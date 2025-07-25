@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-56025-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56026-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6CB1B11D8A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jul 2025 13:29:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 24C24B11D8D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jul 2025 13:29:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80AF6AE2271
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jul 2025 11:28:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC8C0AE1D52
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jul 2025 11:29:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE9FA2EB5D4;
-	Fri, 25 Jul 2025 11:27:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E820A2EBDD8;
+	Fri, 25 Jul 2025 11:27:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SC1qdh7Z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RQ+vu/Bb"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5C02EAD1B;
-	Fri, 25 Jul 2025 11:27:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4732D2EBB97;
+	Fri, 25 Jul 2025 11:27:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753442860; cv=none; b=DcwghrM/xq6stP5dbECJj4HWqMct1B2QBpkmznrwWsneGS00ZA6unHliVbSqPrGc/vXA7gPQmtdwL8oUaXywF/vehbXxXoZNJCoxpF/YW0rMt8TpvzfdvMu7iF3TawH3EFChq00wlZB+DDq0VpArfnNLzd+JFvLwTZAxeyYBf80=
+	t=1753442861; cv=none; b=JBAk8RiGGr4nvIyoDu+A1y0L+yw+6smVxukAk1XJ5i6Fv+2bOvCt7TdlnK7A0BsQWaWRng+2eoT+wpdOB+F53SKoIBOJyfLswlCRncwpuJKkdU/eu7tJAiZ9AnUGgHc6VVnbRdqqvRggOA/qKbpDm4/jupkRIH1lgyJXOfghV7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753442860; c=relaxed/simple;
-	bh=x9mRsG9GcPSU4MPUpLW6idnqdCmA3n9rIq/ddirfr9o=;
+	s=arc-20240116; t=1753442861; c=relaxed/simple;
+	bh=gFKxhW8iA1j4ehsAOr2GRkrzHzX48JxWOxPTQzQT6Jo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nwfDK3Db8v/M1az8mbCgExtzX+sY/A7bsvedmPVm0tiqgJIk5s3RrYbaSuQaFczKI8meAE8cWwzIgnIaAE5cK4oY5ZDBmmt9TZXmB1wIt+GxCSPcWzOGSONtOLM/Od1XWYIrwSjIhHXcBSaMspjj9G5qESESQ/kjZm+rci6Y8Fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SC1qdh7Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F59EC4CEF5;
-	Fri, 25 Jul 2025 11:27:38 +0000 (UTC)
+	 MIME-Version; b=HhLjTBQk71FoFDN8njaIJiau0QDEUmgqFyuOkWaCg501YbzlQPYxWric+imyNzYFSClFARK5s3EuUZ5JlEeE3vNBchY1vVbT4IkF1ahAge6DuO4pkz7C8UMLRNngHMbEa8mhKnF/YrudheKM4b4LdE/RBg51gbiN4j08JC4xAVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RQ+vu/Bb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FB51C4CEEF;
+	Fri, 25 Jul 2025 11:27:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753442859;
-	bh=x9mRsG9GcPSU4MPUpLW6idnqdCmA3n9rIq/ddirfr9o=;
+	s=k20201202; t=1753442861;
+	bh=gFKxhW8iA1j4ehsAOr2GRkrzHzX48JxWOxPTQzQT6Jo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=SC1qdh7Z0GuA3JKQVLGo16uPcdrortss49t2V2r77T53OaY2F4Am8iig+rd0R8Oag
-	 UEXAh9q2zoFf42lj6H0kobbdUtzsco3LH7a1kMtwCqAnA8zBTnIZgYsF1nOiMTxrfC
-	 zK2YM3BFQkn1/kCSbf1QpPoZUMGBxsbzMmaTgsZJDQyC9SkC3tylqQYZt9of0S+ICg
-	 Zm7cCHqKRPi/MYk7jCD0zFfrHuVWYbiSJnMRU0lQhHsUCjZ+uxPJqr4s1lKWf4f/UJ
-	 MdH77v+ZPRe7CBMh/NXG4hzV8yauAe3fE3HuV+MUrjElxApk6uKqzxFvgpTLKSFF3g
-	 FPk/0t3Swl0Tw==
+	b=RQ+vu/BbD0yvt8oAjEAg0WUuJKuRY5grQlDDKMQcHlV2gH08bcuuiVtly5T5tao7p
+	 ydnI3ChpAC+CKEayaZ0TBaylV5pEnTKTKSfH6r7BhWOlqzllx6icl1xaSol2nRS2/H
+	 1LQNVfTbOiGKrec/ZUukZW5hocEJvj5eh/EOVpajhSp3GLgbddTYnLA7C2xvUAPT9W
+	 F8osdzfOkSFk7FiECv1I5czWk37jI/3/rlprS5c53l7HoGe1ucZSbe7da7zhsqjEYd
+	 yPYhN2dmaMfGBsLjC5fyZLpRVo2xZb2aA8Wsis22jQ/A77CAlCd05ws3M0rXgUOSRD
+	 ZCIt/SVrCMj7g==
 From: Christian Brauner <brauner@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [GIT PULL 14/14 for v6.17] vfs iomap
-Date: Fri, 25 Jul 2025 13:27:20 +0200
-Message-ID: <20250725-vfs-iomap-e5f67758f577@brauner>
+Subject: [GIT PULL 01/14 for v6.17] vfs misc
+Date: Fri, 25 Jul 2025 13:27:21 +0200
+Message-ID: <20250725-vfs-misc-599b4aef8eaa@brauner>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250725-vfs-617-1bcbd4ae2ea6@brauner>
 References: <20250725-vfs-617-1bcbd4ae2ea6@brauner>
@@ -58,27 +58,74 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4983; i=brauner@kernel.org; h=from:subject:message-id; bh=x9mRsG9GcPSU4MPUpLW6idnqdCmA3n9rIq/ddirfr9o=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQ0Z4mZC+X9nbwxXP9xyOnfaus+Su9WmlM1w+D+ZF+3Y 3J77jMZd5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEwkq53hf4A983/mRQxxy4Ln WO4Vt7qlsST82Y2JnXxHpxeZr9z2Sp3hn32cR7K28oPQfRwsVs/PVk4NNhXZ93Xhyasx0vfuSn8 6yQMA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=9856; i=brauner@kernel.org; h=from:subject:message-id; bh=gFKxhW8iA1j4ehsAOr2GRkrzHzX48JxWOxPTQzQT6Jo=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQ0Z4nd5DN6u2L6ga5nkyXf6z/8Prv/atisrx+8bnyrW /J2hoe0WkcpC4MYF4OsmCKLQ7tJuNxynorNRpkaMHNYmUCGMHBxCsBE+I0Y/qevn3LWxbOo+dJD afstjVf39XobPZXwcYnRPb367ZEVdZMZGc7wf7gefTWv3cFgIZMfl9J1iW3sRhP0Zs9lYH907En yRU4A
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
 Hey Linus,
 
 /* Summary */
-This contains the iomap updates for this cycle:
+This contains the usual selections of misc updates for this cycle.
 
-- Refactor the iomap writeback code and split the generic and ioend/bio
-  based writeback code. There are two methods that define the split
-  between the generic writeback code, and the implemementation of it,
-  and all knowledge of ioends and bios now sits below that layer.
+Features:
 
-- This series adds fuse iomap support for buffered writes and dirty
-  folio writeback. This is needed so that granular uptodate and dirty
-  tracking can be used in fuse when large folios are enabled. This has
-  two big advantages. For writes, instead of the entire folio needing to
-  be read into the page cache, only the relevant portions need to be.
-  For writeback, only the dirty portions need to be written back instead
-  of the entire folio.
+- Add ext4 IOCB_DONTCACHE support
+
+  This refactors the address_space_operations write_begin() and
+  write_end() callbacks to take const struct kiocb * as their first
+  argument, allowing IOCB flags such as IOCB_DONTCACHE to propagate to
+  the filesystem's buffered I/O path.
+
+  Ext4 is updated to implement handling of the IOCB_DONTCACHE flag and
+  advertises support via the FOP_DONTCACHE file operation flag.
+
+  Additionally, the i915 driver's shmem write paths are updated to
+  bypass the legacy write_begin/write_end interface in favor of directly
+  calling write_iter() with a constructed synchronous kiocb. Another
+  i915 change replaces a manual write loop with kernel_write() during
+  GEM shmem object creation.
+
+Cleanups:
+
+- don't duplicate vfs_open() in kernel_file_open()
+
+- proc_fd_getattr(): don't bother with S_ISDIR() check
+
+- fs/ecryptfs: replace snprintf with sysfs_emit in show function
+
+- vfs: Remove unnecessary list_for_each_entry_safe() from evict_inodes()
+
+- filelock: add new locks_wake_up_waiter() helper
+
+- fs: Remove three arguments from block_write_end()
+
+- VFS: change old_dir and new_dir in struct renamedata to dentrys
+
+- netfs: Remove unused declaration netfs_queue_write_request()
+
+Fixes:
+
+- eventpoll: Fix semi-unbounded recursion
+
+- eventpoll: fix sphinx documentation build warning
+
+- fs/read_write: Fix spelling typo
+
+- fs: annotate data race between poll_schedule_timeout() and pollwake()
+
+- fs/pipe: set FMODE_NOWAIT in create_pipe_files()
+
+- docs/vfs: update references to i_mutex to i_rwsem
+
+- fs/buffer: remove comment about hard sectorsize
+
+- fs/buffer: remove the min and max limit checks in __getblk_slow()
+
+- fs/libfs: don't assume blocksize <= PAGE_SIZE in generic_check_addressable
+
+- fs_context: fix parameter name in infofc() macro
+
+- fs: Prevent file descriptor table allocations exceeding INT_MAX
 
 /* Testing */
 
@@ -92,12 +139,7 @@ No build failures or warnings were observed.
 Merge conflicts with mainline
 =============================
 
-This contains a merge conflict with mainline that can be resolved as follows:
-
-diff --cc fs/fuse/file.c
-index 2ddfb3bb6483,f16426fd2bf5..000000000000
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
+No known conflicts.
 
 Merge conflicts with other trees
 ================================
@@ -110,74 +152,167 @@ The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
 
 are available in the Git repository at:
 
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.17-rc1.iomap
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.17-rc1.misc
 
-for you to fetch changes up to d5212d819e02313f27c867e6d365e71f1fdaaca4:
+for you to fetch changes up to 4e8fc4f7208b032674ef8a4977b96484c328515c:
 
-  Merge patch series "fuse: use iomap for buffered writes + writeback" (2025-07-17 09:55:23 +0200)
+  netfs: Remove unused declaration netfs_queue_write_request() (2025-07-23 15:08:36 +0200)
 
-Please consider pulling these changes from the signed vfs-6.17-rc1.iomap tag.
+Please consider pulling these changes from the signed vfs-6.17-rc1.misc tag.
 
 Thanks!
 Christian
 
 ----------------------------------------------------------------
-vfs-6.17-rc1.iomap
+vfs-6.17-rc1.misc
 
 ----------------------------------------------------------------
-Christian Brauner (2):
-      Merge patch series "refactor the iomap writeback code v5"
-      Merge patch series "fuse: use iomap for buffered writes + writeback"
+Al Viro (2):
+      don't duplicate vfs_open() in kernel_file_open()
+      proc_fd_getattr(): don't bother with S_ISDIR() check
 
-Christoph Hellwig (11):
-      iomap: header diet
-      iomap: pass more arguments using the iomap writeback context
-      iomap: refactor the writeback interface
-      iomap: hide ioends from the generic writeback code
-      iomap: move all ioend handling to ioend.c
-      iomap: rename iomap_writepage_map to iomap_writeback_folio
-      iomap: export iomap_writeback_folio
-      iomap: replace iomap_folio_ops with iomap_write_ops
-      iomap: improve argument passing to iomap_read_folio_sync
-      iomap: add read_folio_range() handler for buffered writes
-      iomap: build the writeback code without CONFIG_BLOCK
+Andy Shevchenko (1):
+      fs/read_write: Fix spelling typo
 
-Joanne Koong (8):
-      iomap: cleanup the pending writeback tracking in iomap_writepage_map_blocks
-      iomap: add public helpers for uptodate state manipulation
-      iomap: move folio_unlock out of iomap_writeback_folio
-      fuse: use iomap for buffered writes
-      fuse: use iomap for writeback
-      fuse: use iomap for folio laundering
-      fuse: hook into iomap for invalidating and checking partial uptodateness
-      fuse: refactor writeback to use iomap_writepage_ctx inode
+Ankit Chauhan (1):
+      fs/ecryptfs: replace snprintf with sysfs_emit in show function
 
- Documentation/filesystems/iomap/design.rst     |   3 -
- Documentation/filesystems/iomap/operations.rst |  57 ++-
- block/fops.c                                   |  37 +-
- fs/fuse/Kconfig                                |   1 +
- fs/fuse/file.c                                 | 345 +++++++--------
- fs/gfs2/aops.c                                 |   8 +-
- fs/gfs2/bmap.c                                 |  48 ++-
- fs/gfs2/bmap.h                                 |   1 +
- fs/gfs2/file.c                                 |   3 +-
- fs/iomap/Makefile                              |   6 +-
- fs/iomap/buffered-io.c                         | 553 ++++++++-----------------
- fs/iomap/direct-io.c                           |   5 -
- fs/iomap/fiemap.c                              |   3 -
- fs/iomap/internal.h                            |   1 -
- fs/iomap/ioend.c                               | 220 +++++++++-
- fs/iomap/iter.c                                |   1 -
- fs/iomap/seek.c                                |   4 -
- fs/iomap/swapfile.c                            |   3 -
- fs/iomap/trace.c                               |   1 -
- fs/iomap/trace.h                               |   4 +-
- fs/xfs/xfs_aops.c                              | 212 ++++++----
- fs/xfs/xfs_file.c                              |   6 +-
- fs/xfs/xfs_iomap.c                             |  12 +-
- fs/xfs/xfs_iomap.h                             |   1 +
- fs/xfs/xfs_reflink.c                           |   3 +-
- fs/zonefs/file.c                               |  40 +-
- include/linux/iomap.h                          |  82 ++--
- 27 files changed, 859 insertions(+), 801 deletions(-)
+Christian Brauner (1):
+      Merge patch series "fs: refactor write_begin/write_end and add ext4 IOCB_DONTCACHE support"
+
+Dmitry Antipov (1):
+      fs: annotate suspected data race between poll_schedule_timeout() and pollwake()
+
+Jan Kara (1):
+      vfs: Remove unnecessary list_for_each_entry_safe() from evict_inodes()
+
+Jann Horn (2):
+      eventpoll: Fix semi-unbounded recursion
+      eventpoll: fix sphinx documentation build warning
+
+Jeff Layton (1):
+      filelock: add new locks_wake_up_waiter() helper
+
+Jens Axboe (1):
+      fs/pipe: set FMODE_NOWAIT in create_pipe_files()
+
+Junxuan Liao (1):
+      docs/vfs: update references to i_mutex to i_rwsem
+
+Matthew Wilcox (Oracle) (1):
+      fs: Remove three arguments from block_write_end()
+
+NeilBrown (1):
+      VFS: change old_dir and new_dir in struct renamedata to dentrys
+
+Pankaj Raghav (3):
+      fs/buffer: remove comment about hard sectorsize
+      fs/buffer: remove the min and max limit checks in __getblk_slow()
+      fs/libfs: don't assume blocksize <= PAGE_SIZE in generic_check_addressable
+
+RubenKelevra (1):
+      fs_context: fix parameter name in infofc() macro
+
+Sasha Levin (1):
+      fs: Prevent file descriptor table allocations exceeding INT_MAX
+
+Taotao Chen (5):
+      drm/i915: Use kernel_write() in shmem object create
+      drm/i915: Refactor shmem_pwrite() to use kiocb and write_iter
+      fs: change write_begin/write_end interface to take struct kiocb *
+      mm/pagemap: add write_begin_get_folio() helper function
+      ext4: support uncached buffered I/O
+
+Yue Haibing (1):
+      netfs: Remove unused declaration netfs_queue_write_request()
+
+ Documentation/filesystems/locking.rst     |   4 +-
+ Documentation/filesystems/vfs.rst         |  11 +--
+ block/fops.c                              |  15 ++--
+ drivers/gpu/drm/i915/gem/i915_gem_shmem.c | 115 ++++++++----------------------
+ fs/adfs/inode.c                           |   9 +--
+ fs/affs/file.c                            |  26 ++++---
+ fs/attr.c                                 |  10 +--
+ fs/bcachefs/fs-io-buffered.c              |   4 +-
+ fs/bcachefs/fs-io-buffered.h              |   4 +-
+ fs/bfs/file.c                             |   7 +-
+ fs/buffer.c                               |  47 ++++++------
+ fs/cachefiles/namei.c                     |   4 +-
+ fs/ceph/addr.c                            |  10 ++-
+ fs/dcache.c                               |  10 +--
+ fs/direct-io.c                            |   8 +--
+ fs/ecryptfs/inode.c                       |   4 +-
+ fs/ecryptfs/main.c                        |   3 +-
+ fs/ecryptfs/mmap.c                        |  10 +--
+ fs/eventpoll.c                            |  58 +++++++++++----
+ fs/exfat/file.c                           |  11 ++-
+ fs/exfat/inode.c                          |  16 +++--
+ fs/ext2/dir.c                             |   2 +-
+ fs/ext2/inode.c                           |  11 +--
+ fs/ext4/file.c                            |   3 +-
+ fs/ext4/inode.c                           |  35 ++++-----
+ fs/f2fs/data.c                            |   8 ++-
+ fs/fat/inode.c                            |  18 ++---
+ fs/file.c                                 |  15 ++++
+ fs/fuse/file.c                            |  14 ++--
+ fs/hfs/hfs_fs.h                           |   2 +-
+ fs/hfs/inode.c                            |   4 +-
+ fs/hfsplus/hfsplus_fs.h                   |   6 +-
+ fs/hfsplus/inode.c                        |   8 ++-
+ fs/hostfs/hostfs_kern.c                   |   8 ++-
+ fs/hpfs/file.c                            |  18 ++---
+ fs/hugetlbfs/inode.c                      |   9 +--
+ fs/inode.c                                |  13 ++--
+ fs/iomap/buffered-io.c                    |   3 +-
+ fs/jffs2/file.c                           |  28 ++++----
+ fs/jfs/inode.c                            |  16 +++--
+ fs/libfs.c                                |  26 ++++---
+ fs/locks.c                                |   4 +-
+ fs/minix/dir.c                            |   2 +-
+ fs/minix/inode.c                          |   7 +-
+ fs/namei.c                                |  29 ++++----
+ fs/namespace.c                            |   2 +-
+ fs/nfs/file.c                             |   8 ++-
+ fs/nfsd/vfs.c                             |   7 +-
+ fs/nilfs2/dir.c                           |   2 +-
+ fs/nilfs2/inode.c                         |   8 ++-
+ fs/nilfs2/recovery.c                      |   3 +-
+ fs/ntfs3/file.c                           |   4 +-
+ fs/ntfs3/inode.c                          |   7 +-
+ fs/ntfs3/ntfs_fs.h                        |  10 +--
+ fs/ocfs2/aops.c                           |   6 +-
+ fs/omfs/file.c                            |   7 +-
+ fs/open.c                                 |   5 +-
+ fs/orangefs/inode.c                       |  16 +++--
+ fs/overlayfs/copy_up.c                    |   6 +-
+ fs/overlayfs/dir.c                        |  16 ++---
+ fs/overlayfs/overlayfs.h                  |  16 ++---
+ fs/overlayfs/readdir.c                    |   2 +-
+ fs/overlayfs/super.c                      |   2 +-
+ fs/overlayfs/util.c                       |   2 +-
+ fs/pipe.c                                 |   8 ++-
+ fs/proc/fd.c                              |  11 +--
+ fs/read_write.c                           |   2 +-
+ fs/select.c                               |   4 +-
+ fs/smb/server/vfs.c                       |   4 +-
+ fs/stack.c                                |   4 +-
+ fs/ubifs/file.c                           |   8 ++-
+ fs/udf/inode.c                            |  11 +--
+ fs/ufs/dir.c                              |   2 +-
+ fs/ufs/inode.c                            |  16 +++--
+ fs/vboxsf/file.c                          |   5 +-
+ fs/xattr.c                                |   2 +-
+ include/linux/buffer_head.h               |   8 +--
+ include/linux/exportfs.h                  |   4 +-
+ include/linux/filelock.h                  |   7 +-
+ include/linux/fs.h                        |  25 +++----
+ include/linux/fs_context.h                |   2 +-
+ include/linux/fs_stack.h                  |   2 +-
+ include/linux/netfs.h                     |   1 -
+ include/linux/pagemap.h                   |  27 +++++++
+ include/linux/quotaops.h                  |   2 +-
+ io_uring/openclose.c                      |   2 -
+ mm/filemap.c                              |   4 +-
+ mm/shmem.c                                |  12 ++--
+ 88 files changed, 520 insertions(+), 457 deletions(-)
 
