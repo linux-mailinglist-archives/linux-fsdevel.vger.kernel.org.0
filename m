@@ -1,130 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-56034-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56035-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C875B11FB3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jul 2025 16:01:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90FBBB120BD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jul 2025 17:22:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B091A1CC52C8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jul 2025 14:01:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 219483B6A1C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jul 2025 15:21:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C7241DE896;
-	Fri, 25 Jul 2025 14:01:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A90E12BDC15;
+	Fri, 25 Jul 2025 15:22:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="EHENJhpt"
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="dJxjij5H"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9710510F1;
-	Fri, 25 Jul 2025 14:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.157.23.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6273B1A840A
+	for <linux-fsdevel@vger.kernel.org>; Fri, 25 Jul 2025 15:22:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753452078; cv=none; b=eizwXm4x40YWLAkLZ4g3BW87TAMtXVgW/M77oyCfzHElDM+Dt0TsLBlAXAwmf9CslSulBE2Kv1WcqvxMbHCPUep94xRiDS3hITI2ZVnSfed+3GMaji/zGwObWVL2k7nspjkahWlRS8bZ4gBfI84ULerm3dXiLrbBUp+QxYQJ1d0=
+	t=1753456926; cv=none; b=l3wbJtuzI2/UIDsLFEStULtNZyXvKbDT/+fI0aHGeF21z96r4QMWOl4s3dps5sNWgdWC82UIZw9WesdprfZ/ubnjYRZzJiFMHG1h7gV8DxNqVif1VJNw3xmQmZpWaeszx2uAioR8xa8g9KXFUFJ1p4Qv/0ZYL9rb480OLdUoBzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753452078; c=relaxed/simple;
-	bh=CU/ofPcM/4/31XAsGzsSMeFb1aVoCrvt6kL7NaWtHiU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=B+MnTXuSv5ioR4HEr9GJVn3tHDaMxX4T5NDqJ6/PEGHsqG+QiB/nK70Yq/ITTrb19gIiNoNGuLySOBcNd1TG4r/keaojmEUD4I3a2eMBi7cwpjglNXxJdCpn+QYZqyiOSWe6GyC+oHO46xvSNnM56adu5HIy6VANmlFQhWn2bBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=EHENJhpt; arc=none smtp.client-ip=35.157.23.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paragon-software.com
-Received: from relayfre-01.paragon-software.com (unknown [176.12.100.13])
-	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id E69301D1A;
-	Fri, 25 Jul 2025 13:52:57 +0000 (UTC)
-Authentication-Results: relayaws-01.paragon-software.com;
-	dkim=pass (1024-bit key; unprotected) header.d=paragon-software.com header.i=@paragon-software.com header.b=EHENJhpt;
-	dkim-atps=neutral
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-	by relayfre-01.paragon-software.com (Postfix) with ESMTPS id C7FA12302;
-	Fri, 25 Jul 2025 13:54:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=paragon-software.com; s=mail; t=1753451661;
-	bh=XERKZUg/mSTGqo3b6VJtn4q+/PRdwVrweknVT9vWgnc=;
-	h=From:To:CC:Subject:Date;
-	b=EHENJhpt+Erc+3kdzeeDpP8aVnliX60cIimbGnBxooKRug3QbnmrkyHP+JBDTpBqL
-	 VKtASoDe/nfYuyGEEoEH7H0ATe17p0bHnwr38TbyRqnAGn1LWXsfGV900XCzxLHcSb
-	 hscmdNckkIWUi+eVsPhHyV+BPLXG6Noo118Vf4oI=
-Received: from localhost.localdomain (172.30.20.191) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Fri, 25 Jul 2025 16:54:20 +0300
-From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-To: <torvalds@linux-foundation.org>
-CC: <ntfs3@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] ntfs3: bugfixes for 6.17
-Date: Fri, 25 Jul 2025 15:54:11 +0200
-Message-ID: <20250725135411.4064-1-almaz.alexandrovich@paragon-software.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1753456926; c=relaxed/simple;
+	bh=w6cqLDPAuWWOf3XDsgnT9TheMq0d2PeDxG8bPLIPHH8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uNLPy9b4LgUKypoZ4Ja/wAEDhkqeJvXWU4Ak4liXjVOvIi48X3dpmj00FqVQI/mTOjYQUpfufs/buOxd4ejUw/QqtRbU3j58fdUbNVxfneHg+HnGHuL0JltY90SJ7Dl4xe3ZPMOsMWkVv4ltoW50lYjYJig+syhfBELKmV+wCLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=dJxjij5H; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from trampoline.thunk.org (pool-173-48-116-187.bstnma.fios.verizon.net [173.48.116.187])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 56PFJ19S022191
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Jul 2025 11:19:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1753456745; bh=wBKmwQYCteJSPB4Hw5iOzmxaBx11IomAX7t4BBIedJc=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=dJxjij5H3IZka8UrAhUdDHbTwYomsTNgMcfiGCaxIgsBWkgzaRf+1/kNCJAepJ7Yq
+	 6W3VbkuAxbG5rY4xeDIvuM6HzdnOGNKb25Hq03osoQY5qfoiOg64BHyD5SVqegA4ut
+	 S95N6Ozx9j8vphBGJmTYZUenYAT2qeVHWW3sgPQC7rrMm5ASWmtHWiZQ3uImpry4cz
+	 1ivX7EVEUWh67Q+HXy2Jp5nrFw3hyZRJ/QeplXswFodxXoMpPwsx0mZrOZOKFuGACQ
+	 zmMLq9Obit2reyRC8ZVCuP9zV4hU06DF8R5y6Z93VFbbkZls+JS6SDKAIjUlM0GQt9
+	 WOwfi87BfJqpA==
+Received: by trampoline.thunk.org (Postfix, from userid 15806)
+	id 774922E00D6; Fri, 25 Jul 2025 09:15:41 -0400 (EDT)
+Date: Fri, 25 Jul 2025 09:15:41 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Jan Kara <jack@suse.cz>
+Cc: Zhang Yi <yi.zhang@huaweicloud.com>, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        adilger.kernel@dilger.ca, ojaswin@linux.ibm.com, linux@roeck-us.net,
+        yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com,
+        yangerkun@huawei.com
+Subject: Re: [PATCH] ext4: fix crash on test_mb_mark_used kunit tests
+Message-ID: <20250725131541.GA184259@mit.edu>
+References: <20250725021654.3188798-1-yi.zhang@huaweicloud.com>
+ <av5necgeitkiormvqsh75kvgq3arjwxxqxpqievulgz2rvi3dg@75hdi2ubarmr>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: vobn-exch-01.paragon-software.com (172.30.72.13) To
- vdlg-exch-02.paragon-software.com (172.30.1.105)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <av5necgeitkiormvqsh75kvgq3arjwxxqxpqievulgz2rvi3dg@75hdi2ubarmr>
 
-Please pull this branch containing ntfs3 code for 6.17.
+On Fri, Jul 25, 2025 at 01:06:18PM +0200, Jan Kara wrote:
+> > This patch applies to the kernel that has only merged bbe11dd13a3f
+> > ("ext4: fix largest free orders lists corruption on mb_optimize_scan
+> > switch"), but not merged 458bfb991155 ("ext4: convert free groups order
+> > lists to xarrays").
+> 
+> Hum, I think it would be best to just squash this into bbe11dd13a3f and
+> then just rebase & squash the other unittest fixup to the final commit when
+> we have to rebase anyway. Because otherwise backports to stable kernel will
+> quickly become rather messy.
 
-Regards,
-Konstantin
+What I ended up doing was to add a squashed combination of these two
+commits and dropped it in before the block allocation scalabiltity
+with the following commit description:
 
-----------------------------------------------------------------
-The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
+    ext4: initialize superblock fields in the kballoc-test.c kunit tests
+    
+    Various changes in the "ext4: better scalability for ext4 block
+    allocation" patch series have resulted in kunit test failures, most
+    notably in the test_new_blocks_simple and the test_mb_mark_used tests.
+    The root cause of these failures is that various in-memory ext4 data
+    structures were not getting initialized, and while previous versions
+    of the functions exercised by the unit tests didn't use these
+    structure members, this was arguably a test bug.
+    
+    Since one of the patches in the block allocation scalability patches
+    is a fix which is has a cc:stable tag, this commit also has a
+    cc:stable tag.
+    
+    CC: stable@vger.kernel.org
+    Link: https://lore.kernel.org/r/20250714130327.1830534-1-libaokun1@huawei.com
+    Link: https://patch.msgid.link/20250725021550.3177573-1-yi.zhang@huaweicloud.com
+    Link: https://patch.msgid.link/20250725021654.3188798-1-yi.zhang@huaweicloud.com
+    Reported-by: Guenter Roeck <linux@roeck-us.net>
+    Closes: https://lore.kernel.org/linux-ext4/b0635ad0-7ebf-4152-a69b-58e7e87d5085@roeck-us.net/
+    Tested-by: Guenter Roeck <linux@roeck-us.net>
+    Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+    Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 
-  Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
+Then in the commit "ext4: convert free groups order lists to xarrays"
+which removed list_head, I modified it to remove the linked list
+initialization from mballoc-test.c, since that's the commit which
+removed those structures.
 
-are available in the Git repository at:
+In the future, we should try to make sure that when we modify data
+structures to add or remove struct elements, that we also make sure
+that kunit test should also be updated.  To that end, I've updated the
+kbuild script[1] in xfstests-bld repo so that "kbuild --test" will run
+the Kunit tests.  Hopefully reducing the friction for running tests
+will encourage more kunit tests to be created and so they will kept
+under regular maintenance.
 
-  https://github.com/Paragon-Software-Group/linux-ntfs3.git tags/ntfs3_for_6.17
+[1] https://github.com/tytso/xfstests-bld/blob/master/kernel-build/kbuild
 
-for you to fetch changes up to a49f0abd8959048af18c6c690b065eb0d65b2d21:
+Cheers,
 
-  Revert "fs/ntfs3: Replace inode_trylock with inode_lock" (2025-07-08 09:42:21 +0200)
-
-----------------------------------------------------------------
-Changes for 6.17-rc1
-
-Added:
-    sanity check for file name;
-    mark live inode as bad and avoid any operations.
-
-Fixed:
-    handling of symlinks created in windows;
-    creation of symlinks for relative path.
-
-Changed:
-    cancel setting inode as bad after removing name fails;
-    revert "replace inode_trylock with inode_lock".
-
-----------------------------------------------------------------
-Edward Adam Davis (1):
-      fs/ntfs3: cancle set bad inode after removing name fails
-
-Konstantin Komarov (2):
-      fs/ntfs3: Exclude call make_bad_inode for live nodes.
-      Revert "fs/ntfs3: Replace inode_trylock with inode_lock"
-
-Lizhi Xu (1):
-      fs/ntfs3: Add sanity check for file name
-
-Rong Zhang (2):
-      fs/ntfs3: fix symlinks cannot be handled correctly
-      fs/ntfs3: correctly create symlink for relative path
-
- fs/ntfs3/dir.c     |  6 ++--
- fs/ntfs3/file.c    | 37 +++++++++++++++++++++-
- fs/ntfs3/frecord.c | 31 +++++++++++++------
- fs/ntfs3/fsntfs.c  |  6 +++-
- fs/ntfs3/inode.c   | 91 ++++++++++++++++++++++++++++++++++--------------------
- fs/ntfs3/namei.c   | 26 +++++++++++-----
- fs/ntfs3/ntfs.h    |  3 +-
- fs/ntfs3/ntfs_fs.h | 17 ++++++++--
- fs/ntfs3/xattr.c   | 22 +++++++++++--
- 9 files changed, 178 insertions(+), 61 deletions(-)
+					- Ted
 
