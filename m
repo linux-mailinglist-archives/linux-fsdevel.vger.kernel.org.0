@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-56022-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56023-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90FDAB11D86
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jul 2025 13:28:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60448B11D88
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jul 2025 13:29:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFDAC561FA0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jul 2025 11:28:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF0905A5165
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jul 2025 11:28:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F206C2E6103;
-	Fri, 25 Jul 2025 11:27:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4095A2EA486;
+	Fri, 25 Jul 2025 11:27:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HJ4eIs1q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YzEYTvrp"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549272E8E0F;
-	Fri, 25 Jul 2025 11:27:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9122EA172;
+	Fri, 25 Jul 2025 11:27:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753442855; cv=none; b=d+7nKCMg2IL/dcCp15oqaDq60KLLDKszaDNvTTBuZMc5kdJ+gjYfeBNldZHvvUZlIjf3nSo5o9QivyIC5kaX5OIuTNPU23f/ntAcZVvTL4MeT/XsQYCEdJ1BwmegHyTIG9nPNNGzsYGTwvMyDHQMFnBhKN3fJXMomMazhdNhh8A=
+	t=1753442856; cv=none; b=aUZloeq8L+xKRfD/39Pec5ZCCH47bsrb7btm1lETlMGP67anJDHMQbwUUIiNgh6UebfyyTt8M4mHLbSCtm9gawC6c6PT4OGRWxUh4MXzBLevybI3OkSIQX3QMAh+r4bvZ9E66EZ8KkkBzZveeIdAC/lbluVuIYY1KvZDnjB3inA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753442855; c=relaxed/simple;
-	bh=qyWq+hKzuIa8hMAydBNZAckNnUT5ZdxfWE+A5AtbJSs=;
+	s=arc-20240116; t=1753442856; c=relaxed/simple;
+	bh=QPw8wpvjPNOsL250HpO87X7GEuwe16d5Ist5M/JBn2E=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TQIr7hUSWdD32HO5xjp8FSiLDVl+wDuCk2ikbi8oTjRwiudoVGEIeYeRQMsLMdgsNNcj1lk7i3t6msL7LiX1iS39o3E8372swPzqovuUedb4UcvPcDEiGX/diuXSOwcvnJzFY5cZG1nXOn8e5s8bKWkx5jsIl5aCMmCd/nQ5G7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HJ4eIs1q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A56B1C4CEEF;
-	Fri, 25 Jul 2025 11:27:33 +0000 (UTC)
+	 MIME-Version; b=Mo3TnLGBiH9ze+VDE1ouMCtjKktWn2b9ss5Hm35wFuQoYVQAj/hLtWlqInEk1e+5riObtsYUtp0igr+jpCCVgZiM/2tPAV3gVJWvoqXbuKm79VQHnMEOdZ/EplWnJJL0tGmuKlLFv7FmlKvu/wQZdsfL+KLMIkv6ruRtL3QQE2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YzEYTvrp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 586F3C4CEE7;
+	Fri, 25 Jul 2025 11:27:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753442854;
-	bh=qyWq+hKzuIa8hMAydBNZAckNnUT5ZdxfWE+A5AtbJSs=;
+	s=k20201202; t=1753442856;
+	bh=QPw8wpvjPNOsL250HpO87X7GEuwe16d5Ist5M/JBn2E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=HJ4eIs1qoFbYjFckr9Qfaa4QN730MxjYqKwWAtDMRz7ocaOAb4SkrGxKQiK2Unlyp
-	 oZjoUoNv4MjhHF1vGVw7gAwPL/7O46I6pJyQ4LfeLJPjVqXOis1RDkohzCyT6Tt/u5
-	 tlMtoDPS/KGK4QQKULU7B0MiYhLuQ8xBjZPsRwsFlVXIRcU55tQiOa2ni+CMwvAYIp
-	 GFMUgdV0UYXAI5FWAT+VbfISMEihwCiVquxQqae73mPElVWr8lTmnxq8KwJZdE/6ST
-	 wew+/gwxgEKZ8zJEoYsZHba14C2o8sQ8rmjyXP27EZe9FfnY1vedBLXbH0SM6GrwQm
-	 ByYUd9aFgfsWg==
+	b=YzEYTvrp+nErkFJXSOxy0pY26JXf/BUR4C7tdqrz00BXJL0eR+/Vc6kW6FR/7D2lU
+	 ZchSv0LNWPZJ5fLzrPT9YC1WSLGRptlT/rsPMomgop4EiOhbG6gzoclbzdweSZW2AJ
+	 8dAhvPds6O/MoD+THK+g6I92SC7HPPy7V6XbtnDL4SGYm3bSMng+H2Dd25yf5/9Hbu
+	 dMaZ2AxkmxRtic4jyQCFFNAB5/ksbyAP92AL55QW9E6kWbme+y8kPwubUhdB5pcG4m
+	 HbR+B0x4RLFWlD7T+cf+ifbtF8fJhw6BdBw0bgX/HuB01oMXmja2IkfuFvyGuMDhVv
+	 iPPFZsZr3H29w==
 From: Christian Brauner <brauner@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [GIT PULL 06/14 for v6.17] vfs fallocate
-Date: Fri, 25 Jul 2025 13:27:17 +0200
-Message-ID: <20250725-vfs-fallocate-91b9067277e8@brauner>
+Subject: [GIT PULL 12/14 for v6.17] vfs fileattr
+Date: Fri, 25 Jul 2025 13:27:18 +0200
+Message-ID: <20250725-vfs-fileattr-fcfc534aac44@brauner>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250725-vfs-617-1bcbd4ae2ea6@brauner>
 References: <20250725-vfs-617-1bcbd4ae2ea6@brauner>
@@ -58,47 +58,41 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4503; i=brauner@kernel.org; h=from:subject:message-id; bh=qyWq+hKzuIa8hMAydBNZAckNnUT5ZdxfWE+A5AtbJSs=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQ0Z4n+r25ienjhm/TWJrn7lT6Lwo7pfkxNLrA513Bs5 pa2O9MXdJSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEyEj4uRoYN32xXmwB/7HK1N io2/9hnWFE6R4lNcF1y5tmSf44PMbkaGlT9DGzl3a4dI7exxZ0vhaV++xscn70B1gO5dIZWSViM +AA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6908; i=brauner@kernel.org; h=from:subject:message-id; bh=QPw8wpvjPNOsL250HpO87X7GEuwe16d5Ist5M/JBn2E=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQ0Z4ly9vGzxhWXN7n8f2rV/Djrx470gl11Xn+LNdNPV H9bWB7YUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMJHuyQz/i04d4Wh4N4uL4+LL NMs9wbn9V/MYveQ1v4fKB706UXxiMiPDoqwXnYJ/GHmuFxZZPdhx54re6tuyy2NOX3LbMKmy8/A sHgA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
 Hey Linus,
 
 /* Summary */
-fallocate() currently supports creating preallocated files efficiently.
-However, on most filesystems fallocate() will preallocate blocks in an
-unwriten state even if FALLOC_FL_ZERO_RANGE is specified.
+This introduces the new file_getattr() and file_setattr() system calls
+after lengthy discussions. Both system calls serve as successors and
+extensible companions to the FS_IOC_FSGETXATTR and FS_IOC_FSSETXATTR
+system calls which have started to show their age in addition to being
+named in a way that makes it easy to conflate them with extended
+attribute related operations.
 
-The extent state must later be converted to a written state when the
-user writes data into this range, which can trigger numerous metadata
-changes and journal I/O. This may leads to significant write
-amplification and performance degradation in synchronous write mode.
+These syscalls allow userspace to set filesystem inode attributes on
+special files. One of the usage examples is the XFS quota projects.
 
-At the moment, the only method to avoid this is to create an empty file
-and write zero data into it (for example, using 'dd' with a large block
-size). However, this method is slow and consumes a considerable amount
-of disk bandwidth.
+XFS has project quotas which could be attached to a directory. All new
+inodes in these directories inherit project ID set on parent directory.
 
-Now that more and more flash-based storage devices are available it is
-possible to efficiently write zeros to SSDs using the unmap write zeroes
-command if the devices do not write physical zeroes to the media.
+The project is created from userspace by opening and calling
+FS_IOC_FSSETXATTR on each inode. This is not possible for special files
+such as FIFO, SOCK, BLK etc. Therefore, some inodes are left with empty
+project ID. Those inodes then are not shown in the quota accounting but
+still exist in the directory. This is not critical but in the case when
+special files are created in the directory with already existing project
+quota, these new inodes inherit extended attributes. This creates a mix
+of special files with and without attributes. Moreover, special files
+with attributes don't have a possibility to become clear or change the
+attributes. This, in turn, prevents userspace from re-creating quota
+project on these existing files.
 
-For example, if SCSI SSDs support the UMMAP bit or NVMe SSDs support the
-DEAC bit[1], the write zeroes command does not write actual data to the
-device, instead, NVMe converts the zeroed range to a deallocated state,
-which works fast and consumes almost no disk write bandwidth.
-
-This series implements the BLK_FEAT_WRITE_ZEROES_UNMAP feature and
-BLK_FLAG_WRITE_ZEROES_UNMAP_DISABLED flag for SCSI, NVMe and
-device-mapper drivers, and add the FALLOC_FL_WRITE_ZEROES and
-STATX_ATTR_WRITE_ZEROES_UNMAP support for ext4 and raw bdev devices.
-
-fallocate() is subsequently extended with the FALLOC_FL_WRITE_ZEROES
-flag. FALLOC_FL_WRITE_ZEROES zeroes a specified file range in such a way
-that subsequent writes to that range do not require further changes to
-the file mapping metadata. This flag is beneficial for subsequent pure
-overwriting within this range, as it can save on block allocation and,
-consequently, significant metadata changes.
+In addition, these new system calls allow the implementation of
+additional attributes that we couldn't or didn't want to fit into the
+legacy ioctls anymore.
 
 /* Testing */
 
@@ -119,54 +113,108 @@ Merge conflicts with other trees
 
 No known conflicts.
 
-The following changes since commit e04c78d86a9699d136910cfc0bdcf01087e3267e:
+The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
 
-  Linux 6.16-rc2 (2025-06-15 13:49:41 -0700)
+  Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
 
 are available in the Git repository at:
 
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.17-rc1.fallocate
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.17-rc1.fileattr
 
-for you to fetch changes up to 4f984fe7b4d9aea332c7ff59827a4e168f0e4e1b:
+for you to fetch changes up to e85931d1cd699307e6a3f1060cbe4c42748f3fff:
 
-  Merge patch series "fallocate: introduce FALLOC_FL_WRITE_ZEROES flag" (2025-06-23 12:45:32 +0200)
+  fs: tighten a sanity check in file_attr_to_fileattr() (2025-07-16 10:22:01 +0200)
 
-Please consider pulling these changes from the signed vfs-6.17-rc1.fallocate tag.
+Please consider pulling these changes from the signed vfs-6.17-rc1.fileattr tag.
 
 Thanks!
 Christian
 
 ----------------------------------------------------------------
-vfs-6.17-rc1.fallocate
+vfs-6.17-rc1.fileattr
 
 ----------------------------------------------------------------
-Christian Brauner (1):
-      Merge patch series "fallocate: introduce FALLOC_FL_WRITE_ZEROES flag"
+Amir Goldstein (1):
+      fs: prepare for extending file_get/setattr()
 
-Zhang Yi (9):
-      block: introduce max_{hw|user}_wzeroes_unmap_sectors to queue limits
-      nvme: set max_hw_wzeroes_unmap_sectors if device supports DEAC bit
-      nvmet: set WZDS and DRB if device enables unmap write zeroes operation
-      scsi: sd: set max_hw_wzeroes_unmap_sectors if device supports SD_ZERO_*_UNMAP
-      dm: clear unmap write zeroes limits when disabling write zeroes
-      fs: introduce FALLOC_FL_WRITE_ZEROES to fallocate
-      block: factor out common part in blkdev_fallocate()
-      block: add FALLOC_FL_WRITE_ZEROES support
-      ext4: add FALLOC_FL_WRITE_ZEROES support
+Andrey Albershteyn (5):
+      fs: split fileattr related helpers into separate file
+      lsm: introduce new hooks for setting/getting inode fsxattr
+      selinux: implement inode_file_[g|s]etattr hooks
+      fs: make vfs_fileattr_[get|set] return -EOPNOTSUPP
+      fs: introduce file_getattr and file_setattr syscalls
 
- Documentation/ABI/stable/sysfs-block | 33 ++++++++++++++++++
- block/blk-settings.c                 | 20 +++++++++--
- block/blk-sysfs.c                    | 26 ++++++++++++++
- block/fops.c                         | 44 +++++++++++++-----------
- drivers/md/dm-table.c                |  4 ++-
- drivers/nvme/host/core.c             | 20 ++++++-----
- drivers/nvme/target/io-cmd-bdev.c    |  4 +++
- drivers/scsi/sd.c                    |  5 +++
- fs/ext4/extents.c                    | 66 ++++++++++++++++++++++++++++++------
- fs/open.c                            |  1 +
- include/linux/blkdev.h               | 10 ++++++
- include/linux/falloc.h               |  3 +-
- include/trace/events/ext4.h          |  3 +-
- include/uapi/linux/falloc.h          | 17 ++++++++++
- 14 files changed, 212 insertions(+), 44 deletions(-)
+Christian Brauner (2):
+      Merge patch series "fs: introduce file_getattr and file_setattr syscalls"
+      tree-wide: s/struct fileattr/struct file_kattr/g
+
+Dan Carpenter (1):
+      fs: tighten a sanity check in file_attr_to_fileattr()
+
+ Documentation/filesystems/locking.rst       |   4 +-
+ Documentation/filesystems/vfs.rst           |   4 +-
+ arch/alpha/kernel/syscalls/syscall.tbl      |   2 +
+ arch/arm/tools/syscall.tbl                  |   2 +
+ arch/arm64/tools/syscall_32.tbl             |   2 +
+ arch/m68k/kernel/syscalls/syscall.tbl       |   2 +
+ arch/microblaze/kernel/syscalls/syscall.tbl |   2 +
+ arch/mips/kernel/syscalls/syscall_n32.tbl   |   2 +
+ arch/mips/kernel/syscalls/syscall_n64.tbl   |   2 +
+ arch/mips/kernel/syscalls/syscall_o32.tbl   |   2 +
+ arch/parisc/kernel/syscalls/syscall.tbl     |   2 +
+ arch/powerpc/kernel/syscalls/syscall.tbl    |   2 +
+ arch/s390/kernel/syscalls/syscall.tbl       |   2 +
+ arch/sh/kernel/syscalls/syscall.tbl         |   2 +
+ arch/sparc/kernel/syscalls/syscall.tbl      |   2 +
+ arch/x86/entry/syscalls/syscall_32.tbl      |   2 +
+ arch/x86/entry/syscalls/syscall_64.tbl      |   2 +
+ arch/xtensa/kernel/syscalls/syscall.tbl     |   2 +
+ fs/Makefile                                 |   3 +-
+ fs/bcachefs/fs.c                            |   4 +-
+ fs/btrfs/ioctl.c                            |   4 +-
+ fs/btrfs/ioctl.h                            |   6 +-
+ fs/ecryptfs/inode.c                         |   4 +-
+ fs/efivarfs/inode.c                         |   4 +-
+ fs/ext2/ext2.h                              |   4 +-
+ fs/ext2/ioctl.c                             |   4 +-
+ fs/ext4/ext4.h                              |   4 +-
+ fs/ext4/ioctl.c                             |   4 +-
+ fs/f2fs/f2fs.h                              |   4 +-
+ fs/f2fs/file.c                              |   4 +-
+ fs/file_attr.c                              | 498 ++++++++++++++++++++++++++++
+ fs/fuse/fuse_i.h                            |   4 +-
+ fs/fuse/ioctl.c                             |   8 +-
+ fs/gfs2/file.c                              |   4 +-
+ fs/gfs2/inode.h                             |   4 +-
+ fs/hfsplus/hfsplus_fs.h                     |   4 +-
+ fs/hfsplus/inode.c                          |   4 +-
+ fs/ioctl.c                                  | 309 -----------------
+ fs/jfs/ioctl.c                              |   4 +-
+ fs/jfs/jfs_inode.h                          |   4 +-
+ fs/nilfs2/ioctl.c                           |   4 +-
+ fs/nilfs2/nilfs.h                           |   4 +-
+ fs/ocfs2/ioctl.c                            |   4 +-
+ fs/ocfs2/ioctl.h                            |   4 +-
+ fs/orangefs/inode.c                         |   4 +-
+ fs/overlayfs/copy_up.c                      |   6 +-
+ fs/overlayfs/inode.c                        |  17 +-
+ fs/overlayfs/overlayfs.h                    |  10 +-
+ fs/overlayfs/util.c                         |   2 +-
+ fs/ubifs/ioctl.c                            |   4 +-
+ fs/ubifs/ubifs.h                            |   4 +-
+ fs/xfs/xfs_ioctl.c                          |  18 +-
+ fs/xfs/xfs_ioctl.h                          |   4 +-
+ include/linux/fileattr.h                    |  38 ++-
+ include/linux/fs.h                          |   6 +-
+ include/linux/lsm_hook_defs.h               |   2 +
+ include/linux/security.h                    |  16 +
+ include/linux/syscalls.h                    |   7 +
+ include/uapi/asm-generic/unistd.h           |   8 +-
+ include/uapi/linux/fs.h                     |  18 +
+ mm/shmem.c                                  |   4 +-
+ scripts/syscall.tbl                         |   2 +
+ security/security.c                         |  30 ++
+ security/selinux/hooks.c                    |  14 +
+ 64 files changed, 752 insertions(+), 410 deletions(-)
+ create mode 100644 fs/file_attr.c
 
