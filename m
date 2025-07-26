@@ -1,295 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-56093-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56094-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEFF6B12CF3
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Jul 2025 00:25:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22CD0B12D0D
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Jul 2025 01:19:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D733D1C2138C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Jul 2025 22:26:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0EBB3B7C61
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Jul 2025 23:19:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7116C28727B;
-	Sat, 26 Jul 2025 22:25:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53DE422D4C8;
+	Sat, 26 Jul 2025 23:19:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jaMXat52"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oP6TEdb7"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B78A93D;
-	Sat, 26 Jul 2025 22:25:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 986261A239D;
+	Sat, 26 Jul 2025 23:19:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753568745; cv=none; b=Yn/J2zOYWyrUrSrnvmcorqNUkF0etkaxmo7FndeVLT6/cIQ64QLLDj2fbLfFeDqv30ki4mIttyKs2AiYx4uXkdA3TXg1HJLeYk9ppfbwwjxXvoLP4lEcrexfow99zUuImDU20MAjfaXpGV4ytVKIjvH/Y9OthdeKJdF6D1+FkwE=
+	t=1753571960; cv=none; b=mpREGK8/QpPUtoLe5p2ZTRSUa4BrYYlb6ego8X72PTbuK//4lVUf0QMCMKPf6S3pW2GN15yu9e4OvfLg8t7NMkk0SUwrEWFGnMGAi8JOd/jl5cheJpZiAA+P9DAe2c51kOKqxZNIaP1j8w4rj0CCHSCge/UGsR/OTwU9Hfiy8YM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753568745; c=relaxed/simple;
-	bh=VRyNpYxtHH4W/8mH0SnrT/bSpXzw1jknw9/jiF+9nhs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=e/jSDYcLUJukwBx8T4AEZ1x46Y6eWkpk1GlHJdwE3MmaeufTqTBOuBdoNH2mghiEcNQ2npN7PrN6T5Nh+wUuZlcLgN+vwg95f8C/MfNUSItcY3+SWiSdx4rgaXsnf1hmCWbdnG3ATwF8MHaVNMnhnkJD0cRe8V7VzlFG7+e9HDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jaMXat52; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9D2BC4CEED;
-	Sat, 26 Jul 2025 22:25:43 +0000 (UTC)
+	s=arc-20240116; t=1753571960; c=relaxed/simple;
+	bh=EDGIW+TH9vAlNoQvdFdR+qpWRbp6aLgiXKsAT00qYJA=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=mHu0LaN9YhytRD8LTby/TWycsI0+YBkW9/e44QC9ReaEomOtU452MDB5tIqlRVZ/dhTY7rnZOc1WSs0tJVaTzlQFd1lrjtDxaz+9tM2Dg6ozFEbjNr0nzvnAiaZxGNQTJYZogECnPNGGMg9VoiWFyKbTm5LKzktI3nZokj79z/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oP6TEdb7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9D9CC4CEED;
+	Sat, 26 Jul 2025 23:19:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753568745;
-	bh=VRyNpYxtHH4W/8mH0SnrT/bSpXzw1jknw9/jiF+9nhs=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=jaMXat52hSd8p1tddnvxTvogjUfK5nYS6PNV2R7PKAi3oaIOjMNfZmkq0A7QiOGx2
-	 lgRE/7sN4f3klb2xYHaphIISXSbkNq3V8MqM5p7ZiuyYl6Q8FrM6g3fMmr9ddwu3jL
-	 UE+4OCIkGmxFAh2+t2TWvQeSJYc5OiBx8kUjVFFvjptK376AkzjQRhVfAsifjm+PpZ
-	 HqgWuH0UFXWR/dVePK7vcZ4KRP7IQ4CRvCdXENp0gvS0AVgnjldGTufdIwsM6UkiF0
-	 pL9nuEWoh8+eC5ac5IeH2A2ZmfGIrL961Y7SSYQUA9hrU3hmY+MYwoiY94oXa2HsAN
-	 X5ZrIzQ9sri0A==
-Message-ID: <6ea73492a01ecf089edc17d0c650b24daf99b60a.camel@kernel.org>
-Subject: Re: [PATCH v2 3/7] nfsd: use ATTR_CTIME_SET for delegated ctime
- updates
-From: Jeff Layton <jlayton@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>, Alexander Viro	
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
-	 <jack@suse.cz>, Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu	
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
- NeilBrown <neil@brown.name>, Olga Kornievskaia <okorniev@redhat.com>, Dai
- Ngo <Dai.Ngo@oracle.com>,  Tom Talpey <tom@talpey.com>
-Cc: Trond Myklebust <trondmy@hammerspace.com>, Anna Schumaker
- <anna@kernel.org>, 	linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, 	linux-trace-kernel@vger.kernel.org,
- linux-nfs@vger.kernel.org
-Date: Sat, 26 Jul 2025 18:25:42 -0400
-In-Reply-To: <67d99140-0513-4797-92f8-1375a06f689a@oracle.com>
-References: <20250726-nfsd-testing-v2-0-f45923db2fbb@kernel.org>
-	 <20250726-nfsd-testing-v2-3-f45923db2fbb@kernel.org>
-	 <5f877de4-347c-484c-814f-33c08f1a5189@oracle.com>
-	 <8ec5b19dc1d0ce26f1cd86d7db2ba5a2d260c073.camel@kernel.org>
-	 <67d99140-0513-4797-92f8-1375a06f689a@oracle.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=k20201202; t=1753571960;
+	bh=EDGIW+TH9vAlNoQvdFdR+qpWRbp6aLgiXKsAT00qYJA=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=oP6TEdb7YE2T2S8Ap9nwc/X3asue9bKewcgHIuUVA3FoCpyOmXmfThSlzYPyAK/rP
+	 4QmN0JpN+rFzUZGkj7ZfF+6czDfH3GIzjeosnlj8ZOiateuLnVjtxdSz4wROmB22Fe
+	 vfrhicja1vsznPCIbFme0J4tO5KEpXgaiaY+tIDY9AwqLc2dTu1wu19uR7qZEUmZ/g
+	 OEgxNsGwqMrDhnvjqnWWGtfTN0rV/BICgDQCteeZ6t/gqmEDxcGxYzVjvKStGgtfOW
+	 na16XywlEeyZIaWoOiS06QOBLiNnnO6YFDoUHguGw1tVAVRvr6V1alfU6Krbou9WWZ
+	 q88hFGa4q31RQ==
+Date: Sat, 26 Jul 2025 16:19:18 -0700
+From: Kees Cook <kees@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+CC: Bhupesh <bhupesh@igalia.com>, akpm@linux-foundation.org,
+ kernel-dev@igalia.com, linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, oliver.sang@intel.com, lkp@intel.com,
+ laoar.shao@gmail.com, pmladek@suse.com, rostedt@goodmis.org,
+ mathieu.desnoyers@efficios.com, arnaldo.melo@gmail.com,
+ alexei.starovoitov@gmail.com, andrii.nakryiko@gmail.com,
+ mirq-linux@rere.qmqm.pl, peterz@infradead.org, willy@infradead.org,
+ david@redhat.com, viro@zeniv.linux.org.uk, ebiederm@xmission.com,
+ brauner@kernel.org, jack@suse.cz, mingo@redhat.com, juri.lelli@redhat.com,
+ bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
+ linux-trace-kernel@vger.kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v6_2/3=5D_treewide=3A_Switch_memcpy=28=29_use?=
+ =?US-ASCII?Q?rs_of_=27task-=3Ecomm=27_to_a_more_safer_implementation?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <CAHk-=wi5c=_-FBGo_88CowJd_F-Gi6Ud9d=TALm65ReN7YjrMw@mail.gmail.com>
+References: <20250724123612.206110-1-bhupesh@igalia.com> <20250724123612.206110-3-bhupesh@igalia.com> <202507241640.572BF86C70@keescook> <CAHk-=wi5c=_-FBGo_88CowJd_F-Gi6Ud9d=TALm65ReN7YjrMw@mail.gmail.com>
+Message-ID: <B9C50D0B-DCD9-41A2-895D-4899728AF605@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, 2025-07-26 at 15:57 -0400, Chuck Lever wrote:
-> On 7/26/25 3:03 PM, Jeff Layton wrote:
-> > On Sat, 2025-07-26 at 14:48 -0400, Chuck Lever wrote:
-> > > Hi Jeff -
-> > >=20
-> > > Thanks again for your focus on getting this straightened out!
-> > >=20
-> > >=20
-> > > On 7/26/25 10:31 AM, Jeff Layton wrote:
-> > > > Ensure that notify_change() doesn't clobber a delegated ctime updat=
+
+
+On July 26, 2025 10:50:55 AM PDT, Linus Torvalds <torvalds@linux-foundatio=
+n=2Eorg> wrote:
+>, but
+>
+>On Thu, 24 Jul 2025 at 16:49, Kees Cook <kees@kernel=2Eorg> wrote:
+>>
+>> Why not switch all of these to get_task_comm()? It will correctly handl=
 e
-> > > > with current_time() by setting ATTR_CTIME_SET for those updates.
-> > > >=20
-> > > > Also, set the tv_nsec field the nfsd4_decode_fattr4 to the correct
-> > > > value.
-> > >=20
-> > > I don't yet see the connection of the above tv_nsec fix to the other
-> > > changes in this patch. Wouldn't this be an independent fix?
-> > >=20
-> >=20
-> > I felt like they were related. Yes, the ia_ctime field is currently
-> > being set wrong, but it's also being clobbered by notify_change(), so
-> > it doesn't matter much. I can break this into a separate patch (with a
-> > Fixes: tag) if you prefer though.
->=20
-> Ah, got it, this patch exposes a latent bug. The usual thing to do is to
-> fix the latent bug in a preceding/pre-requisite patch, so that's my
-> preference.
->=20
+>> the size check and NUL termination=2E
+>
+>I'd rather aim to get rid of get_task_comm() entirely=2E
 
-OK. I'll plan to send a v3 set.
+That works for me! I just get twitchy around seeing memcpy used for string=
+s=2E :) if we're gonna NUL after the memcpy, just use strscpy_pad()=2E
 
->=20
-> > > > Don't bother setting the timestamps in cb_getattr_update_times() in=
- the
-> > > > non-delegated case. notify_change() will do that itself.
-> > > >=20
-> > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > >=20
-> > > General comments:
-> > >=20
-> > > I don't feel that any of the patches in this series need to be tagged
-> > > for stable, since there is already a Kconfig setting that defaults to
-> > > leaving timestamp delegation disabled. But I would like to see Fixes:
-> > > tags, where that makes sense?
-> > >=20
-> >=20
-> > I don't think any of these need to go to stable since this is still
-> > under a non-default Kconfig option, and the main effect of the bug is
-> > wonky timestamps. I should be able to add some Fixes: tags though.
-> >=20
-> > > Is this set on top of the set you posted a day or two ago with the ne=
-w
-> > > trace point? Or does this set replace that one?
-> > >=20
-> >=20
-> > This set should replace those.
->=20
-> I was confused because the trace point patch is missing, and dropping it
-> wasn't mentioned in the cover letter's Change log. NBD, thanks for
-> clarifying.
->=20
+>And guess what? We *have* that function=2E It's called "strscpy()"=2E It
+>already does the right thing, including passing in the size of a fixed
+>array and just dealing with it the RightWay(tm)=2E Add '_pad()' if that
+>is the behavior you want, and now you *document* the fact that the
+>result is padded=2E
 
-Ahh sorry. The last patch drops the function to which I was adding the
-tracepoint, so I dropped the tracepoint as well.
+Exactly=2E Let's see how much we can just replace with strscpy_pad()=2E It=
+ we have other use cases, we can handle those separately=2E
 
-> Since the bulk of these are NFSD changes, I volunteer to take v3 once
-> we have Acks from the VFS maintainers, as needed.
->=20
-
-Many thanks!
-
->=20
-> > > > ---
-> > > >  fs/nfsd/nfs4state.c | 6 +++---
-> > > >  fs/nfsd/nfs4xdr.c   | 5 +++--
-> > > >  2 files changed, 6 insertions(+), 5 deletions(-)
-> > > >=20
-> > > > diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-> > > > index 88c347957da5b8f352be63f84f207d2225f81cb9..77eea2ad93cc07939f0=
-45fc4b983b1ac00d068b8 100644
-> > > > --- a/fs/nfsd/nfs4state.c
-> > > > +++ b/fs/nfsd/nfs4state.c
-> > > > @@ -9167,7 +9167,6 @@ static bool set_cb_time(struct timespec64 *cb=
-, const struct timespec64 *orig,
-> > > >  static int cb_getattr_update_times(struct dentry *dentry, struct n=
-fs4_delegation *dp)
-> > > >  {
-> > > >  	struct inode *inode =3D d_inode(dentry);
-> > > > -	struct timespec64 now =3D current_time(inode);
-> > > >  	struct nfs4_cb_fattr *ncf =3D &dp->dl_cb_fattr;
-> > > >  	struct iattr attrs =3D { };
-> > > >  	int ret;
-> > > > @@ -9175,6 +9174,7 @@ static int cb_getattr_update_times(struct den=
-try *dentry, struct nfs4_delegation
-> > > >  	if (deleg_attrs_deleg(dp->dl_type)) {
-> > > >  		struct timespec64 atime =3D inode_get_atime(inode);
-> > > >  		struct timespec64 mtime =3D inode_get_mtime(inode);
-> > > > +		struct timespec64 now =3D current_time(inode);
-> > > > =20
-> > > >  		attrs.ia_atime =3D ncf->ncf_cb_atime;
-> > > >  		attrs.ia_mtime =3D ncf->ncf_cb_mtime;
-> > > > @@ -9183,12 +9183,12 @@ static int cb_getattr_update_times(struct d=
-entry *dentry, struct nfs4_delegation
-> > > >  			attrs.ia_valid |=3D ATTR_ATIME | ATTR_ATIME_SET;
-> > > > =20
-> > > >  		if (set_cb_time(&attrs.ia_mtime, &mtime, &now)) {
-> > > > -			attrs.ia_valid |=3D ATTR_CTIME | ATTR_MTIME | ATTR_MTIME_SET;
-> > > > +			attrs.ia_valid |=3D ATTR_CTIME | ATTR_CTIME_SET |
-> > > > +					  ATTR_MTIME | ATTR_MTIME_SET;
-> > > >  			attrs.ia_ctime =3D attrs.ia_mtime;
-> > > >  		}
-> > > >  	} else {
-> > > >  		attrs.ia_valid |=3D ATTR_MTIME | ATTR_CTIME;
-> > > > -		attrs.ia_mtime =3D attrs.ia_ctime =3D now;
-> > > >  	}
-> > > > =20
-> > > >  	if (!attrs.ia_valid)
-> > > > diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
-> > > > index 8b68f74a8cf08c6aa1305a2a3093467656085e4a..c0a3c6a7c8bb70d6294=
-0115c3101e9f897401456 100644
-> > > > --- a/fs/nfsd/nfs4xdr.c
-> > > > +++ b/fs/nfsd/nfs4xdr.c
-> > > > @@ -538,8 +538,9 @@ nfsd4_decode_fattr4(struct nfsd4_compoundargs *=
-argp, u32 *bmval, u32 bmlen,
-> > > >  		iattr->ia_mtime.tv_sec =3D modify.seconds;
-> > > >  		iattr->ia_mtime.tv_nsec =3D modify.nseconds;
-> > > >  		iattr->ia_ctime.tv_sec =3D modify.seconds;
-> > > > -		iattr->ia_ctime.tv_nsec =3D modify.seconds;
-> > > > -		iattr->ia_valid |=3D ATTR_CTIME | ATTR_MTIME | ATTR_MTIME_SET | =
-ATTR_DELEG;
-> > > > +		iattr->ia_ctime.tv_nsec =3D modify.nseconds;
-> > > > +		iattr->ia_valid |=3D ATTR_CTIME | ATTR_CTIME_SET |
-> > > > +				   ATTR_MTIME | ATTR_MTIME_SET | ATTR_DELEG;
-> > > >  	}
-> > > > =20
-> > > >  	/* request sanity: did attrlist4 contain the expected number of w=
-ords? */
-> > > >=20
-> > >=20
-> > >=20
-> >=20
->=20
+-Kees
 
 --=20
-Jeff Layton <jlayton@kernel.org>
+Kees Cook
 
