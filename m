@@ -1,55 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-56065-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56066-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A75E5B129B5
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Jul 2025 10:03:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E2737B129B6
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Jul 2025 10:04:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD6A917459B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Jul 2025 08:03:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 265D0174777
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Jul 2025 08:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFAAD78F4C;
-	Sat, 26 Jul 2025 08:03:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C2F202F87;
+	Sat, 26 Jul 2025 08:04:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="M0zHPy7b"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Iz4gBcMs"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53DDD14A82
-	for <linux-fsdevel@vger.kernel.org>; Sat, 26 Jul 2025 08:03:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0123E78F4C
+	for <linux-fsdevel@vger.kernel.org>; Sat, 26 Jul 2025 08:04:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753517010; cv=none; b=tMMxVxy8ZF4A8kVwUwle2AWRzauq5A5daC2sbmgXulGID42X4uCAAR+yCmZMUchVFQftrpwncha/ka0XBHODozzhDNmSBZJHDtj0TnxeQbUWflUmi6+P+pbB+sB5ydsPQyHwN97LANNiF2+iKGoEvYVbr+tJAHwyHu5d8iV+45g=
+	t=1753517065; cv=none; b=HbHTTV85gJlmHHx20VMgLPDB055j5aLiw/69yln35HzxHFFAxECNLGpka85m4YRamxENcFSohJNo6Pc/4zrKseEaCCtpyt1/6xDk8nYlZ3VWysbA2wQLwJhHaBHt7PCvF538OCCJzhJ7xfW+rNiRpB7goiS+B527Is7VaJuYyiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753517010; c=relaxed/simple;
-	bh=ZwigSY9z+xSRzu3DKge87K4aD8yMpVGUyKyzaO6fJPo=;
+	s=arc-20240116; t=1753517065; c=relaxed/simple;
+	bh=/Q9+bFP/TYlwai/GkAxTF6FKJaNs4+mIFtj5n9k1YlM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N0PoyKVJroPYwAuucUIVzpvP/4xD2/s04hoXzRYy3BF7iEfda6jMfT3qLnoALfOl0pclgcOzLsZm35IZnZSUBG7kVylw+mo7vlfwoOcpA27kltBkAKmkbxogdzDGC+qvc+l2aLrkBbLF0FSZ+T7hPqF4ltJaX+elQ9d5IRtWlP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=M0zHPy7b; arc=none smtp.client-ip=62.89.141.173
+	 Content-Type:Content-Disposition:In-Reply-To; b=UbJ5lCT/EPsuzh1aiBUpqTgoh8mur9pXRYxU1EJPrY3xqUKE9zK8Kz7+3g7hElG2K2CADNZrpibzwOrQ1R56Xu08YUQ5apNk1344gMQ1DfgoTxmp5TpIBTfSnGsYDodPxssxBKDz4yPpjs7AoV7lghDt9OBdRBjWLtBXs2PR7h4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Iz4gBcMs; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
 	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=IG8ffiCcWb8EMWY328Tyls2GyxVaNDgpHX3LsA0RH24=; b=M0zHPy7bOGhHdahLHEgGLXqhLW
-	eBwccSDivh0rz7zp3nXMiOJmiJv6enkmJvvweZYkpjfKzfJLYMgCBuereewSE/IsNoSZ+u8SQPZYa
-	OPgv5bRUeBIrTMekES+d6pp4Xuztd5SnE2qFTSNBjruGSmANF1oYhCwHpEMRWC30i30MBDTRCTDKF
-	96oYtEgDrbLBbQpk95sNWnBo2oLGffqv3BtO4f19K133C+M6lqPvnASY++swaDUH0n3NTv0X4fZNI
-	rOFHUQ6Qtot3ETLT4fwPr1Jl0RwOA3ie1PvSaGI7Ldx5FBUg4rKSa+spKkedRslAqJvS7oaOAjfd9
-	qU4l+Dig==;
+	bh=Xhr4Sbp30tWXfWbSyJ28YRaOoD8CuIC9WBI9Ww1OUZw=; b=Iz4gBcMs/u2T6Xy2w7ldGpEmBe
+	HGP2wuc/NLS3rg1p7uopIgMX5wIG1tGWrr/O6lkApCbjH2I7jOYA8DNDuN+Zh9sTzQGM915rJP8D7
+	T5UpqvUFDW5HiestKmyR5yXg4TSDkaSEQt5fUlSJZrDsFCb6IiPKV0oQVKAGdhggNKi6q98CPQG87
+	a0vLCCTOPWQqe9S8yMZdj2gvuQbXSMK9A+sQk4CibCRx/SR65yaLPvZ5IGzaam5IdPXolKrhh6nHD
+	Pcngn2/qoW5CIf7AB4DEpTtDVdwAWwMIgzQoE997b3HNbL/mRWhN6EjFKeKI2uOn9KdHNBKa4qv8p
+	hjzAjOdw==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ufZsM-000000067lT-3Eee;
-	Sat, 26 Jul 2025 08:03:26 +0000
-Date: Sat, 26 Jul 2025 09:03:26 +0100
+	id 1ufZtG-0000000688h-0dm8;
+	Sat, 26 Jul 2025 08:04:22 +0000
+Date: Sat, 26 Jul 2025 09:04:22 +0100
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
-Subject: [git pull][6.17] vfs.git 3/9: rpc_pipefs
-Message-ID: <20250726080326.GB1456602@ZenIV>
+Subject: [git pull][6.17] vfs.git 4/9: asm/param.h pile
+Message-ID: <20250726080422.GC1456602@ZenIV>
 References: <20250726080119.GA222315@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -62,55 +62,44 @@ Content-Disposition: inline
 In-Reply-To: <20250726080119.GA222315@ZenIV>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-[the first couple of commits is shared with #work.simple_recursive_removal]
-
 The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
 
   Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-rpc_pipefs
+  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-headers_param
 
-for you to fetch changes up to 350db61fbeb940502a16e74153ee5954d03622e9:
+for you to fetch changes up to 2560014ec150fd41b969ea6bcf8a985ae910eea5:
 
-  rpc_create_client_dir(): return 0 or -E... (2025-07-02 22:44:55 -0400)
-
-----------------------------------------------------------------
-Massage rpc_pipefs to use saner primitives and clean up the
-APIs provided to the rest of the kernel.
+  loongarch, um, xtensa: get rid of generated arch/$ARCH/include/asm/param.h (2025-06-24 22:02:05 -0400)
 
 ----------------------------------------------------------------
-Al Viro (18):
-      simple_recursive_removal(): saner interaction with fsnotify
-      better lockdep annotations for simple_recursive_removal()
-      new helper: simple_start_creating()
-      rpc_pipe: clean failure exits in fill_super
-      rpc_{rmdir_,}depopulate(): use simple_recursive_removal() instead
-      rpc_unlink(): use simple_recursive_removal()
-      rpc_populate(): lift cleanup into callers
-      rpc_unlink(): saner calling conventions
-      rpc_mkpipe_dentry(): saner calling conventions
-      rpc_pipe: don't overdo directory locking
-      rpc_pipe: saner primitive for creating subdirectories
-      rpc_pipe: saner primitive for creating regular files
-      rpc_mkpipe_dentry(): switch to simple_start_creating()
-      rpc_gssd_dummy_populate(): don't bother with rpc_populate()
-      rpc_pipe: expand the calls of rpc_mkdir_populate()
-      rpc_new_dir(): the last argument is always NULL
-      rpc_create_client_dir(): don't bother with rpc_populate()
-      rpc_create_client_dir(): return 0 or -E...
+This series massages asm/param.h to simpler and more uniform shape.
+By the end of it,
+	* all arch/*/include/uapi/asm/param.h are either generated includes
+of <asm-generic/param.h> or a #define or two followed by such include.
+	* no arch/*/include/asm/param.h anywhere, generated or not.
+	* include <asm/param.h> resolves to arch/*/include/uapi/asm/param.h
+of the architecture in question (or that of host in case of uml).
+	* include/asm-generic/param.h pulls uapi/asm-generic/param.h and
+deals with USER_HZ, CLOCKS_PER_SEC and with HZ redefinition after that.
 
- fs/debugfs/inode.c                 |  21 +-
- fs/libfs.c                         |  34 ++-
- fs/nfs/blocklayout/rpc_pipefs.c    |  53 ++--
- fs/nfs/nfs4idmap.c                 |  14 +-
- fs/nfsd/nfs4recover.c              |  49 ++--
- fs/tracefs/inode.c                 |  15 +-
- include/linux/fs.h                 |   1 +
- include/linux/sunrpc/rpc_pipe_fs.h |   6 +-
- net/sunrpc/auth_gss/auth_gss.c     |  13 +-
- net/sunrpc/clnt.c                  |  36 +--
- net/sunrpc/rpc_pipe.c              | 530 ++++++++++---------------------------
- 11 files changed, 230 insertions(+), 542 deletions(-)
+----------------------------------------------------------------
+Al Viro (3):
+      xtensa: get rid uapi/asm/param.h
+      alpha: regularize the situation with asm/param.h
+      loongarch, um, xtensa: get rid of generated arch/$ARCH/include/asm/param.h
+
+ arch/alpha/include/asm/param.h       | 12 ------------
+ arch/alpha/include/uapi/asm/param.h  |  9 ++-------
+ arch/loongarch/include/asm/Kbuild    |  1 -
+ arch/um/include/asm/Kbuild           |  1 -
+ arch/xtensa/include/asm/Kbuild       |  1 -
+ arch/xtensa/include/uapi/asm/param.h | 31 -------------------------------
+ include/asm-generic/param.h          |  2 +-
+ include/uapi/asm-generic/param.h     |  6 +++++-
+ 8 files changed, 8 insertions(+), 55 deletions(-)
+ delete mode 100644 arch/alpha/include/asm/param.h
+ delete mode 100644 arch/xtensa/include/uapi/asm/param.h
 
