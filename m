@@ -1,325 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-56059-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56060-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57925B12862
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Jul 2025 03:16:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8861B1287C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Jul 2025 03:42:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80C67547B73
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Jul 2025 01:16:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 096C11CC5873
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Jul 2025 01:43:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 005361A76BB;
-	Sat, 26 Jul 2025 01:16:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ixhg8k/W"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90DC71C8604;
+	Sat, 26 Jul 2025 01:42:48 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E6FA15E8B;
-	Sat, 26 Jul 2025 01:16:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E36D381BA;
+	Sat, 26 Jul 2025 01:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753492590; cv=none; b=akOVZV95YQsOaYNWNXlrYu+5BQmmMwKLDp+AlUtWVLsVSQdRk2JZe3RbPR9iFNwG6DhmeJQkwAZV+6sE/9xRbM4CC5jiekW+8JvODtaudmx4IZYb+5G6yYkSCjwcq0SpFwc0giCaIL8edFMLxitT9pAQg6oXSu9C4ikYPVVCNpk=
+	t=1753494168; cv=none; b=lEfrnGX6ev6a2AFQ0OncOiTZSEJx+S5X5SixRciISR8X95ISAx+ogVVrrkdGbEybB5Cv0EbiIe+6frC++DQALQtI7a56nnzOOI4EHVRkirS8F4eoetTg8E6Bj+pfO8b2sfpT4EXAexE1EwAtfu94tFiUmQEOKQ3pdwSNcszr3oA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753492590; c=relaxed/simple;
-	bh=A+DLYEBZHjbPEKb4Gqj5iMUWPXTPgnHHysYdeCmeeIM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QX4She0ir/cOXbIP9Lpil+rdOSTZ8klawRIaIF3CImpq5H0Pjf6LGgLRNb1wQ2Vh7zkD4eBT1p+1iEhxmMR18AqBe3z08ajsA86aeF68KzTnVwqBmvBbvUofnU7iHt/l3pyYGkD/m3nREjxdNK57A55arkgKepvHT+lYS+pO03g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ixhg8k/W; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4ab6416496dso32255791cf.1;
-        Fri, 25 Jul 2025 18:16:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753492587; x=1754097387; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+3wL90PTGk/ln0g+DfvE2KqqysVDgICkM8ai1CipU4s=;
-        b=Ixhg8k/W/HLFN/fPQiRdeu/MrqCV0EmGFcJIeEGwkWs/hOa6WFmofURa+Rj9UQVVfZ
-         9PkeCAAK4awutmoZXDs4AGOE/mUhZiETNVbcB8A5AZcvbIkxhngH84mbKTByql7dHg85
-         q1QPEcIo4qrhbP5zd9pMcjpednnKU4mhMiFy5wpEcwQWAJ05oCXI9RA5pq/RUtUvj/J1
-         QaUcQPzq71FbDj15uUC1lwXjs4Znv3wn/AroY/KJ/EoQGPjASY4Ud1zoqTAfdIil+OcF
-         PbLn2DsHMehinakTE1CWFgN0/ZcRdiydx/2lmXD58KkDhfbt3hNljfQ6djNsvFBfSTjQ
-         z8rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753492587; x=1754097387;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+3wL90PTGk/ln0g+DfvE2KqqysVDgICkM8ai1CipU4s=;
-        b=HKL8rg0Oar7vMYq0Pz3jZTkKUsON2kTWUTMKpdtRzYcatw8dveP+loyPEUjoQrq3cJ
-         tyJOhsWn5Zxc53yPvNzlc+LDAh1NW8d7hvVGE4WdQ62ewRJuDizeAEsp5vzWOOTB06+e
-         V2zfQzBGkaUd8j93wqT1HkZVdoL78EqjMc7K8VG6Q2CQQ2e9WSMu/cE4fbNoyTz3m79A
-         s8apj29aXz2IIjnI9jHYdwpA/X55PjcfjB+WPVV9mHnFTpCOIfCLGQSrvWrPWXJ6r6HU
-         OYRQb1WuxIDizgRLKVdxkoCVclDtHPthTXtLZBcZHmyixHJ2uS4m3WYu1axaqp5p0pgA
-         dhzg==
-X-Forwarded-Encrypted: i=1; AJvYcCWOUUwxwW3Ot4AKBTl1OK4n27jl2dGgB0kZa2YLWjcYuXo5gZ6v0tZY1VlEkUofE5wDinWJ/FoopOt/kpPY@vger.kernel.org, AJvYcCWeul/aqFshR0ZNZQ/TRvw10j4LVURz62RZ84l2mPSOTsTAC731OfcMd/oRRIxdxQiZTElFINx8DLRW@vger.kernel.org, AJvYcCXb/4Ka8bFyNh8ddBwCmaQp3ab7sfm6kWldDhtR5pHOkZ+DIlDYmBFAY+AmcfYxI4h53R1kKWaVa6ueYHH3@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBKo3F9a8S6QNGaeEKwGfP57FyOPDYW+egg3u5HDTIZu8q3Kgl
-	KwctbV81tDxKbJoypLFMKDj9hgj34gDhRpteydN+x0sdC6ctBJTLrMJF5uGCl8ufHeh0qF6E1iV
-	d24sXhAA/c278peykWkSt8LvryaOcvX4=
-X-Gm-Gg: ASbGncutrFZw1cjugxRjgxcSk1Vrw2L6wu47DT9E7K1xIJcYlzxS0E+yLX4XKnHkReo
-	pFEJNdHmUd3fzeRomf2eAviX9udxz3XyLenYC+t6Dl9XQwI4IpLYbKE+xhtJKlPmHHJ3NOhFPE6
-	cRDgJI/Cgg3e3SdgK1ubqDt+a692pMWl6I1/+0Ep7iv4PzCd+qyWvtH3quLDfQijaLCZjgHhGh/
-	VXKn00=
-X-Google-Smtp-Source: AGHT+IHA6MAWvCAFknvGjN01kW0YSiAmTWDknlm+9zgfPFOgXpK3YgxcKpk7P+6ZJn0jP1CHQ4ztram7FXEAQAYa4gg=
-X-Received: by 2002:a05:622a:34a:b0:494:a2b8:88f0 with SMTP id
- d75a77b69052e-4ae8f012526mr46072551cf.33.1753492586365; Fri, 25 Jul 2025
- 18:16:26 -0700 (PDT)
+	s=arc-20240116; t=1753494168; c=relaxed/simple;
+	bh=ABFfoAOBAwyUcqf0zDKRUV3PwNapelhvIFjQcwXU3nU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YRBUGTs0g8iYNKPJJl1Gs/JH5ih2jtqA2dhPx6yqnx4Tfusw9csSmZSJMtfCfcGHzx2F3jBYFOaoEDp/pepOdfVWhJybsPy7Hfg6I7Y64PgBw3MymGj1Z1m/bmmp1GK7OCyI6f3FB5HPKTe9PL+BQZbjmUNcZcZq9laylITfo+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bpnYb4H5szKHMZv;
+	Sat, 26 Jul 2025 09:42:43 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 5FA491A06D7;
+	Sat, 26 Jul 2025 09:42:42 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgAXkxONMoRoIEsFBg--.41753S3;
+	Sat, 26 Jul 2025 09:42:39 +0800 (CST)
+Message-ID: <2f53f9a8-380a-4fe4-8407-03d5b4e78140@huaweicloud.com>
+Date: Sat, 26 Jul 2025 09:42:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+G9fYs5AdVM-T2Tf3LciNCwLZEHetcnSkHsjZajVwwpM2HmJw@mail.gmail.com>
- <20250723144637.GW2672070@frogsfrogsfrogs> <CAJnrk1Z7wcB8uKWcrAuRAZ8B-f8SKnOuwtEr-=cHa+ApR_sgXQ@mail.gmail.com>
- <20250723212020.GY2672070@frogsfrogsfrogs> <CAJnrk1bFWRTGnpNhW_9MwSYZw3qPnPXZBeiwtPSrMhCvb9C3qg@mail.gmail.com>
- <CAJnrk1byTVJtuOyAyZSVYrusjhA-bW6pxBOQQopgHHbD3cDUHw@mail.gmail.com>
-In-Reply-To: <CAJnrk1byTVJtuOyAyZSVYrusjhA-bW6pxBOQQopgHHbD3cDUHw@mail.gmail.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Fri, 25 Jul 2025 18:16:15 -0700
-X-Gm-Features: Ac12FXzimnd_vsyILA4Tel0YjqyEWWgthWY0MmY0akKuYlWvyLQqpBlaOUBO320
-Message-ID: <CAJnrk1ZYR=hM5k90H57tOv=fe6F-r8dO+f3wNuCT_w3j8YNYNQ@mail.gmail.com>
-Subject: Re: next-20250721 arm64 16K and 64K page size WARNING fs fuse file.c
- at fuse_iomap_writeback_range
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, linux-fsdevel@vger.kernel.org, 
-	linux-mm <linux-mm@kvack.org>, linux-xfs@vger.kernel.org, 
-	open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
-	Linux Regressions <regressions@lists.linux.dev>, Miklos Szeredi <miklos@szeredi.hu>, Jan Kara <jack@suse.cz>, 
-	Andrew Morton <akpm@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <liam.howlett@oracle.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Anders Roxell <anders.roxell@linaro.org>, Ben Copeland <benjamin.copeland@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ext4: fix crash on test_mb_mark_used kunit tests
+To: Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, adilger.kernel@dilger.ca,
+ ojaswin@linux.ibm.com, linux@roeck-us.net, yi.zhang@huawei.com,
+ libaokun1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
+References: <20250725021654.3188798-1-yi.zhang@huaweicloud.com>
+ <av5necgeitkiormvqsh75kvgq3arjwxxqxpqievulgz2rvi3dg@75hdi2ubarmr>
+ <20250725131541.GA184259@mit.edu>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <20250725131541.GA184259@mit.edu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgAXkxONMoRoIEsFBg--.41753S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxCw1xAr15KrWDKrW5KF4Durg_yoW5tFW3pa
+	y7W3WYkFWkKF4xuaykuw48uFyaya95Ar1UCr9xW34UA3yvgry0gF1Sya1YvFn0grZYgF1j
+	vF42yrWrG3WDAa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
+	7KsUUUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Thu, Jul 24, 2025 at 12:14=E2=80=AFPM Joanne Koong <joannelkoong@gmail.c=
-om> wrote:
->
-> On Wed, Jul 23, 2025 at 3:37=E2=80=AFPM Joanne Koong <joannelkoong@gmail.=
-com> wrote:
-> >
-> > On Wed, Jul 23, 2025 at 2:20=E2=80=AFPM Darrick J. Wong <djwong@kernel.=
-org> wrote:
-> > >
-> > > On Wed, Jul 23, 2025 at 11:42:42AM -0700, Joanne Koong wrote:
-> > > > On Wed, Jul 23, 2025 at 7:46=E2=80=AFAM Darrick J. Wong <djwong@ker=
-nel.org> wrote:
-> > > > >
-> > > > > [cc Joanne]
-> > > > >
-> > > > > On Wed, Jul 23, 2025 at 05:14:28PM +0530, Naresh Kamboju wrote:
-> > > > > > Regressions found while running LTP msync04 tests on qemu-arm64=
- running
-> > > > > > Linux next-20250721, next-20250722 and next-20250723 with 16K a=
-nd 64K
-> > > > > > page size enabled builds.
-> > > > > >
-> > > > > > CONFIG_ARM64_64K_PAGES=3Dy ( kernel warning as below )
-> > > > > > CONFIG_ARM64_16K_PAGES=3Dy ( kernel warning as below )
-> > > > > >
-> > > > > > No warning noticed with 4K page size.
-> > > > > > CONFIG_ARM64_4K_PAGES=3Dy works as expected
-> > > > >
-> > > > > You might want to cc Joanne since she's been working on large fol=
-io
-> > > > > support in fuse.
-> > > > >
-> > > > > > First seen on the tag next-20250721.
-> > > > > > Good: next-20250718
-> > > > > > Bad:  next-20250721 to next-20250723
-> > > >
-> > > > Thanks for the report. Is there a link to the script that mounts th=
-e
-> > > > fuse server for these tests? I'm curious whether this was mounted a=
-s a
-> > > > fuseblk filesystem.
-> > > >
-> > > > > >
-> > > > > > Regression Analysis:
-> > > > > > - New regression? Yes
-> > > > > > - Reproducibility? Yes
-> > > > > >
-> > > > > > Test regression: next-20250721 arm64 16K and 64K page size WARN=
-ING fs
-> > > > > > fuse file.c at fuse_iomap_writeback_range
-> > > > > >
-> > > > > > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> > > > > >
-> > > > > > ## Test log
-> > > > > > ------------[ cut here ]------------
-> > > > > > [  343.828105] WARNING: fs/fuse/file.c:2146 at
-> > > > > > fuse_iomap_writeback_range+0x478/0x558 [fuse], CPU#0: msync04/4=
-190
-> > > > >
-> > > > >         WARN_ON_ONCE(len & (PAGE_SIZE - 1));
-> > > > >
-> > > > > /me speculates that this might be triggered by an attempt to writ=
-e back
-> > > > > some 4k fsblock within a 16/64k base page?
-> > > > >
-> > > >
-> > > > I think this can happen on 4k base pages as well actually. On the
-> > > > iomap side, the length passed is always block-aligned and in fuse, =
-we
-> > > > set blkbits to be PAGE_SHIFT so theoretically block-aligned is alwa=
-ys
-> > > > page-aligned, but I missed that if it's a "fuseblk" filesystem, tha=
-t
-> > > > isn't true and the blocksize is initialized to a default size of 51=
-2
-> > > > or whatever block size is passed in when it's mounted.
-> > >
-> > > <nod> I think you're correct.
-> > >
-> > > > I'll send out a patch to remove this line. It doesn't make any
-> > > > difference for fuse_iomap_writeback_range() logic whether len is
-> > > > page-aligned or not; I had added it as a sanity-check against sketc=
-hy
-> > > > ranges.
-> > > >
-> > > > Also, I just noticed that apparently the blocksize can change
-> > > > dynamically for an inode in fuse through getattr replies from the
-> > > > server (see fuse_change_attributes_common()). This is a problem sin=
-ce
-> > > > the iomap uses inode->i_blkbits for reading/writing to the bitmap. =
-I
-> > > > think we will have to cache the inode blkbits in the iomap_folio_st=
-ate
-> > > > struct unfortunately :( I'll think about this some more and send ou=
-t a
-> > > > patch for this.
-> > >
-> > > From my understanding of the iomap code, it's possible to do that if =
-you
-> > > flush and unmap the entire pagecache (whilst holding i_rwsem and
-> > > mmap_invalidate_lock) before you change i_blkbits.  Nobody *does* thi=
-s
-> > > so I have no idea if it actually works, however.  Note that even I do=
-n't
-> > > implement the flush and unmap bit; I just scream loudly and do nothin=
-g:
-> >
-> > lol! i wish I could scream loudly and do nothing too for my case.
-> >
-> > AFAICT, I think I just need to flush and unmap that file and can leave
-> > the rest of the files/folios in the pagecache as is? But then if the
-> > file has active refcounts on it or has been pinned into memory, can I
-> > still unmap and remove it from the page cache? I see the
-> > invalidate_inode_pages2() function but my understanding is that the
-> > page still stays in the cache if it has has active references, and if
-> > the page gets mmaped and there's a page fault on it, it'll end up
-> > using the preexisting old page in the page cache.
->
-> Never mind, I was mistaken about this. Johannes confirmed that even if
-> there's active refcounts on the folio, it'll still get removed from
-> the page cache after unmapping and the page cache reference will get
-> dropped.
->
-> I think I can just do what you suggested and call
-> filemap_invalidate_inode() in fuse_change_attributes_common() then if
-> the inode blksize gets changed. Thanks for the suggestion!
->
+On 2025/7/25 21:15, Theodore Ts'o wrote:
+> On Fri, Jul 25, 2025 at 01:06:18PM +0200, Jan Kara wrote:
+>>> This patch applies to the kernel that has only merged bbe11dd13a3f
+>>> ("ext4: fix largest free orders lists corruption on mb_optimize_scan
+>>> switch"), but not merged 458bfb991155 ("ext4: convert free groups order
+>>> lists to xarrays").
+>>
+>> Hum, I think it would be best to just squash this into bbe11dd13a3f and
+>> then just rebase & squash the other unittest fixup to the final commit when
+>> we have to rebase anyway. Because otherwise backports to stable kernel will
+>> quickly become rather messy.
+> 
+> What I ended up doing was to add a squashed combination of these two
+> commits and dropped it in before the block allocation scalabiltity
+> with the following commit description:
+> 
+>     ext4: initialize superblock fields in the kballoc-test.c kunit tests
+>     
+>     Various changes in the "ext4: better scalability for ext4 block
+>     allocation" patch series have resulted in kunit test failures, most
+>     notably in the test_new_blocks_simple and the test_mb_mark_used tests.
+>     The root cause of these failures is that various in-memory ext4 data
+>     structures were not getting initialized, and while previous versions
+>     of the functions exercised by the unit tests didn't use these
+>     structure members, this was arguably a test bug.
+>     
+>     Since one of the patches in the block allocation scalability patches
+>     is a fix which is has a cc:stable tag, this commit also has a
+>     cc:stable tag.
+>     
+>     CC: stable@vger.kernel.org
+>     Link: https://lore.kernel.org/r/20250714130327.1830534-1-libaokun1@huawei.com
+>     Link: https://patch.msgid.link/20250725021550.3177573-1-yi.zhang@huaweicloud.com
+>     Link: https://patch.msgid.link/20250725021654.3188798-1-yi.zhang@huaweicloud.com
+>     Reported-by: Guenter Roeck <linux@roeck-us.net>
+>     Closes: https://lore.kernel.org/linux-ext4/b0635ad0-7ebf-4152-a69b-58e7e87d5085@roeck-us.net/
+>     Tested-by: Guenter Roeck <linux@roeck-us.net>
+>     Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+>     Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+> 
+> Then in the commit "ext4: convert free groups order lists to xarrays"
+> which removed list_head, I modified it to remove the linked list
+> initialization from mballoc-test.c, since that's the commit which
+> removed those structures.
+> 
 
-Thinking about this some more, I don't think this works after all
-because the writeback + page cache removal and inode blkbits update
-needs to be atomic, else after we write back and remove the pages from
-the page cache, a write could be issued right before we update the
-inode blkbits. I don't think we can hold the inode lock the whole time
-for it either since writeback could be intensive. (also btw, I
-realized in hindsight that invalidate_inode_pages2_range() would have
-been the better function to call instead of
-filemap_invalidate_inode()).
+Thank you for revising this series. This way, it will be less likely
+to miss this fix when merging into the LTS branch.
 
-> >
-> > I don't think I really need to have it removed from the page cache so
-> > much as just have the ifs state for all the folios in the file freed
-> > (after flushing the file) so that it can start over with a new ifs.
-> > Ideally we could just flush the file, then iterate through all the
-> > folios in the mapping in order of ascending index, and kfree their
-> > ->private, but I'm not seeing how we can prevent the case of new
-> > writes / a new ifs getting allocated for folios at previous indexes
-> > while we're trying to do the iteration/kfreeing.
-> >
+> In the future, we should try to make sure that when we modify data
+> structures to add or remove struct elements, that we also make sure
+> that kunit test should also be updated.
 
-Going back to this idea, I think this can work. I realized we don't
-need to flush the file, it's enough to free the ifs, then update the
-inode->i_blkbits, then reallocate the ifs (which will now use the
-updated blkbits size), and if we hold the inode lock throughout, that
-prevents any concurrent writes.
-Something like:
-     inode_lock(inode);
-     XA_STATE(xas, &mapping->i_pages, 0);
-     xa_lock_irq(&mapping->i_pages);
-     xas_for_each_marked(&xas, folio, ULONG_MAX, PAGECACHE_TAG_DIRTY) {
-          folio_lock(folio);
-          if (folio_test_dirty(folio)) {
-                  folio_wait_writeback(folio);
-                  kfree(folio->private);
-          }
-          folio_unlock(folio);
-     }
-    inode->i_blkbits =3D new_blkbits_size;
-    xas_set(&xas, 0);
-    xas_for_each_marked(&xas, folio, ULONG_MAX, PAGECACHE_TAG_DIRTY) {
-          folio_lock(folio);
-          if (folio_test_dirty(folio) && !folio_test_writeback(folio))
-                 folio_mark_dirty(folio);
-          folio_unlock(folio);
-    }
-    xa_unlock_irq(&mapping->i_pages);
-    inode_unlock(inode);
+Yes, currently in the Kunit tests, the initialization and maintenance
+of data structures are too fragmented and fragile, making it easy to
+overlook during modifications. In the future, I think we should provide
+some general interfaces to handle the initialization and
+deinitialization of those data structures.
 
+> To that end, I've updated the
+> kbuild script[1] in xfstests-bld repo so that "kbuild --test" will run
+> the Kunit tests.  Hopefully reducing the friction for running tests
+> will encourage more kunit tests to be created and so they will kept
+> under regular maintenance.
+> 
+> [1] https://github.com/tytso/xfstests-bld/blob/master/kernel-build/kbuild
+> 
 
-I think this is the only approach that doesn't require changes to iomap.
+That would be great! Then we won't miss Kunit tests again, and it
+will also make those tests more useful. :-)
 
-I'm going to think about this some more next week and will try to send
-out a patch for this then.
+Best Regards,
+Yi.
 
-
-Thanks,
-Joanne
-
-> > >
-> > > void fuse_iomap_set_i_blkbits(struct inode *inode, u8 new_blkbits)
-> > > {
-> > >         trace_fuse_iomap_set_i_blkbits(inode, new_blkbits);
-> > >
-> > >         if (inode->i_blkbits =3D=3D new_blkbits)
-> > >                 return;
-> > >
-> > >         if (!S_ISREG(inode->i_mode))
-> > >                 goto set_it;
-> > >
-> > >         /*
-> > >          * iomap attaches per-block state to each folio, so we cannot=
- allow
-> > >          * the file block size to change if there's anything in the p=
-age cache.
-> > >          * In theory, fuse servers should never be doing this.
-> > >          */
-> > >         if (inode->i_mapping->nrpages > 0) {
-> > >                 WARN_ON(inode->i_blkbits !=3D new_blkbits &&
-> > >                         inode->i_mapping->nrpages > 0);
-> > >                 return;
-> > >         }
-> > >
-> > > set_it:
-> > >         inode->i_blkbits =3D new_blkbits;
-> > > }
-> > >
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/=
-commit/?h=3Dfuse-iomap-attrs&id=3Dda9b25d994c1140aae2f5ebf10e54d0872f5c884
-> > >
-> > > --D
-> > >
-> > > >
-> > > > Thanks,
-> > > > Joanne
-> > > >
 
