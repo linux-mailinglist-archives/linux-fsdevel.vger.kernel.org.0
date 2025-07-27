@@ -1,50 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-56103-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56104-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59AC8B13148
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Jul 2025 20:37:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3A15B1314C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Jul 2025 20:37:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F1E11773A2
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Jul 2025 18:37:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 922601897C8D
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Jul 2025 18:38:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A81235358;
-	Sun, 27 Jul 2025 18:36:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ADB4239E6E;
+	Sun, 27 Jul 2025 18:36:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xq7cGl2M"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tjPUaPbI"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A406F2343C0;
-	Sun, 27 Jul 2025 18:36:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C32D23909C;
+	Sun, 27 Jul 2025 18:36:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753641390; cv=none; b=RiirG7U+tK2Y4ds6d7OAds5ZtyJ2DKpT9q8bFbOl6aY05LyCXF5KZqqcqFMe+/7UL2JAlPpdZmYIgaVd3mmWGG4btrafJJhjD3Uj0VLuI6Qe5ys52Odv/yCYxt4ger8VsGSeSN79rE/HiKvrKDO4+pb5VE/0A3jeJbzlWEiF05Y=
+	t=1753641392; cv=none; b=kMZKU2ZHHSr5H1Cs4Cv642Oe2Jqq9UDud2Z4r2ydoH3QPnXSyqdULhGbVwTBuRRhnHQaxBAtTAYx+9Ku7h6IHdrfV1g7Xh8Cm0EKiXptVRv+01W3JI3y1FhLgfxc5ZXcLDX9KGfCSXkYn8C3el+PqGZXF29Igbb86tPIRT/AyXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753641390; c=relaxed/simple;
-	bh=tB28A7UEW/1kAwxOpup/7X4hmWe1RoJvUGt2RZpGRko=;
+	s=arc-20240116; t=1753641392; c=relaxed/simple;
+	bh=fdO6f13p1GTQnu6FzwkdZ4uJxgGOC3acS3Ht0AFuvgE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UChe9ciDMVctw2U2LTtFrj5Owfb8Q6X6De8MhqB+6XhQ4Wf+vo3Z/RpWK9kzcMFxh7C66lg1Viwor8fcOn8jj3o5wly01cifhz8jUyFaGVjhFrQ18K58Y+ZquTAOB6y58XZyxWLJzDSbmprgk5vkpX8AcBpzLAXwxZ1gQTJRVNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xq7cGl2M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DDB7C4CEEB;
-	Sun, 27 Jul 2025 18:36:29 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=deA5ba0J/RijIiqL4W6shwsIgIaViq8w1Igv43zewydKuDBhN7y2FMsHCm1LkjT3+NpaNepxdjdyTFNMgoyB+Mb26hP6X3cIv+Gpgom7aURRmLNX9CM3MV7Dk4u6uUUjQEa3q2uRlxICk0CyJqcOr9F3PDeVPpAHnihfkUoqvnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tjPUaPbI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE388C4CEEF;
+	Sun, 27 Jul 2025 18:36:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753641390;
-	bh=tB28A7UEW/1kAwxOpup/7X4hmWe1RoJvUGt2RZpGRko=;
+	s=k20201202; t=1753641392;
+	bh=fdO6f13p1GTQnu6FzwkdZ4uJxgGOC3acS3Ht0AFuvgE=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Xq7cGl2MrD/BJSYSAtROGzOlynYxA21pxvfarm4zPIrmZAe2P+YgqI0K5smqsEZZI
-	 QAJQtfCeeMSs0VgHWlbIrBqLnMOudeCk2ccKm5ElpxcVfZ/6cmSZonqibb5/tCNtQX
-	 Rvck77Px6JSs8cJw0YAj+uhUFT0RexGBAPYFHD3HISJF/8gN2AzP0GhMj6ID5Di4Tm
-	 F9KUY5nlaFtlTacFJ4+Jd20XkcA2hsSSDz2KY5YQTRPc69NW/IUNURfqATCqJHiMpN
-	 b2PwcoGM5EZHyOqNtZmWF8AmN9sEeXxL8GvEyKA9Y/BXoUwk/72JHepEEISoWSELjI
-	 IjUMYBVzvV8xw==
+	b=tjPUaPbIkSik7w2Y3GUReyLhpy8l2uYCWtDq6KTsvcVFegt3f54KDQJGWCEQwM4C6
+	 X3To8bgaKDn2xpT2LCHWe95c6tGjDiBInWkG0w8fKKlaCZDRPlTYJAQ/20zdvcrSBT
+	 w7n+eIIUZk+2bAScMT68Q0YS8d0uJOSJFPM6h920qyc+LjhSmrQlyZGscira26ZkO8
+	 gi4+Y5r4xB+9Rh0BZEQMCFcJQkOpEVYkBh2MqE+d7BxngY2E6KMk5k67Jddy3jG5Fj
+	 V3beodo1QsmVhUVlvvhvakYYXGTeyCmblScIif9MYIohmJajiBkVl18ADLCXYnhUAI
+	 MwG2MkqUF44mw==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Sun, 27 Jul 2025 14:36:14 -0400
-Subject: [PATCH v3 4/8] nfsd: use ATTR_CTIME_SET for delegated ctime
- updates
+Date: Sun, 27 Jul 2025 14:36:15 -0400
+Subject: [PATCH v3 5/8] nfsd: track original timestamps in nfs4_delegation
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250727-nfsd-testing-v3-4-8dc2aafb166d@kernel.org>
+Message-Id: <20250727-nfsd-testing-v3-5-8dc2aafb166d@kernel.org>
 References: <20250727-nfsd-testing-v3-0-8dc2aafb166d@kernel.org>
 In-Reply-To: <20250727-nfsd-testing-v3-0-8dc2aafb166d@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -69,85 +68,89 @@ Cc: Trond Myklebust <trondmy@hammerspace.com>,
  linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
  linux-nfs@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2742; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=tB28A7UEW/1kAwxOpup/7X4hmWe1RoJvUGt2RZpGRko=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBohnGls1yb2RnpV9ql6Wo1JRJszwnE/7UpUdCym
- kjUViPElkKJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaIZxpQAKCRAADmhBGVaC
- FRSSD/oCdv0wKgUqqEZE7shc6/M8ZRGEa+AB8MnmPU+lZq2LTq5EP2sIPpUx3il4TeiEOjP3YvB
- YfmS+xUb0q5sI5sNNOSec8XeiEqTfisInQCrGNKlLrw0I8Imqn1FDdfqtGEa2V/zssbJQMTgVK0
- Ge7ir9gw0s79z5AL7EztP5+AgvNINugerG6qX/eSnRhBHQw2RCAptpvoey6Xd+JOZImHbUDwYJG
- TUjrlBDBUMZ188L+dmUnOk2KQE+I6yWinOqsUri2sfMfNbRmnkOQcIVoHoZg6l8K/n8u8enp1Tn
- hfJXei42MFhQwRwT0jK+wFMz+8tebQRpP/DroNDB3+xJZ6jxvOThLAiTY2Pz6LVvROskbyIxB3b
- zZ/NIVH5HKcOfdVUbntWTUrz16aUdC2/iBc5RaHqFqRAx/ro4pr5tNvwEEA76thHfudJ1vF0tKb
- dVGSzNU9BOAsuPzCZt0HpHh4eE1A9akFGRFRnSp5TkiKDjCU47TYHvJ0wQTi/x+j/2O2Anv0haf
- 1bw1FfTHOB0WdmndkDNgOuGm3e6dzX6IpMmLORwjhkS9tc9C/5HjqkctGTByo4zgaKHN546XgX6
- d/9xZkv7zCOz80TVpRxQP7w01yO8dVQb76FoDhdngA8QJAoqaTNbHNmEfj0mMFMZjFgbsk9jbRn
- SodUHouIntb6wNA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2805; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=fdO6f13p1GTQnu6FzwkdZ4uJxgGOC3acS3Ht0AFuvgE=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBohnGmlQKzsiog12wrAlno6OgP/0STkBQ+c233u
+ IDzv4lwcJmJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaIZxpgAKCRAADmhBGVaC
+ FTf8EACDdtbcx0EjmZAijW3mC6d4HG3fgUAlDWqLLyApRLJgNohVhm91v5qjnFOTP0/9PXIb7ny
+ TgW3O9PEsYkwOvIpHbWlL8cPrh+idAZmYkI5MA/ppn903OGYU9bQh4hqD+vbAfQvZznYFu71IsL
+ ifGxJjPXTAaFytGx0BSAkr7MmznLEb5X+FxvoqbaMCMG5c8lFPAhBUr3Q9/by+A8F4seOvx2cgk
+ tOU+HRu8bAgngsCU0mWwtOWK1fr1moReUPK4qmpWJhICyyb08Vtnf1PsYg5j9KsDJvku2zFrgXu
+ JpLs8wCFlq9P0dbQUT7JEz2hVoxi1fQ+U/4c34P+87kyj/ZyqEZPyXxO4yFPGLH3mKKz4y3X47a
+ aF+ibH5+YWh7o92eMxCFNJTmo3Pjty8ufXD66MC7y8p8Lgm9Nruvad7AOzU4NGeyP75QTJKLtym
+ +t8LOR/d5V1s3Snyg3Sz3ThK/E0QQe4BoNA4AW3Mi8SN+bChpP3pzkGlABphIIgk0D//jGiwhyx
+ gzuZpZ/P2vtuI9e6oSM7CMF4Gfp/zqZuJOtJGMEBjX6N83ffSZNoEjEsC2ckeWjR/upemncNI+p
+ PUQnVkVzWAp9MHvSKP8lcL4sNGkCAKaBUMRe+hUhjlaMQfBKdRNzpYD67BKk0YFpekhLg+JH10Y
+ /e7PXbrVBvDIGmg==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-Ensure that notify_change() doesn't clobber a delegated ctime update
-with current_time() by setting ATTR_CTIME_SET for those updates.
+As Trond points out [1], the "original time" mentioned in RFC 9754
+refers to the timestamps on the files at the time that the delegation
+was granted, and not the current timestamp of the file on the server.
 
-Don't bother setting the timestamps in cb_getattr_update_times() in the
-non-delegated case. notify_change() will do that itself.
+Store the current timestamps for the file in the nfs4_delegation when
+granting one. Add STATX_ATIME and STATX_MTIME to the request mask in
+nfs4_delegation_stat(). When granting OPEN_DELEGATE_READ_ATTRS_DELEG, do
+a nfs4_delegation_stat() and save the correct atime. If the stat() fails
+for any reason, fall back to granting a normal read deleg.
+
+[1]: https://lore.kernel.org/linux-nfs/47a4e40310e797f21b5137e847b06bb203d99e66.camel@kernel.org/
 
 Fixes: 7e13f4f8d27d ("nfsd: handle delegated timestamps in SETATTR")
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/nfsd/nfs4state.c | 6 +++---
- fs/nfsd/nfs4xdr.c   | 3 ++-
- 2 files changed, 5 insertions(+), 4 deletions(-)
+ fs/nfsd/nfs4state.c | 11 ++++++++---
+ fs/nfsd/state.h     |  5 +++++
+ 2 files changed, 13 insertions(+), 3 deletions(-)
 
 diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-index 88c347957da5b8f352be63f84f207d2225f81cb9..77eea2ad93cc07939f045fc4b983b1ac00d068b8 100644
+index 77eea2ad93cc07939f045fc4b983b1ac00d068b8..8737b721daf3433bab46065e751175a4dcdd1c89 100644
 --- a/fs/nfsd/nfs4state.c
 +++ b/fs/nfsd/nfs4state.c
-@@ -9167,7 +9167,6 @@ static bool set_cb_time(struct timespec64 *cb, const struct timespec64 *orig,
- static int cb_getattr_update_times(struct dentry *dentry, struct nfs4_delegation *dp)
- {
- 	struct inode *inode = d_inode(dentry);
--	struct timespec64 now = current_time(inode);
- 	struct nfs4_cb_fattr *ncf = &dp->dl_cb_fattr;
- 	struct iattr attrs = { };
- 	int ret;
-@@ -9175,6 +9174,7 @@ static int cb_getattr_update_times(struct dentry *dentry, struct nfs4_delegation
- 	if (deleg_attrs_deleg(dp->dl_type)) {
- 		struct timespec64 atime = inode_get_atime(inode);
- 		struct timespec64 mtime = inode_get_mtime(inode);
-+		struct timespec64 now = current_time(inode);
+@@ -6157,7 +6157,8 @@ nfs4_delegation_stat(struct nfs4_delegation *dp, struct svc_fh *currentfh,
+ 	path.dentry = file_dentry(nf->nf_file);
  
- 		attrs.ia_atime = ncf->ncf_cb_atime;
- 		attrs.ia_mtime = ncf->ncf_cb_mtime;
-@@ -9183,12 +9183,12 @@ static int cb_getattr_update_times(struct dentry *dentry, struct nfs4_delegation
- 			attrs.ia_valid |= ATTR_ATIME | ATTR_ATIME_SET;
+ 	rc = vfs_getattr(&path, stat,
+-			 (STATX_MODE | STATX_SIZE | STATX_CTIME | STATX_CHANGE_COOKIE),
++			 STATX_MODE | STATX_SIZE | STATX_ATIME |
++			 STATX_MTIME | STATX_CTIME | STATX_CHANGE_COOKIE,
+ 			 AT_STATX_SYNC_AS_STAT);
  
- 		if (set_cb_time(&attrs.ia_mtime, &mtime, &now)) {
--			attrs.ia_valid |= ATTR_CTIME | ATTR_MTIME | ATTR_MTIME_SET;
-+			attrs.ia_valid |= ATTR_CTIME | ATTR_CTIME_SET |
-+					  ATTR_MTIME | ATTR_MTIME_SET;
- 			attrs.ia_ctime = attrs.ia_mtime;
- 		}
+ 	nfsd_file_put(nf);
+@@ -6274,10 +6275,14 @@ nfs4_open_delegation(struct svc_rqst *rqstp, struct nfsd4_open *open,
+ 						    OPEN_DELEGATE_WRITE;
+ 		dp->dl_cb_fattr.ncf_cur_fsize = stat.size;
+ 		dp->dl_cb_fattr.ncf_initial_cinfo = nfsd4_change_attribute(&stat);
++		dp->dl_atime = stat.atime;
++		dp->dl_ctime = stat.ctime;
++		dp->dl_mtime = stat.mtime;
+ 		trace_nfsd_deleg_write(&dp->dl_stid.sc_stateid);
  	} else {
- 		attrs.ia_valid |= ATTR_MTIME | ATTR_CTIME;
--		attrs.ia_mtime = attrs.ia_ctime = now;
+-		open->op_delegate_type = deleg_ts ? OPEN_DELEGATE_READ_ATTRS_DELEG :
+-						    OPEN_DELEGATE_READ;
++		open->op_delegate_type = deleg_ts && nfs4_delegation_stat(dp, currentfh, &stat) ?
++					 OPEN_DELEGATE_READ_ATTRS_DELEG : OPEN_DELEGATE_READ;
++		dp->dl_atime = stat.atime;
+ 		trace_nfsd_deleg_read(&dp->dl_stid.sc_stateid);
  	}
+ 	nfs4_put_stid(&dp->dl_stid);
+diff --git a/fs/nfsd/state.h b/fs/nfsd/state.h
+index 8adc2550129e67a4e6646395fa2811e1c2acb98e..ce7c0d129ba338e1269ed163266e1ee192cd02c5 100644
+--- a/fs/nfsd/state.h
++++ b/fs/nfsd/state.h
+@@ -224,6 +224,11 @@ struct nfs4_delegation {
  
- 	if (!attrs.ia_valid)
-diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
-index 52033e2d603eb545dda781df5458da7d9805a373..c0a3c6a7c8bb70d62940115c3101e9f897401456 100644
---- a/fs/nfsd/nfs4xdr.c
-+++ b/fs/nfsd/nfs4xdr.c
-@@ -539,7 +539,8 @@ nfsd4_decode_fattr4(struct nfsd4_compoundargs *argp, u32 *bmval, u32 bmlen,
- 		iattr->ia_mtime.tv_nsec = modify.nseconds;
- 		iattr->ia_ctime.tv_sec = modify.seconds;
- 		iattr->ia_ctime.tv_nsec = modify.nseconds;
--		iattr->ia_valid |= ATTR_CTIME | ATTR_MTIME | ATTR_MTIME_SET | ATTR_DELEG;
-+		iattr->ia_valid |= ATTR_CTIME | ATTR_CTIME_SET |
-+				   ATTR_MTIME | ATTR_MTIME_SET | ATTR_DELEG;
- 	}
+ 	/* for CB_GETATTR */
+ 	struct nfs4_cb_fattr    dl_cb_fattr;
++
++	/* For delegated timestamps */
++	struct timespec64	dl_atime;
++	struct timespec64	dl_mtime;
++	struct timespec64	dl_ctime;
+ };
  
- 	/* request sanity: did attrlist4 contain the expected number of words? */
+ static inline bool deleg_is_read(u32 dl_type)
 
 -- 
 2.50.1
