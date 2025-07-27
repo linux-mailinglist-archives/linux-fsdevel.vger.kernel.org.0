@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-56099-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56100-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3593CB1313D
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Jul 2025 20:36:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEE61B13140
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Jul 2025 20:36:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E494177282
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Jul 2025 18:36:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B43681772F1
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Jul 2025 18:36:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59503224AFA;
-	Sun, 27 Jul 2025 18:36:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9AE4226CE5;
+	Sun, 27 Jul 2025 18:36:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wq8RgquJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n9mG2wYw"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2FF62E36E6;
-	Sun, 27 Jul 2025 18:36:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 258162253FE;
+	Sun, 27 Jul 2025 18:36:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753641384; cv=none; b=e4cOHl3JbHVdhKOOsze+h/UEEnTinerQkUi/FhY99n/Jgc09zdoATAAjglRqx1P+IBcbSxTIhISF0w1IFAQvQIeth0hqPxMOGmz82APhl7V5Y0pAorBga4BbOLbjC6nlvtmE2xbH63hIdKeKW/dmOXmCJ8mKHqoDOYvVZ6Jpr+Y=
+	t=1753641386; cv=none; b=W+v99dbU33sfGaQCusdnUt9UhWOKXGl6M0X35BObbshja0z2bTN6KiqZki04OyitZIiTrG8nVdb+uVOJQDAU+2qD/ifIpzXSyakLXFc/9FZ9WCUQbAG+6OuUUT/4GrIRTYc1E3qILIY2KO4eKtnC0gymu57XhQ1gNVlSwGfiBbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753641384; c=relaxed/simple;
-	bh=WuGgJeU+Prm+ZC3/MNeq9ugNEFgkJMfPiPWsKJAQOMs=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=DJAJmshxIWCz0y042sSuO3mPzLD4K9ZKbIwouESr8VEeF0hr1ybyyyZrv71C8j/oE1RiAdQIjZ465jRT8XT8vqV3CXM/9vtr5s3l6ksC7oXHc5JIZoL6NaWl4WKGVnLIjm8AfiXzp8dyyfurD4tLjCUovtP6a9rz/RiCddQGR/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wq8RgquJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5B9DC4CEEB;
-	Sun, 27 Jul 2025 18:36:22 +0000 (UTC)
+	s=arc-20240116; t=1753641386; c=relaxed/simple;
+	bh=wX+jZhM05ADBnfHIbs04wC7/mLDtqIQ+H+KgWBk6ve0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=qAwUeSi6KDtoDhNCYS4ORKsJmVj3I4YqUhQUccmD3/9Zg2D32CUlgbxZjhurLOEgyDgwB0YzVQPXl0BUO0gplix58RbogipCsYgtFVGi+w1sZp21tzM+PHVUCZY6pm94r3nGm14SAMfiGmPShL2OMBaZtHaj5JZlIuRhfkF2XXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n9mG2wYw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64560C4CEF9;
+	Sun, 27 Jul 2025 18:36:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753641384;
-	bh=WuGgJeU+Prm+ZC3/MNeq9ugNEFgkJMfPiPWsKJAQOMs=;
-	h=From:Subject:Date:To:Cc:From;
-	b=Wq8RgquJMjspQzQfdZcoc3HCtsCq/d93WCkCjnOF4zlXrifncb+dwT4q3Rr4tDPk+
-	 +sOPWLph5bKp6NcyzPUSkJBBl60JV/7oCU43GSIvRVZr5BPQCTBg1FxDwIDRn5/fnT
-	 RMQhlNB9pI7LtPW7YpDqXtjyPb/+H/XbhR1YDzMEB1WIcFsRmJW1diZR1WwCtKgd5t
-	 UCv2syrmk74/B4Gj/iNe/2ai8mLLdSaUr0d2RXS+OwjhPruJf2yyZB8s5tR56R2ZQ4
-	 k7l1POU5IEj66cpsLSSGErqIungkmqPnNfez3XvfXY/CYCbHqPIPknLJdCGmKRs6kz
-	 f148yH6/6IpLw==
+	s=k20201202; t=1753641385;
+	bh=wX+jZhM05ADBnfHIbs04wC7/mLDtqIQ+H+KgWBk6ve0=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=n9mG2wYwa94UbZ4p/3F4N4tvjteq4TYUsHWu0uW9/Sf7PGlIndG3+FDvjgEJxH5QW
+	 sVN7V2+Znt70kuGjB27PfDdhuDasZANp/Ajw5jiHxXnWOSITzqkqXlEr2qiZShkrGR
+	 mjSkLndFXUxo8hPM2dkvdkSs5+JfVvUuJWyOds0Pig0vL0wWfA5o/pffqzAOB6xTND
+	 oA3Cj5fmUtxiAtajIsPRrJwixFL/NzI62GG1Q7+UUNXc4mDD/Nv6x+ZjflHP4IfV1x
+	 si2FZwNIzh8vULRasf4atZ0Wc1OLxAPnc3BvpGH9deIiMwqsXO0LQhf+GP+agDwZvi
+	 hNCAmesY2vpAw==
 From: Jeff Layton <jlayton@kernel.org>
-Subject: [PATCH v3 0/8] nfsd/vfs: fix handling of delegated timestamp
- updates
-Date: Sun, 27 Jul 2025 14:36:10 -0400
-Message-Id: <20250727-nfsd-testing-v3-0-8dc2aafb166d@kernel.org>
+Date: Sun, 27 Jul 2025 14:36:11 -0400
+Subject: [PATCH v3 1/8] nfsd: fix assignment of ia_ctime.tv_nsec on
+ delegated mtime update
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,11 +53,9 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAJpxhmgC/3XMQQ6CMBCF4auQrq1ppwLiynsYF1BmYKJpTUsaD
- eHuFlZq4vK95PtnETEwRnEqZhEwcWTv8jC7QtixdQNK7vMWoKBUNYB0FHs5YZzYDbLEY6VbY8m
- 0SmTyCEj83HKXa94jx8mH11ZPen3/hJKWShptQNuabFPT+YbB4X3vwyDWUoJPXf1oyJoOZQOm7
- 4C67ksvy/IGYe37QecAAAA=
-X-Change-ID: 20250722-nfsd-testing-5e861a3cf3a0
+Message-Id: <20250727-nfsd-testing-v3-1-8dc2aafb166d@kernel.org>
+References: <20250727-nfsd-testing-v3-0-8dc2aafb166d@kernel.org>
+In-Reply-To: <20250727-nfsd-testing-v3-0-8dc2aafb166d@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
  Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
  Steven Rostedt <rostedt@goodmis.org>, 
@@ -71,68 +69,46 @@ Cc: Trond Myklebust <trondmy@hammerspace.com>,
  linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
  linux-nfs@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1799; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=WuGgJeU+Prm+ZC3/MNeq9ugNEFgkJMfPiPWsKJAQOMs=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBohnGhpUWRYry3ddZksYTq/rwet7Iuo/jOMYXCB
- pLJBCMfsz2JAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaIZxoQAKCRAADmhBGVaC
- FbcqD/93n3K3cHZj9ahOiyE/ao6v8Y+FWTWLhERquoOcX+4cdZ/k/69lH9ymXBXvQNbn4ftukut
- C2rP+XwNmm5WMRDNn64/6k1VQQHUrSxdimfa+qOC3tdkCGFE0UnqzpDAgFdB2rcvgjFcOGvm88L
- 6YlBi3FOxtXxhLYM/fad1ht2S8ihnIluBtqJIfxgPljNsQ3RdKQysrnnioTgCB1FU1B9jm9ya01
- FhUqgDzhHHWyjgl/hvR1WnTvYapPU/mssYzEWOhcLyITl6uCFtcfZGPC5EJVwHIDfGEHCKN5xVS
- HqpUpdMvXAWADSxJVoitsqH5c55NE4gZh1dnsARhEws6Y+/I/hhTOZ8+ExVh1HEFc2n6Ck4ChmZ
- 8aG2bDKJxcdlq8MJ/iJvY5HJ5Ud6/9hFIA1cYujZOz9BMZ4APOX7HJPyl0iDFpRZuGWiNNifBSg
- BNNGUc73yBiyY+kD3VKDNOReISNnfySJaQ/GZkhKkt9upfYFnH/24pdz/AUFOCp7a2f0y4ol6A0
- xM6r1XC7TGktWK7cAxOQi33mTAYGzIczeQbxTNtFNZZTajBrcQqpiFWvi6fYPpcWDAlt4t7ZCFx
- grxsqmQkyTv45kRNgsNrlmWjHbPcAdNPrr4cXn50+BMdzkXlMgbMXlliY++R4kvkK4t/T/tQPzt
- NVjvJXVYcV9wF6A==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=892; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=wX+jZhM05ADBnfHIbs04wC7/mLDtqIQ+H+KgWBk6ve0=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBohnGl7UXl6EFyujtglWHQECzmgMQ3mQNU6ot9j
+ xI7j4TRwEGJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaIZxpQAKCRAADmhBGVaC
+ FdGLEADMMRJ+fvYN4+akt/isW2b/MiRfbGI2KUKrtOuD+PgwpMT3dBevsiViI3rtMGciH/jHmAx
+ uCUeVPbrNmAjtTDF6MyTfGu3XgWunL+0cPGKMT/gJNeVawzi82obIohAlj7aTJR7+7n7D2B5/WG
+ FyTCuSeOpINTLvipFs2lBY2WsgZi+YbxcWhfwBeAYxOmyxnjGQCyBTIUDOq8GghA4AemzEHGQ/8
+ DYEzgbJOpY5fhprY2Q8fWfYsi75Pzdsdhzets+Xsv40uAWVGVq2Q+rJyZ4ZFyehSrgyJL4BfzZP
+ Fyx4RqwjucnyBQ/co2qiA7jULx4uCxTbJLIOX2B+fqeAOB0GbmusK90E5SgkWzFrGwe1PmjTocS
+ WsMoQNv/uuKkWLPl34thQ0YodjkBUTFGojtsMeN2jUQubotjU+OiNJOhjiMZORXmvMa7jL7AROY
+ kIOvXrO/45dE63R5F1PpczjV5DkFehKz8CNN02u3UviWIMc00yYdHWz0ffwpUQqj9qmJNXMVgQ5
+ X4eZDU6xpwWh9DcqN4PhLK+vaBHV6aahJEseVbedEOddlNJoEmNk+m5noF9vSXKYPUOHwh6BFP2
+ BCCzvm7e/izb5z+qPXvn3bHLGoBQXRMBB75bYCxHivlApJ/BEO9bx1V9GM/6exxqke7MZwL3ma6
+ qRl8CcK/2dlBTtQ==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-This patchset fixes the handling of delegated timestamps in nfsd.
+The ia_ctime.tv_nsec field should be set to modify.nseconds.
 
-This posting is basically identical to the last, aside from
-splitting out one fix into a separate patch, and the addition of some
-Fixes: tags.
-
+Fixes: 7e13f4f8d27d ("nfsd: handle delegated timestamps in SETATTR")
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
-Changes in v3:
-- split out decoder fix into separate patch
-- add Fixes: tags
-- Link to v2: https://lore.kernel.org/r/20250726-nfsd-testing-v2-0-f45923db2fbb@kernel.org
+ fs/nfsd/nfs4xdr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes in v2:
-- add ATTR_CTIME_SET and remove inode_set_ctime_deleg()
-- track original timestamps in struct nfs4_delegation
-- fix delegated timestamp updates to respect saved timestamps
-- Link to v1: https://lore.kernel.org/r/20250722-nfsd-testing-v1-0-31321c7fc97f@kernel.org
+diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
+index 8b68f74a8cf08c6aa1305a2a3093467656085e4a..52033e2d603eb545dda781df5458da7d9805a373 100644
+--- a/fs/nfsd/nfs4xdr.c
++++ b/fs/nfsd/nfs4xdr.c
+@@ -538,7 +538,7 @@ nfsd4_decode_fattr4(struct nfsd4_compoundargs *argp, u32 *bmval, u32 bmlen,
+ 		iattr->ia_mtime.tv_sec = modify.seconds;
+ 		iattr->ia_mtime.tv_nsec = modify.nseconds;
+ 		iattr->ia_ctime.tv_sec = modify.seconds;
+-		iattr->ia_ctime.tv_nsec = modify.seconds;
++		iattr->ia_ctime.tv_nsec = modify.nseconds;
+ 		iattr->ia_valid |= ATTR_CTIME | ATTR_MTIME | ATTR_MTIME_SET | ATTR_DELEG;
+ 	}
+ 
 
----
-Jeff Layton (8):
-      nfsd: fix assignment of ia_ctime.tv_nsec on delegated mtime update
-      nfsd: ignore ATTR_DELEG when checking ia_valid before notify_change()
-      vfs: add ATTR_CTIME_SET flag
-      nfsd: use ATTR_CTIME_SET for delegated ctime updates
-      nfsd: track original timestamps in nfs4_delegation
-      nfsd: fix SETATTR updates for delegated timestamps
-      nfsd: fix timestamp updates in CB_GETATTR
-      vfs: remove inode_set_ctime_deleg()
-
- fs/attr.c           | 34 ++++++++++---------------
- fs/inode.c          | 73 -----------------------------------------------------
- fs/nfsd/nfs4proc.c  | 31 ++++++++++++++++++++++-
- fs/nfsd/nfs4state.c | 44 +++++++++++++++++---------------
- fs/nfsd/nfs4xdr.c   |  5 ++--
- fs/nfsd/state.h     |  8 ++++++
- fs/nfsd/vfs.c       |  2 +-
- include/linux/fs.h  |  3 +--
- 8 files changed, 79 insertions(+), 121 deletions(-)
----
-base-commit: b05f077b59098b4760e3f675b00a4e6a1ad4b0ad
-change-id: 20250722-nfsd-testing-5e861a3cf3a0
-
-Best regards,
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.50.1
 
 
