@@ -1,118 +1,165 @@
-Return-Path: <linux-fsdevel+bounces-56111-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56112-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07801B13288
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Jul 2025 01:50:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97154B1329B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Jul 2025 02:04:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E265168FA8
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Jul 2025 23:50:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2213F189675D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Jul 2025 00:05:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23773253951;
-	Sun, 27 Jul 2025 23:50:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HNAcJH/O"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B73A944;
+	Mon, 28 Jul 2025 00:04:42 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from neil.brown.name (neil.brown.name [103.29.64.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C2BB1EE03B;
-	Sun, 27 Jul 2025 23:50:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B119EC4;
+	Mon, 28 Jul 2025 00:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753660228; cv=none; b=E2TxPIl9jcH+0aU0KbfYQkIEygeNVDygFLu+RcHa4FexA2kZSpabt7GX0XkDNb0cT4IyKEQk3pjHHaYhVpAqKcaauVy867GxygMBhuYg/tN8t73Rp6KDW2ohFO6T8mVoZJmU1fLHF8EQLpPB67Dwji72v8Nig66vkc1DH94VPn8=
+	t=1753661081; cv=none; b=JR7UEYafMtn9rdW6b2Ve8UTLjy70Ds+9BlM5J+0KxugNzk31FI5MfkLHah5J6NQOnAb/vem8mZBUX7/OYbHsKBLYKWwPI44X7KfligSB/1F3De6HJKUAE1oTiikiyvgQEyVTc4TRiTp4NdlJIMrtAL/TMrkzFbJExchbcwpR6Kk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753660228; c=relaxed/simple;
-	bh=Vj3HpeuQZVEq61Caf2pqR+ehJBv3qbSAJdwmfv5nlww=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=dw8T4n4D5j1b56056FcRZz3pQ94p1gDk7ZdhtvGAT29E3YwRuU7Ip8BlXc1g1wWfofV84bAlXlkpEEyNmSqigRZx3ZQul+83zCoeBYkR6fQS3C4MGsQt7oWTLVjT6kSSLEQXmpTNahUkAEkCHobslNLNly0ADD5irp3i3sTNdBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HNAcJH/O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC83CC4CEEB;
-	Sun, 27 Jul 2025 23:50:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753660228;
-	bh=Vj3HpeuQZVEq61Caf2pqR+ehJBv3qbSAJdwmfv5nlww=;
-	h=Date:From:To:Cc:Subject:From;
-	b=HNAcJH/Oz+YTprMaPhQZ9kmxE8dw2M/9PFyuNxm1b8IW7CKRw/hNQSo/SP6YpoN1g
-	 kCtyQCffGtll8Z48EJJNTXwzAXrCujnsAqNzI26SP4Ja1/a+1fWKS0w4aiohkGUfnr
-	 0CeKAoeN3gKA/k1maU7RCxBA3Rav7AgmizEeuj6sOdMeCG8MWJJPdI0Otw/XeN/doe
-	 p6CRFLHED20+Dbmg7vqfWZOTNsXZUi7nA9Jpo4bDjtqWmHRdKfJFmANJXZGdKN8jfV
-	 sGvpxgdelu0crsBFfCG2p++/EFWxNPBwi+stbw9LXr2IqS0//42u/HQMVrQdshpZLj
-	 2IXrN2wb8cZBg==
-Date: Sun, 27 Jul 2025 16:49:36 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-	Jaegeuk Kim <jaegeuk@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
-	Yuwen Chen <ywen.chen@foxmail.com>
-Subject: [GIT PULL] fscrypt updates for 6.17
-Message-ID: <20250727234936.GE1261@sol>
+	s=arc-20240116; t=1753661081; c=relaxed/simple;
+	bh=G8Rb58x2rWg7QP/HxlU2+gOrfS6A5ThTTPkS1X2x3u0=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=ir3hMyuvGLkGhbHt0kgxJSAxvh6wElz+6rXE0xi2UJaPHfqoNHTm72qLBVg2/+72X2Iw8lgUCHqFhGO6EUQiZZa5a43CYBI2e4m4+qwpg4b4EjSEjeYfjNnMKtYvie96COoHTx6EfmL2ReiQ5ryF8HJOFLlmvA1l9uLsYyp2OUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
+Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
+	by neil.brown.name with esmtp (Exim 4.95)
+	(envelope-from <mr@neil.brown.name>)
+	id 1ugBLv-003ekj-Lm;
+	Mon, 28 Jul 2025 00:04:29 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+From: "NeilBrown" <neil@brown.name>
+To: "Jeff Layton" <jlayton@kernel.org>
+Cc: "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
+ "Steven Rostedt" <rostedt@goodmis.org>,
+ "Masami Hiramatsu" <mhiramat@kernel.org>,
+ "Mathieu Desnoyers" <mathieu.desnoyers@efficios.com>,
+ "Chuck Lever" <chuck.lever@oracle.com>,
+ "Olga Kornievskaia" <okorniev@redhat.com>, "Dai Ngo" <Dai.Ngo@oracle.com>,
+ "Tom Talpey" <tom@talpey.com>, "Trond Myklebust" <trondmy@hammerspace.com>,
+ "Anna Schumaker" <anna@kernel.org>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-nfs@vger.kernel.org, "Jeff Layton" <jlayton@kernel.org>
+Subject: Re: [PATCH v3 3/8] vfs: add ATTR_CTIME_SET flag
+In-reply-to: <20250727-nfsd-testing-v3-3-8dc2aafb166d@kernel.org>
+References: <20250727-nfsd-testing-v3-0-8dc2aafb166d@kernel.org>,
+ <20250727-nfsd-testing-v3-3-8dc2aafb166d@kernel.org>
+Date: Mon, 28 Jul 2025 10:04:28 +1000
+Message-id: <175366106815.2234665.13768447223879357240@noble.neil.brown.name>
 
-The following changes since commit e04c78d86a9699d136910cfc0bdcf01087e3267e:
+On Mon, 28 Jul 2025, Jeff Layton wrote:
+> When ATTR_ATIME_SET and ATTR_MTIME_SET are set in the ia_valid mask, the
+> notify_change() logic takes that to mean that the request should set
+> those values explicitly, and not override them with "now".
+>=20
+> With the advent of delegated timestamps, similar functionality is needed
+> for the ctime. Add a ATTR_CTIME_SET flag, and use that to indicate that
+> the ctime should be accepted as-is. Also, clean up the if statements to
+> eliminate the extra negatives.
 
-  Linux 6.16-rc2 (2025-06-15 13:49:41 -0700)
+I don't feel entirely comfortable with this.  ctime is a fallback for
+"has anything changed" - mtime can be changed but ctime is always
+reliable, controlled by VFS and FS.
 
-are available in the Git repository at:
+Until now.
 
-  https://git.kernel.org/pub/scm/fs/fscrypt/linux.git tags/fscrypt-for-linus
+I know you aren't exposing this to user-space, but then not doing so
+blocks user-space file servers from using this functionality.
 
-for you to fetch changes up to fa65058063cbaba6e519b5291a7e2e9e0fa24ae3:
+I see that you also move vetting of the value out of vfs code and into
+nfsd code.  I don't really understand why you did that.  Maybe nfsd has
+more information about previous timestamps than the vfs has?
 
-  ceph: Remove gfp_t argument from ceph_fscrypt_encrypt_*() (2025-07-10 12:33:17 -0700)
+Anyway I would much prefer that ATTR_CTIME_SET could only change the
+ctime value to something between the old ctime value and the current
+time (inclusive).
 
-----------------------------------------------------------------
+Certainly nfsd might impose extra restrictions, but I think that basic
+restriction should by in the VFS close to what ATTR_CTIME_SET is
+honoured.  What way if someone else finds another use for it some day
+they will have to work within the same restriction (or change it
+explicitly and try to justify that change).
 
-Simplify how fscrypt uses the crypto API, resulting in some
-significant performance improvements:
+Lustre has the equivalent of ATTR_CTIME_SET (MFS_ATTR_CTIME_SET and
+LA_CTIME) and would want to use it if the server-side code ever landed
+upstream.  It appears to just assume the client sent a valid timestamp.
+I would rather it were vetted by the VFS.
 
- - Drop the incomplete and problematic support for asynchronous
-   algorithms. These drivers are bug-prone, and it turns out they are
-   actually much slower than the CPU-based code as well.
+Thanks,
+NeilBrown
 
- - Allocate crypto requests on the stack instead of the heap. This
-   improves encryption and decryption performance, especially for
-   filenames. It also eliminates a point of failure during I/O.
 
-----------------------------------------------------------------
-Eric Biggers (9):
-      fscrypt: Explicitly include <linux/export.h>
-      fscrypt: Drop obsolete recommendation to enable optimized SHA-512
-      fscrypt: Don't use problematic non-inline crypto engines
-      fscrypt: Don't use asynchronous CryptoAPI algorithms
-      fscrypt: Drop FORBID_WEAK_KEYS flag for AES-ECB
-      fscrypt: Switch to sync_skcipher and on-stack requests
-      fscrypt: Remove gfp_t argument from fscrypt_crypt_data_unit()
-      fscrypt: Remove gfp_t argument from fscrypt_encrypt_block_inplace()
-      ceph: Remove gfp_t argument from ceph_fscrypt_encrypt_*()
+>=20
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/attr.c          | 15 +++++++++------
+>  include/linux/fs.h |  1 +
+>  2 files changed, 10 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/fs/attr.c b/fs/attr.c
+> index 9caf63d20d03e86c535e9c8c91d49c2a34d34b7a..f0dabd2985989d283a931536a5f=
+c53eda366b373 100644
+> --- a/fs/attr.c
+> +++ b/fs/attr.c
+> @@ -463,15 +463,18 @@ int notify_change(struct mnt_idmap *idmap, struct den=
+try *dentry,
+> =20
+>  	now =3D current_time(inode);
+> =20
+> -	attr->ia_ctime =3D now;
+> -	if (!(ia_valid & ATTR_ATIME_SET))
+> -		attr->ia_atime =3D now;
+> -	else
+> +	if (ia_valid & ATTR_ATIME_SET)
+>  		attr->ia_atime =3D timestamp_truncate(attr->ia_atime, inode);
+> -	if (!(ia_valid & ATTR_MTIME_SET))
+> -		attr->ia_mtime =3D now;
+>  	else
+> +		attr->ia_atime =3D now;
+> +	if (ia_valid & ATTR_CTIME_SET)
+> +		attr->ia_ctime =3D timestamp_truncate(attr->ia_ctime, inode);
+> +	else
+> +		attr->ia_ctime =3D now;
+> +	if (ia_valid & ATTR_MTIME_SET)
+>  		attr->ia_mtime =3D timestamp_truncate(attr->ia_mtime, inode);
+> +	else
+> +		attr->ia_mtime =3D now;
+> =20
+>  	if (ia_valid & ATTR_KILL_PRIV) {
+>  		error =3D security_inode_need_killpriv(dentry);
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 040c0036320fdf87a2379d494ab408a7991875bd..f18f45e88545c39716b917b1378=
+fb7248367b41d 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -237,6 +237,7 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t o=
+ffset,
+>  #define ATTR_ATIME_SET	(1 << 7)
+>  #define ATTR_MTIME_SET	(1 << 8)
+>  #define ATTR_FORCE	(1 << 9) /* Not a change, but a change it */
+> +#define ATTR_CTIME_SET	(1 << 10)
+>  #define ATTR_KILL_SUID	(1 << 11)
+>  #define ATTR_KILL_SGID	(1 << 12)
+>  #define ATTR_FILE	(1 << 13)
+>=20
+> --=20
+> 2.50.1
+>=20
+>=20
 
- Documentation/filesystems/fscrypt.rst | 45 ++++++++---------------
- fs/ceph/crypto.c                      | 13 +++----
- fs/ceph/crypto.h                      | 10 ++---
- fs/ceph/file.c                        |  3 +-
- fs/ceph/inode.c                       |  3 +-
- fs/crypto/bio.c                       |  9 +++--
- fs/crypto/crypto.c                    | 52 ++++++++++----------------
- fs/crypto/fname.c                     | 69 +++++++++++++----------------------
- fs/crypto/fscrypt_private.h           | 23 ++++++++++--
- fs/crypto/hkdf.c                      |  4 +-
- fs/crypto/hooks.c                     |  2 +
- fs/crypto/inline_crypt.c              |  1 +
- fs/crypto/keyring.c                   |  5 ++-
- fs/crypto/keysetup.c                  | 23 +++++++-----
- fs/crypto/keysetup_v1.c               | 55 ++++++++++++----------------
- fs/crypto/policy.c                    |  4 +-
- fs/ubifs/crypto.c                     |  2 +-
- include/linux/fscrypt.h               |  5 +--
- 18 files changed, 146 insertions(+), 182 deletions(-)
 
