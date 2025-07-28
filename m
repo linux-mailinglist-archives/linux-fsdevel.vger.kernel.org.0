@@ -1,89 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-56170-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56168-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CBFCB1431C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Jul 2025 22:32:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04D4FB1431B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Jul 2025 22:32:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86CDE1637FC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Jul 2025 20:32:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB4237AD9C5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Jul 2025 20:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D27B827F011;
-	Mon, 28 Jul 2025 20:31:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C7E527EC99;
+	Mon, 28 Jul 2025 20:31:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IrnQIyCJ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OdPKHAYP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91EAD27CB0A
-	for <linux-fsdevel@vger.kernel.org>; Mon, 28 Jul 2025 20:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6163F229B15
+	for <linux-fsdevel@vger.kernel.org>; Mon, 28 Jul 2025 20:31:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753734698; cv=none; b=XtDLAZGl72Iva3Jf1P3OJEIaSYR32v9ckQmHwjyl/xRgX6zvGGIj8ELQz9NOdrWvu9fGAUqCEXco074/9XgVcHy0YgtTGgDxz94H5GhQ4grlb+V28x9vW5seHmvdjBTjSvjL98dUA3y5OzcXXIVB/uVNZuDjcyZyx1BpaHZuWQE=
+	t=1753734696; cv=none; b=gBtkkOa5Bw/4cQ2QhL2rXG4RWregY2xpVPiJpcqM799pQUQPxnzjRSaoY0D7+WTasZPBi95hzxY/prJi6zWx8PMj74yx++aTP60OeAC6eL94tSZJPyzaIDjdWB0i3S+5uhW7KK+sFd+03+ssF0oZUxgtgOL7Z+PzskoLOX5OthA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753734698; c=relaxed/simple;
-	bh=tuQ8f/tR8bjNxLfdJGG+rXIm8Iltuw4mIWHpny+mKAw=;
+	s=arc-20240116; t=1753734696; c=relaxed/simple;
+	bh=V8qNbzjsE4JBu1MhTEPPGAHCYOvhHUKvJ9SI0FfHYX0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To; b=fcBFw0yphWerBvemD6lcs/n+U+NkhdEqyOEX7zo2fzqv7zm9FzF55Y44RzGtgN6JWi46CnD4bzpDNb5WZVGzDTj4dx9WD27xh3K6npgoulgADPidUzYo5S7/6nGpHnbYrSGiz8gVtIdrNTvdTbEP6bASIBpyi6LSuwvDCR2ENm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IrnQIyCJ; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:To; b=i00FLgNNuqxvjiR+zXG47Du4c+i17eyPbdKxzRjILFJg98ysA8Eu1Sk7RMpYHAapihwbIMMtPDSFOp/fidmjwfkru0vsLnapKwKKsLNEvZ30vUkR6ZcwkTdMn4l9ve/d5DJ84gm4QEUW9jMipWfRU7kHCNcVEkJIoqvunEF0r8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OdPKHAYP; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753734693;
+	s=mimecast20190719; t=1753734694;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=NhSSjYb+lsJdO2qb/nLz5H47+MobT7klHyOkyC/1bzQ=;
-	b=IrnQIyCJqVTbqqlzPS2Ya+l7YckNrQ13UmMQuVqCRa8SSVY0GDDgr+oWuD6bB6AI7C2sd5
-	xh/7e9Og0fR/hypkrNHlMxs+EVoO3BxlDaZK9I3jDoJulWQKj1+NSMy6L2NzBBtkHCXx1K
-	THT0joUSerIUTopK+vaNKkdbh7oukMc=
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
- [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=zPq7ioMuDIU1givclwrLOed+wUzgBQHM4Krd29hrZGg=;
+	b=OdPKHAYPSIWSvTUd/qY5ZhQDrE6r6jgIycdQeMrqMAh64PUjVpBe7Qj8WDkdgnrCdz56+Y
+	FeWjOlIr9SlEwq539o3hKesmama/Cm3kisuSlUucilPWSW1/ueFJufPThKNkQzKgcUvaJ+
+	feq1QnARJ9rNTuLE5BzINkwSXkGI9oQ=
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
+ [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-637-0Jsj17FpONKbtbz-1UU9WA-1; Mon, 28 Jul 2025 16:31:32 -0400
-X-MC-Unique: 0Jsj17FpONKbtbz-1UU9WA-1
-X-Mimecast-MFC-AGG-ID: 0Jsj17FpONKbtbz-1UU9WA_1753734691
-Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-6154cf8c32cso1050627a12.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Jul 2025 13:31:31 -0700 (PDT)
+ us-mta-388-ghDj_2izPh-qw00Kcna58g-1; Mon, 28 Jul 2025 16:31:32 -0400
+X-MC-Unique: ghDj_2izPh-qw00Kcna58g-1
+X-Mimecast-MFC-AGG-ID: ghDj_2izPh-qw00Kcna58g_1753734692
+Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-612be84c047so5107787a12.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Jul 2025 13:31:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753734690; x=1754339490;
+        d=1e100.net; s=20230601; t=1753734691; x=1754339491;
         h=to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NhSSjYb+lsJdO2qb/nLz5H47+MobT7klHyOkyC/1bzQ=;
-        b=WlV3l7yylbwiNdlBVzbo5w280sihvm45cg9/QQ3wCROvDrJ3TbM5ZAfN+qYJLMJtkG
-         Tsq1BbBm7YX1tmnVrChqKsmMVmV+bDYRYgzlKZARJAY1gz8D+iN8R4QveLAaknglsTPt
-         9m0eitG7gQiB9RS8vnU6LyBiLPHdkNtj2lVGKfNluuqdf8yl8Csk2ooHmdFr7oOkD4sb
-         IUbt5PzVtS0OqH3QYA7rGw7+dmZQnjp+CzT2A96IGvEX+m0vOzLRT9GKarCyI2FwIJlY
-         EM8YBLZAUfmXMeY05rq+3fb7uhCZUuYxg9Lc2kNvBC980muDm6tG2zBQb8Mj6zZqguYE
-         2LgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXYqk91X3LJ8D8zcoqFdyWYWPUe8+qCBBOIPaXJWvZybxbOIpk9UiY04yGXS5NyLC9JgGVzn3PsNjBg2edg@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyv4S9hcsFefhKg7F0GuWWPOf21awghr5+RP5DukXNV3Dqo+L6h
-	QOK8APz6BwTU7LP7XsfyuDq2M7qbyfn6ebvnll3vjYLbkAxj9XgM8KIJX85kPGv4z/CehLlqj7w
-	cgI6AI2d88MnJXl9pIfVKqPmOTnt/p8avX09WVVOB3bm8CzBdovS8HMyi2xfWBf6KtmYxe2I1lj
-	yLzG5XXN3hwqRmVEhG35ZclioqlHEa16C5q/TrOlgqUtWLNV1h8A==
-X-Gm-Gg: ASbGncuQhAA4uSMGC9LY9pPyyHuv9BpdG50zqgrDFDICYznnX094SFwSe8Mt6wI4CBs
-	ZuuuD3zsVRAU/4N0Lz6PFMPRWW19436aF4C2QV/tZow+vFlhp0Ux/VKbfnnNqMU5PTAEw27xTxo
-	97WqYBOzyoyATlxxv6UmKnOOfiwuaR0W42qo8+e5MB4V1GFL3MUfFDxdJLd3LRVOMNXcF6WGJfL
-	uPmqJAK4DV5+s8NI4OUchsBZ19fxNDaqefPd88fFAvEIOsG+FUqN8nwLRDytNoE7yMxFpFsXR/9
-	yURlA0KqfT+L9xzNUTKOcbhOqJkTMx2F6NqJcTYc4Mwwbw==
-X-Received: by 2002:a05:6402:51cb:b0:612:b723:4d95 with SMTP id 4fb4d7f45d1cf-614f1f2e494mr11033338a12.30.1753734690346;
+        bh=zPq7ioMuDIU1givclwrLOed+wUzgBQHM4Krd29hrZGg=;
+        b=xIsPYyPe7Rah2J/4TmkiaMC4qwOHFlJpQrtVWoLv8nkJBUG3akXx+5D/puv8vLe7ud
+         8oUdJHh4cuiI3bMyyt8b5xHTUC1LZqhf4krToeez5EyEu2+NEK0/ORJfkkfkZM79Wwlf
+         pBbqYwnad0/DSrQBRsWGqT97rbRnLP+0umc43DLJiSmKiZWOFQCXk5QmrMtytPGxAwfJ
+         RLh8BFV7KuwRM6uHC3uHulfBFiYT6yPhgfOdh+2NsJeIexh2p9ZU7eXDmcMZfqrrS97z
+         z9jVQjOPYDB4TC9HVvNWJ/IQmc86byOMIBpWlYq5LWXhWuuTxwxAxOopGVUhPk9a4Wk4
+         +OhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUzKL6ba6K/OXsfF26CPaqHr8MuXRiVBwAxMwIUZbB8Mgl2+JW45of9TTpWlGE7snFA8fuc0GLgjQbRZ6aA@vger.kernel.org
+X-Gm-Message-State: AOJu0YypeNVz9JMfvIHisoE/TVJy8Iova6d8rpNKDeRClnrubU2nYZCP
+	1hgHwH4sW0EHkcJ7IvH2ONUqVEqY8EYHc2MniCN8VVLwY09+hxU4WCX9oYWmraDYv2Y3mqvAObu
+	kftlk12p0E3seGYzwLtygtnkBO3jNahGUXoEqZVczOpBewlzayzjcbYvSvNBnkYzERm/BrLYTL5
+	hC4iWaWWCoyJG/jFjfD0v9ueN9Oq6Bj1TtPnB+KwX9jTb3s8NUYA==
+X-Gm-Gg: ASbGncsC42qNyRHcYn8iAylhZ/essROA7MjWLKpNW1iN/qBXPs/+36csN6YXXYEKv9q
+	7hf8ohwV42Y4qthNwVA/bVOm+kE1U0liLmLhC0kdrsqpFeA2c33SyHooORaDyDdfLjHQoXvSD7V
+	gVWDxj0hrAsg77cDJkGh0zY7JxsanmjWSF0rqVn0FXoTP0TlRUp99bIdlA+NceVAFT9DJZak4sr
+	64GRE8Athu/JwRz0Ty6LUsBGiXFEvwlm2b+jAxAc1SLT2RFSt3qqBZpXAQ56oV3HmBd2MG1ftyY
+	z8BJ+JTpAOA8UAlx6NpV9i2pIEC/Y0PDmiptmO6CbJ+1Sg==
+X-Received: by 2002:a05:6402:2807:b0:60e:23d:43b1 with SMTP id 4fb4d7f45d1cf-614f1df695bmr12503528a12.16.1753734691271;
+        Mon, 28 Jul 2025 13:31:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEJO8IlWhrpYESDaiCimQKB8ZcKiDQlQp927UKgU705UcobB9htySU5iKjsIwV3f3uW8HK5fQ==
+X-Received: by 2002:a05:6402:2807:b0:60e:23d:43b1 with SMTP id 4fb4d7f45d1cf-614f1df695bmr12503495a12.16.1753734690764;
         Mon, 28 Jul 2025 13:31:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHXBBqy/vXldtxYvrueHJwpZSvjKZbwQ5tpqwAu8FXFyHDjYlJYgONObn7uPdVanUULshRM+Q==
-X-Received: by 2002:a05:6402:51cb:b0:612:b723:4d95 with SMTP id 4fb4d7f45d1cf-614f1f2e494mr11033310a12.30.1753734689864;
-        Mon, 28 Jul 2025 13:31:29 -0700 (PDT)
 Received: from [127.0.0.2] (ip-217-030-074-039.aim-net.cz. [217.30.74.39])
         by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615226558d3sm2730656a12.45.2025.07.28.13.31.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 13:31:29 -0700 (PDT)
+        Mon, 28 Jul 2025 13:31:30 -0700 (PDT)
 From: Andrey Albershteyn <aalbersh@redhat.com>
 X-Google-Original-From: Andrey Albershteyn <aalbersh@kernel.org>
-Date: Mon, 28 Jul 2025 22:30:13 +0200
-Subject: [PATCH RFC 09/29] f2fs: use a per-superblock fsverity workqueue
+Date: Mon, 28 Jul 2025 22:30:14 +0200
+Subject: [PATCH RFC 10/29] btrfs: use a per-superblock fsverity workqueue
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -92,40 +92,48 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250728-fsverity-v1-9-9e5443af0e34@kernel.org>
+Message-Id: <20250728-fsverity-v1-10-9e5443af0e34@kernel.org>
 References: <20250728-fsverity-v1-0-9e5443af0e34@kernel.org>
 In-Reply-To: <20250728-fsverity-v1-0-9e5443af0e34@kernel.org>
 To: fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
  linux-xfs@vger.kernel.org, david@fromorbit.com, djwong@kernel.org, 
  ebiggers@kernel.org, hch@lst.de
 X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1047; i=aalbersh@kernel.org;
- h=from:subject:message-id; bh=x2fKAqj6yt8VbdL2CBtiIb5g4L/wAAI+BQgEGBHb3is=;
- b=owJ4nJvAy8zAJea2/JXEGuOHHIyn1ZIYMtrviU9w/cd0wMBlz8mjEoUXGhI+xnT1muzczC9Xc
- r5SfdImZ8GOUhYGMS4GWTFFlnXSWlOTiqTyjxjUyMPMYWUCGcLAxSkAE9H+w/DPwCfpgdSX8PiN
- e6+ZROQZ9tyOVb66MuKFruz8jV1VC4tkGf7nfrzP47+oXuLCn38L324yOnHy1wvZTbMUfThP+Vz
- MsT3BCgB9sEqV
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1310; i=aalbersh@kernel.org;
+ h=from:subject:message-id; bh=kuOn1nMdlYjue/gx8Se2FoLjVY/GfmNvzXVoSFxJQLY=;
+ b=owJ4nJvAy8zAJea2/JXEGuOHHIyn1ZIYMtrviQdOW/4+UExSWf7seuPldh/jPvRu3Mjtucsj6
+ 39LeJhNYn5HKQuDGBeDrJgiyzppralJRVL5Rwxq5GHmsDKBDGHg4hSAibw6yfBPKy6t/d68ZbPT
+ JxV8DZ5d7r6gb7Z+Us6O/f0W04RtCi67MjL07RM9G7V6tuLfTUuTPn9OjZ+/7kvtz7wM7cArTX0
+ zDI6zAwBm2EpH
 X-Developer-Key: i=aalbersh@kernel.org; a=openpgp;
  fpr=AE1B2A9562721A6FC4307C1F46A7EA18AC33E108
 
 From: "Darrick J. Wong" <djwong@kernel.org>
 
-Switch f2fs to use a per-sb fsverity workqueue instead of a systemwide
+Switch btrfs to use a per-sb fsverity workqueue instead of a systemwide
 workqueue.
 
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- fs/f2fs/super.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ fs/btrfs/super.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index bbf1dad6843f..043e76b8efae 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -4634,6 +4634,17 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- #endif
+diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+index a0c65adce1ab..cf82c260da9c 100644
+--- a/fs/btrfs/super.c
++++ b/fs/btrfs/super.c
+@@ -28,6 +28,7 @@
+ #include <linux/btrfs.h>
+ #include <linux/security.h>
+ #include <linux/fs_parser.h>
++#include <linux/fsverity.h>
+ #include "messages.h"
+ #include "delayed-inode.h"
+ #include "ctree.h"
+@@ -954,6 +955,19 @@ static int btrfs_fill_super(struct super_block *sb,
+ 	sb->s_export_op = &btrfs_export_ops;
  #ifdef CONFIG_FS_VERITY
- 	sb->s_vop = &f2fs_verityops;
+ 	sb->s_vop = &btrfs_verityops;
 +	/*
 +	 * Use a high-priority workqueue to prioritize verification work, which
 +	 * blocks reads from completing, over regular application tasks.
@@ -135,11 +143,13 @@ index bbf1dad6843f..043e76b8efae 100644
 +	 * latency on ARM64.
 +	 */
 +	err = fsverity_init_wq(sb, WQ_HIGHPRI, num_online_cpus());
-+	if (err)
-+		goto free_bio_info;
++	if (err) {
++		btrfs_err(fs_info, "fsverity_init_wq failed");
++		return err;
++	}
  #endif
- 	sb->s_xattr = f2fs_xattr_handlers;
- 	sb->s_export_op = &f2fs_export_ops;
+ 	sb->s_xattr = btrfs_xattr_handlers;
+ 	sb->s_time_gran = 1;
 
 -- 
 2.50.0
