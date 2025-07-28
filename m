@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-56126-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56127-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 584C7B138A2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Jul 2025 12:14:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BCA9B138A7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Jul 2025 12:15:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74CA8170D0F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Jul 2025 10:14:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C7701889098
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Jul 2025 10:15:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A6392550D4;
-	Mon, 28 Jul 2025 10:13:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6394825524D;
+	Mon, 28 Jul 2025 10:14:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HergTxt5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mWPJg6TU"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF632E36E2;
-	Mon, 28 Jul 2025 10:13:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B75E6156F4A;
+	Mon, 28 Jul 2025 10:14:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753697637; cv=none; b=ua64LXAyxjG++7brrSMDcpD2HiIzO/27tsyrQ3o7orNXFjNKWy1FUQ+sPQwzJXrZURfwZUMCtsGxxWLqgRsou0DUPfHGw4c0N0NXqgCgt7Y/hYaFdF9iZOvIP16W2MMVl+z5pRmmtMVI3Hkl3nrg0bBU3e6TchCyFmnyPPzLmkE=
+	t=1753697697; cv=none; b=C0pBDKYWCeCB0Eyl22tMwzVkLxChXkExur6V2nIVYfOD7fWtSKFwTsKa50L6/5pvaqcdksbAzuugkx2vKMvy2NrQvRKRoKwEk0V07AKN6+C68+PvkmGwS0mhpW8FakIR8ROxhnBdPBCGQ34S0nnsLbEEzIZKAvjeWxrJ9GVzmHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753697637; c=relaxed/simple;
-	bh=daNJNlAwuAlAmQ7p/YMaL/6tdKQoOCGv84U1fRIrrag=;
+	s=arc-20240116; t=1753697697; c=relaxed/simple;
+	bh=Qmfdssha0pQC/Q7+oh1hSuVB4LZ1IZAFEMrXqsQ8Udg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A6nUt6t+C2sIbb/10eYuIe028nm4E25SBW/apXxR2cnNpfnrQlOVVoS1X3B0OkOxUB0WKbwPuIs0g/XQ9Bp+PSbr4fW4ZQRisk2m3oNeFFi93ZYUT04O2IS+6tBZ3Xzocl+8TlMMrk1BbwYViTXA3MxrXAIVvSpTyL7o5wNRNIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HergTxt5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BE1BC4CEE7;
-	Mon, 28 Jul 2025 10:13:35 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=puagPD+BGBvfRlOfuV1+s8lcWllpqZnQmqrE+ScRCyhc1RxXsCYRShxQHVjPqWM31kJT01ncdbI8gfCMO1EpdwOyqHFqgaNmp/w34Fdem79K2bSt0McauJBJA86syEqtxmzlA1O2Z7cT6s4ZOTL1mQ8AOHBhTSTTMClLfw3JO4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mWPJg6TU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B98B9C4CEE7;
+	Mon, 28 Jul 2025 10:14:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753697637;
-	bh=daNJNlAwuAlAmQ7p/YMaL/6tdKQoOCGv84U1fRIrrag=;
+	s=k20201202; t=1753697697;
+	bh=Qmfdssha0pQC/Q7+oh1hSuVB4LZ1IZAFEMrXqsQ8Udg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HergTxt5kk4TR3TSd1NLJ1RsWKClShrSfD+8qw6wWjTmWoGROlYKuFOej/vLB4FQ4
-	 kBRBH9motJGn7ADDkbzqwuXEzssSs4HSm0g6QrRwxL5ESr7Gq0sgeXo1ZWEkcFxA5c
-	 38uGB+I6b3eutvofz1hgrZKjHL3yln6PLYAfi1YdtEdmUZQsbY2TYBPgSDAhDWOQe0
-	 E3olCvXGndz1IVvIh5zg193asbIOrIhcnErpIdIC0UnddIgd5y8jEbLizZ3A7VUBRx
-	 f5Aq4u9AoD8s/z97FIlq8gE1GGghk4A8DXRN+mj7vokix4E+z67ExqlxbdFqPuKVtZ
-	 kq57cj7+KekTw==
-Date: Mon, 28 Jul 2025 13:13:32 +0300
+	b=mWPJg6TUX4DvdY/7ZlZ5rFSxlzfkXMLo6Y+4tJzAIpixUbN/1b3g/3LhJwM+QGT9V
+	 uJpNPDJxKzps8hBfVhIw+Ar253PhuhPH9XqK2iBOH8H/iE3BNaN7/eYIvJHTaNXjQa
+	 hdOnEU/6eYupi4bro/sil1dpHZNrjqHO8dowC+2pGzJfK08C+xlUFj5fKXMjTle5HQ
+	 OorQ9lNK64e0YUvB+ZA3x6Nm9sGSfI7n4gnFt1wkTrlRxQn1+aJb/DV1lHvsH7vOI/
+	 2HOKB28YAvJ+GbNzrz7lc2ML3PQpAjmBievnS9vJgT7vMaSMHRWuBoWtZYeBVnw0NN
+	 l3svxY9hF4UHg==
+Date: Mon, 28 Jul 2025 13:14:31 +0300
 From: Mike Rapoport <rppt@kernel.org>
 To: Pasha Tatashin <pasha.tatashin@soleen.com>
 Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
@@ -72,10 +72,11 @@ Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
 	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
 	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com,
 	leonro@nvidia.com, witu@nvidia.com
-Subject: Re: [PATCH v2 01/32] kho: init new_physxa->phys_bits to fix lockdep
-Message-ID: <aIdNTN1qd0dTvsQm@kernel.org>
+Subject: Re: [PATCH v2 02/32] kho: mm: Don't allow deferred struct page with
+ KHO
+Message-ID: <aIdNh-qqSqSUIr2V@kernel.org>
 References: <20250723144649.1696299-1-pasha.tatashin@soleen.com>
- <20250723144649.1696299-2-pasha.tatashin@soleen.com>
+ <20250723144649.1696299-3-pasha.tatashin@soleen.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -84,95 +85,42 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250723144649.1696299-2-pasha.tatashin@soleen.com>
+In-Reply-To: <20250723144649.1696299-3-pasha.tatashin@soleen.com>
 
-On Wed, Jul 23, 2025 at 02:46:14PM +0000, Pasha Tatashin wrote:
-> Lockdep shows the following warning:
+On Wed, Jul 23, 2025 at 02:46:15PM +0000, Pasha Tatashin wrote:
+> KHO uses struct pages for the preserved memory early in boot, however,
+> with deferred struct page initialization, only a small portion of
+> memory has properly initialized struct pages.
 > 
-> INFO: trying to register non-static key.
-> The code is fine but needs lockdep annotation, or maybe
-> you didn't initialize this object before use?
-> turning off the locking correctness validator.
+> This problem was detected where vmemmap is poisoned, and illegal flag
+> combinations are detected.
 > 
-> [<ffffffff810133a6>] dump_stack_lvl+0x66/0xa0
-> [<ffffffff8136012c>] assign_lock_key+0x10c/0x120
-> [<ffffffff81358bb4>] register_lock_class+0xf4/0x2f0
-> [<ffffffff813597ff>] __lock_acquire+0x7f/0x2c40
-> [<ffffffff81360cb0>] ? __pfx_hlock_conflict+0x10/0x10
-> [<ffffffff811707be>] ? native_flush_tlb_global+0x8e/0xa0
-> [<ffffffff8117096e>] ? __flush_tlb_all+0x4e/0xa0
-> [<ffffffff81172fc2>] ? __kernel_map_pages+0x112/0x140
-> [<ffffffff813ec327>] ? xa_load_or_alloc+0x67/0xe0
-> [<ffffffff81359556>] lock_acquire+0xe6/0x280
-> [<ffffffff813ec327>] ? xa_load_or_alloc+0x67/0xe0
-> [<ffffffff8100b9e0>] _raw_spin_lock+0x30/0x40
-> [<ffffffff813ec327>] ? xa_load_or_alloc+0x67/0xe0
-> [<ffffffff813ec327>] xa_load_or_alloc+0x67/0xe0
-> [<ffffffff813eb4c0>] kho_preserve_folio+0x90/0x100
-> [<ffffffff813ebb7f>] __kho_finalize+0xcf/0x400
-> [<ffffffff813ebef4>] kho_finalize+0x34/0x70
+> Don't allow them to be enabled together, and later we will have to
+> teach KHO to work properly with deferred struct page init kernel
+> feature.
 > 
-> This is becase xa has its own lock, that is not initialized in
-> xa_load_or_alloc.
+> Fixes: 990a950fe8fd ("kexec: add config option for KHO")
 > 
-> Modifiy __kho_preserve_order(), to properly call
-> xa_init(&new_physxa->phys_bits);
-> 
-> Fixes: fc33e4b44b27 ("kexec: enable KHO support for memory preservation")
 > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-> ---
->  kernel/kexec_handover.c | 29 +++++++++++++++++++++++++----
->  1 file changed, 25 insertions(+), 4 deletions(-)
-> 
-> diff --git a/kernel/kexec_handover.c b/kernel/kexec_handover.c
-> index 5a21dbe17950..1ff6b242f98c 100644
-> --- a/kernel/kexec_handover.c
-> +++ b/kernel/kexec_handover.c
-> @@ -144,14 +144,35 @@ static int __kho_preserve_order(struct kho_mem_track *track, unsigned long pfn,
->  				unsigned int order)
->  {
->  	struct kho_mem_phys_bits *bits;
-> -	struct kho_mem_phys *physxa;
-> +	struct kho_mem_phys *physxa, *new_physxa;
->  	const unsigned long pfn_high = pfn >> order;
->  
->  	might_sleep();
->  
-> -	physxa = xa_load_or_alloc(&track->orders, order, sizeof(*physxa));
-> -	if (IS_ERR(physxa))
-> -		return PTR_ERR(physxa);
-> +	physxa = xa_load(&track->orders, order);
-> +	if (!physxa) {
-> +		new_physxa = kzalloc(sizeof(*physxa), GFP_KERNEL);
-> +		if (!new_physxa)
-> +			return -ENOMEM;
-> +
-> +		xa_init(&new_physxa->phys_bits);
-> +		physxa = xa_cmpxchg(&track->orders, order, NULL, new_physxa,
-> +				    GFP_KERNEL);
-> +		if (xa_is_err(physxa)) {
-> +			int err_ret = xa_err(physxa);
-
-Just int err should be fine here, otherwise
 
 Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
-> +
-> +			xa_destroy(&new_physxa->phys_bits);
-> +			kfree(new_physxa);
-> +
-> +			return err_ret;
-> +		}
-> +		if (physxa) {
-> +			xa_destroy(&new_physxa->phys_bits);
-> +			kfree(new_physxa);
-> +		} else {
-> +			physxa = new_physxa;
-> +		}
-> +	}
->  
->  	bits = xa_load_or_alloc(&physxa->phys_bits, pfn_high / PRESERVE_BITS,
->  				sizeof(*bits));
+> ---
+>  kernel/Kconfig.kexec | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/kernel/Kconfig.kexec b/kernel/Kconfig.kexec
+> index 2ee603a98813..1224dd937df0 100644
+> --- a/kernel/Kconfig.kexec
+> +++ b/kernel/Kconfig.kexec
+> @@ -97,6 +97,7 @@ config KEXEC_JUMP
+>  config KEXEC_HANDOVER
+>  	bool "kexec handover"
+>  	depends on ARCH_SUPPORTS_KEXEC_HANDOVER && ARCH_SUPPORTS_KEXEC_FILE
+> +	depends on !DEFERRED_STRUCT_PAGE_INIT
+>  	select MEMBLOCK_KHO_SCRATCH
+>  	select KEXEC_FILE
+>  	select DEBUG_FS
 > -- 
 > 2.50.0.727.gbf7dc18ff4-goog
 > 
