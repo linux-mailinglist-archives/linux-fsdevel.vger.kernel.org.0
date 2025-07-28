@@ -1,132 +1,141 @@
-Return-Path: <linux-fsdevel+bounces-56121-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56124-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9044B136D8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Jul 2025 10:40:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67613B136F8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Jul 2025 10:50:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFFB9175FB5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Jul 2025 08:40:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42DC318923D8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Jul 2025 08:50:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39BA0225795;
-	Mon, 28 Jul 2025 08:40:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84CE122D9F7;
+	Mon, 28 Jul 2025 08:50:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="S8+76Hp8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YHDogO4p"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C91DE2AE68;
-	Mon, 28 Jul 2025 08:40:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5285F21D5B5;
+	Mon, 28 Jul 2025 08:49:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753692030; cv=none; b=I9U+8K3bmA7flyAuo6vAkeEqhXOWC7cOpLQ0bEA3rQT9nrddkBqSLJB4q0D/QBhA16dhxP64esfyXrQExP6TMRoBJrrvzhHzmturkHNzMFqvVzuSL9oi1EqUuKzfChj6CUDvRCM/eQ/0fq/krCxSEWAFZkFXLtnZ3fJlCk7/aHk=
+	t=1753692600; cv=none; b=uDL+uEB5irk1YdMN6sGyHX5YUKAw4w5ylos5qfRx84RTEJ9TqWaXE4Fm0kTsn3/cho5sJcd2HqbOGi2XVLVxajn3bgG4kDlG9jVUaSHbpZtl3hZtuwN6uJP48qRI66a5IvCjmuoJ3Hu+zmBAD8u7uzHEwIcNZyt+DtZKnqOO4kI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753692030; c=relaxed/simple;
-	bh=8HXJmQ/04NJvw6kus97NYmIgyj/MJ6DycDjPq7oVA2E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kb6mHmOViecyUxjpwZ4EjiuoHusFyA9k+5cPiwesto+ZxhQZXCdgltuK/7U7sWVJvFXSXSIP3ZbJyo2wk7+0UtTs95ikV6qyrbEJJkRSf3Vhx0qxFJEcmeNxJe2t01OfV90lm8hHmClXJwEJkhc57oBTjASFUaGd2Yl5A24Crrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=S8+76Hp8; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=zk
-	iIDNJ189UN3Gvigro6HmhFmr3/xqt0rx4GudPl97g=; b=S8+76Hp8/WS9fIVESB
-	XjqzjYH3q5dvVgttmr85KXXmZkxQv/Fc7tP6X/PEQclJaJW1leuYolTz4fzc3QGh
-	I9O54yDiJP9u6z0xuvBlBMMBl+L556ix+mYS6KtqPknJ2qUUuZGHKNtKc6OY80u0
-	FY1gdO3Ye056LnWIzNN/offTU=
-Received: from czl-ubuntu-pc.. (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id PSgvCgAH9a9hN4doAzUWCQ--.8415S4;
-	Mon, 28 Jul 2025 16:40:03 +0800 (CST)
-From: Chi Zhiling <chizhiling@163.com>
-To: willy@infradead.org,
-	akpm@linux-foundation.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Chi Zhiling <chizhiling@kylinos.cn>
-Subject: [PATCH v1 2/2] mm/filemap: Skip non-uptodate folio if there are available folios
-Date: Mon, 28 Jul 2025 16:39:52 +0800
-Message-ID: <20250728083952.75518-3-chizhiling@163.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250728083952.75518-1-chizhiling@163.com>
-References: <20250728083952.75518-1-chizhiling@163.com>
+	s=arc-20240116; t=1753692600; c=relaxed/simple;
+	bh=TpJPGxKfvXvAjbAFEaZo7FdPosOGcKNZ9WkAuqWCWBc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zi47UniSGorQFmYS3J+fT85ujdLkOLtFu/tgRIo7wpFAQfdv9I8LRDw8iSPRRP2NUHz/uz79BCVS9/w6rO8RLU9R3FnTIn6lUp3ZTjVjs9S5l0Czz/vXOMJZu/2eHTfjVjHRgLSsrc0KH3o4l5uhBe8SKKy6tNFoSSaD7cEhDcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YHDogO4p; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-607cc1a2bd8so7081426a12.2;
+        Mon, 28 Jul 2025 01:49:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753692597; x=1754297397; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nsN7y/1kzG5yx277Iqzf5ufFB3MHq4CNNEmgUnJER1I=;
+        b=YHDogO4puMLsf21k97xqH0JiaE/WAeXozYaPrXMIHXed5fw5VXEv32sawCe7cHPpnW
+         uUvKpZAOVYfndEiUwW43zaB9GzO7LF/myj50W9zpo6svdDF+dALmlOLpd/wYg1Mj1Ksh
+         PPiEet9vnPvnP/MREbLmz1T81Ux4cXIoSvP4eh4PPKe9fRIubEEO07dXejNu6H6xNRCF
+         vp6oWBaxpKY9fj3FKGGlUrMdD61sODMIfjfH7P67SdI7Yx6yN+nIDGXAkrJFLBQiGMjF
+         Ek/rvLTJk6CmoHC/JX0SreBA0f/SM/cC24CRTP0MjPuzeP3lh6vJncw7n5Gn5K7borKa
+         a1pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753692597; x=1754297397;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=nsN7y/1kzG5yx277Iqzf5ufFB3MHq4CNNEmgUnJER1I=;
+        b=m8NRuVLlXbN3H2FEL2c4oIyIpjHbXT06cyFwI8XB+Pmt0VW5gaYUTkLx94fXGpDFEf
+         aFECjr3VIPHbb72zoiFigaHY+rhWqbYeojmybjorZ7M0RGRjuB+Z1THS634OkOSSy0ML
+         6w92zNdvzivXeKF6GPJUHDEwHXq9gCNqGwf/9nIO36ee6Y4zftYNbYnI9xYQjbGbYP+z
+         1tziQHVu3WNOSNz+41T/PXh5E3dx3IN8eTxcRnvM/hoFLPKOjFJ950YJKRg07O6mHSS/
+         pUqrswDRKndgblYIxZt1oN/Nn9PpUMClMl/KTM8PJHKBBum/sjG2Y810tTWXCuzWw8LI
+         cPOw==
+X-Forwarded-Encrypted: i=1; AJvYcCUiaOBGrmvhjoSy14oJPzwA7Av8j2S0uwwTFJ5fJbNO0oMVGnTRU1hDLq47RQnUhRnGCEIvBWO+iDBQRkoF@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYHnu3ZTPi64NBhTLlqyMWGBNeM7JkV8JMvaNgmBMDDXnwBlO1
+	oWcajCe5wTZWEo53MxrzvKosw6JTzfylwjg1gyfNHcJ7ayCEDwjdPNcb
+X-Gm-Gg: ASbGncukadEE65/Kzk/q2ZqDYzJBToTboCEWK2RhluvxmUVdq3JmjkegS5XGOcfLUjs
+	rz4Z0U73ckPcsG156SMH2p2X4T1f4e0dn2i8UYSF3nJPBPmJawZ4Wv1WgEbHt4VqHYbMrbgHLYD
+	Pc6ynqaMaPuYS1zEf1w+eBqZtIecIqrDZPIxOPf1rrMg0rh9UAElXmG4JRpTu0g3DVP5hn/dAwQ
+	OBuXSehGRGPDZeZQHf5ZU2iUZQwCce3R8cHaYiim4vM8uul4TZrLuEG3XzXHkARr/gl9HkX8JSm
+	AVO45Bytp+djHcQJQq0h4nPB8PUxA5Kfx3JyR6bSlQikRAE07hmWs2QvU4QpqkgU9GaJw67X2UJ
+	T7HlYtuysxtBJZO/0bAbtxQ==
+X-Google-Smtp-Source: AGHT+IFaZJsTQLzzOiXfl1Nq1UVtUOTF8P3susmSPp5Bc8zyCjo/DGmP/Cxh+cs7YnmCiD5doe68aA==
+X-Received: by 2002:a17:907:3e10:b0:ae0:d798:2ebd with SMTP id a640c23a62f3a-af61940ce29mr1071644666b.35.1753692596383;
+        Mon, 28 Jul 2025 01:49:56 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af63589ff78sm394541266b.47.2025.07.28.01.49.55
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 28 Jul 2025 01:49:55 -0700 (PDT)
+Date: Mon, 28 Jul 2025 08:49:55 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	xen-devel@lists.xenproject.org, linux-fsdevel@vger.kernel.org,
+	nvdimm@lists.linux.dev, Andrew Morton <akpm@linux-foundation.org>,
+	Juergen Gross <jgross@suse.com>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
+	Hugh Dickins <hughd@google.com>, Oscar Salvador <osalvador@suse.de>,
+	Lance Yang <lance.yang@linux.dev>
+Subject: Re: [PATCH v2 5/9] mm/huge_memory: mark PMD mappings of the huge
+ zero folio special
+Message-ID: <20250728084955.uzobxwoqalcuhk72@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20250717115212.1825089-1-david@redhat.com>
+ <20250717115212.1825089-6-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PSgvCgAH9a9hN4doAzUWCQ--.8415S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW7tFy8WrWDCry7uw4fZry3twb_yoW8Zw1kpF
-	WagwnF93srXFy8Can7AwnruF4Ig39Yyay5Gry5KF95Awn8X3sa9ryIvF15t3W7AryrZr1I
-	qr1Fy340vanYv3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jDtxfUUUUU=
-X-CM-SenderInfo: hfkl6xxlol0wi6rwjhhfrp/xtbBgBSYnWiHLinmMQAAsu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250717115212.1825089-6-david@redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-From: Chi Zhiling <chizhiling@kylinos.cn>
+On Thu, Jul 17, 2025 at 01:52:08PM +0200, David Hildenbrand wrote:
+>The huge zero folio is refcounted (+mapcounted -- is that a word?)
+>differently than "normal" folios, similarly (but different) to the ordinary
+>shared zeropage.
+>
+>For this reason, we special-case these pages in
+>vm_normal_page*/vm_normal_folio*, and only allow selected callers to
+>still use them (e.g., GUP can still take a reference on them).
+>
+>vm_normal_page_pmd() already filters out the huge zero folio. However,
+>so far we are not marking it as special like we do with the ordinary
+>shared zeropage. Let's mark it as special, so we can further refactor
+>vm_normal_page_pmd() and vm_normal_page().
+>
+>While at it, update the doc regarding the shared zero folios.
+>
+>Reviewed-by: Oscar Salvador <osalvador@suse.de>
+>Signed-off-by: David Hildenbrand <david@redhat.com>
 
-When reading data exceeding the maximum IO size, the operation is split
-into multiple IO requests, but the data isn't immediately copied to
-userspace after each IO completion.
+Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
 
-For example, when reading 2560k data from a device with 1280k maximum IO
-size, the following sequence occurs:
-
-1. read 1280k
-2. copy 41 pages and issue read ahead for next 1280k
-3. copy 31 pages to user buffer
-4. wait the next 1280k
-5. copy 8 pages to user buffer
-6. copy 20 folios(64k) to user buffer
-
-The 8 pages in step 5 are copied after the second 1280k completes(step 4)
-due to waiting for a non-uptodate folio in filemap_update_page.
-We can copy the 8 pages before the second 1280k completes(step 4) to
-reduce the latency of this read operation.
-
-After applying the patch, these 8 pages will be copied before the next IO
-completes:
-
-1. read 1280k
-2. copy 41 pages and issue read ahead for next 1280k
-3. copy 31 pages to user buffer
-4. copy 8 pages to user buffer
-5. wait the next 1280k
-6. copy 20 folios(64k) to user buffer
-
-This patch drops a setting of IOCB_NOWAIT for AIO, which is fine because
-filemap_read will set it again for AIO.
-
-The final solution provided by Matthew Wilcox:
-Link: https://lore.kernel.org/linux-fsdevel/aIDy076Sxt544qja@casper.infradead.org/
-
-Suggested-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Signed-off-by: Chi Zhiling <chizhiling@kylinos.cn>
----
- mm/filemap.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 00c30f7f7dc3..d2e07184b281 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2623,9 +2623,10 @@ static int filemap_get_pages(struct kiocb *iocb, size_t count,
- 			goto err;
- 	}
- 	if (!folio_test_uptodate(folio)) {
--		if ((iocb->ki_flags & IOCB_WAITQ) &&
--		    folio_batch_count(fbatch) > 1)
--			iocb->ki_flags |= IOCB_NOWAIT;
-+		if (folio_batch_count(fbatch) > 1) {
-+			err = -EAGAIN;
-+			goto err;
-+		}
- 		err = filemap_update_page(iocb, mapping, count, folio,
- 					  need_uptodate);
- 		if (err)
 -- 
-2.43.0
-
+Wei Yang
+Help you, Help me
 
