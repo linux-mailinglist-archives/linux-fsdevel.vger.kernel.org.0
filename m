@@ -1,183 +1,467 @@
-Return-Path: <linux-fsdevel+bounces-56140-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56141-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D550B13DF1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Jul 2025 17:10:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B062B13DFA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Jul 2025 17:14:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 847063AB8E7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Jul 2025 15:10:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F2D517FAFD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Jul 2025 15:14:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 130F126FA76;
-	Mon, 28 Jul 2025 15:10:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8418F26FA76;
+	Mon, 28 Jul 2025 15:14:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b="rgA+2Xiu";
-	dkim=permerror (0-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b="7w1OAFFb"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IXQDuXwZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.parknet.co.jp (mail.parknet.co.jp [210.171.160.6])
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF0871F1517;
-	Mon, 28 Jul 2025 15:10:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.171.160.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C157635
+	for <linux-fsdevel@vger.kernel.org>; Mon, 28 Jul 2025 15:14:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753715445; cv=none; b=bOTtstLU725tsjJaGT1Bg7Fs6qy9Vrkxp7oiWi8h2qfy8A7ijzPHohbX31aMGhKIWUNzzMFMpJ0Ek/njsdAHZqbFvMXVBdXTIweQPfxeVjdPnvC+VJkAZZJvuD75Kd+lfySkxYKp/d7OKpB9gB5LcnZhXDFbqQ0lfmwF0y0isbw=
+	t=1753715682; cv=none; b=SnWP9QYgVv3teqcd4GLrYGUxtRs2679elNRgVwtetAJ8oxq+LL999meRDIGWrQXxkmwHKXgb784aZv+LVXgN+ABD5n79rlTA2UudJzfE90KyL1FkHDJ4X1vkwvCKSozPy6OjYVMaTPErfczsHZHa2VJZuX16cJysHY7GqNcjrZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753715445; c=relaxed/simple;
-	bh=y3O17yF6OPOSNbZuaED7N7zoZamz2jnz/0qwkNUR9A4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=E/qhxDnMj7pPIyOvr+0pRlKkxO4q9n6GDXqYEuQWO8YFs24EUbYUcRCup+/ClTRYAzmJ5U5amFM8LJxAjr7dt3iBKz7NvMp7t/mDmhoLReJPahGwj6QtVz8vwgVDrA1IRqy4V6wpbnRW60gdBpaAGaWQYLIIPR9qdd0pjlkuP9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mail.parknet.co.jp; spf=pass smtp.mailfrom=parknet.co.jp; dkim=pass (2048-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b=rgA+2Xiu; dkim=permerror (0-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b=7w1OAFFb; arc=none smtp.client-ip=210.171.160.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mail.parknet.co.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=parknet.co.jp
-Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
-	by mail.parknet.co.jp (Postfix) with ESMTPSA id A2EEA2096798;
-	Tue, 29 Jul 2025 00:10:33 +0900 (JST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=parknet.co.jp;
-	s=20250114; t=1753715433;
+	s=arc-20240116; t=1753715682; c=relaxed/simple;
+	bh=3uOVGmNwgK5gxVbeDgyOLkESUku60HgwCyvFC1QrHCg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Q1G5DFkmPIBpPW5dgPBtEqoC3WsXeymwfhqSizZZiLpS/QtANVgaAGVse/pJKrNKFJt48GFgqiHXblVFi0IIvNrgxcDlTn0NIteEDvBWgOQTGiK/j3R0DlFYmX/8aJVyN2YmELtwQvy7wZcCeJbqCJhLU5vFQT72Y1eQ5J9KRdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=IXQDuXwZ; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 28 Jul 2025 11:14:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753715677;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3nk93NjHHk9vOcXrtlULci5a5hCR0YeSKMM2/RWppiI=;
-	b=rgA+2XiuL+QfhYbqXXo/u1z5NoLhNRbSO7LM7dM5/TCBnLzKp3NeOZQtQ9xne6hhZCn3zE
-	WVhv/Rw+E3PA2blSQi2ppskyUJEP7p3IHNMEPHDQNbkrnoeFibmpEHtit1ZBQYw75Ra/zc
-	IqiYeBuqj/BbHe8PUYG+FjZSc0w5F4n8gVLlfPn5R8+uRed7sXLDMb4Zi0eRBUJrc0rtZD
-	tprRkdxFS7RyQrHpYa+cSbeVD96J4YLzjYWxZu/Fa1M+MMDn0moXDlIFtBeOV376qkj83Q
-	ulyBnKT77bSfyykMhWld+HqiZtl5ci2COcS0o3RC1ezkipXx/uuyBR+hcvVCmQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=parknet.co.jp;
-	s=20250114-ed25519; t=1753715433;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3nk93NjHHk9vOcXrtlULci5a5hCR0YeSKMM2/RWppiI=;
-	b=7w1OAFFbI+y9veaNACWCLvIOCF7dtlrKK1SQKfVpn1jW1lyt5hfaWGczuK2H9ftiBKe4X7
-	IQcgNO+mLI+ZxFAA==
-Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
-	by ibmpc.myhome.or.jp (8.18.1/8.18.1/Debian-6) with ESMTPS id 56SFAWsP182221
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Tue, 29 Jul 2025 00:10:33 +0900
-Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
-	by devron.myhome.or.jp (8.18.1/8.18.1/Debian-6) with ESMTPS id 56SFAWib512076
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Tue, 29 Jul 2025 00:10:32 +0900
-Received: (from hirofumi@localhost)
-	by devron.myhome.or.jp (8.18.1/8.18.1/Submit) id 56SFAV9e512074;
-	Tue, 29 Jul 2025 00:10:31 +0900
-From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: syzbot+d3c29ed63db6ddf8406e@syzkaller.appspotmail.com,
-        linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sj1557.seo@samsung.com,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] fat: Prevent the race of read/write the FAT16 and FAT32
- entry
-In-Reply-To: <tencent_E34B081B4A25E3BA9DBBB733019E4E1BD408@qq.com>
-References: <6887321b.a00a0220.b12ec.0096.GAE@google.com>
-	<tencent_E34B081B4A25E3BA9DBBB733019E4E1BD408@qq.com>
-Date: Tue, 29 Jul 2025 00:10:31 +0900
-Message-ID: <874iuwxsew.fsf@mail.parknet.co.jp>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=Vjd+rO5hKnZBaLM1KBwy76vbP9gNplEkFV26xBGir74=;
+	b=IXQDuXwZWbKBcT7spXwSGyfzFd3sQ7WoU0PHQ7DjfbdoMQlNMT+/HtCqX1qoDP0gX9RNEV
+	8OFN+uH5ungPjk12FO9NgFFk7Ff/SUfw9n66bTAg9UDlobz1tLQYdp9R6mkvi13VTEJEnj
+	U7YuK+yHs1oxQZfSA+wkRWcsX8T4vOc=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] bcachefs changes for 6.17
+Message-ID: <22ib5scviwwa7bqeln22w2xm3dlywc4yuactrddhmsntixnghr@wjmmbpxjvipv>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Migadu-Flow: FLOW_OUT
 
-Edward Adam Davis <eadavis@qq.com> writes:
+Schedule notes for users:
 
-> The writer and reader access FAT32 entry without any lock, so the data
-> obtained by the reader is incomplete.
->
-> Add spin lock to solve the race condition that occurs when accessing
-> FAT32 entry.
->
-> FAT16 entry has the same issue and is handled together.
+I've been digging through the bug tracker and polling users to see what
+bugs are still outstanding, and - it's not much.
 
-What is the real issue? Counting free entries doesn't care whether EOF
-(0xffffff) or allocate (0x000068), so it should be same result on both
-case.
+So, the experimental label is coming off in 6.18. 
 
-We may want to use READ_ONCE/WRITE_ONCE though, I can't see the reason
-to add spin_lock.
+As always, if you do hit a bug, please report it.
 
-Thanks.
+-------------------------------
 
-> Reported-by: syzbot+d3c29ed63db6ddf8406e@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=d3c29ed63db6ddf8406e
-> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
-> ---
->  fs/fat/fatent.c | 22 ++++++++++++++++++++--
->  1 file changed, 20 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/fat/fatent.c b/fs/fat/fatent.c
-> index a7061c2ad8e4..0e64875e932c 100644
-> --- a/fs/fat/fatent.c
-> +++ b/fs/fat/fatent.c
-> @@ -19,6 +19,8 @@ struct fatent_operations {
->  };
->  
->  static DEFINE_SPINLOCK(fat12_entry_lock);
-> +static DEFINE_SPINLOCK(fat16_entry_lock);
-> +static DEFINE_SPINLOCK(fat32_entry_lock);
->  
->  static void fat12_ent_blocknr(struct super_block *sb, int entry,
->  			      int *offset, sector_t *blocknr)
-> @@ -137,8 +139,13 @@ static int fat12_ent_get(struct fat_entry *fatent)
->  
->  static int fat16_ent_get(struct fat_entry *fatent)
->  {
-> -	int next = le16_to_cpu(*fatent->u.ent16_p);
-> +	int next;
-> +
-> +	spin_lock(&fat16_entry_lock);
-> +	next = le16_to_cpu(*fatent->u.ent16_p);
->  	WARN_ON((unsigned long)fatent->u.ent16_p & (2 - 1));
-> +	spin_unlock(&fat16_entry_lock);
-> +
->  	if (next >= BAD_FAT16)
->  		next = FAT_ENT_EOF;
->  	return next;
-> @@ -146,8 +153,13 @@ static int fat16_ent_get(struct fat_entry *fatent)
->  
->  static int fat32_ent_get(struct fat_entry *fatent)
->  {
-> -	int next = le32_to_cpu(*fatent->u.ent32_p) & 0x0fffffff;
-> +	int next;
-> +
-> +	spin_lock(&fat32_entry_lock);
-> +	next = le32_to_cpu(*fatent->u.ent32_p) & 0x0fffffff;
->  	WARN_ON((unsigned long)fatent->u.ent32_p & (4 - 1));
-> +	spin_unlock(&fat32_entry_lock);
-> +
->  	if (next >= BAD_FAT32)
->  		next = FAT_ENT_EOF;
->  	return next;
-> @@ -180,15 +192,21 @@ static void fat16_ent_put(struct fat_entry *fatent, int new)
->  	if (new == FAT_ENT_EOF)
->  		new = EOF_FAT16;
->  
-> +	spin_lock(&fat16_entry_lock);
->  	*fatent->u.ent16_p = cpu_to_le16(new);
-> +	spin_unlock(&fat16_entry_lock);
-> +
->  	mark_buffer_dirty_inode(fatent->bhs[0], fatent->fat_inode);
->  }
->  
->  static void fat32_ent_put(struct fat_entry *fatent, int new)
->  {
->  	WARN_ON(new & 0xf0000000);
-> +	spin_lock(&fat32_entry_lock);
->  	new |= le32_to_cpu(*fatent->u.ent32_p) & ~0x0fffffff;
->  	*fatent->u.ent32_p = cpu_to_le32(new);
-> +	spin_unlock(&fat32_entry_lock);
-> +
->  	mark_buffer_dirty_inode(fatent->bhs[0], fatent->fat_inode);
->  }
+The following changes since commit c37495fe3531647db4ae5787a80699ae1438d7cf:
 
--- 
-OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+  bcachefs: Add missing snapshots_seen_add_inorder() (2025-07-24 22:56:37 -0400)
+
+are available in the Git repository at:
+
+  git://evilpiepirate.org/bcachefs.git tags/bcachefs-2025-07-28
+
+for you to fetch changes up to c0d938c16b674bfe9e710579344653b703b92a49:
+
+  bcachefs: Add missing error_throw to bch2_set_version_incompat() (2025-07-25 12:03:48 -0400)
+
+----------------------------------------------------------------
+bcachefs changes for 6.17-rc1
+
+No noteworthy feature work: we're in hard freeze.
+
+Lots of bugfixes. Assorted user visible changes and fixes:
+
+- Fix a major performance bug when deleting many files: this was caused
+  by the key cache caching keys that had been deleted, causing certain
+  lookups in the inode triggers to scan excessively.
+
+- The "io_read_nopromote" counter has been broken out into sub-counters;
+  these can be seen with 'bcachefs fs top' on a recent bcachefs-tools.
+  This helps when diagnosing why reads aren't coming from the cache.
+
+- Congestion tracking is now a bit less aggressive (this controls when
+  we decide to do a promote); this area still needs more work.
+
+- Metadata writes are no longer throttled by writeback throttling
+
+- Nocow writes can now be rebalanced (e.g. background_target,
+  background_compression options)
+
+- (Almost) all recovery passes now have progress indicators.
+
+- Repair improvements: we'll now reconstruct missing inodes if we find
+  contents for that inode (more than one or two keys), not just if the
+  inodes btree was damaged: similarly for 'dirent to missing inode'.
+
+- Btree node tracepoint improvements: they've been converted to more
+  modern printbuf tracepoints, and include significantly more info.
+
+- Fix in-memory accounting going out of sync with the accounting btree
+  when doing accounting updates before going RW.
+
+- BCH_MIN_NR_BUCKETS (minimum number of buckets per device) has been
+  increased from 64 to 512. In the unlikely event that anyone anyone
+  actually was using bcachefs on sub 128M filesystems and doesn't want
+  to lose access (modern tools will format these small filesystems with
+  a more appropriate bucket size), please file a report or contact me.
+
+  (This was just a syzbot issue, so far as I know).
+
+- CLASS()/guard() conversion: a great deal of code has been converted to
+  the new __cleanup based resource handling, and away from 'goto err'
+  cleanup.
+
+----------------------------------------------------------------
+Alan Huang (5):
+      bcachefs: Don't memcpy more than needed
+      bcachefs: Refactor trans->mem allocation
+      bcachefs: Shut up clang warning
+      bcachefs: Don't lock exec_update_lock
+      bcachefs: Use user_backed_iter instead of iter_is_iovec
+
+Anindya Sundar Gayen (1):
+      bcachefs: remove extraneous ; after statements
+
+George Hu (1):
+      bcachefs: use union for bch_compression_opt to make encode & decode easier
+
+Kent Overstreet (193):
+      bcachefs: Fix UAF by journal write path
+      bcachefs: async_objs: update iter pos after obj printed
+      bcachefs: fsck: dir_loop, subvol_loop now autofix
+      bcachefs: kill darray_u32_has()
+      bcachefs: Reduce __bch2_btree_node_alloc() stack usage
+      bcachefs: Allow CONFIG_UNICODE=m
+      bcachefs: use scoped_guard() in fast_list.c
+      bcachefs: DEFINE_CLASS()es for dev refcounts
+      bcachefs: More errcode conversions
+      bcachefs: add an unlikely() to trans_begin()
+      bcachefs: Plumb trans_kmalloc ip to trans_log_msg
+      bcachefs: Don't log error twice in allocator async repair
+      bcachefs: bch2_trans_has_updates()
+      bcachefs: Improve inode deletion
+      bcachefs: Don't peek key cache unless we have a real key
+      bcachefs: Evict/bypass key cache when deleting
+      bcachefs: -o fix_errors may now be used without -o fsck
+      bcachefs: Improved btree node tracepoints
+      bcachefs: Finish error_throw tracepoints
+      bcachefs: Improve inode_create behaviour on old filesystems
+      bcachefs: Before removing dangling dirents, check for contents
+      bcachefs: check_key_has_inode() reconstructs more aggressively
+      bcachefs: bch_fs.devs_removed
+      bcachefs: ptr_to_removed_device
+      bcachefs: bch2_journal_entry_missing_range()
+      bcachefs: Faster checking for missing journal entries
+      bcachefs: Add missing bch2_log_msg_start()
+      bcachefs: Print errcode when bch2_read_extent() sees error
+      bcachefs: Fix error message in buffered read path
+      bcachefs: Debug param for injecting btree node corruption on read
+      bcachefs: device add now properly sets c->online_devs
+      bcachefs: silence userspace build warning
+      bcachefs: Update path flags cleanups
+      bcachefs: add missing log message newline
+      bcachefs: add missing includes
+      bcachefs: silence userspace build warning
+      bcachefs: trace_data_update_done_no_rw_devs
+      bcachefs: use kvzalloc() for journal bios
+      bcachefs: Improve nopromote visibility
+      bcachefs: unsigned -> enum bch_trans_commit_flags
+      bcachefs: __bch2_btree_node_alloc() now respects target
+      bcachefs: bch2_btree_write_buffer_insert_checks()
+      bcachefs: don't call get_update_rebalance_opts() on btree ptrs
+      bcachefs: kill bch2_err_str() BUG_ON()
+      bcachefs: bch2_read_bio_to_text(): tabstops
+      bcachefs: kill __bch2_print_str()
+      bcachefs: bch_log()
+      bcachefs: c->loglevel
+      bcachefs: Zero list_idx when deleting from async obj lists
+      bcachefs: fix device add before fs started
+      bcachefs: fast_list: warn if non-empty on exit
+      bcachefs: bch2_journal_key_insert_take() accumulates accounting updates
+      bcachefs: bch2_fs_initialize() now runs journal replay
+      bcachefs: do_bch2_trans_commit_to_journal_replay handles accounting
+      bcachefs: bch2_set_nr_journal_buckets_iter() always marks
+      bcachefs: bch2_fs_initialize() initializes before going RW
+      bcachefs: Improve bch2_read_bio_to_text()
+      bcachefs: Fix replicas max options
+      bcachefs: Better congestion visibilty in sysfs
+      bcachefs: nopromote sub counters
+      bcachefs: make congestion tracking less aggressive
+      bcachefs: __bset_aux_tree_verify_ro()
+      bcachefs: Add missing bch2_bkey_set_needs_rebalance to nocow write path
+      bcachefs: delete useless null ptr check
+      bcachefs: Also create snapshots with CAP_FOWNER
+      bcachefs: Fix missing compat code in check_subvol()
+      bcachefs: Fix UAF in check_dirent()
+      bcachefs: Fix journal assertion
+      bcachefs: Fix __bch2_fs_read_write() error path
+      bcachefs: Give debugfs cached btree nodes better indentation
+      bcachefs: Silence clang warning about enum types
+      bcachefs: kill bkey_journal_seq()
+      bcachefs: don't pass bch_ioctl_data by value
+      bcachefs: better device too small error message
+      bcachefs: check_i_sectors now prints paths
+      bcachefs: simplify bch2_trans_do()
+      bcachefs: DEFINE_GUARD(printbuf_atomic)
+      bcachefs: convert super-io.c to CLASS/guards
+      bcachefs: convert super.c to CLASS/guards
+      bcachefs: convert acl.c to CLASS/guards
+      bcachefs: convert xattr.c to CLASS/guards
+      bcachefs: convert thread_with_file.c to CLASS/guards
+      bcachefs: convert unit tests to CLASS/guards
+      bcachefs: convert util.[ch] to CLASS/guards
+      bcachefs: convert six.c to guards
+      bcachefs: convert progress.c to guards
+      bcachefs: convert enumerated_ref.c to guards
+      bcachefs: convert opts.c to CLASS/guards
+      bcachefs: convert sysfs.c to CLASS/guards
+      bcachefs: convert buckets_waiting_for_journal.c to CLASS/guards
+      bcachefs: convert quota.c to CLASS/guards
+      bcachefs: convert sb-clean.c to CLASS/guards
+      bcachefs: convert sb-downgrade.c to CLASS/guards
+      bcachefs: convert sb-errors.c to CLASS/guards
+      bcachefs: convert sb-members.c to CLASS/guards
+      bcachefs: convert clock.c to CLASS/guards
+      bcachefs: convert debug.c to CLASS/guards
+      bcachefs: convert nocow_locking.c to CLASS/guards
+      bcachefs: convert replicas.c to CLASS/guards
+      bcachefs: convert bset.c to CLASS
+      bcachefs: convert bkey.c to CLASS
+      bcachefs: convert chardev.c to CLASS
+      bcachefs: convert fs-ioctl.c to CLASS/guards
+      bcachefs: convert disk_groups.c to guards
+      bcachefs: convert checksum.c to CLASS/guards
+      bcachefs: convert compress.c to guards
+      bcachefs: convert rebalance.c to CLASS/guards
+      bcachefs: convert migrate.c to CLASS/guards
+      bcachefs: convert move.c to CLASS/guards
+      bcachefs: convert movinggc.c to CLASS
+      bcachefs: convert data_update.c to CLASS/guards
+      bcachefs: convert reflink.c to CLASS/guards
+      bcachefs: convert snapshot.c to CLASS/guards
+      bcachefs: convert subvolume.c to CLASS/guards
+      bcachefs: convert str_hash.c to CLASS
+      bcachefs: convert recovery_passes.c to CLASS/guards
+      bcachefs: convert recovery.c to CLASS/guards
+      bcachefs: convert lru.c to CLASS
+      bcachefs: convert extents.c to guards
+      bcachefs: convert logged_ops.c to CLASS
+      bcachefs: convert inode.c to CLASS
+      bcachefs: convert dirent.c to CLASS
+      bcachefs: convert namei.c to CLASS
+      bcachefs: convert io_read.c to CLASS/guards
+      bcachefs: convert io_write.c to CLASS/guards
+      bcachefs: convert io_misc.c to CLASS/guards
+      bcachefs: convert fsck.c to CLASS/guards
+      bcachefs: convert disk_accounting.c to CLASS/guards
+      bcachefs: convert buckets.c to CLASS/guards
+      bcachefs: convert ec.c to CLASS/guards
+      bcachefs: convert backpointers.c to CLASS/guards
+      bcachefs: convert alloc_background.c to CLASS/guards
+      bcachefs: convert alloc_foreground.c to CLASS/guards
+      bcachefs: convert fs.c to CLASS/guards
+      bcachefs: convert fs-io.c to CLASS/guards
+      bcachefs: convert fs-io-pagecache.c to CLASS/guards
+      bcachefs: convert fs-io-buffered.c to CLASS/guards
+      bcachefs: convert fs-io-direct.c to CLASS/guards
+      bcachefs: convert btree_node_scan.c to CLASS/guards
+      bcachefs: convert journal.c to CLASS/guards
+      bcachefs: convert journal_io.c to CLASS/guards
+      bcachefs: convert journal_reclaim.c to CLASS/guards
+      bcachefs: convert journal_seq_blacklist.c to CLASS/guards
+      bcachefs: convert btree_cache.c to CLASS/guards
+      bcachefs: convert btree_gc.c to CLASS/guards
+      bcachefs: convert btree_write_buffer.c to CLASS/guards
+      bcachefs: convert btree_update.c to CLASS/guards
+      bcachefs: convert btree_update_interior.c to CLASS/guards
+      bcachefs: convert btree_trans_commit.c to CLASS/guards
+      bcachefs: convert btree_key_cache.c to CLASS/guards
+      bcachefs: convert btree_io.c to CLASS/guards
+      bcachefs: convert btree_iter.c to CLASS/guards
+      bcachefs: convert btree_locking.c to CLASS/guards
+      bcachefs: convert btree_journal_iter.c to CLASS/guards
+      bcachefs: bch2_run_recovery_pass() now prints errors
+      bcachefs: convert error.c to CLASS/guards
+      bcachefs: Fix padding zeroout when creating casefolded dirents
+      bcachefs: Don't call bch2_recovery_pass_want_ratelimit without sb_lock
+      bcachefs: Tell wbt throttling not to throttle metadata writes
+      bcachefs: Kill redundant write_super() when running recovery passes
+      bcachefs: Add comment to journal_flush_done()
+      bcachefs: Don't emit empty journal entry for accounting
+      bcachefs: sysfs trigger_btree_write_buffer_flush
+      closures: Improve warnings on bad put
+      bcachefs: Fix unhandled key type in fiemap_fill_extent
+      bcachefs: Ensure we don't return with closure on waitlist
+      bcachefs: bch2_move_data() now walks btree nodes
+      bcachefs: rereplicate flushes interior updates
+      bcachefs: can_use_btree_node()
+      bcachefs: Fix error handling in btree_iter_peek_slot
+      bcachefs: fix assert in bch2_btree_path_traverse_cached()
+      bcachefs: Fix allocate_dropping_locks() usage
+      bcachefs: log devices we're scanning in btree node scan
+      bcachefs: Fix refs to undefined fields in __bch2_alloc_v4_to_text()
+      bcachefs: fix check_extent_overbig() call
+      bcachefs: Convert topology repair errs to standard error codes
+      bcachefs: Fix __bch2_alloc_to_v4 copy
+      bcachefs: Flush btree_interior_update_work before freeing fs
+      bcachefs: Only track read latency for congestion tracking
+      bcachefs: Clean up btree_node_read_work() error handling
+      bcachefs: Ensure pick_read_device() returns error for btree pointers
+      bcachefs: btree_lost_data: mark a few more errors for silent fixing
+      bcachefs: Don't allow mounting with crazy numbers of dirty journal entries
+      bcachefs: Add pass_done to recovery_pass_status_to_text()
+      bcachefs: Increase BCH_MIN_NR_NBUCKETS
+      bcachefs: Hook up progress indicators for most recovery passes
+      bcachefs: recovery_pass_will_run()
+      bcachefs: journal_entry_btree_keys_to_text() is more careful
+      bcachefs: dirent_to_text() now uses prt_bytes()
+      bcachefs: Add missing ei_last_dirtied update
+      bcachefs: snapshots: pass snapshot_table where appropriate
+      bcachefs: live_child() no longer uses recursion
+      bcachefs: Add missing error_throw to bch2_set_version_incompat()
+
+Nikita Ofitserov (1):
+      bcachefs: Suppress unnecessary inode_i_sectors_wrong fsck error
+
+Youling Tang (2):
+      bcachefs: Simplify bch2_bio_map()
+      bcachefs: Use bio_add_folio_nofail() for unfailable operations
+
+ fs/bcachefs/acl.c                         |  19 +-
+ fs/bcachefs/alloc_background.c            | 300 +++++++---------
+ fs/bcachefs/alloc_background.h            |   9 +-
+ fs/bcachefs/alloc_foreground.c            | 209 +++++------
+ fs/bcachefs/alloc_foreground.h            |   9 +-
+ fs/bcachefs/async_objs.c                  |  29 +-
+ fs/bcachefs/async_objs.h                  |   7 +-
+ fs/bcachefs/async_objs_types.h            |   2 +-
+ fs/bcachefs/backpointers.c                |  63 ++--
+ fs/bcachefs/bcachefs.h                    |  72 ++--
+ fs/bcachefs/bkey.c                        |   4 +-
+ fs/bcachefs/bset.c                        |  74 ++--
+ fs/bcachefs/btree_cache.c                 |  38 +-
+ fs/bcachefs/btree_cache.h                 |  11 +
+ fs/bcachefs/btree_gc.c                    | 122 +++----
+ fs/bcachefs/btree_io.c                    | 119 ++++---
+ fs/bcachefs/btree_iter.c                  | 129 ++++---
+ fs/bcachefs/btree_iter.h                  |  22 +-
+ fs/bcachefs/btree_journal_iter.c          |  20 +-
+ fs/bcachefs/btree_key_cache.c             |  16 +-
+ fs/bcachefs/btree_locking.c               |  17 +-
+ fs/bcachefs/btree_node_scan.c             |  32 +-
+ fs/bcachefs/btree_trans_commit.c          | 121 ++++---
+ fs/bcachefs/btree_types.h                 |  22 +-
+ fs/bcachefs/btree_update.c                | 171 +++++----
+ fs/bcachefs/btree_update.h                |  79 +++--
+ fs/bcachefs/btree_update_interior.c       | 335 +++++++++---------
+ fs/bcachefs/btree_update_interior.h       |  12 +-
+ fs/bcachefs/btree_write_buffer.c          |  45 ++-
+ fs/bcachefs/btree_write_buffer.h          |   6 +-
+ fs/bcachefs/buckets.c                     | 212 +++++------
+ fs/bcachefs/buckets_waiting_for_journal.c |  30 +-
+ fs/bcachefs/chardev.c                     | 120 ++-----
+ fs/bcachefs/checksum.c                    |  54 ++-
+ fs/bcachefs/clock.c                       |  17 +-
+ fs/bcachefs/compress.c                    |  29 +-
+ fs/bcachefs/compress.h                    |  36 +-
+ fs/bcachefs/data_update.c                 |  33 +-
+ fs/bcachefs/debug.c                       |  92 +++--
+ fs/bcachefs/dirent.c                      |  42 +--
+ fs/bcachefs/dirent.h                      |   4 +-
+ fs/bcachefs/disk_accounting.c             | 266 +++++++-------
+ fs/bcachefs/disk_accounting.h             |   9 +-
+ fs/bcachefs/disk_groups.c                 |  27 +-
+ fs/bcachefs/ec.c                          | 239 +++++--------
+ fs/bcachefs/ec.h                          |   2 +-
+ fs/bcachefs/enumerated_ref.c              |   4 +-
+ fs/bcachefs/errcode.c                     |   3 +-
+ fs/bcachefs/errcode.h                     |  13 +
+ fs/bcachefs/error.c                       |  65 ++--
+ fs/bcachefs/extents.c                     |  38 +-
+ fs/bcachefs/extents.h                     |   3 +
+ fs/bcachefs/fast_list.c                   |  32 +-
+ fs/bcachefs/fast_list.h                   |   2 +-
+ fs/bcachefs/fs-io-buffered.c              |  79 ++---
+ fs/bcachefs/fs-io-direct.c                |  11 +-
+ fs/bcachefs/fs-io-pagecache.c             |  55 ++-
+ fs/bcachefs/fs-io.c                       | 127 ++++---
+ fs/bcachefs/fs-io.h                       |  19 +-
+ fs/bcachefs/fs-ioctl.c                    |  33 +-
+ fs/bcachefs/fs.c                          | 192 +++++-----
+ fs/bcachefs/fsck.c                        | 427 ++++++++++++----------
+ fs/bcachefs/inode.c                       | 101 +++---
+ fs/bcachefs/io_misc.c                     |  36 +-
+ fs/bcachefs/io_read.c                     | 157 +++++---
+ fs/bcachefs/io_read.h                     |  20 +-
+ fs/bcachefs/io_write.c                    |  46 +--
+ fs/bcachefs/journal.c                     | 253 ++++++-------
+ fs/bcachefs/journal.h                     |   3 +-
+ fs/bcachefs/journal_io.c                  | 248 ++++++-------
+ fs/bcachefs/journal_io.h                  |   7 +
+ fs/bcachefs/journal_reclaim.c             | 220 ++++++------
+ fs/bcachefs/journal_seq_blacklist.c       |  56 ++-
+ fs/bcachefs/journal_seq_blacklist.h       |   3 +
+ fs/bcachefs/logged_ops.c                  |  14 +-
+ fs/bcachefs/lru.c                         |  24 +-
+ fs/bcachefs/migrate.c                     |  21 +-
+ fs/bcachefs/move.c                        | 218 +++++-------
+ fs/bcachefs/move.h                        |  14 +-
+ fs/bcachefs/movinggc.c                    |   6 +-
+ fs/bcachefs/namei.c                       |  26 +-
+ fs/bcachefs/nocow_locking.c               |  10 +-
+ fs/bcachefs/opts.c                        |  33 +-
+ fs/bcachefs/opts.h                        |   8 +-
+ fs/bcachefs/printbuf.h                    |   4 +
+ fs/bcachefs/progress.c                    |   6 +-
+ fs/bcachefs/progress.h                    |   3 +
+ fs/bcachefs/quota.c                       |  96 ++---
+ fs/bcachefs/rebalance.c                   |  57 ++-
+ fs/bcachefs/recovery.c                    | 213 +++++------
+ fs/bcachefs/recovery_passes.c             |  68 ++--
+ fs/bcachefs/recovery_passes.h             |   9 +-
+ fs/bcachefs/reflink.c                     |  63 ++--
+ fs/bcachefs/replicas.c                    | 147 ++++----
+ fs/bcachefs/sb-clean.c                    |  36 +-
+ fs/bcachefs/sb-counters_format.h          |   6 +
+ fs/bcachefs/sb-downgrade.c                |  19 +-
+ fs/bcachefs/sb-errors.c                   |  45 +--
+ fs/bcachefs/sb-errors_format.h            |   9 +-
+ fs/bcachefs/sb-members.c                  |  48 ++-
+ fs/bcachefs/sb-members.h                  |  19 +-
+ fs/bcachefs/sb-members_format.h           |   2 +-
+ fs/bcachefs/six.c                         |  21 +-
+ fs/bcachefs/snapshot.c                    | 179 ++++------
+ fs/bcachefs/snapshot.h                    |  32 +-
+ fs/bcachefs/snapshot_types.h              |   2 +-
+ fs/bcachefs/str_hash.c                    |  23 +-
+ fs/bcachefs/str_hash.h                    |   4 +-
+ fs/bcachefs/subvolume.c                   | 106 +++---
+ fs/bcachefs/super-io.c                    |  81 ++---
+ fs/bcachefs/super.c                       | 570 ++++++++++++++----------------
+ fs/bcachefs/sysfs.c                       |  28 +-
+ fs/bcachefs/tests.c                       | 198 +++++------
+ fs/bcachefs/thread_with_file.c            |  52 +--
+ fs/bcachefs/time_stats.c                  |   7 +-
+ fs/bcachefs/trace.h                       | 152 ++------
+ fs/bcachefs/util.c                        |  28 +-
+ fs/bcachefs/util.h                        |  10 +-
+ fs/bcachefs/xattr.c                       |  52 ++-
+ lib/closure.c                             |  12 +-
+ 120 files changed, 3972 insertions(+), 4388 deletions(-)
 
