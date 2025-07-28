@@ -1,89 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-56178-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56179-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60E20B1432D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Jul 2025 22:33:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BDD9B1432E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Jul 2025 22:33:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E8F218C2D1C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Jul 2025 20:33:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9700C163A21
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Jul 2025 20:33:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FF8B283C9D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70054283FD0;
 	Mon, 28 Jul 2025 20:31:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LSoZkg46"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MF5VS5C8"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD37128313D
-	for <linux-fsdevel@vger.kernel.org>; Mon, 28 Jul 2025 20:31:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4326E279358
+	for <linux-fsdevel@vger.kernel.org>; Mon, 28 Jul 2025 20:31:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753734707; cv=none; b=DOBp/8y3mossotJheKmeJq/nJWLNvvBwLb9UO9HPj5Yog4F2IEbOe8JEGTWQHfHDNQDHy7xohC1lt5lq5K1s8HH8lWQ1Kg7qpbO3u2b4KsPOo6E5z2AmI2bAT3urznj02uAYXD0RzfCdT1BcY5e4SmhJPPAMIohm6glS0rkvAKo=
+	t=1753734707; cv=none; b=Soen60+veZAxg+GbPKMFK2P+r1xGhVG4oe70+EX8nWqLk6TN51b4XhYXurrSlmi4yQb4cO2wfQ7i6B8o74J+92vW+y5MvufBfMKGidII9uiW+Bqws9zh3PBU3CZ6dFdv/6TJgevi4r8STw4adLIHteoqmq9VCB3f5nw7/4oqlwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1753734707; c=relaxed/simple;
-	bh=9p3je7ovaq0B8RD2/pr9rtueolxe1jVdbp+fSNss1tA=;
+	bh=hehlWCL4DnH1hXGZwMMuYJcNu8D2DJbAccQcjormcfo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=o/bZPh5jV2acXLuHH1DJlT74pCIKzSgMNJNL2Y8qj27DwpV7E0weMzVzBD/x7uN3dH3Kje+JgVeMDkjDpD9F/EnRTE0rf72M90FWh7+R0amYzxWK59bwaW7iPDkXfvL6bjFjcVePu759y5pSa94+pjecU3/2YPICKF8FGiDDXQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LSoZkg46; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:To:Cc; b=MhvEZuOftZPL92Fo0TZ+CthSsS74OxJO4S9IrYCpBkSbmE3nMabTISHXDw0RV3sBR2MmNO0+MK/vj615DoOL6UHqw6qtp3DDvhDZYT8MemfV0TboHEO3DMoTv1pXejGthUMhSLbqkvknLZ/eaocGgjZ7+pfWDWJy6MVxQa8e38o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MF5VS5C8; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753734704;
+	s=mimecast20190719; t=1753734705;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=QtQJvCPxeTpstVyjgZAbXZc0G2YxyuH7YAlXrLlQnu0=;
-	b=LSoZkg46J91hKY01A7NmOzaGruYz3RcvKn1VvndTcStR3E+bEjGMiGOTJtOkSb0/rAZRkN
-	dzyx8+GqLLwVqYuTfMp66EVHLLpyPfBG7aqXmISwlBrnahfrlnjeev76fW74uI6PWzSsNG
-	f3hsm0IDUnHxgPCHQ5yIuWphMg3+Z6I=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=F+cTONg/x1WR5SJCmcwZqVY3Un6rgLMjRuTOy/YQqvw=;
+	b=MF5VS5C8P88qroqmMOIwhMN6VIhj65MfEUOWJJAu+AF2xatdrdXKfvq/iSkI90QHapx2Sq
+	PI2PlU6Z/ie2UrajdUOo2f01rElpS5LhpkJu/+ZpXuMTnh1217wDi/CNWE1OTPhSypesLe
+	5kDg+8NKfev+OAfN/IB414q1y2zm4Dk=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-331-Xk5vWnoeOJ2AgSktNLhY7w-1; Mon, 28 Jul 2025 16:31:41 -0400
-X-MC-Unique: Xk5vWnoeOJ2AgSktNLhY7w-1
-X-Mimecast-MFC-AGG-ID: Xk5vWnoeOJ2AgSktNLhY7w_1753734701
-Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-612b23a8064so5278454a12.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Jul 2025 13:31:41 -0700 (PDT)
+ us-mta-135-vxMl3CbgP-mbvscgZF3hBQ-1; Mon, 28 Jul 2025 16:31:43 -0400
+X-MC-Unique: vxMl3CbgP-mbvscgZF3hBQ-1
+X-Mimecast-MFC-AGG-ID: vxMl3CbgP-mbvscgZF3hBQ_1753734701
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-ae0cd07eeb2so428607566b.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Jul 2025 13:31:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753734700; x=1754339500;
+        d=1e100.net; s=20230601; t=1753734701; x=1754339501;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QtQJvCPxeTpstVyjgZAbXZc0G2YxyuH7YAlXrLlQnu0=;
-        b=B2ZrcNW5MhsAEXXN+R8aicJezw+agUC9NaUBnU8dfZizfhEp9c2oWeMo6eu45AoTdd
-         4fmMPsjvFGGJpgAAIwc3owGsRT9SU9vZc2CPy3+88nvGXRjlv4++g6/xFXLXpdxSzipi
-         yK5CYiEju2yWP5Vv18v72Wp+6HwcWRIhrNQvadcKMyrRlbp0G5OLdd07Q0O18DQdaSpU
-         QkHGTKf6czUpZYLREDdVncQTCiVNNOge0u7Hu2LILdK5rYSChjsyxizJHlwEusctDN/v
-         P88geSAh8i09/GSpDe0G75KI1DOfyW+FMpnrSDxf6YqFqynV6NXKFWjhXQcXun9IpjMD
-         EbVA==
-X-Forwarded-Encrypted: i=1; AJvYcCXDzKUAWPpQfYN7Clr1HzvohfzZMSvtmU2z1M3dshb7VHbeSt1vU8C6G+USBI4qCxPq3oZSrZw038SCFL9K@vger.kernel.org
-X-Gm-Message-State: AOJu0YxURbkG9Ssgfhop49sqZH2TPMsryc8ES7Xe1Apzsq7diD5VRgpB
-	LJYSJ8jAKaQrPbZKf5WbYnw9pGDNLq4thPvGbwBAJYrlN78ZKLOts6Yx13XAJwKDfhF3P6bWOKk
-	I7zTSY6hsN9MWpiPfA1RcfYxFHH+8k1uuncMNFRaeNUihW/w8YoIPvLIwoPZoqGWL0A==
-X-Gm-Gg: ASbGncsbLI+j2HOy1lxY2U+6MAXE8qn6KE4DGn0dHL0QJKbvWFVmFoueG0+udiR9ZMo
-	jox4pEispqyPjTAtNo18KQjoHB4mKO+B1YN7vJ5A0H5krO8fqkMKtHgShTc4pyQJqemJilYSPwQ
-	3gKtZgsbN1rsI7zTHDaIGBMdSaAfRaJ3Jp+TV0HCPlhbgo+x8L77GswqkoXmYDXow4qkbUN2Q/Q
-	cAm0GmVRUS1ZQjIWUyn0dU8gjCSAUkSpDY9/V2mh/mAr1Oa9sUDSYAVtnzncBoelKEQt24H/ERH
-	AfDFCk5y9ttsJIMfB9WFSQ2O4ncRYTUTybK0xZo+9gI4fw==
-X-Received: by 2002:a05:6402:84e:b0:607:f082:5fbf with SMTP id 4fb4d7f45d1cf-614f1bc4e08mr12085052a12.12.1753734700505;
-        Mon, 28 Jul 2025 13:31:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFEm3mB3ElwGqIqkRyBhO2Z5hZvB74PuXLKq9UDjvFTGDUQy/f5zCpnhAQLNFtZgZRIeyuyWA==
-X-Received: by 2002:a05:6402:84e:b0:607:f082:5fbf with SMTP id 4fb4d7f45d1cf-614f1bc4e08mr12085030a12.12.1753734700033;
+        bh=F+cTONg/x1WR5SJCmcwZqVY3Un6rgLMjRuTOy/YQqvw=;
+        b=QtEaYOY2/1N6BRRTFboLIjWL9dn9G8QN18Eokheq+/Ni3NpN/EO6YVALhfmfJw4Cj4
+         LiJKnZl6hm33r0JJiOzqjvdmIYPP4XOz3n9dbL+/i9aWH9inpW5FyPnLxnL/5/sWKHVJ
+         pkbDpJ9joX7kpWH8GI5OLvkHz+bcBjrAs8L2yeJmtmFXJgM1o0RpkOhgi8xdfpCKEp/V
+         KabSJYXDAEUwej1yKsvU7InvuY+qtsiragCWKZuabnImhEbqveuFapNRuJwXN4GCT/Rx
+         WXWJjQVmbLiXSPNUYkqMH8m2S3ydIcYCxr75HUx9dgMVolqhQWvM+4y5JmoLNEtKrRND
+         WbsA==
+X-Forwarded-Encrypted: i=1; AJvYcCWymasc1CEPFh2PUNfdl59uOmtg6adLglrQp/53kv5k2l8AtUzSspaPQYWyZVUIFiJ0a+deLtqQUz/BPZgQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YybqpPaj4L101jPoXMQ6AQDsIv1RdT7U/WyCvke3iha2HX83/Fo
+	f847OjyD4tp+U65PFVw3xKO72vqUBeCCeJW0eJj1FzswIlZRTAVRGoSyPM+ZFHgDkWK4ua6ksS4
+	mESCS9ZdjvgrdIZtFDFKrVI5aDGPY5WgupDakQKNtZqutGaBuXFI9KIxXD+KCgD3qNw==
+X-Gm-Gg: ASbGncuC1E2XvKgLiMnd+MEIxsvpb62Mp7qr/0+Xi4/kMlfC/GI7Az0E/jvT7hibS0b
+	InDh2/GS2LhyFCJUst5YeIbPGzr3N+/OhLWoKaKtpmTxEG30jUckly4IffrObwdXloRU0WMWlOJ
+	samkR702FV6GW/1u2Yfh3MeI9fD1Bg4luVIhQteAdRz4brhzQcNapZPwrnGNnxNNVJLOqCFXixD
+	Wnn4oDLbkfV3Fq/1s0suJVHhODWBcJNpuTgsw99qv8jdBdlADtkwmXzfLxJYBwm8BCpWguZYlrR
+	c+RxX8atI54rCHkbDTstgHt6nW4NfONNqGweYfKfBlDxPw==
+X-Received: by 2002:a17:907:960c:b0:ae3:5212:c906 with SMTP id a640c23a62f3a-af616d05693mr1403398866b.10.1753734701188;
+        Mon, 28 Jul 2025 13:31:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGQMx6515Qysg+2ceeonp9KrxJ6j3Yt04QTkOPLGdwZHs5oma63j7vjBI22ZBCvngDmor2gpA==
+X-Received: by 2002:a17:907:960c:b0:ae3:5212:c906 with SMTP id a640c23a62f3a-af616d05693mr1403396666b.10.1753734700735;
         Mon, 28 Jul 2025 13:31:40 -0700 (PDT)
 Received: from [127.0.0.2] (ip-217-030-074-039.aim-net.cz. [217.30.74.39])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615226558d3sm2730656a12.45.2025.07.28.13.31.39
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615226558d3sm2730656a12.45.2025.07.28.13.31.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 13:31:39 -0700 (PDT)
+        Mon, 28 Jul 2025 13:31:40 -0700 (PDT)
 From: Andrey Albershteyn <aalbersh@redhat.com>
 X-Google-Original-From: Andrey Albershteyn <aalbersh@kernel.org>
-Date: Mon, 28 Jul 2025 22:30:23 +0200
-Subject: [PATCH RFC 19/29] xfs: disable direct read path for fs-verity
- files
+Date: Mon, 28 Jul 2025 22:30:24 +0200
+Subject: [PATCH RFC 20/29] xfs: disable preallocations for fsverity Merkle
+ tree writes
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -92,71 +92,75 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250728-fsverity-v1-19-9e5443af0e34@kernel.org>
+Message-Id: <20250728-fsverity-v1-20-9e5443af0e34@kernel.org>
 References: <20250728-fsverity-v1-0-9e5443af0e34@kernel.org>
 In-Reply-To: <20250728-fsverity-v1-0-9e5443af0e34@kernel.org>
 To: fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
  linux-xfs@vger.kernel.org, david@fromorbit.com, djwong@kernel.org, 
  ebiggers@kernel.org, hch@lst.de
-Cc: Andrey Albershteyn <aalbersh@redhat.com>
+Cc: Andrey Albershteyn <aalbersh@kernel.org>
 X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1542; i=aalbersh@kernel.org;
- h=from:subject:message-id; bh=pMZQbXtMrVBz6SrzAXMqrLN3V7mq4bHJ3sncK2j8+2g=;
- b=owJ4nJvAy8zAJea2/JXEGuOHHIyn1ZIYMtrvSXxXVRT749GyXdn3V8Wy/1NWLajpunhedsr8p
- PdVBb+qMxk7SlkYxLgYZMUUWdZJa01NKpLKP2JQIw8zh5UJZAgDF6cATOTfKYZ/JpG5x6ae+WG9
- UHzu0bbHp/l1zJR3r2a6/kn4xPYVObVntBj+GeYfWnr/wBwvvidTpB3bFZ1ZZxxvVNr0zeXOi8w
- JTWfd2ACym0xK
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2007; i=aalbersh@kernel.org;
+ h=from:subject:message-id; bh=hehlWCL4DnH1hXGZwMMuYJcNu8D2DJbAccQcjormcfo=;
+ b=owJ4nJvAy8zAJea2/JXEGuOHHIyn1ZIYMtrvSYQcst7EMZH/uvLO7Xneqfu2v2znSnPLyz+vu
+ 8LS2CpfeFlHKQuDGBeDrJgiyzppralJRVL5Rwxq5GHmsDKBDGHg4hSAiUxoZfif3iN7yNq+8uiX
+ 2UEiKrUTV5qcU+PM8A6z0eeZ1vVy+wZWhv9Oj7IedRWtyLef8+6qxeZJD09vsNvmKiv9J+9z3Rt
+ RCQVGAHVsRks=
 X-Developer-Key: i=aalbersh@kernel.org; a=openpgp;
  fpr=AE1B2A9562721A6FC4307C1F46A7EA18AC33E108
 
-From: Andrey Albershteyn <aalbersh@redhat.com>
+While writing Merkle tree, file is read-only and there's no further
+writes except Merkle tree building. The file is truncated beforehand to
+remove any preallocated extents.
 
-The direct path is not supported on verity files. Attempts to use direct
-I/O path on such files should fall back to buffered I/O path.
+The Merkle tree is the only data XFS will write. As we don't want XFS to
+truncate file after we done writing, let's also skip truncation on
+fsverity files. Therefore, we also need to disable preallocations while
+writing merkle tree as we don't want any unused extents past the tree.
 
-Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-[djwong: fix braces]
-Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
 ---
- fs/xfs/xfs_file.c | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+ fs/xfs/xfs_iomap.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index da13162925d9..9680c97ee40f 100644
---- a/fs/xfs/xfs_file.c
-+++ b/fs/xfs/xfs_file.c
-@@ -259,7 +259,8 @@ xfs_file_dax_read(
- 	struct kiocb		*iocb,
- 	struct iov_iter		*to)
- {
--	struct xfs_inode	*ip = XFS_I(iocb->ki_filp->f_mapping->host);
-+	struct inode		*inode = iocb->ki_filp->f_mapping->host;
-+	struct xfs_inode	*ip = XFS_I(inode);
- 	ssize_t			ret = 0;
+diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
+index ff05e6b1b0bb..00ec1a738b39 100644
+--- a/fs/xfs/xfs_iomap.c
++++ b/fs/xfs/xfs_iomap.c
+@@ -32,6 +32,8 @@
+ #include "xfs_rtbitmap.h"
+ #include "xfs_icache.h"
+ #include "xfs_zone_alloc.h"
++#include "xfs_fsverity.h"
++#include <linux/fsverity.h>
  
- 	trace_xfs_file_dax_read(iocb, to);
-@@ -312,10 +313,18 @@ xfs_file_read_iter(
+ #define XFS_ALLOC_ALIGN(mp, off) \
+ 	(((off) >> mp->m_allocsize_log) << mp->m_allocsize_log)
+@@ -1849,7 +1851,9 @@ xfs_buffered_write_iomap_begin(
+ 		 * Determine the initial size of the preallocation.
+ 		 * We clean up any extra preallocation when the file is closed.
+ 		 */
+-		if (xfs_has_allocsize(mp))
++		if (xfs_iflags_test(ip, XFS_VERITY_CONSTRUCTION))
++			prealloc_blocks = 0;
++		else if (xfs_has_allocsize(mp))
+ 			prealloc_blocks = mp->m_allocsize_blocks;
+ 		else if (allocfork == XFS_DATA_FORK)
+ 			prealloc_blocks = xfs_iomap_prealloc_size(ip, allocfork,
+@@ -1976,6 +1980,13 @@ xfs_buffered_write_iomap_end(
+ 	if (flags & IOMAP_FAULT)
+ 		return 0;
  
- 	if (IS_DAX(inode))
- 		ret = xfs_file_dax_read(iocb, to);
--	else if (iocb->ki_flags & IOCB_DIRECT)
-+	else if ((iocb->ki_flags & IOCB_DIRECT) && !fsverity_active(inode))
- 		ret = xfs_file_dio_read(iocb, to);
--	else
-+	else {
-+		/*
-+		 * In case fs-verity is enabled, we also fallback to the
-+		 * buffered read from the direct read path. Therefore,
-+		 * IOCB_DIRECT is set and need to be cleared (see
-+		 * generic_file_read_iter())
-+		 */
-+		iocb->ki_flags &= ~IOCB_DIRECT;
- 		ret = xfs_file_buffered_read(iocb, to);
-+	}
- 
- 	if (ret > 0)
- 		XFS_STATS_ADD(mp, xs_read_bytes, ret);
++	/*
++	 * While writing Merkle tree to disk we would not have any other
++	 * delayed allocations
++	 */
++	if (xfs_iflags_test(XFS_I(inode), XFS_VERITY_CONSTRUCTION))
++		return 0;
++
+ 	/* Nothing to do if we've written the entire delalloc extent */
+ 	start_byte = iomap_last_written_block(inode, offset, written);
+ 	end_byte = round_up(offset + length, i_blocksize(inode));
 
 -- 
 2.50.0
