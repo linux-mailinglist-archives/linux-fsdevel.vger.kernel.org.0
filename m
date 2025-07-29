@@ -1,122 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-56277-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56278-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DA5BB1546D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jul 2025 22:51:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1F0AB154D2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jul 2025 23:49:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B90AE7B0D8B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jul 2025 20:50:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 981954E4A21
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jul 2025 21:48:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63EA6277CA9;
-	Tue, 29 Jul 2025 20:51:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE184279358;
+	Tue, 29 Jul 2025 21:49:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=omnibond-com.20230601.gappssmtp.com header.i=@omnibond-com.20230601.gappssmtp.com header.b="piBE9UQ7"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="Xv9tbmhk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.cybernetics.com (mail.cybernetics.com [72.215.153.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09033136348
-	for <linux-fsdevel@vger.kernel.org>; Tue, 29 Jul 2025 20:51:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C00ED22FDE6
+	for <linux-fsdevel@vger.kernel.org>; Tue, 29 Jul 2025 21:49:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.215.153.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753822293; cv=none; b=qirJ9sqhdCepbjJT7AxJbtVOmkSAQDbsBHhwHD2T5JQH/HydosoPwQXfX+hadrdv+DU0mPMdMF8b58t5rUyDrpYolBcEkl9AdAorzvvHW/g1SXOMGoF8jlaLYP0ZIu7iBlyLNv5cm8lFXW69I8P2GUX1MOy/LlDf4sC6ot764vM=
+	t=1753825751; cv=none; b=eVJXBYx2KsBqZs6LhIy9ALT1N8kqI8MWIvLFVyJYqp6fGwkF5C9FdD13Ht4lmo8hrWI4SFMwG7/tUEpXjZDHoC4TIZ6uUAVIK4Y+iZxtfW1jvn1WCQCziwC/9AqttQ8h4nCgvlWiMV25L8UwmDcEYVTBaAiSJIvnFX5nTwK+68g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753822293; c=relaxed/simple;
-	bh=at7wv7dglQHSffUjEQ1SZQdJS8KUBIGGScGRZm65KvE=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=iGI31Cm43qRKfVtoMUR+U+u+IDDJJoa2igcfCIuRnWlAK/t/70lhTXigfK8mZaTJ6RsXxS7l/JqBE1VYyv3JdLyKAZimc9ZDCkKwGe9TRQTNIE8qzQ8C/FTf2pOEqlirLC+cXpdY7QVCivNURWeyZmJPaMXq5eQ5351MX656CEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com; spf=pass smtp.mailfrom=omnibond.com; dkim=pass (2048-bit key) header.d=omnibond-com.20230601.gappssmtp.com header.i=@omnibond-com.20230601.gappssmtp.com header.b=piBE9UQ7; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omnibond.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-31f3b54da19so165347a91.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Jul 2025 13:51:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=omnibond-com.20230601.gappssmtp.com; s=20230601; t=1753822291; x=1754427091; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=578jKP0hi0tqBVIjYWRvcUwNsc6+UhPS5TGkN9Mmbb8=;
-        b=piBE9UQ75fyAfeS0FfO1eZ86mCGsBAcKPAFBcS4ZHmbmhh8cqVQ8TxVR4JhAetOzkd
-         b8zLxwMgByuY90RRJylNeHc/7t/PMfGVmgisexmcyIZsB7rXTMhysdxp+LbzjnE7/i7m
-         B/8gd0tCc/aIhfXq4rYsS6wGOxrklnubdSlKj9YeEkCnEzTSDbf7NhV9HnoB5PrKaG+V
-         +N/a80GFeqHZyxoHPYKmu3hLKLlwVuFmNCCXkqmN9HNfeKBgvBueEoaivjzGGLNGGThR
-         PkNMWkSIquSCVkbaMIyNQ+SCmBAXXOJFgOA6+OqzpODJU2mOIGInf6FQYUq0ZGK8Cvsq
-         X3fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753822291; x=1754427091;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=578jKP0hi0tqBVIjYWRvcUwNsc6+UhPS5TGkN9Mmbb8=;
-        b=pQTkM6JoAte5hBrondeiWNJO7UaJ+WVQdNfaQzAcTcryHhrI+iqrdoCAucnCksgARw
-         WjroImj7LaQbg4TFmHMzpI55xmFwLFneqefS+cYmwpBwFk+CYEIcaizLcgZ1IHHYoh4R
-         LOqkhqjsCWRYAkCZIb6zy5dqlufq9EaXTZY6GFbTTVWsU5xNLGuGMRecZdod+Ro0n5Mk
-         MM2qImigEhRs7J+LnGMnWmejYAuB6pWNlDpb3JzTuLkpbq+AN10QA25y7CnLtHoxyp2p
-         9Siu4CYJB7wciYplPDTMK69xxGTMBdZ8A23dLcjq2Z/0Lsm/k7d/CnOraZQWHS2bRZwi
-         NFgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWOnQc4/D/pI59IaW9p+X4SBkAc/bCJN+uY9fnDhrpa8BlIl/pkTlzIyVhq7y9dUZKdA86s1L/4nUvZZOnF@vger.kernel.org
-X-Gm-Message-State: AOJu0YxS+fH7sE+Kklr/18SzSzpkiUYmeoXH1iCZbfhRP93mjqwmoHE5
-	dFNsh+zXXJPUljBs1gT0rc8TXwYWkBkJIVJTtBDifcmLQ2Qgipj9nVRnMR7Fjq5sHnN50/WPRWZ
-	EJqWHgAhlo5LqPW1CsGUF8PyP5FBkKxgQ0X1I+ZKR
-X-Gm-Gg: ASbGncv8i2kKcXyT9QoTTgjL8QNNv1ErlIp+jaJZS94jP8R3HJ9tQgpWqerbfxe5pc/
-	aCL/XTtXHJCvaB9URMhDLnu70NfeaDegQtSjk38tg66UK2KY7nWAAm3ql284nsbgk43RVERo81/
-	pflKzAe1mACTkdmgev45UMJdOf9rJF8Udj1nqTFxLSeZHceq2jHOLVVhRkIktbNdzyv0uZFp+qj
-	ss90FvLrnWQnrRsRvY=
-X-Google-Smtp-Source: AGHT+IHFddi40TTm6cZBAA9PiJhIK2zNprWK8Gs1f+2BU0iJl2Rwr+HrzlAsoOff6zAq4E0jbc2qWg0bqp+nfvb0+MA=
-X-Received: by 2002:a17:90b:4c8f:b0:312:f88d:25f9 with SMTP id
- 98e67ed59e1d1-31f5dd8921dmr1025894a91.7.1753822291188; Tue, 29 Jul 2025
- 13:51:31 -0700 (PDT)
+	s=arc-20240116; t=1753825751; c=relaxed/simple;
+	bh=geL9Ftjhdqd9egcM/lHhi25CiP49eRIwJI76CvTYyZk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bwYGkDXQnslE/LvWICoWLOFPCdVw6E031R7qe/vS/9HVGX1FqwvPdb9MNTdHDY0jW778eOmaAUN0mLOYaOhyXxfeTgg9opURPyW944Y6zTE8D7v59fTS5kcMZzU18turQUBZTARvGm9uZvOFxDbxmM+QttOWinuFsjJrOAysSDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=fail (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=Xv9tbmhk reason="signature verification failed"; arc=none smtp.client-ip=72.215.153.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
+Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id fs1NZj9U34EIeUGl; Tue, 29 Jul 2025 17:49:07 -0400 (EDT)
+X-Barracuda-Envelope-From: tonyb@cybernetics.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
+X-ASG-Whitelist: Client
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
+	bh=AYKmDyN4bYXhwJrjzg9T8Cn2Ox5lAXwONinxtJCgb5o=;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+	Content-Language:Subject:MIME-Version:Date:Message-ID; b=Xv9tbmhk6jhNYTtkhXLz
+	q+Wh6k31x8gi5fM2VMM/Suipsu8NeuQBqISUezcnE21Cc1s9YNYjmURHVVjptPaecy9ux8KZsupPt
+	KtPJbI6wrCr3lgQC9MK75+uZCsm56sG7Yw8rHFmaMlPw18qlggJz+67jrzvUZmBfbyLl7PTPS0=
+Received: from [10.157.2.224] (HELO [192.168.200.1])
+  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
+  with ESMTPS id 14114358; Tue, 29 Jul 2025 17:49:07 -0400
+Message-ID: <b6af511e-9128-4775-8994-9bbaef3465a2@cybernetics.com>
+X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
+Date: Tue, 29 Jul 2025 17:49:07 -0400
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Mike Marshall <hubcap@omnibond.com>
-Date: Tue, 29 Jul 2025 16:51:20 -0400
-X-Gm-Features: Ac12FXyFxL81O0IrhpWsHbUNoJI2MevNbfRHash4HpouZZbd8DogRq_OxDQUOf0
-Message-ID: <CAOg9mSSTTgDcyex2gGK5V+JmaNfdXJidWkSkR8XdM+i2SN8NXQ@mail.gmail.com>
-Subject: [GIT PULL] orangefs fixes for 6.17
-To: Linus Torvalds <torvalds@linux-foundation.org>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, Mike Marshall <hubcap@omnibond.com>, 
-	devel@lists.orangefs.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] md/raid0,raid4,raid5,raid6,raid10: fix bogus io_opt
+ value
+Content-Language: en-US
+X-ASG-Orig-Subj: Re: [PATCH 1/2] md/raid0,raid4,raid5,raid6,raid10: fix bogus io_opt
+ value
+To: yukuai@kernel.org, Song Liu <song@kernel.org>,
+ Yu Kuai <yukuai3@huawei.com>, Christian Brauner <brauner@kernel.org>,
+ "Darrick J. Wong" <djwong@kernel.org>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: linux-raid@vger.kernel.org, linux-xfs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <b122fa8c-f6a0-4dee-b998-bde65d212c11@cybernetics.com>
+ <3660751f-e230-498c-b857-99d61fe442e6@kernel.org>
+From: Tony Battersby <tonyb@cybernetics.com>
+In-Reply-To: <3660751f-e230-498c-b857-99d61fe442e6@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+X-Barracuda-Connect: UNKNOWN[10.10.4.126]
+X-Barracuda-Start-Time: 1753825747
+X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at cybernetics.com
+X-Barracuda-Scan-Msg-Size: 1280
+X-Barracuda-BRTS-Status: 1
+Content-Transfer-Encoding: quoted-printable
+X-ASG-Debug-ID: 1753825747-1cf43947df83540001-kl68QG
 
-The following changes since commit 347e9f5043c89695b01e66b3ed111755afcf1911:
+On 7/29/25 12:56, Yu Kuai wrote:
+> Hi,
+>
+> =E5=9C=A8 2025/7/30 0:12, Tony Battersby =E5=86=99=E9=81=93:
+>> md-raid currently sets io_min and io_opt to the RAID chunk and stripe
+>> sizes and then calls queue_limits_stack_bdev() to combine the io_min a=
+nd
+>> io_opt values with those of the component devices.  The io_opt size is
+>> notably combined using the least common multiple (lcm), which does not
+>> work well in practice for some drives (1), resulting in overflow or
+>> unreasonable values.
+>>
+>> dm-raid, on the other hand, sets io_min and io_opt through the
+>> raid_io_hints() function, which is called after stacking all the queue
+>> limits of the component drives, so the RAID chunk and stripe sizes
+>> override the values of the stacking.
+>>
+>> Change md-raid to be more like dm-raid by setting io_min and io_opt to
+>> the RAID chunk and stripe sizes after stacking the queue limits of the
+>> component devies.  This fixes /sys/block/md0/queue/optimal_io_size fro=
+m
+>> being a bogus value like 3221127168 to being the correct RAID stripe
+>> size.
+> This is already discussed, and mtp3sas should fix this strange value.
 
-  Linux 6.16-rc6 (2025-07-13 14:25:58 -0700)
+Thanks, I will follow that ongoing discussion.
 
-are available in the Git repository at:
+https://lore.kernel.org/all/ywsfp3lqnijgig6yrlv2ztxram6ohf5z4yfeebswjkvp2=
+dzisd@f5ikoyo3sfq5/
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/hubcap/linux.git
-tags/for-linus-6.17-ofs1
-
-for you to fetch changes up to 2138e89cb066b40386b1d9ddd61253347d356474:
-
-  fs/orangefs: Allow 2 more characters in do_c_string() (2025-07-22
-12:39:29 -0400)
-
-----------------------------------------------------------------
-orangefs: fixes for string handling in debugfs and sysfs
-
-Change scnprintf to sysfs_emit in sysfs code.
-
-Change sprintf to scnprintf in debugfs code.
-
-Refactor debugfs mask-to-string code for readability and slightly
-improved functionality.
-
-----------------------------------------------------------------
-Amir Mohammad Jahangirzad (1):
-      fs/orangefs: use snprintf() instead of sprintf()
-
-Dan Carpenter (1):
-      fs/orangefs: Allow 2 more characters in do_c_string()
-
-Shankari Anand (1):
-      fs: orangefs: replace scnprintf() with sysfs_emit()
-
- fs/orangefs/orangefs-debugfs.c |  8 ++++----
- fs/orangefs/orangefs-sysfs.c   | 28 ++++++++++------------------
- 2 files changed, 14 insertions(+), 22 deletions(-)
 
