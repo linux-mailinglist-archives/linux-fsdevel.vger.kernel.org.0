@@ -1,172 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-56288-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56289-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4769FB1554F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jul 2025 00:33:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB45EB15553
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jul 2025 00:36:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61EE956083B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jul 2025 22:33:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5680918A5CDA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jul 2025 22:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE4A9265CA2;
-	Tue, 29 Jul 2025 22:33:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MeHwVQEJ"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EEEE2853F9;
+	Tue, 29 Jul 2025 22:36:10 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34FFE125B2;
-	Tue, 29 Jul 2025 22:33:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3529D19066D;
+	Tue, 29 Jul 2025 22:36:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753828388; cv=none; b=tOcaj6ZwdlmPTP7EJzSt7PucIMwpk5urrLLoWH5VlQwLcztXdAo9fIt1lyLeGdPLmtspgg70vxo43NRk3Umt8EwhEh9encnIAWe3QCr7x1zbzQM7cf1KwWY6kcdfTuBZyOxELLbdlLDujF8QABLnzXaTNWaUhxpg8U+xlCbGats=
+	t=1753828570; cv=none; b=rQm81iq8kk1/F7TNCZj4p33afJ8MhBMk1w0ZwJKBDGoQol57rO8HCkWFvMA3s+LPpv4iICxfSaDdMGRi/vCFVtNcf1WHVcIPks0KvTwD4168wZIVyBCMlT3vPf6N1cRyyhwIutBPOYW1+AaF0XSHDpbbJvryacsH8GmS+T3XXOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753828388; c=relaxed/simple;
-	bh=ZjZ3r1uxA/Z8/ovTFJEd9CzOFrEmUcsWB1pWpXSJy64=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F4SMKktBKAZ8aJgu9F0sx5/wecOA9LmlRu3xmtJ1+JO1FFioAUGqs/AVTx+iDqS8Gc1WBNwvXOyqYY9nRFUzjpvQRt/IDwlR652g3m9l1p8HRCFMj5DOhofE3CJ/QYD7jvJvram3ZhOOK8nq60AmXLaQnMP3MhjVzp/glthGIG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MeHwVQEJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A839C4CEEF;
-	Tue, 29 Jul 2025 22:33:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753828388;
-	bh=ZjZ3r1uxA/Z8/ovTFJEd9CzOFrEmUcsWB1pWpXSJy64=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MeHwVQEJlDTEkg36VCdVFZAze1gRFTYQ1t+c4grZbNvxx/PHxzcOUrFeW37+v4tP6
-	 vntbI22zaHi/e7T4Bl71OCa0bsjK6BLJ+vr8E0TmUI6E0/BSRcWm2XTTpAmuK1I/Eo
-	 RfIbk7D4MlsyREpIlC1dnlGwXkH7oe/XdekSnLQr+pFj5dK9M0NjTlhk5cLgnycvDs
-	 4rEIZTi8V3P3l0VK0rKhfY1hZTvpwfxrQGdTyUa6dhrftlCo3K9zL6F6Fpff/nWG5H
-	 BjTUsxJGo0j8jaWplz4l5nEgxpkVEFLLVgmpJcfqm6WLRKovFbiMCVp+OmXvlBIUtR
-	 DCMCP7nvZao1w==
-Date: Tue, 29 Jul 2025 15:33:07 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Andrey Albershteyn <aalbersh@redhat.com>
-Cc: fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, david@fromorbit.com, ebiggers@kernel.org,
-	hch@lst.de, Andrey Albershteyn <aalbersh@kernel.org>
-Subject: Re: [PATCH RFC 21/29] xfs: add writeback and iomap reading of Merkel
- tree pages
-Message-ID: <20250729223307.GL2672049@frogsfrogsfrogs>
-References: <20250728-fsverity-v1-0-9e5443af0e34@kernel.org>
- <20250728-fsverity-v1-21-9e5443af0e34@kernel.org>
+	s=arc-20240116; t=1753828570; c=relaxed/simple;
+	bh=g8GPfvhrR7jlhmr1UZtFief6T+T27wiLMRn9jVtYyR8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=axcJwzO0uEEkH3BXXkMl75rQgpS30qbhfeUvJChTAJ1DUPRUtAr+3jVCQvjLM8vJEOhrN58Nqb8lsW71HKaLjvx9v7itOfzbr5noDq31MSXg2XcsKnLx1O6wIPB2wLGyN9qecRyoo+VuJxZ6JvoSFSEyU0/91fXhduSTqWWLUgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf19.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay09.hostedemail.com (Postfix) with ESMTP id DDF7580144;
+	Tue, 29 Jul 2025 22:35:59 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf19.hostedemail.com (Postfix) with ESMTPA id 0B5B020026;
+	Tue, 29 Jul 2025 22:35:33 +0000 (UTC)
+Date: Tue, 29 Jul 2025 18:35:48 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Pasha Tatashin
+ <pasha.tatashin@soleen.com>, pratyush@kernel.org, jasonmiu@google.com,
+ graf@amazon.com, changyuanl@google.com, rppt@kernel.org,
+ dmatlack@google.com, rientjes@google.com, corbet@lwn.net,
+ rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com,
+ kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com,
+ masahiroy@kernel.org, akpm@linux-foundation.org, tj@kernel.org,
+ yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev,
+ chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com,
+ jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org,
+ dan.j.williams@intel.com, david@redhat.com, joel.granados@kernel.org,
+ anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
+ linux@weissschuh.net, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-mm@kvack.org, gregkh@linuxfoundation.org,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+ x86@kernel.org, hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
+ bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
+ myungjoo.ham@samsung.com, yesanishhere@gmail.com,
+ Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
+ aleksander.lobakin@intel.com, ira.weiny@intel.com,
+ andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
+ bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
+ stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
+ brauner@kernel.org, linux-api@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, saeedm@nvidia.com, ajayachandra@nvidia.com,
+ parav@nvidia.com, leonro@nvidia.com, witu@nvidia.com
+Subject: Re: [PATCH v2 31/32] libluo: introduce luoctl
+Message-ID: <20250729183548.49d6c2dc@gandalf.local.home>
+In-Reply-To: <20250729222157.GT36037@nvidia.com>
+References: <20250723144649.1696299-1-pasha.tatashin@soleen.com>
+	<20250723144649.1696299-32-pasha.tatashin@soleen.com>
+	<20250729161450.GM36037@nvidia.com>
+	<877bzqkc38.ffs@tglx>
+	<20250729222157.GT36037@nvidia.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250728-fsverity-v1-21-9e5443af0e34@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: mbmeeobytwf41p4yzc1dpzpwpxe8yucf
+X-Rspamd-Server: rspamout01
+X-Rspamd-Queue-Id: 0B5B020026
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+oxtVU63xhP93/SX7bTvd4Dc8QYczFFgk=
+X-HE-Tag: 1753828533-748000
+X-HE-Meta: U2FsdGVkX1+SVp31L1zEXDG37UVtXoqm70naJW/igIWLrqvmCMEotY5CNRw8dlWDmbUGblNWLe3J9LSKx3hR7L2bQHS5MLhDZ3emhsQZAH8j7he0OBxdHTorWq/tTuIqRvjhOa/pfZhAhrck9wMmroKYmqPDxhcpTqRWDwl3ysMHv7F9H46Msn44g621nxUht5mjN6sz+uKsXXe5sPbrM8NTysSEAUlypv2dGg+JNutKu9XUZ3I+Gxf2ECBE3SxAmB4Vt+rW88Ro0YDc/TOQ3u/BFhWkbWO5mlIrZN6SFp3smVSeUdWdFCHFOoEqQ490+r4zBLenTW7Tcba5bSWwe799mBO+144r
 
-> Subject: [PATCH RFC 21/29] xfs: add writeback and iomap reading of Merkel tree pages
+On Tue, 29 Jul 2025 19:21:57 -0300
+Jason Gunthorpe <jgg@nvidia.com> wrote:
 
-s/Merkel/Merkle/
-
-On Mon, Jul 28, 2025 at 10:30:25PM +0200, Andrey Albershteyn wrote:
-> In the writeback path use unbound write interface, meaning that inode
-> size is not updated and none of the file size checks are applied.
+> > As this is an evolving mechanism, having the corresponding library in
+> > the kernel similar to what we do with perf and other things makes a lot
+> > of sense.  
 > 
-> In read path let iomap know that data is stored beyond EOF via flag.
-> This leads to skipping of post EOF zeroing.
+> If we did this everywhere we'd have hundreds of libraries in the
+> kernel tree and I would feel bad for all the distros that have to deal
+> with packaging such a thing :(
 > 
-> Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
-> ---
->  fs/xfs/xfs_aops.c  | 21 ++++++++++++++-------
->  fs/xfs/xfs_iomap.c |  9 +++++++--
->  2 files changed, 21 insertions(+), 9 deletions(-)
-> 
-> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-> index 63151feb9c3f..02e2c04b36c1 100644
-> --- a/fs/xfs/xfs_aops.c
-> +++ b/fs/xfs/xfs_aops.c
-> @@ -22,6 +22,7 @@
->  #include "xfs_icache.h"
->  #include "xfs_zone_alloc.h"
->  #include "xfs_rtgroup.h"
-> +#include "xfs_fsverity.h"
->  
->  struct xfs_writepage_ctx {
->  	struct iomap_writepage_ctx ctx;
-> @@ -628,10 +629,12 @@ static const struct iomap_writeback_ops xfs_zoned_writeback_ops = {
->  
->  STATIC int
->  xfs_vm_writepages(
-> -	struct address_space	*mapping,
-> -	struct writeback_control *wbc)
-> +	struct address_space		*mapping,
-> +	struct writeback_control	*wbc)
->  {
-> -	struct xfs_inode	*ip = XFS_I(mapping->host);
-> +	struct xfs_inode		*ip = XFS_I(mapping->host);
-> +	struct xfs_writepage_ctx	wpc = { };
-> +
->  
->  	xfs_iflags_clear(ip, XFS_ITRUNCATED);
->  
-> @@ -644,12 +647,16 @@ xfs_vm_writepages(
->  		if (xc.open_zone)
->  			xfs_open_zone_put(xc.open_zone);
->  		return error;
-> -	} else {
-> -		struct xfs_writepage_ctx	wpc = { };
-> +	}
->  
-> -		return iomap_writepages(mapping, wbc, &wpc.ctx,
-> -				&xfs_writeback_ops);
-> +	if (xfs_iflags_test(ip, XFS_VERITY_CONSTRUCTION)) {
-> +		wbc->range_start = XFS_FSVERITY_MTREE_OFFSET;
+> It is great for development but I'm not sure mono-repo directions are
+> so good for the overall ecosystem.
 
-Where is XFS_FSVERITY_MTREE_OFFSET defined?
+I have to agree here. When libtraceevent was in the kernel, it was a pain
+to orchestrate releases with distros. When it was moved out of the kernel,
+it made it much easier to manage.
 
-(Oh, the next patch)
+The main issue was versioning numbers. I know the kernel versioning is
+simply just "hey we added more stuff" and the numbers are meaningless.
 
-Do you need to update wbc->nr if you change range_start?
+But a library usually has a different cycle than the kernel. If it doesn't
+have any changes from one kernel release to the next, the distros will make
+a new version anyway, as each kernel release means a new library release.
 
---D
+This luoctl.c isn't even a library, as it has a "main()" and looks to me
+like an application. So my question is, why is it in tools/lib?
 
-> +		wbc->range_end = LLONG_MAX;
-> +		return iomap_writepages_unbound(mapping, wbc, &wpc.ctx,
-> +						&xfs_writeback_ops);
->  	}
-> +
-> +	return iomap_writepages(mapping, wbc, &wpc.ctx, &xfs_writeback_ops);
->  }
->  
->  STATIC int
-> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-> index 00ec1a738b39..c8725508165c 100644
-> --- a/fs/xfs/xfs_iomap.c
-> +++ b/fs/xfs/xfs_iomap.c
-> @@ -2031,6 +2031,7 @@ xfs_read_iomap_begin(
->  	bool			shared = false;
->  	unsigned int		lockmode = XFS_ILOCK_SHARED;
->  	u64			seq;
-> +	int			iomap_flags;
->  
->  	ASSERT(!(flags & (IOMAP_WRITE | IOMAP_ZERO)));
->  
-> @@ -2050,8 +2051,12 @@ xfs_read_iomap_begin(
->  	if (error)
->  		return error;
->  	trace_xfs_iomap_found(ip, offset, length, XFS_DATA_FORK, &imap);
-> -	return xfs_bmbt_to_iomap(ip, iomap, &imap, flags,
-> -				 shared ? IOMAP_F_SHARED : 0, seq);
-> +	iomap_flags = shared ? IOMAP_F_SHARED : 0;
-> +
-> +	if (fsverity_active(inode) && offset >= XFS_FSVERITY_MTREE_OFFSET)
-> +		iomap_flags |= IOMAP_F_BEYOND_EOF;
-> +
-> +	return xfs_bmbt_to_iomap(ip, iomap, &imap, flags, iomap_flags, seq);
->  }
->  
->  const struct iomap_ops xfs_read_iomap_ops = {
-> 
-> -- 
-> 2.50.0
-> 
-> 
+-- Steve
 
