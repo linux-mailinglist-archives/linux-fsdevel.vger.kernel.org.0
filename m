@@ -1,65 +1,67 @@
-Return-Path: <linux-fsdevel+bounces-56222-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56223-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE28CB1470A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jul 2025 06:09:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2E76B14717
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jul 2025 06:17:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F51C3B9D24
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jul 2025 04:09:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 416FE189F306
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jul 2025 04:18:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B29B226D17;
-	Tue, 29 Jul 2025 04:09:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85E6A2253F2;
+	Tue, 29 Jul 2025 04:17:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="Yy9m5/aJ"
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="okRV7/0y"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out162-62-57-137.mail.qq.com (out162-62-57-137.mail.qq.com [162.62.57.137])
+Received: from out162-62-57-210.mail.qq.com (out162-62-57-210.mail.qq.com [162.62.57.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D92B225409;
-	Tue, 29 Jul 2025 04:09:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C9CC2E36E6;
+	Tue, 29 Jul 2025 04:17:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753762165; cv=none; b=duYGHqXHeRck+vA0BvQIgZsAiu6vHLJ+iBfdLw9IOrNLaK/UaTTMaK0uUhOPm/oi7RzPMEYD3EDLmduclAN8Rc9ACtJ9pg+bCaJ2JgGTJ+2E7N3kOwTVVUi9AVSO3eXezxniGotThOr+CO64Vmte1S8Mb0yKwxN29sWM4d3XOZI=
+	t=1753762663; cv=none; b=ZrwZWLRVwgHWZVm7D2cjr8gMcaPxjncuRZtuAgV5YlpdLPDtjPsaY2zQxIXTJW51uOVUyc2iamcT30yLjxTo0vnwKx1AJ0k9y0WOPGZxy1HuigRcPG4odc5bfo7bxq4RkVDXABa18jgU7KASqboZa6ErV6iNH937PCCfUn55fS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753762165; c=relaxed/simple;
-	bh=MQcuIRRSI+fhUD5roPsQOCWYo2wjitel6FaYSvPvvhc=;
+	s=arc-20240116; t=1753762663; c=relaxed/simple;
+	bh=N9sNQACNBRjYp42D/++67XBOenWpbNSZFS3iE/fM07g=;
 	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=J26ZjhSGR75W4mtYOxam6m2lSkX1KIiIuX2sNO85j6owlAki687KmCBFs0feAsB02wUpyM53/pKCSi97Z+siF97LWNZt7vWR+BlxeEzHXEyoeABdlIXDptSg1878IV+yaC9qZOwFX4HxYg4em9TtZhhcYY1s4pyxY76k7yEhM7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=Yy9m5/aJ; arc=none smtp.client-ip=162.62.57.137
+	 MIME-Version; b=iyjKvWdIau735toE7VlnAS5J2wWQC8B298xCtl8N2MxC+coGaCqMPiAdiAnrFYzfm4UBpTxkq+Xfyg3Hsl7bRbOJEeZo2VIQOmoLA/vv67RZEuCKppY9V/9BLxXzTdMgqdemxmYUf4zXZZ1+eVcI9aJrVBLRlz2fI+Bc5bOqUUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=okRV7/0y; arc=none smtp.client-ip=162.62.57.210
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1753761856; bh=MN9qYG9A3Q1uisz+RpMCGISS9SNPTgLcZHxwlFMi77s=;
+	t=1753762643; bh=++GyHkPA6uNF+ogkISZH3UE9ot5HZgKZ8x2ulVwHSEk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=Yy9m5/aJNsAp4Mr/Mv+Vqag4vRJ59ArDnBhi/ChnSi7T7LHwLYe8NIaj+A6g+bA2+
-	 6S9CFya84k5nfmkGg1+wChDEXhCAzE8GA5FDGb8hBLvbTdve1M/cwtYh5h74rgo3ii
-	 2PlpUgmgZH1f+I0V8nNMdOojAsoE5+BkPhxPPCjg=
+	b=okRV7/0ytku0ACrGlY8SDnoGC/Z3UdSHgTQqtftnXUWjpOzr/ZveLYYDgSUfiSIzD
+	 UIC9WDr4m+sLz1Vz+A5+exoLnar23g8VMiuX32AFrUgg+BRksWuW7G2gMF0rQCyJnr
+	 AKSfKFYwDG9xBjPfLQ63t21T9SLpbScok6WodoDM=
 Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.231.14])
 	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
-	id E741D8F7; Tue, 29 Jul 2025 11:57:52 +0800
-X-QQ-mid: xmsmtpt1753761472t5cslwxsa
-Message-ID: <tencent_524B841B402545BA78BB4733689E021BA908@qq.com>
-X-QQ-XMAILINFO: NTsk71aSumYvklPohUFvjIQbhvUCrlTo0i46gm/1huLtPI0sTLgb0MdlO3oThu
-	 zusFyyHQmmF1SLfJ7rn7A/VDa81hiswl/VgHetN9MXvjpxFbW2tsQH8y+2nMM6J7swhwjT5ejNZa
-	 ExDSCdh5dhjBS+7XtSI7pIGJhBGYLTynvdgPIzQpdvrfgqpD/KPibqkI9CPz2+DgFq3dpvvNKjgW
-	 gM+HYFviO9oQN/uPSfbzWuWs12HXqgPaBrjhK4l4NlbJhNBbeVabzrfagm98zisshlG1CSSoorfR
-	 Wg5t+z3Um4lRQtr1WcnJ8GTqSuSXBJZJCclNe9+HuMz6m1nRZOzD/znoLQ5MO5x6wgl56oCvsFzT
-	 Ezkecw2KANuCBqD4mxYMhsfXsaCR3o8ePWT38/UB3zVLuzRti8MwNCReb7f/TTqM7CpD7GylCnKl
-	 G/TI2d36UWXX5yBS1pF6lsQUFhP5mC1hGXXs0HNhLwOhyK7U2SwqniIU6oiCWSzu1Qiemy/2yhpw
-	 i2vGuerx5ImrsZTiYm0BISrKA8euAHIf3kxMnTfsdSdWMPIbkBv0g+4Xma7nanyJ1RojCwz19Zkj
-	 997gr9EB8sI+9KrflGvqr9s6LpABP/nyUlEyqV2bM4VWOWATldKka0iumWo2w66zCgg4b2YIhdKB
-	 npeoAKArkp/FY5/PW5Gz6jrKQZbtni5J+h12iCylAChV2JU+orGuwx3KDI/HyLlbeRCbK0VCmfMJ
-	 sSWTvCoblm2oc6Iw/tAbNOL3o3LrA4pSrrkhZYimHp/fa5xiRSYo88rqXl2yHXdSlLQTCb71W30x
-	 AM7xxYg50as3DOYuQAxgYjzkynGKF6jR4WKz/6w3c1+qXsO+x9HNU+wU3l0UfdL4ZQVLW++YJxbC
-	 B/i1qgHhePHjLn/jHxVnY3Z5kzJ3ZwKLDnXE6VzZlRgjrv5yr2pCQiSi0GaPUWFZxm1lZBCtrq1T
-	 TIS9ziG4ABfFxtUZPBue1lwRTXUCdR
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+	id 454BBAA9; Tue, 29 Jul 2025 12:17:20 +0800
+X-QQ-mid: xmsmtpt1753762640t81pdok2q
+Message-ID: <tencent_3066496863AAE455D76CD76A06C6336B6305@qq.com>
+X-QQ-XMAILINFO: MzNwb/pqyJTk1mrpoBGk9koeErbzOR6/GYwWqxVCCkQBwFv1aYrFWhC/fP7RJ4
+	 LXn4aAIBI3nerGsWZqi42ZW6FHXHLGmt9uaSr6rQuQWOZA/HU4H3zz3JAiW0q6RvtGd2DQPIsnkx
+	 eIWpVIP+q1+iTK6tiaVkByyKYFVXaqeP08dtaMtGxmtWoI3B0q2/q3yfmVFeUTBBHn3JCn+Q/HQ6
+	 odimiyHvkxDWEXmFyZCjqkzVb/23r4VcDOoAX8sz6iDSFSXgHhY+qT7XqUUpSSeAEXN2ciI+vZBa
+	 n92iUV/1hYsGQuL9aHoMuUiOlFLQY/psiqglzlS5jkhhYuXsHbLUaJIvkwiKszJs432DU6OYJnOQ
+	 MnnPG8VUk3bKX/JzMe8wCht7eS9zfhPj+yHNFY7z7vz1djtzlXKd+sJpWH3UPXYjiz7dTj3iZ78e
+	 m+UVEAxqnBecwIo9DXx9evRrbwGe6vNLl/wMWmj+Ji4BRYpsy3TudpCYvXpQh+4+vlYEutnBIt3q
+	 OGR7aUItk+w7rBsagD9r9mje6mS+LGotNUX7NlssSf1Gb2TfX91lIJHl29HiG0CaKVdvC3qhVFjF
+	 bFkT6dGLCc4JGVIfMV4uS2TwcPzdo4jdlpsJo8VzOeMNXSmMoReBNqekJE6xiXEyPoSbWmKXDDn6
+	 ola1Yz3Cu/WxxAQSv5DuTAGUpWUs6jYZETkKtZ8l8mXU9dgBljGFZ85O0hLMJZNGHhvqeLpwmenS
+	 dxH67IUTqxpU+8R8MJhCZnj6b2g9ok7JLXoY3OsyfpH4n8g0qJAzvQDqZUTHULOsgBVrWFXI4efT
+	 XmZczXVvG52nR2geEf5N0qyBQ03Hh8HzJJu5LnwyOAk1FBYdL3exV2SEKhBGxUQWuzZ/m8mnNWIo
+	 rY/ZhXYgvmovb5Bsoj2D4vyMXVgRrKSQI0RmYugjxLuH79T2LjOZxeS06hxOSZ+Tql0DNqYlJ1Wc
+	 SxEHDCWSubdhqy1GaE8N4Fk/KrBRyLB6o8MNglap3lBNprgmlxKhX9r40jd81PyiZb0bhpAnGP+Y
+	 WHMQId5w7rZ3AkqSMYXjOWMW/Y7Ja9IG8kO+BCmK7K9VhtzXY1mx3fOGSXfSU=
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
 From: Edward Adam Davis <eadavis@qq.com>
-To: hirofumi@mail.parknet.co.jp
+To: viro@zeniv.linux.org.uk
 Cc: eadavis@qq.com,
+	hirofumi@mail.parknet.co.jp,
 	linkinjeon@kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
@@ -67,11 +69,11 @@ Cc: eadavis@qq.com,
 	syzbot+d3c29ed63db6ddf8406e@syzkaller.appspotmail.com,
 	syzkaller-bugs@googlegroups.com
 Subject: Re: [PATCH] fat: Prevent the race of read/write the FAT16 and FAT32 entry
-Date: Tue, 29 Jul 2025 11:57:53 +0800
-X-OQ-MSGID: <20250729035752.2495729-2-eadavis@qq.com>
+Date: Tue, 29 Jul 2025 12:17:21 +0800
+X-OQ-MSGID: <20250729041720.2513812-2-eadavis@qq.com>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <874iuwxsew.fsf@mail.parknet.co.jp>
-References: <874iuwxsew.fsf@mail.parknet.co.jp>
+In-Reply-To: <20250728163526.GD222315@ZenIV>
+References: <20250728163526.GD222315@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -80,24 +82,42 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Tue, 29 Jul 2025 00:10:31 +0900, OGAWA Hirofumi wrote:
->> The writer and reader access FAT32 entry without any lock, so the data
->> obtained by the reader is incomplete.
->>
->> Add spin lock to solve the race condition that occurs when accessing
->> FAT32 entry.
->>
->> FAT16 entry has the same issue and is handled together.
->
->What is the real issue? Counting free entries doesn't care whether EOF
->(0xffffff) or allocate (0x000068), so it should be same result on both
->case.
->
->We may want to use READ_ONCE/WRITE_ONCE though, I can't see the reason
->to add spin_lock.
-Because ent32_p and ent12_p are in the same union [1], their addresses
-are the same, and they both have the "read/write race condition" problem,
-so I used the same method as [2] to add a spinlock to solve it.
+On Mon, 28 Jul 2025 17:35:26 +0100, Al Viro wrote:
+> On Mon, Jul 28, 2025 at 05:04:45PM +0100, Al Viro wrote:
+> > On Mon, Jul 28, 2025 at 07:37:02PM +0800, Edward Adam Davis wrote:
+> > > The writer and reader access FAT32 entry without any lock, so the data
+> > > obtained by the reader is incomplete.
+> >
+> > Could you be more specific?  "Incomplete" in which sense?
+Because ent32_p and ent12_p are in the same union [1], their addresses are
+the same, and they both have the "read/write race condition" problem, so I
+used the same method as [2] to add a spinlock to solve it.
+> >
+> > > Add spin lock to solve the race condition that occurs when accessing
+> > > FAT32 entry.
+> >
+> > Which race condition would that be?
+data-race in fat32_ent_get / fat32_ent_put, detail: see [3]
+> >
+> > > FAT16 entry has the same issue and is handled together.
+> >
+> > FWIW, I strongly suspect that
+> > 	* "issue" with FAT32 is a red herring coming from mindless parroting
+> > of dumb tool output
+> > 	* issue with FAT16 just might be real, if architecture-specific.
+> > If 16bit stores are done as 32bit read-modify-write, we might need some
+> > serialization.  Assuming we still have such architectures, that is -
+> > alpha used to be one, but support for pre-BWX models got dropped.
+> > Sufficiently ancient ARM?
+> 
+> Note that FAT12 situation is really different - we not just have an inevitable
+> read-modify-write for stores (half-byte access), we are not even guaranteed that
+> byte and half-byte will be within the same cacheline, so cmpxchg is not an
+> option; we have to use a spinlock there.
+I think for FAT12 they are always in the same cacheline, the offset of the
+member ent12_p in struct fat_entry is 4 bytes, and no matter x86-64 or arm64,
+the regular 64-byte cacheline is enough to ensure that they are in the same
+cacheline.
 
 [1]
 345 struct fat_entry {
@@ -113,6 +133,7 @@ so I used the same method as [2] to add a spinlock to solve it.
  10 };
 
 [2] 98283bb49c6c ("fat: Fix the race of read/write the FAT12 entry")
+[3] https://syzkaller.appspot.com/bug?extid=d3c29ed63db6ddf8406e
 
 BR,
 Edward
