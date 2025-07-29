@@ -1,182 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-56291-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56293-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9624B155B6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jul 2025 01:06:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B14BB155E5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jul 2025 01:22:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45FB518A6E09
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jul 2025 23:06:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBF5918A7F05
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jul 2025 23:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07FA72798FF;
-	Tue, 29 Jul 2025 23:06:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QkC3K1zy"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB94C285CB7;
+	Tue, 29 Jul 2025 23:22:04 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 617351624E1;
-	Tue, 29 Jul 2025 23:06:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B76B42AE66;
+	Tue, 29 Jul 2025 23:22:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753830391; cv=none; b=b1ret7iaEHP7l9GAtItWeM9FroZBViud6gDy6yFUBqFgoRibXi9xoxKH0rYoTlzSPxYZ5t565rbJH24aJGDAdWyLGtZNh1e6fGev7AWprXW+mh84PTF8lJGkDEw94ySeT16V14kg2EQhFIDtKJ5MCr3HwZkxXPq0bDMAiGCh6h0=
+	t=1753831324; cv=none; b=ghjlmQbA6l7PGRRxqhHMUiQpBkgQRAtmtVSnkZzElI3uMRMNcwy8isKP2BaIMEqMTJdi03B5wuB1SNJddy4vH0HyRI2vM28tfgX8D4Rtjv41WfQcG+6f5VnCS6+hX3Sekn1ZsSBmSWGz0RjbmFMi+BUDohN2FnHYBKf6FCedvt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753830391; c=relaxed/simple;
-	bh=EGzTHz/g+TVoEg5tHXZx9p8xM/RYeUs/uASjKfOqQR8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ORRnGUuRpW83uB7ilX1oCDe8ryP4CbZKf/NtJwJA+dpsrfwDUFkadhtbfux9kch1LLxQpljFqubTqEji/TF86REGX2MaKmptFk+JDHabCHIyp+UbM2WjGnInSg54PSofnW7UHxMldOSrHf1mk1eROhXfhL991z4OoMLtq0tc0x0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QkC3K1zy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFC30C4CEF6;
-	Tue, 29 Jul 2025 23:06:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753830390;
-	bh=EGzTHz/g+TVoEg5tHXZx9p8xM/RYeUs/uASjKfOqQR8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QkC3K1zyPbHGXpUSv3dNVYbMuKO7XPGSIfxmU06ZtLqg64Du+Im3F8ERKEBIV36Vd
-	 I3wukK2Ybar6Dtr+0NVGqXFJfxt7LCGb868Yw+iO/mcUQw66F/ciU5hx4Ga+tFwxnp
-	 seB9hToAQYPvBQZ0DclPQ2kWJGw0KyKU/v1UCteCg28AXfDQESaqgWl6Nu1DhiU8YN
-	 sS7CHrsh4yARvgKK9tNJRxXADnldcpn8a2fC10n+OO2bZQlxhW2bq732/cvuIjBeS4
-	 5THTZm6XZOCnVKcjxZRvEBdgy+FluOKTkRYNEOR3rNpuiKoF8a7xmwqBC4qDA+p640
-	 QVdrj/QUuWlKg==
-Date: Tue, 29 Jul 2025 16:06:30 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Andrey Albershteyn <aalbersh@redhat.com>
-Cc: fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, david@fromorbit.com, ebiggers@kernel.org,
-	hch@lst.de, Andrey Albershteyn <aalbersh@kernel.org>
-Subject: Re: [PATCH RFC 28/29] xfs: add fsverity traces
-Message-ID: <20250729230630.GN2672049@frogsfrogsfrogs>
-References: <20250728-fsverity-v1-0-9e5443af0e34@kernel.org>
- <20250728-fsverity-v1-28-9e5443af0e34@kernel.org>
+	s=arc-20240116; t=1753831324; c=relaxed/simple;
+	bh=quVU5GwWsj8WQozXUgeInT+A7+uoXfMFblBIZZ5aHdc=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=EYOW/RqOEC9ABYgERVnOJ+irgQU8HLuFIKettO0KNe99WWBTaZQysGKAZQ3nb0i8pffQfUkEcF7zAygHykjff+ZQ2FLGQuuC3DWA9TQ+3aNJKqaZtXPzsTVeclQC7+jSe4/zF20FJvN0Rx8tb+w05/KanNveKqxPTI3hEHrBfgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 56TNL8Aq084433;
+	Wed, 30 Jul 2025 08:21:08 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 56TNL8SQ084430
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Wed, 30 Jul 2025 08:21:08 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <427fcb57-8424-4e52-9f21-7041b2c4ae5b@I-love.SAKURA.ne.jp>
+Date: Wed, 30 Jul 2025 08:21:06 +0900
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250728-fsverity-v1-28-9e5443af0e34@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH v4] hfs: update sanity check of the root record
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
+        "willy@infradead.org" <willy@infradead.org>,
+        Leo Stone
+ <leocstone@gmail.com>, Jan Kara <jack@suse.cz>,
+        Christian Brauner <brauner@kernel.org>
+Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
+        "frank.li@vivo.com" <frank.li@vivo.com>,
+        "slava@dubeyko.com" <slava@dubeyko.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <4c1eb34018cabe33f81b1aa13d5eb0adc44661e7.camel@dubeyko.com>
+ <8333cf5e-a9cc-4b56-8b06-9b55b95e97db@I-love.SAKURA.ne.jp>
+ <aH-enGSS7zWq0jFf@casper.infradead.org>
+ <9ac7574508df0f96d220cc9c2f51d3192ffff568.camel@ibm.com>
+ <65009dff-dd9d-4c99-aa53-5e87e2777017@I-love.SAKURA.ne.jp>
+ <e00cff7b-3e87-4522-957f-996cb8ed5b41@I-love.SAKURA.ne.jp>
+ <c99951ae12dc1f5a51b1f6c82bbf7b61b2f12e02.camel@ibm.com>
+ <9a18338da59460bd5c95605d8b10f895a0b7dbb8.camel@ibm.com>
+ <bb8d0438-6db4-4032-ba44-f7b4155d2cef@I-love.SAKURA.ne.jp>
+ <5ef2e2838b0d07d3f05edd2a2a169e7647782de5.camel@ibm.com>
+ <8cb50ca3-8ccc-461e-866c-bb322ef8bfc6@I-love.SAKURA.ne.jp>
+ <d4abeee2-e291-4da4-9e0e-7880a9c213e3@I-love.SAKURA.ne.jp>
+ <650d29da-4f3a-4cfe-b633-ea3b1f27de96@I-love.SAKURA.ne.jp>
+ <6db77f5cb0a35de69a5b6b26719e4ffb3fdac8c5.camel@ibm.com>
+ <1779f2ad-77da-40e3-9ee0-ef6c4cd468fa@I-love.SAKURA.ne.jp>
+ <12de16685af71b513f8027a8bfd14bc0322eb043.camel@ibm.com>
+ <0b9799d4-b938-4843-a863-8e2795d33eca@I-love.SAKURA.ne.jp>
+Content-Language: en-US
+In-Reply-To: <0b9799d4-b938-4843-a863-8e2795d33eca@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav305.rs.sakura.ne.jp
+X-Virus-Status: clean
 
-On Mon, Jul 28, 2025 at 10:30:32PM +0200, Andrey Albershteyn wrote:
-> Even though fsverity has traces, debugging issues with varying block
-> sizes could a bit less transparent without read/write traces.
-> 
-> Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+syzbot is reporting that BUG() in hfs_write_inode() fires upon unmount
+operation when the inode number of the record retrieved as a result of
+hfs_cat_find_brec(HFS_ROOT_CNID) is not HFS_ROOT_CNID, for
+commit b905bafdea21 ("hfs: Sanity check the root record") checked
+the record size and the record type but did not check the inode number.
 
-Looks fine to me,
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+Reported-by: syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=97e301b4b82ae803d21b
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+---
+ fs/hfs/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---D
+diff --git a/fs/hfs/super.c b/fs/hfs/super.c
+index fe09c2093a93..d231989b4e23 100644
+--- a/fs/hfs/super.c
++++ b/fs/hfs/super.c
+@@ -354,7 +354,7 @@ static int hfs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 			goto bail_hfs_find;
+ 		}
+ 		hfs_bnode_read(fd.bnode, &rec, fd.entryoffset, fd.entrylength);
+-		if (rec.type != HFS_CDR_DIR)
++		if (rec.type != HFS_CDR_DIR || rec.dir.DirID != cpu_to_be32(HFS_ROOT_CNID))
+ 			res = -EIO;
+ 	}
+ 	if (res)
+-- 
+2.50.1
 
-> ---
->  fs/xfs/xfs_fsverity.c |  8 ++++++++
->  fs/xfs/xfs_trace.h    | 46 ++++++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 54 insertions(+)
-> 
-> diff --git a/fs/xfs/xfs_fsverity.c b/fs/xfs/xfs_fsverity.c
-> index dfe7b0bcd97e..4d3fd00237b1 100644
-> --- a/fs/xfs/xfs_fsverity.c
-> +++ b/fs/xfs/xfs_fsverity.c
-> @@ -70,6 +70,8 @@ xfs_fsverity_get_descriptor(
->  	};
->  	int			error = 0;
->  
-> +	trace_xfs_fsverity_get_descriptor(ip);
-> +
->  	/*
->  	 * The fact that (returned attribute size) == (provided buf_size) is
->  	 * checked by xfs_attr_copy_value() (returns -ERANGE).  No descriptor
-> @@ -267,6 +269,8 @@ xfs_fsverity_read_merkle(
->  	 */
->  	xfs_fsverity_adjust_read(&region);
->  
-> +	trace_xfs_fsverity_read_merkle(XFS_I(inode), region.pos, region.length);
-> +
->  	folio = iomap_read_region(&region);
->  	if (IS_ERR(folio))
->  		return ERR_PTR(-EIO);
-> @@ -297,6 +301,8 @@ xfs_fsverity_write_merkle(
->  		.ops				= &xfs_buffered_write_iomap_ops,
->  	};
->  
-> +	trace_xfs_fsverity_write_merkle(XFS_I(inode), region.pos, region.length);
-> +
->  	if (region.pos + region.length > inode->i_sb->s_maxbytes)
->  		return -EFBIG;
->  
-> @@ -309,6 +315,8 @@ xfs_fsverity_file_corrupt(
->  	loff_t			pos,
->  	size_t			len)
->  {
-> +	trace_xfs_fsverity_file_corrupt(XFS_I(inode), pos, len);
-> +
->  	xfs_inode_mark_sick(XFS_I(inode), XFS_SICK_INO_DATA);
->  }
->  
-> diff --git a/fs/xfs/xfs_trace.h b/fs/xfs/xfs_trace.h
-> index 50034c059e8c..4477d5412e53 100644
-> --- a/fs/xfs/xfs_trace.h
-> +++ b/fs/xfs/xfs_trace.h
-> @@ -5979,6 +5979,52 @@ DEFINE_EVENT(xfs_freeblocks_resv_class, name, \
->  DEFINE_FREEBLOCKS_RESV_EVENT(xfs_freecounter_reserved);
->  DEFINE_FREEBLOCKS_RESV_EVENT(xfs_freecounter_enospc);
->  
-> +TRACE_EVENT(xfs_fsverity_get_descriptor,
-> +	TP_PROTO(struct xfs_inode *ip),
-> +	TP_ARGS(ip),
-> +	TP_STRUCT__entry(
-> +		__field(dev_t, dev)
-> +		__field(xfs_ino_t, ino)
-> +	),
-> +	TP_fast_assign(
-> +		__entry->dev = VFS_I(ip)->i_sb->s_dev;
-> +		__entry->ino = ip->i_ino;
-> +	),
-> +	TP_printk("dev %d:%d ino 0x%llx",
-> +		  MAJOR(__entry->dev), MINOR(__entry->dev),
-> +		  __entry->ino)
-> +);
-> +
-> +DECLARE_EVENT_CLASS(xfs_fsverity_class,
-> +	TP_PROTO(struct xfs_inode *ip, u64 pos, unsigned int length),
-> +	TP_ARGS(ip, pos, length),
-> +	TP_STRUCT__entry(
-> +		__field(dev_t, dev)
-> +		__field(xfs_ino_t, ino)
-> +		__field(u64, pos)
-> +		__field(unsigned int, length)
-> +	),
-> +	TP_fast_assign(
-> +		__entry->dev = VFS_I(ip)->i_sb->s_dev;
-> +		__entry->ino = ip->i_ino;
-> +		__entry->pos = pos;
-> +		__entry->length = length;
-> +	),
-> +	TP_printk("dev %d:%d ino 0x%llx pos %llx length %x",
-> +		  MAJOR(__entry->dev), MINOR(__entry->dev),
-> +		  __entry->ino,
-> +		  __entry->pos,
-> +		  __entry->length)
-> +)
-> +
-> +#define DEFINE_FSVERITY_EVENT(name) \
-> +DEFINE_EVENT(xfs_fsverity_class, name, \
-> +	TP_PROTO(struct xfs_inode *ip, u64 pos, unsigned int length), \
-> +	TP_ARGS(ip, pos, length))
-> +DEFINE_FSVERITY_EVENT(xfs_fsverity_read_merkle);
-> +DEFINE_FSVERITY_EVENT(xfs_fsverity_write_merkle);
-> +DEFINE_FSVERITY_EVENT(xfs_fsverity_file_corrupt);
-> +
->  #endif /* _TRACE_XFS_H */
->  
->  #undef TRACE_INCLUDE_PATH
-> 
-> -- 
-> 2.50.0
-> 
-> 
+
 
