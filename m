@@ -1,161 +1,185 @@
-Return-Path: <linux-fsdevel+bounces-56263-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56256-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B077B151A6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jul 2025 18:50:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 329AFB15052
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jul 2025 17:41:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 781B418A3E34
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jul 2025 16:51:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2814418A4BEF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jul 2025 15:41:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27342220F4C;
-	Tue, 29 Jul 2025 16:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1F972951C9;
+	Tue, 29 Jul 2025 15:40:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="bO6rvdrT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7AF24F5E0;
-	Tue, 29 Jul 2025 16:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753807840; cv=none; b=IhzbUzNNoBM2e9yywyAyq76i8VOQUbAOmAsprkDDS+Ifb+ux1Nh5Hq/AL5CcJ8oEi53ik0PiitAz/F3xBHsPyA9IorX91AVQpsWxRKDRFf0V35Xs1lCEjS+rDUdliOYDI2BOebCS7VKlvPlJAn9as4OnmFpbIiARgxaWDe7tv7s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753807840; c=relaxed/simple;
-	bh=YhCu13q3EaOM9+19rgoO9TQAPpoXFGMXcSNVdaJcCwM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=oIWE4n//l7hePMaJXicxay8IY/MSw1Mu4TBXESrH/+Dq4Vo1eFBhA2pQyAJ6Ht2D7G6HfG1vU/gy1NEnSov61IIPvFN4/UyQ8JnPis+OJ7AtIehpfNeRsM35cqptcxk7fi0xWdq2O2TAJNtvsBHNzTbkTcocc7fkqXwMMJrAUso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4bs0H82Rfxz9s2l;
-	Tue, 29 Jul 2025 17:52:52 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id foIBeN0qtQ-W; Tue, 29 Jul 2025 17:52:52 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4bs0H81KxLz9s28;
-	Tue, 29 Jul 2025 17:52:52 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 27C058B76C;
-	Tue, 29 Jul 2025 17:52:52 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id AvByEn6-Kv3I; Tue, 29 Jul 2025 17:52:52 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 95C748B763;
-	Tue, 29 Jul 2025 17:52:51 +0200 (CEST)
-Message-ID: <1c37a89e-cfc7-4d4c-89e1-1b3f1217b11e@csgroup.eu>
-Date: Tue, 29 Jul 2025 17:52:51 +0200
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013064.outbound.protection.outlook.com [52.101.127.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3FA62949F1;
+	Tue, 29 Jul 2025 15:40:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753803619; cv=fail; b=nAvOgtqQGkqVgKagKMoRmCBWH5++xQJAGRQEeP0kI/G/AL3WukZ4wqvTJMJrWfKh1BgpTKIpDWJq9iyiAvW9U2LXgA3F3UfPfD90DpjcDIehYeJf+5IcezfwYeSsYSyzPyGTbFUPxheN/+GcVn3yajvhhF8+d1e+1+gpWwjwJ7w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753803619; c=relaxed/simple;
+	bh=qCBupzkXABqNQd3dtciCKSUNEpxW4N0/moeGoWduVDc=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=UkOVKYaEE/+1AUDO80veqwlbSrMvc2PJWznAD83sUCzHkxU0yyjETqUV2LZ74B1eMdjPA5RHQA5aVZghv8UF72JGRtsDArKrCUoqu5Qc6yRB4WkjoQWAjurT2E1xB3PfIYj/ze+o6+bveyfu4jV+vXCAJNZw2UsEakQc7kzMBL0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=bO6rvdrT; arc=fail smtp.client-ip=52.101.127.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FtECmYi3sG5hJOehw7Zz1dT8p8XRApqnFAW3rxMLeFADv5LpXbO8vluC3eB46dX8sYwp82HPQNpaYGrAOLXYRM0K0OVSj71e5D2SapxfhMSEArMv8y+aK4gGtGYGykzoC1lJSxTGr+e4Fu9UYOi4W/7JV4Lz8rLuYtAhHDGvuKRmxU1TojQx5oXGXHxnVhcMZOxE1/wpkwmhkawjXMrUYAPbme90RSDS7Xhlbeyp9frCepz+ee38AXzWTud36zJ/6UNhF9WYs5T0QahX74t7PlO7aHZqrLyfSDnvubVGOKGfUsjcEBqlJQg8ACRdHdt62HHGFnl9qZlV2ElWDOyzCw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=A72/fBY4dDVug/JiChPaXwJBqlUWWmawd3f/G5UJZi8=;
+ b=DD+8dv/rKA4D9ZGVXqGUQSihK2CuHH1e+jY79cIaLcq5K9m1CP+63iPaWNUUj6rW/GjGNwpsK5qy9KZvPIgpzwU86hKhiVRaK+DltNGt0eEtOp41gnQjlmOit/GzTC7vjEwBih8zkZwHmR4/PYVAJy//Hp/Q8SaO0Ng+LioEBjkwYWOGlEmxF4p+PjiDUKrlbmaRN65tmjPvK3QYde323MNkA7urZnqpLVF29nV6mHzCUL0gQj2qM4Q7JVo1LNBCGPXTN067vCN8clylO2/Z3L9iXavom3iVIixyPB7FZE1exd4HxViCUHyhKRK/i7A0U1rXhv8DXn1jTEYxGG0T0g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=A72/fBY4dDVug/JiChPaXwJBqlUWWmawd3f/G5UJZi8=;
+ b=bO6rvdrTX0iQ8malBHs14HsV/r7TUQYGSr+hRvHJp3pqIToRjloSgT4S66Gmgt0Q962gz/XVgECgRgAwW5TEpwy9GGcPPwvpY6UVh+J8jHwFC75hZdNLdT8yRRuQJ4j3qt+rsucSUkmgtJK8wc2qv+lb3XNiZELcNXirRvQ86L7Ojd4WfWDZl5Y93QU9SGF6nRL1XKmK29U6V5jod8reqzh4xF5c0F2KGKGXVKRT7yNRJhR5VAK5YTalmC4xZNYNaGJeO1nZeTfUwk8Imyd7wKw2VTEEUgkh7KK0CszCSWiFT+Wimc6io0c3zrWeaCDZyfLDS6lfpzZzQNHD/OwboA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
+ by SEYPR06MB6203.apcprd06.prod.outlook.com (2603:1096:101:c4::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.26; Tue, 29 Jul
+ 2025 15:40:10 +0000
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::8c74:6703:81f7:9535]) by SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::8c74:6703:81f7:9535%4]) with mapi id 15.20.8989.010; Tue, 29 Jul 2025
+ 15:40:10 +0000
+From: Yangtao Li <frank.li@vivo.com>
+To: slava@dubeyko.com,
+	glaubitz@physik.fu-berlin.de
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yangtao Li <frank.li@vivo.com>
+Subject: [PATCH] MAINTAINERS: update location of hfs&hfsplus trees
+Date: Tue, 29 Jul 2025 10:01:57 -0600
+Message-Id: <20250729160158.2157843-1-frank.li@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR03CA0095.apcprd03.prod.outlook.com
+ (2603:1096:4:7c::23) To SEZPR06MB5269.apcprd06.prod.outlook.com
+ (2603:1096:101:78::6)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs/Kconfig: Enable HUGETLBFS only if
- ARCH_SUPPORTS_HUGETLBFS
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Andrew Morton <akpm@linux-foundation.org>, Borislav Petkov <bp@alien8.de>
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org,
- "David S. Miller" <davem@davemloft.net>, Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
- sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org
-References: <20250711102934.2399533-1-anshuman.khandual@arm.com>
- <20250712161549.499ec62de664904bd86ffa90@linux-foundation.org>
- <f86c9ec6-d82d-4d0c-80b2-504f7c6da22e@arm.com>
- <20250714094909.GBaHTSlW8nkuINON9p@fat_crate.local>
- <20250714173109.265d1fbfa9884cd22c3a6975@linux-foundation.org>
- <9e4e4a84-d929-4317-b920-d11f4bee60df@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <9e4e4a84-d929-4317-b920-d11f4bee60df@csgroup.eu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|SEYPR06MB6203:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4819ecfe-ca5c-46d7-42c5-08ddceb633b0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|52116014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?uXs0wGVcp2sImM/MzA3TWMraKD8HB8+qbUeRHUvcuvJ0E/GhS6r9/K7U+la/?=
+ =?us-ascii?Q?5iswI5o5+9XhJckbm0ut+mJWRN8I0eX2LoEh+59J5TBGsgXuaDkkWt4swkGa?=
+ =?us-ascii?Q?l3FQTeCn0LR6Nt9XdljOn9STN3sUB090hEADQYMsYXns6VFaqiwoYzdHuBRY?=
+ =?us-ascii?Q?lMi+uXNbjmLcL15kfqWbt8PhEzX01YxG+0b6GQQLKwsZmalWbTESF20vxcEY?=
+ =?us-ascii?Q?0eOMgC5FrcadY0JWtdGTsTB/K8uh0wRXvb3XwjzcAmo2smxXDjI4Pmg8TdVY?=
+ =?us-ascii?Q?/yShp6GV0P89/UAEzq8+sBaBhxxu6jWjaXJGLWvLDmfdrvDvXzp++Ekknxvs?=
+ =?us-ascii?Q?e4DeYwhpwSe+F278QryVEq3TZekdmSVWegGZGbMH6X35MEil/FHZRRmfGErN?=
+ =?us-ascii?Q?HrcOwMjf8XraIr0CeC3eAWCONitWln3q4Ey7VoD8uFkF0NyHEyB6j/RI0SbZ?=
+ =?us-ascii?Q?raSz/oLlPWyiXF2C+t1HAqvtIS0PGH8tah/MR/JTZ2gMPGuLZ6M4ru/LBuw5?=
+ =?us-ascii?Q?kJlTIa0KleLJpXg141LByfgRrILz+eEZChxQ37LRuKtyabqSlCXPVxHNVwGp?=
+ =?us-ascii?Q?AHZeaWZqiJC5HvuHIYxKIXD3+F0azQSkUJiD2Q556lvQ+VOSDyZ/e39HuTUL?=
+ =?us-ascii?Q?5nRpz4SmoQpdxQy5XDUKq1LxO0iygoy8n+F38YgMMksmNSbnaMOnO4qdLORa?=
+ =?us-ascii?Q?6B8rYVUjV8FZsXClMwfT7Wb1mtfTm/skIuk+QL4GoRXeP9gbLaCJZNTHtAK5?=
+ =?us-ascii?Q?vgXGr3XmVF9qY2RlhI5XShd19oxWOAFrWztzPzWqZA7jDumKQb29QQL4znFn?=
+ =?us-ascii?Q?xbc0tiKm34qmvH/eLxYriJlDTPWx0hi/DNufCZWoD1I15rtKWRjBiugyPHzt?=
+ =?us-ascii?Q?ANVwItggHqrZjUbDg7g2Aj2MBV69Lr0yL6iBHP7RtUvtdc3Q0jDKKghLbX7b?=
+ =?us-ascii?Q?m23AM6gM5yB86BAaopGtTyXuD80KNAje2LDCeEj0Z7QyyzEmvYCqKF6n9Q/i?=
+ =?us-ascii?Q?RFz0XA+u/Epu51sQ2nPvzLnj4ss7Rulh801p322EficKUC/WLzWFbgxzG2sm?=
+ =?us-ascii?Q?0HpV5MLLWQv2C21vIOzkmr2eNHfLhT4KqpMqY/StwICU9hR6siyzPDvvXei/?=
+ =?us-ascii?Q?J+IwU8vV3mzDMQwEx/qZMGyMddMnqoezCrGULvRai6r+RLszwQvRZ7OgS7pE?=
+ =?us-ascii?Q?ow9nXyO1qdBdsfdLvG3V24uOqwnpfH4jtxUvXlZh9Fk17M6vzAjMu4i9QJNQ?=
+ =?us-ascii?Q?Cw3rxymqqU8Ft1zenwsFBGhGZRgRQh28fdayMvnGOUDamzWcfiQcweVHxP2U?=
+ =?us-ascii?Q?VPoHJuU0lXYg9dDk0Oe8C7RVjoSVc90BYQwv1ln06m2bbwCLVEkZfqVnDEUK?=
+ =?us-ascii?Q?tw1DhPUrzc5/estFDRDNBNIvwSLo2vImFd74mtH2h9WkTr1rmCOQofvF0Ql2?=
+ =?us-ascii?Q?BGlNk/f6PVctbe4rrixDfCt++u7GknH7DGDr7luCw9OPnkPjuDRekg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?lsV0hzKPARmMrRqoBYkJJ2YkR/yDp5yVkBBEqyydGId0E7yElyQWq1bPU9lM?=
+ =?us-ascii?Q?UALlYGA7E98AhUPoYj+CsBY3cyUhp3syegFO5TuoWPdUA2415fyXZrIkoQGM?=
+ =?us-ascii?Q?riqH0zKq4ReVuhoiqw5MHW4U6gLmCudhP0hU9JLlLPJ8WBAVFOqk7U/gl091?=
+ =?us-ascii?Q?extHqEh7qvIHpXqXa1EJ5HdUkLE/L5Bp/YexR4VgvsCOI7Neh3SZUFapUv24?=
+ =?us-ascii?Q?mXYurWcilYNG94bWdmd4IJ2JzHDadjlgcUMQq+Ux0mcudlg00hkVVdde2BFY?=
+ =?us-ascii?Q?cduXECYAf/IsDYy9eNf4O3FR3ICVy9WHC5yK5T0TNp+Z6loo7TqsEIsf8AjY?=
+ =?us-ascii?Q?wlUqHxe+i52DiiWhvdilkqqHLTRQgvnnbZpO/wYzGQTWPF0U/98h9HdHN7+o?=
+ =?us-ascii?Q?feqy9xtPpmmhcnv2/UF7D+AqJQCBGCRu5r72JIE70TPd7D7yHKXuhBBkM7ia?=
+ =?us-ascii?Q?0iPpX7obkzun/YIlgst4Kj23tkKq8z1/5pRWASIRjxcq6da4lExVy3WtCFZP?=
+ =?us-ascii?Q?Wibb+utyMuadJt3U9TfLVzz+4LqOEgwY62mryJmuJx4YvpC1SnZhtIE3LBIL?=
+ =?us-ascii?Q?QiX6OuEE9z5GwQsJlLBESw6Y6CiePEZCEZiBoBb9Z3pTYaRFU/MNCC5hkicA?=
+ =?us-ascii?Q?J4kvqf2I48wr5mn4ohhn9f9gjDM7kcpjHA9FTrdISjXOrrvqF426BT3n/VZF?=
+ =?us-ascii?Q?Qm7hmSopZxijxa5lJnrDs4y+2DQ3RIb+G9lNvXGgEzPC/ZeoEBvUGzrLXR0Q?=
+ =?us-ascii?Q?MhQ/rC4Q5ammBsRQEEbb1P4k01o4yhZ1EfbTob0ep7r4yuzONlkZrv0fVbOl?=
+ =?us-ascii?Q?0mG9Qs4JW+BBHI2/jccEAG+HaGaxAlP9S+WQuDEve7zwnTJvPk6aJqrWAYtG?=
+ =?us-ascii?Q?pLQU9p1Cp3eynagPoSENKGeGOWwO3H2gWsrP/Rv5zDKPKB11Zt1VOADCYlVO?=
+ =?us-ascii?Q?NlhpGTGFUlbIkwEWbGE/iMMNHueYx5RiDM1mMWxuiiySU6YPGCrxsJbCwLyz?=
+ =?us-ascii?Q?TZPtpgYj1Gl79Aw3jVVcVn+pPNHFbgnFLFuSH648BR7R1KzrXEOA5OsGTRbQ?=
+ =?us-ascii?Q?ylaVaBW4ivVaQcx3rXALDj31UBC5GeaAhbDuuTqbnzW69PMdMHCKgIEK4ahc?=
+ =?us-ascii?Q?FLMk6SURSyHQRwAizkZrR3NjYbvDWrsEVmUob5CjR2gtNe5HgWBti1m1h385?=
+ =?us-ascii?Q?Lh3d+GfnxfqUtiwzHPE2hLi2QM4UqnsIt765XJ9Qwh0vhAvZqIu5d+DGs6kV?=
+ =?us-ascii?Q?EJPjByjZd9DdBeYxn85JXmlqmBd/Mc6Jvzt3b5q9kckXqf0YNzxloqsXjuIz?=
+ =?us-ascii?Q?EUlWqTAx46haOJBQervpeGcjyj0lAyzGN9wI7P/lmaZuwUYtxkEjlqQrZRfE?=
+ =?us-ascii?Q?2A1aeSDC/zPzwMuKqMWXULuUsSgyuBvoyIDXfFaw9UqrMKSg3qH7iLJ15ODS?=
+ =?us-ascii?Q?LF0jZGrV6JkK4QxSmLe6/K32mIsafPvfe57oGNxQnxkd/kPn3GNWmufgAJbp?=
+ =?us-ascii?Q?OqhEXOtPORsBHjGS55RzfRmuEYHCOV2ODm5TcAFDknzAnlDy+3PrnoM9oML5?=
+ =?us-ascii?Q?g2xDHds/sZEuuUuB8I575PgNi+h9Q5coAz7DTlg0?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4819ecfe-ca5c-46d7-42c5-08ddceb633b0
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2025 15:40:10.6386
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3VucWGyZx89/68xIHgQOIjqvBeikgGqSMYDZk/57MrstPUXAs0s024qAA3LfgO+BUIjQUUSc0g7GN5p91cL+zA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB6203
 
+Update it at MAINTAINERS file.
 
+Signed-off-by: Yangtao Li <frank.li@vivo.com>
+---
+ MAINTAINERS | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Le 29/07/2025 à 17:50, Christophe Leroy a écrit :
-> 
-> 
-> Le 15/07/2025 à 02:31, Andrew Morton a écrit :
->> On Mon, 14 Jul 2025 11:49:09 +0200 Borislav Petkov <bp@alien8.de> wrote:
->>
->>> On Mon, Jul 14, 2025 at 08:05:31AM +0530, Anshuman Khandual wrote:
->>>> The original first commit had added 'BROKEN', although currently there
->>>> are no explanations about it in the tree.
->>>
->>> commit c0dde7404aff064bff46ae1d5f1584d38e30c3bf
->>> Author: Linus Torvalds <torvalds@home.osdl.org>
->>> Date:   Sun Aug 17 21:23:57 2003 -0700
->>>
->>>      Add CONFIG_BROKEN (default 'n') to hide known-broken drivers.
->>
->> Thanks.  That was unkind of someone.  How's this?
->>
->>
->> From: Andrew Morton <akpm@linux-foundation.org>
->> Subject: init/Kconfig: restore CONFIG_BROKEN help text
->> Date: Mon Jul 14 05:20:02 PM PDT 2025
->>
->> Linus added it in 2003, it later was removed.  Put it back.
-> 
-> Was removed by:
-> 
-> commit 3be71ba84f17f39131900f44e8ef513c696a5b11
-> Author: Linus Torvalds <torvalds@home.osdl.org>
-> Date:   Mon Sep 1 21:30:14 2003 -0700
-> 
->      Instead of asking for "broken drivers", ask for a "clean compile".
-> 
->      This makes "allyesconfig" do a better job.
-
-Which was then later removed by:
-
-commit 3636641bb2c7a806c1099ca092ec8cd180063f9b
-Author: Adrian Bunk <bunk@stusta.de>
-Date:   Fri Feb 3 03:04:00 2006 -0800
-
-     [PATCH] don't allow users to set CONFIG_BROKEN=y
-
-     Do not allow people to create configurations with CONFIG_BROKEN=y.
-
-     The sole reason for CONFIG_BROKEN=y would be if you are working on 
-fixing a
-     broken driver, but in this case editing the Kconfig file is trivial.
-
-     Never ever should a user enable CONFIG_BROKEN.
-
-     Signed-off-by: Adrian Bunk <bunk@stusta.de>
-     Signed-off-by: Andrew Morton <akpm@osdl.org>
-     Signed-off-by: Linus Torvalds <torvalds@osdl.org>
-
-diff --git a/init/Kconfig b/init/Kconfig
-index b9923b1434a2f..8b7abae87bf9c 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -31,19 +31,8 @@ config EXPERIMENTAL
-  	  you say Y here, you will be offered the choice of using features or
-  	  drivers that are currently considered to be in the alpha-test phase.
-
--config CLEAN_COMPILE
--	bool "Select only drivers expected to compile cleanly" if EXPERIMENTAL
--	default y
--	help
--	  Select this option if you don't even want to see the option
--	  to configure known-broken drivers.
--
--	  If unsure, say Y
--
-  config BROKEN
-  	bool
--	depends on !CLEAN_COMPILE
--	default y
-
-  config BROKEN_ON_SMP
-  	bool
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 7a4e63bacaa4..48b25f1e2c01 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10659,6 +10659,7 @@ M:	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+ M:	Yangtao Li <frank.li@vivo.com>
+ L:	linux-fsdevel@vger.kernel.org
+ S:	Maintained
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/vdubeyko/hfs.git
+ F:	Documentation/filesystems/hfs.rst
+ F:	fs/hfs/
+ 
+@@ -10668,6 +10669,7 @@ M:	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+ M:	Yangtao Li <frank.li@vivo.com>
+ L:	linux-fsdevel@vger.kernel.org
+ S:	Maintained
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/vdubeyko/hfs.git
+ F:	Documentation/filesystems/hfsplus.rst
+ F:	fs/hfsplus/
+ 
+-- 
+2.48.1
 
 
