@@ -1,79 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-56234-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56235-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B150AB14986
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jul 2025 09:54:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD6B7B14991
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jul 2025 09:55:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A05F818A0CA2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jul 2025 07:54:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE3DE189F788
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jul 2025 07:55:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C4DB274B5E;
-	Tue, 29 Jul 2025 07:52:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE5726B2DA;
+	Tue, 29 Jul 2025 07:53:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BjYUNxJS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Co27IN4D"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1727826B77A;
-	Tue, 29 Jul 2025 07:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329FA265CAB;
+	Tue, 29 Jul 2025 07:53:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753775562; cv=none; b=lkCe9d0wEUDlRHCFgOqy5hE5wIywkitMTXiGnJ9wmTi7EkdnoQU+AgclwnZqB1C2GwWqt7aHzoo5KlLVc/M+1UdaEE0+/SUpeeBgIcCvpOEWAy5zKiCJPJNHrR0/o9M0Sk9aQXfmCPFwNxjUGuZQWLlB1fHXw3se6oxNoKrjnCc=
+	t=1753775617; cv=none; b=afMSuwVHQfoOH+IvFhtBUKAx/+hI1iBEF/slSjb6j88UYfYW+5Qo9YTS7rlNLJeLQYqnbsGOAqfxK3EtD2no/nVRQJHqFkrIcHe5O5TVJFzZw8oztBnkh4Tuc+36JLjdbN7gOErtQENSamw9OM5P3g5Suwgvg8Juj8E/tLfGnd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753775562; c=relaxed/simple;
-	bh=up6yHYGnEFam/C87iS/6Oa+IpVXTrFoTn6clDs9PXaY=;
+	s=arc-20240116; t=1753775617; c=relaxed/simple;
+	bh=aes4PlrG7u8ZTpHznRKhnbdzYLwksa7kjjCc3G53RK4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BqDv/mannIWw8KOP764d5YklFicWmTOnYH45HuTOuoxZagD3E0YW8eoFXa/mvLu2Qgo224SIhRe5NiznTIMF37lVv6VjiKDocYLp3Rv/O4WTaSM5x5LRS/WjemtjeJJEv0z15FqahsrcMB31cCstaiKS7odDbi3umzGrU8I722I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BjYUNxJS; arc=none smtp.client-ip=209.85.218.53
+	 Content-Type:Content-Disposition:In-Reply-To; b=N8Pbw7tzAEij3QxkC29GwjiYtw9GRT9RJqW0FrPjqV+u+rZ38Y39C4dmGunuhK7S88N0TAnP+pVjfG4FddFExWtuGdK1SWVevyto5p32O30wkDV9YauBTSqPgmV5XkOcsGe76QG4TVNQ7gSp+J3q83xbfnTJ/MrzsId8bdWoed8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Co27IN4D; arc=none smtp.client-ip=209.85.208.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-af66d49daffso253885466b.1;
-        Tue, 29 Jul 2025 00:52:40 -0700 (PDT)
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-6152faff57eso3378209a12.1;
+        Tue, 29 Jul 2025 00:53:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753775559; x=1754380359; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753775614; x=1754380414; darn=vger.kernel.org;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=smgFHrQGxmFhyoF2rRGKiX2BsEmUYdFGX1JZMpUcdm4=;
-        b=BjYUNxJSe4/6kctk4RhHTf54n1d77TmzDigDc3uZrfVOga1zqSnQGtIk/4q1jUXr1y
-         JaawodYJrTLjFbxcDWMryOf2ysndwtdwHiFax6WwD7saw6cDDszos1NOthMkR8Yc0IaL
-         D4UUkQgeWFjOay4+pbmBlwqF5uYkWIA7g1tjQh/ij30e+FmGZsJCunF+bEQaEhoBpBdG
-         4+HzQKCEUinrV+LubMA9fV3Xpxynn9hZXbrNAHbC8F591FcgHQ4C2IWDY0e8EIIOyQI4
-         jjUDKU81EzP+ScaMkprU4J4ZGYJQDFzusWYgH0Ghsl9TMmnaDKEpaNOkWppG31RoybRE
-         xEmA==
+        bh=xsVo12V6n1cHZPjfQGvjTgS28eByrDkHggKW6JJVbsg=;
+        b=Co27IN4DYslceBDIRO0O2CQizu2QrH6p9i9ZtacEvjsWfxQdCUjNgwUhS3y24wuZzd
+         q3AtQwbx7oyimNBH2Rg+hZ9Ksjttg/r9MAnfuu5xqd7Z32+gc7Hnnfn7sQx3zxajNAbb
+         IO30X+vzr58BMiKPtUzkX0gLbmDqBcMKNj9wXTP0/0HO3mITg9D/5EIbLWyNBchtDrVl
+         cGWwa1a4KjwvfDe3ukQZDJJPsoUTLq54SuVDjzLvaVh40g4IK+3ZkA5WFQHK16ZehllA
+         xDQUqllyoDFD8qMAZwMFEy9lmEERKE9R4yWGCCV2e6IX7eMukuG7MGPFAizP7g9L3QRh
+         D/Aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753775559; x=1754380359;
+        d=1e100.net; s=20230601; t=1753775614; x=1754380414;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=smgFHrQGxmFhyoF2rRGKiX2BsEmUYdFGX1JZMpUcdm4=;
-        b=AwWB9kHl5EEI2AaVdlWxbUbjZJzS4aoESKXOYaIwEJQJcI7VMncgWYDW2/WQIhjRFC
-         9PfYPxl2R+0DBPkd8wna/h3qBKxusLTEf1C96u1KBxjSrk4Zw+rcdrr+OWotRQ4+tJnm
-         YvGCjw4jtUsnoCAPUMZP4ikFKOfT8OfG1XE2T9mKnS/Q+RHXAgmFXnqFJZq3GggFqq+g
-         3InaV91Nte4IJLEu7WKuEMx/vqxv5eo0ExDIg/OmU4iWLPytVBqsQ9mLitYZpWEPkg/b
-         m52Y+yfaC6V5ZNWQs8nJncvqS/hihrW/1CjvSY1QPPJjgay5Gnrl/GRGckxu79+jvc59
-         E1MA==
-X-Forwarded-Encrypted: i=1; AJvYcCV+LPlDCWuQkqw7CN5hNI2BCpWNKJR+ySjK4E/AZU5m7UU8OiyvSYz9bM5OLqTmVyhnWO40hzDA+6Oki17F@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx10RyzeWU+OV+rXGHAzzgdnTOoeMKgVcG0o4bR1zLKzGijApzr
-	88xE3jbBG8Mjy34+TbfCcV6z3md/rqMil6XNMr4P08I4mh8C51s63rVfW92hW+zQE3c=
-X-Gm-Gg: ASbGncvWNNOgzCfD4sFvWy2h2xzTdOdvHM7EaJ9GierZjdCPbE+Og0Deq6jQINDhLSq
-	WjnPYVuy7WdMJU/Os9HZTX9jMCkU8l/eDrNxiL1BmGbbOdfm3ytmFM0qBBz5epZG/jp/o084LOq
-	pVCU+uKNGvAowte3YXDC5x2EOk/5AlNtQHmRVQxbkPUzRSJx1S3VgOC1CyHsRzP8U9O2mKe0knl
-	vJEs6alnEMMzywDhq2l3KPAEq8x5s+1CuEplg8ihkDBIXyNKAUuO8T5QvJUd3U+Sbywd5JxDG66
-	WSZEEDBFljrybZ3dW1VPbdu/e8qbIsLBrPHBcUMx9V+43BzN03N5fHkkx+VlEy7986sWPGbFSdG
-	9RbGMeeoj8JkEUElfBxfp4A==
-X-Google-Smtp-Source: AGHT+IEV6FhS7BcuKiy2mmCmExHdPH8UplQNL1+hlnfx7GXoYFJTZHp4rwskMVqcf+8guTBozWXdIg==
-X-Received: by 2002:a17:907:6094:b0:aec:5a33:1573 with SMTP id a640c23a62f3a-af619aff33bmr1645989666b.41.1753775559042;
-        Tue, 29 Jul 2025 00:52:39 -0700 (PDT)
+        bh=xsVo12V6n1cHZPjfQGvjTgS28eByrDkHggKW6JJVbsg=;
+        b=VU+u5/PyVP+AT9i2GLqpdpu/KXY8HQA//4/LH5KiVPvoQHkEKHrEpmPv48yFOBWOl4
+         EuIWN3Hz0kTbKGTc1XsIsXdHMSij0voyEC/ST23nGXccyWdzjzRCFeyqWf+5dHNYg5ch
+         5ECTyi4WYvZzc0lletgxn4HtHn0MZzSkN2j+UksZlcnNibj4SaI+KwM4rlUUStZt1eth
+         ugGfuADDtmXNqUsENUo6H01ul8Zk/CNU8SmH2CDWoHqu11koiZ2RfMWNs/rUjqS9jdPM
+         o5sjpisxt5vnh6MSq2HSVqJmapqi+vC1zJwyWKSq01EchVlsgmQPa2TXg7txI8GQfxuG
+         Y12A==
+X-Forwarded-Encrypted: i=1; AJvYcCWEyxVyxDUWAWz3DNDA9DA+pNACfzsFSlDeRmPwbO1rA3nv0TR4jcX9QEz+I941WqgAS2AgVa5KM/RQ6MxO@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7KmAG00HVqqJiTMWUiITMF7PdNU7PTrUrxTeTXe7Ai11XmbXa
+	MA2dWeiEnwetceL5/kPqWX2zx7Kel/R7MdnJaDeTEYPvbGUo558bAtG2
+X-Gm-Gg: ASbGncsLibWYy7HA8JjzuQOIOUMJQK9csM7C2D7zJ+ms6+Hg0N/LEDIEOD173qoFpP+
+	YbXXWW0gnU7fJVdZtz6xjWrHYz7Q5kKMGxQoC34K/g4kFLR/3TDQ9zstSoKJo6FL72nIc01CLnl
+	ShwupM2Jz4fqw+k/6DuxxnZLJOyyKkg5deII1rOCQFSxDEoVRk8Unf4EtNfjQ9+t5FvVve6fbZv
+	rV88o9j/jFEG7Wy5lVqLxzCpPSaBmSgVJuqM7WJfAJCMCdmPzwgHxV4T9pwe4QBTy+65/8TET9Z
+	mdUhXG2fGJ2fOqfyM1AA2wTlYLjQc/05Zrwp2yArNdCb0lfZGO8lnaYwkNzCiVqJf2uzzhatnY+
+	V3WPAfkVFJGY2ftn4rFrZ2g==
+X-Google-Smtp-Source: AGHT+IGAnknk8rhP20f+2sNuwxA4iW0E1pa7hcWsSRXI9dwJsSvI+o2WMSlmcCRhgf1zJ9FE5orwQQ==
+X-Received: by 2002:a05:6402:2789:b0:615:4655:c74c with SMTP id 4fb4d7f45d1cf-6154655ca5emr5234235a12.31.1753775614152;
+        Tue, 29 Jul 2025 00:53:34 -0700 (PDT)
 Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af6358a1aacsm549963466b.49.2025.07.29.00.52.38
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61556326ee7sm1444188a12.55.2025.07.29.00.53.33
         (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 29 Jul 2025 00:52:38 -0700 (PDT)
-Date: Tue, 29 Jul 2025 07:52:38 +0000
+        Tue, 29 Jul 2025 00:53:33 -0700 (PDT)
+Date: Tue, 29 Jul 2025 07:53:33 +0000
 From: Wei Yang <richard.weiyang@gmail.com>
 To: David Hildenbrand <david@redhat.com>
 Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
@@ -96,12 +96,14 @@ Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
 	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
 	Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
 	Hugh Dickins <hughd@google.com>, Oscar Salvador <osalvador@suse.de>,
-	Lance Yang <lance.yang@linux.dev>
-Subject: Re: [PATCH v2 8/9] mm: introduce and use vm_normal_page_pud()
-Message-ID: <20250729075238.44l3jgz2l6fbss2j@master>
+	Lance Yang <lance.yang@linux.dev>,
+	David Vrabel <david.vrabel@citrix.com>
+Subject: Re: [PATCH v2 9/9] mm: rename vm_ops->find_special_page() to
+ vm_ops->find_normal_page()
+Message-ID: <20250729075333.47jnxp7fly5wfx6n@master>
 Reply-To: Wei Yang <richard.weiyang@gmail.com>
 References: <20250717115212.1825089-1-david@redhat.com>
- <20250717115212.1825089-9-david@redhat.com>
+ <20250717115212.1825089-10-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -110,18 +112,22 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250717115212.1825089-9-david@redhat.com>
+In-Reply-To: <20250717115212.1825089-10-david@redhat.com>
 User-Agent: NeoMutt/20170113 (1.7.2)
 
-On Thu, Jul 17, 2025 at 01:52:11PM +0200, David Hildenbrand wrote:
->Let's introduce vm_normal_page_pud(), which ends up being fairly simple
->because of our new common helpers and there not being a PUD-sized zero
->folio.
+On Thu, Jul 17, 2025 at 01:52:12PM +0200, David Hildenbrand wrote:
+>... and hide it behind a kconfig option. There is really no need for
+>any !xen code to perform this check.
 >
->Use vm_normal_page_pud() in folio_walk_start() to resolve a TODO,
->structuring the code like the other (pmd/pte) cases. Defer
->introducing vm_normal_folio_pud() until really used.
+>The naming is a bit off: we want to find the "normal" page when a PTE
+>was marked "special". So it's really not "finding a special" page.
 >
+>Improve the documentation, and add a comment in the code where XEN ends
+>up performing the pte_mkspecial() through a hypercall. More details can
+>be found in commit 923b2919e2c3 ("xen/gntdev: mark userspace PTEs as
+>special on x86 PV guests").
+>
+>Cc: David Vrabel <david.vrabel@citrix.com>
 >Reviewed-by: Oscar Salvador <osalvador@suse.de>
 >Signed-off-by: David Hildenbrand <david@redhat.com>
 
