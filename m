@@ -1,63 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-56266-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56267-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F0F6B15212
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jul 2025 19:28:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C799B1521F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jul 2025 19:33:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40BAA166BA7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jul 2025 17:28:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 993F718A3938
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jul 2025 17:33:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F7C298994;
-	Tue, 29 Jul 2025 17:28:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60992989AD;
+	Tue, 29 Jul 2025 17:33:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="EI7+7agl"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="FXbJ2XrY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2063.outbound.protection.outlook.com [40.107.92.63])
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2040.outbound.protection.outlook.com [40.107.92.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBD36220F4C;
-	Tue, 29 Jul 2025 17:28:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.63
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B364A0C;
+	Tue, 29 Jul 2025 17:33:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.40
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753810098; cv=fail; b=OvT8WIIVDsOXeISI80WstuwgOR7s9QfyWsAEHEuCydD3Jw01nB66gKSOzKtidYu4uSaHR/B9pOMUSYuiYYNo7dqUSy2vM3XeSEwDEWtfeuE46Q7SqsoYWiq/kVGcud3ea4yFmVeT6gykNG5uwNApMtgIxN0Uu9NqbybV/d8LfJc=
+	t=1753810405; cv=fail; b=UkEygC4AZZbUtI49InMB7NK3UwkAhX9aG8KSiOI12lwXOvNy6btID5E8AgvUi2eaPdEdRtfUi1lTTqRHBgIwlj+ZVEb4bebsLGQ1jZyktSBe7XPVkkjGrK6MXAacKi195tJEAbVWdIHIcj/NMXFg+kT/5OsZA8FnNcS6NvS814c=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753810098; c=relaxed/simple;
-	bh=EBSbn+EgimgEZSuvZuxUfTYC/ICAnAzJkmIwPmsU+hI=;
+	s=arc-20240116; t=1753810405; c=relaxed/simple;
+	bh=EsDUHbPYBGHbtCBiYUllSo8NVOtEBcXisJIqBgMjCNE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=J0Ek1+ozXuPMqHtJP9N5eoSCKZC/2ngPVswmLCxTOa/DGIWte/FYx/eIRO+lV2NLHsrQIEIyteR3y9AXIYIJmC2uqDGgZKt69kTXnTrYTH0GLwBwtMkRleFD6jhXLaRbjC0UMgZ9HZVqLzRuQh5mv3cO1axv+CVrCCfCbqYOnYc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=EI7+7agl; arc=fail smtp.client-ip=40.107.92.63
+	 Content-Disposition:In-Reply-To:MIME-Version; b=SPNg3rqgUhybtBUpBG5YhTwqFl62k5bKjlcw0hSB5bgWC2NhF+2BkgweA3JbzWXIYn/IBEetvkIZtUymGcVVoW96ct2eHWb1gPGoJuHF7NlpOzKiKsqmFk6NPuKXxMpfgZpdYXf7JpThEKiOcLAQNSaPhFpmmqBS8lz6KFHiimw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=FXbJ2XrY; arc=fail smtp.client-ip=40.107.92.40
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TkmqxIVHOMtm/ijeIeAXoEPIfwOJkf1YDUZVA1Tb6gCDl2dd7g3gGs5bUTIdAqt0HIM4Sti4Dtb/e2HFn0P57KqC4LCOzMejgUk90XVJHdz6t0EQoS2XVBwBWZC8J197+UViRR4j2p5VnrZ8sKh4xHExgAyd+Gc0KgHLB2aSxfticfcF15A55NYp4nsSB4Yu1zfShzptY5urUM8wCHzAwQjfjD7M9bJV9hzS2R+tyzQFZneYiOuNuOFmbSt11D1RT/lF57hvbOGI0K4t81CmCWl8QvRT/CRD9LoJvWEXaNbvB+VtbfdryqHBXFV8cIWwbKQMuXUHXFDiJGIHlc9gWw==
+ b=xk9JXydu7xhdf+x3huJoVAQfowdQK5EnSTCEA585j/et/XoOlffs5z1MC8CcaQWczK19zWyHHFZIRnyfhdQDIKq2FOGq6cr18bH983RccUUiDL8s+bC5vEUzSslRVTbUIPFS49QKwrgsBWxYC/wnXQzN2bjWKNa9TU2AQJ1N+MVMbgGGvUYjM1g9GEo9386wb94xhtsQsxBqgyQm5wqvvozTWyeanrjNFOOcI8WfZvDCfbXAVL/3hcTr8XioaXAcbg1+QjzzR01gKlWmFhUyrEemM3fXVWWjj6OURzgIAspX1yXBrkerPm2ptrIMLTkUnDFqhldq9KPVevPP5OkQ4g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TCvwTvNajtxikJKCE7yL5gU9gVhFU/uvpLuFGCooEWU=;
- b=vwohi0e+PAnu0O3N6RSlObLOoU3ghN7gXqjg8SBuDjH8ITqe8VvCTAyYYYaLtzUsjMQYkvkRoo74usqhrMUzBg98F4XmX+npsAng4qzmOtonMxFbLmr6dnPI1ElqMvwS1GUMokTG9gddMTplisavKFb0PVUCIQUoJPCD1M4fvgc5Zhxuis9+kD1Foy0od2WmG34/sBdct/DtK/9xoaFCtmRJSrmRrKqCItQmElTHRLHb+s02haw/pBzPmGX7TaVWWIMQs7GO7Ag8eVw/uMEDjGANDV0zGOZgBFBmaFHhCYxu9POf+nfoc768MID/6hAZo5zMbJ64Fj2OsZTlWPR6qg==
+ bh=47kHgJA1kkjeZL0nbbrCD0dW9hvxPVMWD9MGJuhJgrw=;
+ b=BuqHmTfIu/OnSeELSNk8reUxWJhh8YP0MtHfq9v5vTcjiF2Pc5uTxFNV00X5w3fLICsbslHLhu8vZTlODTpP7V5UgT+JdilED2h/2iBHCAgzowq1cm3VxRmvt6DLI9pJUdnV64m/jeaTo8toM0jptBUCYz7Ds/8kpB6NZSCZ0SdLKrhbflxsM7wJDWpM4HI6gadZDiXMnR1WkM2XZNow1nLjhvUi4se/iYj/PR7smMm/K+mmBGzR3LnjHDd3dBIHC5yY3DV4r3aY3PxmWt8aebNcQeALTYg/YKEzqnuALHJvPRC4iOM52rgDLW2yU1s0iOd1M5TmFNKlfdUGqQbvFA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TCvwTvNajtxikJKCE7yL5gU9gVhFU/uvpLuFGCooEWU=;
- b=EI7+7aglILKLkdCSQ06kIa76OsvTuFyd98+aq+Goc5lKAEZdz2jhjYewfz3KkEDmtTpjffm/cPiwfXE1Uk2yu8EXN71WsYmfbonnWstf6ngopI5IRIY3Qorla6L4fG2EDA8Ax/K8LKINSEsqTJ9M0S9D+OqOSlcP+h+42GReuvkl3k8vjCc+85Vn2gTs+7HoApEAovdxgRAXyz45PygnrcaQOse6OlNYyWX6zvyRZZh0wya+k2VR2/s7qPgdLx8ejh7Bo6HQ+Iwf3wi5HE+lOINwQksL0d8M02bqOf8rDzalhB1ROje1QczRxCt3vYmmQQ5kgXUkquno6d85ueZFiw==
+ bh=47kHgJA1kkjeZL0nbbrCD0dW9hvxPVMWD9MGJuhJgrw=;
+ b=FXbJ2XrYg+ExMvLI0dxp9uoOyGPyrz9nODqZuCE/h5P+W1FQApUpumRLIXKiXxlEtGQYjxkm/aF+QqZE668WfpAtjAoJEn7Ntyx3osUT07JVg75yWSmdO6djDLVowERutAhOfVQWNUI86S4YB9RI96W3dh04E2aCIxsSZzAonz2FggYwE/PRnAtFB9ediZHkP8+VGuHzSPj0O4EeSJaJBIVL5rxsu06lKZG7LCHyNcu5l1cmL//5lzwnZUSM2Uu7jsNErSTvbbhzKb1M0cN+2FCK7z7xSEpy/OygG9iUc7mp2ytx4it3OHAfhIrIGenmzPGZ0GXXHNnXhNt76AiYLg==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by LV8PR12MB9230.namprd12.prod.outlook.com (2603:10b6:408:186::9) with
+ by IA0PPF8CAB220A1.namprd12.prod.outlook.com (2603:10b6:20f:fc04::bd9) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.11; Tue, 29 Jul
- 2025 17:28:13 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.24; Tue, 29 Jul
+ 2025 17:33:20 +0000
 Received: from CH3PR12MB8659.namprd12.prod.outlook.com
  ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
  ([fe80::6eb6:7d37:7b4b:1732%7]) with mapi id 15.20.8964.024; Tue, 29 Jul 2025
- 17:28:13 +0000
-Date: Tue, 29 Jul 2025 14:28:12 -0300
+ 17:33:20 +0000
+Date: Tue, 29 Jul 2025 14:33:18 -0300
 From: Jason Gunthorpe <jgg@nvidia.com>
 To: Pasha Tatashin <pasha.tatashin@soleen.com>
 Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
@@ -88,16 +88,16 @@ Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
 	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
 	ajayachandra@nvidia.com, parav@nvidia.com, leonro@nvidia.com,
 	witu@nvidia.com
-Subject: Re: [PATCH v2 10/32] liveupdate: luo_core: Live Update Orchestrator
-Message-ID: <20250729172812.GP36037@nvidia.com>
+Subject: Re: [PATCH v2 14/32] liveupdate: luo_files: add infrastructure for
+ FDs
+Message-ID: <20250729173318.GQ36037@nvidia.com>
 References: <20250723144649.1696299-1-pasha.tatashin@soleen.com>
- <20250723144649.1696299-11-pasha.tatashin@soleen.com>
+ <20250723144649.1696299-15-pasha.tatashin@soleen.com>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250723144649.1696299-11-pasha.tatashin@soleen.com>
-X-ClientProxiedBy: YT3PR01CA0059.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:82::6) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+In-Reply-To: <20250723144649.1696299-15-pasha.tatashin@soleen.com>
+X-ClientProxiedBy: YT1P288CA0035.CANP288.PROD.OUTLOOK.COM (2603:10b6:b01::48)
+ To CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -105,234 +105,148 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|LV8PR12MB9230:EE_
-X-MS-Office365-Filtering-Correlation-Id: 49ae4e6f-d27e-421b-27a1-08ddcec54bba
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|IA0PPF8CAB220A1:EE_
+X-MS-Office365-Filtering-Correlation-Id: 18ff101c-9c1b-4d07-c59d-08ddcec60299
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|366016|376014|1800799024|7053199007;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?A5WOMUUUZY4bLoHqF8XmCW4RaM5ndoee+vQgQxMWbjHb68ryMzlQzrun1KvR?=
- =?us-ascii?Q?5LaWdSPuEKZJEaSge352eJqS6FMdwt4uaP7aHWYJ6QrP0o94LbLdTHQHu3rd?=
- =?us-ascii?Q?9YHQaUIH7QYi45r3z3w9W2oHPiWBjnlU1r6sufGBCD/+blDYw3SbzB81190I?=
- =?us-ascii?Q?z2a4UjzCiPUzwBU1Akbao+RvdmlJpDvz3dnhFIXnOfnR9Vsv0jJKlarw1ezd?=
- =?us-ascii?Q?72IRejw6C5wEMX1wGrJXJk/CZ7nyEA+B1HmcdbyXpbyeKTutt5cCpgV2fhzZ?=
- =?us-ascii?Q?t0TaylvOM/5kv4he1n1yOrAqYlDudqg73BMO1SlcyWuOzZxOQPvfIdNQhsI3?=
- =?us-ascii?Q?HleMb3d8nIESetGTpv5ngR4WYJE86uCdu59LNwz3kjTFm9ifVWFqopvIF9V1?=
- =?us-ascii?Q?n1SuClWBIJ2Tbp27A1qGjuZtLzu+ADy+faeksfrnY2HfDdAeZTdyLH/Yn8/y?=
- =?us-ascii?Q?7t7HeR/Xqcy0eBdkA2SCCEyqhq/xrOtAyS50FfWfoIwgvcB/JSZ6eV0Pizdc?=
- =?us-ascii?Q?NyvDti24xZ8eTcVKHfjQu/j+aHIzh7j+OyurgpB0jla0XgZbTuwOyJl8VRRz?=
- =?us-ascii?Q?i9Ee5fHFsqlOgv9SEw44fEa6NmZW3A4aeriQgrxY4jXvVwgx5dYcCI+yabhb?=
- =?us-ascii?Q?Z6dterFQfzv5Yg0D6X/DoLOaHPfzGgBPEqQHhXa9NOoy2Hb/7iWI1ZKNpF2o?=
- =?us-ascii?Q?8ndZanW/IBdLWSVxk/XeuSFXf6dVHIjAGpDiHmqphda44QMBKIb+/oolGg4r?=
- =?us-ascii?Q?7n5H9AQLmcvxmRmX1jYJhp2howB4WveJpAiR89heeUHisvoXn2bkLhvL1T3G?=
- =?us-ascii?Q?bmFNRCShOXRpMfWzg6z760uwQDLqoLKjFyymMt4HwvbIUVahR9plswO+Hbey?=
- =?us-ascii?Q?ROizXylranKddpOCrvHPxc6zNjZTT2f0HmOtwmKCRPQzYgXn5tXyN2UqvpUa?=
- =?us-ascii?Q?+7E7yCmt8yqQq7mgXiYuufaCgxai5FdjtKGucEFzGnDnXFO84QRSzvJtnqVv?=
- =?us-ascii?Q?CUGiMUOGehL13NsLtzDanpo81HNLM2dd58TEawPdh3oo2+r0EWlKADW1D71d?=
- =?us-ascii?Q?jxM2GBHnlqe1+wA57ZV4cUgo8npiG/3PYFXu7dlymu9wYPs59cTwgZew/tF9?=
- =?us-ascii?Q?CZVVxx8rPtZ7Dms6JoaRwI9ZPY/djtCt1zb+dQ5+BiSONht8lVZO7KwJaPMr?=
- =?us-ascii?Q?d5B33yrqkSfq6jhaIo++eIUuDl2eg1Q3eAhC+o1SvsfePVJBaL2pR1vat8n7?=
- =?us-ascii?Q?lk0af1Kf+2XLIDxRfvkoCcSEGGb0hG8roANxG5MQvvueFH+VeV2LOthF3XdU?=
- =?us-ascii?Q?FTYv7ZZ5rlk0ZKFPzqQSdJuJZhEDAIddYDO57rSHBCGn9rgrFbTZQoXfgRTo?=
- =?us-ascii?Q?IS/JxbyXi1P6XCm1X9wOaZA6FggFT0+MQguLj6t/w49o3ViELDFsWCrz2IDR?=
- =?us-ascii?Q?8mf0n2eCBNk=3D?=
+	=?us-ascii?Q?ba2Na01DYOZluWstg76uKVrdrmA2YJ4oz6DKkvm2uiKqVDQhOFQSCFnqocXD?=
+ =?us-ascii?Q?dV9Q4D1xhfTJsugHkT4ZkxxnTgFU8WbeeoTyuPTqN2G4fjXEVyCgZHO17XEL?=
+ =?us-ascii?Q?npCD4EKl5xWEiG8eGxo1og7yEOIc5sRr1FfpVf94b+NSqPkg6+aek8NByXyT?=
+ =?us-ascii?Q?p3x5gZ9F0uPZQvuihCArDMkOxtM0mQELD+CTLBg4v76IL/1GzWebtlaUu+UH?=
+ =?us-ascii?Q?6lBS1xjteCgMBkHlhSqFwP0IfQvDuP9Z7iQW4Ias0YgWF/qLWq1QrEYK2RkI?=
+ =?us-ascii?Q?7lrW0Zr2zQpteJYQyCwir0H7AgDOk+i7t+BqmN2+6+3mV48GzU0e+WSPVPuS?=
+ =?us-ascii?Q?zOZiJNCX/Y6H1EIA7FeZw/FhSXUsWxcgsFETV0vP7exvjsi4Ks1Hs3yMAyvY?=
+ =?us-ascii?Q?DYfEOiQHpSrYJLD6CuH/BjnvaZhfG/FOHjuM6GV3B2LBix7pboZOFQ9bnHWv?=
+ =?us-ascii?Q?fHo16VOhxwl6roxX+lUFvD0oJS2JzuX+NX1yb5gf2m14NrCNzC1ItgekLIS0?=
+ =?us-ascii?Q?vY0vmY+eqNc4IfNReMqdoSwh/LL2S8cAUe+5lcUDOUFWOFMf2qAnMNWQHGdA?=
+ =?us-ascii?Q?mO7LNmd9NdwJ8iv1IQJzL3e8bd24/v7tiCR+2eZMgQNsYZ+Y4YO3Msmt3bBI?=
+ =?us-ascii?Q?BvSAbdBq3TPn2dO5omIxxFdOcimVWMZicdipG0+/sXjLUqvXHUmwzk4E8oGj?=
+ =?us-ascii?Q?AfuAhKClFs+QSYJDMbVy1RLEpf70W1KQ2Ci85F4OuDEtss4vJtoL5vnzsG3O?=
+ =?us-ascii?Q?U+fu51dBHEwcgn+tyVqSVmJaEWe1jjLkOUJ/Fkz38Uqz+hQoh61Nvw0n41UP?=
+ =?us-ascii?Q?8jIqCB7gbvGN7iLCBItXzXkSNaPHH9aBM4iDeoIa4RIfTMyXpEDv8QX+hJyv?=
+ =?us-ascii?Q?eTz5OGfM2Q3mvTpqUD3DYUQN053hYYnaPEPfxfsX7zvtN5RU0Wd4gp8L7Wme?=
+ =?us-ascii?Q?gz7ze0XaVhE+n81k1wHv03O541sa8OJ+Cr5WbfY6BZ+8kJ1zPJ/6nfLG2dcm?=
+ =?us-ascii?Q?4+oW1y9dS+vnjPPXLAPRTYboH3YUjrfz3smie4h9n5MRyD/misTk+nHkg0ys?=
+ =?us-ascii?Q?DkutI0ufqr5X7N/8gVqOafFUTO8SJDPI67uziTUPgDWtWBZX8cqvyZtlqHYm?=
+ =?us-ascii?Q?iO3ZTFroCOGdKz6e9rbO2O8d25hKoY+umkohb6GkdSpof2EGXTLgHNZRGAjN?=
+ =?us-ascii?Q?cb8nqH+h7zB5zQt7BRDpPIM7P7x33fjitkt5sDZ5G90duvPRMUgCWvCiqlxW?=
+ =?us-ascii?Q?4Cli1kh0i68m8g3Zs/5gj+Y9kurcJCk3uClkaTsF5JRb5epG7AQtCXHigTAy?=
+ =?us-ascii?Q?c/c/dtTVZ3cpB3WnX04S2q+ggRWvSWPqzB+0ebUoEXCkRKBrfxNN1VvHUxo9?=
+ =?us-ascii?Q?aIuXnlt31Iiltjhv5rs5Wh+CqXmzHyMH2XbCZf2UfkEazYfo6HMRP/yRd51Q?=
+ =?us-ascii?Q?T0m+nnqF89s=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?fIOlaEEIkMoFPCf9BDk0I4noFNlJKgIeTk6wlJcu4sBcquRunvHiUAeNyyq6?=
- =?us-ascii?Q?CfiUkDUgAybkT/xpUPFDQsiNoTYuOoQbJinkF4vsjZCKR4T6AGgCoDC9CvEb?=
- =?us-ascii?Q?odLxJdgHM5tOiEpUfhOKjELyR+STxzMUfhcBQRg9y58Ix4oqldaBZ9Tleq2S?=
- =?us-ascii?Q?J51pyj0hxXEL7BCOC4JuxJwFq6Z37+qwRKD70APRJIFaemsmV2eTdgb6imD8?=
- =?us-ascii?Q?sggJl+Xr+lOeGMbmX8IeN7Iu4gXa2uDmt6cm3TQUqLqmjN2W/WDZzIKMNuyE?=
- =?us-ascii?Q?dv9NiPWy/8j8IgKD8htHxnos50nTBC4+33tC2DkrE7Abq51Nwutwqs9TE4Bd?=
- =?us-ascii?Q?xZdkvC1ieB8kLoezV+ofH7pP26dWmQk8jvfQgGEoETXDmR15Lml4BnflGLuW?=
- =?us-ascii?Q?2aZhx2ubOKDym7xKKZo0FIBKSiRZYHkHLn/dglv09IP7teaVHtWA3jV0wklz?=
- =?us-ascii?Q?pjk8YoWDJMfEjSeB31okjzBa8w0/2PJTqEnySJZX6g2FADqgjYSxejcbcgEU?=
- =?us-ascii?Q?QyZsWxclUxl1hxchPC2QrjhSDirkg+tm0OTjR7fZm6zQsTArmRiVyz+DrP6G?=
- =?us-ascii?Q?0xq8Y0ClJWbbQPwpf4tsvZVvHy6LkisCpIA7oV8kBTWW779sWloU38nMVboU?=
- =?us-ascii?Q?it+FWTOUulOlBnlTRgWK8f/yeqS1VjcUbXOlMYo1PGIXiLeZbWfCgd7YbkSe?=
- =?us-ascii?Q?NZLQZKKuHgTfG+szuR7yjeWgfuagS2yoysd9KveF48kikkDbBIR/FdiStMJ+?=
- =?us-ascii?Q?pS3ZQazGBIq8hZDleWHB01O+GrrBRAhDMh2MbOCKoWS10uWA6KuwkpZJS8Ky?=
- =?us-ascii?Q?V3NngdQu5Bl6+D3WjsFcxxM3V4lYhfOrGPeP0v6fzcJ84n60yIhcI84IHQs5?=
- =?us-ascii?Q?CuAZIPWvbhIbebPbMFPKpqbza11BDhPxMfXagQbDQYSa2X4FqjiGuBXMnzSr?=
- =?us-ascii?Q?Vc8oXAYPMNuR1XLN2HB04hUEk9+oBrojf4gbp/j1jnu5wSCenCwtKF13srHo?=
- =?us-ascii?Q?NYbW7Yj0Zigbq8XMznA0Ka5kflUtMeeuV3Zk5lIzc6hVlDA0rsfcw59CJupW?=
- =?us-ascii?Q?J9j90VVYy1/8mY1iT9Zd4TKocvDrSYlS5KNLveVSKKvcdIaw0tjkVCv+fovb?=
- =?us-ascii?Q?8aQE63ndLWZRfkssudjE0jnjDWmYzd5zLnTksvB+V5CltQKRHwiwsdB/R+JP?=
- =?us-ascii?Q?454YFqlN3b08AT5vKOLNNnvvCnRApzvLC3VMtAG4nOPo3K7QkWt5HUy7DJgh?=
- =?us-ascii?Q?ONeziLkSVXRJv2t0BarQ71kKdaQVgtcBepYIuefxP7YfB0y317l9u8o6EO9S?=
- =?us-ascii?Q?ib1qHrmp3GsNucmuyBxnF4hj9LfAe9tDzU3Rdylhdqdm5sX6wjMMKghFjnX7?=
- =?us-ascii?Q?kU3sAwmCic3kDYb7gtiMAWkohmKo88DuoruO5gt7L2W3x4TbMFGYCJifNT1E?=
- =?us-ascii?Q?U6mBQOreiwNlCbplC52f81b6QRYmo5boMyXoZq+XO/OEx225eA4yFrgo8Cxm?=
- =?us-ascii?Q?gM8Jyfs9x4nXMBScTcruVdPszl1pNH39JAHuyby0HF9mHQ8s6Y4ZjZX6q60f?=
- =?us-ascii?Q?C6AY7sqyIHur4rd0Tjw=3D?=
+	=?us-ascii?Q?w0hMWvqfWM1rSPcYZgVeRMO7fCfNVX6PSJ+5zM0rdE1h8L34liJFgHZEa2kp?=
+ =?us-ascii?Q?1YA//FbGwM+6S/Zt1+w9U1GyCm8tQmMLLL+nBAF0pHvlO+6GavissohliICs?=
+ =?us-ascii?Q?70y4UyufiOSMaRZsimavPAom535HX6d9/IUMqLovl6zhD1uSGMtMVjGFFz7G?=
+ =?us-ascii?Q?uf7W6uHtpZdX3FmL4HW4gy4msr698e4mpoQA7hy7mUUylt3NAA8+UKyCfHOR?=
+ =?us-ascii?Q?DrG+XtW4dr5t+AQkHkrc4QhG4Y+9i22C5lhZcgb2rhv1BnCJY0yw7DEdt2OA?=
+ =?us-ascii?Q?4MTnKkF5rZj6toztAgmluHcLzcvTGYAiJHf6vgcYVfZyvx5BAReUGbsSDvN0?=
+ =?us-ascii?Q?xdOKQgc5+zkwp3o6QNbbtFy3nvRQyTSq2u+AB398SCi3hKxtoAVMaj1dNpRZ?=
+ =?us-ascii?Q?XbVa6OitY78XbC2qGHuEKOih6hf0erl3SKklFmnnUEa0bfov32Ba4LRuXu4f?=
+ =?us-ascii?Q?o6zx4rFdb4syuWmRXBPNzoTGY2qfHrDAOr1biCZo/NukULSbwo0JRIt9POUA?=
+ =?us-ascii?Q?X6UzoydZwzwY7ao02fAdLJzQt0SyY1fCFKb4P2N9DO2pVL+qQ6qhAhIHuO56?=
+ =?us-ascii?Q?aDzBXMPkPVJMx/fpBKWyzlDFTjtneNvebul158yfdgthJtE3MRHrv1Fahn09?=
+ =?us-ascii?Q?AcdCgzSadM2/ppazy0R1irKvssx9pEjfDh68/pNNfN58Bt+T7K2JFxVri0KZ?=
+ =?us-ascii?Q?V9vOy4QzNNm5O0lUY5Xn76/sBXUicVf3Razei3Ffr5tUYlsZNsZT2FY7CndV?=
+ =?us-ascii?Q?HtFw8Mq04BpyJxtDJFeRWAVR2UT45d56NvsBk4yhlXnii+I4JnYCc234q/j6?=
+ =?us-ascii?Q?lRdXYVJlu/mN2bs1bkYDUzbzyjO5jAd3eQmKdK00j+kKxk6BoShmoVkXVhAn?=
+ =?us-ascii?Q?E065ayGzPWLIIyViiiZwy7gSqnD7RwHDd/fSldS/58n0L4qvmvYE66bK6lA1?=
+ =?us-ascii?Q?Y1KxIRRtlrkjpUHV712VvZNJpArfMVmFHJ/hyBs6wqcC5VnNzrP7oedQjpu8?=
+ =?us-ascii?Q?DGXrzwcSuQ/dgwrJQzrPh2l5dx6hB6rZub6vtFS0/7IKd2LW3m/qNeDrls3a?=
+ =?us-ascii?Q?1ZNDOx1XGS4NBCKyEfLC3xP+WWtcOoyW6DDR1LebV9+K62qbj4gOn2cn+Nos?=
+ =?us-ascii?Q?9p8ZiicavFCMfj6ZHhIw+2QXAxSWkGzM2IeRKGmndbQch1wyPiWi+BQiA6D3?=
+ =?us-ascii?Q?y/r1a84Mx3GSYv/92MBIICk3hZaQBXRSlF8VGBKakX6WArjNI7Tx5QaV5Mqn?=
+ =?us-ascii?Q?VtjXgbKUdgvYWHgj7dG9Z3Jh+AxYaAfyFvBmA4cKg/7mbRo0C4x1AglfQilW?=
+ =?us-ascii?Q?ctCIShn6DPcq/XiYDtXGqGi1t1Vyd6ndq0EbtNE7CijTuWKU1YH1jNedZBIm?=
+ =?us-ascii?Q?+fA0hZcKMozGNyYhMzE0xUkUKPSX+JqJ/Sm/Ow11tVOfh+aj8AmPpzdVUo24?=
+ =?us-ascii?Q?/cVMheAt+BNq2HZgU9ofZjeIKQ79tNYFGGtgX3vNSAn2Jl/2kKuMFLHnxQ08?=
+ =?us-ascii?Q?CDCp6zSHTbcHXoAiobHGxJnBZd17y/JI0BchibAnbc4ybowqU2CRDof3HM0H?=
+ =?us-ascii?Q?sRa/MBnr7VghtE9RPsE=3D?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 49ae4e6f-d27e-421b-27a1-08ddcec54bba
+X-MS-Exchange-CrossTenant-Network-Message-Id: 18ff101c-9c1b-4d07-c59d-08ddcec60299
 X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2025 17:28:13.3810
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2025 17:33:20.1926
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0o/u9SsfeOPGSAIAEadZmauuYEHx+gPELpq0G/WqO4a5TwiHIbw7fgN9QNKrCt1J
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9230
+X-MS-Exchange-CrossTenant-UserPrincipalName: XXBuEg3MZrW2g8mUqGUYPaoeVUMhN13Jtri3Y1bOp1I8zGnRJhOgbkUoPPh4h8pC
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PPF8CAB220A1
 
-On Wed, Jul 23, 2025 at 02:46:23PM +0000, Pasha Tatashin wrote:
-> Introduce LUO, a mechanism intended to facilitate kernel updates while
-> keeping designated devices operational across the transition (e.g., via
-> kexec). The primary use case is updating hypervisors with minimal
-> disruption to running virtual machines. For userspace side of hypervisor
-> update we have copyless migration. LUO is for updating the kernel.
-> 
-> This initial patch lays the groundwork for the LUO subsystem.
-> 
-> Further functionality, including the implementation of state transition
-> logic, integration with KHO, and hooks for subsystems and file
-> descriptors, will be added in subsequent patches.
-> 
-> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-> ---
->  include/linux/liveupdate.h       | 140 ++++++++++++++
->  kernel/liveupdate/Kconfig        |  27 +++
->  kernel/liveupdate/Makefile       |   1 +
->  kernel/liveupdate/luo_core.c     | 301 +++++++++++++++++++++++++++++++
->  kernel/liveupdate/luo_internal.h |  21 +++
->  5 files changed, 490 insertions(+)
->  create mode 100644 include/linux/liveupdate.h
->  create mode 100644 kernel/liveupdate/luo_core.c
->  create mode 100644 kernel/liveupdate/luo_internal.h
-> 
-> diff --git a/include/linux/liveupdate.h b/include/linux/liveupdate.h
-> new file mode 100644
-> index 000000000000..da8f05c81e51
-> --- /dev/null
-> +++ b/include/linux/liveupdate.h
-> @@ -0,0 +1,140 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +
-> +/*
-> + * Copyright (c) 2025, Google LLC.
-> + * Pasha Tatashin <pasha.tatashin@soleen.com>
-> + */
-> +#ifndef _LINUX_LIVEUPDATE_H
-> +#define _LINUX_LIVEUPDATE_H
-> +
-> +#include <linux/bug.h>
-> +#include <linux/types.h>
-> +#include <linux/list.h>
-> +
+On Wed, Jul 23, 2025 at 02:46:27PM +0000, Pasha Tatashin wrote:
 > +/**
-> + * enum liveupdate_event - Events that trigger live update callbacks.
-> + * @LIVEUPDATE_PREPARE: PREPARE should happen *before* the blackout window.
-> + *                      Subsystems should prepare for an upcoming reboot by
-> + *                      serializing their states. However, it must be considered
-> + *                      that user applications, e.g. virtual machines are still
-> + *                      running during this phase.
-> + * @LIVEUPDATE_FREEZE:  FREEZE sent from the reboot() syscall, when the current
-> + *                      kernel is on its way out. This is the final opportunity
-> + *                      for subsystems to save any state that must persist
-> + *                      across the reboot. Callbacks for this event should be as
-> + *                      fast as possible since they are on the critical path of
-> + *                      rebooting into the next kernel.
-> + * @LIVEUPDATE_FINISH:  FINISH is sent in the newly booted kernel after a
-> + *                      successful live update and normally *after* the blackout
-> + *                      window. Subsystems should perform any final cleanup
-> + *                      during this phase. This phase also provides an
-> + *                      opportunity to clean up devices that were preserved but
-> + *                      never explicitly reclaimed during the live update
-> + *                      process. State restoration should have already occurred
-> + *                      before this event. Callbacks for this event must not
-> + *                      fail. The completion of this call transitions the
-> + *                      machine from ``updated`` to ``normal`` state.
-> + * @LIVEUPDATE_CANCEL:  CANCEL the live update and go back to normal state. This
-> + *                      event is user initiated, or is done automatically when
-> + *                      LIVEUPDATE_PREPARE or LIVEUPDATE_FREEZE stage fails.
-> + *                      Subsystems should revert any actions taken during the
-> + *                      corresponding prepare event. Callbacks for this event
-> + *                      must not fail.
-> + *
-> + * These events represent the different stages and actions within the live
-> + * update process that subsystems (like device drivers and bus drivers)
-> + * need to be aware of to correctly serialize and restore their state.
-> + *
+> + * struct liveupdate_file_ops - Callbacks for for live-updatable files.
+> + * @prepare:       Optional. Saves state for a specific file instance (@file,
+> + *                 @arg) before update, potentially returning value via @data.
+> + *                 Returns 0 on success, negative errno on failure.
+> + * @freeze:        Optional. Performs final actions just before kernel
+> + *                 transition, potentially reading/updating the handle via
+> + *                 @data.
+> + *                 Returns 0 on success, negative errno on failure.
+> + * @cancel:        Optional. Cleans up state/resources if update is aborted
+> + *                 after prepare/freeze succeeded, using the @data handle (by
+> + *                 value) from the successful prepare. Returns void.
+> + * @finish:        Optional. Performs final cleanup in the new kernel using the
+> + *                 preserved @data handle (by value). Returns void.
+> + * @retrieve:      Retrieve the preserved file. Must be called before finish.
+> + * @can_preserve:  callback to determine if @file with associated context (@arg)
+> + *                 can be preserved by this handler.
+> + *                 Return bool (true if preservable, false otherwise).
 > + */
-> +enum liveupdate_event {
-> +	LIVEUPDATE_PREPARE,
-> +	LIVEUPDATE_FREEZE,
-> +	LIVEUPDATE_FINISH,
-> +	LIVEUPDATE_CANCEL,
+> +struct liveupdate_file_ops {
+> +	int (*prepare)(struct file *file, void *arg, u64 *data);
+> +	int (*freeze)(struct file *file, void *arg, u64 *data);
+> +	void (*cancel)(struct file *file, void *arg, u64 data);
+> +	void (*finish)(struct file *file, void *arg, u64 data, bool reclaimed);
+> +	int (*retrieve)(void *arg, u64 data, struct file **file);
+> +	bool (*can_preserve)(struct file *file, void *arg);
 > +};
 
-I saw a later patch moves these hunks, that is poor patch planning.
+ops structures often have an owner = THIS_MODULE
 
-Ideally an ioctl subsystem should start out with the first patch
-introducing the basic cdev, file open, ioctl dispatch, ioctl uapi
-header and related simple infrastructure.
+It wouldn't hurt to add it here too, and some appropriate module_get's
+though I didn't try to figure what happens if userspace races a module
+unload with other luo operations.
 
-Then you'd go basically ioctl by ioctl adding the new ioctls and
-explaining what they do in the patch commit messages.
-
+> +
 > +/**
-> + * liveupdate_state_updated - Check if the system is in the live update
-> + * 'updated' state.
-> + *
-> + * This function checks if the live update orchestrator is in the
-> + * ``LIVEUPDATE_STATE_UPDATED`` state. This state indicates that the system has
-> + * successfully rebooted into a new kernel as part of a live update, and the
-> + * preserved devices are expected to be in the process of being reclaimed.
-> + *
-> + * This is typically used by subsystems during early boot of the new kernel
-> + * to determine if they need to attempt to restore state from a previous
-> + * live update.
-> + *
-> + * @return true if the system is in the ``LIVEUPDATE_STATE_UPDATED`` state,
-> + * false otherwise.
-> + */
-> +bool liveupdate_state_updated(void)
-> +{
-> +	return is_current_luo_state(LIVEUPDATE_STATE_UPDATED);
-> +}
-> +EXPORT_SYMBOL_GPL(liveupdate_state_updated);
+> + * struct liveupdate_file_handler - Represents a handler for a live-updatable
+> + * file type.
+> + * @ops:           Callback functions
+> + * @compatible:    The compatibility string (e.g., "memfd-v1", "vfiofd-v1")
+> + *                 that uniquely identifies the file type this handler supports.
+> + *                 This is matched against the compatible string associated with
+> + *                 individual &struct liveupdate_file instances.
+> + * @arg:           An opaque pointer to implementation-specific context data
+> + *                 associated with this file handler registration.
 
-Unless there are existing in tree users there should not be exports.
+Why? This is not the normal way, if you want context data then
+allocate a struct driver_liveupdate_file_handler and embed a normal
+struct liveupdate_file_handler inside it, then use container_of.
 
-I'm also not really sure why there is global state, I would expect the
-fd and session objects to record what kind of things they are, not
-having weird globals.
+> +	fdt_for_each_subnode(file_node_offset, luo_file_fdt_in, 0) {
+> +		bool handler_found = false;
+> +		u64 token;
+> +
+> +		node_name = fdt_get_name(luo_file_fdt_in, file_node_offset,
+> +					 NULL);
+> +		if (!node_name) {
+> +			panic("FDT subnode at offset %d: Cannot get name\n",
+> +			      file_node_offset);
 
-Like liveupdate_register_subsystem() stuff, it already has a lock,
-&luo_subsystem_list_mutex, if you want to block mutation of the list
-then, IMHO, it makes more sense to stick a specific variable
-'luo_subsystems_list_immutable' under that lock and make it very
-obvious.
+I think this approach will raise lots of questions..
 
-Stuff like luo_files_startup() feels clunky to me:
+I'd introduce a new function "luo_deserialize_failure" that does panic
+internally.
 
-+       ret = liveupdate_register_subsystem(&luo_file_subsys);
-+       if (ret) {
-+               pr_warn("Failed to register luo_file subsystem [%d]\n", ret);
-+               return ret;
-+       }
-+
-+       if (liveupdate_state_updated()) {
-
-Thats going to be a standard pattern - I would expect that
-liveupdate_register_subsystem() would do the check for updated and
-then arrange to call back something like
-liveupdate_subsystem.ops.post_update()
-
-And then post_update() would get the info that is currently under
-liveupdate_get_subsystem_data() as arguments instead of having to make
-more functions calls.
-
-Maybe even the fdt_node_check_compatible() can be hoisted.
-
-That would remove a bunch more liveupdate_state_updated() calls.
-
-etc.
+Only called by places that are parsing the FDT & related but run into
+trouble that cannot be savely recovered from.
 
 Jason
 
