@@ -1,57 +1,67 @@
-Return-Path: <linux-fsdevel+bounces-56247-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56248-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28755B14EDE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jul 2025 15:56:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBE9FB14F2C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jul 2025 16:22:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6F3A17A094
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jul 2025 13:56:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F377B3B99EA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jul 2025 14:22:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E9E41C5F37;
-	Tue, 29 Jul 2025 13:56:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56F4F1D95B3;
+	Tue, 29 Jul 2025 14:22:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="Di0LzdG1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N7Uqwb0b"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0498B259C;
-	Tue, 29 Jul 2025 13:56:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6A1C1C861F
+	for <linux-fsdevel@vger.kernel.org>; Tue, 29 Jul 2025 14:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753797381; cv=none; b=P8ZPNLJvp9f63goT/X1XxzA57n2d28MwFLgXctDX1mKqqbzphjkdqW6EcyjoGerwBuN7GFhVwr4FBf+ZrJgvNOAwK6Ek5sbt5XQ3Dr+rEtpckc0ermhxTTcXVXKG3I77caXqk2Mf8eij5uKjW/HxT508T0YVxbq6Mrch+SsfuQU=
+	t=1753798970; cv=none; b=LW4kXEYUAExT6V19PPjV0Een+UfycT4hXVgCS9oSh/S5viCeEYaFug9jJ/2Jop/un5BW9jVpzcf+6E855mxEdT/QJ6uB9yxFSvZx6P7qWo7tG2c/cY6L8ueIdaJdN4xouYIOhhOp8se8NRL299t3OamCqDJU8IqEcbpp+VLHT2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753797381; c=relaxed/simple;
-	bh=9QmQpMzi2udYxSpJ+ZckrOkKCazIM26p185CMFDgkMA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LP9bj6kNo/6soJOQ54t2NKE15oiWmgz/F5LuCb/ZFb+1K5s6vj6fWkbeAm5O5TzLcSiGrxf/P+GdKtfMTe7bXPplQbIXzXY/1OOJYFFjpsuqurE1ep/dZTmUQthqnRzv6u97HeHhXYR025dyfAI1yAbjwQ3BSGgVbYVj90JriW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=Di0LzdG1; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=iG2QtJORdxhQU435LxyciN2mxDEHxnGfaCSb/Hh4W9c=; b=Di0LzdG1p+hqq9ScsQprpWF9Qk
-	a9qnfEFtPL1udE9U+dz8xsCsrIQYOyXjSKJpGuK5vLbdElTHCFZOhbIVIo7pCiMtsNwsyXIZc5kFY
-	qcVYNb+VPW7yoexRokEXdy+OQVShcvWvJBR2DNxZTv273nKGhXJYAbEQ88EaSInGr2bJRHQKlzGC7
-	jyh5ziuQaY5Mdig9eUtDB8GF0w7W49aDyazT8IRIJMD02JLgGr3AdjQPx7n742Ynh0tCy145DHOkR
-	F4h8MND51KHZ5wqk4AiqZhs36JW1HezRmlCDnyrhHTGOM+jfzvhaWEp6HbOQ9pFg+L5TxrE1La0ls
-	JvTA+frw==;
-Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1ugkoK-005SVm-HA; Tue, 29 Jul 2025 15:56:08 +0200
-From: Luis Henriques <luis@igalia.com>
-To: Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC] Another take at restarting FUSE servers
-Date: Tue, 29 Jul 2025 14:56:02 +0100
-Message-ID: <8734afp0ct.fsf@igalia.com>
+	s=arc-20240116; t=1753798970; c=relaxed/simple;
+	bh=aTaq88eiE3t0hS83DWtgXoG67GRi0kA5yK6mfIJj6jE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pPZVfU8cYNYzIyK53GrpFJSWS5a6f9/3QgRTQ0um21Z1YlQxteJEnGI+2U6Hitzs/wrYmFxiMkCccJVCXxNcCYWbBDeNRdrpZMaDGT8DYl9x6bs6b5lISvhWultv3d6Xw7m+KC0e/TQ760po0Vz5fYcero556FRPr1lS2xjPapU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N7Uqwb0b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FF49C4CEEF;
+	Tue, 29 Jul 2025 14:22:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753798970;
+	bh=aTaq88eiE3t0hS83DWtgXoG67GRi0kA5yK6mfIJj6jE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=N7Uqwb0bQrfmSIg48fDN7gyfswI9t0GcnLbiAvW8YUOtchzbY8XEfX16Cs3SMBHSB
+	 FFVzT2aXKinKSMOBSxG3aYF5oq7ILdYObaiEstiKWdvdETYtjrIhjZFwOdBgzeRjcS
+	 MZHWRRwtHUescS/DBV2bW5ufAhERKnUe9rvSurYHHduMPj7Q8X2NnLISFCfcyMh52T
+	 IlifSl4LfccdTIUbzu+JxHLNk3RnBL9wkRXjx38cLOmJPCIqBsL34NhY52af2O5JGv
+	 wJnSrs40yFjg+3/KbOVmq2GYZA8EvnL1XWunDMQzxPU3k6UUc4D6fNJlJqmED/VG0h
+	 fK0u6uh5TVFGw==
+Date: Tue, 29 Jul 2025 07:22:49 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Bernd Schubert <bschubert@ddn.com>, "John@groves.net" <John@groves.net>,
+	"joannelkoong@gmail.com" <joannelkoong@gmail.com>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"bernd@bsbernd.com" <bernd@bsbernd.com>,
+	"neal@gompa.dev" <neal@gompa.dev>,
+	"miklos@szeredi.hu" <miklos@szeredi.hu>
+Subject: Re: [PATCH 08/14] libfuse: connect high level fuse library to
+ fuse_reply_attr_iflags
+Message-ID: <20250729142249.GU2672029@frogsfrogsfrogs>
+References: <175279459673.714161.10658209239262310420.stgit@frogsfrogsfrogs>
+ <175279459875.714161.9108157061004962886.stgit@frogsfrogsfrogs>
+ <CAOQ4uxjRjssQr4M0JQShQHkDh_kh7Risj4BhkfTdfQuBVKY8LQ@mail.gmail.com>
+ <20250718155514.GS2672029@frogsfrogsfrogs>
+ <fa6b51a1-f2d9-4bf6-b20e-6ab4fd4fb3f0@ddn.com>
+ <20250723175031.GJ2672029@frogsfrogsfrogs>
+ <CAOQ4uxi8hTbhAB4a1z-Wsnp0px3HG4rM0j-Q7LTt_-zd1UsqeQ@mail.gmail.com>
+ <20250729053533.GS2672029@frogsfrogsfrogs>
+ <CAOQ4uxjwVnD9X6=LtcV7A+_peFs36YHm3tJO2ak+1OSxC36e9Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,47 +69,100 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxjwVnD9X6=LtcV7A+_peFs36YHm3tJO2ak+1OSxC36e9Q@mail.gmail.com>
 
-Hi!
+On Tue, Jul 29, 2025 at 09:50:30AM +0200, Amir Goldstein wrote:
+> On Tue, Jul 29, 2025 at 7:35 AM Darrick J. Wong <djwong@kernel.org> wrote:
+> >
+> > On Thu, Jul 24, 2025 at 09:56:16PM +0200, Amir Goldstein wrote:
+> > > > > Also a bit surprising to see all your lowlevel work and then fuse high
+> > > > > level coming ;)
+> > > >
+> > > > Right now fuse2fs is a high level fuse server, so I hacked whatever I
+> > > > needed into fuse.c to make it sort of work, awkwardly.  That stuff
+> > > > doesn't need to live forever.
+> > > >
+> > > > In the long run, the lowlevel server will probably have better
+> > > > performance because fuse2fs++ can pass ext2 inode numbers to the kernel
+> > > > as the nodeids, and libext2fs can look up inodes via nodeid.  No more
+> > > > path construction overhead!
+> > > >
+> > >
+> > > I was wondering how well an LLM would be in the mechanical task of
+> > > converting fuse2fs to a low level fuse fs, so I was tempted to try.
+> > >
+> > > Feel free to use it or lose it or use as a reference, because at least
+> > > for basic testing it seems to works:
+> > > https://github.com/amir73il/e2fsprogs/commits/fuse4fs/
+> >
+> > Heh, I'll take a closer look in the morning, but it looks like a
+> > reasonable conversion.  Are you willing to add a "Co-developed-by" tag
+> > per Sasha's recent proposal[1] if I pull it in?
+> >
+> > [1] https://lore.kernel.org/lkml/20250727195802.2222764-1-sashal@kernel.org/
+> >
+> 
+> Sure. Added and pushed.
+> 
+> FYI, some behind the scenes for the interested:
+> - The commit titles roughly align to the LLM prompts that I used
 
-I know this has been discussed several times in several places, and the
-recent(ish) addition of NOTIFY_RESEND is an important step towards being
-able to restart a user-space FUSE server.
+Heh.  For reproducibility, I wonder if it ought to be a good idea for
+the commit messages to contain the prompts fed to the LLM?  Maybe I'll
+suggest that to Sasha.
 
-While looking at how to restart a server that uses the libfuse lowlevel
-API, I've created an RFC pull request [1] to understand whether adding
-support for this operation would be something acceptable in the project.
-The PR doesn't do anything sophisticated, it simply hacks into the opaque
-libfuse data structures so that a server could set some of the sessions'
-fields.
+> - One liner commit message "LLM aided conversion" means it's mostly hands off
+> - Anything other than the one liner commit message suggests human intervention,
+>   that was usually done to make the code more human friendly, the patches
+>   diffstat smaller and frankly, to match my human preferences
 
-So, a FUSE server simply has to save the /dev/fuse file descriptor and
-pass it to libfuse while recovering, after a restart or a crash.  The
-mentioned NOTIFY_RESEND should be used so that no requests are lost, of
-course.  And there are probably other data structures that user-space file
-systems will have to keep track as well, so that everything can be
-restored.  (The parameters set in the INIT phase, for example.)
+Oh, I was hoping you'd say that you reprompted all the way to working
+patches, but I suppose AIs are rather expensive to operate.
 
-But, from the discussion with Bernd in the PR, one of the things that
-would be good to have is for the kernel to send back to user-space the
-information about the inodes it already knows about.
+> - I did not let the agent touch git at all and I took care of applying
+> fixes into
+>   respective patches manually when needed
+> - The code compiles, but obviously does not work mid series
 
-I have been playing with this idea with a patch that simply sends out
-LOOKUPs for each of these inodes.  This could be done through a new
-NOTIFY_RESEND_INODES, or maybe it could be an extra operation added to the
-already existing NOTIFY_RESEND.
+ha lol :)
 
-Anyway, before spending any more time with this, I wanted to ask whether
-this is something that could be acceptable in the kernel, if people think
-a different approach should be followed, or if I'm simply trying to solve
-the wrong problem.
+> - The most interesting part was the last commit of tests, when the agent
+>   was testing and fixing its own conversion. This comes with some nice
+>   observations about machine-human collaboration in this context, for example:
+> - The machine figured out the need to convert
+>   EXT2_ROOT_INO <=> FUSE_ROOT_INO by itself from self testing,
+>   created the conversion helpers and used them in lookup and some other
+>   methods
 
-Thanks in advance for any feedback on this.
+<nod> I think Miklos mentioned that I could work around that by allowing
+fuse servers to set the root nodeid with a mount option.
 
-[1] https://github.com/libfuse/libfuse/pull/1219
+> - Obviously, it would have figured out that the conversion helpers need to
+>   be used for all methods sooner or later during self testing, but its self
+>   reflecting cycles can be so long and tedious for an observation that
+>   look so trivial, so a nudge from human "convert all methods" really helps
+>   speeding things up, at least with the agent/model/version that I used
 
-Cheers,
---=20
-Lu=C3=ADs
+Well we could just do the usual "make main exit(1) for the duration of
+the chur^Wchanges" trick to avoid bisection bombs. :)
+
+> I think that language/API conversion is one of the tasks where LLM
+> can contribute most to humans, as long the work is meticulously
+> reviewed by a human that has good knowledge of both source and
+> target language/dialect.
+
+Yeah.  Though first I need to lay the groundwork by figuring out if
+macfuse/freebsd fuse actually provide the lowlevel library.  If not,
+then per Ted's direction I'll have to implement both. :/
+
+Maybe I'll try the Oracle codebot this week, though I think they said it
+only knows Python.  Anyway, thanks for the inputs. :)
+
+--D
+
+> Thanks,
+> Amir.
+> 
 
