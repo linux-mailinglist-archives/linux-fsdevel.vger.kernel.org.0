@@ -1,63 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-56265-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56266-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE6A2B151EF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jul 2025 19:15:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F0F6B15212
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jul 2025 19:28:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E412818A25D5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jul 2025 17:15:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40BAA166BA7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jul 2025 17:28:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68FA1298CC9;
-	Tue, 29 Jul 2025 17:15:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F7C298994;
+	Tue, 29 Jul 2025 17:28:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="A2JU9qeO"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="EI7+7agl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2047.outbound.protection.outlook.com [40.107.93.47])
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2063.outbound.protection.outlook.com [40.107.92.63])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 182E4215191;
-	Tue, 29 Jul 2025 17:14:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBD36220F4C;
+	Tue, 29 Jul 2025 17:28:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.63
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753809301; cv=fail; b=n265E96tlZw1RlXAptGZp6Oj+Lz9037DFqAoKsB/B9KJEsILIFl/AwyWBlSV+helOpl36wm9cI2AqKi9QnT7zoRRUUyHCkuDEBY13Urm6jRGGmUh9RPzVMepesH2W7Wd+47kNsIqAP6SQZioXvHrGN3nemxuy9UEZFKo/JCdYnI=
+	t=1753810098; cv=fail; b=OvT8WIIVDsOXeISI80WstuwgOR7s9QfyWsAEHEuCydD3Jw01nB66gKSOzKtidYu4uSaHR/B9pOMUSYuiYYNo7dqUSy2vM3XeSEwDEWtfeuE46Q7SqsoYWiq/kVGcud3ea4yFmVeT6gykNG5uwNApMtgIxN0Uu9NqbybV/d8LfJc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753809301; c=relaxed/simple;
-	bh=oeLz6KIBwMeq182PhfBn9NsZilSW4e7OyTjlayqWT0M=;
+	s=arc-20240116; t=1753810098; c=relaxed/simple;
+	bh=EBSbn+EgimgEZSuvZuxUfTYC/ICAnAzJkmIwPmsU+hI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=ueH/OMu2oE6r/XUu0uS7gedgOzBz4a5chOqdjOqqpCO4RGc1HqubajarJsf/I0tY3rxW1JxbTKIQU6wmODNzrEzqFPdsRQMkR54fke6QZ4YLHkKGWJ219g2donHuAw8mTjBOCUYrZd+EJJtoh5KLkBijZPE2Y9fk2iec9IFveZ4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=A2JU9qeO; arc=fail smtp.client-ip=40.107.93.47
+	 Content-Disposition:In-Reply-To:MIME-Version; b=J0Ek1+ozXuPMqHtJP9N5eoSCKZC/2ngPVswmLCxTOa/DGIWte/FYx/eIRO+lV2NLHsrQIEIyteR3y9AXIYIJmC2uqDGgZKt69kTXnTrYTH0GLwBwtMkRleFD6jhXLaRbjC0UMgZ9HZVqLzRuQh5mv3cO1axv+CVrCCfCbqYOnYc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=EI7+7agl; arc=fail smtp.client-ip=40.107.92.63
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wlIRhl/RNclEPly6NracVoeQpMii5j7Af85m3lHN1X1wY014ErV4nBOasStu32YixVC5sAM+m4J0HlPFuNQL/v72yOt8Zxdltbrmm13ie7Vd17g5EWPmwUTb4u1U+RlTEc3EUX6IePr6fkDQWVB7CAeZCQTCoQ+RfOtd8mkPTXJzO3iijfepkPDvBk13nvBulAfewI5DcJkxb+8eOQN1m+YNGxdaFTSZAjZppZv35YwttZetoIDtLhY550udpPffn4cZ3qyjq1i7juS7yJjjTj+4+I9FSFrlImMgRGuXFsV0dYUrC780OXtwLQINOByajexs8znAXkEobEj35jjlNg==
+ b=TkmqxIVHOMtm/ijeIeAXoEPIfwOJkf1YDUZVA1Tb6gCDl2dd7g3gGs5bUTIdAqt0HIM4Sti4Dtb/e2HFn0P57KqC4LCOzMejgUk90XVJHdz6t0EQoS2XVBwBWZC8J197+UViRR4j2p5VnrZ8sKh4xHExgAyd+Gc0KgHLB2aSxfticfcF15A55NYp4nsSB4Yu1zfShzptY5urUM8wCHzAwQjfjD7M9bJV9hzS2R+tyzQFZneYiOuNuOFmbSt11D1RT/lF57hvbOGI0K4t81CmCWl8QvRT/CRD9LoJvWEXaNbvB+VtbfdryqHBXFV8cIWwbKQMuXUHXFDiJGIHlc9gWw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=n9BRM1q5heZf7KmBJ8o/BgskR2iqhkmyDvd/m9PF7kY=;
- b=eyHS+DrkEBe3UeFkB5NRCDdxw8GG4ZIWlXXATBMUskpWIrIOUb27e2ovs6sBNT4KeDeqHgRNgSRuXz7p0F5NEAgpDhGU0qOZL6a1zoDvTwg6ZVK6V7qqPiZY1PknSxYYxtqoxS8r9Vs3Uff7cv11VLrGYQOMHEAZBTOGeJlcOQTyT9bRUqlS3sYt5CPSFHqh5omJSsnnGi9KCS77+tS2GXXdrEwz6JhJVHKacxEIXE6CGBQe0umtkZC+hMkH4mYZrtVIhlreAPWizdMnWnNaJXvBIdkkqDJ5R9C0hUcg3IAnmZxBjEig3k4KV9shp/ND1lWIZofOCvuIbOdLqwASUQ==
+ bh=TCvwTvNajtxikJKCE7yL5gU9gVhFU/uvpLuFGCooEWU=;
+ b=vwohi0e+PAnu0O3N6RSlObLOoU3ghN7gXqjg8SBuDjH8ITqe8VvCTAyYYYaLtzUsjMQYkvkRoo74usqhrMUzBg98F4XmX+npsAng4qzmOtonMxFbLmr6dnPI1ElqMvwS1GUMokTG9gddMTplisavKFb0PVUCIQUoJPCD1M4fvgc5Zhxuis9+kD1Foy0od2WmG34/sBdct/DtK/9xoaFCtmRJSrmRrKqCItQmElTHRLHb+s02haw/pBzPmGX7TaVWWIMQs7GO7Ag8eVw/uMEDjGANDV0zGOZgBFBmaFHhCYxu9POf+nfoc768MID/6hAZo5zMbJ64Fj2OsZTlWPR6qg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=n9BRM1q5heZf7KmBJ8o/BgskR2iqhkmyDvd/m9PF7kY=;
- b=A2JU9qeO+YmwhDJOEbtNMIyJbQ0j58Ab4E3xF7YKAsoD30/tkmH5ylzNdCECIHuDJgYTavPIpJpveVXD2fK7CiypPF//yLfu/fBy8Zm4lzMhEPDTlGLIAeCSZ3bIzncLvR1AODCPgw27T2+JSLkhjIP+Hj0RHv8zt7xRcW3MdzN+/UBrS2osefdbNpUJ7JRJNjS09pD0tpsP8rWLAZ7BMRfAbkwVOMUoTyQoVeBFfAbMF4VTugxKK3lWyHl2Apdoj2w9+02dJ4UpH1lnqYSd0fdIM2IxUbayKnsUstuOgIBFV7klZrsmL/4uufOvjytmNKALEMV/k+ptdQhXP78Kcg==
+ bh=TCvwTvNajtxikJKCE7yL5gU9gVhFU/uvpLuFGCooEWU=;
+ b=EI7+7aglILKLkdCSQ06kIa76OsvTuFyd98+aq+Goc5lKAEZdz2jhjYewfz3KkEDmtTpjffm/cPiwfXE1Uk2yu8EXN71WsYmfbonnWstf6ngopI5IRIY3Qorla6L4fG2EDA8Ax/K8LKINSEsqTJ9M0S9D+OqOSlcP+h+42GReuvkl3k8vjCc+85Vn2gTs+7HoApEAovdxgRAXyz45PygnrcaQOse6OlNYyWX6zvyRZZh0wya+k2VR2/s7qPgdLx8ejh7Bo6HQ+Iwf3wi5HE+lOINwQksL0d8M02bqOf8rDzalhB1ROje1QczRxCt3vYmmQQ5kgXUkquno6d85ueZFiw==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by PH0PR12MB7983.namprd12.prod.outlook.com (2603:10b6:510:28e::8) with
+ by LV8PR12MB9230.namprd12.prod.outlook.com (2603:10b6:408:186::9) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.26; Tue, 29 Jul
- 2025 17:14:56 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.11; Tue, 29 Jul
+ 2025 17:28:13 +0000
 Received: from CH3PR12MB8659.namprd12.prod.outlook.com
  ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
  ([fe80::6eb6:7d37:7b4b:1732%7]) with mapi id 15.20.8964.024; Tue, 29 Jul 2025
- 17:14:56 +0000
-Date: Tue, 29 Jul 2025 14:14:54 -0300
+ 17:28:13 +0000
+Date: Tue, 29 Jul 2025 14:28:12 -0300
 From: Jason Gunthorpe <jgg@nvidia.com>
 To: Pasha Tatashin <pasha.tatashin@soleen.com>
 Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
@@ -88,15 +88,15 @@ Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
 	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
 	ajayachandra@nvidia.com, parav@nvidia.com, leonro@nvidia.com,
 	witu@nvidia.com
-Subject: Re: [PATCH v2 09/32] liveupdate: kho: move to kernel/liveupdate
-Message-ID: <20250729171454.GO36037@nvidia.com>
+Subject: Re: [PATCH v2 10/32] liveupdate: luo_core: Live Update Orchestrator
+Message-ID: <20250729172812.GP36037@nvidia.com>
 References: <20250723144649.1696299-1-pasha.tatashin@soleen.com>
- <20250723144649.1696299-10-pasha.tatashin@soleen.com>
+ <20250723144649.1696299-11-pasha.tatashin@soleen.com>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250723144649.1696299-10-pasha.tatashin@soleen.com>
-X-ClientProxiedBy: YT3PR01CA0074.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:84::32) To CH3PR12MB8659.namprd12.prod.outlook.com
+In-Reply-To: <20250723144649.1696299-11-pasha.tatashin@soleen.com>
+X-ClientProxiedBy: YT3PR01CA0059.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:82::6) To CH3PR12MB8659.namprd12.prod.outlook.com
  (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -105,105 +105,234 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|PH0PR12MB7983:EE_
-X-MS-Office365-Filtering-Correlation-Id: dd118a5d-800d-4c97-06b8-08ddcec370ae
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|LV8PR12MB9230:EE_
+X-MS-Office365-Filtering-Correlation-Id: 49ae4e6f-d27e-421b-27a1-08ddcec54bba
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|1800799024|366016|7053199007;
+	BCL:0;ARA:13230040|7416014|366016|376014|1800799024|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?QjXkbfZAMz5tQDHMfL5H14fDyXIh0kenkPaAktPsm9BeaItC8BqMughUnx2P?=
- =?us-ascii?Q?UCPY3Gu5HREbjHnrwWTdHWUiQm+9O8uNbpK/kyPXHRI6102JgAf61vEO27zo?=
- =?us-ascii?Q?wJZK7DJhuD769Tet26O2FwCSsmPP0m4diqkibItfPdkJjs2wkydWhAOj0SnX?=
- =?us-ascii?Q?IYR3asDmIRP5h1XFL4gOlzB7m7GQIRWnnF1yvvyvVOIxzdUubeUxX7WCcxOf?=
- =?us-ascii?Q?xmYQBttRAVdhvS7riyNUQI52Z+KReVWpLnUBbert/F6VFXvZGcWcsuzYTwQ0?=
- =?us-ascii?Q?vYTsFsFy3p8I+BU+oFq4E99DRCLyQCNwWBLBPF+CKd9TshtWbC8QJbZU6Z90?=
- =?us-ascii?Q?8auIpXJTdSHW7MXu+Frr+CInTEmVTMKPEsaN6FqoPdJHv+Vm1TDlRwtPzWXK?=
- =?us-ascii?Q?P5gBtFnLADL7h9pCR+NzncR4BnmLB8eXVWQFQn3q7Dbppry1Q7+x6ROIDoVG?=
- =?us-ascii?Q?ubGfxiHN1pY69na3TLuxmid36mDU9Te5Ho6oaXnh85cqVrDvNqHnmQMicMjO?=
- =?us-ascii?Q?AA4LJ8BDud45iHpnpZ8g4HbYw7XXRTdCjH9UHIRZU0r5NF7f6Yhd6vkfAp1I?=
- =?us-ascii?Q?3ql7spXPc/r8C/59Wf/Hp3H0gL48082fi8csYl9F3gqguY6zUFRk+cA41xIa?=
- =?us-ascii?Q?bLwetzroFXBBS0A5hPpnabjwq6Go2daUmyHZ364f+v/cwuhxvNlGekMMNt4X?=
- =?us-ascii?Q?B5eXouMrsR1MLfZgv6TMJle0uCRGp+AmVx4nl0LZXZsDTF61WGQPO2zVlfLu?=
- =?us-ascii?Q?yMDD0/bbP+L5TtlU0SQi+3E6dajqPXMDMON5lB/m4mzfNE5sQ40ngt0Xa4q1?=
- =?us-ascii?Q?w32FN4lv9VRba9j/Uie3Ig5aUCOjW7Xf8dQpuLGFPwb1FnZTRtaLystBPf9M?=
- =?us-ascii?Q?QdMLUG2I2wn8FHCa/M6F3mkY1fFM7ZwJRsHgUqE0yMAEpAAjsJz7FsZc5PBW?=
- =?us-ascii?Q?wS6RPcUxrAMuYoGmz30GsRT1ZCzkJ8OyJJawZu4O9xJ6gfo+47O4G7OEze48?=
- =?us-ascii?Q?V34iZJ8tUdkW301enYrziKhAiz81osdYNbu4ZB3+P13ggRHgWhVlkY/LHePh?=
- =?us-ascii?Q?wRCoEXqKbRfVQLUB/Hgqkoanu+aeKrQ4Wl7QMKDxnfnN/KmVAba8hsn5qEJV?=
- =?us-ascii?Q?j8YPcnDSvHlyygUIpYKgpcFVIKZ6vgriHq8C3V98TVvsDNzi0tMmK8WaIsgy?=
- =?us-ascii?Q?nXZINv4SISnsP6wrbawD287Q+JB89g9heKI64K36pO+fnpI2yg+annisRykb?=
- =?us-ascii?Q?28QvdwmuGDyVzix0RBg8AZ+KNxEothc5ztD/BSL6n6Q+EXe7vDvV/vcJIy3d?=
- =?us-ascii?Q?WgRbJIE+HL0JftRYk2n76s5VVai6hn/7b0BoQKKVhMN73ypXeWSbWGVuHOeq?=
- =?us-ascii?Q?5BDpC0v0NehiNBzOR4/NN6jDTuAAaJtKXBYRRdnjk3Z5KnJvLVRHigNLivOs?=
- =?us-ascii?Q?xJ6JPR0bF4g=3D?=
+	=?us-ascii?Q?A5WOMUUUZY4bLoHqF8XmCW4RaM5ndoee+vQgQxMWbjHb68ryMzlQzrun1KvR?=
+ =?us-ascii?Q?5LaWdSPuEKZJEaSge352eJqS6FMdwt4uaP7aHWYJ6QrP0o94LbLdTHQHu3rd?=
+ =?us-ascii?Q?9YHQaUIH7QYi45r3z3w9W2oHPiWBjnlU1r6sufGBCD/+blDYw3SbzB81190I?=
+ =?us-ascii?Q?z2a4UjzCiPUzwBU1Akbao+RvdmlJpDvz3dnhFIXnOfnR9Vsv0jJKlarw1ezd?=
+ =?us-ascii?Q?72IRejw6C5wEMX1wGrJXJk/CZ7nyEA+B1HmcdbyXpbyeKTutt5cCpgV2fhzZ?=
+ =?us-ascii?Q?t0TaylvOM/5kv4he1n1yOrAqYlDudqg73BMO1SlcyWuOzZxOQPvfIdNQhsI3?=
+ =?us-ascii?Q?HleMb3d8nIESetGTpv5ngR4WYJE86uCdu59LNwz3kjTFm9ifVWFqopvIF9V1?=
+ =?us-ascii?Q?n1SuClWBIJ2Tbp27A1qGjuZtLzu+ADy+faeksfrnY2HfDdAeZTdyLH/Yn8/y?=
+ =?us-ascii?Q?7t7HeR/Xqcy0eBdkA2SCCEyqhq/xrOtAyS50FfWfoIwgvcB/JSZ6eV0Pizdc?=
+ =?us-ascii?Q?NyvDti24xZ8eTcVKHfjQu/j+aHIzh7j+OyurgpB0jla0XgZbTuwOyJl8VRRz?=
+ =?us-ascii?Q?i9Ee5fHFsqlOgv9SEw44fEa6NmZW3A4aeriQgrxY4jXvVwgx5dYcCI+yabhb?=
+ =?us-ascii?Q?Z6dterFQfzv5Yg0D6X/DoLOaHPfzGgBPEqQHhXa9NOoy2Hb/7iWI1ZKNpF2o?=
+ =?us-ascii?Q?8ndZanW/IBdLWSVxk/XeuSFXf6dVHIjAGpDiHmqphda44QMBKIb+/oolGg4r?=
+ =?us-ascii?Q?7n5H9AQLmcvxmRmX1jYJhp2howB4WveJpAiR89heeUHisvoXn2bkLhvL1T3G?=
+ =?us-ascii?Q?bmFNRCShOXRpMfWzg6z760uwQDLqoLKjFyymMt4HwvbIUVahR9plswO+Hbey?=
+ =?us-ascii?Q?ROizXylranKddpOCrvHPxc6zNjZTT2f0HmOtwmKCRPQzYgXn5tXyN2UqvpUa?=
+ =?us-ascii?Q?+7E7yCmt8yqQq7mgXiYuufaCgxai5FdjtKGucEFzGnDnXFO84QRSzvJtnqVv?=
+ =?us-ascii?Q?CUGiMUOGehL13NsLtzDanpo81HNLM2dd58TEawPdh3oo2+r0EWlKADW1D71d?=
+ =?us-ascii?Q?jxM2GBHnlqe1+wA57ZV4cUgo8npiG/3PYFXu7dlymu9wYPs59cTwgZew/tF9?=
+ =?us-ascii?Q?CZVVxx8rPtZ7Dms6JoaRwI9ZPY/djtCt1zb+dQ5+BiSONht8lVZO7KwJaPMr?=
+ =?us-ascii?Q?d5B33yrqkSfq6jhaIo++eIUuDl2eg1Q3eAhC+o1SvsfePVJBaL2pR1vat8n7?=
+ =?us-ascii?Q?lk0af1Kf+2XLIDxRfvkoCcSEGGb0hG8roANxG5MQvvueFH+VeV2LOthF3XdU?=
+ =?us-ascii?Q?FTYv7ZZ5rlk0ZKFPzqQSdJuJZhEDAIddYDO57rSHBCGn9rgrFbTZQoXfgRTo?=
+ =?us-ascii?Q?IS/JxbyXi1P6XCm1X9wOaZA6FggFT0+MQguLj6t/w49o3ViELDFsWCrz2IDR?=
+ =?us-ascii?Q?8mf0n2eCBNk=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?QnQxvUapmPSpVxdqg9QgvJnsug6Fbz1/wrB58hs1yGl5O/kYw6HGWoxtZgL6?=
- =?us-ascii?Q?aZtF5d0vuvakaUPO5i55FsnUTysHN0YkoYl6Oewa+3E8J1Dioovo6+P+Hj/y?=
- =?us-ascii?Q?+wE5LRs3O9/nc8GqzJDH3pFvyYh5ne+/r0fTsFE4nvnm01+iY76Yl1vr2A3w?=
- =?us-ascii?Q?0ca2xLRuhy4ZGuErd4HBmB8XOsYNJTcST9bjO4bLmI58M3Ngklz/SoiBR794?=
- =?us-ascii?Q?wCJ40Ir5ZXQsODckCmAqOA/meVIat5AsSSqj5y1C+WJyCQewDe/9JnBNWs3+?=
- =?us-ascii?Q?ZzG02KF70aSpBJyhuNAFNJ9kvUxJfEmyq80XXPTCzwuQVRRaFv3/1lZwWsKe?=
- =?us-ascii?Q?uZE+tNDqsSBFOjQaU3+qDNo/fWxtCzzIUJRa/6O59FSqljz51qrUzhZNFP7H?=
- =?us-ascii?Q?1ZO0c+0uD5m9Z8FhYgiXRqfUEs2nEhp7arNQ4V+thOxEfycOw2oelqk34tPy?=
- =?us-ascii?Q?YlsSHEe2W7DAYk3icUZ5Whx944uv8zZBjDMyqiuSUy+6gNJhoV4AexQYfbEF?=
- =?us-ascii?Q?xI3bHLIY3n5FF7CE0bXZAyqOXcksqY0fD0mG7mE76No6jhurhaxyfcFIKPzH?=
- =?us-ascii?Q?RK9/+SsOpw9pllNBOoV7ljC6wbJ9vrkSt4bMoERb1FlOZ89tbyPn2U9HAi0w?=
- =?us-ascii?Q?MCY4s2uXMozP04zKoxoLaWFTbqDMT2qRUm6uqhLv2Lpddwxj0TlF3fHrNOU9?=
- =?us-ascii?Q?LCopR45S1Wu58eJEToOYQwGw3/uqSru5CqE31BS3vmfdT2s0+UCEBkIX6c2E?=
- =?us-ascii?Q?qmLxCm62rv3tiNUUbDSyj72EEdWdrEhPmQjedNYX7Euw93Hx+2ION2cbSynv?=
- =?us-ascii?Q?MqG0BSalhX4OYH0UT86H4uDf9/WFcQFbu8H0sl+DM0sFFHQSRJe4QOFyNvP9?=
- =?us-ascii?Q?xj+C0vRdDxYt4Oos9YGjXVcXlzuVE3qBTENjpkCFr9Oow966VKiDH54zF1ev?=
- =?us-ascii?Q?TK/eIKgN3gSJtUeyydPRLNgzFQDmBwub2CewfJGaBSfe16I5NKYckrAkvqus?=
- =?us-ascii?Q?/owFxj3jcd6BGf6H9B13fGlVmfrd9n0UfFKk0rnOLRvaa9fxabkfvLjDd3eo?=
- =?us-ascii?Q?opTjDl3Tn2UOnCtle4l7L420JqOfDQu1mJS21O5yb0JNSwvcwxtseZZguj/U?=
- =?us-ascii?Q?eG4QHBxxZyAZzcEM8E4fKXq3b8GmGUYZz2NzMXCHKAHqjyGvZ1tMzgnW+Lh8?=
- =?us-ascii?Q?IANAY+k7IMDr+CcPvG+EB5Y4SyoS10lLQ/QyrrT1MPiaM2avZMWJVR7830VJ?=
- =?us-ascii?Q?Ncqi14BSOUhAtw+ZT1nRu+euQYPLsI9v7QP1TLkWkfkZPwcj8+ZhecHzCqyB?=
- =?us-ascii?Q?4QDHhcRablK8R06OT8tKBSzHf1BmdK6H97X5mz95enPr9eF94AYfhNQikz/6?=
- =?us-ascii?Q?GAHyxADeXKz2ieF+B7c1HTSsJbAs5K94yEP1D9hUrh7svq4IzPWnsFUzMxIR?=
- =?us-ascii?Q?EYdk/PJwAuPbxU8wg+wwtgGrlXXqxXVaY2pYXDsIVNejP1yoAHQySj/C2IXP?=
- =?us-ascii?Q?IMKXp8BmBBwfxKUFqGlcFAjjoSStKIWyxIdSmCsXpXzPc9W4jrmARDzzzrPq?=
- =?us-ascii?Q?kmGShiYe/WdPGxJrVzg=3D?=
+	=?us-ascii?Q?fIOlaEEIkMoFPCf9BDk0I4noFNlJKgIeTk6wlJcu4sBcquRunvHiUAeNyyq6?=
+ =?us-ascii?Q?CfiUkDUgAybkT/xpUPFDQsiNoTYuOoQbJinkF4vsjZCKR4T6AGgCoDC9CvEb?=
+ =?us-ascii?Q?odLxJdgHM5tOiEpUfhOKjELyR+STxzMUfhcBQRg9y58Ix4oqldaBZ9Tleq2S?=
+ =?us-ascii?Q?J51pyj0hxXEL7BCOC4JuxJwFq6Z37+qwRKD70APRJIFaemsmV2eTdgb6imD8?=
+ =?us-ascii?Q?sggJl+Xr+lOeGMbmX8IeN7Iu4gXa2uDmt6cm3TQUqLqmjN2W/WDZzIKMNuyE?=
+ =?us-ascii?Q?dv9NiPWy/8j8IgKD8htHxnos50nTBC4+33tC2DkrE7Abq51Nwutwqs9TE4Bd?=
+ =?us-ascii?Q?xZdkvC1ieB8kLoezV+ofH7pP26dWmQk8jvfQgGEoETXDmR15Lml4BnflGLuW?=
+ =?us-ascii?Q?2aZhx2ubOKDym7xKKZo0FIBKSiRZYHkHLn/dglv09IP7teaVHtWA3jV0wklz?=
+ =?us-ascii?Q?pjk8YoWDJMfEjSeB31okjzBa8w0/2PJTqEnySJZX6g2FADqgjYSxejcbcgEU?=
+ =?us-ascii?Q?QyZsWxclUxl1hxchPC2QrjhSDirkg+tm0OTjR7fZm6zQsTArmRiVyz+DrP6G?=
+ =?us-ascii?Q?0xq8Y0ClJWbbQPwpf4tsvZVvHy6LkisCpIA7oV8kBTWW779sWloU38nMVboU?=
+ =?us-ascii?Q?it+FWTOUulOlBnlTRgWK8f/yeqS1VjcUbXOlMYo1PGIXiLeZbWfCgd7YbkSe?=
+ =?us-ascii?Q?NZLQZKKuHgTfG+szuR7yjeWgfuagS2yoysd9KveF48kikkDbBIR/FdiStMJ+?=
+ =?us-ascii?Q?pS3ZQazGBIq8hZDleWHB01O+GrrBRAhDMh2MbOCKoWS10uWA6KuwkpZJS8Ky?=
+ =?us-ascii?Q?V3NngdQu5Bl6+D3WjsFcxxM3V4lYhfOrGPeP0v6fzcJ84n60yIhcI84IHQs5?=
+ =?us-ascii?Q?CuAZIPWvbhIbebPbMFPKpqbza11BDhPxMfXagQbDQYSa2X4FqjiGuBXMnzSr?=
+ =?us-ascii?Q?Vc8oXAYPMNuR1XLN2HB04hUEk9+oBrojf4gbp/j1jnu5wSCenCwtKF13srHo?=
+ =?us-ascii?Q?NYbW7Yj0Zigbq8XMznA0Ka5kflUtMeeuV3Zk5lIzc6hVlDA0rsfcw59CJupW?=
+ =?us-ascii?Q?J9j90VVYy1/8mY1iT9Zd4TKocvDrSYlS5KNLveVSKKvcdIaw0tjkVCv+fovb?=
+ =?us-ascii?Q?8aQE63ndLWZRfkssudjE0jnjDWmYzd5zLnTksvB+V5CltQKRHwiwsdB/R+JP?=
+ =?us-ascii?Q?454YFqlN3b08AT5vKOLNNnvvCnRApzvLC3VMtAG4nOPo3K7QkWt5HUy7DJgh?=
+ =?us-ascii?Q?ONeziLkSVXRJv2t0BarQ71kKdaQVgtcBepYIuefxP7YfB0y317l9u8o6EO9S?=
+ =?us-ascii?Q?ib1qHrmp3GsNucmuyBxnF4hj9LfAe9tDzU3Rdylhdqdm5sX6wjMMKghFjnX7?=
+ =?us-ascii?Q?kU3sAwmCic3kDYb7gtiMAWkohmKo88DuoruO5gt7L2W3x4TbMFGYCJifNT1E?=
+ =?us-ascii?Q?U6mBQOreiwNlCbplC52f81b6QRYmo5boMyXoZq+XO/OEx225eA4yFrgo8Cxm?=
+ =?us-ascii?Q?gM8Jyfs9x4nXMBScTcruVdPszl1pNH39JAHuyby0HF9mHQ8s6Y4ZjZX6q60f?=
+ =?us-ascii?Q?C6AY7sqyIHur4rd0Tjw=3D?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dd118a5d-800d-4c97-06b8-08ddcec370ae
+X-MS-Exchange-CrossTenant-Network-Message-Id: 49ae4e6f-d27e-421b-27a1-08ddcec54bba
 X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2025 17:14:56.3779
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2025 17:28:13.3810
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: EPCedtOha2iXN4SP/DxrS3lw/RTg8RPpOdkz0zWRF5sHKcMgW2/mLelIyTC8TvFz
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7983
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0o/u9SsfeOPGSAIAEadZmauuYEHx+gPELpq0G/WqO4a5TwiHIbw7fgN9QNKrCt1J
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9230
 
-On Wed, Jul 23, 2025 at 02:46:22PM +0000, Pasha Tatashin wrote:
-> Move KHO to kernel/liveupdate/ in preparation of placing all Live Update
-> core kernel related files to the same place.
+On Wed, Jul 23, 2025 at 02:46:23PM +0000, Pasha Tatashin wrote:
+> Introduce LUO, a mechanism intended to facilitate kernel updates while
+> keeping designated devices operational across the transition (e.g., via
+> kexec). The primary use case is updating hypervisors with minimal
+> disruption to running virtual machines. For userspace side of hypervisor
+> update we have copyless migration. LUO is for updating the kernel.
+> 
+> This initial patch lays the groundwork for the LUO subsystem.
+> 
+> Further functionality, including the implementation of state transition
+> logic, integration with KHO, and hooks for subsystems and file
+> descriptors, will be added in subsequent patches.
 > 
 > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
 > ---
->  Documentation/core-api/kho/concepts.rst       |  2 +-
->  MAINTAINERS                                   |  2 +-
->  init/Kconfig                                  |  2 ++
->  kernel/Kconfig.kexec                          | 25 ----------------
->  kernel/Makefile                               |  3 +-
->  kernel/liveupdate/Kconfig                     | 30 +++++++++++++++++++
->  kernel/liveupdate/Makefile                    |  7 +++++
->  kernel/{ => liveupdate}/kexec_handover.c      |  6 ++--
->  .../{ => liveupdate}/kexec_handover_debug.c   |  0
->  .../kexec_handover_internal.h                 |  0
->  10 files changed, 45 insertions(+), 32 deletions(-)
->  create mode 100644 kernel/liveupdate/Kconfig
->  create mode 100644 kernel/liveupdate/Makefile
->  rename kernel/{ => liveupdate}/kexec_handover.c (99%)
->  rename kernel/{ => liveupdate}/kexec_handover_debug.c (100%)
->  rename kernel/{ => liveupdate}/kexec_handover_internal.h (100%)
+>  include/linux/liveupdate.h       | 140 ++++++++++++++
+>  kernel/liveupdate/Kconfig        |  27 +++
+>  kernel/liveupdate/Makefile       |   1 +
+>  kernel/liveupdate/luo_core.c     | 301 +++++++++++++++++++++++++++++++
+>  kernel/liveupdate/luo_internal.h |  21 +++
+>  5 files changed, 490 insertions(+)
+>  create mode 100644 include/linux/liveupdate.h
+>  create mode 100644 kernel/liveupdate/luo_core.c
+>  create mode 100644 kernel/liveupdate/luo_internal.h
+> 
+> diff --git a/include/linux/liveupdate.h b/include/linux/liveupdate.h
+> new file mode 100644
+> index 000000000000..da8f05c81e51
+> --- /dev/null
+> +++ b/include/linux/liveupdate.h
+> @@ -0,0 +1,140 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +
+> +/*
+> + * Copyright (c) 2025, Google LLC.
+> + * Pasha Tatashin <pasha.tatashin@soleen.com>
+> + */
+> +#ifndef _LINUX_LIVEUPDATE_H
+> +#define _LINUX_LIVEUPDATE_H
+> +
+> +#include <linux/bug.h>
+> +#include <linux/types.h>
+> +#include <linux/list.h>
+> +
+> +/**
+> + * enum liveupdate_event - Events that trigger live update callbacks.
+> + * @LIVEUPDATE_PREPARE: PREPARE should happen *before* the blackout window.
+> + *                      Subsystems should prepare for an upcoming reboot by
+> + *                      serializing their states. However, it must be considered
+> + *                      that user applications, e.g. virtual machines are still
+> + *                      running during this phase.
+> + * @LIVEUPDATE_FREEZE:  FREEZE sent from the reboot() syscall, when the current
+> + *                      kernel is on its way out. This is the final opportunity
+> + *                      for subsystems to save any state that must persist
+> + *                      across the reboot. Callbacks for this event should be as
+> + *                      fast as possible since they are on the critical path of
+> + *                      rebooting into the next kernel.
+> + * @LIVEUPDATE_FINISH:  FINISH is sent in the newly booted kernel after a
+> + *                      successful live update and normally *after* the blackout
+> + *                      window. Subsystems should perform any final cleanup
+> + *                      during this phase. This phase also provides an
+> + *                      opportunity to clean up devices that were preserved but
+> + *                      never explicitly reclaimed during the live update
+> + *                      process. State restoration should have already occurred
+> + *                      before this event. Callbacks for this event must not
+> + *                      fail. The completion of this call transitions the
+> + *                      machine from ``updated`` to ``normal`` state.
+> + * @LIVEUPDATE_CANCEL:  CANCEL the live update and go back to normal state. This
+> + *                      event is user initiated, or is done automatically when
+> + *                      LIVEUPDATE_PREPARE or LIVEUPDATE_FREEZE stage fails.
+> + *                      Subsystems should revert any actions taken during the
+> + *                      corresponding prepare event. Callbacks for this event
+> + *                      must not fail.
+> + *
+> + * These events represent the different stages and actions within the live
+> + * update process that subsystems (like device drivers and bus drivers)
+> + * need to be aware of to correctly serialize and restore their state.
+> + *
+> + */
+> +enum liveupdate_event {
+> +	LIVEUPDATE_PREPARE,
+> +	LIVEUPDATE_FREEZE,
+> +	LIVEUPDATE_FINISH,
+> +	LIVEUPDATE_CANCEL,
+> +};
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+I saw a later patch moves these hunks, that is poor patch planning.
+
+Ideally an ioctl subsystem should start out with the first patch
+introducing the basic cdev, file open, ioctl dispatch, ioctl uapi
+header and related simple infrastructure.
+
+Then you'd go basically ioctl by ioctl adding the new ioctls and
+explaining what they do in the patch commit messages.
+
+> +/**
+> + * liveupdate_state_updated - Check if the system is in the live update
+> + * 'updated' state.
+> + *
+> + * This function checks if the live update orchestrator is in the
+> + * ``LIVEUPDATE_STATE_UPDATED`` state. This state indicates that the system has
+> + * successfully rebooted into a new kernel as part of a live update, and the
+> + * preserved devices are expected to be in the process of being reclaimed.
+> + *
+> + * This is typically used by subsystems during early boot of the new kernel
+> + * to determine if they need to attempt to restore state from a previous
+> + * live update.
+> + *
+> + * @return true if the system is in the ``LIVEUPDATE_STATE_UPDATED`` state,
+> + * false otherwise.
+> + */
+> +bool liveupdate_state_updated(void)
+> +{
+> +	return is_current_luo_state(LIVEUPDATE_STATE_UPDATED);
+> +}
+> +EXPORT_SYMBOL_GPL(liveupdate_state_updated);
+
+Unless there are existing in tree users there should not be exports.
+
+I'm also not really sure why there is global state, I would expect the
+fd and session objects to record what kind of things they are, not
+having weird globals.
+
+Like liveupdate_register_subsystem() stuff, it already has a lock,
+&luo_subsystem_list_mutex, if you want to block mutation of the list
+then, IMHO, it makes more sense to stick a specific variable
+'luo_subsystems_list_immutable' under that lock and make it very
+obvious.
+
+Stuff like luo_files_startup() feels clunky to me:
+
++       ret = liveupdate_register_subsystem(&luo_file_subsys);
++       if (ret) {
++               pr_warn("Failed to register luo_file subsystem [%d]\n", ret);
++               return ret;
++       }
++
++       if (liveupdate_state_updated()) {
+
+Thats going to be a standard pattern - I would expect that
+liveupdate_register_subsystem() would do the check for updated and
+then arrange to call back something like
+liveupdate_subsystem.ops.post_update()
+
+And then post_update() would get the info that is currently under
+liveupdate_get_subsystem_data() as arguments instead of having to make
+more functions calls.
+
+Maybe even the fdt_node_check_compatible() can be hoisted.
+
+That would remove a bunch more liveupdate_state_updated() calls.
+
+etc.
 
 Jason
 
