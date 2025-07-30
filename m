@@ -1,153 +1,129 @@
-Return-Path: <linux-fsdevel+bounces-56298-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56299-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8EE4B156C6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jul 2025 02:52:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21FADB156CC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jul 2025 02:58:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8A2B7AAD98
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jul 2025 00:50:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75D9A18A42AC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jul 2025 00:59:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92BFC16F265;
-	Wed, 30 Jul 2025 00:52:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B85C9190692;
+	Wed, 30 Jul 2025 00:58:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="DbsWvAkt"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aVc1Ye7L"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A8435966
-	for <linux-fsdevel@vger.kernel.org>; Wed, 30 Jul 2025 00:52:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E82AC185E7F
+	for <linux-fsdevel@vger.kernel.org>; Wed, 30 Jul 2025 00:58:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753836731; cv=none; b=TZaOYBEeGoLj3wNEaOgB8bORm67kc01/940cExk5/DUsBjgVqcwl0sG0P9WvUXr7Mndf9cQlvX+EBo96bL6gPZBB8PsI1McOdiCKAL1kcws7tgMOWFZ5faCcMXuhVNBKUPmHm9OPUlV0qzUxPuoUHWE1J0Bycg6aC+QsJKnUpBM=
+	t=1753837111; cv=none; b=fNegmFcLtJTmWmvyLGSsHASxKZl2Y9Ul2HQzNa3zrkDvmRgCVFntl6Z00zwdXxnpit3r0KfAc6jLZQ6jdt8IE0N79bvoPEJg4EaJRqnQTl7EHBRbTdqHjOZgNIr7RnGJwWeoCyuQETGvVh/vuOlwMYWC2lC96A5jO5+qhuRLR0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753836731; c=relaxed/simple;
-	bh=K55yfrmOAgZyuht6by9RhaCl9tnqxjffX2Sf34/XSXI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GMvAzbKJqGADR0ZRR3w2q6IXOboTuk4CvJaI66w+hHgGstLg+eBoDNa4jizZiVhpwCkHc1fF5fR9FPzQCKkU7MsOZLtODN7a6JwtTydqODNpn2GtWZaspbG7pKWLdTKXA/uC157C+RnYtzw44q2vicEkHv8eMNyA4/NWL6bIE+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=DbsWvAkt; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-24009eeb2a7so27480605ad.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Jul 2025 17:52:08 -0700 (PDT)
+	s=arc-20240116; t=1753837111; c=relaxed/simple;
+	bh=8krCprYrUMdOZ3h034xFumycFTtvtQ8rNBxl0XROG6M=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ZbBc90sByK5Bkt3Y/04tQR5dBRDyDYiC9vPnaN1rQPC+2S634XuUboapvKu7TuC6umutMLtuhc86I4jI6AzBjhw2mn6A7baSMSge/zn+x29V/z6SClir7pbPt2LDe3OYvpG/ecYcQVLSPMcxI1ACkDn0ZCK8zTYinDWCc4BKCjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--isaacmanjarres.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aVc1Ye7L; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--isaacmanjarres.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-237f8d64263so4704315ad.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Jul 2025 17:58:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1753836728; x=1754441528; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=q3+0fPD4oAPKgGx3/6LlKQLIWFdF50ERDWtVLnGX0c4=;
-        b=DbsWvAktSLQ1q9fV8KALw0+r98lpxiPmqf/2V1w4xB+PJREVmlF/M3lUOj3vb7id46
-         MsXaONMIE2c814J8VQzYO9/8W30oHV1GNYDnUsSQ4mIpdrcSDN9W9bsEccKAiBL2LmHl
-         41aubhn+Yqr6zsx9DcGCWkF1slzbkIFrFRr7vGXSFHuY6CGqfIe63Ljcn2dptkHBwvpp
-         ItcV2cE1PpeaSj6Yq8T7X7/gf7lSV98OY+Xx9fVX9l6SgJPpQbwwpHAOp18Zv6es3X2v
-         mVUw41y16xgZsT06zLEmkH12O0JZUpZVgy/+V7LKJv5rab1CLCrqilPq4FJN6cvq8qQL
-         xQHw==
+        d=google.com; s=20230601; t=1753837108; x=1754441908; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=BvzOHnKibLB3ltRouRfCtD2c5Lgi+zp48cQKPXu7/xE=;
+        b=aVc1Ye7LBjhQvOM4uerN+DgUwFaQw9DTwyqp9kBgDkeAsaMv7K0b4Sksh8DWPPJJxz
+         zVQuIsjWSiYsqlGXObYXiGi/r1e5iWileTW+B50c10TmmFD24yX4SU4T9+esEvbtrYHj
+         tHzSITotoe3W+pHSiQBR6sKhYSm8INdu0G5IIKf0/DVxRilvUqXSf+p4+I3ZITJelMw0
+         o5SIP/0CePZN3SmC19k7Je1e2hhrCLUzMIkn2UisZf8O0C9sP8qGKV0yDZziDbSNJWAf
+         B76HQNt7I8ePF2T1UuBrZrVIcK0tphsrZBwNLsUYM9SvESPZIJHvwXVmeD8ofY5ztJys
+         JCmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753836728; x=1754441528;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q3+0fPD4oAPKgGx3/6LlKQLIWFdF50ERDWtVLnGX0c4=;
-        b=OwFpKYUovzON8d5i1tZ7iJLoLn8uvgnx+PaBUXvv/FJaCyK+Q/bqsoX0sJ4mlB8BHX
-         B43HtTjR8Yp7Zsq2rrOHSm2XU+KYhyB9CuEJytA7poeiBWv6lrOiFNvDfv3ijVUmLp7e
-         flsPUBh+iV6hNrvqkexptjbMHYC1uEb+b3s8+aLTbZYJQ5dI9/xNFkI5n/CGF84iMYTB
-         C4kJZclFrdJ5XA+y5Xufq0+DzS8ueRknXE9hDYiEBb+0Wf346RYvAHFgnDVipEZnZwGc
-         jT4gAv//PWc36I0fibbO2CHHg08qUXULVQ6BYXvgNHmG0hngcHStMykuQ/QRtU8m3nf5
-         Q8/w==
-X-Forwarded-Encrypted: i=1; AJvYcCXNzyBKXafiNjoAUsVpXHOus+A/W9s4w/OgC6NOwxlxZ4MfLKugYnwfGJRDuo4KxNTHcqch9z13hh1OVs0j@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/We96KaOC18l2QgBaXRkRZTIyfqWL8MH/u2mqe5wC8kVGhGm3
-	bBvemZApz2F5vOV20M3gO9uscFhq3kSryR//wVvgxf+eBCTznH+ERkmUQ7xwvZ9vSg4=
-X-Gm-Gg: ASbGncsMJlrIY+2vtCPSG3/2O6orYvKcUt4qjLspvbx6Y3NByd7H8AFK/ao+HR0EfFS
-	C2vN7WCmCx1vuTo2mu2cmqDcCYKPz9bdiKUdKjFB0G1dETRrQRl7cm/ycI5BzzFCHg5fStiwRdO
-	XaKIzQOUQPptJ5rXac1cbepGUpJ9xuJC5ax5Tw9Ly4AxUE5ewvjGgXj3IhBbf/giUL6GUSKIr7g
-	EWpoTH2fOvGPFBki+h9j2b0XD0rK0fB6c9/cD/cvnl8eYWj2B7rgIO0NlP52mzhOlAQ0NUerUBf
-	PSUv+dWr9svoWc5W7rc0rj/mEIPUdSI1sn8KTZUyzOn3X9zi3ZvZ/qoOzhp+edcpiSaOPILdIjg
-	nqiebP+ly0a4HFNy/16k0gJ/Ad/GkgXMQp9uD+D5EsytJrDtXjxVVO+F4RUO5eLG6ZgBRmyMbln
-	Jg/x89rQOC
-X-Google-Smtp-Source: AGHT+IHkORekrsc1P7gAq4NM+SMvbGxBMz8RFSwmBgPVjXtpoGecdqjtTizgxax0+6dsRPmU0LGDIQ==
-X-Received: by 2002:a17:902:d482:b0:234:986c:66bf with SMTP id d9443c01a7336-24096a4f534mr17428045ad.11.1753836727661;
-        Tue, 29 Jul 2025 17:52:07 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-64-170.pa.nsw.optusnet.com.au. [49.181.64.170])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fe648707asm76888805ad.135.2025.07.29.17.52.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Jul 2025 17:52:07 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.98.2)
-	(envelope-from <david@fromorbit.com>)
-	id 1ugv36-0000000HNDV-0H38;
-	Wed, 30 Jul 2025 10:52:04 +1000
-Date: Wed, 30 Jul 2025 10:52:04 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Tony Battersby <tonyb@cybernetics.com>
-Cc: Song Liu <song@kernel.org>, Yu Kuai <yukuai3@huawei.com>,
-	Christian Brauner <brauner@kernel.org>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	linux-raid@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] iomap: align writeback to RAID stripe boundaries
-Message-ID: <aIlstOWckYGw34rM@dread.disaster.area>
-References: <55deda1d-967d-4d68-a9ba-4d5139374a37@cybernetics.com>
+        d=1e100.net; s=20230601; t=1753837108; x=1754441908;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BvzOHnKibLB3ltRouRfCtD2c5Lgi+zp48cQKPXu7/xE=;
+        b=J5dPiSIyMkDBkCb1GUdB8uYPeSR0BnQsNJcoQp6yryMmGO9S7FOomtNbvyUOz1qiSH
+         OglG8Ss4HqA2Y/fmUP34+BvSSTVlNIGp4OcewM1wAKXYDKXG7dcmM5l9mfbaUCv68Xyn
+         3KaSsNGG9dJzQFcYCvk3iHN2STyn1jdymWKkCIrREBS/0ONb1QzLit3jCyJbkBqkFC7e
+         xm6nHvJiqC9FR+0+q8ZCyS9SGowm5dNulSJx/0jhwLOkAASwBgUJftIwicIFhQePvaev
+         dSI7OpZdfN74h14COIWiVd4ByJR01psK/JWSRhYTivFNrHJ5mJ0aTXn4pkRD9YeXps0m
+         w6pw==
+X-Forwarded-Encrypted: i=1; AJvYcCWR+LnVP5lQF/nJ+o9N6Dvfc7I0IVHr07tWDo1dsaz+BdexImyCmM2/RtpCdeoazjeOMzLdXWA/XSdVQirn@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5B1zPs7kQkQDycPo+3VkC49R9rwKnaQTmytrEKnj2X3SwgsuO
+	577UnCw5H68GEx/FzNtjzLJE76aRvzVino/atXZsPRsL8SNk/hBld+S6Big+GoNhFoRxQwEV49D
+	WBi9gp1L4cbVSF331m1gB7RT+TKgcPVhxI4aoQw==
+X-Google-Smtp-Source: AGHT+IEE1T/Er3sKrygau3w97VIOA/QCJAiAB2wozTO9pbOU/DTR6qrzKjpzklTM5AEwRfki5E7dO/OqrMcPg2dtONxW4w==
+X-Received: from pjbsz11.prod.google.com ([2002:a17:90b:2d4b:b0:315:b7f8:7ff])
+ (user=isaacmanjarres job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:902:f145:b0:240:721e:a406 with SMTP id d9443c01a7336-24096b06962mr15696795ad.35.1753837108130;
+ Tue, 29 Jul 2025 17:58:28 -0700 (PDT)
+Date: Tue, 29 Jul 2025 17:58:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <55deda1d-967d-4d68-a9ba-4d5139374a37@cybernetics.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.1.552.g942d659e1b-goog
+Message-ID: <20250730005818.2793577-1-isaacmanjarres@google.com>
+Subject: [PATCH 5.4.y 0/3] Backport series: "permit write-sealed memfd
+ read-only shared mappings"
+From: "Isaac J. Manjarres" <isaacmanjarres@google.com>
+To: lorenzo.stoakes@oracle.com, gregkh@linuxfoundation.org, 
+	Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>, 
+	David Hildenbrand <david@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
+	Michal Hocko <mhocko@suse.com>, Kees Cook <kees@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, Jann Horn <jannh@google.com>, 
+	Pedro Falcato <pfalcato@suse.de>, Hugh Dickins <hughd@google.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: aliceryhl@google.com, stable@vger.kernel.org, 
+	"Isaac J. Manjarres" <isaacmanjarres@google.com>, kernel-team@android.com, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Jul 29, 2025 at 12:13:42PM -0400, Tony Battersby wrote:
-> Improve writeback performance to RAID-4/5/6 by aligning writes to stripe
-> boundaries.  This relies on io_opt being set to the stripe size (or
-> a multiple) when BLK_FEAT_RAID_PARTIAL_STRIPES_EXPENSIVE is set.
+Hello,
 
-This is the wrong layer to be pulling filesystem write alignments
-from.
+Until kernel version 6.7, a write-sealed memfd could not be mapped as
+shared and read-only. This was clearly a bug, and was not inline with
+the description of F_SEAL_WRITE in the man page for fcntl()[1].
 
-Filesystems already have alignment information in their on-disk
-formats. XFS has stripe unit and stripe width information in the
-filesysetm superblock that is set by mkfs.xfs.
+Lorenzo's series [2] fixed that issue and was merged in kernel version
+6.7, but was not backported to older kernels. So, this issue is still
+present on kernels 5.4, 5.10, 5.15, 6.1, and 6.6.
 
-This information comes from the block device io-opt/io-min values
-exposed to userspace at mkfs time, so the filesystem already knows
-what the optimal IO alignment parameters are for the storage stack
-underneath it.
+This series backports Lorenzo's series to the 5.4 kernel.
 
-Indeed, we already align extent allocations to these parameters, so
-aligning filesystem writeback to the same configured alignment makes
-a lot more sense than pulling random stuff from block devices during
-IO submission...
+[1] https://man7.org/linux/man-pages/man2/fcntl.2.html
+[2] https://lore.kernel.org/all/913628168ce6cce77df7d13a63970bae06a526e0.1697116581.git.lstoakes@gmail.com/T/#m28fbfb0d5727e5693e54a7fb2e0c9ac30e95eca5
 
-> @@ -1685,81 +1685,118 @@ static int iomap_add_to_ioend(struct iomap_writepage_ctx *wpc,
->  		struct inode *inode, loff_t pos, loff_t end_pos,
->  		unsigned len)
->  {
-> -	struct iomap_folio_state *ifs = folio->private;
-> -	size_t poff = offset_in_folio(folio, pos);
-> -	unsigned int ioend_flags = 0;
-> -	int error;
-> -
-> -	if (wpc->iomap.type == IOMAP_UNWRITTEN)
-> -		ioend_flags |= IOMAP_IOEND_UNWRITTEN;
-> -	if (wpc->iomap.flags & IOMAP_F_SHARED)
-> -		ioend_flags |= IOMAP_IOEND_SHARED;
-> -	if (folio_test_dropbehind(folio))
-> -		ioend_flags |= IOMAP_IOEND_DONTCACHE;
-> -	if (pos == wpc->iomap.offset && (wpc->iomap.flags & IOMAP_F_BOUNDARY))
-> -		ioend_flags |= IOMAP_IOEND_BOUNDARY;
-> +	struct queue_limits *lim = bdev_limits(wpc->iomap.bdev);
-> +	unsigned int io_align =
-> +		(lim->features & BLK_FEAT_RAID_PARTIAL_STRIPES_EXPENSIVE) ?
-> +		lim->io_opt >> SECTOR_SHIFT : 0;
+Lorenzo Stoakes (3):
+  mm: drop the assumption that VM_SHARED always implies writable
+  mm: update memfd seal write check to include F_SEAL_WRITE
+  mm: perform the mapping_map_writable() check after call_mmap()
 
-i.e. this alignment should come from the filesystem, not the block
-device.
+ fs/hugetlbfs/inode.c |  2 +-
+ include/linux/fs.h   |  4 ++--
+ include/linux/mm.h   | 26 +++++++++++++++++++-------
+ kernel/fork.c        |  2 +-
+ mm/filemap.c         |  2 +-
+ mm/madvise.c         |  2 +-
+ mm/mmap.c            | 26 ++++++++++++++++----------
+ mm/shmem.c           |  2 +-
+ 8 files changed, 42 insertions(+), 24 deletions(-)
 
--Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+2.50.1.552.g942d659e1b-goog
+
 
