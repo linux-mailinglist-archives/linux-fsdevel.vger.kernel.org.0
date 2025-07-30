@@ -1,96 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-56362-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56363-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF46CB168CA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Jul 2025 00:03:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF334B168F7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Jul 2025 00:21:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 648B37B2B58
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jul 2025 22:01:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CD72566B83
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jul 2025 22:21:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 726C2223DED;
-	Wed, 30 Jul 2025 22:03:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA5F226888;
+	Wed, 30 Jul 2025 22:21:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="FX6EG+Iy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B057E1FDE3D;
-	Wed, 30 Jul 2025 22:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD6C1DE8A8;
+	Wed, 30 Jul 2025 22:21:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753913000; cv=none; b=J1/nXJ3K3oiubIlicSQfFt1q1TFMiZDqhWP9H81bFGuqdxYkrbLsi/6okB5M5Y/m61IUhGJEAw5u3LBGLSIGOQcn2yD339xSUBObKfJIIxNKKv0zipi85CLkMFBvJ9nztcu6bIzyabsgTucxrzJ79HlwNnFgwudrimYhtMpE51o=
+	t=1753914099; cv=none; b=QxIMV08j7pPY0yhE5jDiKpA9KO8qZeN0DYkfrvynwX/HqQ3W6g71BLf0u3DxUOkdaZsS1LC+wY+xybvKVUJh/JAv19gmM7ysc8O9oAnsVR6cvWkc9umx54om9Swq2vIQHBG+vxqOr0z7RcsKa9RftAP1w32Mm0XCn8XfdAyHE0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753913000; c=relaxed/simple;
-	bh=g/N/hZ6W5cfDJAGMUWM2n2zgoKSohWbxiFAKvfP8O/Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jOtY226Sx//eh4x5/vtDVjZA5m+7jDJEHmugEKwj+3cuSp0Se/mc1R0SDa+JQq5Zudw10PB+5IvPD8M/iMax4RVOjnWoc4mERN/Z7mIjV/J9dAG/Mv47MYy7JOGK/0z2zHV8qro2b+G+Cwa79eaZQzyyXa/6oScSZNrcusWXxSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 56UM2lZe019769;
-	Thu, 31 Jul 2025 07:02:47 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 56UM2kcl019766
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 31 Jul 2025 07:02:46 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <57d65c2f-ca35-475d-b950-8fd52b135625@I-love.SAKURA.ne.jp>
-Date: Thu, 31 Jul 2025 07:02:45 +0900
+	s=arc-20240116; t=1753914099; c=relaxed/simple;
+	bh=gPV/fgmzSN1XFnlZAHxb9pvfXXEMpz0osDLD/6DJ3W8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bH35BBjglY1nVmGj25mYJ9jOktbo+7CvVS7bnEAxCCKzkz70TgWcZjDwYwOdfTeHy1I7ecqaIkbZxHvRWr6uE2wBCdD7alUQJcNxZYOl0gn2kilvXq9xIrQW81eZmcgK2JPqKB0hXKi60KEDt9H+9EsbTIE7lFbz4jm/Sj+B5kI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=FX6EG+Iy; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id 9D97C14C2D3;
+	Thu, 31 Jul 2025 00:21:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1753914096;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D6JhiF7KoKNgSPD3zCt9p8g2uKhJH9FPFoUMsjdvKB4=;
+	b=FX6EG+IyhJiM2RBZ/KS+3Jz+TsegqLOZXiLNApe+3/CuS68KAz+BdeCjNcQIOioo3eDx0h
+	46POYyy2gWBw30aDw88dEg4Y25ArxKMDI+rO6olMTmAKLcgzvAgFrRPAbaFfpX8MQRriA1
+	zrURvN5QcfKNJtCavzEOqtcdYf8Uv69A2yB/AF2UeODOEBBU0NdAsK1QctGqb/4owV/fQh
+	OROGCfSJGmTli7Jrt6uk7TDV3EQDtuUPcHcG+0Dvb0WfxCnZYQ6il9e27p6oZH9Bk7Dsrh
+	8WHB6QD/IS7ifZnIrbamYVs7y0/t7hZEh4YLuw5x+eSjWdy9FcPl7z0tyRuBfw==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id ad4612f5;
+	Wed, 30 Jul 2025 22:21:32 +0000 (UTC)
+Date: Thu, 31 Jul 2025 07:21:17 +0900
+From: asmadeus@codewreck.org
+To: Eric Sandeen <sandeen@redhat.com>
+Cc: v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ericvh@kernel.org, lucho@ionkov.net,
+	linux_oss@crudebyte.com, dhowells@redhat.com
+Subject: Re: [PATCH V2 0/4] 9p: convert to the new mount API
+Message-ID: <aIqa3cdv3whfNhfP@codewreck.org>
+References: <20250730192511.2161333-1-sandeen@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] hfs: update sanity check of the root record
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
-        "leocstone@gmail.com" <leocstone@gmail.com>,
-        "jack@suse.cz" <jack@suse.cz>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "brauner@kernel.org" <brauner@kernel.org>
-Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
-        "frank.li@vivo.com" <frank.li@vivo.com>,
-        "slava@dubeyko.com" <slava@dubeyko.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-References: <4c1eb34018cabe33f81b1aa13d5eb0adc44661e7.camel@dubeyko.com>
- <65009dff-dd9d-4c99-aa53-5e87e2777017@I-love.SAKURA.ne.jp>
- <e00cff7b-3e87-4522-957f-996cb8ed5b41@I-love.SAKURA.ne.jp>
- <c99951ae12dc1f5a51b1f6c82bbf7b61b2f12e02.camel@ibm.com>
- <9a18338da59460bd5c95605d8b10f895a0b7dbb8.camel@ibm.com>
- <bb8d0438-6db4-4032-ba44-f7b4155d2cef@I-love.SAKURA.ne.jp>
- <5ef2e2838b0d07d3f05edd2a2a169e7647782de5.camel@ibm.com>
- <8cb50ca3-8ccc-461e-866c-bb322ef8bfc6@I-love.SAKURA.ne.jp>
- <d4abeee2-e291-4da4-9e0e-7880a9c213e3@I-love.SAKURA.ne.jp>
- <650d29da-4f3a-4cfe-b633-ea3b1f27de96@I-love.SAKURA.ne.jp>
- <6db77f5cb0a35de69a5b6b26719e4ffb3fdac8c5.camel@ibm.com>
- <1779f2ad-77da-40e3-9ee0-ef6c4cd468fa@I-love.SAKURA.ne.jp>
- <12de16685af71b513f8027a8bfd14bc0322eb043.camel@ibm.com>
- <0b9799d4-b938-4843-a863-8e2795d33eca@I-love.SAKURA.ne.jp>
- <427fcb57-8424-4e52-9f21-7041b2c4ae5b@I-love.SAKURA.ne.jp>
- <5498a57ea660b5366ef213acd554aba55a5804d1.camel@ibm.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <5498a57ea660b5366ef213acd554aba55a5804d1.camel@ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Virus-Status: clean
-X-Anti-Virus-Server: fsav101.rs.sakura.ne.jp
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250730192511.2161333-1-sandeen@redhat.com>
 
-On 2025/07/31 4:24, Viacheslav Dubeyko wrote:
-> If we considering case HFS_CDR_DIR in hfs_read_inode(), then we know that it
-> could be HFS_POR_CNID, HFS_ROOT_CNID, or >= HFS_FIRSTUSER_CNID. Do you mean that
-> HFS_POR_CNID could be a problem in hfs_write_inode()?
+Hi Eric,
 
-Yes. Passing one of 1, 5 or 15 instead of 2 from hfs_fill_super() triggers BUG()
-in hfs_write_inode(). We *MUST* validate at hfs_fill_super(), or hfs_read_inode()
-shall have to also reject 1, 5 and 15 (and as a result only accept 2).
+Eric Sandeen wrote on Wed, Jul 30, 2025 at 02:18:51PM -0500:
+> This is an updated attempt to convert 9p to the new mount API. 9p is
+> one of the last conversions needed, possibly because it is one of the
+> trickier ones!
 
+Thanks for this work!
+
+I think the main contention point here is that we're moving some opaque
+logic that was in each transport into the common code, so e.g. an out of
+tree transport can no longer have its own options (not that I'm aware of
+such a transport existing anyway, so we probably don't have to worry
+about this)
+
+OTOH this is also a blessing because 9p used to silently ignore unknown
+options, and will now properly refuse them (although it'd still silently
+ignore e.g. rdma options being set for a virtio mount -- I guess there's
+little harm in that as long as typos are caught?)
+
+So I think I'm fine with the approach.
+
+> I was able to test this to some degree, but I am not sure how to test
+> all transports; there may well be bugs here. It would be great to get
+> some feedback on whether this approach seems reasonable, and of course
+> any further review or testing would be most welcome.
+
+I still want to de-dust my test setup with rdma over siw for lack of
+supported hardware, so I'll try to give it a try, but don't necessarily
+wait for me as I don't know when that'll be..
+
+-- 
+Dominique Martinet | Asmadeus
 
