@@ -1,183 +1,226 @@
-Return-Path: <linux-fsdevel+bounces-56323-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56324-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC8E7B15E29
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jul 2025 12:29:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B74DCB15E81
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jul 2025 12:52:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F05E13BDEE1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jul 2025 10:28:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E749F18C539F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jul 2025 10:53:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45EEE2820C6;
-	Wed, 30 Jul 2025 10:29:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE8DB292B48;
+	Wed, 30 Jul 2025 10:52:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ub84NMA4";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Qaala2Jg";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="E7ptiLY2";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="gEoL0hF5"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xMzmwMLc";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4nq/T99R";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PAlx+ANF";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9gSKyhV+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442D927A92F
-	for <linux-fsdevel@vger.kernel.org>; Wed, 30 Jul 2025 10:29:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7321E230981
+	for <linux-fsdevel@vger.kernel.org>; Wed, 30 Jul 2025 10:52:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753871349; cv=none; b=kAkSmlmFHaAXeEnFaUqrWs+32tMQTSiTV+rwHp75VNAu9bjm0cMa8+GbaqQC79eTgPczlsa2wISbfo5LPd3VuGpMoCIHA6aW0u8YO2KFCpWjCqVyGzqpM8CgMAyaV2xIo9e+w0xCtFmaQ5uW/2anfYIAXPTbd0+ilnLPrlo+hdM=
+	t=1753872761; cv=none; b=kvlq4zdVhhcMy4ZJggTFo9wrNOf+kK6TFrfsni97is4zr60u3nsa4iGiydvnePNHzDE5R7gT9Wjj7wjbCxIsR98JVnLutqaAI+y6XAVIHC//yqQgrUo/cD9UwiTfZSOlsNm0Ed0sJPh7beeJU33VaazZ/PD+blvxnqFLDFqKK30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753871349; c=relaxed/simple;
-	bh=lO7YkAhoMX+qzxXhKtt6Kzmf4wUtQ/sEypG2OHMHblU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jnB1GG6fT30hIk/zyCPjFoi2P3RcPJgdyKeXHt+rMYsv9GfK5MNzEwPV65a3uw+MYjkHXbqfRtl/6OOf2W75Q9wGtgFeMXzlk/I5OiJxqWdZR4wSYISDyZqsEYI2pAd/cJfliCk2ouy7Kn9DZdcHgdLLSjPTbIhOERtCkT0NioI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ub84NMA4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Qaala2Jg; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=E7ptiLY2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=gEoL0hF5; arc=none smtp.client-ip=195.135.223.130
+	s=arc-20240116; t=1753872761; c=relaxed/simple;
+	bh=eFoOrlxqYnMnNvJOYUbqwIYNCizkzCg+QhTxHNXLwB4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XV6kdOByVGriAWdVnnjINyfOnqjkjAa0joyA6JXfLHH4ni93yl/nBB0ERbx88ynA7D9WaTdhCcTOvRCCEgZ3DokW0DlXvaKAmccLL4hUJEC6FTT+JwJtSKab80QsS7Gm4ziHG2NBQrtroO/7JtyEfy9DhDQI3HmVRnpYdGVmymI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xMzmwMLc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4nq/T99R; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PAlx+ANF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9gSKyhV+; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id CF3AD21246;
-	Wed, 30 Jul 2025 10:28:59 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 581851F385;
+	Wed, 30 Jul 2025 10:52:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1753871340; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=sbC6Uq5aYunWTU8USVVOdmjcJNM1Dt2n1UGLWwQRu+8=;
-	b=ub84NMA47RseCfjunnnzV3zEfNtor+YWEe+5S145sG5x5HYl5BSql3N9JlMNF8T4rAmeWt
-	j2sVzdr5sajXe/MtlEtloWujysrXpPtVVzNZxLbQ9bb8veUFx6IRvuH+MbUL+xhqd6ygSN
-	+ALiSyCZnYFC3xIp5XzJCbnU7cIEhFM=
+	t=1753872756; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wc301orRKr1+S2MHSitGz+H4D8xT/O9/Fr5lKe+1fVg=;
+	b=xMzmwMLcoKXPtfbgpkf/K4eCDc1YzDSooDORkXwYVttd1tQt1qAdx8t1GdLObf70YfM7Br
+	YWZFePc+V7ey4D1hietpdYYzGd4BYJxuEZH4RLZ9eru36KFRfFD3JfVnviPWl7jw2da/Lo
+	fxPLJpYwNG3+lP6TAvmzy1zyTkMSIsI=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1753871340;
+	s=susede2_ed25519; t=1753872756;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=sbC6Uq5aYunWTU8USVVOdmjcJNM1Dt2n1UGLWwQRu+8=;
-	b=Qaala2Jg8yjaKT5mp/KNtfn3fA/d09lA7WElo6vWN7wurTieSXrVmELQNagpixSgzeiLPE
-	sfg8Ma5WofD1SZDg==
-Authentication-Results: smtp-out1.suse.de;
-	none
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wc301orRKr1+S2MHSitGz+H4D8xT/O9/Fr5lKe+1fVg=;
+	b=4nq/T99RBoCZ+02roVmFzZCPWVxe66TDZYDrJ4OKQhrwM7ij6GbQiYaJPCfTDyR+2XT3G1
+	8E+W0ux6jBj6wkAQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=PAlx+ANF;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=9gSKyhV+
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1753871339; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=sbC6Uq5aYunWTU8USVVOdmjcJNM1Dt2n1UGLWwQRu+8=;
-	b=E7ptiLY2u8hMlo/1derQYVC1+Ul9LerWDx5sX+rEoaj2rLDGVBC1OcmHBytHryRwffmRyu
-	lqXUpAZYfBHPK7mQKy86uHzBX/MWA1ElAHPJ889PURRUcL/gYa1b+Z9jehl2nzBG7foerw
-	/7tCc1aEnFIrWHOBF2x3/+UJNW/tH3o=
+	t=1753872755; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wc301orRKr1+S2MHSitGz+H4D8xT/O9/Fr5lKe+1fVg=;
+	b=PAlx+ANFBpMSKJrPGTgslQJH3xcRppVjCCaYMA+IH1ciL/r1UMCHG3wIlZcOTUwuQp0zhW
+	OoHrqHUuCJqKiRfR0iW5WjB76TYmKZkt4xEud326H8ldftr99AQfVhvBQTQey8AcOi6cD7
+	frLA+06OY1zHcFIsWqkrAmj5mOPga7c=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1753871339;
+	s=susede2_ed25519; t=1753872755;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=sbC6Uq5aYunWTU8USVVOdmjcJNM1Dt2n1UGLWwQRu+8=;
-	b=gEoL0hF5yZOWd21zLCSzN9WEthatKLWDoAxBh9xa2QrBNDykpAHwEIO3c0TpqKMYk+FAmD
-	2rPQ29BG5Te9HlAw==
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wc301orRKr1+S2MHSitGz+H4D8xT/O9/Fr5lKe+1fVg=;
+	b=9gSKyhV+RZlq3YDoYw0z24hRmKfSoN7LV2uWy+HwGQi9gzacSgCEH0He3/Pi29GkUPAmGs
+	x2wmKA9lWlqxzjAQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B8A871388B;
-	Wed, 30 Jul 2025 10:28:59 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 484CA1388B;
+	Wed, 30 Jul 2025 10:52:35 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id KkoMLevziWhvfQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 30 Jul 2025 10:28:59 +0000
+	id 8KenEXP5iWicBgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 30 Jul 2025 10:52:35 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 7277EA094F; Wed, 30 Jul 2025 12:28:59 +0200 (CEST)
+	id F35BDA094F; Wed, 30 Jul 2025 12:52:30 +0200 (CEST)
+Date: Wed, 30 Jul 2025 12:52:30 +0200
 From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: <linux-fsdevel@vger.kernel.org>,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	John Garry <john.g.garry@oracle.com>,
-	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] iomap: Fix broken data integrity guarantees for O_SYNC writes
-Date: Wed, 30 Jul 2025 12:28:41 +0200
-Message-ID: <20250730102840.20470-2-jack@suse.cz>
-X-Mailer: git-send-email 2.43.0
+To: Dai Junbing <daijunbing@vivo.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>, 
+	Theodore Ts'o <tytso@mit.edu>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-ext4@vger.kernel.org, opensource.kernel@vivo.com
+Subject: Re: [PATCH v1 5/5] jbd2: Add TASK_FREEZABLE to kjournald2 thread
+Message-ID: <uj22sykbnhfsbk7abj3rdul46uko5vvhq425kdbtkzsw5l5kqa@ixs245eozsfe>
+References: <20250730014708.1516-1-daijunbing@vivo.com>
+ <20250730014708.1516-6-daijunbing@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1920; i=jack@suse.cz; h=from:subject; bh=lO7YkAhoMX+qzxXhKtt6Kzmf4wUtQ/sEypG2OHMHblU=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBoifPYe+pOCTKYAOuLCx+ipNUdUqidRt9KSPJKNZUZ bA5qz16JATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCaInz2AAKCRCcnaoHP2RA2SlQCA ClZnOwpx0K5w2IalXfFQEEJM9eGybMRcz7gyFWpRp2F4W+Ksmm+V1/FrI8TcGHW8ondSO/TG6Lpuh9 ajQCwlfriZcq6gt0IgSE3vatVzfgnP+JhOnFhUhNPJbUu1aqoWsDdrKFK6nhyMP21ZdXhXkZq4uP+u X5O1n5z0SR+iVXdrXNr3wHewSAUTZOBdM14NXVxyry2FxOx642MLvi3pBZA3/F0FbsXW6+DvhBL4gU sllOI9tWNqztsD6ojSKH2/hKStlrc+2CBZRdLmfyPpLOu5DurYAy6gNdnDGarIrVd7G8jAiTUaOzC4 48+LKZvTGm7bS4b3yEExYM+s+mOZLk
-X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-1.30 / 50.00];
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250730014708.1516-6-daijunbing@vivo.com>
+X-Spamd-Result: default: False [-4.01 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_LAST(0.00)[];
+	MX_GOOD(-0.01)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
 	ARC_NA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
 	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[vger.kernel.org,kernel.org,suse.cz,oracle.com,gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
 	FROM_EQ_ENVFROM(0.00)[];
 	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
 	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com]
+	RCVD_TLS_LAST(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_TRACE(0.00)[suse.cz:+]
 X-Spam-Flag: NO
 X-Spam-Level: 
-X-Spam-Score: -1.30
+X-Rspamd-Queue-Id: 581851F385
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.01
 
-Commit d279c80e0bac ("iomap: inline iomap_dio_bio_opflags()") has broken
-the logic in iomap_dio_bio_iter() in a way that when the device does
-support FUA (or has no writeback cache) and the direct IO happens to
-freshly allocated or unwritten extents, we will *not* issue fsync after
-completing direct IO O_SYNC / O_DSYNC write because the
-IOMAP_DIO_WRITE_THROUGH flag stays mistakenly set. Fix the problem by
-clearing IOMAP_DIO_WRITE_THROUGH whenever we do not perform FUA write as
-it was originally intended.
+On Wed 30-07-25 09:47:06, Dai Junbing wrote:
+> Set the TASK_FREEZABLE flag when the kjournald2 kernel thread sleeps
+> during journal commit operations. This prevents premature wakeups
+> during system suspend/resume cycles, avoiding unnecessary CPU wakeups
+> and power consumption.
+> 
+> in this case, the original code:
+> 
+> 	prepare_to_wait(&journal->j_wait_commit, &wait,
+>                	 TASK_INTERRUPTIBLE);
+> 	if (journal->j_commit_sequence != journal->j_commit_request)
+>         	should_sleep = 0;
+> 
+> 	transaction = journal->j_running_transaction;
+> 	if (transaction && time_after_eq(jiffies, transaction->t_expires))
+>         	should_sleep = 0;
+> 	......
+> 	......
+> 	if (should_sleep) {
+>         	write_unlock(&journal->j_state_lock);
+>         	schedule();
+>         	write_lock(&journal->j_state_lock);
+> 	}
+> 
+> is functionally equivalent to the more concise:
+> 
+> 	write_unlock(&journal->j_state_lock);
+> 	wait_event_freezable_exclusive(&journal->j_wait_commit,
+>         	journal->j_commit_sequence == journal->j_commit_request ||
+>         	(journal->j_running_transaction &&
+>          	time_after_eq(jiffies, transaction->t_expires)) ||
+>         	(journal->j_flags & JBD2_UNMOUNT));
+> 	write_lock(&journal->j_state_lock);
 
-CC: John Garry <john.g.garry@oracle.com>
-CC: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Fixes: d279c80e0bac ("iomap: inline iomap_dio_bio_opflags()")
-CC: stable@vger.kernel.org
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- fs/iomap/direct-io.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+This would be actually wrong because you cannot safely do some of the
+dereferences without holding j_state_lock. Luckily you didn't modify the
+existing code in the patch, just the changelog is bogus so please fix it.
 
-BTW, I've spotted this because some performance tests got suspiciously fast
-on recent kernels :) Sadly no easy improvement to cherry-pick for me to fix
-customer issue I'm chasing...
+> Signed-off-by: Dai Junbing <daijunbing@vivo.com>
+> ---
+>  fs/jbd2/journal.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+> index d480b94117cd..9a1def9f730b 100644
+> --- a/fs/jbd2/journal.c
+> +++ b/fs/jbd2/journal.c
+> @@ -222,7 +222,7 @@ static int kjournald2(void *arg)
+>  		DEFINE_WAIT(wait);
+>  
+>  		prepare_to_wait(&journal->j_wait_commit, &wait,
+> -				TASK_INTERRUPTIBLE);
+> +				TASK_INTERRUPTIBLE | TASK_FREEZABLE);
 
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index 6f25d4cfea9f..b84f6af2eb4c 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -363,14 +363,14 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
- 		if (iomap->flags & IOMAP_F_SHARED)
- 			dio->flags |= IOMAP_DIO_COW;
- 
--		if (iomap->flags & IOMAP_F_NEW) {
-+		if (iomap->flags & IOMAP_F_NEW)
- 			need_zeroout = true;
--		} else if (iomap->type == IOMAP_MAPPED) {
--			if (iomap_dio_can_use_fua(iomap, dio))
--				bio_opf |= REQ_FUA;
--			else
--				dio->flags &= ~IOMAP_DIO_WRITE_THROUGH;
--		}
-+		else if (iomap->type == IOMAP_MAPPED &&
-+			 iomap_dio_can_use_fua(iomap, dio))
-+			bio_opf |= REQ_FUA;
-+
-+		if (!(bio_opf & REQ_FUA))
-+			dio->flags &= ~IOMAP_DIO_WRITE_THROUGH;
- 
- 		/*
- 		 * We can only do deferred completion for pure overwrites that
+So this looks fine but I have one question. There's code like:
+
+        if (freezing(current)) {
+                /*
+                 * The simpler the better. Flushing journal isn't a
+                 * good idea, because that depends on threads that may
+                 * be already stopped.
+                 */
+                jbd2_debug(1, "Now suspending kjournald2\n");
+                write_unlock(&journal->j_state_lock);
+                try_to_freeze();
+                write_lock(&journal->j_state_lock);
+
+a few lines above. Is it still needed after your change? I guess that
+probably yes (e.g. when the freeze attempt happens while kjournald still
+performs some work then the later schedule in TASK_FREEZABLE state doesn't
+necessarily freeze the kthread). But getting a confirmation would be nice.
+
+								Honza
+
+>  		transaction = journal->j_running_transaction;
+>  		if (transaction == NULL ||
+>  		    time_before(jiffies, transaction->t_expires)) {
+> -- 
+> 2.25.1
+> 
 -- 
-2.43.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
