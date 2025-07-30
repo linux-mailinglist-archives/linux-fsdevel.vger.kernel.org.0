@@ -1,217 +1,310 @@
-Return-Path: <linux-fsdevel+bounces-56309-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56310-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36A1EB1571E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jul 2025 03:51:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 670C5B15727
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jul 2025 03:52:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3DCC5A146A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jul 2025 01:51:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6975A3B8FD3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jul 2025 01:51:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8342F1E0DEA;
-	Wed, 30 Jul 2025 01:50:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F377F1A5B92;
+	Wed, 30 Jul 2025 01:52:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="AUjFBxsr"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XLwOD95v"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013045.outbound.protection.outlook.com [40.107.44.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D38E1B0414;
-	Wed, 30 Jul 2025 01:50:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753840250; cv=fail; b=EH7SO1CHYpfFlXt6M0YFWmDxgx7UUl+qGaCUzb1Zx9yN4HHKVP4ssMdJIPT6HofCeA7VF7kURVQoXndVln5oL/kedC5EZ+LvfHreHh6kRKXnuZrRCtp9LAMMVn+75wNPGiZQfjANSp9XUN2FCy4M/XQ7BeTByeJsf/dPY/VmRHw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753840250; c=relaxed/simple;
-	bh=SoSUlftAxnZGGEAx7Q6lZi8HTLGi+7eQvVs6q+P+A68=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=cDUBo1pm3LRmokprvkcDriBZTYMlvLKWZrzON/J1i8IxVoW/qpkQEzEaLGWCtEJgn9oG0M3a2V9+dVBHqFAYeCz0HqD7hJHdmMGnBB8J8soPUNOuUNW4rqmSUCQUH52UWPFkBV77ieRmdXZ6tFVAt0tooBYX4UGotkGih+AiJLM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=AUjFBxsr; arc=fail smtp.client-ip=40.107.44.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aLr444lpgTO8lDWVKUqCcK5++7V/tHTBEu66nXJVboAUBghR/NoDHLqq/+S7moYYHYTkbQAKP/BQ6quwvjuGvuqI2mRe8qNz8mMCtzfRoNEWNIppeGLgDJtfokAAv7+a6YKKOzF93Peqx0x0+e3pxi1NrSOwgarIu+7u7s0tVHKuXksYPOmFQUDFvyzX/zgUkBxklKgFIwd+B2iiPCg4P6L8vKbpjvLrOtKPKni/u8dhyndZO0IWV88FpJCEZjyFSdlZymFCwr0o6noOXaem77IEu/wctOwD9HSMpe9zXDn1lq0Il3//2+v9GMYaautYtDPoXvEALuXZKJCjoONNIw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Y0fz6R6c76/McEblHuEKBzjPWv39XjNw8+g5+APIMGY=;
- b=OA3stwXa7/1epP7Sk+8ZMzkPFO9zBl4RXGeZdAC7qIIdVtSBQlVLg/2XSQRgQtCoLFLCveFZ3WfXT1p74P4ywOfZ2pRHaSkgWiuA4zcQ70y/SPq1CWKnXOPiS3Oyj6t7Ylq6x6wMqfBjTT5L7+pxWUEXNrFbO6HRFQaNZo8ldTkRl1iBd4ydccUa1LlNeVS/+4YdLJo3Wl9kYL8+WZhpEDHBqvGLjWYyvytJfRitLr7sk4kBHiKLguhrGsxLdi2sVFjkBcjGMvfXZUKaQuAFBl/ykeEEmYNTkUjima9h+9myQVJbrDxEplxSYhniw5RNwkVSBO7XQ3fgdiUcMWoyZA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Y0fz6R6c76/McEblHuEKBzjPWv39XjNw8+g5+APIMGY=;
- b=AUjFBxsrdzCQO+OmrsMYmziHKMB9CSH1AHqNClOZ4p7RSJ+0OUzaEtWUvEpNjGQaH8y1jZW8Yzyu3gDUdgmHwu+F5Eo8zfuESF4xFXaNaNwL4Hq28w9J5Ms9hR+IUjh+X1ZimryIhNPgzFLPXXTxIuE9ODgMt+xq/55kYwVuLIOD47HbeeVDbUaNh1s03pwBPiMOUIF1oj1MCKi/SdLQkSvVHqIJiDvvYCqWShUT3+NQrFNJItS9MOstJse1dRpU3BSqxjMf517xiroFF43wk9ork7zWwPEP0PGD0T1DGTmAEswcpkrUbxtWNU2c5eqpZujk7CDh8S5Z5LCcNtJ6gg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from TYSPR06MB6921.apcprd06.prod.outlook.com (2603:1096:400:468::6)
- by KU2PPFF77CB3BA9.apcprd06.prod.outlook.com (2603:1096:d18::4b2) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.23; Wed, 30 Jul
- 2025 01:50:44 +0000
-Received: from TYSPR06MB6921.apcprd06.prod.outlook.com
- ([fe80::e3e7:6807:14ca:7768]) by TYSPR06MB6921.apcprd06.prod.outlook.com
- ([fe80::e3e7:6807:14ca:7768%7]) with mapi id 15.20.8989.010; Wed, 30 Jul 2025
- 01:50:43 +0000
-From: Dai Junbing <daijunbing@vivo.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	"Theodore Ts'o" <tytso@mit.edu>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-ext4@vger.kernel.org
-Cc: opensource.kernel@vivo.com,
-	Dai Junbing <daijunbing@vivo.com>
-Subject: [PATCH v1 5/5] jbd2: Add TASK_FREEZABLE to kjournald2 thread
-Date: Wed, 30 Jul 2025 09:47:06 +0800
-Message-Id: <20250730014708.1516-6-daijunbing@vivo.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250730014708.1516-1-daijunbing@vivo.com>
-References: <20250730014708.1516-1-daijunbing@vivo.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYAPR01CA0225.jpnprd01.prod.outlook.com
- (2603:1096:404:11e::21) To TYSPR06MB6921.apcprd06.prod.outlook.com
- (2603:1096:400:468::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53F719CD13
+	for <linux-fsdevel@vger.kernel.org>; Wed, 30 Jul 2025 01:52:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753840341; cv=none; b=IE9N+0R8tpLVDH7fWwBZ3MWFAyKrwHUFz2r2GPksmeasCb6NlomHHmssDNm/N4srqhsFzI6PMPUXBq7VewQUC6ZaxXX7NB+tDpOmzsWdqmKazln6asQDH2guJpPQkiZh1ND72Sai2x8xfVzQcfqFgnthFzVSbE9ga49PXhyWY4s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753840341; c=relaxed/simple;
+	bh=DFsUmBoSxpvEl1jbcoyHdUsySmtnyVJkjTVNKb4iPAY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=K2iZMpiaxwJvV4KZRtVs+Uv+Vdo0q1hhyV6AuQL/U5WaG8iL3j2DV8n6EincWRhMLO0MgfbCCqcU7OsYsnQf9Juf09bwOAOu3MgZx8ql8ZJaYopkJclceMUtbDmPm1HCDHn3URCJUfDiFBVOcPiEQXBBl05bdMC8s0t/0MIh2B8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--isaacmanjarres.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XLwOD95v; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--isaacmanjarres.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2403c86ff97so31830905ad.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Jul 2025 18:52:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753840339; x=1754445139; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4lpYwICX0CJSHu8yDb7qWIdE6OnXVrrqjQR/9Vf5znQ=;
+        b=XLwOD95vFpuIQD+32Yfp6PDmLmYoROvJqTy4v1h8uRuSm3Wj4DhZ1CQ6dLNGsrRIZE
+         HKXdSWmeKCc247MAD34y1H147tkttWaVqbvCx9J6XJHQzh/owSRjDvAEYCmCy04yUf5k
+         gjVlXenVGjQzcY7laVJCDffBN/qcPrVOzGiihdKbTkz8LaLUfjPmSWI//A1+IQoST9Fe
+         rxxt9NY2uQNlF581kedQrJC4F+bx+LtN5cqv3KGsoOlvJTOtTOctQJor5m97kK8c4cpP
+         +riAJL95pFDGqkBwxjh5DpGeY1TyZ9x7bh35QGGwrrTdyIfbph194JXH3cqgbamHHDv1
+         ifBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753840339; x=1754445139;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4lpYwICX0CJSHu8yDb7qWIdE6OnXVrrqjQR/9Vf5znQ=;
+        b=sNjWQQPPliqBAKng4/2UAGEC0uJBby28pxRKQns/91+LzVUXhe2PidI81mOwJt4bgI
+         Dabg0z0+OYYOVszsb4Je03iPOJw6neY5qIeQ23Y+9s8jKRmTcLsyS2lKjr303jwuZXas
+         dHsXMKqBzuunNeUp69/I+VcO8+9G2W0DK3axZZ4a21Igloee+BsSmQItc97lFBcZY53A
+         GvWHmGHKQHqyKOpJA5477qwnrdljKAY7Vs48lVZXdAXfpTV77YzRhX9LMv8Z4vSs/4H8
+         WbreUn0GQ6uWWb3TTSRoyuED84/38D+AWWGOdGdY30AXp7OpxzJ/GZbqQ2GOZOPmNsVu
+         wFlg==
+X-Forwarded-Encrypted: i=1; AJvYcCVekyAloYGlMd/J7nRX3BP4g8Z0UHjxY3yCLHRS589TugU1R+zuf4tdd/6R4IRSDuQKdR4yrovxnuY8EFw1@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYdEFWizt80k3Z17CpdjDwrUPU7AV7qR/HiTRGBt7kYUXlJr0L
+	N1lp9cyHLkyxNC5YhLqJWlUvd0PSHBIklhEfi+2CitKpBpvaFWDfApPK/YXKdLhcmwdcmsyG1/n
+	80ArnUjXil6YZvfIZkPGNXfT1Zxj0TZLmwnB3eQ==
+X-Google-Smtp-Source: AGHT+IGeZs7EIs+wsidrRLh3DvOWd/rMI+xlaw3P1K3iT5U0r2fWnca34EEPi5qKaWhGTlIWdLQsx8AEbCbxzPoxkPb7kA==
+X-Received: from plil7.prod.google.com ([2002:a17:903:17c7:b0:234:c2e4:1df6])
+ (user=isaacmanjarres job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:902:f70d:b0:240:4faa:75cd with SMTP id d9443c01a7336-24096bb3415mr20277435ad.48.1753840338964;
+ Tue, 29 Jul 2025 18:52:18 -0700 (PDT)
+Date: Tue, 29 Jul 2025 18:51:45 -0700
+In-Reply-To: <20250730015152.29758-1-isaacmanjarres@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYSPR06MB6921:EE_|KU2PPFF77CB3BA9:EE_
-X-MS-Office365-Filtering-Correlation-Id: 88cc6be2-e851-453b-5582-08ddcf0b7ec7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|366016|52116014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?XzxqN2WXQ0JEXq7Hj6Kc/2COGakAS6MFTZzAZEYbSzW5bOfojE5Ow5sBIJ75?=
- =?us-ascii?Q?0RHVO8BAAnknAhby8s9ga9e2jdMQl/Ns5tCSmt2a4MGSye8p4qtf2n5KgLZT?=
- =?us-ascii?Q?pUcuiDFF2d8Sf4uPjqum7BHHvfEiBbcShGc5VpFOomQ585s6nXZOVnO9DzRl?=
- =?us-ascii?Q?4mCmCKPhnbjQtMZIc7rCWpgNag7TX9QMkB2y0wTGsKCf+mmuKnM9m06LE/cU?=
- =?us-ascii?Q?rGWY7PRfEs6Zo31/GDY/Ne8CA90dwMaPHTNdMcn0rd6A/0xVW2Y4RYr25ajR?=
- =?us-ascii?Q?06gbr22s1pUXyvyycqxH9uk9XwNYg0banlMcF64y7uVnpINJHwEzaMMSKoHL?=
- =?us-ascii?Q?xRbRm0n89+ut9DoEHwW2WoYZUwW8kx/UEXuwmHYyyag/gMcoVbhfqzMlcbB+?=
- =?us-ascii?Q?z0wOTJ00oWtWe9g6w86q+uuwHn1NXUKa343xHrVb80AblrMteD7pHssD7GdC?=
- =?us-ascii?Q?Hvj7s3pi/TpSnsvCzMZ4u6s8d3wZKdlXqNi2cJL3RRpT0eiToby3So90DXl/?=
- =?us-ascii?Q?qmFYCumWz5U7wUOOoCzR2OOI9h0C/IvuMpOdNg4YjGU7rlu4I+ROIEAwJiL2?=
- =?us-ascii?Q?XuBwat4UhB+QjQHblJcl++kc7Rhjfdhebk1xjth362Eld4QKZJvSYtn1Xwkd?=
- =?us-ascii?Q?R5T4Iilj6jQXlkVeJO9mQg0AtquHlRiQiiV+B+98mnG69B1VVOBRH+nR/HeW?=
- =?us-ascii?Q?/4te3P2DvDqz/EfuX+4VdLraGFC6N8PGXF2DqKNxtyVyIBVQR0a3G2x3j9NW?=
- =?us-ascii?Q?gV8D0EJj4HxCCBDWNwDbDoiVN4vvyjcRvhPtzzYobl8nEAsDp1vAWtCcYnmm?=
- =?us-ascii?Q?Jpv3Iieb+jdP/UtXQpHp2TYVyJMK+bxnPgFAXIJcGh2p5/ji5+ff9aQMemew?=
- =?us-ascii?Q?/09giFmjjV2YY0AlxmDwA/29hzNlfyAiIbbTU1fywnaDpy8n8YR2hSFq14U7?=
- =?us-ascii?Q?ZDi736GRhNYD7RHxxnLlTwqWHP8yVSzRC8F3v5irPy58KRl8WGFJcGRmKpwr?=
- =?us-ascii?Q?rKkHFtxWBsbbsl5chvcdRyK8Zwl2PRAxZ11hGQyDFauptp27KoYhKyOVBaCC?=
- =?us-ascii?Q?cTG6qZDEhSQAQcGbuO/7y4s1cf/65VVHBM/vlTGhafSEzKywMbcal9EnwWfp?=
- =?us-ascii?Q?ttieCrCFjx5s+nqcuqrRwhK2WTYZP1/4rmDGSGIekVagUge3/wX3IMuphGzX?=
- =?us-ascii?Q?tGDFpOemIw2Qvz3fB0wJgvk+wIK56x1cbqEz8IzC2OkT74ENKvVrqTXWD+IA?=
- =?us-ascii?Q?76v5boL3qXIekN9T/vTcgcsWjGx8WK62HglA3sFv1u6DpOY7Pnpk5M5cK8ZJ?=
- =?us-ascii?Q?S/1kntfHzb+ptGI64VdDfI51cPnXx7q2TSBi06+W5IFtphiLxgtKf7Z8HMii?=
- =?us-ascii?Q?lGxKLgcKG8+uGHm7Q9Ag+3jyHW9yKamTnK5M9BY8HbHc4Jm8phlnuELjE1hj?=
- =?us-ascii?Q?z3sPtoAUR+Ko6euEwuh2fmq7xJB85Mdn1jgGcv4J9We6fWVmGestGw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYSPR06MB6921.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?p8/xuNfCGMMvPvaLbSA5N5g7EhIVtaHNSFlsOL1k3TwwXlmIUEbn5v1tkbpT?=
- =?us-ascii?Q?1Z1TUwMXdEbbeL6qNe5MvwzMImliCs0NluU6FjktAW38pwAJL97cBK4Vjwjv?=
- =?us-ascii?Q?qw+MdemqYxN4Gf/x7iDmcey1VlPkIACvG6abmebcxecsxsG5bfg+G5kqswdR?=
- =?us-ascii?Q?dAVIJoUktjVEaP92p2mhpNfUm8BYjrdoTQAHPvMGDA+RjKKZYZjBDypP1Wf/?=
- =?us-ascii?Q?5O4ejW7Oa6MFyYeHdu/gvF9k0bbBXwBuly0bX9S2DAH6eM9PDbA6+lC3HkBY?=
- =?us-ascii?Q?E3FvY+WN3Uf+m35O/z3orIpgY+9DOPh37DOs5fgqGpuZ6eOtqFBOh2SHQDIn?=
- =?us-ascii?Q?DmZ+vwdM22Emu0hOcG8Ub+jXQbQ+DzWOAsxswK5kfCcwwNg8fBrM1PwJH4uV?=
- =?us-ascii?Q?ZEy1VMKVZf2n6fnLVQL9icqyCMvswWRfQDtvtozLf/fOAq84FqBSpnyXCaCw?=
- =?us-ascii?Q?VMsQdGJ/1IodCiyUsbTVM6OuPMSjV7WtjD5xjPW9+kCYl6wglBJO/usR0ovC?=
- =?us-ascii?Q?ihBEI5Cfo/fCo+lstfioCyST9HhAC+qJ/z+R/1CGPLUBEvN49bUUwBjfBhOw?=
- =?us-ascii?Q?RRlq/EB6WtDvFy7Hxo7N32FWM+ErliEZopQBWMRoYEdCaYlTE8GV559HnsjF?=
- =?us-ascii?Q?qhPnYJ6SxnpbEKltzG0/7v7kcLqMswD2QJQGEgKyGMM3kdoWdrHhOiu9nfHW?=
- =?us-ascii?Q?gMd89VdD7s4t2Um06qGrmhtvEolLIcQt0YAI9zyiskh22dbWoU5Lbsna7R3O?=
- =?us-ascii?Q?8q2s/Rq0OaXEQ20jStPnApi4o75umcQwc7SvGuoVJ7wLdKttooUZ8/lcpvk8?=
- =?us-ascii?Q?71ELpcBTm/tvgUmX1EwLIjyvWq56IYRvBlmPn9RMHg3T03z8YCnJcvO0HfKV?=
- =?us-ascii?Q?axkY0BcbnweHKofFXtnwc+DJhEv/Qgn5wdftyNjbZjCJBr2X8roP6oNQJ2gU?=
- =?us-ascii?Q?m38ysbhDO5qzGfxjMwgKNaLgNzMVSb/kpDPB3/HRabMESzma3u9jnfUrpwye?=
- =?us-ascii?Q?3RyJQr7l2xzCAR4ipWy8oVTQnvH56yKjMBod+phahMpbe9xENPWP6cpapiKc?=
- =?us-ascii?Q?DE/4R0i5guT0qxq0xjIFPGuRzu0hU17FgMzJOypxccUJg/YhaNwnUIfrGIWi?=
- =?us-ascii?Q?3m5jfAYeYs6Q8pJbwDXWcdwiZcK5egsm71SaQD2/qfWavcpAmVFibdCIgb5Y?=
- =?us-ascii?Q?00sbx6L2JsW8B0Peoe064VaTugdZTHu5PR+9SiSvI8KDC405OM7g/RsETjIi?=
- =?us-ascii?Q?SKho3iwcOuOz+0/5J7C4z+bbLSnngkJsQIo2TCYdwALVQlOua/YCeUWLhgU+?=
- =?us-ascii?Q?tb3Vk/dmZ4D34I6MT31yO7z7gJBQCDF9B8TUQ7x0XeWdtQqYJpVVOS6NO4/W?=
- =?us-ascii?Q?9FXIbr5syszLN+T8lICtRKkYxQkyA/cTv4gI5bLcUaqFWoc4XyGCnuCHaEDM?=
- =?us-ascii?Q?cC5x8JY1GzJ0SQa39jzHAe3nywDilakrR4tiKqlF/zBMSfjikrEucX48mw47?=
- =?us-ascii?Q?lbKQRKIcSKCs8k3dL3ctNUYu1aQpEzmee/d+uD/o5XsDRqORRoSpGCTmIDHI?=
- =?us-ascii?Q?7fiUaLon8SKx92GiPjvwF1Ha6R4r12b0o7Wy9TgE?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 88cc6be2-e851-453b-5582-08ddcf0b7ec7
-X-MS-Exchange-CrossTenant-AuthSource: TYSPR06MB6921.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2025 01:50:43.7223
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 06+OcTlaVUAH+CI8V0BL2bzOhTF3jvrfXCNxfqOisLrLSA4hTAmpA4t39+Tfu/wncSN0WTBAFMI/PN0jocZynQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KU2PPFF77CB3BA9
+Mime-Version: 1.0
+References: <20250730015152.29758-1-isaacmanjarres@google.com>
+X-Mailer: git-send-email 2.50.1.552.g942d659e1b-goog
+Message-ID: <20250730015152.29758-2-isaacmanjarres@google.com>
+Subject: [PATCH 6.6.y 1/4] mm: drop the assumption that VM_SHARED always
+ implies writable
+From: "Isaac J. Manjarres" <isaacmanjarres@google.com>
+To: lorenzo.stoakes@oracle.com, gregkh@linuxfoundation.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Kees Cook <kees@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, Jann Horn <jannh@google.com>, 
+	Pedro Falcato <pfalcato@suse.de>
+Cc: aliceryhl@google.com, stable@vger.kernel.org, 
+	"Isaac J. Manjarres" <isaacmanjarres@google.com>, kernel-team@android.com, 
+	Lorenzo Stoakes <lstoakes@gmail.com>, Andy Lutomirski <luto@kernel.org>, Hugh Dickins <hughd@google.com>, 
+	Mike Kravetz <mike.kravetz@oracle.com>, Muchun Song <muchun.song@linux.dev>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 
-Set the TASK_FREEZABLE flag when the kjournald2 kernel thread sleeps
-during journal commit operations. This prevents premature wakeups
-during system suspend/resume cycles, avoiding unnecessary CPU wakeups
-and power consumption.
+From: Lorenzo Stoakes <lstoakes@gmail.com>
 
-in this case, the original code:
+[ Upstream commit e8e17ee90eaf650c855adb0a3e5e965fd6692ff1 ]
 
-	prepare_to_wait(&journal->j_wait_commit, &wait,
-               	 TASK_INTERRUPTIBLE);
-	if (journal->j_commit_sequence != journal->j_commit_request)
-        	should_sleep = 0;
+Patch series "permit write-sealed memfd read-only shared mappings", v4.
 
-	transaction = journal->j_running_transaction;
-	if (transaction && time_after_eq(jiffies, transaction->t_expires))
-        	should_sleep = 0;
-	......
-	......
-	if (should_sleep) {
-        	write_unlock(&journal->j_state_lock);
-        	schedule();
-        	write_lock(&journal->j_state_lock);
-	}
+The man page for fcntl() describing memfd file seals states the following
+about F_SEAL_WRITE:-
 
-is functionally equivalent to the more concise:
+    Furthermore, trying to create new shared, writable memory-mappings via
+    mmap(2) will also fail with EPERM.
 
-	write_unlock(&journal->j_state_lock);
-	wait_event_freezable_exclusive(&journal->j_wait_commit,
-        	journal->j_commit_sequence == journal->j_commit_request ||
-        	(journal->j_running_transaction &&
-         	time_after_eq(jiffies, transaction->t_expires)) ||
-        	(journal->j_flags & JBD2_UNMOUNT));
-	write_lock(&journal->j_state_lock);
+With emphasis on 'writable'.  In turns out in fact that currently the
+kernel simply disallows all new shared memory mappings for a memfd with
+F_SEAL_WRITE applied, rendering this documentation inaccurate.
 
-Signed-off-by: Dai Junbing <daijunbing@vivo.com>
+This matters because users are therefore unable to obtain a shared mapping
+to a memfd after write sealing altogether, which limits their usefulness.
+This was reported in the discussion thread [1] originating from a bug
+report [2].
+
+This is a product of both using the struct address_space->i_mmap_writable
+atomic counter to determine whether writing may be permitted, and the
+kernel adjusting this counter when any VM_SHARED mapping is performed and
+more generally implicitly assuming VM_SHARED implies writable.
+
+It seems sensible that we should only update this mapping if VM_MAYWRITE
+is specified, i.e.  whether it is possible that this mapping could at any
+point be written to.
+
+If we do so then all we need to do to permit write seals to function as
+documented is to clear VM_MAYWRITE when mapping read-only.  It turns out
+this functionality already exists for F_SEAL_FUTURE_WRITE - we can
+therefore simply adapt this logic to do the same for F_SEAL_WRITE.
+
+We then hit a chicken and egg situation in mmap_region() where the check
+for VM_MAYWRITE occurs before we are able to clear this flag.  To work
+around this, perform this check after we invoke call_mmap(), with careful
+consideration of error paths.
+
+Thanks to Andy Lutomirski for the suggestion!
+
+[1]:https://lore.kernel.org/all/20230324133646.16101dfa666f253c4715d965@linux-foundation.org/
+[2]:https://bugzilla.kernel.org/show_bug.cgi?id=217238
+
+This patch (of 3):
+
+There is a general assumption that VMAs with the VM_SHARED flag set are
+writable.  If the VM_MAYWRITE flag is not set, then this is simply not the
+case.
+
+Update those checks which affect the struct address_space->i_mmap_writable
+field to explicitly test for this by introducing
+[vma_]is_shared_maywrite() helper functions.
+
+This remains entirely conservative, as the lack of VM_MAYWRITE guarantees
+that the VMA cannot be written to.
+
+Link: https://lkml.kernel.org/r/cover.1697116581.git.lstoakes@gmail.com
+Link: https://lkml.kernel.org/r/d978aefefa83ec42d18dfa964ad180dbcde34795.1697116581.git.lstoakes@gmail.com
+Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
+Suggested-by: Andy Lutomirski <luto@kernel.org>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+Cc: Mike Kravetz <mike.kravetz@oracle.com>
+Cc: Muchun Song <muchun.song@linux.dev>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: stable@vger.kernel.org
+[isaacmanjarres: resolved merge conflicts due to
+due to refactoring that happened in upstream commit
+5de195060b2e ("mm: resolve faulty mmap_region() error path behaviour")]
+Signed-off-by: Isaac J. Manjarres <isaacmanjarres@google.com>
 ---
- fs/jbd2/journal.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/fs.h |  4 ++--
+ include/linux/mm.h | 11 +++++++++++
+ kernel/fork.c      |  2 +-
+ mm/filemap.c       |  2 +-
+ mm/madvise.c       |  2 +-
+ mm/mmap.c          |  8 ++++----
+ 6 files changed, 20 insertions(+), 9 deletions(-)
 
-diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-index d480b94117cd..9a1def9f730b 100644
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -222,7 +222,7 @@ static int kjournald2(void *arg)
- 		DEFINE_WAIT(wait);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index b641a01512fb..4cdeeaedaa40 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -456,7 +456,7 @@ extern const struct address_space_operations empty_aops;
+  *   It is also used to block modification of page cache contents through
+  *   memory mappings.
+  * @gfp_mask: Memory allocation flags to use for allocating pages.
+- * @i_mmap_writable: Number of VM_SHARED mappings.
++ * @i_mmap_writable: Number of VM_SHARED, VM_MAYWRITE mappings.
+  * @nr_thps: Number of THPs in the pagecache (non-shmem only).
+  * @i_mmap: Tree of private and shared mappings.
+  * @i_mmap_rwsem: Protects @i_mmap and @i_mmap_writable.
+@@ -559,7 +559,7 @@ static inline int mapping_mapped(struct address_space *mapping)
  
- 		prepare_to_wait(&journal->j_wait_commit, &wait,
--				TASK_INTERRUPTIBLE);
-+				TASK_INTERRUPTIBLE | TASK_FREEZABLE);
- 		transaction = journal->j_running_transaction;
- 		if (transaction == NULL ||
- 		    time_before(jiffies, transaction->t_expires)) {
+ /*
+  * Might pages of this file have been modified in userspace?
+- * Note that i_mmap_writable counts all VM_SHARED vmas: do_mmap
++ * Note that i_mmap_writable counts all VM_SHARED, VM_MAYWRITE vmas: do_mmap
+  * marks vma as VM_SHARED if it is shared, and the file was opened for
+  * writing i.e. vma may be mprotected writable even if now readonly.
+  *
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index ee26e37daa0a..036be4a87e3d 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -941,6 +941,17 @@ static inline bool vma_is_accessible(struct vm_area_struct *vma)
+ 	return vma->vm_flags & VM_ACCESS_FLAGS;
+ }
+ 
++static inline bool is_shared_maywrite(vm_flags_t vm_flags)
++{
++	return (vm_flags & (VM_SHARED | VM_MAYWRITE)) ==
++		(VM_SHARED | VM_MAYWRITE);
++}
++
++static inline bool vma_is_shared_maywrite(struct vm_area_struct *vma)
++{
++	return is_shared_maywrite(vma->vm_flags);
++}
++
+ static inline
+ struct vm_area_struct *vma_find(struct vma_iterator *vmi, unsigned long max)
+ {
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 7966c9a1c163..0e20d7e94608 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -739,7 +739,7 @@ static __latent_entropy int dup_mmap(struct mm_struct *mm,
+ 
+ 			get_file(file);
+ 			i_mmap_lock_write(mapping);
+-			if (tmp->vm_flags & VM_SHARED)
++			if (vma_is_shared_maywrite(tmp))
+ 				mapping_allow_writable(mapping);
+ 			flush_dcache_mmap_lock(mapping);
+ 			/* insert tmp into the share list, just after mpnt */
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 05eb77623a10..ab24dbf5e747 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -3716,7 +3716,7 @@ int generic_file_mmap(struct file *file, struct vm_area_struct *vma)
+  */
+ int generic_file_readonly_mmap(struct file *file, struct vm_area_struct *vma)
+ {
+-	if ((vma->vm_flags & VM_SHARED) && (vma->vm_flags & VM_MAYWRITE))
++	if (vma_is_shared_maywrite(vma))
+ 		return -EINVAL;
+ 	return generic_file_mmap(file, vma);
+ }
+diff --git a/mm/madvise.c b/mm/madvise.c
+index 9d2a6cb655ff..3d6370d3199f 100644
+--- a/mm/madvise.c
++++ b/mm/madvise.c
+@@ -987,7 +987,7 @@ static long madvise_remove(struct vm_area_struct *vma,
+ 			return -EINVAL;
+ 	}
+ 
+-	if ((vma->vm_flags & (VM_SHARED|VM_WRITE)) != (VM_SHARED|VM_WRITE))
++	if (!vma_is_shared_maywrite(vma))
+ 		return -EACCES;
+ 
+ 	offset = (loff_t)(start - vma->vm_start)
+diff --git a/mm/mmap.c b/mm/mmap.c
+index a9c70001e456..3ef45bac62e6 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -107,7 +107,7 @@ void vma_set_page_prot(struct vm_area_struct *vma)
+ static void __remove_shared_vm_struct(struct vm_area_struct *vma,
+ 		struct file *file, struct address_space *mapping)
+ {
+-	if (vma->vm_flags & VM_SHARED)
++	if (vma_is_shared_maywrite(vma))
+ 		mapping_unmap_writable(mapping);
+ 
+ 	flush_dcache_mmap_lock(mapping);
+@@ -383,7 +383,7 @@ static unsigned long count_vma_pages_range(struct mm_struct *mm,
+ static void __vma_link_file(struct vm_area_struct *vma,
+ 			    struct address_space *mapping)
+ {
+-	if (vma->vm_flags & VM_SHARED)
++	if (vma_is_shared_maywrite(vma))
+ 		mapping_allow_writable(mapping);
+ 
+ 	flush_dcache_mmap_lock(mapping);
+@@ -2845,7 +2845,7 @@ static unsigned long __mmap_region(struct file *file, unsigned long addr,
+ 	mm->map_count++;
+ 	if (vma->vm_file) {
+ 		i_mmap_lock_write(vma->vm_file->f_mapping);
+-		if (vma->vm_flags & VM_SHARED)
++		if (vma_is_shared_maywrite(vma))
+ 			mapping_allow_writable(vma->vm_file->f_mapping);
+ 
+ 		flush_dcache_mmap_lock(vma->vm_file->f_mapping);
+@@ -2926,7 +2926,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+ 		return -EINVAL;
+ 
+ 	/* Map writable and ensure this isn't a sealed memfd. */
+-	if (file && (vm_flags & VM_SHARED)) {
++	if (file && is_shared_maywrite(vm_flags)) {
+ 		int error = mapping_map_writable(file->f_mapping);
+ 
+ 		if (error)
 -- 
-2.25.1
+2.50.1.552.g942d659e1b-goog
 
 
