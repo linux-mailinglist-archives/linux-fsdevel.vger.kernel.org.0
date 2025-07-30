@@ -1,81 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-56310-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56311-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 670C5B15727
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jul 2025 03:52:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05C93B15733
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jul 2025 03:53:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6975A3B8FD3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jul 2025 01:51:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B31F14E7757
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jul 2025 01:53:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F377F1A5B92;
-	Wed, 30 Jul 2025 01:52:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D46821AF0A7;
+	Wed, 30 Jul 2025 01:52:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XLwOD95v"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="w/1I+LYL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53F719CD13
-	for <linux-fsdevel@vger.kernel.org>; Wed, 30 Jul 2025 01:52:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F8922318
+	for <linux-fsdevel@vger.kernel.org>; Wed, 30 Jul 2025 01:52:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753840341; cv=none; b=IE9N+0R8tpLVDH7fWwBZ3MWFAyKrwHUFz2r2GPksmeasCb6NlomHHmssDNm/N4srqhsFzI6PMPUXBq7VewQUC6ZaxXX7NB+tDpOmzsWdqmKazln6asQDH2guJpPQkiZh1ND72Sai2x8xfVzQcfqFgnthFzVSbE9ga49PXhyWY4s=
+	t=1753840379; cv=none; b=cdP90wwdrjJvDyA2/4l68rfyA6R6Be0oiqaaYLnMzLU8SsJNcZ0uYZ1hE14e4D4f75fHzuv6pmsojszaxokB5DUETyB3GNs+1GuEZR9D70U39FLNGZkeIaZxIavyYeTu1jT2o484z8CtoinNO8aUjdLvRyWk4xZiIip5+o6bXCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753840341; c=relaxed/simple;
-	bh=DFsUmBoSxpvEl1jbcoyHdUsySmtnyVJkjTVNKb4iPAY=;
+	s=arc-20240116; t=1753840379; c=relaxed/simple;
+	bh=Dj8Xo+yBbR+QOw9rJ4lj/2lsHlWWR74lkTrVn/v/o58=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=K2iZMpiaxwJvV4KZRtVs+Uv+Vdo0q1hhyV6AuQL/U5WaG8iL3j2DV8n6EincWRhMLO0MgfbCCqcU7OsYsnQf9Juf09bwOAOu3MgZx8ql8ZJaYopkJclceMUtbDmPm1HCDHn3URCJUfDiFBVOcPiEQXBBl05bdMC8s0t/0MIh2B8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--isaacmanjarres.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XLwOD95v; arc=none smtp.client-ip=209.85.214.202
+	 To:Cc:Content-Type; b=jEZIgOWJmctkLvmq5OJT1Lbey5AgX0kLd8UaoZs6oWhqCodbtnGZmB+PYa+as4A/NcRP9rAZMxYhgK6Iyqiz2wYmFKiuZnt4UUlw4d0nDRIHhkG8Uet9TVKrSAFAw1wpSNptfLKEDeup68rdlf25TnKBr73x6DjsXWcIaNNxDU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--isaacmanjarres.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=w/1I+LYL; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--isaacmanjarres.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2403c86ff97so31830905ad.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Jul 2025 18:52:19 -0700 (PDT)
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-711136ed77fso84280767b3.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Jul 2025 18:52:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753840339; x=1754445139; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1753840375; x=1754445175; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4lpYwICX0CJSHu8yDb7qWIdE6OnXVrrqjQR/9Vf5znQ=;
-        b=XLwOD95vFpuIQD+32Yfp6PDmLmYoROvJqTy4v1h8uRuSm3Wj4DhZ1CQ6dLNGsrRIZE
-         HKXdSWmeKCc247MAD34y1H147tkttWaVqbvCx9J6XJHQzh/owSRjDvAEYCmCy04yUf5k
-         gjVlXenVGjQzcY7laVJCDffBN/qcPrVOzGiihdKbTkz8LaLUfjPmSWI//A1+IQoST9Fe
-         rxxt9NY2uQNlF581kedQrJC4F+bx+LtN5cqv3KGsoOlvJTOtTOctQJor5m97kK8c4cpP
-         +riAJL95pFDGqkBwxjh5DpGeY1TyZ9x7bh35QGGwrrTdyIfbph194JXH3cqgbamHHDv1
-         ifBw==
+        bh=opijK7AhKe3RGzDyfUAJ5xJTjdm697jVXAtg305DKTU=;
+        b=w/1I+LYLNLrEROBLntYRxthCI4iqBj+3PDwZkuxSEK8bOXjhRGvGUcIR4VRJp92K8L
+         kh/87hHhtZquCNuWRyVvLibKSoPKXFc1T+bQxtQp/FB835Z4soW9jqPK0/ULJ7kZSdti
+         fDP/DLnmiIm97dGgCmn6WRti809I+lWIiTha1mWnAQA+6E8wsRl52ZPS0zw5iOURXqe+
+         ipSEt6sdzqSGLIQmRzITB/F7A6E3t8ikZH1FdAJWh5pnDF2q0qBONt05iFSUEzlzpZ/h
+         O4ks+Akz6gAjUOs2+vu1raJ211OUuae8dM/9ne7KzRw69c64kUw4ttZHBiDMjAp2M0G/
+         eoLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753840339; x=1754445139;
+        d=1e100.net; s=20230601; t=1753840375; x=1754445175;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4lpYwICX0CJSHu8yDb7qWIdE6OnXVrrqjQR/9Vf5znQ=;
-        b=sNjWQQPPliqBAKng4/2UAGEC0uJBby28pxRKQns/91+LzVUXhe2PidI81mOwJt4bgI
-         Dabg0z0+OYYOVszsb4Je03iPOJw6neY5qIeQ23Y+9s8jKRmTcLsyS2lKjr303jwuZXas
-         dHsXMKqBzuunNeUp69/I+VcO8+9G2W0DK3axZZ4a21Igloee+BsSmQItc97lFBcZY53A
-         GvWHmGHKQHqyKOpJA5477qwnrdljKAY7Vs48lVZXdAXfpTV77YzRhX9LMv8Z4vSs/4H8
-         WbreUn0GQ6uWWb3TTSRoyuED84/38D+AWWGOdGdY30AXp7OpxzJ/GZbqQ2GOZOPmNsVu
-         wFlg==
-X-Forwarded-Encrypted: i=1; AJvYcCVekyAloYGlMd/J7nRX3BP4g8Z0UHjxY3yCLHRS589TugU1R+zuf4tdd/6R4IRSDuQKdR4yrovxnuY8EFw1@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYdEFWizt80k3Z17CpdjDwrUPU7AV7qR/HiTRGBt7kYUXlJr0L
-	N1lp9cyHLkyxNC5YhLqJWlUvd0PSHBIklhEfi+2CitKpBpvaFWDfApPK/YXKdLhcmwdcmsyG1/n
-	80ArnUjXil6YZvfIZkPGNXfT1Zxj0TZLmwnB3eQ==
-X-Google-Smtp-Source: AGHT+IGeZs7EIs+wsidrRLh3DvOWd/rMI+xlaw3P1K3iT5U0r2fWnca34EEPi5qKaWhGTlIWdLQsx8AEbCbxzPoxkPb7kA==
-X-Received: from plil7.prod.google.com ([2002:a17:903:17c7:b0:234:c2e4:1df6])
+        bh=opijK7AhKe3RGzDyfUAJ5xJTjdm697jVXAtg305DKTU=;
+        b=fL+DNzzgmafJHTN6NpZZYpMVZvink4jRUPSasafOUn40np+d1WuCN+JGtyiRIL0oE0
+         JR/z9lZK4g8lmzCuHEJRg7FJy6hZLIQbg9fHjr+he1vFFZd+IHetzEg24vGgle7Xd3XG
+         3NHon8OdjVG9ExwPiIUzjxZdiNembulXalhxzQM7wFiMXLmo8/7bY5mqVq8MArRKdCpi
+         9XPFyTe7u/0nrxTrL5tw1Ea6eC7u7yHz3zekaHUCPjOxf+bZifsBT6N7vEqNZCr9Gl8H
+         MhEKNUmUIrp32dke8FNmQFqiE4UMRhlTw7jV7lRJJDM0a91u1irlrlVAQjN+X04whiIh
+         vTYw==
+X-Forwarded-Encrypted: i=1; AJvYcCX9wURXUvdqYhqorpV3dFXfKS1MzXHdkMXGGWPKGZX9Cg1AJkmDKSigqRDC1cOhNdtCOzt/U5rVs+08g+jh@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZnkTwoaidx3JYmARzwXi4xeceqp4tZiu1x+JaAeYESnSeVrmO
+	tfSv3cqPch7HIklsfe1TPcAQiCsZLhrQ1g+49Q8p3sbMkkUEKOCI2iCXy2VVpSDOewIh/HqBXbc
+	2E3n990I0jbZZ51CBXno6l5GOF3mVcQgaIicOlw==
+X-Google-Smtp-Source: AGHT+IEVCc5l5RWyhngBBu5Jn/PGO8ldc4WNJBgCRgFdSuvfm1vB570lLkXgISLNjwCFAwCvjc3ka27wVRJji+sTcbvDKg==
+X-Received: from ywbhf5.prod.google.com ([2002:a05:690c:6005:b0:71a:35fe:299d])
  (user=isaacmanjarres job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:902:f70d:b0:240:4faa:75cd with SMTP id d9443c01a7336-24096bb3415mr20277435ad.48.1753840338964;
- Tue, 29 Jul 2025 18:52:18 -0700 (PDT)
-Date: Tue, 29 Jul 2025 18:51:45 -0700
-In-Reply-To: <20250730015152.29758-1-isaacmanjarres@google.com>
+ 2002:a05:690c:6911:b0:711:371e:ecbe with SMTP id 00721157ae682-71a4691abbdmr25247057b3.29.1753840375239;
+ Tue, 29 Jul 2025 18:52:55 -0700 (PDT)
+Date: Tue, 29 Jul 2025 18:52:40 -0700
+In-Reply-To: <20250730015247.30827-1-isaacmanjarres@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250730015152.29758-1-isaacmanjarres@google.com>
+References: <20250730015247.30827-1-isaacmanjarres@google.com>
 X-Mailer: git-send-email 2.50.1.552.g942d659e1b-goog
-Message-ID: <20250730015152.29758-2-isaacmanjarres@google.com>
-Subject: [PATCH 6.6.y 1/4] mm: drop the assumption that VM_SHARED always
+Message-ID: <20250730015247.30827-2-isaacmanjarres@google.com>
+Subject: [PATCH 6.1.y 1/4] mm: drop the assumption that VM_SHARED always
  implies writable
 From: "Isaac J. Manjarres" <isaacmanjarres@google.com>
 To: lorenzo.stoakes@oracle.com, gregkh@linuxfoundation.org, 
@@ -182,10 +182,10 @@ Signed-off-by: Isaac J. Manjarres <isaacmanjarres@google.com>
  6 files changed, 20 insertions(+), 9 deletions(-)
 
 diff --git a/include/linux/fs.h b/include/linux/fs.h
-index b641a01512fb..4cdeeaedaa40 100644
+index 1a619b681bcc..48758ab29100 100644
 --- a/include/linux/fs.h
 +++ b/include/linux/fs.h
-@@ -456,7 +456,7 @@ extern const struct address_space_operations empty_aops;
+@@ -410,7 +410,7 @@ extern const struct address_space_operations empty_aops;
   *   It is also used to block modification of page cache contents through
   *   memory mappings.
   * @gfp_mask: Memory allocation flags to use for allocating pages.
@@ -194,7 +194,7 @@ index b641a01512fb..4cdeeaedaa40 100644
   * @nr_thps: Number of THPs in the pagecache (non-shmem only).
   * @i_mmap: Tree of private and shared mappings.
   * @i_mmap_rwsem: Protects @i_mmap and @i_mmap_writable.
-@@ -559,7 +559,7 @@ static inline int mapping_mapped(struct address_space *mapping)
+@@ -513,7 +513,7 @@ static inline int mapping_mapped(struct address_space *mapping)
  
  /*
   * Might pages of this file have been modified in userspace?
@@ -204,10 +204,10 @@ index b641a01512fb..4cdeeaedaa40 100644
   * writing i.e. vma may be mprotected writable even if now readonly.
   *
 diff --git a/include/linux/mm.h b/include/linux/mm.h
-index ee26e37daa0a..036be4a87e3d 100644
+index b36dffbfbe69..b1509be77efb 100644
 --- a/include/linux/mm.h
 +++ b/include/linux/mm.h
-@@ -941,6 +941,17 @@ static inline bool vma_is_accessible(struct vm_area_struct *vma)
+@@ -673,6 +673,17 @@ static inline bool vma_is_accessible(struct vm_area_struct *vma)
  	return vma->vm_flags & VM_ACCESS_FLAGS;
  }
  
@@ -226,10 +226,10 @@ index ee26e37daa0a..036be4a87e3d 100644
  struct vm_area_struct *vma_find(struct vma_iterator *vmi, unsigned long max)
  {
 diff --git a/kernel/fork.c b/kernel/fork.c
-index 7966c9a1c163..0e20d7e94608 100644
+index 8cc313d27188..da318028aa88 100644
 --- a/kernel/fork.c
 +++ b/kernel/fork.c
-@@ -739,7 +739,7 @@ static __latent_entropy int dup_mmap(struct mm_struct *mm,
+@@ -669,7 +669,7 @@ static __latent_entropy int dup_mmap(struct mm_struct *mm,
  
  			get_file(file);
  			i_mmap_lock_write(mapping);
@@ -239,10 +239,10 @@ index 7966c9a1c163..0e20d7e94608 100644
  			flush_dcache_mmap_lock(mapping);
  			/* insert tmp into the share list, just after mpnt */
 diff --git a/mm/filemap.c b/mm/filemap.c
-index 05eb77623a10..ab24dbf5e747 100644
+index 6649a853dc5f..2ae6c6146d84 100644
 --- a/mm/filemap.c
 +++ b/mm/filemap.c
-@@ -3716,7 +3716,7 @@ int generic_file_mmap(struct file *file, struct vm_area_struct *vma)
+@@ -3554,7 +3554,7 @@ int generic_file_mmap(struct file *file, struct vm_area_struct *vma)
   */
  int generic_file_readonly_mmap(struct file *file, struct vm_area_struct *vma)
  {
@@ -252,10 +252,10 @@ index 05eb77623a10..ab24dbf5e747 100644
  	return generic_file_mmap(file, vma);
  }
 diff --git a/mm/madvise.c b/mm/madvise.c
-index 9d2a6cb655ff..3d6370d3199f 100644
+index e1993e18afee..06c5adcaec59 100644
 --- a/mm/madvise.c
 +++ b/mm/madvise.c
-@@ -987,7 +987,7 @@ static long madvise_remove(struct vm_area_struct *vma,
+@@ -980,7 +980,7 @@ static long madvise_remove(struct vm_area_struct *vma,
  			return -EINVAL;
  	}
  
@@ -265,10 +265,10 @@ index 9d2a6cb655ff..3d6370d3199f 100644
  
  	offset = (loff_t)(start - vma->vm_start)
 diff --git a/mm/mmap.c b/mm/mmap.c
-index a9c70001e456..3ef45bac62e6 100644
+index 0f303dc8425a..42e55e50b4a5 100644
 --- a/mm/mmap.c
 +++ b/mm/mmap.c
-@@ -107,7 +107,7 @@ void vma_set_page_prot(struct vm_area_struct *vma)
+@@ -106,7 +106,7 @@ void vma_set_page_prot(struct vm_area_struct *vma)
  static void __remove_shared_vm_struct(struct vm_area_struct *vma,
  		struct file *file, struct address_space *mapping)
  {
@@ -277,7 +277,7 @@ index a9c70001e456..3ef45bac62e6 100644
  		mapping_unmap_writable(mapping);
  
  	flush_dcache_mmap_lock(mapping);
-@@ -383,7 +383,7 @@ static unsigned long count_vma_pages_range(struct mm_struct *mm,
+@@ -408,7 +408,7 @@ static unsigned long count_vma_pages_range(struct mm_struct *mm,
  static void __vma_link_file(struct vm_area_struct *vma,
  			    struct address_space *mapping)
  {
@@ -286,16 +286,16 @@ index a9c70001e456..3ef45bac62e6 100644
  		mapping_allow_writable(mapping);
  
  	flush_dcache_mmap_lock(mapping);
-@@ -2845,7 +2845,7 @@ static unsigned long __mmap_region(struct file *file, unsigned long addr,
+@@ -2827,7 +2827,7 @@ static unsigned long __mmap_region(struct file *file, unsigned long addr,
+ 	vma_mas_store(vma, &mas);
  	mm->map_count++;
  	if (vma->vm_file) {
- 		i_mmap_lock_write(vma->vm_file->f_mapping);
 -		if (vma->vm_flags & VM_SHARED)
 +		if (vma_is_shared_maywrite(vma))
  			mapping_allow_writable(vma->vm_file->f_mapping);
  
  		flush_dcache_mmap_lock(vma->vm_file->f_mapping);
-@@ -2926,7 +2926,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+@@ -2901,7 +2901,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
  		return -EINVAL;
  
  	/* Map writable and ensure this isn't a sealed memfd. */
