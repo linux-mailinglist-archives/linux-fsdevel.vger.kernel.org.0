@@ -1,89 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-56351-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56352-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 404D2B164EB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jul 2025 18:44:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9F15B16697
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jul 2025 20:54:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 481D01890854
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jul 2025 16:44:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B22303B4D24
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jul 2025 18:53:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AF4D2DECDD;
-	Wed, 30 Jul 2025 16:44:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D54852E1C5D;
+	Wed, 30 Jul 2025 18:54:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XznV2Mdc"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="gfEuhADa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914784C62;
-	Wed, 30 Jul 2025 16:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061FA2E172D
+	for <linux-fsdevel@vger.kernel.org>; Wed, 30 Jul 2025 18:54:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753893862; cv=none; b=aDX6K5o6oQ6wKR3sSDVWXBoBn34YZPsLUY/V4kMmRhBK3A/0NO5i6wrP5HW/C1rlgCPGJ3kjLcJ/scuvrpiln6L647FS0xmd7NcbXTH6yc4O+eBYZokMjYUbEamLllP9pTHSe+JFbpFgQKp1J28np/zWTxiFyK1s47WXGEw9Yxg=
+	t=1753901664; cv=none; b=H+/CfBqfWB2agSbOMrt00pnnMWymfDd3n/K3qgMry/uG8QQZ7tVt1mWZhyGfs2lRuXMiKWGuNpI2GV3fYLhs5K9MuHnx56rYOaqB57Hq3filuylfVQvkevoLgm+kGNGM6sdBNxVw+PnSFD2vwUAllmXgY2CtUp6uxuxs1cFhI5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753893862; c=relaxed/simple;
-	bh=QMLIvD18q5k/AyzxrfAowYJawMX/ckycQV4knkks/tU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lTbL51EgMBO+HLyh7zRsvePExfjzULny97Wp2xutnb4eRi2lQeTDIfXFRo7R+yvM37EmeMYPNVW92gaOU++Kkfx9vlwv0fkToUtSd/CkoSH59R1Heb1jsGcNUS/bJ9A86t4cVDhlzxao17nsZ7UQXw44xBMNewqAav+Qb7sI2Xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XznV2Mdc; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-240418cbb8bso236225ad.2;
-        Wed, 30 Jul 2025 09:44:20 -0700 (PDT)
+	s=arc-20240116; t=1753901664; c=relaxed/simple;
+	bh=XtM6JG/OpIBpA8abZfcJPmuPS2KKJYSZyVLxQ1FWo2o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VFHIrIrx/hWOjdvyCoVrRv3Smf2fQ7t6c5QGhM9Bx58PuV/KPOS6EN4aXspG6jWHN+Lqcn69OCtj74ggDrIZWdKhq/XXwuFeAVZhMD43WqLjOeGIdX22+2hlKh9+FqHOpxj94AFUocNpoSkjsebGB4Bm3dKkhP3B+AliGp+Rx0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=gfEuhADa; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e8e21180c55so172734276.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Jul 2025 11:54:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753893860; x=1754498660; darn=vger.kernel.org;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1753901661; x=1754506461; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RZPUO2mFivOcWxZXzDCxvwiqepTKrGBNT8NtkFMEnaM=;
-        b=XznV2MdcRNmIq9rLp8o8UukOLs6bg08d3GzcNBdOgL+/6ygLtogY5TzSXIHe9m9a9T
-         4TjM/nlp0EjCxbCjdvTdkQCUWNLQwxRAA4UYwLLncJp2YEICEHgPEWBvt127QYALOAjj
-         soo8SMiGJklLArtHnlVejbV43XnJKu1HRjp4jDNXVMzojJ2uYPq8llo3cJ66kVEVeghy
-         K9tRiMh0REQKjJEpkj2EhC3SYPI3udG/MIzNo8NajIOc3bx02ybvGRjm2gxfPvv+EV1p
-         HRUb5HRrhpiaOWY/3+jUZwsvaHh30zUS6vc0JgxPdSjrPfmuDSVU2RCRaUvklVJW9SUQ
-         7vhQ==
+        bh=BOBue1rW0D08akK+2cb46wz7cLtVwQa85mat/MzXO7Y=;
+        b=gfEuhADaYvo4GQeJTjn9FcN/fdIsgvc8qHw7q3XNqrfYr0MUPUDpBEl4CoCd0ZdHEx
+         ae9i/tWKK3DJAW8kiOB0hs+s8HH+cjZdiYhvjkPl6hI4z3StMKGES0oJEoWgUtRvw+x0
+         4Bihhbq1BEfpx5kDCDX6zKzz+m8ZNtg+fOk27BMtQ/GeKiWnABXRSl26wRtoMT02yKj3
+         MVvZMLHZbavXeJtYTJfy59LzE65Q5maXy3SYpsWZrA3gc0RSt3lt8mxoTMmS8MWMExVo
+         /g6mTKHOewVnPN4/9G+DDMUVb2Tsfx4k++R59MEtJpzBPrBzTMf8U8fKuJcRlQBTCw0Z
+         XBIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753893860; x=1754498660;
+        d=1e100.net; s=20230601; t=1753901661; x=1754506461;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=RZPUO2mFivOcWxZXzDCxvwiqepTKrGBNT8NtkFMEnaM=;
-        b=rHNDrfkEz/ZCWzFHNvWTg1d/bmLad2AzfMtV7s414Td9Cpsb5JM8rqWHERHyliW+G8
-         iTOQdX0Apvmw7R26kcP+3ukXDujM7ObsHmdi8ws9b/5iwCQDi+RfRisnvQPC9muM2m8T
-         r69ABU0eUeApvT7EvEs5WYWGE8xa1hSZ8ERlwF9wLNXN9w5k7C02tgYoYPw6/6MFeDNK
-         eCTXzty7W88otm1Onujc5mzJCmiRhayQQj+hxR5QzJpEx/c0ijRkEQe3Oo6fSD6qov0w
-         vLKXxN+dSa6VYkjLnyrxXVDcIlFaSD0YE8c5GgbQjaV0ky48tv+/GDRMLuYZeetGL1nK
-         iqtA==
-X-Forwarded-Encrypted: i=1; AJvYcCVxaK8BjMB2ZXnFzeXWrHe7GH+DcDaCfG75tSMf1b3xehRE3IgzKdvs8aqGUTxLVEnObRDeCEvkxBVwT3EQ@vger.kernel.org, AJvYcCWuf35AVeJD8rlZTg778jpY6HrMTiq7r0C/jBu8g1P13Nn5O2Geo3iql7aauHsP2/yjor99Fq5CTvpXbBuk@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDAivSDDJPF9hMpN2ERCskUM5sYy3uo8EHk4tqNTTO3gkXbYZI
-	9X1Y14utxN7+3MEmU4i3sHT8LQpkP05ff0Z1DBl7Dt+DC2TcqrQIM9XO
-X-Gm-Gg: ASbGncuYyWoH9ABWE71u9JdEh/LunVa/34oNcdiQh1e3zmCqnbjeQyzwyM0xeJULUMA
-	FT87JQ6g5EGs15WHYi5wV7qjF+KJBDh0/cB0qc1gqHIFZ933n2mCk8VpWlVTPJ7bB0vZV2wMosH
-	ZS2e8qbDh/I9vugmnCqxwE4ooekiNv1CTu6ipdrMtUK4Znbnga2lvQ7U6NaeuygDi3mw2LcsbYQ
-	ltk4HeKGUA580pgCsmVFWnvjsm4pzbmgyyWh2u7L9m9KozIoAL6QcXO4rl9dziTZyYO+Dvb5vyP
-	Rcn9AehdMK0nRqbwXmWguOsbAvwQzApUcnrhu8xyaSFfJuOtHEHoNr/R2REUrbZOQTX05XfareY
-	I/YgFHYw8MQEHVf/kXJcGlTo+Qu8lI4KiVfU=
-X-Google-Smtp-Source: AGHT+IEAPGlsRH4RQkjsmxGlo4shReiMS64QRe9ionVdAW1LTVtZJkKHURqdPOQBbXf6M7Kx6mIBtw==
-X-Received: by 2002:a17:903:230c:b0:235:e1d6:4e22 with SMTP id d9443c01a7336-24096a85e98mr55559865ad.18.1753893859846;
-        Wed, 30 Jul 2025 09:44:19 -0700 (PDT)
-Received: from VM-16-24-fedora.. ([43.153.32.141])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24013a51427sm81147905ad.74.2025.07.30.09.44.18
+        bh=BOBue1rW0D08akK+2cb46wz7cLtVwQa85mat/MzXO7Y=;
+        b=gACJTh6At8slvS4PaoOjNzmAKRyQjAouYZnVk5mr6fZv4D/ua4sWCqwbf0g0Pia6Fz
+         lNmT2j0c5Rd9MpjA9iItv89P/TK8eXzto433nuieJyo/U1JugyGN1W6mvWPUZUOxDzBb
+         5XllBZRxnmf9b+r8IJGAAdkf9Ih+vfiAuOh0A3uIQv0wG/Bf+z3+V5KcYfD35h0rlO/f
+         iuCQ/cFk0CewUbiURXNt5aOWFmdxgRm+4C1ORf6LT2Zer1oCGm6mesYHSiqxibBTXj8g
+         iG+SvARVA/JumMlnJqeyIJMVeNYZWmuYr1s52jIo8RPmtAP0tOAGapcudo05A3MByfgg
+         GCsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVYnIGTp/upUaY4QJWtFlS7dl+U4CRKsornIgAJIM0eO+LiY3ZWC+2PuDgl4ZtfHdps9HrrpHrZyqM4yryg@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDpRpYH0a4ZEP6Q1Bk33xIifT3Y3r39gnNRjMYyc6GjudSt/H6
+	am0ZdcthDPpEpS9pxJf6YQ/UtiqXMJwyAl7BVlCEsLalnNGbjqDxWRpaUllDvWRPZsY=
+X-Gm-Gg: ASbGnctJvvZp3S6BnCKIF+p5iHfETuBMN92BA58TtX6U432M+Zjp69NKaAag+A32leH
+	B5AXfVmxhyA16AVcnjD/YLgB/gp9NnN3ZlKkb677HaDWETasjxgUQXakryjnH+VBoQaTDyLlwvZ
+	9ze33CAm3eqYHrFok1bvKHYStJLkCR9z3vopqxfu7WYiQafGRszsWUCOLa1lFvLSBukyLzQDzPc
+	OkFDRtWhBogITsT6BITPDgXmvO69vfGfUa38RErJyG0AwRCXajyi/DR392dqF0CTzP0JaC1aNQy
+	YEaq9uF6Z/1VSA/PdbFGR2kcAv2qYq39NeZrNcydN2J47lC9KVLYVSPE4p4JDjPcSyNtH/p1AuY
+	HIWC3zQCMyZdnUKa6cKboizY1maUW35R3R7XcY8o=
+X-Google-Smtp-Source: AGHT+IE8po90BmWOmy7rifQVl+VDOjBkYeJfiHVERW3g0hFbqcBJv78cTBAuYI4Ph44Wm5OU0ChShQ==
+X-Received: by 2002:a05:690c:7408:b0:71a:3484:abe8 with SMTP id 00721157ae682-71a466ada6dmr67298137b3.34.1753901660815;
+        Wed, 30 Jul 2025 11:54:20 -0700 (PDT)
+Received: from system76-pc.attlocal.net ([2600:1700:6476:1430:4964:e64f:4b7:1866])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-719f23e0f06sm25597707b3.71.2025.07.30.11.54.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jul 2025 09:44:19 -0700 (PDT)
-From: alexjlzheng@gmail.com
-X-Google-Original-From: alexjlzheng@tencent.com
-To: brauner@kernel.org,
-	djwong@kernel.org,
-	willy@infradead.org
-Cc: linux-xfs@vger.kernel.org,
+        Wed, 30 Jul 2025 11:54:19 -0700 (PDT)
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: ceph-devel@vger.kernel.org
+Cc: idryomov@gmail.com,
 	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jinliang Zheng <alexjlzheng@tencent.com>
-Subject: [PATCH v2] iomap: move prefaulting out of hot write path
-Date: Thu, 31 Jul 2025 00:44:09 +0800
-Message-ID: <20250730164408.4187624-2-alexjlzheng@tencent.com>
-X-Mailer: git-send-email 2.49.0
+	pdonnell@redhat.com,
+	amarkuze@redhat.com,
+	Slava.Dubeyko@ibm.com,
+	slava@dubeyko.com
+Subject: [PATCH] ceph: cleanup in __ceph_do_pending_vmtruncate() method
+Date: Wed, 30 Jul 2025 11:54:11 -0700
+Message-ID: <20250730185411.1105738-1-slava@dubeyko.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -92,83 +91,115 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Jinliang Zheng <alexjlzheng@tencent.com>
+From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 
-Prefaulting the write source buffer incurs an extra userspace access
-in the common fast path. Make iomap_write_iter() consistent with
-generic_perform_write(): only touch userspace an extra time when
-copy_folio_from_iter_atomic() has failed to make progress.
+The Coverity Scan service has detected an unchecked return
+value in __ceph_do_pending_vmtruncate() method [1].
 
-Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
+The CID 114041 contains explanation: " Calling
+filemap_write_and_wait_range without checking return value.
+If the function returns an error value, the error value
+may be mistaken for a normal value. Value returned from
+a function is not checked for errors before being used.
+(CWE-252)".
+
+The patch adds the checking of returned value of
+filemap_write_and_wait_range() and reporting the error
+message if something wrong is happened during the call.
+It reworks the logic by removing the jump to retry
+label because it could be the reason of potential
+infinite loop in the case of error condition during
+the filemap_write_and_wait_range() call. It was removed
+the check to == ci->i_truncate_pagecache_size because
+the to variable is set by ci->i_truncate_pagecache_size
+in the above code logic. The uneccessary finish variable
+has been removed because the to variable always has
+ci->i_truncate_pagecache_size value. Now if the condition
+ci->i_truncate_pending == 0 is true then logic will jump
+to the end of the function and wake_up_all(&ci->i_cap_wq)
+will be called.
+
+[1] https://scan5.scan.coverity.com/#/project-view/64304/10063?selectedIssue=114041
+
+Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+cc: Alex Markuze <amarkuze@redhat.com>
+cc: Ilya Dryomov <idryomov@gmail.com>
+cc: Ceph Development <ceph-devel@vger.kernel.org>
 ---
-Changelog:
-v2: update commit message and comment
-v1: https://lore.kernel.org/linux-xfs/20250726090955.647131-2-alexjlzheng@tencent.com/
+ fs/ceph/inode.c | 32 +++++++++++++++++---------------
+ 1 file changed, 17 insertions(+), 15 deletions(-)
 
-This patch follows commit faa794dd2e17 ("fuse: Move prefaulting out of
-hot write path") and commit 665575cff098 ("filemap: move prefaulting out
-of hot write path").
----
- fs/iomap/buffered-io.c | 31 ++++++++++++++++---------------
- 1 file changed, 16 insertions(+), 15 deletions(-)
-
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index fd827398afd2..54e0fa86ea16 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -967,21 +967,6 @@ static int iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i,
- 		if (bytes > iomap_length(iter))
- 			bytes = iomap_length(iter);
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index fc543075b827..53ce776b04b5 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -2203,17 +2203,17 @@ void __ceph_do_pending_vmtruncate(struct inode *inode)
+ 	struct ceph_client *cl = ceph_inode_to_client(inode);
+ 	struct ceph_inode_info *ci = ceph_inode(inode);
+ 	u64 to;
+-	int wrbuffer_refs, finish = 0;
++	int wrbuffer_refs;
++	int err;
  
--		/*
--		 * Bring in the user page that we'll copy from _first_.
--		 * Otherwise there's a nasty deadlock on copying from the
--		 * same page as we're writing to, without it being marked
--		 * up-to-date.
--		 *
--		 * For async buffered writes the assumption is that the user
--		 * page has already been faulted in. This can be optimized by
--		 * faulting the user page.
--		 */
--		if (unlikely(fault_in_iov_iter_readable(i, bytes) == bytes)) {
--			status = -EFAULT;
--			break;
--		}
--
- 		status = iomap_write_begin(iter, write_ops, &folio, &offset,
- 				&bytes);
- 		if (unlikely(status)) {
-@@ -996,6 +981,12 @@ static int iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i,
- 		if (mapping_writably_mapped(mapping))
- 			flush_dcache_folio(folio);
- 
-+		/*
-+		 * Faults here on mmap()s can recurse into arbitrary
-+		 * filesystem code. Lots of locks are held that can
-+		 * deadlock. Use an atomic copy to avoid deadlocking
-+		 * in page fault handling.
-+		 */
- 		copied = copy_folio_from_iter_atomic(folio, offset, bytes, i);
- 		written = iomap_write_end(iter, bytes, copied, folio) ?
- 			  copied : 0;
-@@ -1034,6 +1025,16 @@ static int iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i,
- 				bytes = copied;
- 				goto retry;
- 			}
+ 	mutex_lock(&ci->i_truncate_mutex);
+-retry:
+ 	spin_lock(&ci->i_ceph_lock);
 +
-+			/*
-+			 * 'folio' is now unlocked and faults on it can be
-+			 * handled. Ensure forward progress by trying to
-+			 * fault it in now.
-+			 */
-+			if (fault_in_iov_iter_readable(i, bytes) == bytes) {
-+				status = -EFAULT;
-+				break;
-+			}
- 		} else {
- 			total_written += written;
- 			iomap_iter_advance(iter, &written);
++	wrbuffer_refs = ci->i_wrbuffer_ref;
+ 	if (ci->i_truncate_pending == 0) {
+ 		doutc(cl, "%p %llx.%llx none pending\n", inode,
+ 		      ceph_vinop(inode));
+-		spin_unlock(&ci->i_ceph_lock);
+-		mutex_unlock(&ci->i_truncate_mutex);
+-		return;
++		goto out_unlock;
+ 	}
+ 
+ 	/*
+@@ -2224,9 +2224,14 @@ void __ceph_do_pending_vmtruncate(struct inode *inode)
+ 		spin_unlock(&ci->i_ceph_lock);
+ 		doutc(cl, "%p %llx.%llx flushing snaps first\n", inode,
+ 		      ceph_vinop(inode));
+-		filemap_write_and_wait_range(&inode->i_data, 0,
+-					     inode->i_sb->s_maxbytes);
+-		goto retry;
++		err = filemap_write_and_wait_range(&inode->i_data, 0,
++						   inode->i_sb->s_maxbytes);
++		spin_lock(&ci->i_ceph_lock);
++
++		if (unlikely(err)) {
++			pr_err_client(cl, "failed of flushing snaps: err %d\n",
++					err);
++		}
+ 	}
+ 
+ 	/* there should be no reader or writer */
+@@ -2242,20 +2247,17 @@ void __ceph_do_pending_vmtruncate(struct inode *inode)
+ 	truncate_pagecache(inode, to);
+ 
+ 	spin_lock(&ci->i_ceph_lock);
+-	if (to == ci->i_truncate_pagecache_size) {
+-		ci->i_truncate_pending = 0;
+-		finish = 1;
+-	}
+-	spin_unlock(&ci->i_ceph_lock);
+-	if (!finish)
+-		goto retry;
++	ci->i_truncate_pending = 0;
+ 
++out_unlock:
++	spin_unlock(&ci->i_ceph_lock);
+ 	mutex_unlock(&ci->i_truncate_mutex);
+ 
+ 	if (wrbuffer_refs == 0)
+ 		ceph_check_caps(ci, 0);
+ 
+ 	wake_up_all(&ci->i_cap_wq);
++	return;
+ }
+ 
+ static void ceph_inode_work(struct work_struct *work)
 -- 
-2.49.0
+2.50.1
 
 
