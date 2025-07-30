@@ -1,151 +1,289 @@
-Return-Path: <linux-fsdevel+bounces-56325-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56326-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F8DDB15F94
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jul 2025 13:35:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11139B15F96
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jul 2025 13:39:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A25C87AFB53
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jul 2025 11:33:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D3D618C06B0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jul 2025 11:40:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AD36285CB0;
-	Wed, 30 Jul 2025 11:35:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10B2B293B73;
+	Wed, 30 Jul 2025 11:39:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hfhYQeLA"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XfvuOFsD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836B778F4C
-	for <linux-fsdevel@vger.kernel.org>; Wed, 30 Jul 2025 11:35:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5B4578F4C
+	for <linux-fsdevel@vger.kernel.org>; Wed, 30 Jul 2025 11:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753875315; cv=none; b=YnBkgPB6KI2R+8D8t76DCyvFKGR5H9NQoJpaLaLYdYBkx0XdvmwPcor0tvxIFJ5qpvJdvppITwk/B7mgVpZLrpfK4LYEl5x9Np/2E6NqtZFIZds0Ss+UT9nYt9npDbyJc0g/0EXJIFoONFgEVSmnObIhkQk5KILQYYgW6xxtCaE=
+	t=1753875586; cv=none; b=dzH/6vcUEKVjgWF5KbZVPMpNZ2vW0PVrzKANULSSvYbLXP6F2NQZ+RzbZRIxy7IxakdMhDL3NqWFQusXOXy3fBYqPB4tZARL6tQEKAKK8lXPCnrcndQ0WFYu3yR+DlhCrHzDs1hNYJAhBpz6Pteno7bz61kbNkneo2Cbf7RZxGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753875315; c=relaxed/simple;
-	bh=cS3jzH5qD+TtuznAs0NDToiNIM9fmacWZBMDom9qNmg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Uh8U7lvBYhNY0ULhHcvb/UP8i7zUwEFVm8n0/HYZxCR+frQN+wKe7AgZUb4oWBPgamFjUbr/XwJ8lbuj7hdX7SoiltFLXpJ255Du8VyKpFJb7jIMC1Ea8BxboetCNFU2rHeWYM395JLMLPWhPHpO9kEtnLj+ycYKdgLQcO5mL1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hfhYQeLA; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56U72s16017659
-	for <linux-fsdevel@vger.kernel.org>; Wed, 30 Jul 2025 11:34:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=BhCKTD8r+PtEiCiOXNxswbUmBHQNdQ6OsmN
-	mzxRSaec=; b=hfhYQeLAjdvpelqJbPDopViDbil4yS3ew278zWna8mHW849q8Co
-	heEhRK2hkJ7DFS/TAZnH4jTsAmufVP8GJC2WVNGwW3F4UCxkoPqXHlHGKBaNoahp
-	Ek5GTUO9alBX1gkUfl1H8wDOeAfNE4B+ZTwkKkiauxcT7uU7ZjhUkScXrkWSA2T1
-	IzQgM449PPm1iMay7ZozZz1XEYnzFumm35sjuB9os8W9bl8cnZS6HpCdMCiAzQUp
-	rwn/50M4gkuCYlvyLatOM9sdU082WZ+Ns4t5Y0ZCtH8z5g8cHiP26dKQ5BYxKvY+
-	ZJNvdkIiLDyan+cnEYP39QJRlkjHVDEXkhA==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484p1akge5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-fsdevel@vger.kernel.org>; Wed, 30 Jul 2025 11:34:13 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-7074f138855so12799786d6.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Jul 2025 04:34:13 -0700 (PDT)
+	s=arc-20240116; t=1753875586; c=relaxed/simple;
+	bh=HweBPrxgj3m+91urC2NffNsscYCrWCm59D2DpEhbYZA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rfuTVW6XeOZ07+61blYT0e3kcafpgsvtPhcG9/n2qACLq6dTv30P+Y93fRJjHmWqmqtcvZ1rnE5Poef5fUHMy2XY5BLmYUxCVtIN5AKZKsbkot8YJpNk6k7/iJLrcMdn3r922j60Ay0A4pz5VvILNzQKPEhrc8rkVeIgy5Vv3cY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XfvuOFsD; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753875583;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=DgmT/4MxmdvSfKxUoKQscuXLpLll1+wxv5DeTi8iqhY=;
+	b=XfvuOFsDsHaJnmRBq2N2Qw6YLTo5FiSMXEV3HDxQHVETUgDTWaq1PSzbHu5JL1K8Z2SVAT
+	eW/Qt6kzD09Yy8/eph5asXjNynXMmeDQEqEUHq63IgG6ub+Z9iuJYujMu31vcS5RagIyy2
+	a+qTFnV3Vpv48wpFP2y1aJVa9Tp6l3g=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-674-2AxheJfiMX-B8xBsNk8OQQ-1; Wed, 30 Jul 2025 07:39:42 -0400
+X-MC-Unique: 2AxheJfiMX-B8xBsNk8OQQ-1
+X-Mimecast-MFC-AGG-ID: 2AxheJfiMX-B8xBsNk8OQQ_1753875581
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4561c67daebso3393075e9.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Jul 2025 04:39:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753875252; x=1754480052;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BhCKTD8r+PtEiCiOXNxswbUmBHQNdQ6OsmNmzxRSaec=;
-        b=pbnpFZyxpM8rDiXvegcF6CrH3sB2glVcgZDaOO7O9OKTGdlpy4J+3VP0MuelcA1m2N
-         zMu/3sNewvMjvdWH24mVKlRIp+fdWx98T8ih9dkpVHuoAwEtMAZBcPJXNk6Mc1Fw1a3V
-         xi7HwBint+SbjC60IutWgO54smIKQ0IFbVMNTKvoiAleNC+1J8nCTe9AiuDNxMZ85ddV
-         FJdnRwmY7ZK/JSxMDrS3YuzIzGfaL8/LMxbi7RmM159NjmkamVSSp5OM0fkvhju1xPS8
-         XFS9zbZ44mC2NktSmWByyVE2oIQ5UZ70nEzaZVBfFQj24P8yr8Si4S4fekqBpIEEl5I8
-         nM8A==
-X-Gm-Message-State: AOJu0YzTnWmpxlFHTF7s7FPHpst1o/3TuLX5KKoKFTYX85XN4poKc/2t
-	hbtxIbdQJwnzbV28ov/5jHwOb0NwsclCa6o7TSdvVVfuSgb7d5JztT0J2SSFNdwEy5IxkFEoty5
-	/IavdqIfMC2LS+46/p3iKupn3Wrfahk1g/vPBpbsWqt32ej52CJLSHz32fTO5oKLebbTm
-X-Gm-Gg: ASbGnctZeLCzP7zX4jQHZUow+VFyACYLHkQ9kFdMQjIjIiArjw7SlHIHWib1tGOOJnI
-	IzVA23/ZTeHoT8En3ZtmoaChrXc8HInc7jZulrxuMcBjJUbUST9qWCIlS7tJsQcoXNwkED9/b4/
-	57qg2sufwrCnl8efq4bT7z+xJSOpyZrc/kMg4lC8I3oa3o+64MxmdGh+sR0PcT5HBW9jzRgNWDn
-	zEpG8wJE0etgR+Yxg4MapS8+fOaPurFu+RpSViKXBEXdPxV7ehdIUmwciHly9Tdk75MBVKrX6lk
-	HK9Wfs3m6KzCCCnnTqRRWe6EjoJQwOAxxz9WAnkGjYyYFAAugOq+o0c7Ara5
-X-Received: by 2002:ad4:5aa3:0:b0:704:ac29:dda0 with SMTP id 6a1803df08f44-70766e7f5damr42274036d6.18.1753875252414;
-        Wed, 30 Jul 2025 04:34:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGexGDGuxaehZW2/cifgkeDlHP40UB5yPKGc7P/QMgOHs9eSLCivNSPwq4Mlwv+4EQiv5YxTg==
-X-Received: by 2002:ad4:5aa3:0:b0:704:ac29:dda0 with SMTP id 6a1803df08f44-70766e7f5damr42273556d6.18.1753875252021;
-        Wed, 30 Jul 2025 04:34:12 -0700 (PDT)
-Received: from work.. ([117.193.215.211])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ae9951745asm64937751cf.6.2025.07.30.04.34.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jul 2025 04:34:11 -0700 (PDT)
-From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-To: willy@infradead.org
-Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-Subject: [PATCH] idr: Fix the kernel-doc for idr_is_empty()
-Date: Wed, 30 Jul 2025 17:04:02 +0530
-Message-ID: <20250730113402.11733-1-manivannan.sadhasivam@oss.qualcomm.com>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1753875581; x=1754480381;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=DgmT/4MxmdvSfKxUoKQscuXLpLll1+wxv5DeTi8iqhY=;
+        b=crmcMkd5nqEOm1QYjE7rxeNGNjAuq1B7NW6bD+FfLxqYWGDDitKbt31pNcttOB7U/9
+         fTRxlmUTQRltZ3jFYxsXvRschOcdbggeDixXCcthwPWWXfzzWOwNL5RIjeaz9v14prHb
+         fAF4MNIMHmiOEj3Eaop5e/1ZcJ09gscrJLPCPzY5m92IQ6YDmHnqNhx5edlTmaB+ms2Q
+         bNAaOvbeCeXVJOSG0cbhH1lutnTEr8l0sWvpdThQbDn7gwaooyHl53wceOJQdA1eU6Hj
+         loQRAhQwu1s6lU3wOujvoEvQWAB6xy4fCkzVp49gNyAPBaC1hEBHVyxqjJq1oW4X1LKj
+         aD8g==
+X-Gm-Message-State: AOJu0YwkDczPqfIcMKn9BFeH+/Kj3MRnp9CIL7PbzR3OpRtqaKNu4jBv
+	rEIpAMMszsrhTt8xUVVzMLDO9ZRFyLNhu20AxMzv03DczfU/QgXHec9IKHUAV9bFWst7ZI0kX/t
+	Ua6z+rVka2+A5oF+ZKGRcZJ8R9Km8Q6aDNEmAoCFyyGb/hKxnXYeoxC+v1Rpn+PBcPqs=
+X-Gm-Gg: ASbGncunqdWbMeiSEeURk9YlXHxjDGdRX5qrqfHsiI69HBvIbQzbmmmUwRu6nSrm930
+	BRqVBHb62PGAJOQVTVNmXrdp64vClKqT9Xv76osVPeSULEH4I9atT1EJfaZ2mgzLxuZ5lg23HhU
+	3ngykg8uRqcimLz4UaFI/grxqz9DlUSRhdA9ZuF1usIwq0O5C1EvGap8Q5Aey8Oh1getR72CZOC
+	epgItAPqD1YTVeZu4nbOWKs8wVQbrdDjY7YqKOoLkvf881M0/2fhNZqZYGGnTsn8YjiG54phZSQ
+	yBuUQZWirl0gLvdQ3JqolDh2hE+yo5zPoWTFasP0SpLa4C++knYHy6r/Zr9w9w==
+X-Received: by 2002:a05:600c:8b52:b0:450:c9e3:91fe with SMTP id 5b1f17b1804b1-4589303fe49mr26931955e9.0.1753875581209;
+        Wed, 30 Jul 2025 04:39:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGFDob6ua++AEhRi3Gfd/2+HGGi2uT+wVMMUC/mjnay5/mOVTl3fCjXOJlvvVcYCQBEH1aDGg==
+X-Received: by 2002:a05:600c:8b52:b0:450:c9e3:91fe with SMTP id 5b1f17b1804b1-4589303fe49mr26931565e9.0.1753875580676;
+        Wed, 30 Jul 2025 04:39:40 -0700 (PDT)
+Received: from [10.32.64.156] (nat-pool-muc-t.redhat.com. [149.14.88.26])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4589539e491sm24168925e9.26.2025.07.30.04.39.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Jul 2025 04:39:40 -0700 (PDT)
+Message-ID: <aed4c988-7389-44b6-bbdd-eca64304ee10@redhat.com>
+Date: Wed, 30 Jul 2025 13:39:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/5] selftests: prctl: introduce tests for disabling THPs
+ completely
+To: Usama Arif <usamaarif642@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+ ryan.roberts@arm.com
+Cc: linux-fsdevel@vger.kernel.org, corbet@lwn.net, rppt@kernel.org,
+ surenb@google.com, mhocko@suse.com, hannes@cmpxchg.org, baohua@kernel.org,
+ shakeel.butt@linux.dev, riel@surriel.com, ziy@nvidia.com,
+ laoar.shao@gmail.com, dev.jain@arm.com, baolin.wang@linux.alibaba.com,
+ npache@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+ vbabka@suse.cz, jannh@google.com, Arnd Bergmann <arnd@arndb.de>,
+ sj@kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ kernel-team@meta.com
+References: <20250725162258.1043176-1-usamaarif642@gmail.com>
+ <20250725162258.1043176-5-usamaarif642@gmail.com>
+ <b9c72ab9-9687-4953-adfe-0a588a6dd0f7@redhat.com>
+ <4dc95e54-e0ef-4919-973a-748845897ef9@gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <4dc95e54-e0ef-4919-973a-748845897ef9@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: xr5CK1ILt_0iXPfl1yFwk7BEHfAmWrt9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzMwMDA4MiBTYWx0ZWRfX4uKHRVpSSHP0
- hINXbCHVREVGvWBKqvuHwI3fW/umEWOa4klv8NTZSpCfJa2nf0IydTg+MuAbhnNQnpHGWft/VQl
- 0og7Tk4+C0OCs8MhfP/Vejihspr5wa+uM62CXFA/oBvjHSblQLZtNsQfm+5hzZHm7iNttPxMuhw
- 43mExTA7+WPt4/I0KWA/XGvBk/sKQnHpUMKD/A2kXo1nJ+MwN9M2RAouGK2lLBUD/qkbjTYNMG7
- 4f05wAO1QmZDNqVgzOsgC+E8VUHeY2/FxH176RjCCJm3yvrn+3/oBJ/oMetl/HiY9GF0gMyBkY+
- EFGvlnzcCYd/plosjtUDpuQFAcj4G9H110bxPNSIXetalInHX4Z/rBdZ1ijsm2cpwLwA9nGu7FM
- QgGSp/prc5zBWOYJ7MNhice9FxuZ/QA85GS3G1DLKAUgdaRds7lT6Bfww93bLhsTFkRY9LwD
-X-Proofpoint-GUID: xr5CK1ILt_0iXPfl1yFwk7BEHfAmWrt9
-X-Authority-Analysis: v=2.4 cv=KtNN2XWN c=1 sm=1 tr=0 ts=688a0335 cx=c_pps
- a=wEM5vcRIz55oU/E2lInRtA==:117 a=+urnqZw5vKot7juVQre6pw==:17
- a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=-2WPVV21f4NiumMF_pwA:9
- a=OIgjcC2v60KrkQgK7BGD:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-30_04,2025-07-30_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1011 priorityscore=1501 lowpriorityscore=0 suspectscore=0
- adultscore=0 mlxlogscore=999 bulkscore=0 spamscore=0 impostorscore=0
- mlxscore=0 malwarescore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507300082
 
-idr_is_empty() will return 'true' if IDR is empty and 'false' if any IDs
-have been allocated from it. But the kernel-doc says the opposite. Hence,
-fix it.
+On 30.07.25 00:13, Usama Arif wrote:
+>>> +
+>>> +    self->pmdsize = read_pmd_pagesize();
+>>> +    if (!self->pmdsize)
+>>> +        SKIP(return, "Unable to read PMD size\n");
+>>> +
+>>> +    thp_read_settings(&self->settings);
+>>> +    self->settings.thp_enabled = THP_MADVISE;
+>>> +    self->settings.hugepages[sz2ord(self->pmdsize, getpagesize())].enabled = THP_INHERIT;
+>>> +    thp_save_settings();
+>>> +    thp_push_settings(&self->settings);
+>>
+>> push without pop, should that be alarming? :)
+>>
+>> Can we just use thp_write_settings()? (not sure why that push/pop is required ... is it?)
+>>
+> 
+> Thanks for the reviews!
+> Ack on the previous comments, I have fixed them and will include in next revision.
+> Yes, I think we can replace thp_push_settings with thp_write_settings.
+> 
+> For this, I actually just copied what cow.c and uffd-wp-mremap.c are doing :)
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
----
+Right, I see push vs. pop in run_anon_test_case(), but push vs. restore 
+from main(). At least cow.c applies a configuration on top of another 
+one, so it needs the push+pop semantics.
 
-Btw, I'm not sure if we really need the radix_tree_tagged() check in this
-function. It looks redundant to me. But since I'm not too sure about it, I left
-it as it is.
+In your case, we really only perform a single configuration. So 
+write+restore should be good enough I guess.
 
- include/linux/idr.h | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> You can see in these 2 files that we do [1]
+> - thp_read_settings / thp_save_settings
+> - thp_push_settings
+> 
+> Than we run the experiment
+> 
+> and at the end we do [2]
+> - thp_restore_settings
+> 
+> i.e. there is no pop.
+> 
+> I think we can change the thp_push_settings to thp_write_settings in [3] and [4] as well?
 
-diff --git a/include/linux/idr.h b/include/linux/idr.h
-index 2267902d29a7..4955cf89e9c7 100644
---- a/include/linux/idr.h
-+++ b/include/linux/idr.h
-@@ -172,7 +172,9 @@ static inline void idr_init(struct idr *idr)
-  * idr_is_empty() - Are there any IDs allocated?
-  * @idr: IDR handle.
-  *
-- * Return: %true if any IDs have been allocated from this IDR.
-+ * Return:
-+ * * %true if this IDR is empty, or
-+ * * %false if any IDs have been allocated from this IDR.
-  */
- static inline bool idr_is_empty(const struct idr *idr)
- {
+I think we have to push there, so the following push+pop will do the 
+right thing (I think that was the whole idea of push+pop).
+
+An alternative would have been to just have write+restore, whereby write 
+always returns the old state you save in a local variable.
+
+I wonder if a final pop could be used instead of the restore somehow.
+
+Anyhow, probably best to leave the other test cases alone for now, 
+unless you want to clean it up properly :)
+
+[...]
+
+>>> +}
+>>> +
+>>> +FIXTURE_TEARDOWN(prctl_thp_disable_completely)
+>>> +{> +    thp_restore_settings();
+>>> +}
+>>> +
+>>> +/* prctl_thp_disable_except_madvise fixture sets system THP setting to madvise */
+>>> +static void prctl_thp_disable_completely(struct __test_metadata *const _metadata,
+>>> +                     size_t pmdsize)
+>>> +{
+>>> +    int res = 0;
+>>> +
+>>> +    res = prctl(PR_GET_THP_DISABLE, NULL, NULL, NULL, NULL);
+>>> +    ASSERT_EQ(res, 1);
+>>> +
+>>> +    /* global = madvise, process = never, we shouldn't get HPs even with madvise */
+>>
+>> s/HPs/THPs/
+>>
+>>> +    res = test_mmap_thp(NONE, pmdsize);
+>>> +    ASSERT_EQ(res, 0);
+>>> +
+>>> +    res = test_mmap_thp(HUGE, pmdsize);
+>>> +    ASSERT_EQ(res, 0);
+>>> +
+>>> +    res = test_mmap_thp(COLLAPSE, pmdsize);
+>>> +    ASSERT_EQ(res, 0);
+>>> +
+>>> +    /* Reset to system policy */
+>>> +    res =  prctl(PR_SET_THP_DISABLE, 0, NULL, NULL, NULL);
+>>> +    ASSERT_EQ(res, 0);
+>>> +
+>>> +    /* global = madvise */
+>>> +    res = test_mmap_thp(NONE, pmdsize);
+>>> +    ASSERT_EQ(res, 0);
+>>> +
+>>> +    res = test_mmap_thp(HUGE, pmdsize);
+>>> +    ASSERT_EQ(res, 1);
+>>> +
+>>> +    res = test_mmap_thp(COLLAPSE, pmdsize);
+>>> +    ASSERT_EQ(res, 1);
+>>
+>>
+>> Makes me wonder: should we test for global=always and global=always?
+> 
+> Do you mean global=madvise and global=always?>
+
+Yeah, rewrote it 3 times and then messed it up.
+
+>> (or simply for all possible values, including global=never if easily possible?)
+>>
+>> At least testing with global=always should exercise more possible paths
+>> than global=always (esp., test_mmap_thp(NONE, pmdsize) which would
+>> never apply in madvise mode).
+>>
+> 
+> lol I think over here as well you meant madvise in the 2nd instance.
+
+Yeah :)
+
+> 
+> I was just looking at other selftests and I saw FIXTURE_VARIANT_ADD, I think we can
+> use that to do it without replicating too much code. Let me see if I
+> can use that and do it for never, madvise and always. If it doesnt help
+> there might be some code replication, but that should be ok.
+
+Yeah, some easy way without replicating would be very nice.
+
 -- 
-2.45.2
+Cheers,
+
+David / dhildenb
 
 
