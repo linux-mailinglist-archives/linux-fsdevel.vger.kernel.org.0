@@ -1,50 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-56334-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56335-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53BD7B1616C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jul 2025 15:25:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDCD4B16170
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jul 2025 15:26:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3895E1AA1F07
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jul 2025 13:26:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB1565A7629
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jul 2025 13:25:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89B6E29B782;
-	Wed, 30 Jul 2025 13:25:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FCDD29C328;
+	Wed, 30 Jul 2025 13:25:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jvtoRu35"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uk1kb3R3"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD6B629B226;
-	Wed, 30 Jul 2025 13:25:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C08B29B8C7;
+	Wed, 30 Jul 2025 13:25:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753881901; cv=none; b=b7tUd0kz5gwTucdokv4IJluxBBFfp++YV2ee7EIFiyEavCQaYYUX/zorKOHqrCD7rgxWequdcJQn0ZVLmQgzj77vt04/d07sEG4OrCwCb7yNiEzOaOuPhrwKX0mNhP4D/g1TUOv7vmZgJ/1gTLUpYC7T20o6aBVYgXuZA4JrtK0=
+	t=1753881903; cv=none; b=O94mHfw43LOVP9dYz53Y0gHCppELe3T63FVjWmGEh/l7G2Kz0/Fu84yN5PNSxRDZ7D33wRK5NxjuslL6L/f/4FxonYv/hq2q9ui1J8wPOVjK9yo7Gha814tS+RPBlaVeyexIkCqgK10+DKB+BJ0HDrwis8hNZHaZEMebBiBvM7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753881901; c=relaxed/simple;
-	bh=XDfX4u5DGDNsbxUiLltzn/YVAvj+NJLvOFItEakukpE=;
+	s=arc-20240116; t=1753881903; c=relaxed/simple;
+	bh=D6Xk7cn+dUV5CrFWyLhNEZEfnQS3I5r0LFUPIwKxpUo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rdpUlI6PLrT7tqsSS3MVYZ+B7F0MM833JQzse4aFBao1voTcT2Zm8JtFixxzZIehxSqbOFObiOI+9ZYinPT3/+DumwyDJLTImPTgnTK8s+t/96Vz14aihxKV05Q74fwinGQUPQImtFpD2U42NcJS+ddH/05cOrg+jCNW3faMmN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jvtoRu35; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15934C4CEE7;
-	Wed, 30 Jul 2025 13:25:00 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=dkapSBqv4VJgBzFebqu7FPBJ2sLYZw65QroD8a4UYiyCoFRNOmtizuRGmnc4WGMaFEw5r2VwkthPOUTJaKzmEBt/kUevCymx5svBRNInLWLlvryEqJloxhnUUxHg+fA2YZ23M8PUaCIKsmz11b3+BnD5tKksUXCcwK6CeUmqV/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uk1kb3R3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D799C4CEEB;
+	Wed, 30 Jul 2025 13:25:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753881901;
-	bh=XDfX4u5DGDNsbxUiLltzn/YVAvj+NJLvOFItEakukpE=;
+	s=k20201202; t=1753881903;
+	bh=D6Xk7cn+dUV5CrFWyLhNEZEfnQS3I5r0LFUPIwKxpUo=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=jvtoRu356/ynVAUlXQcxRjIe5RaslfNZWKPfk/Sh5HEckQ4lHeVpg9Uy6m5TcJ7/6
-	 0QqnQdOnt7K5z4Y6RDjS3fVlElqu3NQwAwo5Ek2XRSZ7AKYxvVcKCV8SRw/+26dT/K
-	 aPqYpSKGjgtG0rzaqSs7VsZ8K7hCFNGW8VDtfR8AtwixMXL6/TBoWflhOyN9a1nMrF
-	 BYzUzF7lefUalMIqjnq5ZD6KZhWGYeGFKJXi5Gl3Yljvq3FZg/Q6DzY9/6X/EKJPbL
-	 gWbcysCMN3/0VP/mwLIb/7cLrcXICX+8HrSVHUOorxBo+AadWiWYf9rrqdrazfZc0E
-	 fQ0gEsh5u7HFw==
+	b=uk1kb3R30UQu2lY0efGS0dztFSlqBz2fZdhPk8oHhqokQ+KeHBm5hokzm5Npceh6c
+	 z4jq9LUUyhttmio+fXrDU43uCgre5Il2uWmznzYpk+gQJZLUARCqg3KYBRigTz7vAJ
+	 PDzSdTAf9O+BnNOh700kaP9dORl2WgQcG/7jltHmxlzY4pQYqWxQ+MpuDz9I9Rwwyl
+	 ZQ5Mkh2QCIllkKygq7JPNqlby5RkIsnihxyWMmQZ90OuxXLkGMzB6AX5ksHPVAEmxZ
+	 mqfd7wmWwiv/E/eJlCCKJyVEYK8TAEXOUuyUpriF04u8XlOsWe0CetsfoGuTcANube
+	 62A30RHTgClkw==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Wed, 30 Jul 2025 09:24:31 -0400
-Subject: [PATCH v4 2/8] nfsd: ignore ATTR_DELEG when checking ia_valid
- before notify_change()
+Date: Wed, 30 Jul 2025 09:24:32 -0400
+Subject: [PATCH v4 3/8] vfs: add ATTR_CTIME_SET flag
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250730-nfsd-testing-v4-2-7f5730570a52@kernel.org>
+Message-Id: <20250730-nfsd-testing-v4-3-7f5730570a52@kernel.org>
 References: <20250730-nfsd-testing-v4-0-7f5730570a52@kernel.org>
 In-Reply-To: <20250730-nfsd-testing-v4-0-7f5730570a52@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -69,45 +68,126 @@ Cc: Trond Myklebust <trondmy@hammerspace.com>,
  linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
  linux-nfs@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=675; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=XDfX4u5DGDNsbxUiLltzn/YVAvj+NJLvOFItEakukpE=;
- b=kA0DAAoBAA5oQRlWghUByyZiAGiKHSeidVPkw+iRv5K30CeSW0OmrRUGM6TmaKlwkClrlOsvD
- IkCMwQAAQoAHRYhBEvA17JEcbKhhOr10wAOaEEZVoIVBQJoih0nAAoJEAAOaEEZVoIV3ZYP/jES
- yRqPrCXsdAQU3Rge4ThncTlthN5K2VGIwTZsTAHmPa7KwlUIeP2w00AuL3OJehEfBbYQZhKbNIw
- jM5r6lKYJ83/m5B6a4uUoKbuCxKeMuT47Zm8RpjO6dttzBZIRr7dvYRt4WcrnRCNIQGI4L1ZVtg
- ITrMWzQBkHhU/hltrMK+ZYgTJ3i4MWZAP2vVuZ9HXtkQqSrTp8D5oxpZVvA2wFvwB3mKWoTzgl+
- bZXYw1TjKVm5ONdJ7G98nG9UAzh37ybyBEVGuheU+4Cl/f0YuS5D7afzSsx0hu1h8XUeO2s/54M
- +cyIqXsOJNvxJwTdlM4duHsA7EEqZ5EhqB/h6cPgxxXfoyxtJPPt7gHOMFunX1qTJ5zGZljdxau
- /VmjdjYnWICNqCI3No9my2MOMT0rf7PG8l2Rs748cGZocrbPnNIKgujURLpNF5wpTIyrXl36kUs
- QQsncy1XpOUKD/pmO7UFHJEoPaY5A4mXG3O9yqEbaV1nBxxDfaZku7EwQoZoNuOTKbc+qzWQ+Lt
- OM81lGFUfTWJBgcfTeDA8+mZVK4nN7vYEVyzAw3IzLe5wYsqtIt1LHnMqSj1NAvaWY+UbUFeS2R
- VVii5d+j2upuwtScCGPXgRHfBRNi08zdls/kCGcMhyYm3DWR7A/kE6uhEfGbralWhSEiiO01/le
- Rg9+i
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3845; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=D6Xk7cn+dUV5CrFWyLhNEZEfnQS3I5r0LFUPIwKxpUo=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBoih0nRzSwihwapJKgk4mLNsYH/l6BTSPqvX1dr
+ P+0628pYWyJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaIodJwAKCRAADmhBGVaC
+ FR7RD/4ma/rj5Drpc8mgvteRSdUbtRYsu1DmL9xn3VKrQdRZISvT+XnFrGF4RBPU+903PqdxWDT
+ o+BXJUov/C5TlB04Ua/SL1eL/2K4jHO3oRaMJkb6ZBMqFYD/ytM2WAv2vhY7O9TV69gy+gSv7gf
+ nvIWPYaZJrqHKcjx+NFJubuhuIdp/zIpfU/woSDrjahYwh24XYhhK56EcJrxRM9Fht9p5zMlnoa
+ ClEBVfDGzs1DAoe/9S4/RtrZOqT3c6qrz37GIHUbDxfuBDHCRtC7sgFuPQBptBN9WTvqw9n20S2
+ 5vS7beqK8BfQeqnDOXlBdI0Mjk/V8gp5xCejBMLhDVGKN8OQIN/8sGje05T+7EOXFaTBDu+y/jU
+ gQ7x7H/6Flva653hv+wqGMXJsLp9fsh/PXGPqC6ctH48P7MO4alYG0ejgPxValLbbXsYn+P2yAc
+ 4SybPlOZXHzQLQAsAKYAL6RAcFI6cnOdJYEv4XLPAB2D3nCz3FMvqUzowyrBKQoqCm6ZFbed9bV
+ 6gid06pxt55YDBhrv8H7RrFgkTJGFjCFbhjqJdHkC2XSEqrwsoAAwqOTGRjJiWTIMEg6L0c/F0k
+ t5YLVYweFtIbMG+ZUx0gexgQjq4UgFCvRuhIxORVAveTHg0K1hq3eV1yrpxyf8Vuf1iDU37M1uk
+ ivp/stbG1/co+rQ==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-If the only flag left is ATTR_DELEG, then there are no changes to be
-made.
+When ATTR_ATIME_SET and ATTR_MTIME_SET are set in the ia_valid mask, the
+notify_change() logic takes that to mean that the request should set
+those values explicitly, and not override them with "now".
 
-Fixes: 7e13f4f8d27d ("nfsd: handle delegated timestamps in SETATTR")
+With the advent of delegated timestamps, similar functionality is needed
+for the ctime. Add a ATTR_CTIME_SET flag, and use that to indicate that
+the ctime should be accepted as-is. Also, clean up the if statements to
+eliminate the extra negatives.
+
+In setattr_copy() and setattr_copy_mgtime() use inode_set_ctime_deleg()
+when ATTR_CTIME_SET is set, instead of basing the decision on ATTR_DELEG.
+
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/nfsd/vfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/attr.c          | 44 +++++++++++++++++++-------------------------
+ include/linux/fs.h |  1 +
+ 2 files changed, 20 insertions(+), 25 deletions(-)
 
-diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-index eaf04751d07fe9be4d1dd08477bc5a38ac99be3a..68d42fc5504d8750174b9a2aef10886ed92f528b 100644
---- a/fs/nfsd/vfs.c
-+++ b/fs/nfsd/vfs.c
-@@ -467,7 +467,7 @@ static int __nfsd_setattr(struct dentry *dentry, struct iattr *iap)
- 			return 0;
- 	}
+diff --git a/fs/attr.c b/fs/attr.c
+index 9caf63d20d03e86c535e9c8c91d49c2a34d34b7a..f8bb2b6011ca87243765bb444850b3b4bb91e275 100644
+--- a/fs/attr.c
++++ b/fs/attr.c
+@@ -286,20 +286,12 @@ static void setattr_copy_mgtime(struct inode *inode, const struct iattr *attr)
+ 	unsigned int ia_valid = attr->ia_valid;
+ 	struct timespec64 now;
  
--	if (!iap->ia_valid)
-+	if ((iap->ia_valid & ~ATTR_DELEG) == 0)
- 		return 0;
+-	if (ia_valid & ATTR_CTIME) {
+-		/*
+-		 * In the case of an update for a write delegation, we must respect
+-		 * the value in ia_ctime and not use the current time.
+-		 */
+-		if (ia_valid & ATTR_DELEG)
+-			now = inode_set_ctime_deleg(inode, attr->ia_ctime);
+-		else
+-			now = inode_set_ctime_current(inode);
+-	} else {
+-		/* If ATTR_CTIME isn't set, then ATTR_MTIME shouldn't be either. */
+-		WARN_ON_ONCE(ia_valid & ATTR_MTIME);
++	if (ia_valid & ATTR_CTIME_SET)
++		now = inode_set_ctime_deleg(inode, attr->ia_ctime);
++	else if (ia_valid & ATTR_CTIME)
++		now = inode_set_ctime_current(inode);
++	else
+ 		now = current_time(inode);
+-	}
  
- 	/*
+ 	if (ia_valid & ATTR_ATIME_SET)
+ 		inode_set_atime_to_ts(inode, attr->ia_atime);
+@@ -359,12 +351,11 @@ void setattr_copy(struct mnt_idmap *idmap, struct inode *inode,
+ 		inode_set_atime_to_ts(inode, attr->ia_atime);
+ 	if (ia_valid & ATTR_MTIME)
+ 		inode_set_mtime_to_ts(inode, attr->ia_mtime);
+-	if (ia_valid & ATTR_CTIME) {
+-		if (ia_valid & ATTR_DELEG)
+-			inode_set_ctime_deleg(inode, attr->ia_ctime);
+-		else
+-			inode_set_ctime_to_ts(inode, attr->ia_ctime);
+-	}
++
++	if (ia_valid & ATTR_CTIME_SET)
++		inode_set_ctime_deleg(inode, attr->ia_ctime);
++	else if (ia_valid & ATTR_CTIME)
++		inode_set_ctime_to_ts(inode, attr->ia_ctime);
+ }
+ EXPORT_SYMBOL(setattr_copy);
+ 
+@@ -463,15 +454,18 @@ int notify_change(struct mnt_idmap *idmap, struct dentry *dentry,
+ 
+ 	now = current_time(inode);
+ 
+-	attr->ia_ctime = now;
+-	if (!(ia_valid & ATTR_ATIME_SET))
+-		attr->ia_atime = now;
+-	else
++	if (ia_valid & ATTR_ATIME_SET)
+ 		attr->ia_atime = timestamp_truncate(attr->ia_atime, inode);
+-	if (!(ia_valid & ATTR_MTIME_SET))
+-		attr->ia_mtime = now;
+ 	else
++		attr->ia_atime = now;
++	if (ia_valid & ATTR_CTIME_SET)
++		attr->ia_ctime = timestamp_truncate(attr->ia_ctime, inode);
++	else
++		attr->ia_ctime = now;
++	if (ia_valid & ATTR_MTIME_SET)
+ 		attr->ia_mtime = timestamp_truncate(attr->ia_mtime, inode);
++	else
++		attr->ia_mtime = now;
+ 
+ 	if (ia_valid & ATTR_KILL_PRIV) {
+ 		error = security_inode_need_killpriv(dentry);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 040c0036320fdf87a2379d494ab408a7991875bd..f18f45e88545c39716b917b1378fb7248367b41d 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -237,6 +237,7 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
+ #define ATTR_ATIME_SET	(1 << 7)
+ #define ATTR_MTIME_SET	(1 << 8)
+ #define ATTR_FORCE	(1 << 9) /* Not a change, but a change it */
++#define ATTR_CTIME_SET	(1 << 10)
+ #define ATTR_KILL_SUID	(1 << 11)
+ #define ATTR_KILL_SGID	(1 << 12)
+ #define ATTR_FILE	(1 << 13)
 
 -- 
 2.50.1
