@@ -1,97 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-56426-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56427-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2345BB173A3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Jul 2025 17:02:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ABECB173AC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Jul 2025 17:04:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16FB93A89E3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Jul 2025 15:01:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 419A816D4F7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Jul 2025 15:04:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D33A1A01C6;
-	Thu, 31 Jul 2025 15:01:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 475C61A5B99;
+	Thu, 31 Jul 2025 15:04:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YYWoAynW"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RZy2WWft"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E08376
-	for <linux-fsdevel@vger.kernel.org>; Thu, 31 Jul 2025 15:01:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E04DEAC6
+	for <linux-fsdevel@vger.kernel.org>; Thu, 31 Jul 2025 15:04:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753974118; cv=none; b=DI2oi+grHQsfMOZW2QnjmZrb1t+FzdeugPcdJ7YsPDrtUCCuUGoQM3/bFfUSBKahYk2ddTeUr+1jLC8T5QQZNGC89MwVAlzvk17EDWHybXTBnVyK42pf2EXM8KqjwFWe82ZMnBA7YvI0PX3VhR6KWKgyO068bI3AMcaQiL0nPlU=
+	t=1753974273; cv=none; b=Ei9rCVyAF+O5I2iJJ11fEJ1krHbmBBZcaSA8StARhVAI4F9Tsll3aDsU9zzrw8H7Ml/Ia/9aouQFLGM8QPaod1fZyvgAFtjrwJlIMpNKUsDF+mpCtRbnPxnvEgrotzMOw1lyfFyXckKngV9niVJy3JVyyRM/tClPzSmy6RHLudA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753974118; c=relaxed/simple;
-	bh=C2o0Lvne0cCNDsimlsqgbMKsv5mi2W4tRSJaT5aours=;
+	s=arc-20240116; t=1753974273; c=relaxed/simple;
+	bh=l2A8KqcNihaR78kVgz4RRAisascIyaPt/Bghlwi1/UE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aCcU+7k1xUe191oreWql597RUJV7bqLQn4n6UPg4xWY94l7gktUVmo24eqj86oZK5+/dyexbCtLUjsb58rqlZ73db3JCij3J6ZRuOx7bg/4Q2k8I/05273vFsdGjZw0LGS+78E0yCASNO6S5At1JSqBmvxfneNUtUSr2LHPqZks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YYWoAynW; arc=none smtp.client-ip=170.10.133.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=jKdYTeLrLux5PYKsoqkLwf2CDJOhCQlTbjx9ElF9v85VIxAKzmHYf9O1ABtjNWbAAweabH4kPvfMijV+yP4LrAIrJ8SqgCFxg23sszEdE1lW3QEbWzaXoijtUBAgMFjURheck5UF6QRbUflrhQ3Xt4rvWvNiud7LXyb/E5OBhlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RZy2WWft; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753974115;
+	s=mimecast20190719; t=1753974271;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=FYWF/twaLqY/DbwXLo4Q7QUDaME4akWU5NgI7Alefig=;
-	b=YYWoAynWzB7HhcmqJ4NSj1fK1BVfhaKBevoigwsV9BkM28yw6RrdnKCb3DJpSkI1d3tLs1
-	4E0KPrwmOP8ZYjtIwlh3Dpg8GFFSvwhvt2/SiXKuikJU9zZHzjJfNgPU8kvcYRVxQfvWHd
-	Bc8WkZ8JYAT20ytmeS76Oxy/1shT5rM=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=7ITeDGbZ2O04OUGrMEksyGPJeLffXN0Jxej6Zs+oslg=;
+	b=RZy2WWfteZPfiubd6vtsbFXPducxdblZo9ahfr3RnDZYlElbQBL8WVaYHXh/pyz7PdCpOP
+	4DrvKCpG4Xnd7HcSh0xsv6NrvE4sBr8k6IIN6sA6Hz4r6wrfq8BGLqZhJKQrNFDacLCojC
+	ToAAyit/O2pZ0ojGY1V1lzj7yz3fqZ4=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-322-N6WRsQjXOjmCJ8iPLZxeuw-1; Thu, 31 Jul 2025 11:01:54 -0400
-X-MC-Unique: N6WRsQjXOjmCJ8iPLZxeuw-1
-X-Mimecast-MFC-AGG-ID: N6WRsQjXOjmCJ8iPLZxeuw_1753974113
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-adb33457610so125182366b.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Jul 2025 08:01:54 -0700 (PDT)
+ us-mta-624--2vw_f5zN-uxoTtWLLkOmg-1; Thu, 31 Jul 2025 11:04:29 -0400
+X-MC-Unique: -2vw_f5zN-uxoTtWLLkOmg-1
+X-Mimecast-MFC-AGG-ID: -2vw_f5zN-uxoTtWLLkOmg_1753974268
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-adb32dbf60bso90546266b.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Jul 2025 08:04:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753974113; x=1754578913;
+        d=1e100.net; s=20230601; t=1753974268; x=1754579068;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FYWF/twaLqY/DbwXLo4Q7QUDaME4akWU5NgI7Alefig=;
-        b=PSKABwscIULbuam1PG2MSKeowAWNYVAdM3Z1RMxdDwG8PGqSoKfLS/FPMEtSFxzmwv
-         eQzwu7M6Mh7rvBhfRPv5PYLaNDG36NqxHX+6UEDRnDLwYa3+zwAhCAmuc7mf1j/M5gWz
-         zTCrTfOJssZ+ltHrwewPFGLaycSUVqb4+alVwUpbwKfUWARihySxdRClad5iCK2BhL/b
-         ZEtPrDs5q8PQCIkBUo+VFxxNC4H3HGaMW1QAzf49MWq2JpGfT06t78js4cagmlU3QGsn
-         /wuNhrTOZgqdtL9No45pZ/IZ77++yCOAx0IuNNB+wGo9In2wKukT6/P/CebbFWffA99O
-         cmnw==
-X-Forwarded-Encrypted: i=1; AJvYcCUNTQqxUNt1+Ym2mB3MkDa06Bz8iQhia+3EoPRRY/xpEXayekHUQ0rgU6aB1o/nQnKtaV1cS24I2aGQb6RN@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUWaBLSsbZHzRiKst99MnxzGVSq4Wpqp3YnrP0Ks5i/ylPnEfz
-	gKOBGxdU9m6WPjI36AfIlQ1NZkz9TR2B4DCMlTUR0A9VX1GkU21GeP8mHvcY3AV/x5Dyts5u3Mt
-	vxGVs3xwxVNM3Y6qbs9W/yLlAh4DAaUdt0ZNPcvC70x8iI6R0wceN6e7FBIuxepoIJg==
-X-Gm-Gg: ASbGncvLcBaT6fG+PfwZ6wGrVV1aSTw6uPZ0lQtFi35T2C7gfPnJprFgK+tAB5x2lEZ
-	akxturZE/WP/t+UsTDYd8ExmnKK6jxuEsGoRyx2pTZ6/8E4QLEpo8E9D+mT7njQSusrmnUBKO3R
-	mMi6ADUYF6ZXF2SEplHwGOiBzsBI7kasLk1kmYDTWle+YkznKVZgjkxlg8t8zH1xg/ZrlTgUcRT
-	0jCMoXepqcglpD7KIubZy4/IwQvPFir3vEUZLAo2eqkA909OV0vCtE90q62VEyNZ0H941ydEdT8
-	25Rq/69xoKkdHYkMdhXKPXoQ1eITsQXz/EBrQPYTUJDtHsP2NJDzA0Zv/DI=
-X-Received: by 2002:a17:907:9406:b0:ae6:f087:953 with SMTP id a640c23a62f3a-af8fd6a2978mr797019966b.12.1753974112201;
-        Thu, 31 Jul 2025 08:01:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEBaE3lbv+mxzwSASk5fHPQEjeLTnCI6nAdLo7+F+C5W7fYthtLDQO7Gzz3kpH8rMy8vT9x8A==
-X-Received: by 2002:a17:907:9406:b0:ae6:f087:953 with SMTP id a640c23a62f3a-af8fd6a2978mr796991766b.12.1753974109924;
-        Thu, 31 Jul 2025 08:01:49 -0700 (PDT)
+        bh=7ITeDGbZ2O04OUGrMEksyGPJeLffXN0Jxej6Zs+oslg=;
+        b=XvgE3GBMhcdJaxRfFWNlgweNdEp926B3ul9ia2FrIiXPJ6vgjDNFyD73Ayoj1FphdM
+         BPdcPTx9fu0BtFNnO1HSYtTaWiDAOoRhx36t2X4A6CKQKDmrgIQxQMSsTtfQI5lPzwKa
+         ZIEazNFJApkx53S2pNClu4SBSTMoNkYgsaw/r0una1dUppl5yW3DC6YFaDX4ZgaNhrij
+         GRT9A2OmzvxFYagLPKc69j0J+iaiwh++xZ2YxkERA+5jI4Hc2c4VvY5KR9S6ewjih3z3
+         DrH31FAPFvMlxpCchMNWleYYyhXB1jgRxGqOOnc6+nVxqyoJI7yG7GDzduXuemCiUNV3
+         FVcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXvSmQrLESNLqUSBaAmjj/xRxa1Q225x3z7bed+3tB8daUj15Yc0+VWp5zkcyGKfYTqMfm1aanPmH9mzxy5@vger.kernel.org
+X-Gm-Message-State: AOJu0YwihSGhEzshX52QYkivl1EFc0Mdo2cdD1D6RgyGBglsUED832uA
+	U+kuKXegSuaVUudSrHjU9x4jhy59FXnA3LyqXL0yBlL5BVkY/7yWbwkWxuKsMfutu86pF9hd9cM
+	skcrSfjOdk+V2Kq+D5QgUfDSWIhgR1DJvKHyQl8Npgi4VoWoTiyS4XuzKQAOTezeslg==
+X-Gm-Gg: ASbGncvRf2juNCcH9g180AHTr9sAMjaFwlRW0nDPE0MyP/2VbU4Wq52vEoAvzQuwpb6
+	L+/Y1ecxBf/UyPdrv4em5ECbKeLXGZgaGSnXx3kVl7HrBjHqDWkWHsrQWhEGq5+z47KO1Oj0x9+
+	q+c8XISeV7JbboU88dK+fQ2HqjO6StVjVa4avG2vxmee/pGJTzn4KLZjQ2l9gEj2qghKKT+R8Ff
+	rH9Nai67u1u1PFGZKvHt/bqk8bsBQJUwpduDBFaFZoxlf32BrbAXG5yN2bw5VlvurG+CPksE2u0
+	TVvepznQw/tNvoMK1pGGP1uN51WeFGzyxFqrdCmbPHaJfOsd5FLDbbU0sBo=
+X-Received: by 2002:a17:907:7b86:b0:af9:29c1:1103 with SMTP id a640c23a62f3a-af929c113ccmr49447966b.55.1753974267469;
+        Thu, 31 Jul 2025 08:04:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE2H4LIPL12j3qW/yGGCCmOnDSbqpel+xd+fEj1NOlXlMnjHTd1aHsEE2cdwQmPhM7OdTqi5w==
+X-Received: by 2002:a17:907:7b86:b0:af9:29c1:1103 with SMTP id a640c23a62f3a-af929c113ccmr49440766b.55.1753974266858;
+        Thu, 31 Jul 2025 08:04:26 -0700 (PDT)
 Received: from thinky (ip-217-030-074-039.aim-net.cz. [217.30.74.39])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0766absm124207666b.14.2025.07.31.08.01.48
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0def2esm119318666b.61.2025.07.31.08.04.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 08:01:48 -0700 (PDT)
-Date: Thu, 31 Jul 2025 17:01:48 +0200
+        Thu, 31 Jul 2025 08:04:26 -0700 (PDT)
+Date: Thu, 31 Jul 2025 17:04:25 +0200
 From: Andrey Albershteyn <aalbersh@redhat.com>
 To: "Darrick J. Wong" <djwong@kernel.org>
 Cc: fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
 	linux-xfs@vger.kernel.org, david@fromorbit.com, ebiggers@kernel.org, hch@lst.de, 
 	Andrey Albershteyn <aalbersh@kernel.org>
-Subject: Re: [PATCH RFC 13/29] iomap: integrate fs-verity verification into
- iomap's read path
-Message-ID: <oy45h4xpktjswnwnwgzp6ihqif2bgplslwgctbcotdjum4jh5v@wbnx7syzucvk>
+Subject: Re: [PATCH RFC 01/29] iomap: add iomap_writepages_unbound() to write
+ beyond EOF
+Message-ID: <b5mblbmz32iobfmsg2remrevgrb3fqzlg463mwycruzmxpjdrk@dm54azica6xr>
 References: <20250728-fsverity-v1-0-9e5443af0e34@kernel.org>
- <20250728-fsverity-v1-13-9e5443af0e34@kernel.org>
- <20250729232152.GP2672049@frogsfrogsfrogs>
- <f767jjbn25ffuigxnigsi7kz6tqvfqkbk4j2xs3mobtyhnmqip@24mjx53j3axv>
- <20250731145233.GA2672029@frogsfrogsfrogs>
+ <20250728-fsverity-v1-1-9e5443af0e34@kernel.org>
+ <20250729220743.GI2672049@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -100,262 +98,155 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250731145233.GA2672029@frogsfrogsfrogs>
+In-Reply-To: <20250729220743.GI2672049@frogsfrogsfrogs>
 
-On 2025-07-31 07:52:33, Darrick J. Wong wrote:
-> On Thu, Jul 31, 2025 at 01:34:24PM +0200, Andrey Albershteyn wrote:
-> > On 2025-07-29 16:21:52, Darrick J. Wong wrote:
-> > > On Mon, Jul 28, 2025 at 10:30:17PM +0200, Andrey Albershteyn wrote:
-> > > > From: Andrey Albershteyn <aalbersh@redhat.com>
-> > > > 
-> > > > This patch adds fs-verity verification into iomap's read path. After
-> > > > BIO's io operation is complete the data are verified against
-> > > > fs-verity's Merkle tree. Verification work is done in a separate
-> > > > workqueue.
-> > > > 
-> > > > The read path ioend iomap_read_ioend are stored side by side with
-> > > > BIOs if FS_VERITY is enabled.
-> > > > 
-> > > > [djwong: fix doc warning]
-> > > > Signed-off-by: Darrick J. Wong <djwong@kernel.org>
-> > > > Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
-> > > > ---
-> > > >  fs/iomap/buffered-io.c | 151 +++++++++++++++++++++++++++++++++++++++++++++++--
-> > > >  fs/iomap/ioend.c       |  41 +++++++++++++-
-> > > >  include/linux/iomap.h  |  13 +++++
-> > > >  3 files changed, 198 insertions(+), 7 deletions(-)
-> > > > 
-> > > > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> > > > index e959a206cba9..87c974e543e0 100644
-> > > > --- a/fs/iomap/buffered-io.c
-> > > > +++ b/fs/iomap/buffered-io.c
-> > > > @@ -6,6 +6,7 @@
-> > > >  #include <linux/module.h>
-> > > >  #include <linux/compiler.h>
-> > > >  #include <linux/fs.h>
-> > > > +#include <linux/fsverity.h>
-> > > >  #include <linux/iomap.h>
-> > > >  #include <linux/pagemap.h>
-> > > >  #include <linux/uio.h>
-> > > > @@ -363,6 +364,116 @@ static inline bool iomap_block_needs_zeroing(const struct iomap_iter *iter,
-> > > >  		pos >= i_size_read(iter->inode);
-> > > >  }
-> > > >  
-> > > > +#ifdef CONFIG_FS_VERITY
-> > > > +int iomap_init_fsverity(struct super_block *sb, unsigned int wq_flags,
-> > > > +			int max_active)
-> > > > +{
-> > > > +	int ret;
-> > > > +
-> > > > +	if (!iomap_fsverity_bioset) {
-> > > > +		ret = iomap_fsverity_init_bioset();
-> > > > +		if (ret)
-> > > > +			return ret;
-> > > > +	}
-> > > > +
-> > > > +	return fsverity_init_wq(sb, wq_flags, max_active);
-> > > > +}
-> > > > +EXPORT_SYMBOL_GPL(iomap_init_fsverity);
-> > > > +
-> > > > +static void
-> > > > +iomap_read_fsverify_end_io_work(struct work_struct *work)
-> > > > +{
-> > > > +	struct iomap_fsverity_bio *fbio =
-> > > > +		container_of(work, struct iomap_fsverity_bio, work);
-> > > > +
-> > > > +	fsverity_verify_bio(&fbio->bio);
-> > > > +	iomap_read_end_io(&fbio->bio);
-> > > > +}
-> > > > +
-> > > > +static void
-> > > > +iomap_read_fsverity_end_io(struct bio *bio)
-> > > > +{
-> > > > +	struct iomap_fsverity_bio *fbio =
-> > > > +		container_of(bio, struct iomap_fsverity_bio, bio);
-> > > > +
-> > > > +	INIT_WORK(&fbio->work, iomap_read_fsverify_end_io_work);
-> > > > +	queue_work(bio->bi_private, &fbio->work);
-> > > > +}
-> > > > +
-> > > > +static struct bio *
-> > > > +iomap_fsverity_read_bio_alloc(struct inode *inode, struct block_device *bdev,
-> > > > +			    int nr_vecs, gfp_t gfp)
-> > > > +{
-> > > > +	struct bio *bio;
-> > > > +
-> > > > +	bio = bio_alloc_bioset(bdev, nr_vecs, REQ_OP_READ, gfp,
-> > > > +			iomap_fsverity_bioset);
-> > > > +	if (bio) {
-> > > > +		bio->bi_private = inode->i_sb->s_verity_wq;
-> > > > +		bio->bi_end_io = iomap_read_fsverity_end_io;
-> > > > +	}
-> > > > +	return bio;
-> > > > +}
-> > > > +
-> > > > +/*
-> > > > + * True if tree is not aligned with fs block/folio size and we need zero tail
-> > > > + * part of the folio
-> > > > + */
-> > > > +static bool
-> > > > +iomap_fsverity_tree_end_align(struct iomap_iter *iter, struct folio *folio,
-> > > > +		loff_t pos, size_t plen)
-> > > > +{
-> > > > +	int error;
-> > > > +	u8 log_blocksize;
-> > > > +	u64 tree_size, tree_mask, last_block_tree, last_block_pos;
-> > > > +
-> > > > +	/* Not a Merkle tree */
-> > > > +	if (!(iter->iomap.flags & IOMAP_F_BEYOND_EOF))
-> > > > +		return false;
-> > > > +
-> > > > +	if (plen == folio_size(folio))
-> > > > +		return false;
-> > > > +
-> > > > +	if (iter->inode->i_blkbits == folio_shift(folio))
-> > > > +		return false;
-> > > > +
-> > > > +	error = fsverity_merkle_tree_geometry(iter->inode, &log_blocksize, NULL,
-> > > > +			&tree_size);
-> > > > +	if (error)
-> > > > +		return false;
-> > > > +
-> > > > +	/*
-> > > > +	 * We are beyond EOF reading Merkle tree. Therefore, it has highest
-> > > > +	 * offset. Mask pos with a tree size to get a position whare are we in
-> > > > +	 * the tree. Then, compare index of a last tree block and the index of
-> > > > +	 * current pos block.
-> > > > +	 */
-> > > > +	last_block_tree = (tree_size + PAGE_SIZE - 1) >> PAGE_SHIFT;
-> > > > +	tree_mask = (1 << fls64(tree_size)) - 1;
-> > > > +	last_block_pos = ((pos & tree_mask) >> PAGE_SHIFT) + 1;
-> > > > +
-> > > > +	return last_block_tree == last_block_pos;
-> > > > +}
-> > > > +#else
-> > > > +# define iomap_fsverity_read_bio_alloc(...)	(NULL)
-> > > > +# define iomap_fsverity_tree_end_align(...)	(false)
-> > > > +#endif /* CONFIG_FS_VERITY */
-> > > > +
-> > > > +static struct bio *iomap_read_bio_alloc(struct inode *inode,
-> > > > +		const struct iomap *iomap, int nr_vecs, gfp_t gfp)
-> > > > +{
-> > > > +	struct bio *bio;
-> > > > +	struct block_device *bdev = iomap->bdev;
-> > > > +
-> > > > +	if (fsverity_active(inode) && !(iomap->flags & IOMAP_F_BEYOND_EOF))
-> > > > +		return iomap_fsverity_read_bio_alloc(inode, bdev, nr_vecs, gfp);
-> > > > +
-> > > > +	bio = bio_alloc(bdev, nr_vecs, REQ_OP_READ, gfp);
-> > > > +	if (bio)
-> > > > +		bio->bi_end_io = iomap_read_end_io;
-> > > > +	return bio;
-> > > > +}
-> > > > +
-> > > >  static int iomap_readpage_iter(struct iomap_iter *iter,
-> > > >  		struct iomap_readpage_ctx *ctx)
-> > > >  {
-> > > > @@ -375,6 +486,10 @@ static int iomap_readpage_iter(struct iomap_iter *iter,
-> > > >  	sector_t sector;
-> > > >  	int ret;
-> > > >  
-> > > > +	/* Fail reads from broken fsverity files immediately. */
-> > > > +	if (IS_VERITY(iter->inode) && !fsverity_active(iter->inode))
-> > > > +		return -EIO;
-> > > > +
-> > > >  	if (iomap->type == IOMAP_INLINE) {
-> > > >  		ret = iomap_read_inline_data(iter, folio);
-> > > >  		if (ret)
-> > > > @@ -391,6 +506,11 @@ static int iomap_readpage_iter(struct iomap_iter *iter,
-> > > >  	if (iomap_block_needs_zeroing(iter, pos) &&
-> > > >  	    !(iomap->flags & IOMAP_F_BEYOND_EOF)) {
-> > > >  		folio_zero_range(folio, poff, plen);
-> > > > +		if (fsverity_active(iter->inode) &&
-> > > > +		    !fsverity_verify_blocks(folio, plen, poff)) {
-> > > > +			return -EIO;
-> > > > +		}
-> > > > +
-> > > >  		iomap_set_range_uptodate(folio, poff, plen);
-> > > >  		goto done;
-> > > >  	}
-> > > > @@ -408,32 +528,51 @@ static int iomap_readpage_iter(struct iomap_iter *iter,
-> > > >  	    !bio_add_folio(ctx->bio, folio, plen, poff)) {
-> > > >  		gfp_t gfp = mapping_gfp_constraint(folio->mapping, GFP_KERNEL);
-> > > >  		gfp_t orig_gfp = gfp;
-> > > > -		unsigned int nr_vecs = DIV_ROUND_UP(length, PAGE_SIZE);
-> > > >  
-> > > >  		if (ctx->bio)
-> > > >  			submit_bio(ctx->bio);
-> > > >  
-> > > >  		if (ctx->rac) /* same as readahead_gfp_mask */
-> > > >  			gfp |= __GFP_NORETRY | __GFP_NOWARN;
-> > > > -		ctx->bio = bio_alloc(iomap->bdev, bio_max_segs(nr_vecs),
-> > > > -				     REQ_OP_READ, gfp);
-> > > > +
-> > > > +		ctx->bio = iomap_read_bio_alloc(iter->inode, iomap,
-> > > > +				bio_max_segs(DIV_ROUND_UP(length, PAGE_SIZE)),
-> > > > +				gfp);
-> > > > +
-> > > >  		/*
-> > > >  		 * If the bio_alloc fails, try it again for a single page to
-> > > >  		 * avoid having to deal with partial page reads.  This emulates
-> > > >  		 * what do_mpage_read_folio does.
-> > > >  		 */
-> > > >  		if (!ctx->bio) {
-> > > > -			ctx->bio = bio_alloc(iomap->bdev, 1, REQ_OP_READ,
-> > > > -					     orig_gfp);
-> > > > +			ctx->bio = iomap_read_bio_alloc(iter->inode,
-> > > > +					iomap, 1, orig_gfp);
-> > > >  		}
-> > > >  		if (ctx->rac)
-> > > >  			ctx->bio->bi_opf |= REQ_RAHEAD;
-> > > >  		ctx->bio->bi_iter.bi_sector = sector;
-> > > > -		ctx->bio->bi_end_io = iomap_read_end_io;
-> > > >  		bio_add_folio_nofail(ctx->bio, folio, plen, poff);
-> > > >  	}
-> > > >  
-> > > >  done:
-> > > > +	/*
-> > > > +	 * For post EOF region, zero part of the folio which won't be read. This
-> > > > +	 * happens at the end of the region. So far, the only user is
-> > > > +	 * fs-verity which stores continuous data region.
-> > > 
-> > > Is it ever the case that the zeroed region actually has merkle tree
-> > > content on disk?  Or if this region truly was never written by the
-> > > fsverity construction code, then why would it access the unwritten
-> > > region later?
-> > > 
-> > > Or am I misunderstanding something here?
-> > > 
-> > > (Probably...)
+On 2025-07-29 15:07:43, Darrick J. Wong wrote:
+> On Mon, Jul 28, 2025 at 10:30:05PM +0200, Andrey Albershteyn wrote:
+> > From: Andrey Albershteyn <aalbersh@redhat.com>
 > > 
-> > The zeroed region is never written. With 1k fs block and 1k merkle
-> > tree block and 4k page size we could end up reading only single
-> > block, at the end of the tree. But we have to pass PAGE to the
-> > fsverity. So, only the 1/4 of the page is read. This if-case zeroes
-> > the rest of the page to make it uptodate. In the normal read path
-> > this is bound by EOF, but here I use tree size. So, we don't read
-> > this unwritten region but zero the folio.
-> > 
-> > The fsverity does zeroing of unused space while construction, but
-> > this works only for full fs blocks, therefore, 4k fs block and 1k
-> > merkle tree block.
+> > Add iomap_writepages_unbound() without limit in form of EOF. XFS
+> > will use this to write metadata (fs-verity Merkle tree) in range far
+> > beyond EOF.
 > 
-> But if the regions you have to zero are outside the merkle tree, then
-> fsverity shouldn't ever see those bytes, so why zero them?  Or does it
-> actually check the uptodate bit?  So then you want the folio to have
-> well defined contents?
+> ...and I guess some day fscrypt might use it to encrypt merkle trees
+> too?
 
-verity doesn't check uptodate, but I do in xfs_fsverity_read_merkle().
-I think we need to check as it tells that iomap is done reading,
-but that's true that zeroing is not necessary.
+Probably, then, the region offsets will need to be adjusted also.
 
 > 
-> (At this point I'm picking at nits :P)
+> > Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+> > ---
+> >  fs/iomap/buffered-io.c | 51 +++++++++++++++++++++++++++++++++++++++-----------
+> >  include/linux/iomap.h  |  3 +++
+> >  2 files changed, 43 insertions(+), 11 deletions(-)
+> > 
+> > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> > index 3729391a18f3..7bef232254a3 100644
+> > --- a/fs/iomap/buffered-io.c
+> > +++ b/fs/iomap/buffered-io.c
+> > @@ -1881,18 +1881,10 @@ static int iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+> >  	int error = 0;
+> >  	u32 rlen;
+> >  
+> > -	WARN_ON_ONCE(!folio_test_locked(folio));
+> > -	WARN_ON_ONCE(folio_test_dirty(folio));
+> > -	WARN_ON_ONCE(folio_test_writeback(folio));
+> > -
+> > -	trace_iomap_writepage(inode, pos, folio_size(folio));
+> > -
+> > -	if (!iomap_writepage_handle_eof(folio, inode, &end_pos)) {
+> > -		folio_unlock(folio);
+> > -		return 0;
+> > -	}
+> >  	WARN_ON_ONCE(end_pos <= pos);
+> >  
+> > +	trace_iomap_writepage(inode, pos, folio_size(folio));
+> > +
+> >  	if (i_blocks_per_folio(inode, folio) > 1) {
+> >  		if (!ifs) {
+> >  			ifs = ifs_alloc(inode, folio, 0);
+> > @@ -1956,6 +1948,23 @@ static int iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+> >  	return error;
+> >  }
+> >  
+> > +/* Map pages bound by EOF */
+> > +static int iomap_writepage_map_eof(struct iomap_writepage_ctx *wpc,
+> 
+> iomap_writepage_map_within_eof ?
+
+sure
+
+> 
+> > +		struct writeback_control *wbc, struct folio *folio)
+> > +{
+> > +	int error;
+> > +	struct inode *inode = folio->mapping->host;
+> > +	u64 end_pos = folio_pos(folio) + folio_size(folio);
+> > +
+> > +	if (!iomap_writepage_handle_eof(folio, inode, &end_pos)) {
+> > +		folio_unlock(folio);
+> > +		return 0;
+> > +	}
+> > +
+> > +	error = iomap_writepage_map(wpc, wbc, folio);
+> > +	return error;
+> > +}
+> > +
+> >  int
+> >  iomap_writepages(struct address_space *mapping, struct writeback_control *wbc,
+> >  		struct iomap_writepage_ctx *wpc,
+> > @@ -1972,9 +1981,29 @@ iomap_writepages(struct address_space *mapping, struct writeback_control *wbc,
+> >  			PF_MEMALLOC))
+> >  		return -EIO;
+> >  
+> > +	wpc->ops = ops;
+> > +	while ((folio = writeback_iter(mapping, wbc, folio, &error))) {
+> > +		WARN_ON_ONCE(!folio_test_locked(folio));
+> > +		WARN_ON_ONCE(folio_test_dirty(folio));
+> > +		WARN_ON_ONCE(folio_test_writeback(folio));
+> > +
+> > +		error = iomap_writepage_map_eof(wpc, wbc, folio);
+> > +	}
+> > +	return iomap_submit_ioend(wpc, error);
+> > +}
+> > +EXPORT_SYMBOL_GPL(iomap_writepages);
+> > +
+> > +int
+> > +iomap_writepages_unbound(struct address_space *mapping, struct writeback_control *wbc,
+> 
+> Might want to leave a comment here explaining what's the difference
+> between the two iomap_writepages exports:
+> 
+> /*
+>  * Write dirty pages, including any beyond EOF.  This is solely for use
+>  * by files that allow post-EOF pagecache, which means fsverity.
+>  */
+
+sure, thanks!
+
+> 
+> > +		struct iomap_writepage_ctx *wpc,
+> > +		const struct iomap_writeback_ops *ops)
+> > +{
+> > +	struct folio *folio = NULL;
+> > +	int error;
+> > +
+> 
+> ...and you might want a:
+> 
+> 	WARN_ON(!IS_VERITY(wpc->inode));
+> 
+> to keep it that way.
+
+yup, make sense, thanks!
+
 > 
 > --D
 > 
+> >  	wpc->ops = ops;
+> >  	while ((folio = writeback_iter(mapping, wbc, folio, &error)))
+> >  		error = iomap_writepage_map(wpc, wbc, folio);
+> >  	return iomap_submit_ioend(wpc, error);
+> >  }
+> > -EXPORT_SYMBOL_GPL(iomap_writepages);
+> > +EXPORT_SYMBOL_GPL(iomap_writepages_unbound);
+> > diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> > index 522644d62f30..4a0b5ebb79e9 100644
+> > --- a/include/linux/iomap.h
+> > +++ b/include/linux/iomap.h
+> > @@ -464,6 +464,9 @@ void iomap_sort_ioends(struct list_head *ioend_list);
+> >  int iomap_writepages(struct address_space *mapping,
+> >  		struct writeback_control *wbc, struct iomap_writepage_ctx *wpc,
+> >  		const struct iomap_writeback_ops *ops);
+> > +int iomap_writepages_unbound(struct address_space *mapping,
+> > +		struct writeback_control *wbc, struct iomap_writepage_ctx *wpc,
+> > +		const struct iomap_writeback_ops *ops);
+> >  
+> >  /*
+> >   * Flags for direct I/O ->end_io:
+> > 
 > > -- 
-> > - Andrey
+> > 2.50.0
 > > 
 > > 
 > 
