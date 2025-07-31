@@ -1,263 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-56453-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56454-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90C7BB178C4
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Aug 2025 00:01:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CCEDB17923
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Aug 2025 00:32:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B43D65881BC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Jul 2025 22:01:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77A621C270CA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Jul 2025 22:32:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC225273814;
-	Thu, 31 Jul 2025 22:00:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B562227E7C8;
+	Thu, 31 Jul 2025 22:31:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qNlqP4JK"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="l7DURx8l"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9EC72737FA
-	for <linux-fsdevel@vger.kernel.org>; Thu, 31 Jul 2025 22:00:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B66C627CCF3
+	for <linux-fsdevel@vger.kernel.org>; Thu, 31 Jul 2025 22:31:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753999236; cv=none; b=WiWKZCvDnj5LGYXenPNszLzL8D9W74Vpc7CUgWmQM3qp0rWT32r+cT4O6ris8PMyO3IhPnyjlMi5FY8Z0Xeb24YCJyMaDx8ryyQZ95Zzvcs5diW4yUxXFuro20kT493jRcB95g5ioOFIu39DSiBL8CJRH7GA0Rga0V045DD3U9U=
+	t=1754001108; cv=none; b=BRdLnjQw+g+LcC4S1lmglEMoQzycLzDDkSE85vJ2wt9N8s7kRM97D2q+WfYkvRg1EVvwpiuoERNGkQyMefkkkxxEuUriNdwQ8GOYwkHWBtfZaoiO//akk9b2zxvxCZO3eMy75JwijiZ+jtEJ/LzRnrMIqWgZruZLRyn80tV6iDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753999236; c=relaxed/simple;
-	bh=WiIYR43BkynWQ/NHpDxB552UWAXO4+NMreOccpkPwOQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=mjcbfvu8hdM1oKZFc1DeO/Nqd+vEx/UMnOFvY9AdmFVZIz6NfAQ0nIyes6teK5lfL+3Jz4UK+KpsTf7QKJfJHuTn91EVcJTJomY6gRizUZSgz6i3UiyGnM0emCzoSGE09xN4jaaHhmPO+x61jfA8adzxZHzRHmAplwYEzzBZgNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qNlqP4JK; arc=none smtp.client-ip=209.85.214.202
+	s=arc-20240116; t=1754001108; c=relaxed/simple;
+	bh=V88Xz2IVNFWtSxc1E/peEKh9xtpEYQ6L5LEkV/XWJ8M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NbdsasP6B9LzLPrE3o6uQmNcXs9gbaGLLEb+kRe8iwhJ62DlvuJNVLFSIUf5ZOXcpzSoWWC0iYuCU7n7umteASmhusXKqUe3w4F+YWIebVNhxNRmP8vsLo+AOK7HaeOBoQfGy9wqiAxTA90OmcEnezj+/zA+4dxuHCmLwqxa7oI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=l7DURx8l; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-235dd77d11fso9778375ad.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Jul 2025 15:00:34 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-240718d5920so665ad.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Jul 2025 15:31:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753999234; x=1754604034; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vSpqmXgbYV8j5bsB4IVuVf0tack8DQaHL/QU05OaXgY=;
-        b=qNlqP4JK1flJPLxN7zfmFhWvzp8AVpCq61xcPupiHZcXRheMfD6+FfX/VxhHjV4i4s
-         WskETkR01ngEblt5Ox5cKCNlR9KQxZVdvGi+/LBGtn4ybiFWR5BrqT+oVt9rb4Q63pYz
-         8u84hmO2OGp13c96NuQM2QIHJIQ5LmjR1GNNGSxIwBbXhiDteYyOs6Cy/SMz18YKGGy3
-         8+7qgQmhGhEfUVMSylchyagwCYN0ii7O5liTDQo80UFZuazszG1ThGuJ+ss3ikzha/xd
-         RTMeDsc7bKLbyOgvWFTCu0UVPMX+xnmlW/4yKnYI0UcEuua+zKeZUulymZtlZ3BBMayc
-         DSyQ==
+        d=google.com; s=20230601; t=1754001104; x=1754605904; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Dmz3rRRo1iGk4Bkn+XaZWCGWfP9o/IvKxOlu+wl3FL4=;
+        b=l7DURx8l+1zzSNH/Y0f8fq7l5LvLhkhAWf3P4weHQ1LbOSmv7mu6JJsuCVaUJbh0lq
+         sNCIZulvPfUWPfZ90t7kpnRxIltVZGewoVuzU2E6PYAZ5jkVjbNN238aDiDGjPh/Nj4a
+         jaUV8xAeJ4ui7KRw3w4q1W/1r+y+7LgzrvPvBshPYmsu9CMM2JVQX8A4VmtUBEOIbqxE
+         upLTu+7DXqBiXZHYFFBXBFvF7TjLR/aFVWf3H+uE/+GPyLodJEUOKCbNr9RFaVnvAjdP
+         GfLJh6d6kLC0L1MCNLWTueAAvJXq0j5SxIm+ZIFFBQRdH2/wPVOGR3agw1+ub8T5t2wq
+         KOfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753999234; x=1754604034;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vSpqmXgbYV8j5bsB4IVuVf0tack8DQaHL/QU05OaXgY=;
-        b=W/EwMDZ3bDa4lXecZClDXqmrn1rQHbuZiFbFTPqNwG0isgy0HZS8dnH1sLoo+rG/C9
-         t+H4Rf+MpdpbDtfwFy/Rp23KYBpxfQrKbYIlaGgyS92gjAkPvCGbk8lgEIfCgkY9focx
-         0H12376DTRlhl6DBw6Ya4YnVZbZXdW51ZkCj+vscbLp3JoDUvJ7eBR5249mtgyTDCK1Q
-         3LDsYK26rrcWjP30ztZ1OGxbL8488+PqX8ghzfg/r3MqWxbDp4ucgNY1MF+IjwXszsxi
-         IlzrWNi/eUN3VqR5g57WVeBDKkYAGB/3Et5FVAO+83uow2iW2373rchFVSyt/B3jstEI
-         XoIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVikGV5zBSAFNY4BKD5TYW39J2Qhu5AJgpUPjxEkBO3U2SQ1UgHLl9chtgVQbRE1sy5j9CHwO5mJhBkmXjR@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0xvnZWDzTYYaGSkdBSF3wPN9CqkoX0RNwZW0sXrK1lGy5aWcc
-	GR/lKdBE07AgrF2AzPTGNCxVeywmoWy9ElxuG8WEXThS0JLMn570ONmXusiIIZm7OzLNVusf6ec
-	zWVX3kg==
-X-Google-Smtp-Source: AGHT+IG9WPhm5XE/ZfgGaQtzh+SWoXfTwZ/PnXrEVOaIZ7eiVoVCEnZsOmLu+uDuAMPetyxG7jZDFNEKyv8=
-X-Received: from plai12.prod.google.com ([2002:a17:902:c94c:b0:240:2b97:90f6])
- (user=surenb job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:234d:b0:23f:adc0:8cc2
- with SMTP id d9443c01a7336-2422a699c3amr3040655ad.27.1753999233810; Thu, 31
- Jul 2025 15:00:33 -0700 (PDT)
-Date: Thu, 31 Jul 2025 15:00:24 -0700
-In-Reply-To: <20250731220024.702621-1-surenb@google.com>
+        d=1e100.net; s=20230601; t=1754001104; x=1754605904;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Dmz3rRRo1iGk4Bkn+XaZWCGWfP9o/IvKxOlu+wl3FL4=;
+        b=nLjpQXNhlRVh54rTBzDSLUVDV7nNLoQOYI/F9L6rlSwnKYYOsacUmoDCLp/wR5iQX2
+         2QnLFzIO3ppdPmm9/Kl7Kb9ddryw8jsA1tuQ/YVQwo0zdDcbQMQ8iDF1jG6lluWQgaAX
+         trOKpLG5js+i83xKd8L5kpoJJiZMapludwpxgkyUxZ9RFtDSNe1nmC6E23Tx9wcvAv4K
+         CIazCV4yHetzq99eLo4AI/cPH9r8TA1zh0qXwbosRZ6as3ED9XBhvD07lLW4ojqyMAb8
+         0dXMSnwcgwKSJDg8cTyvzdzr1eBaINW4qiqGREwrgxgPatt4lYVB/KZ7BQurdtX3Buqt
+         Cxcw==
+X-Forwarded-Encrypted: i=1; AJvYcCXejGHYkcyUSR5MTeVFdC2O936k15Rs9dd+1DBk2omscYnmM644upcmdc42SYJrQxDDV4doQhgJk1qJXY4f@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoZR5h0Y3xTfoPVvBe1AqHgdx3yLsVHQM9RpzvRvnCUPgX5Plt
+	Y0ooS+lituloiq20ePD/oHr6HfTqgkt2RQA4cvpQQAocOv90Q/zZlB2QJ5BPZjH+WaZ1/zUv7OQ
+	VTmDOIg==
+X-Gm-Gg: ASbGncsYkT7Gfhgjhl9XvNJgr5p3mBYVydsit6RZsK1i1935Vt598+iqOUPbEaZEoQa
+	6UvXRkxqRXsyCEQdv9ZXUcuE7sx3DOotHj25KKRoX8mxELxNZ9TGNlRTR6Ew/lha+L1H8Nbmq5+
+	oakvscFzcjJveIYYZoSAODwOMJBl09V36ALCxcY9/4vslGe70ROZPK34VSSJ2rDxbpoNQhy4K/i
+	/5Ge1QZQ9dlwDkXIQLQ4TLNVh0RbJKszqpDWpR0PpXb8v/NeIif5a2dXvoGBs/GRZkajiiTdOXa
+	1pNSVvccvXHMwtTsWA2vWtPq+V5b7bIKz4FuH1BEIPSfiiiOU6fGqmjouVs73s/tIWMlOzDAIzF
+	WT8x8Wh/C35QNbzhomv9pXvcluVgHNvSBjXemp+w1p/fmslpKDsRqNZG9sYDHao/K18MvRRQECw
+	==
+X-Google-Smtp-Source: AGHT+IFWCtKBf+vvEYOI4A4CICLQLDvH4Pfc5QQIQtFJHb1xrK6jUevGcCx+8VyM7qERSU/tHNMpMg==
+X-Received: by 2002:a17:902:c40b:b0:223:ff93:322f with SMTP id d9443c01a7336-24227b2c79dmr1204955ad.2.1754001103709;
+        Thu, 31 Jul 2025 15:31:43 -0700 (PDT)
+Received: from google.com (135.228.125.34.bc.googleusercontent.com. [34.125.228.135])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e897690csm26801135ad.99.2025.07.31.15.31.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Jul 2025 15:31:43 -0700 (PDT)
+Date: Thu, 31 Jul 2025 22:31:37 +0000
+From: Carlos Llamas <cmllamas@google.com>
+To: Jann Horn <jannh@google.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] eventpoll: Fix semi-unbounded recursion
+Message-ID: <aIvusYlauznxttGc@google.com>
+References: <20250711-epoll-recursion-fix-v1-1-fb2457c33292@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250731220024.702621-1-surenb@google.com>
-X-Mailer: git-send-email 2.50.1.565.gc32cd1483b-goog
-Message-ID: <20250731220024.702621-4-surenb@google.com>
-Subject: [PATCH 3/3] fs/proc/task_mmu: execute PROCMAP_QUERY ioctl under
- per-vma locks
-From: Suren Baghdasaryan <surenb@google.com>
-To: akpm@linux-foundation.org
-Cc: Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, david@redhat.com, 
-	vbabka@suse.cz, peterx@redhat.com, jannh@google.com, hannes@cmpxchg.org, 
-	mhocko@kernel.org, paulmck@kernel.org, shuah@kernel.org, adobriyan@gmail.com, 
-	brauner@kernel.org, josef@toxicpanda.com, yebin10@huawei.com, 
-	linux@weissschuh.net, willy@infradead.org, osalvador@suse.de, 
-	andrii@kernel.org, ryan.roberts@arm.com, christophe.leroy@csgroup.eu, 
-	tjmercier@google.com, kaleshsingh@google.com, aha310510@gmail.com, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kselftest@vger.kernel.org, surenb@google.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250711-epoll-recursion-fix-v1-1-fb2457c33292@google.com>
 
-Utilize per-vma locks to stabilize vma after lookup without taking
-mmap_lock during PROCMAP_QUERY ioctl execution. If vma lock is
-contended, we fall back to mmap_lock but take it only momentarily
-to lock the vma and release the mmap_lock. In a very unlikely case
-of vm_refcnt overflow, this fall back path will fail and ioctl is
-done under mmap_lock protection.
+On Fri, Jul 11, 2025 at 06:33:36PM +0200, Jann Horn wrote:
+> Ensure that epoll instances can never form a graph deeper than
+> EP_MAX_NESTS+1 links.
+> 
+> Currently, ep_loop_check_proc() ensures that the graph is loop-free and
+> does some recursion depth checks, but those recursion depth checks don't
+> limit the depth of the resulting tree for two reasons:
+> 
+>  - They don't look upwards in the tree.
+>  - If there are multiple downwards paths of different lengths, only one of
+>    the paths is actually considered for the depth check since commit
+>    28d82dc1c4ed ("epoll: limit paths").
+> 
+> Essentially, the current recursion depth check in ep_loop_check_proc() just
+> serves to prevent it from recursing too deeply while checking for loops.
+> 
+> A more thorough check is done in reverse_path_check() after the new graph
+> edge has already been created; this checks, among other things, that no
+> paths going upwards from any non-epoll file with a length of more than 5
+> edges exist. However, this check does not apply to non-epoll files.
+> 
+> As a result, it is possible to recurse to a depth of at least roughly 500,
+> tested on v6.15. (I am unsure if deeper recursion is possible; and this may
+> have changed with commit 8c44dac8add7 ("eventpoll: Fix priority inversion
+> problem").)
+> 
+> To fix it:
+> 
+> 1. In ep_loop_check_proc(), note the subtree depth of each visited node,
+> and use subtree depths for the total depth calculation even when a subtree
+> has already been visited.
+> 2. Add ep_get_upwards_depth_proc() for similarly determining the maximum
+> depth of an upwards walk.
+> 3. In ep_loop_check(), use these values to limit the total path length
+> between epoll nodes to EP_MAX_NESTS edges.
+> 
+> Fixes: 22bacca48a17 ("epoll: prevent creating circular epoll structures")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Jann Horn <jannh@google.com>
+> ---
 
-This change is designed to reduce mmap_lock contention and prevent
-PROCMAP_QUERY ioctl calls from blocking address space updates.
+Hey Jann,
 
-Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+I've bisected an LTP test failure to this commit and I can't find any
+reports of this. The test is epoll_ctl04:
+
+https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/syscalls/epoll_ctl/epoll_ctl04.c
+
+This is what I get:
+  ####################################################################3
+  root@debian:~# ./epoll_ctl04
+  tst_test.c:2004: TINFO: LTP version: 20250530-116-g91e6272fe
+  tst_test.c:2007: TINFO: Tested kernel: 6.16.0-rc1-00017-gf2e467a48287 #28 SMP PREEMPT Thu Jul 31 21:12:22 UTC 2025 aarch64
+  tst_kconfig.c:88: TINFO: Parsing kernel config '/proc/config.gz'
+  tst_test.c:1825: TINFO: Overall timeout per run is 0h 00m 30s
+  epoll_ctl04.c:59: TFAIL: epoll_ctl(..., EPOLL_CTL_ADD, ...) with number of nesting is 5 expected EINVAL: ELOOP (40)
+
+  Summary:
+  passed   0
+  failed   1
+  broken   0
+  skipped  0
+  warnings 0
+  ####################################################################3
+
+
+I haven't looked much into this but it seems the test expects EINVAL at
+nesting depth 5 and is instead getting ELOOP. Any chance there is an
+off-by-one error in ep_loop_check() as it fails with depth=4 and
+upwards_depth=0, which isn't correct?
+
 ---
- fs/proc/task_mmu.c | 81 +++++++++++++++++++++++++++++++++++++---------
- 1 file changed, 65 insertions(+), 16 deletions(-)
+diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+index 44648cc09250..811960b2a74c 100644
+--- a/fs/eventpoll.c
++++ b/fs/eventpoll.c
+@@ -2237,7 +2237,7 @@ static int ep_loop_check(struct eventpoll *ep, struct eventpoll *to)
+        upwards_depth = ep_get_upwards_depth_proc(ep, 0);
+        rcu_read_unlock();
 
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index 509fa162760a..b504b798e8fe 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -517,28 +517,78 @@ static int pid_maps_open(struct inode *inode, struct file *file)
- 		PROCMAP_QUERY_VMA_FLAGS				\
- )
- 
--static int query_vma_setup(struct mm_struct *mm)
-+#ifdef CONFIG_PER_VMA_LOCK
-+
-+static int query_vma_setup(struct proc_maps_query_data *query)
- {
--	return mmap_read_lock_killable(mm);
-+	query->locked_vma = NULL;
-+	query->mmap_locked = false;
-+
-+	return 0;
+-       return (depth+1+upwards_depth > EP_MAX_NESTS) ? -1 : 0;
++       return (depth+upwards_depth > EP_MAX_NESTS) ? -1 : 0;
  }
- 
--static void query_vma_teardown(struct mm_struct *mm, struct vm_area_struct *vma)
-+static void query_vma_teardown(struct proc_maps_query_data *query)
- {
--	mmap_read_unlock(mm);
-+	if (query->mmap_locked)
-+		mmap_read_unlock(query->mm);
-+	else
-+		unlock_vma(query);
- }
- 
--static struct vm_area_struct *query_vma_find_by_addr(struct mm_struct *mm, unsigned long addr)
-+static struct vm_area_struct *query_vma_find_by_addr(struct proc_maps_query_data *query,
-+						     unsigned long addr)
- {
--	return find_vma(mm, addr);
-+	struct vm_area_struct *vma;
-+	struct vma_iterator vmi;
-+
-+	unlock_vma(query);
-+	rcu_read_lock();
-+	vma_iter_init(&vmi, query->mm, addr);
-+	vma = lock_next_vma(query->mm, &vmi, addr);
-+	rcu_read_unlock();
-+
-+	if (!IS_ERR_OR_NULL(vma)) {
-+		query->locked_vma = vma;
-+	} else if (PTR_ERR(vma) == -EAGAIN) {
-+		/* Fallback to mmap_lock on vma->vm_refcnt overflow */
-+		mmap_read_lock(query->mm);
-+		vma = find_vma(query->mm, addr);
-+		query->mmap_locked = true;
-+	}
-+
-+	return vma;
- }
- 
--static struct vm_area_struct *query_matching_vma(struct mm_struct *mm,
-+#else /* CONFIG_PER_VMA_LOCK */
-+
-+static int query_vma_setup(struct proc_maps_query_data *query)
-+{
-+	return mmap_read_lock_killable(query->mm);
-+}
-+
-+static void query_vma_teardown(struct proc_maps_query_data *query)
-+{
-+	mmap_read_unlock(query->mm);
-+}
-+
-+static struct vm_area_struct *query_vma_find_by_addr(struct proc_maps_query_data *query,
-+						     unsigned long addr)
-+{
-+	return find_vma(query->mm, addr);
-+}
-+
-+#endif  /* CONFIG_PER_VMA_LOCK */
-+
-+static struct vm_area_struct *query_matching_vma(struct proc_maps_query_data *query,
- 						 unsigned long addr, u32 flags)
- {
- 	struct vm_area_struct *vma;
- 
- next_vma:
--	vma = query_vma_find_by_addr(mm, addr);
-+	vma = query_vma_find_by_addr(query, addr);
-+	if (IS_ERR(vma))
-+		return vma;
-+
- 	if (!vma)
- 		goto no_vma;
- 
-@@ -579,11 +629,11 @@ static struct vm_area_struct *query_matching_vma(struct mm_struct *mm,
- 	return ERR_PTR(-ENOENT);
- }
- 
--static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
-+static int do_procmap_query(struct mm_struct *mm, void __user *uarg)
- {
-+	struct proc_maps_query_data query = { .mm = mm };
- 	struct procmap_query karg;
- 	struct vm_area_struct *vma;
--	struct mm_struct *mm;
- 	const char *name = NULL;
- 	char build_id_buf[BUILD_ID_SIZE_MAX], *name_buf = NULL;
- 	__u64 usize;
-@@ -610,17 +660,16 @@ static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
- 	if (!!karg.build_id_size != !!karg.build_id_addr)
- 		return -EINVAL;
- 
--	mm = priv->query.mm;
- 	if (!mm || !mmget_not_zero(mm))
- 		return -ESRCH;
- 
--	err = query_vma_setup(mm);
-+	err = query_vma_setup(&query);
- 	if (err) {
- 		mmput(mm);
- 		return err;
- 	}
- 
--	vma = query_matching_vma(mm, karg.query_addr, karg.query_flags);
-+	vma = query_matching_vma(&query, karg.query_addr, karg.query_flags);
- 	if (IS_ERR(vma)) {
- 		err = PTR_ERR(vma);
- 		vma = NULL;
-@@ -705,7 +754,7 @@ static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
- 	}
- 
- 	/* unlock vma or mmap_lock, and put mm_struct before copying data to user */
--	query_vma_teardown(mm, vma);
-+	query_vma_teardown(&query);
- 	mmput(mm);
- 
- 	if (karg.vma_name_size && copy_to_user(u64_to_user_ptr(karg.vma_name_addr),
-@@ -725,7 +774,7 @@ static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
- 	return 0;
- 
- out:
--	query_vma_teardown(mm, vma);
-+	query_vma_teardown(&query);
- 	mmput(mm);
- 	kfree(name_buf);
- 	return err;
-@@ -738,7 +787,7 @@ static long procfs_procmap_ioctl(struct file *file, unsigned int cmd, unsigned l
- 
- 	switch (cmd) {
- 	case PROCMAP_QUERY:
--		return do_procmap_query(priv, (void __user *)arg);
-+		return do_procmap_query(priv->query.mm, (void __user *)arg);
- 	default:
- 		return -ENOIOCTLCMD;
- 	}
--- 
-2.50.1.565.gc32cd1483b-goog
 
+ static void clear_tfile_check_list(void)
 
