@@ -1,98 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-56388-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56389-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74F12B17057
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Jul 2025 13:24:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71C1CB17065
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Jul 2025 13:33:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA4B518C2DA2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Jul 2025 11:25:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1C391AA66ED
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Jul 2025 11:33:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E3652C08B0;
-	Thu, 31 Jul 2025 11:24:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3B602C08C4;
+	Thu, 31 Jul 2025 11:33:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mck/8Cfv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e/qe3p+e"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDADD2BDC38;
-	Thu, 31 Jul 2025 11:24:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377D22C9A;
+	Thu, 31 Jul 2025 11:33:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753961083; cv=none; b=CZCS/fCtGMnQKCArszJqShJNApkzuYjgnK4nlnNRzCVA1VjTrQGvcBtq1H97nCo8JZI5r+LswgZ7U/lQ9UXwLuMOUyZJeQCcvUPCb5gUZzqNRgWpfldrqc8O6FGEQ3G/Ys/NjU9ctDqnyKUfLFVOAyLyj293nbUMvcBVP5EN1vU=
+	t=1753961594; cv=none; b=iKIZaSICEhDCkFq/TKCFbsCFice1Pe+TISfBxivRkc5wpR0Z7kjCXg2l8yus1jzQRecTc3/c1y8so+qhCBfV0rjiHdoz6kbTgNYJMexahm0uB5Cu6ohEia9NpvzpFQaWUwKQVsV2lhByyao3QjTu6VWM+vjRCVfQUQgkqYIZIJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753961083; c=relaxed/simple;
-	bh=JHSaOCbpZCUVajXOtrMAa09eXfXSlqRlabPkVQTQSsk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GEwc7/8aHpF72oX+olFz2c30BUQUhYYCEqzRTf8C8z7X4u4M0Rm1HnZVEo4coZvYPbPRjaoEyfRlqSs4RNvcQzJBFqyqtAHnPzII27/KnurqN7DCK+vBGR8SrrBmRKs+fMCXOtJNkaSehra9+ZEzlEmXNGT7awKLBWjYovm6Hu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mck/8Cfv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F4FEC4CEEF;
-	Thu, 31 Jul 2025 11:24:41 +0000 (UTC)
+	s=arc-20240116; t=1753961594; c=relaxed/simple;
+	bh=sTbx7McNSccTMzi7rESQoqeGOeBghvgV4NqCILAaT3M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=krV+Sbyqe//1+E7z1LV91p6CGlKRR/RdLdFX2BnPcGRWg6wJ6DdvImU22m8cPYE0085w5vYivzgW/6QAh2G6dYa9e3Vkm8W6q2tTR/4f7ueLTnHR8hU+UmK6qGI57JZp8YA/rHejROS0Q/ONTgp7UlzJoV7C8hecx7I9e58vBYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e/qe3p+e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25382C4CEEF;
+	Thu, 31 Jul 2025 11:33:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753961083;
-	bh=JHSaOCbpZCUVajXOtrMAa09eXfXSlqRlabPkVQTQSsk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=mck/8CfvElUaoOtqb8LBXnZCEPgD1s6KrT7MuLXubFvLk9cEaSB/wPTRv0IhxhjKH
-	 fPN4DnIzvwX2yZWUUEWlgMBbs5L1mqr0TbDbjReDT2Z19DQJdH41WZpxr1W9TD817o
-	 InJqa3KT7pSm5iCehBG921emzvDPKbZJygXDLDHzjZcEtknSQIwUl6RZGMLfoONaXp
-	 Dw7idfkvj6YDArS/kdVgTJhinkYnFou4jO5wuVQ54FqAYmSK0zQOgDtVocCSgxLoIJ
-	 SsLKgVnDxVUn9/E3oETubTTEWKFaPZumkV0vugPSRkpYj+6+pX6mmQovLBQqjcyR3G
-	 tNkz+fgOsayTw==
+	s=k20201202; t=1753961593;
+	bh=sTbx7McNSccTMzi7rESQoqeGOeBghvgV4NqCILAaT3M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=e/qe3p+eRLamN7D5azYA3q3rxP2X2iSZAfM7QwsPKP6E8FP9Yg2Nv8oesgdd0gTUT
+	 S1ZgL+2m0/CRdjMDGQJl4qYVlbJ7Ms6xuSLFxMczXq/egP8WqscurAeOHlMs0m5amy
+	 MEazmBmhAIK9DVgJSBi4JkJEpIZ/ozykpJAQJixkeKNijlMmK5NFEdPrMnkYbZivJf
+	 wUnO3nm65BPSCDjrmPt95WU80G7p6nPChf97RLIepkPaWqB8mjx9d4GXOANIkpPaeU
+	 KTwQjdavFgRJV3sBYBWcIvVdUwfrutgOTc8bFqi0wCnfQfiZOK4EfIDCTaLg+WO2C+
+	 BZsgjIxE10qZg==
+Date: Thu, 31 Jul 2025 13:33:09 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	John Garry <john.g.garry@oracle.com>,
-	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] iomap: Fix broken data integrity guarantees for O_SYNC writes
-Date: Thu, 31 Jul 2025 13:24:37 +0200
-Message-ID: <20250731-kultobjekt-ansagen-2961e4be4ad2@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250730102840.20470-2-jack@suse.cz>
-References: <20250730102840.20470-2-jack@suse.cz>
+To: Luis Henriques <luis@igalia.com>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, 
+	Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC] Another take at restarting FUSE servers
+Message-ID: <20250731-diamant-kringeln-7f16e5e96173@brauner>
+References: <8734afp0ct.fsf@igalia.com>
+ <20250729233854.GV2672029@frogsfrogsfrogs>
+ <87freddbcf.fsf@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1376; i=brauner@kernel.org; h=from:subject:message-id; bh=JHSaOCbpZCUVajXOtrMAa09eXfXSlqRlabPkVQTQSsk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWR0B5W5zUl4E+aw2UrzrG5eg67Had8LPus67X9xP9ywU 8Zm5naBjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIkU1DEyLPtVtmGLZ8y8s07v p1u4Vnqd+hN3UjFt27P2nWcLTG+qLmP4X3BmTmCekWmvziuep59nT7eq27tgSoya3IPt3vWzvQ/ OZQYA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <87freddbcf.fsf@igalia.com>
 
-On Wed, 30 Jul 2025 12:28:41 +0200, Jan Kara wrote:
-> Commit d279c80e0bac ("iomap: inline iomap_dio_bio_opflags()") has broken
-> the logic in iomap_dio_bio_iter() in a way that when the device does
-> support FUA (or has no writeback cache) and the direct IO happens to
-> freshly allocated or unwritten extents, we will *not* issue fsync after
-> completing direct IO O_SYNC / O_DSYNC write because the
-> IOMAP_DIO_WRITE_THROUGH flag stays mistakenly set. Fix the problem by
-> clearing IOMAP_DIO_WRITE_THROUGH whenever we do not perform FUA write as
-> it was originally intended.
+On Wed, Jul 30, 2025 at 03:04:00PM +0100, Luis Henriques wrote:
+> Hi Darrick,
 > 
-> [...]
+> On Tue, Jul 29 2025, Darrick J. Wong wrote:
+> 
+> > On Tue, Jul 29, 2025 at 02:56:02PM +0100, Luis Henriques wrote:
+> >> Hi!
+> >> 
+> >> I know this has been discussed several times in several places, and the
+> >> recent(ish) addition of NOTIFY_RESEND is an important step towards being
+> >> able to restart a user-space FUSE server.
+> >> 
+> >> While looking at how to restart a server that uses the libfuse lowlevel
+> >> API, I've created an RFC pull request [1] to understand whether adding
+> >> support for this operation would be something acceptable in the project.
+> >
+> > Just speaking for fuse2fs here -- that would be kinda nifty if libfuse
+> > could restart itself.  It's unclear if doing so will actually enable us
+> > to clear the condition that caused the failure in the first place, but I
+> > suppose fuse2fs /does/ have e2fsck -fy at hand.  So maybe restarts
+> > aren't totally crazy.
+> 
+> Maybe my PR lacks a bit of ambition -- it's goal wasn't to have libfuse do
+> the restart itself.  Instead, it simply adds some visibility into the
+> opaque data structures so that a FUSE server could re-initialise a session
+> without having to go through a full remount.
+> 
+> But sure, there are other things that could be added to the library as
+> well.  For example, in my current experiments, the FUSE server needs start
+> some sort of "file descriptor server" to keep the fd alive for the
+> restart.  This daemon could be optionally provided in libfuse itself,
+> which could also be used to store all sorts of blobs needed by the file
+> system after recovery is done.
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+Fwiw, for most use-cases you really just want to use systemd's file
+descriptor store to persist the /dev/fuse connection:
+https://systemd.io/FILE_DESCRIPTOR_STORE/
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+> 
+> >> The PR doesn't do anything sophisticated, it simply hacks into the opaque
+> >> libfuse data structures so that a server could set some of the sessions'
+> >> fields.
+> >> 
+> >> So, a FUSE server simply has to save the /dev/fuse file descriptor and
+> >> pass it to libfuse while recovering, after a restart or a crash.  The
+> >> mentioned NOTIFY_RESEND should be used so that no requests are lost, of
+> >> course.  And there are probably other data structures that user-space file
+> >> systems will have to keep track as well, so that everything can be
+> >> restored.  (The parameters set in the INIT phase, for example.)
+> >
+> > Yeah, I don't know how that would work in practice.  Would the kernel
+> > send back the old connection flags and whatnot via some sort of
+> > FUSE_REINIT request, and the fuse server can either decide that it will
+> > try to recover, or just bail out?
+> 
+> That would be an option.  But my current idea would be that the server
+> would need to store those somewhere and simply assume they are still OK
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] iomap: Fix broken data integrity guarantees for O_SYNC writes
-      https://git.kernel.org/vfs/vfs/c/16f206eebbf8
+The fdstore currently allows to associate a name with a file descriptor
+in the fdstore. That name would allow you to associate the options with
+the fuse connection. However, I would not rule it out that additional
+metadata could be attached to file descriptors in the fdstore if that's
+something that's needed.
 
