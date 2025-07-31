@@ -1,408 +1,360 @@
-Return-Path: <linux-fsdevel+bounces-56434-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56435-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5224B174CB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Jul 2025 18:16:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60902B17591
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Jul 2025 19:22:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86B48586D05
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Jul 2025 16:16:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8A171C20685
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Jul 2025 17:22:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 642362356DA;
-	Thu, 31 Jul 2025 16:16:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D1D264615;
+	Thu, 31 Jul 2025 17:22:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OfOm7dSA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q+kQjTKS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DEE5223714
-	for <linux-fsdevel@vger.kernel.org>; Thu, 31 Jul 2025 16:15:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC9A5154425;
+	Thu, 31 Jul 2025 17:22:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753978559; cv=none; b=tOI3cAONzD0ms0woswGdeuORYalcLP2GU8H3RYRaAQD+AyFdu3VtCqu3VFYH68v8d7gG2vbC2W4DPzCKjPOhpKbGsykfAD7PQKF2i/A/bthkyu32H4IX/rs9yUa7AvcULBXZPL4tbmqNR10K6IUX4tkFCq7D5PxSNK/enwueClg=
+	t=1753982528; cv=none; b=fZj6Vg7/upof/xZh5cu26B1o3GqnoEgxeicJaL5GGUia8bizo0FIH9VZDVpp/O1wMSftKT7lVc6I5jH457j+HirbCExmjX62f86uAnbW3kN45U9qECsFfEhdcsrufYihz4xuYmHJCc5nwW4ZIjKZ8vbciB/gggtFBCrHyauQdvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753978559; c=relaxed/simple;
-	bh=NmK9mpCX/2zw5F1BJI2dwZwnnUGC/SRcSDSLx0fItOM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PUNxlyFFkhvSNw6CGLDz+IrdxhFBZG1R2Ewe3B9iDaUVO0KkOvjKCB5c6Fa8tixTNM1xboHebFuMxywnW3c7vLrmKNANF8ZxV4VagSLQbnxCPHQdO6cCr6+IqFNGQUVLvIZr1XalqD9d36wy7i9Tmoyj+WayqGLjAk59W/LXKQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OfOm7dSA; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753978556;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=hCFMEvUPyBLrGC/oYDfyk4mKEAk9olU5xdsqV7nWMUs=;
-	b=OfOm7dSA3e9fPSKb1XPDxekcSp6SaZUj8G+p/N9mo1ZVrKVDvrym13JbqxkG6JX64/Hgk2
-	0BBITEl8qgWlwpnYwCkn/5leqRypwfF+fLJWfIsQxf/LJpt47uNYoWm/ImfiyemxgHsCp5
-	VzIOshQ2yqZ1k8AH+q6oAJxwjGgQ9zY=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-637-iwBCd937Nhy8fUsGr9bLUw-1; Thu, 31 Jul 2025 12:15:40 -0400
-X-MC-Unique: iwBCd937Nhy8fUsGr9bLUw-1
-X-Mimecast-MFC-AGG-ID: iwBCd937Nhy8fUsGr9bLUw_1753978539
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3b7851a096fso520400f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Jul 2025 09:15:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753978539; x=1754583339;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=hCFMEvUPyBLrGC/oYDfyk4mKEAk9olU5xdsqV7nWMUs=;
-        b=ZqQlAz/+JYWlehhuBpA/X7MiUBTqUekw7QShRDZF2Ngq1KiX+yL2FbrRe15v8qfWXK
-         4Z6diemdn9M8gjGs4QEgiJLwAzKPC0hwRAu9cIP7tljR+w1YW+1bQawqzuGqhmUtWSd4
-         6XvMiLuvYnazrSXpVZYJa7MlkKY4P7HPsJAqkPOc0xfifOg4SzUspnzXDwa7Wf95M/D5
-         gidjnhAyvrCJZOv8GxtfQ1BouigWu8CmQsdbgPhyTjI6kR8FM+AQR4r0EnBxjW6FF8oE
-         Um8YHKTyrgjPV/7IF8MJ9UkSY4yqjEtw0acQPZABwRmRGtooHgHTR/sMJhNKubjv+8gv
-         iA0w==
-X-Forwarded-Encrypted: i=1; AJvYcCVFNClAZ1x7BCtkhYRrauRCEIKQ1BbZDylyHce/tJ4hmOmvq/eyXOO/CYqVU5ZkYFrrj5cO1WcLkdNfxqBS@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxLqJa14bzYJ5tl7rumiCm7A0dKSgYT1gRQ4Rp2MdH6NhQHOUa
-	gdWH6u86jzzSJCXAv9QOwdku1n4o8wUXhJpy4dBUmjoEHTRQsB8i5vrXAYcG9iF1ebBy9ta6MQs
-	kw4GFkmIaHtabcYaJbcPPBSuRakvKko5fwHsypFoP09j4pj7GPBlYkZkW6TgkYGAs27c=
-X-Gm-Gg: ASbGncvVX/fNz2pdi2mUnGg7wGDRA2xy15K28wNvR6hq8mMXQ5fc703niVht4MvY56l
-	JdIbVoOCzwJ9kfTfq8XT0+rHl0kXv9pr2rnr0COzhH3Hpg7c1p7g5/bhjHSx3PlE4PS7OHbvP/R
-	4F0pMS2g4n1/TM4qu9etQjEy0Vja1FdJ+ePwxTRAZ4afmO6IE/FaXQpnFqOEPJ4orjzozZIvo3Y
-	AIW+mXin+OW5CJa1iuIBf746kH2itvBhnmtmn8fxWduC+vAMj//RRVDkKlfsL63wQR0IuRqp7wA
-	NF1NvhyjV/Yb4wdi1T1z27yMD9EeOYLVS4N6bcCapZPLZSmH9FC3p7Z9aAiC0pq5mVjA3+QYUMB
-	18MNhhG0eiZ14X1LfsolizoNMdu3jHFwCL7clx/JCtEozY4V1Y6cVoTpPVUYiy90bvjw=
-X-Received: by 2002:a5d:5f90:0:b0:3a4:fbaf:749e with SMTP id ffacd0b85a97d-3b7950065fdmr6170018f8f.49.1753978538656;
-        Thu, 31 Jul 2025 09:15:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGytZULQmZ/hDajIkM/Htt7MthdICmHyxaaQPthRUhPkwjUZgExKSH13cnPbk4HyFbkpq+P8Q==
-X-Received: by 2002:a5d:5f90:0:b0:3a4:fbaf:749e with SMTP id ffacd0b85a97d-3b7950065fdmr6169988f8f.49.1753978538121;
-        Thu, 31 Jul 2025 09:15:38 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f44:3700:be07:9a67:67f7:24e6? (p200300d82f443700be079a6767f724e6.dip0.t-ipconnect.de. [2003:d8:2f44:3700:be07:9a67:67f7:24e6])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c4a6f62sm2778077f8f.73.2025.07.31.09.15.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Jul 2025 09:15:37 -0700 (PDT)
-Message-ID: <09acd558-19b9-4964-823b-502b9044f954@redhat.com>
-Date: Thu, 31 Jul 2025 18:15:35 +0200
+	s=arc-20240116; t=1753982528; c=relaxed/simple;
+	bh=1YnB1ZKnnu9ilOE9Ji9EAqgov7dm1nmZG/v+1gkFJgQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tK4YcsFKr9NAHdrj4DON6k2P1cTyVFbQmFKGOjsxmrGLvXnnRbU8TUV1jCFIM5HAnAvWl/wysDSneEXmxfF+7mznLeDk/RJbp1hts1O+vTuOS5AXvg5OPX54Hl3E2hkinQZgzo/c4RD9jqnaq5EB2f0mq2P4TdMTLavJGcNzeFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q+kQjTKS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 357A7C4CEEF;
+	Thu, 31 Jul 2025 17:22:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753982527;
+	bh=1YnB1ZKnnu9ilOE9Ji9EAqgov7dm1nmZG/v+1gkFJgQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Q+kQjTKSaxNBJ/YMiJrqgeSQk9K+C9OTKd3RM4xKUKKMxBBh3+K+vF8GwlWEq0I8W
+	 nox28BNIXStI+A7r9Rm36zhW1RzaaevNOzjACzUC7FEti9cAIADi6SLfHrqbKN1Gbo
+	 feBcN+c6GCLwM+xPPAxzT+5a87wqHWlRaI9yubzSjRLVLhCi+cC5775Th9ZShUbA5K
+	 aIprnHpSojAjpd0VWqtdFbcx49BTlyWwj3tRI82eCTE93mXYnXuMRcO8v3GQ7M8s88
+	 kBuhbjAr9zuzjK1FACMxUq4h/Sr10Zp+vwjT50Px13K6IdtmplsiPQXhtHnU6rSF6h
+	 gMZsv8yfRRp7Q==
+Date: Thu, 31 Jul 2025 10:22:06 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Amir Goldstein <amir73il@gmail.com>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, John@groves.net,
+	bernd@bsbernd.com, miklos@szeredi.hu, joannelkoong@gmail.com,
+	Josef Bacik <josef@toxicpanda.com>,
+	linux-ext4 <linux-ext4@vger.kernel.org>,
+	Theodore Ts'o <tytso@mit.edu>, Neal Gompa <neal@gompa.dev>
+Subject: Re: [RFC v3] fuse: use fs-iomap for better performance so we can
+ containerize ext4
+Message-ID: <20250731172206.GJ2672070@frogsfrogsfrogs>
+References: <20250717231038.GQ2672029@frogsfrogsfrogs>
+ <20250718-flitzen-imker-4874d797877e@brauner>
+ <CAOQ4uxgV_nJZBh4BNE+LEjCsMToHv7vSj8Ci4yJqtR-vrxb=yA@mail.gmail.com>
+ <20250718193116.GC2672029@frogsfrogsfrogs>
+ <20250723-situiert-lenkrad-c17d23a177bd@brauner>
+ <20250723180443.GK2672029@frogsfrogsfrogs>
+ <20250731-mitverantwortlich-geothermie-085916922040@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/5] mm/huge_memory: convert "tva_flags" to "enum
- tva_type" for thp_vma_allowable_order*()
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Usama Arif <usamaarif642@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, corbet@lwn.net, rppt@kernel.org,
- surenb@google.com, mhocko@suse.com, hannes@cmpxchg.org, baohua@kernel.org,
- shakeel.butt@linux.dev, riel@surriel.com, ziy@nvidia.com,
- laoar.shao@gmail.com, dev.jain@arm.com, baolin.wang@linux.alibaba.com,
- npache@redhat.com, Liam.Howlett@oracle.com, ryan.roberts@arm.com,
- vbabka@suse.cz, jannh@google.com, Arnd Bergmann <arnd@arndb.de>,
- sj@kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- kernel-team@meta.com
-References: <20250731122825.2102184-1-usamaarif642@gmail.com>
- <20250731122825.2102184-3-usamaarif642@gmail.com>
- <c44cb864-3b36-4aa2-8040-60c97bfdc28e@lucifer.local>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <c44cb864-3b36-4aa2-8040-60c97bfdc28e@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250731-mitverantwortlich-geothermie-085916922040@brauner>
 
-On 31.07.25 16:00, Lorenzo Stoakes wrote:
-> On Thu, Jul 31, 2025 at 01:27:19PM +0100, Usama Arif wrote:
->> From: David Hildenbrand <david@redhat.com>
->>
->> Describing the context through a type is much clearer, and good enough
->> for our case.
+On Thu, Jul 31, 2025 at 12:13:01PM +0200, Christian Brauner wrote:
+> On Wed, Jul 23, 2025 at 11:04:43AM -0700, Darrick J. Wong wrote:
+> > On Wed, Jul 23, 2025 at 03:05:12PM +0200, Christian Brauner wrote:
+> > > On Fri, Jul 18, 2025 at 12:31:16PM -0700, Darrick J. Wong wrote:
+> > > > On Fri, Jul 18, 2025 at 01:55:48PM +0200, Amir Goldstein wrote:
+> > > > > On Fri, Jul 18, 2025 at 10:54 AM Christian Brauner <brauner@kernel.org> wrote:
+> > > > > >
+> > > > > > On Thu, Jul 17, 2025 at 04:10:38PM -0700, Darrick J. Wong wrote:
+> > > > > > > Hi everyone,
+> > > > > > >
+> > > > > > > DO NOT MERGE THIS, STILL!
+> > > > > > >
+> > > > > > > This is the third request for comments of a prototype to connect the
+> > > > > > > Linux fuse driver to fs-iomap for regular file IO operations to and from
+> > > > > > > files whose contents persist to locally attached storage devices.
+> > > > > > >
+> > > > > > > Why would you want to do that?  Most filesystem drivers are seriously
+> > > > > > > vulnerable to metadata parsing attacks, as syzbot has shown repeatedly
+> > > > > > > over almost a decade of its existence.  Faulty code can lead to total
+> > > > > > > kernel compromise, and I think there's a very strong incentive to move
+> > > > > > > all that parsing out to userspace where we can containerize the fuse
+> > > > > > > server process.
+> > > > > > >
+> > > > > > > willy's folios conversion project (and to a certain degree RH's new
+> > > > > > > mount API) have also demonstrated that treewide changes to the core
+> > > > > > > mm/pagecache/fs code are very very difficult to pull off and take years
+> > > > > > > because you have to understand every filesystem's bespoke use of that
+> > > > > > > core code.  Eeeugh.
+> > > > > > >
+> > > > > > > The fuse command plumbing is very simple -- the ->iomap_begin,
+> > > > > > > ->iomap_end, and iomap ->ioend calls within iomap are turned into
+> > > > > > > upcalls to the fuse server via a trio of new fuse commands.  Pagecache
+> > > > > > > writeback is now a directio write.  The fuse server is now able to
+> > > > > > > upsert mappings into the kernel for cached access (== zero upcalls for
+> > > > > > > rereads and pure overwrites!) and the iomap cache revalidation code
+> > > > > > > works.
+> > > > > > >
+> > > > > > > With this RFC, I am able to show that it's possible to build a fuse
+> > > > > > > server for a real filesystem (ext4) that runs entirely in userspace yet
+> > > > > > > maintains most of its performance.  At this stage I still get about 95%
+> > > > > > > of the kernel ext4 driver's streaming directio performance on streaming
+> > > > > > > IO, and 110% of its streaming buffered IO performance.  Random buffered
+> > > > > > > IO is about 85% as fast as the kernel.  Random direct IO is about 80% as
+> > > > > > > fast as the kernel; see the cover letter for the fuse2fs iomap changes
+> > > > > > > for more details.  Unwritten extent conversions on random direct writes
+> > > > > > > are especially painful for fuse+iomap (~90% more overhead) due to upcall
+> > > > > > > overhead.  And that's with debugging turned on!
+> > > > > > >
+> > > > > > > These items have been addressed since the first RFC:
+> > > > > > >
+> > > > > > > 1. The iomap cookie validation is now present, which avoids subtle races
+> > > > > > > between pagecache zeroing and writeback on filesystems that support
+> > > > > > > unwritten and delalloc mappings.
+> > > > > > >
+> > > > > > > 2. Mappings can be cached in the kernel for more speed.
+> > > > > > >
+> > > > > > > 3. iomap supports inline data.
+> > > > > > >
+> > > > > > > 4. I can now turn on fuse+iomap on a per-inode basis, which turned out
+> > > > > > > to be as easy as creating a new ->getattr_iflags callback so that the
+> > > > > > > fuse server can set fuse_attr::flags.
+> > > > > > >
+> > > > > > > 5. statx and syncfs work on iomap filesystems.
+> > > > > > >
+> > > > > > > 6. Timestamps and ACLs work the same way they do in ext4/xfs when iomap
+> > > > > > > is enabled.
+> > > > > > >
+> > > > > > > 7. The ext4 shutdown ioctl is now supported.
+> > > > > > >
+> > > > > > > There are some major warts remaining:
+> > > > > > >
+> > > > > > > a. ext4 doesn't support out of place writes so I don't know if that
+> > > > > > > actually works correctly.
+> > > > > > >
+> > > > > > > b. iomap is an inode-based service, not a file-based service.  This
+> > > > > > > means that we /must/ push ext2's inode numbers into the kernel via
+> > > > > > > FUSE_GETATTR so that it can report those same numbers back out through
+> > > > > > > the FUSE_IOMAP_* calls.  However, the fuse kernel uses a separate nodeid
+> > > > > > > to index its incore inode, so we have to pass those too so that
+> > > > > > > notifications work properly.  This is related to #3 below:
+> > > > > > >
+> > > > > > > c. Hardlinks and iomap are not possible for upper-level libfuse clients
+> > > > > > > because the upper level libfuse likes to abstract kernel nodeids with
+> > > > > > > its own homebrew dirent/inode cache, which doesn't understand hardlinks.
+> > > > > > > As a result, a hardlinked file results in two distinct struct inodes in
+> > > > > > > the kernel, which completely breaks iomap's locking model.  I will have
+> > > > > > > to rewrite fuse2fs for the lowlevel libfuse library to make this work,
+> > > > > > > but on the plus side there will be far less path lookup overhead.
+> > > > > > >
+> > > > > > > d. There are too many changes to the IO manager in libext2fs because I
+> > > > > > > built things needed to stage the direct/buffered IO paths separately.
+> > > > > > > These are now unnecessary but I haven't pulled them out yet because
+> > > > > > > they're sort of useful to verify that iomap file IO never goes through
+> > > > > > > libext2fs except for inline data.
+> > > > > > >
+> > > > > > > e. If we're going to use fuse servers as "safe" replacements for kernel
+> > > > > > > filesystem drivers, we need to be able to set PF_MEMALLOC_NOFS so that
+> > > > > > > fuse2fs memory allocations (in the kernel) don't push pagecache reclaim.
+> > > > > > > We also need to disable the OOM killer(s) for fuse servers because you
+> > > > > > > don't want filesystems to unmount abruptly.
+> > > > > > >
+> > > > > > > f. How do we maximally contain the fuse server to have safe filesystem
+> > > > > > > mounts?  It's very convenient to use systemd services to configure
+> > > > > > > isolation declaratively, but fuse2fs still needs to be able to open
+> > > > > > > /dev/fuse, the ext4 block device, and call mount() in the shared
+> > > > > > > namespace.  This prevents us from using most of the stronger systemd
+> > > > > >
+> > > > > > I'm happy to help you here.
+> > > > > >
+> > > > > > First, I think using a character device for namespaced drivers is always
+> > > > > > a mistake. FUSE predates all that ofc. They're incredibly terrible for
+> > > > > > delegation because of devtmpfs not being namespaced as well as devices
+> > > > > > in general. And having device nodes on anything other than tmpfs is just
+> > > > > > wrong (TM).
+> > > > > >
+> > > > > > In systemd I ultimately want a bpf LSM program that prevents the
+> > > > > > creation of device nodes outside of tmpfs. They don't belong on
+> > > > > > persistent storage imho. But anyway, that's besides the point.
+> > > > > >
+> > > > > > Opening the block device should be done by systemd-mountfsd but I think
+> > > > > > /dev/fuse should really be openable by the service itself.
+> > > > 
+> > > > /me slaps his head and remembers that fsopen/fsconfig/fsmount exist.
+> > > > Can you pass an fsopen fd to an unprivileged process and have that
+> > > > second process call fsmount?
+> > > 
+> > > Yes, but remember that at some point you must call
+> > > fsconfig(FSCONFIG_CMD_CREATE) to create the superblock. On block based
+> > > fses that requires CAP_SYS_ADMIN so that has to be done by the
+> > > privielged process. All the rest can be done by the unprivileged process
+> > > though. That's exactly how bpf tokens work.
+> > 
+> > Hrm.  Assuming the fsopen mount sequence is still:
+> > 
+> > 	sfd = fsopen("ext4", FSOPEN_CLOEXEC);
+> > 	fsconfig(sfd, FSCONFIG_SET_FLAG, "ro", NULL, 0);
+> > 	...
+> > 	fsconfig(sfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
+> > 	mfd = fsmount(sfd, FSMOUNT_CLOEXEC, MS_RELATIME);
+> > 	move_mount(mfd, "", sfd, AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH);
+> > 
+> > Then I guess whoever calls fsconfig(FSCONFIG_CMD_CREATE) needs
+> > CAP_SYS_ADMIN; and they have to be running in the desired fs namespace
+> > for move_mount() to have the intended effect.
+> 
+> Yes-ish.
+> 
+> At fsopen() time the user namespace of the caller is recorded in
+> fs_context->user_ns. If the filesystems is mountable inside of a user
+> namespace then fs_context->user_ns will be used to perform the
+> CAP_SYS_ADMIN check.
 
-Just for the other patch, I'll let Usama take it from here, just a bunch 
-of comments.
+Hrmm, well fuse is one of the filesystems that sets FS_USERNS_MOUNT, so
+I gather that means that the fuse service server (ugh) could invoke the
+mount using the fsopen fd given to it?  That sounds promising.
 
-> 
-> This is pretty bare bones. What context, what type? Under what
-> circumstances?
-> 
-> This also is missing detail on the key difference here - that actually it
-> turns out we _don't_ need these to be flags, rather we can have _distinct_
-> modes which are clearer.
-> 
-> I'd say something like:
-> 
-> 	when determining which THP orders are eligiible for a VMA mapping,
-> 	we have previously specified tva_flags, however it turns out it is
-> 	really not necessary to treat these as flags.
-> 
-> 	Rather, we distinguish between distinct modes.
-> 
-> 	The only case where we previously combined flags was with
-> 	TVA_ENFORCE_SYSFS, but we can avoid this by observing that this is
-> 	the default, except for MADV_COLLAPSE or an edge cases in
-> 	collapse_pte_mapped_thp() and hugepage_vma_revalidate(), and adding
-> 	a mode specifically for this case - TVA_FORCED_COLLAPSE.
-> 
-> 	... stuff about the different modes...
-> 
->>
->> We have:
->> * smaps handling for showing "THPeligible"
->> * Pagefault handling
->> * khugepaged handling
->> * Forced collapse handling: primarily MADV_COLLAPSE, but one other odd case
-> 
-> Can we actually state what this case is? I mean I guess a handwave in the
-> form of 'an edge case in collapse_pte_mapped_thp()' will do also.
+> For filesystems that aren't mountable inside of user namespaces (ext4,
+> xfs, ...) the fs_context->user_ns is ignored in mount_capable() and
+> global CAP_SYS_ADMIN is required. sget_fc() and friends flat out refuse
+> to mount a filesystem with a non-initial userns if it's not marked as
+> mountable. That used to be possible but it's an invitation for extremely
+> subtle bugs and you gain control over the superblock itself.
 
-Yeah, something like that. I think we also call it when we previously 
-checked that there is a THP and that we might be allowed to collapse. 
-E.g., collapse_pte_mapped_thp() is also called from khugepaged code 
-where we already checked the allowed order.
+I guess that's commit e1c5ae59c0f22f ("fs: don't allow non-init
+s_user_ns for filesystems without FS_USERNS_MOUNT")?  What does it mean
+for a filesystem to be "...written with a non-initial s_user_ns in
+mind"?  Is there something specific that I should look out for, aside
+from the usual "we don't mount parking lot xfs because validating that
+is too hard and it might explode the kernel"?
 
+> TL;DR the user namespace the superblock belongs to is usually determined
+> at fsopen() time.
 > 
-> Hmm actually we do weird stuff with this so maybe just handwave.
+> > 
+> > Can two processes share the same fsopen fd?  If so then systemd-mountfsd
 > 
-> Like uprobes calls collapse_pte_mapped_thp()... :/ I'm not sure this 'If we
-> are here, we've succeeded in replacing all the native pages in the page
-> cache with a single hugepage.' comment is even correct.
+> Yes, they can share and it's synchronized.
 
-I think in all these cases we already have a THP and want to force that 
-collapse in the page table.
+> > could pass the fsopen fd to the fuse server (whilst retaining its own
+> > copy).  The fuse server could do its own mount option parsing, call
+> 
+> Yes, systemd-mountfsd already does passing like that.
 
-[...]
+Oh!
 
->>
->> Really, we want to ignore sysfs only when we are forcing a collapse
->> through MADV_COLLAPSE, otherwise we want to enforce.
+> > FSCONFIG_SET_* on the fd, and then signal back to systemd-mountfsd to do
+> > the create/fsmount/move_mount part.
 > 
-> I'd say 'ignoring this edge case, ...'
-> 
-> I think the clearest thing might be to literally list the before/after
-> like:
-> 
-> * TVA_SMAPS | TVA_ENFORCE_SYSFS -> TVA_SMAPS
-> * TVA_IN_PF | TVA_ENFORCE_SYSFS -> TVA_PAGEFAULT
-> * TVA_ENFORCE_SYSFS             -> TVA_KHUGEPAGED
-> * 0                             -> TVA_FORCED_COLLAPSE
-> 
+> Yes.
 
-That makes sense.
+If the fdopen fd tracks the userns of whoever initiated the mount
+attempt, then maybe the fuse server can do that part too?  I guess the
+weird part would be that the fuse server would effectively be passing a
+path from the caller's ns, despite not having access to that ns.
 
->>
->> With this change, we immediately know if we are in the forced collapse
->> case, which will be valuable next.
->>
->> Signed-off-by: David Hildenbrand <david@redhat.com>
->> Acked-by: Usama Arif <usamaarif642@gmail.com>
->> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+> > The systemd-mountfsd would have to be running in desired fs namespace
+> > and with sufficient privileges to open block devices, but I'm guessing
+> > that's already a requirement?
 > 
-> Overall this is a great cleanup, some various nits however.
-> 
->> ---
->>   fs/proc/task_mmu.c      |  4 ++--
->>   include/linux/huge_mm.h | 30 ++++++++++++++++++------------
->>   mm/huge_memory.c        |  8 ++++----
->>   mm/khugepaged.c         | 18 +++++++++---------
->>   mm/memory.c             | 14 ++++++--------
->>   5 files changed, 39 insertions(+), 35 deletions(-)
->>
->> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
->> index 3d6d8a9f13fc..d440df7b3d59 100644
->> --- a/fs/proc/task_mmu.c
->> +++ b/fs/proc/task_mmu.c
->> @@ -1293,8 +1293,8 @@ static int show_smap(struct seq_file *m, void *v)
->>   	__show_smap(m, &mss, false);
->>
->>   	seq_printf(m, "THPeligible:    %8u\n",
->> -		   !!thp_vma_allowable_orders(vma, vma->vm_flags,
->> -			   TVA_SMAPS | TVA_ENFORCE_SYSFS, THP_ORDERS_ALL));
->> +		   !!thp_vma_allowable_orders(vma, vma->vm_flags, TVA_SMAPS,
->> +					      THP_ORDERS_ALL));
-> 
-> This !! is so gross, wonder if we could have a bool wrapper. But not a big
-> deal.
-> 
-> I also sort of _hate_ the smaps flag anyway, invoking this 'allowable
-> orders' thing just for smaps reporting with maybe some minor delta is just
-> odd.
-> 
-> Something like `bool vma_has_thp_allowed_orders(struct vm_area_struct
-> *vma);` would be nicer.
-> 
-> Anyway thoughts for another time... :)
+> Yes, systemd-mountfsd is a system level service running in the initial
+> set of namespaces and interacting with systemd-nsresourced (namespace
+> related stuff). It can obviously also create helper to setns() into
+> various namespaces if required. 
 
-Yeah, that's not the only nasty bit here ... :)
+<nod> I think I saw something else from you about a file descriptor
+store, so I'll go look there next.
 
-> 
->>
->>   	if (arch_pkeys_enabled())
->>   		seq_printf(m, "ProtectionKey:  %8u\n", vma_pkey(vma));
->> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
->> index 71db243a002e..b0ff54eee81c 100644
->> --- a/include/linux/huge_mm.h
->> +++ b/include/linux/huge_mm.h
->> @@ -94,12 +94,15 @@ extern struct kobj_attribute thpsize_shmem_enabled_attr;
->>   #define THP_ORDERS_ALL	\
->>   	(THP_ORDERS_ALL_ANON | THP_ORDERS_ALL_SPECIAL | THP_ORDERS_ALL_FILE_DEFAULT)
->>
->> -#define TVA_SMAPS		(1 << 0)	/* Will be used for procfs */
-> 
-> Dumb question, but what does 'TVA' stand for? :P
+--D
 
-Whoever came up with that probably used the function name where this is 
-passed in
-
-thp_vma_allowable_orders()
-
+> > 
+> > > > If so, then it would be more convenient if mount.safe/systemd-mountfsd
+> > > > could pass open fds for /dev/fuse fsopen then the fuse server wouldn't
 > 
->> -#define TVA_IN_PF		(1 << 1)	/* Page fault handler */
->> -#define TVA_ENFORCE_SYSFS	(1 << 2)	/* Obey sysfs configuration */
->> +enum tva_type {
->> +	TVA_SMAPS,		/* Exposing "THPeligible:" in smaps. */
+> Yes, I would think so.
 > 
-> How I hate this flag (just an observation...)
-> 
->> +	TVA_PAGEFAULT,		/* Serving a page fault. */
->> +	TVA_KHUGEPAGED,		/* Khugepaged collapse. */
-> 
-> This is equivalent to the TVA_ENFORCE_SYSFS case before, sort of a default
-> I guess, but actually quite nice to add the context that it's sourced from
-> khugepaged - I assume this will always be the case when specified?
-> 
->> +	TVA_FORCED_COLLAPSE,	/* Forced collapse (i.e., MADV_COLLAPSE). */
-> 
-> Would put 'e.g.' here, then that allows 'space' for the edge case...
-
-Makes sense.
-
-> 
->> +};
->>
->> -#define thp_vma_allowable_order(vma, vm_flags, tva_flags, order) \
->> -	(!!thp_vma_allowable_orders(vma, vm_flags, tva_flags, BIT(order)))
->> +#define thp_vma_allowable_order(vma, vm_flags, type, order) \
->> +	(!!thp_vma_allowable_orders(vma, vm_flags, type, BIT(order)))
-> 
-> Nit, but maybe worth keeping tva_ prefix - tva_type - here just so it's
-> clear what type it refers to.
-> 
-> But not end of the world.
-> 
-> Same comment goes for param names below etc.
-
-No strong opinion, but I prefer to drop the prefix when it can be 
-deduced from the type and we are inside of the very function that 
-essentially defines these types (tva prefix is implicit, no other type 
-applies).
-
-These should probably just be inline functions at some point with proper 
-types and doc (separate patch uin the future, of course).
-
-[...]
-
->> +++ b/mm/khugepaged.c
->> @@ -474,8 +474,7 @@ void khugepaged_enter_vma(struct vm_area_struct *vma,
->>   {
->>   	if (!test_bit(MMF_VM_HUGEPAGE, &vma->vm_mm->flags) &&
->>   	    hugepage_pmd_enabled()) {
->> -		if (thp_vma_allowable_order(vma, vm_flags, TVA_ENFORCE_SYSFS,
->> -					    PMD_ORDER))
->> +		if (thp_vma_allowable_order(vma, vm_flags, TVA_KHUGEPAGED, PMD_ORDER))
->>   			__khugepaged_enter(vma->vm_mm);
->>   	}
->>   }
->> @@ -921,7 +920,8 @@ static int hugepage_vma_revalidate(struct mm_struct *mm, unsigned long address,
->>   				   struct collapse_control *cc)
->>   {
->>   	struct vm_area_struct *vma;
->> -	unsigned long tva_flags = cc->is_khugepaged ? TVA_ENFORCE_SYSFS : 0;
->> +	enum tva_type tva_type = cc->is_khugepaged ? TVA_KHUGEPAGED :
->> +				 TVA_FORCED_COLLAPSE;
-> 
-> This is great, this is so much clearer.
-> 
-> A nit though, I mean I come back to my 'type' vs 'tva_type' nit above, this
-> is inconsistent, so we should choose one approach and stick with it.
-
-This is outside of the function, so I would prefer to keep it here, but 
-no stong opinion.
-
-> 
->>
->>   	if (unlikely(hpage_collapse_test_exit_or_disable(mm)))
->>   		return SCAN_ANY_PROCESS;
->> @@ -932,7 +932,7 @@ static int hugepage_vma_revalidate(struct mm_struct *mm, unsigned long address,
->>
->>   	if (!thp_vma_suitable_order(vma, address, PMD_ORDER))
->>   		return SCAN_ADDRESS_RANGE;
->> -	if (!thp_vma_allowable_order(vma, vma->vm_flags, tva_flags, PMD_ORDER))
->> +	if (!thp_vma_allowable_order(vma, vma->vm_flags, tva_type, PMD_ORDER))
->>   		return SCAN_VMA_CHECK;
->>   	/*
->>   	 * Anon VMA expected, the address may be unmapped then
->> @@ -1532,9 +1532,10 @@ int collapse_pte_mapped_thp(struct mm_struct *mm, unsigned long addr,
->>   	 * in the page cache with a single hugepage. If a mm were to fault-in
->>   	 * this memory (mapped by a suitably aligned VMA), we'd get the hugepage
->>   	 * and map it by a PMD, regardless of sysfs THP settings. As such, let's
->> -	 * analogously elide sysfs THP settings here.
->> +	 * analogously elide sysfs THP settings here and pretend we are
->> +	 * collapsing.
-> 
-> I think saying pretending here is potentially confusing, maybe worth saying
-> 'force collapse'?
-
-Makes sense.
-
--- 
-Cheers,
-
-David / dhildenb
-
+> > > 
+> > > Yes, that would work.
+> > 
+> > Oh goody :)
+> > 
+> > > > need any special /dev access at all.  I think then the fuse server's
+> > > > service could have:
+> > > > 
+> > > > DynamicUser=true
+> > > > ProtectSystem=true
+> > > > ProtectHome=true
+> > > > PrivateTmp=true
+> > > > PrivateDevices=true
+> > > > DevicePolicy=strict
+> > > > 
+> > > > (I think most of those are redundant with DynamicUser=true but a lot of
+> > > > my systemd-fu is paged out ATM.)
+> > > > 
+> > > > My goal here is extreme containment -- the code doing the fs metadata
+> > > > parsing has no privileges, no write access except to the fds it was
+> > > > given, no network access, and no ability to read anything outside the
+> > > > root filesystem.  Then I can get back to writing buffer
+> > > > overflows^W^Whigh quality filesystem code in peace.
+> > > 
+> > > Yeah, sounds about right.
+> > > 
+> > > > 
+> > > > > > So we can try and allowlist /dev/fuse in vfs_mknod() similar to
+> > > > > > whiteouts. That means you can do mknod() in the container to create
+> > > > > > /dev/fuse (Personally, I would even restrict this to tmpfs right off the
+> > > > > > bat so that containers can only do this on their private tmpfs mount at
+> > > > > > /dev.)
+> > > > > >
+> > > > > > The downside of this would be to give unprivileged containers access to
+> > > > > > FUSE by default. I don't think that's a problem per se but it is a uapi
+> > > > > > change.
+> > > > 
+> > > > Yeah, that is a new risk.  It's still better than metadata parsing
+> > > > within the kernel address space ... though who knows how thoroughly fuse
+> > > > has been fuzzed by syzbot :P
+> > > > 
+> > > > > > Let me think a bit about alternatives. I have one crazy idea but I'm not
+> > > > > > sure enough about it to spill it.
+> > > > 
+> > > > Please do share, #f is my crazy unbaked idea. :)
+> > > > 
+> > > > > I don't think there is a hard requirement for the fuse fd to be opened from
+> > > > > a device driver.
+> > > > > With fuse io_uring communication, the open fd doesn't even need to do io.
+> > > > > 
+> > > > > > > protections because they tend to run in a private mount namespace with
+> > > > > > > various parts of the filesystem either hidden or readonly.
+> > > > > > >
+> > > > > > > In theory one could design a socket protocol to pass mount options,
+> > > > > > > block device paths, fds, and responsibility for the mount() call between
+> > > > > > > a mount helper and a service:
+> > > > > >
+> > > > > > This isn't a problem really. This should just be an extension to
+> > > > > > systemd-mountfsd.
+> > > > 
+> > > > I suppose mount.safe could very well call systemd-mount to go do all the
+> > > > systemd-related service setup, and that would take care of udisks as
+> > > > well.
+> > > 
+> > > The ultimate goal is to teach mount(8)/libmount to use that daemon when
+> > > it's available. Because that would just make unprivileged mounting work
+> > > without userspace noticing anything.
+> > 
+> > That sounds really neat. :)
+> > 
+> > --D
 
