@@ -1,145 +1,277 @@
-Return-Path: <linux-fsdevel+bounces-56415-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56416-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D11DDB172EB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Jul 2025 16:12:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 313D4B17326
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Jul 2025 16:22:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E1731887BE1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Jul 2025 14:13:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FC40177B6A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Jul 2025 14:22:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 629852D238C;
-	Thu, 31 Jul 2025 14:12:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E99716F8E9;
+	Thu, 31 Jul 2025 14:22:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="fSxhT26R"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72AC2C1594;
-	Thu, 31 Jul 2025 14:12:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 996E72F24;
+	Thu, 31 Jul 2025 14:22:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753971163; cv=none; b=slMblf5O+brCdDretXkugfyiYsc59jnb3Mei8+Fo1NJ7tN74ihOhJD5rq0J/xyrRiI9qbkYPKNYDuzegmofCzWpK4NpsAPnQS4UyuCcPAz2ewpHQz70WXH2nspdXZD5sxQfTm1Jzp3rflfQzk1I9XiMDuxjI4F4pwOJszKakbHA=
+	t=1753971723; cv=none; b=KgyX3WVZ7HrO7lUIQ7Sg5m+HZ2pjE237dmRpvTmnUkecG4AWMWa0F35dJZUuzaMVyS8Kb+ghZKJaUYGozF2itgudnxQ89uRnz9V5bAAR3iv145aZ3LgqMa9NdjdcB1SAR+OFC8uyeIu9qBwBABkUAL0igLJmuHYlCLBP/JitgIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753971163; c=relaxed/simple;
-	bh=N+mvX9ou1vvZCytYXuof8XXOllsC5htU6j309tbQTAg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Q2+m1pvopF0BMsqdcQ9Ek3VXgB/W1nl0G3Vdcfm9UwLwNHkMdq5fEFhEsJuBbxQ/Bs2jKTl0RfryQqGLpzq4BsojYu7V7Xzf0jLdBJdfdPDvgYLxx8D5ZoayCoCEiUFiBZuXBgNPHb3iwdf7pKIcy05o+8xMWTB6Y4d97BmrZgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bt9yP1JgszKHMZm;
-	Thu, 31 Jul 2025 22:12:29 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 1B21F1A058E;
-	Thu, 31 Jul 2025 22:12:28 +0800 (CST)
-Received: from huawei.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgD3chPFeYtowwJwCA--.44078S4;
-	Thu, 31 Jul 2025 22:12:28 +0800 (CST)
-From: sunyongjian@huaweicloud.com
-To: linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	yangerkun@huawei.com,
-	yi.zhang@huawei.com,
-	libaokun1@huawei.com,
-	chengzhihao1@huawei.com,
-	sunyongjian1@huawei.com
-Subject: [PATCH -next] ext4: add an update to i_disksize in ext4_block_page_mkwrite
-Date: Thu, 31 Jul 2025 22:05:28 +0800
-Message-Id: <20250731140528.1554917-1-sunyongjian@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1753971723; c=relaxed/simple;
+	bh=IraNA8HTuhadpvynlNEEmtD7drpccg1KpgtEBN3GQWY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WFxVGh0GcMe+w2uE6oeVVLU095BEWXEzk1Ci193e1igaDdN13U3x8HsogqVa1bnqTrgNVRMDyfRmza9sztKLtbWk9NXDd8g8zmQ6rJyAHhgx5zODGs5/Dv8CNnEzA11cU83PcqKQ8vvEIE2l3Q4pgpCUZbY29SxnAsMmehTOSgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=fSxhT26R; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4btB9C2WM7z9sQm;
+	Thu, 31 Jul 2025 16:21:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1753971711;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Nx7s0z1EH5FszrdcRN7llIs5P/UhYM04dWI3hk+qTCc=;
+	b=fSxhT26R7FIdX7IsYL6TTqWc7hAA8xDFEG7EooVGRkH4Xvx17IgMaxM9Nx5o5ce8bgXYhE
+	SxtHz2Sxy96iUsi0+CyrFad/uWxefqow3XNHHuJ8R3Z6XTYLt7zxifpbtiQYqOgXcLnpHQ
+	ITXjikMtUK8NUBdfL1EW8vrL6HQKJbDIOJrAbaOzG1wSN3uKmskmwpaSP7BykvGwr5inyv
+	40JO2o+wdhzOLuwyrCH7PJNXMPZbQK3LXusXsDAuYHjRBWAYBOYmCLU2xv3Hm4b/YOM90u
+	ZQSqMTxdJMfR6uOBWcS9lfkJRRxJvm2JO47853ZKmXPDTOd3iMLnaAQV00lRTQ==
+Date: Fri, 1 Aug 2025 00:21:37 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH RFC v2 3/4] procfs: add PROCFS_GET_PID_NAMESPACE ioctl
+Message-ID: <2025-07-31.1753971633-unlucky-spatula-dismal-smirk-chalky-beasts-Secy8D@cyphar.com>
+References: <20250723-procfs-pidns-api-v2-0-621e7edd8e40@cyphar.com>
+ <20250723-procfs-pidns-api-v2-3-621e7edd8e40@cyphar.com>
+ <20250724-beobachten-verfassen-9a39c0318341@brauner>
+ <2025-07-25.1753409614-vile-track-icky-epidemic-frail-antidote-d7NYuu@cyphar.com>
+ <20250731-angliederung-mahlt-9e5811969817@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgD3chPFeYtowwJwCA--.44078S4
-X-Coremail-Antispam: 1UD129KBjvJXoW7AFykCFWkKr17WF43Wr4Durg_yoW8Kw1Up3
-	yYkFyvgr1vg3s5uws7XF1UXFyjkayrKr4xJFy7Gr42vFy5uw1IgF18t3sxWa4UtrWfJFWq
-	qFWFqrWDWay8u3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkmb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r12
-	6r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI
-	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y
-	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
-	WUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1l
-	IxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUwSdgDUUUU
-X-CM-SenderInfo: 5vxq505qjmxt3q6k3tpzhluzxrxghudrp/
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="vqlqvmb7rrrsrgkq"
+Content-Disposition: inline
+In-Reply-To: <20250731-angliederung-mahlt-9e5811969817@brauner>
 
-From: Yongjian Sun <sunyongjian1@huawei.com>
 
-After running a stress test combined with fault injection,
-we performed fsck -a followed by fsck -fn on the filesystem
-image. During the second pass, fsck -fn reported:
+--vqlqvmb7rrrsrgkq
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH RFC v2 3/4] procfs: add PROCFS_GET_PID_NAMESPACE ioctl
+MIME-Version: 1.0
 
-Inode 131512, end of extent exceeds allowed value
-	(logical block 405, physical block 1180540, len 2)
+On 2025-07-31, Christian Brauner <brauner@kernel.org> wrote:
+> On Fri, Jul 25, 2025 at 12:24:28PM +1000, Aleksa Sarai wrote:
+> > On 2025-07-24, Christian Brauner <brauner@kernel.org> wrote:
+> > > On Wed, Jul 23, 2025 at 09:18:53AM +1000, Aleksa Sarai wrote:
+> > > > /proc has historically had very opaque semantics about PID namespac=
+es,
+> > > > which is a little unfortunate for container runtimes and other prog=
+rams
+> > > > that deal with switching namespaces very often. One common issue is=
+ that
+> > > > of converting between PIDs in the process's namespace and PIDs in t=
+he
+> > > > namespace of /proc.
+> > > >=20
+> > > > In principle, it is possible to do this today by opening a pidfd wi=
+th
+> > > > pidfd_open(2) and then looking at /proc/self/fdinfo/$n (which will
+> > > > contain a PID value translated to the pid namespace associated with=
+ that
+> > > > procfs superblock). However, allocating a new file for each PID to =
+be
+> > > > converted is less than ideal for programs that may need to scan pro=
+cfs,
+> > > > and it is generally useful for userspace to be able to finally get =
+this
+> > > > information from procfs.
+> > > >=20
+> > > > So, add a new API for this in the form of an ioctl(2) you can call =
+on
+> > > > the root directory of procfs. The returned file descriptor will have
+> > > > O_CLOEXEC set. This acts as a sister feature to the new "pidns" mou=
+nt
+> > > > option, finally allowing userspace full control of the pid namespac=
+es
+> > > > associated with procfs instances.
+> > > >=20
+> > > > The permission model for this is a bit looser than that of the "pid=
+ns"
+> > > > mount option, but this is mainly because /proc/1/ns/pid provides the
+> > > > same information, so as long as you have access to that magic-link =
+(or
+> > > > something equivalently reasonable such as privileges with CAP_SYS_A=
+DMIN
+> > > > or being in an ancestor pid namespace) it makes sense to allow user=
+space
+> > > > to grab a handle. setns(2) will still have their own permission che=
+cks,
+> > > > so being able to open a pidns handle doesn't really provide too many
+> > > > other capabilities.
+> > > >=20
+> > > > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+> > > > ---
+> > > >  Documentation/filesystems/proc.rst |  4 +++
+> > > >  fs/proc/root.c                     | 54 ++++++++++++++++++++++++++=
+++++++++++--
+> > > >  include/uapi/linux/fs.h            |  3 +++
+> > > >  3 files changed, 59 insertions(+), 2 deletions(-)
+> > > >=20
+> > > > diff --git a/Documentation/filesystems/proc.rst b/Documentation/fil=
+esystems/proc.rst
+> > > > index c520b9f8a3fd..506383273c9d 100644
+> > > > --- a/Documentation/filesystems/proc.rst
+> > > > +++ b/Documentation/filesystems/proc.rst
+> > > > @@ -2398,6 +2398,10 @@ pidns=3D specifies a pid namespace (either a=
+s a string path to something like
+> > > >  will be used by the procfs instance when translating pids. By defa=
+ult, procfs
+> > > >  will use the calling process's active pid namespace.
+> > > > =20
+> > > > +Processes can check which pid namespace is used by a procfs instan=
+ce by using
+> > > > +the `PROCFS_GET_PID_NAMESPACE` ioctl() on the root directory of th=
+e procfs
+> > > > +instance.
+> > > > +
+> > > >  Chapter 5: Filesystem behavior
+> > > >  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D
+> > > > =20
+> > > > diff --git a/fs/proc/root.c b/fs/proc/root.c
+> > > > index 057c8a125c6e..548a57ec2152 100644
+> > > > --- a/fs/proc/root.c
+> > > > +++ b/fs/proc/root.c
+> > > > @@ -23,8 +23,10 @@
+> > > >  #include <linux/cred.h>
+> > > >  #include <linux/magic.h>
+> > > >  #include <linux/slab.h>
+> > > > +#include <linux/ptrace.h>
+> > > > =20
+> > > >  #include "internal.h"
+> > > > +#include "../internal.h"
+> > > > =20
+> > > >  struct proc_fs_context {
+> > > >  	struct pid_namespace	*pid_ns;
+> > > > @@ -418,15 +420,63 @@ static int proc_root_readdir(struct file *fil=
+e, struct dir_context *ctx)
+> > > >  	return proc_pid_readdir(file, ctx);
+> > > >  }
+> > > > =20
+> > > > +static long int proc_root_ioctl(struct file *filp, unsigned int cm=
+d, unsigned long arg)
+> > > > +{
+> > > > +	switch (cmd) {
+> > > > +#ifdef CONFIG_PID_NS
+> > > > +	case PROCFS_GET_PID_NAMESPACE: {
+> > > > +		struct pid_namespace *active =3D task_active_pid_ns(current);
+> > > > +		struct pid_namespace *ns =3D proc_pid_ns(file_inode(filp)->i_sb);
+> > > > +		bool can_access_pidns =3D false;
+> > > > +
+> > > > +		/*
+> > > > +		 * If we are in an ancestors of the pidns, or have join
+> > > > +		 * privileges (CAP_SYS_ADMIN), then it makes sense that we
+> > > > +		 * would be able to grab a handle to the pidns.
+> > > > +		 *
+> > > > +		 * Otherwise, if there is a root process, then being able to
+> > > > +		 * access /proc/$pid/ns/pid is equivalent to this ioctl and so
+> > > > +		 * we should probably match the permission model. For empty
+> > > > +		 * namespaces it seems unlikely for there to be a downside to
+> > > > +		 * allowing unprivileged users to open a handle to it (setns
+> > > > +		 * will fail for unprivileged users anyway).
+> > > > +		 */
+> > > > +		can_access_pidns =3D pidns_is_ancestor(ns, active) ||
+> > > > +				   ns_capable(ns->user_ns, CAP_SYS_ADMIN);
+> > >=20
+> > > This seems to imply that if @ns is a descendant of @active that the
+> > > caller holds privileges over it. Is that actually always true?
+> > >=20
+> > > IOW, why is the check different from the previous pidns=3D mount opti=
+on
+> > > check. I would've expected:
+> > >=20
+> > > ns_capable(_no_audit)(ns->user_ns) && pidns_is_ancestor(ns, active)
+> > >=20
+> > > and then the ptrace check as a fallback.
+> >=20
+> > That would mirror pidns_install(), and I did think about it. The primary
+> > (mostly handwave-y) reasoning I had for making it less strict was that:
+> >=20
+> >  * If you are in an ancestor pidns, then you can already see those
+> >    processes in your own /proc. In theory that means that you will be
+> >    able to access /proc/$pid/ns/pid for at least some subprocess there
+> >    (even if some subprocesses have SUID_DUMP_DISABLE, that flag is
+> >    cleared on ).
+> >=20
+> >    Though hypothetically if they are all running as a different user,
+> >    this does not apply (and you could create scenarios where a child
+> >    pidns is owned by a userns that you do not have privileges over -- if
+> >    you deal with setuid binaries). Maybe that risk means we should just
+> >    combine them, I'm not sure.
+> >=20
+> >  * If you have CAP_SYS_ADMIN permissions over the pidns, it seems
+> >    strange to disallow access even if it is not in an ancestor
+> >    namespace. This is distinct to pidns_install(), where you want to
+> >    ensure you cannot escape to a parent pid namespace, this is about
+> >    getting a handle to do other operations (i.e. NS_GET_{P,TG}ID_*_PIDN=
+S).
+> >=20
+> > Maybe they should be combined to match pidns_install(), but then I would
+> > expect the ptrace_may_access() check to apply to all processes in the
+> > pidns to make it less restrictive, which is not something you can
+> > practically do (and there is a higher chance that pid1 will have
+> > SUID_DUMP_DISABLE than some random subprocess, which almost certainly
+> > will not be SUID_DUMP_DISABLE).
+> >=20
+> > Fundamentally, I guess I'm still trying to see what the risk is of
+> > allowing a process to get a handle to a pidns that they have some kind
+> > of privilege over (whether it's CAP_SYS_ADMIN, or by the virtue of being
+>=20
+> There shouldn't be. For example, you kinda implicitly do that with a
+> pidfd, no? Because you can pass the pidfd to setns() instead of a
+> namespace fd itself. Maybe that's the argument you're lookin for?
 
-This inode was not in the orphan list. Analysis revealed the
-following call chain that leads to the inconsistency:
+That argument works for me! I'll rewrite the commit message to make sure
+it sounds like I came up with it. ;)
 
-                             ext4_da_write_end()
-                              //does not update i_disksize
-                             ext4_punch_hole()
-                              //truncate folio, keep size
-ext4_page_mkwrite()
- ext4_block_page_mkwrite()
-  ext4_block_write_begin()
-    ext4_get_block()
-     //insert written extent without update i_disksize
-journal commit
-echo 1 > /sys/block/xxx/device/delete
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+https://www.cyphar.com/
 
-da-write path updates i_size but does not update i_disksize. Then
-ext4_punch_hole truncates the da-folio yet still leaves i_disksize
-unchanged. Then ext4_page_mkwrite sees ext4_nonda_switch return 1
-and takes the nodioread_nolock path, the folio about to be written
-has just been punched out, and it’s offset sits beyond the current
-i_disksize. This may result in a written extent being inserted, but
-again does not update i_disksize. If the journal gets committed and
-then the block device is yanked, we might run into this.
+--vqlqvmb7rrrsrgkq
+Content-Type: application/pgp-signature; name="signature.asc"
 
-To fix this, we now check in ext4_block_page_mkwrite whether
-i_disksize needs to be updated to cover the newly allocated blocks.
+-----BEGIN PGP SIGNATURE-----
 
-Signed-off-by: Yongjian Sun <sunyongjian1@huawei.com>
----
- fs/ext4/inode.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaIt78QAKCRAol/rSt+lE
+b4KJAP9yYgg+3KR8dfc439kDY8r9NIKyuj6dnu3tOYDwDw54KQD/WA6Kev9V9C0u
+YQgoYZsOxr+MhZz9igC+/6ZSuFIAXg0=
+=WpMr
+-----END PGP SIGNATURE-----
 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index ed54c4d0f2f9..050270b265ae 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -6666,8 +6666,18 @@ static int ext4_block_page_mkwrite(struct inode *inode, struct folio *folio,
- 		goto out_error;
- 
- 	if (!ext4_should_journal_data(inode)) {
-+		loff_t disksize = folio_pos(folio) + len;
- 		block_commit_write(folio, 0, len);
- 		folio_mark_dirty(folio);
-+		if (disksize > READ_ONCE(EXT4_I(inode)->i_disksize)) {
-+			down_write(&EXT4_I(inode)->i_data_sem);
-+			if (disksize > EXT4_I(inode)->i_disksize)
-+				EXT4_I(inode)->i_disksize = disksize;
-+			up_write(&EXT4_I(inode)->i_data_sem);
-+			ret = ext4_mark_inode_dirty(handle, inode);
-+			if (ret)
-+				goto out_error;
-+		}
- 	} else {
- 		ret = ext4_journal_folio_buffers(handle, folio, len);
- 		if (ret)
--- 
-2.39.2
-
+--vqlqvmb7rrrsrgkq--
 
