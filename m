@@ -1,176 +1,172 @@
-Return-Path: <linux-fsdevel+bounces-56391-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56392-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 455B3B1707C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Jul 2025 13:43:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE0E0B17100
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Jul 2025 14:22:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10623A81EB0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Jul 2025 11:42:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCE7F3AECFA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Jul 2025 12:21:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004D12C15A5;
-	Thu, 31 Jul 2025 11:43:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA9672BE7D9;
+	Thu, 31 Jul 2025 12:21:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="alzogFGO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e6PlslPI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 750612C159B
-	for <linux-fsdevel@vger.kernel.org>; Thu, 31 Jul 2025 11:43:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEFB321FF4E;
+	Thu, 31 Jul 2025 12:21:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753962184; cv=none; b=qRedIfXEKrB0iA1gBp3EaNlYHCPfksL+DgV5QunZbrTam9bp2GM0GyXj7dHB4LUU4ROLQoSXL7tqDpP5SlKyHG+ja38zHxF+Da0uFAI8ZhZ6cPXGSd68W5FcIe/0Ngea2hxc6RvatPbFGDd/xRj5xY7b8WlHo7jD4K+JLAVkRlM=
+	t=1753964516; cv=none; b=MHd7gGLHeh+45VvldFx0/4FQYkM8+qjvggdYRfSpJlV69wltcmcMAC9f9qP5ivoWBqgluj6+KllFxrGejobQNP+egs0UEHJNdu5K5umwqQMp4PIxtwCDA4ou7VsZMIW9/lxZvEQPXN+KuwIxzCPBew35CPkU91r+O1+19NHwIII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753962184; c=relaxed/simple;
-	bh=lPPR+xOELWOjgNYZPLA2fZ8JUQ13Q6IiXHiwQiLDycc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bIbR6ENhUQJF/9bfADdMj/4au81jsuZ3lRy4ngzoMbtaKhAjuU3l95jm/+k604atA29yrBzuebobaXtkfF/3bHlf6wz4mKD8TJMNlXSzhq1WV/8D9ZcrByXXHWVemJdIe3xiixRQoEKE+XDQNdCAlGFbATWE5iFu6PfG3iUkyvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=alzogFGO; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753962181;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fo+NPNjMxlQ2cBw7t4Z+XizD1fhqWsIHl9ucwxzn9EA=;
-	b=alzogFGOo1d1photn8iAKkbAFhqos/a1OSOFSV8YwjLMjy4WeqWBWYIbt+wPT0SvtOzoP9
-	3PR26amSC7lYnnshn/NXJgkZ0BhRKwTSGNjBXumdfPnswunxYGDfOtSCHNa3/nj9URy1Oz
-	Offd65ths7xkjXfdTvGylpE22fmVkgQ=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-513-m8LgnQmBOlOz63xnNUbxJg-1; Thu, 31 Jul 2025 07:43:00 -0400
-X-MC-Unique: m8LgnQmBOlOz63xnNUbxJg-1
-X-Mimecast-MFC-AGG-ID: m8LgnQmBOlOz63xnNUbxJg_1753962177
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-ae1c79fb8a9so35362966b.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Jul 2025 04:42:57 -0700 (PDT)
+	s=arc-20240116; t=1753964516; c=relaxed/simple;
+	bh=+Z8iMUTpzYDGgsj3rGeChufp+xrNaWS2OH30xTfmXP8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uLp2g7371s/tCLSgS9nQ+8gbFADOzwK+SL3ONyyGrT4KZtQPMUyQC/O83M669i8RmxzSA3FUq/GqQCdTceZJLStB6YBGoXoHxFrAQUq6q9zlMMjIwpGmHsp/AU4tsCDr9jqPQQXhz8xHw4J3TVX9muyAoFJaT4iseL8oDi70Ee0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e6PlslPI; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7e33d36491dso29811985a.3;
+        Thu, 31 Jul 2025 05:21:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753964513; x=1754569313; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WyB2bd0Y5ziwt0wpZ4L6oPfSKZCsBSGJvL4ApO6LdH0=;
+        b=e6PlslPIX8+6HiSbiqyENx94xuss16yIV8odmBlndkUP+Vm1DGG01x00G4EG4cczWv
+         Xh9Vp1dN7gEJGBw1xiJMB6k/iDJOwN0CYH0DQk/TkWmUFktLCS9Y4Yiqh5/4az1jH2sR
+         83jpEoBGbCZo/iIGvSb4KJEHTO/kh74iox5CIMV5W9ePEY6D6k3bEojSprZRgxG4Nlak
+         MrK3NarRaC9C0OUmUGKKbDIIlvAoONgmhmoZ3xe5JkUqKyKltX9NtfN9EM/se9gOJDVM
+         zO9qJp+FGvSsnUTUMsGQFqTrRZZNz/Obr25INxKCHXfH97iwlzYAm3py2dmnuzJewHoI
+         LRFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753962177; x=1754566977;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fo+NPNjMxlQ2cBw7t4Z+XizD1fhqWsIHl9ucwxzn9EA=;
-        b=hPyR7atR1p2pOd3H1DxGICExP//sx4xwFMFXy7NosUE84UBjdPGtNiR0A3hQjecMkQ
-         3/oj/JnUjlq/itjiuIHwk6iSiaR0arTKadep7qpssSLvVpzCZKn3Jj0dgzUkO9axWLKh
-         5rsAkVnExPkx/Pc3mLqEBOsqdO6EYvpEwd/x+NsfPPKiDuvVeDp8TJD3CR1eAA1gGAch
-         945k3Q34MPIT9G3DGJfxaJfzm4i6oVYQm0kTDoHYORoSYE/zEOR6jg62QVawb6nv+qRo
-         EXXFEzjaVaFJXBN9PPOM8YtwyuQqfLvPnglS3ALTkXYYAMECjSwWSlTlKoiZbdGnbOpY
-         xdIw==
-X-Forwarded-Encrypted: i=1; AJvYcCV/NWmLHmjMPEYmJVdD+PLwDn7Vl8mXqr5/rji+fJWC8/roLxKTepnCS+IGoXyTuQE/QKvo50WX+M0jeo17@vger.kernel.org
-X-Gm-Message-State: AOJu0YzniOjxkNjGmiDHZhgmhcqIG8QgMPbsJEFsH41d3dTcLYIR74MX
-	Rrb3quPyJiuQAkaEugvSEqAPYWZFgtx2vVnCWtq2BnPLaF77HC0XZJe+fTV8OtfDxuXNkGFjYrN
-	5hiPIAwOlCCQW224QP8RG4l73ZIgju6Ls5rWF8N7F03NiOsyRWroe/JedYTuH7J2y9Q==
-X-Gm-Gg: ASbGncvoS3P+vP3IHGFiQV2H1wigv5LKxHdtw6VlA/3z1MCgNkY/5j9Z+Kl/4V2GQWk
-	ovjA3k21dVCIZPuArLm+daxJD9mXi4VTBiPfLw9t7lhBu3zjf6AWrJPhLVlgv0sGWF93siyNCwD
-	xQn+wmyURAZ6g9nFppfKJjhHcJ3AG7ePT2g3buWOa3UMRolShXgAhgeGHKUBv0DqeEqeXyLhK49
-	ftTcPB/m+MTA53cUnfll5uo67TBWBaG+uaon717GqcVULesl9VH7d5BXBPDjne7MgSgFG16VAg4
-	1lPsbpDI0X4gNvl8YqGFfeFRaK3lNm2h2vQzffjv8D195EDrArQFXyDerlk=
-X-Received: by 2002:a17:907:3da5:b0:ae3:cd73:efde with SMTP id a640c23a62f3a-af8fd9b8cd8mr840014566b.44.1753962176760;
-        Thu, 31 Jul 2025 04:42:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE67P8ng9AVSUESMcuBOxJ0x4LQSgKEPKDtRaQgthvJXLuQrA842cvO1Io0AFJoyaHMXBrfDA==
-X-Received: by 2002:a17:907:3da5:b0:ae3:cd73:efde with SMTP id a640c23a62f3a-af8fd9b8cd8mr840012166b.44.1753962176183;
-        Thu, 31 Jul 2025 04:42:56 -0700 (PDT)
-Received: from thinky (ip-217-030-074-039.aim-net.cz. [217.30.74.39])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a078a11sm98404766b.7.2025.07.31.04.42.55
+        d=1e100.net; s=20230601; t=1753964513; x=1754569313;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WyB2bd0Y5ziwt0wpZ4L6oPfSKZCsBSGJvL4ApO6LdH0=;
+        b=M1Zm9Dc16ojjU1cNNuotLRgAiAPikUXjyIyy5KXnH46mozYWKSZcsHBNE3/VAk5cdS
+         L1+o/ujHIYnewu06IG9lKteGaP7PBjRXWorgtBNEA5gnDt1FrQXHtZTGKIorTY2ZROOq
+         Ux55X7pgL5WxU1348eP2Qrke2O69XNRhILasd0ixNyAUuAqEC0z0vpZ8pAL1kI6NxNYL
+         STQVhHJWQGlBlmpr/54l/AkTIt5o2qomXvJR7WsaCGJNCIjn7GcTNWfUwbX1QUnv5/uk
+         Gc2ydXNpRYV4QQuXgumRTsRXLnJocWUF/XbajOqGNIDoQ4cAS+S0qtDXcrO70q0kzb4b
+         gH/w==
+X-Forwarded-Encrypted: i=1; AJvYcCU+dL9HzfiVsVKajxoq82mit2Vw7x2cpvU7CVQLw6jYcXuYl1bdwBdkxqz4qW76D5ET4OvyIk1+M09vQS3M@vger.kernel.org, AJvYcCXU8mkKTk4K8/ceLgGk6/dNAgIbaEBieh3m/eKBwPitjE6TYXppvyo1MkC85omyk5/+sH2XjBd3Xew=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnC5QFk7z3qxVEFXL4HlBxw1VkNBdVCuq7hoHdYL14UQTDKUKU
+	bLpUP5drVnn3Q11Bg94rH9+pt7VlonN0pAYiIVJmK0eEiiDcF68WgGRH
+X-Gm-Gg: ASbGncvgVoelqxMjWD1uPZJsMkhmwenugKIE3V2NUqAhmz2klmm7ZYadD1BZLpd0ze9
+	Ng6Z4yyj7vz013Gd3R/qLccaoXuPjNfDK32RK3V/Ynpth0wBcimshXcMbXFq3yGFVoqo7ycu4uA
+	d/uJuHnP74asmZ0aIVeKkmLAEgighvnig55HmvWUno956nuwtaUVSyGK6JirJJg2BhwTkxwjVmz
+	g3jj9fjtkxurtW5FHThrHL1JzTBNVFq79vGbfvVdTVJNPkxxASYapF7987Sf9gb3xeiLIPLyNGz
+	nxF1U8wi90YYbbfpUiEAINiBNwdcQQLLOeTBdd/PPmI+X1Pcs8ycNgPaJQgvCYL3m3E1irj4luk
+	qBsdC00qKO7igqr3m
+X-Google-Smtp-Source: AGHT+IFaNwzD9Uxs/RKFYt5m6qnDGOphlQ2Tpe9T1NHIPTPwwihehfIu5ETWtSsTwS33LypgOJOgGQ==
+X-Received: by 2002:a05:620a:d87:b0:7e6:6d78:979 with SMTP id af79cd13be357-7e66ef8a93emr982153985a.15.1753964513428;
+        Thu, 31 Jul 2025 05:21:53 -0700 (PDT)
+Received: from localhost ([2a03:2880:20ff::])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e67f5947e9sm78587585a.1.2025.07.31.05.21.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 04:42:55 -0700 (PDT)
-Date: Thu, 31 Jul 2025 13:42:54 +0200
-From: Andrey Albershteyn <aalbersh@redhat.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, david@fromorbit.com, ebiggers@kernel.org, hch@lst.de, 
-	Andrey Albershteyn <aalbersh@kernel.org>
-Subject: Re: [PATCH RFC 20/29] xfs: disable preallocations for fsverity
- Merkle tree writes
-Message-ID: <hnpu2acy45q3v3k4sj3p3yazfqfpihh3rnvrdyh6ljgmkod6cz@poli3ifoi6my>
-References: <20250728-fsverity-v1-0-9e5443af0e34@kernel.org>
- <20250728-fsverity-v1-20-9e5443af0e34@kernel.org>
- <20250729222736.GK2672049@frogsfrogsfrogs>
+        Thu, 31 Jul 2025 05:21:52 -0700 (PDT)
+From: Usama Arif <usamaarif642@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	david@redhat.com,
+	linux-mm@kvack.org
+Cc: linux-fsdevel@vger.kernel.org,
+	corbet@lwn.net,
+	rppt@kernel.org,
+	surenb@google.com,
+	mhocko@suse.com,
+	hannes@cmpxchg.org,
+	baohua@kernel.org,
+	shakeel.butt@linux.dev,
+	riel@surriel.com,
+	ziy@nvidia.com,
+	laoar.shao@gmail.com,
+	dev.jain@arm.com,
+	baolin.wang@linux.alibaba.com,
+	npache@redhat.com,
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	ryan.roberts@arm.com,
+	vbabka@suse.cz,
+	jannh@google.com,
+	Arnd Bergmann <arnd@arndb.de>,
+	sj@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	kernel-team@meta.com,
+	Usama Arif <usamaarif642@gmail.com>
+Subject: [PATCH 0/5] prctl: extend PR_SET_THP_DISABLE to only provide THPs when advised
+Date: Thu, 31 Jul 2025 13:18:11 +0100
+Message-ID: <20250731122150.2039342-1-usamaarif642@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250729222736.GK2672049@frogsfrogsfrogs>
+Content-Transfer-Encoding: 8bit
 
-On 2025-07-29 15:27:36, Darrick J. Wong wrote:
-> On Mon, Jul 28, 2025 at 10:30:24PM +0200, Andrey Albershteyn wrote:
-> > While writing Merkle tree, file is read-only and there's no further
-> > writes except Merkle tree building. The file is truncated beforehand to
-> > remove any preallocated extents.
-> > 
-> > The Merkle tree is the only data XFS will write. As we don't want XFS to
-> > truncate file after we done writing, let's also skip truncation on
-> > fsverity files. Therefore, we also need to disable preallocations while
-> > writing merkle tree as we don't want any unused extents past the tree.
-> > 
-> > Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
-> > ---
-> >  fs/xfs/xfs_iomap.c | 13 ++++++++++++-
-> >  1 file changed, 12 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-> > index ff05e6b1b0bb..00ec1a738b39 100644
-> > --- a/fs/xfs/xfs_iomap.c
-> > +++ b/fs/xfs/xfs_iomap.c
-> > @@ -32,6 +32,8 @@
-> >  #include "xfs_rtbitmap.h"
-> >  #include "xfs_icache.h"
-> >  #include "xfs_zone_alloc.h"
-> > +#include "xfs_fsverity.h"
-> > +#include <linux/fsverity.h>
-> 
-> What do these includes pull in for the iflags tests below?
+This will allow individual processes to opt-out of THP = "always"
+into THP = "madvise", without affecting other workloads on the system.
+This has been extensively discussed on the mailing list and has been
+summarized very well by David in the first patch which also includes
+the links to alternatives, please refer to the first patch commit message
+for the motivation for this series.
 
-Probably need to be removed, thanks for noting
+Patch 1 adds the PR_THP_DISABLE_EXCEPT_ADVISED flag to implement this, along
+with the MMF changes.
+Patch 2 is a cleanup patch for tva_flags that will allow the forced collapse
+case to be transmitted to vma_thp_disabled (which is done in patch 3).
+Patches 4-5 implement the selftests for PR_SET_THP_DISABLE for completely
+disabling THPs (old behaviour) and only enabling it at advise
+(PR_THP_DISABLE_EXCEPT_ADVISED).
 
-> 
-> >  #define XFS_ALLOC_ALIGN(mp, off) \
-> >  	(((off) >> mp->m_allocsize_log) << mp->m_allocsize_log)
-> > @@ -1849,7 +1851,9 @@ xfs_buffered_write_iomap_begin(
-> >  		 * Determine the initial size of the preallocation.
-> >  		 * We clean up any extra preallocation when the file is closed.
-> >  		 */
-> > -		if (xfs_has_allocsize(mp))
-> > +		if (xfs_iflags_test(ip, XFS_VERITY_CONSTRUCTION))
-> > +			prealloc_blocks = 0;
-> > +		else if (xfs_has_allocsize(mp))
-> >  			prealloc_blocks = mp->m_allocsize_blocks;
-> >  		else if (allocfork == XFS_DATA_FORK)
-> >  			prealloc_blocks = xfs_iomap_prealloc_size(ip, allocfork,
-> > @@ -1976,6 +1980,13 @@ xfs_buffered_write_iomap_end(
-> >  	if (flags & IOMAP_FAULT)
-> >  		return 0;
-> >  
-> > +	/*
-> > +	 * While writing Merkle tree to disk we would not have any other
-> > +	 * delayed allocations
-> > +	 */
-> > +	if (xfs_iflags_test(XFS_I(inode), XFS_VERITY_CONSTRUCTION))
-> > +		return 0;
-> 
-> I assume XFS_VERITY_CONSTRUCTION doesn't get set until after we've
-> locked the inode, flushed the dirty pagecache, and truncated the file to
-> EOF?  In which case I guess this is ok -- we're never going to have new
-> delalloc reservations,
+The patches are tested on top of 4ad831303eca6ae518c3b3d86838a2a04b90ec41
+from mm-new.
 
-yes, this is my thinking here
+v1 -> v2: https://lore.kernel.org/all/20250725162258.1043176-1-usamaarif642@gmail.com/
+- Change thp_push_settings to thp_write_settings (David)
+- Add tests for all the system policies for the prctl call (David)
+- Small fixes and cleanups
+ 
+David Hildenbrand (3):
+  prctl: extend PR_SET_THP_DISABLE to optionally exclude VM_HUGEPAGE
+  mm/huge_memory: convert "tva_flags" to "enum tva_type" for
+    thp_vma_allowable_order*()
+  mm/huge_memory: treat MADV_COLLAPSE as an advise with
+    PR_THP_DISABLE_EXCEPT_ADVISED
 
-> and verity data can't be straddling the EOF
-> folio, no matter how large it is.  Right?
+Usama Arif (2):
+  selftests: prctl: introduce tests for disabling THPs completely
+  selftests: prctl: introduce tests for disabling THPs except for
+    madvise
 
-Not sure, what you mean here. In page cache merkle tree is stored
-at (1 << 53) offset, and there's check for file overlapping this in
-patch 22 xfs_fsverity_begin_enable().
+ Documentation/filesystems/proc.rst            |   5 +-
+ fs/proc/array.c                               |   2 +-
+ fs/proc/task_mmu.c                            |   4 +-
+ include/linux/huge_mm.h                       |  60 ++-
+ include/linux/mm_types.h                      |  13 +-
+ include/uapi/linux/prctl.h                    |  10 +
+ kernel/sys.c                                  |  59 ++-
+ mm/huge_memory.c                              |  11 +-
+ mm/khugepaged.c                               |  20 +-
+ mm/memory.c                                   |  20 +-
+ mm/shmem.c                                    |   2 +-
+ tools/testing/selftests/mm/.gitignore         |   1 +
+ tools/testing/selftests/mm/Makefile           |   1 +
+ .../testing/selftests/mm/prctl_thp_disable.c  | 358 ++++++++++++++++++
+ tools/testing/selftests/mm/thp_settings.c     |   9 +-
+ tools/testing/selftests/mm/thp_settings.h     |   1 +
+ 16 files changed, 505 insertions(+), 71 deletions(-)
+ create mode 100644 tools/testing/selftests/mm/prctl_thp_disable.c
 
 -- 
-- Andrey
+2.47.3
 
 
