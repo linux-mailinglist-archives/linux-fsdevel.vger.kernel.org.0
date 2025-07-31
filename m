@@ -1,101 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-56425-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56426-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F394AB1739E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Jul 2025 17:00:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2345BB173A3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Jul 2025 17:02:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C00EA8349E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Jul 2025 15:00:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16FB93A89E3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Jul 2025 15:01:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2441D6DB9;
-	Thu, 31 Jul 2025 15:00:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D33A1A01C6;
+	Thu, 31 Jul 2025 15:01:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XBIyAI53";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NjKsRzi0";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vyBODI4Z";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="h/g63xHM"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YYWoAynW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B87072A8C1
-	for <linux-fsdevel@vger.kernel.org>; Thu, 31 Jul 2025 15:00:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E08376
+	for <linux-fsdevel@vger.kernel.org>; Thu, 31 Jul 2025 15:01:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753974034; cv=none; b=AC2DNmY5wIX9D6677c4fynvwVexvK+rvTFwZGQAih7ENBSwWXHT/+aO6nzYgQEhg2pMm3ArKtr26Qm0N72muZ1rwrij4V3B0ekGnsmY/OS1QQvFgGjJm693TeG62HISfN6dK4hzwkWWBAdZBjsFIbahUTw37hbKXAHvng2haH64=
+	t=1753974118; cv=none; b=DI2oi+grHQsfMOZW2QnjmZrb1t+FzdeugPcdJ7YsPDrtUCCuUGoQM3/bFfUSBKahYk2ddTeUr+1jLC8T5QQZNGC89MwVAlzvk17EDWHybXTBnVyK42pf2EXM8KqjwFWe82ZMnBA7YvI0PX3VhR6KWKgyO068bI3AMcaQiL0nPlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753974034; c=relaxed/simple;
-	bh=8iBsCXSMxFp3Z/rGX3sNPO2dPgydWh+KZVQ3cFcbulU=;
+	s=arc-20240116; t=1753974118; c=relaxed/simple;
+	bh=C2o0Lvne0cCNDsimlsqgbMKsv5mi2W4tRSJaT5aours=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iqpqe89VOsmfDJ8jBUamIm3F6eEqoWQtpNysWoz8F40TNsvhPU9te/4WgonLckhqGJJO2cSuJe5hXx+xt+6By3eIxXDS+3RC0K3TpDIiszae3VaRCZgT3pZR7vD+MroamfN5CNu/NnXE8x7FBi9UBNX6/xpfCqbVw9TMojUudic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XBIyAI53; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NjKsRzi0; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vyBODI4Z; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=h/g63xHM; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id BCFCC1F813;
-	Thu, 31 Jul 2025 15:00:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1753974030; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aCcU+7k1xUe191oreWql597RUJV7bqLQn4n6UPg4xWY94l7gktUVmo24eqj86oZK5+/dyexbCtLUjsb58rqlZ73db3JCij3J6ZRuOx7bg/4Q2k8I/05273vFsdGjZw0LGS+78E0yCASNO6S5At1JSqBmvxfneNUtUSr2LHPqZks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YYWoAynW; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753974115;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=AbyXKL6HQV1X+cVz8ZhvI4n3efWkggHWZs0n6HYR1QY=;
-	b=XBIyAI53DOXNI6entUsH9ymjzostaKVYJBfPnjBKyiUtMTrZ3V1/eShXtGbKWq9NV/Ij/7
-	F1Rp2ZQeOBG35rZ+fo2/JmfIOWqKAHGTuGbMwdDri6wzPtlxtZVVQATR4YiycSWGDsdGje
-	KysdAMyKeZdTaO2xp6JqC9ZQKfxoXWM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1753974030;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AbyXKL6HQV1X+cVz8ZhvI4n3efWkggHWZs0n6HYR1QY=;
-	b=NjKsRzi0tj2F4CPPA3nrVjB0UvNq4CyHyuroECRbpZXojqVfT8wnq5fwlBWu0s2nJTItwN
-	qUCq04GiLGctlqDw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=vyBODI4Z;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="h/g63xHM"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1753974029; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AbyXKL6HQV1X+cVz8ZhvI4n3efWkggHWZs0n6HYR1QY=;
-	b=vyBODI4ZHQC1KoN75OrPqBU1UGQr/0JzkHoUeoDdadLH36PbgHTk+QXilebcwJ7gMoROUk
-	pzeSFS1oxY17Chj7Na2spmSQ7CZJRq+z/yYHzfD3tGV/rZuKTiYUgRRGQcbM6XBHUW8cwc
-	xAPbu0yZuMtI6gzJDe3xMcHuGmu3oOY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1753974029;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AbyXKL6HQV1X+cVz8ZhvI4n3efWkggHWZs0n6HYR1QY=;
-	b=h/g63xHMS4BDuyzhlwaaJ4lZqzLbSpwBKx1MpMKUhACYpc7/muDwrIdZxyY4n7vQe1PVri
-	7LQoNsJK+ZqAaPCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AF92D13876;
-	Thu, 31 Jul 2025 15:00:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 68fWKg2Fi2jmCwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 31 Jul 2025 15:00:29 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 39ABBA0A02; Thu, 31 Jul 2025 17:00:29 +0200 (CEST)
-Date: Thu, 31 Jul 2025 17:00:29 +0200
-From: Jan Kara <jack@suse.cz>
-To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Cc: fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Jan Kara <jack@suse.cz>, "Darrick J . Wong" <djwong@kernel.org>, 
-	John Garry <john.g.garry@oracle.com>
-Subject: Re: [RFC 1/2] aio-dio-write-verify: Add O_DSYNC option
-Message-ID: <rmevgqdu6jqphqgxx35oye7ukhakijvalgbbn24zxblajaf75m@ag3t4ksa4wv6>
-References: <28abb8a0c4031ce07b475bf9026eedc23892868b.1753964363.git.ritesh.list@gmail.com>
+	bh=FYWF/twaLqY/DbwXLo4Q7QUDaME4akWU5NgI7Alefig=;
+	b=YYWoAynWzB7HhcmqJ4NSj1fK1BVfhaKBevoigwsV9BkM28yw6RrdnKCb3DJpSkI1d3tLs1
+	4E0KPrwmOP8ZYjtIwlh3Dpg8GFFSvwhvt2/SiXKuikJU9zZHzjJfNgPU8kvcYRVxQfvWHd
+	Bc8WkZ8JYAT20ytmeS76Oxy/1shT5rM=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-322-N6WRsQjXOjmCJ8iPLZxeuw-1; Thu, 31 Jul 2025 11:01:54 -0400
+X-MC-Unique: N6WRsQjXOjmCJ8iPLZxeuw-1
+X-Mimecast-MFC-AGG-ID: N6WRsQjXOjmCJ8iPLZxeuw_1753974113
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-adb33457610so125182366b.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Jul 2025 08:01:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753974113; x=1754578913;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FYWF/twaLqY/DbwXLo4Q7QUDaME4akWU5NgI7Alefig=;
+        b=PSKABwscIULbuam1PG2MSKeowAWNYVAdM3Z1RMxdDwG8PGqSoKfLS/FPMEtSFxzmwv
+         eQzwu7M6Mh7rvBhfRPv5PYLaNDG36NqxHX+6UEDRnDLwYa3+zwAhCAmuc7mf1j/M5gWz
+         zTCrTfOJssZ+ltHrwewPFGLaycSUVqb4+alVwUpbwKfUWARihySxdRClad5iCK2BhL/b
+         ZEtPrDs5q8PQCIkBUo+VFxxNC4H3HGaMW1QAzf49MWq2JpGfT06t78js4cagmlU3QGsn
+         /wuNhrTOZgqdtL9No45pZ/IZ77++yCOAx0IuNNB+wGo9In2wKukT6/P/CebbFWffA99O
+         cmnw==
+X-Forwarded-Encrypted: i=1; AJvYcCUNTQqxUNt1+Ym2mB3MkDa06Bz8iQhia+3EoPRRY/xpEXayekHUQ0rgU6aB1o/nQnKtaV1cS24I2aGQb6RN@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUWaBLSsbZHzRiKst99MnxzGVSq4Wpqp3YnrP0Ks5i/ylPnEfz
+	gKOBGxdU9m6WPjI36AfIlQ1NZkz9TR2B4DCMlTUR0A9VX1GkU21GeP8mHvcY3AV/x5Dyts5u3Mt
+	vxGVs3xwxVNM3Y6qbs9W/yLlAh4DAaUdt0ZNPcvC70x8iI6R0wceN6e7FBIuxepoIJg==
+X-Gm-Gg: ASbGncvLcBaT6fG+PfwZ6wGrVV1aSTw6uPZ0lQtFi35T2C7gfPnJprFgK+tAB5x2lEZ
+	akxturZE/WP/t+UsTDYd8ExmnKK6jxuEsGoRyx2pTZ6/8E4QLEpo8E9D+mT7njQSusrmnUBKO3R
+	mMi6ADUYF6ZXF2SEplHwGOiBzsBI7kasLk1kmYDTWle+YkznKVZgjkxlg8t8zH1xg/ZrlTgUcRT
+	0jCMoXepqcglpD7KIubZy4/IwQvPFir3vEUZLAo2eqkA909OV0vCtE90q62VEyNZ0H941ydEdT8
+	25Rq/69xoKkdHYkMdhXKPXoQ1eITsQXz/EBrQPYTUJDtHsP2NJDzA0Zv/DI=
+X-Received: by 2002:a17:907:9406:b0:ae6:f087:953 with SMTP id a640c23a62f3a-af8fd6a2978mr797019966b.12.1753974112201;
+        Thu, 31 Jul 2025 08:01:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEBaE3lbv+mxzwSASk5fHPQEjeLTnCI6nAdLo7+F+C5W7fYthtLDQO7Gzz3kpH8rMy8vT9x8A==
+X-Received: by 2002:a17:907:9406:b0:ae6:f087:953 with SMTP id a640c23a62f3a-af8fd6a2978mr796991766b.12.1753974109924;
+        Thu, 31 Jul 2025 08:01:49 -0700 (PDT)
+Received: from thinky (ip-217-030-074-039.aim-net.cz. [217.30.74.39])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0766absm124207666b.14.2025.07.31.08.01.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Jul 2025 08:01:48 -0700 (PDT)
+Date: Thu, 31 Jul 2025 17:01:48 +0200
+From: Andrey Albershteyn <aalbersh@redhat.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, david@fromorbit.com, ebiggers@kernel.org, hch@lst.de, 
+	Andrey Albershteyn <aalbersh@kernel.org>
+Subject: Re: [PATCH RFC 13/29] iomap: integrate fs-verity verification into
+ iomap's read path
+Message-ID: <oy45h4xpktjswnwnwgzp6ihqif2bgplslwgctbcotdjum4jh5v@wbnx7syzucvk>
+References: <20250728-fsverity-v1-0-9e5443af0e34@kernel.org>
+ <20250728-fsverity-v1-13-9e5443af0e34@kernel.org>
+ <20250729232152.GP2672049@frogsfrogsfrogs>
+ <f767jjbn25ffuigxnigsi7kz6tqvfqkbk4j2xs3mobtyhnmqip@24mjx53j3axv>
+ <20250731145233.GA2672029@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -104,100 +100,267 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <28abb8a0c4031ce07b475bf9026eedc23892868b.1753964363.git.ritesh.list@gmail.com>
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	ARC_NA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	TAGGED_RCPT(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: BCFCC1F813
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -2.51
+In-Reply-To: <20250731145233.GA2672029@frogsfrogsfrogs>
 
-On Thu 31-07-25 18:05:54, Ritesh Harjani (IBM) wrote:
-> This patch adds -D for O_DSYNC open flag to aio-dio-write-verify test.
-> We will use this in later patch for integrity verification test with
-> aio-dio.
+On 2025-07-31 07:52:33, Darrick J. Wong wrote:
+> On Thu, Jul 31, 2025 at 01:34:24PM +0200, Andrey Albershteyn wrote:
+> > On 2025-07-29 16:21:52, Darrick J. Wong wrote:
+> > > On Mon, Jul 28, 2025 at 10:30:17PM +0200, Andrey Albershteyn wrote:
+> > > > From: Andrey Albershteyn <aalbersh@redhat.com>
+> > > > 
+> > > > This patch adds fs-verity verification into iomap's read path. After
+> > > > BIO's io operation is complete the data are verified against
+> > > > fs-verity's Merkle tree. Verification work is done in a separate
+> > > > workqueue.
+> > > > 
+> > > > The read path ioend iomap_read_ioend are stored side by side with
+> > > > BIOs if FS_VERITY is enabled.
+> > > > 
+> > > > [djwong: fix doc warning]
+> > > > Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+> > > > Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+> > > > ---
+> > > >  fs/iomap/buffered-io.c | 151 +++++++++++++++++++++++++++++++++++++++++++++++--
+> > > >  fs/iomap/ioend.c       |  41 +++++++++++++-
+> > > >  include/linux/iomap.h  |  13 +++++
+> > > >  3 files changed, 198 insertions(+), 7 deletions(-)
+> > > > 
+> > > > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> > > > index e959a206cba9..87c974e543e0 100644
+> > > > --- a/fs/iomap/buffered-io.c
+> > > > +++ b/fs/iomap/buffered-io.c
+> > > > @@ -6,6 +6,7 @@
+> > > >  #include <linux/module.h>
+> > > >  #include <linux/compiler.h>
+> > > >  #include <linux/fs.h>
+> > > > +#include <linux/fsverity.h>
+> > > >  #include <linux/iomap.h>
+> > > >  #include <linux/pagemap.h>
+> > > >  #include <linux/uio.h>
+> > > > @@ -363,6 +364,116 @@ static inline bool iomap_block_needs_zeroing(const struct iomap_iter *iter,
+> > > >  		pos >= i_size_read(iter->inode);
+> > > >  }
+> > > >  
+> > > > +#ifdef CONFIG_FS_VERITY
+> > > > +int iomap_init_fsverity(struct super_block *sb, unsigned int wq_flags,
+> > > > +			int max_active)
+> > > > +{
+> > > > +	int ret;
+> > > > +
+> > > > +	if (!iomap_fsverity_bioset) {
+> > > > +		ret = iomap_fsverity_init_bioset();
+> > > > +		if (ret)
+> > > > +			return ret;
+> > > > +	}
+> > > > +
+> > > > +	return fsverity_init_wq(sb, wq_flags, max_active);
+> > > > +}
+> > > > +EXPORT_SYMBOL_GPL(iomap_init_fsverity);
+> > > > +
+> > > > +static void
+> > > > +iomap_read_fsverify_end_io_work(struct work_struct *work)
+> > > > +{
+> > > > +	struct iomap_fsverity_bio *fbio =
+> > > > +		container_of(work, struct iomap_fsverity_bio, work);
+> > > > +
+> > > > +	fsverity_verify_bio(&fbio->bio);
+> > > > +	iomap_read_end_io(&fbio->bio);
+> > > > +}
+> > > > +
+> > > > +static void
+> > > > +iomap_read_fsverity_end_io(struct bio *bio)
+> > > > +{
+> > > > +	struct iomap_fsverity_bio *fbio =
+> > > > +		container_of(bio, struct iomap_fsverity_bio, bio);
+> > > > +
+> > > > +	INIT_WORK(&fbio->work, iomap_read_fsverify_end_io_work);
+> > > > +	queue_work(bio->bi_private, &fbio->work);
+> > > > +}
+> > > > +
+> > > > +static struct bio *
+> > > > +iomap_fsverity_read_bio_alloc(struct inode *inode, struct block_device *bdev,
+> > > > +			    int nr_vecs, gfp_t gfp)
+> > > > +{
+> > > > +	struct bio *bio;
+> > > > +
+> > > > +	bio = bio_alloc_bioset(bdev, nr_vecs, REQ_OP_READ, gfp,
+> > > > +			iomap_fsverity_bioset);
+> > > > +	if (bio) {
+> > > > +		bio->bi_private = inode->i_sb->s_verity_wq;
+> > > > +		bio->bi_end_io = iomap_read_fsverity_end_io;
+> > > > +	}
+> > > > +	return bio;
+> > > > +}
+> > > > +
+> > > > +/*
+> > > > + * True if tree is not aligned with fs block/folio size and we need zero tail
+> > > > + * part of the folio
+> > > > + */
+> > > > +static bool
+> > > > +iomap_fsverity_tree_end_align(struct iomap_iter *iter, struct folio *folio,
+> > > > +		loff_t pos, size_t plen)
+> > > > +{
+> > > > +	int error;
+> > > > +	u8 log_blocksize;
+> > > > +	u64 tree_size, tree_mask, last_block_tree, last_block_pos;
+> > > > +
+> > > > +	/* Not a Merkle tree */
+> > > > +	if (!(iter->iomap.flags & IOMAP_F_BEYOND_EOF))
+> > > > +		return false;
+> > > > +
+> > > > +	if (plen == folio_size(folio))
+> > > > +		return false;
+> > > > +
+> > > > +	if (iter->inode->i_blkbits == folio_shift(folio))
+> > > > +		return false;
+> > > > +
+> > > > +	error = fsverity_merkle_tree_geometry(iter->inode, &log_blocksize, NULL,
+> > > > +			&tree_size);
+> > > > +	if (error)
+> > > > +		return false;
+> > > > +
+> > > > +	/*
+> > > > +	 * We are beyond EOF reading Merkle tree. Therefore, it has highest
+> > > > +	 * offset. Mask pos with a tree size to get a position whare are we in
+> > > > +	 * the tree. Then, compare index of a last tree block and the index of
+> > > > +	 * current pos block.
+> > > > +	 */
+> > > > +	last_block_tree = (tree_size + PAGE_SIZE - 1) >> PAGE_SHIFT;
+> > > > +	tree_mask = (1 << fls64(tree_size)) - 1;
+> > > > +	last_block_pos = ((pos & tree_mask) >> PAGE_SHIFT) + 1;
+> > > > +
+> > > > +	return last_block_tree == last_block_pos;
+> > > > +}
+> > > > +#else
+> > > > +# define iomap_fsverity_read_bio_alloc(...)	(NULL)
+> > > > +# define iomap_fsverity_tree_end_align(...)	(false)
+> > > > +#endif /* CONFIG_FS_VERITY */
+> > > > +
+> > > > +static struct bio *iomap_read_bio_alloc(struct inode *inode,
+> > > > +		const struct iomap *iomap, int nr_vecs, gfp_t gfp)
+> > > > +{
+> > > > +	struct bio *bio;
+> > > > +	struct block_device *bdev = iomap->bdev;
+> > > > +
+> > > > +	if (fsverity_active(inode) && !(iomap->flags & IOMAP_F_BEYOND_EOF))
+> > > > +		return iomap_fsverity_read_bio_alloc(inode, bdev, nr_vecs, gfp);
+> > > > +
+> > > > +	bio = bio_alloc(bdev, nr_vecs, REQ_OP_READ, gfp);
+> > > > +	if (bio)
+> > > > +		bio->bi_end_io = iomap_read_end_io;
+> > > > +	return bio;
+> > > > +}
+> > > > +
+> > > >  static int iomap_readpage_iter(struct iomap_iter *iter,
+> > > >  		struct iomap_readpage_ctx *ctx)
+> > > >  {
+> > > > @@ -375,6 +486,10 @@ static int iomap_readpage_iter(struct iomap_iter *iter,
+> > > >  	sector_t sector;
+> > > >  	int ret;
+> > > >  
+> > > > +	/* Fail reads from broken fsverity files immediately. */
+> > > > +	if (IS_VERITY(iter->inode) && !fsverity_active(iter->inode))
+> > > > +		return -EIO;
+> > > > +
+> > > >  	if (iomap->type == IOMAP_INLINE) {
+> > > >  		ret = iomap_read_inline_data(iter, folio);
+> > > >  		if (ret)
+> > > > @@ -391,6 +506,11 @@ static int iomap_readpage_iter(struct iomap_iter *iter,
+> > > >  	if (iomap_block_needs_zeroing(iter, pos) &&
+> > > >  	    !(iomap->flags & IOMAP_F_BEYOND_EOF)) {
+> > > >  		folio_zero_range(folio, poff, plen);
+> > > > +		if (fsverity_active(iter->inode) &&
+> > > > +		    !fsverity_verify_blocks(folio, plen, poff)) {
+> > > > +			return -EIO;
+> > > > +		}
+> > > > +
+> > > >  		iomap_set_range_uptodate(folio, poff, plen);
+> > > >  		goto done;
+> > > >  	}
+> > > > @@ -408,32 +528,51 @@ static int iomap_readpage_iter(struct iomap_iter *iter,
+> > > >  	    !bio_add_folio(ctx->bio, folio, plen, poff)) {
+> > > >  		gfp_t gfp = mapping_gfp_constraint(folio->mapping, GFP_KERNEL);
+> > > >  		gfp_t orig_gfp = gfp;
+> > > > -		unsigned int nr_vecs = DIV_ROUND_UP(length, PAGE_SIZE);
+> > > >  
+> > > >  		if (ctx->bio)
+> > > >  			submit_bio(ctx->bio);
+> > > >  
+> > > >  		if (ctx->rac) /* same as readahead_gfp_mask */
+> > > >  			gfp |= __GFP_NORETRY | __GFP_NOWARN;
+> > > > -		ctx->bio = bio_alloc(iomap->bdev, bio_max_segs(nr_vecs),
+> > > > -				     REQ_OP_READ, gfp);
+> > > > +
+> > > > +		ctx->bio = iomap_read_bio_alloc(iter->inode, iomap,
+> > > > +				bio_max_segs(DIV_ROUND_UP(length, PAGE_SIZE)),
+> > > > +				gfp);
+> > > > +
+> > > >  		/*
+> > > >  		 * If the bio_alloc fails, try it again for a single page to
+> > > >  		 * avoid having to deal with partial page reads.  This emulates
+> > > >  		 * what do_mpage_read_folio does.
+> > > >  		 */
+> > > >  		if (!ctx->bio) {
+> > > > -			ctx->bio = bio_alloc(iomap->bdev, 1, REQ_OP_READ,
+> > > > -					     orig_gfp);
+> > > > +			ctx->bio = iomap_read_bio_alloc(iter->inode,
+> > > > +					iomap, 1, orig_gfp);
+> > > >  		}
+> > > >  		if (ctx->rac)
+> > > >  			ctx->bio->bi_opf |= REQ_RAHEAD;
+> > > >  		ctx->bio->bi_iter.bi_sector = sector;
+> > > > -		ctx->bio->bi_end_io = iomap_read_end_io;
+> > > >  		bio_add_folio_nofail(ctx->bio, folio, plen, poff);
+> > > >  	}
+> > > >  
+> > > >  done:
+> > > > +	/*
+> > > > +	 * For post EOF region, zero part of the folio which won't be read. This
+> > > > +	 * happens at the end of the region. So far, the only user is
+> > > > +	 * fs-verity which stores continuous data region.
+> > > 
+> > > Is it ever the case that the zeroed region actually has merkle tree
+> > > content on disk?  Or if this region truly was never written by the
+> > > fsverity construction code, then why would it access the unwritten
+> > > region later?
+> > > 
+> > > Or am I misunderstanding something here?
+> > > 
+> > > (Probably...)
+> > 
+> > The zeroed region is never written. With 1k fs block and 1k merkle
+> > tree block and 4k page size we could end up reading only single
+> > block, at the end of the tree. But we have to pass PAGE to the
+> > fsverity. So, only the 1/4 of the page is read. This if-case zeroes
+> > the rest of the page to make it uptodate. In the normal read path
+> > this is bound by EOF, but here I use tree size. So, we don't read
+> > this unwritten region but zero the folio.
+> > 
+> > The fsverity does zeroing of unused space while construction, but
+> > this works only for full fs blocks, therefore, 4k fs block and 1k
+> > merkle tree block.
 > 
-> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> But if the regions you have to zero are outside the merkle tree, then
+> fsverity shouldn't ever see those bytes, so why zero them?  Or does it
+> actually check the uptodate bit?  So then you want the folio to have
+> well defined contents?
 
-Cool. Both patches look good to me and they fail without the iomap fix I've
-submitted so feel free to add:
+verity doesn't check uptodate, but I do in xfs_fsverity_read_merkle().
+I think we need to check as it tells that iomap is done reading,
+but that's true that zeroing is not necessary.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-and
-
-Tested-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  src/aio-dio-regress/aio-dio-write-verify.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
 > 
-> diff --git a/src/aio-dio-regress/aio-dio-write-verify.c b/src/aio-dio-regress/aio-dio-write-verify.c
-> index 513a338b..0cf14a2a 100644
-> --- a/src/aio-dio-regress/aio-dio-write-verify.c
-> +++ b/src/aio-dio-regress/aio-dio-write-verify.c
-> @@ -40,6 +40,7 @@ void usage(char *progname)
->  	        "\t\tsize=N: AIO write size\n"
->  	        "\t\toff=M:  AIO write startoff\n"
->  	        "\t-S: uses O_SYNC flag for open. By default O_SYNC is not used\n"
-> +	        "\t-D: uses O_DSYNC flag for open. By default O_DSYNC is not used\n"
->  	        "\t-N: no_verify: means no write verification. By default noverify is false\n"
->  	        "e.g: %s -t 4608 -a size=4096,off=512 -a size=4096,off=4608 filename\n"
->  	        "e.g: %s -t 1048576 -a size=1048576 -S -N filename\n",
-> @@ -298,7 +299,7 @@ int main(int argc, char *argv[])
->  	int o_sync = 0;
->  	int no_verify = 0;
->  
-> -	while ((c = getopt(argc, argv, "a:t:SN")) != -1) {
-> +	while ((c = getopt(argc, argv, "a:t:SND")) != -1) {
->  		char *endp;
->  
->  		switch (c) {
-> @@ -316,6 +317,9 @@ int main(int argc, char *argv[])
->  		case 'S':
->  			o_sync = O_SYNC;
->  			break;
-> +		case 'D':
-> +			o_sync = O_DSYNC;
-> +			break;
->  		case 'N':
->  			no_verify = 1;
->  			break;
-> -- 
-> 2.49.0
+> (At this point I'm picking at nits :P)
 > 
+> --D
+> 
+> > -- 
+> > - Andrey
+> > 
+> > 
+> 
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+- Andrey
+
 
