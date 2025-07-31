@@ -1,149 +1,185 @@
-Return-Path: <linux-fsdevel+bounces-56365-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56366-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F4F5B16A2C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Jul 2025 03:38:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6867B16A84
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Jul 2025 04:41:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44D711AA2583
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Jul 2025 01:38:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1082D1AA0F19
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Jul 2025 02:41:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CDAF13A258;
-	Thu, 31 Jul 2025 01:38:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB49E239E95;
+	Thu, 31 Jul 2025 02:40:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WusmOceC"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rf0S6QkR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18EE633062
-	for <linux-fsdevel@vger.kernel.org>; Thu, 31 Jul 2025 01:38:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F267A18A6B0;
+	Thu, 31 Jul 2025 02:40:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753925904; cv=none; b=cnwf37AShokLDR1VRYdqxAYOTvgSpjBAxfioR+2sRUPdSzAddWT2rLP3NAJTXiJSnih6KjLaXsKl4OJC63TeR4+ddAnnQOqIBwwY2uFmWqnnoYNBkM0MS8VNYBIZDv/+Is3wCVfE5F5G7dUVlWblF04RvNld2C/7RMcHaKCXuJQ=
+	t=1753929653; cv=none; b=glmYFDSp/1KWd7d+algUf0qntf3slRBSM272IMoM0oQJZ6Z8d4evouQQj0IPiDJXkY64VoLctHdU75UalhQ7WTt13xqc8CTqYxap76xt5U8Lv9mooshqbKc9DU3ZuvF3QnCwLMohu6XUXxkRm2/vq8HHkOQxUn9Zch6jHSszHZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753925904; c=relaxed/simple;
-	bh=8ya7e6/CKYInYotmvzdXqePRXf+We+Yf0/tthtPk6a8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q4b37ywHdRUFbOOtYpLP9CCjnKWrWtpYxZchqARS+N0uMXVMcZKoVlSB5C0O6soh4+zUS19XHiH5zkWkGEhwgLqDDYz6WoVwxcOBrj/ZIh9QEeHmcnE+lkqkP9iUH2ndj5Vx3ERdBbx9NCWOdugFI22sbtoOa0BdtxWjTQI3ERU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WusmOceC; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753925902;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e8OY69MZlq/xsrBb9axeH4pIVOb+xTllFUAYP1I6n5U=;
-	b=WusmOceC1ChbgaCH44N4zpNHw8etE+AGdYv7kuF2STLFWXtPyYghoQt7GlO1StRDdPr2fr
-	nkzYZcFGFUmVFnl5BEx0odabFjMiAUsB1f2rUMyX4ipZ1JOdGsXca2gMQotaHmvSRNzwn9
-	mSMm1G9PzPiLjCk2/P/mG4AIAxwb/z0=
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com
- [209.85.166.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-661-zDpE_Jy2NfSkP8gIB4UV7g-1; Wed, 30 Jul 2025 21:38:20 -0400
-X-MC-Unique: zDpE_Jy2NfSkP8gIB4UV7g-1
-X-Mimecast-MFC-AGG-ID: zDpE_Jy2NfSkP8gIB4UV7g_1753925900
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-87c33c0b62eso36665939f.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Jul 2025 18:38:20 -0700 (PDT)
+	s=arc-20240116; t=1753929653; c=relaxed/simple;
+	bh=3a12tHqij9N3PVZUPClnk9cypm9n4czLihZ6VU4IrEw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hlxriqR7F1Hh0R1svxpD+n2H4mupSzuYK4fRtOoZZAJDTeV3QbUArsop/aBz7YuRvWIAoAzMgSUY+WoaynxAHE2Nvwuem5PmnR3q4R8E2A33djybVkLpVcQ37rh3DAcULezYeV28Oi5gsGabvdTYS8Wmrhml2Yy6ft+ysVpCZtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rf0S6QkR; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b3507b63c6fso431710a12.2;
+        Wed, 30 Jul 2025 19:40:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753929651; x=1754534451; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0CQqvk7Q1Awqd0peVfmJpjnN11IYasMyTNsOJwXbWQU=;
+        b=Rf0S6QkRzzxbJzaPU0IucJ/Dv+555gYZzENDOgnOlKNAybD3lm1uldy69CTELq/3nc
+         Uw1Csw9GKnaamAH1TV0yhHW4b8HA9lQIZdATIzXEYlKNVsXCG5gMrG71dElUmOquixiM
+         faGg5DLMykUbJVU55ziWSXGS5DLDKzUT5HMEpZukYawvRD4gAhA0BYqB0LIRag1cDYzc
+         N3eTcQ6rOJiPCl41VwfK3T9NqcKtw32zCaNXolDnyldfU0p6yudMgoNg7UtAxr42rIqx
+         a80VvM/GhhnG+zqiXL5Pnw59hLGHEf91vpHvke6DgcKNfQrOI6MC2pVfwoFJA1Q8HLTs
+         NooQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753925899; x=1754530699;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=e8OY69MZlq/xsrBb9axeH4pIVOb+xTllFUAYP1I6n5U=;
-        b=ncILxf5h0Z8PvlHxLf4syzPiGixH/kjCkagW1kep//maJjrLdpGvBXfiVn6MQI+3HP
-         wJeV5/hgFc9pTq4NLfi9cr6aAAfdhYs44X3MywSbHitVUyJgIn0dGHrTD3hlvIqoN8Vg
-         X5QiDQ82eq3MzjqbJlOI70368URU2Njx4SCt/5GYV4jZe06fQQGev3U6PP5nssXMp2Ih
-         baTaflCRhoC9GVOcOJZSm9UnnPGlwk8d7iVqS3rmIixXwEbD/c5vlhLv3vqrIGiMt/9O
-         iQiddjRKnKvAYZd5DAUt/8mcQNX42j48dpBHptbh2ACMyDMIIWebkqwfgyV5QtZy2VRB
-         eEbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXluHD18DAVAcVQ0kqtbIGdgVh34SdsEwpcl7QJ9lQSUhJ5a1J88yZ9wz31UaG9dwRAdijG50gayLvrGNXe@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyiu8rxw3JFCxiZ5J7DKZu1YWDo9Oh3ptYzNWdxCUhgXdOFkjcb
-	WgLDjKK0H01lXb+MlEzucr2iqvP8HK9LhqMYU1zHnxDX5cjzvzyBsTuZkVc0FDdiDoKnOi8fKWf
-	mIHivDURbAvISGkEdopdluZar1gkj7z353kIhP6SgizjajneieDqFTg0mMBYltPcUsJU=
-X-Gm-Gg: ASbGncvz8tJ8ND87s2Uhu/xWKYwknTScao32yZkFPhdkyYje6tS2CKxT88SM3OgodIm
-	qK91sQ3Yg93FmHf0eWcPRSSoJOkk1wvtcAgLP9sqaHXhU9ktzdXFCryUxJ13C3mPt0pkGcRCwVQ
-	sjM29J8na6zuTo7r1RL4fW6XXRBUGtaFVwaJ9h3Fb2a71vdEUxdmitPNE32yf4kS9cysKgt0Klt
-	aVHJRl1r/mpXtAhFewsBivAL0UY0dwCVGA+b0lhNLoxepfM278U021VwZC0B4IcT5PWlvPuT7cS
-	L2SxRO6B1egEwdzIoqIG0HOxGXzIM8EoS7wC1ousDCcdWZ4raGUIdPbWMppXsJ0roU1PGA7/WKW
-	h
-X-Received: by 2002:a05:6602:1592:b0:85d:b054:6eb9 with SMTP id ca18e2360f4ac-88138b04598mr1029070239f.14.1753925899512;
-        Wed, 30 Jul 2025 18:38:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHDYpvJqVTQun48scooKx53IQp8MzyEscpkj6Zf7fOtkrrh/YzKc++iz/oiD39bF32aJz1UpQ==
-X-Received: by 2002:a05:6602:1592:b0:85d:b054:6eb9 with SMTP id ca18e2360f4ac-88138b04598mr1029067239f.14.1753925899081;
-        Wed, 30 Jul 2025 18:38:19 -0700 (PDT)
-Received: from [10.0.0.82] (75-168-243-62.mpls.qwest.net. [75.168.243.62])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-8814dfa2282sm12147439f.27.2025.07.30.18.38.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Jul 2025 18:38:18 -0700 (PDT)
-Message-ID: <fb7e2cc2-a13a-4ff7-b4ab-8f39492d3f76@redhat.com>
-Date: Wed, 30 Jul 2025 20:38:17 -0500
+        d=1e100.net; s=20230601; t=1753929651; x=1754534451;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0CQqvk7Q1Awqd0peVfmJpjnN11IYasMyTNsOJwXbWQU=;
+        b=n96aeZf+p/Ad8489FSdprdkJn9OTQtnK3+yfGvp9dxUTRnopD47xYYFUTmp71wZapR
+         cbPr9D23qU0TML4iH2vFUkjBDwQxWH0hnNx87y8WezF4elLL+iaK7cXXkry7Ecru8ENU
+         xQYDKTmjI9uZ80AN88Aafxsy7FxcUV5obDp7kHj4kTeBezDeIhTqOU9W+Wlf2KtvJIyE
+         vMeleLsoZCFbg1DcjZaDAd7xZ0seXMFENZk88sr1Acg+T/GspjQ1Av1tldXmpY8IPql5
+         n/pqbf8/gRKGVYYepzF0diwoMLZTz0tId0DQyJ4Acy6nr2QufU2TmcxAOrDAcWuEtVB4
+         vFEg==
+X-Forwarded-Encrypted: i=1; AJvYcCV4w5sDvUJhfsJ7zHMIYZ9hz5iptkK3EQp7XryagOH8FRVFEl53cICctzU2AbjS76gsLT6uc0+mDT5Sg7TxyQ==@vger.kernel.org, AJvYcCVS4YXibjph+2beS+A+4NAwBaGDofJkYlu0wAfsmC2A7QlJxZZ9Cb9tXynvW5MwhPNu4H+X9mnFQr0=@vger.kernel.org, AJvYcCWMDR4tIp/cuoP+xNy42LGTN2kopqDj0OAvVjqSEG21syZ34/BtwPR9Bud7AfPBkwsIuIk0/w35@vger.kernel.org, AJvYcCXjG+zCIEx+s0eRJRhNf5s5gd/ZcBMIx36cEpCJxmHmfAVogJKDJ8wnNaRm7GEs8m0H5g4deR6BMxM85vFw@vger.kernel.org
+X-Gm-Message-State: AOJu0YzS2HJy01PGGh6uL+d0j2LCs3DRaRpP+E8CpqfjQoBwx2EA6qxc
+	VZKbIcR424ijt4hc8VkYXEL93nxD8GxFzQWWuw+HHqnxf6q5vnNS6owGNT0NhVynrtWq9X/JDMB
+	W4LZLFlOmK/KVlOQ7altyWh1xbS93XOE=
+X-Gm-Gg: ASbGncvKWTHiWIDbIvr1QzYVifLw7CmGjGnCaPEQdtaV+X/7M4EDkPK+e2u59JDFdxp
+	g/DsZHwAfsvn5Na60xTvfVE9IpPyC5vax9+1VitH0Esivmw6Th41BxQYnT3qFoqHd2lPCQPYpDL
+	p/PLXmBwcfinLK8IpyMVrNjAHO9yWJzbogQy4WLqPFT9DaOw+oAzS3c9seJp/x2UyqKslnBGoHl
+	WEokF2wF9HrwrCPsFNthxiwBW4T0BgGzIWJC6AZgJ0E4TTZCA==
+X-Google-Smtp-Source: AGHT+IEer314JEfgtgZ9Pz5/zv9i5Zh9oeAvswURdKpH+l/Yga0+wQP5lxV1mHKZaEO7wk2zN/VJyrOfcdvA0n3d2MA=
+X-Received: by 2002:a17:90b:39c5:b0:311:ea13:2e70 with SMTP id
+ 98e67ed59e1d1-31f5de3ceb7mr7878737a91.14.1753929651140; Wed, 30 Jul 2025
+ 19:40:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 0/4] 9p: convert to the new mount API
-To: asmadeus@codewreck.org
-Cc: v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, ericvh@kernel.org, lucho@ionkov.net,
- linux_oss@crudebyte.com, dhowells@redhat.com
-References: <20250730192511.2161333-1-sandeen@redhat.com>
- <aIqa3cdv3whfNhfP@codewreck.org>
-Content-Language: en-US
-From: Eric Sandeen <sandeen@redhat.com>
-In-Reply-To: <aIqa3cdv3whfNhfP@codewreck.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <CANaxB-xXgW1FEj6ydBT2=cudTbP=fX6x8S53zNkWcw1poL=L2A@mail.gmail.com>
+ <20250724230052.GW2580412@ZenIV> <CANaxB-xbsOMkKqfaOJ0Za7-yP2N8axO=E1XS1KufnP78H1YzsA@mail.gmail.com>
+ <20250726175310.GB222315@ZenIV> <CAEWA0a6jgj8vQhrijSJXUHBnCTtz0HEV66tmaVKPe83ng=3feQ@mail.gmail.com>
+In-Reply-To: <CAEWA0a6jgj8vQhrijSJXUHBnCTtz0HEV66tmaVKPe83ng=3feQ@mail.gmail.com>
+From: Pavel Tikhomirov <snorcht@gmail.com>
+Date: Thu, 31 Jul 2025 10:40:40 +0800
+X-Gm-Features: Ac12FXyQt4pEAVf5fhzS5ubdEtkRViMRFtrqLTmfPA4sKpgrINaSaazpM3ky72k
+Message-ID: <CAE1zp74Myaab_U5ZswjCE=ND66bT907Y=vmsk14hV89R_ugbtg@mail.gmail.com>
+Subject: Re: do_change_type(): refuse to operate on unmounted/not ours mounts
+To: Andrei Vagin <avagin@google.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Andrei Vagin <avagin@gmail.com>, 
+	Christian Brauner <brauner@kernel.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, criu@lists.linux.dev, 
+	Linux API <linux-api@vger.kernel.org>, stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/30/25 5:21 PM, asmadeus@codewreck.org wrote:
-> Hi Eric,
-> 
-> Eric Sandeen wrote on Wed, Jul 30, 2025 at 02:18:51PM -0500:
->> This is an updated attempt to convert 9p to the new mount API. 9p is
->> one of the last conversions needed, possibly because it is one of the
->> trickier ones!
-> 
-> Thanks for this work!
-> 
-> I think the main contention point here is that we're moving some opaque
-> logic that was in each transport into the common code, so e.g. an out of
-> tree transport can no longer have its own options (not that I'm aware of
-> such a transport existing anyway, so we probably don't have to worry
-> about this)
+If detached mounts are our only concern, it looks like the check instead of=
+:
 
-I had not thought about out of tree transports. And I was a little unsure
-about moving everything into fs/9p/* but I'm not sure I saw any other way
-to do it in the new framework. @dhowells?
+if (!check_mnt(mnt)) {
+        err =3D -EINVAL;
+        goto out_unlock;
+}
 
-> OTOH this is also a blessing because 9p used to silently ignore unknown
-> options, and will now properly refuse them (although it'd still silently
-> ignore e.g. rdma options being set for a virtio mount -- I guess there's
-> little harm in that as long as typos are caught?)
+could've been a more relaxed one:
 
-Well, that might be considered a regression. Such conversions have burned
-us before, so if you want, it might be possible to keep the old more
-permissive behavior ... I'd have to look, not sure.
+if (mnt_detached(mnt)) {
+        err =3D -EINVAL;
+        goto out_unlock;
+}
 
-> So I think I'm fine with the approach.
-> 
->> I was able to test this to some degree, but I am not sure how to test
->> all transports; there may well be bugs here. It would be great to get
->> some feedback on whether this approach seems reasonable, and of course
->> any further review or testing would be most welcome.
-> 
-> I still want to de-dust my test setup with rdma over siw for lack of
-> supported hardware, so I'll try to give it a try, but don't necessarily
-> wait for me as I don't know when that'll be..
+bool mnt_detached(struct mount *mnt)
+{
+        return !mnt->mnt_ns;
+}
 
-Cool, thanks.
+not to allow propagation change only on detached mounts. (As
+umount_tree sets mnt_ns to NULL.)
 
--Eric
+Also in do_mount_setattr we have a more relaxed check too:
 
+if ((mnt_has_parent(mnt) || !is_anon_ns(mnt->mnt_ns)) && !check_mnt(mnt))
+        goto out;
+
+Best Regards, Tikhomirov Pavel.
+
+On Sun, Jul 27, 2025 at 5:01=E2=80=AFAM Andrei Vagin <avagin@google.com> wr=
+ote:
+>
+> On Sat, Jul 26, 2025 at 10:53=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk=
+> wrote:
+> >
+> > On Sat, Jul 26, 2025 at 10:12:34AM -0700, Andrei Vagin wrote:
+> > > On Thu, Jul 24, 2025 at 4:00=E2=80=AFPM Al Viro <viro@zeniv.linux.org=
+.uk> wrote:
+> > > >
+> > > > On Thu, Jul 24, 2025 at 01:02:48PM -0700, Andrei Vagin wrote:
+> > > > > Hi Al and Christian,
+> > > > >
+> > > > > The commit 12f147ddd6de ("do_change_type(): refuse to operate on
+> > > > > unmounted/not ours mounts") introduced an ABI backward compatibil=
+ity
+> > > > > break. CRIU depends on the previous behavior, and users are now
+> > > > > reporting criu restore failures following the kernel update. This=
+ change
+> > > > > has been propagated to stable kernels. Is this check strictly req=
+uired?
+> > > >
+> > > > Yes.
+> > > >
+> > > > > Would it be possible to check only if the current process has
+> > > > > CAP_SYS_ADMIN within the mount user namespace?
+> > > >
+> > > > Not enough, both in terms of permissions *and* in terms of "thou
+> > > > shalt not bugger the kernel data structures - nobody's priveleged
+> > > > enough for that".
+> > >
+> > > Al,
+> > >
+> > > I am still thinking in terms of "Thou shalt not break userspace"...
+> > >
+> > > Seriously though, this original behavior has been in the kernel for 2=
+0
+> > > years, and it hasn't triggered any corruptions in all that time.
+> >
+> > For a very mild example of fun to be had there:
+> >         mount("none", "/mnt", "tmpfs", 0, "");
+> >         chdir("/mnt");
+> >         umount2(".", MNT_DETACH);
+> >         mount(NULL, ".", NULL, MS_SHARED, NULL);
+> > Repeat in a loop, watch mount group id leak.  That's a trivial example
+> > of violating the assertion ("a mount that had been through umount_tree(=
+)
+> > is out of propagation graph and related data structures for good").
+>
+> I wasn't referring to detached mounts. CRIU modifies mounts from
+> non-current namespaces.
+>
+> >
+> > As for the "CAP_SYS_ADMIN within the mount user namespace" - which
+> > userns do you have in mind?
+> >
+>
+> The user namespace of the target mount:
+> ns_capable(mnt->mnt_ns->user_ns, CAP_SYS_ADMIN)
+>
 
