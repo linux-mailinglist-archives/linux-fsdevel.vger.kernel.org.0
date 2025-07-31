@@ -1,181 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-56384-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56385-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBF75B1702F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Jul 2025 13:12:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EF18B17030
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Jul 2025 13:12:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 002947B1291
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Jul 2025 11:10:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 164B71893BA3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Jul 2025 11:12:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46DB22BE7C3;
-	Thu, 31 Jul 2025 11:11:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34E4B2BE7AF;
+	Thu, 31 Jul 2025 11:12:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="U/idqGjB";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="uOs2klm2";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sznea/cB";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="GcFGAaW+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fspx8/Nj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E71162BE646
-	for <linux-fsdevel@vger.kernel.org>; Thu, 31 Jul 2025 11:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF0B2BE646
+	for <linux-fsdevel@vger.kernel.org>; Thu, 31 Jul 2025 11:12:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753960314; cv=none; b=qm3msZu08bOPxLGX3gV+i1uHM3QD6sb9CCG6ABMdE4apNWFFxKCIqllaK8rl4sc4xcq6gxbDh+7GW4ivjHwLfIyNV/vq5hf8qhL1ko/jH+xYfUNZgwlClRuDFg7pDIM7breOgQBjLrx5MYQCGrJMauJngEZm3wRhe/kiegXFnHI=
+	t=1753960341; cv=none; b=hKGDAeNpjC51NOYIXNLAButuWr+hwhPAxwHpN86PpWAwFYfLA5A4x/0dhA6RCrTdaeayO4jM1lJSRFRlfOQZdCmpzEjTtgME3i3TPsgCg/x8mw0hdQdOhI0uFFQVRX/j84H8fe7QOhRvULQWHAaezUuwPFXpDXrC1nPGin3UolE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753960314; c=relaxed/simple;
-	bh=XqdT38zKkoheSOE0qMe6rcrdX01xPR+cQNuEAHnJvbw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Otd/RC6bynbv8QkBTMCnste0/k60f0DANpNJB43U48r5p2mDGNW3L11nnh95XB7WtT8DyLM8+sWUC2Amn0U3cTCJF5a03LrfLghSf9Ptckhc8zvugzqjbUwvp/Da1H7KNhxa7g6E6Uy7q1sfDuBtDK4UUYNZ7Ja9P3PQnFAQhJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=U/idqGjB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=uOs2klm2; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sznea/cB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=GcFGAaW+; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E62421F45A;
-	Thu, 31 Jul 2025 11:11:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1753960311; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bC7FB0x391njBB/QqTinlGQnb1L1WFmu9ZyfULAa6+w=;
-	b=U/idqGjB0QhBvRAJ/d0R2hHXS5H5ckbXC6itH3aDdRl4fhQ1AvUxxOFJCGlyHJtRlbT67e
-	BhafGMCEhgddhOSem3taKX0XACIG1BdYR3XJEDILvWJrDVtsFYR972yoMg+5antUg+jfR0
-	LWVsPKBtLSMZbT2bMo8YLWPKuJhQTMw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1753960311;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bC7FB0x391njBB/QqTinlGQnb1L1WFmu9ZyfULAa6+w=;
-	b=uOs2klm2Q0N0sRXL4a1hXbPB5Ct8XGdR9ZeIrVzpWsgUWBslPBZLmGVRWLqAfMmj9kURQh
-	qz0e7xSOb4wrMECQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="sznea/cB";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=GcFGAaW+
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1753960310; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bC7FB0x391njBB/QqTinlGQnb1L1WFmu9ZyfULAa6+w=;
-	b=sznea/cBGcersWNs+RtlhR9bYwiCe3Xcw037IneQcsBbMe08ZpB8n0ogM/4bHEOO8StIl1
-	zrW/25PviAbQtfVVIPLvjQ4dFuV2D3a1+0U22F+a6oVDEcyBzsrJzRpFJ5L5Z5X+F3h6Rc
-	H7FN1nEI7MDYFHd6vQ0qdURpUZ1jQCo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1753960310;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bC7FB0x391njBB/QqTinlGQnb1L1WFmu9ZyfULAa6+w=;
-	b=GcFGAaW+o2SK6mRCweleohLkmDZNmYU9LF4EZbW/yaJPfCU2wvGgGIPwB3f01txLkNe1VS
-	43VnBVxXycmAhRDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D83A713876;
-	Thu, 31 Jul 2025 11:11:50 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 5v+ANHZPi2hUPgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 31 Jul 2025 11:11:50 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 65A2DA0A25; Thu, 31 Jul 2025 13:11:46 +0200 (CEST)
-Date: Thu, 31 Jul 2025 13:11:46 +0200
-From: Jan Kara <jack@suse.cz>
-To: Kriish Sharma <kriish.sharma2006@gmail.com>
-Cc: skhan@linuxfoundation.org, linux-fsdevel@vger.kernel.org, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-kernel-mentees@lists.linux.dev
-Subject: Re: [PATCH] fs: document 'name' parameter for name_contains_dotdot()
-Message-ID: <oo4phoyuqa7g4d4y76rekvkwjyndgovny4u2h4tk5klzt5dsyq@3cnq5fneh23l>
-References: <20250730201853.8436-1-kriish.sharma2006@gmail.com>
+	s=arc-20240116; t=1753960341; c=relaxed/simple;
+	bh=tI0ocCtP/WXxCb9jIK/Xxai0/mwpERbye7yF3tPm8pM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IlPk78//o59MOBBNFudqs/Qe7SciIm3xeBS0IVOginKts0JXZCJVmM79slmAw2ZI5PshBmJNzFWRAOmLfUPxUnyVplK13XWWlmmrO43EL1fh225i1bUsIr7BPW8jdb32j3rhxuWZMW1/V0YMDxWlFMXtuWLNmQE03+pHTP973Nk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fspx8/Nj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 445DAC4CEEF;
+	Thu, 31 Jul 2025 11:12:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753960341;
+	bh=tI0ocCtP/WXxCb9jIK/Xxai0/mwpERbye7yF3tPm8pM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Fspx8/Njx12I6saOIi30zYuuTnSSak777OLm5iqdYbNu+sd1cObG3GyswkUOfH8RE
+	 g2yqsjZbSHBvEsHEE6YKPcpu7+d2+pFCBuCEY0pSByCee9NzDRVAij3iYgwXeW1c9h
+	 X+lq7GcKFE1sDpwqgIT4aPpTmnvC3gPJN+Bpb7ZdbAZBI78IHyvwh4TRxwLnUFYK1d
+	 uqTXTQnSLj4uqpFzJSH91UPWkobdBmxZlPmkiA7TsIWZY+TxcEXGDLRMzCVgOM6fZP
+	 m3RJ0g8DQ4tSe186r+yjVO6SvEwFtNjDiO/Qx8O+NeBR8RBv1ZsYODnDndhE5SU8vl
+	 takGLQSNmMrzw==
+From: Christian Brauner <brauner@kernel.org>
+To: linux-fsdevel@vger.kernel.org,
+	tbecker@redhat.com
+Cc: Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH] locks: Remove the last reference to EXPORT_OP_ASYNC_LOCK.
+Date: Thu, 31 Jul 2025 13:12:15 +0200
+Message-ID: <20250731-amtsmissbrauch-voneinander-87b2906e57d0@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250724203516.153616-1-tbecker@redhat.com>
+References: <20250724203516.153616-1-tbecker@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250730201853.8436-1-kriish.sharma2006@gmail.com>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: E62421F45A
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -2.51
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1011; i=brauner@kernel.org; h=from:subject:message-id; bh=tI0ocCtP/WXxCb9jIK/Xxai0/mwpERbye7yF3tPm8pM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWR0+08IdCq/6fVsuVRwTsMMq7iNtYu3zp+5TeG+3nfJR vG6sA3eHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABNpcmH4n5jkfFdZ/1zMRLm5 Jltk5xyXv/qeP6zlondd/PGf/ZdeJzP8lalUZN70a4V807TA3jkZ2Q1z53JdP8Lf5HKC5S7/rKf ZrAA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Wed 30-07-25 20:18:53, Kriish Sharma wrote:
-> The kernel-doc for name_contains_dotdot() was missing the @name
-> parameter description, leading to a warning during make htmldocs.
+On Thu, 24 Jul 2025 17:35:16 -0300, tbecker@redhat.com wrote:
+> Commit b875bd5b381e ("exportfs: Remove EXPORT_OP_ASYNC_LOCK") removed
+> all references to EXPORT_OP_ASYNC_LOCK, but one lasted in the
+> comments for fs/locks.c. Remove it.
 > 
-> Add the missing documentation to resolve this warning.
 > 
-> Signed-off-by: Kriish Sharma <kriish.sharma2006@gmail.com>
 
-Sure. Feel free to add:
+Applied to the master branch of the vfs/vfs.git tree.
+Patches in the master branch should appear in linux-next soon.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-								Honza
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-> ---
->  include/linux/fs.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 2ec4807d4ea8..d7d311b99438 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3279,7 +3279,7 @@ static inline bool is_dot_dotdot(const char *name, size_t len)
->  
->  /**
->   * name_contains_dotdot - check if a file name contains ".." path components
-> - *
-> + * @name: File path string to check
->   * Search for ".." surrounded by either '/' or start/end of string.
->   */
->  static inline bool name_contains_dotdot(const char *name)
-> -- 
-> 2.34.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: master
+
+[1/1] locks: Remove the last reference to EXPORT_OP_ASYNC_LOCK.
+      https://git.kernel.org/vfs/vfs/c/8991d5172a9b
 
