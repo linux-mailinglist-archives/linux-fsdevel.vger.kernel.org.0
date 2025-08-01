@@ -1,234 +1,184 @@
-Return-Path: <linux-fsdevel+bounces-56517-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56518-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80A64B184DE
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Aug 2025 17:24:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87B9DB184FD
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Aug 2025 17:31:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D91B01C833E0
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Aug 2025 15:24:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 678AC7B84F4
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Aug 2025 15:29:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C94CC27280E;
-	Fri,  1 Aug 2025 15:24:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 796192741D5;
+	Fri,  1 Aug 2025 15:31:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ybhceot0"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FqzHFUd/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D0AF2561D4;
-	Fri,  1 Aug 2025 15:24:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C12273D82
+	for <linux-fsdevel@vger.kernel.org>; Fri,  1 Aug 2025 15:30:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754061841; cv=none; b=TK538sz/cfcOYfN0/gsmSdfOkdFKykGf61oSNI6E4kWmusCXL2fR9JJRuAiRFXx34LTpIkRmTgk/5DdUTptmFsJxdhxp8dUX3+A+AHEOX3ELkvwWnLB6jArjGR54SKRAMbUOMp4+V4DPPppkn+Od/XRKujdJzfsHAzeAVgWqL4U=
+	t=1754062260; cv=none; b=EVKbkz6GytefqrThaq7uFgwdqCzsNQiaRIcUMIb8X5OrOQa1VbwI5ZKUyzZIMPK/efCq3yOHBZ0JVvELoZ0VYqpV9quJx8Rd83gLLYv94xfrTKk62qsO81gHNB0+CYeFIUZSyscGnv5GFniQw0mj5XK8wkHcngfaNL0tMV1FkSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754061841; c=relaxed/simple;
-	bh=V7o+bgdIVb3UeWT9T9ZBWSzxBOn3tlnld7jHt8D6nY0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZlrEb15cv8yYdhn7suBCwzfz+1PtGlKIntDncahBLNEzr/w+gg3GnePnY5r24o1wDQkZPbLiQxcqoDCZTyF60VR4bAsaPH8RETUmo5J+RAr+rBbHRxvZ0sD8Y+baoW0EVm48nEkQFUSMQ6JIduTbMeqsmh1EBiHXlqjlCA74EVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ybhceot0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A58FAC4CEE7;
-	Fri,  1 Aug 2025 15:23:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754061840;
-	bh=V7o+bgdIVb3UeWT9T9ZBWSzxBOn3tlnld7jHt8D6nY0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ybhceot0jd3NpcVE68V3hffEIFciXXEDBhjIaKXz332hFSSfx0AqiPsjCqVZy83nx
-	 lAfuvilvWGyzU2IfQAHDzIKP1ti3QEeYv9itO2ZrlaCYbS1VGE3W59SyeBmQUg/atc
-	 8eo6qeiX5fSw65opeVQ9s7aw/ZnheG5MN6Tpn6oa/bB13+7Xd5kv7/wkAc8P2lnjZM
-	 O/rETg1ptKlD8rBYCZ92dDr+IQGRdOLRYcmujdb8wNNnoYVMdi5/vtSIT8yuE6WfRo
-	 3+DYHooEua8tiPh/rKkJ35XmULNgY9ZsHPw9cwf/+2nBW5sxgI+Tmdb9sp41+JBR/t
-	 s8Zar1Rc2DFMg==
-Date: Fri, 1 Aug 2025 09:23:57 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Mike Snitzer <snitzer@kernel.org>
-Cc: Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-	Jeff Layton <jlayton@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>, linux-nfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	hch@infradead.org, linux-block@vger.kernel.org
-Subject: Re: [RFC PATCH v2 4/8] lib/iov_iter: remove piecewise bvec length
- checking in iov_iter_aligned_bvec
-Message-ID: <aIzcDWJyft7kzGi3@kbusch-mbp>
-References: <20250708160619.64800-1-snitzer@kernel.org>
- <20250708160619.64800-5-snitzer@kernel.org>
- <5819d6c5bb194613a14d2dcf05605e701683ba49.camel@kernel.org>
- <aG_SpLuUv4EH7fAb@kbusch-mbp>
- <aG_mbURjwxk3vZlX@kernel.org>
+	s=arc-20240116; t=1754062260; c=relaxed/simple;
+	bh=7akrvybSuCww6Aao3DyWFeiL7vWdSkmvf97d4yc+JYU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VJOVroPcufxbpouzdHmFxKIChav8g4upZWdtAqy5o1EzSAAKJ/tnsylO20gY2r81H0huPvEZbGAuvc6jv7eH7784lb7D9jpre8szHAgieR/uWRG7Fjrcah7tgOzv6R1jx+fchgt6hr1RebG9hatyWBmXUXYbCVJ9r+QMnF3qGxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FqzHFUd/; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754062258;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=TCi1+HoXdkRVSSOUpmZn555kzLpizeDbqqPts9w0KWE=;
+	b=FqzHFUd//HcrurCIuHqb6UXU7Is2zk7XR2lzVjW1XYd7bGUaz1bsnAuzuf70/djFGsD1dy
+	FNdrtG8JhiR2ABqIwOOuVLAx1buNlUicxmZQqf9zurO/2BZyXBcu6uL9ytvj5sRwW7civa
+	4gF116GLzZo0BLWx5GDbBxNM/SgJ5t8=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-223-U6e_U-suP-6if7PlTybveA-1; Fri, 01 Aug 2025 11:30:51 -0400
+X-MC-Unique: U6e_U-suP-6if7PlTybveA-1
+X-Mimecast-MFC-AGG-ID: U6e_U-suP-6if7PlTybveA_1754062250
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45597cc95d5so4472235e9.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 01 Aug 2025 08:30:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754062250; x=1754667050;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=TCi1+HoXdkRVSSOUpmZn555kzLpizeDbqqPts9w0KWE=;
+        b=kfmiqoer8lAQl9cAw5JxKlkHkPvgRuuXg0LeYNqiikyrvT1lOq0rjFt/KiC9+SCqv3
+         20q3cTsVeE7BpGOA53pZjjLPn0BqB5fR4bKZAiGIaxd2fKL2zPFb8TCG4IiISx+tEz1o
+         ndiyEmCLKtfG2MiN7N58aSibAuPbrbthqn9QICAuwG7EENYDX3WJHto2a1ur02M+mCAd
+         SLpgNCumH0aw5LfNFf5dFS+AqeKldU8DfJtJGELghJoSdDKW9vtC8Yj7jZ1EBn6zWnV+
+         EmTVf5t7buzshLtzi+Jl4EYcJWekg/vO8FnHr7eVCngV0VJq2tGanOmTmktKtSly2vbJ
+         6YIw==
+X-Forwarded-Encrypted: i=1; AJvYcCWWXQOfGS6/6LHE3v2xtAm4hEUAVHuvAxyNEwGPqBiel/7otVfHD4GB6eksDdBIhTYuyQWrrCO77Cv0Awiz@vger.kernel.org
+X-Gm-Message-State: AOJu0YzptzpHF1GwNejObzQn4ygxr4EXEDeBuhpuznLB632stsQhz5uO
+	wyRAh5WBgw+p9K/6gzMo8fzPxCC8AY4l0/t239U1T1PhdEUydgdpFZoE8rUBK83QlcMmxtsla9h
+	znQYRetQPNVaeRig2WOx2uZlc5/vYqumjWDa4hy3iISYfPtOVXmiJ4ZTAsS1GpVEU3eo=
+X-Gm-Gg: ASbGncuTfSrvCb2ZhhaaVYtbervWAfxaOAH3QYW7ORZ5iBrtvWbxTzghr7Wc5i/yCGA
+	ScBHYaBCBQt9FEeI0xV7/5aB/UKInwYpA4x8Zh1csUxuZxFQh/SQuFQVbgPaC9FovuxtJ8TwIxa
+	r7L+cykWbL+oqVwGji4KkAlbgOy3b9rH0DyCyNc63gw+2Nn3WCHMmqKr+JNt+d0Du0XdtGRmnA9
+	A/zx6aYJPUeenpfn9voXI7BMijFociWQml8nQzB6Lqv33tnyb9Yl+bQuLMWPLDA0cTo7h+1rt4K
+	RlqDgXZndi2YOfiLauiuwX4KKwX+yuqvoEbWCiRiepXFnIdheIAI9DMuxIwzNUyauOuo7+kyQQA
+	UfStSJVm6TsWmUeF/fEMMKBlpovgnU9jhmeQ+yLu6yPVttD5gHjUOPFe+D+Bj7tDN
+X-Received: by 2002:a05:600c:8b6e:b0:456:27a4:50ad with SMTP id 5b1f17b1804b1-45892be4bf9mr92153575e9.33.1754062249718;
+        Fri, 01 Aug 2025 08:30:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEUB5TcsYvRJNB+TvTZn9gO82Mj1g+cFuoQumEuT1Z47ONxoVqJ+Dm0x1gQESNybtDTjIpcKQ==
+X-Received: by 2002:a05:600c:8b6e:b0:456:27a4:50ad with SMTP id 5b1f17b1804b1-45892be4bf9mr92153235e9.33.1754062249262;
+        Fri, 01 Aug 2025 08:30:49 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f20:7500:5f99:9633:990e:138? (p200300d82f2075005f999633990e0138.dip0.t-ipconnect.de. [2003:d8:2f20:7500:5f99:9633:990e:138])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4589edf54bdsm73593495e9.6.2025.08.01.08.30.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Aug 2025 08:30:48 -0700 (PDT)
+Message-ID: <88296851-3bbe-44fc-a507-70964c0bea8c@redhat.com>
+Date: Fri, 1 Aug 2025 17:30:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aG_mbURjwxk3vZlX@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC v2 1/4] mm: rename huge_zero_page_shrinker to
+ huge_zero_folio_shrinker
+To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+ "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
+ Suren Baghdasaryan <surenb@google.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Borislav Petkov <bp@alien8.de>,
+ Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>,
+ Mike Rapoport <rppt@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Michal Hocko <mhocko@suse.com>, Lorenzo Stoakes
+ <lorenzo.stoakes@oracle.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>,
+ Dev Jain <dev.jain@arm.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Jens Axboe <axboe@kernel.dk>
+Cc: linux-kernel@vger.kernel.org, willy@infradead.org, linux-mm@kvack.org,
+ x86@kernel.org, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org,
+ gost.dev@samsung.com, hch@lst.de, Pankaj Raghav <p.raghav@samsung.com>
+References: <20250724145001.487878-1-kernel@pankajraghav.com>
+ <20250724145001.487878-2-kernel@pankajraghav.com> <87v7n7r7xx.fsf@gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <87v7n7r7xx.fsf@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 10, 2025 at 12:12:29PM -0400, Mike Snitzer wrote:
-> All said, in practice I haven't had any issues with this patch.  But
-> it could just be I don't have the stars aligned to test the case that
-> might have problems.  If you know of such a case I'd welcome
-> suggestions.
+On 01.08.25 06:18, Ritesh Harjani (IBM) wrote:
+> "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com> writes:
+> 
+>> From: Pankaj Raghav <p.raghav@samsung.com>
+>>
+>> As we already moved from exposing huge_zero_page to huge_zero_folio,
+>> change the name of the shrinker to reflect that.
+>>
+> 
+> Why not change get_huge_zero_page() to get_huge_zero_folio() too, for
+> consistent naming?
 
-This is something I threw together that appears to be successful with
-NVMe through raw block direct-io. This will defer catching an invalid io
-vector to much later in the block stack, which should be okay, and
-removes one of the vector walks in the fast path, so that's a bonus.
+Then we should also rename put_huge_zero_folio(). Renaming 
+MMF_HUGE_ZERO_PAGE should probably be done separately.
 
-While this is testing okay with NVMe so far, I haven't tested any more
-complicated setups yet, and I probably need to get filesystems using
-this relaxed limit too.
+-- 
+Cheers,
 
----
-diff --git a/block/bio.c b/block/bio.c
-index 92c512e876c8d..634b2031c4829 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -1227,13 +1227,6 @@ static int __bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
- 	if (bio->bi_bdev && blk_queue_pci_p2pdma(bio->bi_bdev->bd_disk->queue))
- 		extraction_flags |= ITER_ALLOW_P2PDMA;
- 
--	/*
--	 * Each segment in the iov is required to be a block size multiple.
--	 * However, we may not be able to get the entire segment if it spans
--	 * more pages than bi_max_vecs allows, so we have to ALIGN_DOWN the
--	 * result to ensure the bio's total size is correct. The remainder of
--	 * the iov data will be picked up in the next bio iteration.
--	 */
- 	size = iov_iter_extract_pages(iter, &pages,
- 				      UINT_MAX - bio->bi_iter.bi_size,
- 				      nr_pages, extraction_flags, &offset);
-@@ -1241,18 +1234,6 @@ static int __bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
- 		return size ? size : -EFAULT;
- 
- 	nr_pages = DIV_ROUND_UP(offset + size, PAGE_SIZE);
--
--	if (bio->bi_bdev) {
--		size_t trim = size & (bdev_logical_block_size(bio->bi_bdev) - 1);
--		iov_iter_revert(iter, trim);
--		size -= trim;
--	}
--
--	if (unlikely(!size)) {
--		ret = -EFAULT;
--		goto out;
--	}
--
- 	for (left = size, i = 0; left > 0; left -= len, i += num_pages) {
- 		struct page *page = pages[i];
- 		struct folio *folio = page_folio(page);
-@@ -1297,6 +1278,23 @@ static int __bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
- 	return ret;
- }
- 
-+static int bio_align_to_bs(struct bio *bio, struct iov_iter *iter)
-+{
-+	unsigned int mask = bdev_logical_block_size(bio->bi_bdev) - 1;
-+	unsigned int total = bio->bi_iter.bi_size;
-+	size_t trim = total & mask;
-+
-+	if (!trim)
-+	        return 0;
-+
-+	/* FIXME: might be leaking pages */
-+	bio_revert(bio, trim);
-+	iov_iter_revert(iter, trim);
-+	if (total == trim)
-+	        return -EFAULT;
-+	return 0;
-+}
-+
- /**
-  * bio_iov_iter_get_pages - add user or kernel pages to a bio
-  * @bio: bio to add pages to
-@@ -1327,7 +1325,7 @@ int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
- 	if (iov_iter_is_bvec(iter)) {
- 		bio_iov_bvec_set(bio, iter);
- 		iov_iter_advance(iter, bio->bi_iter.bi_size);
--		return 0;
-+		return bio_align_to_bs(bio, iter);
- 	}
- 
- 	if (iov_iter_extract_will_pin(iter))
-@@ -1336,6 +1334,7 @@ int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
- 		ret = __bio_iov_iter_get_pages(bio, iter);
- 	} while (!ret && iov_iter_count(iter) && !bio_full(bio, 0));
- 
-+	ret = bio_align_to_bs(bio, iter);
- 	return bio->bi_vcnt ? 0 : ret;
- }
- EXPORT_SYMBOL_GPL(bio_iov_iter_get_pages);
-diff --git a/block/blk-merge.c b/block/blk-merge.c
-index 70d704615be52..a3acfef8eb81d 100644
---- a/block/blk-merge.c
-+++ b/block/blk-merge.c
-@@ -298,6 +298,9 @@ int bio_split_rw_at(struct bio *bio, const struct queue_limits *lim,
- 	unsigned nsegs = 0, bytes = 0;
- 
- 	bio_for_each_bvec(bv, bio, iter) {
-+		if (bv.bv_offset & lim->dma_alignment)
-+			return -EFAULT;
-+
- 		/*
- 		 * If the queue doesn't support SG gaps and adding this
- 		 * offset would create a gap, disallow it.
-@@ -341,6 +344,8 @@ int bio_split_rw_at(struct bio *bio, const struct queue_limits *lim,
- 	 * we do not use the full hardware limits.
- 	 */
- 	bytes = ALIGN_DOWN(bytes, bio_split_alignment(bio, lim));
-+	if (!bytes)
-+		return -EFAULT;
- 
- 	/*
- 	 * Bio splitting may cause subtle trouble such as hang when doing sync
-diff --git a/block/fops.c b/block/fops.c
-index 82451ac8ff25d..820902cf10730 100644
---- a/block/fops.c
-+++ b/block/fops.c
-@@ -38,8 +38,8 @@ static blk_opf_t dio_bio_write_op(struct kiocb *iocb)
- static bool blkdev_dio_invalid(struct block_device *bdev, struct kiocb *iocb,
- 				struct iov_iter *iter)
- {
--	return iocb->ki_pos & (bdev_logical_block_size(bdev) - 1) ||
--		!bdev_iter_is_aligned(bdev, iter);
-+	return (iocb->ki_pos | iov_iter_count(iter)) &
-+			(bdev_logical_block_size(bdev) - 1);
- }
- 
- #define DIO_INLINE_BIO_VECS 4
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index 46ffac5caab78..d3ddf78d1f35e 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -169,6 +169,22 @@ static inline void bio_advance(struct bio *bio, unsigned int nbytes)
- 
- #define bio_iter_last(bvec, iter) ((iter).bi_size == (bvec).bv_len)
- 
-+static inline void bio_revert(struct bio *bio, unsigned int nbytes)
-+{
-+	bio->bi_iter.bi_size -= nbytes;
-+
-+	while (nbytes) {
-+		struct bio_vec *bv = &bio->bi_io_vec[bio->bi_vcnt - 1];
-+
-+		if (nbytes < bv->bv_len) {
-+			bv->bv_len -= nbytes;
-+			return;
-+		}
-+		bio->bi_vcnt--;
-+		nbytes -= bv->bv_len;
-+       }
-+}
-+
- static inline unsigned bio_segments(struct bio *bio)
- {
- 	unsigned segs = 0;
---
+David / dhildenb
+
 
