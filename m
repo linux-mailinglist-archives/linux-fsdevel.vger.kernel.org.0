@@ -1,81 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-56510-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56511-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EF17B18109
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Aug 2025 13:26:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2492B18140
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Aug 2025 13:42:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B90B54140E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Aug 2025 11:26:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A9383B6DC4
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Aug 2025 11:42:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2517924468E;
-	Fri,  1 Aug 2025 11:26:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3674246786;
+	Fri,  1 Aug 2025 11:42:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DtRF/9A6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kiW7xoPw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DD2D239E69;
-	Fri,  1 Aug 2025 11:26:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FCD0223707;
+	Fri,  1 Aug 2025 11:42:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754047569; cv=none; b=e4X4WjPtM1/e4eQhcBXAQawMIgLd6J9CFMLtjm46rYobG8g2P9fA9A/5E5BGySd4ROb2RwhGvWikij6kMarwsd93SIiA7HKxmQbJ/kwAINMZ3d7Xqxuo66OrWdE7ZMgJSM8oAv5y+iB2QMT12am4A4CIMYmjaomsGWUMzEQ8VVg=
+	t=1754048564; cv=none; b=Ahb1Kjp+ITw/HKleqWK6lBLK4Ohvh8soZuQswXjxfrvI5gosDkum9nHwHOVoBxDeM6PPxkvWLcu72spyI8M74x8yrzyi30GlCDeZvdEeiUvtb+xJuSSFMod2pt2gqBXRiq7fXgRXT7lInIFZTpW0dGe/bjI+tpUOrFIwxi9bvpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754047569; c=relaxed/simple;
-	bh=ctcPV0e4TcLmBOtwNfnGutyp4VCyuR8D9x3aly+gaKE=;
+	s=arc-20240116; t=1754048564; c=relaxed/simple;
+	bh=d8OGW4zCuGqhw+09W9cGsbGa1xLxMT7HIjAc6+EofyU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Hwx1Q/l6/6zhZqXRuyc1m0LlXhDugvRXknvoZKqARTLJSGaO1hI92RPY3Leoga5HjtE+AN8s45wV6po9uDlfxbTRb5NbqrHIGff03Z5OFrM0fj2OVI03iUxZFfYj6o54zMyN2KiC8XSMlTEtoQ0MnaRw99M0w3WCE4maNGh4Rpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DtRF/9A6; arc=none smtp.client-ip=209.85.128.44
+	 In-Reply-To:Content-Type; b=Gg48NPkssgyf8IqlZrXSW2ikn1rv+32YCLzXaYEtz3OUJR6YSfsSnnD72XdyGlYliBsC4ttEoLubvFC3Lb98NKrURTiXRL+v1bFKa34AWvyc/ahpzhsYQDvu4olaux5YnLgkAkiQi+KoPcu+1wB776r7DJl9wHmvsqb3dkMR4ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kiW7xoPw; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4538bc52a8dso11327165e9.2;
-        Fri, 01 Aug 2025 04:26:07 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4560add6cd2so15358615e9.0;
+        Fri, 01 Aug 2025 04:42:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754047566; x=1754652366; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1754048560; x=1754653360; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=f31sjo4y6IU/9pLIItS9Wkop/JonBlPPFk2NLd9JXtg=;
-        b=DtRF/9A6Ri5ib4ixUe6EFVwBQ/WQC4lCAxVU7gZ2z8OKJtQUNGNCxBpicBLc4bW6nO
-         6j2DT5ssaK6tivOmEaOv6YMdWBBiBjNoxIwKuGIEV7ICu3u0TN4Q19GqUrShocjm1AP9
-         fMkYToZZBzSQMxUibXXmZSON8VgOpEVaVDsMG+MraetBvJv+gFANV0VMPzk+liwBlQvI
-         z19VYk1zkrqaLwGS0swiE/XzFL7y4inFrIujUQOm4Rr8K/bwWrwdRpPycnf95QrWm7yd
-         kHsDsCX3/C1LANzE+PUv14FPVlWxpBU1MO2pOj6nWZ0HAslznyz1opUqURaArlC8JNVS
-         wLXA==
+        bh=momi1YfOHTpFLGKMVxFm/VGFaTZTo2hyfea3bMFo1dk=;
+        b=kiW7xoPwuf7Ot+VI/fII4bEG5ctG++N2E7QE+xkX1+UuehwCDQywARSThw1ce1EfHQ
+         t+sRTB9IMb9Pegk3LIZBAUI0G15oZLk1dphEYO6Grn5kwrDqHysFHoDmsTUouy0lpqJk
+         mVC97Md3WbPQFRZEU+TDBzPCv/gI3fwBw8AuNidcMGRI2NjTlJWEliqpVw6QS4ZTO/S7
+         L3md6NemUAFjGGVCXrrZYjHKahjrQDHygpl0AIEGs7+MvtADHAmBSi3iBaQv4tpEnhVj
+         O5Cy11VeDWen42IurbXnGrOoZb3lpD862znAJ1w6fbHLTGRt6LYMweyTGP0METoHDo78
+         EpbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754047566; x=1754652366;
+        d=1e100.net; s=20230601; t=1754048560; x=1754653360;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=f31sjo4y6IU/9pLIItS9Wkop/JonBlPPFk2NLd9JXtg=;
-        b=FGpprTSOnuZCzUf/iWHN13LyXL2efLauX7tol2xcrUzDyqdXqA+Qq+spxKgrm5pNtl
-         Ub/NnbWvaJWfS+LynmVCw+9IG5l3lKxyxZRTKn4bB+VjOGGgCFQlT8jVe0YaQfVtLYma
-         TCet/czRKMkC40k5zBCeUcJBmlamhNhUQp5l3k3IjEcr0yr5DAFyC95TIIyAs7ZM597A
-         +Csdhk1fcPd95cgcv970YFrYQNm//GfaHxjTIYxpcMCUmxLCmgdaRwq//CmDLZCuQqey
-         c2P0FBWmJ+iX4T1P6Kz5Q6PgXfDddzRI5mF+xH1fEyRTDer1+aL1WU8TMTmdqsWNyWON
-         sdNg==
-X-Forwarded-Encrypted: i=1; AJvYcCU3izXj0k5PJTaT7WG5FmjRhIs0uTqPw2zi+vqjWg03Fhh97cWX6IDU5AAkyFGPix3swMSrUJ30b8o=@vger.kernel.org, AJvYcCVLsHrZtljGY2n+06S9GoFEU9IjWLVZ1SeEyq4B/KA0B+ijPdxmzhgKAL4dsB9zBtVrePAFAYepp7BAAm2QPw==@vger.kernel.org, AJvYcCVaFwOOpc1AhoDvOb08I/4EgO2SlCCt3KnvkhZaz/JdfG6I/zIpgnNbPJL3dCabEr/OHtgthFczF13+5rHP@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5fy1PTie5JL096BtIZrM+dZDtO70/JNgpWYpSX59T8LJS7Z2L
-	DfEcoLiNyFhsar8f3lOyYz1fYoqcfcV0dxk8hC4N9Oq2oLmqtVz81qbS
-X-Gm-Gg: ASbGncttIFTazw3FizY4tZ/kNLHP4P0trODSor4JKpJC2hwUrehC5hTjf6gLDvTTY4A
-	CQ1eKZjdBtZo7BffTTIf6jcpZP2sBRyf6D5KhBgCP5szdAnSiL6uv6qBatsIuHvjAvatK55JP+J
-	44LHVq4gePhJyWvODdO3a/bmUz78xYieVtY/dZlOAgI6RqPpBQzPH43yt3zFEXOr4PPBPSNLfit
-	ujxIAsDDvjCX/rd6Xm4sRLjJq+CUiKj/VTMevR1kIwoNkZD1j7swE0GkntUUEGL3+dyVITD+s0W
-	q8LkfqgACQBvHb+QlfVHXDmunXf1K9FLIxShn7XuIAyfQ7Z6BSme/VyUCVwm0l67q61bnHJkuZB
-	714/atMLqBV45yHhTV+SuisCg9qakN8EXANBMGMI8F6zDPk42a+nQA9U9ezE7tL3BYqZ4Up73xb
-	QhKzVp6GMO+w==
-X-Google-Smtp-Source: AGHT+IFjTKWLBkC1vBA6besRk7jxQ0cAB8sF1kKVfEqfQ3SbATKsd62PtflkSV1CPQXrUyg4yTYm1Q==
-X-Received: by 2002:adf:a455:0:b0:3b7:9564:29be with SMTP id ffacd0b85a97d-3b795642a6fmr5837784f8f.49.1754047565577;
-        Fri, 01 Aug 2025 04:26:05 -0700 (PDT)
+        bh=momi1YfOHTpFLGKMVxFm/VGFaTZTo2hyfea3bMFo1dk=;
+        b=Xdk12e2q4onIJwpTTrrKuuDOQashaLjYENjTHwKiMYm4XJ4AII179OxiJG1Cx+fgAd
+         XuAtsvWuj3uhvEs0BDNLRwP9+Zvp94Opglv5SuiCvmUtGxDWqnE30wa81mHnR0FH0xu2
+         shb+1Tp/0LNFMAOPpMd+ARpAJib+3PANlePV9H1Lf2mzjywxqwwuU02arhx4s/SRhQby
+         XiM7kZ7J5ajrzyVVDyNeE+2mLqzjvyo20Iy+dXbXSjg3jh+3x4gU7HLxorcOW4sAjWUb
+         P32IBuxZBkMQPMooF3g6SbnuOeGZaBIKnDBlskP2BidrF3iX2ws6yfodn+uwRaLZqJNY
+         uJtw==
+X-Forwarded-Encrypted: i=1; AJvYcCVInB06GNLxkvcW+5wHwhYWXmpKdm4KzPYeW7UIFZaKgLVbUGKHQy7+KaPGfh7ayjKBUGcwGXi8//hZRUvW@vger.kernel.org, AJvYcCXZGjYQqjCyZvKZWLv1aujHXOwYZ6uTnOwSqNngP83Ti3zr9aK2qrSS0y2y0qRGew7XOo6D5NB9EVA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUXCrl5hlHd7kbxVxmoue+ybvryj8jDZFbfiN6UVFoXB/XvgvP
+	YScfvJk7383ZfUl51JA3/UHePynSXo0XWbVdKbwW3Jle3pV/LjLeHT1H
+X-Gm-Gg: ASbGncu9Rhn+HwJxhfOGElSWnDm4PuNe8wXPMurrJjhqkZXD4a7x3sjg0+rpt5/wkhr
+	zBOiSDH5hPyImd3/GY60z7y85L/Q7Li8jvB+lh/KW+eX4t9yeG7BlrkkOdXQCl8P+d6Ggm1NFgt
+	pQ7hvEZnFDm2fIqiyBvZXBDJLkEPdnW/9xu9nDJlCPm1Hk8Kf8RojywgD694mmLPn1UjoPsM9Rm
+	TZ6t46HRQbIqCVi1Mu5R+FfTUvt1caLoEYbV68tiMo5oeHpwqAMSOjS0RANhSb8Ew3GrHh6hwSK
+	AtagrjkFM1ChDcjv0qL3CNOJa3Mc1xB6fTArC6ILqgzFAnNaFUiw3X/JDUd+gGTsxEC2FtXxhSl
+	uZjghmTi7Y3yyczeWZ7TXbEPl0YeA+5wLb41kVC8eofKKYvLyaQ9wmHUV7AnUfkwzilXCjOMI2v
+	oSOE5kbMrVRGYxoyOIjgfn
+X-Google-Smtp-Source: AGHT+IFHDY7W3Ce5xcLtfL4XnnwU/a+0HjPBHBzmVsYbShhebd7Z21HrXzs3mc/awIMb9FyAT2pj+w==
+X-Received: by 2002:a05:600c:190a:b0:456:18e:eb7f with SMTP id 5b1f17b1804b1-458a1e0bf9emr62743245e9.3.1754048559998;
+        Fri, 01 Aug 2025 04:42:39 -0700 (PDT)
 Received: from ?IPV6:2a02:6b6f:e759:7e00:8b4:7c1f:c64:2a4? ([2a02:6b6f:e759:7e00:8b4:7c1f:c64:2a4])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4589536abb1sm108846655e9.4.2025.08.01.04.26.04
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c46ee84sm5508760f8f.57.2025.08.01.04.42.38
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Aug 2025 04:26:04 -0700 (PDT)
-Message-ID: <3fc8b76c-825d-4aaa-98f4-ff64bb40497d@gmail.com>
-Date: Fri, 1 Aug 2025 12:26:03 +0100
+        Fri, 01 Aug 2025 04:42:39 -0700 (PDT)
+Message-ID: <22e263a3-a1d2-4159-b3c8-44f7a29bace9@gmail.com>
+Date: Fri, 1 Aug 2025 12:42:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -83,276 +83,209 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/5] mm/huge_memory: treat MADV_COLLAPSE as an advise
- with PR_THP_DISABLE_EXCEPT_ADVISED
+Subject: Re: [PATCH v2 4/5] selftests: prctl: introduce tests for disabling
+ THPs completely
 To: David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, corbet@lwn.net, rppt@kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+Cc: linux-fsdevel@vger.kernel.org, corbet@lwn.net, rppt@kernel.org,
  surenb@google.com, mhocko@suse.com, hannes@cmpxchg.org, baohua@kernel.org,
  shakeel.butt@linux.dev, riel@surriel.com, ziy@nvidia.com,
  laoar.shao@gmail.com, dev.jain@arm.com, baolin.wang@linux.alibaba.com,
- npache@redhat.com, Liam.Howlett@oracle.com, ryan.roberts@arm.com,
- vbabka@suse.cz, jannh@google.com, Arnd Bergmann <arnd@arndb.de>,
- sj@kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- kernel-team@meta.com
+ npache@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+ ryan.roberts@arm.com, vbabka@suse.cz, jannh@google.com,
+ Arnd Bergmann <arnd@arndb.de>, sj@kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, kernel-team@meta.com
 References: <20250731122825.2102184-1-usamaarif642@gmail.com>
- <20250731122825.2102184-4-usamaarif642@gmail.com>
- <aca74036-f37f-4247-b3b8-112059f53659@lucifer.local>
- <747509a6-8493-46c3-99d4-38b53a8a7504@redhat.com>
+ <20250731122825.2102184-5-usamaarif642@gmail.com>
+ <7b13d8b5-a534-47f8-b6c5-09a65bffc691@redhat.com>
 Content-Language: en-US
 From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <747509a6-8493-46c3-99d4-38b53a8a7504@redhat.com>
+In-Reply-To: <7b13d8b5-a534-47f8-b6c5-09a65bffc691@redhat.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 
 
-On 31/07/2025 15:54, David Hildenbrand wrote:
-> On 31.07.25 16:38, Lorenzo Stoakes wrote:
->> Nits on subject:
+On 31/07/2025 20:42, David Hildenbrand wrote:
+> On 31.07.25 14:27, Usama Arif wrote:
+>> The test will set the global system THP setting to never, madvise
+>> or always depending on the fixture variant and the 2M setting to
+>> inherit before it starts (and reset to original at teardown).
 >>
->> - It's >75 chars
+>> This tests if the process can:
+>> - successfully set and get the policy to disable THPs completely.
+>> - never get a hugepage when the THPs are completely disabled
+>>    with the prctl, including with MADV_HUGE and MADV_COLLAPSE.
+>> - successfully reset the policy of the process.
+>> - after reset, only get hugepages with:
+>>    - MADV_COLLAPSE when policy is set to never.
+>>    - MADV_HUGE and MADV_COLLAPSE when policy is set to madvise.
+>>    - always when policy is set to "always".
+>> - repeat the above tests in a forked process to make sure
+>>    the policy is carried across forks.
+>>
+>> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+>> ---
 > 
-> No big deal. If we cna come up with something shorter, good.
+> [...]
+> 
+> Looks much better already. Some quirks.
+> 
+>> +#include <stdio.h>
+>> +#include <stdlib.h>
+>> +#include <string.h>
+>> +#include <unistd.h>
+>> +#include <sys/mman.h>
+>> +#include <sys/prctl.h>
+>> +#include <sys/wait.h>
+>> +
+>> +#include "../kselftest_harness.h"
+>> +#include "thp_settings.h"
+>> +#include "vm_util.h"
+>> +
+>> +static int sz2ord(size_t size, size_t pagesize)
+>> +{
+>> +    return __builtin_ctzll(size / pagesize);
+>> +}
+>> +
+>> +enum thp_collapse_type {
+>> +    THP_COLLAPSE_NONE,
+>> +    THP_COLLAPSE_MADV_HUGEPAGE,    /* MADV_HUGEPAGE before access */
+>> +    THP_COLLAPSE_MADV_COLLAPSE,    /* MADV_COLLAPSE after access */
+>> +};
+>> +
+>> +enum thp_policy {
+>> +    THP_POLICY_NEVER,
+>> +    THP_POLICY_MADVISE,
+>> +    THP_POLICY_ALWAYS,
+>> +};
+> 
+> Couldn't you have reused "enum thp_enabled" end simply never specified the "THP_INHERIT"? Then, you need to do less translation.
 
-Changed it to "mm/huge_memory: respect MADV_COLLAPSE with PR_THP_DISABLE_EXCEPT_ADVISED"
-for the next revision. That would be 73 chars :)
+yes, introducing this enum was silly. Have removed it for next revision.> 
+>> +
+>> +struct test_results {
+>> +    int prctl_get_thp_disable;
+> 
+> The result is always one, does that here make sense?
+
+Its 3 in the next patch for PR_THP_DISABLE_EXCEPT_ADVISED :)
+
+I will remove this struct, but I think maybe it might have been a good idea to squash this
+with the next patch to show why the struct was useful.
 
 > 
->> - advise is the verb, advice is the noun.
+>> +    int prctl_applied_collapse_none;
 > 
-> Yeah.
+> "prctl_applied" is a bit confusing. And most of these always have the same value.
 > 
->>
->> On Thu, Jul 31, 2025 at 01:27:20PM +0100, Usama Arif wrote:
->>> From: David Hildenbrand <david@redhat.com>
->>>
->>> Let's allow for making MADV_COLLAPSE succeed on areas that neither have
->>> VM_HUGEPAGE nor VM_NOHUGEPAGE when we have THP disabled
->>> unless explicitly advised (PR_THP_DISABLE_EXCEPT_ADVISED).
->>
->> Hmm, I'm not sure about this.
->>
->> So far this prctl() has been the only way to override MADV_COLLAPSE
->> behaviour, but now we're allowing for this one case to not.
-> 
-> This is not an override really. prctl() disallowed MADV_COLLAPSE, but in the new mode we don't want that anymore.
-> 
->> > I suppose the precedent is that MADV_COLLAPSE overrides 'madvise' sysfs
->> behaviour.
->> > I suppose what saves us here is 'advised' can be read to mean either
->> MADV_HUGEPAGE or MADV_COLLAPSE.
->> > And yes, MADV_COLLAPSE is clearly the user requesting this behaviour.
-> 
-> Exactly.
-> 
->>
->> I think the vagueness here is one that already existed, because one could
->> perfectly one have expected MADV_COLLAPSE to obey sysfs and require
->> MADV_HUGEPAGE to have been applied, but of course this is not the case.
-> 
-> Yes.
-> 
->>
->> OK so fine.
->>
->> BUT.
->>
->> I think the MADV_COLLAPSE man page will need to be updated to mention this.
->>
-> 
-> Yes.
-> 
-
-Thanks, yes will do and send this along with changes to prctl man page after this
-makes into mm-stable.
-
->> And I REALLY think we should update the THP doc too to mention all these
->> prctl() modes.
->>
->> I'm not sure we cover that right now _at all_ and obviously we should
->> describe the new flags.
->>
->> Usama - can you add a patch to this series to do that?
-> 
-> Good point, let's document the interaction with prctl().
-> 
-
-I have added the following patch for the next revision. I know that a lot
-of this will be in the man page as well, but I have gone the way of being very
-very explicit of what are all the possible calls that can be made (hopefully thats
-the right approach :))
-
-
-commit 5f290d29741a514d0861d0f99c8b860ba6af9c37
-Author: Usama Arif <usamaarif642@gmail.com>
-Date:   Fri Aug 1 12:05:49 2025 +0100
-
-    docs: transhuge: document process level THP controls
-    
-    This includes the PR_SET_THP_DISABLE/PR_GET_THP_DISABLE pair of
-    prctl calls as well the newly introduced PR_THP_DISABLE_EXCEPT_ADVISED
-    flag for the PR_SET_THP_DISABLE prctl call.
-    
-    Signed-off-by: Usama Arif <usamaarif642@gmail.com>
-
-diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
-index 370fba113460..cce0a99beac8 100644
---- a/Documentation/admin-guide/mm/transhuge.rst
-+++ b/Documentation/admin-guide/mm/transhuge.rst
-@@ -225,6 +225,45 @@ to "always" or "madvise"), and it'll be automatically shutdown when
- PMD-sized THP is disabled (when both the per-size anon control and the
- top-level control are "never")
- 
-+process THP controls
-+--------------------
-+
-+A process can control its own THP behaviour using the ``PR_SET_THP_DISABLE``
-+and ``PR_GET_THP_DISABLE`` pair of prctl(2) calls. These calls support the
-+following arguments::
-+
-+       prctl(PR_SET_THP_DISABLE, 1, 0, 0, 0):
-+               This will set the MMF_DISABLE_THP_COMPLETELY mm flag which will
-+               result in no THPs being faulted in or collapsed, irrespective
-+               of global THP controls. This flag and hence the behaviour is
-+               inherited across fork(2) and execve(2).
-+
-+       prctl(PR_SET_THP_DISABLE, 1, PR_THP_DISABLE_EXCEPT_ADVISED, 0, 0):
-+               This will set the MMF_DISABLE_THP_EXCEPT_ADVISED mm flag which
-+               will result in THPs being faulted in or collapsed only for
-+               the following cases:
-+               - Global THP controls are set to "always" or "madvise" and
-+                 the process has madvised the region with either MADV_HUGEPAGE
-+                 or MADV_COLLAPSE.
-+               - Global THP controls is set to "never" and the process has
-+                 madvised the region with MADV_COLLAPSE.
-+               This flag and hence the behaviour is inherited across fork(2)
-+               and execve(2).
-+
-+       prctl(PR_SET_THP_DISABLE, 0, 0, 0, 0):
-+               This will clear the MMF_DISABLE_THP_COMPLETELY and
-+               MMF_DISABLE_THP_EXCEPT_ADVISED mm flags. The process will
-+               behave according to the global THP controls. This behaviour
-+               will be inherited across fork(2) and execve(2).
-+
-+       prctl(PR_GET_THP_DISABLE, 0, 0, 0, 0):
-+               This will return the THP disable mm flag status of the process
-+               that was set by prctl(PR_SET_THP_DISABLE, ...).
-+               i.e.
-+               - 1 if MMF_DISABLE_THP_COMPLETELY flag is set
-+               - 3 if MMF_DISABLE_THP_EXCEPT_ADVISED flag is set
-+               - 0 otherwise.
-+
- Khugepaged controls
- -------------------
-
-
->>
->>>
->>> MADV_COLLAPSE is a clear advise that we want to collapse.
->>
->> advise -> advice.
->>
->>>
->>> Note that we still respect the VM_NOHUGEPAGE flag, just like
->>> MADV_COLLAPSE always does. So consequently, MADV_COLLAPSE is now only
->>> refused on VM_NOHUGEPAGE with PR_THP_DISABLE_EXCEPT_ADVISED.
->>
->> You also need to mention the shmem change you've made I think.
-> 
-> Yes.
-> 
->> >>
->>> Co-developed-by: Usama Arif <usamaarif642@gmail.com>
->>> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
->>> Signed-off-by: David Hildenbrand <david@redhat.com>
->>> ---
->>>   include/linux/huge_mm.h    | 8 +++++++-
->>>   include/uapi/linux/prctl.h | 2 +-
->>>   mm/huge_memory.c           | 5 +++--
->>>   mm/memory.c                | 6 ++++--
->>>   mm/shmem.c                 | 2 +-
->>>   5 files changed, 16 insertions(+), 7 deletions(-)
->>>
->>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
->>> index b0ff54eee81c..aeaf93f8ac2e 100644
->>> --- a/include/linux/huge_mm.h
->>> +++ b/include/linux/huge_mm.h
->>> @@ -329,7 +329,7 @@ struct thpsize {
->>>    * through madvise or prctl.
->>>    */
->>>   static inline bool vma_thp_disabled(struct vm_area_struct *vma,
->>> -        vm_flags_t vm_flags)
->>> +        vm_flags_t vm_flags, bool forced_collapse)
->>>   {
->>>       /* Are THPs disabled for this VMA? */
->>>       if (vm_flags & VM_NOHUGEPAGE)
->>> @@ -343,6 +343,12 @@ static inline bool vma_thp_disabled(struct vm_area_struct *vma,
->>>        */
->>>       if (vm_flags & VM_HUGEPAGE)
->>>           return false;
->>> +    /*
->>> +     * Forcing a collapse (e.g., madv_collapse), is a clear advise to
->>
->> advise -> advice.
->>
->>> +     * use THPs.
->>> +     */
->>> +    if (forced_collapse)
->>> +        return false;
->>>       return test_bit(MMF_DISABLE_THP_EXCEPT_ADVISED, &vma->vm_mm->flags);
->>>   }
->>>
->>> diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
->>> index 9c1d6e49b8a9..ee4165738779 100644
->>> --- a/include/uapi/linux/prctl.h
->>> +++ b/include/uapi/linux/prctl.h
->>> @@ -185,7 +185,7 @@ struct prctl_mm_map {
->>>   #define PR_SET_THP_DISABLE    41
->>>   /*
->>>    * Don't disable THPs when explicitly advised (e.g., MADV_HUGEPAGE /
->>> - * VM_HUGEPAGE).
->>> + * VM_HUGEPAGE / MADV_COLLAPSE).
->>
->> This is confusing you're mixing VMA flags with MADV ones... maybe just
->> stick to madvise ones, or add extra context around VM_HUGEPAGE bit?
-> 
-> I don't see anything confusing here, really.
-> 
-> But if it helps you, we can do
->     (e.g., MADV_HUGEPAGE / VM_HUGEPAGE, MADV_COLLAPSE).
-> 
-> (reason VM_HUGEPAGE is spelled out is that there might be code where we set VM_HUGEPAGE implicitly in the kernel)
-> 
->>
->> Would need to be fixed up in a prior commit obviously.
->>
->>>    */
->>>   # define PR_THP_DISABLE_EXCEPT_ADVISED    (1 << 1)
->>>   #define PR_GET_THP_DISABLE    42
->>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->>> index 85252b468f80..ef5ccb0ec5d5 100644
->>> --- a/mm/huge_memory.c
->>> +++ b/mm/huge_memory.c
->>> @@ -104,7 +104,8 @@ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
->>>   {
->>>       const bool smaps = type == TVA_SMAPS;
->>>       const bool in_pf = type == TVA_PAGEFAULT;
->>> -    const bool enforce_sysfs = type != TVA_FORCED_COLLAPSE;
->>> +    const bool forced_collapse = type == TVA_FORCED_COLLAPSE;
->>> +    const bool enforce_sysfs = !forced_collapse;
->>
->> Can we just get rid of this enforce_sysfs altogether in patch 2/5 and use
->> forced_collapse?
-> 
-> Let's do that as a separate cleanup on top. I want least churn in that patch.
-> 
-> (had the same idea while writing that patch, but I have other things to focus on than cleaning up all this mess)
+> Can't we special case the remaining two cases on the current policy and avoid this struct compeltely?
 > 
 
-I am happy to send this cleanup once this series makes it to mm-new and a new revision is not expected.
+The values are different in the next patch when PR_THP_DISABLE_EXCEPT_ADVISED is used.
 
-Thanks!
-Usama
+Just to explain how I came about using this struct test_results (though it doesnt matter as
+I will remove it for the next revision):
+I wanted to maximise code reuse and only wanted to have one instance of prctl_thp_disable_test.
+I actually started with special casing, but went the brute force way of adding too many if else
+statements and it was looking quite messy after I added the tests for PR_THP_DISABLE_EXCEPT_ADVISED.
+I saw this struct test_results in another kselftest and thought this should make it much better and
+extendable.
+
+I have removed struct test_results and changed prctl_thp_disable_test to the following for next revision:
+
+static void prctl_thp_disable_test(struct __test_metadata *const _metadata,
+				   size_t pmdsize, enum thp_enabled thp_policy,
+				   int prctl_flags)
+{
+	ASSERT_EQ(prctl(PR_GET_THP_DISABLE, NULL, NULL, NULL, NULL),
+		  prctl_flags & PR_THP_DISABLE_EXCEPT_ADVISED ? 3 : 1);
+
+	/* tests after prctl overrides global policy */
+	ASSERT_EQ(test_mmap_thp(THP_COLLAPSE_NONE, pmdsize), 0);
+
+	ASSERT_EQ(test_mmap_thp(THP_COLLAPSE_MADV_HUGEPAGE, pmdsize),
+		  thp_policy == THP_NEVER || !prctl_flags ? 0 : 1);
+
+	ASSERT_EQ(test_mmap_thp(THP_COLLAPSE_MADV_COLLAPSE, pmdsize),
+		  !prctl_flags ? 0 : 1);
+
+	/* Reset to global policy */
+	ASSERT_EQ(prctl(PR_SET_THP_DISABLE, 0, NULL, NULL, NULL), 0);
+
+	/* tests after prctl is cleared, and only global policy is effective */
+	ASSERT_EQ(test_mmap_thp(THP_COLLAPSE_NONE, pmdsize),
+		  thp_policy == THP_ALWAYS ? 1 : 0);
+
+	ASSERT_EQ(test_mmap_thp(THP_COLLAPSE_MADV_HUGEPAGE, pmdsize),
+		  thp_policy == THP_NEVER ? 0 : 1);
+
+	ASSERT_EQ(test_mmap_thp(THP_COLLAPSE_MADV_COLLAPSE, pmdsize), 1);
+}
+
+
+
+
+> 
+>> +    int prctl_applied_collapse_madv_huge;
+>> +    int prctl_applied_collapse_madv_collapse;
+>> +    int prctl_removed_collapse_none;
+>> +    int prctl_removed_collapse_madv_huge;
+>> +    int prctl_removed_collapse_madv_collapse;
+>> +};
+>> +
+>> +/*
+>> + * Function to mmap a buffer, fault it in, madvise it appropriately (before
+>> + * page fault for MADV_HUGE, and after for MADV_COLLAPSE), and check if the
+>> + * mmap region is huge.
+>> + * Returns:
+>> + * 0 if test doesn't give hugepage
+>> + * 1 if test gives a hugepage
+>> + * -errno if mmap fails
+>> + */
+>> +static int test_mmap_thp(enum thp_collapse_type madvise_buf, size_t pmdsize)
+>> +{
+>> +    char *mem, *mmap_mem;
+>> +    size_t mmap_size;
+>> +    int ret;
+>> +
+>> +    /* For alignment purposes, we need twice the THP size. */
+>> +    mmap_size = 2 * pmdsize;
+>> +    mmap_mem = (char *)mmap(NULL, mmap_size, PROT_READ | PROT_WRITE,
+>> +                    MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+>> +    if (mmap_mem == MAP_FAILED)
+>> +        return -errno;
+>> +
+>> +    /* We need a THP-aligned memory area. */
+>> +    mem = (char *)(((uintptr_t)mmap_mem + pmdsize) & ~(pmdsize - 1));
+>> +
+>> +    if (madvise_buf == THP_COLLAPSE_MADV_HUGEPAGE)
+>> +        madvise(mem, pmdsize, MADV_HUGEPAGE);
+>> +
+>> +    /* Ensure memory is allocated */
+>> +    memset(mem, 1, pmdsize);
+>> +
+>> +    if (madvise_buf == THP_COLLAPSE_MADV_COLLAPSE)
+>> +        madvise(mem, pmdsize, MADV_COLLAPSE);
+>> +
+> 
+> To avoid even mmap_mem to get merged with some other VMA, maybe just do
+> before reading the smap here:
+> 
+> /* HACK: make sure we have a separate VMA that we can check reliably. */
+> mprotect(mem, pmdsize, PROT_READ);
+> 
+Thanks! Yeah this is a nice hack, have used it in the next revision.
+
+> or
+> 
+> madvise(mem, pmdsize, MADV_DONTFORK);
+> 
+> before reading smaps.
+> 
+> That is probably the easiest approach. The you can drop the lengthy comment and perform a single thp check.
+> 
+> 
+
+[...]
 
