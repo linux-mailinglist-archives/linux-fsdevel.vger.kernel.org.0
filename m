@@ -1,165 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-56535-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56536-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCAB2B188EB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Aug 2025 23:47:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ABC70B188EF
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Aug 2025 23:53:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F123A5A0A71
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Aug 2025 21:47:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C7095A0B5D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Aug 2025 21:53:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F0EA21B185;
-	Fri,  1 Aug 2025 21:47:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SkhvV7JO"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1092B220F2B;
+	Fri,  1 Aug 2025 21:53:08 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4191013A258
-	for <linux-fsdevel@vger.kernel.org>; Fri,  1 Aug 2025 21:47:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4459616F8E9;
+	Fri,  1 Aug 2025 21:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754084863; cv=none; b=lqYP/JJ/UIPDFjeIjSus9k3PxTEqfy8w274OTC7snfC9QbU/I2MY5OJ899/PX/7zw8PdDiMr+Kxe7yRClSfa5ngCxVXXtwUdsnvWeRQcjmtTwfBBLEqpg5WcRgNP3KvfVcA3QmBqrOX7EpscDg+31ZtNqmrrmCBDuFe638YvQwo=
+	t=1754085187; cv=none; b=nC9aNKHzYOpj0/Torj3rj7y7LVNbXRxpt9kv274GcIW3jJgzbj0KkMopNBp/uim31fXWNgYtWvKHcXxLBUeKHO1vE9JKSB8W479szJWWS840Bx3Ctl4obd//0LEl92h6ugNI8kjASvWJwPywVxYGg299qdA/2q0g206PgaD4OZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754084863; c=relaxed/simple;
-	bh=k157+JI1r22QvghvRDoSO0n3FR1g+DG1J4GSrZXyutE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HNRZYWlHzPzIW38leaHFYzoNeaDzZN2tdpDEkiPic9GXQOomBVbC5YHfUY3y4XCzKBL3qCylQkz83zODTU52FXNiSQeYGbYamFP8J3dBpmjBQDTFkd1mAWo/2XNljX6dbRv7wnQ5ssSfZuaDPs1Y0OV6U/Yb06JIaHcRLxFHikA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SkhvV7JO; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4af123c6fc4so4005351cf.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 01 Aug 2025 14:47:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754084861; x=1754689661; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qzab8vfejFy6BGVYexdP79Amr1wH4zaNM7RRQ0cASzc=;
-        b=SkhvV7JOkoxSTFM4pXbxzfldXJiwugqWvdX4/sXXS8vw/oSzqn49BWcCEoyRV6rNc8
-         GpvVoI66SMtkvGYJzoIngomLsZfFQmr5k+3cxgJgkc7qco4GsSe89f+jWsP2PTwapxjL
-         skNjllmet1af6NS0hvfOOp0UWsIPVLEYMljis4RIXjX5z5sHH7bhLG4E1gtitqprju4R
-         9A//MYJECNfUb900WfZsfT+cXkzJYD68jg67td3sdgFhe94C9JLn5uodDp+S3Iz1GSIo
-         qyynL891ncb1TsiON0E7Pv5xUktCMB9nTLPXty7qGQlAsgWbhcD4iBB/tzcWkNJp8P8Q
-         t+EA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754084861; x=1754689661;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qzab8vfejFy6BGVYexdP79Amr1wH4zaNM7RRQ0cASzc=;
-        b=KZ3cAcSa3jwk71PggtUsRw7LgJbPIkKO6u4BnBY6EcFyAewcODqpPZ9bPjISodcxI2
-         p8b7YFg5NMjycVqX2clDj5hJ4iPZg6m9y0q+WFhMbNdIBzu7zmM/9OED9B86S9PWUJL7
-         e0BGXal3Wocsb4GYBUFyBId9fel1otv1OFwC0zEF9vVxMyNFpD5mBMecPyJGxSsDmlGn
-         /524kfGdQQ6Bhddd6fJ0+p8/73CsikZc5n1YzXka3/CUbK0/X4u8bk+zGeGadagj/VAD
-         Qa/XtssNX8/Mjm8PtL9ZANTTr1kNxirDmOGIkTcI1TD06Q7vsmGLqDZsNArNdc+0Cvjr
-         hldw==
-X-Forwarded-Encrypted: i=1; AJvYcCV04K8m6d6h1zh4UaGR8S6L8mT1cjoiVzFm91n3zdhavscNzIUVYzmK1yhz3Am8YQkLKgt7m/z6pJ4AluOh@vger.kernel.org
-X-Gm-Message-State: AOJu0YykScoBu6adTOrMFFoSmxPhAk6L4euS6S8tlAK0kdqJzbTgNpFB
-	eGaaz2cOgjOn/7DppgWCI3rq3R2w7d538zDQLWYRd8RF3B6eje0g1CmB5ALykqsXZsUh17ZpE5D
-	TaMBzNQSYqad2NU1Pvz/aTTLxg4UxDG9Fu7iL404=
-X-Gm-Gg: ASbGncuLLiGS/TmRjTwqIeMJLygbXT/9AbIHH0bPeisQQlZcfzcYp+jel6lfnv6WObu
-	oz7vrIPSrcuIFcI8a04Q9uvFRih5fRUrIWBzDguPpa/ImQ9CqVmub/x/fELU315/uEHd3lOKqYL
-	gmtzya7O1NINB/TteNfRRNpb+YejWPGixENT2yBWhXe/XnE/B44nmKLwT0BbuQy2sDzliySl3Np
-	rGvhlGnzSI+S+61aw==
-X-Google-Smtp-Source: AGHT+IF8Bkr7PS7/P+w37YpYpvkm4jMRLLF3escBy9onGRRvAuSm5oEUYJawRmHEiGCmm5CjW7kphVKyIhE0/EfAlgM=
-X-Received: by 2002:ac8:5716:0:b0:4ae:fa71:9ea5 with SMTP id
- d75a77b69052e-4af10d11525mr19086791cf.48.1754084860965; Fri, 01 Aug 2025
- 14:47:40 -0700 (PDT)
+	s=arc-20240116; t=1754085187; c=relaxed/simple;
+	bh=bRWx2pAgCkgzaxaEhGPC83Gy2yU8rwcb+0y2pqaC6A4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TEb83rxDJsWmlq5wmUW9zVOp3hNRlBZyrKWcHMCSxmhxfPlyP2fBTX66oKcUQ4pDKQNQJWCfhstaJJj3tvIJkdfv51cyfJ1hAfYiUE6tBhLFmKzEvC2nl4PsPpzY/snrgMY7oDapD0Lg+nvLQqDnxHrtzh6pwuBjE5fwXmCPIHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 571Lq1OE017435;
+	Sat, 2 Aug 2025 06:52:01 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 571Lq1dn017431
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sat, 2 Aug 2025 06:52:01 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <98938e56-b404-4748-94bd-75c88415fafe@I-love.SAKURA.ne.jp>
+Date: Sat, 2 Aug 2025 06:52:01 +0900
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250801002131.255068-1-joannelkoong@gmail.com>
- <20250801002131.255068-6-joannelkoong@gmail.com> <ghghf7cynwbmthtozlthggdscnmgvkmnq6s3gkcl4qp2zxubee@azmf2dxubund>
-In-Reply-To: <ghghf7cynwbmthtozlthggdscnmgvkmnq6s3gkcl4qp2zxubee@azmf2dxubund>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Fri, 1 Aug 2025 14:47:30 -0700
-X-Gm-Features: Ac12FXxaOUKnRnhsre2EUbUqbED2JQEbEAQrHEZ5LNAO58jwZ4eXF6jMaZEnX1g
-Message-ID: <CAJnrk1awAjCY6HNp0F2QUEkA10O_ZABr_QpJ29JdzRGq7E0ffw@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 05/10] mm: add filemap_dirty_folio_pages() helper
-To: Jan Kara <jack@suse.cz>
-Cc: linux-mm@kvack.org, brauner@kernel.org, willy@infradead.org, 
-	hch@infradead.org, djwong@kernel.org, linux-fsdevel@vger.kernel.org, 
-	kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] hfs: update sanity check of the root record
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
+        "leocstone@gmail.com" <leocstone@gmail.com>,
+        "jack@suse.cz" <jack@suse.cz>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "brauner@kernel.org" <brauner@kernel.org>
+Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
+        "frank.li@vivo.com" <frank.li@vivo.com>,
+        "slava@dubeyko.com" <slava@dubeyko.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+References: <4c1eb34018cabe33f81b1aa13d5eb0adc44661e7.camel@dubeyko.com>
+ <bb8d0438-6db4-4032-ba44-f7b4155d2cef@I-love.SAKURA.ne.jp>
+ <5ef2e2838b0d07d3f05edd2a2a169e7647782de5.camel@ibm.com>
+ <8cb50ca3-8ccc-461e-866c-bb322ef8bfc6@I-love.SAKURA.ne.jp>
+ <d4abeee2-e291-4da4-9e0e-7880a9c213e3@I-love.SAKURA.ne.jp>
+ <650d29da-4f3a-4cfe-b633-ea3b1f27de96@I-love.SAKURA.ne.jp>
+ <6db77f5cb0a35de69a5b6b26719e4ffb3fdac8c5.camel@ibm.com>
+ <1779f2ad-77da-40e3-9ee0-ef6c4cd468fa@I-love.SAKURA.ne.jp>
+ <12de16685af71b513f8027a8bfd14bc0322eb043.camel@ibm.com>
+ <0b9799d4-b938-4843-a863-8e2795d33eca@I-love.SAKURA.ne.jp>
+ <427fcb57-8424-4e52-9f21-7041b2c4ae5b@I-love.SAKURA.ne.jp>
+ <5498a57ea660b5366ef213acd554aba55a5804d1.camel@ibm.com>
+ <57d65c2f-ca35-475d-b950-8fd52b135625@I-love.SAKURA.ne.jp>
+ <f0580422d0d8059b4b5303e56e18700539dda39a.camel@ibm.com>
+ <5f0769cd-2cbb-4349-8be4-dfdc74c2c5f8@I-love.SAKURA.ne.jp>
+ <06bea1c3fc9080b5798e6b5ad1ad533a145bf036.camel@ibm.com>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <06bea1c3fc9080b5798e6b5ad1ad533a145bf036.camel@ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Virus-Status: clean
+X-Anti-Virus-Server: fsav403.rs.sakura.ne.jp
 
-On Fri, Aug 1, 2025 at 10:07=E2=80=AFAM Jan Kara <jack@suse.cz> wrote:
->
-> On Thu 31-07-25 17:21:26, Joanne Koong wrote:
-> > Add filemap_dirty_folio_pages() which takes in the number of pages to d=
-irty.
-> >
-> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> ...
-> > diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-> > index b0ae10a6687d..a3805988f3ad 100644
-> > --- a/mm/page-writeback.c
-> > +++ b/mm/page-writeback.c
-> > @@ -2732,7 +2732,7 @@ void folio_account_cleaned(struct folio *folio, s=
-truct bdi_writeback *wb)
-> >   * try_to_free_buffers() to fail.
-> >   */
-> >  void __folio_mark_dirty(struct folio *folio, struct address_space *map=
-ping,
-> > -                          int warn, long nr_pages)
-> > +                          int warn, long nr_pages, bool newly_dirty)
-> >  {
-> >       unsigned long flags;
-> >
-> > @@ -2740,12 +2740,29 @@ void __folio_mark_dirty(struct folio *folio, st=
-ruct address_space *mapping,
-> >       if (folio->mapping) {   /* Race with truncate? */
-> >               WARN_ON_ONCE(warn && !folio_test_uptodate(folio));
-> >               folio_account_dirtied(folio, mapping, nr_pages);
-> > -             __xa_set_mark(&mapping->i_pages, folio_index(folio),
-> > -                             PAGECACHE_TAG_DIRTY);
-> > +             if (newly_dirty)
-> > +                     __xa_set_mark(&mapping->i_pages, folio_index(foli=
-o),
-> > +                                     PAGECACHE_TAG_DIRTY);
-> >       }
-> >       xa_unlock_irqrestore(&mapping->i_pages, flags);
->
-> I think this is a dangerous coding pattern. What is making sure that by t=
-he
-> time you get here newly_dirty is still valid? I mean the dirtying can rac=
-e
-> e.g. with writeback and so it can happen that the page is clean by the ti=
-me
-> we get here but newly_dirty is false. We are often protected by page lock
-> when dirtying a folio but not always... So if nothing else this requires =
-a
-> careful documentation about correct use.
->
->                                                                 Honza
+On 2025/08/02 3:26, Viacheslav Dubeyko wrote:
+> On Fri, 2025-08-01 at 06:12 +0900, Tetsuo Handa wrote:
+>> On 2025/08/01 3:03, Viacheslav Dubeyko wrote:
+>>> On Thu, 2025-07-31 at 07:02 +0900, Tetsuo Handa wrote:
+>>>> On 2025/07/31 4:24, Viacheslav Dubeyko wrote:
+>>>>> If we considering case HFS_CDR_DIR in hfs_read_inode(), then we know that it
+>>>>> could be HFS_POR_CNID, HFS_ROOT_CNID, or >= HFS_FIRSTUSER_CNID. Do you mean that
+>>>>> HFS_POR_CNID could be a problem in hfs_write_inode()?
+>>>>
+>>>> Yes. Passing one of 1, 5 or 15 instead of 2 from hfs_fill_super() triggers BUG()
+>>>> in hfs_write_inode(). We *MUST* validate at hfs_fill_super(), or hfs_read_inode()
+>>>> shall have to also reject 1, 5 and 15 (and as a result only accept 2).
+>>>
+>>> The fix should be in hfs_read_inode(). Currently, suggested solution hides the
+>>> issue but not fix the problem.
+>>
+>> Not fixing this problem might be hiding other issues, by hitting BUG() before
+>> other issues shows up.
+>>
+> 
+> I am not going to start a philosophical discussion. We simply need to fix the
+> bug. The suggested patch doesn't fix the issue.
 
-I think races against writeback and truncation could already exist
-here prior to this patch. afaict from the function documentation for
-__folio_mark_dirty(), it's up to the caller to prevent this:
+What is your issue?
 
- * It is the caller's responsibility to prevent the folio from being trunca=
-ted
- * while this function is in progress, although it may have been truncated
- * before this function is called.  Most callers have the folio locked.
- * A few have the folio blocked from truncation through other means (e.g.
- * zap_vma_pages() has it mapped and is holding the page table lock).
+My issue (what syzbot is reporting) is that the kernel crashes if the inode number
+of the record retrieved as a result of hfs_cat_find_brec(HFS_ROOT_CNID) is not
+HFS_ROOT_CNID. My suggested patch does fix my issue.
 
-The documentation doesn't mention anything about writeback but I think
-it applies here similarly.
+> Please, don't use hardcoded value. I already shared the point that we must use
+> the declared constants.
+> 
+> This function is incorrect and it cannot work for folders and files at the same
+> time.
 
-I'm happy to do this another way though if there's a better approach here.
+I already shared that I don't plan to try writing such function
+( http://lkml.kernel.org/r/38d8f48e-47c3-4d67-9caa-498f3b47004f@I-love.SAKURA.ne.jp ).
 
-Thanks,
-Joanne
+Please show us your patch that solves your issue.
 
-> --
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
 
