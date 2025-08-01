@@ -1,83 +1,83 @@
-Return-Path: <linux-fsdevel+bounces-56498-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56499-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 474E2B17BC7
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Aug 2025 06:24:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD5CBB17BD1
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Aug 2025 06:30:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1F915A6197
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Aug 2025 04:23:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1024D7A5F8E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Aug 2025 04:29:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AE621EA7E1;
-	Fri,  1 Aug 2025 04:23:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F4641E9B1A;
+	Fri,  1 Aug 2025 04:30:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U4BDHeZ3"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dsYncnkw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 027DB80B;
-	Fri,  1 Aug 2025 04:23:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19FB81519B4;
+	Fri,  1 Aug 2025 04:30:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754022229; cv=none; b=qWYtrn+Kv5iEGZR6h2G1Nc0kPRjC/LwYGbX+ixvL9O1VYQx3UWPLItF07FUcuIwNDYl9/pXv/4S5fMGQHmQcsFUlPpdX++qYhykTbuUxCWrEGn0hWu9DzjY6eMpSndeuRB/bVXGTVsJpUOwku427Eo3FPUjzbit8mAhel9G3uzE=
+	t=1754022621; cv=none; b=B9s5m81lKa712iJoZHnktauw8SQvtGflwDUA3+mhWaq971q2KZK7wLQ36dpBS8anZV2DnhQhksY70OfitvrKxGt1arix+9WIiZRNNYQeTTHObnaPgoZjERQsXhNbYgLl26MqmR9jno3e/BhhbTYCnMyOI0JyLwAjOcGHw0O3uvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754022229; c=relaxed/simple;
-	bh=jBgOLIUY3EkUVGIgWztwk/fefH7v1CGKX1hl/rS9vus=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=p0Xne28gh4Eiv67Up/p69ttBk+EEXkmmYNY0j+sNJ0DcupkNX5ocI8Db2FejyRiIXZElkOSAVCBpfcEhYbtuF2YJXFhWUXtinb1V74vS3+PBXLzF71eVrDBldVFr9sHY6TrVogeHll7N5vjVJti3PpEbLg3VJyGbcmWfDiPdVeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U4BDHeZ3; arc=none smtp.client-ip=209.85.210.172
+	s=arc-20240116; t=1754022621; c=relaxed/simple;
+	bh=piYJV8Y4LjN/W8XtRqLL1KO0JAveKpssg3VbBT7bOd4=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=rZ/eZUqmsDmEzzfLHgAMUYR54CH3d7naz9lE+0lXFdQRXcbfDhAbqutVUmDQs0Eefd/3igcPOasNDJ3PjmUS7mB3pGuT+fC8Wg+TrCxhA6QqNot4X+8tAG00dOlbzTfEPr5Rh5e+s/8jxZAHYsekwfUgfR5oTA16v6YvaCi9FyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dsYncnkw; arc=none smtp.client-ip=209.85.215.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-73c17c770a7so590095b3a.2;
-        Thu, 31 Jul 2025 21:23:47 -0700 (PDT)
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b271f3ae786so1395982a12.3;
+        Thu, 31 Jul 2025 21:30:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754022227; x=1754627027; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1754022619; x=1754627419; darn=vger.kernel.org;
         h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=FNFG0goKRFNn6WAYQtw0Gyc6OtTnvSZYrWlxnJqfeJg=;
-        b=U4BDHeZ3d8FUwiPkbkSD9K+og8pKAOWyMEjnCBBKMGf7SfbDqALaRqhrEU5Rd0k5BH
-         ATdc+860qqCbHXfHhRxYKHCTm9sVoie+BzvvOAjx/UPCLIEKKVeEfuF5NUXQuHXl94mV
-         6Iba2WAX2nuIY9S70lTqiUy4Rc4UZXuIZU06kyvcp4G7rzq9bpIknhFoewki8xmxqndG
-         WGhgX5iG97IuFgDF/EVDrSPQZeF4WYbbdYY8VrPWiHtfdpZO0xp7Vzolv+eeOZJU/uSM
-         3NsYo1YecMtGbs+/Lq7jB008Ne9o2iZSco6dLYh1yoCr2Cn0B86ohThlxrFc+D/bNI+N
-         sjOA==
+        bh=piYJV8Y4LjN/W8XtRqLL1KO0JAveKpssg3VbBT7bOd4=;
+        b=dsYncnkwJH0c3pkrIwmpq9HPZq5KVs0oSvMx0YjmSsNWzOu5pC7HzgLFgZhC/dXyt8
+         7VZq1COcBjdImXlVRFqwhiryoQDqylykTC8iVB9kq9ZlTXhbvNI1Kkr7vIhgxvF0HUhB
+         0P/gk8EaG4SB/rbyU5TDLrEFN2Ph6XFa5k80j6APE+G3LUDrfRoSR62SrU0TjJRRKHXo
+         vpfjdTkp+gzIaFGIbxYwD8kxtkgLSWXuI9ikLytyUEa0xtvXi5bf5qVeH/tPc3XWzA65
+         j0lgV4BbaDSSZYNQhVz202sJLAuuVzk9y2XH4eB2CCqSvNOlNHw3GzZRfY6Q0X/mm7dt
+         PXtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754022227; x=1754627027;
+        d=1e100.net; s=20230601; t=1754022619; x=1754627419;
         h=references:message-id:date:in-reply-to:subject:cc:to:from
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FNFG0goKRFNn6WAYQtw0Gyc6OtTnvSZYrWlxnJqfeJg=;
-        b=QXR2i/0PTwJUVw61+BSumjVfhJcz4m1b0AEIGEa4t6mnLJ4jSKQck7HfzygY5Qfy09
-         ixVOYIRfXpF3zMQj5zVAw1uRlFLLENWyPo5JtD69Bw/c10xMVXUk8IAIpuWAcJE3VYbu
-         tD8cqsfhSgHdABRML0iod7cXuvYsEBaCAlK4tTEv/gh65AKQAeCbdFCwy6cmVoi0i7+R
-         HneZod83SHznQXjwqYmVshNc3NGdp9b+PrniJMJJps3n4o1z62J95H9e6S6P7S5p7keg
-         IfN6XckDymfx5rdhq12ku9lC1r9VeHtqbLGoe8DcYyy3NgjX3t+nyf8wjR0T4GqYgLCI
-         rntQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVKGpor8olxouuryVgvKgv5/Rt91QwHU42WQnUYZyVA1qw6njasGbN7YPkFnH7ZeviIqqheIJUy/uRMuA==@vger.kernel.org, AJvYcCWE+6/pFoAMin+Kw2s5u5AFt5IhqWw8Ab4qAi0WNOW0uQOgKv9sJlLtEpegseEDrpkWyBr5C2YrTBbC8bggzQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyfg2aHjj0y4g1O4on0c+cb3aUlgLcfIYhcR0/qw0WDOSyx7V26
-	GdizxQ1DKJiIPEnzfybws34ZTYPrQ2mJa0HFjOVL9XdXMG7XBVI82391
-X-Gm-Gg: ASbGncvwi7NbsfOpE9VHC2+O70khZacX789td6utH5x2U3GuQyNZtNennZwqllP9HYb
-	pfIPalUBxnITr0+q7dl7zpM1GrF/PVeZTQ8Asr5Dtbvbe6B+bLf8PknxauyIXgpC/qsC8Fiw+Qn
-	VZnE7tKWI5/b8rCpxpADNicsvrNSOj47yM+i5qeEqephCIs4ytg90hmUw7S2KMOYooZOuhXJ1Jm
-	91s7r/r0zbuSiYaT8/NxkgnU3G22z3/Dc8UJBnSAYfYwUiRBDOv2mqT2k9RjyF1m/huyLPM6CDq
-	IMXNCEvR3gzn+AZjIrJM8tbOm8JyrI/0E6N3lpRVtGIHnOfO1NTGCXfdlJ9rAtwRA2GIg3ghyYz
-	4aqq4gEcILL72lc8=
-X-Google-Smtp-Source: AGHT+IFYpTrv1dKIphQdIwKL1PvNWrKjfBnLAZqwJKaFm7GvpRXCHXO9Ik+FatBqLwjSU63HnQ9A9A==
-X-Received: by 2002:a05:6a21:9998:b0:220:4750:1fb1 with SMTP id adf61e73a8af0-23dc0d0444emr17449915637.4.1754022227221;
-        Thu, 31 Jul 2025 21:23:47 -0700 (PDT)
+        bh=piYJV8Y4LjN/W8XtRqLL1KO0JAveKpssg3VbBT7bOd4=;
+        b=o4/oeZ4t5lt1bUg7K9/NscfPIptqCNmxuVqGT+PKrddIQPR5vmRNBjehh0lRMHttvq
+         j24gMrAjv5v1huFk21amcoa7m3kROM8S9DYW/RlQ5LPlyB5xIqpF/8SLVV19AOaIjw4a
+         5FltlnpwFRxB9PJm2DLdXQ7E2DU33Zz0UFOVHjhfkROArR736AcuHapwQ2m65fX/l/ce
+         oGb760kA0IZ/X9i4Jo7EhH0j4+YaiaH+TBVO/r0wyIfzn56cWO24c1TnJ8lJR7arqblA
+         DDoluDTJ0VzLwqc4LjAHmiI6lb3jUMPyRMEQmY2evy6Y79KgVOgMBV2D3iXMAWymzPQ0
+         EQTA==
+X-Forwarded-Encrypted: i=1; AJvYcCWUpP2dd2Xw9be9xKLMCAVbi6Sw1EI5Hg6M1GjmB4dDQrtggZiME7RFXs47bVdZwdcRgngyrSlpb3VdfOaW2A==@vger.kernel.org, AJvYcCXOQSFrc7eqAdSqN+0PjDA8lkWiCHgUwmBLkIZh3P2ecgJ0tLdByvqm77I+i7J8aKccFzH23OAQctGqMw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyD9SOuSGvP5QIMBr0cnE5jAYMigTN3VNsvR7+scSp0A1iX86q+
+	xZ4LmOyqbrZTzw/J0uYlQ80LRH621hE4Llsxo0vM6Tf8iH98B9KNjKfuZrNcfg==
+X-Gm-Gg: ASbGncugpS2v+QRsYgVWU27MXwYjSX6XcbDlY1xiM2+MOCR+NUUz7SZRxJdJ29YvTXR
+	i/YBOYDjYZ2UTZWmFObpWbPxo5XnztZAmEqM2C0Jo8nFjmu89/+lWadyNEsCkcFZMKqxQ7SfBcO
+	EE166BPKm6zapBGZ5TLWKSjz9Y0cHGjfCIZ5HVwPv0uWBRenPDoN06jpmF/9sgWRM/e8UBqE0p5
+	Lc30KYveIU1m5JCqTt7jLO5eVaRc2RSQKVQ/aMb/9ROd0mMh2fiJKYRdC2FtgOZDLKPBstYmH/7
+	7+7pi3bdc0WjYLFaKdliaSzonJjqrceLFlXzDZV2OkdvB5xxpfG1kJOwPKt1rCA8jgBTTCxeuKf
+	Rcn/8ouDeQRCeLr0=
+X-Google-Smtp-Source: AGHT+IHsBcZ7jbf88T/H26yKkIr5RGXZAEkQ0zGeJsJopMViNuzkuMhxbnUjM/2qC4wMrVQtn4dP+A==
+X-Received: by 2002:a05:6a20:12d1:b0:21f:a6c9:34d with SMTP id adf61e73a8af0-23dc0cf620fmr14523968637.1.1754022619024;
+        Thu, 31 Jul 2025 21:30:19 -0700 (PDT)
 Received: from dw-tp ([49.205.218.89])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bcce8f800sm2922802b3a.42.2025.07.31.21.23.38
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bcce8fa92sm2999321b3a.45.2025.07.31.21.30.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 21:23:46 -0700 (PDT)
+        Thu, 31 Jul 2025 21:30:18 -0700 (PDT)
 From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>, Suren Baghdasaryan <surenb@google.com>, Ryan Roberts <ryan.roberts@arm.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, Mike Rapoport <rppt@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, Michal Hocko <mhocko@suse.com>, David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, Jens Axboe <axboe@kernel.dk>
 Cc: linux-kernel@vger.kernel.org, willy@infradead.org, linux-mm@kvack.org, x86@kernel.org, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org, gost.dev@samsung.com, kernel@pankajraghav.com, hch@lst.de, Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [RFC v2 1/4] mm: rename huge_zero_page_shrinker to huge_zero_folio_shrinker
-In-Reply-To: <20250724145001.487878-2-kernel@pankajraghav.com>
-Date: Fri, 01 Aug 2025 09:48:18 +0530
-Message-ID: <87v7n7r7xx.fsf@gmail.com>
-References: <20250724145001.487878-1-kernel@pankajraghav.com> <20250724145001.487878-2-kernel@pankajraghav.com>
+Subject: Re: [RFC v2 2/4] mm: add static huge zero folio
+In-Reply-To: <20250724145001.487878-3-kernel@pankajraghav.com>
+Date: Fri, 01 Aug 2025 09:53:56 +0530
+Message-ID: <87tt2rr7oj.fsf@gmail.com>
+References: <20250724145001.487878-1-kernel@pankajraghav.com> <20250724145001.487878-3-kernel@pankajraghav.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -88,21 +88,51 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 
 > From: Pankaj Raghav <p.raghav@samsung.com>
 >
-> As we already moved from exposing huge_zero_page to huge_zero_folio,
-> change the name of the shrinker to reflect that.
+> There are many places in the kernel where we need to zeroout larger
+> chunks but the maximum segment we can zeroout at a time by ZERO_PAGE
+> is limited by PAGE_SIZE.
 >
-
-Why not change get_huge_zero_page() to get_huge_zero_folio() too, for
-consistent naming?
-
-> No functional changes.
+> This is especially annoying in block devices and filesystems where we
+> attach multiple ZERO_PAGEs to the bio in different bvecs. With multipage
+> bvec support in block layer, it is much more efficient to send out
+> larger zero pages as a part of single bvec.
 >
-> Suggested-by: David Hildenbrand <david@redhat.com>
-> Acked-by: David Hildenbrand <david@redhat.com>
-> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
-> ---
->  mm/huge_memory.c | 24 ++++++++++++------------
->  1 file changed, 12 insertions(+), 12 deletions(-)
+> This concern was raised during the review of adding LBS support to
+> XFS[1][2].
+>
+> Usually huge_zero_folio is allocated on demand, and it will be
+> deallocated by the shrinker if there are no users of it left. At moment,
+> huge_zero_folio infrastructure refcount is tied to the process lifetime
+> that created it. This might not work for bio layer as the completions
+> can be async and the process that created the huge_zero_folio might no
+> longer be alive. And, one of the main point that came during discussion
+> is to have something bigger than zero page as a drop-in replacement.
+>
+> Add a config option STATIC_HUGE_ZERO_FOLIO that will always allocate
+> the huge_zero_folio, and it will never drop the reference. This makes
+> using the huge_zero_folio without having to pass any mm struct and does
+> not tie the lifetime of the zero folio to anything, making it a drop-in
+> replacement for ZERO_PAGE.
+>
+> If STATIC_HUGE_ZERO_FOLIO config option is enabled, then
+> mm_get_huge_zero_folio() will simply return this page instead of
+> dynamically allocating a new PMD page.
+>
+> This option can waste memory in small systems or systems with 64k base
+> page size. So make it an opt-in and also add an option from individual
+> architecture so that we don't enable this feature for larger base page
+> size systems.
+
+Can you please help me understand why will there be memory waste with
+64k base pagesize, if this feature gets enabled?
+
+Is it because systems with 64k base pagsize can have a much larger PMD
+size then 2M and hence this static huge folio won't really get used?
+
+Just want to understand this better. On Power with Radix MMU, PMD size
+is still 2M, but with Hash it can be 16M.
+So I was considering if we should enable this with Radix. Hence the ask
+to better understand this.
 
 -ritesh
 
