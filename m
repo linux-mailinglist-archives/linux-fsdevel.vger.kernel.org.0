@@ -1,140 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-56551-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56552-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCC6BB18F3A
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Aug 2025 17:37:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88480B190D8
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Aug 2025 01:34:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9549AA15DD
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Aug 2025 15:37:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5EC297A1107
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Aug 2025 23:32:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE2211C3BF7;
-	Sat,  2 Aug 2025 15:37:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C42917736;
+	Sat,  2 Aug 2025 23:33:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="XAtq+/GB"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="IzAEYSMQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78066C13B
-	for <linux-fsdevel@vger.kernel.org>; Sat,  2 Aug 2025 15:37:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D09D1EDA09
+	for <linux-fsdevel@vger.kernel.org>; Sat,  2 Aug 2025 23:33:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754149056; cv=none; b=EOWCXpq9gdx4CV3OaynplTYhvnr+3ZBCCn4xIFPIaxm5YZHx4EnsqpFP5okvlhmGX4c3/NcOG5A3ZtuPqmAKcxf5gySmVDPRjcDipzQBV4ux9mjmiYwy77BJ2VIjN+ehhp6CgjN3GyKMgnh8/e6hhgzuWnirrUA0x2G+djO/TKg=
+	t=1754177627; cv=none; b=EdfJrH5R9R9H+bWuD3U2gM7+0L87c4jWghRlzMa4Tpjhab7X8XmGEvM0jLmzpspIkmjqHZHED2ltbF3GNMHG0NBg+tSENH+2Rtdisp79VvgPXig9y57ySstZ1exd7AtaaxvV8MKuwceyy1Q6tzkuYPcloEdY0VZx9dpPcPokR1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754149056; c=relaxed/simple;
-	bh=r5BclxiNA2oHNLLunK2Td77xpt9TQVXBaWGBfY2UqXo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FTf2UGDBhKRBG0UOggtFnz+tpgiNPECAKDj1dtGJPVG4+63JOs139fxRCAqrKYhfnWUpZUtPzu30Sp2IE+vkw5zcrSVugtALjwUOiPpNNaMUcDN2lGp8FT4DdbWNySMizvjG+S79iMndSX52yLp6Me2cskkZPRX/GdLRm27DIJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=XAtq+/GB; arc=none smtp.client-ip=209.85.166.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3e3ff43383fso19936435ab.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 02 Aug 2025 08:37:34 -0700 (PDT)
+	s=arc-20240116; t=1754177627; c=relaxed/simple;
+	bh=kJsgdU92CHKcumA558FjE09dL3p6PDIATBJc8UDK+q4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dD3weEPsUNe6iMO329dMRhw0Rcv686zruqRkoWx3YI99m61/1K8zx0FqkW9DSjpaUiEM6Ge3wZQm4upqg8F2eaBjZ8NA4jCs11GKyz0I6t5bz7CRJfpvZE1kHWk9Hm9+DQcW7qWHzYHvkHZzMBagufal1dmKbIsk4kIwN8UgvE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=IzAEYSMQ; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4ab71ac933eso17452891cf.2
+        for <linux-fsdevel@vger.kernel.org>; Sat, 02 Aug 2025 16:33:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1754149053; x=1754753853; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=04FKV/5jxBcAoTht60UjROgiF7iSlnQp8Ncc9Cilojs=;
-        b=XAtq+/GB1qOsAPi1C1uMNsjlNdZG0pY91Tuo705P0vGIeCQ2ulLYjILvL6u8an64XW
-         rF1c+hh6bg3MQp1hMdn5SUGZG/+h1TQUxrcGGbbxJdVbrlW46NNO55I+YkQQ/w4hORQt
-         qjVdHGYrbYwud7y2nlnTP2u5/pgvltTQaXSMDlvEvc2pmFZ20D9JNEfj3Okk3g0ib561
-         5H9q4VfwETJ3a8wgyMOjxv2U/CtiHeiNOAnAdzdAZKyRkeMvv3pQ+g74PKVIHPJSq/0L
-         NY8/Qt+8y+HWtwlCkTQu5HkKlO+Jltnv4DzKXi5T2QkrjwjfirlHberh3j4/ZUnwHVj5
-         2PkA==
+        d=soleen.com; s=google; t=1754177624; x=1754782424; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=kJsgdU92CHKcumA558FjE09dL3p6PDIATBJc8UDK+q4=;
+        b=IzAEYSMQQxBOsikic/wv4S2Ak1IkZWDRqiFN9WKskOPCYCKnFySUQlasVHApND+PMR
+         OCjjIv3KDQDhiLV7iCbKECJEl0TiLe3LVTmuy6gNIAPlrHpPMvaWeAUew+pYDqxDAdq4
+         cRYIk3Pk40uuINjMm25FNjXxHw1561DmTbJKWM4u2DSj995QfnrH1KmOwQGD9nFg6Tzy
+         eSGc8sOAfVf6chgTuWPeRCwVLIPcObgRenylCwTmVbeWGXJ7/Ql9GaIrxyl7KD0kBpwd
+         JYCDYQADCKMCdpfH8waqilxH0gttD+Wvvd/08ZapWIo6fXD3VG1lnW9cGur68EAGto5p
+         gp9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754149053; x=1754753853;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=04FKV/5jxBcAoTht60UjROgiF7iSlnQp8Ncc9Cilojs=;
-        b=glOLYUlW5p+bAobcw/Nv2IidS9kv1kPLmDkCwe6jeRziXoSnIsZ7S/YSfRHPf5DehP
-         RbmDfSm6LmQNIUuThLFa3V2m4PXjYGqMo0cr64y+ORhPJ5+HPoyQ4t0OnGxIq1iOTHtj
-         EJSNA3f/u/yGoE4+TZO/Rfue54N5wor6yq1Xv+AduBwqGzsXrE7eTDmLC7pq5pSf2OPo
-         zvZJG0/9M1CteVFZkIK+/NF4JZowxGAPpDKDxztXcF/kB8hR4nBEAL3MnvlrirFt7m43
-         TXRzZyNj6drNmPnoFpx+CBsajMSj7aA7scLYLR9K7EUHP+jqAeqXSye7jcyoFfl2NUDf
-         1ByQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVaZV5f9RS3imG8PN+BQXYQgGG2iA6Xrbz84xAZxiLKbz0X0YdBQfeBbWWNBk/Tu0kigasyIPqhZlI7cBOu@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJQ01ivAlyxpB4BVh8s5yYwAZL6O7wzEziRKTz3nXeGyGP527y
-	oLLFH7JIClL7YgbKZiy31JDjGkptvsme+Iwke7gehDuzeh9tjX0hjfjQUEr1XwQoNIc=
-X-Gm-Gg: ASbGncs5XmVonaJMeSfLdle53SQjex95BVv42glaCdwqmT+ol7yw/WZ62jszuJwol9U
-	jS9yi7R7Eqnut/QVKTs57JLuT5HMfxrjD9T9wrLOesJ2hRiQuCFgEXbdaZn07Y5YVKKlfT/PM7u
-	WZLkEQl9YyhsyKR/Z0U6CISlIQwOJrR2R3k6q97RTIscU2spkqqplMW4ACDIt1Acp5r5IkJTFU+
-	DANP3D1F3ZKB0k43ZCSRGDO6H8ozEEhR2c+IZHbIDnOyiw/0pDB7RdJbmcU6Pu6ka50UyBzJYEs
-	x286nyK5mioHodoEORAZnfwAZwd/Y0GNKuFA2BZGyR5B/GoIwdeS4AEePN8oTbuAeCLOhPWDC3q
-	I81QJxlhGbUj9yt+JOA4=
-X-Google-Smtp-Source: AGHT+IFpKu7HslfN99lpIdPLZvZStogsGBrzGWqBfvd20JQpD1Wdf3nzDTTCR48VUkNyC7cVFYirug==
-X-Received: by 2002:a05:6e02:2382:b0:3df:347f:ff3e with SMTP id e9e14a558f8ab-3e416116d8bmr66728215ab.7.1754149053646;
-        Sat, 02 Aug 2025 08:37:33 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e40297c3d3sm26117545ab.6.2025.08.02.08.37.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 02 Aug 2025 08:37:32 -0700 (PDT)
-Message-ID: <43716438-2fb9-4377-a4a0-6f803d7b8aec@kernel.dk>
-Date: Sat, 2 Aug 2025 09:37:32 -0600
+        d=1e100.net; s=20230601; t=1754177624; x=1754782424;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kJsgdU92CHKcumA558FjE09dL3p6PDIATBJc8UDK+q4=;
+        b=uUnxzs5WT1efZQHdqmKZQ5pFFFUCh9/CLMDoRj7minP6CGfKAdPZw3tpI0xvAxo+OB
+         Nqfr7DzVdpjg5qIo5v6G6YalFY6QdYq/G6A1ag5FYBI3MU1gg9qcFhGH4D+GfUNv6S4h
+         yW77q4rGO5Cx/GcCa2Cc9l0bjC1Ha6F+Xd762lMnjbtXjgqYUt8DqaQXK+lr+D5OxZRR
+         DHOjjdVUfuAXw32934fYcmD25gY0j8hmgRxwlHgVzVM1HeVU3UTAZC8O2qXzF1jD4DDt
+         EMTzPR5pcERKu6qElfjU8JnUnITDgzvDvWs7peQJIxmeG/4PH86TRP4jUXaAiLIHEktP
+         SdrA==
+X-Forwarded-Encrypted: i=1; AJvYcCUBLsnLBmqZmW3ki/PpIRI80eqSD17Rm8v4wiVkzpKcYsyIR5IJjaIrVEE2SGawnNfoVt+V4lUug8BZzw8p@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxia61xJRsq1jfDb0dhb1pM9aOFpHFGQQ/gwNVzK16yrJUAr/f2
+	uXjx7iRR9BI0yYGfVDwDpR0/nU4YTdWUOyiLykIKdoB2MttZ2KNgZQmT1oBbmLJhP5h+t8Cm6v+
+	bzuU2ZDcXG5xnhen3qeQBwh4ztiOpEjY9QpJmdaUxJQ==
+X-Gm-Gg: ASbGnctTV8RKaSZaApUk3Ct9pyz5YuDNbYyPMbYUinsh2tIVBo0AE3LAdHjL8ZdyNCr
+	rVzCiGbq+W4pIHF7ilxfxQyeElm88BY+/bYBDobW7lo8B9amEfu1qJ9cOwRqkuOFM/SYf9jVf6/
+	mlkWaKijSV2ICCkeatEXpj6UBeIi8lbsc8uDDvygn93XFja4hW+VgKA/y2+8uFwgixY7qbGF1e3
+	EXMEGTSTq1tH9M=
+X-Google-Smtp-Source: AGHT+IHK7fLZil0+YTWDez+wvKBQ8V6Jt/OxjDZMFuEzIGCH7fVFxrWmUeAnr0aeRkYb+cC5kQOxq3dgtd4ni01q4II=
+X-Received: by 2002:a05:622a:8cd:b0:4ab:3ffe:409d with SMTP id
+ d75a77b69052e-4af107905acmr85155491cf.0.1754177624500; Sat, 02 Aug 2025
+ 16:33:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/7] direct-io: even more flexible io vectors
-To: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: snitzer@kernel.org, dw@davidwei.uk, brauner@kernel.org,
- Keith Busch <kbusch@kernel.org>
-References: <20250801234736.1913170-1-kbusch@meta.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20250801234736.1913170-1-kbusch@meta.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250723144649.1696299-1-pasha.tatashin@soleen.com>
+ <20250723144649.1696299-2-pasha.tatashin@soleen.com> <aIdNTN1qd0dTvsQm@kernel.org>
+In-Reply-To: <aIdNTN1qd0dTvsQm@kernel.org>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Sat, 2 Aug 2025 19:33:08 -0400
+X-Gm-Features: Ac12FXzhu6LQ65rG6yLekEcwlc9H74rWaGowwnkVgbEc9_PttPli4Tw81uem1BM
+Message-ID: <CA+CK2bD2pyWmnzDyRA54nXQwB1ABPKqWP2yH6bVnnE09ogCHXg@mail.gmail.com>
+Subject: Re: [PATCH v2 01/32] kho: init new_physxa->phys_bits to fix lockdep
+To: Mike Rapoport <rppt@kernel.org>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
+	changyuanl@google.com, dmatlack@google.com, rientjes@google.com, 
+	corbet@lwn.net, rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, 
+	kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com, 
+	masahiroy@kernel.org, akpm@linux-foundation.org, tj@kernel.org, 
+	yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev, 
+	chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com, 
+	jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org, 
+	dan.j.williams@intel.com, david@redhat.com, joel.granados@kernel.org, 
+	rostedt@goodmis.org, anna.schumaker@oracle.com, song@kernel.org, 
+	zhangguopeng@kylinos.cn, linux@weissschuh.net, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-mm@kvack.org, gregkh@linuxfoundation.org, 
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, rafael@kernel.org, 
+	dakr@kernel.org, bartosz.golaszewski@linaro.org, cw00.choi@samsung.com, 
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, 
+	quic_zijuhu@quicinc.com, aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
+	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, 
+	leonro@nvidia.com, witu@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 8/1/25 5:47 PM, Keith Busch wrote:
-> From: Keith Busch <kbusch@kernel.org>
-> 
-> In furthering direct IO use from user space buffers without bouncing to
-> align to unnecessary kernel software constraints, this series removes
-> the requirement that io vector lengths align to the logical block size.
-> The downside (if want to call it that) is that mis-aligned io vectors
-> are caught further down the block stack rather than closer to the
-> syscall.
+> Just int err should be fine here, otherwise
 
-That's not a downside imho, it's much nicer to have the correct/expected
-case be fast, and catch the unexpected error case down the line when we
-have to iterate the vecs anyway.
+Done
 
-IOW, I love this patchset. I'll spend some time going over the details.
-Did you write some test cases for this?
+> Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
-> This change also removes one walking of the io vector, so that's nice
-> too.
-> 
-> Keith Busch (7):
->   block: check for valid bio while splitting
->   block: align the bio after building it
->   block: simplify direct io validity check
->   iomap: simplify direct io validity check
->   block: remove bdev_iter_is_aligned
->   blk-integrity: use simpler alignment check
->   iov_iter: remove iov_iter_is_aligned
-> 
->  block/bio-integrity.c  |  4 +-
->  block/bio.c            | 58 +++++++++++++++++---------
->  block/blk-merge.c      |  5 +++
->  block/fops.c           |  4 +-
->  fs/iomap/direct-io.c   |  3 +-
->  include/linux/blkdev.h |  7 ----
->  include/linux/uio.h    |  2 -
->  lib/iov_iter.c         | 95 ------------------------------------------
->  8 files changed, 49 insertions(+), 129 deletions(-)
+Thanks.
 
-Now that's a beautiful diffstat.
-
--- 
-Jens Axboe
+Pasha
 
