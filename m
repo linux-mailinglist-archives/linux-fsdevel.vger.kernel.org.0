@@ -1,93 +1,153 @@
-Return-Path: <linux-fsdevel+bounces-56559-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56560-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA159B1943D
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Aug 2025 16:30:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79C0CB1955D
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Aug 2025 22:48:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E7FB3B1DB9
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Aug 2025 14:30:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27F471893406
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Aug 2025 20:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D919D156C6F;
-	Sun,  3 Aug 2025 14:30:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA26205E2F;
+	Sun,  3 Aug 2025 20:48:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="VcOX2KXw"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c/Z7EFiX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0170D2836F;
-	Sun,  3 Aug 2025 14:30:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18CBE12BF24;
+	Sun,  3 Aug 2025 20:48:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754231431; cv=none; b=DyJDUZ+nlI07dp9Mx71en30BbwEFsQyOpBfuefa1YStCiVUlzHO6d6jJ6CY8rXRuppwhVsJ+RCKHCAHwfW5HxFV8VMCtmdAIMpFrK2HY42fwH/d8h97ydoXXKe3xXY1lV4RTnSjgg9p+m0l+vRFnrHFT48a7R7iCbvlJND3v438=
+	t=1754254117; cv=none; b=gwyf9RZvfduXE6XVtoTc4FqMCPDAJYXlGkCc/t3Uh6cEnnJvBcgNnFet8AOD0YS854Jgw/WNt0S0FtFkeQs4PC2zqfORTVYGkDkZZgvr6hsY1kbMppFQF8uTHRGcry/20tulZLRTrO+UrccEOFcyHU7uibxycb8mnDk2qMIXByI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754231431; c=relaxed/simple;
-	bh=sIOKAD2MTUbXtcoW87WJAGTcHShe/qrRmPh438Vntwk=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=ghxpF8hDDbppJJ5SJQMaa17Y6vshQbr5FoHhCVR180tOefOH6wqxrGokau96GU184t9fCL9tnR8UA3unopegrXFdkZib+vcDut1VGYyPGpEBTAnh4kO54MHQzz2gywfxyU6C7gBgdz8Bf3zCY2sLoROZG/W7fxUeGstZPNUmN8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=VcOX2KXw; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id; bh=Zx/3aqFbue8q2T0
-	EElnkI1Xd/UhLG7XGArEZaqXXprU=; b=VcOX2KXwKAsJL+lcuEBLEu8XulA539Z
-	uWMjdSFKr6aBpC3/v4yeXumJCx9d7Jg9NhsFNXYyS+HjHziFzKpr2QIUgaFabRXL
-	cbB5+5TCASX4JDSYPfdc9+gifdZum7DnIumLOz4V1b2Z7Vk4DxoClOWWpJWh5I9z
-	h3uSrfAQ97fw=
-Received: from 163.com (unknown [])
-	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wAXHs5Bco9ofBxoJQ--.5397S2;
-	Sun, 03 Aug 2025 22:29:22 +0800 (CST)
-From: Beibei Yang <13738176232@163.com>
-To: viro@zeniv.linux.org.uk
-Cc: brauner@kernel.org,
-	jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	13738176232@163.com,
-	root <root@192.168.220.227>
-Subject: [PATCH trivial] init: Fix comment typo in do_mounts_initrd.c
-Date: Sun,  3 Aug 2025 07:29:18 -0700
-Message-Id: <1754231358-3544-1-git-send-email-13738176232@163.com>
-X-Mailer: git-send-email 1.8.3.1
-X-CM-TRANSID:_____wAXHs5Bco9ofBxoJQ--.5397S2
-X-Coremail-Antispam: 1Uf129KBjvdXoW7XrWDJw48tF1kCr45Cw4kJFb_yoWfKwbEga
-	18XFs7JrsI93Wjyw47Cryrt3WDWrWFvF4rCF1rCryUta4kJr90kr92qr97G39F9r4j9FZx
-	Ww4DX3yayr12kjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRWyxiJUUUUU==
-X-CM-SenderInfo: zprtljayrxljits6il2tof0z/1tbiYhGea2iPaWfA-wAAsQ
+	s=arc-20240116; t=1754254117; c=relaxed/simple;
+	bh=zzC0veX4U38w95i1qqvR/sj3J+MM6e8Lc6c6kYzUZV8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MBqAgzPOZ5QK6f1WOrahdIaypH42bO0zuoENs0OPJoKJ8kugA1/hhaWHZSUWTvPMcJpp32VByPh36/f7ERV2jCEj/nYrbMWpsJzWfi6Rz+m6NZJHq3J7Vsm6BYRjwG0431CcsXGhkFaq9py2r/HhmAQgPviJHh0nn/XUgDwv/6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c/Z7EFiX; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-af95ecfbd5bso119580966b.1;
+        Sun, 03 Aug 2025 13:48:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754254114; x=1754858914; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Lwy9S+seQCh1gpHswr4BPXe5Cl0mTG2Hkawb//nlLoc=;
+        b=c/Z7EFiXTcw+kEczsToH6kKe0+64ggW4YwH6ZzlP19ZQxZ7UqV5oG+dr3HQQ91mFtd
+         Sgvz5WdmgnXezXHYY74NXWklJ6CWCTVFQngb+C3Lgs6fhedqooJsqNZuYdaBLrC/iRmZ
+         ZnlLOd30NkDrBbCHb21X1Ob4TnVuCJJDkXUui5tAPaIIRKmOh08K2segC7wKrn3O67/b
+         qMpDAw2laRtz6fUrHXBOcWbAzjL0NfNkEJzsvKpXwhPhWAzSgfU8qz6ZaMV7OINBo7+R
+         YyOw5SkLAYXp5O2YtvBhuz0myWzuBG/BUPBgEWHldrwtMwU6h+RNZmsN5qQ6USEjSaR8
+         YVsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754254114; x=1754858914;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Lwy9S+seQCh1gpHswr4BPXe5Cl0mTG2Hkawb//nlLoc=;
+        b=LTf3wly5vt2ZrT/skQsMXWXlvauIyXlhgMq3sVI5GtmHsiQMa11GSbUVICcJ7m7GV7
+         fslAUzrOqNGFpiGuT0wiv0lGmO3YYJaB6i4XIZnvHV3DHlql9xv786drOD9e3Fn4H0Ah
+         7apbLOp9chC2Rl7R9qeEWofCwwTGhhaOWHc3Ww+fIabsZrX22XZsi+MAM8FtKQOoOIhH
+         3qV94ic4BeQKFy4/jQznRl8PARqUy9iU1JU7lgP5vfUIcyU3FU8vOLmlbbBb+iARmmfi
+         JtDxibRqfiuDGiLEH44IK5CJKYxNLt3GYE97GoavV2dsOc2VxtGcgu80QFJsckN02AT8
+         p2Zg==
+X-Forwarded-Encrypted: i=1; AJvYcCWHu/CJkJl8PgSCoedka4iFdHk1+366xbj4hhMFB1Nfo/RNmAYW5eOreyzGkQK81c6j4f+UVwgWjvZy9Llg@vger.kernel.org, AJvYcCWm3ELwEvfvZsw1vVfPcFjo3NwNvLBzdly9+aE07gH0aX0jn45XGTLOOVX+sPhdNGMt4rVd6E2mtLY4UW5Kc8Pp@vger.kernel.org, AJvYcCXeXGzwEK/P4Jwr/FEVq9epOOQL9X1+NPvDo9FQZNMRopWiAbfPIO4xn7fzSkZkeHs3kv9lU+dbmiJox0AR@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCMHM/wluDBvEk2tCKl1okAGVhMj+chCSomCesXizZl1hO1E2D
+	JqB4s768iyaZ0Gggzq/cC/PjhSaXWfmD8SqZa4uazNjrGDdkl3QeblNM
+X-Gm-Gg: ASbGncupAmpnhZ5EZMZQ1TBsOEfeEdaVX2OKhar/vcgZT7UeGrvVo214RQCSZ0ftlPs
+	Ld+/7p14PfsdNv9Eyut7bhmDXs2vyZ4H+U5rappL5AJBHQ4YuHW/8UHIyk/bDzbFr/TbeaLxsTP
+	Lfs77/W3O14izgKFloUXRtx6+k5nt3eAaIF+7cNVCeZkL47+Ti62zIV+i4MKQ7aCt/rUfhb4b8x
+	gtE9HmajUGXZBneHNhbKYo4nUTNRs1jGXNWOVsDprn/QBsKJYvkFqQCkjMgxbrqhDY3OizKOHoU
+	hmIY7qyXwG+94POpoXRHSJ9DwDueZN07Io42E8UIgyHPdGEAeI00Vcn9fUF29sNvZQhT8Vorxx9
+	LV/Mm1qS+Kh5wFeY=
+X-Google-Smtp-Source: AGHT+IED2U86NMVTRqP/XDEpeRpB+DYiVCnbANSQwHQ90TIg/gegMf7X5EOI193KklAwzpnqqt/v+Q==
+X-Received: by 2002:a17:906:f192:b0:af9:44fe:dea1 with SMTP id a640c23a62f3a-af944fee3b8mr478126866b.23.1754254113813;
+        Sun, 03 Aug 2025 13:48:33 -0700 (PDT)
+Received: from hsukr3.. ([141.70.88.200])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0761f2sm629695266b.11.2025.08.03.13.48.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 03 Aug 2025 13:48:33 -0700 (PDT)
+From: Sukrut Heroorkar <hsukrut3@gmail.com>
+To: Shuah Khan <shuah@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Sukrut Heroorkar <hsukrut3@gmail.com>,
+	linux-kernel@vger.kernel.org (open list:PROC FILESYSTEM),
+	linux-fsdevel@vger.kernel.org (open list:PROC FILESYSTEM),
+	linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK)
+Cc: skhar@linuxfoundation.org,
+	david.hunter.linux@gmail.com
+Subject: [PATCH] selftests/proc: Fix string literal warning in proc-maps-race.c
+Date: Sun,  3 Aug 2025 22:47:26 +0200
+Message-ID: <20250803204746.1899942-1-hsukrut3@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: root <root@192.168.220.227>
+This change resolves non literal string format warning invoked
+for proc-maps-race.c while compiling.
 
-The original comment incorrectly used "cwd" (current working directory)
-when referring to the root change operation. The correct term should be
-"pwd" (present working directory) as per process context semantics.
+proc-maps-race.c:205:17: warning: format not a string literal and no format arguments [-Wformat-security]
+  205 |                 printf(text);
+      |                 ^~~~~~
+proc-maps-race.c:209:17: warning: format not a string literal and no format arguments [-Wformat-security]
+  209 |                 printf(text);
+      |                 ^~~~~~
+proc-maps-race.c: In function ‘print_last_lines’:
+proc-maps-race.c:224:9: warning: format not a string literal and no format arguments [-Wformat-security]
+  224 |         printf(start);
+      |         ^~~~~~
 
-This is a pure comment correction with no functional impact.
+Added string format specifier %s for the printf calls
+in both print_first_lines() and print_last_lines() thus
+resolving the warnings invoked.
 
-Signed-off-by: Beibei Yang <13738176232@163.com>
+The test executes fine after this change thus causing no
+affect to the functional behavior of the test.
+
+Signed-off-by: Sukrut Heroorkar <hsukrut3@gmail.com>
 ---
- init/do_mounts_initrd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/testing/selftests/proc/proc-maps-race.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/init/do_mounts_initrd.c b/init/do_mounts_initrd.c
-index f6867ba..173b569 100644
---- a/init/do_mounts_initrd.c
-+++ b/init/do_mounts_initrd.c
-@@ -107,7 +107,7 @@ static void __init handle_initrd(char *root_device_name)
+diff --git a/tools/testing/selftests/proc/proc-maps-race.c b/tools/testing/selftests/proc/proc-maps-race.c
+index 66773685a047..94bba4553130 100644
+--- a/tools/testing/selftests/proc/proc-maps-race.c
++++ b/tools/testing/selftests/proc/proc-maps-race.c
+@@ -202,11 +202,11 @@ static void print_first_lines(char *text, int nr)
+ 		int offs = end - text;
  
- 	/* move initrd to rootfs' /old */
- 	init_mount("..", ".", NULL, MS_MOVE, NULL);
--	/* switch root and cwd back to / of rootfs */
-+	/* switch root and pwd back to / of rootfs */
- 	init_chroot("..");
+ 		text[offs] = '\0';
+-		printf(text);
++		printf("%s", text);
+ 		text[offs] = '\n';
+ 		printf("\n");
+ 	} else {
+-		printf(text);
++		printf("%s", text);
+ 	}
+ }
  
- 	if (new_decode_dev(real_root_dev) == Root_RAM0) {
+@@ -221,7 +221,7 @@ static void print_last_lines(char *text, int nr)
+ 		nr--;
+ 		start--;
+ 	}
+-	printf(start);
++	printf("%s", start);
+ }
+ 
+ static void print_boundaries(const char *title, FIXTURE_DATA(proc_maps_race) *self)
 -- 
-1.8.3.1
+2.43.0
 
 
