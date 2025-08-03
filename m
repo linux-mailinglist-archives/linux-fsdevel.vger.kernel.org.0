@@ -1,59 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-56586-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56585-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36215B195EB
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Aug 2025 23:22:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 988A0B19613
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Aug 2025 23:23:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5992E173FD8
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Aug 2025 21:22:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0A287ABCA1
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Aug 2025 21:20:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA0D62264B5;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF20C2264A9;
 	Sun,  3 Aug 2025 21:20:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z7BtFuDW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="czHGulkZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 326BD218E8B;
-	Sun,  3 Aug 2025 21:20:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 272FA2040A8;
+	Sun,  3 Aug 2025 21:20:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754256045; cv=none; b=A92S3WTdahtaNSlQS9WUA0pq2w1oauHxlsICb6dQCzD6Z1xHKX2GTeEbHL6IRFjAhhoBp4wvBo0rsmntnLSED8wIgIqTx4YvA/W9dlWramHWdgAyB4KrMv3Z6EsvJDUm1Fiant65NC5m1RRE20KWARVizo2XwmOoJu4+Tb/81Eg=
+	t=1754256045; cv=none; b=C3FmezNXprqEqLszGMTvpfpyB5ZIdxkPwuW1dG+GzCHGtGF7XGDyN3bfiva+EB6gyez+RsPNJygGs8YSA17R/JygpgCVkrjQfWTSWhajNnmuIonnk5SOiWJN7Zj5lhNWZ7sVPKKBm2wg8JbAxoVLAqzdJ3bxENiT2Jj1SiYHS+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1754256045; c=relaxed/simple;
-	bh=eQ849iF4KjP3D9Dc9qqlZhLI00wTAMm52Ieg9rHLMSo=;
+	bh=2LK/g5UpKAcQvdGs5mw3rovHeY79/5O62YuslKEy0lY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UZ9RFWcCcDJxWTIiZbIBaJP2RDiUy7M3YkRY9og//NNNwLeHi3b8Q99iy7G5kjdu5HGrEW/Qud56f3FOt6U9mUm7ewLrItl1F3OY/JDWlqkolOnBXl6yr0obHst+O3QeqpMcE/RSQEcgP+2dh5AjxnB6Sa57CEbor8VITvGfR+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z7BtFuDW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFD51C4CEF0;
-	Sun,  3 Aug 2025 21:20:40 +0000 (UTC)
+	 MIME-Version; b=bV/N5z5qnM3VStCKE32144GrzZCUENmg2vZ1h4QIvZogRr/rWqI/3Fsm6r+/+u9rEnS1VdXfoNhMm3IOlUr4EtKB48tuF9xj4QgbnvXURyO3SsTHui70H/B6Rx1JyAUquG+u6/ep+wY9wU1p9FXmSzqElU6W014Pze+t9/lT4Q8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=czHGulkZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F626C4CEF8;
+	Sun,  3 Aug 2025 21:20:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754256042;
-	bh=eQ849iF4KjP3D9Dc9qqlZhLI00wTAMm52Ieg9rHLMSo=;
+	s=k20201202; t=1754256045;
+	bh=2LK/g5UpKAcQvdGs5mw3rovHeY79/5O62YuslKEy0lY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Z7BtFuDW7uK5AJtc/3TtDyI16wqs65LWOqIwBEDBhTSqot2mzqpo6nGbo4nAzZMt3
-	 xjah0DD5kCcyChI/xQCzh7/3O8YWPIGPqaI5ZXIkOrn2c2M2lENm8E7Xa8u8//NyqN
-	 wxy6eLTd9TS9lNEoZCw077DOVGJGosqlxGWb5wXdcWuByjFBz/Zwl44NK61/m5AicI
-	 Vetc7usgpSpf7qi4OTeYN46IRn3TzRfXvCrKxEoDZQXABp8bNwk8J3UxtHmjOxwvgf
-	 i8pJ6Y1rLHd6dLN5B+P5UDRHwIN/loJBL9DxVK2twxmgG75E/XFF6pXwS2lVEbLAC+
-	 ZwDFZ+V+dIoCg==
+	b=czHGulkZlI2Ow5T9AOhqD69SFd6EQA02fcuwu2960qeGueSdJas8fawXcsA7XXTnD
+	 f1JZLhssiiWdiTUPKfoOER1q0XhPCpc6h67+EALxv9fL88DL/FXRy1z28s+lwK9Gx4
+	 HdkmXb/gPn6um9ZsaOY7UvOqoU1Y+cc45/YX3c3vDQuNNkTyFhbKQ0tDUh1JYXdlgG
+	 VrN2YU7Rh+dOhOVqChg9BhOhksYtE/MFut2YCQteCbslftUQqsF+uZJC/CtZbTUQe0
+	 EaJtIxCU2dxT2kas1VAZtgjLBq8+K5PBi/bFr22tVwdirfZE+cVC8xKLNCZnS7cnYM
+	 TxfFG38UBQ6Tw==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Viacheslav Dubeyko <slava@dubeyko.com>,
-	Wenzhi Wang <wenzhi.wang@uwaterloo.ca>,
-	Liu Shixin <liushixin2@huawei.com>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Yangtao Li <frank.li@vivo.com>,
-	linux-fsdevel@vger.kernel.org,
-	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 6.6 04/23] hfsplus: fix slab-out-of-bounds read in hfsplus_uni2asc()
-Date: Sun,  3 Aug 2025 17:20:11 -0400
-Message-Id: <20250803212031.3547641-4-sashal@kernel.org>
+Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+	syzbot <syzbot+1107451c16b9eb9d29e6@syzkaller.appspotmail.com>,
+	Viacheslav Dubeyko <slava@dubeyko.com>,
+	Sasha Levin <sashal@kernel.org>,
+	frank.li@vivo.com,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.6 05/23] hfsplus: don't use BUG_ON() in hfsplus_create_attributes_file()
+Date: Sun,  3 Aug 2025 17:20:12 -0400
+Message-Id: <20250803212031.3547641-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250803212031.3547641-1-sashal@kernel.org>
 References: <20250803212031.3547641-1-sashal@kernel.org>
@@ -68,220 +67,98 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.101
 Content-Transfer-Encoding: 8bit
 
-From: Viacheslav Dubeyko <slava@dubeyko.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-[ Upstream commit 94458781aee6045bd3d0ad4b80b02886b9e2219b ]
+[ Upstream commit c7c6363ca186747ebc2df10c8a1a51e66e0e32d9 ]
 
-The hfsplus_readdir() method is capable to crash by calling
-hfsplus_uni2asc():
+When the volume header contains erroneous values that do not reflect
+the actual state of the filesystem, hfsplus_fill_super() assumes that
+the attributes file is not yet created, which later results in hitting
+BUG_ON() when hfsplus_create_attributes_file() is called. Replace this
+BUG_ON() with -EIO error with a message to suggest running fsck tool.
 
-[  667.121659][ T9805] ==================================================================
-[  667.122651][ T9805] BUG: KASAN: slab-out-of-bounds in hfsplus_uni2asc+0x902/0xa10
-[  667.123627][ T9805] Read of size 2 at addr ffff88802592f40c by task repro/9805
-[  667.124578][ T9805]
-[  667.124876][ T9805] CPU: 3 UID: 0 PID: 9805 Comm: repro Not tainted 6.16.0-rc3 #1 PREEMPT(full)
-[  667.124886][ T9805] Hardware name: QEMU Ubuntu 24.04 PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-[  667.124890][ T9805] Call Trace:
-[  667.124893][ T9805]  <TASK>
-[  667.124896][ T9805]  dump_stack_lvl+0x10e/0x1f0
-[  667.124911][ T9805]  print_report+0xd0/0x660
-[  667.124920][ T9805]  ? __virt_addr_valid+0x81/0x610
-[  667.124928][ T9805]  ? __phys_addr+0xe8/0x180
-[  667.124934][ T9805]  ? hfsplus_uni2asc+0x902/0xa10
-[  667.124942][ T9805]  kasan_report+0xc6/0x100
-[  667.124950][ T9805]  ? hfsplus_uni2asc+0x902/0xa10
-[  667.124959][ T9805]  hfsplus_uni2asc+0x902/0xa10
-[  667.124966][ T9805]  ? hfsplus_bnode_read+0x14b/0x360
-[  667.124974][ T9805]  hfsplus_readdir+0x845/0xfc0
-[  667.124984][ T9805]  ? __pfx_hfsplus_readdir+0x10/0x10
-[  667.124994][ T9805]  ? stack_trace_save+0x8e/0xc0
-[  667.125008][ T9805]  ? iterate_dir+0x18b/0xb20
-[  667.125015][ T9805]  ? trace_lock_acquire+0x85/0xd0
-[  667.125022][ T9805]  ? lock_acquire+0x30/0x80
-[  667.125029][ T9805]  ? iterate_dir+0x18b/0xb20
-[  667.125037][ T9805]  ? down_read_killable+0x1ed/0x4c0
-[  667.125044][ T9805]  ? putname+0x154/0x1a0
-[  667.125051][ T9805]  ? __pfx_down_read_killable+0x10/0x10
-[  667.125058][ T9805]  ? apparmor_file_permission+0x239/0x3e0
-[  667.125069][ T9805]  iterate_dir+0x296/0xb20
-[  667.125076][ T9805]  __x64_sys_getdents64+0x13c/0x2c0
-[  667.125084][ T9805]  ? __pfx___x64_sys_getdents64+0x10/0x10
-[  667.125091][ T9805]  ? __x64_sys_openat+0x141/0x200
-[  667.125126][ T9805]  ? __pfx_filldir64+0x10/0x10
-[  667.125134][ T9805]  ? do_user_addr_fault+0x7fe/0x12f0
-[  667.125143][ T9805]  do_syscall_64+0xc9/0x480
-[  667.125151][ T9805]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[  667.125158][ T9805] RIP: 0033:0x7fa8753b2fc9
-[  667.125164][ T9805] Code: 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 48
-[  667.125172][ T9805] RSP: 002b:00007ffe96f8e0f8 EFLAGS: 00000217 ORIG_RAX: 00000000000000d9
-[  667.125181][ T9805] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fa8753b2fc9
-[  667.125185][ T9805] RDX: 0000000000000400 RSI: 00002000000063c0 RDI: 0000000000000004
-[  667.125190][ T9805] RBP: 00007ffe96f8e110 R08: 00007ffe96f8e110 R09: 00007ffe96f8e110
-[  667.125195][ T9805] R10: 0000000000000000 R11: 0000000000000217 R12: 0000556b1e3b4260
-[  667.125199][ T9805] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-[  667.125207][ T9805]  </TASK>
-[  667.125210][ T9805]
-[  667.145632][ T9805] Allocated by task 9805:
-[  667.145991][ T9805]  kasan_save_stack+0x20/0x40
-[  667.146352][ T9805]  kasan_save_track+0x14/0x30
-[  667.146717][ T9805]  __kasan_kmalloc+0xaa/0xb0
-[  667.147065][ T9805]  __kmalloc_noprof+0x205/0x550
-[  667.147448][ T9805]  hfsplus_find_init+0x95/0x1f0
-[  667.147813][ T9805]  hfsplus_readdir+0x220/0xfc0
-[  667.148174][ T9805]  iterate_dir+0x296/0xb20
-[  667.148549][ T9805]  __x64_sys_getdents64+0x13c/0x2c0
-[  667.148937][ T9805]  do_syscall_64+0xc9/0x480
-[  667.149291][ T9805]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[  667.149809][ T9805]
-[  667.150030][ T9805] The buggy address belongs to the object at ffff88802592f000
-[  667.150030][ T9805]  which belongs to the cache kmalloc-2k of size 2048
-[  667.151282][ T9805] The buggy address is located 0 bytes to the right of
-[  667.151282][ T9805]  allocated 1036-byte region [ffff88802592f000, ffff88802592f40c)
-[  667.152580][ T9805]
-[  667.152798][ T9805] The buggy address belongs to the physical page:
-[  667.153373][ T9805] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x25928
-[  667.154157][ T9805] head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-[  667.154916][ T9805] anon flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-[  667.155631][ T9805] page_type: f5(slab)
-[  667.155997][ T9805] raw: 00fff00000000040 ffff88801b442f00 0000000000000000 dead000000000001
-[  667.156770][ T9805] raw: 0000000000000000 0000000080080008 00000000f5000000 0000000000000000
-[  667.157536][ T9805] head: 00fff00000000040 ffff88801b442f00 0000000000000000 dead000000000001
-[  667.158317][ T9805] head: 0000000000000000 0000000080080008 00000000f5000000 0000000000000000
-[  667.159088][ T9805] head: 00fff00000000003 ffffea0000964a01 00000000ffffffff 00000000ffffffff
-[  667.159865][ T9805] head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000008
-[  667.160643][ T9805] page dumped because: kasan: bad access detected
-[  667.161216][ T9805] page_owner tracks the page as allocated
-[  667.161732][ T9805] page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN9
-[  667.163566][ T9805]  post_alloc_hook+0x1c0/0x230
-[  667.164003][ T9805]  get_page_from_freelist+0xdeb/0x3b30
-[  667.164503][ T9805]  __alloc_frozen_pages_noprof+0x25c/0x2460
-[  667.165040][ T9805]  alloc_pages_mpol+0x1fb/0x550
-[  667.165489][ T9805]  new_slab+0x23b/0x340
-[  667.165872][ T9805]  ___slab_alloc+0xd81/0x1960
-[  667.166313][ T9805]  __slab_alloc.isra.0+0x56/0xb0
-[  667.166767][ T9805]  __kmalloc_cache_noprof+0x255/0x3e0
-[  667.167255][ T9805]  psi_cgroup_alloc+0x52/0x2d0
-[  667.167693][ T9805]  cgroup_mkdir+0x694/0x1210
-[  667.168118][ T9805]  kernfs_iop_mkdir+0x111/0x190
-[  667.168568][ T9805]  vfs_mkdir+0x59b/0x8d0
-[  667.168956][ T9805]  do_mkdirat+0x2ed/0x3d0
-[  667.169353][ T9805]  __x64_sys_mkdir+0xef/0x140
-[  667.169784][ T9805]  do_syscall_64+0xc9/0x480
-[  667.170195][ T9805]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[  667.170730][ T9805] page last free pid 1257 tgid 1257 stack trace:
-[  667.171304][ T9805]  __free_frozen_pages+0x80c/0x1250
-[  667.171770][ T9805]  vfree.part.0+0x12b/0xab0
-[  667.172182][ T9805]  delayed_vfree_work+0x93/0xd0
-[  667.172612][ T9805]  process_one_work+0x9b5/0x1b80
-[  667.173067][ T9805]  worker_thread+0x630/0xe60
-[  667.173486][ T9805]  kthread+0x3a8/0x770
-[  667.173857][ T9805]  ret_from_fork+0x517/0x6e0
-[  667.174278][ T9805]  ret_from_fork_asm+0x1a/0x30
-[  667.174703][ T9805]
-[  667.174917][ T9805] Memory state around the buggy address:
-[  667.175411][ T9805]  ffff88802592f300: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[  667.176114][ T9805]  ffff88802592f380: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[  667.176830][ T9805] >ffff88802592f400: 00 04 fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-[  667.177547][ T9805]                       ^
-[  667.177933][ T9805]  ffff88802592f480: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-[  667.178640][ T9805]  ffff88802592f500: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-[  667.179350][ T9805] ==================================================================
-
-The hfsplus_uni2asc() method operates by struct hfsplus_unistr:
-
-struct hfsplus_unistr {
-	__be16 length;
-	hfsplus_unichr unicode[HFSPLUS_MAX_STRLEN];
-} __packed;
-
-where HFSPLUS_MAX_STRLEN is 255 bytes. The issue happens if length
-of the structure instance has value bigger than 255 (for example,
-65283). In such case, pointer on unicode buffer is going beyond of
-the allocated memory.
-
-The patch fixes the issue by checking the length value of
-hfsplus_unistr instance and using 255 value in the case if length
-value is bigger than HFSPLUS_MAX_STRLEN. Potential reason of such
-situation could be a corruption of Catalog File b-tree's node.
-
-Reported-by: Wenzhi Wang <wenzhi.wang@uwaterloo.ca>
-Signed-off-by: Liu Shixin <liushixin2@huawei.com>
-Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
-cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-cc: Yangtao Li <frank.li@vivo.com>
-cc: linux-fsdevel@vger.kernel.org
-Reviewed-by: Yangtao Li <frank.li@vivo.com>
-Link: https://lore.kernel.org/r/20250710230830.110500-1-slava@dubeyko.com
+Reported-by: syzbot <syzbot+1107451c16b9eb9d29e6@syzkaller.appspotmail.com>
+Closes: https://syzkaller.appspot.com/bug?extid=1107451c16b9eb9d29e6
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reviewed-by: Viacheslav Dubeyko <slava@dubeyko.com>
+Link: https://lore.kernel.org/r/7b587d24-c8a1-4413-9b9a-00a33fbd849f@I-love.SAKURA.ne.jp
 Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-**YES**
+**Backport Status: YES**
 
 This commit should be backported to stable kernel trees for the
 following reasons:
 
-1. **Critical Security Vulnerability**: The commit fixes a slab-out-of-
-   bounds read vulnerability in `hfsplus_uni2asc()` that can be
-   triggered when processing malformed HFS+ filesystem data. The KASAN
-   report shows this causes memory corruption with reads beyond
-   allocated bounds.
+1. **Fixes a Critical Bug**: The commit replaces a `BUG_ON()` that could
+   crash the entire system with proper error handling. The original code
+   at line 175 had `BUG_ON(i_size_read(attr_file) != 0);` which would
+   trigger a kernel panic when the HFS+ filesystem metadata is corrupted
+   or inconsistent.
 
-2. **Exploitable Attack Vector**: The vulnerability can be triggered
-   through normal filesystem operations (readdir) on a crafted/corrupted
-   HFS+ filesystem. An attacker could craft a malicious HFS+ image with
-   `ustr->length` values exceeding `HFSPLUS_MAX_STRLEN` (255) to trigger
-   out-of-bounds reads.
+2. **Real-World Issue**: This was reported by syzbot (a kernel fuzzer),
+   indicating it's a reachable code path that can be triggered with
+   malformed filesystem data. The bug report link confirms this is a
+   reproducible issue.
 
-3. **Simple and Contained Fix**: The fix is minimal and straightforward
-   - it adds a bounds check that limits `ustrlen` to
-   `HFSPLUS_MAX_STRLEN` before using it in the loop that reads from the
-   `unicode` array. The change is only 7 lines of code addition with no
-   architectural changes.
+3. **Simple and Contained Fix**: The change is minimal - it replaces the
+   BUG_ON with:
+  ```c
+  if (i_size_read(attr_file) != 0) {
+  err = -EIO;
+  pr_err("detected inconsistent attributes file, running fsck.hfsplus is
+  recommended.\n");
+  goto end_attr_file_creation;
+  }
+  ```
+  This is a straightforward conversion that maintains the same logic but
+  handles the error gracefully.
 
-4. **Low Risk of Regression**: The fix only adds a defensive check and
-   doesn't change normal operation for valid HFS+ filesystems. It simply
-   prevents reading beyond the allocated buffer when corrupted data is
-   encountered.
+4. **Prevents System Crashes**: BUG_ON() causes a kernel panic, which is
+   particularly severe. Converting it to return -EIO allows the system
+   to continue running and provides users with actionable guidance (run
+   fsck.hfsplus).
 
-5. **Pattern of Similar Issues**: The git history shows multiple similar
-   slab-out-of-bounds fixes in HFS+ recently (`ac7825c41213`,
-   `bb5e07cb9277`), indicating this filesystem has ongoing boundary
-   checking issues that need to be addressed in stable kernels.
+5. **Low Risk of Regression**: The change only affects error handling
+   when filesystem corruption is detected. It doesn't alter normal
+   operation paths and follows established error handling patterns in
+   the kernel.
 
-6. **User Impact**: HFS+ filesystems are commonly used for compatibility
-   with macOS systems. Users mounting untrusted HFS+ media (USB drives,
-   disk images) could be vulnerable to crashes or potential exploitation
-   without this fix.
+6. **Follows Stable Tree Rules**: This is a classic example of a stable-
+   worthy fix:
+   - Fixes a real bug (system crash on corrupted filesystem)
+   - Small, easily reviewable change
+   - No new features or architectural changes
+   - High benefit (prevents crashes) with minimal risk
 
-The commit clearly meets stable kernel criteria: it fixes a real bug
-that affects users, the fix is small and contained, and the risk of
-regression is minimal while the security benefit is significant.
+The commit message clearly indicates this addresses filesystem
+corruption scenarios where "the volume header contains erroneous values
+that do not reflect the actual state of the filesystem," making it an
+important robustness improvement for stable kernels.
 
- fs/hfsplus/unicode.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ fs/hfsplus/xattr.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/fs/hfsplus/unicode.c b/fs/hfsplus/unicode.c
-index 73342c925a4b..36b6cf2a3abb 100644
---- a/fs/hfsplus/unicode.c
-+++ b/fs/hfsplus/unicode.c
-@@ -132,7 +132,14 @@ int hfsplus_uni2asc(struct super_block *sb,
+diff --git a/fs/hfsplus/xattr.c b/fs/hfsplus/xattr.c
+index f7f9d0889df3..d5fd8e068486 100644
+--- a/fs/hfsplus/xattr.c
++++ b/fs/hfsplus/xattr.c
+@@ -172,7 +172,11 @@ static int hfsplus_create_attributes_file(struct super_block *sb)
+ 		return PTR_ERR(attr_file);
+ 	}
  
- 	op = astr;
- 	ip = ustr->unicode;
-+
- 	ustrlen = be16_to_cpu(ustr->length);
-+	if (ustrlen > HFSPLUS_MAX_STRLEN) {
-+		ustrlen = HFSPLUS_MAX_STRLEN;
-+		pr_err("invalid length %u has been corrected to %d\n",
-+			be16_to_cpu(ustr->length), ustrlen);
+-	BUG_ON(i_size_read(attr_file) != 0);
++	if (i_size_read(attr_file) != 0) {
++		err = -EIO;
++		pr_err("detected inconsistent attributes file, running fsck.hfsplus is recommended.\n");
++		goto end_attr_file_creation;
 +	}
-+
- 	len = *len_p;
- 	ce1 = NULL;
- 	compose = !test_bit(HFSPLUS_SB_NODECOMPOSE, &HFSPLUS_SB(sb)->flags);
+ 
+ 	hip = HFSPLUS_I(attr_file);
+ 
 -- 
 2.39.5
 
