@@ -1,225 +1,174 @@
-Return-Path: <linux-fsdevel+bounces-56611-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56612-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B940BB1966B
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Aug 2025 23:25:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 069BBB196D4
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 01:04:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFC4C18863A0
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Aug 2025 21:25:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8CC67A2BDC
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Aug 2025 23:03:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6540E22259F;
-	Sun,  3 Aug 2025 21:23:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C8D421421D;
+	Sun,  3 Aug 2025 23:04:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EThaOxpZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dvmyy2WR"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7DA5155CBD;
-	Sun,  3 Aug 2025 21:23:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CAD21FCF7C
+	for <linux-fsdevel@vger.kernel.org>; Sun,  3 Aug 2025 23:04:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754256208; cv=none; b=h961A7quT9QtbyeZOVgHgCFTrgSL7w/Jk05ULBH9SXyXaUTZk5qDq16tMWViTW3IM5MujQP75oYHVGa/f1dNdYxHtmmccoIHBdBe5L4fjJG9nYh/t0UVijx+E0dwempTYu/JmLnBNIvcx/k6RQshRe5dt9eAqcoZI3+HVwHzPsY=
+	t=1754262286; cv=none; b=gGfhOshJyfexdeGUS9SD255cB0a8qH7UY+4kgaB3Xw7HJGzAXvlfm+FqxRrBONcW/tMCSNfqNzH9sgnBtxBbSSNuYR5JDbpLKkE5HTobffEn6Wmk+vOyWI6Tgwy59qAOs5SBpq5ZPd+6KLRrxdY8QgtsFNYCTGUHlzJ4m7T/ECU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754256208; c=relaxed/simple;
-	bh=Xz0qXBXassRqVnxlrXrAVFGa0XgFnmgYBvILCHLENWY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=IGSmpczVCImy8BLLEfCAAhjov86f9almhcOWhJsj51NWpqOiRBoZ/y6X/22Qcx0k+Dv/ISXDDqrI/BiwNL07zIczRA9Odp2Ryyg5DNTc8SGqmQQj/BURSVAWS5UfLdiSXU/9ryBlVKhgrulE2q6yUGPE74JaplqIL+Yn+QHtcMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EThaOxpZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FE13C4CEEB;
-	Sun,  3 Aug 2025 21:23:27 +0000 (UTC)
+	s=arc-20240116; t=1754262286; c=relaxed/simple;
+	bh=Dv81L0UB61wQBOb0IupiOoJhq1u150tKJU35Qof1ZvI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TCZWcnpvROhEp7+86XJnlwvtGj90hfsAt3VcdNG2guBo196wygFLScKHm162kCybN3iZxc+JCIui77b6NPxzghm52amiia8sjEmXcJHwysk6loR+eQiKCU0LvqP/AJh0xkJJ2CxcobtpktMG4H5JhXOyK4Xd3+1yuq81BlWPpq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dvmyy2WR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CA7FC4CEEB
+	for <linux-fsdevel@vger.kernel.org>; Sun,  3 Aug 2025 23:04:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754256208;
-	bh=Xz0qXBXassRqVnxlrXrAVFGa0XgFnmgYBvILCHLENWY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=EThaOxpZ18kAU48xtOSR0iN5B/0accQY+SqBuPBvU2RH3Y1IiepvtfMO897rlPNYX
-	 UQOJHM6zpSwwzhQEvPSAVph0SgWqR0oKPqPwtv6a+eO6cBSrwrnY5kWeWflt5cnDJC
-	 nTN++jW90PV46efolJuzlnSuVfhbRI96KD78p50cgJXqdNZgQJBWTLKktDs4iRf/2+
-	 vXG6pkshvEozrkylDEZU8XIZxs/4lGwRXI0E1q5I6aNWBElVZw/ItsMy6rz8HmcLB5
-	 uQOG+kAWZ8OoeI+1q0G1NKhDMcJzk+/jAaESf+rujDzBwANJJPbMi5OU4k2uMKsntT
-	 aWN3DFfbIxVoQ==
-From: Sasha Levin <sashal@kernel.org>
-To: patches@lists.linux.dev,
-	stable@vger.kernel.org
-Cc: Viacheslav Dubeyko <slava@dubeyko.com>,
-	Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-	Sasha Levin <sashal@kernel.org>,
-	frank.li@vivo.com,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 8/9] hfs: fix not erasing deleted b-tree node issue
-Date: Sun,  3 Aug 2025 17:23:08 -0400
-Message-Id: <20250803212309.3549683-8-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250803212309.3549683-1-sashal@kernel.org>
-References: <20250803212309.3549683-1-sashal@kernel.org>
+	s=k20201202; t=1754262286;
+	bh=Dv81L0UB61wQBOb0IupiOoJhq1u150tKJU35Qof1ZvI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Dvmyy2WRIVA2yPVZL2MvKZdibhREriJ4DfE2dM+0GFucRZFmjQY4/PKcdlMWjr/7x
+	 0gN4EXc7YdiPM19hHUSsGS7Ton8GLki2EzPIiT/NEAJbPBNLWW6U7iU2f322B4gfm1
+	 Ftn+Wh7JuNZxi4ADa/3HCTav7DU60PBH3NN7eq0aPuOe7yjcFOLPOZQKYSFGE0fFwF
+	 PziVZ9iBrypWONw5g0kQwr6+nY+3lGsTEhCgKQ3O8HCCRPuHW2T2faRfo+7X4OMA+B
+	 TA7xymUNVqP4xqiELmChJDUMzGfx6goq2JLHrWF67FZNwBt4vMU17NH13d4UCepuiW
+	 NUhOUAgDa883A==
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-615622ed70fso5709598a12.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 03 Aug 2025 16:04:46 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXBY6qU+Cob4N9HYMJDDoxMrKp9Pv69i6gp8tB9HYgtWDIqJZJ0pXYpvHV5qhliHA2mZ7dhq159LjHyv6Yc@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgpIS7oDwWhmHedxslYgledccp8w49cFCsQvK6/CzTRyquE/Qt
+	3q3XEUl+dWwoK6sju20ikarctDTzXnO0kmh3enu1CTbd0zE92XgghXtZnAE1K+AEmk/EGoQtVH6
+	9BImFqxvOlu/MCYjdmPvoprlsxrtwAe0=
+X-Google-Smtp-Source: AGHT+IG389RxyrNgiDXJS0M3GuK8XvQHY/TIxlJvNvVeL1YQdD23Nh7MfNZ19+0iUKXCAdMCiXLGNmTSK7sgW/Kp8H4=
+X-Received: by 2002:a17:906:aacd:b0:af9:5ca0:e4fe with SMTP id
+ a640c23a62f3a-af95ca1914cmr327149166b.56.1754262284645; Sun, 03 Aug 2025
+ 16:04:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.4.296
-Content-Transfer-Encoding: 8bit
+References: <20250801001452.14105-1-linkinjeon@kernel.org> <PUZPR04MB631623977A900687BA21F92E8126A@PUZPR04MB6316.apcprd04.prod.outlook.com>
+In-Reply-To: <PUZPR04MB631623977A900687BA21F92E8126A@PUZPR04MB6316.apcprd04.prod.outlook.com>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Mon, 4 Aug 2025 08:04:33 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd9sFBN+7=8xO35dY4adNRsuvTMbRuyPkMF6=k40QJCRhQ@mail.gmail.com>
+X-Gm-Features: Ac12FXxWH2mAbl8zWiQI7YOP9bEkeRDxtL4F0Qd78fyjB_1xh7LaDjp2Uq-lnPQ
+Message-ID: <CAKYAXd9sFBN+7=8xO35dY4adNRsuvTMbRuyPkMF6=k40QJCRhQ@mail.gmail.com>
+Subject: Re: [PATCH] exfat: optimize allocation bitmap loading time
+To: "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
+Cc: "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Viacheslav Dubeyko <slava@dubeyko.com>
+On Fri, Aug 1, 2025 at 5:03=E2=80=AFPM Yuezhang.Mo@sony.com
+<Yuezhang.Mo@sony.com> wrote:
+>
+> > Loading the allocation bitmap is very slow if user set the small cluste=
+r
+> > size on large partition.
+> >
+> > For optimizing it, This patch uses sb_breadahead() read the allocation
+> > bitmap. It will improve the mount time.
+> >
+> > The following is the result of about 4TB partition(2KB cluster size)
+> > on my target.
+> >
+> > without patch:
+> > real 0m41.746s
+> > user 0m0.011s
+> > sys 0m0.000s
+> >
+> > with patch:
+> > real 0m2.525s
+> > user 0m0.008s
+> > sys 0m0.008s
+> >
+> > Reviewed-by: Sungjong Seo <sj1557.seo@samsung.com>
+> > Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
+> > ---
+> >  fs/exfat/balloc.c   | 12 +++++++++++-
+> >  fs/exfat/dir.c      |  1 -
+> >  fs/exfat/exfat_fs.h |  1 +
+> >  3 files changed, 12 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/fs/exfat/balloc.c b/fs/exfat/balloc.c
+> > index cc01556c9d9b..c40b73701941 100644
+> > --- a/fs/exfat/balloc.c
+> > +++ b/fs/exfat/balloc.c
+> > @@ -30,9 +30,11 @@ static int exfat_allocate_bitmap(struct super_block =
+*sb,
+> >                 struct exfat_dentry *ep)
+> >  {
+> >         struct exfat_sb_info *sbi =3D EXFAT_SB(sb);
+> > +       struct blk_plug plug;
+> >         long long map_size;
+> > -       unsigned int i, need_map_size;
+> > +       unsigned int i, j, need_map_size;
+> >         sector_t sector;
+> > +       unsigned int max_ra_count =3D EXFAT_MAX_RA_SIZE >> sb->s_blocks=
+ize_bits;
+> >
+> >         sbi->map_clu =3D le32_to_cpu(ep->dentry.bitmap.start_clu);
+> >         map_size =3D le64_to_cpu(ep->dentry.bitmap.size);
+> > @@ -57,6 +59,14 @@ static int exfat_allocate_bitmap(struct super_block =
+*sb,
+> >
+> >         sector =3D exfat_cluster_to_sector(sbi, sbi->map_clu);
+> >         for (i =3D 0; i < sbi->map_sectors; i++) {
+> > +               /* Trigger the next readahead in advance. */
+> > +               if (0 =3D=3D (i % max_ra_count)) {
+> > +                       blk_start_plug(&plug);
+> > +                       for (j =3D i; j < min(max_ra_count, sbi->map_se=
+ctors - i) + i; j++)
+> > +                               sb_breadahead(sb, sector + j);
+> > +                       blk_finish_plug(&plug);
+> > +               }
+> > +
+> >                 sbi->vol_amap[i] =3D sb_bread(sb, sector + i);
+> >                 if (!sbi->vol_amap[i]) {
+> >                         /* release all buffers and free vol_amap */
+> > diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c
+> > index ee060e26f51d..e7a8550c0346 100644
+> > --- a/fs/exfat/dir.c
+> > +++ b/fs/exfat/dir.c
+> > @@ -616,7 +616,6 @@ static int exfat_find_location(struct super_block *=
+sb, struct exfat_chain *p_dir
+> >         return 0;
+> >  }
+> >
+> > -#define EXFAT_MAX_RA_SIZE     (128*1024)
+> >  static int exfat_dir_readahead(struct super_block *sb, sector_t sec)
+> >  {
+> >         struct exfat_sb_info *sbi =3D EXFAT_SB(sb);
+> > diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
+> > index f8ead4d47ef0..d1792d5c9eed 100644
+> > --- a/fs/exfat/exfat_fs.h
+> > +++ b/fs/exfat/exfat_fs.h
+> > @@ -13,6 +13,7 @@
+> >  #include <uapi/linux/exfat.h>
+> >
+> >  #define EXFAT_ROOT_INO         1
+> > +#define EXFAT_MAX_RA_SIZE     (128*1024)
+>
+> Why is the max readahead size 128KiB?
+> If the limit is changed to max_sectors_kb, so that a read request reads a=
+s much
+> data as possible, will the performance be better?
+This sets an appropriate readahead size for exfat. It's already used
+elsewhere in exfat.
+Getting ->max_sectors_kb from the block layer will result in a layer violat=
+ion.
 
-[ Upstream commit d3ed6d6981f4756f145766753c872482bc3b28d3 ]
-
-The generic/001 test of xfstests suite fails and corrupts
-the HFS volume:
-
-sudo ./check generic/001
-FSTYP         -- hfs
-PLATFORM      -- Linux/x86_64 hfsplus-testing-0001 6.15.0-rc2+ #3 SMP PREEMPT_DYNAMIC Fri Apr 25 17:13:00 PDT 2>
-MKFS_OPTIONS  -- /dev/loop51
-MOUNT_OPTIONS -- /dev/loop51 /mnt/scratch
-
-generic/001 32s ... _check_generic_filesystem: filesystem on /dev/loop50 is inconsistent
-(see /home/slavad/XFSTESTS-2/xfstests-dev/results//generic/001.full for details)
-
-Ran: generic/001
-Failures: generic/001
-Failed 1 of 1 tests
-
-fsck.hfs -d -n ./test-image.bin
-** ./test-image.bin (NO WRITE)
-	Using cacheBlockSize=32K cacheTotalBlock=1024 cacheSize=32768K.
-   Executing fsck_hfs (version 540.1-Linux).
-** Checking HFS volume.
-   The volume name is untitled
-** Checking extents overflow file.
-** Checking catalog file.
-   Unused node is not erased (node = 2)
-   Unused node is not erased (node = 4)
-<skipped>
-   Unused node is not erased (node = 253)
-   Unused node is not erased (node = 254)
-   Unused node is not erased (node = 255)
-   Unused node is not erased (node = 256)
-** Checking catalog hierarchy.
-** Checking volume bitmap.
-** Checking volume information.
-   Verify Status: VIStat = 0x0000, ABTStat = 0x0000 EBTStat = 0x0000
-                  CBTStat = 0x0004 CatStat = 0x00000000
-** The volume untitled was found corrupt and needs to be repaired.
-	volume type is HFS
-	primary MDB is at block 2 0x02
-	alternate MDB is at block 20971518 0x13ffffe
-	primary VHB is at block 0 0x00
-	alternate VHB is at block 0 0x00
-	sector size = 512 0x200
-	VolumeObject flags = 0x19
-	total sectors for volume = 20971520 0x1400000
-	total sectors for embedded volume = 0 0x00
-
-This patch adds logic of clearing the deleted b-tree node.
-
-sudo ./check generic/001
-FSTYP         -- hfs
-PLATFORM      -- Linux/x86_64 hfsplus-testing-0001 6.15.0-rc2+ #3 SMP PREEMPT_DYNAMIC Fri Apr 25 17:13:00 PDT 2025
-MKFS_OPTIONS  -- /dev/loop51
-MOUNT_OPTIONS -- /dev/loop51 /mnt/scratch
-
-generic/001 9s ...  32s
-Ran: generic/001
-Passed all 1 tests
-
-fsck.hfs -d -n ./test-image.bin
-** ./test-image.bin (NO WRITE)
-	Using cacheBlockSize=32K cacheTotalBlock=1024 cacheSize=32768K.
-   Executing fsck_hfs (version 540.1-Linux).
-** Checking HFS volume.
-   The volume name is untitled
-** Checking extents overflow file.
-** Checking catalog file.
-** Checking catalog hierarchy.
-** Checking volume bitmap.
-** Checking volume information.
-** The volume untitled appears to be OK.
-
-Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
-Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Link: https://lore.kernel.org/r/20250430001211.1912533-1-slava@dubeyko.com
-Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
-
-LLM Generated explanations, may be completely bogus:
-
-Based on my analysis of the commit and the surrounding code, I can now
-provide a determination on whether this should be backported to stable
-kernel trees.
-
-**Backport Status: YES**
-
-This commit should be backported to stable kernel trees for the
-following reasons:
-
-1. **Fixes a real bug that causes filesystem corruption**: The commit
-   fixes a bug where deleted b-tree nodes in HFS filesystems are not
-   properly erased, leading to filesystem corruption that is detected by
-   fsck.hfs. The commit message shows clear evidence of filesystem
-   corruption with "Unused node is not erased" errors across multiple
-   nodes (2, 4, 253-256).
-
-2. **Small and contained fix**: The patch is only 1 line of code
-   addition (`hfs_bnode_clear(node, 0, tree->node_size);`), well within
-   the 100-line stable tree limit. The fix is localized to the HFS
-   b-tree node management code and doesn't affect other subsystems.
-
-3. **Obviously correct**: The fix adds a missing step that already
-   exists in the HFS+ implementation. Looking at
-   fs/hfsplus/bnode.c:728-729, the HFS+ code already calls
-   `hfs_bnode_clear()` when deleting b-tree nodes (conditionally based
-   on a volume attribute). The HFS code was missing this critical step
-   entirely.
-
-4. **Tested with concrete results**: The commit message includes before
-   and after test results using xfstests generic/001, showing that the
-   filesystem corruption is resolved after applying the patch. The
-   "after" test shows "The volume untitled appears to be OK" from
-   fsck.hfs.
-
-5. **Data corruption prevention**: Without this fix, HFS filesystems can
-   become corrupted during normal operations that involve b-tree node
-   deletion, potentially leading to data loss. This is a serious issue
-   that affects filesystem integrity.
-
-6. **No architectural changes**: The commit doesn't introduce any new
-   features or architectural changes - it simply adds a missing cleanup
-   step that should have been there all along.
-
-7. **Low regression risk**: The `hfs_bnode_clear()` function being
-   called already exists and is used elsewhere in the HFS code. The fix
-   follows the established pattern from HFS+ and uses existing, tested
-   infrastructure.
-
-The commit meets all the stable kernel rules criteria: it fixes a real
-bug that causes filesystem corruption, is small and contained, is
-obviously correct (matches HFS+ implementation), and has been tested to
-resolve the issue.
-
- fs/hfs/bnode.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/fs/hfs/bnode.c b/fs/hfs/bnode.c
-index 2039cb6d5f66..219e3b8fd6a8 100644
---- a/fs/hfs/bnode.c
-+++ b/fs/hfs/bnode.c
-@@ -586,6 +586,7 @@ void hfs_bnode_put(struct hfs_bnode *node)
- 		if (test_bit(HFS_BNODE_DELETED, &node->flags)) {
- 			hfs_bnode_unhash(node);
- 			spin_unlock(&tree->hash_lock);
-+			hfs_bnode_clear(node, 0, tree->node_size);
- 			hfs_bmap_free(node);
- 			hfs_bnode_free(node);
- 			return;
--- 
-2.39.5
-
+Thanks.
 
