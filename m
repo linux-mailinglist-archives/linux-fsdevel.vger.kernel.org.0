@@ -1,96 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-56558-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56559-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1166B193FD
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Aug 2025 14:09:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DA159B1943D
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Aug 2025 16:30:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95CAC3B6A10
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Aug 2025 12:09:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E7FB3B1DB9
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Aug 2025 14:30:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E131A25EF90;
-	Sun,  3 Aug 2025 12:09:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D919D156C6F;
+	Sun,  3 Aug 2025 14:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="VcOX2KXw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 360DC22541F
-	for <linux-fsdevel@vger.kernel.org>; Sun,  3 Aug 2025 12:09:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0170D2836F;
+	Sun,  3 Aug 2025 14:30:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754222944; cv=none; b=kGUbnGgU1v3f2XNsNNZFeWJZKSFb53NfbovLI5ATOebRNBp4DbA+nzfZZeBboIeedFWwJYBjJIjfm5cvp5n9uOhTbQqYK5km4EOktSdK00l8uwW01S83TZmeLmyM3DWbFEZ3iOczBAad5UumYWpDi4tpKUJgRj0sg50BpXvqUCQ=
+	t=1754231431; cv=none; b=DyJDUZ+nlI07dp9Mx71en30BbwEFsQyOpBfuefa1YStCiVUlzHO6d6jJ6CY8rXRuppwhVsJ+RCKHCAHwfW5HxFV8VMCtmdAIMpFrK2HY42fwH/d8h97ydoXXKe3xXY1lV4RTnSjgg9p+m0l+vRFnrHFT48a7R7iCbvlJND3v438=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754222944; c=relaxed/simple;
-	bh=+BxCQVXtTe+xoz4eJ9sHAveL3+qt5++cybtEn1AaG/w=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=l0UJweqXPXCuFM/k4G2gkuyOWVXchBElNuGT5JCm4FjiiQAmBoWa+08sRv3X8OB1aMMtUn2/NyWFkaF92Yy7PW/NzSSkN5j+L9SGGD7MvAiP8Bm6tugsZO7bLj+Lic0wFwvsBc058g1MxzqcTv02pNTrwy0pCuGkp8M/RgtmBuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3e3d492a279so73417615ab.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 03 Aug 2025 05:09:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754222942; x=1754827742;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v5+xCIY68eQod8HShjZie1OqXUWvIMyxZ5G/valhey4=;
-        b=j2hKZdyW66W/g+UfP8iTDkBBVyZAtLr6IoSRMatabdrp+KaMbngHLZdWmfTeHFASj1
-         fXGe2kq1Z80QYYSHv8isfjTEpx3monbbu5FNb5kR1AKotV1WQEU9Cv+omoPBKbmHTMqh
-         nGBz8pahQOfvmKwFuizY+lsNT/8Qq8RgBmKwlQfmfGG/FrnrQF2F1AlxhIarlBoyqFTk
-         rPHbB9DPMm6tz9jugpqhX4GlpiJlQH9eWBI4lzP0C1B0AktJdD+mlGPgvmZg64LPKHUJ
-         5ga+WUiFQqeYxn986U8dZ4sMwO8/FFyAwgLWvs+FkfMFCXlakjlGR9hbqRawjmLcp4kJ
-         TTnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXOeayUVtcGIR8hkocLGgxGf50cYuWmoMIHN3mU3g7zx1TjGa8a8I61QhCRP6E+nVSesv1EF+CaKL8ishI5@vger.kernel.org
-X-Gm-Message-State: AOJu0YynR5vdrLl02TOWkv5ZXI5nV5GW12C06h1kXx6qi9+Oaib7md+X
-	Ziw2DanaC/eogui4DddNlFxNqI5fMDbj2wDryKObuyoICXtwI1SJyQEZg8ummQc6v5Oat84VqOC
-	psdOp6+23Hx3UPKDtT/HXvFfAdOGT9seHUE6MFdXptxqC9l6b0ggRfA6R7DY=
-X-Google-Smtp-Source: AGHT+IEI73yOX7LuYSonRTZStd7VDhDxkqzJkzexmNHlJCJ1YhLhqOvcqAg6Qh64hhfeEztD7/M6cYE5zqbG4QmcfI8nTwAfsPR1
+	s=arc-20240116; t=1754231431; c=relaxed/simple;
+	bh=sIOKAD2MTUbXtcoW87WJAGTcHShe/qrRmPh438Vntwk=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=ghxpF8hDDbppJJ5SJQMaa17Y6vshQbr5FoHhCVR180tOefOH6wqxrGokau96GU184t9fCL9tnR8UA3unopegrXFdkZib+vcDut1VGYyPGpEBTAnh4kO54MHQzz2gywfxyU6C7gBgdz8Bf3zCY2sLoROZG/W7fxUeGstZPNUmN8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=VcOX2KXw; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id; bh=Zx/3aqFbue8q2T0
+	EElnkI1Xd/UhLG7XGArEZaqXXprU=; b=VcOX2KXwKAsJL+lcuEBLEu8XulA539Z
+	uWMjdSFKr6aBpC3/v4yeXumJCx9d7Jg9NhsFNXYyS+HjHziFzKpr2QIUgaFabRXL
+	cbB5+5TCASX4JDSYPfdc9+gifdZum7DnIumLOz4V1b2Z7Vk4DxoClOWWpJWh5I9z
+	h3uSrfAQ97fw=
+Received: from 163.com (unknown [])
+	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wAXHs5Bco9ofBxoJQ--.5397S2;
+	Sun, 03 Aug 2025 22:29:22 +0800 (CST)
+From: Beibei Yang <13738176232@163.com>
+To: viro@zeniv.linux.org.uk
+Cc: brauner@kernel.org,
+	jack@suse.cz,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	13738176232@163.com,
+	root <root@192.168.220.227>
+Subject: [PATCH trivial] init: Fix comment typo in do_mounts_initrd.c
+Date: Sun,  3 Aug 2025 07:29:18 -0700
+Message-Id: <1754231358-3544-1-git-send-email-13738176232@163.com>
+X-Mailer: git-send-email 1.8.3.1
+X-CM-TRANSID:_____wAXHs5Bco9ofBxoJQ--.5397S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7XrWDJw48tF1kCr45Cw4kJFb_yoWfKwbEga
+	18XFs7JrsI93Wjyw47Cryrt3WDWrWFvF4rCF1rCryUta4kJr90kr92qr97G39F9r4j9FZx
+	Ww4DX3yayr12kjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRWyxiJUUUUU==
+X-CM-SenderInfo: zprtljayrxljits6il2tof0z/1tbiYhGea2iPaWfA-wAAsQ
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3303:b0:3e2:81d9:cbbc with SMTP id
- e9e14a558f8ab-3e41611a082mr111370915ab.2.1754222942254; Sun, 03 Aug 2025
- 05:09:02 -0700 (PDT)
-Date: Sun, 03 Aug 2025 05:09:02 -0700
-In-Reply-To: <67dedd2f.050a0220.31a16b.003f.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <688f515e.050a0220.13f73d.0000.GAE@google.com>
-Subject: Re: [syzbot] [netfs?] INFO: task hung in netfs_unbuffered_write_iter
-From: syzbot <syzbot+62262fdc0e01d99573fc@syzkaller.appspotmail.com>
-To: asmadeus@codewreck.org, brauner@kernel.org, dhowells@redhat.com, 
-	eadavis@qq.com, ericvh@kernel.org, hdanton@sina.com, jack@suse.cz, 
-	jlayton@kernel.org, kprateek.nayak@amd.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux_oss@crudebyte.com, lucho@ionkov.net, 
-	mjguzik@gmail.com, netfs@lists.linux.dev, oleg@redhat.com, pc@manguebit.org, 
-	sfrench@samba.org, swapnil.sapkal@amd.com, syzkaller-bugs@googlegroups.com, 
-	v9fs@lists.linux.dev, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
 
-syzbot suspects this issue was fixed by commit:
+From: root <root@192.168.220.227>
 
-commit da8cf4bd458722d090a788c6e581eeb72695c62f
-Author: David Howells <dhowells@redhat.com>
-Date:   Tue Jul 1 16:38:36 2025 +0000
+The original comment incorrectly used "cwd" (current working directory)
+when referring to the root change operation. The correct term should be
+"pwd" (present working directory) as per process context semantics.
 
-    netfs: Fix hang due to missing case in final DIO read result collection
+This is a pure comment correction with no functional impact.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14cfbcf0580000
-start commit:   66701750d556 Merge tag 'io_uring-6.16-20250630' of git://g..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e29b8115bf337f53
-dashboard link: https://syzkaller.appspot.com/bug?extid=62262fdc0e01d99573fc
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1400348c580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17b2048c580000
+Signed-off-by: Beibei Yang <13738176232@163.com>
+---
+ init/do_mounts_initrd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-If the result looks correct, please mark the issue as fixed by replying with:
+diff --git a/init/do_mounts_initrd.c b/init/do_mounts_initrd.c
+index f6867ba..173b569 100644
+--- a/init/do_mounts_initrd.c
++++ b/init/do_mounts_initrd.c
+@@ -107,7 +107,7 @@ static void __init handle_initrd(char *root_device_name)
+ 
+ 	/* move initrd to rootfs' /old */
+ 	init_mount("..", ".", NULL, MS_MOVE, NULL);
+-	/* switch root and cwd back to / of rootfs */
++	/* switch root and pwd back to / of rootfs */
+ 	init_chroot("..");
+ 
+ 	if (new_decode_dev(real_root_dev) == Root_RAM0) {
+-- 
+1.8.3.1
 
-#syz fix: netfs: Fix hang due to missing case in final DIO read result collection
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
