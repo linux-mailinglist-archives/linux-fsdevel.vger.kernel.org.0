@@ -1,58 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-56585-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56587-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 988A0B19613
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Aug 2025 23:23:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 876AEB195F7
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Aug 2025 23:22:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0A287ABCA1
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Aug 2025 21:20:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FB62189420F
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Aug 2025 21:22:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF20C2264A9;
-	Sun,  3 Aug 2025 21:20:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B95C21A440;
+	Sun,  3 Aug 2025 21:21:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="czHGulkZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qkY5aRDI"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 272FA2040A8;
-	Sun,  3 Aug 2025 21:20:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D99652046BA;
+	Sun,  3 Aug 2025 21:21:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754256045; cv=none; b=C3FmezNXprqEqLszGMTvpfpyB5ZIdxkPwuW1dG+GzCHGtGF7XGDyN3bfiva+EB6gyez+RsPNJygGs8YSA17R/JygpgCVkrjQfWTSWhajNnmuIonnk5SOiWJN7Zj5lhNWZ7sVPKKBm2wg8JbAxoVLAqzdJ3bxENiT2Jj1SiYHS+U=
+	t=1754256065; cv=none; b=CT4i+O+u4NwioUBwrRKtdETtHdlYKwo4D8gBU+SaOQPgEteXZYbUgad94ivcBPDPfT13eoMk8vcpEPv+KXqsW1UAWRys8f2EnadTRqdm3eudA6rx85pxSAJaNvYE9ApPS5zcz8+qbYZkUv48Q6pQAgGf7+UFcMOYq7JPoLargEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754256045; c=relaxed/simple;
-	bh=2LK/g5UpKAcQvdGs5mw3rovHeY79/5O62YuslKEy0lY=;
+	s=arc-20240116; t=1754256065; c=relaxed/simple;
+	bh=DimeH0/NfsM6Wmvn56UqsCkFwI7Yb+h9wm5ZeMxu0n8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bV/N5z5qnM3VStCKE32144GrzZCUENmg2vZ1h4QIvZogRr/rWqI/3Fsm6r+/+u9rEnS1VdXfoNhMm3IOlUr4EtKB48tuF9xj4QgbnvXURyO3SsTHui70H/B6Rx1JyAUquG+u6/ep+wY9wU1p9FXmSzqElU6W014Pze+t9/lT4Q8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=czHGulkZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F626C4CEF8;
-	Sun,  3 Aug 2025 21:20:43 +0000 (UTC)
+	 MIME-Version; b=rT6M5aAKDdfkgJ9Jv868VvmaoGPh9XuTWnweulfFNzFbuo+fesFd+x3Zb4BNTOyr5sEBfG6OU2rErh9k5TwaBsMAMHIr3EP0AgPVF6h3FlBaSCYLXzLsfRr3PP0spX5W4Dmi5uusDAEO3QUv96R+GnQVPyJP0c06MbluWxo45NY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qkY5aRDI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B6D6C4CEF8;
+	Sun,  3 Aug 2025 21:21:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754256045;
-	bh=2LK/g5UpKAcQvdGs5mw3rovHeY79/5O62YuslKEy0lY=;
+	s=k20201202; t=1754256065;
+	bh=DimeH0/NfsM6Wmvn56UqsCkFwI7Yb+h9wm5ZeMxu0n8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=czHGulkZlI2Ow5T9AOhqD69SFd6EQA02fcuwu2960qeGueSdJas8fawXcsA7XXTnD
-	 f1JZLhssiiWdiTUPKfoOER1q0XhPCpc6h67+EALxv9fL88DL/FXRy1z28s+lwK9Gx4
-	 HdkmXb/gPn6um9ZsaOY7UvOqoU1Y+cc45/YX3c3vDQuNNkTyFhbKQ0tDUh1JYXdlgG
-	 VrN2YU7Rh+dOhOVqChg9BhOhksYtE/MFut2YCQteCbslftUQqsF+uZJC/CtZbTUQe0
-	 EaJtIxCU2dxT2kas1VAZtgjLBq8+K5PBi/bFr22tVwdirfZE+cVC8xKLNCZnS7cnYM
-	 TxfFG38UBQ6Tw==
+	b=qkY5aRDIlvu0oXx0H7SV5iFuNc2aBkT1jmFzc/aEuR5Q9yrr3tBMGv35az0OeYCyY
+	 xFuDyaJl0MpQ9vWwapwPPsR6uAIcmvDpNyfugCKI26RgYOcY4W16E/H2v8YcLkjcJa
+	 YEvbmFz6YWnvp53F1TxgWT4Rx83WsGRlpXsKmOC2O2UKN3Ch7bYZ9O7nYFAvm8/2yI
+	 +NC0I8AdF9J0Z5QyouHOKjQ69J63sTFKfDGuM+IatHM4tu9nj/kqruWFeVsDPT5aKS
+	 UV9K/GRABJFAKCy1XR6OmRjxrSq0JoSb4Eot74hiV52BGexK0PjyDDyrvfjKaqsWX4
+	 026dtKp+tZvNw==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-	syzbot <syzbot+1107451c16b9eb9d29e6@syzkaller.appspotmail.com>,
-	Viacheslav Dubeyko <slava@dubeyko.com>,
+Cc: Viacheslav Dubeyko <slava@dubeyko.com>,
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>,
 	Sasha Levin <sashal@kernel.org>,
 	frank.li@vivo.com,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 05/23] hfsplus: don't use BUG_ON() in hfsplus_create_attributes_file()
-Date: Sun,  3 Aug 2025 17:20:12 -0400
-Message-Id: <20250803212031.3547641-5-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.6 14/23] hfs: fix not erasing deleted b-tree node issue
+Date: Sun,  3 Aug 2025 17:20:21 -0400
+Message-Id: <20250803212031.3547641-14-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250803212031.3547641-1-sashal@kernel.org>
 References: <20250803212031.3547641-1-sashal@kernel.org>
@@ -67,98 +66,159 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.101
 Content-Transfer-Encoding: 8bit
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Viacheslav Dubeyko <slava@dubeyko.com>
 
-[ Upstream commit c7c6363ca186747ebc2df10c8a1a51e66e0e32d9 ]
+[ Upstream commit d3ed6d6981f4756f145766753c872482bc3b28d3 ]
 
-When the volume header contains erroneous values that do not reflect
-the actual state of the filesystem, hfsplus_fill_super() assumes that
-the attributes file is not yet created, which later results in hitting
-BUG_ON() when hfsplus_create_attributes_file() is called. Replace this
-BUG_ON() with -EIO error with a message to suggest running fsck tool.
+The generic/001 test of xfstests suite fails and corrupts
+the HFS volume:
 
-Reported-by: syzbot <syzbot+1107451c16b9eb9d29e6@syzkaller.appspotmail.com>
-Closes: https://syzkaller.appspot.com/bug?extid=1107451c16b9eb9d29e6
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reviewed-by: Viacheslav Dubeyko <slava@dubeyko.com>
-Link: https://lore.kernel.org/r/7b587d24-c8a1-4413-9b9a-00a33fbd849f@I-love.SAKURA.ne.jp
+sudo ./check generic/001
+FSTYP         -- hfs
+PLATFORM      -- Linux/x86_64 hfsplus-testing-0001 6.15.0-rc2+ #3 SMP PREEMPT_DYNAMIC Fri Apr 25 17:13:00 PDT 2>
+MKFS_OPTIONS  -- /dev/loop51
+MOUNT_OPTIONS -- /dev/loop51 /mnt/scratch
+
+generic/001 32s ... _check_generic_filesystem: filesystem on /dev/loop50 is inconsistent
+(see /home/slavad/XFSTESTS-2/xfstests-dev/results//generic/001.full for details)
+
+Ran: generic/001
+Failures: generic/001
+Failed 1 of 1 tests
+
+fsck.hfs -d -n ./test-image.bin
+** ./test-image.bin (NO WRITE)
+	Using cacheBlockSize=32K cacheTotalBlock=1024 cacheSize=32768K.
+   Executing fsck_hfs (version 540.1-Linux).
+** Checking HFS volume.
+   The volume name is untitled
+** Checking extents overflow file.
+** Checking catalog file.
+   Unused node is not erased (node = 2)
+   Unused node is not erased (node = 4)
+<skipped>
+   Unused node is not erased (node = 253)
+   Unused node is not erased (node = 254)
+   Unused node is not erased (node = 255)
+   Unused node is not erased (node = 256)
+** Checking catalog hierarchy.
+** Checking volume bitmap.
+** Checking volume information.
+   Verify Status: VIStat = 0x0000, ABTStat = 0x0000 EBTStat = 0x0000
+                  CBTStat = 0x0004 CatStat = 0x00000000
+** The volume untitled was found corrupt and needs to be repaired.
+	volume type is HFS
+	primary MDB is at block 2 0x02
+	alternate MDB is at block 20971518 0x13ffffe
+	primary VHB is at block 0 0x00
+	alternate VHB is at block 0 0x00
+	sector size = 512 0x200
+	VolumeObject flags = 0x19
+	total sectors for volume = 20971520 0x1400000
+	total sectors for embedded volume = 0 0x00
+
+This patch adds logic of clearing the deleted b-tree node.
+
+sudo ./check generic/001
+FSTYP         -- hfs
+PLATFORM      -- Linux/x86_64 hfsplus-testing-0001 6.15.0-rc2+ #3 SMP PREEMPT_DYNAMIC Fri Apr 25 17:13:00 PDT 2025
+MKFS_OPTIONS  -- /dev/loop51
+MOUNT_OPTIONS -- /dev/loop51 /mnt/scratch
+
+generic/001 9s ...  32s
+Ran: generic/001
+Passed all 1 tests
+
+fsck.hfs -d -n ./test-image.bin
+** ./test-image.bin (NO WRITE)
+	Using cacheBlockSize=32K cacheTotalBlock=1024 cacheSize=32768K.
+   Executing fsck_hfs (version 540.1-Linux).
+** Checking HFS volume.
+   The volume name is untitled
+** Checking extents overflow file.
+** Checking catalog file.
+** Checking catalog hierarchy.
+** Checking volume bitmap.
+** Checking volume information.
+** The volume untitled appears to be OK.
+
+Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
+Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Link: https://lore.kernel.org/r/20250430001211.1912533-1-slava@dubeyko.com
 Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
+Based on my analysis of the commit and the surrounding code, I can now
+provide a determination on whether this should be backported to stable
+kernel trees.
+
 **Backport Status: YES**
 
 This commit should be backported to stable kernel trees for the
 following reasons:
 
-1. **Fixes a Critical Bug**: The commit replaces a `BUG_ON()` that could
-   crash the entire system with proper error handling. The original code
-   at line 175 had `BUG_ON(i_size_read(attr_file) != 0);` which would
-   trigger a kernel panic when the HFS+ filesystem metadata is corrupted
-   or inconsistent.
+1. **Fixes a real bug that causes filesystem corruption**: The commit
+   fixes a bug where deleted b-tree nodes in HFS filesystems are not
+   properly erased, leading to filesystem corruption that is detected by
+   fsck.hfs. The commit message shows clear evidence of filesystem
+   corruption with "Unused node is not erased" errors across multiple
+   nodes (2, 4, 253-256).
 
-2. **Real-World Issue**: This was reported by syzbot (a kernel fuzzer),
-   indicating it's a reachable code path that can be triggered with
-   malformed filesystem data. The bug report link confirms this is a
-   reproducible issue.
+2. **Small and contained fix**: The patch is only 1 line of code
+   addition (`hfs_bnode_clear(node, 0, tree->node_size);`), well within
+   the 100-line stable tree limit. The fix is localized to the HFS
+   b-tree node management code and doesn't affect other subsystems.
 
-3. **Simple and Contained Fix**: The change is minimal - it replaces the
-   BUG_ON with:
-  ```c
-  if (i_size_read(attr_file) != 0) {
-  err = -EIO;
-  pr_err("detected inconsistent attributes file, running fsck.hfsplus is
-  recommended.\n");
-  goto end_attr_file_creation;
-  }
-  ```
-  This is a straightforward conversion that maintains the same logic but
-  handles the error gracefully.
+3. **Obviously correct**: The fix adds a missing step that already
+   exists in the HFS+ implementation. Looking at
+   fs/hfsplus/bnode.c:728-729, the HFS+ code already calls
+   `hfs_bnode_clear()` when deleting b-tree nodes (conditionally based
+   on a volume attribute). The HFS code was missing this critical step
+   entirely.
 
-4. **Prevents System Crashes**: BUG_ON() causes a kernel panic, which is
-   particularly severe. Converting it to return -EIO allows the system
-   to continue running and provides users with actionable guidance (run
-   fsck.hfsplus).
+4. **Tested with concrete results**: The commit message includes before
+   and after test results using xfstests generic/001, showing that the
+   filesystem corruption is resolved after applying the patch. The
+   "after" test shows "The volume untitled appears to be OK" from
+   fsck.hfs.
 
-5. **Low Risk of Regression**: The change only affects error handling
-   when filesystem corruption is detected. It doesn't alter normal
-   operation paths and follows established error handling patterns in
-   the kernel.
+5. **Data corruption prevention**: Without this fix, HFS filesystems can
+   become corrupted during normal operations that involve b-tree node
+   deletion, potentially leading to data loss. This is a serious issue
+   that affects filesystem integrity.
 
-6. **Follows Stable Tree Rules**: This is a classic example of a stable-
-   worthy fix:
-   - Fixes a real bug (system crash on corrupted filesystem)
-   - Small, easily reviewable change
-   - No new features or architectural changes
-   - High benefit (prevents crashes) with minimal risk
+6. **No architectural changes**: The commit doesn't introduce any new
+   features or architectural changes - it simply adds a missing cleanup
+   step that should have been there all along.
 
-The commit message clearly indicates this addresses filesystem
-corruption scenarios where "the volume header contains erroneous values
-that do not reflect the actual state of the filesystem," making it an
-important robustness improvement for stable kernels.
+7. **Low regression risk**: The `hfs_bnode_clear()` function being
+   called already exists and is used elsewhere in the HFS code. The fix
+   follows the established pattern from HFS+ and uses existing, tested
+   infrastructure.
 
- fs/hfsplus/xattr.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+The commit meets all the stable kernel rules criteria: it fixes a real
+bug that causes filesystem corruption, is small and contained, is
+obviously correct (matches HFS+ implementation), and has been tested to
+resolve the issue.
 
-diff --git a/fs/hfsplus/xattr.c b/fs/hfsplus/xattr.c
-index f7f9d0889df3..d5fd8e068486 100644
---- a/fs/hfsplus/xattr.c
-+++ b/fs/hfsplus/xattr.c
-@@ -172,7 +172,11 @@ static int hfsplus_create_attributes_file(struct super_block *sb)
- 		return PTR_ERR(attr_file);
- 	}
- 
--	BUG_ON(i_size_read(attr_file) != 0);
-+	if (i_size_read(attr_file) != 0) {
-+		err = -EIO;
-+		pr_err("detected inconsistent attributes file, running fsck.hfsplus is recommended.\n");
-+		goto end_attr_file_creation;
-+	}
- 
- 	hip = HFSPLUS_I(attr_file);
- 
+ fs/hfs/bnode.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/hfs/bnode.c b/fs/hfs/bnode.c
+index 1dac5d9c055f..e8cd1a31f247 100644
+--- a/fs/hfs/bnode.c
++++ b/fs/hfs/bnode.c
+@@ -574,6 +574,7 @@ void hfs_bnode_put(struct hfs_bnode *node)
+ 		if (test_bit(HFS_BNODE_DELETED, &node->flags)) {
+ 			hfs_bnode_unhash(node);
+ 			spin_unlock(&tree->hash_lock);
++			hfs_bnode_clear(node, 0, tree->node_size);
+ 			hfs_bmap_free(node);
+ 			hfs_bnode_free(node);
+ 			return;
 -- 
 2.39.5
 
