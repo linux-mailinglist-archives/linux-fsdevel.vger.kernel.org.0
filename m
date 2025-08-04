@@ -1,108 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-56677-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56678-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01A27B1A8A0
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 19:27:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 269AFB1A8A8
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 19:32:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD8E73B93A2
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 17:27:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAECA3B0E4F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 17:32:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9CF28B7D4;
-	Mon,  4 Aug 2025 17:27:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 514D421CC59;
+	Mon,  4 Aug 2025 17:32:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="tQM26qnJ"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vLTw7Gfy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 803981E51EF;
-	Mon,  4 Aug 2025 17:27:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C40F1C5F23
+	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Aug 2025 17:32:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754328466; cv=none; b=ib3xvmwJ+Rk/fSA/XhaHlKxsv4Bcb35RB+LA8iYJDnsZafm3CXKoDguEfPxTlJslM4JZblDXabpW6DuW4azvacSocI0oU2uNt5kRae0TPefxiK5B54pMH4p08rOpp0LKwRDqfHKD+jDJOdcykYQecKR1CYc88Oq7pPZOcs0CB5g=
+	t=1754328754; cv=none; b=t0TnbNy7OH0722BG7thta6Kaza/keWXG789sg6cjnsZVz7scEAx15RszPtRKAVqf9QqVyk3kJp9zp2gAu1y/vbEUjzixakBVjqecvFh0Vh7KTXONCi1zGagqSdA5JO7IjvVFCgXF9A5K+LYbnMOvWYjWjB1wwerXTXAPiU/GIsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754328466; c=relaxed/simple;
-	bh=ctfsacsK2Fl1aDVbBdpkGAYL0DhKf6KDkMkitlncA0Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PfYXMiSN9DQf6FgH9T8lat2AGBGhdxWww5WzjNY+inRWnESvTOG+fCeGpRyteUBW/EGVJTD19SnFHzexdW4wc6S9b/UeTrVxOfVjHKVbrNFZVNFspOMSJtT960lycMBEUVZkBwyWZjxUZzqUi+CHzIMd3ygWi4eA2QSr8MKzK04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=tQM26qnJ; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=67sic9kDkYzicepXGm+7JEs5NBMq9PIdJXSJlsR3EcY=; b=tQM26qnJmZk9l3AHOjQKFeP6TG
-	LQYo3vg58KT3u2IQlf4GNt+YYG6MJDz6sX3AhHdcnPdw0tmRihRJhQesl1HIL8YLrtFKh7NwRJbXx
-	YD/K9I1Wulj2ViAgt+O+0kHVR4rzT5Y2xwZugxvql0ytEq9rWHIk503O9auciTZl0/ULirrN5s2GX
-	KxwmE87dLWIYVDj0CkuTXPbgacicKWp38/IEcgQ1gO5eGw2FU9ith+eZLh4CO9nyqYJR1Wxyty2Vq
-	LpjBwdRM/s/ejo5i/klJHvUES2FJRrjuQ0kik7yKpKjwmqtoTcJvfo8VpxK0DFR5S0t8ERZp7WEJE
-	go793xoQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uiyyL-0000000D8Am-1uCv;
-	Mon, 04 Aug 2025 17:27:41 +0000
-Date: Mon, 4 Aug 2025 18:27:41 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
-	Jan Kara <jack@suse.cz>, Sargun Dhillon <sargun@sargun.me>,
-	Kees Cook <kees@kernel.org>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2] fs: always return zero on success from replace_fd()
-Message-ID: <20250804172741.GZ222315@ZenIV>
-References: <20250804-fix-receive_fd_replace-v2-1-ecb28c7b9129@linutronix.de>
- <20250804-rundum-anwalt-10c3b9c11f8e@brauner>
- <20250804155229.GY222315@ZenIV>
+	s=arc-20240116; t=1754328754; c=relaxed/simple;
+	bh=6omrky32C6lrFTbeVuU07023mfEqWFh51fbWb7R4jZI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=gKfLaunlj9aiQeALx6wV3OXQNJKznFHzZCXFIqVwa66muFktplRL1xgbaQcfgPoODyDU3Wlcwa+bZQSyp3eREFiF/tz1r3u7r6tsYLLPaTYvJzs5pf/cKWiTkfRNXAUNF2vV4y/J0vc14V+Sw+bXVZq6ne7IEjF57NItBQqSxuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--paullawrence.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vLTw7Gfy; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--paullawrence.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b2c36d3f884so3128934a12.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Aug 2025 10:32:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754328753; x=1754933553; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=e1hbEV+wQKYZ91CYnEdmqqYZVyEmSUGWyP+ffm9T6J8=;
+        b=vLTw7GfyD04va9AtoMAVTpxnn37hBwzX+zVKGRNAJleioTa5pYfgN8DsvYJ6M7HbvY
+         e08ST6di7CvjTGt6ZOu8CkOVDQgxyc9lIQOxWQli0YCMMlInkdfTsgjs3eJ45w9tGIMN
+         YOjCXl4OfOeem5detjjxPz0g2t+lMg3ja+JR4N7lEnDg4IdtJh8Ai5CqOG/yJJ3fj9Sr
+         H43jvBoNZFwWtV19b2m+FoX4EJIOGXv2glEnzHyTTDlsDts60A9Vn7DPMs5I1fpr4/AG
+         QGvKpxoyXsThIeQG/fq9IAyReEQZrHZH1TXyHepXX4rB2Fx9PbfUrhvwN5g/3jC9oHZ5
+         BM1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754328753; x=1754933553;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=e1hbEV+wQKYZ91CYnEdmqqYZVyEmSUGWyP+ffm9T6J8=;
+        b=i2ID1l9/ilpt73sfx+qQQF2vfBAUmF1uCoV4gw+jVDIsx45cSFITV/XIrPf0vgWISV
+         UGsZ+1nenm1FbVocZlqHoLJIihBjsr8xu+ZNJi+GrhJAVV4USL061N5/Un6Zk2usEcf6
+         O02J2qbWLRF/7IOTiPWAW5PCkkKD6oxtnDMw5D4VBO6DvzU3ZkLj1tqivuVNap0eV5Xz
+         f3SwgfPIN3ogL3+z5CB7N6HXdYBO6B+5JSmR1QXvg1ORUi2VOIrWw/t70P/4wNGhQdsb
+         5WeKnw6nLPEVBNLrZnzRkU5KXkWtyKp1DansfuumgkfyUjro80Y7eEI/HQknxOzsQz5e
+         hg/g==
+X-Forwarded-Encrypted: i=1; AJvYcCV1jDGg5/BqJ3ZfQfZeQoY2yOvcTivzVlBHpGv/1y7uTguiQMOJXVyPoEXv4EHnkrZUsEMuT816xccKfV1K@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmEt01plzUawMxssU5v8lxeCCnttr7eQzSEM44JRLyntwwZVlU
+	LZZyW7P+1Dfx0wo6YGriZjWIhn/ON2D4SWFS9rv4/b6DC/smrqKRvYdnFmch0kKXo0TdPlRwCH3
+	2yYra3R5y92SQeJUg3e3ztNIIk6t9vQ==
+X-Google-Smtp-Source: AGHT+IG1Pt6ujaMG+SQxGxkhlNtNdzUak3p7dhUL29RUZrlLA0K8t6YWgUS3XDJz7oEgP1LT/PGOceeopw4/IKy7z2c=
+X-Received: from pfblm18.prod.google.com ([2002:a05:6a00:3c92:b0:746:1931:952a])
+ (user=paullawrence job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6a21:3297:b0:23d:dad9:50d1 with SMTP id adf61e73a8af0-23df8f94a3cmr15663166637.7.1754328752641;
+ Mon, 04 Aug 2025 10:32:32 -0700 (PDT)
+Date: Mon,  4 Aug 2025 10:32:26 -0700
+In-Reply-To: <CAOQ4uxhmA862ZPAXd=g3vKJAvwAdobAnB--7MqHV87Vmh0USFw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250804155229.GY222315@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Mime-Version: 1.0
+References: <CAOQ4uxhmA862ZPAXd=g3vKJAvwAdobAnB--7MqHV87Vmh0USFw@mail.gmail.com>
+X-Mailer: git-send-email 2.50.1.565.gc32cd1483b-goog
+Message-ID: <20250804173228.1990317-1-paullawrence@google.com>
+Subject: [PATCH 0/2] RFC: Set backing file at lookup
+From: Paul Lawrence <paullawrence@google.com>
+To: amir73il@gmail.com
+Cc: bernd.schubert@fastmail.fm, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, miklos@szeredi.hu, paullawrence@google.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Aug 04, 2025 at 04:52:29PM +0100, Al Viro wrote:
-> On Mon, Aug 04, 2025 at 02:33:13PM +0200, Christian Brauner wrote:
-> 
-> > +       guard(spinlock)(&files->file_lock);
-> >         err = expand_files(files, fd);
-> >         if (unlikely(err < 0))
-> > -               goto out_unlock;
-> > -       return do_dup2(files, file, fd, flags);
-> > +               return err;
-> > +       err = do_dup2(files, file, fd, flags);
-> > +       if (err < 0)
-> > +               return err;
-> > 
-> > -out_unlock:
-> > -       spin_unlock(&files->file_lock);
-> > -       return err;
-> > +       return 0;
-> >  }
-> 
-> NAK.  This is broken - do_dup2() drops ->file_lock.  And that's why I
-> loathe the guard() - it's too easy to get confused *and* assume that
-> it will DTRT, no need to check carefully.
+Based on our discussion, I put together two simple patches.
 
-Note, BTW, that in actual replacing case do_dup2() has blocking
-operations (closing the replaced reference) after dropping ->file_lock,
-so making it locking-neutral would not be easy; doable (have it
-return the old reference in the replacing case and adjust the callers
-accordingly), but it's seriously not pretty (NULL/address of old file/ERR_PTR()
-for return value, boilerplate in callers, etc.).  Having do_dup2() called
-without ->file_lock and taking it inside is not an option - we could pull
-expand_files() in there, but lookup of oldfd in actual dup2(2)/dup3(2) has
-to be done within the same ->file_lock scope where it is inserted into the
-table.
+The first adds an optional extra parameter to FUSE_LOOKUP outargs. This allows
+the daemon to set a backing file at lookup time on a successful lookup.
 
-Sure, all things equal it's better to have functions locking-neutral, but
-it's not always the best approach.  And while __free() allows for "we'd
-passed the object to somebody else, it's not ours to consume anymore",
-guard() does not.
+I then looked at which opcodes do not require a file handle. The simplest seem
+to be FUSE_MKDIR and FUSE_RMDIR. So I implemented passthrough handling for these
+opcodes in the second patch.
+
+Both patches sit on top of Amir's tree at:
+
+https://github.com/amir73il/linux/commit/ceaf7f16452f6aaf7993279b1c10e727d6bf6a32
+
+Thoughts?
+
+Paul
+
+Paul Lawrence (2):
+  fuse: Allow backing file to be set at lookup (WIP)
+  fuse: Add passthrough for mkdir and rmdir (WIP)
+
+ fs/fuse/dir.c             | 31 +++++++++++++---
+ fs/fuse/fuse_i.h          | 14 ++++++-
+ fs/fuse/iomode.c          | 41 ++++++++++++++++++--
+ fs/fuse/passthrough.c     | 78 ++++++++++++++++++++++++++++++++++-----
+ include/uapi/linux/fuse.h |  6 +++
+ 5 files changed, 150 insertions(+), 20 deletions(-)
+
+-- 
+2.50.1.565.gc32cd1483b-goog
+
 
