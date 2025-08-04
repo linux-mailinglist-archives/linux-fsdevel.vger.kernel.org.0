@@ -1,156 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-56622-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56623-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2EA9B19BD7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 08:58:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FD0DB19DC3
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 10:37:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56A81189867A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 06:59:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8696179186
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 08:37:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ABE9235045;
-	Mon,  4 Aug 2025 06:58:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90E6B242D6F;
+	Mon,  4 Aug 2025 08:37:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1OeUnbRP";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RX7Q2XWP";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1OeUnbRP";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RX7Q2XWP"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="tQIosnnf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8267F23372C
-	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Aug 2025 06:58:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09D4A1E9B22;
+	Mon,  4 Aug 2025 08:37:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754290728; cv=none; b=VmZlhnEoUGwoqlPl8JJq145qoeHZpChdyeoqUyT/zGUUE1Ik74E+RuTB4d6fTk9HnbB4tWbpoTZTMla/cYk8Kxdawa66JM7lqL4nMhbcS1AXZrSJ6h8pvwRdSmO1dMu0yKOh07KfddJvwJIkWujt/lw36azmG75svl5jXWYT1Vg=
+	t=1754296642; cv=none; b=IY0zYLsQ5KBb07qcjMuqexfzr6eUpEZaKLbrlp1lwUvZRGuMPBFGVDAxB6+i93wOlCLEZ4G1sTruJie1mXePZ8a83K2likRaqY5oRJ5Nic3PMrDcsthns7z2gnOXdIFkDn77x8krJEPyLRE11ye1aqeONTfJd9BP3LSYUfHML7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754290728; c=relaxed/simple;
-	bh=5y1x2aDUNvECnPaxmPB++TOu3OVNzGY4Qh51g26l6VI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Yksdsuv/5mxI8K5cchXYSF7UPQDlHggZ/ML3Sj98wjCRIOOJcLOAoVililPhrVdHBQns4cBIyVpogJzO12aclHm6pZZUkwIy5qJ1wBckiHswaziOub/YvNkKv1HrmCl40wpeQttkCuYQR2gmxOLo34jVXi7AVKBtilECo/X1Ir8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1OeUnbRP; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RX7Q2XWP; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1OeUnbRP; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RX7Q2XWP; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	s=arc-20240116; t=1754296642; c=relaxed/simple;
+	bh=HIXk4+TAbrKiQuY/qIcBcH+nKJgvbBjd1RaFeR0UKwI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=alW1VrhioigaEm2fAFVjVn9j6CGmvYYdZA4UdmU/ltKqUvCbKLh3vIfhiL+2E4ONXxo1U/jxN9zn3L7QChitM063am6L0Z83JHkC355+GprJ0DSlRlt3FhzguMnzDwmskaolpfZ7Mc/JBtF3CMNn2qccSnmzheM5ODEWknL5RP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=tQIosnnf; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id C66801F387;
-	Mon,  4 Aug 2025 06:58:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1754290724; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4bwVKf31nCz9sxm;
+	Mon,  4 Aug 2025 10:37:10 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1754296630;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=1VdSXN5CTvWh9eCYxYGq6Le8A7T8+jX+UqzQdoGN3wQ=;
-	b=1OeUnbRPitk8hO9Iy5Axk0JyzcyUfERooiMg8lg5MhISSPROXhOVCifDKtnhP3Gh9yb/3B
-	GPgsYxlnM0qeEAlnh5X7BslBTrn4GeVaORYsKVLql8GeJ4sAGew6MvrP1/p59HhRRYGBhs
-	yNhlrluEtn3a7e4GFoPiYleGfyBSjG0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1754290724;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1VdSXN5CTvWh9eCYxYGq6Le8A7T8+jX+UqzQdoGN3wQ=;
-	b=RX7Q2XWPSlhiFRsA0jMlPweDbTLEDdsJRlOPDyKhGsoS1GiQvkMicLXEFX73KiAofXFxHp
-	rXa5T8OpH8xKlUCA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1754290724; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1VdSXN5CTvWh9eCYxYGq6Le8A7T8+jX+UqzQdoGN3wQ=;
-	b=1OeUnbRPitk8hO9Iy5Axk0JyzcyUfERooiMg8lg5MhISSPROXhOVCifDKtnhP3Gh9yb/3B
-	GPgsYxlnM0qeEAlnh5X7BslBTrn4GeVaORYsKVLql8GeJ4sAGew6MvrP1/p59HhRRYGBhs
-	yNhlrluEtn3a7e4GFoPiYleGfyBSjG0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1754290724;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1VdSXN5CTvWh9eCYxYGq6Le8A7T8+jX+UqzQdoGN3wQ=;
-	b=RX7Q2XWPSlhiFRsA0jMlPweDbTLEDdsJRlOPDyKhGsoS1GiQvkMicLXEFX73KiAofXFxHp
-	rXa5T8OpH8xKlUCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 62FF0133D1;
-	Mon,  4 Aug 2025 06:58:44 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id NkkgFiRakGj9UAAAD6G6ig
-	(envelope-from <hare@suse.de>); Mon, 04 Aug 2025 06:58:44 +0000
-Message-ID: <857e1e8f-99c9-4780-96c5-68cdfbdcd310@suse.de>
-Date: Mon, 4 Aug 2025 08:58:44 +0200
+	bh=4wPJnPv1bn5Li9I/0MOxjuiNX4rqaManwCgRKuRDtlQ=;
+	b=tQIosnnfJQ37NBK6nScKmwmL/r2DsnOlMH8NmKwU/1J+eiAE8TIF/z/4vRRMBiXWL9OhAs
+	Ev3sNf1iILxDYEV27e320oPn8umOlMIt6ywe0tFVSMBmakfOSZkEOotKPLOxsWsnsDZ1VB
+	CsQshtiJmUg9dq7RvfYFsVH9rZMVlC3u15dB1eolZJrLOASd2fFncxcTgJrGAfigKokZDo
+	gys9bNHNBOlK+176OkV886HR7vQF2uqIrJVNyLf8ECIQfGBcJgg1kQOo9Ok5CKz6z/C8Iu
+	xVAa/fv1eyE1jqdOng8qoE26TuCp4oqzCYXRIIWObZ+G/nyeN54b8uJufuVUmw==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of kernel@pankajraghav.com designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=kernel@pankajraghav.com
+Date: Mon, 4 Aug 2025 10:36:57 +0200
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, 
+	"H . Peter Anvin" <hpa@zytor.com>, Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, 
+	Mike Rapoport <rppt@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Michal Hocko <mhocko@suse.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, 
+	willy@infradead.org, linux-mm@kvack.org, x86@kernel.org, linux-block@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org, 
+	gost.dev@samsung.com, hch@lst.de, Pankaj Raghav <p.raghav@samsung.com>
+Subject: Re: [RFC v2 1/4] mm: rename huge_zero_page_shrinker to
+ huge_zero_folio_shrinker
+Message-ID: <arhm7vlux7xl627zvlexwziq6gpgxueeslxvjrzhofld7xgvul@uvlyngrizze3>
+References: <20250724145001.487878-1-kernel@pankajraghav.com>
+ <20250724145001.487878-2-kernel@pankajraghav.com>
+ <87v7n7r7xx.fsf@gmail.com>
+ <88296851-3bbe-44fc-a507-70964c0bea8c@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/7] blk-integrity: use simpler alignment check
-To: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: snitzer@kernel.org, axboe@kernel.dk, dw@davidwei.uk, brauner@kernel.org,
- Keith Busch <kbusch@kernel.org>
-References: <20250801234736.1913170-1-kbusch@meta.com>
- <20250801234736.1913170-7-kbusch@meta.com>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20250801234736.1913170-7-kbusch@meta.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.997];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <88296851-3bbe-44fc-a507-70964c0bea8c@redhat.com>
+X-Rspamd-Queue-Id: 4bwVKf31nCz9sxm
 
-On 8/2/25 01:47, Keith Busch wrote:
-> From: Keith Busch <kbusch@kernel.org>
+On Fri, Aug 01, 2025 at 05:30:46PM +0200, David Hildenbrand wrote:
+> On 01.08.25 06:18, Ritesh Harjani (IBM) wrote:
+> > "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com> writes:
+> > 
+> > > From: Pankaj Raghav <p.raghav@samsung.com>
+> > > 
+> > > As we already moved from exposing huge_zero_page to huge_zero_folio,
+> > > change the name of the shrinker to reflect that.
+> > > 
+> > 
+> > Why not change get_huge_zero_page() to get_huge_zero_folio() too, for
+> > consistent naming?
 > 
-> We're checking length and addresses against the same alignment value, so
-> use the more simple iterator check.
-> 
-> Signed-off-by: Keith Busch <kbusch@kernel.org>
-> ---
->   block/bio-integrity.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+> Then we should also rename put_huge_zero_folio(). Renaming
+> MMF_HUGE_ZERO_PAGE should probably be done separately.
 
-Cheers,
+Thanks Ritesh and David.
 
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+I will change them in the next version! :)
+
+--
+Pankaj
 
