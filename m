@@ -1,97 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-56647-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56648-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC1E4B1A454
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 16:17:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8391AB1A4CF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 16:24:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F40C2174CD8
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 14:17:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F37D7A1B68
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 14:22:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 672E52727E7;
-	Mon,  4 Aug 2025 14:16:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5815E271472;
+	Mon,  4 Aug 2025 14:24:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ygvauovz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rG66nN0f"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA09F1DED4A;
-	Mon,  4 Aug 2025 14:16:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABA0426B755;
+	Mon,  4 Aug 2025 14:24:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754317004; cv=none; b=Vqdtw3DAt9zYNaCS7mrm1UbpNLr0+mvpbHlh6KqV3DfI4fY/5YSjmRsH9m26NrPAayHapnNVCL20GFku+H7M869YZ6/Ly+21vMDXe/1Z6KEnSqDYjOKtBxe49yDTgv1qZIiN2KSVLLkhFqa8ILmi8buUm1mTfSsdkAndv3WAZ8U=
+	t=1754317445; cv=none; b=IOSjMBvbJq7iJSX7Fb8KvQNkrOTjHYEeQblhun/BZJbc9GdYjfoa+HrL02MUIJOnCLMQHneQPIIbRGC4rXFMc60nCAxB8mHRZbT2tS3L6BILKzvcvrYL862ijSh1EJ8y7NmQWJ0o+2PBbbC0tnPMiq+OfTj0kQLM48nDx4kxA+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754317004; c=relaxed/simple;
-	bh=xZ4/OtTou0bjCOMvQJOdhc2IhhVGQdK8WBFg49SVbYc=;
+	s=arc-20240116; t=1754317445; c=relaxed/simple;
+	bh=XgUMlZidrLg1tze+vp7RzDI/dCdqdxcMxPxHB1C779k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rQ/L4sweUVDVgkMXTxOZsCm64ZgKjkQGcKVgAD6kaZ/DJMYJgTJvnE8EeDH1kh8Mnyz9KMbLzFigl/cQvLCnA8LMrlUTjKUP4ZCjWr2+p8JeeX1PD2rulQON1iyN6oDKUShwtZ2COG0YcSan6Rq2D4IV6BgmNs8XoqXvMHavwME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ygvauovz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79EE0C4CEF6;
-	Mon,  4 Aug 2025 14:16:41 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=kkmGaSuVzLNxj5lP69R/jgUv2Uy8Wn0WOBdNe2hQ2tEF6dhThU8+QKwUxED0JgNM9+wS5mK+PWI5wUHVbrt3whab6UDndMbSdsxdvIkSA77ShK3LVLsKLQs80Ob7GHENfCL6lmH0T7eK/xZvHu6x7zn/5tieZUxpCyFFlIDBuZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rG66nN0f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1806CC4CEE7;
+	Mon,  4 Aug 2025 14:24:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754317002;
-	bh=xZ4/OtTou0bjCOMvQJOdhc2IhhVGQdK8WBFg49SVbYc=;
+	s=k20201202; t=1754317445;
+	bh=XgUMlZidrLg1tze+vp7RzDI/dCdqdxcMxPxHB1C779k=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YgvauovzR3vOKKvaFyT3pCHc7GSPQP3+yYpYdpyLxL9xvghi9ot/OQ+21Xi+LAWh0
-	 D44/J9HtNTqzyYUX1ys3dez6fpZSTU+M+1ErNU8GiyrJR/QyrQAIjpyd3eJjWV3TIg
-	 udaADm/VfRwUUZCqN1cCDX0TkQvR6Bv9t1h/gpyzxCxnf9LVOQVwwIkJwJk7lQkzPn
-	 JptGtZFQC/5+MmjAZopvHN7UmN0VUUulSYKXW7E/EWZJruEZ3QiY38MOAWXW5oin//
-	 XSiG4zNCghlX1ydzSHy5Bbtq/Dr53L6JS+TuesL0wBPIGiqQrE2a0AkS/hNEdoP0FA
-	 5Fh5vDjafLsKg==
-Date: Mon, 4 Aug 2025 08:16:39 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Mike Snitzer <snitzer@kernel.org>
-Cc: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	axboe@kernel.dk, dw@davidwei.uk, brauner@kernel.org,
-	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org
-Subject: Re: [PATCH 7/7] iov_iter: remove iov_iter_is_aligned
-Message-ID: <aJDAx1Ns9Fg7F6iK@kbusch-mbp>
-References: <20250801234736.1913170-1-kbusch@meta.com>
- <20250801234736.1913170-8-kbusch@meta.com>
- <aI1xySNUdQ2B0dbJ@kernel.org>
+	b=rG66nN0fw8ArwK6YmYIJT48P4C4nJ5mCjWX+JLT4a8ThDoTiBGD+HPHoCse0r/XWH
+	 I/tid93IGOUvGfzviZpkMtJi/bKHMeZtPEwEGiylZwRTdlgw7Iujy/LUYjNbPx6pWw
+	 Ele+pYPJFNKfJlT+G5nTTtzuRykYcW/7NtzZd1hxp5XhP2dHepHJ8J85edS/QYphNo
+	 mO1R7SStOOVf4nKvLAM2hxCsKubKaD+f/KIZ6KBdva0FIsgR5m+iDAyGjEb5RqYcB3
+	 0cxGEQMlEhUqvqALQ4FMM8dBqKN+qJPrC3rqjXyTf19F8uK9vgD9PKo5xw09+Oab5y
+	 nmkiruah+vr+w==
+Date: Mon, 4 Aug 2025 16:24:01 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>
+Subject: Re: [GIT PULL 09/14 for v6.17] vfs bpf
+Message-ID: <20250804-dammbruch-babypuppen-689a8e3421df@brauner>
+References: <20250725-vfs-617-1bcbd4ae2ea6@brauner>
+ <20250725-vfs-bpf-a1ee4bf91435@brauner>
+ <ysgjztjbsmjae3g4jybuzlmfljq5zog3eja7augtrjmji5pqw4@n3sc37ynny3t>
+ <20250731-matrosen-zugluft-12a865db6ccb@brauner>
+ <CAADnVQKMNq3vWDzYocS6QojBDXDzC2RdE=VzTnd7C_SN6Jhn_g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aI1xySNUdQ2B0dbJ@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAADnVQKMNq3vWDzYocS6QojBDXDzC2RdE=VzTnd7C_SN6Jhn_g@mail.gmail.com>
 
-On Fri, Aug 01, 2025 at 10:02:49PM -0400, Mike Snitzer wrote:
-> On Fri, Aug 01, 2025 at 04:47:36PM -0700, Keith Busch wrote:
-> > From: Keith Busch <kbusch@kernel.org>
-> > 
-> > No more callers.
-> > 
-> > Signed-off-by: Keith Busch <kbusch@kernel.org>
+On Thu, Jul 31, 2025 at 02:57:52PM -0700, Alexei Starovoitov wrote:
+> On Thu, Jul 31, 2025 at 1:28 AM Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > It's been in -next a few days. Instead of slapping some hotfix on top
+> > that leaves the tree in a broken state the fix was squashed. In other
+> > words you would have to reapply the series anyway.
 > 
-> You had me up until this last patch.
+> That's not how stable branches work. The whole point of a stable
+> branch is that sha-s should not change. You don't squash things
+> after a branch is created.
+> That extra fix could have been easily added on top.
 > 
-> I'm actually making use of iov_iter_is_aligned() in a series of
-> changes for both NFS and NFSD.  Chuck has included some of the
-> NFSD changes in his nfsd-testing branch, see:
-> https://git.kernel.org/pub/scm/linux/kernel/git/cel/linux.git/commit/?h=nfsd-testing&id=5d78ac1e674b45f9c9e3769b48efb27c44f4e4d3
+> > I mean, your mail is very short of "Linus, I'm subtly telling you what
+> > mean Christian did wrong and that he's rebased, which I know you hate
+> > and you have to resolve merge conflicts so please yell at him.". Come
+> > on.
 > 
-> And the balance of my work that is pending review/inclusion is:
-> https://lore.kernel.org/linux-nfs/20250731230633.89983-1-snitzer@kernel.org/
-> https://lore.kernel.org/linux-nfs/20250801171049.94235-1-snitzer@kernel.org/
+> Not subtly. You made a mistake and instead of admitting it
+> you're doubling down on your wrong git process.
 > 
-> I only need iov_iter_aligned_bvec, but recall I want to relax its
-> checking with this patch:
-> https://lore.kernel.org/linux-nfs/20250708160619.64800-5-snitzer@kernel.org/
+> > I work hard to effectively cooperate with you but until there is a
+> > good-faith mutual relationship on-list I don't want meaningful VFS work
+> > going through the bpf tree. You can take it or leave it and I would
+> > kindly ask Linus to respect that if he agrees.
 > 
-> Should I just add iov_iter_aligned_bvec() to fs/nfs_common/ so that
-> both NFS and NFSD can use it?
+> Look, you took bpf patches that BPF CI flagged as broken
+> and bpf maintainers didn't even ack.
+> Out of 4 patches that you applied one was yours that
+> touched VFS and 3 were bpf related.
+> That was a wtf moment, but we didn't complain,
+> since the feature is useful, so we were happy to see
+> it land even in this half broken form.
+> We applied your "stable" branch to bpf-next and added fixes on top.
+> Then you squashed "hotfix".
+> That made all of our fixes in bpf-next to become conflicts.
+> We cannot reapply your branch. We don't rebase the trees.
+> That was the policy for years. Started long ago during
+> net-next era and now in bpf-next too.
+> This time we were lucky that conflicts were not that bad
+> and it was easy enough for Linus to deal with them,
+> but that must not repeat.
 
-If at all possible, I recommend finding a place that already walks the
-vectors and do an opprotunistic check for the alignments there. This
-will save CPU cycles. For example, nfsd_iter_read already iterates the
-bvec while setting each page. Could you check the alignment while doing
-that instead of iterating a second time immediately after?
+Ah, I see what you're complaining about now. But I'm still not happy
+that we didn't manage to resolve this confusion earlier.
+
+I was not clear in what way you did rely on that branch and that you
+relied on me not folding in the mutex fix especially because you didn't
+reply when I said I would fold it and you said that putting fixes on top
+wouldn't work upthread.
+
+If I'm aware that a branch is shared and relied upon then I won't change it.
+I would've immediately rolled it back would I have know that this causes
+issues for you but to me everything looked fine when I didn't hear back.
 
