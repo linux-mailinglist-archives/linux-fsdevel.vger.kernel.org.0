@@ -1,222 +1,229 @@
-Return-Path: <linux-fsdevel+bounces-56633-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56634-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A5F9B1A00B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 12:54:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 130A2B1A09A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 13:34:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D85CC3BC20A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 10:54:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25DAF178C8E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 11:34:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443C4252904;
-	Mon,  4 Aug 2025 10:54:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FA2923BF9B;
+	Mon,  4 Aug 2025 11:34:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uh2Gn0q0"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WJsKnsNU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA4681D5CF2;
-	Mon,  4 Aug 2025 10:54:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E00752046A9
+	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Aug 2025 11:34:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754304871; cv=none; b=b5VphjqpHvKTXGlnKOp68hfAGc+NPVccUyln8omoPCg3CzYpj8kAtrCASjhxsG+nIlLFYr+crIjZiTgzb4iZGWSWitu2RHlsba3CQUEcJ+RrFJKUlHe3+PZIdnRcV6+TUQPNhtlBd2FcKmF5Qfw6Pg6we2198TP7BbilWgeyp5E=
+	t=1754307289; cv=none; b=svNCqrSh/nRkY/DKgfjcZcZDU2kBslR29QpP0M6vnPYp51X2+cXm3Dbtroxh3y4Sw+5wWIQAPJ6SfQbSoClOFjTuttthXVCl/mHpDP1QrBnzj10H4ZBc3k53hTtMQWpdZC9VUk8pGcwAIHQmeJc4Rdo8FybTcuMYpLLgGfKY8qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754304871; c=relaxed/simple;
-	bh=LLYmh07tODzNKrSqXaL0z3ysxtPy/JmLxTic6NiwVjE=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ov2B4Z+1XE7OwKefx/80lvOVxzdoz0RgshwJgXxU4+HcVH4yh+C9ZFPjK9ar1tJloWMBdZIsbuMEAqg+30p0cI8d8KsEN1ejUQztOX+wxsmXhDyoBbNI7qI79QdZGwA+FwK7Radx7o/FK/VQQHy2AYpDR2UXsuztWAmGuyh7iwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uh2Gn0q0; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-33211f7f06eso35695241fa.2;
-        Mon, 04 Aug 2025 03:54:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754304868; x=1754909668; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=X4RxvHMamXD48DKrjLVxOGxx8Xo0bomZZqlvqy6+mMo=;
-        b=Uh2Gn0q05+FYkWk0VZulC4Q/x7+Yq8YKAgFG8Zgy0lXIKYjRxrUY01lGBijYFcWzI9
-         czAGM84crafWTALrr2y7nFIqOB8c/KLZRLDMPxzE9Ip8JouprTpkzDfmvytNaKwhNlSy
-         8rmfj5d279xMnRcDO/8XvjeC72IWIRxrE3JqhezxFdnPlBcu4zDWuwQ9xtFKMVnlHzdw
-         CtdPeXs63CMRXYKQfIeAjPhZswnmsSzE7czti+pHuGuvVkbxKHH2oL08cYUy4yPjfP/+
-         DFoXeUr7wWjwGgNAsY0zInJFA0o+0yXia5SKyKub2ckNpNc+L/aSH6fDntuTS+AOZ9zc
-         xt8A==
+	s=arc-20240116; t=1754307289; c=relaxed/simple;
+	bh=ulhD4ZkuDAK3k2qDQl0X7/UyqpKU+NyG3I0TjP00sss=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l8PKbQ2oxcacJBB4E15ZTvfTFP3yC3zMX99t2ac+QP2+OQ+No6AfBWf0jcONb26ZeEAy/DGd1SnRAddgwGUeBYEt4GyFkO7ku1pCXFlHEhGFAfyONG3JVjqqRhNvlDOzvhe11nWAxwr4ERC887cvMSZfvo3UwbYn/Ov5PdC9MHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WJsKnsNU; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754307286;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3V1T20G7TfHh7dK0HImr9yuZ74iE23wyw4ljPa6v4iQ=;
+	b=WJsKnsNUcPz6UO4TkAB21UigK36qjuEAwtEXhEJxgQxrvIvqXvlnUPp0KyLZj2uKlMTtOu
+	4Dj4Jg5GbE106gQTgNa88ZfaE0pMXnMPdOlSWipAJSktT4CZHhlSiujqHoTEMlKkYjHLhA
+	kMqy4Lg7dPEj7SeQBfR5yFn7Do+tXfI=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-652--DNC-n-3MNOFeE5PCEFuQQ-1; Mon, 04 Aug 2025 07:34:45 -0400
+X-MC-Unique: -DNC-n-3MNOFeE5PCEFuQQ-1
+X-Mimecast-MFC-AGG-ID: -DNC-n-3MNOFeE5PCEFuQQ_1754307284
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3b7889c8d2bso1691610f8f.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Aug 2025 04:34:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754304868; x=1754909668;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=X4RxvHMamXD48DKrjLVxOGxx8Xo0bomZZqlvqy6+mMo=;
-        b=L2k0w2eopkCw+wo7lSvRcthu+P6ngN0GBh3oE8S99h7ARNfuNwcJ3sqaTSyvTBj8Ob
-         RTSXMzCFRRW2CIgn4FDiu3z2jxl8WNnd0fQc0LFxy5UoxCq7EvsihPil25VUu0CRtASJ
-         62jUrqE+AJYaIkd6EQ+QqwhBHUI+mYL59VhAMFuiBFvPp+k6fxDA5i7RHGObo59NHIUs
-         SC0liQsrwFN2jfN8OlF9NAehnRMRtktr0GMMkok+yymTk5Xh8WlKlMf+PnrLYfQRFy9s
-         Au/+ijwa3sXmZQtHcB9r0K94mTtQlI9y0fXRkO0DrRVQR+ijX+dMq4/fDNqPg6q42BUW
-         xLDw==
-X-Forwarded-Encrypted: i=1; AJvYcCUNfsY32aenR5TTYjLopQxJcJW0YI1xBB15q1f/KgaN0jxS+wet7xInMsnHq3fJNe2g0zRHDb9pHNzyXGHDLg==@vger.kernel.org, AJvYcCV/LudbpFr3ZPYbKPc3NK9XAPQg0rMwtpxN0Xty5Ekj2F1hmmn76FzkZq7PEUxB1C97ixU=@vger.kernel.org, AJvYcCVnN3c06z5ESZ1w1IyzYUF3altTy9tMBWdDjhgwvwHEYFYEeSxVI3DxnZVmWdG4ScY6m3ok3flBauiIrBMf@vger.kernel.org, AJvYcCWpsnTL3WvYW42tMrSExp3+NyfUBc6M0ldR1s7ZPBt74xruaoSI55CEUpkcyk5YF61O5Cw73UnMfoPOOw==@vger.kernel.org, AJvYcCXGCNjxKLGpTSlJtKBHuDRqI6JhZ66Ka9+FjLr4fpklNr9f+Www1vShUoVavwQWGB+SgtwBuUc2/JzksrmzBfsvV/4n@vger.kernel.org, AJvYcCXin6r0nuOsGKAL5x+yojTjbWF1YZjXeAY0ylQCgisn9tOqxyGbdNobIuDq93XJM8/l7uN90yKk/yYs@vger.kernel.org
-X-Gm-Message-State: AOJu0YxR2En5uTOoAn20N13788kkpolieOSeTRTfBgVEGUewKM2qeSwM
-	8uxeiVJ4+KMxNhIvlvpil10gu80jPi1Hvwm9tx55Pu/2bk0w0iptlU0A
-X-Gm-Gg: ASbGnctajp32N59rDl1u87AMGHhdS7VjKpeOfg6gYAkEHPsB6sAmXkESHOoaYNuibS0
-	lozIQfUJel+4HJA3JC/ruIT2LLwF1EyvefBW1TVVPGNC4dv9v2MdeagVhSCbZ2kxi6TF3WwbFMe
-	YBMTdGTBMGK3SzgfzwA4W4fiYQDRi3c/Uk4cCya9Ep4Z2vK8IlMVHbysYVH6qHwLrCG16t3N63M
-	EwlT8h0QoxNEsFfn9/RmFWrzjANfWwyV7uaeJysIG2VHjmf5g7oCIywY8Ao3GKWP19r4dVBV+8t
-	9iMLuARGEXs+h2EgkrgUrFhzVMAfweC5fXHNn8H79DEjQs/QtRm7IDFgpzFzRzML5qm6O6/H4Uo
-	2CEb5YbUZSHOAjx8FhaGn/4bhEc365o3b3Ouz9X58xwgVk7bDUW84ha/tfCy4
-X-Google-Smtp-Source: AGHT+IGJZZFcFy8qBb/9BVJvSpxogtzfM17wxVB5B1bfSxKSrolhCiqzChAu468YcmIMkpSbHFvpbA==
-X-Received: by 2002:a05:651c:20ce:20b0:332:4a77:ad9f with SMTP id 38308e7fff4ca-3325677af91mr12521651fa.24.1754304867614;
-        Mon, 04 Aug 2025 03:54:27 -0700 (PDT)
-Received: from pc636 (host-95-203-22-207.mobileonline.telia.com. [95.203.22.207])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-33238271bdfsm16396311fa.6.2025.08.04.03.54.23
+        d=1e100.net; s=20230601; t=1754307284; x=1754912084;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3V1T20G7TfHh7dK0HImr9yuZ74iE23wyw4ljPa6v4iQ=;
+        b=N62SD2ohW2ZMZZRl15hWeO+BzGlSz2FzeCiIc2CMIGRDPmJhuvfQXECqsL4oQZLUCd
+         sznoVQFREUGe6mSSWywdmvZmhIeeVdd9Ac2pCaLFcfl5ba08oJMg1a/SJZcJpp4fxoFA
+         0FnLBftZ+akO95QNKbd9b6XxZGUk/kNtH9ES4AiVo8ephCpHLqRWAFWiKdAR4MPeEmC3
+         W83WcmafsSrDWffRvj5fK1X6Qr/MIBhy3+cUsbtK6e5sPzm9UxlvRcCSIL6d8S475SnP
+         qEvJcoyHf/GK8WdUBnwQSNorAKvpIUGgI08B296+jvl4X8iyPG8IruD6Kx+AFq9NJ+C/
+         EdMA==
+X-Forwarded-Encrypted: i=1; AJvYcCU0/goju0xQrSKCKrBLY5CozOzmV9dOnMWj8RV2Qe5474WPxY5ugeVDO89HaVNUfgo7r29JyPhH4CZAjLsZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPZvDbZY3ldljZYMiuKNSONVUMw8gs4nF23Z/EGx4XTYsZra40
+	bsXvju9cLFks8Pkc7ueZrJixz8s4djw5BwfSUVD/wCGcXLl4J+ixBsPW3BRO8yyZg+KRFFnNK0Y
+	SHsn9E/GQi0AvYXnfKPk4eEcR+JuusIezpfd9/847z3WznmLINMuHf3TdJN0XBSHhG2VhZAEYwg
+	==
+X-Gm-Gg: ASbGnctUV/lFtjfUa3fhMt6PZ2y/3vHy1VDqRTRI//96qfsM+7sCg4PDg98IyMCKCEl
+	4adeLI5cXXOmBTBjot0vebMHsaErRMcOWzK/FwapT0CgIEwd8SaiOlzY0Mmny1Jp1CM8x3J4u5I
+	baQ+f4TQJnaEq4g/QahU0yIsJVditLhCUs972hSlyOS5fZKsh9ZgSgYsOW3cZYB2p+XwWQN53zz
+	tkJbrz0J40zCEbQk4hZLx8SCPyYiomW/BvUa9C+GQ3MxumOt6NTEv449BwvhnaI3yyqch78zQTY
+	zAu1KrUft5DnSvPeUAtjnUnb8XrfbfEolClm1NuKVMIczGZpuLxT9GHnbhk=
+X-Received: by 2002:a05:6000:4308:b0:3b7:9af4:9c75 with SMTP id ffacd0b85a97d-3b8d94b5f5cmr5721836f8f.30.1754307283916;
+        Mon, 04 Aug 2025 04:34:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IECSNlAqX2SbDaV4025aA/QtAgxGcECmwvMzo9vl9cLxYwe+gfIm+JQX3+RGKTbSCjXQi1ysQ==
+X-Received: by 2002:a05:6000:4308:b0:3b7:9af4:9c75 with SMTP id ffacd0b85a97d-3b8d94b5f5cmr5721809f8f.30.1754307283439;
+        Mon, 04 Aug 2025 04:34:43 -0700 (PDT)
+Received: from thinky (ip-217-030-074-039.aim-net.cz. [217.30.74.39])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3ad803sm15173444f8f.6.2025.08.04.04.34.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Aug 2025 03:54:26 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Mon, 4 Aug 2025 12:54:21 +0200
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Uladzislau Rezki <urezki@gmail.com>, Harry Yoo <harry.yoo@oracle.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"David S . Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Kees Cook <kees@kernel.org>, Peter Xu <peterx@redhat.com>,
-	David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-	Xu Xin <xu.xin16@zte.com.cn>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Hugh Dickins <hughd@google.com>, Vlastimil Babka <vbabka@suse.cz>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>, Jann Horn <jannh@google.com>,
-	Pedro Falcato <pfalcato@suse.de>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Qi Zheng <zhengqi.arch@bytedance.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org,
-	sparclinux@vger.kernel.org, linux-sgx@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	nvdimm@lists.linux.dev, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] mm: update core kernel code to use vm_flags_t
- consistently
-Message-ID: <aJCRXVP-ZFEPtl1Y@pc636>
-References: <cover.1750274467.git.lorenzo.stoakes@oracle.com>
- <d1588e7bb96d1ea3fe7b9df2c699d5b4592d901d.1750274467.git.lorenzo.stoakes@oracle.com>
- <aIgSpAnU8EaIcqd9@hyeyoo>
- <73764aaa-2186-4c8e-8523-55705018d842@lucifer.local>
- <aIkVRTouPqhcxOes@pc636>
- <69860c97-8a76-4ce5-b1d6-9d7c8370d9cd@lucifer.local>
+        Mon, 04 Aug 2025 04:34:43 -0700 (PDT)
+Date: Mon, 4 Aug 2025 13:34:41 +0200
+From: Andrey Albershteyn <aalbersh@redhat.com>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, david@fromorbit.com, djwong@kernel.org, ebiggers@kernel.org, 
+	hch@lst.de, Andrey Albershteyn <aalbersh@kernel.org>
+Subject: Re: [PATCH RFC 01/29] iomap: add iomap_writepages_unbound() to write
+ beyond EOF
+Message-ID: <nusz22lytklhy2qlc6ihpp3onpwckbvpo5lohmcsfyjbgnprqm@mi6u5fleplah>
+References: <20250728-fsverity-v1-0-9e5443af0e34@kernel.org>
+ <20250728-fsverity-v1-1-9e5443af0e34@kernel.org>
+ <CAJnrk1ambrfq-bMdTSgj=pPrGW6GA1Jgwjvx8=sy8SVR67=bJA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <69860c97-8a76-4ce5-b1d6-9d7c8370d9cd@lucifer.local>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJnrk1ambrfq-bMdTSgj=pPrGW6GA1Jgwjvx8=sy8SVR67=bJA@mail.gmail.com>
 
-Hello, Lorenzo!
-
-> So sorry Ulad, I meant to get back to you on this sooner!
-> 
-> On Tue, Jul 29, 2025 at 08:39:01PM +0200, Uladzislau Rezki wrote:
-> > On Tue, Jul 29, 2025 at 06:25:39AM +0100, Lorenzo Stoakes wrote:
-> > > Andrew - FYI there's nothing to worry about here, the type remains
-> > > precisely the same, and I'll send a patch to fix this trivial issue so when
-> > > later this type changes vmalloc will be uaffected.
-> > >
-> > > On Tue, Jul 29, 2025 at 09:15:51AM +0900, Harry Yoo wrote:
-> > > > [Adding Uladzislau to Cc]
-> > >
-> > > Ulad - could we PLEASE get rid of 'vm_flags' in vmalloc? It's the precise
-> > > same name and (currently) type as vma->vm_flags and is already the source
-> > > of confusion.
-> > >
-> > You mean all "vm_flags" variable names? "vm_struct" has flags as a
-> > member. So you want:
+On 2025-07-31 11:43:52, Joanne Koong wrote:
+> On Mon, Jul 28, 2025 at 1:31 PM Andrey Albershteyn <aalbersh@redhat.com> wrote:
 > >
-> > urezki@pc638:~/data/backup/coding/linux-not-broken.git$ grep -rn vm_flags mm/execmem.c
-> > 29:                          pgprot_t pgprot, unsigned long vm_flags)
-> > 39:             vm_flags |= VM_DEFER_KMEMLEAK;
-> > 41:     if (vm_flags & VM_ALLOW_HUGE_VMAP)
-> > 45:                              pgprot, vm_flags, NUMA_NO_NODE,
-> > 51:                                      pgprot, vm_flags, NUMA_NO_NODE,
-> > 85:                          pgprot_t pgprot, unsigned long vm_flags)
-> > 259:    unsigned long vm_flags = VM_ALLOW_HUGE_VMAP;
-> > 266:    p = execmem_vmalloc(range, alloc_size, PAGE_KERNEL, vm_flags);
-> > 376:    unsigned long vm_flags = VM_FLUSH_RESET_PERMS;
-> > 385:            p = execmem_vmalloc(range, size, pgprot, vm_flags);
-> > urezki@pc638:~/data/backup/coding/linux-not-broken.git$ grep -rn vm_flags mm/vmalloc.c
-> > 3853: * @vm_flags:                additional vm area flags (e.g. %VM_NO_GUARD)
-> > 3875:                   pgprot_t prot, unsigned long vm_flags, int node,
-> > 3894:   if (vmap_allow_huge && (vm_flags & VM_ALLOW_HUGE_VMAP)) {
-> > 3912:                             VM_UNINITIALIZED | vm_flags, start, end, node,
-> > 3977:   if (!(vm_flags & VM_DEFER_KMEMLEAK))
-> > 4621:   vm_flags_set(vma, VM_DONTEXPAND | VM_DONTDUMP);
-> > urezki@pc638:~/data/backup/coding/linux-not-broken.git$ grep -rn vm_flags mm/execmem.c
-> > 29:                          pgprot_t pgprot, unsigned long vm_flags)
-> > 39:             vm_flags |= VM_DEFER_KMEMLEAK;
-> > 41:     if (vm_flags & VM_ALLOW_HUGE_VMAP)
-> > 45:                              pgprot, vm_flags, NUMA_NO_NODE,
-> > 51:                                      pgprot, vm_flags, NUMA_NO_NODE,
-> > 85:                          pgprot_t pgprot, unsigned long vm_flags)
-> > 259:    unsigned long vm_flags = VM_ALLOW_HUGE_VMAP;
-> > 266:    p = execmem_vmalloc(range, alloc_size, PAGE_KERNEL, vm_flags);
-> > 376:    unsigned long vm_flags = VM_FLUSH_RESET_PERMS;
-> > 385:            p = execmem_vmalloc(range, size, pgprot, vm_flags);
-> > urezki@pc638:~/data/backup/coding/linux-not-broken.git$ grep -rn vm_flags ./include/linux/vmalloc.h
-> > 172:                    pgprot_t prot, unsigned long vm_flags, int node,
-> > urezki@pc638:~/data/backup/coding/linux-not-broken.git$
+> > From: Andrey Albershteyn <aalbersh@redhat.com>
 > >
-> > to rename all those "vm_flags" to something, for example, like "flags"?
+> > Add iomap_writepages_unbound() without limit in form of EOF. XFS
+> > will use this to write metadata (fs-verity Merkle tree) in range far
+> > beyond EOF.
+> >
+> > Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+> > ---
+> >  fs/iomap/buffered-io.c | 51 +++++++++++++++++++++++++++++++++++++++-----------
+> >  include/linux/iomap.h  |  3 +++
+> >  2 files changed, 43 insertions(+), 11 deletions(-)
+> >
+> > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> > index 3729391a18f3..7bef232254a3 100644
+> > --- a/fs/iomap/buffered-io.c
+> > +++ b/fs/iomap/buffered-io.c
+> > @@ -1881,18 +1881,10 @@ static int iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+> >         int error = 0;
+> >         u32 rlen;
+> >
+> > -       WARN_ON_ONCE(!folio_test_locked(folio));
+> > -       WARN_ON_ONCE(folio_test_dirty(folio));
+> > -       WARN_ON_ONCE(folio_test_writeback(folio));
+> > -
+> > -       trace_iomap_writepage(inode, pos, folio_size(folio));
+> > -
+> > -       if (!iomap_writepage_handle_eof(folio, inode, &end_pos)) {
+> > -               folio_unlock(folio);
+> > -               return 0;
+> > -       }
+> >         WARN_ON_ONCE(end_pos <= pos);
+> >
+> > +       trace_iomap_writepage(inode, pos, folio_size(folio));
+> > +
+> >         if (i_blocks_per_folio(inode, folio) > 1) {
+> >                 if (!ifs) {
+> >                         ifs = ifs_alloc(inode, folio, 0);
+> > @@ -1956,6 +1948,23 @@ static int iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+> >         return error;
+> >  }
+> >
+> > +/* Map pages bound by EOF */
+> > +static int iomap_writepage_map_eof(struct iomap_writepage_ctx *wpc,
+> > +               struct writeback_control *wbc, struct folio *folio)
+> > +{
+> > +       int error;
+> > +       struct inode *inode = folio->mapping->host;
+> > +       u64 end_pos = folio_pos(folio) + folio_size(folio);
+> > +
+> > +       if (!iomap_writepage_handle_eof(folio, inode, &end_pos)) {
+> > +               folio_unlock(folio);
+> > +               return 0;
+> > +       }
+> > +
+> > +       error = iomap_writepage_map(wpc, wbc, folio);
+> > +       return error;
+> > +}
+> > +
+> >  int
+> >  iomap_writepages(struct address_space *mapping, struct writeback_control *wbc,
+> >                 struct iomap_writepage_ctx *wpc,
+> > @@ -1972,9 +1981,29 @@ iomap_writepages(struct address_space *mapping, struct writeback_control *wbc,
+> >                         PF_MEMALLOC))
+> >                 return -EIO;
+> >
+> > +       wpc->ops = ops;
+> > +       while ((folio = writeback_iter(mapping, wbc, folio, &error))) {
+> > +               WARN_ON_ONCE(!folio_test_locked(folio));
+> > +               WARN_ON_ONCE(folio_test_dirty(folio));
+> > +               WARN_ON_ONCE(folio_test_writeback(folio));
+> > +
+> > +               error = iomap_writepage_map_eof(wpc, wbc, folio);
+> > +       }
+> > +       return iomap_submit_ioend(wpc, error);
+> > +}
+> > +EXPORT_SYMBOL_GPL(iomap_writepages);
+> > +
+> > +int
+> > +iomap_writepages_unbound(struct address_space *mapping, struct writeback_control *wbc,
+> > +               struct iomap_writepage_ctx *wpc,
+> > +               const struct iomap_writeback_ops *ops)
+> > +{
+> > +       struct folio *folio = NULL;
+> > +       int error;
+> > +
+> >         wpc->ops = ops;
+> >         while ((folio = writeback_iter(mapping, wbc, folio, &error)))
+> >                 error = iomap_writepage_map(wpc, wbc, folio);
+> >         return iomap_submit_ioend(wpc, error);
+> >  }
+> > -EXPORT_SYMBOL_GPL(iomap_writepages);
+> > +EXPORT_SYMBOL_GPL(iomap_writepages_unbound);
+> > diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> > index 522644d62f30..4a0b5ebb79e9 100644
+> > --- a/include/linux/iomap.h
+> > +++ b/include/linux/iomap.h
+> > @@ -464,6 +464,9 @@ void iomap_sort_ioends(struct list_head *ioend_list);
+> >  int iomap_writepages(struct address_space *mapping,
+> >                 struct writeback_control *wbc, struct iomap_writepage_ctx *wpc,
+> >                 const struct iomap_writeback_ops *ops);
+> > +int iomap_writepages_unbound(struct address_space *mapping,
+> > +               struct writeback_control *wbc, struct iomap_writepage_ctx *wpc,
+> > +               const struct iomap_writeback_ops *ops);
+> >
 > 
-> Yeah, sorry I know it's a churny pain, but I think it's such a silly source
-> of confusion _in general_, not only this series where I made a mistake (of
-> course entirely my fault but certainly more understandable given the
-> naming), but in the past I've certainly sat there thinking 'hmmm wait' :)
-> 
-> Really I think we should rename 'vm_struct' too, but if that causes _too
-> much_ churn fair enough.
-> 
-> I think even though it's long-winded, 'vmalloc_flags' would be good, both
-> in fields and local params as it makes things very very clear.
->
-> 
-> Equally 'vm_struct' -> 'vmalloc_struct' would be a good change.
-> 
-Uh.. This could be a pain :) I will have a look and see what we can do.
+> Just curious, instead of having a new api for
+> iomap_writepages_unbound, does adding a bitfield for unbound to the
+> iomap_writepage_ctx struct suffice? afaict, the logic between the two
+> paths is identical except for the iomap_writepage_handle_eof() call
+> and some WARN_ONs - if that gets gated behind the bitfield check, then
+> it seems like it does the same thing logically but imo is more
+> straightforward to follow the code flow of. But maybe I"m missing some
+> reason why this wouldn't work?
 
-Thanks!
+Yeah, that's another option. If others also prefer flag then I can
+change it.
 
---
-Uladzislau Rezki
+-- 
+- Andrey
+
 
