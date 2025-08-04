@@ -1,161 +1,181 @@
-Return-Path: <linux-fsdevel+bounces-56691-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56692-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A248B1AA4C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 23:10:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ED91B1AA87
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 23:49:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6E933BBE1D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 21:10:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F6E5180A63
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 21:49:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9241823BCFF;
-	Mon,  4 Aug 2025 21:10:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 991D523A98E;
+	Mon,  4 Aug 2025 21:49:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B2mEivut"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RhHLNfgx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E2C4634
-	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Aug 2025 21:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52366215055;
+	Mon,  4 Aug 2025 21:49:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754341849; cv=none; b=LH1zuoTNgB+/aCSPpTMY+Ay0Ywl9TgumdT2KEEFwRjPgaZ5cyY+BtjMnRRZLR0s6vBEinNsgdueGXKZPDotj+mAa/NurhG+HH8dZG3sIGsVVfSFSkyPZwfsmHtufpc+OzVSBCvJmXbvjS770YHGANLw7ipTNhUWTN5VieB+ly3c=
+	t=1754344143; cv=none; b=LViTGcxi5jrCo2LnqIZ4JWXtXWpY/kiuPjWfNTXhfVIujdkaaHG/kiv3fPBxfGccagEMYNlCPoVpytcKlyTYCcNnaSkRrz9xAazeu6w1XF6mBMoAXvNfovdoLddQSU+DGyrrRc0hL22ojM8VynrMAR2v93bICEmDcXgAoug5z2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754341849; c=relaxed/simple;
-	bh=gWZ5CFnZrZloV5PT+6IdUiKajYp5viisUj/4FnCJ9t4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gARUkGajj1syg0BT1k04/NXMSU5smsLllu9xONt90LAgjYxVf4egix5xohao+gUjaXhPkC/An97B4lySZoEcDCZipU/FKO1W2wDLNGDLfMNpef+ioUjWR1nwhq7DmioF6I4eh1XVKhsCQu2zBLv7E71bCmnfTnUAhdt5cj5kkl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B2mEivut; arc=none smtp.client-ip=209.85.214.171
+	s=arc-20240116; t=1754344143; c=relaxed/simple;
+	bh=2x8KOgz2q7JfsX+Pl5gpGDVIep4NWKJe4BoPRF/W+iE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=We/MwCuVBG94IAlh/O0xG+jOae/NI+Bc8o6yP89xwt5i7ATs0lybX794MHXnT9ZSKWW1qRKpv0xDY6ucpBxZIiWKqjabDOXJdw4v/5PA0fKct4uYb4YQL4NC9e4RHtKIRBzEt8H2So3k4gik4s/GvLt6N9ZPRI7vYd+Mad/RTH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RhHLNfgx; arc=none smtp.client-ip=209.85.167.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-23ffa7b3b30so35882025ad.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Aug 2025 14:10:47 -0700 (PDT)
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-555024588b1so4751114e87.1;
+        Mon, 04 Aug 2025 14:49:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754341847; x=1754946647; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1754344139; x=1754948939; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fHvDMc+lEP45RzdNZnW/LnW1yObaHq09ajd3YQq0Tas=;
-        b=B2mEivutTKW9KpN9lCNWWSDTRw5vdyHGOjXZUws6lZMFxhHiI5rE1wpeKtzI8JIvXS
-         CXvJ/nGtRzKG7UJmY7BgN8mKc8gVW6A3fH7q4RoRkaNZbUET22+hD7zhsnz0e/808iig
-         GFN/nLhnVFUVUAEGTIOm9CEha2D3UJVrYWPvFc5hfp383jzKZ5wdZ7BEzCQ+Xnw+5lXm
-         AbMKFgZO2L4gBLI+Vb+ioB65wrKgqqPDR+oakQMlytiOnOjDjkb570AHyUIABxhDCgI3
-         VbhubObO5oQqCxMmy6OOZsIiFKspbz2nJ7cD2ChlWcCc6hKaeUk73+YJ/24muRziPP+m
-         QL2g==
+        bh=muTFQg3ki9PD9IOpXqr9RHnNzLZ07myg3+n31XmzRDU=;
+        b=RhHLNfgxPkJaruuE6OH4KYocN4ndikgJ/q86exc/ssqy4FNt3lCuyCM8xwF9+7CGAi
+         NVqVl8v8rF1eKY4xalzO6Ul/QxvP+sq1fJ+AnbzCU3tNPH0uc8YFW4a61iYjtLvaqE5Z
+         Oy75zcz792GDIBuvEcZzxT2eQB8EiW+Z98PQE8RpKt0F5S/xehm4L1oEWMOB1/f+9wxU
+         N6ig4iRgNkzmHx+qi4vpy83mfKI+caJBhpvcm5v15yiJf2InhjYKmPWldyZtbcsMYRQj
+         hXVeyQ4ZWdZ3j4eJeeH8DJGDnfDAi0yDm0+xopatNxBgxHCiP1vhjx2LHiavWM0t2ihl
+         Lheg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754341847; x=1754946647;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1754344139; x=1754948939;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fHvDMc+lEP45RzdNZnW/LnW1yObaHq09ajd3YQq0Tas=;
-        b=idpfWnZ92zK8MVfD3RuWlMeI1A9wKQ56IQbh1LMzd1oK1uZhGJ/9fqf9Y1F3le05Jn
-         5Rzb0Ndq/lLgtk1DOxUtdmYp8xlujIs4BOyJgEd73c6zCQvPdS6nb+8yaobNTiUG0hhP
-         EZpQCSqZ2IPFFLZx3tYlMqwMZV7GQqiIQjIHIge/GgnKM7D60F8TYnJh/hjsd0Z+HxmY
-         qQ2PdYXn6FtZilTWV7y6r0ITNi8AoGBtYZRYHyo1I7QqFV5oHpeJ9McPu+XHiog4KpQJ
-         q822rig3GhMZp5W/aqQBaTGVauocevdaE78kgTblqujEyYSvERiNLDssNfy58443hN45
-         SiYA==
-X-Forwarded-Encrypted: i=1; AJvYcCWbwiEG9q5FdbFngeW8vBOd2hHJVJeY/a8+xwfYOeHLM7NYThDZdyKB0ZTd5boKmU1CbrFsLrraJvpXgMeP@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOBpVoNlO0c7sPICU9tPA/Mouagew3Y6VATsxiFDKTc1L4swmd
-	nNPdgCOD71hML7/VEFROCh0/VKQNQjksxDbIMnoSX3Wl4tqlXZx3DhAp
-X-Gm-Gg: ASbGncvvxrqh9sJwmeqPb4SjqXD6Fa3WigUWLwS1B4wKEFoASEon/raPSLzClZrknhC
-	NprWa3AHnhfSy2vtwpH1c3b51Bb+3GpfIUHL+kxISN5dddg0p5f11sH43G9t5iTVn5CvIrbfocJ
-	dssHaHrph48V7Z9J/B+pPpLPTdwt2yvbH7AGebXn3R81z7HvMF2HS0yrYk3C/LcJYB/xdZKGDLM
-	BoyDLnXRXIT9Z7MSL/ZOCMsKFUYMIHHdDN4TCy+qn4d+Jq2maPVnvKDtB+ldFZVQbUgA2G2SUCY
-	o9XmArtLJANlOVgASnKJKaFfB/QMhp+4t2zLVnjTRaeMBZSDPItonikQBv7ZQHt/oJUvlj01gML
-	KgZy16lw32yVgndQp
-X-Google-Smtp-Source: AGHT+IGC1lHzFDIYCI1zdJ/MCVjIG4Dthc7liQy/7xqYYGEZhpQycBcbJHqJ6j0cOy2DNKUEXeGBlQ==
-X-Received: by 2002:a17:903:2351:b0:240:71a5:f30 with SMTP id d9443c01a7336-24246f86a58mr160708595ad.22.1754341846916;
-        Mon, 04 Aug 2025 14:10:46 -0700 (PDT)
-Received: from localhost ([2a03:2880:ff:7::])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8ab3da8sm116713395ad.175.2025.08.04.14.10.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Aug 2025 14:10:46 -0700 (PDT)
-From: Joanne Koong <joannelkoong@gmail.com>
-To: miklos@szeredi.hu
-Cc: djwong@kernel.org,
-	willy@infradead.org,
-	linux-fsdevel@vger.kernel.org,
-	kernel-team@meta.com
-Subject: [PATCH v1 2/2] fuse: add blksize configuration at mount for non-fuseblk servers
-Date: Mon,  4 Aug 2025 14:07:43 -0700
-Message-ID: <20250804210743.1239373-3-joannelkoong@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250804210743.1239373-1-joannelkoong@gmail.com>
-References: <20250804210743.1239373-1-joannelkoong@gmail.com>
+        bh=muTFQg3ki9PD9IOpXqr9RHnNzLZ07myg3+n31XmzRDU=;
+        b=nUCmYxN2RZ4ILVpn/WEvBJL1fj3J5oKOvsgi8KrW+48otQNUeR2g64fJwB/A/cYBRh
+         e9/uMpFQCj9ptKfSWWZjLcK7Uppu5aJKT9fCuH85K1L9Cs68EvBZ3UCJx7ZUqZ/OHNHT
+         tsTXmT9gnFmiD0BJ1xMMQzNCs+I/CXEBP+L9q77g5XEMXlnMLBZt+jZ7+7b2uhvjStlO
+         D5xdGEb70yeCbfRUwa3vzHh4f7Qoxs/SBA/tc219/WmiRIr6aXb1nsTlV1jt+gL1PJ/5
+         UDF3D5hdQkJS5/dlA6kN9DkRs9q5jVnRPmHQe2GC+0RpIMGHwS8t/l4X6p/e4OA6y0io
+         cavA==
+X-Forwarded-Encrypted: i=1; AJvYcCUXhioUGHV3anRphXieoqPi5A1zC7R5tq/Hqeg7kvUkhRAGJFxBJSluTGvDfMmg+OutUXUjXxGMMPxS+1mj@vger.kernel.org, AJvYcCVWdUFFxwgwjOncTO3v62soNduB4TYn7nCnMit4NpoffJhLcpdobS+VpZE7kB2dc0A19knLu5Ug8avN7E0hgP/x@vger.kernel.org, AJvYcCXT21JRZo++epWxee0LR+426SWamsxCunmrml5uWZ8NsAz7TPwQq009uUGbdSrVFkVYU4mV8BVcM0lSF1Z/@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8UIVcmENYtT2gqd04Hrfh29dIADrFzBtRqifZ8iFZ+g/iGQqh
+	aCm4l5SIubS7j4oGlKWZOq09t1wo6LB4j027p5RHMxBTeMlUIocR4UhQ03f7H5CuzJytWCAcrxQ
+	d4fJ19h3ROm6h0vMe6D5MfS+MJGnVYr8=
+X-Gm-Gg: ASbGncuUSkmmTPMlPhzp5BaE/CHm0YI9VhQaUbC3E1p8Uk4wtUAUagfesAY27mDdb4W
+	vzjfr5SmAGcOAN2h3OuZvd7yBkl6TKAudl20v7ZNPVqQ9aNxVLNveVmWyvMCMcbQIGUplCNn6m+
+	RIUxS0MVEXf7MeXJSWmT/81D7L8im1S824fvGsfvacJ/uYj6121WMi+uEYE0mXaccTmGugWY9bS
+	M8Keo8=
+X-Google-Smtp-Source: AGHT+IFlZbW5lOCGSQjJt4+9a1bHOnV+gUrJQ5yivlFyz/JksHbYESP3g6+3UY9godJESN82MYvslsY/wq3q989OsgY=
+X-Received: by 2002:a05:6512:3b87:b0:55b:9595:c7cd with SMTP id
+ 2adb3069b0e04-55b97bd17d6mr3134536e87.54.1754344139144; Mon, 04 Aug 2025
+ 14:48:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250803204746.1899942-1-hsukrut3@gmail.com> <CAJuCfpF8+MJ2xmS+dC2O3LLtorW_ugLNJozZw-KM+7fmnSHFhg@mail.gmail.com>
+In-Reply-To: <CAJuCfpF8+MJ2xmS+dC2O3LLtorW_ugLNJozZw-KM+7fmnSHFhg@mail.gmail.com>
+From: sukrut heroorkar <hsukrut3@gmail.com>
+Date: Mon, 4 Aug 2025 23:48:47 +0200
+X-Gm-Features: Ac12FXw563ckk6p2a5b2SueZmIkjD4EhqnLA6zSn7xgCZHTjWW399iUzCrYmTHE
+Message-ID: <CAHCkknoxpKV80-S3jByY1xnRXd1Pr=v=D2a0ZcgnY0-Hnya56Q@mail.gmail.com>
+Subject: Re: [PATCH] selftests/proc: Fix string literal warning in proc-maps-race.c
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: Shuah Khan <shuah@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	"open list:PROC FILESYSTEM" <linux-kernel@vger.kernel.org>, 
+	"open list:PROC FILESYSTEM" <linux-fsdevel@vger.kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, skhar@linuxfoundation.org, 
+	david.hunter.linux@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This allows fuse servers to pass in at mount time the blocksize that
-should be used for its inodes. Previously this was only supported for
-fuseblk servers and non-fuseblk servers could only specify blocksize
-dynamically through server replies (which is now disallowed).
+Hi Suren,
 
-This gives a way for non-fuseblk fuse servers to specify the blocksize.
-The block size must be a power of 2 and >= FUSE_DEFAULT_BLKSIZE (which
-is also already a requirement for fuseblk servers).
+On Mon, Aug 4, 2025 at 9:47=E2=80=AFPM Suren Baghdasaryan <surenb@google.co=
+m> wrote:
+>
+> On Sun, Aug 3, 2025 at 1:48=E2=80=AFPM Sukrut Heroorkar <hsukrut3@gmail.c=
+om> wrote:
+> >
+> > This change resolves non literal string format warning invoked
+> > for proc-maps-race.c while compiling.
+> >
+> > proc-maps-race.c:205:17: warning: format not a string literal and no fo=
+rmat arguments [-Wformat-security]
+> >   205 |                 printf(text);
+> >       |                 ^~~~~~
+> > proc-maps-race.c:209:17: warning: format not a string literal and no fo=
+rmat arguments [-Wformat-security]
+> >   209 |                 printf(text);
+> >       |                 ^~~~~~
+> > proc-maps-race.c: In function =E2=80=98print_last_lines=E2=80=99:
+> > proc-maps-race.c:224:9: warning: format not a string literal and no for=
+mat arguments [-Wformat-security]
+> >   224 |         printf(start);
+> >       |         ^~~~~~
+> >
+> > Added string format specifier %s for the printf calls
+> > in both print_first_lines() and print_last_lines() thus
+> > resolving the warnings invoked.
+> >
+> > The test executes fine after this change thus causing no
+> > affect to the functional behavior of the test.
+>
+> Please add:
+>
+> Fixes: aadc099c480f ("selftests/proc: add verbose mode for
+> /proc/pid/maps tearing tests")
+>
+> >
+> > Signed-off-by: Sukrut Heroorkar <hsukrut3@gmail.com>
+>
+> Acked-by: Suren Baghdasaryan <surenb@google.com>
+>
+> Thanks,
+> Suren.
+>
+> > ---
+> >  tools/testing/selftests/proc/proc-maps-race.c | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/tools/testing/selftests/proc/proc-maps-race.c b/tools/test=
+ing/selftests/proc/proc-maps-race.c
+> > index 66773685a047..94bba4553130 100644
+> > --- a/tools/testing/selftests/proc/proc-maps-race.c
+> > +++ b/tools/testing/selftests/proc/proc-maps-race.c
+> > @@ -202,11 +202,11 @@ static void print_first_lines(char *text, int nr)
+> >                 int offs =3D end - text;
+> >
+> >                 text[offs] =3D '\0';
+> > -               printf(text);
+> > +               printf("%s", text);
+> >                 text[offs] =3D '\n';
+> >                 printf("\n");
+> >         } else {
+> > -               printf(text);
+> > +               printf("%s", text);
+> >         }
+> >  }
+> >
+> > @@ -221,7 +221,7 @@ static void print_last_lines(char *text, int nr)
+> >                 nr--;
+> >                 start--;
+> >         }
+> > -       printf(start);
+> > +       printf("%s", start);
+> >  }
+> >
+> >  static void print_boundaries(const char *title, FIXTURE_DATA(proc_maps=
+_race) *self)
+> > --
+> > 2.43.0
+> >
 
-If the blocksize option is not set, the blocksize will be the default
-value (FUSE_DEFAULT_BLKSIZE for fuseblk servers and PAGE_SIZE for
-non-fuseblk servers).
+Thank you for the review and Acked-by.
+I will add the Fixes tag and resend as V2 shortly.
 
-Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
----
- fs/fuse/inode.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
-
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 280896d4fd44..23ebc59d0825 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -871,8 +871,9 @@ static int fuse_parse_param(struct fs_context *fsc, struct fs_parameter *param)
- 		break;
- 
- 	case OPT_BLKSIZE:
--		if (!ctx->is_bdev)
--			return invalfc(fsc, "blksize only supported for fuseblk");
-+		if (result.uint_32 < FUSE_DEFAULT_BLKSIZE ||
-+		    !is_power_of_2(result.uint_32))
-+			return invalfc(fsc, "Invalid blksize");
- 		ctx->blksize = result.uint_32;
- 		break;
- 
-@@ -1806,8 +1807,8 @@ int fuse_fill_super_common(struct super_block *sb, struct fuse_fs_context *ctx)
- 			goto err;
- #endif
- 	} else {
--		sb->s_blocksize = PAGE_SIZE;
--		sb->s_blocksize_bits = PAGE_SHIFT;
-+		sb->s_blocksize = ctx->blksize;
-+		sb->s_blocksize_bits = ilog2(sb->s_blocksize);
- 	}
- 
- 	sb->s_subtype = ctx->subtype;
-@@ -2007,7 +2008,6 @@ static int fuse_init_fs_context(struct fs_context *fsc)
- 		return -ENOMEM;
- 
- 	ctx->max_read = ~0;
--	ctx->blksize = FUSE_DEFAULT_BLKSIZE;
- 	ctx->legacy_opts_show = true;
- 
- #ifdef CONFIG_BLOCK
-@@ -2017,6 +2017,8 @@ static int fuse_init_fs_context(struct fs_context *fsc)
- 	}
- #endif
- 
-+	ctx->blksize = ctx->is_bdev ? FUSE_DEFAULT_BLKSIZE : PAGE_SIZE;
-+
- 	fsc->fs_private = ctx;
- 	fsc->ops = &fuse_context_ops;
- 	return 0;
--- 
-2.47.3
-
+Regards,
+Sukrut.
 
