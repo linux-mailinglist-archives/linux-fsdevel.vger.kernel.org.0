@@ -1,163 +1,185 @@
-Return-Path: <linux-fsdevel+bounces-56642-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56643-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54B11B1A175
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 14:33:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F8B2B1A26F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 15:00:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3245B17C6AF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 12:33:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53A18162430
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 13:00:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61DEA25A344;
-	Mon,  4 Aug 2025 12:33:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 684DD253B67;
+	Mon,  4 Aug 2025 13:00:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PnDWCO2g"
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="p7xxzhgp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013047.outbound.protection.outlook.com [40.107.44.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4B524E4C3;
-	Mon,  4 Aug 2025 12:33:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754310797; cv=none; b=qmxvxcLF7r7X15ZvXX2UKWbpPjPR/6DxGZ5y8Sjrt0MASUFePR2r+ziYsmOaunBn0cTX3guNzUMqILUV8Nwp8SH01TBm40Va+Hb87//y8mzolC2B4YrEOU3HYawLlC9SbqrtvZFwo0pDIUjqfWxMke7789iuolkcBfIi4bePk8M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754310797; c=relaxed/simple;
-	bh=HFdiepAhYZGaIJYjhN24/8vbIETT0vL1Ber9jx+RMzc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yx4qbpexvFFI6kM4hgWXFivN6JSScGX/m5dj3Rsdh3sHLR43oeLdf8m0RiQpCgTIzQwOBzb01QaHX1/i7jdjceTKI/SDdvaM/j7xnTvRU3SNZzKkEJdPL+MWaGoaEflh9MLNHeoCb2DxbfNz35jU9eflyPqd4P0h9kzpJJELJcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PnDWCO2g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52A8CC4CEE7;
-	Mon,  4 Aug 2025 12:33:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754310797;
-	bh=HFdiepAhYZGaIJYjhN24/8vbIETT0vL1Ber9jx+RMzc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PnDWCO2gcHKfRelYIeYR7Nm96AaWAPlC5dw7cgMGjH+RLa4/xTlvOWNo8mLHyRGno
-	 s+ofiOr4npgG81bd2jQwPxDt3ArlPM9be32/et6DXRtUS9xsDYyjcrJhTZdqFj2ntn
-	 S38bMDOhjbvvKnXW5zFrc9zbFLavr9p+EDg6CcZXWnZ+CpbcLKMT6VEkBtVw8TWA7D
-	 3QsLtiYKs0ksj7yOHBGua/v78frNKI3D+ridwKUZTl3A92QtQdrUZMhjaYed6OiWua
-	 EUFyGu1i7H9m/Dajg/qv4E/4wf18uNXRAknDs4NCQRki9IEnVmJpIDhrOLTkjg1fc+
-	 NyxI6cFq03/Xg==
-Date: Mon, 4 Aug 2025 14:33:13 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	Sargun Dhillon <sargun@sargun.me>, Kees Cook <kees@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2] fs: always return zero on success from replace_fd()
-Message-ID: <20250804-rundum-anwalt-10c3b9c11f8e@brauner>
-References: <20250804-fix-receive_fd_replace-v2-1-ecb28c7b9129@linutronix.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 177011362;
+	Mon,  4 Aug 2025 13:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754312432; cv=fail; b=boQXiv6URrPqqa/Kq7Pep7hd32Pd4VOhETF6NqyxviILzjJvQwqcxFQCqdZDtkxk8qygOxoTvMLvLsGhH3QlFkuhTSQXUU5RvblgKTrSe7CPt0oHpuZDrWK41sES0n8S398BuXeCBvtLg5qQqNhHSNd14twUivp8msByiqyP8Ak=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754312432; c=relaxed/simple;
+	bh=oEYTotZEw+NpAzImVnaCBuSa5UV3nQBA92zDjotN+jw=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=r2tczYGYEHqQBnj8fsWnOV7z0gXXH/Y84YknzEKfmqM5sMFVb0wkHO03ZK+sN1r/FkQ6i3dETns1+AOhgEWrgHkx+NKmtLIqcFRAKGPATpXYci9NOf33lqWG1pKFhclznzFhneSRgsh2KmEv+ySMkCbiH8J7JEuezjlLCGXqiCM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=p7xxzhgp; arc=fail smtp.client-ip=40.107.44.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pabRLVUW8PN4WX1fB1O2ie3ClVhudFd+E25VGBr0RB+X/fWpzfrps8wvjixDib2L4uisX3fc7moq/c69X3apjMhzO51g2PagPUk0Di6eTpdsdM73/yiyFoDke8jKey1KNyJFS0I0bwxfkQD3StFq2kyCSLPwfVu4zb8F+OAUbsBDL1PVcNfX9cS7WD3A0LZ2qXIo7/o5yNMQpDK8gvX1FZ2hU65aMKM0IMRFCDlTSbHDj/atgkEmBeVANCNsuaswcI3dqGyA0S/dOG3u18BYa76ZkWVWfoPcKmzV+U6oMKXJdachD+K8EU5iLNJEowPGzS8ftSjC0SqVxwezyvJAag==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/isIDQXqth2L3lN4ebor7qSOeCpQ7n6aPlOnnGVHjO8=;
+ b=i5IBrAIRRYWGQEdF/sdrYUI23SeKpcCyk3WRDwlQ0aIcYwKhPXfyI6NLkFyeEXfdEhB3tpf0X1pGv07GtZWcZlVHX9i4MTvqWmNvt3FN480BIjYwCui2Y5rtHY7yXKWqTV9l0BNxTOwPHoadgmIxRN5/t311+LS5eFIcsXLCcPy+0+mImnY7dMzyg8nYGkvgV01CNK3Z/pjlEFxREdjcBoLojIFQg7u3P23pVpH+cxsfOfavjF2i2l5/ms34VO/TbT7/S3NNnQAWv0fLYEme+6+ARexag8+yQbczSkG6eq07yEzABEDBnVo3ixDvJaMg/HbyGPJ7WrHmDolOGeYjFg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/isIDQXqth2L3lN4ebor7qSOeCpQ7n6aPlOnnGVHjO8=;
+ b=p7xxzhgpGdv6z2ohwwneLeGpW0vabUEqbE8NTJnyvhGVUZGzJXbN4o3hjM86h4le+EHEEkqze7s6BIYDbSs4+535+evqFOuqylQ9wfAQzEdM+tABplTxN0ojmnoCjTNiKcATOIWm3YKjehvhbKrv3eUNO9SD12uEaWFnLXQiShVT18Sfxyol039BuqSc2JibV4OJeZNuu+aAnZ4DtjiXOnmD36czp75zh5Hkpreo1sMR7OEWlbp4rzh42Ag8vhEzae9+I2nWZGGVAH20/vptz7plLbXdKq30Oh8LlRY5jk+WE8mZj3vemEOj0VE3EMzIaXrQ9zCGOiUmAoHjOlpqNg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
+ KL1PR0601MB5566.apcprd06.prod.outlook.com (2603:1096:820:c4::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.21; Mon, 4 Aug
+ 2025 13:00:28 +0000
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666%4]) with mapi id 15.20.8989.018; Mon, 4 Aug 2025
+ 13:00:27 +0000
+From: Qianfeng Rong <rongqianfeng@vivo.com>
+To: Matthew Wilcox <willy@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Cc: Qianfeng Rong <rongqianfeng@vivo.com>
+Subject: [PATCH] xarray: Remove redundant __GFP_NOWARN
+Date: Mon,  4 Aug 2025 21:00:17 +0800
+Message-Id: <20250804130018.484321-1-rongqianfeng@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYAPR01CA0004.jpnprd01.prod.outlook.com (2603:1096:404::16)
+ To SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250804-fix-receive_fd_replace-v2-1-ecb28c7b9129@linutronix.de>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|KL1PR0601MB5566:EE_
+X-MS-Office365-Filtering-Correlation-Id: 550c65f8-9c59-41d7-1c52-08ddd356e268
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?gQmUL3/j6tp860/UgiZtFRiJjPamRlzyt4aSZNMjT8MjnOBs3+JqPVSTn3aI?=
+ =?us-ascii?Q?mhYrSNY0A0BYdD2Ig/ep1HdeiUhHlwJF/to3pGIGwJoVi/voQtJrKE2v0iEA?=
+ =?us-ascii?Q?V+wrXVRpNlvzOmNkfOzosTcQ7amILu0Y2Mx4P64RGtGxPc60eNYi6alJi6kA?=
+ =?us-ascii?Q?K1kURBcQGYIphK4zQNBVBWbLYOteRkyKWT3FiKlhNFfAJ+oPG9BhO2QtPJ+K?=
+ =?us-ascii?Q?8tagvtdqliDHyLyMj08DXXxoI0EQJHJUljnE8tWKRaEhHL8QYvOWlOYFLNG+?=
+ =?us-ascii?Q?gNtfd2jJQUB6pFf2YeNYuet3PzEtECmFbmvTBw3P4jD5TrXumo48qvboySaw?=
+ =?us-ascii?Q?tnMQaPpm/aXQQVyNkkASNiFkMnGBYwyDl7T/nSDf88Wgf9HbeUU6yhHMb0ta?=
+ =?us-ascii?Q?+thWu31MNufS0u9sKmEvoOEhbOHk662iTj6sNwpou0akp/SVD8oIufZWq3pv?=
+ =?us-ascii?Q?CRegd+Uec+sJSRk4JwpbxNzHs3pbrjmdrCFkosVcJu/RP8PxaQyD2KbMiDNn?=
+ =?us-ascii?Q?wdGv8ipygSiDJDqQkNK/WMYXPa6MBQCQC70r2TNydB4ZbxiqFD3vKHDjBYHH?=
+ =?us-ascii?Q?4UlksUjda9JKSGR1dOLjVMkl32u6PebTkHjZMClzQnkigLUe9mQhoOAEvxlZ?=
+ =?us-ascii?Q?sIrweoxwlh8tnbgDuA0Lt7bB7m9xw7gri+JjmQxg+i24blxCTYG3gvodYFV0?=
+ =?us-ascii?Q?/13PlLyW2lMN7Z+hCSzrPRJ/oJmNNEy3xffB5h1RImwlQvvPzwcWoJAS+vkN?=
+ =?us-ascii?Q?GZVACWJwgvl51AfTrE8jPO2NAocdHjwSwklQC17l5zLKsPTvkxa/BVYbqGLI?=
+ =?us-ascii?Q?IfGZ5ECGLpVhgr8SRg4sGjfyEj+VkTi8BicEaP2Sk5vT0hCILN/DAeBoy9On?=
+ =?us-ascii?Q?qtnv0bCDCiM/gF/69w9TCocvI05q+u0hNsxmTsUnAxY70wIcOJORc/T2FGwg?=
+ =?us-ascii?Q?vbSYUiJaaLt7am/CNgGGCbnMOmk/9OrSp6bEf7evyxqG+4w3pMEKPW+1BWs9?=
+ =?us-ascii?Q?fO8Uo37+WOQE64WOlQKQrh3ZGbCDx6JrSHpVuuooBWx+lt74Kp36/66RfoXr?=
+ =?us-ascii?Q?u/PmoGwc4GaHtKKw4QdbkyDyFCBYJpbmk1vRv6eq+1wz+G9QWxLgH2inolEe?=
+ =?us-ascii?Q?k5wNwyZ6+KlvCXx9fkEZeVhyqX/6JdUkvr0R0fHqDDcXQ2NusYH9aGPWUb/M?=
+ =?us-ascii?Q?kBCfibOOP3wmRc7r5+av7T7nmo1XiQ34KuOjp7zoJa6zmTFxcEOs20OKZXqx?=
+ =?us-ascii?Q?tDyss6D27t2KSequjU7a+kdSnX8yqqhbZ8flgOQZPsPO7kSVHIp1qnV+6zMK?=
+ =?us-ascii?Q?sfj9sMX63T4pHwdl9OcbzF3jyziSSX+8GB8Cf+DdeUYcWxZWSS5oLeuj3X8y?=
+ =?us-ascii?Q?CjviPkJItNp5UWJm0cQmiRymOzHKGGvkCVJafIcXPjtBIzcKJTs5iWJ89jJX?=
+ =?us-ascii?Q?4/WkYrFPQlJgOz5dAVZBKSt39x6Yg7GgfxaTIVLzwLDte5QIJFy7OQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?7me5xU/DSx3xYmf+aVb4mZFgkDKrWtdoRddA+TNAAJcYlZp4oDKZGqwYA/WA?=
+ =?us-ascii?Q?89yQcWOGFhLU4mGZJVxQ5as64senPQkiQ8qmWLx+jAXp5yMFTz+c+DpfnzA9?=
+ =?us-ascii?Q?x5Vv0yaKTyvl7AParJe7dnMCYMwm0YXFtotf8lUSK4pH71hMeKskV6t/Vazq?=
+ =?us-ascii?Q?Y5NaxmGl7sZj3PTsHzzP16l/uU0yupPCdbLIA3MPYmzyiPe5tEkMJzzgYOgb?=
+ =?us-ascii?Q?wFNZOTPHyelxGMPUl96ENlU/0ntVxle9HAUtu+pEAcy4u8QZ48RHQvsl7UP7?=
+ =?us-ascii?Q?qpO1w3/ig3xU9m0NcT+mmlgN3nne2BzEDSaEy1dmjenwKg6nhvB651GsvUYW?=
+ =?us-ascii?Q?1U8oF7t7ES3ZioucuXEKolk0fJAT/CX6iOUm5EdTXhdCDUlGzrPJEHwwePO8?=
+ =?us-ascii?Q?E0LyV9RlDtUhIepmZ21m1mmk1Hpf3rDCAdDDydciybhvWZ7nVSbfmdm8GnGm?=
+ =?us-ascii?Q?77/aX6su6hjY6V6coUjaRvvJasMe0JUlPMKC4qRm9gwVPLHitMVDYDfPC1fS?=
+ =?us-ascii?Q?I7nuWu6AXVFQqfHxSczDoUgH8B4TiEOoqk25APeZQNtiTwDifgNUgp+Gbz3O?=
+ =?us-ascii?Q?23kKvI3Wd8eWagFsFsoL4TbLj90iSOGRIcDWxYjFfv18A/oN55pfd3VcMcNG?=
+ =?us-ascii?Q?q00jPg3NO44h1baY1hj6mSTWbUOyu2Ru/f8tQKSaP7M7SNIQd8cWdWS6yjGc?=
+ =?us-ascii?Q?OHV97AuwTiBQXqQD6aL7bntSeevBpO2/ENmFkbkTZMstNCQP7R0VXi0ppHq9?=
+ =?us-ascii?Q?7hJ1xwmQkjwYbl0PEzPOdtfX4uwqHBma8tDby1txpWNUDLOsuBXYrn4geroC?=
+ =?us-ascii?Q?5OP12bosOW8+JDL7mDJOPHMJLO5QO/MCgquAfbjiajRDTz6IQ7FVzHK3EgZg?=
+ =?us-ascii?Q?Zd/PmRbY/FRRo7hlW4/l/kUwAFBiDp5nZHuRyU+bIMZ9+3K6kon05Z3u+g7e?=
+ =?us-ascii?Q?IEZpxS19oTQr3citr80CSjFVQnqoBlmXJ0e9RCyrp/RD/r8B4YqGI/thltIX?=
+ =?us-ascii?Q?38LPSmBKvV2bbqFsdZ4UhDxJCMFf/XvJd/dpr+j/FGGgxmiIgUWSi0kbwE/3?=
+ =?us-ascii?Q?Qn933A2u1mW1iX/Ksj0JV2JQfQ20foEP2M+uRE5LN1cLVPNiN/aV0k20UArB?=
+ =?us-ascii?Q?mhPoiKGlEkF0Cx90v0CEDn4hQm5ZZ5yZqEvQdZk8jHlDpeBpB9eOsVCkd8Ex?=
+ =?us-ascii?Q?fjMLKqnQYXz4ZbczG9d0ChqnRsSGlFzrl2wM40w2z+74lnccOljm/h4Qmosm?=
+ =?us-ascii?Q?YkOk2TfcEF+17SnFhxb3XljYBih3MnnjOb1P2KlfjHeRIjmkpAOce0S+39nh?=
+ =?us-ascii?Q?sU5Ak5yB6CRyB9de+k2H7Y7P2psZmDQazJBfEoQp26ucfreT6CZnEfuSIwxF?=
+ =?us-ascii?Q?axSNzQILjUGleCTuUwooBJBP3T0PnV8bKfUxF8lNTW3nNbno1ojhiojoRKDM?=
+ =?us-ascii?Q?u9K2mollqSPVzq9TSt7Cxyu6n4fC+BUT3BCMFxISHeGjop6AUDVng/uvB+Df?=
+ =?us-ascii?Q?nMZ0rMgxkgV/+yIdGEojMVFP2vTYhzXSiRHHXxTultOacVYdOyTFHPbnMC8o?=
+ =?us-ascii?Q?eWhuwfO3rBcU1KVuAB/4IXaJ+SRT1OiEiebkW8H2?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 550c65f8-9c59-41d7-1c52-08ddd356e268
+X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Aug 2025 13:00:27.8731
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xyg7Sq4zQK5Dowih5Zn2aKiSA/56n/KTMF9jrYcQjI2sDh/lw01fPSfSLlVK3b8ZqL9cjn67uSQEtbGP0OeLKw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR0601MB5566
 
-On Mon, Aug 04, 2025 at 10:40:17AM +0200, Thomas Weißschuh wrote:
-> replace_fd() returns the number of the new file descriptor through the
-> return value of do_dup2(). However its callers never care about the
-> specific number. In fact the caller in receive_fd_replace() treats any
+Commit 16f5dfbc851b ("gfp: include __GFP_NOWARN in GFP_NOWAIT")
+made GFP_NOWAIT implicitly include __GFP_NOWARN.
 
-To be pedantic as stated this isn't true: While they don't care about it
-in their error handling they very much care about what specific file
-descriptor number is used. Try and assign unexpected fd numbers for
-coredumping and see what CVEs you can get out of it...
+Therefore, explicit __GFP_NOWARN combined with GFP_NOWAIT
+(e.g., `GFP_NOWAIT | __GFP_NOWARN`) is now redundant. Let's clean
+up these redundant flags across subsystems.
 
-I'll take the patch but I'll amend it to just use a guard:
+No functional changes.
 
-diff --git a/fs/file.c b/fs/file.c
-index 6d2275c3be9c..858a55dbd5d8 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -1318,7 +1318,7 @@ __releases(&files->file_lock)
- int replace_fd(unsigned fd, struct file *file, unsigned flags)
- {
-        int err;
--       struct files_struct *files = current->files;
-+       struct files_struct *files;
+Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+---
+ lib/xarray.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-        if (!file)
-                return close_fd(fd);
-@@ -1326,15 +1326,17 @@ int replace_fd(unsigned fd, struct file *file, unsigned flags)
-        if (fd >= rlimit(RLIMIT_NOFILE))
-                return -EBADF;
+diff --git a/lib/xarray.c b/lib/xarray.c
+index 191a02d94524..a2e543d1396c 100644
+--- a/lib/xarray.c
++++ b/lib/xarray.c
+@@ -370,7 +370,7 @@ static void *xas_alloc(struct xa_state *xas, unsigned int shift)
+ 	if (node) {
+ 		xas->xa_alloc = rcu_dereference_raw(node->parent);
+ 	} else {
+-		gfp_t gfp = GFP_NOWAIT | __GFP_NOWARN;
++		gfp_t gfp = GFP_NOWAIT;
+ 
+ 		if (xas->xa->xa_flags & XA_FLAGS_ACCOUNT)
+ 			gfp |= __GFP_ACCOUNT;
+-- 
+2.34.1
 
--       spin_lock(&files->file_lock);
-+       files = current->files;
-+
-+       guard(spinlock)(&files->file_lock);
-        err = expand_files(files, fd);
-        if (unlikely(err < 0))
--               goto out_unlock;
--       return do_dup2(files, file, fd, flags);
-+               return err;
-+       err = do_dup2(files, file, fd, flags);
-+       if (err < 0)
-+               return err;
-
--out_unlock:
--       spin_unlock(&files->file_lock);
--       return err;
-+       return 0;
- }
-
- /**
-
-scoped_guard() works too but bloats the patch.
-
-> non-zero return value as an error and therefore never calls
-> __receive_sock() for most file descriptors, which is a bug.
-> 
-> To fix the bug in receive_fd_replace() and to avoid the same issue
-> happening in future callers, signal success through a plain zero.
-> 
-> Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
-> Link: https://lore.kernel.org/lkml/20250801220215.GS222315@ZenIV/
-> Fixes: 173817151b15 ("fs: Expand __receive_fd() to accept existing fd")
-> Fixes: 42eb0d54c08a ("fs: split receive_fd_replace from __receive_fd")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-> ---
-> Changes in v2:
-> - Move the fix to replace_fd() (Al)
-> - Link to v1: https://lore.kernel.org/r/20250801-fix-receive_fd_replace-v1-1-d46d600c74d6@linutronix.de
-> ---
-> Untested, it stuck out while reading the code.
-> ---
->  fs/file.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/file.c b/fs/file.c
-> index 6d2275c3be9c6967d16c75d1b6521f9b58980926..f8a271265913951d755a5db559938d589219c4f2 100644
-> --- a/fs/file.c
-> +++ b/fs/file.c
-> @@ -1330,7 +1330,10 @@ int replace_fd(unsigned fd, struct file *file, unsigned flags)
->  	err = expand_files(files, fd);
->  	if (unlikely(err < 0))
->  		goto out_unlock;
-> -	return do_dup2(files, file, fd, flags);
-> +	err = do_dup2(files, file, fd, flags);
-> +	if (err < 0)
-> +		goto out_unlock;
-> +	err = 0;
->  
->  out_unlock:
->  	spin_unlock(&files->file_lock);
-> 
-> ---
-> base-commit: d2eedaa3909be9102d648a4a0a50ccf64f96c54f
-> change-id: 20250801-fix-receive_fd_replace-7fdd5ce6532d
-> 
-> Best regards,
-> -- 
-> Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-> 
 
