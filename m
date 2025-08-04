@@ -1,54 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-56640-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56641-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FE27B1A105
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 14:16:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0D3AB1A107
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 14:16:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56090189D88D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 12:16:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1598517011E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 12:16:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7604425B2E1;
-	Mon,  4 Aug 2025 12:14:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89B8325CC58;
+	Mon,  4 Aug 2025 12:14:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="JogdjNc8"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="y4Rv0tCm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42B89258CE2;
-	Mon,  4 Aug 2025 12:14:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5096E257AF9;
+	Mon,  4 Aug 2025 12:14:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754309683; cv=none; b=XL0Wl/lzamgrV0Dqo97J2I4DE1WLrcZSckZxtV5usg0wEJGiOlTtLdLWSsxjM0T8XtwdjwZa8kYS3OFTxUIw68mVkFvyzjvXKb4BTgiQtJkD8BHCpqImyv6NPtoeJcyAyHJBb/q8ajvUIwIZ+JSnH/54TJGWoyGNc6WiCrUaW3E=
+	t=1754309693; cv=none; b=tym/SRULQ+bJt4PQzV6L765aZ6dfpfdQUFAUz7WypRBoh35qR8iCS7zPadZ0qwUadFG8+TFL7VuHrWiBcN4PxyJwtVh23Im7RS1pwWmhp4jkWfRoj3gRtf5HkI0DpFQf3uWCP0oXCWVdtroLiDiu1JxPHaVAgv2lIJvadrUuGDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754309683; c=relaxed/simple;
-	bh=3yvTRW5FhiAKs+vOBuG4HDRUaaXxURgqxp/7gqTmM9g=;
+	s=arc-20240116; t=1754309693; c=relaxed/simple;
+	bh=cE5HF3Q/pCpPUC8URCS1OOHU8K26yfnjKDLE9CXvFJg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=o6eI3zqaxicIa8rTAUjN0IOjgqRCHNpJCiULMhNJVShcgqVTtSO3UXxkUiGaCurdxJftRHhuQYAQuvDYZ3zWiM0yI3CtLv6POO0XM3Vz7FkwM26XIzpuJVlw70rCmWMuzdOmU/Qyje5Yx57pM2y92CAxAku3mf04aIAsqRntdzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=JogdjNc8; arc=none smtp.client-ip=80.241.56.151
+	 MIME-Version; b=ZYbtmngLAdmc0/6+BKoJGrGbNLM52iOzGumEgUx4XxpZkbjbxcc1IhUAwYlL5YIgWaLQejbkyoRXHZWclvOZ5tKzdK1Wn9NvkuE8dLIK8YQtZbb1DenDdtfuj+ZuMYNwQT3Dc2TdLcGU+NM4Nq6USECAa7jyCCIh/EeuXGPquD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=y4Rv0tCm; arc=none smtp.client-ip=80.241.56.161
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4bwb8Z5DNqz9sy6;
-	Mon,  4 Aug 2025 14:14:38 +0200 (CEST)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4bwb8l4PMTz9shb;
+	Mon,  4 Aug 2025 14:14:47 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1754309678;
+	s=MBO0001; t=1754309687;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=kgGhybuB+tAZvqsghR5tZCuaExpLC7iQdGM6Ue4YApc=;
-	b=JogdjNc8TbOYGaRal6ul2EdZ36M2+wgOdqzDmdw3o4etELnbmBQeg79oT/sOzxB33y0cQN
-	qRMI/4ZoRg0HAWSBDELzHTQzWLCs4YFWROruNL1nq9mQc5FC1/70hgrFl/zGwM3N7u+6V4
-	KHw5BFNEg0Lu+8WStXiP05uU6wg/0Jis8IHzu52cYC6YBI1Niros/a1LLyH5Xxz4STWBwy
-	J+WhOF6PhL3+9tOHYwpg3yftiilUDt9aL01rwjXaVo49+tWVlwqK+UReV2OsJTo96uRAd/
-	lriRpdwu9IdqxW56eCKiIwtkfKb21aEBKqavjMlzLVrVV5vJWJhbQExhq+qnGg==
+	bh=aUm65lZP53PD6UFdCNM0FQrwo2MXNsuP3026Ad+nKaE=;
+	b=y4Rv0tCmaVgD31H5miqrX3K20uYG9fm+wdi+/Sy2amT1kSzTYClOtvSxRGbWkTh7kFtx0g
+	HHt8oVU3das9R/nUe4juc6tSW/A/5Tyg/Vyhd8pMoPLi4fWGep6y2mdWg4ywbdETFHVqg9
+	eEeU3Ir4814EluMrwjX9DdiMn5Ts3LaS58zGSQ5/OEvLKgZvlm+jqdCANukxTaEsK3vYJ3
+	z/gam7TBBVKILGDRxrO2D3XuJoQIGggS9XlZArNyWQwqwCEz69FZagUgzrkIbqSBzZ5cd7
+	Klh+d92S00osdmGx6fJ4NMhLIKrjKEe4+/GEXYY1UMII3FMMP4qCuF2mc2goBg==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of kernel@pankajraghav.com designates 2001:67c:2050:b231:465::1 as permitted sender) smtp.mailfrom=kernel@pankajraghav.com
 From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
 To: Suren Baghdasaryan <surenb@google.com>,
 	Ryan Roberts <ryan.roberts@arm.com>,
@@ -82,9 +85,9 @@ Cc: linux-kernel@vger.kernel.org,
 	kernel@pankajraghav.com,
 	hch@lst.de,
 	Pankaj Raghav <p.raghav@samsung.com>
-Subject: [PATCH 4/5]  mm: add largest_zero_folio() routine
-Date: Mon,  4 Aug 2025 14:13:55 +0200
-Message-ID: <20250804121356.572917-5-kernel@pankajraghav.com>
+Subject: [PATCH 5/5] block: use largest_zero_folio in __blkdev_issue_zero_pages()
+Date: Mon,  4 Aug 2025 14:13:56 +0200
+Message-ID: <20250804121356.572917-6-kernel@pankajraghav.com>
 In-Reply-To: <20250804121356.572917-1-kernel@pankajraghav.com>
 References: <20250804121356.572917-1-kernel@pankajraghav.com>
 Precedence: bulk
@@ -94,47 +97,58 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 4bwb8l4PMTz9shb
 
 From: Pankaj Raghav <p.raghav@samsung.com>
 
-Add largest_zero_folio() routine so that huge_zero_folio can be
-used directly when CONFIG_STATIC_HUGE_ZERO_FOLIO is enabled. This will
-return ZERO_PAGE folio if CONFIG_STATIC_HUGE_ZERO_FOLIO is disabled or
-if we failed to allocate a huge_zero_folio.
+Use largest_zero_folio() in __blkdev_issue_zero_pages().
+On systems with CONFIG_STATIC_HUGE_ZERO_FOLIO enabled, we will end up
+sending larger bvecs instead of multiple small ones.
 
-Co-developed-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: David Hildenbrand <david@redhat.com>
+Noticed a 4% increase in performance on a commercial NVMe SSD which does
+not support OP_WRITE_ZEROES. The device's MDTS was 128K. The performance
+gains might be bigger if the device supports bigger MDTS.
+
 Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
 ---
- include/linux/huge_mm.h | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ block/blk-lib.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 78ebceb61d0e..c44a6736704b 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -716,4 +716,21 @@ static inline int split_folio_to_order(struct folio *folio, int new_order)
- 	return split_folio_to_list_to_order(folio, NULL, new_order);
- }
- 
-+/*
-+ * largest_zero_folio - Get the largest zero size folio available
-+ *
-+ * This function will return huge_zero_folio if CONFIG_STATIC_HUGE_ZERO_FOLIO
-+ * is enabled. Otherwise, a ZERO_PAGE folio is returned.
-+ *
-+ * Deduce the size of the folio with folio_size instead of assuming the
-+ * folio size.
-+ */
-+static inline struct folio *largest_zero_folio(void)
-+{
-+	struct folio *folio = get_static_huge_zero_folio();
+diff --git a/block/blk-lib.c b/block/blk-lib.c
+index 4c9f20a689f7..3030a772d3aa 100644
+--- a/block/blk-lib.c
++++ b/block/blk-lib.c
+@@ -196,6 +196,8 @@ static void __blkdev_issue_zero_pages(struct block_device *bdev,
+ 		sector_t sector, sector_t nr_sects, gfp_t gfp_mask,
+ 		struct bio **biop, unsigned int flags)
+ {
++	struct folio *zero_folio = largest_zero_folio();
 +
-+	if (folio)
-+		return folio;
-+	return page_folio(ZERO_PAGE(0));
-+}
- #endif /* _LINUX_HUGE_MM_H */
+ 	while (nr_sects) {
+ 		unsigned int nr_vecs = __blkdev_sectors_to_bio_pages(nr_sects);
+ 		struct bio *bio;
+@@ -208,15 +210,14 @@ static void __blkdev_issue_zero_pages(struct block_device *bdev,
+ 			break;
+ 
+ 		do {
+-			unsigned int len, added;
++			unsigned int len;
+ 
+-			len = min_t(sector_t,
+-				PAGE_SIZE, nr_sects << SECTOR_SHIFT);
+-			added = bio_add_page(bio, ZERO_PAGE(0), len, 0);
+-			if (added < len)
++			len = min_t(sector_t, folio_size(zero_folio),
++				    nr_sects << SECTOR_SHIFT);
++			if (!bio_add_folio(bio, zero_folio, len, 0))
+ 				break;
+-			nr_sects -= added >> SECTOR_SHIFT;
+-			sector += added >> SECTOR_SHIFT;
++			nr_sects -= len >> SECTOR_SHIFT;
++			sector += len >> SECTOR_SHIFT;
+ 		} while (nr_sects);
+ 
+ 		*biop = bio_chain_and_submit(*biop, bio);
 -- 
 2.49.0
 
