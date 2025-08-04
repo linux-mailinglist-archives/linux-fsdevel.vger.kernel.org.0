@@ -1,109 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-56623-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56624-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FD0DB19DC3
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 10:37:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEE89B19DC9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 10:38:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8696179186
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 08:37:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F2783B9D8C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 08:38:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90E6B242D6F;
-	Mon,  4 Aug 2025 08:37:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 726D3242D6E;
+	Mon,  4 Aug 2025 08:38:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="tQIosnnf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CN2Vv6iA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09D4A1E9B22;
-	Mon,  4 Aug 2025 08:37:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C42532356D2;
+	Mon,  4 Aug 2025 08:38:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754296642; cv=none; b=IY0zYLsQ5KBb07qcjMuqexfzr6eUpEZaKLbrlp1lwUvZRGuMPBFGVDAxB6+i93wOlCLEZ4G1sTruJie1mXePZ8a83K2likRaqY5oRJ5Nic3PMrDcsthns7z2gnOXdIFkDn77x8krJEPyLRE11ye1aqeONTfJd9BP3LSYUfHML7I=
+	t=1754296720; cv=none; b=Xoiu5e6uk38TpXIzAc6eg7UrrXG3gAaUHQRF7F1BVELDHd3S2NggYiVPqgz1t6V9rY+AhJrOa6xoERRTYD15OxGLyn3x4Cug7PKEp9ODbdqotlpsGSAxO7hnqA+pMBsO9CoLyp3WltKJ+ORx0TyGPeFgU9TgqcKNElJKOds5gro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754296642; c=relaxed/simple;
-	bh=HIXk4+TAbrKiQuY/qIcBcH+nKJgvbBjd1RaFeR0UKwI=;
+	s=arc-20240116; t=1754296720; c=relaxed/simple;
+	bh=LYhxDdmv7WKdVH4JS805mi9rifdSH1ISJELxQdylTt4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=alW1VrhioigaEm2fAFVjVn9j6CGmvYYdZA4UdmU/ltKqUvCbKLh3vIfhiL+2E4ONXxo1U/jxN9zn3L7QChitM063am6L0Z83JHkC355+GprJ0DSlRlt3FhzguMnzDwmskaolpfZ7Mc/JBtF3CMNn2qccSnmzheM5ODEWknL5RP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=tQIosnnf; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4bwVKf31nCz9sxm;
-	Mon,  4 Aug 2025 10:37:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1754296630;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4wPJnPv1bn5Li9I/0MOxjuiNX4rqaManwCgRKuRDtlQ=;
-	b=tQIosnnfJQ37NBK6nScKmwmL/r2DsnOlMH8NmKwU/1J+eiAE8TIF/z/4vRRMBiXWL9OhAs
-	Ev3sNf1iILxDYEV27e320oPn8umOlMIt6ywe0tFVSMBmakfOSZkEOotKPLOxsWsnsDZ1VB
-	CsQshtiJmUg9dq7RvfYFsVH9rZMVlC3u15dB1eolZJrLOASd2fFncxcTgJrGAfigKokZDo
-	gys9bNHNBOlK+176OkV886HR7vQF2uqIrJVNyLf8ECIQfGBcJgg1kQOo9Ok5CKz6z/C8Iu
-	xVAa/fv1eyE1jqdOng8qoE26TuCp4oqzCYXRIIWObZ+G/nyeN54b8uJufuVUmw==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of kernel@pankajraghav.com designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=kernel@pankajraghav.com
-Date: Mon, 4 Aug 2025 10:36:57 +0200
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, 
-	"H . Peter Anvin" <hpa@zytor.com>, Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, 
-	Mike Rapoport <rppt@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Michal Hocko <mhocko@suse.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, 
-	willy@infradead.org, linux-mm@kvack.org, x86@kernel.org, linux-block@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org, 
-	gost.dev@samsung.com, hch@lst.de, Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [RFC v2 1/4] mm: rename huge_zero_page_shrinker to
- huge_zero_folio_shrinker
-Message-ID: <arhm7vlux7xl627zvlexwziq6gpgxueeslxvjrzhofld7xgvul@uvlyngrizze3>
-References: <20250724145001.487878-1-kernel@pankajraghav.com>
- <20250724145001.487878-2-kernel@pankajraghav.com>
- <87v7n7r7xx.fsf@gmail.com>
- <88296851-3bbe-44fc-a507-70964c0bea8c@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZAl8+xYH2WaZF0p9hpzeqJFDU/NWNeACYXOjVZqMgbqk8wCTfS2Q/eoZmqPDj0Z/HvP2CKeGRht//AjOz9mr6BhvjCfa/L1BJ7LO28uM+kJybhcvuNqNpxL4eHkosPND+NCX71Y+EMUQecFTeI69sbJFRrggjg7AapKv9VMBqUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CN2Vv6iA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DEDCC4CEE7;
+	Mon,  4 Aug 2025 08:38:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754296720;
+	bh=LYhxDdmv7WKdVH4JS805mi9rifdSH1ISJELxQdylTt4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CN2Vv6iAH2xHExWYpSQAo0Ti6f8+vt7skh+EI3mk6n0OyVH03PkNxZtmziJzo8kQG
+	 rGwty3bYsGLnkzk8EhFdpUhvt9GrH0IX84G1yRBqVir3Q4wqGWf/Ak4i8ZghT9FgX4
+	 jar+NcJBpRBxEMIWHsHvyECdD8Do0v9+j1dFKxped4ndPAFDM1WFv64eLLANej9xYL
+	 HtaybN8vxFH+ySWaNlz0YHUVlvSQksxuzVHc5oTf6F3GHu7dr1zGEsRekkSX7WsbfW
+	 7cQu2uhWYxDUk0CsuYR4I+XNPsl0eBKyZEfvqVGX7ccGSwg2Q/aCuU8xg5IWsXg2io
+	 4gZUhS7Ltld0A==
+Date: Mon, 4 Aug 2025 10:38:35 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Sargun Dhillon <sargun@sargun.me>, Kees Cook <kees@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] fs: correctly check for errors from replace_fd() in
+ receive_fd_replace()
+Message-ID: <20250804-fechten-glukose-1cb2e2b0413a@brauner>
+References: <20250801-fix-receive_fd_replace-v1-1-d46d600c74d6@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <88296851-3bbe-44fc-a507-70964c0bea8c@redhat.com>
-X-Rspamd-Queue-Id: 4bwVKf31nCz9sxm
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250801-fix-receive_fd_replace-v1-1-d46d600c74d6@linutronix.de>
 
-On Fri, Aug 01, 2025 at 05:30:46PM +0200, David Hildenbrand wrote:
-> On 01.08.25 06:18, Ritesh Harjani (IBM) wrote:
-> > "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com> writes:
-> > 
-> > > From: Pankaj Raghav <p.raghav@samsung.com>
-> > > 
-> > > As we already moved from exposing huge_zero_page to huge_zero_folio,
-> > > change the name of the shrinker to reflect that.
-> > > 
-> > 
-> > Why not change get_huge_zero_page() to get_huge_zero_folio() too, for
-> > consistent naming?
+On Fri, Aug 01, 2025 at 09:38:38AM +0200, Thomas Weißschuh wrote:
+> replace_fd() returns either a negative error number or the number of the
+> new file descriptor. The current code misinterprets any positive file
+> descriptor number as an error.
 > 
-> Then we should also rename put_huge_zero_folio(). Renaming
-> MMF_HUGE_ZERO_PAGE should probably be done separately.
+> Only check for negative error numbers, so that __receive_sock() is called
+> correctly for valid file descriptors.
+> 
+> Fixes: 173817151b15 ("fs: Expand __receive_fd() to accept existing fd")
+> Fixes: 42eb0d54c08a ("fs: split receive_fd_replace from __receive_fd")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+> ---
+> Untested, it stuck out while reading the code.
+> ---
+>  fs/file.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/file.c b/fs/file.c
+> index 6d2275c3be9c6967d16c75d1b6521f9b58980926..56c3a045121d8f43a54cf05e6ce1962f896339ac 100644
+> --- a/fs/file.c
+> +++ b/fs/file.c
+> @@ -1387,7 +1387,7 @@ int receive_fd_replace(int new_fd, struct file *file, unsigned int o_flags)
+>  	if (error)
+>  		return error;
+>  	error = replace_fd(new_fd, file, o_flags);
+> -	if (error)
+> +	if (error < 0)
+>  		return error;
 
-Thanks Ritesh and David.
-
-I will change them in the next version! :)
-
---
-Pankaj
+What in the holy fsck? Why did the seccomp selftests not fail
+horrendously explode because of that.
 
