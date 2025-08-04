@@ -1,120 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-56648-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56649-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8391AB1A4CF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 16:24:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B318B1A4EF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 16:30:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F37D7A1B68
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 14:22:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 093C91885145
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 14:31:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5815E271472;
-	Mon,  4 Aug 2025 14:24:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 357FE26FA60;
+	Mon,  4 Aug 2025 14:30:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rG66nN0f"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h5noqCvd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABA0426B755;
-	Mon,  4 Aug 2025 14:24:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23801245012
+	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Aug 2025 14:30:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754317445; cv=none; b=IOSjMBvbJq7iJSX7Fb8KvQNkrOTjHYEeQblhun/BZJbc9GdYjfoa+HrL02MUIJOnCLMQHneQPIIbRGC4rXFMc60nCAxB8mHRZbT2tS3L6BILKzvcvrYL862ijSh1EJ8y7NmQWJ0o+2PBbbC0tnPMiq+OfTj0kQLM48nDx4kxA+Y=
+	t=1754317841; cv=none; b=KIG8I86byC1p2e2Qe96OOHEKHJQWrEVuG8hIBJ8QqGY+EK9sSKG1p8TRFDJxQQTPHUFruTqRLv1YO2Du/2xKkdXn8ttZCU2SJ58Opl7R5dlYEmP8li4BC4hrcMg17CnH+vUPaLrzyw0kaH/Q8FW/wI7UgkxVPxO/2aIgC57vpzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754317445; c=relaxed/simple;
-	bh=XgUMlZidrLg1tze+vp7RzDI/dCdqdxcMxPxHB1C779k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kkmGaSuVzLNxj5lP69R/jgUv2Uy8Wn0WOBdNe2hQ2tEF6dhThU8+QKwUxED0JgNM9+wS5mK+PWI5wUHVbrt3whab6UDndMbSdsxdvIkSA77ShK3LVLsKLQs80Ob7GHENfCL6lmH0T7eK/xZvHu6x7zn/5tieZUxpCyFFlIDBuZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rG66nN0f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1806CC4CEE7;
-	Mon,  4 Aug 2025 14:24:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754317445;
-	bh=XgUMlZidrLg1tze+vp7RzDI/dCdqdxcMxPxHB1C779k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rG66nN0fw8ArwK6YmYIJT48P4C4nJ5mCjWX+JLT4a8ThDoTiBGD+HPHoCse0r/XWH
-	 I/tid93IGOUvGfzviZpkMtJi/bKHMeZtPEwEGiylZwRTdlgw7Iujy/LUYjNbPx6pWw
-	 Ele+pYPJFNKfJlT+G5nTTtzuRykYcW/7NtzZd1hxp5XhP2dHepHJ8J85edS/QYphNo
-	 mO1R7SStOOVf4nKvLAM2hxCsKubKaD+f/KIZ6KBdva0FIsgR5m+iDAyGjEb5RqYcB3
-	 0cxGEQMlEhUqvqALQ4FMM8dBqKN+qJPrC3rqjXyTf19F8uK9vgD9PKo5xw09+Oab5y
-	 nmkiruah+vr+w==
-Date: Mon, 4 Aug 2025 16:24:01 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>
-Subject: Re: [GIT PULL 09/14 for v6.17] vfs bpf
-Message-ID: <20250804-dammbruch-babypuppen-689a8e3421df@brauner>
-References: <20250725-vfs-617-1bcbd4ae2ea6@brauner>
- <20250725-vfs-bpf-a1ee4bf91435@brauner>
- <ysgjztjbsmjae3g4jybuzlmfljq5zog3eja7augtrjmji5pqw4@n3sc37ynny3t>
- <20250731-matrosen-zugluft-12a865db6ccb@brauner>
- <CAADnVQKMNq3vWDzYocS6QojBDXDzC2RdE=VzTnd7C_SN6Jhn_g@mail.gmail.com>
+	s=arc-20240116; t=1754317841; c=relaxed/simple;
+	bh=Ni8CSHpOhukdN/21kURJP+BanGjYorMPnmv5tP1P+3c=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=OlRl0thT5VMx0vWTHreGBc6Ch19d95Fi089w/D7u3ujSkgG7BvWYkmwm4ivwogUGRaTqdTBTpLco/1Z9DDvm2mKnjXSTMNbSgpVRq7ecnrBTQwz8UB6b1XJ7e/QAGp4QJ0znCXueMn2H+e71QmJQdlIOzv4594MzcvYyGsrfnVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h5noqCvd; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754317839;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oLfj4Z6OrcNJ/e8ghBxGUuYT9xlFmnM4pxqWJq7Kcow=;
+	b=h5noqCvdMmbC0fnVhmUy76Pqz+Ib1PZHtC5OROKxCP89q+vSHQNoMao1Mb480qEEA1FtpM
+	a5iprIdB1kXYwbIRV4z1hBjzi1spiGU+Dt1OTaoRTmneEngrvjNkZGRupcAjNdxO+TQMYN
+	MSQqUS2uV73RDsGMevnXEAWJ7cUA8qg=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-65-Q3G1GamQOFKpwVDVa7ykow-1; Mon,
+ 04 Aug 2025 10:30:36 -0400
+X-MC-Unique: Q3G1GamQOFKpwVDVa7ykow-1
+X-Mimecast-MFC-AGG-ID: Q3G1GamQOFKpwVDVa7ykow_1754317835
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7C3F41800264;
+	Mon,  4 Aug 2025 14:30:34 +0000 (UTC)
+Received: from fweimer-oldenburg.csb.redhat.com (unknown [10.45.224.14])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1EDC11800EED;
+	Mon,  4 Aug 2025 14:30:31 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: fuse-devel@lists.sourceforge.net,  linux-api@vger.kernel.org,
+  linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [fuse-devel] copy_file_range return value on FUSE
+In-Reply-To: <CAJfpegur9fUQ8MaOqrE-XrGUDK40+PGQeMZ+AzzpX6hNV_BKsw@mail.gmail.com>
+	(Miklos Szeredi's message of "Mon, 4 Aug 2025 15:30:27 +0200")
+References: <lhuh5ynl8z5.fsf@oldenburg.str.redhat.com>
+	<CAJfpegur9fUQ8MaOqrE-XrGUDK40+PGQeMZ+AzzpX6hNV_BKsw@mail.gmail.com>
+Date: Mon, 04 Aug 2025 16:30:43 +0200
+Message-ID: <lhu4iuni2gc.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAADnVQKMNq3vWDzYocS6QojBDXDzC2RdE=VzTnd7C_SN6Jhn_g@mail.gmail.com>
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Thu, Jul 31, 2025 at 02:57:52PM -0700, Alexei Starovoitov wrote:
-> On Thu, Jul 31, 2025 at 1:28 AM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > It's been in -next a few days. Instead of slapping some hotfix on top
-> > that leaves the tree in a broken state the fix was squashed. In other
-> > words you would have to reapply the series anyway.
-> 
-> That's not how stable branches work. The whole point of a stable
-> branch is that sha-s should not change. You don't squash things
-> after a branch is created.
-> That extra fix could have been easily added on top.
-> 
-> > I mean, your mail is very short of "Linus, I'm subtly telling you what
-> > mean Christian did wrong and that he's rebased, which I know you hate
-> > and you have to resolve merge conflicts so please yell at him.". Come
-> > on.
-> 
-> Not subtly. You made a mistake and instead of admitting it
-> you're doubling down on your wrong git process.
-> 
-> > I work hard to effectively cooperate with you but until there is a
-> > good-faith mutual relationship on-list I don't want meaningful VFS work
-> > going through the bpf tree. You can take it or leave it and I would
-> > kindly ask Linus to respect that if he agrees.
-> 
-> Look, you took bpf patches that BPF CI flagged as broken
-> and bpf maintainers didn't even ack.
-> Out of 4 patches that you applied one was yours that
-> touched VFS and 3 were bpf related.
-> That was a wtf moment, but we didn't complain,
-> since the feature is useful, so we were happy to see
-> it land even in this half broken form.
-> We applied your "stable" branch to bpf-next and added fixes on top.
-> Then you squashed "hotfix".
-> That made all of our fixes in bpf-next to become conflicts.
-> We cannot reapply your branch. We don't rebase the trees.
-> That was the policy for years. Started long ago during
-> net-next era and now in bpf-next too.
-> This time we were lucky that conflicts were not that bad
-> and it was easy enough for Linus to deal with them,
-> but that must not repeat.
+* Miklos Szeredi:
 
-Ah, I see what you're complaining about now. But I'm still not happy
-that we didn't manage to resolve this confusion earlier.
+> On Mon, 4 Aug 2025 at 11:42, Florian Weimer via fuse-devel
+> <fuse-devel@lists.sourceforge.net> wrote:
+>>
+>> The FUSE protocol uses struct fuse_write_out to convey the return value
+>> of copy_file_range, which is restricted to uint32_t.  But the
+>> copy_file_range interface supports a 64-bit copy operation.  Given that
+>> copy_file_range is expected to clone huge files, large copies are not
+>> unexpected, so this appears to be a real limitation.
+>
+> That's a nasty oversight.  Fixing with a new FUSE_COPY_FILE_RANGE_64
+> op, fallback to the legacy FUSE_COPY_FILE_RANGE.
 
-I was not clear in what way you did rely on that branch and that you
-relied on me not folding in the mutex fix especially because you didn't
-reply when I said I would fold it and you said that putting fixes on top
-wouldn't work upthread.
+Or adding a capability flag to switch from struct fuse_write_out to
+something that uses an uint64_t value.  One complication: The struct
+fuse_write_out layout is too close to a potential 64-bit version of it
+on little-endian systems, so that proper testing might be difficult with
+the obvious approach.
 
-If I'm aware that a branch is shared and relied upon then I won't change it.
-I would've immediately rolled it back would I have know that this causes
-issues for you but to me everything looked fine when I didn't hear back.
+>> There is another wrinkle: we'd need to check if the process runs in
+>> 32-bit compat mode, and reject size_t arguments larger than INT_MAX in
+>> this case (with EOVERFLOW presumably).  But perhaps this should be
+>> handled on the kernel side?  Currently, this doesn't seem to happen, and
+>> we can get copy_file_range results in the in-band error range.
+>> Applications have no way to disambiguate this.
+>
+> That's not fuse specific, right?
+
+In-kernel file systems can check if the request originated from a compat
+process, using in_compat_syscall.  I don't think that's possible over
+FUSE.
+
+Thanks,
+Florian
+
 
