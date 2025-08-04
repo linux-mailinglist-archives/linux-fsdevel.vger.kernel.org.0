@@ -1,185 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-56697-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56698-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB481B1AB2A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 01:01:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD73EB1AB4F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 01:16:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5296A3B933B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 23:01:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EBFD1899F4B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 23:16:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67FFE290BC8;
-	Mon,  4 Aug 2025 23:01:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FB1C2900BA;
+	Mon,  4 Aug 2025 23:15:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="AYlBj9Vi"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jUOCTCL9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0EF1DF985
-	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Aug 2025 23:01:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7815115E97
+	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Aug 2025 23:15:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754348479; cv=none; b=dRU/4HGSxaNobsF0PZseyWbEn6jH8h71JKrnRk035O5v582Iiw5jQWT5Rth0NrgcLcILTt2w/cNLYldj5lXJ71Bt7aN+MdAtrLNC1wdsNWJJm2hIk8/VJrTqewD0IotdgcnpsQMXu5J0vY5frvVHGm0FjItmbmJprHclOwQYj4I=
+	t=1754349357; cv=none; b=N/lcnKTjyp0coR97xV4JmCcvtho9qKL9+zKlHoJYM5wTkQaK2i7T0DgvQj1bZeTUBqxEnOjeQmCynSxRk+P5YlBo3EMzvStBeNNICYMMUFNQkBwfwsswoqr5FbtF6sOGLhZGju034LuE29dBKNyW2UzVhMK754PM2raC+b4yLUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754348479; c=relaxed/simple;
-	bh=kh1Iqz0Yf5ok/S6yiGGNzHKbyS1kwiJn5rDTHcZSof0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fJIrOiOef6XPKGeaMGcsJdsSIyJkheHwbprN2X2gWBhgzW3rLVpILGfsVES5qgXiESoredPVsoPpFgCZwOq+S4VxcKt/emkQk1kDAWlEizkVmk/hHX/TiOAK9ksBRpfkJ/0k4qRSSoDkp370lbFposB8o4ZGtQvXoBLBLQQ/AB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=AYlBj9Vi; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4aeea691687so43085221cf.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Aug 2025 16:01:18 -0700 (PDT)
+	s=arc-20240116; t=1754349357; c=relaxed/simple;
+	bh=aLD/mc6gQzsIeMbR4/fU38vrGMY6ASni5WoEO50oRKc=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Mso4G4lfYsyHd00VEeZf/1mAQxPdK5MBRSKTElbOpe1G9m6E5rWQyva5owVtGzenilR6cqllJ4j1z47n/NrekyEkw9wGdW+u63u7z//idmieUNg3jJNTqETA32UvSLe87owck9rVcC47cjnUPrD7wYiOKe4CytfGlUxcGwX4+V8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jUOCTCL9; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b2fcbd76b61so5196332a12.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Aug 2025 16:15:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1754348477; x=1754953277; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=gU7gICCtCiiOkKgytm+DZgh/C6t4tnk/oqWk65I1YqY=;
-        b=AYlBj9Vi9oeeUhhAv7M5QYtp7yD49AbI2V4og/j1+jWMDyNGJYo7lda1IPfzY3cD90
-         rTMlqqfgz3jszmO0x9rvF5ik6kwMO3NH5Pv93491kLWzzGoEw/KBqgysLIqgEXrMxUqT
-         Ltm8yhBliuMaNAly/2dHYSjAGQjCJJvHwpW050fX3whlw1CEP05vA1b2nddYjrXK4aAr
-         OWh49iDlEufQ3wSfa6dN4iu+DmtG/8ZOrXkwPCwXXVQzRoJWzi32+MO9NQXeJkEpKy4L
-         +d+Ym6jGTy1WYAZTvJU3So0Uz+XA1JdFPaw8LuZ15O2bBax0WmrLBPcUG/JfBn6Ittl8
-         AUFg==
+        d=google.com; s=20230601; t=1754349356; x=1754954156; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=C8NgMA0HX6GfrkP4AehXbgu9Qzh9g7nw7slgx4SS+9M=;
+        b=jUOCTCL9cdlB88x2O5dDxoLZTx9JMu2tQcoRTsm+Z85wtpQoH/5W15Q1dbGrso6RhC
+         aH970OhJdlNGCY5gJ3uRCL+iWImyAbs9qkzjerMOldzudBwIh26R3zf0O8vUZq1a7qKW
+         D82/OwFCHBhBH2mYUXwUBbDok262nsjEyC3p7nx6bfRBf7kTeDVgfCbT38wt8G9xrc/C
+         dq16kv7zNdHDm80y7Fnj7GbzPi1ARnFQSV4/GRxlp1FXPqqwjmWKoaEM+Kx8M818/7SJ
+         Ob6rjzz+QxEy+i/f3UhGbd2qqxUYco4Lxd6PGIxNej3s3PeWkFK3pg5jp5c5mFYV7Eom
+         ZEKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754348477; x=1754953277;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gU7gICCtCiiOkKgytm+DZgh/C6t4tnk/oqWk65I1YqY=;
-        b=OvOZ5qn06Pg9LbqZ1MpzoKxoA3FMiWGAw9f+AqlVkfBvGP/FGdmb44vXWw+gjKWoI3
-         fVpnmi2biu0fOEbbG6F37/VKr2KmiYVPiQa73UX4EDX+XiKlaNEbena8smixcM/j3qEh
-         +G2y1Xk1RF6WzlfLvkdV29scnNz/KD1WGrgRtub6DNLXWricP0RtB4wgBlyvgsEyg1Jw
-         4Jj7uYgdyyHMCXkn+0n9o3nl5+P1Khu9fY+A2+L07RjVboJl8ygtIhN1Z4xV07nEbvIB
-         0IaCwkkUAXDikXFRrIcv5GpEC+EWIXKPyGYXKPTq8n/XijhgA5VJyAF17HE6wqnpafjT
-         RdSw==
-X-Forwarded-Encrypted: i=1; AJvYcCVpUXrax8L0c+vGQojs8BbF+1tsar9nF3ZNLgyeEIQfq7GEmhXe1RvdMHSGSHuTaLEyJ8IlD2fE6FHMLHCv@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEGhyvsmXSUYuTCVckRk4e/8kWYcITGn9TmhaAyUfJ1HU++j9j
-	/LuTeAnA4P/3CWS7jIllvsFGPTvVGJ0shyseu2H0ZWmUxHkbDiJ3b8e7bQbnC/5oBeUi5v1EiXE
-	ZnRfGe4ZcZcRth2eG+N6qSKfVH2Nhrsmjkx00SaOMxA==
-X-Gm-Gg: ASbGncvVMdpfFV5aApGuEniGbTalKEHTmTg/YldKJMe/ZN59lde9uwmVSw8XneVdsWm
-	PGeq8EmfEciTaE7oYvXRXnU/khIa5yTTEjI7eWXOYE+b/1XGMBWLD22KwhV9XdZodcxrls75LRe
-	X+DY5F09plgtEoLNe+sk3DeobghH3ak9+VyvKVdfxcpd9y+inJtffeFf92G7PTMushs/Uko/J0a
-	5NG
-X-Google-Smtp-Source: AGHT+IHe63ELG7HHSW4Jr0p22ejEnswLaJpBTfGBY8KrlhhHwCd1xtHK5nLfdWJ/GzdTJH5a222X5rXcjnstQZeQWOo=
-X-Received: by 2002:ac8:57cf:0:b0:4af:c21:41b1 with SMTP id
- d75a77b69052e-4af10ad5bdbmr146282341cf.55.1754348476999; Mon, 04 Aug 2025
- 16:01:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754349356; x=1754954156;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=C8NgMA0HX6GfrkP4AehXbgu9Qzh9g7nw7slgx4SS+9M=;
+        b=ir/idh/e0Zybg6+F9XWEYsn3U06wOw5/COnmsyD2SmmlWCq/5Cay2Sbo/2CcQc5u72
+         OscdGb7qyZx/exdf8UmiyXTgxFJElcSfYpTSgu19k6wtYJRoLtQFnd8KN9ObIQjRgUq/
+         TBg/+j+chqZfT+iMru9UgwxWAd+LlDpH9wQZqiC8DD+3ggmqqdb0enZLhvcCgZdXxH+7
+         I9CE2DJaU9F45FPS+BD2KLxwvl4NYzBTf6GThq2F0wFSNpNgmGRND21i65mNkwwD7/tl
+         DC4qDMPE48kVdhDjMDEV0bmPlV/vhGydIcOq/xDmouV20M6L45qxNxohtXzlJXNcbhW1
+         nHbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWvN23igcf78ySurRkv+RDdlYi9WDffPj0r0YKrNeWZgkM8SEVQybepE1mpXhL4vOb26lD5FNjFKs0oYWqI@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxiq7+66rx+QrJ9SrP3OOXd2Jyj4vHwdDmF6j+ajJ9vLbPqqfPZ
+	o1NFHDeqNY3RwzNL8TnxdZEYneGRCC1hVcSl33SVcJuJjqt/vyMaPOfGygxFL7GDC04iy4IacX0
+	EGvtn1A==
+X-Google-Smtp-Source: AGHT+IG2q4Q/icGmfZqa/AQL4Y/7ixWiXboOhyChxpBm5zefJHZYEBLAPMKg6t2vVqdvtV/Sahk/uwOkeqs=
+X-Received: from pgan189.prod.google.com ([2002:a63:40c6:0:b0:b42:da4:ef4])
+ (user=surenb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:9994:b0:23f:fd87:424b
+ with SMTP id adf61e73a8af0-23ffd874f47mr10654460637.44.1754349355847; Mon, 04
+ Aug 2025 16:15:55 -0700 (PDT)
+Date: Mon,  4 Aug 2025 16:15:48 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250723144649.1696299-1-pasha.tatashin@soleen.com>
- <20250723144649.1696299-15-pasha.tatashin@soleen.com> <20250729173318.GQ36037@nvidia.com>
-In-Reply-To: <20250729173318.GQ36037@nvidia.com>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Mon, 4 Aug 2025 23:00:39 +0000
-X-Gm-Features: Ac12FXy6p3_gSOnGWR1VjKZIJjskzeugSY4VSrqKY12UE9gHpXQr70kL51Ej-YY
-Message-ID: <CA+CK2bBEX6C6v63DrK-Fx2sE7fvLTZM=HX0y_j4aVDYcfrCXOg@mail.gmail.com>
-Subject: Re: [PATCH v2 14/32] liveupdate: luo_files: add infrastructure for FDs
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
-	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
-	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
-	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
-	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
-	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
-	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
-	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
-	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
-	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
-	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
-	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
-	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
-	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	saeedm@nvidia.com, ajayachandra@nvidia.com, parav@nvidia.com, 
-	leonro@nvidia.com, witu@nvidia.com
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.1.565.gc32cd1483b-goog
+Message-ID: <20250804231552.1217132-1-surenb@google.com>
+Subject: [PATCH v2 0/3] execute PROCMAP_QUERY ioctl under per-vma lock
+From: Suren Baghdasaryan <surenb@google.com>
+To: akpm@linux-foundation.org
+Cc: Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, david@redhat.com, 
+	vbabka@suse.cz, peterx@redhat.com, jannh@google.com, hannes@cmpxchg.org, 
+	mhocko@kernel.org, paulmck@kernel.org, shuah@kernel.org, adobriyan@gmail.com, 
+	brauner@kernel.org, josef@toxicpanda.com, yebin10@huawei.com, 
+	linux@weissschuh.net, willy@infradead.org, osalvador@suse.de, 
+	andrii@kernel.org, ryan.roberts@arm.com, christophe.leroy@csgroup.eu, 
+	tjmercier@google.com, kaleshsingh@google.com, aha310510@gmail.com, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kselftest@vger.kernel.org, surenb@google.com
 Content-Type: text/plain; charset="UTF-8"
 
-> > +struct liveupdate_file_ops {
-> > +     int (*prepare)(struct file *file, void *arg, u64 *data);
-> > +     int (*freeze)(struct file *file, void *arg, u64 *data);
-> > +     void (*cancel)(struct file *file, void *arg, u64 data);
-> > +     void (*finish)(struct file *file, void *arg, u64 data, bool reclaimed);
-> > +     int (*retrieve)(void *arg, u64 data, struct file **file);
-> > +     bool (*can_preserve)(struct file *file, void *arg);
-> > +};
->
-> ops structures often have an owner = THIS_MODULE
+With /proc/pid/maps now being read under per-vma lock protection we can
+reuse parts of that code to execute PROCMAP_QUERY ioctl also without
+taking mmap_lock. The change is designed to reduce mmap_lock contention
+and prevent PROCMAP_QUERY ioctl calls from blocking address space updates.
 
-Added here, and to subsystems.
+This patchset was split out of the original patchset [1] that introduced
+per-vma lock usage for /proc/pid/maps reading. It contains PROCMAP_QUERY
+tests, code refactoring patch to simplify the main change and the actual
+transition to per-vma lock.
 
->
-> It wouldn't hurt to add it here too, and some appropriate module_get's
-> though I didn't try to figure what happens if userspace races a module
-> unload with other luo operations.
+Changes since v1 [2]
+- Added Tested-by and Acked-by, per SeongJae Park
+- Fixed NOMMU case, per Vlastimil Babka
+- Renamed proc_maps_query_data to proc_maps_locking_ctx,
+per Vlastimil Babka
 
-I added try_module_get()/module_put() to register/unregister functions.
+[1] https://lore.kernel.org/all/20250704060727.724817-1-surenb@google.com/
+[2] https://lore.kernel.org/all/20250731220024.702621-1-surenb@google.com/
 
-> > +
-> > +/**
-> > + * struct liveupdate_file_handler - Represents a handler for a live-updatable
-> > + * file type.
-> > + * @ops:           Callback functions
-> > + * @compatible:    The compatibility string (e.g., "memfd-v1", "vfiofd-v1")
-> > + *                 that uniquely identifies the file type this handler supports.
-> > + *                 This is matched against the compatible string associated with
-> > + *                 individual &struct liveupdate_file instances.
-> > + * @arg:           An opaque pointer to implementation-specific context data
-> > + *                 associated with this file handler registration.
->
-> Why? This is not the normal way, if you want context data then
-> allocate a struct driver_liveupdate_file_handler and embed a normal
-> struct liveupdate_file_handler inside it, then use container_of.
+Suren Baghdasaryan (3):
+  selftests/proc: test PROCMAP_QUERY ioctl while vma is concurrently
+    modified
+  fs/proc/task_mmu: factor out proc_maps_private fields used by
+    PROCMAP_QUERY
+  fs/proc/task_mmu: execute PROCMAP_QUERY ioctl under per-vma locks
 
-Good point. I removed arg, and added handler as an argument to the
-callback functions.
+ fs/proc/internal.h                            |  15 +-
+ fs/proc/task_mmu.c                            | 149 ++++++++++++------
+ fs/proc/task_nommu.c                          |  14 +-
+ tools/testing/selftests/proc/proc-maps-race.c |  65 ++++++++
+ 4 files changed, 181 insertions(+), 62 deletions(-)
 
-> > +     fdt_for_each_subnode(file_node_offset, luo_file_fdt_in, 0) {
-> > +             bool handler_found = false;
-> > +             u64 token;
-> > +
-> > +             node_name = fdt_get_name(luo_file_fdt_in, file_node_offset,
-> > +                                      NULL);
-> > +             if (!node_name) {
-> > +                     panic("FDT subnode at offset %d: Cannot get name\n",
-> > +                           file_node_offset);
->
-> I think this approach will raise lots of questions..
->
-> I'd introduce a new function "luo_deserialize_failure" that does panic
-> internally.
->
-> Only called by places that are parsing the FDT & related but run into
-> trouble that cannot be savely recovered from.
 
-Agreed. I added a new macro in luo_internal.h:
+base-commit: 01da54f10fddf3b01c5a3b80f6b16bbad390c302
+-- 
+2.50.1.565.gc32cd1483b-goog
 
- 11 /*
- 12  * Handles a deserialization failure: devices and memory is in
-unpredictable
- 13  * state.
- 14  *
- 15  * Continuing the boot process after a failure is dangerous
-because it could
- 16  * lead to leaks of private data.
- 17  */
- 18 #define luo_restore_fail(__fmt, ...) panic(__fmt, ##__VA_ARGS__)
-
-And use it in places where we panic during deserialization.
-
-Pasha
 
