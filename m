@@ -1,113 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-56626-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56627-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70C42B19DE1
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 10:42:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9715EB19DE9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 10:45:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 692BE1730D7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 08:42:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B913B16537F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 08:45:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76E70242D72;
-	Mon,  4 Aug 2025 08:42:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 985C323A989;
+	Mon,  4 Aug 2025 08:45:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="d3ew3y4C"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MygY6za/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 666682F2D;
-	Mon,  4 Aug 2025 08:42:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005842F30;
+	Mon,  4 Aug 2025 08:45:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754296930; cv=none; b=YSnh3GT1sQAzKENF83qHyOv+V3zT+aL7/6zU2cGBszxpzZfjypyTq3SAT6lKSg/WZCecLb/U2grL+W2NmMjd+3v1iHlwsWn/onlwaeT2W/XGZmhlLNtrGRJ/s02IIbkxnfL/AUpjewx9I6GETV6NxLFIIGKheGC+IKFbf4E0qek=
+	t=1754297149; cv=none; b=aDIwjPXBqTDLznv5IOhGE76TRZEqTRDahHormxMhPdhwd2r0JCnGql3bgDdEsPn23xLMyBeLNen8YmVwO2fCNcak02JyjwyhCdeIFmAp0abEXRT9DhslyNUdlr9dtR+8++rfaYDg4bF/KODWJEECMRmlDJtlKQ4hQvEAtUpfmlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754296930; c=relaxed/simple;
-	bh=fAlwdqLalSWQzGnJHjxgzwKR+E4wl43ZeLk3xqZ1L6g=;
+	s=arc-20240116; t=1754297149; c=relaxed/simple;
+	bh=uuDHiYwQIffCG6IrU7+9PPyyyGEjkOwbsx1qo2fJD2I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Uwha3AmAUA7gnqH6snpjFMYr00w5jYDkq1CFVRItt6+toBIebqFFAgXHgVnhwwNSD/SROFHJbrmgwOOhnejvEc4ZhzN/8sZ+YEDufvHAeOOeBI/xK4R5UwKiYuZrWNP1WIHwf/V3nQKyCC//6sfjm58mRRCS+qBKwiSiZi3TnV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=d3ew3y4C; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4bwVRC3tJPz9tgT;
-	Mon,  4 Aug 2025 10:41:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1754296919;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=h5cvOoIUvXoSA3YDvNmkVTraImUN1coRcGDWgmZ0ku8=;
-	b=d3ew3y4CFKYZ+VyhNFbndX+TRRbDqEyyOElvf8iYszezLZcjM4iI59HEe5ORk8OvsLOEpS
-	WikS6cICQGDoEVQuAj3pfdaPq/TcRJmue3XirL0NjyC9KNh8k3hJPDaz3RBTVJf1ip6ibg
-	VBRQCMBbi1b4MqAutC4q4CEY94wl7eSUpI1MQtpnagSCPLI7Td8wTC5KOKNDY8Dn4l0ENJ
-	RC4QkJWB3NqKa6JyL0sTpubQfiSInAJRb4T1eNOJ6AoWsYdZtQQEmV8/myQtaz38Pdn5vn
-	29RaegynYI9FqjOl7OyBeaMUlCo/leLxpqJsCoR2ZvJIae653f2ijMpYB0TuVA==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of kernel@pankajraghav.com designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=kernel@pankajraghav.com
-Date: Mon, 4 Aug 2025 10:41:49 +0200
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Ritesh Harjani <ritesh.list@gmail.com>
-Cc: Suren Baghdasaryan <surenb@google.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, 
-	"H . Peter Anvin" <hpa@zytor.com>, Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, 
-	Mike Rapoport <rppt@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Michal Hocko <mhocko@suse.com>, David Hildenbrand <david@redhat.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, 
-	willy@infradead.org, linux-mm@kvack.org, x86@kernel.org, linux-block@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org, 
-	gost.dev@samsung.com, hch@lst.de, Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [RFC v2 2/4] mm: add static huge zero folio
-Message-ID: <6inodp2wabvb27ecfpqu7mzyxb6tktc4ec4sc4yatksfbl45eg@ndyi3ucvj5r2>
-References: <20250724145001.487878-1-kernel@pankajraghav.com>
- <20250724145001.487878-3-kernel@pankajraghav.com>
- <87tt2rr7oj.fsf@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BpSqfzdTfAKZOpiWY50uzlY0QvuvJQRJSWWmURYGMTYwmZH/dUAiykKjTPx+PjVy7yJx2CknDCO2R11BQ/BlYMjruCPJnxCHGftNQmND5upM2+/RuojpCTzhMbhX/aedcd2ypKa9DTCl5eRfEJmZPjWTuagpf4BApd3yPrSmK3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MygY6za/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29278C4CEE7;
+	Mon,  4 Aug 2025 08:45:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754297148;
+	bh=uuDHiYwQIffCG6IrU7+9PPyyyGEjkOwbsx1qo2fJD2I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MygY6za/7JQ8298Ydmi7env+67ti+AqAjBZTE1/buPxLIMF9zeHwqrdNLHfMaIJ6G
+	 PdofNwBgkHccLko+bFZh39rrqDof/vNLRRAn8XhNhV8K9g/5eIqgtXGw9h3ECLxtrQ
+	 OT/HWCPs1VpNCh6Dg/7/gbOurMduy0sAUP4cqdt9UoDiHDekMAQC8CNGlgcPjsrQFZ
+	 ZZQffZXSk785CvD2FFZPgGqTG8fDBHiwCh3A3JUW7IQnI9dF5DhpcsWVyk/2G8q7me
+	 7AEpRDoFDtfYetU3JaOXZ94Io42dvw2i+qLxEFQy9hgNRFs2ykQpUS7W7Cg/spaNCE
+	 +ZdBrDh5yrwVA==
+Date: Mon, 4 Aug 2025 10:45:44 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Luis Henriques <luis@igalia.com>, Miklos Szeredi <miklos@szeredi.hu>, 
+	Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC] Another take at restarting FUSE servers
+Message-ID: <20250804-lesezeichen-kugel-7a8b7053d236@brauner>
+References: <8734afp0ct.fsf@igalia.com>
+ <20250729233854.GV2672029@frogsfrogsfrogs>
+ <87freddbcf.fsf@igalia.com>
+ <20250731-diamant-kringeln-7f16e5e96173@brauner>
+ <20250731172946.GK2672070@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <87tt2rr7oj.fsf@gmail.com>
-X-Rspamd-Queue-Id: 4bwVRC3tJPz9tgT
+In-Reply-To: <20250731172946.GK2672070@frogsfrogsfrogs>
 
-> > This option can waste memory in small systems or systems with 64k base
-> > page size. So make it an opt-in and also add an option from individual
-> > architecture so that we don't enable this feature for larger base page
-> > size systems.
+On Thu, Jul 31, 2025 at 10:29:46AM -0700, Darrick J. Wong wrote:
+> On Thu, Jul 31, 2025 at 01:33:09PM +0200, Christian Brauner wrote:
+> > On Wed, Jul 30, 2025 at 03:04:00PM +0100, Luis Henriques wrote:
+> > > Hi Darrick,
+> > > 
+> > > On Tue, Jul 29 2025, Darrick J. Wong wrote:
+> > > 
+> > > > On Tue, Jul 29, 2025 at 02:56:02PM +0100, Luis Henriques wrote:
+> > > >> Hi!
+> > > >> 
+> > > >> I know this has been discussed several times in several places, and the
+> > > >> recent(ish) addition of NOTIFY_RESEND is an important step towards being
+> > > >> able to restart a user-space FUSE server.
+> > > >> 
+> > > >> While looking at how to restart a server that uses the libfuse lowlevel
+> > > >> API, I've created an RFC pull request [1] to understand whether adding
+> > > >> support for this operation would be something acceptable in the project.
+> > > >
+> > > > Just speaking for fuse2fs here -- that would be kinda nifty if libfuse
+> > > > could restart itself.  It's unclear if doing so will actually enable us
+> > > > to clear the condition that caused the failure in the first place, but I
+> > > > suppose fuse2fs /does/ have e2fsck -fy at hand.  So maybe restarts
+> > > > aren't totally crazy.
+> > > 
+> > > Maybe my PR lacks a bit of ambition -- it's goal wasn't to have libfuse do
+> > > the restart itself.  Instead, it simply adds some visibility into the
+> > > opaque data structures so that a FUSE server could re-initialise a session
+> > > without having to go through a full remount.
+> > > 
+> > > But sure, there are other things that could be added to the library as
+> > > well.  For example, in my current experiments, the FUSE server needs start
+> > > some sort of "file descriptor server" to keep the fd alive for the
+> > > restart.  This daemon could be optionally provided in libfuse itself,
+> > > which could also be used to store all sorts of blobs needed by the file
+> > > system after recovery is done.
+> > 
+> > Fwiw, for most use-cases you really just want to use systemd's file
+> > descriptor store to persist the /dev/fuse connection:
+> > https://systemd.io/FILE_DESCRIPTOR_STORE/
 > 
-> Can you please help me understand why will there be memory waste with
-> 64k base pagesize, if this feature gets enabled?
+> Very nice!  This is exactly what I was looking for to handle the initial
+> setup, so I'm glad I don't have to go design a protocol around that.
 > 
-> Is it because systems with 64k base pagsize can have a much larger PMD
-> size then 2M and hence this static huge folio won't really get used?
-
-Yeah, exactly. More than 2M seems to be excessive for zeroing.
-
+> > > 
+> > > >> The PR doesn't do anything sophisticated, it simply hacks into the opaque
+> > > >> libfuse data structures so that a server could set some of the sessions'
+> > > >> fields.
+> > > >> 
+> > > >> So, a FUSE server simply has to save the /dev/fuse file descriptor and
+> > > >> pass it to libfuse while recovering, after a restart or a crash.  The
+> > > >> mentioned NOTIFY_RESEND should be used so that no requests are lost, of
+> > > >> course.  And there are probably other data structures that user-space file
+> > > >> systems will have to keep track as well, so that everything can be
+> > > >> restored.  (The parameters set in the INIT phase, for example.)
+> > > >
+> > > > Yeah, I don't know how that would work in practice.  Would the kernel
+> > > > send back the old connection flags and whatnot via some sort of
+> > > > FUSE_REINIT request, and the fuse server can either decide that it will
+> > > > try to recover, or just bail out?
+> > > 
+> > > That would be an option.  But my current idea would be that the server
+> > > would need to store those somewhere and simply assume they are still OK
+> > 
+> > The fdstore currently allows to associate a name with a file descriptor
+> > in the fdstore. That name would allow you to associate the options with
+> > the fuse connection. However, I would not rule it out that additional
+> > metadata could be attached to file descriptors in the fdstore if that's
+> > something that's needed.
 > 
-> Just want to understand this better. On Power with Radix MMU, PMD size
-> is still 2M, but with Hash it can be 16M.
-> So I was considering if we should enable this with Radix. Hence the ask
-> to better understand this.
+> Names are useful, I'd at least want "fusedev", "fsopen", and "device".
+> 
+> If someone passed "journal_dev=/dev/sdaX" to fuse2fs then I'd want it to
+> be able to tell mountfsd "Hey, can you also open /dev/sdaX and put it in
+> the store as 'journal_dev'?" Then it just has to wait until the fd shows
+> up, and it can continue with the mount process.
+> 
+> Though the "device" argument needn't be a path, so to be fully general
+> mountfsd and the fuse server would have to handshake that as well.
 
-I enabled only for x86 as a part of this series to reduce the scope. But
-the idea is to enable for all architectures with reasonable PMD size,
-like ARM with 4k, Power with Radix MMU, etc.
-
-Once we get the base patches up, I can follow up with enabling for those
-architectures.
-
---
-Pankaj
+Fwiw, to attach arbitrary metadata to a file descriptor the easiest
+thing to do would be to stash both a (fuse server) file descriptor and
+then also a memfd via memfd_create() that e.g., can contain all the
+server options that you want to store.
 
