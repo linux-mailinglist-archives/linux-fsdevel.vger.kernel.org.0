@@ -1,227 +1,206 @@
-Return-Path: <linux-fsdevel+bounces-56666-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56667-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13285B1A721
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 18:26:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74293B1A722
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 18:26:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CA9717F8CC
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 16:26:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 704C117F1F3
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 16:26:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D98D26B973;
-	Mon,  4 Aug 2025 16:26:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C00924293B;
+	Mon,  4 Aug 2025 16:26:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S4NhubTU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W+bYsi7N"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02045218AB0
-	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Aug 2025 16:26:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E98BB21FF5C
+	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Aug 2025 16:26:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754324768; cv=none; b=GpztJBeVb9zwPDIWDBFBnYNaOFpxaHux5BwzQvTbjFPPiJnYnZd3WpyknW5Yi7yyUs/kvjLRN4ziDE2E9paf2EHuqoGJ8CRpPWSPkb6OKC4uyPSBGb8O1iqW98Vu8zhemAXnb/l2Vkb+tzt0tnPlE6K8U4d9nv0+05qRLJrHN+4=
+	t=1754324791; cv=none; b=WL9XrGccddSibBGK3b6DsxMSPTteTNIxJcOQLJslPE7/X3evou3Os0Pjh1XCmH6X00acvDW0zh4PvR9QAqHZwIp2kYsX+ncYNbR+94aJ4fzP01qbyGdguP1rEIZdTkCC13TzZcTNsv7dvXaQQDxDRN8oIHs7zzgNCAscWxWefOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754324768; c=relaxed/simple;
-	bh=R218sPVSXYnFCGqZb+b/cH4HzZ5xrpQ7AYZGd9GOFz4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=l8/XaKJCyhq1JhW7iVbZmMWvgGZKMRpGik9ZvD5dLinESy1q18PgGbum/12qQfOihzW4FoKkEQmNfrmUeqsWpvFFJpxtn16Sx9wIHwmI3PihDKQBa4vc4zv4ISmVH9av7W7kfBuFVl0VrDzY1+MHD2jWpaOVOC8kSiNS8NuDR7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S4NhubTU; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754324764;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sn5uts2CJYwTpLEONTKxRvUqhKZom385WAkIxWVvqP8=;
-	b=S4NhubTU8HOTppy5zpxKHczTzjwf9HgOjasgiwupy9dUaegsAfpQ3Bz+clD8wwpb4tkZo6
-	yJE5pANDZMjWtLWVpj7AObXuYT4kypdRg/8ZRaU3+uRCLd0UJkqB2Nk4EViQ2KFmPEQScK
-	mOw3EcZ3Q0DIEzXEdDrAfmJTWe1WNSg=
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com
- [209.85.166.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-288-F2N1gXpFORCIQJsAHJnMsA-1; Mon, 04 Aug 2025 12:26:03 -0400
-X-MC-Unique: F2N1gXpFORCIQJsAHJnMsA-1
-X-Mimecast-MFC-AGG-ID: F2N1gXpFORCIQJsAHJnMsA_1754324763
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3e3ea64a166so9585815ab.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Aug 2025 09:26:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754324763; x=1754929563;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sn5uts2CJYwTpLEONTKxRvUqhKZom385WAkIxWVvqP8=;
-        b=T5vr91XIVUOxmHxdFG4EW/9dyKt0y9/LoO70l32lmRlGnE21DjcN7sxawbRjgywnvT
-         DV+M3CVz96jD1pAj8ofJ9NS4b3wXRK+f1LEmSWRaY9LQSu/4JnaQ0h19d3QElowuChwG
-         Z3SNQajNMTI0yT9vyGvBFkOr0edI3NSnljrIknZibAH+bAaAoze4dvpl3ysdutff2/ej
-         2lWD/9KTqKM2DTq2psSVD88F4G433TVAKPkVF/3h1q0we3zDZcXYDPbPZG8GCgh80ALs
-         ukdsdMswk2pDmqI2PrNZ+1N1GJ1ULxsMdv38Rp9Ta07pjLSVOJzEprcfFIng0LEIadAY
-         Ag+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXxg/j1P5mFrrargA7I7Ut/OVSDu1vblknRCtJ6OJVTVDIlHIDwbopIF4fi8MZw1UKKxIx9vnClB+1w4K0j@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnhS2kQuM6NF22In/h8vVsRYb4oNxH3jyJU0HUBZDUhgkDed7i
-	5gQdyd7Tagpiw8lEDPaUf+xqGL1k9kDgEWj7Cn6quJgMZ8Hq/Ae8tfUvbTh5E9koCJ9SmguruBu
-	O2UPZkzMJ8BEYST30izMzXB80SUx6tIKIYYGsDe7HV6ClKNfq9I/nGRo2B1a8ngq0+xw=
-X-Gm-Gg: ASbGncszK1+TCN6QAm9F+Oj7FejWdDt+RBJtxhbLjWOc0Hgk+gSdXtht7LkeS2URCpd
-	5ShM3hoVyMVpRzZSXVWT1HputsEMgC9ndo58ugoxqJLOcIfdeWAfnHZZrIxhqXetPHnHeWXnr/P
-	m5/5i6HrTx9N/Z5AXusWHyRZ8PIZePcyORPyrxEV1+73005vG2QX8HANW0CnqYAz8hyjOCPO6If
-	CCLA32y04XQx5BeeHqqelAPk1d9o25D8VNkT5A+VKztHQRwDdslWNUqrnZUSXQd7IslXYC7XLxu
-	Nyy8i3TZzuJq5e2SQyAX414oz754rj4TIgLlaTUQSKE=
-X-Received: by 2002:a05:6e02:3084:b0:3dd:ce1c:f1bc with SMTP id e9e14a558f8ab-3e4161f8ab9mr48406515ab.7.1754324762658;
-        Mon, 04 Aug 2025 09:26:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH/PktnFn38IcDhPnUKHUSzBQWRLjAnmL+eMF8KeCeGRLPNsN/Ln/N48PmpMDQmWQ53TzUUGA==
-X-Received: by 2002:a05:6e02:3084:b0:3dd:ce1c:f1bc with SMTP id e9e14a558f8ab-3e4161f8ab9mr48406315ab.7.1754324762188;
-        Mon, 04 Aug 2025 09:26:02 -0700 (PDT)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50a55b4cfa1sm3276936173.29.2025.08.04.09.26.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Aug 2025 09:26:01 -0700 (PDT)
-Date: Mon, 4 Aug 2025 10:25:59 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Alex Mastro <amastro@fb.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Jason Gunthorpe <jgg@ziepe.ca>, Keith
- Busch <kbusch@kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-fsdevel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
- <kvm@vger.kernel.org>
-Subject: Re: [PATCH v3] vfio/pci: print vfio-device syspath to fdinfo
-Message-ID: <20250804102559.5f1e8bcf.alex.williamson@redhat.com>
-In-Reply-To: <20250801-show-fdinfo-v3-1-165dfcab89b9@fb.com>
-References: <20250801-show-fdinfo-v3-1-165dfcab89b9@fb.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1754324791; c=relaxed/simple;
+	bh=L5ACyzAlA0YlxAF7uYe/Bpae6JGRGz2cx1uIB+/4ZTc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=uZpEVie7U3PGWwZftYGOM1mRQN0EAIq2irAlyrxmb0rBourEEVfV5TWldCqHACEnrsFx9FfLYnOEuQqoXNku23GtMCDNnqLyMC2WbxDSvmWhlCBy3dgbRjKNR9LwdY+E7CpsGCAdCgiSER6xdjqXxdbz/S2cWAcIvGDrd+Y+cv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W+bYsi7N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C86D0C4CEE7;
+	Mon,  4 Aug 2025 16:26:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754324790;
+	bh=L5ACyzAlA0YlxAF7uYe/Bpae6JGRGz2cx1uIB+/4ZTc=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=W+bYsi7NBjs3nD34FDIGMu1pn3rCxNEOgweJjcvVNxgjiYW2/sUWAcgdYh1tRRZWZ
+	 GxcToDthAhyDufHnjIqhBh9Dtr60ZrOR0vFR68G/fwmN3+hZkSzMMxsPFUxS0YyY4g
+	 z6mWIwGrwoVkG4VNMIn+BgI37IfyBe9NjTLvXmYvQ5GK0/L/XAZtx03I+ohfCDIg6D
+	 ObTk9DOyn3tDSq/r/oYP/c9Hy3iLJAJrM7AIzF+dQAiE+0Dr+0CwwRjLqr51Nc634p
+	 Qc0Jj8zjQr35qvQ4zSZWfEtu9OTD0CS8MNB03m8Owvrvc29w6LN7I/PHx9T1z5lYWU
+	 gb6/Ht7IDBdmw==
+Message-ID: <51c6bdaca7b9cde34a3114208283098de827b639.camel@kernel.org>
+Subject: Re: [RFC PATCH v1 08/10] mm: refactor clearing dirty stats into
+ helper function
+From: Jeff Layton <jlayton@kernel.org>
+To: Joanne Koong <joannelkoong@gmail.com>, linux-mm@kvack.org, 
+	brauner@kernel.org
+Cc: willy@infradead.org, jack@suse.cz, hch@infradead.org, djwong@kernel.org,
+ 	linux-fsdevel@vger.kernel.org, kernel-team@meta.com
+Date: Mon, 04 Aug 2025 12:26:28 -0400
+In-Reply-To: <20250801002131.255068-9-joannelkoong@gmail.com>
+References: <20250801002131.255068-1-joannelkoong@gmail.com>
+	 <20250801002131.255068-9-joannelkoong@gmail.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
+ n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
+ egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
+ T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
+ 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
+ YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
+ VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
+ cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
+ CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
+ LZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BB
+ MBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4
+ gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI
+ 7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/r0km
+ R/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2B
+ rQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRI
+ ONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZ
+ Wf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQO
+ lDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7Rj
+ iR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27Xi
+ QQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBM
+ YXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKC
+ wQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9q
+ LqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC
+ 3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoa
+ c8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3F
+ LpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx3bri75n1
+ TkBYGmqAXy9usCkHIsG5CBHmphv9MHmqMZQVsxvCzfnI5IO1+7MoloeeW/lxuyd0pU88dZsV/riHw
+ 87i2GJUJtVlMl5IGBNFpqoNUoqmvRfEMeXhy/kUX4Xc03I1coZIgmwLmCSXwx9MaCPFzV/dOOrju2
+ xjO+2sYyB5BNtxRqUEyXglpujFZqJxxau7E0eXoYgoY9gtFGsspzFkVNntamVXEWVVgzJJr/EWW0y
+ +jNd54MfPRqH+eCGuqlnNLktSAVz1MvVRY1dxUltSlDZT7P2bUoMorIPu8p7ZCg9dyX1+9T6Muc5d
+ Hxf/BBP/ir+3e8JTFQBFOiLNdFtB9KZWZmIExheXRvbiA8amxheXRvbkBzYW1iYS5vcmc+iQI4BBM
+ BAgAiBQJOldK9AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRAADmhBGVaCFWgWD/0ZRi4h
+ N9FK2BdQs9RwNnFZUr7JidAWfCrs37XrA/56olQl3ojn0fQtrP4DbTmCuh0SfMijB24psy1GnkPep
+ naQ6VRf7Dxg/Y8muZELSOtsv2CKt3/02J1BBitrkkqmHyni5fLLYYg6fub0T/8Kwo1qGPdu1hx2BQ
+ RERYtQ/S5d/T0cACdlzi6w8rs5f09hU9Tu4qV1JLKmBTgUWKN969HPRkxiojLQziHVyM/weR5Reu6
+ FZVNuVBGqBD+sfk/c98VJHjsQhYJijcsmgMb1NohAzwrBKcSGKOWJToGEO/1RkIN8tqGnYNp2G+aR
+ 685D0chgTl1WzPRM6mFG1+n2b2RR95DxumKVpwBwdLPoCkI24JkeDJ7lXSe3uFWISstFGt0HL8Eew
+ P8RuGC8s5h7Ct91HMNQTbjgA+Vi1foWUVXpEintAKgoywaIDlJfTZIl6Ew8ETN/7DLy8bXYgq0Xzh
+ aKg3CnOUuGQV5/nl4OAX/3jocT5Cz/OtAiNYj5mLPeL5z2ZszjoCAH6caqsF2oLyAnLqRgDgR+wTQ
+ T6gMhr2IRsl+cp8gPHBwQ4uZMb+X00c/Amm9VfviT+BI7B66cnC7Zv6Gvmtu2rEjWDGWPqUgccB7h
+ dMKnKDthkA227/82tYoFiFMb/NwtgGrn5n2vwJyKN6SEoygGrNt0SI84y6hEVbQlSmVmZiBMYXl0b
+ 24gPGpsYXl0b25AcHJpbWFyeWRhdGEuY29tPokCOQQTAQIAIwUCU4xmKQIbAwcLCQgHAwIBBhUIAg
+ kKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIV1H0P/j4OUTwFd7BBbpoSp695qb6HqCzWMuExsp8nZjr
+ uymMaeZbGr3OWMNEXRI1FWNHMtcMHWLP/RaDqCJil28proO+PQ/yPhsr2QqJcW4nr91tBrv/MqItu
+ AXLYlsgXqp4BxLP67bzRJ1Bd2x0bWXurpEXY//VBOLnODqThGEcL7jouwjmnRh9FTKZfBDpFRaEfD
+ FOXIfAkMKBa/c9TQwRpx2DPsl3eFWVCNuNGKeGsirLqCxUg5kWTxEorROppz9oU4HPicL6rRH22Ce
+ 6nOAON2vHvhkUuO3GbffhrcsPD4DaYup4ic+DxWm+DaSSRJ+e1yJvwi6NmQ9P9UAuLG93S2MdNNbo
+ sZ9P8k2mTOVKMc+GooI9Ve/vH8unwitwo7ORMVXhJeU6Q0X7zf3SjwDq2lBhn1DSuTsn2DbsNTiDv
+ qrAaCvbsTsw+SZRwF85eG67eAwouYk+dnKmp1q57LDKMyzysij2oDKbcBlwB/TeX16p8+LxECv51a
+ sjS9TInnipssssUDrHIvoTTXWcz7Y5wIngxDFwT8rPY3EggzLGfK5Zx2Q5S/N0FfmADmKknG/D8qG
+ IcJE574D956tiUDKN4I+/g125ORR1v7bP+OIaayAvq17RP+qcAqkxc0x8iCYVCYDouDyNvWPGRhbL
+ UO7mlBpjW9jK9e2fvZY9iw3QzIPGKtClKZWZmIExheXRvbiA8amVmZi5sYXl0b25AcHJpbWFyeWRh
+ dGEuY29tPokCOQQTAQIAIwUCU4xmUAIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOa
+ EEZVoIVzJoQALFCS6n/FHQS+hIzHIb56JbokhK0AFqoLVzLKzrnaeXhE5isWcVg0eoV2oTScIwUSU
+ apy94if69tnUo4Q7YNt8/6yFM6hwZAxFjOXR0ciGE3Q+Z1zi49Ox51yjGMQGxlakV9ep4sV/d5a50
+ M+LFTmYSAFp6HY23JN9PkjVJC4PUv5DYRbOZ6Y1+TfXKBAewMVqtwT1Y+LPlfmI8dbbbuUX/kKZ5d
+ dhV2736fgyfpslvJKYl0YifUOVy4D1G/oSycyHkJG78OvX4JKcf2kKzVvg7/Rnv+AueCfFQ6nGwPn
+ 0P91I7TEOC4XfZ6a1K3uTp4fPPs1Wn75X7K8lzJP/p8lme40uqwAyBjk+IA5VGd+CVRiyJTpGZwA0
+ jwSYLyXboX+Dqm9pSYzmC9+/AE7lIgpWj+3iNisp1SWtHc4pdtQ5EU2SEz8yKvDbD0lNDbv4ljI7e
+ flPsvN6vOrxz24mCliEco5DwhpaaSnzWnbAPXhQDWb/lUgs/JNk8dtwmvWnqCwRqElMLVisAbJmC0
+ BhZ/Ab4sph3EaiZfdXKhiQqSGdK4La3OTJOJYZphPdGgnkvDV9Pl1QZ0ijXQrVIy3zd6VCNaKYq7B
+ AKidn5g/2Q8oio9Tf4XfdZ9dtwcB+bwDJFgvvDYaZ5bI3ln4V3EyW5i2NfXazz/GA/I/ZtbsigCFc
+ 8ftCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIgUCWe8u6AIbAwYLCQg
+ HAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1oJVAE37uW308UpVSD
+ 2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOTtmOdz4ZN2tdvNgozz
+ uxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+9eiVUNpxF4SiU4i9J
+ DfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPcog7xvR5ENPH19ojRD
+ CHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/WprhsIM7U9pse1f1g
+ Yy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EBny71CZrOgD6kJwPVV
+ AaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9KXE6fF7HzKxKuZMJO
+ aEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTiCThbqsB20VrbMjlhp
+ f8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XRMJBAB/UYb6FyC7S+m
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Fri, 1 Aug 2025 13:50:56 -0700
-Alex Mastro <amastro@fb.com> wrote:
-
-> Print the PCI device syspath to a vfio device's fdinfo. This enables tools
-> to query which device is associated with a given vfio device fd.
-> 
-> This results in output like below:
-> 
-> $ cat /proc/"$SOME_PID"/fdinfo/"$VFIO_FD" | grep vfio
-> vfio-device-syspath: /sys/devices/pci0000:e0/0000:e0:01.1/0000:e1:00.0/0000:e2:05.0/0000:e8:00.0
-> 
-> Signed-off-by: Alex Mastro <amastro@fb.com>
+On Thu, 2025-07-31 at 17:21 -0700, Joanne Koong wrote:
+> Move logic for clearing dirty stats into a helper function
+> both folio_account_cleaned() and __folio_clear_dirty_for_io() invoke.
+>=20
+> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
 > ---
-> Changes in v3:
-> - Remove changes to vfio_pci.c
-> - Add section to Documentation/filesystems/proc.rst
-> - Link to v2: https://lore.kernel.org/all/20250724-show-fdinfo-v2-1-2952115edc10@fb.com
-> Changes in v2:
-> - Instead of PCI bdf, print the fully-qualified syspath (prefixed by
->   /sys) to fdinfo.
-> - Rename the field to "vfio-device-syspath". The term "syspath" was
->   chosen for consistency e.g. libudev's usage of the term.
-> - Link to v1: https://lore.kernel.org/r/20250623-vfio-fdinfo-v1-1-c9cec65a2922@fb.com
-> ---
->  Documentation/filesystems/proc.rst | 14 ++++++++++++++
->  drivers/vfio/vfio_main.c           | 20 ++++++++++++++++++++
->  include/linux/vfio.h               |  2 ++
->  3 files changed, 36 insertions(+)
-> 
-> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-> index 2a17865dfe39..fc5ed3117834 100644
-> --- a/Documentation/filesystems/proc.rst
-> +++ b/Documentation/filesystems/proc.rst
-> @@ -2162,6 +2162,20 @@ DMA Buffer files
->  where 'size' is the size of the DMA buffer in bytes. 'count' is the file count of
->  the DMA buffer file. 'exp_name' is the name of the DMA buffer exporter.
->  
-> +VFIO Device files
-> +~~~~~~~~~~~~~~~~
-> +
-> +::
-> +
-> +	pos:    0
-> +	flags:  02000002
-> +	mnt_id: 17
-> +	ino:    5122
-> +	vfio-device-syspath: /sys/devices/pci0000:e0/0000:e0:01.1/0000:e1:00.0/0000:e2:05.0/0000:e8:00.0
-> +
-> +where 'vfio-device-syspath' is the sysfs path corresponding to the VFIO device
-> +file.
-> +
->  3.9	/proc/<pid>/map_files - Information about memory mapped files
->  ---------------------------------------------------------------------
->  This directory contains symbolic links which represent memory mapped files
-> diff --git a/drivers/vfio/vfio_main.c b/drivers/vfio/vfio_main.c
-> index 1fd261efc582..37a39cee10ed 100644
-> --- a/drivers/vfio/vfio_main.c
-> +++ b/drivers/vfio/vfio_main.c
-> @@ -28,6 +28,7 @@
->  #include <linux/pseudo_fs.h>
->  #include <linux/rwsem.h>
->  #include <linux/sched.h>
-> +#include <linux/seq_file.h>
->  #include <linux/slab.h>
->  #include <linux/stat.h>
->  #include <linux/string.h>
-> @@ -1354,6 +1355,22 @@ static int vfio_device_fops_mmap(struct file *filep, struct vm_area_struct *vma)
->  	return device->ops->mmap(device, vma);
+>  mm/page-writeback.c | 23 ++++++++++++-----------
+>  1 file changed, 12 insertions(+), 11 deletions(-)
+>=20
+> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+> index c1fec76ee869..f5916711db2d 100644
+> --- a/mm/page-writeback.c
+> +++ b/mm/page-writeback.c
+> @@ -2703,6 +2703,14 @@ static void folio_account_dirtied(struct folio *fo=
+lio,
+>  	}
 >  }
->  
-> +#ifdef CONFIG_PROC_FS
-> +static void vfio_device_show_fdinfo(struct seq_file *m, struct file *filep)
+> =20
+> +static void __clear_dirty_for_io_stats(struct folio *folio,
+> +			struct bdi_writeback *wb, long nr_pages)
 > +{
-> +	char *path;
-> +	struct vfio_device_file *df = filep->private_data;
-> +	struct vfio_device *device = df->device;
-> +
-> +	path = kobject_get_path(&device->dev->kobj, GFP_KERNEL);
-> +	if (!path)
-> +		return;
-> +
-> +	seq_printf(m, "vfio-device-syspath: /sys%s\n", path);
-> +	kfree(path);
+> +	lruvec_stat_mod_folio(folio, NR_FILE_DIRTY, -nr_pages);
+> +	zone_stat_mod_folio(folio, NR_ZONE_WRITE_PENDING, -nr_pages);
+> +	wb_stat_mod(wb, WB_RECLAIMABLE, -nr_pages);
 > +}
-> +#endif
 > +
->  const struct file_operations vfio_device_fops = {
->  	.owner		= THIS_MODULE,
->  	.open		= vfio_device_fops_cdev_open,
-> @@ -1363,6 +1380,9 @@ const struct file_operations vfio_device_fops = {
->  	.unlocked_ioctl	= vfio_device_fops_unl_ioctl,
->  	.compat_ioctl	= compat_ptr_ioctl,
->  	.mmap		= vfio_device_fops_mmap,
-> +#ifdef CONFIG_PROC_FS
-> +	.show_fdinfo	= vfio_device_show_fdinfo,
-> +#endif
->  };
->  
->  static struct vfio_device *vfio_device_from_file(struct file *file)
-> diff --git a/include/linux/vfio.h b/include/linux/vfio.h
-> index 707b00772ce1..54076045a44f 100644
-> --- a/include/linux/vfio.h
-> +++ b/include/linux/vfio.h
-> @@ -16,6 +16,7 @@
->  #include <linux/cdev.h>
->  #include <uapi/linux/vfio.h>
->  #include <linux/iova_bitmap.h>
-> +#include <linux/seq_file.h>
->  
->  struct kvm;
->  struct iommufd_ctx;
-> @@ -135,6 +136,7 @@ struct vfio_device_ops {
->  	void	(*dma_unmap)(struct vfio_device *vdev, u64 iova, u64 length);
->  	int	(*device_feature)(struct vfio_device *device, u32 flags,
->  				  void __user *arg, size_t argsz);
-> +	void	(*show_fdinfo)(struct vfio_device *device, struct seq_file *m);
->  };
+>  /*
+>   * Helper function for deaccounting dirty page without writeback.
+>   *
+> @@ -2711,9 +2719,7 @@ void folio_account_cleaned(struct folio *folio, str=
+uct bdi_writeback *wb)
+>  {
+>  	long nr =3D folio_nr_pages(folio);
+> =20
+> -	lruvec_stat_mod_folio(folio, NR_FILE_DIRTY, -nr);
+> -	zone_stat_mod_folio(folio, NR_ZONE_WRITE_PENDING, -nr);
+> -	wb_stat_mod(wb, WB_RECLAIMABLE, -nr);
+> +	__clear_dirty_for_io_stats(folio, wb, nr);
+>  	task_io_account_cancelled_write(nr * PAGE_SIZE);
+>  }
+> =20
+> @@ -2977,14 +2983,9 @@ static bool __folio_clear_dirty_for_io(struct foli=
+o *folio, bool update_stats)
+>  		 */
+>  		wb =3D unlocked_inode_to_wb_begin(inode, &cookie);
+>  		if (folio_test_clear_dirty(folio)) {
+> -			if (update_stats) {
+> -				long nr =3D folio_nr_pages(folio);
+> -				lruvec_stat_mod_folio(folio, NR_FILE_DIRTY,
+> -						      -nr);
+> -				zone_stat_mod_folio(folio,
+> -						    NR_ZONE_WRITE_PENDING, -nr);
+> -				wb_stat_mod(wb, WB_RECLAIMABLE, -nr);
+> -			}
+> +			if (update_stats)
+> +				__clear_dirty_for_io_stats(folio, wb,
+> +						folio_nr_pages(folio));
+>  			ret =3D true;
+>  		}
+>  		unlocked_inode_to_wb_end(inode, &cookie);
 
-Changes in this file look spurious, vfio_device_ops vs
-vfio_device_fops?  Nothing implements or consumes the vfio_device_ops
-callback here.  Thanks,
 
-Alex
+This seems like a nice cleanup that isn't dependent on the rest of the
+series.
 
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
