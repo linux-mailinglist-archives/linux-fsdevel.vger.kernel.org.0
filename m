@@ -1,76 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-56632-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56633-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 040D3B19FD4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 12:41:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A5F9B1A00B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 12:54:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F1AF04E115D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 10:41:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D85CC3BC20A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 10:54:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 566902517AC;
-	Mon,  4 Aug 2025 10:41:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443C4252904;
+	Mon,  4 Aug 2025 10:54:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="EwLd8BBB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uh2Gn0q0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE0022D7B6;
-	Mon,  4 Aug 2025 10:41:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA4681D5CF2;
+	Mon,  4 Aug 2025 10:54:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754304094; cv=none; b=LkT4Emf/u7dYFwPt9OG58C75QQOFaV7Dd3rJzR+41zPfF1SG37M/+SvP1Na1mbYpHuy0uZhEjWKGDxndoD2vz8VbDvrQRbmlR+8OySBB7GNJFzhJ7Qofc5PUAJNq1qcYAW8Xn9mCrCvQCVLPBliA4A+cBOsQByyJA+wlVAZMQAk=
+	t=1754304871; cv=none; b=b5VphjqpHvKTXGlnKOp68hfAGc+NPVccUyln8omoPCg3CzYpj8kAtrCASjhxsG+nIlLFYr+crIjZiTgzb4iZGWSWitu2RHlsba3CQUEcJ+RrFJKUlHe3+PZIdnRcV6+TUQPNhtlBd2FcKmF5Qfw6Pg6we2198TP7BbilWgeyp5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754304094; c=relaxed/simple;
-	bh=DuAPQTcj/Xn7GP+w5RSFpF9rlE6svspfioxz3YtrKHA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RiSVOl3a/U7wfay0qL2rlIOTKWHb1z6sPxW6AW/D7lhkpTumujlpgpVsNsMIT/KfcjJn7vvU5ca6sFegTdFm8hwUf2YXiVTkBrfZPYgc5BMuelZ6XgVNN4e7G7/9bAfpQtyKw6YUPyO3jRKwzh7IpXbK2EHPmsPVjRr7CEOqs6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=EwLd8BBB; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4bwY4y1NrSz9slM;
-	Mon,  4 Aug 2025 12:41:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1754304082;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Q9pCjdnFkpARgLiLLxUhk5Y4uqhi7xM89tzgN6X+mCo=;
-	b=EwLd8BBBf0Mcwjbxl4UWRmEjeI+PvXFRnOlyAcdlvs7ZCSaD7oa1wWbNkFGMhtgTz/F+yf
-	YpWez/5yZ1rV3coIzohJFS5TW0q8NXb9iaiPQCu51aXspnhpo78qvalqTWdhW/nwEsxiul
-	nXfgTNrWEQnQyjYHumRXXvtS2Dwpg+EuDY2oCBPKp1UdbGRRCac/+0af7G/DWfxzLehhBk
-	bfYFdCQQzYHn9nyS2qXS6Q+srDRc56wjDKnOkTNKHgCjG5Seb/Qsup2XO0DT3n5G3cOjva
-	7gjkSnm8jRflzyIEzuQGdBNK3YyOAOORSmcQLJKb70d8AY9tRZlofWRqEhSSOg==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of kernel@pankajraghav.com designates 2001:67c:2050:b231:465::1 as permitted sender) smtp.mailfrom=kernel@pankajraghav.com
-Date: Mon, 4 Aug 2025 12:41:09 +0200
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Suren Baghdasaryan <surenb@google.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, 
-	"H . Peter Anvin" <hpa@zytor.com>, Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, 
-	Mike Rapoport <rppt@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Michal Hocko <mhocko@suse.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, 
-	willy@infradead.org, linux-mm@kvack.org, x86@kernel.org, linux-block@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org, 
-	gost.dev@samsung.com, hch@lst.de, Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [RFC v2 2/4] mm: add static huge zero folio
-Message-ID: <cjlxwzcx57oss5rpmbufywbnz7pha5vueu3vnythp4rvn6bcf2@m7yhkifpqsio>
-References: <20250724145001.487878-1-kernel@pankajraghav.com>
- <20250724145001.487878-3-kernel@pankajraghav.com>
- <d8899e72-5735-4779-9222-5f27f8c16b80@redhat.com>
+	s=arc-20240116; t=1754304871; c=relaxed/simple;
+	bh=LLYmh07tODzNKrSqXaL0z3ysxtPy/JmLxTic6NiwVjE=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ov2B4Z+1XE7OwKefx/80lvOVxzdoz0RgshwJgXxU4+HcVH4yh+C9ZFPjK9ar1tJloWMBdZIsbuMEAqg+30p0cI8d8KsEN1ejUQztOX+wxsmXhDyoBbNI7qI79QdZGwA+FwK7Radx7o/FK/VQQHy2AYpDR2UXsuztWAmGuyh7iwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uh2Gn0q0; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-33211f7f06eso35695241fa.2;
+        Mon, 04 Aug 2025 03:54:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754304868; x=1754909668; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=X4RxvHMamXD48DKrjLVxOGxx8Xo0bomZZqlvqy6+mMo=;
+        b=Uh2Gn0q05+FYkWk0VZulC4Q/x7+Yq8YKAgFG8Zgy0lXIKYjRxrUY01lGBijYFcWzI9
+         czAGM84crafWTALrr2y7nFIqOB8c/KLZRLDMPxzE9Ip8JouprTpkzDfmvytNaKwhNlSy
+         8rmfj5d279xMnRcDO/8XvjeC72IWIRxrE3JqhezxFdnPlBcu4zDWuwQ9xtFKMVnlHzdw
+         CtdPeXs63CMRXYKQfIeAjPhZswnmsSzE7czti+pHuGuvVkbxKHH2oL08cYUy4yPjfP/+
+         DFoXeUr7wWjwGgNAsY0zInJFA0o+0yXia5SKyKub2ckNpNc+L/aSH6fDntuTS+AOZ9zc
+         xt8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754304868; x=1754909668;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X4RxvHMamXD48DKrjLVxOGxx8Xo0bomZZqlvqy6+mMo=;
+        b=L2k0w2eopkCw+wo7lSvRcthu+P6ngN0GBh3oE8S99h7ARNfuNwcJ3sqaTSyvTBj8Ob
+         RTSXMzCFRRW2CIgn4FDiu3z2jxl8WNnd0fQc0LFxy5UoxCq7EvsihPil25VUu0CRtASJ
+         62jUrqE+AJYaIkd6EQ+QqwhBHUI+mYL59VhAMFuiBFvPp+k6fxDA5i7RHGObo59NHIUs
+         SC0liQsrwFN2jfN8OlF9NAehnRMRtktr0GMMkok+yymTk5Xh8WlKlMf+PnrLYfQRFy9s
+         Au/+ijwa3sXmZQtHcB9r0K94mTtQlI9y0fXRkO0DrRVQR+ijX+dMq4/fDNqPg6q42BUW
+         xLDw==
+X-Forwarded-Encrypted: i=1; AJvYcCUNfsY32aenR5TTYjLopQxJcJW0YI1xBB15q1f/KgaN0jxS+wet7xInMsnHq3fJNe2g0zRHDb9pHNzyXGHDLg==@vger.kernel.org, AJvYcCV/LudbpFr3ZPYbKPc3NK9XAPQg0rMwtpxN0Xty5Ekj2F1hmmn76FzkZq7PEUxB1C97ixU=@vger.kernel.org, AJvYcCVnN3c06z5ESZ1w1IyzYUF3altTy9tMBWdDjhgwvwHEYFYEeSxVI3DxnZVmWdG4ScY6m3ok3flBauiIrBMf@vger.kernel.org, AJvYcCWpsnTL3WvYW42tMrSExp3+NyfUBc6M0ldR1s7ZPBt74xruaoSI55CEUpkcyk5YF61O5Cw73UnMfoPOOw==@vger.kernel.org, AJvYcCXGCNjxKLGpTSlJtKBHuDRqI6JhZ66Ka9+FjLr4fpklNr9f+Www1vShUoVavwQWGB+SgtwBuUc2/JzksrmzBfsvV/4n@vger.kernel.org, AJvYcCXin6r0nuOsGKAL5x+yojTjbWF1YZjXeAY0ylQCgisn9tOqxyGbdNobIuDq93XJM8/l7uN90yKk/yYs@vger.kernel.org
+X-Gm-Message-State: AOJu0YxR2En5uTOoAn20N13788kkpolieOSeTRTfBgVEGUewKM2qeSwM
+	8uxeiVJ4+KMxNhIvlvpil10gu80jPi1Hvwm9tx55Pu/2bk0w0iptlU0A
+X-Gm-Gg: ASbGnctajp32N59rDl1u87AMGHhdS7VjKpeOfg6gYAkEHPsB6sAmXkESHOoaYNuibS0
+	lozIQfUJel+4HJA3JC/ruIT2LLwF1EyvefBW1TVVPGNC4dv9v2MdeagVhSCbZ2kxi6TF3WwbFMe
+	YBMTdGTBMGK3SzgfzwA4W4fiYQDRi3c/Uk4cCya9Ep4Z2vK8IlMVHbysYVH6qHwLrCG16t3N63M
+	EwlT8h0QoxNEsFfn9/RmFWrzjANfWwyV7uaeJysIG2VHjmf5g7oCIywY8Ao3GKWP19r4dVBV+8t
+	9iMLuARGEXs+h2EgkrgUrFhzVMAfweC5fXHNn8H79DEjQs/QtRm7IDFgpzFzRzML5qm6O6/H4Uo
+	2CEb5YbUZSHOAjx8FhaGn/4bhEc365o3b3Ouz9X58xwgVk7bDUW84ha/tfCy4
+X-Google-Smtp-Source: AGHT+IGJZZFcFy8qBb/9BVJvSpxogtzfM17wxVB5B1bfSxKSrolhCiqzChAu468YcmIMkpSbHFvpbA==
+X-Received: by 2002:a05:651c:20ce:20b0:332:4a77:ad9f with SMTP id 38308e7fff4ca-3325677af91mr12521651fa.24.1754304867614;
+        Mon, 04 Aug 2025 03:54:27 -0700 (PDT)
+Received: from pc636 (host-95-203-22-207.mobileonline.telia.com. [95.203.22.207])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-33238271bdfsm16396311fa.6.2025.08.04.03.54.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Aug 2025 03:54:26 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Mon, 4 Aug 2025 12:54:21 +0200
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Uladzislau Rezki <urezki@gmail.com>, Harry Yoo <harry.yoo@oracle.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"David S . Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Kees Cook <kees@kernel.org>, Peter Xu <peterx@redhat.com>,
+	David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Xu Xin <xu.xin16@zte.com.cn>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Hugh Dickins <hughd@google.com>, Vlastimil Babka <vbabka@suse.cz>,
+	Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
+	Muchun Song <muchun.song@linux.dev>,
+	Oscar Salvador <osalvador@suse.de>, Jann Horn <jannh@google.com>,
+	Pedro Falcato <pfalcato@suse.de>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Qi Zheng <zhengqi.arch@bytedance.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org,
+	sparclinux@vger.kernel.org, linux-sgx@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	nvdimm@lists.linux.dev, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] mm: update core kernel code to use vm_flags_t
+ consistently
+Message-ID: <aJCRXVP-ZFEPtl1Y@pc636>
+References: <cover.1750274467.git.lorenzo.stoakes@oracle.com>
+ <d1588e7bb96d1ea3fe7b9df2c699d5b4592d901d.1750274467.git.lorenzo.stoakes@oracle.com>
+ <aIgSpAnU8EaIcqd9@hyeyoo>
+ <73764aaa-2186-4c8e-8523-55705018d842@lucifer.local>
+ <aIkVRTouPqhcxOes@pc636>
+ <69860c97-8a76-4ce5-b1d6-9d7c8370d9cd@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -79,212 +142,81 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d8899e72-5735-4779-9222-5f27f8c16b80@redhat.com>
-X-Rspamd-Queue-Id: 4bwY4y1NrSz9slM
+In-Reply-To: <69860c97-8a76-4ce5-b1d6-9d7c8370d9cd@lucifer.local>
 
-On Fri, Aug 01, 2025 at 05:49:10PM +0200, David Hildenbrand wrote:
-> On 24.07.25 16:49, Pankaj Raghav (Samsung) wrote:
-> > From: Pankaj Raghav <p.raghav@samsung.com>
-> > 
-> > There are many places in the kernel where we need to zeroout larger
-> > chunks but the maximum segment we can zeroout at a time by ZERO_PAGE
-> > is limited by PAGE_SIZE.
-> > 
-> > This is especially annoying in block devices and filesystems where we
-> > attach multiple ZERO_PAGEs to the bio in different bvecs. With multipage
-> > bvec support in block layer, it is much more efficient to send out
-> > larger zero pages as a part of single bvec.
-> > 
-> > This concern was raised during the review of adding LBS support to
-> > XFS[1][2].
-> > 
-> > Usually huge_zero_folio is allocated on demand, and it will be
-> > deallocated by the shrinker if there are no users of it left. At moment,
-> > huge_zero_folio infrastructure refcount is tied to the process lifetime
-> > that created it. This might not work for bio layer as the completions
-> > can be async and the process that created the huge_zero_folio might no
-> > longer be alive. And, one of the main point that came during discussion
-> > is to have something bigger than zero page as a drop-in replacement.
-> > 
-> > Add a config option STATIC_HUGE_ZERO_FOLIO that will always allocate
-> 
-> "... will result in allocating the huge zero folio on first request, if not already allocated, and turn it static such that it can never get freed."
+Hello, Lorenzo!
 
-Sounds good.
+> So sorry Ulad, I meant to get back to you on this sooner!
 > 
-> > the huge_zero_folio, and it will never drop the reference. This makes
-> > using the huge_zero_folio without having to pass any mm struct and does
-> > not tie the lifetime of the zero folio to anything, making it a drop-in
-> > replacement for ZERO_PAGE.
-> > 
-> > If STATIC_HUGE_ZERO_FOLIO config option is enabled, then
-> > mm_get_huge_zero_folio() will simply return this page instead of
-> > dynamically allocating a new PMD page.
-> > 
-> > This option can waste memory in small systems or systems with 64k base
-> > page size. So make it an opt-in and also add an option from individual
-> > architecture so that we don't enable this feature for larger base page
-> > size systems.
-> > > [1] https://lore.kernel.org/linux-xfs/20231027051847.GA7885@lst.de/
-> > [2] https://lore.kernel.org/linux-xfs/ZitIK5OnR7ZNY0IG@infradead.org/
-> > 
-> > Co-developed-by: David Hildenbrand <david@redhat.com>
-> > Signed-off-by: David Hildenbrand <david@redhat.com>
-> > Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
-> > ---
-> >   arch/x86/Kconfig        |  1 +
-> >   include/linux/huge_mm.h | 18 ++++++++++++++++++
-> >   mm/Kconfig              | 21 +++++++++++++++++++++
-> >   mm/huge_memory.c        | 42 +++++++++++++++++++++++++++++++++++++++++
-> >   4 files changed, 82 insertions(+)
-> > 
-> > diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> > index 0ce86e14ab5e..8e2aa1887309 100644
-> > --- a/arch/x86/Kconfig
-> > +++ b/arch/x86/Kconfig
-> > @@ -153,6 +153,7 @@ config X86
-> >   	select ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP	if X86_64
-> >   	select ARCH_WANT_HUGETLB_VMEMMAP_PREINIT if X86_64
-> >   	select ARCH_WANTS_THP_SWAP		if X86_64
-> > +	select ARCH_WANTS_STATIC_HUGE_ZERO_FOLIO if X86_64
-> >   	select ARCH_HAS_PARANOID_L1D_FLUSH
-> >   	select ARCH_WANT_IRQS_OFF_ACTIVATE_MM
-> >   	select BUILDTIME_TABLE_SORT
-> > diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> > index 7748489fde1b..78ebceb61d0e 100644
-> > --- a/include/linux/huge_mm.h
-> > +++ b/include/linux/huge_mm.h
-> > @@ -476,6 +476,7 @@ vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf);
-> >   extern struct folio *huge_zero_folio;
-> >   extern unsigned long huge_zero_pfn;
-> > +extern atomic_t huge_zero_folio_is_static;
-> >   static inline bool is_huge_zero_folio(const struct folio *folio)
-> >   {
-> > @@ -494,6 +495,18 @@ static inline bool is_huge_zero_pmd(pmd_t pmd)
-> >   struct folio *mm_get_huge_zero_folio(struct mm_struct *mm);
-> >   void mm_put_huge_zero_folio(struct mm_struct *mm);
-> > +struct folio *__get_static_huge_zero_folio(void);
-> > +
-> > +static inline struct folio *get_static_huge_zero_folio(void)
-> > +{
-> > +	if (!IS_ENABLED(CONFIG_STATIC_HUGE_ZERO_FOLIO))
-> > +		return NULL;
-> > +
-> > +	if (likely(atomic_read(&huge_zero_folio_is_static)))
-> > +		return huge_zero_folio;
-> > +
-> > +	return __get_static_huge_zero_folio();
-> > +}
-> >   static inline bool thp_migration_supported(void)
-> >   {
-> > @@ -685,6 +698,11 @@ static inline int change_huge_pud(struct mmu_gather *tlb,
-> >   {
-> >   	return 0;
-> >   }
-> > +
-> > +static inline struct folio *get_static_huge_zero_folio(void)
-> > +{
-> > +	return NULL;
-> > +}
-> >   #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
-> >   static inline int split_folio_to_list_to_order(struct folio *folio,
-> > diff --git a/mm/Kconfig b/mm/Kconfig
-> > index 0287e8d94aea..e2132fcf2ccb 100644
-> > --- a/mm/Kconfig
-> > +++ b/mm/Kconfig
-> > @@ -835,6 +835,27 @@ config ARCH_WANT_GENERAL_HUGETLB
-> >   config ARCH_WANTS_THP_SWAP
-> >   	def_bool n
-> > +config ARCH_WANTS_STATIC_HUGE_ZERO_FOLIO
-> > +	def_bool n
-> > +
-> > +config STATIC_HUGE_ZERO_FOLIO
-> > +	bool "Allocate a PMD sized folio for zeroing"
-> > +	depends on ARCH_WANTS_STATIC_HUGE_ZERO_FOLIO && TRANSPARENT_HUGEPAGE
-> > +	help
-> > +	  Without this config enabled, the huge zero folio is allocated on
-> > +	  demand and freed under memory pressure once no longer in use.
-> > +	  To detect remaining users reliably, references to the huge zero folio
-> > +	  must be tracked precisely, so it is commonly only available for mapping
-> > +	  it into user page tables.
-> > +
-> > +	  With this config enabled, the huge zero folio can also be used
-> > +	  for other purposes that do not implement precise reference counting:
-> > +	  it is still allocated on demand, but never freed, allowing for more
-> > +	  wide-spread use, for example, when performing I/O similar to the
-> > +	  traditional shared zeropage.
-> > +
-> > +	  Not suitable for memory constrained systems.
-> > +
-> >   config MM_ID
-> >   	def_bool n
-> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> > index 5d8365d1d3e9..c160c37f4d31 100644
-> > --- a/mm/huge_memory.c
-> > +++ b/mm/huge_memory.c
-> > @@ -75,6 +75,7 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
-> >   static bool split_underused_thp = true;
-> >   static atomic_t huge_zero_refcount;
-> > +atomic_t huge_zero_folio_is_static __read_mostly;
-> >   struct folio *huge_zero_folio __read_mostly;
-> >   unsigned long huge_zero_pfn __read_mostly = ~0UL;
-> >   unsigned long huge_anon_orders_always __read_mostly;
-> > @@ -266,6 +267,47 @@ void mm_put_huge_zero_folio(struct mm_struct *mm)
-> >   		put_huge_zero_page();
-> >   }
-> > +#ifdef CONFIG_STATIC_HUGE_ZERO_FOLIO
-> > +#define FAIL_COUNT_LIMIT 2
-> > +
-> > +struct folio *__get_static_huge_zero_folio(void)
-> > +{
-> > +	static unsigned long fail_count_clear_timer;
-> > +	static atomic_t huge_zero_static_fail_count __read_mostly;
-> > +
-> > +	if (unlikely(!slab_is_available()))
-> > +		return NULL;
-> > +
-> > +	/*
-> > +	 * If we failed to allocate a huge zero folio multiple times,
-> > +	 * just refrain from trying for one minute before retrying to get
-> > +	 * a reference again.
-> > +	 */
+> On Tue, Jul 29, 2025 at 08:39:01PM +0200, Uladzislau Rezki wrote:
+> > On Tue, Jul 29, 2025 at 06:25:39AM +0100, Lorenzo Stoakes wrote:
+> > > Andrew - FYI there's nothing to worry about here, the type remains
+> > > precisely the same, and I'll send a patch to fix this trivial issue so when
+> > > later this type changes vmalloc will be uaffected.
+> > >
+> > > On Tue, Jul 29, 2025 at 09:15:51AM +0900, Harry Yoo wrote:
+> > > > [Adding Uladzislau to Cc]
+> > >
+> > > Ulad - could we PLEASE get rid of 'vm_flags' in vmalloc? It's the precise
+> > > same name and (currently) type as vma->vm_flags and is already the source
+> > > of confusion.
+> > >
+> > You mean all "vm_flags" variable names? "vm_struct" has flags as a
+> > member. So you want:
+> >
+> > urezki@pc638:~/data/backup/coding/linux-not-broken.git$ grep -rn vm_flags mm/execmem.c
+> > 29:                          pgprot_t pgprot, unsigned long vm_flags)
+> > 39:             vm_flags |= VM_DEFER_KMEMLEAK;
+> > 41:     if (vm_flags & VM_ALLOW_HUGE_VMAP)
+> > 45:                              pgprot, vm_flags, NUMA_NO_NODE,
+> > 51:                                      pgprot, vm_flags, NUMA_NO_NODE,
+> > 85:                          pgprot_t pgprot, unsigned long vm_flags)
+> > 259:    unsigned long vm_flags = VM_ALLOW_HUGE_VMAP;
+> > 266:    p = execmem_vmalloc(range, alloc_size, PAGE_KERNEL, vm_flags);
+> > 376:    unsigned long vm_flags = VM_FLUSH_RESET_PERMS;
+> > 385:            p = execmem_vmalloc(range, size, pgprot, vm_flags);
+> > urezki@pc638:~/data/backup/coding/linux-not-broken.git$ grep -rn vm_flags mm/vmalloc.c
+> > 3853: * @vm_flags:                additional vm area flags (e.g. %VM_NO_GUARD)
+> > 3875:                   pgprot_t prot, unsigned long vm_flags, int node,
+> > 3894:   if (vmap_allow_huge && (vm_flags & VM_ALLOW_HUGE_VMAP)) {
+> > 3912:                             VM_UNINITIALIZED | vm_flags, start, end, node,
+> > 3977:   if (!(vm_flags & VM_DEFER_KMEMLEAK))
+> > 4621:   vm_flags_set(vma, VM_DONTEXPAND | VM_DONTDUMP);
+> > urezki@pc638:~/data/backup/coding/linux-not-broken.git$ grep -rn vm_flags mm/execmem.c
+> > 29:                          pgprot_t pgprot, unsigned long vm_flags)
+> > 39:             vm_flags |= VM_DEFER_KMEMLEAK;
+> > 41:     if (vm_flags & VM_ALLOW_HUGE_VMAP)
+> > 45:                              pgprot, vm_flags, NUMA_NO_NODE,
+> > 51:                                      pgprot, vm_flags, NUMA_NO_NODE,
+> > 85:                          pgprot_t pgprot, unsigned long vm_flags)
+> > 259:    unsigned long vm_flags = VM_ALLOW_HUGE_VMAP;
+> > 266:    p = execmem_vmalloc(range, alloc_size, PAGE_KERNEL, vm_flags);
+> > 376:    unsigned long vm_flags = VM_FLUSH_RESET_PERMS;
+> > 385:            p = execmem_vmalloc(range, size, pgprot, vm_flags);
+> > urezki@pc638:~/data/backup/coding/linux-not-broken.git$ grep -rn vm_flags ./include/linux/vmalloc.h
+> > 172:                    pgprot_t prot, unsigned long vm_flags, int node,
+> > urezki@pc638:~/data/backup/coding/linux-not-broken.git$
+> >
+> > to rename all those "vm_flags" to something, for example, like "flags"?
 > 
-> Is this "try twice" really worth it? Just try once, and if it fails, try only again in the future.
+> Yeah, sorry I know it's a churny pain, but I think it's such a silly source
+> of confusion _in general_, not only this series where I made a mistake (of
+> course entirely my fault but certainly more understandable given the
+> naming), but in the past I've certainly sat there thinking 'hmmm wait' :)
 > 
-Yeah, that makes sense. Let's go with try it once for now.
+> Really I think we should rename 'vm_struct' too, but if that causes _too
+> much_ churn fair enough.
+> 
+> I think even though it's long-winded, 'vmalloc_flags' would be good, both
+> in fields and local params as it makes things very very clear.
+>
+> 
+> Equally 'vm_struct' -> 'vmalloc_struct' would be a good change.
+> 
+Uh.. This could be a pain :) I will have a look and see what we can do.
 
-> I guess we'll learn how that will behave in practice, and how we'll have to fine-tune it :)
-> 
-> 
-> In shrink_huge_zero_page_scan(), should we probably warn if something buggy happens?
-Yeah, I can fold this in the next version. I guess WARN_ON_ONCE already
-adds an unlikely to the conditition which is appropriate.
+Thanks!
 
-> 
-> Something like
-> 
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 2b4ea5a2ce7d2..b1109f8699a24 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -277,7 +277,11 @@ static unsigned long shrink_huge_zero_page_scan(struct shrinker *shrink,
->                                        struct shrink_control *sc)
->  {
->         if (atomic_cmpxchg(&huge_zero_refcount, 1, 0) == 1) {
-> -               struct folio *zero_folio = xchg(&huge_zero_folio, NULL);
-> +               struct folio *zero_folio;
-> +
-> +               if (WARN_ON_ONCE(atomic_read(&huge_zero_folio_is_static)))
-> +                       return 0;
-> +               zero_folio = xchg(&huge_zero_folio, NULL);
->                 BUG_ON(zero_folio == NULL);
->                 WRITE_ONCE(huge_zero_pfn, ~0UL);
->                 folio_put(zero_folio);
-> 
-> 
-> -- 
-> Cheers,
-> 
 --
-Pankaj
+Uladzislau Rezki
 
