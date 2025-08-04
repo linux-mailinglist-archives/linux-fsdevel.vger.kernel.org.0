@@ -1,58 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-56646-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56647-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3980FB1A416
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 16:08:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC1E4B1A454
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 16:17:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5A457AAD8A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 14:07:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F40C2174CD8
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Aug 2025 14:17:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2F3A26F471;
-	Mon,  4 Aug 2025 14:08:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 672E52727E7;
+	Mon,  4 Aug 2025 14:16:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ls0/4rEz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ygvauovz"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3755D2BAF7;
-	Mon,  4 Aug 2025 14:08:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA09F1DED4A;
+	Mon,  4 Aug 2025 14:16:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754316522; cv=none; b=nmpXgCA2/Y4aN7AVPbd6E5v2wxO7k0ffWoQwpEOryB+ktLEDNyXig+N4JeeUNAj1bputfwLS2Eihw0eJOvWc47D6n4u7R8mXykF72U2TMJhhhq5tXWb0pwX8SpOfn6m+4rYgtCafXGOKJv4fBk7a+jqWR/FMs+fpV4KsJV8bIV4=
+	t=1754317004; cv=none; b=Vqdtw3DAt9zYNaCS7mrm1UbpNLr0+mvpbHlh6KqV3DfI4fY/5YSjmRsH9m26NrPAayHapnNVCL20GFku+H7M869YZ6/Ly+21vMDXe/1Z6KEnSqDYjOKtBxe49yDTgv1qZIiN2KSVLLkhFqa8ILmi8buUm1mTfSsdkAndv3WAZ8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754316522; c=relaxed/simple;
-	bh=+7Q4LotkGwU5ARZYTGNnCuBdetHLX3DRgjQvtKWhXzg=;
+	s=arc-20240116; t=1754317004; c=relaxed/simple;
+	bh=xZ4/OtTou0bjCOMvQJOdhc2IhhVGQdK8WBFg49SVbYc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VvRTePtynmMSRvJRYINB8rH98KWNAsK+kXjGqOFz22kXOc8z0bbsSfNK1yyVAzKxfRtq5o1ROf37AZc6F4+69guTvwiGNxgwmJ5VG9ivAGg34b3WiNrI9l0AldV20awDSwiHKkiUUBWk7w0MmwLPjiBmVQeOooNMeLOroD9fmrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ls0/4rEz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 040E7C4CEE7;
-	Mon,  4 Aug 2025 14:08:40 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=rQ/L4sweUVDVgkMXTxOZsCm64ZgKjkQGcKVgAD6kaZ/DJMYJgTJvnE8EeDH1kh8Mnyz9KMbLzFigl/cQvLCnA8LMrlUTjKUP4ZCjWr2+p8JeeX1PD2rulQON1iyN6oDKUShwtZ2COG0YcSan6Rq2D4IV6BgmNs8XoqXvMHavwME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ygvauovz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79EE0C4CEF6;
+	Mon,  4 Aug 2025 14:16:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754316521;
-	bh=+7Q4LotkGwU5ARZYTGNnCuBdetHLX3DRgjQvtKWhXzg=;
+	s=k20201202; t=1754317002;
+	bh=xZ4/OtTou0bjCOMvQJOdhc2IhhVGQdK8WBFg49SVbYc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ls0/4rEzghBmvR0vP8lQ63jV9Ne2vih9EuPhtx0lfJsVSWafCSD8lowTwlYCWSWH3
-	 iAJoAfO8H7B7MLKxPxBO9SG6lBdmVrr2brAy4i5atmiM+4sXCE4pzamyRou9a2izWt
-	 1gKTF7IFQ6ez+NqItBxcSbZ9lFCzk/wmuHE9YRFrJcijTUag6F08uIlDle8P1fMMOU
-	 +naPsw+VTvORrZ93ujPN8krJKyIL7XapyEx9868EnbA78ubsDdJDV7yrzGl/iVy7vw
-	 vkNK730Ir8W4L8YtoEynIHYQD8/Glt5GvaR26s+rQB7y6vebZKiifieCcXEpd/BhVu
-	 wM5VBUhVvk+fg==
-Date: Mon, 4 Aug 2025 08:08:38 -0600
+	b=YgvauovzR3vOKKvaFyT3pCHc7GSPQP3+yYpYdpyLxL9xvghi9ot/OQ+21Xi+LAWh0
+	 D44/J9HtNTqzyYUX1ys3dez6fpZSTU+M+1ErNU8GiyrJR/QyrQAIjpyd3eJjWV3TIg
+	 udaADm/VfRwUUZCqN1cCDX0TkQvR6Bv9t1h/gpyzxCxnf9LVOQVwwIkJwJk7lQkzPn
+	 JptGtZFQC/5+MmjAZopvHN7UmN0VUUulSYKXW7E/EWZJruEZ3QiY38MOAWXW5oin//
+	 XSiG4zNCghlX1ydzSHy5Bbtq/Dr53L6JS+TuesL0wBPIGiqQrE2a0AkS/hNEdoP0FA
+	 5Fh5vDjafLsKg==
+Date: Mon, 4 Aug 2025 08:16:39 -0600
 From: Keith Busch <kbusch@kernel.org>
-To: Hannes Reinecke <hare@suse.de>
+To: Mike Snitzer <snitzer@kernel.org>
 Cc: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	snitzer@kernel.org, axboe@kernel.dk, dw@davidwei.uk,
-	brauner@kernel.org
-Subject: Re: [PATCH 2/7] block: align the bio after building it
-Message-ID: <aJC-5qTTVDNjp0uk@kbusch-mbp>
+	axboe@kernel.dk, dw@davidwei.uk, brauner@kernel.org,
+	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH 7/7] iov_iter: remove iov_iter_is_aligned
+Message-ID: <aJDAx1Ns9Fg7F6iK@kbusch-mbp>
 References: <20250801234736.1913170-1-kbusch@meta.com>
- <20250801234736.1913170-3-kbusch@meta.com>
- <14c5a629-2169-4271-97b8-a1aba45a6e54@suse.de>
+ <20250801234736.1913170-8-kbusch@meta.com>
+ <aI1xySNUdQ2B0dbJ@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,42 +61,37 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <14c5a629-2169-4271-97b8-a1aba45a6e54@suse.de>
+In-Reply-To: <aI1xySNUdQ2B0dbJ@kernel.org>
 
-On Mon, Aug 04, 2025 at 08:54:00AM +0200, Hannes Reinecke wrote:
-> On 8/2/25 01:47, Keith Busch wrote:
-> > +static int bio_align_to_lbs(struct bio *bio, struct iov_iter *iter)
-> > +{
-> > +	struct block_device *bdev = bio->bi_bdev;
-> > +	size_t nbytes;
-> > +
-> > +	if (!bdev)
-> > +		return 0;
-> > +
-> > +	nbytes = bio->bi_iter.bi_size & (bdev_logical_block_size(bdev) - 1);
-> > +	if (!nbytes)
-> > +		return 0;
-> > +
-> > +	bio_revert(bio, nbytes);
-> > +	iov_iter_revert(iter, nbytes);
-> > +	if (!bio->bi_iter.bi_size)
-> > +		return -EFAULT;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >   /**
-> >    * bio_iov_iter_get_pages - add user or kernel pages to a bio
-> >    * @bio: bio to add pages to
-> > @@ -1336,6 +1355,7 @@ int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
-> >   		ret = __bio_iov_iter_get_pages(bio, iter);
-> >   	} while (!ret && iov_iter_count(iter) && !bio_full(bio, 0));
-> > +	ret = bio_align_to_lbs(bio, iter);
-> >   	return bio->bi_vcnt ? 0 : ret;
+On Fri, Aug 01, 2025 at 10:02:49PM -0400, Mike Snitzer wrote:
+> On Fri, Aug 01, 2025 at 04:47:36PM -0700, Keith Busch wrote:
+> > From: Keith Busch <kbusch@kernel.org>
+> > 
+> > No more callers.
+> > 
+> > Signed-off-by: Keith Busch <kbusch@kernel.org>
 > 
-> Wouldn't that cause the error from bio_align_to_lba() to be ignored
-> if bio->bi_vcnt is greater than 0?
+> You had me up until this last patch.
+> 
+> I'm actually making use of iov_iter_is_aligned() in a series of
+> changes for both NFS and NFSD.  Chuck has included some of the
+> NFSD changes in his nfsd-testing branch, see:
+> https://git.kernel.org/pub/scm/linux/kernel/git/cel/linux.git/commit/?h=nfsd-testing&id=5d78ac1e674b45f9c9e3769b48efb27c44f4e4d3
+> 
+> And the balance of my work that is pending review/inclusion is:
+> https://lore.kernel.org/linux-nfs/20250731230633.89983-1-snitzer@kernel.org/
+> https://lore.kernel.org/linux-nfs/20250801171049.94235-1-snitzer@kernel.org/
+> 
+> I only need iov_iter_aligned_bvec, but recall I want to relax its
+> checking with this patch:
+> https://lore.kernel.org/linux-nfs/20250708160619.64800-5-snitzer@kernel.org/
+> 
+> Should I just add iov_iter_aligned_bvec() to fs/nfs_common/ so that
+> both NFS and NFSD can use it?
 
-That returns an error only if the alignment reduces the size to 0, so
-there would be a bug somewhere if bi_vcnt is not also 0 in that case.
+If at all possible, I recommend finding a place that already walks the
+vectors and do an opprotunistic check for the alignments there. This
+will save CPU cycles. For example, nfsd_iter_read already iterates the
+bvec while setting each page. Could you check the alignment while doing
+that instead of iterating a second time immediately after?
 
