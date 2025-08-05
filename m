@@ -1,88 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-56733-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56734-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E33FB1B21A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 12:36:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 827C1B1B254
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 12:55:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 312237AC039
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 10:35:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A342F180EA3
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 10:55:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D233F23ABA7;
-	Tue,  5 Aug 2025 10:36:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A96241691;
+	Tue,  5 Aug 2025 10:55:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W3EQ0HsV"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CFMdW2Wx"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29D11F4612
-	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Aug 2025 10:36:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF3241E5B78
+	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Aug 2025 10:55:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754390198; cv=none; b=aKUjbZN9FshjglqUTI8UtWC0JkrHqto2aqXs0ZOkeNzsnAqJ+NMQXjCoE6GSvBGetIXyuPC687jeoNEGma9GB+R7fB1JwyatetfM2lJ7AeGr19QvuJvvyCakLGOyeZ2kAoSeLDPmDk425JKBISPK9OVCZaGminzvTtC4B98zT2c=
+	t=1754391329; cv=none; b=g9IiJiNVmQ4pNQ6YAks58LnZ/2zSjgBJby4OEEXlHQidtPJpf1PGhr5Z4VQrvfwLk9xberW5cXSL5YPsBdjCXDjQmcoZfXsa+WOCYV5DEKSEMi3qUNg8XAUYTDrrwzUYDE55cghs1Tyof43rUq/GpUySzPOlrOUIt+tMO4bwxGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754390198; c=relaxed/simple;
-	bh=Cnxh6DN3ni8Y+KmkTa/tBdiSQ9JUY6wzfuiufw/04MU=;
+	s=arc-20240116; t=1754391329; c=relaxed/simple;
+	bh=VpIuLO4zDxNyZE1PHSOAIYGLr+cZdU0TXVbN/O6zHvc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F8B4mIURzz5YywzcHvAOk0d4bKkXZr4EW7/vwzzRU00twUgRNJbusabpBFbxc2YisruBabFI5eZrLBLaVIxeTgVS7ut+tEk4kH3Jz1VzRTApaFfn3zNFMwXYR8XA62fJKRh91V1uTlvTnYg9FwP+b6D+ncsjXSjM/KINBkiFIcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W3EQ0HsV; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=dMe1DXk8N4h2lI7lwUU9TeqMM99Wwo4ExMGfn27/s+otrvJjn5gSh3pqYuOCqzFKmHS7NV7/D1R/QQcQCHUBTyXWiuonz7w+4IWk2ct1pVwlTKo1NCRLJXM5ZQpzt9Ja7tDl64XYt4CNjRXkhN7C/rNOBD0nqvyUuEyijtpkokc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CFMdW2Wx; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754390195;
+	s=mimecast20190719; t=1754391326;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Wl4ZijE/HHMB43Fi7BAYKpOKxsawoOhIpbaL37luJFI=;
-	b=W3EQ0HsVdh5KXrjZgAEQowiq2XjJQjNHX62mSDlHRQUVCzOEyw8zFcRMwDqaWyL2P/XIkv
-	pU7WM8SYIgE/D95ixNUU5qWV660FxPYPfhIOHvr2cLwJFJHHKlJ/MvTNaoEpaLnALdrSuQ
-	hH8vPx98y2BBE83xA6whbfv/doD/l2Q=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=XQZDklFzgIg/VRMnloECBcZkyVf0Gj6nmHNcIi06hAc=;
+	b=CFMdW2WxjnLZ4HNKMpP5RsMsx9AtFzS1tTg/ikyKpXxwvFHNKutg6fOAd77xNa+toPm4HP
+	QB/CW3sQvyqrm9wJpeYGYlqqLBgUgwkPn7NtjxAc4FX35vCY8n7YWDaFW5dsfcLrbfl+6A
+	74cOonUAHjoKpWx3i/HC9NS6Pv95ZQ0=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-47-eOVWvENXOIeNVn56lWXEiA-1; Tue, 05 Aug 2025 06:36:33 -0400
-X-MC-Unique: eOVWvENXOIeNVn56lWXEiA-1
-X-Mimecast-MFC-AGG-ID: eOVWvENXOIeNVn56lWXEiA_1754390193
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3b78329f007so4752114f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Aug 2025 03:36:33 -0700 (PDT)
+ us-mta-397-YOyKCASjMxy4ukH_jQBIiw-1; Tue, 05 Aug 2025 06:55:25 -0400
+X-MC-Unique: YOyKCASjMxy4ukH_jQBIiw-1
+X-Mimecast-MFC-AGG-ID: YOyKCASjMxy4ukH_jQBIiw_1754391324
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4538f375e86so42455795e9.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Aug 2025 03:55:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754390192; x=1754994992;
+        d=1e100.net; s=20230601; t=1754391324; x=1754996124;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=Wl4ZijE/HHMB43Fi7BAYKpOKxsawoOhIpbaL37luJFI=;
-        b=HM4ARZuq2q5SyQirBE8BHieaAYUMfXhJy1vLYb64ST4CYyU9HMcdacUOuHUh5f75Hp
-         5szb4a71ulhuuYu9YepXGc7PnBFZwlkZUXhk94Bs4MgI83H33oQuDBmFFt3wHtmz7E8r
-         EHpyTFpG2jCiInb4np3DzcOe5LpR5hkfqoU6cvvfw5A4/2Y+bwuy28UosAHWQ1sBFlrG
-         RR3KE4u7j9LdzqgV8yL7/KEpbuyng3DgebMDy7qj2Z0y08jUTrmxK4mhnmU9oIkQT4MH
-         sH+gzH8wj32QaG2d2zihUfKWuLKjolAlIFiufYzORV0Z2aGC7tvo7JKQ69rt4TcOoZ8G
-         afGg==
-X-Gm-Message-State: AOJu0YytyAkUuhaBJn0CxZGIme/RenfwyIBdoeAplQ3xTkEra5SBKNiD
-	jj5eiR7DZ15cnK65Az4JViVcSxbKgv/RznHWIsT5SG0Fg8xWd9FdpbZ7trmViyXFvQKXCHyNyWa
-	tFSZDjSw1oYkItrs74AKDL9mbqJXeKzUAkQuKzm0rVA0j0qRFYhj1pOkKeDAOo4bniFYgssDG6D
-	s=
-X-Gm-Gg: ASbGncux/YFCJSm84NowAQs6LGl+2lTboRKzKrJyJBp6IGxZ0AY5pKgpEn3uAlpUO25
-	PJk7wgLX4Ji0wE1RjPHRHh0hQk2L6XWJctSG6wzvf2dWqmzQ7UPUc3fBlkHBER+wDA27eVr/esh
-	c1TJmbld+CyAzxsFVrXtIcYKyheHKN/p9GQPt6WBZPvlYqUk0EczgWBxpMzznpzINackrDIJzlS
-	KBOUmsS40M4StPwI/6CqVSWgnS/L+DYBaBEiqZfoPELKxLHjyV9evtpJ89MLZcTAi2yN2GXRHHc
-	VF3C2v+S7PMXHQfl7xih4gqzubpSdGMTCxdk3OVO3OJ9SQf2Ueqjs2CYPDPkj7CsTAPML0ad/hQ
-	hozhLq4YpkNPlrvvJqrP6gzRatwsrHtC8dh5tk9NCg87EzC4b0DH6npkLUix8yP50i/4=
-X-Received: by 2002:a05:6000:4305:b0:3b7:89a2:bb8c with SMTP id ffacd0b85a97d-3b8d9474e63mr8616388f8f.16.1754390192594;
-        Tue, 05 Aug 2025 03:36:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGAOnGMnGXyh1ND7MnUFCBNlWbq0W6kMApMwVAYJuatGTqk1QunVq1YA2SrRT1HUU1vGbKqVw==
-X-Received: by 2002:a05:6000:4305:b0:3b7:89a2:bb8c with SMTP id ffacd0b85a97d-3b8d9474e63mr8616359f8f.16.1754390192127;
-        Tue, 05 Aug 2025 03:36:32 -0700 (PDT)
+        bh=XQZDklFzgIg/VRMnloECBcZkyVf0Gj6nmHNcIi06hAc=;
+        b=AOE8Qu53JciOwQh8Rvm2vF57Bx63o4uaKsEnoTPgIUXvH+jKH952DLrXMKDEXgHvRb
+         265vXTyVXCMNNo2DVHDqkdcaJVqsJKTf0/RVsjFV0e0X5yqI/97uoAPX5R/5+Tau9Nqg
+         8idj4cSuIkBMbcMKCIJGz3r4VTEQTpMptcHgpmYU2Llra8b2En3YtQiGbwWDgpU4iPUW
+         EjHD1JPoMMFeZl9fe2NJqd4jX+9sWg0S9hYClFkLScuuENT5UO80/MEMmHAL51ow2VE8
+         6difiq8EPHYkR6tMdPp9Prdvg5dup3K34NbAHjjAXM8ikP717VcWl0B45kZp5C3CMuZQ
+         tpGg==
+X-Forwarded-Encrypted: i=1; AJvYcCW6BWVzy4poT9cwjSsLCmyAE1ORbTqKG1ci5Hg1BC5TNSKDi+a6dhupI1GzRdF06I/LvLuTQrzz+wvTB2jV@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUcb7DBxsdnNuBfKhpIdLlRChko0IwrWfi5NjQiNRce45Bcfhs
+	UEK9xCyeaPXZSeUvgHDAZHcOseLVJM0v0xkJybIZvmGG84Uz7G85HqTlzudZNoidObRdz4gVa2Y
+	ZS4JicKlO+3VdkpfsebRKUyjou9pAmj/opuzEc7oSCQdMcwmIBVMqvl8pFPb28Wjd9Jo=
+X-Gm-Gg: ASbGncvRmBQwwC+q2+Woqf0cEchlYlIlf5L+W/RbbY1eP6WLqqL0l9d10o291K8lciE
+	GUN8FCZxlcfLbtmmdjPAX/TW/AxeqGRQ1CmM46zL79A2NZn8xkFHEqb6LTAlzSFxZ45UC00WgFB
+	KPkLI8VuHGP3bzz9ImS7fZEQcpfJtqvOghKdeFlk2O+2jGnIUUCBgNMuwYcqE5zEyN5r1VO4HgU
+	XIzEQAsGMpILjLopjNGjm4AsGLCizRsFKah7cksfZoV0SLb/14XMp4TPfI9dCBYX71ybnH9aHKp
+	AU2BGbZVcWwyBKISajKqaX1KHOqcIinfqoPsGRrlDnFqRoB4sCqd32QeYoojsmhLqinxk49t6kj
+	NM5Pwhc/WvUsmre+sdp5dDiXpstDBUc5dNuPsaVXHcsea/zCtNUx72AD5Q6xKA5Qt2hQ=
+X-Received: by 2002:a05:6000:2409:b0:3b6:17c0:f094 with SMTP id ffacd0b85a97d-3b8d9471798mr11284834f8f.14.1754391323776;
+        Tue, 05 Aug 2025 03:55:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFXZZ49K+DE6A9wsCyzXFzTDhqAI2hR0tkMmhgQXu6JP+pyCF9/xS8ilZrR1y0iOzvUgnMF0g==
+X-Received: by 2002:a05:6000:2409:b0:3b6:17c0:f094 with SMTP id ffacd0b85a97d-3b8d9471798mr11284803f8f.14.1754391323277;
+        Tue, 05 Aug 2025 03:55:23 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f2b:b200:607d:d3d2:3271:1be0? (p200300d82f2bb200607dd3d232711be0.dip0.t-ipconnect.de. [2003:d8:2f2b:b200:607d:d3d2:3271:1be0])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3ad803sm18564762f8f.6.2025.08.05.03.36.30
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459dc900606sm62407115e9.15.2025.08.05.03.55.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Aug 2025 03:36:31 -0700 (PDT)
-Message-ID: <9bcb1dee-314e-4366-9bad-88a47d516c79@redhat.com>
-Date: Tue, 5 Aug 2025 12:36:29 +0200
+        Tue, 05 Aug 2025 03:55:22 -0700 (PDT)
+Message-ID: <bc6cdb11-41fc-486b-9c39-17254f00d751@redhat.com>
+Date: Tue, 5 Aug 2025 12:55:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -90,20 +90,28 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 6/6] selftests: prctl: introduce tests for disabling
- THPs except for madvise
-To: Usama Arif <usamaarif642@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-Cc: linux-fsdevel@vger.kernel.org, corbet@lwn.net, rppt@kernel.org,
- surenb@google.com, mhocko@suse.com, hannes@cmpxchg.org, baohua@kernel.org,
- shakeel.butt@linux.dev, riel@surriel.com, ziy@nvidia.com,
- laoar.shao@gmail.com, dev.jain@arm.com, baolin.wang@linux.alibaba.com,
- npache@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
- ryan.roberts@arm.com, vbabka@suse.cz, jannh@google.com,
- Arnd Bergmann <arnd@arndb.de>, sj@kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, kernel-team@meta.com
-References: <20250804154317.1648084-1-usamaarif642@gmail.com>
- <20250804154317.1648084-7-usamaarif642@gmail.com>
+Subject: Re: [PATCH 3/5] mm: add static huge zero folio
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
+ Suren Baghdasaryan <surenb@google.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Borislav Petkov <bp@alien8.de>,
+ Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>,
+ Mike Rapoport <rppt@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Michal Hocko <mhocko@suse.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>,
+ Dev Jain <dev.jain@arm.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, willy@infradead.org, x86@kernel.org,
+ linux-block@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
+ linux-fsdevel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>,
+ mcgrof@kernel.org, gost.dev@samsung.com, hch@lst.de,
+ Pankaj Raghav <p.raghav@samsung.com>
+References: <20250804121356.572917-1-kernel@pankajraghav.com>
+ <20250804121356.572917-4-kernel@pankajraghav.com>
+ <4463bc75-486d-4034-a19e-d531bec667e8@lucifer.local>
+ <70049abc-bf79-4d04-a0a8-dd3787195986@redhat.com>
+ <6ff6fc46-49f1-49b0-b7e4-4cb37ec10a57@lucifer.local>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -151,70 +159,153 @@ Autocrypt: addr=david@redhat.com; keydata=
  WBe5lqcozu9LpNDH/brVSzHCSb7vjNGvvSVESDuoiHK8gNlf0v+epy5WYd7CGAgODPvDShGN
  g3eXuA==
 Organization: Red Hat
-In-Reply-To: <20250804154317.1648084-7-usamaarif642@gmail.com>
+In-Reply-To: <6ff6fc46-49f1-49b0-b7e4-4cb37ec10a57@lucifer.local>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 04.08.25 17:40, Usama Arif wrote:
-> The test will set the global system THP setting to never, madvise
-> or always depending on the fixture variant and the 2M setting to
-> inherit before it starts (and reset to original at teardown)
+
+>>
+>>
+>> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+>> index 0ce86e14ab5e1..8e2aa18873098 100644
+>> --- a/arch/x86/Kconfig
+>> +++ b/arch/x86/Kconfig
+>> @@ -153,6 +153,7 @@ config X86
+>>   	select ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP	if X86_64
+>>   	select ARCH_WANT_HUGETLB_VMEMMAP_PREINIT if X86_64
+>>   	select ARCH_WANTS_THP_SWAP		if X86_64
+>> +	select ARCH_WANTS_STATIC_HUGE_ZERO_FOLIO if X86_64
+>>   	select ARCH_HAS_PARANOID_L1D_FLUSH
+>>   	select ARCH_WANT_IRQS_OFF_ACTIVATE_MM
+>>   	select BUILDTIME_TABLE_SORT
+>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+>> index 7748489fde1b7..ccfa5c95f14b1 100644
+>> --- a/include/linux/huge_mm.h
+>> +++ b/include/linux/huge_mm.h
+>> @@ -495,6 +495,17 @@ static inline bool is_huge_zero_pmd(pmd_t pmd)
+>>   struct folio *mm_get_huge_zero_folio(struct mm_struct *mm);
+>>   void mm_put_huge_zero_folio(struct mm_struct *mm);
+>> +static inline struct folio *get_static_huge_zero_folio(void)
+>> +{
+>> +	if (!IS_ENABLED(CONFIG_STATIC_HUGE_ZERO_FOLIO))
+>> +		return NULL;
+>> +
+>> +	if (unlikely(!huge_zero_folio))
+>> +		return NULL;
+>> +
+>> +	return huge_zero_folio;
+>> +}
+>> +
+>>   static inline bool thp_migration_supported(void)
+>>   {
+>>   	return IS_ENABLED(CONFIG_ARCH_ENABLE_THP_MIGRATION);
+>> @@ -685,6 +696,11 @@ static inline int change_huge_pud(struct mmu_gather *tlb,
+>>   {
+>>   	return 0;
+>>   }
+>> +
+>> +static inline struct folio *get_static_huge_zero_folio(void)
+>> +{
+>> +	return NULL;
+>> +}
+>>   #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+>>   static inline int split_folio_to_list_to_order(struct folio *folio,
+>> diff --git a/mm/Kconfig b/mm/Kconfig
+>> index e443fe8cd6cf2..366a6d2d771e3 100644
+>> --- a/mm/Kconfig
+>> +++ b/mm/Kconfig
+>> @@ -823,6 +823,27 @@ config ARCH_WANT_GENERAL_HUGETLB
+>>   config ARCH_WANTS_THP_SWAP
+>>   	def_bool n
+>> +config ARCH_WANTS_STATIC_HUGE_ZERO_FOLIO
+>> +	def_bool n
+>> +
+>> +config STATIC_HUGE_ZERO_FOLIO
+>> +	bool "Allocate a PMD sized folio for zeroing"
+>> +	depends on ARCH_WANTS_STATIC_HUGE_ZERO_FOLIO && TRANSPARENT_HUGEPAGE
+>> +	help
+>> +	  Without this config enabled, the huge zero folio is allocated on
+>> +	  demand and freed under memory pressure once no longer in use.
+>> +	  To detect remaining users reliably, references to the huge zero folio
+>> +	  must be tracked precisely, so it is commonly only available for mapping
+>> +	  it into user page tables.
+>> +
+>> +	  With this config enabled, the huge zero folio can also be used
+>> +	  for other purposes that do not implement precise reference counting:
+>> +	  it is allocated statically and never freed, allowing for more
+>> +	  wide-spread use, for example, when performing I/O similar to the
+>> +	  traditional shared zeropage.
+>> +
+>> +	  Not suitable for memory constrained systems.
+>> +
+>>   config MM_ID
+>>   	def_bool n
+>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>> index ff06dee213eb2..f65ba3e6f0824 100644
+>> --- a/mm/huge_memory.c
+>> +++ b/mm/huge_memory.c
+>> @@ -866,9 +866,14 @@ static int __init thp_shrinker_init(void)
+>>   	huge_zero_folio_shrinker->scan_objects = shrink_huge_zero_folio_scan;
+>>   	shrinker_register(huge_zero_folio_shrinker);
+>> -	deferred_split_shrinker->count_objects = deferred_split_count;
+>> -	deferred_split_shrinker->scan_objects = deferred_split_scan;
+>> -	shrinker_register(deferred_split_shrinker);
+>> +	if (IS_ENABLED(CONFIG_STATIC_HUGE_ZERO_FOLIO)) {
+>> +		if (!get_huge_zero_folio())
+>> +			pr_warn("Allocating static huge zero folio failed\n");
+>> +	} else {
+>> +		deferred_split_shrinker->count_objects = deferred_split_count;
+>> +		deferred_split_shrinker->scan_objects = deferred_split_scan;
+>> +		shrinker_register(deferred_split_shrinker);
+>> +	}
+>>   	return 0;
+>>   }
+>> --
+>> 2.50.1
+>>
+>>
+>> Now, one thing I do not like is that we have "ARCH_WANTS_STATIC_HUGE_ZERO_FOLIO" but
+>> then have a user-selectable option.
+>>
+>> Should we just get rid of ARCH_WANTS_STATIC_HUGE_ZERO_FOLIO?
 > 
-> This tests if the process can:
-> - successfully set and get the policy to disable THPs expect for madvise.
-> - get hugepages only on MADV_HUGE and MADV_COLLAPSE if the global policy
->    is madvise/always and only with MADV_COLLAPSE if the global policy is
->    never.
-> - successfully reset the policy of the process.
-> - after reset, only get hugepages with:
->    - MADV_COLLAPSE when policy is set to never.
->    - MADV_HUGE and MADV_COLLAPSE when policy is set to madvise.
->    - always when policy is set to "always".
-> - repeat the above tests in a forked process to make sure  the policy is
->    carried across forks.
-> 
-> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
-> ---
+> Yeah, though I guess we probably need to make it need CONFIG_MMU if so?
+> Probably don't want to provide it if it might somehow break things?
 
-[...]
+It would still depend on THP, and THP is !MMU. So that should just work.
 
-> +FIXTURE_VARIANT(prctl_thp_disable_except_madvise)
-> +{
-> +	enum thp_enabled thp_policy;
-> +};
-> +
-> +FIXTURE_VARIANT_ADD(prctl_thp_disable_except_madvise, never)
-> +{
-> +	.thp_policy = THP_NEVER,
-> +};
-> +
-> +FIXTURE_VARIANT_ADD(prctl_thp_disable_except_madvise, madvise)
-> +{
-> +	.thp_policy = THP_MADVISE,
-> +};
-> +
-> +FIXTURE_VARIANT_ADD(prctl_thp_disable_except_madvise, always)
-> +{
-> +	.thp_policy = THP_ALWAYS,
-> +};
-> +
-> +FIXTURE_SETUP(prctl_thp_disable_except_madvise)
-> +{
-> +	if (!thp_available())
-> +		SKIP(return, "Transparent Hugepages not available\n");
-> +
-> +	self->pmdsize = read_pmd_pagesize();
-> +	if (!self->pmdsize)
-> +		SKIP(return, "Unable to read PMD size\n");
+We could go one step further and special case in 
+mm_get_huge_zero_folio() + mm_put_huge_zero_folio() on 
+CONFIG_STATIC_HUGE_ZERO_FOLIO.
 
-Should we test here if the kernel knows PR_THP_DISABLE_EXCEPT_ADVISED, 
-and if not, skip?
+Something like
 
-Might be as simple as trying issuing two prctl, and making sure the 
-first disabling attempt doesn't fail. If so, SKIP.
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 9c38a95e9f091..9b87884e5f299 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -248,6 +248,9 @@ static void put_huge_zero_page(void)
 
-Nothing else jumped at me. Can you include a test run result in the 
-patch description?
+  struct folio *mm_get_huge_zero_folio(struct mm_struct *mm)
+  {
++       if (IS_ENABLED(CONFIG_STATIC_HUGE_ZERO_FOLIO))
++               return huge_zero_folio;
++
+         if (test_bit(MMF_HUGE_ZERO_PAGE, &mm->flags))
+                 return READ_ONCE(huge_zero_folio);
+
+@@ -262,6 +265,9 @@ struct folio *mm_get_huge_zero_folio(struct 
+mm_struct *mm)
+
+  void mm_put_huge_zero_folio(struct mm_struct *mm)
+  {
++       if (IS_ENABLED(CONFIG_STATIC_HUGE_ZERO_FOLIO))
++               return huge_zero_folio;
++
+         if (test_bit(MMF_HUGE_ZERO_PAGE, &mm->flags))
+                 put_huge_zero_page();
+  }
+
 
 -- 
 Cheers,
