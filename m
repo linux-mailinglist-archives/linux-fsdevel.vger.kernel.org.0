@@ -1,130 +1,159 @@
-Return-Path: <linux-fsdevel+bounces-56789-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56791-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B226B1BA19
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 20:30:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58BE5B1BA5E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 20:40:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B65CE3AF43E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 18:30:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED37518A6FDF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 18:41:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91625295D86;
-	Tue,  5 Aug 2025 18:30:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D120299943;
+	Tue,  5 Aug 2025 18:40:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eqmX1X/Q"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="Sm5P3yQB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872B414A0B5
-	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Aug 2025 18:30:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62DC319E98C;
+	Tue,  5 Aug 2025 18:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754418627; cv=none; b=F1ryPzREpKUCfRI1Ro7ssFK0fC/GcRWRTcw0AcfSl956VXxtqYhL/VcRwAKUF5No7aRKN9CCJ4U67GlepOBbLfdewB2EnIAt29//fP05w5VL9cXi1lQ1TzYlzXcQ2nwovs7OEZsBoVlrycRiDUKEeJEM16NVk/LjY+RA/LpeoVQ=
+	t=1754419247; cv=none; b=QsVeql9i6jVkkqdYIE7L0FQn4iu2HHurIXPUy9lpqbChQF1mqkV5vQs7RUXQGHJYUHqMfrkc4+uQ6mw0GBV4ssWUxR6nNNUkYKF9SwY6gyB+xpuPoXrbwOLSXMvm8uw70KqgKMpoLVXmIBrUDyCTUqshZk5j6RU+eKHrOcnDCWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754418627; c=relaxed/simple;
-	bh=D3Q62JDOJMoCruOsnz+vC8PgQX3Y7tK6WSKtlJ2Rnu0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=anF4hYnQA3qfVSpD3TICP4iCOIxGBrwrV0XirNdYso9cNc1pOnRpoLER8+s2uCZExMbYEz7Jf5q+aiD5iBKIRgaQAQADez/wFdsuFazj5LdKYbBV4SpUydSRiwHppmT0CmyI1AVi6gd2Ji5ZweV8C8+vyl+DGyh5Ekq2si1uNUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eqmX1X/Q; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754418624;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MsajB2UO0A1Piq3NOBQB21g4NsKLS1tqOn8nF+qqwHU=;
-	b=eqmX1X/QhaRrsGF44qMPRPK04Cd/RkpoNVa6BlxM8WzPC4eDjnRDSVoOhXTFrmUMHZx26Q
-	P7lJZd5B/EEl/UtTHFetI4t0Pp/vDrA3W/F6qnx0f8gjWv7EZRkHS6LaDcuWe/sbCGKVfh
-	g2X4OltATk4hx7mHukSXwlrA9ikY+sk=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-401-fioK_HJQP9u-KZkyDXuASw-1; Tue, 05 Aug 2025 14:30:23 -0400
-X-MC-Unique: fioK_HJQP9u-KZkyDXuASw-1
-X-Mimecast-MFC-AGG-ID: fioK_HJQP9u-KZkyDXuASw_1754418622
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-459d8020b7bso16280715e9.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Aug 2025 11:30:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754418622; x=1755023422;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MsajB2UO0A1Piq3NOBQB21g4NsKLS1tqOn8nF+qqwHU=;
-        b=prZvJS5ExplKg7EPofn3qU6qRS1KgQhWWbHldpgNIrVppQJmu1qyHrWMGfJl53SyRU
-         /PeJdu+AoaMRW9XrxgtOAPQGzVhFrOdtTa90xLLTqS1wKBUbMGb+bzh7e/5mb3fSHIjh
-         h4J8CS36qn8B28bFNsM4H0IYI1wkcbMx/QPS/Paz5Qvnp9nw/fNJZ9Q0GLrCz/4B2Bka
-         SQ8EKNElmyxoFEolEDWfjlwDoJyXHpvM64cHnuxFQcvMwdjLnAo4zhHxkBneD1wkkL2Y
-         wcsqCPUDJ3bIJdWOjdtBlVZv+huursNHO0OpHzL2XteSzq+FrBmRXef5B8ooa+5aM/1y
-         WXVg==
-X-Gm-Message-State: AOJu0YxkizO4p6dDviUVcPNzAzd2NLrqQOnk/RFV4Ys/Yg19cgtpdQDt
-	VCf7scOOoC2Pyni2PkfLqCiz3/FkXIWc+3jEPFdK1mlgytYNFebIYy47L7dS2vRkG3IusAjLjiS
-	RZY3Rc3E9LzdYZM0m0vronOUgScGx3jMVuJuI68CJvu6PV+jL5uMEb0ATagKikkGY0JM7q1VJxt
-	AXYzLrN0W1veUpsk8OT42/lRMDdDuo5zUaG8tWPu4yqp4aIbvHiOpzQA==
-X-Gm-Gg: ASbGncvuY9rqegCEFxrlnff5clcwf0uMVooXUPqHWQPIFSw0qcHYyqV2546KojRxRg6
-	ShrLKqREdJSacB41GJofWBQMnRyY0O8vso88cUIH3ZH7QMQ2BDr3xLSd8U9iCJuadwR6EbBkbjf
-	GuL0q/CBfsPp2JrV33N1Lzpm4Tqak4i4ZurrVUBvm7d91A2u+JiQYJWd0SI9YzqOB3U8FcdG4mK
-	qV0nGzhvYRUgKe8iTN77EMfUAzmEnNKXV8VRNdT+bmbH06fch/RR4inZHUS5BMarjDozUad0X36
-	A0x1dhOg5DzhPBEf6Gsb9ihYZDTJ+VKmnoauf1R2DeBIGTtKwP+CCWTMFIHxH4Hl1CTuKXjK9OT
-	1vmA+IDBSvVWD+3O9wCLMSFe9mBXsed7Rvio6cXQPbQi/axiT6hhD
-X-Received: by 2002:a05:600c:3145:b0:458:a7b5:9f6c with SMTP id 5b1f17b1804b1-458b69ddc11mr110879875e9.11.1754418621606;
-        Tue, 05 Aug 2025 11:30:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGsZ3CjrIs1HhwsUKFyZq2yQgnd/j48KFVjB9s+monVp4A6XH4Y5mB6lgT4Dk9MJh2D0PvxuA==
-X-Received: by 2002:a05:600c:3145:b0:458:a7b5:9f6c with SMTP id 5b1f17b1804b1-458b69ddc11mr110879535e9.11.1754418621005;
-        Tue, 05 Aug 2025 11:30:21 -0700 (PDT)
-Received: from maszat.piliscsaba.szeredi.hu (2A00111001223DBEE14EFA8D033F8FE7.mobile.pool.telekom.hu. [2a00:1110:122:3dbe:e14e:fa8d:33f:8fe7])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e586ad64sm14164595e9.20.2025.08.05.11.30.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Aug 2025 11:30:20 -0700 (PDT)
-From: Miklos Szeredi <mszeredi@redhat.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: Bernd Schubert <bschubert@ddn.com>,
-	Florian Weimer <fweimer@redhat.com>
-Subject: [PATCH 2/2] copy_file_range: limit size if in compat mode
-Date: Tue,  5 Aug 2025 20:30:16 +0200
-Message-ID: <20250805183017.4072973-2-mszeredi@redhat.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250805183017.4072973-1-mszeredi@redhat.com>
-References: <20250805183017.4072973-1-mszeredi@redhat.com>
+	s=arc-20240116; t=1754419247; c=relaxed/simple;
+	bh=sIPUeNyn51MwQcRen63qFH0M1zxVZVeGRf5hgQsJ3fg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R9XZTdEk6hinu1cyoJNMTiTvf+uYZPCIVhVMHKcxPCIiMzNCQHZ7iRMWHCK+bVd92jE/d6Z89UO3WEjUQFhPdfSYxYUCuKGcOcwn8MSkVftZmqcz3gF7zld+X2owe+UXwie2h5XlYpJV0b7+7+41+01h2CDCweNVhHpI9q3ceRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=Sm5P3yQB; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=KciQmJIXbw07cDbx+i2HzfhTEtup2QyBKXkEWtonmtc=; b=Sm5P3yQBIShc3zbeTt7E+XdS+4
+	EvScx9z/vp+XzZyTDaceoPdtZEEONqTBWAJmzcnrq/dgKqSSfRNulm9/9u+X+DlQCXeGcG8RqgWy4
+	rOlvq4/iFI9fDTruD3xWZcU+KgQUtWRnyv4/5SvgNOhAMzkogNWL4W/a2d/wRmQ+O8I1wnUVOHzcq
+	DukqLYB7KBmY4Mjhd6aZB9JsqEKJ/8Kem+uSWZJmjPmiyxciOIKL+Tae/4vScNEe8Y4g3rGHlRcFN
+	UsqBN9+3lcGGcDBivDOfM3wXgv/DA13t+5Pl2VjWXp+dVKKw4wG/C0L63CcWeYw5M6famlVX8SdMX
+	WBpcoxpA==;
+Received: from [191.204.199.202] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1ujMaP-00A38z-Qu; Tue, 05 Aug 2025 20:40:34 +0200
+Message-ID: <f5ea7370-c8c3-47c2-88cb-9740d82e87c6@igalia.com>
+Date: Tue, 5 Aug 2025 15:40:28 -0300
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 2/8] ovl: Create ovl_strcmp() with casefold support
+To: Gabriel Krisman Bertazi <gabriel@krisman.be>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>,
+ Theodore Tso <tytso@mit.edu>, linux-unionfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ kernel-dev@igalia.com
+References: <20250805-tonyk-overlayfs-v2-0-0e54281da318@igalia.com>
+ <20250805-tonyk-overlayfs-v2-2-0e54281da318@igalia.com>
+ <87o6stakb6.fsf@mailhost.krisman.be>
+Content-Language: en-US
+From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+In-Reply-To: <87o6stakb6.fsf@mailhost.krisman.be>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-If the process runs in 32-bit compat mode, copy_file_range results can be
-in the in-band error range.  In this case limit copy length to MAX_RW_COUNT
-to prevent a signed overflow.
+Hi Gabriel!
 
-Reported-by: Florian Weimer <fweimer@redhat.com>
-Closes: https://lore.kernel.org/all/lhuh5ynl8z5.fsf@oldenburg.str.redhat.com/
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
----
- fs/read_write.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Em 05/08/2025 11:56, Gabriel Krisman Bertazi escreveu:
+> André Almeida <andrealmeid@igalia.com> writes:
+> 
+>> To add overlayfs support casefold filesystems, create a new function
+>> ovl_strcmp() with support for casefold names.
+>>
+>> If the ovl_cache_entry have stored a casefold name, use it and create
+>> a casfold version of the name that is going to be compared to.
+>>
+>> For the casefold support, just comparing the strings does not work
+>> because we need the dentry enconding, so make this function find the
+>> equivalent dentry for a giving directory, if any.
+>>
+>> As this function is used for search and insertion in the red-black tree,
+>> that means that the tree node keys are going to be the casefolded
+>> version of the dentry's names. Otherwise, the search would not work for
+>> case-insensitive mount points.
+>>
+>> For the non-casefold names, nothing changes.
+>>
+>> Signed-off-by: André Almeida <andrealmeid@igalia.com>
+>> ---
+>> I wonder what should be done here if kmalloc fails, if the strcmp()
+>> should fail as well or just fallback to the normal name?
+>> ---
+>>   fs/overlayfs/readdir.c | 42 ++++++++++++++++++++++++++++++++++++++++--
+>>   1 file changed, 40 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
+>> index 83bca1bcb0488461b08effa70b32ff2fefba134e..1b8eb10e72a229ade40d18795746d3c779797a06 100644
+>> --- a/fs/overlayfs/readdir.c
+>> +++ b/fs/overlayfs/readdir.c
+>> @@ -72,6 +72,44 @@ static struct ovl_cache_entry *ovl_cache_entry_from_node(struct rb_node *n)
+>>   	return rb_entry(n, struct ovl_cache_entry, node);
+>>   }
+>>   
+>> +/*
+>> + * Compare a string with a cache entry, with support for casefold names.
+>> + */
+>> +static int ovl_strcmp(const char *str, struct ovl_cache_entry *p, int len)
+>> +{
+> 
+> Why do you need to re-casefold str on every call to ovl_strcmp?  Isn't
+> it done in a loop while walking the rbtree with a constant "str" (i.e.,
+> the name being added, see ovl_cache_entry_find)? Can't you do it once,
+> outside of ovl_strcmp? This way you don't repeatedly allocate/free
+> memory for each node of the tree (as Viro mentioned), and you don't have
+> to deal with kmalloc failures here.
+> 
 
-diff --git a/fs/read_write.c b/fs/read_write.c
-index 0ef70e128c4a..e2ccc44d96e6 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -1576,6 +1576,10 @@ ssize_t vfs_copy_file_range(struct file *file_in, loff_t pos_in,
- 	if (len == 0)
- 		return 0;
- 
-+	/* Make sure return value doesn't overflow in 32bit compat mode */
-+	if (in_compat_syscall() && len > MAX_RW_COUNT)
-+		len = MAX_RW_COUNT;
-+
- 	file_start_write(file_out);
- 
- 	/*
--- 
-2.49.0
+Yes, that's a more reasonable approach, I will do it for v3
 
+>> +
+>> +	const struct qstr qstr = { .name = str, .len = len };
+>> +	const char *p_name = p->name, *name = str;
+>> +	char *dst = NULL;
+>> +	int cmp, cf_len;
+>> +
+>> +	if (p->cf_name)
+>> +		p_name = p->cf_name;
+> 
+> This should check IS_ENABLED(CONFIG_UNICODE) so it can be
+> compiled out by anyone doing CONFIG_UNICODE=n
+> 
+>> +
+>> +	if (p->map && !is_dot_dotdot(str, len)) {
+>> +		dst = kmalloc(OVL_NAME_LEN, GFP_KERNEL);
+>> +
+>> +		/*
+>> +		 * strcmp can't fail, so we fallback to the use the original
+>> +		 * name
+>> +		 */
+>> +		if (dst) {
+>> +			cf_len = utf8_casefold(p->map, &qstr, dst, OVL_NAME_LEN);
+> 
+> utf8_casefold can fail, as you know and checked.  But if it does, a
+> negative cf_len is passed to strncmp and cast to a very high
+> value.
+> 
+
+ops, that's right, thanks for the feedback!
 
