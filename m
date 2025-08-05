@@ -1,65 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-56780-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56782-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65F50B1B896
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 18:33:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91440B1B8AA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 18:42:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8425E16755C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 16:33:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B2AE17D096
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 16:42:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E05B275B0D;
-	Tue,  5 Aug 2025 16:33:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF68F292B48;
+	Tue,  5 Aug 2025 16:42:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jFTf7O7L"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I4OUu/L+"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB65719CCFC;
-	Tue,  5 Aug 2025 16:33:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95EA92571D4;
+	Tue,  5 Aug 2025 16:42:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754411596; cv=none; b=IkqryN3RwfNVvMfDw/qFVxizju6fJEGCLJHJyNA+j2NQXis43M9XOzaTi6VcqzZl1KPwM/HxajY6nMRPfeY7/DlAt6WpMhImvBJHU42H0j7zHPxwQb5eta49Tm1YvAn/w+naSWaivC7aZABijT+3jMHyt/aCz4y+ZD17X9C3MDY=
+	t=1754412139; cv=none; b=jnRi+fnhYhe+q58KEvYwm6ert6kA7bsmqBzoMgjNGwzEtxf6CR8Pfmn6TnhtgnKwm5s8HHOLvF8O7jgzyfzHi1Jk9LSG1GU5Ef8EOJfTYyfhe3TvByKx9nEKheKgr9+Mz0wQV/nIXAgwr4qfqAdyQRZ3ksnj2zHLCJ5d6wTY+3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754411596; c=relaxed/simple;
-	bh=XlIUZZSTRcuLHdWy+RPpcgyNKVOAIfsokczyJGQ5h4M=;
+	s=arc-20240116; t=1754412139; c=relaxed/simple;
+	bh=NI0Pa52pJjxiroyoTscQkPI/Lrl+7gR5IHOHQEg0uqA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ec3Pck7Ho9ZGegnbrwejZFntWDwk7bj0O5AWdwKKz292M9Aj8+HJ1o9gXfZNTDY2Ahd9m/5t18C4wmDARtQAOMnNqw9+jNFZOz7R/tqjr7T/11oK/k/2ktry6HIZjKl5AlFvewHHq8doaHYzPjQ1MoiWabpiBYHhTTbi5Vv1EzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jFTf7O7L; arc=none smtp.client-ip=192.198.163.16
+	 In-Reply-To:Content-Type; b=hu1K22GbmJ2B17ZZp5La0k4QXm75gFppNXYBdy1nii0UVu4J7oEbJIxWRB7c+q++dcAgpQxxyM0NC2kUmAJpcJ1FR91eoq75ytDDGyiAxEObco6eVR58NR6F2e4poUB5SCf3EPgI7qJ99KOjH/QUc9TYroFSa5Whph4frsQGnAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I4OUu/L+; arc=none smtp.client-ip=192.198.163.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754411595; x=1785947595;
+  t=1754412137; x=1785948137;
   h=message-id:date:mime-version:subject:to:cc:references:
    from:in-reply-to:content-transfer-encoding;
-  bh=XlIUZZSTRcuLHdWy+RPpcgyNKVOAIfsokczyJGQ5h4M=;
-  b=jFTf7O7LHB8YIKDDTKDOj3d+sjQooQ6Yh5xyC9cCK7CEe+LihdCIQDLX
-   4UL/WaW1grYC6uzCB77hu3PLTzcMniZ9kcQQxP4TIgr+aWeMGhQqFkaGT
-   ubLzomiWR09LTrg9YNGmTrlWRmEfpIEIVtPdnoxbF2MWGxFzCtfQeOtsH
-   1DmgC38AUYfzKSAKJlHR0AT6/8noh/ndUtUubZL5PpeAIhK1Tj+uptjRp
-   c6IHmBbAsoB3nGcsTM9mvp6dTWA2/YBLT5Gq++q4/hnTRKA1Mec7zviaU
-   pJNUF55+yz1iulQ1TrClhBfdFaxEVHF8IMRZKxHk+fsx2Cw0pcEHm30zf
-   w==;
-X-CSE-ConnectionGUID: LX6DlyCoQoSDzHb6lpuaVg==
-X-CSE-MsgGUID: lgwoeAQCR/O2wbGthMN5Iw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11513"; a="44308297"
+  bh=NI0Pa52pJjxiroyoTscQkPI/Lrl+7gR5IHOHQEg0uqA=;
+  b=I4OUu/L+MrGsc2HBGo2oVyoKIKNtmVMylL25yhLhUm7cJ2R18EWz0FK3
+   TsT6LlAaSyCSOe9IQTqu0vB7IR27vHml6QBrHkGh1OkzU6ILqIJkMv73Q
+   p/6bzdvjXDsruYm34wyi6zuhqhJXtEhKp2B7j0LnQGHX2j0R1iwhJCxgS
+   jmbDsQ5CIwqRC5hn/gQZ0CLJLnx8qb7+vznVPNsh6eNMN5gox/Mu4yTlg
+   bf184xUmOpHVktpCU+olyR1OmkY6tseKmqTUvP+2pWFuYKimmtkVEY4U+
+   1OU3a0J+I7CK84kQ+X2ST5OPkCmy1mY1jsxLWMCePyzePMRT4dYzHheMR
+   A==;
+X-CSE-ConnectionGUID: m8G2J9m6RMmMs0dGOLIUnQ==
+X-CSE-MsgGUID: 6zxoOmOtRqWHd+vDV/1e3Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11513"; a="44309751"
 X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="44308297"
+   d="scan'208";a="44309751"
 Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 09:33:13 -0700
-X-CSE-ConnectionGUID: U+kcStHjQo+Rs6I62bQmeg==
-X-CSE-MsgGUID: CRRYWzt0RiiDjWLIQ8F5Hg==
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 09:42:16 -0700
+X-CSE-ConnectionGUID: 2zo8793CR+SS/fNQvNF4lA==
+X-CSE-MsgGUID: Waiv5Ff0Q8u+GwM8Ts8yjw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="164902203"
+   d="scan'208";a="164905002"
 Received: from inaky-mobl1.amr.corp.intel.com (HELO [10.125.110.106]) ([10.125.110.106])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 09:33:11 -0700
-Message-ID: <558da90d-e43d-464d-a3b6-02f6ee0de035@intel.com>
-Date: Tue, 5 Aug 2025 09:33:10 -0700
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 09:42:15 -0700
+Message-ID: <b810103c-ee95-4cc9-8b59-4dc6b1847d1e@intel.com>
+Date: Tue, 5 Aug 2025 09:42:14 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -67,7 +67,7 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] mm: add static huge zero folio
+Subject: Re: [PATCH 4/5] mm: add largest_zero_folio() routine
 To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
  Suren Baghdasaryan <surenb@google.com>, Ryan Roberts <ryan.roberts@arm.com>,
  Baolin Wang <baolin.wang@linux.alibaba.com>, Borislav Petkov <bp@alien8.de>,
@@ -86,7 +86,7 @@ Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, willy@infradead.org,
  "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org,
  gost.dev@samsung.com, hch@lst.de, Pankaj Raghav <p.raghav@samsung.com>
 References: <20250804121356.572917-1-kernel@pankajraghav.com>
- <20250804121356.572917-4-kernel@pankajraghav.com>
+ <20250804121356.572917-5-kernel@pankajraghav.com>
 From: Dave Hansen <dave.hansen@intel.com>
 Content-Language: en-US
 Autocrypt: addr=dave.hansen@intel.com; keydata=
@@ -132,190 +132,66 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
  hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
  vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
-In-Reply-To: <20250804121356.572917-4-kernel@pankajraghav.com>
+In-Reply-To: <20250804121356.572917-5-kernel@pankajraghav.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 8/4/25 05:13, Pankaj Raghav (Samsung) wrote:
 > From: Pankaj Raghav <p.raghav@samsung.com>
 > 
-> There are many places in the kernel where we need to zeroout larger
-> chunks but the maximum segment we can zeroout at a time by ZERO_PAGE
-> is limited by PAGE_SIZE.
-...
+> Add largest_zero_folio() routine so that huge_zero_folio can be
+> used directly when CONFIG_STATIC_HUGE_ZERO_FOLIO is enabled. This will
+> return ZERO_PAGE folio if CONFIG_STATIC_HUGE_ZERO_FOLIO is disabled or
+> if we failed to allocate a huge_zero_folio.
 
-In x86-land, the rules are pretty clear about using imperative voice.
-There are quite a few "we's" in the changelog and comments in this series.
+This changelog is telling a lot of the "what" but none of the "why".
 
-I do think they're generally good to avoid and do lead to more clarity,
-but I'm also not sure how important that is in mm-land these days.
+The existing huge zero folio API is for users that have an mm. This is
+*only* for folks that want a huge zero folio but don't have an mm.
+That's _why_ this function is needed. It's in this series because there
+was no way to get a huge zero folio before the permanent one was
+introduced in this series.
 
+Can we please get some of that into the function comment and changelog?
+It's critical.
 
-> +static inline struct folio *get_static_huge_zero_folio(void)
-> +{
-> +	if (!IS_ENABLED(CONFIG_STATIC_HUGE_ZERO_FOLIO))
-> +		return NULL;
-> +
-> +	if (likely(atomic_read(&huge_zero_folio_is_static)))
-> +		return huge_zero_folio;
-> +
-> +	return __get_static_huge_zero_folio();
-> +}
-
-This seems like an ideal place to use 'struct static_key'.
-
->  static inline bool thp_migration_supported(void)
->  {
-> @@ -685,6 +698,11 @@ static inline int change_huge_pud(struct mmu_gather *tlb,
->  {
->  	return 0;
->  }
-> +
-> +static inline struct folio *get_static_huge_zero_folio(void)
-> +{
-> +	return NULL;
-> +}
->  #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
->  
->  static inline int split_folio_to_list_to_order(struct folio *folio,
-> diff --git a/mm/Kconfig b/mm/Kconfig
-> index e443fe8cd6cf..366a6d2d771e 100644
-> --- a/mm/Kconfig
-> +++ b/mm/Kconfig
-> @@ -823,6 +823,27 @@ config ARCH_WANT_GENERAL_HUGETLB
->  config ARCH_WANTS_THP_SWAP
->  	def_bool n
->  
-> +config ARCH_WANTS_STATIC_HUGE_ZERO_FOLIO
-> +	def_bool n
-> +
-> +config STATIC_HUGE_ZERO_FOLIO
-> +	bool "Allocate a PMD sized folio for zeroing"
-> +	depends on ARCH_WANTS_STATIC_HUGE_ZERO_FOLIO && TRANSPARENT_HUGEPAGE
-> +	help
-> +	  Without this config enabled, the huge zero folio is allocated on
-> +	  demand and freed under memory pressure once no longer in use.
-> +	  To detect remaining users reliably, references to the huge zero folio
-> +	  must be tracked precisely, so it is commonly only available for mapping
-> +	  it into user page tables.
-> +
-> +	  With this config enabled, the huge zero folio can also be used
-> +	  for other purposes that do not implement precise reference counting:
-> +	  it is still allocated on demand, but never freed, allowing for more
-> +	  wide-spread use, for example, when performing I/O similar to the
-> +	  traditional shared zeropage.
-> +
-> +	  Not suitable for memory constrained systems.
-
-IMNHO, this is written like a changelog, not documentation for end users
-trying to make sense of Kconfig options. I'd suggest keeping it short
-and sweet:
-
-config PERSISTENT_HUGE_ZERO_FOLIO
-	bool "Allocate a persistent PMD-sized folio for zeroing"
-	...
-	help
-	  Enable this option to reduce the runtime refcounting overhead
-	  of the huge zero folio and expand the places in the kernel
-	  that can use huge zero folios.
-
-	  With this option enabled, the huge zero folio is allocated
-	  once and never freed. It potentially wastes one huge page
-	  worth of memory.
-
-	  Say Y if your system has lots of memory. Say N if you are
-	  memory constrained.
-
->  config MM_ID
->  	def_bool n
->  
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index ff06dee213eb..e117b280b38d 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -75,6 +75,7 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
->  static bool split_underused_thp = true;
->  
->  static atomic_t huge_zero_refcount;
-> +atomic_t huge_zero_folio_is_static __read_mostly;
->  struct folio *huge_zero_folio __read_mostly;
->  unsigned long huge_zero_pfn __read_mostly = ~0UL;
->  unsigned long huge_anon_orders_always __read_mostly;
-> @@ -266,6 +267,45 @@ void mm_put_huge_zero_folio(struct mm_struct *mm)
->  		put_huge_zero_folio();
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index 78ebceb61d0e..c44a6736704b 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -716,4 +716,21 @@ static inline int split_folio_to_order(struct folio *folio, int new_order)
+>  	return split_folio_to_list_to_order(folio, NULL, new_order);
 >  }
 >  
-> +#ifdef CONFIG_STATIC_HUGE_ZERO_FOLIO
-> +
-> +struct folio *__get_static_huge_zero_folio(void)
+> +/*
+> + * largest_zero_folio - Get the largest zero size folio available
+> + *
+> + * This function will return huge_zero_folio if CONFIG_STATIC_HUGE_ZERO_FOLIO
+> + * is enabled. Otherwise, a ZERO_PAGE folio is returned.
+> + *
+> + * Deduce the size of the folio with folio_size instead of assuming the
+> + * folio size.
+> + */
+
+This comment needs to get fleshed out. It at _least_ needs to say
+something along the lines of:
+
+	Use this when a huge zero folio is needed but there is no mm
+	lifetime to tie it to. Basically, use this when you can't use
+	mm_get_huge_zero_folio().
+
+> +static inline struct folio *largest_zero_folio(void)
 > +{
-> +	static unsigned long fail_count_clear_timer;
-> +	static atomic_t huge_zero_static_fail_count __read_mostly;
+> +	struct folio *folio = get_static_huge_zero_folio();
 > +
-> +	if (unlikely(!slab_is_available()))
-> +		return NULL;
-> +
-> +	/*
-> +	 * If we failed to allocate a huge zero folio, just refrain from
-> +	 * trying for one minute before retrying to get a reference again.
-> +	 */
-> +	if (atomic_read(&huge_zero_static_fail_count) > 1) {
-> +		if (time_before(jiffies, fail_count_clear_timer))
-> +			return NULL;
-> +		atomic_set(&huge_zero_static_fail_count, 0);
-> +	}
+> +	if (folio)
+> +		return folio;
 
-Any reason that this is an open-coded ratelimit instead of using
-'struct ratelimit_state'?
+There needs to be a newline in here.
 
-I also find the 'huge_zero_static_fail_count' use pretty unintuitive.
-This is fundamentally a slow path. Ideally, it's called once. In the
-pathological case, it's called once a minute.
+> +	return page_folio(ZERO_PAGE(0));
+> +}
+>  #endif /* _LINUX_HUGE_MM_H */
 
-I'd probably just recommend putting a rate limit on this function, then
-using a plain old mutex for the actual allocation to keep multiple
-threads out.
-
-Then the function becomes something like this:
-
-	if (__ratelimit(&huge_zero_alloc_ratelimit))
-		return;
-
-	guard(mutex)(&huge_zero_mutex);
-
-	if (!get_huge_zero_folio())
-		return NULL;
-
-	static_key_enable(&huge_zero_noref_key);
-
-	return huge_zero_folio;
-
-No atomic, no cmpxchg, no races on allocating.
-
-
-...
->  static unsigned long shrink_huge_zero_folio_count(struct shrinker *shrink,
->  						  struct shrink_control *sc)
->  {
-> @@ -277,7 +317,11 @@ static unsigned long shrink_huge_zero_folio_scan(struct shrinker *shrink,
->  						 struct shrink_control *sc)
->  {
->  	if (atomic_cmpxchg(&huge_zero_refcount, 1, 0) == 1) {
-> -		struct folio *zero_folio = xchg(&huge_zero_folio, NULL);
-> +		struct folio *zero_folio;
-> +
-> +		if (WARN_ON_ONCE(atomic_read(&huge_zero_folio_is_static)))
-> +			return 0;
-> +		zero_folio = xchg(&huge_zero_folio, NULL);
->  		BUG_ON(zero_folio == NULL);
->  		WRITE_ONCE(huge_zero_pfn, ~0UL);
->  		folio_put(zero_folio);
-
-This seems like a hack to me. If you don't want the shrinker to run,
-then deregister it. Keeping the refcount elevated is fine, but
-repeatedly calling the shrinker to do atomic_cmpxchg() when you *know*
-it will do nothing seems silly.
-
-If you can't deregister the shrinker, at least use the static_key
-approach and check the static key instead of doing futile cmpxchg's forever.
+The code is fine, but the changelog and comments need quite a bit of work.
 
