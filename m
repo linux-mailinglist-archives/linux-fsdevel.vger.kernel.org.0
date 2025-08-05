@@ -1,235 +1,190 @@
-Return-Path: <linux-fsdevel+bounces-56704-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56705-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D326B1ABD4
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 02:53:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CA6DB1ABE2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 03:06:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 962EC17D37F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 00:53:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13CBC18A1E42
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 01:07:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AE14189905;
-	Tue,  5 Aug 2025 00:53:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 110B417C21C;
+	Tue,  5 Aug 2025 01:06:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Zt4LTHs0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jJmWMI7s"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 778EA3FE7
-	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Aug 2025 00:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7023B149C7B
+	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Aug 2025 01:06:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754355179; cv=none; b=ijUBoyfS295pUmK/S3wRKj75hW7RW5jxWUN354NRvSgBf6DV00cwps2iXpZ9jPFwYvuqzgwoQNxXKfVo+WNBAdXXFN6P9D3d+ZtaH4uur8hu5D0xm2ZLv4Kc0FH8ZiSUYLeXacOVgGe5zkH+TjiLH51H++wgDEu7b6eIg7kX3Lc=
+	t=1754356002; cv=none; b=tbebVoEGczh2tBku4znZ84NqWh/cadCW5amQf51weqli7O2WVKvUgQYk92iBLKlRRwE2cqYoKBVuCXR09dq6ESOc0YDOnmvRXG7aFihfGQ1MXrjgF29tvXZ267V3YvUnKGcuPXxh8ARozak43h6Lvc2wxzDqPxnK2j7ic5f1qkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754355179; c=relaxed/simple;
-	bh=TBUNnhxD1842HFOzp6kn5hSqXP5MRgPWgOWV2/OvRo4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=X2mgSvzwxOJHIWPds9759ZAUgCDsf9jcm0WeQQFZGczdqGOXwSBbQiodr+N19AdVh6srzUAc2osKTc7sG6uQjpCvEy6r44Wopbh/6G5JnvXr0fweS8Z1oo9sxM40MlupCZFKoue9Knseqxil/yY7J/RLStDkOnRDFyvfNQy0MVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Zt4LTHs0; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3b78a034f17so3346595f8f.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Aug 2025 17:52:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1754355176; x=1754959976; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=T3mkcPdexRN4at20C1geVLLNsNcKXRcUEz7db2wwIaU=;
-        b=Zt4LTHs0gWkxhWM/ENdODLvrpkV/8oJA+BU2EmM1rbEQXIE0NHFLFNOOT+T864wqtR
-         SeUvfP/0rEOUMzW5ERYCYU9oSNAtNn7lVJkylbJKp+yDNbi+XqgF7Y4JQXNCMQI+tP/a
-         ErrQTrQ8h8WuQHFXwpx/0wY7NgzNaAz0SE3lOO+pJrst8NmRjSDLog7u106GyGrnqdRY
-         YZsjQE7NZ/NnXHlFqKtxP80qRjhvdybLKjNo+UkzdaVapwyodsRqPrRmETQ9Tm3efgD8
-         rYFAjJw0x5HGHFQaqFm8/MU2Ji2l8LfixcU0Sfk4xjUhrTqcTCiTiZg3SWWEDA+wHgza
-         fWqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754355176; x=1754959976;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=T3mkcPdexRN4at20C1geVLLNsNcKXRcUEz7db2wwIaU=;
-        b=q4ZSgrY9ylRSvvOzSVWJ6i7hslygZJtr1+r3AR91JjNp55gU3K6u4Ez66gfrrypUrC
-         5hUkVLydRofqJshTtoDMvRrGWkflCo49xKQvQn/Z+aytf/uWWp3LC1DiT/SYCRVIrgyp
-         baMaojq2XxV9obF0hdAyxZZQmhTR/EyhCRd/OmjoCKgh3Un7Phd/zEkDiVbf3aU2CLo7
-         N7/nQd0fnTZgeiW6B6jGfJvqncMfMwgTLhlNXlt06GadDoiGzEQyVOdLAE4WWtHNnYuy
-         TwDWEM4QANCL0aFUZPSdU/g1o9JQGCOQvlJf4czaO8dGOY2C+yzKtTl6XM9HL27n3qCi
-         MDqg==
-X-Forwarded-Encrypted: i=1; AJvYcCUxpLY+aphMJtTaxLNNXhtdy0GVjUODJSqWaGOFp7ux0su+MpdafAgelyEUwom84ZPArXoGe0Wm6tyfYbvX@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaaeJynwpE6JxwX7q3JSqpPt6cWtbAMy5JDHNxTUrsfYXM1qjm
-	NWWHMISoysx6YhsZihpD5d3zvrs4bBHw6n5Itb2pE5RkIY0dbues4OP7Hf1xiLaZ25g=
-X-Gm-Gg: ASbGncv8dV0JXeIK1mpeIYz/GubbJna5q9rqJeLWHd3enLX1B/P2vZn9jm9YKG53wO3
-	lEkIcz+5YQcsPGl3wXWXHKX0YY4o32h5UE0Y6DLkR/OAvuLwYatxPywuVP1QARO0cFjmbCAiPwC
-	JcBYeDvtgdtClWhD8Nglr0NbuM8s93s49qnwiNhqPaUnRKakp2RNgjheUE3zpXO9JOZMDS2AUNa
-	aw8+7TH5widEbrbYxh6ujIMCVXoyPRW/uSkFgJ6Lpr6wJCoS7IKlfv16ZO3jQsmnuAnIB9bpXk+
-	zsfekgz7elgqfN3ssbBk2UK158kiviYCceX87q+YV/XgqKnhS8sae/39Qk5G2ZFr0hehuFKynVb
-	i0oJ6sZt1yAki5jOkJDpRg7T2ee8h830oad+lptkCX1CrHKAvq4qLS37tnUSU
-X-Google-Smtp-Source: AGHT+IGgIoj/ytGmmiZCm/WyOOoK/JoWd3pIPcnuGCXIvetP+ROr/UwG61SyL9Unu72AH58O/qAHvg==
-X-Received: by 2002:a05:6000:228a:b0:3b7:825e:2d28 with SMTP id ffacd0b85a97d-3b8d946c027mr7987123f8f.9.1754355175648;
-        Mon, 04 Aug 2025 17:52:55 -0700 (PDT)
-Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8ac9021sm118590975ad.195.2025.08.04.17.52.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Aug 2025 17:52:55 -0700 (PDT)
-Message-ID: <510675a5-7cb2-4838-87e0-9fb0e9f114f0@suse.com>
-Date: Tue, 5 Aug 2025 10:22:49 +0930
+	s=arc-20240116; t=1754356002; c=relaxed/simple;
+	bh=IcXN/ilg1S2uPP6eSiRbp0iv7m0rBZXd4r+xJxdcXSw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P9zUnvOFTXKzZqmI2Nyg86i0a9IjOcmsXVhRl3pLmTDcrxtTRmXrZGxQcj+z1LX9o8HEqNH4SohclabdRZUJbdPxh+vINyDyzCt7IrQDsBAjeQEM8BB4guEvA3hGSYQE2eWhbZsbmP/IxZ3hPdfDUbRCPrfM0WyruUsSv96e4C8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jJmWMI7s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6078C4CEF0
+	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Aug 2025 01:06:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754356001;
+	bh=IcXN/ilg1S2uPP6eSiRbp0iv7m0rBZXd4r+xJxdcXSw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=jJmWMI7sk2CV3fg/1yXbB9bUJ8AybViKi8Yd5cfLHWL7l0gZy412zNagO0UvdcxTx
+	 +vdY3NCHsNMIgYm0FcqsB/3Uty0si8M8Vsn6VsNeNCRXinXo0QddSXCa+GNHYgQ1d6
+	 sJ0t9b3CSYc0Lii0X/K9+ROgOIkAUcP2ezRo9uHL5oMO9ILILgHN20GFQ1nZm2XzfV
+	 n2KxweRQOnCoVCMJNeenkjRCZyhlpLFKWOW5x5CjD+vg43BJTwILb9h0LHUJqmAnde
+	 frLQssQVDgRphg2rxsQ43Fy9Actwg3kCfXxnGEsJGKOH54g8usbizWvi49C4KJLWBD
+	 PW78Iy7fgAUXA==
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6157b5d0cc2so5164174a12.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Aug 2025 18:06:41 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWoU8bUsrZjYPpoh29n9sb4pDukw9FfVqk78D/FldqIxGoJOkjXGdEueGzuPpCGCJnDCDWXogeG3hZ7sW5J@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeRPBaTl4TZT7tvsk8v5M+SyRJWexCNp7pFz0Frxo8qdSt93pQ
+	0pIOYqkXtg/Wdo4FLu9OHUEuTu6vTNd8tWwxxqOXOrQrmZ774Ll2p65bt7Fu1n88mFWNmGB9yPL
+	VCBRJhFecschml23YAz9YxNU8gwmhHdA=
+X-Google-Smtp-Source: AGHT+IG6Qku6JaAcDjo9Qhu5rpyHMTbRwjN5uLUkw4LY9x9OCuxYQ7UX6LIo4GQpO9TJeL/vjAjbdXn4yxP747IECy4=
+X-Received: by 2002:a17:907:94c9:b0:ae3:ed38:8f63 with SMTP id
+ a640c23a62f3a-af94000c956mr1169597866b.14.1754356000469; Mon, 04 Aug 2025
+ 18:06:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Should seed device be allowed to be mounted multiple times?
-To: Anand Jain <anand.jain@oracle.com>, Qu Wenruo <quwenruo.btrfs@gmx.com>,
- Qu Wenruo <wqu@suse.de>, linux-btrfs <linux-btrfs@vger.kernel.org>,
- David Sterba <dsterba@suse.com>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-References: <aef03da8-853a-4c9f-b77b-30cf050ec1a5@suse.de>
- <4cdf6f5c-41e8-4943-9c8b-794e04aa47c5@suse.de>
- <8daff5f7-c8e8-4e74-a56c-3d161d3bda1f@oracle.com>
- <bddc796f-a0e0-4ab5-ab90-8cd10e20db23@suse.de>
- <184c750a-ce86-4e08-9722-7aa35163c940@oracle.com>
- <bc8ecf02-b1a1-4bc0-80e3-162e334db94a@gmx.com>
- <a3db2131-37a8-469f-a20d-dc83b2b14475@oracle.com>
-Content-Language: en-US
-From: Qu Wenruo <wqu@suse.com>
-Autocrypt: addr=wqu@suse.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
- FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
- Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
- fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
- 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
- V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
- rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
- rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
- Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
- E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
- vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
- g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
- AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
- cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
- qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
- /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
- o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
- JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
-In-Reply-To: <a3db2131-37a8-469f-a20d-dc83b2b14475@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250801001452.14105-1-linkinjeon@kernel.org> <PUZPR04MB631623977A900687BA21F92E8126A@PUZPR04MB6316.apcprd04.prod.outlook.com>
+ <CAKYAXd9sFBN+7=8xO35dY4adNRsuvTMbRuyPkMF6=k40QJCRhQ@mail.gmail.com> <PUZPR04MB631671AF6B812D54A033C4598123A@PUZPR04MB6316.apcprd04.prod.outlook.com>
+In-Reply-To: <PUZPR04MB631671AF6B812D54A033C4598123A@PUZPR04MB6316.apcprd04.prod.outlook.com>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Tue, 5 Aug 2025 10:06:28 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd89-cCuHKzNqHzpHUB3owfvdQ3AOFwnLCP6nvONZsNZOA@mail.gmail.com>
+X-Gm-Features: Ac12FXydym_jaesOfNhO4SpnHeuccHLyPs0qaDpIkFeGohLbQQLvBZFqAo9-LvA
+Message-ID: <CAKYAXd89-cCuHKzNqHzpHUB3owfvdQ3AOFwnLCP6nvONZsNZOA@mail.gmail.com>
+Subject: Re: [PATCH] exfat: optimize allocation bitmap loading time
+To: "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
+Cc: "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-在 2025/8/5 10:06, Anand Jain 写道:
-> 
-> 
->>> Thanks for the comments.
->>> Our seed block device use-case doesn’t fall under the kind of risk that
->>> BLK_OPEN_RESTRICT_WRITES is meant to guard against—it’s not a typical
->>> multi-FS RW setup. Seed devices are readonly, so it might be reasonable
->>> to handle this at the block layer—or maybe it’s not feasible.
-> 
-> 
->> Read-only doesn't prevent the device from being removed suddenly.
-> 
-> I don't see how this is related to the BLK_OPEN_RESTRICT_WRITES flag. 
-> Can you clarify?
-
-It's not related to that flag, I'm talking about the 
-fs_bdev_mark_dead(), and the remaining 3 callbacks.
-
-Those call backs are all depending on the bdev holder to grab a super block.
-
-Thus a block device should and can not have multiple super blocks.
-
-> 
-> ------
-> /* open is exclusive wrt all other BLK_OPEN_WRITE opens to the device */
-> #define BLK_OPEN_RESTRICT_WRITES        ((__force blk_mode_t)(1 << 5))
-> ------
-> 
->> You still didn't know that the whole fs_holder_ops is based on the 
->> assumption that one block device should only belong to one mounted fs.
-> 
-> You're missing the point: after a sprout, Btrfs internally becomes a new
-> filesystem with a new FSID. Some may call it insane—but it's different,
-> useful, and it works.
-
-I totally know that, it's you don't understand how bdev holder works, 
-nor willing to spend any time reading the details about bdev_open().
-
-Just search the @holder inside that function, even without 
-RESTRICT_WRITES flag, it will still fail at bd_may_reclaim() due to the 
-holder (super block) mismatch.
-
-
-> 
-> During that transition, fs_holder (or equivalent) needs to be updated to
-> reflect the change. If that's not currently possible, we may need to add
-> support for it.
-> 
-> The problem is that fs_holder_ops still sees it as a seed device, which
-> is risky—we don’t know what else could break if the FSID change isn’t
-> properly handled.
-
-Nope, it's super simple, you just can not mount have a block device with 
-two different holders.
-
-> 
->> And I see that assumption completely valid.
->>
->> I didn't see any reason why any sane people want to mount the sported 
->> fs and the seed device at the same time.
-> 
-> Neither of us has data on how it’s being used.
-
-Just read all the other filesystems' code.
-
-Either it's pushing super block as bdev holder, so that we can easily 
-grab the fs from bdev through bdev_super_lock(), or it's bcachefs doing 
-the similar thing, but without using the existing helpers.
-
-> And as I’ve hinted, it
-> does violate kABI from a technical standpoint.
->> If the use case is to sprout a fs based on the seed device multiple 
->> times, it's still possible, just unmount the sprout fs before mounting 
->> the seed device again.
-> 
-> In a datacenter environment, unmounting isn’t always a viable option.
-
-If you're mounting the fs already, why you can not umount suddenly?
-
-If you're talking about rootfs, it's no deal breaker, just remove the 
-seed device from the sprout fs, then mount the seed device again.
-
-> 
-> Now that there’s a regression and a feature has been broken, let’s not
-> shift the discussion to whether that feature was useful. I prefer to
-> keep things technical—not personal—and I expect respectful communication
-> to be mutual, not taken for granted.
-
-I have explained the technical details enough. If you are not willing to 
-understand, sure call it whatever you want.
-
-> 
-> Btrfs has some unique behaviors, and it’s possible we’ll need changes in
-> the block layer or fs_holder_ops. That still needs to be figured out.
-
-Unique doesn't mean correct nor sane.
-
-And seed device is nothing special. If you don't want to accept that one 
-mounted block device should only belong to one mounted fs, sure go ahead 
-and see what everyone else thinks.
-
-> 
-> Thanks, Anand
-> 
-
+On Mon, Aug 4, 2025 at 5:57=E2=80=AFPM Yuezhang.Mo@sony.com
+<Yuezhang.Mo@sony.com> wrote:
+>
+> > On Fri, Aug 1, 2025 at 5:03=E2=80=AFPM Yuezhang.Mo@sony.com
+> > <Yuezhang.Mo@sony.com> wrote:
+> > >
+> > > > Loading the allocation bitmap is very slow if user set the small cl=
+uster
+> > > > size on large partition.
+> > > >
+> > > > For optimizing it, This patch uses sb_breadahead() read the allocat=
+ion
+> > > > bitmap. It will improve the mount time.
+> > > >
+> > > > The following is the result of about 4TB partition(2KB cluster size=
+)
+> > > > on my target.
+> > > >
+> > > > without patch:
+> > > > real 0m41.746s
+> > > > user 0m0.011s
+> > > > sys 0m0.000s
+> > > >
+> > > > with patch:
+> > > > real 0m2.525s
+> > > > user 0m0.008s
+> > > > sys 0m0.008s
+> > > >
+> > > > Reviewed-by: Sungjong Seo <sj1557.seo@samsung.com>
+> > > > Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
+> > > > ---
+> > > >  fs/exfat/balloc.c   | 12 +++++++++++-
+> > > >  fs/exfat/dir.c      |  1 -
+> > > >  fs/exfat/exfat_fs.h |  1 +
+> > > >  3 files changed, 12 insertions(+), 2 deletions(-)
+> > > >
+> > > > diff --git a/fs/exfat/balloc.c b/fs/exfat/balloc.c
+> > > > index cc01556c9d9b..c40b73701941 100644
+> > > > --- a/fs/exfat/balloc.c
+> > > > +++ b/fs/exfat/balloc.c
+> > > > @@ -30,9 +30,11 @@ static int exfat_allocate_bitmap(struct super_bl=
+ock *sb,
+> > > >                 struct exfat_dentry *ep)
+> > > >  {
+> > > >         struct exfat_sb_info *sbi =3D EXFAT_SB(sb);
+> > > > +       struct blk_plug plug;
+> > > >         long long map_size;
+> > > > -       unsigned int i, need_map_size;
+> > > > +       unsigned int i, j, need_map_size;
+> > > >         sector_t sector;
+> > > > +       unsigned int max_ra_count =3D EXFAT_MAX_RA_SIZE >> sb->s_bl=
+ocksize_bits;
+> > > >
+> > > >         sbi->map_clu =3D le32_to_cpu(ep->dentry.bitmap.start_clu);
+> > > >         map_size =3D le64_to_cpu(ep->dentry.bitmap.size);
+> > > > @@ -57,6 +59,14 @@ static int exfat_allocate_bitmap(struct super_bl=
+ock *sb,
+> > > >
+> > > >         sector =3D exfat_cluster_to_sector(sbi, sbi->map_clu);
+> > > >         for (i =3D 0; i < sbi->map_sectors; i++) {
+> > > > +               /* Trigger the next readahead in advance. */
+> > > > +               if (0 =3D=3D (i % max_ra_count)) {
+> > > > +                       blk_start_plug(&plug);
+> > > > +                       for (j =3D i; j < min(max_ra_count, sbi->ma=
+p_sectors - i) + i; j++)
+> > > > +                               sb_breadahead(sb, sector + j);
+> > > > +                       blk_finish_plug(&plug);
+> > > > +               }
+> > > > +
+> > > >                 sbi->vol_amap[i] =3D sb_bread(sb, sector + i);
+> > > >                 if (!sbi->vol_amap[i]) {
+> > > >                         /* release all buffers and free vol_amap */
+> > > > diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c
+> > > > index ee060e26f51d..e7a8550c0346 100644
+> > > > --- a/fs/exfat/dir.c
+> > > > +++ b/fs/exfat/dir.c
+> > > > @@ -616,7 +616,6 @@ static int exfat_find_location(struct super_blo=
+ck *sb, struct exfat_chain *p_dir
+> > > >         return 0;
+> > > >  }
+> > > >
+> > > > -#define EXFAT_MAX_RA_SIZE     (128*1024)
+> > > >  static int exfat_dir_readahead(struct super_block *sb, sector_t se=
+c)
+> > > >  {
+> > > >         struct exfat_sb_info *sbi =3D EXFAT_SB(sb);
+> > > > diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
+> > > > index f8ead4d47ef0..d1792d5c9eed 100644
+> > > > --- a/fs/exfat/exfat_fs.h
+> > > > +++ b/fs/exfat/exfat_fs.h
+> > > > @@ -13,6 +13,7 @@
+> > > >  #include <uapi/linux/exfat.h>
+> > > >
+> > > >  #define EXFAT_ROOT_INO         1
+> > > > +#define EXFAT_MAX_RA_SIZE     (128*1024)
+> > >
+> > > Why is the max readahead size 128KiB?
+> > > If the limit is changed to max_sectors_kb, so that a read request rea=
+ds as much
+> > > data as possible, will the performance be better?
+> > This sets an appropriate readahead size for exfat. It's already used
+> > elsewhere in exfat.
+> > Getting ->max_sectors_kb from the block layer will result in a layer vi=
+olation.
+>
+> I checked the code of read ahead, EXFAT_MAX_RA_SIZE is consistent with th=
+e
+> default value(VM_READAHEAD_PAGES) of sb->s_bdi->ra_pages.
+>
+> Is it better to use sb->s_bdi->ra_pages instead?
+> If so, users can set different values via 'blockdev --setra'.
+I will change max_ra_count as follows:
+max_ra_count =3D min(sb->s_bdi->ra_pages, sb->s_bdi->io_pages)
+                << (PAGE_SHIFT - sb->s_blocksize_bits);
+Thanks.
 
