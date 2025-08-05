@@ -1,94 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-56707-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56713-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B8D6B1AC3D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 03:50:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 247C0B1ACE6
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 05:48:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 193153B7EEA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 01:50:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52A4917EF86
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 03:48:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1DDC1A9B24;
-	Tue,  5 Aug 2025 01:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B18C61EF363;
+	Tue,  5 Aug 2025 03:48:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="sg+HJsZE"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="cg121kSb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E65F288DB;
-	Tue,  5 Aug 2025 01:49:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 328BE72615;
+	Tue,  5 Aug 2025 03:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754358596; cv=none; b=Ed8HnJFmUP7OsUwz3N30r8mp5/fSeOSWflqGkCkWlehehLrCqlAjclWIp6VEmEkPQOBryZoJyYnOsJL9QnV60Se9r8uegb99oiOUmZhXENQ6qy0kw6c0/E/5cJRfz1hUgG6wpdh4KBPerALEI1rXeM37RtlZIQj/BSsGeF3STwk=
+	t=1754365711; cv=none; b=CbjSVVHr4VRCp0pQrocGNTtQhvWG6+MYC3y48rVQd1UrlH3Ny85LW109b9AS5pHo2r+T5gsEGBXMmEuNqj4KlhTd4monCfApS/SwJztDnjck6H0RYRcJf2+Df32CY+LiT7cOlHvxgdlsmFSdMGexbM8ILkKtImU2HiaeJFptwtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754358596; c=relaxed/simple;
-	bh=uPhfCt+Gk+6ssNFj+WuNt3PKXTNzfrVOwR/OpC8K+9o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hZumZ1+CmY+brjNCd8LJNSsl/9RJPWyw/BGWM3O57hJ2LxLdtQov6SEWItklG8q7Sk/t7z4KFRL71IpVaULQGpzyAKFuNd4pjPjHBphWXUfUXRsxfl5uN/75OEMZWFAwKMR4ArZI9QkXpsu1YGkkVbZfQBwF32uQbvPaDJaJsDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=sg+HJsZE; arc=none smtp.client-ip=115.124.30.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1754358591; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=Rh+PmBHA1gbb8whqL0XrewPPTjKcvEmBiru3WFTQ8U0=;
-	b=sg+HJsZEGDnljQqrHWN9dC74GL7rGx/Zhz0B9oBjeRvGNPC6iYtFOdW2BC4AGhBU0VZiHrP+ku8VUztYYAANQ3JyJG2Cpqys5WgZ1PanxdnhAskODH4PygN9hPg/FFemvF1e6bX69pH+wcJ26R/P/Fb1P4DL55yo8YfPnHlZ5Lg=
-Received: from 30.74.144.114(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0Wl3-EKr_1754358588 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 05 Aug 2025 09:49:49 +0800
-Message-ID: <ebbac3ee-df43-4a39-95b2-53f9cdd34e16@linux.alibaba.com>
-Date: Tue, 5 Aug 2025 09:49:48 +0800
+	s=arc-20240116; t=1754365711; c=relaxed/simple;
+	bh=2NYG8G2h5AQQlHz2qPx5CzpuSIMUYeDTyFMImmoO7UA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=CkFCE8F/HbFdvVjiRdc7S6HkoCYalKo4NffW6B+KvH48vALEb/dt9lk5Apky3Q1hWe1y7MfkCxWcQj8EKWH877GrPUbKJGKuvHMUR3PC1uXksEU2uQIceTqaH3tGnKNrQC+L1foRfPgjeMSuVSOXVRoUcst6HLEFLCGhgNXUm+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=cg121kSb; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:
+	Message-Id:Date:Subject:From:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=PUdM4E1mQH13KKw+cr4oA8dVQ/P7q9l6p3ARqB/UHdU=; b=cg121kSbJksjOxfX9P3HAtlqH0
+	RYTeauJh7VjKt4cdzWXRygLqUEUYVHLxYzkBUiw2HnuFuAy84EbV9lZLFRbcQTaKPpG0A6hDmuTRN
+	3g95hH2yEI/gxqvBAdHM30vbP2dXaVMCBI4Cmn1av/RH7Gx7xs3a9BjHnw02fVeYExEKFyE8cfaK8
+	ZhrOXhKil1+76VRL9B/HN7PWaOd9dEIoM1kD9ntj72q7jgE7Ew+wCmOHVcRalguIU+n48lOFqrn98
+	nzrQwl8hPV0r5DNbsN6EYyHqzXXJnu+3aIaPRwFi4BqnUun60qHAKwEMFlzxmn+fS4wiO/JH+WXpQ
+	hbarEVzw==;
+Received: from [191.204.199.202] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1uj838-009TiJ-Dp; Tue, 05 Aug 2025 05:09:14 +0200
+From: =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+Subject: [PATCH RFC v2 0/8] ovl: Enable support for casefold filesystems
+Date: Tue, 05 Aug 2025 00:09:04 -0300
+Message-Id: <20250805-tonyk-overlayfs-v2-0-0e54281da318@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/6] mm/huge_memory: respect MADV_COLLAPSE with
- PR_THP_DISABLE_EXCEPT_ADVISED
-To: Usama Arif <usamaarif642@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>, david@redhat.com,
- linux-mm@kvack.org
-Cc: linux-fsdevel@vger.kernel.org, corbet@lwn.net, rppt@kernel.org,
- surenb@google.com, mhocko@suse.com, hannes@cmpxchg.org, baohua@kernel.org,
- shakeel.butt@linux.dev, riel@surriel.com, ziy@nvidia.com,
- laoar.shao@gmail.com, dev.jain@arm.com, npache@redhat.com,
- lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, ryan.roberts@arm.com,
- vbabka@suse.cz, jannh@google.com, Arnd Bergmann <arnd@arndb.de>,
- sj@kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- kernel-team@meta.com
-References: <20250804154317.1648084-1-usamaarif642@gmail.com>
- <20250804154317.1648084-4-usamaarif642@gmail.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <20250804154317.1648084-4-usamaarif642@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIANB1kWgC/3WNzQrCMBCEX6Xs2UjSP4knQfABvEoPS7tpF9tEk
+ hIsJe9u6N3jN8N8s0MgzxTgWuzgKXJgZzOUpwL6Ce1IgofMUMqykbXUYnV2ewsXyc+4mSAarUx
+ D9VDLC0JefTwZ/h7GFzwfd+hyOHFYnd+Ol6iO6q8wKiFFpbVqVWtIY3XjEWfGc+8W6FJKPypXW
+ si0AAAA
+X-Change-ID: 20250409-tonyk-overlayfs-591f5e4d407a
+To: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
+ Theodore Tso <tytso@mit.edu>, Gabriel Krisman Bertazi <krisman@kernel.org>
+Cc: linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ kernel-dev@igalia.com, 
+ =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+X-Mailer: b4 0.14.2
 
+Hi all,
 
+We would like to support the usage of casefold filesystems with
+overlayfs to be used with container tools. This use case requires a
+simple setup, where every layer will have the same encoding setting
+(i.e. Unicode version and flags), using one upper and one lower layer.
 
-On 2025/8/4 23:40, Usama Arif wrote:
-> From: David Hildenbrand <david@redhat.com>
-> 
-> Let's allow for making MADV_COLLAPSE succeed on areas that neither have
-> VM_HUGEPAGE nor VM_NOHUGEPAGE when we have THP disabled
-> unless explicitly advised (PR_THP_DISABLE_EXCEPT_ADVISED).
-> 
-> MADV_COLLAPSE is a clear advice that we want to collapse.
-> 
-> Note that we still respect the VM_NOHUGEPAGE flag, just like
-> MADV_COLLAPSE always does. So consequently, MADV_COLLAPSE is now only
-> refused on VM_NOHUGEPAGE with PR_THP_DISABLE_EXCEPT_ADVISED,
-> including for shmem.
-> 
-> Co-developed-by: Usama Arif <usamaarif642@gmail.com>
-> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-> ---
+* Implementation
 
-LGTM.
-Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+When merge layers, ovl uses a red-black tree to check if a given dentry
+name from a lower layers already exists in the upper layer. For merging
+case-insensitive names, we need to store then in tree casefolded.
+However, when displaying to the user the dentry name, we need to respect
+the name chosen when the file was created (e.g. Picture.PNG, instead of
+picture.png). To achieve this, I create a new field for cache entries
+that stores the casefolded names and a function ovl_strcmp() that uses
+this name for searching the rb_tree. For composing the layer, ovl uses
+the original name, keeping it consistency with whatever name the user
+created.
+
+The rest of the patches are mostly for checking if casefold is being
+consistently used across the layers and dropping the mount restrictions
+that prevented case-insensitive filesystems to be mounted.
+
+Thanks for the feedback!
+
+---
+Changes in v2:
+- Almost a full rewritten from the v1.
+v1: https://lore.kernel.org/lkml/20250409-tonyk-overlayfs-v1-0-3991616fe9a3@igalia.com/
+
+---
+André Almeida (8):
+      olv: Store casefold name for case-insentive dentries
+      ovl: Create ovl_strcmp() with casefold support
+      fs: Create sb_same_encoding() helper
+      ovl: Ensure that all mount points have the same encoding
+      ovl: Set case-insensitive dentry operations for ovl sb
+      ovl: Set inode S_CASEFOLD for casefolded dentries
+      ovl: Check casefold consistency in ovl stack
+      ovl: Drop restrictions for casefolded dentries
+
+ fs/overlayfs/inode.c   |  7 +++++
+ fs/overlayfs/namei.c   | 25 ++++++---------
+ fs/overlayfs/params.c  |  7 -----
+ fs/overlayfs/readdir.c | 82 ++++++++++++++++++++++++++++++++++++++++++++++++--
+ fs/overlayfs/super.c   | 21 +++++++++++++
+ fs/overlayfs/util.c    |  8 ++---
+ include/linux/fs.h     | 22 ++++++++++++++
+ 7 files changed, 143 insertions(+), 29 deletions(-)
+---
+base-commit: ba04dc6f8768e61d6de2d0c5c5079a8b54e62fbb
+change-id: 20250409-tonyk-overlayfs-591f5e4d407a
+
+Best regards,
+-- 
+André Almeida <andrealmeid@igalia.com>
+
 
