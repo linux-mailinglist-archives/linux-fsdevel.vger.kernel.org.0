@@ -1,180 +1,161 @@
-Return-Path: <linux-fsdevel+bounces-56781-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56785-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C12C7B1B8A0
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 18:37:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5E6EB1B8E5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 19:03:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD1EB17C1D9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 16:37:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E19D3BC684
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 17:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80CC0292908;
-	Tue,  5 Aug 2025 16:37:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D63AA217F2E;
+	Tue,  5 Aug 2025 17:03:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="S8ZCo4iE"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cTfkSCC5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013050.outbound.protection.outlook.com [52.101.127.50])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 435C717A2FC;
-	Tue,  5 Aug 2025 16:37:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754411833; cv=fail; b=hKEATjk/sBfCvW3JX+HWpoJsaq6MtyEjlmBpB6wLC1K7YIwPvAKtBPVZrI8tPU5BDJRxuapkKsE9Eb3CbJQR50YnYT0A+mYVd6UkuavCKOz2wrAtNIxZNTlnK15XYCAqBBziy0DwWAwy/iK6/Gofq0mnniG/a4hxR2EM+dlFmMU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754411833; c=relaxed/simple;
-	bh=awV37WL8yCftZEBEtq/XNBMp7Yi/2urVoSrRazY4Nqk=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=FQsZh9eF2hWfd72P9FurSMLEINDIT7uV6COsSRbS/0WlA+x6x76ksiFigdzdJ8OMhDuug0Fri1eglNs2kX62SxiRz57CBBE7PbBl3BHDYvBcAufg+lrMzvGUI532IEV+QjNbxeGDqFEvzuq6T+wKrjZ/5/3xCPSBtuIqGXGZv+s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=S8ZCo4iE; arc=fail smtp.client-ip=52.101.127.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VpNUe6E6qtcoy5C8gJOV0EExZPUik9bJAD0wvb4ksQdypkP9Ui/JqCJDSaufVp+dRdVwG5cXVEGNsZvoxh9yqbO+I0+8KHrOWtRJbH8pgjUI4/d8O0WJLZTQVV4Wz9oTPy5TUrO5iL92CMp2n08gN7eJZpF17Ji0dAVl78EnEmiy3i6ZxXuCUvlh9zFBu0JdsdEYSlPqgM7nYaJJCNuJAOF/mVWAkD7Mb3fRkiMGVSEhdMROGI5sHPVUp+tFExDf+VUGFe4vL28Pbd7qdYXZX4VogbBN4/xMf247NxFXXbPvWPyujXBIRyX2FmH4hR8kS70A5x7AXWva5wJnWJtINg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=g6FpGl3S5HEEaSaLieJEYs7fKBBpofzgmjuxLUrHXX8=;
- b=BumSyvnofaKWg6KGMZJuanChotoTQulXebkSQeiZCEA7aNf+kgHhwsusOzNm3ddmNTPcMrsBC7nZYoHSKV3lAIeJTF8ganztysT6Zh+HrudaAmpT9CVz3/jTgF3a0Wy4sUF2onw40k/h9OZE2ZTZw+lCwbJu9bITVbVDgepiLWzZE2BnTIfGD6+6Fi1wCIFWAV0Y5+7HE/79Y3XTy77KyVX3YQlnXvtwsaMaa04rtrWtjKmYCUqiX0nfP5RyXhxkeuPZEuw26H8lKxJaRTuTRsL1IEPvonvotgmBikxNns6Q4cvzbJPVVp0OBO61ua0edIYH2UQugq5RYGDI/scMnQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=g6FpGl3S5HEEaSaLieJEYs7fKBBpofzgmjuxLUrHXX8=;
- b=S8ZCo4iELSB1kv0pPGodMneGHs32qFG5I0agyJTY6bs0eRgMbbJIQ+Tmu7e4mbISDzNFjvCTVRH+9wKTw5OTecBqaTZPnCqKMWSGxz75yTPwfnZHzQB8v2z/qZuTzShIqc7MYgoMhULz/raJW3nT0aeyix4+9Efq0rdCAyQINxF1Hs/uhyDthTiPAj//1mHK8albeP1mBgo64FXcuMn9loRTpefdBKC68L2xb56/A8g3P1nxEvRoKkvj4cikgBUPlS6AvZSbeNJuXyUXyqcaPYWWJHpkfu82UJRDWvb4+cSg0zl0MGhvH/ErCrmG6GlYeFSflXoF3b+AnCRHrZJCOQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
- by SEYPR06MB6616.apcprd06.prod.outlook.com (2603:1096:101:168::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.14; Tue, 5 Aug
- 2025 16:37:09 +0000
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::8c74:6703:81f7:9535]) by SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::8c74:6703:81f7:9535%4]) with mapi id 15.20.9009.013; Tue, 5 Aug 2025
- 16:37:09 +0000
-From: Yangtao Li <frank.li@vivo.com>
-To: slava@dubeyko.com,
-	glaubitz@physik.fu-berlin.de,
-	Yangtao Li <frank.li@vivo.com>
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] hfsplus: return EIO when type of hidden directory mismatch in hfsplus_fill_super()
-Date: Tue,  5 Aug 2025 10:58:59 -0600
-Message-Id: <20250805165905.3390154-1-frank.li@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR01CA0035.apcprd01.prod.exchangelabs.com
- (2603:1096:4:192::13) To SEZPR06MB5269.apcprd06.prod.outlook.com
- (2603:1096:101:78::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A322AD14
+	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Aug 2025 17:03:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754413416; cv=none; b=jAbLJO7jCo93p+IgutSirgzJKg1Lj2OdkFfysgdBVQdx3Ry5AgxVY6RV3VBUEMhR4tw5XjikLAfBvY6//OerSb2u27peIicvzD2AcMSggfnP9opW9OnULYLK73OlM1Wxx94Ttr2eXMywFk3zA5nhffYVVlPrpA9oMU/HmwF7lHI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754413416; c=relaxed/simple;
+	bh=Kh56pL20T7H5zlhh9Vn7vZ2/KCtiWdU2V/izuigl+nM=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ueuoQi0+3VQ8KepCgF3kj01QyZ5bu0qN0UI7O9d96Sx/rmW+ulWzPbJGwjGvhuECr1Mh9ZZADkL/QHF3y/7fDAG/3hFGocTcE8u/wtcyqgdCI8O16XGefc1ncG4e9f+xKpXJzuLTXsccYXjWNOWIHuI8p/I8S87haoukOr8hZm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cTfkSCC5; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754413413;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tbVVoGaAB5mP5RybMnrtLIB1JKz2+YRNMZHEyFUTSmw=;
+	b=cTfkSCC5kvsANOJX+UYcPqpSlBuTWtNoTfLAK9V6FkRYbPgKP9eKq+zwTV8os1YuIMIPz6
+	fat/ZR6APt1nPRISR7Wtmb0sZcaGWpQuP5NKrq49xJKH3HHPFAG2bUgXXek0p2LQ08UJj2
+	1fILTAiLlZBy3dICkUBKLZ1rjIXCXBc=
+Received: from mail-oa1-f69.google.com (mail-oa1-f69.google.com
+ [209.85.160.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-654-WLwzhkWbOUKNKLItuKXm0g-1; Tue, 05 Aug 2025 13:03:32 -0400
+X-MC-Unique: WLwzhkWbOUKNKLItuKXm0g-1
+X-Mimecast-MFC-AGG-ID: WLwzhkWbOUKNKLItuKXm0g_1754413412
+Received: by mail-oa1-f69.google.com with SMTP id 586e51a60fabf-30b7d09bb58so4100055fac.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Aug 2025 10:03:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754413411; x=1755018211;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tbVVoGaAB5mP5RybMnrtLIB1JKz2+YRNMZHEyFUTSmw=;
+        b=HKiv25VwHbyJqTp8njXuxi4cpmeE23KC73WLYu+6EIpVY4mMCxWJ83X7HcGUGtKZTk
+         QJ0ByWON15JBu9UsdK7QHesNYFspxhIoOhI5y5z2M+uPc3IPupkLlLBw4nPEti6JFyki
+         RY6Ye7SXidHDzUvRhRhd89kQoanxFL2iHs4rr+f9078CPqnkuDCJTeiqLKJVWjxkS+o4
+         iuvUEJIGh/AXeQyBotA89kwCiy9BiZ6HGbOeV70yB0eNthDWW9rnVhZvtM/VV6odNku2
+         LdjSrbgXVdKgwehTzLK+EeJ47qXIwgZ5Eb+CG5H+5o15mFTo4sXX5Zp2CgHnERSfcPvM
+         8Zcg==
+X-Forwarded-Encrypted: i=1; AJvYcCWYgdTpB0BNauCuQ44gl4qG0hKgIiBjC4JhZJF7XYMEzgAdbCshBgkzqYaQ7UFaEp5s8oqZqaS8jtPO1651@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0AVnkNDAqsN49hF8j6YK0+dlHcc4BfnMbC74T+DcwIVIC3GPY
+	2yB0PdGccQ1Hdb2YTMSdWpMr/vyelTV4GBNzn6uW74TGXRzKoe4MgU7Q1D08GdtQdJUkOPdEoFd
+	lDXslasCQvdTmv/tq0sOrPXB2Ivmb9R8RIuPRNOFhHDjpUBC7xCMrr0lPhE531BVFPs39mY7ir2
+	dSFw==
+X-Gm-Gg: ASbGncvsAtBLIi3eTZLn8cp7wAIrLhkmUBDrqHY+/lkO7w9p3zRwdQS77BIKdzbRz3P
+	0D/WO90KHecNQ17yUKTIMfpOoVMPeznZ3MD1t8P+KU4cXD/WRorz9P63WnGUxPge+wCztmd2Bbv
+	tS4tDxU4KR5CuJQZuHHdpxZWbBCgvQist2KeeTK0OCxdmMH8l72KlUOb0x8MpN+cu+1d23FXXzX
+	jsOMYYJXsAjz6gdNaNcslBbZcG53PhOccBoV3BKGIFvdq3dvUnfnOZLROr8AIcyxYFh8AEB/odc
+	OBQ4F4LWaheiP86Pn1607JmZTb30dk2G
+X-Received: by 2002:a05:6871:2317:b0:2f3:4720:f7ca with SMTP id 586e51a60fabf-30b67628183mr8873980fac.2.1754413411377;
+        Tue, 05 Aug 2025 10:03:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGc+1OdQM+G/winnp5rPILb3JTMTlJWC5iVwWvIxlu/QYRJKW6ClokbBNAn1HhCL44Xbq8bxQ==
+X-Received: by 2002:a05:6871:2317:b0:2f3:4720:f7ca with SMTP id 586e51a60fabf-30b67628183mr8873915fac.2.1754413410937;
+        Tue, 05 Aug 2025 10:03:30 -0700 (PDT)
+Received: from [10.2.0.2] ([146.70.8.22])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-742fa231cefsm434274a34.45.2025.08.05.10.03.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Aug 2025 10:03:30 -0700 (PDT)
+Message-ID: <d6588ae2-0fdb-480d-8448-9c993fdc2563@redhat.com>
+Date: Tue, 5 Aug 2025 12:03:28 -0500
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|SEYPR06MB6616:EE_
-X-MS-Office365-Filtering-Correlation-Id: dc82ecf3-fc89-4fab-a719-08ddd43e5210
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ZD8nspQ0kA7s7WDUi18mwVpd2woJxlOJMvfWIB0YNKAXVhWpVnCbivpBVQrO?=
- =?us-ascii?Q?21wlHml28qPvD8yNMXPZzuppiljHUuo8sP8TCusTFJ7UdWeLmSLXtvjCEuJ1?=
- =?us-ascii?Q?Ms1mAfBL9jY1ycxFvUBPez2XqB9gWZi8FUxBF8sKRBq+XwwIPvxdcH69e9qI?=
- =?us-ascii?Q?DcQKAw5upnxSAdJCsdnIh6ysV6/duaP9pOCFpk9onwcdMF4dEke2UN1C25V2?=
- =?us-ascii?Q?DVI/YtQ5/HuVxuAUofnJcGneTvUuHFTvHu4zBBLZfBKcexXdA9Pe5LwwVMKH?=
- =?us-ascii?Q?MbtL8H1P0ln0h6OwhfyV3nsAbzWnpG9TxWqWbKSU8Sk8EXUN/0MVbvAH966g?=
- =?us-ascii?Q?ITM16DL69X0IO2vYDgOZKpJGVh3edugwizu3rBgKqSdr64uj1hd6AcWBz2Nb?=
- =?us-ascii?Q?eQ+PnGqnBm0RJFg+SAFeuHyslOVvRr5HXQ7B9YnHenqiQtkR4mBS21oGp+ef?=
- =?us-ascii?Q?gOvZ2pZcBSYTeskEzVKCYwuNAdf1QjkraPmtXhICtnQzr4TPh3XBL+kOoTvu?=
- =?us-ascii?Q?lDjiAX00psa4BQ7QaMgHV0uS4EzcGmmuDgD7ZWA4aAfSSnZO3pgPs5dREIQ0?=
- =?us-ascii?Q?yHFNspBGFfPoclqzhp9SWg4cQXtnG2PVDLsEJIAKXIkU6LXUkF4N2olIMQQ0?=
- =?us-ascii?Q?2YzlInHK3rJdkF1hcubEjAuxLpYzu+ce0eg0vg606ja95gsg4MBMycJVthTg?=
- =?us-ascii?Q?qZUc5lvpt/uhiFa+29xWRJcuYd+ZPpASGtOKp9c2S1ksWON2sS346MIkGqHY?=
- =?us-ascii?Q?xe6/wQ4V+FWd+pkXqAVPLsA1UU366Nui8GsupVeQ2hSMwxL3UuAf0h7RBsKd?=
- =?us-ascii?Q?qTLiwSTy0qtE9Ru4qslFRx6u+oxzM6/E6snwC+PkTVBzgVc/PYpgBIDxC50A?=
- =?us-ascii?Q?MwpytlwFYvJEh3ITAIpEpepOngFMCVvnOajq7x+H/Gv/pzULLOgS9SNRU98o?=
- =?us-ascii?Q?W7WkJa5XktZwa8vg6TdpZSpk4iQ2B6DxvWthEasCDXVU3VsNWk3cgxc5yuq3?=
- =?us-ascii?Q?j256d7265JToFz8LxJw+5sDNCs0KRa2FlnIbkCpcqMKjWerSknhOdQRGUKnU?=
- =?us-ascii?Q?6HfvQmt7dwMdEPktfgppIgKXWMJ/hD0s5pqpOZoyYhFetirrIw2D0wvprx/6?=
- =?us-ascii?Q?G78vrP7gcenV7ByoEv4qdQC1oNBqG5B8bNj5godod/aLFjRzpRlH4xRhBLfD?=
- =?us-ascii?Q?CyhfTCfnzu8DwqI5kkWPArjf7VzCUMZEO84gve8S+8rmaSZnnaRa7mVfvoPe?=
- =?us-ascii?Q?bpWa8K4NgMEMJedKJy+FIpmumMAidDlvsO13jz8wlL3M80yVj0rYBXnkc1Vm?=
- =?us-ascii?Q?PoqvZLyHM6Ez2jwipm3PJGpxa7Qg8DcGmNwRIPJQfiKXAxf5zW8wygJXRHyu?=
- =?us-ascii?Q?LTzakQx9US0duZH1AA0qSQPYaUwv7vQwDkPMPJDNz9SdqcQYjYoUiDtdKDc1?=
- =?us-ascii?Q?yV/xlletREn1diEORbWCAB2h+qZyWs+4fQ6qwXl+dzJHIGtdZtu8xQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ffoNbdughPrQaWvhvt1DCAdDN6sN/+SfUJEIRPINPBlQnG3DF1Z+XDOuCCU/?=
- =?us-ascii?Q?s1eIud0bGd8BLdLk5IPRihGCzyD+i85TGtkK9jDYAmF5vNMa0ekJgE/7dMKj?=
- =?us-ascii?Q?uezLGj2kYj5+Zc5LVVbmDK+msoCpWwkXI3LEZb3HIGUCL8ewlkii5uchQZnI?=
- =?us-ascii?Q?fazUFE0dOfTGXinsciJj4zqeAhAVae9Uly5uuLrBSTMJMpLXHjR0i4lux8yh?=
- =?us-ascii?Q?+UvRpfIjCRUG5kCkbpj8WSSC/+jdIbE5Q3s1CO5nUmBDHnr5fgIJstTeE/lO?=
- =?us-ascii?Q?HYweFt+IErJJw8PGZnpuDYZ40HpvrczjlGTRoPDoovoJqD0a/jlxKjN0pCHh?=
- =?us-ascii?Q?p0eXOzYjB9vIHrusIfnLPfMVZr7qlc+TDaZW7g6gsA4wRROLlJo0futAiZz1?=
- =?us-ascii?Q?hAQVg9xeijbAnYbhIKNO15GNVyZ5M3eM38mP/uKA0jHyjUtnj8DjEUCTn1os?=
- =?us-ascii?Q?Djp5iVuPdHBF+zccr48MiUs9iWm4EwgHTR6qS3oO7ACYOJ1VwTdHi0VIALpl?=
- =?us-ascii?Q?Mcihok6sPOFxYu9sF1j9T6Ac/oXfPEtg4euJA0Xb0C3zoOY7yVDR29xYp5OB?=
- =?us-ascii?Q?U8yNWhkIdY6k3FfIRyH4NNDOLeeN+CBuVZKvwvNB/wbvXhQlHf4gdRbd3fJw?=
- =?us-ascii?Q?2V2Ev7WONWBQidaMF1aA21fU+wnW4JO4zM1BmWtMhIUbEc0e5FY1bJXy8Tgh?=
- =?us-ascii?Q?0NDQMpK3EB5vfefoZmlM/g4xIqKeUBvV/E1RQr4XOzBGtOP/SLROYAtzEwaJ?=
- =?us-ascii?Q?PMfeDnSkfKfO40Y1jyGHvgbA9U/B+kiFG2vEeJzseNj6y0L5UKtmdje6o2Wq?=
- =?us-ascii?Q?4KHWKMRSk04GKbIFLKyOANQk1m0qb2H+r9BP/2Csp4sTfWnb7AmHkAMcOspm?=
- =?us-ascii?Q?0Gl6McgpgDzZz7tWWrmoKoht2uXW5sxQai/Lb1+L1U+yc+cWRcBUHCPh5gi3?=
- =?us-ascii?Q?LHdLgpNSR+XwEG0JkzaI4ZNRnDpYV6FwXz5wsWuGXd5PBoOzNOEwwxz1RezT?=
- =?us-ascii?Q?F5tia3Dt52s3uueE/IXK68/peTM1MuIfi9hh/30rtsrR3Lw1zD6TDgnJ61rG?=
- =?us-ascii?Q?vhwMkdnFoFS/0YzkfqDgwEk1fUqPcyKyEJ+dncGk5qnRYkb6ap/kYIAWKcX9?=
- =?us-ascii?Q?pfxJpf1xw4Dgj62HXLdRvru9nhOVgLkeHlB2VX6HkbKmoiDmNkRW3rvShaUD?=
- =?us-ascii?Q?ZKUIpl0486URJxvqHM1b0Y+qCMP1XO3O07ti8+FB1bWbt+03FE7g/lwNH3Zj?=
- =?us-ascii?Q?PLcBr5XG0sgnYDuQuJU611srLFssSBckeN8Da73UXpY5lC/PuLl8xfd2aepD?=
- =?us-ascii?Q?t+TkUEV56IV7LRJI7seOJuKF4B4ztHbIeI2oI9Ue1xg6kulJEV3qxdIher0S?=
- =?us-ascii?Q?DqFPnJ1bkbR1Vi2MBgHq5OTfRTmSX5p8NtHxJHu3Du+1jOyroHYxqmJmgjVw?=
- =?us-ascii?Q?Nd7FXblEHZzlSsry1uhvrU2YyJ1xPmreL0ixbBkXUsrG8+Y3PhQLfVku4sVt?=
- =?us-ascii?Q?dKucftU0x8Nn5feThNMzZ83dp0x4GfnkSoqAvqrk30QWfW/X4S1lHigRZcLp?=
- =?us-ascii?Q?rjyHs5/u1SfR2jzc6l72m4HH45sDVuLVrjZ36Dq4?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dc82ecf3-fc89-4fab-a719-08ddd43e5210
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2025 16:37:08.9010
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZVslpIJ2TsjoyIDUfacpYHRxYITvocGT95iUoXFJUM8dc3qmm+wt0ibPM2qoeP/g00WEXJZZMJkc5zomByh0Tg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB6616
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] debugfs: fix mount options not being applied
+From: Eric Sandeen <sandeen@redhat.com>
+To: Charalampos Mitrodimas <charmitro@posteo.net>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
+ Christian Brauner <brauner@kernel.org>, David Howells <dhowells@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+ linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20250804-debugfs-mount-opts-v1-1-bc05947a80b5@posteo.net>
+ <a1b3f555-acfe-4fd1-8aa4-b97f456fd6f4@redhat.com>
+Content-Language: en-US
+In-Reply-To: <a1b3f555-acfe-4fd1-8aa4-b97f456fd6f4@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-If Catalog File contains corrupted record for the case of
-hidden directory's type, regard it as I/O error instead of
-Invalid argument.
+On 8/4/25 12:22 PM, Eric Sandeen wrote:
+> On 8/4/25 9:30 AM, Charalampos Mitrodimas wrote:
+>> Mount options (uid, gid, mode) are silently ignored when debugfs is
+>> mounted. This is a regression introduced during the conversion to the
+>> new mount API.
+>>
+>> When the mount API conversion was done, the line that sets
+>> sb->s_fs_info to the parsed options was removed. This causes
+>> debugfs_apply_options() to operate on a NULL pointer.
+>>
+>> As an example, with the bug the "mode" mount option is ignored:
+>>
+>>   $ mount -o mode=0666 -t debugfs debugfs /tmp/debugfs_test
+>>   $ mount | grep debugfs_test
+>>   debugfs on /tmp/debugfs_test type debugfs (rw,relatime)
+>>   $ ls -ld /tmp/debugfs_test
+>>   drwx------ 25 root root 0 Aug  4 14:16 /tmp/debugfs_test
+> 
+> Argh. So, this looks a lot like the issue that got fixed for tracefs in:
+> 
+> e4d32142d1de tracing: Fix tracefs mount options
+> 
+> Let me look at this; tracefs & debugfs are quite similar, so perhaps
+> keeping the fix consistent would make sense as well but I'll dig
+> into it a bit more.
 
-Signed-off-by: Yangtao Li <frank.li@vivo.com>
----
- fs/hfsplus/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+So, yes - a fix following the pattern of e4d32142d1de does seem to resolve
+this issue.
 
-diff --git a/fs/hfsplus/super.c b/fs/hfsplus/super.c
-index 86351bdc8985..55f42b349a5e 100644
---- a/fs/hfsplus/super.c
-+++ b/fs/hfsplus/super.c
-@@ -524,7 +524,7 @@ static int hfsplus_fill_super(struct super_block *sb, struct fs_context *fc)
- 	if (!hfs_brec_read(&fd, &entry, sizeof(entry))) {
- 		hfs_find_exit(&fd);
- 		if (entry.type != cpu_to_be16(HFSPLUS_FOLDER)) {
--			err = -EINVAL;
-+			err = -EIO;
- 			goto out_put_root;
- 		}
- 		inode = hfsplus_iget(sb, be32_to_cpu(entry.folder.id));
--- 
-2.48.1
+However, I think we might be playing whack-a-mole here (fixing one fs at a time,
+when the problem is systemic) among filesystems that use get_tree_single()
+and have configurable options. For example, pstore:
+
+# umount /sys/fs/pstore 
+
+# mount -t pstore -o kmsg_bytes=65536 none /sys/fs/pstore
+# mount | grep pstore
+none on /sys/fs/pstore type pstore (rw,relatime,seclabel)
+
+# mount -o remount,kmsg_bytes=65536 /sys/fs/pstore
+# mount | grep pstore
+none on /sys/fs/pstore type pstore (rw,relatime,seclabel,kmsg_bytes=65536)
+#
+
+I think gadgetfs most likely has the same problem but I'm not yet sure
+how to test that.
+
+I have no real objection to merging your patch, though I like the
+consistency of following e4d32142d1de a bit more. But I think we should
+find a graceful solution so that any filesystem using get_tree_single
+can avoid this pitfall, if possible.
+
+-Eric
 
 
