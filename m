@@ -1,190 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-56705-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56706-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CA6DB1ABE2
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 03:06:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94CB2B1AC2A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 03:41:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13CBC18A1E42
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 01:07:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3D0818087E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 01:41:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 110B417C21C;
-	Tue,  5 Aug 2025 01:06:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82ECE1A239D;
+	Tue,  5 Aug 2025 01:41:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jJmWMI7s"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="EhfvULJn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7023B149C7B
-	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Aug 2025 01:06:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5353FA41;
+	Tue,  5 Aug 2025 01:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754356002; cv=none; b=tbebVoEGczh2tBku4znZ84NqWh/cadCW5amQf51weqli7O2WVKvUgQYk92iBLKlRRwE2cqYoKBVuCXR09dq6ESOc0YDOnmvRXG7aFihfGQ1MXrjgF29tvXZ267V3YvUnKGcuPXxh8ARozak43h6Lvc2wxzDqPxnK2j7ic5f1qkM=
+	t=1754358106; cv=none; b=ojucn8YlHltxwYqg/WKdV7tnQjoQG/hNB2OAMtIcInt04NFKmIa5zk2nRMsWjgJlGPjC+W/4CJldC10wuyZRmZXlH9AIjs1DZiCKPu6HQ3qhGn3/t7raPVV19T2dLrZqz7zshMp0OcOHtaWtsNy9aGpf5qUzm6pyI+yRU/7XoKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754356002; c=relaxed/simple;
-	bh=IcXN/ilg1S2uPP6eSiRbp0iv7m0rBZXd4r+xJxdcXSw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P9zUnvOFTXKzZqmI2Nyg86i0a9IjOcmsXVhRl3pLmTDcrxtTRmXrZGxQcj+z1LX9o8HEqNH4SohclabdRZUJbdPxh+vINyDyzCt7IrQDsBAjeQEM8BB4guEvA3hGSYQE2eWhbZsbmP/IxZ3hPdfDUbRCPrfM0WyruUsSv96e4C8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jJmWMI7s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6078C4CEF0
-	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Aug 2025 01:06:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754356001;
-	bh=IcXN/ilg1S2uPP6eSiRbp0iv7m0rBZXd4r+xJxdcXSw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=jJmWMI7sk2CV3fg/1yXbB9bUJ8AybViKi8Yd5cfLHWL7l0gZy412zNagO0UvdcxTx
-	 +vdY3NCHsNMIgYm0FcqsB/3Uty0si8M8Vsn6VsNeNCRXinXo0QddSXCa+GNHYgQ1d6
-	 sJ0t9b3CSYc0Lii0X/K9+ROgOIkAUcP2ezRo9uHL5oMO9ILILgHN20GFQ1nZm2XzfV
-	 n2KxweRQOnCoVCMJNeenkjRCZyhlpLFKWOW5x5CjD+vg43BJTwILb9h0LHUJqmAnde
-	 frLQssQVDgRphg2rxsQ43Fy9Actwg3kCfXxnGEsJGKOH54g8usbizWvi49C4KJLWBD
-	 PW78Iy7fgAUXA==
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6157b5d0cc2so5164174a12.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Aug 2025 18:06:41 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWoU8bUsrZjYPpoh29n9sb4pDukw9FfVqk78D/FldqIxGoJOkjXGdEueGzuPpCGCJnDCDWXogeG3hZ7sW5J@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeRPBaTl4TZT7tvsk8v5M+SyRJWexCNp7pFz0Frxo8qdSt93pQ
-	0pIOYqkXtg/Wdo4FLu9OHUEuTu6vTNd8tWwxxqOXOrQrmZ774Ll2p65bt7Fu1n88mFWNmGB9yPL
-	VCBRJhFecschml23YAz9YxNU8gwmhHdA=
-X-Google-Smtp-Source: AGHT+IG6Qku6JaAcDjo9Qhu5rpyHMTbRwjN5uLUkw4LY9x9OCuxYQ7UX6LIo4GQpO9TJeL/vjAjbdXn4yxP747IECy4=
-X-Received: by 2002:a17:907:94c9:b0:ae3:ed38:8f63 with SMTP id
- a640c23a62f3a-af94000c956mr1169597866b.14.1754356000469; Mon, 04 Aug 2025
- 18:06:40 -0700 (PDT)
+	s=arc-20240116; t=1754358106; c=relaxed/simple;
+	bh=k5XrY1B3TV43SkDqF3kk4f9XGmVe9KKBMmYc28bmAPc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ht7/D24ufFqjhrVus9R+2sW7/weOIvMpw4PRF7dqvhWha00m4Vo35L3Ht1BFFxz+hTBKi+Lzn+jJiiyNxyQEFX0ghxtLyeVH8fywmwj6iQaGBSTpaQ5oaIYWutyMxZ+fDl0+xj1CCVfzV5YK3wUYv0/YLLKRVclu7+zA1cJ71iQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=EhfvULJn; arc=none smtp.client-ip=115.124.30.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1754358095; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=sPrO0h2D30ui+zm6MLtXYmt/y/NyN6nZoAqs4yAWrlI=;
+	b=EhfvULJn+FUo3bE+4JArryhPnYn+l79EFLVTE7Lh5mYpdo6xysHVUkn08/CFrsNK3nkuZj80AYUiNm1wsw6r0B1ogi2DrN9J3+EN1RTef2j4sMa5yZ8PJXifjquEl6vBFVUjnEhBkaCzArefnsDNMhWjJqbJ49Iqj0mbPNpP0og=
+Received: from 30.74.144.114(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0Wl33Qh7_1754358092 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 05 Aug 2025 09:41:33 +0800
+Message-ID: <aa1666eb-022b-4d2b-9f2a-6c8f79237c50@linux.alibaba.com>
+Date: Tue, 5 Aug 2025 09:41:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250801001452.14105-1-linkinjeon@kernel.org> <PUZPR04MB631623977A900687BA21F92E8126A@PUZPR04MB6316.apcprd04.prod.outlook.com>
- <CAKYAXd9sFBN+7=8xO35dY4adNRsuvTMbRuyPkMF6=k40QJCRhQ@mail.gmail.com> <PUZPR04MB631671AF6B812D54A033C4598123A@PUZPR04MB6316.apcprd04.prod.outlook.com>
-In-Reply-To: <PUZPR04MB631671AF6B812D54A033C4598123A@PUZPR04MB6316.apcprd04.prod.outlook.com>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Tue, 5 Aug 2025 10:06:28 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd89-cCuHKzNqHzpHUB3owfvdQ3AOFwnLCP6nvONZsNZOA@mail.gmail.com>
-X-Gm-Features: Ac12FXydym_jaesOfNhO4SpnHeuccHLyPs0qaDpIkFeGohLbQQLvBZFqAo9-LvA
-Message-ID: <CAKYAXd89-cCuHKzNqHzpHUB3owfvdQ3AOFwnLCP6nvONZsNZOA@mail.gmail.com>
-Subject: Re: [PATCH] exfat: optimize allocation bitmap loading time
-To: "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
-Cc: "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/6] mm/huge_memory: convert "tva_flags" to "enum
+ tva_type"
+To: Usama Arif <usamaarif642@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>, david@redhat.com,
+ linux-mm@kvack.org
+Cc: linux-fsdevel@vger.kernel.org, corbet@lwn.net, rppt@kernel.org,
+ surenb@google.com, mhocko@suse.com, hannes@cmpxchg.org, baohua@kernel.org,
+ shakeel.butt@linux.dev, riel@surriel.com, ziy@nvidia.com,
+ laoar.shao@gmail.com, dev.jain@arm.com, npache@redhat.com,
+ lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, ryan.roberts@arm.com,
+ vbabka@suse.cz, jannh@google.com, Arnd Bergmann <arnd@arndb.de>,
+ sj@kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ kernel-team@meta.com
+References: <20250804154317.1648084-1-usamaarif642@gmail.com>
+ <20250804154317.1648084-3-usamaarif642@gmail.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <20250804154317.1648084-3-usamaarif642@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 4, 2025 at 5:57=E2=80=AFPM Yuezhang.Mo@sony.com
-<Yuezhang.Mo@sony.com> wrote:
->
-> > On Fri, Aug 1, 2025 at 5:03=E2=80=AFPM Yuezhang.Mo@sony.com
-> > <Yuezhang.Mo@sony.com> wrote:
-> > >
-> > > > Loading the allocation bitmap is very slow if user set the small cl=
-uster
-> > > > size on large partition.
-> > > >
-> > > > For optimizing it, This patch uses sb_breadahead() read the allocat=
-ion
-> > > > bitmap. It will improve the mount time.
-> > > >
-> > > > The following is the result of about 4TB partition(2KB cluster size=
-)
-> > > > on my target.
-> > > >
-> > > > without patch:
-> > > > real 0m41.746s
-> > > > user 0m0.011s
-> > > > sys 0m0.000s
-> > > >
-> > > > with patch:
-> > > > real 0m2.525s
-> > > > user 0m0.008s
-> > > > sys 0m0.008s
-> > > >
-> > > > Reviewed-by: Sungjong Seo <sj1557.seo@samsung.com>
-> > > > Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
-> > > > ---
-> > > >  fs/exfat/balloc.c   | 12 +++++++++++-
-> > > >  fs/exfat/dir.c      |  1 -
-> > > >  fs/exfat/exfat_fs.h |  1 +
-> > > >  3 files changed, 12 insertions(+), 2 deletions(-)
-> > > >
-> > > > diff --git a/fs/exfat/balloc.c b/fs/exfat/balloc.c
-> > > > index cc01556c9d9b..c40b73701941 100644
-> > > > --- a/fs/exfat/balloc.c
-> > > > +++ b/fs/exfat/balloc.c
-> > > > @@ -30,9 +30,11 @@ static int exfat_allocate_bitmap(struct super_bl=
-ock *sb,
-> > > >                 struct exfat_dentry *ep)
-> > > >  {
-> > > >         struct exfat_sb_info *sbi =3D EXFAT_SB(sb);
-> > > > +       struct blk_plug plug;
-> > > >         long long map_size;
-> > > > -       unsigned int i, need_map_size;
-> > > > +       unsigned int i, j, need_map_size;
-> > > >         sector_t sector;
-> > > > +       unsigned int max_ra_count =3D EXFAT_MAX_RA_SIZE >> sb->s_bl=
-ocksize_bits;
-> > > >
-> > > >         sbi->map_clu =3D le32_to_cpu(ep->dentry.bitmap.start_clu);
-> > > >         map_size =3D le64_to_cpu(ep->dentry.bitmap.size);
-> > > > @@ -57,6 +59,14 @@ static int exfat_allocate_bitmap(struct super_bl=
-ock *sb,
-> > > >
-> > > >         sector =3D exfat_cluster_to_sector(sbi, sbi->map_clu);
-> > > >         for (i =3D 0; i < sbi->map_sectors; i++) {
-> > > > +               /* Trigger the next readahead in advance. */
-> > > > +               if (0 =3D=3D (i % max_ra_count)) {
-> > > > +                       blk_start_plug(&plug);
-> > > > +                       for (j =3D i; j < min(max_ra_count, sbi->ma=
-p_sectors - i) + i; j++)
-> > > > +                               sb_breadahead(sb, sector + j);
-> > > > +                       blk_finish_plug(&plug);
-> > > > +               }
-> > > > +
-> > > >                 sbi->vol_amap[i] =3D sb_bread(sb, sector + i);
-> > > >                 if (!sbi->vol_amap[i]) {
-> > > >                         /* release all buffers and free vol_amap */
-> > > > diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c
-> > > > index ee060e26f51d..e7a8550c0346 100644
-> > > > --- a/fs/exfat/dir.c
-> > > > +++ b/fs/exfat/dir.c
-> > > > @@ -616,7 +616,6 @@ static int exfat_find_location(struct super_blo=
-ck *sb, struct exfat_chain *p_dir
-> > > >         return 0;
-> > > >  }
-> > > >
-> > > > -#define EXFAT_MAX_RA_SIZE     (128*1024)
-> > > >  static int exfat_dir_readahead(struct super_block *sb, sector_t se=
-c)
-> > > >  {
-> > > >         struct exfat_sb_info *sbi =3D EXFAT_SB(sb);
-> > > > diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
-> > > > index f8ead4d47ef0..d1792d5c9eed 100644
-> > > > --- a/fs/exfat/exfat_fs.h
-> > > > +++ b/fs/exfat/exfat_fs.h
-> > > > @@ -13,6 +13,7 @@
-> > > >  #include <uapi/linux/exfat.h>
-> > > >
-> > > >  #define EXFAT_ROOT_INO         1
-> > > > +#define EXFAT_MAX_RA_SIZE     (128*1024)
-> > >
-> > > Why is the max readahead size 128KiB?
-> > > If the limit is changed to max_sectors_kb, so that a read request rea=
-ds as much
-> > > data as possible, will the performance be better?
-> > This sets an appropriate readahead size for exfat. It's already used
-> > elsewhere in exfat.
-> > Getting ->max_sectors_kb from the block layer will result in a layer vi=
-olation.
->
-> I checked the code of read ahead, EXFAT_MAX_RA_SIZE is consistent with th=
-e
-> default value(VM_READAHEAD_PAGES) of sb->s_bdi->ra_pages.
->
-> Is it better to use sb->s_bdi->ra_pages instead?
-> If so, users can set different values via 'blockdev --setra'.
-I will change max_ra_count as follows:
-max_ra_count =3D min(sb->s_bdi->ra_pages, sb->s_bdi->io_pages)
-                << (PAGE_SHIFT - sb->s_blocksize_bits);
-Thanks.
+
+
+On 2025/8/4 23:40, Usama Arif wrote:
+> From: David Hildenbrand <david@redhat.com>
+> 
+> When determining which THP orders are eligible for a VMA mapping,
+> we have previously specified tva_flags, however it turns out it is
+> really not necessary to treat these as flags.
+> 
+> Rather, we distinguish between distinct modes.
+> 
+> The only case where we previously combined flags was with
+> TVA_ENFORCE_SYSFS, but we can avoid this by observing that this
+> is the default, except for MADV_COLLAPSE or an edge cases in
+> collapse_pte_mapped_thp() and hugepage_vma_revalidate(), and
+> adding a mode specifically for this case - TVA_FORCED_COLLAPSE.
+> 
+> We have:
+> * smaps handling for showing "THPeligible"
+> * Pagefault handling
+> * khugepaged handling
+> * Forced collapse handling: primarily MADV_COLLAPSE, but also for
+>    an edge case in collapse_pte_mapped_thp()
+> 
+> Disregarding the edge cases, we only want to ignore sysfs settings only
+> when we are forcing a collapse through MADV_COLLAPSE, otherwise we
+> want to enforce it, hence this patch does the following flag to enum
+> conversions:
+> 
+> * TVA_SMAPS | TVA_ENFORCE_SYSFS -> TVA_SMAPS
+> * TVA_IN_PF | TVA_ENFORCE_SYSFS -> TVA_PAGEFAULT
+> * TVA_ENFORCE_SYSFS             -> TVA_KHUGEPAGED
+> * 0                             -> TVA_FORCED_COLLAPSE
+> 
+> With this change, we immediately know if we are in the forced collapse
+> case, which will be valuable next.
+> 
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> Acked-by: Usama Arif <usamaarif642@gmail.com>
+> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+> ---
+
+Looks really nice. Thanks.
+Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 
