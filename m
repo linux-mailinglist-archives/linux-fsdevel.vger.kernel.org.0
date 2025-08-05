@@ -1,95 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-56765-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56766-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D16DB1B63A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 16:20:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D902B1B65E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 16:26:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A6BA1893505
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 14:19:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C504D3B7919
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 14:26:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CAFB275B0D;
-	Tue,  5 Aug 2025 14:18:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F53727702B;
+	Tue,  5 Aug 2025 14:26:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JLEiwTWg";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="15OpfyJo";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zDiNZGJ5";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZnbvifoH"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OoFDAz9e"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D00C0274FEB
-	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Aug 2025 14:18:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE9C721C16B;
+	Tue,  5 Aug 2025 14:26:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754403535; cv=none; b=j3woGhX17TKY6eV+xqVre64zaImOjAFsH7QIBMbNvLZZTuvI3goYoARUtchBMwmwjiSUgjm+L/Bed/InXkGx+jCgk7+K/E5YKCMwM14kUKWkSUOAje5QMQlDszPv6LvMKDG4EwenDzYYHGmWjlJEe9267F+ApOIW35lnlIIfj/0=
+	t=1754403985; cv=none; b=mOUbTRor4LFYG2Y+cIiRBKbRWTCQL/jpGm2I1AQo3qxmE/tHUgstzVKk3GvksTQc4jEXyc/MGSgD766vONluUls9hDHA6/UBc1lMavkJ/Kodeu5P8gTZ0MZq+vK7iu0FcQX93u+qYmVNkL+93G0DOkvN85hYSK1nbN6OdBsNdZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754403535; c=relaxed/simple;
-	bh=8aRcbWkNJ7XJB7HhT/RC3DT8xiYVHSKOLO2NPWxyEFk=;
+	s=arc-20240116; t=1754403985; c=relaxed/simple;
+	bh=FwtBnLDhwV/1DNOAles45j9etEv98yJEYZEYdpI4Odk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pN67p7bV99DsZ2bQo6fGNXiAt4bMAEECtYN6m/BxJfI7zqGwgSAskncHnIJyu2W+HaOyQZvxHaaM5uPDvNXEP7YpeiGgEw4UCV2MJuZ2H6V+PxPu43em/aZJnFAhbOrrPUD1zPnsg2q0MyNmMx1pzDbtrUgw17PeMxtdRDHw68E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JLEiwTWg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=15OpfyJo; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zDiNZGJ5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZnbvifoH; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id DB6CE1F38A;
-	Tue,  5 Aug 2025 14:18:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1754403531; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+NfTJO6QExB/AjtZCsMzDvrCWnZLiopnMrmlLDf3JbE=;
-	b=JLEiwTWgrN3FMXG6fIc7sMoJCxq1EVPmn0gw60A48lFseG+7pgp16TK0QsWp2cyVPSlB/d
-	Ax+Gw0JlK4Ic1I5p9wroVK7OffPuUuzWkwRIAtIjjJCgaMcdqyBW6T9hWmecarQgR9mpQE
-	OcoOcLoqzQ/JdIiyuaVHAe7bXMGe0cY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1754403531;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+NfTJO6QExB/AjtZCsMzDvrCWnZLiopnMrmlLDf3JbE=;
-	b=15OpfyJoyk2taAkgIC4Xv+OOtyhWW4yD2jIA+HdaA0B9fKtQ5TD5UCTC0igqFmqQ3E8Gz+
-	59OI7CE+fPo/VRDQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1754403530; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+NfTJO6QExB/AjtZCsMzDvrCWnZLiopnMrmlLDf3JbE=;
-	b=zDiNZGJ5si2mcehmfw2uKJsVv/5QwnJ6f3tNpjsLAoeQmqBlltQNalA9bop2V2mU6urcLB
-	1rnepXmjAR41zGBOEEQSGv/ckndF0/HNZADa6bItMJME+ydlyKB7WT+CUIj3PF6Hk3a+3d
-	hydmdVEkZp/7sEij6hxG7BWqmmO6fDs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1754403530;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+NfTJO6QExB/AjtZCsMzDvrCWnZLiopnMrmlLDf3JbE=;
-	b=ZnbvifoHF0Ve/E4VFWtrLfAQSaYUTFoeM8xoPnpU01Q7Mo4yP0G3GwG2rcPBIw0ZSkljNF
-	2gAHxNsZHZZYPrDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D0D8513A50;
-	Tue,  5 Aug 2025 14:18:49 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ysP5MMkSkmh2LwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 05 Aug 2025 14:18:49 +0000
-Message-ID: <a2fca13d-87bd-4eb3-b673-46c538f46e66@suse.cz>
-Date: Tue, 5 Aug 2025 16:20:47 +0200
+	 In-Reply-To:Content-Type; b=qzb7YGcpogrhYdkXMgcwhW775AgpMNPZfVtV5nrjxEW9YlFrHWKTIb5P5LAbqtLtr1dqjNOKkbIWWv/D0uMusRtzV9vy7rWzcwtexiJnmgJKroVLU0QQpqTB5vl2CYehQFlmvw7VSUdkFTemH18uf7gAk5vgHnE/C+avB/cgrrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OoFDAz9e; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4563cfac2d2so40896725e9.3;
+        Tue, 05 Aug 2025 07:26:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754403982; x=1755008782; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ry5Dfhvc2U44AmB7UaxhnygbevOBppFjf0G6WuFTeXE=;
+        b=OoFDAz9e6rNUeSgtywoSv1XGmF7US4NORzRHyoziq1vl/6vHc9QI385UGurq6khDDn
+         ruEtsqnwXgTVekuJiJ1NKgKWBipLc13lC/ej6+YPSAG3pD+S2SvRB0VzY1g2fHL7XdG9
+         N9j0Wsk1pDC5Qd37dOxpVCG+6yVArqs00csMObQYsaTB2YDbLaTxBBThz14vlNJwwGty
+         5CUewGeP6KU7A5ELplbCK2RHTOKogYSgl1qhjHYTXZG5Wz9ASWzZ8F2RryTYdiaMqCUu
+         ikBZzIGZOBcFytMznPb26Xi2k7yaww+pYhdbjnBtJMZasP/k7UBwVGTrC/YPTbFCYGwS
+         XGvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754403982; x=1755008782;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ry5Dfhvc2U44AmB7UaxhnygbevOBppFjf0G6WuFTeXE=;
+        b=QHO8tayQ52TD6G5hjjVpaBmLXVoHHno3RLy87P5Dxn7OhoDHcX7D/VAqXUqqEuf870
+         kR3cb3eWiAyEsrJnku/zwFb7R/iPAbW9f/CdqT14d2aAFNXMYeHYaacxqcaWCi5xxul6
+         kHCHVG2Y+hbqXFVPfZnpnJisJwMc+R7ZHHW+2mHXxSo9mJRftmgPbkFMIuPe+EZrLJca
+         d1OS4l8SoTeuiyNt5kOyskJhrwJ1HDHuhlyipxoxJjvWOuHAz9MFEMNNu7dam1JFXe8G
+         R8LMSmR/NljmO36kewZUUgX2Jco9Qe8TpbAX9f/inqUBD/5FMvRvsDfHDlF65uru3lht
+         Iviw==
+X-Forwarded-Encrypted: i=1; AJvYcCUw0p0vUDqWn0fj1zfb3HnBKcgN/nUgGW8zVdiS81CSnZmGLltKSlvPUPtmg5+a7yMEOFKo62/lQaR/quF7@vger.kernel.org, AJvYcCVKO3p82kVQ9zOGrsEpr4RdzSJjGu6ns8n7sZDCrT46qL+KWtZ79zbZ06YMAfgQ057s/iIvTz2aOFs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHd/DSRQj8ZyiYuH05CMuVnDP53uWhf/6MoqRccJrYUJ/Qfdca
+	Xj9XAjKjNGKy5oW1B2Nvb+UgTzkAyysZDIQEikrB0dQMF8i8eGC+EwNQ
+X-Gm-Gg: ASbGncus7ApoZ1Gyfk4d3LYo4/ho7V90hU9/jPDyYdTwzZnOYg/sA5bxA+K8UFNUoOI
+	UAgiRdhMIlOGlCcdSOvCWZkOrTl16hh7LwCqmcg5hREd5JDH+nnD6MWskZSBHIa5WsPvPVeWjxx
+	rbTnC4+IVM3HRfJd/FZ/mYVdg126YiPpRVwqtGTFwZl7JmAeM1YMpi7dzknuO5O2D6CItNDMAhr
+	i0W6UPemwOzwD8nLsdcBMUZwJnxll1KhZ2Dz8AVDxmoYdq0pNjuIvZ/EWr9yBtdSvp4+hHPTmNu
+	BT89lYQhan/GQa6MWEnroMbQWGI+IrX4RSPlwmm7Ts5120TFXJZs1OHmzy6UbqAJtIhmKT1D+MA
+	wQBYIo5mAUusEQEMXc6LPyOdU+sqgedRSpbSoU9lIks5UovYn1RyyMV/nNWmpGlwUZTrsrve20f
+	1k/RsOww==
+X-Google-Smtp-Source: AGHT+IH9EpTWoImUYJcCr9my5UTeO92YxiB5fFdInePVkEEtZ/CAl5u4VV1vdMFHKZwzOROQeDzq4Q==
+X-Received: by 2002:a05:600c:470d:b0:459:d709:e5a1 with SMTP id 5b1f17b1804b1-459d709e91emr78434045e9.6.1754403981789;
+        Tue, 05 Aug 2025 07:26:21 -0700 (PDT)
+Received: from ?IPV6:2a03:83e0:1126:4:14f1:c189:9748:5e5a? ([2620:10d:c092:500::6:98ea])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e5c40eb1sm1458615e9.6.2025.08.05.07.26.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Aug 2025 07:26:21 -0700 (PDT)
+Message-ID: <955ed533-dd7e-45e6-a2cb-f379a5878ef7@gmail.com>
+Date: Tue, 5 Aug 2025 15:26:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -97,126 +83,130 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] fs/proc/task_mmu: execute PROCMAP_QUERY ioctl
- under per-vma locks
-To: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
-Cc: Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, david@redhat.com,
- peterx@redhat.com, jannh@google.com, hannes@cmpxchg.org, mhocko@kernel.org,
- paulmck@kernel.org, shuah@kernel.org, adobriyan@gmail.com,
- brauner@kernel.org, josef@toxicpanda.com, yebin10@huawei.com,
- linux@weissschuh.net, willy@infradead.org, osalvador@suse.de,
- andrii@kernel.org, ryan.roberts@arm.com, christophe.leroy@csgroup.eu,
- tjmercier@google.com, kaleshsingh@google.com, aha310510@gmail.com,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-kselftest@vger.kernel.org
-References: <20250804231552.1217132-1-surenb@google.com>
- <20250804231552.1217132-4-surenb@google.com>
-From: Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH v3 5/6] selftests: prctl: introduce tests for disabling
+ THPs completely
+To: David Hildenbrand <david@redhat.com>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+Cc: linux-fsdevel@vger.kernel.org, corbet@lwn.net, rppt@kernel.org,
+ surenb@google.com, mhocko@suse.com, hannes@cmpxchg.org, baohua@kernel.org,
+ shakeel.butt@linux.dev, riel@surriel.com, ziy@nvidia.com,
+ laoar.shao@gmail.com, dev.jain@arm.com, baolin.wang@linux.alibaba.com,
+ npache@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+ ryan.roberts@arm.com, vbabka@suse.cz, jannh@google.com,
+ Arnd Bergmann <arnd@arndb.de>, sj@kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, kernel-team@meta.com
+References: <20250804154317.1648084-1-usamaarif642@gmail.com>
+ <20250804154317.1648084-6-usamaarif642@gmail.com>
+ <66c2b413-fa60-476a-b88f-542bbda9c89c@redhat.com>
+ <a22beba8-17ae-4c40-88f0-d4027d17fdbc@gmail.com>
+ <e608f766-8750-4781-bd23-8fa95b6d683a@redhat.com>
 Content-Language: en-US
-In-Reply-To: <20250804231552.1217132-4-surenb@google.com>
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <e608f766-8750-4781-bd23-8fa95b6d683a@redhat.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[28];
-	RCVD_TLS_ALL(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[oracle.com,redhat.com,google.com,cmpxchg.org,kernel.org,gmail.com,toxicpanda.com,huawei.com,weissschuh.net,infradead.org,suse.de,arm.com,csgroup.eu,vger.kernel.org,kvack.org];
-	R_RATELIMIT(0.00)[to_ip_from(RLqwhhqik4qyk5i1fk54co8f1o)];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:mid]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -4.30
+Content-Transfer-Encoding: 8bit
 
-On 8/5/25 1:15 AM, Suren Baghdasaryan wrote:
-> Utilize per-vma locks to stabilize vma after lookup without taking
-> mmap_lock during PROCMAP_QUERY ioctl execution. If vma lock is
-> contended, we fall back to mmap_lock but take it only momentarily
-> to lock the vma and release the mmap_lock. In a very unlikely case
-> of vm_refcnt overflow, this fall back path will fail and ioctl is
-> done under mmap_lock protection.
+
+
+On 05/08/2025 13:55, David Hildenbrand wrote:
+> On 05.08.25 14:46, Usama Arif wrote:
+>>
+>>
+>> On 05/08/2025 13:39, David Hildenbrand wrote:
+>>>> +FIXTURE_SETUP(prctl_thp_disable_completely)
+>>>> +{
+>>>> +    if (!thp_available())
+>>>> +        SKIP(return, "Transparent Hugepages not available\n");
+>>>> +
+>>>> +    self->pmdsize = read_pmd_pagesize();
+>>>> +    if (!self->pmdsize)
+>>>> +        SKIP(return, "Unable to read PMD size\n");
+>>>> +
+>>>> +    thp_save_settings();
+>>>> +    thp_read_settings(&self->settings);
+>>>> +    self->settings.thp_enabled = variant->thp_policy;
+>>>> +    self->settings.hugepages[sz2ord(self->pmdsize, getpagesize())].enabled = THP_INHERIT;
+>>>
+>>> Oh, one more thing: should we set all other sizes also to THP_INHERIT or (for simplicity) THP_NEVER?
+>>>
+>>
+>> hmm do we need to? I am hoping that we should always get the PMD size THP no matter what the policy
+>> for others is in the scenario we have?
 > 
-> This change is designed to reduce mmap_lock contention and prevent
-> PROCMAP_QUERY ioctl calls from blocking address space updates.
-> 
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> ---
->  fs/proc/task_mmu.c | 81 +++++++++++++++++++++++++++++++++++++---------
->  1 file changed, 65 insertions(+), 16 deletions(-)
-> 
-> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index 843577aa7a32..1d06ecdbef6f 100644
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-> @@ -517,28 +517,78 @@ static int pid_maps_open(struct inode *inode, struct file *file)
->  		PROCMAP_QUERY_VMA_FLAGS				\
->  )
->  
-> -static int query_vma_setup(struct mm_struct *mm)
-> +#ifdef CONFIG_PER_VMA_LOCK
-> +
-> +static int query_vma_setup(struct proc_maps_locking_ctx *lock_ctx)
->  {
-> -	return mmap_read_lock_killable(mm);
-> +	lock_ctx->locked_vma = NULL;
-> +	lock_ctx->mmap_locked = false;
-> +
-> +	return 0;
->  }
->  
-> -static void query_vma_teardown(struct mm_struct *mm, struct vm_area_struct *vma)
-> +static void query_vma_teardown(struct proc_maps_locking_ctx *lock_ctx)
->  {
-> -	mmap_read_unlock(mm);
-> +	if (lock_ctx->mmap_locked)
-> +		mmap_read_unlock(lock_ctx->mm);
-> +	else
-> +		unlock_vma(lock_ctx);
->  }
->  
-> -static struct vm_area_struct *query_vma_find_by_addr(struct mm_struct *mm, unsigned long addr)
-> +static struct vm_area_struct *query_vma_find_by_addr(struct proc_maps_locking_ctx *lock_ctx,
-> +						     unsigned long addr)
->  {
-> -	return find_vma(mm, addr);
-> +	struct vm_area_struct *vma;
-> +	struct vma_iterator vmi;
+> Assuming 64K is set to "always", couldn't it mislead us in the "madvise"/"never" test cases in some scenarios?
 > 
 
-Hm I think we can reach here with lock_ctx->mmap_locked being true via
-"goto next_vma" in query_matching_vma(). In that case we should just
-"return find_vma()" and doing the below is wrong, no?
+I tried it with 64K to always and seems to be ok. check_huge_anon checks AnonHugepages from smaps which
+only indicates the pmd mapped THPs only. So I think should be ok?
+Happy to set them to never and the change is probably something simple like below (untested), but
+just trying to understand better the need for it.
 
-> +	unlock_vma(lock_ctx);
-> +	rcu_read_lock();
-> +	vma_iter_init(&vmi, lock_ctx->mm, addr);
-> +	vma = lock_next_vma(lock_ctx->mm, &vmi, addr);
-> +	rcu_read_unlock();
-> +
-> +	if (!IS_ERR_OR_NULL(vma)) {
-> +		lock_ctx->locked_vma = vma;
-> +	} else if (PTR_ERR(vma) == -EAGAIN) {
-> +		/* Fallback to mmap_lock on vma->vm_refcnt overflow */
-> +		mmap_read_lock(lock_ctx->mm);
-> +		vma = find_vma(lock_ctx->mm, addr);
-> +		lock_ctx->mmap_locked = true;
-> +	}
-> +
-> +	return vma;
->  }
->  
+diff --git a/tools/testing/selftests/mm/prctl_thp_disable.c b/tools/testing/selftests/mm/prctl_thp_disable.c
+index 4b072d4ecc30..ee692c397835 100644
+--- a/tools/testing/selftests/mm/prctl_thp_disable.c
++++ b/tools/testing/selftests/mm/prctl_thp_disable.c
+@@ -142,6 +142,8 @@ FIXTURE_SETUP(prctl_thp_disable_completely)
+        thp_save_settings();
+        thp_read_settings(&self->settings);
+        self->settings.thp_enabled = variant->thp_policy;
++       for (int i = 1; i < sz2ord(self->pmdsize, getpagesize()); i++)
++               self->settings.hugepages[i].enabled = THP_INHERIT;
+        self->settings.hugepages[sz2ord(self->pmdsize, getpagesize())].enabled = THP_INHERIT;
+        thp_write_settings(&self->settings);
+ }
+@@ -244,6 +246,8 @@ FIXTURE_SETUP(prctl_thp_disable_except_madvise)
+        thp_save_settings();
+        thp_read_settings(&self->settings);
+        self->settings.thp_enabled = variant->thp_policy;
++       for (int i = 1; i < sz2ord(self->pmdsize, getpagesize()); i++)
++               self->settings.hugepages[i].enabled = THP_INHERIT;
+        self->settings.hugepages[sz2ord(self->pmdsize, getpagesize())].enabled = THP_INHERIT;
+        thp_write_settings(&self->settings);
+ }
+ 
+
+
+[root@vm7 vmuser]# echo always >  /sys/kernel/mm/transparent_hugepage/hugepages-64kB/enabled                                                                                                                                                                                                                        
+[root@vm7 vmuser]# ./prctl_thp_disable                                                                                                                                                                                                                                                                              
+TAP version 13                                                                                                                                                                                                                                                                                                      
+1..12                                                                                                                                                                                                                                                                                                               
+# Starting 12 tests from 6 test cases.                                                                                                                                                                                                                                                                              
+#  RUN           prctl_thp_disable_completely.never.nofork ...
+#            OK  prctl_thp_disable_completely.never.nofork
+ok 1 prctl_thp_disable_completely.never.nofork
+#  RUN           prctl_thp_disable_completely.never.fork ...
+#            OK  prctl_thp_disable_completely.never.fork
+ok 2 prctl_thp_disable_completely.never.fork
+#  RUN           prctl_thp_disable_completely.madvise.nofork ...
+#            OK  prctl_thp_disable_completely.madvise.nofork
+ok 3 prctl_thp_disable_completely.madvise.nofork
+#  RUN           prctl_thp_disable_completely.madvise.fork ...
+#            OK  prctl_thp_disable_completely.madvise.fork
+ok 4 prctl_thp_disable_completely.madvise.fork
+#  RUN           prctl_thp_disable_completely.always.nofork ...
+#            OK  prctl_thp_disable_completely.always.nofork
+ok 5 prctl_thp_disable_completely.always.nofork
+#  RUN           prctl_thp_disable_completely.always.fork ...
+#            OK  prctl_thp_disable_completely.always.fork
+ok 6 prctl_thp_disable_completely.always.fork
+#  RUN           prctl_thp_disable_except_madvise.never.nofork ...
+#            OK  prctl_thp_disable_except_madvise.never.nofork
+ok 7 prctl_thp_disable_except_madvise.never.nofork
+#  RUN           prctl_thp_disable_except_madvise.never.fork ...
+#            OK  prctl_thp_disable_except_madvise.never.fork
+ok 8 prctl_thp_disable_except_madvise.never.fork
+#  RUN           prctl_thp_disable_except_madvise.madvise.nofork ...
+#            OK  prctl_thp_disable_except_madvise.madvise.nofork
+ok 9 prctl_thp_disable_except_madvise.madvise.nofork
+#  RUN           prctl_thp_disable_except_madvise.madvise.fork ...
+#            OK  prctl_thp_disable_except_madvise.madvise.fork
+ok 10 prctl_thp_disable_except_madvise.madvise.fork
+#  RUN           prctl_thp_disable_except_madvise.always.nofork ...
+#            OK  prctl_thp_disable_except_madvise.always.nofork
+ok 11 prctl_thp_disable_except_madvise.always.nofork
+#  RUN           prctl_thp_disable_except_madvise.always.fork ...
+#            OK  prctl_thp_disable_except_madvise.always.fork
+ok 12 prctl_thp_disable_except_madvise.always.fork
+# PASSED: 12 / 12 tests passed.
+# Totals: pass:12 fail:0 xfail:0 xpass:0 skip:0 error:0
 
