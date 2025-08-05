@@ -1,145 +1,266 @@
-Return-Path: <linux-fsdevel+bounces-56776-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56777-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E65F7B1B7DE
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 18:00:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80133B1B82F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 18:14:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9618A189BFFB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 16:01:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24DE2168B71
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 16:14:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5EB528FAB5;
-	Tue,  5 Aug 2025 16:00:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ED4627F015;
+	Tue,  5 Aug 2025 16:14:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n8R5QlC6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zu+U3pL5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7433772630;
-	Tue,  5 Aug 2025 16:00:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A01F61C8603;
+	Tue,  5 Aug 2025 16:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754409644; cv=none; b=i2YmANoC02kBjwYToFpYFcipigL2eTIywvy6UVGkmP5MTk2Kdo6A0E8UWC2YpO4lKvHywk8nMSGNFxAJLcJ7HIdc4bZSdu3RBWuvCON1zWEOVEeXLGzlHlBOyOZLWCbypTDSLbuKGgBwdR6rXz4l7Wv++woYUzAr26NWoR1ZuSI=
+	t=1754410445; cv=none; b=sG45V+GdoMCFbtHP7VEmUL6bBUdZbUd8hiDEKg74MKdZBpnjaKs4yu4uwGYiR6Oki7jRfXlLmomHtb53k3HabVuLHE1n1g+c/f9M0z2AziGhIYzH45Q1x7ze7HXsQ/AQg/4CbepgcYz9E6DuE71W0sZqtyuzHlZTzFq8/phv8Dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754409644; c=relaxed/simple;
-	bh=M2YtucqNGx2YsjI76mHZf+3Hm3gOJxCDQ+hE8UN2Hkg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u1TsNwFROlnfSUR8ahjgPpF/WvG9lul7iGvTzA6U2WcaAcUtVaLloYyicA9b8ViSgTOBz6eujIGO9Nl64Vnf6X+JwO1ctqjZH3PgvThGqCasqUzd/mdPSI4OMnu+WzScvubAHg0NmAQcHYsCn2dbh02oDmxtlM+b91eTV9tU6oU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n8R5QlC6; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754409643; x=1785945643;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=M2YtucqNGx2YsjI76mHZf+3Hm3gOJxCDQ+hE8UN2Hkg=;
-  b=n8R5QlC6ME7oXWNUfF/t8KjIK0KH52zspLWJWB27ya52dbWLSfHvnNml
-   iGYwVZMir5x9PEhBvF3T/kUCwoOaGxHk1w8s4QCOu1+3J987kLIF3//QR
-   ngTFvSv9VhYnFKlKmBu5wcYM7aFy6ucKTTxAW03vwcMBYm0cone/HJAwP
-   OHre8z1d4rSv/jw/TsHvaRphm4V4t29uJ0rcLBKZmgE0W60O8vor+nmSw
-   izAvRg4Ad12DUtn+ME7DDa24f+l9e4KSrQdny67MD2ikC8xBUdSCy95Ba
-   jEuaol9hTkqxr5cSKSIWRVxOZey6YhiG4T3hvTum8wAvhr39mtdr5HD8J
-   A==;
-X-CSE-ConnectionGUID: 99HfzlPiSFae0bRBePZtiQ==
-X-CSE-MsgGUID: 8SrL7b0WSEiShcvnNwTIcg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11513"; a="60524256"
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="60524256"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 09:00:42 -0700
-X-CSE-ConnectionGUID: +Up2vnUySYqq/0HXS90B2g==
-X-CSE-MsgGUID: 6LXLbsqVTACJt64tAxMK4A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="164852041"
-Received: from inaky-mobl1.amr.corp.intel.com (HELO [10.125.110.106]) ([10.125.110.106])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 09:00:41 -0700
-Message-ID: <c3b0adc9-e8e9-45ce-b839-cb09dcce3b50@intel.com>
-Date: Tue, 5 Aug 2025 09:00:40 -0700
+	s=arc-20240116; t=1754410445; c=relaxed/simple;
+	bh=BglbfbCfxjDdNAl+FJxNAK3U0aRdh/ewx/iXRTko+dM=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bCmNbeoNjxCiJOkQpA5AgctmWxrwYxOk64myWn6QfJKVFwLD9eZPsterRDrBgUAlXvak5oXqwn8pjfSS4/PZlT0jFZsr7WcS4ipaxi4Gn6RXxmjPGjbdu8tB+CBF96xZJ8joZ+Q+aRtuJWOa+31mDqWadGk6qdXVOy0PucI5B+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zu+U3pL5; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-332631e47afso714441fa.0;
+        Tue, 05 Aug 2025 09:14:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754410442; x=1755015242; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ut5lsjSSswYnbLzk6rrdmu5+CeAKFhijQRi1rB1wfMg=;
+        b=Zu+U3pL5o4ZPJwIdkXISpU2dyfPB0+TNZSjkYcKaYSD+SRRfTxkyiY1CToGY5wFqXg
+         d8melksPoN+JtITTK/3buDk8xEYbfYAarJDpRVujvYiOcWyWF7oQh2Bih2TJHc50/B2G
+         9ZSAO+oT9l+ky/3GyCE1N/l6yabchtlYwVZ+jVHSjdVj6iebKyEv27RnIb7aN9pPx0JD
+         m4TSkoDO2Yc6tLTV92FnvVCzzvf4ITl6fFll+GlPKPIj/SaRddi5H5EkcddCdZcWoTAi
+         RwT2OhbFiB8+sd9j9pLdRESRxpfojA4PvSkmWNZIRK9A5+KcBdYgxbVvRXdnnlCEuZB6
+         7ptw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754410442; x=1755015242;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ut5lsjSSswYnbLzk6rrdmu5+CeAKFhijQRi1rB1wfMg=;
+        b=wx79USt3Ijrv7F9dJ5zPWyZw9psisLB0mYeorSbrDyQjqfUBf8xXKgZWmCy9+bpmEI
+         NsOQSPKcZhmj5okJHTHaeXJrCjt0+0kEDXMSSCqFF4ypECrAjg9Mqa+uoy6XQW8jMA6Z
+         HhOYGAXrHy+bCSq0JJESfwr/muam04OZYoZLFL4Mw3/dUD+hzWy5Mz70SPM/lGsPlqGR
+         FW9wV55/f5JWjawM1SacamRoVoYwv7sX5bhAWUq4WGl1su2Q/HM2Ix5r+roprpqF1sPH
+         XBRQgUBk5WMsQ6kaxNXK1ylwKYXYSl5+uX46312Actj1UgIG67sg/BcVmq97aabj5nnW
+         Y96Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUBXXl7Ln8ePOt/LelC/47AUjsVXvr3aPHOVL7QwGqVc5pFYT1j1Z2e1MNh3RiYjrnwUBQzS243SljyeA==@vger.kernel.org, AJvYcCUYCQuoHFFsYcLtOpmBwSDPF0KAghyxY5nF8FAvFG4Q+VvV2lijReZePpr67eT/bw/AFL/CTrEMmFo/KilbGE0D5wSK@vger.kernel.org, AJvYcCUa0UAeg0sZyqKo/pYjy0MGDl3e7b/NsFK1EKVj+A2xR4u5QXE9yYMF+ogf3tuqwRaXeCyw8igidhx7IYy3@vger.kernel.org, AJvYcCVRzqnQEWpS4yisO12QA03J8rA0KSLDSkQO9l6MXGLXU1kz2EuLKVXQjReyetwSbyw+eB1rw3Mmqi4WJIUyPg==@vger.kernel.org, AJvYcCVjEelcX7AjVqrAjOGe/iWWj+BaB4QwssPJxvQQRTSUxlrifa0jfXjaHVmeoKISzeZMxgcGPS4E2Om8@vger.kernel.org, AJvYcCWKdVjmu7PtpdRJn0EnQxgGH/0ush9kKfGE1O6tpN/2LAPHeGQ6MMxHWmCHE7vu6cioOgk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgVvFVN1d7cyE2qfbqHEjKPXhjt7TIYRSMIjSxMUH+zl6P/8El
+	PC34RCwbFvWQEtOmGfQZuUUdqoV9xsgEsXPydgi5zNJ0+eAJ45Zjc7N8
+X-Gm-Gg: ASbGncv2m1NdzzRQhE1BgT7wneFjtgaQUh42bE1MXtBKurH6VPUQM3n7S/FFB7eujIL
+	80Sejdzh4+vE5PRMl3xJVPUWnfk8vKDcXphHC3zUk0g4FtZIcnpYCB9Hzz5XfaiLWosaEnV0fIn
+	/s/gDY+7JkzAQXU6scowMADMhEJPRb+9ZGRGtnETnNmwW5nyQOoNCDCap9+RBTO1KT90DejATDa
+	RZBXMxPEA2BqPI+TTnAEY6w8WiF7ngq+154gH+UZncedd4YGQnFPS796Fl/g3sJX5rLsaOLlBBw
+	JB9VsbWJQaM9wjqYVQ0l62+8xq1jV0UK5JDGiJcmslAc5GtEReC9yiDUOGbJep4F20AZKrEDbyg
+	lrlIOfVOliLyfdhnOD8yMSnqzpAQU0YP0g+rLanYoASb9qPS1XQ==
+X-Google-Smtp-Source: AGHT+IH0xPAx9h/e+86wx2UChAIDs8RS46jNjVMEpxxiiDlgZAALsSVVnEbgPp+pN/RR7dfa5MNCmA==
+X-Received: by 2002:a05:651c:b0f:b0:332:341d:9531 with SMTP id 38308e7fff4ca-3327b9157d5mr10915411fa.12.1754410441379;
+        Tue, 05 Aug 2025 09:14:01 -0700 (PDT)
+Received: from pc636 (host-95-203-18-142.mobileonline.telia.com. [95.203.18.142])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-33238272ff7sm20616811fa.7.2025.08.05.09.13.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Aug 2025 09:14:00 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Tue, 5 Aug 2025 18:13:56 +0200
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Uladzislau Rezki <urezki@gmail.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Harry Yoo <harry.yoo@oracle.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"David S . Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Kees Cook <kees@kernel.org>, Peter Xu <peterx@redhat.com>,
+	David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Xu Xin <xu.xin16@zte.com.cn>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Hugh Dickins <hughd@google.com>, Vlastimil Babka <vbabka@suse.cz>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
+	Muchun Song <muchun.song@linux.dev>,
+	Oscar Salvador <osalvador@suse.de>, Jann Horn <jannh@google.com>,
+	Pedro Falcato <pfalcato@suse.de>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Qi Zheng <zhengqi.arch@bytedance.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org,
+	sparclinux@vger.kernel.org, linux-sgx@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	nvdimm@lists.linux.dev, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] mm: update core kernel code to use vm_flags_t
+ consistently
+Message-ID: <aJItxJNfn8B2JBbn@pc636>
+References: <cover.1750274467.git.lorenzo.stoakes@oracle.com>
+ <d1588e7bb96d1ea3fe7b9df2c699d5b4592d901d.1750274467.git.lorenzo.stoakes@oracle.com>
+ <aIgSpAnU8EaIcqd9@hyeyoo>
+ <73764aaa-2186-4c8e-8523-55705018d842@lucifer.local>
+ <aIkVRTouPqhcxOes@pc636>
+ <69860c97-8a76-4ce5-b1d6-9d7c8370d9cd@lucifer.local>
+ <aJCRXVP-ZFEPtl1Y@pc636>
+ <aJHQ9XCLtibFjt93@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/5] add static huge zero folio support
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
- Suren Baghdasaryan <surenb@google.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Borislav Petkov <bp@alien8.de>,
- Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
- Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>,
- Mike Rapoport <rppt@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>,
- Michal Hocko <mhocko@suse.com>, David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>,
- Dev Jain <dev.jain@arm.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Jens Axboe <axboe@kernel.dk>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, willy@infradead.org,
- x86@kernel.org, linux-block@vger.kernel.org,
- Ritesh Harjani <ritesh.list@gmail.com>, linux-fsdevel@vger.kernel.org,
- "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org,
- gost.dev@samsung.com, hch@lst.de, Pankaj Raghav <p.raghav@samsung.com>
-References: <20250804121356.572917-1-kernel@pankajraghav.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
- oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
- 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
- ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
- VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
- iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
- c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
- pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
- ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
- QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
- c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
- LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
- lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
- MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
- IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
- aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
- I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
- E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
- F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
- CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
- P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
- 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
- GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
- MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
- Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
- lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
- 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
- qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
- BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
- 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
- vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
- FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
- l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
- yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
- +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
- asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
- WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
- sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
- KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
- MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
- hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
- vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
-In-Reply-To: <20250804121356.572917-1-kernel@pankajraghav.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aJHQ9XCLtibFjt93@kernel.org>
 
-On 8/4/25 05:13, Pankaj Raghav (Samsung) wrote:
-> Add a config option STATIC_HUGE_ZERO_FOLIO that will always allocate
-> the huge_zero_folio, and it will never drop the reference.
+On Tue, Aug 05, 2025 at 12:37:57PM +0300, Mike Rapoport wrote:
+> On Mon, Aug 04, 2025 at 12:54:21PM +0200, Uladzislau Rezki wrote:
+> > Hello, Lorenzo!
+> > 
+> > > So sorry Ulad, I meant to get back to you on this sooner!
+> > > 
+> > > On Tue, Jul 29, 2025 at 08:39:01PM +0200, Uladzislau Rezki wrote:
+> > > > On Tue, Jul 29, 2025 at 06:25:39AM +0100, Lorenzo Stoakes wrote:
+> > > > > Andrew - FYI there's nothing to worry about here, the type remains
+> > > > > precisely the same, and I'll send a patch to fix this trivial issue so when
+> > > > > later this type changes vmalloc will be uaffected.
+> > > > >
+> > > > > On Tue, Jul 29, 2025 at 09:15:51AM +0900, Harry Yoo wrote:
+> > > > > > [Adding Uladzislau to Cc]
+> > > > >
+> > > > > Ulad - could we PLEASE get rid of 'vm_flags' in vmalloc? It's the precise
+> > > > > same name and (currently) type as vma->vm_flags and is already the source
+> > > > > of confusion.
+> > > > >
+> > > > You mean all "vm_flags" variable names? "vm_struct" has flags as a
+> > > > member. So you want:
+> > > >
+> > > > urezki@pc638:~/data/backup/coding/linux-not-broken.git$ grep -rn vm_flags mm/execmem.c
+> > > > 29:                          pgprot_t pgprot, unsigned long vm_flags)
+> > > > 39:             vm_flags |= VM_DEFER_KMEMLEAK;
+> > > > 41:     if (vm_flags & VM_ALLOW_HUGE_VMAP)
+> > > > 45:                              pgprot, vm_flags, NUMA_NO_NODE,
+> > > > 51:                                      pgprot, vm_flags, NUMA_NO_NODE,
+> > > > 85:                          pgprot_t pgprot, unsigned long vm_flags)
+> > > > 259:    unsigned long vm_flags = VM_ALLOW_HUGE_VMAP;
+> > > > 266:    p = execmem_vmalloc(range, alloc_size, PAGE_KERNEL, vm_flags);
+> > > > 376:    unsigned long vm_flags = VM_FLUSH_RESET_PERMS;
+> > > > 385:            p = execmem_vmalloc(range, size, pgprot, vm_flags);
+> > > > urezki@pc638:~/data/backup/coding/linux-not-broken.git$ grep -rn vm_flags mm/vmalloc.c
+> > > > 3853: * @vm_flags:                additional vm area flags (e.g. %VM_NO_GUARD)
+> > > > 3875:                   pgprot_t prot, unsigned long vm_flags, int node,
+> > > > 3894:   if (vmap_allow_huge && (vm_flags & VM_ALLOW_HUGE_VMAP)) {
+> > > > 3912:                             VM_UNINITIALIZED | vm_flags, start, end, node,
+> > > > 3977:   if (!(vm_flags & VM_DEFER_KMEMLEAK))
+> > > > 4621:   vm_flags_set(vma, VM_DONTEXPAND | VM_DONTDUMP);
+> > > > urezki@pc638:~/data/backup/coding/linux-not-broken.git$ grep -rn vm_flags mm/execmem.c
+> > > > 29:                          pgprot_t pgprot, unsigned long vm_flags)
+> > > > 39:             vm_flags |= VM_DEFER_KMEMLEAK;
+> > > > 41:     if (vm_flags & VM_ALLOW_HUGE_VMAP)
+> > > > 45:                              pgprot, vm_flags, NUMA_NO_NODE,
+> > > > 51:                                      pgprot, vm_flags, NUMA_NO_NODE,
+> > > > 85:                          pgprot_t pgprot, unsigned long vm_flags)
+> > > > 259:    unsigned long vm_flags = VM_ALLOW_HUGE_VMAP;
+> > > > 266:    p = execmem_vmalloc(range, alloc_size, PAGE_KERNEL, vm_flags);
+> > > > 376:    unsigned long vm_flags = VM_FLUSH_RESET_PERMS;
+> > > > 385:            p = execmem_vmalloc(range, size, pgprot, vm_flags);
+> > > > urezki@pc638:~/data/backup/coding/linux-not-broken.git$ grep -rn vm_flags ./include/linux/vmalloc.h
+> > > > 172:                    pgprot_t prot, unsigned long vm_flags, int node,
+> > > > urezki@pc638:~/data/backup/coding/linux-not-broken.git$
+> > > >
+> > > > to rename all those "vm_flags" to something, for example, like "flags"?
+> > > 
+> > > Yeah, sorry I know it's a churny pain, but I think it's such a silly source
+> > > of confusion _in general_, not only this series where I made a mistake (of
+> > > course entirely my fault but certainly more understandable given the
+> > > naming), but in the past I've certainly sat there thinking 'hmmm wait' :)
+> > > 
+> > > Really I think we should rename 'vm_struct' too, but if that causes _too
+> > > much_ churn fair enough.
+> 
+> Well, it's not that terrible :)
+> 
+> ~/git/linux$ git grep -w vm_struct | wc -l
+> 173
+> 
+Indeed :)
 
-"static" is a really odd naming choice for a dynamically allocated
-structure. It's one that's never freed, sure, but it's still dynamically
-allocated in the first place.
+
+> > > I think even though it's long-winded, 'vmalloc_flags' would be good, both
+> > > in fields and local params as it makes things very very clear.
+> > > 
+> > > Equally 'vm_struct' -> 'vmalloc_struct' would be a good change.
+> 
+> Do we really need the _struct suffix?
+> How about vmalloc_area?
+> 
+I think, we should not use vmalloc_ prefix here, because vmalloc
+operates within its own range: VMALLOC_START:VMALLOC_END, therefore
+it might be confusing also.
+
+others can use another regions. vmap_mapping?
+
+>
+> It also seems that struct vmap_area can be made private to mm/.
+> 
+I agree. Also it can be even moved under vmalloc.c. There is only one
+user which needs it globally, it is usercopy.c. It uses find_vmap_area()
+which is wrong. See:
+
+<snip>
+	if (is_vmalloc_addr(ptr) && !pagefault_disabled()) {
+		struct vmap_area *area = find_vmap_area(addr);
+
+		if (!area)
+			usercopy_abort("vmalloc", "no area", to_user, 0, n);
+
+		if (n > area->va_end - addr) {
+			offset = addr - area->va_start;
+			usercopy_abort("vmalloc", NULL, to_user, offset, n);
+		}
+		return;
+	}
+<snip>
+
+we can add a function which just assign va_start, va_end as input
+parameters and use them in the usercopy.c. 
+
+Thanks!
+
+--
+Uladzislau Rezki
 
