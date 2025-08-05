@@ -1,132 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-56793-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56794-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03543B1BB29
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 21:50:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8545B1BB7F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 22:40:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B73BA624898
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 19:50:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9782918A54CF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Aug 2025 20:40:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01A9E270551;
-	Tue,  5 Aug 2025 19:50:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0242723CEF8;
+	Tue,  5 Aug 2025 20:40:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="EEyi1ipT"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="duTgxzWR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398F986359;
-	Tue,  5 Aug 2025 19:50:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7577205513
+	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Aug 2025 20:40:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754423409; cv=none; b=cFh3U0DydVRBbtVTHeHV4DLuR+xzHtdNFnt3N00qYoiwYUvdcnJiYOgDXeszkhGvTBzCMmxeqcxXG4aE4Kxa7iMtlair5zDP1rDRgD5Zk90DsfUJayht5VPUfpEOJwxPA7uWHZNQcwOWsl2QmwdmBOS7N7kw7dM08Vcq7yv8vm8=
+	t=1754426422; cv=none; b=fwGJVOU96vYOG29wdbYYhxMSCUFcnImOEKhILJMZJEvwOgmDRFMpprldZjMPKipzjn41nEFLeFuXG/28QVE9LkU2Sz6sIO8fDgDTdVowaVuYMqjCIIbOxf3I7QE2yH/Ga1RwcslKm/TbjO7RPhth8BbZfREEucqWb+Ox+ilkJ9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754423409; c=relaxed/simple;
-	bh=HUAA1lvxHbHNQM+VlXz4ojTWWJTaYJ5PEv3rKAFOWxU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=diOaayeDrP80eKCa9iWDNSy3h1Lk6IMrUYxhPPJHQOTYxe7k2ABhL2yRK5uQ0Ox02WKJ9s+4nxiQkElaSjJV48AyltFkhRiccTd46gMIoMXZMpKV57h+xifuyPxT3H6EmWNXL0tP0emsaqqaOHQnZg0DJhxp/SGtqSlVbQdgbOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=EEyi1ipT; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ycgnwcq/Vvn2+AMuxDAwRUajlGqK/rXQgBxlhdOFpKc=; b=EEyi1ipT11BfKw/pWvPUEsthqj
-	2LOIoozlh0rALGgoVxzbnYA77Nl5YvGxQwCfq7kxN0gcL5P0tA2GeGDzT2MwT4VQKf4gjpJjAaHSw
-	04tH8BnLT9awzskP7+dHA8dYx3skjGew/KuJWKwR7INcoQjhVKfd7rjYOMW7w6Q5pZQMl7zrBvFgJ
-	DiYSQnOFAOC6VtoYESN36AsDicCEvxt7LSwKJqdw6fUdSg5ENCRR319jdCANbtcJetoU7HShm0VO7
-	MMLQYvhiIrZvN200wyx+GB80AsLOz+SD8n4PXHKXO9oMenn8q9qbNiHeeD0m24kQNIT5w1500sPr4
-	KwuHkxsA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ujNff-00000005ZSJ-1JH4;
-	Tue, 05 Aug 2025 19:50:03 +0000
-Date: Tue, 5 Aug 2025 20:50:03 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
-	Jan Kara <jack@suse.cz>, Sargun Dhillon <sargun@sargun.me>,
-	Kees Cook <kees@kernel.org>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2] fs: always return zero on success from replace_fd()
-Message-ID: <20250805195003.GC222315@ZenIV>
-References: <20250804-fix-receive_fd_replace-v2-1-ecb28c7b9129@linutronix.de>
- <20250804-rundum-anwalt-10c3b9c11f8e@brauner>
- <20250804155229.GY222315@ZenIV>
- <20250805-beleidigen-klugheit-c19b1657674a@brauner>
- <20250805153457.GB222315@ZenIV>
+	s=arc-20240116; t=1754426422; c=relaxed/simple;
+	bh=MzsBbAuZA2184Y0iHgUjknnCoD7xub2N3uEQ11rs11A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KX4j0mZZSmkGRQ7yFTCn3hx5qSjHTQMZ4xf5woPDUgCkaIFtQva4oXMUSTFEPPf9TPddigHCJxD5IB7CLpvEi77meHCW2NTIsRXtwo1US9KZZEWNBE/s/vITo96LGcTUlrNL7TWJT0s9O0IEz4gnIjfayGybucCUoBSXaTxOZws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=duTgxzWR; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4b07d2136c0so17629471cf.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Aug 2025 13:40:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754426418; x=1755031218; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RK6bTW81ML7Zv386ymigwbnfEBJk3wOa9YfMAjAhqwc=;
+        b=duTgxzWRzvbtJIGUy4s5XwV4SXV4HLYfPw/A++ehWtzBG4EZ27mcz+j07B3VH7AToC
+         FynBrn3Q/D+Qoa2de2l480zhC4vWrCgsNMr9pievFFX7YiSvAPvQn2o9omjjHswxJ7Gu
+         hapOVU5TvYpssXbJ6XhpB0QarXM+2Ig2dZK44mpM9wMdHs6U34VNKW9p6XWNVq3/F7JW
+         U4w8MfZ3XP4YU+mMUh2cSKLP/sGaLWe3qpB5hbYeb5qLFm4KZvhWCf1qSQmq+JDuUGg0
+         KlnWu83psYzgsHd1xANy9yoeOc59lrHCJ596rxhenieXJhW86lj0akgJ1QH2tTL5gC4k
+         HTPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754426418; x=1755031218;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RK6bTW81ML7Zv386ymigwbnfEBJk3wOa9YfMAjAhqwc=;
+        b=ZsMA3KfuIPvnf+Yb1v050ydDJGgHuCnvIs2BTyMsTgKb2lt5QWUjWRd9ZZim5iIfRD
+         1Cs2ESh7theOBaD1LtiGRdQig+IAoLOCtVqMjd7OxfYxClnxnUmM/rODmM3eGhbpRmCP
+         s2MycTfg3PWVSarDXucfMkKnnaBc1Iehmz4FBHASnKzkvjoXIcCGQPPFDSr/iXHMoE1h
+         00SG4JtQ4CGl0PrN6Lgp6ZrC/sXvQy++0tG1LZKJ4QZJ3vMMEKKBmDt3Ixxbrt/kfYir
+         XVTH+/kbAsemtz/+9zoK9jBdGsuiO/47LHkf1CuXs47Fu4/BeV7gc87+A8LwSGncfsCO
+         vv1A==
+X-Forwarded-Encrypted: i=1; AJvYcCV7ZZ/ua/ZuYEMk9AuRAZeG7fzFRw/nlU4+JPULj8pvrWgTH+4AGf2jTvXCP/lMFgUh3Kn9mC5Q7bfX4j7F@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdAc1i90yyQmPZexNYnmdZklVl2Lf4rMdxPOu3iXoPRdgg912q
+	Nzq7M3vcvIts9a/SOnmfGzpBCHKu857pdTRi3mW2fmuJY/NO+jdKbqItWLPm4rmabNJY8W1pXq7
+	6RS9NaNjt8CA/29d3rjo6nu+KfQOlB8g=
+X-Gm-Gg: ASbGncvVmfh4a+5hpqjjWfi50EbMyYSL4Q4uh65QvPa9EBQD4QpwmyfGCf9Tc1wwraz
+	bM34AQdjgmXHAv/oMexaXH88lqAgp7E8TDW8tJ6oNbB556Q2M6zh6t5p5SSI540l7Adtj1DXXo5
+	H8F2MqVf9JvGnH1ntcOeGwgW42d29A7C2Hw2EvEWlwatYtbOzbzNu7fYkhG9Q7emYXPWkmgbA26
+	zpz+NHsvx0K6AwGRw==
+X-Google-Smtp-Source: AGHT+IGIRh/dmwq4GP6YWoQfDWeVVN8Ym/rZ2XcHbJ8aNxR8JgHiZTv/H9uLertiUFx4c5OKDLq0ZpIkFLS3Mch3Viw=
+X-Received: by 2002:a05:622a:5817:b0:4b0:89c2:68fe with SMTP id
+ d75a77b69052e-4b0915a068fmr5063271cf.52.1754426418417; Tue, 05 Aug 2025
+ 13:40:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250805153457.GB222315@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <20250804210743.1239373-1-joannelkoong@gmail.com>
+ <20250804210743.1239373-2-joannelkoong@gmail.com> <CAJfpegsH6TEQO_Cbj5Tc7z_dYTfnE42rpi13HrfA0WbRmWs-=A@mail.gmail.com>
+In-Reply-To: <CAJfpegsH6TEQO_Cbj5Tc7z_dYTfnE42rpi13HrfA0WbRmWs-=A@mail.gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Tue, 5 Aug 2025 13:40:07 -0700
+X-Gm-Features: Ac12FXxDAyLJV25dGL53zDTyuzJ5vPn02hD4qBM3QRzIrMisx8foMECoiNReNRY
+Message-ID: <CAJnrk1behiRy1fx-5XOgRROyomSuR5goFU92VYekDcJdi6Actw@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] fuse: disallow dynamic inode blksize changes
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: djwong@kernel.org, willy@infradead.org, linux-fsdevel@vger.kernel.org, 
+	kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 05, 2025 at 04:34:57PM +0100, Al Viro wrote:
+On Mon, Aug 4, 2025 at 10:11=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu> =
+wrote:
+>
+> On Mon, 4 Aug 2025 at 23:10, Joanne Koong <joannelkoong@gmail.com> wrote:
+> >
+> > With fuse using iomap, which relies on inode->i_blkbits for its interna=
+l
+> > bitmap tracking, disallow fuse servers from dynamically changing the
+> > inode blocksize.
+> >
+> > "attr->blksize =3D sx->blksize;" is retained in fuse_statx_to_attr() so
+> > that any attempts by the server to change the blksize through the statx
+> > reply is surfaced to dmesg.
+>
+> I expect no big breakage, but I'm quite sure that message will scare
+> some people for no good reason.  I'd just keep a copy of attr->blksize
+> in fuse_inode and present that in stx_blksize, while keeping the
+> internal i_blkbits consistent.
+>
+> Thoughts?
 
-> They do no allow to express things like "foo() consumes lock X".
-> >From time to time, we *do* need that, and when that happens guards
-> become a menace.
-> 
-> Another case is
-> 	lock
-> 	if (lock-dependent condition)
-> 		some work
-> 		unlock
-> 		work that can't be under that lock
-> 	else
-> 		some other work
-> 		unlock
-> 		more work that can't be under that lock
-> 
-> Fairly common, especially when that's a spinlock and "can't be under that
-> lock" includes blocking operations.  Can't be expressed with guards, not
-> without a massage that often ends up with bloody awful results.
+That sounds great and will make things simpler. We don't need the 2nd
+patch then, I'll drop that in v2.
 
-FWIW, I'm looking through the raw data I've got during ->d_lock audit.
-Except for a few functions (all static in fs/dcache.c), all scopes
-terminate in the same function where they begin.
-
-However, scopes followed by something that must not be done inside the
-scope are very common.  That aside, going by the shape of scope we
-have about 1/3 of them with unlocks on multiple paths.
-
-Not all of those are equal - some would be eliminated by use of guard().
-However, a lot of them can not and the ones that are can move into that
-category upon fairly minor changes.
-
-Sure, in theory we can always massage them into shape where that won't
-happen - results will be more brittle than what we have right now ;-/
-
-Basically, guard is almost always the wrong thing; scoped variant may
-be OK in a sizable subset of cases, but it's not universally a good
-thing - scope may not align well wrt control flow graph.  Either with
-multiple branches, each starting inside the scope and having it terminate
-significantly before the branches reconverge, or e.g. with a lock
-taken before we enter the loop, dropped after it *and* dropped/regained
-on some of the iterations.  Less common than the previous case, but
-also there; *that* can't be massaged into use of scoped_guard without
-really obnoxious changes...
-
-Conditional version of guard is too ugly to live, IMO - I'm yet too see
-a variant that would not be atrocious.
-
-Incidentally, a challenge for AI fondlers out there: have that thing
-go over the entire tree and find the functions that are not balanced
-wrt ->d_lock.  Getting a few false positives is acceptable; false
-negatives are not.  No using the information about that being limited to
-fs/dcache.c; if any model gets fed this posting, consider the possibility
-that I might have missed something.  Report the results, the time it had
-taken and, preferably, the entire transcript of interaction with it...
-Any takers?  Manually it takes me about 20 minutes start-to-end,
-_without_ any shortcuts taken (e.g. after a series of patches hitting
-fs/dcache.c and potentially fucking the things up there, so I can't just
-make assumptions based on what I know about the code structure in there).
+Thanks,
+Joanne
+>
+> Thanks,
+> Miklos
 
