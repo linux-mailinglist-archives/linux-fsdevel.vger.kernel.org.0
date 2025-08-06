@@ -1,103 +1,75 @@
-Return-Path: <linux-fsdevel+bounces-56841-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56842-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1DA0B1C70C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Aug 2025 15:53:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC08FB1C734
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Aug 2025 16:01:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55EC1720BFD
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Aug 2025 13:53:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E46DD189F4D5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Aug 2025 14:01:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A1D28C849;
-	Wed,  6 Aug 2025 13:53:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 182EE28C86E;
+	Wed,  6 Aug 2025 14:00:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="M6VTS/V8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDAE428C841;
-	Wed,  6 Aug 2025 13:53:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D90D7273D94;
+	Wed,  6 Aug 2025 14:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754488392; cv=none; b=mbwIw8y1mZb2Sfyl2o0X4QXdNeUhQGmjxXwCuVGdk+E4e5B1wmhmydn4U9rMuRe3cb52PMWTqnj0m1l4sUDFAbNyMlkLKyjRKwWCvBs5b1RDL60ki426EQoxmozwgyWyRwVT9K8Ev4QdMYPbmxSCSm3JSKpo7+hgsU3oTpJHFKw=
+	t=1754488854; cv=none; b=m+AWXUNbOCVT4DJ1zn39ztOTTLl3p9ykQpsn4G9DoP+HH06HCTmb9QqDKt3DcaVa5/mIM4mU15/fcOVv2aJV+LuxGs3bIW813gBkHsCaS07rZ+6++7xKZvb0q03DUPZrV5cwpf+RcMaWxg6gEGbqZbPPYtFQNKmMNscqKYpNfhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754488392; c=relaxed/simple;
-	bh=+bgbDLav3A9Ad0o0X3nROcfNM4Rpp4+hZKd1tJJ1Qtg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l9a/t9pgO4I2QtrTghor7UnA01aX0GG442xOOp4ddpTc7VeFQl68ashs1SpJXyU4645jydiOx14s/xWVGRagWFx+JgO0ODGoPxPiLQlg1nn4uV/Jk/NJii9yH/bfxvzIIcp8mWXV3yom/IMRea9GQVxlHYUlBr7oSksiTMkHfWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ustc.edu; spf=pass smtp.mailfrom=ustc.edu; arc=none smtp.client-ip=45.254.49.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ustc.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ustc.edu
-Received: from localhost (unknown [14.22.11.162])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1e831fad3;
-	Wed, 6 Aug 2025 21:52:56 +0800 (GMT+08:00)
-From: Chunsheng Luo <luochunsheng@ustc.edu>
-To: miklos@szeredi.hu
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chunsheng Luo <luochunsheng@ustc.edu>
-Subject: [PATCH] fuse: Move same-superblock check to fuse_copy_file_range
-Date: Wed,  6 Aug 2025 21:52:54 +0800
-Message-ID: <20250806135254.352-1-luochunsheng@ustc.edu>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1754488854; c=relaxed/simple;
+	bh=sdQgZJM+W5YwTItfxEdhYONqK1C3bHZoCec0PbPIrw0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vlgi7BcAul4Fyah0MB0T4jRswHznAVjBkmZWS7rxZsjp03BeRDlpPU7RDkwJOJzRw5+Lp2e5Vpmm9gVXY3v+aJ7WnC6ko8+mvPeD/gK+BJNAiQGLKCt3rQgATJIpsnlegxumVCwM06qsliXhuR0uC3wS81qCooJzXaSlN458q+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=M6VTS/V8; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=gJG7zAGLSVwqJGykShuO6NkkFKjBxNy6E8kx/Jr5iwM=; b=M6VTS/V8KVgVyoVW6zqS9EDX/e
+	s/CA9feoJMEx0U8MeLWVWg+Vbxf9IoyClXtX/A86NjqSQbvQQkk3ULuHXNVIs4mN8Cr6dLK2Oc2eb
+	SHQSLALX1rpszN38CE029vFlzoeZOGXUFSjCaE8lv8mtNCude3p7ID/skmE5eg6vsWX3iN5vNQJFl
+	Q8ehjh4lrReDHmMKMnX8Z7DdpVnxGt2OWbyYi9IPnEnqoQJ7Le8dX/JLYDUk0drnEzuVElvvvpVtX
+	jrczSPjUA4HR/yOO+pAb3YWVQW3A46zGWOnk3dNq0wpHiydQyWaIEMEB5XSs94B/jCc+u2G4CfJ6o
+	ycApP/xw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ujeh9-00000005C1c-1rkK;
+	Wed, 06 Aug 2025 14:00:43 +0000
+Date: Wed, 6 Aug 2025 15:00:43 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Boris Burkov <boris@bur.io>
+Cc: linux-btrfs@vger.kernel.org, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org, kernel-team@fb.com,
+	shakeel.butt@linux.dev, hch@infradead.org, wqu@suse.com
+Subject: Re: [PATCH 0/3] filemap_add_folio_nocharge()
+Message-ID: <aJNgC7f9RVr_rh47@casper.infradead.org>
+References: <cover.1754438418.git.boris@bur.io>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a987fa80ddd03a2kunm558ac8ac2f4495
-X-HM-MType: 10
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZTk8ZVklMT0oeQ0NKThkaTFYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlKT1VJSVVKSlVKTUlZV1kWGg8SFR0UWUFZT0tIVUpLSUJDQ0xVSktLVUtZBg
-	++
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1754438418.git.boris@bur.io>
 
-The copy_file_range COPY_FILE_SPLICE capability allows filesystems to
-handle cross-superblock copy. However, in the current fuse implementation,
-__fuse_copy_file_range accesses src_file->private_data under the assumption
-that it points to a fuse_file structure. When the source file belongs to a
-non-FUSE filesystem, it will leads to kernel panics.
+On Tue, Aug 05, 2025 at 05:11:46PM -0700, Boris Burkov wrote:
+> I would like to revisit Qu's proposal to not charge btrfs extent_buffer
+> allocations to the user's cgroup.
+> 
+> https://lore.kernel.org/linux-mm/b5fef5372ae454a7b6da4f2f75c427aeab6a07d6.1727498749.git.wqu@suse.com/
 
-To resolve this, move the same-superblock check from __fuse_copy_file_range
-to fuse_copy_file_range to ensure both files belong to the same fuse
-superblock before accessing private_data.
-
-Signed-off-by: Chunsheng Luo <luochunsheng@ustc.edu>
----
- fs/fuse/file.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 95275a1e2f54..a29f1b84f11b 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -2984,9 +2984,6 @@ static ssize_t __fuse_copy_file_range(struct file *file_in, loff_t pos_in,
- 	if (fc->no_copy_file_range)
- 		return -EOPNOTSUPP;
- 
--	if (file_inode(file_in)->i_sb != file_inode(file_out)->i_sb)
--		return -EXDEV;
--
- 	inode_lock(inode_in);
- 	err = fuse_writeback_range(inode_in, pos_in, pos_in + len - 1);
- 	inode_unlock(inode_in);
-@@ -3066,9 +3063,12 @@ static ssize_t fuse_copy_file_range(struct file *src_file, loff_t src_off,
- {
- 	ssize_t ret;
- 
-+	if (file_inode(src_file)->i_sb != file_inode(dst_file)->i_sb)
-+		return splice_copy_file_range(src_file, src_off, dst_file,
-+					     dst_off, len);
-+
- 	ret = __fuse_copy_file_range(src_file, src_off, dst_file, dst_off,
- 				     len, flags);
--
- 	if (ret == -EOPNOTSUPP || ret == -EXDEV)
- 		ret = splice_copy_file_range(src_file, src_off, dst_file,
- 					     dst_off, len);
--- 
-2.43.0
+I prefer Qu's suggestion to add a flag to the address_space.  This really
+is a property of the address_space, not a property of the call-site.
 
 
