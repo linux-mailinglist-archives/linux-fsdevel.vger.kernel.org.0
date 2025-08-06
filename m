@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-56808-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56809-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1537B1BFAA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Aug 2025 06:49:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9133B1BFAC
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Aug 2025 06:49:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E32817E6B0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Aug 2025 04:49:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8214188C900
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Aug 2025 04:49:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DEC51F418F;
-	Wed,  6 Aug 2025 04:48:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BADA31F866A;
+	Wed,  6 Aug 2025 04:49:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="DK6PjxR/"
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="Vsb5mhdU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B4981F09A8;
-	Wed,  6 Aug 2025 04:48:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973831F4CBC;
+	Wed,  6 Aug 2025 04:48:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754455737; cv=none; b=VurPjuv3yKHfj6RY6CNqeC6ZP50HJG90dQxckq4u8xtRiVd1tXHwBS56LW3NI0KkSg6uAfZ7b1ZCYGUY4rSfzj4bSTrzcC+DnohHmVSGT1NFUX+9pHs3a3u4v7uwaMvdS23Qb1g5gWbgkB/7osP7b0EwbeTafaGY/yxXwph0bXs=
+	t=1754455741; cv=none; b=XGLNYwHSdYvFLl+lcGvHlh0q90Gc4F4xZaw0s5YFNbJq9elJJozE5UHIUBXfjLvoSXdTzwTkDvVE953mYIYpSaFIWIhB1wqauYg/dU3BN/SVmh61fj3+6rJZ8iibs/3Ng3xDXlXpNiDtLJqyp2ZF2IG4NGEz3At6vghc1bPyvBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754455737; c=relaxed/simple;
-	bh=4s8Gi1EenOHJaLb55g1juwsl7ZsPZjgWY4gDBSu2WAI=;
+	s=arc-20240116; t=1754455741; c=relaxed/simple;
+	bh=hE1jzhCIqDyIWqjL9YCdSp48W9E82NKQr3N/AJyoveA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Nijj9GrOueCcGpbnz6PHrtsd9vhiuotvgCNregrfc+amQ7m/NuDPSHiMuxetJS2Wc2fkcXNPmazHK/OJe72EBLpbUvd5LzvVKqaxdnfSqPyLa7O4Vfub0XTjpbTSZpZ/Cxs274VuzxzZfJ2s2XS6FqbtPejUMqX8NBC+DaYAl44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=DK6PjxR/; arc=none smtp.client-ip=80.241.56.171
+	 In-Reply-To:To:Cc; b=rMtQ/bpVsAS1FF7AiyK4Vn9yx5gTI/ghkGKo8kJcr56GRPU2msPBc6ERg6J+tQT5CCki0MbVfIZmxyJvQ2L1wwfhrxXtAuHqzmTsBzlScTRhqQd9MtUDkDWVa+EHIWqy1pK5V0VnWuQuiC4G4yyi3ZJLkGXs+HKcKEDPTCRn7BA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=Vsb5mhdU; arc=none smtp.client-ip=80.241.56.151
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
 Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4bxd9J21lsz9tcW;
-	Wed,  6 Aug 2025 06:48:52 +0200 (CEST)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4bxd9N0mCsz9tBc;
+	Wed,  6 Aug 2025 06:48:56 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1754455732;
+	t=1754455736;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=yOE9waL0ew+X+ln2ytNi3KfwfeUFVHt9mFZ0tGiHb8c=;
-	b=DK6PjxR/9ImS0JWNd3vv8Ze6rOf4pQNc/2QZhAdFa+q3bFH969lnNbTJtZVngV3LhWABS2
-	80EEyJoAPfrLat25yfgKuyqOFDsGvLUloSaDKHls0FmYGT4PLaPlRB/oZQW9WFG03zRO8w
-	Ce4YqQqWrCevQgPZeTO1u7FbF1wfVq8LMLtT7QTSB9AH7YjUC64mv29WoT5l+OKWp50rYs
-	dOYPhh2aPC0YbF/yC6BKs2SCYdY5GYS8sXrxZ3A/PiBVGujQAT/bl0PMpf23ntMrTHqQ2u
-	C+IAwJhidXDDCcXyQc1sCLlKmDL7wwzDIOi5a9cWx4eASxE+O/p/a0dDaNetGQ==
+	bh=iOcmob/KBJLyEb2W1q46NfuHtAS0YPNzHthf2+pOIlc=;
+	b=Vsb5mhdUdVEPX9SNJKEOEnQHNvxL9oBMRd+iNbJvgkhG01xY7rtkxgS+BVLBlhMHlgJSE/
+	sfONYwyky1IDUj8vDvU7jHojb8o9Lh4t0aiXZ6Cyja8H85MExcD8SRgbHle0T1019L6l0I
+	aZmaE73bboQVYFUVams1dAE6ofnUP8I2wge34by98bqxGH1nh/e8qxAfBxldJQYPBXYags
+	CNzh6B7btQciNUY/44Av+vjikDPGb5kgJCI5LNYBZn5elMN5nlsXwd50P85Qik99an0hS2
+	X9udLBs9SvYStfFR0W0zD3ECKYEKD+aHu6+fXogkbp270HI2Ocd8BuJfsei1Ug==
 From: Aleksa Sarai <cyphar@cyphar.com>
-Date: Wed, 06 Aug 2025 14:48:29 +1000
-Subject: [PATCH 1/2] fscontext: add custom-prefix log helpers
+Date: Wed, 06 Aug 2025 14:48:30 +1000
+Subject: [PATCH 2/2] vfs: output mount_too_revealing() errors to fscontext
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,7 +60,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250806-errorfc-mount-too-revealing-v1-1-536540f51560@cyphar.com>
+Message-Id: <20250806-errorfc-mount-too-revealing-v1-2-536540f51560@cyphar.com>
 References: <20250806-errorfc-mount-too-revealing-v1-0-536540f51560@cyphar.com>
 In-Reply-To: <20250806-errorfc-mount-too-revealing-v1-0-536540f51560@cyphar.com>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -68,84 +68,61 @@ To: Alexander Viro <viro@zeniv.linux.org.uk>,
 Cc: David Howells <dhowells@redhat.com>, linux-api@vger.kernel.org, 
  linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
  Aleksa Sarai <cyphar@cyphar.com>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3383; i=cyphar@cyphar.com;
- h=from:subject:message-id; bh=4s8Gi1EenOHJaLb55g1juwsl7ZsPZjgWY4gDBSu2WAI=;
- b=owGbwMvMwCWmMf3Xpe0vXfIZT6slMWRMurcqbMnxaRq538u4Ptok++s3JBy8dXzjsfkv7LV2v
- DqVpWdm11HKwiDGxSArpsiyzc8zdNP8xVeSP61kg5nDygQyhIGLUwAmcuM4wz+7qU/nMKxc4aIx
- edE8+95L9h7TMj66HRGYbHSxwYUt6aQswx9eH+WT3pu0Ln/Y8MZZ2aPoxBad5xmbug/rmdXfuKL
- a8YALAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1639; i=cyphar@cyphar.com;
+ h=from:subject:message-id; bh=hE1jzhCIqDyIWqjL9YCdSp48W9E82NKQr3N/AJyoveA=;
+ b=owGbwMvMwCWmMf3Xpe0vXfIZT6slMWRMurdqu8mTilSu2XnRAn46Wkv11ng98lwunXTgR4uf5
+ YrwgN07OkpZGMS4GGTFFFm2+XmGbpq/+Eryp5VsMHNYmUCGMHBxCsBEmKMZ/pfsad/37aH/j/J7
+ Mn1drm8ZNwTdKj0WNC/l6hR2YZ/MV1cZ/kqlf1P/x9FsENJq/Pb5bWdXQ5lVPc1/F5zwfWBlGx6
+ zgQkA
 X-Developer-Key: i=cyphar@cyphar.com; a=openpgp;
  fpr=C9C370B246B09F6DBCFC744C34401015D1D2D386
 
-Sometimes, errors associated with an fscontext come from the VFS or
-otherwise outside of the filesystem driver itself. However, the default
-logging of errorfc will always prefix the message with the filesystem
-name.
+It makes little sense for fsmount() to output the warning message when
+mount_too_revealing() is violated to kmsg. Instead, the warning should
+be output (with a "VFS" prefix) to the fscontext log. In addition,
+include the same log message for mount_too_revealing() when doing a
+regular mount for consistency.
 
-So, add some *fcp() wrappers that allow for custom prefixes to be used
-when emitting information to the fscontext log.
+With the newest fsopen()-based mount(8) from util-linux, the error
+messages now look like
+
+  # mount -t proc proc /tmp
+  mount: /tmp: fsmount() failed: VFS: Mount too revealing.
+         dmesg(1) may have more information after failed mount system call.
+
+which could finally result in mount_too_revealing() errors being easier
+for users to detect and understand.
 
 Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
 ---
- include/linux/fs_context.h | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+ fs/namespace.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
-index 7773eb870039..671f031be173 100644
---- a/include/linux/fs_context.h
-+++ b/include/linux/fs_context.h
-@@ -186,10 +186,12 @@ struct fc_log {
- extern __attribute__((format(printf, 4, 5)))
- void logfc(struct fc_log *log, const char *prefix, char level, const char *fmt, ...);
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 55f28cebbe7d..b2146857cbbd 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -3820,8 +3820,10 @@ static int do_new_mount_fc(struct fs_context *fc, struct path *mountpoint,
+ 	int error;
  
--#define __logfc(fc, l, fmt, ...) logfc((fc)->log.log, NULL, \
--					l, fmt, ## __VA_ARGS__)
--#define __plog(p, l, fmt, ...) logfc((p)->log, (p)->prefix, \
--					l, fmt, ## __VA_ARGS__)
-+#define __logfc(fc, l, fmt, ...) \
-+	logfc((fc)->log.log, NULL, (l), (fmt), ## __VA_ARGS__)
-+#define __plogp(p, prefix, l, fmt, ...) \
-+	logfc((p)->log, (prefix), (l), (fmt), ## __VA_ARGS__)
-+#define __plog(p, l, fmt, ...) __plogp(p, (p)->prefix, l, fmt, ## __VA_ARGS__)
-+
- /**
-  * infof - Store supplementary informational message
-  * @fc: The context in which to log the informational message
-@@ -201,6 +203,8 @@ void logfc(struct fc_log *log, const char *prefix, char level, const char *fmt,
- #define infof(fc, fmt, ...) __logfc(fc, 'i', fmt, ## __VA_ARGS__)
- #define info_plog(p, fmt, ...) __plog(p, 'i', fmt, ## __VA_ARGS__)
- #define infofc(fc, fmt, ...) __plog((&(fc)->log), 'i', fmt, ## __VA_ARGS__)
-+#define infofcp(fc, prefix, fmt, ...) \
-+	__plogp((&(fc)->log), prefix, 'i', fmt, ## __VA_ARGS__)
+ 	error = security_sb_kern_mount(sb);
+-	if (!error && mount_too_revealing(sb, &mnt_flags))
++	if (!error && mount_too_revealing(sb, &mnt_flags)) {
+ 		error = -EPERM;
++		errorfcp(fc, "VFS", "Mount too revealing");
++	}
  
- /**
-  * warnf - Store supplementary warning message
-@@ -213,6 +217,8 @@ void logfc(struct fc_log *log, const char *prefix, char level, const char *fmt,
- #define warnf(fc, fmt, ...) __logfc(fc, 'w', fmt, ## __VA_ARGS__)
- #define warn_plog(p, fmt, ...) __plog(p, 'w', fmt, ## __VA_ARGS__)
- #define warnfc(fc, fmt, ...) __plog((&(fc)->log), 'w', fmt, ## __VA_ARGS__)
-+#define warnfcp(fc, prefix, fmt, ...) \
-+	__plogp((&(fc)->log), prefix, 'w', fmt, ## __VA_ARGS__)
+ 	if (unlikely(error)) {
+ 		fc_drop_locked(fc);
+@@ -4547,7 +4549,7 @@ SYSCALL_DEFINE3(fsmount, int, fs_fd, unsigned int, flags,
  
- /**
-  * errorf - Store supplementary error message
-@@ -225,6 +231,8 @@ void logfc(struct fc_log *log, const char *prefix, char level, const char *fmt,
- #define errorf(fc, fmt, ...) __logfc(fc, 'e', fmt, ## __VA_ARGS__)
- #define error_plog(p, fmt, ...) __plog(p, 'e', fmt, ## __VA_ARGS__)
- #define errorfc(fc, fmt, ...) __plog((&(fc)->log), 'e', fmt, ## __VA_ARGS__)
-+#define errorfcp(fc, prefix, fmt, ...) \
-+	__plogp((&(fc)->log), prefix, 'e', fmt, ## __VA_ARGS__)
+ 	ret = -EPERM;
+ 	if (mount_too_revealing(fc->root->d_sb, &mnt_flags)) {
+-		pr_warn("VFS: Mount too revealing\n");
++		errorfcp(fc, "VFS", "Mount too revealing");
+ 		goto err_unlock;
+ 	}
  
- /**
-  * invalf - Store supplementary invalid argument error message
-@@ -237,5 +245,7 @@ void logfc(struct fc_log *log, const char *prefix, char level, const char *fmt,
- #define invalf(fc, fmt, ...) (errorf(fc, fmt, ## __VA_ARGS__), -EINVAL)
- #define inval_plog(p, fmt, ...) (error_plog(p, fmt, ## __VA_ARGS__), -EINVAL)
- #define invalfc(fc, fmt, ...) (errorfc(fc, fmt, ## __VA_ARGS__), -EINVAL)
-+#define invalfcp(fc, prefix, fmt, ...) \
-+	(errorfcp(fc, prefix, fmt, ## __VA_ARGS__), -EINVAL)
- 
- #endif /* _LINUX_FS_CONTEXT_H */
 
 -- 
 2.50.1
