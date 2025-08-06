@@ -1,179 +1,86 @@
-Return-Path: <linux-fsdevel+bounces-56922-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56923-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4001AB1CF13
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 00:28:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EE8CB1CF57
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 01:20:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DEC0178864
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Aug 2025 22:28:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28E5916B8C7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Aug 2025 23:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9880231A30;
-	Wed,  6 Aug 2025 22:28:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8816726C389;
+	Wed,  6 Aug 2025 23:20:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="eo30fwtJ"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="URXqgwx/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A532343CF
-	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Aug 2025 22:28:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2544C26B755
+	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Aug 2025 23:19:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754519320; cv=none; b=nCDGrgEjrp/vzh4uSe7x0VbUc9wmtkbNSvofFoIk1Ex0glzrcR+lbnwuNrq2gSinrufL6c+DaN+KHqRra4n2xG55zOR2pZp4Yj+LfMf++wYOHXQyKE1wzwpi9FtZeif3lS+wLmt+xU80F8wRhOUQbKmAFRomBRxVKXZy2hqQ+yQ=
+	t=1754522401; cv=none; b=TahI/mRtPT1TQMrl/+BHjGej4G8hTNM6S7JGOoIA7tq0k4s1dXmI46KrUYcBXJOdHn6RlDYYK13LDLonGxCNgSx4TSiQKL+O/UzbXgLeXDiac4SoxJVwbeySX27M2T3UVY9VUMtslcRt1TcE+alF+7CIlsOU12oXvy+y8SpyCDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754519320; c=relaxed/simple;
-	bh=jp5aL9hosoVfsIf/vUTflIwyWNQUTNECZPt4O+fKGxg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fC3FuFC8jEwCkMIEDDJaEnkmr17ssRzey0Qqhz5IN2Pfqh87mGIKDZWHHTs0z9H1OUvowBAsnyBcYBgRBes4n84eIUrmtLn6Dq5yXC51icUAj0vZgpF/mzK/LlV3zQyCEvhN+/9PSDFipVcmvxqb8SitOgB9r/NVbdhrURvlBcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=eo30fwtJ; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4b09db20abbso3461941cf.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Aug 2025 15:28:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1754519317; x=1755124117; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xhQ142AcHuDpEckqO7rgr+eVAp4QNMkO6ZcybFE1pag=;
-        b=eo30fwtJc3FfmJwRbu1NMdcEcqTZKJWByRpVc9OQJoktmAevqt2uWeqlNSJVhGwJEc
-         W/+BR+NeypBV4LA2+rQVcIYO12jMb46CNAKy0tg0lHcr1F2HGWniRsAmovCmtZiuNsFF
-         EBX4sEJOHqteOyjr+gVkvWCvoETjFEsHAfGOiI2GtGStR9APNAkEh0/DJog7cvW9QhBI
-         ixIslptNWRTPPhlewctV8LM9rhkNS43YzajszMmkisyeGedQQPM6Y/7EgPOkGp5d5Vi8
-         LBm1S1eAQsURdAhDPAIgCudSWEDEXmlSuxdu3QsH1tfHTBhRWdkcPc8XqjNVjDIcpgKs
-         nkpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754519317; x=1755124117;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xhQ142AcHuDpEckqO7rgr+eVAp4QNMkO6ZcybFE1pag=;
-        b=g72y2DnUlkzlUzw5zMi1g0LJzx2if02wOcGxTqE6Z8liq4iKf2SEE1HPpxkumqhx0S
-         uTUAeuiWNBPxhU+Pe3MdauwLXcTrWlTuCwAhdIJn5zdEsOMvXi91TxwHUe3HtB5JjaHC
-         AbQ/TBsWpXBgJl5Uwsmxoq0tHJ9/OHvN0WjXgc8l2AkVbe66T2T2hkH1G11yc37xvgia
-         zCfNxLK/goT4lU7GGSt3ecAo/rlI96+jsawg3XAy/XKFAtDG9NuBxqrhAdKxCxirv1AK
-         dtsdoSuPwdH1EhOy2RovnDMq0vsNQ6iQddDvjblOJw1KgaEnT5pdUZlxMVdVWadifV1l
-         CaUg==
-X-Forwarded-Encrypted: i=1; AJvYcCUD2BTqrAlgBskh0rksPazBy0DD8zeYjDzYGpXaaTel3hLeRxzI3HlOQsdqo/g8+0klBGHggk2OVBPIUL8U@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVf5zeXpViCbbsAN8N8SVwSE+Vmg0B2CKvaG7++UuHW0d/Olpv
-	WGdZ0Sebcu4IXe4+DU1F90SD8x1DSq2p3Z3HozAaGSdUKx5kFBW1Pos1v3Zjdy0rn/vQM7g40WW
-	1Bmp9iLCObE8hprE45uRzXGGmwEk1kVGLcfW/6TPr0A==
-X-Gm-Gg: ASbGncvtH6WBoPuPf1hFl6YkWYlXpseIH534bSzrvEx7Ro4PNP7OhvNlgy2/xCzqlHH
-	QBimUxxDXenCbfcLq0pflTfM2ltS701DpY2SK0qRmqpV4e/RkXzsDZl0k/bxSeSNcDRlNoQieRL
-	qKDmjzwn+UlQEvcgUrf92GQM6PbWeQeQALATCot79ADwIrMPqyXICiVT20nALEJzq9gXIzrHf28
-	2Ap
-X-Google-Smtp-Source: AGHT+IGj0vOgYMp9T/0JmW5XllWs9eR8q77wvB4/2/eB5UfznGaAzPWexivE55P3uc74jC/GyDuncjth4cnA3wVQmDo=
-X-Received: by 2002:ac8:5889:0:b0:4b0:695d:9ad0 with SMTP id
- d75a77b69052e-4b0924e0f3emr47887021cf.3.1754519317270; Wed, 06 Aug 2025
- 15:28:37 -0700 (PDT)
+	s=arc-20240116; t=1754522401; c=relaxed/simple;
+	bh=D7X6MJ+OgYZoymypsd+2saXCljgSp8/OGEhIZJ/9r/s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DyGbhFHBAFjy0JBOvmQWmf4gUTOM0iM1X8tEv5wptmkXuEe5LQ7bl8utxhEVHnc5TrnaImW5IWwvnWP0kIC7TnQLQUnVbtfjlZiQsSIDg/ZylQQ8+PnZ94qxNrvgN51uGzB+Qjq6Sa0T+GV/EtB95V8/+HhmxLkrd+zqS+tsv40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=URXqgwx/; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 6 Aug 2025 16:19:40 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1754522386;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=U6QOt2ArdADNBAJU4PEVq2qG6ReKiOxj9ZcPXxOARXY=;
+	b=URXqgwx/5/5PY0dFhng1uG+sZJJQasTsnvBd7kueJ4x1mVsoLJBPTHoiHL3CE3QP+2EDNy
+	rz6hus8qYRjVDYdE2aK2zOLisVWd5HnP/a2cjtbnBFCtH4g0gWLnA6y8/f3TCJ+Dig1EK8
+	zg1s7W+0Yn+gE5paA/pOoP3+jqwrbww=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Boris Burkov <boris@bur.io>, linux-btrfs@vger.kernel.org, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, kernel-team@fb.com, 
+	hch@infradead.org, wqu@suse.com, hannes@cmpxchg.org, mhocko@kernel.org, 
+	roman.gushchin@linux.dev, muchun.song@linux.dev, cgroups@vger.kernel.org
+Subject: Re: [PATCH 0/3] filemap_add_folio_nocharge()
+Message-ID: <mph4trybfnzki4aiq67suf2cki7cf6qpvqlojxs45hywgh2gfb@7qnhfp3y65mh>
+References: <cover.1754438418.git.boris@bur.io>
+ <aJNgC7f9RVr_rh47@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250723144649.1696299-1-pasha.tatashin@soleen.com>
- <20250723144649.1696299-11-pasha.tatashin@soleen.com> <20250729172812.GP36037@nvidia.com>
- <CA+CK2bCrfVef_sFWCQpdwe9N_go8F_pU4O-w+XBJZ6yEuXRj9g@mail.gmail.com> <20250805123103.GH184255@nvidia.com>
-In-Reply-To: <20250805123103.GH184255@nvidia.com>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Wed, 6 Aug 2025 22:28:00 +0000
-X-Gm-Features: Ac12FXzz6aElzLLHqZjWxK5H3LOARobpBSmk1rsUp_q_uPWZt7Z5vxl_KzsDWdA
-Message-ID: <CA+CK2bCeaH_Lesyr1G-Ur0eDb9HgKqOYgTu=vk=wrpZExMrWuA@mail.gmail.com>
-Subject: Re: [PATCH v2 10/32] liveupdate: luo_core: Live Update Orchestrator
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
-	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
-	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
-	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
-	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
-	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
-	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
-	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
-	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
-	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
-	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
-	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
-	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
-	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	saeedm@nvidia.com, ajayachandra@nvidia.com, parav@nvidia.com, 
-	leonro@nvidia.com, witu@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aJNgC7f9RVr_rh47@casper.infradead.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Aug 5, 2025 at 12:31=E2=80=AFPM Jason Gunthorpe <jgg@nvidia.com> wr=
-ote:
->
-> On Sun, Aug 03, 2025 at 09:11:20PM -0400, Pasha Tatashin wrote:
->
-> > Having a global state is necessary for performance optimizations. This
-> > is similar to why we export the state to userspace via sysfs: it
-> > allows other subsystems to behave differently during a
-> > performance-optimized live update versus a normal boot.
->
-> > For example, in our code base we have a driver that doesn't
-> > participate in the live update itself (it has no state to preserve).
-> > However, during boot, it checks this global state. If it's a live
-> > update boot, the driver skips certain steps, like loading firmware, to
-> > accelerate the overall boot time.
->
-> TBH, I'm against this. Give the driver a 0 byte state if it wants to
-> behave differently during live update. We should not be making
-> implicit things like this.
->
-> Plus the usual complaining about building core kernel infrastructure
-> around weird out of tree drivers.
->
-> If userspace wants a device to participate in live update, even just
-> "optimizations", then it has to opt in.
->
-> Frankly, this driver has no idea what the prior kernel did, and by
-> "optimizing" I think you are actually assuming that the prior kernel
-> had it bound to a normal kernel driver that left it in some
-> predictable configuration.
+CCing memcg maintainers.
 
-Fair enough, that subsystem / driver should simply participate in the
-live update process normally.
+On Wed, Aug 06, 2025 at 03:00:43PM +0100, Matthew Wilcox wrote:
+> On Tue, Aug 05, 2025 at 05:11:46PM -0700, Boris Burkov wrote:
+> > I would like to revisit Qu's proposal to not charge btrfs extent_buffer
+> > allocations to the user's cgroup.
+> > 
+> > https://lore.kernel.org/linux-mm/b5fef5372ae454a7b6da4f2f75c427aeab6a07d6.1727498749.git.wqu@suse.com/
+> 
+> I prefer Qu's suggestion to add a flag to the address_space.  This really
+> is a property of the address_space, not a property of the call-site.
+> 
 
-> Vs say bound to VFIO and completely messed up.
->
-> So this should be represented by a LUO serialization that says "the
-> prior kernel left this device in well defined state X" even if it
-> takes 0 bytes to describe that state.
->
-> So no globals, there should be a way for a driver to tell if it is
-> participating in LUO, but not some global 'is luo' boot fla.g
->
-> > > +       ret =3D liveupdate_register_subsystem(&luo_file_subsys);
-> > > +       if (ret) {
-> > > +               pr_warn("Failed to register luo_file subsystem [%d]\n=
-", ret);
-> > > +               return ret;
-> > > +       }
-> > > +
-> > > +       if (liveupdate_state_updated()) {
-> > >
-> > > Thats going to be a standard pattern - I would expect that
-> > > liveupdate_register_subsystem() would do the check for updated and
-> > > then arrange to call back something like
-> > > liveupdate_subsystem.ops.post_update()
-
-I added another callback liveupdate_subsystem.ops.post_update(), which
-gets called on live update, just when a subsystem registers with LUO,
-because that is when we know that it is ready. I will send the new
-patch version soon.
-
-Thank you,
-Pasha
+I think Michal wanted call-site (explicit interface) for easy
+searchability. I don't have a strong opinion either way. However I
+wonder if having this information in address_space might be more useful.
+At the moment, this series is using !folio_memcg(folio) to detect if the
+folio has skipped memcg charging on the free path to decrement the stat.
+Having information in address_space would be another way to extract that
+information. I need to think more on this.
 
