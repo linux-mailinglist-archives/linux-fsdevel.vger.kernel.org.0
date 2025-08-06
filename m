@@ -1,156 +1,177 @@
-Return-Path: <linux-fsdevel+bounces-56914-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56915-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC5A6B1CE1A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Aug 2025 22:55:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D78E2B1CE2F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Aug 2025 23:04:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8113F3A6A65
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Aug 2025 20:55:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89EC418C6483
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Aug 2025 21:04:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04FFD1FDA7B;
-	Wed,  6 Aug 2025 20:55:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5134220F3F;
+	Wed,  6 Aug 2025 21:04:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="nFa0vurz";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JIcUNrAT"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gdEVCvoP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-b8-smtp.messagingengine.com (fout-b8-smtp.messagingengine.com [202.12.124.151])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CBC31C5D72;
-	Wed,  6 Aug 2025 20:55:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A4141E0E0B
+	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Aug 2025 21:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754513722; cv=none; b=jkMMv/M4imC6E7JlXMXeQG48ebOe//L0VgLcEyNbp6SB+aM4ruvmtw88dZYxSbGWbQG0v7atbpjbyBz7lb1szb7fWzo6aRVEWPHWrmK0BJa/xiNi9hpyHsTCMcRsSvZhnhFFiIzXzKoRBEzHab35FsUK2ARHCu80aIRJ0Nu5aDA=
+	t=1754514255; cv=none; b=iPARZL4sOS7xju9uO2+OhQHWiMk3Fb6hiLsAJroz/3swkihtMtNG31Lo3g238HPK1Lo72bd/Xy+JfB9FeoR1ADRT8qpMKlW2Fzw4e6Dw4gDjpUWN78pN57PB7Bg1wrg/q/k0G6mNNzfGUT8xAvlnGHD8Jg84aul9m9SLBFCxgO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754513722; c=relaxed/simple;
-	bh=54xUB62CplasX1mx7fisyZ9P9WgcorjVVjt8KXvW9l4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qnR4O8+weyYLArYBjYTZmtbU/25hvli7lTIpQcDOQqRSi0csyLa0J0sW8Eouvb9VnC9+Fb3BsD/nn950on6DDQoQ1qgOClVKoxm8aiSB8leDUedj7iSRqgs4oTMVQWRisZlC5a5+vrPTI6CgRloyIQksNktSl1dcZ3yZq2CFeNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=nFa0vurz; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JIcUNrAT; arc=none smtp.client-ip=202.12.124.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfout.stl.internal (Postfix) with ESMTP id 896791D000A4;
-	Wed,  6 Aug 2025 16:55:16 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Wed, 06 Aug 2025 16:55:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1754513716;
-	 x=1754600116; bh=b3EiBgD+zq+pGmznr4aVpdajsWWFZnlVn4Kp2x4xaTI=; b=
-	nFa0vurzXxGtrfXFFJS7wr5ObjcLdQ8p+zOcIjKRtphgMqRNYXn+1dQXSF8HnhQK
-	UnIoNV1VYIUFjg+RlVw1MXPYeet++mfmLn/f9cH0tR85TN1Lasn1QTpcDlQF7OSq
-	JpU5/AgWVp+NK1/4oIG3NYw0cyjoz7mjGBYyTtMXQQh29BnuhWXA9R8euI1bLT6w
-	4+lE/QWwgLaPON8oyCPHkbCMkvhRRgshoIVEMuCixre1fa+OEo5kjRDhtxXAnZbG
-	wwCbZOVlmMxglWe3Vzo4ZEcAWNPo9wf0ltW71z6qeAjO9RP/kvCMBaO3/9hBUPtC
-	eRmkD4aVF5uk44kX4o8M5g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1754513716; x=
-	1754600116; bh=b3EiBgD+zq+pGmznr4aVpdajsWWFZnlVn4Kp2x4xaTI=; b=J
-	IcUNrATng/QXGa9rYqrlP7octHStvo0rhv5DA/2UUD2KJgpHz5e9oQcQIcIBrvZz
-	I7I5ExKXGlBZ0XRhd9hTskywIx9IbtMpquNgq8eKElsNz0O1y1FKWQfWjpJPKl2r
-	oz5y2B8VEenL1YFyGgg6sQ+KDUxgh846XXCV9t5p/9rnjptxF0cVyzjNt9Oxjc5W
-	oBdVrP8Utkudr8SITSqc0BnP3+YL2A2M/vLSLYafcZ5tu2+Pv930EuMafOsZn3As
-	p6LF9HNAh2y4muDs2CHgRJouvsiSKY1ATERHxKvnudloFPfBsF138ivtNSAjwXlh
-	9pFQSKR5VZBOQtPxwrwFA==
-X-ME-Sender: <xms:M8GTaL5x_TPdKKcqVfeJ1_xTgIJ0HjjSLp4lRffEtn1pefyDlNpQzg>
-    <xme:M8GTaKVXgyMiWMyWpLPIfZ6xBxXaRpbNzv9s_YFJqvecsrz5LCosTJ-vNmKuvbj1m
-    UNVMcqTnv4_AMjE>
-X-ME-Received: <xmr:M8GTaCDdXFBNC-0yqNKUQexiVGSIlc0OlJFpwfoXpZt6GKS08CEwTahUWjq0O4rlNpt92eZAFRauELi69ktE1ENpgIB7GWcuAec4Wr_bIpuhuMWyM_blVhEY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduudeltdejucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeeuvghrnhgu
-    ucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvghrnhgurdgtohhmqeenucggtffrrg
-    htthgvrhhnpeehhfejueejleehtdehteefvdfgtdelffeuudejhfehgedufedvhfehueev
-    udeugeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    gsvghrnhgusegsshgsvghrnhgurdgtohhmpdhnsggprhgtphhtthhopeegpdhmohguvgep
-    shhmthhpohhuthdprhgtphhtthhopehluhhotghhuhhnshhhvghnghesuhhsthgtrdgvug
-    hupdhrtghpthhtohepmhhikhhlohhssehsiigvrhgvughirdhhuhdprhgtphhtthhopehl
-    ihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
-    eplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:M8GTaB76n8d-_wcV7mVcK8ji80SXo8kK8ZTVxe1heUup78XJXAgvUQ>
-    <xmx:M8GTaFxZqWwSEkbMXRl4N3OmZ052TIJW5H5nR3TD7YE9FC-wK-JOUw>
-    <xmx:M8GTaAxHRjbtViUtFdWJiuLqaFMIlkT7y8kTGdGV-1oL887SriHDrg>
-    <xmx:M8GTaFwycqzadVPdXF_PZTLv665N-xxZP5resnWlpo4Q6H2GQ_ShQw>
-    <xmx:NMGTaF6I06UBQ5DGcU8YXD7MPLPb6GX7QnEcKouZsPNSkTDvB3lIQlRg>
-Feedback-ID: i5c2e48a5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 6 Aug 2025 16:55:13 -0400 (EDT)
-Message-ID: <7b8d5689-1024-4c36-80c9-1cbffcc43dc0@bsbernd.com>
-Date: Wed, 6 Aug 2025 22:55:11 +0200
+	s=arc-20240116; t=1754514255; c=relaxed/simple;
+	bh=+LCV1jDSbtCM8xMs6XjHMNRRTJcYyiBwbdn4ReTo/gM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mzKd37Wc9iomHDoansOZIAeCIBDB7DvzucowpncZcgBeLPn53cThHy4B/hwH8jBEs1jd+GZ6nULIQjv4RzFtGu0ltdtQp+8XLV6YwPOZoWjnj5V5i8aATMZwVPGbmm6pFQkguDll9PSy7+A44DWSDKtCs5sGUMBWS56XYduToYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gdEVCvoP; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754514252;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0JeKLDCh0OXtsQCgiYEaDHOZDUteMIsqCidzk53fVSY=;
+	b=gdEVCvoPiZKb9+NrlwFdgivtW7qgqfOJOQQdLtgL2OUNLcf9jh2XtfaL9Q736o8i0Gwec+
+	J7yw4q9Fby9JDdmU4dcR2o/xw39ZTG0w3gohOD4EZGqosfDYxkbEvqMEjcAjoVAfexjy90
+	rgxcfsx7PjdCM/hQrKjEnTNn4u94B0U=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-101-wHny5XraNK-g1JiWa0jbdA-1; Wed,
+ 06 Aug 2025 17:04:10 -0400
+X-MC-Unique: wHny5XraNK-g1JiWa0jbdA-1
+X-Mimecast-MFC-AGG-ID: wHny5XraNK-g1JiWa0jbdA_1754514249
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C7629180048E;
+	Wed,  6 Aug 2025 21:04:08 +0000 (UTC)
+Received: from madcap2.tricolour.ca (unknown [10.22.58.4])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0FD4C1956086;
+	Wed,  6 Aug 2025 21:04:05 +0000 (UTC)
+Date: Wed, 6 Aug 2025 17:04:03 -0400
+From: Richard Guy Briggs <rgb@redhat.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Linux-Audit Mailing List <linux-audit@lists.linux-audit.osci.io>,
+	LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
+	Linux Kernel Audit Mailing List <audit@vger.kernel.org>,
+	Eric Paris <eparis@parisplace.org>, Steve Grubb <sgrubb@redhat.com>,
+	Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [PATCH v1 1/2] audit: record fanotify event regardless of
+ presence of rules
+Message-ID: <aJPDQ+xdHol4tLzI@madcap2.tricolour.ca>
+References: <3c2679cb9df8a110e1e21b7f387b77ddfaacc289.1741210251.git.rgb@redhat.com>
+ <fb8db86ae7208a08277ddc0fb949419b@paul-moore.com>
+ <aDW5mI2dE7xOMMni@madcap2.tricolour.ca>
+ <CAHC9VhTO-bdwzfSeDvJcV19PPfqXn_HM1PUfHe5Z6fPmmsypqA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fuse: Move same-superblock check to fuse_copy_file_range
-To: Chunsheng Luo <luochunsheng@ustc.edu>, miklos@szeredi.hu
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250806135254.352-1-luochunsheng@ustc.edu>
-From: Bernd Schubert <bernd@bsbernd.com>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <20250806135254.352-1-luochunsheng@ustc.edu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhTO-bdwzfSeDvJcV19PPfqXn_HM1PUfHe5Z6fPmmsypqA@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-
-
-On 8/6/25 15:52, Chunsheng Luo wrote:
-> The copy_file_range COPY_FILE_SPLICE capability allows filesystems to
-> handle cross-superblock copy. However, in the current fuse implementation,
-> __fuse_copy_file_range accesses src_file->private_data under the assumption
-> that it points to a fuse_file structure. When the source file belongs to a
-> non-FUSE filesystem, it will leads to kernel panics.
+On 2025-05-29 20:01, Paul Moore wrote:
+> On Tue, May 27, 2025 at 9:10 AM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > On 2025-04-11 14:14, Paul Moore wrote:
+> > > On Mar  5, 2025 Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > >
+> > > > When no audit rules are in place, fanotify event results are
+> > > > unconditionally dropped due to an explicit check for the existence of
+> > > > any audit rules.  Given this is a report from another security
+> > > > sub-system, allow it to be recorded regardless of the existence of any
+> > > > audit rules.
+> > > >
+> > > > To test, install and run the fapolicyd daemon with default config.  Then
+> > > > as an unprivileged user, create and run a very simple binary that should
+> > > > be denied.  Then check for an event with
+> > > >     ausearch -m FANOTIFY -ts recent
+> > > >
+> > > > Link: https://issues.redhat.com/browse/RHEL-1367
+> > > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > > > Acked-by: Jan Kara <jack@suse.cz>
+> > > > ---
+> > > >  include/linux/audit.h | 8 +-------
+> > > >  kernel/auditsc.c      | 2 +-
+> > > >  2 files changed, 2 insertions(+), 8 deletions(-)
+> > > >
+> > > > diff --git a/include/linux/audit.h b/include/linux/audit.h
+> > > > index 0050ef288ab3..d0c6f23503a1 100644
+> > > > --- a/include/linux/audit.h
+> > > > +++ b/include/linux/audit.h
+> > > > @@ -418,7 +418,7 @@ extern void __audit_log_capset(const struct cred *new, const struct cred *old);
+> > > >  extern void __audit_mmap_fd(int fd, int flags);
+> > > >  extern void __audit_openat2_how(struct open_how *how);
+> > > >  extern void __audit_log_kern_module(char *name);
+> > > > -extern void __audit_fanotify(u32 response, struct fanotify_response_info_audit_rule *friar);
+> > > > +extern void audit_fanotify(u32 response, struct fanotify_response_info_audit_rule *friar);
+> > > >  extern void __audit_tk_injoffset(struct timespec64 offset);
+> > > >  extern void __audit_ntp_log(const struct audit_ntp_data *ad);
+> > > >  extern void __audit_log_nfcfg(const char *name, u8 af, unsigned int nentries,
+> > > > @@ -525,12 +525,6 @@ static inline void audit_log_kern_module(char *name)
+> > > >             __audit_log_kern_module(name);
+> > > >  }
+> > > >
+> > > > -static inline void audit_fanotify(u32 response, struct fanotify_response_info_audit_rule *friar)
+> > > > -{
+> > > > -   if (!audit_dummy_context())
+> > > > -           __audit_fanotify(response, friar);
+> > > > -}
+> > >
+> > > It seems like we should at least have an audit_enabled() check, yes?
+> > > We've had people complain about audit events being generated when audit
+> > > is disabled, any while we don't currently have such a check in place
+> > > here, I believe the dummy context check is doing that for us.
+> > >
+> > >   static inline void audit_fanotify(...)
+> > >   {
+> > >     if (!audit_enabled)
+> > >       return;
+> > >     __audit_fanotify(...);
+> > >   }
+> >
+> > That would be consistent with other security events messages.  I was
+> > going through the selinux code to see what it does and I am missing it
+> > if selinux checks with audit_enabled().  Are selinux messages somehow
+> > exempt from audit_enabled()?
 > 
-> To resolve this, move the same-superblock check from __fuse_copy_file_range
-> to fuse_copy_file_range to ensure both files belong to the same fuse
-> superblock before accessing private_data.
-> 
-> Signed-off-by: Chunsheng Luo <luochunsheng@ustc.edu>
-> ---
->  fs/fuse/file.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index 95275a1e2f54..a29f1b84f11b 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -2984,9 +2984,6 @@ static ssize_t __fuse_copy_file_range(struct file *file_in, loff_t pos_in,
->  	if (fc->no_copy_file_range)
->  		return -EOPNOTSUPP;
->  
-> -	if (file_inode(file_in)->i_sb != file_inode(file_out)->i_sb)
-> -		return -EXDEV;
-> -
->  	inode_lock(inode_in);
->  	err = fuse_writeback_range(inode_in, pos_in, pos_in + len - 1);
->  	inode_unlock(inode_in);
-> @@ -3066,9 +3063,12 @@ static ssize_t fuse_copy_file_range(struct file *src_file, loff_t src_off,
->  {
->  	ssize_t ret;
->  
-> +	if (file_inode(src_file)->i_sb != file_inode(dst_file)->i_sb)
-> +		return splice_copy_file_range(src_file, src_off, dst_file,
-> +					     dst_off, len);
-> +
->  	ret = __fuse_copy_file_range(src_file, src_off, dst_file, dst_off,
->  				     len, flags);
-> -
->  	if (ret == -EOPNOTSUPP || ret == -EXDEV)
->  		ret = splice_copy_file_range(src_file, src_off, dst_file,
->  					     dst_off, len);
+> There are likely a number of callers in the kernel that don't have
+> audit_enabled() checks, some are probably bugs, others probably
+> intentional; I wouldn't worry too much about what one subsystem does
+> when deciding what to do for another.  In the case of fanotify, I
+> suspect the right thing to do is add an audit_enabled() check since it
+> is already doing an audit_dummy_context() check.  To be clear, there
+> may be some cases where we do an audit_dummy_context() check and doing
+> an audit_enabled() check would be wrong, but I don't believe that is
+> the case with fanotify.
 
-I guess you can remove the check EXDEV here?
+I totally dropped the ball on this.  I had it respun, tested and
+documented, ready to go May 28th and had a note that I'd sent it
+complete with Message-ID and I find no evidence it was ever sent.
+Re-based, re-tested, sending.
+
+> paul-moore.com
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+Upstream IRC: SunRaycer
+Voice: +1.613.860 2354 SMS: +1.613.518.6570
 
 
