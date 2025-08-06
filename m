@@ -1,151 +1,191 @@
-Return-Path: <linux-fsdevel+bounces-56803-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56804-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96A38B1BDDB
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Aug 2025 02:25:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93F7CB1BE77
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Aug 2025 03:55:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C51E5183176
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Aug 2025 00:25:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E7443B15B1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Aug 2025 01:55:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AA0764A8F;
-	Wed,  6 Aug 2025 00:25:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67D701A23A0;
+	Wed,  6 Aug 2025 01:54:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="H8R01tOn"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="L744vBhq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3F7171C9;
-	Wed,  6 Aug 2025 00:25:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C712502BE;
+	Wed,  6 Aug 2025 01:54:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754439924; cv=none; b=I6hi5Mhfv53sX/A9F5n5bytarsGAaCH6EL3JHr67NMwTc/g2aNY7k/azPOxGVwneZ0kqt3Y7tMsnd4xlBv/OQedAZ+aI+0AMxW9v+1K3KckIugIiM0cx99n1vdsrtA4o/F8QaZZeQxyWd+Bfw9F33XkAzXetGqvVPP6RpSG3xEI=
+	t=1754445295; cv=none; b=cJnkn0FVcTNLbUZT7yRUfnK7wgvDHBfysWbim7Y8Ee95RlTWUlwDm7tsoEIqlanPtdM7S/3uj7jlj/RNyNnWQgLd9ZR1N08F+AMXQWFJBzpT8JzGJ9+dAuV3jXb7DIrVGMlwIDNRkDiUkOxlK73OrdvYY1OM2ToG00qojrXq+6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754439924; c=relaxed/simple;
-	bh=Xa8K2I92uLyO484B0qkAfsO5WwTjl3NToPDEdFw7lcg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Wjtwq6tBw5ge/E46UTDs6102S5txoXSxpQZtN9IorDsfI3dkdDFVOeUGpOi5v2tYq7tT2/qP+dRhc7BykzPbcCI/7KAfM2nRs0T/Cv+zfgokHGDSS2HVBpUOGxK/Uyy3J/3zMw5MYs9g6MxVh+zq31vEj4QwP+9gYhI3ZkIM4EM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=H8R01tOn; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1754445295; c=relaxed/simple;
+	bh=EPVzJPUmvWwbmQcqVM3T4ytLQLa5WfF2jfCt0acpElE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ScF3ieRZY51BFVox2gqoaErtbbJ+hbtcVk1LUzvGDfeKIJJkHySzkXk0N+f7yjC6XD9XGSqIwLr99ozBTM7K/zkxmJA8gbMRsfweZdqSPTrYWzjxcRwDdpMwhOjLBq4urGzLD2mtYWABbiSIKBplDCoIKMQXBtJQSbUiuc7LcaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=L744vBhq; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=zYA8n4MidVExydv3/JxDVqPaTJImy9qKxpLFRRwzZo0=; b=H8R01tOndR7j5SuRFu/C4Cwen/
-	qLz3YG25lqRLqoW6M+4RKs+nHpyWcdKTRyr0ZP5nxnd3D6HmKyoWDxmWXgRHGOUc1FW46lewgrfJ0
-	LSEMLCNC/IH9zpuV4kFdU5ByyPyffXWewCwvfb1ebK7EiQWMyfPZCLw9Yip1A6yH/v00SuK/Aqs9r
-	yWWWVYTuX6LZ/bobuRQDVZ5+aXzrH98yhIA2PePmC4XhJOeiyU8kpCGxyxKyfzMP+fo/jovz2+9tZ
-	lUUp2RUxQXVNT8j9kIlvm2bvsq+hkYJm/litTEgfQNXMZfHmBjQ/e3Ua0f38lvrIVRUjZ3fUNdyg0
-	clkeqPxw==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ujRy4-0000000E3ZF-3ciz;
-	Wed, 06 Aug 2025 00:25:20 +0000
-Message-ID: <9027aa89-b3b2-46c8-8338-6c37f1c5b97a@infradead.org>
-Date: Tue, 5 Aug 2025 17:25:19 -0700
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=y7hjcTlBLlHEkIsVkJW9LcLYrfSDMpCRStdSI9oCyBM=; b=L744vBhqaFVKh14WsOoVpPCpHk
+	Um4YnOsK0YP+Eb69qKtI76/vtSGMMUY9nBQN+YPT2U/WQKvvIi9T5refIu2ThAdMCbGYCVKXAh4Px
+	Ff3n6Ie5XtTSolnLiIOZxqsv9/tCStxb7vgQhIS6e7u0kLJuMXhvNAphammMluL9+CUpN363VNH2r
+	FWz8IoX1+jU3hNtXCvsyTh4NoQK4O9HErhAJflMa8WjFM1vatAJK7N34S105oExp6vsbipc8OvjZe
+	LjvTUXfo9FQV0lrue+LCVbeaokOsgrhFKDPdrJ+7PY+Rc80OQuvbSnpCRJWdJe4icmLQZzJwkMbSB
+	jF12ROjg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ujTMf-00000007Aqw-3DD8;
+	Wed, 06 Aug 2025 01:54:49 +0000
+Date: Wed, 6 Aug 2025 02:54:49 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
+	Jan Kara <jack@suse.cz>, Sargun Dhillon <sargun@sargun.me>,
+	Kees Cook <kees@kernel.org>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2] fs: always return zero on success from replace_fd()
+Message-ID: <20250806015449.GA1638962@ZenIV>
+References: <20250804-fix-receive_fd_replace-v2-1-ecb28c7b9129@linutronix.de>
+ <20250804-rundum-anwalt-10c3b9c11f8e@brauner>
+ <20250804155229.GY222315@ZenIV>
+ <20250805-beleidigen-klugheit-c19b1657674a@brauner>
+ <20250805153457.GB222315@ZenIV>
+ <20250805195003.GC222315@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/4] procfs: add PROCFS_GET_PID_NAMESPACE ioctl
-To: Aleksa Sarai <cyphar@cyphar.com>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
- Jan Kara <jack@suse.cz>, Jonathan Corbet <corbet@lwn.net>,
- Shuah Khan <shuah@kernel.org>
-Cc: Andy Lutomirski <luto@amacapital.net>, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20250805-procfs-pidns-api-v4-0-705f984940e7@cyphar.com>
- <20250805-procfs-pidns-api-v4-3-705f984940e7@cyphar.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250805-procfs-pidns-api-v4-3-705f984940e7@cyphar.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250805195003.GC222315@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-
-
-On 8/4/25 10:45 PM, Aleksa Sarai wrote:
-> /proc has historically had very opaque semantics about PID namespaces,
-> which is a little unfortunate for container runtimes and other programs
-> that deal with switching namespaces very often. One common issue is that
-> of converting between PIDs in the process's namespace and PIDs in the
-> namespace of /proc.
+On Tue, Aug 05, 2025 at 08:50:03PM +0100, Al Viro wrote:
+> On Tue, Aug 05, 2025 at 04:34:57PM +0100, Al Viro wrote:
 > 
-> In principle, it is possible to do this today by opening a pidfd with
-> pidfd_open(2) and then looking at /proc/self/fdinfo/$n (which will
-> contain a PID value translated to the pid namespace associated with that
-> procfs superblock). However, allocating a new file for each PID to be
-> converted is less than ideal for programs that may need to scan procfs,
-> and it is generally useful for userspace to be able to finally get this
-> information from procfs.
+> > They do no allow to express things like "foo() consumes lock X".
+> > >From time to time, we *do* need that, and when that happens guards
+> > become a menace.
+> > 
+> > Another case is
+> > 	lock
+> > 	if (lock-dependent condition)
+> > 		some work
+> > 		unlock
+> > 		work that can't be under that lock
+> > 	else
+> > 		some other work
+> > 		unlock
+> > 		more work that can't be under that lock
+> > 
+> > Fairly common, especially when that's a spinlock and "can't be under that
+> > lock" includes blocking operations.  Can't be expressed with guards, not
+> > without a massage that often ends up with bloody awful results.
 > 
-> So, add a new API to get the pid namespace of a procfs instance, in the
-> form of an ioctl(2) you can call on the root directory of said procfs.
-> The returned file descriptor will have O_CLOEXEC set. This acts as a
-> sister feature to the new "pidns" mount option, finally allowing
-> userspace full control of the pid namespaces associated with procfs
-> instances.
-> 
-> The permission model for this is a bit looser than that of the "pidns"
-> mount option (and also setns(2)) because /proc/1/ns/pid provides the
-> same information, so as long as you have access to that magic-link (or
-> something equivalently reasonable such as being in an ancestor pid
-> namespace) it makes sense to allow userspace to grab a handle. Ideally
-> we would check for ptrace-read access against all processes in the pidns
-> (which is very likely to be true for at least one process, as
-> SUID_DUMP_DISABLE is cleared on exec(2) and is rarely set by most
-> programs), but this would obviously not scale.
-> 
-> setns(2) will still have their own permission checks, so being able to
-> open a pidns handle doesn't really provide too many other capabilities.
-> 
-> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
-> ---
->  Documentation/filesystems/proc.rst |  4 +++
->  fs/proc/root.c                     | 68 ++++++++++++++++++++++++++++++++++++--
->  include/uapi/linux/fs.h            |  4 +++
->  3 files changed, 74 insertions(+), 2 deletions(-)
-> 
+> FWIW, I'm looking through the raw data I've got during ->d_lock audit.
+> Except for a few functions (all static in fs/dcache.c), all scopes
+> terminate in the same function where they begin.
 
+... and for ->file_lock we have the following:
+	expand_fdtable(): drops and regains
+	expand_files(): either nothing or drops and regains
+	do_dup2(): drops
+everything else is neutral.
 
-> diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-> index 0bd678a4a10e..68e65e6d7d6b 100644
-> --- a/include/uapi/linux/fs.h
-> +++ b/include/uapi/linux/fs.h
-> @@ -435,8 +435,12 @@ typedef int __bitwise __kernel_rwf_t;
->  			 RWF_APPEND | RWF_NOAPPEND | RWF_ATOMIC |\
->  			 RWF_DONTCACHE)
->  
-> +/* This matches XSDFEC_MAGIC, so we need to allocate subvalues carefully. */
->  #define PROCFS_IOCTL_MAGIC 'f'
->  
-> +/* procfs root ioctls */
-> +#define PROCFS_GET_PID_NAMESPACE	_IO(PROCFS_IOCTL_MAGIC, 32)
+20 functions touching that stuff total.  Convertible to guard() or
+scoped_guard(): put_unused_fd(), fd_install(), close_fd() (scoped_guard
+only), __range_cloexec(), file_close_fd(), set_close_on_exec(),
+iterate_fd(), fcntl_setlk() and fcntl_setlk64() (scoped_guard only), 
+seq_show() - 10 out of 20.
 
-Since the _IO() nr here is 32, Documentation/userspace-api/ioctl/ioctl-number.rst
-should be updated like:
+Anything that uses expand_fdtable() is in the best case an abuse of
+guard/scoped_guard; in the worst, it's actively confusing, since
+there's *not* one continuous scope there.  expand_files() is in
+the same boat.  That covers alloc_fd(), replace_fd() and ksys_dup3().
+That's 5 out of remaining 10.  BTW, trying to eliminate gotos from
+alloc_fd() is not fun either.
 
--'f'   00-0F  linux/fs.h                                                conflict!
-+'f'   00-1F  linux/fs.h                                                conflict!
+dup_fd():
+	spin_lock(&oldf->file_lock);
+	...
+	while (unlikely(open_files > new_fdt->max_fds)) {
+		spin_unlock(&oldf->file_lock);
+		... (blocking, possibly return on failure here)
+		spin_lock(&oldf->file_lock);
+		...
+	}
+	...
+	spin_unlock(&oldf->file_lock);
+	...
+No way to do that with guard() - not unless you mix it with explicit
+unlock/lock in the middle of scope, and even that will be bitch to
+deal with due to failure exit after allocation failure.  We'd need
+to do this:
+	spin_unlock(&oldf->file_lock);
+	if (new_fdt != &newf->fdtab)
+		__free_fdtable(new_fdt);
+	new_fdt = alloc_fdtable(open_files);
+	spin_lock(&oldf->file_lock);
+	if (IS_ERR(new_fdt)) {
+		kmem_cache_free(files_cachep, newf);
+		return ERR_CAST(new_fdt);
+	}
+all of that under guard(spinlock)(&oldf->file_lock).  IMO that would
+be too confusing and brittle.
 
-(17 is already used for PROCFS_IOCTL_MAGIC somewhere else, so that probably should
-have update the Doc/rst file.)
+__range_close():
+	spin_lock(&files->file_lock);
+	...
+	for (; fd <= max_fd; fd++) { 
+		file = file_close_fd_locked(files, fd);
+		if (file) {
+			spin_unlock(&files->file_lock);
+			filp_close(file, files);
+			cond_resched();
+			spin_lock(&files->file_lock);
+		} else if (need_resched()) {
+			spin_unlock(&files->file_lock);
+			cond_resched();
+			spin_lock(&files->file_lock);
+		}
+	}
+	spin_unlock(&files->file_lock);
+Not a good fit for guard(), for the same reasons.
 
-> +
->  /* Pagemap ioctl */
->  #define PAGEMAP_SCAN	_IOWR(PROCFS_IOCTL_MAGIC, 16, struct pm_scan_arg)
->  
-> 
-Thanks.
--- 
-~Randy
+do_close_on_exec():
+	...
+	spin_lock(&files->file_lock);
+	for (i = 0; ; i++) {
+		....
+		for ( ; set ; fd++, set >>= 1) {
+			....
+			spin_unlock(&files->file_lock);
+			filp_close(file, files);
+			cond_resched();
+			spin_lock(&files->file_lock);
+		}
+	}
+	spin_unlock(&files->file_lock);
+Same story.
 
+io_close():
+	might be convertible to scoped_guard; won't be pretty,
+AFAICS - that -EAGAIN case in the middle makes it very clumsy.
+
+do_dup2(): well... we could lift filp_close() into the callers,
+but that ends up with fairly unpleasant boilerplate in the
+callers, and one of those callers is a fairly hot syscall.
+
+And that's the remaining 5.  For some locks scoped_guard() is
+a decent fit; for some it really isn't ;-/
 
