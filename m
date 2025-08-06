@@ -1,62 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-56904-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56905-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9D47B1CDCE
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Aug 2025 22:44:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DED2B1CDD1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Aug 2025 22:44:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA20E565896
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Aug 2025 20:44:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C95218C6711
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Aug 2025 20:44:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36C9322157B;
-	Wed,  6 Aug 2025 20:39:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2554729B229;
+	Wed,  6 Aug 2025 20:39:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Kn/QR/b9"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Y/q4FdxV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11E752BE65B
-	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Aug 2025 20:39:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B264821FF33
+	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Aug 2025 20:39:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754512760; cv=none; b=OpNMaejVqyyz/s+/6zQT0WWm+rYmzXmnrFJ0rXKo3NrzroA+7Un6FaFpDCZ2MOPfPquMWh1ENxIXYLcvSeup3RNbpcUgHpI5+DbnJD4NoAQDQkdhpa9tmnCcijtkzVwLnaUyZPLJi2Fr16JDfFJduGuNywPcWGuMfDTkLmNMA4w=
+	t=1754512764; cv=none; b=Atj+K1GF2Z/K/tMZII7o5lmHCxjzbs3el1+i0T9F/WMCetrwtF8nuyMCGis/hTasv1u9cCkip7WEXaqoV1SeU0nN1BGYIfM9RyjNAhYF+k206ZBCceZ0vqpeGax/pHfH2X+gIXnVYkO9qBByp9uYvm9CA5V2TQw8kRPQhcM84BQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754512760; c=relaxed/simple;
-	bh=T2bSoxrSwOGDQ+OPDN6pZ89/dtL2KAnQ+Cou834QaRs=;
+	s=arc-20240116; t=1754512764; c=relaxed/simple;
+	bh=FgZs7FlbxxcfYWLEAv9uHBpudQGIcMZzepwa8tZo2os=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KA2A4DFVeo0o94Fwys/Rh7r3rpPtFp4Fa88jLyjQuv5x9QAjHj+OujOZvyX6Ky7TRVAVlH28lZ7hy4IZTFqyrpaSvPG3e9kQ6s6IWRmPHHTKWsdMGK2CQSElUAx/+uXY+fBtLyUp8yIvbV1UAS0BogQ/HrNp30b5osfCEELmILk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Kn/QR/b9; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=PYzlcXqFqXzGX5/uJBKPPEmQyYKEXVKMk4hbPzaH8RPVZqnIoOVty5NsUhNEpGf5q3GCgOvURXoGDIZxO8BxpuxVeSkO1FtwGm0gc32FonfPq31momzJNL8B3XDj5Au05T3lpE5FxGtSHtFR3j6ZxzfZ4IESxFmvd0k8OS65X90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Y/q4FdxV; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754512757;
+	s=mimecast20190719; t=1754512760;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=HjeSK8GjGxfDr1EtNwWgacqn2lDSd3SKB7IJ3INJ84c=;
-	b=Kn/QR/b9JzzuKjcCpBUOLe5stefCKtGiSvLkPRdX3xSI/MB+oF0z4C61qYCDPYLs2zkQN1
-	WSqMhFr5nWFzL5okklm6G5h25nen3h827XfAAtfBVVuR1iEy5WUKjJy58bIoHT8OIIXoGr
-	0fLnlD9ZP4/TjkIRQY0bmgzEQPrdZFs=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+	bh=7Y38Kg6xeMPfdlB6BUDECDD4woV1aeL7i1JxW9bLzAY=;
+	b=Y/q4FdxVp1xr0ufTvTObChtOPbB+KhnhEI1QsNhStAzhRQds9t3dzu8Tko3V3/bcvNM/CG
+	i5SVeDUImEYjJJ76AuSvJthzJByhpnZ7m6plqW8dd986AHWgoeKxLUC+B07bh8npxMnmO9
+	QzAzXkp02YBZfPOXQSsATe1pDAOac6k=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-671-qbmsm-QuPm2cVbAzIxy3XA-1; Wed,
- 06 Aug 2025 16:39:12 -0400
-X-MC-Unique: qbmsm-QuPm2cVbAzIxy3XA-1
-X-Mimecast-MFC-AGG-ID: qbmsm-QuPm2cVbAzIxy3XA_1754512750
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-116-1-WtZdDROiK-vqhqVrthnw-1; Wed,
+ 06 Aug 2025 16:39:17 -0400
+X-MC-Unique: 1-WtZdDROiK-vqhqVrthnw-1
+X-Mimecast-MFC-AGG-ID: 1-WtZdDROiK-vqhqVrthnw_1754512755
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CB54F1956094;
-	Wed,  6 Aug 2025 20:39:10 +0000 (UTC)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AAF0D1800561;
+	Wed,  6 Aug 2025 20:39:15 +0000 (UTC)
 Received: from warthog.procyon.org.com (unknown [10.42.28.17])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8238019560AD;
-	Wed,  6 Aug 2025 20:39:07 +0000 (UTC)
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 634881800280;
+	Wed,  6 Aug 2025 20:39:12 +0000 (UTC)
 From: David Howells <dhowells@redhat.com>
 To: Steve French <sfrench@samba.org>
 Cc: David Howells <dhowells@redhat.com>,
@@ -70,9 +70,9 @@ Cc: David Howells <dhowells@redhat.com>,
 	linux-kernel@vger.kernel.org,
 	netfs@lists.linux.dev,
 	linux-fsdevel@vger.kernel.org
-Subject: [RFC PATCH 24/31] cifs: Convert SMB2 Negotiate Protocol request
-Date: Wed,  6 Aug 2025 21:36:45 +0100
-Message-ID: <20250806203705.2560493-25-dhowells@redhat.com>
+Subject: [RFC PATCH 25/31] cifs: Convert SMB2 Session Setup request
+Date: Wed,  6 Aug 2025 21:36:46 +0100
+Message-ID: <20250806203705.2560493-26-dhowells@redhat.com>
 In-Reply-To: <20250806203705.2560493-1-dhowells@redhat.com>
 References: <20250806203705.2560493-1-dhowells@redhat.com>
 Precedence: bulk
@@ -82,7 +82,7 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 cc: Steve French <sfrench@samba.org>
@@ -93,873 +93,752 @@ cc: linux-cifs@vger.kernel.org
 cc: netfs@lists.linux.dev
 cc: linux-fsdevel@vger.kernel.org
 ---
- fs/smb/client/smb2pdu.c | 509 ++++++++++++++++++++++++----------------
- fs/smb/common/smb2pdu.h |  24 +-
- fs/smb/server/smb2pdu.c |  22 +-
- 3 files changed, 319 insertions(+), 236 deletions(-)
+ fs/smb/client/ntlmssp.h |  20 +--
+ fs/smb/client/sess.c    | 271 ++++++++++++++++++++++------------------
+ fs/smb/client/smb2pdu.c | 172 ++++++++++---------------
+ 3 files changed, 226 insertions(+), 237 deletions(-)
 
-diff --git a/fs/smb/client/smb2pdu.c b/fs/smb/client/smb2pdu.c
-index 58a2a4ff3368..f1b6d36fe7cd 100644
---- a/fs/smb/client/smb2pdu.c
-+++ b/fs/smb/client/smb2pdu.c
-@@ -788,144 +788,200 @@ static int smb2_ioctl_req_init(u32 opcode, struct cifs_tcon *tcon,
+diff --git a/fs/smb/client/ntlmssp.h b/fs/smb/client/ntlmssp.h
+index 875de43b72de..5ca249f1c51c 100644
+--- a/fs/smb/client/ntlmssp.h
++++ b/fs/smb/client/ntlmssp.h
+@@ -123,7 +123,7 @@ typedef struct _CHALLENGE_MESSAGE {
+ 	   do not set the version is present flag */
+ } __attribute__((packed)) CHALLENGE_MESSAGE, *PCHALLENGE_MESSAGE;
  
- /* For explanation of negotiate contexts see MS-SMB2 section 2.2.3.1 */
+-typedef struct _AUTHENTICATE_MESSAGE {
++struct ntlmssp_authenticate_message {
+ 	__u8 Signature[sizeof(NTLMSSP_SIGNATURE)];
+ 	__le32 MessageType;  /* NtLmsAuthenticate = 3 */
+ 	SECURITY_BUFFER LmChallengeResponse;
+@@ -136,7 +136,7 @@ typedef struct _AUTHENTICATE_MESSAGE {
+ 	struct	ntlmssp_version Version;
+ 	/* SECURITY_BUFFER */
+ 	char UserString[];
+-} __attribute__((packed)) AUTHENTICATE_MESSAGE, *PAUTHENTICATE_MESSAGE;
++} __attribute__((packed));
  
--static void
--build_preauth_ctxt(struct smb2_preauth_neg_context *pneg_ctxt)
-+static void *cifs_begin_neg_context(struct smb_message *smb,
-+				    __le16 context_type)
- {
--	pneg_ctxt->ContextType = SMB2_PREAUTH_INTEGRITY_CAPABILITIES;
--	pneg_ctxt->DataLength = cpu_to_le16(38);
--	pneg_ctxt->HashAlgorithmCount = cpu_to_le16(1);
--	pneg_ctxt->SaltLength = cpu_to_le16(SMB311_SALT_SIZE);
--	get_random_bytes(pneg_ctxt->Salt, SMB311_SALT_SIZE);
--	pneg_ctxt->HashAlgorithms = SMB2_PREAUTH_INTEGRITY_SHA512;
-+	struct smb2_neg_context *neg;
-+
-+	neg = cifs_begin_extension(smb);
-+	neg->ContextType	= context_type;
-+	neg->Reserved		= 0;
-+	return (void *)neg;
+ /*
+  * Size of the session key (crypto key encrypted with the password
+@@ -147,11 +147,11 @@ int build_ntlmssp_negotiate_blob(unsigned char **pbuffer, u16 *buflen,
+ 				 struct cifs_ses *ses,
+ 				 struct TCP_Server_Info *server,
+ 				 const struct nls_table *nls_cp);
+-int build_ntlmssp_smb3_negotiate_blob(unsigned char **pbuffer, u16 *buflen,
+-				 struct cifs_ses *ses,
+-				 struct TCP_Server_Info *server,
+-				 const struct nls_table *nls_cp);
+-int build_ntlmssp_auth_blob(unsigned char **pbuffer, u16 *buflen,
+-			struct cifs_ses *ses,
+-			struct TCP_Server_Info *server,
+-			const struct nls_table *nls_cp);
++int build_ntlmssp_smb3_negotiate_blob(struct smb_message *smb,
++				      struct cifs_ses *ses,
++				      struct TCP_Server_Info *server,
++				      const struct nls_table *nls_cp);
++int build_ntlmssp_auth_blob(struct smb_message *smb,
++			    struct cifs_ses *ses,
++			    struct TCP_Server_Info *server,
++			    const struct nls_table *nls_cp);
+diff --git a/fs/smb/client/sess.c b/fs/smb/client/sess.c
+index 330bc3d25bad..8063cf06ea9f 100644
+--- a/fs/smb/client/sess.c
++++ b/fs/smb/client/sess.c
+@@ -966,32 +966,86 @@ int decode_ntlmssp_challenge(char *bcc_ptr, int blob_len,
+ 	return 0;
  }
  
--static void
--build_compression_ctxt(struct smb2_compression_capabilities_context *pneg_ctxt)
-+static void cifs_end_neg_context(struct smb_message *smb, void *p, size_t size)
+-static int size_of_ntlmssp_blob(struct cifs_ses *ses, int base_size)
++static int size_of_ntlmssp_blob(struct cifs_ses *ses, int base_size,
++				const struct nls_table *nls_cp)
+ {
+ 	int sz = base_size + ses->auth_key.len
+ 		- CIFS_SESS_KEY_SIZE + CIFS_CPHTXT_SIZE + 2;
+ 
+ 	if (ses->domainName)
+-		sz += sizeof(__le16) * strnlen(ses->domainName, CIFS_MAX_DOMAINNAME_LEN);
++		sz += cifs_size_strtoUTF16(ses->domainName, CIFS_MAX_DOMAINNAME_LEN,
++					   nls_cp);
+ 	else
+ 		sz += sizeof(__le16);
+ 
+ 	if (ses->user_name)
+-		sz += sizeof(__le16) * strnlen(ses->user_name, CIFS_MAX_USERNAME_LEN);
++		sz += cifs_size_strtoUTF16(ses->user_name, CIFS_MAX_USERNAME_LEN,
++					   nls_cp);
+ 	else
+ 		sz += sizeof(__le16);
+ 
+ 	if (ses->workstation_name[0])
+-		sz += sizeof(__le16) * strnlen(ses->workstation_name,
+-					       ntlmssp_workstation_name_size(ses));
++		sz += cifs_size_strtoUTF16(ses->workstation_name,
++					   ntlmssp_workstation_name_size(ses),
++					   nls_cp);
+ 	else
+ 		sz += sizeof(__le16);
+ 
+ 	return sz;
+ }
+ 
++static void cifs_append_security_string(struct smb_message *smb,
++					SECURITY_BUFFER *pbuf,
++					const char *str_value,
++					int str_length,
++					unsigned char **pcur,
++					const struct nls_table *nls_cp)
 +{
-+	struct smb2_neg_context *neg = p;
++	int len;
 +
-+	neg->DataLength = cpu_to_le16(size - sizeof(*neg));
-+	cifs_end_extension(smb, size);
-+}
-+
-+static void build_preauth_ctxt(struct smb_message *smb)
- {
--	pneg_ctxt->ContextType = SMB2_COMPRESSION_CAPABILITIES;
--	pneg_ctxt->DataLength =
--		cpu_to_le16(sizeof(struct smb2_compression_capabilities_context)
--			  - sizeof(struct smb2_neg_context));
--	pneg_ctxt->CompressionAlgorithmCount = cpu_to_le16(3);
--	pneg_ctxt->CompressionAlgorithms[0] = SMB3_COMPRESS_LZ77;
--	pneg_ctxt->CompressionAlgorithms[1] = SMB3_COMPRESS_LZ77_HUFF;
--	pneg_ctxt->CompressionAlgorithms[2] = SMB3_COMPRESS_LZNT1;
-+	struct smb2_preauth_neg_context *preauth;
-+
-+	preauth = cifs_begin_neg_context(smb, SMB2_PREAUTH_INTEGRITY_CAPABILITIES);
-+	preauth->HashAlgorithmCount	= cpu_to_le16(1);
-+	preauth->SaltLength		= cpu_to_le16(SMB311_SALT_SIZE);
-+	preauth->HashAlgorithms		= SMB2_PREAUTH_INTEGRITY_SHA512;
-+	get_random_bytes(preauth->Salt, SMB311_SALT_SIZE);
-+	cifs_end_neg_context(smb, preauth, sizeof(*preauth));
- }
- 
--static unsigned int
--build_signing_ctxt(struct smb2_signing_capabilities *pneg_ctxt)
-+static void build_compression_ctxt(struct smb_message *smb)
-+{
-+	struct smb2_compression_capabilities_context *compr;
-+
-+	compr = cifs_begin_neg_context(smb, SMB2_COMPRESSION_CAPABILITIES);
-+	compr->CompressionAlgorithmCount = cpu_to_le16(3);
-+	compr->CompressionAlgorithms[0] = SMB3_COMPRESS_LZ77;
-+	compr->CompressionAlgorithms[1] = SMB3_COMPRESS_LZ77_HUFF;
-+	compr->CompressionAlgorithms[2] = SMB3_COMPRESS_LZNT1;
-+	cifs_end_neg_context(smb, compr, sizeof(*compr));
-+}
-+
-+static size_t smb2_size_signing_ctxt(void)
-+{
-+	size_t ctxt_len = sizeof(struct smb2_signing_capabilities);
-+	unsigned short num_algs = 1; /* number of signing algorithms sent */
-+
-+	ctxt_len += sizeof(__le16) * num_algs;
-+	return ALIGN8(ctxt_len);
-+}
-+
-+static void build_signing_ctxt(struct smb_message *smb)
- {
--	unsigned int ctxt_len = sizeof(struct smb2_signing_capabilities);
-+	struct smb2_signing_capabilities *scap;
- 	unsigned short num_algs = 1; /* number of signing algorithms sent */
- 
--	pneg_ctxt->ContextType = SMB2_SIGNING_CAPABILITIES;
-+	scap = cifs_begin_neg_context(smb, SMB2_SIGNING_CAPABILITIES);
-+	scap->SigningAlgorithmCount = cpu_to_le16(num_algs);
-+	scap->SigningAlgorithms[0] = cpu_to_le16(SIGNING_ALG_AES_CMAC);
-+	/* TBD add SIGNING_ALG_AES_GMAC and/or SIGNING_ALG_HMAC_SHA256 */
-+
- 	/*
- 	 * Context Data length must be rounded to multiple of 8 for some servers
- 	 */
--	pneg_ctxt->DataLength = cpu_to_le16(ALIGN8(sizeof(struct smb2_signing_capabilities) -
--					    sizeof(struct smb2_neg_context) +
--					    (num_algs * sizeof(u16))));
--	pneg_ctxt->SigningAlgorithmCount = cpu_to_le16(num_algs);
--	pneg_ctxt->SigningAlgorithms[0] = cpu_to_le16(SIGNING_ALG_AES_CMAC);
--
--	ctxt_len += sizeof(__le16) * num_algs;
--	ctxt_len = ALIGN8(ctxt_len);
--	return ctxt_len;
--	/* TBD add SIGNING_ALG_AES_GMAC and/or SIGNING_ALG_HMAC_SHA256 */
-+	cifs_end_neg_context(smb, scap,
-+			     ALIGN8(struct_size(scap, SigningAlgorithms, num_algs)));
- }
- 
--static void
--build_encrypt_ctxt(struct smb2_encryption_neg_context *pneg_ctxt)
-+static void build_encrypt_ctxt(struct smb_message *smb)
- {
--	pneg_ctxt->ContextType = SMB2_ENCRYPTION_CAPABILITIES;
--	if (require_gcm_256) {
--		pneg_ctxt->DataLength = cpu_to_le16(4); /* Cipher Count + 1 cipher */
--		pneg_ctxt->CipherCount = cpu_to_le16(1);
--		pneg_ctxt->Ciphers[0] = SMB2_ENCRYPTION_AES256_GCM;
--	} else if (enable_gcm_256) {
--		pneg_ctxt->DataLength = cpu_to_le16(8); /* Cipher Count + 3 ciphers */
--		pneg_ctxt->CipherCount = cpu_to_le16(3);
--		pneg_ctxt->Ciphers[0] = SMB2_ENCRYPTION_AES128_GCM;
--		pneg_ctxt->Ciphers[1] = SMB2_ENCRYPTION_AES256_GCM;
--		pneg_ctxt->Ciphers[2] = SMB2_ENCRYPTION_AES128_CCM;
-+	struct smb2_encryption_neg_context *ecap;
-+	size_t count;
-+
-+	ecap = cifs_begin_neg_context(smb, SMB2_ENCRYPTION_CAPABILITIES);
-+
-+	if (READ_ONCE(require_gcm_256)) {
-+		ecap->Ciphers[0]  = SMB2_ENCRYPTION_AES256_GCM;
-+		count = 1;
-+	} else if (READ_ONCE(enable_gcm_256)) {
-+		ecap->Ciphers[0]  = SMB2_ENCRYPTION_AES128_GCM;
-+		ecap->Ciphers[1]  = SMB2_ENCRYPTION_AES256_GCM;
-+		ecap->Ciphers[2]  = SMB2_ENCRYPTION_AES128_CCM;
-+		count = 3;
- 	} else {
--		pneg_ctxt->DataLength = cpu_to_le16(6); /* Cipher Count + 2 ciphers */
--		pneg_ctxt->CipherCount = cpu_to_le16(2);
--		pneg_ctxt->Ciphers[0] = SMB2_ENCRYPTION_AES128_GCM;
--		pneg_ctxt->Ciphers[1] = SMB2_ENCRYPTION_AES128_CCM;
-+		ecap->Ciphers[0]  = SMB2_ENCRYPTION_AES128_GCM;
-+		ecap->Ciphers[1]  = SMB2_ENCRYPTION_AES128_CCM;
-+		count = 2;
- 	}
-+	ecap->CipherCount = cpu_to_le16(count);
-+	cifs_end_neg_context(smb, ecap, struct_size(ecap, Ciphers, count));
- }
- 
--static unsigned int
--build_netname_ctxt(struct smb2_netname_neg_context *pneg_ctxt, char *hostname)
-+static size_t smb2_size_netname_ctxt(struct TCP_Server_Info *server)
- {
-+	size_t data_len;
-+
-+#if 0
- 	struct nls_table *cp = load_nls_default();
-+	const char *hostname;
- 
--	pneg_ctxt->ContextType = SMB2_NETNAME_NEGOTIATE_CONTEXT_ID;
-+	/* Only include up to first 100 bytes of server name in the NetName
-+	 * field.
-+	 */
-+	cifs_server_lock(pserver);
-+	hostname = pserver->hostname;
-+	if (hostname && hostname[0])
-+		data_len = cifs_size_strtoUTF16(hostname, 100, cp);
-+	cifs_server_unlock(pserver);
-+#else
-+	/* Now, we can't just measure the length of hostname as, unless we hold
-+	 * the lock, it may change under us, so allow maximum space for it.
-+	 */
-+	data_len = 400;
-+#endif
-+	return ALIGN8(sizeof(struct smb2_neg_context) + data_len);
-+}
-+
-+static void build_netname_ctxt(struct smb_message *smb, const char *hostname)
-+{
-+	struct smb2_netname_neg_context *name;
-+	struct nls_table *cp = load_nls_default();
-+	size_t count;
-+
-+	name = cifs_begin_neg_context(smb, SMB2_NETNAME_NEGOTIATE_CONTEXT_ID);
- 
- 	/* copy up to max of first 100 bytes of server name to NetName field */
--	pneg_ctxt->DataLength = cpu_to_le16(2 * cifs_strtoUTF16(pneg_ctxt->NetName, hostname, 100, cp));
--	/* context size is DataLength + minimal smb2_neg_context */
--	return ALIGN8(le16_to_cpu(pneg_ctxt->DataLength) + sizeof(struct smb2_neg_context));
-+	count = cifs_strtoUTF16(name->NetName, hostname, 100, cp);
-+	cifs_end_neg_context(smb, name, struct_size(name, NetName, count));
- }
- 
--static void
--build_posix_ctxt(struct smb2_posix_neg_context *pneg_ctxt)
-+static void build_posix_ctxt(struct smb_message *smb)
- {
--	pneg_ctxt->ContextType = SMB2_POSIX_EXTENSIONS_AVAILABLE;
--	pneg_ctxt->DataLength = cpu_to_le16(POSIX_CTXT_DATA_LEN);
-+	struct smb2_posix_neg_context *posix;
-+
-+	posix = cifs_begin_neg_context(smb, SMB2_POSIX_EXTENSIONS_AVAILABLE);
- 	/* SMB2_CREATE_TAG_POSIX is "0x93AD25509CB411E7B42383DE968BCD7C" */
--	pneg_ctxt->Name[0] = 0x93;
--	pneg_ctxt->Name[1] = 0xAD;
--	pneg_ctxt->Name[2] = 0x25;
--	pneg_ctxt->Name[3] = 0x50;
--	pneg_ctxt->Name[4] = 0x9C;
--	pneg_ctxt->Name[5] = 0xB4;
--	pneg_ctxt->Name[6] = 0x11;
--	pneg_ctxt->Name[7] = 0xE7;
--	pneg_ctxt->Name[8] = 0xB4;
--	pneg_ctxt->Name[9] = 0x23;
--	pneg_ctxt->Name[10] = 0x83;
--	pneg_ctxt->Name[11] = 0xDE;
--	pneg_ctxt->Name[12] = 0x96;
--	pneg_ctxt->Name[13] = 0x8B;
--	pneg_ctxt->Name[14] = 0xCD;
--	pneg_ctxt->Name[15] = 0x7C;
-+	posix->Name[0] = 0x93;
-+	posix->Name[1] = 0xAD;
-+	posix->Name[2] = 0x25;
-+	posix->Name[3] = 0x50;
-+	posix->Name[4] = 0x9C;
-+	posix->Name[5] = 0xB4;
-+	posix->Name[6] = 0x11;
-+	posix->Name[7] = 0xE7;
-+	posix->Name[8] = 0xB4;
-+	posix->Name[9] = 0x23;
-+	posix->Name[10] = 0x83;
-+	posix->Name[11] = 0xDE;
-+	posix->Name[12] = 0x96;
-+	posix->Name[13] = 0x8B;
-+	posix->Name[14] = 0xCD;
-+	posix->Name[15] = 0x7C;
-+	cifs_end_neg_context(smb, posix, sizeof(posix));
- }
- 
--static void
--assemble_neg_contexts(struct smb2_negotiate_req *req,
--		      struct TCP_Server_Info *server, unsigned int *total_len)
-+static size_t smb2_size_neg_contexts(struct TCP_Server_Info *server,
-+				     size_t offset)
- {
--	unsigned int ctxt_len, neg_context_count;
- 	struct TCP_Server_Info *pserver;
--	char *pneg_ctxt;
--	char *hostname;
--
--	if (*total_len > 200) {
--		/* In case length corrupted don't want to overrun smb buffer */
--		cifs_server_dbg(VFS, "Bad frame length assembling neg contexts\n");
--		return;
--	}
- 
- 	/*
- 	 * round up total_len of fixed part of SMB3 negotiate request to 8
- 	 * byte boundary before adding negotiate contexts
- 	 */
--	*total_len = ALIGN8(*total_len);
-+	offset = ALIGN8(offset);
-+	offset += ALIGN8(sizeof(struct smb2_preauth_neg_context));
-+	offset += ALIGN8(sizeof(struct smb2_encryption_neg_context));
- 
--	pneg_ctxt = (*total_len) + (char *)req;
--	req->NegotiateContextOffset = cpu_to_le32(*total_len);
-+	/*
-+	 * secondary channels don't have the hostname field populated
-+	 * use the hostname field in the primary channel instead
-+	 */
-+	pserver = SERVER_IS_CHAN(server) ? server->primary_server : server;
-+	offset += smb2_size_netname_ctxt(pserver);
-+
-+	offset += ALIGN8(sizeof(struct smb2_posix_neg_context));
-+	if (server->compression.requested)
-+		offset += ALIGN8(sizeof(struct smb2_compression_capabilities_context));
-+	if (enable_negotiate_signing)
-+		offset += smb2_size_signing_ctxt();
-+	return offset;
-+}
- 
--	build_preauth_ctxt((struct smb2_preauth_neg_context *)pneg_ctxt);
--	ctxt_len = ALIGN8(sizeof(struct smb2_preauth_neg_context));
--	*total_len += ctxt_len;
--	pneg_ctxt += ctxt_len;
-+static void
-+assemble_neg_contexts(struct smb_message *smb, struct TCP_Server_Info *server)
-+{
-+	struct smb2_negotiate_req *req;
-+	struct TCP_Server_Info *pserver;
-+	const char *hostname;
-+	unsigned int neg_context_count = 2;
- 
--	build_encrypt_ctxt((struct smb2_encryption_neg_context *)pneg_ctxt);
--	ctxt_len = ALIGN8(sizeof(struct smb2_encryption_neg_context));
--	*total_len += ctxt_len;
--	pneg_ctxt += ctxt_len;
-+	build_preauth_ctxt(smb);
-+	build_encrypt_ctxt(smb);
- 
- 	/*
- 	 * secondary channels don't have the hostname field populated
-@@ -934,47 +990,36 @@ assemble_neg_contexts(struct smb2_negotiate_req *req,
- 	pserver = SERVER_IS_CHAN(server) ? server->primary_server : server;
- 	cifs_server_lock(pserver);
- 	hostname = pserver->hostname;
--	if (hostname && (hostname[0] != 0)) {
--		ctxt_len = build_netname_ctxt((struct smb2_netname_neg_context *)pneg_ctxt,
--					      hostname);
--		*total_len += ctxt_len;
--		pneg_ctxt += ctxt_len;
--		neg_context_count = 3;
--	} else
--		neg_context_count = 2;
-+	if (hostname && hostname[0]) {
-+		build_netname_ctxt(smb, hostname);
-+		neg_context_count++;
-+	}
- 	cifs_server_unlock(pserver);
- 
--	build_posix_ctxt((struct smb2_posix_neg_context *)pneg_ctxt);
--	*total_len += sizeof(struct smb2_posix_neg_context);
--	pneg_ctxt += sizeof(struct smb2_posix_neg_context);
-+	build_posix_ctxt(smb);
- 	neg_context_count++;
- 
- 	if (server->compression.requested) {
--		build_compression_ctxt((struct smb2_compression_capabilities_context *)
--				pneg_ctxt);
--		ctxt_len = ALIGN8(sizeof(struct smb2_compression_capabilities_context));
--		*total_len += ctxt_len;
--		pneg_ctxt += ctxt_len;
-+		build_compression_ctxt(smb);
- 		neg_context_count++;
- 	}
- 
- 	if (enable_negotiate_signing) {
--		ctxt_len = build_signing_ctxt((struct smb2_signing_capabilities *)
--				pneg_ctxt);
--		*total_len += ctxt_len;
--		pneg_ctxt += ctxt_len;
-+		build_signing_ctxt(smb);
- 		neg_context_count++;
- 	}
- 
- 	/* check for and add transport_capabilities and signing capabilities */
-+	req = smb->request;
- 	req->NegotiateContextCount = cpu_to_le16(neg_context_count);
--
- }
- 
- /* If invalid preauth context warn but use what we requested, SHA-512 */
--static void decode_preauth_context(struct smb2_preauth_neg_context *ctxt)
-+static void decode_preauth_context(struct smb2_neg_context *neg)
- {
--	unsigned int len = le16_to_cpu(ctxt->DataLength);
-+	struct smb2_preauth_neg_context *ctxt =
-+		container_of(neg, struct smb2_preauth_neg_context, neg);
-+	unsigned int len = le16_to_cpu(ctxt->neg.DataLength);
- 
- 	/*
- 	 * Caller checked that DataLength remains within SMB boundary. We still
-@@ -994,9 +1039,11 @@ static void decode_preauth_context(struct smb2_preauth_neg_context *ctxt)
- }
- 
- static void decode_compress_ctx(struct TCP_Server_Info *server,
--			 struct smb2_compression_capabilities_context *ctxt)
-+				struct smb2_neg_context *neg)
- {
--	unsigned int len = le16_to_cpu(ctxt->DataLength);
-+	struct smb2_compression_capabilities_context *ctxt =
-+		container_of(neg, struct smb2_compression_capabilities_context, neg);
-+	unsigned int len = le16_to_cpu(ctxt->neg.DataLength);
- 	__le16 alg;
- 
- 	server->compression.enabled = false;
-@@ -1029,9 +1076,11 @@ static void decode_compress_ctx(struct TCP_Server_Info *server,
- }
- 
- static int decode_encrypt_ctx(struct TCP_Server_Info *server,
--			      struct smb2_encryption_neg_context *ctxt)
-+			      struct smb2_neg_context *neg)
- {
--	unsigned int len = le16_to_cpu(ctxt->DataLength);
-+	struct smb2_encryption_neg_context *ctxt =
-+		container_of(neg, struct smb2_encryption_neg_context, neg);
-+	unsigned int len = le16_to_cpu(ctxt->neg.DataLength);
- 
- 	cifs_dbg(FYI, "decode SMB3.11 encryption neg context of len %d\n", len);
- 	/*
-@@ -1081,9 +1130,11 @@ static int decode_encrypt_ctx(struct TCP_Server_Info *server,
- }
- 
- static void decode_signing_ctx(struct TCP_Server_Info *server,
--			       struct smb2_signing_capabilities *pctxt)
-+			       struct smb2_neg_context *neg)
- {
--	unsigned int len = le16_to_cpu(pctxt->DataLength);
-+	struct smb2_signing_capabilities *pctxt =
-+		container_of(neg, struct smb2_signing_capabilities, neg);
-+	unsigned int len = le16_to_cpu(pctxt->neg.DataLength);
- 
- 	/*
- 	 * Caller checked that DataLength remains within SMB boundary. We still
-@@ -1110,11 +1161,12 @@ static void decode_signing_ctx(struct TCP_Server_Info *server,
- }
- 
- 
--static int smb311_decode_neg_context(struct smb2_negotiate_rsp *rsp,
--				     struct TCP_Server_Info *server,
--				     unsigned int len_of_smb)
-+static int smb311_decode_neg_context(struct smb_message *smb,
-+				     struct TCP_Server_Info *server)
- {
-+	struct smb2_negotiate_rsp *rsp = smb->response;
- 	struct smb2_neg_context *pctx;
-+	unsigned int len_of_smb = smb->response_len;
- 	unsigned int offset = le32_to_cpu(rsp->NegotiateContextOffset);
- 	unsigned int ctxt_cnt = le16_to_cpu(rsp->NegotiateContextCount);
- 	unsigned int len_of_ctxts, i;
-@@ -1147,23 +1199,26 @@ static int smb311_decode_neg_context(struct smb2_negotiate_rsp *rsp,
- 		if (clen > len_of_ctxts)
- 			break;
- 
--		if (pctx->ContextType == SMB2_PREAUTH_INTEGRITY_CAPABILITIES)
--			decode_preauth_context(
--				(struct smb2_preauth_neg_context *)pctx);
--		else if (pctx->ContextType == SMB2_ENCRYPTION_CAPABILITIES)
--			rc = decode_encrypt_ctx(server,
--				(struct smb2_encryption_neg_context *)pctx);
--		else if (pctx->ContextType == SMB2_COMPRESSION_CAPABILITIES)
--			decode_compress_ctx(server,
--				(struct smb2_compression_capabilities_context *)pctx);
--		else if (pctx->ContextType == SMB2_POSIX_EXTENSIONS_AVAILABLE)
-+		switch (pctx->ContextType) {
-+		case SMB2_PREAUTH_INTEGRITY_CAPABILITIES:
-+			decode_preauth_context(pctx);
-+			break;
-+		case SMB2_ENCRYPTION_CAPABILITIES:
-+			rc = decode_encrypt_ctx(server, pctx);
-+			break;
-+		case SMB2_COMPRESSION_CAPABILITIES:
-+			decode_compress_ctx(server, pctx);
-+			break;
-+		case SMB2_POSIX_EXTENSIONS_AVAILABLE:
- 			server->posix_ext_supported = true;
--		else if (pctx->ContextType == SMB2_SIGNING_CAPABILITIES)
--			decode_signing_ctx(server,
--				(struct smb2_signing_capabilities *)pctx);
--		else
-+			break;
-+		case SMB2_SIGNING_CAPABILITIES:
-+			decode_signing_ctx(server, pctx);
-+			break;
-+		default:
- 			cifs_server_dbg(VFS, "unknown negcontext of type %d ignored\n",
- 				le16_to_cpu(pctx->ContextType));
-+		}
- 		if (rc)
- 			break;
- 
-@@ -1248,17 +1303,16 @@ SMB2_negotiate(const unsigned int xid,
- 	       struct cifs_ses *ses,
- 	       struct TCP_Server_Info *server)
- {
--	struct smb_rqst rqst;
- 	struct smb2_negotiate_req *req;
- 	struct smb2_negotiate_rsp *rsp;
--	struct kvec iov[1];
--	struct kvec rsp_iov;
-+	struct smb_message *smb;
-+	const char *vs;
-+	size_t offset, num_dialects;
- 	int rc;
--	int resp_buftype;
- 	int blob_offset, blob_length;
- 	char *security_blob;
- 	int flags = CIFS_NEG_OP;
--	unsigned int total_len;
-+	enum { DEF, ANY3, SPEC } version;
- 
- 	cifs_dbg(FYI, "Negotiate protocol\n");
- 
-@@ -1267,36 +1321,67 @@ SMB2_negotiate(const unsigned int xid,
- 		return -EIO;
- 	}
- 
--	rc = smb2_plain_req_init(SMB2_NEGOTIATE, NULL, server,
--				 (void **) &req, &total_len);
-+	rc = smb2_reconnect(SMB2_SESSION_SETUP, NULL, server, false);
- 	if (rc)
- 		return rc;
- 
-+	/* Calculate how much space we need for a Negotiate Request message.
-+	 * We can't do this exactly as the hostname might change, but we don't
-+	 * want to hold the lock across the allocation.
-+	 */
-+	vs = server->vals->version_string;
-+	if (strcmp(vs, SMB3ANY_VERSION_STRING) == 0) {
-+		version = ANY3;
-+		num_dialects = 3;
-+	} else if (strcmp(vs, SMBDEFAULT_VERSION_STRING) == 0) {
-+		version = DEF;
-+		num_dialects = 4;
++	if (!str_value) {
++		pbuf->BufferOffset = cpu_to_le32(smb->offset);
++		pbuf->Length = 0;
++		pbuf->MaximumLength = 0;
++		*(__le16 *)*pcur = 0;
++		smb->offset += 2;
++		pcur += 2;
 +	} else {
-+		version = SPEC;
-+		num_dialects = 1;
++		len = cifs_strtoUTF16((__le16 *)*pcur,
++				      str_value,
++				      str_length,
++				      nls_cp);
++		len *= sizeof(__le16);
++		pbuf->BufferOffset = cpu_to_le32(smb->offset);
++		pbuf->Length = cpu_to_le16(len);
++		pbuf->MaximumLength = cpu_to_le16(len);
++		smb->offset += len;
++		pcur += len;
 +	}
++}
 +
-+	offset = sizeof(struct smb2_negotiate_req);
-+	offset += sizeof(req->Dialects[0]) * num_dialects;
-+
-+	if ((server->vals->protocol_id == SMB311_PROT_ID) ||
-+	    (version == ANY3) ||
-+	    (version == DEF))
-+		offset = smb2_size_neg_contexts(server, offset);
-+
-+	smb = smb2_create_request(SMB2_NEGOTIATE, server, NULL,
-+				  sizeof(*req), offset, 0,
-+				  SMB2_REQ_HEAD);
-+	if (!smb)
-+		return -ENOMEM;
-+
-+	/* Fill in the message. */
-+	req = smb->request;
- 	req->hdr.SessionId = 0;
-+	req->NegotiateContextOffset = cpu_to_be32(smb->ext_offset);
- 
- 	memset(server->preauth_sha_hash, 0, SMB2_PREAUTH_HASH_SIZE);
- 	memset(ses->preauth_sha_hash, 0, SMB2_PREAUTH_HASH_SIZE);
- 
--	if (strcmp(server->vals->version_string,
--		   SMB3ANY_VERSION_STRING) == 0) {
-+	switch (version) {
-+	case ANY3:
- 		req->Dialects[0] = cpu_to_le16(SMB30_PROT_ID);
- 		req->Dialects[1] = cpu_to_le16(SMB302_PROT_ID);
- 		req->Dialects[2] = cpu_to_le16(SMB311_PROT_ID);
- 		req->DialectCount = cpu_to_le16(3);
--		total_len += 6;
--	} else if (strcmp(server->vals->version_string,
--		   SMBDEFAULT_VERSION_STRING) == 0) {
-+		break;
-+	case DEF:
- 		req->Dialects[0] = cpu_to_le16(SMB21_PROT_ID);
- 		req->Dialects[1] = cpu_to_le16(SMB30_PROT_ID);
- 		req->Dialects[2] = cpu_to_le16(SMB302_PROT_ID);
- 		req->Dialects[3] = cpu_to_le16(SMB311_PROT_ID);
- 		req->DialectCount = cpu_to_le16(4);
--		total_len += 8;
--	} else {
-+		break;
-+	case SPEC:
- 		/* otherwise send specific dialect */
- 		req->Dialects[0] = cpu_to_le16(server->vals->protocol_id);
- 		req->DialectCount = cpu_to_le16(1);
--		total_len += 2;
-+		break;
- 	}
- 
- 	/* only one of SMB2 signing flags may be set in SMB2 request */
-@@ -1312,97 +1397,108 @@ SMB2_negotiate(const unsigned int xid,
- 		req->Capabilities |= cpu_to_le32(SMB2_GLOBAL_CAP_MULTI_CHANNEL);
- 
- 	/* ClientGUID must be zero for SMB2.02 dialect */
--	if (server->vals->protocol_id == SMB20_PROT_ID)
-+	if (server->vals->protocol_id == SMB20_PROT_ID) {
- 		memset(req->ClientGUID, 0, SMB2_CLIENT_GUID_SIZE);
--	else {
++static void cifs_append_security_blob(struct smb_message *smb,
++				      SECURITY_BUFFER *pbuf,
++				      const void *content,
++				      int len,
++				      unsigned char **pcur)
++{
++	if (!content) {
++		pbuf->BufferOffset	= cpu_to_le32(smb->offset);
++		pbuf->Length		= 0;
++		pbuf->MaximumLength	= 0;
 +	} else {
- 		memcpy(req->ClientGUID, server->client_guid,
- 			SMB2_CLIENT_GUID_SIZE);
- 		if ((server->vals->protocol_id == SMB311_PROT_ID) ||
--		    (strcmp(server->vals->version_string,
--		     SMB3ANY_VERSION_STRING) == 0) ||
--		    (strcmp(server->vals->version_string,
--		     SMBDEFAULT_VERSION_STRING) == 0))
--			assemble_neg_contexts(req, server, &total_len);
-+		    (version == ANY3) ||
-+		    (version == DEF))
-+			assemble_neg_contexts(smb, server);
- 	}
--	iov[0].iov_base = (char *)req;
--	iov[0].iov_len = total_len;
- 
--	memset(&rqst, 0, sizeof(struct smb_rqst));
--	rqst.rq_iov = iov;
--	rqst.rq_nvec = 1;
-+	rc = smb_send_recv_messages(xid, ses, server, smb, flags);
-+	smb_clear_request(smb);
- 
--	rc = cifs_send_recv(xid, ses, server,
--			    &rqst, &resp_buftype, flags, &rsp_iov);
--	cifs_small_buf_release(req);
--	rsp = (struct smb2_negotiate_rsp *)rsp_iov.iov_base;
- 	/*
- 	 * No tcon so can't do
- 	 * cifs_stats_inc(&tcon->stats.smb2_stats.smb2_com_fail[SMB2...]);
- 	 */
--	if (rc == -EOPNOTSUPP) {
--		cifs_server_dbg(VFS, "Dialect not supported by server. Consider  specifying vers=1.0 or vers=2.0 on mount for accessing older servers\n");
--		goto neg_exit;
--	} else if (rc != 0)
-+	if (rc != 0) {
-+		if (rc == -EOPNOTSUPP)
-+			cifs_server_dbg(VFS, "Dialect not supported by server. Consider  specifying vers=1.0 or vers=2.0 on mount for accessing older servers\n");
- 		goto neg_exit;
++		memcpy(pcur, content, len);
++		pbuf->BufferOffset	= cpu_to_le32(smb->offset);
++		pbuf->Length		= cpu_to_le16(len);
++		pbuf->MaximumLength	= cpu_to_le16(len);
++		smb->offset += len;
++		pcur += len;
 +	}
- 
-+	/* ________________________________________
-+	 * Decode the response.
-+	 */
-+	rsp = (struct smb2_negotiate_rsp *)smb->response;
++}
 +
-+	int dialect_revision = le16_to_cpu(rsp->DialectRevision);
- 	rc = -EIO;
--	if (strcmp(server->vals->version_string,
--		   SMB3ANY_VERSION_STRING) == 0) {
--		if (rsp->DialectRevision == cpu_to_le16(SMB20_PROT_ID)) {
-+	switch (version) {
-+	case ANY3:
-+		switch (dialect_revision) {
-+		case SMB20_PROT_ID:
- 			cifs_server_dbg(VFS,
- 				"SMB2 dialect returned but not requested\n");
- 			goto neg_exit;
--		} else if (rsp->DialectRevision == cpu_to_le16(SMB21_PROT_ID)) {
-+		case SMB21_PROT_ID:
- 			cifs_server_dbg(VFS,
- 				"SMB2.1 dialect returned but not requested\n");
- 			goto neg_exit;
--		} else if (rsp->DialectRevision == cpu_to_le16(SMB311_PROT_ID)) {
-+		case SMB311_PROT_ID:
- 			/* ops set to 3.0 by default for default so update */
- 			server->ops = &smb311_operations;
- 			server->vals = &smb311_values;
-+			break;
- 		}
--	} else if (strcmp(server->vals->version_string,
--		   SMBDEFAULT_VERSION_STRING) == 0) {
--		if (rsp->DialectRevision == cpu_to_le16(SMB20_PROT_ID)) {
-+		break;
-+	case DEF:
-+		switch (dialect_revision) {
-+		case SMB20_PROT_ID:
- 			cifs_server_dbg(VFS,
- 				"SMB2 dialect returned but not requested\n");
- 			goto neg_exit;
--		} else if (rsp->DialectRevision == cpu_to_le16(SMB21_PROT_ID)) {
-+		case SMB21_PROT_ID:
- 			/* ops set to 3.0 by default for default so update */
- 			server->ops = &smb21_operations;
- 			server->vals = &smb21_values;
--		} else if (rsp->DialectRevision == cpu_to_le16(SMB311_PROT_ID)) {
-+			break;
-+		case SMB311_PROT_ID:
- 			server->ops = &smb311_operations;
- 			server->vals = &smb311_values;
-+			break;
- 		}
--	} else if (le16_to_cpu(rsp->DialectRevision) !=
--				server->vals->protocol_id) {
--		/* if requested single dialect ensure returned dialect matched */
--		cifs_server_dbg(VFS, "Invalid 0x%x dialect returned: not requested\n",
--				le16_to_cpu(rsp->DialectRevision));
--		goto neg_exit;
-+		break;
-+	default:
-+		if (dialect_revision != server->vals->protocol_id) {
-+			/* if requested single dialect ensure returned dialect matched */
-+			cifs_server_dbg(VFS, "Invalid 0x%x dialect returned: not requested\n",
-+					dialect_revision);
-+			goto neg_exit;
-+		}
-+		break;
+ static inline void cifs_security_buffer_from_str(SECURITY_BUFFER *pbuf,
+-						 char *str_value,
++						 const char *str_value,
+ 						 int str_length,
+ 						 unsigned char *pstart,
+ 						 unsigned char **pcur,
+@@ -1038,7 +1092,7 @@ int build_ntlmssp_negotiate_blob(unsigned char **pbuffer,
+ 	unsigned char *tmp;
+ 	int len;
+ 
+-	len = size_of_ntlmssp_blob(ses, sizeof(NEGOTIATE_MESSAGE));
++	len = size_of_ntlmssp_blob(ses, sizeof(NEGOTIATE_MESSAGE), nls_cp);
+ 	*pbuffer = kmalloc(len, GFP_KERNEL);
+ 	if (!*pbuffer) {
+ 		rc = -ENOMEM;
+@@ -1088,173 +1142,148 @@ int build_ntlmssp_negotiate_blob(unsigned char **pbuffer,
+  * supported by modern servers. For safety limit to SMB3 or later
+  * See notes in MS-NLMP Section 2.2.2.1 e.g.
+  */
+-int build_ntlmssp_smb3_negotiate_blob(unsigned char **pbuffer,
+-				 u16 *buflen,
+-				 struct cifs_ses *ses,
+-				 struct TCP_Server_Info *server,
+-				 const struct nls_table *nls_cp)
++int build_ntlmssp_smb3_negotiate_blob(struct smb_message *smb,
++				      struct cifs_ses *ses,
++				      struct TCP_Server_Info *server,
++				      const struct nls_table *nls_cp)
+ {
+-	int rc = 0;
+-	struct negotiate_message *sec_blob;
+-	__u32 flags;
++	struct negotiate_message *neg_msg;
+ 	unsigned char *tmp;
++	__u32 flags;
++	void *blob;
+ 	int len;
++	int rc = 0;
+ 
+-	len = size_of_ntlmssp_blob(ses, sizeof(struct negotiate_message));
+-	*pbuffer = kmalloc(len, GFP_KERNEL);
+-	if (!*pbuffer) {
++	len = size_of_ntlmssp_blob(ses, sizeof(*neg_msg), nls_cp);
++	blob = cifs_allocate_tx_buf(server, len);
++	if (!blob) {
+ 		rc = -ENOMEM;
+ 		cifs_dbg(VFS, "Error %d during NTLMSSP allocation\n", rc);
+-		*buflen = 0;
+ 		goto setup_ntlm_smb3_neg_ret;
  	}
+-	sec_blob = (struct negotiate_message *)*pbuffer;
  
- 	cifs_dbg(FYI, "mode 0x%x\n", rsp->SecurityMode);
+-	memset(*pbuffer, 0, sizeof(struct negotiate_message));
+-	memcpy(sec_blob->Signature, NTLMSSP_SIGNATURE, 8);
+-	sec_blob->MessageType = NtLmNegotiate;
++	smb_add_segment_to_tx_buf(smb, blob, len);
++	smb->offset = sizeof(*neg_msg);
  
--	if (rsp->DialectRevision == cpu_to_le16(SMB20_PROT_ID))
-+	switch (dialect_revision) {
-+	case SMB20_PROT_ID:
- 		cifs_dbg(FYI, "negotiated smb2.0 dialect\n");
--	else if (rsp->DialectRevision == cpu_to_le16(SMB21_PROT_ID))
-+		break;
-+	case SMB21_PROT_ID:
- 		cifs_dbg(FYI, "negotiated smb2.1 dialect\n");
--	else if (rsp->DialectRevision == cpu_to_le16(SMB30_PROT_ID))
-+		break;
-+	case SMB30_PROT_ID:
- 		cifs_dbg(FYI, "negotiated smb3.0 dialect\n");
--	else if (rsp->DialectRevision == cpu_to_le16(SMB302_PROT_ID))
-+		break;
-+	case SMB302_PROT_ID:
- 		cifs_dbg(FYI, "negotiated smb3.02 dialect\n");
--	else if (rsp->DialectRevision == cpu_to_le16(SMB311_PROT_ID))
-+		break;
-+	case SMB311_PROT_ID:
- 		cifs_dbg(FYI, "negotiated smb3.1.1 dialect\n");
--	else {
-+		break;
-+	default:
- 		cifs_server_dbg(VFS, "Invalid dialect returned by server 0x%x\n",
--				le16_to_cpu(rsp->DialectRevision));
-+				dialect_revision);
- 		goto neg_exit;
- 	}
+ 	/* BB is NTLMV2 session security format easier to use here? */
+-	flags = NTLMSSP_NEGOTIATE_56 |	NTLMSSP_REQUEST_TARGET |
+-		NTLMSSP_NEGOTIATE_128 | NTLMSSP_NEGOTIATE_UNICODE |
+-		NTLMSSP_NEGOTIATE_NTLM | NTLMSSP_NEGOTIATE_EXTENDED_SEC |
+-		NTLMSSP_NEGOTIATE_ALWAYS_SIGN | NTLMSSP_NEGOTIATE_SEAL |
+-		NTLMSSP_NEGOTIATE_SIGN | NTLMSSP_NEGOTIATE_VERSION;
++	flags = NTLMSSP_NEGOTIATE_56		| NTLMSSP_REQUEST_TARGET |
++		NTLMSSP_NEGOTIATE_128		| NTLMSSP_NEGOTIATE_UNICODE |
++		NTLMSSP_NEGOTIATE_NTLM		| NTLMSSP_NEGOTIATE_EXTENDED_SEC |
++		NTLMSSP_NEGOTIATE_ALWAYS_SIGN	| NTLMSSP_NEGOTIATE_SEAL |
++		NTLMSSP_NEGOTIATE_SIGN		| NTLMSSP_NEGOTIATE_VERSION;
+ 	if (!server->session_estab || ses->ntlmssp->sesskey_per_smbsess)
+ 		flags |= NTLMSSP_NEGOTIATE_KEY_XCH;
  
- 	rc = 0;
--	server->dialect = le16_to_cpu(rsp->DialectRevision);
-+	server->dialect = dialect_revision;
+-	sec_blob->Version.ProductMajorVersion = LINUX_VERSION_MAJOR;
+-	sec_blob->Version.ProductMinorVersion = LINUX_VERSION_PATCHLEVEL;
+-	sec_blob->Version.ProductBuild = cpu_to_le16(SMB3_PRODUCT_BUILD);
+-	sec_blob->Version.NTLMRevisionCurrent = NTLMSSP_REVISION_W2K3;
++	neg_msg = (struct negotiate_message *)blob;
++	*neg_msg = (struct negotiate_message){
++		.Signature			= NTLMSSP_SIGNATURE,
++		.MessageType			= NtLmNegotiate,
++		.NegotiateFlags			= cpu_to_le32(flags),
++		.Version.ProductMajorVersion	= LINUX_VERSION_MAJOR,
++		.Version.ProductMinorVersion	= LINUX_VERSION_PATCHLEVEL,
++		.Version.ProductBuild		= cpu_to_le16(SMB3_PRODUCT_BUILD),
++		.Version.NTLMRevisionCurrent	= NTLMSSP_REVISION_W2K3,
++	};
  
- 	/*
- 	 * Keep a copy of the hash after negprot. This hash will be
-@@ -1461,10 +1557,9 @@ SMB2_negotiate(const unsigned int xid,
- 			rc = -EIO;
- 	}
+-	tmp = *pbuffer + sizeof(struct negotiate_message);
+ 	ses->ntlmssp->client_flags = flags;
+-	sec_blob->NegotiateFlags = cpu_to_le32(flags);
++	tmp = blob + sizeof(struct negotiate_message);
  
--	if (rsp->DialectRevision == cpu_to_le16(SMB311_PROT_ID)) {
-+	if (server->dialect == SMB311_PROT_ID) {
- 		if (rsp->NegotiateContextCount)
--			rc = smb311_decode_neg_context(rsp, server,
--						       rsp_iov.iov_len);
-+			rc = smb311_decode_neg_context(smb, server);
- 		else
- 			cifs_server_dbg(VFS, "Missing expected negotiate contexts\n");
- 	}
-@@ -1472,7 +1567,7 @@ SMB2_negotiate(const unsigned int xid,
- 	if (server->cipher_type && !rc)
- 		rc = smb3_crypto_aead_allocate(server);
- neg_exit:
--	free_rsp_buf(resp_buftype, rsp);
-+	smb_put_messages(smb);
+ 	/* these fields should be null in negotiate phase MS-NLMP 3.1.5.1.1 */
+-	cifs_security_buffer_from_str(&sec_blob->DomainName,
+-				      NULL,
+-				      CIFS_MAX_DOMAINNAME_LEN,
+-				      *pbuffer, &tmp,
+-				      nls_cp);
++	cifs_append_security_string(smb, &neg_msg->DomainName,
++				    NULL, CIFS_MAX_DOMAINNAME_LEN,
++				    &tmp, nls_cp);
+ 
+-	cifs_security_buffer_from_str(&sec_blob->WorkstationName,
+-				      NULL,
+-				      CIFS_MAX_WORKSTATION_LEN,
+-				      *pbuffer, &tmp,
+-				      nls_cp);
+-
+-	*buflen = tmp - *pbuffer;
++	cifs_append_security_string(smb, &neg_msg->WorkstationName,
++				    NULL, CIFS_MAX_WORKSTATION_LEN,
++				    &tmp, nls_cp);
+ setup_ntlm_smb3_neg_ret:
  	return rc;
  }
  
-diff --git a/fs/smb/common/smb2pdu.h b/fs/smb/common/smb2pdu.h
-index 7da40d229ab5..e3b888140b59 100644
---- a/fs/smb/common/smb2pdu.h
-+++ b/fs/smb/common/smb2pdu.h
-@@ -455,9 +455,7 @@ struct smb2_neg_context {
- #define MIN_PREAUTH_CTXT_DATA_LEN 6
  
- struct smb2_preauth_neg_context {
--	__le16	ContextType; /* 1 */
--	__le16	DataLength;
--	__le32	Reserved;
-+	struct smb2_neg_context neg;
- 	__le16	HashAlgorithmCount; /* 1 */
- 	__le16	SaltLength;
- 	__le16	HashAlgorithms; /* HashAlgorithms[0] since only one defined */
-@@ -473,9 +471,7 @@ struct smb2_preauth_neg_context {
- /* Min encrypt context data is one cipher so 2 bytes + 2 byte count field */
- #define MIN_ENCRYPT_CTXT_DATA_LEN	4
- struct smb2_encryption_neg_context {
--	__le16	ContextType; /* 2 */
--	__le16	DataLength;
--	__le32	Reserved;
-+	struct smb2_neg_context neg;
- 	/* CipherCount usually 2, but can be 3 when AES256-GCM enabled */
- 	__le16	CipherCount; /* AES128-GCM and AES128-CCM by default */
- 	__le16	Ciphers[];
-@@ -495,9 +491,7 @@ struct smb2_encryption_neg_context {
- #define SMB2_COMPRESSION_CAPABILITIES_FLAG_CHAINED	cpu_to_le32(0x00000001)
- 
- struct smb2_compression_capabilities_context {
--	__le16	ContextType; /* 3 */
--	__le16  DataLength;
--	__le32	Reserved;
-+	struct smb2_neg_context neg;
- 	__le16	CompressionAlgorithmCount;
- 	__le16	Padding;
- 	__le32	Flags;
-@@ -511,9 +505,7 @@ struct smb2_compression_capabilities_context {
-  * Its struct simply contains NetName, an array of Unicode characters
-  */
- struct smb2_netname_neg_context {
--	__le16	ContextType; /* 5 */
--	__le16	DataLength;
--	__le32	Reserved;
-+	struct smb2_neg_context neg;
- 	__le16	NetName[]; /* hostname of target converted to UCS-2 */
- } __packed;
- 
-@@ -567,9 +559,7 @@ struct smb2_rdma_transform_capabilities_context {
- #define SIGNING_ALG_AES_GMAC_LE    cpu_to_le16(2)
- 
- struct smb2_signing_capabilities {
--	__le16	ContextType; /* 8 */
--	__le16	DataLength;
--	__le32	Reserved;
-+	struct smb2_neg_context neg;
- 	__le16	SigningAlgorithmCount;
- 	__le16	SigningAlgorithms[];
- 	/*  Followed by padding to 8 byte boundary (required by some servers) */
-@@ -577,9 +567,7 @@ struct smb2_signing_capabilities {
- 
- #define POSIX_CTXT_DATA_LEN	16
- struct smb2_posix_neg_context {
--	__le16	ContextType; /* 0x100 */
--	__le16	DataLength;
--	__le32	Reserved;
-+	struct smb2_neg_context neg;
- 	__u8	Name[16]; /* POSIX ctxt GUID 93AD25509CB411E7B42383DE968BCD7C */
- } __packed;
- 
-diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
-index 1ed2bcba649f..af5187d1101e 100644
---- a/fs/smb/server/smb2pdu.c
-+++ b/fs/smb/server/smb2pdu.c
-@@ -774,10 +774,10 @@ static int smb2_get_dos_mode(struct kstat *stat, int attribute)
- static void build_preauth_ctxt(struct smb2_preauth_neg_context *pneg_ctxt,
- 			       __le16 hash_id)
+ /* See MS-NLMP 2.2.1.3 */
+-int build_ntlmssp_auth_blob(unsigned char **pbuffer,
+-					u16 *buflen,
+-				   struct cifs_ses *ses,
+-				   struct TCP_Server_Info *server,
+-				   const struct nls_table *nls_cp)
++int build_ntlmssp_auth_blob(struct smb_message *smb,
++			    struct cifs_ses *ses,
++			    struct TCP_Server_Info *server,
++			    const struct nls_table *nls_cp)
  {
--	pneg_ctxt->ContextType = SMB2_PREAUTH_INTEGRITY_CAPABILITIES;
--	pneg_ctxt->DataLength = cpu_to_le16(38);
-+	pneg_ctxt->neg.ContextType = SMB2_PREAUTH_INTEGRITY_CAPABILITIES;
-+	pneg_ctxt->neg.DataLength = cpu_to_le16(38);
-+	pneg_ctxt->neg.Reserved = cpu_to_le32(0);
- 	pneg_ctxt->HashAlgorithmCount = cpu_to_le16(1);
--	pneg_ctxt->Reserved = cpu_to_le32(0);
- 	pneg_ctxt->SaltLength = cpu_to_le16(SMB311_SALT_SIZE);
- 	get_random_bytes(pneg_ctxt->Salt, SMB311_SALT_SIZE);
- 	pneg_ctxt->HashAlgorithms = hash_id;
-@@ -786,9 +786,9 @@ static void build_preauth_ctxt(struct smb2_preauth_neg_context *pneg_ctxt,
- static void build_encrypt_ctxt(struct smb2_encryption_neg_context *pneg_ctxt,
- 			       __le16 cipher_type)
- {
--	pneg_ctxt->ContextType = SMB2_ENCRYPTION_CAPABILITIES;
--	pneg_ctxt->DataLength = cpu_to_le16(4);
--	pneg_ctxt->Reserved = cpu_to_le32(0);
-+	pneg_ctxt->neg.ContextType = SMB2_ENCRYPTION_CAPABILITIES;
-+	pneg_ctxt->neg.DataLength = cpu_to_le16(4);
-+	pneg_ctxt->neg.Reserved = cpu_to_le32(0);
- 	pneg_ctxt->CipherCount = cpu_to_le16(1);
- 	pneg_ctxt->Ciphers[0] = cipher_type;
+-	int rc;
+-	AUTHENTICATE_MESSAGE *sec_blob;
+-	__u32 flags;
++	struct ntlmssp_authenticate_message *auth_msg;
+ 	unsigned char *tmp;
++	__u32 flags;
++	void *blob;
+ 	int len;
++	int rc;
+ 
+ 	rc = setup_ntlmv2_rsp(ses, nls_cp);
+ 	if (rc) {
+ 		cifs_dbg(VFS, "Error %d during NTLMSSP authentication\n", rc);
+-		*buflen = 0;
+ 		goto setup_ntlmv2_ret;
+ 	}
+ 
+-	len = size_of_ntlmssp_blob(ses, sizeof(AUTHENTICATE_MESSAGE));
+-	*pbuffer = kmalloc(len, GFP_KERNEL);
+-	if (!*pbuffer) {
++	len = size_of_ntlmssp_blob(ses, sizeof(*auth_msg), nls_cp);
++	blob = cifs_allocate_tx_buf(server, len);
++	if (!blob) {
+ 		rc = -ENOMEM;
+ 		cifs_dbg(VFS, "Error %d during NTLMSSP allocation\n", rc);
+-		*buflen = 0;
+ 		goto setup_ntlmv2_ret;
+ 	}
+-	sec_blob = (AUTHENTICATE_MESSAGE *)*pbuffer;
+ 
+-	memcpy(sec_blob->Signature, NTLMSSP_SIGNATURE, 8);
+-	sec_blob->MessageType = NtLmAuthenticate;
++	smb_add_segment_to_tx_buf(smb, blob, len);
++	smb->offset = sizeof(*auth_msg);
+ 
+ 	/* send version information in ntlmssp authenticate also */
+-	flags = ses->ntlmssp->server_flags | NTLMSSP_REQUEST_TARGET |
+-		NTLMSSP_NEGOTIATE_TARGET_INFO | NTLMSSP_NEGOTIATE_VERSION |
++	flags = ses->ntlmssp->server_flags	| NTLMSSP_REQUEST_TARGET |
++		NTLMSSP_NEGOTIATE_TARGET_INFO	| NTLMSSP_NEGOTIATE_VERSION |
+ 		NTLMSSP_NEGOTIATE_WORKSTATION_SUPPLIED;
+ 
+-	sec_blob->Version.ProductMajorVersion = LINUX_VERSION_MAJOR;
+-	sec_blob->Version.ProductMinorVersion = LINUX_VERSION_PATCHLEVEL;
+-	sec_blob->Version.ProductBuild = cpu_to_le16(SMB3_PRODUCT_BUILD);
+-	sec_blob->Version.NTLMRevisionCurrent = NTLMSSP_REVISION_W2K3;
++	auth_msg = blob;
++	*auth_msg = (struct ntlmssp_authenticate_message){
++		.Signature			= NTLMSSP_SIGNATURE,
++		.MessageType			= NtLmAuthenticate,
++		.NegotiateFlags			= cpu_to_le32(flags),
++		.Version.ProductMajorVersion	= LINUX_VERSION_MAJOR,
++		.Version.ProductMinorVersion	= LINUX_VERSION_PATCHLEVEL,
++		.Version.ProductBuild		= cpu_to_le16(SMB3_PRODUCT_BUILD),
++		.Version.NTLMRevisionCurrent	= NTLMSSP_REVISION_W2K3,
++	};
+ 
+-	tmp = *pbuffer + sizeof(AUTHENTICATE_MESSAGE);
+-	sec_blob->NegotiateFlags = cpu_to_le32(flags);
++	tmp = blob + sizeof(*auth_msg);
+ 
+-	sec_blob->LmChallengeResponse.BufferOffset =
+-				cpu_to_le32(sizeof(AUTHENTICATE_MESSAGE));
+-	sec_blob->LmChallengeResponse.Length = 0;
+-	sec_blob->LmChallengeResponse.MaximumLength = 0;
++	cifs_append_security_blob(smb, &auth_msg->LmChallengeResponse,
++				  NULL, 0, &tmp);
+ 
+-	sec_blob->NtChallengeResponse.BufferOffset =
+-				cpu_to_le32(tmp - *pbuffer);
+-	if (ses->user_name != NULL) {
+-		memcpy(tmp, ses->auth_key.response + CIFS_SESS_KEY_SIZE,
+-				ses->auth_key.len - CIFS_SESS_KEY_SIZE);
+-		tmp += ses->auth_key.len - CIFS_SESS_KEY_SIZE;
++	/* Only send an NT Response for anonymous access */
++	if (ses->user_name)
++		cifs_append_security_blob(smb, &auth_msg->NtChallengeResponse,
++					  ses->auth_key.response + CIFS_SESS_KEY_SIZE,
++					  ses->auth_key.len - CIFS_SESS_KEY_SIZE,
++					  &tmp);
++	else
++		cifs_append_security_blob(smb, &auth_msg->NtChallengeResponse,
++					  NULL, 0, &tmp);
+ 
+-		sec_blob->NtChallengeResponse.Length =
+-				cpu_to_le16(ses->auth_key.len - CIFS_SESS_KEY_SIZE);
+-		sec_blob->NtChallengeResponse.MaximumLength =
+-				cpu_to_le16(ses->auth_key.len - CIFS_SESS_KEY_SIZE);
+-	} else {
+-		/*
+-		 * don't send an NT Response for anonymous access
+-		 */
+-		sec_blob->NtChallengeResponse.Length = 0;
+-		sec_blob->NtChallengeResponse.MaximumLength = 0;
+-	}
++	cifs_append_security_string(smb, &auth_msg->DomainName,
++				    ses->domainName, CIFS_MAX_DOMAINNAME_LEN,
++				    &tmp, nls_cp);
+ 
+-	cifs_security_buffer_from_str(&sec_blob->DomainName,
+-				      ses->domainName,
+-				      CIFS_MAX_DOMAINNAME_LEN,
+-				      *pbuffer, &tmp,
+-				      nls_cp);
++	cifs_append_security_string(smb, &auth_msg->UserName,
++				    ses->user_name, CIFS_MAX_USERNAME_LEN,
++				    &tmp, nls_cp);
+ 
+-	cifs_security_buffer_from_str(&sec_blob->UserName,
+-				      ses->user_name,
+-				      CIFS_MAX_USERNAME_LEN,
+-				      *pbuffer, &tmp,
+-				      nls_cp);
+-
+-	cifs_security_buffer_from_str(&sec_blob->WorkstationName,
+-				      ses->workstation_name,
+-				      ntlmssp_workstation_name_size(ses),
+-				      *pbuffer, &tmp,
+-				      nls_cp);
++	cifs_append_security_string(smb, &auth_msg->WorkstationName,
++				    ses->workstation_name,
++				    ntlmssp_workstation_name_size(ses),
++				    &tmp, nls_cp);
+ 
+ 	if ((ses->ntlmssp->server_flags & NTLMSSP_NEGOTIATE_KEY_XCH) &&
+ 	    (!ses->server->session_estab || ses->ntlmssp->sesskey_per_smbsess) &&
+-	    !calc_seckey(ses)) {
+-		memcpy(tmp, ses->ntlmssp->ciphertext, CIFS_CPHTXT_SIZE);
+-		sec_blob->SessionKey.BufferOffset = cpu_to_le32(tmp - *pbuffer);
+-		sec_blob->SessionKey.Length = cpu_to_le16(CIFS_CPHTXT_SIZE);
+-		sec_blob->SessionKey.MaximumLength =
+-				cpu_to_le16(CIFS_CPHTXT_SIZE);
+-		tmp += CIFS_CPHTXT_SIZE;
+-	} else {
+-		sec_blob->SessionKey.BufferOffset = cpu_to_le32(tmp - *pbuffer);
+-		sec_blob->SessionKey.Length = 0;
+-		sec_blob->SessionKey.MaximumLength = 0;
+-	}
+-
+-	*buflen = tmp - *pbuffer;
++	    !calc_seckey(ses))
++		cifs_append_security_blob(smb, &auth_msg->SessionKey,
++					  ses->ntlmssp->ciphertext, CIFS_CPHTXT_SIZE,
++					  &tmp);
++	else
++		cifs_append_security_blob(smb, &auth_msg->SessionKey,
++					  NULL, 0, &tmp);
+ setup_ntlmv2_ret:
+ 	return rc;
  }
-@@ -796,19 +796,19 @@ static void build_encrypt_ctxt(struct smb2_encryption_neg_context *pneg_ctxt,
- static void build_sign_cap_ctxt(struct smb2_signing_capabilities *pneg_ctxt,
- 				__le16 sign_algo)
+diff --git a/fs/smb/client/smb2pdu.c b/fs/smb/client/smb2pdu.c
+index f1b6d36fe7cd..685af9c0cdcb 100644
+--- a/fs/smb/client/smb2pdu.c
++++ b/fs/smb/client/smb2pdu.c
+@@ -1740,33 +1740,29 @@ struct SMB2_sess_data {
+ 	void (*func)(struct SMB2_sess_data *);
+ 	int result;
+ 	u64 previous_session;
+-
+-	/* we will send the SMB in three pieces:
+-	 * a fixed length beginning part, an optional
+-	 * SPNEGO blob (which can be zero length), and a
+-	 * last part which will include the strings
+-	 * and rest of bcc area. This allows us to avoid
+-	 * a large buffer 17K allocation
+-	 */
+-	int buf0_type;
+-	struct kvec iov[2];
+ };
+ 
+-static int
+-SMB2_sess_alloc_buffer(struct SMB2_sess_data *sess_data)
++static struct smb_message *
++SMB2_create_session_request(struct SMB2_sess_data *sess_data)
  {
--	pneg_ctxt->ContextType = SMB2_SIGNING_CAPABILITIES;
--	pneg_ctxt->DataLength =
-+	pneg_ctxt->neg.ContextType = SMB2_SIGNING_CAPABILITIES;
-+	pneg_ctxt->neg.DataLength =
- 		cpu_to_le16((sizeof(struct smb2_signing_capabilities) + 2)
- 			- sizeof(struct smb2_neg_context));
--	pneg_ctxt->Reserved = cpu_to_le32(0);
-+	pneg_ctxt->neg.Reserved = cpu_to_le32(0);
- 	pneg_ctxt->SigningAlgorithmCount = cpu_to_le16(1);
- 	pneg_ctxt->SigningAlgorithms[0] = sign_algo;
+-	int rc;
++	struct smb_message *smb;
+ 	struct cifs_ses *ses = sess_data->ses;
+ 	struct TCP_Server_Info *server = sess_data->server;
+ 	struct smb2_sess_setup_req *req;
+-	unsigned int total_len;
+ 	bool is_binding = false;
+ 
+-	rc = smb2_plain_req_init(SMB2_SESSION_SETUP, NULL, server,
+-				 (void **) &req,
+-				 &total_len);
+-	if (rc)
+-		return rc;
++	/* We will send the SMB in three pieces:
++	 * - a fixed length beginning part,
++	 * - an optional SPNEGO blob (which can be zero length), and
++	 * - a last part which will include the strings and rest of bcc area.
++	 * This allows us to avoid a large buffer 17K allocation
++	 */
++	smb = smb2_create_request(SMB2_SESSION_SETUP, server, NULL,
++				  sizeof(*req), sizeof(*req), 0,
++				  SMB2_REQ_DYNAMIC |
++				  SMB2_REQ_SENSITIVE);
++	if (!smb)
++		return NULL;
+ 
+ 	spin_lock(&ses->ses_lock);
+ 	is_binding = (ses->ses_status == SES_GOOD);
+@@ -1815,55 +1811,25 @@ SMB2_sess_alloc_buffer(struct SMB2_sess_data *sess_data)
+ 
+ 	req->Channel = 0; /* MBZ */
+ 
+-	sess_data->iov[0].iov_base = (char *)req;
+-	/* 1 for pad */
+-	sess_data->iov[0].iov_len = total_len - 1;
+-	/*
+-	 * This variable will be used to clear the buffer
+-	 * allocated above in case of any error in the calling function.
+-	 */
+-	sess_data->buf0_type = CIFS_SMALL_BUFFER;
+-
+-	return 0;
+-}
+-
+-static void
+-SMB2_sess_free_buffer(struct SMB2_sess_data *sess_data)
+-{
+-	struct kvec *iov = sess_data->iov;
+-
+-	/* iov[1] is already freed by caller */
+-	if (sess_data->buf0_type != CIFS_NO_BUFFER && iov[0].iov_base)
+-		memzero_explicit(iov[0].iov_base, iov[0].iov_len);
+-
+-	free_rsp_buf(sess_data->buf0_type, iov[0].iov_base);
+-	sess_data->buf0_type = CIFS_NO_BUFFER;
++	/* Testing shows that buffer offset must be at location of Buffer[0] */
++	req->SecurityBufferOffset = cpu_to_le16(sizeof(*req));
++	req->SecurityBufferLength = 0;
++	return smb;
  }
  
- static void build_posix_ctxt(struct smb2_posix_neg_context *pneg_ctxt)
+ static int
+-SMB2_sess_sendreceive(struct SMB2_sess_data *sess_data)
++SMB2_sess_sendreceive(struct SMB2_sess_data *sess_data,
++		      struct smb_message *smb)
  {
--	pneg_ctxt->ContextType = SMB2_POSIX_EXTENSIONS_AVAILABLE;
--	pneg_ctxt->DataLength = cpu_to_le16(POSIX_CTXT_DATA_LEN);
-+	pneg_ctxt->neg.ContextType = SMB2_POSIX_EXTENSIONS_AVAILABLE;
-+	pneg_ctxt->neg.DataLength = cpu_to_le16(POSIX_CTXT_DATA_LEN);
- 	/* SMB2_CREATE_TAG_POSIX is "0x93AD25509CB411E7B42383DE968BCD7C" */
- 	pneg_ctxt->Name[0] = 0x93;
- 	pneg_ctxt->Name[1] = 0xAD;
+ 	int rc;
+-	struct smb_rqst rqst;
+-	struct smb2_sess_setup_req *req = sess_data->iov[0].iov_base;
+-	struct kvec rsp_iov = { NULL, 0 };
++	struct smb2_sess_setup_req *req = smb->request;
+ 
+-	/* Testing shows that buffer offset must be at location of Buffer[0] */
+-	req->SecurityBufferOffset =
+-		cpu_to_le16(sizeof(struct smb2_sess_setup_req));
+-	req->SecurityBufferLength = cpu_to_le16(sess_data->iov[1].iov_len);
+-
+-	memset(&rqst, 0, sizeof(struct smb_rqst));
+-	rqst.rq_iov = sess_data->iov;
+-	rqst.rq_nvec = 2;
++	req->SecurityBufferLength = cpu_to_le16(smb->total_len - sizeof(*req));
+ 
+ 	/* BB add code to build os and lm fields */
+-	rc = cifs_send_recv(sess_data->xid, sess_data->ses,
+-			    sess_data->server,
+-			    &rqst,
+-			    &sess_data->buf0_type,
+-			    CIFS_LOG_ERROR | CIFS_SESS_OP, &rsp_iov);
+-	cifs_small_buf_release(sess_data->iov[0].iov_base);
++	rc = smb_send_recv_messages(sess_data->xid, sess_data->ses, sess_data->server,
++				    smb, CIFS_LOG_ERROR | CIFS_SESS_OP);
++	smb_clear_request(smb);
+ 	if (rc == 0)
+ 		sess_data->ses->expired_pwd = false;
+ 	else if ((rc == -EACCES) || (rc == -EKEYEXPIRED) || (rc == -EKEYREVOKED)) {
+@@ -1875,8 +1841,6 @@ SMB2_sess_sendreceive(struct SMB2_sess_data *sess_data)
+ 		sess_data->ses->expired_pwd = true;
+ 	}
+ 
+-	memcpy(&sess_data->iov[0], &rsp_iov, sizeof(struct kvec));
+-
+ 	return rc;
+ }
+ 
+@@ -1911,16 +1875,18 @@ SMB2_sess_establish_session(struct SMB2_sess_data *sess_data)
+ static void
+ SMB2_auth_kerberos(struct SMB2_sess_data *sess_data)
+ {
+-	int rc;
+-	struct cifs_ses *ses = sess_data->ses;
++	struct smb2_sess_setup_rsp *rsp = NULL;
+ 	struct TCP_Server_Info *server = sess_data->server;
+ 	struct cifs_spnego_msg *msg;
++	struct smb_message *smb = NULL;
++	struct cifs_ses *ses = sess_data->ses;
+ 	struct key *spnego_key = NULL;
+-	struct smb2_sess_setup_rsp *rsp = NULL;
++	void *key_buf = NULL;
+ 	bool is_binding = false;
++	int rc = -ENOMEM;
+ 
+-	rc = SMB2_sess_alloc_buffer(sess_data);
+-	if (rc)
++	smb = SMB2_create_session_request(sess_data);
++	if (!smb)
+ 		goto out;
+ 
+ 	spnego_key = cifs_get_spnego_key(ses, server);
+@@ -1962,14 +1928,21 @@ SMB2_auth_kerberos(struct SMB2_sess_data *sess_data)
+ 		ses->auth_key.len = msg->sesskey_len;
+ 	}
+ 
+-	sess_data->iov[1].iov_base = msg->data + msg->sesskey_len;
+-	sess_data->iov[1].iov_len = msg->secblob_len;
++	/* Copy the key data here so that we can pass it to MSG_SPLICE_PAGES
++	 * and the need to copy the whole message.
++	 */
++	key_buf = cifs_allocate_tx_buf(server, msg->secblob_len);
++	if (!key_buf)
++		goto out;
++
++	memcpy(key_buf, msg->data + msg->sesskey_len, msg->secblob_len);
++	smb_add_segment_to_tx_buf(smb, key_buf, msg->secblob_len);
+ 
+-	rc = SMB2_sess_sendreceive(sess_data);
++	rc = SMB2_sess_sendreceive(sess_data, smb);
+ 	if (rc)
+ 		goto out_put_spnego_key;
+ 
+-	rsp = (struct smb2_sess_setup_rsp *)sess_data->iov[0].iov_base;
++	rsp = (struct smb2_sess_setup_rsp *)smb->response;
+ 	/* keep session id and flags if binding */
+ 	if (!is_binding) {
+ 		ses->Suid = le64_to_cpu(rsp->hdr.SessionId);
+@@ -1985,10 +1958,11 @@ SMB2_auth_kerberos(struct SMB2_sess_data *sess_data)
+ 		ses->auth_key.response = NULL;
+ 		ses->auth_key.len = 0;
+ 	}
++
+ out:
++	smb_put_messages(smb);
+ 	sess_data->result = rc;
+ 	sess_data->func = NULL;
+-	SMB2_sess_free_buffer(sess_data);
+ }
+ #else
+ static void
+@@ -2006,14 +1980,13 @@ SMB2_sess_auth_rawntlmssp_authenticate(struct SMB2_sess_data *sess_data);
+ static void
+ SMB2_sess_auth_rawntlmssp_negotiate(struct SMB2_sess_data *sess_data)
+ {
+-	int rc;
+-	struct cifs_ses *ses = sess_data->ses;
+-	struct TCP_Server_Info *server = sess_data->server;
+ 	struct smb2_sess_setup_rsp *rsp = NULL;
+-	unsigned char *ntlmssp_blob = NULL;
++	struct TCP_Server_Info *server = sess_data->server;
++	struct smb_message *smb = NULL;
++	struct cifs_ses *ses = sess_data->ses;
+ 	bool use_spnego = false; /* else use raw ntlmssp */
+-	u16 blob_length = 0;
+ 	bool is_binding = false;
++	int rc = -ENOMEM;
+ 
+ 	/*
+ 	 * If memory allocation is successful, caller of this function
+@@ -2026,13 +1999,12 @@ SMB2_sess_auth_rawntlmssp_negotiate(struct SMB2_sess_data *sess_data)
+ 	}
+ 	ses->ntlmssp->sesskey_per_smbsess = true;
+ 
+-	rc = SMB2_sess_alloc_buffer(sess_data);
+-	if (rc)
++	smb = SMB2_create_session_request(sess_data);
++	if (!smb)
+ 		goto out_err;
+ 
+-	rc = build_ntlmssp_smb3_negotiate_blob(&ntlmssp_blob,
+-					  &blob_length, ses, server,
+-					  sess_data->nls_cp);
++	rc = build_ntlmssp_smb3_negotiate_blob(smb, ses, server,
++					       sess_data->nls_cp);
+ 	if (rc)
+ 		goto out;
+ 
+@@ -2042,15 +2014,12 @@ SMB2_sess_auth_rawntlmssp_negotiate(struct SMB2_sess_data *sess_data)
+ 		rc = -EOPNOTSUPP;
+ 		goto out;
+ 	}
+-	sess_data->iov[1].iov_base = ntlmssp_blob;
+-	sess_data->iov[1].iov_len = blob_length;
+ 
+-	rc = SMB2_sess_sendreceive(sess_data);
+-	rsp = (struct smb2_sess_setup_rsp *)sess_data->iov[0].iov_base;
++	rc = SMB2_sess_sendreceive(sess_data, smb);
++	rsp = (struct smb2_sess_setup_rsp *)smb->response;
+ 
+ 	/* If true, rc here is expected and not an error */
+-	if (sess_data->buf0_type != CIFS_NO_BUFFER &&
+-		rsp->hdr.Status == STATUS_MORE_PROCESSING_REQUIRED)
++	if (rsp->hdr.Status == STATUS_MORE_PROCESSING_REQUIRED)
+ 		rc = 0;
+ 
+ 	if (rc)
+@@ -2081,14 +2050,13 @@ SMB2_sess_auth_rawntlmssp_negotiate(struct SMB2_sess_data *sess_data)
+ 	}
+ 
+ out:
+-	kfree_sensitive(ntlmssp_blob);
+-	SMB2_sess_free_buffer(sess_data);
+ 	if (!rc) {
+ 		sess_data->result = 0;
+ 		sess_data->func = SMB2_sess_auth_rawntlmssp_authenticate;
+ 		return;
+ 	}
+ out_err:
++	smb_put_messages(smb);
+ 	kfree_sensitive(ses->ntlmssp);
+ 	ses->ntlmssp = NULL;
+ 	sess_data->result = rc;
+@@ -2098,26 +2066,23 @@ SMB2_sess_auth_rawntlmssp_negotiate(struct SMB2_sess_data *sess_data)
+ static void
+ SMB2_sess_auth_rawntlmssp_authenticate(struct SMB2_sess_data *sess_data)
+ {
+-	int rc;
++	struct smb_message *smb;
+ 	struct cifs_ses *ses = sess_data->ses;
+ 	struct TCP_Server_Info *server = sess_data->server;
+ 	struct smb2_sess_setup_req *req;
+ 	struct smb2_sess_setup_rsp *rsp = NULL;
+-	unsigned char *ntlmssp_blob = NULL;
+ 	bool use_spnego = false; /* else use raw ntlmssp */
+-	u16 blob_length = 0;
+ 	bool is_binding = false;
++	int rc = -ENOMEM;
+ 
+-	rc = SMB2_sess_alloc_buffer(sess_data);
+-	if (rc)
++	smb = SMB2_create_session_request(sess_data);
++	if (!smb)
+ 		goto out;
+ 
+-	req = (struct smb2_sess_setup_req *) sess_data->iov[0].iov_base;
++	req = smb->request;
+ 	req->hdr.SessionId = cpu_to_le64(ses->Suid);
+ 
+-	rc = build_ntlmssp_auth_blob(&ntlmssp_blob, &blob_length,
+-				     ses, server,
+-				     sess_data->nls_cp);
++	rc = build_ntlmssp_auth_blob(smb, ses, server, sess_data->nls_cp);
+ 	if (rc) {
+ 		cifs_dbg(FYI, "build_ntlmssp_auth_blob failed %d\n", rc);
+ 		goto out;
+@@ -2129,14 +2094,12 @@ SMB2_sess_auth_rawntlmssp_authenticate(struct SMB2_sess_data *sess_data)
+ 		rc = -EOPNOTSUPP;
+ 		goto out;
+ 	}
+-	sess_data->iov[1].iov_base = ntlmssp_blob;
+-	sess_data->iov[1].iov_len = blob_length;
+ 
+-	rc = SMB2_sess_sendreceive(sess_data);
++	rc = SMB2_sess_sendreceive(sess_data, smb);
+ 	if (rc)
+ 		goto out;
+ 
+-	rsp = (struct smb2_sess_setup_rsp *)sess_data->iov[0].iov_base;
++	rsp = (struct smb2_sess_setup_rsp *)smb->response;
+ 
+ 	spin_lock(&ses->ses_lock);
+ 	is_binding = (ses->ses_status == SES_GOOD);
+@@ -2165,8 +2128,6 @@ SMB2_sess_auth_rawntlmssp_authenticate(struct SMB2_sess_data *sess_data)
+ 	}
+ #endif
+ out:
+-	kfree_sensitive(ntlmssp_blob);
+-	SMB2_sess_free_buffer(sess_data);
+ 	kfree_sensitive(ses->ntlmssp);
+ 	ses->ntlmssp = NULL;
+ 	sess_data->result = rc;
+@@ -2224,7 +2185,6 @@ SMB2_sess_setup(const unsigned int xid, struct cifs_ses *ses,
+ 	sess_data->xid = xid;
+ 	sess_data->ses = ses;
+ 	sess_data->server = server;
+-	sess_data->buf0_type = CIFS_NO_BUFFER;
+ 	sess_data->nls_cp = (struct nls_table *) nls_cp;
+ 	sess_data->previous_session = ses->Suid;
+ 
 
 
