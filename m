@@ -1,266 +1,239 @@
-Return-Path: <linux-fsdevel+bounces-56849-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56850-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC5DCB1C97C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Aug 2025 17:59:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F22CB1C98C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Aug 2025 18:01:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8276175BE9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Aug 2025 15:59:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4855C3BEABA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Aug 2025 16:01:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A60A028FFCD;
-	Wed,  6 Aug 2025 15:59:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E5FB28D85D;
+	Wed,  6 Aug 2025 16:01:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Budp1pRU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kNyVL+Q7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE8EC29A9E1
-	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Aug 2025 15:59:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F107D20B7ED
+	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Aug 2025 16:01:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754495957; cv=none; b=JzgFCL3Lite1OuxtH2OPnnNsIaY156AiiBPeo4J47piC5k5+/vJiWGrqRlapyQEthWVKINAVu9KXycGl3E0RJXLtXna9Uv5jbIiRGa39z/3rllSszMFka5pG34bNQMcm4d2sFps7rVfQ5ZYkgm/lQcNQXPq30SvlCYkxN/O/iBM=
+	t=1754496104; cv=none; b=Bo98WYXro7b/JLtwQrTLw2mKqoVLFYziOA581LYafGncF36F81+MC1Sa0Ny71XiMXYILqxn/R9vRuoL1vzpL/zcalmUa+2vCqmG/tif91LxXuEObN0fHtaGMK1QAM9RBftSIx9+ybDJ6qvkzChVB9BsETd6j4EczibxwfKd3xy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754495957; c=relaxed/simple;
-	bh=JRfgX1mdsRBhfL5iUYnonjqsaZrBRF+pfu+2IoIqfMs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Q9f492Pb+x8JZldO+behoOKXCLGsPiSmn8JSOUzHTmpBPoWpaZUama2FTLYS8nCBuJT7DK39HvrxI3yZuzjiRfHPI5occVUk0Z3kdTn7bcI4zjuZiWNf8AO2XEPLx4VVqwvpsVVZT/CGhpRx3jwWl+GDaOL+p0HlOFm29kWCc6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Budp1pRU; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-24011ceafc8so60487045ad.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Aug 2025 08:59:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754495954; x=1755100754; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=79cST+DpT8JLjhSc853c7Vp44fp4YLe4km92lxkzOhQ=;
-        b=Budp1pRUx6mYa0epyo7zbp+kkDKr3RN/i8el8R7Gka6OmrHe2dFDFDdc+iDTLUKKiC
-         iq40KT4Z5+N9+8HmW49DP/HxNSsTFIzoP30ciMT9uw8AeFodCJqI6ZEdtg9hnks+JGHl
-         xZoBMksg8rh0B18GhOcwGnnPUsoKD54LGiyKNA3erREfPj6wpwDRuMrPdDoFPXgCrh0q
-         Lo0mJa3l3ezZkJrQ9XJPpiSLn0TwfCXe/2ffk5VJZXxr8LYJF29c9J5g6v9woFjbRH+8
-         Ryz0j8obquz+9LqjwKt+gymvn94TrB4q8xSYgGRCXLW7KO3UMTw2Aas+6mWmJKGs5X1s
-         9U7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754495954; x=1755100754;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=79cST+DpT8JLjhSc853c7Vp44fp4YLe4km92lxkzOhQ=;
-        b=ZN5F7JRMTRgsiiA0/l34WEPPvyKxwiTXfI0IB/cYLOCvjfeoDwlFlBlmR7N/OLNoXZ
-         7qZeQqlhb9XWsIXQqE6Um2j9p9B6MzDFd8FBuUyUw/Q1g6XAtJ/M9SxS83fPXT1Xbf1Y
-         eBHQN+EtE+YKeOJQUZc/+ZQXpoBYwDdBNXnonSFsDdQXiX6ZjQ7V0uQyqQcFW/WZffCX
-         sQPSR9AQzPw7s+t6OTq1+aFC8002hsceC3EM3ffI+CjfGBiFZTGOJSSTLXjFdb6rCAOs
-         AqLMIFjOSN4+DCnTLDk13QX5cpw+HHdrci6/3XdpwBxsUmoByPju3wjYOq28R2J6GryS
-         tp6w==
-X-Forwarded-Encrypted: i=1; AJvYcCXizKTz2LTq1ZbsN2AiT19xMMPEzEBelSsQW512pQzNF0ZEhFEoGvbIpZj0w1GGVjW84fFcVwnCiN9Ycb71@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLdXuzQ35WIDwoUCbUwkbZaETXWq91ndV/r0AjEwEYIHgOLYFX
-	HSkB3FVD/xRJB0yQa+M4JtQlTr+p82L6AvT5Q1/8/jnqCnWDnJoXrhdb82smR690n8kpkU14iua
-	kkV57bA==
-X-Google-Smtp-Source: AGHT+IFlS+JvIsWnRvs7bTfyfgC/5w+RmEgonVOp9GJDKi3AshY2Fhxqa2lT8Ee9l8rZG2GebQuiHk0ZMyQ=
-X-Received: from pjboe1.prod.google.com ([2002:a17:90b:3941:b0:31e:c61e:663b])
- (user=surenb job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:dacc:b0:240:92cc:8fcf
- with SMTP id d9443c01a7336-2429f496c6bmr47463745ad.49.1754495954146; Wed, 06
- Aug 2025 08:59:14 -0700 (PDT)
-Date: Wed,  6 Aug 2025 08:59:04 -0700
-In-Reply-To: <20250806155905.824388-1-surenb@google.com>
+	s=arc-20240116; t=1754496104; c=relaxed/simple;
+	bh=pA8MqpwRM2yK5hOZ3qnjVZf/Ca/csAoYxhuTbYLC1Jw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=magitd/9S4hj3XLLDy7ch3aFad234cKCqAEAJJ9aaapxmxiC3buvGe6tbhPDOfn6f4S3beuJS0aSmpGZeBRj23pB3K0mgV+HPYoNIoS4XXq/xHpMwuyBkRDSAx+thoavmBydy+cuiUgrLQTRFVlfh2maG4Yn1Qy6G/lojls9Wsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kNyVL+Q7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D549C4CEE7;
+	Wed,  6 Aug 2025 16:01:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754496103;
+	bh=pA8MqpwRM2yK5hOZ3qnjVZf/Ca/csAoYxhuTbYLC1Jw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kNyVL+Q7zMloP2bIXayhMbDzaHBQZge3BoktJ+BP18gSwxo/6GQTvsUnIDyFL6rx6
+	 3tiRl0nr71+5HgC4f5vV+LTXHb3zM5oX6L071zDae3TyaVcKpKI5AI1eTETuWoQmUT
+	 hu1rrNbPZQUlRMMZazH7M5LW6z81E/ypN3qJZ4jMRGG7GVGrHwh5VAYiaJEPNBVBrx
+	 ErbZu7a/3bvODbGJHxw9kFQRtHj5Jce/Jcz3hwqW2Nk7lPhp00UrDNsnbUAVtThZJ1
+	 K6ZOtP6xTednKpPJrBzcxQr+tzwZ0r8l54E8HdQCEAbpCvEUNdsInnooAmnwJWB0RZ
+	 lWhAwogbI7Fyw==
+Date: Wed, 6 Aug 2025 09:01:42 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Luis Henriques <luis@igalia.com>
+Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org,
+	Bernd Schubert <bschubert@ddn.com>,
+	Florian Weimer <fweimer@redhat.com>
+Subject: Re: [PATCH 1/2] fuse: fix COPY_FILE_RANGE interface
+Message-ID: <20250806160142.GF2672029@frogsfrogsfrogs>
+References: <20250805183017.4072973-1-mszeredi@redhat.com>
+ <87pld8kdwt.fsf@wotan.olymp>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250806155905.824388-1-surenb@google.com>
-X-Mailer: git-send-email 2.50.1.565.gc32cd1483b-goog
-Message-ID: <20250806155905.824388-4-surenb@google.com>
-Subject: [PATCH v3 3/3] fs/proc/task_mmu: execute PROCMAP_QUERY ioctl under
- per-vma locks
-From: Suren Baghdasaryan <surenb@google.com>
-To: akpm@linux-foundation.org
-Cc: Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, david@redhat.com, 
-	vbabka@suse.cz, peterx@redhat.com, jannh@google.com, hannes@cmpxchg.org, 
-	mhocko@kernel.org, paulmck@kernel.org, shuah@kernel.org, adobriyan@gmail.com, 
-	brauner@kernel.org, josef@toxicpanda.com, yebin10@huawei.com, 
-	linux@weissschuh.net, willy@infradead.org, osalvador@suse.de, 
-	andrii@kernel.org, ryan.roberts@arm.com, christophe.leroy@csgroup.eu, 
-	tjmercier@google.com, kaleshsingh@google.com, aha310510@gmail.com, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kselftest@vger.kernel.org, surenb@google.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87pld8kdwt.fsf@wotan.olymp>
 
-Utilize per-vma locks to stabilize vma after lookup without taking
-mmap_lock during PROCMAP_QUERY ioctl execution. If vma lock is
-contended, we fall back to mmap_lock but take it only momentarily
-to lock the vma and release the mmap_lock. In a very unlikely case
-of vm_refcnt overflow, this fall back path will fail and ioctl is
-done under mmap_lock protection.
+On Wed, Aug 06, 2025 at 10:17:06AM +0100, Luis Henriques wrote:
+> On Tue, Aug 05 2025, Miklos Szeredi wrote:
+> 
+> > The FUSE protocol uses struct fuse_write_out to convey the return value of
+> > copy_file_range, which is restricted to uint32_t.  But the COPY_FILE_RANGE
+> > interface supports a 64-bit size copies.
+> >
+> > Currently the number of bytes copied is silently truncated to 32-bit, which
+> > is unfortunate at best.
+> >
+> > Introduce a new op COPY_FILE_RANGE_64, which is identical, except the
+> > number of bytes copied is returned in a 64-bit value.
+> >
+> > If the fuse server does not support COPY_FILE_RANGE_64, fall back to
+> > COPY_FILE_RANGE and truncate the size to UINT_MAX - 4096.
+> 
+> I was wondering if it wouldn't make more sense to truncate the size to
+> MAX_RW_COUNT instead.  My reasoning is that, if I understand the code
+> correctly (which is probably a big 'if'!), the VFS will fallback to
+> splice() if the file system does not implement copy_file_range.  And in
+> this case splice() seems to limit the operation to MAX_RW_COUNT.
 
-This change is designed to reduce mmap_lock contention and prevent
-PROCMAP_QUERY ioctl calls from blocking address space updates.
+It doesn't, because copy_file_range implementations can do other things
+(like remapping/reflinking file blocks) that produce a very small amount
+of disk IO for what is effectively a very large change to file contents.
+That's why the VFS doesn't cap len at MAX_RW_COUNT bytes.
 
-Signed-off-by: Suren Baghdasaryan <surenb@google.com>
----
- fs/proc/task_mmu.c | 84 +++++++++++++++++++++++++++++++++++++---------
- 1 file changed, 68 insertions(+), 16 deletions(-)
+--D
 
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index 45134335e086..0396315dfaee 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -517,28 +517,81 @@ static int pid_maps_open(struct inode *inode, struct file *file)
- 		PROCMAP_QUERY_VMA_FLAGS				\
- )
- 
--static int query_vma_setup(struct mm_struct *mm)
-+#ifdef CONFIG_PER_VMA_LOCK
-+
-+static int query_vma_setup(struct proc_maps_locking_ctx *lock_ctx)
- {
--	return mmap_read_lock_killable(mm);
-+	lock_ctx->locked_vma = NULL;
-+	lock_ctx->mmap_locked = false;
-+
-+	return 0;
- }
- 
--static void query_vma_teardown(struct mm_struct *mm, struct vm_area_struct *vma)
-+static void query_vma_teardown(struct proc_maps_locking_ctx *lock_ctx)
- {
--	mmap_read_unlock(mm);
-+	if (lock_ctx->mmap_locked)
-+		mmap_read_unlock(lock_ctx->mm);
-+	else
-+		unlock_vma(lock_ctx);
-+}
-+
-+static struct vm_area_struct *query_vma_find_by_addr(struct proc_maps_locking_ctx *lock_ctx,
-+						     unsigned long addr)
-+{
-+	struct vm_area_struct *vma;
-+	struct vma_iterator vmi;
-+
-+	if (lock_ctx->mmap_locked)
-+		return find_vma(lock_ctx->mm, addr);
-+
-+	unlock_vma(lock_ctx);
-+	rcu_read_lock();
-+	vma_iter_init(&vmi, lock_ctx->mm, addr);
-+	vma = lock_next_vma(lock_ctx->mm, &vmi, addr);
-+	rcu_read_unlock();
-+
-+	if (!IS_ERR_OR_NULL(vma)) {
-+		lock_ctx->locked_vma = vma;
-+	} else if (PTR_ERR(vma) == -EAGAIN) {
-+		/* Fallback to mmap_lock on vma->vm_refcnt overflow */
-+		mmap_read_lock(lock_ctx->mm);
-+		vma = find_vma(lock_ctx->mm, addr);
-+		lock_ctx->mmap_locked = true;
-+	}
-+
-+	return vma;
-+}
-+
-+#else /* CONFIG_PER_VMA_LOCK */
-+
-+static int query_vma_setup(struct proc_maps_locking_ctx *lock_ctx)
-+{
-+	return mmap_read_lock_killable(lock_ctx->mm);
- }
- 
--static struct vm_area_struct *query_vma_find_by_addr(struct mm_struct *mm, unsigned long addr)
-+static void query_vma_teardown(struct proc_maps_locking_ctx *lock_ctx)
- {
--	return find_vma(mm, addr);
-+	mmap_read_unlock(lock_ctx->mm);
- }
- 
--static struct vm_area_struct *query_matching_vma(struct mm_struct *mm,
-+static struct vm_area_struct *query_vma_find_by_addr(struct proc_maps_locking_ctx *lock_ctx,
-+						     unsigned long addr)
-+{
-+	return find_vma(lock_ctx->mm, addr);
-+}
-+
-+#endif  /* CONFIG_PER_VMA_LOCK */
-+
-+static struct vm_area_struct *query_matching_vma(struct proc_maps_locking_ctx *lock_ctx,
- 						 unsigned long addr, u32 flags)
- {
- 	struct vm_area_struct *vma;
- 
- next_vma:
--	vma = query_vma_find_by_addr(mm, addr);
-+	vma = query_vma_find_by_addr(lock_ctx, addr);
-+	if (IS_ERR(vma))
-+		return vma;
-+
- 	if (!vma)
- 		goto no_vma;
- 
-@@ -579,11 +632,11 @@ static struct vm_area_struct *query_matching_vma(struct mm_struct *mm,
- 	return ERR_PTR(-ENOENT);
- }
- 
--static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
-+static int do_procmap_query(struct mm_struct *mm, void __user *uarg)
- {
-+	struct proc_maps_locking_ctx lock_ctx = { .mm = mm };
- 	struct procmap_query karg;
- 	struct vm_area_struct *vma;
--	struct mm_struct *mm;
- 	const char *name = NULL;
- 	char build_id_buf[BUILD_ID_SIZE_MAX], *name_buf = NULL;
- 	__u64 usize;
-@@ -610,17 +663,16 @@ static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
- 	if (!!karg.build_id_size != !!karg.build_id_addr)
- 		return -EINVAL;
- 
--	mm = priv->lock_ctx.mm;
- 	if (!mm || !mmget_not_zero(mm))
- 		return -ESRCH;
- 
--	err = query_vma_setup(mm);
-+	err = query_vma_setup(&lock_ctx);
- 	if (err) {
- 		mmput(mm);
- 		return err;
- 	}
- 
--	vma = query_matching_vma(mm, karg.query_addr, karg.query_flags);
-+	vma = query_matching_vma(&lock_ctx, karg.query_addr, karg.query_flags);
- 	if (IS_ERR(vma)) {
- 		err = PTR_ERR(vma);
- 		vma = NULL;
-@@ -705,7 +757,7 @@ static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
- 	}
- 
- 	/* unlock vma or mmap_lock, and put mm_struct before copying data to user */
--	query_vma_teardown(mm, vma);
-+	query_vma_teardown(&lock_ctx);
- 	mmput(mm);
- 
- 	if (karg.vma_name_size && copy_to_user(u64_to_user_ptr(karg.vma_name_addr),
-@@ -725,7 +777,7 @@ static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
- 	return 0;
- 
- out:
--	query_vma_teardown(mm, vma);
-+	query_vma_teardown(&lock_ctx);
- 	mmput(mm);
- 	kfree(name_buf);
- 	return err;
-@@ -738,7 +790,7 @@ static long procfs_procmap_ioctl(struct file *file, unsigned int cmd, unsigned l
- 
- 	switch (cmd) {
- 	case PROCMAP_QUERY:
--		return do_procmap_query(priv, (void __user *)arg);
-+		return do_procmap_query(priv->lock_ctx.mm, (void __user *)arg);
- 	default:
- 		return -ENOIOCTLCMD;
- 	}
--- 
-2.50.1.565.gc32cd1483b-goog
-
+> Cheers,
+> -- 
+> Luís
+> 
+> 
+> > Reported-by: Florian Weimer <fweimer@redhat.com>
+> > Closes: https://lore.kernel.org/all/lhuh5ynl8z5.fsf@oldenburg.str.redhat.com/
+> > Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> > ---
+> >  fs/fuse/file.c            | 34 ++++++++++++++++++++++++++--------
+> >  fs/fuse/fuse_i.h          |  3 +++
+> >  include/uapi/linux/fuse.h | 12 +++++++++++-
+> >  3 files changed, 40 insertions(+), 9 deletions(-)
+> >
+> > diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> > index adc4aa6810f5..bd6624885855 100644
+> > --- a/fs/fuse/file.c
+> > +++ b/fs/fuse/file.c
+> > @@ -3017,6 +3017,8 @@ static ssize_t __fuse_copy_file_range(struct file *file_in, loff_t pos_in,
+> >  		.flags = flags
+> >  	};
+> >  	struct fuse_write_out outarg;
+> > +	struct fuse_copy_file_range_out outarg_64;
+> > +	u64 bytes_copied;
+> >  	ssize_t err;
+> >  	/* mark unstable when write-back is not used, and file_out gets
+> >  	 * extended */
+> > @@ -3066,30 +3068,46 @@ static ssize_t __fuse_copy_file_range(struct file *file_in, loff_t pos_in,
+> >  	if (is_unstable)
+> >  		set_bit(FUSE_I_SIZE_UNSTABLE, &fi_out->state);
+> >  
+> > -	args.opcode = FUSE_COPY_FILE_RANGE;
+> > +	args.opcode = FUSE_COPY_FILE_RANGE_64;
+> >  	args.nodeid = ff_in->nodeid;
+> >  	args.in_numargs = 1;
+> >  	args.in_args[0].size = sizeof(inarg);
+> >  	args.in_args[0].value = &inarg;
+> >  	args.out_numargs = 1;
+> > -	args.out_args[0].size = sizeof(outarg);
+> > -	args.out_args[0].value = &outarg;
+> > +	args.out_args[0].size = sizeof(outarg_64);
+> > +	args.out_args[0].value = &outarg_64;
+> > +	if (fc->no_copy_file_range_64) {
+> > +fallback:
+> > +		/* Fall back to old op that can't handle large copy length */
+> > +		args.opcode = FUSE_COPY_FILE_RANGE;
+> > +		args.out_args[0].size = sizeof(outarg);
+> > +		args.out_args[0].value = &outarg;
+> > +		inarg.len = min_t(size_t, len, 0xfffff000);
+> > +	}
+> >  	err = fuse_simple_request(fm, &args);
+> >  	if (err == -ENOSYS) {
+> > -		fc->no_copy_file_range = 1;
+> > -		err = -EOPNOTSUPP;
+> > +		if (fc->no_copy_file_range_64) {
+> > +			fc->no_copy_file_range = 1;
+> > +			err = -EOPNOTSUPP;
+> > +		} else {
+> > +			fc->no_copy_file_range_64 = 1;
+> > +			goto fallback;
+> > +		}
+> >  	}
+> >  	if (err)
+> >  		goto out;
+> >  
+> > +	bytes_copied = fc->no_copy_file_range_64 ?
+> > +		outarg.size : outarg_64.bytes_copied;
+> > +
+> >  	truncate_inode_pages_range(inode_out->i_mapping,
+> >  				   ALIGN_DOWN(pos_out, PAGE_SIZE),
+> > -				   ALIGN(pos_out + outarg.size, PAGE_SIZE) - 1);
+> > +				   ALIGN(pos_out + bytes_copied, PAGE_SIZE) - 1);
+> >  
+> >  	file_update_time(file_out);
+> > -	fuse_write_update_attr(inode_out, pos_out + outarg.size, outarg.size);
+> > +	fuse_write_update_attr(inode_out, pos_out + bytes_copied, bytes_copied);
+> >  
+> > -	err = outarg.size;
+> > +	err = bytes_copied;
+> >  out:
+> >  	if (is_unstable)
+> >  		clear_bit(FUSE_I_SIZE_UNSTABLE, &fi_out->state);
+> > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> > index b54f4f57789f..a8be19f686b1 100644
+> > --- a/fs/fuse/fuse_i.h
+> > +++ b/fs/fuse/fuse_i.h
+> > @@ -850,6 +850,9 @@ struct fuse_conn {
+> >  	/** Does the filesystem support copy_file_range? */
+> >  	unsigned no_copy_file_range:1;
+> >  
+> > +	/** Does the filesystem support copy_file_range_64? */
+> > +	unsigned no_copy_file_range_64:1;
+> > +
+> >  	/* Send DESTROY request */
+> >  	unsigned int destroy:1;
+> >  
+> > diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+> > index 122d6586e8d4..94621f68a5cc 100644
+> > --- a/include/uapi/linux/fuse.h
+> > +++ b/include/uapi/linux/fuse.h
+> > @@ -235,6 +235,10 @@
+> >   *
+> >   *  7.44
+> >   *  - add FUSE_NOTIFY_INC_EPOCH
+> > + *
+> > + *  7.45
+> > + *  - add FUSE_COPY_FILE_RANGE_64
+> > + *  - add struct fuse_copy_file_range_out
+> >   */
+> >  
+> >  #ifndef _LINUX_FUSE_H
+> > @@ -270,7 +274,7 @@
+> >  #define FUSE_KERNEL_VERSION 7
+> >  
+> >  /** Minor version number of this interface */
+> > -#define FUSE_KERNEL_MINOR_VERSION 44
+> > +#define FUSE_KERNEL_MINOR_VERSION 45
+> >  
+> >  /** The node ID of the root inode */
+> >  #define FUSE_ROOT_ID 1
+> > @@ -657,6 +661,7 @@ enum fuse_opcode {
+> >  	FUSE_SYNCFS		= 50,
+> >  	FUSE_TMPFILE		= 51,
+> >  	FUSE_STATX		= 52,
+> > +	FUSE_COPY_FILE_RANGE_64	= 53,
+> >  
+> >  	/* CUSE specific operations */
+> >  	CUSE_INIT		= 4096,
+> > @@ -1148,6 +1153,11 @@ struct fuse_copy_file_range_in {
+> >  	uint64_t	flags;
+> >  };
+> >  
+> > +/* For FUSE_COPY_FILE_RANGE_64 */
+> > +struct fuse_copy_file_range_out {
+> > +	uint64_t	bytes_copied;
+> > +};
+> > +
+> >  #define FUSE_SETUPMAPPING_FLAG_WRITE (1ull << 0)
+> >  #define FUSE_SETUPMAPPING_FLAG_READ (1ull << 1)
+> >  struct fuse_setupmapping_in {
+> > -- 
+> > 2.49.0
+> >
+> 
+> 
 
