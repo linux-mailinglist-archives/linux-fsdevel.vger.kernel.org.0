@@ -1,198 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-56801-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56802-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 343E6B1BDC5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Aug 2025 02:11:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D27AB1BDD4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Aug 2025 02:20:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E24296266E8
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Aug 2025 00:11:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE21A18A0BC9
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Aug 2025 00:20:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A2965695;
-	Wed,  6 Aug 2025 00:11:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16C9754654;
+	Wed,  6 Aug 2025 00:19:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bur.io header.i=@bur.io header.b="GGrF1uOW";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="oCbDjzsH"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TUPNyQX3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FF3D13AF2;
-	Wed,  6 Aug 2025 00:10:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A95F19A;
+	Wed,  6 Aug 2025 00:19:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754439062; cv=none; b=l5mohOFbZZmJARfeyc64PQ71lfdkKezdRftciz4AZlNLHtosp8vIPpiEL53ywM/XZSrlJTkcd/52V8KxBOPOH8k+ceMYx6muDG781UzACR8jPxUZHnMCID5kuLRexbn7BMClMfRk+b9ydL0nwr4cPFXCZzj7+OgmMnTESH02B5c=
+	t=1754439596; cv=none; b=OyDNdH+Xy4lqVeBVG2Q/8lbB45U3i/29CEEBPNDGUk7boAo3yBrUKSmF7Jm/38OplFrjcHvu8qZCHGpXr2HP+x3C0cxhTChvFpbdVQYz9VRtKQJSt8dL2OISMGJD4iYOJj4yAxsPnmzCOCzMAwpM9cmtAI+OdBuNb5LCXz/tAh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754439062; c=relaxed/simple;
-	bh=H8IpWBITRasSJMwNzPiT+Hxrs2ExC/XmGa1fk+R77ys=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SG0tERjgeBD/LjfPtiJTdfzcKvBKETOF+GEHawUvYJvEmheyE1i7w6WQxIkmxII+i3WsTMl1PDRSD2GOP1j9CP13g/1GsqvcZoURAWa3mT8IVBZ6ilL9+4mKTi0i4GHK3aFiIkMiDgGvF36PN9QQSpZCqXfuSkIb/pmp5KQNiRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bur.io; spf=pass smtp.mailfrom=bur.io; dkim=pass (2048-bit key) header.d=bur.io header.i=@bur.io header.b=GGrF1uOW; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=oCbDjzsH; arc=none smtp.client-ip=202.12.124.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bur.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bur.io
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfout.stl.internal (Postfix) with ESMTP id 203B01D0024E;
-	Tue,  5 Aug 2025 20:10:59 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Tue, 05 Aug 2025 20:10:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bur.io; h=cc:cc
-	:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1754439058; x=
-	1754525458; bh=NMkug1PZF2QAfivblMu+w2TJxSj/x/jO/BIhiNhgEAg=; b=G
-	GrF1uOWR5MDmu7iedNKmcnSawwxfou0p9UqxNUMBsMWsuN9wRlwLxjnTo8m3zc5M
-	nObp6f1faws8totu9es1+Nq52vloBczQevQhH8ZxlC9A4GzaqL1LYym8dihZt4AG
-	vfSvVtgEhXyUjtyfvCrHUr4YouyNOCyzeXEGNhuK6KA/2RUWHYa9U6ydKI5F2E3H
-	dgmpo/jSYMLYlpLjiRf7N6QRxHR8QqbZMhdMR4agv+zpVt5dEu3Tyy1Xl1klypjh
-	O8wureZFYxLFksMtxWLt1afrCJqhNlKX+1hD4Cxy6mGhIxYVUGutKxD0jI0S9Aq+
-	Hmr5Z8cxRf/tJUQ7C1tBg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm3; t=1754439058; x=1754525458; bh=N
-	Mkug1PZF2QAfivblMu+w2TJxSj/x/jO/BIhiNhgEAg=; b=oCbDjzsHAuG03l79C
-	ajpGywvRrJXz6UmB5jHjrxwxBZCo18XD996ekP1Ax2tOZ6M40HSzyE1hDng/R783
-	komopR2kWdj6E+g897Tm5EbAEs+E5aNTgidojpdextoZChI7YTEIcz1EdeJcCqvs
-	bLDBGbHi881Ew/0XSubf9uO/Om+vOcz/Hz/nax4pUQPbF/m17RaBXVPIQSZiB1Xk
-	A87vYvZGD5VGwX8zxAp5WFuKJc7gr2YEWEdj7EMiRr7qoeYS+zQzvb0tpy9HL1cd
-	Tpdn+hsxUQYS6NAoBUstLu00fQ1ncM1Z+y+H/0CP0ykippQyZlXA6mgqkXl/33KS
-	qJ5Pg==
-X-ME-Sender: <xms:kp2SaC3BqECAlvdzvihEOwcVdywbPvMCZbJr65QywvgXlDCrYYvAJQ>
-    <xme:kp2SaI6CmYjwXaxPVmfIEeyfgIhWTW_9FhJFkpl7rNY0c1LAxupaAW41nY2a3D_ZB
-    ydFKVWytRBbyQTmxh8>
-X-ME-Received: <xmr:kp2SaD-K3eXlK0-EjR7TgNI9O5VKDh_FjhZf3170KuvvF7fq3CYi5YJFvBUKW1sXSJRxRZwQ3Cop9r_wmWopb44hkwA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduudeiheekucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucgoufhorhhtvggutfgvtghiphdvucdlgedtmdenucfjug
-    hrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeeuohhrihhsuceu
-    uhhrkhhovhcuoegsohhrihhssegsuhhrrdhioheqnecuggftrfgrthhtvghrnhepgedute
-    ffveeileetueejheevveeugfdttddvgfeijefhjeetjeduffehkeelkeehnecuvehluhhs
-    thgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghorhhishessghurh
-    drihhopdhnsggprhgtphhtthhopeejpdhmohguvgepshhmthhpohhuthdprhgtphhtthho
-    pehlihhnuhigqdgsthhrfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
-    eplhhinhhugidqmhhmsehkvhgrtghkrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhs
-    uggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehkvghrnhgvlh
-    dqthgvrghmsehfsgdrtghomhdprhgtphhtthhopehshhgrkhgvvghlrdgsuhhttheslhhi
-    nhhugidruggvvhdprhgtphhtthhopehhtghhsehinhhfrhgruggvrggurdhorhhgpdhrtg
-    hpthhtohepfihquhesshhushgvrdgtohhm
-X-ME-Proxy: <xmx:kp2SaHXSdnG8j0oyDfF47wPag9u3kOVwos43rOmYwk5XHOVB09rogQ>
-    <xmx:kp2SaOq08RiY7n4O0xhXWeZEeDUWPTNU9nZq3HPhD2W0Z6bpMZxlrg>
-    <xmx:kp2SaJkBuQ4R7P3Pqtpl2E7qLOE9BfiaaxtdcAYPnEeCdO0pQ1Dcrg>
-    <xmx:kp2SaO1BKhjA8M96K5tUgLGc9nojcxjeIwFDG54kkIR9mMFMoouE8w>
-    <xmx:kp2SaN0JikDm19k-l6Qrs5Hr9cu60wHcs0cLP3wEbCb6rG-sS0NsJUWT>
-Feedback-ID: i083147f8:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 5 Aug 2025 20:10:58 -0400 (EDT)
-From: Boris Burkov <boris@bur.io>
-To: linux-btrfs@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	kernel-team@fb.com
-Cc: shakeel.butt@linux.dev,
-	hch@infradead.org,
-	wqu@suse.com
-Subject: [PATCH 3/3] mm: add vmstat for cgroup uncharged pages
-Date: Tue,  5 Aug 2025 17:11:49 -0700
-Message-ID: <eae30d630ba07de8966d09a3e1700f53715980c2.1754438418.git.boris@bur.io>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <cover.1754438418.git.boris@bur.io>
-References: <cover.1754438418.git.boris@bur.io>
+	s=arc-20240116; t=1754439596; c=relaxed/simple;
+	bh=OT3f/U4DpV8q91l9jRxEsTYFN/WOPBcjG9NXESoXWrs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pUQVGmjIJ4fuJx935Pi1E3V10FYxJ4zdVotbKbE+SkWEJhWTmFNDiu6yNakesvLhW7nX1iAHKPK5a/3j6GApCrG0QXO+u4sq3xAqwjA4CSFVbfliN883PMJ5JuMS66GeM9zjSVI3LWRGUKqKRzz3u2UDTHiVbBumCXrMxNoYOrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=TUPNyQX3; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=nZYwsKOptSUZO0neyK/l0Qf2ovJ/CTbLtLm7FCTYX5s=; b=TUPNyQX3WyRtkdwpmO7RZqOyAo
+	WQMlt77Ff95hM004vnyaI6qjzqGPl4GufiP6o/4tEvS3XUVJpvn1kO3pzYRrWjSO5E454b802yoZm
+	oLiEUgEeQFUAfH+Pb7xC96Rgq5E9Wx16sY6NCvNtF9Dm+INNGPVRg18tqRZjXlPt9VkBEO3O6U104
+	7p52IsEO327eDPsZRW7D2bWUzGX0QaNELvDyH6K51qMbioYWFqMKZwqQRAJcXDQSc4GAYffRKF9wA
+	M5oQClEteyQL5XTcf/4PUe23ScgeDO2AcEtong/vrPmTCq4Ufml+0F0WbT0oK11ZJxjFXPOlzRkFc
+	07v8Ka0w==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ujRsg-0000000E3K1-3O8k;
+	Wed, 06 Aug 2025 00:19:46 +0000
+Message-ID: <c1ba0f8d-6b3c-4c2b-863c-2ce374df723c@infradead.org>
+Date: Tue, 5 Aug 2025 17:19:45 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/4] procfs: add "pidns" mount option
+To: Aleksa Sarai <cyphar@cyphar.com>, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
+ Jan Kara <jack@suse.cz>, Jonathan Corbet <corbet@lwn.net>,
+ Shuah Khan <shuah@kernel.org>
+Cc: Andy Lutomirski <luto@amacapital.net>, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20250805-procfs-pidns-api-v4-0-705f984940e7@cyphar.com>
+ <20250805-procfs-pidns-api-v4-2-705f984940e7@cyphar.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250805-procfs-pidns-api-v4-2-705f984940e7@cyphar.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-If cgroups are configured into the kernel, then uncharged pages can only
-come from filemap_add_folio_nocharge. Track such uncharged folios in
-vmstat so that they are accounted for.
+Hi,
 
-Suggested-by: Shakeel Butt <shakeel.butt@linux.dev>
-Signed-off-by: Boris Burkov <boris@bur.io>
----
- include/linux/mmzone.h |  3 +++
- mm/filemap.c           | 18 ++++++++++++++++++
- mm/vmstat.c            |  3 +++
- 3 files changed, 24 insertions(+)
+On 8/4/25 10:45 PM, Aleksa Sarai wrote:
+> Since the introduction of pid namespaces, their interaction with procfs
+> has been entirely implicit in ways that require a lot of dancing around
+> by programs that need to construct sandboxes with different PID
+> namespaces.
+> 
+> Being able to explicitly specify the pid namespace to use when
+> constructing a procfs super block will allow programs to no longer need
+> to fork off a process which does then does unshare(2) / setns(2) and
+> forks again in order to construct a procfs in a pidns.
+> 
+> So, provide a "pidns" mount option which allows such users to just
+> explicitly state which pid namespace they want that procfs instance to
+> use. This interface can be used with fsconfig(2) either with a file
+> descriptor or a path:
+> 
+>   fsconfig(procfd, FSCONFIG_SET_FD, "pidns", NULL, nsfd);
+>   fsconfig(procfd, FSCONFIG_SET_STRING, "pidns", "/proc/self/ns/pid", 0);
+> 
+> or with classic mount(2) / mount(8):
+> 
+>   // mount -t proc -o pidns=/proc/self/ns/pid proc /tmp/proc
+>   mount("proc", "/tmp/proc", "proc", MS_..., "pidns=/proc/self/ns/pid");
+> 
+> As this new API is effectively shorthand for setns(2) followed by
+> mount(2), the permission model for this mirrors pidns_install() to avoid
+> opening up new attack surfaces by loosening the existing permission
+> model.
+> 
+> In order to avoid having to RCU-protect all users of proc_pid_ns() (to
+> avoid UAFs), attempting to reconfigure an existing procfs instance's pid
+> namespace will error out with -EBUSY. Creating new procfs instances is
+> quite cheap, so this should not be an impediment to most users, and lets
+> us avoid a lot of churn in fs/proc/* for a feature that it seems
+> unlikely userspace would use.
+> 
+> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+> ---
+>  Documentation/filesystems/proc.rst |  8 ++++
+>  fs/proc/root.c                     | 98 +++++++++++++++++++++++++++++++++++---
+>  2 files changed, 100 insertions(+), 6 deletions(-)
+> 
+> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
+> index 5236cb52e357..5a157dadea0b 100644
+> --- a/Documentation/filesystems/proc.rst
+> +++ b/Documentation/filesystems/proc.rst
+> @@ -2360,6 +2360,7 @@ The following mount options are supported:
+>  	hidepid=	Set /proc/<pid>/ access mode.
+>  	gid=		Set the group authorized to learn processes information.
+>  	subset=		Show only the specified subset of procfs.
+> +	pidns=		Specify a the namespace used by this procfs.
 
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 283913d42d7b..a945dec65371 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -241,6 +241,9 @@ enum node_stat_item {
- 	NR_HUGETLB,
- #endif
- 	NR_BALLOON_PAGES,
-+#ifdef CONFIG_MEMCG
-+	NR_UNCHARGED_FILE_PAGES,
-+#endif
- 	NR_VM_NODE_STAT_ITEMS
- };
- 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index ccc9cfb4d418..0a258b4a9246 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -146,6 +146,22 @@ static void page_cache_delete(struct address_space *mapping,
- 	mapping->nrpages -= nr;
- }
- 
-+#ifdef CONFIG_MEMCG
-+static void filemap_mod_uncharged_vmstat(struct folio *folio, int sign)
-+{
-+	long nr = folio_nr_pages(folio) * sign;
-+
-+	if (!folio_memcg(folio))
-+		__lruvec_stat_mod_folio(folio, NR_UNCHARGED_FILE_PAGES, nr);
-+}
-+#else
-+static void filemap_mod_uncharged_cgroup_vmstat(struct folio *folio, int sign)
-+{
-+	return;
-+}
-+#endif
-+
-+
- static void filemap_unaccount_folio(struct address_space *mapping,
- 		struct folio *folio)
- {
-@@ -190,6 +206,7 @@ static void filemap_unaccount_folio(struct address_space *mapping,
- 		__lruvec_stat_mod_folio(folio, NR_FILE_THPS, -nr);
- 		filemap_nr_thps_dec(mapping);
- 	}
-+	filemap_mod_uncharged_vmstat(folio, -1);
- 
- 	/*
- 	 * At this point folio must be either written or cleaned by
-@@ -978,6 +995,7 @@ int filemap_add_folio_nocharge(struct address_space *mapping, struct folio *foli
- 		if (!(gfp & __GFP_WRITE) && shadow)
- 			workingset_refault(folio, shadow);
- 		folio_add_lru(folio);
-+		filemap_mod_uncharged_vmstat(folio, 1);
- 	}
- 	return ret;
- }
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index a78d70ddeacd..63318742ae5a 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1281,6 +1281,9 @@ const char * const vmstat_text[] = {
- 	"nr_hugetlb",
- #endif
- 	"nr_balloon_pages",
-+#ifdef CONFIG_MEMCG
-+	"nr_uncharged_file_pages",
-+#endif
- 	/* system-wide enum vm_stat_item counters */
- 	"nr_dirty_threshold",
- 	"nr_dirty_background_threshold",
+			drop ^^ a
+
+>  	=========	========================================================
+>  
+>  hidepid=off or hidepid=0 means classic mode - everybody may access all
+> @@ -2392,6 +2393,13 @@ information about processes information, just add identd to this group.
+>  subset=pid hides all top level files and directories in the procfs that
+>  are not related to tasks.
+>  
+> +pidns= specifies a pid namespace (either as a string path to something like
+> +`/proc/$pid/ns/pid`, or a file descriptor when using `FSCONFIG_SET_FD`) that
+> +will be used by the procfs instance when translating pids. By default, procfs
+> +will use the calling process's active pid namespace. Note that the pid
+> +namespace of an existing procfs instance cannot be modified (attempting to do
+> +so will give an `-EBUSY` error).
+> +
+>  Chapter 5: Filesystem behavior
+>  ==============================
+>  
 -- 
-2.50.1
+~Randy
 
 
