@@ -1,212 +1,165 @@
-Return-Path: <linux-fsdevel+bounces-56877-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56878-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74A26B1CC39
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Aug 2025 20:57:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0334DB1CC3E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Aug 2025 20:57:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 929A9565D84
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Aug 2025 18:57:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28D8156619B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Aug 2025 18:57:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5166529E0F2;
-	Wed,  6 Aug 2025 18:57:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B31829E118;
+	Wed,  6 Aug 2025 18:57:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u5DgpZMb"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sbNFfut8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3E2DC8EB;
-	Wed,  6 Aug 2025 18:57:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C2D21E834E;
+	Wed,  6 Aug 2025 18:57:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754506653; cv=none; b=R2a7mOmuPTEh4EiFDzREYUyPU5zEJejYW/gEgzdwi4PFTPWJFtFH7htW0uVRrhB6W4bL8aZCe45d9CZFYwUtgvvbFWnLbB3mn0upQPLYbWdImhmu6wjo0jM2mZqRGoTP4FEeNP/YMlJANhWfKjlsuzh54RW44nzV48dVTYn16GQ=
+	t=1754506670; cv=none; b=Ije0/JGF9+neO/rijVe8o+E+0BjuejV7bhMi0Di+/xADozrjqUMK6d9qyQ/nh6MP4JL3R24Gw0GOi8vrRzg1PzGboJsS4OY89q6gOxaHM6nD6c+ekf/Q6cfKZNnwC7BGpoWmWG7iFlKoAcZIwo+5ILTJh40ybyGbTmfs57EcsgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754506653; c=relaxed/simple;
-	bh=S1tpOXHvVmGvkkUcDTVIht6ckWqyaRnBwEeo7jDPZu4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mcYKk9Hefu9GBKvmaFc9r1/KYd5EWdzNi7y4GpWmVWhBCgSh4DvMtqGgVYaNjS7nL/y0RyNZC+RQ0hoYyeq5u3ihitrOevM6GSs/oHVIONtWXsZFnaOHa6P2yU9otb9MWepejLU4f/5TkMzzcR0qYbhF0b95NTcpE6PZrq6ud7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u5DgpZMb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AC07C4CEE7;
-	Wed,  6 Aug 2025 18:57:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754506653;
-	bh=S1tpOXHvVmGvkkUcDTVIht6ckWqyaRnBwEeo7jDPZu4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=u5DgpZMbBrMlEHCD0U2XV9oAFeSNwqE2saBD4NroNIwSwfQOb6fR/e+Hj+9dkXYza
-	 GSdnwVTypo0RrO1uPIi9p5Gqgw4zsLp9qhaHYpo0fGtuA457QbxgTpNfPio863LrTQ
-	 eE/2/ZbnCVJ75QckPgb1x3qVBiirfktGC62Y/rdLagTJEQ1cwOQrfn77EHN7tACR6k
-	 bOOrjC0euY0CI30rXkLWpEgVVxW8u1x8ZX5SED+CC6sycNRZn8b0Rl7vZF3GvgW088
-	 63MpRrSxhEIoxOV5Y40cqoToFFG/aWeNYTEWMcnI74UVv+t4xrHm5jhdGDglSVCJ2Q
-	 mlvn4La0hLeiw==
-Date: Wed, 6 Aug 2025 11:57:32 -0700
-From: Kees Cook <kees@kernel.org>
-To: Svetlana Parfenova <svetlana.parfenova@syntacore.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, jack@suse.cz, akpm@linux-foundation.org,
-	david@redhat.com, lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
-	surenb@google.com, mhocko@suse.com
-Subject: Re: [RFC RESEND] binfmt_elf: preserve original ELF e_flags in core
- dumps
-Message-ID: <202508061152.6B26BDC6FB@keescook>
-References: <20250806161814.607668-1-svetlana.parfenova@syntacore.com>
+	s=arc-20240116; t=1754506670; c=relaxed/simple;
+	bh=Z2K44BDv8iYtioBJw82pfmKLTw/D0OBAOM+CsDmQydU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H6ZTUX63hFxagfhd/RAEnjSyxrVxZFRXIxrOUeCz3n/Xp8swqzmkUrhIOPUzgS63gCC9SzJsq3VRWZR7C6fdL2vd3boiiJKk9iUZWUvyMJJE5mNRtcTkSJ9hJwghynmsUuUapQQD9EXkWagVoJeT6wTxxiRGNpEtrMw0cEz1wu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=sbNFfut8; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=hzq0vb/yvUU3QbvwPK4scAkP5mr8qU5DJOgyJY7yIlM=; b=sbNFfut8rqy1hdfW/leJn9f/Mf
+	cfbhFoDmOnw0rwsdOyFgb0fWp0zUslkXicnn5nYw0vzJZ+ZfIfQ3r1vyZ9Y9v8Diknno3KxftnSyA
+	2PD2UlQMQUY2qFg546bxsdSXs/zjLOnREg5bTHmLhndzsu2/uw2QUBBdHzNujstdUUGF2X1eIj/+5
+	OwjdxuHMgVxSkaxFzT22HEp0HZzkbegje5DiNp1/3c4jzTzhQKskuBOQEvMB9hCovykO7YftUY3e8
+	dCsSXT0EAHP0w6n/nFJp+TLwNtQe/TZmrI7w5w804DkHdKJG2Qg2jdWVAN9L1/sKQf+2ccayBMD/X
+	2L0nM9vA==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ujjKY-0000000G8fK-3YMG;
+	Wed, 06 Aug 2025 18:57:42 +0000
+Message-ID: <1ea6f1d9-550d-4b81-bade-1a0ca14c27c6@infradead.org>
+Date: Wed, 6 Aug 2025 11:57:42 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250806161814.607668-1-svetlana.parfenova@syntacore.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/4] procfs: add PROCFS_GET_PID_NAMESPACE ioctl
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+ Andy Lutomirski <luto@amacapital.net>, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20250805-procfs-pidns-api-v4-0-705f984940e7@cyphar.com>
+ <20250805-procfs-pidns-api-v4-3-705f984940e7@cyphar.com>
+ <9027aa89-b3b2-46c8-8338-6c37f1c5b97a@infradead.org>
+ <2025-08-06.1754503216-vulgar-pinch-more-tasks-meager-grader-93KeQn@cyphar.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <2025-08-06.1754503216-vulgar-pinch-more-tasks-meager-grader-93KeQn@cyphar.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 06, 2025 at 10:18:14PM +0600, Svetlana Parfenova wrote:
-> Preserve the original ELF e_flags from the executable in the core dump
-> header instead of relying on compile-time defaults (ELF_CORE_EFLAGS or
-> value from the regset view). This ensures that ABI-specific flags in
-> the dump file match the actual binary being executed.
+
+
+On 8/6/25 11:02 AM, Aleksa Sarai wrote:
+> On 2025-08-05, Randy Dunlap <rdunlap@infradead.org> wrote:
+>>
+>>
+>> On 8/4/25 10:45 PM, Aleksa Sarai wrote:
+>>> /proc has historically had very opaque semantics about PID namespaces,
+>>> which is a little unfortunate for container runtimes and other programs
+>>> that deal with switching namespaces very often. One common issue is that
+>>> of converting between PIDs in the process's namespace and PIDs in the
+>>> namespace of /proc.
+>>>
+>>> In principle, it is possible to do this today by opening a pidfd with
+>>> pidfd_open(2) and then looking at /proc/self/fdinfo/$n (which will
+>>> contain a PID value translated to the pid namespace associated with that
+>>> procfs superblock). However, allocating a new file for each PID to be
+>>> converted is less than ideal for programs that may need to scan procfs,
+>>> and it is generally useful for userspace to be able to finally get this
+>>> information from procfs.
+>>>
+>>> So, add a new API to get the pid namespace of a procfs instance, in the
+>>> form of an ioctl(2) you can call on the root directory of said procfs.
+>>> The returned file descriptor will have O_CLOEXEC set. This acts as a
+>>> sister feature to the new "pidns" mount option, finally allowing
+>>> userspace full control of the pid namespaces associated with procfs
+>>> instances.
+>>>
+>>> The permission model for this is a bit looser than that of the "pidns"
+>>> mount option (and also setns(2)) because /proc/1/ns/pid provides the
+>>> same information, so as long as you have access to that magic-link (or
+>>> something equivalently reasonable such as being in an ancestor pid
+>>> namespace) it makes sense to allow userspace to grab a handle. Ideally
+>>> we would check for ptrace-read access against all processes in the pidns
+>>> (which is very likely to be true for at least one process, as
+>>> SUID_DUMP_DISABLE is cleared on exec(2) and is rarely set by most
+>>> programs), but this would obviously not scale.
+>>>
+>>> setns(2) will still have their own permission checks, so being able to
+>>> open a pidns handle doesn't really provide too many other capabilities.
+>>>
+>>> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+>>> ---
+>>>  Documentation/filesystems/proc.rst |  4 +++
+>>>  fs/proc/root.c                     | 68 ++++++++++++++++++++++++++++++++++++--
+>>>  include/uapi/linux/fs.h            |  4 +++
+>>>  3 files changed, 74 insertions(+), 2 deletions(-)
+>>>
+>>
+>>
+>>> diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+>>> index 0bd678a4a10e..68e65e6d7d6b 100644
+>>> --- a/include/uapi/linux/fs.h
+>>> +++ b/include/uapi/linux/fs.h
+>>> @@ -435,8 +435,12 @@ typedef int __bitwise __kernel_rwf_t;
+>>>  			 RWF_APPEND | RWF_NOAPPEND | RWF_ATOMIC |\
+>>>  			 RWF_DONTCACHE)
+>>>  
+>>> +/* This matches XSDFEC_MAGIC, so we need to allocate subvalues carefully. */
+>>>  #define PROCFS_IOCTL_MAGIC 'f'
+>>>  
+>>> +/* procfs root ioctls */
+>>> +#define PROCFS_GET_PID_NAMESPACE	_IO(PROCFS_IOCTL_MAGIC, 32)
+>>
+>> Since the _IO() nr here is 32, Documentation/userspace-api/ioctl/ioctl-number.rst
+>> should be updated like:
+>>
+>> -'f'   00-0F  linux/fs.h                                                conflict!
+>> +'f'   00-1F  linux/fs.h                                                conflict!
 > 
-> Save the e_flags field during ELF binary loading (in load_elf_binary())
-> into the mm_struct, and later retrieve it during core dump generation
-> (in fill_note_info()). Use this saved value to populate the e_flags in
-> the core dump ELF header.
-> 
-> Add a new Kconfig option, CONFIG_CORE_DUMP_USE_PROCESS_EFLAGS, to guard
-> this behavior. Although motivated by a RISC-V use case, the mechanism is
-> generic and can be applied to all architectures.
+> Should this be 00-20 (or 00-2F) instead?
 
-In the general case, is e_flags mismatched? i.e. why hide this behind a
-Kconfig? Put another way, if I enabled this Kconfig and dumped core from
-some regular x86_64 process, will e_flags be different?
+Oops, yes, it should be one of those. Thanks.
 
-> This change is needed to resolve a debugging issue encountered when
-> analyzing core dumps with GDB for RISC-V systems. GDB inspects the
-> e_flags field to determine whether optional register sets such as the
-> floating-point unit are supported. Without correct flags, GDB may warn
-> and ignore valid register data:
-> 
->     warning: Unexpected size of section '.reg2/213' in core file.
-> 
-> As a result, floating-point registers are not accessible in the debugger,
-> even though they were dumped. Preserving the original e_flags enables
-> GDB and other tools to properly interpret the dump contents.
-> 
-> Signed-off-by: Svetlana Parfenova <svetlana.parfenova@syntacore.com>
-> ---
->  fs/Kconfig.binfmt        |  9 +++++++++
->  fs/binfmt_elf.c          | 26 ++++++++++++++++++++------
->  include/linux/mm_types.h |  5 +++++
->  3 files changed, 34 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/Kconfig.binfmt b/fs/Kconfig.binfmt
-> index bd2f530e5740..45bed2041542 100644
-> --- a/fs/Kconfig.binfmt
-> +++ b/fs/Kconfig.binfmt
-> @@ -184,4 +184,13 @@ config EXEC_KUNIT_TEST
->  	  This builds the exec KUnit tests, which tests boundary conditions
->  	  of various aspects of the exec internals.
->  
-> +config CORE_DUMP_USE_PROCESS_EFLAGS
-> +	bool "Preserve ELF e_flags from executable in core dumps"
-> +	depends on BINFMT_ELF && ELF_CORE && RISCV
-> +	default n
-> +	help
-> +	  Save the ELF e_flags from the process executable at load time
-> +	  and use it in the core dump header. This ensures the dump reflects
-> +	  the original binary ABI.
-> +
->  endmenu
-> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-> index caeddccaa1fe..e5e06e11f9fc 100644
-> --- a/fs/binfmt_elf.c
-> +++ b/fs/binfmt_elf.c
-> @@ -1290,6 +1290,11 @@ static int load_elf_binary(struct linux_binprm *bprm)
->  	mm->end_data = end_data;
->  	mm->start_stack = bprm->p;
->  
-> +#ifdef CONFIG_CORE_DUMP_USE_PROCESS_EFLAGS
-> +	/* stash e_flags for use in core dumps */
-> +	mm->saved_e_flags = elf_ex->e_flags;
-> +#endif
+> Also, is there a better value to use for this new ioctl? I'm not quite
+> sure what is the best practice to handle these kinds of conflicts...
 
-Is this structure actually lost during ELF load? I thought we preserved
-some more of the ELF headers during load...
+I wouldn't worry about it. We have *many* conflicts.
+(unless Al or Christian are concerned)
 
-> +
->  	/**
->  	 * DOC: "brk" handling
->  	 *
-> @@ -1804,6 +1809,8 @@ static int fill_note_info(struct elfhdr *elf, int phdrs,
->  	struct elf_thread_core_info *t;
->  	struct elf_prpsinfo *psinfo;
->  	struct core_thread *ct;
-> +	u16 machine;
-> +	u32 flags;
->  
->  	psinfo = kmalloc(sizeof(*psinfo), GFP_KERNEL);
->  	if (!psinfo)
-> @@ -1831,17 +1838,24 @@ static int fill_note_info(struct elfhdr *elf, int phdrs,
->  		return 0;
->  	}
->  
-> -	/*
-> -	 * Initialize the ELF file header.
-> -	 */
-> -	fill_elf_header(elf, phdrs,
-> -			view->e_machine, view->e_flags);
-> +	machine = view->e_machine;
-> +	flags = view->e_flags;
->  #else
->  	view = NULL;
->  	info->thread_notes = 2;
-> -	fill_elf_header(elf, phdrs, ELF_ARCH, ELF_CORE_EFLAGS);
-> +	machine = ELF_ARCH;
-> +	flags = ELF_CORE_EFLAGS;
->  #endif
->  
-> +#ifdef CONFIG_CORE_DUMP_USE_PROCESS_EFLAGS
-> +	flags = dump_task->mm->saved_e_flags;
-> +#endif
-
-This appears to clobber the value from view->e_flags. Is that right? It
-feels like this change should only be needed in the default
-ELF_CORE_EFLAGS case. How is view->e_flags normally set?
-
-> +
-> +	/*
-> +	 * Initialize the ELF file header.
-> +	 */
-> +	fill_elf_header(elf, phdrs, machine, flags);
-> +
->  	/*
->  	 * Allocate a structure for each thread.
->  	 */
-> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> index d6b91e8a66d6..39921b32e4f5 100644
-> --- a/include/linux/mm_types.h
-> +++ b/include/linux/mm_types.h
-> @@ -1098,6 +1098,11 @@ struct mm_struct {
->  
->  		unsigned long saved_auxv[AT_VECTOR_SIZE]; /* for /proc/PID/auxv */
->  
-> +#ifdef CONFIG_CORE_DUMP_USE_PROCESS_EFLAGS
-> +		/* the ABI-related flags from the ELF header. Used for core dump */
-> +		unsigned long saved_e_flags;
-> +#endif
-> +
->  		struct percpu_counter rss_stat[NR_MM_COUNTERS];
->  
->  		struct linux_binfmt *binfmt;
-> -- 
-> 2.50.1
-> 
-
--Kees
+>> (17 is already used for PROCFS_IOCTL_MAGIC somewhere else, so that probably should
+>> have update the Doc/rst file.)
+>>
+>>> +
+>>>  /* Pagemap ioctl */
+>>>  #define PAGEMAP_SCAN	_IOWR(PROCFS_IOCTL_MAGIC, 16, struct pm_scan_arg)
 
 -- 
-Kees Cook
+~Randy
+
 
