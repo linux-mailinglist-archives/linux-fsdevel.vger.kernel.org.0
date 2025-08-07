@@ -1,133 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-57009-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57010-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73047B1DCA8
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 19:51:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62C0AB1DCB2
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 19:55:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F41FA0047E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 17:51:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE0A01AA003C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 17:55:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 290251FF1C4;
-	Thu,  7 Aug 2025 17:51:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46D1D20296E;
+	Thu,  7 Aug 2025 17:55:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OOcdZ5Zz"
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="h4n7VQwP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FDEE1F8677
-	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Aug 2025 17:51:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C253D1F4192;
+	Thu,  7 Aug 2025 17:55:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754589073; cv=none; b=Kp+tM/d+dQ3XHyGdZlLM6U+MZ/AajuKfmxTKf3LeaELU6G6IH5K9kLW+p2+48C1SE6akJuQ/RZgVd0V8xMosTpeAPWju0wi4D80kKzUHq5X6CthU7EWXTp3fEGTjKkEO8spg/dpSnURPF8IjXxb7VD6SLk0PnrehIYjd/6GqYrw=
+	t=1754589325; cv=none; b=qt4pSiqlQSlZpuiTtNWTLwWc5vPmsC7qJfp7bsb0CILjNstZoPeMTjZksMEyc86YNMtouUIR0I61oBsK9kL8W5N+K1d6ldWQp1Zh5thMVudTI3e1OyHe5OwEgh9IiEwC235ltN7/L3ioJVB1x1E/S9Hvvb66x6u7MFRrZgXDRH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754589073; c=relaxed/simple;
-	bh=RmVatj+7jo06KaQAn37VgCls2qhfvtin2QixOBSNLZw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eh/GacVWQbbVcEWLJ6ZAqpjdMc9p/yFGc80n5P2eAu2mz6mjML33DPuapXQl2ApcURVucjANbUu+YIFgreFUFSOkqpMKbDNHvcd6xdWUpAJP5srp7Wbc+k2VJO9DnQWTHLsW2knjNyXh4kOnDXFwQJ1XqhYJuwbLATjJkP4YMp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OOcdZ5Zz; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-76bc5e68d96so1225245b3a.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Aug 2025 10:51:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754589071; x=1755193871; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pMRqLIhExZVAfYccMazV9kOBGqRXT44AzWAjvx9vBxk=;
-        b=OOcdZ5ZzzteksEDUd19GPxYoY4wwja4+HTYpdZ4pQkBOxGBYaTs/yI5C0AqdPVKHM5
-         VifYBSIms/XMIruVvHmgUQQ5akMCvoI6RjAjGjlh8z/3+2z6wVyx+tBRCT5VVobxkVgT
-         lGwaEUgG6IAud9Q8YuYS/lQZ94EqxgHMwoP6B4ekvuLdsN2Y2mhhR/GjguanG/DXJRP8
-         wncInR/RPNWPndzHCSsYBzqlkKvjtAnCgymIAzs/ArDGjQmEhgO/2Z1egio1gCF01OHu
-         1lcBO72vtD71UzX3NRVNDkn/y/oBoFPhmxWHN2GBlzbWxFxk4UneVEsREh+rwRhiAZ9H
-         ZE6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754589071; x=1755193871;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pMRqLIhExZVAfYccMazV9kOBGqRXT44AzWAjvx9vBxk=;
-        b=uWbn5r5M6isDHKsPKe/LTVYrbx8BdUXejbGbYyaqiGaNL09d0rAz8a7RbTeN8AptIT
-         58gnEefFQp2UwGwwD6cOtmbAjwwTheoB514aZBQhrBQloRmauGfgYyefIJv354gDws1r
-         TNFFaZ1G4/JHJ2RgZEYwtwU8Lsjik/ju6XBXuJoUtIpTveX98CCXm1vkc///1l7m8ePo
-         b2SfnKkFejLE3Z7zKhiCDkveJpKQfv8t2yFVz8AVVsEQYvuJD4H/JuEhGhPey1N1BFtv
-         kscTo8OecucCnWLvlZ6tAdFCv1DxKwNnX8qAs9c83xTgwi4ZHbN3IpCDETeuUeWPHeta
-         0m7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWiD13CdSI2aduUavfvyBMm6LAbMD4/QfGXN4DtoBxHNfylKThySFM8j52ZOe/cPN5ph0MUR7IaXcd0+bwy@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoRiFuscWjmtIlf7CbTAb8vsBL2jGcndmF/aeXG6UiK9hV/DDi
-	hi3v+RhF8eLkWVjJ5RRiBKmUwlAofMKcw3SI+//HDoMkauLtAWTkccY9
-X-Gm-Gg: ASbGncuZ11UpidUunrO+DRJz3/gpCAAAiwzabhvNTmKKr8A80teKa7JwIwbDjuqcnpP
-	QHL0HCq/WFtyXzJTynBmSB74vP3nbEuhX/MBo6LY8QaHamXjKgb1SpieKdrpiUbLOa+BzIMyVxy
-	1FIIFntj7SydbEY7B+I7FUwYYUrOJQTVhxISguDkyF6CcZM4bBntcYa9BhcdjUaMvGRXYWDTOIJ
-	Bsu6V6gwZryafIOikO/y9bCaC2xpmTqM8vqe1EZHrl1vOcCKmOIe5W+QBTwogZrTg1xEfStQPdl
-	0Dq8hRZT/CcRUY0Swo/UlyjUHXmwLgZZ3sgpLlMQSI5bVrVMP7OOGu7V5nzAepYz8OM7kMOpDLr
-	AEuLcki35HwjwRgy4fg3/fPENJ8s=
-X-Google-Smtp-Source: AGHT+IFLQ01FEJypsmR7F/fsM8eeu93DZf6AY6LL0Xcyb7lGkpN7LB02NvgtlO5ylYMeLic38l9gNw==
-X-Received: by 2002:a17:902:cccc:b0:240:2eae:aecb with SMTP id d9443c01a7336-2429f54e4aemr107194375ad.43.1754589071273;
-        Thu, 07 Aug 2025 10:51:11 -0700 (PDT)
-Received: from localhost ([2a03:2880:ff:b::])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1ef83f3sm189867975ad.28.2025.08.07.10.51.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Aug 2025 10:51:10 -0700 (PDT)
-From: Joanne Koong <joannelkoong@gmail.com>
-To: miklos@szeredi.hu,
-	brauner@kernel.org
-Cc: djwong@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	kernel-team@meta.com
-Subject: [PATCH v2] fuse: keep inode->i_blkbits constant
-Date: Thu,  7 Aug 2025 10:50:15 -0700
-Message-ID: <20250807175015.515192-1-joannelkoong@gmail.com>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1754589325; c=relaxed/simple;
+	bh=UQBjd7oTQ++xKM4gsFbaCmOR0brFLzErTPP56dbXe5Y=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=EQMiSIDzBAI9uA8hxpOGAOE4NDUpbd/RpEHGNN0Y4c0yGsKj1zZvEqlsjKF24+0D49YcAyej1jjlfl1fTAJG76c/2N3R3NJRtOa4cro6pFGQ97AidvELdXtoLfHUMV2Rcwx2nmLMLBWfGBJ1LHiIo80iyuPF+h8yAWa0/+orXOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=h4n7VQwP; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4byZZJ0x87z9sTR;
+	Thu,  7 Aug 2025 19:55:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1754589320;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=YsPsa0bzvSKbHR6viJA+n9YQMrDTXPcEJKFy94H+8uI=;
+	b=h4n7VQwPjju8fULKvEP82k60PP97PW3gHg9m9K4dRgB5aOHPjkE494qT6B2NCcNxt6kk1B
+	Xb08jIeaMgwFh3xYGjziex+Ll3QbA7znWMkpSuEcNa0lWgBDGaBp5pKLBZj+qcv9DEJ4ie
+	KBRAk5Tp21mX6jD9FIjA7Vt0+hgWegP+zQJ72BXgpvQPTo6W5mES6uSiGGRvyrKEUlVYDW
+	1RCV16Le/OKExNqQk9sXQJbbHwDaZiV8jCu2+XrMe8xwAhu6dgVmr3uvV7d+bkZFClxs/L
+	J3D/B6w2g3Np4vUBc1CZflgNXRKRAvfP4XuIpAjVRgzgZ8mpBn9jQG+ucBX40g==
+From: Aleksa Sarai <cyphar@cyphar.com>
+Subject: [PATCH 0/2] open_tree_attr: do not allow id-mapping changes
+ without OPEN_TREE_CLONE
+Date: Fri, 08 Aug 2025 03:55:04 +1000
+Message-Id: <20250808-open_tree_attr-bugfix-idmap-v1-0-0ec7bc05646c@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHnolGgC/x2MSQqAMAwAvyI5W2jFDb8iIq1GzcFa0iqC+HeDx
+ 2GGeSAiE0bosgcYL4p0eAGTZzBt1q+oaBaGQheVbnWrjoB+TIw42pRYuXNd6JZot0E515TG1PU
+ 86RLkEBhF/vd+eN8PC5d7Dm0AAAA=
+To: Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>, 
+ stable@vger.kernel.org
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1702; i=cyphar@cyphar.com;
+ h=from:subject:message-id; bh=UQBjd7oTQ++xKM4gsFbaCmOR0brFLzErTPP56dbXe5Y=;
+ b=owGbwMvMwCWmMf3Xpe0vXfIZT6slMWRMedHA2ttmuj4wgvv3beEorXfLul7Ep5hxKDjv/R/6L
+ t92uXttRykLgxgXg6yYIss2P8/QTfMXX0n+tJINZg4rE8gQBi5OAZjINwOG/6URf4tL5/tceui3
+ jGd3kcJ3vgrRXYE/ZS76aQn/ebHx0hdGhne84W3v3i3LrpW+HtW+/7jzzjJ+k3iPm0ket6QerEu
+ rYgAA
+X-Developer-Key: i=cyphar@cyphar.com; a=openpgp;
+ fpr=C9C370B246B09F6DBCFC744C34401015D1D2D386
 
-With fuse now using iomap for writeback handling, inode blkbits changes
-are problematic because iomap relies on inode->i_blkbits for its
-internal bitmap logic. Currently we change inode->i_blkbits in fuse to
-match the attr->blksize value passed in by the server.
+As described in commit 7a54947e727b ('Merge patch series "fs: allow
+changing idmappings"'), open_tree_attr(2) was necessary in order to
+allow for a detached mount to be created and have its idmappings changed
+without the risk of any racing threads operating on it. For this reason,
+mount_setattr(2) still does not allow for id-mappings to be changed.
 
-This commit keeps inode->i_blkbits constant in fuse. Any attr->blksize
-values passed in by the server will not update inode->i_blkbits. The
-client-side behavior for stat is unaffected, stat will still reflect the
-blocksize passed in by the server.
+However, there was a bug in commit 2462651ffa76 ("fs: allow changing
+idmappings") which allowed users to bypass this restriction by calling
+open_tree_attr(2) *without* OPEN_TREE_CLONE.
 
-Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-Fixes: ef7e7cbb32 ("fuse: use iomap for writeback")
+can_idmap_mount() prevented this bug from allowing an attached
+mountpoint's id-mapping from being modified (thanks to an is_anon_ns()
+check), but this still allows for detached (but visible) mounts to have
+their be id-mapping changed. This risks the same UAF and locking issues
+as described in the merge commit, and was likely unintentional.
+
+For what it's worth, I found this while working on the open_tree_attr(2)
+man page, and was trying to figure out what open_tree_attr(2)'s
+behaviour was in the (slightly fruity) ~OPEN_TREE_CLONE case.
+
+Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
 ---
-Changelog:
-v1: https://lore.kernel.org/linux-fsdevel/20250804210743.1239373-1-joannelkoong@gmail.com/#t
-v1 -> v2:
-  * Remove warning and keep stat() behavior unchanged (Miklos)
-  * Dropped 2nd patch
----
- fs/fuse/inode.c | 5 -----
- 1 file changed, 5 deletions(-)
+Aleksa Sarai (2):
+      open_tree_attr: do not allow id-mapping changes without OPEN_TREE_CLONE
+      selftests/mount_setattr: add smoke tests for open_tree_attr(2) bug
 
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index bfe8d8af46f3..33632c32ba6c 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -285,11 +285,6 @@ void fuse_change_attributes_common(struct inode *inode, struct fuse_attr *attr,
- 		}
- 	}
- 
--	if (attr->blksize != 0)
--		inode->i_blkbits = ilog2(attr->blksize);
--	else
--		inode->i_blkbits = inode->i_sb->s_blocksize_bits;
--
- 	/*
- 	 * Don't set the sticky bit in i_mode, unless we want the VFS
- 	 * to check permissions.  This prevents failures due to the
+ fs/namespace.c                                     |  3 +-
+ .../selftests/mount_setattr/mount_setattr_test.c   | 77 ++++++++++++++++++----
+ 2 files changed, 66 insertions(+), 14 deletions(-)
+---
+base-commit: 66639db858112bf6b0f76677f7517643d586e575
+change-id: 20250808-open_tree_attr-bugfix-idmap-bb741166dc04
+
+Best regards,
 -- 
-2.47.3
+Aleksa Sarai <cyphar@cyphar.com>
 
 
