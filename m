@@ -1,145 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-56963-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56964-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1AEEB1D325
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 09:18:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E97AB1D45E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 10:41:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35C3116694C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 07:18:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E341A62846B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 08:41:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6E2238D5A;
-	Thu,  7 Aug 2025 07:18:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99727256C87;
+	Thu,  7 Aug 2025 08:41:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="Z12glsS8"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="LnUmBl1Z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD2A88F48;
-	Thu,  7 Aug 2025 07:18:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEB8A233136;
+	Thu,  7 Aug 2025 08:41:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754551101; cv=none; b=n6v0Aw8lDf4o4DkwgaGCuI/qz7ZOD8epbAYkap1/tt4cbPc7uMM9E7UdI0frKjEZ6sreTgk7pb9IBti2OekuxNTYQP2ofFJPy1KYJqMMGPd6UtZIB+5i2FNuWoRn7QdLNI1hoVagLT7cdSt1HxsjAYMStmnHNNRXzg6Ac90GAB8=
+	t=1754556071; cv=none; b=dCn1TKc532ka3pS48G5+1I26M6dptWdGOJEdqLcUNPB4DoO5JTMEUv0eS+Jz3SebmS79hH7a5eMbzAIBOYWZS4a6zutQJTuVmtJrc40+XXZdRvjYAz/I1aNJW2znhbZKXHCsihFlN4VsT4QCgen7AG0IPlYMOMxw2vueiyB0bsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754551101; c=relaxed/simple;
-	bh=+ULjuenwEzpGC8UAzxKw+UpGPt4UQhh+CmIbbChlejc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OOegH35pPA0fBDuiYTIHycRlyED/uJq5KXc3pcr9/2esp+VyIr5MK/x6wwICoVHlaQ8xxihuwqz5BfyKYJYzP9wPHNbc1Xtftsd0JjnaXv7SoD9C0zqlzEMqIznsJa+7K564GY1GzpJdJrG3RU02g8sqcOzToYymiWX9qVLfTyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=Z12glsS8; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4byJR86h77z9syY;
-	Thu,  7 Aug 2025 09:18:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1754551093;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+ULjuenwEzpGC8UAzxKw+UpGPt4UQhh+CmIbbChlejc=;
-	b=Z12glsS8h5ztkydn7KCjBvp8B2d4sQhdHS+zy0dBp50B4bgFRDwn3iKX+ukysgEeH7ycmD
-	1fP2zrfNK/iq3ueO00R3iE2YKrjtes55OO0CveBD/oGdVpTy96/28NQ8kUCRzmZMVvthiy
-	dAg7+PnZWnPO2F5WEkaSm/UH6N2xgIFqwZ+iWAWqHu6ZrQwfCuBHcGWU297wOxsZuKti0w
-	VVnB8Big+Y08L+WWrbOfnEKIuT7mCorfJIns+4CO7po8sDf4+8z/vE/QNGqW0B+zSi5a6G
-	W0+mZ4fsBKK2h3Prvu5AvLppI7QfJmZ79OG7TVDvAkWDHA4alRtg3F/8vOrCow==
-Date: Thu, 7 Aug 2025 17:17:56 +1000
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Askar Safin <safinaskar@zohomail.com>
-Cc: amir73il@gmail.com, brauner@kernel.org, corbet@lwn.net, jack@suse.cz, 
-	linux-api@vger.kernel.org, linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, luto@amacapital.net, 
-	shuah@kernel.org, viro@zeniv.linux.org.uk
-Subject: Re: [PATCH v4 2/4] procfs: add "pidns" mount option
-Message-ID: <2025-08-07.1754550206-glad-sneeze-upstate-sorts-swank-courts-YKmj7E@cyphar.com>
-References: <2025-08-05.1754378656-steep-harps-muscled-mailroom-lively-gosling-VVGNTP@cyphar.com>
- <20250806102501.75104-1-safinaskar@zohomail.com>
- <2025-08-06.1754489257-elated-baubles-defiant-growls-beloved-jewelry-9Ofm2b@cyphar.com>
+	s=arc-20240116; t=1754556071; c=relaxed/simple;
+	bh=29/0/D42/WwMJ2+ruqP8oXlKefinLhx/lRUtc4cP/kU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=E41DVD34a78bcsi7mLc8XDitx3T18UVab0xwtXm2jopG512qBXJe+epUPYu3Sfc1/+KTmhZ59ZZu3mcpndBMwgCsrgk9bHpSp3zcK7uJXVLGODCxssUuGuMDlXfBS5/KbZFuErIZx1245aCXBQ1re7gW07bqo214558najORNT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=LnUmBl1Z; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=YSbYWHuNmw8y1RdYInOumWjpEswg0F29surRDM+7eW0=; b=LnUmBl1ZkjfES3scO0WN9jKW6E
+	zDJTk55GVnoBGbPwyZCkF3Q5bFYld87AAgnEuCVC1g5PKf8ymlitAy4SJH7Uy45tbqMxvMSuxPpX9
+	9grXKs31pNJYpx4zR9Nz7ZlXmqtR4ckKZu5aD8Ux650Bi2vGz4kYSQjrOLlYr+yZi6wJlxHmq6kQR
+	GveqUgLoXvXKc7K3Bx4xvB5tRPUnUtmyvMEHQZSaUDaoEyOK4QJCRAVopGPeeDvFjARS+KAeoX1Kk
+	iF8UCZNwEy+IulVHPTnLjz8BJNJQ0SlMx9SqrnTieDo25gXAClBRBg3oIAzN40GbEczTxHm5rtF9H
+	HBZbRKTw==;
+Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1ujwBI-00Auyx-Nd; Thu, 07 Aug 2025 10:41:00 +0200
+From: Luis Henriques <luis@igalia.com>
+To: Chunsheng Luo <luochunsheng@ustc.edu>
+Cc: miklos@szeredi.hu,  linux-fsdevel@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fuse: Move same-superblock check to fuse_copy_file_range
+In-Reply-To: <20250806135254.352-1-luochunsheng@ustc.edu> (Chunsheng Luo's
+	message of "Wed, 6 Aug 2025 21:52:54 +0800")
+References: <20250806135254.352-1-luochunsheng@ustc.edu>
+Date: Thu, 07 Aug 2025 09:40:55 +0100
+Message-ID: <87bjorle20.fsf@wotan.olymp>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="s5bgiurac7jxabhb"
-Content-Disposition: inline
-In-Reply-To: <2025-08-06.1754489257-elated-baubles-defiant-growls-beloved-jewelry-9Ofm2b@cyphar.com>
-
-
---s5bgiurac7jxabhb
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4 2/4] procfs: add "pidns" mount option
-MIME-Version: 1.0
 
-On 2025-08-07, Aleksa Sarai <cyphar@cyphar.com> wrote:
-> On 2025-08-06, Askar Safin <safinaskar@zohomail.com> wrote:
-> > > I just realised that we probably also want to support FSCONFIG_SET_PA=
-TH
-> >=20
-> > I just checked kernel code. Indeed nobody uses FSCONFIG_SET_PATH.
-> > Moreover, fsparam_path macro is present since 5.1. And for all this
-> > time nobody used it. So, let's just remove FSCONFIG_SET_PATH. Nobody
-> > used it, so this will not break anything.
-> >=20
-> > If you okay with that, I can submit patch, removing it.
->=20
-> I would prefer you didn't -- "*at()" semantics are very useful to a lot
-> of programs (*especially* AT_EMPTY_PATH). I would like the pidns=3D stuff
-> to support it, and probably also overlayfs...
->=20
-> I suspect the primary issue is that when migrating to the new mount API,
-> filesystem devs just went with the easiest thing to use
-> (FSCONFIG_SET_STRING) even though FSCONFIG_SET_PATH would be better. I
-> suspect the lack of documentation around fsconfig(2) played a part too.
->=20
-> My impression is that interest in the minutia about fsconfig(2) is quite
-> low on the list of priorities for most filesystem devs, and so the neat
-> aspects of fsconfig(2) haven't been fully utilised. (In LPC last year,
-> we struggled to come to an agreement on how filesystems should use the
-> read(2)-based error interface.)
->=20
-> We can very easily move fsparam_string() or fsparam_file_or_string()
-> parameters to fsparam_path() and a future fsparam_file_or_path(). I
-> would much prefer that as a user.
+On Wed, Aug 06 2025, Chunsheng Luo wrote:
 
-Actually, fsparam_bdev() accepts FSCONFIG_SET_PATH in a very roundabout
-way (and the checker doesn't verify anything...?). So there is at least
-one user (ext4's "journal_path"), it's just not well-documented (which
-I'm trying to fix ;]).
+> The copy_file_range COPY_FILE_SPLICE capability allows filesystems to
+> handle cross-superblock copy. However, in the current fuse implementation,
+> __fuse_copy_file_range accesses src_file->private_data under the assumpti=
+on
+> that it points to a fuse_file structure. When the source file belongs to a
+> non-FUSE filesystem, it will leads to kernel panics.
 
-My plan is to update fs_lookup_param() to be more useful for the (fairly
-common) use-case of wanting to support paths and file descriptors, and
-going through to clean up some of these unused fsparam_* helpers (or
-fsparam_* helpers being abused to implement stuff that the fs_parser
-core already supports).
+I wonder if you have actually seen this kernel panic happening.  It seems
+like the code you're moving into fuse_copy_file_range() shouldn't be
+needed as the same check is already done in generic_copy_file_checks()
+(which is called from vfs_copy_file_range()).
 
-At the very least, overlayfs, ext4, and this procfs patchset can make
-use of it.
+Either way, I think your change to fuse_copy_file_range() could be
+simplified with something like:
 
+	ssize_t ret =3D -EXDEV;
+
+	if (file_inode(src_file)->i_sb =3D=3D file_inode(dst_file)->i_sb)
+		ret =3D __fuse_copy_file_range(src_file, src_off, dst_file, dst_off,
+					     len, flags);
+
+	if (ret =3D=3D -EOPNOTSUPP || ret =3D=3D -EXDEV)
+		ret =3D splice_copy_file_range(src_file, src_off, dst_file,
+					     dst_off, len);
+
+But again, my understanding is that this should never happen in practice
+and that the superblock check could even be removed from
+__fuse_copy_file_range().
+
+Cheers,
 --=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-https://www.cyphar.com/
+Lu=C3=ADs
 
---s5bgiurac7jxabhb
-Content-Type: application/pgp-signature; name="signature.asc"
+>
+> To resolve this, move the same-superblock check from __fuse_copy_file_ran=
+ge
+> to fuse_copy_file_range to ensure both files belong to the same fuse
+> superblock before accessing private_data.
+>
+> Signed-off-by: Chunsheng Luo <luochunsheng@ustc.edu>
+> ---
+>  fs/fuse/file.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index 95275a1e2f54..a29f1b84f11b 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -2984,9 +2984,6 @@ static ssize_t __fuse_copy_file_range(struct file *=
+file_in, loff_t pos_in,
+>  	if (fc->no_copy_file_range)
+>  		return -EOPNOTSUPP;
+>=20=20
+> -	if (file_inode(file_in)->i_sb !=3D file_inode(file_out)->i_sb)
+> -		return -EXDEV;
+> -
+>  	inode_lock(inode_in);
+>  	err =3D fuse_writeback_range(inode_in, pos_in, pos_in + len - 1);
+>  	inode_unlock(inode_in);
+> @@ -3066,9 +3063,12 @@ static ssize_t fuse_copy_file_range(struct file *s=
+rc_file, loff_t src_off,
+>  {
+>  	ssize_t ret;
+>=20=20
+> +	if (file_inode(src_file)->i_sb !=3D file_inode(dst_file)->i_sb)
+> +		return splice_copy_file_range(src_file, src_off, dst_file,
+> +					     dst_off, len);
+> +
+>  	ret =3D __fuse_copy_file_range(src_file, src_off, dst_file, dst_off,
+>  				     len, flags);
+> -
+>  	if (ret =3D=3D -EOPNOTSUPP || ret =3D=3D -EXDEV)
+>  		ret =3D splice_copy_file_range(src_file, src_off, dst_file,
+>  					     dst_off, len);
+> --=20
+> 2.43.0
+>
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaJRTJAAKCRAol/rSt+lE
-b8vQAP4i3lUz0raHzBGHmCX+UhlLhpD2d850DSh9njsFS7RknQEArL1ac/38BwlE
-Qey3BzoNaEAAXVm8ZejpG1aKW6NoJAQ=
-=Xy1s
------END PGP SIGNATURE-----
-
---s5bgiurac7jxabhb--
 
