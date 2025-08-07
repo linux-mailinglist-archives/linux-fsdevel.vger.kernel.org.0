@@ -1,240 +1,223 @@
-Return-Path: <linux-fsdevel+bounces-56984-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56985-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26DABB1D816
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 14:39:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A6032B1D83B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 14:48:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C842118C33DD
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 12:39:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AD801AA41DA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 12:49:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D77F1253B42;
-	Thu,  7 Aug 2025 12:38:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94CA3254AF5;
+	Thu,  7 Aug 2025 12:48:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="kM9UQQHD"
+	dkim=pass (2048-bit key) header.d=aquinas.su header.i=@aquinas.su header.b="lT3lpeDZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from hope.aquinas.su (hope.aquinas.su [82.148.24.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 748F324728B;
-	Thu,  7 Aug 2025 12:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A5ED125D6;
+	Thu,  7 Aug 2025 12:48:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.148.24.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754570336; cv=none; b=IOrVDfhJ+FWXteAL2BeeFGHZWMv402knvAIETm+Hekio+lFGMisE+RTiHjIvk5E0b7s1rRgaj90kmqcqXqZVFTqDvEV0zdwDYrVs/ysmvwhBjoHTm3We1G25aYrsIBCqogT+H6pmsXWsRQdWkZOx2etoGVxP2QnNcFJpUlHsiI4=
+	t=1754570927; cv=none; b=NyQEBpazRmGAtLZa7w6klWCIlme7n5SVGSApwhzXF/UGpkfoe6nUHaCmfMrSB4xGF2xnPRpoI8yq6K2WIflWOZQXgtV3U2IoWpMsmLCAW0z2LUrarBk8QFAYR2NkvC5o6DGVi0bVGd29ukG8yeTryhusXV4Z7hu15wAF92U6jns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754570336; c=relaxed/simple;
-	bh=YFLcIo16OfvzbGgpVCXltFxog7lFpdvAFZs0xLw95kY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UcwlMpR/fjH0CTdnoTlI6cQI/ptELTFjrTbwok+v3rHtZ0ueLOZ9HonQ6V9sOZEYJ/tUweTvPxPTBqQNHsIiNr2hhp0vWoyefJGokDJVBdAaPQ2l28EfY+RSHyJAHlcxTxvzoRUsweZ8GqrZSZavdmTnhT0pX62/1WuGmr2v2nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=kM9UQQHD; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4byRY52lVvz9sQ0;
-	Thu,  7 Aug 2025 14:38:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1754570329;
+	s=arc-20240116; t=1754570927; c=relaxed/simple;
+	bh=U8KEEURk5qfhc86MD9bRvMHAHEupAimMFaWGHIvzC+U=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tnqeBVIg/CQh+xpA0ReXdOfADPTvUZP1PcDp2PpMkKSffNzMrOVWCCf7/K+PqoPbhc3JOlqx0Se5zUPJlpC+T10EiIGs8mEcqef7US+kR6iBIKaKAJSIIoFNDZVqcNYjYoekIcO5/MhjTNrY7eWNUX2JLqMJKQ4QTVaG2IRL8uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aquinas.su; spf=pass smtp.mailfrom=aquinas.su; dkim=pass (2048-bit key) header.d=aquinas.su header.i=@aquinas.su header.b=lT3lpeDZ; arc=none smtp.client-ip=82.148.24.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aquinas.su
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aquinas.su
+Received: from woolf.localnet (host-46-241-65-133.bbcustomer.zsttk.net [46.241.65.133])
+	(Authenticated sender: admin@aquinas.su)
+	by hope.aquinas.su (Postfix) with ESMTPSA id B0706708CC;
+	Thu,  7 Aug 2025 15:42:39 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aquinas.su; s=default;
+	t=1754570561;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=bU/y9MWFa6B0gIwG3PfeO00P0lRWaDiO5X7C9N+oo0U=;
-	b=kM9UQQHDjzAmp/xrv3atJndAWsdCCFR7mMfP78QqFoplx1+Pdy6bZTKmOAuFlTRRql3qYi
-	tCXfgoRYSq/7XDRh86GZyVycpkfdHaDGPP9AauOWFsrgH7iMXlLoSx0cSSErElxCPG/7C2
-	6IkTzjYdqcXc8qHDulI52eFFG9/+lipLRXQWT1BHRBIUqTS/OE9+bgo1NcTRe62BPkoIfe
-	J371X18elF2EvVAJpI7CGXojf26F1uP+giUxASD5o2T8r9nN7tLUosLY3XPD71toDhO0vy
-	ZIsCB+Z2bWFUyaISC6dQVa3ucKtY5FX8m26cp8NO9j56ldMarOdhJuiCTc42Zw==
-Date: Thu, 7 Aug 2025 22:38:36 +1000
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Alejandro Colomar <alx@kernel.org>
-Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v2 02/11] mount_setattr.2: move mount_attr struct to
- mount_attr.2type
-Message-ID: <2025-08-07.1754570250-rented-dazzler-furry-proton-robust-diamonds-Kgpe2w@cyphar.com>
-References: <20250807-new-mount-api-v2-0-558a27b8068c@cyphar.com>
- <20250807-new-mount-api-v2-2-558a27b8068c@cyphar.com>
- <cselxzuadkkf4cfx45fm3cm77mkq7gxrbzg7idr5726p52w5qa@sarhby7scgp6>
+	bh=U8KEEURk5qfhc86MD9bRvMHAHEupAimMFaWGHIvzC+U=;
+	b=lT3lpeDZqQeC9m4cj3n0axS4HCvp7Xv9NpPXsVzKSbfYxxiw5XA0J6cq/FwGzlMn86dKZx
+	glLCIIrQiAjFYkt5sw1IIMrU+SNmeSU6HzGNRiFgNcxpM8Pzdt2g3rUCB1KYmy5MmdUuXg
+	kxGceG35K4MkTRIQYyNjxa1XbYMZJ/e4CoohKwJNvpuWJKhHJyM3QB2iMEVVXuSs52UCNp
+	3EiQSIqxbbgloV8cHsS3ihIj8VnOz5VAnsEPPg/Oo7zTprP+Cu9wqaVtHP9vFem07RZd3h
+	DtXdd8xkX7jmOe1LyAdEmfw2fxotmwtZfW3YEtxOPlYLNMvXhYWRIIDokH+VjA==
+Authentication-Results: hope.aquinas.su;
+	auth=pass smtp.auth=admin@aquinas.su smtp.mailfrom=admin@aquinas.su
+From: Aquinas Admin <admin@aquinas.su>
+To: Malte =?UTF-8?B?U2NocsO2ZGVy?= <malte.schroeder@tnxip.de>,
+ Kent Overstreet <kent.overstreet@linux.dev>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ "Carl E. Thompson" <list-bcachefs@carlthompson.net>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] bcachefs changes for 6.17
+Date: Thu, 07 Aug 2025 19:42:38 +0700
+Message-ID: <5909824.DvuYhMxLoT@woolf>
+In-Reply-To: <1869778184.298.1754433695609@mail.carlthompson.net>
+References:
+ <22ib5scviwwa7bqeln22w2xm3dlywc4yuactrddhmsntixnghr@wjmmbpxjvipv>
+ <f4be82e7-d98c-44d1-a65b-8c4302574fff@tnxip.de>
+ <1869778184.298.1754433695609@mail.carlthompson.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2efsv5i2maco22bu"
-Content-Disposition: inline
-In-Reply-To: <cselxzuadkkf4cfx45fm3cm77mkq7gxrbzg7idr5726p52w5qa@sarhby7scgp6>
-
-
---2efsv5i2maco22bu
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 02/11] mount_setattr.2: move mount_attr struct to
- mount_attr.2type
-MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 
-On 2025-08-07, Alejandro Colomar <alx@kernel.org> wrote:
-> Hi Aleksa,
+Generally, this drama is more like a kindergarten. I honestly don't underst=
+and=20
+why there's such a reaction. It's a management issue, solely a management=20
+issue. The fact is that there are plenty of administrative possibilities to=
+=20
+resolve this situation.
+
+Assign a specific person to handle issues with Kent, if Linus is unable to =
+do=20
+so.
+Simply freeze the patch acceptance for a certain period, explaining the=20
+situation, and ignoring it if the problem is really there. Then resume work=
+=2E=20
+This has already been done and it was reasonable.
+Explain to the person who is wrong in the discussion, draw conclusions, and=
+=20
+possibly make some exceptions or changes in the process.
+The main task of management is to work with engineers, who are often not=20
+politically correct or have their own view of the world. If you throw out a=
+=20
+successful development that has proven its viability into the cold, I have=
+=20
+questions about your actions. Anyway, I have plenty of questions about the=
+=20
+Linux Foundation in general. The point is that many remember how the projec=
+t=20
+was born and how it developed.
+
+So, tell me, you release a product. You have a well-organized development=20
+cycle. You find a problem that prevents your product from being used as=20
+advertised. You already have an RC. The only way to fix the problem is to a=
+dd=20
+new functionality to one of the product's subsystems. Will you release a=20
+product with known issues and later issue an errata, or will you make the=20
+necessary changes, provided no one is standing behind you with an axe=20
+threatening to cut your head off for a delay in the release? What's so terr=
+ible=20
+about that?
+
+What's so terrible about fixing a bug in a subsystem marked as experimental=
+,=20
+which some of your customers use? Especially since it will only affect thos=
+e=20
+customers who use this subsystem, as others won't include it in their build=
+=20
+processes.
+
+This "We don't start adding new features just because you found other bugs"=
+=20
+sounds absurd. So, if we find bugs, they can't be fixed if we need to exten=
+d the=20
+functionality before the release? Excuse me, what? I clearly understand the=
+=20
+absurdity of this requirement. Because it effectively means that if we noti=
+ce=20
+that ext4 is corrupting data only in RC simply because some code was forgot=
+ten=20
+to be added to a subsystem during the release window, we can't accept the f=
+ix=20
+because it requires adding new functionality and we will release the versio=
+n=20
+with the problem. I clearly understand that this is not the exact situation=
+,=20
+but it was done as a solution to an existing user's problem. Moreover, the=
+=20
+amount of changes is not that significant. Especially since it's not really=
+ a=20
+fix but a workaround, a useful one that can actually help some real users i=
+n=20
+certain situations.
+
+new USB serial driver device ids 6.12-rc7 is this new functionality or not?
+ALSA: hda/realtek: Support mute LED on HP Laptop 14-dq2xxx 6.11-rc7 - new=20
+functionality?
+ALSA: hda/realtek: Enable Mute Led for HP Victus 15-fb1xxx - 6.11-rc7
+Octeontx2-pf: ethtool: support multi advertise mode - 6.15-rc5
+drm/i915/flipq: Implement Wa_18034343758
+drm/i915/display: Add drm_panic support
+Is this different? Or are the rules somehow not for everyone?
+
+But no, instead, this is what happened.
+
+Yes, the file system is marked as experimental. However, everyone knows tha=
+t=20
+there are users who use this file system in a production environment. It's =
+just=20
+how it has historically been. Usually, it's SOHO, but that doesn't change=20
+much. Everyone knows that the file system has a very interesting design and=
+=20
+some features that make it the most optimal solution. At least now, it is=20
+already successfully used as a replacement for LVM-Cache, DM-Cache, Bcachef=
+s,=20
+etc. No existing file system today offers this functionality. Btrfs does no=
+t=20
+offer this functionality on various types of devices. Let's not consider ZF=
+S,=20
+since it's an Out-Of-Tree project and has a number of problems and=20
+limitations, and even though such functionality could be implemented, it's =
+not=20
+SOHO.
+
+Therefore, instead of development, we are getting nonsense in the form of=20
+freezing the project or, worse, throwing the codebase away entirely. Why?=20
+Maybe we should switch from development to degradation?
+
+As for the "trust issue," we've seen many examples of malicious code being=
+=20
+included in the kernel. That's also a trust issue, isn't it? From this=20
+perspective, you can't use Linux at all. There's no way. You know, You can'=
+t=20
+have it both ways. Either that or nothing at all. Why these half-measures?
+
+I somehow feel that we should start with management, not throwing the proje=
+ct=20
+into the cold.
+> If we're giving our personal opinions I lean the other way.
 >=20
-> On Thu, Aug 07, 2025 at 03:44:36AM +1000, Aleksa Sarai wrote:
-> > As with open_how(2type), it makes sense to move this to a separate man
-> > page.  In addition, future man pages added in this patchset will want to
-> > reference mount_attr(2type).
+> I make no statement about the quality of Mr. Overstreet's code or whether=
+ it
+> is (or isn't) stabilizing. But for me as someone who's made a career out =
+of
+> Linux it's not just about code it's about *trust*. For me personally I've
+> made the decision to remove bcachefs entirely from my personal workstatio=
+ns
+> and lab where I'd been testing and using it extensively for years. It's
+> harsh to say it but I simply do not trust Kent's decision making process
+> nor do I trust him as a *person* enough for me to be comfortable running
+> bcachefs. I base this not on what other's may have said or written about
+> him but on my own interactions with him and reading his own words.
+>=20
+> This can (and hopefully will) change. People can grow... particularly
+> through adversity. I'm hopeful that if it's decided that bcachefs will be
+> removed or its in-kernel development paused Kent may reevaluate what's
+> important and how he deals with people. I look forward to being able to
+> trust bcachefs again but that's not right now.
+>=20
+> Just my 2=C2=A2.
+>=20
+> > On 2025-08-05 2:19 PM PDT Malte Schr=C3=B6der <malte.schroeder@tnxip.de=
+> wrote:
 > >=20
-> > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
-> > ---
-> >  man/man2/mount_setattr.2      | 17 ++++---------
-> >  man/man2type/mount_attr.2type | 58 +++++++++++++++++++++++++++++++++++=
-++++++++
-> >  2 files changed, 63 insertions(+), 12 deletions(-)
-> >=20
-> > diff --git a/man/man2/mount_setattr.2 b/man/man2/mount_setattr.2
-> > index c96f0657f046..d44fafc93a20 100644
-> > --- a/man/man2/mount_setattr.2
-> > +++ b/man/man2/mount_setattr.2
-> > @@ -114,18 +114,11 @@ .SH DESCRIPTION
-> >  .I attr
-> >  argument of
-> >  .BR mount_setattr ()
-> > -is a structure of the following form:
-> > -.P
-> > -.in +4n
-> > -.EX
-> > -struct mount_attr {
-> > -    __u64 attr_set;     /* Mount properties to set */
-> > -    __u64 attr_clr;     /* Mount properties to clear */
-> > -    __u64 propagation;  /* Mount propagation type */
-> > -    __u64 userns_fd;    /* User namespace file descriptor */
-> > -};
-> > -.EE
-> > -.in
-> > +is a pointer to a
-> > +.I mount_attr
-> > +structure,
-> > +described in
-> > +.BR mount_attr (2type).
-> >  .P
-> >  The
-> >  .I attr_set
-> > diff --git a/man/man2type/mount_attr.2type b/man/man2type/mount_attr.2t=
-ype
-> > new file mode 100644
-> > index 000000000000..b7a3ace6b3b9
-> > --- /dev/null
-> > +++ b/man/man2type/mount_attr.2type
-> > @@ -0,0 +1,58 @@
-> > +
->=20
-> Please remove this blank.  It is not diagnosed by groff(1), but I think
-> it should be diagnosed (blank lines are diagnosed elsewhere).  I've
-> reported a bug to groff(1) (Branden will be reading this, anyway).
->=20
-> > +.\" Copyright, the authors of the Linux man-pages project
-> > +.\"
-> > +.\" SPDX-License-Identifier: Linux-man-pages-copyleft
-> > +.\"
-> > +.TH mount_attr 2type (date) "Linux man-pages (unreleased)"
-> > +.SH NAME
-> > +mount_attr \- what mount properties to set and clear
-> > +.SH LIBRARY
-> > +Linux kernel headers
-> > +.SH SYNOPSIS
-> > +.EX
-> > +.B #include <sys/mount.h>
-> > +.P
-> > +.B struct mount_attr {
-> > +.BR "    __u64 attr_set;" "     /* Mount properties to set */"
-> > +.BR "    __u64 attr_clr;" "     /* Mount properties to clear */"
-> > +.BR "    __u64 propagation;" "  /* Mount propagation type */"
-> > +.BR "    __u64 userns_fd;" "    /* User namespace file descriptor */"
-> > +    /* ... */
-> > +.B };
-> > +.EE
-> > +.SH DESCRIPTION
-> > +Specifies which mount properties should be changed with
-> > +.BR mount_setattr (2).
-> > +.P
-> > +The fields are as follows:
-> > +.TP
-> > +.I .attr_set
-> > +This field specifies which
-> > +.BI MOUNT_ATTR_ *
-> > +attribute flags to set.
-> > +.TP
-> > +.I .attr_clr
-> > +This fields specifies which
-> > +.BI MOUNT_ATTR_ *
-> > +attribute flags to clear.
-> > +.TP
-> > +.I .propagation
-> > +This field specifies what mount propagation will be applied.
-> > +The valid values of this field are the same propagation types describe=
-d in
-> > +.BR mount_namespaces (7).
-> > +.TP
-> > +.I .userns_fd
-> > +This fields specifies a file descriptor that indicates which user name=
-space to
->=20
-> s/fields/field/
->=20
-> > +use as a reference for ID-mapped mounts with
-> > +.BR MOUNT_ATTR_IDMAP .
-> > +.SH VERSIONS
-> > +Extra fields may be appended to the structure,
-> > +with a zero value in a new field resulting in
-> > +the kernel behaving as though that extension field was not present.
-> > +Therefore, a user
-> > +.I must
-> > +zero-fill this structure on initialization.
->=20
-> I think this would be more appropriate for HISTORY.  In VERSIONS, we
-> usually document differences with the BSDs or other systems.
->=20
-> While moving this to HISTORY, it would also be useful to mention the
-> glibc version that added the structure.  In the future, we'd document
-> the versions of glibc and Linux that have added members.
-
-Sure, though I just copied this section from open_how(2type).
-
-> > +.SH STANDARDS
-> > +Linux.
-> > +.SH SEE ALSO
-> > +.BR mount_setattr (2)
->=20
-> Have a lovely day!
-> Alex
->=20
-> --=20
-> <https://www.alejandro-colomar.es/>
+> > On 28.07.25 17:14, Kent Overstreet wrote:
+>> <Overquoting deleted>.
 
 
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-https://www.cyphar.com/
 
---2efsv5i2maco22bu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaJSeTAAKCRAol/rSt+lE
-byfSAQCqNmxfPk92j1CnM3+qclM4UB915txEO/XP3YjHlJP/CwD/X3E5g69iOsxF
-cZoG8TIXEQwoU/gIa8AeFIat7yb+7wA=
-=FiKS
------END PGP SIGNATURE-----
-
---2efsv5i2maco22bu--
 
