@@ -1,213 +1,520 @@
-Return-Path: <linux-fsdevel+bounces-56971-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56972-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79C7CB1D681
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 13:20:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62763B1D6D2
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 13:38:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F767721961
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 11:20:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09395724919
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 11:38:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02B6F278161;
-	Thu,  7 Aug 2025 11:20:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 043F527979F;
+	Thu,  7 Aug 2025 11:38:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jcZ03XH6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hjH6wBHL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9AA221FD2
-	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Aug 2025 11:20:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E8C224234;
+	Thu,  7 Aug 2025 11:38:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754565626; cv=none; b=ksAknMrX0+pOArpV/0rb0WBcYXwY0BAQH4zyHW0DFjAySVPRC3zxsdw1t6d3LqMr0wrsDQ/lGYkhSuJtJSUpaS5jO2PCEmp9SUWhUzIhCTwWBmSBCoijHzR0a+wA9aSib7UjgGD88R28n9QcNKWoRSCUG9RyFCxfphIEBgloGsc=
+	t=1754566721; cv=none; b=nh0C1d6Q7AWImy0+H08FruS7+rVjIbxLNJL/ecp5rGMLgvgXrhnsHOAYpjeycewrcKf8QutJpgXREp4alDyvlYORWML1WvTWXQFWtA1cKcRVuVHZ+PJfzH0JrtrOJHykLn7oZFg/Jo9H5reECL4LHt4QSOeZ65IIst41mC7SiII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754565626; c=relaxed/simple;
-	bh=bT199VEQVqscKcI1ySGvbrsT+zAn6cUa1qjcLrPjd5w=;
+	s=arc-20240116; t=1754566721; c=relaxed/simple;
+	bh=uQu3Py2oEuArs0OzUw92G43s0O6/NHsN4v71kxlOCk4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IJMLC5RW46irknJJP52xedj+1VUDSg+Kgxp7EcYQzaAnK+SSXH5i4DuggLixA94EOdDTni2lyEHvkotdORaQY/J3NGxr1sJl7Vd//kTi6x/bFaQkqNnL5aMo6dZiXjjW1IXlIyM9u5XCmHRjlOUuN3QU2rJxpQwanXRGNd7zvsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jcZ03XH6; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-459d4d7c745so8442825e9.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Aug 2025 04:20:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754565623; x=1755170423; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=t+xe2dZhSU0YB/2XKMOmDkqHorIZkYeC9Ed4u60MW1U=;
-        b=jcZ03XH6iuRL3ExacLRh3+izApPk6khtidHPYAPhOnPQXGdT5Wtht9ZIFzJwWLakUW
-         BDka++7AcfQklFD08BpxQD5LbO9w6OCzFLKG8vs2FNH3MgFNNLKV/WxyGk29X4R/28BZ
-         iEDzpK+mag9ib/j/S5BHNboB+J1f2wHuX8/0vpiEHeAVwF6vi2T+8YMqi2VI/8z0Sv3g
-         isPMMISWSreKCr0GYyCcs5AleXV5ZqqxzCzi+wkQ0oaC909ebpxvdZJg5PS644hL+xTn
-         Zql4q+lZ/xeNvi9DTQm6unEQgIKMb9vSBEhslduDYX8jzFlRlD+jsrTgMaO2TEQpRhIJ
-         +V2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754565623; x=1755170423;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t+xe2dZhSU0YB/2XKMOmDkqHorIZkYeC9Ed4u60MW1U=;
-        b=NM9iUWcnNMsl41h7BIv7mtl/mfg7De2w9LFoqi+iggutmkN6QNLTL/ZVPxKzzuwLAi
-         UfAgNcglGScqb9oJ9hpqTACKq6wHoi0AsP64Cc5sTZYBgZGxqUXL4UfmsCDwSejf5psQ
-         FgjKPENo/43mHY2nuQI35kW3sSaTNO1kXayxkQarLpUO7rrI0L495vv8TbqjZTat7YdM
-         qWRO5Owb2B8HLZebtMDtGV6bw2bphiKmlkm+hHDscJUlHR+7vmjs6uusZjG0/uWFsHUT
-         TiqsP1WZ9dy3+EVu5cM4DwTRN3oqijvOiLdIkBAkTYUuPWaTj/rUNehZLS0Xd5YLprdc
-         Lbig==
-X-Forwarded-Encrypted: i=1; AJvYcCUCJkEmFcmw208aQY7ldFJvikh2hhh22e64jWIQAWyAjxjEcclSA/SwPI9du2pVn4ycMjd9pQrGZZChmC2m@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGqL6pJTLgdCL71gyDfcdeu2iB0Br0lc4pxhcDUjnIDx6FrrjH
-	eWixjcKtovsalUxBCERHJGmfSUTYcwPH6h6SMDITSY37lIgvD1wDmV0K4MeoGt9JWpY=
-X-Gm-Gg: ASbGnctGfFHsjWoRPJOtkRzAvuUYzMfYfTDt12R7Q3eSzLaBKwkGm6lXqpjIPKFGMKW
-	2Hc00LhUSoqypY5Or9T3PIVjTxTK+ECjmhB1byCqIk7cYb0hOCB31A/cLWaYa/KEzvt5SvpTVj3
-	oSZuEGoIiyECa/bwIl/NWdVQgx2J1WQ+zZUqCuiMGNfDk/6e/32P8Dk+jloGKV6jxvwFfePRfxt
-	cjttCa9IRJPX3qU615fwHOlvAa470oeqtLZhSBOFbEWmjUkbAqNcHEgH24Uu4CGJDTou3SLJUH+
-	WHpvsFjsMzG/0DF4jTf/T4cxlgCKjJeqoGs9+66OoHUoYQdZ7bU+8vD6xgLbpk2APBex09sr1A2
-	POwJWwf+VPucebFvaVPPovyll8is=
-X-Google-Smtp-Source: AGHT+IHle4/R1ej0UE31AopKf2sNC+DTWDiHvIqjOlfMPaSTgNALiUGVLhXkvILnmSQe+GoiHKqW1Q==
-X-Received: by 2002:a05:600c:3b98:b0:43c:eeee:b713 with SMTP id 5b1f17b1804b1-459f33960a5mr5645055e9.20.1754565622973;
-        Thu, 07 Aug 2025 04:20:22 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e6214640sm88873865e9.1.2025.08.07.04.20.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Aug 2025 04:20:22 -0700 (PDT)
-Date: Thu, 7 Aug 2025 14:20:19 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: Renjiang Han <quic_renjiang@quicinc.com>,
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
-	Cgroups <cgroups@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	lkft-triage@lists.linaro.org,
-	Linux Regressions <regressions@lists.linux.dev>,
-	linux-fsdevel@vger.kernel.org, Song Liu <song@kernel.org>,
-	yukuai3@huawei.com, Arnd Bergmann <arnd@arndb.de>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Ben Copeland <benjamin.copeland@linaro.org>
-Subject: Re: next-20250804 Unable to handle kernel execute from
- non-executable memory at virtual address idem_hash
-Message-ID: <66c0fb9f-c9fc-4186-9450-ecf726b6791f@suswa.mountain>
-References: <CA+G9fYvZtbQLoS=GpaZ_uzm3YiZEQmz0oghnwVamNQ49CosT2w@mail.gmail.com>
- <aJNsreA4FuxalDc8@stanley.mountain>
- <CA+G9fYvEGBAAEetvvtXWsGb3EQ2sTOM=szkxZ4m-Gt2bTszBdQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OD/ccTwNg72Tu0X18ifFJwoWyyzQMxc+XJvLQgc4anbeh3bS7BuTuSYafXVp4H3R1LNUxf5nbni7DzFINk0Y12+p2GD8u+e7zQB+JvDf5C9IYGlbmIWs4UHKSKEuTRHRClZex7dInH72ZKWHykq/HpEyKrMcJeeculxTcQFQI0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hjH6wBHL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 123F0C4CEF1;
+	Thu,  7 Aug 2025 11:38:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754566720;
+	bh=uQu3Py2oEuArs0OzUw92G43s0O6/NHsN4v71kxlOCk4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hjH6wBHLO3sKB9X843CJPNI7eBAdJaww3pWCQhPYuwFJ5cKcL01cZVbjSCsksEdGw
+	 jD+FzKfmCRiCNzBnXaxyx5G7hZoXjrWZAL57QVCcWeUdN6ipTxpU/LEmsuWa1YbwuP
+	 lAyaNGJqNufK//0/RS931FLCa1SAEIzz41Uca+seG9nPxjunNLJ4ACxIvE/inK714F
+	 dbhmRSndsUeQAL4q6PCsIkFgR0aDPoA1y//skl+Wew/7fz+F/zRno7nUVu8HungdBQ
+	 Llo/iqUquo9CG3+oWeJwRQCikI3Tepgvymp+j7lENuua+lAtN+9BLk0rBcgQIb9/r4
+	 nBJ8v+hTEwtaw==
+Date: Thu, 7 Aug 2025 13:38:31 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
+	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v2 03/11] fsopen.2: document 'new' mount api
+Message-ID: <afty6mfpowwj3kzzbn3p7s4j4ovmput34dtqfzzwa57ocaita4@2jj4qandbnw3>
+References: <20250807-new-mount-api-v2-0-558a27b8068c@cyphar.com>
+ <20250807-new-mount-api-v2-3-558a27b8068c@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="rauumv4cvcseze5b"
 Content-Disposition: inline
-In-Reply-To: <CA+G9fYvEGBAAEetvvtXWsGb3EQ2sTOM=szkxZ4m-Gt2bTszBdQ@mail.gmail.com>
+In-Reply-To: <20250807-new-mount-api-v2-3-558a27b8068c@cyphar.com>
 
-On Thu, Aug 07, 2025 at 02:51:29PM +0530, Naresh Kamboju wrote:
-> Hi Dan,
-> 
-> On Wed, 6 Aug 2025 at 20:24, Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> >
-> > On Tue, Aug 05, 2025 at 12:50:28AM +0530, Naresh Kamboju wrote:
-> > > While booting and testing selftest cgroups and filesystem testing on arm64
-> > > dragonboard-410c the following kernel warnings / errors noticed and system
-> > > halted and did not recover with selftests Kconfig enabled running the kernel
-> > > Linux next tag next-20250804.
-> > >
-> > > Regression Analysis:
-> > > - New regression? Yes
-> > > - Reproducibility? Re-validation is in progress
-> > >
-> > > First seen on the next-20250804
-> > > Good: next-20250801
-> > > Bad: next-20250804
-> > >
-> > > Test regression: next-20250804 Unable to handle kernel execute from
-> > > non-executable memory at virtual address idem_hash
-> > > Test regression: next-20250804 refcount_t: addition on 0;
-> > > use-after-free refcount_warn_saturate
-> > >
-> > > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> > >
-> > > ## Test crash log
-> > > [    9.811341] Unable to handle kernel NULL pointer dereference at
-> > > virtual address 000000000000002e
-> > > [    9.811444] Mem abort info:
-> > > [    9.821150]   ESR = 0x0000000096000004
-> > > [    9.833499]   SET = 0, FnV = 0
-> > > [    9.833566]   EA = 0, S1PTW = 0
-> > > [    9.835511]   FSC = 0x04: level 0 translation fault
-> > > [    9.838901] Data abort info:
-> > > [    9.843788]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
-> > > [    9.846565]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-> > > [    9.851938]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-> > > [    9.853510] rtc-pm8xxx 200f000.spmi:pmic@0:rtc@6000: registered as rtc0
-> > > [    9.856992] user pgtable: 4k pages, 48-bit VAs, pgdp=00000000856f8000
-> > > [    9.862446] rtc-pm8xxx 200f000.spmi:pmic@0:rtc@6000: setting system
-> > > clock to 1970-01-01T00:00:31 UTC (31)
-> > > [    9.868789] [000000000000002e] pgd=0000000000000000, p4d=0000000000000000
-> > > [    9.875459] Internal error: Oops: 0000000096000004 [#1]  SMP
-> > > [    9.889547] input: pm8941_pwrkey as
-> > > /devices/platform/soc@0/200f000.spmi/spmi-0/0-00/200f000.spmi:pmic@0:pon@800/200f000.spmi:pmic@0:pon@800:pwrkey/input/input1
-> > > [    9.891545] Modules linked in: qcom_spmi_temp_alarm rtc_pm8xxx
-> > > qcom_pon(+) qcom_pil_info videobuf2_dma_sg ubwc_config qcom_q6v5
-> > > venus_core(+) qcom_sysmon qcom_spmi_vadc v4l2_fwnode llcc_qcom
-> > > v4l2_async qcom_vadc_common qcom_common ocmem v4l2_mem2mem drm_gpuvm
-> > > videobuf2_memops qcom_glink_smem videobuf2_v4l2 drm_exec mdt_loader
-> > > qmi_helpers gpu_sched drm_dp_aux_bus qnoc_msm8916 videodev
-> > > drm_display_helper qcom_stats videobuf2_common cec qcom_rng
-> > > drm_client_lib mc phy_qcom_usb_hs socinfo rpmsg_ctrl display_connector
-> > > rpmsg_char ramoops rmtfs_mem reed_solomon drm_kms_helper fuse drm
-> > > backlight
-> > > [    9.912286] input: pm8941_resin as
-> > > /devices/platform/soc@0/200f000.spmi/spmi-0/0-00/200f000.spmi:pmic@0:pon@800/200f000.spmi:pmic@0:pon@800:resin/input/input2
-> > > [    9.941186] CPU: 2 UID: 0 PID: 221 Comm: (udev-worker) Not tainted
-> > > 6.16.0-next-20250804 #1 PREEMPT
-> > > [    9.941200] Hardware name: Qualcomm Technologies, Inc. APQ 8016 SBC (DT)
-> > > [    9.941206] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> > > [    9.941215] pc : dev_pm_opp_put (/builds/linux/drivers/opp/core.c:1685)
-> > > [    9.941233] lr : core_clks_enable+0x54/0x148 venus_core
-> > > [   10.004266] sp : ffff8000842b35f0
-> > > [   10.004273] x29: ffff8000842b35f0 x28: ffff8000842b3ba0 x27: ffff0000047be938
-> > > [   10.004289] x26: 0000000000000000 x25: 0000000000000000 x24: ffff80007b350ba0
-> > > [   10.004303] x23: ffff00000ba380c8 x22: ffff00000ba38080 x21: 0000000000000000
-> > > [   10.004316] x20: 0000000000000000 x19: ffffffffffffffee x18: 00000000ffffffff
-> > > [   10.004330] x17: 0000000000000000 x16: 1fffe000017541a1 x15: ffff8000842b3560
-> > > [   10.004344] x14: 0000000000000000 x13: 007473696c5f7974 x12: 696e696666615f65
-> > > [   10.004358] x11: 00000000000000c0 x10: 0000000000000020 x9 : ffff80007b33f2bc
-> > > [   10.004371] x8 : ffffffffffffffde x7 : ffff0000044a4800 x6 : 0000000000000000
-> > > [   10.004384] x5 : 0000000000000002 x4 : 00000000c0000000 x3 : 0000000000000001
-> > > [   10.004397] x2 : 0000000000000002 x1 : ffffffffffffffde x0 : ffffffffffffffee
-> > > [   10.004412] Call trace:
-> > > [   10.004417] dev_pm_opp_put (/builds/linux/drivers/opp/core.c:1685) (P)
-> > > [   10.004435] core_clks_enable+0x54/0x148 venus_core
-> > > [   10.004504] core_power_v1+0x78/0x90 venus_core
-> > > [   10.004560] venus_runtime_resume+0x6c/0x98 venus_core
-> > > [   10.004616] pm_generic_runtime_resume
-> >
-> > Could you try adding some error checking to core_clks_enable()?
-> > Does the patch below help?
-> 
-> Your patch works.
-> The attached patch from Sasha fixes this reported problem on today's
-> Linux next tag.
-> 
-> $ git log --oneline next-20250805..next-20250807 --
-> drivers/media/platform/qcom/venus/pm_helpers.c
-> 7881cd6886a89 media: venus: Fix OPP table error handling
-> 
 
-I feel a bit bad about this, because I saw this bug as a static
-checker warning:
+--rauumv4cvcseze5b
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
+	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v2 03/11] fsopen.2: document 'new' mount api
+References: <20250807-new-mount-api-v2-0-558a27b8068c@cyphar.com>
+ <20250807-new-mount-api-v2-3-558a27b8068c@cyphar.com>
+MIME-Version: 1.0
+In-Reply-To: <20250807-new-mount-api-v2-3-558a27b8068c@cyphar.com>
 
-drivers/media/platform/qcom/venus/pm_helpers.c:51 core_clks_enable() error: 'opp' dereferencing possible ERR_PTR()
+Hi Aleksa,
 
-But I figured that leaving out the error checking was probably
-deliberate so I didn't report it...  I'll go through my list of old
-warnings and review them again.
+On Thu, Aug 07, 2025 at 03:44:37AM +1000, Aleksa Sarai wrote:
+> This is loosely based on the original documentation written by David
+> Howells and later maintained by Christian Brauner, but has been
+> rewritten to be more from a user perspective (as well as fixing a few
+> critical mistakes).
+>=20
+> Co-developed-by: David Howells <dhowells@redhat.com>
+> Co-developed-by: Christian Brauner <brauner@kernel.org>
 
-$ grep "dereferencing possible ERR_PTR" smatch_warns.txt | wc -l
-115
+Please use Co-authored-by.  It's documented under CONTRIBUTING.d/:
 
-regards,
-dan carpenter
+	$ cat CONTRIBUTING.d/patches/description | grep -A99 Trailer;
+	    Trailer
+		Sign your patch with "Signed-off-by:".  Read about the
+		"Developer's Certificate of Origin" at
+		<https://www.kernel.org/doc/Documentation/process/submitting-patches.rst>.
+		When appropriate, other tags documented in that file, such as
+		"Reported-by:", "Reviewed-by:", "Acked-by:", and "Suggested-by:"
+		can be added to the patch.  We use "Co-authored-by:" instead of
+		"Co-developed-by:".  Example:
 
+			Signed-off-by: Alejandro Colomar <alx@kernel.org>
+
+I think 'author' is more appropriate than 'developer' for documentation.
+It is also more consistent with the Copyright notice, which assigns
+copyright to the authors (documented in AUTHORS).  And ironically, even
+the kernel documentation about Co-authored-by talks about authorship
+instead of development:
+
+	Co-developed-by: states that the patch was co-created by
+	multiple developers; it is used to give attribution to
+	co-authors (in addition to the author attributed by the From:
+	tag) when several people work on a single patch.
+
+> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+> ---
+>  man/man2/fsopen.2 | 319 ++++++++++++++++++++++++++++++++++++++++++++++++=
+++++++
+>  1 file changed, 319 insertions(+)
+>=20
+> diff --git a/man/man2/fsopen.2 b/man/man2/fsopen.2
+> new file mode 100644
+> index 000000000000..ad38ef0782be
+> --- /dev/null
+> +++ b/man/man2/fsopen.2
+> @@ -0,0 +1,319 @@
+> +.\" Copyright, the authors of the Linux man-pages project
+> +.\"
+> +.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+> +.\"
+> +.TH fsopen 2 (date) "Linux man-pages (unreleased)"
+> +.SH NAME
+> +fsopen \- create a new filesystem context
+> +.SH LIBRARY
+> +Standard C library
+> +.RI ( libc ,\~ \-lc )
+> +.SH SYNOPSIS
+> +.nf
+> +.BR "#include <sys/mount.h>"
+> +.P
+> +.BI "int fsopen(const char *" fsname ", unsigned int " flags ");"
+> +.fi
+> +.SH DESCRIPTION
+> +The
+> +.BR fsopen ()
+> +system call is part of the suite of file descriptor based mount faciliti=
+es in
+> +Linux.
+> +.P
+> +.BR fsopen ()
+> +creates a blank filesystem configuration context within the kernel
+> +for the filesystem named by
+> +.IR fsname ,
+> +puts the context into creation mode and attaches it to a file descriptor,
+> +which is then returned.
+> +The calling process must have the
+> +.B \%CAP_SYS_ADMIN
+> +capability in order to create a new filesystem configuration context.
+> +.P
+> +A filesystem configuration context is an in-kernel representation of a p=
+ending
+> +transaction,
+
+This page still needs semantic newlines.  (Please review all pages
+regarding that.)  (In this specific sentence, I'd break after 'is'.)
+
+> +containing a set of configuration parameters that are to be applied
+> +when creating a new instance of a filesystem
+> +(or modifying the configuration of an existing filesystem instance,
+> +such as when using
+> +.BR fspick (2)).
+> +.P
+> +After obtaining a filesystem configuration context with
+> +.BR fsopen (),
+> +the general workflow for operating on the context looks like the followi=
+ng:
+> +.IP (1) 5
+> +Pass the filesystem context file descriptor to
+> +.BR fsconfig (2)
+> +to specify any desired filesystem parameters.
+> +This may be done as many times as necessary.
+> +.IP (2)
+> +Pass the same filesystem context file descriptor to
+
+Do we need to say "same"?  I guess it's obvious.  Or do you expect
+any confusion if we don't?
+
+> +.BR fsconfig (2)
+> +with
+> +.B \%FSCONFIG_CMD_CREATE
+> +to create an instance of the configured filesystem.
+> +.IP (3)
+> +Pass the same filesystem context file descriptor to
+> +.BR fsmount (2)
+> +to create a new mount object for the root of the filesystem,
+> +which is then attached to a new file descriptor.
+> +This also places the filesystem context file descriptor into reconfigura=
+tion
+> +mode,
+> +similar to the mode produced by
+> +.BR fspick (2).
+> +.IP (4)
+> +Use the mount object file descriptor as a
+> +.I dirfd
+> +argument to "*at()" system calls;
+> +or attach the mount object to a mount point
+> +by passing the mount object file descriptor to
+> +.BR move_mount (2).
+> +.P
+> +A filesystem context will move between different modes throughout its
+> +lifecycle
+> +(such as the creation phase when created with
+> +.BR fsopen (),
+> +the reconfiguration phase when an existing filesystem instance is select=
+ed by
+> +.BR fspick (2),
+> +and the intermediate "needs-mount" phase between
+> +.\" FS_CONTEXT_NEEDS_MOUNT is the term the kernel uses for this.
+> +.BR \%FSCONFIG_CMD_CREATE
+> +and
+> +.BR fsmount (2)),
+> +which has an impact on what operations are permitted on the filesystem c=
+ontext.
+> +.P
+> +The file descriptor returned by
+> +.BR fsopen ()
+> +also acts as a channel for filesystem drivers to provide more comprehens=
+ive
+> +error, warning, and information messages
+
+Should we just say "diagnostic messages" to avoid explicitly mentioning
+all the levels?
+
+> +than are normally provided through the standard
+> +.BR errno (3)
+> +interface for system calls.
+> +If an error occurs at any time during the workflow mentioned above,
+> +calling
+> +.BR read (2)
+> +on the filesystem context file descriptor will retrieve any ancillary
+> +information about the encountered errors.
+> +(See the "Message retrieval interface" section for more details on the m=
+essage
+> +format.)
+> +.P
+> +.I flags
+> +can be used to control aspects of the creation of the filesystem configu=
+ration
+> +context file descriptor.
+> +A value for
+> +.I flags
+> +is constructed by bitwise ORing
+> +zero or more of the following constants:
+> +.RS
+> +.TP
+> +.B FSOPEN_CLOEXEC
+> +Set the close-on-exec
+> +.RB ( FD_CLOEXEC )
+> +flag on the new file descriptor.
+> +See the description of the
+> +.B O_CLOEXEC
+> +flag in
+> +.BR open (2)
+> +for reasons why this may be useful.
+> +.RE
+> +.P
+> +A list of filesystems supported by the running kernel
+> +(and thus a list of valid values for
+> +.IR fsname )
+> +can be obtained from
+> +.IR /proc/filesystems .
+> +(See also
+> +.BR proc_filesystems (5).)
+> +.SS Message retrieval interface
+> +When doing operations on a filesystem configuration context,
+> +the filesystem driver may choose to provide ancillary information to use=
+rspace
+> +in the form of message strings.
+> +.P
+> +The filesystem context file descriptors returned by
+> +.BR fsopen ()
+> +and
+> +.BR fspick (2)
+> +may be queried for message strings at any time by calling
+> +.BR read (2)
+> +on the file descriptor.
+> +Each call to
+> +.BR read (2)
+> +will return a single message,
+> +prefixed to indicate its class:
+> +.RS
+> +.TP
+> +.B "e <message>"
+> +An error message was logged.
+> +This is usually associated with an error being returned from the corresp=
+onding
+> +system call which triggered this message.
+> +.TP
+> +.B "w <message>"
+> +A warning message was logged.
+> +.TP
+> +.B "i <message>"
+> +An informational message was logged.
+> +.RE
+> +.P
+> +Messages are removed from the queue as they are read.
+> +Note that the message queue has limited depth,
+> +so it is possible for messages to get lost.
+> +If there are no messages in the message queue,
+> +.B read(2)
+> +will return no data and
+> +.I errno
+> +will be set to
+> +.BR \%ENODATA .
+> +If the
+> +.I buf
+> +argument to
+> +.BR read (2)
+> +is not large enough to contain the message,
+> +.BR read (2)
+> +will return no data and
+> +.I errno
+> +will be set to
+> +.BR \%EMSGSIZE .
+> +.P
+> +If there are multiple filesystem context file descriptors referencing th=
+e same
+> +filesystem instance
+> +(such as if you call
+> +.BR fspick (2)
+> +multiple times for the same mount),
+> +each one gets its own independent message queue.
+> +This does not apply to file descriptors that were duplicated with
+> +.BR dup (2).
+> +.P
+> +Messages strings will usually be prefixed by the filesystem driver that =
+logged
+
+s/Messages/Message/
+
+BTW, here, I'd break after 'prefixed', and then after the ','.
+
+> +the message, though this may not always be the case.
+> +See the Linux kernel source code for details.
+> +.SH RETURN VALUE
+> +On success, a new file descriptor is returned.
+> +On error, \-1 is returned, and
+> +.I errno
+> +is set to indicate the error.
+> +.SH ERRORS
+> +.TP
+> +.B EFAULT
+> +.I fsname
+> +is NULL
+> +or a pointer to a location
+> +outside the calling process's accessible address space.
+> +.TP
+> +.B EINVAL
+> +.I flags
+> +had an invalid flag set.
+> +.TP
+> +.B EMFILE
+> +The calling process has too many open files to create more.
+> +.TP
+> +.B ENFILE
+> +The system has too many open files to create more.
+> +.TP
+> +.B ENODEV
+> +The filesystem named by
+> +.I fsname
+> +is not supported by the kernel.
+> +.TP
+> +.B ENOMEM
+> +The kernel could not allocate sufficient memory to complete the operatio=
+n.
+> +.TP
+> +.B EPERM
+> +The calling process does not have the required
+> +.B \%CAP_SYS_ADMIN
+> +capability.
+> +.SH STANDARDS
+> +Linux.
+> +.SH HISTORY
+> +Linux 5.2.
+> +.\" commit 24dcb3d90a1f67fe08c68a004af37df059d74005
+> +glibc 2.36.
+> +.SH EXAMPLES
+> +To illustrate the workflow for creating a new mount,
+> +the following is an example of how to mount an
+> +.BR ext4 (5)
+> +filesystem stored on
+> +.I /dev/sdb1
+> +onto
+> +.IR /mnt .
+> +.P
+> +.in +4n
+> +.EX
+> +int fsfd, mntfd;
+> +\&
+> +fsfd =3D fsopen("ext4", FSOPEN_CLOEXEC);
+> +fsconfig(fsfd, FSCONFIG_SET_FLAG, "ro", NULL, 0);
+> +fsconfig(fsfd, FSCONFIG_SET_PATH, "source", "/dev/sdb1", AT_FDCWD);
+> +fsconfig(fsfd, FSCONFIG_SET_FLAG, "noatime", NULL, 0);
+> +fsconfig(fsfd, FSCONFIG_SET_FLAG, "acl", NULL, 0);
+> +fsconfig(fsfd, FSCONFIG_SET_FLAG, "user_xattr", NULL, 0);
+> +fsconfig(fsfd, FSCONFIG_SET_FLAG, "iversion", NULL, 0)
+> +fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
+> +mntfd =3D fsmount(fsfd, FSMOUNT_CLOEXEC, MOUNT_ATTR_RELATIME);
+> +move_mount(mntfd, "", AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH);
+> +.EE
+> +.in
+> +.P
+> +First, an ext4 configuration context is created and attached to the file
+
+Here, I'd break after the ',', and if you need to break again, after
+'created'.
+
+> +descriptor
+> +.IR fsfd .
+> +Then, a series of parameters
+> +(such as the source of the filesystem)
+> +are provided using
+> +.BR fsconfig (2),
+> +followed by the filesystem instance being created with
+> +.BR \%FSCONFIG_CMD_CREATE .
+> +.BR fsmount (2)
+> +is then used to create a new mount object attached to the file descriptor
+> +.IR mntfd ,
+> +which is then attached to the intended mount point using
+> +.BR move_mount (2).
+> +.P
+> +The above procedure is functionally equivalent to the following mount op=
+eration
+> +using
+> +.BR mount (2):
+> +.P
+> +.in +4n
+> +.EX
+> +mount("/dev/sdb1", "/mnt", "ext4", MS_RELATIME,
+> +      "ro,noatime,acl,user_xattr,iversion");
+> +.EE
+> +.in
+> +.P
+> +And here's an example of creating a mount object
+> +of an NFS server share
+> +and setting a Smack security module label.
+> +However, instead of attaching it to a mount point,
+> +the program uses the mount object directly
+> +to open a file from the NFS share.
+> +.P
+> +.in +4n
+> +.EX
+> +int fsfd, mntfd, fd;
+> +\&
+> +fsfd =3D fsopen("nfs", 0);
+> +fsconfig(fsfd, FSCONFIG_SET_STRING, "source", "example.com/pub/linux", 0=
+);
+> +fsconfig(fsfd, FSCONFIG_SET_STRING, "nfsvers", "3", 0);
+> +fsconfig(fsfd, FSCONFIG_SET_STRING, "rsize", "65536", 0);
+> +fsconfig(fsfd, FSCONFIG_SET_STRING, "wsize", "65536", 0);
+> +fsconfig(fsfd, FSCONFIG_SET_STRING, "smackfsdef", "foolabel", 0);
+> +fsconfig(fsfd, FSCONFIG_SET_FLAG, "rdma", NULL, 0);
+> +fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
+> +mntfd =3D fsmount(fsfd, 0, MOUNT_ATTR_NODEV);
+> +fd =3D openat(mntfd, "src/linux-5.2.tar.xz", O_RDONLY);
+> +.EE
+> +.in
+> +.P
+> +Unlike the previous example,
+> +this operation has no trivial equivalent with
+> +.BR mount (2),
+> +as it was not previously possible to create a mount object
+> +that is not attached to any mount point.
+> +.SH SEE ALSO
+> +.BR fsconfig (2),
+> +.BR fsmount (2),
+> +.BR fspick (2),
+> +.BR mount (2),
+> +.BR mount_setattr (2),
+> +.BR move_mount (2),
+> +.BR open_tree (2),
+> +.BR mount_namespaces (7)
+
+Other than those minor comments, the text LGTM.
+
+
+Cheers,
+Alex
+
+--=20
+<https://www.alejandro-colomar.es/>
+
+--rauumv4cvcseze5b
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmiUkDAACgkQ64mZXMKQ
+wqlTqw/+N0VrqD0qvzJwocG5kZLGGN6OWAPQbHSDqo47aneZHPzf0A+obeuAHttc
+YKFmNT+0f/y1dmnrxnD2QT39/NKYcwoOMW4kTxbx5h0iYDXhlFqAd8AhYg/knJ+T
+GapYKhwHImGYlgM/4Hm/8p7feHBQettdAobF+CYoaHjniPXDP0/2VWTJGmSMS0yi
+D3uAVI9ub2KTm1XNrKYg7bOPfqjFY8tWOF+IEK93MP4nHSGcLcqIS3TKus6PCBpz
+TsiJVw/uamyXsWlli42fPcYz87x2wbA3mU5INxmGj8/t89+vGvf8nYfewDYwEZjI
+MBmGm/dtSshSoE/97gGqiU4FfAItany2mTTpJEM2r1sPYZlhGorjZUmAiGiPkHds
+olGxL0UgEFjYyqzQyFJpguDKbPrGAQWLHVNy7SXgorpyw3zQlrYoElELZgAee5sQ
+FUDWPzj3ycen9XU9GcT0NX6Do3+CoNsvEoUy0JrBGjX2JT+uoB4vxj0LLtuodTmq
+2Z0ktNc2laBSALNLbgMWVfmKZaJHgeQIfYqbc/ODUxNNFj4SchQt2Pmc3fsaskAw
+NFJRu8m0T8pNmhOvFj9tQDm5fThS5Sy9QX6I/XsvNVaZnG5IpFVpSXaS7xCDpRZV
+HBDQTxjmMwwdqt+KcuZuJxGisYMWwNHCu17jnICx1Q2GrJF5N8s=
+=4sAT
+-----END PGP SIGNATURE-----
+
+--rauumv4cvcseze5b--
 
