@@ -1,80 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-56962-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56963-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A27B1B1D275
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 08:24:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1AEEB1D325
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 09:18:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63C103AA0A3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 06:24:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35C3116694C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 07:18:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B9CA21C9EA;
-	Thu,  7 Aug 2025 06:24:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6E2238D5A;
+	Thu,  7 Aug 2025 07:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="Z12glsS8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4313F1537A7
-	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Aug 2025 06:24:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD2A88F48;
+	Thu,  7 Aug 2025 07:18:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754547875; cv=none; b=HSVwfJGdUSZEcK2ajxL9heZtuFoNMbSFjdBW0FmqoVhiilO/w5Y+orqjcS2PugfiYrfZBsTaUxYau4KRuius2U1x6k0PucuqEMdSwKgA+BzeNsV+qIMsJVY3SxTYMmSbjGAwxzK4G9SWXjC8nDz8N9p59Odrq/enAMrPNwHdMQg=
+	t=1754551101; cv=none; b=n6v0Aw8lDf4o4DkwgaGCuI/qz7ZOD8epbAYkap1/tt4cbPc7uMM9E7UdI0frKjEZ6sreTgk7pb9IBti2OekuxNTYQP2ofFJPy1KYJqMMGPd6UtZIB+5i2FNuWoRn7QdLNI1hoVagLT7cdSt1HxsjAYMStmnHNNRXzg6Ac90GAB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754547875; c=relaxed/simple;
-	bh=U0MYI67nuyvtu1+h2yN0YHGJT7aZgIR7cCtQpaxpPFc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=irToq6Ko39+qxuhtpvSS/3uPbfvNmHTrRjvcRo/MRJn2Nnqya5Odcrpz++903m6ncTFrm2YfoIUYxb5si3E3nXEGho53FKDvUcqv08MZqqiC4hd8fnxuDiw5SYuP2MD/TSpf9EMuCioTshgqpEsxZFexTKYoL/NdLQ+cLq9tVDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ustc.edu; spf=pass smtp.mailfrom=ustc.edu; arc=none smtp.client-ip=45.254.49.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ustc.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ustc.edu
-Received: from localhost (unknown [14.116.239.36])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1e971c126;
-	Thu, 7 Aug 2025 14:24:26 +0800 (GMT+08:00)
-From: Chunsheng Luo <luochunsheng@ustc.edu>
-To: mszeredi@redhat.com
-Cc: bschubert@ddn.com,
-	fweimer@redhat.com,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/2] fuse: fix COPY_FILE_RANGE interface
-Date: Thu,  7 Aug 2025 14:24:25 +0800
-Message-ID: <20250807062425.694-1-luochunsheng@ustc.edu>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250805183017.4072973-1-mszeredi@redhat.com>
-References: <20250805183017.4072973-1-mszeredi@redhat.com>
+	s=arc-20240116; t=1754551101; c=relaxed/simple;
+	bh=+ULjuenwEzpGC8UAzxKw+UpGPt4UQhh+CmIbbChlejc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OOegH35pPA0fBDuiYTIHycRlyED/uJq5KXc3pcr9/2esp+VyIr5MK/x6wwICoVHlaQ8xxihuwqz5BfyKYJYzP9wPHNbc1Xtftsd0JjnaXv7SoD9C0zqlzEMqIznsJa+7K564GY1GzpJdJrG3RU02g8sqcOzToYymiWX9qVLfTyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=Z12glsS8; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4byJR86h77z9syY;
+	Thu,  7 Aug 2025 09:18:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1754551093;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+ULjuenwEzpGC8UAzxKw+UpGPt4UQhh+CmIbbChlejc=;
+	b=Z12glsS8h5ztkydn7KCjBvp8B2d4sQhdHS+zy0dBp50B4bgFRDwn3iKX+ukysgEeH7ycmD
+	1fP2zrfNK/iq3ueO00R3iE2YKrjtes55OO0CveBD/oGdVpTy96/28NQ8kUCRzmZMVvthiy
+	dAg7+PnZWnPO2F5WEkaSm/UH6N2xgIFqwZ+iWAWqHu6ZrQwfCuBHcGWU297wOxsZuKti0w
+	VVnB8Big+Y08L+WWrbOfnEKIuT7mCorfJIns+4CO7po8sDf4+8z/vE/QNGqW0B+zSi5a6G
+	W0+mZ4fsBKK2h3Prvu5AvLppI7QfJmZ79OG7TVDvAkWDHA4alRtg3F/8vOrCow==
+Date: Thu, 7 Aug 2025 17:17:56 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Askar Safin <safinaskar@zohomail.com>
+Cc: amir73il@gmail.com, brauner@kernel.org, corbet@lwn.net, jack@suse.cz, 
+	linux-api@vger.kernel.org, linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, luto@amacapital.net, 
+	shuah@kernel.org, viro@zeniv.linux.org.uk
+Subject: Re: [PATCH v4 2/4] procfs: add "pidns" mount option
+Message-ID: <2025-08-07.1754550206-glad-sneeze-upstate-sorts-swank-courts-YKmj7E@cyphar.com>
+References: <2025-08-05.1754378656-steep-harps-muscled-mailroom-lively-gosling-VVGNTP@cyphar.com>
+ <20250806102501.75104-1-safinaskar@zohomail.com>
+ <2025-08-06.1754489257-elated-baubles-defiant-growls-beloved-jewelry-9Ofm2b@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a988333c98e03a2kunm340965d2348ccf
-X-HM-MType: 10
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaSEIfVh9LSkgdTklMGk5PSlYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlKT1VKSk1VSUhCVUhNWVdZFhoPEhUdFFlBWU9LSFVKS0lCTUtKVUpLS1VLWQ
-	Y+
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="s5bgiurac7jxabhb"
+Content-Disposition: inline
+In-Reply-To: <2025-08-06.1754489257-elated-baubles-defiant-growls-beloved-jewelry-9Ofm2b@cyphar.com>
 
-On Thu, Aug 07 2025, Chunsheng Luo wrote:
 
-> On Tue, Aug 05 2025, Miklos Szeredi wrote:
->
-> +	bytes_copied = fc->no_copy_file_range_64 ?
-> +		outarg.size : outarg_64.bytes_copied;
-> +
->  	truncate_inode_pages_range(inode_out->i_mapping,
->  				   ALIGN_DOWN(pos_out, PAGE_SIZE),
-> -				   ALIGN(pos_out + outarg.size, PAGE_SIZE) - 1);
-> +				   ALIGN(pos_out + bytes_copied, PAGE_SIZE) - 1);
->  
->  	file_update_time(file_out);
-> -	fuse_write_update_attr(inode_out, pos_out + outarg.size, outarg.size);
-> +	fuse_write_update_attr(inode_out, pos_out + bytes_copied, bytes_copied);
+--s5bgiurac7jxabhb
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 2/4] procfs: add "pidns" mount option
+MIME-Version: 1.0
 
-The copy_file_range syscall returns bytes_copied, a value provided by the userspace filesystem that the kernel cannot control. If bytes_copied > len, how should the application handle this? Similarly, if pos_out + bytes_copied < pos_outdue to integer overflow, could this cause any issues? Since vfs_copy_file_range->generic_copy_file_checks already check that pos_out + len does not overflow, so just need check bytes_copied > len.
+On 2025-08-07, Aleksa Sarai <cyphar@cyphar.com> wrote:
+> On 2025-08-06, Askar Safin <safinaskar@zohomail.com> wrote:
+> > > I just realised that we probably also want to support FSCONFIG_SET_PA=
+TH
+> >=20
+> > I just checked kernel code. Indeed nobody uses FSCONFIG_SET_PATH.
+> > Moreover, fsparam_path macro is present since 5.1. And for all this
+> > time nobody used it. So, let's just remove FSCONFIG_SET_PATH. Nobody
+> > used it, so this will not break anything.
+> >=20
+> > If you okay with that, I can submit patch, removing it.
+>=20
+> I would prefer you didn't -- "*at()" semantics are very useful to a lot
+> of programs (*especially* AT_EMPTY_PATH). I would like the pidns=3D stuff
+> to support it, and probably also overlayfs...
+>=20
+> I suspect the primary issue is that when migrating to the new mount API,
+> filesystem devs just went with the easiest thing to use
+> (FSCONFIG_SET_STRING) even though FSCONFIG_SET_PATH would be better. I
+> suspect the lack of documentation around fsconfig(2) played a part too.
+>=20
+> My impression is that interest in the minutia about fsconfig(2) is quite
+> low on the list of priorities for most filesystem devs, and so the neat
+> aspects of fsconfig(2) haven't been fully utilised. (In LPC last year,
+> we struggled to come to an agreement on how filesystems should use the
+> read(2)-based error interface.)
+>=20
+> We can very easily move fsparam_string() or fsparam_file_or_string()
+> parameters to fsparam_path() and a future fsparam_file_or_path(). I
+> would much prefer that as a user.
 
-Thanks
-Chunsheng Luo
+Actually, fsparam_bdev() accepts FSCONFIG_SET_PATH in a very roundabout
+way (and the checker doesn't verify anything...?). So there is at least
+one user (ext4's "journal_path"), it's just not well-documented (which
+I'm trying to fix ;]).
+
+My plan is to update fs_lookup_param() to be more useful for the (fairly
+common) use-case of wanting to support paths and file descriptors, and
+going through to clean up some of these unused fsparam_* helpers (or
+fsparam_* helpers being abused to implement stuff that the fs_parser
+core already supports).
+
+At the very least, overlayfs, ext4, and this procfs patchset can make
+use of it.
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+https://www.cyphar.com/
+
+--s5bgiurac7jxabhb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaJRTJAAKCRAol/rSt+lE
+b8vQAP4i3lUz0raHzBGHmCX+UhlLhpD2d850DSh9njsFS7RknQEArL1ac/38BwlE
+Qey3BzoNaEAAXVm8ZejpG1aKW6NoJAQ=
+=Xy1s
+-----END PGP SIGNATURE-----
+
+--s5bgiurac7jxabhb--
 
