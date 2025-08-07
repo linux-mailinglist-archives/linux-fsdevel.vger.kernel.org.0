@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-56991-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56992-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8498EB1D923
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 15:33:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2EA3B1D941
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 15:42:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69F521AA4BE2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 13:34:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D3D116E537
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 13:42:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39B4025C711;
-	Thu,  7 Aug 2025 13:33:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5680E214813;
+	Thu,  7 Aug 2025 13:42:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G4h3RIxD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bEWLYMxH"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EB5679F5;
-	Thu,  7 Aug 2025 13:33:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB122242D84;
+	Thu,  7 Aug 2025 13:42:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754573619; cv=none; b=UfKdgYKhny6yOpXtABTq64eYWykJr6P70g2VsNBYYDp0BbGLVyoTgoUT5W0vL6P73KhMaqmwXGKRb3j+0Yc7kpQMoPkpI6V6MKsiLoMYbWKANytNW9W6jog9Zw6bYRhMof+BZV1C+x8KosSGXhjJ2MlbJhO6DcZiIWKaN9zYA5M=
+	t=1754574168; cv=none; b=SaIND0iHXNKmSStJbQI3X89satVCUoQvIPlPyI1dxX0KS8QC7FHcoGK1K+WHDPFUy5RL7E7iPvAvcrfX4+Syi5Pd2+WwKVSXQUyZ3SOB2h7hnQtuZ4R5uhAGvOgloRmxOX6VIjWvLDluHPprdF3sNXkDH6BUrrVlYMJELpjSilE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754573619; c=relaxed/simple;
-	bh=C+m41Sxvs2J9cP2hrThqL8yu6FEllFdE5iFu8nqgbqE=;
+	s=arc-20240116; t=1754574168; c=relaxed/simple;
+	bh=dhX65AbgfS/KR4PaiEOOQpG6AstcgDk1GMb4f5SARWs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nKVTQkWe3E0VzImQKD4j2fnLFgqB/x3uTbv+cZnQWX5euVEffEAD84IzpI3qC9P3eNrHxU2htjkb/pZP3jhkNaRBef+IdvLuaRzRD+HGqhpNSKpfvanRsP7tTD0GVgaTa9Xjq/IQtdVdi7HHXonYYDL3tjyDnr+W4Noxyv+r5Vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G4h3RIxD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F65EC4CEEB;
-	Thu,  7 Aug 2025 13:33:32 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=mOb1Y+fYxqLb8sffP1Mjh8xOgXGKCE/RMDbG5yhwvGkMaUP9KlOBcpV95IZszB1OhpAQOmPPHkzZ4Lj824zIl9b9B4gRCeKA2WfUkQRMfhyp0C22F1Mh2sr8XjmF3d079XkX0KsfDypqsZX1lSAYpM6Zu1DFWfD4CUY00fwsDEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bEWLYMxH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58EB7C4CEF6;
+	Thu,  7 Aug 2025 13:42:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754573619;
-	bh=C+m41Sxvs2J9cP2hrThqL8yu6FEllFdE5iFu8nqgbqE=;
+	s=k20201202; t=1754574168;
+	bh=dhX65AbgfS/KR4PaiEOOQpG6AstcgDk1GMb4f5SARWs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G4h3RIxDa5i/vOU7X8qLKhoxfuweduPC7xndg3evrKhJ18CaO27VYtOgIXd67KtSX
-	 vzSnZFU2VCoEbfUHUIZumnuw4dCyRw+oxZxDDRgmG5e3Ibt4r4Sn1tuxZfAo8iPT2E
-	 dQ5WmrdvpjOnmWKGBQqM1ZcYhJqdZkeWoxsHbGKJPYJe+qDbKd66+0ogCd5t9tur1R
-	 MnU2JtVgPZx8qSLzef/tD7TYEoSZm2agBxiUGsFgNAq/wE7d4y8kYs9NEPLFiWH6un
-	 V08nVEV3fWO66aOXZeY/x6hCGz+p1Wjd2a0g9oO8Y3bIk9m+oCcCaqIWI+yIyO0Y10
-	 ZyHDB3ldpiZdQ==
-Date: Thu, 7 Aug 2025 15:33:29 +0200
+	b=bEWLYMxHcH2jizGyY/SFgN5uigtWAiTuKXTIcPw3oMNicxwhx7UQQy/ECp6kPCBRz
+	 Q+a4BU9bTXkObP4c4MgyD53iy8bgZSrveG3zzbKFYdxHKgDgBaHkZrxfuxeEhpGx9B
+	 ayQpfQineK/u17uTenDsF6t6ZSWlacb839OtcnoeUSc1u2vsPVepZmUgrKZYbwx/sp
+	 KwjFJ3vfM7YoauRiKlKG13yrwBD1y7f2m8wY+voQpUH1dr/tEtTbB25+BzWtkSiYK1
+	 mA2DqWTTZ4SLB3LXsRQJ1l1Fp3S+RLfRUPZGxmfiuRHABuDuC9MIqJZZ30iSnloPtL
+	 pmACWhnM4CCtg==
+Date: Thu, 7 Aug 2025 15:42:39 +0200
 From: Alejandro Colomar <alx@kernel.org>
 To: Aleksa Sarai <cyphar@cyphar.com>
 Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
@@ -49,13 +49,12 @@ Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>,
 	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
 	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v2 02/11] mount_setattr.2: move mount_attr struct to
- mount_attr.2type
-Message-ID: <jyzhaxy4htdmqijbxdbzivdlktwkpmbop7kcmqqdvtzb423wgx@sdbqwmmofkqa>
+Subject: Re: [PATCH v2 03/11] fsopen.2: document 'new' mount api
+Message-ID: <3u44qtys5a6k7hspgs6syhhuuicwjtdzdsdhe65j3kilacmfuj@pqsaofcc4lul>
 References: <20250807-new-mount-api-v2-0-558a27b8068c@cyphar.com>
- <20250807-new-mount-api-v2-2-558a27b8068c@cyphar.com>
- <cselxzuadkkf4cfx45fm3cm77mkq7gxrbzg7idr5726p52w5qa@sarhby7scgp6>
- <2025-08-07.1754570250-rented-dazzler-furry-proton-robust-diamonds-Kgpe2w@cyphar.com>
+ <20250807-new-mount-api-v2-3-558a27b8068c@cyphar.com>
+ <afty6mfpowwj3kzzbn3p7s4j4ovmput34dtqfzzwa57ocaita4@2jj4qandbnw3>
+ <2025-08-07.1754570381-dill-stub-postwar-mowers-wrinkly-pacifism-hYIHTB@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,12 +62,12 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="g4eqyz2xnmynvagq"
+	protocol="application/pgp-signature"; boundary="qkuodxlnnepjp6wv"
 Content-Disposition: inline
-In-Reply-To: <2025-08-07.1754570250-rented-dazzler-furry-proton-robust-diamonds-Kgpe2w@cyphar.com>
+In-Reply-To: <2025-08-07.1754570381-dill-stub-postwar-mowers-wrinkly-pacifism-hYIHTB@cyphar.com>
 
 
---g4eqyz2xnmynvagq
+--qkuodxlnnepjp6wv
 Content-Type: text/plain; protected-headers=v1; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -79,86 +78,144 @@ Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>,
 	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
 	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v2 02/11] mount_setattr.2: move mount_attr struct to
- mount_attr.2type
+Subject: Re: [PATCH v2 03/11] fsopen.2: document 'new' mount api
 References: <20250807-new-mount-api-v2-0-558a27b8068c@cyphar.com>
- <20250807-new-mount-api-v2-2-558a27b8068c@cyphar.com>
- <cselxzuadkkf4cfx45fm3cm77mkq7gxrbzg7idr5726p52w5qa@sarhby7scgp6>
- <2025-08-07.1754570250-rented-dazzler-furry-proton-robust-diamonds-Kgpe2w@cyphar.com>
+ <20250807-new-mount-api-v2-3-558a27b8068c@cyphar.com>
+ <afty6mfpowwj3kzzbn3p7s4j4ovmput34dtqfzzwa57ocaita4@2jj4qandbnw3>
+ <2025-08-07.1754570381-dill-stub-postwar-mowers-wrinkly-pacifism-hYIHTB@cyphar.com>
 MIME-Version: 1.0
-In-Reply-To: <2025-08-07.1754570250-rented-dazzler-furry-proton-robust-diamonds-Kgpe2w@cyphar.com>
+In-Reply-To: <2025-08-07.1754570381-dill-stub-postwar-mowers-wrinkly-pacifism-hYIHTB@cyphar.com>
 
 Hi Aleksa,
 
-On Thu, Aug 07, 2025 at 10:38:36PM +1000, Aleksa Sarai wrote:
-> On 2025-08-07, Alejandro Colomar <alx@kernel.org> wrote:
-> > > +.SH VERSIONS
-> > > +Extra fields may be appended to the structure,
-> > > +with a zero value in a new field resulting in
-> > > +the kernel behaving as though that extension field was not present.
-> > > +Therefore, a user
-> > > +.I must
-> > > +zero-fill this structure on initialization.
+On Thu, Aug 07, 2025 at 10:50:17PM +1000, Aleksa Sarai wrote:
+> > > +A filesystem configuration context is an in-kernel representation of=
+ a pending
+> > > +transaction,
 > >=20
-> > I think this would be more appropriate for HISTORY.  In VERSIONS, we
-> > usually document differences with the BSDs or other systems.
-> >=20
-> > While moving this to HISTORY, it would also be useful to mention the
-> > glibc version that added the structure.  In the future, we'd document
-> > the versions of glibc and Linux that have added members.
+> > This page still needs semantic newlines.  (Please review all pages
+> > regarding that.)  (In this specific sentence, I'd break after 'is'.)
 >=20
-> Sure, though I just copied this section from open_how(2type).
+> I did try adding them to this page (and all of the other pages -- I
+> suspect the pages later in the patchset have more aggressive newlining).
+> If you compare the newline placement between v1 and v2 you'll see that I
+> have added a lot of newlines in all of the man-pages, but it's possible
+> I missed a couple of sentences like this one.
 
-Thanks!  I should fix that.
+Yup, it's quite better.  Thanks!
+
+> To be honest I feel quite lost where the "semantic newlines" school
+> would deem appropriate to place newlines, and man-pages(7) is very terse
+> on the topic. Outside of very obvious examples,
+> it just feels wrong
+> to have such choppy
+> line break usage.
+> I understand
+> the argument that
+> this helps
+> with reviewing diffs,
+> but I really find it
+> incredibly unnatural.
+> (And this tongue-in-cheek example
+> is probably wrong too.)
+
+I understand.  The guidelines I use are:
+
+	If there's punctuation, break.
+	If there isn't punctuation, but the sentence would go past the
+	80-char right margin, try to find the best point to break (this
+	is sometimes hard or subjective).
+	Other than that, there's no need to break.
+
+Does that seem reasonable?  (I can always amend a few cases that you
+don't know where to split.)
+
+>=20
+> > > +containing a set of configuration parameters that are to be applied
+> > > +when creating a new instance of a filesystem
+> > > +(or modifying the configuration of an existing filesystem instance,
+> > > +such as when using
+> > > +.BR fspick (2)).
+> > > +.P
+> > > +After obtaining a filesystem configuration context with
+> > > +.BR fsopen (),
+> > > +the general workflow for operating on the context looks like the fol=
+lowing:
+> > > +.IP (1) 5
+> > > +Pass the filesystem context file descriptor to
+> > > +.BR fsconfig (2)
+> > > +to specify any desired filesystem parameters.
+> > > +This may be done as many times as necessary.
+> > > +.IP (2)
+> > > +Pass the same filesystem context file descriptor to
+> >=20
+> > Do we need to say "same"?  I guess it's obvious.  Or do you expect
+> > any confusion if we don't?
+>=20
+> The first time I saw this interface I was confused when you pass
+> which file descriptor (especially around the FSCONFIG_CMD_CREATE stage),
+> so I felt it better to make it clear which file descriptor we are
+> talking about.
+
+Okay.
+
+> > > +.EX
+> > > +int fsfd, mntfd;
+> > > +\&
+> > > +fsfd =3D fsopen("ext4", FSOPEN_CLOEXEC);
+> > > +fsconfig(fsfd, FSCONFIG_SET_FLAG, "ro", NULL, 0);
+> > > +fsconfig(fsfd, FSCONFIG_SET_PATH, "source", "/dev/sdb1", AT_FDCWD);
+> > > +fsconfig(fsfd, FSCONFIG_SET_FLAG, "noatime", NULL, 0);
+> > > +fsconfig(fsfd, FSCONFIG_SET_FLAG, "acl", NULL, 0);
+> > > +fsconfig(fsfd, FSCONFIG_SET_FLAG, "user_xattr", NULL, 0);
+> > > +fsconfig(fsfd, FSCONFIG_SET_FLAG, "iversion", NULL, 0)
+> > > +fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
+> > > +mntfd =3D fsmount(fsfd, FSMOUNT_CLOEXEC, MOUNT_ATTR_RELATIME);
+> > > +move_mount(mntfd, "", AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH);
+> > > +.EE
+> > > +.in
+> > > +.P
+> > > +First, an ext4 configuration context is created and attached to the =
+file
+> >=20
+> > Here, I'd break after the ',', and if you need to break again, after
+> > 'created'.
+>=20
+> Okay, I wanted to avoid having lines with single words due to semantic
+> newlines, but if that's what you prefer I can update that everywhere...
+
+I don't have a strong opinion on that.  I sometimes avoid the break if
+the rest of the sentence is short and all fits in one line, but if you
+already need to break, that'd be the first obvious place to look at.
+Other times, I have a more pedantic day, and split at every comma, even
+unnecessarily.
 
 
 Cheers,
 Alex
 
->=20
-> > > +.SH STANDARDS
-> > > +Linux.
-> > > +.SH SEE ALSO
-> > > +.BR mount_setattr (2)
-> >=20
-> > Have a lovely day!
-> > Alex
-> >=20
-> > --=20
-> > <https://www.alejandro-colomar.es/>
->=20
->=20
->=20
-> --=20
-> Aleksa Sarai
-> Senior Software Engineer (Containers)
-> SUSE Linux GmbH
-> https://www.cyphar.com/
-
-
-
 --=20
 <https://www.alejandro-colomar.es/>
 
---g4eqyz2xnmynvagq
+--qkuodxlnnepjp6wv
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmiUqygACgkQ64mZXMKQ
-wqlwpRAAjjX7Pf1H7oPcZt4gFLMb3IUa3YzMoWSRYwJJO13sAmuQRilMq1xxjOww
-m+x3ksXkam9FdQnM1wl82cX+exj0H7QrFd/6QCCh8VTmE6virPTWZhJzl+ACWM4x
-d4B+MBXsanhjiMc4rozHUhAKlCCVE7hBQg32NxQxjIVbZ/ZBBFcgTUHRLSP28zLS
-YHCsZcbu4QfQkHMU+FeiEplaycDwfFiHNKKHwaCSTTLO+xezJslW1YQ/l4y6cdnJ
-seZnFFzutIJZWksqMbCyx3vTLLDze/rLOsUNJS2IqY1KKA65FhRShUI5OfczqmFq
-QK36tqlHnP1Uu+ow8rEmZjHEIic3Wr2XV8LCzdvRkXuia08Eh0WSg1SGG/z04Fr5
-oVyDOlCVHRc4SlJ0jlJUPIhIFpIfYScujeG/3O8qEz9jYFrpc3jMDhxuhl3tpCmK
-PWSuQhgrE0l5cKiC5G6Cw883HTp2lys6VXnTeoJeNKTH4IcXTDHYWopwfO4TVwk+
-IZkYgvKznDtLVLjJOOr4xwaIaiS7wOPWSSpx7YQq0JEtqvBSDLvJBQLkGzEPeK18
-QXD0E4XXmFXccEP2PKBQeBLWLMLm+e4ZqN+GVwHalHIUSkr8LSQJV3kPw2eNt7Od
-EMvVsrLeTH93eYzEdSA+7OcQeQJaJdEDccuy+oe4A7tLY5fdQiE=
-=FPho
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmiUrU4ACgkQ64mZXMKQ
+wqnTaA/+O7z7oj6Sv67u8mhwvcsgbLALqTTvBca9IqwAMeJnEV7a9X5PKUGQty3B
+Hc6L+Zsfdm2kDSU42TxeI2hqDelup+jKCwmzWJpQMGgOoiI4XcnXgf1YobvEXhhT
+riLc9i2PQT/Bd6U5C+6zzuntBVjHxaRCfTzqDrSolQinZYAGIRztEqWrdI0C+hXy
+cGbRE3dXFt2sTcLP4MftPuvV6hWm6keeOvDYaBtH9fprE777obJhVHMxdZZQMY83
+ZwtJKT27dVlm6LAVHGKddaBOydZkCIjHVAW1me0nRxW5ZYFZelWXuh/9dO0MW4lF
+bXPVL09qeDA/s7sPacOYpcHguKAQ4NAngPd2RMtm0YG+INoSx3RuY9wUxfudcYbU
+YVJspezm0+VaUv1zS10venuv1swWpSiJjjL9kohopGe9PXctxzze9OwCHhU8i6WB
+HafuQtrQV/0jPsnNmcU0vk8vjRHFedvVDO7KGDs+8YcILsBdspuqGHniqPPJfeWk
+4Vf1V5SnOHvSJPWJ/LJXy6C/vvaV5zmjGYuvtZPcV/GuJgFV0y0d6yFKf/C4nHeu
+EsyzNEhqhficSws6eslw6RerjrvjUWLdYIGUBNzvni5u/PfZToFpBxI5thKPluXH
+aPoYsZDPJWot38955MK4LIETF783alrCL8xJXESg239BCZ513j0=
+=QzCX
 -----END PGP SIGNATURE-----
 
---g4eqyz2xnmynvagq--
+--qkuodxlnnepjp6wv--
 
