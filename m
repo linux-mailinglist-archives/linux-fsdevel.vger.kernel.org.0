@@ -1,57 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-57017-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57018-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 087BCB1DDBC
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 21:58:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1106BB1DE96
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 23:01:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32E9156099E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 19:58:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E22BF18C19D9
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 21:01:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18858231C91;
-	Thu,  7 Aug 2025 19:58:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A88CB207A3A;
+	Thu,  7 Aug 2025 21:01:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bHscZq3J"
+	dkim=pass (2048-bit key) header.d=joshtriplett.org header.i=@joshtriplett.org header.b="lI+F6Ef9";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TsI9nULV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7201A482EB;
-	Thu,  7 Aug 2025 19:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 950B42AD32
+	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Aug 2025 21:01:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754596699; cv=none; b=lco3AJ7XRHHwv+GAGm/fsf3Jq5bxKIls7ma4n4081gVW7dGQDZxxGHtnnRPRNPhv/ulvZ5FkNR3ryxrZfbwDEKeRigOr2+HUVq9FIvnZhnz6PGIe5xAmODY6bGscTzgEmgxrvieviZ2NoAn0XDAxDhZrA2IBbG9B1BUiUqkmj8c=
+	t=1754600481; cv=none; b=P+9K1+ZjEk3Bk3SBh/PfaA9cirmKyJR9F0rVorVY889ghYduYzzaTnA593UPmIsl8qBQs2+Nsp+3UmGLe4zir1rA6+0cbwRg41DsiRB4tieGXTbOSxDlrhOd63nPbly/UoIQy/ZUsnp21xBSKoHV436NFX0o+Xzy+vijTVU9zTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754596699; c=relaxed/simple;
-	bh=PRNJdTkg+Cl6Md5MFcIQfJg92u2l/9AkbA/ArJEWtm8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gSMWbgKDkNUvPH7YaRBDiwfSxdTJTEWyRA8p6V2JdCjBAX7NU/wjxwGieZ0DcS4C0TUImAqn3VeUROGzJR9rR6lea1uuD1/JMMDBP3hH6EqLJFhEYrTfs+HyO7Gby/JtxuGG2MF1db/Re1WMhi1/Ux5p5wezvY9Qd7yJSJ7wdcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bHscZq3J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFE28C4CEEB;
-	Thu,  7 Aug 2025 19:58:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754596699;
-	bh=PRNJdTkg+Cl6Md5MFcIQfJg92u2l/9AkbA/ArJEWtm8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bHscZq3Ji/KNWUPeLmgm/rj+7+w79HIVnvWLbXv6xCPZyY1WCkefgsN6roB+YH5aU
-	 Jl8aFRp5QC2UfP42SWdbnJn6gjplgmVmTWdkjNfKmBYAS0R2O5eNpLOahibJdeDWkH
-	 gDXpwIYvYqST4nKUK9/pfK8cPx0NFvy82wUG69Y/Ji5R5i6bwAx7o7fomN2zbL5Y11
-	 yc+CZdqA4bBxSY+xNpkkvWyEvmxoU+mmACcLwAw/ANExV8WmBDG13z/m4eC699ZuSK
-	 LKDPW8dGWCHtYDC4KHmYbBFJ2gyOmBcUiZ5AdOjCMhNEuXR84dGx+yIkdYw1dg1egU
-	 ByVrZPsOm3X3g==
-Date: Thu, 7 Aug 2025 12:58:18 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc: linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-	Ritesh Harjani <ritesh.list@gmail.com>,
-	Zhang Yi <yi.zhang@huawei.com>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/2] ext4: Fix reserved gdt blocks handling in fsmap
-Message-ID: <20250807195818.GT2672022@frogsfrogsfrogs>
-References: <e7472c8535c9c5ec10f425f495366864ea12c9da.1754377641.git.ojaswin@linux.ibm.com>
- <08781b796453a5770112aa96ad14c864fbf31935.1754377641.git.ojaswin@linux.ibm.com>
+	s=arc-20240116; t=1754600481; c=relaxed/simple;
+	bh=rz04v2wTBINoGu0Ur5WxqrMSyTGYU80gMg9CiAfouFI=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=mTo+GB2sJoWr/83k/9I/eZGSQEsDx0sDOe78rXGglkKdrvajNbaxosKsCJMtyTMcBqCcm2jzJQZJNCqwsTu4MW2HSD5+Lj/kCSkCKxnKL/QDvYG3PdW5bUtTCg1YmQ1IbNFOTJL0p3xCevhlzXCCbGyckOV7m+owtIoaZ8JOfo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joshtriplett.org; spf=pass smtp.mailfrom=joshtriplett.org; dkim=pass (2048-bit key) header.d=joshtriplett.org header.i=@joshtriplett.org header.b=lI+F6Ef9; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TsI9nULV; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joshtriplett.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=joshtriplett.org
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id A8E0AEC01CD
+	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Aug 2025 17:01:17 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-05.internal (MEProxy); Thu, 07 Aug 2025 17:01:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	joshtriplett.org; h=cc:content-type:content-type:date:date:from
+	:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to; s=fm3; t=1754600477; x=1754686877; bh=LErLBlhCuX
+	j1NH6NqMdHEiJ4dOhbfYQfSkcVHCiovdc=; b=lI+F6Ef9AFBUrzV+Ow/v99I7RN
+	ZMeY8N/NvCcjpys2GYljhO/OnMgmFApGZgwKGv3btUX52FTTDTYVE1VnklDZKvPt
+	YG4qFQnzgbPa9Oj0QkSp179UE0c1Q+Uv6IxbyHMaI1iDIFQqVlI9njkvGxuoEzf5
+	3XkFyzGGKHaEa1DvP01Oz7HniOWQ1ZeT0qjbdSTNkadUEpocOtKlWxthfdyeIkqg
+	twoxImaXP6TvSphjL4rBqDfXZ+WoQWrky0OmXJE+FoB6mtv4GZQ7hp2HGyRluT7G
+	WfN0AWc93PPwDSbZAN9yUwtQUODJPEK3cvrJgShSEm6r3A6lCgNP+gG/UBnA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:message-id
+	:mime-version:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1754600477; x=
+	1754686877; bh=LErLBlhCuXj1NH6NqMdHEiJ4dOhbfYQfSkcVHCiovdc=; b=T
+	sI9nULV7aeM9QAnUsn1jIxnglyEY4XLHuaMf0zprg1DAagPt40/OTreYR8Vr0Esq
+	vKyK+n59G1bXqX0Dj4R1WSkRX6bR1XMk7CPJkEhcVj89iXNaT+x8P9lk3Ld2u3Xl
+	BSYD0XtqpzxOrLglviE85OS3dNttcTufCpDm9ewpnwUbG95xQBEAnBiSU5FWSSKi
+	j8A2gW+gcbQCxZOTa1pvATLHCI3RFZiftob8ZgkshsYNhijY224yNtgE5DAxqXfR
+	lX42NBQrpbPy3DqfnoEReH8+TFSosEo2/0TWN9vC4uBLCHimLa0ZjeBs/XAyQ/+1
+	LT0MfM1AKK4O7tqd8D2Qw==
+X-ME-Sender: <xms:HRSVaD4tu9Z53rJMIDsK3GpZGG-i0AgwGywLTeGJJLHS1bObtguGew>
+    <xme:HRSVaK5ioo0G4emSLBeIi9BkLwYo4X70QZeVqozTwnaOQAcnLZr4DRJ2z3Z2eUHeW
+    pSZq_xsnulX2NiHCEw>
+X-ME-Received: <xmr:HRSVaD3ZqXcenPhOsUzes618o3WXbj9N1Soco9DooL8CwLUqaWGz4UUkaQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduvdduleeiucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucenucfjughrpeffhffvuffkgggtugesthdtredttddtvd
+    enucfhrhhomheplfhoshhhucfvrhhiphhlvghtthcuoehjohhshhesjhhoshhhthhrihhp
+    lhgvthhtrdhorhhgqeenucggtffrrghtthgvrhhnpeelleeggedtjeejfeeuvddufeeggf
+    ektdefkeehveeuvedvvdfhgeffgfdvgfffkeenucevlhhushhtvghrufhiiigvpedtnecu
+    rfgrrhgrmhepmhgrihhlfhhrohhmpehjohhshhesjhhoshhhthhrihhplhgvthhtrdhorh
+    hgpdhnsggprhgtphhtthhopedupdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehl
+    ihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:HRSVaGVC31eBOC0Q31Fs5XmmX8hWCxPLAIs6pXkAWaghkVwwz_Wmtw>
+    <xmx:HRSVaO7vfIzN2tJxO_O4CkszcWYnZnU9-SZ9QjaD9NbuFh3N8g5Yfg>
+    <xmx:HRSVaNIFKbMkYmw8DvnxfWgHbiRkDrPpoOEvU9b6FrliaMtKZaMlRA>
+    <xmx:HRSVaPLF3XWB2UTavwnvjtt6n0b_sbSHgsPzeB6bZBc58cDmJHrqOA>
+    <xmx:HRSVaJTKI9bztoX--Cbr7Rlejx7RNK9GlilIHoOl_YAkzKooIrtjjj7y>
+Feedback-ID: i83e94755:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA for
+ <linux-fsdevel@vger.kernel.org>; Thu, 7 Aug 2025 17:01:16 -0400 (EDT)
+Date: Thu, 7 Aug 2025 14:01:15 -0700
+From: Josh Triplett <josh@joshtriplett.org>
+To: linux-fsdevel@vger.kernel.org
+Subject: futimens use of utimensat does not support O_PATH fds
+Message-ID: <aJUUGyJJrWLgL8xv@localhost>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,58 +93,45 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <08781b796453a5770112aa96ad14c864fbf31935.1754377641.git.ojaswin@linux.ibm.com>
 
-On Tue, Aug 05, 2025 at 02:00:31PM +0530, Ojaswin Mujoo wrote:
-> In some cases like small FSes with no meta_bg and where the resize doesn't
-> need extra gdt blocks as it can fit in the current one,
-> s_reserved_gdt_blocks is set as 0, which causes fsmap to emit a 0 length
-> entry, which is incorrect.
-> 
->   $ mkfs.ext4 -b 65536 -O bigalloc /dev/sda 5G
->   $ mount /dev/sda /mnt/scratch
->   $ xfs_io -c "fsmap -d" /mnt/scartch
-> 
->         0: 253:48 [0..127]: static fs metadata 128
->         1: 253:48 [128..255]: special 102:1 128
->         2: 253:48 [256..255]: special 102:2 0     <---- 0 len entry
->         3: 253:48 [256..383]: special 102:3 128
-> 
-> Fix this by adding a check for this case.
-> 
-> Fixes: 0c9ec4beecac ("ext4: support GETFSMAP ioctls")
-> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+I just discovered that opening a file with O_PATH gives an fd that works
+with
 
-I had no idea that this could be zero, so....
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+utimensat(fd, "", times, O_EMPTY_PATH)
 
---D
+but does *not* work with what futimens calls, which is:
 
-> ---
->  fs/ext4/fsmap.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/fs/ext4/fsmap.c b/fs/ext4/fsmap.c
-> index 9d63c39f6077..91185c40f755 100644
-> --- a/fs/ext4/fsmap.c
-> +++ b/fs/ext4/fsmap.c
-> @@ -393,6 +393,14 @@ static unsigned int ext4_getfsmap_find_sb(struct super_block *sb,
->  	/* Reserved GDT blocks */
->  	if (!ext4_has_feature_meta_bg(sb) || metagroup < first_meta_bg) {
->  		len = le16_to_cpu(sbi->s_es->s_reserved_gdt_blocks);
-> +
-> +		/*
-> +		 * mkfs.ext4 can set s_reserved_gdt_blocks as 0 in some cases,
-> +		 * check for that.
-> +		 */
-> +		if (!len)
-> +			return 0;
-> +
->  		error = ext4_getfsmap_fill(meta_list, fsb, len,
->  					   EXT4_FMR_OWN_RESV_GDT);
->  		if (error)
-> -- 
-> 2.49.0
-> 
-> 
+utimensat(fd, NULL, times, 0)
+
+The former will go through do_utimes_fd, while the latter goes through
+do_utimes_path. I would have expected these two cases to end up in the
+same codepath once they'd discovered they were operating on a file
+descriptor, and I would have expected both to support O_PATH file
+descriptors if either does.
+
+This is true for both symlinks (with O_NOFOLLOW | O_PATH) and regular
+files (with just O_PATH). This is on 6.12, in case it matters.
+
+Quick and dirty test program (in Rust, using rustix to make syscalls):
+
+```
+use rustix::fs::{AtFlags, OFlags, Timespec, Timestamps, UTIME_OMIT};
+
+fn main() -> std::io::Result<()> {
+    let f = rustix::fs::open("oldfile", OFlags::PATH | OFlags::CLOEXEC, 0o666.into())?;
+    let times = Timestamps {
+        last_access: Timespec { tv_sec: 0, tv_nsec: UTIME_OMIT },
+        last_modification: Timespec { tv_sec: 0, tv_nsec: 0 },
+    };
+    let ret = rustix::fs::utimensat(&f, "", &times, AtFlags::EMPTY_PATH);
+    println!("utimensat: {ret:?}");
+    let ret = rustix::fs::futimens(&f, &times);
+    println!("futimens: {ret:?}");
+    Ok(())
+}
+```
+
+Is this something that would be reasonable to fix? Would a patch be
+welcome that makes both cases work identically and support O_PATH file
+descriptors?
 
