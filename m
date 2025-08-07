@@ -1,243 +1,258 @@
-Return-Path: <linux-fsdevel+bounces-56965-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56966-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 835B5B1D4A4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 11:21:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2123EB1D4E9
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 11:36:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9671D178DCB
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 09:21:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0438C18A1D9D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 09:35:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6802206B8;
-	Thu,  7 Aug 2025 09:21:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62DAC264F96;
+	Thu,  7 Aug 2025 09:34:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="erpoaS/k"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="RDsRrwpr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D086B1D47B4
-	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Aug 2025 09:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA94624DD00;
+	Thu,  7 Aug 2025 09:34:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754558504; cv=none; b=JNMO2nL0hLW9gzrzsqqaYzcyAHFnp69IeFjfgo/9hVDewGcuyDWS9+2xE2OYzBxm+uObp7ZuKb2A+civ6/3gPu7GkrfoVf7pVxJH3Wmq+1O6N+1+EjnHXYjUIyomYWhl08zgvuRrdqrBf1gqHhTgL4VYLAG/oTjfCIOogXUtnNY=
+	t=1754559286; cv=none; b=AaHXuc46kBsopyF+AMiJN9v3dY03W+OH2nQFfiCcB2UyLvj2dYGA+eGv7jWRlq+qIFJb0sJKZTT4ckyXESjnufonkUstLRgG6IEFjERTHAIFJhBdhEoVcKvzBi4ifNJwpjJaSHoz8NZ7sk9/TNAHBm63qcNYJU6KTToo/qqOiaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754558504; c=relaxed/simple;
-	bh=2kF9Xp/i+CMWgPLaCGqbMiGiYTpga7r7YABuRUKkC+U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oNicpiayJ5OZZ58s7IcFDgi1UZbHN9Cl4CbPpWifH123M0rALIOLv7dongi7/4+V1S6NgyOjzcKSl+9MdcxhmTS9AzJ6A9oq6vEqnkfiU15V2hPP2R2vvFWQG93pB7RKdq5Q/IJ4f+PbC4GPm1/yNT44oAtMun2AbHrafKXETjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=erpoaS/k; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2405c0c431cso7039995ad.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Aug 2025 02:21:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754558502; x=1755163302; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=nazhVQn6Jruflxd4sQmZQocx4oQcxFqDx6cnHObT89c=;
-        b=erpoaS/ktQ3Qc6Q34OoQEztjQK1yqvAEpPkrcwBhE3P3FByAghn28uN3NjWZDM+MIy
-         KrOR1maQNj9fZIZ1+E4p4b3Ru8zBXtFue7Qi2xaayL3GU6tjeXPy3xn/HDwtwfWapZr0
-         XoSogb2O7zjF5vXo++1pghafqFfr0c8aHNW0u1MMzxT6ACCeAJa5aBQIjFGrF5gxcz0u
-         3owk7mld5hI8RLHbsiCXH+T0rfDKqqKgoYBYhdbFSBKTxjtGYVf17m5teekfKxcEVd6D
-         UUKgUweR6D/UPm5CW12Fu5dVIJ5b9NZaIImhoMorYY6CwbrmIb3/WA3lN5DMV90mNbzM
-         RD0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754558502; x=1755163302;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nazhVQn6Jruflxd4sQmZQocx4oQcxFqDx6cnHObT89c=;
-        b=vFKz2fKMRtBZ5pdlRK668MWvAyac9awdOcPMgy0g6aGnPBE+R/uFMnt0lUtulRuKYz
-         xQLOt2tisQM0eN/rbmNgB4KXngodeMSF0PU+IuRNtI4ZXd+rRes3tfrJGG1KamBaDs1H
-         DW5AIdOGkf6xkz/DQI7JAR3zt8f/wZLQytRb5PlncfmEWOZzLcfptn//LtySg5beLdjJ
-         JgGqEa2vJ6TPCo8xNXwbV1auONnsl1F/6/4sZFRKaMPsF8H5bbZOHU/4RMJuK86IAiOF
-         hzxyxFAx6fdpzKsHugwtz+oVsQWqQiDGOMZSdFItA/rPgFXjYpIxo6WENSe21avTAEyo
-         UpJg==
-X-Forwarded-Encrypted: i=1; AJvYcCVZkuHRP4TbFT9Z8AmDeaiFyuj1e3uX/XWftQLkdqGI5EpH0paBhs3zwcsAgsFaifTm/K4fqVZ2GvSjau1f@vger.kernel.org
-X-Gm-Message-State: AOJu0YwW4e/eA9tBcJOD5jPj+0gGfnl8odLXYd93vuq5vU69Aq8B5nfZ
-	6FJamhkxJtIuoyyrKDBTQwSnnDTYGTvnoB/banwQ4qx9IV4nRhe5fatREYI3coHHRPzNftPQCLo
-	jUxIVnnqYQtcwBq+bdr5y0Yc3QWQ3C2x9Lz/gIIWqIw==
-X-Gm-Gg: ASbGnctLvl+anIy9Rmanb6Cay6ycxlCGvxDOWV9PGOq7nk4/Addmj/s5q2q656sjIto
-	+X7wrt47rPJof1PZMGS3W6QA2CjWxexIkkv88EEl01rTuGOQxJHPk6v4WwAy8eq2mkAq5Wonmj8
-	TT08R33Cnz5dFY7x2hw+toLuxxI1Bxh9yKuKvz9RACjonUdKodp1CyKyUiizPzP2T9FQ/+55K6p
-	nDOdL91iIaT5tV0Rd9Ng1nAUgqq1mUZ6SgUUCFpZwNCFOIdmB7g
-X-Google-Smtp-Source: AGHT+IENUNZHbWNhDkjrlDBP/IMI+ox17dvQGf1pPh/T6DNibPj5t5Kqy2cH1NAjJtx9Hg5ja440tS5wnPkyrNZunu0=
-X-Received: by 2002:a17:903:2f89:b0:240:967a:fec3 with SMTP id
- d9443c01a7336-2429f30b074mr82279045ad.29.1754558502039; Thu, 07 Aug 2025
- 02:21:42 -0700 (PDT)
+	s=arc-20240116; t=1754559286; c=relaxed/simple;
+	bh=bi5/cUDmfgbhIMHd6ZTDNPs0NPoSsPI20ih8TFJpEfs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fJLQz1A3QvaLwDQ8zH/ZtMRPL9WM6NDR+x1I1DiYpCp3HRfMWmUa2LfdtP1+cNMhrvfPxqyUqzuxeEFnWjX1aGOWBBFwdDHOe90UeySplaWNK0cd4omz3sA84+5trRX1N2ILNPIPu8LdM/zJB+4+asiM/g4cj8GUAXBMh+GbXa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=RDsRrwpr; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5772hmde017964;
+	Thu, 7 Aug 2025 09:34:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=6vWCBn2ea2AJ8hlZ7l2i2oo4f/pnID
+	rmDJGP0OfWrxg=; b=RDsRrwprbMwU5R7G0NJ4yvG0oFV5lXhM8LLYysN9NxNqDY
+	IOiUDqEAfmXwXcZkuN5P9+7tioqcLRqNu6NJrPhueqYfUFDz4CdzWKHX/m81M+3h
+	5d6TyKiKe3eoVsLWRcwX1QYle99ayN40vV4hdxKpK5iA0cIenHOa9i7qEa+HDjVZ
+	XMVk6MDi1be5/5IuBuG83XzltFC9AMJG/IrCaHO/SY3E4LI7HIn0K4jE+kzRtCqg
+	Yl/G26IzF4RKM/KfA+aVM/LJrQFitEyv5WExGuAsMxEFqK9VpYnCXWi3ygP0iIvA
+	04hsHo+eSnHMkv7OtFxb0JxmlpHB1xkuRSGiZ/AA==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48bq6396h2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Aug 2025 09:34:36 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5779UOoT007961;
+	Thu, 7 Aug 2025 09:34:36 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 48bpwmyx1u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Aug 2025 09:34:36 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5779YYxX33947992
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 7 Aug 2025 09:34:34 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3E95220043;
+	Thu,  7 Aug 2025 09:34:34 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1853C2004B;
+	Thu,  7 Aug 2025 09:34:32 +0000 (GMT)
+Received: from li-e7e2bd4c-2dae-11b2-a85c-bfd29497117c.ibm.com (unknown [9.39.27.140])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu,  7 Aug 2025 09:34:31 +0000 (GMT)
+Date: Thu, 7 Aug 2025 15:04:29 +0530
+From: Amit Machhiwal <amachhiw@linux.ibm.com>
+To: Alex Mastro <amastro@fb.com>
+Cc: Alex Williamson <alex.williamson@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Keith Busch <kbusch@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        kvm@vger.kernel.org
+Subject: Re: [PATCH v4] vfio/pci: print vfio-device syspath to fdinfo
+Message-ID: <20250807144938.e0abc7bb-a4-amachhiw@linux.ibm.com>
+Mail-Followup-To: Alex Mastro <amastro@fb.com>, 
+	Alex Williamson <alex.williamson@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Keith Busch <kbusch@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, kvm@vger.kernel.org
+References: <20250804-show-fdinfo-v4-1-96b14c5691b3@fb.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+G9fYvZtbQLoS=GpaZ_uzm3YiZEQmz0oghnwVamNQ49CosT2w@mail.gmail.com>
- <aJNsreA4FuxalDc8@stanley.mountain>
-In-Reply-To: <aJNsreA4FuxalDc8@stanley.mountain>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Thu, 7 Aug 2025 14:51:29 +0530
-X-Gm-Features: Ac12FXzDGhnu1-S9XsmcuSQdpNl-4x-pjyL4dJsRMo-Zz2V8DR8MxaCT9WEoD8A
-Message-ID: <CA+G9fYvEGBAAEetvvtXWsGb3EQ2sTOM=szkxZ4m-Gt2bTszBdQ@mail.gmail.com>
-Subject: Re: next-20250804 Unable to handle kernel execute from non-executable
- memory at virtual address idem_hash
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Renjiang Han <quic_renjiang@quicinc.com>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, Cgroups <cgroups@vger.kernel.org>, 
-	open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
-	Linux Regressions <regressions@lists.linux.dev>, linux-fsdevel@vger.kernel.org, 
-	Song Liu <song@kernel.org>, yukuai3@huawei.com, Arnd Bergmann <arnd@arndb.de>, 
-	Anders Roxell <anders.roxell@linaro.org>, Ben Copeland <benjamin.copeland@linaro.org>
-Content-Type: multipart/mixed; boundary="00000000000040a1ab063bc2fcd6"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250804-show-fdinfo-v4-1-96b14c5691b3@fb.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA3MDA3MyBTYWx0ZWRfXyzA19daRx9Jv
+ +S0nugzECf8LjRgaWq9Uidy+7lXie11jZxPN50pOzFw+DF12e6gEkqmRecrnhnV224ZxELfB8Yj
+ G5S+VNlm8+hXRRRhqZlRsju1bQZfgE/PFbK8yDw0afmQ1DAB4VFt8Oy7jLyxLVnEpcE7E0fQhi5
+ gF49kT7r/LFgq/VIgFqgjpgzaXMuLOKhcbKFRSBCwAK43Y0CpBwaSnyLRDIOIdfwXcsgIpZoCZS
+ 9S5Wqrat766/Y1nbEsCpk5YkQAv3YHbUd+WZaGrhVvt2DMATNYaRkU8ZGCnLocGOXCfrZpzkw1r
+ QGpGI0lCX+PQXqzRb3PkCDNq4RrCB2dBb8FF60evsJevO9mHhnNAkm2aVhMm61Z59ouqgWu3Y9g
+ cWcQGxEkHkA+IXQl/gn92M2TG7Iqc3NroY/kVMyHBAFHY+7IRMSOzTfTm3WCTg0RcuiCvKuk
+X-Proofpoint-GUID: CvV8F5CmtDJe8LqRhlB-dMTow_wL2oOA
+X-Authority-Analysis: v=2.4 cv=PoCTbxM3 c=1 sm=1 tr=0 ts=6894732d cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=FOH2dFAWAAAA:8
+ a=VnNF1IyMAAAA:8 a=kvThyvOQPCVtOW654kcA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-ORIG-GUID: CvV8F5CmtDJe8LqRhlB-dMTow_wL2oOA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-07_01,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_spam_definite policy=outbound
+ score=100 suspectscore=0 malwarescore=0 adultscore=0 clxscore=1011
+ bulkscore=0 priorityscore=1501 impostorscore=0 mlxlogscore=-999 mlxscore=100
+ phishscore=0 lowpriorityscore=0 spamscore=100 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508070073
 
---00000000000040a1ab063bc2fcd6
-Content-Type: text/plain; charset="UTF-8"
+Hello,
 
-Hi Dan,
+On 2025/08/04 12:44 PM, Alex Mastro wrote:
+> Print the PCI device syspath to a vfio device's fdinfo. This enables tools
+> to query which device is associated with a given vfio device fd.
+> 
+> This results in output like below:
+> 
+> $ cat /proc/"$SOME_PID"/fdinfo/"$VFIO_FD" | grep vfio
+> vfio-device-syspath: /sys/devices/pci0000:e0/0000:e0:01.1/0000:e1:00.0/0000:e2:05.0/0000:e8:00.0
+> 
+> Signed-off-by: Alex Mastro <amastro@fb.com>
 
-On Wed, 6 Aug 2025 at 20:24, Dan Carpenter <dan.carpenter@linaro.org> wrote:
->
-> On Tue, Aug 05, 2025 at 12:50:28AM +0530, Naresh Kamboju wrote:
-> > While booting and testing selftest cgroups and filesystem testing on arm64
-> > dragonboard-410c the following kernel warnings / errors noticed and system
-> > halted and did not recover with selftests Kconfig enabled running the kernel
-> > Linux next tag next-20250804.
-> >
-> > Regression Analysis:
-> > - New regression? Yes
-> > - Reproducibility? Re-validation is in progress
-> >
-> > First seen on the next-20250804
-> > Good: next-20250801
-> > Bad: next-20250804
-> >
-> > Test regression: next-20250804 Unable to handle kernel execute from
-> > non-executable memory at virtual address idem_hash
-> > Test regression: next-20250804 refcount_t: addition on 0;
-> > use-after-free refcount_warn_saturate
-> >
-> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> >
-> > ## Test crash log
-> > [    9.811341] Unable to handle kernel NULL pointer dereference at
-> > virtual address 000000000000002e
-> > [    9.811444] Mem abort info:
-> > [    9.821150]   ESR = 0x0000000096000004
-> > [    9.833499]   SET = 0, FnV = 0
-> > [    9.833566]   EA = 0, S1PTW = 0
-> > [    9.835511]   FSC = 0x04: level 0 translation fault
-> > [    9.838901] Data abort info:
-> > [    9.843788]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
-> > [    9.846565]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-> > [    9.851938]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-> > [    9.853510] rtc-pm8xxx 200f000.spmi:pmic@0:rtc@6000: registered as rtc0
-> > [    9.856992] user pgtable: 4k pages, 48-bit VAs, pgdp=00000000856f8000
-> > [    9.862446] rtc-pm8xxx 200f000.spmi:pmic@0:rtc@6000: setting system
-> > clock to 1970-01-01T00:00:31 UTC (31)
-> > [    9.868789] [000000000000002e] pgd=0000000000000000, p4d=0000000000000000
-> > [    9.875459] Internal error: Oops: 0000000096000004 [#1]  SMP
-> > [    9.889547] input: pm8941_pwrkey as
-> > /devices/platform/soc@0/200f000.spmi/spmi-0/0-00/200f000.spmi:pmic@0:pon@800/200f000.spmi:pmic@0:pon@800:pwrkey/input/input1
-> > [    9.891545] Modules linked in: qcom_spmi_temp_alarm rtc_pm8xxx
-> > qcom_pon(+) qcom_pil_info videobuf2_dma_sg ubwc_config qcom_q6v5
-> > venus_core(+) qcom_sysmon qcom_spmi_vadc v4l2_fwnode llcc_qcom
-> > v4l2_async qcom_vadc_common qcom_common ocmem v4l2_mem2mem drm_gpuvm
-> > videobuf2_memops qcom_glink_smem videobuf2_v4l2 drm_exec mdt_loader
-> > qmi_helpers gpu_sched drm_dp_aux_bus qnoc_msm8916 videodev
-> > drm_display_helper qcom_stats videobuf2_common cec qcom_rng
-> > drm_client_lib mc phy_qcom_usb_hs socinfo rpmsg_ctrl display_connector
-> > rpmsg_char ramoops rmtfs_mem reed_solomon drm_kms_helper fuse drm
-> > backlight
-> > [    9.912286] input: pm8941_resin as
-> > /devices/platform/soc@0/200f000.spmi/spmi-0/0-00/200f000.spmi:pmic@0:pon@800/200f000.spmi:pmic@0:pon@800:resin/input/input2
-> > [    9.941186] CPU: 2 UID: 0 PID: 221 Comm: (udev-worker) Not tainted
-> > 6.16.0-next-20250804 #1 PREEMPT
-> > [    9.941200] Hardware name: Qualcomm Technologies, Inc. APQ 8016 SBC (DT)
-> > [    9.941206] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> > [    9.941215] pc : dev_pm_opp_put (/builds/linux/drivers/opp/core.c:1685)
-> > [    9.941233] lr : core_clks_enable+0x54/0x148 venus_core
-> > [   10.004266] sp : ffff8000842b35f0
-> > [   10.004273] x29: ffff8000842b35f0 x28: ffff8000842b3ba0 x27: ffff0000047be938
-> > [   10.004289] x26: 0000000000000000 x25: 0000000000000000 x24: ffff80007b350ba0
-> > [   10.004303] x23: ffff00000ba380c8 x22: ffff00000ba38080 x21: 0000000000000000
-> > [   10.004316] x20: 0000000000000000 x19: ffffffffffffffee x18: 00000000ffffffff
-> > [   10.004330] x17: 0000000000000000 x16: 1fffe000017541a1 x15: ffff8000842b3560
-> > [   10.004344] x14: 0000000000000000 x13: 007473696c5f7974 x12: 696e696666615f65
-> > [   10.004358] x11: 00000000000000c0 x10: 0000000000000020 x9 : ffff80007b33f2bc
-> > [   10.004371] x8 : ffffffffffffffde x7 : ffff0000044a4800 x6 : 0000000000000000
-> > [   10.004384] x5 : 0000000000000002 x4 : 00000000c0000000 x3 : 0000000000000001
-> > [   10.004397] x2 : 0000000000000002 x1 : ffffffffffffffde x0 : ffffffffffffffee
-> > [   10.004412] Call trace:
-> > [   10.004417] dev_pm_opp_put (/builds/linux/drivers/opp/core.c:1685) (P)
-> > [   10.004435] core_clks_enable+0x54/0x148 venus_core
-> > [   10.004504] core_power_v1+0x78/0x90 venus_core
-> > [   10.004560] venus_runtime_resume+0x6c/0x98 venus_core
-> > [   10.004616] pm_generic_runtime_resume
->
-> Could you try adding some error checking to core_clks_enable()?
-> Does the patch below help?
+I tested this patch on a POWER9 bare metal system with a VFIO PCI device and
+could see the VFIO device syspath in fdinfo.
 
-Your patch works.
-The attached patch from Sasha fixes this reported problem on today's
-Linux next tag.
+ Without this patch:
+ -------------------
 
-$ git log --oneline next-20250805..next-20250807 --
-drivers/media/platform/qcom/venus/pm_helpers.c
-7881cd6886a89 media: venus: Fix OPP table error handling
+    [root@localhost ~]# cat /proc/7059/fdinfo/188
+    pos:    0
+    flags:  02000002
+    mnt_id: 17
+    ino:    1113
 
-- Naresh
+ With this patch:
+ ----------------
+    [root@localhost ~]# cat /proc/7722/fdinfo/188
+    pos:    0
+    flags:  02000002
+    mnt_id: 17
+    ino:    2145
+    vfio-device-syspath: /sys/devices/pci0031:00/0031:00:00.0/0031:01:00.0
 
---00000000000040a1ab063bc2fcd6
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="media-venus-fix-opp-table-error-handling.patch"
-Content-Disposition: attachment; 
-	filename="media-venus-fix-opp-table-error-handling.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_me16oaig0>
-X-Attachment-Id: f_me16oaig0
+..., and the code changes LGTM. Hence,
 
-Y29tbWl0IDc4ODFjZDY4ODZhODllZGE4NDgxOTJkM2Y1NzU5Y2UwODY3MmUwODQKQXV0aG9yOiBT
-YXNoYSBMZXZpbiA8c2FzaGFsQGtlcm5lbC5vcmc+CkRhdGU6ICAgVHVlIEF1ZyA1IDA4OjU4OjIw
-IDIwMjUgLTA0MDAKCiAgICBtZWRpYTogdmVudXM6IEZpeCBPUFAgdGFibGUgZXJyb3IgaGFuZGxp
-bmcKICAgIAogICAgVGhlIHZlbnVzIGRyaXZlciBmYWlscyB0byBjaGVjayBpZiBkZXZfcG1fb3Bw
-X2ZpbmRfZnJlcV97Y2VpbCxmbG9vcn0oKQogICAgcmV0dXJucyBhbiBlcnJvciBwb2ludGVyIGJl
-Zm9yZSBjYWxsaW5nIGRldl9wbV9vcHBfcHV0KCkuIFRoaXMgY2F1c2VzCiAgICBhIGNyYXNoIHdo
-ZW4gT1BQIHRhYmxlcyBhcmUgbm90IHByZXNlbnQgaW4gZGV2aWNlIHRyZWUuCiAgICAKICAgIFVu
-YWJsZSB0byBoYW5kbGUga2VybmVsIGFjY2VzcyB0byB1c2VyIG1lbW9yeSBvdXRzaWRlIHVhY2Nl
-c3Mgcm91dGluZXMKICAgIGF0IHZpcnR1YWwgYWRkcmVzcyAwMDAwMDAwMDAwMDAwMDJlCiAgICAu
-Li4KICAgIHBjIDogZGV2X3BtX29wcF9wdXQrMHgxYy8weDRjCiAgICBsciA6IGNvcmVfY2xrc19l
-bmFibGUrMHg0Yy8weDE2YyBbdmVudXNfY29yZV0KICAgIAogICAgQWRkIElTX0VSUigpIGNoZWNr
-cyBiZWZvcmUgY2FsbGluZyBkZXZfcG1fb3BwX3B1dCgpIHRvIGF2b2lkCiAgICBkZXJlZmVyZW5j
-aW5nIGVycm9yIHBvaW50ZXJzLgogICAgCiAgICBGaXhlczogYjE3OTIzNGI1ZTU5ICgibWVkaWE6
-IHZlbnVzOiBwbV9oZWxwZXJzOiB1c2Ugb3BwLXRhYmxlIGZvciB0aGUgZnJlcXVlbmN5IikKICAg
-IFNpZ25lZC1vZmYtYnk6IFNhc2hhIExldmluIDxzYXNoYWxAa2VybmVsLm9yZz4KICAgIFNpZ25l
-ZC1vZmYtYnk6IExpbnVzIFRvcnZhbGRzIDx0b3J2YWxkc0BsaW51eC1mb3VuZGF0aW9uLm9yZz4K
-CmRpZmYgLS1naXQgYS9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL3Fjb20vdmVudXMvcG1faGVscGVy
-cy5jIGIvZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9xY29tL3ZlbnVzL3BtX2hlbHBlcnMuYwppbmRl
-eCA4ZGQ1YTliMGQwNjBjLi5lMzJmODg2MmE5ZjkwIDEwMDY0NAotLS0gYS9kcml2ZXJzL21lZGlh
-L3BsYXRmb3JtL3Fjb20vdmVudXMvcG1faGVscGVycy5jCisrKyBiL2RyaXZlcnMvbWVkaWEvcGxh
-dGZvcm0vcWNvbS92ZW51cy9wbV9oZWxwZXJzLmMKQEAgLTQ4LDcgKzQ4LDggQEAgc3RhdGljIGlu
-dCBjb3JlX2Nsa3NfZW5hYmxlKHN0cnVjdCB2ZW51c19jb3JlICpjb3JlKQogCWludCByZXQ7CiAK
-IAlvcHAgPSBkZXZfcG1fb3BwX2ZpbmRfZnJlcV9jZWlsKGRldiwgJmZyZXEpOwotCWRldl9wbV9v
-cHBfcHV0KG9wcCk7CisJaWYgKCFJU19FUlIob3BwKSkKKwkJZGV2X3BtX29wcF9wdXQob3BwKTsK
-IAogCWZvciAoaSA9IDA7IGkgPCByZXMtPmNsa3NfbnVtOyBpKyspIHsKIAkJaWYgKElTX1Y2KGNv
-cmUpKSB7CkBAIC02NjAsNyArNjYxLDggQEAgc3RhdGljIGludCBkZWNpZGVfY29yZShzdHJ1Y3Qg
-dmVudXNfaW5zdCAqaW5zdCkKIAkvKlRPRE8gOiBkaXZpZGUgdGhpcyBpbnN0LT5sb2FkIGJ5IHdv
-cmtfcm91dGUgKi8KIAogCW9wcCA9IGRldl9wbV9vcHBfZmluZF9mcmVxX2Zsb29yKGRldiwgJm1h
-eF9mcmVxKTsKLQlkZXZfcG1fb3BwX3B1dChvcHApOworCWlmICghSVNfRVJSKG9wcCkpCisJCWRl
-dl9wbV9vcHBfcHV0KG9wcCk7CiAKIAltaW5fbG9hZGVkX2NvcmUoaW5zdCwgJm1pbl9jb3JlaWQs
-ICZtaW5fbG9hZCwgZmFsc2UpOwogCW1pbl9sb2FkZWRfY29yZShpbnN0LCAmbWluX2xwX2NvcmVp
-ZCwgJm1pbl9scF9sb2FkLCB0cnVlKTsKQEAgLTExMjEsNyArMTEyMyw4IEBAIHN0YXRpYyBpbnQg
-bG9hZF9zY2FsZV92NChzdHJ1Y3QgdmVudXNfaW5zdCAqaW5zdCkKIAlmcmVxID0gbWF4KGZyZXFf
-Y29yZTEsIGZyZXFfY29yZTIpOwogCiAJb3BwID0gZGV2X3BtX29wcF9maW5kX2ZyZXFfZmxvb3Io
-ZGV2LCAmbWF4X2ZyZXEpOwotCWRldl9wbV9vcHBfcHV0KG9wcCk7CisJaWYgKCFJU19FUlIob3Bw
-KSkKKwkJZGV2X3BtX29wcF9wdXQob3BwKTsKIAogCWlmIChmcmVxID4gbWF4X2ZyZXEpIHsKIAkJ
-ZGV2X2RiZyhkZXYsIFZEQkdMICJyZXF1ZXN0ZWQgY2xvY2sgcmF0ZTogJWx1IHNjYWxpbmcgY2xv
-Y2sgcmF0ZSA6ICVsdVxuIiwKQEAgLTExMzEsNyArMTEzNCw4IEBAIHN0YXRpYyBpbnQgbG9hZF9z
-Y2FsZV92NChzdHJ1Y3QgdmVudXNfaW5zdCAqaW5zdCkKIAl9CiAKIAlvcHAgPSBkZXZfcG1fb3Bw
-X2ZpbmRfZnJlcV9jZWlsKGRldiwgJmZyZXEpOwotCWRldl9wbV9vcHBfcHV0KG9wcCk7CisJaWYg
-KCFJU19FUlIob3BwKSkKKwkJZGV2X3BtX29wcF9wdXQob3BwKTsKIAogc2V0X2ZyZXE6CiAK
---00000000000040a1ab063bc2fcd6--
+Reviewed-by: Amit Machhiwal <amachhiw@linux.ibm.com>
+Tested-by: Amit Machhiwal <amachhiw@linux.ibm.com>
+
+Thanks,
+Amit
+
+> ---
+> Changes in v4:
+> - Remove changes to vfio.h
+> - Link to v3: https://lore.kernel.org/r/20250801-show-fdinfo-v3-1-165dfcab89b9@fb.com
+> Changes in v3:
+> - Remove changes to vfio_pci.c
+> - Add section to Documentation/filesystems/proc.rst
+> - Link to v2: https://lore.kernel.org/all/20250724-show-fdinfo-v2-1-2952115edc10@fb.com
+> Changes in v2:
+> - Instead of PCI bdf, print the fully-qualified syspath (prefixed by
+>   /sys) to fdinfo.
+> - Rename the field to "vfio-device-syspath". The term "syspath" was
+>   chosen for consistency e.g. libudev's usage of the term.
+> - Link to v1: https://lore.kernel.org/r/20250623-vfio-fdinfo-v1-1-c9cec65a2922@fb.com
+> ---
+>  Documentation/filesystems/proc.rst | 14 ++++++++++++++
+>  drivers/vfio/vfio_main.c           | 20 ++++++++++++++++++++
+>  2 files changed, 34 insertions(+)
+> 
+> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
+> index 2a17865dfe39..fc5ed3117834 100644
+> --- a/Documentation/filesystems/proc.rst
+> +++ b/Documentation/filesystems/proc.rst
+> @@ -2162,6 +2162,20 @@ DMA Buffer files
+>  where 'size' is the size of the DMA buffer in bytes. 'count' is the file count of
+>  the DMA buffer file. 'exp_name' is the name of the DMA buffer exporter.
+>  
+> +VFIO Device files
+> +~~~~~~~~~~~~~~~~
+> +
+> +::
+> +
+> +	pos:    0
+> +	flags:  02000002
+> +	mnt_id: 17
+> +	ino:    5122
+> +	vfio-device-syspath: /sys/devices/pci0000:e0/0000:e0:01.1/0000:e1:00.0/0000:e2:05.0/0000:e8:00.0
+> +
+> +where 'vfio-device-syspath' is the sysfs path corresponding to the VFIO device
+> +file.
+> +
+>  3.9	/proc/<pid>/map_files - Information about memory mapped files
+>  ---------------------------------------------------------------------
+>  This directory contains symbolic links which represent memory mapped files
+> diff --git a/drivers/vfio/vfio_main.c b/drivers/vfio/vfio_main.c
+> index 1fd261efc582..37a39cee10ed 100644
+> --- a/drivers/vfio/vfio_main.c
+> +++ b/drivers/vfio/vfio_main.c
+> @@ -28,6 +28,7 @@
+>  #include <linux/pseudo_fs.h>
+>  #include <linux/rwsem.h>
+>  #include <linux/sched.h>
+> +#include <linux/seq_file.h>
+>  #include <linux/slab.h>
+>  #include <linux/stat.h>
+>  #include <linux/string.h>
+> @@ -1354,6 +1355,22 @@ static int vfio_device_fops_mmap(struct file *filep, struct vm_area_struct *vma)
+>  	return device->ops->mmap(device, vma);
+>  }
+>  
+> +#ifdef CONFIG_PROC_FS
+> +static void vfio_device_show_fdinfo(struct seq_file *m, struct file *filep)
+> +{
+> +	char *path;
+> +	struct vfio_device_file *df = filep->private_data;
+> +	struct vfio_device *device = df->device;
+> +
+> +	path = kobject_get_path(&device->dev->kobj, GFP_KERNEL);
+> +	if (!path)
+> +		return;
+> +
+> +	seq_printf(m, "vfio-device-syspath: /sys%s\n", path);
+> +	kfree(path);
+> +}
+> +#endif
+> +
+>  const struct file_operations vfio_device_fops = {
+>  	.owner		= THIS_MODULE,
+>  	.open		= vfio_device_fops_cdev_open,
+> @@ -1363,6 +1380,9 @@ const struct file_operations vfio_device_fops = {
+>  	.unlocked_ioctl	= vfio_device_fops_unl_ioctl,
+>  	.compat_ioctl	= compat_ptr_ioctl,
+>  	.mmap		= vfio_device_fops_mmap,
+> +#ifdef CONFIG_PROC_FS
+> +	.show_fdinfo	= vfio_device_show_fdinfo,
+> +#endif
+>  };
+>  
+>  static struct vfio_device *vfio_device_from_file(struct file *file)
+> 
+> ---
+> base-commit: 4518e5a60c7fbf0cdff393c2681db39d77b4f87e
+> change-id: 20250801-show-fdinfo-ef109ca738cf
+> 
+> Best regards,
+> -- 
+> Alex Mastro <amastro@fb.com>
+> 
 
