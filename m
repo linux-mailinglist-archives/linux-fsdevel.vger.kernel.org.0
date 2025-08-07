@@ -1,97 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-57005-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57006-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F7AAB1DC01
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 18:51:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 514ECB1DC04
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 18:55:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27F4B1AA3241
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 16:51:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC8A1626449
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 16:55:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3FC7273D8F;
-	Thu,  7 Aug 2025 16:51:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E4A271471;
+	Thu,  7 Aug 2025 16:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="yZkIAOS4"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WkLwyS6f"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f195.google.com (mail-pg1-f195.google.com [209.85.215.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C452737E7
-	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Aug 2025 16:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F4D186A;
+	Thu,  7 Aug 2025 16:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754585461; cv=none; b=aQu1y3QsJn+So8j9A+LnSAADooyOGmlEq69rsyH3ra2tprkRl9n6nVN95xLcEUyEdcjWPaHDsTt4XM/LE+SVlr7Md2ioiqhw+4AHm051XthObeLx0kOOwKZUrCMpgtp0b7Iti2AYj/B03SZRfRzC/Zp2AGI/svWkc8NW3qGfbDg=
+	t=1754585706; cv=none; b=mhWWGPnXmts0bqqTWI5y3MzH+U15gJ9zYw9Jq3aYygfpnnfVpKAKFsFr5Q93jnMBBbApeUuKrFOcxaZR8ZlBdFF7XcV9DsqoU9SwNoIhN8u/+E42gzKE6IVW+16FqzstQABJ91jZqhf5KBo+RrHBfAOcvU92I5HR8HG+HwgRa44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754585461; c=relaxed/simple;
-	bh=v8rFHgkrPNB3ELButopohje3DL8oevA26/4a+ko21Ew=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lVPstKIPkhcXs/8vpLFn2NkDIO5V/klikPIoQ3GKQK++apj27aHMoquib0fQMn616kPMUyKldKLfPN9fRLnPenMsXSouYVMUh6PtZKPY4vpSqMxkPmV8g0pq+7hN1mNoF5e4Ksx00Y2gHnUnHF+FogNKgDnba9w7XW4eGGJn324=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=yZkIAOS4; arc=none smtp.client-ip=67.231.145.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 577EIraj005787
-	for <linux-fsdevel@vger.kernel.org>; Thu, 7 Aug 2025 09:50:59 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=s2048-2025-q2; bh=v8rFHgkrPNB3ELButopo
-	hje3DL8oevA26/4a+ko21Ew=; b=yZkIAOS4tJlscJPy7cL3PG2M4DNN5EVknRaB
-	3sz9yJBC1Ym3BLZ4HJLiLD+dklxLjaIGOZ2Ow+b+f9ujGDDF7AmCKzQX13Ce+2NK
-	bKRN6iFDbugsCovB8iL+BrEpJOzrCU9ZYDzhSFoGf+0+U4IZv2zba476iNA9zJ+r
-	PUfWcE/WJizAhqj2ZnvSvTPcP4Q2FnYtLBAgvyVY9aZXYHxLwsx4hO06sBSY5s2k
-	9l9kF+nepviKWOS73Qm5WhwBD7qOVuc/Y1nGvIb/zA9F9vGqTTYTlxqfPUi4blyP
-	AGhYQPkJn2ZgySo6NL7HvFs09etYMCDliOu0E/ynRBaAfMoPyg==
-Received: from mail.thefacebook.com ([163.114.134.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 48ckc34g9d-8
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-fsdevel@vger.kernel.org>; Thu, 07 Aug 2025 09:50:58 -0700 (PDT)
-Received: from twshared24438.15.frc2.facebook.com (2620:10d:c085:108::150d) by
- mail.thefacebook.com (2620:10d:c08b:78::2ac9) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.17; Thu, 7 Aug 2025 16:50:57 +0000
-Received: by devgpu013.nha3.facebook.com (Postfix, from userid 199522)
-	id 0DF4C837B4F; Thu,  7 Aug 2025 09:50:54 -0700 (PDT)
-Date: Thu, 7 Aug 2025 09:50:54 -0700
-From: Alex Mastro <amastro@fb.com>
-To: Amit Machhiwal <amachhiw@linux.ibm.com>
-CC: Alex Williamson <alex.williamson@redhat.com>,
-        Jonathan Corbet
-	<corbet@lwn.net>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Keith Busch
-	<kbusch@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <kvm@vger.kernel.org>
-Subject: Re: [PATCH v4] vfio/pci: print vfio-device syspath to fdinfo
-Message-ID: <aJTZboKCbYVkLLUE@devgpu013.nha3.facebook.com>
-References: <20250804-show-fdinfo-v4-1-96b14c5691b3@fb.com>
- <20250807144938.e0abc7bb-a4-amachhiw@linux.ibm.com>
+	s=arc-20240116; t=1754585706; c=relaxed/simple;
+	bh=l3DtQRpYB5RTDk46I7413GNLIhcqwBDTYZT5TpROceo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CkulGndO8a56FmboK+wRUSQkHb+k76PjHCMG08SVBzhsAPFHuOcLEfQ6oc5EqePIcjtzWZ5S6cZq1aIZu0vwU6XZXJGHyQPwCU5wzN3sHNXTakF8i0Ch1NSEfH7F6evBHezOcNN/fbamA1PE0mAalp3tUQco6ESWinSdxIo5Ybw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WkLwyS6f; arc=none smtp.client-ip=209.85.215.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f195.google.com with SMTP id 41be03b00d2f7-b4281fabee0so857772a12.2;
+        Thu, 07 Aug 2025 09:55:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754585704; x=1755190504; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iq2W53PaksP7m4jbktUk0gHJCrNmSbCmS2yXdqV7dD8=;
+        b=WkLwyS6fJCpHa7oHB2kZblWzW0c9E8cCTLMP0xN2OO8pIzCdUBoD/i8M7kXLqWM2vX
+         m4yFCSeZzLzuIrvot8YitOK319waIWCBkKoPXckmjgEpNxjLUVSe03a379s4KmS2lY7b
+         A5I2z64Im8w/ZAzlEvdFaPa1LbK1LFrYbeP6marVKaVX3/RgppAZfFhvUZQAGOHEkI7S
+         KfEMCLy/t50sKvUUbZOKvnpRrYwg/rW7P8KJNfps6RddSHZhIoB8dGEVYHXFvVumWuIA
+         tvUtBBj2tcS13Vpc13GRYsH6F3A2NBeRGvTSoRAGiwXxkjUbGe6uQbKLkU8vmaY5KlVX
+         JmwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754585704; x=1755190504;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iq2W53PaksP7m4jbktUk0gHJCrNmSbCmS2yXdqV7dD8=;
+        b=bNhre4uXD0ps9l714ilcDtcsW/78aSWPC4Xk7y9q4JAhBwl0nbZNIZWVlCiW+shodj
+         mg6opO/0EYue1gS2zQEi3FyTgmjyosnCJIzVOmE2w7P4VC4rsSC889nz/UqZo9/SlIJC
+         shdgYlfz2LFbJlmoZIHPX1VEU+q01t+dg24/kOdEMLxDDkaj9sEGQI5iY8WTVLjBzqTE
+         Q5jYgyK18Jty8iMXBT2d/ZfzYtMYrcOMD5IVTjrGAGAsPfgls9PDu/ob0jchm7zlkq95
+         n7bj4wp0JSMrRffhDqlnHvibu9x6PE+2w6wg+IsBl8K5yDIrwmu4SUn14/UwNyQz4OIB
+         quLA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/uwKBrMzbbG4pHixKLx9ZPSLEN1fBCBt7hY4sIc+vOU6snz+LTW9/f2mTrTlTqeYKqadD2hOqWSiMwjnU@vger.kernel.org, AJvYcCUG+Qx0mBCNKs7JE8vxDjOd0fBoS9/j18Laqz8tN5+VzJJI5j0lnKzqyWXuyTAcN/Yflxck6puv9xChvO2r@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMKg3v8nP+LAnUB3jzzbwAiG0b3+I3ifEjBb20N84atTXGwdfz
+	OQVhN+VFKH9Uiqy8G+fohX2een7MlLMOOsCwGZr3+Ig4D0qRCV4cZ7JR
+X-Gm-Gg: ASbGncvO87/G74+vxVoXYHtbZroZ/hwzAujAYccQLDslYvuir3DsK32vx1P/EF+kBOp
+	30u9JPth8x5WBAADKRH+J74ZmAYU/4O6EfRDqkPHZZjois9VCyCC1aI9IJGpXbTjPJRcvsiNs49
+	TOl9Vrq2hvibykt3vePuOYD/sxufUV97Azg21PsFXktDR+qNmT5VkuxWq4VuaLGdSoPpn5FPE2i
+	uiz+8xNXLl/bc8R0QGxXr7xLGNGM0CZMF5F82WMmf/lo/8RVeQtGO61gmI3I0qiBOgOgrkllmkv
+	KnKCeJQMK2BPP/unIrrCoOfS5VQkenSvBvlyN7oz1AeYSo6VddTpewqhZHebmg6lsarmcZgC19l
+	7o79kLCxuuw==
+X-Google-Smtp-Source: AGHT+IHjGIDdfLcH/CylLSuTLaAdxW/Bxe5A/6jb2R++T/jR61KPerOxYSQMKmtbz5TClTk9H2CWsA==
+X-Received: by 2002:a17:903:2347:b0:240:49e8:1d38 with SMTP id d9443c01a7336-242a0b3e6b9mr99733295ad.35.1754585704228;
+        Thu, 07 Aug 2025 09:55:04 -0700 (PDT)
+Received: from archlinux.lan ([117.185.160.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8aabdedsm190575505ad.167.2025.08.07.09.55.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Aug 2025 09:55:03 -0700 (PDT)
+From: Jialin Wang <wjl.linux@gmail.com>
+To: Penglei Jiang <superman.xpt@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Jialin Wang <wjl.linux@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH] proc: proc_maps_open allow proc_mem_open to return NULL
+Date: Fri,  8 Aug 2025 00:54:55 +0800
+Message-ID: <20250807165455.73656-1-wjl.linux@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250807144938.e0abc7bb-a4-amachhiw@linux.ibm.com>
-X-FB-Internal: Safe
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA3MDEzNyBTYWx0ZWRfX5LgU5LrnNvrl z6OAx9Js++arf5WjIAuxrBqrvsIjmAdAx+s73nsM35ZWO+iMp83IHSRRrOeqfMNG0kgURHvjUfW eLz06Q9Bp7mEg4fwAaU+QrjKjjknOQzPbs4qimFXqbbyLQbU0wVZvZJHa9nDyWC+sz+fO045wDm
- pdc2ZxTU19Zo8e+rO0CnGdx4VPdRj/w5F0fv0hL4WkKE0oIt0ReCIue6VT3l4/rNcugoUs0WMJ/ bOu6t00tn2iWrW36kdXpQfnTpIkML2iMIYqwupHdpOTjDdf0mkd55kL1lunbrvvglEvKzRxXncH 7k/PeLhu+3/stIv5bzDLm27Gu1L176/LqHaDfkDcazUZ7EcHfjovV5PrHY7rjc/Fg7jiCMZTf/T
- tr/UibmvcDMAU5W8XHIVaogOLcvJFykCEGgAbq9sZyAFAcVW9p0Ym5eOSp8FVniolKkPR3cN
-X-Proofpoint-ORIG-GUID: ubr-_D2creH14R7XnsoKxlrqF8PMKv1o
-X-Proofpoint-GUID: ubr-_D2creH14R7XnsoKxlrqF8PMKv1o
-X-Authority-Analysis: v=2.4 cv=d6X1yQjE c=1 sm=1 tr=0 ts=6894d972 cx=c_pps a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17 a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=Ocdik3-Q_VXzhM4yoKoA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-07_03,2025-08-06_01,2025-03-28_01
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 07, 2025 at 03:04:29PM +0530, Amit Machhiwal wrote:
-> Reviewed-by: Amit Machhiwal <amachhiw@linux.ibm.com>
-> Tested-by: Amit Machhiwal <amachhiw@linux.ibm.com>
+The commit 65c66047259f ("proc: fix the issue of proc_mem_open returning NULL")
+breaks `perf record -g -p PID` when profiling a kernel thread.
 
-Hi Amit, thanks for taking the time to test and review!
+The strace of `perf record -g -p $(pgrep kswapd0)` shows:
 
-Alex
+  openat(AT_FDCWD, "/proc/65/task/65/maps", O_RDONLY) = -1 ESRCH (No such process)
+
+This patch partially reverts the commit to fix it.
+
+Fixes: 65c66047259f ("proc: fix the issue of proc_mem_open returning NULL")
+Signed-off-by: Jialin Wang <wjl.linux@gmail.com>
+---
+ fs/proc/task_mmu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index 3d6d8a9f13fc..7a7ce26106ac 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -340,8 +340,8 @@ static int proc_maps_open(struct inode *inode, struct file *file,
+ 
+ 	priv->inode = inode;
+ 	priv->mm = proc_mem_open(inode, PTRACE_MODE_READ);
+-	if (IS_ERR_OR_NULL(priv->mm)) {
+-		int err = priv->mm ? PTR_ERR(priv->mm) : -ESRCH;
++	if (IS_ERR(priv->mm)) {
++		int err = PTR_ERR(priv->mm);
+ 
+ 		seq_release_private(inode, file);
+ 		return err;
+-- 
+2.50.0
+
 
