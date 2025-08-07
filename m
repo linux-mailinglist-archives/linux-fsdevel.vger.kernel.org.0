@@ -1,123 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-56955-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56956-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF2D2B1D0AD
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 03:53:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52843B1D0FF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 04:46:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D38115829E8
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 01:53:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFC007212F2
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 02:46:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD9F91E5734;
-	Thu,  7 Aug 2025 01:47:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A03A11C7015;
+	Thu,  7 Aug 2025 02:46:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="B4k4FZ1w"
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="sJGCq99k"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A220F1B424D
-	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Aug 2025 01:47:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16FC379EA;
+	Thu,  7 Aug 2025 02:46:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754531263; cv=none; b=ndcLdZyNG49UqtcSBHWd99ewS+wp3Da5h/XZaOZo4wuhdvoMAA7K8sKGRTpOvndNnhn7JLvIcyaHJxuRZGNaQyT6gORt0c7iEA2nh+9/D9UZVIiF78GFyeb+gbolf01B0snnEUjnAodySJi8oGroWpgT9u0u/ft6DiuQ3nU1AnA=
+	t=1754534792; cv=none; b=O76bCnNm8SfRRhOHL4VJ3m81070kVHtTDUuahpvbQHvbCSKFUo0XEALCn5zLVtMyj+fwyb0MhTiqTTFf+WthfDk/mU9WBKWaEZLfNVzQqC/FwL3bgFmNHy+EGVjMWOrNcT7jnqB5NCibyLkEr3JMXSFcW81nX7QhwQcQmUNKXlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754531263; c=relaxed/simple;
-	bh=3/ZBMbX1rfnr2/RwjuPJssXYwyCyUeok6+T+rCEfBb8=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=WOlGNDKFYQj77qS0xBxmSNm+8pfz2PQe5vLPq0lw7VaYv0y0MoMRYj2Y8nLT4Hr/uEiyCTQjpnn+lTsCZuA3gV4vrjqy8GN482ZfoniAlAUqbFC1BxhGoqn3MpAkA/2rzETN9PjarFDOGiyloCvtzye5mbwNbfbSV2UV6nd54nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=B4k4FZ1w; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-70884da4b55so6149186d6.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Aug 2025 18:47:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1754531259; x=1755136059; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aY5+apIPDPz1zLZWet0eNNipx7u+zsC5VKHubvKB0qY=;
-        b=B4k4FZ1wJZ26kcCyeGSrszGuKAKl02WCI416bWqISmNCYvQ6EK0AwLXxPrtiF/M/fm
-         MF1URsmzdzSnjtufA6F0oLPbUx3DFAYc3mjPhq8qHsETHQtpzzA1uBK2jvfcuJAtWARt
-         8psGtVUIPqJUEgVFmIQTLPiUStheypEhm4FdE8E+q4ECs5mrE2GFlspXgM/2UyotyEkw
-         3h1N5F9N/dg0Plh2auIG28/P1Ux8s+lusU0xAMhRO/YymAXtDmme7kQ++SvAPv6xlKpb
-         IUdfapwquOomZ90aZB38VYLfQ1S0aF+VAb/G72wwKKH5UtsJ84+lL+ziZhM77AY8qq3a
-         Vrqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754531259; x=1755136059;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=aY5+apIPDPz1zLZWet0eNNipx7u+zsC5VKHubvKB0qY=;
-        b=ouNkry5o+iYxz0D2rUTesJxzd82Y1ZWhOVlzu/fqeka0mff5e8bneb2bQgkSuHCJRL
-         IWvFB2Zvdz+2rvnXw/PAZmY7FiXmW7vMG0Kz2QfuGkJmBy/FqkQq8EM530l83xOkBmFe
-         ORyFgxRI3RyJQx/Cz59rxZuDapWa/ipPhdxG+G0f/7C1cJ8bA0xwEczbm7RDX5PYNQBt
-         5zKzHxBZrMBvgIlBLvJmrgypvPqfkFQ7ViXJFxLlNuR1CuAigp6Ys7obENufKzQNhShU
-         jCRVoTz3XkzTdGoSTEFLCkjbl3gPQApJCx1o8DLbIVc1tqP49PPKJXYVSDegjkjiBQeG
-         OQwg==
-X-Forwarded-Encrypted: i=1; AJvYcCXu/gu/GE/MpSSwvwS7BAMzjckiNpCPLZ07zm7km/kmupgUWA8Ym/fouvwag/aGDX9NWf3f34sOQeRuBI9A@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjEuDg2qYSYZJYRpIVr9XfK9xV+NEKX21g1BGp72NQZth0CUbb
-	XZy+DgvsPOu9gakWIrBB0fDExnV+EWcGQoouIBn0bH7eXpMmOyOKBKVxPGReV1egdg==
-X-Gm-Gg: ASbGncuQypRdCh7Ps3kIo3OoMzJxgMp8hFIhcMsyyhSPXUuBGDVaQyG4krQKWgeYMOc
-	ej81cJn5ArR96Zp7VS4wCMyLqicEwaSSHYsj4zysUJMomtyr+VSPURMc4dUy8qRuU5JF2nuWZ1X
-	Y8XLI4BdcBhaA5dqJvQISyP1EzifJS9L3azmt2lO4YDJbDlVY5Dkno/dsY2GYd5wrRmcgbH8YUO
-	lgsU9jzU7pN1hBau+H0caJ2DZjs0cL4+plpup5BmuhlcgEEE0lynMGqDONw8LUlGBNF/KPIPn/Q
-	Kwx4BDSCTkfxKzex4/PaDmEikUCE5pPOHLfH/kptVeFVthOsBwLl06i8DhaUQ6uLOYIxIwIFRQg
-	9yg5ItOSol/UHUmIDLmIHLemtzaTzmYUgF4ABhVCGmwgkUVmgr/XePRo4+Xd6saXgN0HXBeS7wK
-	Odgg==
-X-Google-Smtp-Source: AGHT+IG8gljUkhxjIhCTlEyvnsU1ykkoPiUWoXdbBKK7biBWjQdmiSFWNhS7Sn1nsxWyxlD0vdtbTg==
-X-Received: by 2002:a05:6214:20cf:b0:707:76a8:ee9d with SMTP id 6a1803df08f44-7097b055482mr61183906d6.51.1754531259574;
-        Wed, 06 Aug 2025 18:47:39 -0700 (PDT)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-7077cd69b86sm93679226d6.42.2025.08.06.18.47.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Aug 2025 18:47:38 -0700 (PDT)
-Date: Wed, 06 Aug 2025 21:47:38 -0400
-Message-ID: <74767dff9834360b2100907df5142ab9@paul-moore.com>
+	s=arc-20240116; t=1754534792; c=relaxed/simple;
+	bh=6fytCeeUudLTY0ffUnh8JTpCldUAMNOKqbM15mFHfZc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t6yZjJ2LY3aRg1ftOReRmXhXOnXr9MrOd7PJWx/0zFXgywuDDleEskgID0p4pAEY4rbB7lgoPSrdiCsiNetzMAwdw/qUnxAnFPBgaJVc+GrPsP8C6Ar6BVEdz4i60IZ7IkMmnuMIKA00bY6/Lx2FFZYCoQOKoGoSVaO/ozy64YY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=sJGCq99k; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4byBPY6Dbdz9t4B;
+	Thu,  7 Aug 2025 04:46:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1754534785;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Tub9/9osH95VcqyXOi1mtkKeG5xrj44pXKAdmNqMqBE=;
+	b=sJGCq99kPI1k/JhV6zWQVYmo0T9/Xse07waxFNQPdPpkiBD+FLCjnckGgEW5Xd7QO/JrMO
+	NeC5oNLAX73swxhjdQFCcnOptsSvJYPaxx2SOq+loy06v68MiRg8hq8Fj6VLJEhZV1hNaS
+	DrKX5HGFY9CQJ0zUetyU8VGein+J4n/BJHjfHxAXdcOGs37VbXsjQQhBDktfKseoE8xzyt
+	4S8QNJXYEeYtcTLXEOopLm3IGouEd5UOZw2nMeyj3yWJbRSrSI9N0MoL2HHcr/o8j3Xk2K
+	4X3/dciU8tjQCG3jPgpFkiWIk17aA1uYA6z1TZzVEaVZT3WqH6EbwKWwGfQIgQ==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
+Date: Thu, 7 Aug 2025 12:46:17 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	David Howells <dhowells@redhat.com>, Shuah Khan <shuah@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] fscontext: do not consume log entries when
+ returning -EMSGSIZE
+Message-ID: <2025-08-07.1754534735-core-snowplow-plaid-exiles-anemic-gulls-v9Da77@cyphar.com>
+References: <20250807-fscontext-log-cleanups-v3-0-8d91d6242dc3@cyphar.com>
+ <20250807-fscontext-log-cleanups-v3-1-8d91d6242dc3@cyphar.com>
+ <20250806190751.GG222315@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20250806_1659/pstg-lib:20250806_1657/pstg-pwork:20250806_1659
-From: Paul Moore <paul@paul-moore.com>
-To: Richard Guy Briggs <rgb@redhat.com>, Linux-Audit Mailing List <linux-audit@lists.linux-audit.osci.io>, LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org, Linux Kernel Audit Mailing List <audit@vger.kernel.org>
-Cc: Eric Paris <eparis@parisplace.org>, Steve Grubb <sgrubb@redhat.com>, Richard Guy Briggs <rgb@redhat.com>, Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>
-Subject: Re: [PATCH v2] audit: record fanotify event regardless of presence of  rules
-References: <6a18a0b1af0ccca1fc56a8e82f02d5e4ab36149c.1754063834.git.rgb@redhat.com>
-In-Reply-To: <6a18a0b1af0ccca1fc56a8e82f02d5e4ab36149c.1754063834.git.rgb@redhat.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="esbkpzrhwvkavmb4"
+Content-Disposition: inline
+In-Reply-To: <20250806190751.GG222315@ZenIV>
+X-Rspamd-Queue-Id: 4byBPY6Dbdz9t4B
 
-On Aug  6, 2025 Richard Guy Briggs <rgb@redhat.com> wrote:
-> 
-> When no audit rules are in place, fanotify event results are
-> unconditionally dropped due to an explicit check for the existence of
-> any audit rules.  Given this is a report from another security
-> sub-system, allow it to be recorded regardless of the existence of any
-> audit rules.
-> 
-> To test, install and run the fapolicyd daemon with default config.  Then
-> as an unprivileged user, create and run a very simple binary that should
-> be denied.  Then check for an event with
-> 	ausearch -m FANOTIFY -ts recent
-> 
-> Link: https://issues.redhat.com/browse/RHEL-9065
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> ---
-> changelog:
-> v2
-> - re-add audit_enabled check
-> ---
->  include/linux/audit.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Merged into audit/dev-staging with the plan being to merge it to
-audit/dev once the merge window closes.
+--esbkpzrhwvkavmb4
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 1/2] fscontext: do not consume log entries when
+ returning -EMSGSIZE
+MIME-Version: 1.0
 
---
-paul-moore.com
+On 2025-08-06, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> On Thu, Aug 07, 2025 at 03:55:23AM +1000, Aleksa Sarai wrote:
+>=20
+> > -		goto err_free;
+> > -	ret =3D -EFAULT;
+> > -	if (copy_to_user(_buf, p, n) !=3D 0)
+> > -		goto err_free;
+> > +	if (copy_to_user(_buf, p, n))
+> > +		n =3D -EFAULT;
+> >  	ret =3D n;
+> > -
+> > -err_free:
+> >  	if (need_free)
+> >  		kfree(p);
+> >  	return ret;
+>=20
+> Minor nit: seeing that there's only one path to that return, I would
+> rather turn it into
+> 	return n;
+> and dropped the assignment to ret a few lines above.  Anyway, that's
+> trivially done when applying...
+
+It felt odd to use "return ret;" at the start and switch to "return n;"
+at the end, but feel free to change it when applying.
+
+> Anyway, who's carrying fscontext-related stuff this cycle?  I've got
+> a short series in that area, but there won't be much from me around
+> there - a plenty of tree-in-dcache stuff, quite a bit of mount-related
+> work, etc., but not a lot around the options-parsing machinery.
+>=20
+> Christian, do you have any plans around that area?
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+https://www.cyphar.com/
+
+--esbkpzrhwvkavmb4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaJQTeAAKCRAol/rSt+lE
+b94wAQCrCBDcIXw22aUu3figMXSuo1sk4u/y3z9goDq6pKhwEwEA2arOWYUnSBnh
+o66eC1CZ/DJYZ+VQYJpyPsDGCErquwc=
+=gJe2
+-----END PGP SIGNATURE-----
+
+--esbkpzrhwvkavmb4--
 
