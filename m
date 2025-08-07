@@ -1,61 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-57011-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57012-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2E6CB1DCB6
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 19:55:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD750B1DCB8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 19:56:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 404A61AA01D5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 17:56:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85269A007DE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Aug 2025 17:56:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B15E217F53;
-	Thu,  7 Aug 2025 17:55:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C982201004;
+	Thu,  7 Aug 2025 17:55:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="yXdzj7D+"
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="ZVx+ttTg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39CCF20FA81;
-	Thu,  7 Aug 2025 17:55:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07E2200BBC;
+	Thu,  7 Aug 2025 17:55:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754589329; cv=none; b=Gb9pJWb9xMk80nCQoDG2i5M2TzlGttMb6nuvd9Udx2NTMjMJrcZYg2k8/cRVZIQZrZ5wAvNYwQf3kOAQkusONMDw/zKZ1ye8uT5N6FC8vcNW+6MnTp1ffJZMKtOQQX98bGb1rcdhdKHqdONqTVsshKPfyPiS+6zHKcJOA7do5WY=
+	t=1754589341; cv=none; b=TWbFjJuHUV1COYIy3au5ol9U2WkaZHdxw+m1nTcQx6Ed0GrxrX4aUFxvyqpsV5DIipbRb4+CVW3i0RGs9XnTlkFf8PfUdcnxRtgSoD2J3r7uH3k0qdOcyxJZ6Pg05FdxVCyf6wPpozXI8KCqaWNaezHVEAgPH6HbSJTJjrVk8Xs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754589329; c=relaxed/simple;
-	bh=+QEWGiv8l3M9oIgqLkQar3zS6Rw1OmQ/brz3Qfd/Yrs=;
+	s=arc-20240116; t=1754589341; c=relaxed/simple;
+	bh=5SipIL2mqzjw8Lq0NGeJ5rC1D8r6xnD/6FPUKkhjv6c=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=dP3zOq4+pB6Oi7mH6pKSAGYqOUmK8zAOEgLjtsh+SjAVygAa44Gb83WR0x4ez20aYLYCFn6TntXCPbBnncZ9NVUOkiXoxzDCtnLSzuyiEswV8FdfVzlIRhNwF+EQYjVVEdW6o6crB8J87uAEqo67F8LcpH4XSTOvSxZc6dEKJDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=yXdzj7D+; arc=none smtp.client-ip=80.241.56.152
+	 In-Reply-To:To:Cc; b=hrZABSBwVzRrf0dp9YRlHhyuNp/Qqb/YTqarrZFh2kpjbBPyw0sqCR4EC3lzgMJXvyAFhLTRfwLe4QBexeq2dA0zfhiQVDmo2Gn+kVjjCtgURt6yzFVC0z60BCOrRPVsmDLMRCSqjujwit2IEvT0ANYP2PvWGgcqYES9eP+d8qU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=ZVx+ttTg; arc=none smtp.client-ip=80.241.56.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
 Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4byZZN5Nktz9v57;
-	Thu,  7 Aug 2025 19:55:24 +0200 (CEST)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4byZZT1KVKz9tfQ;
+	Thu,  7 Aug 2025 19:55:29 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1754589324;
+	t=1754589329;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=nPSe3q1UuRjtf3920YQVGD4OWn8ImFqh4BUQwMIGXI0=;
-	b=yXdzj7D+sAxFwYInSiwH+14/NiRE+zS49hZ7KnrZzsO6Lu8nM93ESIFkZ5PtHZ7z4UbFIf
-	ep58MO9GMfc+hta9DXtWtqwiTL/CkF5fGjwjLL8yjMzLdJ+u7IAL05dcF4RzpfpDIF2Qve
-	tpvOyK5AZRS7Z1VPCsSBxpyw8Lvd4oNXwKoHO+7p8NFXtb/CKQNDLAreGmuInR3XUnR7TX
-	0oUgLSeAmICEYS5b3dpzBMuoXUKnW8RYw07efjCV/xhjKSHj1aumQhExG8TK+MmniHTCP6
-	w14MLygUKbclW2UtYZI1zWDme2+QAT8rSIjdaasiy5Io43sB0kz2kgFX2VSEXg==
+	bh=u1tGdj0bYIbktrA9nGNPQV29HAdkSKoqYz5zUeS8lIY=;
+	b=ZVx+ttTgCC2wvM3YNPiaDoGGKLNuUQkh684NzSkrW0dQB58kAWvoTJd6IEZ29TjHt1xwim
+	2A+jYaAKD3fTz1J88KquQQx1bErSq1LWnIXkKMX6nQE6qmN7DT3kPUNROfQ03pUuKI0xNX
+	6ilWQGHpr9mTqplG9l3Oq8iP6DfQM8OZQ/jh3bN0G7IkXU3EPUdFTho/BgDuRZSRdhoGuo
+	TRTSTFhPClWmIpQFk9D6hHfHj+JRJnHRH9jlT23yfl6voachoR5tyrQ/uDtfmawdg3Ds8k
+	oZuDla+AQxvu/EjKskEZZ54oVxbogexfa4DgJGCXNmmWXqbVQUkEP7WBZOT2kQ==
 Authentication-Results: outgoing_mbo_mout;
 	dkim=none;
 	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
 From: Aleksa Sarai <cyphar@cyphar.com>
-Date: Fri, 08 Aug 2025 03:55:05 +1000
-Subject: [PATCH 1/2] open_tree_attr: do not allow id-mapping changes
- without OPEN_TREE_CLONE
+Date: Fri, 08 Aug 2025 03:55:06 +1000
+Subject: [PATCH 2/2] selftests/mount_setattr: add smoke tests for
+ open_tree_attr(2) bug
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -64,7 +64,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250808-open_tree_attr-bugfix-idmap-v1-1-0ec7bc05646c@cyphar.com>
+Message-Id: <20250808-open_tree_attr-bugfix-idmap-v1-2-0ec7bc05646c@cyphar.com>
 References: <20250808-open_tree_attr-bugfix-idmap-v1-0-0ec7bc05646c@cyphar.com>
 In-Reply-To: <20250808-open_tree_attr-bugfix-idmap-v1-0-0ec7bc05646c@cyphar.com>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -72,55 +72,165 @@ To: Alexander Viro <viro@zeniv.linux.org.uk>,
  "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>, 
  Shuah Khan <shuah@kernel.org>
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>, 
- stable@vger.kernel.org
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1615; i=cyphar@cyphar.com;
- h=from:subject:message-id; bh=+QEWGiv8l3M9oIgqLkQar3zS6Rw1OmQ/brz3Qfd/Yrs=;
- b=owGbwMvMwCWmMf3Xpe0vXfIZT6slMWRMedHwvNGssHHBrlPZrt99mEo6Io10HjtvZPDTkn14K
- aNj740/HaUsDGJcDLJiiizb/DxDN81ffCX500o2mDmsTCBDGLg4BWAiMQsZGc5u3fKnK2Zu7JL4
- SdsZvpvEPjzEzWVXpb6bhXGijpxxkjjD/2i73R8rNhseDt2U+Sbv1Vr+bLMrlpbasQwzFzfqf73
- ZwgoA
+ linux-kselftest@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5342; i=cyphar@cyphar.com;
+ h=from:subject:message-id; bh=5SipIL2mqzjw8Lq0NGeJ5rC1D8r6xnD/6FPUKkhjv6c=;
+ b=owGbwMvMwCWmMf3Xpe0vXfIZT6slMWRMedHQ6HDUvlTz6mxFq8Q1dl/WW+W92xjQvMLsyvXkM
+ +LpHybXdZSyMIhxMciKKbJs8/MM3TR/8ZXkTyvZYOawMoEMYeDiFICJ+K5i+O8W75S/+abnVS4V
+ rgmrtC3b/vz8PXeWR+BsFl8DnUsvFe8x/NM84ryscxFPdcbm9js+TNw8Cl2yjI+K7J/Ya2w8ulL
+ 0IQ8A
 X-Developer-Key: i=cyphar@cyphar.com; a=openpgp;
  fpr=C9C370B246B09F6DBCFC744C34401015D1D2D386
-X-Rspamd-Queue-Id: 4byZZN5Nktz9v57
+X-Rspamd-Queue-Id: 4byZZT1KVKz9tfQ
 
-As described in commit 7a54947e727b ('Merge patch series "fs: allow
-changing idmappings"'), open_tree_attr(2) was necessary in order to
-allow for a detached mount to be created and have its idmappings changed
-without the risk of any racing threads operating on it. For this reason,
-mount_setattr(2) still does not allow for id-mappings to be changed.
+There appear to be no other open_tree_attr(2) tests at the moment, but
+as a minimal solution just add some additional checks in the existing
+MOUNT_ATTR_IDMAP tests to make sure that open_tree_attr(2) cannot be
+used to bypass the tested restrictions that apply to mount_setattr(2).
 
-However, there was a bug in commit 2462651ffa76 ("fs: allow changing
-idmappings") which allowed users to bypass this restriction by calling
-open_tree_attr(2) *without* OPEN_TREE_CLONE.
-
-can_idmap_mount() prevented this bug from allowing an attached
-mountpoint's id-mapping from being modified (thanks to an is_anon_ns()
-check), but this still allows for detached (but visible) mounts to have
-their be id-mapping changed. This risks the same UAF and locking issues
-as described in the merge commit, and was likely unintentional.
-
-Fixes: 2462651ffa76 ("fs: allow changing idmappings")
-Cc: <stable@vger.kernel.org> # v6.15+
 Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
 ---
- fs/namespace.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ .../selftests/mount_setattr/mount_setattr_test.c   | 77 ++++++++++++++++++----
+ 1 file changed, 64 insertions(+), 13 deletions(-)
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 55f28cebbe7d..196a7873897b 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -5302,7 +5302,8 @@ SYSCALL_DEFINE5(open_tree_attr, int, dfd, const char __user *, filename,
- 		int ret;
- 		struct mount_kattr kattr = {};
+diff --git a/tools/testing/selftests/mount_setattr/mount_setattr_test.c b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+index b1e4618399be..a688871a98eb 100644
+--- a/tools/testing/selftests/mount_setattr/mount_setattr_test.c
++++ b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+@@ -107,6 +107,26 @@
+ 	#endif
+ #endif
  
--		kattr.kflags = MOUNT_KATTR_IDMAP_REPLACE;
-+		if (flags & OPEN_TREE_CLONE)
-+			kattr.kflags = MOUNT_KATTR_IDMAP_REPLACE;
- 		if (flags & AT_RECURSIVE)
- 			kattr.kflags |= MOUNT_KATTR_RECURSE;
++#ifndef __NR_open_tree_attr
++	#if defined __alpha__
++		#define __NR_open_tree_attr 577
++	#elif defined _MIPS_SIM
++		#if _MIPS_SIM == _MIPS_SIM_ABI32	/* o32 */
++			#define __NR_open_tree_attr (467 + 4000)
++		#endif
++		#if _MIPS_SIM == _MIPS_SIM_NABI32	/* n32 */
++			#define __NR_open_tree_attr (467 + 6000)
++		#endif
++		#if _MIPS_SIM == _MIPS_SIM_ABI64	/* n64 */
++			#define __NR_open_tree_attr (467 + 5000)
++		#endif
++	#elif defined __ia64__
++		#define __NR_open_tree_attr (467 + 1024)
++	#else
++		#define __NR_open_tree_attr 467
++	#endif
++#endif
++
+ #ifndef MOUNT_ATTR_IDMAP
+ #define MOUNT_ATTR_IDMAP 0x00100000
+ #endif
+@@ -121,6 +141,12 @@ static inline int sys_mount_setattr(int dfd, const char *path, unsigned int flag
+ 	return syscall(__NR_mount_setattr, dfd, path, flags, attr, size);
+ }
  
++static inline int sys_open_tree_attr(int dfd, const char *path, unsigned int flags,
++				     struct mount_attr *attr, size_t size)
++{
++	return syscall(__NR_open_tree_attr, dfd, path, flags, attr, size);
++}
++
+ static ssize_t write_nointr(int fd, const void *buf, size_t count)
+ {
+ 	ssize_t ret;
+@@ -1222,6 +1248,12 @@ TEST_F(mount_setattr_idmapped, attached_mount_inside_current_mount_namespace)
+ 	attr.userns_fd	= get_userns_fd(0, 10000, 10000);
+ 	ASSERT_GE(attr.userns_fd, 0);
+ 	ASSERT_NE(sys_mount_setattr(open_tree_fd, "", AT_EMPTY_PATH, &attr, sizeof(attr)), 0);
++	/*
++	 * Make sure that open_tree_attr() without OPEN_TREE_CLONE is not a way
++	 * to bypass this mount_setattr() restriction.
++	 */
++	ASSERT_LT(sys_open_tree_attr(open_tree_fd, "", AT_EMPTY_PATH, &attr, sizeof(attr)), 0);
++
+ 	ASSERT_EQ(close(attr.userns_fd), 0);
+ 	ASSERT_EQ(close(open_tree_fd), 0);
+ }
+@@ -1255,6 +1287,12 @@ TEST_F(mount_setattr_idmapped, attached_mount_outside_current_mount_namespace)
+ 	ASSERT_GE(attr.userns_fd, 0);
+ 	ASSERT_NE(sys_mount_setattr(open_tree_fd, "", AT_EMPTY_PATH, &attr,
+ 				    sizeof(attr)), 0);
++	/*
++	 * Make sure that open_tree_attr() without OPEN_TREE_CLONE is not a way
++	 * to bypass this mount_setattr() restriction.
++	 */
++	ASSERT_LT(sys_open_tree_attr(open_tree_fd, "", AT_EMPTY_PATH, &attr, sizeof(attr)), 0);
++
+ 	ASSERT_EQ(close(attr.userns_fd), 0);
+ 	ASSERT_EQ(close(open_tree_fd), 0);
+ }
+@@ -1321,6 +1359,19 @@ TEST_F(mount_setattr_idmapped, detached_mount_outside_current_mount_namespace)
+ 	ASSERT_EQ(close(open_tree_fd), 0);
+ }
+ 
++static bool expected_uid_gid(int dfd, const char *path, int flags,
++			     uid_t expected_uid, gid_t expected_gid)
++{
++	int ret;
++	struct stat st;
++
++	ret = fstatat(dfd, path, &st, flags);
++	if (ret < 0)
++		return false;
++
++	return st.st_uid == expected_uid && st.st_gid == expected_gid;
++}
++
+ /**
+  * Validate that currently changing the idmapping of an idmapped mount fails.
+  */
+@@ -1331,6 +1382,8 @@ TEST_F(mount_setattr_idmapped, change_idmapping)
+ 		.attr_set = MOUNT_ATTR_IDMAP,
+ 	};
+ 
++	ASSERT_TRUE(expected_uid_gid(-EBADF, "/mnt/D", 0, 0, 0));
++
+ 	if (!mount_setattr_supported())
+ 		SKIP(return, "mount_setattr syscall not supported");
+ 
+@@ -1348,27 +1401,25 @@ TEST_F(mount_setattr_idmapped, change_idmapping)
+ 				    AT_EMPTY_PATH, &attr, sizeof(attr)), 0);
+ 	ASSERT_EQ(close(attr.userns_fd), 0);
+ 
++	EXPECT_FALSE(expected_uid_gid(open_tree_fd, ".", 0, 0, 0));
++	EXPECT_TRUE(expected_uid_gid(open_tree_fd, ".", 0, 10000, 10000));
++
+ 	/* Change idmapping on a detached mount that is already idmapped. */
+ 	attr.userns_fd	= get_userns_fd(0, 20000, 10000);
+ 	ASSERT_GE(attr.userns_fd, 0);
+ 	ASSERT_NE(sys_mount_setattr(open_tree_fd, "", AT_EMPTY_PATH, &attr, sizeof(attr)), 0);
++	/*
++	 * Make sure that open_tree_attr() without OPEN_TREE_CLONE is not a way
++	 * to bypass this mount_setattr() restriction.
++	 */
++	EXPECT_LT(sys_open_tree_attr(open_tree_fd, "", AT_EMPTY_PATH, &attr, sizeof(attr)), 0);
++	EXPECT_FALSE(expected_uid_gid(open_tree_fd, ".", 0, 20000, 20000));
++	EXPECT_TRUE(expected_uid_gid(open_tree_fd, ".", 0, 10000, 10000));
++
+ 	ASSERT_EQ(close(attr.userns_fd), 0);
+ 	ASSERT_EQ(close(open_tree_fd), 0);
+ }
+ 
+-static bool expected_uid_gid(int dfd, const char *path, int flags,
+-			     uid_t expected_uid, gid_t expected_gid)
+-{
+-	int ret;
+-	struct stat st;
+-
+-	ret = fstatat(dfd, path, &st, flags);
+-	if (ret < 0)
+-		return false;
+-
+-	return st.st_uid == expected_uid && st.st_gid == expected_gid;
+-}
+-
+ TEST_F(mount_setattr_idmapped, idmap_mount_tree_invalid)
+ {
+ 	int open_tree_fd = -EBADF;
 
 -- 
 2.50.1
