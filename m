@@ -1,120 +1,183 @@
-Return-Path: <linux-fsdevel+bounces-57114-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57115-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23F40B1ED11
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 18:35:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 883C8B1ED25
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 18:44:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED2387A7B01
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 16:34:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C46D726530
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 16:44:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1589B286D74;
-	Fri,  8 Aug 2025 16:35:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J2PnLtUX"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 082BC28751E;
+	Fri,  8 Aug 2025 16:44:13 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E528E25228C
-	for <linux-fsdevel@vger.kernel.org>; Fri,  8 Aug 2025 16:35:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1C7327FB07;
+	Fri,  8 Aug 2025 16:44:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754670934; cv=none; b=rrp1nRYkcGZ3yicE0xmmgA1eHu4lYo9J6jT8ujtB7pIx5OlRA9S29K1KG8ut1OVo/m9ZZ9MsIlxSUIp5SA4xCvPwUnrAn3DbsqAav+fOguQpG4bkdxHaP6smBLdQumwQlROSw+9cJuEWqFOL0GKm655Y15SACeL9ziDss6zbzvc=
+	t=1754671452; cv=none; b=ZBh3o1G6v7KBElU+nFd00o12JDPcqah4i36lS4xiRbPbCkMww6aqnMRZMzoWJlTQCfFjnqK0ZpbPgX25Nsh5pGcUEytT3qnt/m7FNbRV4HjaMkONby1n2MmgfmbHNaBuYCj0jbt/DNbDWhvldVxs0iWuZe4wlLxQ01ho9nspm8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754670934; c=relaxed/simple;
-	bh=aOccXo9yYpAaxBGY/Mshh1PlyX/8uz6oGOWJ0S7XK8Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CowvUl8x86sSP4r+AJzSe7XyFfsKBxw4raY0TpcpkpABg+I3jNnwTJZAXzeQ4ml/GfySOt65gede09O4kF5S3TmMr7SWux6GWTniQKFvASvCfB1NjDYGUUMv3JpFa7toSMRfoa1/8dI/buRa4lM+vPv9KIrPC/iA8L8DAyLHNP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J2PnLtUX; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-af925cbd73aso461182366b.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Aug 2025 09:35:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754670931; x=1755275731; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pLK7E2AgdjG9Mqu9sTUCxyiafe09MqR8lXee9lQry4Q=;
-        b=J2PnLtUXxuAwmPWFC/YklSQL4j0mFG7AKBxejvohuNnbIB5u5Cg0JB4Uac5vicTUib
-         YZqPkxweNWFoU3TiIiOc1Fq01njM3j3ll+wu9Wr4GaK46nT8Wpp/D8AXnJyG60uuG/Ef
-         X6TyveSXYettm9rSiAZRSxUycpVgFxqejoKSCHdJDBKbthLdFyQAgPaXulETbWwMRUhD
-         mhBus75pV3aGQfixTq8oqwOKZgELSlA48TeathoDBCUMbrQL3vFEQ2COQAGc/g2oWFxY
-         0jYbv4ppdC3MKLWUDXedaxGA/ud1Tjfh1TLNeZJEOdmYR42auzLwQBoWi28yVfUjpA0G
-         aO6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754670931; x=1755275731;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pLK7E2AgdjG9Mqu9sTUCxyiafe09MqR8lXee9lQry4Q=;
-        b=MK267/YfUMtb5vX+lmknLJE115LT/B4ojmIF7r8yBB6VcwgwbfWMAPQaDcoYQp4+3i
-         ia1TgWTTT8fnxuO69TayUEBsjeem4rsEDlUNE4y3isvuDVBsaRn1plrRJM51Y2qqFp4Q
-         F2IXWYikhVRtXamyRFXKc3diU6UmnjroOsILLotTlIrNeG1BVVzDlphuuYPpF8xvQeuu
-         vDP1d1ZKT2hh2glijYTQ1jZ8hg5r9a4+djPRbXB5RsCvJnznvM5BGfVibwGE2egRUoU6
-         jrXdOPd2gtZvcY2Es7IByHwKve+sGLFb2N62jrBzRB1B7urZKKljx1vfhk248RHxlu4M
-         XDqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWVvDxmZN8fF+cwLgoqOjFJLFVtvV+qGqcSi3njQndI3D+/urJWrPWqQuRA8eb7CUBxli62tK3N+ik+RwKV@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMz7JWayB2bxE6VhFEE/kaAvNxSAqdJ0Bhsl3T+h2BmUygHRF9
-	b4xM7U0dtHAONLYYANBhfLQFIjPszHViC7WR8jsFcPL0pGM7hAhP4jrAeEukO+8U75QqDCBj5YU
-	smkiZ4Zh13vhj/H5jctrct4HqsQ1TmZ8=
-X-Gm-Gg: ASbGncuH8Tbg7okAUywUPXlHsDPjDINsYjnS/V/r0MlCnH88MNC0IvjQ8nmFZhwRsEh
-	P2bRSu//s9Nh3YK89WsQ/Wj7ffRSC8w7b/GrlckscANg9jCIC6XDP6+zlShNwW6a/tcSx2R5/pm
-	U4ihvI5jbB6gvi0f1x8OmRFMh+BEqtITVKmctsD2b1+yzuNdePSyslCff/J8wiPJKrK9ndn9EDY
-	M+HnDE=
-X-Google-Smtp-Source: AGHT+IE6aOHLq7RCXJk6Ln/ZdnhbJ+imkAEhmNJ80LIxgYfTuGY23xaY/pxlWlI2thH3pDVKqcin5AjwA69SaSGvdvI=
-X-Received: by 2002:a17:907:6d20:b0:ae3:8c9b:bd61 with SMTP id
- a640c23a62f3a-af9c63aefaemr287563466b.12.1754670930775; Fri, 08 Aug 2025
- 09:35:30 -0700 (PDT)
+	s=arc-20240116; t=1754671452; c=relaxed/simple;
+	bh=PXre777B2idTmV51mUoS99uMhDePtl9t6H3/4Aoie/0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=AwVj6AUWXYvk4ahtmWT2zFk0xecOWNUa0u8kqxjXU9X1KSBp034ztbArc18VvMjDVwLaGT93DtgNxXXU9L1Pa4AySHVAyxfGg+U7Cd6t5fnywFBvLswQExkS56N9dvEKPFMqqYE2VcPpoiGC+5XkrPlm6qsLpVt2XWiOJ16K4O0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kaod.org; spf=pass smtp.mailfrom=ozlabs.org; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kaod.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ozlabs.org
+Received: from mail.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
+	by gandalf.ozlabs.org (Postfix) with ESMTP id 4bz8xh05gdz4xdF;
+	Sat,  9 Aug 2025 02:44:08 +1000 (AEST)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bz8xc2nlQz4xcb;
+	Sat,  9 Aug 2025 02:44:03 +1000 (AEST)
+Message-ID: <bc7e754f-f414-4c43-8f25-03314b894b34@kaod.org>
+Date: Fri, 8 Aug 2025 18:44:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250806220516.953114-1-ibrahimjirdeh@meta.com>
-In-Reply-To: <20250806220516.953114-1-ibrahimjirdeh@meta.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 8 Aug 2025 18:35:19 +0200
-X-Gm-Features: Ac12FXwvhJPn24nENlaalZzGrByf79Fv1SSphccfreKChUurI9_tKVjHdNWL1og
-Message-ID: <CAOQ4uxh++fiNg7QOimAqLTMe_Y3vbBChRH-fwhqxWHaS7SfUZQ@mail.gmail.com>
-Subject: Re: [PATCH 0/2] fanotify: support restartable permission events
-To: Ibrahim Jirdeh <ibrahimjirdeh@meta.com>
-Cc: jack@suse.cz, josef@toxicpanda.com, lesha@meta.com, 
-	linux-fsdevel@vger.kernel.org, sargun@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] vfio/pci: print vfio-device syspath to fdinfo
+To: Alex Mastro <amastro@fb.com>, Alex Williamson
+ <alex.williamson@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Keith Busch <kbusch@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-doc@vger.kernel.org, kvm@vger.kernel.org
+References: <20250804-show-fdinfo-v4-1-96b14c5691b3@fb.com>
+ <20250807144938.e0abc7bb-a4-amachhiw@linux.ibm.com>
+ <dd0b8e6f-1673-49c3-8018-974d1e7f1a54@kaod.org>
+ <20250808205338.dc652e3e-61-amachhiw@linux.ibm.com>
+From: =?UTF-8?Q?C=C3=A9dric_Le_Goater?= <clg@kaod.org>
+Content-Language: en-US, fr
+Autocrypt: addr=clg@kaod.org; keydata=
+ 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
+In-Reply-To: <20250808205338.dc652e3e-61-amachhiw@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 7, 2025 at 12:06=E2=80=AFAM Ibrahim Jirdeh <ibrahimjirdeh@meta.=
-com> wrote:
->
-> These patches are in order to add support for restarting permission
-> events which is useful for HSM use cases which are backed by a daemon
-> to respond reliably [1].
->
-> In terms of testing, there is an additional LTP test attached which
-> exercises releasing queue via the new api [2]
->
-> [1] https://lore.kernel.org/linux-fsdevel/6za2mngeqslmqjg3icoubz37hbbxi6b=
-i44canfsg2aajgkialt@c3ujlrjzkppr/
-> [2] https://github.com/ibrahim-jirdeh/ltp/commit/ec38a798b823954f5c5f801b=
-006257ff278f523b
->
+On 8/8/25 17:45, Amit Machhiwal wrote:
+> Hi Cédric,
+> 
+> Please find my comments inline:
+> 
+> On 2025/08/08 03:49 PM, Cédric Le Goater wrote:
+>> Hello Amit,
+>>
+>> On 8/7/25 11:34, Amit Machhiwal wrote:
+>>> Hello,
+>>>
+>>> On 2025/08/04 12:44 PM, Alex Mastro wrote:
+>>>> Print the PCI device syspath to a vfio device's fdinfo. This enables tools
+>>>> to query which device is associated with a given vfio device fd.
+>>>>
+>>>> This results in output like below:
+>>>>
+>>>> $ cat /proc/"$SOME_PID"/fdinfo/"$VFIO_FD" | grep vfio
+>>>> vfio-device-syspath: /sys/devices/pci0000:e0/0000:e0:01.1/0000:e1:00.0/0000:e2:05.0/0000:e8:00.0
+>>>>
+>>>> Signed-off-by: Alex Mastro <amastro@fb.com>
+>>>
+>>> I tested this patch on a POWER9 bare metal system with a VFIO PCI device and
+>>> could see the VFIO device syspath in fdinfo.
+>>
+>> POWER9 running on OPAL FW : I am curious about the software stack.
+>>
+>> I suppose this is the latest upstream kernel ?
+> 
+> Yes, I used the latest upstream kernel and applied this patch on top of commit
+> cca7a0aae895.
+> 
+>> Are you using an upstream QEMU to test too ?
+> 
+> No, I had used the Fedora 42 distro qemu. The version details are as below:
+> 
+>    [root@localhost ~]# qemu-system-ppc64 --version
+>    QEMU emulator version 9.2.4 (qemu-9.2.4-1.fc42)
+>    Copyright (c) 2003-2024 Fabrice Bellard and the QEMU Project developers
+> 
+> I gave the upstream qemu (HEAD pointing to cd21ee5b27) a try and I see the same
+> behavior with that too.
+> 
+>    [root@localhost ~]# ./qemu-system-ppc64 --version
+>    QEMU emulator version 10.0.92 (v10.1.0-rc2-4-gcd21ee5b27-dirty)
+>    Copyright (c) 2003-2025 Fabrice Bellard and the QEMU Project developers
+> 
+>    [root@localhost ~]# cat /proc/52807/fdinfo/191
+>    pos:    0
+>    flags:  02000002
+>    mnt_id: 17
+>    ino:    1125
+>    vfio-device-syspath: /sys/devices/pci0031:00/0031:00:00.0/0031:01:00.0
+> 
+>>
+>> and which device ?
+> 
+> I'm using a Broadcom NetXtreme network card (4-port) and passing through its
+> fn0.
+> 
+>    [root@guest ~]# lspci
+>    [...]
+>    0001:00:01.0 Ethernet controller: Broadcom Inc. and subsidiaries NetXtreme BCM5719 Gigabit Ethernet PCIe (rev 01)
+> 
+> Please let me know if I may help you with any additional information.
 
-Nice test.
-Gave some minor comments on github.
+It is good to know that device pass-through still works with upstream on
+OpenPower servers.
 
-I would add two things:
-1. Test close of control fd before queue fd -
-    Read from queue of shutdown group should fail
-2. Generate two events but read/restart only one of them -
-    Read event after re-open queue fd should get the first event not
-the second one
-    Second read should get the second event
+Have you tried VFs ?
 
-Thanks and nice work!
-Amir.
+Thanks Amit,
+
+C.
+
 
