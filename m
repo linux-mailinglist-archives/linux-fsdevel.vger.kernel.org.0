@@ -1,153 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-57093-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57094-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CB49B1EA1A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 16:15:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ED19B1EA2A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 16:17:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7112F4E2763
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 14:15:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6FEAC4E44CD
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 14:17:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BE3D27EC80;
-	Fri,  8 Aug 2025 14:15:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC87927816B;
+	Fri,  8 Aug 2025 14:17:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ul4RDosv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eFWqfvWH"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C4A727E05F;
-	Fri,  8 Aug 2025 14:15:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A9BF4F1;
+	Fri,  8 Aug 2025 14:17:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754662501; cv=none; b=TIhz3YWb0rj7EuHqWDDP3tX+exbWrpBE5BX8v3xgudU2eR4v1pOot7iXll2qHUuq5sjp0TaH3KNLy5hRYHXmo2jk/C5sezQhT7k8QlRMQUeSpZ27gCju1xDIjptV4Ya31/08PTWleZt8QNPJdsck+v0fLFIYRGAXr+0UMbrS/2A=
+	t=1754662638; cv=none; b=S3/2wiRvXJL4UtWp554qmXE13o4QvVWV0yygnox1VNihn38DJqE0IX7ZKytTZdlANHQ0J18kAhChgLzM2H4NRVz3h6VaFHRVWqpqf8sU6n0IcH7kSaZzbMF5bOfUE7XJanG0RF2jpFXdn7dpu2ApSIjkKE8LJijAcKxFUOQRxNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754662501; c=relaxed/simple;
-	bh=HKIkgDzMLDwzvzKcSbUoDlFcm9sGFZMnObzsmCeGRbk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZlT4fTAwL6H7AgzjxXNbzsEXVguQX5lnl6GEy4rUVB1QTedi8kV+TpArLczJzc5cNDv49lU6NaOfvGP7nLmWa3TKO+gg604KDBXoO6fyrynWQt0AcVWbcnkCtZ9kMcg+xA/o35UfkdEbt0nJ4u5yjXYbc6W34BNBPukhH93HBhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ul4RDosv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22B1DC4CEED;
-	Fri,  8 Aug 2025 14:14:57 +0000 (UTC)
+	s=arc-20240116; t=1754662638; c=relaxed/simple;
+	bh=FN1yrR+pKPwucphh9TBMxiQFtFhUAgNaMIP8D20nNeI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RsCMfz39xctTEsLuPkhJt8zenRh/qnDJ3gXUum6U3FCYsdcUDyjkySpebFoo+X/i6mzWBej9G6olw/XltV1b697sr+RFiBUfsw9eeUcl2E69W2DxXFb8zjXy1Mr8q0q/miHzEgd8a9Mz3oSv6+EFAdhWXAVZ/lQgvKKZO7Lu/nY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eFWqfvWH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D216C4CEED;
+	Fri,  8 Aug 2025 14:17:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754662500;
-	bh=HKIkgDzMLDwzvzKcSbUoDlFcm9sGFZMnObzsmCeGRbk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ul4RDosvdyO3wvUFC9dpG5zZP+OhqJpvY6w4eDfUSuYA2AQLSHCJlkKZCkOY2LLjP
-	 Qtkd4Vee/lax31JRFeEYVYLYAylGeMvoEM45Bvn1W6/hoyuXNUB2/UR4QvXrDaIDLW
-	 s6+0+Kp9hpeneR2Ru2Xa7EmtJH4PHg33ncPjZNQy9oz4BM/qLDzYXYnp4i6QBASt6z
-	 nsGc/7PSDMwEbjKZqKUqlhHJ1GgNYEiX+fP05VZAubvlVEe0BrW3LoGJKPPO6DOOtq
-	 kLdTiZtv3XGb8h8qDBmd6m2xFNPU8KcOyrz6kF/6PTiyiNTm7Y5zOmKdVfj+0gOslK
-	 FaXmVQPl4LrDQ==
-Date: Fri, 8 Aug 2025 16:14:55 +0200
+	s=k20201202; t=1754662637;
+	bh=FN1yrR+pKPwucphh9TBMxiQFtFhUAgNaMIP8D20nNeI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=eFWqfvWHroqzq09/phqN0Pd/7oeeWTq/EWBXhu73T3/owBEnEJisVvzlmqgd9WTW/
+	 QtnSapeJtTkQQUpqWyEdoR66XijFMGm/tQhvL/0h6Yp0/UiRzXyAnMibyWm6XeCtd1
+	 21p069tS1p16zKl98FmSecdLFFGmXF301zC9/Pm1WO8oesuZH/IWlwMi4xxSszoxb3
+	 de3IgN/d6E+tD5siV8l1Lw5o5DCkFMBDxc+5VOlC2Mr4drVr4I2Dheg0aZ5qCB1BlT
+	 q6NDOkZ8yUCog1qaMbn2ChKlJ7ACBI1g5RunxqiPKO8YK2oNARrKgrzc4qn111hAUj
+	 ucH5PEq641DqQ==
 From: Christian Brauner <brauner@kernel.org>
-To: Qu Wenruo <wqu@suse.com>
-Cc: Anand Jain <anand.jain@oracle.com>, Josef Bacik <josef@toxicpanda.com>, 
-	Qu Wenruo <quwenruo.btrfs@gmx.com>, Qu Wenruo <wqu@suse.de>, 
-	linux-btrfs <linux-btrfs@vger.kernel.org>, David Sterba <dsterba@suse.com>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: Should seed device be allowed to be mounted multiple times?
-Message-ID: <20250808-liest-allumfassend-2fb553ad1fb3@brauner>
-References: <aef03da8-853a-4c9f-b77b-30cf050ec1a5@suse.de>
- <4cdf6f5c-41e8-4943-9c8b-794e04aa47c5@suse.de>
- <8daff5f7-c8e8-4e74-a56c-3d161d3bda1f@oracle.com>
- <bddc796f-a0e0-4ab5-ab90-8cd10e20db23@suse.de>
- <184c750a-ce86-4e08-9722-7aa35163c940@oracle.com>
- <bc8ecf02-b1a1-4bc0-80e3-162e334db94a@gmx.com>
- <a3db2131-37a8-469f-a20d-dc83b2b14475@oracle.com>
- <510675a5-7cb2-4838-87e0-9fb0e9f114f0@suse.com>
- <20250805-tragweite-keule-31547b419bc3@brauner>
- <6a85c9c0-36ac-4a69-a0d5-4bc5846cd5c7@suse.com>
+To: =?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	Sargun Dhillon <sargun@sargun.me>,
+	Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH v3] fs: always return zero on success from replace_fd()
+Date: Fri,  8 Aug 2025 16:17:03 +0200
+Message-ID: <20250808-lernbegierde-amtssiegel-cb2104469f1d@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250805-fix-receive_fd_replace-v3-1-b72ba8b34bac@linutronix.de>
+References: <20250805-fix-receive_fd_replace-v3-1-b72ba8b34bac@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1350; i=brauner@kernel.org; h=from:subject:message-id; bh=FN1yrR+pKPwucphh9TBMxiQFtFhUAgNaMIP8D20nNeI=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRMY3tRmPFWfdMCqT22T8RNF5U2nVA41b3/f/Wjx2c/K L6RDboxr6OUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAikqsYGRqFNc/ODtJ9OTNk v+u+EkOJZz+mrNRbtfdZ7sy62X9X2b5lZHgalcUz40zetKmaoleOLD5uHs1vHjObgSWYnUdpp9d LN24A
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <6a85c9c0-36ac-4a69-a0d5-4bc5846cd5c7@suse.com>
 
-On Wed, Aug 06, 2025 at 07:50:06AM +0930, Qu Wenruo wrote:
+On Tue, 05 Aug 2025 14:38:08 +0200, Thomas Weißschuh wrote:
+> replace_fd() returns the number of the new file descriptor through the
+> return value of do_dup2(). However its callers never care about the
+> specific returned number. In fact the caller in receive_fd_replace() treats
+> any non-zero return value as an error and therefore never calls
+> __receive_sock() for most file descriptors, which is a bug.
 > 
+> To fix the bug in receive_fd_replace() and to avoid the same issue
+> happening in future callers, signal success through a plain zero.
 > 
-> 在 2025/8/5 22:13, Christian Brauner 写道:
-> > On Tue, Aug 05, 2025 at 10:22:49AM +0930, Qu Wenruo wrote:
-> > > 
-> > > 
-> > > 在 2025/8/5 10:06, Anand Jain 写道:
-> > > > 
-> > > > 
-> > > > > > Thanks for the comments.
-> > > > > > Our seed block device use-case doesn’t fall under the kind of risk that
-> > > > > > BLK_OPEN_RESTRICT_WRITES is meant to guard against—it’s not a typical
-> > > > > > multi-FS RW setup. Seed devices are readonly, so it might be reasonable
-> > > > > > to handle this at the block layer—or maybe it’s not feasible.
-> > > > 
-> > > > 
-> > > > > Read-only doesn't prevent the device from being removed suddenly.
-> > > > 
-> > > > I don't see how this is related to the BLK_OPEN_RESTRICT_WRITES flag.
-> > > > Can you clarify?
-> > > 
-> > > It's not related to that flag, I'm talking about the fs_bdev_mark_dead(),
-> > > and the remaining 3 callbacks.
-> > > 
-> > > Those call backs are all depending on the bdev holder to grab a super block.
-> > > 
-> > > Thus a block device should and can not have multiple super blocks.
-> > 
-> > I'm pretty sure you can't just break the seed device sharing use-case
-> > without causing a lot of regressions...
-> 
-> It's not that widely affecting, we can still share the same seed device for
-> all different sprout fses, just only one of them can be mounted at the same
-> time.
-> 
-> And even with that limitation, it won't affect most (or any) real world use
-> cases.
-> 
-> Even the most complex case like using seed devices as rootfs, and we want to
-> sprout the rootfs again, just remove the seed device from the current
-> rootfs, then one can mount the seed device again.
-> 
-> > 
-> > If you know what the seed devices are than you can change the code to
-> > simply use the btrfs filesystem type as the holder without any holder
-> > operations but just for seed devices. Then seed devices can be opened
-> > by/shared with any btrfs filesystem.
-> 
-> But we will lose all the bdev related events.
-> 
-> We still want to sync/freeze/thaw the real sprouted fs in the end.
-> 
-> > 
-> > The only restriction is that you cannot use a device as a seed device
-> > that another btrfs filesystem uses as a non-seed device because then it
-> > will be fully owned by the other btrfs filesystem. But Josef tells me
-> > you can only use it as a seed device anyway.
-> > 
-> > IOW, if you have a concept of shareable devices between different btrfs
-> > filesystems then it's fine to reflect that in the code. If really needed
-> > you can later add custom block holder ops for seed devices so you can
-> > e.g., iterate through all filesystems that share the device.
-> 
-> Sure it's possible, with a lot of extra code looking up where the seed
-> device belongs, and all the extra bdev event proxy.
-> 
-> 
-> But I'd say, the seed device specification is not well specified in the very
-> beginning, thus it results a lot of "creative" but not practical use cases.
-> 
-> Yes, this will result some regression, but I'd prefer a more sounding and
-> simpler logic for the whole seed device, with minimal impact to the most
-> common existing use cases.
+> [...]
 
-Ok, I'm not in a position to argue this effectively. If you think you an
-reasonably get away with this regression so be it. But if this ends up
-in a total revert of the conversion even though we'd have alternative
-solution I'm not going to be happy...
+Applied to the vfs-6.18.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.18.misc branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.18.misc
+
+[1/1] fs: always return zero on success from replace_fd()
+      https://git.kernel.org/vfs/vfs/c/7db5553d705f
 
