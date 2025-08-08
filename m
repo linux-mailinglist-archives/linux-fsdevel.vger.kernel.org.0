@@ -1,126 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-57077-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57078-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24238B1E925
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 15:27:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AC6CB1E929
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 15:28:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 204673B420E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 13:27:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 891F1582604
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 13:28:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F04B827D77D;
-	Fri,  8 Aug 2025 13:27:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 398DD27D780;
+	Fri,  8 Aug 2025 13:28:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="MwKw2/MN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tVrD1vdH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9705320ED;
-	Fri,  8 Aug 2025 13:27:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F8E620ED;
+	Fri,  8 Aug 2025 13:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754659637; cv=none; b=jeRMG1tPOEHYLg3QrYh3ORakqPDghQT1NzgNhFAT1+yr6Pc5sod8AZ/v2t5e6V66vCOJk9tYFDMkM2xrZEnbOeFvuOVVCoVpBtgnwwg4pl/Jul2CQc1hd7fTZtELaHRb79eCxccJ1sHDvc6guCkyNR77bnSa7jfgHBWoV8QTsQI=
+	t=1754659682; cv=none; b=kQ7bLxX6389luFzYHk1axzt2JHrzPFVXf/X/kcOzLG5/jOpSlFZelak6rak95pSe2EY7uEf3fA+8e/ADPdcpb/16UBSo2MZYY+P9UKpi+g8h/n0BpVg2TX3bTNCa+4I6qjkwCmyAMNw1Oi6+Cto1xv/bRgdvVNtu8Ky45QM7RtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754659637; c=relaxed/simple;
-	bh=n2kz0PDmt6ySR11T9g1wOWoTTyWGTuf9XiYZXhELFWU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nJ4R8ZS9qt9SweQr9zagEsPY0bLehxFmWkzEV7TnONmTvqSIdQ8KQov0KQAQF1+l1EKA3WORr5nlowzJ0YcCXQxnIT084mML1XO30QY3u6reR7qIqcwJMRLGtF6PnA7ONZzWPMMJH9ies0wW/GSjXjxh0J122LiXOgd1vQkwkPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=MwKw2/MN; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4bz4ZR4Hwlz9t1l;
-	Fri,  8 Aug 2025 15:27:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1754659631;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=n2kz0PDmt6ySR11T9g1wOWoTTyWGTuf9XiYZXhELFWU=;
-	b=MwKw2/MNyxLlmN8COwj+D9kstKwgCgYHRxc+tdNeZJf8g9/fycG3zM9eH+bA5T5u/5BjNs
-	WRgKZTGABVtwByYQx7LlVdSUP4hS9mjdOo7GKzGngproU53Z4FRtMYat+RdO1wNWTadOcj
-	3GM6jt1spGuCeYBAvlrkPDNZUoA6m8WtI+v4wTAqZWd7Yrrc2htCMJbFEWlN0QxkfDdBYX
-	BcmNLml30zAy8EkVBlYqm0iFtFwFzKPp2HfIaiXmFk4YnrfL8XPyeSCC4S80SzQnlH0Ydn
-	CtI1100YKIj2i9iqG81pu2obhoBMLOHy1vR7Jh8o4UU7U1yHfE+X1qsO1+S4zg==
-Date: Fri, 8 Aug 2025 23:26:56 +1000
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Askar Safin <safinaskar@zohomail.com>
-Cc: Alejandro Colomar <alx@kernel.org>, 
-	"Michael T. Kerrisk" <mtk.manpages@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jan Kara <jack@suse.cz>, "G. Branden Robinson" <g.branden.robinson@gmail.com>, 
-	linux-man <linux-man@vger.kernel.org>, linux-api <linux-api@vger.kernel.org>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v2 08/11] open_tree.2: document 'new' mount api
-Message-ID: <2025-08-08.1754659362-feral-upset-odds-relish-frSs5D@cyphar.com>
-References: <20250807-new-mount-api-v2-0-558a27b8068c@cyphar.com>
- <20250807-new-mount-api-v2-8-558a27b8068c@cyphar.com>
- <19889ab0576.e4d2f37341528.6111844101094013469@zohomail.com>
+	s=arc-20240116; t=1754659682; c=relaxed/simple;
+	bh=976PJWpxguFHFCo5zyJH+l9FUHbqjblXu/xKA/FqtsQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kvGw19uXxvfq/6y9nruPc3IvL3+WAe1s0ZVugOp0VEV9UC7xmFBwuKfAyMt7iXxYXhK5Lih2WcUc5ZIkjTRS0AFuaNbgEP3sAy5Q5Iv7y06QrITpGvwm14Tpu3Jfh7O7858t8kHE73v9eq7zRHo/AYGtXqauNnjLzb+whwUr6TE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tVrD1vdH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3ADADC4CEED;
+	Fri,  8 Aug 2025 13:28:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754659682;
+	bh=976PJWpxguFHFCo5zyJH+l9FUHbqjblXu/xKA/FqtsQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=tVrD1vdHyE87TGiBcRfH36cv/NvLYYWGPmt6chSEoY5O16UgT6AH2eLV7O7BlbmTd
+	 AXoq1ZDJ77qefE6cGN+mE9hZZrKU91dnj0beZ61ZgDh4IQH3AOzjRJzBRWqkBjrbAg
+	 ScFCW6hHcGDYPS8RlFQVNHl/hY8xT4a8SfFO9zhr8ul/ZcezhS0YHBDYDRQ3XqBjET
+	 Zl8EgdmcIrHxG02nuQ59bua6OGliqACaYtu37/+HVaREN0LQ8T1so1+vsGZgCXDAJH
+	 o1CtMhpLK7N2Ol7TQ+5S145/Bg85u8F2QB37lD5cNHn+81pis3ac33HrMYXRn3OH4d
+	 u7eXfSD12oyQA==
+From: Christian Brauner <brauner@kernel.org>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	linux-api@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v2 0/2] vfs: output mount_too_revealing() errors to fscontext
+Date: Fri,  8 Aug 2025 15:27:45 +0200
+Message-ID: <20250808-fluktuation-panne-1056600eb918@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250806-errorfc-mount-too-revealing-v2-0-534b9b4d45bb@cyphar.com>
+References: <20250806-errorfc-mount-too-revealing-v2-0-534b9b4d45bb@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="bvkhbalo6bzxjws3"
-Content-Disposition: inline
-In-Reply-To: <19889ab0576.e4d2f37341528.6111844101094013469@zohomail.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1404; i=brauner@kernel.org; h=from:subject:message-id; bh=976PJWpxguFHFCo5zyJH+l9FUHbqjblXu/xKA/FqtsQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRM/R3LLTq16Vs1v7uh6+oJChoLkzZmWJn+zpL3bbWZe jWt/+2njlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIlccGD4Z/P4vWG83Jad7fJf Xgdt3XuoeKJJVjPLDyPRF0wPtq/82snwP4Iv5/UuywKOtI0lxt/OfbDJWvvw/hbW2XM10yZcf3j Bng8A
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
+On Wed, 06 Aug 2025 16:07:04 +1000, Aleksa Sarai wrote:
+> It makes little sense for fsmount() to output the warning message when
+> mount_too_revealing() is violated to kmsg. Instead, the warning should
+> be output (with a "VFS" prefix) to the fscontext log. In addition,
+> include the same log message for mount_too_revealing() when doing a
+> regular mount for consistency.
+> 
+> With the newest fsopen()-based mount(8) from util-linux, the error
+> messages now look like
+> 
+> [...]
 
---bvkhbalo6bzxjws3
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 08/11] open_tree.2: document 'new' mount api
-MIME-Version: 1.0
+Nice, thank you!
 
-On 2025-08-08, Askar Safin <safinaskar@zohomail.com> wrote:
-> In "man open_tree":
->=20
-> > As with "*at()" system calls, fspick() uses the dirfd argument in conju=
-nction
->=20
-> You meant "open_tree"
->=20
-> > If flags does not contain OPEN_TREE_CLONE, open_tree() returns
-> > a file descriptor that is exactly equivalent to one produced by open(2).
->=20
-> Please, change "by open(2)" to "by openat(2) with O_PATH" (and other simi=
-lar places).
+---
 
-I think the more common pattern in man-pages is to prefer to refer to
-open(2) unless you are explicitly talking about openat(2) features (like
-passing a dirfd). If it's just "a file descriptor with O_PATH" then most
-man-pages I've seen reference open(2) even if they were written
-post-openat(2).
+Applied to the vfs-6.18.mount branch of the vfs/vfs.git tree.
+Patches in the vfs-6.18.mount branch should appear in linux-next soon.
 
-Though in this case, since we are talking about open_tree(2) as an open
-operation that takes a dirfd, you're right that openat(2) might be
-better.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-https://www.cyphar.com/
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
---bvkhbalo6bzxjws3
-Content-Type: application/pgp-signature; name="signature.asc"
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
------BEGIN PGP SIGNATURE-----
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.18.mount
 
-iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaJX7IAAKCRAol/rSt+lE
-bwBcAP9cN20ZuPe0MC2Cwv+PN1I/0VaLonAep0j3nYX/mM0IdQD5AZwu+JMVvyEC
-PU6StZuE1rQmIoC09xUR17m2Jr6KMgw=
-=25J6
------END PGP SIGNATURE-----
-
---bvkhbalo6bzxjws3--
+[1/2] fscontext: add custom-prefix log helpers
+      https://git.kernel.org/vfs/vfs/c/49e998eb0154
+[2/2] vfs: output mount_too_revealing() errors to fscontext
+      https://git.kernel.org/vfs/vfs/c/3441e1534e67
 
