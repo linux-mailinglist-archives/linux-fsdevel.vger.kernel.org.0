@@ -1,85 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-57108-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57110-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F2F4B1EC55
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 17:48:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EEC3B1EC6C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 17:52:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79D3F18C4F3E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 15:49:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89E3D1887ABD
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 15:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A549728541C;
-	Fri,  8 Aug 2025 15:48:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0827285CAE;
+	Fri,  8 Aug 2025 15:52:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="NPIGwmgG";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="zUqNOIf3"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fxpv6/rP";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="sQMjoc+R"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52971C4A17;
-	Fri,  8 Aug 2025 15:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0B6428541C;
+	Fri,  8 Aug 2025 15:52:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754668119; cv=fail; b=BuGxG98JyQjvjf1jHIGiYR3wqfXcOli9IV2HQMDg9LlSVW6YCbXNBYvRudUqys3ABOJLdG7f5xmVA7n0nf9Cg8JRiYKhNnxPhi9LFGYwM8xUPOMlJax19CBNyGQD8BFcA3DH0Vvbs6Td8rWBDbMuo5JWPfcc9YkhS/8nS66kMlM=
+	t=1754668322; cv=fail; b=VTV3vyYSajYiOZZ1YrQckcI+ST7DBYTwOX1V9pHCgd7oen+guQ50c2w5VoA2RF0hSjSTUmkOy6nAJgSo7ooX5AsT5iYRFWjAt2oS+L4S8MVpFGXErQxeBG17CR5OV3TbK4LUiowYWh6HPhPWGMCAcCBrb7ehzG7pMPGp0Z2olWA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754668119; c=relaxed/simple;
-	bh=nh9Fa97m5iZcyril+7BH3bFPeoSdnUaQfoFeagz2ni0=;
+	s=arc-20240116; t=1754668322; c=relaxed/simple;
+	bh=kCmBYoKchtROlSi/cminok7J70RVuY4ZR3d90XD6M3o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=rET5zKehdfxIVCL0mLVrrWidWoh5MZ79w2on5P3wmqdYeswlBE1iu16tabZndgLf7hz8wsPGYmzuUwUiSLyX4zef7ULTK1FiqbJsCeGBsBFQQGDDH35Xn/9PMEC/WFsbzyz8+mFKlQmRAWFBcXszgiMqIJqG4dHs1D1+PH1VM2U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=NPIGwmgG; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=zUqNOIf3; arc=fail smtp.client-ip=205.220.177.32
+	 Content-Disposition:In-Reply-To:MIME-Version; b=s3fiAG4BVRLZq4OJoBXbayc0F0Vk7yC18Fxa7ihXarMZN7TpkGtCNH57Eyao+/ghOiTGZRqhxoLSoSvMtJ32RKspFAA9Dvth/DY0aH5TJfai9lhK815HOlhTUbaMR01gJ7oLR7W6c3ziw+Ma2uOq4ssfwswyQmfrM7yR7YVPeV8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=fxpv6/rP; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=sQMjoc+R; arc=fail smtp.client-ip=205.220.165.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 578DNTW8014746;
-	Fri, 8 Aug 2025 15:47:46 GMT
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 578DNWQ3001329;
+	Fri, 8 Aug 2025 15:50:55 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
 	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=/oseSVPmXXi31u4T66
-	hhqWXynH5odVqXADVgwYQrwYI=; b=NPIGwmgGHk6UI+WhHirpE7vitmaC4pdwXL
-	vst7uFpLEc1hNtuq6aea7/csnUJHKU7DjOuWpFPWkat8ZjTfImGiE01FIFsyiDDw
-	pfJDYlgw2scJ09vj1A4HU62m9ODIJv+4BS3+nB6b71Ag2Db1zq4s2o4UTDYmptjv
-	nTmujdc9ZmoH7zUyMlWauxrt+x8j7u4yLOQks11nj08eUGxxP3DQCR2vAeGQoChV
-	A/K3swTGdhdACSrj5fvw3WgTZxQuyKn2cXJVsncnHCwmc9mrssZirB6BKuzTu+kj
-	ikkaUT6engLWtjmbdBXCUahuEV38fHTnxDQbQVRQcIKk+hYIwyuA==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48bpve6mcj-1
+	:references:subject:to; s=corp-2025-04-25; bh=q1M5WweRFj2IuXfgBW
+	u8KrCu56DBl915hj5S7O1FDcM=; b=fxpv6/rPJ6RuFm6IjJBFLSMdq+++QTbPlL
+	F0qz8+74bojIr3sTBBUQwcA3f25bUZAjejueMMDilChboU3ns9iuwCRQx/IIPK/M
+	j2MzgD9ybFdWJB7Hrb95QaQWAaJPD19JETaVvYuijxrvU/PqE5oBRh61sW8puVST
+	qRVkPagJdO06EEWxBjHZUi2M8AJFkyG/vjdV9kTYMmnH/HJ8uf6GJf2iDuGWOxxT
+	7JQ+gVcd5tV2CMZUgZUkd+mbCsolA6Pk66saOStiKEc7qdG/KH8KRl8yrSjU/bX6
+	YxJolSVvqyHZ6tMqNLOGGe8Jxb0WGoGdmhjpaEP5NGDDPX5pFwRA==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48bpvgxhuf-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 08 Aug 2025 15:47:45 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 578EH5pQ032083;
-	Fri, 8 Aug 2025 15:47:45 GMT
-Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12on2046.outbound.protection.outlook.com [40.107.243.46])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 48bpwtexnb-1
+	Fri, 08 Aug 2025 15:50:55 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 578ESniH018510;
+	Fri, 8 Aug 2025 15:50:54 GMT
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10on2062.outbound.protection.outlook.com [40.107.94.62])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 48bpwtxx2w-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 08 Aug 2025 15:47:45 +0000
+	Fri, 08 Aug 2025 15:50:54 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Akomebsmak2JFZQ1UD0zI6xe6J2OGTrlJucn50gWlqfOgzzSe6DvmP7KKFCpRJvPd33yWv+hSRnElx+KZcvpjVDRFN88pWtcWD+RqX8cslmJ/aaTXa8EQHhV4Oow3CRzp+Q1cIx9C5hD+fm+/ogXz+Hr7Ch7AwVp4/l027ONcgkTyESuNKuZfHt25WxFuMVI4VdgKyE1G7y/45R+GnH8WC9fhiBRggqmejCRLUV4VJC/kQIdywade8KalADxH4YUNIfQHXQMPmXCnMJ5lFBJClkiuzAYUGy6ls9mBp8xDZIJ8F992wlT6W5xr8A/w0b4nO4g9RB1rqbK/dCpGElEmQ==
+ b=fwwt3KcFpLciCtH6q1zj+VMbVeOS25djTMhiU6OrCnU/O9mbmuU4C3F7DgV/25KczuTkFgCqVmZ7kBcwJX5TlLQXS6+XkHa9ru2+zjlQlsu3guRv8XJ775RC00PWI6VX8cyuE5X+1hc5Q1s6l+Sls8ulJjU5LqoscTmAbB6MLKBxiCDYIVLno540ik/nOmvjAamB8b4Zu18FIW1vU5pon0vUertjK6Gb5Jumi3pqmdBuMDOOONMEUAkD8aL9FGSBeE7aBAuoDmWk/7D2+bkD/MXb6y2dhyrW50iA8knbU34Qk39IhJlheHcUs/9ucefU5fNwuHGh31Dr6FnN4Gcdyg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/oseSVPmXXi31u4T66hhqWXynH5odVqXADVgwYQrwYI=;
- b=hvPatrBhBTXBU6ZWk5m0PkMaSJ+YJAihGeBzQQdDxQGkrDMuZqtOCB851u7nq+1pzLLB/JlSiBANflQ2mmmys7llZMn57HS9oljQSHfTvrJd4FQ8VCa/XesS8So47YFgbNMhpOecyTEWfLTXgVBtYCbpflKVl6mnu9RTIFSVS8/tMG9I5CCngrY0K75vp8HkM4zKu9elIq0TLP7ui2NByUKey12VffF+6N4Y5qL9TRodsZRoxz9CykLLBDPz3CCu+gnXtyVolkR4xbnb9gTbTp5xv2qdy48/k+9yvThfRg7d4E+p+RHdzLIW0F+eXOAzDOWOV3MoxMI/UVQooi3SOg==
+ bh=q1M5WweRFj2IuXfgBWu8KrCu56DBl915hj5S7O1FDcM=;
+ b=hyYu3X45idKrRHC/LDCYpxQOd9j9NNawr7dxw7hgkT9V1NKU5HrjsWuWAIEBifbX+jdeVWOUu9pdE25v3NTlbHd2BBXavohpgx/aX8fv0Aa+LO8cMyHJCH6iEM3hpE+GesICb7vbr45uwYmplucXhSpb0x6/SjeUvj2Nn32nrqChuJ4HNDyUDiOhvNzsEVCX4MKqbYBUxCdTZpcGNgMaP/GisN33EatTlRdlSFR30qvty3GdOzKsPynCM/2mAjhlH/DIEDN9a+XIj2BqnzdwsELsRHblQs3rHlQ5w5ckMeGMl1MZqj+gS5l4L1oTB19ZyhZRead0dnacBRWhtsSeNw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/oseSVPmXXi31u4T66hhqWXynH5odVqXADVgwYQrwYI=;
- b=zUqNOIf3/JmavaxhksXsTsylBJ/QcSi6mAzezWeHJHggUmdwGm0MzVJjPzlO39myn+Yp4ZtfeydUISStWGg5oHDnbHd9WmtbxoyWPAhEr4hAw5/bDw3SRF3qTyZl5k6ZamjZTn6YrlV6uSolbZx1xqIKlLSrPtMw2v1pi3kNkRI=
+ bh=q1M5WweRFj2IuXfgBWu8KrCu56DBl915hj5S7O1FDcM=;
+ b=sQMjoc+RwXoQfMeP3D+V9PIUMuoHH60Y/YskT6tW9ECbuyhNLizQM2NRxX6VyGO8OhjJv9NpZArFAeiN46sQ048huZ8LydO9TrKeHyj14umShGG1wFIvctI2YDvkFtqoPkjvAWfn2+b5bkYXMoXnXB1OIcrlknDMTLQKuTITGME=
 Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by BLAPR10MB5107.namprd10.prod.outlook.com (2603:10b6:208:324::5) with
+ by SJ5PPFDE34AA4C5.namprd10.prod.outlook.com (2603:10b6:a0f:fc02::7d5) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.16; Fri, 8 Aug
- 2025 15:47:42 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.13; Fri, 8 Aug
+ 2025 15:50:50 +0000
 Received: from DM4PR10MB8218.namprd10.prod.outlook.com
  ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
  ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.9009.013; Fri, 8 Aug 2025
- 15:47:42 +0000
-Date: Fri, 8 Aug 2025 16:47:38 +0100
+ 15:50:50 +0000
+Date: Fri, 8 Aug 2025 16:50:47 +0100
 From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
 Cc: Suren Baghdasaryan <surenb@google.com>,
@@ -99,15 +99,15 @@ Cc: Suren Baghdasaryan <surenb@google.com>,
         linux-fsdevel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>,
         mcgrof@kernel.org, gost.dev@samsung.com, hch@lst.de,
         Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [PATCH v2 3/5] mm: add persistent huge zero folio
-Message-ID: <731d8b44-1a45-40bc-a274-8f39a7ae0f7f@lucifer.local>
+Subject: Re: [PATCH v2 4/5] mm: add largest_zero_folio() routine
+Message-ID: <f9b0b6c5-b33e-4995-9e58-4d1519d3a6d3@lucifer.local>
 References: <20250808121141.624469-1-kernel@pankajraghav.com>
- <20250808121141.624469-4-kernel@pankajraghav.com>
+ <20250808121141.624469-5-kernel@pankajraghav.com>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250808121141.624469-4-kernel@pankajraghav.com>
-X-ClientProxiedBy: MM0P280CA0076.SWEP280.PROD.OUTLOOK.COM
- (2603:10a6:190:8::18) To DM4PR10MB8218.namprd10.prod.outlook.com
+In-Reply-To: <20250808121141.624469-5-kernel@pankajraghav.com>
+X-ClientProxiedBy: MM0P280CA0055.SWEP280.PROD.OUTLOOK.COM
+ (2603:10a6:190:b::18) To DM4PR10MB8218.namprd10.prod.outlook.com
  (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -116,316 +116,170 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|BLAPR10MB5107:EE_
-X-MS-Office365-Filtering-Correlation-Id: e8fef815-717c-45b4-6920-08ddd692e90b
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|SJ5PPFDE34AA4C5:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6bc08f20-61f3-43dd-1a41-08ddd6935915
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Xdo25V6r1XIyt+ne46cMOdQ9R+KhREwDtTBA3qNonHoil7IeOrWS+H6niUYC?=
- =?us-ascii?Q?m0uPvTZ58j6+T6OkosckBeKXdyQXQT5RAANc+6rBB/6qLsADUmaYFYY+ftQK?=
- =?us-ascii?Q?0AvvEjU4DyHkcX/sM36wpYGll8ixTFm94Z+OcgPTB44j5ITKDAplzt1QmW/g?=
- =?us-ascii?Q?EhdZPQhF+FA2k+68l0TQ2xMmjz/mjmRz60FgWS7gxsDmIn5wBhEauQg6XMxu?=
- =?us-ascii?Q?YdStebLD7lhejoOqKVnZW5fgRazDOCDqsIE3xGM54hjtzpexOfYNvG5KfFQD?=
- =?us-ascii?Q?8gEyPGf/vodG3L2wuoXIKTqmh1JI/5qYh5mfveVuCT2YRqS2zEVpmxJda1ex?=
- =?us-ascii?Q?Dy5gD8X7dmZZa+LWOlyMIR8O6P647u8B9zS8AS6XJBtCSSTQvpxKoiDYxnwG?=
- =?us-ascii?Q?QgqSURnugoCeIZhpfYWiQy1bfSlN5sKjzYk0VhOgjOZDwmOHogxyQ/yKsELb?=
- =?us-ascii?Q?itlvUdF/A7pgHfzAD2qRsixO0BORHYP+0kT78fMIbyjfdTEk9oWPkjkYT/VF?=
- =?us-ascii?Q?kfVPS3OB6jLfohH15abDchqE0gvWcuTyP8qp8jueDs/CeX50eJZE+SHN20ho?=
- =?us-ascii?Q?el816uxJLfTc6N2XO2nD9SVAV2S1N8Td8vobZkqKVc/BebXGcjRJTv/2Auqf?=
- =?us-ascii?Q?EgW1X83iY0i6h5tf89hGkYXGd9B+YUrcv6HW16PrMtVsg9UccgGh3KfCUtYt?=
- =?us-ascii?Q?ZKjn6tnZ6Q8wLTHtj0mthwkQ85XS66YKrrwTMoE3KoVLE/e79Z7TX5MHRfQK?=
- =?us-ascii?Q?d9EJw85Fm/UKCnGkfk852TnTC0CsBiM33ELNNxoGquHOqcf+JzF6uQYhw858?=
- =?us-ascii?Q?oVrgfPrqhE747wYUU1L1DVaoKXKkhHjEAVK/UoMu3gVvMpiFhQVw39LOWiS0?=
- =?us-ascii?Q?3MV82YDGOxeEfWJN9FKtWMut9fkwLODAsOaW3GN7FUT2mmRZKn0C/QQaEgX3?=
- =?us-ascii?Q?obooZBILY83f6qsPMoaojdkXsGjYAGlFc6JUlEOZjxZrewjEgu9iPATUfAYr?=
- =?us-ascii?Q?+eEHZKHH0VkEg6kdCaxT31ChePF7Cp6jYueofWHLLz1FlYv3bwvJPYTmKazk?=
- =?us-ascii?Q?r3Ngp3HsMZ3UgQ4srK9w//YTGhK7Aq6GjdBW/2e6Q1N8D7amtYM8BDU56rZa?=
- =?us-ascii?Q?+YeaUOB5U/OJZqK6T8PW7fYU+q/yZHFEk/L8MCtWAIbMj5KZ57oo86TtECGz?=
- =?us-ascii?Q?o6wsD9ivys8dWRO+SEB5/DifeW2Yt8byUbY3C07TqKoQzBpC39RThsWLfwZE?=
- =?us-ascii?Q?ygw5HKvUPmwiv/qL0tsWteNc7cW4AdkXEkxr+Qia2SmbgplXpRQ3j6P8rhiM?=
- =?us-ascii?Q?y4p64+6MvhCHLGDriDWlsV86x2B94Pj9HYJHGAE7Uyzf/FlLBqlw4Vu+9nrv?=
- =?us-ascii?Q?tzPoGv2RDg2+ehK4a1xfbfCyDgaVWKjt228ZumdYIVDo0053m4ekousIUQIt?=
- =?us-ascii?Q?WPzWaw9aMIY=3D?=
+	=?us-ascii?Q?Vy9kUHqay2RiWLAwdZK9FGdfCRekRFi9aGVSaNapSsUxVR7l1V3ezHqYM7XN?=
+ =?us-ascii?Q?lYn95hgdliiEFbmRr/xbtOV4i99cOILfPttvq/0P8KHlc3yXINq0KTleVmK0?=
+ =?us-ascii?Q?8lbYBIKFmYcVfKG4yU+jk02of0nX+x84846D7W3YBEdjodbjEU3V1YS0yO2Y?=
+ =?us-ascii?Q?clk31Ck4ITI+N8BGM+nHv+t0YeI3jIzJdLf0ulsorp3FDuJouKKc34j6SvkF?=
+ =?us-ascii?Q?jcYuFOVl5nZkqWjzXpKMLzzQzFwVzFGPZNGCUE309RJOvS5pWs4EFnK3LWqe?=
+ =?us-ascii?Q?0YaQsIo2jde3LwEan2JAurbe1w3UwrCj6655OXqRnnq9r1aRrbKN00XYBIdh?=
+ =?us-ascii?Q?UcYasHbc6LjAOacD4FrF8hfSTafJRh/l4hU+tkZQxiaSnYj0nSSjGqbsjufl?=
+ =?us-ascii?Q?IAVYx010FTwx3PIYTsMWKYO/Zx+zv+9Uj8SoCYr4s7HvNCW21whJDFGbjX7w?=
+ =?us-ascii?Q?Pcmn0MOpD1ZMSmCV9px4II5ED5kq78Igk/oPKyF1KpDrTD6Gwpr5MD6Xi13G?=
+ =?us-ascii?Q?AIFlQZZtpB2w/EQXExyQo5djXcTXhsJU89o1AodGaoVVtQPKaMffxJM3Zf1k?=
+ =?us-ascii?Q?5C6KHDjkI7fz6PaYEbaFkRqrEuJuYq4ZYuvG3PiZUTUh+8oQtV9pyIev2dbI?=
+ =?us-ascii?Q?paAM13Z737go6uWXwfR5rgcIgnKKQVA825/GRO22jI5urrQFm2aw5VDVt98F?=
+ =?us-ascii?Q?uvM+iWz1XKL2WpLNAapdUTYsuwYyaHIjSv2MP10rBM1AezBbe/7HACqoEdsS?=
+ =?us-ascii?Q?B7mnff1qreGyzPxK9UEhv9mOgcTZ1mkW56n8wYnrtsJUtnJ85WbtGhBDsPJ6?=
+ =?us-ascii?Q?FSFhAcgszxWsSRtBYjbXhAp5Jbwe+aMuKWUVxgJnk8pWefpEjLNJP5ML0IiV?=
+ =?us-ascii?Q?VrNZH3QWxZURdYmxMqJExomRRk2oCOqcr5CAfemGhXjFhpSIde5Ck7BBmtWN?=
+ =?us-ascii?Q?N0OVye/EPCwD+cwWjhdch9dQsy2DzgpodySHYPtyjc2r2VzKd/o4RnhHn59h?=
+ =?us-ascii?Q?df3HQQTT58shamKoADK2ekX0+T4HhBO5aR5XMcSBkeh0CZDohQgnECmZFWFb?=
+ =?us-ascii?Q?StdQWjjn263BpoN8IJhFLALYmRWzbvq8LA09TpxxRZyd92GEStn1Lch+mTLz?=
+ =?us-ascii?Q?NW9Z4iwbwTjNGu3AfVAEZDUFK9w3dDk/Xay2KTOvnhoTu5a6NIg1F0hy759U?=
+ =?us-ascii?Q?VhwzhF3euMJh75i3r2L0ScezTc1pnehcmTMdwvMaJhCwdU+mHhpNcJBbu//I?=
+ =?us-ascii?Q?m+c/VX6ypn3UZab0H154yV7e+Upp2PhQ6hUfSDNuw2aykOKSxyiXWuNT3+H3?=
+ =?us-ascii?Q?59GN4Lp7zPDrH79GDeFdOoqzO2RlBAP8OaCL+9yGjRgBUxCYl0ZouJLEFDTa?=
+ =?us-ascii?Q?+O16OauG4BHk+PNMJPKDdzumg4x1x9syCUjhtYyXyZDTeBhCJOSg6UwrNPFx?=
+ =?us-ascii?Q?zmyRhFZrpDE=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?XSVFGbh2+sjfmHcRYj5rGK3LNpe6JJ4Z1h3HFlN7BZ4EXbTZMGOR0BE46w+r?=
- =?us-ascii?Q?XHdLHu2LGeZM3Mwcz0iV52ecSYyB7/ksRUW4NeRIvLGWGFgIGFG8jV0X3BMJ?=
- =?us-ascii?Q?a62FmhBXzUFKeteMfcgnoenuxTluMPSDE7pmOWM2B329hac3Ij2sC1MYQtU8?=
- =?us-ascii?Q?J9UDYxYohEPny2UiiYzy5gPah/prNWl/DDUlCC5jS6NysvaVU+OZFsngz18K?=
- =?us-ascii?Q?zMobwpHw5drXBjMfmqh1BUkZmnhbpULOPILa8OCZmmLrLHm6Lu09TgBTem88?=
- =?us-ascii?Q?+Ork/M94xPWfdu/UDZ1K/aGYJTkB2gXHHQAxNohM///Epbw7wJsTB6jmWkPV?=
- =?us-ascii?Q?iYNKbp7QkiOaMCbPvTtXy5zSDaINpKkWV72CGiTtP6AqA1h0McuukSiLroes?=
- =?us-ascii?Q?jAl0r/Yl4IBUgsqtGu9AoZGNPkbvTLouuvKPPxnpn2hTOmDaU/4HQBwvEPnN?=
- =?us-ascii?Q?wsU11EsfR5gVNlQtTpGGya0BIASLZc46tjy7OR4f2QaHI+WaSyJK9kOcljcX?=
- =?us-ascii?Q?ovS4x34qRDEx2djePB1Zb0MMdrrTIcxf+qedszaTzjvzGNE/8GdvA6nL8XZ4?=
- =?us-ascii?Q?jR6MX34JsfZO9tkFvkzTdb5vfwJeqgQYer1N1c/04hWSTZKHoffkk7s5LAEd?=
- =?us-ascii?Q?FVh/ot6FcUVXUScNyAy1+IKFVelSt8ipuFvUqMTMc9vrMWM6uvfV2Ph4ygvb?=
- =?us-ascii?Q?zE5DKcRvy/tXht04eCwhCNgCZ1OnKE50HDZVuu8HjZRKzHfPAW3x0NCpvCgx?=
- =?us-ascii?Q?xCkazGB0SNsvT9abkLUXxrF9Fd5X6veZ9QtrUTHP/MJLQOYH+723t72GvaPJ?=
- =?us-ascii?Q?kq3Sa0kGzxHvttTj18450+AUxTfxsbJcD/qcNHDpRU6OzqfegpuvCTe/3iWZ?=
- =?us-ascii?Q?qyHiZmKZBnSwNWBz+vnyCa50rI0DWvhnz0jB6aVFIHOG7BKbcVPfLOAEoZM5?=
- =?us-ascii?Q?GRv2ggcIlQONg7S2/Jd/a1jSau+F/N3xLgY45lF8jryWVr7hkaxbGnQHr3C7?=
- =?us-ascii?Q?9X9rjNYLmT2drAqGPJRL2OUB3YFwGncQKNH3CLKbxI28mQCKzYklVXSwgm2P?=
- =?us-ascii?Q?ZKIuROPovlnX0PawFAbQ7HbVXJysIswvm0mXQXwbbkvLEbGUov3t8PU9UT2B?=
- =?us-ascii?Q?OQPvZr/+o4bIYkYSZwU6uiorsAZ8VnXKfx2HHa87vrwZuj+8iFEJ5M/gNEjh?=
- =?us-ascii?Q?jsn6N6Nrm4a/9OfB3bZB2KYPz1Qo1a2CmHEEgEJmkCPUvENcqfKMDNlsy6RL?=
- =?us-ascii?Q?8Y8yZGnb99ZV8ULReodMyJz6Fh87GwjqvrvSS/e9s7xZoXMuZIdO3KAQCT4W?=
- =?us-ascii?Q?rZoG6crWWZpTKNri/QFEd0/IRAVgUpDwv/e0tjJBpd4Za4L8s0qYdlb0/Ufn?=
- =?us-ascii?Q?hFQUXsaE9LUTzVtb/Ts5KbnmQ/6H+h8b4KQBWg+5y28lU+6pqP9pKfUqWrs9?=
- =?us-ascii?Q?o/bXhnBwTKkbnD+dkcNEgSXgcqcjxXBFEoW5UH1Kq48QH2aPAQMs4vJ/CPTb?=
- =?us-ascii?Q?OMg10zXhsx7+QU8DwHW1xjLXqlsZJOOwtwyZk6BknIPse+NbLF8sxCf/Ervg?=
- =?us-ascii?Q?Lybm86lpp/yy80meURmHZ2wqA8fOJqDK4IrDJAKlWFy3mliIpGHIbXOj+RG3?=
- =?us-ascii?Q?Gg=3D=3D?=
+	=?us-ascii?Q?8ORAq9uvWArplMbN0dHvcdjktoCV1+/WH2Va8HfjvzQEIQ6hCgljRElulDKr?=
+ =?us-ascii?Q?c5lKIUOO+AVEYt9UmYyRMJYPNKqZkALev/EsNvCULdIRAnkmDQ2XgflF6PIU?=
+ =?us-ascii?Q?lOW/2l+dl5dxuWL8mDEOpFEB/ixWs9qzC3tSlKvguehHVmX8c5XaBos29pGb?=
+ =?us-ascii?Q?FebtZW9PQViqEOvdC2sVKlruXvKcVUsS1JLtAOkg1slw3PhGOcoDdHYWdYOL?=
+ =?us-ascii?Q?Lfe10BuquDG+6vr5KFp89OCJNCtvoNWvDQ0rQT8WFGKYf18I6xSKum8SgPSs?=
+ =?us-ascii?Q?ZGOq5VuybIy3j8Hs9U0SgBNMOutWJR0hDiKOKX8heQ51Ib952NNNmJ2z8dPM?=
+ =?us-ascii?Q?3hwBEA/xvDwTYhucU+x4E2tjQdgiKdFxUJzhT5r1Aqa82bpVNOiPRI/53UQG?=
+ =?us-ascii?Q?TeUIuQRHyXizylcN3NJwN0IK4LZ3AdD8Pu1X8TANHUMeZGcV0CxFXlGvAKL7?=
+ =?us-ascii?Q?ycTwPzbUj7e0NZOJliksqfnqFLMjM1Dp38VYQqpVG29UymAlz3NtTPcQ+zyG?=
+ =?us-ascii?Q?JrPvsAI2JtZooaP/T3/sEixY1k9GJWHSfVsDW1oqrv/56Y6M5DO3PyiOmQLw?=
+ =?us-ascii?Q?jQdlt/mYR1hZqWbRNbTW+mxeARjwOHnSUii5uhh//ZDBe/C8pfWzzmwrlzFE?=
+ =?us-ascii?Q?71PDmQWoq5ts0TLPPQ5ulMGWy4SgHpLDplh/4sUfemPeGnsYWwhSIa3x7M0y?=
+ =?us-ascii?Q?W36QWtxNxhRvqLEW36MXcabUTdsR+uw1RQ2a4/MAqlaE+0fHqIM+1QHSYz+p?=
+ =?us-ascii?Q?Ujugf0cO2kpdn8/ohexC7TS2LISY8IHKumvNgMx0YrzXyn2ZZ6BSEhOYY7NX?=
+ =?us-ascii?Q?Vn6DEYI6tdNl00v9+JbgU/O/6l8sbJEweZjYvDh4aBI0n3Na7X6Cp6R0L+ey?=
+ =?us-ascii?Q?YM+B3yXUxwnQ6PywSLxj+uyYfqcyn5UCceJQszXZq7r1P6PritZL81scFanY?=
+ =?us-ascii?Q?sBUymrB9ltDre/mC633UWO6bZyi8jH4VYY8GTqYSxaxBftXNfZSdry7VRbWK?=
+ =?us-ascii?Q?Kpv721m3VNpJG+AAyqH9hpoHBlN3E/KUB7STLmeWkRP1gaUadZq7un7JDADL?=
+ =?us-ascii?Q?YZoHbh2PXI8XCVCpZLTBFFWeUd4BzaJDsrimN1uOWmZ1vupZrmZsr2N0hfIs?=
+ =?us-ascii?Q?yjrSuaiCAxRFI9tA03YfJsBiromtt0teTqOmLKD30Po+FO4qYt4NVi8Mb52I?=
+ =?us-ascii?Q?9xv3SWREK4c92vw7lQhGHXg+W7seTjTpNqn+pg4xup54sfOIANLRQC+bNC3a?=
+ =?us-ascii?Q?I1DDGVaHbe3nN2Nt1YXDpPSKE7B0Uj0bjMo50Lx8TfdlavN7bTUdyyu+vRZx?=
+ =?us-ascii?Q?3ug6hRT/Lu6E1rdhqW4TDd9ddMtJzvYto5tcpOlWqb0JnUMX92FKTSCc8X0Y?=
+ =?us-ascii?Q?UoNpN5RgNf1K7FHOv6Uykfo2j7wEQsQuW3IN3g6KxKREtBQyvRJLsnfoCN6+?=
+ =?us-ascii?Q?58QhfksmKU+YOiubkm7d33EB1fB4ICUpI4FtkW0fUF0whLZq5ZhMtPFHbJCt?=
+ =?us-ascii?Q?MTiAGMd7zuP69+zcPpcGB/5hKoTb2qmLvVYwbtOgFiZE2AZf+U3lpgEgD5wL?=
+ =?us-ascii?Q?XA2Q4WA34CvJ8bABZIf5b1RtaCy6XJpoNFqgDHIuXvR1tdicuOMVxGuMEFIl?=
+ =?us-ascii?Q?Mg=3D=3D?=
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	dyCrLWQILt/+lQNgpq1unUwWyqZNh4QqLx2H9/xe7cootPdxN7Y2vU06ogdZxSo9N59Cp0dWh7Q0O7XiMicxZ6QJh0BE09IQxeMJofy/tZPxB6LZ1ScZgFlUI7dmWQw+Oa0nhtFvOHhb6Dsux6JBjBWt6cpifO3W+0A4BWzW/ipRz3ZrcwrJ3c747+R5hxb5U4l++aSVTK5nvL3SqjUEkjUBhhy6XpANDVyVAHcPTAZBpbAFGp+3jiRHyheEMxfk/s9vRbrnpHJ3bIIeqpUvho5MCOF4DdvriB6b6rM9n3SXI+Tk1mWj1EunzNdR0nGBPJmqnlOs6RJmfNMVqvlMjLMcw80XCFmtKffI3KAElWq6Rnky8vs/3ID6R/7tw42c3i89HGYKU1VjPzFFeaci0VSvljqMoK+CT5WTxcFz+AlO9UHos4IZ55fr0/t0WricEW+sHNJsWahq7T48lcBX8HWig3sZc83k8ZjZiURY7qQ/Qmx5X39niRAHrV0kjLxgI71WoiUG7jSqDdpeSWb1IhGZBbs8/WZm0qnTKRyWCfGAuA4ph02Yb5ndd3dupLSqnj5apSbCI5WxuivddOl1+zvdOm1j2kzoBRDk3eMbqsE=
+	SJ3pw8/aCH6EXpf0w/LbciauxqPXtIZ6zXLsn3iT15RUPvOOSGx78GrJxljI4+yoff7e8gRRARkbSwl+cx9CYD6SdpIUnxTFkss7s0ccdiHsmHLXv5AGAKDkdpUkPsaQwh8sj9NE7SRf785rftJgNI2/i1HgrmFFpUXLAlods39FKpo09C77ERMYsFRqxr2PcloBfftUbrEBjdibl/hdU2cSUtunSGIyHFKVE2cSq6bFRYzcDk3N7GViIoD77f8HzJM/PTFroPYjZDpd6p/VMi8TMGuU5k7zAj77OaF9Wvxi8QpTmuxsRpso4duu+cNRZ4QOqgiuqtS/D9sExlEVfXppEbw/jnwY0DN8xnp5D0PONZxMaTTBa4qMyyeRNvW4IuHU/2AO4/LfEp27vchdCCojD1LOzqJk5gTQG9KQW2766MJAvfDoMNGNPZVYpepEEAJGNeV4LW0tNb2zoqxXbW5JZec+/MggPUSBbVMSnmkVPVCTr7crkyLBku11xD73U8xsrxd4NwIGb+omU7I4QqpnLH2V4VSTlB57FnLMDS58pthhsMAwN5FJLAkXp6OoKPb5j5eGzG1TLuvPGcVqVuq7G7lk3H2uKLRim3UB7wM=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e8fef815-717c-45b4-6920-08ddd692e90b
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6bc08f20-61f3-43dd-1a41-08ddd6935915
 X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2025 15:47:42.0648
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2025 15:50:50.0230
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: oJVV2aw967Hw6guVTlWFxbNEsn2p5FMCvFQGQTZ9oaZijclrvDdOl4z/zVkrwInE+hpFM3U5uxPbOcGJzXo5uI1m8/YysAvGeN0+xdJvEmo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLAPR10MB5107
+X-MS-Exchange-CrossTenant-UserPrincipalName: DFbza0Ck27d8ebObd2c5sBjm+75bXR148kpIqYbnTcPJTA80Rjjt08Zz0Kq7+EBCZ/aWfILUzAANFTZobeseuNIp0fuCvql3nqOwf6ZqL/0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPFDE34AA4C5
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-08-08_05,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 suspectscore=0
- phishscore=0 mlxscore=0 malwarescore=0 bulkscore=0 mlxlogscore=999
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2507300000 definitions=main-2508080128
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA4MDEyNyBTYWx0ZWRfX+1hYQ+75fycq
- 3+HBv2wYQ4MmkAztSjC07R+RaM6GrIVLWm+o3/9QO+vhWpx4I0zkJe0UQsoc9yERo5aK6W8OiJG
- V+yBSXGBZf04dG+cXnbSBE9+aL+A8nqz1E1+5X/UAjg0drCG//0rxHnEowIzLjJPCanbyPhFnVB
- jToninbsK84VyjK9Peqdzob8LIVYubKTA6Cja6QrVI8vpV1rnOVk88R97BQFeVovBptPKnHdIMC
- pH1wBPOg5iz1S9YNz8xd1rSJujTxAAMR8+NejcsUmyt0Qoh3+grogeS5qkAIHhe0uVo9zeob5kq
- i6rFEKElubcDujru2i1CFbdgRUhYGvTrQLIiAPsiin9emIu4mTouRyIdviop15OUVBDl4BetXS3
- cy8wkjlnKq54pYBWd6tsqdQ+rAqmOPMve9cTsHk7z8QNS3BlnXdNMjHROZHKLZuhhaYCbDMZ
-X-Authority-Analysis: v=2.4 cv=ApPu3P9P c=1 sm=1 tr=0 ts=68961c21 b=1 cx=c_pps
- a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 bulkscore=0 phishscore=0
+ mlxlogscore=999 adultscore=0 spamscore=0 suspectscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2507300000
+ definitions=main-2508080128
+X-Authority-Analysis: v=2.4 cv=WMp/XmsR c=1 sm=1 tr=0 ts=68961cdf b=1 cx=c_pps
+ a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
  a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
  a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
  a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=2OwXVqhp2XgA:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=JfrnYn6hAAAA:8
- a=hD80L64hAAAA:8 a=20KFwNOVAAAA:8 a=yPCof4ZbAAAA:8 a=b-UZI_kN-eTE8Grid68A:9
- a=CjuIK1q_8ugA:10 a=1CNFftbPRP8L7MoqJWF3:22 cc=ntf awl=host:13600
-X-Proofpoint-ORIG-GUID: Fw7XuUAUs_r2J51GBbLyv7zDfC0eMmx2
-X-Proofpoint-GUID: Fw7XuUAUs_r2J51GBbLyv7zDfC0eMmx2
+ a=2OwXVqhp2XgA:10 a=GoEa3M9JfhUA:10 a=hD80L64hAAAA:8 a=20KFwNOVAAAA:8
+ a=yPCof4ZbAAAA:8 a=hlPhqOGCPa6wHWZYAvYA:9 a=CjuIK1q_8ugA:10 cc=ntf
+ awl=host:12070
+X-Proofpoint-GUID: PEBOfpwdym-V2egufxSQzWca6J2mdxdx
+X-Proofpoint-ORIG-GUID: PEBOfpwdym-V2egufxSQzWca6J2mdxdx
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA4MDEyNyBTYWx0ZWRfX6HD0g6yZPmHO
+ fYPU+qdw8mEPYP1q1o+eSUsjLg4yL3r+1/M9n8pK4LJD7W7ioDoaIdpj0afD+2ki1KAJBSVJznH
+ Ew3y4JkOlLgDBIPLFciktCzKIhp4o61uhWAuOKi6C+90FEJ4j13a1YqqAJD98EV16Gr28ttoI2F
+ RqPdcaHHLWNTTJoTxe2AJsM/QpHS5INloW0rThwxhCeUx9YWthOfFp4G3MjcCwhfhSUxs+BtYPJ
+ R2MHXYi55UM4TXgQzPw1V+XsBxET0fDv3XeKjRS1XYa14/+kGrHt/vGb80OZL/d5eU0g7vFS0nb
+ YzHaz/SzLqLkPJ/LtoO2uyxtdTrsEhgSTB4HepjjuJg37uWSEYWjdV4p157xpxqkn9e/fob8ONJ
+ h89TH48nqXW9PRFJqc4H8VVjst0c7PsiGIJxy9TwCbgw1XZEsuabhG6baI65mPiDaP7NqZsh
 
-On Fri, Aug 08, 2025 at 02:11:39PM +0200, Pankaj Raghav (Samsung) wrote:
+On Fri, Aug 08, 2025 at 02:11:40PM +0200, Pankaj Raghav (Samsung) wrote:
 > From: Pankaj Raghav <p.raghav@samsung.com>
 >
-> Many places in the kernel need to zero out larger chunks, but the
-> maximum segment that can be zeroed out at a time by ZERO_PAGE is limited
-> by PAGE_SIZE.
+> The callers of mm_get_huge_zero_folio() have access to a mm struct and
+> the lifetime of the huge_zero_folio is tied to the lifetime of the mm
+> struct.
 >
-> This is especially annoying in block devices and filesystems where
-> multiple ZERO_PAGEs are attached to the bio in different bvecs. With
-> multipage bvec support in block layer, it is much more efficient to send
-> out larger zero pages as a part of single bvec.
+> largest_zero_folio() will give access to huge_zero_folio when
+> PERSISTENT_HUGE_ZERO_FOLIO config option is enabled for callers that do not
+> want to tie the lifetime to a mm struct. This is very useful for
+> filesystem and block layers where the request completions can be async
+> and there is no guarantee on the mm struct lifetime.
 >
-> This concern was raised during the review of adding Large Block Size
-> support to XFS[1][2].
->
-> Usually huge_zero_folio is allocated on demand, and it will be
-> deallocated by the shrinker if there are no users of it left. At moment,
-> huge_zero_folio infrastructure refcount is tied to the process lifetime
-> that created it. This might not work for bio layer as the completions
-> can be async and the process that created the huge_zero_folio might no
-> longer be alive. And, one of the main points that came up during
-> discussion is to have something bigger than zero page as a drop-in
-> replacement.
->
-> Add a config option PERSISTENT_HUGE_ZERO_FOLIO that will result in
-> allocating the huge zero folio during early init and never free the memory
-> by disabling the shrinker. This makes using the huge_zero_folio without
-> having to pass any mm struct and does not tie the lifetime of the zero
-> folio to anything, making it a drop-in replacement for ZERO_PAGE.
->
-> If PERSISTENT_HUGE_ZERO_FOLIO config option is enabled, then
-> mm_get_huge_zero_folio() will simply return the allocated page instead of
-> dynamically allocating a new PMD page.
->
-> Use this option carefully in resource constrained systems as it uses
-> one full PMD sized page for zeroing purposes.
->
-> [1] https://lore.kernel.org/linux-xfs/20231027051847.GA7885@lst.de/
-> [2] https://lore.kernel.org/linux-xfs/ZitIK5OnR7ZNY0IG@infradead.org/
+> This function will return a ZERO_PAGE folio if PERSISTENT_HUGE_ZERO_FOLIO
+> is disabled or if we failed to allocate a huge_zero_folio during early
+> init.
 >
 > Co-developed-by: David Hildenbrand <david@redhat.com>
 > Signed-off-by: David Hildenbrand <david@redhat.com>
 > Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
 
-This is much nicer and now _super_ simple, I like it.
+Hm thought I R-b this already :P
 
-A few nits below but generally:
+LGTM, so:
 
 Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
 > ---
->  include/linux/huge_mm.h | 16 ++++++++++++++++
->  mm/Kconfig              | 16 ++++++++++++++++
->  mm/huge_memory.c        | 40 ++++++++++++++++++++++++++++++----------
->  3 files changed, 62 insertions(+), 10 deletions(-)
+>  include/linux/huge_mm.h | 22 ++++++++++++++++++++++
+>  1 file changed, 22 insertions(+)
 >
 > diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index 7748489fde1b..bd547857c6c1 100644
+> index bd547857c6c1..14d424830fa8 100644
 > --- a/include/linux/huge_mm.h
 > +++ b/include/linux/huge_mm.h
-> @@ -495,6 +495,17 @@ static inline bool is_huge_zero_pmd(pmd_t pmd)
->  struct folio *mm_get_huge_zero_folio(struct mm_struct *mm);
->  void mm_put_huge_zero_folio(struct mm_struct *mm);
+> @@ -714,4 +714,26 @@ static inline int split_folio_to_order(struct folio *folio, int new_order)
+>  	return split_folio_to_list_to_order(folio, NULL, new_order);
+>  }
 >
-> +static inline struct folio *get_persistent_huge_zero_folio(void)
+> +/**
+> + * largest_zero_folio - Get the largest zero size folio available
+> + *
+> + * This function shall be used when mm_get_huge_zero_folio() cannot be
+> + * used as there is no appropriate mm lifetime to tie the huge zero folio
+> + * from the caller.
+> + *
+> + * Deduce the size of the folio with folio_size instead of assuming the
+> + * folio size.
+> + *
+> + * Return: pointer to PMD sized zero folio if CONFIG_PERSISTENT_HUGE_ZERO_FOLIO
+> + * is enabled or a single page sized zero folio
+> + */
+> +static inline struct folio *largest_zero_folio(void)
 > +{
-> +	if (!IS_ENABLED(CONFIG_PERSISTENT_HUGE_ZERO_FOLIO))
-> +		return NULL;
+> +	struct folio *folio = get_persistent_huge_zero_folio();
 > +
-> +	if (unlikely(!huge_zero_folio))
-> +		return NULL;
+> +	if (folio)
+> +		return folio;
 > +
-> +	return huge_zero_folio;
+> +	return page_folio(ZERO_PAGE(0));
 > +}
-> +
->  static inline bool thp_migration_supported(void)
->  {
->  	return IS_ENABLED(CONFIG_ARCH_ENABLE_THP_MIGRATION);
-> @@ -685,6 +696,11 @@ static inline int change_huge_pud(struct mmu_gather *tlb,
->  {
->  	return 0;
->  }
-> +
-> +static inline struct folio *get_persistent_huge_zero_folio(void)
-> +{
-> +	return NULL;
-> +}
->  #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
->
->  static inline int split_folio_to_list_to_order(struct folio *folio,
-> diff --git a/mm/Kconfig b/mm/Kconfig
-> index e443fe8cd6cf..fbe86ef97fd0 100644
-> --- a/mm/Kconfig
-> +++ b/mm/Kconfig
-> @@ -823,6 +823,22 @@ config ARCH_WANT_GENERAL_HUGETLB
->  config ARCH_WANTS_THP_SWAP
->  	def_bool n
->
-> +config PERSISTENT_HUGE_ZERO_FOLIO
-> +	bool "Allocate a PMD sized folio for zeroing"
-> +	depends on TRANSPARENT_HUGEPAGE
-
-I feel like we really need to sort out what is/isn't predicated on THP... it
-seems like THP is sort of short hand for 'any large folio stuff' but not
-always...
-
-But this is a more general point :)
-
-> +	help
-> +	  Enable this option to reduce the runtime refcounting overhead
-> +	  of the huge zero folio and expand the places in the kernel
-> +	  that can use huge zero folios. This can potentially improve
-> +	  the performance while performing an I/O.
-
-NIT: I think we can drop 'an', and probably refactor this sentence to something
-like 'For instance, block I/O benefits from access to large folios for zeroing
-memory'.
-
-> +
-> +	  With this option enabled, the huge zero folio is allocated
-> +	  once and never freed. One full huge page worth of memory shall
-> +	  be used.
-
-NIT: huge page worth -> huge page's worth
-
-> +
-> +	  Say Y if your system has lots of memory. Say N if you are
-> +	  memory constrained.
-> +
->  config MM_ID
->  	def_bool n
->
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index ff06dee213eb..bedda9640936 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -248,6 +248,9 @@ static void put_huge_zero_folio(void)
->
->  struct folio *mm_get_huge_zero_folio(struct mm_struct *mm)
->  {
-> +	if (IS_ENABLED(CONFIG_PERSISTENT_HUGE_ZERO_FOLIO))
-> +		return huge_zero_folio;
-> +
->  	if (test_bit(MMF_HUGE_ZERO_FOLIO, &mm->flags))
->  		return READ_ONCE(huge_zero_folio);
->
-> @@ -262,6 +265,9 @@ struct folio *mm_get_huge_zero_folio(struct mm_struct *mm)
->
->  void mm_put_huge_zero_folio(struct mm_struct *mm)
->  {
-> +	if (IS_ENABLED(CONFIG_PERSISTENT_HUGE_ZERO_FOLIO))
-> +		return;
-> +
->  	if (test_bit(MMF_HUGE_ZERO_FOLIO, &mm->flags))
->  		put_huge_zero_folio();
->  }
-> @@ -849,16 +855,34 @@ static inline void hugepage_exit_sysfs(struct kobject *hugepage_kobj)
->
->  static int __init thp_shrinker_init(void)
->  {
-> -	huge_zero_folio_shrinker = shrinker_alloc(0, "thp-zero");
-> -	if (!huge_zero_folio_shrinker)
-> -		return -ENOMEM;
-> -
->  	deferred_split_shrinker = shrinker_alloc(SHRINKER_NUMA_AWARE |
->  						 SHRINKER_MEMCG_AWARE |
->  						 SHRINKER_NONSLAB,
->  						 "thp-deferred_split");
-> -	if (!deferred_split_shrinker) {
-> -		shrinker_free(huge_zero_folio_shrinker);
-> +	if (!deferred_split_shrinker)
-> +		return -ENOMEM;
-> +
-> +	deferred_split_shrinker->count_objects = deferred_split_count;
-> +	deferred_split_shrinker->scan_objects = deferred_split_scan;
-> +	shrinker_register(deferred_split_shrinker);
-> +
-> +	if (IS_ENABLED(CONFIG_PERSISTENT_HUGE_ZERO_FOLIO)) {
-> +		/*
-> +		 * Bump the reference of the huge_zero_folio and do not
-> +		 * initialize the shrinker.
-> +		 *
-> +		 * huge_zero_folio will always be NULL on failure. We assume
-> +		 * that get_huge_zero_folio() will most likely not fail as
-> +		 * thp_shrinker_init() is invoked early on during boot.
-> +		 */
-> +		if (!get_huge_zero_folio())
-> +			pr_warn("Allocating static huge zero folio failed\n");
-> +		return 0;
-> +	}
-> +
-> +	huge_zero_folio_shrinker = shrinker_alloc(0, "thp-zero");
-> +	if (!huge_zero_folio_shrinker) {
-> +		shrinker_free(deferred_split_shrinker);
->  		return -ENOMEM;
->  	}
->
-> @@ -866,10 +890,6 @@ static int __init thp_shrinker_init(void)
->  	huge_zero_folio_shrinker->scan_objects = shrink_huge_zero_folio_scan;
->  	shrinker_register(huge_zero_folio_shrinker);
->
-> -	deferred_split_shrinker->count_objects = deferred_split_count;
-> -	deferred_split_shrinker->scan_objects = deferred_split_scan;
-> -	shrinker_register(deferred_split_shrinker);
-> -
->  	return 0;
->  }
->
+>  #endif /* _LINUX_HUGE_MM_H */
 > --
 > 2.49.0
 >
