@@ -1,135 +1,213 @@
-Return-Path: <linux-fsdevel+bounces-57098-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57099-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD49FB1EA87
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 16:41:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01557B1EA94
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 16:44:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D974F178717
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 14:41:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39E8CAA108D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 14:44:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FDFC27FB26;
-	Fri,  8 Aug 2025 14:41:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B04F27FD6E;
+	Fri,  8 Aug 2025 14:44:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DVcHni5J"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jijpBWK9";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="EUKWkl4C";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jijpBWK9";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="EUKWkl4C"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A1427FB25
-	for <linux-fsdevel@vger.kernel.org>; Fri,  8 Aug 2025 14:41:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA74280017
+	for <linux-fsdevel@vger.kernel.org>; Fri,  8 Aug 2025 14:44:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754664083; cv=none; b=A+GjK5BjKStkrpYXwN52uwnuCQ/b/83ueS7d8k0XLE7R5loD4EkbFPDa9yFB5A6uxvZsZb1D4O9toKPj8o2/YpM0HIsYApeSmNkP5thMl7JLPhm3xIu0A0HPVOvca/cYVoG8veaX4LGmLo8noecyRrzxg1BVEfPsFsQvLmaeZNE=
+	t=1754664282; cv=none; b=AApIrYWExvfxnIuTyWNg+onP4XGMNTvB+S5Ijvc4UPZnboADCi3fpOGEDACLgMR7tFyYgdKeAUXeVOfROnDCj0O312VLloikn3T0dTK8ZoBGci1b5Po23bi79oW8EYZvT8FJRMIgeDTxJ2Yg5lmH2eoYSp4UG2xjSVLRx7wzGKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754664083; c=relaxed/simple;
-	bh=qd2MUsflHlZ/tZVMWNcFSyxtl05BNFiVeTGXc3N54Uk=;
+	s=arc-20240116; t=1754664282; c=relaxed/simple;
+	bh=gjrGNANIykDfpf7Wf3pIFM8t1nwf+Duna9YIV3lGNBY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f8mYyjMxGgNUoqRhl10esJQna2WERHwembNlUtlw1zMjtBIX8uEaFxxvwcwe3kn4z3B1dAeR86vaQP/UDvmPv6Ktmv5q2R6Vc0ehZuAkMunZzWI3Xjbsh6NmDXt8Xo0Kj42askl9YhLK0B7cQblts7mETXagG0Tats83VTp6P/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DVcHni5J; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754664081;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CVbXlbyZjsINekjOptSlbtwiYMjqyKFTkplWxm4uz+w=;
-	b=DVcHni5JPhpUXMWb4xvEtq6WVo8tue4maR4fdQtWA1X/H+WZFR4zmp9HiGmmiBr9R9HNlx
-	Te6Cbg3gCTWPfycbC0BCpS99wCE36LH0F0azPdwQ/hCqDpMUDxGPQYVDsgb/XPnXkXmDEj
-	gXUbBOczj208C3eMc5EjRtmkjEPJr/Y=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-618-raJ6zeyFMcWE-g_6SowfgQ-1; Fri,
- 08 Aug 2025 10:41:17 -0400
-X-MC-Unique: raJ6zeyFMcWE-g_6SowfgQ-1
-X-Mimecast-MFC-AGG-ID: raJ6zeyFMcWE-g_6SowfgQ_1754664073
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	 Content-Type:Content-Disposition:In-Reply-To; b=m9qtOiKiJO78q5VRKnLARFmrain3g6p8pt3chVxjuDWHoMv7nE+Xs4zrw/Mv3slJekUt4s5tqmkQq4NXY/EfQPJEclNCeLJKZ4/cqaf0qAzyvBaeU0rpZqKyFDMnUfu/t9i/n6e7H8vyPWe1oVCZt7vxQ3pM24jafbIfTyz+nWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jijpBWK9; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=EUKWkl4C; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jijpBWK9; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=EUKWkl4C; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3CA0619560B5;
-	Fri,  8 Aug 2025 14:41:11 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.117])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 8DD2A180029D;
-	Fri,  8 Aug 2025 14:40:55 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Fri,  8 Aug 2025 16:39:59 +0200 (CEST)
-Date: Fri, 8 Aug 2025 16:39:43 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	David Hildenbrand <david@redhat.com>,
-	Michal Hocko <mhocko@suse.com>, Jonathan Corbet <corbet@lwn.net>,
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	len brown <len.brown@intel.com>, pavel machek <pavel@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Nico Pache <npache@redhat.com>, xu xin <xu.xin16@zte.com.cn>,
-	wangfushuai <wangfushuai@baidu.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jeff Layton <jlayton@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
-	Adrian Ratiu <adrian.ratiu@collabora.com>, linux-pm@vger.kernel.org,
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v1 5/9] freezer: set default freeze priority for
- PF_SUSPEND_TASK processes
-Message-ID: <20250808143943.GB21685@redhat.com>
-References: <20250807121418.139765-1-zhangzihuan@kylinos.cn>
- <20250807121418.139765-6-zhangzihuan@kylinos.cn>
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 020EE5BE4D;
+	Fri,  8 Aug 2025 14:44:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1754664279; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=weYf+fL75c7lg2yK6WWI7BLtwoQlL2mdPNNPz/8x2L0=;
+	b=jijpBWK9QZaQ4JmLM8UecWrbSSTWtPe9+TuGDC+7Fgb45zLKmam6BL0INKhxXCKG5W1d+x
+	NsqXfsWVHhvPioHhAkmtH4MKJxdp0G/xi0iykW9x9UsCXHpbe0mqURLnZNaw5ayOR1hNZ7
+	oMlqxHSGkulZtkYTCScjayUE7YpAW4k=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1754664279;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=weYf+fL75c7lg2yK6WWI7BLtwoQlL2mdPNNPz/8x2L0=;
+	b=EUKWkl4C1Qip0HfrlkSPnCCtMy9hpzN1TXaymzoFlJV4i+aUPwVbDU8NuNzQw42nJe5CcH
+	4MEjAmWkWWCov0AQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=jijpBWK9;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=EUKWkl4C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1754664279; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=weYf+fL75c7lg2yK6WWI7BLtwoQlL2mdPNNPz/8x2L0=;
+	b=jijpBWK9QZaQ4JmLM8UecWrbSSTWtPe9+TuGDC+7Fgb45zLKmam6BL0INKhxXCKG5W1d+x
+	NsqXfsWVHhvPioHhAkmtH4MKJxdp0G/xi0iykW9x9UsCXHpbe0mqURLnZNaw5ayOR1hNZ7
+	oMlqxHSGkulZtkYTCScjayUE7YpAW4k=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1754664279;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=weYf+fL75c7lg2yK6WWI7BLtwoQlL2mdPNNPz/8x2L0=;
+	b=EUKWkl4C1Qip0HfrlkSPnCCtMy9hpzN1TXaymzoFlJV4i+aUPwVbDU8NuNzQw42nJe5CcH
+	4MEjAmWkWWCov0AQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7815713A7E;
+	Fri,  8 Aug 2025 14:44:38 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id B2v2D1YNlmidOAAAD6G6ig
+	(envelope-from <ematsumiya@suse.de>); Fri, 08 Aug 2025 14:44:38 +0000
+Date: Fri, 8 Aug 2025 11:44:36 -0300
+From: Enzo Matsumiya <ematsumiya@suse.de>
+To: David Howells <dhowells@redhat.com>
+Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>, 
+	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, 
+	Wang Zhaolong <wangzhaolong@huaweicloud.com>, Stefan Metzmacher <metze@samba.org>, 
+	Mina Almasry <almasrymina@google.com>, linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH 24/31] cifs: Convert SMB2 Negotiate Protocol request
+Message-ID: <zt6f2jl6y5wpiuchryc2vdsmtkiia7s5mligm7helffkanxe3o@2f2ksngn5ekk>
+References: <20250806203705.2560493-1-dhowells@redhat.com>
+ <20250806203705.2560493-25-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20250807121418.139765-6-zhangzihuan@kylinos.cn>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+In-Reply-To: <20250806203705.2560493-25-dhowells@redhat.com>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 020EE5BE4D
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Score: -4.01
 
-On 08/07, Zihuan Zhang wrote:
+On 08/06, David Howells wrote:
+> ...
+> 
+>-static unsigned int
+>-build_netname_ctxt(struct smb2_netname_neg_context *pneg_ctxt, char *hostname)
+>+static size_t smb2_size_netname_ctxt(struct TCP_Server_Info *server)
+> {
+>+	size_t data_len;
+>+
+>+#if 0
+> 	struct nls_table *cp = load_nls_default();
+>+	const char *hostname;
 >
-> --- a/kernel/power/process.c
-> +++ b/kernel/power/process.c
-> @@ -147,6 +147,7 @@ int freeze_processes(void)
+>-	pneg_ctxt->ContextType = SMB2_NETNAME_NEGOTIATE_CONTEXT_ID;
+>+	/* Only include up to first 100 bytes of server name in the NetName
+>+	 * field.
+>+	 */
+>+	cifs_server_lock(pserver);
+>+	hostname = pserver->hostname;
+>+	if (hostname && hostname[0])
+>+		data_len = cifs_size_strtoUTF16(hostname, 100, cp);
+>+	cifs_server_unlock(pserver);
+>+#else
+>+	/* Now, we can't just measure the length of hostname as, unless we hold
+>+	 * the lock, it may change under us, so allow maximum space for it.
+>+	 */
+>+	data_len = 400;
+>+#endif
+>+	return ALIGN8(sizeof(struct smb2_neg_context) + data_len);
+>+}
+
+Why was this commented out?  Your comment implies that you can't hold
+the lock anymore there, but I couldn't find out why (with your patches
+applied).
+
+>-static void
+>-assemble_neg_contexts(struct smb2_negotiate_req *req,
+>-		      struct TCP_Server_Info *server, unsigned int *total_len)
+>+static size_t smb2_size_neg_contexts(struct TCP_Server_Info *server,
+>+				     size_t offset)
+> {
+>-	unsigned int ctxt_len, neg_context_count;
+> 	struct TCP_Server_Info *pserver;
+>-	char *pneg_ctxt;
+>-	char *hostname;
+>-
+>-	if (*total_len > 200) {
+>-		/* In case length corrupted don't want to overrun smb buffer */
+>-		cifs_server_dbg(VFS, "Bad frame length assembling neg contexts\n");
+>-		return;
+>-	}
 >
->  	pm_wakeup_clear(0);
->  	pm_freezing = true;
-> +	freeze_set_default_priority(current, FREEZE_PRIORITY_NEVER);
-
-But why?
-
-Again, freeze_task() will return false anyway, this process is
-PF_SUSPEND_TASK.
-
-> @@ -218,6 +219,7 @@ void thaw_processes(void)
->  	WARN_ON(!(curr->flags & PF_SUSPEND_TASK));
->  	curr->flags &= ~PF_SUSPEND_TASK;
+> 	/*
+> 	 * round up total_len of fixed part of SMB3 negotiate request to 8
+> 	 * byte boundary before adding negotiate contexts
+> 	 */
+>-	*total_len = ALIGN8(*total_len);
+>+	offset = ALIGN8(offset);
+>+	offset += ALIGN8(sizeof(struct smb2_preauth_neg_context));
+>+	offset += ALIGN8(sizeof(struct smb2_encryption_neg_context));
 >
-> +	freeze_set_default_priority(current, FREEZE_PRIORITY_NORMAL);
->  	usermodehelper_enable();
+>-	pneg_ctxt = (*total_len) + (char *)req;
+>-	req->NegotiateContextOffset = cpu_to_le32(*total_len);
+>+	/*
+>+	 * secondary channels don't have the hostname field populated
+>+	 * use the hostname field in the primary channel instead
+>+	 */
+>+	pserver = SERVER_IS_CHAN(server) ? server->primary_server : server;
+>+	offset += smb2_size_netname_ctxt(pserver);
 
-What if current->freeze_priority was changed via
-/proc/pid/freeze_priority you add in 9/9 ?
-
-Oleg.
-
+If you're keeping data_len=400 above, you could just drop
+smb2_size_netname_ctxt() altogether and use
+"ALIGN8(sizeof(struct smb2_neg_context) + 400)" directly here.
 
