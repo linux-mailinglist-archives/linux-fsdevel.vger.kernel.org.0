@@ -1,136 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-57074-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57075-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65AADB1E8A9
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 14:54:16 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68CFFB1E8ED
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 15:09:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22CECA0231E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 12:54:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2D9314E1549
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 13:09:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9D1127AC48;
-	Fri,  8 Aug 2025 12:53:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 279E427B500;
+	Fri,  8 Aug 2025 13:09:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mRoVAXxo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="se4c6TmU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f196.google.com (mail-pf1-f196.google.com [209.85.210.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1CD027A935;
-	Fri,  8 Aug 2025 12:53:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D65B27603F;
+	Fri,  8 Aug 2025 13:09:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754657637; cv=none; b=dhCM0jeBSXJlP5B22rg/Kjr0arcxQDaCO/aULlSQ5X9q+1BrSkNCrF03WqrZ3TkvxG9qD0w0TNIMHAtJ90PqEUpTliZeGydfL1jjDS3yQgVmpRQ21MoWfgYdGMaercmG/Plct9Yi3/nexFY6h12inHfjki78ttOnJzYF++887hE=
+	t=1754658553; cv=none; b=mo3M5yf9ZjaZje9wZe6y45H1wvqspO9l0kcC4at8McnuHAcRQddOaIoL+JPzxy9cp0C/oqz91vK5qNYi2Kqm4eKEshevfaW4e9IKraX2yeFe+umvnb0G4WFWtGRUwb6U/9MqK9NAFZU0ZA3SKe33gosbB8I7BMRu9ytyu1xSlQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754657637; c=relaxed/simple;
-	bh=KkGDKiJOUwD7zLKcC5btX1IuhHoswB0EXW0yNh3HBaA=;
+	s=arc-20240116; t=1754658553; c=relaxed/simple;
+	bh=YOUfFxIay4gAI/yW/+JWV4fx/HDYohbN9iogANpShf0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jIjoOsYElRyNc2POeKcvFA3PX+eGU3pn63INdb5F9Ksn2tszPYq73NeyRqpaGoSraU2QnZBHotbZJqoi8fFVfnkz05n2lYe16REoiCHxU7BYBHTF5S9hJK+8EIyrMO25+xXc5szyn1BPQSoU+Iz0o/saJft6HdXE7wYh7r7uC5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mRoVAXxo; arc=none smtp.client-ip=209.85.210.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f196.google.com with SMTP id d2e1a72fcca58-7682560a2f2so2273847b3a.1;
-        Fri, 08 Aug 2025 05:53:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754657635; x=1755262435; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mTWOqUkzFG3Jw/HnlOM4lgmjg34Hd8Pocw1TILgDbGg=;
-        b=mRoVAXxohScSq6BPh3Hre0kxwANrIu0/j6rRovKsVqm3Ua7nek1a3sKMUyU7Ry1RpO
-         Kn8wIN5CotY7DgMRvJWR9HL5GY0jabEIQDkyFc/g0m7hK3w0EcG+41KV7WRd/mkq5KBU
-         dlB6XXqqZX3t2wjmFTYWL3TE+eUoPL3vO3anrZCNNhRrI9ybsbBXKW8oD8PoHzGXnRpW
-         qi+XnXYsxlwUIj69IYhgKvXhUhPjEMzVURr1RdU0kbkgFfcIwIBJdRfFrBQJerP3aPTJ
-         iXWpxR9JZVZ1URCvqLsBhrsXq7tWYn0HErvytLdZxVyW0wOWclL08rbLE+WnBAAcwz4w
-         aKHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754657635; x=1755262435;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mTWOqUkzFG3Jw/HnlOM4lgmjg34Hd8Pocw1TILgDbGg=;
-        b=q5LpEZmXhfT8ftc0pPKt+LPccNOlDp3E54gpSVz3jwl8EEhajj9sks9X6Byi1l06P8
-         0zYKdpbGANXopsnx3KqUyZ6BMyjwWe+tEp+/5rnD+TNxzWAfqT5WgD6sM1PsYG8fxBC3
-         EL4OuIAOKLTWZWD3ML6M5/D9jK2geteoqik1F4QGvHqQY4K/GZ8KVHZhHp9pIGQm4XnY
-         fBYAvmVn0ToAaSIx7tO6Tijulzmq88fjow+01w+7M1LqAcdwbPjVUH318e1F/9XHhs+Z
-         WLkWSJz3lk0l5IMwUWWgjXnvZ+4xs+pMW78+wpyYmRVXSAJuffqH1bKZp3jS7P3XJJg6
-         xb0w==
-X-Forwarded-Encrypted: i=1; AJvYcCUDytnmwjzIxd8v2ettruQyjLCq6fl5w+IsNN6RNaOWBbuv2ehsWvDp0MLIE9sRdvvCZkdsV4dNqHaE2L0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxX2P6UShnmg7p+JZ49+AsjBVQeVK2vWa0x/NAoomgHCCtCUayL
-	3dYEsOkF3+Ztfk6PXMme6vyz3EVzevHa/OF48knjwm8aaQRkiQOYLrX3
-X-Gm-Gg: ASbGncuGegI7aFKhVEMMxYtiLSOit8nzxRYubueNZtP4k54EayVt9uveCi26FEuQibj
-	WZ7W+GPmLaR6v+9WLWCqMiFp9EK3m7QIJPqcIfsd+ysYjbfxg2xyw7GLkM15UkgM9qgWqUWFwJc
-	UmA8liv8ZAKxkJTcKGquwzQhvYvrR7RaA+a3icJp6IP9LeUeXM2bEA8HYoGG5+yUlrXbl9A2A/n
-	JkL/Ze/46zGOI5LHmmtN2NyW1kboF3TnebE+X8tr4Z+xcqP4nF8PlHLxozTVyj0eWe4cRHEdOop
-	XxKfAn33gSFjzUSr87JTAKNy2IlBHxuFGaO0bI096svKRJ6kB3Y62ee9ytflHHscAuX63n57IhH
-	GDbOsPIFyPWYwog==
-X-Google-Smtp-Source: AGHT+IHEu3YnEzqJY/WXYBAGLf2iW78rGpx5r015+HxZuncS7sPK8bFfmj7sVtI8d8rVxFCGTdqmdQ==
-X-Received: by 2002:a05:6a21:6d88:b0:240:177:e820 with SMTP id adf61e73a8af0-24055662d71mr4928154637.13.1754657634893;
-        Fri, 08 Aug 2025 05:53:54 -0700 (PDT)
-Received: from archlinux.lan ([117.185.160.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bccfbd174sm20419107b3a.63.2025.08.08.05.53.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Aug 2025 05:53:54 -0700 (PDT)
-From: Jialin Wang <wjl.linux@gmail.com>
-To: akpm@linux-foundation.org
-Cc: linux-fsdevel@vger.kernel.org,
+	 MIME-Version:Content-Type; b=b02kWdmgk9D3F+e6v49l6+/TU2pAcdSjKd2mHJwymHmPiYSQX9lfdsNFTVXAFuKofKBn+FNJmBJYFJLm29N0Nc6AhhY+1xlgOYxfUFspfUX1XjXYJUutnami1jQszJrI4C3FdHCGPyn/OvBjXT/qY4WBA6UsvLtbWQZE3fMRt5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=se4c6TmU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57FC3C4CEED;
+	Fri,  8 Aug 2025 13:09:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754658553;
+	bh=YOUfFxIay4gAI/yW/+JWV4fx/HDYohbN9iogANpShf0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=se4c6TmUs1TOXVCpZttvjHqi1ZTe3toFddiGPUOJIwIgiaJO6wqCudc52Gnc+tFF0
+	 1kV4yHZUz1VqSpZQ/86wnpZEsdi5Nd7JCTp2F+frsWb2FX9c/0T0q7DEdZgr7aQPoC
+	 17mPVMoL7J7jQCEMcA88rZo5BQ5ZHKS8UCK3CWrMP57F0Z8O66FbkQhGvOU2RFT6IQ
+	 vvTcknWIdhQbx/izyTxE6xPaI9Q/nKiZTbHJwi5UgmF1cLxwG2NNuJ79LnTsgrCp/M
+	 QiCwaVcSSuRdDfnXGdgf5Jcw5+eCwK0TJzg3lVxphxfNA5vTRR//6WxmCl8fuLMJI1
+	 +EQt6cM/w/jBA==
+From: Christian Brauner <brauner@kernel.org>
+To: Xichao Zhao <zhao.xichao@vivo.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	jack@suse.cz,
+	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	superman.xpt@gmail.com,
-	wjl.linux@gmail.com
-Subject: [PATCH v2] proc: proc_maps_open allow proc_mem_open to return NULL
-Date: Fri,  8 Aug 2025 20:53:47 +0800
-Message-ID: <20250808125347.14775-1-wjl.linux@gmail.com>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250807154606.131d96b133c19baca0c5f2e6@linux-foundation.org>
-References: <20250807154606.131d96b133c19baca0c5f2e6@linux-foundation.org>
+	viro@zeniv.linux.org.uk
+Subject: Re: [PATCH v2] fs: fix "writen"->"written"
+Date: Fri,  8 Aug 2025 15:09:02 +0200
+Message-ID: <20250808-samthandschuhen-gekannt-9cbd952fa5f2@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250808083758.229563-1-zhao.xichao@vivo.com>
+References: <20250808083758.229563-1-zhao.xichao@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=870; i=brauner@kernel.org; h=from:subject:message-id; bh=YOUfFxIay4gAI/yW/+JWV4fx/HDYohbN9iogANpShf0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRM/fblksVSR6OPn1ZUHeQNvjH3cY7pm7pnvmH9G3UXl nVyfdKz6ShlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZiIyWeGfzrBv7jY32etcDp8 zI1J/Nk+2S3MfSdEo22Wcp3KWnLn6SSG/7k7vrBYdpgnzHvRd8Fx+lvnuhuN5z9kZayL2y17N/P nOVYA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-The commit 65c66047259f ("proc: fix the issue of proc_mem_open returning
-NULL") caused proc_maps_open() to return -ESRCH when proc_mem_open()
-returns NULL. This breaks legitimate /proc/<pid>/maps access for kernel
-threads since kernel threads have NULL mm_struct.
+On Fri, 08 Aug 2025 16:37:58 +0800, Xichao Zhao wrote:
+> Trivial fix to spelling mistake in comment text.
+> 
+> 
 
-The regression causes perf to fail and exit when profiling a kernel thread:
+Applied to the vfs-6.18.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.18.misc branch should appear in linux-next soon.
 
-  # perf record -v -g -p $(pgrep kswapd0)
-  ...
-  couldn't open /proc/65/task/65/maps
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-This patch partially reverts the commit to fix it.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-Fixes: 65c66047259f ("proc: fix the issue of proc_mem_open returning NULL")
-Signed-off-by: Jialin Wang <wjl.linux@gmail.com>
----
-Changes in v2 (Thanks to Andrew):
-- Add more detailed misbehavior description in commit message
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
- fs/proc/task_mmu.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.18.misc
 
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index 3d6d8a9f13fc..7a7ce26106ac 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -340,8 +340,8 @@ static int proc_maps_open(struct inode *inode, struct file *file,
- 
- 	priv->inode = inode;
- 	priv->mm = proc_mem_open(inode, PTRACE_MODE_READ);
--	if (IS_ERR_OR_NULL(priv->mm)) {
--		int err = priv->mm ? PTR_ERR(priv->mm) : -ESRCH;
-+	if (IS_ERR(priv->mm)) {
-+		int err = PTR_ERR(priv->mm);
- 
- 		seq_release_private(inode, file);
- 		return err;
--- 
-2.50.0
-
+[1/1] fs: fix "writen"->"written"
+      https://git.kernel.org/vfs/vfs/c/fe31a1c4d266
 
