@@ -1,88 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-57128-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57129-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 420DEB1EEDF
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 21:30:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3060FB1EEE1
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 21:30:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 495E91732C2
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 19:30:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 407B25A2DF0
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 19:30:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 494CF28850C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA9A6288513;
 	Fri,  8 Aug 2025 19:30:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BpmhG2Gw"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="I/7LxGgq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A3511F237A
-	for <linux-fsdevel@vger.kernel.org>; Fri,  8 Aug 2025 19:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD7712882B9
+	for <linux-fsdevel@vger.kernel.org>; Fri,  8 Aug 2025 19:30:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754681428; cv=none; b=n8Kfrl+yJcDJPMpXvoSNNN83mQdPwCKMI36HtA+HI0EEtUBeS2vOvpM5p+BMny8e3DdGwRFI2eG7jmb9ShGUU5T8lDu/+Gnltg4KC/isDZb6jlcEf05buUh5O8GDCjPhsC/lh+0bLtIylaIGTdWSSaN7cG4cx0F+U5X/rjJ3g9o=
+	t=1754681429; cv=none; b=o1hwsmr5cyAlD9PClZyUMU+sj5RmqWP1aZy6sLwSwa1sZGPJUoHN/MCWO1ZMqZPjzZtMWWtrcuw1BZLULjcA0ek4K3Iub4aQJ0NppoH9wK75XVdck9g5dNE8loDjOz4xu831V0zFulCjYXFFij/aPmlJXgm7637ybcU7CmH5yR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754681428; c=relaxed/simple;
-	bh=eg/DSoHIYQ2Xa/D8nefv5BPFGPXBwI7m3WJ+RITvhfI=;
+	s=arc-20240116; t=1754681429; c=relaxed/simple;
+	bh=rkmNz1sSnysOaIdcGInEjZTg0J3rQpVEu6HfuiKCXOg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Gu6tA1SdQclXawhgD0FgDdDNBeNsYy8Maf2v6a/xnVku2LHV2CNqKNRXHLpemeIWXXgU0ARC0A/CF6irrKKl1TA2pABEgfoUiAnjUYc5N64ME0HZF3F9mJmNjMhbDZIK7wHp4Kvt2bOW4i7b/Dj5N00o5Tz+UtIMFSqP6PDltTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BpmhG2Gw; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:To; b=CVgoiiBIYASP2G91erDP7nGLZUCqA9nO/sHNIRIIqBSP98Z4eqMCM6up24P5qzRFDIbW27i88ohuKbIE+QoB/FlwPyj0SsEwJ6XSRPdlRM+l8mPobqsBP7Mm/l54QVMQbY9UxPqkBLT29MgY3oKH4mCLT85Z0vXuXPQ1aRUeVgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=I/7LxGgq; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
 	s=mimecast20190719; t=1754681426;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Ey2QTtaZjTVUUOsnGVoF6yUZobYQXb+AIsFSKD5G0C0=;
-	b=BpmhG2Gwet9put6WoRZjWOfNF3ZTUPOwoL5kmgLyRkuluf36cPwBrCMMlJ/O7udntf/JyS
-	GIJxtyiyltR6Lc/jc4hMllMu/K4Ro796K3vRdQ84vX1l2i3VRGm5OLUCDw+SU+/wGvZh5+
-	nVZRpA5ZyoMRVB8rwYL+MsZ0D2dfI0Y=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=UpVGkkrUe+YakAilFwzjKDkOETJ448oermX++9pfg/4=;
+	b=I/7LxGgqEEMGk1uIuiqfWcoynl39W2upcb4YPv03wZqumNBpwVsBbUyQ+9ztHBQXBBbOHD
+	ybfPadj+4gM81wDVArBYq02SpzxLvPx1GXJdzAfuXBinwUZoCFtUHjoCfHYlemZJ9qDzXL
+	YH6GiEL2FE2OwHE9qGZR/ZJNzh7GscU=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-260-8PY-V_-PMxSt64-JM1_8UA-1; Fri, 08 Aug 2025 15:30:24 -0400
-X-MC-Unique: 8PY-V_-PMxSt64-JM1_8UA-1
-X-Mimecast-MFC-AGG-ID: 8PY-V_-PMxSt64-JM1_8UA_1754681423
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3b8dac70703so1267715f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Aug 2025 12:30:24 -0700 (PDT)
+ us-mta-441-V-sfNPUzNbi3BVYGakwMmg-1; Fri, 08 Aug 2025 15:30:25 -0400
+X-MC-Unique: V-sfNPUzNbi3BVYGakwMmg-1
+X-Mimecast-MFC-AGG-ID: V-sfNPUzNbi3BVYGakwMmg_1754681424
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-459d7da3647so18893115e9.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Aug 2025 12:30:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754681423; x=1755286223;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+        d=1e100.net; s=20230601; t=1754681424; x=1755286224;
+        h=to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Ey2QTtaZjTVUUOsnGVoF6yUZobYQXb+AIsFSKD5G0C0=;
-        b=DBCE58qZDaqIKGKGc8+VuOxoLpuMaPqfwWguovaQxR2FpifIzShlqYzncKW1XxU1D2
-         wP15mpjJgGLT5418ncDvQbxZikzwUrOml2e17jNXAqYZZ3KjBuLzI9IGa+ntb3Jrth4Z
-         lZ1pgWQ8m1cmdUsj57qPXOTJYw6P88lCBUpMXgGBnyMAXPuZRsANiYdlKBoKJ2HNf4St
-         9brCshANiadSTh4B1rnGyRZ9V+mFXxyo0eYqwI/VN/dA5XjWn75l9HxI/47N62WkrDGw
-         V53VgPo8twTSY3XHT3LFJ272JoQ5HmIOUZATkiRPhSC6Ew4y6b5pt2L3Atc+es2IB8bP
-         Gd9A==
-X-Forwarded-Encrypted: i=1; AJvYcCUF0FX8OHE8knrR+5Y4mWSbvr+dBN6/pULIcFHxFdu6ww4Vyj2LsoqmWWVAlSUjuyyYDjTlxQRVuo4lNMPx@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQjz9HlkdA0rmsG8I2b6NhAc95yoxO64DbnuMq6YFWMaKkmp2w
-	qkt4QXypjaTE424LASP3TpN0reS5iJgUzgJAAKCb7uc5wpvQufqZ3ScpzZ8O/9gIhSlvBcGEi2z
-	h2RP3xBZOQiD4/lOpKUCSXKjnlMu9+9RfM1bwAXrZ96LUaegoiIytyCt886gvmEEa5w==
-X-Gm-Gg: ASbGncvIzDzpQvLxgJqVH4tTnWcObeOWMmg93h4e7rlRjdd3Dx/Y4wlWxHnlyra5LFa
-	6KbSI7UJC8A8xr67dyJt7OKLGNmr0Qnf46yaEinxyAXSPpi3XVhfHWblliG40BQDjCJmOL9TN0s
-	wkXvIJBqxLHM3HNQE6n9CIQDKW1g6MgBZtI1tC9psjIdXT0DuH6Q8Eqhe2ZXwQIRMX6JTNvgHo5
-	BEsKOo05mQG/AGXA8H3rzAb2DR3ZAd0wiQbbxpkl0fLH7iVvc7NLXAzc+qAjnK4nySQeqA1xoXT
-	gw+OG+hABmGeUbI5a6XzCR4GdS2mQLbd5DuH1LgziG4LiQ==
-X-Received: by 2002:a05:6000:4310:b0:3b7:8646:eeb3 with SMTP id ffacd0b85a97d-3b900fdd7edmr4459631f8f.15.1754681423334;
+        bh=UpVGkkrUe+YakAilFwzjKDkOETJ448oermX++9pfg/4=;
+        b=ox0FlUUNJR9W7wMsNIt8rS8bcp1F9WXr+FKPhlDBJWSMTyNVsqMquxDVxO4WeVDUE6
+         ip0mondPOptwd4pJPxNaWhLGgkFFELPQ4mvWWC1bJB6w3T50KGStcjwVlkzV1mM0K9VZ
+         Uhw+9HMO3l/ntOu480b2+vJm6N+p/rLqOi690kWFVBpQySIY2pz5WI5sbz7a6bCqIMNX
+         AxaUqcjt+d7dEHCrauGTbSyg9btZZ8jdHxiOo0uD3bcvGIhROMsmiSd3ZDNVjtlFthJx
+         RWB2IDAXTuEElRz11h+xFeIwjdqwbB9I0vcNTqCrXQWB6DjM/Ff7SgKJFC7XmzjzW+FC
+         oVjw==
+X-Forwarded-Encrypted: i=1; AJvYcCUCmDDuSK1o0OcwgxtsaiiDdCFw7HPBeBw2e6sbbMwRpaXLhDrolQklk3LFY81pTOQSiUkoeIdyPTJsKLma@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWDFEOa4vtpXiu3OajYg/S0ojDjtG5EnxPYNpsqgmmdL5EoSYJ
+	Umz7f5NiYl76+9vNr0J44R8RGeVXxOoZxfX3UvCPMqYsCn2Tm+YOIg5sPHnDynbpuKm4uj2buOc
+	IO23Zzy8L85M4e5XrNRotZilGGAsfukHyvkVB1RhUd7xxiCZoHUFStl/gHlCbS0PegQ==
+X-Gm-Gg: ASbGnctVWR28lJqzRpOpxivw09i7MihV34A4jssAsTfk9osle/leZwm9m/r2mvOpgQc
+	xcY4+MyuZTVJQaha/4mu53YsvqNYaaNfzxx7jMWB629XSFC9Kj2a/iU8kNTq2fvBacVUXqOlzo3
+	Smq1lnhjPaYGhEyngDipzExZo602WbYVaoEU31Yl6wL4TdxanGZsbndQcveyEYGClqQlO+JkU83
+	m57Rjct7Ux+ZS5qUl3W7XxGyl8GkC+0BV+FmYO72PsiKbYh1z+p7WIjmjYFF4r20M2nOtXGSy9V
+	Xo8p3YHezkDjjxw8iNfhAZv0qpT9qq9uWSgg/1zUNytYZw==
+X-Received: by 2002:a05:6000:240b:b0:3b6:1a8c:569f with SMTP id ffacd0b85a97d-3b900b49861mr3916106f8f.1.1754681424070;
+        Fri, 08 Aug 2025 12:30:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGJrVlyIhj5KYTf9nlfZi/yobMCyyW6+KZtHs0zepTVKqSEVXLpboIqqa5l9qlNh4xq6cN0pA==
+X-Received: by 2002:a05:6000:240b:b0:3b6:1a8c:569f with SMTP id ffacd0b85a97d-3b900b49861mr3916076f8f.1.1754681423522;
         Fri, 08 Aug 2025 12:30:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFHStybTVVERxYlQ5+zy8iYCL9DbPx/EgBHkjUD++gkEHV1J8O+bbmjXRk4DCcfy6+bQ1MVIQ==
-X-Received: by 2002:a05:6000:4310:b0:3b7:8646:eeb3 with SMTP id ffacd0b85a97d-3b900fdd7edmr4459602f8f.15.1754681422919;
-        Fri, 08 Aug 2025 12:30:22 -0700 (PDT)
 Received: from [127.0.0.2] (ip-217-030-074-039.aim-net.cz. [217.30.74.39])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b8f8b1bc81sm8925162f8f.69.2025.08.08.12.30.21
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b8f8b1bc81sm8925162f8f.69.2025.08.08.12.30.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Aug 2025 12:30:21 -0700 (PDT)
+        Fri, 08 Aug 2025 12:30:23 -0700 (PDT)
 From: Andrey Albershteyn <aalbersh@redhat.com>
 X-Google-Original-From: Andrey Albershteyn <aalbersh@kernel.org>
-Date: Fri, 08 Aug 2025 21:30:18 +0200
-Subject: [PATCH 3/4] xfs_io: make ls/chattr work with special files
+Date: Fri, 08 Aug 2025 21:30:19 +0200
+Subject: [PATCH 4/4] xfs_db: use file_setattr to copy attributes on special
+ files with rdump
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -91,238 +92,89 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250808-xattrat-syscall-v1-3-48567c29e45c@kernel.org>
+Message-Id: <20250808-xattrat-syscall-v1-4-48567c29e45c@kernel.org>
 References: <20250808-xattrat-syscall-v1-0-48567c29e45c@kernel.org>
 In-Reply-To: <20250808-xattrat-syscall-v1-0-48567c29e45c@kernel.org>
 To: aalbersh@kernel.org, linux-fsdevel@vger.kernel.org, 
  linux-xfs@vger.kernel.org
-Cc: Andrey Albershteyn <aalbersh@redhat.com>
 X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5478; i=aalbersh@kernel.org;
- h=from:subject:message-id; bh=4zK7ywtk5dBgZL66VuvRbszYNCLsIpa4lxCLuNHStLE=;
- b=owJ4nJvAy8zAJea2/JXEGuOHHIyn1ZIYMqYFeKuVxcZelU5JM2vkTGw8ItItYsXgdNTsX/e++
- ZyOmd/mKXSUsjCIcTHIiimyrJPWmppUJJV/xKBGHmYOKxPIEAYuTgGYyPEChv8Z17bwVkUcydw4
- zXjWjrbz68/t4Td8vtx8lWBQSbGHcOVXRobT75xnmUiaznt8+Pamc38ex3Me3fVN19x1weKlmSd
- f6KkyAwDyOEc1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1982; i=aalbersh@kernel.org;
+ h=from:subject:message-id; bh=rkmNz1sSnysOaIdcGInEjZTg0J3rQpVEu6HfuiKCXOg=;
+ b=owJ4nJvAy8zAJea2/JXEGuOHHIyn1ZIYMqYFeC97cmja525mk/VHWDwyzlcw9PcHS5RW6IgKR
+ K3rSDih/LmjlIVBjItBVkyRZZ201tSkIqn8IwY18jBzWJlAhjBwcQrARGQfMzIcUHUTum4oN785
+ 9wHPAjXpq42vTqbtKuH+wijx9EPhmdZURoabZwKK7BtDG7l2dVWbBsiaHpywP7RmQc3yrgcn4vR
+ vZTECACz2RNQ=
 X-Developer-Key: i=aalbersh@kernel.org; a=openpgp;
  fpr=AE1B2A9562721A6FC4307C1F46A7EA18AC33E108
 
-From: Andrey Albershteyn <aalbersh@redhat.com>
-
-With new file_getattr/file_setattr syscalls we can now list/change file
-attributes on special files instead for ignoring them.
+rdump just skipped file attributes on special files as copying wasn't
+possible. Let's use new file_getattr/file_setattr syscalls to copy
+attributes even for special files.
 
 Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
 ---
- io/attr.c | 130 ++++++++++++++++++++++++++++++++++++--------------------------
- 1 file changed, 75 insertions(+), 55 deletions(-)
+ db/rdump.c | 24 +++++++++++++++++++++---
+ 1 file changed, 21 insertions(+), 3 deletions(-)
 
-diff --git a/io/attr.c b/io/attr.c
-index fd82a2e73801..1cce602074f4 100644
---- a/io/attr.c
-+++ b/io/attr.c
-@@ -8,6 +8,7 @@
- #include "input.h"
- #include "init.h"
- #include "io.h"
+diff --git a/db/rdump.c b/db/rdump.c
+index 9ff833553ccb..5b9458e6bc94 100644
+--- a/db/rdump.c
++++ b/db/rdump.c
+@@ -17,6 +17,7 @@
+ #include "field.h"
+ #include "inode.h"
+ #include "listxattr.h"
 +#include "libfrog/file_attr.h"
+ #include <sys/xattr.h>
+ #include <linux/xattr.h>
  
- static cmdinfo_t chattr_cmd;
- static cmdinfo_t lsattr_cmd;
-@@ -156,36 +157,35 @@ lsattr_callback(
- 	int			status,
- 	struct FTW		*data)
+@@ -152,10 +153,17 @@ rdump_fileattrs_path(
+ 	const struct destdir	*destdir,
+ 	const struct pathbuf	*pbuf)
  {
--	struct fsxattr		fsx;
--	int			fd;
-+	struct file_attr	fa;
-+	int			error;
++	struct file_attr	fa = {
++		.fa_extsize	= ip->i_extsize,
++		.fa_projid	= ip->i_projid,
++		.fa_cowextsize	= ip->i_cowextsize,
++		.fa_xflags	= xfs_ip2xflags(ip),
++	};
+ 	int			ret;
++	int			at_flags = AT_SYMLINK_NOFOLLOW;
  
- 	if (recurse_dir && !S_ISDIR(stat->st_mode))
- 		return 0;
- 
--	if ((fd = open(path, O_RDONLY)) == -1) {
--		fprintf(stderr, _("%s: cannot open %s: %s\n"),
--			progname, path, strerror(errno));
--		exitcode = 1;
--	} else if ((xfsctl(path, fd, FS_IOC_FSGETXATTR, &fsx)) < 0) {
-+	error = file_getattr(AT_FDCWD, path, stat, &fa, AT_SYMLINK_NOFOLLOW);
-+	if (error) {
- 		fprintf(stderr, _("%s: cannot get flags on %s: %s\n"),
- 			progname, path, strerror(errno));
- 		exitcode = 1;
--	} else
--		printxattr(fsx.fsx_xflags, 0, 1, path, 0, 1);
-+		return 0;
-+	}
-+
-+	printxattr(fa.fa_xflags, 0, 1, path, 0, 1);
- 
--	if (fd != -1)
--		close(fd);
- 	return 0;
- }
- 
- static int
- lsattr_f(
--	int		argc,
--	char		**argv)
-+	int			argc,
-+	char			**argv)
- {
--	struct fsxattr	fsx;
--	char		*name = file->name;
--	int		c, aflag = 0, vflag = 0;
-+	struct file_attr	fa;
-+	char			*name = file->name;
-+	int			c, aflag = 0, vflag = 0;
-+	struct stat		st;
-+	int			error;
- 
- 	recurse_all = recurse_dir = 0;
- 	while ((c = getopt(argc, argv, "DRav")) != EOF) {
-@@ -211,17 +211,27 @@ lsattr_f(
- 	if (recurse_all || recurse_dir) {
- 		nftw(name, lsattr_callback,
- 			100, FTW_PHYS | FTW_MOUNT | FTW_DEPTH);
--	} else if ((xfsctl(name, file->fd, FS_IOC_FSGETXATTR, &fsx)) < 0) {
-+		return 0;
-+	}
-+
-+	error = stat(name, &st);
-+	if (error)
-+		return error;
-+
-+	error = file_getattr(AT_FDCWD, name, &st, &fa, AT_SYMLINK_NOFOLLOW);
-+	if (error) {
- 		fprintf(stderr, _("%s: cannot get flags on %s: %s\n"),
- 			progname, name, strerror(errno));
- 		exitcode = 1;
--	} else {
--		printxattr(fsx.fsx_xflags, vflag, !aflag, name, vflag, !aflag);
--		if (aflag) {
--			fputs("/", stdout);
--			printxattr(-1, 0, 1, name, 0, 1);
--		}
-+		return 0;
- 	}
-+
-+	printxattr(fa.fa_xflags, vflag, !aflag, name, vflag, !aflag);
-+	if (aflag) {
-+		fputs("/", stdout);
-+		printxattr(-1, 0, 1, name, 0, 1);
-+	}
-+
- 	return 0;
- }
- 
-@@ -232,44 +242,43 @@ chattr_callback(
- 	int			status,
- 	struct FTW		*data)
- {
--	struct fsxattr		attr;
--	int			fd;
-+	struct file_attr	attr;
-+	int			error;
- 
- 	if (recurse_dir && !S_ISDIR(stat->st_mode))
- 		return 0;
- 
--	if ((fd = open(path, O_RDONLY)) == -1) {
--		fprintf(stderr, _("%s: cannot open %s: %s\n"),
--			progname, path, strerror(errno));
--		exitcode = 1;
--	} else if (xfsctl(path, fd, FS_IOC_FSGETXATTR, &attr) < 0) {
-+	error = file_getattr(AT_FDCWD, path, stat, &attr, AT_SYMLINK_NOFOLLOW);
-+	if (error) {
- 		fprintf(stderr, _("%s: cannot get flags on %s: %s\n"),
- 			progname, path, strerror(errno));
- 		exitcode = 1;
--	} else {
--		attr.fsx_xflags |= orflags;
--		attr.fsx_xflags &= ~andflags;
--		if (xfsctl(path, fd, FS_IOC_FSSETXATTR, &attr) < 0) {
--			fprintf(stderr, _("%s: cannot set flags on %s: %s\n"),
--				progname, path, strerror(errno));
--			exitcode = 1;
--		}
-+		return 0;
-+	}
-+
-+	attr.fa_xflags |= orflags;
-+	attr.fa_xflags &= ~andflags;
-+	error = file_setattr(AT_FDCWD, path, stat, &attr, AT_SYMLINK_NOFOLLOW);
-+	if (error) {
-+		fprintf(stderr, _("%s: cannot set flags on %s: %s\n"),
-+			progname, path, strerror(errno));
-+		exitcode = 1;
+ 	ret = fchmodat(destdir->fd, pbuf->path, VFS_I(ip)->i_mode & ~S_IFMT,
+-			AT_SYMLINK_NOFOLLOW);
++			at_flags);
+ 	if (ret) {
+ 		/* fchmodat on a symlink is not supported */
+ 		if (errno == EPERM || errno == EOPNOTSUPP)
+@@ -169,7 +177,7 @@ rdump_fileattrs_path(
  	}
  
--	if (fd != -1)
--		close(fd);
- 	return 0;
- }
- 
- static int
- chattr_f(
--	int		argc,
--	char		**argv)
-+	int			argc,
-+	char			**argv)
- {
--	struct fsxattr	attr;
--	struct xflags	*p;
--	unsigned int	i = 0;
--	char		*c, *name = file->name;
-+	struct file_attr	attr;
-+	struct xflags		*p;
-+	unsigned int		i = 0;
-+	char			*c, *name = file->name;
-+	struct stat		st;
-+	int			error;
- 
- 	orflags = andflags = 0;
- 	recurse_all = recurse_dir = 0;
-@@ -326,19 +335,30 @@ chattr_f(
- 	if (recurse_all || recurse_dir) {
- 		nftw(name, chattr_callback,
- 			100, FTW_PHYS | FTW_MOUNT | FTW_DEPTH);
--	} else if (xfsctl(name, file->fd, FS_IOC_FSGETXATTR, &attr) < 0) {
-+		return 0;
-+	}
-+
-+	error = stat(name, &st);
-+	if (error)
-+		return error;
-+
-+	error = file_getattr(AT_FDCWD, name, &st, &attr, AT_SYMLINK_NOFOLLOW);
-+	if (error) {
- 		fprintf(stderr, _("%s: cannot get flags on %s: %s\n"),
- 			progname, name, strerror(errno));
- 		exitcode = 1;
--	} else {
--		attr.fsx_xflags |= orflags;
--		attr.fsx_xflags &= ~andflags;
--		if (xfsctl(name, file->fd, FS_IOC_FSSETXATTR, &attr) < 0) {
--			fprintf(stderr, _("%s: cannot set flags on %s: %s\n"),
--				progname, name, strerror(errno));
--			exitcode = 1;
--		}
-+		return 0;
+ 	ret = fchownat(destdir->fd, pbuf->path, i_uid_read(VFS_I(ip)),
+-			i_gid_read(VFS_I(ip)), AT_SYMLINK_NOFOLLOW);
++			i_gid_read(VFS_I(ip)), at_flags);
+ 	if (ret) {
+ 		if (errno == EPERM)
+ 			lost_mask |= LOST_OWNER;
+@@ -181,7 +189,17 @@ rdump_fileattrs_path(
+ 			return 1;
  	}
-+
-+	attr.fa_xflags |= orflags;
-+	attr.fa_xflags &= ~andflags;
-+	error = file_setattr(AT_FDCWD, name, &st, &attr, AT_SYMLINK_NOFOLLOW);
-+	if (error) {
-+		fprintf(stderr, _("%s: cannot set flags on %s: %s\n"),
-+			progname, name, strerror(errno));
-+		exitcode = 1;
+ 
+-	/* Cannot copy fsxattrs until setfsxattrat gets merged */
++	ret = file_setattr(destdir->fd, pbuf->path, NULL, &fa, at_flags);
++	if (ret) {
++		if (errno == EOPNOTSUPP || errno == EPERM || errno == ENOTTY)
++			lost_mask |= LOST_FSXATTR;
++		else
++			dbprintf(_("%s%s%s: file_setattr %s\n"), destdir->path,
++					destdir->sep, pbuf->path,
++					strerror(errno));
++		if (strict_errors)
++			return 1;
 +	}
-+
+ 
  	return 0;
  }
- 
 
 -- 
 2.49.0
