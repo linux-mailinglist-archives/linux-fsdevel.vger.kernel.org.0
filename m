@@ -1,189 +1,240 @@
-Return-Path: <linux-fsdevel+bounces-57101-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57102-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B304B1EB29
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 17:10:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF8A8B1EB5F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 17:15:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FECE178BB6
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 15:10:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB0F63ABB6C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 15:15:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B410528032D;
-	Fri,  8 Aug 2025 15:10:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD408281520;
+	Fri,  8 Aug 2025 15:14:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jSjj2V/9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A8mGyadO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66A8427F73E
-	for <linux-fsdevel@vger.kernel.org>; Fri,  8 Aug 2025 15:10:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5073E28137A
+	for <linux-fsdevel@vger.kernel.org>; Fri,  8 Aug 2025 15:14:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754665825; cv=none; b=Qd6nP7H+NNievZ1jKLNEQpPifW3VGGDKno+AmEMDRl7kLAZZ0szzN0X2XevVoLl7D5Gs4do2tOphtrNeMLDF0XUeFnJ40T9f850kyVc6MQRQ1+ZIYrPWe9kUGJDole4ZQkhflE+9f+zADhOGo83ZFFLD5w9rujQYP93medUy+O4=
+	t=1754666078; cv=none; b=CJme600OOMRIbSol0vqdC8ILSD4sAHL9JfhqrAPf/4Dqa6Z7v5E0AuG3VR/XbEJC0APih4Uzd8FtDtDEsvxFHccXGHvZ83T+VTziYKSLSFSi44Z26IzX3T5kZjYQpUeK6GlHGOk7qTGiozxlWdzJoR0P44ctzfxWYLxlZR3euYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754665825; c=relaxed/simple;
-	bh=umcvyVklicbzq/kBy0WmrsbaWF0kIcR+4L2lO8UDxYY=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=Hd5l2A8gojdACquyS90mZ/06HCl63OnkC7VeA+grihjgmUFbJ48sGLzPp5NG22F4miCxntM2f2muaQ5zsa/SCkSw/HpMfuSR36XT8SGIvNi9HJXs+q1N9mc80Ht3OTLdjSTJfpalj9ToHmkwHz3CIvQlC+h3+7sLXTojnDsF/IY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jSjj2V/9; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754665822;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sb1xY4mkvRwciVCfa3SBcbz2VY+53NejsonXd/nwxL4=;
-	b=jSjj2V/9slbuCnk9cJv3AKoL080j1+excdlRwV2hADCu1wFfyX7SOX7KrVAYTRMCy/FVlb
-	My36Cy44r6K3ooCGw1/z53fMR2+rkyNlK8k4k/Yt1Pyk5xJcIqiWokVeoEH+Xz3jIyl5qy
-	4TVCtGfMtH/ctnbV8QN9K22HoeTPD7g=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-347-0hywt-IUNPy6Fruejruu2w-1; Fri,
- 08 Aug 2025 11:10:18 -0400
-X-MC-Unique: 0hywt-IUNPy6Fruejruu2w-1
-X-Mimecast-MFC-AGG-ID: 0hywt-IUNPy6Fruejruu2w_1754665816
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9FE8F18003FD;
-	Fri,  8 Aug 2025 15:10:15 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.17])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 28773180029B;
-	Fri,  8 Aug 2025 15:10:11 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <zt6f2jl6y5wpiuchryc2vdsmtkiia7s5mligm7helffkanxe3o@2f2ksngn5ekk>
-References: <zt6f2jl6y5wpiuchryc2vdsmtkiia7s5mligm7helffkanxe3o@2f2ksngn5ekk> <20250806203705.2560493-1-dhowells@redhat.com> <20250806203705.2560493-25-dhowells@redhat.com>
-To: Enzo Matsumiya <ematsumiya@suse.de>
-Cc: dhowells@redhat.com, Steve French <sfrench@samba.org>,
-    Paulo Alcantara <pc@manguebit.org>,
-    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-    Wang Zhaolong <wangzhaolong@huaweicloud.com>,
-    Stefan Metzmacher <metze@samba.org>,
-    Mina Almasry <almasrymina@google.com>, linux-cifs@vger.kernel.org,
-    linux-kernel@vger.kernel.org, netfs@lists.linux.dev,
-    linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH 24/31] cifs: Convert SMB2 Negotiate Protocol request
+	s=arc-20240116; t=1754666078; c=relaxed/simple;
+	bh=7r/QLjV9hPRuz+DbdM5NY1WLZu4kyYIt9Thz70vrlAo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mhqBEEtouUEplJcRplyMiayEOFfWEsG+ja58ZE93EIoQWMNQMxrBzV777+IWydQ/3AOS4MXNj+KCeVcptHhakQuxvX/VurKVYknANXsnJLpQGfATUBgYz4XhLn/4ipcs9YS3+muFsw9Byb2l/KMKatmyNNoDedzibmRi9MGf+BQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A8mGyadO; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-af95b919093so345711466b.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Aug 2025 08:14:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754666075; x=1755270875; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZSixpwtVSv3c542cVqNmnRiORegvqseVWcZ0hA0T4OA=;
+        b=A8mGyadOsza4nU1i5QBl1cBRvBJOqzl3jnF7XDVqgd6F9lS57Hdp1OQia/kSBFFLPJ
+         QA14iKsS8bDzAJqdYa2ypPCGyk1nY9EaBMN6XAOJDRKojLC74iL4+zlrRzoTNKqPEl/j
+         LcpJ7xaEOxNQPLJWvGkAjgVV+DdEsTpuY28+Sr8vrh4Mn5wmdtgaLzA8jM68lYU6AwdM
+         cBfSCEo77AaI3BhnTrELEDMUr4GwSYU2hr5BkhQPMkp5Rabmi8nuCaYoRI3Pd+ZxjDPp
+         cf2MVZvamH5DvKykIlCwOQwEOQPSsLqCiEOt57r2uCurfVqulTNZh1fdMzJLBtuntru2
+         pcfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754666075; x=1755270875;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZSixpwtVSv3c542cVqNmnRiORegvqseVWcZ0hA0T4OA=;
+        b=XRACAV9JbV5jkS1YGqKbHczlV4FTQMLju8dUfPj2u5NEl6J63RHfuuQcpNqs7NIb7U
+         AVe8jU5Nqncib7dU1Wk9z8ZTd8DS5RLd2rAzJgcXrIEteCmTrFFkzCFF/HiMByK63qu4
+         zvhl+nvfL26/3V7iPt1x+RMGXtH3mH3qSQCTHPGSdgAgtfn1vojw171BAv0THWSVLuQX
+         dlrXlxe/y0WbOm+0IWgm1w/eH3AJ16s2IiH91omAKTxFHUEtZ5a/FUi/7uApYYWKaYD4
+         ArbE9S4Kx9mwluDvIX+UpRYyM4+dTXlYOs1Jbj9ZOYWprKDT1q4EsGMhZRenVYjXvnE6
+         X82g==
+X-Forwarded-Encrypted: i=1; AJvYcCWpLgl0VejE7gMpT8ihXu4jfh0OLMNQs9zULY7A8HY/XbiKAe5V4OybDlqb5de6bF9vEfaxae2sBb+3+s0F@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdrZFkAPXvvRTvjmE1LLWNBOkywZ71Uhq35QlXMviNIGXim4JY
+	onoArDZxKs7vzyq/OiZtD4Z6DopcIkdIdqJexHCf5O+MIFbjxlWTKc1iKpsLvx1iGj58s1nmQAL
+	Tx4ATUC5svggM3sNx2peEP7XLzOJSogE=
+X-Gm-Gg: ASbGncsOBSr/QNpSw/hxTAJQ6h89ij2rDSgSU8iphh+LOeLu8v/xYbsjILKttRKlh9+
+	VvhUEUEbOO6x0asCubTZv8MG5+IIHF2GOjT74Q6LVLURRxHbX0Uh5pVozabkhobTig1whE7zxab
+	jghA4wEswlJJp3Lx/GKTvm4ulboJ7EOxWg5lis+27unKGUo1AMFNg6RyueH45cnUDC9r/rN0+FT
+	IqGC2A3VRdhnZF6/g==
+X-Google-Smtp-Source: AGHT+IE2SD4xy6SkSds+3CMX1D582W+myOQw3IfAXponVUuGt3yOlZQQts4DKaodMiq1a1wyc6lJTXRFbiz4FSVKUHw=
+X-Received: by 2002:a17:907:25c7:b0:ad2:425c:27ce with SMTP id
+ a640c23a62f3a-af9c640f866mr310030166b.2.1754666074375; Fri, 08 Aug 2025
+ 08:14:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2926139.1754665810.1@warthog.procyon.org.uk>
+References: <20250806220516.953114-1-ibrahimjirdeh@meta.com> <20250806220516.953114-2-ibrahimjirdeh@meta.com>
+In-Reply-To: <20250806220516.953114-2-ibrahimjirdeh@meta.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 8 Aug 2025 17:14:22 +0200
+X-Gm-Features: Ac12FXzZi8GGv4mmjgyeNsrBp1I35tkYJFjo-s_FG1yIBwE6ZlHibtDhzYS-buw
+Message-ID: <CAOQ4uxjOn=pnnxmKZWeTg_eOiAV9Tbc0yc10JxuB2Zf=hkxTxA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] fanotify: create helper for clearing pending events
+To: Ibrahim Jirdeh <ibrahimjirdeh@meta.com>
+Cc: jack@suse.cz, josef@toxicpanda.com, lesha@meta.com, 
+	linux-fsdevel@vger.kernel.org, sargun@meta.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 08 Aug 2025 16:10:10 +0100
-Message-ID: <2926140.1754665810@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Enzo Matsumiya <ematsumiya@suse.de> wrote:
+On Thu, Aug 7, 2025 at 12:06=E2=80=AFAM Ibrahim Jirdeh <ibrahimjirdeh@meta.=
+com> wrote:
+>
+> This adds logic in order to support restarting pending permission
+> events. In terms of implementation, we reinsert events into
+> notification queue so they can be reprocessed on subsequent read
+> ops (an alternative is restarting fsnotify call [1]).
+> Restart will be triggered upon queue fd release.
+>
+> [1] https://lore.kernel.org/linux-fsdevel/2ogjwnem7o3jwukzoq2ywnxha5ljiqn=
+jnr4o4b5xvdvwpbyeac@v4i7jygvk7fj/2-0001-fanotify-Add-support-for-resending-=
+unanswered-permis.patch
+>
+> Suggested-by: Jan Kara <jack@suse.cz>
+> Link: https://lore.kernel.org/linux-fsdevel/sx5g7pmkchjqucfbzi77xh7wx4wua=
+5nteqi5bsa2hfqgxua2a2@v7x6ja3gsirn/
+> Signed-off-by: Ibrahim Jirdeh <ibrahimjirdeh@meta.com>
+> ---
+>  fs/notify/fanotify/fanotify.c      |  4 +--
+>  fs/notify/fanotify/fanotify.h      |  6 ++++
+>  fs/notify/fanotify/fanotify_user.c | 57 ++++++++++++++++++++++++------
+>  3 files changed, 55 insertions(+), 12 deletions(-)
+>
+> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.=
+c
+> index bfe884d624e7..6f5f43a3e6bd 100644
+> --- a/fs/notify/fanotify/fanotify.c
+> +++ b/fs/notify/fanotify/fanotify.c
+> @@ -179,7 +179,7 @@ static bool fanotify_should_merge(struct fanotify_eve=
+nt *old,
+>  #define FANOTIFY_MAX_MERGE_EVENTS 128
+>
+>  /* and the list better be locked by something too! */
+> -static int fanotify_merge(struct fsnotify_group *group,
+> +int fanotify_merge(struct fsnotify_group *group,
+>                           struct fsnotify_event *event)
 
-> On 08/06, David Howells wrote:
-> > ...
-> > -static unsigned int
-> >-build_netname_ctxt(struct smb2_netname_neg_context *pneg_ctxt, char *h=
-ostname)
-> >+static size_t smb2_size_netname_ctxt(struct TCP_Server_Info *server)
-> > {
-> >+	size_t data_len;
-> >+
-> >+#if 0
-> > 	struct nls_table *cp =3D load_nls_default();
-> >+	const char *hostname;
-> >
-> >-	pneg_ctxt->ContextType =3D SMB2_NETNAME_NEGOTIATE_CONTEXT_ID;
-> >+	/* Only include up to first 100 bytes of server name in the NetName
-> >+	 * field.
-> >+	 */
-> >+	cifs_server_lock(pserver);
-> >+	hostname =3D pserver->hostname;
-> >+	if (hostname && hostname[0])
-> >+		data_len =3D cifs_size_strtoUTF16(hostname, 100, cp);
-> >+	cifs_server_unlock(pserver);
-> >+#else
-> >+	/* Now, we can't just measure the length of hostname as, unless we ho=
-ld
-> >+	 * the lock, it may change under us, so allow maximum space for it.
-> >+	 */
-> >+	data_len =3D 400;
-> >+#endif
-> >+	return ALIGN8(sizeof(struct smb2_neg_context) + data_len);
-> >+}
-> =
+fanotify_merge is not for permission events, its irrelevant
 
-> Why was this commented out?  Your comment implies that you can't hold
-> the lock anymore there, but I couldn't find out why (with your patches
-> applied).
+>  {
+>         struct fanotify_event *old, *new =3D FANOTIFY_E(event);
+> @@ -904,7 +904,7 @@ static __kernel_fsid_t fanotify_get_fsid(struct fsnot=
+ify_iter_info *iter_info)
+>  /*
+>   * Add an event to hash table for faster merge.
+>   */
+> -static void fanotify_insert_event(struct fsnotify_group *group,
+> +void fanotify_insert_event(struct fsnotify_group *group,
+>                                   struct fsnotify_event *fsn_event)
 
-The problem is that the hostname may change - and there's a spinlock to
-protect it.  However, now that I'm working out the message size before the
-allocation, I need to find the size of the host name, do the alloc and the=
-n
-copy the hostname in - but I can't hold the spinlock across the alloc, so =
-the
-hostname may change whilst the lock is dropped.
+You should not use fanotify_insert_event callback because it is
+irrelevant for permission events.
 
-The obvious solution is to just allocate the maximum size for it.  It's no=
-t
-that big and this command isn't used all that often.
+>  {
+>         struct fanotify_event *event =3D FANOTIFY_E(fsn_event);
+> diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.=
+h
+> index b78308975082..c0dffbc3370d 100644
+> --- a/fs/notify/fanotify/fanotify.h
+> +++ b/fs/notify/fanotify/fanotify.h
+> @@ -550,3 +550,9 @@ static inline u32 fanotify_get_response_errno(int res=
+)
+>  {
+>         return (res >> FAN_ERRNO_SHIFT) & FAN_ERRNO_MASK;
+>  }
+> +
+> +extern void fanotify_insert_event(struct fsnotify_group *group,
+> +       struct fsnotify_event *fsn_event);
+> +
+> +extern int fanotify_merge(struct fsnotify_group *group,
+> +       struct fsnotify_event *event);
+> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fano=
+tify_user.c
+> index b192ee068a7a..01d273d35936 100644
+> --- a/fs/notify/fanotify/fanotify_user.c
+> +++ b/fs/notify/fanotify/fanotify_user.c
+> @@ -1000,6 +1000,51 @@ static ssize_t fanotify_write(struct file *file, c=
+onst char __user *buf, size_t
+>         return count;
+>  }
+>
+> +static void clear_queue(struct file *file, bool restart_events)
+> +{
+> +       struct fsnotify_group *group =3D file->private_data;
+> +       struct fsnotify_event *fsn_event;
+> +       int insert_ret;
+> +
+> +       /*
+> +        * Clear all pending permission events from the access_list. If
+> +        * restart is requested, move them back into the notification que=
+ue
+> +        * for reprocessing, otherwise simulate a reply from userspace.
+> +        */
+> +       spin_lock(&group->notification_lock);
+> +       while (!list_empty(&group->fanotify_data.access_list)) {
+> +               struct fanotify_perm_event *event;
+> +
+> +               event =3D list_first_entry(&group->fanotify_data.access_l=
+ist,
+> +                                        struct fanotify_perm_event,
+> +                                        fae.fse.list);
+> +               list_del_init(&event->fae.fse.list);
+> +
+> +               if (restart_events) {
+> +                       // requeue the event
+> +                       spin_unlock(&group->notification_lock);
+> +                       fsn_event =3D &event->fae.fse;
+> +
+> +                       insert_ret =3D fsnotify_insert_event(
+> +                               group, fsn_event, fanotify_merge,
+> +                               fanotify_insert_event);
 
-Remember that this is a work in progress, so you may find bits like this w=
-here
-I may need to reconsider what I've chosen.
+1. Restarted events should be inserted to the head of queue
+2. merge and insert callbacks are irrelevant
+3. I don't think we should deal with overflow for restarted events.
+    (possibly, we can count pending events in group->q_len)
 
-> >-static void
-> >-assemble_neg_contexts(struct smb2_negotiate_req *req,
-> >-		      struct TCP_Server_Info *server, unsigned int *total_len)
-> >+static size_t smb2_size_neg_contexts(struct TCP_Server_Info *server,
-> >+				     size_t offset)
-> > {
-> >-	unsigned int ctxt_len, neg_context_count;
-> > 	struct TCP_Server_Info *pserver;
-> >-	char *pneg_ctxt;
-> >-	char *hostname;
-> >-
-> >-	if (*total_len > 200) {
-> >-		/* In case length corrupted don't want to overrun smb buffer */
-> >-		cifs_server_dbg(VFS, "Bad frame length assembling neg contexts\n");
-> >-		return;
-> >-	}
-> >
-> > 	/*
-> > 	 * round up total_len of fixed part of SMB3 negotiate request to 8
-> > 	 * byte boundary before adding negotiate contexts
-> > 	 */
-> >-	*total_len =3D ALIGN8(*total_len);
-> >+	offset =3D ALIGN8(offset);
-> >+	offset +=3D ALIGN8(sizeof(struct smb2_preauth_neg_context));
-> >+	offset +=3D ALIGN8(sizeof(struct smb2_encryption_neg_context));
-> >
-> >-	pneg_ctxt =3D (*total_len) + (char *)req;
-> >-	req->NegotiateContextOffset =3D cpu_to_le32(*total_len);
-> >+	/*
-> >+	 * secondary channels don't have the hostname field populated
-> >+	 * use the hostname field in the primary channel instead
-> >+	 */
-> >+	pserver =3D SERVER_IS_CHAN(server) ? server->primary_server : server;
-> >+	offset +=3D smb2_size_netname_ctxt(pserver);
-> =
+IOW, a dedicated fsnotify_restart_event() is probably in order
 
-> If you're keeping data_len=3D400 above, you could just drop
-> smb2_size_netname_ctxt() altogether and use
-> "ALIGN8(sizeof(struct smb2_neg_context) + 400)" directly here.
+> +                       if (insert_ret) {
+> +                               /*
+> +                                * insertion for permission events can fa=
+il if group itself
+> +                                * is being shutdown. In this case, simpl=
+y reply ALLOW for
+> +                                * the event.
+> +                                */
+> +                               spin_lock(&group->notification_lock);
+> +                               finish_permission_event(group, event, FAN=
+_ALLOW, NULL);
+> +                       }
+> +               } else {
+> +                       finish_permission_event(group, event, FAN_ALLOW, =
+NULL);
+> +               }
+> +               spin_lock(&group->notification_lock);
+> +       }
+> +       spin_unlock(&group->notification_lock);
+> +}
+> +
 
-Yeah.  Probably would make sense to do that with a comment saying why 400.
 
-David
+I find very little value (negative value in fact) in this
+clear-or-restart helper.
+The two cases are almost completely different code paths and the helper
+looks complex and overly nested.
 
+Thanks,
+Amir.
 
