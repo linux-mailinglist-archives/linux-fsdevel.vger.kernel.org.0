@@ -1,58 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-57141-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57142-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16BCEB1EF99
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 22:40:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 90BC0B1EF9D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 22:40:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7883F7AC548
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 20:39:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6FC9C7B3543
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 20:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95535242D8C;
-	Fri,  8 Aug 2025 20:40:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A27525392D;
+	Fri,  8 Aug 2025 20:40:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="rGb9F0ex"
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="hG9Kz/5y"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74AEF2248B3;
-	Fri,  8 Aug 2025 20:40:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 774D5241695;
+	Fri,  8 Aug 2025 20:40:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754685614; cv=none; b=TyzrSIGxrMpb3TsmeXu8IMkDJ5nsszCox4MeNNfYranfs4ZF58gI7KVtvmfDJRmc6nUk272NqdT7XJ2lF8ht/FszWIUiHIBiIKrcn+kHUiQGOMQu1WXj4u7TG4EmcTKhBR0DSDagcjfC0HSf3V0vS+7EFk8Zzjms3kzick/1wnQ=
+	t=1754685620; cv=none; b=t6ux0tx7B2WB4N6OuwwCxFEhOt7dDArNwRnNzAEYwy0xhCOn2rJ5RefX4kMc5PkIMbvNlyAZRpKC+Kj6ujrSKS+oIE5hZN32Mm+LKquNjVZNNqhDHciPszJ06EL0Y+TxhZ1qm4z99yu3t8DETCEb/N2WGfVT4M/w4ul9y7i0bSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754685614; c=relaxed/simple;
-	bh=9x2GIlcD3cYf08YHgjOqsR+ppGR5Qw6j8BsDOjGrJJU=;
+	s=arc-20240116; t=1754685620; c=relaxed/simple;
+	bh=bTGFD2/2bcT9alY7qwJn5EsSznhn0m8yNz6wwuY7Wt0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Xzm7TEwjBvH1B4v3eS+PBWFbHJFe4UxmEmX4sQDn76Oo5N017oUFTJfz7qtKARBjDuB+LqJi0QTNSs8WRpoTY4mMQD0PVknCKG4FHo94cuZkyQfKowhIyRjbpmE+WxUhEB+nz2Dwj65DEIWNIbUPyfs36KqQP5IQvke02l4h6O4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=rGb9F0ex; arc=none smtp.client-ip=80.241.56.161
+	 In-Reply-To:To:Cc; b=pZkrPT8tdvkt9HjuQg+rAALEcvPydbRxYv/OzZ/TOB8XTfrEc5GalZAUbMMuKdv/7pBBIJFK7rtiA8MiDeAUoMVFZCrzrv0JrC5NkM66Kj6iMZVRHzdMcNOHjZJZWLZb7+quNyjWxdWIoaZw0ZI9b+H5Rbn31OCpTFhNRpuKTkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=hG9Kz/5y; arc=none smtp.client-ip=80.241.56.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4bzGB042N4z9t7d;
-	Fri,  8 Aug 2025 22:40:08 +0200 (CEST)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4bzGB66Sppz9sWF;
+	Fri,  8 Aug 2025 22:40:14 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1754685608;
+	t=1754685614;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=1l48VI8o0GNZeOO2k04rV2PeunW2FfL5oSOr2P+jRHY=;
-	b=rGb9F0exbTVvk7CQW80/2LPTRslfMH6YeOohp6+2RaD9tVa0OvEsHm9zBeq31A7FDRQqvM
-	Txb5w5k2qfX8YLAnwCgFmOT8NOiORcQM5FWKxiNxInRQGBYaIEbCJ6pqOGLMlkIfXGDfcz
-	iMyoehpVC2OGfhzMYTZTOJzdY1BTdFrwpuwnwSIrIf9rx/phGC51wyiYYOk8veX5n1nCmu
-	fyok+DIrG+C88hzHWmU2onYOWNP+5eJ3UmLqx0vx5IQK4N7Kju4pCZRpMUrahyst4JBB6w
-	XG53mhpbs3Ajc5BUXAGpXn0+F4wF9LnaIHf6nRV2yppm7qOpE6YeJRgq3OZf2w==
+	bh=MqFHaT9eot7e8JTZuFttQxIxVA/lkTUjjI9C+5YSP+k=;
+	b=hG9Kz/5ygwPKYDnVKf+jdnrbsGhcgaywYwRqx2PXl6XrSYnJMJuH8E6qHeOdtEeczqDNJN
+	4CfmBFMSQdhmHgdHCn69Bx68YMPb3KsckodqL4WgBRHif6YYwCoRJxp7oS4qqjzTWeu1MA
+	gQrYkmv7o2O8deUzmrpdHoaArRSjXgXrqM+OUTEpv9tjxcU7ADR0sfRIHa7tslBoOYkxPz
+	dbEOA4ey/HfGigOIdUCs8vIfLit7EmOsgfP4QhQ13VQObuTtNapWs5xQkG4WMQ3mtR+zqE
+	+A/QuIlFKXuJ/kQL6lGER17NTxnnUyw3S9Jy/K/TbBCCSniUgR9in7WBrzXejA==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::1 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
 From: Aleksa Sarai <cyphar@cyphar.com>
-Date: Sat, 09 Aug 2025 06:39:45 +1000
-Subject: [PATCH v3 01/12] man/man2/statx.2: correctly document
- AT_NO_AUTOMOUNT
+Date: Sat, 09 Aug 2025 06:39:46 +1000
+Subject: [PATCH v3 02/12] man/man2/mount_setattr.2: fix stray quote in
+ SYNOPSIS
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,7 +64,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250809-new-mount-api-v3-1-f61405c80f34@cyphar.com>
+Message-Id: <20250809-new-mount-api-v3-2-f61405c80f34@cyphar.com>
 References: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com>
 In-Reply-To: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com>
 To: Alejandro Colomar <alx@kernel.org>
@@ -73,41 +76,35 @@ Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>,
  linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
  David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>, 
  Aleksa Sarai <cyphar@cyphar.com>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1020; i=cyphar@cyphar.com;
- h=from:subject:message-id; bh=9x2GIlcD3cYf08YHgjOqsR+ppGR5Qw6j8BsDOjGrJJU=;
- b=owGbwMvMwCWmMf3Xpe0vXfIZT6slMWRMS5jmyKdgM+eU7FyvzAtdvKXP9mffzNnMK/R3ecvC3
- zsrjaQ9OkpZGMS4GGTFFFm2+XmGbpq/+Eryp5VsMHNYmUCGMHBxCsBEzgczMqzXkuEvdmq+bHl3
- bU3wXNP9PnL2ctOu/t5hMuMAf4F7qzbDP4vwL98yym5klVU+05rbs8SxX/bcu7PnnGsyHxSd6tK
- ZxAUA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=798; i=cyphar@cyphar.com;
+ h=from:subject:message-id; bh=bTGFD2/2bcT9alY7qwJn5EsSznhn0m8yNz6wwuY7Wt0=;
+ b=owGbwMvMwCWmMf3Xpe0vXfIZT6slMWRMS5i2QizWLzXVQSOs/lRsoG4ou/C3B1qnOw0yJ81ON
+ 5x1R6Kgo5SFQYyLQVZMkWWbn2fopvmLryR/WskGM4eVCWQIAxenAEzEQpeRYelz0Z6F235WcOic
+ 3v89y0bzSXfqR/03ZXNF1ryw7XYt72b4yfhr6bZz8YFLOZ74F994I3FE9v/7AkHlA43H3DZVGlb
+ fYAcA
 X-Developer-Key: i=cyphar@cyphar.com; a=openpgp;
  fpr=C9C370B246B09F6DBCFC744C34401015D1D2D386
+X-Rspamd-Queue-Id: 4bzGB66Sppz9sWF
 
-AT_NO_AUTOMOUNT un-sets FOLLOW_AUTOMOUNT, which blocks the automounting
-of all automount points encountered during lookup, not just the terminal
-component.
-
+Fixes: eb0f8239bc35 ("man/man2/mount_setattr.2: Document glibc >= 2.36 syscall wrappers")
 Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
 ---
- man/man2/statx.2 | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ man/man2/mount_setattr.2 | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/man/man2/statx.2 b/man/man2/statx.2
-index 07ac60b3c5d61d919fa790fe2d5c2ba33a771f75..0b4175e994f42c7aab6b0bfd50739971d4d55a4f 100644
---- a/man/man2/statx.2
-+++ b/man/man2/statx.2
-@@ -184,9 +184,9 @@ .SS Invoking statx():
- the call operates on the current working directory.
- .TP
- .B AT_NO_AUTOMOUNT
--Don't automount the terminal ("basename") component of
--.I path
--if it is a directory that is an automount point.
-+Don't automount any automount points encountered
-+while resolving
-+.IR path .
- This allows the caller to gather attributes of an automount point
- (rather than the location it would mount).
- This flag has no effect if the mount point has already been mounted over.
+diff --git a/man/man2/mount_setattr.2 b/man/man2/mount_setattr.2
+index c96f0657f0468fc4d2bc0132e08d1328570073b1..e1a975dcc8e2b263f68d18dc0492e8ecc518459e 100644
+--- a/man/man2/mount_setattr.2
++++ b/man/man2/mount_setattr.2
+@@ -14,7 +14,7 @@ .SH SYNOPSIS
+ .B #include <sys/mount.h>
+ .P
+ .BI "int mount_setattr(int " dirfd ", const char *" path ", unsigned int " flags ","
+-.BI "                  struct mount_attr *" attr ", size_t " size );"
++.BI "                  struct mount_attr *" attr ", size_t " size ");"
+ .fi
+ .SH DESCRIPTION
+ The
 
 -- 
 2.50.1
