@@ -1,159 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-57059-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57060-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D544AB1E7C1
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 13:52:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A48CB1E7C8
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 13:55:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10470587999
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 11:52:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 210E33AA289
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 11:55:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DE69275878;
-	Fri,  8 Aug 2025 11:52:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2FC0275AE9;
+	Fri,  8 Aug 2025 11:55:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uDdmB93f"
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="egIcImIJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B49223DD9;
-	Fri,  8 Aug 2025 11:52:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02112275860;
+	Fri,  8 Aug 2025 11:55:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754653943; cv=none; b=BeuX/Y2a6IhFwwJBH1ZjPAd4D7qiRHSnUycBtThvhli0Ewh/VBtzzYVTLeYG0NSd9O9BzTGBG0cfVzqLO/XpsUEPU8eKKsv6/67iMq9el90GooVCfNxlB457v9xQbGawLP1ju/wDVq42wp+5hSw/kjTXwpj6bxWsBi3g23dtgFM=
+	t=1754654131; cv=none; b=NR12LLfQ7W5mhMkLdC8TWTkkSCzUWISLngaamSiW8EWtMWe92FUzNhGnPv1/QnspPTaYJuqsuwfGbwiBSmUktnoXOkZjnlO57vXxZjpZJsRJqs51jg0zv+TzDjR20LHiF4uXNqJfnuj4Fpy9VOqSiDrjhNLnS7dr+m3q1d/gGlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754653943; c=relaxed/simple;
-	bh=xSEzUb8y2xqXpVXNL7u1aJemA6z6EHDR87sROVoHVGk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=d4fwT2VtCxOR+eOqLCN41UkH9vXaeZvsNbZUeG4RNJoKtJuhGFXesmdyoVd+/F2ouwRMEn9gKWPSqCECULNmwu2H5/travcukERFRTMEns6Tvk5SPclWLGPibKJJd02QpF8e1hymX7eQztlPTxZLt0fNCNspnVzFwGSVRXaYVKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uDdmB93f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0977FC4CEF1;
-	Fri,  8 Aug 2025 11:52:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754653943;
-	bh=xSEzUb8y2xqXpVXNL7u1aJemA6z6EHDR87sROVoHVGk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=uDdmB93f9xXYQw7pkccVTAZrASxgjPMDhOD4dK5a+xhpb/pMvvaduoXy2UTuDD4PR
-	 bXX5SxJeAHbarWlsYjOOfSdbQsa2Kg4b0aEtjXzZJNmW2ocmkCY33jH3ChlAGzHSSu
-	 U/cwCh0SZq0ZwcXNcEV5xM4/tMPsJRedE7liIKTRhR/8w4H2s7U0ZiG8y/hSAnn4W2
-	 wAFDEllgM2zeloAVeBdqRvUewuE/hXeMPpG7vhtP0DsUJ+1d8jB4ago0TZ7Q/GJp2u
-	 QgK18psr/pv4vsQbytQEYh4lAbzARwwolw9f5yGC6h89p1AtmQ0dGtKbWQb2WXd097
-	 +/moD7XmsFvkg==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Pratyush Yadav <pratyush@kernel.org>
-Cc: Pasha Tatashin <pasha.tatashin@soleen.com>,  jasonmiu@google.com,
-  graf@amazon.com,  changyuanl@google.com,  rppt@kernel.org,
-  dmatlack@google.com,  rientjes@google.com,  corbet@lwn.net,
-  rdunlap@infradead.org,  ilpo.jarvinen@linux.intel.com,
-  kanie@linux.alibaba.com,  ojeda@kernel.org,  aliceryhl@google.com,
-  masahiroy@kernel.org,  akpm@linux-foundation.org,  tj@kernel.org,
-  yoann.congal@smile.fr,  mmaurer@google.com,  roman.gushchin@linux.dev,
-  chenridong@huawei.com,  axboe@kernel.dk,  mark.rutland@arm.com,
-  jannh@google.com,  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
-  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
-  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
-  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
-  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
-  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
-  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
-  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
-  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
-  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
-  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
-  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
-  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
-  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
-  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
-  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  saeedm@nvidia.com,  ajayachandra@nvidia.com,  jgg@nvidia.com,
-  parav@nvidia.com,  leonro@nvidia.com,  witu@nvidia.com
-Subject: Re: [PATCH v3 01/30] kho: init new_physxa->phys_bits to fix lockdep
-In-Reply-To: <mafs0o6sqavkx.fsf@kernel.org>
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
-	<20250807014442.3829950-2-pasha.tatashin@soleen.com>
-	<mafs0o6sqavkx.fsf@kernel.org>
-Date: Fri, 08 Aug 2025 13:52:12 +0200
-Message-ID: <mafs0bjoqav4j.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1754654131; c=relaxed/simple;
+	bh=j1iFPkLEAmTkGhtA+v5oK2zN/6c1oShcayNSSJekln0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FlNbkbCD84XxHVsqmB0MQtPgRxPIwkO1qFH0pgakax0ZMUsHIk1+GRFm+Wr77ZO4NrHAINQr+r0QFcll5mOMoVmeoGduepctgUNmc98pEXKQqITZWXiOpaFQZQKr1+mrDraRE3O1j5HfdbNDeMOEllXECZWnksz1ZBa3qSA5Qyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=egIcImIJ; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4bz2XX66QLz9ty9;
+	Fri,  8 Aug 2025 13:55:24 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1754654124;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TMaM5szYKN3qFWMkEpTqrXdlKuBnXydRA4YHiDHA/9Q=;
+	b=egIcImIJjKF7/IfjOV0R1Nw4dd7l5dZO1qMvAspQR0V4HF/5Isr61tUJ0yzQQwy8jp0Sem
+	XcLHtaKMhT2hZxQvA3O3OjKmIlZbUKGaV47ZTAX1KtHTdY6ZVwO0a2MV+bZeiGSU1Uo1en
+	FLkB0T02ycjhAoVdf3fqRNaOB+5R9U1/oGeyalxIkoofAMNxpStcQmZkqiLUOkTPtA70n/
+	bCWvD7GLfLrOjrhXofvM5q+IfXDemykIcYiV6Z9bRJ0KrRo/Q/lVju/xwSDAi7syNi1Lpm
+	uWvAjP8/iX9Ze9ewpTYa9thJvNRlXidkOdEjJrqQeoMPzltneFwG/Zy2MmHk0Q==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::1 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
+Date: Fri, 8 Aug 2025 21:55:10 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Askar Safin <safinaskar@zohomail.com>
+Cc: Alejandro Colomar <alx@kernel.org>, 
+	"Michael T. Kerrisk" <mtk.manpages@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, "G. Branden Robinson" <g.branden.robinson@gmail.com>, 
+	linux-man <linux-man@vger.kernel.org>, linux-api <linux-api@vger.kernel.org>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, 
+	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v2 01/11] mount_setattr.2: document glibc >= 2.36 syscall
+ wrappers
+Message-ID: <2025-08-08.1754653930-iffy-pickled-agencies-mother-K0e7Hn@cyphar.com>
+References: <20250807-new-mount-api-v2-0-558a27b8068c@cyphar.com>
+ <20250807-new-mount-api-v2-1-558a27b8068c@cyphar.com>
+ <19888fe1066.fcb132d640137.7051727418921685299@zohomail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="chd6azrmxxoywhso"
+Content-Disposition: inline
+In-Reply-To: <19888fe1066.fcb132d640137.7051727418921685299@zohomail.com>
+X-Rspamd-Queue-Id: 4bz2XX66QLz9ty9
 
-On Fri, Aug 08 2025, Pratyush Yadav wrote:
-[...]
->> @@ -144,14 +144,35 @@ static int __kho_preserve_order(struct kho_mem_track *track, unsigned long pfn,
->>  				unsigned int order)
->>  {
->>  	struct kho_mem_phys_bits *bits;
->> -	struct kho_mem_phys *physxa;
->> +	struct kho_mem_phys *physxa, *new_physxa;
->>  	const unsigned long pfn_high = pfn >> order;
->>  
->>  	might_sleep();
->>  
->> -	physxa = xa_load_or_alloc(&track->orders, order, sizeof(*physxa));
->> -	if (IS_ERR(physxa))
->> -		return PTR_ERR(physxa);
->> +	physxa = xa_load(&track->orders, order);
->> +	if (!physxa) {
->> +		new_physxa = kzalloc(sizeof(*physxa), GFP_KERNEL);
->> +		if (!new_physxa)
->> +			return -ENOMEM;
->> +
->> +		xa_init(&new_physxa->phys_bits);
->> +		physxa = xa_cmpxchg(&track->orders, order, NULL, new_physxa,
->> +				    GFP_KERNEL);
->> +		if (xa_is_err(physxa)) {
->> +			int err = xa_err(physxa);
->> +
->> +			xa_destroy(&new_physxa->phys_bits);
->> +			kfree(new_physxa);
->> +
->> +			return err;
->> +		}
->> +		if (physxa) {
->> +			xa_destroy(&new_physxa->phys_bits);
->> +			kfree(new_physxa);
->> +		} else {
->> +			physxa = new_physxa;
->> +		}
->
-> I suppose this could be simplified a bit to:
->
-> 	err = xa_err(physxa);
->         if (err || physxa) {
->         	xa_destroy(&new_physxa->phys_bits);
->                 kfree(new_physxa);
->
-> 		if (err)
->                 	return err;
-> 	} else {
->         	physxa = new_physxa;
-> 	}
 
-My email client completely messed the whitespace up so this is a bit
-unreadable. Here is what I meant:
+--chd6azrmxxoywhso
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 01/11] mount_setattr.2: document glibc >= 2.36 syscall
+ wrappers
+MIME-Version: 1.0
 
-	err = xa_err(physxa);
-	if (err || physxa) {
-		xa_destroy(&new_physxa->phys_bits);
-		kfree(new_physxa);
+On 2025-08-08, Askar Safin <safinaskar@zohomail.com> wrote:
+> When I render "mount_setattr" from this (v2) pathset, I see weird quote m=
+ark. I. e.:
+>=20
+> $ MANWIDTH=3D10000 man /path/to/mount_setattr.2
+> ...
+> SYNOPSIS
+>        #include <fcntl.h>       /* Definition of AT_* constants */
+>        #include <sys/mount.h>
+>=20
+>        int mount_setattr(int dirfd, const char *path, unsigned int flags,
+>                          struct mount_attr *attr, size_t size);"
+> ...
 
-		if (err)
-			return err;
-	} else {
-		physxa = new_physxa;
-	}
+Ah, my bad. "make -R lint-man" told me to put end quotes on the synopsis
+lines, but I missed that there was a separate quote missing. This should
+fix it:
 
-[...]
+diff --git a/man/man2/mount_setattr.2 b/man/man2/mount_setattr.2
+index d44fafc93a20..46fcba927dd8 100644
+--- a/man/man2/mount_setattr.2
++++ b/man/man2/mount_setattr.2
+@@ -14,7 +14,7 @@ .SH SYNOPSIS
+ .B #include <sys/mount.h>
+ .P
+ .BI "int mount_setattr(int " dirfd ", const char *" path ", unsigned int "=
+ flags ","
+-.BI "                  struct mount_attr *" attr ", size_t " size );"
++.BI "                  struct mount_attr *" attr ", size_t " size ");"
+ .fi
+ .SH DESCRIPTION
+ The
 
--- 
-Regards,
-Pratyush Yadav
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+https://www.cyphar.com/
+
+--chd6azrmxxoywhso
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaJXlngAKCRAol/rSt+lE
+by9BAP4yMGtidqOpBrcBgGWWVVVChQPXqEuLZJoUx48cMFfZXAD/dlNXX2+IP0ZE
++obDnRBcywlV9Y55z6X1Gbrq5Kvm/wE=
+=qGsv
+-----END PGP SIGNATURE-----
+
+--chd6azrmxxoywhso--
 
