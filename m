@@ -1,352 +1,201 @@
-Return-Path: <linux-fsdevel+bounces-57118-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57119-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5A59B1EDF2
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 19:42:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29A0FB1EE06
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 19:46:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4C1B1C27C8A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 17:43:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4D513BAE93
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 17:46:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852E1288517;
-	Fri,  8 Aug 2025 17:41:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11DA31DE4EC;
+	Fri,  8 Aug 2025 17:46:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pdR31kP5"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hnTsNRSV";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QisqGGgW";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hnTsNRSV";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QisqGGgW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB7AB1F3FC8;
-	Fri,  8 Aug 2025 17:41:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9942E199385
+	for <linux-fsdevel@vger.kernel.org>; Fri,  8 Aug 2025 17:46:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754674909; cv=none; b=mcdcIm0fAZOJm61OhJ4xUFsWfYwNDhT66knfFN4rxsU6oe5K2Rd6U7tnI4UfdCQgzj6CyYZRZqIG7TFv4XqJkEhsCkFv85ruM2gedC6xFgQB8xUhgsETMIRO8ahZORgmb2TBOaSfoNDAZ9eSeWhE2nnlEx8i8SbCayA51NaimLY=
+	t=1754675168; cv=none; b=cWQcmW6rXrukLlNlxU96ntir2qekst9/3L9WUk78ktb1TbXBW7ivm7Bx9XHbrRfZHxFuES9qjn/PFHZ0LvNg2SUz7mfxkgZ5TUnd/ZTYd31zNyr6TMUIjFjjJp9YStDhD2PVd6d/aYp+OMFFDM95F11ba560FVvm3WiVZxqWAUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754674909; c=relaxed/simple;
-	bh=7KZi11aOcWzah1MMGc2QhuWnuga7pRdJlsHIWcTdCls=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Iwt5UlO0WT8fe4N57v7mODaDPjxL6D3uUoYbA1e9aMVnkstWAaUxoEXsZel9rQU9Qlv1VxFCNRB69sC+P2G+ElXuDfxrfD7HgWsX51a0okVxhFIr5PELub/1X2E5oIiI4bJZwe0YBHU3j6go6YVv1K+SyWDK5rqCf+uJ7WvlqMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pdR31kP5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DFDFC4CEF0;
-	Fri,  8 Aug 2025 17:41:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754674909;
-	bh=7KZi11aOcWzah1MMGc2QhuWnuga7pRdJlsHIWcTdCls=;
-	h=From:To:Cc:Subject:Date:From;
-	b=pdR31kP5xLcFhX0sGDC4pSFPyGm1hcosbtCYCO+pOl1R5q5nrEkf51LYZtJA01Vym
-	 2q6m7qvzhq1MTRmMrpRCQYJ8ZrtkoGPRbXyrJfAl6EugkOthUSIF7+ceYHSNvsMC/V
-	 UY1LcJlRmZKwN4AnNIdoQg/TuXaJJv5zlxE+Ty+L3l0pMVSe9No0oWndGW5uYAkvLz
-	 flWFpHMHTL/wPJ9n/F0/RBFU5S/rz/bYA0Ol3xkCwVFwzedNSGiyITDay/bViE5nHL
-	 2qEPRvlAWyyXA0rc5guhWVJcuPpCfpcf0ETECAZgz/hClxKBdbTq32+zAfIG1pbzmF
-	 QQCZuSJMUa2Sw==
-From: Sasha Levin <sashal@kernel.org>
-To: patches@lists.linux.dev,
-	stable@vger.kernel.org
-Cc: Yuezhang Mo <Yuezhang.Mo@sony.com>,
-	Namjae Jeon <linkinjeon@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	sj1557.seo@samsung.com,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.16-6.6] exfat: add cluster chain loop check for dir
-Date: Fri,  8 Aug 2025 13:41:41 -0400
-Message-Id: <20250808174146.1272242-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1754675168; c=relaxed/simple;
+	bh=iGutLKLgFUfnDYSezu1T9enbcXs8bRsISAfNtknSfw4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i5DdbvrCNNWLcdCMwRkoJLAwqQYWIK4FXvPChQcZ8QUss7rU/Hz5ZnMAKJYf8tLOE83QF9aZPqG/RGYM4bPB1N2a8aCZOGSmJ2WpL4iAJpMeYSOQKcgqczT42rlabNc8bfGOnb1xIRzVFQnWxjaj0b3OYY41ql0Fd8pyysukTII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hnTsNRSV; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QisqGGgW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hnTsNRSV; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QisqGGgW; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 3427433E3F;
+	Fri,  8 Aug 2025 17:46:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1754675163; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=OgUmwY6RCC9p9/dfYsN5D7uMh1db1LsUhnXQ6lTp2CU=;
+	b=hnTsNRSVcXZvncuMw3nnw3vQDVI1iiWEAHLrfxWgbwFzht9b+UyUTUYYy/aNFqBcXY4CUT
+	nbIZqT+2hRwWPzxv67SfrKgnuvM6erLL7LbqDtgg4hXLicK3kl/GuKMW6FZaqCmX6an7mc
+	UsSjNdn48T5GOfWzuuoH75CNj62gJHU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1754675163;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=OgUmwY6RCC9p9/dfYsN5D7uMh1db1LsUhnXQ6lTp2CU=;
+	b=QisqGGgWGb0XheLsmWyq31VQkNt7/VLiJP9Kc/6q7GiK1lg5QFvTGDBPmuzglkgYPiHmnV
+	n37q4/fG28qVkmBg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1754675163; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=OgUmwY6RCC9p9/dfYsN5D7uMh1db1LsUhnXQ6lTp2CU=;
+	b=hnTsNRSVcXZvncuMw3nnw3vQDVI1iiWEAHLrfxWgbwFzht9b+UyUTUYYy/aNFqBcXY4CUT
+	nbIZqT+2hRwWPzxv67SfrKgnuvM6erLL7LbqDtgg4hXLicK3kl/GuKMW6FZaqCmX6an7mc
+	UsSjNdn48T5GOfWzuuoH75CNj62gJHU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1754675163;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=OgUmwY6RCC9p9/dfYsN5D7uMh1db1LsUhnXQ6lTp2CU=;
+	b=QisqGGgWGb0XheLsmWyq31VQkNt7/VLiJP9Kc/6q7GiK1lg5QFvTGDBPmuzglkgYPiHmnV
+	n37q4/fG28qVkmBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EF51F1392A;
+	Fri,  8 Aug 2025 17:46:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 6GkKOto3lmjUaAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Fri, 08 Aug 2025 17:46:02 +0000
+Message-ID: <2a53f01c-db74-4298-bb9e-36b770e4fcd0@suse.cz>
+Date: Fri, 8 Aug 2025 19:46:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.16
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/3] fs/proc/task_mmu: execute PROCMAP_QUERY ioctl
+ under per-vma locks
+Content-Language: en-US
+To: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
+Cc: Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, david@redhat.com,
+ peterx@redhat.com, jannh@google.com, hannes@cmpxchg.org, mhocko@kernel.org,
+ paulmck@kernel.org, shuah@kernel.org, adobriyan@gmail.com,
+ brauner@kernel.org, josef@toxicpanda.com, yebin10@huawei.com,
+ linux@weissschuh.net, willy@infradead.org, osalvador@suse.de,
+ andrii@kernel.org, ryan.roberts@arm.com, christophe.leroy@csgroup.eu,
+ tjmercier@google.com, kaleshsingh@google.com, aha310510@gmail.com,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+ SeongJae Park <sj@kernel.org>
+References: <20250808152850.2580887-1-surenb@google.com>
+ <20250808152850.2580887-4-surenb@google.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <20250808152850.2580887-4-surenb@google.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[29];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[oracle.com,redhat.com,google.com,cmpxchg.org,kernel.org,gmail.com,toxicpanda.com,huawei.com,weissschuh.net,infradead.org,suse.de,arm.com,csgroup.eu,vger.kernel.org,kvack.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.cz:mid];
+	R_RATELIMIT(0.00)[to_ip_from(RLqwhhqik4qyk5i1fk54co8f1o)]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
-From: Yuezhang Mo <Yuezhang.Mo@sony.com>
+On 8/8/25 17:28, Suren Baghdasaryan wrote:
+> Utilize per-vma locks to stabilize vma after lookup without taking
+> mmap_lock during PROCMAP_QUERY ioctl execution. If vma lock is
+> contended, we fall back to mmap_lock but take it only momentarily
+> to lock the vma and release the mmap_lock. In a very unlikely case
+> of vm_refcnt overflow, this fall back path will fail and ioctl is
+> done under mmap_lock protection.
+> 
+> This change is designed to reduce mmap_lock contention and prevent
+> PROCMAP_QUERY ioctl calls from blocking address space updates.
+> 
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> Acked-by: SeongJae Park <sj@kernel.org>
 
-[ Upstream commit 99f9a97dce39ad413c39b92c90393bbd6778f3fd ]
-
-An infinite loop may occur if the following conditions occur due to
-file system corruption.
-
-(1) Condition for exfat_count_dir_entries() to loop infinitely.
-    - The cluster chain includes a loop.
-    - There is no UNUSED entry in the cluster chain.
-
-(2) Condition for exfat_create_upcase_table() to loop infinitely.
-    - The cluster chain of the root directory includes a loop.
-    - There are no UNUSED entry and up-case table entry in the cluster
-      chain of the root directory.
-
-(3) Condition for exfat_load_bitmap() to loop infinitely.
-    - The cluster chain of the root directory includes a loop.
-    - There are no UNUSED entry and bitmap entry in the cluster chain
-      of the root directory.
-
-(4) Condition for exfat_find_dir_entry() to loop infinitely.
-    - The cluster chain includes a loop.
-    - The unused directory entries were exhausted by some operation.
-
-(5) Condition for exfat_check_dir_empty() to loop infinitely.
-    - The cluster chain includes a loop.
-    - The unused directory entries were exhausted by some operation.
-    - All files and sub-directories under the directory are deleted.
-
-This commit adds checks to break the above infinite loop.
-
-Signed-off-by: Yuezhang Mo <Yuezhang.Mo@sony.com>
-Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
-
-LLM Generated explanations, may be completely bogus:
-
-**YES**
-
-This commit should be backported to stable kernel trees for the
-following critical reasons:
-
-## Security Impact - Prevents Multiple Infinite Loop Vulnerabilities
-
-The commit fixes **five distinct infinite loop conditions** that can
-occur due to filesystem corruption, each representing a potential
-denial-of-service vulnerability:
-
-1. **exfat_count_dir_entries()** - Adds loop detection using
-   `sbi->used_clusters` as a bound
-2. **exfat_create_upcase_table()** - Addressed through root directory
-   chain validation
-3. **exfat_load_bitmap()** - Addressed through root directory chain
-   validation
-4. **exfat_find_dir_entry()** - Adds loop detection using
-   `EXFAT_DATA_CLUSTER_COUNT(sbi)`
-5. **exfat_check_dir_empty()** - Adds loop detection using
-   `EXFAT_DATA_CLUSTER_COUNT(sbi)`
-
-## Critical Bug Fix Characteristics
-
-1. **Fixes Real Security Issues**: The infinite loops can cause system
-   hangs and DoS conditions when mounting corrupted/malicious exFAT
-   filesystems
-2. **Small, Contained Changes**: The fix adds simple counter checks (4-5
-   lines per location) without architectural changes
-3. **Clear Root Cause**: Addresses missing validation of cluster chain
-   loops in directory traversal
-4. **Pattern of Similar Fixes**: This follows three previous infinite
-   loop fixes in the same subsystem (commits b0522303f672, a5324b3a488d,
-   fee873761bd9), all of which fix similar issues dating back to the
-   original exfat implementation
-
-## Code Analysis Shows Low Risk
-
-The changes are minimal and safe:
-- Adds `unsigned int clu_count = 0` declarations
-- Increments counter when following cluster chains
-- Breaks traversal if counter exceeds valid cluster count
-- In `exfat_count_num_clusters()`: adds explicit loop detection with
-  error message
-
-## Follows Stable Kernel Rules
-
-✓ Fixes critical bugs (infinite loops/DoS)
-✓ Minimal code changes (~50 lines total)
-✓ No new features or API changes
-✓ Similar fixes already backported (the three previous infinite loop
-fixes)
-✓ Clear error conditions with proper error returns (-EIO)
-
-The commit message explicitly states these are corruption-triggered
-infinite loops, and the pattern matches previous fixes that have
-"Fixes:" tags pointing to the original exfat implementation. This is a
-critical reliability and security fix that prevents system hangs when
-handling corrupted exFAT filesystems.
-
- fs/exfat/dir.c    | 12 ++++++++++++
- fs/exfat/fatent.c | 10 ++++++++++
- fs/exfat/namei.c  |  5 +++++
- fs/exfat/super.c  | 32 +++++++++++++++++++++-----------
- 4 files changed, 48 insertions(+), 11 deletions(-)
-
-diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c
-index 3103b932b674..ee060e26f51d 100644
---- a/fs/exfat/dir.c
-+++ b/fs/exfat/dir.c
-@@ -996,6 +996,7 @@ int exfat_find_dir_entry(struct super_block *sb, struct exfat_inode_info *ei,
- 	struct exfat_hint_femp candi_empty;
- 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
- 	int num_entries = exfat_calc_num_entries(p_uniname);
-+	unsigned int clu_count = 0;
- 
- 	if (num_entries < 0)
- 		return num_entries;
-@@ -1133,6 +1134,10 @@ int exfat_find_dir_entry(struct super_block *sb, struct exfat_inode_info *ei,
- 		} else {
- 			if (exfat_get_next_cluster(sb, &clu.dir))
- 				return -EIO;
-+
-+			/* break if the cluster chain includes a loop */
-+			if (unlikely(++clu_count > EXFAT_DATA_CLUSTER_COUNT(sbi)))
-+				goto not_found;
- 		}
- 	}
- 
-@@ -1195,6 +1200,7 @@ int exfat_count_dir_entries(struct super_block *sb, struct exfat_chain *p_dir)
- 	int i, count = 0;
- 	int dentries_per_clu;
- 	unsigned int entry_type;
-+	unsigned int clu_count = 0;
- 	struct exfat_chain clu;
- 	struct exfat_dentry *ep;
- 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-@@ -1227,6 +1233,12 @@ int exfat_count_dir_entries(struct super_block *sb, struct exfat_chain *p_dir)
- 		} else {
- 			if (exfat_get_next_cluster(sb, &(clu.dir)))
- 				return -EIO;
-+
-+			if (unlikely(++clu_count > sbi->used_clusters)) {
-+				exfat_fs_error(sb, "FAT or bitmap is corrupted");
-+				return -EIO;
-+			}
-+
- 		}
- 	}
- 
-diff --git a/fs/exfat/fatent.c b/fs/exfat/fatent.c
-index 23065f948ae7..232cc7f8ab92 100644
---- a/fs/exfat/fatent.c
-+++ b/fs/exfat/fatent.c
-@@ -490,5 +490,15 @@ int exfat_count_num_clusters(struct super_block *sb,
- 	}
- 
- 	*ret_count = count;
-+
-+	/*
-+	 * since exfat_count_used_clusters() is not called, sbi->used_clusters
-+	 * cannot be used here.
-+	 */
-+	if (unlikely(i == sbi->num_clusters && clu != EXFAT_EOF_CLUSTER)) {
-+		exfat_fs_error(sb, "The cluster chain has a loop");
-+		return -EIO;
-+	}
-+
- 	return 0;
- }
-diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
-index fede0283d6e2..f5f1c4e8a29f 100644
---- a/fs/exfat/namei.c
-+++ b/fs/exfat/namei.c
-@@ -890,6 +890,7 @@ static int exfat_check_dir_empty(struct super_block *sb,
- {
- 	int i, dentries_per_clu;
- 	unsigned int type;
-+	unsigned int clu_count = 0;
- 	struct exfat_chain clu;
- 	struct exfat_dentry *ep;
- 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-@@ -926,6 +927,10 @@ static int exfat_check_dir_empty(struct super_block *sb,
- 		} else {
- 			if (exfat_get_next_cluster(sb, &(clu.dir)))
- 				return -EIO;
-+
-+			/* break if the cluster chain includes a loop */
-+			if (unlikely(++clu_count > EXFAT_DATA_CLUSTER_COUNT(sbi)))
-+				break;
- 		}
- 	}
- 
-diff --git a/fs/exfat/super.c b/fs/exfat/super.c
-index 7ed858937d45..3a9ec75ab452 100644
---- a/fs/exfat/super.c
-+++ b/fs/exfat/super.c
-@@ -341,13 +341,12 @@ static void exfat_hash_init(struct super_block *sb)
- 		INIT_HLIST_HEAD(&sbi->inode_hashtable[i]);
- }
- 
--static int exfat_read_root(struct inode *inode)
-+static int exfat_read_root(struct inode *inode, struct exfat_chain *root_clu)
- {
- 	struct super_block *sb = inode->i_sb;
- 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
- 	struct exfat_inode_info *ei = EXFAT_I(inode);
--	struct exfat_chain cdir;
--	int num_subdirs, num_clu = 0;
-+	int num_subdirs;
- 
- 	exfat_chain_set(&ei->dir, sbi->root_dir, 0, ALLOC_FAT_CHAIN);
- 	ei->entry = -1;
-@@ -360,12 +359,9 @@ static int exfat_read_root(struct inode *inode)
- 	ei->hint_stat.clu = sbi->root_dir;
- 	ei->hint_femp.eidx = EXFAT_HINT_NONE;
- 
--	exfat_chain_set(&cdir, sbi->root_dir, 0, ALLOC_FAT_CHAIN);
--	if (exfat_count_num_clusters(sb, &cdir, &num_clu))
--		return -EIO;
--	i_size_write(inode, num_clu << sbi->cluster_size_bits);
-+	i_size_write(inode, EXFAT_CLU_TO_B(root_clu->size, sbi));
- 
--	num_subdirs = exfat_count_dir_entries(sb, &cdir);
-+	num_subdirs = exfat_count_dir_entries(sb, root_clu);
- 	if (num_subdirs < 0)
- 		return -EIO;
- 	set_nlink(inode, num_subdirs + EXFAT_MIN_SUBDIR);
-@@ -578,7 +574,8 @@ static int exfat_verify_boot_region(struct super_block *sb)
- }
- 
- /* mount the file system volume */
--static int __exfat_fill_super(struct super_block *sb)
-+static int __exfat_fill_super(struct super_block *sb,
-+		struct exfat_chain *root_clu)
- {
- 	int ret;
- 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-@@ -595,6 +592,18 @@ static int __exfat_fill_super(struct super_block *sb)
- 		goto free_bh;
- 	}
- 
-+	/*
-+	 * Call exfat_count_num_cluster() before searching for up-case and
-+	 * bitmap directory entries to avoid infinite loop if they are missing
-+	 * and the cluster chain includes a loop.
-+	 */
-+	exfat_chain_set(root_clu, sbi->root_dir, 0, ALLOC_FAT_CHAIN);
-+	ret = exfat_count_num_clusters(sb, root_clu, &root_clu->size);
-+	if (ret) {
-+		exfat_err(sb, "failed to count the number of clusters in root");
-+		goto free_bh;
-+	}
-+
- 	ret = exfat_create_upcase_table(sb);
- 	if (ret) {
- 		exfat_err(sb, "failed to load upcase table");
-@@ -627,6 +636,7 @@ static int exfat_fill_super(struct super_block *sb, struct fs_context *fc)
- 	struct exfat_sb_info *sbi = sb->s_fs_info;
- 	struct exfat_mount_options *opts = &sbi->options;
- 	struct inode *root_inode;
-+	struct exfat_chain root_clu;
- 	int err;
- 
- 	if (opts->allow_utime == (unsigned short)-1)
-@@ -645,7 +655,7 @@ static int exfat_fill_super(struct super_block *sb, struct fs_context *fc)
- 	sb->s_time_min = EXFAT_MIN_TIMESTAMP_SECS;
- 	sb->s_time_max = EXFAT_MAX_TIMESTAMP_SECS;
- 
--	err = __exfat_fill_super(sb);
-+	err = __exfat_fill_super(sb, &root_clu);
- 	if (err) {
- 		exfat_err(sb, "failed to recognize exfat type");
- 		goto check_nls_io;
-@@ -680,7 +690,7 @@ static int exfat_fill_super(struct super_block *sb, struct fs_context *fc)
- 
- 	root_inode->i_ino = EXFAT_ROOT_INO;
- 	inode_set_iversion(root_inode, 1);
--	err = exfat_read_root(root_inode);
-+	err = exfat_read_root(root_inode, &root_clu);
- 	if (err) {
- 		exfat_err(sb, "failed to initialize root inode");
- 		goto put_inode;
--- 
-2.39.5
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
 
 
