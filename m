@@ -1,210 +1,352 @@
-Return-Path: <linux-fsdevel+bounces-57117-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57118-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A9A6B1EDC1
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 19:21:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5A59B1EDF2
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 19:42:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93C3C5857E1
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 17:21:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4C1B1C27C8A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 17:43:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC07228751D;
-	Fri,  8 Aug 2025 17:21:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852E1288517;
+	Fri,  8 Aug 2025 17:41:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="K5J2AzAJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pdR31kP5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E40B18871F;
-	Fri,  8 Aug 2025 17:21:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB7AB1F3FC8;
+	Fri,  8 Aug 2025 17:41:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754673699; cv=none; b=lv4Rx4c93BPWxtYsdg7aRy4059kE2x7B9Oufucy21gXTzW5aaBp6nGTsExTVziQcwMF9Ep5vctTj+OxoI2NVxG5crSD3ZOWegULQFPWdT7oL/j1kNgedZZrVEcatroScsJA6VQXj3xe9Cr62Q50RB70iWlz3hT7oDgb8ghVPm10=
+	t=1754674909; cv=none; b=mcdcIm0fAZOJm61OhJ4xUFsWfYwNDhT66knfFN4rxsU6oe5K2Rd6U7tnI4UfdCQgzj6CyYZRZqIG7TFv4XqJkEhsCkFv85ruM2gedC6xFgQB8xUhgsETMIRO8ahZORgmb2TBOaSfoNDAZ9eSeWhE2nnlEx8i8SbCayA51NaimLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754673699; c=relaxed/simple;
-	bh=DBKFYTu5tPuGX9ybLDozeJ5i82kOtDjidng1iB4g6xc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JccXSBRoTO9Av7KiD/d3S0BiO2ayZOIwKIm87f7wC/Hj76Ds1c03LdCEdoO4bE0MWoNGRdKm5JkWv4mXIiS6458LqdiZ7J2fHIBWrPqpKwJME0TX1PUFXhfTQ6X8XaacBt7+6FJeIS8l72cvjvwbUE/u7ZSOx3Z+GLSk0wEvET4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=K5J2AzAJ; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 578EVqe4022753;
-	Fri, 8 Aug 2025 17:21:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=Ke2ysD
-	bRl8q6joTUOu+MU16x2yWgmGXvnQxWBgQqMZ8=; b=K5J2AzAJbr6j1wVE7r2WCZ
-	eqTkH+QNahoaI/wn8Psq6tEemu90x0/gr1RPOD9AM8Rxf2Jj8ookp5kbaMaTwQeS
-	o2Hhy7fZvogZNoVib1gjYnWX4xKl3knSGj0ed0LJRPPFh9AXl5klylFvexrIn5bE
-	tfRZ4vdxMWnbJhCIrwFy5gxez8wqKSdFTwsu/HEGz5RN7KqEDXWiqb7jndIdTZzb
-	UPYGESswg1VN3vfF9yk4KrRqBbVCRFtjIH71BLlKsif2L7NJ6zlOzfVdtyQAjfHM
-	Smu8S2pLHLC+9j01rXBmkp5SFM8Wl0nkGazzKnXw7l0/YtGz/Uhg/YA2Z9yrq56g
-	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48dk2n8tua-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 08 Aug 2025 17:21:14 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 578EvZbt031326;
-	Fri, 8 Aug 2025 17:21:13 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48bpwnpka9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 08 Aug 2025 17:21:13 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 578HLB2j22085908
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 8 Aug 2025 17:21:11 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4D36920040;
-	Fri,  8 Aug 2025 17:21:11 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1B8902004D;
-	Fri,  8 Aug 2025 17:21:09 +0000 (GMT)
-Received: from li-e7e2bd4c-2dae-11b2-a85c-bfd29497117c.ibm.com (unknown [9.39.29.218])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri,  8 Aug 2025 17:21:08 +0000 (GMT)
-Date: Fri, 8 Aug 2025 22:51:06 +0530
-From: Amit Machhiwal <amachhiw@linux.ibm.com>
-To: =?utf-8?Q?C=C3=A9dric?= Le Goater <clg@kaod.org>
-Cc: Alex Mastro <amastro@fb.com>, Alex Williamson <alex.williamson@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Keith Busch <kbusch@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        kvm@vger.kernel.org
-Subject: Re: [PATCH v4] vfio/pci: print vfio-device syspath to fdinfo
-Message-ID: <20250808224806.09f6d858-1d-amachhiw@linux.ibm.com>
-Mail-Followup-To: =?utf-8?Q?C=C3=A9dric?= Le Goater <clg@kaod.org>, 
-	Alex Mastro <amastro@fb.com>, Alex Williamson <alex.williamson@redhat.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jason Gunthorpe <jgg@ziepe.ca>, Keith Busch <kbusch@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	kvm@vger.kernel.org
-References: <20250804-show-fdinfo-v4-1-96b14c5691b3@fb.com>
- <20250807144938.e0abc7bb-a4-amachhiw@linux.ibm.com>
- <dd0b8e6f-1673-49c3-8018-974d1e7f1a54@kaod.org>
- <20250808205338.dc652e3e-61-amachhiw@linux.ibm.com>
- <bc7e754f-f414-4c43-8f25-03314b894b34@kaod.org>
+	s=arc-20240116; t=1754674909; c=relaxed/simple;
+	bh=7KZi11aOcWzah1MMGc2QhuWnuga7pRdJlsHIWcTdCls=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Iwt5UlO0WT8fe4N57v7mODaDPjxL6D3uUoYbA1e9aMVnkstWAaUxoEXsZel9rQU9Qlv1VxFCNRB69sC+P2G+ElXuDfxrfD7HgWsX51a0okVxhFIr5PELub/1X2E5oIiI4bJZwe0YBHU3j6go6YVv1K+SyWDK5rqCf+uJ7WvlqMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pdR31kP5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DFDFC4CEF0;
+	Fri,  8 Aug 2025 17:41:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754674909;
+	bh=7KZi11aOcWzah1MMGc2QhuWnuga7pRdJlsHIWcTdCls=;
+	h=From:To:Cc:Subject:Date:From;
+	b=pdR31kP5xLcFhX0sGDC4pSFPyGm1hcosbtCYCO+pOl1R5q5nrEkf51LYZtJA01Vym
+	 2q6m7qvzhq1MTRmMrpRCQYJ8ZrtkoGPRbXyrJfAl6EugkOthUSIF7+ceYHSNvsMC/V
+	 UY1LcJlRmZKwN4AnNIdoQg/TuXaJJv5zlxE+Ty+L3l0pMVSe9No0oWndGW5uYAkvLz
+	 flWFpHMHTL/wPJ9n/F0/RBFU5S/rz/bYA0Ol3xkCwVFwzedNSGiyITDay/bViE5nHL
+	 2qEPRvlAWyyXA0rc5guhWVJcuPpCfpcf0ETECAZgz/hClxKBdbTq32+zAfIG1pbzmF
+	 QQCZuSJMUa2Sw==
+From: Sasha Levin <sashal@kernel.org>
+To: patches@lists.linux.dev,
+	stable@vger.kernel.org
+Cc: Yuezhang Mo <Yuezhang.Mo@sony.com>,
+	Namjae Jeon <linkinjeon@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	sj1557.seo@samsung.com,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.16-6.6] exfat: add cluster chain loop check for dir
+Date: Fri,  8 Aug 2025 13:41:41 -0400
+Message-Id: <20250808174146.1272242-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.16
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <bc7e754f-f414-4c43-8f25-03314b894b34@kaod.org>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA4MDE0MSBTYWx0ZWRfX+LTZsfDCvdAS
- zgJH5N24m4p3Hd0TMlHdhraDi2L6J4fMXCjO17EiVdWhz9L5farTcSVt51IlhCDnEkO3A0liE+l
- gxX1QcqTVv+AQtkU6oZTlxBaWl7yEy3ipqCmrLDRaNr1n1PvJpQJadBTnLP0pMmOjqhTjUAH1uM
- T4DGk6SJsmPXYCMyv7xJBz1/onhyDuoleA2i2fCk+cnkSue7oDg4AKgJAbMt/J9PZMtD3IzszgQ
- 8UGSXM0MIrBkDaVSALNMBWjKc9PLDQuCAc3xM+5bE3dT1JOHRnSi7GV4hTrGm/tUjtcA/tIKoA2
- 7oAeFuBEklmOCEr/GI4C+OEVwgGPs7e4l/NzdRyaG+dxBMcCUIT1VcKCCSi6pg4L0hRvOdNvl2f
- 1cMq6blohiFwylb3WPBTvt0yaPslRtECXn+uvQoLu5P8BqWpEHa/5Lfs1tiQQiw+vvTFaCwZ
-X-Proofpoint-GUID: A3HiGeHw8cjSeUofRyC2D-HKmq29oXh6
-X-Proofpoint-ORIG-GUID: A3HiGeHw8cjSeUofRyC2D-HKmq29oXh6
-X-Authority-Analysis: v=2.4 cv=BNWzrEQG c=1 sm=1 tr=0 ts=6896320a cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=8nJEP1OIZ-IA:10 a=2OwXVqhp2XgA:10 a=FOH2dFAWAAAA:8 a=1rDcQM-rTn2rXFAQwpAA:9
- a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-08_05,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_spam_definite policy=outbound
- score=100 suspectscore=0 lowpriorityscore=0 spamscore=100 bulkscore=0
- impostorscore=0 phishscore=0 mlxscore=100 clxscore=1015 malwarescore=0
- priorityscore=1501 adultscore=0 mlxlogscore=-999 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508080141
 
-On 2025/08/08 06:44 PM, Cédric Le Goater wrote:
-> On 8/8/25 17:45, Amit Machhiwal wrote:
-> > Hi Cédric,
-> > 
-> > Please find my comments inline:
-> > 
-> > On 2025/08/08 03:49 PM, Cédric Le Goater wrote:
-> > > Hello Amit,
-> > > 
-> > > On 8/7/25 11:34, Amit Machhiwal wrote:
-> > > > Hello,
-> > > > 
-> > > > On 2025/08/04 12:44 PM, Alex Mastro wrote:
-> > > > > Print the PCI device syspath to a vfio device's fdinfo. This enables tools
-> > > > > to query which device is associated with a given vfio device fd.
-> > > > > 
-> > > > > This results in output like below:
-> > > > > 
-> > > > > $ cat /proc/"$SOME_PID"/fdinfo/"$VFIO_FD" | grep vfio
-> > > > > vfio-device-syspath: /sys/devices/pci0000:e0/0000:e0:01.1/0000:e1:00.0/0000:e2:05.0/0000:e8:00.0
-> > > > > 
-> > > > > Signed-off-by: Alex Mastro <amastro@fb.com>
-> > > > 
-> > > > I tested this patch on a POWER9 bare metal system with a VFIO PCI device and
-> > > > could see the VFIO device syspath in fdinfo.
-> > > 
-> > > POWER9 running on OPAL FW : I am curious about the software stack.
-> > > 
-> > > I suppose this is the latest upstream kernel ?
-> > 
-> > Yes, I used the latest upstream kernel and applied this patch on top of commit
-> > cca7a0aae895.
-> > 
-> > > Are you using an upstream QEMU to test too ?
-> > 
-> > No, I had used the Fedora 42 distro qemu. The version details are as below:
-> > 
-> >    [root@localhost ~]# qemu-system-ppc64 --version
-> >    QEMU emulator version 9.2.4 (qemu-9.2.4-1.fc42)
-> >    Copyright (c) 2003-2024 Fabrice Bellard and the QEMU Project developers
-> > 
-> > I gave the upstream qemu (HEAD pointing to cd21ee5b27) a try and I see the same
-> > behavior with that too.
-> > 
-> >    [root@localhost ~]# ./qemu-system-ppc64 --version
-> >    QEMU emulator version 10.0.92 (v10.1.0-rc2-4-gcd21ee5b27-dirty)
-> >    Copyright (c) 2003-2025 Fabrice Bellard and the QEMU Project developers
-> > 
-> >    [root@localhost ~]# cat /proc/52807/fdinfo/191
-> >    pos:    0
-> >    flags:  02000002
-> >    mnt_id: 17
-> >    ino:    1125
-> >    vfio-device-syspath: /sys/devices/pci0031:00/0031:00:00.0/0031:01:00.0
-> > 
-> > > 
-> > > and which device ?
-> > 
-> > I'm using a Broadcom NetXtreme network card (4-port) and passing through its
-> > fn0.
-> > 
-> >    [root@guest ~]# lspci
-> >    [...]
-> >    0001:00:01.0 Ethernet controller: Broadcom Inc. and subsidiaries NetXtreme BCM5719 Gigabit Ethernet PCIe (rev 01)
-> > 
-> > Please let me know if I may help you with any additional information.
-> 
-> It is good to know that device pass-through still works with upstream on
-> OpenPower servers.
-> 
-> Have you tried VFs ?
+From: Yuezhang Mo <Yuezhang.Mo@sony.com>
 
-I didn't get a chance to try VFs yet, Cédric.
+[ Upstream commit 99f9a97dce39ad413c39b92c90393bbd6778f3fd ]
 
-> 
-> Thanks Amit,
+An infinite loop may occur if the following conditions occur due to
+file system corruption.
 
-No problem. :)
+(1) Condition for exfat_count_dir_entries() to loop infinitely.
+    - The cluster chain includes a loop.
+    - There is no UNUSED entry in the cluster chain.
 
-Thanks,
-Amit
+(2) Condition for exfat_create_upcase_table() to loop infinitely.
+    - The cluster chain of the root directory includes a loop.
+    - There are no UNUSED entry and up-case table entry in the cluster
+      chain of the root directory.
 
-> 
-> C.
-> 
+(3) Condition for exfat_load_bitmap() to loop infinitely.
+    - The cluster chain of the root directory includes a loop.
+    - There are no UNUSED entry and bitmap entry in the cluster chain
+      of the root directory.
+
+(4) Condition for exfat_find_dir_entry() to loop infinitely.
+    - The cluster chain includes a loop.
+    - The unused directory entries were exhausted by some operation.
+
+(5) Condition for exfat_check_dir_empty() to loop infinitely.
+    - The cluster chain includes a loop.
+    - The unused directory entries were exhausted by some operation.
+    - All files and sub-directories under the directory are deleted.
+
+This commit adds checks to break the above infinite loop.
+
+Signed-off-by: Yuezhang Mo <Yuezhang.Mo@sony.com>
+Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+
+LLM Generated explanations, may be completely bogus:
+
+**YES**
+
+This commit should be backported to stable kernel trees for the
+following critical reasons:
+
+## Security Impact - Prevents Multiple Infinite Loop Vulnerabilities
+
+The commit fixes **five distinct infinite loop conditions** that can
+occur due to filesystem corruption, each representing a potential
+denial-of-service vulnerability:
+
+1. **exfat_count_dir_entries()** - Adds loop detection using
+   `sbi->used_clusters` as a bound
+2. **exfat_create_upcase_table()** - Addressed through root directory
+   chain validation
+3. **exfat_load_bitmap()** - Addressed through root directory chain
+   validation
+4. **exfat_find_dir_entry()** - Adds loop detection using
+   `EXFAT_DATA_CLUSTER_COUNT(sbi)`
+5. **exfat_check_dir_empty()** - Adds loop detection using
+   `EXFAT_DATA_CLUSTER_COUNT(sbi)`
+
+## Critical Bug Fix Characteristics
+
+1. **Fixes Real Security Issues**: The infinite loops can cause system
+   hangs and DoS conditions when mounting corrupted/malicious exFAT
+   filesystems
+2. **Small, Contained Changes**: The fix adds simple counter checks (4-5
+   lines per location) without architectural changes
+3. **Clear Root Cause**: Addresses missing validation of cluster chain
+   loops in directory traversal
+4. **Pattern of Similar Fixes**: This follows three previous infinite
+   loop fixes in the same subsystem (commits b0522303f672, a5324b3a488d,
+   fee873761bd9), all of which fix similar issues dating back to the
+   original exfat implementation
+
+## Code Analysis Shows Low Risk
+
+The changes are minimal and safe:
+- Adds `unsigned int clu_count = 0` declarations
+- Increments counter when following cluster chains
+- Breaks traversal if counter exceeds valid cluster count
+- In `exfat_count_num_clusters()`: adds explicit loop detection with
+  error message
+
+## Follows Stable Kernel Rules
+
+âœ“ Fixes critical bugs (infinite loops/DoS)
+âœ“ Minimal code changes (~50 lines total)
+âœ“ No new features or API changes
+âœ“ Similar fixes already backported (the three previous infinite loop
+fixes)
+âœ“ Clear error conditions with proper error returns (-EIO)
+
+The commit message explicitly states these are corruption-triggered
+infinite loops, and the pattern matches previous fixes that have
+"Fixes:" tags pointing to the original exfat implementation. This is a
+critical reliability and security fix that prevents system hangs when
+handling corrupted exFAT filesystems.
+
+ fs/exfat/dir.c    | 12 ++++++++++++
+ fs/exfat/fatent.c | 10 ++++++++++
+ fs/exfat/namei.c  |  5 +++++
+ fs/exfat/super.c  | 32 +++++++++++++++++++++-----------
+ 4 files changed, 48 insertions(+), 11 deletions(-)
+
+diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c
+index 3103b932b674..ee060e26f51d 100644
+--- a/fs/exfat/dir.c
++++ b/fs/exfat/dir.c
+@@ -996,6 +996,7 @@ int exfat_find_dir_entry(struct super_block *sb, struct exfat_inode_info *ei,
+ 	struct exfat_hint_femp candi_empty;
+ 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+ 	int num_entries = exfat_calc_num_entries(p_uniname);
++	unsigned int clu_count = 0;
+ 
+ 	if (num_entries < 0)
+ 		return num_entries;
+@@ -1133,6 +1134,10 @@ int exfat_find_dir_entry(struct super_block *sb, struct exfat_inode_info *ei,
+ 		} else {
+ 			if (exfat_get_next_cluster(sb, &clu.dir))
+ 				return -EIO;
++
++			/* break if the cluster chain includes a loop */
++			if (unlikely(++clu_count > EXFAT_DATA_CLUSTER_COUNT(sbi)))
++				goto not_found;
+ 		}
+ 	}
+ 
+@@ -1195,6 +1200,7 @@ int exfat_count_dir_entries(struct super_block *sb, struct exfat_chain *p_dir)
+ 	int i, count = 0;
+ 	int dentries_per_clu;
+ 	unsigned int entry_type;
++	unsigned int clu_count = 0;
+ 	struct exfat_chain clu;
+ 	struct exfat_dentry *ep;
+ 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+@@ -1227,6 +1233,12 @@ int exfat_count_dir_entries(struct super_block *sb, struct exfat_chain *p_dir)
+ 		} else {
+ 			if (exfat_get_next_cluster(sb, &(clu.dir)))
+ 				return -EIO;
++
++			if (unlikely(++clu_count > sbi->used_clusters)) {
++				exfat_fs_error(sb, "FAT or bitmap is corrupted");
++				return -EIO;
++			}
++
+ 		}
+ 	}
+ 
+diff --git a/fs/exfat/fatent.c b/fs/exfat/fatent.c
+index 23065f948ae7..232cc7f8ab92 100644
+--- a/fs/exfat/fatent.c
++++ b/fs/exfat/fatent.c
+@@ -490,5 +490,15 @@ int exfat_count_num_clusters(struct super_block *sb,
+ 	}
+ 
+ 	*ret_count = count;
++
++	/*
++	 * since exfat_count_used_clusters() is not called, sbi->used_clusters
++	 * cannot be used here.
++	 */
++	if (unlikely(i == sbi->num_clusters && clu != EXFAT_EOF_CLUSTER)) {
++		exfat_fs_error(sb, "The cluster chain has a loop");
++		return -EIO;
++	}
++
+ 	return 0;
+ }
+diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
+index fede0283d6e2..f5f1c4e8a29f 100644
+--- a/fs/exfat/namei.c
++++ b/fs/exfat/namei.c
+@@ -890,6 +890,7 @@ static int exfat_check_dir_empty(struct super_block *sb,
+ {
+ 	int i, dentries_per_clu;
+ 	unsigned int type;
++	unsigned int clu_count = 0;
+ 	struct exfat_chain clu;
+ 	struct exfat_dentry *ep;
+ 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+@@ -926,6 +927,10 @@ static int exfat_check_dir_empty(struct super_block *sb,
+ 		} else {
+ 			if (exfat_get_next_cluster(sb, &(clu.dir)))
+ 				return -EIO;
++
++			/* break if the cluster chain includes a loop */
++			if (unlikely(++clu_count > EXFAT_DATA_CLUSTER_COUNT(sbi)))
++				break;
+ 		}
+ 	}
+ 
+diff --git a/fs/exfat/super.c b/fs/exfat/super.c
+index 7ed858937d45..3a9ec75ab452 100644
+--- a/fs/exfat/super.c
++++ b/fs/exfat/super.c
+@@ -341,13 +341,12 @@ static void exfat_hash_init(struct super_block *sb)
+ 		INIT_HLIST_HEAD(&sbi->inode_hashtable[i]);
+ }
+ 
+-static int exfat_read_root(struct inode *inode)
++static int exfat_read_root(struct inode *inode, struct exfat_chain *root_clu)
+ {
+ 	struct super_block *sb = inode->i_sb;
+ 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+ 	struct exfat_inode_info *ei = EXFAT_I(inode);
+-	struct exfat_chain cdir;
+-	int num_subdirs, num_clu = 0;
++	int num_subdirs;
+ 
+ 	exfat_chain_set(&ei->dir, sbi->root_dir, 0, ALLOC_FAT_CHAIN);
+ 	ei->entry = -1;
+@@ -360,12 +359,9 @@ static int exfat_read_root(struct inode *inode)
+ 	ei->hint_stat.clu = sbi->root_dir;
+ 	ei->hint_femp.eidx = EXFAT_HINT_NONE;
+ 
+-	exfat_chain_set(&cdir, sbi->root_dir, 0, ALLOC_FAT_CHAIN);
+-	if (exfat_count_num_clusters(sb, &cdir, &num_clu))
+-		return -EIO;
+-	i_size_write(inode, num_clu << sbi->cluster_size_bits);
++	i_size_write(inode, EXFAT_CLU_TO_B(root_clu->size, sbi));
+ 
+-	num_subdirs = exfat_count_dir_entries(sb, &cdir);
++	num_subdirs = exfat_count_dir_entries(sb, root_clu);
+ 	if (num_subdirs < 0)
+ 		return -EIO;
+ 	set_nlink(inode, num_subdirs + EXFAT_MIN_SUBDIR);
+@@ -578,7 +574,8 @@ static int exfat_verify_boot_region(struct super_block *sb)
+ }
+ 
+ /* mount the file system volume */
+-static int __exfat_fill_super(struct super_block *sb)
++static int __exfat_fill_super(struct super_block *sb,
++		struct exfat_chain *root_clu)
+ {
+ 	int ret;
+ 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+@@ -595,6 +592,18 @@ static int __exfat_fill_super(struct super_block *sb)
+ 		goto free_bh;
+ 	}
+ 
++	/*
++	 * Call exfat_count_num_cluster() before searching for up-case and
++	 * bitmap directory entries to avoid infinite loop if they are missing
++	 * and the cluster chain includes a loop.
++	 */
++	exfat_chain_set(root_clu, sbi->root_dir, 0, ALLOC_FAT_CHAIN);
++	ret = exfat_count_num_clusters(sb, root_clu, &root_clu->size);
++	if (ret) {
++		exfat_err(sb, "failed to count the number of clusters in root");
++		goto free_bh;
++	}
++
+ 	ret = exfat_create_upcase_table(sb);
+ 	if (ret) {
+ 		exfat_err(sb, "failed to load upcase table");
+@@ -627,6 +636,7 @@ static int exfat_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	struct exfat_sb_info *sbi = sb->s_fs_info;
+ 	struct exfat_mount_options *opts = &sbi->options;
+ 	struct inode *root_inode;
++	struct exfat_chain root_clu;
+ 	int err;
+ 
+ 	if (opts->allow_utime == (unsigned short)-1)
+@@ -645,7 +655,7 @@ static int exfat_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	sb->s_time_min = EXFAT_MIN_TIMESTAMP_SECS;
+ 	sb->s_time_max = EXFAT_MAX_TIMESTAMP_SECS;
+ 
+-	err = __exfat_fill_super(sb);
++	err = __exfat_fill_super(sb, &root_clu);
+ 	if (err) {
+ 		exfat_err(sb, "failed to recognize exfat type");
+ 		goto check_nls_io;
+@@ -680,7 +690,7 @@ static int exfat_fill_super(struct super_block *sb, struct fs_context *fc)
+ 
+ 	root_inode->i_ino = EXFAT_ROOT_INO;
+ 	inode_set_iversion(root_inode, 1);
+-	err = exfat_read_root(root_inode);
++	err = exfat_read_root(root_inode, &root_clu);
+ 	if (err) {
+ 		exfat_err(sb, "failed to initialize root inode");
+ 		goto put_inode;
+-- 
+2.39.5
+
 
