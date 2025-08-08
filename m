@@ -1,175 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-57123-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57124-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28AF9B1EEC0
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 21:08:11 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3771B1EED4
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 21:29:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33A35170099
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 19:08:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BA0754E06D8
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 19:29:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2385286411;
-	Fri,  8 Aug 2025 19:08:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0438E285CA9;
+	Fri,  8 Aug 2025 19:28:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="DDNcni97"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DUi1BPrs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2FCB13790B;
-	Fri,  8 Aug 2025 19:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F04D1224B04
+	for <linux-fsdevel@vger.kernel.org>; Fri,  8 Aug 2025 19:28:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754680082; cv=none; b=s8rVMaVslwwMdne1QM0YEiNLJIAS7kuZ2Jj33lUz7Cvw9ej4c4qgQlbn8T8u7rOHg0xpoKfGjwTdXP8IKz6CMnp4QQksXwEIXZ7d3ghCp3UPRgoGTWozETIYXu9jCNxs43F4DLM0MSte4JU94XIl3pbWezhtR0XBD8auCie2Duc=
+	t=1754681336; cv=none; b=b40HmPAGmI5VyefqNPRLJ++T2UivC+6C329x+1q7Zdlzxy9MFHA6hcRx2B5JS1KJp39FlxuCLjB1zHtx/gwpeEhPttMndqAhX1bUHRisv9x7rMZyn1xRND0aquuDlfBSyLR/BG3TOiTn0VdGFKn49yYUfzi60dDCJF8MMn45W4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754680082; c=relaxed/simple;
-	bh=v90Z/z9h4SuuSRtazOa+PB8Cn9ZuFoeC1O34f0jk86s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mqwKlWJnrrEMhmp6fH9iZiEv0U6vF38qCeVPjECvh5LaQPOxHveesYWlxdK57zs/PM3rjDeJb9iTSf7/C2O0rAtcsNcfzG7u/15Bpy6pImNcYxsJJe7yi9NsCo2LU6rigLQI3GGlTPRYkzZIMzJZzwEEuhpxFV1xAQoYTg32kC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=DDNcni97; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4bzD7b5SQHz9svT;
-	Fri,  8 Aug 2025 21:07:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1754680075;
+	s=arc-20240116; t=1754681336; c=relaxed/simple;
+	bh=QEXhxovWYUHVgBkEl/gTdcNOIaqUcKQWivj1PPJZ8ak=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=PE86y0zlJtm9DAf23/c6oBZgsngfTuUreCTQJq9VeyYq6/tJWoNzas8NDA+MWohUE8Zqf4CRCjOPyCARp1YqOmOLcuGddXEAZAonxiQAuTIFiwS3zWEIl3ERFHqS6O9sygDcpcoOgsyoT4VxUaqRoAJr9YFVg+EUstebQsp9nZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DUi1BPrs; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754681333;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YZ2Bfu9wA7mUyzKiz143rWYgufUqFCbjKIcINHsYjf8=;
-	b=DDNcni97QGO1rwlh61XyuEouz6fLhIGe8Nbw/FVqPQgBQDOdAG7y5B6cSfVlEbfJLwlsUt
-	pelgbA+icyy9+8+smKZB0WduFzmca1ySTvDtCJ/1ppxkeD31X47SEn5CuDAUqdzpqmlcB1
-	9ZVlJGlXtCmNHZfen5qLy99IpAv0C2E7iNgHKdCPiHixgfmiL74OcodTbRoVppWZjB0fg/
-	42fzmquvAuB5w6JlBkdtczklL8yCsfBiiQOytjXYXk5HVlrjAqJ7dQvF4Nc81dSsIep6xl
-	MICfP3pDTAvX/na3Ip2ogMbR3t2QBKROj7aAkcSe1mShvrQ4tqH3kLCHTGVS8w==
-Date: Sat, 9 Aug 2025 05:07:41 +1000
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Askar Safin <safinaskar@zohomail.com>
-Cc: Alejandro Colomar <alx@kernel.org>, 
-	"Michael T. Kerrisk" <mtk.manpages@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jan Kara <jack@suse.cz>, "G. Branden Robinson" <g.branden.robinson@gmail.com>, 
-	linux-man <linux-man@vger.kernel.org>, linux-api <linux-api@vger.kernel.org>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v2 05/11] fsconfig.2: document 'new' mount api
-Message-ID: <2025-08-08.1754679911-hidden-varsity-charts-ragweed-wIijBm@cyphar.com>
-References: <20250807-new-mount-api-v2-0-558a27b8068c@cyphar.com>
- <20250807-new-mount-api-v2-5-558a27b8068c@cyphar.com>
- <19889fbe690.e80d252e42280.4347614991285137048@zohomail.com>
- <2025-08-08.1754666161-creaky-taboo-miso-cuff-mKwsCC@cyphar.com>
+	 to:to:cc:mime-version:mime-version:content-type:content-type;
+	bh=z+VJfc5dyu/GsDQ2jOZqvhe7ZEO+uEqdgkyy6rtOglw=;
+	b=DUi1BPrsTUrsFwjKg9jL03qCweG0xA1/hE9kg+yLPLTjzogdLZFbg7c/3eXWZplIGeqh5a
+	bC2zVKu9jar8k3oRJ6mNNP9qlHqWcHyji5xpu08S0p0UcCYbWySt4sfexo0uGSjaqo5fT5
+	dG8X7ftAdwFc4Q9YFXm2MC+1Y/Q6GYM=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-682-AI7fOW9hP4e_HSMykff0uQ-1; Fri, 08 Aug 2025 15:28:52 -0400
+X-MC-Unique: AI7fOW9hP4e_HSMykff0uQ-1
+X-Mimecast-MFC-AGG-ID: AI7fOW9hP4e_HSMykff0uQ_1754681331
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3b8d62a680bso1371462f8f.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Aug 2025 12:28:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754681331; x=1755286131;
+        h=content-disposition:mime-version:message-id:subject:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=z+VJfc5dyu/GsDQ2jOZqvhe7ZEO+uEqdgkyy6rtOglw=;
+        b=oXImKW+wAC40ZhOAB+Z2ZDzjAnCDzvQMgKhmPgxvZN6jmC0PybZothCOaAmnY0OyDk
+         wwm7ujwNEhfiM42nv8rG7A//56VePlaRaIFcjR/YpWEPtd8guJWKDSN3WYcS2yVHdeGe
+         HRce+e6GoL48EKDZqUaeqPfBwblQxmEnxx10iHe2So+W9SUT3IYuskmcqsLIQcMpQGQg
+         ZaZ1An/BR4p8OKRxLCNK7mq/Aa1+S7PCBsmEjEapgfqxc++5nCF4G+PDK7p7DBjkzfPI
+         drmsRvcjMnOkDbh/oD3IDyxY/7+Lc0fZk1QtrGS+UkiFut/WpbXGsQM8LOaZiMaKenGn
+         GlDg==
+X-Forwarded-Encrypted: i=1; AJvYcCU8c3jVlAG/AH5kCwO0G4kGGi9+S7DAKWlTIT6vfSTfZ721xTqyXiCy3yuEr5WAEK+XnwBrvZo8tqIGhQr0@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/5F6S5fah4Xnuy756QFke2mYrQHyrJJ8+Tv5gkPyUMQmrME3f
+	yiR2O9245kYlq+G7xN4azJosq+RGrL5E94hQxkf3+E4JTkfRp1HJQNv8C20BB3NAHO9a6HbI+jI
+	Ha/I3zgCqLnQDaZ1XOGqVyXZUhWt+zIQGkKBI0bdI9+2fkX3mahAxy7n5u5R+FqfOHg==
+X-Gm-Gg: ASbGnctX3haxvVLC0A7TmExaICBStAtmFV1QLWjS18X0tpF1urj5M2HgjKBTqUeoDRx
+	OcPO11vAM6ze59xBFjkOyPQWnypOoKo66wKGbbrfVtepcsPdZNRaTJEd5EloRwz89+mrGBwx1+I
+	7fIjBpTroDv9S/TOGmlLRc5o9S8XrSx/Okx8u5mXLGJCop+iekHp3DkyypBwj9RjtoX4klLxwqv
+	dShnzxrTB6C+77VdGzihbbBMtZk3Gx/5p1ZmXLixvsS6DlJLkS20LCzZEN7sgL94UgikNM9xmBk
+	5pFkdfkqnc4MxoqNrWwYsaq4oLL4CIkIkd4qEK3UBV01g7jKYqCvZnWEDJY=
+X-Received: by 2002:a05:6000:2209:b0:3a4:cec5:b59c with SMTP id ffacd0b85a97d-3b8f97f4ba4mr8240465f8f.25.1754681331221;
+        Fri, 08 Aug 2025 12:28:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFI9xY/6Qpbd5IKobjzePxeB3jT7K8h08kAJrvDGyK5ww5Cu3HFMUyCZu/kR3Zamj5WJ7zjng==
+X-Received: by 2002:a05:6000:2209:b0:3a4:cec5:b59c with SMTP id ffacd0b85a97d-3b8f97f4ba4mr8240451f8f.25.1754681330861;
+        Fri, 08 Aug 2025 12:28:50 -0700 (PDT)
+Received: from thinky (ip-217-030-074-039.aim-net.cz. [217.30.74.39])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3ad803sm31036606f8f.6.2025.08.08.12.28.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Aug 2025 12:28:50 -0700 (PDT)
+Date: Fri, 8 Aug 2025 21:28:44 +0200
+From: Andrey Albershteyn <aalbersh@redhat.com>
+To: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	fstests@vger.kernel.org
+Subject: Tests for file_getattr()/file_setattr() and xfsprogs update
+Message-ID: <lgivc7qosvmmqzcq7fzhij74smpqlgnoosnbnooalulhv4spkj@fva6erttoa4d>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="jrcgfz2nxvhfj7eo"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2025-08-08.1754666161-creaky-taboo-miso-cuff-mKwsCC@cyphar.com>
 
+Hi all,
 
---jrcgfz2nxvhfj7eo
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 05/11] fsconfig.2: document 'new' mount api
-MIME-Version: 1.0
+This two patchsets are update to xfsprogs to utilize recently added
+file_getattr() and file_setattr() syscalls.
 
-On 2025-08-09, Aleksa Sarai <cyphar@cyphar.com> wrote:
-> On 2025-08-08, Askar Safin <safinaskar@zohomail.com> wrote:
-> > Let's consider this example:
-> >=20
-> >            int fsfd, mntfd, nsfd, nsdirfd;
-> >=20
-> >            nsfd =3D open("/proc/self/ns/pid", O_PATH);
-> >            nsdirfd =3D open("/proc/1/ns", O_DIRECTORY);
-> >=20
-> >            fsfd =3D fsopen("proc", FSOPEN_CLOEXEC);
-> >            /* "pidns" changes the value each time. */
-> >            fsconfig(fsfd, FSCONFIG_SET_PATH, "pidns", "/proc/self/ns/pi=
-d", AT_FDCWD);
-> >            fsconfig(fsfd, FSCONFIG_SET_PATH, "pidns", "pid", NULL, nsdi=
-rfd);
-> >            fsconfig(fsfd, FSCONFIG_SET_PATH_EMPTY, "pidns", "", nsfd);
-> >            fsconfig(fsfd, FSCONFIG_SET_FD, "pidns", NULL, nsfd);
-> >            fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
-> >            mntfd =3D fsmount(fsfd, FSMOUNT_CLOEXEC, 0);
-> >            move_mount(mntfd, "", AT_FDCWD, "/proc", MOVE_MOUNT_F_EMPTY_=
-PATH);
-> >=20
-> > I don't like it. /proc/self/ns/pid is our namespace, which is default a=
-nyway.
-> > I. e. setting pidns to /proc/self/ns/pid is no-op (assuming that "pidns=
-" option is implemented in our kernel, of course).
-> > Moreover, if /proc is mounted properly, then /proc/1/ns/pid refers to o=
-ur namespace, too!
+The second patchset adds two tests to fstests, one generic one on
+these syscals and second one is for XFS's original usecase for these
+syscalls (projects quotas).
 
-This slightly depends on what you mean by "properly". If you deal with
-namespaces a lot, running into a situation whether the current process's
-pidns doesn't match /proc is quite common (we run into it with container
-runtimes all the time).
+-- 
+- Andrey
 
-A proper example with provably different pidns values (such as the
-selftests for the pidns parameter) would make for a very lengthy example
-program with very little use for readers.
-
-I'm tempted to just delete this example.
-
-> > Thus, *all* these fsconfig(FSCONFIG_SET_...) calls are no-op.
-> > Thus it is bad example.
-> >=20
-> > I suggest using, say, /proc/2/ns/pid . It has actual chance to refer to=
- some other namespace.
-> >=20
-> > Also, sentence '"pidns" changes the value each time' is a lie: as I exp=
-lained, all these calls are no-ops,
-> > they don't really change anything.
->=20
-> Right, I see your point.
->=20
-> One other problem with this example is that there is no
-> currently-existing parameter which accepts all of FSCONFIG_SET_PATH,
-> FSCONFIG_SET_PATH_EMPTY, FSCONFIG_SET_FD, and FSCONFIG_SET_STRING so
-> this example is by necessity a little contrived. I suspect that it'd be
-> better to remove this and re-add it once we actually something that
-> works this way...
->=20
-> You've replied to the pidns parameter patchset so I shouldn't repeat
-> myself here too much, but supporting this completely is my plan for the
-> next version I send. It's just not a thing that exists today (ditto for
-> overlayfs).
->=20
-> --=20
-> Aleksa Sarai
-> Senior Software Engineer (Containers)
-> SUSE Linux GmbH
-> https://www.cyphar.com/
-
-
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-https://www.cyphar.com/
-
---jrcgfz2nxvhfj7eo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaJZK/QAKCRAol/rSt+lE
-b+/iAQDQhXvntGxO/K+rTCZQBBOfgc9JQ7KeTbPVMY04ldZghQEAgKQDzFjsiFpR
-FkCNDr4PJBoMmWGd6LUiPPR0hlXU4ws=
-=W/yu
------END PGP SIGNATURE-----
-
---jrcgfz2nxvhfj7eo--
 
