@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-57064-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57065-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D386B1E80D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 14:12:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EF7DB1E811
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 14:12:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D813F1C21FFF
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 12:12:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B2B71C22405
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 12:13:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A420527602B;
-	Fri,  8 Aug 2025 12:12:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F15C5277CA4;
+	Fri,  8 Aug 2025 12:12:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="QGUnXZHl"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="JoSi9Q3J"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 418B326D4FC;
-	Fri,  8 Aug 2025 12:12:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A59726D4FC;
+	Fri,  8 Aug 2025 12:12:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754655133; cv=none; b=IXpvazLhk9MNBu9ibTCQK3M7KtgODI2qSYoy5NyydgVZuRTUYUkHEarpIOw1wfzV0o0YkZH3pVPzLNFxrldlndhv11VtgbAHRUjEz1j7AYH44MtuoCK/5M+F+lAsBMafHFjxLWNP6xY98J4Crkms6mbarqWC+MKBhsXQlrMicv8=
+	t=1754655141; cv=none; b=lvucVQvjDaQx7X5zMbw1M0j8+qlxU8+1K7pVfGsvOCpWzaPjpIQPXSx0Y1WNSt4SFHWo3TuXeeExhMLl5qyuEfnN8cNLNvou1o0y7TQr4mxsZRQdOSF9HsTquFrv/rKclvxu1feCoxd2cP6RYk0tOFbBwdsJaTQ/CIsbIkUeic4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754655133; c=relaxed/simple;
-	bh=Lnbkr3x0JYfoWu6sKfOzg3PL074sWgz9L0+tsOihiWs=;
+	s=arc-20240116; t=1754655141; c=relaxed/simple;
+	bh=MYC10gdNX8ZtrrG0256wz28UpKQ/saMS5pv8moprmVk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CKVTZdgmoMFNoUpHenst5nTt3OKzJ2WfKX5WgX8nJ5SdrvHZcol4MqEuv4V7EPAm01Cy5D5GObnAkzwijmSyIShN08m79m4S9UEsd62tvOK1U7/ri39OjU4xM2M8Fn9Utoc5BcI+i0TuRhjpxjD7RAupIfMcg4ysARipJkJYhr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=QGUnXZHl; arc=none smtp.client-ip=80.241.56.172
+	 MIME-Version; b=Ed0voy/39ioyrf9k9/ixW4hs1fA7o64LkVL09UiJQ6F9RPZ6ERKTE1ziOTob6tx472RYXzr8WsMWMrGTihIdN1lD0eVZJAX8T44VMDJp0mjY+eo2vTGr28p2KH2uBbR/6jf4BaIQMNxV+JWlZbHwg29uvMg/L1DM3zZbujw4FF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=JoSi9Q3J; arc=none smtp.client-ip=80.241.56.151
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
 Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4bz2vp6Ymsz9t24;
-	Fri,  8 Aug 2025 14:12:06 +0200 (CEST)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4bz2vy5Vnsz9tKX;
+	Fri,  8 Aug 2025 14:12:14 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1754655126;
+	s=MBO0001; t=1754655134;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=8/ct59qYuG3RzWBHGmFR3jjZkQ8rYUbub3Dfwy3OQL8=;
-	b=QGUnXZHlRNWqOMSVO0Y5Peq+yB1a9+GxThUm3ERkXjm3E9T+3p4Fj7E2d+i4XqRZzdsC3r
-	vhOn0P934owXGjzttjgAXA1XHOnEQwFFS+490iTAnHUNPOvCAVIKMWL2byS1zPSb/ruWLX
-	xtE7sce+hygMs/cARuruABHNlPW2w3gHC7+tjSzqSB371JD4GJD6rmSFQtSMjhNtJvNsIj
-	sbYC+J8kGKhyk9By8B+/sqbS7roIpvgMRJglVsGjkX6wNmFAFZK2jiRY3aOva/TSzVVclY
-	bdodhTDFWZnJjg+aXJ4PCMN8R6cf5HJqPvG+EdIx0pc9jLtTx7TGLzZ+PhyEyg==
+	bh=lUZ7WtmWLoytrmXItECRu19QRh1MV13CnCf09RIJKKo=;
+	b=JoSi9Q3JxxnkC076NeRBpep92TSYR+k4FGMsQeKkFhAwRA7uW/FSMye6KknS49iyFbK+1k
+	VsBFupxh6QBDFDeWG4yb7PGwz6i3bTcWdOpVsvs+1JrjcAZSkFbMi2V9jOPVw4zQfUWXix
+	zV/lPe0wK2trTobCNS+0XAmsp59FdfXd6RuwwxhiEa1KSqkbZXVsCjykyCCep1KLVRDNqR
+	EXumP7weBN1r/2YJTxrxLUjllm1ox0lGdZpNJZtjn7DfnEPxW6e4kKrFqGq5JmpEst9V8U
+	AGV3PiXvByicwPX+QK5kIIEoi8ycvdgLgy8j/0lmIOWHB/Fj2T6S6JfkvJ70Yw==
 From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
 To: Suren Baghdasaryan <surenb@google.com>,
 	Ryan Roberts <ryan.roberts@arm.com>,
@@ -78,9 +78,9 @@ Cc: linux-kernel@vger.kernel.org,
 	kernel@pankajraghav.com,
 	hch@lst.de,
 	Pankaj Raghav <p.raghav@samsung.com>
-Subject: [PATCH v2 1/5] mm: rename huge_zero_page to huge_zero_folio
-Date: Fri,  8 Aug 2025 14:11:37 +0200
-Message-ID: <20250808121141.624469-2-kernel@pankajraghav.com>
+Subject: [PATCH v2 2/5] mm: rename MMF_HUGE_ZERO_PAGE to MMF_HUGE_ZERO_FOLIO
+Date: Fri,  8 Aug 2025 14:11:38 +0200
+Message-ID: <20250808121141.624469-3-kernel@pankajraghav.com>
 In-Reply-To: <20250808121141.624469-1-kernel@pankajraghav.com>
 References: <20250808121141.624469-1-kernel@pankajraghav.com>
 Precedence: bulk
@@ -93,9 +93,8 @@ Content-Transfer-Encoding: 8bit
 
 From: Pankaj Raghav <p.raghav@samsung.com>
 
-As the transition already happened from exposing huge_zero_page to
-huge_zero_folio, change the name of the shrinker and the other helper
-function to reflect that.
+As all the helper functions has been renamed from *_page to *_folio,
+rename the MM flag from MMF_HUGE_ZERO_PAGE to MMF_HUGE_ZERO_FOLIO.
 
 No functional changes.
 
@@ -105,114 +104,50 @@ Suggested-by: David Hildenbrand <david@redhat.com>
 Acked-by: David Hildenbrand <david@redhat.com>
 Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
 ---
- mm/huge_memory.c | 34 +++++++++++++++++-----------------
- 1 file changed, 17 insertions(+), 17 deletions(-)
+ include/linux/mm_types.h | 2 +-
+ mm/huge_memory.c         | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index 3ed763e7ec6f..cf94df4955c7 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -1758,7 +1758,7 @@ enum {
+ #define MMF_RECALC_UPROBES	20	/* MMF_HAS_UPROBES can be wrong */
+ #define MMF_OOM_SKIP		21	/* mm is of no interest for the OOM killer */
+ #define MMF_UNSTABLE		22	/* mm is unstable for copy_from_user */
+-#define MMF_HUGE_ZERO_PAGE	23      /* mm has ever used the global huge zero page */
++#define MMF_HUGE_ZERO_FOLIO	23      /* mm has ever used the global huge zero folio */
+ #define MMF_DISABLE_THP		24	/* disable THP for all VMAs */
+ #define MMF_DISABLE_THP_MASK	(1 << MMF_DISABLE_THP)
+ #define MMF_OOM_REAP_QUEUED	25	/* mm was queued for oom_reaper */
 diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 2b4ea5a2ce7d..6625514f622b 100644
+index 6625514f622b..ff06dee213eb 100644
 --- a/mm/huge_memory.c
 +++ b/mm/huge_memory.c
-@@ -207,7 +207,7 @@ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
- 	return orders;
- }
+@@ -248,13 +248,13 @@ static void put_huge_zero_folio(void)
  
--static bool get_huge_zero_page(void)
-+static bool get_huge_zero_folio(void)
+ struct folio *mm_get_huge_zero_folio(struct mm_struct *mm)
  {
- 	struct folio *zero_folio;
- retry:
-@@ -237,7 +237,7 @@ static bool get_huge_zero_page(void)
- 	return true;
- }
- 
--static void put_huge_zero_page(void)
-+static void put_huge_zero_folio(void)
- {
- 	/*
- 	 * Counter should never go to zero here. Only shrinker can put
-@@ -251,11 +251,11 @@ struct folio *mm_get_huge_zero_folio(struct mm_struct *mm)
- 	if (test_bit(MMF_HUGE_ZERO_PAGE, &mm->flags))
+-	if (test_bit(MMF_HUGE_ZERO_PAGE, &mm->flags))
++	if (test_bit(MMF_HUGE_ZERO_FOLIO, &mm->flags))
  		return READ_ONCE(huge_zero_folio);
  
--	if (!get_huge_zero_page())
-+	if (!get_huge_zero_folio())
+ 	if (!get_huge_zero_folio())
  		return NULL;
  
- 	if (test_and_set_bit(MMF_HUGE_ZERO_PAGE, &mm->flags))
--		put_huge_zero_page();
-+		put_huge_zero_folio();
+-	if (test_and_set_bit(MMF_HUGE_ZERO_PAGE, &mm->flags))
++	if (test_and_set_bit(MMF_HUGE_ZERO_FOLIO, &mm->flags))
+ 		put_huge_zero_folio();
  
  	return READ_ONCE(huge_zero_folio);
- }
-@@ -263,18 +263,18 @@ struct folio *mm_get_huge_zero_folio(struct mm_struct *mm)
+@@ -262,7 +262,7 @@ struct folio *mm_get_huge_zero_folio(struct mm_struct *mm)
+ 
  void mm_put_huge_zero_folio(struct mm_struct *mm)
  {
- 	if (test_bit(MMF_HUGE_ZERO_PAGE, &mm->flags))
--		put_huge_zero_page();
-+		put_huge_zero_folio();
- }
- 
--static unsigned long shrink_huge_zero_page_count(struct shrinker *shrink,
--					struct shrink_control *sc)
-+static unsigned long shrink_huge_zero_folio_count(struct shrinker *shrink,
-+						  struct shrink_control *sc)
- {
- 	/* we can free zero page only if last reference remains */
- 	return atomic_read(&huge_zero_refcount) == 1 ? HPAGE_PMD_NR : 0;
- }
- 
--static unsigned long shrink_huge_zero_page_scan(struct shrinker *shrink,
--				       struct shrink_control *sc)
-+static unsigned long shrink_huge_zero_folio_scan(struct shrinker *shrink,
-+						 struct shrink_control *sc)
- {
- 	if (atomic_cmpxchg(&huge_zero_refcount, 1, 0) == 1) {
- 		struct folio *zero_folio = xchg(&huge_zero_folio, NULL);
-@@ -287,7 +287,7 @@ static unsigned long shrink_huge_zero_page_scan(struct shrinker *shrink,
- 	return 0;
- }
- 
--static struct shrinker *huge_zero_page_shrinker;
-+static struct shrinker *huge_zero_folio_shrinker;
- 
- #ifdef CONFIG_SYSFS
- static ssize_t enabled_show(struct kobject *kobj,
-@@ -849,8 +849,8 @@ static inline void hugepage_exit_sysfs(struct kobject *hugepage_kobj)
- 
- static int __init thp_shrinker_init(void)
- {
--	huge_zero_page_shrinker = shrinker_alloc(0, "thp-zero");
--	if (!huge_zero_page_shrinker)
-+	huge_zero_folio_shrinker = shrinker_alloc(0, "thp-zero");
-+	if (!huge_zero_folio_shrinker)
- 		return -ENOMEM;
- 
- 	deferred_split_shrinker = shrinker_alloc(SHRINKER_NUMA_AWARE |
-@@ -858,13 +858,13 @@ static int __init thp_shrinker_init(void)
- 						 SHRINKER_NONSLAB,
- 						 "thp-deferred_split");
- 	if (!deferred_split_shrinker) {
--		shrinker_free(huge_zero_page_shrinker);
-+		shrinker_free(huge_zero_folio_shrinker);
- 		return -ENOMEM;
- 	}
- 
--	huge_zero_page_shrinker->count_objects = shrink_huge_zero_page_count;
--	huge_zero_page_shrinker->scan_objects = shrink_huge_zero_page_scan;
--	shrinker_register(huge_zero_page_shrinker);
-+	huge_zero_folio_shrinker->count_objects = shrink_huge_zero_folio_count;
-+	huge_zero_folio_shrinker->scan_objects = shrink_huge_zero_folio_scan;
-+	shrinker_register(huge_zero_folio_shrinker);
- 
- 	deferred_split_shrinker->count_objects = deferred_split_count;
- 	deferred_split_shrinker->scan_objects = deferred_split_scan;
-@@ -875,7 +875,7 @@ static int __init thp_shrinker_init(void)
- 
- static void __init thp_shrinker_exit(void)
- {
--	shrinker_free(huge_zero_page_shrinker);
-+	shrinker_free(huge_zero_folio_shrinker);
- 	shrinker_free(deferred_split_shrinker);
+-	if (test_bit(MMF_HUGE_ZERO_PAGE, &mm->flags))
++	if (test_bit(MMF_HUGE_ZERO_FOLIO, &mm->flags))
+ 		put_huge_zero_folio();
  }
  
 -- 
