@@ -1,150 +1,210 @@
-Return-Path: <linux-fsdevel+bounces-57116-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57117-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6858B1EDB6
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 19:20:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A9A6B1EDC1
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 19:21:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59FCDA0676D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 17:20:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93C3C5857E1
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 17:21:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 107621C1F12;
-	Fri,  8 Aug 2025 17:20:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC07228751D;
+	Fri,  8 Aug 2025 17:21:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="a8M63Uui"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="K5J2AzAJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F6F21B423B
-	for <linux-fsdevel@vger.kernel.org>; Fri,  8 Aug 2025 17:20:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E40B18871F;
+	Fri,  8 Aug 2025 17:21:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754673624; cv=none; b=ig7bceRnNaJK6fugvVu6hEO4uJ/yBViCa1xYeaNIIc6XD36mzjbwjHE4ymWScQKGNlKW7XKDBx9VUxRvmdJvgZm8eME9w/jfV3YkIvaGHlZ+VXww7K8kUvYcuQb1WnJL09VJT7mUpjFB9EK4dSx0McLx6LevOXlelvcsb8zMqvA=
+	t=1754673699; cv=none; b=lv4Rx4c93BPWxtYsdg7aRy4059kE2x7B9Oufucy21gXTzW5aaBp6nGTsExTVziQcwMF9Ep5vctTj+OxoI2NVxG5crSD3ZOWegULQFPWdT7oL/j1kNgedZZrVEcatroScsJA6VQXj3xe9Cr62Q50RB70iWlz3hT7oDgb8ghVPm10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754673624; c=relaxed/simple;
-	bh=RqNZJ9llYxg5119nPvsoAte+UupsM8m84wjkhwHB7S4=;
+	s=arc-20240116; t=1754673699; c=relaxed/simple;
+	bh=DBKFYTu5tPuGX9ybLDozeJ5i82kOtDjidng1iB4g6xc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=akQopT3CYypvUdr6fx45yPHla2Tz0LBpbnBjXuTp0/PX8jYuGRMMaWXGtHit7GSfIjjGIC1p7Y1oE8mXzGlSYCE2TjryIob7Lwp76EdlVx8GNzA8veN3Fdb2ryiEd6lYsoqM0LtlCpsceneEu7OWVU7FIRxdYC+sK3Bm/j2FttU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=a8M63Uui; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b42254ea4d5so1606885a12.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Aug 2025 10:20:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc.com; s=google; t=1754673622; x=1755278422; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=e5KtmNZscqY46KvhQCHs24ev6RrXWd+1XTPfyk6qu6o=;
-        b=a8M63UuieKcX26TzVIbNSA88Yn2tSAaxOYC3qXip6DTpLgrn22RYAPzvTl7GC4X9n7
-         z/MTSt5RmjktrSErLR5LGgZ5yeeSVtDdy7r2tM2Vu46CreMC2xvBV/xJ4kk/9gTLtBME
-         XD6iQ6/bTVbnM06BTpJ3Wqoamucgcv6vA+OIF0+0vPh9mB6sBnKW8qCfSS5KlftSo3az
-         WCQrHVGt76H8CJWQDS7PnRtch2s5ptTFKFYwdOWhLRTPtvqtNEO2M2/DWyUucdKdhrXG
-         PfX0jt+/QtWvkyBjDFhL2MK1WtIdbK19Ej4ghyPEM4jpSiVz2OOVtdPLEqDkQS/C0a4r
-         xzhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754673622; x=1755278422;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e5KtmNZscqY46KvhQCHs24ev6RrXWd+1XTPfyk6qu6o=;
-        b=Oe70i0KUUwq0ASteQXTRKUfPNFuQL5h5hky7r2j/aO+8vBRDudXUCpixXJpjwajfr+
-         Hof9WVL196dwSu7WgmwCBpx3o6qrPUUknELg2qd3vTQwbXW2Vp1UGWU4WVyXQs2bw4e3
-         Dja8j+RLkfXGJvgnfqC6i/ty1oGDxo9mQ/UItTmRp+FQalKtnzcT82sSUp09igAD4aRI
-         w15R4j1humDzXPClzA5rAlFdtXRN6kF4pTeeRt27HhmBwQBNoj9xXsUi/p2/hNGGdPZ6
-         angH/CazbKxO4n2fiK058xqR5Q5dAsXd0Klfo9v/xpRxPJ3XE5dsBHdz6UyCkOT+8LRA
-         qF2A==
-X-Forwarded-Encrypted: i=1; AJvYcCVcKM5d4agkMeVuOZu7Bw/3r9eqNgwku4FrVGxCxefR2Kv6KLfk1rhISRgj4BDsCEi4/5e+F8p72KEnkmJD@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+rXR+8QDYX+82mOljD+gWbzFywwQRM7n93frAwZIPCoC6JX5A
-	EyB0YRfPzCNIBt5NcVKbLR5qgXhy+UehEvkNSiv4QO38OnZKiml+LkwsFl1uCJMOKVw=
-X-Gm-Gg: ASbGnctFKuFodeDxsvhHnnWRiuBYCuAqDq0LnYe3HNRkzWZXChbh6nwID2CI3U+Yr8L
-	PATWJHvX9kGFPr7ignpdi4r6vd06y/ncZ6tbDqxpvxykM4btAL6+aLM01idl7rKvpdW6hLyqUgG
-	36dqhUjLKX5xmtfrWxqNPQIB873oF6pY4ogWVZycpsHqZ9HJnL4BZLthItXIROXcxTjKAqIuwdX
-	Z8/rwan188w9qz7vLpOqTR7ITbQKxTtm9v5wuwKqhmegtCSV/LWLg89SF97eTzTPXFZALcI0Ece
-	TiyAQbKrDCMpPyaKxzqtHeXObMMtbo9eNX4p3377CH2rT1ZLr8SxjajXF4z1TsqIe/Q9/PCuxnY
-	IbA+Tj+DqiECpFpJeCOLf3NYg1nmxdtk1V7JFjf+f9d0=
-X-Google-Smtp-Source: AGHT+IEbXOfCcMMF+EKLeMi8xU3SNI8Lg4qkWBu83GI5zB4sNqf//XXj2WJssysLa22zlDPxSEkl6g==
-X-Received: by 2002:a17:902:da82:b0:240:c678:c1ee with SMTP id d9443c01a7336-242c1ffb211mr57743355ad.11.1754673622272;
-        Fri, 08 Aug 2025 10:20:22 -0700 (PDT)
-Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8aafa77sm213263625ad.174.2025.08.08.10.20.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Aug 2025 10:20:21 -0700 (PDT)
-Date: Fri, 8 Aug 2025 10:20:17 -0700
-From: Deepak Gupta <debug@rivosinc.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: patchwork-bot+linux-riscv@kernel.org, linux-riscv@lists.infradead.org,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	akpm@linux-foundation.org, Liam.Howlett@oracle.com, vbabka@suse.cz,
-	lorenzo.stoakes@oracle.com, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, conor@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, arnd@arndb.de,
-	brauner@kernel.org, peterz@infradead.org, oleg@redhat.com,
-	ebiederm@xmission.com, kees@kernel.org, corbet@lwn.net,
-	shuah@kernel.org, jannh@google.com, conor+dt@kernel.org,
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@kernel.org,
-	aliceryhl@google.com, tmgross@umich.edu, lossin@kernel.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, devicetree@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, alistair.francis@wdc.com,
-	richard.henderson@linaro.org, jim.shu@sifive.com,
-	andybnac@gmail.com, kito.cheng@sifive.com, charlie@rivosinc.com,
-	atishp@rivosinc.com, evan@rivosinc.com, cleger@rivosinc.com,
-	alexghiti@rivosinc.com, samitolvanen@google.com,
-	rick.p.edgecombe@intel.com, rust-for-linux@vger.kernel.org,
-	zong.li@sifive.com, david@redhat.com
-Subject: Re: [PATCH v19 00/27] riscv control-flow integrity for usermode
-Message-ID: <aJYx0Yi3rQcdY6se@debug.ba.rivosinc.com>
-References: <20250731-v5_user_cfi_series-v19-0-09b468d7beab@rivosinc.com>
- <175450053775.2863135.11568399057706626223.git-patchwork-notify@kernel.org>
- <db4eb976-693c-426c-a867-66cadd3dd7d8@sirena.org.uk>
- <aJWz82F21pVTSVJi@debug.ba.rivosinc.com>
- <09081487-89ac-4f8d-b9fc-e563f09726d2@sirena.org.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JccXSBRoTO9Av7KiD/d3S0BiO2ayZOIwKIm87f7wC/Hj76Ds1c03LdCEdoO4bE0MWoNGRdKm5JkWv4mXIiS6458LqdiZ7J2fHIBWrPqpKwJME0TX1PUFXhfTQ6X8XaacBt7+6FJeIS8l72cvjvwbUE/u7ZSOx3Z+GLSk0wEvET4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=K5J2AzAJ; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 578EVqe4022753;
+	Fri, 8 Aug 2025 17:21:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=Ke2ysD
+	bRl8q6joTUOu+MU16x2yWgmGXvnQxWBgQqMZ8=; b=K5J2AzAJbr6j1wVE7r2WCZ
+	eqTkH+QNahoaI/wn8Psq6tEemu90x0/gr1RPOD9AM8Rxf2Jj8ookp5kbaMaTwQeS
+	o2Hhy7fZvogZNoVib1gjYnWX4xKl3knSGj0ed0LJRPPFh9AXl5klylFvexrIn5bE
+	tfRZ4vdxMWnbJhCIrwFy5gxez8wqKSdFTwsu/HEGz5RN7KqEDXWiqb7jndIdTZzb
+	UPYGESswg1VN3vfF9yk4KrRqBbVCRFtjIH71BLlKsif2L7NJ6zlOzfVdtyQAjfHM
+	Smu8S2pLHLC+9j01rXBmkp5SFM8Wl0nkGazzKnXw7l0/YtGz/Uhg/YA2Z9yrq56g
+	==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48dk2n8tua-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 08 Aug 2025 17:21:14 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 578EvZbt031326;
+	Fri, 8 Aug 2025 17:21:13 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48bpwnpka9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 08 Aug 2025 17:21:13 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 578HLB2j22085908
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 8 Aug 2025 17:21:11 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4D36920040;
+	Fri,  8 Aug 2025 17:21:11 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1B8902004D;
+	Fri,  8 Aug 2025 17:21:09 +0000 (GMT)
+Received: from li-e7e2bd4c-2dae-11b2-a85c-bfd29497117c.ibm.com (unknown [9.39.29.218])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri,  8 Aug 2025 17:21:08 +0000 (GMT)
+Date: Fri, 8 Aug 2025 22:51:06 +0530
+From: Amit Machhiwal <amachhiw@linux.ibm.com>
+To: =?utf-8?Q?C=C3=A9dric?= Le Goater <clg@kaod.org>
+Cc: Alex Mastro <amastro@fb.com>, Alex Williamson <alex.williamson@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Keith Busch <kbusch@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        kvm@vger.kernel.org
+Subject: Re: [PATCH v4] vfio/pci: print vfio-device syspath to fdinfo
+Message-ID: <20250808224806.09f6d858-1d-amachhiw@linux.ibm.com>
+Mail-Followup-To: =?utf-8?Q?C=C3=A9dric?= Le Goater <clg@kaod.org>, 
+	Alex Mastro <amastro@fb.com>, Alex Williamson <alex.williamson@redhat.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Jason Gunthorpe <jgg@ziepe.ca>, Keith Busch <kbusch@kernel.org>, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	kvm@vger.kernel.org
+References: <20250804-show-fdinfo-v4-1-96b14c5691b3@fb.com>
+ <20250807144938.e0abc7bb-a4-amachhiw@linux.ibm.com>
+ <dd0b8e6f-1673-49c3-8018-974d1e7f1a54@kaod.org>
+ <20250808205338.dc652e3e-61-amachhiw@linux.ibm.com>
+ <bc7e754f-f414-4c43-8f25-03314b894b34@kaod.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <09081487-89ac-4f8d-b9fc-e563f09726d2@sirena.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <bc7e754f-f414-4c43-8f25-03314b894b34@kaod.org>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA4MDE0MSBTYWx0ZWRfX+LTZsfDCvdAS
+ zgJH5N24m4p3Hd0TMlHdhraDi2L6J4fMXCjO17EiVdWhz9L5farTcSVt51IlhCDnEkO3A0liE+l
+ gxX1QcqTVv+AQtkU6oZTlxBaWl7yEy3ipqCmrLDRaNr1n1PvJpQJadBTnLP0pMmOjqhTjUAH1uM
+ T4DGk6SJsmPXYCMyv7xJBz1/onhyDuoleA2i2fCk+cnkSue7oDg4AKgJAbMt/J9PZMtD3IzszgQ
+ 8UGSXM0MIrBkDaVSALNMBWjKc9PLDQuCAc3xM+5bE3dT1JOHRnSi7GV4hTrGm/tUjtcA/tIKoA2
+ 7oAeFuBEklmOCEr/GI4C+OEVwgGPs7e4l/NzdRyaG+dxBMcCUIT1VcKCCSi6pg4L0hRvOdNvl2f
+ 1cMq6blohiFwylb3WPBTvt0yaPslRtECXn+uvQoLu5P8BqWpEHa/5Lfs1tiQQiw+vvTFaCwZ
+X-Proofpoint-GUID: A3HiGeHw8cjSeUofRyC2D-HKmq29oXh6
+X-Proofpoint-ORIG-GUID: A3HiGeHw8cjSeUofRyC2D-HKmq29oXh6
+X-Authority-Analysis: v=2.4 cv=BNWzrEQG c=1 sm=1 tr=0 ts=6896320a cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=8nJEP1OIZ-IA:10 a=2OwXVqhp2XgA:10 a=FOH2dFAWAAAA:8 a=1rDcQM-rTn2rXFAQwpAA:9
+ a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-08_05,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_spam_definite policy=outbound
+ score=100 suspectscore=0 lowpriorityscore=0 spamscore=100 bulkscore=0
+ impostorscore=0 phishscore=0 mlxscore=100 clxscore=1015 malwarescore=0
+ priorityscore=1501 adultscore=0 mlxlogscore=-999 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508080141
 
-On Fri, Aug 08, 2025 at 12:48:31PM +0100, Mark Brown wrote:
->On Fri, Aug 08, 2025 at 01:23:15AM -0700, Deepak Gupta wrote:
->> On Thu, Aug 07, 2025 at 01:28:36PM +0100, Mark Brown wrote:
->
->> > Do you have an update for my clone3() shadow
->
->> No I don't.
->
->> > stack series that I could roll in for when I repost that after the merge
->> > window, and/or instructions for how to run this stuff for RISC-V on some
->> > emulated platform?
->
->> I would want to write-up instructions. But I don't want you to go through
->> a lot of hassle of building toolchain and bunch of other stuff.
->> Let me see how I can make it easy for you. Will report back.
->
->Thanks.  FWIW I should already be sorted for the kernel build, unless
->there's a super new or specialist toolchain required for this feature
+On 2025/08/08 06:44 PM, Cédric Le Goater wrote:
+> On 8/8/25 17:45, Amit Machhiwal wrote:
+> > Hi Cédric,
+> > 
+> > Please find my comments inline:
+> > 
+> > On 2025/08/08 03:49 PM, Cédric Le Goater wrote:
+> > > Hello Amit,
+> > > 
+> > > On 8/7/25 11:34, Amit Machhiwal wrote:
+> > > > Hello,
+> > > > 
+> > > > On 2025/08/04 12:44 PM, Alex Mastro wrote:
+> > > > > Print the PCI device syspath to a vfio device's fdinfo. This enables tools
+> > > > > to query which device is associated with a given vfio device fd.
+> > > > > 
+> > > > > This results in output like below:
+> > > > > 
+> > > > > $ cat /proc/"$SOME_PID"/fdinfo/"$VFIO_FD" | grep vfio
+> > > > > vfio-device-syspath: /sys/devices/pci0000:e0/0000:e0:01.1/0000:e1:00.0/0000:e2:05.0/0000:e8:00.0
+> > > > > 
+> > > > > Signed-off-by: Alex Mastro <amastro@fb.com>
+> > > > 
+> > > > I tested this patch on a POWER9 bare metal system with a VFIO PCI device and
+> > > > could see the VFIO device syspath in fdinfo.
+> > > 
+> > > POWER9 running on OPAL FW : I am curious about the software stack.
+> > > 
+> > > I suppose this is the latest upstream kernel ?
+> > 
+> > Yes, I used the latest upstream kernel and applied this patch on top of commit
+> > cca7a0aae895.
+> > 
+> > > Are you using an upstream QEMU to test too ?
+> > 
+> > No, I had used the Fedora 42 distro qemu. The version details are as below:
+> > 
+> >    [root@localhost ~]# qemu-system-ppc64 --version
+> >    QEMU emulator version 9.2.4 (qemu-9.2.4-1.fc42)
+> >    Copyright (c) 2003-2024 Fabrice Bellard and the QEMU Project developers
+> > 
+> > I gave the upstream qemu (HEAD pointing to cd21ee5b27) a try and I see the same
+> > behavior with that too.
+> > 
+> >    [root@localhost ~]# ./qemu-system-ppc64 --version
+> >    QEMU emulator version 10.0.92 (v10.1.0-rc2-4-gcd21ee5b27-dirty)
+> >    Copyright (c) 2003-2025 Fabrice Bellard and the QEMU Project developers
+> > 
+> >    [root@localhost ~]# cat /proc/52807/fdinfo/191
+> >    pos:    0
+> >    flags:  02000002
+> >    mnt_id: 17
+> >    ino:    1125
+> >    vfio-device-syspath: /sys/devices/pci0031:00/0031:00:00.0/0031:01:00.0
+> > 
+> > > 
+> > > and which device ?
+> > 
+> > I'm using a Broadcom NetXtreme network card (4-port) and passing through its
+> > fn0.
+> > 
+> >    [root@guest ~]# lspci
+> >    [...]
+> >    0001:00:01.0 Ethernet controller: Broadcom Inc. and subsidiaries NetXtreme BCM5719 Gigabit Ethernet PCIe (rev 01)
+> > 
+> > Please let me know if I may help you with any additional information.
+> 
+> It is good to know that device pass-through still works with upstream on
+> OpenPower servers.
+> 
+> Have you tried VFs ?
 
-Unlike x86 shadow stack and arm's GCS, push on RISC-V shadow stack is done
-using dedicated `sspush` instruction and pop is done using instruction
-`sspopchk`. RISC-V vDSO has certain `C` files and they would need shadow stack
-push and pop (along with landing pad on them). So that's why kernel compile
-would require the toolchain. I'll point you to it.
+I didn't get a chance to try VFs yet, Cédric.
 
->(I'd guess I should be fine for the shadow stacks bit?) - it's userspace
->and emulation for the extension I'm missing.
+> 
+> Thanks Amit,
 
-Qemu changes are upstream. I'll provide the command line option.
-On userspace, I'll point you to something pre-compiled rootfs.
+No problem. :)
 
+Thanks,
+Amit
 
+> 
+> C.
+> 
 
