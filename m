@@ -1,252 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-57070-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57071-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 503C6B1E83F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 14:25:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96962B1E866
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 14:33:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07CD7A05501
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 12:24:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B8343BFB26
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 12:33:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F5D6277CB1;
-	Fri,  8 Aug 2025 12:24:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C226278E42;
+	Fri,  8 Aug 2025 12:32:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CMRCOSJ4"
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="XFYuNxhQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFC1D275B17;
-	Fri,  8 Aug 2025 12:24:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754655891; cv=none; b=u0yE5JuwT2LKbzHrIL+aFQdJXRjK1a/ZQEIq54zDrDa7fLDjNpWf9pzKBI83gLkCkFfPWpysZHBKwdSjag/rvquq3W64bCcR1E37sOc5nZa9sH2JXit/qyraHzPbnJaIa7lkUSph07xgatYpXuT0jAgKMfs5WjCg4U+vvRTVLmk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754655891; c=relaxed/simple;
-	bh=qRjvtQepeMwWQ1iZeyP+WXdo3DOPw4yY3tm/2Jj3ro8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=hhuBIGrQG8Pm5YD/j3z5pjrpQSbKAMOvEiP/5AnP3vd2ZJMMe7pXITpmC3chLzsP1NINH88MqeeCNwjDSU8lVC8expx4lzgBbgXgmPiI4Cuf+bkr0YcL6e/LVtF32j+sTUfi/oASXMRB6jCZO0aLbbZWRqLAAuTsjMLACm+yOic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CMRCOSJ4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01115C4CEED;
-	Fri,  8 Aug 2025 12:24:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754655891;
-	bh=qRjvtQepeMwWQ1iZeyP+WXdo3DOPw4yY3tm/2Jj3ro8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=CMRCOSJ4OD4BgEV43QFUeLjx//tVMPcvn1zUTdkz9AEdPWvxToF3CTtrJ1JY/j7FQ
-	 Wafqp+mkl4F+RrKLdpvFkCtYorEJs9Tt6axGTHlEr587xP5Xo0loGlmK2qV8cF6d9p
-	 NmSBZDjZycBiXzMSQy1zA1Ob1jgfjGybkU/W7UHhsItAXGLuyJQCcvBbRVKaPo+3oj
-	 HvW4FB4JncGBNWmwmBjkKKNhjw+tydQpk4wQrQ7Sc5vXhwrwqPZpgVhJgUazpVAPKt
-	 nCXk1XTmrY1dMOqyD13Z5jOxKdhUOOsLFfOP/zTIiXCQhWc3Q9/8G9+QB5lLT2QKeT
-	 MhrbCEVrZ3BPA==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: Pasha Tatashin <pasha.tatashin@soleen.com>,  pratyush@kernel.org,
-  jasonmiu@google.com,  graf@amazon.com,  changyuanl@google.com,
-  rppt@kernel.org,  dmatlack@google.com,  rientjes@google.com,
-  corbet@lwn.net,  rdunlap@infradead.org,  ilpo.jarvinen@linux.intel.com,
-  kanie@linux.alibaba.com,  ojeda@kernel.org,  aliceryhl@google.com,
-  masahiroy@kernel.org,  akpm@linux-foundation.org,  tj@kernel.org,
-  yoann.congal@smile.fr,  mmaurer@google.com,  roman.gushchin@linux.dev,
-  chenridong@huawei.com,  axboe@kernel.dk,  mark.rutland@arm.com,
-  jannh@google.com,  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
-  dan.j.williams@intel.com,  joel.granados@kernel.org,
-  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
-  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
-  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
-  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
-  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
-  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
-  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
-  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
-  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
-  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
-  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
-  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
-  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
-  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  saeedm@nvidia.com,  ajayachandra@nvidia.com,  jgg@nvidia.com,
-  parav@nvidia.com,  leonro@nvidia.com,  witu@nvidia.com, Hugh Dickins
- <hughd@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>
-Subject: Re: [PATCH v3 00/30] Live Update Orchestrator
-In-Reply-To: <b227482a-31ec-4c92-a856-bd19f72217b7@redhat.com>
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
-	<b227482a-31ec-4c92-a856-bd19f72217b7@redhat.com>
-Date: Fri, 08 Aug 2025 14:24:40 +0200
-Message-ID: <mafs07bzeatmf.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 319E01EA6F;
+	Fri,  8 Aug 2025 12:32:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754656372; cv=pass; b=ph/XuEIo0z+R+Yf0GpOd92J+Nhc9EQbzsH/LnRntPPJNqoBKXVrCxlaHKVeHhALyLUBCpAkZbpbWyoMvRgcXVb+g6IaHv0sn1LQJ/jXPrUYZfX1eFWdkvgS+M5YnfO92Iwmkj2P6TJLDckBCnuQlV0hQE14UjZBfAMhxsfPWyus=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754656372; c=relaxed/simple;
+	bh=5RQ0+KlgYtKgJpnVIo+1qCVbmoXGajzKhpxHfMEn0WY=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=MvtjYd96ZNENAJdXasb5WMu9wMCalWqEUjSYejotez1u0I1JmLL7R7IduYk9DKzOr6n3KhkKEKA/oirU214NoYgXsiYaFcyT0mrpkp6LRP56qX2h+L/neWq4i8dSbyGkDMPTHcHsULjpjIuecWqi7o6aaf1LhGPZFBW5v2NYGzw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=XFYuNxhQ; arc=pass smtp.client-ip=136.143.188.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1754656345; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=UrDX7IR2VxvXfwtejFwdGZfS2v1hw8nj+cg5B2l3pDrVo5MTqw/+JmND8V0FIMfCM9CBXcimP1Gc08fXy4yU0o+DVA5un3rMf30OQ43NZztswVW8TJKAxSmuueOzao+Zi/tG3hxHF/vAbmz7ClLWFgKg5rKi/A7JvofgIoTKBnQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1754656345; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=5RQ0+KlgYtKgJpnVIo+1qCVbmoXGajzKhpxHfMEn0WY=; 
+	b=Ye8gHmpoQgBExPR2Nr1sLutPFa7IFeImcLnKkO22YTlQtmvNXupQ+U339MGphPdq4E4t1wc/06uTFopgtnnT6hcNAporfmqx02xwz7gZCZFVqR6rzYdfMz/OoAgir3snTaLKd01bMKodI0g1iFRouI6tiH9ou8LfkNYz/iunJSY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
+	dmarc=pass header.from=<safinaskar@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754656345;
+	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=5RQ0+KlgYtKgJpnVIo+1qCVbmoXGajzKhpxHfMEn0WY=;
+	b=XFYuNxhQ4V3dMbkA5Uv23BNwH7JMq9UrwR9O4Ex78upsvUoVeGi0fYp82IB3lz33
+	AP0AaXP1Fk/JV+Z+3IptAHnKBYd02K95LVqXFAvmueqUyqqGNgtlndfUnXfwaGWOvng
+	DmJMwIdr+sMcEroCQiPAvlrDZPL/QGzK8EBPc8/g=
+Received: from mail.zoho.com by mx.zohomail.com
+	with SMTP id 1754656343428651.8436591123038; Fri, 8 Aug 2025 05:32:23 -0700 (PDT)
+Received: from  [212.73.77.104] by mail.zoho.com
+	with HTTP;Fri, 8 Aug 2025 05:32:23 -0700 (PDT)
+Date: Fri, 08 Aug 2025 16:32:23 +0400
+From: Askar Safin <safinaskar@zohomail.com>
+To: "Aleksa Sarai" <cyphar@cyphar.com>
+Cc: "Alejandro Colomar" <alx@kernel.org>,
+	"Michael T. Kerrisk" <mtk.manpages@gmail.com>,
+	"Alexander Viro" <viro@zeniv.linux.org.uk>,
+	"Jan Kara" <jack@suse.cz>,
+	"G. Branden Robinson" <g.branden.robinson@gmail.com>,
+	"linux-man" <linux-man@vger.kernel.org>,
+	"linux-api" <linux-api@vger.kernel.org>,
+	"linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel" <linux-kernel@vger.kernel.org>,
+	"David Howells" <dhowells@redhat.com>,
+	"Christian Brauner" <brauner@kernel.org>
+Message-ID: <19889ab0576.e4d2f37341528.6111844101094013469@zohomail.com>
+In-Reply-To: <20250807-new-mount-api-v2-8-558a27b8068c@cyphar.com>
+References: <20250807-new-mount-api-v2-0-558a27b8068c@cyphar.com> <20250807-new-mount-api-v2-8-558a27b8068c@cyphar.com>
+Subject: Re: [PATCH v2 08/11] open_tree.2: document 'new' mount api
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
+Feedback-ID: rr08011227ec3fb710edb18d71033cf66a0000f0b18623aa033c3fd537ebecad1b88db1fc808a4879d0a0e93:zu0801122783754bada4211323d45ed4b50000f21b461a6265b1713ea60e9de137aa5cde7232862d10e0b658:rf0801122b4eb2dc596efb65b1382cdee1000011cd5c6982eaed6fdedff49ce50371052af85a2b0623aad07268b14c1e:ZohoMail
 
-On Fri, Aug 08 2025, David Hildenbrand wrote:
+In "man open_tree":
 
-> On 07.08.25 03:44, Pasha Tatashin wrote:
->> This series introduces the LUO, a kernel subsystem designed to
->> facilitate live kernel updates with minimal downtime,
->> particularly in cloud delplyoments aiming to update without fully
->> disrupting running virtual machines.
->> This series builds upon KHO framework by adding programmatic
->> control over KHO's lifecycle and leveraging KHO for persisting LUO's
->> own metadata across the kexec boundary. The git branch for this series
->> can be found at:
->> https://github.com/googleprodkernel/linux-liveupdate/tree/luo/v3
->> Changelog from v2:
->> - Addressed comments from Mike Rapoport and Jason Gunthorpe
->> - Only one user agent (LiveupdateD) can open /dev/liveupdate
->> - Release all preserved resources if /dev/liveupdate closes
->>    before reboot.
->> - With the above changes, sessions are not needed, and should be
->>    maintained by the user-agent itself, so removed support for
->>    sessions.
->> - Added support for changing per-FD state (i.e. some FDs can be
->>    prepared or finished before the global transition.
->> - All IOCTLs now follow iommufd/fwctl extendable design.
->> - Replaced locks with guards
->> - Added a callback for registered subsystems to be notified
->>    during boot: ops->boot().
->> - Removed args from callbacks, instead use container_of() to
->>    carry context specific data (see luo_selftests.c for example).
->> - removed patches for luolib, they are going to be introduced in
->>    a separate repository.
->> What is Live Update?
->> Live Update is a kexec based reboot process where selected kernel
->> resources (memory, file descriptors, and eventually devices) are kept
->> operational or their state preserved across a kernel transition. For
->> certain resources, DMA and interrupt activity might continue with
->> minimal interruption during the kernel reboot.
->> LUO provides a framework for coordinating live updates. It features:
->> State Machine: Manages the live update process through states:
->> NORMAL, PREPARED, FROZEN, UPDATED.
->> KHO Integration:
->> LUO programmatically drives KHO's finalization and abort sequences.
->> KHO's debugfs interface is now optional configured via
->> CONFIG_KEXEC_HANDOVER_DEBUG.
->> LUO preserves its own metadata via KHO's kho_add_subtree and
->> kho_preserve_phys() mechanisms.
->> Subsystem Participation: A callback API liveupdate_register_subsystem()
->> allows kernel subsystems (e.g., KVM, IOMMU, VFIO, PCI) to register
->> handlers for LUO events (PREPARE, FREEZE, FINISH, CANCEL) and persist a
->> u64 payload via the LUO FDT.
->> File Descriptor Preservation: Infrastructure
->> liveupdate_register_filesystem, luo_register_file, luo_retrieve_file to
->> allow specific types of file descriptors (e.g., memfd, vfio) to be
->> preserved and restored.
->> Handlers for specific file types can be registered to manage their
->> preservation and restoration, storing a u64 payload in the LUO FDT.
->> User-space Interface:
->> ioctl (/dev/liveupdate): The primary control interface for
->> triggering LUO state transitions (prepare, freeze, finish, cancel)
->> and managing the preservation/restoration of file descriptors.
->> Access requires CAP_SYS_ADMIN.
->> sysfs (/sys/kernel/liveupdate/state): A read-only interface for
->> monitoring the current LUO state. This allows userspace services to
->> track progress and coordinate actions.
->> Selftests: Includes kernel-side hooks and userspace selftests to
->> verify core LUO functionality, particularly subsystem registration and
->> basic state transitions.
->> LUO State Machine and Events:
->> NORMAL:   Default operational state.
->> PREPARED: Initial preparation complete after LIVEUPDATE_PREPARE
->>            event. Subsystems have saved initial state.
->> FROZEN:   Final "blackout window" state after LIVEUPDATE_FREEZE
->>            event, just before kexec. Workloads must be suspended.
->> UPDATED:  Next kernel has booted via live update. Awaiting restoration
->>            and LIVEUPDATE_FINISH.
->> Events:
->> LIVEUPDATE_PREPARE: Prepare for reboot, serialize state.
->> LIVEUPDATE_FREEZE:  Final opportunity to save state before kexec.
->> LIVEUPDATE_FINISH:  Post-reboot cleanup in the next kernel.
->> LIVEUPDATE_CANCEL:  Abort prepare or freeze, revert changes.
->> v2:
->> https://lore.kernel.org/all/20250723144649.1696299-1-pasha.tatashin@soleen.com
->> v1: https://lore.kernel.org/all/20250625231838.1897085-1-pasha.tatashin@soleen.com
->> RFC v2: https://lore.kernel.org/all/20250515182322.117840-1-pasha.tatashin@soleen.com
->> RFC v1: https://lore.kernel.org/all/20250320024011.2995837-1-pasha.tatashin@soleen.com
->> Changyuan Lyu (1):
->>    kho: add interfaces to unpreserve folios and physical memory ranges
->> Mike Rapoport (Microsoft) (1):
->>    kho: drop notifiers
->> Pasha Tatashin (23):
->>    kho: init new_physxa->phys_bits to fix lockdep
->>    kho: mm: Don't allow deferred struct page with KHO
->>    kho: warn if KHO is disabled due to an error
->>    kho: allow to drive kho from within kernel
->>    kho: make debugfs interface optional
->>    kho: don't unpreserve memory during abort
->>    liveupdate: kho: move to kernel/liveupdate
->>    liveupdate: luo_core: luo_ioctl: Live Update Orchestrator
->>    liveupdate: luo_core: integrate with KHO
->>    liveupdate: luo_subsystems: add subsystem registration
->>    liveupdate: luo_subsystems: implement subsystem callbacks
->>    liveupdate: luo_files: add infrastructure for FDs
->>    liveupdate: luo_files: implement file systems callbacks
->>    liveupdate: luo_ioctl: add userpsace interface
->>    liveupdate: luo_files: luo_ioctl: Unregister all FDs on device close
->>    liveupdate: luo_files: luo_ioctl: Add ioctls for per-file state
->>      management
->>    liveupdate: luo_sysfs: add sysfs state monitoring
->>    reboot: call liveupdate_reboot() before kexec
->>    kho: move kho debugfs directory to liveupdate
->>    liveupdate: add selftests for subsystems un/registration
->>    selftests/liveupdate: add subsystem/state tests
->>    docs: add luo documentation
->>    MAINTAINERS: add liveupdate entry
->> Pratyush Yadav (5):
->>    mm: shmem: use SHMEM_F_* flags instead of VM_* flags
->>    mm: shmem: allow freezing inode mapping
->>    mm: shmem: export some functions to internal.h
->>    luo: allow preserving memfd
->>    docs: add documentation for memfd preservation via LUO
->
-> It's not clear from the description why these mm shmem changes are buried in
-> this patch set. It's not even described above in the patch description.
+> As with "*at()" system calls, fspick() uses the dirfd argument in conjunction
 
-Patches 26-30 describe the shmem changes in more detail, but you're
-right, it should be mentioned in the cover as well.
+You meant "open_tree"
 
-The idea is, LUO is used to preserve kernel resources across kexec. One
-of the most fundamental resources the kernel has is memory. Since LUO
-does preservation based on file descriptors, memfd is the way to attach
-a FD to memory. So we went with memfd as the first user of LUO. memfd
-can be backed by shmem or hugetlb, but currently only shmem is
-supported. We do plan to support hugetlb as well in the future.
+> If flags does not contain OPEN_TREE_CLONE, open_tree() returns
+> a file descriptor that is exactly equivalent to one produced by open(2).
 
-The idea is to keep the serialization/live update logic out of the way
-of the main subsystem. So we decided to keep the logic out in a separate
-file.
+Please, change "by open(2)" to "by openat(2) with O_PATH" (and other similar places).
 
->
-> I suggest sending that part out separately, so Hugh actually spots this.
-> (is he even CC'ed?)
+--
+Askar Safin
+https://types.pl/@safinaskar
 
-Hmm, none of the shmem maintainers are included. I wonder why. The
-patches do touch shmem.c and shmem_fs.h so the MAINTAINERS entry for
-"TMPFS (SHMEM FILESYSTEM)" should have been hit. My guess is that the
-shmem changes weren't part of the original RFC so perhaps Pasha forgot
-to update the To/Cc list since then?
-
-Either way, I've added Hugh and Baolin to this email. Hugh, Baolin, you
-can find the shmem related patches at [0][1][2][3][4].
-
-Pasha, can you please add them for later versions as well?
-
-And now that I think about it, I suppose patch 29 should also add
-memfd_luo.c under the SHMEM MAINTAINERS entry.
-
-[0] https://lore.kernel.org/lkml/20250807014442.3829950-27-pasha.tatashin@soleen.com/
-[1] https://lore.kernel.org/lkml/20250807014442.3829950-28-pasha.tatashin@soleen.com/
-[2] https://lore.kernel.org/lkml/20250807014442.3829950-29-pasha.tatashin@soleen.com/
-[3] https://lore.kernel.org/lkml/20250807014442.3829950-30-pasha.tatashin@soleen.com/
-[4] https://lore.kernel.org/lkml/20250807014442.3829950-31-pasha.tatashin@soleen.com/
-
--- 
-Regards,
-Pratyush Yadav
 
