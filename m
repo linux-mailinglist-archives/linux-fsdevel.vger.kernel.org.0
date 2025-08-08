@@ -1,58 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-57152-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57153-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BF21B1EFCB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 22:43:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0628BB1EFFE
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 22:59:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 551FC16FC17
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 20:43:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F5A31789C4
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 20:59:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F97528A3EF;
-	Fri,  8 Aug 2025 20:41:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B1D242D75;
+	Fri,  8 Aug 2025 20:59:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="nfmdhOZO"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="Z4a7Skhb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9826289E3C;
-	Fri,  8 Aug 2025 20:41:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E15121CFFD;
+	Fri,  8 Aug 2025 20:59:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754685685; cv=none; b=o8Y6sNlQhDakdCu/L96E+wab7RgmVyOx/IRNkNebZSO1K98SOMBGpG2xzzX8iSutFlUccs2Q9aasFbPduXUr1OThIPQLOWIkQN1XAgyHdxw9d9Wt/AaP0bjr4L6hFcvNm3VxiJcWQzUsDVmNEH/1RxFoSPBDyucoxMt4R9jrbdM=
+	t=1754686762; cv=none; b=Lhy6UnK/tgp+mnXqVrQMUQn690ZLbC0TlzmmeNFyB0iROxh/ONETU2KEGtVCpm5HAGZIAKw4Hi51Mff3hS1Djl6NjNOzECiuE3MhVbGL46/Z5Wk0uWKFcc06OXI9j1CAt+yTjC+2M+/o//o0kVjxYlNjaoRfwQzN6Ar+cIEdT/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754685685; c=relaxed/simple;
-	bh=kYsKPddX805RzOw4SP5aC06jULGnc9Yib7S66nFHI4k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Qj5GID6pGIikJLOVg62Urub12QEW1M9JKu6k55MTOnhPZ/Ic7riZDN61A+VsezsaS/fzpQr0Slisp/3XYC6KMGqX99a/m6DW0vyyVTzSZ8vW/xl0AaXw/1e4xJLgWk1dkSBjL5VaUoU+ftsyqyKOQ//OezD/NSVEDJk29ZmRuZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=nfmdhOZO; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4bzGCM1f4lz9sc4;
-	Fri,  8 Aug 2025 22:41:19 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1754685679;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bGPumx2Rqm3p1S+Eay5H6awP7U7X//hs66pgfwkfArc=;
-	b=nfmdhOZONZIqDdp2LMPb/i11Lmd7BC5zLRjXgy7cdKTk+PfUT+nNdMnwA0DYGSsoUtg4Ng
-	EJWmJp7VLE4GetNpIwiS68Xf5E3x8BQAS5/UjpCGsMws+quTJe2nBuIimRRhjqk0fLynYA
-	/Uir3/CIU207a2mMOKpVgNZYAoQoEgf6iS6VrEAfajgaD5iGZjVmmXTSvrbjvxpv/bZtrN
-	UpLRU/6LWMhxpMAObWDBxUS2ottC22sh5k7BCLpV9zeHQeiNdysLjBcZBPFNbj1iE8eD29
-	YEvna1o6ttRk47daFZpxxj7NuWc6lUahSsg7oi1feEodBxAyh+eCDWF8+qhbZA==
-From: Aleksa Sarai <cyphar@cyphar.com>
-Date: Sat, 09 Aug 2025 06:39:56 +1000
-Subject: [PATCH v3 12/12] man/man2/{fsconfig,mount_setattr}.2: add note
- about attribute-parameter distinction
+	s=arc-20240116; t=1754686762; c=relaxed/simple;
+	bh=Y1akW/tUO8/eLc3WG3wFlUv009EciIOQQNjsOPYu7hE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=J4nQ2PSeNEjPBiBq1440gI8y/lfbHo7TEaTroSb1fq6OikFk3v//PvOnZo+qxq4ZppmeJRM0RexVbF6LaJ2JVepv2pUgkU8/7kz91J++gYOygYoLjHvM2wr6kbYx4iZDE+23r2OP+mn6ws80roCsd1FEsW2cOoiCJtJdpNgKoGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=Z4a7Skhb; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:
+	Message-Id:Date:Subject:From:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=n1D/LrSY803XlLsMoG+Du6YGArf9vgrOCY1imzFNMh8=; b=Z4a7Skhbl8V+UHlHFJR8iRC52Y
+	27HdoiG4eTDk2jZfWEBotuMrHJ4BSxMQMaAkWdtU/ZyHeRosClI5dcjoBLs2fPJCGeAgxbjy0zwmd
+	thHnjEnjcW/5T0/lj6yWKDo1zC3RstTrtB+R2L5nvuQWD5jjTfVAueU/bGh7JVeyldwGaxa//NVZ0
+	Wxi6pHuP7JlCGQdUz8Vludq8nJDYTZ7r3u2fDtNg7shvJWvLOiA7Ys9Ce0g7N7XzxNCO1M8fxBGRk
+	DtCWzAz88BXYS2C9Z8bhvgwHTynKsmIfHtnMkkSfs9+vQkE9Q7TNU/WhD4uBZ0oo7X+tIT34gMrkK
+	s4czI3lg==;
+Received: from [152.250.7.37] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1ukUBD-00BiQh-Se; Fri, 08 Aug 2025 22:59:12 +0200
+From: =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+Subject: [PATCH RFC v3 0/7] ovl: Enable support for casefold filesystems
+Date: Fri, 08 Aug 2025 17:58:42 -0300
+Message-Id: <20250808-tonyk-overlayfs-v3-0-30f9be426ba8@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,110 +57,93 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250809-new-mount-api-v3-12-f61405c80f34@cyphar.com>
-References: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com>
-In-Reply-To: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com>
-To: Alejandro Colomar <alx@kernel.org>
-Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
- Askar Safin <safinaskar@zohomail.com>, 
- "G. Branden Robinson" <g.branden.robinson@gmail.com>, 
- linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>, 
- Aleksa Sarai <cyphar@cyphar.com>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2776; i=cyphar@cyphar.com;
- h=from:subject:message-id; bh=kYsKPddX805RzOw4SP5aC06jULGnc9Yib7S66nFHI4k=;
- b=owGbwMvMwCWmMf3Xpe0vXfIZT6slMWRMS5hxnHdanKCNzTLp9dW6i3QShXrV9rXotXxZE9wZ9
- /jD9RT5jlIWBjEuBlkxRZZtfp6hm+YvvpL8aSUbzBxWJpAhDFycAjCRcgFGhj3v50lNnc4+SW65
- qMPpBaE+K/NOt2X0nXrUaGKwrc3D/BzDf5+ICYGL2Tm+eE6+mL+7/ry5x8frldXMfLs2Nwfefiq
- nxwMA
-X-Developer-Key: i=cyphar@cyphar.com; a=openpgp;
- fpr=C9C370B246B09F6DBCFC744C34401015D1D2D386
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAAJllmgC/3XNTQrCMBAF4KvIrI3ktzauBMEDuBUXoZ20wdpIU
+ oKl9O6GbETE5ZvHfG+BiMFhhMNmgYDJRefHHMR2A01vxg6Ja3MGTrmikmoy+XG+E58wDGa2kSj
+ NrELZSro3kL+eAa17FfEKl/MJbvnYuzj5MJeVxEr1F0yMUCK0ZhWrLGojjq4zgzO7xj8KlvgHq
+ Kn6BXgGKCrJa9YaweovYF3XNz/Annn1AAAA
+X-Change-ID: 20250409-tonyk-overlayfs-591f5e4d407a
+To: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
+ Theodore Tso <tytso@mit.edu>, Gabriel Krisman Bertazi <krisman@kernel.org>
+Cc: linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ kernel-dev@igalia.com, 
+ =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+X-Mailer: b4 0.14.2
 
-This was not particularly well documented in mount(8) nor mount(2), and
-since this is a fairly notable aspect of the new mount API, we should
-probably add some words about it.
+Hi all,
 
-Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+We would like to support the usage of casefold filesystems with
+overlayfs to be used with container tools. This use case requires a
+simple setup, where every layer will have the same encoding setting
+(i.e. Unicode version and flags), using one upper and one lower layer.
+
+* Implementation
+
+When merge layers, ovl uses a red-black tree to check if a given dentry
+name from a lower layers already exists in the upper layer. For merging
+case-insensitive names, we need to store then in tree casefolded.
+However, when displaying to the user the dentry name, we need to respect
+the name chosen when the file was created (e.g. Picture.PNG, instead of
+picture.png). To achieve this, I create a new field for cache entries
+that stores the casefolded names and a function ovl_strcmp() that uses
+this name for searching the rb_tree. For composing the layer, ovl uses
+the original name, keeping it consistency with whatever name the user
+created.
+
+The rest of the patches are mostly for checking if casefold is being
+consistently used across the layers and dropping the mount restrictions
+that prevented case-insensitive filesystems to be mounted.
+
+Thanks for the feedback!
+
 ---
- man/man2/fsconfig.2      | 11 +++++++++++
- man/man2/mount_setattr.2 | 37 +++++++++++++++++++++++++++++++++++++
- 2 files changed, 48 insertions(+)
+Changes in v3:
+- Rebased on top of vfs-6.18.misc branch
+- Added more guards for casefolding things inside of IS_ENABLED(UNICODE)
+- Refactor the strncmp() patch to do a single kmalloc() per rb_tree operation
+- Instead of casefolding the cache entry name everytime per strncmp(),
+  casefold it once and reuse it for every strncmp().
+- Created ovl_dentry_ci_operations to not override dentry ops set by
+  ovl_dentry_operations
+- Instead of setting encoding just when there's a upper layer, set it
+  for any first layer (ofs->fs[0].sb), regardless of it being upper or
+  not.
+- Rewrote the patch that set inode flags
+- Check if every dentry is consistent with the root dentry regarding
+  casefold
+v2: https://lore.kernel.org/r/20250805-tonyk-overlayfs-v2-0-0e54281da318@igalia.com
 
-diff --git a/man/man2/fsconfig.2 b/man/man2/fsconfig.2
-index 97c9aff0e0c195e6028e1c7bd70e40905ba9f994..a7642e1633541bf8f5cd537db22987a4ec70da06 100644
---- a/man/man2/fsconfig.2
-+++ b/man/man2/fsconfig.2
-@@ -522,6 +522,17 @@ .SS Generic filesystem parameters
- Linux Security Modules (LSMs)
- are also generic with respect to the underlying filesystem.
- See the documentation for the LSM you wish to configure for more details.
-+.SS Mount attributes and filesystem parameters
-+Some filesystem parameters
-+(traditionally associated with
-+.BR mount (8)-style
-+options)
-+are also mount attributes.
-+.P
-+For a description of the distinction between
-+mount attributes and filesystem parameters,
-+see the "Mount attributes and filesystem parameters" subsection of
-+.BR mount_setattr (2).
- .SH CAVEATS
- .SS Filesystem parameter types
- As a result of
-diff --git a/man/man2/mount_setattr.2 b/man/man2/mount_setattr.2
-index d98e7d70870c082144dfa47e31ddf091c8545e4f..2927b012eed1569e0d78a2fb91815f364fca124d 100644
---- a/man/man2/mount_setattr.2
-+++ b/man/man2/mount_setattr.2
-@@ -790,6 +790,43 @@ .SS ID-mapped mounts
- .BR chown (2)
- system call changes the ownership globally and permanently.
- .\"
-+.SS Mount attributes and filesystem parameters
-+Some mount attributes
-+(traditionally associated with
-+.BR mount (8)-style
-+options)
-+are also filesystem parameters.
-+For example, the
-+.I -o ro
-+option to
-+.BR mount (8)
-+can refer to the
-+"read-only" filesystem parameter,
-+or the "read-only" mount attribute.
-+.P
-+The distinction between these two kinds of option is that
-+mount object attributes are applied per-mount-object
-+(allowing different mount objects
-+derived from a given filesystem instance
-+to have different attributes),
-+while filesystem instance parameters
-+("superblock flags" in kernel-developer parlance)
-+apply to all mount objects
-+derived from the same filesystem instance.
-+.P
-+When using
-+.BR mount (2),
-+the line between these two types of mount options was blurred.
-+However, with
-+.BR mount_setattr ()
-+and
-+.BR fsconfig (2),
-+the distinction is made much clearer.
-+Mount attributes are configured with
-+.BR mount_setattr (),
-+while filesystem parameters can be configured using
-+.BR fsconfig (2).
-+.\"
- .SS Extensibility
- In order to allow for future extensibility,
- .BR mount_setattr ()
+Changes in v2:
+- Almost a full rewritten from the v1.
+v1: https://lore.kernel.org/lkml/20250409-tonyk-overlayfs-v1-0-3991616fe9a3@igalia.com/
 
+---
+André Almeida (7):
+      ovl: Store casefold name for case-insentive dentries
+      ovl: Create ovl_casefold() to support casefolded strncmp()
+      fs: Create sb_same_encoding() helper
+      ovl: Ensure that all mount points have the same encoding
+      ovl: Set case-insensitive dentry operations for ovl sb
+      ovl: Add S_CASEFOLD as part of the inode flag to be copied
+      ovl: Support case-insensitive lookup
+
+ fs/overlayfs/namei.c     |  17 +++---
+ fs/overlayfs/overlayfs.h |   2 +-
+ fs/overlayfs/ovl_entry.h |   1 +
+ fs/overlayfs/params.c    |   7 +--
+ fs/overlayfs/readdir.c   | 133 ++++++++++++++++++++++++++++++++++++++++++-----
+ fs/overlayfs/super.c     |  39 ++++++++++++++
+ fs/overlayfs/util.c      |   8 +--
+ include/linux/fs.h       |  19 +++++++
+ 8 files changed, 195 insertions(+), 31 deletions(-)
+---
+base-commit: 0fdf709a849f773c9b23b0d9fff2a25de056ddd5
+change-id: 20250409-tonyk-overlayfs-591f5e4d407a
+
+Best regards,
 -- 
-2.50.1
+André Almeida <andrealmeid@igalia.com>
 
 
