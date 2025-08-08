@@ -1,192 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-57086-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57087-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E363B1E9C2
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 16:00:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DE54B1E9C7
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 16:01:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D82C27AA2CF
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 13:59:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D23616BBA3
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 14:01:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A65C327E07B;
-	Fri,  8 Aug 2025 14:00:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4251227CB0A;
+	Fri,  8 Aug 2025 14:01:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="fYzyli9L"
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="ZJy+b8A5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90DEE246BCD
-	for <linux-fsdevel@vger.kernel.org>; Fri,  8 Aug 2025 14:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754661648; cv=none; b=srd2eYBvlvtfVxkcKq7gwl8yHzbyZklZZBrTRqt8rcF+vhfn4ImBat76b6xXYVX6Yh2pfPbC6CrMs3wMzSTp3X3GCIJX8wwNgxLpJirPNPUEnA0nh+PkwpkO9EFTho3E95MfeIHQLlBfpFnKUyxfMc/lgUKosxbSYSnNuU/dpcU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754661648; c=relaxed/simple;
-	bh=x4ha9INZKS3qtde5fpadJaWJod/g+Zi1d0xN7YAlf3E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X4JiUnOV2H42Hf5pEfV/5ITmr7uesubG1izYABdXHCtTQ81789P9vdIhWhM+vF4btxhCzxx6Iub5TLivab5B8xePg8WmdEDzTWbUjA+CMYLxMYdm18ijzu7IhWu6LDcqP1tPxL2R0MCY2BVRV4n/7ku3POpcNJfp6bQxR7YVA4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=fYzyli9L; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4b08a0b63c6so24855951cf.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Aug 2025 07:00:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1754661645; x=1755266445; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qqINGqOAKkihtWhqv8aP2ZlDWCyF3eZIl3dlPcJlrEs=;
-        b=fYzyli9LeJhZI3OL2lOmQmUB/2hupW00LWygDlRVwGMxBR6yau6SZv2gOz0tzUT4ea
-         snHxd+H9EFl1H+/X1Kuw/Ay6esXEphiIW0Wea0tYgDRhnyH80AU1JlRrdlnyQFGH5nHQ
-         qBXOAOTE7nE66vqCtARk4xwfHgLypH8vftFTfMPNHT+4rD0HNyW2CCJB7skOr4/pZtNV
-         r5h6moz4C1iZV/8WF/H2qJoMGWJHm10+N2EdNBQ2C5BLDovti2qlpQwWWf4LSWkFatbg
-         CktxOs8XWJC4y8m4FEB8cFeqpPOvpFk4O7UwXT6V0ihyQxWLHFJ25SXcpb9rfinl3Gs7
-         AMGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754661645; x=1755266445;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qqINGqOAKkihtWhqv8aP2ZlDWCyF3eZIl3dlPcJlrEs=;
-        b=ES86qvr4UZEhB0hw9LmhcBMEFEAuhClXVqsDcR+xA6Q8gD9IwiulaSAoDde+gDFX/G
-         Qfaw+bwY3v2KFl/D5KKws+m318O5q9T9uP+ZzyFIIbwjWdS+2NRQW/Lbq+9wtFc17KNk
-         F1ECe5al2efVz4QERccIauXmfgAG8k19g489j1OR9G0s2i2L5777QmLo2u5R4XuW8a/O
-         ALeg11q4RZ2LZNHZ+neskQ1s+kfWeULqEsSvXQepy5g8kLfnTBX54jG3fq3orn7QhxFv
-         /vfEnZjfhA4HRASfL1H3YIkjsmcDwNIhqaHw+VB3fBEJq/g0tuDmPUT7ZdWIkNX4A6YJ
-         vAuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUNW9hHKpC9hf3Ud8l0UHwPvoEtKo35Pc7uADQlV/fbGeXfih2OZ/33bR8L0Y0TXeISjFY3A5ecHi43ROik@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywb8aiNuBL+kcg4HRMRHGBfGS64FItV09QJJ/9wwDf7+0ydjwXT
-	+HxhTw3ok2c4j4jeiue/J1CEZTiM4fvL58/yBM8YZUTiyHTHaVWCDN0+8ah2OIn2aD2wjeC6RAk
-	EhBOAcPzd0rrsZDvR3FNW1ND0tOj5TRVGPUG6sOv+Bg==
-X-Gm-Gg: ASbGncuonDBk3RBJfX//hB/v0dzm1SFid3pQw8TKxree/G16sUqAwhgib315gYXca7G
-	BcTEQTKKCZuzkAwN0Ck5f4iaNA545OWj9Uft6tZpVdfwoChwf+lkTOXQGZAnRSti5hZUvU/kTJI
-	Vt6NzVAoP8mPzxRNsEs1675fZFSHXXP+UQAB4Vn93B2tL58whybFc9i+f4HopOJ6C46zMq/UaBl
-	n87
-X-Google-Smtp-Source: AGHT+IGU7X5qeX8OS2DQuYKdpYSGfIFno/a95GYTX1d6NB06BqBHy2416czan27fZPJSukzaA24gTw9e0PS+96Ajhto=
-X-Received: by 2002:a05:622a:5a0f:b0:4af:4bac:e523 with SMTP id
- d75a77b69052e-4b0aed0f0e9mr39963141cf.8.1754661645094; Fri, 08 Aug 2025
- 07:00:45 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DA4026AC3;
+	Fri,  8 Aug 2025 14:01:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754661682; cv=pass; b=qw4M5s5rynXaLzkZ5muQ9pXU0MnTdqHnGmAU3O2lJB17TsC/RrNBMhFrt0DRvFm+w55ZW6Mcopo+EIfHRNA9KTd6PYrjkIdZNiTSHlriWjhqMqUeTDQu2v0l7K6yqr+5rA5rDmm9BtVTdk3jhLS785XGg9BB9fetpAgWm4JVbSg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754661682; c=relaxed/simple;
+	bh=rT3VzyH6Xn1glT38DkuRT8Gj02/qfEIf4SWBwVJK6uw=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=FKETRv3cFAPjR4eKvIQ3Zg5lX8h+0f/Mm4FEkMt1oOtKrEfYwXdjYH5l1T7a7YtXryXQY7LAnIWqJxm3UfxAIZlEwcXcgYKjeRWnn9x/VWno4KY2EMy5lTQLyHg0V0fX3FF6NIyX1/Ay3azEgVxgX2QIOIEb7/d2tlWrqo4Pb88=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=ZJy+b8A5; arc=pass smtp.client-ip=136.143.188.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1754661646; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=F3DH0S9y/LpE8St8iKYkkwyJXdFUODHoXmtvCqlFrZhZnkpG5DJS9ZhZQ46ZSTJH+qM5odKZbN8S6WqUJUZlmTBCbd76sZ3g98zyvY/SHm6M5ochVBHaw5RdTXMv84w2i1E3/tQmrRlyiOSZxDwMUH25nMl1JmPRAua4tMuNMvs=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1754661646; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=M7IuwaQDdYjwYVpeTbAcgAwO0y6aDahsOmCDYXaJ2+o=; 
+	b=SoD79QwLNYx7W9+bD91y6gLXyT9fSaEh90BSHY4ZrZtLFuOw8qKaGHJRrzDvYJ3oyMP6ZOkuJmghrJTxkR5p+5GS5JX0WvH5lXJPqdId7o+7saHQS2uPrHo715PX4Rz3iW9yvr+I/L+xsNHzXLu77p7b0X78hfAYifwJroPorzU=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
+	dmarc=pass header.from=<safinaskar@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754661646;
+	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=M7IuwaQDdYjwYVpeTbAcgAwO0y6aDahsOmCDYXaJ2+o=;
+	b=ZJy+b8A5Zx6KJGcsPzbG82dCyS9LHI58Avgst6PxWJsswc1F3HcVz1mTypDg2INT
+	KoRODugjrc7ivZr7UNxrDtFmeBgXz5TwAJCgwI893qlpOY0diziM9VnZkO3I3NSN6x3
+	p3PYBtSKmHvSMJXp0D0h1TZZ6dSXmWKSt1Y3SEus=
+Received: from mail.zoho.com by mx.zohomail.com
+	with SMTP id 1754661643941480.67059820000884; Fri, 8 Aug 2025 07:00:43 -0700 (PDT)
+Received: from  [212.73.77.104] by mail.zoho.com
+	with HTTP;Fri, 8 Aug 2025 07:00:43 -0700 (PDT)
+Date: Fri, 08 Aug 2025 18:00:43 +0400
+From: Askar Safin <safinaskar@zohomail.com>
+To: "Aleksa Sarai" <cyphar@cyphar.com>
+Cc: "Alejandro Colomar" <alx@kernel.org>,
+	"Michael T. Kerrisk" <mtk.manpages@gmail.com>,
+	"Alexander Viro" <viro@zeniv.linux.org.uk>,
+	"Jan Kara" <jack@suse.cz>,
+	"G. Branden Robinson" <g.branden.robinson@gmail.com>,
+	"linux-man" <linux-man@vger.kernel.org>,
+	"linux-api" <linux-api@vger.kernel.org>,
+	"linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel" <linux-kernel@vger.kernel.org>,
+	"David Howells" <dhowells@redhat.com>,
+	"Christian Brauner" <brauner@kernel.org>
+Message-ID: <19889fbe690.e80d252e42280.4347614991285137048@zohomail.com>
+In-Reply-To: <20250807-new-mount-api-v2-5-558a27b8068c@cyphar.com>
+References: <20250807-new-mount-api-v2-0-558a27b8068c@cyphar.com> <20250807-new-mount-api-v2-5-558a27b8068c@cyphar.com>
+Subject: Re: [PATCH v2 05/11] fsconfig.2: document 'new' mount api
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
- <20250807014442.3829950-2-pasha.tatashin@soleen.com> <mafs0o6sqavkx.fsf@kernel.org>
- <mafs0bjoqav4j.fsf@kernel.org>
-In-Reply-To: <mafs0bjoqav4j.fsf@kernel.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Fri, 8 Aug 2025 14:00:08 +0000
-X-Gm-Features: Ac12FXyA0-d-njVDnQIR5bUTLVyM1KEOMfZexHnLlS_vPOyE1wA5_qbuL5SMqTM
-Message-ID: <CA+CK2bBoMNEfyFKgvKR0JvECpZrGKP1mEbC_fo8SqystEBAQUA@mail.gmail.com>
-Subject: Re: [PATCH v3 01/30] kho: init new_physxa->phys_bits to fix lockdep
-To: Pratyush Yadav <pratyush@kernel.org>
-Cc: jasonmiu@google.com, graf@amazon.com, changyuanl@google.com, 
-	rppt@kernel.org, dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
-	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
-	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
-	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
-	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
-	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
-	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
-	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
-	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn, 
-	linux@weissschuh.net, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-mm@kvack.org, gregkh@linuxfoundation.org, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
-	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org, 
-	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com, 
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, 
-	quic_zijuhu@quicinc.com, aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, lennart@poettering.net, brauner@kernel.org, 
-	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, saeedm@nvidia.com, 
-	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, leonro@nvidia.com, 
-	witu@nvidia.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
+Feedback-ID: rr080112273483f9e25750bd5e64720e9300000a43eff5e06d646831b4925fdb282f74945ca5395047b5b966:zu08011227295a2319a843661c6004f60f0000f4c6cf4f655d584944e8f69f6a3a421beea4a6b920d39a4d09:rf0801122b8da7ca7ba25404bd0a9fc9bd0000b41b42decbf1c6f1f242aac919400a2b489e22dceb18c04293f4c63600:ZohoMail
 
-On Fri, Aug 8, 2025 at 11:52=E2=80=AFAM Pratyush Yadav <pratyush@kernel.org=
-> wrote:
->
-> On Fri, Aug 08 2025, Pratyush Yadav wrote:
-> [...]
-> >> @@ -144,14 +144,35 @@ static int __kho_preserve_order(struct kho_mem_t=
-rack *track, unsigned long pfn,
-> >>                              unsigned int order)
-> >>  {
-> >>      struct kho_mem_phys_bits *bits;
-> >> -    struct kho_mem_phys *physxa;
-> >> +    struct kho_mem_phys *physxa, *new_physxa;
-> >>      const unsigned long pfn_high =3D pfn >> order;
-> >>
-> >>      might_sleep();
-> >>
-> >> -    physxa =3D xa_load_or_alloc(&track->orders, order, sizeof(*physxa=
-));
-> >> -    if (IS_ERR(physxa))
-> >> -            return PTR_ERR(physxa);
-> >> +    physxa =3D xa_load(&track->orders, order);
-> >> +    if (!physxa) {
-> >> +            new_physxa =3D kzalloc(sizeof(*physxa), GFP_KERNEL);
-> >> +            if (!new_physxa)
-> >> +                    return -ENOMEM;
-> >> +
-> >> +            xa_init(&new_physxa->phys_bits);
-> >> +            physxa =3D xa_cmpxchg(&track->orders, order, NULL, new_ph=
-ysxa,
-> >> +                                GFP_KERNEL);
-> >> +            if (xa_is_err(physxa)) {
-> >> +                    int err =3D xa_err(physxa);
-> >> +
-> >> +                    xa_destroy(&new_physxa->phys_bits);
-> >> +                    kfree(new_physxa);
-> >> +
-> >> +                    return err;
-> >> +            }
-> >> +            if (physxa) {
-> >> +                    xa_destroy(&new_physxa->phys_bits);
-> >> +                    kfree(new_physxa);
-> >> +            } else {
-> >> +                    physxa =3D new_physxa;
-> >> +            }
-> >
-> > I suppose this could be simplified a bit to:
-> >
-> >       err =3D xa_err(physxa);
-> >         if (err || physxa) {
-> >               xa_destroy(&new_physxa->phys_bits);
-> >                 kfree(new_physxa);
-> >
-> >               if (err)
-> >                       return err;
-> >       } else {
-> >               physxa =3D new_physxa;
-> >       }
->
-> My email client completely messed the whitespace up so this is a bit
-> unreadable. Here is what I meant:
->
->         err =3D xa_err(physxa);
->         if (err || physxa) {
->                 xa_destroy(&new_physxa->phys_bits);
->                 kfree(new_physxa);
->
->                 if (err)
->                         return err;
->         } else {
->                 physxa =3D new_physxa;
->         }
->
-> [...]
+Let's consider this example:
 
-Thanks Pratyush, I will make this simplification change if Andrew does
-not take this patch in before the next revision.
+           int fsfd, mntfd, nsfd, nsdirfd;
 
-Pasha
+           nsfd = open("/proc/self/ns/pid", O_PATH);
+           nsdirfd = open("/proc/1/ns", O_DIRECTORY);
+
+           fsfd = fsopen("proc", FSOPEN_CLOEXEC);
+           /* "pidns" changes the value each time. */
+           fsconfig(fsfd, FSCONFIG_SET_PATH, "pidns", "/proc/self/ns/pid", AT_FDCWD);
+           fsconfig(fsfd, FSCONFIG_SET_PATH, "pidns", "pid", NULL, nsdirfd);
+           fsconfig(fsfd, FSCONFIG_SET_PATH_EMPTY, "pidns", "", nsfd);
+           fsconfig(fsfd, FSCONFIG_SET_FD, "pidns", NULL, nsfd);
+           fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
+           mntfd = fsmount(fsfd, FSMOUNT_CLOEXEC, 0);
+           move_mount(mntfd, "", AT_FDCWD, "/proc", MOVE_MOUNT_F_EMPTY_PATH);
+
+I don't like it. /proc/self/ns/pid is our namespace, which is default anyway.
+I. e. setting pidns to /proc/self/ns/pid is no-op (assuming that "pidns" option is implemented in our kernel, of course).
+Moreover, if /proc is mounted properly, then /proc/1/ns/pid refers to our namespace, too!
+Thus, *all* these fsconfig(FSCONFIG_SET_...) calls are no-op.
+Thus it is bad example.
+
+I suggest using, say, /proc/2/ns/pid . It has actual chance to refer to some other namespace.
+
+Also, sentence '"pidns" changes the value each time' is a lie: as I explained, all these calls are no-ops,
+they don't really change anything.
+
+--
+Askar Safin
+https://types.pl/@safinaskar
+
 
