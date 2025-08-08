@@ -1,34 +1,34 @@
-Return-Path: <linux-fsdevel+bounces-57154-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57155-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25A30B1EFFF
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 22:59:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A308B1F002
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 23:00:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA33D3B0A44
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 20:59:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5993717C28E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 21:00:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AFF3242D89;
-	Fri,  8 Aug 2025 20:59:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 386D3253F07;
+	Fri,  8 Aug 2025 20:59:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="JoeyDXpD"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="X9UeX77y"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2A921D00D;
-	Fri,  8 Aug 2025 20:59:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25E524679F;
+	Fri,  8 Aug 2025 20:59:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754686762; cv=none; b=BZUbWNN+RAd86xjpoxszzS9ISGYPrQV6VIGANdt5JeA4y8EfPfOd1x3FDOsaeF21joc+zkoHiVO+A0HBLhmdXE0+XpDON1jzcOH1S6Jk/ACR3aixWsJMcJYu6lHQKX6gFxq385MUsdMzuW9sRUp4CU0koortqDSIPdwgwwJBaec=
+	t=1754686764; cv=none; b=CvCv7Pofo71Kv2x156roGODUXOTsBoUjwQDsawlaSzDm/stLKkQl1gPRkaLv0BTNis8fFI0hpblcB3XuSsU2dSWhfr3aXubZYiHpA1yVsm95B5uSuuLa8ek/mlzo5BmN32fd9+Or9kZ7CVAE/DB1c4SZQdvVi7OEcERAWniJzsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754686762; c=relaxed/simple;
-	bh=lts1u80SMMqa4/xe940q6JwSTiF+tO19ClFEbfS7cyo=;
+	s=arc-20240116; t=1754686764; c=relaxed/simple;
+	bh=u3dVlKVgCIToDkks6TwPSnBHVCtdx+U9LZIfDBQnw/Q=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=j7b7/YmFYUCJAgONUVzpK6aSs4TKNzrYZ5jmjBDBAx9BGrmlqLZmNoUENCrRcwLqql8c1691LI2QFqqKwngwEl5PzPT4tlfYCAXq6fqsQjxEEOySsSduCsoBx3FB/n88PvIFt4wKmwIosM+MqjQWQwd1EtUInBGe853C6N28HIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=JoeyDXpD; arc=none smtp.client-ip=213.97.179.56
+	 In-Reply-To:To:Cc; b=n2cnsr/7q5IBCAoXy1xnd4ZXkTg4Ix3ANR4Z9BFgnokWCfg7tsUFVeYe2K+XYi/gTkGFEODZGGJlcCIYpkpcoLf1cg3p1IONJeNzeZ/8j7I7n1DlpTJUj9RCjTkp15juayGAyzFA5Ywm1uAUQ2hEX8R0PfrT3BS2Q3wXCw9ue+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=X9UeX77y; arc=none smtp.client-ip=213.97.179.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
@@ -37,20 +37,20 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
 	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=I3x2BitoREkICs8gzrBGPPrHzXqLRXwM+o5AKkH5M1I=; b=JoeyDXpDULr2w9e0KvI9CJkMwn
-	T881InFYWW9bLjWhlXEXjL4ot7JrvOrjCyry50+fA4WPbbXo2hE3xKqtGmjjzj/s5VGDr8RWw4+cR
-	t0bLpRlLQ4XrBxYwLE0Vc5eBjN2iQD/5jY9iYJkbAeL/bY65wgWn4owCAclIztdXWbuOL7567Ls4z
-	LfSqNdsjqfhfVg15dZn6uW9/vv5BAf5whofIyq0e4gJ6LaYThJgPLtcAHMs2YKULi/Wz5ZyuN25hc
-	nCoxNkbx3Ig4PcaVYWc5Edv2cBM+iTbnOPQcr35MSnyNjUCYVfKKLiF7NyMnlOLK+IRdxEWmiR++h
-	XIwlsJMQ==;
+	bh=Lg9awdomZOsISya3sAyiL8R37JeVM+GS4Ptv56M4avs=; b=X9UeX77yU+KxevR+nY/dqEKZ+g
+	a09nvP6FyVFLz/OvOiz4ZcWbmBS4tcOje8GMn3kLcq+D68laQiHXdeQFymHNSRxvmqsoz/uBdapxF
+	dcDZdBcJBpM5PDOmW7jIj6d1W0y4XU5gjv7APnT/zkB+jajLkZOaOOwVmZDlCdUlmV7u6E5k6Hxkq
+	JzLThdbCCAuJ3RCfDHMlEP8Bnwou1ef+yckTxMU00U+wdF44yqonkJmA6Kse1NDnuLG4FOPO7SXUr
+	WeIabbD13HArdwug2PJc7MFjVQGBNiTUBF1zzygO03EBOkt97v0egyTDelmVQtz2Gcf+8X8BOHyPF
+	NbEypaqA==;
 Received: from [152.250.7.37] (helo=[192.168.15.100])
 	by fanzine2.igalia.com with esmtpsa 
 	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1ukUBG-00BiQh-Mx; Fri, 08 Aug 2025 22:59:14 +0200
+	id 1ukUBJ-00BiQh-H8; Fri, 08 Aug 2025 22:59:17 +0200
 From: =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Date: Fri, 08 Aug 2025 17:58:43 -0300
-Subject: [PATCH RFC v3 1/7] ovl: Store casefold name for case-insentive
- dentries
+Date: Fri, 08 Aug 2025 17:58:44 -0300
+Subject: [PATCH RFC v3 2/7] ovl: Create ovl_casefold() to support
+ casefolded strncmp()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,7 +59,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250808-tonyk-overlayfs-v3-1-30f9be426ba8@igalia.com>
+Message-Id: <20250808-tonyk-overlayfs-v3-2-30f9be426ba8@igalia.com>
 References: <20250808-tonyk-overlayfs-v3-0-30f9be426ba8@igalia.com>
 In-Reply-To: <20250808-tonyk-overlayfs-v3-0-30f9be426ba8@igalia.com>
 To: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
@@ -71,117 +71,217 @@ Cc: linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org,
  =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
 X-Mailer: b4 0.14.2
 
-In order to make case-insentive mounting points work, overlayfs needs
-the casefolded version of its dentries so the search and insertion in
-the struct ovl_readdir_data's red-black compares the dentry names in a
-case-insentive fashion.
+To add overlayfs support casefold filesystems, create a new function
+ovl_casefold(), to be able to do case-insensitive strncmp().
 
-If a dentry is casefolded, compute and store it's casefolded name and
-it's Unicode map. If utf8_casefold() fails, set it's name pointer as
-NULL so it can be ignored and fallback to the original name.
+ovl_casefold() allocates a new buffer and stores the casefolded version
+of the string on it. If the allocation or the casefold operation fails,
+fallback to use the original string. The caller of the function is
+responsible of freeing the buffer.
+
+The other string to be compared is casefolded in a previous step and
+stored at `struct ovl_cache_entry` member `char *cf_name`.
+
+Finally, set the strncmp() parameters to the casefold versions of the
+names to achieve case-insensitive support.
+
+For the non-casefold names, nothing changes and the rb_tree
+search/insert functions just ignores this change.
 
 Signed-off-by: André Almeida <andrealmeid@igalia.com>
 ---
-Changes from v3:
- - Guard all the casefolding inside of IS_ENABLED(UNICODE)
+Changes from v2:
+- Refactor the patch to do a single kmalloc() per rb_tree operation
+- Instead of casefolding the cache entry name everytime per strncmp(),
+  casefold it once and reuse it for every strncmp().
 ---
- fs/overlayfs/readdir.c | 41 ++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 40 insertions(+), 1 deletion(-)
+ fs/overlayfs/readdir.c | 92 +++++++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 80 insertions(+), 12 deletions(-)
 
 diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
-index b65cdfce31ce27172d28d879559f1008b9c87320..2f42fec97f76c2000f76e15c60975db567b2c6d6 100644
+index 2f42fec97f76c2000f76e15c60975db567b2c6d6..422f991393dfae12bcacf326414b7ee19e486ac8 100644
 --- a/fs/overlayfs/readdir.c
 +++ b/fs/overlayfs/readdir.c
-@@ -16,6 +16,8 @@
- #include <linux/overflow.h>
- #include "overlayfs.h"
- 
-+#define OVL_NAME_LEN 255
-+
- struct ovl_cache_entry {
- 	unsigned int len;
- 	unsigned int type;
-@@ -27,6 +29,8 @@ struct ovl_cache_entry {
- 	bool is_upper;
- 	bool is_whiteout;
- 	bool check_xwhiteout;
-+	char *cf_name;
-+	int cf_len;
- 	char name[];
- };
- 
-@@ -45,6 +49,7 @@ struct ovl_readdir_data {
- 	struct list_head *list;
- 	struct list_head middle;
- 	struct ovl_cache_entry *first_maybe_whiteout;
-+	struct unicode_map *map;
- 	int count;
- 	int err;
- 	bool is_upper;
-@@ -166,6 +171,31 @@ static struct ovl_cache_entry *ovl_cache_entry_new(struct ovl_readdir_data *rdd,
- 	p->is_whiteout = false;
- 	/* Defer check for overlay.whiteout to ovl_iterate() */
- 	p->check_xwhiteout = rdd->in_xwhiteouts_dir && d_type == DT_REG;
-+	p->cf_name = NULL;
-+	p->cf_len = 0;
-+
-+#if IS_ENABLED(CONFIG_UNICODE)
-+	if (rdd->map && !is_dot_dotdot(name, len)) {
-+		const struct qstr str = { .name = name, .len = len };
-+		int ret;
-+
-+		p->cf_name = kmalloc(OVL_NAME_LEN, GFP_KERNEL);
-+
-+		if (!p->cf_name) {
-+			kfree(p);
-+			return NULL;
-+		}
-+
-+		ret = utf8_casefold(rdd->map, &str, p->cf_name, OVL_NAME_LEN);
-+
-+		if (ret < 0) {
-+			kfree(p->cf_name);
-+			p->cf_name = NULL;
-+		} else {
-+			p->cf_len = ret;
-+		}
-+	}
-+#endif
- 
- 	if (d_type == DT_CHR) {
- 		p->next_maybe_whiteout = rdd->first_maybe_whiteout;
-@@ -223,8 +253,10 @@ void ovl_cache_free(struct list_head *list)
- 	struct ovl_cache_entry *p;
- 	struct ovl_cache_entry *n;
- 
--	list_for_each_entry_safe(p, n, list, l_node)
-+	list_for_each_entry_safe(p, n, list, l_node) {
-+		kfree(p->cf_name);
- 		kfree(p);
-+	}
- 
- 	INIT_LIST_HEAD(list);
+@@ -71,20 +71,58 @@ static struct ovl_cache_entry *ovl_cache_entry_from_node(struct rb_node *n)
+ 	return rb_entry(n, struct ovl_cache_entry, node);
  }
-@@ -357,12 +389,19 @@ static int ovl_dir_read_merged(struct dentry *dentry, struct list_head *list,
- 		.list = list,
- 		.root = root,
- 		.is_lowest = false,
-+		.map = NULL,
- 	};
- 	int idx, next;
- 	const struct ovl_layer *layer;
  
- 	for (idx = 0; idx != -1; idx = next) {
- 		next = ovl_path_next(idx, dentry, &realpath, &layer);
-+
++static int ovl_casefold(struct unicode_map *map, const char *str, int len, char **dst)
++{
 +#if IS_ENABLED(CONFIG_UNICODE)
-+		if (ovl_dentry_casefolded(realpath.dentry))
-+			rdd.map = realpath.dentry->d_sb->s_encoding;
++	const struct qstr qstr = { .name = str, .len = len };
++	int cf_len;
++
++	if (!map || is_dot_dotdot(str, len))
++		return -1;
++
++	*dst = kmalloc(OVL_NAME_LEN, GFP_KERNEL);
++
++	if (dst) {
++		cf_len = utf8_casefold(map, &qstr, *dst, OVL_NAME_LEN);
++
++		if (cf_len > 0)
++			return cf_len;
++	}
 +#endif
 +
- 		rdd.is_upper = ovl_dentry_upper(dentry) == realpath.dentry;
- 		rdd.in_xwhiteouts_dir = layer->has_xwhiteouts &&
- 					ovl_dentry_has_xwhiteouts(dentry);
++	return -1;
++}
++
+ static bool ovl_cache_entry_find_link(const char *name, int len,
+ 				      struct rb_node ***link,
+-				      struct rb_node **parent)
++				      struct rb_node **parent,
++				      struct unicode_map *map)
+ {
++	int ret;
++	char *dst = NULL;
+ 	bool found = false;
++	const char *str = name;
+ 	struct rb_node **newp = *link;
+ 
++	ret = ovl_casefold(map, name, len, &dst);
++
++	if (ret > 0) {
++		str = dst;
++		len = ret;
++	}
++
+ 	while (!found && *newp) {
+ 		int cmp;
++		char *aux;
+ 		struct ovl_cache_entry *tmp;
+ 
+ 		*parent = *newp;
++
+ 		tmp = ovl_cache_entry_from_node(*newp);
+-		cmp = strncmp(name, tmp->name, len);
++
++		aux = tmp->cf_name ? tmp->cf_name : tmp->name;
++
++		cmp = strncmp(str, aux, len);
+ 		if (cmp > 0)
+ 			newp = &tmp->node.rb_right;
+ 		else if (cmp < 0 || len < tmp->len)
+@@ -94,27 +132,50 @@ static bool ovl_cache_entry_find_link(const char *name, int len,
+ 	}
+ 	*link = newp;
+ 
++	kfree(dst);
++
+ 	return found;
+ }
+ 
+ static struct ovl_cache_entry *ovl_cache_entry_find(struct rb_root *root,
+-						    const char *name, int len)
++						    const char *name, int len,
++						    struct unicode_map *map)
+ {
+ 	struct rb_node *node = root->rb_node;
+-	int cmp;
++	struct ovl_cache_entry *p;
++	const char *str = name;
++	bool found = false;
++	char *dst = NULL;
++	int cmp, ret;
++
++	ret = ovl_casefold(map, name, len, &dst);
++
++	if (ret > 0) {
++		str = dst;
++		len = ret;
++	}
++
++	while (!found && node) {
++		char *aux;
+ 
+-	while (node) {
+-		struct ovl_cache_entry *p = ovl_cache_entry_from_node(node);
++		p = ovl_cache_entry_from_node(node);
+ 
+-		cmp = strncmp(name, p->name, len);
++		aux = p->cf_name ? p->cf_name : p->name;
++
++		cmp = strncmp(str, aux, len);
+ 		if (cmp > 0)
+ 			node = p->node.rb_right;
+ 		else if (cmp < 0 || len < p->len)
+ 			node = p->node.rb_left;
+ 		else
+-			return p;
++			found = true;
+ 	}
+ 
++	kfree(dst);
++
++	if (found)
++		return p;
++
+ 	return NULL;
+ }
+ 
+@@ -212,7 +273,7 @@ static bool ovl_cache_entry_add_rb(struct ovl_readdir_data *rdd,
+ 	struct rb_node *parent = NULL;
+ 	struct ovl_cache_entry *p;
+ 
+-	if (ovl_cache_entry_find_link(name, len, &newp, &parent))
++	if (ovl_cache_entry_find_link(name, len, &newp, &parent, rdd->map))
+ 		return true;
+ 
+ 	p = ovl_cache_entry_new(rdd, name, len, ino, d_type);
+@@ -234,7 +295,7 @@ static bool ovl_fill_lowest(struct ovl_readdir_data *rdd,
+ {
+ 	struct ovl_cache_entry *p;
+ 
+-	p = ovl_cache_entry_find(rdd->root, name, namelen);
++	p = ovl_cache_entry_find(rdd->root, name, namelen, rdd->map);
+ 	if (p) {
+ 		list_move_tail(&p->l_node, &rdd->middle);
+ 	} else {
+@@ -640,7 +701,8 @@ static int ovl_dir_read_impure(const struct path *path,  struct list_head *list,
+ 			struct rb_node *parent = NULL;
+ 
+ 			if (WARN_ON(ovl_cache_entry_find_link(p->name, p->len,
+-							      &newp, &parent)))
++							      &newp, &parent,
++							      rdd.map)))
+ 				return -EIO;
+ 
+ 			rb_link_node(&p->node, parent, newp);
+@@ -701,6 +763,7 @@ struct ovl_readdir_translate {
+ 	struct dir_context *orig_ctx;
+ 	struct ovl_dir_cache *cache;
+ 	struct dir_context ctx;
++	struct unicode_map *map;
+ 	u64 parent_ino;
+ 	int fsid;
+ 	int xinobits;
+@@ -721,7 +784,7 @@ static bool ovl_fill_real(struct dir_context *ctx, const char *name,
+ 	} else if (rdt->cache) {
+ 		struct ovl_cache_entry *p;
+ 
+-		p = ovl_cache_entry_find(&rdt->cache->root, name, namelen);
++		p = ovl_cache_entry_find(&rdt->cache->root, name, namelen, rdt->map);
+ 		if (p)
+ 			ino = p->ino;
+ 	} else if (rdt->xinobits) {
+@@ -763,11 +826,16 @@ static int ovl_iterate_real(struct file *file, struct dir_context *ctx)
+ 		.orig_ctx = ctx,
+ 		.xinobits = ovl_xino_bits(ofs),
+ 		.xinowarn = ovl_xino_warn(ofs),
++		.map      = NULL,
+ 	};
+ 
+ 	if (rdt.xinobits && lower_layer)
+ 		rdt.fsid = lower_layer->fsid;
+ 
++#if IS_ENABLED(CONFIG_UNICODE)
++	rdt.map = dir->d_sb->s_encoding;
++#endif
++
+ 	if (OVL_TYPE_MERGE(ovl_path_type(dir->d_parent))) {
+ 		struct kstat stat;
+ 		struct path statpath = file->f_path;
 
 -- 
 2.50.1
