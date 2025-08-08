@@ -1,129 +1,159 @@
-Return-Path: <linux-fsdevel+bounces-57058-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57059-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F561B1E7BA
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 13:49:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D544AB1E7C1
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 13:52:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 710F57AA9B8
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 11:47:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10470587999
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 11:52:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF8E7275855;
-	Fri,  8 Aug 2025 11:48:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DE69275878;
+	Fri,  8 Aug 2025 11:52:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KlH2z2/S"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uDdmB93f"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E27125C827;
-	Fri,  8 Aug 2025 11:48:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B49223DD9;
+	Fri,  8 Aug 2025 11:52:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754653725; cv=none; b=rb2vZ8Qjl9+1/jnZNdtdPz/xxc8R5nM0ulPP6lHHfXIa5rdKJImSQAvTEmPPzEWYXcbi7XXfxmsmUJFvkiCFpA8XiDuW/ohp5PBN1ADC/RyHp0vk0HGZBOGmIladYIpl3k4vz2gVjgSPHnzBdxpuaiIM1emfVc6KkcEgz52lEYw=
+	t=1754653943; cv=none; b=BeuX/Y2a6IhFwwJBH1ZjPAd4D7qiRHSnUycBtThvhli0Ewh/VBtzzYVTLeYG0NSd9O9BzTGBG0cfVzqLO/XpsUEPU8eKKsv6/67iMq9el90GooVCfNxlB457v9xQbGawLP1ju/wDVq42wp+5hSw/kjTXwpj6bxWsBi3g23dtgFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754653725; c=relaxed/simple;
-	bh=FUx4gUgdyZ2ZZBXuzAMKD50bvkFnEcWtdMYMuJy1cVM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HGwE/Z/fk7JD4UrBrzwpoch3JP8/PAbCDAJNWqm/HCmCeLY0Oos1nEKnmv69TNbH4yZVMTLWjbHRdmSea5O33HuOI4nO4xjqC992KoaNFgeaW+taVbZNcomiYrVMFTMsCsFEfdvQJx2fPAXxUt8kKE1XKBxpsHnWw0AhqS415OA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KlH2z2/S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EFFEC4CEF1;
-	Fri,  8 Aug 2025 11:48:34 +0000 (UTC)
+	s=arc-20240116; t=1754653943; c=relaxed/simple;
+	bh=xSEzUb8y2xqXpVXNL7u1aJemA6z6EHDR87sROVoHVGk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=d4fwT2VtCxOR+eOqLCN41UkH9vXaeZvsNbZUeG4RNJoKtJuhGFXesmdyoVd+/F2ouwRMEn9gKWPSqCECULNmwu2H5/travcukERFRTMEns6Tvk5SPclWLGPibKJJd02QpF8e1hymX7eQztlPTxZLt0fNCNspnVzFwGSVRXaYVKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uDdmB93f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0977FC4CEF1;
+	Fri,  8 Aug 2025 11:52:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754653724;
-	bh=FUx4gUgdyZ2ZZBXuzAMKD50bvkFnEcWtdMYMuJy1cVM=;
-	h=Date:From:To:List-Id:Cc:Subject:References:In-Reply-To:From;
-	b=KlH2z2/SRGW4K4fN/lCfwfHAWCLsioLuNXYi0U8bGmXfTGaqjSCRwOhCs4s6TOA0J
-	 7X5PzrzWTGmySfiKXxgGxB0TXo1/sEh2IwxOimdqCIM5itio7QuZye5qUFhTiowsro
-	 g9QGixSNwxKrLcq5ITi3jqk67TuJhrezSoeLBNFz3QMy7WAmsXR3PnPszSWAp/YNRf
-	 EpX42Uy/odYqRyAa1Gq9Pu3xMZtrRg9Wroqn8PxqGIn7GoY01TQOQU0yKZO8i1uzel
-	 dv/TdTFEOVjWt68sUn36VVGp+5yBeS/m5Bp5b7ElzfFVkSOFUCDepl9vRLQpiKGtKo
-	 ASrYLKLOSRMsg==
-Date: Fri, 8 Aug 2025 12:48:31 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Deepak Gupta <debug@rivosinc.com>
-Cc: patchwork-bot+linux-riscv@kernel.org, linux-riscv@lists.infradead.org,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	akpm@linux-foundation.org, Liam.Howlett@oracle.com, vbabka@suse.cz,
-	lorenzo.stoakes@oracle.com, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, conor@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, arnd@arndb.de,
-	brauner@kernel.org, peterz@infradead.org, oleg@redhat.com,
-	ebiederm@xmission.com, kees@kernel.org, corbet@lwn.net,
-	shuah@kernel.org, jannh@google.com, conor+dt@kernel.org,
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@kernel.org,
-	aliceryhl@google.com, tmgross@umich.edu, lossin@kernel.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, devicetree@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, alistair.francis@wdc.com,
-	richard.henderson@linaro.org, jim.shu@sifive.com,
-	andybnac@gmail.com, kito.cheng@sifive.com, charlie@rivosinc.com,
-	atishp@rivosinc.com, evan@rivosinc.com, cleger@rivosinc.com,
-	alexghiti@rivosinc.com, samitolvanen@google.com,
-	rick.p.edgecombe@intel.com, rust-for-linux@vger.kernel.org,
-	zong.li@sifive.com, david@redhat.com
-Subject: Re: [PATCH v19 00/27] riscv control-flow integrity for usermode
-Message-ID: <09081487-89ac-4f8d-b9fc-e563f09726d2@sirena.org.uk>
-References: <20250731-v5_user_cfi_series-v19-0-09b468d7beab@rivosinc.com>
- <175450053775.2863135.11568399057706626223.git-patchwork-notify@kernel.org>
- <db4eb976-693c-426c-a867-66cadd3dd7d8@sirena.org.uk>
- <aJWz82F21pVTSVJi@debug.ba.rivosinc.com>
+	s=k20201202; t=1754653943;
+	bh=xSEzUb8y2xqXpVXNL7u1aJemA6z6EHDR87sROVoHVGk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=uDdmB93f9xXYQw7pkccVTAZrASxgjPMDhOD4dK5a+xhpb/pMvvaduoXy2UTuDD4PR
+	 bXX5SxJeAHbarWlsYjOOfSdbQsa2Kg4b0aEtjXzZJNmW2ocmkCY33jH3ChlAGzHSSu
+	 U/cwCh0SZq0ZwcXNcEV5xM4/tMPsJRedE7liIKTRhR/8w4H2s7U0ZiG8y/hSAnn4W2
+	 wAFDEllgM2zeloAVeBdqRvUewuE/hXeMPpG7vhtP0DsUJ+1d8jB4ago0TZ7Q/GJp2u
+	 QgK18psr/pv4vsQbytQEYh4lAbzARwwolw9f5yGC6h89p1AtmQ0dGtKbWQb2WXd097
+	 +/moD7XmsFvkg==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Pratyush Yadav <pratyush@kernel.org>
+Cc: Pasha Tatashin <pasha.tatashin@soleen.com>,  jasonmiu@google.com,
+  graf@amazon.com,  changyuanl@google.com,  rppt@kernel.org,
+  dmatlack@google.com,  rientjes@google.com,  corbet@lwn.net,
+  rdunlap@infradead.org,  ilpo.jarvinen@linux.intel.com,
+  kanie@linux.alibaba.com,  ojeda@kernel.org,  aliceryhl@google.com,
+  masahiroy@kernel.org,  akpm@linux-foundation.org,  tj@kernel.org,
+  yoann.congal@smile.fr,  mmaurer@google.com,  roman.gushchin@linux.dev,
+  chenridong@huawei.com,  axboe@kernel.dk,  mark.rutland@arm.com,
+  jannh@google.com,  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
+  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
+  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
+  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
+  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
+  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
+  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
+  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
+  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
+  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
+  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
+  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
+  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
+  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
+  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
+  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+  saeedm@nvidia.com,  ajayachandra@nvidia.com,  jgg@nvidia.com,
+  parav@nvidia.com,  leonro@nvidia.com,  witu@nvidia.com
+Subject: Re: [PATCH v3 01/30] kho: init new_physxa->phys_bits to fix lockdep
+In-Reply-To: <mafs0o6sqavkx.fsf@kernel.org>
+References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
+	<20250807014442.3829950-2-pasha.tatashin@soleen.com>
+	<mafs0o6sqavkx.fsf@kernel.org>
+Date: Fri, 08 Aug 2025 13:52:12 +0200
+Message-ID: <mafs0bjoqav4j.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="D45dRbRxMwDeSA/W"
-Content-Disposition: inline
-In-Reply-To: <aJWz82F21pVTSVJi@debug.ba.rivosinc.com>
-X-Cookie: What an artist dies with me!
+Content-Type: text/plain
 
+On Fri, Aug 08 2025, Pratyush Yadav wrote:
+[...]
+>> @@ -144,14 +144,35 @@ static int __kho_preserve_order(struct kho_mem_track *track, unsigned long pfn,
+>>  				unsigned int order)
+>>  {
+>>  	struct kho_mem_phys_bits *bits;
+>> -	struct kho_mem_phys *physxa;
+>> +	struct kho_mem_phys *physxa, *new_physxa;
+>>  	const unsigned long pfn_high = pfn >> order;
+>>  
+>>  	might_sleep();
+>>  
+>> -	physxa = xa_load_or_alloc(&track->orders, order, sizeof(*physxa));
+>> -	if (IS_ERR(physxa))
+>> -		return PTR_ERR(physxa);
+>> +	physxa = xa_load(&track->orders, order);
+>> +	if (!physxa) {
+>> +		new_physxa = kzalloc(sizeof(*physxa), GFP_KERNEL);
+>> +		if (!new_physxa)
+>> +			return -ENOMEM;
+>> +
+>> +		xa_init(&new_physxa->phys_bits);
+>> +		physxa = xa_cmpxchg(&track->orders, order, NULL, new_physxa,
+>> +				    GFP_KERNEL);
+>> +		if (xa_is_err(physxa)) {
+>> +			int err = xa_err(physxa);
+>> +
+>> +			xa_destroy(&new_physxa->phys_bits);
+>> +			kfree(new_physxa);
+>> +
+>> +			return err;
+>> +		}
+>> +		if (physxa) {
+>> +			xa_destroy(&new_physxa->phys_bits);
+>> +			kfree(new_physxa);
+>> +		} else {
+>> +			physxa = new_physxa;
+>> +		}
+>
+> I suppose this could be simplified a bit to:
+>
+> 	err = xa_err(physxa);
+>         if (err || physxa) {
+>         	xa_destroy(&new_physxa->phys_bits);
+>                 kfree(new_physxa);
+>
+> 		if (err)
+>                 	return err;
+> 	} else {
+>         	physxa = new_physxa;
+> 	}
 
---D45dRbRxMwDeSA/W
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+My email client completely messed the whitespace up so this is a bit
+unreadable. Here is what I meant:
 
-On Fri, Aug 08, 2025 at 01:23:15AM -0700, Deepak Gupta wrote:
-> On Thu, Aug 07, 2025 at 01:28:36PM +0100, Mark Brown wrote:
+	err = xa_err(physxa);
+	if (err || physxa) {
+		xa_destroy(&new_physxa->phys_bits);
+		kfree(new_physxa);
 
-> > Do you have an update for my clone3() shadow
+		if (err)
+			return err;
+	} else {
+		physxa = new_physxa;
+	}
 
-> No I don't.
+[...]
 
-> > stack series that I could roll in for when I repost that after the merge
-> > window, and/or instructions for how to run this stuff for RISC-V on some
-> > emulated platform?
-
-> I would want to write-up instructions. But I don't want you to go through
-> a lot of hassle of building toolchain and bunch of other stuff.
-> Let me see how I can make it easy for you. Will report back.
-
-Thanks.  FWIW I should already be sorted for the kernel build, unless
-there's a super new or specialist toolchain required for this feature
-(I'd guess I should be fine for the shadow stacks bit?) - it's userspace
-and emulation for the extension I'm missing.
-
---D45dRbRxMwDeSA/W
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmiV5A4ACgkQJNaLcl1U
-h9BR4gf/Yvc9us1uldFqSA9g7p+0bzU3IY/RfdDdME4qVGVWWXybW7b1P+6OdvKr
-lRLLeAJQkpEzhtLNeXXTVgRijmaDgccqM2d2Vkehw9qrW1+pwA56PX8PQPBtJsGL
-riODDRX0jZSrSVAPE/mwrQRc97vY83Tme2w2Psah2FzICcRcLdsC9vz3BIsquWgp
-5LbvWFyIS7PraLBoSkO76qBYDtRwjw3LzoANXm5rYo9QKsT48UPgjfvmzxLqTSxT
-oDMob4PjC2+1FU6Q1yzo5CUyK+aX58BM0OGwWEq4DDOCu5kd0ltVJen8HWszpfVz
-YgUpgySyAiGsfZTi1JBRv158syBsdQ==
-=5/MC
------END PGP SIGNATURE-----
-
---D45dRbRxMwDeSA/W--
+-- 
+Regards,
+Pratyush Yadav
 
