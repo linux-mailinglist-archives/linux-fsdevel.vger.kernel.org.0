@@ -1,178 +1,201 @@
-Return-Path: <linux-fsdevel+bounces-57163-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57164-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23F71B1F096
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Aug 2025 00:05:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D897B1F09F
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Aug 2025 00:12:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97F4E7B55A9
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 22:04:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33B27165126
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 22:12:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAAD622DA0C;
-	Fri,  8 Aug 2025 22:05:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A5DF2727E1;
+	Fri,  8 Aug 2025 22:11:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="YENAXNLo"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KNljQvnm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 745F21FF7B4
-	for <linux-fsdevel@vger.kernel.org>; Fri,  8 Aug 2025 22:05:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FDD5219E8D
+	for <linux-fsdevel@vger.kernel.org>; Fri,  8 Aug 2025 22:11:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754690732; cv=none; b=WwWsXZMbsUSUSGLe77PB2Ky2rEbfPFxuX9wLmgD5Ls382joddnFL0QbwzBu0FmB+XhUiUIDrtb7iMiKLNijpjm5eTF+iRBRf9dScmd/quHnTNCX2lQPrJOgVGuTmgH341+ud7NmAP2SzD+nqr/rgjPWC+jsuu09Vk3CNprkDc4c=
+	t=1754691113; cv=none; b=cv1PPgQRt7U6GSqwXbBWIxV5kftRkIEBnu/FbylA8cjJ8teCjCTTUzXuDOXZ7z17BQHi57HKDxmkn2n5paqpKEHX5dm15B9M4XJxKkuToJh0BG6a0ZlvVCKYngsMp71QTsE5ATUC2YAEz3dVan3mA20566ORbnfcblHxa7jcGKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754690732; c=relaxed/simple;
-	bh=z0p4fSt/9QtpNpe3fR6Xsb9YfFn6QCE6Uv1Dq/Mm0+8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=aqrpHyzwwIMBICupUtZ/30ihN0yYmr3CDDz5eXgwoSXzqzFephOX0TKwyz9b2MYTUbGmHVtGMw0LN5Wpk7xP5z4RXGAZ/hAkmSRzGZqoqxmzKBDKw6hgwNZ3y+E/BYLG+cnfzOvecc5JhdhScEG+0adhIufCrIltooLXLF1TY60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=YENAXNLo; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e9052f82d4cso848840276.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Aug 2025 15:05:30 -0700 (PDT)
+	s=arc-20240116; t=1754691113; c=relaxed/simple;
+	bh=sPot/QiJGx0ie2GqPuzcKoCFOI60aOBXfDEt5ep6Kl0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Va4BOOK2sKe9EPcgR/cQBKiiaLLQdcfyMeVNI25oXCyKc2kZ4Md5VU3+weSKiH0EsY80ACxHqxrZXzYcCMhDiwJWq/AqQNEdOBYJ/6ArszUBQ0n+9b9pTWmZo1/YZTcxXgQGkhxorcJyGFMjwBdf+R52VOFS+auTPhE64WStmiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KNljQvnm; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3b785a69454so1462106f8f.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Aug 2025 15:11:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1754690729; x=1755295529; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=4q+cdyvWHF2EFZpRv1rdYQz6WreFMS9niRVK6qj7E2I=;
-        b=YENAXNLo/c1kmg5gLZp8IZ8I12tdJnNx4i2pmOhQl17AAaAP3HUpq7bSqoYTmWUnhs
-         eyb4NukCahrM4TCssYOEowdmc5fM+T55nqwdFrq67yRmf7BPjfOvJhyHwEumfbYqb7hq
-         JmBO8mXEoS3QLvrMqyk013nwknPhYHuXAGka5KCGHFB8jwb8V3T3/YY9pCfJl0MRDbjy
-         vSnNgFgwS/JCAWCkHqQZh106psd5dIhsRxQRU1NMHuIyn9Qo+abwpBjQ1fJT6Ktj28Vq
-         YKltxfNGcSeTP7amjYsymrFcpYDnM5Q7hOtV7AAzbNCBlXi3LOUYHa3d/YVXlRJ2qpi5
-         aL+A==
+        d=suse.com; s=google; t=1754691108; x=1755295908; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=vfp4XJviTGuQNIDYxaXXZY38lwfZr5BPome6oUUC1Fw=;
+        b=KNljQvnmNTVxXm3LkWBnKj1BOzOvTLrIFWhq40frLzqh0T0/jP2KK3EXMCb1xv1U2b
+         6EzEVczFRSQ1a9ffbcnjWBouU3i2/6NmrTGxskcNZRGLmlPv3zz9Iv57z/+KazvKzmsO
+         tPtHk7HytvbZSuCE/1eDq0xDbkG+iBObQoyyhZTDwjn5kM+t6BWNeGgKMCi0+BoBYW8B
+         i0M38+zmZyPtKdB/bJ49cVxc7htRhVcVNqRGeY2107pBpPST4R4twnheYy06uZ0iP0Bc
+         TXuR+NQo25wR/OvymkiLYp99jBRZt/ikXyGQXc0V+I9s0u26gKnm77GckjlJ9ELEUeOa
+         W45Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754690729; x=1755295529;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4q+cdyvWHF2EFZpRv1rdYQz6WreFMS9niRVK6qj7E2I=;
-        b=kv6E3tgGaEOyrwqcjwyBOWm0JPQMYknwlrRpGKRa+bzY0AJ1sTF8Whxcv54tn9q5Xe
-         16QSCDm1UHCbLuOzWQm6sh09zslE7j4ngIA2SZYlCy43xHkpdRRF7lHCYpSGHfnhIeK9
-         KUm0ogu3De+j1JmfOnFDtNSLe4853Ny+l06NTEcgagCZcjMT7ulRozQ0ku7CApQrXncs
-         GQcWUZXZCaauJrddU+yG8P7OQaXVkoVRbQIjcaO31Y1A74PLLpDvojRcqE3ueR5LocWe
-         r1MCxeRYDWSuweFMoMhAIwsMubxpoD/YEMV2xzlODgdmTxMzbDO0X9N1xbmJTnpQuEUX
-         nmOA==
-X-Gm-Message-State: AOJu0YwiBYdvok2iOzu8ki64O3KyjdNTFQG5lAns1Lg5iNYCyOFfC5wG
-	kgC7+9rxhZciOKKzGPg4PSV3XfcHYgWWDTl/p9LHQcAxqvD1Ov9R7at6Iu3TxwnPUCU=
-X-Gm-Gg: ASbGncurlm698yhf/mw83sxPpq9eWoXUAuep3rUZ9ZvwJe4+B8YN1YRzzzdOOnUODyd
-	1Atg6mXwAwfTnFMV7ma0DU2/8h0QEEEKLd5OgFjcXuodN64bjGIRKsj/5nOepZ6C9eMgBZe9itm
-	mIvasOvKqPJ7Q3ESryuhFPntp+e5rL+flEiugKlRHoe1lXRBXBMKSxKDF6TIMslIQoRlL6MXHXj
-	U1z7uquFyT3iCv3q4gZq+aWhwV0dxuPlb3u201YPrflGHnNCVzLkKsmxsHwVr2cdnh1Ruki1Pnq
-	ArtjSA6bZ1zeuFlGQ8F8uNv7dFBYFvfmG85MJLhDS4Rs0Gwjv0j97FOmkPeWqFBCPYQ8GG+MmPd
-	wrcoOcfbtWmGTy2a2zaCJvxaDBp8=
-X-Google-Smtp-Source: AGHT+IHn95Eykij2+QGsYED5ru2MLntLkFJVd9rRLSQeIR5izSO1Ij4Lk7P6QYD3Yuix6ZnMNWNogg==
-X-Received: by 2002:a05:6902:4a8c:b0:e90:2edf:9642 with SMTP id 3f1490d57ef6-e904b58452emr5111362276.25.1754690729358;
-        Fri, 08 Aug 2025 15:05:29 -0700 (PDT)
-Received: from ?IPv6:2600:1700:6476:1430::3d? ([2600:1700:6476:1430::3d])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e905b5c98adsm147112276.34.2025.08.08.15.05.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Aug 2025 15:05:28 -0700 (PDT)
-Message-ID: <201feccdf58b34a6d75285f74109528a66bdfd62.camel@dubeyko.com>
-Subject: Re: [PATCH 1/2] hfs: abort hfs_lookup if name is too long
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-To: Yangtao Li <frank.li@vivo.com>, glaubitz@physik.fu-berlin.de
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Fri, 08 Aug 2025 15:05:27 -0700
-In-Reply-To: <20250806171132.3402278-2-frank.li@vivo.com>
-References: <20250806171132.3402278-1-frank.li@vivo.com>
-	 <20250806171132.3402278-2-frank.li@vivo.com>
-Autocrypt: addr=slava@dubeyko.com; prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (by Flathub.org) 
+        d=1e100.net; s=20230601; t=1754691108; x=1755295908;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vfp4XJviTGuQNIDYxaXXZY38lwfZr5BPome6oUUC1Fw=;
+        b=BMnqTyM2wxDyyPQmQoYs+QzaRW4xmAEMj4p9Z/kdH0kQKmHwBBUA4h6CUJ1mhAbfz3
+         dR553aHIYDftVyY2NZj6Tt0lmu/7kUUiDZE3yMCCo2KREjRpqOdHNe36c+p6Bz8FfR1O
+         7USIxRqsDQcN4ijkWTKRHdRS8YvUNsMhFJfWlziqfWz76C/RJAJfSuUp6A3DM1AChr/x
+         tUH0NWSJ5DA61VnKdxR50l5JquLVkOpDH6OOdSRKuD1sAEdeUGvuK2mFseSg5Z8Ahf5I
+         ZlrQxi1XFYIy5Wo7rGE5qRSPN/Vg2eW9TJ9Jb7FCMu2UKSdO/O1avNlMU1tTSN33vAVn
+         tv3g==
+X-Forwarded-Encrypted: i=1; AJvYcCVYzSBPe/43M+DcqXVpv1+VQGFkIo2Q5MfkqJa5iIXS/CtEJvAepCsU7gbIY5SYM4I2R7FuTJFNmPKqmh5P@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzs/Rgb8JfGl8+59/ctf2AXhtIU2a5DaKYH48JPkqY9yq+NxOc+
+	LlOM/71Gv1w48l8Cq52SFVyKk2c/AbbG09320XwNCdfA6T5EWrnXAOTUlFe5pKq5IA0=
+X-Gm-Gg: ASbGnctttJpsv1kmJuOAnii+DYJX44I8Sn7B/t05Rw/riY3sM24hbYo0H/33/qgObb7
+	e0K7MpJDUzMKMLQ5Kolv1UPRHAw9maQ9IE5jWQyOwsyYw5jxStxqWK6Rl8N9r9+TiSQs+r5Iu26
+	zu6+jwB1Y5JFRqFqZG6voddiCi8lbbexAC0ZbjsXAsI/G8vM9dOwpo1Xt/oa7oaXWjtCqYOrDnD
+	JoHabC/48Hm916OD2y7NRthkum1Xvsj/Z+2Z/vJpSaWkCxh5EjOZZmeCRYxYYbyBHbekw4cQrg2
+	m/MN6vpskX3JfAInQlLqXD8mLBJhcwbFyGfddX9fmVq7YU9inC7KJ20Q3Lkp4i4pBFu2/QENFcT
+	3xC9YrboDdgIJjkHSTRguyodZ5g3MV1QYR1ruAMnTB2ylF3TF3rYii8VSM64n
+X-Google-Smtp-Source: AGHT+IFIxLKMLKj0aUzzhwq3MMNuW4vixZGGnupJ71Z/AHI1G3sTObVSeFAVOad94beA9NPbKPu3+g==
+X-Received: by 2002:a05:6000:1ac6:b0:3b7:7749:aa92 with SMTP id ffacd0b85a97d-3b900b6ab1emr3552969f8f.58.1754691108438;
+        Fri, 08 Aug 2025 15:11:48 -0700 (PDT)
+Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bcce8f800sm21219043b3a.42.2025.08.08.15.11.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Aug 2025 15:11:47 -0700 (PDT)
+Message-ID: <035ad34e-fb1e-414f-8d3c-839188cfa387@suse.com>
+Date: Sat, 9 Aug 2025 07:41:43 +0930
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: Ext4 iomap warning during btrfs/136 (yes, it's from btrfs test
+ cases)
+To: Theodore Ts'o <tytso@mit.edu>, Qu Wenruo <quwenruo.btrfs@gmx.com>
+Cc: linux-ext4 <linux-ext4@vger.kernel.org>,
+ linux-btrfs <linux-btrfs@vger.kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+References: <9b650a52-9672-4604-a765-bb6be55d1e4a@gmx.com>
+ <4ef2476f-50c3-424d-927d-100e305e1f8e@gmx.com>
+ <20250808121659.GC778805@mit.edu>
+Content-Language: en-US
+From: Qu Wenruo <wqu@suse.com>
+Autocrypt: addr=wqu@suse.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
+ FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
+ Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
+ fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
+ 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
+ V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
+ rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
+ rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
+ Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
+ E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
+ vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
+ g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
+ AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
+ cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
+ qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
+ /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
+ o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
+ JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
+In-Reply-To: <20250808121659.GC778805@mit.edu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, 2025-08-06 at 11:11 -0600, Yangtao Li wrote:
-> Long file names for hfs is 31 characters.
->=20
 
-Could this max name length affects the xfstests in the case if we
-finally restricts the creation of files/folders with longer names?
 
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
-> ---
-> =C2=A0fs/hfs/dir.c | 3 +++
-> =C2=A01 file changed, 3 insertions(+)
->=20
-> diff --git a/fs/hfs/dir.c b/fs/hfs/dir.c
-> index 86a6b317b474..30f6194da939 100644
-> --- a/fs/hfs/dir.c
-> +++ b/fs/hfs/dir.c
-> @@ -25,6 +25,9 @@ static struct dentry *hfs_lookup(struct inode *dir,
-> struct dentry *dentry,
-> =C2=A0	struct inode *inode =3D NULL;
-> =C2=A0	int res;
-> =C2=A0
-> +	if (dentry->d_name.len > HFS_NAMELEN)
-> +		return ERR_PTR(-ENAMETOOLONG);
-> +
+在 2025/8/8 21:46, Theodore Ts'o 写道:
+> On Fri, Aug 08, 2025 at 06:20:56PM +0930, Qu Wenruo wrote:
+>>
+>> 在 2025/8/8 17:22, Qu Wenruo 写道:
+>>> Hi,
+>>>
+>>> [BACKGROUND]
+>>> Recently I'm testing btrfs with 16KiB block size.
+>>>
+>>> Currently btrfs is artificially limiting subpage block size to 4K.
+>>> But there is a simple patch to change it to support all block sizes <=
+>>> page size in my branch:
+>>>
+>>> https://github.com/adam900710/linux/tree/larger_bs_support
+>>>
+>>> [IOMAP WARNING]
+>>> And I'm running into a very weird kernel warning at btrfs/136, with 16K
+>>> block size and 64K page size.
+>>>
+>>> The problem is, the problem happens with ext3 (using ext4 modeule) with
+>>> 16K block size, and no btrfs is involved yet.
+> 
+> 
+> Thanks for the bug report!  This looks like it's an issue with using
+> indirect block-mapped file with a 16k block size.  I tried your
+> reproducer using a 1k block size on an x86_64 system, which is how I
+> test problem caused by the block size < page size.  It didn't
+> reproduce there, so it looks like it really needs a 16k block size.
+> 
+> Can you say something about what system were you running your testing
+> on --- was it an arm64 system, or a powerpc 64 system (the two most
+> common systems with page size > 4k)?  (I assume you're not trying to
+> do this on an Itanic.  :-)   And was the page size 16k or 64k?
 
-I think it makes sense to follow the HFS+ logic. We need to rework
-hfs_cat_build_key() [1, 2] and hfs_asc2mac() [3]. It already operates
-by -ENAMETOOLONG [4] but it is not we would like to have.
+The architecture is aarch64, the host board is Rock5B (cheap and fast 
+enough), the test machine is a VM on that board, with ovmf as the UEFI 
+firmware.
+
+The kernel is configured to use 64K page size, the *ext3* system is 
+using 16K block size.
+
+Currently I tried the following combination with 64K page size and ext3, 
+the result looks like the following
+
+- 2K block size
+- 4K block size
+   All fine
+
+- 8K block size
+- 16K block size
+   All the same kernel warning and never ending fsstress
+
+- 32K block size
+- 64K block size
+   All fine
+
+I am surprised as you that, not all subpage block size are having 
+problems, just 2 of the less common combinations failed.
+
+And the most common ones (4K, page size) are all fine.
+
+Finally, if using ext4 not ext3, all combinations above are fine again.
+
+So I ran out of ideas why only 2 block sizes fail here...
 
 Thanks,
-Slava.
+Qu
 
-> =C2=A0	res =3D hfs_find_init(HFS_SB(dir->i_sb)->cat_tree, &fd);
-> =C2=A0	if (res)
-> =C2=A0		return ERR_PTR(res);
+> 
+> Thanks,
+> 
+> 					- Ted
+> 
 
-[1] https://elixir.bootlin.com/linux/v6.16/source/fs/hfs/dir.c#L31
-[2] https://elixir.bootlin.com/linux/v6.16/source/fs/hfs/catalog.c#L28
-[3] https://elixir.bootlin.com/linux/v6.16/source/fs/hfs/trans.c#L97
-[4] https://elixir.bootlin.com/linux/v6.16/source/fs/hfs/trans.c#L125
 
