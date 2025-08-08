@@ -1,268 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-57027-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57028-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA577B1E07C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 04:13:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 34659B1E081
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 04:16:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58E8D720865
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 02:13:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC780720BAE
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 02:16:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0918416F288;
-	Fri,  8 Aug 2025 02:13:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F44078F4C;
+	Fri,  8 Aug 2025 02:16:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="PV1lIamc"
+	dkim=pass (2048-bit key) header.d=joshtriplett.org header.i=@joshtriplett.org header.b="V9lVN2pr";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GQ2qTFbH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013001.outbound.protection.outlook.com [52.101.127.1])
+Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BEB42F30;
-	Fri,  8 Aug 2025 02:13:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.1
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754619184; cv=fail; b=doCVa2+oxLjY9vgQzBPVNFIe6RltwUAYI6LnJfDYDtOQ/WNrAYJzlB2h3PBkRiK4BjxvaQPSOHPDcoyD2+0ItLrboZ+psuaGWykBAIDCBMD/a2PLOiyzw/cuvRo/pAbmzKhB7jN12a/jIVPZ5Jf0gMCZtQmcS0CjcZ1zXPfiXXE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754619184; c=relaxed/simple;
-	bh=fYchabpVANjQocXdLsiFkLKn2+bu9cbRRrhxTScdOIM=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=CTTUaEPgx26EDz2S7728dkOKpS5Lai+Ex5zcK7fCuPIolpX2g15j86BvJZMOR77NoURDcBfVKPFLJVXrXr25zjCwfQgkyCmo40cKYQita5BRA1+YaVa66mSoFnT+qxseAnw3rjH2Ee/sdTLN1jjfbwFdKLFgCKr2JI4C13jdfhE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=PV1lIamc; arc=fail smtp.client-ip=52.101.127.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wJ08yMraOGEzGiY3NqT/0P5AL8Qm6giF2oh4wQuNsLsKzvuBNCAauJxW57J5Iuy0D13tu7SgU6YmZoWTw8k+uAJLILUdytHD3o4fLwCbUpY6O6txE+kWyh97YRgfuqUg3RRB7Li8kWt444mdZFTMQDmmq9nQjMAt/vj0uWBX9xA2R3EMpTRTVkwikYoxf1gfNpZQ1lDqjImfhX+PV5/LQU4fWV+ZvDZZCAuJMF3px5bd0u7ZsmiK3mOJdzZeUYOd0/GbCjeY4luLSuY294WH5/tvLsyncLz4E4qQGVNtWOD2JsFZ0McXWSPyLVYBYRFNf7J6JnJkyfNhzQXvCyUABA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4I0EJLh0TUrOGMXjJkqzI3+7M7YSawIYdtxWZUOcOrE=;
- b=O8C7zFGWHuphxyN6yRDrsf8a+CxOduZerl/kopRgEkH9/1S5b/Yw/gFbQ0q25LFkiwh677pkWkBlHxc5K57DBc+oKl/PPIUgmV35jqRvMFMpUCxDm5rxy+xtgyp28pQ0pibmfiRTMz+Godr4d8MUGJ0NQlWenCeYViXq4pfK5c5s8NTGoBqyRRcEohUbHv//tedqu6KlUwmiRZlFoKjVcmz8ZphZfW956fqPMrmWB/BRRuZ6xO00MrkutVVUgIrroYjCu/RkSxm4zSlXORKFD1TdLw6uPXqdWcMf9YSYlOE8HDHSy0TKl5nhCwGVqpyPpUPs/EXhP+jKBkLfVFoPYA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4I0EJLh0TUrOGMXjJkqzI3+7M7YSawIYdtxWZUOcOrE=;
- b=PV1lIamcKHMja1jJoKABTUTJiBFRBP/MD8r3VnEjVEKhahRKmdQlGZIPicwFM/f1EWmoIiyJiNT5KC7Qwc2spk/ZB1xZlGOC/GLNiFHGS4IT4J3EOS+1EYLixJivEjBqo7yDE6lTBJ+jxTFqYrim+jrV2Qju3Scl17eSYGc8u1gujR86B0E3VSzMEVh1Wsri1LHW6pCOdMrQZCDvaV2ipRpxfx0eiDDX4CRx/Gai3Dx6uDwVgJqdEuOqeXEH/5+k/HFkVXSH0IxLOPEzuH6vyb04mxOKy5UZ20p0Ho13f8Z/EsWMTVQTv/kUt8ee6CB07V2XOhYE2RJOYUWJdCbfgg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from TYSPR06MB6921.apcprd06.prod.outlook.com (2603:1096:400:468::6)
- by KL1PR0601MB5535.apcprd06.prod.outlook.com (2603:1096:820:b5::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.18; Fri, 8 Aug
- 2025 02:12:58 +0000
-Received: from TYSPR06MB6921.apcprd06.prod.outlook.com
- ([fe80::e3e7:6807:14ca:7768]) by TYSPR06MB6921.apcprd06.prod.outlook.com
- ([fe80::e3e7:6807:14ca:7768%7]) with mapi id 15.20.9009.013; Fri, 8 Aug 2025
- 02:12:58 +0000
-Message-ID: <2cf7ebe5-db81-4aca-9c70-65e712f69835@vivo.com>
-Date: Fri, 8 Aug 2025 10:12:53 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 5/5] jbd2: Add TASK_FREEZABLE to kjournald2 thread
-To: Jan Kara <jack@suse.cz>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>,
- Theodore Ts'o <tytso@mit.edu>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
- opensource.kernel@vivo.com
-References: <20250730014708.1516-1-daijunbing@vivo.com>
- <20250730014708.1516-6-daijunbing@vivo.com>
- <uj22sykbnhfsbk7abj3rdul46uko5vvhq425kdbtkzsw5l5kqa@ixs245eozsfe>
-From: daijunbing <daijunbing@vivo.com>
-In-Reply-To: <uj22sykbnhfsbk7abj3rdul46uko5vvhq425kdbtkzsw5l5kqa@ixs245eozsfe>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SI2PR02CA0026.apcprd02.prod.outlook.com
- (2603:1096:4:195::19) To TYSPR06MB6921.apcprd06.prod.outlook.com
- (2603:1096:400:468::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38B07645
+	for <linux-fsdevel@vger.kernel.org>; Fri,  8 Aug 2025 02:16:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754619404; cv=none; b=kHHczTO7HjnyUH5hLox85nnkLEVKCYvwHyaxuiVkWB9ttqpTUUSg4/LdX9zm07lf3RxLxb33Xl4+EzKsCnSkYTip2Dvh60RoJhVHt7kBhoUkAAWxR/TzUvIUi9CepA8cqsJORlMRUgWymk72ouhR9lQ5EizUYYsbR5oK0gnwu4g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754619404; c=relaxed/simple;
+	bh=CXncHPZzpg8JyoDEAD72ZBy4uj3VY4VfvcJQurXoZxE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jfVe2VZlpCOMMYTPhzXh7dDpNROm9cJIk8rfZdcRTe5vCrA64eJqj6sgv3amMvapr7DtWB2e0EAyd3aBANAsmcpelqlRvhqdwZmQYIdTIY/b4UTUkdLd4O45SVQKzvDL33RLARixZp5yBT5crbL+uhgrrp0xHS6dHhkIXayInGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joshtriplett.org; spf=pass smtp.mailfrom=joshtriplett.org; dkim=pass (2048-bit key) header.d=joshtriplett.org header.i=@joshtriplett.org header.b=V9lVN2pr; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=GQ2qTFbH; arc=none smtp.client-ip=103.168.172.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joshtriplett.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=joshtriplett.org
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailfout.phl.internal (Postfix) with ESMTP id 39986EC00DD;
+	Thu,  7 Aug 2025 22:16:41 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-01.internal (MEProxy); Thu, 07 Aug 2025 22:16:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	joshtriplett.org; h=cc:cc:content-type:content-type:date:date
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1754619401;
+	 x=1754705801; bh=NP+M/GMoJvPTmFsuK2bHezKUOJ84Zg13tsjPhI3w5FY=; b=
+	V9lVN2prU8Ysza2WrZ6GkeMopm2BtD0U87fg/lix2Hf7lQWDKcC8yfjb4VWVilO2
+	mgMOMsshOfP18dvtcX2O8bmiKWZHICPBoT13QA0l7cqVmngPwRlsVbfbLEdHCwFL
+	w2McBxZY4JVFjd5dULoQA36E7Cy+hksgkLNeVNuDZa5uHcSYI8xTmL2kus14mif8
+	CpMp9JCW2JweizF8B0AERTjGRfTGuIcK+KsspvKk5+GvcSsEBP1Jti0jmFYmu3nF
+	aictlG3xmSzGSoruPzpG5qyrc3GTppOnrN3rXyYyUkwPN3Ay2aYQOvMGgUO+fsrX
+	b6UthLk/FQn1hrZDFhGQ2Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1754619401; x=1754705801; bh=NP+M/GMoJvPTmFsuK2bHezKUOJ84Zg13tsj
+	PhI3w5FY=; b=GQ2qTFbHTrs5K14Sd5spQwizq5tbUMDaakf5XBF56iLb6ucx3Tf
+	09dY0OnK6zFqCtuo89Glkw7CQI+3Up8WsG8sMvGvrz0XxFxBLD5TonhNVC9yrkQL
+	7IuPuo03GvaxyURD9Ft8CjG3ef8yH3b2n4pyqrb5OLxj3qdoH/kckLw8RXnOdyMW
+	iJjvr5GdNJWVncMH5zkPJO+BVCpSQwiDS3lO5qXgrJ9yjyFrD2b4iy05qHKAcBlw
+	kiT1AI6rvSMhjSx9PdQQudj9XyygPJI9bhM5UrD1bBq/HWrwfJ5n+CX9UsBVuTfV
+	ZR2PpZYTVHXVH7xeDsSeSxBOBAfEEf+5GWA==
+X-ME-Sender: <xms:CF6VaGdLUj16SX1isxtsIebZaYdaqKVEyT4dY-bqsBCT2UhXTc9tdQ>
+    <xme:CF6VaAabBRVZU96ne5rf-ggfC_y488FJbJM99-Uf37-_A15gd-nsJZwDa5pj16x72
+    8vv8u2yTokaDNBNrX8>
+X-ME-Received: <xmr:CF6VaJWuDEKYF-95zly9-SfkuGU8v2WVNLHRRK2v82OyarniNfqkv-wjkQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduvddvheelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucenucfjughrpeffhffvvefukfhfgggtuggjsehttdertd
+    dttddvnecuhfhrohhmpeflohhshhcuvfhrihhplhgvthhtuceojhhoshhhsehjohhshhht
+    rhhiphhlvghtthdrohhrgheqnecuggftrfgrthhtvghrnhepudeigeehieejuedvtedufe
+    evtdejfeegueefgffhkefgleefteetledvtdfftefgnecuvehluhhsthgvrhfuihiivgep
+    tdenucfrrghrrghmpehmrghilhhfrhhomhepjhhoshhhsehjohhshhhtrhhiphhlvghtth
+    drohhrghdpnhgspghrtghpthhtohepvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthht
+    oheptgihphhhrghrsegthihphhgrrhdrtghomhdprhgtphhtthhopehlihhnuhigqdhfsh
+    guvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:CF6VaCixYpU7p4Hgr_4Pd0_Y9QnHw5vZsoHg3Nznibk4C0hy3OW1Dw>
+    <xmx:CF6VaHVJp-TvQ4fZrVjT9YlqkWH4dS80sckE-YSLrF_OueIJ3wP7TQ>
+    <xmx:CF6VaJMXqrBBmuE01fNFj3bNQgDD57MkswGPz0EqzNE96Y0EovaSHQ>
+    <xmx:CF6VaDYT8PCu00m6ielSvKH0IqkbfukGGgNYlIPaZDP2VYQzXwKN3Q>
+    <xmx:CV6VaDhUszPx5LMuBGQa0NlPijuWDrB9K18hhkSSB_BANlYb-5Lo09P2>
+Feedback-ID: i83e94755:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 7 Aug 2025 22:16:40 -0400 (EDT)
+Date: Thu, 7 Aug 2025 19:16:38 -0700
+From: Josh Triplett <josh@joshtriplett.org>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: linux-fsdevel@vger.kernel.org
+Subject: Re: futimens use of utimensat does not support O_PATH fds
+Message-ID: <aJVeBt2FBl_cQOIO@localhost>
+References: <aJUUGyJJrWLgL8xv@localhost>
+ <2025-08-07.1754602716-spare-cyan-roughage-volcano-lW6q7A@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYSPR06MB6921:EE_|KL1PR0601MB5535:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7cd41334-07a5-4c5e-52ba-08ddd62117c1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?K0VqaWFGTHJqZFRKOXJiNVloYnB3N0MrU01IcGNtQ3F2c3pyd2Q5UkNXWDZ4?=
- =?utf-8?B?bDJOZjFyNHBuSThJY0JaL0VJR1o4L05JWnVXWlFSVm5vN3JNWUF1c000Tkgz?=
- =?utf-8?B?aFJOQzk5V2NzZEtwNWhrb0c3TldVNGtOZnVMTzlqdHFhRXdvR3lwbG5HUHdw?=
- =?utf-8?B?RytwVVVIdjRGNnNFRTd4ajN0WUpyZVZ4RVI5TkFDRXVQbFJUOUxkZmxsanJX?=
- =?utf-8?B?Uit6ZzNNUVpGT01GNnA5cnFIVWw2Z2V4RFRKQ0J2a1p2VElSa3FqTE44Q0pG?=
- =?utf-8?B?Z25YMVRncFFjN0pHUXdKVkNlNmlEbER5bEUrMHVaaTJVbVFWR0Y0WUVTdFFi?=
- =?utf-8?B?Z0MxQzM4YXE4SUFuOFRWaTg0NWxnSlB0Y1h6QnMwcVZaaWFPTWhqNWptdlE3?=
- =?utf-8?B?ZnlQMU8rOHBFNzRCUmswZzRhT1J5SW80enlXVzNTOG1JWWxXZVpxMWFjNHZQ?=
- =?utf-8?B?Y0JrOVpOLytsaGVwNG1Tbnl0SlhpNHNnN203MjZ5djkxalg3K0VqeFI1NHhU?=
- =?utf-8?B?a1hEejRuYjR1djRMUVZoaUdmNFBNcW1uQVFkQjh6akt2N0UremZlK1FzQ0FQ?=
- =?utf-8?B?TWU0YytzWHFpOGtlTFVpUmpLNTEzb2lTSkw5dWg4UVEzUUJHUG9mUUh3LzNm?=
- =?utf-8?B?V0pBZXBob093a3VHem1wQXo5ZG92bVpMdllMTGNLRnBjMTZ0ZXhLcVhGcUhG?=
- =?utf-8?B?QzNWdkFPeUY4alMrak9sUVJYYjFZL0wwNFpOV25rWG1HMnVxdHo3U2trSDhk?=
- =?utf-8?B?ek1BdXFZM0dNZTZOMGJsUis3Mk5Ub1U4aG1nT1FtVHZaMXVnVThMbVFJOUpY?=
- =?utf-8?B?Y1YrMlpTU1p2VFdXdi9mVUxEaXJqUVltbWtUdHUrSjhHaHF1cEZBNk9JeXls?=
- =?utf-8?B?SE4zcWkrUmpPWkxwcmFKT3FTdkFpNkxnUjlEQVNXU1hyZmRaZmhoSFBnOUEy?=
- =?utf-8?B?M1FGU2pibytnNHlqeFdDMW1zZnNqUW5CQzRLbFF1U201VGlxaExia1liRzly?=
- =?utf-8?B?K2EyZlVnUi9UaGVrQVByZGVjZkdoZTAzbVdwMXBYd1dTNkNwTk9ybDNFNGhs?=
- =?utf-8?B?TDJKQmtzeGxqcXpjaXRrU3lvRm5kdmhMbmV6LzNKMGVqQXFaNFFuMGw3OTlk?=
- =?utf-8?B?b3NhUHprc2ZTQUg1QkgyVDQrM3FZTWtIWktmRWJVN2Q3a2VYQVNRRERwcmcw?=
- =?utf-8?B?UnlDMm5LTGJTaVRUemY1SmpMa2s4dUkxTjFuTFE0bmxiNHRnKzMyeXpDY21C?=
- =?utf-8?B?NStiZ1l1T3ZIL2Z4ZThaN3RZOHY3YURRZVgrYUVZL0o2RTlZc2EwTTVRQTRv?=
- =?utf-8?B?OGlQSHBIcmJJQVFKZS9KQU1lNTFGeVhEbHNrRXFMU25VaEsxZ1VpTjF1djUy?=
- =?utf-8?B?R3VxWkFFa0VYREk2WHRiRFNtanpwZEh4NkJaenBpQU55V3Bqa0k2UUJuOVVu?=
- =?utf-8?B?Vkg2L21tQ21PMzdEckRpanBXbVN5OHEwM29jeVhPY2tkbmdkMVlhYnFDa29P?=
- =?utf-8?B?VWdsSmtjTGpWNmJVVkdqRXE3UlAzekppbVBNSm5VblVmMGdJRnlmMjM3VXg1?=
- =?utf-8?B?cWRCZ3JTeU0ySE5acVBvNVpQaWt4cGs3UWFmOWxma3Y4UnZWMjFnMW5xaXNz?=
- =?utf-8?B?YkYzbUpuQk1uZjhDVTRUUWNPcW9QbUNEUTdEUldOWGhIU1dJWmdhaW5OT1RS?=
- =?utf-8?B?VGR2WGFmZnp3OFhkU3BqQXNOU0puR0o4cjBZMEJ1TWFSejBLM244KzJVZXBm?=
- =?utf-8?B?WEFROG1abG1VOXg0V3oxa2Q4bTJ2Q3NUNlVHaEsxdlY3d1dFMDJlcHQwY2Ru?=
- =?utf-8?B?SEdLWVVCcTk0TGRoMUxlRE1PRHZjK3ZnNWtwS1VxUmlQL2FXRWR0SDFoLzAw?=
- =?utf-8?B?aktJalV2WElmbmtVN0haTFpCTnRvaFlrdmlEbzBvNExYWWpsMFRnSjVEZy93?=
- =?utf-8?Q?z2PYktOiNbk=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYSPR06MB6921.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UU94aTFzNlQxN3pESzFzeU44YnpYR2hSVjhmZTNYbHZvaWw1OEFvWE4yL24y?=
- =?utf-8?B?Ylp3MWdGNmZEQ2dMTWx2My93UHdsNEFueW9KNWFPMiszcVB2bG1KR0k4R3pl?=
- =?utf-8?B?aW92Z0tTRmkyQzJ4NERhakFQWHVCU29nc0RtcnRVRHVzTk9IY2dHVGQvbGJ1?=
- =?utf-8?B?Lzk0ay9YNTE0QWZ3eTJCdFY5N3hFbGZlWFphWExlS256UXVuOGdDanhHc2Jk?=
- =?utf-8?B?bGEvYWx3TlVMbG91dnFvMVRYaGdlbktaMXl1TlZrMTVnV3dXM2pmcGxNZEpx?=
- =?utf-8?B?M2lGN0FXL0Z5QzBONnQ5YzJZVzF5VmhNQ3J1WUJJOGJJMkludFBENFhQN1Fl?=
- =?utf-8?B?MHpMaU5PNG9PQjF0dmRGZTdDaFRvdjFpVHJVenpDQVlDSmtjVUR1dW9vQnJi?=
- =?utf-8?B?SmpZVW9hbE5vaEVhbGV0RkdyUThiT3RCSWVUZGpVMURuUkdZVHFZSGsxSEph?=
- =?utf-8?B?eXVVVzcwODY0Y0gwL0pIZTY0NjRRdklkS2VZNDBaOXAzOTI2ZWtZemx5NnJn?=
- =?utf-8?B?Z1lydlZycnFBYWNRa2Z5YjQ0V0p4eWhmSHlHcnBFdm1QMmM3OGhzT3l4UUFX?=
- =?utf-8?B?dlViN0RtOUx3cC9qdjlJSWVLZW8zL1JuVnBKWDZLM0E3cDZOWVBzSW95WkZC?=
- =?utf-8?B?eUtsaDNZZEtIL3kvRzZZa1BXd0tMSi9pY1NzUVJlWk9PL0hCcGFBT05pWG9n?=
- =?utf-8?B?cCtFSjFsczNYeEM0bnJrdC9yUkNpSmlKZ250dmtNeDBpQUoxK3pEYlBzSm1l?=
- =?utf-8?B?clNFcVovTWd4TENUclp5b3RwZElEempqSUdIRXd1aDF3c1pPSm1NSERlNWEy?=
- =?utf-8?B?cktYZHFGcXZKVFZYeG41MXRZQUV2ODNQQTdrMVQyZURSTVBjd1NJR0ZhK0pl?=
- =?utf-8?B?clFodWFzZWd2MDZJbHNYYUdEV1ViU2lPWFJtRHNiUGpjZW5CL0x1bTBjaS9B?=
- =?utf-8?B?UlJQZUh5ZFBrby8rZE4wVGJNQVVuZURyRTRQZnZiVnB4cUtwQUdQQnR1U0Qz?=
- =?utf-8?B?YnpKRklmUUN6dXpEZnBka3EveEFFeGRwNWZEd245ZDJsdWNyUUthWVQvT0ZT?=
- =?utf-8?B?dUhxN0ROUFpycVB2R0M4ckg1eTc0MnBOcDc1VGtjMVc5bkRqLzlzeWhLeXZu?=
- =?utf-8?B?Q2FDOXBBelYyVmRRcnVNU3RRU2JvekFYNEUvK1gwa2pHc3ViMnlKbldPWnc5?=
- =?utf-8?B?dzdWN2dCVlo1cEtXQzVMZmdjTUJZUEZhL2Q1U2pmdllJb05Ga2ZkSzRsUDB4?=
- =?utf-8?B?TTF0TzVqb1I2R2k5UTRxbGJydWFqdXpCK0tRa255OFNObHF1TUJVd1BCOUIx?=
- =?utf-8?B?WlVsVjlVNnE3d1hUbWJHbWVZcjYrVUF6TzRNZHFBYVFpMUtqSExueUdUMGsx?=
- =?utf-8?B?U25aVWhBMkw0VTFHeWFEMFNTNmVONFpPTFFHeDNFQWViTTF2YjdXbzRIU2pt?=
- =?utf-8?B?aXAwVUd5THIxcnJ5eDFmOHZWdEdUOFdHcEVVcDUrZDBuWDk5d0crVWxxZWNl?=
- =?utf-8?B?VmFaU1FMNlJScEdTV3FBc1d5amFBOXJ4S3NlSWhKcHkxd3h3L0VSaWRYYUlh?=
- =?utf-8?B?MWozWlVVTDNRNjY2SG5USG9UNVlrMVA3VjlIb2FGaHh5QldDN3RZbXFIYTR0?=
- =?utf-8?B?V3pDLzRHMk1ST0YzY3FKU0JHRVdTOHo1aStmdnJwN0VJWVovMzFSYlg0cVh4?=
- =?utf-8?B?Rm1rTGxmN1JNYlcvMFBWQndQZ2xrb21ZYm5zbnFjVURzTERzbHhqeWY1MlBH?=
- =?utf-8?B?WTN2K21ldHFETWZ2TkRLWlozUWkyUnFkMWNtVTMzNUZTVzJGS1ZKRDhBYVRx?=
- =?utf-8?B?QXVtSXFYZEl0dDM1bmFvRHB3RHpmdERUbGpwemdNTkdmTG42cXdjdmRWVGRJ?=
- =?utf-8?B?UXJqN1AyQUtnTElKdjQ4c3NMdjRlMFFEQ2RYTjR1eHNRaHQ5ZUR3TjhkcGZ5?=
- =?utf-8?B?ZDVOQlZEcUNMWGpxaVZSVmRyQUQwOGN6S0x6eGc5SlY3dXJMRFVLS3ZNTzV3?=
- =?utf-8?B?N1pUd0RQa0lEdXBVZ25YNjNMQ0J5elBzdDdFSStYcXBZT0pwTnlCalhXVFUr?=
- =?utf-8?B?NGlUYXFHZ0U1SWZlYmNGM3JEcStlMUZueml3S3lveWQ4UWhwSmJWWk9XWEtK?=
- =?utf-8?Q?8vJl42/feBtXPQ0xgtejO9gv8?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7cd41334-07a5-4c5e-52ba-08ddd62117c1
-X-MS-Exchange-CrossTenant-AuthSource: TYSPR06MB6921.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2025 02:12:57.9989
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bMOdV4wbq7sd2WW9GbO6lQI/WDNdSIyuTmcUBWVB2sm8PqGXAcJ4xR9rNxkp4dl8d2hsNhg6a2ZobBCGi0KDyQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR0601MB5535
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025-08-07.1754602716-spare-cyan-roughage-volcano-lW6q7A@cyphar.com>
 
-
-
-在 2025/7/30 18:52, Jan Kara 写道:
-> On Wed 30-07-25 09:47:06, Dai Junbing wrote:
->> Set the TASK_FREEZABLE flag when the kjournald2 kernel thread sleeps
->> during journal commit operations. This prevents premature wakeups
->> during system suspend/resume cycles, avoiding unnecessary CPU wakeups
->> and power consumption.
->>
->> in this case, the original code:
->>
->> 	prepare_to_wait(&journal->j_wait_commit, &wait,
->>                 	 TASK_INTERRUPTIBLE);
->> 	if (journal->j_commit_sequence != journal->j_commit_request)
->>          	should_sleep = 0;
->>
->> 	transaction = journal->j_running_transaction;
->> 	if (transaction && time_after_eq(jiffies, transaction->t_expires))
->>          	should_sleep = 0;
->> 	......
->> 	......
->> 	if (should_sleep) {
->>          	write_unlock(&journal->j_state_lock);
->>          	schedule();
->>          	write_lock(&journal->j_state_lock);
->> 	}
->>
->> is functionally equivalent to the more concise:
->>
->> 	write_unlock(&journal->j_state_lock);
->> 	wait_event_freezable_exclusive(&journal->j_wait_commit,
->>          	journal->j_commit_sequence == journal->j_commit_request ||
->>          	(journal->j_running_transaction &&
->>           	time_after_eq(jiffies, transaction->t_expires)) ||
->>          	(journal->j_flags & JBD2_UNMOUNT));
->> 	write_lock(&journal->j_state_lock);
+On Fri, Aug 08, 2025 at 07:51:26AM +1000, Aleksa Sarai wrote:
+> On 2025-08-07, Josh Triplett <josh@joshtriplett.org> wrote:
+> > I just discovered that opening a file with O_PATH gives an fd that works
+> > with
+> > 
+> > utimensat(fd, "", times, O_EMPTY_PATH)
 > 
-> This would be actually wrong because you cannot safely do some of the
-> dereferences without holding j_state_lock. Luckily you didn't modify the
-> existing code in the patch, just the changelog is bogus so please fix it.
+> I guess you mean AT_EMPTY_PATH? We don't have O_EMPTY_PATH on Linux
+> (yet, at least...).
 
-Thank you for pointing this out. I'll make the corresponding changelog 
-updates.
+Yes, that was a typo.
 
-> 
->> Signed-off-by: Dai Junbing <daijunbing@vivo.com>
->> ---
->>   fs/jbd2/journal.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
->> index d480b94117cd..9a1def9f730b 100644
->> --- a/fs/jbd2/journal.c
->> +++ b/fs/jbd2/journal.c
->> @@ -222,7 +222,7 @@ static int kjournald2(void *arg)
->>   		DEFINE_WAIT(wait);
->>   
->>   		prepare_to_wait(&journal->j_wait_commit, &wait,
->> -				TASK_INTERRUPTIBLE);
->> +				TASK_INTERRUPTIBLE | TASK_FREEZABLE);
-> 
-> So this looks fine but I have one question. There's code like:
-> 
->          if (freezing(current)) {
->                  /*
->                   * The simpler the better. Flushing journal isn't a
->                   * good idea, because that depends on threads that may
->                   * be already stopped.
->                   */
->                  jbd2_debug(1, "Now suspending kjournald2\n");
->                  write_unlock(&journal->j_state_lock);
->                  try_to_freeze();
->                  write_lock(&journal->j_state_lock);
-> 
-> a few lines above. Is it still needed after your change? I guess that
-> probably yes (e.g. when the freeze attempt happens while kjournald still
-> performs some work then the later schedule in TASK_FREEZABLE state doesn't
-> necessarily freeze the kthread). But getting a confirmation would be nice.
+> The set of things that are and are not allowed on O_PATH file
+> descriptors is a bit of a hodge-podge these days. Originally the
+> intention was for all of these things to be blocked by O_PATH (kind of
+> like O_SEARCH on other *nix systems) but the existence of AT_EMPTY_PATH
+> (and /proc/self/fd/... hackery) slowly led more and more things to be
+> allowed.
 
-I agree with your perspective.
-While cleaner implementations may exist,I haven't made changes due to 
-uncertainty about the alternatives>
-> 								Honza
-> 
->>   		transaction = journal->j_running_transaction;
->>   		if (transaction == NULL ||
->>   		    time_before(jiffies, transaction->t_expires)) {
->> -- 
->> 2.25.1
->>
+I do appreciate that. In large part, I'm trying to figure out if it
+would be reasonable for this specific case to work, based on the premise
+that it doesn't add any new capability, just makes an existing
+capability available more consistently.
 
+Having that would make it easier to write portable code with *fewer*
+branches for Linux. It'd still be necessary to *open* files with the
+Linux-specific O_PATH, but generic library routines that operate on open
+files wouldn't have to change.
+
+- Josh Triplett
 
