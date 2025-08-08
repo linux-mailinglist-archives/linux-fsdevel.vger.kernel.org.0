@@ -1,296 +1,205 @@
-Return-Path: <linux-fsdevel+bounces-57042-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57043-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF367B1E470
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 10:33:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88963B1E47D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 10:37:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CF74167656
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 08:33:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 618C518C1977
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 08:37:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E0CF25484D;
-	Fri,  8 Aug 2025 08:32:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60FCA262D27;
+	Fri,  8 Aug 2025 08:37:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="vGS2O7jo"
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="HGQgjoOx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [185.125.25.12])
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013023.outbound.protection.outlook.com [40.107.44.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EAD3EEB3
-	for <linux-fsdevel@vger.kernel.org>; Fri,  8 Aug 2025 08:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754641979; cv=none; b=uSvJ7Ty8+TUGZ+iDDxvKQNh5OiGYHInbNMgxqxHGGIS7fdrjcehBtdIYIlLPJ33ADPDbp7hFbNA+0TQFm468RWI483KeGqRRFSDVfXvHIWhRrc3fM4B5UoLwbb/8dQ6K7zV2K2PVNpHhLyE6G2o/CN7omudj3/cILUCy2XuXGUc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754641979; c=relaxed/simple;
-	bh=gT+txAt8nZe/co3LkaAWz8uEzYM6sGFZniHbs4hZqcU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jIpZyrrO4cLIcOR6/NNZwiwAi1ztifyC0rguP6+L8bRh8e6Iza+H1ouNZ0NiktkxJaikHf/YMlH8lHExlOBxizFFaj4R15nBYlE4gQ8Es53/aOVNgO68rJ3TcaFoUOtTRlUGGvmScsUewVGohXaLmD94C+1WtgmM1BwvIBgu0j8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=vGS2O7jo; arc=none smtp.client-ip=185.125.25.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4byy2k0fHbzYF1;
-	Fri,  8 Aug 2025 10:32:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1754641965;
-	bh=+4ctHB3moBCqTfP2FRQc6ZArCbvN42I0Tyrh1hPX3xs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vGS2O7jor5acY+JkeRvyLM4Ls760abARgX+2IG411SN+960bsUT6nqLH0ST+vBL0F
-	 SA0E8DcnVXus/LwawkuHKshRrCLjUJ8KeYaQjj2Bsbujp+W9jdqKo3YJCAqJ3xlq16
-	 TyjxpymCGpG8Ekg8LLjhqGiPwN/9ivNUrxnVW/BE=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4byy2j05FJzwZg;
-	Fri,  8 Aug 2025 10:32:44 +0200 (CEST)
-Date: Fri, 8 Aug 2025 10:32:44 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tingmao Wang <m@maowtm.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, 
-	Eric Van Hensbergen <ericvh@kernel.org>, Dominique Martinet <asmadeus@codewreck.org>, 
-	Latchesar Ionkov <lucho@ionkov.net>, Christian Schoenebeck <linux_oss@crudebyte.com>, 
-	v9fs@lists.linux.dev, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	linux-security-module@vger.kernel.org, Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
-	Matthew Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH 1/6] fs/9p: Add ability to identify inode by path for
- .L
-Message-ID: <20250808.oog4xee5Pee2@digikod.net>
-References: <cover.1743971855.git.m@maowtm.org>
- <e839a49e0673b12eb5a1ed2605a0a5267ff644db.1743971855.git.m@maowtm.org>
- <20250705002536.GW1880847@ZenIV>
- <b32e2088-92c0-43e0-8c90-cb20d4567973@maowtm.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE8B61A00E7;
+	Fri,  8 Aug 2025 08:37:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.23
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754642238; cv=fail; b=s4aMPOsjTXWxJ6MT0sYr64HncoSj5fttIq6lzRuGgebXvz9kTrJ5jYYFg94q7TJcEKoOWnzUjB5dn9RBT5LlxVE20rtlNDCITBYIwzrB11NmDank9zufr1Wtl6K3lswIHKSAlLaw3SKm451ErJQ3Lk2yiQBRL3hKwKibg78tvgI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754642238; c=relaxed/simple;
+	bh=xOiHvzEYqjlvm3Gmtzi2+NskAp2tKmbE8rFTdqNxK3o=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=JywjJC2Du4AY0fZtlNappspHrB59wWaOUdjjed+z/It7y7xPNayZndmvwzB4VNd91nkN4HpBvRH5gGZ5Mced+3CToabYI+Z8gG+28lnXRXlbF8QvHxOopgtP9425o8jI9uRivgioY8/0qKQDcfKdf7f8Do2LLXaDHEdL+pHtBFA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=HGQgjoOx; arc=fail smtp.client-ip=40.107.44.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=aLCuz86h8iKxPjEdRM8QIPyQZU45jl5+aIvPZ6dbokh7y9S9aGYJN7VNNY7XlQ2uKB174wdmkrOvn2r1e4peV05z8dW1B7cQgwCbwpN8l3sTBZnuIavFT5azEXlsqoc69rjqdqOhjpuY37iTxuhZyKaaYn+n99BJ2vJ5JlZrQDFHOLocXIvAQitfAFQqzX0jcGzgjAZhWJ0VXnzQrj57hiR+6VVsaSvkOPGSletkkL7uUiXeC3u3fIwIsysMETEP8lQlL8Flmtutrgw0RZyexFZv4rxRMxJ5WCnifRKS73FHoEyEAKIZm8a5DAwTZefOBuWxTSKOkx/LK6SEyQl1Bw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0HL6LtkkQGNZCnbSu4jztnDHtTwJZNxu5rMLfHu+9bw=;
+ b=IOHJAbe0orR7kB7Tx4JOP7ymDCVr0Bf20FeKhmJxjOqVo/lInYOa7ZoWCOzqcbOJ0dwF8Dska3CaWjgQjv0OkVtZqMkuBHO8pVlDWFfPINUU/Q6hNh+78V2FAmQ45VlhYlTeuM2nzFDbua9293iUsw+I7SJqqh2m6VXYBXj/GAqu+bpXEc8+CqbeQ7eNMWeW+F1bmWSbQm6e+vOHjxUnNKUqPlUyvgG2FezxtN1Zjgp4rKA5cVpnZYRN0KERlQiArGjT6tiWG6NhILm4C5PSq+6XdYtbKdqE3CYVAWilBgIoyPi2X9J8/6BcR5ZbfkC1zQlhjtu1lvGWkLh/Urtt8g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0HL6LtkkQGNZCnbSu4jztnDHtTwJZNxu5rMLfHu+9bw=;
+ b=HGQgjoOx5i7LwNSITagSGWd7Gp2oELqGTEiRA3yhgkPeJK0hpiXDp3wh9ALwJ9UPCUFfWEkBpMCWQ9YRAxMJx5q4qJcXyUi1q2SfysuYmoc1cfsN6Ne3LvI02V6iff9mp/ZEDb2HDBCVoEndiF1EzaiOqu/chV7PGFSSnkXjF0EkoyYuDwUlZMMSJMFAAh6i/8BIGsXsuVHAV3r/SBb6F1A8g5omF6hQRGeJYQ3vpsA8tYnry63apv7+V+vk64IXrBp4g2VrVQXQJVym5BftB24g/j83rl09D2wJzsci5TKF8NhBLE1hG0wZM0uNXeJgx8XspAfGzorPMIcNhyY9Nw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from KL1PR06MB6020.apcprd06.prod.outlook.com (2603:1096:820:d8::5)
+ by SEYPR06MB6564.apcprd06.prod.outlook.com (2603:1096:101:16c::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.18; Fri, 8 Aug
+ 2025 08:37:11 +0000
+Received: from KL1PR06MB6020.apcprd06.prod.outlook.com
+ ([fe80::4ec9:a94d:c986:2ceb]) by KL1PR06MB6020.apcprd06.prod.outlook.com
+ ([fe80::4ec9:a94d:c986:2ceb%5]) with mapi id 15.20.9009.017; Fri, 8 Aug 2025
+ 08:37:11 +0000
+From: Xichao Zhao <zhao.xichao@vivo.com>
+To: dlemoal@kernel.org,
+	naohiro.aota@wdc.com
+Cc: jth@kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Xichao Zhao <zhao.xichao@vivo.com>
+Subject: [PATCH v2] zonefs: correct some spelling mistakes
+Date: Fri,  8 Aug 2025 16:37:01 +0800
+Message-Id: <20250808083701.229364-1-zhao.xichao@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR02CA0093.apcprd02.prod.outlook.com
+ (2603:1096:4:90::33) To KL1PR06MB6020.apcprd06.prod.outlook.com
+ (2603:1096:820:d8::5)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <b32e2088-92c0-43e0-8c90-cb20d4567973@maowtm.org>
-X-Infomaniak-Routing: alpha
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: KL1PR06MB6020:EE_|SEYPR06MB6564:EE_
+X-MS-Office365-Filtering-Correlation-Id: 87ea5a13-ca12-4fe7-39c4-08ddd656c4ab
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|52116014|376014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?i/d8Ub/BGjuWM6rIvzPCWLgfHivkePJ9rqA5JtjjbDHci2M4+fD8dFKpO0uu?=
+ =?us-ascii?Q?auQs/GO4PjNOtPbWBfJC8b+M+mdYAJeRHyJyAi1HtwBgPw3PcPMdHbmz7u/f?=
+ =?us-ascii?Q?vt2B7GMbP0uZGxouemmgW1LQDmRvRrPG3WUqOlYx00Bqaje5rTyjc58hqELu?=
+ =?us-ascii?Q?Pc2wLmsU9UQHpT18Na4W1E7hYpa3BJvE1p2j8gEOEmT8k8Ai3eaIFWPX4H78?=
+ =?us-ascii?Q?3C+BncOSbLnbwTpnHECBVIqYZsJ9Hv5sHnr9rvXnT0ixcwuJvYhBoex6W2J0?=
+ =?us-ascii?Q?nZOnb0rcD6jHZHVneWQqZVwT6K4uayD4Lni43Fg5xM/Dmy/uDsDnuKVBpmGI?=
+ =?us-ascii?Q?5ZWM0pNhDmrj909Spsf9ejSqOrd8/By5OHJVHPGDx4U5pPVXiDRCU24S/LnS?=
+ =?us-ascii?Q?jhlciPwllEyC2DKgy7CNcYOraR8zzQQKVS6WL1yhMQlU7ac8Ef/szhSLhlXZ?=
+ =?us-ascii?Q?/Wo7dDjA6KlrVL+N4LY2hJA0v1uavgto+CoExF531lleiZpuHgtLnVIx1eQ3?=
+ =?us-ascii?Q?8EQOI8+w2PDMjZvlIf3t+uAz8WISlYufAYLkLo5YdTgE7FdE1JGObOuVEppE?=
+ =?us-ascii?Q?BRlF4gO83ervQp4fp4tYCgjh03emkzuFVofqXr6h+YJzX4nB5ngHKMSGAqnu?=
+ =?us-ascii?Q?Gocmt8/Rpup0+nlwqGF+6omhUB0dGvj76cqpnA8+leCeYr8tlKFhL9sOzyZy?=
+ =?us-ascii?Q?2gkdCbV4u70xhWbEQLLJM/dqNeaq1fSULxtB+GlYHGQOoBhxpYfclmxAU5WZ?=
+ =?us-ascii?Q?7XxgvYQxaSY/o0Ixj27qWhX9G4vYgcA6dPb626FmgLOHB/9RpJtaNWyIMHb1?=
+ =?us-ascii?Q?ka8kuCj0T5e3LwT3wo8qhcfHzOfWsnzlDKKSrkqdSUiwJo8GHg72ZrV9MYgw?=
+ =?us-ascii?Q?kcEa9KLPkXpyRWur5IxOYM6ACNXPapiltU5ijqvKhzxxYAgjmp3BeJ5szhQD?=
+ =?us-ascii?Q?sjYtyUruVC/IO6//1T1QKpo7aS5Bp01wf3nTDM6dgfE7YADbW4O+i8p6ROO6?=
+ =?us-ascii?Q?MNbQWG0weAUGahR3IiGNoZ+wWPngrwX0dJXM6dHRIA60zL6Cj2ALnV6NlaA1?=
+ =?us-ascii?Q?aSJHTavwc0AqJLcauor1VVsoypdCwYC+OI+O+DLmDiIp3Rio2YvvZgUwaehN?=
+ =?us-ascii?Q?8Ths8/G4lqxjo9UFV4dbU9nLA25GeT9qv1OrjJQjhzCN2Vc2HwRHUwXyly4n?=
+ =?us-ascii?Q?SrvXzZvL4WIdhMLrbUp8S6VXjmPMYy+OuEI3DAEjc8p8/kmBIei6dFxTeHhK?=
+ =?us-ascii?Q?CGbm5SxH8Z5yNlzpBHohb027QfrwD0lU16nqn6GIzSXGVI0lzRxn5obNdoEi?=
+ =?us-ascii?Q?F0jZ0Aqpp3nF862f7cLBK/LQxUuEJR08s6CzOAc0YiSDEkjY0WQTwL/KnSwp?=
+ =?us-ascii?Q?mxn5Pt0+mKd97DOfh6ceC+dp0OsGHtwbvxKUk0RchT0rlFXpuTN/Pzg/Y/Rp?=
+ =?us-ascii?Q?NjY3Vfga7zG5Munvfal6B6oUAn6zJWorSg6OaseK8uE8/A5HvFuGPw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB6020.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(376014)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?HW3oJ0nrbUxPlHVaYgL20Fpcu4640bv6vu9vtMr2QYLwfi4pKtcnuICMDCMo?=
+ =?us-ascii?Q?mC2QXz78GA3omCoUPiQMYpSSGL8boQeGuo0quS0WElK8c9dge0rAuMwtICDX?=
+ =?us-ascii?Q?ukzlXz8TkSo6vOQSm5HazTvC1oY22nhahK6HPcn7Dj+5hEGj0UH8XpgrFwUY?=
+ =?us-ascii?Q?+kr00vtzFEIBRASI0wd51llngrMfyA78QKusQGATXi8GQazjSfnpQXJLi1fk?=
+ =?us-ascii?Q?FZSI38TqcOk4Ky1cua8SE4jViIXw6Mv+qhG3vIuE3yWlecYZuzeDCM2fyghw?=
+ =?us-ascii?Q?0Tco0vFy8Nv8Dggn4hkv/mRWJabFJ7fvfssvqaSg5qMyw7PkEXgq0jwAEbm/?=
+ =?us-ascii?Q?KXmzlx6/8SNy9Belx6auPDo8I0MM2XlblWaBLsouQVnGSJz7Y7xm5Q7IKEDq?=
+ =?us-ascii?Q?6xKKAxSzJEb7ucTo4E/rEerbtz3vzqmEnoHE/mH+TOZJMoSRvFV07jPqoBdP?=
+ =?us-ascii?Q?cdrdmkJIl3AtucX0EMUnoDyhNSejlszABfbDWDHmUl2eXJq0meYVA/xFc58Y?=
+ =?us-ascii?Q?2SlUKjLSrb5H+h1G8fKqTrLbr6MWgl9/n0O2ny3Mwe7Ah+yQuTbMUKzC+zri?=
+ =?us-ascii?Q?kzluscv1bv7hDFlDg7AFZnBz9wDo/YQcx7LjI5E+uULl43WNTuoZXZgmE+eH?=
+ =?us-ascii?Q?OH+0pFj+FtYk3vyNnvrU3L+0WmbBdWwYzsI9SS266gnXDXWJxNS5lSCvr1cF?=
+ =?us-ascii?Q?cHKPLMFgbfw3nZsIIqwUAaOxoh3dwYWdgxM424tHcRTBFaTHmQPhho4bFb4E?=
+ =?us-ascii?Q?vkCt9YZDEvDogoW4r9YvJAG3eMfd7x8iUzfB5tZFc8eOsc1CS2T8byaNOsdC?=
+ =?us-ascii?Q?Sgd8keznFiF+VjRnIX932STV7jNWeJV4swRKvJtc0kwcg5SOp+mN2wIPJA2Z?=
+ =?us-ascii?Q?neX60EBwCM1MgiXDGRPml6yaogy74FB7400ANIUx0zbbfhW+JpJhliQHVJmm?=
+ =?us-ascii?Q?F8oLXL+FoY8jLpH3g+qI4tg5r5j3jhEX9XFu+j+LfhbjfMz6f5HTxgU5+wnq?=
+ =?us-ascii?Q?lfC4VVIhCl4d/nIbf8AHM4H5jTpN1NoLKSJrXKt3L5lsHc4HmtY1r5pkheeT?=
+ =?us-ascii?Q?BXdSAZDmAJUb6PIctjskVtHWms5X3jHQet8UfoyO2dgJUn/DqxQzjuz5FV6C?=
+ =?us-ascii?Q?/ekcq9sNeiL8qDwWS/8gs3p6baAkuLkcwl3TBNAO1d0mp3dxnRj2NDin2mfA?=
+ =?us-ascii?Q?esQeXrH79rmfRVwSgad3ZCVsgnHvcRVC4hpONURV2Q/zwa2qfngzcMl1ROSA?=
+ =?us-ascii?Q?0sdQhTu+mF4Kcs41GqbiJxxHLbqT1wtXlBPUZNoU7UhFkIUYt61iVr6/lpKc?=
+ =?us-ascii?Q?d36zS49ok0ipAoeQfHN7vQf3SUeweDHU5uba1MeUt/i1zWVMpKTF8z8Ja5IY?=
+ =?us-ascii?Q?VNl37rKtVzaKbB6csObTLq7tyUmSaAhXgPDcCEdASJ8pU4uxxoOyvcxGEvkY?=
+ =?us-ascii?Q?Qj7FqMjIRLWnggUtda+W+KDgd+9wU/f4ukf2US13lBhw2GFkcVHFBQvMBDtH?=
+ =?us-ascii?Q?a+gPEUCDY8ZqWK47vL3LP4GOalhSQVxakzbmDUQM4ZFbpNz8jAGF1bS89zJJ?=
+ =?us-ascii?Q?CPB1OMeF1ZqLFCx32QpyfFuHgqIDbXb8bUYTgsaB?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 87ea5a13-ca12-4fe7-39c4-08ddd656c4ab
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB6020.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2025 08:37:11.3508
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: rhseEbiiSW9LIhkSRLvvr9B4h009aGNa6I2rLB+HDYbHD3nUOiP/rblFF5uYTy443fcZwjRmO+euIbqDaPzg2A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB6564
 
-On Fri, Jul 11, 2025 at 08:11:44PM +0100, Tingmao Wang wrote:
-> Hi Al, thanks for the review :)  I haven't had the chance to properly
-> think about this until today, so apologies for the delay.
-> 
-> On 7/5/25 01:19, Al Viro wrote:
-> > On Sun, Apr 06, 2025 at 09:43:02PM +0100, Tingmao Wang wrote:
-> > 
-> >> +struct v9fs_ino_path *make_ino_path(struct dentry *dentry)
-> >> +{
-> >> +	struct v9fs_ino_path *path;
-> >> +	size_t path_components = 0;
-> >> +	struct dentry *curr = dentry;
-> >> +	ssize_t i;
-> >> +
-> >> +	lockdep_assert_held_read(&v9fs_dentry2v9ses(dentry)->rename_sem);
-> >> +
-> >> +	rcu_read_lock();
-> >> +
-> >> +    /* Don't include the root dentry */
-> >> +	while (curr->d_parent != curr) {
-> >> +		path_components++;
-> >> +		curr = curr->d_parent;
-> >> +	}
-> >> +	if (WARN_ON(path_components > SSIZE_MAX)) {
-> 
-> (Looking at this again I think this check is a bit bogus.  I don't know
-> how would it be possible at all for us to have > SSIZE_MAX deep
-> directories especially since each level requires a dentry allocation, but
-> even if this check is actually useful, it should be in the while loop,
-> before each path_components++)
+Trivial fix to spelling mistake in comment text.
 
-WARN_ON_ONCE() would be better, especially in a while loop.  I avoid
-using WARN_ON(), especially when that can be triggered by users.
+(1) fix "unwriten"->"unwritten"
+(2) fix "writen"->"written"
 
-> 
-> >> +		rcu_read_unlock();
-> >> +		return NULL;
-> >> +	}
-> >> +
-> >> +	path = kmalloc(struct_size(path, names, path_components),
-> >> +		       GFP_KERNEL);
-> > 
-> > Blocking allocation under rcu_read_lock().
-> 
-> I think my first instinct of how to fix this, if the original code is
-> correct barring this allocation issue, would be to take rcu read lock
-> twice (first walk to calculate how much to allocate, then second walk to
-> actually take the snapshots).  We should be safe to rcu_read_unlock() in
-> the middle as long as caller has a reference to the target dentry (this
-> needs to be true even if we just do one rcu_read_lock() anyway), and we
-> can start a parent walk again.  The v9fs rename_sem should ensure we see
-> the same path again.
-> 
-> Alternatively, we can use dget_parent to do the walk, and not lock RCU at
-> all.  We still need to walk twice tho, to know how much to allocate.  But
-> for now I will keep the current approach.
-> 
-> New version:
-> 
-> /*
->  * Must hold rename_sem due to traversing parents.  Caller must hold
->  * reference to dentry.
->  */
-> struct v9fs_ino_path *make_ino_path(struct dentry *dentry)
-> {
-> 	struct v9fs_ino_path *path;
-> 	size_t path_components = 0;
-> 	struct dentry *curr = dentry;
-> 	ssize_t i;
-> 
-> 	lockdep_assert_held_read(&v9fs_dentry2v9ses(dentry)->rename_sem);
-> 	might_sleep(); /* Allocation below might block */
-> 
-> 	rcu_read_lock();
-> 
-> 	/* Don't include the root dentry */
-> 	while (curr->d_parent != curr) {
-> 		if (WARN_ON(path_components >= SSIZE_MAX)) {
-> 			rcu_read_unlock();
-> 			return NULL;
-> 		}
-> 		path_components++;
-> 		curr = curr->d_parent;
-> 	}
-> 
-> 	/*
-> 	 * Allocation can block so don't do it in RCU (and because the
-> 	 * allocation might be large, since name_snapshot leaves space for
-> 	 * inline str, not worth trying GFP_ATOMIC)
-> 	 */
-> 	rcu_read_unlock();
-> 
-> 	path = kmalloc(struct_size(path, names, path_components), GFP_KERNEL);
-> 	if (!path) {
-> 		rcu_read_unlock();
+Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
+---
+ fs/zonefs/file.c  | 2 +-
+ fs/zonefs/super.c | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-This unlock is wrong.
+diff --git a/fs/zonefs/file.c b/fs/zonefs/file.c
+index fd3a5922f6c3..90e2ad8ee5f4 100644
+--- a/fs/zonefs/file.c
++++ b/fs/zonefs/file.c
+@@ -85,7 +85,7 @@ static int zonefs_write_iomap_begin(struct inode *inode, loff_t offset,
+ 	/*
+ 	 * For conventional zones, all blocks are always mapped. For sequential
+ 	 * zones, all blocks after always mapped below the inode size (zone
+-	 * write pointer) and unwriten beyond.
++	 * write pointer) and unwritten beyond.
+ 	 */
+ 	mutex_lock(&zi->i_truncate_mutex);
+ 	iomap->bdev = inode->i_sb->s_bdev;
+diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
+index 4dc7f967c861..70be0b3dda49 100644
+--- a/fs/zonefs/super.c
++++ b/fs/zonefs/super.c
+@@ -268,7 +268,7 @@ static void zonefs_handle_io_error(struct inode *inode, struct blk_zone *zone,
+ 	 * Check the zone condition: if the zone is not "bad" (offline or
+ 	 * read-only), read errors are simply signaled to the IO issuer as long
+ 	 * as there is no inconsistency between the inode size and the amount of
+-	 * data writen in the zone (data_size).
++	 * data written in the zone (data_size).
+ 	 */
+ 	data_size = zonefs_check_zone_condition(sb, z, zone);
+ 	isize = i_size_read(inode);
+@@ -282,7 +282,7 @@ static void zonefs_handle_io_error(struct inode *inode, struct blk_zone *zone,
+ 	 * For the latter case, the cause may be a write IO error or an external
+ 	 * action on the device. Two error patterns exist:
+ 	 * 1) The inode size is lower than the amount of data in the zone:
+-	 *    a write operation partially failed and data was writen at the end
++	 *    a write operation partially failed and data was written at the end
+ 	 *    of the file. This can happen in the case of a large direct IO
+ 	 *    needing several BIOs and/or write requests to be processed.
+ 	 * 2) The inode size is larger than the amount of data in the zone:
+-- 
+2.34.1
 
-> 		return NULL;
-> 	}
-> 
-> 	path->nr_components = path_components;
-> 	curr = dentry;
-> 
-> 	rcu_read_lock();
-> 	for (i = path_components - 1; i >= 0; i--) {
-> 		take_dentry_name_snapshot(&path->names[i], curr);
-> 		curr = curr->d_parent;
-> 	}
-> 	WARN_ON(curr != curr->d_parent);
-> 	rcu_read_unlock();
-> 	return path;
-> }
-> 
-> How does this look?
-
-Looks good to me overall.  Please sent a new patch series.
-
-> 
-> On 7/5/25 01:25, Al Viro wrote:
-> > On Sun, Apr 06, 2025 at 09:43:02PM +0100, Tingmao Wang wrote:
-> >> +bool ino_path_compare(struct v9fs_ino_path *ino_path,
-> >> +			     struct dentry *dentry)
-> >> +{
-> >> +	struct dentry *curr = dentry;
-> >> +	struct qstr *curr_name;
-> >> +	struct name_snapshot *compare;
-> >> +	ssize_t i;
-> >> +
-> >> +	lockdep_assert_held_read(&v9fs_dentry2v9ses(dentry)->rename_sem);
-> >> +
-> >> +	rcu_read_lock();
-> >> +	for (i = ino_path->nr_components - 1; i >= 0; i--) {
-> >> +		if (curr->d_parent == curr) {
-> >> +			/* We're supposed to have more components to walk */
-> >> +			rcu_read_unlock();
-> >> +			return false;
-> >> +		}
-> >> +		curr_name = &curr->d_name;
-> >> +		compare = &ino_path->names[i];
-> >> +		/*
-> >> +		 * We can't use hash_len because it is salted with the parent
-> >> +		 * dentry pointer.  We could make this faster by pre-computing our
-> >> +		 * own hashlen for compare and ino_path outside, probably.
-> >> +		 */
-> >> +		if (curr_name->len != compare->name.len) {
-> >> +			rcu_read_unlock();
-> >> +			return false;
-> >> +		}
-> >> +		if (strncmp(curr_name->name, compare->name.name,
-> >> +			    curr_name->len) != 0) {
-> > 
-> > ... without any kind of protection for curr_name.  Incidentally,
-> > what about rename()?  Not a cross-directory one, just one that
-> > changes the name of a subdirectory within the same parent?
-> 
-> As far as I can tell, in v9fs_vfs_rename, v9ses->rename_sem is taken for
-> both same-parent and different parent renames, so I think we're safe here
-> (and hopefully for any v9fs dentries, nobody should be causing d_name to
-> change except for ourselves when we call d_move in v9fs_vfs_rename?  If
-> yes then because we also take v9ses->rename_sem, in theory we should be
-> fine here...?)
-
-A lockdep_assert_held() or similar and a comment would make this clear.
-
-> 
-> (Let me know if I missed anything.  I'm assuming only the filesystem
-> "owning" a dentry should d_move/d_exchange the dentry.)
-> 
-> However, I see that there is a d_same_name function in dcache.c which is
-> slightly more careful (but still requires the caller to check the dentry
-> seqcount, which we do not need to because of the reasoning above), and in
-> hindsight I think that is probably the more proper way to do this
-> comparison (and will also handle case-insensitivity, although I've not
-> explored if this is applicable to 9pfs).
-> 
-> New version:
-> 
-> /*
->  * Must hold rename_sem due to traversing parents
->  */
-> bool ino_path_compare(struct v9fs_ino_path *ino_path, struct dentry *dentry)
-> {
-> 	struct dentry *curr = dentry;
-> 	struct name_snapshot *compare;
-> 	ssize_t i;
-> 
-> 	lockdep_assert_held_read(&v9fs_dentry2v9ses(dentry)->rename_sem);
-> 
-> 	rcu_read_lock();
-> 	for (i = ino_path->nr_components - 1; i >= 0; i--) {
-> 		if (curr->d_parent == curr) {
-> 			/* We're supposed to have more components to walk */
-> 			rcu_read_unlock();
-> 			return false;
-> 		}
-> 		compare = &ino_path->names[i];
-> 		if (!d_same_name(curr, curr->d_parent, &compare->name)) {
-> 			rcu_read_unlock();
-> 			return false;
-> 		}
-> 		curr = curr->d_parent;
-> 	}
-> 	rcu_read_unlock();
-> 	if (curr != curr->d_parent) {
-> 		/* dentry is deeper than ino_path */
-> 		return false;
-> 	}
-> 	return true;
-> }
-
-I like this new version.
-
-> 
-> If you think this is not enough, can you suggest what would be needed?
-> I'm thinking maybe we can check dentry seqcount to be safe, but from
-> earlier discussion in "bpf path iterator" my impression is that that is
-> VFS internal data - can we use it here (if needed)?
-> 
-> (I assume, from looking at the code, just having a reference does not
-> prevent d_name from changing)
-> 
-> 
 
