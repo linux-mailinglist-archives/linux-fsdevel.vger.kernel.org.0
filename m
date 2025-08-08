@@ -1,134 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-57053-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57054-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3FBCB1E66F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 12:27:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61A09B1E775
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 13:37:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DA2B24E38B7
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 10:27:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57F8D188BD1E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 11:38:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A1AC2741D0;
-	Fri,  8 Aug 2025 10:27:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52935273D6C;
+	Fri,  8 Aug 2025 11:37:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="sRc44Oza"
+	dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b="v57oPpag"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7C34156228;
-	Fri,  8 Aug 2025 10:27:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EE21242D6E;
+	Fri,  8 Aug 2025 11:37:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.157.229
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754648866; cv=none; b=D9V5BLxd18AfhwZTQnfnznihxN+6ikYD8mW/mc5nmZbPR9RdjCE+RbBScofzq4aKVJOI+GPRil+JQAABL7f4HD6V1av19yEZANWQQ9uLxmXzfu0pHsw8OwSaVUwBd1ZUAjvscefXRNjFQmWRBAcbubhzDUUhCRyQt9pdl8CZ9HI=
+	t=1754653066; cv=none; b=OLNQMZ1cD9SycgH8cKT2SnpW+U17lKbJeYCEXCxIVVgw/Rqc8s+/zuRgrC+H/bvMxIDPWMqfulK+/G3StuOGsIzoHsBxTW8n1i6nMs9HDkTx9YB2V5V4pWwTtuY6EHFFj7/p7066srzes0Wjib/PZ7TKPmCvdzfWPAEaygp0txY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754648866; c=relaxed/simple;
-	bh=IOa2BR4LpvfZrae90RszxtU1ig3d5u2WB2gxD1gy0SI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iNIYGElsN2NzaUZ+CLt8MJ+X8vdL7joTD3mTqZFMF7mPv9nhojWCscMNK0rth/AZKZanmCa9cYBy2VvSR26pxgZzADDZ70cEEVkNuSSmWS0/HU7+d1jwzySZMfn/ig21INJ6q6/TeiaKI1UFPE8YrjlOxyfUKEmHFGX+AVLOC+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=sRc44Oza; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id 50B1814C2D3;
-	Fri,  8 Aug 2025 12:27:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1754648855;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bqUxzr3feljf19Z74jNSXA0Vn9kV/vutqFw9326ggZ0=;
-	b=sRc44OzaMabfqv8JbDv//0noQ7tTRtsJakABMEJm5Dk0LDi1I/f0lBxwOCd2UbJTahwi1U
-	Q1MuGOx4HKsYRYsGVb8R4WmO+hcFn8AD9ZxD9FeBoub3MFLNtZiLezNFJlOcQUh/2muGSQ
-	o/sy8i4BcxQqIOGUdq+ETopn8WpvY6/Tgnz8su/vut0Bo+hcrwd7TdhovG3ekdorqBiBIG
-	Rgz2aDezJb9DIGHIOBIGnVwUoBUU913sGEjjtep5Tel4weiVZx2aLyOBfbMyCgnl3JMaj4
-	128nexclltaoWNE1jkSlj7rCBhuJhh4Gjlr1UXAPXs9h0RL4SuiVvYfF/bfRDQ==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id c66f225c;
-	Fri, 8 Aug 2025 10:27:30 +0000 (UTC)
-Date: Fri, 8 Aug 2025 19:27:15 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Tingmao Wang <m@maowtm.org>
+	s=arc-20240116; t=1754653066; c=relaxed/simple;
+	bh=q86u2q3E0J9VVCxDEgPxY2X12X8ilwraUch8EX+MS8M=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CdS56FwEaD/4IMK6tOfMszcZytw7Us2dkIZHVejwvOtJXi++lwGGT2LmZZYQCAEbJcgHsxR2EsTVj9K/rw4T4EgWlrTi0kFpCnA6jE5E98N+ZebIT/l+s0oOFM6yZwzlnFHTFvwFVkPsHa0BOEqu+YlrRmENko2WNIuR23JRTvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com; spf=pass smtp.mailfrom=crudebyte.com; dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b=v57oPpag; arc=none smtp.client-ip=5.189.157.229
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crudebyte.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+	Content-ID:Content-Description;
+	bh=2qBntLxlZ49ZMmoDuyXBV++1xNmyGAoNPONRB31R6QY=; b=v57oPpaghOOCrtFx39Vet4uGwu
+	Ij9hUaWJ2CHHln+l+fvTrpzwIfS4nruPcDPVuDkhwS3lo1tmZjqNUxrDOdVHp2Ec68uI3Tm8Z6+lr
+	JXvIpuw/btvuznFF6RaP4NYlUSShQw82TN0fkmcy90i/h/6xwzxo0smBzxS4Kh9uJ/IG39BTdzZdk
+	Y1GNaxWz2rAT+6E4LM03eUDWa7hYwRe0q0V2W9AvsuPCH+n7mhsfcJnjXLimZI54Ig0JSaeEnYkyG
+	/N4mp6GABgvCTICGQPK2Od33JkdWG36WXQavVXusiDln9UB3yDwN97EFCfV+PL8Ti7708yBGJtJXU
+	CRlogAqBOWenyZ21inBGPbwXyIqbWeSwR53bt2TqvHrzrjbjZTYmUBIHGLr/xQe8pCa0v7rQK2zbo
+	OUMmS0zvi0VtBe4FXRSHcz2nQm6TINsWdyJA73rtqLyrY4dhlmJDOZ7DLLYbHrTzyvHDVKrFVtLdo
+	ep/O6i+aSs+oEhXZiScvVUMzSExbA/Uoz7H1nU8B8OPJtF8lig5XidOKBhBeS+zpLmwCCi8334JCQ
+	v+FMVJDroTEKu9yFYa8Ueq3AvdJQ1qL6BMw9zExpa18U/3GvWGwtGn+6QgEi1QwUCaGkhg9h3vbM2
+	kergTBKoT0fEzzA12BerWlmNFaiD4h2VlNKj2cKKo=;
+From: Christian Schoenebeck <linux_oss@crudebyte.com>
+To: Tingmao Wang <m@maowtm.org>, Dominique Martinet <asmadeus@codewreck.org>
 Cc: Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>,
-	v9fs@lists.linux.dev,
-	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>,
-	linux-security-module@vger.kernel.org, Jan Kara <jack@suse.cz>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Matthew Bobrowski <repnop@google.com>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH 0/6] fs/9p: Reuse inode based on path (in addition to
- qid)
-Message-ID: <aJXRAzCqTrY4aVEP@codewreck.org>
-References: <cover.1743971855.git.m@maowtm.org>
+ Latchesar Ionkov <lucho@ionkov.net>, v9fs@lists.linux.dev,
+ =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+ =?ISO-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+ linux-security-module@vger.kernel.org, Jan Kara <jack@suse.cz>,
+ Amir Goldstein <amir73il@gmail.com>, Matthew Bobrowski <repnop@google.com>,
+ linux-fsdevel@vger.kernel.org
+Subject:
+ Re: [RFC PATCH 0/6] fs/9p: Reuse inode based on path (in addition to qid)
+Date: Fri, 08 Aug 2025 12:52:38 +0200
+Message-ID: <13395769.lPas3JvW2k@silver>
+In-Reply-To: <aJXRAzCqTrY4aVEP@codewreck.org>
+References:
+ <cover.1743971855.git.m@maowtm.org> <aJXRAzCqTrY4aVEP@codewreck.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <cover.1743971855.git.m@maowtm.org>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Sorry for the delay...
+On Friday, August 8, 2025 12:27:15 PM CEST Dominique Martinet wrote:
+> Sorry for the delay...
+> 
+> Tingmao Wang wrote on Sun, Apr 06, 2025 at 09:43:01PM +0100:
+> > Unrelated to the above problem, it also seems like even with the revert in
+> > [2], because in cached mode inode are still reused based on qid (and type,
+> > version (aka mtime), etc), the setup mentioned in [2] still causes
+> > problems in th latest kernel with cache=loose:
+> 
+> cache=loose is "you're on your own", I think it's fine to keep as is,
+> especially given qemu can handle it with multidevs=remap if required
 
-Tingmao Wang wrote on Sun, Apr 06, 2025 at 09:43:01PM +0100:
-> Unrelated to the above problem, it also seems like even with the revert in
-> [2], because in cached mode inode are still reused based on qid (and type,
-> version (aka mtime), etc), the setup mentioned in [2] still causes
-> problems in th latest kernel with cache=loose:
+As of QEMU 10.0, multidevs=remap (i.e. remapping inodes from host to guest) is
+now the default behaviour, since inode collisions were constantly causing
+issues and confusion among 9p users.
 
-cache=loose is "you're on your own", I think it's fine to keep as is,
-especially given qemu can handle it with multidevs=remap if required
+And yeah, cache=loose means 9p client is blind for whatever changes on 9p
+server side.
 
-> With the above in mind, I have a proposal for 9pfs to:
-> 1. Reuse inodes even in uncached mode
-> 2. However, reuse them based on qid.path AND the actual pathname, by doing
->    the appropriate testing in v9fs_test(_new)?_inode(_dotl)?
-
-I think that's fine for cache=none, but it breaks hardlinks on
-cache=loose so I think this ought to only be done without cache
-(I haven't really played with the cache flag bits, not check pathname if
-any of loose, writeback or metadata are set?)
-
-> The main problem here is how to store the pathname in a sensible way and
-> tie it to the inode.  For now I opted with an array of names acquired with
-> take_dentry_name_snapshot, which reuses the same memory as the dcache to
-> store the actual strings, but doesn't tie the lifetime of the dentry with
-> the inode (I thought about holding a reference to the dentry in the
-> v9fs_inode, but it seemed like a wrong approach and would cause dentries
-> to not be evicted/released).
-
-That's pretty hard to get right and I wish we had more robust testing
-there... But I guess that's appropriate enough.
-
-I know Atos has done an implementation that keeps the full path
-somewhere to re-open fids in case of server reconnections, but that code
-has never been submitted upstream that I can see so I can't check how
-they used to store the path :/ Ohwell.
-
-> Storing one pathname per inode also means we don't reuse the same inode
-> for hardlinks -- maybe this can be fixed as well in a future version, if
-> this approach sounds good?
-
-Ah, you pointed it out yourself. I don't see how we could fix that, as
-we have no way other than the qid to identify hard links; so this really
-ought to depend on cache level if you want to support landlock/*notify
-in cache=none.
-
-Frankly the *notify use-case is difficult to support properly, as files
-can change from under us (e.g. modifying the file directly on the host
-in qemu case, or just multiple mounts of the same directory), so it
-can't be relied on in the general case anyway -- 9p doesn't have
-anything like NFSv4 leases to get notified when other clients write a
-file we "own", so whatever we do will always be limited...
-But I guess it can make sense for limited monitoring e.g. rebuilding
-something on change and things like that?
+/Christian
 
 
--- 
-Dominique Martinet | Asmadeus
 
