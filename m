@@ -1,61 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-57092-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57093-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE657B1EA19
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 16:14:06 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CB49B1EA1A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 16:15:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B82C7A31DA
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 14:12:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7112F4E2763
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Aug 2025 14:15:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ACFD27E07B;
-	Fri,  8 Aug 2025 14:13:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BE3D27EC80;
+	Fri,  8 Aug 2025 14:15:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NjK/+29s"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ul4RDosv"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 892D726AC3;
-	Fri,  8 Aug 2025 14:13:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C4A727E05F;
+	Fri,  8 Aug 2025 14:15:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754662436; cv=none; b=IosKWHUYvHhridt/t+snl42ae11/XoYNDHCZbZNvvquJIfCF0ctldIeZXDsMvy+iW/ya5eeRosuzb7vME3yAbmy1KCh5/GNCNCIDzub+cB0QYCX85L+NPhou29UlPTdHnPUOINhFCv8T/faYMnGo64GhsDTNZKdTkh3glt8A8jc=
+	t=1754662501; cv=none; b=TIhz3YWb0rj7EuHqWDDP3tX+exbWrpBE5BX8v3xgudU2eR4v1pOot7iXll2qHUuq5sjp0TaH3KNLy5hRYHXmo2jk/C5sezQhT7k8QlRMQUeSpZ27gCju1xDIjptV4Ya31/08PTWleZt8QNPJdsck+v0fLFIYRGAXr+0UMbrS/2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754662436; c=relaxed/simple;
-	bh=9yk04mc+0Ylbce9BjbokKz+Cr6x4aNkv2rGq0+e+Jt0=;
+	s=arc-20240116; t=1754662501; c=relaxed/simple;
+	bh=HKIkgDzMLDwzvzKcSbUoDlFcm9sGFZMnObzsmCeGRbk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L6IjhEysR9MP9seAwF3kAxCYPmdMKh3Korus97PiKg/eTZ6221ET3hsnPHxiVvZheHVKyH0vRMAzSSsqhNWkigrvPR9n0wcLzP1nwfOsvFIgeMtOE2ebSMsdd6pska6Wh19jvAmjVYyIxH0G5pC3+hJh+yMAhFfNKNy1Ro/m5nI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NjK/+29s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2C91C4CEF4;
-	Fri,  8 Aug 2025 14:13:53 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZlT4fTAwL6H7AgzjxXNbzsEXVguQX5lnl6GEy4rUVB1QTedi8kV+TpArLczJzc5cNDv49lU6NaOfvGP7nLmWa3TKO+gg604KDBXoO6fyrynWQt0AcVWbcnkCtZ9kMcg+xA/o35UfkdEbt0nJ4u5yjXYbc6W34BNBPukhH93HBhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ul4RDosv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22B1DC4CEED;
+	Fri,  8 Aug 2025 14:14:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754662436;
-	bh=9yk04mc+0Ylbce9BjbokKz+Cr6x4aNkv2rGq0+e+Jt0=;
+	s=k20201202; t=1754662500;
+	bh=HKIkgDzMLDwzvzKcSbUoDlFcm9sGFZMnObzsmCeGRbk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NjK/+29sJp+Jh7+L6gRyHXbecq2hI4C0ZzApO6eHPTdMfdxDFR5/cMbwf7g8s/gY4
-	 j81ZKJbzsDCzow9mwZNzxBEnLaLUuQofa5/DcgyRWV0vhXBkW/fmgyGtO/Kd8p5rRU
-	 z79SkO9wx1cpODEWIkQnDiK7T0aS0ThcmTAu0Fd3hvNsbqkoE8hjBsnJa0fYkhH2ou
-	 PP9jbG7Fnrd35u1NQQCY4qylVConsnrnTIVPLdxyoBW5JIDxEIUIQq8H3OS6n5H6U6
-	 P6iHBZHwQeP28VGjfvZPd5vznlZE4xPadp534409BKAPtJCatI+1ML3LC5Mgb5ktDd
-	 Q3VCfNHzSMBQg==
-Date: Fri, 8 Aug 2025 16:13:51 +0200
+	b=Ul4RDosvdyO3wvUFC9dpG5zZP+OhqJpvY6w4eDfUSuYA2AQLSHCJlkKZCkOY2LLjP
+	 Qtkd4Vee/lax31JRFeEYVYLYAylGeMvoEM45Bvn1W6/hoyuXNUB2/UR4QvXrDaIDLW
+	 s6+0+Kp9hpeneR2Ru2Xa7EmtJH4PHg33ncPjZNQy9oz4BM/qLDzYXYnp4i6QBASt6z
+	 nsGc/7PSDMwEbjKZqKUqlhHJ1GgNYEiX+fP05VZAubvlVEe0BrW3LoGJKPPO6DOOtq
+	 kLdTiZtv3XGb8h8qDBmd6m2xFNPU8KcOyrz6kF/6PTiyiNTm7Y5zOmKdVfj+0gOslK
+	 FaXmVQPl4LrDQ==
+Date: Fri, 8 Aug 2025 16:14:55 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Eric Sandeen <sandeen@sandeen.net>
-Cc: Charalampos Mitrodimas <charmitro@posteo.net>, 
-	Eric Sandeen <sandeen@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
-	David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH] debugfs: fix mount options not being applied
-Message-ID: <20250808-aufrechnung-geizig-a99993c8e8f4@brauner>
-References: <20250804-debugfs-mount-opts-v1-1-bc05947a80b5@posteo.net>
- <a1b3f555-acfe-4fd1-8aa4-b97f456fd6f4@redhat.com>
- <d6588ae2-0fdb-480d-8448-9c993fdc2563@redhat.com>
- <8734a53cpx.fsf@posteo.net>
- <cf97c467-6391-44df-8ce3-570f533623b8@sandeen.net>
+To: Qu Wenruo <wqu@suse.com>
+Cc: Anand Jain <anand.jain@oracle.com>, Josef Bacik <josef@toxicpanda.com>, 
+	Qu Wenruo <quwenruo.btrfs@gmx.com>, Qu Wenruo <wqu@suse.de>, 
+	linux-btrfs <linux-btrfs@vger.kernel.org>, David Sterba <dsterba@suse.com>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: Should seed device be allowed to be mounted multiple times?
+Message-ID: <20250808-liest-allumfassend-2fb553ad1fb3@brauner>
+References: <aef03da8-853a-4c9f-b77b-30cf050ec1a5@suse.de>
+ <4cdf6f5c-41e8-4943-9c8b-794e04aa47c5@suse.de>
+ <8daff5f7-c8e8-4e74-a56c-3d161d3bda1f@oracle.com>
+ <bddc796f-a0e0-4ab5-ab90-8cd10e20db23@suse.de>
+ <184c750a-ce86-4e08-9722-7aa35163c940@oracle.com>
+ <bc8ecf02-b1a1-4bc0-80e3-162e334db94a@gmx.com>
+ <a3db2131-37a8-469f-a20d-dc83b2b14475@oracle.com>
+ <510675a5-7cb2-4838-87e0-9fb0e9f114f0@suse.com>
+ <20250805-tragweite-keule-31547b419bc3@brauner>
+ <6a85c9c0-36ac-4a69-a0d5-4bc5846cd5c7@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -64,74 +68,86 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <cf97c467-6391-44df-8ce3-570f533623b8@sandeen.net>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6a85c9c0-36ac-4a69-a0d5-4bc5846cd5c7@suse.com>
 
-On Wed, Aug 06, 2025 at 11:33:11AM -0500, Eric Sandeen wrote:
-> On 8/5/25 12:22 PM, Charalampos Mitrodimas wrote:
-> > Eric Sandeen <sandeen@redhat.com> writes:
-> > 
-> >> On 8/4/25 12:22 PM, Eric Sandeen wrote:
-> >>> On 8/4/25 9:30 AM, Charalampos Mitrodimas wrote:
-> >>>> Mount options (uid, gid, mode) are silently ignored when debugfs is
-> >>>> mounted. This is a regression introduced during the conversion to the
-> >>>> new mount API.
-> >>>>
-> >>>> When the mount API conversion was done, the line that sets
-> >>>> sb->s_fs_info to the parsed options was removed. This causes
-> >>>> debugfs_apply_options() to operate on a NULL pointer.
-> >>>>
-> >>>> As an example, with the bug the "mode" mount option is ignored:
-> >>>>
-> >>>>   $ mount -o mode=0666 -t debugfs debugfs /tmp/debugfs_test
-> >>>>   $ mount | grep debugfs_test
-> >>>>   debugfs on /tmp/debugfs_test type debugfs (rw,relatime)
-> >>>>   $ ls -ld /tmp/debugfs_test
-> >>>>   drwx------ 25 root root 0 Aug  4 14:16 /tmp/debugfs_test
-> >>>
-> >>> Argh. So, this looks a lot like the issue that got fixed for tracefs in:
-> >>>
-> >>> e4d32142d1de tracing: Fix tracefs mount options
-> >>>
-> >>> Let me look at this; tracefs & debugfs are quite similar, so perhaps
-> >>> keeping the fix consistent would make sense as well but I'll dig
-> >>> into it a bit more.
-> >>
-> >> So, yes - a fix following the pattern of e4d32142d1de does seem to resolve
-> >> this issue.
-> >>
-> >> However, I think we might be playing whack-a-mole here (fixing one fs at a time,
-> >> when the problem is systemic) among filesystems that use get_tree_single()
-> >> and have configurable options. For example, pstore:
-> >>
-> >> # umount /sys/fs/pstore 
-> >>
-> >> # mount -t pstore -o kmsg_bytes=65536 none /sys/fs/pstore
-> >> # mount | grep pstore
-> >> none on /sys/fs/pstore type pstore (rw,relatime,seclabel)
-> >>
-> >> # mount -o remount,kmsg_bytes=65536 /sys/fs/pstore
-> >> # mount | grep pstore
-> >> none on /sys/fs/pstore type pstore (rw,relatime,seclabel,kmsg_bytes=65536)
-> >> #
-> >>
-> >> I think gadgetfs most likely has the same problem but I'm not yet sure
-> >> how to test that.
-> >>
-> >> I have no real objection to merging your patch, though I like the
-> >> consistency of following e4d32142d1de a bit more. But I think we should
-> >> find a graceful solution so that any filesystem using get_tree_single
-> >> can avoid this pitfall, if possible.
-> > 
-> > Hi, thanks for the review, and yes you're right.
-> > 
-> > Maybe a potential systemic fix would be to make get_tree_single() always
-> > call fc->ops->reconfigure() after vfs_get_super() when reusing an
-> > existing superblock, fixing all affected filesystems at once.
+On Wed, Aug 06, 2025 at 07:50:06AM +0930, Qu Wenruo wrote:
 > 
-> Yep, I'm looking into that. mount_single used to do this, and IIRC we discussed
-> it before but for some reason opted not to. It seems a bit trickier than I first
-> expected, but I might just be dense. ;)
+> 
+> 在 2025/8/5 22:13, Christian Brauner 写道:
+> > On Tue, Aug 05, 2025 at 10:22:49AM +0930, Qu Wenruo wrote:
+> > > 
+> > > 
+> > > 在 2025/8/5 10:06, Anand Jain 写道:
+> > > > 
+> > > > 
+> > > > > > Thanks for the comments.
+> > > > > > Our seed block device use-case doesn’t fall under the kind of risk that
+> > > > > > BLK_OPEN_RESTRICT_WRITES is meant to guard against—it’s not a typical
+> > > > > > multi-FS RW setup. Seed devices are readonly, so it might be reasonable
+> > > > > > to handle this at the block layer—or maybe it’s not feasible.
+> > > > 
+> > > > 
+> > > > > Read-only doesn't prevent the device from being removed suddenly.
+> > > > 
+> > > > I don't see how this is related to the BLK_OPEN_RESTRICT_WRITES flag.
+> > > > Can you clarify?
+> > > 
+> > > It's not related to that flag, I'm talking about the fs_bdev_mark_dead(),
+> > > and the remaining 3 callbacks.
+> > > 
+> > > Those call backs are all depending on the bdev holder to grab a super block.
+> > > 
+> > > Thus a block device should and can not have multiple super blocks.
+> > 
+> > I'm pretty sure you can't just break the seed device sharing use-case
+> > without causing a lot of regressions...
+> 
+> It's not that widely affecting, we can still share the same seed device for
+> all different sprout fses, just only one of them can be mounted at the same
+> time.
+> 
+> And even with that limitation, it won't affect most (or any) real world use
+> cases.
+> 
+> Even the most complex case like using seed devices as rootfs, and we want to
+> sprout the rootfs again, just remove the seed device from the current
+> rootfs, then one can mount the seed device again.
+> 
+> > 
+> > If you know what the seed devices are than you can change the code to
+> > simply use the btrfs filesystem type as the holder without any holder
+> > operations but just for seed devices. Then seed devices can be opened
+> > by/shared with any btrfs filesystem.
+> 
+> But we will lose all the bdev related events.
+> 
+> We still want to sync/freeze/thaw the real sprouted fs in the end.
+> 
+> > 
+> > The only restriction is that you cannot use a device as a seed device
+> > that another btrfs filesystem uses as a non-seed device because then it
+> > will be fully owned by the other btrfs filesystem. But Josef tells me
+> > you can only use it as a seed device anyway.
+> > 
+> > IOW, if you have a concept of shareable devices between different btrfs
+> > filesystems then it's fine to reflect that in the code. If really needed
+> > you can later add custom block holder ops for seed devices so you can
+> > e.g., iterate through all filesystems that share the device.
+> 
+> Sure it's possible, with a lot of extra code looking up where the seed
+> device belongs, and all the extra bdev event proxy.
+> 
+> 
+> But I'd say, the seed device specification is not well specified in the very
+> beginning, thus it results a lot of "creative" but not practical use cases.
+> 
+> Yes, this will result some regression, but I'd prefer a more sounding and
+> simpler logic for the whole seed device, with minimal impact to the most
+> common existing use cases.
 
-If we can make it work generically, we should. I too don't remember what
-the reasons were for not doing it that way.
+Ok, I'm not in a position to argue this effectively. If you think you an
+reasonably get away with this regression so be it. But if this ends up
+in a total revert of the conversion even though we'd have alternative
+solution I'm not going to be happy...
 
