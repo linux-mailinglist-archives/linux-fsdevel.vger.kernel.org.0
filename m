@@ -1,88 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-57173-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57174-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36DB9B1F470
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Aug 2025 13:51:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAB20B1F494
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Aug 2025 14:36:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A16567AD1A7
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Aug 2025 11:49:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F971174E46
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Aug 2025 12:36:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC43227E1C5;
-	Sat,  9 Aug 2025 11:51:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3A7A286893;
+	Sat,  9 Aug 2025 12:36:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CmqUxmud"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kIRbyPzI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE3E1C8612;
-	Sat,  9 Aug 2025 11:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80245244677;
+	Sat,  9 Aug 2025 12:36:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754740265; cv=none; b=mdDXGhJsX2hhCXvIXSi5xzu+44sFlKbIiWABN/Zts8pD3spOeLmSZ25cegkeSg835JmHzfVYWhaeHQpnnYIm9GsxkoXzjpnGnXfnYqGdr3mshkt9PzfiLwmtKlOg2QaGusir/ikWbTVNhuSE1kQ4FqCoxr7W3fudpZCQQP5m4Go=
+	t=1754742990; cv=none; b=FUtFQAYVpzeWvYz8yMsEy5E0SfOf7aJ9rOhiNw5OMQ+2+AweOt8HOSjdF2Jd1yoLm6io0Q4lKzZGqZEA91xgpK/nPJm6/l+Gkmyer3yQ8cl4xbhWOuCqsD+XINy6vAeYmnWSyiXJXxd0XgrWEH8Vu3qA6IVo8d16CNevQQ76Z3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754740265; c=relaxed/simple;
-	bh=umgl5S5iD3CkVkoXfrjuAMTV5SQMCel30y8lHMmkFIk=;
+	s=arc-20240116; t=1754742990; c=relaxed/simple;
+	bh=oLw6t04dtk91WBMbXe/9DtsTKh22NqMz2zSS/v0RE2g=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GH9VpHKXHUW+69e0SCCyUfA2DbLzJFSCFm/sdNrMQ1JcMQ/oFWJW0SRltL3ZBG2gZMFIX7VDIwehjnNiqiCkWRe53ZxWv5KNnWNv0qpjSA5pfSiSuHWLdb3nxjItU5PEPGxjZpcWAms8Tnx5AZQZwLfVDiHYvkQ+uaau9eGgZgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CmqUxmud; arc=none smtp.client-ip=209.85.208.46
+	 To:Cc:Content-Type; b=TgVhYlQQg1TKXkgO2UWQ3YQqHZ+QIfT9lEvgHRYiHCdSK4QXxJECgzeYyow4sw/cin5BpUvXJcyfR2fEEF2f4wtPd+CLvSyCPc/HQr0UGUmPks6tNh2SkaBP/mhp6qMmTJrhxELg1EMYwhKUmSWCW16tt+Ap4B90UTJOr97wQpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kIRbyPzI; arc=none smtp.client-ip=209.85.218.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-615398dc162so4732798a12.3;
-        Sat, 09 Aug 2025 04:51:03 -0700 (PDT)
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ae0bde4d5c9so567662366b.3;
+        Sat, 09 Aug 2025 05:36:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754740262; x=1755345062; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1754742987; x=1755347787; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5akKwpC8IMkTFFts2eo/e1Duj9P6C50jyTgZzoqxgpQ=;
-        b=CmqUxmudzzhshFvaSY6IOwUulVduCqnxoMBFTGqBIlUPS5jXpdfPaGGcsdqD2/hmLX
-         QnrGfc/6hV/0/wmFLWvf74FxRk1Hqi2jM05j38+TiLNuPw3ZQWuUzmlhmuEOtvILI4jm
-         ltuDZXcVTgFBunuPvRwCcllPguIhf7pp3qCe0nVTHoaSM1qT9gtfdchSLPW5f2Rne7xG
-         i6Fyq9Oemo0Q+UfZAfbMGJDTQvP4VIRor0BHvYcCoiDyTPetpYoIiTexigO0ho7rfeW8
-         k0EuSQ2/EvOH3EqmwixNf3JAOnxdc3BzR44MqpSUk94JQcjJ2QTIgY3WhR4kqEHU63nm
-         EvhQ==
+        bh=eRoaKzlW07zs3NpzL/zUAlPACOOfMwP8ZC5PGuZsgDY=;
+        b=kIRbyPzISLbsCwDOnceLl3sIPK+ygSS1ne6l02ltigzKH7JkmNiLtEwZrQnfQeo5dy
+         CUkPibMIKRh3KI/NuVU680eVelyg2oMyHW+ssE20g0B+2MIKpHtreY/YpqNmAXSzEgoY
+         7V0GTqyYhwrE2TMvv0x719TAmf1hhuDjEcELtoHiYGxHtrvcP65zxUn6bBMgFQZu5yhl
+         VK3fupyBt8hVUYltMD1yHsaI33m1V+7pd2jS50RtOTbhI/R5i5G8Csf2PutX3A69TI/F
+         EVr/7edCHiiOSutlSCPcw9bh/Hu8qAbIlLQTBMjgvg25cbI7SVinZQN6ftn8TcbVHBlX
+         6T5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754740262; x=1755345062;
+        d=1e100.net; s=20230601; t=1754742987; x=1755347787;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5akKwpC8IMkTFFts2eo/e1Duj9P6C50jyTgZzoqxgpQ=;
-        b=QQA4nTKwRLwR3knqWQ3FoRcZbSUtfj4fqFb8cagAcdcicIVC17WayY4JDFF4AZHXNT
-         BW3iUcLthMGtjgFDb40NenzMFW07XKFBnlNmGE8c1NkiGTbzinTMq8Pek0RwsJNeANcB
-         F2N98FrLV/uTkXfiEWkw5aZzwcmALMl9r+VOldP1pZEDBstBuCG01kn4UOyaAEuXzbWE
-         cwIuDZRXlMAnaNkQ6AbQ2I7jkl2UPEJnVz57P7uQiWTpGxHd81qxQUsGlDV+tRKD9/ji
-         ycvMOGpTrXBrs+7scwpfMKc8SeBYRcMbN0qSBf0zSAx4Bbq7WXxKm2soqsJQlZ3RnSSP
-         lXtg==
-X-Forwarded-Encrypted: i=1; AJvYcCWMDFQuMruZ09Tm8x3FRB8psSVkHrRbsbgQoCVM6cERiXFWm/icGtFMcbxoTOMNI28P3Fm/TP2E54jmkVYI@vger.kernel.org, AJvYcCXFqmR3DqcjsvtmAxVGFuZYse7ieqFC9h+iKMG3vnPXnk7F6aLg97VqYgOHl7jggZjABqiq67YZDnIGVerWNg==@vger.kernel.org, AJvYcCXnc+xk5cI1sO45X5hASLr++2CMCsbuxeyUyKnsPvsSoH6Yr8vvrk3i7ZHKByvUuqzfLPP2vmAUa5S/2xde@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1pJ1Pad+OZM1K4LkS/DwmHqYlT01zBHghoz7bWAfmn0Ab+X7U
-	VooyE6qyq8M0GnlOhPYtOEz2NSvV+z9eW51ZmFQQR5M2ehpasjDFBKY1hIAUW7QqUJSPbia4mbR
-	PDKldkCbij1dEZoSitFfhK1oVqmsz/Eg=
-X-Gm-Gg: ASbGncs8Fuo8JlD6zpX8PHZwZzDKYQp6Dy8YbYRSg89OffaGWzo8eminEovIrGZ6Zk8
-	LeQfWxDcNKqdTRNVSKiI8GN8OqaDjzf255CZfgeF81W4YipGHEEadQPeSUOvIzTdrFyqiUA8/GD
-	f+zndGwVQgOd2OhWWaicLJU/9WGeuQxTeRTWcGH+/5azzj0Yor2FQjRdcY/npHYOvYEmd3mYOPJ
-	tF4piY=
-X-Google-Smtp-Source: AGHT+IHd+FBbW2YkPH15kNn5/vNwhRP3OgDWgNA2KUkXuXEBG1T+ThwFKa4VJOrTkPcVpl3JliNZ0rryShESGcvsHvs=
-X-Received: by 2002:a17:907:3da2:b0:af9:5260:9ed3 with SMTP id
- a640c23a62f3a-af9c642fdddmr576516866b.14.1754740261464; Sat, 09 Aug 2025
- 04:51:01 -0700 (PDT)
+        bh=eRoaKzlW07zs3NpzL/zUAlPACOOfMwP8ZC5PGuZsgDY=;
+        b=Vjf61cOuQqXB5pitGSyy2xoKJhf1DMJ9DcOCFvpkaDzarbvSNAXj5TMC4Gp+FJkb9o
+         UEUSl8i4BQ1R08oWEkt4fH6Jufm0OqqjmXJI2Bicr5byats97rzGUneuTNfVY9kMoo3m
+         AfheEdaGkEbCDBq4lCBep+6oVlfQEAR6XGjDnZCTe5CE9NBjzuZnZMGj/DFIupXaaBFZ
+         HksFUPaipn7cbtuiMCenifjSjXsSBTqyCXw7/a3H6q0+VKv863yeTmN25qYoO70yxSJR
+         xw8LC6A1TruBd098xfoAGbBh1WmCaG8QbkqOy5s32KymC4k5v7WizhjrAWhk6YgeWb5C
+         VXDw==
+X-Forwarded-Encrypted: i=1; AJvYcCWY7r9FBSQBSffIkFUEo8XSHGfxXRDRUbfoTRhwQE0/vu6dWlL6z1+PAxGR6hNFUzbYFAd8eBXP6lJ38ZBs@vger.kernel.org, AJvYcCXjC7Z4cnn0s8Bjvs/Rx5fNu5v4eXBhRo+2Zydy0FDePuC7mAij0X3zA0nmO0/IMX2QdKNWeAWu84tp5MLT@vger.kernel.org, AJvYcCXwZhjRYyDg8HejDHxoxBIoSX6v4Diog927gdu5znUkO3DeKKgUtRR2HeMKr0ca1Jk8NtqoPtVHNIQes8hDcg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyF0PTLGnJtcOLiPpoes0te4B00kcjxvPVdhhbouJSjOrcVFlyr
+	zVFdAK/ploedhNjaPaSayTDsoJlyC4pXvUHDmXNpMyUii62ldkH7A2yXcs7ogOOkpL3xgXjCyRN
+	yFsXAoPB2BhIJTzeozWO3pjYVBkAtkws=
+X-Gm-Gg: ASbGncuxzN9hVd1m2NjV0DJh71KOLHBU8yaw9j56uhRUPAPvgx7gt82qeyGHZwVDsr+
+	VS20wpjxqlxjjMUY/ApDKxw2H/sOC9cwkn5LRC8OY+kEAA51Jnpsrgw2OpEdJb3kDwVwuWsZajo
+	035xEJwMtuLYJtbrzYMBDwcbZXX1PYwvafbF6JjIp/bbmZ6Jf2MnKDVbDIH7uXNYxt5l2j3Oplg
+	nro5yQ=
+X-Google-Smtp-Source: AGHT+IHSWwS/buNPqITaxdKDVY1uKDuwtYzSBRHCgvPL1Qh5tWVb7vQRRJijmb9wUBHlSO9IFpRGutJr3eGhVz8eCNM=
+X-Received: by 2002:a17:907:7e89:b0:ae0:35fb:5c83 with SMTP id
+ a640c23a62f3a-af9c64bf042mr527260266b.28.1754742986514; Sat, 09 Aug 2025
+ 05:36:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250808-tonyk-overlayfs-v3-0-30f9be426ba8@igalia.com> <20250808-tonyk-overlayfs-v3-5-30f9be426ba8@igalia.com>
-In-Reply-To: <20250808-tonyk-overlayfs-v3-5-30f9be426ba8@igalia.com>
+References: <20250808-tonyk-overlayfs-v3-0-30f9be426ba8@igalia.com> <20250808-tonyk-overlayfs-v3-1-30f9be426ba8@igalia.com>
+In-Reply-To: <20250808-tonyk-overlayfs-v3-1-30f9be426ba8@igalia.com>
 From: Amir Goldstein <amir73il@gmail.com>
-Date: Sat, 9 Aug 2025 13:50:50 +0200
-X-Gm-Features: Ac12FXymfynjWT6oaNDg2pY7A5wkIJ6yOhqyJGu9_Eu5mvdmvf9djMKbJn-W9EE
-Message-ID: <CAOQ4uxj+42O07HxnKrp5A2A-Gk0Z_WLDk=62Y9WZ7RRypdju2w@mail.gmail.com>
-Subject: Re: [PATCH RFC v3 5/7] ovl: Set case-insensitive dentry operations
- for ovl sb
+Date: Sat, 9 Aug 2025 14:36:14 +0200
+X-Gm-Features: Ac12FXxP3f5A8LTv5kEEgxosIWCJPDd5y2WC3kiD6sjtLvEpJKNRVeLowoYhTvs
+Message-ID: <CAOQ4uxjdE4A14cwkhm+QjZS-5ANhc1568nbNU=KtF-oh_fE3VQ@mail.gmail.com>
+Subject: Re: [PATCH RFC v3 1/7] ovl: Store casefold name for case-insentive dentries
 To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
 Cc: Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>, 
 	Gabriel Krisman Bertazi <krisman@kernel.org>, linux-unionfs@vger.kernel.org, 
@@ -95,188 +94,182 @@ Content-Transfer-Encoding: quoted-printable
 On Fri, Aug 8, 2025 at 10:59=E2=80=AFPM Andr=C3=A9 Almeida <andrealmeid@iga=
 lia.com> wrote:
 >
-> For filesystems with encoding (i.e. with case-insensitive support), set
-> the dentry operations for the super block as ovl_dentry_ci_operations.
-> Also, use the first layer encoding as the ovl super block encoding.
+> In order to make case-insentive mounting points work, overlayfs needs
+
+Terminology:
+not case-insensitive mounting points
+case-insensitive layers.
+
+> the casefolded version of its dentries so the search and insertion in
+
+Terminology:
+overlayfs needs the casefolded names
+the objects in the rb tree correspond to dirent readdir results not to dent=
+ries
+which are dcache objects.
+
+> the struct ovl_readdir_data's red-black compares the dentry names in a
+> case-insentive fashion.
+>
+> If a dentry is casefolded, compute and store it's casefolded name and
+
+We are not doing per-dir casefolding so should say:
+"If overlay mount is casefolded, compute and store the casefolded name..."
+
+> it's Unicode map. If utf8_casefold() fails, set it's name pointer as
+> NULL so it can be ignored and fallback to the original name.
 >
 > Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
 > ---
-> Changes from v2:
-> - Create ovl_dentry_ci_operations to not override dentry ops set by
->   ovl_dentry_operations
-> - Create a new function for this
-> - Instead of setting encoding just when there's a upper layer, set it
->   for any first layer (ofs->fs[0].sb), regardless of it being upper or
->   not.
+> Changes from v3:
+>  - Guard all the casefolding inside of IS_ENABLED(UNICODE)
 > ---
->  fs/overlayfs/super.c | 28 ++++++++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
+>  fs/overlayfs/readdir.c | 41 ++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 40 insertions(+), 1 deletion(-)
 >
-> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> index bcb7f5dbf9a32e4aa09bc41596be443851e21200..68091bf8368a880d62d942555=
-2613497d6e90b6b 100644
-> --- a/fs/overlayfs/super.c
-> +++ b/fs/overlayfs/super.c
-> @@ -161,6 +161,16 @@ static const struct dentry_operations ovl_dentry_ope=
-rations =3D {
->         .d_weak_revalidate =3D ovl_dentry_weak_revalidate,
+> diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
+> index b65cdfce31ce27172d28d879559f1008b9c87320..2f42fec97f76c2000f76e15c6=
+0975db567b2c6d6 100644
+> --- a/fs/overlayfs/readdir.c
+> +++ b/fs/overlayfs/readdir.c
+> @@ -16,6 +16,8 @@
+>  #include <linux/overflow.h>
+>  #include "overlayfs.h"
+>
+> +#define OVL_NAME_LEN 255
+> +
+
+This is very arbitrary.
+Either use the existing constant NAME_MAX or
+use the max of all layers ofs->namelen.
+I think ofs->namelen will always be <=3D NAME_MAX,
+so it's fine to use NAME_MAX if we never expose
+the cf_name to userspace.
+
+>  struct ovl_cache_entry {
+>         unsigned int len;
+>         unsigned int type;
+> @@ -27,6 +29,8 @@ struct ovl_cache_entry {
+>         bool is_upper;
+>         bool is_whiteout;
+>         bool check_xwhiteout;
+> +       char *cf_name;
+> +       int cf_len;
+>         char name[];
 >  };
 >
-> +#if IS_ENABLED(CONFIG_UNICODE)
-> +static const struct dentry_operations ovl_dentry_ci_operations =3D {
-> +       .d_real =3D ovl_d_real,
-> +       .d_revalidate =3D ovl_dentry_revalidate,
-> +       .d_weak_revalidate =3D ovl_dentry_weak_revalidate,
-> +       .d_hash =3D generic_ci_d_hash,
-> +       .d_compare =3D generic_ci_d_compare,
-> +};
-> +#endif
+> @@ -45,6 +49,7 @@ struct ovl_readdir_data {
+>         struct list_head *list;
+>         struct list_head middle;
+>         struct ovl_cache_entry *first_maybe_whiteout;
+> +       struct unicode_map *map;
+>         int count;
+>         int err;
+>         bool is_upper;
+> @@ -166,6 +171,31 @@ static struct ovl_cache_entry *ovl_cache_entry_new(s=
+truct ovl_readdir_data *rdd,
+>         p->is_whiteout =3D false;
+>         /* Defer check for overlay.whiteout to ovl_iterate() */
+>         p->check_xwhiteout =3D rdd->in_xwhiteouts_dir && d_type =3D=3D DT=
+_REG;
+> +       p->cf_name =3D NULL;
+> +       p->cf_len =3D 0;
 > +
->  static struct kmem_cache *ovl_inode_cachep;
->
->  static struct inode *ovl_alloc_inode(struct super_block *sb)
-> @@ -1318,6 +1328,21 @@ static struct dentry *ovl_get_root(struct super_bl=
-ock *sb,
->         return root;
->  }
->
-> +/*
-> + * Set the ovl sb encoding as the same one used by the first layer
-> + */
-> +static void ovl_set_sb_ci_ops(struct super_block *ovl_sb, struct super_b=
-lock *fs_sb)
-> +{
 > +#if IS_ENABLED(CONFIG_UNICODE)
-> +       if (sb_has_encoding(fs_sb)) {
-> +               ovl_sb->s_encoding =3D fs_sb->s_encoding;
-> +               ovl_sb->s_encoding_flags =3D fs_sb->s_encoding_flags;
+
+Whenever possible in C code you should use:
+
+if (IS_ENABLED(CONFIG_UNICODE) && rdd->map && ...
+
+> +       if (rdd->map && !is_dot_dotdot(name, len)) {
+> +               const struct qstr str =3D { .name =3D name, .len =3D len =
+};
+> +               int ret;
+> +
+> +               p->cf_name =3D kmalloc(OVL_NAME_LEN, GFP_KERNEL);
+> +
+> +               if (!p->cf_name) {
+> +                       kfree(p);
+> +                       return NULL;
+> +               }
+> +
+> +               ret =3D utf8_casefold(rdd->map, &str, p->cf_name, OVL_NAM=
+E_LEN);
+> +
+> +               if (ret < 0) {
+> +                       kfree(p->cf_name);
+> +                       p->cf_name =3D NULL;
+> +               } else {
+> +                       p->cf_len =3D ret;
+> +               }
 > +       }
-> +
-> +       set_default_d_op(ovl_sb, &ovl_dentry_ci_operations);
-
-I don't like it that set_default_d_op() is called twice and if anything thi=
-s
-helper should have been called only for the ofs->casefold enabled case.
-
-what I suggest it to split to two helpers, first set dentry_ops based on
-ofs->casefold determined before ovl_fill_super() is called:
-
-diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-index df85a76597e9..00647440a566 100644
---- a/fs/overlayfs/super.c
-+++ b/fs/overlayfs/super.c
-@@ -1307,6 +1307,19 @@ static struct dentry *ovl_get_root(struct
-super_block *sb,
-        return root;
- }
-
-+static void ovl_set_d_op(struct super_block *sb)
-+{
-+       struct ovl_fs *ofs =3D sb->s_fs_info;
-+
-+#if IS_ENABLED(CONFIG_UNICODE)
-+       if (ofs->casefold) {
-+               set_default_d_op(ovl_sb, &ovl_dentry_ci_operations);
-+               return;
-+       }
-+#endif
-+       set_default_d_op(sb, &ovl_dentry_operations);
-+}
-+
- int ovl_fill_super(struct super_block *sb, struct fs_context *fc)
- {
-        struct ovl_fs *ofs =3D sb->s_fs_info;
-@@ -1322,7 +1335,7 @@ int ovl_fill_super(struct super_block *sb,
-struct fs_context *fc)
-        if (WARN_ON(fc->user_ns !=3D current_user_ns()))
-                goto out_err;
-
--       set_default_d_op(sb, &ovl_dentry_operations);
-+       ovl_set_d_op(sb);
-
-
 > +#endif
-> +}
-> +
->  int ovl_fill_super(struct super_block *sb, struct fs_context *fc)
->  {
->         struct ovl_fs *ofs =3D sb->s_fs_info;
-> @@ -1423,12 +1448,15 @@ int ovl_fill_super(struct super_block *sb, struct=
- fs_context *fc)
 >
->                 sb->s_stack_depth =3D upper_sb->s_stack_depth;
->                 sb->s_time_gran =3D upper_sb->s_time_gran;
-> +
-
-stray new line.
-
->         }
->         oe =3D ovl_get_lowerstack(sb, ctx, ofs, layers);
->         err =3D PTR_ERR(oe);
->         if (IS_ERR(oe))
->                 goto out_err;
+>         if (d_type =3D=3D DT_CHR) {
+>                 p->next_maybe_whiteout =3D rdd->first_maybe_whiteout;
+> @@ -223,8 +253,10 @@ void ovl_cache_free(struct list_head *list)
+>         struct ovl_cache_entry *p;
+>         struct ovl_cache_entry *n;
 >
-> +       ovl_set_sb_ci_ops(sb, ofs->fs[0].sb);
+> -       list_for_each_entry_safe(p, n, list, l_node)
+> +       list_for_each_entry_safe(p, n, list, l_node) {
+> +               kfree(p->cf_name);
+>                 kfree(p);
+> +       }
+>
+>         INIT_LIST_HEAD(list);
+>  }
+> @@ -357,12 +389,19 @@ static int ovl_dir_read_merged(struct dentry *dentr=
+y, struct list_head *list,
+>                 .list =3D list,
+>                 .root =3D root,
+>                 .is_lowest =3D false,
+> +               .map =3D NULL,
+>         };
+>         int idx, next;
+>         const struct ovl_layer *layer;
+>
+>         for (idx =3D 0; idx !=3D -1; idx =3D next) {
+>                 next =3D ovl_path_next(idx, dentry, &realpath, &layer);
+> +
+> +#if IS_ENABLED(CONFIG_UNICODE)
+> +               if (ovl_dentry_casefolded(realpath.dentry))
+> +                       rdd.map =3D realpath.dentry->d_sb->s_encoding;
+> +#endif
 > +
 
-This is wrong because ofs->fs[0].sb is NULL on overlay without an upper dir=
-.
+We are not doing per-dir casefolding, so this should be
+if (ofs->casefold)
 
-Please consider doing this as part of patch 4 instead of using the
-local sb1 var:
+and I'd rather avoid this ifdef, so how about another vfs helper:
 
---- a/fs/overlayfs/super.c
-+++ b/fs/overlayfs/super.c
-@@ -991,6 +991,19 @@ static int ovl_get_data_fsid(struct ovl_fs *ofs)
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 2ec4807d4ea8..3f4c89367908 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3738,15 +3738,20 @@ static inline bool
+generic_ci_validate_strict_name(struct inode *dir, struct qst
+ }
+ #endif
+
+-static inline bool sb_has_encoding(const struct super_block *sb)
++static inline struct unicode_map *sb_encoding(const struct super_block *sb=
+)
+ {
+ #if IS_ENABLED(CONFIG_UNICODE)
+-       return !!sb->s_encoding;
++       return sb->s_encoding;
+ #else
+-       return false;
++       return NULL;
+ #endif
  }
 
-+/*
-+ * Set the ovl sb encoding as the same one used by the first layer
-+ */
-+static void ovl_set_encoding(struct super_block *sb, struct super_block *f=
-s_sb)
++static inline bool sb_has_encoding(const struct super_block *sb)
 +{
-+#if IS_ENABLED(CONFIG_UNICODE)
-+      if (sb_has_encoding(fs_sb)) {
-+              sb->s_encoding =3D fs_sb->s_encoding;
-+              sb->s_encoding_flags =3D fs_sb->s_encoding_flags;
-+      }
-+#endif
++       return !!sb_encoding(sb);
 +}
 +
- static int ovl_get_layers(struct super_block *sb, struct ovl_fs *ofs,
-                          struct ovl_fs_context *ctx, struct ovl_layer *lay=
-ers)
- {
-@@ -1024,6 +1036,8 @@ static int ovl_get_layers(struct super_block
-*sb, struct ovl_fs *ofs,
-        if (ovl_upper_mnt(ofs)) {
-                ofs->fs[0].sb =3D ovl_upper_mnt(ofs)->mnt_sb;
-                ofs->fs[0].is_lower =3D false;
-+               if (ofs->casefold)
-+                       ovl_set_encoding(sb, ofs->fs[0].sb);
-        }
-
-        nr_merged_lower =3D ctx->nr - ctx->nr_data;
-@@ -1083,6 +1097,17 @@ static int ovl_get_layers(struct super_block
-*sb, struct ovl_fs *ofs,
-                l->name =3D NULL;
-                ofs->numlayer++;
-                ofs->fs[fsid].is_lower =3D true;
-+
-+               if (ofs->casefold) {
-+                       if (!ovl_upper_mnt(ofs) && !sb_has_encoding(sb))
-+                               ovl_set_encoding(sb, ofs->fs[fsid].sb);
-+
-+                       if (!sb_has_encoding(sb) ||
-+                           !sb_same_encoding(sb, mnt->mnt_sb)) {
-+                               pr_err("all layers must have the same
-encoding\n");
-+                               return -EINVAL;
-+                       }
-+               }
-        }
-
 
 Thanks,
 Amir.
