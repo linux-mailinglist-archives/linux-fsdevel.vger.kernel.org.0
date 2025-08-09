@@ -1,58 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-57180-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57181-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5511EB1F5AB
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Aug 2025 19:36:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BB78B1F5FB
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Aug 2025 21:22:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C0F4189B63B
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Aug 2025 17:37:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42F3018C0BD1
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Aug 2025 19:22:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3B82BE7CD;
-	Sat,  9 Aug 2025 17:36:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48981299937;
+	Sat,  9 Aug 2025 19:22:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UDM50cGi"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="oVH/H+CV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FE6C26FDB2
-	for <linux-fsdevel@vger.kernel.org>; Sat,  9 Aug 2025 17:36:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 107451F3B87
+	for <linux-fsdevel@vger.kernel.org>; Sat,  9 Aug 2025 19:21:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754761009; cv=none; b=dfeeYVYa7uBW5H8wFDAbneUehrfVqKxbq1IsUhq7i3Lqy8m6wPpgKFA2hvzJeVSejl9nr2gU4qMQ/IvcL2NU4LFjjZHF5r7NRn2PqaMXqZtLE90AvlZy8M3PwEAhSeFh3V93kgMOEq7335jm6p08PUZNozNamD3KUjwEBP4jMvk=
+	t=1754767320; cv=none; b=m+1wpLicSkEKK4rBkDyxsJT+HhORMo7jnjQt46CjBc1kiNqV9yIo7vaDlj3FtjFYzmmjbSFt0wikOWEMBRqwPHWlmtEQzgVn6GDKf7/56i9HXnhZsDJVvTjs1U+30FHzigglGGho/aLhjWUN3g50Mfv2LUdwGHMeaqtzdkNNYrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754761009; c=relaxed/simple;
-	bh=Gd5oTh9r3zVpFn4RTFnhoJRGiU6NiPZSIlKtemeFeR0=;
+	s=arc-20240116; t=1754767320; c=relaxed/simple;
+	bh=h3Apy+if9b+XE+PfNGkz/zZ+g5R4G5lXdu3AvwX0+OA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BKC1UDOm8WD/79L335f0G++0cQFrFn7/60yC8j3IfqV/22vCjiSebcEN54QxvNTFQgqZopVd+AsIeFB/O6MyJTt9SnYrR6X0hmPnio51JWE6d3w5fNN03Uk1pLBSdyUZqgzjftPLOTxJOzOoY3yr7G7fju9c39NDBuuT5zWA1TA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UDM50cGi; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sat, 9 Aug 2025 13:36:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1754761002;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+4TOJ5bZ6qxtbqVJ+u9DQ1EQ7xsWRrlaYDcuhb+mjSE=;
-	b=UDM50cGi46OyE2YaxkWdmoARb71f/qnsgkcZM/J/B9M+BS6sW6dkYjdPGPGkrWZ9sT0v+J
-	YRirirJejPjPgr3Mm0by+bmZoPXV1GodeWfW6lvCAaMCgmX9D5pUFiAwHkyDLLtlYAyw7n
-	LF1DkWDQlgpumZkcROh6oCYgy4PCeb4=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Aquinas Admin <admin@aquinas.su>
-Cc: Malte =?utf-8?B?U2NocsO2ZGVy?= <malte.schroeder@tnxip.de>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, "Carl E. Thompson" <list-bcachefs@carlthompson.net>, 
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=hvVMvjIUCbjr4inW94WW+ht0qb+zHiceVQ/d7JdyA2o0w6gGYsGPsOtclINTS5tR0Sf+W1LeE0oQSngu478zyv6totID4lF4v7CuuI2LYUEB8qDEMs6usrVfuViksESbLFvK9iclVMNkJAMLCOZuS9UCvYWK3Z3a9tdeb0esc8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=oVH/H+CV; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e902849978bso2466494276.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 09 Aug 2025 12:21:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1754767318; x=1755372118; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tNI3FzGuqhvpLMUoYQfTha9JCC3Gjeyc60VySTiyNyA=;
+        b=oVH/H+CVTP2kIoCtmxAjtuWN4HZ7jsoeSpaohP0Nzg1zwyL8nj80w9wiUpEQauN1Xr
+         ncwM+ufHVn4SFWVHkRwhfWqaA+LWqohoIcC2kjcb+7UZBCSJ/0d3XbSieafCjvzGsV7C
+         k04JdjPqYFu0+mHaeg/hw2V4T0lKQioIpDm5ZMrWfQEM+RRKC0pGGvAnU4BBaSkQ9F0/
+         EwpTonZocP6iPzhPHDNBVpQWAB9cexlUZOQCY+AnnRdzejL5thYskk6kHgt9Ld1pHV7Z
+         jZERKc9FXo4YBkrqKfhYZsY6phAb+09r2i45Qbmoyu4lc2+VKXSW9kjh1P/XGhRb78xg
+         nf8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754767318; x=1755372118;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tNI3FzGuqhvpLMUoYQfTha9JCC3Gjeyc60VySTiyNyA=;
+        b=WdMgkFYfxLoN0Ojjndv3o6LcNlL3C5Swlq0iefVmnUNHv8VLbOna8gbx3SBc2iCSq6
+         DJLQg6ctykDX0gt+A3IjnBoY6zUvYkAtD8iWb55ztr0VtxQW6iQWLIfImtLvsUpYn5JE
+         6qZ2YGenK3iDxJMlf7gB724ABWpWwglHZPoxwkyCk0OdCcV/dGS6jhekr23CDc3kOpzn
+         XRKp9GOjA9JzZjQRoUH2vapHq9EtG9KZM3dH6kmyRnFja7O3MX95n1HjrtsPKMxrNZtz
+         iGS1VSfRwSwzEgOuVl+bST8/eKtfPb+ahnJZt1ocW3vkdCSVWSsKOwJpQLrwIo6pu/ls
+         LCQA==
+X-Forwarded-Encrypted: i=1; AJvYcCXxuu1Ooi2ne0P9MQRnZxIYuo767uUmmZhoefFAI3ocr97/OJk8qYXxOjjbe5zoShbhVASjN6SIN3lejRyN@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxg/kloPAv1zRP6xU2kuwmAN2zTIyzq0F1HKS6V4xG5m7ZVO5V7
+	Ao1/YN7Shb9+eZq/ED5wT2APkSd9ZNRf5eW24/fXcULVVBCHNsg4yt+vsfPawuyzjo8=
+X-Gm-Gg: ASbGncvRVaKKjSeojVTTffDVyRbMfbyncaov/xOsEB1hL2geSHdj92dF4EcNoeEqPcX
+	NG9lV5uYUWNE6GNQ2OjCAOmxk3vKSUr3dvVk27yz9V58k/fMMC2BnpvND8U516KJ73moVSoXzj0
+	Ph0N+ARQK1KygG6Dv1SidBojF2OPjEwyth9+wZMSV+IqEWWPSQrCeGkvDJGA/GsvyYSca9njB/C
+	gri0CRJExAG9IiD9YvERjQkMY27hJlfOhR5fnagKSVarhfvFQL5V/cxH/HhyGvanZZsaVl9m2xr
+	1lLd4CIPmZ6uNyYIdCOX0Zmn81pgKVL2iSs4ndaIgs+3bbiWOim1u8xEJGtlLO2RqX51lhmbzBl
+	LQW8beTNt6uEINZh1Csxr98uckqjeC1hj4UgHs9nfGbb9TDS86U0A4xClz0+N87ZmvsX38A==
+X-Google-Smtp-Source: AGHT+IExmujknx2TM2tLuZiauHbhXnPmw1RB7ZvhZsQHYkPr1rGepKt+DAqu5eteErMK86fJg6JejQ==
+X-Received: by 2002:a05:6902:4a02:b0:e8b:4282:65d7 with SMTP id 3f1490d57ef6-e904b579e55mr7609585276.25.1754767317816;
+        Sat, 09 Aug 2025 12:21:57 -0700 (PDT)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e8fd3860a91sm8336114276.23.2025.08.09.12.21.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 09 Aug 2025 12:21:57 -0700 (PDT)
+Date: Sat, 9 Aug 2025 15:21:56 -0400
+From: Josef Bacik <josef@toxicpanda.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Aquinas Admin <admin@aquinas.su>,
+	Malte =?iso-8859-1?Q?Schr=F6der?= <malte.schroeder@tnxip.de>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	"Carl E. Thompson" <list-bcachefs@carlthompson.net>,
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
 Subject: Re: [GIT PULL] bcachefs changes for 6.17
-Message-ID: <3ik3h6hfm4v2y3rtpjshk5y4wlm5n366overw2lp72qk5izizw@k6vxp22uwnwa>
+Message-ID: <20250809192156.GA1411279@fedora>
 References: <22ib5scviwwa7bqeln22w2xm3dlywc4yuactrddhmsntixnghr@wjmmbpxjvipv>
  <f4be82e7-d98c-44d1-a65b-8c4302574fff@tnxip.de>
  <1869778184.298.1754433695609@mail.carlthompson.net>
  <5909824.DvuYhMxLoT@woolf>
+ <3ik3h6hfm4v2y3rtpjshk5y4wlm5n366overw2lp72qk5izizw@k6vxp22uwnwa>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,181 +96,78 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5909824.DvuYhMxLoT@woolf>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <3ik3h6hfm4v2y3rtpjshk5y4wlm5n366overw2lp72qk5izizw@k6vxp22uwnwa>
 
-On Thu, Aug 07, 2025 at 07:42:38PM +0700, Aquinas Admin wrote:
-> Generally, this drama is more like a kindergarten. I honestly don't understand 
-> why there's such a reaction. It's a management issue, solely a management 
-> issue. The fact is that there are plenty of administrative possibilities to 
-> resolve this situation.
+On Sat, Aug 09, 2025 at 01:36:39PM -0400, Kent Overstreet wrote:
+> On Thu, Aug 07, 2025 at 07:42:38PM +0700, Aquinas Admin wrote:
+> > Generally, this drama is more like a kindergarten. I honestly don't understand 
+> > why there's such a reaction. It's a management issue, solely a management 
+> > issue. The fact is that there are plenty of administrative possibilities to 
+> > resolve this situation.
+> 
+> Yes, this is accurate. I've been getting entirely too many emails from
+> Linus about how pissed off everyone is, completely absent of details -
+> or anything engineering related, for that matter. Lots of "you need to
+> work with us better" - i.e. bend to demands - without being willing to
+> put forth an argument that stands to scrutiny.
+> 
+> This isn't high school, and it's not a popularity contest. This is
+> engineering, and it's about engineering standards.
+> 
 
-Yes, this is accurate. I've been getting entirely too many emails from
-Linus about how pissed off everyone is, completely absent of details -
-or anything engineering related, for that matter. Lots of "you need to
-work with us better" - i.e. bend to demands - without being willing to
-put forth an argument that stands to scrutiny.
+Exactly. Which is why the Meta infrastructure is built completely on btrfs and
+its features. We have saved billions of dollars in infrastructure costs with the
+features and robustness of btrfs.
 
-This isn't high school, and it's not a popularity contest. This is
-engineering, and it's about engineering standards.
+Btrfs doesn't need me or anybody else wandering around screaming about how
+everybody else sucks to gain users. The proof is in the pudding. If you read
+anything that I've wrote in my commentary about other file systems you will find
+nothing but praise and respect, because this is hard and we all make our
+tradeoffs.
 
-Those engineering standards have been notably lacking in the Linux
-filesystem world.
+That courtesy has been extended to you in the past, and still extends to your
+file system. Because I don't need to tear you down or your work down to make
+myself feel good. And because I truly beleive you've done some great things with
+bcachefs, things I wish we had had the foresight to do with btrfs.
 
-When brtfs shipped, it did so with clear design issues that have never
-been adequately resolved. These were brought up on the list in the very
-early days of btrfs, when it was still experimental, with detailed
-analysis - that was ignored.
+I'm yet again having to respond to this silly childishness because people on the
+outside do not have the context or historical knowledge to understand that they
+should ignore every word that comes out of your mouth. If there are articles
+written about these claims I want to make sure that they are not unchallenged
+and thus viewed as if they are true or valid.
 
-The issues in btrfs are the stuff of legend; I've been to conferences
-(past LSFs) where after dinner the stories kept coming out from people
-who had worked on it - for easily an _hour_ - and had people falling out
-of their chairs.
+Emails like this are why nobody wants to work with you. Emails like this are why
+I've been on literally dozens of email threads, side conversations, chat
+threads, and in person discussions about what to do when we have exceedingly
+toxic developers in our community.
 
-As a result, to this day, people don't trust it, and for good reason.
-Multidevice data corruptions, unfixed bugs with no real information,
-people who have tried to help out and fund getting this stuff fixed only
-to be turned away. This stuff is still going on:
-https://news.ycombinator.com/item?id=44508601
+Emails like this are exactly why we have to have a code of conduct.
 
-This is what you'd expect to happen when you rush to have all the
-features, skip the design, and don't build a community that's focused on
-working with users.
+Emails like this are why a majority of the community filters your emails to
+/dev/null.
 
-Let's compare what's going on in bcachefs:
+You alone with your toxic behavior have wasted a fair amount of mine and other
+peoples time trying to figure out how do we exist in our place of work with
+somebody who is bent on tearing down the community and the people who work in
+it.
 
-Bug tracker:
-https://github.com/koverstreet/bcachefs/issues?q=is%3Aissue%20state%3Aopen%20-label%3Aenhancement%20-label%3A%22waiting%20confirmation%20fixed%22
+I have defended you in the past, I was hoping that the support, guidance, and
+grace you've been afforded by so many people in this community would have
+resulted in your behavior changing. I'm very sorry I was wrong, and I'm very
+sorry if my support in anyway enabled the decision to merge your filesystem.
 
-Syzbot, and the other major filesystems for comparison:
-https://syzkaller.appspot.com/upstream/s/bcachefs
-https://syzkaller.appspot.com/upstream/s/ext4
-https://syzkaller.appspot.com/upstream/s/xfs
-https://syzkaller.appspot.com/upstream/s/btrfs
+Because your behavior is unacceptable. This email is unacceptable. Everything
+about your presence in this community has been a disruption and has ended up
+with all of our jobs being harder.
 
-(Does btrfs even have a central bug tracker?)
+You are not some paraih. You are not some victim. You are not some misunderstood
+genius. Your behavior makes this community a worse place to work in. If you are
+removed from this community it will soley be because you lack the ability to
+learn and to grow as a person and take responsibility for your behavior.
 
-An important note, with bcachefs most of the activity doesn't happen on
-the bug tracker, it's on IRC (and the IRC channel is by far the most
-active out of all the major filesystems). The bug tracker is for making
-sure bugs don't get lost if they can't get fixed right away - most bugs
-never make it there. So the bug tracker is a good measure of outstanding
-bugs, but not fixed bugs or gauging usage.
+If you are allowed to continue to be in this community that will be a travesty.
 
-How did we get here, what are we doing differently - and where are we
-now?
+Thanks,
 
-The recipe has been: patient, methodical engineering, with a focus on
-the users and building the user community, and working closely with the
-people who are using, testing and QAing.
-
-Get the design right, keep the codebase reasonably clean and well
-organized so that we can work efficiently; _heavy_ focus on assertions,
-automated testing (i.e. basic modern engineering best practices),
-introspection and debug tooling.
-
-Get enough feature work done to validate the design, and then - fix
-every last bug, and work with users to make sure that bugs are fixed and
-it's working well; work with people who are doing every kind of torture
-testing imaginable.
-
-A refrain I've been hearing has been about "working with the community",
-but to the kernel community, I need to hammer the point home that the
-community is not just us; it's all the people running our code, too.
-
-We have to actively work with those people if we want our code to
-actually work reliably in the real world, and this is something that's
-been frighteningly absent elsewhere, in filesystem development these
-days.
-
-30 years ago, Linux took over by being a real community effort.
-
-But now, most of the development is very corporate, and getting
-corporate developers to actually engage with the community and do
-anything that smells of unpaid support is worse than pulling teeth - it
-just doesn't happen.
-
-Now bcachefs is the community based up and comer...
-
-But it's not really "up and coming" anymore.
-
-6.16 is "unofficially unexperimental" - it's solid.
-
-It's attracting real interest and feedback from the ZFS community, and
-that hasn't happened before; those are the people who care about
-reliability and good engineering above all else.
-
-All the hard engineering problems are solved, stabilizing is basically
-done. We've got petabyte scalability, the majority of online fsck in
-place, all the multi device stuff rock solid (a major area where brtfs
-falls over); the error handling, logging and debugging tools are top
-notch. Repair is comprehensive and robust, with real defense in depth,
-and an extensive suite of tools for analyzing issues and making sure we
-can debug anything that may occur in the wild.
-
-The kernel community is being caught with their pants down here.
-
-The desicionmaking process has, at every step in the way, been "things
-couldn't possibly be that insane" - and yet, I am continually proven
-wrong.
-
-Post btrfs, I seriously expected there to be real design review for any
-future filesystems, and a retrospective on development process.
-
-Needless to say, that did not happen - it seems we're still in the
-"trust me bro, I got this" stage in the development of an engineering
-culture.
-
-But a cowboy culture only takes you so far, at some point you really do
-need actual engineer standards; you need to be able to explain your
-designs, your methods, your processes and decisionmaking.
-
-I've talked at length in the past about the need for a tight feedback
-loop on getting bugs out to users if we want to be able to work with
-those users (and to be honest, that should not even have been a
-discussion; I've been going over RC pull requests and there's been
-nothing remotely unusual about what I've been sending - except for
-volume, which is exactly what you want and expect for a filesystem
-that's been rapidly stabilizing).
-
-But "shipping bugfixes" has been called "whining" - that's the mentality
-we're dealing with here.
-
-I have to hammer on this one: there are certain bedrock principles of
-systems engineering we all know.  "Make sure things work and stay
-working" is one of them. The rest of the kernel knows this as "do not
-break userspace", but in filesystem land that same underlying principle
-is written as "we do not lose user data".
-
-Our job is to ship things that work, and make sure they work.
-
-I also talk a lot about the need for automated testing; and that's
-another area where the kernel is woefully behind - and it's been one of
-the sources of conflict. I've asked people in other subsystems to please
-make sure they tests when regressions have hit bcachefs; it's good for
-everyone, not just bcachefs. But this has been cited (!) as one of the
-causes of conflict that's been pissing Linus off.
-
-Engineering principles. Basic stuff, here.
-
-And regarding manegement processes: Linus has been saying repeatedly
-(and loudly, and in public) that it's his decision whether or not to
-remove bcachefs from the kernel - but the criteria and decisionmaking
-process have been notably absent.
-
-It is not for me to say whether or not the kernel should still be a
-personal project, with decisions made in this way. And at the end of the
-day, we're all human beings, I'm not going to argue against the human
-factor, or against considering the people behind these projects.
-
-But the uncertainty this has caused has created massive problems for
-building a sustainable developer community around this thing, it should
-be noted.
-
-For my part, I just want to reassure people that I'm not going anywhere;
-bcachefs will continue to be developed and supported, in or out of the
-kernel.
-
-Cheers,
-Kent
+Josef
 
