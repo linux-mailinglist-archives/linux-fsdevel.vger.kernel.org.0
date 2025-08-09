@@ -1,175 +1,166 @@
-Return-Path: <linux-fsdevel+bounces-57169-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57170-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29A09B1F408
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Aug 2025 12:08:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EED2B1F438
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Aug 2025 12:43:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E250566CEF
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Aug 2025 10:08:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CF1C5604AD
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Aug 2025 10:43:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C31424DCF7;
-	Sat,  9 Aug 2025 10:08:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FE5B26B0B3;
+	Sat,  9 Aug 2025 10:42:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EqYZd+gC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YDqKTywn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F3BA146A72;
-	Sat,  9 Aug 2025 10:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66EC41D5ACE;
+	Sat,  9 Aug 2025 10:42:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754734090; cv=none; b=jZqFcQCAvFMEtXFEmkxWmGLAxxCIYuUeQlZXlm4YEwyBgUga9Jva3qAQ6K/94MXwk3L4zLdqwLqStR5dHHwP8bpTsS5gO/1HBe3brpjvq6k5SgiK7WQCPh6tBJ123wauIIL279ve8enBli1RKX7oW609HplG2MtCzugHnhk2vpA=
+	t=1754736178; cv=none; b=PEeV4fHjIDwDzoDxt03vmFj7s0Eee/kRWC0jzfKDv8mzoz5lxPxpvmgmjLTt8ESx2VVRWz6ocQK4zW/ml+7PhdcFe0Qp/Wrk/o/HBpk1Pb+bEiR/xlay4NcAi9/UG9AiWH8aIYVfCEIPaibM7yKvQtHnkCPMhwZOhNJG8vlLMbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754734090; c=relaxed/simple;
-	bh=lga9pgiwZZMzTGRuWaRxqaiQtbSWaBM34r1Z641KLKo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lF6sopBawH7UgmsG8KEdBVfFlGC6l8unOZC09vjAv9J2ePQB/iWQfwgApNNbCvqFDecWGlCOydnYUnGpGnwJeuO4BPCMyPg8Njzxs+1jkvavCnkZk5Y55NoDgNbAlRkYwPanExdvAbdbBZkl/vUIXEOYJGGR1uO9VegMyHrQG/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EqYZd+gC; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-af949bdf36cso494175466b.0;
-        Sat, 09 Aug 2025 03:08:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754734087; x=1755338887; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sIQXQZQu1+6vEGMEjeH1puu0gWgZwO1IcUkPlVIjGL4=;
-        b=EqYZd+gCDMDa0WnMSgzQbSFfxiokx8IzdozVxXcNXEVE7Ge19OdnY0UAwHDwPr2AXU
-         tGM+JYofiusb9x/6DfA5AD072twGYbzRkHCp4//JmfYkRKq8p+u9Fmylk6EJyfPI6Ns4
-         WIcNQQz/d7PmxJ67kGBiTQmscntybiq5nei+/510NYJDW1yBLGvSmjjxSkzrSTSzvLup
-         Fs+dD3y8eHu3Vyj2dPyDZE3seU6kf3HAi+q+xmGW6paXBZCHZTHXpk37JPblXw79zo5G
-         6sGmcrh9PAITShfG+9qSJErkZlpfWGlI1FaOL7UKgOB413lcbQUOEe/wck5/k5pbP9qR
-         9VaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754734087; x=1755338887;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sIQXQZQu1+6vEGMEjeH1puu0gWgZwO1IcUkPlVIjGL4=;
-        b=FNbvWwlwRg1HFiouMpXoWvJ8B77r29q6vioVq3Lt309LBr2G5zjXiQBrRnvlNQ7Wrx
-         JvAu7ZOC5CHQJy5wr8cmFpQwxajTL0vlz5ehbL7LWlbAKvZExLLZraCievsyakgpd9gb
-         3NF0TvAdTmEpydFJdTen8P0bpgHpbeFutHP1FTgGkGRLnceNH+Wzoga+VRwUXiqYlskU
-         DD2jqYAEbiu+bvDmvD/ZVqZZfzECTOR6rYi8a2FbNtbZuB7sVh50j0Astn5BWDpUUig/
-         atdssIg8pueIVZmfCZxFWJkS8fAdISieYj96x5HZMVV1fCYdcOMkEmgj2IoNapHInrbs
-         XNwA==
-X-Forwarded-Encrypted: i=1; AJvYcCVcUWNN664zyixNxZnl0khx/fNCv1FTy2kpY7ZFIuls2+gTziB7QRTSQFcDWF0aaz5FRMPwBnGF4Ie0hSEJzA==@vger.kernel.org, AJvYcCWJpB6wdLBAh1eV3WXyvWhnifv5wzP/eYUfWnlMqXpWTV3g0Ef41zuXm/P9QEYzfHqkKv+hBeSPqdcbur1d@vger.kernel.org, AJvYcCWxZoZvrSoISPV09IvoQvUFS92eB6+9ou4dLTCILTdwlO7ZRVKgOclnkIRLnIvile8WAPTQM5jwJIClEptf@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCuzViyazsLpsofK/beB/pLb0zGLuAEAVjNSd6LHmmVKah95iN
-	MD2MCrgSSRKOIUo+TAt8h6ITVRJEb1i3Vqfk/0Vn3c6WspYUCTTrfiO7pt7ZSoUiRTbQ+u4qRdJ
-	Ewth4xRCWgpmU2vpD4LqWkLh2S8OjCuw=
-X-Gm-Gg: ASbGncsKTUWEbrjYmQ4qBsmS+5MMbZQ+mvDGwydr4xqH0sQghG5bobBvoXhpzPiIsbo
-	Hk0+DRIs9N88sOsHhpoaJEfgL7K0/5b2htd1wsTOYKw6sAtC+mRr11CGq+MSoEkKuPXyare8Wjx
-	d46izk0O3NrcwUATb4PHvYhkjJMq4EPADsnnsxcuGjgyxDeB2+PjjKe6yOwYzNFGDOhJXc40EeD
-	noSZG8=
-X-Google-Smtp-Source: AGHT+IE6dxz8o3+PYhHrDBBahI7Jkews09Ev+dhaBseaNyuXcllm2iXZNfZ4IF8glX36sCDnlH79ucNlTx1kUQ2lMKA=
-X-Received: by 2002:a17:907:3d02:b0:ade:3ce3:15d1 with SMTP id
- a640c23a62f3a-af9c645329dmr566121066b.27.1754734087310; Sat, 09 Aug 2025
- 03:08:07 -0700 (PDT)
+	s=arc-20240116; t=1754736178; c=relaxed/simple;
+	bh=a8+UN8/ZSBO/sg2c/xViTOsohY3HngjC+LoJbCHsVEM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pfNd/JCBQ6PzTSuYILtEmkJPYgJvgMHvMu/LEOFQMUZ3K6Cbk+uQvm1ADTzJfBTNL/H8huenSm2xAU7XGs5nJTA40tIHcg2HT/DU/3TOg1yo0Ko23Psmwi1J/3qxcCwRvs7YFgO3rahYkzKkmh9TjhywzaQ8EDnyeW/VR4XD6xI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YDqKTywn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07F15C4CEE7;
+	Sat,  9 Aug 2025 10:42:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754736178;
+	bh=a8+UN8/ZSBO/sg2c/xViTOsohY3HngjC+LoJbCHsVEM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YDqKTywnRc8WgKFRX1w9DZ3/NL4s3ZkX6W5/rlg/5WFN87tXrkrpeIVLb+hfnoGeC
+	 7B4znkqz0L4jJkvotDRFDR8Roi+O9GruyarmlJRoadFPSzcBKpR+J22EJA0127pcVC
+	 mchr+wxMc4WgE+32mw1HTdV3G1eVrWq0r4isB81lIDonS3lxt6ipVG9mrt1PlYm4Ji
+	 R9MTZ3HwBWHSrGy5Gvp3noLR5btNMKi1BLVtu2K87kLmtVjybFAz+pYCL1Kftg72Nm
+	 96NhX8jTpot1/TkbKYoEP1HzmhJ47NDk+elNKPWbaUWDzi8IpoYmH/95YpDERMqtz2
+	 ttnAiY2zK2SjQ==
+Date: Sat, 9 Aug 2025 12:42:47 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: Askar Safin <safinaskar@zohomail.com>, 
+	"Michael T. Kerrisk" <mtk.manpages@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, "G. Branden Robinson" <g.branden.robinson@gmail.com>, 
+	linux-man <linux-man@vger.kernel.org>, linux-api <linux-api@vger.kernel.org>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, 
+	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v2 01/11] mount_setattr.2: document glibc >= 2.36 syscall
+ wrappers
+Message-ID: <j57inuu7wzzh2tm7sxfnhdogg4u7f4gf3vktmla4qlafuknh3p@ypu3peu3g5k6>
+References: <20250807-new-mount-api-v2-0-558a27b8068c@cyphar.com>
+ <20250807-new-mount-api-v2-1-558a27b8068c@cyphar.com>
+ <19888fe1066.fcb132d640137.7051727418921685299@zohomail.com>
+ <2025-08-08.1754653930-iffy-pickled-agencies-mother-K0e7Hn@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250808-tonyk-overlayfs-v3-0-30f9be426ba8@igalia.com> <20250808-tonyk-overlayfs-v3-4-30f9be426ba8@igalia.com>
-In-Reply-To: <20250808-tonyk-overlayfs-v3-4-30f9be426ba8@igalia.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Sat, 9 Aug 2025 12:07:56 +0200
-X-Gm-Features: Ac12FXySHqBT78bwGzLSstGk7mKLDJaNroBOdAsooH4Xa7ziEHPu7nezIHdrW7c
-Message-ID: <CAOQ4uxikEukw8o_=SrH6w01bnjD0ZBmMrf3kzLuR1U++B2x4dQ@mail.gmail.com>
-Subject: Re: [PATCH RFC v3 4/7] ovl: Ensure that all mount points have the
- same encoding
-To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>, 
-	Gabriel Krisman Bertazi <krisman@kernel.org>, linux-unionfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	kernel-dev@igalia.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ad66n3krjtkx2hx6"
+Content-Disposition: inline
+In-Reply-To: <2025-08-08.1754653930-iffy-pickled-agencies-mother-K0e7Hn@cyphar.com>
+
+
+--ad66n3krjtkx2hx6
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: Askar Safin <safinaskar@zohomail.com>, 
+	"Michael T. Kerrisk" <mtk.manpages@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, "G. Branden Robinson" <g.branden.robinson@gmail.com>, 
+	linux-man <linux-man@vger.kernel.org>, linux-api <linux-api@vger.kernel.org>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, 
+	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v2 01/11] mount_setattr.2: document glibc >= 2.36 syscall
+ wrappers
+References: <20250807-new-mount-api-v2-0-558a27b8068c@cyphar.com>
+ <20250807-new-mount-api-v2-1-558a27b8068c@cyphar.com>
+ <19888fe1066.fcb132d640137.7051727418921685299@zohomail.com>
+ <2025-08-08.1754653930-iffy-pickled-agencies-mother-K0e7Hn@cyphar.com>
+MIME-Version: 1.0
+In-Reply-To: <2025-08-08.1754653930-iffy-pickled-agencies-mother-K0e7Hn@cyphar.com>
 
-On Fri, Aug 8, 2025 at 10:59=E2=80=AFPM Andr=C3=A9 Almeida <andrealmeid@iga=
-lia.com> wrote:
->
-> When mounting different mount points with casefold support, they should
+Hi Aleksa, Askar,
 
-Different mount points in incorrect terminology, please use:
-When merging layers from different filesystems with casefold enabled,
-all layers should...
+On Fri, Aug 08, 2025 at 09:55:10PM +1000, Aleksa Sarai wrote:
+> On 2025-08-08, Askar Safin <safinaskar@zohomail.com> wrote:
+> > When I render "mount_setattr" from this (v2) pathset, I see weird quote=
+ mark. I. e.:
+> >=20
+> > $ MANWIDTH=3D10000 man /path/to/mount_setattr.2
+> > ...
+> > SYNOPSIS
+> >        #include <fcntl.h>       /* Definition of AT_* constants */
+> >        #include <sys/mount.h>
+> >=20
+> >        int mount_setattr(int dirfd, const char *path, unsigned int flag=
+s,
+> >                          struct mount_attr *attr, size_t size);"
+> > ...
+>=20
+> Ah, my bad. "make -R lint-man" told me to put end quotes on the synopsis
+> lines, but I missed that there was a separate quote missing. This should
+> fix it:
+>=20
+> diff --git a/man/man2/mount_setattr.2 b/man/man2/mount_setattr.2
+> index d44fafc93a20..46fcba927dd8 100644
+> --- a/man/man2/mount_setattr.2
+> +++ b/man/man2/mount_setattr.2
+> @@ -14,7 +14,7 @@ .SH SYNOPSIS
+>  .B #include <sys/mount.h>
+>  .P
+>  .BI "int mount_setattr(int " dirfd ", const char *" path ", unsigned int=
+ " flags ","
+> -.BI "                  struct mount_attr *" attr ", size_t " size );"
+> +.BI "                  struct mount_attr *" attr ", size_t " size ");"
+
+Actually, I'd use
+
+=2EBI "                  struct mount_attr *" attr ", size_t " size );
+
+>  .fi
+>  .SH DESCRIPTION
+>  The
+
+Hmmm, thanks for the catch!  My CI server is down until I come back home
+and have a chance to fix it.
 
 
-> use the same encoding version and have the same flags to avoid any kind
-> of incompatibility issues.
->
-> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
-> ---
->  fs/overlayfs/super.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
->
-> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> index df85a76597e910d00323018f1d2cd720c5db921d..bcb7f5dbf9a32e4aa09bc4159=
-6be443851e21200 100644
-> --- a/fs/overlayfs/super.c
-> +++ b/fs/overlayfs/super.c
-> @@ -998,6 +998,7 @@ static int ovl_get_layers(struct super_block *sb, str=
-uct ovl_fs *ofs,
->         int err;
->         unsigned int i;
->         size_t nr_merged_lower;
-> +       struct super_block *sb1 =3D NULL;
->
->         ofs->fs =3D kcalloc(ctx->nr + 2, sizeof(struct ovl_sb), GFP_KERNE=
-L);
->         if (ofs->fs =3D=3D NULL)
-> @@ -1024,6 +1025,8 @@ static int ovl_get_layers(struct super_block *sb, s=
-truct ovl_fs *ofs,
->         if (ovl_upper_mnt(ofs)) {
->                 ofs->fs[0].sb =3D ovl_upper_mnt(ofs)->mnt_sb;
->                 ofs->fs[0].is_lower =3D false;
-> +
-> +               sb1 =3D ofs->fs[0].sb;
->         }
->
->         nr_merged_lower =3D ctx->nr - ctx->nr_data;
-> @@ -1067,6 +1070,9 @@ static int ovl_get_layers(struct super_block *sb, s=
-truct ovl_fs *ofs,
->                         return err;
->                 }
->
-> +               if (!sb1)
-> +                       sb1 =3D mnt->mnt_sb;
-> +
->                 /*
->                  * Make lower layers R/O.  That way fchmod/fchown on lowe=
-r file
->                  * will fail instead of modifying lower fs.
-> @@ -1083,6 +1089,11 @@ static int ovl_get_layers(struct super_block *sb, =
-struct ovl_fs *ofs,
->                 l->name =3D NULL;
->                 ofs->numlayer++;
->                 ofs->fs[fsid].is_lower =3D true;
-> +
-> +               if (!sb_same_encoding(sb1, mnt->mnt_sb)) {
-> +                       pr_err("all layers must have the same encoding\n"=
-);
-> +                       return -EINVAL;
-> +               }
->         }
+Have a lovely day!
+Alex
 
-This condition is too strict IMO.
-It is only needed if ofs->casefold is enabled.
-When casefolding is not enabled for the ovl mount,
-we need not care about the layers encoding.
+--=20
+<https://www.alejandro-colomar.es/>
 
-This is related to another comment I have on path 7 -
-ofs->casefold config should be introduced much earlier in the
-series, so that it could be used in conditions like this one and
-in the S_CASEFOLD assertions after copying inode flags.
+--ad66n3krjtkx2hx6
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks,
-Amir.
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmiXJicACgkQ64mZXMKQ
+wqnnbw//WMHggmA4jUE/nRABMPtJLZDCGULhgMy1N4WDcF/+TKjDOt0ExRzUDVru
+ItgtH8RM8Pp3sDxwaq3BonhA6gzg/JHKIJ8jxVJy5jpEOD+ovNOpCYbD7n1KCnAy
+efvU3E27J4t4liHsA05PPqugb0Ndu20snWa7eaVPKnBWVTAEzTYl6NNgjvE5K7i1
+noOwofQZt8wzNtAZzQyOfTh3RnamwJ0G/f9r15KiFOZ7Sq+ZVJJkhY18QS6lQVOO
+VjNft+KwyOXGF+vHnFVkDBUr8sRe2UiFbQkS+jB12Rp0YGGjk+eirsLMRSqTxlLo
+MBEq16FTOD8HPEgTn9Unvuml09SSluevUQlMOa8Hbnu62148zqL9ApGa0JS8ButU
+JRXrJCZOwqRtOgNlusc4e5Xhej7Gpvw5tbl+2AJpxRrnZGOxTXkRZFv4pRp6mOcz
+8kgMMZuZwuYyHYn5W3R5MXLHs/mkCLkcJXQXU0PwHiDDH/6RIwChUTJ2qha61Fqa
+Wkfln9v94TDWVVGCBKNy7A9TPS8+mAK8cVfYn/iqdWm5NpL18223l32qjw5rQt3Y
+0R+WgxjLdpjRRjcV4b1wGN5raLE7/yKUB0y3MR71q+oS7s8hj7t21LgZaxE4TiI3
+iN15mSC7sAns/N56Ig3367Hm9b8xr4/eZWfN0zVCWqzYg2Z4Cdk=
+=TkZt
+-----END PGP SIGNATURE-----
+
+--ad66n3krjtkx2hx6--
 
