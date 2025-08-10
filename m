@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-57212-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57213-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 955B7B1F92B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Aug 2025 10:02:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C228AB1F92E
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Aug 2025 10:02:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33A991668F3
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Aug 2025 08:01:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BA9E16D155
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Aug 2025 08:01:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB7C4253944;
-	Sun, 10 Aug 2025 08:00:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D73A256C71;
+	Sun, 10 Aug 2025 08:00:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IBNeIHJ2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o3Ppu9lC"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EA2C247299;
-	Sun, 10 Aug 2025 08:00:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 771AF248F5A;
+	Sun, 10 Aug 2025 08:00:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754812810; cv=none; b=qSRfTaJiUITlTlp3/+JcvEOod/F9YUV/UDEO/Yq80iNAdcUFuRhYqoxlREWFaLIKFQTfyAg/4KlEqz1+sv8HilNCejzQiZ9Xwy8e9AYm4G9uuq7e8Sid+2rJHiu7vWRj4CkI6KZ7/D7v0/0pKwToaslOXEUFTAu+7y5GnxNE3NU=
+	t=1754812810; cv=none; b=LneBvag1boojgblXpqpOL1JVNeUkibdMTvabWgxL9ElDXGlOVt7/ONnQ8E9umzEDxORaLuljD6JTXTxUOka741fbfUfpzcOgHvk48KUaO0PTsKq0nfEEdQ5mTincEyWku9Gzu57/sqB1v1Oro4f2XE6kZSnCWAPJkxJ7TUljuTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1754812810; c=relaxed/simple;
-	bh=Qm1plsgVlmTBCpbZLW/xcJNpj1w2kpvFy1WqJ9hSAZw=;
+	bh=bmB+BqOK47AQ74zOAlenVEXHIBC1qQuTYrDPLOSDJDw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LApkqpBtaZJqM4UiZdO/1jQBKj2yOnonRpTMlcrWxizH3Ikfr6YNn4wTILWl4svPyNquDeFvBWvuwYHw80u0wttXeuxhe2pkuX8aFmPmp//V+SV/j3AU+YPjYazFqSSsxcNBhMesVuf3acY78oDThxbsbKcqJ5KUBPBRCMgXEHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IBNeIHJ2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D421C4CEEB;
+	 MIME-Version; b=P7lh+Yw57wHfhkjUPQI8Ze6AedlYXIL1E1xiGeeg55FxwUQxdO2WU1QcXZ6Ed5sU29l+UDxMOQrnMn0G8rgIS2f9CBDfRk4nAbDU5RdiCZ2o0mJ3/S1aTOnFiAnNnwwtn5C5wrCkAcQq7U8Y9x6dAxAxWMUSJogeshxB97mUm0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o3Ppu9lC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0353DC4CEFB;
 	Sun, 10 Aug 2025 08:00:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754812809;
-	bh=Qm1plsgVlmTBCpbZLW/xcJNpj1w2kpvFy1WqJ9hSAZw=;
+	s=k20201202; t=1754812810;
+	bh=bmB+BqOK47AQ74zOAlenVEXHIBC1qQuTYrDPLOSDJDw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IBNeIHJ2heVgM/csrEC21oBuVod6FeprqFqd1W+zzBuMWSAFjawLCDuBK4bneu7ou
-	 0AlF0wyE4wt//266UDH7gUEIzRcrV+jXb8aeubS8u1tpfdXci4muagNyNZfgTKW7z6
-	 jF+JQtHOfsQEB/S3jXe+F3X3rWlXyf4VbWi7aYpAxVSjgjSsDaWRFTSxEVW7ec7/Rc
-	 kHShVks2Ht5rGE4vyY02UuKKgzsrXLCZoQMGvSwhz/kAeIpVrCuHfxcKEFzFAG1/fr
-	 XCR8JpQGpS8e3uHh5SXlecIvhE6bSOWV5WiT27UJA8SYlbR+nXiMx3EeZEKqt1YvaB
-	 x54EA9wnkMuUw==
+	b=o3Ppu9lCK+UMIRCJ649FLlexF8zz+c5Fny3h+DogkpOBxxoTI+SD12otxBd4HJPGN
+	 KrDlaO+YuVwOT5khIksO9p/0SHCSpmXkMAtaa9ZYhjNb+HopBdHl5Dgaq7wIamHvE4
+	 Lx0RUvlNHg9683rs5qCfE6WCKJafDQIjyfimusDQPjsBQCFnURsh7M1PygjfbmsQsO
+	 TcauGSZNJ/T+xRc3iJJaE+4/RX8mbkSg3olk0B9E8OMQ3IYEwZXXP7hfpdQCMrWXxi
+	 v6M244Sk1mMSGGyYMPXvvqKBHDNMb/N2yOcxgbUKe/kBGuifA8XvEt1Ov4Sxny0gpD
+	 tevQolZt9j7OA==
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fscrypt@vger.kernel.org,
 	fsverity@lists.linux.dev
@@ -52,9 +52,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	ceph-devel@vger.kernel.org,
 	Christian Brauner <brauner@kernel.org>,
 	Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH v5 05/13] ubifs: move crypt info pointer to fs-specific part of inode
-Date: Sun, 10 Aug 2025 00:56:58 -0700
-Message-ID: <20250810075706.172910-6-ebiggers@kernel.org>
+Subject: [PATCH v5 06/13] ceph: move crypt info pointer to fs-specific part of inode
+Date: Sun, 10 Aug 2025 00:56:59 -0700
+Message-ID: <20250810075706.172910-7-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250810075706.172910-1-ebiggers@kernel.org>
 References: <20250810075706.172910-1-ebiggers@kernel.org>
@@ -67,71 +67,71 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
 Move the fscrypt_inode_info pointer into the filesystem-specific part of
-the inode by adding the field ubifs_inode::i_crypt_info and configuring
-fscrypt_operations::inode_info_offs accordingly.
+the inode by adding the field ceph_inode_info::i_crypt_info and
+configuring fscrypt_operations::inode_info_offs accordingly.
 
 This is a prerequisite for a later commit that removes
 inode::i_crypt_info, saving memory and improving cache efficiency with
 filesystems that don't support fscrypt.
 
-Note that the initialization of ubifs_inode::i_crypt_info to NULL on
-inode allocation is handled by the memset() in ubifs_alloc_inode().
-
 Co-developed-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Eric Biggers <ebiggers@kernel.org>
 ---
- fs/ubifs/crypto.c | 2 ++
- fs/ubifs/ubifs.h  | 4 ++++
- 2 files changed, 6 insertions(+)
+ fs/ceph/crypto.c | 2 ++
+ fs/ceph/inode.c  | 1 +
+ fs/ceph/super.h  | 1 +
+ 3 files changed, 4 insertions(+)
 
-diff --git a/fs/ubifs/crypto.c b/fs/ubifs/crypto.c
-index fb5ac358077b1..0b14d004a095b 100644
---- a/fs/ubifs/crypto.c
-+++ b/fs/ubifs/crypto.c
-@@ -86,10 +86,12 @@ int ubifs_decrypt(const struct inode *inode, struct ubifs_data_node *dn,
- 
- 	return 0;
+diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
+index cab7226192073..7026e794813ca 100644
+--- a/fs/ceph/crypto.c
++++ b/fs/ceph/crypto.c
+@@ -131,10 +131,12 @@ static const union fscrypt_policy *ceph_get_dummy_policy(struct super_block *sb)
+ {
+ 	return ceph_sb_to_fs_client(sb)->fsc_dummy_enc_policy.policy;
  }
  
- const struct fscrypt_operations ubifs_crypt_operations = {
-+	.inode_info_offs	= (int)offsetof(struct ubifs_inode, i_crypt_info) -
-+				  (int)offsetof(struct ubifs_inode, vfs_inode),
- 	.legacy_key_prefix	= "ubifs:",
- 	.get_context		= ubifs_crypt_get_context,
- 	.set_context		= ubifs_crypt_set_context,
- 	.empty_dir		= ubifs_crypt_empty_dir,
- };
-diff --git a/fs/ubifs/ubifs.h b/fs/ubifs/ubifs.h
-index 5db45c9e26ee0..49e50431741cd 100644
---- a/fs/ubifs/ubifs.h
-+++ b/fs/ubifs/ubifs.h
-@@ -363,10 +363,11 @@ struct ubifs_gced_idx_leb {
-  * @compr_type: default compression type used for this inode
-  * @last_page_read: page number of last page read (for bulk read)
-  * @read_in_a_row: number of consecutive pages read in a row (for bulk read)
-  * @data_len: length of the data attached to the inode
-  * @data: inode's data
-+ * @i_crypt_info: inode's fscrypt information
-  *
-  * @ui_mutex exists for two main reasons. At first it prevents inodes from
-  * being written back while UBIFS changing them, being in the middle of an VFS
-  * operation. This way UBIFS makes sure the inode fields are consistent. For
-  * example, in 'ubifs_rename()' we change 4 inodes simultaneously, and
-@@ -414,10 +415,13 @@ struct ubifs_inode {
- 	int flags;
- 	pgoff_t last_page_read;
- 	pgoff_t read_in_a_row;
- 	int data_len;
- 	void *data;
-+#ifdef CONFIG_FS_ENCRYPTION
-+	struct fscrypt_inode_info *i_crypt_info;
-+#endif
- };
+ static struct fscrypt_operations ceph_fscrypt_ops = {
++	.inode_info_offs	= (int)offsetof(struct ceph_inode_info, i_crypt_info) -
++				  (int)offsetof(struct ceph_inode_info, netfs.inode),
+ 	.needs_bounce_pages	= 1,
+ 	.get_context		= ceph_crypt_get_context,
+ 	.set_context		= ceph_crypt_set_context,
+ 	.get_dummy_policy	= ceph_get_dummy_policy,
+ 	.empty_dir		= ceph_crypt_empty_dir,
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index fc543075b827a..480cb3a1d639a 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -663,10 +663,11 @@ struct inode *ceph_alloc_inode(struct super_block *sb)
  
- /**
-  * struct ubifs_unclean_leb - records a LEB recovered under read-only mode.
-  * @list: list
+ 	INIT_WORK(&ci->i_work, ceph_inode_work);
+ 	ci->i_work_mask = 0;
+ 	memset(&ci->i_btime, '\0', sizeof(ci->i_btime));
+ #ifdef CONFIG_FS_ENCRYPTION
++	ci->i_crypt_info = NULL;
+ 	ci->fscrypt_auth = NULL;
+ 	ci->fscrypt_auth_len = 0;
+ #endif
+ 	return &ci->netfs.inode;
+ }
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index cf176aab0f823..25d8bacbcf440 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -461,10 +461,11 @@ struct ceph_inode_info {
+ 
+ 	struct work_struct i_work;
+ 	unsigned long  i_work_mask;
+ 
+ #ifdef CONFIG_FS_ENCRYPTION
++	struct fscrypt_inode_info *i_crypt_info;
+ 	u32 fscrypt_auth_len;
+ 	u32 fscrypt_file_len;
+ 	u8 *fscrypt_auth;
+ 	u8 *fscrypt_file;
+ #endif
 -- 
 2.50.1
 
