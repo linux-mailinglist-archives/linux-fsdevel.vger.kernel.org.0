@@ -1,122 +1,188 @@
-Return-Path: <linux-fsdevel+bounces-57230-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57231-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D605B1F9A5
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Aug 2025 12:32:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC8A9B1FA11
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Aug 2025 15:02:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9621A173FCE
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Aug 2025 10:32:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5823C3B7023
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Aug 2025 13:02:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E068F246781;
-	Sun, 10 Aug 2025 10:32:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2330524BD03;
+	Sun, 10 Aug 2025 13:02:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A5x6GaxY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.lichtvoll.de (lichtvoll.de [37.120.160.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 597C8198E9B;
-	Sun, 10 Aug 2025 10:32:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.120.160.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D88BF1C683;
+	Sun, 10 Aug 2025 13:02:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754821963; cv=none; b=m6jPh5leNObINCxga0b9vCbucCtsc/1bEVMlBOs3H/fdpfpjKRVL4zf3Y/P2eOdIGSvAU9bamjjT0kZWfUUm9xFfY8yylV1wS/5F+kO5jg3Qrx9dpWo91ivJi9qBCl6Y5F4NGAAv7sTkMwHjBJw40LpWUVCRTDv9ZCe9g7SB3kI=
+	t=1754830955; cv=none; b=TPqbKU7Z/YYVY6yQjBLR+oOhPPWp3Qtay7UCDSp0XT9P+M/bii5voAyl8PWjcC1HwMuNqqucjvGuedsDl+NOmY52hpf/fNXvVEfWhETfwDWg6otLCjoDzPhWWhB57vVJAimrJSKgkfN9eMNJTlN6m9KPv6PuIGASeYuFIlJPFiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754821963; c=relaxed/simple;
-	bh=8D9WEyhPPhhVKH+WCxVVbKm/SDCaoqn/KutdHv9zxqo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YRHeh+m0QyDx19gWe1Yl/wFJpvu3RReAqXlzG+9wqpVt1rqlJd1iAZUXEUxRi6XZmOtOm08JdkoE+AywfSITUeHd4pNIzVzgsnzfRmhekf+UmbgriCMR28n/twfoxxc8FPZNStctwpHmrCyrhQ1EZKf08VAmHmSeKfbAS/nOGvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lichtvoll.de; spf=pass smtp.mailfrom=lichtvoll.de; arc=none smtp.client-ip=37.120.160.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lichtvoll.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtvoll.de
-Received: from 127.0.0.1 (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature ECDSA (secp384r1) server-digest SHA384)
-	(No client certificate requested)
-	by mail.lichtvoll.de (Postfix) with ESMTPSA id E7DC912E133;
-	Sun, 10 Aug 2025 10:32:38 +0000 (UTC)
-Authentication-Results: mail.lichtvoll.de;
-	auth=pass smtp.auth=martin@lichtvoll.de smtp.mailfrom=martin@lichtvoll.de
-From: Martin Steigerwald <martin@lichtvoll.de>
-To: Kent Overstreet <kent.overstreet@linux.dev>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Gerhard Wiesinger <lists@wiesinger.com>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org
-Subject: Re: [GIT PULL] bcachefs changes for 6.17
-Date: Sun, 10 Aug 2025 12:32:38 +0200
-Message-ID: <22799288.EfDdHjke4D@lichtvoll.de>
-In-Reply-To: <e19849f2-4a39-4a09-b19e-cb4f291a2dc2@wiesinger.com>
-References:
- <22ib5scviwwa7bqeln22w2xm3dlywc4yuactrddhmsntixnghr@wjmmbpxjvipv>
- <e19849f2-4a39-4a09-b19e-cb4f291a2dc2@wiesinger.com>
+	s=arc-20240116; t=1754830955; c=relaxed/simple;
+	bh=7vETKwtpidENX53WjwI6MHM6eVFOckiWgacFT/qG6FM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Fl4MDNWKxcSeDyX9fGiD3qYEfAY3f8vWVJlxs8NrVEyjzIyin/oaXZjWGLJoijUSkpYpzn8lfXy4ScTa9V2R8lXXpvyTe7vNyuX55hLQvNDlm/HmMXaGEasGBIkmaM8BKUpJykNKoqAhzx7MAUEB9cju9QKuqi9DF66UnaCzrsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A5x6GaxY; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-af98b77d2f0so660647066b.3;
+        Sun, 10 Aug 2025 06:02:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754830952; x=1755435752; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oSlOOEhHSp0QmqGAVt0Ofk92yXA+aQmJze++Vd3SO3g=;
+        b=A5x6GaxYRh9k6qmp5rI3dT/W1fNYdHygpTq9FZOkjs4ur1PMpqvCoIE+R8CAh+NJ1N
+         U/ubZ+2T3KT/ED0yDs0Ok0a93IcbgZRQ0e5S1qb94GO0RPC2eDv2e00C4uH/WO6iDM4u
+         IvhYOnIbMsIXnh8U3IvE49PhAf/HDRzN6pwHvXs0Zmb9tEYRgHTlM735mzkkgqzIwSq0
+         OCxnnONIGFU21b14mYgXBbUC/tzuZvzb5f1xumV6Nwo1qkRaMvO4ekDJ9zUhQJHzfJM6
+         Pal6iuqmkZZ3E6XSVeTPutOeE2FC53IMqhKYDArsXx7CYnUcDyQApv9Que54rs+q2ZmV
+         2hIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754830952; x=1755435752;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oSlOOEhHSp0QmqGAVt0Ofk92yXA+aQmJze++Vd3SO3g=;
+        b=T1MJVp2Cgp4Yx/An4kkdNZx9TWnalEP9DLwJGUsH7oOTsfbBKu5Nu/eTIzDtc6pMT2
+         XfOFO+pJOwlfQYBS/qL2zGISUorwNQdDagRNMuVv4d7Y/995iY8lAJ90mcH05ydI07m5
+         iHo36g17NO5AM8KtegwYIzf9J4NRZftDLRExgFIEABVTLdkaiQKS8QdyCVzdNnWiIyhf
+         ZOPDKe9ryK39ZGWw1cspP4YFOHBSG2CCPqRe6r/27zKorypl6mGa/ejqFpveoj7YB3CH
+         bgueCgzDGUOO29TEmMvn/kPd3OZ/3CCtk5Y/2JMTgFOEmF9/lMRrCC/pMyE5JjuVr599
+         j6Gw==
+X-Forwarded-Encrypted: i=1; AJvYcCUC9hv1TYBBQmE7lJMm2Se/nSzw88TiZl+ZthezESdcJkI8O0AvGhSw7piNhZbJj8xNYUQYmbTcK/hU/BoT@vger.kernel.org, AJvYcCUh2u3regHOZTnbZoXORDB13c0NECUiIgW/2bUWNVIFBlz1QAUKOpqq/1Pmk8DNMo22J5BPdtWK1OdurHFphw==@vger.kernel.org, AJvYcCVpWqG3Tz5zWdogboKLTBUexBlMbCUPBIE+TXA8nM26qDTW6Zq45r3FMySJuxoGas5vy6EqoUQREDufbMMY@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWhLu44rIWbYKiO1KSyV93HXbsG/LFwSFRmTnWmEPXPPyCMRSe
+	WTCZqaGa0oDPHayQ4+kC6oTjXpD65yr7mbqNo0WS48q0px5gknOrIePUY2lMmd4/G+NvwrWFgop
+	ITnU/2yf+jgVjR2B7nkl5WSTRLouye4s=
+X-Gm-Gg: ASbGnctG6dnL6AAt+YgIV6N28RjybKwVFTWUEKBuKa0c0fWsWfmJ8oQtEfy53yZOqX8
+	fAKPWiYZDGM52lWhDL3ZrX3EUMv2TJXOMCWtumpFF3LQu+biXpHYMz6Gel+/xYY8qNWDn8B8ttR
+	+2zQQWiJN5OGcLA5L0uBa0HOFVgxG543FkxiZVe5WrDdhnsVw2PN49ACIFgr5RHnBI96QuIVX8Y
+	iDcnRY=
+X-Google-Smtp-Source: AGHT+IGc1LjBDs581anLLqxndQtaeysDoGVU+r3AisBDGvFqnux7ki0lPq5hSFTSlEIgP20ONz/YoIpX6TnfSC527jk=
+X-Received: by 2002:a17:906:9f8b:b0:ae6:f087:953 with SMTP id
+ a640c23a62f3a-af9c63b0a87mr823318466b.12.1754830951730; Sun, 10 Aug 2025
+ 06:02:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250808-tonyk-overlayfs-v3-0-30f9be426ba8@igalia.com>
+ <20250808-tonyk-overlayfs-v3-6-30f9be426ba8@igalia.com> <CAOQ4uxiDtq4LF-OVtQ6ufmcAZqLn-jqynM06RgHLgUYOW-uHHA@mail.gmail.com>
+In-Reply-To: <CAOQ4uxiDtq4LF-OVtQ6ufmcAZqLn-jqynM06RgHLgUYOW-uHHA@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Sun, 10 Aug 2025 15:02:20 +0200
+X-Gm-Features: Ac12FXz3sd9nkTZqSLTKZCKnaQeDmVdIW_6sTRxrlBzilIXPWIRh2FNlF3TnYpg
+Message-ID: <CAOQ4uxg326bEDdfKCKnoV0MnBBgRbxPEgN_41kBJv9HUdb-5dg@mail.gmail.com>
+Subject: Re: [PATCH RFC v3 6/7] ovl: Add S_CASEFOLD as part of the inode flag
+ to be copied
+To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>, 
+	Gabriel Krisman Bertazi <krisman@kernel.org>, linux-unionfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	kernel-dev@igalia.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
 
-Hi Gerhard, hi.
+On Sat, Aug 9, 2025 at 11:51=E2=80=AFAM Amir Goldstein <amir73il@gmail.com>=
+ wrote:
+>
+> On Fri, Aug 8, 2025 at 10:59=E2=80=AFPM Andr=C3=A9 Almeida <andrealmeid@i=
+galia.com> wrote:
+> >
+> > To keep ovl's inodes consistent with their real inodes, add the
+> > S_CASEFOLD flag as part of the flags that need to be copied.
+> >
+> > Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
+> > ---
+> > Changes from v2:
+> > - Instead of manually setting the flag if the realpath dentry is
+> >   casefolded, just add this flag as part of the flags that need to be
+> >   copied.
+> > ---
+> >  fs/overlayfs/overlayfs.h | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+> > index bb0d7ded8e763a4a7a6fc506d966ed2f3bdb4f06..8a9a67d2933173c61b0fa0a=
+f5634d91e092e00b2 100644
+> > --- a/fs/overlayfs/overlayfs.h
+> > +++ b/fs/overlayfs/overlayfs.h
+> > @@ -822,7 +822,7 @@ struct inode *ovl_get_inode(struct super_block *sb,
+> >  void ovl_copyattr(struct inode *to);
+> >
+> >  /* vfs inode flags copied from real to ovl inode */
+> > -#define OVL_COPY_I_FLAGS_MASK  (S_SYNC | S_NOATIME | S_APPEND | S_IMMU=
+TABLE)
+> > +#define OVL_COPY_I_FLAGS_MASK  (S_SYNC | S_NOATIME | S_APPEND | S_IMMU=
+TABLE | S_CASEFOLD)
+> >  /* vfs inode flags read from overlay.protattr xattr to ovl inode */
+> >  #define OVL_PROT_I_FLAGS_MASK  (S_APPEND | S_IMMUTABLE)
+> >
+>
+> Ok, this is simpler, but it's too simple.
+> OVL_COPY_I_FLAGS_MASK is used in copy up with the assumption that
+> all copied i_flags are related to fileattr flags, so you need something l=
+ike:
+>
+> diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
+> index 27396fe63f6d..66bd43a99d2e 100644
+> --- a/fs/overlayfs/copy_up.c
+> +++ b/fs/overlayfs/copy_up.c
+> @@ -670,7 +670,7 @@ static int ovl_copy_up_metadata(struct
+> ovl_copy_up_ctx *c, struct dentry *temp)
+>         if (err)
+>                 return err;
+>
+> -       if (inode->i_flags & OVL_COPY_I_FLAGS_MASK &&
+> +       if (inode->i_flags & OVL_FATTR_I_FLAGS_MASK &&
+>             (S_ISREG(c->stat.mode) || S_ISDIR(c->stat.mode))) {
+>                 /*
+>                  * Copy the fileattr inode flags that are the source of a=
+lready
 
-Gerhard Wiesinger - 10.08.25, 08:20:43 CEST:
-> On 28.07.2025 17:14, Kent Overstreet wrote:
-> > Schedule notes for users:
-> >=20
-> > I've been digging through the bug tracker and polling users to see
-> > what bugs are still outstanding, and - it's not much.
-> >=20
-> > So, the experimental label is coming off in 6.18.
-> >=20
-> > As always, if you do hit a bug, please report it.
->=20
-> I can now confirm that bcachefs is getting stable and the test cases
-> with intentionally data corruption (simulation of a real world case I
-> had) gets bcachefs back to a consistent state (after 2 runs of: bcachefs
-> fsck -f -y ${DEV}). That's a base requirement for a stable filesystem.
-> Version of bcachefs-tools is git
-> 530e8ade4e6af7d152f4f79bf9f2b9dec6441f2b and kernel is
-> 6.16.0-200.fc42.x86_64.
->=20
-> See for details, I made data corruption even worser with running the
-> destroy script 5x:
->=20
-> https://lore.kernel.org/linux-bcachefs/aa613c37-153c-43e4-b68e-9d50744be
-> 7de@wiesinger.com/
->=20
-> Great work Kent and the other contributors.
->=20
-> Unfortunately btrfs can't be repaired to a consistent state with the
-> same testcase. I'd like to be that testcase fixed also for BTRFS as a
-> stable filesystem (versions: 6.16.0-200.fc42.x86_64, btrfs-progs v6.15,
-> -EXPERIMENTAL -INJECT -STATIC +LZO +ZSTD +UDEV +FSVERITY +ZONED
-> CRYPTO=3Dlibgcrypt).
->=20
-> (I reported that already far in the past on the mailing list, see here:
-> https://lore.kernel.org/linux-btrfs/63f8866f-ceda-4228-b595-e37b016e7b1f
-> @wiesinger.com/).
+Which reminds me that you also need to verify that a copied up directory
+conforms to the ofs->casefold expectation, because there is no code
+to make the copied up directory casefolded.
 
-Thanks for this great find and these test results.
+We can assume that layers check has already verified that upperdir/workdir
+are casefold correct, but we need to verify that $workdir/work/$tmpdir crea=
+ted
+by ovl_create_temp() has inherited the expected casefolding.
 
-On a technical perspective I still think the Linux kernel is a better=20
-kernel with BCacheFS included.
+Same goes for ovl_mkdir(), we must verify that the new created dentry/inode
+conform to the expected ofs->casefold.
 
-And write this without having had any issues =E2=80=93 except for bad perfo=
-rmance=20
-especially on hard disks, but partly also on flash =E2=80=93 with BTRFS. An=
-d I use=20
-it on a couple laptops, some virtual machines and a lot of external disks.=
-=20
-But not on a multi device setup. I had a BTRFS RAID 1 for a long time.=20
-This also has been stable since kernel 4.6 up to the time I still used it.
+I think this check in ovl_create_real() should cover both cases:
 
-So I did not really have much of a need to fsck BTRFS.
+diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
+index 70b8687dc45e..be8c5d02302d 100644
+--- a/fs/overlayfs/dir.c
++++ b/fs/overlayfs/dir.c
+@@ -187,6 +187,11 @@ struct dentry *ovl_create_real(struct ovl_fs
+*ofs, struct dentry *parent,
+                        /* mkdir is special... */
+                        newdentry =3D  ovl_do_mkdir(ofs, dir, newdentry,
+attr->mode);
+                        err =3D PTR_ERR_OR_ZERO(newdentry);
++                       /* expect to inherit casefolding from
+workdir/upperdir */
++                       if (!err && ofs->casefold !=3D
+ovl_dentry_casefolded(newdentry)) {
++                               dput(newdentry);
++                               err =3D -EINVAL;
++                       }
+                        break;
 
-Best,
-=2D-=20
-Martin
-
-
+Thanks,
+Amir.
 
