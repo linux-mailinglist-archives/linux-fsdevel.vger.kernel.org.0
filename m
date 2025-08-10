@@ -1,135 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-57234-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57235-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AC89B1FA70
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Aug 2025 16:33:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D01CB1FA74
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Aug 2025 16:37:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1205189617F
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Aug 2025 14:33:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F125173970
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Aug 2025 14:37:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8CD2263892;
-	Sun, 10 Aug 2025 14:33:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9027F268688;
+	Sun, 10 Aug 2025 14:37:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KBPtTeFC"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="smDhgsk6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9901927462;
-	Sun, 10 Aug 2025 14:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EF0B2E3702;
+	Sun, 10 Aug 2025 14:37:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754836385; cv=none; b=sPU6osiZUC0D9BLmpJVU69DQytAZFXHtpTS4PaIvOANpKlpO+Xn3UPsill4vZszKZWSXcZwyrXYl2UjXf8qbN7+Ayb1+pXfHS4woK/SGqhpk27AJCmMPqtLvtdfF4DRXHSlWsd16SH1w7YMzRiDxJYUQWIXzEKIlW54FX7NV0lk=
+	t=1754836663; cv=none; b=XNS7Skg7imG22rhVTSrQSdJQXYiAt/Faa0iJrgJVNUu0YNNBKOy/uHqE9Ru0kmfaHRrx2WzCJNAyKTD8N2TkeFfltxYkoCQK9KlOccx3at7Gfk2ENYGpg+hkxJ9gKsy1SGyR7fQ6l6GKazhBg5LLPiYAHvP+lBrn53QrSE11T4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754836385; c=relaxed/simple;
-	bh=CJhjBKExR3c7p9ihQ8Yq1x9T2uLUyzu7TUtb7fzt74s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V+nX3eJ7bP9rThbKkk9wIvnIweQ6Lox2FtSCVT2Nr+9tIbAkdGpCm4uNZnZJvXcnTBjQ5s0eO4Fj1nFmCarXlgOscp8iHt8GjSxJ2D13NU3Cl62SvpIgydUoQ8il10IrxetQzgUFxp4CXwPWI8ZPV5gkZsHo/wS8QUL+sgsMlxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KBPtTeFC; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ae9c2754a00so682538666b.2;
-        Sun, 10 Aug 2025 07:33:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754836382; x=1755441182; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CJhjBKExR3c7p9ihQ8Yq1x9T2uLUyzu7TUtb7fzt74s=;
-        b=KBPtTeFCRJeoZAFx0nCuPxUJabtsJWh3pyYBNEnw1SwhTyDyOuNzn3WYVGafltAbka
-         X1QJxK48r2TV6jH91zMJO1jXuqPM6El/PC0JvAlLIHNTy+Y5yqC1yq5q0/Gquc8ZTD1d
-         /d9Fut3mg94KoFlsMYMyi+QLclP7IG1Z6O7W0AhBWLTmjVkGE4BhxF6u3op80kRE+3z6
-         i8Q23ANFd+of2dQrsDBqWmhJLX9IRe9bU4whBTlTSdmOrHsfQY2nd+8BJj88feh+PP6U
-         GTo5WrMZk+mD7gEBzB2O4q71CovGJAh/U5/WbeBiiYdXY9/9mfepVrHVEVtRbgnWoGAl
-         wZnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754836382; x=1755441182;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CJhjBKExR3c7p9ihQ8Yq1x9T2uLUyzu7TUtb7fzt74s=;
-        b=WoX0G1OnFj4tC/YEOMbvXUXjn2xRt0mwDmWRgDHsQt58Ew3fq/wNXN1Fr7qBieVdSp
-         YkU1iaBodWreDt9C/7watvaXWmI2pLXugrISxwkDdhk7F9tRuPNnrJ7iGM+Csk3x/H3G
-         dO/ukoOPYhzUKOS1aQzEcHxUJ41wygvIR4KSyOUG7RPnJdXjDi2wRnVH5ZjxYLfQClYa
-         lhBjn7GjpHZU06Nx1OHID5r6nnyDcTKKe/f6LQ0dKOlBDYyE1XuqBAZtBxtmvs6iOk7J
-         ZqBHH1oBFPuDpeTg1qRhlRzpon0rNSUbyN71093st3EHDH67RtzGO6CS8tPOiO3mhLlW
-         GjLw==
-X-Forwarded-Encrypted: i=1; AJvYcCU53qAjyIXZsKfpMw6L0NvDQ3f97znWeJcT4h5f2RLLyQz81qsA1qqbJwEY0IbF6M/tapl9ajHK1NFOLoME@vger.kernel.org, AJvYcCVGrFBfMkqdm2GvUHO/y/x59PAD++KDZwPwaYZZLy+mNVlxM1A8rQ+sZZ5h2i+cAoISBvueG42dWFLJ4384@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwLfKCZdV45PG8GWtyt2ggMuEoZPrPViFaXhng3a0g7gDXbRAN
-	DNmBYVxec8TWef+RKd55sUqarn/EajdIFPsIQUzH9ziOYG9ThrtutLPtbcvEvbfSvNXS/pCNOS/
-	XYbFiPECJ5fvEGJD5e130S8mU3tkDJcHdZCqep/s=
-X-Gm-Gg: ASbGncs1No6J9kdubG16Vr2pdN2z7hkI1GpM2xLPEWfVzIc06E4TnkRzOb+VwRGtN5l
-	LLkIXc3jigzp1KQj9CiCw5Yi/KaUxHk2Lxzq1sfSZEQngjKR1aTtgPNP/bNqQRNoatdQFhx4V6W
-	BhYERcZkgkajMvBUXZveqMheOPZuI23JI0ym+VsLn7KLr3DU0GS+0YEmhKtelCFzNEtPilpKUAX
-	dAhQnk=
-X-Google-Smtp-Source: AGHT+IEmLFippxPo1yWpvRmkH1XCrTMyj2CVWyfRoMuEjgvGmddka6dEo2F6UI78eEYemrSb84SZ3W0I36GxnJQguZw=
-X-Received: by 2002:a17:907:934a:b0:ae6:f163:5d75 with SMTP id
- a640c23a62f3a-af9c63b017dmr764449266b.11.1754836381487; Sun, 10 Aug 2025
- 07:33:01 -0700 (PDT)
+	s=arc-20240116; t=1754836663; c=relaxed/simple;
+	bh=IxAxzw5kkdQJ03Mopc1VqfjQUYdRD1B5ji6NLutB1tg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ibovmz74TGWcKErobP5/FNzE6CRuZ1xiQpK66IlPNc9BcJAUs7tPAZbz/hSV4HUwVDSL69eFtnZbzuVKbm4JNlo0xoaA00G+HNF+wTACvdfD81hoyMEY+g864IpOQxQqoGF2y4ifIiAx9LAGwacO56b9YA4e96Qwqx1aoAyigQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=smDhgsk6; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=rC0/MyEJFfsNrbJCBEWzCqib5fE9JZLKVZpwjQH0ewA=; b=smDhgsk6XIvrYy+XhWieKJKQcZ
+	ncECLq7Cy24P5MVUJeUYT4eN1n0OddH56m+G7QwnZbrOoh//XTCHWZTGDUB8NLpvk7Ih6fGNGyXAD
+	WCXMbzVANzPelgMlCv2yk7w2BMFiY0Xf1EPk7WfjboByvaRNy8I2Z9BwICNseYVr69JkAfLK9BbO9
+	pOie0cx77MyAnnnFicHSoli+RRQVNqC8BdG4iLnxmKZLnORoWTBP+UpIP4Ng4EpkGG8gRCRzxbamc
+	o1AVx0GjvjkojxXbSKcMWOr9CaJdcFd/i5p2yaNc8xefKRTzHwDTB+7dFERfSuGvdkpL5qD2T+FOD
+	cPtTqpfg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ul7B2-00000005hbi-1PqT;
+	Sun, 10 Aug 2025 14:37:36 +0000
+Date: Sun, 10 Aug 2025 07:37:36 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Keith Busch <kbusch@meta.com>
+Cc: linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, snitzer@kernel.org, axboe@kernel.dk,
+	dw@davidwei.uk, brauner@kernel.org, Keith Busch <kbusch@kernel.org>,
+	Hannes Reinecke <hare@suse.de>
+Subject: Re: [PATCHv2 1/7] block: check for valid bio while splitting
+Message-ID: <aJiusAtZ-CsnPTOR@infradead.org>
+References: <20250805141123.332298-1-kbusch@meta.com>
+ <20250805141123.332298-2-kbusch@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAOQ4uxhmA862ZPAXd=g3vKJAvwAdobAnB--7MqHV87Vmh0USFw@mail.gmail.com>
- <20250804173228.1990317-1-paullawrence@google.com> <CAOQ4uxiFVt8eVmP5hUkjvascK-rVNyZzAec_tiGQf7N0PYDdTQ@mail.gmail.com>
-In-Reply-To: <CAOQ4uxiFVt8eVmP5hUkjvascK-rVNyZzAec_tiGQf7N0PYDdTQ@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Sun, 10 Aug 2025 16:32:50 +0200
-X-Gm-Features: Ac12FXxr9byjNW2nQMobzxNF-4ZzU1DKKMiM6TnNG_zfEaqNRdDpRWqdvRy20Iw
-Message-ID: <CAOQ4uxgYgbzcR1XV1kM6hEis6Lfnbo0xWYzdc0exAAPq-M6rew@mail.gmail.com>
-Subject: Re: [PATCH 0/2] RFC: Set backing file at lookup
-To: Paul Lawrence <paullawrence@google.com>
-Cc: bernd.schubert@fastmail.fm, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, miklos@szeredi.hu
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250805141123.332298-2-kbusch@meta.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Sun, Aug 10, 2025 at 3:25=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
- wrote:
->
-> On Mon, Aug 4, 2025 at 7:32=E2=80=AFPM Paul Lawrence <paullawrence@google=
-.com> wrote:
-> >
-> > Based on our discussion, I put together two simple patches.
-> >
-> > The first adds an optional extra parameter to FUSE_LOOKUP outargs. This=
- allows
-> > the daemon to set a backing file at lookup time on a successful lookup.
-> >
-> > I then looked at which opcodes do not require a file handle. The simple=
-st seem
-> > to be FUSE_MKDIR and FUSE_RMDIR. So I implemented passthrough handling =
-for these
-> > opcodes in the second patch.
-> >
-> > Both patches sit on top of Amir's tree at:
-> >
-> > https://github.com/amir73il/linux/commit/ceaf7f16452f6aaf7993279b1c10e7=
-27d6bf6a32
-> >
->
-> I think you based your patches on ceaf7f16452f^ and patch 1/2 replaces co=
-mmit
-> ceaf7f16452f ("fuse: support setting backing inode passthrough on getattr=
-")
->
-> Right?
->
-> That makes sense to me because that last patch was a hacky API,
-> but then you made some other changes to my patch which I did not understa=
-nd why.
+On Tue, Aug 05, 2025 at 07:11:17AM -0700, Keith Busch wrote:
+> @@ -341,6 +344,8 @@ int bio_split_rw_at(struct bio *bio, const struct queue_limits *lim,
+>  	 * we do not use the full hardware limits.
+>  	 */
+>  	bytes = ALIGN_DOWN(bytes, bio_split_alignment(bio, lim));
+> +	if (!bytes)
+> +		return -EINVAL;
 
-Push a new version of fuse-backing-inode-wip based on
-https://github.com/amir73il/libfuse/commits/fuse_passthrough_iops/
+How is this related to the other hunk and the patch description?
 
-Please base your work on the above branch with the helpers instead of
-modifying them.
-
-Thanks,
-Amir.
 
