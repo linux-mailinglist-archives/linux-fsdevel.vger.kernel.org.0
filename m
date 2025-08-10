@@ -1,166 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-57228-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57229-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FF78B1F99C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Aug 2025 12:17:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD773B1F9A2
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Aug 2025 12:22:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 956C5189904B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Aug 2025 10:17:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 406857A3579
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Aug 2025 10:21:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C68B25BEF2;
-	Sun, 10 Aug 2025 10:16:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mFbw6hvG"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE910246787;
+	Sun, 10 Aug 2025 10:22:39 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.lichtvoll.de (lichtvoll.de [37.120.160.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6581223FC42;
-	Sun, 10 Aug 2025 10:16:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 185CEB663;
+	Sun, 10 Aug 2025 10:22:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.120.160.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754820968; cv=none; b=OA0MIuIQD6QBaxcl3RvlCnvQCMRZtka9AxN0AEqBYuRLEr6uL9p1KADcs300r0XF6CQJ6I1oHVQpqVXe2ykAaX0E4jM8D+8JXEhcgD46rlVDCsVZmdxYLVBQtZF06R0gQcGonDPhEk4K6slX2Mrfy0iqZvoa16GrgvhRYrc6HwI=
+	t=1754821359; cv=none; b=dF8ZvCwIdGJsSyOANRXDMplxtZtHOzZwaNSu/AH7E+YliAP/fXPbakqoidgsYGVT9+7IeJmIaW2izkDkaADNyak8yJqJU7aqJQ70zofL7ntarIHPAt03QCRtq0hTVYgCdxKllTwouRKf/zRGLdjWbWSnH09pGkLpQL0OtEG/RQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754820968; c=relaxed/simple;
-	bh=rDQIx1s6A6hGmi9HbZcEjXtoTdyxpU+DpS5cyiDpCqs=;
+	s=arc-20240116; t=1754821359; c=relaxed/simple;
+	bh=0I9+2+UqEr/TPvVHGXFmqel3QSDQnTF6p3y0uqQOGzU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DDe/fbt9pB5rHEhzhk5lpxR/RHoj/jqZNP0DwqDCCgQZvhGwTaI3r8AAUbqOvegCEJJLSEVzujjKNUuRCKvhOd3UfkygbxC+YVGXeTebvJAcTnDkDSW9fII1o6PfiLz9M6jb2YPkvb7wmG8kv9sXkrQwDWGv34hIzRKfpLHHQxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mFbw6hvG; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b34a8f69862so2490250a12.2;
-        Sun, 10 Aug 2025 03:16:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754820967; x=1755425767; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y2OT5F7bZ/arjZTso2AUwwEE0thLjDqJvHVad93pKuM=;
-        b=mFbw6hvGLvoMahE0p51EHAvIUB3WPzywNgIvWj8QsbqTaq+/pMM9y8Gdi/hXytJqep
-         1pru4AksJ9UddzlisCFr0aEjZTR2Bbja7tJb3ws38trz54NCBZu/MA9G9Wt2meCKQlfv
-         +zxDKifr9/SWtJ+QaP9T48drAZ9WzG4+gBAVDPxqVPH7F5ql4NGSC8iVMleBBnwGlBC3
-         iTraatSIQ4b3Htuuu3G32Zw6APLScJo8S4aa/YByMn4f4SDJo99XIayvPQ4yYuKJYdKQ
-         uwQ38oB3WSh2boQolLrmicWKr2Kmo9nCPMAP7B8BohAYJD3Lrr1FyQ5ydv9kk4OGleiv
-         IiMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754820967; x=1755425767;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=y2OT5F7bZ/arjZTso2AUwwEE0thLjDqJvHVad93pKuM=;
-        b=w3LLOQxDrJY2Mfeba7CitJANmCaTVDu159IEHed6qDcwISS+9lgMjyklrCILjbaPtV
-         mFiEAXFwRBZ/UQeTVj5env44XC3JPm8D1COFJM6lLDVDfLlAJLXvwNwnJTBOAvZDkvrV
-         9qLzejUgmJXc1QEfjET3IVg/gWoXON/4mpuCVpl+Sr3zN+UpAXektU3vyh0E38cmSMMa
-         TVxebOgXNy3JQnXgD3/9Cinn2KvBJpcfmIiHpUw8e3Tckr87AdVBKVrZYTgNz6O6pTJ/
-         pyiPALipThCH3B1pMvDoHOvsx9eYjzSUGuZjUJVQI0X/3Q8vsP7NJUbxyZZyfxCCZFJ2
-         iFoA==
-X-Forwarded-Encrypted: i=1; AJvYcCWJy+L+DYt1sFEwR/9e/dTbvpf3plkZFncRHHv7bAOn8juyDkGaVvMBfKBN0Hsdx6YPm2M4Jz54kd7pcDID@vger.kernel.org, AJvYcCXQM74ixIaCknYoLjRkw3XFdGoMPRXsHU2gqxdxAg21uRKScB1uI/tnp4aQcswg1ZHNV38EfQVvUxF4sV5Y@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyp1euaY+W1QPX3wfLxb/4zDEIT4vzOWx+r0NnWG5oBwZq23PRg
-	+zaUs2IG1SMZa/FA9YLHJNDE0YYRrs+3mvbEr6mZ/HNLeHpH+KwceQjM
-X-Gm-Gg: ASbGncsLcPywx2W386SnOAGEkJokk8IfLnqGV91jTk1iRw+i1UUeLqPoEny5BxvXxc6
-	j4tA3CK3fvIxB9qgcuzjWBTNJK3nOPnt7CfDz4dp3f9CwAtGFWnBB/b49mQRtxG+XFinh5mQAx/
-	eW4JzM046p3/EuUpN1xnlBfmHOHQaHkRiKmpnt4rBfWa5LzmyLtZs/89tWzrCG6RmmkUXCpL+ft
-	oVAjIIFoaxU49SVUyoMkUd2YxQdUHbSvsqRzV1ipv7fU4zOaUwNIc/nH0jxsXp1OfeZdM9K4xal
-	HtT4gqmZWIfmmnG5JKMr8AhBEJ5YFhu1JTtqN5blqHo7dZlLBCHCrOyePwotCavI+he+vDF1vVB
-	YY1Fij/aTBCNzoyW4g8N/D8qU2Py8pJPapjXwBmNIO4Rfcg==
-X-Google-Smtp-Source: AGHT+IEfzIB/bMwT0gz0dl/X1susnwXrNxFT85X7Tg/EAtUZIdu1PG7GaBu71SPqPgTGFInFXAWt6A==
-X-Received: by 2002:a17:90b:48c4:b0:31e:fe18:c6df with SMTP id 98e67ed59e1d1-32183e32f54mr15165340a91.16.1754820966597;
-        Sun, 10 Aug 2025 03:16:06 -0700 (PDT)
-Received: from VM-16-24-fedora.. ([43.153.32.141])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32161259329sm11923432a91.17.2025.08.10.03.16.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Aug 2025 03:16:06 -0700 (PDT)
-From: alexjlzheng@gmail.com
-X-Google-Original-From: alexjlzheng@tencent.com
-To: brauner@kernel.org,
-	djwong@kernel.org
-Cc: linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jinliang Zheng <alexjlzheng@tencent.com>
-Subject: [PATCH v2 4/4] iomap: don't abandon the whole thing with iomap_folio_state
-Date: Sun, 10 Aug 2025 18:15:54 +0800
-Message-ID: <20250810101554.257060-5-alexjlzheng@tencent.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250810101554.257060-1-alexjlzheng@tencent.com>
-References: <20250810101554.257060-1-alexjlzheng@tencent.com>
+	 MIME-Version:Content-Type; b=bThPm1W2do0BOoqJtlX3Qpq+Pz4KyfLK/Sp7NoKpGfs7k+mpoD6rAuk9dg+9SgTouRn+voJQk51CgSCiyE/N9YtwR4/mkcgn4Y2Czp68T0yFgqGNgGg286NUybcjEFwko/o1/NzIK9+ev8wj11ol1HUttnwNGIdB+yPegfVlL2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lichtvoll.de; spf=pass smtp.mailfrom=lichtvoll.de; arc=none smtp.client-ip=37.120.160.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lichtvoll.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtvoll.de
+Received: from 127.0.0.1 (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature ECDSA (secp384r1) server-digest SHA384)
+	(No client certificate requested)
+	by mail.lichtvoll.de (Postfix) with ESMTPSA id 4418412E120;
+	Sun, 10 Aug 2025 10:22:33 +0000 (UTC)
+Authentication-Results: mail.lichtvoll.de;
+	auth=pass smtp.auth=martin@lichtvoll.de smtp.mailfrom=martin@lichtvoll.de
+From: Martin Steigerwald <martin@lichtvoll.de>
+To: "Gerald B. Cox" <gbcox@bzb.us>, Theodore Ts'o <tytso@mit.edu>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+ Sasha Levin <sashal@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
+ Aquinas Admin <admin@aquinas.su>,
+ Malte =?UTF-8?B?U2NocsO2ZGVy?= <malte.schroeder@tnxip.de>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ "Carl E. Thompson" <list-bcachefs@carlthompson.net>,
+ linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] bcachefs changes for 6.17
+Date: Sun, 10 Aug 2025 12:22:30 +0200
+Message-ID: <3371119.aeNJFYEL58@lichtvoll.de>
+In-Reply-To: <20250810055955.GA984814@mit.edu>
+References:
+ <1869778184.298.1754433695609@mail.carlthompson.net>
+ <CACLvpcxmnXFmgfwGCyUJe1chz5vLkxbg3=NzayYOKWi4efHrqQ@mail.gmail.com>
+ <20250810055955.GA984814@mit.edu>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-From: Jinliang Zheng <alexjlzheng@tencent.com>
+Hi Theodore, hi,
 
-With iomap_folio_state, we can identify uptodate states at the block
-level, and a read_folio reading can correctly handle partially
-uptodate folios.
+Theodore Ts'o - 10.08.25, 07:59:55 CEST:
+> On Sat, Aug 09, 2025 at 09:26:16PM -0700, Gerald B. Cox wrote:
+> > And really, this whole thread feels beneath what the kernel community
+> > should be. If there=E2=80=99s a serious question about bcachefs=E2=80=
+=99s future, it
+> > ought to be a quiet, direct conversation between Kent and Linus=E2=80=
+=94not a
+> > public spectacle.
+>=20
+> There has been private conversations with Kent.  I will note that it
+> was *Kent* who started this most recent round of e-mails[1].  In his
+> e-mail, He slammed the Linux Kernel's "engineering standards", and
+> btrfs in particular.  I won't quote any of it here, because it really
+> is quite toxic, but please note that it was Kent who started the
+> discussion about btrfs.  This kind of attack is Just Not Helpful, and
+> this kind of behavior is, unfortunately, quite common coming from
+> Kent.
+>=20
+> [1]
+> https://lore.kernel.org/all/3ik3h6hfm4v2y3rtpjshk5y4wlm5n366overw2lp72q
+> k5izizw@k6vxp22uwnwa/
 
-Therefore, when a partial write occurs, accept the block-aligned
-partial write instead of rejecting the entire write.
+I kind of agree that this thread would have gone better without this mail=20
+from Kent.
 
-Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
----
- fs/iomap/buffered-io.c | 32 +++++++++++++++++++++++++++-----
- 1 file changed, 27 insertions(+), 5 deletions(-)
+Best,
+=2D-=20
+Martin
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index f80386a57d37..19bf879f3333 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -873,6 +873,25 @@ static int iomap_write_begin(struct iomap_iter *iter,
- 	return status;
- }
- 
-+static int iomap_trim_tail_partial(struct inode *inode, loff_t pos,
-+		size_t copied, struct folio *folio)
-+{
-+	struct iomap_folio_state *ifs = folio->private;
-+	unsigned block_size, last_blk, last_blk_bytes;
-+
-+	if (!ifs || !copied)
-+		return 0;
-+
-+	block_size = 1 << inode->i_blkbits;
-+	last_blk = offset_in_folio(folio, pos + copied - 1) >> inode->i_blkbits;
-+	last_blk_bytes = (pos + copied) & (block_size - 1);
-+
-+	if (!ifs_block_is_uptodate(ifs, last_blk))
-+		copied -= min(copied, last_blk_bytes);
-+
-+	return copied;
-+}
-+
- static int __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
- 		size_t copied, struct folio *folio)
- {
-@@ -886,12 +905,15 @@ static int __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
- 	 * read_folio might come in and destroy our partial write.
- 	 *
- 	 * Do the simplest thing and just treat any short write to a
--	 * non-uptodate page as a zero-length write, and force the caller to
--	 * redo the whole thing.
-+	 * non-uptodate block as a zero-length write, and force the caller to
-+	 * redo the things begin from the block.
- 	 */
--	if (unlikely(copied < len && !folio_test_uptodate(folio)))
--		return 0;
--	iomap_set_range_uptodate(folio, offset_in_folio(folio, pos), len);
-+	if (unlikely(copied < len && !folio_test_uptodate(folio))) {
-+		copied = iomap_trim_tail_partial(inode, pos, copied, folio);
-+		if (!copied)
-+			return 0;
-+	}
-+	iomap_set_range_uptodate(folio, offset_in_folio(folio, pos), copied);
- 	iomap_set_range_dirty(folio, offset_in_folio(folio, pos), copied);
- 	filemap_dirty_folio(inode->i_mapping, folio);
- 	return copied;
--- 
-2.49.0
 
 
