@@ -1,110 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-57220-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57221-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1954B1F94F
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Aug 2025 10:04:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55449B1F951
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Aug 2025 10:04:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7D6A3BEBAB
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Aug 2025 08:02:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAC3D163D1B
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Aug 2025 08:03:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31D98274B56;
-	Sun, 10 Aug 2025 08:00:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sMaXqJKa"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EDED2356C6;
+	Sun, 10 Aug 2025 08:03:04 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.lichtvoll.de (lichtvoll.de [37.120.160.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB4926E6FF;
-	Sun, 10 Aug 2025 08:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22DAF6DCE1;
+	Sun, 10 Aug 2025 08:02:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.120.160.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754812813; cv=none; b=QS6RbrbzF59bZpJR00KrpcA7Ks6IsFGGYuUtRnucMPDDaHGb98piTdAatuz/KIpllCXnCgV2s65IWtXXzEsVExPKuvg4d+tIOZg5sHXFXNXEn9+FWOFslO0FVPriPjsqCHlaj1vdOMiYYPrH6DTiCn7Jry/lOsPmPoOcbUiLPT0=
+	t=1754812983; cv=none; b=mFo00cOkfCFLN0z7VjfoInbiixGq7YsKIQ3PK8yN65v103skkSbk+aPTlzH9G84BKg6MaaeQqQvpqttFRJtdKjy0VtHdikuF88toeb3AlqE9ur3CBapyPQHxbcVjC4wBNIT+SfeVY+4jc/FKBoAbZtQeOvsxOh5/D8wBtn/3FvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754812813; c=relaxed/simple;
-	bh=rH4xOjWHyO4rXuGnXUPR48o6Mlex3OOttISDvsv5E9s=;
+	s=arc-20240116; t=1754812983; c=relaxed/simple;
+	bh=ADRozaRnU5m4kHiz5jjiFKrDWtNl3Wz0lFtyPVMGAZk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bdWLoldjYHHI/mH8u6KJMh6qo5c05Gy2pSGfRSqYJuA0bEZDrxTA4yc0EiBwzvspnB329Epv80/nQeYRIa/i/prD+1BSiu1rnuo49xonHFZNVZpcvnrIxH2WMYX/1wDEtoMQDOhppESlgzJBnj41qe7sNonAlZMtvV9HsSWHCc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sMaXqJKa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 199D3C4CEEB;
-	Sun, 10 Aug 2025 08:00:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754812813;
-	bh=rH4xOjWHyO4rXuGnXUPR48o6Mlex3OOttISDvsv5E9s=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=sMaXqJKa2KxH6f4tMBBaWdPiIEWUPBUacPolQNKXvYj7y1z5EdTS9Ztn04re75Tzb
-	 Von+ZDv71Est4yhSEseq9WQNpCJ5tYDDeTnayh3M7Ljc6Z5LkP+X1xTHvCmVmnK62o
-	 3fFoQXIgkxTTpk30YcZ1TJeOyR6HE6cw0xQlu6QUNcpP4gKaVMPy6BWuJYymPZm+si
-	 9rGzeRe7mySUbOWFc0+2EcQHLZTC4EgyqFre8OARwwRm7N8e3UuA4+gMwWTizV3tt5
-	 i+cgenU4mq/isXW8C68emNfvbILzzQPczeVWKyKRxfEEbcTnIOkWQnm7zeTHl03ugW
-	 6uTqLHCGI1q/g==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-fscrypt@vger.kernel.org,
-	fsverity@lists.linux.dev
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-mtd@lists.infradead.org,
-	linux-btrfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>,
-	Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH v5 13/13] fsverity: check IS_VERITY() in fsverity_cleanup_inode()
-Date: Sun, 10 Aug 2025 00:57:06 -0700
-Message-ID: <20250810075706.172910-14-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250810075706.172910-1-ebiggers@kernel.org>
-References: <20250810075706.172910-1-ebiggers@kernel.org>
+	 MIME-Version:Content-Type; b=WqT0Z4MNCB4RVLU0IF9+NK0qacMA+WrRmsmLkYd4LRGGg92zO6YMMbYYcGKrKHRnFbiJ14PIIQNFYY86Pd8C5+pEOVb4gNZkZQiOCwRkiRMJgd+RcDsg3jCeEA5MejtquR9lXRw/2H6G04WBXNVzqhDZ/bh54ZkHWCi5m8T3EKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lichtvoll.de; spf=pass smtp.mailfrom=lichtvoll.de; arc=none smtp.client-ip=37.120.160.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lichtvoll.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtvoll.de
+Received: from 127.0.0.1 (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature ECDSA (secp384r1) server-digest SHA384)
+	(No client certificate requested)
+	by mail.lichtvoll.de (Postfix) with ESMTPSA id 9612312DFD1;
+	Sun, 10 Aug 2025 08:02:48 +0000 (UTC)
+Authentication-Results: mail.lichtvoll.de;
+	auth=pass smtp.auth=martin@lichtvoll.de smtp.mailfrom=martin@lichtvoll.de
+From: Martin Steigerwald <martin@lichtvoll.de>
+To: Theodore Ts'o <tytso@mit.edu>, Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Josef Bacik <josef@toxicpanda.com>, Aquinas Admin <admin@aquinas.su>,
+ Malte =?UTF-8?B?U2NocsO2ZGVy?= <malte.schroeder@tnxip.de>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ "Carl E. Thompson" <list-bcachefs@carlthompson.net>,
+ linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] bcachefs changes for 6.17
+Date: Sun, 10 Aug 2025 10:02:46 +0200
+Message-ID: <1935642.tdWV9SEqCh@lichtvoll.de>
+In-Reply-To: <k6e6f3evjptze7ifjmrz2g5vhm4mdsrgm7dqo7jdatkde5pfvi@3oiymjvy6f3e>
+References:
+ <22ib5scviwwa7bqeln22w2xm3dlywc4yuactrddhmsntixnghr@wjmmbpxjvipv>
+ <20250810022436.GA966107@mit.edu>
+ <k6e6f3evjptze7ifjmrz2g5vhm4mdsrgm7dqo7jdatkde5pfvi@3oiymjvy6f3e>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-Since getting the address of the fsverity_info has gotten a bit more
-expensive, make fsverity_cleanup_inode() check for IS_VERITY() instead.
-This avoids adding more overhead to non-verity files.
+Hi Kent, hi,
 
-This assumes that verity info is never set when !IS_VERITY(), which is
-currently true, but add a VFS_WARN_ON_ONCE() that asserts that.  (This
-of course defeats the optimization, but only when CONFIG_VFS_DEBUG=y.)
+Kent Overstreet - 10.08.25, 05:17:44 CEST:
+> I think you guys have been taking this a bit too far.
 
-Signed-off-by: Eric Biggers <ebiggers@kernel.org>
----
- include/linux/fsverity.h | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+I am not sure who is right here. Or right to what extend.
 
-diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
-index 844f7b8b56bbc..5bc7280425a71 100644
---- a/include/linux/fsverity.h
-+++ b/include/linux/fsverity.h
-@@ -188,12 +188,19 @@ void __fsverity_cleanup_inode(struct inode *inode);
-  *
-  * Filesystems must call this on inode eviction to free the inode's verity info.
-  */
- static inline void fsverity_cleanup_inode(struct inode *inode)
- {
--	if (*fsverity_info_addr(inode))
-+	/*
-+	 * Only IS_VERITY() inodes can have verity info, so start by checking
-+	 * for IS_VERITY() (which is faster than retrieving the pointer to the
-+	 * verity info).  This minimizes overhead for non-verity inodes.
-+	 */
-+	if (IS_VERITY(inode))
- 		__fsverity_cleanup_inode(inode);
-+	else
-+		VFS_WARN_ON_ONCE(*fsverity_info_addr(inode) != NULL);
- }
- 
- /* read_metadata.c */
- 
- int fsverity_ioctl_read_metadata(struct file *filp, const void __user *uarg);
--- 
-2.50.1
+And maybe that is not even the question.
+
+But Kent, if your priority is the users of BCacheFS, look at the result:
+
+The current result is a disservice to users.
+
+Maybe even a huge one.
+
+And likely a disservice to developers as well.
+
+Is this result really what you like to achieve?
+
+Cause if not, I can assure you that by doing the same thing over and over=20
+and over again you will yield exactly the same result over and over and=20
+over again. Just look at the past: This has been going in *predictable*=20
+cycles.
+
+If you go on to do the same thing over and over again that drives off=20
+people, then that is exactly the result you will be receiving.
+
+So if you do not adapt your behavior and do something *different* next=20
+time=E2=80=A6 *whether you like it or not* (!) you need to wait until someo=
+ne else=20
+does. And that "until" may never happen. You can only influence what you=20
+do. So do you like to continue to give the power to change something in=20
+here to someone else by blaming everyone but you? That would be a lot of=20
+wasted energy.
+
+You are not going to change the dynamics of power within the kernel=20
+development community by what you have been doing all the time.
+
+Of course this goes the other way around as well: As long as people try to=
+=20
+change each other in here, this is not going anywhere. The only change you=
+=20
+can affect is a change within yourself.
+
+So maybe take a while off mail, breathe deeply and meditate or do whatever=
+=20
+helps you to see what within you contributes to the result we see here. I=20
+will do the same.
+
+All in all again I point out: This cannot by solved by writing mails. You=20
+need to *speak* to each other.
+
+Enough already.
+
+Best,
+=2D-=20
+Martin
+
 
 
