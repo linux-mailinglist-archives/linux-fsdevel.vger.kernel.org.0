@@ -1,80 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-57202-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57203-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11EC8B1F893
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Aug 2025 08:06:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9068CB1F89A
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Aug 2025 08:21:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A152716BEAA
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Aug 2025 06:06:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26083160C0C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Aug 2025 06:21:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B91E31F3BAE;
-	Sun, 10 Aug 2025 06:06:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42467229B36;
+	Sun, 10 Aug 2025 06:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=wiesinger.com header.i=@wiesinger.com header.b="NxcgECf6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.carlthompson.net (charon.carlthompson.net [45.77.7.122])
+Received: from vps01.wiesinger.com (vps01.wiesinger.com [46.36.37.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CADD51E520B;
-	Sun, 10 Aug 2025 06:06:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.77.7.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DF88376;
+	Sun, 10 Aug 2025 06:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.36.37.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754805970; cv=none; b=BwexFPKAMQ3pmSfU1XbgqTLE8vvlvEVCHGtoHdQcIE4IqttaKtHP83B5kOtjAZmrK9AU64dBNdCkix0t6NxGAXt2NuWrj3XN3RGN07pmi85CK90/QzX101MAojPnQIc2b3bfBiKRaNfXa4sDhVZxdyAngxOYwUzDeK9+hq54k7s=
+	t=1754806852; cv=none; b=iTcdud4AL4PEdVTMQOs8B3pPmH9EPOEYBFXGBCk/zsmggVyjhMIvVl3Zairs47HJyvgdFl5Xaf/6rc3XhjVE1X3d0PpdXXFPbSIP8vPGUqSq7ocot5DR96ZN6v/c/nxGpssBBBPv/WvBqmJ7hKeJDfY2y3bzdfYd1EbMmX5kbTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754805970; c=relaxed/simple;
-	bh=a+BZgYmi7k3vnE2eh4pZZC/qkKUR0kd5fvjKOuGsfYc=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=HrWXVhRd/vMQBpfZAXkKqL1DxyzhWz6sFi4xMt7RThpOgJMiorqbbhdrO63w1FUbdNVf2WBDc7QTzPmuZTjFaimBaz9pViTASv8iUmdoq7G8C6Qd/qM7CeZxFkjKTmsLxzFsnBIw2KrBBYwoi7MVzpclcNuFw5JIOckg+bXd3lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=carlthompson.net; spf=pass smtp.mailfrom=carlthompson.net; arc=none smtp.client-ip=45.77.7.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=carlthompson.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=carlthompson.net
-Received: from mail.carlthompson.net (mail.home [10.35.20.252])
-	(Authenticated sender: cet@carlthompson.net)
-	by smtp.carlthompson.net (Postfix) with ESMTPSA id 5162A1E3AE570;
-	Sat,  9 Aug 2025 23:05:58 -0700 (PDT)
-Date: Sat, 9 Aug 2025 23:05:58 -0700 (PDT)
-From: "Carl E. Thompson" <list-bcachefs@carlthompson.net>
-To: Theodore Ts'o <tytso@mit.edu>,
-	Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Josef Bacik <josef@toxicpanda.com>, Aquinas Admin <admin@aquinas.su>,
-	=?UTF-8?Q?Malte_Schr=C3=B6der?= <malte.schroeder@tnxip.de>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Message-ID: <745617536.363.1754805958174@mail.carlthompson.net>
-In-Reply-To: <20250810022436.GA966107@mit.edu>
-References: <22ib5scviwwa7bqeln22w2xm3dlywc4yuactrddhmsntixnghr@wjmmbpxjvipv>
- <f4be82e7-d98c-44d1-a65b-8c4302574fff@tnxip.de>
- <1869778184.298.1754433695609@mail.carlthompson.net>
- <5909824.DvuYhMxLoT@woolf>
- <3ik3h6hfm4v2y3rtpjshk5y4wlm5n366overw2lp72qk5izizw@k6vxp22uwnwa>
- <20250809192156.GA1411279@fedora>
- <2z3wpodivsysxhxmkk452pa4zrwxsu5jk64iqazwdzkh3rmg5y@xxtklrrebip2>
- <20250810022436.GA966107@mit.edu>
-Subject: Re: [GIT PULL] bcachefs changes for 6.17
+	s=arc-20240116; t=1754806852; c=relaxed/simple;
+	bh=M7BvxSuPFE1PLsNqp4rFUS6XlJhH6tEbM4K6dTLyfDI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uA6NvUH0tA6Bvxkyz3hvx/St96O9UZn8rBu3gEs1XOrxQS6XeOIOi9fmDMlbpttVVsWD/6lFml1dX6T2ssUIoyLtoeZcx5bf+zvwpt/lsPdDfeaFXFwEglHM0baCYclsa2yLVn5a1rXDvGj3cZ8UNoRgLSNQwgU77fV7dxfGCwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wiesinger.com; spf=pass smtp.mailfrom=wiesinger.com; dkim=pass (4096-bit key) header.d=wiesinger.com header.i=@wiesinger.com header.b=NxcgECf6; arc=none smtp.client-ip=46.36.37.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wiesinger.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wiesinger.com
+Received: from wiesinger.com (wiesinger.com [84.112.177.114])
+	by vps01.wiesinger.com (Postfix) with ESMTPS id 30C389F297;
+	Sun, 10 Aug 2025 08:20:47 +0200 (CEST)
+Received: from [192.168.33.7] (wireguard7.intern [192.168.33.7] (may be forged))
+	(authenticated bits=0)
+	by wiesinger.com (8.18.1/8.18.1) with ESMTPSA id 57A6KhtN1484441
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+	Sun, 10 Aug 2025 08:20:44 +0200
+DKIM-Filter: OpenDKIM Filter v2.11.0 wiesinger.com 57A6KhtN1484441
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wiesinger.com;
+	s=default; t=1754806845;
+	bh=GAdzF4QqfDT99s7sOhQOl37zKv8DI7o1004cutcmn6g=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=NxcgECf6x5++A999sOmr/8Tbj9CLYMiH9ruTJSCmiwPwFT8ok/LrqGAZtCkoNy+W8
+	 V7rqHMflCvqzsWdLm6y/PAzjNYm0RUOUpDNe0yyyO2/8nMcBdtfLlQ51CeuNJ1sbnI
+	 eV8z0HuCuE5IOPQZqmqA8tQuho5o9LMzjuzaP2nP+JcwoxXP5eLbPjtlbWTQCtVjDQ
+	 DFMA91kI9xzBE1EVI+lLu3wHZpIW/xMoRbffqF/IDwfEZlY/c5vk3vm0ooSxity+By
+	 gHzr6er2z2qmlOcw6ej0ySJzUmkXQEwrRt4WqcNYavdTxr25S+nBbot/AY9yf3PQDu
+	 4tDwMQiMNxoVA+V3cBrgImIbpdJstjveS7BmaQ1QZmo/u+krSbeSc28Q7JppefjnC8
+	 YikeZZYaKRSkp4YHm2Gp3Wsi+PNef2n0i/kxTedrovn5tlo4ecNjCkj/IPYdQOL/Is
+	 DgoESdCK41Lxidj1DFvToVPBws5qDB/nWE9BEDWSHoxcKFaVgADNLf4WSGf0RuKnTf
+	 zcmdLP/EWpeNVV/M/6ayL5eHkSbVYIuaGAAxcdke6X36QvnfnlJ1+BZtEN+iJj+OZe
+	 j6/WAiVJWUZQvRFd7TXuanW/8dBTBjL7ku30eMvYVMDfcMF4J3TvcTkP3DUjlRvp9G
+	 uNEyDiZSMPAoCiUPrrlGKdFo=
+Message-ID: <e19849f2-4a39-4a09-b19e-cb4f291a2dc2@wiesinger.com>
+Date: Sun, 10 Aug 2025 08:20:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Normal
-X-Mailer: Open-Xchange Mailer v7.10.6-Rev73
-X-Originating-Client: open-xchange-appsuite
+User-Agent: Betterbird (Windows)
+Subject: Re: [GIT PULL] bcachefs changes for 6.17
+Content-Language: en-US
+To: Kent Overstreet <kent.overstreet@linux.dev>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org
+References: <22ib5scviwwa7bqeln22w2xm3dlywc4yuactrddhmsntixnghr@wjmmbpxjvipv>
+From: Gerhard Wiesinger <lists@wiesinger.com>
+In-Reply-To: <22ib5scviwwa7bqeln22w2xm3dlywc4yuactrddhmsntixnghr@wjmmbpxjvipv>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+On 28.07.2025 17:14, Kent Overstreet wrote:
+> Schedule notes for users:
+>
+> I've been digging through the bug tracker and polling users to see what
+> bugs are still outstanding, and - it's not much.
+>
+> So, the experimental label is coming off in 6.18.
+>
+> As always, if you do hit a bug, please report it.
+>
+I can now confirm that bcachefs is getting stable and the test cases 
+with intentionally data corruption (simulation of a real world case I 
+had) gets bcachefs back to a consistent state (after 2 runs of: bcachefs 
+fsck -f -y ${DEV}). That's a base requirement for a stable filesystem. 
+Version of bcachefs-tools is git 
+530e8ade4e6af7d152f4f79bf9f2b9dec6441f2b and kernel is 
+6.16.0-200.fc42.x86_64.
 
-> On 2025-08-09 7:24 PM PDT Theodore Ts'o <tytso@mit.edu> wrote:
+See for details, I made data corruption even worser with running the 
+destroy script 5x:
 
-> ... unless you can find someone willing to be your intermediary, and
-> hopefully your coach in how to better work with other people ...
+https://lore.kernel.org/linux-bcachefs/aa613c37-153c-43e4-b68e-9d50744be7de@wiesinger.com/
 
-Going that route would just prolong Kent's attack on all of you (and the kernel) and make the damage worse. It's not a matter of getting him to understand; He's *always* understood what is needed from him but he does not believe in it and will not do it. Even though he is now (once again) promising to behave he won't. You all know that. Giving him yet another chance right now won't undo the damage that's already been done to Linux and will only allow him to inflict more.
+Great work Kent and the other contributors.
 
-Kent has already said many times, including in this thread, that he can and will continue to work on bcachefs even if it's removed from the kernel. Let him.
+Unfortunately btrfs can't be repaired to a consistent state with the 
+same testcase. I'd like to be that testcase fixed also for BTRFS as a 
+stable filesystem (versions: 6.16.0-200.fc42.x86_64, btrfs-progs v6.15, 
+-EXPERIMENTAL -INJECT -STATIC +LZO +ZSTD +UDEV +FSVERITY +ZONED 
+CRYPTO=libgcrypt).
 
-This is not the time to try to fix him. This is the time to protect the thing you've spent so much of your collective lives building.
+(I reported that already far in the past on the mailing list, see here: 
+https://lore.kernel.org/linux-btrfs/63f8866f-ceda-4228-b595-e37b016e7b1f@wiesinger.com/).
+
+Thnx.
+
+Ciao,
+
+Gerhard
+
 
