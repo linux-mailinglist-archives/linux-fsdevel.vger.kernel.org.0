@@ -1,124 +1,108 @@
-Return-Path: <linux-fsdevel+bounces-57221-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57222-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55449B1F951
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Aug 2025 10:04:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 65314B1F95F
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Aug 2025 10:47:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAC3D163D1B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Aug 2025 08:03:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51B12176A28
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Aug 2025 08:47:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EDED2356C6;
-	Sun, 10 Aug 2025 08:03:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7276623F294;
+	Sun, 10 Aug 2025 08:47:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FtooPbxv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.lichtvoll.de (lichtvoll.de [37.120.160.25])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22DAF6DCE1;
-	Sun, 10 Aug 2025 08:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.120.160.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B440C2033A;
+	Sun, 10 Aug 2025 08:47:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754812983; cv=none; b=mFo00cOkfCFLN0z7VjfoInbiixGq7YsKIQ3PK8yN65v103skkSbk+aPTlzH9G84BKg6MaaeQqQvpqttFRJtdKjy0VtHdikuF88toeb3AlqE9ur3CBapyPQHxbcVjC4wBNIT+SfeVY+4jc/FKBoAbZtQeOvsxOh5/D8wBtn/3FvI=
+	t=1754815657; cv=none; b=K606PxHadPl6okRmmYSEL63xICywx4CJ4BcigF2P/seJIBgyrS0pqJcPjPJ8NsQZTuWVLCd/J41AOtgEoEU9qP7dFRQf5m1Kd/bKG0pH9AgJRl2d4u4F3WHUQeXXsho1sDG3Sol0R21T3ufu6yUZOJm/9UkV37SGAbCWMWrwZ38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754812983; c=relaxed/simple;
-	bh=ADRozaRnU5m4kHiz5jjiFKrDWtNl3Wz0lFtyPVMGAZk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WqT0Z4MNCB4RVLU0IF9+NK0qacMA+WrRmsmLkYd4LRGGg92zO6YMMbYYcGKrKHRnFbiJ14PIIQNFYY86Pd8C5+pEOVb4gNZkZQiOCwRkiRMJgd+RcDsg3jCeEA5MejtquR9lXRw/2H6G04WBXNVzqhDZ/bh54ZkHWCi5m8T3EKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lichtvoll.de; spf=pass smtp.mailfrom=lichtvoll.de; arc=none smtp.client-ip=37.120.160.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lichtvoll.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtvoll.de
-Received: from 127.0.0.1 (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature ECDSA (secp384r1) server-digest SHA384)
-	(No client certificate requested)
-	by mail.lichtvoll.de (Postfix) with ESMTPSA id 9612312DFD1;
-	Sun, 10 Aug 2025 08:02:48 +0000 (UTC)
-Authentication-Results: mail.lichtvoll.de;
-	auth=pass smtp.auth=martin@lichtvoll.de smtp.mailfrom=martin@lichtvoll.de
-From: Martin Steigerwald <martin@lichtvoll.de>
-To: Theodore Ts'o <tytso@mit.edu>, Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Josef Bacik <josef@toxicpanda.com>, Aquinas Admin <admin@aquinas.su>,
- Malte =?UTF-8?B?U2NocsO2ZGVy?= <malte.schroeder@tnxip.de>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- "Carl E. Thompson" <list-bcachefs@carlthompson.net>,
- linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] bcachefs changes for 6.17
-Date: Sun, 10 Aug 2025 10:02:46 +0200
-Message-ID: <1935642.tdWV9SEqCh@lichtvoll.de>
-In-Reply-To: <k6e6f3evjptze7ifjmrz2g5vhm4mdsrgm7dqo7jdatkde5pfvi@3oiymjvy6f3e>
-References:
- <22ib5scviwwa7bqeln22w2xm3dlywc4yuactrddhmsntixnghr@wjmmbpxjvipv>
- <20250810022436.GA966107@mit.edu>
- <k6e6f3evjptze7ifjmrz2g5vhm4mdsrgm7dqo7jdatkde5pfvi@3oiymjvy6f3e>
+	s=arc-20240116; t=1754815657; c=relaxed/simple;
+	bh=q8SgtBm3Um6/IA3ICdzyzAhRe18cnxg4v20POkcefXw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tp8ec+R7UoUkXhbU3mmPTr51avxDjzxNs781ji7BdDIIK51WNdlVTefpjVUkvKRKuOkRgFmLWN1CJZV5nOihfzV/mBK1lgyHN8gkUezKoXy0BijnuNf169XShseCV6DcqR30+b3PcZxBaM0bkKu7jSxetkmLOapCUQ6M/dvwhpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FtooPbxv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3CF8C4CEEB;
+	Sun, 10 Aug 2025 08:47:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754815657;
+	bh=q8SgtBm3Um6/IA3ICdzyzAhRe18cnxg4v20POkcefXw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FtooPbxvpMTQCvH7Y/f3jq8mtZ+j/O3aDgP+3ZDwN0u32EsCmn8yc0AKE1k/H2Z1k
+	 PQcymiASqiWiA16/vCx1gQQcg7YHewbgB1Wc/5K7oo75w46ZkF91d1ycyvskavJO3D
+	 tTpZsbR+PitArv7r2tRUUUeejD0YwLa6Fn1dABbPofZOU+eDQdZQoCUATiN+hpG58A
+	 0xvnOYtqG67M2OJnB5cZipmABNVmRvYs5TIUnVYKQR+fkIAQjUtb7DtnWFi4aymBzu
+	 Iuy8JCz+4B0EdnQsu2lU/uW4tHrpSpqnCISu7mnnhxzEGd2p7NGr1cq7nEuvnDpShT
+	 eax2bwRzxDaDQ==
+Date: Sun, 10 Aug 2025 10:47:32 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-fscrypt@vger.kernel.org, fsverity@lists.linux.dev, 
+	linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, linux-btrfs@vger.kernel.org, 
+	ceph-devel@vger.kernel.org
+Subject: Re: [PATCH v5 00/13] Move fscrypt and fsverity info out of struct
+ inode
+Message-ID: <20250810-tortur-gerammt-8d9ffd00da19@brauner>
+References: <20250810075706.172910-1-ebiggers@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250810075706.172910-1-ebiggers@kernel.org>
 
-Hi Kent, hi,
+On Sun, Aug 10, 2025 at 12:56:53AM -0700, Eric Biggers wrote:
+> This is a cleaned-up implementation of moving the i_crypt_info and
+> i_verity_info pointers out of 'struct inode' and into the fs-specific
+> part of the inode, as proposed previously by Christian at
+> https://lore.kernel.org/r/20250723-work-inode-fscrypt-v4-0-c8e11488a0e6@kernel.org/
+> 
+> The high-level concept is still the same: fs/crypto/ and fs/verity/
+> locate the pointer by adding an offset to the address of struct inode.
+> The offset is retrieved from fscrypt_operations or fsverity_operations.
+> 
+> I've cleaned up a lot of the details, including:
+> - Grouped changes into patches differently
+> - Rewrote commit messages and comments to be clearer
+> - Adjusted code formatting to be consistent with existing code
+> - Removed unneeded #ifdefs
+> - Improved choice and location of VFS_WARN_ON_ONCE() statements
+> - Added missing kerneldoc for ubifs_inode::i_crypt_info
+> - Moved field initialization to init_once functions when they exist
+> - Improved ceph offset calculation and removed unneeded static_asserts
+> - fsverity_get_info() now checks IS_VERITY() instead of v_ops
+> - fscrypt_put_encryption_info() no longer checks IS_ENCRYPTED(), since I
+>   no longer think it's actually correct there.
+> - verity_data_blocks() now keeps doing a raw dereference
+> - Dropped fscrypt_set_inode_info() 
+> - Renamed some functions
+> - Do offset calculation using int, so we don't rely on unsigned overflow
+> - And more.
+> 
+> For v4 and earlier, see
+> https://lore.kernel.org/r/20250723-work-inode-fscrypt-v4-0-c8e11488a0e6@kernel.org/
+> 
+> I'd like to take this series through the fscrypt tree for 6.18.
+> (fsverity normally has a separate tree, but by choosing just one tree
+> for this, we'll avoid conflicts in some places.)
 
-Kent Overstreet - 10.08.25, 05:17:44 CEST:
-> I think you guys have been taking this a bit too far.
+Woh woh. First, I had a cleaned up version ready for v6.18 so if you
+plan on taking over someone's series and resend then maybe ask the
+author first whether that's ok or not. I haven't seen you do that. You
+just caused duplicated work for no reason.
 
-I am not sure who is right here. Or right to what extend.
-
-And maybe that is not even the question.
-
-But Kent, if your priority is the users of BCacheFS, look at the result:
-
-The current result is a disservice to users.
-
-Maybe even a huge one.
-
-And likely a disservice to developers as well.
-
-Is this result really what you like to achieve?
-
-Cause if not, I can assure you that by doing the same thing over and over=20
-and over again you will yield exactly the same result over and over and=20
-over again. Just look at the past: This has been going in *predictable*=20
-cycles.
-
-If you go on to do the same thing over and over again that drives off=20
-people, then that is exactly the result you will be receiving.
-
-So if you do not adapt your behavior and do something *different* next=20
-time=E2=80=A6 *whether you like it or not* (!) you need to wait until someo=
-ne else=20
-does. And that "until" may never happen. You can only influence what you=20
-do. So do you like to continue to give the power to change something in=20
-here to someone else by blaming everyone but you? That would be a lot of=20
-wasted energy.
-
-You are not going to change the dynamics of power within the kernel=20
-development community by what you have been doing all the time.
-
-Of course this goes the other way around as well: As long as people try to=
-=20
-change each other in here, this is not going anywhere. The only change you=
-=20
-can affect is a change within yourself.
-
-So maybe take a while off mail, breathe deeply and meditate or do whatever=
-=20
-helps you to see what within you contributes to the result we see here. I=20
-will do the same.
-
-All in all again I point out: This cannot by solved by writing mails. You=20
-need to *speak* to each other.
-
-Enough already.
-
-Best,
-=2D-=20
-Martin
-
-
+And second general infrastructure changes that touch multiple fses and
+generic fs infrastructure I very much want to go through VFS trees.
+We'll simply use a shared tree.
 
