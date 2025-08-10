@@ -1,167 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-57193-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57194-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 548C0B1F854
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Aug 2025 06:45:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29633B1F858
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Aug 2025 06:48:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0986E3BAF6F
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Aug 2025 04:45:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A5FD1789E5
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Aug 2025 04:48:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF211E1E19;
-	Sun, 10 Aug 2025 04:45:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 378D31D61B7;
+	Sun, 10 Aug 2025 04:48:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="gCjpSsFA"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hbsOeKm1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A99F1DB122
-	for <linux-fsdevel@vger.kernel.org>; Sun, 10 Aug 2025 04:45:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6BB1B660;
+	Sun, 10 Aug 2025 04:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754801104; cv=none; b=sxo81EW4AoF4yu7R7rgbEmeO5Bsi97AEiprkTccpmkcBg0UZCA62VU3bKkBO0n/HJbKIRLYJRuMMPxRnFV8tuNUZNcyjL+MXvtZ/foquY6TzqvQjjezXVLz6SUcsdhiq2HP2tHSpaB2bxXC/bWLBXNGMNks4x8JSEzc5/i+sO7s=
+	t=1754801293; cv=none; b=huwgzn0Vg2JVvn+ggZw44SXdRP8i0iFd4vbOKyduZxRjCEi3jfL0+b1gwGgfxMzRJTF98knGtls9xD4EWF+5SSJr08Fp6Mwwv+ATszm1Nq38QHS2hr8KYmZnxPHob3duKq3GASQnmj6yPZS0MX7VFD2DK4OGKgGlUQ6UA6IKirA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754801104; c=relaxed/simple;
-	bh=lA+FGvQLLl2vwVMgBK/VusUOTksog/0l+tfMKgE72ss=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fyUeRI9xJhCCNxX66CcQTDVbakRZmRX2tT8IwqS/jvK6uUDl1ly3KS0xMlyoMNxicVxKxkPHzSkAZzSd9vxXgYWidLkIFtHSY7oGH8ORTUD4fUzNr1Ojtgb+B1XFrq4R52A3gMyasV2sSpN7KxTKngBCjUjCsxMlmM9MIxqagQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=gCjpSsFA; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4c04tq5sbbz9srX;
-	Sun, 10 Aug 2025 06:44:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1754801091;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=O5i521x+dJKFucvW1RX/3P7SkHvl0sY6aC2wo6UdY5U=;
-	b=gCjpSsFAYbhUVIkWiER9TE17fiEt2lqaMIKP9v3TV32AViaK2W3TVpkuNUI9rL2RexfqA8
-	KiRpLd7IWUvxbTRfjQurnLXqh9AMGuUQfQcfryV1BErYj0vNZCBTH3OcJ65UaJOolRJ1He
-	OPoaf0ltX0iEgknQrgmMBBMe945iqohh23FnTgrmT2UugUDQKHtcQKwmYvi0Np1runNd1B
-	LZyq0OTc5QsZbsev5tfUzYKIPMbgAGONE7K8cFzDZrkDeONO0JQ4atN6SHozBgvIYORkg1
-	UWYqf4Np3mlyqNkAW6a+fOapDa1yaJTnLkVMILkT4n9HIEiKmL1H2pyUCrtNng==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
-Date: Sun, 10 Aug 2025 14:44:40 +1000
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Josh Triplett <josh@joshtriplett.org>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: Re: futimens use of utimensat does not support O_PATH fds
-Message-ID: <2025-08-09.1754760807-mushy-helpful-shrug-booze-qPqkMg@cyphar.com>
-References: <aJUUGyJJrWLgL8xv@localhost>
- <20250808-ziert-erfanden-15e6d972ae43@brauner>
- <aJZJpIEJB2R0x-Hh@localhost>
+	s=arc-20240116; t=1754801293; c=relaxed/simple;
+	bh=wfpf9ZbirFcXH8c+qYrEACdr88BC5e2ObwRAJAJki8Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rZa6jkJe5q2efW96VXliRLrHls6F7lmLAXbPd0uKguCz0G/Ym4/Kb8hpShGXBDwWHYFUogE1HPFIC5WNsn8KNT4raNl/lopME8p1HNgw+skVXLXfyXZ584cn1xMOQo3FCYDSJvcPA0VfaOyeDat+JgAphxlCi8fD2dV7Sku1u7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hbsOeKm1; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2403ca0313aso26986995ad.0;
+        Sat, 09 Aug 2025 21:48:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754801291; x=1755406091; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HkKfdo5HSjaHQ96VOApl89ja6x95mC251RmFMbCQL/w=;
+        b=hbsOeKm1cJ3eczBqHMarmmco2gsOz+8vh7lbo41lu34VQYFFWTxfUxMk4hN3vf6cn5
+         sr3uqY+A4yzUoQRowOzdNsRFVcRjpHb1omuAXxXnSvtn2M5aftHS1a3lfuc2I4QMOdiL
+         UoAHlpW88IioflK3RLzgxiThW9QGTgyPaQv7mHZ+mIpGqNIFTv+4Uve4NGi7UMnH3auB
+         YaDPI2KdH7vo1Q68BdAb19zh+Og7P8FZiG5cWs/C5SawYJUhI9EfFNR/b5a4EMf/nrbG
+         6p3kjsiHoNJn23CHdoE6RgaQUpVmQLIBjIrqM6MSo8CTyxaVa33z1XpILQEuJERr1lFq
+         kjTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754801291; x=1755406091;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HkKfdo5HSjaHQ96VOApl89ja6x95mC251RmFMbCQL/w=;
+        b=Q/zfBRIisOw/OBkylm3plxPjm9cugq3baCRYwiou3aQUWAOUa5Y7ni6RK1qi/vl//3
+         sDDmllcU5048kTEhwlYXZViRfbqOBuHxRqUtt10dxVtp4R4QVk/JHAn6VyVlHKzxXda6
+         /bBANxOtqx98ZfEhKFNOf4UPGpRFe+e3R90KCbwQG5hIeddZw0JUTuF/q2Y3FILC+pXs
+         PaKbXTqEjbIVmqLGuskkqEjbKxbzvRyyq4j1XMzGevGLjp9T0ZWx500rc51u+GQUkpDx
+         Fm2sGUedD1QxPvQ3jI0QUmLKFyFhFJ+wzkJ9F+YqPO3/lYoQbknJzSTm0A2FNNlNqqal
+         KdvA==
+X-Forwarded-Encrypted: i=1; AJvYcCWbFJdF7tCOAY53vVm1bUwzqwB+q43/s9VpHn5ihAmMlbON9jZN0SgAH4oKTP57o8IOqKexVI3BK/2qjisu@vger.kernel.org, AJvYcCWxbmUFgoXtv/auY9v9WQjsqbnjY5bNgnhEup8nWy1NBlO1PxrTzksfGiNnWRXOQGkb8qRGvoB5FEBNCxrK@vger.kernel.org
+X-Gm-Message-State: AOJu0YzatgUQD7H32INYEoMnAT/e6+m8POcd/jcAEf0WKiLq0dMVwVO1
+	oxfHE5X9eweIL9RKxI7Z/xGvE2UzXwJdKSn8xtyewyIrqbycAqCKzrctufSOAWEJ
+X-Gm-Gg: ASbGncuk05o81oPgknikhuiBe+/Kb4sSfRq00lmt5x2sTLAnaGS/Q/IaWysz0sLHU6C
+	T7zeTwMatzrhSIX6mlM+++qruUB2i1+iggK+U4hGg7zFVLWt0oUSROLrlkOo+sVD15Qyp1yo8UT
+	lBlyuv8AtRjp1eHBsfVNFEhW/+wb8PyJs86upwRLyEMcWq7s/W5OhcnshtNimWycQaDO+24FblL
+	Dklp0ZBuMkgfCcK0HOtIPTYc7YyX9BktIdYQPJ3MNrJgqH7MMrtxWrK8E1nWyJJWRoeUym9m4Oh
+	YK73a97RjFjTmAowbF+IA9WovY+PyGx6VcmD6j5qliC6kw/uaOvoSMWFERPRuuP8xGi8LxxyXZH
+	eTmNZOUh+1ZidvaPdhKfultFsc4tPM05dT9o=
+X-Google-Smtp-Source: AGHT+IFOH2/dsnWPM1u6i/BJU9lEL2p9pj3eHZ2JBbhjIGI2JU/wY1OF9bocjBt0OMpa0ZKygbLe+Q==
+X-Received: by 2002:a17:902:d4ca:b0:240:2e99:906c with SMTP id d9443c01a7336-242c209fa2bmr133509025ad.15.1754801290784;
+        Sat, 09 Aug 2025 21:48:10 -0700 (PDT)
+Received: from VM-16-24-fedora.. ([43.153.32.141])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8976f53sm244113645ad.113.2025.08.09.21.48.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 09 Aug 2025 21:48:10 -0700 (PDT)
+From: alexjlzheng@gmail.com
+X-Google-Original-From: alexjlzheng@tencent.com
+To: brauner@kernel.org,
+	djwong@kernel.org
+Cc: linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jinliang Zheng <alexjlzheng@tencent.com>
+Subject: [PATCH 0/4] iomap: allow partial folio write with iomap_folio_state
+Date: Sun, 10 Aug 2025 12:48:02 +0800
+Message-ID: <20250810044806.3433783-1-alexjlzheng@tencent.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="z5s6jjxflruahsil"
-Content-Disposition: inline
-In-Reply-To: <aJZJpIEJB2R0x-Hh@localhost>
-X-Rspamd-Queue-Id: 4c04tq5sbbz9srX
+Content-Transfer-Encoding: 8bit
 
+From: Jinliang Zheng <alexjlzheng@tencent.com>
 
---z5s6jjxflruahsil
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: futimens use of utimensat does not support O_PATH fds
-MIME-Version: 1.0
+With iomap_folio_state, we can identify uptodate states at the block
+level, and a read_folio reading can correctly handle partially
+uptodate folios.
 
-On 2025-08-08, Josh Triplett <josh@joshtriplett.org> wrote:
-> On Fri, Aug 08, 2025 at 03:22:58PM +0200, Christian Brauner wrote:
-> > On Thu, Aug 07, 2025 at 02:01:15PM -0700, Josh Triplett wrote:
-> > > I just discovered that opening a file with O_PATH gives an fd that wo=
-rks
-> > > with
-> > >=20
-> > > utimensat(fd, "", times, O_EMPTY_PATH)
-> > >=20
-> > > but does *not* work with what futimens calls, which is:
-> > >=20
-> > > utimensat(fd, NULL, times, 0)
-> >=20
-> > It's in line with what we do for fchownat() and fchmodat2() iirc.
-> > O_PATH as today is a broken concept imho. O_PATH file descriptors
-> > should've never have gained the ability to meaningfully alter state. I
-> > think it's broken that they can be used to change ownership or mode and
-> > similar.
->=20
-> In the absence of having O_PATH file descriptors, what would be the way
-> to modify the properties of a symlink using race-free
-> file-descriptor-based calls rather than filenames? AFAICT, there's no
-> way to get a file descriptor corresponding to a symbolic link without
-> using `O_PATH | O_NOFOLLOW`.
+Therefore, when a partial write occurs, accept the block-aligned
+partial write instead of rejecting the entire write.
 
-Yes, O_PATH|O_NOFOLLOW is the only way to get a file descriptor
-referencing a symlink. However, depending on what property you were
-talking about, doing
+This patchset has been tested by xfstests' generic and xfs group, and
+there's no new failed cases compared to the lastest upstream version kernel.
 
-  fooat(parent_dirfd, "terminal-pathname-without-slashes", AT_SYMLINK_NOFOL=
-LOW);
+Jinliang Zheng (4):
+  iomap: make sure iomap_adjust_read_range() are aligned with block_size
+  iomap: move iter revert case out of the unwritten branch
+  iomap: make iomap_write_end() return the number of written length again
+  iomap: don't abandon the whole thing with iomap_folio_state
 
-is probably sufficient for most programs, and I believe is the pattern
-that Solaris was going for when they introduced *at(2) system calls.
-Solaris does also have O_SEARCH, but I believe it's more restrictive
-than O_PATH.
+ fs/iomap/buffered-io.c | 68 +++++++++++++++++++++++++++++-------------
+ 1 file changed, 47 insertions(+), 21 deletions(-)
 
-Yes, if you want to operate on a very specific inode, this approach
-doesn't work if an attacker has write access to the parent directory.
-But in my experience there are very few cases where you want to operate
-on a very specific inode inside an attacker-controlled directory (most
-of the time you just want to avoid being tricked to operate on stuff
-outside the directory, and any inode inside the directory is fine --
-which is what the above gives you).
+-- 
+2.49.0
 
-> It makes sense that a file descriptor for a symbolic link would be able
-> to do inode operations but not file operations.
-
-=46rom a kernel developer's perspective, maybe. But what is a file
-operation or an inode operation is not immediately obvious to user
-space, and the in-kernel distinction really isn't an API that was
-intended to be user-visible IMHO.
-
-In general, when it comes to O_PATH some userspace programs would prefer
-O_PATH to disallow modifying _any aspect_ of the file descriptor, so
-that you can pass them to untrusted programs (like a real
-capability-based system). This is no longer achievable on Linux today,
-and the fact we keep poking more holes in O_PATH is making the situation
-less and less tenable.
-
-I _do_ want a better solution for this, but if we want to keep expanding
-O_PATH then we really need to have some way for programs to opt-out of
-those expansions. Then we can come up with a default set of allowed
-operations on O_PATH that programs can adjust, which will finally break
-up the binary nature of O_PATH.
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-https://www.cyphar.com/
-
---z5s6jjxflruahsil
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaJgjuAAKCRAol/rSt+lE
-b3ufAQDySGxSDnfG/p/4jwaNLEum5Hxx1A9GoyxC4dvcq90newEAoWhXVRkFL3Xg
-1oPPqNKyIAjrp4ycOnYcxJEVKoeDgQE=
-=9Q4h
------END PGP SIGNATURE-----
-
---z5s6jjxflruahsil--
 
