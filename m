@@ -1,59 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-57255-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57249-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 632AEB1FFA6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 08:53:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D920AB1FF82
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 08:46:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 182C53B3EFC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 06:53:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E936A169A69
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 06:46:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8665F2D8DC0;
-	Mon, 11 Aug 2025 06:53:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C347F2D6634;
+	Mon, 11 Aug 2025 06:46:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="n9X43tgx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889AB2D879B;
-	Mon, 11 Aug 2025 06:53:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EDBF29CEB;
+	Mon, 11 Aug 2025 06:46:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754895203; cv=none; b=c4gS8r84fCS3zyY3dk+2keq70ggDbAFIMFSgm5kEYPGX5nH1tnp29qWR0r00ufPGR80kfnKscmGq/CYTT0w9V6loljqzOSC2XYFRdSpdy0sMcHYV9nQrwnizB/eZn8pSJQ/9BhOHqz7i8b3XrvFXXefp9Hl8tts0j+hQBNM8CUI=
+	t=1754894799; cv=none; b=hSEql6olz7BTVtysBDB60ODxq6Q3T8xWKfsQMEkTopYsbjt8NkL2sB0jPa8E+7LvNjcomCtjeKHC1EV8gt/Ss/bYsxGYyDPC9BdHmvsz6HYW9+YdG+er52O/7WbjK+jMrU2jvSbSeWjb9oNSN9drgWqSP+s4RgO/IRxA7T94dpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754895203; c=relaxed/simple;
-	bh=gOATprzbrTgn6Vf9KjTSYAUc1Ynco9a2MIBDqLgNeqA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=g18F+ZiqkucA5pshOsUDjmUFqtDw51mWOa6X8YAIlewvt549v1LoiIJPMHlMYsS4sKdcoZg8K28GtxqpE942GLAMe4I9wYQMsNNsJB4pWXamm58q9a3gbir0S/bfHFNsMCYyLRWfjr7yHDcbVpgnPKTQ/LMK0Efwl0CJp9yBpkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c0lhY0NcKzYQv9H;
-	Mon, 11 Aug 2025 14:53:17 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id A73B81A09DA;
-	Mon, 11 Aug 2025 14:53:15 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgBHERJRk5lo7EkyDQ--.13266S4;
-	Mon, 11 Aug 2025 14:53:13 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
+	s=arc-20240116; t=1754894799; c=relaxed/simple;
+	bh=n0a7b4JAwxure5Hrb5kN5KOagiOIhYfShhtLZY8mNE4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=moCWM89k2uJkVje2/BdhYxK6yiT95de8LWFm8VLU8E1Ja/tB17BakJeRslxFNsQw0WVR+jsro5W96nFv7+RRtlA5+bigWaouU+y32g9+Qrp8B/bXuINPGSz5ANT11VnM26H1YY17Vri5Ahd1CcXdI7pbmOM40kj4nGkQ3cLcR8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=n9X43tgx; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=kbvwlNZUn0Q7xGqd2td/p5wrTa01tYFtoJ3G9wHE7i0=; b=n9X43tgxYR31C4cKiAzLXMY6Co
+	6yQPeegFMzxG1w66CbnCCZvVEIIFMyqBdZfyAArl0Cg3xE40xucrDzkTqY+mUEjZtqVyPLgMFxwKU
+	cSct/cbsmeilH656OUb5FBU+nlbn2I6EJqr76OkcslpQmRfe1QXb9EpmQTtA/C+40tSHA7fdP7aLt
+	lusqiBGmjevyUK8LozbceXxtULYAJkCzsqRAsZcKXRF+xSgCrxi2g9zOmyNQAOR4Cgg7HleTo+a34
+	xralwBwKEoooA7s5PykDrjAfuz08Y7NqoZ+wB21Fl3/b8fzyLs2nHcRZZGlnO87WSybnGWQIo5Z9N
+	1lB0rz+A==;
+Received: from [223.233.69.163] (helo=localhost.localdomain)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1ulMIZ-00Cdun-Hh; Mon, 11 Aug 2025 08:46:23 +0200
+From: Bhupesh <bhupesh@igalia.com>
+To: akpm@linux-foundation.org
+Cc: bhupesh@igalia.com,
+	kernel-dev@igalia.com,
 	linux-kernel@vger.kernel.org,
-	tytso@mit.edu,
-	adilger.kernel@dilger.ca,
+	bpf@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	oliver.sang@intel.com,
+	lkp@intel.com,
+	laoar.shao@gmail.com,
+	pmladek@suse.com,
+	rostedt@goodmis.org,
+	mathieu.desnoyers@efficios.com,
+	arnaldo.melo@gmail.com,
+	alexei.starovoitov@gmail.com,
+	andrii.nakryiko@gmail.com,
+	mirq-linux@rere.qmqm.pl,
+	peterz@infradead.org,
+	willy@infradead.org,
+	david@redhat.com,
+	viro@zeniv.linux.org.uk,
+	keescook@chromium.org,
+	ebiederm@xmission.com,
+	brauner@kernel.org,
 	jack@suse.cz,
-	ojaswin@linux.ibm.com,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	libaokun1@huawei.com,
-	yukuai3@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH] ext4: fix hole length calculation overflow in non-extent inodes
-Date: Mon, 11 Aug 2025 14:45:32 +0800
-Message-Id: <20250811064532.1788289-1-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	mingo@redhat.com,
+	juri.lelli@redhat.com,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com,
+	linux-trace-kernel@vger.kernel.org,
+	kees@kernel.org,
+	torvalds@linux-foundation.org
+Subject: [PATCH v7 0/4] Add support for long task name
+Date: Mon, 11 Aug 2025 12:16:05 +0530
+Message-Id: <20250811064609.918593-1-bhupesh@igalia.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,97 +92,158 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBHERJRk5lo7EkyDQ--.13266S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxCr1rWFWUKryrGFy3uw13CFg_yoW5Aw1xpr
-	ZIkr17Gr48Wr47uF4xJw1UAr15tayUCF1UJrWxJry5XFyYvw1rtr1UtF4IyF1UJrW5ZF1I
-	qF1UK340yw1UAaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
-	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-	nIWIevJa73UjIFyTuYvjfUonmRUUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-From: Zhang Yi <yi.zhang@huawei.com>
+Changes since v6:
+================
+- v6 can be seen here: https://lore.kernel.org/all/20250724123612.206110-1-bhupesh@igalia.com/
+- As suggested by Linus, we got rid of 'get_task_comm()' entirely and replaced it with
+  'strscpy_pad()' implementation.
+- Also changed the current memcpy() use-cases which use 'current->comm' to copy the task name over
+  to local copies, to call a wrappper like "get_task_array()".
+- Collected 'Reviewed-by' from Kees for [PATCH 1/4].
 
-In a filesystem with a block size larger than 4KB, the hole length
-calculation for a non-extent inode in ext4_ind_map_blocks() can easily
-exceed INT_MAX. Then it could return a zero length hole and trigger the
-following waring and infinite in the iomap infrastructure.
+Changes since v5:
+================
+- v5 can be seen here: https://lore.kernel.org/lkml/20250716123916.511889-1-bhupesh@igalia.com/ 
+- As suggested by Linus, replaced 'tsk->comm' with 'tsk->comm_str' locally, and verified basic
+  thread names and then changed 'tsk->comm_str' back to 'tsk->comm'. So essentially now 'tsk->comm'
+  is TASK_COMM_EXT_LEN i.e. 64-bytes long.
 
-  ------------[ cut here ]------------
-  WARNING: CPU: 3 PID: 434101 at fs/iomap/iter.c:34 iomap_iter_done+0x148/0x190
-  CPU: 3 UID: 0 PID: 434101 Comm: fsstress Not tainted 6.16.0-rc7+ #128 PREEMPT(voluntary)
-  Hardware name: QEMU KVM Virtual Machine, BIOS unknown 2/2/2022
-  pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-  pc : iomap_iter_done+0x148/0x190
-  lr : iomap_iter+0x174/0x230
-  sp : ffff8000880af740
-  x29: ffff8000880af740 x28: ffff0000db8e6840 x27: 0000000000000000
-  x26: 0000000000000000 x25: ffff8000880af830 x24: 0000004000000000
-  x23: 0000000000000002 x22: 000001bfdbfa8000 x21: ffffa6a41c002e48
-  x20: 0000000000000001 x19: ffff8000880af808 x18: 0000000000000000
-  x17: 0000000000000000 x16: ffffa6a495ee6cd0 x15: 0000000000000000
-  x14: 00000000000003d4 x13: 00000000fa83b2da x12: 0000b236fc95f18c
-  x11: ffffa6a4978b9c08 x10: 0000000000001da0 x9 : ffffa6a41c1a2a44
-  x8 : ffff8000880af5c8 x7 : 0000000001000000 x6 : 0000000000000000
-  x5 : 0000000000000004 x4 : 000001bfdbfa8000 x3 : 0000000000000000
-  x2 : 0000000000000000 x1 : 0000004004030000 x0 : 0000000000000000
-  Call trace:
-   iomap_iter_done+0x148/0x190 (P)
-   iomap_iter+0x174/0x230
-   iomap_fiemap+0x154/0x1d8
-   ext4_fiemap+0x110/0x140 [ext4]
-   do_vfs_ioctl+0x4b8/0xbc0
-   __arm64_sys_ioctl+0x8c/0x120
-   invoke_syscall+0x6c/0x100
-   el0_svc_common.constprop.0+0x48/0xf0
-   do_el0_svc+0x24/0x38
-   el0_svc+0x38/0x120
-   el0t_64_sync_handler+0x10c/0x138
-   el0t_64_sync+0x198/0x1a0
-  ---[ end trace 0000000000000000 ]---
+Changes since v4:
+================
+- v4 can be seen here: https://lore.kernel.org/lkml/20250521062337.53262-1-bhupesh@igalia.com/ 
+- As suggested by Kees, replaced tsk->comm with tsk->comm_str, inside 'task_struct'
+  where TASK_COMM_EXT_LEN is 64-bytes.
 
-Fixes: facab4d9711e ("ext4: return hole from ext4_map_blocks()")
-Reported-by: Qu Wenruo <wqu@suse.com>
-Closes: https://lore.kernel.org/linux-ext4/9b650a52-9672-4604-a765-bb6be55d1e4a@gmx.com/
-Tested-by: Qu Wenruo <wqu@suse.com>
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
----
- fs/ext4/indirect.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Changes since v3:
+================
+- v3 can be seen here: https://lore.kernel.org/lkml/20250507110444.963779-1-bhupesh@igalia.com/
+- As suggested by Petr and Steven, used 'comm_ext' name instead of
+  'real_comm'. Correspondingly the macro name is changed to 'TASK_COMM_EXT_LEN'
+  for the 64-byte extended comm.
+- Rebased this patchset on linux-next/master, which contain the following patch from
+  Steven now:
+       155fd6c3e2f0 ("tracing/sched: Use __string() instead of fixed lengths for task->comm")
+- Accordingly, v4 drops the changes done for 'trace/sched' events in v3,
+  but retains the 'safe' memcpy' changes for other kernel trace users.
 
-diff --git a/fs/ext4/indirect.c b/fs/ext4/indirect.c
-index 7de327fa7b1c..d45124318200 100644
---- a/fs/ext4/indirect.c
-+++ b/fs/ext4/indirect.c
-@@ -539,7 +539,7 @@ int ext4_ind_map_blocks(handle_t *handle, struct inode *inode,
- 	int indirect_blks;
- 	int blocks_to_boundary = 0;
- 	int depth;
--	int count = 0;
-+	u64 count = 0;
- 	ext4_fsblk_t first_block = 0;
- 
- 	trace_ext4_ind_map_blocks_enter(inode, map->m_lblk, map->m_len, flags);
-@@ -588,7 +588,7 @@ int ext4_ind_map_blocks(handle_t *handle, struct inode *inode,
- 		count++;
- 		/* Fill in size of a hole we found */
- 		map->m_pblk = 0;
--		map->m_len = min_t(unsigned int, map->m_len, count);
-+		map->m_len = umin(map->m_len, count);
- 		goto cleanup;
- 	}
- 
+Changes since v2:
+================
+- v2 can be seen here: https://lore.kernel.org/lkml/20250331121820.455916-1-bhupesh@igalia.com/
+- As suggested by Yafang and Kees, picked Linus' suggested approach for
+  this version (see: <https://lore.kernel.org/all/CAHk-=wjAmmHUg6vho1KjzQi2=psR30+CogFd4aXrThr2gsiS4g@mail.gmail.com/>).
+- Dropped kthreads patch from this version. It would be sent out
+  separately, if we have a consensus on this approach.
+
+Changes since v1:
+================
+- v1 can be seen here: https://lore.kernel.org/lkml/20250314052715.610377-1-bhupesh@igalia.com/
+- As suggested by Kees, added [PATCH 3/3] to have a consistent
+  'full_name' entry inside 'task_struct' which both tasks and
+  kthreads can use.
+- Fixed the commit message to indicate that the existing ABI
+  '/proc/$pid/task/$tid/comm' remains untouched and a parallel
+  '/proc/$pid/task/$tid/full_name' ABI for new (interested) users.
+
+While working with user-space debugging tools which work especially
+on linux gaming platforms, I found that the task name is truncated due
+to the limitation of TASK_COMM_LEN.
+
+Now, during debug tracing, seeing truncated names is not very useful,
+especially on gaming platforms where the number of tasks running can
+be very high.
+
+This patchset does not touch 'TASK_COMM_LEN' at all, i.e.
+'TASK_COMM_LEN' and the 16-byte design remains untouched.
+
+Via this patchset, Linus suggested 'tsk->comm' is made 64-byte long
+and equal to TASK_COMM_EXT_LEN.
+
+To avoid any surprises / bug,s I replaced 'tsk->comm' with
+'tsk->comm_str' locally inside 'task_struct' and checked compilation
+of code and basic working of thread names:
+
+       struct task_struct {
+	       ..............
+               char    comm_str[TASK_COMM_EXT_LEN];
+	       ..............
+       };
+
+       where TASK_COMM_EXT_LEN is 64-bytes.
+
+Once done, I changed the name back to 'tsk->comm'.
+
+To ensure that the existing ABI and userspace continues to work
+as intended, we ensure that:
+
+- Existing users of 'get_task_comm'/ 'set_task_comm' will get 'tsk->comm'
+  truncated to a maximum of 'TASK_COMM_LEN' (16-bytes) to maintain ABI,
+- New / Modified users of 'get_task_comm'/ 'set_task_comm' will get
+ 'tsk->comm' supported up to a maximum of 'TASK_COMM_EXT_LEN' (64-bytes).
+
+Note, that the existing users have not been modified to migrate to
+'TASK_COMM_EXT_LEN', in case they have hard-coded expectations of
+dealing with only a 'TASK_COMM_LEN' long 'tsk->comm_str'.
+
+After this change, gdb is able to show full name of the task, using a
+simple app which generates threads with long names [see 1]:
+  # gdb ./threadnames -ex "run info thread" -ex "detach" -ex "quit" > log
+  # cat log
+
+  NameThatIsTooLongForComm[4662]
+
+[1]. https://github.com/lostgoat/tasknames
+
+Bhupesh (4):
+  exec: Remove obsolete comments
+  include: Set tsk->comm length to 64 bytes
+  treewide: Replace 'get_task_comm()' with 'strscpy_pad()'
+  treewide: Switch memcpy() users of 'task->comm' to a more safer
+    implementation
+
+ drivers/connector/cn_proc.c                   |  2 +-
+ drivers/dma-buf/sw_sync.c                     |  2 +-
+ .../gpu/drm/amd/amdgpu/amdgpu_amdkfd_fence.c  |  2 +-
+ .../drm/amd/amdgpu/amdgpu_eviction_fence.c    |  2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c       |  2 +-
+ .../gpu/drm/amd/amdgpu/amdgpu_userq_fence.c   |  2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c        |  4 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vram_mgr.c  |  2 +-
+ drivers/gpu/drm/lima/lima_ctx.c               |  2 +-
+ drivers/gpu/drm/panfrost/panfrost_gem.c       |  2 +-
+ drivers/gpu/drm/panthor/panthor_gem.c         |  2 +-
+ drivers/gpu/drm/virtio/virtgpu_ioctl.c        |  2 +-
+ drivers/hwtracing/stm/core.c                  |  2 +-
+ drivers/tty/tty_audit.c                       |  2 +-
+ fs/bcachefs/thread_with_file.c                |  2 +-
+ fs/binfmt_elf.c                               |  2 +-
+ fs/binfmt_elf_fdpic.c                         |  2 +-
+ fs/ocfs2/cluster/netdebug.c                   |  1 -
+ fs/proc/array.c                               |  2 +-
+ include/linux/coredump.h                      |  2 +-
+ include/linux/sched.h                         | 50 ++++++++++++-------
+ include/linux/tracepoint.h                    |  4 +-
+ include/trace/events/block.h                  | 10 ++--
+ include/trace/events/oom.h                    |  2 +-
+ include/trace/events/osnoise.h                |  2 +-
+ include/trace/events/sched.h                  | 13 +++--
+ include/trace/events/signal.h                 |  2 +-
+ include/trace/events/task.h                   |  4 +-
+ kernel/audit.c                                |  6 ++-
+ kernel/auditsc.c                              |  6 ++-
+ kernel/sys.c                                  |  2 +-
+ mm/kmemleak.c                                 |  6 ---
+ net/bluetooth/hci_sock.c                      |  2 +-
+ net/netfilter/nf_tables_api.c                 |  2 +-
+ security/integrity/integrity_audit.c          |  3 +-
+ security/ipe/audit.c                          |  2 +-
+ security/landlock/domain.c                    |  2 +-
+ security/lsm_audit.c                          |  7 +--
+ tools/bpf/bpftool/pids.c                      |  6 +--
+ .../bpf/test_kmods/bpf_testmod-events.h       |  2 +-
+ 40 files changed, 91 insertions(+), 83 deletions(-)
+
 -- 
-2.39.2
+2.38.1
 
 
