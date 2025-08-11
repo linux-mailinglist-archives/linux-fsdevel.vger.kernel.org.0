@@ -1,163 +1,147 @@
-Return-Path: <linux-fsdevel+bounces-57361-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57362-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86020B20BAF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 16:22:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A120B20BCC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 16:26:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 598FD2A7D5E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 14:19:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A7CA7A1B54
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 14:25:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D4221858E;
-	Mon, 11 Aug 2025 14:18:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9567248895;
+	Mon, 11 Aug 2025 14:26:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="B1FivQUg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06EA0130E58
-	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Aug 2025 14:18:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89EA3246783
+	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Aug 2025 14:26:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754921920; cv=none; b=oap7gmG94WSHjJRXIYWFwBB7bgam0nI+7Lfh8yEt8s0OvdZ5dVpvNFr0VskzCk0bguf7luZ3eLnVDqOcRSG9ehtVBw72dD29WBlYPZaVzJOSXu1FPXMEBbbDLoxOrwqEH2n4MjmM2G8t47+S6S8v3WAWVYrcVcUYWjH1H8R0H7I=
+	t=1754922372; cv=none; b=e6gtZ/29oA5U4UQUpOyTC4CM2ihcidIAapZQfcc9ecMaQ4O7IMyMnL8gKvjBUPD3hYWBnRkciwLNA72/GNBlimxGCZAVvY+23ySAYrdT7y/hUxtDGvFNfpbqTIBDLzYfanso0rec1Dmlff/mf4aDHK/Z3y/F+f0nJOMsGqiDoPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754921920; c=relaxed/simple;
-	bh=V4aSu0PXLZI44H/I1IxZP5P+SIjwXfvJSWY1R8xdfkw=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=SQ8wSLBZxYai8LawBqi61q4xpfFqStrhTgsmXxuOoec9iD419hsIn9IdrNgqLf/O3JMPNN1xGfCRumieE4/dWMZUvVKv0ZQxZgl23GWrgtDDk7GjThkz0k1Sp64N2G/NiJRPMwK1UWqRUuOHibSyvuRtWoAcDrPIK0vEbyrly6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c0xZK4yqszKHMnt
-	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Aug 2025 22:18:33 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id DF8721A07BB
-	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Aug 2025 22:18:32 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.101.107])
-	by APP4 (Coremail) with SMTP id gCh0CgDXUxS3+5loVRRVDQ--.30563S4;
-	Mon, 11 Aug 2025 22:18:32 +0800 (CST)
-From: Ye Bin <yebin@huaweicloud.com>
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	yebin@huaweicloud.com,
-	yebin10@huawei.com
-Subject: [PATCH RFC] fs/buffer: fix use-after-free when call bh_read() helper
-Date: Mon, 11 Aug 2025 22:18:30 +0800
-Message-Id: <20250811141830.343774-1-yebin@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1754922372; c=relaxed/simple;
+	bh=Gpgif4jJQvzanWKJOJ2s9ZDQOWPc1/PQaHnckHjCNmo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cyifvm2jqHo88eeipRtZb1eav8okIgv/eonAswAOFz8VEabypnhu+jLlE8wg+rMJeqsoAH+EzqEUVHzGzPj2zEy1V6JOr0Z7Ei4nQ1xxqo+TrKWohqS1ERZJYL3OV96b4JMhFRbcr7gdyb+oeUKs59KIIsPkmgRr6aFBIVfy8ZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=B1FivQUg; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 11 Aug 2025 10:26:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1754922367;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=A6rsFHxkQsnak3YFY7+1+x3Sg0pa/9qbnvIjHnk7aBE=;
+	b=B1FivQUgvpvJLB61xJM8hVKYlrmhN3IFbY6GpfOTI0aX5GH/dn8Xpqak7qRBv7S6vSHJFD
+	P9H6f2rhqAxvzDuw9gmXv0oR/HL8oU6JJcs+GckwpX/DveuBvxSw0XQRkJG+H0EG8tZ5X5
+	ZKOJWabEeP+tmcj7qeFeEbO2WZWyb60=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Konstantin Shelekhin <k.shelekhin@ftml.net>
+Cc: admin@aquinas.su, linux-bcachefs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, list-bcachefs@carlthompson.net, 
+	malte.schroeder@tnxip.de, torvalds@linux-foundation.org
+Subject: Re: [GIT PULL] bcachefs changes for 6.17
+Message-ID: <iktaz2phgjvhixpb5a226ebar7hq6elw6l4evcrkeu3wwm2vs7@fsdav6kbz4og>
+References: <3ik3h6hfm4v2y3rtpjshk5y4wlm5n366overw2lp72qk5izizw@k6vxp22uwnwa>
+ <55e623db-ff03-4d33-98d1-1042106e83c6@ftml.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDXUxS3+5loVRRVDQ--.30563S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxZw45Cr1UWw1rAFy5WFy7GFg_yoW5XF47pr
-	90kFW7tr4kXFsFyr4jyF9xWr18JF4DXF47CF4rJ3W3Za45J3sa9ryUtF1qqF4jyrZFvFW8
-	Xr48Kas5WryUZw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkG14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
-	JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
-	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIY
-	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
-	v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
-	JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JUBVbkUUU
-	UU=
-X-CM-SenderInfo: p1hex046kxt4xhlfz01xgou0bp/
+In-Reply-To: <55e623db-ff03-4d33-98d1-1042106e83c6@ftml.net>
+X-Migadu-Flow: FLOW_OUT
 
-From: Ye Bin <yebin10@huawei.com>
+On Mon, Aug 11, 2025 at 12:51:11PM +0300, Konstantin Shelekhin wrote:
+> >  Yes, this is accurate. I've been getting entirely too many emails from Linus about
+> > how pissed off everyone is, completely absent of details - or anything engineering
+> > related, for that matter.
+> 
+> That's because this is not an engineering problem, it's a communication problem. You just piss
+> people off for no good reason. Then people get tired of dealing with you and now we're here,
+> with Linus thinking about `git rm -rf fs/bcachesfs`. Will your users be happy? Probably not.
+> Will your sponsors be happy? Probably not either. Then why are you keep doing this?
+> 
+> If you really want to change the way things work go see a therapist. A competent enough doctor
+> probably can fix all that in a couple of months.
 
-There's issue as follows:
-BUG: KASAN: stack-out-of-bounds in end_buffer_read_sync+0xe3/0x110
-Read of size 8 at addr ffffc9000168f7f8 by task swapper/3/0
-CPU: 3 UID: 0 PID: 0 Comm: swapper/3 Not tainted 6.16.0-862.14.0.6.x86_64
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996)
-Call Trace:
- <IRQ>
- dump_stack_lvl+0x55/0x70
- print_address_description.constprop.0+0x2c/0x390
- print_report+0xb4/0x270
- kasan_report+0xb8/0xf0
- end_buffer_read_sync+0xe3/0x110
- end_bio_bh_io_sync+0x56/0x80
- blk_update_request+0x30a/0x720
- scsi_end_request+0x51/0x2b0
- scsi_io_completion+0xe3/0x480
- ? scsi_device_unbusy+0x11e/0x160
- blk_complete_reqs+0x7b/0x90
- handle_softirqs+0xef/0x370
- irq_exit_rcu+0xa5/0xd0
- sysvec_apic_timer_interrupt+0x6e/0x90
- </IRQ>
+Konstantin, please tell me what you're basing this on.
 
- Above issue happens when do ntfs3 filesystem mount, issue may happens
- as follows:
-           mount                            IRQ
-ntfs_fill_super
-  read_cache_page
-    do_read_cache_folio
-      filemap_read_folio
-        mpage_read_folio
-	 do_mpage_readpage
-	  ntfs_get_block_vbo
-	   bh_read
-	     submit_bh
-	     wait_on_buffer(bh);
-	                            blk_complete_reqs
-				     scsi_io_completion
-				      scsi_end_request
-				       blk_update_request
-				        end_bio_bh_io_sync
-					 end_buffer_read_sync
-					  __end_buffer_read_notouch
-					   unlock_buffer
+The claims I've been hearing have simply lacked any kind of specifics;
+if there's people I'd pissed off for no reason, I would've been happy to
+apologize, but I'm not aware of the incidences you're claiming - not
+within a year or more; I have made real efforts to tone things down.
 
-            wait_on_buffer(bh);--> return will return to caller
+On the other hand, for the only incidences I can remotely refer to in
+the past year and a half, there has been:
 
-					  put_bh
-					    --> trigger stack-out-of-bounds
-In the mpage_read_folio() function, the stack variable 'map_bh' is
-passed to ntfs_get_block_vbo(). Once unlock_buffer() unlocks and
-wait_on_buffer() returns to continue processing, the stack variable
-is likely to be reclaimed. Consequently, during the end_buffer_read_sync()
-process, calling put_bh() may result in stack overrun.
-If it is not a stack variable, since the reference count of the
-buffer_head is released after unlocking, it cannot be released during
-drop_buffers. This poses a risk of buffer_head leakage.
-To solve above issue first call put_bh() before unlock_buffer. This
-should be safe because during the release, discard_buffer() will call
-lock_buffer().
+- the mm developer who started outright swearing at me on IRC in a
+  discussion about assertions
+- the block layer developer who went on a four email rant where he,
+  charitably, misread the spec or the patchset or both; all this over a
+  patch to simply bring a warning in line with the actual NVME and SCSI
+  specs.
+- and reference to an incident at LSF, but the only noteworthy event
+  that I can recall at the last LSF (a year and a half ago) was where a
+  filesystem developer chased a Rust developer out of the community.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Ye Bin <yebin10@huawei.com>
----
- fs/buffer.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+So: what am I supposed to make of all this?
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index ead4dc85debd..6a8752f7bbed 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -157,8 +157,8 @@ static void __end_buffer_read_notouch(struct buffer_head *bh, int uptodate)
-  */
- void end_buffer_read_sync(struct buffer_head *bh, int uptodate)
- {
--	__end_buffer_read_notouch(bh, uptodate);
- 	put_bh(bh);
-+	__end_buffer_read_notouch(bh, uptodate);
- }
- EXPORT_SYMBOL(end_buffer_read_sync);
- 
--- 
-2.34.1
+To an outsider, I don't think any of this looks like a reasonable or
+measured response, or professional behaviour. The problems with toxic
+behaviour have been around long before I was prominent, and they're
+still in evidence.
 
+It is not reasonable or professional to jump from professional criticism
+of code and work to personal attacks: it is our job to be critical of
+our own and each other's code, and while that may bring up strong
+feelings when we feel our work is attacked, that does not mean that it
+is appropriate to lash out.
+
+We have to separate the professional criticism from the personal.
+
+It's also not reasonable or professional to always escelate tensions,
+always look for the upper hand, and never de-escalate.
+
+As a reminder, this all stems from a single patch, purely internal to
+fs/bcachefs/, that was a critical, data integrity hotfix.
+
+There has been a real pattern of hyper reactive, dramatic responses to
+bugfixes in the bcachefs pull requests, all the way up to full blown
+repeated threats of removing it from the kernel, and it's been toxic.
+
+And it's happening again, complete with full blown rants right off the
+bat in the private maintainer thread about not trusting my work (and I
+have provided data and comparisons with btrfs specifically to rebut
+that), all the way to "everyone hates you and you need therapy". That is
+not reasonable or constructive.
+
+This specific thread was in response to Linus saying that bcachefs was
+imminently going to be git rm -rf'd, "or else", again with zero details
+on that or else or anything that would make it actionable.
+
+Look, I'm always happy to sit down, have a beer, talk things out, and
+listen.
+
+If there's people I have legitimately pissed off (and I do not include
+anyone who starts swearing at me in a technical discussion) - let me
+know, I'll listen. I'm not unapproachable, I'm not going to bite your
+head off.
+
+I've mended fences with people in the past; there were people I thought
+I'd be odds with forever, but all it really takes is just talking. Say
+what it is that you feel has affected, be willing to listen and turn,
+and it gets better.
 
