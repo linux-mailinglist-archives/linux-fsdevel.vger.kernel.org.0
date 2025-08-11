@@ -1,55 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-57379-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57380-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 218E2B20D39
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 17:12:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 413E4B20D45
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 17:14:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D55E7A589F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 15:10:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25DCA1882384
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 15:14:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FBBC2DFA34;
-	Mon, 11 Aug 2025 15:12:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E75602DFA2F;
+	Mon, 11 Aug 2025 15:14:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lUutmAEo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jspNcJ1N"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95758238150;
-	Mon, 11 Aug 2025 15:12:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52BB54EB38;
+	Mon, 11 Aug 2025 15:14:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754925138; cv=none; b=fF14n6lw+cqgXKgnuB8r/VjvSJujH2W3+f+KRAVShss41lT2I1ZovCWGaR/N96S5gYoa36ITRUOPP8EVLlIUba0xjVo9fRVGepyGQwabZZZlfn4aJ6UQ5q614OQwcp8hDQLNY5qchYmRtXEL3mYoYTCXwah5xALsh0sdYEhJ2yI=
+	t=1754925269; cv=none; b=a4CtGZ9r0X/5gmc7aytnZ/ST6SbIyoqCViStsl4NDMudcqtMuVFE31kHjPR5hgAM0pqmhT0Ddiwu81/baAEEp/lJYW95uRutAMEa4o4+tH/ThxD7Uczxeu83LfZh6tb7mTsF+gCcqMHdRppTGiPcTjdlblkQxGgTIqPO/q2+uX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754925138; c=relaxed/simple;
-	bh=8eZx9i04RnI5EQR6arVRDob9c1B+I50FwXifnrZsFv4=;
+	s=arc-20240116; t=1754925269; c=relaxed/simple;
+	bh=/mbXIpabho31eUfIim0DE7D3c8tlMfBRMicVypve6Mk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZPUHMCk2u2yplD2AqVl20UdeFf53QHik0es2mb+fn2oj7rrUWwm164iDhgLOe0r6tfx7iiwJO08GfPzaOkK8UebWMqs7ntVMIMC061CXgCc08/W+5c6QUme4hD7V2y05+unLCfuJxDyNEieotZRUVspGyqppi9d5ciLihB4E8sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lUutmAEo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26192C4CEED;
-	Mon, 11 Aug 2025 15:12:18 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=nBsFOGrvU86mInyAhxOYEVR7OyX5Goo8fxaZ/5qZ+qIbNE4OYWEZgn1014JAYsMh8YigXamc9xq2IVyeRhfxEFLZ0D42F2itLRs/c/ktwM4z1kyN0Xy0VKcg2UeqWvEyllfNfxdcGkf9h0fmkJEh0VZ0TNQ9CKz+i3kWfZwwEcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jspNcJ1N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9AE9C4CEED;
+	Mon, 11 Aug 2025 15:14:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754925138;
-	bh=8eZx9i04RnI5EQR6arVRDob9c1B+I50FwXifnrZsFv4=;
+	s=k20201202; t=1754925268;
+	bh=/mbXIpabho31eUfIim0DE7D3c8tlMfBRMicVypve6Mk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lUutmAEofKXh1qB2lfoocJAtoqdmTNbS0tACoiiDvGmlQdyK4hfLm6uttomvS7+Nt
-	 bU1CzkhG4rTKN6M/7B+VIXM5eynEUH7ikzw9PhjV2/MRNZ/zXS4PGXSXlFY17pe6DT
-	 e4771H0pdYz9SzcCAcU+y9K3CmUQJXsalGSCUq+A7GXSquzxWDudYhPgZ7LZVs1z3p
-	 //P07rK6YICx++sTSwX7YCY/hNSyc8PYBOBKJrrjo6ch3j+klkPxZfAQef7fclQuoD
-	 0sM/BkoNt5VBsetpVdK8zPF06zUYJ7uVZnxy0GOXGeRoIkuF4f3wShklD5aN1ofiD7
-	 3v6CgrahO5V6w==
-Date: Mon, 11 Aug 2025 08:12:17 -0700
+	b=jspNcJ1NFXl2diJz3m98rIx4+L0EisejPc9UQN6hEE9p9kNQmtcO3uI2Xe5e79aVs
+	 52ihPNCi+jUzaehTJAp2kn/xXgG/T+3qf8QgTDOm1wtYLmNZzLDQ7diN0KS1j9TTHw
+	 n31VJisd5eMrrCWo13w+hurRnPpscOsCMxiAshi5HcYHR9IwKIKLri2ltcmfABw8yz
+	 csPRFx7WNQLCL3v5qD04O14jPKGvVb10a0AQWM/lfm6oOtQVyXlbFPWW2X6S+iMkfM
+	 W2fmCrsfGU3b7yosrl4KTik4c/H1MSRVOrNCZkzZ5atWtGif3v25kxPliwpizf22Um
+	 mb4OIUOiGHl8g==
+Date: Mon, 11 Aug 2025 08:14:27 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: Andrey Albershteyn <aalbersh@redhat.com>
 Cc: aalbersh@kernel.org, linux-fsdevel@vger.kernel.org,
 	linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 3/4] xfs_io: make ls/chattr work with special files
-Message-ID: <20250811151217.GC7965@frogsfrogsfrogs>
+Subject: Re: [PATCH 4/4] xfs_db: use file_setattr to copy attributes on
+ special files with rdump
+Message-ID: <20250811151427.GD7965@frogsfrogsfrogs>
 References: <20250808-xattrat-syscall-v1-0-48567c29e45c@kernel.org>
- <20250808-xattrat-syscall-v1-3-48567c29e45c@kernel.org>
+ <20250808-xattrat-syscall-v1-4-48567c29e45c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -58,239 +59,84 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250808-xattrat-syscall-v1-3-48567c29e45c@kernel.org>
+In-Reply-To: <20250808-xattrat-syscall-v1-4-48567c29e45c@kernel.org>
 
-On Fri, Aug 08, 2025 at 09:30:18PM +0200, Andrey Albershteyn wrote:
-> From: Andrey Albershteyn <aalbersh@redhat.com>
-> 
-> With new file_getattr/file_setattr syscalls we can now list/change file
-> attributes on special files instead for ignoring them.
+On Fri, Aug 08, 2025 at 09:30:19PM +0200, Andrey Albershteyn wrote:
+> rdump just skipped file attributes on special files as copying wasn't
+> possible. Let's use new file_getattr/file_setattr syscalls to copy
+> attributes even for special files.
 > 
 > Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
 > ---
->  io/attr.c | 130 ++++++++++++++++++++++++++++++++++++--------------------------
->  1 file changed, 75 insertions(+), 55 deletions(-)
+>  db/rdump.c | 24 +++++++++++++++++++++---
+>  1 file changed, 21 insertions(+), 3 deletions(-)
 > 
-> diff --git a/io/attr.c b/io/attr.c
-> index fd82a2e73801..1cce602074f4 100644
-> --- a/io/attr.c
-> +++ b/io/attr.c
-> @@ -8,6 +8,7 @@
->  #include "input.h"
->  #include "init.h"
->  #include "io.h"
+> diff --git a/db/rdump.c b/db/rdump.c
+> index 9ff833553ccb..5b9458e6bc94 100644
+> --- a/db/rdump.c
+> +++ b/db/rdump.c
+> @@ -17,6 +17,7 @@
+>  #include "field.h"
+>  #include "inode.h"
+>  #include "listxattr.h"
 > +#include "libfrog/file_attr.h"
+>  #include <sys/xattr.h>
+>  #include <linux/xattr.h>
 >  
->  static cmdinfo_t chattr_cmd;
->  static cmdinfo_t lsattr_cmd;
-> @@ -156,36 +157,35 @@ lsattr_callback(
->  	int			status,
->  	struct FTW		*data)
+> @@ -152,10 +153,17 @@ rdump_fileattrs_path(
+>  	const struct destdir	*destdir,
+>  	const struct pathbuf	*pbuf)
 >  {
-> -	struct fsxattr		fsx;
-> -	int			fd;
-> +	struct file_attr	fa;
-> +	int			error;
->  
->  	if (recurse_dir && !S_ISDIR(stat->st_mode))
->  		return 0;
->  
-> -	if ((fd = open(path, O_RDONLY)) == -1) {
-> -		fprintf(stderr, _("%s: cannot open %s: %s\n"),
-> -			progname, path, strerror(errno));
-> -		exitcode = 1;
-> -	} else if ((xfsctl(path, fd, FS_IOC_FSGETXATTR, &fsx)) < 0) {
-> +	error = file_getattr(AT_FDCWD, path, stat, &fa, AT_SYMLINK_NOFOLLOW);
-> +	if (error) {
->  		fprintf(stderr, _("%s: cannot get flags on %s: %s\n"),
->  			progname, path, strerror(errno));
->  		exitcode = 1;
-> -	} else
-> -		printxattr(fsx.fsx_xflags, 0, 1, path, 0, 1);
-> +		return 0;
-> +	}
-> +
-> +	printxattr(fa.fa_xflags, 0, 1, path, 0, 1);
+> +	struct file_attr	fa = {
+> +		.fa_extsize	= ip->i_extsize,
+> +		.fa_projid	= ip->i_projid,
+> +		.fa_cowextsize	= ip->i_cowextsize,
+> +		.fa_xflags	= xfs_ip2xflags(ip),
+> +	};
+>  	int			ret;
+> +	int			at_flags = AT_SYMLINK_NOFOLLOW;
 
-Maybe it's time to rename this printxflags or something that's less
-easily confused with extended attributes...
+Why does this become a mutable variable?  AFAICT it doesn't change?
 
->  
-> -	if (fd != -1)
-> -		close(fd);
->  	return 0;
->  }
->  
->  static int
->  lsattr_f(
-> -	int		argc,
-> -	char		**argv)
-> +	int			argc,
-> +	char			**argv)
->  {
-> -	struct fsxattr	fsx;
-> -	char		*name = file->name;
-> -	int		c, aflag = 0, vflag = 0;
-> +	struct file_attr	fa;
-> +	char			*name = file->name;
-> +	int			c, aflag = 0, vflag = 0;
-> +	struct stat		st;
-> +	int			error;
->  
->  	recurse_all = recurse_dir = 0;
->  	while ((c = getopt(argc, argv, "DRav")) != EOF) {
-> @@ -211,17 +211,27 @@ lsattr_f(
->  	if (recurse_all || recurse_dir) {
->  		nftw(name, lsattr_callback,
->  			100, FTW_PHYS | FTW_MOUNT | FTW_DEPTH);
-> -	} else if ((xfsctl(name, file->fd, FS_IOC_FSGETXATTR, &fsx)) < 0) {
-> +		return 0;
-> +	}
-> +
-> +	error = stat(name, &st);
-> +	if (error)
-> +		return error;
-> +
-> +	error = file_getattr(AT_FDCWD, name, &st, &fa, AT_SYMLINK_NOFOLLOW);
-> +	if (error) {
->  		fprintf(stderr, _("%s: cannot get flags on %s: %s\n"),
->  			progname, name, strerror(errno));
->  		exitcode = 1;
-> -	} else {
-> -		printxattr(fsx.fsx_xflags, vflag, !aflag, name, vflag, !aflag);
-> -		if (aflag) {
-> -			fputs("/", stdout);
-> -			printxattr(-1, 0, 1, name, 0, 1);
-> -		}
-> +		return 0;
->  	}
-> +
-> +	printxattr(fa.fa_xflags, vflag, !aflag, name, vflag, !aflag);
-> +	if (aflag) {
-> +		fputs("/", stdout);
-> +		printxattr(-1, 0, 1, name, 0, 1);
-> +	}
-> +
->  	return 0;
->  }
->  
-> @@ -232,44 +242,43 @@ chattr_callback(
->  	int			status,
->  	struct FTW		*data)
->  {
-> -	struct fsxattr		attr;
-> -	int			fd;
-> +	struct file_attr	attr;
-> +	int			error;
->  
->  	if (recurse_dir && !S_ISDIR(stat->st_mode))
->  		return 0;
->  
-> -	if ((fd = open(path, O_RDONLY)) == -1) {
-> -		fprintf(stderr, _("%s: cannot open %s: %s\n"),
-> -			progname, path, strerror(errno));
-> -		exitcode = 1;
-> -	} else if (xfsctl(path, fd, FS_IOC_FSGETXATTR, &attr) < 0) {
-> +	error = file_getattr(AT_FDCWD, path, stat, &attr, AT_SYMLINK_NOFOLLOW);
-> +	if (error) {
->  		fprintf(stderr, _("%s: cannot get flags on %s: %s\n"),
->  			progname, path, strerror(errno));
->  		exitcode = 1;
-> -	} else {
-> -		attr.fsx_xflags |= orflags;
-> -		attr.fsx_xflags &= ~andflags;
-> -		if (xfsctl(path, fd, FS_IOC_FSSETXATTR, &attr) < 0) {
-> -			fprintf(stderr, _("%s: cannot set flags on %s: %s\n"),
-> -				progname, path, strerror(errno));
-> -			exitcode = 1;
-> -		}
-> +		return 0;
-> +	}
-> +
-> +	attr.fa_xflags |= orflags;
-> +	attr.fa_xflags &= ~andflags;
-> +	error = file_setattr(AT_FDCWD, path, stat, &attr, AT_SYMLINK_NOFOLLOW);
-> +	if (error) {
-> +		fprintf(stderr, _("%s: cannot set flags on %s: %s\n"),
-> +			progname, path, strerror(errno));
-> +		exitcode = 1;
->  	}
->  
-> -	if (fd != -1)
-> -		close(fd);
->  	return 0;
->  }
->  
->  static int
->  chattr_f(
-> -	int		argc,
-> -	char		**argv)
-> +	int			argc,
-> +	char			**argv)
->  {
-> -	struct fsxattr	attr;
-> -	struct xflags	*p;
-> -	unsigned int	i = 0;
-> -	char		*c, *name = file->name;
-> +	struct file_attr	attr;
-> +	struct xflags		*p;
-> +	unsigned int		i = 0;
-> +	char			*c, *name = file->name;
-> +	struct stat		st;
-> +	int			error;
->  
->  	orflags = andflags = 0;
->  	recurse_all = recurse_dir = 0;
-> @@ -326,19 +335,30 @@ chattr_f(
->  	if (recurse_all || recurse_dir) {
->  		nftw(name, chattr_callback,
->  			100, FTW_PHYS | FTW_MOUNT | FTW_DEPTH);
-> -	} else if (xfsctl(name, file->fd, FS_IOC_FSGETXATTR, &attr) < 0) {
-> +		return 0;
-> +	}
-> +
-> +	error = stat(name, &st);
-> +	if (error)
-> +		return error;
-> +
-> +	error = file_getattr(AT_FDCWD, name, &st, &attr, AT_SYMLINK_NOFOLLOW);
-> +	if (error) {
->  		fprintf(stderr, _("%s: cannot get flags on %s: %s\n"),
->  			progname, name, strerror(errno));
->  		exitcode = 1;
-> -	} else {
-> -		attr.fsx_xflags |= orflags;
-> -		attr.fsx_xflags &= ~andflags;
-> -		if (xfsctl(name, file->fd, FS_IOC_FSSETXATTR, &attr) < 0) {
-> -			fprintf(stderr, _("%s: cannot set flags on %s: %s\n"),
-> -				progname, name, strerror(errno));
-> -			exitcode = 1;
-> -		}
-> +		return 0;
->  	}
-> +
-> +	attr.fa_xflags |= orflags;
-> +	attr.fa_xflags &= ~andflags;
-> +	error = file_setattr(AT_FDCWD, name, &st, &attr, AT_SYMLINK_NOFOLLOW);
-
-For my own curiosity, if you wanted to do the get/set sequence on a file
-that's already open, is that just:
-
-	file_getattr(fd, "", &attr, AT_EMPTY_PATH | AT_SYMLINK_NOFOLLOW);
-	...
-	file_setattr(fd, "", &attr, AT_EMPTY_PATH | AT_SYMLINK_NOFOLLOW);
+Otherwise things look good here.
 
 --D
 
-> +	if (error) {
-> +		fprintf(stderr, _("%s: cannot set flags on %s: %s\n"),
-> +			progname, name, strerror(errno));
-> +		exitcode = 1;
+>  
+>  	ret = fchmodat(destdir->fd, pbuf->path, VFS_I(ip)->i_mode & ~S_IFMT,
+> -			AT_SYMLINK_NOFOLLOW);
+> +			at_flags);
+>  	if (ret) {
+>  		/* fchmodat on a symlink is not supported */
+>  		if (errno == EPERM || errno == EOPNOTSUPP)
+> @@ -169,7 +177,7 @@ rdump_fileattrs_path(
+>  	}
+>  
+>  	ret = fchownat(destdir->fd, pbuf->path, i_uid_read(VFS_I(ip)),
+> -			i_gid_read(VFS_I(ip)), AT_SYMLINK_NOFOLLOW);
+> +			i_gid_read(VFS_I(ip)), at_flags);
+>  	if (ret) {
+>  		if (errno == EPERM)
+>  			lost_mask |= LOST_OWNER;
+> @@ -181,7 +189,17 @@ rdump_fileattrs_path(
+>  			return 1;
+>  	}
+>  
+> -	/* Cannot copy fsxattrs until setfsxattrat gets merged */
+> +	ret = file_setattr(destdir->fd, pbuf->path, NULL, &fa, at_flags);
+> +	if (ret) {
+> +		if (errno == EOPNOTSUPP || errno == EPERM || errno == ENOTTY)
+> +			lost_mask |= LOST_FSXATTR;
+> +		else
+> +			dbprintf(_("%s%s%s: file_setattr %s\n"), destdir->path,
+> +					destdir->sep, pbuf->path,
+> +					strerror(errno));
+> +		if (strict_errors)
+> +			return 1;
 > +	}
-> +
+>  
 >  	return 0;
 >  }
->  
 > 
 > -- 
 > 2.49.0
