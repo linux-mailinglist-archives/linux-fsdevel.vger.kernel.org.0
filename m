@@ -1,186 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-57392-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57393-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7FDEB210D9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 18:05:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E879B21165
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 18:17:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F0DE7B3966
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 16:02:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3E943B11D0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 16:09:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8980D2E03EB;
-	Mon, 11 Aug 2025 15:49:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2DD4311C23;
+	Mon, 11 Aug 2025 16:02:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WrGck7Fm"
+	dkim=pass (2048-bit key) header.d=aquinas.su header.i=@aquinas.su header.b="Obxusw6B"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from hope.aquinas.su (hope.aquinas.su [82.148.24.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB02E2E2679;
-	Mon, 11 Aug 2025 15:49:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B01D311C0A;
+	Mon, 11 Aug 2025 16:02:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.148.24.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754927377; cv=none; b=cTzShH5tNb+SJ3/JIac9f45M6WQtxUUpMZKbNGGsL3rMEssiOc733gripkspi8NLg0+DLKknscUPz25jO9+mh5CZ504UGmlLYs6zjQED794/un9IAJkgbE2KF5XfP+yfqH7i2HJx9ll4ONi6zJs42WDg9SGv7ozrl4BuxAlmSFo=
+	t=1754928161; cv=none; b=p1fzjobx2m6gaFCTxMPY+cfRS+th1/6KVOQQ1ezAUXPnRYiDMEcPOX0y7JeFiOxMepkFTJdRvLlfK0/i8zpKIxaWi1ZqsGZNgtryqna6SdTf2GxH8tFOUn7FMI2vPR27f0dUis5d7TjaOIFhZEufgAHFWz1ZV6wBPpgEUVX/85A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754927377; c=relaxed/simple;
-	bh=RopHifErAZ/r1bKrzCXHi+tqR8Gd+ZBCOXa63JC3HIU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=duTirGKDQyiGBycyeKkvAiDA+PxmGT2Wcz7Ut5cbO5BRV7AqwSjREhyDzi8h2Th/WNpWnMRTGAWRmROQxHlknjGYXwC7WeG+eCtKFriId2xu/fYYq55rycfWt433MTjdjvFQLaEstZCwKXLvCGb00RSNcMBxMyTf3vLZHxVrRZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WrGck7Fm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A2FBC4CEED;
-	Mon, 11 Aug 2025 15:49:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754927376;
-	bh=RopHifErAZ/r1bKrzCXHi+tqR8Gd+ZBCOXa63JC3HIU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WrGck7Fmn0StA1HSyOixhZNPLPo5/WRadk5mDshttUOMgrSNgupbE96hta5DvBVj3
-	 apSkCJOnMOECU6/IGLbkJHX2t7Vvbotqor63J18pfGnwia/s6dXE1SreowaY24sO0q
-	 wQv5qfqtKahV6w8xGiUAV8eURWno82WnSMRDKSAs2RJK/g/q3HIL3VWC2cB98VCGKW
-	 QesWjW+OnVmrp9KDJ2yFVTxfMfuKyTpp+WLHGuakLcpptXpnmJAWXndwyWnOnsF3q+
-	 s8DO7xeTCoaEjnNgQlSddM+52tNVwSnC4BsO8Rmzgvi74GrybIFHuhPemLca0du7Mp
-	 yO0DvfspCWAEQ==
-Date: Mon, 11 Aug 2025 08:49:35 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Cc: Zhang Yi <yi.zhang@huaweicloud.com>, Qu Wenruo <wqu@suse.com>,
-	Theodore Ts'o <tytso@mit.edu>,
-	linux-ext4 <linux-ext4@vger.kernel.org>,
-	linux-btrfs <linux-btrfs@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: Ext4 iomap warning during btrfs/136 (yes, it's from btrfs test
- cases)
-Message-ID: <20250811154935.GD7942@frogsfrogsfrogs>
-References: <9b650a52-9672-4604-a765-bb6be55d1e4a@gmx.com>
- <4ef2476f-50c3-424d-927d-100e305e1f8e@gmx.com>
- <20250808121659.GC778805@mit.edu>
- <035ad34e-fb1e-414f-8d3c-839188cfa387@suse.com>
- <c2a00db8-ed34-49bb-8c01-572381451af3@huaweicloud.com>
- <15a4c437-d276-4503-9e30-4d48f5b7a4ff@gmx.com>
+	s=arc-20240116; t=1754928161; c=relaxed/simple;
+	bh=gVKmCoAyy9x30EQWroVVZLSZOdXVdA6INBp7hov+ynI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WGm5+uV0jM7l8h3Lgrrz408Qq4FPo0p7OoA49ZahVWLv5zHpcEZTFNdl4NNvNznLoT6/F7gRLafBOER9Shp0a5fye3js50uW2z7R5eJZZ5K/PUqtDCkc2UuRNt5eiyn8ZKtLMon0Ewy2DaFVr+5w4hoW7sVvlJTs12ivb1CuR1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aquinas.su; spf=pass smtp.mailfrom=aquinas.su; dkim=pass (2048-bit key) header.d=aquinas.su header.i=@aquinas.su header.b=Obxusw6B; arc=none smtp.client-ip=82.148.24.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aquinas.su
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aquinas.su
+Received: from woolf.localnet (host-46-241-65-133.bbcustomer.zsttk.net [46.241.65.133])
+	(Authenticated sender: admin@aquinas.su)
+	by hope.aquinas.su (Postfix) with ESMTPSA id 9FBD2649E0;
+	Mon, 11 Aug 2025 19:02:25 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aquinas.su; s=default;
+	t=1754928147;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gVKmCoAyy9x30EQWroVVZLSZOdXVdA6INBp7hov+ynI=;
+	b=Obxusw6BJYizYhPcNz4kfwVntrOX2OQ4eZoQOQACE/5NnXko3cFjs2lrj6SEWW+D+ab9k4
+	DBBWW6RiCH8u+zM9XqynNXfnC5bXUBAHsZy5ytf0+WQjJ0kMxO5GRweWRxAkSGQc2ZYcCW
+	J0CX1icyLc26dFzy+I6bdgFqa5VIhvGgK3vLT11gxqQ+7Mw1tlzUKbQrFAxKQqsU9W2O7V
+	HgrehzcScOCVr5rF3h/jMD9srEd7HQgZ8iRHNv5w4GGj75GIcGr0JAuQAMdQjMgStADvUj
+	16rQLfzsUkUyYNMdFLFEK1TVaBdwlRuETKckG+hismSGE6D8yXoJVzySca9oeQ==
+Authentication-Results: hope.aquinas.su;
+	auth=pass smtp.auth=admin@aquinas.su smtp.mailfrom=admin@aquinas.su
+From: Aquinas Admin <admin@aquinas.su>
+To: Kent Overstreet <kent.overstreet@linux.dev>,
+ Josef Bacik <josef@toxicpanda.com>
+Cc: Malte =?UTF-8?B?U2NocsO2ZGVy?= <malte.schroeder@tnxip.de>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ "Carl E. Thompson" <list-bcachefs@carlthompson.net>,
+ linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] bcachefs changes for 6.17
+Date: Mon, 11 Aug 2025 23:02:24 +0700
+Message-ID: <5030625.31r3eYUQgx@woolf>
+In-Reply-To: <20250809192156.GA1411279@fedora>
+References:
+ <22ib5scviwwa7bqeln22w2xm3dlywc4yuactrddhmsntixnghr@wjmmbpxjvipv>
+ <3ik3h6hfm4v2y3rtpjshk5y4wlm5n366overw2lp72qk5izizw@k6vxp22uwnwa>
+ <20250809192156.GA1411279@fedora>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <15a4c437-d276-4503-9e30-4d48f5b7a4ff@gmx.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Sun, Aug 10, 2025 at 07:36:48AM +0930, Qu Wenruo wrote:
-> 
-> 
-> 在 2025/8/9 18:39, Zhang Yi 写道:
-> > On 2025/8/9 6:11, Qu Wenruo wrote:
-> > > 在 2025/8/8 21:46, Theodore Ts'o 写道:
-> > > > On Fri, Aug 08, 2025 at 06:20:56PM +0930, Qu Wenruo wrote:
-> > > > > 
-> > > > > 在 2025/8/8 17:22, Qu Wenruo 写道:
-> > > > > > Hi,
-> > > > > > 
-> > > > > > [BACKGROUND]
-> > > > > > Recently I'm testing btrfs with 16KiB block size.
-> > > > > > 
-> > > > > > Currently btrfs is artificially limiting subpage block size to 4K.
-> > > > > > But there is a simple patch to change it to support all block sizes <=
-> > > > > > page size in my branch:
-> > > > > > 
-> > > > > > https://github.com/adam900710/linux/tree/larger_bs_support
-> > > > > > 
-> > > > > > [IOMAP WARNING]
-> > > > > > And I'm running into a very weird kernel warning at btrfs/136, with 16K
-> > > > > > block size and 64K page size.
-> > > > > > 
-> > > > > > The problem is, the problem happens with ext3 (using ext4 modeule) with
-> > > > > > 16K block size, and no btrfs is involved yet.
-> > > > 
-> > > > 
-> > > > Thanks for the bug report!  This looks like it's an issue with using
-> > > > indirect block-mapped file with a 16k block size.  I tried your
-> > > > reproducer using a 1k block size on an x86_64 system, which is how I
-> > > > test problem caused by the block size < page size.  It didn't
-> > > > reproduce there, so it looks like it really needs a 16k block size.
-> > > > 
-> > > > Can you say something about what system were you running your testing
-> > > > on --- was it an arm64 system, or a powerpc 64 system (the two most
-> > > > common systems with page size > 4k)?  (I assume you're not trying to
-> > > > do this on an Itanic.  :-)   And was the page size 16k or 64k?
-> > > 
-> > > The architecture is aarch64, the host board is Rock5B (cheap and fast enough), the test machine is a VM on that board, with ovmf as the UEFI firmware.
-> > > 
-> > > The kernel is configured to use 64K page size, the *ext3* system is using 16K block size.
-> > > 
-> > > Currently I tried the following combination with 64K page size and ext3, the result looks like the following
-> > > 
-> > > - 2K block size
-> > > - 4K block size
-> > >    All fine
-> > > 
-> > > - 8K block size
-> > > - 16K block size
-> > >    All the same kernel warning and never ending fsstress
-> > > 
-> > > - 32K block size
-> > > - 64K block size
-> > >    All fine
-> > > 
-> > > I am surprised as you that, not all subpage block size are having problems, just 2 of the less common combinations failed.
-> > > 
-> > > And the most common ones (4K, page size) are all fine.
-> > > 
-> > > Finally, if using ext4 not ext3, all combinations above are fine again.
-> > > 
-> > > So I ran out of ideas why only 2 block sizes fail here...
-> > > 
-> > 
-> > This issue is caused by an overflow in the calculation of the hole's
-> > length on the forth-level depth for non-extent inodes. For a file system
-> > with a 4KB block size, the calculation will not overflow. For a 64KB
-> > block size, the queried position will not reach the fourth level, so this
-> > issue only occur on the filesystem with a 8KB and 16KB block size.
-> > 
-> > Hi, Wenruo, could you try the following fix?
-> > 
-> > diff --git a/fs/ext4/indirect.c b/fs/ext4/indirect.c
-> > index 7de327fa7b1c..d45124318200 100644
-> > --- a/fs/ext4/indirect.c
-> > +++ b/fs/ext4/indirect.c
-> > @@ -539,7 +539,7 @@ int ext4_ind_map_blocks(handle_t *handle, struct inode *inode,
-> >   	int indirect_blks;
-> >   	int blocks_to_boundary = 0;
-> >   	int depth;
-> > -	int count = 0;
-> > +	u64 count = 0;
-> >   	ext4_fsblk_t first_block = 0;
-> > 
-> >   	trace_ext4_ind_map_blocks_enter(inode, map->m_lblk, map->m_len, flags);
-> > @@ -588,7 +588,7 @@ int ext4_ind_map_blocks(handle_t *handle, struct inode *inode,
-> >   		count++;
-> >   		/* Fill in size of a hole we found */
-> >   		map->m_pblk = 0;
-> > -		map->m_len = min_t(unsigned int, map->m_len, count);
-> > +		map->m_len = umin(map->m_len, count);
-> >   		goto cleanup;
-> >   	}
-> 
-> It indeed solves the problem.
-> 
-> Tested-by: Qu Wenruo <wqu@suse.com>
-
-Can we get the relevant chunks of this test turned into a tests/ext4/
-fstest so that the ext4 developers have a regression test that doesn't
-require setting up btrfs, please?
-
---D
-
+> Exactly. Which is why the Meta infrastructure is built completely on btrfs
+> and its features. We have saved billions of dollars in infrastructure cos=
+ts
+> with the features and robustness of btrfs.
+>=20
+> Btrfs doesn't need me or anybody else wandering around screaming about how
+> everybody else sucks to gain users. The proof is in the pudding. If you r=
+ead
+> anything that I've wrote in my commentary about other file systems you wi=
+ll
+> find nothing but praise and respect, because this is hard and we all make
+> our tradeoffs.
+>=20
+Sure, of course. The problem is that Meta doesn't need a general-purpose fi=
+le=20
+system. And yes, and in general, Meta is not the kind of company that makes=
+=20
+technically sound decisions. Tell me, does Meta still store user passwords =
+in=20
+plain text? At least in March 2019, Meta was fined for that. Should we ment=
+ion=20
+that the btrfs used at Meta differs from the btrfs in the kernel? Has "btrf=
+s=20
+check" stopped completely destroying the file system? Has the problem with=
+=20
+RAID5/6 (write hole) been solved in more than 20 years of development? Btrf=
+s=20
+is not the file system that users want to see as a general-purpose file sys=
+tem.=20
+It works, of course, in certain scenarios. But if you run out of space, you=
+=20
+even can't delete a file from it. That's the design=E2=80=94bravo! I'm surp=
+rised that a=20
+technically knowledgeable person would use "god-level" arguments. What file=
+=20
+system have they saved money on compared to? How does a specific use case a=
+lign=20
+with general-purpose scenarios? Why did you switch to discussing personal=20
+attacks in response to technical criticism?
+>=20
 > Thanks,
-> Qu
-> 
-> > Thanks,
-> > Yi.
-> > 
-> 
-> 
+>=20
+> Josef
+
+
+
 
