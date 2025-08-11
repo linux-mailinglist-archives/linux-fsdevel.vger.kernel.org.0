@@ -1,177 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-57348-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57349-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7495CB20A37
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 15:30:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46C46B20A4D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 15:35:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C8CB7A36F6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 13:28:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50FF32A4F9F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 13:35:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 620792DEA9B;
-	Mon, 11 Aug 2025 13:29:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA3FB2DECC5;
+	Mon, 11 Aug 2025 13:34:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nHYQdHSS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OLF36AqI"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC34C1F5820;
-	Mon, 11 Aug 2025 13:29:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12252DCF64;
+	Mon, 11 Aug 2025 13:34:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754918988; cv=none; b=czlyiJV/3qUQawsJLCD3Bx2qtW+N2GuyZ0nU9rjkszVVXorb6vXL0BY/lVa6vc8238JqauqRm6kDG5zLMubDwYnaDnOKs9vP59ORPWNm/VcC5oJf12LuuDA5cVan0ZPutsDyyx+fnY8QeQNlxYlpPzBMVcTHwnsINZgop6E61Gc=
+	t=1754919281; cv=none; b=qiyMRcrKRsk+PXn2R1jepqZsdgxZXFWgU0Ep6ROfxWDdRCvRAM+bVloRT77MZNAixDKKWOhmNl+KACeYxDqEpQzt0+lYEbp44aUL51E3GzKkoLd9vx2kr98u2LgBY6V8XAfVjXroBxstgXWQkj3oEWk1jHb2g7jCI4A2wKaIym8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754918988; c=relaxed/simple;
-	bh=TgjO8kHAVKI3l7CYVMLzptQqzc2/jaFVmi388jyGESY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=uGCYg/t1TrSkEyHb5cQvnFiyel9UHMRwGZ42v/SJf372XcAKSeXc9WmnCMsvQ4sySfpyp9nSJ14GnlPhsQVsHz5BmZ0FVSpiLV6F42wGJ7dzgU1dG9/Rp105g6STPXga3MJLU3d6vpcN+XY4cd/llx+pDls/RziPubL6sffs5Ec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nHYQdHSS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5E83C4CEF7;
-	Mon, 11 Aug 2025 13:29:44 +0000 (UTC)
+	s=arc-20240116; t=1754919281; c=relaxed/simple;
+	bh=Ba4T8JRIhY1ucolU1ke77/oTfZPh0CpkbfaJTVmXDGs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GAay2s+1vnBbpK8oTH1lAqxj40TojrxT/uIG1Nq34Cp2dGxw2EWSYgn86L6sjIm0sni2aFdArI5YADRnpPUvMPVBCxqxEFZI539PtWYCJbTxJ2svKpyBcDRk4NQ3/1x2c9exnhm2NLyqulhy9YtwBuqA3OhQE9bw+o0LgfjI8Ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OLF36AqI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EB39C4CEED;
+	Mon, 11 Aug 2025 13:34:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754918988;
-	bh=TgjO8kHAVKI3l7CYVMLzptQqzc2/jaFVmi388jyGESY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=nHYQdHSSsQwSWCD3WrYy07OaO4m86uNO8iyi3aw6PA55zHLFltaTHVJUygKn6D2GA
-	 Y+UmhsiLOJ3RptaWumnpZZT3EVrIi746eRRBdDKeY1WVcqoZsuatOyykNiQxQFNbGj
-	 5nHPIR4LS3w7UJvKIMLUD8vkAXFafB8oYjzL/KUiL8zEt7xrg+Rn6jh0utGwwReCvZ
-	 nPF5SQ7W2+epSEgJ26xHgkiO3gPZTnBluEWwiv5/YQfkNMv0tpyfPmv0Ra35lLUyK5
-	 kv7xn3kkbcotz4S40rFwfiuHybfIoFUDaUYQL6m9MEoAiZm8Dk2UOzQeN1lk/wk6ap
-	 yNI4p5nOvyF4Q==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Tamir Duberstein <tamird@gmail.com>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
- Matthew Wilcox <willy@infradead.org>, Andrew Morton
- <akpm@linux-foundation.org>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, Daniel Almeida
- <daniel.almeida@collabora.com>, Tamir Duberstein <tamird@gmail.com>, Janne
- Grunau <j@jannau.net>
-Subject: Re: [PATCH v2 3/3] rust: xarray: add `insert` and `reserve`
-In-Reply-To: <20250713-xarray-insert-reserve-v2-3-b939645808a2@gmail.com>
-References: <20250713-xarray-insert-reserve-v2-0-b939645808a2@gmail.com>
- <iPv7ly-33WYOq_9Fait3DBD6dQCAn1WCRGwXjlPgNBmuj5yejzu0D6-qfg3VYyJfwu9uS4rJOu9o3L2ebudROw==@protonmail.internalid>
- <20250713-xarray-insert-reserve-v2-3-b939645808a2@gmail.com>
-Date: Mon, 11 Aug 2025 15:28:11 +0200
-Message-ID: <87o6smf0no.fsf@t14s.mail-host-address-is-not-set>
+	s=k20201202; t=1754919280;
+	bh=Ba4T8JRIhY1ucolU1ke77/oTfZPh0CpkbfaJTVmXDGs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OLF36AqIkTxYij3rbRxLgiTKeAc20fE19pNkSF+6AsTmK4O7x7hqc6h9W1w8JaKxB
+	 F6Yd6j+Zuz3C0Z725mv1ub40YX4pJKu9nCeUFh2JxNvosAsHrd4mTQ2qzKY1GIBjIw
+	 utXSwPyDvH5GbbB4gOpKORIsVNVeawQrxrddtJU038mcQ5W0vgkBBoWX+bWpmCh+K1
+	 wrIWKmD6rZBzQrW6phPG619xf0GlruQdThXJEfKIWfoZkrpK2I9COSa5cZMyFHZNg/
+	 LG8LJcdQ3DDiYJIXqSDznqH/6+C6ULpc7F7fNadE2owbTdrJ+LR0jcwygpsMArWBYA
+	 ZgrzYeoo58MPw==
+Date: Mon, 11 Aug 2025 15:34:35 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-fscrypt@vger.kernel.org, fsverity@lists.linux.dev, 
+	linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, linux-btrfs@vger.kernel.org, 
+	ceph-devel@vger.kernel.org
+Subject: Re: [PATCH v5 00/13] Move fscrypt and fsverity info out of struct
+ inode
+Message-ID: <20250811-unbedacht-vollmond-1a805b76212b@brauner>
+References: <20250810075706.172910-1-ebiggers@kernel.org>
+ <20250810-tortur-gerammt-8d9ffd00da19@brauner>
+ <20250810090302.GA1274@sol>
+ <20250811-distribuieren-nilpferd-bef047fa7992@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250811-distribuieren-nilpferd-bef047fa7992@brauner>
 
-"Tamir Duberstein" <tamird@gmail.com> writes:
+On Mon, Aug 11, 2025 at 03:17:01PM +0200, Christian Brauner wrote:
+> On Sun, Aug 10, 2025 at 02:03:02AM -0700, Eric Biggers wrote:
+> > On Sun, Aug 10, 2025 at 10:47:32AM +0200, Christian Brauner wrote:
+> > > On Sun, Aug 10, 2025 at 12:56:53AM -0700, Eric Biggers wrote:
+> > > > This is a cleaned-up implementation of moving the i_crypt_info and
+> > > > i_verity_info pointers out of 'struct inode' and into the fs-specific
+> > > > part of the inode, as proposed previously by Christian at
+> > > > https://lore.kernel.org/r/20250723-work-inode-fscrypt-v4-0-c8e11488a0e6@kernel.org/
+> > > > 
+> > > > The high-level concept is still the same: fs/crypto/ and fs/verity/
+> > > > locate the pointer by adding an offset to the address of struct inode.
+> > > > The offset is retrieved from fscrypt_operations or fsverity_operations.
+> > > > 
+> > > > I've cleaned up a lot of the details, including:
+> > > > - Grouped changes into patches differently
+> > > > - Rewrote commit messages and comments to be clearer
+> > > > - Adjusted code formatting to be consistent with existing code
+> > > > - Removed unneeded #ifdefs
+> > > > - Improved choice and location of VFS_WARN_ON_ONCE() statements
+> > > > - Added missing kerneldoc for ubifs_inode::i_crypt_info
+> > > > - Moved field initialization to init_once functions when they exist
+> > > > - Improved ceph offset calculation and removed unneeded static_asserts
+> > > > - fsverity_get_info() now checks IS_VERITY() instead of v_ops
+> > > > - fscrypt_put_encryption_info() no longer checks IS_ENCRYPTED(), since I
+> > > >   no longer think it's actually correct there.
+> > > > - verity_data_blocks() now keeps doing a raw dereference
+> > > > - Dropped fscrypt_set_inode_info() 
+> > > > - Renamed some functions
+> > > > - Do offset calculation using int, so we don't rely on unsigned overflow
+> > > > - And more.
+> > > > 
+> > > > For v4 and earlier, see
+> > > > https://lore.kernel.org/r/20250723-work-inode-fscrypt-v4-0-c8e11488a0e6@kernel.org/
+> > > > 
+> > > > I'd like to take this series through the fscrypt tree for 6.18.
+> > > > (fsverity normally has a separate tree, but by choosing just one tree
+> > > > for this, we'll avoid conflicts in some places.)
+> > > 
+> > > Woh woh. First, I had a cleaned up version ready for v6.18 so if you
+> > > plan on taking over someone's series and resend then maybe ask the
+> > > author first whether that's ok or not. I haven't seen you do that. You
+> > > just caused duplicated work for no reason.
+> > 
+> > Ah, sorry about that.  When I started looking at it again yesterday
+> > there turned out to be way too many cleanups and fixes I wanted to make
+> > (beyond the comments I gave earlier), and I hadn't seen activity from
+> > you on it in a while.  So I figured it would be easier to just send a
+> > series myself.  But I should have asked you first, sorry.
+> 
+> So I started working on this pretty much right away. And I had planned
+> on sending it out rather soon but then thought to better wait for -rc1
+> to be released because I saw you had a bunch of crypto changes in for
+> -rc1 that would've caused merge conflicts. It's no big deal overall but
+> I just don't like that I wasted massaging all that stuff. So next time a
+> heads-up would be nice. Thank you!
 
-> Add `Guard::{insert,reserve}` and `Guard::{insert,reserve}_limit`, which
-> are akin to `__xa_{alloc,insert}` in C.
->
-> Note that unlike `xa_reserve` which only ensures that memory is
-> allocated, the semantics of `Reservation` are stricter and require
-> precise management of the reservation. Indices which have been reserved
-> can still be overwritten with `Guard::store`, which allows for C-like
-> semantics if desired.
->
-> `__xa_cmpxchg_raw` is exported to facilitate the semantics described
-> above.
->
-> Tested-by: Janne Grunau <j@jannau.net>
-> Reviewed-by: Janne Grunau <j@jannau.net>
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+I just pulled the series and now I see that you also changed the
+authorship of every single patch in the series from me to you and put my
+Co-developed-by in there.
 
-<cut>
+I mean I acknowledge that there's changes between the branches and
+there's some function renaming but it's not to the point where
+authorship should be changed. And if you think that's necessary than it
+would be something you would want to talk to me about first.
 
-> +    /// Stores an element somewhere in the given range of indices.
-> +    ///
-> +    /// On success, takes ownership of `ptr`.
-> +    ///
-> +    /// On failure, ownership returns to the caller.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// `ptr` must be `NULL` or have come from a previous call to `T::into_foreign`.
-> +    unsafe fn alloc(
+I don't care about the stats but it was always hugely frustrating to me
+when I started kernel development when senior kernel developers waltzed
+in and thought they'd just take things over so I try very hard to not do
+that unless this is agreed upon first.
 
-
-The naming of this method in C is confusing. Could we call it
-insert_limit_raw on the Rust side?
-
-Even though this is private, I think we should also document that the
-effect of inserting NULL is to reserve the entry.
-
-> +        &mut self,
-> +        limit: impl ops::RangeBounds<u32>,
-> +        ptr: *mut T::PointedTo,
-> +        gfp: alloc::Flags,
-> +    ) -> Result<usize> {
-> +        // NB: `xa_limit::{max,min}` are inclusive.
-> +        let limit = bindings::xa_limit {
-> +            max: match limit.end_bound() {
-> +                ops::Bound::Included(&end) => end,
-> +                ops::Bound::Excluded(&end) => end - 1,
-> +                ops::Bound::Unbounded => u32::MAX,
-> +            },
-> +            min: match limit.start_bound() {
-> +                ops::Bound::Included(&start) => start,
-> +                ops::Bound::Excluded(&start) => start + 1,
-> +                ops::Bound::Unbounded => 0,
-> +            },
-> +        };
-> +
-> +        let mut index = u32::MAX;
-> +
-> +        // SAFETY:
-> +        // - `self.xa` is always valid by the type invariant.
-> +        // - `self.xa` was initialized with `XA_FLAGS_ALLOC` or `XA_FLAGS_ALLOC1`.
-> +        //
-> +        // INVARIANT: `ptr` is either `NULL` or came from `T::into_foreign`.
-> +        match unsafe {
-> +            bindings::__xa_alloc(
-> +                self.xa.xa.get(),
-> +                &mut index,
-> +                ptr.cast(),
-> +                limit,
-> +                gfp.as_raw(),
-> +            )
-> +        } {
-> +            0 => Ok(to_usize(index)),
-> +            errno => Err(Error::from_errno(errno)),
-> +        }
-> +    }
-> +
-> +    /// Allocates an entry somewhere in the array.
-
-Should we rephrase this to match `alloc`?
-
-  Stores an entry somewhere in the given range of indices.
-
-<cut>
-
-> +impl<T: ForeignOwnable> Reservation<'_, T> {
-> +    /// Returns the index of the reservation.
-> +    pub fn index(&self) -> usize {
-> +        self.index
-> +    }
-> +
-> +    /// Replaces the reserved entry with the given entry.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// `ptr` must be `NULL` or have come from a previous call to `T::into_foreign`.
-
-We should document the effect of replacing with NULL.
-
-
-Best regards,
-Andreas Hindborg
-
-
+> > > And second general infrastructure changes that touch multiple fses and
+> > > generic fs infrastructure I very much want to go through VFS trees.
+> > > We'll simply use a shared tree.
+> > 
+> > So you'd like to discontinue the fscrypt and fsverity trees?  That's
+> > what they are for: general infrastructure shared by multiple
+> > filesystems.  Or is this comment just for this series in particular,
+> > presumably because it touches 'struct inode'?
+> 
+> My comment just applies this series. I'm not here to take away your
+> trees ofc unless you would like to have them go through the VFS batch.
+> That's something that some people like Amir have started doing.
+> 
+> I'll put the series into vfs-6.17.inode and push it out then you can
+> base any additional changes on top of that. I'll not touch it unless you
+> tell me to. Linus knows that VFS trees often have work that is used as
+> the base for other trees so he will merge VFS trees before any of the
+> smaller trees and I always mention this to him.
 
