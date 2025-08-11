@@ -1,138 +1,186 @@
-Return-Path: <linux-fsdevel+bounces-57391-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57392-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C49EBB210F8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 18:08:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7FDEB210D9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 18:05:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAAF568746A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 16:02:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F0DE7B3966
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 16:02:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CACC72E2DFB;
-	Mon, 11 Aug 2025 15:48:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8980D2E03EB;
+	Mon, 11 Aug 2025 15:49:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mazr+Izh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WrGck7Fm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B56982E2DE4;
-	Mon, 11 Aug 2025 15:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB02E2E2679;
+	Mon, 11 Aug 2025 15:49:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754927312; cv=none; b=YOOcE31WFjsuZ5aCz+x5U9azqNJS7aIkiAbk1fYEPldovJzP6zv398ctpw90HhV3r147zLPTK7BUcFlYbVRKT7nnH21j4Xk438XYGrmZ41bGKYYEto/UnJsEvnMbu5dyBUMWAFfRSu2Y5yHWXiGmumtwyBeYBg1jehgeOd3LvMw=
+	t=1754927377; cv=none; b=cTzShH5tNb+SJ3/JIac9f45M6WQtxUUpMZKbNGGsL3rMEssiOc733gripkspi8NLg0+DLKknscUPz25jO9+mh5CZ504UGmlLYs6zjQED794/un9IAJkgbE2KF5XfP+yfqH7i2HJx9ll4ONi6zJs42WDg9SGv7ozrl4BuxAlmSFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754927312; c=relaxed/simple;
-	bh=EBQ0QkaAv5cpHJjuhRc73J70XhiDX+eXJVtfJMjYzxs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Su3mqfTTE8/TA5t8is+g4Vh77UGtkw+fSX+a/IGDpbhoJYWO8JNO1xkEXkj+D1alakyuQxYZUTnQm7LwXPJgGzQLnPaw7+F/Zk8xf0+fxWDw2m+U7zhUvRZ+Sdg0vPARVKOTdib5iLPRpaRIKOxtLrvQ730lLwtrB48lW2Xxt4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mazr+Izh; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4b07275e0a4so56639081cf.3;
-        Mon, 11 Aug 2025 08:48:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754927310; x=1755532110; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EBQ0QkaAv5cpHJjuhRc73J70XhiDX+eXJVtfJMjYzxs=;
-        b=mazr+IzhE9mY3E6y1szjJ4hkvhroPZ/ZUF/H3mO2+5/7jfXD8ii1joVo5aD2U6V7fj
-         jAhY5vSuGpVGaCumTIko7IXynKfYGllMbYy00dshKUu5gxeC1cY0NRPcipZX80Dh0ur4
-         fZughJFRsVfJJJEMxLdVFNe7w2Fc0oAi0Ea2JyFP6Rhxwtn/zuLUfzLFpT0hiN9XHd3+
-         rsazR6qeFfASxBHJj+zJb9I0wNVG6NhCkNnFuq5ZoDbNpYh7RBMjvGS5P6+R0XHP+SMR
-         R/CU6ZBdlTWaN2+aBzlbeL7bbfzidZbuqSwI3lozEC9Hvev144N1lRrxp0ifiZ3mSPde
-         dtMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754927310; x=1755532110;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EBQ0QkaAv5cpHJjuhRc73J70XhiDX+eXJVtfJMjYzxs=;
-        b=bLzoUK2d+5CxF+qMFUMAtgQ1mWfWH3sKqIVpZCIq7tlDsM49flm4zsg+5SjEt4a0S0
-         v2NZ2s+iVn29o2fpuFT5G0/xOHaE3V/V+a3DNPw4ZdYc9IWEY5YjWBz6Gnz02AtN4CWD
-         6d/LzqYN5um+b96dgqcDBPTSng5EYY87bIIyFJ1YpaqzeuLWvxYv6afHxK21es7nk6ur
-         +nlk3Q0mSc8navFx93JOZyt2yR4ln3hEraHCLBIZsWs5q2R9uelp6GwRy6Y/5lt3jRQA
-         M2ku94CIM6qXo3Ao8GX3nYu9aq1ngwMhDXf2mz2j3LiEl62YtePsjHZ0zBgX0zIbDYps
-         Mtaw==
-X-Forwarded-Encrypted: i=1; AJvYcCUCOiIdKoGc3/EOTf3uWa97LPASxJm5WvGP3Al/TYERwAy+cipTPJ4BLP+nSlHJHI/zBUhaNFMSA+qje6BBGQ==@vger.kernel.org, AJvYcCV09ddUDoKJOZIMd8gTZ5FvJAPp52EnZiAZAABM8dJJCPs5guifFuCS/mfaOpW/4Fsd2LUsjd5p78MvZrZS5Q==@vger.kernel.org, AJvYcCWIRVe33xGEJGbFCN3wWTtH9pIo7e0PbBAUYDh5O7zFRJNRIzs65np4XnX0pEfImhqX4eZ7gVfzyXDOgkfV@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRoSq9auXE/95Jt7UQbqx2QNlN5HDU3XIlBVSTtkiZIi0m9u5E
-	M5bY4wmgVpc7jzSdbBYj2lSkDGdNaG7UDd1IMs5vZrMwH6kSepTSEVWK
-X-Gm-Gg: ASbGncsROmfNYR7WIFkpiMX2OMBJSbrTeZ9escvR2M9Ua8SNTsAp9F4yfYZ3PY+B/Ki
-	T9m2BHFbQZjh9btEGtf9EJEvBmi/JFwdvWNvNVWgpLYmLHXnbi0vpdV25064+gTtZ9Vzw7gRAFO
-	TEv1AeYUMQ7p9ygcozIFBZ7EuUzj+mcaKfwcG0MCmY0BzJ9Jrenua2/pZ8HnJK8+oea2/V0BB94
-	UXmwncKU9Z2d1Iba6xnc7a+6puFdOaIPUeR//hzM41XzdKFb3W+toJrcg0rA93807w72Iy57794
-	YmQsAHCqmV/tjW0oLFg3hHMUbvjTQMGrcghaxKterxjaW8U0Op3hI6c4/bOWF8W7HLcS2ikTPPc
-	nlMr8pkSOL7Q=
-X-Google-Smtp-Source: AGHT+IFdnUv9qrJph7Hp7SIOe4NCYWKaM41QyCXBms9PdRcOtfMYS3QZKfUivI3rFW5GtngByCEfxQ==
-X-Received: by 2002:a05:622a:4c10:b0:4b0:6205:d22b with SMTP id d75a77b69052e-4b0aee3af76mr176061101cf.52.1754927309493;
-        Mon, 11 Aug 2025 08:48:29 -0700 (PDT)
-Received: from mambli.lan ([2600:4040:523f:fb00::254c:3ef2])
-        by smtp.googlemail.com with ESMTPSA id d75a77b69052e-4b07c80ddbbsm94537841cf.57.2025.08.11.08.48.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 08:48:28 -0700 (PDT)
-From: James Lawrence <jalexanderlawrence@gmail.com>
-X-Google-Original-From: James Lawrence <james@egdaemon.com>
-To: tytso@mit.edu
-Cc: admin@aquinas.su,
-	gbcox@bzb.us,
-	josef@toxicpanda.com,
-	kent.overstreet@linux.dev,
-	linux-bcachefs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	list-bcachefs@carlthompson.net,
-	malte.schroeder@tnxip.de,
-	sashal@kernel.org,
-	torvalds@linux-foundation.org
-Subject: Peanut gallery 2c
-Date: Mon, 11 Aug 2025 11:48:26 -0400
-Message-ID: <20250811154826.509952-1-james@egdaemon.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250810055955.GA984814@mit.edu>
-References: <20250810055955.GA984814@mit.edu>
+	s=arc-20240116; t=1754927377; c=relaxed/simple;
+	bh=RopHifErAZ/r1bKrzCXHi+tqR8Gd+ZBCOXa63JC3HIU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=duTirGKDQyiGBycyeKkvAiDA+PxmGT2Wcz7Ut5cbO5BRV7AqwSjREhyDzi8h2Th/WNpWnMRTGAWRmROQxHlknjGYXwC7WeG+eCtKFriId2xu/fYYq55rycfWt433MTjdjvFQLaEstZCwKXLvCGb00RSNcMBxMyTf3vLZHxVrRZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WrGck7Fm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A2FBC4CEED;
+	Mon, 11 Aug 2025 15:49:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754927376;
+	bh=RopHifErAZ/r1bKrzCXHi+tqR8Gd+ZBCOXa63JC3HIU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WrGck7Fmn0StA1HSyOixhZNPLPo5/WRadk5mDshttUOMgrSNgupbE96hta5DvBVj3
+	 apSkCJOnMOECU6/IGLbkJHX2t7Vvbotqor63J18pfGnwia/s6dXE1SreowaY24sO0q
+	 wQv5qfqtKahV6w8xGiUAV8eURWno82WnSMRDKSAs2RJK/g/q3HIL3VWC2cB98VCGKW
+	 QesWjW+OnVmrp9KDJ2yFVTxfMfuKyTpp+WLHGuakLcpptXpnmJAWXndwyWnOnsF3q+
+	 s8DO7xeTCoaEjnNgQlSddM+52tNVwSnC4BsO8Rmzgvi74GrybIFHuhPemLca0du7Mp
+	 yO0DvfspCWAEQ==
+Date: Mon, 11 Aug 2025 08:49:35 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Cc: Zhang Yi <yi.zhang@huaweicloud.com>, Qu Wenruo <wqu@suse.com>,
+	Theodore Ts'o <tytso@mit.edu>,
+	linux-ext4 <linux-ext4@vger.kernel.org>,
+	linux-btrfs <linux-btrfs@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: Ext4 iomap warning during btrfs/136 (yes, it's from btrfs test
+ cases)
+Message-ID: <20250811154935.GD7942@frogsfrogsfrogs>
+References: <9b650a52-9672-4604-a765-bb6be55d1e4a@gmx.com>
+ <4ef2476f-50c3-424d-927d-100e305e1f8e@gmx.com>
+ <20250808121659.GC778805@mit.edu>
+ <035ad34e-fb1e-414f-8d3c-839188cfa387@suse.com>
+ <c2a00db8-ed34-49bb-8c01-572381451af3@huaweicloud.com>
+ <15a4c437-d276-4503-9e30-4d48f5b7a4ff@gmx.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <15a4c437-d276-4503-9e30-4d48f5b7a4ff@gmx.com>
 
-I've been a user of bcachefs for over 2 years now and I must say in that time watching the drama
-play out in the lkml most of it isn't coming from kent. Interestingly like ext4 its one of the few filesystems
-I have *not* had to think about while providing far more functionality all while marked as experimental.
+On Sun, Aug 10, 2025 at 07:36:48AM +0930, Qu Wenruo wrote:
+> 
+> 
+> 在 2025/8/9 18:39, Zhang Yi 写道:
+> > On 2025/8/9 6:11, Qu Wenruo wrote:
+> > > 在 2025/8/8 21:46, Theodore Ts'o 写道:
+> > > > On Fri, Aug 08, 2025 at 06:20:56PM +0930, Qu Wenruo wrote:
+> > > > > 
+> > > > > 在 2025/8/8 17:22, Qu Wenruo 写道:
+> > > > > > Hi,
+> > > > > > 
+> > > > > > [BACKGROUND]
+> > > > > > Recently I'm testing btrfs with 16KiB block size.
+> > > > > > 
+> > > > > > Currently btrfs is artificially limiting subpage block size to 4K.
+> > > > > > But there is a simple patch to change it to support all block sizes <=
+> > > > > > page size in my branch:
+> > > > > > 
+> > > > > > https://github.com/adam900710/linux/tree/larger_bs_support
+> > > > > > 
+> > > > > > [IOMAP WARNING]
+> > > > > > And I'm running into a very weird kernel warning at btrfs/136, with 16K
+> > > > > > block size and 64K page size.
+> > > > > > 
+> > > > > > The problem is, the problem happens with ext3 (using ext4 modeule) with
+> > > > > > 16K block size, and no btrfs is involved yet.
+> > > > 
+> > > > 
+> > > > Thanks for the bug report!  This looks like it's an issue with using
+> > > > indirect block-mapped file with a 16k block size.  I tried your
+> > > > reproducer using a 1k block size on an x86_64 system, which is how I
+> > > > test problem caused by the block size < page size.  It didn't
+> > > > reproduce there, so it looks like it really needs a 16k block size.
+> > > > 
+> > > > Can you say something about what system were you running your testing
+> > > > on --- was it an arm64 system, or a powerpc 64 system (the two most
+> > > > common systems with page size > 4k)?  (I assume you're not trying to
+> > > > do this on an Itanic.  :-)   And was the page size 16k or 64k?
+> > > 
+> > > The architecture is aarch64, the host board is Rock5B (cheap and fast enough), the test machine is a VM on that board, with ovmf as the UEFI firmware.
+> > > 
+> > > The kernel is configured to use 64K page size, the *ext3* system is using 16K block size.
+> > > 
+> > > Currently I tried the following combination with 64K page size and ext3, the result looks like the following
+> > > 
+> > > - 2K block size
+> > > - 4K block size
+> > >    All fine
+> > > 
+> > > - 8K block size
+> > > - 16K block size
+> > >    All the same kernel warning and never ending fsstress
+> > > 
+> > > - 32K block size
+> > > - 64K block size
+> > >    All fine
+> > > 
+> > > I am surprised as you that, not all subpage block size are having problems, just 2 of the less common combinations failed.
+> > > 
+> > > And the most common ones (4K, page size) are all fine.
+> > > 
+> > > Finally, if using ext4 not ext3, all combinations above are fine again.
+> > > 
+> > > So I ran out of ideas why only 2 block sizes fail here...
+> > > 
+> > 
+> > This issue is caused by an overflow in the calculation of the hole's
+> > length on the forth-level depth for non-extent inodes. For a file system
+> > with a 4KB block size, the calculation will not overflow. For a 64KB
+> > block size, the queried position will not reach the fourth level, so this
+> > issue only occur on the filesystem with a 8KB and 16KB block size.
+> > 
+> > Hi, Wenruo, could you try the following fix?
+> > 
+> > diff --git a/fs/ext4/indirect.c b/fs/ext4/indirect.c
+> > index 7de327fa7b1c..d45124318200 100644
+> > --- a/fs/ext4/indirect.c
+> > +++ b/fs/ext4/indirect.c
+> > @@ -539,7 +539,7 @@ int ext4_ind_map_blocks(handle_t *handle, struct inode *inode,
+> >   	int indirect_blks;
+> >   	int blocks_to_boundary = 0;
+> >   	int depth;
+> > -	int count = 0;
+> > +	u64 count = 0;
+> >   	ext4_fsblk_t first_block = 0;
+> > 
+> >   	trace_ext4_ind_map_blocks_enter(inode, map->m_lblk, map->m_len, flags);
+> > @@ -588,7 +588,7 @@ int ext4_ind_map_blocks(handle_t *handle, struct inode *inode,
+> >   		count++;
+> >   		/* Fill in size of a hole we found */
+> >   		map->m_pblk = 0;
+> > -		map->m_len = min_t(unsigned int, map->m_len, count);
+> > +		map->m_len = umin(map->m_len, count);
+> >   		goto cleanup;
+> >   	}
+> 
+> It indeed solves the problem.
+> 
+> Tested-by: Qu Wenruo <wqu@suse.com>
 
-What I've found most interesting in watching it play out is that the criticisms of kent are rarely on the technical issues.
-its mostly 'how dare he point out the issues in other file systems', 'how dare he point out issues with the kernel's engineering processes'
-as if that is somehow unthinkable. Are we not allowed to critize poorly performing systems and processes?
+Can we get the relevant chunks of this test turned into a tests/ext4/
+fstest so that the ext4 developers have a regression test that doesn't
+require setting up btrfs, please?
 
-Isn't that *precisely* what engineering is all about *improving* poorly performing systems? Have we all forgotten this? How about instead of
-complaining that kent is critiquing your processes, fix them. address the actual critiques. its pretty hard to critique something that has been resolved no?
+--D
 
-linus if you dont like the timing of kent's pull requests just ignore it until the next cycle, no one is forcing you and kent certainly can't.
-It'll be inconvenient for those of us downstream who absolutely adore the fast pace of the fixes kent has provided when we run into problems, but we'll survive we went in knowing
-we'd run into issues and if they're serious we'll work around the delays caused by upstream in our own way.
-
-If maintainers have actual technical issues with bcachefs, then they can bring those up with some ideas for solutions. they can bring hard evidence to the table and
-not 'someone said something about code i work on, that i took offense to and then did nothing to address, as a reason for their code existing'.
-
-I would very much like to see bcachefs remain because its been a breeze to setup, use, and maintain. Backups are a breeze, I can safely mess with my entire
-system with a single command to produce a snapshot prior to starting that is basically instant. Something that previously required an entire esoteric distribution ecosystem dedicated to immutability to accomplish.
-
-And since other FS maintainers are not stepping up to the plate and improving or implementing new filesystems to address their own featureset and branding short comings,
-I'm not terribly interested in what they have tso say on the matter. And neither should you linus, let them be upset that *experimental* *opt in* systems can
-(and should) operate under different development processes. I certainly give my engineers/researchers a ton of leeway long as their work is opt in.
-
-And when kent is ready to take off the experimental label, then rake bcachefs over the coals as much as you want to make sure its actually ready.
-
-Until then maybe consider not making your own life harder by trying to gate keep the development process for an actively developing entirely opt in/experimental system?
-
-Apologies for bothering everyone with my 2c,
-James Lawrence
-Principal Engineer
-
-
+> Thanks,
+> Qu
+> 
+> > Thanks,
+> > Yi.
+> > 
+> 
+> 
 
