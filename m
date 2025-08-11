@@ -1,116 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-57245-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57246-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D97F3B1FD65
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 02:58:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5829DB1FE69
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 06:55:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9B037A15A1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 00:56:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5AD63B9B48
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 04:55:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6890F19CD1B;
-	Mon, 11 Aug 2025 00:58:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1294A216E26;
+	Mon, 11 Aug 2025 04:55:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="jy0xTVGJ"
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="aoPm2mxZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1856E158535;
-	Mon, 11 Aug 2025 00:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754873902; cv=none; b=NqHcdnry/7QkGM7XBBzF1uqrl3FgvTSQ784jQGVCiUk5x5O7S+mBGzWqKt+6tg3KKp97M+oxymnKLaACLo2tjSTdsTx8cYw+AXIAM+t11AZxQyH5HpEtL5N3w2IHoXsC3zeVjI37Y9LWD8+6evWMzcV/5LjdSoGybsVR5WfWCAg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754873902; c=relaxed/simple;
-	bh=Ca6C5/G6JFtlESkeALp4nkpI7w6l08YrhdSky1a/1Sc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EE1frHuz+r4gpJBws8N0m/e5ecL40N1Jfd8uLcxARDqCOzZItrB4GtHrGsqt0B1yG6022r1Y7BDakUmBITWDkitPNnE+zOPyd9O7aGR1H65gPXcgzumX/6jh3Sx6oRUGiJrDS8uyoFvqlsZjiCOe5bnCVMWSPmxcMaaiuP7hhHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=jy0xTVGJ; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id A234914C2D3;
-	Mon, 11 Aug 2025 02:58:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1754873893;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6+WDmvL58Zkd9+bnuMxxM5Ne5Go/EKIWCRikWVY6hwo=;
-	b=jy0xTVGJiNYAtFxShDClUvVeoh1ob4HiiAV9pGwcMjUI4CiojpOvQnTdtzliclCLXddcKB
-	yZJ8JWBKAY2eltqmk4VR70SuAmXFUMF/1gj88IpFIJOFqbydf2JFcWl/M+ry6FqYD267qR
-	j4O8h1+Jhm5tZiB1P9n8mxPwqwX0vZwdAJkP3oyR7lcLtInQdEJgyGFGjt+BPWd24bq5ub
-	tTbLE915b226sd4IQj1X6y3XwLww+/kC9x8406mJFMB9kULd99YfRTuncz08L4C8Wi5OmT
-	FPJCNahS3tNKXfxDnUKn76Vzue1AjhqAfTvBWR2T7DAUUZ1KW+EzMgnmxiJCKw==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id a20b2092;
-	Mon, 11 Aug 2025 00:58:06 +0000 (UTC)
-Date: Mon, 11 Aug 2025 09:57:51 +0900
-From: asmadeus@codewreck.org
-To: Arnout Engelen <arnout@bzzt.net>
-Cc: ryan@lahfa.xyz, antony.antony@secunet.com, antony@phenome.org,
-	brauner@kernel.org, dhowells@redhat.com, ericvh@kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux_oss@crudebyte.com, lucho@ionkov.net, maximilian@mbosch.me,
-	netfs@lists.linux.dev, regressions@lists.linux.dev,
-	sedat.dilek@gmail.com, v9fs@lists.linux.dev
-Subject: Re: [REGRESSION] 9pfs issues on 6.12-rc1
-Message-ID: <aJlAD0nPcR2kvAtS@codewreck.org>
-References: <w5ap2zcsatkx4dmakrkjmaexwh3mnmgc5vhavb2miaj6grrzat@7kzr5vlsrmh5>
- <20250810175712.3588005-1-arnout@bzzt.net>
+Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 182952E3718
+	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Aug 2025 04:55:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754888128; cv=pass; b=Tgo9ztoF/5ppUteKZUG/bMae+hu9SvMXiYTWI8oKkzLa1UYw64jnl5H1cGmyxEk53LC5oGnr4pqbz1yu2+71g+6XQ0DUAm6OUniESkTRF6E4zicRpUCGoGmBs+TRB5CWHhR50frhTQxvjuHpBdjYrgJZcI558t0QDZj+2NaT8yw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754888128; c=relaxed/simple;
+	bh=iITz7QylY4ZjPZ7tL3v/HhstGn14ci0ejmT9frTByO4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=R5VLUePrwzO6tydXMUXxANEI0MB+fmjaPy0sL4Xkh22IXfoG+fcmTr30a+yCyM3KEPJ6cmrbigHrIkc9GftG+mNfHCCSyP2iWvdKvKLowAsa8F0cTjxln6Nf5GhkapsbDZWBMk5y3N97W+vHLPw9aMxouqTKMH8DbogVJ7VEVnA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=aoPm2mxZ; arc=pass smtp.client-ip=136.143.188.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1754888106; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=mhIDAuKCKEnoCbWMkbE2fH/AYF27pxxYUbE8ZN296ueVE86MzDXp2H3LltS8Y/G85iTWt4c3jyce5DXenNRL6CYAZkG2NVOEC1Gub2lIQu9LPDO60QFcd4E33aGFkkyCPPHHUQirjCE2AhdGMf3LoX+WrDbQFKm3yjxALa42lMw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1754888106; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=01ljkBsOaenlB8KL2Ax+hoaCPfwywP7/IkV8mFhtY9U=; 
+	b=CSgsUsIBlBlnXllQqYUgp8c0WtIPuNE22ZxU3Pwng6sDdb7rAyDiXlEQXjlTF7VTwgBNRVxJ1xjkcYrV0c0ThD9YJZOb4uNQIegIGmbRCW0hYTD3XAcRY0jamLRgrH5RW2x+cDURk3CIJ4IBmUvFvxfWLWkp/ELuck18j7qjDz0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
+	dmarc=pass header.from=<safinaskar@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754888106;
+	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=01ljkBsOaenlB8KL2Ax+hoaCPfwywP7/IkV8mFhtY9U=;
+	b=aoPm2mxZeNOIvPua9AnwtufLqnGMe4cER1tOEy2KRjDLloHDoblHGwVlGW7C2y7z
+	y5himB2dljptz2R0V4zOodsuL7ZiHIErbZC9XvDFfWoUhOIyfUkd3HnLi8qSNExdaxD
+	kxV0BWhK1eTcPTr4/WM8x3uAh9hJDi0+uEnzC6ok=
+Received: by mx.zohomail.com with SMTPS id 1754888103228185.8244194885384;
+	Sun, 10 Aug 2025 21:55:03 -0700 (PDT)
+From: Askar Safin <safinaskar@zohomail.com>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>
+Cc: linux-fsdevel@vger.kernel.org,
+	David Howells <dhowells@redhat.com>,
+	patches@lists.linux.dev
+Subject: [PATCH] vfs: fs/namespace.c: remove ms_flags argument from do_remount
+Date: Mon, 11 Aug 2025 04:52:23 +0000
+Message-ID: <20250811045444.1813009-1-safinaskar@zohomail.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250810175712.3588005-1-arnout@bzzt.net>
+Content-Transfer-Encoding: 8bit
+Feedback-ID: rr080112277302660ec9043eeaaf4111350000f90744bcd3139453096ead3195ca382ca647d724acb6e68412:zu080112272aa6d3018171a76df79478430000e5dfa6c0840f708152a2a560b8bdea9e3fc24829ff13631037:rf0801122cc7cb08dbc6be82c8043e520c00001855383ec7e0d11b5b8a5a8290e5ace3ea563b5ebf11fe741184bb37b2b3:ZohoMail
+X-ZohoMailClient: External
 
-Arnout Engelen wrote on Sun, Aug 10, 2025 at 07:57:11PM +0200:
-> I have a smallish nix-based reproducer at [3], and a more involved setup
-> with a lot of logging enabled and a convenient way to attach gdb at [4].
-> You start the VM and then 'cat /repro/default.json' manually, and see if
-> it looks 'truncated'.
+...because it is not used
 
-Thank you!!! I was able to reproduce with this!
+Signed-off-by: Askar Safin <safinaskar@zohomail.com>
+---
+ fs/namespace.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-(well, `nix -L build .#nixosConfigurations.default.config.system.build.vm`
-to build the VM as this machine isn't running nixos and doesn't have
-nixos-rebuild...)
-
-> Interestingly, the file is read in two p9 read calls: one of 12288 bytes and
-> one of 655 bytes. The first read is a zero-copy one, the second is not
-> zero-copy (because it is smaller than 1024).
-
-Yes, your msize is set to 16k but with the 9p overhead the largest,
-4k-aligned read that can be done is 12k, so that's coherent.
-(Changing the msize to 32k so it's read in a single zero-copy read,
-obviously makes this particular error go away, but it's a huge hint)
-
-Removing readahead also makes the problem go away, which is also
-surprising because from looking at traces it's only calling into
-p9_client_read() once (which forks the two p9_client_read_once, one with
-zc and the other without), so readahead shouldn't matter at all but it
-obviously does...
-
-Also I haven't been able to reproduce it with a kernel I built myself/my
-environment, but it reproduces reliably 99% of the times in the nixos
-VM, so we're missing a last piece for a "simple" (non-nix) reproducer,
-but I think it's good enough for me to dig into this;
-I'll try to find time to check in details this afternoon...
-Basically "just" have to follow where the data is written and why it
-doesn't end up in the iov and fix that, but I'll need to reproduce on a
-kernel I built first to be able to validate the fix.
-
-
-Anyway this is a huge leap forward (hopeful it's the same problem and we
-don't have two similar issues lurking here...), we can't thank you
-enough.
-
-I'll report back ASAP.
+diff --git a/fs/namespace.c b/fs/namespace.c
+index ddfd4457d338..dbc773b36d49 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -3279,7 +3279,7 @@ static int do_reconfigure_mnt(struct path *path, unsigned int mnt_flags)
+  * If you've mounted a non-root directory somewhere and want to do remount
+  * on it - tough luck.
+  */
+-static int do_remount(struct path *path, int ms_flags, int sb_flags,
++static int do_remount(struct path *path, int sb_flags,
+ 		      int mnt_flags, void *data)
+ {
+ 	int err;
+@@ -4109,7 +4109,7 @@ int path_mount(const char *dev_name, struct path *path,
+ 	if ((flags & (MS_REMOUNT | MS_BIND)) == (MS_REMOUNT | MS_BIND))
+ 		return do_reconfigure_mnt(path, mnt_flags);
+ 	if (flags & MS_REMOUNT)
+-		return do_remount(path, flags, sb_flags, mnt_flags, data_page);
++		return do_remount(path, sb_flags, mnt_flags, data_page);
+ 	if (flags & MS_BIND)
+ 		return do_loopback(path, dev_name, flags & MS_REC);
+ 	if (flags & (MS_SHARED | MS_PRIVATE | MS_SLAVE | MS_UNBINDABLE))
 -- 
-Dominique Martinet | Asmadeus
+2.47.2
+
 
