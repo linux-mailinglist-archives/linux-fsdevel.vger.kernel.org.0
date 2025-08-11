@@ -1,350 +1,509 @@
-Return-Path: <linux-fsdevel+bounces-57410-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57411-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01C74B213D3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 20:03:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CDD0B213D8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 20:06:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E23E27A110D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 18:02:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE6EE1906AD1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 18:07:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 811E12D6E46;
-	Mon, 11 Aug 2025 18:03:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 682602D6E50;
+	Mon, 11 Aug 2025 18:06:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kriOUhy9"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VuLbXviX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 075A32147F5;
-	Mon, 11 Aug 2025 18:03:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E98CB38DD3
+	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Aug 2025 18:06:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754935421; cv=none; b=Ub8DE+kExASMSQpmfjq3qLgW3Tldq6fiT1FvdgdewhWvZKbmpO+7LCL0kUcIqnFEcl6jei4vI/UTecMb8eNzfecmee4ypLvOxY7lCK+J+16blng5Kt3dQcHvLoG27wv907gkt8zGK6kcP/ieaOWQ11mTqlvH+d90BEIFfVov2Yo=
+	t=1754935594; cv=none; b=H4fLwQdrHlgfhyFSAr0nTPJQ2NaHhVF0wrf87J7Kmw0ZGqNHaW043I//6kzSy6z/OVWh0B/w9ZSg8JXUhPM7bFlIN6+/g1Z029MoItVMsE1ho8mh0hLCq0DfYnljuQx5KGHZSKNGJ2mFlJyY38+shCVkmfhVH6RsCw2QE4KtxF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754935421; c=relaxed/simple;
-	bh=7yn1n7Qpf2iPDWVSr/zIL7FWuQMJ307xYh/Er4cR4pc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o3isEA7P8HprjvqOmPpy8CiIpTwaK/REv35nXfP4WEatqbacSO4yOkyVSMczJsdl4YCOmHKvC9+ehdk7gfYbo+yiC6dl4s3uivdiaqegOXLtJ5DavsqlS5Xt6zTJJr+WeJOZsekpC5wDviI82U5litJqGjqimRfRydRLkjTxJNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kriOUhy9; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-3324e2e6f54so52010101fa.1;
-        Mon, 11 Aug 2025 11:03:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754935417; x=1755540217; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d///4wuoQangGNst6fYpzsgtPxISb9SbCVVJE+l8aHU=;
-        b=kriOUhy9hlYSlYXeOxpcHC0GFvAM5EX8uEbedhcgy1zrVZD+KWcNZXcNXb6MJsuajT
-         iUSLKinwSbkFxBiHilorRc19R7rnXVNwVNxsRSDFdoGLsIyd51aM2sDzZtXRiFjnSjXv
-         O87owJjefL1lpnvd8JiXxXi55hV7HsSOWLVhHG3uI1PEMr5sVBKzf68qtf765wvcDi4r
-         4h+qjaTbkR1udnOBk6YQXuA9+Pra2CA1OttDEu2FYWs1syfSo9JTa2cc6/fVgBII7z6o
-         O9fnkXXfZEJ9tTVTttD9eF1J/7JqXlpCh084ZMVRP3RqNS7WgMWpvNRJgUT9kXZ3iKNM
-         xEvg==
+	s=arc-20240116; t=1754935594; c=relaxed/simple;
+	bh=B883spe+HGJuCfDUtTTBYFtKj8bdGxKAyPg6WW4U7HY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OxciAG5/aXYKJatxF5BvMMxE4Kz4vMyngnsxuTf3pMIhGG6ZPxrdrmbJa790ARdcwIKmmFrf6OQz6Sq83bTw75jiOWbyweJF189xOhvrNQld/YGWyuB3Y1FgGg768JW76CjuES6iTPnbCXSF2ZmC1CocozFZSDJOuqB4e8jNmd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VuLbXviX; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754935591;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UetujY4teDrYc0Bxu9Hz0sVSN1mNpDqE+lc/mpyaRP0=;
+	b=VuLbXviXhqX/5PTk7xbQFJwS+HG8oaCHcPj0MFeQEUZQFwqGofLaIDuuPRRt5kpuG+xki4
+	g5IsmpT5oMPQA0fktlZhQzFYh3/qWOVKUmBXVWrsQMuDYxF/OoyJXB8A7KPWVQZbSP3eW3
+	XdJcFP+mVMRgytAJihRCP7MATIwXfs0=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-568-zxvLJ_APPCKbEmpTmEa02w-1; Mon, 11 Aug 2025 14:06:30 -0400
+X-MC-Unique: zxvLJ_APPCKbEmpTmEa02w-1
+X-Mimecast-MFC-AGG-ID: zxvLJ_APPCKbEmpTmEa02w_1754935589
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-459de8f00cfso19460365e9.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Aug 2025 11:06:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754935417; x=1755540217;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d///4wuoQangGNst6fYpzsgtPxISb9SbCVVJE+l8aHU=;
-        b=FS0M4vNaZueUpvEbrSEa9tb9Nw+z+Zg5KKJQvOmo37b5vmGljp6/tyh5pbRqlM8L+M
-         qvru+32UX6nJPIATTw/ydBQ0XHrxbA895PJHv0kug4UTCdcTQ63j8jtH91iOTB/Wf0AS
-         XOmEAEEbqSF9nLD+NLxL5fHUvD6i9TMYzdBMMJwWYjYbH/2tx4YTVEvkaE1iM432HZSw
-         zp1lVM4r4xjoQyJNlqSwM0uEl2oTKyR+Er/9Ip+hQp9dnAKD5u8ANCv0FMzgwQlnoUM8
-         vCMBs3Z8cStwQB75UYtuPbHGNbTSKFjTIsBjHAFXL7asVnjWt6uCujdl4r34sXFrwS6e
-         s+Ow==
-X-Forwarded-Encrypted: i=1; AJvYcCVRX2DYeGPJH0W+fkIs9NEvTg91kkUlGMRA6dhQFiCKg2aBhS23Wxp773B328bR/9DqGpCiXZ815livdK3x@vger.kernel.org, AJvYcCX109MflOUUma3nI14REKTFUiZLfs/WIpISqQka0UiuTyxdcu/e2JRSldhy93C8ZK14X+4rYnaoMSuzKzCr@vger.kernel.org, AJvYcCXWeZyMMsJzhPPzH688VXSW16xx3ME8MwZv2i17EyvjDSnpHPCcDM2RJfLJRjrKwxZ/fJZMagZLCR92p4rB2Wk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzK9SNatG8XEvy6yqk2UsXMVvrA/D/rnbM4WmRQe33bfaTq6MH3
-	rGGeiQM3X24z7911CS7zzO+xXQRSGP568Vd3gAoAp7nM/wJAtBmCqJOOKYnsoEy1vCnsNfmdLOd
-	hZ9MF8YUr4rBnYgOOA8AekEb1wyuHzAY=
-X-Gm-Gg: ASbGncuzr1WqqCQsrRa/Jh4xP2nqHBuN4rxeehJMf+DEnjwJbDUhSw0j+2xEpbYA4iJ
-	+un74umVFP81rNELnsIYhUOGOkU39qiSRZDyt4NLMEZ9KezATEV8uv6PF2URDsGrW/BTpJKkdch
-	0bo4SpSxnA83CLBDjVtIyJnO7/V6J6YI/OgcVhUBW2F36sFj4REbjWWgA3N4ZM75xohOMan6kjI
-	mESmFIz
-X-Google-Smtp-Source: AGHT+IEBGMWFwPBvVKkHkPwEpE2wMzzGocdD5JdNJj56rt+2ZuB0UWbX44hvIpNbmg6xFrgD/0gijWRDGE/YtO1Eu00=
-X-Received: by 2002:a05:651c:19a0:b0:332:13d4:6f6e with SMTP id
- 38308e7fff4ca-333d7ad9f94mr1663741fa.2.1754935416777; Mon, 11 Aug 2025
- 11:03:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754935589; x=1755540389;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UetujY4teDrYc0Bxu9Hz0sVSN1mNpDqE+lc/mpyaRP0=;
+        b=kilPI0mvCUiakxKJ/H1AHac4cle0sUZnHB8o7OATVIVx93Kzn4zcec4cYU+uuims6p
+         daIVeALDTsTxmWLWtnR5EONDsuMgzg1yvgKairlY0oWpwNGSeK0hgU3PIqMjjglLn+lx
+         2bXxwZMtgte2gBlTwuJAhzKyBQOWoAAkKrPsQh3i8zBrh+gtXnk4JKU9WlS36d9RQEjo
+         nABdqXnR6G+EBLAvFnPTdDXcNaVWvRrIsX+wmIPA4RXu3ANzG7rCKWPAAZmKl2MuJEin
+         +qGNP3AhRVhAzE2XyMT0m77k25GjOLEur2s4riqMlq3mJh5KfQXKvlmYCqAI0E/ShSv2
+         nCeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV45FaYqQhgy0RHs7Q5+ataf79Q8HoTrjnWH3SSkkpPekT6uj/5d2ah8/APu9qcFWbKgQrgE4ROyGiQXjHj@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKm/3NpvKsrYv+mvcdCxhGVBWFwQGUoL8JDgav6j8wIQPqQ8Cq
+	WulyZ5qbpeWW3WBjwL5MX+03jvpo4LhF8RyF18bDD9xaW0qLmhmNSULJ1fqMFMme55J/OZmKSFz
+	HKtyQmQv7EXrYg8rQqwByp4JpRUlF1B+bnDqzIOIUlptm93JH1Sd7C+CryoXUI7czhEpRhrxXiQ
+	==
+X-Gm-Gg: ASbGncsGpD9ARqU0DzzZVha4KgNH00IEbjzzgrYX9jXFfVuDab0iOxgE0RCqxeffavd
+	tt2sTVyBvEAnj+ZJRrdRpFl2kgOOdNDYItd/ijoEH4ETRKRKggIEYmwh+jKDHvyy8y5Cc6FHVL2
+	VowXbiZODfCsTiu0PSQFMbZMIHr988LdaiTEyj/g1ORfnZIFgDjaaUVJqPz3zIdN4bsQOEKncG9
+	jKtPL/aurr/TkCHaEr29zsVP4MRE7ZJuAiXuOtAHhRIxaeLn5FqGM3/hUZA18TsaoSI7DQPlcwe
+	Exwz2rgQSSH9HeJKDzX0wnBk8X55kJhqrXvvT/IrMmF4lofX5JnJ1dMClmk=
+X-Received: by 2002:a05:600c:3e08:b0:456:1b6f:c888 with SMTP id 5b1f17b1804b1-45a10d22f93mr5084285e9.23.1754935588654;
+        Mon, 11 Aug 2025 11:06:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE+u3mV+tfyDx8XsODWBVKQ1IzrUBIuQC6glKK4U1fYfDEhPItjm+le3RxrvndcuIpnP3fQMg==
+X-Received: by 2002:a05:600c:3e08:b0:456:1b6f:c888 with SMTP id 5b1f17b1804b1-45a10d22f93mr5083995e9.23.1754935588203;
+        Mon, 11 Aug 2025 11:06:28 -0700 (PDT)
+Received: from thinky (ip-217-030-074-039.aim-net.cz. [217.30.74.39])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b8fc28a830sm17317007f8f.16.2025.08.11.11.06.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 11:06:27 -0700 (PDT)
+Date: Mon, 11 Aug 2025 20:06:27 +0200
+From: Andrey Albershteyn <aalbersh@redhat.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: fstests@vger.kernel.org, zlang@redhat.com, 
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	Andrey Albershteyn <aalbersh@kernel.org>
+Subject: Re: [PATCH 1/3] file_attr: introduce program to set/get fsxattr
+Message-ID: <gmkcjrcegsypuiuljh4jh7nluubzpz36t6lnb5fgn6hwyqfzy7@pxx6xoe53c7e>
+References: <20250808-xattrat-syscall-v1-0-6a09c4f37f10@kernel.org>
+ <20250808-xattrat-syscall-v1-1-6a09c4f37f10@kernel.org>
+ <20250811152340.GG7965@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250713-xarray-insert-reserve-v2-0-b939645808a2@gmail.com>
- <20250713-xarray-insert-reserve-v2-3-b939645808a2@gmail.com>
- <aJnojv8AWj2isnit@arm.com> <CAJ-ks9=BU2jfT-MPzxDcXrZj7uQkKbVm6WhzGiJsM_628b2kmg@mail.gmail.com>
- <aJn_dtWDcoscYpgV@arm.com>
-In-Reply-To: <aJn_dtWDcoscYpgV@arm.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Mon, 11 Aug 2025 14:02:59 -0400
-X-Gm-Features: Ac12FXwh33fn1ZAGbWU8KHUjxEVF-ovI5P2-O31Ri2jQBQmGUO28sNFAyHxqAe4
-Message-ID: <CAJ-ks9kECSobk0NX6SXn1US7My028POc=nLmw0AHZGiRUstP2g@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] rust: xarray: add `insert` and `reserve`
-To: Beata Michalska <beata.michalska@arm.com>
-Cc: Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	Matthew Wilcox <willy@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	Daniel Almeida <daniel.almeida@collabora.com>, Janne Grunau <j@jannau.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250811152340.GG7965@frogsfrogsfrogs>
 
-On Mon, Aug 11, 2025 at 10:35=E2=80=AFAM Beata Michalska
-<beata.michalska@arm.com> wrote:
->
-> On Mon, Aug 11, 2025 at 09:09:56AM -0400, Tamir Duberstein wrote:
-> > On Mon, Aug 11, 2025 at 8:57=E2=80=AFAM Beata Michalska <beata.michalsk=
-a@arm.com> wrote:
-> > >
-> > > Hi Tamir,
-> > >
-> > > Apologies for such a late drop.
-> >
-> > Hi Beata, no worries, thanks for your review.
-> >
-> > >
-> > > On Sun, Jul 13, 2025 at 08:05:49AM -0400, Tamir Duberstein wrote:
-> [snip] ...
-> > > > +/// A reserved slot in an array.
-> > > > +///
-> > > > +/// The slot is released when the reservation goes out of scope.
-> > > > +///
-> > > > +/// Note that the array lock *must not* be held when the reservati=
-on is filled or dropped as this
-> > > > +/// will lead to deadlock. [`Reservation::fill_locked`] and [`Rese=
-rvation::release_locked`] can be
-> > > > +/// used in context where the array lock is held.
-> > > > +#[must_use =3D "the reservation is released immediately when the r=
-eservation is unused"]
-> > > > +pub struct Reservation<'a, T: ForeignOwnable> {
-> > > > +    xa: &'a XArray<T>,
-> > > > +    index: usize,
-> > > > +}
-> > > > +
-> [snip] ...
-> > > > +
-> > > > +impl<T: ForeignOwnable> Drop for Reservation<'_, T> {
-> > > > +    fn drop(&mut self) {
-> > > > +        // NB: Errors here are possible since `Guard::store` does =
-not honor reservations.
-> > > > +        let _: Result =3D self.release_inner(None);
-> > > This seems bit risky as one can drop the reservation while still hold=
-ing the
-> > > lock?
-> >
-> > Yes, that's true. The only way to avoid it would be to make the
-> > reservation borrowed from the guard, but that would exclude usage
-> > patterns where the caller wants to reserve and fulfill in different
-> > critical sections.
-> >
-> > Do you have a specific suggestion?
-> I guess we could try with locked vs unlocked `Reservation' types, which w=
-ould
-> have different Drop implementations, and providing a way to convert locke=
-d into
-> unlocked. Just thinking out loud, so no, nothing specific here.
-> At very least we could add 'rust_helper_spin_assert_is_held() ?'
+On 2025-08-11 08:23:40, Darrick J. Wong wrote:
+> On Fri, Aug 08, 2025 at 09:31:56PM +0200, Andrey Albershteyn wrote:
+> > This programs uses newly introduced file_getattr and file_setattr
+> > syscalls. This program is partially a test of invalid options. This will
+> > be used further in the test.
+> > 
+> > Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+> > ---
+> >  .gitignore            |   1 +
+> >  configure.ac          |   1 +
+> >  include/builddefs.in  |   1 +
+> >  m4/package_libcdev.m4 |  16 +++
+> >  src/Makefile          |   5 +
+> >  src/file_attr.c       | 277 ++++++++++++++++++++++++++++++++++++++++++++++++++
+> >  6 files changed, 301 insertions(+)
+> > 
+> > diff --git a/.gitignore b/.gitignore
+> > index 4fd817243dca..1a578eab1ea0 100644
+> > --- a/.gitignore
+> > +++ b/.gitignore
+> > @@ -210,6 +210,7 @@ tags
+> >  /src/fiemap-fault
+> >  /src/min_dio_alignment
+> >  /src/dio-writeback-race
+> > +/src/file_attr
+> >  
+> >  # Symlinked files
+> >  /tests/generic/035.out
+> > diff --git a/configure.ac b/configure.ac
+> > index f3c8c643f0eb..6fe54e8e1d54 100644
+> > --- a/configure.ac
+> > +++ b/configure.ac
+> > @@ -73,6 +73,7 @@ AC_HAVE_RLIMIT_NOFILE
+> >  AC_NEED_INTERNAL_XFS_IOC_EXCHANGE_RANGE
+> >  AC_HAVE_FICLONE
+> >  AC_HAVE_TRIVIAL_AUTO_VAR_INIT
+> > +AC_HAVE_FILE_ATTR
+> >  
+> >  AC_CHECK_FUNCS([renameat2])
+> >  AC_CHECK_FUNCS([reallocarray])
+> > diff --git a/include/builddefs.in b/include/builddefs.in
+> > index 96d5ed25b3e2..821237339cc7 100644
+> > --- a/include/builddefs.in
+> > +++ b/include/builddefs.in
+> > @@ -74,6 +74,7 @@ HAVE_BMV_OF_SHARED = @have_bmv_of_shared@
+> >  HAVE_RLIMIT_NOFILE = @have_rlimit_nofile@
+> >  NEED_INTERNAL_XFS_IOC_EXCHANGE_RANGE = @need_internal_xfs_ioc_exchange_range@
+> >  HAVE_FICLONE = @have_ficlone@
+> > +HAVE_FILE_ATTR = @have_file_attr@
+> >  
+> >  GCCFLAGS = -std=gnu11 -funsigned-char -fno-strict-aliasing -Wall
+> >  SANITIZER_CFLAGS += @autovar_init_cflags@
+> > diff --git a/m4/package_libcdev.m4 b/m4/package_libcdev.m4
+> > index ed8fe6e32ae0..e68a70f7d87e 100644
+> > --- a/m4/package_libcdev.m4
+> > +++ b/m4/package_libcdev.m4
+> > @@ -86,3 +86,19 @@ AC_DEFUN([AC_HAVE_TRIVIAL_AUTO_VAR_INIT],
+> >      CFLAGS="${OLD_CFLAGS}"
+> >      AC_SUBST(autovar_init_cflags)
+> >    ])
+> > +
+> > +#
+> > +# Check if we have a file_getattr/file_setattr system call (Linux)
+> > +#
+> > +AC_DEFUN([AC_HAVE_FILE_ATTR],
+> > +  [ AC_MSG_CHECKING([for file_getattr/file_setattr syscalls])
+> > +    AC_LINK_IFELSE([AC_LANG_PROGRAM([[
+> > +#define _GNU_SOURCE
+> > +#include <sys/syscall.h>
+> > +#include <unistd.h>
+> > +    ]], [[
+> > +         syscall(__NR_file_getattr, 0, 0, 0, 0, 0, 0);
+> > +    ]])],[have_file_attr=yes
+> > +       AC_MSG_RESULT(yes)],[AC_MSG_RESULT(no)])
+> > +    AC_SUBST(have_file_attr)
+> > +  ])
+> > diff --git a/src/Makefile b/src/Makefile
+> > index 6ac72b366257..f3137acf687f 100644
+> > --- a/src/Makefile
+> > +++ b/src/Makefile
+> > @@ -61,6 +61,11 @@ ifeq ($(HAVE_FALLOCATE), true)
+> >  LCFLAGS += -DHAVE_FALLOCATE
+> >  endif
+> >  
+> > +ifeq ($(HAVE_FILE_ATTR), yes)
+> > +LINUX_TARGETS += file_attr
+> > +LCFLAGS += -DHAVE_FILE_ATTR
+> > +endif
+> > +
+> >  ifeq ($(PKG_PLATFORM),linux)
+> >  TARGETS += $(LINUX_TARGETS)
+> >  endif
+> > diff --git a/src/file_attr.c b/src/file_attr.c
+> > new file mode 100644
+> > index 000000000000..9756ab265a57
+> > --- /dev/null
+> > +++ b/src/file_attr.c
+> > @@ -0,0 +1,277 @@
+> > +#include "global.h"
+> > +#include <sys/syscall.h>
+> > +#include <getopt.h>
+> > +#include <errno.h>
+> > +#include <linux/fs.h>
+> > +#include <sys/stat.h>
+> > +#include <string.h>
+> > +#include <getopt.h>
+> > +#include <stdlib.h>
+> > +#include <unistd.h>
+> > +
+> > +#ifndef HAVE_FILE_ATTR
+> > +#define __NR_file_getattr 468
+> > +#define __NR_file_setattr 469
+> > +
+> > +struct file_attr {
+> > +       __u32           fa_xflags;     /* xflags field value (get/set) */
+> > +       __u32           fa_extsize;    /* extsize field value (get/set)*/
+> > +       __u32           fa_nextents;   /* nextents field value (get)   */
+> > +       __u32           fa_projid;     /* project identifier (get/set) */
+> > +       __u32           fa_cowextsize; /* CoW extsize field value (get/set) */
+> > +};
+> > +
+> > +#endif
+> > +
+> > +#define SPECIAL_FILE(x) \
+> > +	   (S_ISCHR((x)) \
+> > +	|| S_ISBLK((x)) \
+> > +	|| S_ISFIFO((x)) \
+> > +	|| S_ISLNK((x)) \
+> > +	|| S_ISSOCK((x)))
+> > +
+> > +static struct option long_options[] = {
+> > +	{"set",			no_argument,	0,	's' },
+> > +	{"get",			no_argument,	0,	'g' },
+> > +	{"no-follow",		no_argument,	0,	'n' },
+> > +	{"at-cwd",		no_argument,	0,	'a' },
+> > +	{"set-nodump",		no_argument,	0,	'd' },
+> > +	{"invalid-at",		no_argument,	0,	'i' },
+> > +	{"too-big-arg",		no_argument,	0,	'b' },
+> > +	{"too-small-arg",	no_argument,	0,	'm' },
+> > +	{"new-fsx-flag",	no_argument,	0,	'x' },
+> > +	{0,			0,		0,	0 }
+> > +};
+> > +
+> > +static struct xflags {
+> > +	uint	flag;
+> > +	char	*shortname;
+> > +	char	*longname;
+> > +} xflags[] = {
+> > +	{ FS_XFLAG_REALTIME,		"r", "realtime"		},
+> > +	{ FS_XFLAG_PREALLOC,		"p", "prealloc"		},
+> > +	{ FS_XFLAG_IMMUTABLE,		"i", "immutable"	},
+> > +	{ FS_XFLAG_APPEND,		"a", "append-only"	},
+> > +	{ FS_XFLAG_SYNC,		"s", "sync"		},
+> > +	{ FS_XFLAG_NOATIME,		"A", "no-atime"		},
+> > +	{ FS_XFLAG_NODUMP,		"d", "no-dump"		},
+> > +	{ FS_XFLAG_RTINHERIT,		"t", "rt-inherit"	},
+> > +	{ FS_XFLAG_PROJINHERIT,		"P", "proj-inherit"	},
+> > +	{ FS_XFLAG_NOSYMLINKS,		"n", "nosymlinks"	},
+> > +	{ FS_XFLAG_EXTSIZE,		"e", "extsize"		},
+> > +	{ FS_XFLAG_EXTSZINHERIT,	"E", "extsz-inherit"	},
+> > +	{ FS_XFLAG_NODEFRAG,		"f", "no-defrag"	},
+> > +	{ FS_XFLAG_FILESTREAM,		"S", "filestream"	},
+> > +	{ FS_XFLAG_DAX,			"x", "dax"		},
+> > +	{ FS_XFLAG_COWEXTSIZE,		"C", "cowextsize"	},
+> > +	{ FS_XFLAG_HASATTR,		"X", "has-xattr"	},
+> > +	{ 0, NULL, NULL }
+> > +};
+> > +
+> > +static int
+> > +file_getattr(
+> > +		int			dfd,
+> > +		const char		*filename,
+> > +		struct file_attr	*fsx,
+> > +		size_t			usize,
+> > +		unsigned int		at_flags)
+> > +{
+> > +	return syscall(__NR_file_getattr, dfd, filename, fsx, usize, at_flags);
+> > +}
+> > +
+> > +static int
+> > +file_setattr(
+> > +		int			dfd,
+> > +		const char		*filename,
+> > +		struct file_attr	*fsx,
+> > +		size_t			usize,
+> > +		unsigned int		at_flags)
+> > +{
+> > +	return syscall(__NR_file_setattr, dfd, filename, fsx, usize, at_flags);
+> > +}
+> > +
+> > +void
+> > +printxattr(
+> > +	uint		flags,
+> > +	int		verbose,
+> > +	int		dofname,
+> > +	const char	*fname,
+> > +	int		dobraces,
+> > +	int		doeol)
+> > +{
+> > +	struct xflags	*p;
+> > +	int		first = 1;
+> > +
+> > +	if (dobraces)
+> > +		fputs("[", stdout);
+> > +	for (p = xflags; p->flag; p++) {
+> > +		if (flags & p->flag) {
+> > +			if (verbose) {
+> > +				if (first)
+> > +					first = 0;
+> > +				else
+> > +					fputs(", ", stdout);
+> > +				fputs(p->longname, stdout);
+> > +			} else {
+> > +				fputs(p->shortname, stdout);
+> > +			}
+> > +		} else if (!verbose) {
+> > +			fputs("-", stdout);
+> > +		}
+> > +	}
+> > +	if (dobraces)
+> > +		fputs("]", stdout);
+> > +	if (dofname)
+> > +		printf(" %s ", fname);
+> > +	if (doeol)
+> > +		fputs("\n", stdout);
+> > +}
+> > +
+> > +int main(int argc, char *argv[])
+> > +{
+> > +	int error;
+> > +	int c;
+> > +	const char *path = NULL;
+> > +	const char *path1 = NULL;
+> > +	const char *path2 = NULL;
+> > +	unsigned int at_flags = 0;
+> > +	unsigned int fa_xflags = 0;
+> > +	int action = 0; /* 0 get; 1 set */
+> > +	struct file_attr fsx = { };
+> > +	int fa_size = sizeof(struct file_attr);
+> > +	struct stat status;
+> > +	int fd;
+> > +	int at_fdcwd = 0;
+> > +	int unknwon_fa_flag = 0;
+> > +
+> > +        while (1) {
+> > +            int option_index = 0;
+> > +
+> > +            c = getopt_long_only(argc, argv, "", long_options, &option_index);
+> > +            if (c == -1)
+> > +                break;
+> > +
+> > +            switch (c) {
+> > +	    case 's':
+> > +		action = 1;
+> > +		break;
+> > +	    case 'g':
+> > +		action = 0;
+> > +		break;
+> > +	    case 'n':
+> > +		at_flags |= AT_SYMLINK_NOFOLLOW;
+> > +		break;
+> > +	    case 'a':
+> > +		at_fdcwd = 1;
+> > +		break;
+> > +	    case 'd':
+> > +		fa_xflags |= FS_XFLAG_NODUMP;
+> > +		break;
+> > +	    case 'i':
+> > +		at_flags |= (1 << 25);
+> > +		break;
+> > +	    case 'b':
+> > +		fa_size = getpagesize() + 1; /* max size if page size */
+> > +		break;
+> > +	    case 'm':
+> > +		fa_size = 19; /* VER0 size of fsxattr is 20 */
+> > +		break;
+> > +	    case 'x':
+> > +		unknwon_fa_flag = (1 << 27);
+> > +		break;
+> > +	    default:
+> > +		goto usage;
+> > +            }
+> > +        }
+> > +
+> > +	if (!path1 && optind < argc)
+> > +		path1 = argv[optind++];
+> > +	if (!path2 && optind < argc)
+> > +		path2 = argv[optind++];
+> > +
+> > +	if (at_fdcwd) {
+> > +		fd = AT_FDCWD;
+> > +		path = path1;
+> > +	} else if (!path2) {
+> > +		error = stat(path1, &status);
+> > +		if (error) {
+> > +			fprintf(stderr,
+> > +"Can not get file status of %s: %s\n", path1, strerror(errno));
+> > +			return error;
+> > +		}
+> > +
+> > +		if (SPECIAL_FILE(status.st_mode)) {
+> > +			fprintf(stderr,
+> > +"Can not open special file %s without parent dir: %s\n", path1, strerror(errno));
+> > +			return errno;
+> > +		}
+> > +
+> > +		fd = open(path1, O_RDONLY);
+> > +		if (fd == -1) {
+> > +			fprintf(stderr, "Can not open %s: %s\n", path1,
+> > +					strerror(errno));
+> > +			return errno;
+> > +		}
+> > +	} else {
+> > +		fd = open(path1, O_RDONLY);
+> > +		if (fd == -1) {
+> > +			fprintf(stderr, "Can not open %s: %s\n", path1,
+> > +					strerror(errno));
+> > +			return errno;
+> > +		}
+> > +		path = path2;
+> > +	}
+> > +
+> > +	if (!path)
+> > +		at_flags |= AT_EMPTY_PATH;
+> > +
+> > +	if (action) {
+> > +		error = file_getattr(fd, path, &fsx, fa_size,
+> > +				at_flags);
+> > +		if (error) {
+> > +			fprintf(stderr, "Can not get fsxattr on %s: %s\n", path,
+> > +					strerror(errno));
+> > +			return error;
+> > +		}
+> > +
+> > +		fsx.fa_xflags |= (fa_xflags | unknwon_fa_flag);
+> > +
+> > +		error = file_setattr(fd, path, &fsx, fa_size,
+> > +				at_flags);
+> > +		if (error) {
+> > +			fprintf(stderr, "Can not set fsxattr on %s: %s\n", path,
+> > +					strerror(errno));
+> > +			return error;
+> > +		}
+> > +	} else {
+> > +		error = file_getattr(fd, path, &fsx, fa_size,
+> > +				at_flags);
+> > +		if (error) {
+> > +			fprintf(stderr, "Can not get fsxattr on %s: %s\n", path,
+> > +					strerror(errno));
+> > +			return error;
+> > +		}
+> 
+> Can the file_getattr be lifted above the if (action) ?
 
-I don't see how having two types of reservations would help.
+yup
 
-Can you help me understand how you'd use `rust_helper_spin_assert_is_held` =
-here?
+> 
+> > +
+> > +		if (path2)
+> > +			printxattr(fsx.fa_xflags, 0, 1, path, 0, 1);
+> > +		else
+> > +			printxattr(fsx.fa_xflags, 0, 1, path1, 0, 1);
+> > +	}
+> > +
+> > +	return error;
+> > +
+> > +usage:
+> > +	printf("Usage: %s [options]\n", argv[0]);
+> > +	printf("Options:\n");
+> > +	printf("\t--get\t\tget filesystem inode attributes\n");
+> > +	printf("\t--set\t\tset filesystem inode attributes\n");
+> > +	printf("\t--at-cwd\t\topen file at current working directory\n");
+> > +	printf("\t--no-follow\t\tdon't follow symlinks\n");
+> > +	printf("\t--set-nodump\t\tset FS_XFLAG_NODUMP on an inode\n");
+> > +	printf("\t--invalid-at\t\tUse invalida AT_* flag\n");
+> > +	printf("\t--too-big-arg\t\tSet fsxattr size bigger than PAGE_SIZE\n");
+> > +	printf("\t--too-small-arg\t\tSet fsxattr size to 27 bytes\n");
+> 
+> 27?  I thought you put in 19 above?
 
-> >
-> > > > +    }
-> > > >  }
-> > > >
-> > > >  // SAFETY: `XArray<T>` has no shared mutable state so it is `Send`=
- iff `T` is `Send`.
-> > > > @@ -282,3 +617,136 @@ unsafe impl<T: ForeignOwnable + Send> Send fo=
-r XArray<T> {}
-> > > >  // SAFETY: `XArray<T>` serialises the interior mutability it provi=
-des so it is `Sync` iff `T` is
-> > > >  // `Send`.
-> > > >  unsafe impl<T: ForeignOwnable + Send> Sync for XArray<T> {}
-> > > > +
-> > > > +#[macros::kunit_tests(rust_xarray_kunit)]
-> > > > +mod tests {
-> > > > +    use super::*;
-> > > > +    use pin_init::stack_pin_init;
-> > > > +
-> > > > +    fn new_kbox<T>(value: T) -> Result<KBox<T>> {
-> > > > +        KBox::new(value, GFP_KERNEL).map_err(Into::into)
-> > > I believe this should be GFP_ATOMIC as it is being called while holdi=
-ng the xa
-> > > lock.
-> >
-> > I'm not sure what you mean - this function can be called in any
-> > context, and besides: it is test-only code.
-> Actually it cannot: allocations using GFP_KERNEL can sleep so should not =
-be
-> called from atomic context, which is what is happening in the test cases.
+ops, forgot to update it here
 
-I see. There are no threads involved in these tests, so I think it is
-just fine to sleep with this particular lock held. Can you help me
-understand why this is incorrect?
+> 
+> Also it'd be nice if the help listed the short and long versions.
+> 
+> (Or skip the short cli switches ;))
 
->
-> ---
-> BR
-> Beata
-> >
-> > >
-> > > Otherwise:
-> > >
-> > > Tested-By: Beata Michalska <beata.michalska@arm.com>
-> >
-> > Thanks!
-> > Tamir
-> >
-> > >
-> > > ---
-> > > BR
-> > > Beata
-> > > > +    }
-> > > > +
-> > > > +    #[test]
-> > > > +    fn test_alloc_kind_alloc() -> Result {
-> > > > +        test_alloc_kind(AllocKind::Alloc, 0)
-> > > > +    }
-> > > > +
-> > > > +    #[test]
-> > > > +    fn test_alloc_kind_alloc1() -> Result {
-> > > > +        test_alloc_kind(AllocKind::Alloc1, 1)
-> > > > +    }
-> > > > +
-> > > > +    fn test_alloc_kind(kind: AllocKind, expected_index: usize) -> =
-Result {
-> > > > +        stack_pin_init!(let xa =3D XArray::new(kind));
-> > > > +        let mut guard =3D xa.lock();
-> > > > +
-> > > > +        let reservation =3D guard.reserve_limit(.., GFP_KERNEL)?;
-> > > > +        assert_eq!(reservation.index(), expected_index);
-> > > > +        reservation.release_locked(&mut guard)?;
-> > > > +
-> > > > +        let insertion =3D guard.insert_limit(.., new_kbox(0x1337)?=
-, GFP_KERNEL);
-> > > > +        assert!(insertion.is_ok());
-> > > > +        let insertion_index =3D insertion.unwrap();
-> > > > +        assert_eq!(insertion_index, expected_index);
-> > > > +
-> > > > +        Ok(())
-> > > > +    }
-> > > > +
-> > > > +    #[test]
-> > > > +    fn test_insert_and_reserve_interaction() -> Result {
-> > > > +        const IDX: usize =3D 0x1337;
-> > > > +
-> > > > +        fn insert<T: ForeignOwnable>(
-> > > > +            guard: &mut Guard<'_, T>,
-> > > > +            value: T,
-> > > > +        ) -> Result<(), StoreError<T>> {
-> > > > +            guard.insert(IDX, value, GFP_KERNEL)
-> > > > +        }
-> > > > +
-> > > > +        fn reserve<'a, T: ForeignOwnable>(guard: &mut Guard<'a, T>=
-) -> Result<Reservation<'a, T>> {
-> > > > +            guard.reserve(IDX, GFP_KERNEL)
-> > > > +        }
-> > > > +
-> > > > +        #[track_caller]
-> > > > +        fn check_not_vacant<'a>(guard: &mut Guard<'a, KBox<usize>>=
-) -> Result {
-> > > > +            // Insertion fails.
-> > > > +            {
-> > > > +                let beef =3D new_kbox(0xbeef)?;
-> > > > +                let ret =3D insert(guard, beef);
-> > > > +                assert!(ret.is_err());
-> > > > +                let StoreError { error, value } =3D ret.unwrap_err=
-();
-> > > > +                assert_eq!(error, EBUSY);
-> > > > +                assert_eq!(*value, 0xbeef);
-> > > > +            }
-> > > > +
-> > > > +            // Reservation fails.
-> > > > +            {
-> > > > +                let ret =3D reserve(guard);
-> > > > +                assert!(ret.is_err());
-> > > > +                assert_eq!(ret.unwrap_err(), EBUSY);
-> > > > +            }
-> > > > +
-> > > > +            Ok(())
-> > > > +        }
-> > > > +
-> > > > +        stack_pin_init!(let xa =3D XArray::new(Default::default())=
-);
-> > > > +        let mut guard =3D xa.lock();
-> > > > +
-> > > > +        // Vacant.
-> > > > +        assert_eq!(guard.get(IDX), None);
-> > > > +
-> > > > +        // Reservation succeeds.
-> > > > +        let reservation =3D {
-> > > > +            let ret =3D reserve(&mut guard);
-> > > > +            assert!(ret.is_ok());
-> > > > +            ret.unwrap()
-> > > > +        };
-> > > > +
-> > > > +        // Reserved presents as vacant.
-> > > > +        assert_eq!(guard.get(IDX), None);
-> > > > +
-> > > > +        check_not_vacant(&mut guard)?;
-> > > > +
-> > > > +        // Release reservation.
-> > > > +        {
-> > > > +            let ret =3D reservation.release_locked(&mut guard);
-> > > > +            assert!(ret.is_ok());
-> > > > +            let () =3D ret.unwrap();
-> > > > +        }
-> > > > +
-> > > > +        // Vacant again.
-> > > > +        assert_eq!(guard.get(IDX), None);
-> > > > +
-> > > > +        // Insert succeeds.
-> > > > +        {
-> > > > +            let dead =3D new_kbox(0xdead)?;
-> > > > +            let ret =3D insert(&mut guard, dead);
-> > > > +            assert!(ret.is_ok());
-> > > > +            let () =3D ret.unwrap();
-> > > > +        }
-> > > > +
-> > > > +        check_not_vacant(&mut guard)?;
-> > > > +
-> > > > +        // Remove.
-> > > > +        assert_eq!(guard.remove(IDX).as_deref(), Some(&0xdead));
-> > > > +
-> > > > +        // Reserve and fill.
-> > > > +        {
-> > > > +            let beef =3D new_kbox(0xbeef)?;
-> > > > +            let ret =3D reserve(&mut guard);
-> > > > +            assert!(ret.is_ok());
-> > > > +            let reservation =3D ret.unwrap();
-> > > > +            let ret =3D reservation.fill_locked(&mut guard, beef);
-> > > > +            assert!(ret.is_ok());
-> > > > +            let () =3D ret.unwrap();
-> > > > +        };
-> > > > +
-> > > > +        check_not_vacant(&mut guard)?;
-> > > > +
-> > > > +        // Remove.
-> > > > +        assert_eq!(guard.remove(IDX).as_deref(), Some(&0xbeef));
-> > > > +
-> > > > +        Ok(())
-> > > > +    }
-> > > > +}
-> > > >
-> > > > --
-> > > > 2.50.1
-> > > >
-> > > >
-> >
+will add short versions
+
+> 
+> --D
+> 
+> > +	printf("\t--new-fsx-flag\t\tUse unknown fa_flags flag\n");
+> > +
+> > +	return 1;
+> > +}
+> > 
+> > -- 
+> > 2.49.0
+> > 
+> > 
+> 
+
+-- 
+- Andrey
+
 
