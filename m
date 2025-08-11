@@ -1,117 +1,212 @@
-Return-Path: <linux-fsdevel+bounces-57400-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57401-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC718B212B6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 19:01:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5444EB2131A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 19:26:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14BFB2A6FA6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 17:00:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6149016D32B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 17:26:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC3712C21EE;
-	Mon, 11 Aug 2025 17:00:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68DC92D3A7E;
+	Mon, 11 Aug 2025 17:25:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nhq2hFbH"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="aw8+geIu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2F872C21D7;
-	Mon, 11 Aug 2025 17:00:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5ECD1DFDAB
+	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Aug 2025 17:25:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754931612; cv=none; b=a9QElHlVMeDCSgxd5MJA8X/lm9Ux4WlSdfXgEJOemZPxtRG49BsfsgOfEGavl+wOHkfJjJmhUjDZbiRUdrCR/8tUyeT/ufRDAlJcOenQMD3lB5uZTLyUYx3WBXjZZlSn2+NQhk0k/RbmieORpu7pTMy2N1GBhZ/JSiXQCoDusiU=
+	t=1754933158; cv=none; b=EzoCsxIiOUS/Ld2fQfo+KxBHD/HJKwXOVSxu3aRycjLgXEOLdLQyN9YvwpZlVJg+Qr9/tC/n+9piZuhJ43wZPinbOli/i54a05uSjnLnFYES5YJtONF15JgEvG3cERu3gJU9PxbfCeSp8CmmYX3nQuug4FnkzXpMz/s6jyZ9s9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754931612; c=relaxed/simple;
-	bh=k9z8ufONhwNETq3bfYfRYPDYJAMQBM2fYTjPqXGH+UM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=X6nR7sylY+gpfk/0F8IN5tQHLw9/97M9KMYyYbfyxXA04mo3IyVLlkmcwqlZ11C+AZAubFgUdPK/sjxODBl6yixin6HPB2ETW3Bawz9ywdwPr8p43rpeNLfagVtEtx+z7XE2kJ2KS9Z+A5kZtoYzf9s+ttiJ0qtRiiYpEtkj+hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nhq2hFbH; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-7075ccb168bso38253296d6.0;
-        Mon, 11 Aug 2025 10:00:10 -0700 (PDT)
+	s=arc-20240116; t=1754933158; c=relaxed/simple;
+	bh=+5j1WtmSbCepc85Uu28avyybqNkrTW+D1C3yTy4KP54=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ql3BdyD6UXSARxC+9NxZRMLAO0AVxGI0CfxhOz0VFaV+Kblvh7Q6E0jZBRMshUjJBdzxutdm5cRl2csN1h08yt9bPCRuwQSlAniWpRHKsrZKrZyIQNz0LVoWSscyYHFZtAgjjGU1Gn45oCPdDsOltB9vX1/OwfmJaCMfr77YC00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=aw8+geIu; arc=none smtp.client-ip=209.85.166.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-88182bb2336so123694039f.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Aug 2025 10:25:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754931610; x=1755536410; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k9z8ufONhwNETq3bfYfRYPDYJAMQBM2fYTjPqXGH+UM=;
-        b=nhq2hFbH2VeUxeUqeV8l2aRyrrTP7+TmRIyLnp9euY1874P7lmzjIox1ee1M6d9bXv
-         v+hoAXA8eksoLm1DzIRVTLu6usfI9kh4Kgt9ebhPUNyyE4u+Eqn8Q97F59rT/oNopBHd
-         BZceX97m9neO0BCyUQFDfS0JEp5wn8NwnKBfovQf1WYfDe1fD3HFEAU6ug+0EFSoEsGu
-         obIhYv0I/u/Y1gMnYM+ykjCMpMW0IL7k7tg53zXeqScSawLizlILM+1ynBHe1SovbwA5
-         WO8v+uAJ5JaBCVQaRycr3PDtqpH6J7GJB4Njonq+f4DCT21O1G7fZKQOEhMPheqYdHX2
-         9qEg==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1754933155; x=1755537955; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ylgbjSchVuRq/wSTb5b7E9IeSolYCqXoPwG3niv5Ku4=;
+        b=aw8+geIuDQio/RhEbFBoWASmRsPzOq76wW1wyStHna4Mk4UKcS9Ju92clxcDzSnb9e
+         gr1dSi9pyjAbUZ34+K7DJPyQp4RpfRe9SaiTVblicHO4Azjg6oMgm5dmHQaCsSpCyU0b
+         4OzV5Ue079zKOdn9F6uCGyjx5EYAQAv9U1n1DAMO3B2b0dnM7MzZBqNfyq4o5TUa5Nnz
+         UASFJSBJ26Az0JldHqWoagVfT/gO1Ho7I4Wa7cFWv8Fb8XAuv+TBjluQQK2HBMpo9J2V
+         yGn9vaPzoLuV+hN7fj9a8VryenLw8JKJ4lwCQ8N9whV8hQEPT7zziZ3FXw458rkJ1r87
+         evhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754931610; x=1755536410;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=k9z8ufONhwNETq3bfYfRYPDYJAMQBM2fYTjPqXGH+UM=;
-        b=DB9x3jBVRzBa4YMw0RXDGpq7qU9H1JVbJuWrfcRpL6GJduDlrvJN7vwr+OzpRLFUom
-         PlXlsPwH9oeSppnFg85CAgM7swKBZAyY8w4bHC69uRT4SwEbIwEFV1sDYLDCu8b8Tzkg
-         kD0AxN10t7MPojS0AuzE5PSod+YkBFcNSl3XtLaz6hZ5LlnWM566qjQYcKQOXeLt6S5F
-         ab8B6DN1uFDM57XTJMYSVBpOljj/qxOoLHMcubp2jjbkz66JazOwX+OSovCF4nVpXDVE
-         MSuBRH49uIWE2sjaw8YBYOXtVZztVM0HKf8IADiidqcfbw9CagPkaMxyM2bxLtYhPj3b
-         /nxw==
-X-Forwarded-Encrypted: i=1; AJvYcCU+hADaZPj9697p61BLZeX7IBE7LhD+XoazCitQ8xddeveVOV4XauLAdAlizTzCcxL2gqCH77JZFWaAgNFX@vger.kernel.org, AJvYcCWwgOrmoo87HHSSSZYe4kuvhwTmQTzTWa3ooDDaskEg+tAnh+NRtdcH9Otvtt6l1s9zD9zGtPkn5UVFHi1KRQ==@vger.kernel.org, AJvYcCWzeDuZsnFW4D1QalJkmQ7Pk+b2HaN32Bzto0cVP8bitTY9j4OvuwqUaIo/RJONB2WDErplINQH9/+VIju1FQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzzl5ucIZiaBYh/wNUzkU/uu8PdKx2O5xWyJ1lSYPuDE+GoYGSu
-	sgcNPKTRmGg2KuKMfw4Q2VPlPxTfQg5Y/A1QN3BZTIQGvSzJlh6+eSHi
-X-Gm-Gg: ASbGncsDKSpLl16y56haYQ8psBFl4UODxelmEHy2/ZSxrZazmGMp5FU1U3i1PzglIcl
-	TqYat1oUeP+YvPCYtMh5KCxz29kuMehib+0XdB9yS9EjAQd68Fp13IMq6uG6aPH0LwugL1x/v4U
-	pxGAOerwv5AjtSYwZRhJtYbof6j0eLsaQAAXcoy50obO5a3KN+Eh8fsOBcQ4Ij5fDyoFgU4cSHd
-	x9OmSfDs6cuq65Rfkz8Dtx7/vNSRz6UUfLo9dSoD99Cc806HTV7aygKXirTUk9GUKukovzku1K2
-	k69OPkQODqcIDstw43OyhmF/v+oP3Nu7JEDeJfZS2JETsS+NjoUr5VyvAkKHwOrrsIYQOgygHpS
-	wZQhiwMbK6dE=
-X-Google-Smtp-Source: AGHT+IEbIoEUmPYtQXdoxKp5+7KVr57UYJ4gZAVtnzvswzy3kWILO/2M1Q5p58gXAgLvATXXf6/V4Q==
-X-Received: by 2002:a05:6214:27ef:b0:709:302a:7aad with SMTP id 6a1803df08f44-7099a2dd887mr153816976d6.24.1754931609413;
-        Mon, 11 Aug 2025 10:00:09 -0700 (PDT)
-Received: from mambli.lan ([2600:4040:523f:fb00::254c:3ef2])
-        by smtp.googlemail.com with ESMTPSA id 6a1803df08f44-7077cde5a01sm158335396d6.70.2025.08.11.10.00.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 10:00:08 -0700 (PDT)
-From: James Lawrence <jalexanderlawrence@gmail.com>
-X-Google-Original-From: James Lawrence <james@egdaemon.com>
-To: kent.overstreet@linux.dev
-Cc: admin@aquinas.su,
-	gbcox@bzb.us,
-	jalexanderlawrence@gmail.com,
-	josef@toxicpanda.com,
-	linux-bcachefs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	list-bcachefs@carlthompson.net,
-	malte.schroeder@tnxip.de,
-	sashal@kernel.org,
-	torvalds@linux-foundation.org,
-	tytso@mit.edu
-Subject: Peanut gallery 2c
-Date: Mon, 11 Aug 2025 13:00:07 -0400
-Message-ID: <20250811170007.646981-1-james@egdaemon.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <ct5pqur2cwn2gulxuu277uomoknflxae32zzpyf4yqbrxcxj4d@p5j77u6xks4l>
-References: <ct5pqur2cwn2gulxuu277uomoknflxae32zzpyf4yqbrxcxj4d@p5j77u6xks4l>
+        d=1e100.net; s=20230601; t=1754933155; x=1755537955;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ylgbjSchVuRq/wSTb5b7E9IeSolYCqXoPwG3niv5Ku4=;
+        b=OS4jN/TmEj2lXOyYPoUDJcWDfQpWei+tynNJGsFaBjVOMFH2kDyN6IwMQ9pao4C25V
+         rAaFKKBfsWgaMmweo+OuWs96f57s1EpPLijePCHLnY92OuNRKk64TNAo5x1IwNx3KKLp
+         h8suOba81C2rSwcz2foPMkJNp9OrbMmX4WDYbef9L9SNk38h9R+sQcgKmid+VDaGZ+My
+         BqDXHC+vVkwzc8wecpV7dn+xdxequtelaseur6MdDEl+ROpf34UP1LQTI4HfuxVrcffM
+         dU4XhBOQQ6w0M34J/Vc5ir5J1FaytNak85FM7NuG5g/n4Fe8AqEDow9SE71nPvdK2rXp
+         /DUg==
+X-Forwarded-Encrypted: i=1; AJvYcCUgFGPbAdLNaxjtOI35YQwRfCkLp7bZ3izk4wNWVLSDDyl2p83NnsIx0ePLOynf/KZUNNT+kG5vJdA4QWpW@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6n81l+FIwyhHL3r7mObfMh8DimM5+wKGWuP7J3+VimxtvkOBs
+	E1niVW/nMeiRLBwD3iWx5TfQYl9z1z65jDxVdjvf+ro6RrBO4ItMqeMP4aPvGqZ0+JA=
+X-Gm-Gg: ASbGnctVN+1Up9rPPdUxobzHm5RopwxJ/G1h8DbIt3YESEL2JuWeGwELMjxlqSr2jq2
+	9VEMGFtTO5fDNpWjPQxM74V6HHqV9+cPCdTIBWQkbAKtgPQwWik2b5aBAguw3CiBVO0FcKGTh6M
+	oASyi2fsJ4JkKZp1VWBVLootirY7VAsaOJunQ8cCa61wplalgXVFDdy9K+xmschQ3Qq30588bMI
+	OINGcvQXpsc4lwOQUM5QWSYI1LYqLrhAj9FHZkHqk7Xsv6XPi3oVdTbFjx7TxdZiIo1Yh3xX8BQ
+	JnnRsFh05aA6d2Emsp/BJckPOW3UALJ6gkUjPksO8H+edWbynWbR3WhafqjQm9fW5NN5jtBf//k
+	t672esjy9cYgoxigvV7M=
+X-Google-Smtp-Source: AGHT+IFOd4aKFBw64+HMgB8vYZQBUaJ7NA64vOBdxsiT5qogCsWs/AJDdMJXCdpsm7CLbyX2FcloKQ==
+X-Received: by 2002:a05:6602:1584:b0:87c:30c6:a7cf with SMTP id ca18e2360f4ac-883f10de3e3mr2457533539f.0.1754933154647;
+        Mon, 11 Aug 2025 10:25:54 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-883f19d013dsm294433839f.31.2025.08.11.10.25.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Aug 2025 10:25:53 -0700 (PDT)
+Message-ID: <409ec862-de32-4ea0-aae3-73ac6a59cc25@kernel.dk>
+Date: Mon, 11 Aug 2025 11:25:52 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+From: Jens Axboe <axboe@kernel.dk>
+Subject: Re: RWF_DONTCACHE documentation
+To: Alejandro Colomar <alx@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>, linux-fsdevel@vger.kernel.org,
+ linux-man@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>
+References: <aD28onWyzS-HgNcB@infradead.org>
+ <cb062be5-04e4-4131-94cc-6a8d90a809ac@kernel.dk>
+ <a8a96487-99d9-442d-bf05-2df856458b39@kernel.dk>
+ <sxmgk5dskiuq6wdfmdffsk4qtd42dgiyzwjmxv22xchj5gbuls@sln3lw6x2fkh>
+Content-Language: en-US
+In-Reply-To: <sxmgk5dskiuq6wdfmdffsk4qtd42dgiyzwjmxv22xchj5gbuls@sln3lw6x2fkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-fair enough, I was less explicit about which are which. btrfs has mostly a branding issue at this stage, which is fairly rough to dig out of.
+>
+> Hi Jens,
+>
+> On Mon, Jun 02, 2025 at 02:54:01PM -0600, Jens Axboe wrote:
+> > On 6/2/25 9:49 AM, Jens Axboe wrote:
+> > > On 6/2/25 9:00 AM, Christoph Hellwig wrote:
+> > >> Hi Jens,
+> > >>
+> > >> I just tried to reference RWF_DONTCACHE semantics in a standards
+> > >> discussion, but it doesn't seem to be documented in the man pages
+> > >> or in fact anywhere else I could easily find.  Could you please write
+> > >> up the semantics for the preadv2/pwritev2 man page?
+> > >
+> > > Sure, I can write up something for the man page.
+> >
+> > Adding Darrick as well, as a) he helped review the patches, and b) his
+> > phrasing is usually much better than mine.
+> >
+> > Anyway, here's my first attempt:
+> >
+> > diff --git a/man/man2/readv.2 b/man/man2/readv.2
+> > index c3b0a7091619..2e23e2f15cf4 100644
+> > --- a/man/man2/readv.2
+> > +++ b/man/man2/readv.2
+> > @@ -301,6 +301,28 @@ or their equivalent flags and system calls are used
+> >  .B RWF_SYNC
+> >  is specified for
+> >  .BR pwritev2 ()).
+> > +.TP
+> > +.BR RWF_DONTCACHE " (since Linux 6.14)"
+> > +Reads or writes to a regular file will prune instantiated page cache content
+> > +when the operation completes. This is different than normal buffered I/O,
+>
+> Please use semantic newlines, even for drafts; it makes editing later
+> much easier.  See man-pages(7):
+>
+> $ MANWIDTH=72 man man-pages | sed -n '/Use semantic newlines/,/^$/p'
+>    Use semantic newlines
+>      In the source of a manual page, new sentences should be started on
+>      new lines, long sentences should be split  into  lines  at  clause
+>      breaks  (commas,  semicolons, colons, and so on), and long clauses
+>      should be split at phrase boundaries.  This convention,  sometimes
+>      known as "semantic newlines", makes it easier to see the effect of
+>      patches, which often operate at the level of individual sentences,
+>      clauses, or phrases.
+>
+> And a quote from Brian W. Kernighan about preparing documents:
+>
+>     Brian W. Kernighan, 1974 [UNIX For Beginners]:
+>
+>     [
+>     Hints for Preparing Documents
+>
+>     Most documents go through several versions
+>     (always more than you expected)
+>     before they are finally finished.
+>     Accordingly,
+>     you should do whatever possible
+>     to make the job of changing them easy.
+>
+>     First,
+>     when you do the purely mechanical operations of typing,
+>     type so subsequent editing will be easy.
+>     Start each sentence on a new line.
+>     Make lines short,
+>     and break lines at natural places,
+>     such as after commas and semicolons,
+>     rather than randomly.
+>     Since most people change documents
+>     by rewriting phrases and
+>     adding, deleting and rearranging sentences,
+>     these precautions simplify any editing you have to do later.
+>     ]
+>
+> > +where the data usually remains in cache until such time that it gets reclaimed
+> > +due to memory pressure. If ranges of the read or written I/O was already in
+>
+> s/was/were/
+>
+> > +cache before this read or write, then those range will not be pruned at I/O
+>
+> s/range/&s/
+>
+> > +completion time. Additionally, any range dirtied by a write operation with
+> > +.B RWF_DONTCACHE
+> > +set will get kicked off for writeback. This is similar to calling
+> > +.BR sync_file_range (2)
+> > +with
+> > +.IR SYNC_FILE_RANGE_WRITE
+> > +to start writeback on the given range.
+> > +.B RWF_DONTCACHE
+> > +is a hint, or best effort, where no hard guarantees are given on the state of
+> > +the page cache once the operation completes.
+>
+>
+> > +Note: file systems must support
+> > +this feature as well.
+>
+> I'd remove the sentence above.  It's redundant with the following one.
+> Also, to give it more visibility, and because it's not connected with
+> the preceding text, I'd move it to a new paragraph with '.IP'.
+>
+> Other than this comments, the text looks good to me.  Thanks!
 
-You would know better than I would since you're directly in the weeds. I only have prior experiences and old cases to go off, of most of which are out dated at this point, and im primarily interested in raid 5/6 usecases.
+I kind of walked away from this one as I didn't have time or motivation
+to push it forward. FWIW, if you want to massage it into submission
+that'd be greatly appreciated. I'm not a regular man page contributor
+nor do I aim to be, but I do feel like we should this feature
+documented.
 
-Which is why I've mostly stayed out of the lkml drama until now. But removal doesnt resolve the problems with the linux filesystem ecosystem
-and it'd be a disservice to everyone to lose convienent access to the work you've done.
-
-crossing my fingers your work will remain,
-James Lawrence
-Principal Engineer
-
+-- 
+Jens Axboe
 
 
