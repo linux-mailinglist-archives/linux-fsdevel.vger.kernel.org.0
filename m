@@ -1,211 +1,265 @@
-Return-Path: <linux-fsdevel+bounces-57413-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57414-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3A10B213E6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 20:13:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E8A8B213F8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 20:15:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EDB362198B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 18:13:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73A8119075AC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 18:15:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FD632D6E77;
-	Mon, 11 Aug 2025 18:13:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9402B2E1C55;
+	Mon, 11 Aug 2025 18:13:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="AGmRNIvl"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HIomUPfw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2075.outbound.protection.outlook.com [40.107.223.75])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 200A829BDA6;
-	Mon, 11 Aug 2025 18:13:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.75
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754936010; cv=fail; b=KfHDXbiRyb2ZOxFZNw/ktfCeMcCX3akyt5xauKJBtrdawtq532qx+458FlzD6P/nakw1dXJmw47QzuJmVi5voeJQAcNZ81E+W5F5n1gosz7klZoUVVYZnatTeddw6Bpd1tbjhtH3H03/2CdADs7Jh/gVOYuqZ29rW6mct0tzlDc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754936010; c=relaxed/simple;
-	bh=ZXiZs1Qs7oFqXQ+sVOZAOvOTh4nRJejcfTUp35Jhlcs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=IJI172wf/2g+Su1gYHTaC4UgbtKKpvJZU3pynKJfztFfW++aXVV74j8PAiP7lfiWtqCQVC9Y7gNUhOOveKhSJDDqADDEmS5VKDpZVUfO3yW/kxHrNt6nZ/wgX/sSOx24hxBudyA2N9M59maWydVplZcyvMXuZiRobGjCQe24sVg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=AGmRNIvl; arc=fail smtp.client-ip=40.107.223.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kqCibHb7WfynOrKG6L3+S3QJW86vrFs4Jj3opxomgcUmpdUUl859ZQVnRQKHINNxLwosbznqrSKvMCCG2BRPvTrWUQaBhVYFhFRKOw+Xx/smhrYLedcIjfx85rgJPNMns6LpD7Ay6sGsJvmVO0/IGwcNw12WyDkXPotRkXMZgyu573BheoFzCNhXLj9KYR2D+tDLbrxrgITlYltKs5szC+ovr0Z7+G5F//O7mRseshcUC1E196JxHOQ/fh6J0gcR5z2/1Ukb9BENnW7gUnqmoPBot6l4zH+aYYe5l//My3lKe02UT80KuUX/KbxZok1dMXvTOqd6kp0naUc2GJT19Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sGV22iA4648kX+1SLXqRIJp9tvQz6hauCgYznHiUf3A=;
- b=mKjS7iRqf9RtZ7IN1IIw08y9jGiU9MhTc24bWHVEXjHug6s52va32X5DsKRr0bNPCTt7L7ncwltrliOXqyYW1dHR+1goFnyOD51EWbIoYSXGJqQ2h0OA8uC852s5EeBzdLB9XRosqulnL3s7NHTKcssbcUD3saDL8NB14lPyABjKLlCJvzl1UCpLP4z6PqW4hXgQLafrudWhuKKkIXpglM0nrWoHjelXxYLrG4oahMpCTisSQ+fuJ1CGWD3CbN8jfuZ6Mx/hmnwejxhIeZHJgkv47twoGtHeQ2r/V27G8i0bk7JP188uz6ZT08X1WtwsnoC799JeOIMuLwRTcT/h7Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sGV22iA4648kX+1SLXqRIJp9tvQz6hauCgYznHiUf3A=;
- b=AGmRNIvle1xNuzTW+OowrKLrpxVus2WO6EddvsBkKGE6ZGkNcZCWgNVPRKstgy/kKXOzoIildUPW3H346rPL/CzNywsQqEepi6n0S4lYjqd2i+5Sriho9skpFkYm1tmWmZcZjisgCro66daFSArrrkJfRiBXkdqqgHEaGbMR7l+3yl+T4czwAB6R9cMOju5jQ7OE1l+nvwJcOE3cWLEXDmMngGsYkYV2Nyet4aFV05JiqbZXp6Go3fmL03Z7EWsWx4ia0dBvhZzwaTPUY545QScGGfBvrR/jQgkJoz9FzChJqKew02EkIG3jeZqa2oTgoAMYa6QqAC6QsuPkszWCfw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- CH3PR12MB7739.namprd12.prod.outlook.com (2603:10b6:610:151::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.22; Mon, 11 Aug
- 2025 18:13:26 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%6]) with mapi id 15.20.9009.017; Mon, 11 Aug 2025
- 18:13:26 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linuxppc-dev@lists.ozlabs.org, virtualization@lists.linux.dev,
- linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
- linux-btrfs@vger.kernel.org, jfs-discussion@lists.sourceforge.net,
- Andrew Morton <akpm@linux-foundation.org>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Jerrin Shaji George <jerrin.shaji-george@broadcom.com>,
- Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
- =?utf-8?q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Benjamin LaHaise <bcrl@kvack.org>, Chris Mason <clm@fb.com>,
- Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
- Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>,
- Dave Kleikamp <shaggy@kernel.org>, Matthew Brost <matthew.brost@intel.com>,
- Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
- Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
- Ying Huang <ying.huang@linux.alibaba.com>,
- Alistair Popple <apopple@nvidia.com>, Minchan Kim <minchan@kernel.org>,
- Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [PATCH v1 1/2] mm/migrate: remove MIGRATEPAGE_UNMAP
-Date: Mon, 11 Aug 2025 14:13:21 -0400
-X-Mailer: MailMate (2.0r6272)
-Message-ID: <B4A54756-87EC-4795-855C-3F80114456FF@nvidia.com>
-In-Reply-To: <20250811143949.1117439-2-david@redhat.com>
-References: <20250811143949.1117439-1-david@redhat.com>
- <20250811143949.1117439-2-david@redhat.com>
-Content-Type: text/plain
-X-ClientProxiedBy: MN2PR04CA0001.namprd04.prod.outlook.com
- (2603:10b6:208:d4::14) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD6D92E06EA
+	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Aug 2025 18:13:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754936026; cv=none; b=F060bzEei9EoAkhzOQAMZVe8kkC/oYWdaOynUR3Kb3rtk9AFRhRjt95z3z7marR5nsHF0ArGgiNTVvT18XqyPIgC8HzbjtptFe4KyL0whAC3Y4me/R2rdbVfumJ9+WMm+tNS8Pg0rVZk+IxMTNF0Pr+pDFHPIEsUeHfDDO5QCfU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754936026; c=relaxed/simple;
+	bh=SaDYoexQ4i5tsfF3WUqgJORGkWiPSN9Fx4XhDfEx2tA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a2FGvcinbRDgjRB8ejDkUXhi1OwsBawNzPynXUAqcY962jE3hxCLQ7wfDkxoYL1BJJFpc7h7TmhHjNoRxOL8DMxYZZPdsrUFKGChoVJMvR+Be8FrzWkXAbNgrZxBYvaZDRITxQzF++zGSvzT22qm1PmBHf7LY5BfZyiPITL51wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HIomUPfw; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754936022;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9TMPOQosyR3kzECChmd17ITJUt3EfWra1AAklKdXopQ=;
+	b=HIomUPfwNuqsw1XY2bZouyhNtpqmrsqZ7q57FOzT4PVK4iUMNL1FYHIBAUV16m8g0gBcpi
+	RizPl84Uuy8XvNw5ToagHrCd/SJlu0YBOev7iRH3Za+TggwFktnElxSdkQjcCJnBgQQOA6
+	bR6g9ppbNF4ab8fBQPG7vgZIwEFTDBk=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-206-KQrHDoG0NZW7G8PzKhuiaA-1; Mon, 11 Aug 2025 14:13:41 -0400
+X-MC-Unique: KQrHDoG0NZW7G8PzKhuiaA-1
+X-Mimecast-MFC-AGG-ID: KQrHDoG0NZW7G8PzKhuiaA_1754936020
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-451d30992bcso44641355e9.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Aug 2025 11:13:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754936020; x=1755540820;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9TMPOQosyR3kzECChmd17ITJUt3EfWra1AAklKdXopQ=;
+        b=AfmCziFZGJ3nGAdb2xxzmpkZnOGdd8CSG6I7yfS5lb8y6RL2IIuOaifLjX+C7a80+/
+         7BXctpGSTMRm0vBG6vU7/NoVzEZRQLMiiAnKX+dccrtszH7JpQloAJ7IpfCZeyLe64kP
+         zh4IW0KLKuxvG+EZ6YQIfhHv+mJZJgXOOEHW8UFZKEyqjhr0deUMWfipLUdi48gu0h/j
+         Co0lkIKGUnQZG/x1qYk/EmVeArIL+qve6x2frbavFLrhSw/c5lYI5EGrCWuGKJzQ8pkK
+         cOW+NxY5AN6o6C7p2i48pIPMvjNXs7A1cp+PCJJ5YFzwfLZ2cmTJnF7RjNZ6WT1mSuPi
+         kWAA==
+X-Forwarded-Encrypted: i=1; AJvYcCUv2myHjpjyzM8goBoAPU2mNJb915CiBI7IlZzrMjgZbcqXoS87zSnxWmHudKrQRI90U4yd9UlM8CkfFZpc@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBJXzisD4eBHXasOe98oaX+JjU6pGxvQ7F3EZ78xFz5VprKG/z
+	xWvY9BAl0A3022R4cRUPzKR8yFuKTO5fUDIBYtTNeNTNaC4le6yIAX4vShl6aBBVcRPDHZSOgHo
+	HHkfmKmXVJXo4PKVe3BCcSitbu34drWmSQRpyd5bx1TDz8OreRF6fnGCDm+mTLDeeWg==
+X-Gm-Gg: ASbGncvIMaroVNVylHJgY6gBExrcSDyAP9eBvrGcaOdpyRzJNIW20McB2l7cn1ipsPH
+	oGJ2LZV5Y0pYyGtxuTUhklIsJDsNRWau5/7MPosD6EeFtR8tsX4x243zEZ1VKtljRPcwl2g9N1U
+	8HgUcIjIUnS+Vs2pDfaQz0cawJ9XLaFih3nbNfRLtRBp9gozU9MikEnGCBvVyF4ZvyKYwgMQsjF
+	NPKEMaB4ffh22jgMZ8VOZShPSgPGVqqFbN9fl2CM2crgxrkxF7aj578k5sm0B3zCBP0hCVAOpHI
+	ip4+114+jaylgOMfNochbcg2LvfnlriDwwot/yvzqPV6MF/zX3elhpB+gxY=
+X-Received: by 2002:a05:600c:1c97:b0:43c:f44c:72a6 with SMTP id 5b1f17b1804b1-459f4f3dda6mr118690345e9.2.1754936019712;
+        Mon, 11 Aug 2025 11:13:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGpEEe1Ffykdz8Jornajz4J1RLFvc/FUoBKAZ7COCrJvtMvhYda/gZ9RZ/4GOWvQPFQrYHNYA==
+X-Received: by 2002:a05:600c:1c97:b0:43c:f44c:72a6 with SMTP id 5b1f17b1804b1-459f4f3dda6mr118690175e9.2.1754936019256;
+        Mon, 11 Aug 2025 11:13:39 -0700 (PDT)
+Received: from thinky (ip-217-030-074-039.aim-net.cz. [217.30.74.39])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e5873c43sm286317885e9.22.2025.08.11.11.13.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 11:13:39 -0700 (PDT)
+Date: Mon, 11 Aug 2025 20:13:38 +0200
+From: Andrey Albershteyn <aalbersh@redhat.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: fstests@vger.kernel.org, zlang@redhat.com, 
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	Andrey Albershteyn <aalbersh@kernel.org>
+Subject: Re: [PATCH 2/3] generic: introduce test to test
+ file_getattr/file_setattr syscalls
+Message-ID: <n226bxztejpoulfh5ok4qp2acccnr3d2smbqev2jsbd46omnom@4xqc67yx234p>
+References: <20250808-xattrat-syscall-v1-0-6a09c4f37f10@kernel.org>
+ <20250808-xattrat-syscall-v1-2-6a09c4f37f10@kernel.org>
+ <20250811151740.GE7965@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|CH3PR12MB7739:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8197a7b4-0230-4ff8-9333-08ddd902c42d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?GlB/C9QUMNoi5RlZS4KAhVuYCrDyzlwNMMpuKf5R2+GrizrTmWwV6wmufBSv?=
- =?us-ascii?Q?eYeXizzWXFYP/6fa/pHQSyj3gxjBukLSrROUM9Daag4D/LHXcKZAy2ZJKj0l?=
- =?us-ascii?Q?Jy/IwAgy0wlzXFcH4A3hJqGiVCcMkYvN/JL40a6QFa1J1NuBNc/j4nT109v+?=
- =?us-ascii?Q?KMTBv3DI0T2ty/Uw21EbRRGi4njeCeblvR9FLhxMfn5TwJ2b/CfKQJKf5q3E?=
- =?us-ascii?Q?ofJ5XWd+W6Lke70i9QfWREvQkYViNRmqhCMYAMpu19+je7wI64JgC767IbY+?=
- =?us-ascii?Q?glNou6LoJTY8rNFvw89m91g1Ro5fmOO7dYT7kv4OARGYboWf05YDv0AmIveG?=
- =?us-ascii?Q?VGtxEEKz+8+Jpiphn4YkS6tU3WXxr87PT7AAzCtwnnkgaCwIC2um5gTHiFKZ?=
- =?us-ascii?Q?Ke2niPQQhIKmzdHU1VrJwFKZVuxNAP/JCQB0sHIMjKXoFZyo4C0a69SndSD6?=
- =?us-ascii?Q?yvcjB1wiqh5YrZR8W3xaoLKJ0Q1aMz467pU5BQoRL1NkPqS6538rxZlgyjl/?=
- =?us-ascii?Q?rFow/Ep1CrBtU/KXR53ureRVgkubq5GS+L3RP2L5eG0noZwzxufZjygKAayp?=
- =?us-ascii?Q?A0HtpGi+aZ21pa3cJvAGggO0Y2z2yHYAG3jn45BOrr0cNJND9aO3+P0Yf/T+?=
- =?us-ascii?Q?2LoeGinA42qccikW74AzScXb5YLA74zbtwmA2NyizjG0zfiS7qf7vVQqow9e?=
- =?us-ascii?Q?x2boKigGQFgAT7/mvHHispzZ/tvRbU0o+16HO3xqnCkMpWSL9UTVfMDxAe9f?=
- =?us-ascii?Q?BzfTioMDJN7RfI1NrUyYIqOU/a/JGyQkanFvtifB0K4UPkw5DG0CkzO9mQMj?=
- =?us-ascii?Q?ZnqDj8dKtOqd7icl90T5Lfk1jo4W3lKP5H2hJhEjyplcuvsuQjr99/J4MrTi?=
- =?us-ascii?Q?n9GZ2VOvZPkrWzVe/9F1yLToLA0vAy9HuFY6szg6B9uw0i0Zu0hT6qJC0zoi?=
- =?us-ascii?Q?ZxQ2sqRoyms7vBr9a2iP7y2oMnSMFUhuaBQ5GsReRyCeTLi99nGT38447DWA?=
- =?us-ascii?Q?TR8mgd3n9JV1FMXyVVKWYyQziyPsGa+bs8ganaEayXFy9p+1YOcpfk1yaWp/?=
- =?us-ascii?Q?3dPuEg/mKlt8NLbB8Upa2TGGVpMjrTEEib1EvwoEPNbVHesz8229kwWRgMT7?=
- =?us-ascii?Q?ibPcAmnjIvQiTlYDkHkfNSi57rAE9GYMczcZOEKCwv6D1ZyP4NyDaW5PqHZn?=
- =?us-ascii?Q?iaiVxuIB9oZpdrNp/RGKfXFlG/MdZZCyMczOT/3mV8J1rshYCHrFk8QGtU9M?=
- =?us-ascii?Q?POEX1iUcnkjGT2kEerseHmiW7Hk5Z4kQHfXfO/2OnW2gDS5AGcCPQCcGgHW7?=
- =?us-ascii?Q?rQwl+Hln7F9188vLLym+7Gh0fHKX8m/y9NG4WpP+drsOuGJ8wDd+iaxccKw6?=
- =?us-ascii?Q?DgpUmkg+2g2dkygaSD3FoSpKSiNC6o4Gh0iOMOK9EYsFO7hVTg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?xIXEu2/iE51CsYDVEPUWzoXUh6wZlcKDn9UW/O5fkTqvwXJdguDCKVokARjF?=
- =?us-ascii?Q?VsxzWD3KhxNRzraZESPM3h2RoxQlzkpB3a0uR3rP1jjxl7OCt9zDLUSUsTVr?=
- =?us-ascii?Q?gTlFeaMYz5VpTa274rHhPloDcKQqThNgFDhmnhMY1vn+b+zxGYGWtKxYHpxG?=
- =?us-ascii?Q?jpGl6o0h8Xj72QvrMdTLqDwoLPgHgj9iwyl2bGlPqKe/D3EhG7omTt7fRNtI?=
- =?us-ascii?Q?RzX3LJ1z6g6twB8K48zoMLKr9ipFb04slwAgU01/1vovBbTvN7aksZVL1jkR?=
- =?us-ascii?Q?pc6kE4gsGXn+r3joU6iz7GKfLKyeuPWN6SObX4FVlw4QFx76T+bS1jX4+yph?=
- =?us-ascii?Q?12ZoZhO9OiwIoV+QbWM07JmZG3V3LSu5iJC2Rr0SfsjKeE5J3IgHb0UmP/Oz?=
- =?us-ascii?Q?WI8wycYK4kcWSm+EWzuryFLATaHPOkvYD3OnU+kCExXKHSdlArI1lq71R6Qx?=
- =?us-ascii?Q?tRNASA/7DuJpqBV23P9DaByjB0hKTjmp1DU0HHpXUWgNikN1ehlnnJEqPP/R?=
- =?us-ascii?Q?QMPUP5q5U57nkOkNPTfsLLWpaJvNeL1NGRg19ZT6EwY3xKU6VTc9WEv5nxdY?=
- =?us-ascii?Q?n1+T8zbWL02EcyO3Wa/oiOvDnlTzMARVC+l1B5sQzolCVjQdvT3pRY5hxe8s?=
- =?us-ascii?Q?KHR6CvbfMsHSn4JqB+3GOkRUTGuQY8nxP68MaHyvVB1NDCRmeaiYnTRau8O6?=
- =?us-ascii?Q?MfL888oT8SQ9fKuRIPmIatNmn7hyrwkV7Yl4+NNfCci757D6UoRo1Omp8RAa?=
- =?us-ascii?Q?cTNQBwiMLHBXM416fEY4pQ3sk5LCAgoT6KtSU19Cn6n69tALZHPEBaOT+bXE?=
- =?us-ascii?Q?Tiw9hJQpCHU2CiTey1R1VN9cgISiWlBK++AHKmKeMp4j45hPCkLqQniTiyRQ?=
- =?us-ascii?Q?td1MBEAYPdr03+rkiqkWd/MdMXearxdD4AY2Y1sIDRxOZ/feVCb0ppFZhCIN?=
- =?us-ascii?Q?N8gq0ZKuLo5kvBvrNzQp4UEUPIjEekPzfWG7z33nu2LPgNMXSyl4xypUupAu?=
- =?us-ascii?Q?bZ7GUD15kbWH94rP3vqQz/c78hwSxaSgJ3i4qlToWg5nSNvzPub51YK03Vsu?=
- =?us-ascii?Q?txe2uYEGLEklNUyVKttSKmzSqAF/WWuc54Wv0dNziUC6AM5lTxw26L2SYqxR?=
- =?us-ascii?Q?Vb/8gsudZrWLfCmZvCI9w02Slg5ZuUl5gX12kJIFtnNgtCafOoVPZWelcW1e?=
- =?us-ascii?Q?DCay5RvUT4XCCdfe1A0ExFiZQeGXIGOX1SUpleLsHsvs0+npq0MKHnR9mOR2?=
- =?us-ascii?Q?xHW74eDjiS5lZC4+xnSdg7nbT2EptxhRmyA8LHjHWGE3t1CQM7FYnzDfs5Gp?=
- =?us-ascii?Q?nj+qCkkzc458DMWn+MwYT3i2m+OCTXFtySlNLtlmPmVP3tTZOZMc67zqA4YF?=
- =?us-ascii?Q?+g9HkQEv3E0jnOuaELihkmUwhvzUCawOHJzHMkbVqAYDf0jkfxnFyIGGGnp6?=
- =?us-ascii?Q?LOpVk9W5/07uQ6BgFziCumIWCf/zv+M+wCeH0PZASRNKlc3FmVMOPNQ/64Vf?=
- =?us-ascii?Q?t+crWITAGvc0W5lEnHXdc4pNhfEZcwAVGqSctF6vrO8qPaDPfYnVH4fOu7JK?=
- =?us-ascii?Q?iVAmKGEN87VF7Xa7vE2GChZ4b3PBLXEyOXMw6TP9?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8197a7b4-0230-4ff8-9333-08ddd902c42d
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Aug 2025 18:13:26.3436
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: A3mJLBJ94ddefQBmjiKbvY7QVlGcoxAjEbRIWBZLMSDXcDvVKrUUcq0hlpZifjCS
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7739
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250811151740.GE7965@frogsfrogsfrogs>
 
-On 11 Aug 2025, at 10:39, David Hildenbrand wrote:
+On 2025-08-11 08:17:40, Darrick J. Wong wrote:
+> On Fri, Aug 08, 2025 at 09:31:57PM +0200, Andrey Albershteyn wrote:
+> > Add a test to test basic functionality of file_getattr() and
+> > file_setattr() syscalls. Most of the work is done in file_attr
+> > utility.
+> > 
+> > Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+> > ---
+> >  tests/generic/2000     | 113 +++++++++++++++++++++++++++++++++++++++++++++++++
+> >  tests/generic/2000.out |  37 ++++++++++++++++
+> >  2 files changed, 150 insertions(+)
+> > 
+> > diff --git a/tests/generic/2000 b/tests/generic/2000
+> > new file mode 100755
+> > index 000000000000..b4410628c241
+> > --- /dev/null
+> > +++ b/tests/generic/2000
+> > @@ -0,0 +1,113 @@
+> > +#! /bin/bash
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +# Copyright (c) 2025 Red Hat Inc.  All Rights Reserved.
+> > +#
+> > +# FS QA Test No. 2000
+> > +#
+> > +# Test file_getattr/file_setattr syscalls
+> > +#
+> > +. ./common/preamble
+> > +_begin_fstest auto
+> > +
+> > +# Import common functions.
+> > +# . ./common/filter
+> > +
+> > +_wants_kernel_commit xxxxxxxxxxx \
+> > +	"fs: introduce file_getattr and file_setattr syscalls"
+> > +
+> > +# Modify as appropriate.
+> > +_require_scratch
+> > +_require_test_program "af_unix"
+> > +_require_test_program "file_attr"
+> > +_require_symlinks
+> > +_require_mknod
+> > +
+> > +_scratch_mkfs >>$seqres.full 2>&1
+> > +_scratch_mount
+> > +
+> > +file_attr () {
+> > +	$here/src/file_attr $*
+> > +}
+> > +
+> > +create_af_unix () {
+> > +	$here/src/af_unix $* || echo af_unix failed
+> > +}
+> > +
+> > +projectdir=$SCRATCH_MNT/prj
+> > +
+> > +# Create normal files and special files
+> > +mkdir $projectdir
+> > +mkfifo $projectdir/fifo
+> > +mknod $projectdir/chardev c 1 1
+> > +mknod $projectdir/blockdev b 1 1
+> > +create_af_unix $projectdir/socket
+> > +touch $projectdir/foo
+> > +ln -s $projectdir/foo $projectdir/symlink
+> > +touch $projectdir/bar
+> > +ln -s $projectdir/bar $projectdir/broken-symlink
+> > +rm -f $projectdir/bar
+> > +
+> > +echo "Error codes"
+> > +# wrong AT_ flags
+> > +file_attr --get --invalid-at $projectdir ./foo
+> > +file_attr --set --invalid-at $projectdir ./foo
+> > +# wrong fsxattr size (too big, too small)
+> > +file_attr --get --too-big-arg $projectdir ./foo
+> > +file_attr --get --too-small-arg $projectdir ./foo
+> > +file_attr --set --too-big-arg $projectdir ./foo
+> > +file_attr --set --too-small-arg $projectdir ./foo
+> > +# out of fsx_xflags mask
+> > +file_attr --set --new-fsx-flag $projectdir ./foo
+> > +
+> > +echo "Initial attributes state"
+> > +file_attr --get $projectdir
+> > +file_attr --get $projectdir ./fifo
+> > +file_attr --get $projectdir ./chardev
+> > +file_attr --get $projectdir ./blockdev
+> > +file_attr --get $projectdir ./socket
+> > +file_attr --get $projectdir ./foo
+> > +file_attr --get $projectdir ./symlink
+> > +
+> > +echo "Set FS_XFLAG_NODUMP (d)"
+> > +file_attr --set --set-nodump $projectdir
+> > +file_attr --set --set-nodump $projectdir ./fifo
+> > +file_attr --set --set-nodump $projectdir ./chardev
+> > +file_attr --set --set-nodump $projectdir ./blockdev
+> > +file_attr --set --set-nodump $projectdir ./socket
+> > +file_attr --set --set-nodump $projectdir ./foo
+> > +file_attr --set --set-nodump $projectdir ./symlink
+> > +
+> > +echo "Read attributes"
+> > +file_attr --get $projectdir
+> > +file_attr --get $projectdir ./fifo
+> > +file_attr --get $projectdir ./chardev
+> > +file_attr --get $projectdir ./blockdev
+> > +file_attr --get $projectdir ./socket
+> > +file_attr --get $projectdir ./foo
+> > +file_attr --get $projectdir ./symlink
+> > +
+> > +echo "Set attribute on broken link with AT_SYMLINK_NOFOLLOW"
+> > +file_attr --set --set-nodump $projectdir ./broken-symlink
+> > +file_attr --get $projectdir ./broken-symlink
+> > +
+> > +file_attr --set --no-follow --set-nodump $projectdir ./broken-symlink
+> > +file_attr --get --no-follow $projectdir ./broken-symlink
+> > +
+> > +cd $SCRATCH_MNT
+> > +touch ./foo2
+> > +echo "Initial state of foo2"
+> > +file_attr --get --at-cwd ./foo2
+> > +echo "Set attribute relative to AT_FDCWD"
+> > +file_attr --set --at-cwd --set-nodump ./foo2
+> > +file_attr --get --at-cwd ./foo2
+> > +
+> > +echo "Set attribute on AT_FDCWD"
+> > +mkdir ./bar
+> > +file_attr --get --at-cwd ./bar
+> > +cd ./bar
+> > +file_attr --set --at-cwd --set-nodump ""
+> > +file_attr --get --at-cwd .
+> > +
+> > +# success, all done
+> > +status=0
+> > +exit
+> > diff --git a/tests/generic/2000.out b/tests/generic/2000.out
+> > new file mode 100644
+> > index 000000000000..51b4d84e2bae
+> > --- /dev/null
+> > +++ b/tests/generic/2000.out
+> > @@ -0,0 +1,37 @@
+> > +QA output created by 2000
+> > +Error codes
+> > +Can not get fsxattr on ./foo: Invalid argument
+> > +Can not get fsxattr on ./foo: Invalid argument
+> > +Can not get fsxattr on ./foo: Argument list too long
+> > +Can not get fsxattr on ./foo: Invalid argument
+> > +Can not get fsxattr on ./foo: Argument list too long
+> > +Can not get fsxattr on ./foo: Invalid argument
+> > +Can not set fsxattr on ./foo: Invalid argument
+> > +Initial attributes state
+> > +----------------- /mnt/scratch/prj 
+> 
+> Assuming SCRATCH_DIR=/mnt/scratch on your system, please _filter_scratch
+> the output.
+> 
+> (The rest looks reasonable to me.)
+> 
+> --D
+> 
 
-> migrate_folio_unmap() is the only user of MIGRATEPAGE_UNMAP. We want to
-> remove MIGRATEPAGE_* completely.
->
-> It's rather weird to have a generic MIGRATEPAGE_UNMAP, documented to be
-> returned from address-space callbacks, when it's only used for an
-> internal helper.
->
-> Let's start by having only a single "success" return value for
-> migrate_folio_unmap() -- 0 -- by moving the "folio was already freed"
-> check into the single caller.
->
-> There is a remaining comment for PG_isolated, which we renamed to
-> PG_movable_ops_isolated recently and forgot to update.
->
-> While we might still run into that case with zsmalloc, it's something we
-> want to get rid of soon. So let's just focus that optimization on real
-> folios only for now by excluding movable_ops pages. Note that concurrent
-> freeing can happen at any time and this "already freed" check is not
-> relevant for correctness.
->
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-> ---
->  include/linux/migrate.h |  1 -
->  mm/migrate.c            | 40 ++++++++++++++++++++--------------------
->  2 files changed, 20 insertions(+), 21 deletions(-)
->
-LGTM. Reviewed-by: Zi Yan <ziy@nvidia.com>
+ops, will fix, thanks
 
-Best Regards,
-Yan, Zi
+-- 
+- Andrey
+
 
