@@ -1,171 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-57415-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57416-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 016F6B213FB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 20:16:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F5CBB21424
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 20:24:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8F6D172C71
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 18:15:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9AE71A20E00
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 18:24:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61C4A2DE1F0;
-	Mon, 11 Aug 2025 18:14:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B707F2E1C57;
+	Mon, 11 Aug 2025 18:18:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OxLkVp6s"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.carlthompson.net (charon.carlthompson.net [45.77.7.122])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E83A2D6E66;
-	Mon, 11 Aug 2025 18:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.77.7.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6FC2E0B59
+	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Aug 2025 18:18:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754936049; cv=none; b=BoOxC5q8TZpmRCCllgaYZxlTX0Y6xfjDIJX7rnK6XV/mVOPFmjrFFgp3R6HoYOFDUdR1iVk+WUebgoytgqyXJfjk6Qey/ciIh44/b81cxGC7iAb4PnZ9spJzUyTJXOoVhp/t/CcLFKkQhSGyCx1vteP8xl0AKrYxnOsDEPViq/k=
+	t=1754936312; cv=none; b=oesZrOu68lvLOpG5SVcu/T6bWMHLrr7AHy1fX4G0JVsewIpDbz+W1IrA25tp8uK398UfPvmUtwOdPdvPU3JTX9gt5Y62QhJQ8lFrt5cVX9Vf9apY0Pi25c4kFgVVO7eKp4vEEKUo84sODVxC1mL6gtBoRdQd0nS/hCZSIPrdF0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754936049; c=relaxed/simple;
-	bh=cxoFCFETBOccsLdMwv3sh9Um/zOuhvG93S2CSNiIWzA=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=giYPVeQRDIHtVqmASBU+GL35FSAABeawanriJEBnltqVC+5d00RIyQvaclmcwwX5oorbemnfho+ee1BiB9K897NpKEleTGLL1+xV/wpLLAwVYfXo0T8hRW1eRv2SRL4iwSpAZ930dUODZcNI1LafgWBrbxh5gtDdG8JAvM6EJgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=carlthompson.net; spf=pass smtp.mailfrom=carlthompson.net; arc=none smtp.client-ip=45.77.7.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=carlthompson.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=carlthompson.net
-Received: from mail.carlthompson.net (mail.home [10.35.20.252])
-	(Authenticated sender: cet@carlthompson.net)
-	by smtp.carlthompson.net (Postfix) with ESMTPSA id 775F11E3AE570;
-	Mon, 11 Aug 2025 11:13:58 -0700 (PDT)
-Date: Mon, 11 Aug 2025 11:13:58 -0700 (PDT)
-From: "Carl E. Thompson" <list-bcachefs@carlthompson.net>
-To: Kent Overstreet <kent.overstreet@linux.dev>,
-	Konstantin Shelekhin <k.shelekhin@ftml.net>
-Cc: admin@aquinas.su, linux-bcachefs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	malte.schroeder@tnxip.de, torvalds@linux-foundation.org
-Message-ID: <514556110.413.1754936038265@mail.carlthompson.net>
-In-Reply-To: <iktaz2phgjvhixpb5a226ebar7hq6elw6l4evcrkeu3wwm2vs7@fsdav6kbz4og>
-References: <3ik3h6hfm4v2y3rtpjshk5y4wlm5n366overw2lp72qk5izizw@k6vxp22uwnwa>
- <55e623db-ff03-4d33-98d1-1042106e83c6@ftml.net>
- <iktaz2phgjvhixpb5a226ebar7hq6elw6l4evcrkeu3wwm2vs7@fsdav6kbz4og>
-Subject: Re: [GIT PULL] bcachefs changes for 6.17
+	s=arc-20240116; t=1754936312; c=relaxed/simple;
+	bh=278LB+F/JpYWyp3Scr9ING3NFA9Kzch6L8LJO3c2y5s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HEXtGnlCz5beisB+IbZdUYJpWHfcMuG5E+h0CNz161LbzyjWJ89nUpT+mH0g1McWvit41V4AAeGTZyIZSJ4sHcg6tCll5vZJJR0Un1Q4T38F2RcL+wUQ4U5PPoz4mkmQYg2Cg/fQKd+YDZ2xC2/6MIvCCuRnmRo2bN/ic8uO2Gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OxLkVp6s; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754936309;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lAD+rf/CTMK9ZczcWk4uX22kkA50cFqnLejY2P0NP4k=;
+	b=OxLkVp6svFYTvn/BPtYe1GoA1L7n4dNWpPNgz9ncJgJsklSOZGPZ+4ZC3DFuJjUXbW4dy5
+	QoEw4z+kpJ8poy1g0AXiUUvw3wN8yYyhZpFYj0VHzuhPCssqt82uHD+JLohUknR+j/GXoP
+	hbQc18soZOz6Cys+N8iFO0J19GUgyG4=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-178-f6BCHOtUNEWjA1u8RumtbA-1; Mon, 11 Aug 2025 14:18:28 -0400
+X-MC-Unique: f6BCHOtUNEWjA1u8RumtbA-1
+X-Mimecast-MFC-AGG-ID: f6BCHOtUNEWjA1u8RumtbA_1754936307
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-459d8020b7bso23758165e9.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Aug 2025 11:18:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754936306; x=1755541106;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lAD+rf/CTMK9ZczcWk4uX22kkA50cFqnLejY2P0NP4k=;
+        b=ZYZ1Loz6aLthIJL2EWNDpSRgVFN+Abj/xcSf+oDvU/pVgUcqIgEoiXdEcgW2mpjiIC
+         YZ5XJxyjQm+wn0iuRnW4fjloz4l1GXMWWSR+PonS6LbLd7+45lWmwoMY4CRhfZTvIC11
+         V7/s+pTVQbHCfEum6ZecWexFejzqw/+6Rdfu84rcb0lVMP/CmfBejFdprI3nrXILIhbg
+         WyFz7GynMDYVTj0VaMS/X1eLPU7EX3AWDeXmNowNv7PE9raz0RsJGXyc+VnFuJiBTK6U
+         aYplj7S2XYpbvnYkF6pyVoIUuhDiLtx1m7LJ8ey9uW3FAOzMC0/MYz9j31+fc6yfUxwK
+         j0oA==
+X-Forwarded-Encrypted: i=1; AJvYcCVWFv8H6d5hZaO0+630YzqXKe/QUJo9o34zIcgMFTKojLNuD/6E050irO25Ey60fXwMOGnoVPX2//7up9xH@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIgt/e888ZK7Z2aZqfJHmbbWC0YasPtHUxauJ3uU4Pdn4X4OpI
+	bDKSy14HmRW6KKg4CbEJGOWCDyhX1xEmUQ1/D7kkfTjDX9yNIUvmufozvhbwZb+kkJvU3LnXcLn
+	MSykEBrQijwMBYNuWFz5z7LqrP/mpqxN4YPBZwhm7jFP5w5smqWa4mDWWPgSa4kIefeJHzGg7pQ
+	==
+X-Gm-Gg: ASbGncsgByTWdDQG/fxNQKXYLMUmmVSatkgT8AZpWKjASvU8jUbxgbi2XjHXAnJoRgJ
+	ZvhuK6UbsLZ64Pf4tVK08a3QWQ9sTmVCj7YR+1eC2NbffCYdC3kAFgx48QUcJXUuyFcY5GJYI+9
+	/JG2GKz66/RgWc5fjgxCKG1ocKgR0YDX1A7C2yL2w5v9lwUOHIFxNWwTTEY3a53E736ZEHmCSxz
+	89LT/EaYsq1blhQITfc5fwZFu1yqLvuAVgkN/12FWJZLSxbE8wU3RsPKZ6me2qo45t4Jx/l/n4x
+	n10xK6eLr7GNr9pUBydiozEaAqrPsmjvwpKy5WuUXCVYnIxlXfCADuZDJUQ=
+X-Received: by 2002:a05:600c:1c90:b0:456:2a9:f815 with SMTP id 5b1f17b1804b1-45a10b941ddmr7145935e9.4.1754936306147;
+        Mon, 11 Aug 2025 11:18:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG6y7tsIn2G/sy6tsYCOF6OgvujdY/Mg5JcoMXvxNskFgP3OG39fmK1x2ARU5f0kEII7yPZbg==
+X-Received: by 2002:a05:600c:1c90:b0:456:2a9:f815 with SMTP id 5b1f17b1804b1-45a10b941ddmr7145785e9.4.1754936305759;
+        Mon, 11 Aug 2025 11:18:25 -0700 (PDT)
+Received: from thinky (ip-217-030-074-039.aim-net.cz. [217.30.74.39])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c453aeasm43024090f8f.40.2025.08.11.11.18.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 11:18:25 -0700 (PDT)
+Date: Mon, 11 Aug 2025 20:18:24 +0200
+From: Andrey Albershteyn <aalbersh@redhat.com>
+To: Zorro Lang <zlang@redhat.com>
+Cc: fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, Andrey Albershteyn <aalbersh@kernel.org>
+Subject: Re: [PATCH 2/3] generic: introduce test to test
+ file_getattr/file_setattr syscalls
+Message-ID: <ydu5kha77suh2sn4jmyh4xxj2eiw3g72qvf3b7hy2k5xoh33eu@2vconk3marrs>
+References: <20250808-xattrat-syscall-v1-0-6a09c4f37f10@kernel.org>
+ <20250808-xattrat-syscall-v1-2-6a09c4f37f10@kernel.org>
+ <20250811175541.nbvwyy76zulslgnq@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Priority: 3
-Importance: Normal
-X-Mailer: Open-Xchange Mailer v7.10.6-Rev73
-X-Originating-Client: open-xchange-appsuite
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250811175541.nbvwyy76zulslgnq@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
 
-I seriously hope none of the kernel developers are foolish enough to be foo=
-led (yet again) by this I'm-a-reasonable-guy-we-can-talk-this-out act. You'=
-ve been there and done that.
+On 2025-08-12 01:55:41, Zorro Lang wrote:
+> On Fri, Aug 08, 2025 at 09:31:57PM +0200, Andrey Albershteyn wrote:
+> > Add a test to test basic functionality of file_getattr() and
+> > file_setattr() syscalls. Most of the work is done in file_attr
+> > utility.
+> > 
+> > Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+> > ---
+> >  tests/generic/2000     | 113 +++++++++++++++++++++++++++++++++++++++++++++++++
+> >  tests/generic/2000.out |  37 ++++++++++++++++
+> >  2 files changed, 150 insertions(+)
+> > 
+> > diff --git a/tests/generic/2000 b/tests/generic/2000
+> > new file mode 100755
+> > index 000000000000..b4410628c241
+> > --- /dev/null
+> > +++ b/tests/generic/2000
+> > @@ -0,0 +1,113 @@
+> > +#! /bin/bash
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +# Copyright (c) 2025 Red Hat Inc.  All Rights Reserved.
+> > +#
+> > +# FS QA Test No. 2000
+> > +#
+> > +# Test file_getattr/file_setattr syscalls
+> > +#
+> > +. ./common/preamble
+> > +_begin_fstest auto
+> > +
+> > +# Import common functions.
+> > +# . ./common/filter
+> > +
+> > +_wants_kernel_commit xxxxxxxxxxx \
+> > +	"fs: introduce file_getattr and file_setattr syscalls"
+> 
+> As this's a new feature test, I'm wondering if we should use a _require_
+> function to check if current kernel and FSTYP supports file_set/getattr
+> syscalls, and _notrun if it's not supported, rather than fail the test.
 
-Kent's perplexing behavior almost makes me want to put on a tinfoil hat. Is=
- it simply mental illness or is it something more? Is he being egged on by =
-backers who *want* to destabilize the leadership of Linux for whatever reas=
-on? It's hard to see how any individual could be this far out there without=
- help.
+hmm, I don't see where _require_function is defined
 
-And I'll point out what's obvious to people who have followed this closely =
-but may not be to people who read an occasional email thread like this one:=
- A very large portion of what Kent says including in this email is just fac=
-tually wrong. Either he is an unashamed and extremely prolific liar or he i=
-s very sick.
+Anyway, the _notrun makes more sense, I will look into what to check
+for to skip this one if it's not supported
 
-Carl
+-- 
+- Andrey
 
-> On 2025-08-11 7:26 AM PDT Kent Overstreet <kent.overstreet@linux.dev> wro=
-te:
->=20
-> =20
-> On Mon, Aug 11, 2025 at 12:51:11PM +0300, Konstantin Shelekhin wrote:
-> > > =C2=A0Yes, this is accurate. I've been getting entirely too many emai=
-ls from Linus about
-> > > how pissed off everyone is, completely absent of details - or anythin=
-g engineering
-> > > related, for that matter.
-> >=20
-> > That's because this is not an engineering problem, it's a communication=
- problem. You just piss
-> > people off for no good reason. Then people get tired of dealing with yo=
-u and now we're here,
-> > with Linus thinking about `git rm -rf fs/bcachesfs`. Will your users be=
- happy? Probably not.
-> > Will your sponsors be happy? Probably not either. Then why are you keep=
- doing this?
-> >=20
-> > If you really want to change the way things work go see a therapist. A =
-competent enough doctor
-> > probably can fix all that in a couple of months.
->=20
-> Konstantin, please tell me what you're basing this on.
->=20
-> The claims I've been hearing have simply lacked any kind of specifics;
-> if there's people I'd pissed off for no reason, I would've been happy to
-> apologize, but I'm not aware of the incidences you're claiming - not
-> within a year or more; I have made real efforts to tone things down.
->=20
-> On the other hand, for the only incidences I can remotely refer to in
-> the past year and a half, there has been:
->=20
-> - the mm developer who started outright swearing at me on IRC in a
->   discussion about assertions
-> - the block layer developer who went on a four email rant where he,
->   charitably, misread the spec or the patchset or both; all this over a
->   patch to simply bring a warning in line with the actual NVME and SCSI
->   specs.
-> - and reference to an incident at LSF, but the only noteworthy event
->   that I can recall at the last LSF (a year and a half ago) was where a
->   filesystem developer chased a Rust developer out of the community.
->=20
-> So: what am I supposed to make of all this?
->=20
-> To an outsider, I don't think any of this looks like a reasonable or
-> measured response, or professional behaviour. The problems with toxic
-> behaviour have been around long before I was prominent, and they're
-> still in evidence.
->=20
-> It is not reasonable or professional to jump from professional criticism
-> of code and work to personal attacks: it is our job to be critical of
-> our own and each other's code, and while that may bring up strong
-> feelings when we feel our work is attacked, that does not mean that it
-> is appropriate to lash out.
->=20
-> We have to separate the professional criticism from the personal.
->=20
-> It's also not reasonable or professional to always escelate tensions,
-> always look for the upper hand, and never de-escalate.
->=20
-> As a reminder, this all stems from a single patch, purely internal to
-> fs/bcachefs/, that was a critical, data integrity hotfix.
->=20
-> There has been a real pattern of hyper reactive, dramatic responses to
-> bugfixes in the bcachefs pull requests, all the way up to full blown
-> repeated threats of removing it from the kernel, and it's been toxic.
->=20
-> And it's happening again, complete with full blown rants right off the
-> bat in the private maintainer thread about not trusting my work (and I
-> have provided data and comparisons with btrfs specifically to rebut
-> that), all the way to "everyone hates you and you need therapy". That is
-> not reasonable or constructive.
->=20
-> This specific thread was in response to Linus saying that bcachefs was
-> imminently going to be git rm -rf'd, "or else", again with zero details
-> on that or else or anything that would make it actionable.
->=20
-> Look, I'm always happy to sit down, have a beer, talk things out, and
-> listen.
->=20
-> If there's people I have legitimately pissed off (and I do not include
-> anyone who starts swearing at me in a technical discussion) - let me
-> know, I'll listen. I'm not unapproachable, I'm not going to bite your
-> head off.
->=20
-> I've mended fences with people in the past; there were people I thought
-> I'd be odds with forever, but all it really takes is just talking. Say
-> what it is that you feel has affected, be willing to listen and turn,
-> and it gets better.
 
