@@ -1,162 +1,201 @@
-Return-Path: <linux-fsdevel+bounces-57430-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57431-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A937EB216B2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 22:44:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D88C9B216DB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 23:05:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AE65D4E39DB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 20:44:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8631C628243
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 21:05:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 400C32E2EF9;
-	Mon, 11 Aug 2025 20:43:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC3C2E285B;
+	Mon, 11 Aug 2025 21:05:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hLTBLd4C"
+	dkim=pass (2048-bit key) header.d=ftml.net header.i=@ftml.net header.b="JhTha1LX";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ew2D1WR3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35EC12E2DFB
-	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Aug 2025 20:43:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1B51F875A;
+	Mon, 11 Aug 2025 21:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754945018; cv=none; b=cwIf94yvWY9YEiIBhXrz2G11ejmwO4SNBdIlXeh5hXBYRJrkDh0gWePWhxWITWMdneI33okKkuXZ8Sd2atc7Pg2Jw5VC7KK3+7T0ORwzBOEzOVxF5RE8QyxKHcWbucwgSFGJdJXUUJMReF25BzbXTyqMYn5v4Q7lNqG3lkLvRYw=
+	t=1754946304; cv=none; b=Q3FIN0xAdp/Zs1WYlj8bae6z/87a1MsXTeuf3eVlUvtGvZ7F9KIJFxVKHGAqod9UlFPGSA7jcMI4Y3hS5ba5kF3ojCeXEA9KpBJiCizmW6GX+FWTtJZRMyNSBG+0Aie7XfcaxiaFdgu2TnWhtOanrLdtUVCioXu0IpyyBpKVpWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754945018; c=relaxed/simple;
-	bh=GOtym20jpNWgPjFWrqHZ0YuLQDo9ICs9CZXp75umkrs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nfyAcqHWmimRL6kgKv1TTUjfst0p58YmvmImh9/bZAea21mJ2N3SMWgXpIwZHwVqCIUsZg7FYw/5WkBTaPHf360cQfi/Fvb9p9qMDDq5+lR48f2wGISgFGkSv4USnH1kzRLe7bIN8c4xPKfLqO83lG6Gmh+90msWC0JAMByALIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hLTBLd4C; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-242ff06b130so85395ad.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Aug 2025 13:43:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754945016; x=1755549816; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CWicoF01GWC9VUfZ/CNzz82pf35qpl9B0qyYYGYdUZA=;
-        b=hLTBLd4Cx2yEykIf67OV2CR+J5CtnZ8kj73UQ0b6VS0gcZJ5YvvHr2E3BkQpdGQUYB
-         yagwWnhfUegGpmmZ3gzWLUdP+LfYrTM+3tvvJsqq0HVtCOOWBLj6gMLfdhSXTSCejyqI
-         74M1q5/t/uD3ZcomQ+u+HITWb3820z+kVs3uxieeWisp7qPfsHytnuL0JHfljy1stQ4W
-         f+FVB/oQNswhAf6lrA7FvKUnQQ/1fU5fZnSloXH5oAHNwu5fw7UZRmdgfvV8yI9LwnPZ
-         UowgpFJZdGg1rw/DzMBWefDjSaIrK1kO2qChH8sdySNQXJeorUw0CTnwAdUnKLmsBs2z
-         FV6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754945016; x=1755549816;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CWicoF01GWC9VUfZ/CNzz82pf35qpl9B0qyYYGYdUZA=;
-        b=tO4V6W9VxY5JMIaOUM4p3X7hng6eZ5gImwHI6DHISBGcnesJyOfL1szYw2dDCHWTfw
-         N8b4iIfUwzEJOffPuSgxOUDSlRMX5o2waYSYx8I1lYbS8QFL8/qSaiNGnDngmODZELzk
-         iZw486r6ttgtA1mgr66an51eU5pcyI9EGPjFm+BADwYL2ufH8b+qjy2E3rM54g86SO8w
-         ql1urIxS25FaEH/cVtVwyWB0GPcmOEe4oPbGnxFy7E+gPCVcoWBZaUmUN6qz8mS4BCmD
-         KrZDScKpsKGMYGBllT31Yv5c0CK4VmOYW2d1koCghqPQ4IdB77bD5be4+m1etNNqQcM5
-         Mk6w==
-X-Gm-Message-State: AOJu0YyambvD8vrkb4Ydse36rCOOnsO5bdneyoLn6Ru4sx8moVI4SDWi
-	GZBlwxViOkrE/Oz+xaaaUrI/ojW5Ot9/hxqkD2oUD58h+cyP0i4p75kX
-X-Gm-Gg: ASbGncvsatelTZgYmxZscudHKAUFkqGcgTxSDhH2+yXjYYGcIz0CAzjZqJrN31/3Q1m
-	waw8nUuXsOcFex+fCGIhbjyTyeCKLKXkd+IHCrw4kr03aSIaqp7bzkIwcZOCmd06vK/Mr3fv2Hq
-	o9H3Q+wtQfMyPqKw7ugzwYryzoXRaoUosJvU5R51PxF2F+m9AiOXcE306/6np+jK2dbOWeAgGOw
-	rq6O7ttUy3NxrntJjMaB+1R51qlhMF+gFAqYbwihUQ9887/dqgWLgikH5f+gjQzuTd+1aHfswWl
-	OdB50uUnNdJultHaXrgLwWriqst/gCrGoZ4Kbs2dXvUsqtHM0UEbV+PV8CKzq42TLDn+ojNEXme
-	L1dtKssNcN0G4QgVm
-X-Google-Smtp-Source: AGHT+IHI3KUYz7eRrldoY5UMU/RfdLnxIsyGxdvpI/fXYybFR5o5Czg7NHwAIrFHqnq9pMyn3Q4GPA==
-X-Received: by 2002:a17:902:ef48:b0:240:640a:c560 with SMTP id d9443c01a7336-242c206b2d2mr223309665ad.24.1754945016347;
-        Mon, 11 Aug 2025 13:43:36 -0700 (PDT)
-Received: from localhost ([2a03:2880:ff:6::])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8aaa829sm280190415ad.149.2025.08.11.13.43.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 13:43:36 -0700 (PDT)
-From: Joanne Koong <joannelkoong@gmail.com>
-To: miklos@szeredi.hu
-Cc: linux-fsdevel@vger.kernel.org,
-	jefflexu@linux.alibaba.com,
-	bernd.schubert@fastmail.fm,
-	willy@infradead.org,
-	kernel-team@meta.com
-Subject: [PATCH] fuse: enable large folios (if writeback cache is unused)
-Date: Mon, 11 Aug 2025 13:40:08 -0700
-Message-ID: <20250811204008.3269665-1-joannelkoong@gmail.com>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1754946304; c=relaxed/simple;
+	bh=jNHvp3MbY7uZE4NVlRnm7/n0OTvqpb44HoPh3Wvy5W0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kwCJ3erKQ2z078miiu+JHXbzH0/Qr2apjuLkHP8t90qXsLogdzr0+CEyHV2yY1sd/a57VAVvgGIEGk4z6WC57FcEC2ChW6GgLz30EhVj4+QAu+CaYZ53iN3i9OVBcxmGWy3IGViV6delDht0cRWITNxYJswv/1bQa7LwyIpGhX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ftml.net; spf=pass smtp.mailfrom=ftml.net; dkim=pass (2048-bit key) header.d=ftml.net header.i=@ftml.net header.b=JhTha1LX; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ew2D1WR3; arc=none smtp.client-ip=103.168.172.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ftml.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ftml.net
+Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
+	by mailfout.phl.internal (Postfix) with ESMTP id 98D89EC01AD;
+	Mon, 11 Aug 2025 17:05:00 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-07.internal (MEProxy); Mon, 11 Aug 2025 17:05:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ftml.net; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1754946300;
+	 x=1755032700; bh=eI+uci7II5o7HIMNDnzqiBnyPIO3lognkiNHaLdRtqI=; b=
+	JhTha1LXJLBJ9syMef5f+gTO0aHwgtXwzu1AUpQb84HWm7ZodLBP4cuE+fni8s25
+	VC1JcXLLe2VG+P+hJ+cEzPfY9kLxwP6JMy/ngjJbwje0DTVj6cCOOKmEM3TWU8MH
+	sXDq7rl01rW8ZDEzktPNilspRBPdXMW7mUGv/ImV0NDdW26RD9dmeXggaNS7OXzI
+	/+yxtm4DkVd4J8OsSTUfzctZY++xNzOUn67Z/6R3APaj6ieohXpEDQ5IeMF9BjyO
+	bKVRcy50Ypc8zvqwK8489xhU/Z/nAM0bjZ1avPQqe5lCuSzBRBOyHn+2Xmid1VoR
+	nCn18TOWbo0zZgeaAyKCbQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1754946300; x=
+	1755032700; bh=eI+uci7II5o7HIMNDnzqiBnyPIO3lognkiNHaLdRtqI=; b=e
+	w2D1WR3UE7JHcrssXIdnpJKT4ZEMSQskHmwYALCeZYMykVZEUKoVy9zuzhIN4mUo
+	3L2wAh0h2nUC8mZd6iWFHfe8Ym/U6tCS7FkmCujuFrt3iGWnZ2+85DfhsgxbO3/g
+	U0mZx9BGxwbnNZGX7GgTMZ5aui+WHgYlGb47cnF+wOUG+1dEJU8Kt/W927xA03GH
+	DcmM3oDzlfejNK8tFDtMGJIzKVZ6wvn9IyYMftZgccWuW85aeVKkR+dD0ly+EiIj
+	lPQX9Ajjle3W7n+LfaaxPZoMiBQSvsicsWNb9p6wC8JAxsVG5L6WUkCB234Nz6r9
+	nQMlkq2lUg6XriBt/7jWg==
+X-ME-Sender: <xms:-1qaaK7YlgC7cgOx5wtWXpEahwA1hHS0X2ySRpC7WfbfNj6FjTrSBg>
+    <xme:-1qaaKrmEe5iU93iCOFbGplMZQ2oDcSXBEnK3zRyGkFR59Wnrl9Rpm3jzq0C2RBj2
+    e-sJQCedE-VhvDiKiE>
+X-ME-Received: <xmr:-1qaaLPSR7ZefcM-UWaDTd7goyHKMppL9nDeGFSETar0-WdQSUQYNMfnlDSpri8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufeefgeekucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpefmohhnshht
+    rghnthhinhcuufhhvghlvghkhhhinhcuoehkrdhshhgvlhgvkhhhihhnsehfthhmlhdrnh
+    gvtheqnecuggftrfgrthhtvghrnhepiedvgeettdfgvedvueeigeetvdejueetudegteff
+    hfejvdehtedvffduleehveegnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlh
+    hushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkrdhshhgvlhgv
+    khhhihhnsehfthhmlhdrnhgvthdpnhgspghrtghpthhtohepkedpmhhouggvpehsmhhtph
+    houhhtpdhrtghpthhtohepkhgvnhhtrdhovhgvrhhsthhrvggvtheslhhinhhugidruggv
+    vhdprhgtphhtthhopegrughmihhnsegrqhhuihhnrghsrdhsuhdprhgtphhtthhopehlih
+    hnuhigqdgstggrtghhvghfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthho
+    pehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpth
+    htoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
+    thhtoheplhhishhtqdgstggrtghhvghfshestggrrhhlthhhohhmphhsohhnrdhnvghtpd
+    hrtghpthhtohepmhgrlhhtvgdrshgthhhrohgvuggvrhesthhngihiphdruggvpdhrtghp
+    thhtohepthhorhhvrghlughssehlihhnuhigqdhfohhunhgurghtihhonhdrohhrgh
+X-ME-Proxy: <xmx:-1qaaC1dAyIz_K-sUIqXcJekYiWdh4NTsc5Gn9jnUhOEd2tH9qdYeg>
+    <xmx:-1qaaKDPLXoZydI-L9saiI5TzXtNX5aXm48YyaWJJrKd7PoLAiMsbw>
+    <xmx:-1qaaPJWC9evBpbXm15uTnkb_e0oaeE18u71zZqdq63565M7fVSItg>
+    <xmx:-1qaaDknq9QDlHcwP37lp2b1KJZKJ5GS9zbNA3Mea5OT_0ufPInWXg>
+    <xmx:_FqaaPKt7TP9bQ93z2zb_s_VCDBZWu6QLsWtAvAaxVZZIjjvnIaT_7jJ>
+Feedback-ID: ib7794740:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 11 Aug 2025 17:04:57 -0400 (EDT)
+Message-ID: <fd55b2ee-c54a-4eca-9406-92302ca61011@ftml.net>
+Date: Tue, 12 Aug 2025 00:04:53 +0300
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] bcachefs changes for 6.17
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: admin@aquinas.su, linux-bcachefs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ list-bcachefs@carlthompson.net, malte.schroeder@tnxip.de,
+ torvalds@linux-foundation.org
+References: <3ik3h6hfm4v2y3rtpjshk5y4wlm5n366overw2lp72qk5izizw@k6vxp22uwnwa>
+ <55e623db-ff03-4d33-98d1-1042106e83c6@ftml.net>
+ <iktaz2phgjvhixpb5a226ebar7hq6elw6l4evcrkeu3wwm2vs7@fsdav6kbz4og>
+Content-Language: en-US
+From: Konstantin Shelekhin <k.shelekhin@ftml.net>
+In-Reply-To: <iktaz2phgjvhixpb5a226ebar7hq6elw6l4evcrkeu3wwm2vs7@fsdav6kbz4og>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Large folios are only enabled if the writeback cache isn't on.
-(Strictlimiting needs to be turned off if the writeback cache is used in
-conjunction with large folios, else this tanks performance.)
+On 11/08/2025 17:26, Kent Overstreet wrote:
 
-Benchmarks showed noticeable improvements for writes (both sequential
-and random). There were no performance differences seen for random reads
-or direct IO. For sequential reads, there was no performance difference
-seen for the first read (which populates the page cache) but subsequent
-sequential reads showed a huge speedup.
+> Konstantin, please tell me what you're basing this on.
 
-Benchmarks were run using fio on the passthrough_hp fuse server:
-~/libfuse/build/example/passthrough_hp ~/libfuse ~/fuse_mnt --nopassthrough --nocache
+This, for example: - 
+https://lore.kernel.org/all/9db17620-4b93-4c01-b7f8-ecab83b12d0f@kernel.dk/ 
+- 
+https://lore.kernel.org/all/20250308155011.1742461-1-kent.overstreet@linux.dev/ 
+I've just lurked around lore for a couple of minutes.
 
-run fio in ~/fuse_mnt:
-fio --name=test --ioengine=sync --rw=write --bs=1M --size=5G --numjobs=2 --ramp_time=30 --group_reporting=1
+> The claims I've been hearing have simply lacked any kind of specifics;
+if there's people I'd pissed off for no reason, I would've been happy to
+apologize, but I'm not aware of the incidences you're claiming - not
+within a year or more; I have made real efforts to tone things down.
 
-Results (tested on bs=256K, 1M, 5M) showed roughly a 15-20% increase in
-write throughput and for sequential reads after the page cache has
-already been populated, there was a ~800% speedup seen.
+Both links are four months old.
 
-Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
----
- fs/fuse/file.c | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+> On the other hand, for the only incidences I can remotely refer to in
+the past year and a half, there has been:
+>
+> - the mm developer who started outright swearing at me on IRC in a
+> discussion about assertions
 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index adc4aa6810f5..2e7aae294c9e 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -1167,9 +1167,10 @@ static ssize_t fuse_fill_write_pages(struct fuse_io_args *ia,
- 		pgoff_t index = pos >> PAGE_SHIFT;
- 		unsigned int bytes;
- 		unsigned int folio_offset;
-+		fgf_t fgp = FGP_WRITEBEGIN | fgf_set_order(num);
- 
-  again:
--		folio = __filemap_get_folio(mapping, index, FGP_WRITEBEGIN,
-+		folio = __filemap_get_folio(mapping, index, fgp,
- 					    mapping_gfp_mask(mapping));
- 		if (IS_ERR(folio)) {
- 			err = PTR_ERR(folio);
-@@ -3155,11 +3156,24 @@ void fuse_init_file_inode(struct inode *inode, unsigned int flags)
- {
- 	struct fuse_inode *fi = get_fuse_inode(inode);
- 	struct fuse_conn *fc = get_fuse_conn(inode);
-+	unsigned int max_pages, max_order;
- 
- 	inode->i_fop = &fuse_file_operations;
- 	inode->i_data.a_ops = &fuse_file_aops;
--	if (fc->writeback_cache)
-+	if (fc->writeback_cache) {
- 		mapping_set_writeback_may_deadlock_on_reclaim(&inode->i_data);
-+	} else {
-+		/*
-+		 * Large folios are only enabled if the writeback cache isn't on.
-+		 * If the writeback cache is on, large folios should only be
-+		 * enabled in conjunction with strictlimiting turned off, else
-+		 * performance tanks.
-+		 */
-+		max_pages = min(min(fc->max_write, fc->max_read) >> PAGE_SHIFT,
-+				fc->max_pages);
-+		max_order = ilog2(max_pages);
-+		mapping_set_folio_order_range(inode->i_mapping, 0, max_order);
-+	}
- 
- 	INIT_LIST_HEAD(&fi->write_files);
- 	INIT_LIST_HEAD(&fi->queued_writes);
--- 
-2.47.3
+That is very unfortunate.
+
+> - the block layer developer who went on a four email rant where he,
+> charitably, misread the spec or the patchset or both; all this over a
+> patch to simply bring a warning in line with the actual NVME and SCSI
+> specs.
+
+My team has contributed to NVMe and SCSI subsystems, so I have some
+experience working with Jens, Martin and Christoph. Nobody on my team
+had this level of drama, even when we were in disagreement about specs
+or intended behavior.
+
+> - and reference to an incident at LSF, but the only noteworthy event
+>  that I can recall at the last LSF (a year and a half ago) was where a
+>  filesystem developer chased a Rust developer out of the community.
+>
+> So: what am I supposed to make of all this?
+
+That you're trying to excuse your communication issues with other people's
+communication issues?
+
+> To an outsider, I don't think any of this looks like a reasonable or
+> measured response, or professional behaviour. The problems with toxic
+> behaviour have been around long before I was prominent, and they're
+> still in evidence.
+
+Again, "Timmy also did that" is not a very good excuse for a grown up adult.
+
+> It is not reasonable or professional to jump from professional criticism
+> of code and work to personal attacks: it is our job to be critical of
+> our own and each other's code, and while that may bring up strong
+> feelings when we feel our work is attacked, that does not mean that it
+> is appropriate to lash out.
+
+This is _NOT_ about the code. That's the essence of your struggles. Forget
+about the code, the code is not the issue here. Communication is.
+
+> As a reminder, this all stems from a single patch, purely internal to
+> fs/bcachefs/, that was a critical, data integrity hotfix.
+
+But this does not matter. No matter how important your fix is.
+
+> There has been a real pattern of hyper reactive, dramatic responses to
+> bugfixes in the bcachefs pull requests, all the way up to full blown
+> repeated threats of removing it from the kernel, and it's been toxic.
+
+Play stupid games, win stupid prizes. Piss off a maintainer long enough,
+he will refuse to work with you. Who would've thought, eh?
+
+> And it's happening again, complete with full blown rants right off the
+> bat in the private maintainer thread about not trusting my work (and I
+> have provided data and comparisons with btrfs specifically to rebut
+> that), all the way to "everyone hates you and you need therapy". That is
+> not reasonable or constructive.
+
+You seem to ignore what people keep telling you: _COMMUNICATION_ is the
+problem, not the _CODE_. So arguments about how btrfs performs compared
+to bcachefs do not matter.
+
+Your result is not the issue, the journey with you is.
 
 
