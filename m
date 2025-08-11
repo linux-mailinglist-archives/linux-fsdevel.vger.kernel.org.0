@@ -1,158 +1,189 @@
-Return-Path: <linux-fsdevel+bounces-57295-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57296-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82894B20491
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 11:55:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CF0BB204E3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 12:08:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5873418C12AF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 09:55:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 747C83ADD35
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 10:08:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7864225A38;
-	Mon, 11 Aug 2025 09:54:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B7DC21CC63;
+	Mon, 11 Aug 2025 10:07:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="UlUAzQzL";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CNCTDk+m"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+Received: from flow-b4-smtp.messagingengine.com (flow-b4-smtp.messagingengine.com [202.12.124.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B64B21CFF6;
-	Mon, 11 Aug 2025 09:54:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B8813A86C;
+	Mon, 11 Aug 2025 10:07:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754906092; cv=none; b=WzAN4EBwX+CskKcNhlXccVQpNQzaFJsmMKv/ta41xiQSmFw5Frrl/311ZkQJAK2eifqY6SPkNfxIrU32CtYT75LdW/VBe6TGSUfoFVAkpn8+1rbMC9h9POgrUtbLC9NP7VV2AZSzppS2P4CBBb4jzE+vsVnfugZbhDOP1EGPBwQ=
+	t=1754906878; cv=none; b=IVjfcF2D45gdDkIbkPbL8n/z0tE+rC5H9y3jRvkj+EXheYlrdYvTGwgG2isakc/dio/Var01Y58HxHmuS6u6z9lQRxoQRA4XA4mb19uiWqxb3ob9VN7fgKbf2kcZNE7zuXgSs1n9IU/VkjmO9SXtYUJrq9dNIWfrSODpC64csS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754906092; c=relaxed/simple;
-	bh=JrNdyX6RHoEyF+dmtK86znKyiqTo8VUOFA2j6T73oQ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lp5PClsgRhoL+q21LZyD4XXrVT3E9ypUfqTNo8Lqs574ih0sUSzdNCvZfQaSFoGBykx5rM44feSNpEIAplrSDAASWKBLudr9FbqtN0pyHPNrV47GHYS7Py/lmLhWnEb4hGYcwkyb4SBEdJRN1Ig8iKOxEfZDilA2SCHU/EIUzfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 2b9da468769911f0b29709d653e92f7d-20250811
-X-CID-CACHE: Type:Local,Time:202508111725+08,HitQuantity:2
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:acc68978-f090-491f-984d-775e43d21c34,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:d6456464c6e6748e41fc8f4c855f847f,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 2b9da468769911f0b29709d653e92f7d-20250811
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangzihuan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1249145062; Mon, 11 Aug 2025 17:54:28 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id 9F9D3E009021;
-	Mon, 11 Aug 2025 17:54:27 +0800 (CST)
-X-ns-mid: postfix-6899BDD3-5075201002
-Received: from [172.25.120.24] (unknown [172.25.120.24])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 81F3EE008FED;
-	Mon, 11 Aug 2025 17:54:24 +0800 (CST)
-Message-ID: <4ceb0e8c-d164-4323-add0-a0770ec2afc6@kylinos.cn>
-Date: Mon, 11 Aug 2025 17:54:23 +0800
+	s=arc-20240116; t=1754906878; c=relaxed/simple;
+	bh=rd9xQztgMcfSzy1cQFOsfKJVqnKSd/C1pT4QiTbzM5w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n66K8HWT+qWD1nVPHrLpumPkz5V+eKHS4Y4IX7HdpX/adgMNs7a0MwNa5zVGINc7ouyP4PrLdu0jBMy341xebnQatZqlAZjZBtj7jZXIOuWC+QAmpfujaIQ3ScDpS8FfFn6CsM23U2l5FoXEL1HjAYj9a1ED6DYPN+X5U/0q8og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=UlUAzQzL; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=CNCTDk+m; arc=none smtp.client-ip=202.12.124.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailflow.stl.internal (Postfix) with ESMTP id 4A95B1300168;
+	Mon, 11 Aug 2025 06:07:54 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-03.internal (MEProxy); Mon, 11 Aug 2025 06:07:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1754906874; x=
+	1754914074; bh=YMVHbKt84ajobxpDslMW7shZLCihMMdqMX7Bu7K6MQc=; b=U
+	lUAzQzLiTBAPDTVtOK64KS4Yag1rkY3R7Ig8f8E9UtChnbtz5HASBIVq2pl9rPIN
+	swtt2+1lpWIHjNFtkqlMFLD8L9YSYFzC/Wy0LR1UQeZwJX7Kkjh7ltz00WVyflKp
+	IK3L8Qc2HALu/gu45rStzT2u1TnbnKBZ8SBD9j/JqHTaUS5UG5M+rhqQZfPc3DWM
+	vkRh7dQGN1NQTF4klOJsYPQFoTbufs8fd194I7lGGFPHxdtCNHVaJbwuD4DPpAgm
+	FsWTzXmHUXcDpP0JfenrDpDiG9Duiu2z3alsiC4DS/9RwXlQaI9ivq/vr+ha1Suo
+	TS3nkp1Lh0NTjQTdedI0w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1754906874; x=1754914074; bh=YMVHbKt84ajobxpDslMW7shZLCihMMdqMX7
+	Bu7K6MQc=; b=CNCTDk+m/R8DW2A5rWRfgIuozvJ/fJg4fquLl5cey7hAs4g/0kL
+	F8QlBLVfJRYav7mTNnNf4lHYIi60o9ACQP/q64y2XHedY9VDvILXG+5NNIV3kqWp
+	eRPVx/BPAHasEXVsnoFK32WoE68mnIMCTdKk7hxLVRVS7LyS3JUPQMHS3PZckhBq
+	TTkROi/cC8fPiaUe4TPK8eyXWzKQ2V0bVndfYFAnd93eBvybb+1fg2YP1WVb14k2
+	Liy/M8Fv2d0/rmEmXzzuhsgHaavl/7QljjBY1dZka99D0XejlMZYvgYOuZZPdsmi
+	UaVW2NQ93fwai3J65RtLZCDpUENyuEnUXBw==
+X-ME-Sender: <xms:98CZaG9aKnMFKfDBk16aqYN5V9ARSsbYFCtJkucvVn8zvHCPCASnBQ>
+    <xme:98CZaJrDhNJ5UQOyAV5SaCp6pswEZWT2w1WUvQk-vuDLTSKRYqno6rdYQt6fE_61y
+    LaEtQbIpzxMJNEKwzY>
+X-ME-Received: <xmr:98CZaCzWWjtIjDEIbmyf2PmDXrzPc4yw5ycncCFoqEazPriq1FiJQypuoia->
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufedvudejucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
+    ufhhuhhtshgvmhgruhcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecugg
+    ftrfgrthhtvghrnhepjeehueefuddvgfejkeeivdejvdegjefgfeeiteevfffhtddvtdel
+    udfhfeefffdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopeeh
+    iedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuggrvhhiugesrhgvughhrghtrd
+    gtohhmpdhrtghpthhtohepkhgvrhhnvghlsehprghnkhgrjhhrrghghhgrvhdrtghomhdp
+    rhgtphhtthhopehsuhhrvghnsgesghhoohhglhgvrdgtohhmpdhrtghpthhtoheprhihrg
+    hnrdhrohgsvghrthhssegrrhhmrdgtohhmpdhrtghpthhtohepsggrohhlihhnrdifrghn
+    gheslhhinhhugidrrghlihgsrggsrgdrtghomhdprhgtphhtthhopehvsggrsghkrgessh
+    hushgvrdgtiidprhgtphhtthhopeiiihihsehnvhhiughirgdrtghomhdprhgtphhtthho
+    pehrphhptheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrvhgvrdhhrghnshgvnh
+    eslhhinhhugidrihhnthgvlhdrtghomh
+X-ME-Proxy: <xmx:98CZaIk1g2pwnQF0ZCmAGsoZLEWfhdiqeMEMRwt6usFGJ0Z10Eq_3A>
+    <xmx:98CZaOnLoiGDJjCwNk9y_0rIqxSexo1YPGRQCKaef_P_Z-NeIQf8hw>
+    <xmx:98CZaOwcAoRr88sQNj8EsQDLYwPiFrzeoGpcp61tm8q1HdOyhfhrgQ>
+    <xmx:98CZaFZ-7tIQCWXSINvVQZEBCDXAn-WG-vqKTLT35EnFrp5WIzvP9Q>
+    <xmx:-sCZaCvSYdCPW6f41s1J5E9AZKAdplnP3VG2J6p6QFiaKVLC-CLJYKox>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 11 Aug 2025 06:07:51 -0400 (EDT)
+Date: Mon, 11 Aug 2025 11:07:48 +0100
+From: Kiryl Shutsemau <kirill@shutemov.name>
+To: David Hildenbrand <david@redhat.com>
+Cc: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, 
+	Mike Rapoport <rppt@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Michal Hocko <mhocko@suse.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, willy@infradead.org, Ritesh Harjani <ritesh.list@gmail.com>, 
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	"Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org, gost.dev@samsung.com, hch@lst.de, 
+	Pankaj Raghav <p.raghav@samsung.com>
+Subject: Re: [PATCH v3 0/5] add persistent huge zero folio support
+Message-ID: <rr6kkjxizlpruc46hjnx72jl5625rsw3mcpkc5h4bvtp3wbmjf@g45yhep3ogjo>
+References: <20250811084113.647267-1-kernel@pankajraghav.com>
+ <hzk7e52sfhfqvo5bh7btthtyyo2tf4rwe24jxtp3fqd62vxo7k@cylwrbxqj47b>
+ <dfb01243-7251-444c-8ac6-d76666742aa9@redhat.com>
+ <112b4bcd-230a-4482-ae2e-67fa22b3596f@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 5/9] freezer: set default freeze priority for
- PF_SUSPEND_TASK processes
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, David Hildenbrand <david@redhat.com>,
- Michal Hocko <mhocko@suse.com>, Jonathan Corbet <corbet@lwn.net>,
- Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- len brown <len.brown@intel.com>, pavel machek <pavel@kernel.org>,
- Kees Cook <kees@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Nico Pache <npache@redhat.com>,
- xu xin <xu.xin16@zte.com.cn>, wangfushuai <wangfushuai@baidu.com>,
- Andrii Nakryiko <andrii@kernel.org>, Christian Brauner <brauner@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Jeff Layton <jlayton@kernel.org>,
- Al Viro <viro@zeniv.linux.org.uk>, Adrian Ratiu
- <adrian.ratiu@collabora.com>, linux-pm@vger.kernel.org, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250807121418.139765-1-zhangzihuan@kylinos.cn>
- <20250807121418.139765-6-zhangzihuan@kylinos.cn>
- <20250808143943.GB21685@redhat.com>
- <0754e3e3-9c47-47d5-81d9-4574e5b413bc@kylinos.cn>
- <20250811093216.GB11928@redhat.com>
- <428beb0d-2484-4816-86c3-01e91bd7715a@kylinos.cn>
- <20250811094651.GD11928@redhat.com>
-From: Zihuan Zhang <zhangzihuan@kylinos.cn>
-In-Reply-To: <20250811094651.GD11928@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <112b4bcd-230a-4482-ae2e-67fa22b3596f@redhat.com>
 
+On Mon, Aug 11, 2025 at 11:52:11AM +0200, David Hildenbrand wrote:
+> On 11.08.25 11:49, David Hildenbrand wrote:
+> > On 11.08.25 11:43, Kiryl Shutsemau wrote:
+> > > On Mon, Aug 11, 2025 at 10:41:08AM +0200, Pankaj Raghav (Samsung) wrote:
+> > > > From: Pankaj Raghav <p.raghav@samsung.com>
+> > > > 
+> > > > Many places in the kernel need to zero out larger chunks, but the
+> > > > maximum segment we can zero out at a time by ZERO_PAGE is limited by
+> > > > PAGE_SIZE.
+> > > > 
+> > > > This concern was raised during the review of adding Large Block Size support
+> > > > to XFS[2][3].
+> > > > 
+> > > > This is especially annoying in block devices and filesystems where
+> > > > multiple ZERO_PAGEs are attached to the bio in different bvecs. With multipage
+> > > > bvec support in block layer, it is much more efficient to send out
+> > > > larger zero pages as a part of single bvec.
+> > > > 
+> > > > Some examples of places in the kernel where this could be useful:
+> > > > - blkdev_issue_zero_pages()
+> > > > - iomap_dio_zero()
+> > > > - vmalloc.c:zero_iter()
+> > > > - rxperf_process_call()
+> > > > - fscrypt_zeroout_range_inline_crypt()
+> > > > - bch2_checksum_update()
+> > > > ...
+> > > > 
+> > > > Usually huge_zero_folio is allocated on demand, and it will be
+> > > > deallocated by the shrinker if there are no users of it left. At the moment,
+> > > > huge_zero_folio infrastructure refcount is tied to the process lifetime
+> > > > that created it. This might not work for bio layer as the completions
+> > > > can be async and the process that created the huge_zero_folio might no
+> > > > longer be alive. And, one of the main point that came during discussion
+> > > > is to have something bigger than zero page as a drop-in replacement.
+> > > > 
+> > > > Add a config option PERSISTENT_HUGE_ZERO_FOLIO that will always allocate
+> > > > the huge_zero_folio, and disable the shrinker so that huge_zero_folio is
+> > > > never freed.
+> > > > This makes using the huge_zero_folio without having to pass any mm struct and does
+> > > > not tie the lifetime of the zero folio to anything, making it a drop-in
+> > > > replacement for ZERO_PAGE.
+> > > > 
+> > > > I have converted blkdev_issue_zero_pages() as an example as a part of
+> > > > this series. I also noticed close to 4% performance improvement just by
+> > > > replacing ZERO_PAGE with persistent huge_zero_folio.
+> > > > 
+> > > > I will send patches to individual subsystems using the huge_zero_folio
+> > > > once this gets upstreamed.
+> > > > 
+> > > > Looking forward to some feedback.
+> > > 
+> > > Why does it need to be compile-time? Maybe whoever needs huge zero page
+> > > would just call get_huge_zero_page()/folio() on initialization to get it
+> > > pinned?
+> > 
+> > That's what v2 did, and this way here is cleaner.
+> 
+> Sorry, RFC v2 I think. It got a bit confusing with series names/versions.
 
-=E5=9C=A8 2025/8/11 17:46, Oleg Nesterov =E5=86=99=E9=81=93:
-> On 08/11, Zihuan Zhang wrote:
->> =E5=9C=A8 2025/8/11 17:32, Oleg Nesterov =E5=86=99=E9=81=93:
->>> On 08/11, Zihuan Zhang wrote:
->>>> =E5=9C=A8 2025/8/8 22:39, Oleg Nesterov =E5=86=99=E9=81=93:
->>>>> On 08/07, Zihuan Zhang wrote:
->>>>>> --- a/kernel/power/process.c
->>>>>> +++ b/kernel/power/process.c
->>>>>> @@ -147,6 +147,7 @@ int freeze_processes(void)
->>>>>>
->>>>>>   	pm_wakeup_clear(0);
->>>>>>   	pm_freezing =3D true;
->>>>>> +	freeze_set_default_priority(current, FREEZE_PRIORITY_NEVER);
->>>>> But why?
->>>>>
->>>>> Again, freeze_task() will return false anyway, this process is
->>>>> PF_SUSPEND_TASK.
->>>> I=C2=A0 think there is resaon put it here. For example, systemd-slee=
-p is a
->>>> user-space process that executes the suspend flow.
->>>>
->>>>  =C2=A0If we don=E2=80=99t set its freeze priority explicitly, our c=
-urrent code may end up
->>>> with this user process being the last one that cannot freeze.
->>> How so? sorry I don't follow.
->> The problem is in this part:
->>
->> +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (user_only && !(p->flags=
- & PF_KTHREAD) && round <
->> p->freeze_priority)
->> +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 continue;
->>
->> PF_SUSPEND_TASK is a user process, so it meets the =E2=80=9Cneeds free=
-zing=E2=80=9D
->> condition and todo gets incremented.
->              ^^^^^^^^^^^^^^^^^^^^^^^^^
->
-> No.
-> 	if (p =3D=3D current || !freeze_task(p))
-> 		continue;
->
-> 	todo++;
->
-> Again, again, freeze_task(p) returns false.
->
->> But it actually doesn=E2=80=99t need to freeze,
->> so resulting in an infinite loop
-> I don't think so.
->
-> Oleg.
-Sorry, you=E2=80=99re right =E2=80=94 it=E2=80=99s indeed unnecessary. In=
- an earlier version, I=20
-incremented the counter before the continue, but I later removed that=20
-and forgot about it.
+Well, my worry is that 2M can be a high tax for smaller machines.
+Compile-time might be cleaner, but it has downsides.
+
+It is also not clear if these users actually need physical HZP or virtual
+is enough. Virtual is cheap.
+
+-- 
+Kiryl Shutsemau / Kirill A. Shutemov
 
