@@ -1,132 +1,76 @@
-Return-Path: <linux-fsdevel+bounces-57441-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57442-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82C61B2184D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 00:23:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 104CDB21853
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 00:24:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2B981A208A5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 22:23:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2234646371D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 22:24:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C78632E11C6;
-	Mon, 11 Aug 2025 22:23:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 625A92E2F16;
+	Mon, 11 Aug 2025 22:24:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="VQmJ9bwJ"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="V5wMDi/g"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3B7E1D61B7
-	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Aug 2025 22:23:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B73B1D61B7;
+	Mon, 11 Aug 2025 22:24:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754951005; cv=none; b=R+ZphROS7cR/rB7mt+GrJ9TwbNrDQEAbWIT2d1GwTIFd+SeFV7ZmXw12oLJcKjx0h8T8Ag8EoaZJVqUmXihpZ0Qz8grAAWr/jHcGZomjbjJeERkEj5ibwuVQzoRiiaoHtsdMNizuwomtsSsYwFGgCUhrMi/A7C8gt1C2HLwE/Ls=
+	t=1754951042; cv=none; b=YjO9fdhwn2JWH4TmcaNHzjxGcJ3HnCyjbLvW+ukLES4fKI74rrOy9DM2nAw3tbN3+y5LcY+eYeUjESmZG4BB3GVDh/aAsIq59f1Jeurtuk1JtN3sOmGG42SaTflRGg5V3hvi+dZmSqQEzbbQZn/FI18NzIlmxHqy5B+fjIgxu5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754951005; c=relaxed/simple;
-	bh=UkjdFhfkD/5MPGo9lrvJIpAtslR7NzBNQeU9GjEIVS4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o8bCRZj3HeYIoSNDGmuDuT4wFF56eCmRn3oKHUHhjmY2el1o2ag20oaKasD9yacdsIf1sLn1s/PqwwDF72gbYmtyQjqt383gegpsh5C9VFkBK5kEb5f3VS4UKD+llqolK4zw0oYevFonW/CFs28XNyIoMQ3Jq26tlpkfpjq3syE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=VQmJ9bwJ; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-76b36e6b9ddso4126785b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Aug 2025 15:23:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1754951003; x=1755555803; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BqRVwbRElxBdPXk8lHsckCVjfIRqkrurOlwpMKEN7BE=;
-        b=VQmJ9bwJjq7NqmL65iNeFkBh+Ge9NCFhKyWZftypmXP+/uAHG7wQm/Zgf6FMKYZS+z
-         +tTMy9gQLYG0PnpKM7PVHR53L2E4L0Gd19THj1TyLej+OoteZXFT5PnJB1o11MSUN//b
-         YgQAvGypyDjdlH2JwcZpita+BDoyBG4siomr9xQnyN90PL2aGnQxGqe9HUO0C0mBJ9Cq
-         tGVOzW/risvTcO3fROub+p7EULiCTtv8dxBOy/AP+H1yBRSaYsZ1y/IysT1MmTtx/SWJ
-         RVq80ogNIMh5xCAbvljTyJNvU8YT+9XzmyOkdvFa/e+86b8TCohnJR6dwhqK+UA/xqUf
-         zTtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754951003; x=1755555803;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BqRVwbRElxBdPXk8lHsckCVjfIRqkrurOlwpMKEN7BE=;
-        b=G/014Qv7wCPCRe5oh0mI0tvTtK3Dukc/cIpuZxV9NHY95rQDPPPVSl78iS6QE6UFxZ
-         MbfVF4Y6j1r3rNRSCBV6EQeoPdwmCj4WmYtkQolVdfn1B/MKozjMXLkDTdt7hpzukFY7
-         nbytTNkcFCDIsSKzDjEXMO/QcR4/36tND+abx7phtSARisMvotnvWyv3B9BFoIYYN+7S
-         ++mW1x3wuHd+aa4ha1YuIiMF30/eQw3mUv3MZ6IGVJ4W+5vBq1z6F/v2YW+p955kGt7r
-         rOFbMLRapoA3khig2SnSMFaLLtMSXP7YmJx3qZBEqMVfa4+n7gv7l/lkvkYeA5tc7yYJ
-         pVuA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZkcW6Uxxglf5G4re1SKREw2btG1Ios655Q74ql9sjif3SbhMKRm8sFq8XGE/BdOZUCBJnZ7r96zjyILwx@vger.kernel.org
-X-Gm-Message-State: AOJu0YzetJCeULOz59PYQDpqUdFQ1Zm2D8vw27xQNS7IDlbjuaWz75Wi
-	fijl1qa8s8wqg8ULDZrdB1rm3HYCY9FqFJGyqpowIwI8lCcJHavk7U6BKCXe+sPOuxVvOhT2KVg
-	khFxyadNp8wBA++WfpCXWkVIab3FubY7o3wfAyaao
-X-Gm-Gg: ASbGncvTcoCuOt5ksN5QNEcPVBIAxL6lz0N1XJPSkatleNdvm0qWUfiCWrd/HKTfjv5
-	Iw6nkwmDRpkOmLiZaXYKip3E0Dcp7SBh4ksj/JXOxYk+lkTQpio8B4cBFgzsWVC5AE88eMJ0jLw
-	NvUb3juOlL9wvJW8va53Tgij7RNvSPz0zE1qH4LC06TkweR4v4pzMkO1VK6z27xJTeDsvte7SfV
-	uXgGVY=
-X-Google-Smtp-Source: AGHT+IGOFn6nK9TXlaa8CkF00jvK01f6MUwhUi89/qVrrGCFQDmatsrEWgtc5jXmtyHYczNSCnTUlh5awjVGJA2HI2M=
-X-Received: by 2002:a17:902:ea0c:b0:23d:f986:6472 with SMTP id
- d9443c01a7336-242fc287481mr14184195ad.25.1754951003328; Mon, 11 Aug 2025
- 15:23:23 -0700 (PDT)
+	s=arc-20240116; t=1754951042; c=relaxed/simple;
+	bh=98ykCNdNjNFSoyI0ITIiZdyle5+j2R/y/7umcgQAvy8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tQbciifF70ohsbWyFgBT0EmWxuor2AZB0W+51z+nrk0+wo8uvCANv25UhkWzlMEpTatR8/h++CzyZNA64m1TXPrLxjyuYiNyr8LDKAHgGaJnZKasb0T+gR47U9HE1slZljpDF0lGQF2oJ16ulAeXes9AUcV0N9JtYQCB1hS5/xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=V5wMDi/g; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=NlAqg/7Oyr3wS5iGZ4uIxYUTz0VW9QeMIoSSCMaE47E=; b=V5wMDi/g0idtCjGqzjARU+zjAH
+	srv3bOvcej/mmYohat69G7az4oakF3m++wuqOaKwBLXCs0ItnZtnzW80gINoDcFuaFFbwI6XkmSbk
+	KKN3IdYiJhc+wO51oWdsMmLNnehAVDKYOFc5X0pNHEZjxhk1PFJhDLlopQgyg6WrD/9Of/GKOF0Ly
+	o/KJ4qpM54eRhtevG8CNdcdzcNUYQ557Q7qMS5fTqd9+mX45yU+LWzRzsoBydFFSjNzYOr703QH7S
+	AO5vu+yh9UXsIH1zrVBLsuQqgXGi0AvWCIF4+zCbgMd6qTAOx+wJ0jd5nuB+LMHKuRDQwK7n/tpJ1
+	w1t8wBhg==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ulavv-0000000A3EA-0fw7;
+	Mon, 11 Aug 2025 22:23:59 +0000
+Date: Mon, 11 Aug 2025 23:23:58 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Tal Zussman <tz2294@columbia.edu>
+Cc: Hans de Goede <hansg@kernel.org>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] vboxsf: Convert vboxsf_write_end() to use
+ kmap_local_folio()
+Message-ID: <aJptfu79PV4TaCq3@casper.infradead.org>
+References: <20250811-vboxsf_folio-v1-1-fe31a8b37115@columbia.edu>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <6a18a0b1af0ccca1fc56a8e82f02d5e4ab36149c.1754063834.git.rgb@redhat.com>
- <74767dff9834360b2100907df5142ab9@paul-moore.com> <aJSyXpsVfU+PfFzN@madcap2.tricolour.ca>
-In-Reply-To: <aJSyXpsVfU+PfFzN@madcap2.tricolour.ca>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 11 Aug 2025 18:23:10 -0400
-X-Gm-Features: Ac12FXzlcanNoS7j2e973OwKiT9rlNsc4IrrFZzGeXXhu4-6krmOTM7sf1LTA6A
-Message-ID: <CAHC9VhQY_0wm_Wz7HD0wv0Xc_Pikv3FNtw4_ppGSYLyyKdFJWA@mail.gmail.com>
-Subject: Re: [PATCH v2] audit: record fanotify event regardless of presence of rules
-To: Richard Guy Briggs <rgb@redhat.com>
-Cc: Linux-Audit Mailing List <linux-audit@lists.linux-audit.osci.io>, 
-	LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
-	Linux Kernel Audit Mailing List <audit@vger.kernel.org>, Eric Paris <eparis@parisplace.org>, 
-	Steve Grubb <sgrubb@redhat.com>, Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250811-vboxsf_folio-v1-1-fe31a8b37115@columbia.edu>
 
-On Thu, Aug 7, 2025 at 10:04=E2=80=AFAM Richard Guy Briggs <rgb@redhat.com>=
- wrote:
-> On 2025-08-06 21:47, Paul Moore wrote:
-> > On Aug  6, 2025 Richard Guy Briggs <rgb@redhat.com> wrote:
-> > >
-> > > When no audit rules are in place, fanotify event results are
-> > > unconditionally dropped due to an explicit check for the existence of
-> > > any audit rules.  Given this is a report from another security
-> > > sub-system, allow it to be recorded regardless of the existence of an=
-y
-> > > audit rules.
-> > >
-> > > To test, install and run the fapolicyd daemon with default config.  T=
-hen
-> > > as an unprivileged user, create and run a very simple binary that sho=
-uld
-> > > be denied.  Then check for an event with
-> > >     ausearch -m FANOTIFY -ts recent
-> > >
-> > > Link: https://issues.redhat.com/browse/RHEL-9065
-> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > > ---
-> > > changelog:
-> > > v2
-> > > - re-add audit_enabled check
-> > > ---
-> > >  include/linux/audit.h | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > Merged into audit/dev-staging with the plan being to merge it to
-> > audit/dev once the merge window closes.
->
-> Thanks Paul.
+On Mon, Aug 11, 2025 at 05:42:00PM -0400, Tal Zussman wrote:
+> Now that vboxsf_write_end() takes a folio, convert the kmap() call to
+> kmap_local_folio(). This removes two instances of &folio->page as
+> well.
 
-Now merged into audit/dev, thanks!
-
---=20
-paul-moore.com
+Oh; something I should have said.  If you have an interest in vboxsf,
+it looks like there's a communication protocol that lets you pass in a
+physical address and length rather than a virtual address and length.
+Redesigning the Linux driver to use that would be a big win and we could
+drop the kmap calls entirely.
 
