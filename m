@@ -1,286 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-57364-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57365-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BF6AB20C33
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 16:40:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0573B20C54
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 16:43:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D6FB622CC1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 14:35:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 562FC3B8CB8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 14:38:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47179258CE7;
-	Mon, 11 Aug 2025 14:35:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21E6F2561A2;
+	Mon, 11 Aug 2025 14:38:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h2WrE2VM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229A4253958;
-	Mon, 11 Aug 2025 14:34:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8D02580D2
+	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Aug 2025 14:37:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754922901; cv=none; b=Pg5ZkVZstW4cMtioXKo7AYgq+8hLjXYgtqUfZZm5IwI5SXjqLz4oQ/ia1c0qSBN/52hm4EalYNZUsAnnu+Wxo5T0jjFIhA+xNk53U8DyyuUqY/HqTq+rVANnh41Fqa/YHbW/pCOi5BFjt6LmNYtWewdioxamY6XaJ7UcC0+dWo4=
+	t=1754923080; cv=none; b=kSpQiyTWUGEaXVbfUP6HSTlQLsX9sXDUqaw9FlZXNQs0AskkSccM0q2x5+tiYA8mrEQY9OTyNN5yv0fnwmltykYI1NZsF/6kE98bry/qV6GcIHh1/r292scRnLEgGgLhCjBpEN6P1huK8XxaR++y68PrjmsiwqI2wEwZEVEW3no=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754922901; c=relaxed/simple;
-	bh=kp+heYHj8N1j8ackGeFHTYbZTNiWqigm8+L8Yk/CwP8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MiXMO8e3zoJAMLyTOqyMux0a60YaKQPURTmCAup0qiy1xRCDLdLsnuYaZjVb7FmcLc5xJgLH1Sk78lusFsajbC3DM/MbBuM+hVXBqanh7ZxIWD6KTWnR2Llpibh6ODdjfem+Pd+sjUeslFuvOzqzu/PxzdUFA2xMlszBAC2Jtu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2BBC52641;
-	Mon, 11 Aug 2025 07:34:51 -0700 (PDT)
-Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 602813F738;
-	Mon, 11 Aug 2025 07:34:53 -0700 (PDT)
-Date: Mon, 11 Aug 2025 16:34:30 +0200
-From: Beata Michalska <beata.michalska@arm.com>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Andreas Hindborg <a.hindborg@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Janne Grunau <j@jannau.net>
-Subject: Re: [PATCH v2 3/3] rust: xarray: add `insert` and `reserve`
-Message-ID: <aJn_dtWDcoscYpgV@arm.com>
-References: <20250713-xarray-insert-reserve-v2-0-b939645808a2@gmail.com>
- <20250713-xarray-insert-reserve-v2-3-b939645808a2@gmail.com>
- <aJnojv8AWj2isnit@arm.com>
- <CAJ-ks9=BU2jfT-MPzxDcXrZj7uQkKbVm6WhzGiJsM_628b2kmg@mail.gmail.com>
+	s=arc-20240116; t=1754923080; c=relaxed/simple;
+	bh=PFgJ+zB5hVpERr6LzS1Phpz3tCMO3VqUYvX2WhQo1To=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=rQg0xTOl6sO2CIH5BrVnnwLmdN+qNEQojTvxsQEF/YuyBz2MfpfRetXr8ZokqKI16u6cb260aZB9ZN/G9eTBRuAlE9abg2SGZmNOiIKe3lK/p1O1hULldaee6oXknnsdIrBHhwgtzZuEogLl7wkgGX8Jlc52fyNq86wY3fhTO34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h2WrE2VM; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754923077;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Zj+nQGw4ZVcuIWrfoL36qS6s2se7TenOLOhyMxt+l1Q=;
+	b=h2WrE2VMM0rwiwtXC6TetJgpFfnNaO/kY/HSswJ0+NC87/UuwH3BTPSV8fcmu6riuXimg5
+	YgzPCJOrTYzafeM5CgbVu/x5wDGWBJMW1UCY0iCEUsTAVr4g+cvq5oXsP4hFlgVVOtRL2j
+	dZZxckm7lW4rPVBMQC/Dqm/wAcavPZg=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-510-pzW5bl4iPZ-V7ZkxMVTt5A-1; Mon,
+ 11 Aug 2025 10:37:54 -0400
+X-MC-Unique: pzW5bl4iPZ-V7ZkxMVTt5A-1
+X-Mimecast-MFC-AGG-ID: pzW5bl4iPZ-V7ZkxMVTt5A_1754923072
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9C708195609E;
+	Mon, 11 Aug 2025 14:37:50 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.21])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 08FE91800280;
+	Mon, 11 Aug 2025 14:37:44 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20250811-iot_iter_folio-v1-1-d9c223adf93c@codewreck.org>
+References: <20250811-iot_iter_folio-v1-1-d9c223adf93c@codewreck.org> <20250811-iot_iter_folio-v1-0-d9c223adf93c@codewreck.org>
+To: asmadeus@codewreck.org
+Cc: dhowells@redhat.com, "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+    Christian Brauner <brauner@kernel.org>,
+    Alexander Viro <viro@zeniv.linux.org.uk>,
+    Andrew Morton <akpm@linux-foundation.org>,
+    Maximilian Bosch <maximilian@mbosch.me>, Ryan Lahfa <ryan@lahfa.xyz>,
+    Christian Theune <ct@flyingcircus.io>,
+    Arnout Engelen <arnout@bzzt.net>, linux-kernel@vger.kernel.org,
+    linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+    stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] iov_iter: iterate_folioq: fix handling of offset >= folio size
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJ-ks9=BU2jfT-MPzxDcXrZj7uQkKbVm6WhzGiJsM_628b2kmg@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <385672.1754923063.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 11 Aug 2025 15:37:43 +0100
+Message-ID: <385673.1754923063@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Mon, Aug 11, 2025 at 09:09:56AM -0400, Tamir Duberstein wrote:
-> On Mon, Aug 11, 2025 at 8:57 AM Beata Michalska <beata.michalska@arm.com> wrote:
-> >
-> > Hi Tamir,
-> >
-> > Apologies for such a late drop.
-> 
-> Hi Beata, no worries, thanks for your review.
-> 
-> >
-> > On Sun, Jul 13, 2025 at 08:05:49AM -0400, Tamir Duberstein wrote:
-[snip] ...
-> > > +/// A reserved slot in an array.
-> > > +///
-> > > +/// The slot is released when the reservation goes out of scope.
-> > > +///
-> > > +/// Note that the array lock *must not* be held when the reservation is filled or dropped as this
-> > > +/// will lead to deadlock. [`Reservation::fill_locked`] and [`Reservation::release_locked`] can be
-> > > +/// used in context where the array lock is held.
-> > > +#[must_use = "the reservation is released immediately when the reservation is unused"]
-> > > +pub struct Reservation<'a, T: ForeignOwnable> {
-> > > +    xa: &'a XArray<T>,
-> > > +    index: usize,
-> > > +}
-> > > +
-[snip] ...
-> > > +
-> > > +impl<T: ForeignOwnable> Drop for Reservation<'_, T> {
-> > > +    fn drop(&mut self) {
-> > > +        // NB: Errors here are possible since `Guard::store` does not honor reservations.
-> > > +        let _: Result = self.release_inner(None);
-> > This seems bit risky as one can drop the reservation while still holding the
-> > lock?
-> 
-> Yes, that's true. The only way to avoid it would be to make the
-> reservation borrowed from the guard, but that would exclude usage
-> patterns where the caller wants to reserve and fulfill in different
-> critical sections.
-> 
-> Do you have a specific suggestion?
-I guess we could try with locked vs unlocked `Reservation' types, which would
-have different Drop implementations, and providing a way to convert locked into
-unlocked. Just thinking out loud, so no, nothing specific here.
-At very least we could add 'rust_helper_spin_assert_is_held() ?'
->
-> > > +    }
-> > >  }
-> > >
-> > >  // SAFETY: `XArray<T>` has no shared mutable state so it is `Send` iff `T` is `Send`.
-> > > @@ -282,3 +617,136 @@ unsafe impl<T: ForeignOwnable + Send> Send for XArray<T> {}
-> > >  // SAFETY: `XArray<T>` serialises the interior mutability it provides so it is `Sync` iff `T` is
-> > >  // `Send`.
-> > >  unsafe impl<T: ForeignOwnable + Send> Sync for XArray<T> {}
-> > > +
-> > > +#[macros::kunit_tests(rust_xarray_kunit)]
-> > > +mod tests {
-> > > +    use super::*;
-> > > +    use pin_init::stack_pin_init;
-> > > +
-> > > +    fn new_kbox<T>(value: T) -> Result<KBox<T>> {
-> > > +        KBox::new(value, GFP_KERNEL).map_err(Into::into)
-> > I believe this should be GFP_ATOMIC as it is being called while holding the xa
-> > lock.
-> 
-> I'm not sure what you mean - this function can be called in any
-> context, and besides: it is test-only code.
-Actually it cannot: allocations using GFP_KERNEL can sleep so should not be
-called from atomic context, which is what is happening in the test cases.
+Dominique Martinet via B4 Relay wrote:
 
----
-BR
-Beata
-> 
-> >
-> > Otherwise:
-> >
-> > Tested-By: Beata Michalska <beata.michalska@arm.com>
-> 
-> Thanks!
-> Tamir
-> 
-> >
-> > ---
-> > BR
-> > Beata
-> > > +    }
-> > > +
-> > > +    #[test]
-> > > +    fn test_alloc_kind_alloc() -> Result {
-> > > +        test_alloc_kind(AllocKind::Alloc, 0)
-> > > +    }
-> > > +
-> > > +    #[test]
-> > > +    fn test_alloc_kind_alloc1() -> Result {
-> > > +        test_alloc_kind(AllocKind::Alloc1, 1)
-> > > +    }
-> > > +
-> > > +    fn test_alloc_kind(kind: AllocKind, expected_index: usize) -> Result {
-> > > +        stack_pin_init!(let xa = XArray::new(kind));
-> > > +        let mut guard = xa.lock();
-> > > +
-> > > +        let reservation = guard.reserve_limit(.., GFP_KERNEL)?;
-> > > +        assert_eq!(reservation.index(), expected_index);
-> > > +        reservation.release_locked(&mut guard)?;
-> > > +
-> > > +        let insertion = guard.insert_limit(.., new_kbox(0x1337)?, GFP_KERNEL);
-> > > +        assert!(insertion.is_ok());
-> > > +        let insertion_index = insertion.unwrap();
-> > > +        assert_eq!(insertion_index, expected_index);
-> > > +
-> > > +        Ok(())
-> > > +    }
-> > > +
-> > > +    #[test]
-> > > +    fn test_insert_and_reserve_interaction() -> Result {
-> > > +        const IDX: usize = 0x1337;
-> > > +
-> > > +        fn insert<T: ForeignOwnable>(
-> > > +            guard: &mut Guard<'_, T>,
-> > > +            value: T,
-> > > +        ) -> Result<(), StoreError<T>> {
-> > > +            guard.insert(IDX, value, GFP_KERNEL)
-> > > +        }
-> > > +
-> > > +        fn reserve<'a, T: ForeignOwnable>(guard: &mut Guard<'a, T>) -> Result<Reservation<'a, T>> {
-> > > +            guard.reserve(IDX, GFP_KERNEL)
-> > > +        }
-> > > +
-> > > +        #[track_caller]
-> > > +        fn check_not_vacant<'a>(guard: &mut Guard<'a, KBox<usize>>) -> Result {
-> > > +            // Insertion fails.
-> > > +            {
-> > > +                let beef = new_kbox(0xbeef)?;
-> > > +                let ret = insert(guard, beef);
-> > > +                assert!(ret.is_err());
-> > > +                let StoreError { error, value } = ret.unwrap_err();
-> > > +                assert_eq!(error, EBUSY);
-> > > +                assert_eq!(*value, 0xbeef);
-> > > +            }
-> > > +
-> > > +            // Reservation fails.
-> > > +            {
-> > > +                let ret = reserve(guard);
-> > > +                assert!(ret.is_err());
-> > > +                assert_eq!(ret.unwrap_err(), EBUSY);
-> > > +            }
-> > > +
-> > > +            Ok(())
-> > > +        }
-> > > +
-> > > +        stack_pin_init!(let xa = XArray::new(Default::default()));
-> > > +        let mut guard = xa.lock();
-> > > +
-> > > +        // Vacant.
-> > > +        assert_eq!(guard.get(IDX), None);
-> > > +
-> > > +        // Reservation succeeds.
-> > > +        let reservation = {
-> > > +            let ret = reserve(&mut guard);
-> > > +            assert!(ret.is_ok());
-> > > +            ret.unwrap()
-> > > +        };
-> > > +
-> > > +        // Reserved presents as vacant.
-> > > +        assert_eq!(guard.get(IDX), None);
-> > > +
-> > > +        check_not_vacant(&mut guard)?;
-> > > +
-> > > +        // Release reservation.
-> > > +        {
-> > > +            let ret = reservation.release_locked(&mut guard);
-> > > +            assert!(ret.is_ok());
-> > > +            let () = ret.unwrap();
-> > > +        }
-> > > +
-> > > +        // Vacant again.
-> > > +        assert_eq!(guard.get(IDX), None);
-> > > +
-> > > +        // Insert succeeds.
-> > > +        {
-> > > +            let dead = new_kbox(0xdead)?;
-> > > +            let ret = insert(&mut guard, dead);
-> > > +            assert!(ret.is_ok());
-> > > +            let () = ret.unwrap();
-> > > +        }
-> > > +
-> > > +        check_not_vacant(&mut guard)?;
-> > > +
-> > > +        // Remove.
-> > > +        assert_eq!(guard.remove(IDX).as_deref(), Some(&0xdead));
-> > > +
-> > > +        // Reserve and fill.
-> > > +        {
-> > > +            let beef = new_kbox(0xbeef)?;
-> > > +            let ret = reserve(&mut guard);
-> > > +            assert!(ret.is_ok());
-> > > +            let reservation = ret.unwrap();
-> > > +            let ret = reservation.fill_locked(&mut guard, beef);
-> > > +            assert!(ret.is_ok());
-> > > +            let () = ret.unwrap();
-> > > +        };
-> > > +
-> > > +        check_not_vacant(&mut guard)?;
-> > > +
-> > > +        // Remove.
-> > > +        assert_eq!(guard.remove(IDX).as_deref(), Some(&0xbeef));
-> > > +
-> > > +        Ok(())
-> > > +    }
-> > > +}
-> > >
-> > > --
-> > > 2.50.1
-> > >
-> > >
-> 
+> It's apparently possible to get an iov forwarded all the way up to the
+
+By "forwarded" I presume you mean "advanced"?
+
+> end of the current page we're looking at, e.g.
+> =
+
+> (gdb) p *iter
+> $24 =3D {iter_type =3D 4 '\004', nofault =3D false, data_source =3D fals=
+e, iov_offset =3D 4096, {__ubuf_iovec =3D {
+>       iov_base =3D 0xffff88800f5bc000, iov_len =3D 655}, {{__iov =3D 0xf=
+fff88800f5bc000, kvec =3D 0xffff88800f5bc000,
+>         bvec =3D 0xffff88800f5bc000, folioq =3D 0xffff88800f5bc000, xarr=
+ay =3D 0xffff88800f5bc000,
+>         ubuf =3D 0xffff88800f5bc000}, count =3D 655}}, {nr_segs =3D 2, f=
+olioq_slot =3D 2 '\002', xarray_start =3D 2}}
+> =
+
+> Where iov_offset is 4k with 4k-sized folios
+> =
+
+> This should have been because we're only in the 2nd slot and there's
+> another one after this, but iterate_folioq should not try to map a
+> folio that skips the whole size, and more importantly part here does
+> not end up zero (because 'PAGE_SIZE - skip % PAGE_SIZE' ends up
+> PAGE_SIZE and not zero..), so skip forward to the "advance to next
+> folio" code.
+
+Note that things get complicated because folioqs form a segmented list tha=
+t
+can be under construction as it advances.  So if there's no next folioq
+segment at the time you advance to the end of the current one, it will end=
+ up
+parked at the end of the last folio or with slot=3D=3Dnr_slots because the=
+re's
+nowhere for it to advance to.  However, the folioq chain can then get
+extended, so the advancer has to detect this and move on to the next segme=
+nt.
+
+Anyway:
+
+Acked-by: David Howells <dhowells@redhat.com>
+
+Note that extract_folioq_to_sg() already does this as does
+iov_iter_extract_folioq_pages().
+
 
