@@ -1,111 +1,286 @@
-Return-Path: <linux-fsdevel+bounces-57363-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57364-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE8E2B20C22
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 16:38:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BF6AB20C33
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 16:40:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 943882A248A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 14:34:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D6FB622CC1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 14:35:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 344B62D3230;
-	Mon, 11 Aug 2025 14:34:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DIbEH2Ox"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47179258CE7;
+	Mon, 11 Aug 2025 14:35:02 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CAC1253B42
-	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Aug 2025 14:34:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229A4253958;
+	Mon, 11 Aug 2025 14:34:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754922859; cv=none; b=P56tq/9QpfBx32EXxS7mi9eVjdiE+6iOSjlvh9OEuxjRxycgU+E1jHtvflk4vOpdCBlKrDrmmm2UP0xeIMV5xKkZ35P5cscHN2KXRixGfDwa4VZF7ui5fqdyDIuth0Tewn2LM4y2dzt9zw/WAPL702VewJUzcRwNTpPiKPAtoVo=
+	t=1754922901; cv=none; b=Pg5ZkVZstW4cMtioXKo7AYgq+8hLjXYgtqUfZZm5IwI5SXjqLz4oQ/ia1c0qSBN/52hm4EalYNZUsAnnu+Wxo5T0jjFIhA+xNk53U8DyyuUqY/HqTq+rVANnh41Fqa/YHbW/pCOi5BFjt6LmNYtWewdioxamY6XaJ7UcC0+dWo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754922859; c=relaxed/simple;
-	bh=bruREYZz13FVqwhmiTuhvJnq89yjM0qtV4JcUUKirMo=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=sein010qUkWIseH07DSux8K58OKMqu/4VqGqj1yPo2VY1dt5IiCWTIxsNLlr8oCZYjfpGWF88cCEvHXli6f38PKPSuLUQQCTo0L9F5U15ZF9aN15vrdwRsFtW9GlOE51GRuq0OfCnIIAhVLgEV7n0nzafM1G3amp3/3xZD8Y+/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DIbEH2Ox; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b46e380a400so1521289a12.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Aug 2025 07:34:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754922857; x=1755527657; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=s3QC/DofyyJ1kIbquP7TygGRJBogDIdpEUbLnTdcdHg=;
-        b=DIbEH2OxjBvZkBS8teorCGp39U2CsmDZuMeaPxaLBtckmwePYI1C99M65EyxVI7trh
-         HMj94pK8tSAk3aLUDeLtAL6D0cSxG/BAIn/jY23E+Z+FueDmK4DbobALuGZ7GOUSpFAV
-         pFuN9hANNqRVIBG3ZvvVCSw2QTKDTvKP8zGpnXzSyTfcMqchaQovLADWbt6PftZYq+8u
-         MDnxb7e9+ghOdjDXxhD0wKp0209GGbj42znut7BAb3XeN1mYs9dLBE8YTT0TeccuZFNV
-         78Z3olcG5TguJmbCuK46mBMg9bII8+GyNCNGPCcxWsmK1r2rbJoaYCZLg7gIdLsEdA9X
-         HxAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754922857; x=1755527657;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=s3QC/DofyyJ1kIbquP7TygGRJBogDIdpEUbLnTdcdHg=;
-        b=sXRJWrIT8WKFRKWaAUXpzFjeVOkua/AvWm9jOvjyBCaQ5wRd++TlX/7Os6RATrgSN0
-         fsBOXfrQK+xdGcCqau8tyNdt+bBsPUl+uco9O3/PBrfwXe2WcNQHnlsZTDX2cXnYCKwC
-         8Bt8T/gmmMIrZxVzUbdxVfux0ZjR0AARp3oSla9Mg1HMo4psu9vtuAPlIYM90p9c9ZWI
-         NJXxNyFZXxDhNnGZW8onGIvJCwU3khb0bGXam8PfhboDGSCOBYDIf8kLQ4ZzTU4GjaSz
-         G5fo6cqlIRbMRHDqPbeEqbl1/4qJlc1szuX/BMJlZK7kiH0yAbSP08oVqQfua1A4jHoW
-         yDMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWfQG/2z/SGem9HNH/854e5ANCr13n2/5ro9RJOunUxxTWG83FPU/RMvlcR0hjHbdeHO+Hica0t16VafKTh@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSQxFAF9u3/CDkk3amdfh/j0CPJwnbqno2uz/b4DA2kYplMs7N
-	hZ8A72d1lyOY+hZvO3CLCm/eadbkw70MNYVIYk6U0xtUeMGAkdhdZfv+0xGrY5XQiUrJasCO9Fc
-	jdV+9rQ==
-X-Google-Smtp-Source: AGHT+IHDzFt+0zXjA0CUz3si8YkwDTRVPFUsiiRh4VZN4Dkprgq2wlq3CPL9ofZgO6/62HnwUQZt6ujhFVk=
-X-Received: from pgos21.prod.google.com ([2002:a63:af55:0:b0:b31:d198:ffb2])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:3d8b:b0:240:6dc:9164
- with SMTP id adf61e73a8af0-2405502ffeamr23223057637.15.1754922855887; Mon, 11
- Aug 2025 07:34:15 -0700 (PDT)
-Date: Mon, 11 Aug 2025 07:34:14 -0700
-In-Reply-To: <20250811090605.16057-2-shivankg@amd.com>
+	s=arc-20240116; t=1754922901; c=relaxed/simple;
+	bh=kp+heYHj8N1j8ackGeFHTYbZTNiWqigm8+L8Yk/CwP8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MiXMO8e3zoJAMLyTOqyMux0a60YaKQPURTmCAup0qiy1xRCDLdLsnuYaZjVb7FmcLc5xJgLH1Sk78lusFsajbC3DM/MbBuM+hVXBqanh7ZxIWD6KTWnR2Llpibh6ODdjfem+Pd+sjUeslFuvOzqzu/PxzdUFA2xMlszBAC2Jtu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2BBC52641;
+	Mon, 11 Aug 2025 07:34:51 -0700 (PDT)
+Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 602813F738;
+	Mon, 11 Aug 2025 07:34:53 -0700 (PDT)
+Date: Mon, 11 Aug 2025 16:34:30 +0200
+From: Beata Michalska <beata.michalska@arm.com>
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Andreas Hindborg <a.hindborg@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Janne Grunau <j@jannau.net>
+Subject: Re: [PATCH v2 3/3] rust: xarray: add `insert` and `reserve`
+Message-ID: <aJn_dtWDcoscYpgV@arm.com>
+References: <20250713-xarray-insert-reserve-v2-0-b939645808a2@gmail.com>
+ <20250713-xarray-insert-reserve-v2-3-b939645808a2@gmail.com>
+ <aJnojv8AWj2isnit@arm.com>
+ <CAJ-ks9=BU2jfT-MPzxDcXrZj7uQkKbVm6WhzGiJsM_628b2kmg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250811090605.16057-2-shivankg@amd.com>
-Message-ID: <aJn_ZvD2AfZBX4Ox@google.com>
-Subject: Re: [PATCH RFC V10 0/7] Add NUMA mempolicy support for KVM guest-memfd
-From: Sean Christopherson <seanjc@google.com>
-To: Shivank Garg <shivankg@amd.com>
-Cc: david@redhat.com, vbabka@suse.cz, willy@infradead.org, 
-	akpm@linux-foundation.org, shuah@kernel.org, pbonzini@redhat.com, 
-	brauner@kernel.org, viro@zeniv.linux.org.uk, ackerleytng@google.com, 
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz, 
-	bfoster@redhat.com, tabba@google.com, vannapurve@google.com, 
-	chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, michael.day@amd.com, 
-	shdhiman@amd.com, yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com, 
-	thomas.lendacky@amd.com, michael.roth@amd.com, aik@amd.com, jgg@nvidia.com, 
-	kalyazin@amazon.com, peterx@redhat.com, jack@suse.cz, rppt@kernel.org, 
-	hch@infradead.org, cgzones@googlemail.com, ira.weiny@intel.com, 
-	rientjes@google.com, roypat@amazon.co.uk, ziy@nvidia.com, 
-	matthew.brost@intel.com, joshua.hahnjy@gmail.com, rakie.kim@sk.com, 
-	byungchul@sk.com, gourry@gourry.net, kent.overstreet@linux.dev, 
-	ying.huang@linux.alibaba.com, apopple@nvidia.com, chao.p.peng@intel.com, 
-	amit@infradead.org, ddutile@redhat.com, dan.j.williams@intel.com, 
-	ashish.kalra@amd.com, gshan@redhat.com, jgowans@amazon.com, 
-	pankaj.gupta@amd.com, papaluri@amd.com, yuzhao@google.com, 
-	suzuki.poulose@arm.com, quic_eberman@quicinc.com, 
-	aneeshkumar.kizhakeveetil@arm.com, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, kvm@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-coco@lists.linux.dev
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJ-ks9=BU2jfT-MPzxDcXrZj7uQkKbVm6WhzGiJsM_628b2kmg@mail.gmail.com>
 
-On Mon, Aug 11, 2025, Shivank Garg wrote:
-> This series introduces NUMA-aware memory placement support for KVM guests
-> with guest_memfd memory backends. It builds upon Fuad Tabba's work (V17)
-> that enabled host-mapping for guest_memfd memory [1].
+On Mon, Aug 11, 2025 at 09:09:56AM -0400, Tamir Duberstein wrote:
+> On Mon, Aug 11, 2025 at 8:57 AM Beata Michalska <beata.michalska@arm.com> wrote:
+> >
+> > Hi Tamir,
+> >
+> > Apologies for such a late drop.
+> 
+> Hi Beata, no worries, thanks for your review.
+> 
+> >
+> > On Sun, Jul 13, 2025 at 08:05:49AM -0400, Tamir Duberstein wrote:
+[snip] ...
+> > > +/// A reserved slot in an array.
+> > > +///
+> > > +/// The slot is released when the reservation goes out of scope.
+> > > +///
+> > > +/// Note that the array lock *must not* be held when the reservation is filled or dropped as this
+> > > +/// will lead to deadlock. [`Reservation::fill_locked`] and [`Reservation::release_locked`] can be
+> > > +/// used in context where the array lock is held.
+> > > +#[must_use = "the reservation is released immediately when the reservation is unused"]
+> > > +pub struct Reservation<'a, T: ForeignOwnable> {
+> > > +    xa: &'a XArray<T>,
+> > > +    index: usize,
+> > > +}
+> > > +
+[snip] ...
+> > > +
+> > > +impl<T: ForeignOwnable> Drop for Reservation<'_, T> {
+> > > +    fn drop(&mut self) {
+> > > +        // NB: Errors here are possible since `Guard::store` does not honor reservations.
+> > > +        let _: Result = self.release_inner(None);
+> > This seems bit risky as one can drop the reservation while still holding the
+> > lock?
+> 
+> Yes, that's true. The only way to avoid it would be to make the
+> reservation borrowed from the guard, but that would exclude usage
+> patterns where the caller wants to reserve and fulfill in different
+> critical sections.
+> 
+> Do you have a specific suggestion?
+I guess we could try with locked vs unlocked `Reservation' types, which would
+have different Drop implementations, and providing a way to convert locked into
+unlocked. Just thinking out loud, so no, nothing specific here.
+At very least we could add 'rust_helper_spin_assert_is_held() ?'
+>
+> > > +    }
+> > >  }
+> > >
+> > >  // SAFETY: `XArray<T>` has no shared mutable state so it is `Send` iff `T` is `Send`.
+> > > @@ -282,3 +617,136 @@ unsafe impl<T: ForeignOwnable + Send> Send for XArray<T> {}
+> > >  // SAFETY: `XArray<T>` serialises the interior mutability it provides so it is `Sync` iff `T` is
+> > >  // `Send`.
+> > >  unsafe impl<T: ForeignOwnable + Send> Sync for XArray<T> {}
+> > > +
+> > > +#[macros::kunit_tests(rust_xarray_kunit)]
+> > > +mod tests {
+> > > +    use super::*;
+> > > +    use pin_init::stack_pin_init;
+> > > +
+> > > +    fn new_kbox<T>(value: T) -> Result<KBox<T>> {
+> > > +        KBox::new(value, GFP_KERNEL).map_err(Into::into)
+> > I believe this should be GFP_ATOMIC as it is being called while holding the xa
+> > lock.
+> 
+> I'm not sure what you mean - this function can be called in any
+> context, and besides: it is test-only code.
+Actually it cannot: allocations using GFP_KERNEL can sleep so should not be
+called from atomic context, which is what is happening in the test cases.
 
-Is this still actually an RFC?  If so, why?  If not, drop tag on the next version
-(if one is needed/sent).
+---
+BR
+Beata
+> 
+> >
+> > Otherwise:
+> >
+> > Tested-By: Beata Michalska <beata.michalska@arm.com>
+> 
+> Thanks!
+> Tamir
+> 
+> >
+> > ---
+> > BR
+> > Beata
+> > > +    }
+> > > +
+> > > +    #[test]
+> > > +    fn test_alloc_kind_alloc() -> Result {
+> > > +        test_alloc_kind(AllocKind::Alloc, 0)
+> > > +    }
+> > > +
+> > > +    #[test]
+> > > +    fn test_alloc_kind_alloc1() -> Result {
+> > > +        test_alloc_kind(AllocKind::Alloc1, 1)
+> > > +    }
+> > > +
+> > > +    fn test_alloc_kind(kind: AllocKind, expected_index: usize) -> Result {
+> > > +        stack_pin_init!(let xa = XArray::new(kind));
+> > > +        let mut guard = xa.lock();
+> > > +
+> > > +        let reservation = guard.reserve_limit(.., GFP_KERNEL)?;
+> > > +        assert_eq!(reservation.index(), expected_index);
+> > > +        reservation.release_locked(&mut guard)?;
+> > > +
+> > > +        let insertion = guard.insert_limit(.., new_kbox(0x1337)?, GFP_KERNEL);
+> > > +        assert!(insertion.is_ok());
+> > > +        let insertion_index = insertion.unwrap();
+> > > +        assert_eq!(insertion_index, expected_index);
+> > > +
+> > > +        Ok(())
+> > > +    }
+> > > +
+> > > +    #[test]
+> > > +    fn test_insert_and_reserve_interaction() -> Result {
+> > > +        const IDX: usize = 0x1337;
+> > > +
+> > > +        fn insert<T: ForeignOwnable>(
+> > > +            guard: &mut Guard<'_, T>,
+> > > +            value: T,
+> > > +        ) -> Result<(), StoreError<T>> {
+> > > +            guard.insert(IDX, value, GFP_KERNEL)
+> > > +        }
+> > > +
+> > > +        fn reserve<'a, T: ForeignOwnable>(guard: &mut Guard<'a, T>) -> Result<Reservation<'a, T>> {
+> > > +            guard.reserve(IDX, GFP_KERNEL)
+> > > +        }
+> > > +
+> > > +        #[track_caller]
+> > > +        fn check_not_vacant<'a>(guard: &mut Guard<'a, KBox<usize>>) -> Result {
+> > > +            // Insertion fails.
+> > > +            {
+> > > +                let beef = new_kbox(0xbeef)?;
+> > > +                let ret = insert(guard, beef);
+> > > +                assert!(ret.is_err());
+> > > +                let StoreError { error, value } = ret.unwrap_err();
+> > > +                assert_eq!(error, EBUSY);
+> > > +                assert_eq!(*value, 0xbeef);
+> > > +            }
+> > > +
+> > > +            // Reservation fails.
+> > > +            {
+> > > +                let ret = reserve(guard);
+> > > +                assert!(ret.is_err());
+> > > +                assert_eq!(ret.unwrap_err(), EBUSY);
+> > > +            }
+> > > +
+> > > +            Ok(())
+> > > +        }
+> > > +
+> > > +        stack_pin_init!(let xa = XArray::new(Default::default()));
+> > > +        let mut guard = xa.lock();
+> > > +
+> > > +        // Vacant.
+> > > +        assert_eq!(guard.get(IDX), None);
+> > > +
+> > > +        // Reservation succeeds.
+> > > +        let reservation = {
+> > > +            let ret = reserve(&mut guard);
+> > > +            assert!(ret.is_ok());
+> > > +            ret.unwrap()
+> > > +        };
+> > > +
+> > > +        // Reserved presents as vacant.
+> > > +        assert_eq!(guard.get(IDX), None);
+> > > +
+> > > +        check_not_vacant(&mut guard)?;
+> > > +
+> > > +        // Release reservation.
+> > > +        {
+> > > +            let ret = reservation.release_locked(&mut guard);
+> > > +            assert!(ret.is_ok());
+> > > +            let () = ret.unwrap();
+> > > +        }
+> > > +
+> > > +        // Vacant again.
+> > > +        assert_eq!(guard.get(IDX), None);
+> > > +
+> > > +        // Insert succeeds.
+> > > +        {
+> > > +            let dead = new_kbox(0xdead)?;
+> > > +            let ret = insert(&mut guard, dead);
+> > > +            assert!(ret.is_ok());
+> > > +            let () = ret.unwrap();
+> > > +        }
+> > > +
+> > > +        check_not_vacant(&mut guard)?;
+> > > +
+> > > +        // Remove.
+> > > +        assert_eq!(guard.remove(IDX).as_deref(), Some(&0xdead));
+> > > +
+> > > +        // Reserve and fill.
+> > > +        {
+> > > +            let beef = new_kbox(0xbeef)?;
+> > > +            let ret = reserve(&mut guard);
+> > > +            assert!(ret.is_ok());
+> > > +            let reservation = ret.unwrap();
+> > > +            let ret = reservation.fill_locked(&mut guard, beef);
+> > > +            assert!(ret.is_ok());
+> > > +            let () = ret.unwrap();
+> > > +        };
+> > > +
+> > > +        check_not_vacant(&mut guard)?;
+> > > +
+> > > +        // Remove.
+> > > +        assert_eq!(guard.remove(IDX).as_deref(), Some(&0xbeef));
+> > > +
+> > > +        Ok(())
+> > > +    }
+> > > +}
+> > >
+> > > --
+> > > 2.50.1
+> > >
+> > >
+> 
 
