@@ -1,134 +1,177 @@
-Return-Path: <linux-fsdevel+bounces-57345-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57348-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2EFEB20A09
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 15:24:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7495CB20A37
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 15:30:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD61D18A5F10
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 13:24:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C8CB7A36F6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 13:28:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A64A2DCF56;
-	Mon, 11 Aug 2025 13:23:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 620792DEA9B;
+	Mon, 11 Aug 2025 13:29:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JML8hIvK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nHYQdHSS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FE701F5820;
-	Mon, 11 Aug 2025 13:23:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC34C1F5820;
+	Mon, 11 Aug 2025 13:29:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754918622; cv=none; b=BSN1mhjMU4PZf5wEonaXVK9H5e1S+Z0qN/Ezt6Y993O54+cW7cjHEPAvgw4fpJxcWImwzN3YaGBskZKq3tvLW/hASd8JPzBjVpp3Tt9uaofSmE+2zRi3wM0tCgHm+NRHJhogRuFYrQ++F6boOswj0PmCvPRlFtyj2Ed5yH0DvFA=
+	t=1754918988; cv=none; b=czlyiJV/3qUQawsJLCD3Bx2qtW+N2GuyZ0nU9rjkszVVXorb6vXL0BY/lVa6vc8238JqauqRm6kDG5zLMubDwYnaDnOKs9vP59ORPWNm/VcC5oJf12LuuDA5cVan0ZPutsDyyx+fnY8QeQNlxYlpPzBMVcTHwnsINZgop6E61Gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754918622; c=relaxed/simple;
-	bh=wHW3BD/OhOcrPu7KFCVJOURhRRyzQJLJFCVQAcdkFF4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eNv4L2lgCsxboCfNshG+hIIDYYq1Qn8JTPhFRvN7vc/FbRRVWO0pkivyYH7+/AN6NlMmbBFDtr8gU7XYSqb9/vtgRZxknL9TFRC3x/d8ZoWa5rnecoWzLZ5W5WjLWdvCknX3WOS1ofRldDyEUlEwtwHDNsqwfFFd4+GtBME0mKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JML8hIvK; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3b786421e36so2324349f8f.3;
-        Mon, 11 Aug 2025 06:23:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754918617; x=1755523417; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3i1TwRw5PXH9PjVgIN+9fLGelO+SfMaHlVr07PGn1u4=;
-        b=JML8hIvKHB9/V6tEpgNpWXvslFCMnGIsIblRvvYFTnfHsGqXA9iAcyppTL8kOd9vQi
-         DnaEy0e05IuvJ4+UDrSebtcULb0YUlzy/Ddc8nUJXtt6q54e6doFwz9s+gmBM4YpDb0F
-         +eGnezsm5MJpvw5tIPiuAKj1J0BL7TU4l4GAqKRORE5POJ6XFIj06zi8l1rSozueR/u4
-         izt33C4qciMX3fWup8XxfnP/CSNGLN2mhJB0Sz7GOaBaYiI682N/DVU7alcgy/Us+3Pc
-         culJ4d4C9snrNWqIx02tcFB2o8TT9RM51Gnit0GuyRflc1DxYIjXUXo4pltVdDKoIfok
-         rxIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754918617; x=1755523417;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3i1TwRw5PXH9PjVgIN+9fLGelO+SfMaHlVr07PGn1u4=;
-        b=u5WD2ZnwpM6jkTqGrDXm7Z26DkKPTlhFJ6Az7/vVydyCpd/1KkPoJd+kW/a7asJnwK
-         cuCG5j+Yr5TBCotwCyGk/ptFA354zPP0/yAv/45DyECgHeAbCTDrFDYQIyHcx6QMvj0Y
-         XMJHNMiEBKtjdmJUsM6iINuec+QrXw5dKp7bkWFTW+iJmbbeA440eTpXNtA19WzqFXCO
-         Q2MRv2SwGZSneugnV+glhcV2P81srAUYiLVS6CWSYtBdW/5QX1vqcrQdZsAa6v5KE5lk
-         eUatYi7imuQDacqBP92fpCJd/BiZ2vT+Hy8eXDkT2OA5qqAspz+1dpEC82rIiOR/onor
-         c0iQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWq5Wj3VnauejqG3EZhMEDLiP6qD9QsFev6FUTQ4ZXH9m6EImzWuVAMOwuwwILL2fGJWK1XUbRiE3Rb0EU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXckqGe90gLhRVGLdVq8FYgCqOnd4UV4LRFtdNi8xB8cYJfsvq
-	CWIVpOZ0zGF4DGbyhvFWGseT6hoPMGxsZ7j+UayHqPkaMkjk8AMBUXNat5M4kQ==
-X-Gm-Gg: ASbGncsTQGo3Y+as6u+bap4GgOCfhqHqlnItWSm4G9TTDh9nyQKFxk6APRpjkzqcNJo
-	z6FSNiFSwthceqPiJB6UDDXjpaYiPdl9vOn3U3dBUzq8m4nZ26fD59cd0g0C+gs7w7Sn6NNCOjE
-	exFX2cRFOLFFpvlBXywMYyDT/eCLEOBihT8wKXEbgbMa5cdvBiCLjsAzrUhmPfPTV82KKvYnC/r
-	bM0KmEM/zYnSqGAgXJyTTbNY9GwsdEt8wavoE/I7fBDCc3kdVyQZQ7uqsZtO/W3cO7uwsLgRWni
-	fZYxG2n342s4jMNBC4eXH0xD4Gl8dKuri34RY4sTkhjeQnKZ/G1hASEZxdSKo7yJ62Yxy8EJqTQ
-	PNcaSRFKDrTWyKo78xeX5BQ==
-X-Google-Smtp-Source: AGHT+IGBHoj4ms524wUd0zko8zHozOF0t+LhhO65J3aM5sG0taiXoz6QgxsNwY8QbsjLVlUpoADWPg==
-X-Received: by 2002:a05:6000:2886:b0:3b8:2cb1:5f8f with SMTP id ffacd0b85a97d-3b900b35ab9mr9247412f8f.25.1754918617223;
-        Mon, 11 Aug 2025 06:23:37 -0700 (PDT)
-Received: from fedora ([193.77.86.199])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c453ab0sm40983617f8f.44.2025.08.11.06.23.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 06:23:36 -0700 (PDT)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>
-Subject: [PATCH] fs: Use try_cmpxchg() in sb_init_done_wq()
-Date: Mon, 11 Aug 2025 15:23:03 +0200
-Message-ID: <20250811132326.620521-1-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1754918988; c=relaxed/simple;
+	bh=TgjO8kHAVKI3l7CYVMLzptQqzc2/jaFVmi388jyGESY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=uGCYg/t1TrSkEyHb5cQvnFiyel9UHMRwGZ42v/SJf372XcAKSeXc9WmnCMsvQ4sySfpyp9nSJ14GnlPhsQVsHz5BmZ0FVSpiLV6F42wGJ7dzgU1dG9/Rp105g6STPXga3MJLU3d6vpcN+XY4cd/llx+pDls/RziPubL6sffs5Ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nHYQdHSS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5E83C4CEF7;
+	Mon, 11 Aug 2025 13:29:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754918988;
+	bh=TgjO8kHAVKI3l7CYVMLzptQqzc2/jaFVmi388jyGESY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=nHYQdHSSsQwSWCD3WrYy07OaO4m86uNO8iyi3aw6PA55zHLFltaTHVJUygKn6D2GA
+	 Y+UmhsiLOJ3RptaWumnpZZT3EVrIi746eRRBdDKeY1WVcqoZsuatOyykNiQxQFNbGj
+	 5nHPIR4LS3w7UJvKIMLUD8vkAXFafB8oYjzL/KUiL8zEt7xrg+Rn6jh0utGwwReCvZ
+	 nPF5SQ7W2+epSEgJ26xHgkiO3gPZTnBluEWwiv5/YQfkNMv0tpyfPmv0Ra35lLUyK5
+	 kv7xn3kkbcotz4S40rFwfiuHybfIoFUDaUYQL6m9MEoAiZm8Dk2UOzQeN1lk/wk6ap
+	 yNI4p5nOvyF4Q==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Tamir Duberstein <tamird@gmail.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
+ Matthew Wilcox <willy@infradead.org>, Andrew Morton
+ <akpm@linux-foundation.org>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, Daniel Almeida
+ <daniel.almeida@collabora.com>, Tamir Duberstein <tamird@gmail.com>, Janne
+ Grunau <j@jannau.net>
+Subject: Re: [PATCH v2 3/3] rust: xarray: add `insert` and `reserve`
+In-Reply-To: <20250713-xarray-insert-reserve-v2-3-b939645808a2@gmail.com>
+References: <20250713-xarray-insert-reserve-v2-0-b939645808a2@gmail.com>
+ <iPv7ly-33WYOq_9Fait3DBD6dQCAn1WCRGwXjlPgNBmuj5yejzu0D6-qfg3VYyJfwu9uS4rJOu9o3L2ebudROw==@protonmail.internalid>
+ <20250713-xarray-insert-reserve-v2-3-b939645808a2@gmail.com>
+Date: Mon, 11 Aug 2025 15:28:11 +0200
+Message-ID: <87o6smf0no.fsf@t14s.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Use !try_cmpxchg() instead of cmpxchg(*ptr, old, new) != old.
+"Tamir Duberstein" <tamird@gmail.com> writes:
 
-The x86 CMPXCHG instruction returns success in the ZF flag,
-so this change saves a compare after CMPXCHG.
+> Add `Guard::{insert,reserve}` and `Guard::{insert,reserve}_limit`, which
+> are akin to `__xa_{alloc,insert}` in C.
+>
+> Note that unlike `xa_reserve` which only ensures that memory is
+> allocated, the semantics of `Reservation` are stricter and require
+> precise management of the reservation. Indices which have been reserved
+> can still be overwritten with `Guard::store`, which allows for C-like
+> semantics if desired.
+>
+> `__xa_cmpxchg_raw` is exported to facilitate the semantics described
+> above.
+>
+> Tested-by: Janne Grunau <j@jannau.net>
+> Reviewed-by: Janne Grunau <j@jannau.net>
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 
-No functional change intended.
+<cut>
 
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>
----
- fs/super.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+> +    /// Stores an element somewhere in the given range of indices.
+> +    ///
+> +    /// On success, takes ownership of `ptr`.
+> +    ///
+> +    /// On failure, ownership returns to the caller.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// `ptr` must be `NULL` or have come from a previous call to `T::into_foreign`.
+> +    unsafe fn alloc(
 
-diff --git a/fs/super.c b/fs/super.c
-index 7f876f32343a..e91718017701 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -2318,13 +2318,15 @@ int sb_init_dio_done_wq(struct super_block *sb)
- 						      sb->s_id);
- 	if (!wq)
- 		return -ENOMEM;
-+
-+	old = NULL;
- 	/*
- 	 * This has to be atomic as more DIOs can race to create the workqueue
- 	 */
--	old = cmpxchg(&sb->s_dio_done_wq, NULL, wq);
--	/* Someone created workqueue before us? Free ours... */
--	if (old)
-+	if (!try_cmpxchg(&sb->s_dio_done_wq, &old, wq)) {
-+		/* Someone created workqueue before us? Free ours... */
- 		destroy_workqueue(wq);
-+	}
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(sb_init_dio_done_wq);
--- 
-2.50.1
+
+The naming of this method in C is confusing. Could we call it
+insert_limit_raw on the Rust side?
+
+Even though this is private, I think we should also document that the
+effect of inserting NULL is to reserve the entry.
+
+> +        &mut self,
+> +        limit: impl ops::RangeBounds<u32>,
+> +        ptr: *mut T::PointedTo,
+> +        gfp: alloc::Flags,
+> +    ) -> Result<usize> {
+> +        // NB: `xa_limit::{max,min}` are inclusive.
+> +        let limit = bindings::xa_limit {
+> +            max: match limit.end_bound() {
+> +                ops::Bound::Included(&end) => end,
+> +                ops::Bound::Excluded(&end) => end - 1,
+> +                ops::Bound::Unbounded => u32::MAX,
+> +            },
+> +            min: match limit.start_bound() {
+> +                ops::Bound::Included(&start) => start,
+> +                ops::Bound::Excluded(&start) => start + 1,
+> +                ops::Bound::Unbounded => 0,
+> +            },
+> +        };
+> +
+> +        let mut index = u32::MAX;
+> +
+> +        // SAFETY:
+> +        // - `self.xa` is always valid by the type invariant.
+> +        // - `self.xa` was initialized with `XA_FLAGS_ALLOC` or `XA_FLAGS_ALLOC1`.
+> +        //
+> +        // INVARIANT: `ptr` is either `NULL` or came from `T::into_foreign`.
+> +        match unsafe {
+> +            bindings::__xa_alloc(
+> +                self.xa.xa.get(),
+> +                &mut index,
+> +                ptr.cast(),
+> +                limit,
+> +                gfp.as_raw(),
+> +            )
+> +        } {
+> +            0 => Ok(to_usize(index)),
+> +            errno => Err(Error::from_errno(errno)),
+> +        }
+> +    }
+> +
+> +    /// Allocates an entry somewhere in the array.
+
+Should we rephrase this to match `alloc`?
+
+  Stores an entry somewhere in the given range of indices.
+
+<cut>
+
+> +impl<T: ForeignOwnable> Reservation<'_, T> {
+> +    /// Returns the index of the reservation.
+> +    pub fn index(&self) -> usize {
+> +        self.index
+> +    }
+> +
+> +    /// Replaces the reserved entry with the given entry.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// `ptr` must be `NULL` or have come from a previous call to `T::into_foreign`.
+
+We should document the effect of replacing with NULL.
+
+
+Best regards,
+Andreas Hindborg
+
 
 
