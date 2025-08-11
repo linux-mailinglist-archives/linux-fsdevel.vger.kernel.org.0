@@ -1,34 +1,34 @@
-Return-Path: <linux-fsdevel+bounces-57250-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57251-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A22CAB1FF87
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 08:47:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 618F1B1FF8D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 08:47:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D78C87A9D9B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 06:45:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8136417206A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 06:47:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C87E12D876B;
-	Mon, 11 Aug 2025 06:46:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCB052D948A;
+	Mon, 11 Aug 2025 06:46:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="bqHVpoX0"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="ptqdBLk0"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE3721FF53;
-	Mon, 11 Aug 2025 06:46:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E69D22D7818;
+	Mon, 11 Aug 2025 06:46:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754894801; cv=none; b=dldoEoiBTsNLzaNmubz2tV346fT5Ffjmkj35E9ih61ZkfyQls9vnNEuTKFozu4/YfNOADhv2u5NZt54hYC/oakeqpXLm87vWA2v2D6DaZYGCeEgIiMm5m1MoMlTH+AO03uu9Hbkzbs6Dk4J8HwkSdgeD60vWxJKMZw9KBmiizeM=
+	t=1754894803; cv=none; b=BQLhNLH37lG/Mg+nXjgLW8xIS/QYZmpNdulfI/8A2GWZisywBchHcwzV328J3XDJvnrKr/UzjM7gblbIZ6RM+onN7xry+rD3710GNos2Y9Cn5g4Shqx4ME614t4n325JYoi500+Gf47+ks3UFyEiC42C6HSkqgGwtSKBQQLOQ0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754894801; c=relaxed/simple;
-	bh=ah5XmN0p5OKT3SnLtU//hFc4ZcLBGKTpPnSb3eCrldk=;
+	s=arc-20240116; t=1754894803; c=relaxed/simple;
+	bh=xA6I6V5RcV7kAy9Brc3IGuiS6TL+tbl6mcXlmUmGFT8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Lun4WiAkC34uLEumx/SKInVMScOO9g2EXX/sRdTgg+XGeK10QFsHe8MWRyJhiTpjFEKl45/Dwzoj2RVNdAmRHnUxNGsds+ltH/8xcvEtMDEidO32OWFXkyQ6B1IXnTXICsTl40NxRWTV+r/0Xx69/QAymqGxyEpG43fIlQBzIq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=bqHVpoX0; arc=none smtp.client-ip=213.97.179.56
+	 MIME-Version; b=cYr1VC90QIKaTbmABBTM4jWp4FtOhjwqIYi5i5bJ2QzcA7Mqf8Zry62mcYJuB8ymSPsNymLOHeBh37WZaAlVXaNZCwNohO6fevxZQUcNEg2rytb1VeEjBD0ltx/wWmDQ2MnpUIb+PGjO1hRI3UsY0HQBG/FOUurBp8EDeMKz+3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=ptqdBLk0; arc=none smtp.client-ip=213.97.179.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
@@ -37,16 +37,16 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
 	List-Post:List-Owner:List-Archive;
-	bh=JhBQCfWXGs3G3r8TkEW6sohCj/RBFaQuR4TU8IFeeZQ=; b=bqHVpoX0CFjJdA0XjxgpcmPI/C
-	WFMGInmi83uYPtBm65B72Q0msNgMnA6+J77c+yKJ3q3VHndYyVdOpBaLbp3dTyXZzH1KcZTnyNjV7
-	y72ADIofsMLkA2kVjjVijOamXmdZuz4xIKDGym2GS9nu9esYZRUSySNSselGRlHpJ1KXAJOY6DB66
-	me/84O7axpghwjoiDzQ6z2YXD+S+93OiQe+d9yPk8DpOo+kUS6gfArjoQehlAA1OYNK2XMu0xy59y
-	Le7SmcIUt7AQie1E4fvhyPR0pUOpP3al3GIm+ZMPyLjLGRYltuFcN9PBCf+/tyJg7X2P+hsYS4Uaf
-	aXdF12Tg==;
+	bh=AkOlSlHnGVT1KRBhwKqmf727gWs6TB6cX2vkRjDeLAc=; b=ptqdBLk0JKXdgsD1MQ7pDWNbTJ
+	Yx6u6119QunQo0/L3znvKKPWvfMTw2okCRnwrEiRIRokDj1xoz/hYlOpd6xAEXBuoefl8ebPAJWfM
+	a8W4kh0bCi0vufydf+xHW33x3Q/dIONhTo01K5Mh3sDrHL18fF1d6WTvbZ/IWAENhbHLW7EY+r0Cg
+	GhV4G6bw1PCYjifGJuvX/EesWsCX6t4y+2t9SWGNtas36iC45P42cXDjqAlINGwf/eDK2ygbczQdR
+	aj3YnkYVkBcFXcsTFgwnJxeQCrFVIvvVxF2F6+Fa9hUOmoxA1WuzkDINqs1aLpAX/ewJv9rhHknHu
+	FwX5swJQ==;
 Received: from [223.233.69.163] (helo=localhost.localdomain)
 	by fanzine2.igalia.com with esmtpsa 
 	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1ulMIg-00Cdun-Jd; Mon, 11 Aug 2025 08:46:31 +0200
+	id 1ulMIn-00Cdun-Li; Mon, 11 Aug 2025 08:46:38 +0200
 From: Bhupesh <bhupesh@igalia.com>
 To: akpm@linux-foundation.org
 Cc: bhupesh@igalia.com,
@@ -82,9 +82,9 @@ Cc: bhupesh@igalia.com,
 	linux-trace-kernel@vger.kernel.org,
 	kees@kernel.org,
 	torvalds@linux-foundation.org
-Subject: [PATCH v7 1/4] exec: Remove obsolete comments
-Date: Mon, 11 Aug 2025 12:16:06 +0530
-Message-Id: <20250811064609.918593-2-bhupesh@igalia.com>
+Subject: [PATCH v7 2/4] include: Set tsk->comm length to 64 bytes
+Date: Mon, 11 Aug 2025 12:16:07 +0530
+Message-Id: <20250811064609.918593-3-bhupesh@igalia.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20250811064609.918593-1-bhupesh@igalia.com>
 References: <20250811064609.918593-1-bhupesh@igalia.com>
@@ -96,49 +96,59 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Patch 3a3f61ce5e0b ("exec: Make sure task->comm is always NUL-terminated"),
-replaced 'strscpy_pad()' with 'memcpy()' implementations inside
-'__set_task_comm()'.
+Historically due to the 16-byte length of TASK_COMM_LEN, the
+users of 'tsk->comm' are restricted to use a fixed-size target
+buffer also of TASK_COMM_LEN for 'memcpy()' like use-cases.
 
-However a few left-over comments are still there, which mention
-the usage of 'strscpy_pad()' inside '__set_task_comm()'.
+To fix the same, we now use a 64-byte TASK_COMM_EXT_LEN and
+set the comm element inside 'task_struct' to the same length:
+       struct task_struct {
+	       .....
+               char    comm[TASK_COMM_EXT_LEN];
+	       .....
+       };
 
-Remove those obsolete comments.
+       where TASK_COMM_EXT_LEN is 64-bytes.
 
-While at it, also remove an obsolete comment regarding 'task_lock()'
-usage while handing 'task->comm'.
+Note, that the existing users have not been modified to migrate to
+'TASK_COMM_EXT_LEN', in case they have hard-coded expectations of
+dealing with only a 'TASK_COMM_LEN' long 'tsk->comm'.
 
 Signed-off-by: Bhupesh <bhupesh@igalia.com>
-Reviewed-by: Kees Cook <kees@kernel.org>
 ---
- include/linux/sched.h | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ include/linux/sched.h | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 2b272382673d..35f1ef06eb6c 100644
+index 35f1ef06eb6c..87e9dfaf61ac 100644
 --- a/include/linux/sched.h
 +++ b/include/linux/sched.h
-@@ -1159,10 +1159,8 @@ struct task_struct {
- 	 *
- 	 * - normally initialized begin_new_exec()
- 	 * - set it with set_task_comm()
--	 *   - strscpy_pad() to ensure it is always NUL-terminated and
-+	 *   - logic inside set_task_comm() will ensure it is always NUL-terminated and
- 	 *     zero-padded
--	 *   - task_lock() to ensure the operation is atomic and the name is
--	 *     fully updated.
- 	 */
- 	char				comm[TASK_COMM_LEN];
+@@ -318,6 +318,7 @@ struct user_event_mm;
+  */
+ enum {
+ 	TASK_COMM_LEN = 16,
++	TASK_COMM_EXT_LEN = 64,
+ };
  
-@@ -1972,7 +1970,7 @@ extern void __set_task_comm(struct task_struct *tsk, const char *from, bool exec
-  *   User space can randomly change their names anyway, so locking for readers
-  *   doesn't make sense. For writers, locking is probably necessary, as a race
-  *   condition could lead to long-term mixed results.
-- *   The strscpy_pad() in __set_task_comm() can ensure that the task comm is
-+ *   The logic inside __set_task_comm() should ensure that the task comm is
-  *   always NUL-terminated and zero-padded. Therefore the race condition between
-  *   reader and writer is not an issue.
-  *
+ extern void sched_tick(void);
+@@ -1162,7 +1163,7 @@ struct task_struct {
+ 	 *   - logic inside set_task_comm() will ensure it is always NUL-terminated and
+ 	 *     zero-padded
+ 	 */
+-	char				comm[TASK_COMM_LEN];
++	char				comm[TASK_COMM_EXT_LEN];
+ 
+ 	struct nameidata		*nameidata;
+ 
+@@ -1961,7 +1962,7 @@ extern void kick_process(struct task_struct *tsk);
+ 
+ extern void __set_task_comm(struct task_struct *tsk, const char *from, bool exec);
+ #define set_task_comm(tsk, from) ({			\
+-	BUILD_BUG_ON(sizeof(from) != TASK_COMM_LEN);	\
++	BUILD_BUG_ON(sizeof(from) < TASK_COMM_LEN);	\
+ 	__set_task_comm(tsk, from, false);		\
+ })
+ 
 -- 
 2.38.1
 
