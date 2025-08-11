@@ -1,93 +1,171 @@
-Return-Path: <linux-fsdevel+bounces-57342-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57343-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2A78B209C2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 15:12:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAA27B209D2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 15:14:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F09E7B2B96
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 13:10:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1001218A6F6A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 13:14:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D92FE2DCF67;
-	Mon, 11 Aug 2025 13:11:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481632DC326;
+	Mon, 11 Aug 2025 13:14:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bzzt.net header.i=@bzzt.net header.b="XZl4ihZK";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="lQCKAswU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 150162DCF45
-	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Aug 2025 13:11:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A1F2D3EDC;
+	Mon, 11 Aug 2025 13:14:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754917866; cv=none; b=WcDLqJvWcizGGMYDZdAyj5jNHWS0IAWsNvmgM6gKVX6g/jYjrk96b4ivEY3MHlVXI3KuF6DPpNRMuVBD0XKTpGwjnQqkRlUOdunX36tTqekgZDJ6eB7jwCi68B3/CReTFzN1dLB0rXpsONZgCcQeGyPtlLC13IOgatsBHGFHSG4=
+	t=1754918064; cv=none; b=hC/9d+Ed4vUPmFxxUFsR0E6VbwqqjfxEPHad3PkXydBGqpeT/VVMxfNO5msYAsX2XOHScXENE8baC2YdzP0AzLT3Y7M+ldswNhLS7BxQjkt0h0P0/2gPydBuum7OPU9EioylPPe2NFhFPlzDDihwPgl2Ez/51M41SmAyWrjdxu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754917866; c=relaxed/simple;
-	bh=xD0rhCCQDxyiCTCiqij42tudVaP/CESMLu3wSMvzdTM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ZQIbzUthmdeGZs6vRJrRLcErghSUhqWIFa8x+rBcQJZ+iDF3FtuBAaW2bTHwegp2aEv0T4gkVW6bsbzH9N/qy7XIcsHPc0c6icFY+wmrXsWmbV4OmZf2khQcQ/+m8nRvNMnX0xB1DVY6ErGfbpnCr+JyEAYKGu+9FCF3pbAJ8bo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-881878af906so869441839f.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Aug 2025 06:11:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754917864; x=1755522664;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=n9dk/KXnfmnIr4tFpnYGM6Fy+h6Hay7E0LqrHRkUZ/Y=;
-        b=aKP73IEFY5PYcJ2fz9/lL0cThKe+lR7prkDvrZRtmRZHem17+eOs6wLzvXkIeYfZXs
-         FEdBk/wb68sOa6dGdGhZB+tMJZO5GiyxmoSffOXpEkd6T8JDaMdoVzuK3rNwp4bkoyCI
-         Fi0/i9a2A7uv0Ure04Tbvombe/EVxoeH08G9mJkBk3YJTBYzTAkrppJwSx/ztrJqXGc6
-         xeRT48mMUOQISKEjnRe4uY4p3UdkG6HjL/RlBDgjrQu2wenLVyF9mXLtFJZ+7vvw3WLz
-         Maig+klvCsrUz266UXjisvzYME+XrZDoqqTrYcGP4aRQ7V2/CR527vi/KNnDoZV9D+WS
-         ppDA==
-X-Forwarded-Encrypted: i=1; AJvYcCVjqXxSB2nfImge3XEkMDxf0epopTp+Uch4T5Zx2lkakW6fulaxEGRIrNqBjferSnKKqeZtA34SQ9Kmiozn@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/OpDOkkGpTx3M2kmSYcQTh7Ya3J2pSGZil2VoS+RKFiGC0WzG
-	r5Yo+t+mAXFLSlQYh+TmYSL8rE1x6iLyknW9p/n4rXAIOHk5U8nbWpW6Lk7wQDGW4mx7CdcRryS
-	UtGj3bt27DF6UOgMiv1Wc5v8I6fhMcj76ZHVs8a00xqcjV7v9x9EQiHqx+Ro=
-X-Google-Smtp-Source: AGHT+IHp9kHMc1UpwKQ0Vk7zM8V/ayxaruCybpjEPHUNxmSMW53BtQydoWKdfjWT0CkXKjyVjb9CYlFLTTfcQDbsDeNWS2uKGzn4
+	s=arc-20240116; t=1754918064; c=relaxed/simple;
+	bh=DPLqD3GGr96cRV7HKqFLj2qf/dhmL3aEJpnOdLbyf78=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=CWSPlcn+CKd58Uen3WWY+pgJ0mD0JBS6dt9/8u7vHf1jMLWGSEreSoVnSbgOl253CE2x/Xhw6aLv/QRbw//EK6uWtsr3625/ZryPV+jBRncg9JQJEBzK0MM5KVvXENuI7Vrxe3JGmDJRF7HTf1BzhzXoemMpqvEolEL6Ap2vDFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bzzt.net; spf=pass smtp.mailfrom=bzzt.net; dkim=pass (2048-bit key) header.d=bzzt.net header.i=@bzzt.net header.b=XZl4ihZK; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=lQCKAswU; arc=none smtp.client-ip=202.12.124.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bzzt.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bzzt.net
+Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
+	by mailfout.stl.internal (Postfix) with ESMTP id 593B31D00093;
+	Mon, 11 Aug 2025 09:14:21 -0400 (EDT)
+Received: from phl-imap-01 ([10.202.2.91])
+  by phl-compute-12.internal (MEProxy); Mon, 11 Aug 2025 09:14:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bzzt.net; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1754918061;
+	 x=1755004461; bh=RGqZbPWNuOFgVl2x8ZENQQRp+k804OgLKfLNdr8vPUc=; b=
+	XZl4ihZKzGNAn4imgaCNI9lV+gAE+C+n+6xDSi75QFoUph3fymabm6DhFIXeGxO1
+	3UwkLCA2vBQObwwZE6rXxU404D23fJbsTPSbP9yGbDcMhTGLuzpgjFh1jKW12MNU
+	SwMJEGotcXsjSKJHtu90FhvpDJ+7ylANePEqKsCfeEe61DvmRnmNi/ugIFnuQd/P
+	ZLcjmwm2SELbfUcTt11wT5I0tNgLXfYokaWt7CjRm7iPV2uV9p2B2UKLTMsjjc2C
+	gLpQ/Omr61FfVawe7NruHYztXC878Y0hHh4kaiXUSTG3v9N+Ox4N5mAjhLd2Jna+
+	6Fm9PgsVRRdsWBqLzsYzhg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1754918061; x=
+	1755004461; bh=RGqZbPWNuOFgVl2x8ZENQQRp+k804OgLKfLNdr8vPUc=; b=l
+	QCKAswUPaGiNwxks850xeoFVJbjn0xI46Zyd9HHheohUe5z9I0dgzLEKf7YxhkMo
+	LEKJW3kr+zDo0vpC6uxxmr9wKx5FnErrUUzSLx/SJuyMTLAJhaOsFlqXS+Xq+OOb
+	Dso5MQ39RjlPXfpsBrfn6A26bk1tvjW893/yF2aHAshirwxFEE5fmIWINso7P2Qs
+	HoVB13QYrL9Jxbqn6IKX2HNVw0+xMo8kN1ZByR0ZgkcVbPeWyu6V4mHTftelk9jK
+	BRJz3jsSH9vmnlbcCr/LDV1UEYooopF3t8efHmmpFLcGvT1d/FTuhF2sm0pQXTlD
+	Cblk8qX6XXgykirFWVgbA==
+X-ME-Sender: <xms:rOyZaFQarlfNFgoKw07xdvZT3yqe0tR9w0gfW8HtLKYHM0Kwp0zbiw>
+    <xme:rOyZaOzJLiYqB9OpvW33KeKk-G9OXNjsZ1zYMWPJoWejvHS1fDxtv1-5LVetDAnzn
+    TOVk7BIDt0_wluFP1s>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufedvheegucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhho
+    uhhtucfgnhhgvghlvghnfdcuoegrrhhnohhuthessgiiiihtrdhnvghtqeenucggtffrrg
+    htthgvrhhnpeefkeffgfekvefhjeettdelueelfffgtdevfeeftdefveejieeuheehheeh
+    vefhveenucffohhmrghinhepvghnghgvlhgvnhdrvghunecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhhouhhtsegsiiiithdrnhgvthdp
+    nhgspghrtghpthhtohepuddvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrsh
+    hmrgguvghushestghouggvfihrvggtkhdrohhrghdprhgtphhtthhopegtthesfhhlhihi
+    nhhgtghirhgtuhhsrdhiohdprhgtphhtthhopeifihhllhihsehinhhfrhgruggvrggurd
+    horhhgpdhrtghpthhtohepsghrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthht
+    oheprhihrghnsehlrghhfhgrrdighiiipdhrtghpthhtoheprghkphhmsehlihhnuhigqd
+    hfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehmrgigihhmihhlihgrnhesmhgs
+    ohhstghhrdhmvgdprhgtphhtthhopeguhhhofigvlhhlshesrhgvughhrghtrdgtohhmpd
+    hrtghpthhtoheplhhinhhugidqsghlohgtkhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:rOyZaKtBin8L3MIfTfYFtlhNFH2YI58KgNEnlrngOpw3QENt80mZ1A>
+    <xmx:rOyZaM96b9KAZUw_tpXAkeQukwXczQHMqOMDltACQnrTvMe68QnyEg>
+    <xmx:rOyZaIY3ZxjddhXV3JoZ1GapBbwRBi3LOa1Toba1bZfIHG--mnqe3A>
+    <xmx:rOyZaKpV1EoBGVsP5aAhkPmqZ8y4QgAyP8KZAr6V58mLiofcBfu34w>
+    <xmx:reyZaIMdwIDo1nl5FAQnOn3laBWP7fLUMTk6gbmYgR0_FPJvYx-DeF4x>
+Feedback-ID: i8a1146c4:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 3F2AA18C0066; Mon, 11 Aug 2025 09:14:20 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1585:b0:882:a22d:c543 with SMTP id
- ca18e2360f4ac-883f1268d15mr2517820939f.12.1754917864223; Mon, 11 Aug 2025
- 06:11:04 -0700 (PDT)
-Date: Mon, 11 Aug 2025 06:11:04 -0700
-In-Reply-To: <684c05ba.050a0220.be214.029e.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6899ebe8.a70a0220.7865.003f.GAE@google.com>
-Subject: Re: [syzbot] [hfs?] INFO: task hung in hfs_mdb_commit (3)
-From: syzbot <syzbot+6bdbdd12cf8cdbc66466@syzkaller.appspotmail.com>
-To: anders.roxell@linaro.org, arnd@arndb.de, brauner@kernel.org, 
-	frank.li@vivo.com, glaubitz@physik.fu-berlin.de, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	slava@dubeyko.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-ThreadId: ALpogynE4SFc
+Date: Mon, 11 Aug 2025 15:13:59 +0200
+From: "Arnout Engelen" <arnout@bzzt.net>
+To: "Dominique Martinet" <asmadeus@codewreck.org>,
+ "Matthew Wilcox" <willy@infradead.org>,
+ "Christian Brauner" <brauner@kernel.org>,
+ "David Howells" <dhowells@redhat.com>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Andrew Morton" <akpm@linux-foundation.org>
+Cc: "Maximilian Bosch" <maximilian@mbosch.me>, "Ryan Lahfa" <ryan@lahfa.xyz>,
+ "Christian Theune" <ct@flyingcircus.io>, linux-kernel@vger.kernel.org,
+ linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Message-Id: <21fceb38-4c0d-4183-a929-c824a3cb46a9@app.fastmail.com>
+In-Reply-To: <20250811-iot_iter_folio-v1-2-d9c223adf93c@codewreck.org>
+References: <20250811-iot_iter_folio-v1-0-d9c223adf93c@codewreck.org>
+ <20250811-iot_iter_folio-v1-2-d9c223adf93c@codewreck.org>
+Subject: Re: [PATCH 2/2] iov_iter: iov_folioq_get_pages: don't leave empty slot behind
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-syzbot suspects this issue was fixed by commit:
+Great! I can confirm this indeed fixes my reproducer, and the iov_iter
+now looks sensible in gdb as far as I can judge.
 
-commit 42b0ef01e6b5e9c77b383d32c25a0ec2a735d08a
-Author: Arnd Bergmann <arnd@arndb.de>
-Date:   Fri Jul 11 08:46:51 2025 +0000
+Tested-by: Arnout Engelen <arnout@bzzt.net>
 
-    block: fix FS_IOC_GETLBMD_CAP parsing in blkdev_common_ioctl()
+On Mon, Aug 11, 2025, at 09:39, Dominique Martinet via B4 Relay wrote:
+> From: Dominique Martinet <asmadeus@codewreck.org>
+> 
+> After advancing into a folioq it makes more sense to point to the next
+> slot than at the end of the current slot.
+> This should not be needed for correctness, but this also happens to
+> "fix" the 9p bug with iterate_folioq() not copying properly.
+> 
+> Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
+> ---
+> lib/iov_iter.c | 6 +++---
+> 1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+> index f9193f952f49945297479483755d68a34c6d4ffe..65c05134ab934e1e0bf5d010fff22983bfe9c680 100644
+> --- a/lib/iov_iter.c
+> +++ b/lib/iov_iter.c
+> @@ -1032,9 +1032,6 @@ static ssize_t iter_folioq_get_pages(struct iov_iter *iter,
+> maxpages--;
+> }
+>  
+> - if (maxpages == 0 || extracted >= maxsize)
+> - break;
+> -
+> if (iov_offset >= fsize) {
+> iov_offset = 0;
+> slot++;
+> @@ -1043,6 +1040,9 @@ static ssize_t iter_folioq_get_pages(struct iov_iter *iter,
+> slot = 0;
+> }
+> }
+> +
+> + if (maxpages == 0 || extracted >= maxsize)
+> + break;
+> }
+>  
+> iter->count = count;
+> 
+> -- 
+> 2.50.1
+> 
+> 
+> 
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=133fa9a2580000
-start commit:   19272b37aa4f Linux 6.16-rc1
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c07f08ee4bcfb276
-dashboard link: https://syzkaller.appspot.com/bug?extid=6bdbdd12cf8cdbc66466
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16e6ca0c580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15d429d4580000
-
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: block: fix FS_IOC_GETLBMD_CAP parsing in blkdev_common_ioctl()
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+-- 
+Arnout Engelen
+Engelen Open Source
+https://engelen.eu
 
