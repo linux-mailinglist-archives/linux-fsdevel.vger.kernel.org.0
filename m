@@ -1,135 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-57351-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57352-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19CE2B20A7E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 15:39:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D7939B20A94
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 15:42:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 327F82A31A2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 13:39:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BDE317760B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 13:42:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871692DECBA;
-	Mon, 11 Aug 2025 13:38:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8876B1E990E;
+	Mon, 11 Aug 2025 13:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="YrRN6BWV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cv2rISWf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC4F82DEA76;
-	Mon, 11 Aug 2025 13:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCBAF2DE1FE;
+	Mon, 11 Aug 2025 13:41:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754919536; cv=none; b=VMdBqcmI/RTz1X7rw4Jx9xq8j26FpBgDk1OhE1/XOjoARlBVYo65eJZy8ehRvifa8yNYLQwO9VSboAfV+LCAoSpXHoKQXD9F8ok9MWmWdBSEsK4snqXHIYVVRLyDxOdqRkSaLpcaKxXRLIpB/3wvlVWXrF3JMrT+rxCETMpLw9Y=
+	t=1754919713; cv=none; b=m7nrz1CPwuU8h6curHUuv+hvZTWR9q/GAp43W/j5gTAfL6hhum/1b2ni0LzeldFIH+biGFp3OvMtMXev5b9b5BFlDukHdYejP28Zlxd3Kzz037DgRE35v5cNMxqeT/XFQ2AQUcruOrmUZxxaF3mSVxidTOuf9etWXhRGSb7EVR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754919536; c=relaxed/simple;
-	bh=NTxLN/OIxdavvXriPAMpsQ/MGWkSJkBk6dizUl8lFio=;
+	s=arc-20240116; t=1754919713; c=relaxed/simple;
+	bh=3osHvzoxJlsSVwbZTMcuJWxZaUZZUOM5NQIViYuVKo0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k8L/ydHYEgRpqTesJvXmoMhDe3rA8bHaQv+mp1DBE1dCWcpPOXMSFYUuy/az4VWw7WKXHNIvvauMl84VojmtW8l++xHZb8GhGmtF+DTUgqYjf0DHoisZ5O1A5SQ8+TDxSm1egV5kIL4UzadNqOst86QdXdBIXBoLQvBvJyPebTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=YrRN6BWV; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ZpQwJb5N9DB6xXQvZYGJMUsct3O7Ai+ocYqxGIM0vSk=; b=YrRN6BWVo93BdrvTMPbddp9LK5
-	B5YtER7BRP33UvwIdaC4KYrEI0T1O6A9iOXgJrpYb9/E93HYrmnrFK+X6sq1iV+RQpq5ZZwHPm+Ze
-	JfJz6A5T31t3lEzJJhiMpltBvWmqbdh2VwmJeI8L1yXn86r/ZJaSSP4jp7WwQsB5aUA2YRSv2wRIT
-	lPDmHXpY+IasxZrQ6pyP2fq5BWEX/uqZvBSkgqnScZVMKVKzMPOKei2RRCwHp+SRRwXegFn/g7de8
-	ffUsXh46HjYGaKTIdpma4N0YDBxq/U1AuACimlqGDUCm0i2Vf12QYSdZMmS8ivZOuZauIs+nY6XP5
-	FN0Y6rYA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ulSjg-0000000147G-1Sic;
-	Mon, 11 Aug 2025 13:38:48 +0000
-Date: Mon, 11 Aug 2025 14:38:48 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	ntfs3@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH] vfs: exclude ntfs3 from file mode validation in
- may_open()
-Message-ID: <20250811133848.GR222315@ZenIV>
-References: <fb3888fb-11b8-481b-86a6-766bbbab5c81@I-love.SAKURA.ne.jp>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CFs4f+YqbUuUUjGqNg8QM3GiR7sGMTzT/4nGPE5oXao7lXHsmX3M8s4XvW805D8JKDD6j20h9g8vqya2/XMyhS4nYysigA+hPpdD51r6zPEGvqo8R+UK0mwOmINMb7SBZ07M1W5GdA1LrCHso9fm3OHz5aBrikHjTiXgia0M0bw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cv2rISWf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF4E6C4CEF5;
+	Mon, 11 Aug 2025 13:41:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754919712;
+	bh=3osHvzoxJlsSVwbZTMcuJWxZaUZZUOM5NQIViYuVKo0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Cv2rISWfyFxRCHlwTXtn3759cvclKZ9lX5SNGmiE3nVvUOKL2IUjQLTHTN4fo272s
+	 /ATBpwQqx9iJfZMMaq3s1cyPR96JrhfvQANGdVTmWze99tr+JjZ7mpyBoGoEtY5BVG
+	 P7i2ON0QlAmVPfMoSD7mG7TxYj3uLuXBv21h8A7U+h4r/Q+3JD708lAG53459Rmwqb
+	 PD2PEnD8h1FSRvJT37bZ+cf/THz9LvFKOe76nMAC5tSSwN+dPVAhl8eugEB+x2+PRN
+	 l2vzce0QbG0YfxfD8U4pf0vLLcPKA2TgIJTjtLOQ2K/m0dhWfhLSsrd+9nnPJgLiwC
+	 4wZi1catHRD+Q==
+Date: Mon, 11 Aug 2025 15:41:48 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Fushuai Wang <wangfushuai@baidu.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	viro@zeniv.linux.org.uk, jack@suse.cz
+Subject: Re: [PATCH] coredump: simplify coredump_skip()
+Message-ID: <20250811-vielversprechend-imker-3a87ced68e95@brauner>
+References: <20250811075155.7637-1-wangfushuai@baidu.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <fb3888fb-11b8-481b-86a6-766bbbab5c81@I-love.SAKURA.ne.jp>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20250811075155.7637-1-wangfushuai@baidu.com>
 
-On Mon, Aug 11, 2025 at 04:05:51PM +0900, Tetsuo Handa wrote:
-> Since ntfs_read_mft() not only accepts file modes which may_open() accepts
-> but also accepts
+On Mon, Aug 11, 2025 at 03:51:55PM +0800, Fushuai Wang wrote:
+> Replace the multi-if conditional check with a single return statement.
 > 
->   (fname && fname->home.low == cpu_to_le32(MFT_REC_EXTEND) &&
->    fname->home.seq == cpu_to_le16(MFT_REC_EXTEND)
-> 
-> case when the file mode is none of
-> S_IFDIR/S_IFLNK/S_IFREG/S_IFCHR/S_IFBLK/S_IFIFO/S_IFSOCK, may_open() cannot
-> unconditionally expect IS_ANON_FILE(inode) when the file mode is none of
-> S_IFDIR/S_IFLNK/S_IFREG/S_IFCHR/S_IFBLK/S_IFIFO/S_IFSOCK.
-> 
-> Treat as if S_IFREG when the inode is for NTFS3 filesystem.
-> 
-> Reported-by: syzbot <syzbot+895c23f6917da440ed0d@syzkaller.appspotmail.com>
-> Closes: https://syzkaller.appspot.com/bug?extid=895c23f6917da440ed0d
-> Fixes: af153bb63a33 ("vfs: catch invalid modes in may_open()")
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Signed-off-by: Fushuai Wang <wangfushuai@baidu.com>
 > ---
-> Is it possible to handle this problem on the NTFS3 side?
-> 
->   --- a/fs/ntfs3/inode.c
->   +++ b/fs/ntfs3/inode.c
->   @@ -470,8 +470,9 @@ static struct inode *ntfs_read_mft(struct inode *inode,
->           } else if (fname && fname->home.low == cpu_to_le32(MFT_REC_EXTEND) &&
->                      fname->home.seq == cpu_to_le16(MFT_REC_EXTEND)) {
->                   /* Records in $Extend are not a files or general directories. */
->                   inode->i_op = &ntfs_file_inode_operations;
->   +               mode = S_IFREG;
->           } else {
->                   err = -EINVAL;
->                   goto out;
->           }
-> 
-> I don't know what breaks if we pretend as if S_IFREG...
-> 
->  fs/namei.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index cd43ff89fbaa..a66599754394 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -3471,6 +3471,12 @@ static int may_open(struct mnt_idmap *idmap, const struct path *path,
->  			return -EACCES;
->  		break;
->  	default:
-> +		/* Special handling for ntfs_read_mft() case. */
-> +		if (inode->i_sb->s_magic == 0x7366746e) {
-> +			if ((acc_mode & MAY_EXEC) && path_noexec(path))
-> +				return -EACCES;
-> +			break;
-> +		}
->  		VFS_BUG_ON_INODE(!IS_ANON_FILE(inode), inode);
->  	}
->  
 
-Bravo, but that's several months late - would be lovely for an AFD posting.
-In the current form the patch is obviously unacceptable; if we do that
-kind of special-casing, the proper place is in register_filesystem() where
-we clearly ought to compare fs->name with "ntfs" and return an error.
-
-All jokes aside, this kind of stuff is a non-starter.  Blacklist it on
-syzbot side or fix fs/ntfs3; VFS is *NOT* the place for this kind of
-special-casing.
+This is a matter of taste. Thanks for the idea but the checks on
+separate lines make it easier to read.
 
