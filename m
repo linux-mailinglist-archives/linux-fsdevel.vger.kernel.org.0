@@ -1,69 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-57358-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57359-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4914BB20B4E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 16:10:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9F7EB20B47
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 16:09:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8995218C7A81
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 14:08:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E378D2A5F6C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 14:08:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC36820F070;
-	Mon, 11 Aug 2025 14:07:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B785C35971;
+	Mon, 11 Aug 2025 14:08:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RJcS1rQA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G/qI0wiI"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E041EE7C6;
-	Mon, 11 Aug 2025 14:07:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E1A41A314B;
+	Mon, 11 Aug 2025 14:08:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754921259; cv=none; b=bLzvZgHFPmWpvwidIk7BapioH1qc/ztCSJnPd3N4A0W+Nm5YnixbCaa7lqc4GKLc4donCrqmp57pmanHr7U0wOWwThbRuk7qOjlu4zwGXKP/FE1GL1vNzrITWA55E6WpOoi/Tfs+xixBJRqY1QPaVd4ly7+eRhAe4zK+bhRY45k=
+	t=1754921306; cv=none; b=JM+kykrNHL5Tpji1xMszHGZcf/Wn1xK4FXwnRuoQHi3hUZ4aggEHkboB7NDouTTaibPvdDMncweIVTR2jUVYuTV5SCaHKGp6ufiIqCZGKQ3PFYAFvsl1KmLWr7rKpg7KJZyNIvbeNehzRac3Fgts/MdSUhN6xaGfNaZHWtXGXkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754921259; c=relaxed/simple;
-	bh=K7u0H5z3vDfaEXuo51/4K17TiD6LYFYSNJZ33PJEquU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tYKjaYa+dxvgbPbfSEwVrh3hO52x+VyaWLDBJ9SY3QPRdZfPs8ECC9ty6or4b74VhCFxwxqXpCvwHb8ndg1lqE57YLskfU5FN29JHQ4vZpr8PTilU3KMK5QDB37Lc2cPSP6Ex/41Jhuk9LtcMMABUhWa4z+rldR068ePgmRCqQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RJcS1rQA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D700C4CEED;
-	Mon, 11 Aug 2025 14:07:36 +0000 (UTC)
+	s=arc-20240116; t=1754921306; c=relaxed/simple;
+	bh=HGN8ywaENQf9F+hB5Ui43d4vB2fUp6slqVPWEkCXdEY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UlYBs3Oe6cW3GNQMov6cNJP/Fe412lUxa0+N52fVLizcee3BGixe4HThrzM0ib5WEhXvmLWrQVgh9xYguF4Ag2Ed3+dbxmY5rC6kah2EMLPhtB9qvmrSwBoWwsbzfKkid6uGrwVKlosKYxsnnOMuzT6pb56iocydJx5CULh68rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G/qI0wiI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11D79C4CEED;
+	Mon, 11 Aug 2025 14:08:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754921257;
-	bh=K7u0H5z3vDfaEXuo51/4K17TiD6LYFYSNJZ33PJEquU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RJcS1rQAlW6dT9Rd688QHivCWZHiBQOAKFRBEHm6hfFbbcP0xytKlrMaL/6x9IZxd
-	 t5lQ5EO2PL8/qHEeaKGvKMmx57UoQBS6Om16yDN54wx3EdONQQo4F5Z7uUFrE2Iwzc
-	 jc4EwF6Oi/1wBtK4yhsy0cHKSKUjbGKHfWgbVl1PKoeIALoNPirpWsNfb1p7OEk5w8
-	 i/NvvKxjfeLQ18r3Jr79xE5SUbM6WBXsrsSbQoC2+wYvNkqC+rdL2yrWemfREOF/5r
-	 aufZHBepgSpuHAEEzM50wsrO0WASTn/TJh1TKmJpcvF4SLDTYWBBywIYcRThY5jVBE
-	 c2jW7rjzEnuPg==
-Date: Mon, 11 Aug 2025 16:07:33 +0200
+	s=k20201202; t=1754921305;
+	bh=HGN8ywaENQf9F+hB5Ui43d4vB2fUp6slqVPWEkCXdEY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=G/qI0wiIkCSD4DJBwkLBvRcUNbMNoRUx1flA9hVC2M7sCTsdWsLe1qn6WicKrxACr
+	 VvpD/OynAgGf3BmmDkpzbJnxmqci0ICxbUxv/UWtLqs+rYLeVG3WYqSB8BF+sT0Fks
+	 zgr8QgWAi9yoShSjqrDLc/+rEYxKz5MmPg6yYW0HKCnU+wr7THNb4JpqVomW+M3e2Y
+	 vcGxsb2B7+BfL5GbtcfF95VZuVDAj7D1yfBE+L1yLo65SS+lZpbPjKDkVgC3OAzWWd
+	 xk2P2kUhRPm6ot/KpJ5cbvj0RaLxgVvh5lneqyOctHUUVMcivg1ZfTTV1vQEwx1wCF
+	 A0YLR3JZzV4pA==
 From: Christian Brauner <brauner@kernel.org>
-To: Yuntao Wang <yuntao.wang@linux.dev>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] fs: fix incorrect lflags value in the move_mount syscall
-Message-ID: <20250811-petrischalen-rednerpult-9cf14ac266da@brauner>
-References: <20250811052426.129188-1-yuntao.wang@linux.dev>
+To: Askar Safin <safinaskar@zohomail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	David Howells <dhowells@redhat.com>,
+	patches@lists.linux.dev,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH] vfs: fs/namespace.c: remove ms_flags argument from do_remount
+Date: Mon, 11 Aug 2025 16:08:14 +0200
+Message-ID: <20250811-regie-wandlung-afa613e3853f@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250811045444.1813009-1-safinaskar@zohomail.com>
+References: <20250811045444.1813009-1-safinaskar@zohomail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250811052426.129188-1-yuntao.wang@linux.dev>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=881; i=brauner@kernel.org; h=from:subject:message-id; bh=HGN8ywaENQf9F+hB5Ui43d4vB2fUp6slqVPWEkCXdEY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTM/BnKeGW6eEPVt3viaxZPzjNiv+sql/e44+lvng35A Wmlr9MbOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbi0crwv9zBVEKN1TlqhqLM 7+Unb92XOVnU7iK/sUXjXtahOOHsfob/WRU22m7vHl0znzB9pnt89py7unrb3l6+szB7w5nQpZ3 p3AA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 11, 2025 at 01:24:26PM +0800, Yuntao Wang wrote:
-> The lflags value used to look up from_path was overwritten by the one used
-> to look up to_path.
+On Mon, 11 Aug 2025 04:52:23 +0000, Askar Safin wrote:
+> ...because it is not used
 > 
-> In other words, from_path was looked up with the wrong lflags value. Fix it.
+> 
 
-Right, thanks.
+Applied to the vfs-6.18.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.18.misc branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.18.misc
+
+[1/1] vfs: fs/namespace.c: remove ms_flags argument from do_remount
+      https://git.kernel.org/vfs/vfs/c/59f67bb635a8
 
