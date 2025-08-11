@@ -1,144 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-57336-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57337-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05F16B20897
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 14:18:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62C60B208C4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 14:26:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 307E5426586
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 12:18:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EF2F16C66F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 12:26:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D08E2D322F;
-	Mon, 11 Aug 2025 12:18:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 361D32D3A83;
+	Mon, 11 Aug 2025 12:25:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Na5vuT96"
+	dkim=pass (2048-bit key) header.d=manguebit.org header.i=@manguebit.org header.b="FZOHRrf8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx1.manguebit.org (mx1.manguebit.org [143.255.12.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406F5F9C1;
-	Mon, 11 Aug 2025 12:18:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36B2B2D3A63;
+	Mon, 11 Aug 2025 12:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=143.255.12.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754914687; cv=none; b=NPnzuFsHgryQgZbxThhCXlX6b2i/mHD/TG9CDbuLPLx3E9WjrSo9ytrbxWnYpvAB2nMDSgvnwLLwv4GOqg5JAn986ndC9R6m3tYdruL11bVh78ill8sEVY7lfcVCApklRyP048wfSjKZ3ki/aIgscx1qkwkh9IJhChKuuVb8kkA=
+	t=1754915141; cv=none; b=tqQzH9GtJNZ9/HNYeBIwfeDp2i1Ffx63YVOn6xpK2Wa0DZe1qneu3hA7hamAfEwnTgz7T6bYbfSCfOtUYAOl+7Ypx1IaDcV495bDLdi7v0XEEtp0aKme8/ECfBDqjpPZ4tH9XnileM2zUua3em7dp7S5H1NTDOVlkGeVk4l++MQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754914687; c=relaxed/simple;
-	bh=MVA3cmSNN27LkxyEA8lesQ3/osK84jmCIGC0z7Qenn0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AqB/2FeuoHUYLLZ6JBe8JJwNpGt5mLZwp5iuSmvxDFKvHrV/KXJDH3USzNpf5Dz1gVZAPr1VtpfGiSXG+qNVVINM6uanrbeqPjFlpTq0YeQQkkYqlgeW9taEfdaXaXTSHIx4Eo0lF6o6T/twwXiV6SAvM6S7FIBU5ynV+koC9gE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Na5vuT96; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-321265ae417so4746889a91.2;
-        Mon, 11 Aug 2025 05:18:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754914685; x=1755519485; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sLwF+BlEG3mYZAdz+ZKehsPdpmM/5PMg6nKb3VsuZq0=;
-        b=Na5vuT96gPZkD32oIiOwF3cWJbJK0DX0pC5sRRUWWbAhXTADBPxuheCgyxW6DF5I9K
-         FlJZA6c6zprCfMQWOchugULVUEcp/g0r7IO89hoPhgIGr3dfslur0RUHTdnAJG8WPlsm
-         6vvaqUa6ESYe3ep1+jAwKMCrB1cd+5pDyrm4TfycO2OieXWjya/UTy0X/O5c4qHv79LR
-         nrLsh4CZCPHWn8x6FL0xKnjxAFKdPGjWDvOMah9V4HYN2DfsrjqaUWSp7MkTZPsVgpEg
-         M+IHidHVSfTqaBXXy/tVH0XTsiXrLHdTKnzJaMb5GjmvQsZGsrIJN1ifc2tKIC46BD//
-         MVOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754914685; x=1755519485;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sLwF+BlEG3mYZAdz+ZKehsPdpmM/5PMg6nKb3VsuZq0=;
-        b=GObjZ0T+tMAtvCb1xT074gJuK/AdNDD2YRJ8lhoBWAVBVFqlTi5HRnRI7EGLNT+AU2
-         gTiQmtVM22ieTUFtWVvZMRws7w7/w6MhmN0lwNlT61sHxrPG8XWkFyEJ1HgnOgx5Ng2L
-         lrHWpd9TshrBtzM5ych+6bEfVZi58VW6yuc2reTdvt29skcLiWxUv3dQehbLm0W511X6
-         21dON//sPpo9ROJzeJPphEUl8ZVDMfJSbmaHvisG9pQ5CU3bNtJFsX0420p+d8DqQLgE
-         kibNro8xyD9Af7WtdqoQb7N9atmHD1EZuIw5lQ2IyBruNGn/9l/qW33iIihNqt8pZvQB
-         TKXg==
-X-Forwarded-Encrypted: i=1; AJvYcCUEG6m4RhgqQ92bctMkgMcC8edrgN3v8Ci+F3EuJ7NYiY7cvHWCQmN+by1foQq9bQD2reUpjwKgyvU9@vger.kernel.org, AJvYcCVju5C+gQzSAWNj9oWhZkwCZVtlscTY0v5JP3Ooo24aqgsLQF1YdhYHXEmht1W9pKSMcul63w2PTH2sJCBV@vger.kernel.org, AJvYcCX6JDB5EEVWfvQI6SUaTFrIEJ7FCNotoxXSnmyUK4n5DDs+7k7N3jtUznUJcXaliLXWtsOoHRXpwuwlnrMl@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxsiuycxf9zs6xq3wIleBtxvM2DyRfBAZHZ0n2WEvZGI/NQ9Nu4
-	QbOrelXRF8Sw913o07i37awdWuBJj1rXM8n71aWJVyVstFE200rV+lQB
-X-Gm-Gg: ASbGncsP84ZY7r3FAXZcY9B+ZYKsZK40RQKEvbOwgB7e66QZvb5k34ghwltWKxzCq9l
-	moEYFrN2MGbqVv6njcbX2csaMKgTRdWHR+7G2AB/DWgyxfKxSIR1aotSQEMRbBS1M2zPTdvkptG
-	Yp7b5YeLYDwrA0PxGxv7zq9pm17KFQDqYH6PXgA9vp4PhRGhkEiDCGkr1j6rdMuzHJdOPyFJrVA
-	1uS9ctYvDld4sakuy9VLtdfNRRJn2eNs1SwocErH/aAKrlrbYyCgjPcdZHQ9LpqAh9k2PGx4bz7
-	FyqexgSeJkInQunNv6EdgXf6cWnZ+sejiLh944RpmLRKxjsv59j/bcmvNWisv9xw+wu8KtztFDW
-	sXLwRha7XmC1+hy1+ZlDrEsGE1Wzf1uVTNQ8=
-X-Google-Smtp-Source: AGHT+IGpVpf0c/X4abESKaQnFxymPaeu0aEa91MmwZs35UQ6NdtLjVlAtbrYTHHTFScmU0eyMDgi3w==
-X-Received: by 2002:a17:90b:4b41:b0:31f:6ddd:ef3 with SMTP id 98e67ed59e1d1-32183e74d4dmr18558679a91.35.1754914685407;
-        Mon, 11 Aug 2025 05:18:05 -0700 (PDT)
-Received: from VM-16-24-fedora.. ([43.153.32.141])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4384baf139sm5021009a12.36.2025.08.11.05.18.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 05:18:05 -0700 (PDT)
-From: Jinliang Zheng <alexjlzheng@gmail.com>
-X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
-To: hch@infradead.org
-Cc: alexjlzheng@gmail.com,
-	alexjlzheng@tencent.com,
-	brauner@kernel.org,
-	djwong@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] iomap: don't abandon the whole thing with iomap_folio_state
-Date: Mon, 11 Aug 2025 20:18:03 +0800
-Message-ID: <20250811121803.1026731-1-alexjlzheng@tencent.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <aJnI49GCSfILx8eE@infradead.org>
-References: <aJnI49GCSfILx8eE@infradead.org>
+	s=arc-20240116; t=1754915141; c=relaxed/simple;
+	bh=fyMJVnzq19HoVjaJWvf7zLPkT0rLDLhUHH3rd92MRNA=;
+	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Date:
+	 MIME-Version:Content-Type; b=uN4CxbaMzC5vjqFifRIPALow2Gp7MoxncrfZgca0uFZ/tGvRaM2sx+9OQDGYYCkkH5j7TCA1g9uAGNqwfnAEaitU6fV6VqMOSxYVuAaj1so7OC+Es51t8iHOs9tDkYsZlKaFnL7o5gWjw+ezKhp4ZsQxBwB3s09hqW0UHEd+hRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.org; spf=pass smtp.mailfrom=manguebit.org; dkim=pass (2048-bit key) header.d=manguebit.org header.i=@manguebit.org header.b=FZOHRrf8; arc=none smtp.client-ip=143.255.12.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manguebit.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=manguebit.org; s=dkim; h=Content-Type:MIME-Version:Date:References:
+	In-Reply-To:Subject:Cc:To:From:Message-ID:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=HQe9woX2qSiEsy9FbidNroRd+9loJaekn/V3lZ85QLU=; b=FZOHRrf86TSOMsy4/15ub+Z+BD
+	LFbTet6eHpszyszaAIgHBKCELIE6ELVmG9t0q5MtPAXmIDQnu9jk7AaDWU7C4jsRh1EVkP36kjE1C
+	FknDVlbBbi0qjZg36w5NVnF6/nFceObERAjqBq7xb3mJ7fGrtDtIVerLQgUFq8g02YwO6Gc+/9UEb
+	W4ObIv2mkyHZll42KKRpckO6O8vZMEgt3mCe3Nk6eTTV3lw1isaKLX8lgvoHIQ0FOUGaf8i0KVJPL
+	696iQTN4PrVe24KXtS7mR0i28+vlv5ZLEV7MLfvHesRJ6WazuDl6ztgxaBt4ivFhKvAzJ/cJXbP3A
+	fm7trYkw==;
+Received: from pc by mx1.manguebit.org with local (Exim 4.98.2)
+	id 1ulRai-000000002Wy-3vkP;
+	Mon, 11 Aug 2025 09:25:28 -0300
+Message-ID: <9ab64c5bd90474a5e57c73cc0c48f612@manguebit.org>
+From: Paulo Alcantara <pc@manguebit.org>
+To: David Howells <dhowells@redhat.com>, Steve French <sfrench@samba.org>,
+ Enzo Matsumiya <ematsumiya@suse.de>
+Cc: dhowells@redhat.com, Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey
+ <tom@talpey.com>, linux-cifs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cifs: Fix collect_sample() to handle any iterator type
+In-Reply-To: <324664.1754897644@warthog.procyon.org.uk>
+References: <324664.1754897644@warthog.procyon.org.uk>
+Date: Mon, 11 Aug 2025 09:25:23 -0300
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Mon, 11 Aug 2025 03:41:39 -0700, Christoph Hellwig wrote:
-> Where "the whole thing" is the current iteration in the write loop.
-> Can you spell this out a bit better?
+David Howells <dhowells@redhat.com> writes:
 
-Hahaha, I was also confused about "the whole thing". I guess it refers to a
-partial write in a folio. It appears in the comments of __iomap_write_end().
+> collect_sample() is used to gather samples of the data in a Write op for
+> analysis to try and determine if the compression algorithm is likely to
+> achieve anything more quickly than actually running the compression
+> algorithm.
+>
+> However, collect_sample() assumes that the data it is going to be sampling
+> is stored in an ITER_XARRAY-type iterator (which it now should never be)
+> and doesn't actually check that it is before accessing the underlying
+> xarray directly.
+>
+> Fix this by replacing the code with a loop that just uses the standard
+> iterator functions to sample every other 2KiB block, skipping the
+> intervening ones.  It's not quite the same as the previous algorithm as it
+> doesn't necessarily align to the pages within an ordinary write from the
+> pagecache.
+>
+> Note that the btrfs code from which this was derived samples the inode's
+> pagecache directly rather than the iterator - but that doesn't necessarily
+> work for network filesystems if O_DIRECT is in operation.
+>
+> Fixes: 94ae8c3fee94 ("smb: client: compress: LZ77 code improvements cleanup")
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Steve French <sfrench@samba.org>
+> cc: Enzo Matsumiya <ematsumiya@suse.de>
+> cc: Paulo Alcantara <pc@manguebit.org>
+> cc: Shyam Prasad N <sprasad@microsoft.com>
+> cc: Tom Talpey <tom@talpey.com>
+> cc: linux-cifs@vger.kernel.org
+> cc: linux-fsdevel@vger.kernel.org
+> ---
+>  fs/smb/client/compress.c |   71 +++++++++++++----------------------------------
+>  1 file changed, 21 insertions(+), 50 deletions(-)
 
-static bool __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
-		size_t copied, struct folio *folio)
-{
-	flush_dcache_folio(folio);
-
-	/*
-	 * The blocks that were entirely written will now be uptodate, so we
-	 * don't have to worry about a read_folio reading them and overwriting a
-	 * partial write.  However, if we've encountered a short write and only
-	 * partially written into a block, it will not be marked uptodate, so a
-	 * read_folio might come in and destroy our partial write.
-	 *
-	 * Do the simplest thing and just treat any short write to a
-	 * non-uptodate page as a zero-length write, and force the caller to
-	 * redo the whole thing.
-                ^^^^^^^^^^^^^^^ <------------------ look look look, it's here :)
-	 */
-	if (unlikely(copied < len && !folio_test_uptodate(folio)))
-		return false;
-	iomap_set_range_uptodate(folio, offset_in_folio(folio, pos), len);
-	iomap_set_range_dirty(folio, offset_in_folio(folio, pos), copied);
-	filemap_dirty_folio(inode->i_mapping, folio);
-	return true;
-}
-
-> 
-> Also please include the rationale why you are changing the logic
-> here in the commit log.
-
-Hahaha, what I want to express is that we no longer need to define partial write
-based on folio granularity, it is more appropriate to use block granularity.
-
-Please forgive my poor English. :-<
-
-thanks,
-Jinliang Zheng :)
-
+Acked-by: Paulo Alcantara (Red Hat) <pc@manguebit.org>
 
