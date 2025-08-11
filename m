@@ -1,66 +1,66 @@
-Return-Path: <linux-fsdevel+bounces-57377-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57378-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41258B20D26
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 17:11:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 82873B20D32
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 17:12:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EFAD1907773
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 15:09:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD57A188400E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 15:10:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13CB8243968;
-	Mon, 11 Aug 2025 15:09:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 999B62DFA3B;
+	Mon, 11 Aug 2025 15:10:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OSkIOWZQ"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lubqyM0K"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF026A8D2;
-	Mon, 11 Aug 2025 15:09:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C4A32DECA1;
+	Mon, 11 Aug 2025 15:10:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754924943; cv=none; b=WCcctqupjB2Xt+G3+nGLzN7AgeckrsE/iOGWC/rJ1GAtC7YB9WWNDRT6wzPQlWUdsjTxVA8cFwg7KkGuLC9JreQ9vQ2E9MXy+nqG42svSykZ4Snz3dBc27pZ/mXo1tI+0YfbOLm5NDkIDg3+sqhoJsT6goQuJ/eCGiB6CvVVGB0=
+	t=1754925016; cv=none; b=Jf4XLMLCLk7lG9rPrTjDR3x/lOciNhmYCz6HExoWa96T6gqz5DOE323fLwnNIDKzsP2FTVAN6IBGHTxKAbR53HelJnzAYtK7z1LwlJyIrldhePtQFza5tdbsxVjQAdy6nzCFB2lOMLRDAc9weqzdmdmEo+ZcK1eyC/UGggGeQVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754924943; c=relaxed/simple;
-	bh=Fos2Bc+psd2wDnxAA9C+5WvzOAyECbjI1HOkUcLQeFQ=;
+	s=arc-20240116; t=1754925016; c=relaxed/simple;
+	bh=5zT1AiufQmdFoxK3k4uUGhgeuApkAvlocyRFSIML/z4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r7KN4WeZeXrrIxXZZZU3dkcur+XdhmMGW4fTXvZinh+BgIwsfXXEpY4g3f1KXyivf9bu2PClEJQNVK9/fl4Oj45SFGE+nPc3u25g/7nElTRGS91O/zFkwKFLjrtPnLfETOBRK7ALtfUNn3ptUgsFTKsAgxiGaaQWYY+y97Goqd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OSkIOWZQ; arc=none smtp.client-ip=192.198.163.19
+	 Content-Type:Content-Disposition:In-Reply-To; b=uBtbenPHhK8GaCMytd7Xhrme3iEf6KPxacF/2PR0vcWwSPpPNkQVCliMPjRqUZTWDJW7OoTJPJMc345OM3//VcPv5/XQldVde30FncqGlpZRwWgOT3L6KgXTkoJt7BG3wfAYUyQiBGwTelHjDQGqP91lfPgm0ewgWLQbghdtKlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lubqyM0K; arc=none smtp.client-ip=198.175.65.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754924942; x=1786460942;
+  t=1754925014; x=1786461014;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=Fos2Bc+psd2wDnxAA9C+5WvzOAyECbjI1HOkUcLQeFQ=;
-  b=OSkIOWZQdF4WtXR4yJZiaP3h23HctK9rnOKF1o7Qb3VJCkjDNp/sVvlh
-   0/5dws5yWSHVGIlTmDvk9g+G0tIVp0+7DW8vhnG1euLCaeveL/HavAhA5
-   rAWmFjC/varyuoQ+1WIuxEw2pZKeeQZXWOKVjkULo5DoNDAgjEJyjLcwW
-   1f56TEmT8wZ1OGAhBYt2i4sfmimZDpjKGT+KqDXv3Wn2rICJZyJj8XOJq
-   UMKkIWh3SzlN3plekBzSoBNO9L3BgnG+s0jr4Xc6F/ElYXZXbHEfPltiW
-   bykYBad6lQosEIFYLL0+hazpPvwJcBqzsVVVn3Z3evaFfs0qezrr0hLuI
-   w==;
-X-CSE-ConnectionGUID: mSaDRsO4SlSBuZuzlSp5ig==
-X-CSE-MsgGUID: 7HHEZe00QPukYZVI0tIWUA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="56209114"
+  bh=5zT1AiufQmdFoxK3k4uUGhgeuApkAvlocyRFSIML/z4=;
+  b=lubqyM0KlyyjmZVNC30EW66JOTrX7NyvDT+kb0ECsynZxrEZ7DicDVP3
+   K8PzZD4UPJMyi4oUFnjvt1Not0/4+oZPksjcn2CZ1yQFhS5F9JrQ2F6cC
+   iV/h/lwTwWtnU5fFb4sQWwYaQ9ThYMAQy7A0G6gNYROTH8MLUsnAodF4d
+   IHGjzQdejyuhbINvfKz8n9MULGX3ddRE7KasFCdhG1TlboCxqSepp7Tab
+   tNrep54xj/48c4BkL66xNOoIsessnt37Pu5S/3RuUC5/xjYz213Gd0d9t
+   /NHPwLqX7vsSLSzgMbwe2RAOl7HrwL8RG7fBIFfFOZzVOryRDgIG0HuQf
+   g==;
+X-CSE-ConnectionGUID: izh6LzfZTVikTHurpwkHAw==
+X-CSE-MsgGUID: y/sdhqaMSFy62tOumpV65g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="79750521"
 X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="56209114"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 08:09:01 -0700
-X-CSE-ConnectionGUID: 6HXLT3G1QeCd5htSdOz7vw==
-X-CSE-MsgGUID: viOw19WfRZm7kbZL2ZA/7A==
+   d="scan'208";a="79750521"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 08:10:14 -0700
+X-CSE-ConnectionGUID: e80qHBrnQ3+4tIioB2Gvuw==
+X-CSE-MsgGUID: gQ9FGlJyQies9g8Zki86eg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="165831059"
+   d="scan'208";a="171290349"
 Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa006.fm.intel.com with ESMTP; 11 Aug 2025 08:08:54 -0700
+  by orviesa005.jf.intel.com with ESMTP; 11 Aug 2025 08:10:07 -0700
 Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id D6F1B94; Mon, 11 Aug 2025 17:08:52 +0200 (CEST)
-Date: Mon, 11 Aug 2025 17:08:52 +0200
+	id 7E14494; Mon, 11 Aug 2025 17:10:05 +0200 (CEST)
+Date: Mon, 11 Aug 2025 17:10:05 +0200
 From: Andy Shevchenko <andriy.shevchenko@intel.com>
 To: Bhupesh <bhupesh@igalia.com>
 Cc: akpm@linux-foundation.org, kernel-dev@igalia.com,
@@ -77,11 +77,10 @@ Cc: akpm@linux-foundation.org, kernel-dev@igalia.com,
 	mgorman@suse.de, vschneid@redhat.com,
 	linux-trace-kernel@vger.kernel.org, kees@kernel.org,
 	torvalds@linux-foundation.org
-Subject: Re: [PATCH v7 4/4] treewide: Switch memcpy() users of 'task->comm'
- to a more safer implementation
-Message-ID: <aJoHhDIL6T0Zo-nB@black.igk.intel.com>
+Subject: Re: [PATCH v7 2/4] include: Set tsk->comm length to 64 bytes
+Message-ID: <aJoHzTKO9xw2CANn@black.igk.intel.com>
 References: <20250811064609.918593-1-bhupesh@igalia.com>
- <20250811064609.918593-5-bhupesh@igalia.com>
+ <20250811064609.918593-3-bhupesh@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -90,42 +89,35 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250811064609.918593-5-bhupesh@igalia.com>
+In-Reply-To: <20250811064609.918593-3-bhupesh@igalia.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, Aug 11, 2025 at 12:16:09PM +0530, Bhupesh wrote:
-> As Linus mentioned in [1], currently we have several memcpy() use-cases
-> which use 'current->comm' to copy the task name over to local copies.
-> For an example:
+On Mon, Aug 11, 2025 at 12:16:07PM +0530, Bhupesh wrote:
+> Historically due to the 16-byte length of TASK_COMM_LEN, the
+> users of 'tsk->comm' are restricted to use a fixed-size target
+> buffer also of TASK_COMM_LEN for 'memcpy()' like use-cases.
 > 
->  ...
->  char comm[TASK_COMM_LEN];
->  memcpy(comm, current->comm, TASK_COMM_LEN);
->  ...
+> To fix the same, we now use a 64-byte TASK_COMM_EXT_LEN and
+> set the comm element inside 'task_struct' to the same length:
+>        struct task_struct {
+> 	       .....
+>                char    comm[TASK_COMM_EXT_LEN];
+> 	       .....
+>        };
 > 
-> These should be rather calling a wrappper like "get_task_array()",
-> which is implemented as:
+>        where TASK_COMM_EXT_LEN is 64-bytes.
 > 
->    static __always_inline void
->        __cstr_array_copy(char *dst,
->             const char *src, __kernel_size_t size)
->    {
->         memcpy(dst, src, size);
->         dst[size] = 0;
->    }
-> 
->    #define get_task_array(dst,src) \
->       __cstr_array_copy(dst, src, __must_be_array(dst))
-> 
-> The relevant 'memcpy()' users were identified using the following search
-> pattern:
->  $ git grep 'memcpy.*->comm\>'
+> Note, that the existing users have not been modified to migrate to
+> 'TASK_COMM_EXT_LEN', in case they have hard-coded expectations of
+> dealing with only a 'TASK_COMM_LEN' long 'tsk->comm'.
 
-> [1]. https://lore.kernel.org/all/CAHk-=wi5c=_-FBGo_88CowJd_F-Gi6Ud9d=TALm65ReN7YjrMw@mail.gmail.com/
-> 
-> Signed-off-by: Bhupesh <bhupesh@igalia.com>
+...
 
-Same suggestion, make it a Link tag.
+> -	BUILD_BUG_ON(sizeof(from) != TASK_COMM_LEN);	\
+> +	BUILD_BUG_ON(sizeof(from) < TASK_COMM_LEN);	\
+
+Wondering if we may convert this to static_assert().
+(rather in a separate patch)
 
 -- 
 With Best Regards,
