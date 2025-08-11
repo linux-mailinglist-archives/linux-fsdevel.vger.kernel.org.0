@@ -1,56 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-57382-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57383-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2B23B21051
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 17:55:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2231B2102E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 17:49:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6A423E6587
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 15:49:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1FAB7A7FCB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 15:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB98E2E266D;
-	Mon, 11 Aug 2025 15:21:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42C252E2F03;
+	Mon, 11 Aug 2025 15:21:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kCzhd0w5"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MOIkM5pS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F582E11AA;
-	Mon, 11 Aug 2025 15:21:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8942F27450
+	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Aug 2025 15:21:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754925670; cv=none; b=UYK9mVrHFRG0GeyfjeEfv57sTrWaLe0ZDZqPex7aFVVlR5GFUmO1zPaSvOWQRczsVwqZdihKE4Gmr0EPBFCRKuk0h/+z3OatKlu63FJW7TYv5Tgj43iH2xxey7qNuZpnEldMiOu7BmjyBfkHBvDN1DlAAHlK75eq2l2UN9/7L2U=
+	t=1754925694; cv=none; b=iQZY4vhEw9cR29dABXVrEusl8vacRMyqB1SjOb7ebe4Ye/DOGHhSUBCf6CKB+Wayxc3bt3DGTNQ11KNM8CqNN1IKRa02hzNvAh5bRzbXEAbfaW7JY/fhlKUikE1kfVYF8ehbPz+ggVbrJIL8FSH3o+mn4PH7/TRITDpLhWURICo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754925670; c=relaxed/simple;
-	bh=FOapJCkcHHb2SlWwRYoetr0nJMVUP61KZwf6I7eXpDA=;
+	s=arc-20240116; t=1754925694; c=relaxed/simple;
+	bh=KoaCKpRcz2pcuzclB7c8T4G2Aqry0TNOxpFWFQmBoJs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BDPuBPn2vFUJRg6UAw5h1gT21MPVRKY0yA5HeX0/bjoudvWe+vU5UJy9wyk9qCnTxVEQ7gDJr9FeH2mvDZCZiHEUerdJ+11V004vYBLxB7T7t133jXCNAhUcoie1IVd0MW8Pr/xsNZe71ZLO2PqaCTErjiC4eVeD0kV5FdKO01s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kCzhd0w5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A8A7C4CEED;
-	Mon, 11 Aug 2025 15:21:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754925669;
-	bh=FOapJCkcHHb2SlWwRYoetr0nJMVUP61KZwf6I7eXpDA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kCzhd0w5kq2HlxRUxrbVr+gu/htgK7dbS6jYuuDM19LanpGFhcfCRQLQKe2Y4NONZ
-	 DkPUZcgL9WB8tW4110ldXKqlx4rZEbiYW0qctIPr2pW8iCNRMwt21nnSnGusPdVCx6
-	 Ers/uMCLklQ/OXADnJAMMQS3Ns1YxdVySe8VCVKNwbS4EuUS91Spy3UfZE/BBeSf62
-	 q2xwAPndPvPAnwZe1fEeU332oSuYqGwLhMx4PVKdn5AYnyTMRTjADjIAKpjIVOqa3d
-	 iz6IgEiaJNOT8pZF7EJXX5rjMTkXwKhpqGd4QA7BHRaE/1Wantm+Bodx95qSEmIcav
-	 EBHhHmckj72eQ==
-Date: Mon, 11 Aug 2025 08:21:09 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Andrey Albershteyn <aalbersh@redhat.com>
-Cc: fstests@vger.kernel.org, zlang@redhat.com,
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	Andrey Albershteyn <aalbersh@kernel.org>
-Subject: Re: [PATCH 3/3] xfs: test quota's project ID on special files
-Message-ID: <20250811152109.GF7965@frogsfrogsfrogs>
-References: <20250808-xattrat-syscall-v1-0-6a09c4f37f10@kernel.org>
- <20250808-xattrat-syscall-v1-3-6a09c4f37f10@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lBIvyGuR5e/COHdLP6u1/yKXHHkOD98P3evKkab5pfkQgkDnV20SqJsWcbL2eFOuHPIM4L2N/VRRCkGUuVH0Nq2Jvawx7+CpWluhUs8rGKLZATE/R+sAYY7axrkfe0Y/PKBjr4jEoEBYQv9DogDKpGu4IIQQfhDMBsvE4tf2LZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MOIkM5pS; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=uNhW/Qj4AiEzXsHrZkbmlvnudfJwvnnC5E4PbuwrLU4=; b=MOIkM5pSMGXteg/sk7lNTd6KVu
+	ovXi4boULEEdGPWFIuFSbF8snBcNe6ymdwz+vLvgst/6gBezVOPNXAe3x+gZHqeFhTpaL3xHMP6fN
+	HocTtKOfxKYSD/P1xTDZtIAwJHlEaE+D5Dxo/+idHP64kCHMDyxo9oszuj0hm3cjspZnzYljCg3a7
+	xfDoRlwi8sibt9FnreZHrTrf+g1lQ7L/Ql2rYSMhjfGd6hojRFRP3gXUq4CEshORzv42vHyS4gMUp
+	r/5wyFyYs5AGlBbdH9/JzPjLMd2Hi17r/bKH5HkAMakHLee+u/uxDKk9B6XA+v2DKfgd8AQ/txJ7l
+	X51R9GPQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ulUL0-00000006tKr-3FXm;
+	Mon, 11 Aug 2025 15:21:27 +0000
+Date: Mon, 11 Aug 2025 16:21:26 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Ye Bin <yebin@huaweicloud.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	linux-fsdevel@vger.kernel.org, yebin10@huawei.com
+Subject: Re: [PATCH RFC] fs/buffer: fix use-after-free when call bh_read()
+ helper
+Message-ID: <aJoKdtFcqcG8Y48U@casper.infradead.org>
+References: <20250811141830.343774-1-yebin@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,137 +61,117 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250808-xattrat-syscall-v1-3-6a09c4f37f10@kernel.org>
+In-Reply-To: <20250811141830.343774-1-yebin@huaweicloud.com>
 
-On Fri, Aug 08, 2025 at 09:31:58PM +0200, Andrey Albershteyn wrote:
-> From: Andrey Albershteyn <aalbersh@redhat.com>
+On Mon, Aug 11, 2025 at 10:18:30PM +0800, Ye Bin wrote:
+> From: Ye Bin <yebin10@huawei.com>
 > 
-> With addition of file_getattr() and file_setattr(), xfs_quota now can
-> set project ID on filesystem inodes behind special files. Previously,
-> quota reporting didn't count inodes of special files created before
-> project initialization. Only new inodes had project ID set.
+> There's issue as follows:
+> BUG: KASAN: stack-out-of-bounds in end_buffer_read_sync+0xe3/0x110
+> Read of size 8 at addr ffffc9000168f7f8 by task swapper/3/0
+> CPU: 3 UID: 0 PID: 0 Comm: swapper/3 Not tainted 6.16.0-862.14.0.6.x86_64
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996)
+> Call Trace:
+>  <IRQ>
+>  dump_stack_lvl+0x55/0x70
+>  print_address_description.constprop.0+0x2c/0x390
+>  print_report+0xb4/0x270
+>  kasan_report+0xb8/0xf0
+>  end_buffer_read_sync+0xe3/0x110
+>  end_bio_bh_io_sync+0x56/0x80
+>  blk_update_request+0x30a/0x720
+>  scsi_end_request+0x51/0x2b0
+>  scsi_io_completion+0xe3/0x480
+>  ? scsi_device_unbusy+0x11e/0x160
+>  blk_complete_reqs+0x7b/0x90
+>  handle_softirqs+0xef/0x370
+>  irq_exit_rcu+0xa5/0xd0
+>  sysvec_apic_timer_interrupt+0x6e/0x90
+>  </IRQ>
 > 
-> Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+>  Above issue happens when do ntfs3 filesystem mount, issue may happens
+>  as follows:
+>            mount                            IRQ
+> ntfs_fill_super
+>   read_cache_page
+>     do_read_cache_folio
+>       filemap_read_folio
+>         mpage_read_folio
+> 	 do_mpage_readpage
+> 	  ntfs_get_block_vbo
+> 	   bh_read
+> 	     submit_bh
+> 	     wait_on_buffer(bh);
+> 	                            blk_complete_reqs
+> 				     scsi_io_completion
+> 				      scsi_end_request
+> 				       blk_update_request
+> 				        end_bio_bh_io_sync
+> 					 end_buffer_read_sync
+> 					  __end_buffer_read_notouch
+> 					   unlock_buffer
+> 
+>             wait_on_buffer(bh);--> return will return to caller
+> 
+> 					  put_bh
+> 					    --> trigger stack-out-of-bounds
+> In the mpage_read_folio() function, the stack variable 'map_bh' is
+> passed to ntfs_get_block_vbo(). Once unlock_buffer() unlocks and
+> wait_on_buffer() returns to continue processing, the stack variable
+> is likely to be reclaimed. Consequently, during the end_buffer_read_sync()
+> process, calling put_bh() may result in stack overrun.
+
+All good to here.
+
+> If it is not a stack variable, since the reference count of the
+> buffer_head is released after unlocking, it cannot be released during
+> drop_buffers. This poses a risk of buffer_head leakage.
+> To solve above issue first call put_bh() before unlock_buffer. This
+> should be safe because during the release, discard_buffer() will call
+> lock_buffer().
+
+I find this part of the explanation hard to follow and I thought there
+was a mistake here.  However after tracing through what would happen in
+gfs2_metapath_ra() and __ext4_sb_bread_gfp(), I don't see a problem.
+
+So here's a replacement paragraph:
+
+If the bh is not allocated on the stack, it belongs to a folio.  Freeing a
+buffer head which belongs to a folio is done by drop_buffers() which
+will fail to free buffers which are still locked.  So it is safe to call
+put_bh() before __end_buffer_read_notouch().
+
+Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+
+I'll also note that we have a bunch of weird corruptions with ntfs3
+and this might explain them.  Also this isn't really an ntfs3 bug,
+but ntfs3 might be the only in-tree filesystem which happens to use
+map_bh like this.  It's bad for performance to do it this way, but
+if all you're trying to do is get a working filesystem, this is a
+simple way to do things.
+
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Signed-off-by: Ye Bin <yebin10@huawei.com>
 > ---
->  tests/xfs/2000     | 77 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
->  tests/xfs/2000.out | 17 ++++++++++++
->  2 files changed, 94 insertions(+)
+>  fs/buffer.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/tests/xfs/2000 b/tests/xfs/2000
-> new file mode 100755
-> index 000000000000..26a0093c1da1
-> --- /dev/null
-> +++ b/tests/xfs/2000
-> @@ -0,0 +1,77 @@
-> +#! /bin/bash
-> +# SPDX-License-Identifier: GPL-2.0
-> +# Copyright (c) 2024 Red Hat.  All Rights Reserved.
-> +#
-> +# FS QA Test No. 2000
-> +#
-> +# Test that XFS can set quota project ID on special files
-> +#
-> +. ./common/preamble
-> +_begin_fstest auto quota
-> +
-> +# Import common functions.
-> +. ./common/quota
-> +. ./common/filter
-> +
-> +_wants_kernel_commit xxxxxxxxxxx \
-> +	"xfs: allow setting file attributes on special files"
-> +_wants_git_commit xfsprogs xxxxxxxxxxx \
-> +	"xfs_quota: utilize file_setattr to set prjid on special files"
-
-These syscalls aren't going to be backported to old kernels, so I think
-these two tests are going to need a _require_file_getattr to skip them.
-
---D
-
-> +
-> +# Modify as appropriate.
-> +_require_scratch
-> +_require_xfs_quota
-> +_require_test_program "af_unix"
-> +_require_symlinks
-> +_require_mknod
-> +
-> +_scratch_mkfs >>$seqres.full 2>&1
-> +_qmount_option "pquota"
-> +_scratch_mount
-> +
-> +create_af_unix () {
-> +	$here/src/af_unix $* || echo af_unix failed
-> +}
-> +
-> +filter_quota() {
-> +	_filter_quota | sed "s~$tmp.projects~PROJECTS_FILE~"
-> +}
-> +
-> +projectdir=$SCRATCH_MNT/prj
-> +id=42
-> +
-> +mkdir $projectdir
-> +mkfifo $projectdir/fifo
-> +mknod $projectdir/chardev c 1 1
-> +mknod $projectdir/blockdev b 1 1
-> +create_af_unix $projectdir/socket
-> +touch $projectdir/foo
-> +ln -s $projectdir/foo $projectdir/symlink
-> +touch $projectdir/bar
-> +ln -s $projectdir/bar $projectdir/broken-symlink
-> +rm -f $projectdir/bar
-> +
-> +$XFS_QUOTA_PROG -D $tmp.projects -P $tmp.projid -x \
-> +	-c "project -sp $projectdir $id" $SCRATCH_DEV | filter_quota
-> +$XFS_QUOTA_PROG -D $tmp.projects -P $tmp.projid -x \
-> +	-c "limit -p isoft=20 ihard=20 $id " $SCRATCH_DEV | filter_quota
-> +$XFS_QUOTA_PROG -D $tmp.projects -P $tmp.projid -x \
-> +	-c "project -cp $projectdir $id" $SCRATCH_DEV | filter_quota
-> +$XFS_QUOTA_PROG -D $tmp.projects -P $tmp.projid -x \
-> +	-c "report -inN -p" $SCRATCH_DEV
-> +$XFS_QUOTA_PROG -D $tmp.projects -P $tmp.projid -x \
-> +	-c "project -Cp $projectdir $id" $SCRATCH_DEV | filter_quota
-> +
-> +# Let's check that we can recreate the project (flags were cleared out)
-> +$XFS_QUOTA_PROG -D $tmp.projects -P $tmp.projid -x \
-> +	-c "project -sp $projectdir $id" $SCRATCH_DEV | filter_quota
-> +$XFS_QUOTA_PROG -D $tmp.projects -P $tmp.projid -x \
-> +	-c "limit -p isoft=20 ihard=20 $id " $SCRATCH_DEV | filter_quota
-> +$XFS_QUOTA_PROG -D $tmp.projects -P $tmp.projid -x \
-> +	-c "report -inN -p" $SCRATCH_DEV
-> +$XFS_QUOTA_PROG -D $tmp.projects -P $tmp.projid -x \
-> +	-c "project -Cp $projectdir $id" $SCRATCH_DEV | filter_quota
-> +
-> +# success, all done
-> +status=0
-> +exit
-> diff --git a/tests/xfs/2000.out b/tests/xfs/2000.out
-> new file mode 100644
-> index 000000000000..dd3918f1376d
-> --- /dev/null
-> +++ b/tests/xfs/2000.out
-> @@ -0,0 +1,17 @@
-> +QA output created by 2000
-> +Setting up project 42 (path SCRATCH_MNT/prj)...
-> +Processed 1 (PROJECTS_FILE and cmdline) paths for project 42 with recursion depth infinite (-1).
-> +Checking project 42 (path SCRATCH_MNT/prj)...
-> +Processed 1 (PROJECTS_FILE and cmdline) paths for project 42 with recursion depth infinite (-1).
-> +#0                   3          0          0     00 [--------]
-> +#42                  8         20         20     00 [--------]
-> +
-> +Clearing project 42 (path SCRATCH_MNT/prj)...
-> +Processed 1 (PROJECTS_FILE and cmdline) paths for project 42 with recursion depth infinite (-1).
-> +Setting up project 42 (path SCRATCH_MNT/prj)...
-> +Processed 1 (PROJECTS_FILE and cmdline) paths for project 42 with recursion depth infinite (-1).
-> +#0                   3          0          0     00 [--------]
-> +#42                  8         20         20     00 [--------]
-> +
-> +Clearing project 42 (path SCRATCH_MNT/prj)...
-> +Processed 1 (PROJECTS_FILE and cmdline) paths for project 42 with recursion depth infinite (-1).
-> 
+> diff --git a/fs/buffer.c b/fs/buffer.c
+> index ead4dc85debd..6a8752f7bbed 100644
+> --- a/fs/buffer.c
+> +++ b/fs/buffer.c
+> @@ -157,8 +157,8 @@ static void __end_buffer_read_notouch(struct buffer_head *bh, int uptodate)
+>   */
+>  void end_buffer_read_sync(struct buffer_head *bh, int uptodate)
+>  {
+> -	__end_buffer_read_notouch(bh, uptodate);
+>  	put_bh(bh);
+> +	__end_buffer_read_notouch(bh, uptodate);
+>  }
+>  EXPORT_SYMBOL(end_buffer_read_sync);
+>  
 > -- 
-> 2.49.0
+> 2.34.1
 > 
 > 
 
