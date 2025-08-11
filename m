@@ -1,56 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-57376-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57377-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D232FB20D1E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 17:10:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41258B20D26
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 17:11:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5AB3168D33
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 15:08:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EFAD1907773
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 15:09:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05DC12DECBC;
-	Mon, 11 Aug 2025 15:07:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13CB8243968;
+	Mon, 11 Aug 2025 15:09:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iw3d87zu"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OSkIOWZQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 624B418EB0;
-	Mon, 11 Aug 2025 15:07:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF026A8D2;
+	Mon, 11 Aug 2025 15:09:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754924868; cv=none; b=hXmsapH21v3cP7rFnPr8TVbNbc842Gm1jttvJnKN62/dP2/SqOBIymd3vc4Gf5HlvSEUSYo8kgrMyC1jSEOfSuXJighZkXRLLVwcWGk9fJ5Z6IphUrGZrURAApywApJWgq9RLB/7IrWUjJ3l0xmAp2uOHyXh6d/L66a1CoQqYdo=
+	t=1754924943; cv=none; b=WCcctqupjB2Xt+G3+nGLzN7AgeckrsE/iOGWC/rJ1GAtC7YB9WWNDRT6wzPQlWUdsjTxVA8cFwg7KkGuLC9JreQ9vQ2E9MXy+nqG42svSykZ4Snz3dBc27pZ/mXo1tI+0YfbOLm5NDkIDg3+sqhoJsT6goQuJ/eCGiB6CvVVGB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754924868; c=relaxed/simple;
-	bh=DMZxfkZQ/KEYNXJ1rWpPkTdH+TcVBH0OC1iNUOxqhcc=;
+	s=arc-20240116; t=1754924943; c=relaxed/simple;
+	bh=Fos2Bc+psd2wDnxAA9C+5WvzOAyECbjI1HOkUcLQeFQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CBEcHpDJNmWjHx+e9BSZtw419Vm4VIFeAha/gZsMR1InjuzURLjPxy22KKpFYjDU7gnpPZMCL+sQV8vTs1XRtoTPhW2BNeOyq7wHhgKvXQmZs5/oOacArAXU+UGV3j1+ffpS6pcZGDffyJvBg5D+S+t8iW2wF/MpDpshs+lm68k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iw3d87zu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C37C1C4CEED;
-	Mon, 11 Aug 2025 15:07:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754924867;
-	bh=DMZxfkZQ/KEYNXJ1rWpPkTdH+TcVBH0OC1iNUOxqhcc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iw3d87zuoq2QjgiqpL/lVO7XiZyyexveFajj9DVgtSezNG/fImiPC79vUppnbPoJ6
-	 QbtrBIyLdeR4FY9gm7+39vls1EjpQu5wNQyNxNN7VbR87kILZWAQJGMFuuxsuN24OG
-	 jT5Dq7eteUpwwYZVGRpm/k2quTWTK+jGw62A0HVXVArlKJ/ZMLJbiuAVDiaKbRQIZT
-	 23WqfNJwAe0upBAh+dcxabV2lrBBqI+p4CvDVd5Vw4VwYcyQ7skVzlQcpX+k9aZqfE
-	 My4qrdOIpr9UfxKWdxMz44zt+WjXj+2VI4W3YLI2x3RpY06mLsXP0SX89tTHW/2xBT
-	 kloylr2j1UtQw==
-Date: Mon, 11 Aug 2025 08:07:47 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Andrey Albershteyn <aalbersh@redhat.com>
-Cc: aalbersh@kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 2/4] xfs_quota: utilize file_setattr to set prjid on
- special files
-Message-ID: <20250811150747.GB7965@frogsfrogsfrogs>
-References: <20250808-xattrat-syscall-v1-0-48567c29e45c@kernel.org>
- <20250808-xattrat-syscall-v1-2-48567c29e45c@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=r7KN4WeZeXrrIxXZZZU3dkcur+XdhmMGW4fTXvZinh+BgIwsfXXEpY4g3f1KXyivf9bu2PClEJQNVK9/fl4Oj45SFGE+nPc3u25g/7nElTRGS91O/zFkwKFLjrtPnLfETOBRK7ALtfUNn3ptUgsFTKsAgxiGaaQWYY+y97Goqd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OSkIOWZQ; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754924942; x=1786460942;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Fos2Bc+psd2wDnxAA9C+5WvzOAyECbjI1HOkUcLQeFQ=;
+  b=OSkIOWZQdF4WtXR4yJZiaP3h23HctK9rnOKF1o7Qb3VJCkjDNp/sVvlh
+   0/5dws5yWSHVGIlTmDvk9g+G0tIVp0+7DW8vhnG1euLCaeveL/HavAhA5
+   rAWmFjC/varyuoQ+1WIuxEw2pZKeeQZXWOKVjkULo5DoNDAgjEJyjLcwW
+   1f56TEmT8wZ1OGAhBYt2i4sfmimZDpjKGT+KqDXv3Wn2rICJZyJj8XOJq
+   UMKkIWh3SzlN3plekBzSoBNO9L3BgnG+s0jr4Xc6F/ElYXZXbHEfPltiW
+   bykYBad6lQosEIFYLL0+hazpPvwJcBqzsVVVn3Z3evaFfs0qezrr0hLuI
+   w==;
+X-CSE-ConnectionGUID: mSaDRsO4SlSBuZuzlSp5ig==
+X-CSE-MsgGUID: 7HHEZe00QPukYZVI0tIWUA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="56209114"
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="56209114"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 08:09:01 -0700
+X-CSE-ConnectionGUID: 6HXLT3G1QeCd5htSdOz7vw==
+X-CSE-MsgGUID: viOw19WfRZm7kbZL2ZA/7A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="165831059"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by fmviesa006.fm.intel.com with ESMTP; 11 Aug 2025 08:08:54 -0700
+Received: by black.igk.intel.com (Postfix, from userid 1003)
+	id D6F1B94; Mon, 11 Aug 2025 17:08:52 +0200 (CEST)
+Date: Mon, 11 Aug 2025 17:08:52 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Bhupesh <bhupesh@igalia.com>
+Cc: akpm@linux-foundation.org, kernel-dev@igalia.com,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, oliver.sang@intel.com, lkp@intel.com,
+	laoar.shao@gmail.com, pmladek@suse.com, rostedt@goodmis.org,
+	mathieu.desnoyers@efficios.com, arnaldo.melo@gmail.com,
+	alexei.starovoitov@gmail.com, andrii.nakryiko@gmail.com,
+	mirq-linux@rere.qmqm.pl, peterz@infradead.org, willy@infradead.org,
+	david@redhat.com, viro@zeniv.linux.org.uk, keescook@chromium.org,
+	ebiederm@xmission.com, brauner@kernel.org, jack@suse.cz,
+	mingo@redhat.com, juri.lelli@redhat.com, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com,
+	linux-trace-kernel@vger.kernel.org, kees@kernel.org,
+	torvalds@linux-foundation.org
+Subject: Re: [PATCH v7 4/4] treewide: Switch memcpy() users of 'task->comm'
+ to a more safer implementation
+Message-ID: <aJoHhDIL6T0Zo-nB@black.igk.intel.com>
+References: <20250811064609.918593-1-bhupesh@igalia.com>
+ <20250811064609.918593-5-bhupesh@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,290 +90,46 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250808-xattrat-syscall-v1-2-48567c29e45c@kernel.org>
+In-Reply-To: <20250811064609.918593-5-bhupesh@igalia.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, Aug 08, 2025 at 09:30:17PM +0200, Andrey Albershteyn wrote:
-> From: Andrey Albershteyn <aalbersh@redhat.com>
+On Mon, Aug 11, 2025 at 12:16:09PM +0530, Bhupesh wrote:
+> As Linus mentioned in [1], currently we have several memcpy() use-cases
+> which use 'current->comm' to copy the task name over to local copies.
+> For an example:
 > 
-> Utilize new file_getattr/file_setattr syscalls to set project ID on
-> special files. Previously, special files were skipped due to lack of the
-> way to call FS_IOC_SETFSXATTR ioctl on them. The quota accounting was
-> therefore missing these inodes (special files created before project
-> setup). The ones created after porject initialization did inherit the
-> projid flag from the parent.
+>  ...
+>  char comm[TASK_COMM_LEN];
+>  memcpy(comm, current->comm, TASK_COMM_LEN);
+>  ...
 > 
-> Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
-> ---
->  quota/project.c | 144 +++++++++++++++++++++++++++++---------------------------
->  1 file changed, 74 insertions(+), 70 deletions(-)
+> These should be rather calling a wrappper like "get_task_array()",
+> which is implemented as:
 > 
-> diff --git a/quota/project.c b/quota/project.c
-> index adb26945fa57..93d7ace0e11b 100644
-> --- a/quota/project.c
-> +++ b/quota/project.c
-> @@ -4,14 +4,17 @@
->   * All Rights Reserved.
->   */
->  
-> +#include <unistd.h>
->  #include "command.h"
->  #include "input.h"
->  #include "init.h"
-> +#include "libfrog/file_attr.h"
->  #include "quota.h"
->  
->  static cmdinfo_t project_cmd;
->  static prid_t prid;
->  static int recurse_depth = -1;
-> +static int dfd;
+>    static __always_inline void
+>        __cstr_array_copy(char *dst,
+>             const char *src, __kernel_size_t size)
+>    {
+>         memcpy(dst, src, size);
+>         dst[size] = 0;
+>    }
+> 
+>    #define get_task_array(dst,src) \
+>       __cstr_array_copy(dst, src, __must_be_array(dst))
+> 
+> The relevant 'memcpy()' users were identified using the following search
+> pattern:
+>  $ git grep 'memcpy.*->comm\>'
 
-Ew, global scope variables, can we pass that through to check_project?
-
->  enum {
->  	CHECK_PROJECT	= 0x1,
-> @@ -19,13 +22,6 @@ enum {
->  	CLEAR_PROJECT	= 0x4,
->  };
->  
-> -#define EXCLUDED_FILE_TYPES(x) \
-> -	   (S_ISCHR((x)) \
-> -	|| S_ISBLK((x)) \
-> -	|| S_ISFIFO((x)) \
-> -	|| S_ISLNK((x)) \
-> -	|| S_ISSOCK((x)))
-> -
->  static void
->  project_help(void)
->  {
-> @@ -85,8 +81,8 @@ check_project(
->  	int			flag,
->  	struct FTW		*data)
->  {
-> -	struct fsxattr		fsx;
-> -	int			fd;
-> +	int			error;
-> +	struct file_attr	fa = { 0 };
->  
->  	if (recurse_depth >= 0 && data->level > recurse_depth)
->  		return 0;
-> @@ -96,30 +92,30 @@ check_project(
->  		fprintf(stderr, _("%s: cannot stat file %s\n"), progname, path);
->  		return 0;
->  	}
-> -	if (EXCLUDED_FILE_TYPES(stat->st_mode)) {
-> -		fprintf(stderr, _("%s: skipping special file %s\n"), progname, path);
-> -		return 0;
-> -	}
->  
-> -	if ((fd = open(path, O_RDONLY|O_NOCTTY)) == -1) {
-> -		exitcode = 1;
-> -		fprintf(stderr, _("%s: cannot open %s: %s\n"),
-> -			progname, path, strerror(errno));
-> -	} else if ((xfsctl(path, fd, FS_IOC_FSGETXATTR, &fsx)) < 0) {
-> -		exitcode = 1;
-> +	error = file_getattr(dfd, path, stat, &fa, AT_SYMLINK_NOFOLLOW);
-> +	if (error) {
-> +#ifndef HAVE_FILE_ATTR
-> +		if (SPECIAL_FILE(stat->st_mode)) {
-> +			fprintf(stderr, _("%s: skipping special file %s\n"),
-> +					progname, path);
-> +			return 0;
-> +		}
-> +#endif
-
-Yeah, file_getattr really ought to return some error code for "not
-supported" and then this becomes:
-
-	error = file_getattr(...);
-	if (error && errno == EOPNOTSUPP) {
-		fprintf(stderr, _("%s: skipping special file %s\n"),
-					progname, path);
-		return 0;
-	}
-	if (error) {
-		fprintf(stderr, _("%s: cannot get flags on %s: %s\n"),
-			progname, path, strerror(errno));
-		exitcode = 1;
-		return 0;
-	}
-
->  		fprintf(stderr, _("%s: cannot get flags on %s: %s\n"),
-> -			progname, path, strerror(errno));
-> -	} else {
-> -		if (fsx.fsx_projid != prid)
-> -			printf(_("%s - project identifier is not set"
-> -				 " (inode=%u, tree=%u)\n"),
-> -				path, fsx.fsx_projid, (unsigned int)prid);
-> -		if (!(fsx.fsx_xflags & FS_XFLAG_PROJINHERIT) && S_ISDIR(stat->st_mode))
-> -			printf(_("%s - project inheritance flag is not set\n"),
-> -				path);
-> +				progname, path, strerror(errno));
-> +		exitcode = 1;
-> +		return 0;
->  	}
-> -	if (fd != -1)
-> -		close(fd);
-> +
-> +	if (fa.fa_projid != prid)
-> +		printf(_("%s - project identifier is not set"
-> +				" (inode=%u, tree=%u)\n"),
-> +			path, fa.fa_projid, (unsigned int)prid);
-> +	if (!(fa.fa_xflags & FS_XFLAG_PROJINHERIT) && S_ISDIR(stat->st_mode))
-> +		printf(_("%s - project inheritance flag is not set\n"),
-> +			path);
-> +
->  	return 0;
->  }
->  
-> @@ -130,8 +126,8 @@ clear_project(
->  	int			flag,
->  	struct FTW		*data)
->  {
-> -	struct fsxattr		fsx;
-> -	int			fd;
-> +	int			error;
-> +	struct file_attr	fa;
->  
->  	if (recurse_depth >= 0 && data->level > recurse_depth)
->  		return 0;
-> @@ -141,32 +137,31 @@ clear_project(
->  		fprintf(stderr, _("%s: cannot stat file %s\n"), progname, path);
->  		return 0;
->  	}
-> -	if (EXCLUDED_FILE_TYPES(stat->st_mode)) {
-> -		fprintf(stderr, _("%s: skipping special file %s\n"), progname, path);
-> -		return 0;
-> -	}
->  
-> -	if ((fd = open(path, O_RDONLY|O_NOCTTY)) == -1) {
-> -		exitcode = 1;
-> -		fprintf(stderr, _("%s: cannot open %s: %s\n"),
-> -			progname, path, strerror(errno));
-> -		return 0;
-> -	} else if (xfsctl(path, fd, FS_IOC_FSGETXATTR, &fsx) < 0) {
-> -		exitcode = 1;
-> +	error = file_getattr(dfd, path, stat, &fa, AT_SYMLINK_NOFOLLOW);
-> +	if (error) {
-> +#ifndef HAVE_FILE_ATTR
-> +		if (SPECIAL_FILE(stat->st_mode)) {
-> +			fprintf(stderr, _("%s: skipping special file %s\n"),
-> +					progname, path);
-> +			return 0;
-> +		}
-> +#endif
->  		fprintf(stderr, _("%s: cannot get flags on %s: %s\n"),
-> -			progname, path, strerror(errno));
-> -		close(fd);
-> +				progname, path, strerror(errno));
-> +		exitcode = 1;
->  		return 0;
->  	}
->  
-> -	fsx.fsx_projid = 0;
-> -	fsx.fsx_xflags &= ~FS_XFLAG_PROJINHERIT;
-> -	if (xfsctl(path, fd, FS_IOC_FSSETXATTR, &fsx) < 0) {
-> -		exitcode = 1;
-> +	fa.fa_projid = 0;
-> +	fa.fa_xflags &= ~FS_XFLAG_PROJINHERIT;
-> +
-> +	error = file_setattr(dfd, path, stat, &fa, AT_SYMLINK_NOFOLLOW);
-> +	if (error) {
->  		fprintf(stderr, _("%s: cannot clear project on %s: %s\n"),
->  			progname, path, strerror(errno));
-> +		exitcode = 1;
->  	}
-> -	close(fd);
->  	return 0;
->  }
->  
-> @@ -177,8 +172,8 @@ setup_project(
->  	int			flag,
->  	struct FTW		*data)
->  {
-> -	struct fsxattr		fsx;
-> -	int			fd;
-> +	struct file_attr	fa;
-> +	int			error;
->  
->  	if (recurse_depth >= 0 && data->level > recurse_depth)
->  		return 0;
-> @@ -188,32 +183,32 @@ setup_project(
->  		fprintf(stderr, _("%s: cannot stat file %s\n"), progname, path);
->  		return 0;
->  	}
-> -	if (EXCLUDED_FILE_TYPES(stat->st_mode)) {
-> -		fprintf(stderr, _("%s: skipping special file %s\n"), progname, path);
-> -		return 0;
-> -	}
->  
-> -	if ((fd = open(path, O_RDONLY|O_NOCTTY)) == -1) {
-> -		exitcode = 1;
-> -		fprintf(stderr, _("%s: cannot open %s: %s\n"),
-> -			progname, path, strerror(errno));
-> -		return 0;
-> -	} else if (xfsctl(path, fd, FS_IOC_FSGETXATTR, &fsx) < 0) {
-> -		exitcode = 1;
-> +	error = file_getattr(dfd, path, stat, &fa, AT_SYMLINK_NOFOLLOW);
-> +	if (error) {
-> +#ifndef HAVE_FILE_ATTR
-> +		if (SPECIAL_FILE(stat->st_mode)) {
-> +			fprintf(stderr, _("%s: skipping special file %s\n"),
-> +					progname, path);
-> +			return 0;
-> +		}
-> +#endif
->  		fprintf(stderr, _("%s: cannot get flags on %s: %s\n"),
-> -			progname, path, strerror(errno));
-> -		close(fd);
-> +				progname, path, strerror(errno));
-> +		exitcode = 1;
->  		return 0;
->  	}
->  
-> -	fsx.fsx_projid = prid;
-> -	fsx.fsx_xflags |= FS_XFLAG_PROJINHERIT;
-> -	if (xfsctl(path, fd, FS_IOC_FSSETXATTR, &fsx) < 0) {
-> -		exitcode = 1;
-> +	fa.fa_projid = prid;
-> +	if (S_ISDIR(stat->st_mode))
-> +		fa.fa_xflags |= FS_XFLAG_PROJINHERIT;
-> +
-> +	error = file_setattr(dfd, path, stat, &fa, AT_SYMLINK_NOFOLLOW);
-> +	if (error) {
->  		fprintf(stderr, _("%s: cannot set project on %s: %s\n"),
->  			progname, path, strerror(errno));
-> +		exitcode = 1;
->  	}
-> -	close(fd);
->  	return 0;
->  }
->  
-> @@ -223,6 +218,13 @@ project_operations(
->  	char		*dir,
->  	int		type)
->  {
-> +	dfd = open(dir, O_RDONLY|O_NOCTTY);
-> +	if (dfd < -1) {
-> +		printf(_("Error opening dir %s for project %s...\n"), dir,
-> +				project);
-> +		return;
-> +	}
-> +
->  	switch (type) {
->  	case CHECK_PROJECT:
->  		printf(_("Checking project %s (path %s)...\n"), project, dir);
-> @@ -237,6 +239,8 @@ project_operations(
->  		nftw(dir, clear_project, 100, FTW_PHYS|FTW_MOUNT);
->  		break;
->  	}
-> +
-> +	close(dfd);
->  }
->  
->  static void
+> [1]. https://lore.kernel.org/all/CAHk-=wi5c=_-FBGo_88CowJd_F-Gi6Ud9d=TALm65ReN7YjrMw@mail.gmail.com/
 > 
-> -- 
-> 2.49.0
-> 
-> 
+> Signed-off-by: Bhupesh <bhupesh@igalia.com>
+
+Same suggestion, make it a Link tag.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
