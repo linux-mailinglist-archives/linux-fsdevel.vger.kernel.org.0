@@ -1,147 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-57362-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57363-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A120B20BCC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 16:26:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE8E2B20C22
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 16:38:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A7CA7A1B54
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 14:25:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 943882A248A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 14:34:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9567248895;
-	Mon, 11 Aug 2025 14:26:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 344B62D3230;
+	Mon, 11 Aug 2025 14:34:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="B1FivQUg"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DIbEH2Ox"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89EA3246783
-	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Aug 2025 14:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CAC1253B42
+	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Aug 2025 14:34:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754922372; cv=none; b=e6gtZ/29oA5U4UQUpOyTC4CM2ihcidIAapZQfcc9ecMaQ4O7IMyMnL8gKvjBUPD3hYWBnRkciwLNA72/GNBlimxGCZAVvY+23ySAYrdT7y/hUxtDGvFNfpbqTIBDLzYfanso0rec1Dmlff/mf4aDHK/Z3y/F+f0nJOMsGqiDoPI=
+	t=1754922859; cv=none; b=P56tq/9QpfBx32EXxS7mi9eVjdiE+6iOSjlvh9OEuxjRxycgU+E1jHtvflk4vOpdCBlKrDrmmm2UP0xeIMV5xKkZ35P5cscHN2KXRixGfDwa4VZF7ui5fqdyDIuth0Tewn2LM4y2dzt9zw/WAPL702VewJUzcRwNTpPiKPAtoVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754922372; c=relaxed/simple;
-	bh=Gpgif4jJQvzanWKJOJ2s9ZDQOWPc1/PQaHnckHjCNmo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cyifvm2jqHo88eeipRtZb1eav8okIgv/eonAswAOFz8VEabypnhu+jLlE8wg+rMJeqsoAH+EzqEUVHzGzPj2zEy1V6JOr0Z7Ei4nQ1xxqo+TrKWohqS1ERZJYL3OV96b4JMhFRbcr7gdyb+oeUKs59KIIsPkmgRr6aFBIVfy8ZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=B1FivQUg; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 11 Aug 2025 10:26:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1754922367;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A6rsFHxkQsnak3YFY7+1+x3Sg0pa/9qbnvIjHnk7aBE=;
-	b=B1FivQUgvpvJLB61xJM8hVKYlrmhN3IFbY6GpfOTI0aX5GH/dn8Xpqak7qRBv7S6vSHJFD
-	P9H6f2rhqAxvzDuw9gmXv0oR/HL8oU6JJcs+GckwpX/DveuBvxSw0XQRkJG+H0EG8tZ5X5
-	ZKOJWabEeP+tmcj7qeFeEbO2WZWyb60=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Konstantin Shelekhin <k.shelekhin@ftml.net>
-Cc: admin@aquinas.su, linux-bcachefs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, list-bcachefs@carlthompson.net, 
-	malte.schroeder@tnxip.de, torvalds@linux-foundation.org
-Subject: Re: [GIT PULL] bcachefs changes for 6.17
-Message-ID: <iktaz2phgjvhixpb5a226ebar7hq6elw6l4evcrkeu3wwm2vs7@fsdav6kbz4og>
-References: <3ik3h6hfm4v2y3rtpjshk5y4wlm5n366overw2lp72qk5izizw@k6vxp22uwnwa>
- <55e623db-ff03-4d33-98d1-1042106e83c6@ftml.net>
+	s=arc-20240116; t=1754922859; c=relaxed/simple;
+	bh=bruREYZz13FVqwhmiTuhvJnq89yjM0qtV4JcUUKirMo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=sein010qUkWIseH07DSux8K58OKMqu/4VqGqj1yPo2VY1dt5IiCWTIxsNLlr8oCZYjfpGWF88cCEvHXli6f38PKPSuLUQQCTo0L9F5U15ZF9aN15vrdwRsFtW9GlOE51GRuq0OfCnIIAhVLgEV7n0nzafM1G3amp3/3xZD8Y+/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DIbEH2Ox; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b46e380a400so1521289a12.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Aug 2025 07:34:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754922857; x=1755527657; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=s3QC/DofyyJ1kIbquP7TygGRJBogDIdpEUbLnTdcdHg=;
+        b=DIbEH2OxjBvZkBS8teorCGp39U2CsmDZuMeaPxaLBtckmwePYI1C99M65EyxVI7trh
+         HMj94pK8tSAk3aLUDeLtAL6D0cSxG/BAIn/jY23E+Z+FueDmK4DbobALuGZ7GOUSpFAV
+         pFuN9hANNqRVIBG3ZvvVCSw2QTKDTvKP8zGpnXzSyTfcMqchaQovLADWbt6PftZYq+8u
+         MDnxb7e9+ghOdjDXxhD0wKp0209GGbj42znut7BAb3XeN1mYs9dLBE8YTT0TeccuZFNV
+         78Z3olcG5TguJmbCuK46mBMg9bII8+GyNCNGPCcxWsmK1r2rbJoaYCZLg7gIdLsEdA9X
+         HxAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754922857; x=1755527657;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=s3QC/DofyyJ1kIbquP7TygGRJBogDIdpEUbLnTdcdHg=;
+        b=sXRJWrIT8WKFRKWaAUXpzFjeVOkua/AvWm9jOvjyBCaQ5wRd++TlX/7Os6RATrgSN0
+         fsBOXfrQK+xdGcCqau8tyNdt+bBsPUl+uco9O3/PBrfwXe2WcNQHnlsZTDX2cXnYCKwC
+         8Bt8T/gmmMIrZxVzUbdxVfux0ZjR0AARp3oSla9Mg1HMo4psu9vtuAPlIYM90p9c9ZWI
+         NJXxNyFZXxDhNnGZW8onGIvJCwU3khb0bGXam8PfhboDGSCOBYDIf8kLQ4ZzTU4GjaSz
+         G5fo6cqlIRbMRHDqPbeEqbl1/4qJlc1szuX/BMJlZK7kiH0yAbSP08oVqQfua1A4jHoW
+         yDMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWfQG/2z/SGem9HNH/854e5ANCr13n2/5ro9RJOunUxxTWG83FPU/RMvlcR0hjHbdeHO+Hica0t16VafKTh@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSQxFAF9u3/CDkk3amdfh/j0CPJwnbqno2uz/b4DA2kYplMs7N
+	hZ8A72d1lyOY+hZvO3CLCm/eadbkw70MNYVIYk6U0xtUeMGAkdhdZfv+0xGrY5XQiUrJasCO9Fc
+	jdV+9rQ==
+X-Google-Smtp-Source: AGHT+IHDzFt+0zXjA0CUz3si8YkwDTRVPFUsiiRh4VZN4Dkprgq2wlq3CPL9ofZgO6/62HnwUQZt6ujhFVk=
+X-Received: from pgos21.prod.google.com ([2002:a63:af55:0:b0:b31:d198:ffb2])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:3d8b:b0:240:6dc:9164
+ with SMTP id adf61e73a8af0-2405502ffeamr23223057637.15.1754922855887; Mon, 11
+ Aug 2025 07:34:15 -0700 (PDT)
+Date: Mon, 11 Aug 2025 07:34:14 -0700
+In-Reply-To: <20250811090605.16057-2-shivankg@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <55e623db-ff03-4d33-98d1-1042106e83c6@ftml.net>
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0
+References: <20250811090605.16057-2-shivankg@amd.com>
+Message-ID: <aJn_ZvD2AfZBX4Ox@google.com>
+Subject: Re: [PATCH RFC V10 0/7] Add NUMA mempolicy support for KVM guest-memfd
+From: Sean Christopherson <seanjc@google.com>
+To: Shivank Garg <shivankg@amd.com>
+Cc: david@redhat.com, vbabka@suse.cz, willy@infradead.org, 
+	akpm@linux-foundation.org, shuah@kernel.org, pbonzini@redhat.com, 
+	brauner@kernel.org, viro@zeniv.linux.org.uk, ackerleytng@google.com, 
+	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz, 
+	bfoster@redhat.com, tabba@google.com, vannapurve@google.com, 
+	chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, michael.day@amd.com, 
+	shdhiman@amd.com, yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com, 
+	thomas.lendacky@amd.com, michael.roth@amd.com, aik@amd.com, jgg@nvidia.com, 
+	kalyazin@amazon.com, peterx@redhat.com, jack@suse.cz, rppt@kernel.org, 
+	hch@infradead.org, cgzones@googlemail.com, ira.weiny@intel.com, 
+	rientjes@google.com, roypat@amazon.co.uk, ziy@nvidia.com, 
+	matthew.brost@intel.com, joshua.hahnjy@gmail.com, rakie.kim@sk.com, 
+	byungchul@sk.com, gourry@gourry.net, kent.overstreet@linux.dev, 
+	ying.huang@linux.alibaba.com, apopple@nvidia.com, chao.p.peng@intel.com, 
+	amit@infradead.org, ddutile@redhat.com, dan.j.williams@intel.com, 
+	ashish.kalra@amd.com, gshan@redhat.com, jgowans@amazon.com, 
+	pankaj.gupta@amd.com, papaluri@amd.com, yuzhao@google.com, 
+	suzuki.poulose@arm.com, quic_eberman@quicinc.com, 
+	aneeshkumar.kizhakeveetil@arm.com, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, kvm@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-coco@lists.linux.dev
+Content-Type: text/plain; charset="us-ascii"
 
-On Mon, Aug 11, 2025 at 12:51:11PM +0300, Konstantin Shelekhin wrote:
-> >  Yes, this is accurate. I've been getting entirely too many emails from Linus about
-> > how pissed off everyone is, completely absent of details - or anything engineering
-> > related, for that matter.
-> 
-> That's because this is not an engineering problem, it's a communication problem. You just piss
-> people off for no good reason. Then people get tired of dealing with you and now we're here,
-> with Linus thinking about `git rm -rf fs/bcachesfs`. Will your users be happy? Probably not.
-> Will your sponsors be happy? Probably not either. Then why are you keep doing this?
-> 
-> If you really want to change the way things work go see a therapist. A competent enough doctor
-> probably can fix all that in a couple of months.
+On Mon, Aug 11, 2025, Shivank Garg wrote:
+> This series introduces NUMA-aware memory placement support for KVM guests
+> with guest_memfd memory backends. It builds upon Fuad Tabba's work (V17)
+> that enabled host-mapping for guest_memfd memory [1].
 
-Konstantin, please tell me what you're basing this on.
-
-The claims I've been hearing have simply lacked any kind of specifics;
-if there's people I'd pissed off for no reason, I would've been happy to
-apologize, but I'm not aware of the incidences you're claiming - not
-within a year or more; I have made real efforts to tone things down.
-
-On the other hand, for the only incidences I can remotely refer to in
-the past year and a half, there has been:
-
-- the mm developer who started outright swearing at me on IRC in a
-  discussion about assertions
-- the block layer developer who went on a four email rant where he,
-  charitably, misread the spec or the patchset or both; all this over a
-  patch to simply bring a warning in line with the actual NVME and SCSI
-  specs.
-- and reference to an incident at LSF, but the only noteworthy event
-  that I can recall at the last LSF (a year and a half ago) was where a
-  filesystem developer chased a Rust developer out of the community.
-
-So: what am I supposed to make of all this?
-
-To an outsider, I don't think any of this looks like a reasonable or
-measured response, or professional behaviour. The problems with toxic
-behaviour have been around long before I was prominent, and they're
-still in evidence.
-
-It is not reasonable or professional to jump from professional criticism
-of code and work to personal attacks: it is our job to be critical of
-our own and each other's code, and while that may bring up strong
-feelings when we feel our work is attacked, that does not mean that it
-is appropriate to lash out.
-
-We have to separate the professional criticism from the personal.
-
-It's also not reasonable or professional to always escelate tensions,
-always look for the upper hand, and never de-escalate.
-
-As a reminder, this all stems from a single patch, purely internal to
-fs/bcachefs/, that was a critical, data integrity hotfix.
-
-There has been a real pattern of hyper reactive, dramatic responses to
-bugfixes in the bcachefs pull requests, all the way up to full blown
-repeated threats of removing it from the kernel, and it's been toxic.
-
-And it's happening again, complete with full blown rants right off the
-bat in the private maintainer thread about not trusting my work (and I
-have provided data and comparisons with btrfs specifically to rebut
-that), all the way to "everyone hates you and you need therapy". That is
-not reasonable or constructive.
-
-This specific thread was in response to Linus saying that bcachefs was
-imminently going to be git rm -rf'd, "or else", again with zero details
-on that or else or anything that would make it actionable.
-
-Look, I'm always happy to sit down, have a beer, talk things out, and
-listen.
-
-If there's people I have legitimately pissed off (and I do not include
-anyone who starts swearing at me in a technical discussion) - let me
-know, I'll listen. I'm not unapproachable, I'm not going to bite your
-head off.
-
-I've mended fences with people in the past; there were people I thought
-I'd be odds with forever, but all it really takes is just talking. Say
-what it is that you feel has affected, be willing to listen and turn,
-and it gets better.
+Is this still actually an RFC?  If so, why?  If not, drop tag on the next version
+(if one is needed/sent).
 
