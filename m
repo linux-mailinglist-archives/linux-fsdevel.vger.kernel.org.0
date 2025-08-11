@@ -1,133 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-57354-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57355-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E9D3B20AB1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 15:50:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 420FAB20AB5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 15:51:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44F7E18C259C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 13:50:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A40ED3A9067
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 13:51:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D761719DF5F;
-	Mon, 11 Aug 2025 13:50:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19E451DF27F;
+	Mon, 11 Aug 2025 13:51:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tvTKhn7+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CYjARFsX"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BCE5192D8A;
-	Mon, 11 Aug 2025 13:50:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 765A819DF5F;
+	Mon, 11 Aug 2025 13:51:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754920207; cv=none; b=FMIzsLm3WKF7XLH8xKoAftNBckaenGqtubUYoWWChyTsdFTVMu+Sgv5VpPQzmf8ZyJ6HiBFYATdZCMmdkKQ77ynS03fvlIyI68iLYelVnZMpB5UuXx27dKGFIln9rAKpDumbkM9pHzHoOYTx9sUrDJWoQnk3uimLPEJIUlzwEtQ=
+	t=1754920272; cv=none; b=jPEe1FVpU9xsKfOt9T5O1dYU9XNRz4v5q0BOwHver+M5WYqgycJWlpmVRjFwPmhXvFlPn76z21u37gIiJJsou9vZsqAr8M7KlZ/E5urTxlUKUsgM7hVfXcB3855DODRHyDf2262YLYIQy5YOHVJFfJO4u3u+USkh7E+LBulo5EA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754920207; c=relaxed/simple;
-	bh=Q3wRFljT1RqYBoMrZp5hrUr0ZoeqxaR44aa4gXoxX18=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ASmFbVnRlZP218XwE5Z9Sg9c9/FALaGiLb9xDkPDzhnjgpVhbEcqsqbU0lfS7rQkcfHdARcTRWd7+aTyNdO4BQdX8u/IHGwBnAIKV7tjTQqWXTVVb4NO8BKndIOwO57Cf+uw+98R/DfjYvhzaZvDcVRSPe+YbCo5ioYuGCrFVNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tvTKhn7+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE867C4CEED;
-	Mon, 11 Aug 2025 13:50:04 +0000 (UTC)
+	s=arc-20240116; t=1754920272; c=relaxed/simple;
+	bh=+F8d3/5en9MycyzN7vz0cV8gLmAzIUKKReiksPPHZzI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZDyI+8yqgbqUTynwS4HUkU/UGz/zr+go9X6kw7B7Wz5fwSMUihcUB7QqMpLa4Motl8FtvmTlXcGJGMMjqOgulfZH3aP9XLI61zSHNx4RZg2b3juUBv9g3smQUr1XC3s6xYy8wjExwXElAT/+G/mtXGDhXsClishL2cJSmMdMTWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CYjARFsX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 602EDC4CEED;
+	Mon, 11 Aug 2025 13:51:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754920206;
-	bh=Q3wRFljT1RqYBoMrZp5hrUr0ZoeqxaR44aa4gXoxX18=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tvTKhn7+/cg26lCF8iufQgaAZVGIt+1RdEg5ca3bkwvmjm/9zzFu+dpLh/NCYBaxq
-	 nB2bTrKZqQ/0OeKeh3VfXOLlguf5zCFD/XBeN0O+Ojx77pzkVbUFdT6sdbXTnxn1bY
-	 zBjBU1oGDe/FhG6AE/y10dKDMSvhEZSkJ9UV29botVq4qVLDZDwUWlCotJfcREW79t
-	 nSHSFqUznSu7YT+x2o0HXBEwiWwXSBodYrWcVrwieTmvPbupRBDfrUn3Nbqv8v7z95
-	 YbYHe4zWfam2qOco0imx51oYaBBJdiBfllh27S16Yt7xZJG6fV+P/IZBI6vUwMumAL
-	 uoX8g4EiAZLaA==
-Date: Mon, 11 Aug 2025 15:50:02 +0200
+	s=k20201202; t=1754920272;
+	bh=+F8d3/5en9MycyzN7vz0cV8gLmAzIUKKReiksPPHZzI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=CYjARFsXODuGMN1Qd4Tn2sKFg/PKfwVQa1+wwG6g7GO6ASjgncsVtSRBK8u6VHj/j
+	 8KqZeIfgBj8JZVBDuIutA09QBTxwPniCqFNCU6xGIPjCyoWr5HQ93kLp2mo/yRhvAy
+	 T1KJ3yFYuerDgGqgkXcG1Qo6LdIO32/ByLamlfuOqIoFVHMRdIEv3BtAQ5q0a/n7fX
+	 H3nzxDJU6ekch8YClEiTEjVEEkOraZbOSwx7Ls4RV2oH+jp0Rg5Go8P8FzBpGSbvkT
+	 9S7t3lGcfVJEDClCEMcJVWsqHskkHpHfXVk8NqbWjLT3nlLiGHyYz6/B+FYFCHAaUG
+	 oHRkZb9RwV0Hg==
 From: Christian Brauner <brauner@kernel.org>
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, 
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	Mateusz Guzik <mjguzik@gmail.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
-	ntfs3@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH] vfs: exclude ntfs3 from file mode validation in
- may_open()
-Message-ID: <20250811-geteilt-sprudeln-f09e6ec25c0c@brauner>
-References: <fb3888fb-11b8-481b-86a6-766bbbab5c81@I-love.SAKURA.ne.jp>
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: Re: [PATCH] vfs: show filesystem name at dump_inode()
+Date: Mon, 11 Aug 2025 15:51:01 +0200
+Message-ID: <20250811-bahnhof-paare-593afaae19b5@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <ceaf4021-65cc-422e-9d0e-6afa18dd8276@I-love.SAKURA.ne.jp>
+References: <ceaf4021-65cc-422e-9d0e-6afa18dd8276@I-love.SAKURA.ne.jp>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <fb3888fb-11b8-481b-86a6-766bbbab5c81@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1354; i=brauner@kernel.org; h=from:subject:message-id; bh=+F8d3/5en9MycyzN7vz0cV8gLmAzIUKKReiksPPHZzI=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTM/Op9cOFRI/UzrxZHFWh7Wq+ZPasiYtLtk3vOrXgcc PqWdNmzuI5SFgYxLgZZMUUWh3aTcLnlPBWbjTI1YOawMoEMYeDiFICJ8Nxn+Ke6esMK6/ubytVN rGLKyg50mVVP9PqW8PNrq1T0kwXr3OYyMpzpmjvlXJHBdpul7+z92zxVzv8V2/hGKpFHSD1+jvH vRG4A
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 11, 2025 at 04:05:51PM +0900, Tetsuo Handa wrote:
-> Since ntfs_read_mft() not only accepts file modes which may_open() accepts
-> but also accepts
+On Mon, 11 Aug 2025 15:50:28 +0900, Tetsuo Handa wrote:
+> Commit 8b17e540969a ("vfs: add initial support for CONFIG_DEBUG_VFS") added
+> dump_inode(), but dump_inode() currently reports only raw pointer address.
+> Comment says that adding a proper inode dumping routine is a TODO.
 > 
->   (fname && fname->home.low == cpu_to_le32(MFT_REC_EXTEND) &&
->    fname->home.seq == cpu_to_le16(MFT_REC_EXTEND)
+> However, syzkaller concurrently tests multiple filesystems, and several
+> filesystems started calling dump_inode() due to hitting VFS_BUG_ON_INODE()
+> added by commit af153bb63a33 ("vfs: catch invalid modes in may_open()")
+> before a proper inode dumping routine is implemented.
 > 
-> case when the file mode is none of
-> S_IFDIR/S_IFLNK/S_IFREG/S_IFCHR/S_IFBLK/S_IFIFO/S_IFSOCK, may_open() cannot
-> unconditionally expect IS_ANON_FILE(inode) when the file mode is none of
-> S_IFDIR/S_IFLNK/S_IFREG/S_IFCHR/S_IFBLK/S_IFIFO/S_IFSOCK.
-> 
-> Treat as if S_IFREG when the inode is for NTFS3 filesystem.
-> 
-> Reported-by: syzbot <syzbot+895c23f6917da440ed0d@syzkaller.appspotmail.com>
-> Closes: https://syzkaller.appspot.com/bug?extid=895c23f6917da440ed0d
-> Fixes: af153bb63a33 ("vfs: catch invalid modes in may_open()")
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> ---
-> Is it possible to handle this problem on the NTFS3 side?
+> [...]
 
-Ugh, this is annoying.
-@Konstantin, why do you leave a zero mode for these files?
-Let's just make them regular files?
+Applied to the vfs-6.18.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.18.misc branch should appear in linux-next soon.
 
-> 
->   --- a/fs/ntfs3/inode.c
->   +++ b/fs/ntfs3/inode.c
->   @@ -470,8 +470,9 @@ static struct inode *ntfs_read_mft(struct inode *inode,
->           } else if (fname && fname->home.low == cpu_to_le32(MFT_REC_EXTEND) &&
->                      fname->home.seq == cpu_to_le16(MFT_REC_EXTEND)) {
->                   /* Records in $Extend are not a files or general directories. */
->                   inode->i_op = &ntfs_file_inode_operations;
->   +               mode = S_IFREG;
->           } else {
->                   err = -EINVAL;
->                   goto out;
->           }
-> 
-> I don't know what breaks if we pretend as if S_IFREG...
-> 
->  fs/namei.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index cd43ff89fbaa..a66599754394 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -3471,6 +3471,12 @@ static int may_open(struct mnt_idmap *idmap, const struct path *path,
->  			return -EACCES;
->  		break;
->  	default:
-> +		/* Special handling for ntfs_read_mft() case. */
-> +		if (inode->i_sb->s_magic == 0x7366746e) {
-> +			if ((acc_mode & MAY_EXEC) && path_noexec(path))
-> +				return -EACCES;
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-That's really unacceptable. We either need to drop the assert which
-would be a shame because it keeps finding bugs or we fix that in ntfs3
-which is my preferred solution...
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-> +			break;
-> +		}
->  		VFS_BUG_ON_INODE(!IS_ANON_FILE(inode), inode);
->  	}
->  
-> -- 
-> 2.50.1
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.18.misc
+
+[1/1] vfs: show filesystem name at dump_inode()
+      https://git.kernel.org/vfs/vfs/c/ecb060536446
 
