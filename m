@@ -1,86 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-57424-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57425-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA3FDB21500
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 20:57:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F09BBB2150B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 21:01:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE9924610D3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 18:57:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B08573A9E58
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 19:01:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C64A2E2DF0;
-	Mon, 11 Aug 2025 18:57:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E3892E2EFA;
+	Mon, 11 Aug 2025 19:00:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pnnj7TI2"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="icypy6Ds"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B915C72600;
-	Mon, 11 Aug 2025 18:56:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF842E2DFA
+	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Aug 2025 19:00:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754938620; cv=none; b=kDN58pbFM48wD6WFVXCb9dGfyYX5GTAGWLOGFuO3nBpRPTq5O3hjSgpV8w4VAtKVsEVXGqlzeYHOiI93Ty6gkFtiG67TEcZn8YhAUw68Cylck/weQPS965r17aHVz5Rpx7iMyWrQK35WoKV0O6dEfKGi59xjKB67lh4AORrrrPY=
+	t=1754938858; cv=none; b=ZaCSIMjAZDoTubITYtz5SDL6JmeH32Fgl8kfe1PWblFl1hwRfiPPrPOaXTA9HCqXQOQa4/Fq2yCQ8NlBUX+JAvAdTXcqDbBLHCqK+lbAV5SNMVLWIeZWarcVHSJ1VbCGEuX2unQ47r3ehTL4YMCF5gp0pdcDnfzAkSPScKMhof8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754938620; c=relaxed/simple;
-	bh=/1h1FXQ8wlbSgFHXbQzagekP6WBsykBAbMExF88232A=;
+	s=arc-20240116; t=1754938858; c=relaxed/simple;
+	bh=ybcjvOJlMNn70eoStdwho8f04eAjfDTqsUepVF/tZCI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M8kdyZtotZhaNpaVc6UvjFN2dqzgn0PXkO2Z3BOAOSbpE4nXrgGOG3GozpvkaTpV+cXh5FJuVLtbLAAE/zov2I52N4fZ9Rs87HgArJYwCg1/dxgTvpXgTab31W5f7XeywycUWqTzqZN2JmUGkmIABFu7PKpnjQSyRtOnnFdW9/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pnnj7TI2; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754938619; x=1786474619;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/1h1FXQ8wlbSgFHXbQzagekP6WBsykBAbMExF88232A=;
-  b=Pnnj7TI22M/wvUQDA78sBsJeug6tdbnzc6tMcoEMXCDeXuZ+/1PX66TL
-   nt95+jNkA1Cpq9bO3VPBo8c6nSHglAJfv9ynUxQ2x0SL+lGfZeH1+ClFZ
-   WH1Y+mJEuF+AVYPA94khQZJSKKDHdj42M+3Z+gHdhHFBYQTLfNYzch+zA
-   lL7GsI2mjIHmk3Gk8ItKBa1ZGF48M5dQt3sNCryzJebeaEC10dYrs9ld9
-   CQNDL6WG0bIY4JQ0pEk+tv69Xwwr4CytfMXEE0gDjbE0KgPAI7fW0WFUU
-   gMSKZ6INDw43vm6bl8Hy8G6GX2Ljik8ejShDnWjNaHGD9yJJPbLzyhhAF
-   Q==;
-X-CSE-ConnectionGUID: Je30W+SHQEu6DShDcy1vkQ==
-X-CSE-MsgGUID: GMyWzhJfQsC7si7eDViI3w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="57344995"
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="57344995"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 11:56:58 -0700
-X-CSE-ConnectionGUID: vpWZx5ZjTIuthikuHuwiLg==
-X-CSE-MsgGUID: gJZTJWVSR5qvoV1h6E7NgA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="165192786"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa006.jf.intel.com with ESMTP; 11 Aug 2025 11:56:53 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ulXhL-00069Y-0y;
-	Mon, 11 Aug 2025 18:56:44 +0000
-Date: Tue, 12 Aug 2025 02:55:55 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dominique Martinet via B4 Relay <devnull+asmadeus.codewreck.org@kernel.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Christian Brauner <brauner@kernel.org>,
-	David Howells <dhowells@redhat.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Maximilian Bosch <maximilian@mbosch.me>,
-	Ryan Lahfa <ryan@lahfa.xyz>, Christian Theune <ct@flyingcircus.io>,
-	Arnout Engelen <arnout@bzzt.net>, linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Dominique Martinet <asmadeus@codewreck.org>, stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] iov_iter: iterate_folioq: fix handling of offset >=
- folio size
-Message-ID: <202508120250.Eooq2ydr-lkp@intel.com>
-References: <20250811-iot_iter_folio-v1-1-d9c223adf93c@codewreck.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SyEPFaAAZfje9R/0zO+Phm1nCSvJ9LKNXFt+CoUxqsvOfVE3HyUQi5lVPVn5VyS5LRU/WEKb3TdJc8mTgL32GLiWdI17sc+rBqA1Yxe4kWZ4S2bpW5ACHC/BYpN9RWCEbUca6aLJjAlB3uAIn0A+RN5Ijzs/N1/SsRYm93G5kFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=icypy6Ds; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754938836;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=58JoT5HH4eptH1LhdQHcGjevevo6yl7PELRmS6dCCGw=;
+	b=icypy6Ds1D5COnupWJhZDJmtECTqDPuygWMlgjk8HYpbaYyMMMMqe+tnP6dxrxxF9HZ70o
+	Zh+2FLdal59Tdla4GgFQCtRA74AM0eq9E894/eQfVy2DrdfJtA8hnkG6PGVVDsmKjXOUAt
+	m3yFdsbUVonma4qS1fC+BqnA9i45hdM=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-674-C_S1mD-oPbq09gk5BJhxKA-1; Mon, 11 Aug 2025 15:00:33 -0400
+X-MC-Unique: C_S1mD-oPbq09gk5BJhxKA-1
+X-Mimecast-MFC-AGG-ID: C_S1mD-oPbq09gk5BJhxKA_1754938832
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3b78aa2a113so2247976f8f.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Aug 2025 12:00:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754938832; x=1755543632;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=58JoT5HH4eptH1LhdQHcGjevevo6yl7PELRmS6dCCGw=;
+        b=HM6zB0SXKvM9wn8iP2EVm2mALue8kp3RzP67htpVAjEHkIS3PST+xx3cTfGbAinZUq
+         Dz7F4OLXYLdqcLYn5wGWMUGrO5lK1L3xExzYPOcSCanfOICP61rETE2ZIw1znVXLE6t8
+         s29LwH0e+m/y1FvjEwpQFwX2ylQNuicu3bQHAcV06bAhA3QRKN/NRuNl40kf9+RB6IA1
+         lgHR7R6U5+1hZzlBJZ9R0ui0Sm5dipUYXeDAZKMVdZHxG1AWlkr2DAGW4hm9XjGfpQTU
+         AAEGD070Y12ai42TC5pslu4LNIhCKlJO5HYxFDS4MCNn213gcuFvqeG40U6T0yK3oIaS
+         kzZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUUJwszGhKTHsQu9OJLu8huuEZ26zNMG0FI/E8tu9RyorW0FRb/ApduHEc9yEwly/yWMWMdLs33MkimUNna@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBORLYyX5LPJtHep5B55H1ERSxJRrdakql8uFhKntm82enR0S4
+	/E23GCRS3RLkVQr1ji84J++0T7fpebR1O3Mk4dhd0HpPsOZT2a3NP/OM6jTNez0uhYZ+vQSuKAm
+	OosUVt+Obx06dZWZh7PKV4zVzAgcp3oDSRS7T29Z2KXRWukYaMAy5hoxdIWirNKtjig==
+X-Gm-Gg: ASbGncuc5VcMa/TLg3tqTzd41AR50QYJJhriH6AlPlK/aGhEw1rMuUS3cJSBKvoxiV7
+	I9YoLkFBtah9oREtVkgMwujDoFzaW6eXOucBGXi0erKpfyePhtUI6lbjvPiWKy5pnDtOzkGMnmy
+	L8zV7/7Re5td+jpA0HueClf67wke30IYlJq4cuqycWvVRbXn/8jQ0qOnWD5Hu7lQjlJfdUXPuzs
+	BUSgfwnr8OvHCH0LxGFTVBc7o3bMa3i9V/bLFuDKGQJQGW57JSKtKmTRCUqOfhtYl3buwm4QT5v
+	nTmiALhjOYVYx+rxUHb2M5j+J2YRxjdTWPaMsyBtCENTgW2ni4FMFmE3KlQ=
+X-Received: by 2002:a05:6000:310d:b0:3a5:3b03:3bc6 with SMTP id ffacd0b85a97d-3b911007a82mr729071f8f.28.1754938832135;
+        Mon, 11 Aug 2025 12:00:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFhSlMkIt2XZ85mTyNIxX5yeT/WsbII4MET5l/kPnwGJDSFQsCvBR4Sv0f4Njm12y3xRw1vzQ==
+X-Received: by 2002:a05:6000:310d:b0:3a5:3b03:3bc6 with SMTP id ffacd0b85a97d-3b911007a82mr729045f8f.28.1754938831710;
+        Mon, 11 Aug 2025 12:00:31 -0700 (PDT)
+Received: from thinky (ip-217-030-074-039.aim-net.cz. [217.30.74.39])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458b866392csm232787035e9.2.2025.08.11.12.00.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 12:00:31 -0700 (PDT)
+Date: Mon, 11 Aug 2025 21:00:29 +0200
+From: Andrey Albershteyn <aalbersh@redhat.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, david@fromorbit.com, djwong@kernel.org, ebiggers@kernel.org, 
+	Andrey Albershteyn <aalbersh@kernel.org>
+Subject: Re: [PATCH RFC 14/29] xfs: add attribute type for fs-verity
+Message-ID: <je3ryqpl3dyryplaxt6a5h6vtvsa2tpemfzraofultyfccr4a4@mftein7jfwmt>
+References: <20250728-fsverity-v1-0-9e5443af0e34@kernel.org>
+ <20250728-fsverity-v1-14-9e5443af0e34@kernel.org>
+ <20250811115023.GD8969@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -89,110 +97,28 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250811-iot_iter_folio-v1-1-d9c223adf93c@codewreck.org>
+In-Reply-To: <20250811115023.GD8969@lst.de>
 
-Hi Dominique,
+On 2025-08-11 13:50:23, Christoph Hellwig wrote:
+> On Mon, Jul 28, 2025 at 10:30:18PM +0200, Andrey Albershteyn wrote:
+> > From: Andrey Albershteyn <aalbersh@redhat.com>
+> > 
+> > The fsverity descriptor is stored in the extended attributes of the
+> > inode. Add new attribute type for fs-verity metadata. Add
+> > XFS_ATTR_INTERNAL_MASK to skip parent pointer and fs-verity attributes
+> > as those are only for internal use. While we're at it add a few comments
+> > in relevant places that internally visible attributes are not suppose to
+> > be handled via interface defined in xfs_xattr.c.
+> 
+> So ext4 and other seems to place the descriptor just before the verity
+> data.  What is the benefit of an attr?
+> 
 
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on 8f5ae30d69d7543eee0d70083daf4de8fe15d585]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Dominique-Martinet-via-B4-Relay/iov_iter-iterate_folioq-fix-handling-of-offset-folio-size/20250811-154319
-base:   8f5ae30d69d7543eee0d70083daf4de8fe15d585
-patch link:    https://lore.kernel.org/r/20250811-iot_iter_folio-v1-1-d9c223adf93c%40codewreck.org
-patch subject: [PATCH 1/2] iov_iter: iterate_folioq: fix handling of offset >= folio size
-config: i386-buildonly-randconfig-002-20250811 (https://download.01.org/0day-ci/archive/20250812/202508120250.Eooq2ydr-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250812/202508120250.Eooq2ydr-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508120250.Eooq2ydr-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from lib/iov_iter.c:14:
->> include/linux/iov_iter.h:171:7: warning: variable 'remain' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
-     171 |                 if (skip >= fsize)
-         |                     ^~~~~~~~~~~~~
-   include/linux/iov_iter.h:190:7: note: uninitialized use occurs here
-     190 |                 if (remain)
-         |                     ^~~~~~
-   include/linux/iov_iter.h:171:3: note: remove the 'if' if its condition is always false
-     171 |                 if (skip >= fsize)
-         |                 ^~~~~~~~~~~~~~~~~~
-     172 |                         goto next;
-         |                         ~~~~~~~~~
-   include/linux/iov_iter.h:163:22: note: initialize the variable 'remain' to silence this warning
-     163 |                 size_t part, remain, consumed;
-         |                                    ^
-         |                                     = 0
-   1 warning generated.
-
-
-vim +171 include/linux/iov_iter.h
-
-   143	
-   144	/*
-   145	 * Handle ITER_FOLIOQ.
-   146	 */
-   147	static __always_inline
-   148	size_t iterate_folioq(struct iov_iter *iter, size_t len, void *priv, void *priv2,
-   149			      iov_step_f step)
-   150	{
-   151		const struct folio_queue *folioq = iter->folioq;
-   152		unsigned int slot = iter->folioq_slot;
-   153		size_t progress = 0, skip = iter->iov_offset;
-   154	
-   155		if (slot == folioq_nr_slots(folioq)) {
-   156			/* The iterator may have been extended. */
-   157			folioq = folioq->next;
-   158			slot = 0;
-   159		}
-   160	
-   161		do {
-   162			struct folio *folio = folioq_folio(folioq, slot);
-   163			size_t part, remain, consumed;
-   164			size_t fsize;
-   165			void *base;
-   166	
-   167			if (!folio)
-   168				break;
-   169	
-   170			fsize = folioq_folio_size(folioq, slot);
- > 171			if (skip >= fsize)
-   172				goto next;
-   173			base = kmap_local_folio(folio, skip);
-   174			part = umin(len, PAGE_SIZE - skip % PAGE_SIZE);
-   175			remain = step(base, progress, part, priv, priv2);
-   176			kunmap_local(base);
-   177			consumed = part - remain;
-   178			len -= consumed;
-   179			progress += consumed;
-   180			skip += consumed;
-   181			if (skip >= fsize) {
-   182	next:
-   183				skip = 0;
-   184				slot++;
-   185				if (slot == folioq_nr_slots(folioq) && folioq->next) {
-   186					folioq = folioq->next;
-   187					slot = 0;
-   188				}
-   189			}
-   190			if (remain)
-   191				break;
-   192		} while (len);
-   193	
-   194		iter->folioq_slot = slot;
-   195		iter->folioq = folioq;
-   196		iter->iov_offset = skip;
-   197		iter->count -= progress;
-   198		return progress;
-   199	}
-   200	
+Mostly because it was already implemented. But looking for benefits,
+attr can be inode LOCAL so a bit of saved space? Also, seems like a
+better interface than to look at a magic offset
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+- Andrey
+
 
