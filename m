@@ -1,346 +1,301 @@
-Return-Path: <linux-fsdevel+bounces-57279-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57280-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 208C5B202C9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 11:11:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F03EB202FF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 11:14:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 290CE18C1096
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 09:11:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76D964227F7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 09:14:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 956FE2DFA2E;
-	Mon, 11 Aug 2025 09:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="cCQ3ND/B"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52DDD2DCF6E;
+	Mon, 11 Aug 2025 09:14:05 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2060.outbound.protection.outlook.com [40.107.94.60])
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26852DE6E4;
-	Mon, 11 Aug 2025 09:10:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754903402; cv=fail; b=k6BoPbuyCBuwsSWcAur8M9v7+9RLrUTn8SLFr/zYyOxrTBkrTpBS/9e1RIP/efjM6UdLMuFMIFvu+OqzxlVsSDJlp8/X0uAhfob/OfY/o7KPD6nwcC1V7AHSp2p2uK/0lMiq7J32w9EtHk5rJQzp8eryQIwWcaB5ukL7A4iFUrY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754903402; c=relaxed/simple;
-	bh=RJgW1rW3bl9n+rXVKa6f7TmvgZaUvnWszY+n5P1hYQs=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aVeOhn8WwIwJYWWOYsO4EzcVN4Do+GXAmGxTy7Qc8kfCSjCkq5VR7NJ8+cUqLLfqA/JJ20B35I9Vd35Sq1z73lJcWREXbaEzIX8HCetxLx5QbgYrSMHDb8vRcg5OaUN6Dv9e34f5P6pZ5b06eqWUeBuSjXrI0Y42LTqfqVdksvs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=cCQ3ND/B; arc=fail smtp.client-ip=40.107.94.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aDWDRtYSOJaFP96DlX8ZpH6KExqhlEIXbNlXFf8sqMIxFXWCd9VqDR0UEkBM7e3J+MF56ibHt++FrdUHacgEkppF025DuD20LL68Fdy/fPGibgTpnX5ZWcwbY13BmRgx/Y1xwjW4bGwfysgPZuSAq5+66OETLeaarNWEdJLNPLUOBeMBLps1pOggJZJsXIwuc5u1R/+ehk1oma3wUUWO26LOgf+RKfeWIXs2X3SCI9CNzjd3mCLab/u5/5bAQCZGX7IWoPMVu8412eL62am+Cb4RfEfA/OMB0kqg0vG2xM8yEUCfe91PthsqNXHwolCMpkOJyRb+i4/rpaustvB2QA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XPDfLyt/MPaUAMCoHLY3T7BwEtSKTurKhRPa+CQpITI=;
- b=n5qj+/iLpWJ51qyAjFRSZu1mkjciTnFImOWXUDzT6Nd0OVmjv/s54wvoQjhH67BhMWRID1msyjJCD+NF4uBqxgai97qkkeOP0Ik0Ky7iu5Ir8e6Q6ruvXdDKZo15DUsmJBptteex4fKIbY94woyyoc8Q6mZ6n1YtTrgGspCtjnlorSZpIEoGGWNGPW07XCzM19XI0VbeCTXSpPVxj7RcgLHyuuVzV2l8Q3IcWlKhmFWnxV1hDa+qUxxpSOs1w8BXjymBAKHDGoNe2GGPgcGvm7PPV1/T1CbNLqCuDbKMAo1IQE8XQqpLNRoQYimC8LggVdRiwdUN/nUlF7Q0xxt2WA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XPDfLyt/MPaUAMCoHLY3T7BwEtSKTurKhRPa+CQpITI=;
- b=cCQ3ND/BY6BuPE/cZ2JSFTmGQ8HCYkRtmSdzWmyoGCZLdRZ4vHxePDJBxpGh5TZ+1FQJPWKmotOf9pFG1sZB8s6H33Qej2HoqQ6Ld/UrD2cFTRzveohwkRXx3/E1s6S43u7OFguZzH2RQjXnffp1tnCgDYpwHtD0qgV25myzBUA=
-Received: from MN2PR12CA0027.namprd12.prod.outlook.com (2603:10b6:208:a8::40)
- by CH3PR12MB7498.namprd12.prod.outlook.com (2603:10b6:610:143::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.21; Mon, 11 Aug
- 2025 09:09:57 +0000
-Received: from BL02EPF00021F6A.namprd02.prod.outlook.com
- (2603:10b6:208:a8:cafe::7a) by MN2PR12CA0027.outlook.office365.com
- (2603:10b6:208:a8::40) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9009.21 via Frontend Transport; Mon,
- 11 Aug 2025 09:09:56 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BL02EPF00021F6A.mail.protection.outlook.com (10.167.249.6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9031.11 via Frontend Transport; Mon, 11 Aug 2025 09:09:56 +0000
-Received: from kaveri.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 11 Aug
- 2025 04:09:41 -0500
-From: Shivank Garg <shivankg@amd.com>
-To: <seanjc@google.com>, <david@redhat.com>, <vbabka@suse.cz>,
-	<willy@infradead.org>, <akpm@linux-foundation.org>, <shuah@kernel.org>,
-	<pbonzini@redhat.com>, <brauner@kernel.org>, <viro@zeniv.linux.org.uk>
-CC: <ackerleytng@google.com>, <paul@paul-moore.com>, <jmorris@namei.org>,
-	<serge@hallyn.com>, <pvorel@suse.cz>, <bfoster@redhat.com>,
-	<tabba@google.com>, <vannapurve@google.com>, <chao.gao@intel.com>,
-	<bharata@amd.com>, <nikunj@amd.com>, <michael.day@amd.com>,
-	<shdhiman@amd.com>, <yan.y.zhao@intel.com>, <Neeraj.Upadhyay@amd.com>,
-	<thomas.lendacky@amd.com>, <michael.roth@amd.com>, <aik@amd.com>,
-	<jgg@nvidia.com>, <kalyazin@amazon.com>, <peterx@redhat.com>,
-	<shivankg@amd.com>, <jack@suse.cz>, <rppt@kernel.org>, <hch@infradead.org>,
-	<cgzones@googlemail.com>, <ira.weiny@intel.com>, <rientjes@google.com>,
-	<roypat@amazon.co.uk>, <ziy@nvidia.com>, <matthew.brost@intel.com>,
-	<joshua.hahnjy@gmail.com>, <rakie.kim@sk.com>, <byungchul@sk.com>,
-	<gourry@gourry.net>, <kent.overstreet@linux.dev>,
-	<ying.huang@linux.alibaba.com>, <apopple@nvidia.com>,
-	<chao.p.peng@intel.com>, <amit@infradead.org>, <ddutile@redhat.com>,
-	<dan.j.williams@intel.com>, <ashish.kalra@amd.com>, <gshan@redhat.com>,
-	<jgowans@amazon.com>, <pankaj.gupta@amd.com>, <papaluri@amd.com>,
-	<yuzhao@google.com>, <suzuki.poulose@arm.com>, <quic_eberman@quicinc.com>,
-	<aneeshkumar.kizhakeveetil@arm.com>, <linux-fsdevel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-	<linux-security-module@vger.kernel.org>, <kvm@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <linux-coco@lists.linux.dev>
-Subject: [PATCH RFC V10 7/7] KVM: guest_memfd: selftests: Add tests for mmap and NUMA policy support
-Date: Mon, 11 Aug 2025 09:06:09 +0000
-Message-ID: <20250811090605.16057-13-shivankg@amd.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250811090605.16057-2-shivankg@amd.com>
-References: <20250811090605.16057-2-shivankg@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF3EB23B613;
+	Mon, 11 Aug 2025 09:13:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754903644; cv=none; b=X+p76muX0J4D2H2cZiych0jlVQT4od0MoI/Bs0pRc+aGpZsTWXhB3hxvQiOSWAaBAdfXwS2QkRPw+l84vpcDdYpWUFD/IQvqumajxpS8oQiAHCtOwK0417l1bi8evJZiA4laDm+lWHGZU5x/es1D51nRVNYMLxcshuaDyHXV6Gk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754903644; c=relaxed/simple;
+	bh=NXv5SMn7xjwbfnsKK35GuN+UD0kh/Ux7ELzbxv6osL0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DQu20tDaMNkio3flFOjmUpXXUpO4A4oHEdumcvGTC/30GqBlCiRsHJagDmGaVOJiPdVQLuJbaFQ54ZVwYeMYe2UhupjBLsBkttdOdkY3qR7m256mBwZQ628QYRAlg501Jeh3t7gCwlB7vyjuPjbIV4byl70LLuUf4JTF/6PB9OM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 7f6c73fe769311f0b29709d653e92f7d-20250811
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:3ba7c0db-18e1-43fc-a896-13f729196999,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:dbc7cdf834544e741f770fa4c9a5deb7,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
+	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
+	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 1,FCT|NGT
+X-CID-BAS: 1,FCT|NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 7f6c73fe769311f0b29709d653e92f7d-20250811
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1790700532; Mon, 11 Aug 2025 17:13:51 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id 76C64E00901E;
+	Mon, 11 Aug 2025 17:13:51 +0800 (CST)
+X-ns-mid: postfix-6899B44F-304809903
+Received: from [172.25.120.24] (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id 4529AE008FED;
+	Mon, 11 Aug 2025 17:13:44 +0800 (CST)
+Message-ID: <09df0911-9421-40af-8296-de1383be1c58@kylinos.cn>
+Date: Mon, 11 Aug 2025 17:13:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF00021F6A:EE_|CH3PR12MB7498:EE_
-X-MS-Office365-Filtering-Correlation-Id: 31473fa7-8bfe-4f6a-a4fb-08ddd8b6d7a0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|36860700013|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?vjLIh5qPZ3GZBc1s5AAtnvzkJda+p+9yLObiZUQvf5SwPLtWpia5mK7+9PoE?=
- =?us-ascii?Q?QiU+ryVS8mnQa32iyqVXxc7fMMWnT+F4maZJKqK69l9ps0gfGIyB+yXflBLp?=
- =?us-ascii?Q?CotUoWI07qutKZUEYBf1jEF9RvQ0BpeEqemFNPR+q3vOMPpwBlphH84qJ+dX?=
- =?us-ascii?Q?U0QfdPR+aSUgZLWMJoiTPSIiMH1FF7H31w9YxFbPDOf3YkSoRTpUTmIXlxns?=
- =?us-ascii?Q?BKlzPbjKA7ymFnZA3TzplTR6EObtMl2maUGtjnduwNXdL+2aR4c817h51t4N?=
- =?us-ascii?Q?yy9qT48T0jMI5QAE2KrRIroGIQNoFvfHKqjFk1NxOwlTwSZplAXVyW65l8bK?=
- =?us-ascii?Q?fg/9XopPj80hQvLYrEqZ47Vn9ywHHpQ1yfl/gv5JExDu2cEgvU3rUVaShwy9?=
- =?us-ascii?Q?k4UGmbgN2J1QmwIkwygQFonX58ZqsQp/sEBQgaBtjCe93CYHKLeNg2++/Jjr?=
- =?us-ascii?Q?cpfXi0jzUj87wGr2g01cM+3fRolxSP9xCM5+HZp4t/Pfa3u7cG0DxSkOlrnD?=
- =?us-ascii?Q?OBymW44LlaQdhKBiliFlvYAj51atPhJpfI6kL/vAR4x/RnNVaYVgY1fFHlOt?=
- =?us-ascii?Q?gYbQxBM6JXnPc0OLhGcts5irhCtL8Ia9Hz84kR+/7jYiESCJTFWUKOmkA83g?=
- =?us-ascii?Q?jguJdUEvyJjFfpGVlhU90csI/62uvJUEPq6TwZgMX2UIz0culJb9udiDoymn?=
- =?us-ascii?Q?O51fHjKjR3n+qhykVv8R9cMJgx2G5TfduGjEw10I+zxi5k2mUoSEj+dnmvff?=
- =?us-ascii?Q?Tm6YNaMFgJhSHsynQQoasEfnyl/3Ah99G+BYfuaRVFPnbei0eFL2QVHtP76a?=
- =?us-ascii?Q?fuTfCjxZOm5uj/+5XU+eoHAnVEYgLDdg71o2OaGLr+pai0apFvEKycCmsYQK?=
- =?us-ascii?Q?MnVT6Rx/QLDjXtosuXZn4ckIzusCRH0tqHXqp3i7glY/x2InzOmxuyNuNu/3?=
- =?us-ascii?Q?XxzqzPLf9jsUZs9fCUrX+1UjUgMtfPY968IP1lNw6oUFLgX4y2wGoy0Jur9c?=
- =?us-ascii?Q?hmdRH7Uo7G5NL4nmRqt93rLQFdVgG4080w6P0naNyZCaiH90VFWLhQdhWT9U?=
- =?us-ascii?Q?8WtDK1zf7yWkjnP0L2/pUo3M5Ugx+N5WWN5dXHZbYZACEr75/H671yVTO6i6?=
- =?us-ascii?Q?+XgBnFv9HW3o7ZFrcBYi3wlxpUwsf/nSvh1FwdRW4UrcSY06s/Qyk+9kqJwU?=
- =?us-ascii?Q?+0Kk45fZb/7k57wNln4tY6AbMWYFEO+65t+ikvuH7YFTs2lUKNudvGDiEdjx?=
- =?us-ascii?Q?nnKRoz8sh/IXdmcOSbQXCnOP9CL1VI+oiOlqRkg/hBT1m1RVWHM2t/w+Vn2S?=
- =?us-ascii?Q?0IYc3htSwerbERLVgUj4og3+1QaWoLR2UJvlsQCs1+N4TaC5M21zUsBzqArU?=
- =?us-ascii?Q?Qgihd7eBcYmxiM3Iowzt8V1mW+/tQYzr6HqlvnORtW/nwm2qZzl2Db+uZpPV?=
- =?us-ascii?Q?//Ll4hkv3fVWvdm//5Bov3CoK7lnwXlcYmEhsuW+rDpRBMMUJTfU3NAwFkHR?=
- =?us-ascii?Q?v8l7DdiNZ89l1NvWKmq+H1dc3rNp+7HChAr3?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(36860700013)(82310400026)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Aug 2025 09:09:56.9302
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 31473fa7-8bfe-4f6a-a4fb-08ddd8b6d7a0
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL02EPF00021F6A.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7498
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 0/9] freezer: Introduce freeze priority model to
+ address process dependency issues
+To: Michal Hocko <mhocko@suse.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>,
+ David Hildenbrand <david@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+ Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ len brown <len.brown@intel.com>, pavel machek <pavel@kernel.org>,
+ Kees Cook <kees@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Nico Pache <npache@redhat.com>,
+ xu xin <xu.xin16@zte.com.cn>, wangfushuai <wangfushuai@baidu.com>,
+ Andrii Nakryiko <andrii@kernel.org>, Christian Brauner <brauner@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Jeff Layton <jlayton@kernel.org>,
+ Al Viro <viro@zeniv.linux.org.uk>, Adrian Ratiu
+ <adrian.ratiu@collabora.com>, linux-pm@vger.kernel.org, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250807121418.139765-1-zhangzihuan@kylinos.cn>
+ <aJSpTpB9_jijiO6m@tiehlicka>
+ <4c46250f-eb0f-4e12-8951-89431c195b46@kylinos.cn>
+ <aJWglTo1xpXXEqEM@tiehlicka>
+ <ba9c23c4-cd95-4dba-9359-61565195d7be@kylinos.cn>
+ <aJW8NLPxGOOkyCfB@tiehlicka>
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+In-Reply-To: <aJW8NLPxGOOkyCfB@tiehlicka>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-Add tests for NUMA memory policy binding and NUMA aware allocation in
-guest_memfd. This extends the existing selftests by adding proper
-validation for:
-- KVM GMEM set_policy and get_policy() vm_ops functionality using
-  mbind() and get_mempolicy()
-- NUMA policy application before and after memory allocation
 
-These tests help ensure NUMA support for guest_memfd works correctly.
+=E5=9C=A8 2025/8/8 16:58, Michal Hocko =E5=86=99=E9=81=93:
+> On Fri 08-08-25 15:52:31, Zihuan Zhang wrote:
+>> =E5=9C=A8 2025/8/8 15:00, Michal Hocko =E5=86=99=E9=81=93:
+>>> On Fri 08-08-25 09:13:30, Zihuan Zhang wrote:
+>>> [...]
+>>>> However, in practice, we=E2=80=99ve observed cases where tasks appea=
+r stuck in
+>>>> uninterruptible sleep (D state) during the freeze phase=C2=A0 =E2=80=
+=94 and thus cannot
+>>>> respond to signals or enter the refrigerator. These tasks are techni=
+cally
+>>>> TASK_FREEZABLE, but due to the nature of their sleep state, they don=
+=E2=80=99t
+>>>> freeze promptly, and may require multiple retry rounds, or cause the=
+ entire
+>>>> suspend to fail.
+>>> Right, but that is an inherent problem of the freezer implemenatation=
+.
+>>> It is not really clear to me how priorities or layers improve on that=
+.
+>>> Could you please elaborate on that?
+>> Thanks for the follow-up.
+>>
+>>  From our observations, we=E2=80=99ve seen processes like Xorg that ar=
+e in a normal
+>> state before freezing begins, but enter D state during the freeze wind=
+ow.
+>> Upon investigation,
+>>
+>> we found that these processes often depend on other user processes (e.=
+g.,
+>> I/O helpers or system services), and when those dependencies are froze=
+n
+>> first, the dependent process (like Xorg) gets stuck and can=E2=80=99t =
+be frozen
+>> itself.
+> OK, I see.
+>
+>> This led us to treat such processes as =E2=80=9Chard to freeze=E2=80=9D=
+ tasks =E2=80=94 not because
+>> they=E2=80=99re inherently unfreezable, but because they are more like=
+ly to become
+>> problematic if not frozen early enough.
+>>
+>> So our model works as follows:
+>>  =C2=A0 =C2=A0 =E2=80=A2=C2=A0 =C2=A0 By default, freezer tries to fre=
+eze all freezable tasks in each
+>> round.
+>>  =C2=A0 =C2=A0 =E2=80=A2=C2=A0 =C2=A0 With our approach, we only attem=
+pt to freeze tasks whose
+>> freeze_priority is less than or equal to the current round number.
+>>  =C2=A0 =C2=A0 =E2=80=A2=C2=A0 =C2=A0 This ensures that higher-priorit=
+y (i.e., harder-to-freeze) tasks
+>> are attempted earlier, increasing the chance that they freeze before b=
+eing
+>> blocked by others.
+>>
+>> Since we cannot know in advance which tasks will be difficult to freez=
+e, we
+>> use heuristics:
+>>  =C2=A0 =C2=A0 =E2=80=A2=C2=A0 =C2=A0 Any task that causes freeze fail=
+ure or is found in D state during
+>> the freeze window is treated as hard-to-freeze in the next attempt and=
+ its
+>> priority is increased.
+>>  =C2=A0 =C2=A0 =E2=80=A2=C2=A0 =C2=A0 Additionally, users can manually=
+ raise/reduce the freeze priority
+>> of known problematic tasks via an exposed sysfs interface, giving them
+>> fine-grained control.
+> This would have been a very useful information for the changelog so tha=
+t
+> we can understand what you are trying to achieve.
+>
+Got it, I=E2=80=99ll add that info to the changelog. Thanks!
+>> This doesn=E2=80=99t change the fundamental logic of the freezer =E2=80=
+=94 it still retries
+>> until all tasks are frozen =E2=80=94 but by adjusting the traversal or=
+der,
+>>
+>>  =C2=A0we=E2=80=99ve observed significantly fewer retries and more rel=
+iable success in
+>> scenarios where these D state transitions occur.
+>  =20
+> OK, I believe I do understand what you are trying to achieve but I am
+> not conviced this is a robust way to deal with the problem. This all
+> seems highly timing specific that might work in very specific usecase
+> but you are essentially trying to fight tiny race windows with a very
+> probabilitistic interface.
 
-Signed-off-by: Shivank Garg <shivankg@amd.com>
----
- tools/testing/selftests/kvm/Makefile.kvm      |   1 +
- .../testing/selftests/kvm/guest_memfd_test.c  | 121 ++++++++++++++++++
- 2 files changed, 122 insertions(+)
+Actually, our approach does not conflict with solving the problem. We=20
+plan to keep the freeze priority mechanism disabled by default and only=20
+enable it when issues arise, so as to maintain the consistency of the=20
+existing code flow as much as possible. It acts like a fallback mechanism=
+.
 
-diff --git a/tools/testing/selftests/kvm/Makefile.kvm b/tools/testing/selftests/kvm/Makefile.kvm
-index 90f03f00cb04..c46cef2a7cd7 100644
---- a/tools/testing/selftests/kvm/Makefile.kvm
-+++ b/tools/testing/selftests/kvm/Makefile.kvm
-@@ -275,6 +275,7 @@ pgste-option = $(call try-run, echo 'int main(void) { return 0; }' | \
- 	$(CC) -Werror -Wl$(comma)--s390-pgste -x c - -o "$$TMP",-Wl$(comma)--s390-pgste)
- 
- LDLIBS += -ldl
-+LDLIBS += -lnuma
- LDFLAGS += -pthread $(no-pie-option) $(pgste-option)
- 
- LIBKVM_C := $(filter %.c,$(LIBKVM))
-diff --git a/tools/testing/selftests/kvm/guest_memfd_test.c b/tools/testing/selftests/kvm/guest_memfd_test.c
-index b86bf89a71e0..4d33c225d9f7 100644
---- a/tools/testing/selftests/kvm/guest_memfd_test.c
-+++ b/tools/testing/selftests/kvm/guest_memfd_test.c
-@@ -7,6 +7,8 @@
- #include <stdlib.h>
- #include <string.h>
- #include <unistd.h>
-+#include <numa.h>
-+#include <numaif.h>
- #include <errno.h>
- #include <stdio.h>
- #include <fcntl.h>
-@@ -19,6 +21,7 @@
- #include <sys/mman.h>
- #include <sys/types.h>
- #include <sys/stat.h>
-+#include <sys/syscall.h>
- 
- #include "kvm_util.h"
- #include "test_util.h"
-@@ -72,6 +75,122 @@ static void test_mmap_supported(int fd, size_t page_size, size_t total_size)
- 	TEST_ASSERT(!ret, "munmap() should succeed.");
- }
- 
-+#define TEST_REQUIRE_NUMA_MULTIPLE_NODES()	\
-+	TEST_REQUIRE(numa_available() != -1 && numa_max_node() >= 1)
-+
-+static void test_mbind(int fd, size_t page_size, size_t total_size)
-+{
-+	unsigned long nodemask = 1; /* nid: 0 */
-+	unsigned long maxnode = 8;
-+	unsigned long get_nodemask;
-+	int get_policy;
-+	char *mem;
-+	int ret;
-+
-+	TEST_REQUIRE_NUMA_MULTIPLE_NODES();
-+
-+	mem = mmap(NULL, total_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-+	TEST_ASSERT(mem != MAP_FAILED, "mmap for mbind test should succeed");
-+
-+	/* Test MPOL_INTERLEAVE policy */
-+	ret = syscall(__NR_mbind, mem, page_size * 2, MPOL_INTERLEAVE,
-+		      &nodemask, maxnode, 0);
-+	TEST_ASSERT(!ret, "mbind with INTERLEAVE to node 0 should succeed");
-+	ret = syscall(__NR_get_mempolicy, &get_policy, &get_nodemask,
-+		      maxnode, mem, MPOL_F_ADDR);
-+	TEST_ASSERT(!ret && get_policy == MPOL_INTERLEAVE && get_nodemask == nodemask,
-+		    "Policy should be MPOL_INTERLEAVE and nodes match");
-+
-+	/* Test basic MPOL_BIND policy */
-+	ret = syscall(__NR_mbind, mem + page_size * 2, page_size * 2, MPOL_BIND,
-+		      &nodemask, maxnode, 0);
-+	TEST_ASSERT(!ret, "mbind with MPOL_BIND to node 0 should succeed");
-+	ret = syscall(__NR_get_mempolicy, &get_policy, &get_nodemask,
-+		      maxnode, mem + page_size * 2, MPOL_F_ADDR);
-+	TEST_ASSERT(!ret && get_policy == MPOL_BIND && get_nodemask == nodemask,
-+		    "Policy should be MPOL_BIND and nodes match");
-+
-+	/* Test MPOL_DEFAULT policy */
-+	ret = syscall(__NR_mbind, mem, total_size, MPOL_DEFAULT, NULL, 0, 0);
-+	TEST_ASSERT(!ret, "mbind with MPOL_DEFAULT should succeed");
-+	ret = syscall(__NR_get_mempolicy, &get_policy, &get_nodemask,
-+		      maxnode, mem, MPOL_F_ADDR);
-+	TEST_ASSERT(!ret && get_policy == MPOL_DEFAULT && get_nodemask == 0,
-+		    "Policy should be MPOL_DEFAULT and nodes zero");
-+
-+	/* Test with invalid policy */
-+	ret = syscall(__NR_mbind, mem, page_size, 999, &nodemask, maxnode, 0);
-+	TEST_ASSERT(ret == -1 && errno == EINVAL,
-+		    "mbind with invalid policy should fail with EINVAL");
-+
-+	TEST_ASSERT(munmap(mem, total_size) == 0, "munmap should succeed");
-+}
-+
-+static void test_numa_allocation(int fd, size_t page_size, size_t total_size)
-+{
-+	unsigned long node0_mask = 1;  /* Node 0 */
-+	unsigned long node1_mask = 2;  /* Node 1 */
-+	unsigned long maxnode = 8;
-+	void *pages[4];
-+	int status[4];
-+	char *mem;
-+	int ret, i;
-+
-+	TEST_REQUIRE_NUMA_MULTIPLE_NODES();
-+
-+	/* Clean slate: deallocate all file space, if any */
-+	ret = fallocate(fd, FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE, 0, total_size);
-+	TEST_ASSERT(!ret, "fallocate(PUNCH_HOLE) should succeed");
-+
-+	mem = mmap(NULL, total_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-+	TEST_ASSERT(mem != MAP_FAILED, "mmap should succeed");
-+
-+	for (i = 0; i < 4; i++)
-+		pages[i] = (char *)mem + page_size * i;
-+
-+	/* Set NUMA policy after allocation */
-+	memset(mem, 0xaa, page_size);
-+	ret = syscall(__NR_mbind, pages[0], page_size, MPOL_BIND, &node0_mask, maxnode, 0);
-+	TEST_ASSERT(!ret, "mbind after allocation page 0 to node 0 should succeed");
-+	ret = fallocate(fd, FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE, 0, page_size);
-+	TEST_ASSERT(!ret, "fallocate(PUNCH_HOLE) should succeed");
-+
-+	/* Set NUMA policy before allocation */
-+	ret = syscall(__NR_mbind, pages[0], page_size * 2, MPOL_BIND, &node1_mask, maxnode, 0);
-+	TEST_ASSERT(!ret, "mbind page 0, 1 to node 1 should succeed");
-+	ret = syscall(__NR_mbind, pages[2], page_size * 2, MPOL_BIND, &node0_mask, maxnode, 0);
-+	TEST_ASSERT(!ret, "mbind page 2, 3 to node 0 should succeed");
-+	memset(mem, 0xaa, total_size);
-+
-+	/* Validate if pages are allocated on specified NUMA nodes */
-+	ret = syscall(__NR_move_pages, 0, 4, pages, NULL, status, 0);
-+	TEST_ASSERT(ret >= 0, "move_pages should succeed for status check");
-+	TEST_ASSERT(status[0] == 1, "Page 0 should be allocated on node 1");
-+	TEST_ASSERT(status[1] == 1, "Page 1 should be allocated on node 1");
-+	TEST_ASSERT(status[2] == 0, "Page 2 should be allocated on node 0");
-+	TEST_ASSERT(status[3] == 0, "Page 3 should be allocated on node 0");
-+
-+	/* Punch hole for all pages */
-+	ret = fallocate(fd, FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE, 0, total_size);
-+	TEST_ASSERT(!ret, "fallocate(PUNCH_HOLE) should succeed");
-+
-+	/* Change NUMA policy nodes and reallocate */
-+	ret = syscall(__NR_mbind, pages[0], page_size * 2, MPOL_BIND, &node0_mask, maxnode, 0);
-+	TEST_ASSERT(!ret, "mbind page 0, 1 to node 0 should succeed");
-+	ret = syscall(__NR_mbind, pages[2], page_size * 2, MPOL_BIND, &node1_mask, maxnode, 0);
-+	TEST_ASSERT(!ret, "mbind page 2, 3 to node 1 should succeed");
-+	memset(mem, 0xaa, total_size);
-+
-+	ret = syscall(__NR_move_pages, 0, 4, pages, NULL, status, 0);
-+	TEST_ASSERT(ret >= 0, "move_pages should succeed after reallocation");
-+	TEST_ASSERT(status[0] == 0, "Page 0 should be allocated on node 0");
-+	TEST_ASSERT(status[1] == 0, "Page 1 should be allocated on node 0");
-+	TEST_ASSERT(status[2] == 1, "Page 2 should be allocated on node 1");
-+	TEST_ASSERT(status[3] == 1, "Page 3 should be allocated on node 1");
-+
-+	TEST_ASSERT(munmap(mem, total_size) == 0, "munmap should succeed");
-+}
-+
- static sigjmp_buf jmpbuf;
- void fault_sigbus_handler(int signum)
- {
-@@ -286,6 +405,8 @@ static void test_guest_memfd(unsigned long vm_type)
- 	if (flags & GUEST_MEMFD_FLAG_MMAP) {
- 		test_mmap_supported(fd, page_size, total_size);
- 		test_fault_overflow(fd, page_size, total_size);
-+		test_mbind(fd, page_size, total_size);
-+		test_numa_allocation(fd, page_size, total_size);
- 	} else {
- 		test_mmap_not_supported(fd, page_size, total_size);
- 	}
--- 
-2.43.0
+We acknowledge that the causes of D-state tasks are complex and require=20
+high effort to fully resolve, which the current freezer mechanism cannot=20
+achieve. Our solution is low-cost and able to capture some problematic=20
+tasks effectively.
 
+> Also the interface seems to be really coarse grained and it can easily
+> turn out insufficient for other usecases while it is not entirely clear
+> to me how this could be extended for those.
+ =C2=A0We recognize that the current interface is relatively coarse-grain=
+ed=20
+and may not be sufficient for all scenarios. The present implementation=20
+is a basic version.
+
+Our plan is to introduce a classification-based mechanism that assigns=20
+different freeze priorities according to process categories. For=20
+example, filesystem and graphics-related processes will be given higher=20
+default freeze priority, as they are critical in the freezing workflow.=20
+This classification approach helps target important processes more=20
+precisely.
+
+However, this requires further testing and refinement before full=20
+deployment. We believe this incremental, category-based design will make=20
+the mechanism more effective and adaptable over time while keeping it=20
+manageable.
+> I believe it would be more useful to find sources of those freezer
+> blockers and try to address those. Making more blocked tasks
+> __set_task_frozen compatible sounds like a general improvement in
+> itself.
+
+we have already identified some causes of D-state tasks, many of which=20
+are related to the filesystem. On some systems, certain processes=20
+frequently execute ext4_sync_file, and under contention this can lead to=20
+D-state tasks.
+
+ =C2=A06616.650482] task:ThreadPoolForeg state:D stack:0=C2=A0 =C2=A0 =C2=
+=A0pid:262026=20
+tgid:4065=C2=A0 ppid:2490=C2=A0 =C2=A0task_flags:0x400040 flags:0x0000400=
+4
+[ 6616.650485] Call Trace:
+[ 6616.650486]=C2=A0 <TASK>
+[ 6616.650489]=C2=A0 __schedule+0x532/0xea0
+[ 6616.650494]=C2=A0 schedule+0x27/0x80
+[ 6616.650496]=C2=A0 jbd2_log_wait_commit+0xa6/0x120
+[ 6616.650499]=C2=A0 ? __pfx_autoremove_wake_function+0x10/0x10
+[ 6616.650502]=C2=A0 ext4_sync_file+0x1ba/0x380
+[ 6616.650505]=C2=A0 do_fsync+0x3b/0x80
+[ 6616.650507]=C2=A0 __x64_sys_fdatasync+0x17/0x20
+[ 6616.650509]=C2=A0 do_syscall_64+0x7d/0x2c0
+[ 6616.650512]=C2=A0 ? syscall_exit_work+0x108/0x140
+[ 6616.650515]=C2=A0 ? do_syscall_64+0x1f3/0x2c0
+[ 6616.650517]=C2=A0 ? syscall_exit_work+0x108/0x140
+[ 6616.650519]=C2=A0 ? do_syscall_64+0x1d5/0x2c0
+[ 6616.650522]=C2=A0 ? audit_reset_context.part.0+0x284/0x2f0
+[ 6616.650524]=C2=A0 ? syscall_exit_work+0x108/0x140
+[ 6616.650527]=C2=A0 ? do_syscall_64+0x1f3/0x2c0
+[ 6616.650529]=C2=A0 ? futex_unqueue+0x4e/0x80
+[ 6616.650531]=C2=A0 ? __futex_wait+0x9b/0x100
+[ 6616.650534]=C2=A0 ? __pfx_futex_wake_mark+0x10/0x10
+[ 6616.650536]=C2=A0 ? timerqueue_del+0x2e/0x50
+[ 6616.650539]=C2=A0 ? __remove_hrtimer+0x39/0x70
+[ 6616.650542]=C2=A0 ? hrtimer_try_to_cancel+0x85/0x100
+[ 6616.650544]=C2=A0 ? hrtimer_cancel+0x15/0x30
+[ 6616.650546]=C2=A0 ? futex_wait+0x7d/0x110
+[ 6616.650549]=C2=A0 ? __pfx_hrtimer_wakeup+0x10/0x10
+[ 6616.650552]=C2=A0 ? audit_reset_context.part.0+0x284/0x2f0
+[ 6616.650554]=C2=A0 ? syscall_exit_work+0x108/0x140
+[ 6616.650556]=C2=A0 ? do_syscall_64+0x1d5/0x2c0
+[ 6616.650558]=C2=A0 ? switch_fpu_return+0x4f/0xd0
+[ 6616.650560]=C2=A0 ? do_syscall_64+0x1d5/0x2c0
+[ 6616.650563]=C2=A0 entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[ 6616.650565] RIP: 0033:0x7f095ef8f3eb
+[ 6616.650567] RSP: 002b:00007f07409fa360 EFLAGS: 00000293 ORIG_RAX:=20
+000000000000004b
+[ 6616.650569] RAX: ffffffffffffffda RBX: 00000d38021f03a0 RCX:=20
+00007f095ef8f3eb
+[ 6616.650570] RDX: 0000000000000000 RSI: 0000000000000000 RDI:=20
+000000000000009a
+[ 6616.650571] RBP: 00007f07409fa410 R08: 0000000000000000 R09:=20
+00007f07409fa570
+[ 6616.650572] R10: 00007f0960a60000 R11: 0000000000000293 R12:=20
+00000d38021f0380
+[ 6616.650573] R13: 000055c28c70b400 R14: 00007f07409fa3a0 R15:=20
+00007f07409fa380
+
+
+While the kernel already supports freezing the filesystem, which can=20
+address this problem, it is quite expensive =E2=80=94 enabling this featu=
+re=20
+increases the suspend time by about=C2=A0 3~4 seconds in our tests. We ar=
+e=20
+therefore exploring lower-cost approaches to mitigate the issue without=20
+such a heavy performance impact.
+
+root@zzhwaxy-pc:/sys/power# echo 1 > freeze_filesystems
+root@zzhwaxy-pc:/sys/power# sudo dmesg | grep -E 'suspend'
+[ 9844.984658] PM: suspend entry (deep)
+[ 9850.998197] PM: suspend exit
+
+root@zzhwaxy-pc:/sys/power# echo 0 > freeze_filesystems
+root@zzhwaxy-pc:/sys/power# sudo dmesg | grep -E 'suspend'
+[ 9893.928486] PM: suspend entry (deep)
+[ 9896.239425] PM: suspend exit
+
+> Thanks
 
