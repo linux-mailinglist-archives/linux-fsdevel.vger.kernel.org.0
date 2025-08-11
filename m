@@ -1,61 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-57302-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57303-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D946B20569
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 12:33:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E38DB205B9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 12:37:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72C9818A2172
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 10:33:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4D8D188B5E4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 10:37:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4CA22309B5;
-	Mon, 11 Aug 2025 10:32:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5BEB23D2A0;
+	Mon, 11 Aug 2025 10:36:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Z42FQXJZ"
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="ZYwJzj33";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="lw/u2PNS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from flow-b8-smtp.messagingengine.com (flow-b8-smtp.messagingengine.com [202.12.124.143])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6FB01F16B;
-	Mon, 11 Aug 2025 10:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 098372264C7;
+	Mon, 11 Aug 2025 10:36:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.143
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754908376; cv=none; b=D0WiBpjv0tpbIajF0FrjGvVxJ7EoUiUEhpURBpX9AyNz6ZXEtqDPxuf3ozsgffhJC5WExkXyQE6KeF3qJM4ZphbfZ3caAE9yQOBMGazv+Hrw4DhTU5mU8DqjcucvPo7GLVNgSg8eQKYsI4TiSpF2ipv396MUNJirF+4KPs1b9q4=
+	t=1754908599; cv=none; b=mIhtw8zgpEojStQwwEOZNvBp7luwem6ZPYvHJjCDNd51ztx1PMoJZ8In3u+DRCotvdFN6LRgiGoeRWXjjn4DT07Tzxv0cJC/ZjLi2egsZxs91qp/CZcvxqE1VPe2h1bSs7eOqqqEoM56SDtpS2Ts+UEXa/RqY92N9VJIltrzzJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754908376; c=relaxed/simple;
-	bh=fWZBuhCByaZrfX3gSeAzXz6/RAbJoqfRd3mRk8eamwE=;
+	s=arc-20240116; t=1754908599; c=relaxed/simple;
+	bh=cI+cNKDa9mnavxrQZJDacURYTScB7hGATRfNuLhEhlc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uqsBm0VpmXwInMJrSzqqOxTQTpjo7EC3cX0ADMYL9QKxuFE7HwPBp/YeVoLOBUW66KttnIN0wp+MUSaLtf3CUvAbfEFrnAk3MZB3oLmUgGLrp7L6YAjhHNq7LKQijzBuql9j8U832htUOQ/1lh+jtIHiWlsKy+fEEZdRAeu5YdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Z42FQXJZ; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=0Xj76AAJHUlJ1qkjB5mkm0NmtEe4zDSZlXQMIRpqBrw=; b=Z42FQXJZNHojIEfopDWRSQwSn1
-	YWcFq6LtQBoyn4YBv1yNMRU8CV5mhVaHxMF8llZYDp19rAetu3ouFPecDYY6cGhUtocXDp5ARRIwx
-	4/1edMZvP91kxASaxEZI+UBn7dBDFW/dtinzZqVsSuqkm+3GsNIoaYcXQXWOHXowA2X9WAgLxPdRS
-	41nVrmKoxX9e5dJt1oYy4fYFRYN/GDPhG0eDKRbWJ/rPn1yATYHppizBED9ztazj8S/cFZfHJ4BTH
-	oKXM1mRiDR7d3nvCXOVZlPGe8Ppbi9Sa4bw3PvVEUKaRpKjdRAkmI1Q0Vp9+WsuK0sbzWxqRqQ5i7
-	Sq1ddxIQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ulPpk-00000007KQl-3ytD;
-	Mon, 11 Aug 2025 10:32:52 +0000
-Date: Mon, 11 Aug 2025 03:32:52 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Keith Busch <kbusch@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>, Keith Busch <kbusch@meta.com>,
-	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, snitzer@kernel.org, axboe@kernel.dk,
-	dw@davidwei.uk, brauner@kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCHv2 0/7] direct-io: even more flexible io vectors
-Message-ID: <aJnG1H4XXL8AXHcS@infradead.org>
-References: <20250805141123.332298-1-kbusch@meta.com>
- <aJNr9svJav0DgZ-E@infradead.org>
- <aJU0scj_dR8_37S8@kbusch-mbp>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uC/2gzKu4RQBgUk47pz3XnyG2odgFLYNYUNmeXxj9nxSdRDT6BYIptbM+LQAz0zdQDOw0GGvEy26BeCg5+o811bqA0WfGiGgTRe2vCWrtS5XLKsiM3jRMRLTWSxSfGYJO942e6lXBcGMDihXSrGt/FiWqqPi5yqZ/+mQNgU1xx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=ZYwJzj33; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=lw/u2PNS; arc=none smtp.client-ip=202.12.124.143
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
+	by mailflow.stl.internal (Postfix) with ESMTP id 63CD11300191;
+	Mon, 11 Aug 2025 06:36:34 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-07.internal (MEProxy); Mon, 11 Aug 2025 06:36:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1754908594; x=
+	1754915794; bh=3ir52tZmodooRvQScQwDhVxAmA5y/JQn5auuY4m6agI=; b=Z
+	YwJzj33xYsZBUJ6IzJ0WxB7ZPZ+NTd64XV3Jz1dl2fvYAxNzZqiEtfHmMBJ2dEjF
+	jKsaTTRFIar75JV/WXJ7sAat2l3PPKC7Ypb/SFtLg97g2ylkT6Q+AwUTyeH3ytyW
+	C5+k5l+T8OXQiTCGWyRj1cpraEq+jwmJ+lUEucZq8BAleJMuubOB1FeqeZL+9Oem
+	7w4b1iN3mORNUKRRBHFjl839Zr8Q/X/Trze38YmDdAU5FrnwNOuQqUfX8JKr6vtF
+	C29Z8eIEgAOZTIT6E0KsP/cEi/l6pYvchnrlf8pnCE1zyAM1RSmkM135KlCcEN0O
+	UI9DCOz2+1AhB+gIcoisw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1754908594; x=1754915794; bh=3ir52tZmodooRvQScQwDhVxAmA5y/JQn5au
+	uY4m6agI=; b=lw/u2PNSpIOo4ODXYLXgQDAIDVQVNJ3cuT/pt2oak+p6hymj6Xl
+	TRKUQgcUrq/GPM7Q8mKax6iMD4p1MBQDa/v4DrS/c+Fte3wWPNbeSfqzYKHuJgol
+	Vwr+9t45ICKWovIldVz7rHak7NsrkLjyGvhCvcX6UAZ0KSSBEIFk2EygetByQcg7
+	kxzQaz+n+OmC1EyGVb9naUnnPfv5JgkXkbno7qbAvbDUbwYObdc5iT0kGjcv084a
+	vlnQjymLIS//aiGkw3A/tGIVKtX4eQI9FHXB5SaFl1E0NnTOJS7QlJ0KpbKUnold
+	Rv4D4LR5w9WAOpQvYYCiTZ5IueMmz/serGg==
+X-ME-Sender: <xms:sMeZaPaai9YTIfw37ejKGZ3uGQwKZvHuCiE7-KvW-M9p-7Uk-iOpjg>
+    <xme:sMeZaFgwkWilAXNt0CQgdPvo93xCwzEUapb2eKzTFKmLJpbLRRUrDTcHm5-AMsWEM
+    r3kzzuQ8G9wkII6XCI>
+X-ME-Received: <xmr:sMeZaEUiO8h_lYXko7NSPUjZ-CuHAgkNr-N1frHBBn69VDhV0BaagnTqIgq6>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufedvvdefucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
+    ufhhuhhtshgvmhgruhcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecugg
+    ftrfgrthhtvghrnhepjeehueefuddvgfejkeeivdejvdegjefgfeeiteevfffhtddvtdel
+    udfhfeefffdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopeeh
+    iedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuggrvhhiugesrhgvughhrghtrd
+    gtohhmpdhrtghpthhtoheplhhorhgvnhiiohdrshhtohgrkhgvshesohhrrggtlhgvrdgt
+    ohhmpdhrtghpthhtohepkhgvrhhnvghlsehprghnkhgrjhhrrghghhgrvhdrtghomhdprh
+    gtphhtthhopehsuhhrvghnsgesghhoohhglhgvrdgtohhmpdhrtghpthhtoheprhihrghn
+    rdhrohgsvghrthhssegrrhhmrdgtohhmpdhrtghpthhtohepsggrohhlihhnrdifrghngh
+    eslhhinhhugidrrghlihgsrggsrgdrtghomhdprhgtphhtthhopehvsggrsghkrgesshhu
+    shgvrdgtiidprhgtphhtthhopeiiihihsehnvhhiughirgdrtghomhdprhgtphhtthhope
+    hrphhptheskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:sMeZaPV_84z0yhD5XP_EVdFCaSDz6zDY0-Ijs-UIqVV-oE-oIRcrPg>
+    <xmx:sMeZaAiOMRpSac9hXOdj4hbOcGAs28WlUd9C-IzToTaV7WNs3ipB1A>
+    <xmx:sMeZaELPkPI7mE-7kWSuW_m46t4dVUS4Rq9m-8LNs0ubdR2tcmsfxw>
+    <xmx:sMeZaNelP9kaRfzsgLdrlb2R4FxaIHU5LPHs6wHSrQbQQF3MpikgFA>
+    <xmx:sseZaEdV8sqEXHjuevFSSbmlXO3_7TfRosx8ii5M5eEv0tu70ejlW2xN>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 11 Aug 2025 06:36:31 -0400 (EDT)
+Date: Mon, 11 Aug 2025 11:36:29 +0100
+From: Kiryl Shutsemau <kirill@shutemov.name>
+To: David Hildenbrand <david@redhat.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>, Suren Baghdasaryan <surenb@google.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, Mike Rapoport <rppt@kernel.org>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Michal Hocko <mhocko@suse.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, willy@infradead.org, Ritesh Harjani <ritesh.list@gmail.com>, 
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	"Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org, gost.dev@samsung.com, hch@lst.de, 
+	Pankaj Raghav <p.raghav@samsung.com>
+Subject: Re: [PATCH v3 0/5] add persistent huge zero folio support
+Message-ID: <osippshkfu7ip5tg42zc5nyxegrplm2kekskhitrapzjdyps3h@hodqaqh5r26o>
+References: <20250811084113.647267-1-kernel@pankajraghav.com>
+ <hzk7e52sfhfqvo5bh7btthtyyo2tf4rwe24jxtp3fqd62vxo7k@cylwrbxqj47b>
+ <dfb01243-7251-444c-8ac6-d76666742aa9@redhat.com>
+ <112b4bcd-230a-4482-ae2e-67fa22b3596f@redhat.com>
+ <rr6kkjxizlpruc46hjnx72jl5625rsw3mcpkc5h4bvtp3wbmjf@g45yhep3ogjo>
+ <b087814e-8bdf-4503-a6ba-213db4263083@lucifer.local>
+ <lkwidnuk5qtb65qz5mjkjln7k3hhc6eiixpjmh3a522drfsquu@tizjis7y467s>
+ <57bec266-97c4-4292-bd81-93baca737a3c@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -64,25 +121,34 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aJU0scj_dR8_37S8@kbusch-mbp>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <57bec266-97c4-4292-bd81-93baca737a3c@redhat.com>
 
-On Thu, Aug 07, 2025 at 05:20:17PM -0600, Keith Busch wrote:
-> Sure. I wrote up some for blktest, and the same test works as-is for
-> filesystems too. Potential question: where do such programs go
-> (xfstests, blktests, both, or some common place)?
+On Mon, Aug 11, 2025 at 12:21:23PM +0200, David Hildenbrand wrote:
+> On 11.08.25 12:17, Kiryl Shutsemau wrote:
+> > On Mon, Aug 11, 2025 at 11:09:24AM +0100, Lorenzo Stoakes wrote:
+> > > On Mon, Aug 11, 2025 at 11:07:48AM +0100, Kiryl Shutsemau wrote:
+> > > > 
+> > > > Well, my worry is that 2M can be a high tax for smaller machines.
+> > > > Compile-time might be cleaner, but it has downsides.
+> > > > 
+> > > > It is also not clear if these users actually need physical HZP or virtual
+> > > > is enough. Virtual is cheap.
+> > > 
+> > > The kernel config flag (default =N) literally says don't use unless you
+> > > have plenty of memory :)
+> > > 
+> > > So this isn't an issue.
+> > 
+> > Distros use one-config-fits-all approach. Default N doesn't help
+> > anything.
+> 
+> You'd probably want a way to say "use the persistent huge zero folio if you
+> machine has more than X Gigs". That's all reasonable stuff that can be had
+> on top of this series.
 
-We currently have no good way to share tests between xfstest and
-blktests, so I think it would require duplicating the helper programs.
+We have 'totalram_pages() < (512 << (20 - PAGE_SHIFT))' check in
+hugepage_init(). It can [be abstracted out and] re-used.
 
-> I tested on loop, nvme, and virtio-blk, both raw block (blktests) and
-> xfs (fstests). Seems fine.
-
-Cool.  I'd like the hear from the other XFS folks if the possibility
-of easily introducing preallocated space (that's what it looks like on
-disk) for writes failed because of wrong alignment is fine.  Given that
-the same user could introduce them using fallocate it's definitively not
-a security issue, but also rather unusual and unexpected.  And from the
-other file system maintainers if they have similar issues.
-
+-- 
+Kiryl Shutsemau / Kirill A. Shutemov
 
