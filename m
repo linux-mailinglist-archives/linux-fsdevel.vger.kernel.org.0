@@ -1,130 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-57443-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57444-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 117D0B2185E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 00:30:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 579FFB218F9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 01:11:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C06666802B6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 22:30:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57A354611BC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Aug 2025 23:11:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D3832E5407;
-	Mon, 11 Aug 2025 22:29:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36D12242D89;
+	Mon, 11 Aug 2025 23:11:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b="DJs51zFL"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YSHJWR2A"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-00364e01.pphosted.com (mx0a-00364e01.pphosted.com [148.163.135.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F6122E425B
-	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Aug 2025 22:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E50F5239096
+	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Aug 2025 23:11:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754951390; cv=none; b=h4dBxQ9GMR5mkBAGOEohrLsdkGHxs3le//cLHqVmZuaSB0gaNNooRSPTrGWqrqTMCy5O8H96m+jO4XNysSruA8WP629O7hnibThtaptL4V6OBkCenkD9n3V/Knftk3u+XFsQHR/oR1J1Hiy/DwMNxF4/dDfsPf9GaDtd8wdnaPE=
+	t=1754953875; cv=none; b=f0fAJwL9EtIeRFsKcmY8BB4+DS2P9XH16kA3D3QmPLoFWIVDhfkv/a37cyeAlqabMeGq0VnGtXC88J/Jn8eUx0dStOS6is7v864TyZTTdjTgI3f6gUfMJMWRz8ZAe/gABX9fv707La+piFqoqlD6Ztb2U14OQRF4vI3lGxlw3Ko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754951390; c=relaxed/simple;
-	bh=PMDEEIrVR4LcjKeT+FuaDVksS6DA0F9s2pn9QeLfY1o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MEWoWQo0aYpppTFuMO5jP8PwA8AZJtOqir5JtwWnG7uqZEtM0dSUixhI3uAc4OuxOCtFs7KjNUceq/QsYSTdDcCuDkSNJ7863z0U2YmjDoqw0Ra+jbn/ayMKYvtT5p7reSqstRYW0oXBvwfDN/wbXK0Sfo1VSFDP/2rUOHNpWWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=columbia.edu; spf=pass smtp.mailfrom=columbia.edu; dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b=DJs51zFL; arc=none smtp.client-ip=148.163.135.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=columbia.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=columbia.edu
-Received: from pps.filterd (m0167069.ppops.net [127.0.0.1])
-	by mx0a-00364e01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57BMCNtQ009123
-	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Aug 2025 18:29:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=columbia.edu; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pps01; bh=AE5q
-	aVqXBGVV5Dn43rDR9xCaZLA3qjgL/c+3+4/geUg=; b=DJs51zFLcbziotKNHaFC
-	QyOQsIGKvsowydM3Lae/IoQKkvjZSvhogiUxH0DC3m/ZI57b2gLyUTx9qdN5Qm6b
-	0p+5aq77ddIh0xqUBKDf2r1sfzljtdOpQbt0Ox28TL+WZ11FtiyVtQBdOi/0Snks
-	9A5ksIGOO/VTdIEYj3vxSEeqReMX4ZFxKj80KqceDaVfHestaz8bNuENd3BjVEd6
-	qgP1FhZViBicuVqHGl2eW6jd68MzRnsch97MWdS0TLPHj5mfc/+BS5mlMou3QMud
-	kqkXKXWlnh+wwizm/Vs6uwkBkpeZyNmxkdJa9VQay/nVxQQGDdODNwXtlH+b6KGM
-	tg==
-Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com [209.85.128.199])
-	by mx0a-00364e01.pphosted.com (PPS) with ESMTPS id 48ejwk375u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Aug 2025 18:29:47 -0400 (EDT)
-Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-70e72e81fafso67952807b3.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Aug 2025 15:29:47 -0700 (PDT)
+	s=arc-20240116; t=1754953875; c=relaxed/simple;
+	bh=XlKWe7hGY5MiFreFuz3bf4pAkpABAV4Hc9Q8DzXwtQg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eCRB46L/2AoRZLXnq/fx5CKNqcbe8ML9HM129ceQedIbw6Q+WPdqFaHVej4TBwwQdHbOflYZJWwzALDdiJ0Kx0rCXMIj+6dlhIfSfIUjwwvl9240PdfAGm3KMyoL0DLFMiSyP6tMJz6rVTsiu3D4wDjk48c3GDZ/SZ0Wupj9D3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YSHJWR2A; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-242d1e9c6b4so89725ad.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Aug 2025 16:11:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754953873; x=1755558673; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=t1oV7yVKsQ5TCnNZCaQ3AZrRbIoYDq2nQJuy1DeTjIQ=;
+        b=YSHJWR2Ak4gKSANGEL3Fqc1ZINt5iFRbA0zVKdnvL0nnrT5J7nx5tQuwEy6fGH1kka
+         UcFrLsH6sQOhTkcUt2VHNlaRXkU9eJ1/6gEJexK7A+fBYC5SgmkTbhrR4MBcBoVvyoOu
+         xAe7SjKWG6czv3spPAy4dOGwTs0FNxeCXIHWTScr7tItz/DAOpZJXqBfzWYHSHstTI8c
+         sF/Y7AffUIuqhEjogcjUewGZ1DURn34f9y3fS9Ai3O6go+qe4mZCoqKRayKPNgF97GcI
+         FZw/9GQTxy6T4Hn/S2l4EXMEaSdGc9j7admfGv6LthS+q7Ah1vmimLLWSXXFhPK5yOpN
+         RlrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754951386; x=1755556186;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AE5qaVqXBGVV5Dn43rDR9xCaZLA3qjgL/c+3+4/geUg=;
-        b=YV8k5GzYlBVUmT/CPNKW2lNIzAS4/gDTwyroSE3h1w3J2ZPI/Qz4oitNflNxMuSxEC
-         32uo77Mob5HL6UqPO/EYFafi/Earo2l57WuN2Dr0VX0CjxMNMFhEdSYS5HRIsrBpcDBp
-         o+He+6JwAna6GxX6lx8wsopvCYfo/SV/6vg1jYb1WBgr2BQUi1PrwO478zVFGbzugXBg
-         d25rXxNBPcUZXqazUvBlgrXrX7VBrHAjsCE/TCFP3+mgxQ6ZzLrgLgn2PiZGqCKNi2qb
-         aWLM5eO+/tP9FRzgp76t7TjOAtMYNMXV6G/YFm8XxDgJQNBRSmAd8ntTWOR8rt3/4HKk
-         oqdg==
-X-Forwarded-Encrypted: i=1; AJvYcCVNe7HbTr0tBN5Wk6E09aO18tRZwFiSa7w3F+v6n5ug60aNAW2SKdbwmv9CrkreQ9e7raXKcoPAMInr2vAr@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSAkBxELmVP+Oto5U0M+DmU9ws/ZOE1Q39+wb/iOsI1jyio2cG
-	AmcbPCVWZq0k7QC/+PR/LemXZOaeZEDT2FF+2+q3K6NhnfW3vu91ou4xn5BtJXCy1tu5gEuFfif
-	IyLyBtev+yw6bthYotadTP9LFHvMUnCJ8EYmwpJfmRtbLXV1QSwSv3z6g35AsJ5Kg8NJGcpGNWL
-	YYQ4cDFGW7Fqb3m8jkPagDPLICG40UtzCfwiSPqw==
-X-Gm-Gg: ASbGncsCpMLkQ+oEnEzbCU/dxFtb05F2aBiH0vu4Bv6/Msyerhjlc2AQI3kyij/tsks
-	P9edbNeTShA29ez+vjYcOB8HWMzUAGYmDXYnjZI8jRrBjphOL/uwtkMyw6t1zLbcNngRtU6TLf2
-	Cbrsmz5InYi52gS2hW+wYo
-X-Received: by 2002:a05:690c:d8b:b0:71a:a9c:30dd with SMTP id 00721157ae682-71bf0ceec37mr215180997b3.2.1754951386375;
-        Mon, 11 Aug 2025 15:29:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH4xutuahTdVuDHkB9pGR6PFw62RaMQhcwg1ni+TzXpZI6Q7aTCGZIxYCTxWjI4ddw5HKpnz5sRl2TAesf7Otk=
-X-Received: by 2002:a05:690c:d8b:b0:71a:a9c:30dd with SMTP id
- 00721157ae682-71bf0ceec37mr215180627b3.2.1754951385770; Mon, 11 Aug 2025
- 15:29:45 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754953873; x=1755558673;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t1oV7yVKsQ5TCnNZCaQ3AZrRbIoYDq2nQJuy1DeTjIQ=;
+        b=FXyQ6qyZit8IPH+opkl8bKwa67hDvpWlGMLZOWQTqRq6gt9rXjOiI1JHh0Pa80X8OK
+         0k7LlSF3l53IXFZzPFbZi3ZNNLk6OT+dxT9Kbih/3DO0v9gf4OdqkvIO0OIL5QOub4Hg
+         nyt6wPyD0MGOy9vHp6T6kFBOKdkKwfMntfvAzOosBJK0t+XAesBwKN3Y1THfbBv97h/2
+         mq0GK1iq8u0jrSL1ZNlWjK/U16bwKvwzQUXJb1Q6WvihpzjIrpXCa8L3WrQKLt/fRMG1
+         Dp0P4Ndcf1d9Nzujc2qxfPOCTR6qp5YJBSo3PxsCHm09X4zZNyVkuU/2M5vQ60INEXWt
+         jf+g==
+X-Forwarded-Encrypted: i=1; AJvYcCWz+t0fBE216rwIDx8Y0elV7GWJE+9yjKIVXonQkPvxM8pMWU9vXHiO8n+U9gZq6FKNSSY3uVhiiAkCDA9e@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2upaXGWqjGvqmVW6SpGXmX6/xadG4jV/utWpnjrbLOxqHzJHe
+	fGKlgxL08DHVNyemzDoTiBfwyX/uvPlLykj2NN2/HhFquvBqy18mppMLk1ceUknS8A==
+X-Gm-Gg: ASbGncuwvFpP5DnpvXdPsHlM2xJo4gs1ELDQbmC5qWwBe+0cEdADzrwL4oxl9R0eV3k
+	h2uL2lK3FJSbQfXzOnVhbEFxgeTmjPsRQOpBzZeyrxsRIbttIxdN8QEhH84/0hQRsBNtkIuRPXo
+	Yx591vsJbM591wuRNerjylTsL7Nf+sWGyuOdsltJUZGHdw6KTGLlzKiFKHZ5lv0gf5D2PWLjA8P
+	u8arN0LcCpMRTqOmt3tt0pOEt+0dDa05zZkQTe4k1ARlTS8GhNFzkwhf1zVYXzZOJj15/YXKjih
+	VdkGAEwsA2TOPctGSPIWHK543Qjt2cHHZcz+u/CBp0TnYcVrf1kXRMsmkxn8ImKXnmCLg1o1RYB
+	utEYucNFVfJR7udmpFaFEXQRo/vZ9JbiY/a0lJnORJOtNEMmgDhe9UKzP5PXjX7hcS+5w5Q==
+X-Google-Smtp-Source: AGHT+IFzyKR/w1E27eWm6IovhDIP1SONsBPcExVJWFEliFhx+rfqf71Fi48caAfu36gGEzgxJL2HPA==
+X-Received: by 2002:a17:903:41c5:b0:240:520b:3cbc with SMTP id d9443c01a7336-242fd3660c2mr1826635ad.14.1754953872909;
+        Mon, 11 Aug 2025 16:11:12 -0700 (PDT)
+Received: from google.com (176.13.105.34.bc.googleusercontent.com. [34.105.13.176])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bccead450sm27859139b3a.54.2025.08.11.16.11.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 16:11:12 -0700 (PDT)
+Date: Mon, 11 Aug 2025 16:11:07 -0700
+From: Vipin Sharma <vipinsh@google.com>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
+	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com,
+	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org,
+	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com,
+	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org,
+	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr,
+	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com,
+	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com,
+	vincent.guittot@linaro.org, hannes@cmpxchg.org,
+	dan.j.williams@intel.com, david@redhat.com,
+	joel.granados@kernel.org, rostedt@goodmis.org,
+	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
+	linux@weissschuh.net, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org,
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
+	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
+	aleksander.lobakin@intel.com, ira.weiny@intel.com,
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
+	brauner@kernel.org, linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
+	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com,
+	leonro@nvidia.com, witu@nvidia.com
+Subject: Re: [PATCH v3 26/30] mm: shmem: use SHMEM_F_* flags instead of VM_*
+ flags
+Message-ID: <20250811231107.GA2328988.vipinsh@google.com>
+References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
+ <20250807014442.3829950-27-pasha.tatashin@soleen.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250811-vboxsf_folio-v1-1-fe31a8b37115@columbia.edu> <aJpqw4HhLVsXiWvt@casper.infradead.org>
-In-Reply-To: <aJpqw4HhLVsXiWvt@casper.infradead.org>
-From: Tal Zussman <tz2294@columbia.edu>
-Date: Tue, 12 Aug 2025 01:29:34 +0300
-X-Gm-Features: Ac12FXzIpGdHBMABXIL57Onr3abs54wsPYwfjVfBU0PYd6jel03kHRX93Ov0EEg
-Message-ID: <CAKha_srnh8HOMdHPp1Dd9drMhtM+oROvC3UDx+N2wiFvwDe-YA@mail.gmail.com>
-Subject: Re: [PATCH] vboxsf: Convert vboxsf_write_end() to use kmap_local_folio()
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Hans de Goede <hansg@kernel.org>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-ORIG-GUID: Y_31gTGEpIAQVQ_6FaWUf6vpdk0uZvMi
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDE2MCBTYWx0ZWRfX3xcG10e+ZHy7
- NHy3l9MnqfTdq18RzEddUTsrIF4dpCM1UMZr7AezpzEZ7LqoEfHh3HAgZph5iWw3esEvjEq2stE
- Cj1A5Psumi7+OALEbaiDQjTYv/wzDklj/ERAYyCEKq4jgYmPHAw+i39NSI/0+5vRFvUZZCxFJfN
- WeRe9vupLwrHKklaymEkOpHso60pt36Zz/xN71OVtjsOMsepuqQFh3yW3Jmbn4Aax4XFwJu0mto
- fQKgjOwiunM7FvxCDrxxdkRFF3l3MKmtWYjliXVUeAbmeC5DN5Ulb29cLR/mM6MSSD3zB0nqgkV
- t+3IQwh1FG/+Ca86lRQ+3omBNKo5lso9kt6xRatUpFoWAIxZBhprtpZlxVpJK9l0VcHV/eti2Oz
- rwAPzX5s
-X-Proofpoint-GUID: Y_31gTGEpIAQVQ_6FaWUf6vpdk0uZvMi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-11_05,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=10 bulkscore=10 phishscore=0 adultscore=0 priorityscore=1501
- suspectscore=0 clxscore=1015 impostorscore=0 mlxlogscore=687 mlxscore=0
- spamscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508110160
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250807014442.3829950-27-pasha.tatashin@soleen.com>
 
-On Tue, Aug 12, 2025 at 1:12=E2=80=AFAM Matthew Wilcox <willy@infradead.org=
-> wrote:
-> On Mon, Aug 11, 2025 at 05:42:00PM -0400, Tal Zussman wrote:
-> > Now that vboxsf_write_end() takes a folio, convert the kmap() call to
-> > kmap_local_folio(). This removes two instances of &folio->page as
-> > well.
-> >
-> > Compile-tested only.
->
-> Yeah ... I don't know if this is safe or not.  Needs actual testing.
+On 2025-08-07 01:44:32, Pasha Tatashin wrote:
+> From: Pratyush Yadav <ptyadav@amazon.de>
+> @@ -3123,7 +3123,9 @@ static struct inode *__shmem_get_inode(struct mnt_idmap *idmap,
+>  	spin_lock_init(&info->lock);
+>  	atomic_set(&info->stop_eviction, 0);
+>  	info->seals = F_SEAL_SEAL;
+> -	info->flags = flags & VM_NORESERVE;
+> +	info->flags = 0;
 
-Could you elaborate on why this might be unsafe? I assumed that (1) this is
-similar to the conversion done in vboxsf_writepages() and (2) that the
-kmap() call here could be simply converted to kmap_local_page() and then to
-kmap_local_folio(), but clearly I'm missing something...
+This is not needed as the 'info' is being set to 0 just above
+spin_lock_init.
+
+> +	if (flags & VM_NORESERVE)
+> +		info->flags |= SHMEM_F_NORESERVE;
+
+As info->flags will be 0, this can be just direct assignment '='.
+
+>  	info->i_crtime = inode_get_mtime(inode);
+>  	info->fsflags = (dir == NULL) ? 0 :
+>  		SHMEM_I(dir)->fsflags & SHMEM_FL_INHERITED;
+> @@ -5862,8 +5864,10 @@ static inline struct inode *shmem_get_inode(struct mnt_idmap *idmap,
+>  /* common code */
+>  
+>  static struct file *__shmem_file_setup(struct vfsmount *mnt, const char *name,
+> -			loff_t size, unsigned long flags, unsigned int i_flags)
+> +				       loff_t size, unsigned long vm_flags,
+> +				       unsigned int i_flags)
+
+Nit: Might be just my editor, but this alignment seems off.
+
+>  {
+> +	unsigned long flags = (vm_flags & VM_NORESERVE) ? SHMEM_F_NORESERVE : 0;
+>  	struct inode *inode;
+>  	struct file *res;
+>  
+> @@ -5880,7 +5884,7 @@ static struct file *__shmem_file_setup(struct vfsmount *mnt, const char *name,
+>  		return ERR_PTR(-ENOMEM);
+>  
+>  	inode = shmem_get_inode(&nop_mnt_idmap, mnt->mnt_sb, NULL,
+> -				S_IFREG | S_IRWXUGO, 0, flags);
+> +				S_IFREG | S_IRWXUGO, 0, vm_flags);
+>  	if (IS_ERR(inode)) {
+>  		shmem_unacct_size(flags, size);
+>  		return ERR_CAST(inode);
+> -- 
+> 2.50.1.565.gc32cd1483b-goog
+> 
 
