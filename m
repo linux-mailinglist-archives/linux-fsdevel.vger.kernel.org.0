@@ -1,139 +1,174 @@
-Return-Path: <linux-fsdevel+bounces-57491-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57492-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3561CB2229C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 11:16:21 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BCB3B22297
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 11:16:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5B941885323
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 09:14:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2B46A4E1716
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 09:16:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51FC92E7171;
-	Tue, 12 Aug 2025 09:14:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F5932E8DE2;
+	Tue, 12 Aug 2025 09:15:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nBWJYBmg"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jSqkyw41"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355172E719A;
-	Tue, 12 Aug 2025 09:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688B12DF3F8;
+	Tue, 12 Aug 2025 09:15:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754990044; cv=none; b=Ghd6dzRecmv83yRX3VhGVo3wODu/ay3t26Tq8ZNyqGABG4qOnZ5Gm58KE5kID7UT17TOoy6g870ZVE4s9H30xXsTssW+dGHcIBvW+k1ZVxLSkGWvlaWViti0nZzDg/+xlnM4R4kt2hQ886hcf4mN1cvjS+P+vMS2xLDn2hsJcEo=
+	t=1754990153; cv=none; b=t8Nb0knnHtbMoosS0j5iJEevH+BDHR20/fxKxprUPE8dTfKig9mC5XKdzo6iZKIwp8uvAdV0hEccN+eaWMXG/xJER9D1d+Mct8bQS3luT+TRt7SSfaBwiI6hldOl84srGyKcmE6uq5xYaLDexj2+8BNhTaFbo5nUW6KZwf6+yEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754990044; c=relaxed/simple;
-	bh=3mrPt0k6oW37kVZVWbgrQe36tlhm9WafzeCVJIhfXxE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lhKajoKyEnEv8B5L5KGAczNiPAt1clWx+ga+PjVlG/Q/4lrHWLcTlWgvtU7+Fa+UP+feNn0anBnq6V+T/vRN7hfGPtfC2qbf0gJeqOpuA1gq5LZZk76+EminnOXwU0k3w4j2aZ23QyPPNcHPB2ZGvYYWKYl7NR3WhrBgZGPTo/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nBWJYBmg; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754990043; x=1786526043;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3mrPt0k6oW37kVZVWbgrQe36tlhm9WafzeCVJIhfXxE=;
-  b=nBWJYBmgB+EcROEe17MUBannMjeyZ04Qud6IA+sXEu+GZf+ldO2LpQ/Q
-   4wsrSh5ACHQopzhz4VN4i+1oTejtDI80/Klg2sStqf3TDD6KzAjqJgZw7
-   uhUx8Tv02BhHRFaKtknr+Wqxaotq8Ha3NU29YMFHc7gwG1ySVsKmE+mR/
-   rbEAPVJCrcwaLNsczTysmN50b0XfWPaKTOi2CFNASkCofbroFwwZuf50L
-   /fTCFRG6ea82gwRVXbGsVoQlDwA3BWM3kwUoV7uOm980uFICEY/KQ0q7q
-   EPe91ni1hLKLf3Oxv/fAD1h2iB2/3eYRAfoB+qQzCOkCPENg8SkmGvbwg
-   Q==;
-X-CSE-ConnectionGUID: yID9FercTVSMi5OguOhtOg==
-X-CSE-MsgGUID: t8AL5RymQM+6gOYU1tz3qQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="67965352"
-X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
-   d="scan'208";a="67965352"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2025 02:14:02 -0700
-X-CSE-ConnectionGUID: wxjRK0m0SJGHwZm8ovjW8g==
-X-CSE-MsgGUID: DmYbdTZ1Qkq8kRQ6zTZidw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
-   d="scan'208";a="166943956"
-Received: from dhhellew-desk2.ger.corp.intel.com (HELO localhost) ([10.245.246.8])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2025 02:13:33 -0700
-Date: Tue, 12 Aug 2025 12:13:26 +0300
-From: Tony Lindgren <tony.lindgren@linux.intel.com>
-To: Ackerley Tng <ackerleytng@google.com>
-Cc: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	x86@kernel.org, linux-fsdevel@vger.kernel.org, aik@amd.com,
-	ajones@ventanamicro.com, akpm@linux-foundation.org,
-	amoorthy@google.com, anthony.yznaga@oracle.com, anup@brainfault.org,
-	aou@eecs.berkeley.edu, bfoster@redhat.com,
-	binbin.wu@linux.intel.com, brauner@kernel.org,
-	catalin.marinas@arm.com, chao.p.peng@intel.com,
-	chenhuacai@kernel.org, dave.hansen@intel.com, david@redhat.com,
-	dmatlack@google.com, dwmw@amazon.co.uk, erdemaktas@google.com,
-	fan.du@intel.com, fvdl@google.com, graf@amazon.com,
-	haibo1.xu@intel.com, hch@infradead.org, hughd@google.com,
-	ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz,
-	james.morse@arm.com, jarkko@kernel.org, jgg@ziepe.ca,
-	jgowans@amazon.com, jhubbard@nvidia.com, jroedel@suse.de,
-	jthoughton@google.com, jun.miao@intel.com, kai.huang@intel.com,
-	keirf@google.com, kent.overstreet@linux.dev,
-	kirill.shutemov@intel.com, liam.merwick@oracle.com,
-	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name,
-	maz@kernel.org, mic@digikod.net, michael.roth@amd.com,
-	mpe@ellerman.id.au, muchun.song@linux.dev, nikunj@amd.com,
-	nsaenz@amazon.es, oliver.upton@linux.dev, palmer@dabbelt.com,
-	pankaj.gupta@amd.com, paul.walmsley@sifive.com, pbonzini@redhat.com,
-	pdurrant@amazon.co.uk, peterx@redhat.com, pgonda@google.com,
-	pvorel@suse.cz, qperret@google.com, quic_cvanscha@quicinc.com,
-	quic_eberman@quicinc.com, quic_mnalajal@quicinc.com,
-	quic_pderrin@quicinc.com, quic_pheragu@quicinc.com,
-	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com,
-	richard.weiyang@gmail.com, rick.p.edgecombe@intel.com,
-	rientjes@google.com, roypat@amazon.co.uk, rppt@kernel.org,
-	seanjc@google.com, shuah@kernel.org, steven.price@arm.com,
-	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com,
-	thomas.lendacky@amd.com, usama.arif@bytedance.com,
-	vannapurve@google.com, vbabka@suse.cz, viro@zeniv.linux.org.uk,
-	vkuznets@redhat.com, wei.w.wang@intel.com, will@kernel.org,
-	willy@infradead.org, xiaoyao.li@intel.com, yan.y.zhao@intel.com,
-	yilun.xu@intel.com, yuzenghui@huawei.com, zhiquan1.li@intel.com
-Subject: Re: [RFC PATCH v2 32/51] KVM: guest_memfd: Support guestmem_hugetlb
- as custom allocator
-Message-ID: <aJsFtq-vLmCWHT06@tlindgre-MOBL1>
-References: <cover.1747264138.git.ackerleytng@google.com>
- <4d16522293c9a3eacdbe30148b6d6c8ad2eb5908.1747264138.git.ackerleytng@google.com>
+	s=arc-20240116; t=1754990153; c=relaxed/simple;
+	bh=j9+6/BtKXkL2QaMY2FoQC+HwWI3ZEqaWiBWV7v0gt+U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gzA0KpCk+lIuUZYHiJ0LrwgRJZYh/jRgUPMtA6LZW+zAnETkyKn4Ku5Xkqgph0QCi5rbq4SsVVLRyy2plI8szFE+PUCzbokHSGVLgtB/qcoir1uHJd6YgVbt/SuVtlRpZqo75CynoAKjvyMdOXFe72s3IoTbxAUVjZv2DBGvkU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jSqkyw41; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2403ceef461so44065315ad.3;
+        Tue, 12 Aug 2025 02:15:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754990152; x=1755594952; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WbwDl4rRVtn28imgZeHnrlv/um74SVfJLwZLvLqwSRA=;
+        b=jSqkyw41T8xrZA6ma74MZb/FFz6K0VOJtXbdmveLBi7gjOYAe/raaTzZcd2LpmxKw2
+         4Xs+zGaTqKuUlYhWKHjAt9kX9pzQDMDDhkQ52El+nADqem1mTFyK+ONS3SS6ScIW+CUn
+         psSUcz/Q1jhInPmJaSzSwmCedG9dgWnmy3TNhPSSh5XP6Q7gWy0DTycaz2Pte2X1M4G8
+         2y+rVv1vNHxaLflxBiv5L/SiOjemhRjs5sfsCkMjZWD1SjFF7caJacf1iVJzVO5IY8nW
+         hP0QXdzZKjUCdQPsMmSSEXsirPPSMIHsxXn1JAly7SWHJhXJ4FGqlzug8BJFdYVz0TLh
+         1K0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754990152; x=1755594952;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WbwDl4rRVtn28imgZeHnrlv/um74SVfJLwZLvLqwSRA=;
+        b=dUuWPyBRLMrDvSnySN8kCL5H/fELOzNgdxgtLvABP269Cxe903igiMCi7D06jfjyfD
+         g44us/8VM5vOBdjeelAgxKWwtOq8VdLR8m5t51NOXabY6G5i/bZpBL1GLnxIrWTvhKee
+         +SnwtUzQ6CP6ltrqhpwpKbUlfcXdT/i40SxgEnM51nkA/9YAemAjry9hfrtHdHuAdhkK
+         btLpCCjGmHP1UArULVNG4G+Ury6XgoXCB2QjRFL/tTcyfTYOh1NY62t2bXOA+xULafmo
+         MLQbRXI2pj4EteEtYov9VUUyRdfjnVII5agZzfl74oSzuME+1GCOqPScFSKe43Pqdu9R
+         bhdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXPcXduJFwKRWt47X6aYlU8x6taVXXuKGgFP0Ul4koAjSowL9Z7rdTP0YWwYomCWH/hbnzaRiKUAwxAuhbb@vger.kernel.org, AJvYcCXjeqBWRsZ8VQgycOw2x+w3WuaFL4mIlp71rgjTCvVKeOnOv95tByDbZybnjHwS1+1FG1/r3oGtSRdTTWy5@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnfLGTbi7LNNyb4ZPZiDJ7TXSTKIJk/LAcUzh0bo5iBfiVKDb8
+	y9iIZQDVLNN69l2ppoo801NDoxNzCh98+bRiV4NJ5DeRsEdKIIrt9tVR
+X-Gm-Gg: ASbGncu3Ui8uZMVKl2Y2V0aw3VIN+WCTQynBU9ROjB10mx1k/NVwQEugtunopmDXin+
+	zlIwUnj7lt+ACGaTNmW4ouNN0kebV4DIf+exPVBw+Lu+vXvRMPUQVq+sWgfdOZiMLWL3fgkLZ0w
+	8okFnmWhsB2gVfdjIn4im8zB3O8Ds2WjHJItcAnsxL9fE9wSbmDptNvwYkWpbFVSOZpyHBMNj98
+	1+QpkdcOEbrplRwqRZRvsEY4xqgAk/x3lnBulNViXe+t/377XNpRdy9ynk5WtX5xsmpcawhaLMs
+	4DCaLATIS9UBLKUBlN0GvuRchtchCWav0YRz5wpZ51qxwIw5nDEVrcyXbpMbtOInn63twkf8g3d
+	y4gpDezDYoDemoW7P1sTFhI50Wc7asbNsvoY=
+X-Google-Smtp-Source: AGHT+IGuIQ1YTqAaMYMDmAKJX2mJyPZGXP1hLFmGpeB4DWEiDBGam4XzBUEoGRxXqCcEXbLfGwwDRA==
+X-Received: by 2002:a17:902:e84b:b0:240:483:dc3a with SMTP id d9443c01a7336-242c1fdc531mr262814785ad.12.1754990151568;
+        Tue, 12 Aug 2025 02:15:51 -0700 (PDT)
+Received: from VM-16-24-fedora.. ([43.153.32.141])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1f1efe8sm291670665ad.69.2025.08.12.02.15.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Aug 2025 02:15:51 -0700 (PDT)
+From: alexjlzheng@gmail.com
+X-Google-Original-From: alexjlzheng@tencent.com
+To: brauner@kernel.org,
+	djwong@kernel.org
+Cc: linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yi.zhang@huawei.com,
+	Jinliang Zheng <alexjlzheng@tencent.com>
+Subject: [PATCH v3 0/4] allow partial folio write with iomap_folio_state
+Date: Tue, 12 Aug 2025 17:15:34 +0800
+Message-ID: <20250812091538.2004295-1-alexjlzheng@tencent.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4d16522293c9a3eacdbe30148b6d6c8ad2eb5908.1747264138.git.ackerleytng@google.com>
+Content-Transfer-Encoding: 8bit
 
-Hi,
+From: Jinliang Zheng <alexjlzheng@tencent.com>
 
-On Wed, May 14, 2025 at 04:42:11PM -0700, Ackerley Tng wrote:
-> --- a/virt/kvm/Kconfig
-> +++ b/virt/kvm/Kconfig
-> @@ -133,3 +133,8 @@ config KVM_GMEM_SHARED_MEM
->         select KVM_GMEM
->         bool
->         prompt "Enables in-place shared memory for guest_memfd"
-> +
-> +config KVM_GMEM_HUGETLB
-> +       select KVM_PRIVATE_MEM
-> +       depends on GUESTMEM_HUGETLB
-> +       bool "Enables using a custom allocator with guest_memfd, see CONFIG_GUESTMEM_HUGETLB"
+With iomap_folio_state, we can identify uptodate states at the block
+level, and a read_folio reading can correctly handle partially
+uptodate folios.
 
-For v3, this needs s/KVM_PRIVATE_MEM/KVM_GMEM/ assuming the patches are
-based on "KVM: Rename CONFIG_KVM_PRIVATE_MEM to CONFIG_KVM_GMEM".
+Therefore, when a partial write occurs, accept the block-aligned
+partial write instead of rejecting the entire write.
 
-Also probably good idea to run some make randconfig builds on the series to
-check the various Kconfig changes and inline functions for build errors.
+For example, suppose a folio is 2MB, blocksize is 4kB, and the copied
+bytes are 2MB-3kB.
 
-Regards,
+Without this patchset, we'd need to recopy from the beginning of the
+folio in the next iteration, which means 2MB-3kB of bytes is copy
+duplicately.
 
-Tony
+ |<-------------------- 2MB -------------------->|
+ +-------+-------+-------+-------+-------+-------+
+ | block |  ...  | block | block |  ...  | block | folio
+ +-------+-------+-------+-------+-------+-------+
+ |<-4kB->|
+
+ |<--------------- copied 2MB-3kB --------->|       first time copied
+ |<-------- 1MB -------->|                          next time we need copy (chunk /= 2)
+                         |<-------- 1MB -------->|  next next time we need copy.
+
+ |<------ 2MB-3kB bytes duplicate copy ---->|
+
+With this patchset, we can accept 2MB-4kB of bytes, which is block-aligned.
+This means we only need to process the remaining 4kB in the next iteration,
+which means there's only 1kB we need to copy duplicately.
+
+ |<-------------------- 2MB -------------------->|
+ +-------+-------+-------+-------+-------+-------+
+ | block |  ...  | block | block |  ...  | block | folio
+ +-------+-------+-------+-------+-------+-------+
+ |<-4kB->|
+
+ |<--------------- copied 2MB-3kB --------->|       first time copied
+                                         |<-4kB->|  next time we need copy
+
+                                         |<>|
+                              only 1kB bytes duplicate copy
+
+Although partial writes are inherently a relatively unusual situation and do
+not account for a large proportion of performance testing, the optimization
+here still makes sense in large-scale data centers.
+
+This patchset has been tested by xfstests' generic and xfs group, and
+there's no new failed cases compared to the lastest upstream version kernel.
+
+Changelog:
+
+V3: patch[1]: use WARN_ON() instead of BUG_ON()
+    patch[2]: make commit message clear
+    patch[3]: -
+    patch[4]: make commit message clear
+
+V2: https://lore.kernel.org/linux-fsdevel/20250810101554.257060-1-alexjlzheng@tencent.com/ 
+    use & instead of % for 64 bit variable on m68k/xtensa, try to make them happy:
+       m68k-linux-ld: fs/iomap/buffered-io.o: in function `iomap_adjust_read_range':
+    >> buffered-io.c:(.text+0xa8a): undefined reference to `__moddi3'
+    >> m68k-linux-ld: buffered-io.c:(.text+0xaa8): undefined reference to `__moddi3'
+
+V1: https://lore.kernel.org/linux-fsdevel/20250810044806.3433783-1-alexjlzheng@tencent.com/
+
+Jinliang Zheng (4):
+  iomap: make sure iomap_adjust_read_range() are aligned with block_size
+  iomap: move iter revert case out of the unwritten branch
+  iomap: make iomap_write_end() return the number of written length
+    again
+  iomap: don't abandon the whole copy when we have iomap_folio_state
+
+ fs/iomap/buffered-io.c | 68 +++++++++++++++++++++++++++++-------------
+ 1 file changed, 47 insertions(+), 21 deletions(-)
+
+-- 
+2.49.0
+
 
