@@ -1,217 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-57536-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57537-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 626C7B22E1D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 18:48:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B663AB22E73
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 19:02:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DF267A5E61
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 16:46:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C1971A25D99
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 16:59:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CF492FA0F7;
-	Tue, 12 Aug 2025 16:48:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 050172FA0FD;
+	Tue, 12 Aug 2025 16:59:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cdPFVQ4V"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J+4g/Efi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2BA01F4CA0;
-	Tue, 12 Aug 2025 16:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 120A7126C17
+	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Aug 2025 16:59:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755017287; cv=none; b=uTqkINgSyCimtS1BL5Urk7OmTEeWH+QFsMTizcyAuIhatl2bxvjBeVZYgii7enU9tQkoJSwzc8Kbnoz01WICutDpPImPK34XehVhpnzLe3WlfT3okQsY6IS3Pdg7spVhopfxUyAUeyfDiwDOQYMlSQ8Klk8mxgYwbTvoj9pSeyA=
+	t=1755017944; cv=none; b=pRFLs06FEo9n9VIyyR7syR42qnVcc7kO54eYona5bwgJBdZmBRx3s7m2rYKAJOEOTLi5SPgsNY3RDKKmBQfPcZnaWjGQopVc9i3mtCFMZORVcEfiLa5t8QdWFjt5ru3hBXDNSun27Hi42AUJZ9YYn4bKd9u3/F5lBhLlRChfCEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755017287; c=relaxed/simple;
-	bh=TyxIRLTl9NXVeVcD8UsZ5wlMsNk5vzwRoGhXxXi1k8k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kw9ZMPl8/FzFPrA2UtB95PUhpLiMBFKCmc+AB2zfx24Y5eyNeNOT27QqZ0f7C7a66jY0lYCgEUrmHRLtqp6YeMwTKIhBAnY84gUXYV6xVZNDpMRas9D0Ynl3w+Wn8HP56rbHO67qAQJRWG2RoI02g22wBcInZqTkGTXXSlblI74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cdPFVQ4V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7408AC4CEF0;
-	Tue, 12 Aug 2025 16:48:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755017286;
-	bh=TyxIRLTl9NXVeVcD8UsZ5wlMsNk5vzwRoGhXxXi1k8k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cdPFVQ4VF5/IPTEMsMSORpVJmORvFRtRNo7KaE76rjlqlVZQADF89BLaWdbubfedU
-	 fy96WdYdnkepCImVEnGfPBKIBgl1xiRARu6i1kamVb6dhK+THzDhAvhkAeu53rImkT
-	 d0s5IXvrPQWktZ/3+7bYvZW0fqwBrlyvDn7cC4UsTziQOucpPxPJEJRgTSe5pFwBfQ
-	 Rb6ClY79oKSx7fCb7T/GRa7ZQBgkfjKnrpaKvgK48BGt2vnWcS+agb4t08zqxXaB8y
-	 mt2zZFET4wQcCJzBcJZQtJaz3WXq3zlfGEgtV+9qj73uLLu/qdyQLs6sY2QXKzVTTD
-	 wgnf/8d43lJRQ==
-Date: Tue, 12 Aug 2025 09:48:05 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Qu Wenruo <wqu@suse.com>
-Cc: Qu Wenruo <quwenruo.btrfs@gmx.com>, Zhang Yi <yi.zhang@huaweicloud.com>,
-	Theodore Ts'o <tytso@mit.edu>,
-	linux-ext4 <linux-ext4@vger.kernel.org>,
-	linux-btrfs <linux-btrfs@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: Ext4 iomap warning during btrfs/136 (yes, it's from btrfs test
- cases)
-Message-ID: <20250812164805.GH7942@frogsfrogsfrogs>
-References: <9b650a52-9672-4604-a765-bb6be55d1e4a@gmx.com>
- <4ef2476f-50c3-424d-927d-100e305e1f8e@gmx.com>
- <20250808121659.GC778805@mit.edu>
- <035ad34e-fb1e-414f-8d3c-839188cfa387@suse.com>
- <c2a00db8-ed34-49bb-8c01-572381451af3@huaweicloud.com>
- <15a4c437-d276-4503-9e30-4d48f5b7a4ff@gmx.com>
- <20250811154935.GD7942@frogsfrogsfrogs>
- <869c9ca6-2799-4ae0-8490-f383d7e0564b@suse.com>
+	s=arc-20240116; t=1755017944; c=relaxed/simple;
+	bh=SibeW2U2WnGKJjoCvqQ+x3RIR1dngSmzKWci1qJZzoU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aad7mGYtxm5VKgoEmPKk2sfYuh+DfnPpY8XzpQLMlBRM27zPIrXHsfoK0VNoVY1o29tcHjfkekgi5TEbUMWi1/z9ztxF+50lMifRsmQZJgUw/9YZgMDSBf8GJs30gSI30y5cIwYqOKnbHC5lju5PX91ifR10ovCieROBFOs/iSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J+4g/Efi; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4b0e607a957so9739691cf.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Aug 2025 09:59:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755017942; x=1755622742; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Wr3CW9p1Y0qv8q9NqMTReU5nix/ZVNNX2NqzNHGcVFI=;
+        b=J+4g/Efi+VMHZTbBIosrEaYClhcj81g8L6xFbhw26E9nbbYG5ItiFzJoxfi+zxw0uu
+         aLuT8QOiB0tSIOY3MU1ky7UeC5rbvnhpvjs7ENO3jIi2NnS1jSQ3mT4c9Vx1YUCQziIT
+         sDAFpRVcEDA8FR9W/+XZLj+L7dY32JQHLOOiI7awYBrFCsvGHhNz2CjHtY4Y/1t17Izy
+         /PMuA9+vX50T6ygxkOhMKQ8VGktckK+Npd5Il+UWWBRZjVf7cPvpQQy2UnCeWNaGwLGb
+         +YkJnoXvpWPd9w+gmVCzg2Zv5DEXMLS8p4owUyjn1W12+CiVC+vSakbFruOqhGGVYuNj
+         JVeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755017942; x=1755622742;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Wr3CW9p1Y0qv8q9NqMTReU5nix/ZVNNX2NqzNHGcVFI=;
+        b=PjLW9a+7wYh2uTWOBdY/9iaqP7gC8YVbyyFpupUoSnSYXI2//3nEhYk0sFYfez3qoC
+         WUmX/nnIbqvFARJCAH5wi57g3ad6S8S4WbD54EGylT7vlNL52CC2ceC165xYuk53kxvK
+         wGV1178RwL+s2/nC6tgq/Bl3jp0tdGI6/5WzpHFKE+NwqhI7NJLW31YmJnlaaegO/3om
+         IKcBRfIQA0gmrGm/k1sW9km+ucgmabhaYiQCat1wCIfu+XI1jhUDMWtyfiyCZHTDxUV9
+         b9asVz5d8d4OUbXQGa4tv+N9AYkKHxcaweo1c9LXdmI2hbtUQ5HW6EUkuZqWFSAOmUGh
+         9s0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUJ4zynBkrgjxW74GvsmxNyGhAczgwoVVtVWmt49wcctz1ydr9evI+FuF/rnIZlkEOF9fSz6RBhvAaV/usb@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLOIpIxsVfrFBVbS06lf+z5G6YIxui99EJz4bDH1J8fYBIX/an
+	4PVkL1V4d2i7IkY716ysBUk9Zil0MZeP2EXtHHEtpCNsdiR2NmzrjXyVVby2jEMM2cpzAqBfmBR
+	p9ltIXguXZWDMt9r6p+Sxgjwf18MgTwHIcA==
+X-Gm-Gg: ASbGncuu5vYqQY+FDoBUc+bTS3b8kOQNHMuQQyg1r3UZcm2gxa9LCWVUdLokxBFn/s3
+	eB7Gl1rkJFyHO0ga5ROmGU5JuM5fmQRU45A3LaAW5B+XR6QotCaYr1ASbCzqICaQXbGEeQDfJeh
+	cjApwjx2RjLhVgD5rNz9He8vPh9J8SwDYtTEstQYmyIuuKvTNkxT4/LjbGE55LE2zaHzoDyYw7E
+	kwDc3+J
+X-Google-Smtp-Source: AGHT+IE8N+QKwcexhYzZ07kzSL2xwAaHXqOAZ1PxIhRpLz7xXUaFfrx9zhlv4DFaDz+CKj/fiIkecu2usOp+gVAKu5o=
+X-Received: by 2002:a05:622a:2611:b0:4a9:a90a:7232 with SMTP id
+ d75a77b69052e-4b0fa7e8fc5mr5086411cf.13.1755017941801; Tue, 12 Aug 2025
+ 09:59:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <869c9ca6-2799-4ae0-8490-f383d7e0564b@suse.com>
+References: <20250807175015.515192-1-joannelkoong@gmail.com> <CAJfpeguCOxeVX88_zPd1hqziB_C+tmfuDhZP5qO2nKmnb-dTUA@mail.gmail.com>
+In-Reply-To: <CAJfpeguCOxeVX88_zPd1hqziB_C+tmfuDhZP5qO2nKmnb-dTUA@mail.gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Tue, 12 Aug 2025 09:58:50 -0700
+X-Gm-Features: Ac12FXxRXeExg9vPytAmiKHGLesinfhVCHHmC9gL4hbvRVUDfW784yndOztuwU0
+Message-ID: <CAJnrk1Z9hPV2-Bv5hw3XJHOg_4Df5p4ZHJ6MHYH1ScwND_xVsg@mail.gmail.com>
+Subject: Re: [PATCH v2] fuse: keep inode->i_blkbits constant
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: brauner@kernel.org, djwong@kernel.org, linux-fsdevel@vger.kernel.org, 
+	kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 12, 2025 at 07:44:09AM +0930, Qu Wenruo wrote:
-> 
-> 
-> 在 2025/8/12 01:19, Darrick J. Wong 写道:
-> > On Sun, Aug 10, 2025 at 07:36:48AM +0930, Qu Wenruo wrote:
-> > > 
-> > > 
-> > > 在 2025/8/9 18:39, Zhang Yi 写道:
-> > > > On 2025/8/9 6:11, Qu Wenruo wrote:
-> > > > > 在 2025/8/8 21:46, Theodore Ts'o 写道:
-> > > > > > On Fri, Aug 08, 2025 at 06:20:56PM +0930, Qu Wenruo wrote:
-> > > > > > > 
-> > > > > > > 在 2025/8/8 17:22, Qu Wenruo 写道:
-> > > > > > > > Hi,
-> > > > > > > > 
-> > > > > > > > [BACKGROUND]
-> > > > > > > > Recently I'm testing btrfs with 16KiB block size.
-> > > > > > > > 
-> > > > > > > > Currently btrfs is artificially limiting subpage block size to 4K.
-> > > > > > > > But there is a simple patch to change it to support all block sizes <=
-> > > > > > > > page size in my branch:
-> > > > > > > > 
-> > > > > > > > https://github.com/adam900710/linux/tree/larger_bs_support
-> > > > > > > > 
-> > > > > > > > [IOMAP WARNING]
-> > > > > > > > And I'm running into a very weird kernel warning at btrfs/136, with 16K
-> > > > > > > > block size and 64K page size.
-> > > > > > > > 
-> > > > > > > > The problem is, the problem happens with ext3 (using ext4 modeule) with
-> > > > > > > > 16K block size, and no btrfs is involved yet.
-> > > > > > 
-> > > > > > 
-> > > > > > Thanks for the bug report!  This looks like it's an issue with using
-> > > > > > indirect block-mapped file with a 16k block size.  I tried your
-> > > > > > reproducer using a 1k block size on an x86_64 system, which is how I
-> > > > > > test problem caused by the block size < page size.  It didn't
-> > > > > > reproduce there, so it looks like it really needs a 16k block size.
-> > > > > > 
-> > > > > > Can you say something about what system were you running your testing
-> > > > > > on --- was it an arm64 system, or a powerpc 64 system (the two most
-> > > > > > common systems with page size > 4k)?  (I assume you're not trying to
-> > > > > > do this on an Itanic.  :-)   And was the page size 16k or 64k?
-> > > > > 
-> > > > > The architecture is aarch64, the host board is Rock5B (cheap and fast enough), the test machine is a VM on that board, with ovmf as the UEFI firmware.
-> > > > > 
-> > > > > The kernel is configured to use 64K page size, the *ext3* system is using 16K block size.
-> > > > > 
-> > > > > Currently I tried the following combination with 64K page size and ext3, the result looks like the following
-> > > > > 
-> > > > > - 2K block size
-> > > > > - 4K block size
-> > > > >     All fine
-> > > > > 
-> > > > > - 8K block size
-> > > > > - 16K block size
-> > > > >     All the same kernel warning and never ending fsstress
-> > > > > 
-> > > > > - 32K block size
-> > > > > - 64K block size
-> > > > >     All fine
-> > > > > 
-> > > > > I am surprised as you that, not all subpage block size are having problems, just 2 of the less common combinations failed.
-> > > > > 
-> > > > > And the most common ones (4K, page size) are all fine.
-> > > > > 
-> > > > > Finally, if using ext4 not ext3, all combinations above are fine again.
-> > > > > 
-> > > > > So I ran out of ideas why only 2 block sizes fail here...
-> > > > > 
-> > > > 
-> > > > This issue is caused by an overflow in the calculation of the hole's
-> > > > length on the forth-level depth for non-extent inodes. For a file system
-> > > > with a 4KB block size, the calculation will not overflow. For a 64KB
-> > > > block size, the queried position will not reach the fourth level, so this
-> > > > issue only occur on the filesystem with a 8KB and 16KB block size.
-> > > > 
-> > > > Hi, Wenruo, could you try the following fix?
-> > > > 
-> > > > diff --git a/fs/ext4/indirect.c b/fs/ext4/indirect.c
-> > > > index 7de327fa7b1c..d45124318200 100644
-> > > > --- a/fs/ext4/indirect.c
-> > > > +++ b/fs/ext4/indirect.c
-> > > > @@ -539,7 +539,7 @@ int ext4_ind_map_blocks(handle_t *handle, struct inode *inode,
-> > > >    	int indirect_blks;
-> > > >    	int blocks_to_boundary = 0;
-> > > >    	int depth;
-> > > > -	int count = 0;
-> > > > +	u64 count = 0;
-> > > >    	ext4_fsblk_t first_block = 0;
-> > > > 
-> > > >    	trace_ext4_ind_map_blocks_enter(inode, map->m_lblk, map->m_len, flags);
-> > > > @@ -588,7 +588,7 @@ int ext4_ind_map_blocks(handle_t *handle, struct inode *inode,
-> > > >    		count++;
-> > > >    		/* Fill in size of a hole we found */
-> > > >    		map->m_pblk = 0;
-> > > > -		map->m_len = min_t(unsigned int, map->m_len, count);
-> > > > +		map->m_len = umin(map->m_len, count);
-> > > >    		goto cleanup;
-> > > >    	}
-> > > 
-> > > It indeed solves the problem.
-> > > 
-> > > Tested-by: Qu Wenruo <wqu@suse.com>
-> > 
-> > Can we get the relevant chunks of this test turned into a tests/ext4/
-> > fstest so that the ext4 developers have a regression test that doesn't
-> > require setting up btrfs, please?
-> 
-> Sure, although I can send out a ext4 specific test case for it, I'm
-> definitely not the best one to explain why the problem happens.
-> 
-> Thus I believe Zhang Yi would be the best one to send the test case.
-> 
-> 
-> 
-> Another thing is, any ext3 run with 16K block size (that's if the system
-> supports it) should trigger it with the existing test cases.
-> 
-> The biggest challenge is to get a system supporting 16k bs (aka page size >=
-> 16K), so it has a high chance that for most people the new test case will
-> mostly be NOTRUN.
+On Tue, Aug 12, 2025 at 1:27=E2=80=AFAM Miklos Szeredi <miklos@szeredi.hu> =
+wrote:
+>
+> On Thu, 7 Aug 2025 at 19:51, Joanne Koong <joannelkoong@gmail.com> wrote:
+> >
+> > With fuse now using iomap for writeback handling, inode blkbits changes
+> > are problematic because iomap relies on inode->i_blkbits for its
+> > internal bitmap logic. Currently we change inode->i_blkbits in fuse to
+> > match the attr->blksize value passed in by the server.
+> >
+> > This commit keeps inode->i_blkbits constant in fuse. Any attr->blksize
+> > values passed in by the server will not update inode->i_blkbits. The
+> > client-side behavior for stat is unaffected, stat will still reflect th=
+e
+> > blocksize passed in by the server.
+>
+> Not quite.  You also need to save ilog2(attr->blksize) in
+> fi->orig_i_blkbits and restore it after calling generic_fillattr() in
+> fuse_update_get_attr() just like it's done for i_mode and i_ino.
+>
 
-I'm curious to try out fuse2fs against whatever test gets written, since
-it supports large fsblock sizes.
+Oh I see, thanks. I'll resubmit this. And will do the same logic for
+the fuseblk i_blkbits patch I submitted yesterday.
 
---D
+Thanks,
+Joanne
 
 > Thanks,
-> Qu
-> 
-> > 
-> > --D
-> > 
-> > > Thanks,
-> > > Qu
-> > > 
-> > > > Thanks,
-> > > > Yi.
-> > > > 
-> > > 
-> > > 
-> 
-> 
+> Miklos
 
