@@ -1,206 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-57496-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57497-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 925C0B222D0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 11:21:08 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 403F2B222B9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 11:19:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1692B623E86
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 09:16:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 38A7E4E1955
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 09:19:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2B622E9EB4;
-	Tue, 12 Aug 2025 09:16:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61D5A2EAB8E;
+	Tue, 12 Aug 2025 09:16:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y+SzDVgS"
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="FtoVLQwr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B097E2E54C4;
-	Tue, 12 Aug 2025 09:16:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754990163; cv=none; b=rty7R2IDtGGzAAD4YiDlFhtGqfURmGpobmxxzJTE6UR3H8bl7aNd5ed9sXOnrnmsWvAEXuIHv+/VRfC+OiFvcdIJqAlXFNxG8hceLJ5y6ZXaJ+h9SbazzKtpIJi7IAptDMPIlhsH/mgLDDH96Ec3APNRKD1UQffBb3wInPedOVM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754990163; c=relaxed/simple;
-	bh=ELWvW+M2jADaIZWOkli/FMGFEI1EmtXEE0T6HI5+TdI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mTwrYsu0snWmTiJXF9ulCMDy8CWr0ALzMQIdim+AWPGKrmcVOBM0JRR1pPSx98VdNzll49jN1tjXaiR0TNLjLPKBno/1MMkHaVuDhGrCrg+HubA6BEHFyRdfPzUEs66I4NxoKPEmoDceXmPsJ37i4anvA2KcPtyKULGalHNbSP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y+SzDVgS; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2403ceef461so44066195ad.3;
-        Tue, 12 Aug 2025 02:16:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754990161; x=1755594961; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ETsvnaYYTYssQSdiqD1pneEVq8m5ZOm8thK8WL38Gi8=;
-        b=Y+SzDVgSonJRg8Pur3nQMAv1y9pltRLTUeUp93UT+wqmBhO8AHUiDY/aqAng4dZJau
-         9KJZyFDfJ/g7XuMal8/RzkMhmvDe8Z2ONKvochzrTLW9kW6fvkFkP41KXnC/solT7hu1
-         mWn0AXTN9DUDNW1w5+yXPEQw0iWWI/bzzO5JiX2KmnZfd9WQeeyeU7vuyvg4dB93wQaH
-         1KHv4JyFUOF3zckfeEl9oTJLFP4H5UaRqvkeZzd+zBCJSfd2ivFTLZ1jNSOFRhCm5+Za
-         l6K+RNBjsQZJVc5PQdYrJcc6OME2d6MmVtJECmkBaSiJtUlpho4n8aah39NANY+Buid3
-         i7ZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754990161; x=1755594961;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ETsvnaYYTYssQSdiqD1pneEVq8m5ZOm8thK8WL38Gi8=;
-        b=MC0r073XP9CwfEGbAHsCRcvJRvGOxM8RDniimMELzLCrPFIq1g20XKeX1Q0y4iXzyv
-         P8HbG5iKgI2s+1vqgWGJWYTfotk0SZkquiqvTYXW7+qcWkJjsNiWEhiiRqZ3DbffJD8O
-         fY2pe/Koysp19lkntXLF3K3WkFtV7Y6bongZdpqBppEnD/hlEW2IHECN1BYCx45kc1zT
-         6PQdYeFkXRkhUAGWH5NMN7DGPbFamzAVTrV/3nOj7OIPsc+Gk749r4g7hBA4YjvlafXy
-         WS5X9EejIuP1E+0OcT77ymp40NRh4DNSbR0S0fUt5CWSmPzU287LOP7Ukte7JPWnxIXv
-         QIyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW89OpX5vfwLjz9AZOfRCNHk3PQ51nOAP2MsOCsmK3fvaiW4KHPth0EbU25C/uTcek7pFHw9sd46WwD2EtK@vger.kernel.org, AJvYcCWbtR0kmGsapxLEXvPZiCV8BEWBwvbku3a0Kot4wEhtdB3qXy6HBMYgWfgagxJQ/rGmCo+ODUlJMeInlhmP@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxj3a+Qoen5OMAS5fg1ssJDOmsAiOYmcltjaXm2cSftDXDCRWEw
-	TY9G1f04XSFxSdag7ZKu/ePazEZaTnyo5jPOu+t/0ux5mcaZczkwbzmTjU7VavyM
-X-Gm-Gg: ASbGnctGNwef71NFwQQhuNwfFZSAVgTUH4XeCWcoP3ZS4gF8ILUT1/rpDJJM90egdi3
-	bEhlGDJ4TBZ0z0IuS4KyLMv+o0NMgnMmYaKAoknysz+tfLcN6tALXxfPgEUOxxClgtpXQGrEFh9
-	NTyc/h0ajXwAn464LoB6Qi7/4q/9G95heaVtVIQidbEU3Qjh7drSdjYdlGbrjyaKrjLK+NENxi2
-	EGPa2URRj5PvrZ+4X0hx0Eq3/lyV813CF8wNGDS4jgMWSVpqJnecZeOE5y8y2lO9FA0oeH9cf3k
-	NoVyCXjuIuuvRuloMTdlnxYEsGCTQUY+I2HRQ9kl17asm21Phhi+UlZygYNEQOKmOEvUi1foWj5
-	Hu+HH1ia6Zu1shabUHWccz7sqqC8tlFugMoJvt1vKeU3rVw==
-X-Google-Smtp-Source: AGHT+IHPnPWiYSaXaV0zUa1cKXWI5MwMCHYaCm7ZlRbK6uLcbEU1rYhEf47LkLOcZUOOYIGCc4NPpg==
-X-Received: by 2002:a17:902:ec8b:b0:224:23be:c569 with SMTP id d9443c01a7336-242c201115amr257867705ad.22.1754990160846;
-        Tue, 12 Aug 2025 02:16:00 -0700 (PDT)
-Received: from VM-16-24-fedora.. ([43.153.32.141])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1f1efe8sm291670665ad.69.2025.08.12.02.16.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 02:16:00 -0700 (PDT)
-From: alexjlzheng@gmail.com
-X-Google-Original-From: alexjlzheng@tencent.com
-To: brauner@kernel.org,
-	djwong@kernel.org
-Cc: linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yi.zhang@huawei.com,
-	Jinliang Zheng <alexjlzheng@tencent.com>
-Subject: [PATCH v3 4/4] iomap: don't abandon the whole copy when we have iomap_folio_state
-Date: Tue, 12 Aug 2025 17:15:38 +0800
-Message-ID: <20250812091538.2004295-5-alexjlzheng@tencent.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250812091538.2004295-1-alexjlzheng@tencent.com>
-References: <20250812091538.2004295-1-alexjlzheng@tencent.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A05C2E9EAC;
+	Tue, 12 Aug 2025 09:16:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754990212; cv=pass; b=NhPAvFAK3CYgWKXCqbUX/DdiLQSNKUaadnfDTbW8X3/JWu2LBy3v+iGHpG35G+PvhiJTvLBcFBv490h0T0P+8m1l0ncW6KTkGuILtAztmCEJmgIXahkqLgl2Jmq0TuhZHkv1pFFsUh56FH9rNVrHoz3oq8Ifg0Y5KiA5fsDIvlc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754990212; c=relaxed/simple;
+	bh=WCHrfZ3FqSSAm8m6z10Yl9zXQWOEanY1aJ7VPxiQmRo=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=DzsTrNYkA52Jqo0R3dq/tnUVKxNa03tSHy3DNJdy6obpb5fDEWmb07rDWNSH4BC1HbJYMdM4zrYRK5LuLMwNVjf7N42wcUWMdd/aubtAs1BF1qS3VCmlhiN3AK6glQnKZ6eEZlM9jZ5FNMSTVbUFsfFsd3+CaW8eIdZxp7kAl6M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=FtoVLQwr; arc=pass smtp.client-ip=136.143.188.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1754990175; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=gCN4ceDMwS2sO8ua0KycD8kDVZEMv3eixn09ZfzQz/Ztr5XZoAdEy3KA31g9ocIkodVnnqsAoX55b9adHoCtAq5zDxMDRQtcc5EJFSj9XIxjgP25KziXfW/lUbL7FR068ElM+NPvW4WbuJENoDOSxuVHXkMPSeuUYvzkzA06soY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1754990175; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=WCHrfZ3FqSSAm8m6z10Yl9zXQWOEanY1aJ7VPxiQmRo=; 
+	b=iMcPuzCl04jSwqNlE2sAPeShzAXgzKwA7qiSvmb9ypCEiflOXulFl5I+N+h8lwXz18CmrRWvgBumRahUcbFf1YjH/6lBNAw8WEk3m3uEIvIjDlchcH9+DewZGu1uQ/Gybl8snwGg3fr0YtnQg9dT6sTJ4+44Eu4NpmsTQ8Tjr6o=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
+	dmarc=pass header.from=<safinaskar@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754990175;
+	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=WCHrfZ3FqSSAm8m6z10Yl9zXQWOEanY1aJ7VPxiQmRo=;
+	b=FtoVLQwraAG7EAXtulrfuXSaw2gwbluX74+xju36oKIsCrXiw7ooeNSRckv/LTqq
+	g0FHB4adlSNa3RANqC/8J0cH/4MPWivdRkfzU5UUQ3wbweDmgQ/cNa+E/iqddZtg3uk
+	46YzxgyrYzt0v/FLH7dZFBPwgf5wB9CRrsMzx1g0=
+Received: from mail.zoho.com by mx.zohomail.com
+	with SMTP id 1754990173829768.6252306582485; Tue, 12 Aug 2025 02:16:13 -0700 (PDT)
+Received: from  [212.73.77.104] by mail.zoho.com
+	with HTTP;Tue, 12 Aug 2025 02:16:13 -0700 (PDT)
+Date: Tue, 12 Aug 2025 13:16:13 +0400
+From: Askar Safin <safinaskar@zohomail.com>
+To: "Aleksa Sarai" <cyphar@cyphar.com>
+Cc: "Alejandro Colomar" <alx@kernel.org>,
+	"Michael T. Kerrisk" <mtk.manpages@gmail.com>,
+	"Alexander Viro" <viro@zeniv.linux.org.uk>,
+	"Jan Kara" <jack@suse.cz>,
+	"G. Branden Robinson" <g.branden.robinson@gmail.com>,
+	"linux-man" <linux-man@vger.kernel.org>,
+	"linux-api" <linux-api@vger.kernel.org>,
+	"linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel" <linux-kernel@vger.kernel.org>,
+	"David Howells" <dhowells@redhat.com>,
+	"Christian Brauner" <brauner@kernel.org>
+Message-ID: <1989d90de76.d3b8b3cc73065.2447955224950374755@zohomail.com>
+In-Reply-To: <20250809-new-mount-api-v3-7-f61405c80f34@cyphar.com>
+References: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com> <20250809-new-mount-api-v3-7-f61405c80f34@cyphar.com>
+Subject: Re: [PATCH v3 07/12] man/man2/fsmount.2: document "new" mount API
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
+Feedback-ID: rr08011227a2c34c5ab8c14803b4abf6dc00009210938a959c1bb3689b6ef1246a757dba4e101626c5a0942f:zu08011227dfb0fdd931ee86c1cd2f0e420000ba6a0a3185b7859d536a7a7d18ccd2a9382d444f4696fadf65:rf0801122bb274c5e08bb304d06800b10a0000bcecb4cdcc742b10fb5c526e9134a2da206c85f7656772d281405081c4:ZohoMail
 
-From: Jinliang Zheng <alexjlzheng@tencent.com>
+fsmount:
+> Unlike open_tree(2) with OPEN_TREE_CLONE, fsmount() can only be called once in the lifetime of a filesystem instance to produce a mount object.
 
-With iomap_folio_state, we can identify uptodate states at the block
-level, and a read_folio reading can correctly handle partially
-uptodate folios.
+I don't understand what you meant here. This phrase in its current form is wrong.
+Consider this scenario: we did this:
+fsopen(...)
+fsconfig(..., FSCONFIG_SET_STRING, "source", ...)
+fsconfig(..., FSCONFIG_CMD_CREATE, ...)
+fsmount(...)
+fsopen(...)
+fsconfig(..., FSCONFIG_SET_STRING, "source", ...)
+fsconfig(..., FSCONFIG_CMD_CREATE, ...)
+fsmount(...)
 
-Therefore, when a partial write occurs, accept the block-aligned
-partial write instead of rejecting the entire write.
+We used FSCONFIG_CMD_CREATE here as opposed to FSCONFIG_CMD_CREATE_EXCL, thus
+it is possible that second fsmount will return mount for the same superblock.
+Thus that statement "fsmount() can only be called once in the lifetime of a filesystem instance to produce a mount object"
+is not true.
 
-For example, suppose a folio is 2MB, blocksize is 4kB, and the copied
-bytes are 2MB-3kB.
-
-Without this patchset, we'd need to recopy from the beginning of the
-folio in the next iteration, which means 2MB-3kB of bytes is copy
-duplicately.
-
- |<-------------------- 2MB -------------------->|
- +-------+-------+-------+-------+-------+-------+
- | block |  ...  | block | block |  ...  | block | folio
- +-------+-------+-------+-------+-------+-------+
- |<-4kB->|
-
- |<--------------- copied 2MB-3kB --------->|       first time copied
- |<-------- 1MB -------->|                          next time we need copy (chunk /= 2)
-                         |<-------- 1MB -------->|  next next time we need copy.
-
- |<------ 2MB-3kB bytes duplicate copy ---->|
-
-With this patchset, we can accept 2MB-4kB of bytes, which is block-aligned.
-This means we only need to process the remaining 4kB in the next iteration,
-which means there's only 1kB we need to copy duplicately.
-
- |<-------------------- 2MB -------------------->|
- +-------+-------+-------+-------+-------+-------+
- | block |  ...  | block | block |  ...  | block | folio
- +-------+-------+-------+-------+-------+-------+
- |<-4kB->|
-
- |<--------------- copied 2MB-3kB --------->|       first time copied
-                                         |<-4kB->|  next time we need copy
-
-                                         |<>|
-                              only 1kB bytes duplicate copy
-
-Although partial writes are inherently a relatively unusual situation and do
-not account for a large proportion of performance testing, the optimization
-here still makes sense in large-scale data centers.
-
-Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
----
- fs/iomap/buffered-io.c | 32 +++++++++++++++++++++++++++-----
- 1 file changed, 27 insertions(+), 5 deletions(-)
-
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 7b9193f8243a..743e369b64d4 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -873,6 +873,25 @@ static int iomap_write_begin(struct iomap_iter *iter,
- 	return status;
- }
- 
-+static int iomap_trim_tail_partial(struct inode *inode, loff_t pos,
-+		size_t copied, struct folio *folio)
-+{
-+	struct iomap_folio_state *ifs = folio->private;
-+	unsigned block_size, last_blk, last_blk_bytes;
-+
-+	if (!ifs || !copied)
-+		return 0;
-+
-+	block_size = 1 << inode->i_blkbits;
-+	last_blk = offset_in_folio(folio, pos + copied - 1) >> inode->i_blkbits;
-+	last_blk_bytes = (pos + copied) & (block_size - 1);
-+
-+	if (!ifs_block_is_uptodate(ifs, last_blk))
-+		copied -= min(copied, last_blk_bytes);
-+
-+	return copied;
-+}
-+
- static int __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
- 		size_t copied, struct folio *folio)
- {
-@@ -886,12 +905,15 @@ static int __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
- 	 * read_folio might come in and destroy our partial write.
- 	 *
- 	 * Do the simplest thing and just treat any short write to a
--	 * non-uptodate page as a zero-length write, and force the caller to
--	 * redo the whole thing.
-+	 * non-uptodate block as a zero-length write, and force the caller to
-+	 * redo the things begin from the block.
- 	 */
--	if (unlikely(copied < len && !folio_test_uptodate(folio)))
--		return 0;
--	iomap_set_range_uptodate(folio, offset_in_folio(folio, pos), len);
-+	if (unlikely(copied < len && !folio_test_uptodate(folio))) {
-+		copied = iomap_trim_tail_partial(inode, pos, copied, folio);
-+		if (!copied)
-+			return 0;
-+	}
-+	iomap_set_range_uptodate(folio, offset_in_folio(folio, pos), copied);
- 	iomap_set_range_dirty(folio, offset_in_folio(folio, pos), copied);
- 	filemap_dirty_folio(inode->i_mapping, folio);
- 	return copied;
--- 
-2.49.0
+--
+Askar Safin
+https://types.pl/@safinaskar
 
 
