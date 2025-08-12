@@ -1,127 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-57467-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57468-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DAA4B21F71
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 09:25:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BC27B21F92
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 09:33:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BAB797B1055
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 07:24:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA8496869F9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 07:33:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79F2D2DCF62;
-	Tue, 12 Aug 2025 07:24:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 247592DEA62;
+	Tue, 12 Aug 2025 07:33:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EV7aYnWL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC8A2D7803;
-	Tue, 12 Aug 2025 07:24:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 710771FBE87;
+	Tue, 12 Aug 2025 07:33:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754983483; cv=none; b=Kx7UUh7rJNtffjZv/OnLXVGYwKzmiIHEetCklBmm6owY2FpIDf/Tm7Od3epx3w3Sih4fx5pEwdj+5xC1sPLp+8X3MceEtS4NchmmSHnAy1igPdwFug/zPqrX2uii3D7oiZIFwY3tW9iYVb59s6qiCh/c1oQnTC1nOV79Mk1N7jU=
+	t=1754984006; cv=none; b=nSZoticI9EBmADuY6Gen0B0M5j6JcXUsWeFbXlao75WEMHY4EFrxGbIKW1QqhUhFdb7mgFjywuZHb2eH5iek3bURF5wttYNgARodkAYry07cT/Cxs6Oc76tr9HPxMVkWckv+EnbnbFPiq/Wbv6Vj/8t5PhNNxBUGfxU/fKU45k8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754983483; c=relaxed/simple;
-	bh=F1+sEh/R9brLB1dIm7iUxPhrrN4R39Dy8Uv/ot60slI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oW8lv9c49RTOrmM4qw8pnCr5KlgKFjgSBI/2gamMbBzthKyLP4+Sxo/F2c/1JZz+pjg6bFOB/x1THz3b7cW3508ydbJwTwY2KWHi3BdDUdYrBW3zwsUlCZxJTaS0KSS4RM+IYMPfmJbAPa62UG9BkhfpPp9OyVpHR+nEg0NndnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-4fc1a5e600aso1872657137.1;
-        Tue, 12 Aug 2025 00:24:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754983476; x=1755588276;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XOtePJ+whO1RZk6W6FcCDIfHBFaG85SKwR/jfH7mXsk=;
-        b=SUoNFS61n34YXTByb984/BURL7m8KdyItK3E062VixEs8PEhVe88Yaj0Gp2Kq1wLO6
-         oWDuD9yKgpxgFmL2blGOJwK5ep4B18IRFvNjJydfeIb/TtQDZaCEST3XFejv6Rv/yzFW
-         LSC1ghPJY864JIafv3cP9a41jgqkwEvSb9voytam1loibWEModmOCqazMCNKq3Tl/86W
-         1sxE6xK75zZk8CsQq34BRoAdmLxbYfnM0o6Hpxq5rZ0U1+zy1IDZtU4XqPhyTJxDy6a5
-         ubLORK+cUvAwVyYoQQx8mnTvHZk6mLHhRKlaW/wjDz+iH2qew/auOxzdB4A2flABIl8n
-         XYIw==
-X-Forwarded-Encrypted: i=1; AJvYcCURLg0UDUiW04htSRaEjEZv6xdX78dGNa/rvmXAukm+1Y8P05v0KCWdprxXXZw3p1sG0eKYjhwZJKWDWta+@vger.kernel.org, AJvYcCUl908DYraWTylU2faiA2L5OekRAdCbyVB5+LRRXNjRQ/Tr93vzdajPhOUNCwJwwWHNMGgTRl5UyZRb@vger.kernel.org, AJvYcCVX7Cxg2bXZEnyBtvFljjtki1kl6uV9u9b0j23omEQXIKB41m4X60J5EE33TF/5Yc31FKTjn2JfYcZ2ptkt@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQiMQ4D+Hm6BDLVktCH/4+nm0URWYAMCnHAm6y3H4urro0+s7a
-	gpNGSRm8ix3Azie26fkKoLq+NdPmxuW/7OXH26moYZN/qQgvwTGSB3HJSLHD5tm2
-X-Gm-Gg: ASbGncvm4iUjyhgJV+3YZA+e8dK1cUCuKEaoR+3cUaJoMUh4LWTjvmv7qOcfTLfiK2Q
-	JsF54a3YWFzKFmL5cFSrbhjWimbGKAJcAaaaC25lba1oqi9OfVY0u5/gft3Jq8Qn+qzepNBoU1u
-	E4WF6zMdM3MMKkMrAnFvvt0wk861qCOQA+pk65V6C+z/h3sgQehSmdYMJofb2aGQUXLZA4MpV93
-	sWkoeFl2nxlP6b/9n2i9OTR6o7Bvmbqn/mq5dO5DXRUeEGWrbGHMCUrz+ZhHcOHndJzzenAvwhc
-	daEriuzBNQ2O0cvFQ1Py1w9efxt54CWuEWs8zzuWfe6njccE7LZv7c8RzZOo2F8q5yr0TgftDx1
-	XHQpcRgWXY4aAPxlgoKFWi5qtiU7vtxdxVol3+X6lK2K32nxAJehxGWNZC02F+aXN7YDIKnc=
-X-Google-Smtp-Source: AGHT+IFc8Niv3i50vfcXctqOM9+EaZ22zdjVC0swY9qmcjEuQX8hCa12CQtuWuf4JLS0mLRf1jyUow==
-X-Received: by 2002:a05:6102:809e:b0:4e6:edce:4b55 with SMTP id ada2fe7eead31-50cbcfdaf30mr985804137.4.1754983476017;
-        Tue, 12 Aug 2025 00:24:36 -0700 (PDT)
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5062b6519e7sm2134403137.13.2025.08.12.00.24.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Aug 2025 00:24:35 -0700 (PDT)
-Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-4fc18de8e1bso1720985137.0;
-        Tue, 12 Aug 2025 00:24:35 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVQ9+AhqXAYlLdeStixqoH8hsg70AGD6hWIKwvacfzPicalBC+TmxZd0C/KHXYy5YhzE6lN+neKSSPuwlly@vger.kernel.org, AJvYcCViHOCBcmIi56mcTkFyTZiVx8g2+j4lBemehmj7IKYn6tWER1GLPD6J/7RRP1Wte761HFqI+rClxRf8@vger.kernel.org, AJvYcCXcWxeDX/448yOHwoPy83mH0dnjOwlMAH/PXhIh6YJuGQHI3B/egynRFrTmZzITIkWplSAhPo5fx7/Lxhrv@vger.kernel.org
-X-Received: by 2002:a05:6102:3749:b0:4e9:b899:6f4e with SMTP id
- ada2fe7eead31-50cbd4c9427mr1106337137.7.1754983475510; Tue, 12 Aug 2025
- 00:24:35 -0700 (PDT)
+	s=arc-20240116; t=1754984006; c=relaxed/simple;
+	bh=1zwIg61p0aZAz/MHzJHLtHrthB9VhlqRgKswzzLDMvg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=PprAxaeiaGe7eqgk227Kimh86z1XVoJw3hE2Jp7SiCVlRWXwj9cEPB7jr6Z1smllUnTJuB2+vxNgiIv6jt/mI/YbHrbb/MIfF971Myyu3nvQ7c+l/gqFidyeemx4bOYwnfJKXsEgSHuftlRw2n3EM1EHNod3ob2SijCUpVuGibE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EV7aYnWL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A0F1C4CEF7;
+	Tue, 12 Aug 2025 07:33:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754984006;
+	bh=1zwIg61p0aZAz/MHzJHLtHrthB9VhlqRgKswzzLDMvg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=EV7aYnWLpVgEV8DPgJrDBgLiTguQZXAAcUklGDv+bi/inh03vNkEXU3h2cGGK5Z6U
+	 /LQY4KruwgX6C5avdYZQoDDe7lrLP6kKBo0n2f4V/GUYbkwJ77Qqlw0CmzDSucgREX
+	 zLf2WnOUG//kBuBmP0fbpYE1/y/adcfbyf6dSv9JvUZJz2F6lWoGC+SyUv60c5FKH2
+	 tvn5SW1U7e/vjgLbNJ64XBW95zcxVWRxhVazy4yZDo6sSJkOnjlQHtd1ZSEEn7gOPd
+	 j2t9RhINxZ5/nCX5vldW7z7C511tEiVOPtGUVas3JsgdtWMXhagoanJRlfZwXxlAg8
+	 lJB8kzowbad6w==
+From: Carlos Maiolino <cem@kernel.org>
+To: djwong@kernel.org, hch@lst.de, dan.j.williams@intel.com, 
+ willy@infradead.org, jack@suse.cz, brauner@kernel.org, 
+ viro@zeniv.linux.org.uk, John Garry <john.g.garry@oracle.com>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org
+In-Reply-To: <20250724081215.3943871-1-john.g.garry@oracle.com>
+References: <20250724081215.3943871-1-john.g.garry@oracle.com>
+Subject: Re: [PATCH v3 0/3] xfs and DAX atomic writes changes
+Message-Id: <175498400299.824422.14848821788318521460.b4-ty@kernel.org>
+Date: Tue, 12 Aug 2025 09:33:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250810101554.257060-1-alexjlzheng@tencent.com> <20250810101554.257060-2-alexjlzheng@tencent.com>
-In-Reply-To: <20250810101554.257060-2-alexjlzheng@tencent.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 12 Aug 2025 09:24:24 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUFn1aWxdgb__NY4yr1E8k_zSaaDzmkUBfyDV1mWawTMA@mail.gmail.com>
-X-Gm-Features: Ac12FXxppZi-71w7rSLDFISw5f4QrRnM71zGAobEkqyavB6YoHT3FR5Y1ocCRLs
-Message-ID: <CAMuHMdUFn1aWxdgb__NY4yr1E8k_zSaaDzmkUBfyDV1mWawTMA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] iomap: make sure iomap_adjust_read_range() are
- aligned with block_size
-To: alexjlzheng@gmail.com
-Cc: brauner@kernel.org, djwong@kernel.org, linux-xfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jinliang Zheng <alexjlzheng@tencent.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-Hi Jinliang,
+On Thu, 24 Jul 2025 08:12:12 +0000, John Garry wrote:
+> This series contains an atomic writes fix for DAX support on xfs and
+> an improvement to WARN against using IOCB_ATOMIC on the DAX write path.
+> 
+> Also included is an xfs atomic writes mount option fix.
+> 
+> Based on xfs -next at ("b0494366bd5b Merge branch 'xfs-6.17-merge' into
+> for-next")
+> 
+> [...]
 
-On Mon, 11 Aug 2025 at 18:49, <alexjlzheng@gmail.com> wrote:
-> From: Jinliang Zheng <alexjlzheng@tencent.com>
->
-> iomap_folio_state marks the uptodate state in units of block_size, so
-> it is better to check that pos and length are aligned with block_size.
->
-> Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
+Applied to for-next, thanks!
 
-Thanks for your patch!
+[1/3] fs/dax: Reject IOCB_ATOMIC in dax_iomap_rw()
+      commit: e7fb9b71326f43bab25fb8f18c6bfebd7a628696
+[2/3] xfs: disallow atomic writes on DAX
+      commit: 68456d05eb57a5d16b4be2d3caf421bdcf2de72e
+[3/3] xfs: reject max_atomic_write mount option for no reflink
+      commit: 8dc5e9b037138317c1d3151a7dabe41fa171cee1
 
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -234,6 +234,9 @@ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
->         unsigned first = poff >> block_bits;
->         unsigned last = (poff + plen - 1) >> block_bits;
->
-> +       BUG_ON(*pos & (block_size - 1));
-> +       BUG_ON(length & (block_size - 1));
-
-!IS_ALIGNED(...)
-
-> +
->         /*
->          * If the block size is smaller than the page size, we need to check the
->          * per-block uptodate status and adjust the offset and length if needed
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+Best regards,
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Carlos Maiolino <cem@kernel.org>
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
