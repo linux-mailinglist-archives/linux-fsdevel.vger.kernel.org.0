@@ -1,131 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-57592-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57593-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0880AB23BFD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 00:45:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2560B23C00
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 00:47:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D6FD2A8668
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 22:45:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB3115812B0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 22:47:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9266F2D9787;
-	Tue, 12 Aug 2025 22:45:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017F327E077;
+	Tue, 12 Aug 2025 22:47:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T80HOv/6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UbYXOr36"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C15C2D7392
-	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Aug 2025 22:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1C62F0685
+	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Aug 2025 22:47:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755038713; cv=none; b=N1eMQVnZRNeKYF03Udq9XQKcgp5hYcS5w1SREGCZy47pAicNLzMYnYHFagFMDA7IvhqFxw85dmly58eRPdScrxiS8hJEnfKj7BXLBagnaFPEilInCUw+T3/tFCV9KES+BDdvkgTUuaAkTdnr4uxbsbSee5DQqx+nFfTvzmicxCY=
+	t=1755038849; cv=none; b=hN0xBWwRNADp0G+0kctK3JfGlE6hh1WJyHlkdNGzx07AKJg8dghOFaee9xDEVksOILxqEQFl+0yYKj0X8FxrUH7ot++hI5HXpthddqdObCLvQHs3l6WIe1uUio5vNTzkATpQJMAM6/MIepqGEKqba8b+bvyQo0a64LZz5tCWHao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755038713; c=relaxed/simple;
-	bh=o2ffnv5qZojJnFoBlMbu5tRKE2FmqJ6tybqZkFkxphU=;
+	s=arc-20240116; t=1755038849; c=relaxed/simple;
+	bh=z80Ce4qwQmqdD70AXLu0v9WHK75cVzVlZL48TooJBbU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JI3WhyTgPWl++/oJLVxoNLDnBVe776I9n2+V8BiAX56Vk8JbR8UscKUdkeQyS+WZRMEtRRR7cSD7isQXoQnVAGeWpqWUPyDmH/Wh+BLyb1TlSysDaytG+SEPkZb/aJlmD6PfkJlyl7q9D0on6lTVNIlcdwYZSE3HURxLKGxqXHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T80HOv/6; arc=none smtp.client-ip=209.85.222.169
+	 To:Cc:Content-Type; b=uc20iXVVZ1+Fk6uHP6g1fM4k2/VSLUEB2iEEJYkUn99busVp/zDPw7p1fxnAB3NQx8vIyIYycsJbJTuQdSSO0RSRfDRCSQe/X4SYXx/seIkxqf7cNu02gnSEruHXzcxDgD6sspALhn4Z30pmW1jHDVutJtJvToS84mO+W2MJkys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UbYXOr36; arc=none smtp.client-ip=209.85.160.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7e278d8345aso584183185a.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Aug 2025 15:45:11 -0700 (PDT)
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4af2019af5aso68488051cf.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Aug 2025 15:47:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755038711; x=1755643511; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1755038847; x=1755643647; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=o2ffnv5qZojJnFoBlMbu5tRKE2FmqJ6tybqZkFkxphU=;
-        b=T80HOv/6jWlYfdCe8vfJHIzSAt6NyaTf7wPW0sEz0+gOUwvvaDXuNeJYuoF+mrtfV3
-         n1E6hDAE1ia9RdP8tbtLBvVcRmRJvp/cYa1hjaR8Up/hh/REt6M7db8W9aRIM9nJh7J+
-         zwMLc9wXKoqLE2zYtyhZUCxJQBCX8H6tqNrscdt2d8dKba7Osn0qwvzWx252dwRjvNIr
-         DaGFqn9K0zifN7PYTYq1mmjw5dkfZUY80c+n7Mp2HHe5vpgICzkU0iEyxBsgmm50sSEU
-         CfVvwgxe4yxWDRu+Gg4XtHLp02Ld7iXrv8i10RQAAlpGp/G0M3lKIqf0eMMcaJrbTYIK
-         MPhw==
+        bh=z80Ce4qwQmqdD70AXLu0v9WHK75cVzVlZL48TooJBbU=;
+        b=UbYXOr362OYhog4wXdx+vZArSrvWeXtkRLLUyDwHLYP4kyOutFI/8mGz7xHUgTr/09
+         H5oZniMYiFlDIGFZEu/jNWEHUiA5J8rPXt7M+hYdvkq2j/YdJiOwyRrVAH+rwrbjKWAH
+         Hf4h3CupxDjuVUoXeXJkPY2P7PoEfHZj3OQNy7AxDafOUjlD//Q0zoQSasVzvUFLoLMV
+         Rp+4zVbJKk3L9fQSLPqft9tn5W3jaqZvUYgjH74UKjvA93trGzZWQzMWA2bSuMJhL1ta
+         b/oM9ZL+dFazJe06eq/P0wJCT21fX04V44cxGcmO2wqhQTx+omhnbjiMeQsfKUmlkIqo
+         o9OA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755038711; x=1755643511;
+        d=1e100.net; s=20230601; t=1755038847; x=1755643647;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=o2ffnv5qZojJnFoBlMbu5tRKE2FmqJ6tybqZkFkxphU=;
-        b=UBCAUs0xT1k14AoMTiIzODsZ4P3UMHdx34UMNB/kUKr05sXPQyUyR8zsjqxWaFz/Xr
-         hCP2ITbP6rpvM6cA1iPk34/e+W2GIc81gKGLEIreY8llpXyyrcpPOTYR06HWDMkZjkPG
-         uCBce+YzZzue3dJPIWIcdUAnLp9HeYtjkykhHmIPQ4NN4etTyhVXPnCRx6wfZZcrJ6zs
-         N5R1eKyYsA7DTQ7WLHt7PrpKfhB0/XXBRFV0intTwwY9ooPYw4VopibG7HyVhqnXX1R1
-         isb2+u3M7pnlsW1qoyMWKtSjvHJlB2qR9Ptk0NM5me+hRqaZ9/ED3b3rIiuJgPoNebUT
-         Bpvg==
-X-Gm-Message-State: AOJu0YweV6tXaEi5QGe/GS/FkflOmPJcFeZ3O0MPdwxlMhqAVRMKGYwM
-	R+MkgC2zbNDuagajzLzh4MQvBaWfx5l1wRFUhLWL1otYwh6Lxns5f7/eUJd5PuAj4KSA9T6Jrz1
-	mBV0rCrpRVpfvGcOTH2RGuc3TF+8L6Q2IhkZK
-X-Gm-Gg: ASbGncvtr3lOQ1Ff3c3bfzbMtummrGEQmzasM50dzc3fDBBInybr09UNQ7rXshkzsoL
-	hR8XyQFAI51VCDHXTKEle/OGrQGdeDRY0Q1/JZXhjw8+T+qKwENW8mDl2vKdu2XKXV18gAK4nig
-	leX4yxtL7wqigcl8ZvSnGUHoJ9mKMcrQ8v39RFxOk02fpZVUKGdT5+iujEzB/UmVQfIphK3BTkR
-	A/g3JlQ
-X-Google-Smtp-Source: AGHT+IH8bIEtv9JXpNEEogRc6bxsWkIjxgqN1sCJCq654YuI1mSSf2ztI7KXCh0EbfaacioU7jdAV9NpGAttamhX5eg=
-X-Received: by 2002:a05:620a:2905:b0:7e0:cb93:6fb1 with SMTP id
- af79cd13be357-7e865223b9cmr138172185a.9.1755038710971; Tue, 12 Aug 2025
- 15:45:10 -0700 (PDT)
+        bh=z80Ce4qwQmqdD70AXLu0v9WHK75cVzVlZL48TooJBbU=;
+        b=WNaeIBVRlwK3pRnHe7WBOIlFbL95t8rtmQabHWP68S5dP9TA5ToGfqzqpr++/De0oU
+         0zRgsn4lw56k3z0/dW59oZeTDUKuci1CFZPBjc5VO/fS1KVAlBHq+/tAy2flSLhudzwj
+         HQRAI+tNN7f1J7d7ve3MOOXhtwWilaPQJJpuhVm4jOGEQch/qzXHXv0ulG0+dAGn1lgG
+         8MDVwnNeCnF8mTzvqqCBsfV5ttLJm4WWiUe4S/Wi7iiElDCY1B/el7Yhv8IqIyqTVc8O
+         WL/4b2bdwCYNU7QbcMMOUj+4D/ib/aw7VKRhfcWq5GrpBh+Xi3QV/Qhv8lQVlQr9ccHT
+         Cn/w==
+X-Forwarded-Encrypted: i=1; AJvYcCUmEp+PwQtiIsLnDEA9FtZko2UYlso0TM31cqmZZ+5zCkNbQ9m3jmSitzSORq1YDslMgE9AWJBl9SzI/QZr@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5GbO2eWQjbkR+CGxYnyWJGCna8cAffFmanJUleKMux4dvAxQs
+	K+o+8fRZ+mfGLeSTGc2qw/pa2ktyXrhPAY7VBKsgy01B4U0jlO+P0n629MGr6hy9D5i++h1a+Ng
+	8H7ycTxAC9nQnyp8qLpECykw3uub91ao=
+X-Gm-Gg: ASbGncvRiedwbcM3BN+nk73d+U48C06u++ux2oIw8XNT0j0jLJLwshASWQ8+s50qnYr
+	kQFN3umV/dwrJX7AbbZfPlz0lXh3sngcXC7qtVjOXOkIZGyXgc67XpQnlQz7/OEHOrl94vtW3uP
+	Yy2xJUIBTR62nIL18I+HOpqkpcTyua4y9CEbEVn+VuPw1Z1p+xSiGZMaGBCUEvMKGXRuh5/WYr9
+	Uc+X0HwWS21VX5pt6Q=
+X-Google-Smtp-Source: AGHT+IFSbwqbwJbqWUWnnrUsmCnbhK1s5FH+xgvtTM02etvvi3eCYlyzmpHtRJ/vcDLYFCtunyIiGEgkZXGjhvTzByk=
+X-Received: by 2002:ac8:6909:0:b0:4b0:74ac:db35 with SMTP id
+ d75a77b69052e-4b0fc7135d8mr13745961cf.12.1755038846792; Tue, 12 Aug 2025
+ 15:47:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250811204008.3269665-1-joannelkoong@gmail.com>
- <CAJnrk1ZLxmgGerHrjqeK-srL7RtRhiiwfvaOc75UBpRuvatcNw@mail.gmail.com> <CAJfpegs_BH6GFdKuAFbtt2Z6c0SGEVnQnqMX0or9Ps1cO3j+LA@mail.gmail.com>
-In-Reply-To: <CAJfpegs_BH6GFdKuAFbtt2Z6c0SGEVnQnqMX0or9Ps1cO3j+LA@mail.gmail.com>
+References: <20250812014623.2408476-1-joannelkoong@gmail.com>
+In-Reply-To: <20250812014623.2408476-1-joannelkoong@gmail.com>
 From: Joanne Koong <joannelkoong@gmail.com>
-Date: Tue, 12 Aug 2025 15:44:59 -0700
-X-Gm-Features: Ac12FXymgD1yk-ULnRkGgmMW-Jf4VoveFjdev7JXcxtBuIybDPwQzwbaFA6njKY
-Message-ID: <CAJnrk1Zf5LxMAbNYMNsyphHZbDyC6VxZb41xiz3CBsHdYcwimw@mail.gmail.com>
-Subject: Re: [PATCH] fuse: enable large folios (if writeback cache is unused)
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-fsdevel@vger.kernel.org, jefflexu@linux.alibaba.com, 
-	bernd.schubert@fastmail.fm, willy@infradead.org, kernel-team@meta.com
+Date: Tue, 12 Aug 2025 15:47:16 -0700
+X-Gm-Features: Ac12FXxl118n1toG1Y34RUfULIQ5BqtXPgNlRM3Bqc0gLULyakY5P5qtAqIWC5s
+Message-ID: <CAJnrk1ZYZmr4yne25WV7LjOTptb2OTarZ23Tf7gfZUk4aSwppA@mail.gmail.com>
+Subject: Re: [PATCH] fuse: fix fuseblk i_blkbits for iomap partial writes
+To: brauner@kernel.org
+Cc: miklos@szeredi.hu, djwong@kernel.org, linux-fsdevel@vger.kernel.org, 
+	kernel-team@meta.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 12, 2025 at 4:14=E2=80=AFAM Miklos Szeredi <miklos@szeredi.hu> =
-wrote:
+On Mon, Aug 11, 2025 at 6:49=E2=80=AFPM Joanne Koong <joannelkoong@gmail.co=
+m> wrote:
 >
-> On Mon, 11 Aug 2025 at 23:13, Joanne Koong <joannelkoong@gmail.com> wrote=
-:
-> >
-> > On Mon, Aug 11, 2025 at 1:43=E2=80=AFPM Joanne Koong <joannelkoong@gmai=
-l.com> wrote:
-> > >
-> > > Large folios are only enabled if the writeback cache isn't on.
-> > > (Strictlimiting needs to be turned off if the writeback cache is used=
- in
-> > > conjunction with large folios, else this tanks performance.)
+> On regular fuse filesystems, i_blkbits is set to PAGE_SHIFT which means
+> any iomap partial writes will mark the entire folio as uptodate. However
+> fuseblk filesystems work differently and allow the blocksize to be less
+> than the page size. As such, this may lead to data corruption if fuseblk
+> sets its blocksize to less than the page size, uses the writeback cache,
+> and does a partial write, then a read and the read happens before the
+> write has undergone writeback, since the folio will not be marked
+> uptodate from the partial write so the read will read in the entire
+> folio from disk, which will overwrite the partial write.
 >
-> Is there an explanation somewhere about the writeback cache vs.
-> strictlimit issue?
+> The long-term solution for this, which will also be needed for fuse to
+> enable large folios with the writeback cache on, is to have fuse also
+> use iomap for folio reads, but until that is done, the cleanest
+> workaround is to use the page size for fuseblk's internal kernel
+> blksize/blkbits values while maintaining current behavior for stat().
+>
+> This was verified using ntfs-3g:
+> $ sudo mkfs.ntfs -f -c 512 /dev/vdd1
+> $ sudo ntfs-3g /dev/vdd1 ~/fuseblk
+> $ stat ~/fuseblk/hi.txt
+> IO Block: 512
+>
+> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> Fixes: a4c9ab1d4975 ("fuse: use iomap for buffered writes")
 
-There's not much documentation about how strictlimit affects writeback
-but from the balance dirty pages code, my understanding is that with
-strictlimit on, the dirty throttle control uses the wb counters/limits
-instead of the global ones and calculates stuff like the setpoint and
-position ratio more conservatively, which leads to more eager io
-throttling. This rfc patchset [1] is meant to help but it won't help
-workloads that do lots of large sequential writes. Experimentally,
-with strictlimiting on and the writeback cache used with large folios,
-I saw around a 25 to 50% hit in throughput but with strictlimiting
-disabled, there was around a 12% to 15% improvement.
-
-(It'd also be great if others have time to confirm these benchmarks on
-their systems to make sure they're also seeing the same percentage
-improvements on their machines)
-
-[1] https://lore.kernel.org/linux-fsdevel/20250801002131.255068-1-joannelko=
-ong@gmail.com/T/#t
+Please ignore this version of the patch. This is superseded by the
+newer version here:
+https://lore.kernel.org/linux-fsdevel/20250812214614.2674485-1-joannelkoong=
+@gmail.com/T/#t
 
 Thanks,
 Joanne
->
-> Thanks,
-> Miklos
 
