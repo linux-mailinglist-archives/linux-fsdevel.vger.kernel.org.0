@@ -1,130 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-57464-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57467-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 659B8B21F5F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 09:23:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DAA4B21F71
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 09:25:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1EC24260CE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 07:23:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BAB797B1055
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 07:24:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 681062DC32F;
-	Tue, 12 Aug 2025 07:23:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="HLScVlfq"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79F2D2DCF62;
+	Tue, 12 Aug 2025 07:24:43 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5C411EA6F;
-	Tue, 12 Aug 2025 07:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC8A2D7803;
+	Tue, 12 Aug 2025 07:24:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754983414; cv=none; b=AQyvjnlzf0ie3YU8y1T+jQ8iF6qEgBGqyRntYTy051GZe07GHGlm4bkVYkZH8s7hUZ6xch4Z/oeWnWRlIP9JoidCwSucg9QCXJE6WubDfgMyk1NojHrVfujmn1q5dhtArf76JSGmEr5GxT6nww7QfPu3Yp/gYkXVvO3YwlaTtjM=
+	t=1754983483; cv=none; b=Kx7UUh7rJNtffjZv/OnLXVGYwKzmiIHEetCklBmm6owY2FpIDf/Tm7Od3epx3w3Sih4fx5pEwdj+5xC1sPLp+8X3MceEtS4NchmmSHnAy1igPdwFug/zPqrX2uii3D7oiZIFwY3tW9iYVb59s6qiCh/c1oQnTC1nOV79Mk1N7jU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754983414; c=relaxed/simple;
-	bh=FFE6Ne18Gbj+9SQCya+6LnGwC3jVEx/5s2eYX1s0mJQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YtaoClxWPNuhPMIhxnR17uIstb3r7PwgaYmpeGdmuWX7+advB5Sh19fT1C1EZCmx/gqe9t1l7kcb6an1aKoBwV12FHRCC4bcBzupSNerX6vTi8unBJOuv2Bc3fGvJt7hDKsMAZqrmTJM9GykCnoR05s7pEzG8UCqhpzaIMTyiX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=HLScVlfq; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=3W
-	U889qCdNQb92vh6TByBQLFAnLxusGdo1gurJ2fGSg=; b=HLScVlfqHDX6yGgsZo
-	wkJeK4EeYiH8pVlG2vviLmwzL+9vOxp0QnQcwufcI9oJhZubfjCHA6G47HpH/crv
-	juy2XRZmtUKkBvYvGbT/uOdfoK4fr49LbcN7cTbBOVAAJxXDwgf8Y8fn3bRAx/wW
-	6M4EosojQo6dsOju7ntgx0+Bc=
-Received: from czl-ubuntu-pc.. (unknown [])
-	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wC3RSPN65pon26ABQ--.34118S4;
-	Tue, 12 Aug 2025 15:22:55 +0800 (CST)
-From: Chi Zhiling <chizhiling@163.com>
-To: linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Matthew Wilcox <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Namjae Jeon <linkinjeon@kernel.org>,
-	Sungjong Seo <sj1557.seo@samsung.com>,
-	Yuezhang Mo <yuezhang.mo@sony.com>,
-	Chi Zhiling <chizhiling@kylinos.cn>
-Subject: [PATCH 3/3] mpage: convert do_mpage_readpage() to return int type
-Date: Tue, 12 Aug 2025 15:22:25 +0800
-Message-ID: <20250812072225.181798-3-chizhiling@163.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250812072225.181798-1-chizhiling@163.com>
-References: <20250812072225.181798-1-chizhiling@163.com>
+	s=arc-20240116; t=1754983483; c=relaxed/simple;
+	bh=F1+sEh/R9brLB1dIm7iUxPhrrN4R39Dy8Uv/ot60slI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oW8lv9c49RTOrmM4qw8pnCr5KlgKFjgSBI/2gamMbBzthKyLP4+Sxo/F2c/1JZz+pjg6bFOB/x1THz3b7cW3508ydbJwTwY2KWHi3BdDUdYrBW3zwsUlCZxJTaS0KSS4RM+IYMPfmJbAPa62UG9BkhfpPp9OyVpHR+nEg0NndnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-4fc1a5e600aso1872657137.1;
+        Tue, 12 Aug 2025 00:24:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754983476; x=1755588276;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XOtePJ+whO1RZk6W6FcCDIfHBFaG85SKwR/jfH7mXsk=;
+        b=SUoNFS61n34YXTByb984/BURL7m8KdyItK3E062VixEs8PEhVe88Yaj0Gp2Kq1wLO6
+         oWDuD9yKgpxgFmL2blGOJwK5ep4B18IRFvNjJydfeIb/TtQDZaCEST3XFejv6Rv/yzFW
+         LSC1ghPJY864JIafv3cP9a41jgqkwEvSb9voytam1loibWEModmOCqazMCNKq3Tl/86W
+         1sxE6xK75zZk8CsQq34BRoAdmLxbYfnM0o6Hpxq5rZ0U1+zy1IDZtU4XqPhyTJxDy6a5
+         ubLORK+cUvAwVyYoQQx8mnTvHZk6mLHhRKlaW/wjDz+iH2qew/auOxzdB4A2flABIl8n
+         XYIw==
+X-Forwarded-Encrypted: i=1; AJvYcCURLg0UDUiW04htSRaEjEZv6xdX78dGNa/rvmXAukm+1Y8P05v0KCWdprxXXZw3p1sG0eKYjhwZJKWDWta+@vger.kernel.org, AJvYcCUl908DYraWTylU2faiA2L5OekRAdCbyVB5+LRRXNjRQ/Tr93vzdajPhOUNCwJwwWHNMGgTRl5UyZRb@vger.kernel.org, AJvYcCVX7Cxg2bXZEnyBtvFljjtki1kl6uV9u9b0j23omEQXIKB41m4X60J5EE33TF/5Yc31FKTjn2JfYcZ2ptkt@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQiMQ4D+Hm6BDLVktCH/4+nm0URWYAMCnHAm6y3H4urro0+s7a
+	gpNGSRm8ix3Azie26fkKoLq+NdPmxuW/7OXH26moYZN/qQgvwTGSB3HJSLHD5tm2
+X-Gm-Gg: ASbGncvm4iUjyhgJV+3YZA+e8dK1cUCuKEaoR+3cUaJoMUh4LWTjvmv7qOcfTLfiK2Q
+	JsF54a3YWFzKFmL5cFSrbhjWimbGKAJcAaaaC25lba1oqi9OfVY0u5/gft3Jq8Qn+qzepNBoU1u
+	E4WF6zMdM3MMKkMrAnFvvt0wk861qCOQA+pk65V6C+z/h3sgQehSmdYMJofb2aGQUXLZA4MpV93
+	sWkoeFl2nxlP6b/9n2i9OTR6o7Bvmbqn/mq5dO5DXRUeEGWrbGHMCUrz+ZhHcOHndJzzenAvwhc
+	daEriuzBNQ2O0cvFQ1Py1w9efxt54CWuEWs8zzuWfe6njccE7LZv7c8RzZOo2F8q5yr0TgftDx1
+	XHQpcRgWXY4aAPxlgoKFWi5qtiU7vtxdxVol3+X6lK2K32nxAJehxGWNZC02F+aXN7YDIKnc=
+X-Google-Smtp-Source: AGHT+IFc8Niv3i50vfcXctqOM9+EaZ22zdjVC0swY9qmcjEuQX8hCa12CQtuWuf4JLS0mLRf1jyUow==
+X-Received: by 2002:a05:6102:809e:b0:4e6:edce:4b55 with SMTP id ada2fe7eead31-50cbcfdaf30mr985804137.4.1754983476017;
+        Tue, 12 Aug 2025 00:24:36 -0700 (PDT)
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5062b6519e7sm2134403137.13.2025.08.12.00.24.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Aug 2025 00:24:35 -0700 (PDT)
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-4fc18de8e1bso1720985137.0;
+        Tue, 12 Aug 2025 00:24:35 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVQ9+AhqXAYlLdeStixqoH8hsg70AGD6hWIKwvacfzPicalBC+TmxZd0C/KHXYy5YhzE6lN+neKSSPuwlly@vger.kernel.org, AJvYcCViHOCBcmIi56mcTkFyTZiVx8g2+j4lBemehmj7IKYn6tWER1GLPD6J/7RRP1Wte761HFqI+rClxRf8@vger.kernel.org, AJvYcCXcWxeDX/448yOHwoPy83mH0dnjOwlMAH/PXhIh6YJuGQHI3B/egynRFrTmZzITIkWplSAhPo5fx7/Lxhrv@vger.kernel.org
+X-Received: by 2002:a05:6102:3749:b0:4e9:b899:6f4e with SMTP id
+ ada2fe7eead31-50cbd4c9427mr1106337137.7.1754983475510; Tue, 12 Aug 2025
+ 00:24:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wC3RSPN65pon26ABQ--.34118S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW7tF17ArykWr43Ww1DuFy3urg_yoW8AFW8pF
-	W8Ca4kuF43J3yagFyxJrs5Zr1S93ySgFWUAFW8J343Z3ZxJrsYkasrXas8ZF4xtr1rCa1k
-	Xr4Iqry7Za1DWFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jwF4iUUUUU=
-X-CM-SenderInfo: hfkl6xxlol0wi6rwjhhfrp/xtbBawKnnWia6QNKpwACsk
+References: <20250810101554.257060-1-alexjlzheng@tencent.com> <20250810101554.257060-2-alexjlzheng@tencent.com>
+In-Reply-To: <20250810101554.257060-2-alexjlzheng@tencent.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 12 Aug 2025 09:24:24 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUFn1aWxdgb__NY4yr1E8k_zSaaDzmkUBfyDV1mWawTMA@mail.gmail.com>
+X-Gm-Features: Ac12FXxppZi-71w7rSLDFISw5f4QrRnM71zGAobEkqyavB6YoHT3FR5Y1ocCRLs
+Message-ID: <CAMuHMdUFn1aWxdgb__NY4yr1E8k_zSaaDzmkUBfyDV1mWawTMA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] iomap: make sure iomap_adjust_read_range() are
+ aligned with block_size
+To: alexjlzheng@gmail.com
+Cc: brauner@kernel.org, djwong@kernel.org, linux-xfs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jinliang Zheng <alexjlzheng@tencent.com>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Chi Zhiling <chizhiling@kylinos.cn>
+Hi Jinliang,
 
-The return value of do_mpage_readpage() is arg->bio, which is already set
-in the arg structure. Returning it again is redundant.
+On Mon, 11 Aug 2025 at 18:49, <alexjlzheng@gmail.com> wrote:
+> From: Jinliang Zheng <alexjlzheng@tencent.com>
+>
+> iomap_folio_state marks the uptodate state in units of block_size, so
+> it is better to check that pos and length are aligned with block_size.
+>
+> Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
 
-This patch changes the return type to int and always returns 0 since
-the caller does not care about the return value.
+Thanks for your patch!
 
-Signed-off-by: Chi Zhiling <chizhiling@kylinos.cn>
----
- fs/mpage.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -234,6 +234,9 @@ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
+>         unsigned first = poff >> block_bits;
+>         unsigned last = (poff + plen - 1) >> block_bits;
+>
+> +       BUG_ON(*pos & (block_size - 1));
+> +       BUG_ON(length & (block_size - 1));
 
-diff --git a/fs/mpage.c b/fs/mpage.c
-index a81a71de8f59..718c2c448947 100644
---- a/fs/mpage.c
-+++ b/fs/mpage.c
-@@ -148,7 +148,7 @@ struct mpage_readpage_args {
-  * represent the validity of its disk mapping and to decide when to do the next
-  * get_block() call.
-  */
--static struct bio *do_mpage_readpage(struct mpage_readpage_args *args)
-+static int do_mpage_readpage(struct mpage_readpage_args *args)
- {
- 	struct folio *folio = args->folio;
- 	struct inode *inode = folio->mapping->host;
-@@ -297,7 +297,7 @@ static struct bio *do_mpage_readpage(struct mpage_readpage_args *args)
- 	else
- 		args->last_block_in_bio = first_block + blocks_per_folio - 1;
- out:
--	return args->bio;
-+	return 0;
- 
- confused:
- 	if (args->bio)
-@@ -360,7 +360,7 @@ void mpage_readahead(struct readahead_control *rac, get_block_t get_block)
- 		prefetchw(&folio->flags);
- 		args.folio = folio;
- 		args.nr_pages = readahead_count(rac);
--		args.bio = do_mpage_readpage(&args);
-+		do_mpage_readpage(&args);
- 		if (!folio_test_locked(folio) &&
- 		    !folio_test_uptodate(folio))
- 			break;
-@@ -381,7 +381,7 @@ int mpage_read_folio(struct folio *folio, get_block_t get_block)
- 		.get_block = get_block,
- 	};
- 
--	args.bio = do_mpage_readpage(&args);
-+	do_mpage_readpage(&args);
- 	if (args.bio)
- 		mpage_bio_submit_read(args.bio);
- 	return 0;
+!IS_ALIGNED(...)
+
+> +
+>         /*
+>          * If the block size is smaller than the page size, we need to check the
+>          * per-block uptodate status and adjust the offset and length if needed
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.43.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
