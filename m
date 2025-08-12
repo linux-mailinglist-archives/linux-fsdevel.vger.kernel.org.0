@@ -1,138 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-57509-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57510-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 862D4B22AA4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 16:34:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A554B22AC4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 16:37:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 391F3684679
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 14:26:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D89C1895FA7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 14:33:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C1FA2E7BA5;
-	Tue, 12 Aug 2025 14:26:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB5642EBBA6;
+	Tue, 12 Aug 2025 14:33:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gV16sq1x"
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="hEGmOT2F"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F2BB2E2F1B
-	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Aug 2025 14:26:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AEEB2EACE2;
+	Tue, 12 Aug 2025 14:33:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755008781; cv=none; b=RGNl4bKiUJh/A/aBl2/Tc5y4Y6XuG6BmJOpBZT7nK61NMpAHiBH8xm+mXt2Eh74PTNEaZp6GAPcaslSOgC0y29kqvVUF/rrnpPYcB8E0WY3jqabgqqD3rQ8OIF0LwuBaIaRczofag9xNqHIUUSwAkh2PMh2/PArT4x8a6ZRnYdw=
+	t=1755009205; cv=none; b=RtMJ0TJTu1xcRf+aSNjcHNHvGZEH7YJXiytuXuCzkJ8uNuXBsEFhsSa6849i75mDc5e+n9DfPemvt5342hDWEJC/i0dekIUSjeCkbaJ/868tj+RUfj8mnbHWVwfZE+WG/WMdvlqMfgFB3MisVbSeKXdIl3eIq7CTI8Kd/fEWrHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755008781; c=relaxed/simple;
-	bh=BCzl/In8AhCPExTkm7oOiLGhOWvI0LbQdU3xbbH37ec=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fcy3g28zDjrnEDqUtDW6JCZ5R31SY9V90k6zKWl9p2ze8orQl0AvkQ+U5TwN4Lb21l6/2cy/pGpGO00kcLz/8j0k/uRDnc9MnGflQUy4GCqruEqWPWsNzVILIwxfeIKQV6W3ghQLNkHcd3Kds3UC2GZO8noXxRqC+oFQ9734ZvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gV16sq1x; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-61557997574so7907988a12.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Aug 2025 07:26:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755008777; x=1755613577; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xOjDz4BYfzTbC9w5/VauPmNc/kQqhL4hipAPSmqI+4k=;
-        b=gV16sq1xUsTDLUXOMJmvGSoasfvWzWV57a1Rtety0nZczEXUGUyRzMbCyrKUt2do3z
-         KSL1AkmMPyCHLhFGQxBnn/3ESYy5QXjv/Ajgfn2lmMRV0dZctiuLjawA/vAsm4aKIJYp
-         f+c+CjZqscNI6+96p7WaBbhmSEwf/oeeCt3UPo9XSivOCFUYckBdne1n6LZlw0wXP+EG
-         sttqJZc1RPoLZOawtc0lK7MfmaDDLH8JZ7w4DFwZABxWDzV65Q3BKqBx9bBKiPp/3WL5
-         Aiaw8vrl/k80g9VdpUmPKlLAE01RhZrf9iDnSyxMryguuB0mCuZ6O+MyPBPIudg05M8t
-         qkfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755008777; x=1755613577;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xOjDz4BYfzTbC9w5/VauPmNc/kQqhL4hipAPSmqI+4k=;
-        b=ITg1jm8eb1TuKobw0312i8rYxLt6nbgljOFseiCRKClDG1AAbJ6ptVAyBydzli04SG
-         lWozS8XcOisVgyEFv47nlE+9kFwROj0e/SnR8DMWtgRYr/YDZpiYs4dEHO5BERIECrH+
-         LPbAMK/gLVNy5s8gtYi5yyhGEl2uVWGVuj/JVSpMMtG0bpeLVvf7Cma8CQI1cc1uRgH/
-         RtrL/wZoRrPcJHMrNKP8AVolUKSpAwB72XJaA16ojuTevuDt6g1lYd/kVklTnSoRyFnN
-         RjEGrHHg9zTdLOKXxlxK7PpZWcNEAhgdnunLpKDqcO95/plpzz0HoSX9YOEo2ts6p0ui
-         9LGg==
-X-Gm-Message-State: AOJu0Yzgvs6EFyvecPAlZi5vm5ATKePsy2snaWSk1PxBmcdWQXhPJJ9x
-	s0aIoep7PnhLgf5PXA/5cZBEDd1Q+lZT2FsrD9KA09S9VtfhQ8Ju9ygZ0jv5r232xfmVLxnaXLr
-	nQeODyw/jXmFkEPfcA5mUbLyECLRQ3eU=
-X-Gm-Gg: ASbGncubBHPDlw8VCDQEWwwRGHDqGpzFG5c9+F5woFaSqYVKwzz2J0msqNvHy6NoxUc
-	tnwYwWf9ciN8f+Q89y9aQ6Zzg0RBkM3Ogv62aTsfym0LTh0dNyt7ayajxMJa0gpl4dU/NA7dkcR
-	Wq3bCE/UuaThoRfdk/NYowKg+3KZTOl593hrG6WqD8OVHepC/GvekfAi0I3O8C1QmfHNQpJYyaS
-	UroqZU=
-X-Google-Smtp-Source: AGHT+IGvcQ6+hss6KAC32l1MwZs9FRqdXdWjBMQAn8/ScTTUnYYec0W1yuTBgdHwVk4tf4ZALXk1FnfERlsxY9Bs21s=
-X-Received: by 2002:a17:907:7e90:b0:ae3:6d27:5246 with SMTP id
- a640c23a62f3a-afa1e173579mr312456566b.48.1755008777194; Tue, 12 Aug 2025
- 07:26:17 -0700 (PDT)
+	s=arc-20240116; t=1755009205; c=relaxed/simple;
+	bh=Z4YpjWDFsTisTYRrs6dwdNxnd1Rfd901xv2zPPVlSzc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xw967hWEcJ63ngk8JW8hyZ+aV3sM6/2c796MqUlFdiyUkJB5ADBO3kqKFjgy6b/tBJWJPPdYwUV6coS3mNxmeXGpuhWwXI7DkXmpOvDzd1uryeh1wHFY5k4ATIZOQBRtGsegJ/Ov6Cd8QJluvfV6F2EDcRuGZ/5+fCah2COETUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=hEGmOT2F; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4c1Yrt6cZ5z9t89;
+	Tue, 12 Aug 2025 16:33:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1755009199;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G85S6yN/jpAxYJYn22nLde2onQJqpGZG2EjZVAKSCR0=;
+	b=hEGmOT2FM06uSJI210uoGwYT8ijebX66XoYQNfd/oNGtB/w9zAZAxcoOnwZMmcBUrUtSAu
+	ZK4YCfAPOX/nML2b3iCyiEJhrXE+MVtaUN/VW8vnpQlqfTte4bts9Gzixp8VJqI9BqxLVe
+	MNfaTgwl1ApZXQrQowjWIy9eLjD61dFs4J4zYZwPxmAs1E2u1t1bKtYJaHemd+FcmtpWtd
+	PRxqo5sHx527p8Kl4mA+Hfue5WIBEucH7Nf/Tfhf0Gz+AVmKMvs31uU8h3K11EFEOumR5E
+	BD1ZipHmbK4jOrC9k0s22kri0Uq2hUNYaGVUpATd7VIz8tWEBANMJF7LmtlIRA==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
+Date: Wed, 13 Aug 2025 00:33:04 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Askar Safin <safinaskar@zohomail.com>
+Cc: Alejandro Colomar <alx@kernel.org>, 
+	"Michael T. Kerrisk" <mtk.manpages@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, "G. Branden Robinson" <g.branden.robinson@gmail.com>, 
+	linux-man <linux-man@vger.kernel.org>, linux-api <linux-api@vger.kernel.org>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, 
+	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v3 07/12] man/man2/fsmount.2: document "new" mount API
+Message-ID: <2025-08-12.1755007445-rural-feudal-spacebar-forehead-28QkCN@cyphar.com>
+References: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com>
+ <20250809-new-mount-api-v3-7-f61405c80f34@cyphar.com>
+ <1989d90de76.d3b8b3cc73065.2447955224950374755@zohomail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250805183017.4072973-1-mszeredi@redhat.com> <20250805183017.4072973-2-mszeredi@redhat.com>
-In-Reply-To: <20250805183017.4072973-2-mszeredi@redhat.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 12 Aug 2025 16:26:06 +0200
-X-Gm-Features: Ac12FXyyr1hGvAuJ6fWu_gvmKxYuyLFZf29t1lopg1Wl1ZXn04TMDRQzHakCAyY
-Message-ID: <CAOQ4uxj4Naa_=fPTXT1n68xsPhtZLPYpe0rd4LhzFotkb+fk=A@mail.gmail.com>
-Subject: Re: [PATCH 2/2] copy_file_range: limit size if in compat mode
-To: Miklos Szeredi <mszeredi@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, Bernd Schubert <bschubert@ddn.com>, 
-	Florian Weimer <fweimer@redhat.com>, "Darrick J. Wong" <djwong@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="b2zuzbzu2rwnxtze"
+Content-Disposition: inline
+In-Reply-To: <1989d90de76.d3b8b3cc73065.2447955224950374755@zohomail.com>
+X-Rspamd-Queue-Id: 4c1Yrt6cZ5z9t89
+
+
+--b2zuzbzu2rwnxtze
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 07/12] man/man2/fsmount.2: document "new" mount API
+MIME-Version: 1.0
 
-On Tue, Aug 5, 2025 at 8:30=E2=80=AFPM Miklos Szeredi <mszeredi@redhat.com>=
- wrote:
+On 2025-08-12, Askar Safin <safinaskar@zohomail.com> wrote:
+> fsmount:
+> > Unlike open_tree(2) with OPEN_TREE_CLONE, fsmount() can only be called =
+once in the lifetime of a filesystem instance to produce a mount object.
 >
-> If the process runs in 32-bit compat mode, copy_file_range results can be
-> in the in-band error range.  In this case limit copy length to MAX_RW_COU=
-NT
-> to prevent a signed overflow.
->
-> Reported-by: Florian Weimer <fweimer@redhat.com>
-> Closes: https://lore.kernel.org/all/lhuh5ynl8z5.fsf@oldenburg.str.redhat.=
-com/
-> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-> ---
->  fs/read_write.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/fs/read_write.c b/fs/read_write.c
-> index 0ef70e128c4a..e2ccc44d96e6 100644
-> --- a/fs/read_write.c
-> +++ b/fs/read_write.c
-> @@ -1576,6 +1576,10 @@ ssize_t vfs_copy_file_range(struct file *file_in, =
-loff_t pos_in,
->         if (len =3D=3D 0)
->                 return 0;
->
-> +       /* Make sure return value doesn't overflow in 32bit compat mode *=
-/
-> +       if (in_compat_syscall() && len > MAX_RW_COUNT)
-> +               len =3D MAX_RW_COUNT;
-> +
+> I don't understand what you meant here. This phrase in its current form i=
+s wrong.
+> Consider this scenario: we did this:
+> fsopen(...)
+> fsconfig(..., FSCONFIG_SET_STRING, "source", ...)
+> fsconfig(..., FSCONFIG_CMD_CREATE, ...)
+> fsmount(...)
+> fsopen(...)
+> fsconfig(..., FSCONFIG_SET_STRING, "source", ...)
+> fsconfig(..., FSCONFIG_CMD_CREATE, ...)
+> fsmount(...)
+>=20
+> We used FSCONFIG_CMD_CREATE here as opposed to FSCONFIG_CMD_CREATE_EXCL, =
+thus
+> it is possible that second fsmount will return mount for the same superbl=
+ock.
+> Thus that statement "fsmount() can only be called once in the lifetime of=
+ a filesystem instance to produce a mount object"
+> is not true.
 
-1. Note that generic_copy_file_checks() can already shorten len,
-    so maybe this should also be done there?? not sure..
-2. Both ->remap_file_range() and splice cases already trim to MAX_RW_COUNT
-    so the only remaining case for len > MAX_RW_COUNT are filesystems
-    that implement ->copy_file_range() and actually support copying ranges
-    larger than 2MB (don't know if they actually exist)
+Yeah, the superblock reuse behaviour makes this description less
+coherent than what I was going for. My thinking was that a reused
+superblock is (to userspace) conceptually a new filesystem instance
+because they create it the same way as any other filesystem instance.
+(In fact, the rest of the VFS treats them the same way too -- only
+sget_fc() knows about superblock reuse.)
 
-IOW, if we do:
+But yeah, "filesystem context" is more accurate here, so probably just:
 
-if (splice || !file_out->f_op->copy_file_range || in_compat_syscall())
-        len =3D min_t(loff_t, MAX_RW_COUNT, len);
+  Unlike open_tree(2) with OPEN_TREE_CLONE, fsmount() can only be called
+  once in the lifetime of a filesystem context.
 
-We will not need to repeat the same trim of len in 3 different places
-in this function.
+Though maybe we should mention that it's fsopen(2)-only (even though
+it's mentioned earlier in the DESCRIPTION)? If you read the sentence in
+isolation you might get the wrong impression. Do you have any
+alternative suggestions?
 
-Thanks,
-Amir.
+FWIW, superblock reuse is one of those things that is a fairly hairy
+implementation detail of the VFS, and as such it has quite odd
+semantics. I probably wouldn't have documented it as heavily if it
+wasn't for the addition of FSCONFIG_CMD_CREATE_EXCL (maybe an entry in
+BUGS or CAVEATS at most -- this behaviour has an even worse impact on
+mount(2) but it's completely undocumented there).
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+https://www.cyphar.com/
+
+--b2zuzbzu2rwnxtze
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaJtQmRsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG/UwAD+MwnSuB2nUpF6VN+lG6Sk
+ahtWU9Ut5x9w1cljgw+oql0BAPzwUVFsh5FWVEt9gyvDxhFsVMHokKdK4FubSZ9L
+TmEO
+=CcEX
+-----END PGP SIGNATURE-----
+
+--b2zuzbzu2rwnxtze--
 
