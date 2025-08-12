@@ -1,104 +1,108 @@
-Return-Path: <linux-fsdevel+bounces-57488-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57489-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8C0AB22126
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 10:34:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B550AB2226F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 11:11:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EF5F1B6397F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 08:32:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67DBF1AA765B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 09:08:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D9B12E9756;
-	Tue, 12 Aug 2025 08:27:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="n3vQfNmH"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA04C2E7654;
+	Tue, 12 Aug 2025 09:08:28 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E9822E283D
-	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Aug 2025 08:27:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A752E0B6E
+	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Aug 2025 09:08:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754987277; cv=none; b=M+OJHDo9CV2SfLhRhXz+3PltCnUw+fa7uLT+fmq3gvxD0pO9oliLwC9ahJaItTQJvi2GZqVwo3t9GLpC0Uqto9m5gfl6g3gXNUjMStIEQ34Os2yxLGJig07NV4kLTYoGT/scuNdE6ILLB0bpUhM2YMjTvI5YpEpdWGqcie/7IbY=
+	t=1754989708; cv=none; b=p/WcZAZfOlVp0MWTXK6zVUDfmUanlRXnoSxKJvmZ5kD82wpNbdLd6dUeDYUrbc61k8nME7mox1ZH9L+p32/1grpJz4/JbBUNrc1r6SmXHmJDJAlnIzxs4laay8HGHffwLw6cvW9Ietqmfpw3XxwE2u5w1LahRn9EAiJsyEVqarU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754987277; c=relaxed/simple;
-	bh=p84/JH6ujUXADoU7F1v/k7vE0fdq1DxNOncd6ZeLHYk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F45B5zU9hj92YR6CnIu7bNor7hUHtBGm9OcqQfjemd6IqWB/cyVhqarff0WFp1uTZpWGUEaBXTTm8jECq3jb6gfJ1f6KU/+IVKJWTg6GfhrhxogHLslf/lWSIR4fexo9n5CPv7dQqYxG1ep9pZKUpUlu7B+wNznycNbjUlfkUG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=n3vQfNmH; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4b08c56d838so71132311cf.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Aug 2025 01:27:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1754987273; x=1755592073; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=1iYAnIreCDHpg5Mzl3mEVvIUTo7Ej1EmgvdEUIQ6TiQ=;
-        b=n3vQfNmHMM0tCkc6R6l33lrLuCfAR4aO8fVFW1N+f5XmyFOXTG+yb3Ce0Pswpm7kSD
-         6Y+dqFr+5Dur1dICcTT7tVnBmIXDfuuVC3TVxGRrgFjOlz2EDlKHlUOHUpovNvNssVNh
-         XUHtklv21qGXbqcT8P2jNz3aXh2W0Jz+geNaI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754987273; x=1755592073;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1iYAnIreCDHpg5Mzl3mEVvIUTo7Ej1EmgvdEUIQ6TiQ=;
-        b=cr2mrZrLL0VS0l+44ccLkTiRrgsrJHPlQy1V7P+34gda21bLELypL0LHNju//fLFnn
-         QjhRxYcSQ8CnWBcshNVL7ibXlLqeGKPKd14EEMP/+ZOhaAeqWASnWvb4BsD7s8uqQzUM
-         sOwTuJjBC1uOLPHTrq7jMj1Lz3qWyKc8P8NVpBffcvVJ1+nHbRIiAs1u8fLJp099WYbS
-         TiSDpmnDy/+7Yr6kL84EgTXW8zTmLrhz7zMyzrxRJwdB0AkAdg3XyrVaiIF3ymBI0Sm2
-         f4v/9AHQeyCn04uPYtyb5Ebtv8JSA3/wC53si6yhsxicxcAhHAMlfwO+Fm7oVLLueED0
-         MUuw==
-X-Forwarded-Encrypted: i=1; AJvYcCVjhzn5rgg8rnrxsPWCz7gao0ynKq/SuNXF3eQnV7kCQ1KF8X7kBDqIbjd0OR5kgqUo8QertF2uu33FnRLZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYzqOdqjzNLZEtgw200QT1HGBizrlR8A3vxZ+QcBcxZ9KTQ9bl
-	GWqbnv7pxCwINSBrnphNEcSO5sioR5UfESHP0HyDW0GFP5wLOy53ID9SLl9xFxn27dPrwBzxrUS
-	4ObmYU7BlZnBJs7HW5IUG+Y12vs2lrEgatZVli3wN+A==
-X-Gm-Gg: ASbGncsexIBoi0clxp2SogF+UUpwo58eSEBmd3MBfcKzaDzT98SqhqdnAsYUehpETdO
-	wWuylzLHMZ98eI8faucONG/yAqiAGYzH28AiA6t+RvJAHt5+eGkwfl0nukxI9BsnODgiqyrG9DQ
-	RdOg2w/lWyKC0IoQ+yZ1Y1Co6yGYaYymK7ZmG0fESBU/gti7g+Vt7xIDyyukzCJsSbq4lXXr5em
-	0dv
-X-Google-Smtp-Source: AGHT+IHhKn6FMwffxsQP6b/eSz87NPzoagmw4rkRbgqDATPA0jZycxCJi4NLu12p8z01OSGS/kQfqc7JlneEYVLOihU=
-X-Received: by 2002:ac8:7f16:0:b0:4b0:77c1:1042 with SMTP id
- d75a77b69052e-4b0ec87e630mr38876421cf.0.1754987272938; Tue, 12 Aug 2025
- 01:27:52 -0700 (PDT)
+	s=arc-20240116; t=1754989708; c=relaxed/simple;
+	bh=wBJLLZKEoreziNjyb66CBFS26IMufFGfV8EWmpFNaM8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=GR2HZYRCjaXhyhrsucVplwT6Y9N+uoilkaKnRRK99uW2KlSe5emOwne0T7RtkvpP0C0OoXANY3NFX7vmtvJcvhLijATLQwbb6FTDXw9id2PWIrRZ3j/VmqaBe4qlKybwjtgUuT3m+JBfgTkKLb9l27Tk80GQex1wtMkEtWuo6BE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ustc.edu; spf=pass smtp.mailfrom=ustc.edu; arc=none smtp.client-ip=45.254.49.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ustc.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ustc.edu
+Received: from localhost (unknown [14.22.11.162])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1f1bb1d7a;
+	Tue, 12 Aug 2025 17:08:19 +0800 (GMT+08:00)
+From: Chunsheng Luo <luochunsheng@ustc.edu>
+To: bschubert@ddn.com
+Cc: fweimer@redhat.com,
+	linux-fsdevel@vger.kernel.org,
+	luis@igalia.com,
+	mszeredi@redhat.com
+Subject: Re: [PATCH 1/2] fuse: fix COPY_FILE_RANGE interface
+Date: Tue, 12 Aug 2025 17:08:18 +0800
+Message-ID: <20250812090818.2810-1-luochunsheng@ustc.edu>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <3bf4f5f5-bfab-47cb-815b-979b56821cc5@ddn.com>
+References: <3bf4f5f5-bfab-47cb-815b-979b56821cc5@ddn.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250807175015.515192-1-joannelkoong@gmail.com>
-In-Reply-To: <20250807175015.515192-1-joannelkoong@gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 12 Aug 2025 10:27:41 +0200
-X-Gm-Features: Ac12FXwonsREqvftcM-jFbI4rom0I55iJ_RI2IafmdmNYIdw_YfNyT8eLKTLP9Y
-Message-ID: <CAJfpeguCOxeVX88_zPd1hqziB_C+tmfuDhZP5qO2nKmnb-dTUA@mail.gmail.com>
-Subject: Re: [PATCH v2] fuse: keep inode->i_blkbits constant
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: brauner@kernel.org, djwong@kernel.org, linux-fsdevel@vger.kernel.org, 
-	kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a989d89a0ea03a2kunm27d3630c73b61
+X-HM-MType: 10
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCT0wdVkhLTBlDSkIfQx8dT1YeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlKT1VJSVVKSlVKTUlZV1kWGg8SFR0UWUFZT0tIVUpLSUJNS0pVSktLVUtZBg
+	++
 
-On Thu, 7 Aug 2025 at 19:51, Joanne Koong <joannelkoong@gmail.com> wrote:
+On 8/6/25 19:43, Bernd Schubert wrote: 
+
+> On 8/6/25 11:17, Luis Henriques wrote:
+>> On Tue, Aug 05 2025, Miklos Szeredi wrote:
+>> 
+>>> The FUSE protocol uses struct fuse_write_out to convey the return value of
+>>> copy_file_range, which is restricted to uint32_t.  But the COPY_FILE_RANGE
+>>> interface supports a 64-bit size copies.
+>>>
+>>> Currently the number of bytes copied is silently truncated to 32-bit, which
+>>> is unfortunate at best.
+>>>
+>>> Introduce a new op COPY_FILE_RANGE_64, which is identical, except the
+>>> number of bytes copied is returned in a 64-bit value.
+>>>
+>>> If the fuse server does not support COPY_FILE_RANGE_64, fall back to
+>>> COPY_FILE_RANGE and truncate the size to UINT_MAX - 4096.
+>> 
+>> I was wondering if it wouldn't make more sense to truncate the size to
+>> MAX_RW_COUNT instead.  My reasoning is that, if I understand the code
+>> correctly (which is probably a big 'if'!), the VFS will fallback to
+>> splice() if the file system does not implement copy_file_range.  And in
+>> this case splice() seems to limit the operation to MAX_RW_COUNT.
 >
-> With fuse now using iomap for writeback handling, inode blkbits changes
-> are problematic because iomap relies on inode->i_blkbits for its
-> internal bitmap logic. Currently we change inode->i_blkbits in fuse to
-> match the attr->blksize value passed in by the server.
->
-> This commit keeps inode->i_blkbits constant in fuse. Any attr->blksize
-> values passed in by the server will not update inode->i_blkbits. The
-> client-side behavior for stat is unaffected, stat will still reflect the
-> blocksize passed in by the server.
+> I personally don't like the hard coded value too much and would use
+> 
+> inarg.len = min_t(size_t, len, (UINT_MAX - 4096));
+> 
+> (btw, 0xfffff000 is UINT_MAX - 4095, isn't it?).
+> 
+> Though that is all nitpick. The worst part that could happen are
+> applications that do not handle partial file copy and then wouldn't
+> copy the entire file. For these it probably would be better to return
+> -ENOSYS.
+> 
+> LGTM, 
+> 
+> Reviewed-by: Bernd Schubert <bschubert@ddn.com>
 
-Not quite.  You also need to save ilog2(attr->blksize) in
-fi->orig_i_blkbits and restore it after calling generic_fillattr() in
-fuse_update_get_attr() just like it's done for i_mode and i_ino.
+Abot "truncate the size to UINT_MAX - 4096":
+4096 refers to PAGE_SIZE (the standard memory page size in most systems)?
+If so, wouldn't UINT_MAX & PAGE_MASK be more appropriate? 
+like: `#define MAX_RW_COUNT (INT_MAX & PAGE_MASK)`
+UINT_MAX & PAGE_MASK ensures the operation does not cross a page boundary.
 
-Thanks,
-Miklos
+Thanks
+Chunsheng Luo
 
