@@ -1,108 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-57501-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57502-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E4C3B223F5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 12:02:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D7EBB22447
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 12:13:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7E9C3A1891
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 10:01:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 572107B6A55
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 10:11:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38DF72E2DC0;
-	Tue, 12 Aug 2025 10:01:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="PSCo6pIQ"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 174852EB5D8;
+	Tue, 12 Aug 2025 10:09:14 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
+Received: from mail.lichtvoll.de (lichtvoll.de [37.120.160.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 660982C21C2;
-	Tue, 12 Aug 2025 10:01:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754992873; cv=pass; b=pAyXVo7v6Xkv/ZvVfFy0p+B88RQTa3mLT2FlKhHbxi1Qv6C1bml2ou8v0cxGr2ZaJR/L23JZc8FY9TKZbDTGtcf3VpNTCrNBYeLzEh747OVfjc5cLxX0pJEs+CyveDbLuLJSkLOvUXuyNFgsGfL/2RHrC4X7IlkyTrkLS7ZTiSw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754992873; c=relaxed/simple;
-	bh=kgUCJfV7mImVOY3bZxCjYihaXOk239LAIdBgB7iaNyk=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=aS2i7JB/7TvKnxohdcsaffW0kZHHTCppNEx+3QXzCLd0W+QktaiZNfSG73hVHkjLDC/MXHEyO0H4lfqNl2B7TitztYWZ7rCEmQv+SobPLThgJcxn3ObYD8fFudzE4E2N5gwvyzOkmE4taV8WMOXvw4eYbG/GLachkxMYfIlMCNw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=PSCo6pIQ; arc=pass smtp.client-ip=136.143.188.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1754992837; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=VYcg4G2Kml1oa8Mltt7CdMobYjn0EO8HcTy6rAH0r0If0uZJMj+dJWbc7PNo8w+hitmWAldVaOvIStOycPc82Qa45A7h1z0CNgWyBPwUkHJZY4yeac0oXZOA3cmg3ZyZko6tM4Jzc2Tp3I7Dn3M2TauKA5reT5gq8nSQZGxtMUQ=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1754992837; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=kgUCJfV7mImVOY3bZxCjYihaXOk239LAIdBgB7iaNyk=; 
-	b=STvXLn6Vc4PZ5CTWld0ZnI8FXmjv+DXS/9bgHM2cxYjGftKPGyHUcm59MsC0ZoUJtS7daPCgePyqXLCcHhx3A8JCkYvyX6DGyHUazu1feE7Cyu73AFpcD+umJsUArcPKz2kHPYAexZ63lJfUaiOAnOicffAhnSrpsD1pXKKjfKU=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
-	dmarc=pass header.from=<safinaskar@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754992837;
-	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=kgUCJfV7mImVOY3bZxCjYihaXOk239LAIdBgB7iaNyk=;
-	b=PSCo6pIQNtojLLY6ohwqEZ+wrnzUOJlJyRdHwDEmj2RbUEIhg4Gn39odWIUUaNFy
-	Bj9lhT2fx4IwPZ2gqVWV5OSzsGanshpf53wmDFd9Tq1fJAn7dmy4+hA2HVSyIld6XYd
-	BIdHJz71rYQnTuEXsLNIvV1mdLfHTijhNBVie1aM=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 1754992836162658.3034625938293; Tue, 12 Aug 2025 03:00:36 -0700 (PDT)
-Received: from  [212.73.77.104] by mail.zoho.com
-	with HTTP;Tue, 12 Aug 2025 03:00:36 -0700 (PDT)
-Date: Tue, 12 Aug 2025 14:00:36 +0400
-From: Askar Safin <safinaskar@zohomail.com>
-To: "Aleksa Sarai" <cyphar@cyphar.com>
-Cc: "Alejandro Colomar" <alx@kernel.org>,
-	"Michael T. Kerrisk" <mtk.manpages@gmail.com>,
-	"Alexander Viro" <viro@zeniv.linux.org.uk>,
-	"Jan Kara" <jack@suse.cz>,
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>,
-	"linux-man" <linux-man@vger.kernel.org>,
-	"linux-api" <linux-api@vger.kernel.org>,
-	"linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel" <linux-kernel@vger.kernel.org>,
-	"David Howells" <dhowells@redhat.com>,
-	"Christian Brauner" <brauner@kernel.org>
-Message-ID: <1989db97e30.b71849c573511.8013418925525314426@zohomail.com>
-In-Reply-To: <20250809-new-mount-api-v3-8-f61405c80f34@cyphar.com>
-References: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com> <20250809-new-mount-api-v3-8-f61405c80f34@cyphar.com>
-Subject: Re: [PATCH v3 08/12] man/man2/move_mount.2: document "new" mount
- API
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001B62EAB90;
+	Tue, 12 Aug 2025 10:09:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.120.160.25
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754993353; cv=none; b=SMgAhCv21/25AOHTMILMJZevl9mIjz+WyzClJujZoVreu5+VDZR0G/EJx3F2rTpqgW6t4w053s6u/IUTF7AInynmfcsOEI4iQzOyLL7sq3p4XpkUZg7j1y5WqHmtA7h5BtZDC1R2+1sOfx4v3tn+fV1Olvj721dv5sX7GSokQnA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754993353; c=relaxed/simple;
+	bh=rXldXyQYQNsTINwFWo1vCWq2u09zsOBrOqUDFtbCO9E=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AeLryMh/7pozISQleItKkc0z9nXzwrit64dTsBMRzrJr8P2LAGCQ/6+62TOuWCAS2jyXR2DSYkIwUOWORJi5hcCFmswe9LdrYpFLYQ89bv+nvfGrhvCH9Ct4/ECwAtFIpqh8rQi49EeQrwktNCwG/h3m+2rPo2tifjpDIQI6+1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lichtvoll.de; spf=pass smtp.mailfrom=lichtvoll.de; arc=none smtp.client-ip=37.120.160.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lichtvoll.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtvoll.de
+Received: from 127.0.0.1 (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature ECDSA (secp384r1) server-digest SHA384)
+	(No client certificate requested)
+	by mail.lichtvoll.de (Postfix) with ESMTPSA id D0AE712F5B5;
+	Tue, 12 Aug 2025 10:09:05 +0000 (UTC)
+Authentication-Results: mail.lichtvoll.de;
+	auth=pass smtp.auth=martin@lichtvoll.de smtp.mailfrom=martin@lichtvoll.de
+From: Martin Steigerwald <martin@lichtvoll.de>
+To: Kent Overstreet <kent.overstreet@linux.dev>,
+ Matthew Wilcox <willy@infradead.org>, Jani Partanen <jiipee@sotapeli.fi>
+Cc: Aquinas Admin <admin@aquinas.su>,
+ Malte =?UTF-8?B?U2NocsO2ZGVy?= <malte.schroeder@tnxip.de>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ "Carl E. Thompson" <list-bcachefs@carlthompson.net>,
+ linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] bcachefs changes for 6.17
+Date: Tue, 12 Aug 2025 12:09:03 +0200
+Message-ID: <3374793.44csPzL39Z@lichtvoll.de>
+In-Reply-To: <c55affa6-4b8e-4110-bf44-c595d4cda81f@sotapeli.fi>
+References:
+ <22ib5scviwwa7bqeln22w2xm3dlywc4yuactrddhmsntixnghr@wjmmbpxjvipv>
+ <5ip2wzfo32zs7uznaunpqj2bjmz3log4yrrdezo5audputkbq5@uoqutt37wmvp>
+ <c55affa6-4b8e-4110-bf44-c595d4cda81f@sotapeli.fi>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
-Feedback-ID: rr08011227ed681f0984f64caead3fd76800002f86793465c345950cc70426c6652bd2118811869f33088e1c:zu08011227b621c5e6b8fdd93ff561a4260000d3d2e17d9d1eacbfc9f32d9a32cc0774b9e31c3e7da1d76e2f:rf0801122b4f0437dd9979b87848767c50000055ac18e9c8826b37c00d434adce3a050315069caf7161966f1b2fd0de1:ZohoMail
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-move_mount for v2 contained this:
-> Mounts cannot be moved beneath the rootfs
+Hi Jani, hi.
 
-In v3 you changed this to this:
-> Mount objects cannot be attached beneath the filesystem root
+Jani Partanen - 12.08.25, 09:49:03 CEST:
+> On 10/08/2025 2.13, Kent Overstreet wrote:
+> > And now, I just got an email from Linus saying "we're now talking
+> > about
+> > git rm -rf in 6.18", after previously saying we just needed a
+> > go-between.
+> > 
+> > So if that's the plan, I need to be arguing forcefully here, because a
+> > lot is on the line for a lot of people.
+> 
+> No that is not what you need to do. Arguing is the guarantee way that rm
+> -rf will happen.
+> 
+> You need to *SHUT* *THE* *FUCK* *UP* *RIGHT* *NOW!* That is what you
+> need to do and find very very fast some spokesman/woman/person who deal
+> all the communication.
 
-You made this phrase worse.
+I might have worded this differently, but in essence I agree.
 
-"Filesystem root" can be understood as "root of superblock".
-So, please, change this to "root directory" or something.
+The likely hood of BCacheFS pull requests being accepted again would have 
+been far better without that initial comment and subsequent comments from 
+you, Kent, (and some others) on this thread. Actually I felt that the 
+thread was even going in a quite good direction, before your first comment 
+to it. Some users spoke in favor of accepting the pull request. And I feel 
+after your comment that momentum was completely destroyed. As I read your 
+first comment, Kent, I thought: Oh no, now this is going to go downhill 
+just like the other threads about the topic. And unfortunately that 
+happened. It was predictable. Completely predictable.
 
-> This would create a new bind-mount of /home/cyphar as attached mount object, and then attach
-You meant "as detached mount object"
+And avoidable.
 
-Also: I see that you addressed all my v2 comments. Thank you!
+See, Kent, you argued all the time. Look at the results.
 
---
-Askar Safin
-https://types.pl/@safinaskar
+Again: Look at your behavior and look at the results. Really do it. Take 
+time to do it.
+
+It is not even about to what extent your arguments have been accurate or 
+not. But more about the *way* you argued.
+
+If you continue to do the same thing all over again, you will receive the 
+same result. (Unless someone in charge changes their behavior in a 
+significant way, but do you really like to make BCacheFS acceptance in 
+kernel community dependent on that? You may wait a very long time then.)
+
+See, it is not about right or wrong, but it is about where the lever to 
+change the outcome actually is. And that lever is not in asking others to 
+change. And it is also not within insisting that you are right, even in 
+case you are right at least to some extent.
+
+It may very well be that others overreacted. But it is outside of your 
+power to change that. Especially not by blaming or asking them to change. 
+Blaming is a certain way to give away power over what you experience to 
+someone else.
+
+Step back. Take some time to contemplate about what happened. Actually 
+that is a good approach for everyone involved, I think.
+
+Seek another approach to communicate *differently* from what you have 
+already been doing all the time. Then you *might* achieve a different 
+result.
+
+Doing the same thing over and over again and expecting a different result 
+is insane.
+
+Best,
+-- 
+Martin
+
 
 
