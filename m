@@ -1,86 +1,74 @@
-Return-Path: <linux-fsdevel+bounces-57450-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57599-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2FAAB21A63
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 03:49:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DDC0B23C99
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 01:54:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A53E6827D0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 01:49:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EA596274D5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 23:54:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B9C62D7812;
-	Tue, 12 Aug 2025 01:49:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fQAmYCrx"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4CA2E610E;
+	Tue, 12 Aug 2025 23:53:05 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from neil.brown.name (neil.brown.name [103.29.64.221])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 613ED212B05
-	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Aug 2025 01:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D46B2DAFCE;
+	Tue, 12 Aug 2025 23:53:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754963392; cv=none; b=jdj/Ah5ugxVkRTwbbhyLwhNmICmeX6u4kqWCl2fFOxr9nWsmZHeEAaWfppgXpU4SRi/4ZuHycpZpt/BmwpCjGorSiF23yZtUV6IGO8QLulLI43yFpeX1bRwpuySFdrB1s/VvaSdlhOzELLdvKF5SydQJR7dRcKncVNk81VrPGMM=
+	t=1755042784; cv=none; b=qaD+ynXvSLH3xtSxD0AEqeyO/GzZDmpIPFvgh64IUR86OXISxzaXxxJkUnFLoFC3UNxCdBxeYfiClfrCnGxjRKw6ISULmcsEUBWDxtdRM6ubXAoyj67nVS9hdvnAmrAz2kgfPhGcvHfhbfmtV/+CBCNCdUZrExu96/nIq9mts/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754963392; c=relaxed/simple;
-	bh=CNVd6KHMTpJunoixp5bbow0Q1lSSKmphpF55Xmug7jU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=geTiYlCECEcctCSQ3Iuu8o1G6/2M4UdrO5K00EQ2UAs0YyNzfYkLI3ciKmQzsTRMSxu6rr0tQH40cfxs7jFbAb5A34exwzKIDl7j6H4P270jv0PImVnPKavKM8uBL3cyttiUeYLMD17HNux2i8TsMfi8ymDQIeksOKVitmr/Aw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fQAmYCrx; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-240763b322fso51310105ad.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Aug 2025 18:49:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754963391; x=1755568191; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=KFRS+alSWbXNedwoOC+rNo9fO5lAZqVpFvc5Qr4f5+w=;
-        b=fQAmYCrxEnhPa8tZZpMkkPYRox3wxqWq1Z+nKrpFg2g9JId1Ztgqu1mf3go9J0WyKV
-         mgZyd29K+WGqCXReW8Q/j7np1H7odZURqKObqvvRP+Px428jQtOw08QZX15Zz8nEsRFq
-         jnpAs3n75PaY9T+S/o3tCA8NBeozLV9UAd2nZveGDx+NSogTFB+4sRWINMtqt2SRTofE
-         GjLLNcZhcaZIge5/jzODSJpibCwvwM19cFHNW59c7lmvMxdmxE41HGK9d1Ymm6P/Eh9e
-         rmPpMnWb9nRB8NE9RNscHLT3sbemAJYRyahawo1ERyDm9TYeLp37SOexCIVQAcb06BeD
-         Y67Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754963391; x=1755568191;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KFRS+alSWbXNedwoOC+rNo9fO5lAZqVpFvc5Qr4f5+w=;
-        b=hhzhsl91wS20k6AP7WjH75XBP7aLdPTYIJRYQUv2B4jf6UgKrh5Gl1PRxuHSldCzUo
-         LVfAGqYj9vf4I/E8hvKGjdrVpqwHI4algB50mivZyjA77K6h/J3Jng81UBZGM2imo79t
-         Qj/Nq0nJBsAM3gtp8UI/vGGmv79NhTC6e4jagoNmvuqXgozrn2goWvD0Ysenuc5lIwJN
-         XrRsAZB7rZU+plGJfzoP5jm8uJjvlEm4ww0Go9XW0ObZLAhdga0Sv7BbhNlfj6blNfIY
-         mQkFyQYEPTrxlGT+2QJ7Dp6NASiK08sFtSlyaH5qm8rCAndPLOZDdB4wfMT9yXNGz7/+
-         GScQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW88m6M72C6VNTTwLgtjqK6x/7pNynTDh6dBzFGozV0ke3QcpzWJ05zDa7tbSqJ+wJdCLb2dTv5lqgwPb1w@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLzCnUj2qXdSWFOfbk+2BuudI5njF8hwE2Q99JROE8YJW0Xhlr
-	VcI+FwZV//HrP2y0UN/W+jFKUz3FBnSlb0K1kxAA3KOQ4RhrNjx5siKK
-X-Gm-Gg: ASbGncvAEdTekw1OizaAQCOuFvoMRpZfqKxoJcSgs0NuTXeYTZkRWbvtz+uR74gV4Ub
-	YXZ23sCKVZ6NB/SKlvcJmBAfrf9/CDBwE9ziMGIPP0kcTnTEN7kEzQn5Vl1/2Wxzbw+HjKWKir+
-	6Oe55P4s/zkz7e2bDbN9qkQmChJHN3RKy3ErI88s6j0RxN4Ywe2SSZr72DU8Cd79DwlgtVz5Efl
-	LWYJSsFPSMWSK+jsJy3VJomt1QApRSoNdEXZ4xAUjVez60NaMpnH/blRpkc9Ou4XgtduK3XTw3r
-	lNlLXVU6qXOlu4oX9c2DKF2pxTEbJc5YhopKZwQV0gBkD8UAPCDzLUzMkl19xGcthZvBF0MwtI6
-	Q/oGnW9aukEOOmszN3Q==
-X-Google-Smtp-Source: AGHT+IFNeihSX5nfoczoiYS6aoSbFuIRcMfuhNet3GNnKPdJ8exzV/BeI+HO9O5ryXN1I3+W8YtKfw==
-X-Received: by 2002:a17:903:2ad0:b0:237:d734:5642 with SMTP id d9443c01a7336-242fc390ec9mr21645585ad.41.1754963390455;
-        Mon, 11 Aug 2025 18:49:50 -0700 (PDT)
-Received: from localhost ([2a03:2880:ff:74::])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8aac2a3sm284140265ad.165.2025.08.11.18.49.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 18:49:50 -0700 (PDT)
-From: Joanne Koong <joannelkoong@gmail.com>
-To: brauner@kernel.org
-Cc: miklos@szeredi.hu,
-	djwong@kernel.org,
+	s=arc-20240116; t=1755042784; c=relaxed/simple;
+	bh=gn54IA1/q/Cn2j1DUaCUAMg4l43QdpVX0r604C6RKaY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sCDw1VF2S9Abc2JQPlRxAHaZtQqIS8HoQm2Iav8kVbIFb4Ssio3zWCX1WvMMGEfRgj4/mHt5qJDVMhbKJtzzXTqulEjLs2e9a5/aaOPgggn7A0r7grVEbmbNDd5UOXFUHTWpd+rZJudamba+eYGim4VhUA/rVciF8KDX5IG5ubw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
+Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
+	by neil.brown.name with esmtp (Exim 4.95)
+	(envelope-from <mr@neil.brown.name>)
+	id 1ulynI-005Y1s-6o;
+	Tue, 12 Aug 2025 23:52:41 +0000
+From: NeilBrown <neil@brown.name>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>
+Cc: David Howells <dhowells@redhat.com>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Xiubo Li <xiubli@redhat.com>,
+	Ilya Dryomov <idryomov@gmail.com>,
+	Tyler Hicks <code@tyhicks.com>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Richard Weinberger <richard@nod.at>,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Steve French <sfrench@samba.org>,
+	Namjae Jeon <linkinjeon@kernel.org>,
+	Carlos Maiolino <cem@kernel.org>,
 	linux-fsdevel@vger.kernel.org,
-	kernel-team@meta.com
-Subject: [PATCH] fuse: fix fuseblk i_blkbits for iomap partial writes
-Date: Mon, 11 Aug 2025 18:46:23 -0700
-Message-ID: <20250812014623.2408476-1-joannelkoong@gmail.com>
-X-Mailer: git-send-email 2.47.3
+	linux-afs@lists.infradead.org,
+	netfs@lists.linux.dev,
+	ceph-devel@vger.kernel.org,
+	ecryptfs@vger.kernel.org,
+	linux-um@lists.infradead.org,
+	linux-nfs@vger.kernel.org,
+	linux-unionfs@vger.kernel.org,
+	linux-cifs@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 00/11] VFS: prepare for changes to directory locking
+Date: Tue, 12 Aug 2025 12:25:03 +1000
+Message-ID: <20250812235228.3072318-1-neil@brown.name>
+X-Mailer: git-send-email 2.50.0.107.gf914562f5916.dirty
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -89,88 +77,118 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On regular fuse filesystems, i_blkbits is set to PAGE_SHIFT which means
-any iomap partial writes will mark the entire folio as uptodate. However
-fuseblk filesystems work differently and allow the blocksize to be less
-than the page size. As such, this may lead to data corruption if fuseblk
-sets its blocksize to less than the page size, uses the writeback cache,
-and does a partial write, then a read and the read happens before the
-write has undergone writeback, since the folio will not be marked
-uptodate from the partial write so the read will read in the entire
-folio from disk, which will overwrite the partial write.
+This is the first of 3 sets of patches which, together, allow
+filesystems to opt-out of having the directory inode lock held over
+directory operations (except readdir).
+- This set creates some new APIs in the VFS and makes a few changes in
+  callers either because they are trivial (patch 08) or because they
+  involve a flag-day change (patches 06, 07, and 09).
+- The second set rolls the new APIs out to all non-VFS code which 
+  invokes directory operations.
+- The third (which isn't yet bug-free) changes the implementation
+  of these APIs to make the use of inode_lock() optional.
 
-The long-term solution for this, which will also be needed for fuse to
-enable large folios with the writeback cache on, is to have fuse also
-use iomap for folio reads, but until that is done, the cleanest
-workaround is to use the page size for fuseblk's internal kernel
-blksize/blkbits values while maintaining current behavior for stat().
+I imagine these three set landing in three different merge windows,
+though some of the second set could get in the same window as the first.
 
-This was verified using ntfs-3g:
-$ sudo mkfs.ntfs -f -c 512 /dev/vdd1
-$ sudo ntfs-3g /dev/vdd1 ~/fuseblk
-$ stat ~/fuseblk/hi.txt
-IO Block: 512
+The patches are listed below and are available at 
+   https://github.com/neilbrown/linux
+in branch pdirops.
 
-Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-Fixes: a4c9ab1d4975 ("fuse: use iomap for buffered writes")
----
- fs/fuse/dir.c    | 2 +-
- fs/fuse/fuse_i.h | 3 +++
- fs/fuse/inode.c  | 9 +++++++++
- 3 files changed, 13 insertions(+), 1 deletion(-)
+This first set adds and updates APIs with three particular goals:
+1/ centralising all lookup and locking for directory ops.  This
+  includes a variety of dentry_lookup() calls with done_dentry_lookup(),
+  and rename_lookup() with done_rename_lookup().
+2/ Removing the use of d_drop() during a directory operation (it is
+   OK for d_drop to happen at the end).  As the goal is for locks
+   to be based on the dentry, a dropped dentry will no longer protect the name.
+   The only change in this patch set is 08 which changes d_splice_alias()
+   and d_add() to not require a preceding d_drop(), and then removes
+   the unnecessary d_drop()s.
+3/ No blocking in d_alloc_parallel() within readdir() (iterate_shared()) requests.
+   We will need to invert the ordering between d_alloc_parallel() and
+   inode_lock(), so blocking in d_alloc_parallel() to, e.g., prime the
+   dcache during readdir must be avoided.  The last patch introduces
+   new interfaces that can be used instead and explains them.
+   Patches 9 and 10 prepare for this.
 
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 2d817d7cab26..18900fa6d5da 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -1199,7 +1199,7 @@ static void fuse_fillattr(struct mnt_idmap *idmap, struct inode *inode,
- 	if (attr->blksize != 0)
- 		blkbits = ilog2(attr->blksize);
- 	else
--		blkbits = inode->i_sb->s_blocksize_bits;
-+		blkbits = fc->inode_blkbits;
- 
- 	stat->blksize = 1 << blkbits;
- }
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index ec248d13c8bf..3be86056f4ff 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -969,6 +969,9 @@ struct fuse_conn {
- 		/* Request timeout (in jiffies). 0 = no timeout */
- 		unsigned int req_timeout;
- 	} timeout;
-+
-+	/** This is a workaround until fuse uses iomap for reads */
-+	unsigned inode_blkbits;
- };
- 
- /*
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 67c2318bfc42..681167117edf 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -1805,10 +1805,19 @@ int fuse_fill_super_common(struct super_block *sb, struct fuse_fs_context *ctx)
- 		err = -EINVAL;
- 		if (!sb_set_blocksize(sb, ctx->blksize))
- 			goto err;
-+		/*
-+		 * This is a workaround until fuse hooks into iomap for reads.
-+		 * Else if ctx->blksize < PAGE_SIZE and the writeback cache is
-+		 * enabled, a read may overwrite partially written data.
-+		 */
-+		fc->inode_blkbits = sb->s_blocksize_bits;
-+		if (!sb_set_blocksize(sb, PAGE_SIZE))
-+			goto err;
- #endif
- 	} else {
- 		sb->s_blocksize = PAGE_SIZE;
- 		sb->s_blocksize_bits = PAGE_SHIFT;
-+		fc->inode_blkbits = sb->s_blocksize_bits;
- 	}
- 
- 	sb->s_subtype = ctx->subtype;
--- 
-2.47.3
+Please review and consider for 6.18.
+
+Thanks,
+NeilBrown
+
+ [PATCH 01/11] VFS: discard err2 in filename_create()
+ [PATCH 02/11] VFS: introduce dentry_lookup() and friends
+ [PATCH 03/11] VFS: add dentry_lookup_killable()
+ [PATCH 04/11] VFS: introduce dentry_lookup_continue()
+ [PATCH 05/11] VFS: add rename_lookup()
+ [PATCH 06/11] VFS: unify old_mnt_idmap and new_mnt_idmap in
+ [PATCH 07/11] VFS: Change vfs_mkdir() to unlock on failure.
+ [PATCH 08/11] VFS: allow d_splice_alias() and d_add() to work on
+ [PATCH 09/11] VFS: use global wait-queue table for d_alloc_parallel()
+ [PATCH 10/11] VFS: use d_alloc_parallel() in lookup_one_qstr_excl().
+ [PATCH 11/11] VFS: introduce d_alloc_noblock() and d_alloc_locked()
+
+Future patches:
+
+set 2:
+ devtmpfs: use new dentry locking APIs
+ audit: use new dentry locking APIs
+ debugfs: use new dentry locking APIs.
+ binderfs: use new dentry locking APIs.
+ binfmt_misc: use new dentry locking APIs.
+ kernel/bpf: use new dentry locking APIs.
+ devpts: use new dentry locking APIs.
+ ipc/mqueue: use new dentry locking APIs.
+ s390/hypfs: use new dentry locking APIs.
+ security: use new dentry locking APIs.
+ tracefs: use new dentry locking APIs.
+
+ ecryptfs: use dentry_lookup_continue() in lock_parent()
+ ecryptfs: use rename_lookup()
+
+ fs/proc: Don't look root inode when creating "self" and "thread-self"
+ proc: use d_alloc_locked() and lock_lookup()
+
+ bcachefs: use new dentry locking APIs
+ exfat: use d_splice_alias(), don't d_drop()
+ coda: don't d_drop() early.
+ smb/server: use new dentry locking APIs.
+ nfsd: use new dentry locking APIs.
+ cachefiles: use new dentry locking APIs.
+ btrfs: use dentry_lookup_killable()
+ fuse: use new dentry locking APIs.
+ sunrpc/rpc_pipe: use new dentry locking APIs.
+ xfs: use new dentry locking APIs.
+
+ ovl: use is_subdir() for testing if one thing is a subdir of another
+ ovl: introduce ovl_upper_dentry_lookup() and use it.
+ ovl: switch from parent_lock() to dentry_lookup_continue() except for rename.
+ ovl: use dentry_lookup_killable() in ovl_check_whiteouts()
+ ovl: split ovl_tempname() out from ovl_lookup_temp().
+ ovl: Change ovl_lookup_temp() to use ovl_upper_dentry_lookup()
+ ovl: Change all rename code to use rename_lookup_noperm()
+ ovl: don't dget_parent() in ovl_lookup_real_one()
+ ovl: use new APIs in ovl_lookup_real_one()
+ ovl: use new dir apis in ovl_cache_update()
+
+ NFS: remove d_drop() from nfs_atomic_open()
+ nfs: use d_alloc_noblock() in silly-rename
+
+ afs: use d_splice_alias() in afs_vnode_new_inode()
+ afs: use d_time instead of d_fsdata
+ afs: don't unhash/rehash dentries during unlink/rename
+ AFS: use new dir access APIs.
+
+set 3:
+ VFS: make various namei.c functions static.
+ VFS: Remove lookup_one() and lookup_noperm()
+ VFS: Introduce S_DYING which warns that S_DEAD might follow.
+ VFS: lift d_alloc_parallel above inode_lock
+ VFS: provide alternative to s_vfs_rename_mutex
+ VFS: Add ability to exclusively lock a dentry
+ VFS: use new dentry locking for open/create/remove/rename
+ VFS: allow a filesystem to opt out of directory locking.
+ NFS: allow concurrent dir ops.
 
 
