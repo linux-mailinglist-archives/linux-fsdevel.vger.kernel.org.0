@@ -1,106 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-57463-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57466-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7055B21F50
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 09:17:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 71752B21F67
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 09:24:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 021EA1719F8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 07:17:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1ABC5027CB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 07:24:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35542D8376;
-	Tue, 12 Aug 2025 07:17:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F872E11A5;
+	Tue, 12 Aug 2025 07:23:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cock.li header.i=@cock.li header.b="IYsQGkEF"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="LOji5XU5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.cock.li (mail.cock.li [37.120.193.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF5A311C28;
-	Tue, 12 Aug 2025 07:17:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.120.193.124
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12C782E091E;
+	Tue, 12 Aug 2025 07:23:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754983044; cv=none; b=X+qzS3VuJTxdfkaY77Pzl8jr0UJ9zjFbVfSZpSGGI44Zrm1mq6IUNgEeDe7zwvLhxwAqMfYNi43PXL4YI0T/ymBtScSQ1CvYOjpAeQsMc3YM+dx2fSIrrO5j0GPOf0mf/mC9Oak8XB3e+1ZrQQ8RUZu4cAVFX7jN4mFY1ScemUY=
+	t=1754983422; cv=none; b=dF+UJIq7RaUzXEurvK0tPAoPrIsAD+9ciyGLMu9yd4s7Tfzm2QhOuI2rxsgYJhQiWcarRGFoFsPm324nRjM1NPyidyrJWoENnZpspQbMGXT/4Y3+kqYK7HK0lmxjFULrK/r3jF1PDMUChUaLR/Q+nqJMa3HNYocBOqdy0+wwBWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754983044; c=relaxed/simple;
-	bh=Nw5DXZD4EG15mYMBDrHw8FvaFfajl4SMYn2QjYQl9ME=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KGIm/pCnwswczWS5yvnLIPRnHW2taaWzgz4lE5uYW8t7J4ZAh/N/uYyNmMFL/sC4QWkg9InP1Abp8kisisDb0akLu30CIuH/TuP0LHPY8h+g7QqVhPJA43aMyhKoCmAkbM/7JP988vqAKUY9SijRY3i+Q5dSlkBKEnMKpet+Rx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cock.li; spf=pass smtp.mailfrom=cock.li; dkim=pass (2048-bit key) header.d=cock.li header.i=@cock.li header.b=IYsQGkEF; arc=none smtp.client-ip=37.120.193.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cock.li
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cock.li
-Message-ID: <9e81bbfd-1688-46bd-bf38-252fed3b1c82@cock.li>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cock.li; s=mail;
-	t=1754983034; bh=Nw5DXZD4EG15mYMBDrHw8FvaFfajl4SMYn2QjYQl9ME=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IYsQGkEFxANswCrL89YQRKOb2KF/WB6jiMguv7n7IhNDwJLQhjqRfH9ftl1DZhVCj
-	 2Q8/sDb7QHhl/z/LxypbrU3X61l67JwvqoBpNaZf4JhqNSGDWQzfqQUIYmWnKHyz4i
-	 HPVbzkhdNMYfBh7m/rtAceCkQl95n/HsafkoviZaitA+rAvfcegFX8LVpGll7tB1lN
-	 tBsoyjzta8bFvSmGT7Ps6ODN+D44b500mYrBBZNTChPaliwGlyq4ADKByU9OcnSbVu
-	 rQ5M1HUjFdZBEVA6MV0nNRw7rGurbd/yJQaSynvdP71QJ1qQS++nZhx3idbgVG1VyE
-	 y5wMknNvVcotw==
-Date: Tue, 12 Aug 2025 04:17:07 -0300
+	s=arc-20240116; t=1754983422; c=relaxed/simple;
+	bh=WcNaaM8QRc4Y8mmSQQ9NeysAFICGpnhIllrm6/E9Mys=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dHmpBK0VAY47IuyILjO3bRcTuX74TKWQc4HNxCn/erxb1c0OoMtMqjXH4jEMGUR9udwchqFgTAK1eIDvFZf+e/mnVPsO0E7A5q4ALSqdhhKkfhbJpaMdJOkc0/dbB9HaKW3y6itpA/cV+qIzKEnETzage9J+y788ho5t/Wa5aWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=LOji5XU5; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=Jj
+	lLxLRI6fLwtv2iE/50RkS+dk+jF7EbPdI+ydJz3ow=; b=LOji5XU5lpsMoVqWbl
+	tnY5dHtpSWHADwj/Dsif2UfS217Fus03rsVeg9km1bHa+99SrNMJROmiJbKr+ctN
+	WVaSd/4rEsz6ucQ2Bh9TiTFg4qRl9+VgjdItSwZR7DQXV7LHnjGTaBSrp4P+awB2
+	qxjWZlLGLiFG29DKS5+ZxXkUU=
+Received: from czl-ubuntu-pc.. (unknown [])
+	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wC3RSPN65pon26ABQ--.34118S2;
+	Tue, 12 Aug 2025 15:22:54 +0800 (CST)
+From: Chi Zhiling <chizhiling@163.com>
+To: linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Matthew Wilcox <willy@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Namjae Jeon <linkinjeon@kernel.org>,
+	Sungjong Seo <sj1557.seo@samsung.com>,
+	Yuezhang Mo <yuezhang.mo@sony.com>,
+	Chi Zhiling <chizhiling@kylinos.cn>
+Subject: [PATCH 1/3] mpage: terminate read-ahead on read error
+Date: Tue, 12 Aug 2025 15:22:23 +0800
+Message-ID: <20250812072225.181798-1-chizhiling@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] bcachefs changes for 6.17
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Konstantin Shelekhin <k.shelekhin@ftml.net>, admin@aquinas.su,
- linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, list-bcachefs@carlthompson.net,
- malte.schroeder@tnxip.de, torvalds@linux-foundation.org
-References: <3ik3h6hfm4v2y3rtpjshk5y4wlm5n366overw2lp72qk5izizw@k6vxp22uwnwa>
- <55e623db-ff03-4d33-98d1-1042106e83c6@ftml.net>
- <iktaz2phgjvhixpb5a226ebar7hq6elw6l4evcrkeu3wwm2vs7@fsdav6kbz4og>
- <c1516337-a681-40be-b3f1-4d1e5290cbff@cock.li>
- <rabpjlpydnsnlkrgqmolvgg5tyo2kk5v45evwdt6ffetsqynfy@dt2r3cxio5my>
-Content-Language: en-US
-From: asdx <asdx52@cock.li>
-In-Reply-To: <rabpjlpydnsnlkrgqmolvgg5tyo2kk5v45evwdt6ffetsqynfy@dt2r3cxio5my>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wC3RSPN65pon26ABQ--.34118S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7CF4rCFWUWry3tr18Wr4DArb_yoW8Gr1fpF
+	y0kFyvkFsrJrWfXayxJFsrAryfK39Fga15JF95J347Arn8JrsIkr9xKa4UZay2yrZ5X3ZY
+	vw10vFy2qa1UuFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jUnYwUUUUU=
+X-CM-SenderInfo: hfkl6xxlol0wi6rwjhhfrp/xtbBawKnnWia6QNKpwAAsm
 
+From: Chi Zhiling <chizhiling@kylinos.cn>
 
-On 8/12/25 4:04 AM, Kent Overstreet wrote:
-> On Tue, Aug 12, 2025 at 03:52:39AM -0300, asdx wrote:
->> On 8/11/25 11:26 AM, Kent Overstreet wrote:
->>> On Mon, Aug 11, 2025 at 12:51:11PM +0300, Konstantin Shelekhin wrote:
->>>>>    Yes, this is accurate. I've been getting entirely too many emails from Linus about
->>>>> how pissed off everyone is, completely absent of details - or anything engineering
->>>>> related, for that matter.
->>>> That's because this is not an engineering problem, it's a communication problem. You just piss
->>>> people off for no good reason. Then people get tired of dealing with you and now we're here,
->>>> with Linus thinking about `git rm -rf fs/bcachesfs`. Will your users be happy? Probably not.
->>>> Will your sponsors be happy? Probably not either. Then why are you keep doing this?
->>>>
->>>> If you really want to change the way things work go see a therapist. A competent enough doctor
->>>> probably can fix all that in a couple of months.
->>> Konstantin, please tell me what you're basing this on.
->>>
->>> The claims I've been hearing have simply lacked any kind of specifics;
->>> if there's people I'd pissed off for no reason, I would've been happy to
->>> apologize, but I'm not aware of the incidences you're claiming - not
->>> within a year or more; I have made real efforts to tone things down.
->>>
->> You keep lying. How can you be so cynical? Just two days ago you were
->> complaining on #bcache about how much control Linus has over Linux and there
->> was a lot of talk about getting him removed from Linux via CoC action.
-> Are you the same guy who was just posting this on Phoronix? Either
-> you're trolling, or you misread something.
->
-> For the record, I'm one of the more anti CoC people out there - I agree
-> with the spirit of their goals, not so much the approach. I would never
-> invoke them on anyone; I prefer to talk things out (and I don't mind
-> getting flamed, so long as it doesn't get in the way of the work).
+For exFAT filesystems with 4MB read_ahead_size, removing the storage device
+during read operations can delay EIO error reporting by several minutes.
+This occurs because the read-ahead implementation in mpage doesn't handle
+errors.
 
-I read your messages well.
+Another reason for the delay is that the filesystem requires metadata to
+issue file read request. When the storage device is removed, the metadata
+buffers are invalidated, causing mpage to repeatedly attempt to fetch
+metadata during each get_block call.
 
-Linus Torvalds is way more valuable than bcachefs. Please back off.
+The original purpose of this patch is terminate read ahead when we fail
+to get metadata, to make the patch more generic, implement it by checking
+folio status, instead of checking the return of get_block().
+
+Signed-off-by: Chi Zhiling <chizhiling@kylinos.cn>
+---
+ fs/mpage.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/fs/mpage.c b/fs/mpage.c
+index c5fd821fd30e..b6510b8dfa2b 100644
+--- a/fs/mpage.c
++++ b/fs/mpage.c
+@@ -369,6 +369,9 @@ void mpage_readahead(struct readahead_control *rac, get_block_t get_block)
+ 		args.folio = folio;
+ 		args.nr_pages = readahead_count(rac);
+ 		args.bio = do_mpage_readpage(&args);
++		if (!folio_test_locked(folio) &&
++		    !folio_test_uptodate(folio))
++			break;
+ 	}
+ 	if (args.bio)
+ 		mpage_bio_submit_read(args.bio);
+-- 
+2.43.0
 
 
