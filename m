@@ -1,91 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-57481-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57482-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83723B22071
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 10:14:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D205AB22079
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 10:15:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1D0B7A7159
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 08:12:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2183B16FCE0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Aug 2025 08:15:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8707F2E0B64;
-	Tue, 12 Aug 2025 08:14:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D82E52DF3F8;
+	Tue, 12 Aug 2025 08:15:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FrxgrVtU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70924296BDF
-	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Aug 2025 08:14:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1273B2E1C69
+	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Aug 2025 08:15:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754986448; cv=none; b=glqtsrrcA8rOHWXxXuiZQJRqsY+8q/HM5wwVTPCMmJaeZb+TmhzYotPQDsKHKXOY3AFKNroh409gdorZGcjIwx+kCMgtEokWuqavnNF0Ar5Vj1/+Ylf/UbwtVIDifstV+5gtqICiYm11YKyF+YTPona0iVWWJV4kjjAqNisaLqE=
+	t=1754986514; cv=none; b=ZsPJa23ixkFwXgkm07PR4mCxeN/CTtA4iuaz8dl0lvRon0xO1zhgUZMPb6vb0WrpX3oaMieAAVzJlwfydwixrEzu86kxybOQzscPYDIatrIFkv2ZJtGXn+HVwxw6x0R4Teszj/URADnQ64S6R/vn3CBaY60aoyXysFiRq4n7HTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754986448; c=relaxed/simple;
-	bh=9w5snlT7EHa/4e9Y0WWd/uyCPzVX8HqOUM0kPbfmXjw=;
+	s=arc-20240116; t=1754986514; c=relaxed/simple;
+	bh=neAzmMUGnx0hJU+0Lv5HU49gdojYbeGHBQFKu1UKZ2I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YP/UQIkiKWQuRbvMJedMKcN3Cm2hnzbqNc/aOFSQUi9x6bwShiGfnrXSv3OWPM0oqTpWVebxq4aICDrZWYqKNfFStowYGwY6ielSam6Jewn99Cbpl7GVFZVF5jMIdxsIiQfTVgY61sAK5TDsUgUvMkjyEXiutqxBiFXOI6NOKgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 8E7CE1F461;
-	Tue, 12 Aug 2025 08:14:03 +0000 (UTC)
-Authentication-Results: smtp-out2.suse.de;
-	none
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 534191351A;
-	Tue, 12 Aug 2025 08:14:03 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id QtPcE8v3mmj4YQAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Tue, 12 Aug 2025 08:14:03 +0000
-Date: Tue, 12 Aug 2025 10:13:58 +0200
-From: David Sterba <dsterba@suse.cz>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linuxppc-dev@lists.ozlabs.org, virtualization@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
-	linux-btrfs@vger.kernel.org, jfs-discussion@lists.sourceforge.net,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Jerrin Shaji George <jerrin.shaji-george@broadcom.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Benjamin LaHaise <bcrl@kvack.org>, Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>,
-	Dave Kleikamp <shaggy@kernel.org>, Zi Yan <ziy@nvidia.com>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
-	Byungchul Park <byungchul@sk.com>,
-	Gregory Price <gourry@gourry.net>,
-	Ying Huang <ying.huang@linux.alibaba.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Minchan Kim <minchan@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [PATCH v1 2/2] treewide: remove MIGRATEPAGE_SUCCESS
-Message-ID: <20250812081358.GA5507@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <20250811143949.1117439-1-david@redhat.com>
- <20250811143949.1117439-3-david@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tsvbdwAb0K2wKykvMYcjeRFjsAPKsz011LaFffLSI4cc+4vLFItPm1B/PMplu+FQQIbB66ML34GfLM8KNk7kLgxY2KcVPi+90huPe3MAOS5XDLteOK5txSL+2pgvSAW+kYpmimZkKy/4H9rL2tHk0G36dY7CvWhv1g/e6X/Ul04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FrxgrVtU; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=i1a5Sy4YXsTFeKN4+P/fLFTUGtAtBymy9RHHSvlwq08=; b=FrxgrVtUVjW5SqogYthsgZQlMi
+	3p9g3b7adEh2YYSjclbIwZ0WhtVD9/BX8CHMnZekNVB8i/LiykRD/TCPmp26qfayA8QiJ2ggmxaUK
+	8ysWryy8KrFCGC6y8hhuG3dugZ3mimUXurnGuDuRaf0CMwajEfIpVYZ50/zhErLLCo/OUx8d0KLpO
+	CeyNsDeGsLhVwMOxpTQD7eAtGX5AkcsPUmt0Ob2GgPcr4a5vHaxbhkqqTCrqNsKmh4h9h2SXALsYQ
+	Gd70A9nI4eGUBST4exzrVi1Fy82LRkw35oXoAQFj8HegkAjInKfHMw6ASYQiRC/t0pCW0uoSLSdxh
+	2UWM/1cg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ulkA3-0000000ADHX-22WD;
+	Tue, 12 Aug 2025 08:15:11 +0000
+Date: Tue, 12 Aug 2025 01:15:11 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: linux-mm@kvack.org, brauner@kernel.org, willy@infradead.org,
+	jack@suse.cz, hch@infradead.org, djwong@kernel.org,
+	linux-fsdevel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [RFC PATCH v1 10/10] iomap: add granular dirty and writeback
+ accounting
+Message-ID: <aJr4D9ec7XG92G--@infradead.org>
+References: <20250801002131.255068-1-joannelkoong@gmail.com>
+ <20250801002131.255068-11-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -94,42 +63,79 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250811143949.1117439-3-david@redhat.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Spam-Level: 
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[];
-	TAGGED_RCPT(0.00)[]
-X-Rspamd-Queue-Id: 8E7CE1F461
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -4.00
+In-Reply-To: <20250801002131.255068-11-joannelkoong@gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Mon, Aug 11, 2025 at 04:39:48PM +0200, David Hildenbrand wrote:
-> At this point MIGRATEPAGE_SUCCESS is misnamed for all folio users,
-> and now that we remove MIGRATEPAGE_UNMAP, it's really the only "success"
-> return value that the code uses and expects.
-> 
-> Let's just get rid of MIGRATEPAGE_SUCCESS completely and just use "0"
-> for success.
-> 
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-> ---
->  arch/powerpc/platforms/pseries/cmm.c |  2 +-
->  drivers/misc/vmw_balloon.c           |  4 +--
->  drivers/virtio/virtio_balloon.c      |  2 +-
->  fs/aio.c                             |  2 +-
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index bcc6e0e5334e..626c3c8399cc 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -20,6 +20,8 @@ struct iomap_folio_state {
+>  	spinlock_t		state_lock;
+>  	unsigned int		read_bytes_pending;
+>  	atomic_t		write_bytes_pending;
+> +	/* number of pages being currently written back */
+> +	unsigned		nr_pages_writeback;
 
-For
+This adds more sizse to the folio state.  Shouldn't this be the same
+as
 
->  fs/btrfs/inode.c                     |  4 +--
+    DIV_ROUND_UP(write_bytes_pending, PAGE_SIZE)
 
-Acked-by: David Sterba <dsterba@suse.com>
+anyway?
+
+> +	unsigned end_blk = min((unsigned)(i_size_read(inode) >> inode->i_blkbits),
+> +				i_blocks_per_folio(inode, folio));
+
+Overly long line.  Also not sure why the cast is needed to start with?
+
+> +	unsigned nblks = 0;
+> +
+> +	while (start_blk < end_blk) {
+> +		if (ifs_block_is_dirty(folio, ifs, start_blk))
+> +			nblks++;
+> +		start_blk++;
+> +	}
+
+We have this pattern open coded in a few places.  Maybe factor it into a
+helper first?  And then maybe someone smart can actually make it use
+find_first_bit/find_next_bit.
+
+> +static bool iomap_granular_dirty_pages(struct folio *folio)
+> +{
+> +	struct iomap_folio_state *ifs = folio->private;
+> +	struct inode *inode;
+> +	unsigned block_size;
+> +
+> +	if (!ifs)
+> +		return false;
+> +
+> +	inode = folio->mapping->host;
+> +	block_size = 1 << inode->i_blkbits;
+> +
+> +	if (block_size >= PAGE_SIZE) {
+> +		WARN_ON(block_size & (PAGE_SIZE - 1));
+> +		return true;
+> +	}
+> +	return false;
+
+Do we need the WARN_ON?  Both the block and page size must be powers
+of two, so I can't see how it would trigger.  Also this can use the
+i_blocksize helper.
+
+I.e. just turn this into:
+
+	return i_blocksize(folio->mapping->host) >= PAGE_SIZE;
+
+
+> +static bool iomap_dirty_folio_range(struct address_space *mapping, struct folio *folio,
+
+Overly long line.
+
+> +	wpc->wbc->no_stats_accounting = true;
+
+Who does the writeback accounting now?  Maybe throw in a comment if
+iomap is now doing something different than all the other writeback
+code.
+
 
