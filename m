@@ -1,139 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-57692-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57693-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDC36B249B1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 14:44:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 159CBB249CC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 14:51:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05CA52A48E0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 12:44:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B32B73B13F5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 12:51:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB012E283B;
-	Wed, 13 Aug 2025 12:44:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A08012E5B0F;
+	Wed, 13 Aug 2025 12:50:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gYls+iQY"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="G/lvod9q"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D4E32E1C69;
-	Wed, 13 Aug 2025 12:44:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D700D1547D2;
+	Wed, 13 Aug 2025 12:50:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755089054; cv=none; b=qSJf2l7WCpDrKXTigH8Z/RAmZss9NF3Ox4Yp22x+osJyf3K980dgI4xtUJEotQddRA8djlmdvnSNvU6rNDxLUjtnL9QS68mv3CJGIVh6qGhRLf7rWvfca6CeT0gdsLDEkmbbEX8U4gifrpk5y+cwKtVfS5WCeWepFVV9ts6LEQA=
+	t=1755089453; cv=none; b=CknsgSvJgl1Zh59hOpLfYfRAuYQ8Yj5W7+EKf2yXWOrz5e8imxfb6zSuccQ2tQBFvqBeTWmzReWKClmzTMSky6SgpA8IJGIvWbWtVyCTiw6oyekgq/6qiVJvCyugJGYteJ1vkIQXGyjVVRUtG8PqUu6xsIR19d+zD2ab/ou76/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755089054; c=relaxed/simple;
-	bh=DDRdKzPeZcrqxhyOyBHNrCzLGb9zvR9HWqXptkScBTI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=gdY/Ju0zfsrh2Yd55m05hZSeTy7kbBzTZrzacX9yq5obT5PchtZPudtFiJZgl4YUy1n5Ygd+Ai2PP8b73dCIDCzwkFYt2KYfr4qY67KieUaRLSf/gWvwvgDTPCicVP5kX422fEFgSmwb11DNpTd5o5JzUWggNZ1bqf6StSzsAJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gYls+iQY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98A6DC4CEEB;
-	Wed, 13 Aug 2025 12:44:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755089053;
-	bh=DDRdKzPeZcrqxhyOyBHNrCzLGb9zvR9HWqXptkScBTI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=gYls+iQY+eTb+KNGGeRqRwXWo8twVx/emg3S4y0UYygbM5zO9NqHkKOoMf8oqlqlP
-	 i5BoF7JCGyiO+dNBV43VNf06FoblMmDnfeIMsiezUIzZfEQos0MK5yNU6enaGQAXPc
-	 tCsL8SK1kvYsw8aimFXHiMMAwSGXX7LDT6+1+LkNShDaUxJ3nYokKDBO3d9YFW2t7o
-	 c9QlpPdguBGmx0nGMIzgIleVjk+S5361TxR74ppc2b/6EXawl7CJnZvFXZFEEbfHCx
-	 gh4FPANJ/YJ8GX/Ep0bKAQ87CTUUl2M23ZDqJXJIS3hCTlslAYG8KhB50nLC1O2H22
-	 coJJM4BNYO67w==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: pratyush@kernel.org,  jasonmiu@google.com,  graf@amazon.com,
-  changyuanl@google.com,  rppt@kernel.org,  dmatlack@google.com,
-  rientjes@google.com,  corbet@lwn.net,  rdunlap@infradead.org,
-  ilpo.jarvinen@linux.intel.com,  kanie@linux.alibaba.com,
-  ojeda@kernel.org,  aliceryhl@google.com,  masahiroy@kernel.org,
-  akpm@linux-foundation.org,  tj@kernel.org,  yoann.congal@smile.fr,
-  mmaurer@google.com,  roman.gushchin@linux.dev,  chenridong@huawei.com,
-  axboe@kernel.dk,  mark.rutland@arm.com,  jannh@google.com,
-  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
-  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
-  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
-  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
-  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
-  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
-  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
-  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
-  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
-  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
-  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
-  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
-  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
-  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
-  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
-  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  saeedm@nvidia.com,  ajayachandra@nvidia.com,  jgg@nvidia.com,
-  parav@nvidia.com,  leonro@nvidia.com,  witu@nvidia.com,
-  jrhilke@google.com
-Subject: Re: [PATCH v3 29/30] luo: allow preserving memfd
-In-Reply-To: <CA+CK2bAP-PWkYtZbw8ofhTgDaW3qoQkNob30wWSjidxEUTV4pg@mail.gmail.com>
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
-	<20250807014442.3829950-30-pasha.tatashin@soleen.com>
-	<CA+CK2bAP-PWkYtZbw8ofhTgDaW3qoQkNob30wWSjidxEUTV4pg@mail.gmail.com>
-Date: Wed, 13 Aug 2025 14:44:03 +0200
-Message-ID: <mafs0o6sjwfvw.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1755089453; c=relaxed/simple;
+	bh=1sFEp7tfTZsLqsEbQ6yN/DfqybrcqHWTfRSt7pluUnU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WBMMPo6Dgs6KU48wanigWveFyU0ke3mw2WIRfJXi/Mywb36at153DHjZEIkG+6kzcYj2lurLyu3X1P3PtOxZeqOeqEzjvpyLN71JdgAnnF82zg+d0ECUUsVAapadPWOLvhYbau4YaAlmXXrz5wHh12dolrQbIE4C3mtxv7z6epw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=G/lvod9q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9B4EC4CEF6;
+	Wed, 13 Aug 2025 12:50:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1755089452;
+	bh=1sFEp7tfTZsLqsEbQ6yN/DfqybrcqHWTfRSt7pluUnU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G/lvod9qaNFe8MgiqMNtSrnZl6ICr4ny7PsTyyOhzVZeCv/MZyhfDLlgNxCv37Z7r
+	 GYSIKBF/pteVt/vjuJB94/MdSefsCgRAQaRxWEIW2/awDVXuZZFSfXB+5rMnnQexLI
+	 cxOX0SSrpyCPB+x6DMMiVzgiv5VergRxG6Bl2MhE=
+Date: Wed, 13 Aug 2025 14:50:49 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+	achill@achill.org, qemu-devel@nongnu.org,
+	Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Ben Copeland <benjamin.copeland@linaro.org>,
+	LTP List <ltp@lists.linux.it>, chrubis <chrubis@suse.cz>,
+	Petr Vorel <pvorel@suse.cz>, Ian Rogers <irogers@google.com>,
+	linux-perf-users@vger.kernel.org,
+	Zhang Yi <yi.zhang@huaweicloud.com>,
+	Joseph Qi <jiangqi903@gmail.com>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org,
+	linux-ext4 <linux-ext4@vger.kernel.org>
+Subject: Re: [PATCH 6.16 000/627] 6.16.1-rc1 review
+Message-ID: <2025081300-frown-sketch-f5bd@gregkh>
+References: <20250812173419.303046420@linuxfoundation.org>
+ <CA+G9fYtBnCSa2zkaCn-oZKYz8jz5FZj0HS7DjSfMeamq3AXqNg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+G9fYtBnCSa2zkaCn-oZKYz8jz5FZj0HS7DjSfMeamq3AXqNg@mail.gmail.com>
 
-On Fri, Aug 08 2025, Pasha Tatashin wrote:
+On Wed, Aug 13, 2025 at 05:46:26PM +0530, Naresh Kamboju wrote:
+> Long story:
+> 1)
+> The perf gcc-13 build failed on x86_64 and i386.
+> 
+> Build regression: qemu-arm64 ARM64_64K_PAGES ltp syscalls swap fsync
+> fallocate failed.
+> 
+> > Ian Rogers <irogers@google.com>
+> >     perf topdown: Use attribute to see an event is a topdown metic or slots
+> 
+> Build error:
+> 
+> arch/x86/tests/topdown.c: In function 'event_cb':
+> arch/x86/tests/topdown.c:53:25: error: implicit declaration of
+> function 'pr_debug' [-Werror=implicit-function-declaration]
+>    53 |                         pr_debug("Broken topdown information
+> for '%s'\n", evsel__name(evsel));
+>       |                         ^~~~~~~~
+> cc1: all warnings being treated as errors
 
->> +static int memfd_luo_preserve_folios(struct memfd_luo_preserved_folio *pfolios,
->> +                                    struct folio **folios,
->> +                                    unsigned int nr_folios)
->> +{
->> +       unsigned int i;
->
-> Should be 'long i'
->
-> Otherwise in err_unpreserve we get into an infinite loop. Thank you
-> Josh Hilke for noticing this.
+Already fixed.
 
-Good catch! Will fix.
->
->> +       int err;
->> +
->> +       for (i = 0; i < nr_folios; i++) {
->> +               struct memfd_luo_preserved_folio *pfolio = &pfolios[i];
->> +               struct folio *folio = folios[i];
->> +               unsigned int flags = 0;
->> +               unsigned long pfn;
->> +
->> +               err = kho_preserve_folio(folio);
->> +               if (err)
->> +                       goto err_unpreserve;
->> +
->> +               pfn = folio_pfn(folio);
->> +               if (folio_test_dirty(folio))
->> +                       flags |= PRESERVED_FLAG_DIRTY;
->> +               if (folio_test_uptodate(folio))
->> +                       flags |= PRESERVED_FLAG_UPTODATE;
->> +
->> +               pfolio->foliodesc = PRESERVED_FOLIO_MKDESC(pfn, flags);
->> +               pfolio->index = folio->index;
->> +       }
->> +
->> +       return 0;
->> +
->> +err_unpreserve:
->> +       i--;
->> +       for (; i >= 0; i--)
->> +               WARN_ON_ONCE(kho_unpreserve_folio(folios[i]));
->> +       return err;
->> +}
->> +
+> 2)
+> 
+> The following list of LTP syscalls failure noticed on qemu-arm64 with
+> stable-rc 6.16.1-rc1 with CONFIG_ARM64_64K_PAGES=y build configuration.
+> 
+> Most failures report ENOSPC (28) or mkswap errors, which may be related
+> to disk space handling in the 64K page configuration on qemu-arm64.
+> 
+> The issue is reproducible on multiple runs.
+> 
+> * qemu-arm64, ltp-syscalls - 64K page size test failures list,
+> 
+>   - fallocate04
+>   - fallocate05
+>   - fdatasync03
+>   - fsync01
+>   - fsync04
+>   - ioctl_fiemap01
+>   - swapoff01
+>   - swapoff02
+>   - swapon01
+>   - swapon02
+>   - swapon03
+>   - sync01
+>   - sync_file_range02
+>   - syncfs01
+> 
+> Reproducibility:
+>  - 64K config above listed test fails
+>  - 4K config above listed test pass.
+> 
+> Regression Analysis:
+> - New regression? yes
 
--- 
-Regards,
-Pratyush Yadav
+Regression from 6.16?  Or just from 6.15.y?
+
+> 3)
+> 
+> Test regression: stable-rc 6.16.1-rc1 WARNING fs jbd2 transaction.c
+> start_this_handle
+> 
+> Kernel warning noticed on this stable-rc 6.16.1-rc1 this regression was
+> reported last month on the Linux next,
+> 
+> - https://lore.kernel.org/all/CA+G9fYsyYQ3ZL4xaSg1-Tt5Evto7Zd+hgNWZEa9cQLbahA1+xg@mail.gmail.com/
+
+Ok, no real regression here if this was already in 6.16.
+
+Doesn't look like it got fixed in 6.17-rc1 either :(
+
+thanks,
+
+greg k-h
 
