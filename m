@@ -1,97 +1,148 @@
-Return-Path: <linux-fsdevel+bounces-57812-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57813-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 237F7B2575D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 01:18:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A1DEB257C5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 01:50:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7DD45880CE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 23:18:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60C8F3B1FB7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 23:50:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63C592FB99E;
-	Wed, 13 Aug 2025 23:18:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D92E02FB973;
+	Wed, 13 Aug 2025 23:49:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="nqVXzWar"
+	dkim=pass (3072-bit key) header.d=posteo.net header.i=@posteo.net header.b="SbagBhM3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
+Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FDEA301462;
-	Wed, 13 Aug 2025 23:18:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D6712F60A1
+	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Aug 2025 23:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755127086; cv=none; b=ltdpxXMdbyv42ce46nIH+tq5QOy/clR5WpqKZ5gufSyiz3r13s0VxkLGcL6uKrNHIGs8waJVlGCGUaWPerHnaEpKFBS0FrPAPsFO1Uqyytws/h8/J6Hem5YOgKuAD6q+aRGDnBqF2Vl/bynrZS75kzD+DTr8y4/IBc3jUxpwWoo=
+	t=1755128998; cv=none; b=k3O9g5CqBzXJa16Fwiq12jQufSdvwOOeLtGXqYz+NVWnBMh1aqNHT6xbMKsUssw5cSCOXZ4j1lF4dytptCAM07YROBnQBggbnreEa0sbSqk46TvAwmrIkai96SCSlg2/n/vz8KqUFJJp9JHJt1jjMapcN5u0m3N/sSgP9UM7fVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755127086; c=relaxed/simple;
-	bh=XcpIxI3Kza+KlS7nav08N2XpPAC2+IEz61rOMpvZXxA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=vCKTfocF85+rk6dcrftoAq11J4QJRdzqBdZrGOzi6PbSJZwz1bfBG92UlSZBTnAQQU/CiIDZXJhMOdAxjBCyhWCfXNmAVw6GrnDcShmGxqTZs4S2vbyOswK4F9BYb5+4mi7J9n//Got37FQrNbvNDTAug7DH5F2CFJf1/Dpih8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=nqVXzWar; arc=none smtp.client-ip=199.89.3.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 003.mia.mailroute.net (Postfix) with ESMTP id 4c2PRv0lpQzlvX7x;
-	Wed, 13 Aug 2025 23:18:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1755127081; x=1757719082; bh=AEV57I4CJV4Mttizx6a8pEEt
-	tPypHfB0/YPycEt6mc4=; b=nqVXzWarOX4zMSFucbW7ffFZxP9HO34B9aWBnKKA
-	Zm32DijgAgoCKh8LlL25ZxnKuHqjo51nYlgYYtjVc1TfyKLQIiB2xjbtHf/+dFTr
-	Q3dViL6GZtDFQKDmx3NwOxt1zpAhvspLViCJ3c5A8Odbi5285cUhVv1wG3rBpuM0
-	ry2QttQIgR5bVnkXxidmgHOxyoCchz34oSKbcF6mDgjtcjxH/43vN/jXJEZVfcgp
-	dsrLy7oQo5BCFlP7rvuazuU/d7YnBGfhV3yfN7DvpCgLIpRForgeQlpePgGcBs9E
-	qCG0SSXtbAdQ90mOSmKtCjAJgn7EcuiL1ur9Nk8GlADJRA==
-X-Virus-Scanned: by MailRoute
-Received: from 003.mia.mailroute.net ([127.0.0.1])
- by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id SH6xn7L3igvD; Wed, 13 Aug 2025 23:18:01 +0000 (UTC)
-Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4c2PRj11tVzlvbmy;
-	Wed, 13 Aug 2025 23:17:51 +0000 (UTC)
-Message-ID: <279bdc31-ee29-4156-ab5b-9592e8297ebb@acm.org>
-Date: Wed, 13 Aug 2025 16:17:49 -0700
+	s=arc-20240116; t=1755128998; c=relaxed/simple;
+	bh=u1zVyD7rzcExKdgOxK0dG1FH/LUnC/ES8o4VdVTMDko=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Onh8jX2p+OwxHhNlaXXkPNZzdeNGO4f9/nGjJrx+mp4e/e+f4sjJeE5gfcdSdrVuydiwA0M2v14D3nJxEMw8PK8ByNneiurkFa8urjsSi3uzaBBgfaNR1fVfmuuvONNpf9NaDu5pK/rBwADIb5OoG5jO9AmRm/yiEwDsKzZ6geE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (3072-bit key) header.d=posteo.net header.i=@posteo.net header.b=SbagBhM3; arc=none smtp.client-ip=185.67.36.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout02.posteo.de (Postfix) with ESMTPS id CEA1D240105
+	for <linux-fsdevel@vger.kernel.org>; Thu, 14 Aug 2025 01:49:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.net;
+	s=1984.ea087b; t=1755128993;
+	bh=1YxUkmq6FN6LQgr3UahX2gKJFk0JaYwHgo29qh2xlSg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 From;
+	b=SbagBhM3kXvT29iByWoxEuqWFCMAKNBiTzGo4JtaaxPjssKi1zBnEiu/SMlQVlw+q
+	 9bd5bu3S6OrehMwtzFOmAQ4vliXqSHdMhm2JcrbuaOKDmJs9SveP+d4AEXAGHsHx0h
+	 JmhVb4kwULEODhYaVO1KVMZdxBXpIWsKCE2NXgPZOPGGPvR/wQzaleK0QqhjpH69rl
+	 DiWyGTOwaedm6O9SnsbXgEUi6JpFw/uHzo+2vLOBnSgKPmOSju7X+xyq6AlnXxZ06B
+	 8oa+Ysgyt2sD7E3zJMR1QIsIf7pGfVZNiwmgrltznzYfmjlLIGnUttDPgu90bX+w0s
+	 tZGq/JYm9XoeemZcDc9FRkjhqcLVMY8sUiDpdzefwIC2xAcZ/gUelWNtMHBULTOSr5
+	 4yAXYHwM9Prq2jkvLDQ8+TFNsn9/P2bkzlhXxxBiOPgmmfqy4XrR9WlofKY/yIzkbf
+	 bzeaCgqR/rBS74iP2NTGQSkju2ngnSGe1XcVnookAqpN6KNxV1R
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4c2Q8c17Wgz6tsf;
+	Thu, 14 Aug 2025 01:49:52 +0200 (CEST)
+From: Charalampos Mitrodimas <charmitro@posteo.net>
+To: Eric Sandeen <sandeen@sandeen.net>
+Cc: Christian Brauner <brauner@kernel.org>,  Eric Sandeen
+ <sandeen@redhat.com>,  Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+  "Rafael J. Wysocki" <rafael@kernel.org>,  Danilo Krummrich
+ <dakr@kernel.org>,  David Howells <dhowells@redhat.com>,
+  linux-kernel@vger.kernel.org,  linux-fsdevel
+ <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] debugfs: fix mount options not being applied
+In-Reply-To: <495848ab-2493-4701-b514-415377fe877b@sandeen.net>
+References: <20250804-debugfs-mount-opts-v1-1-bc05947a80b5@posteo.net>
+	<a1b3f555-acfe-4fd1-8aa4-b97f456fd6f4@redhat.com>
+	<d6588ae2-0fdb-480d-8448-9c993fdc2563@redhat.com>
+	<8734a53cpx.fsf@posteo.net>
+	<cf97c467-6391-44df-8ce3-570f533623b8@sandeen.net>
+	<20250808-aufrechnung-geizig-a99993c8e8f4@brauner>
+	<495848ab-2493-4701-b514-415377fe877b@sandeen.net>
+Date: Wed, 13 Aug 2025 23:49:53 +0000
+Message-ID: <87plcyixy9.fsf@posteo.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv2 1/7] block: check for valid bio while splitting
-To: Keith Busch <kbusch@kernel.org>
-Cc: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- snitzer@kernel.org, axboe@kernel.dk, dw@davidwei.uk, brauner@kernel.org,
- Hannes Reinecke <hare@suse.de>
-References: <20250805141123.332298-1-kbusch@meta.com>
- <20250805141123.332298-2-kbusch@meta.com> <aJzwO9dYeBQAHnCC@kbusch-mbp>
- <d9116c88-4098-46a7-8cbc-c900576a5da3@acm.org> <aJz9EUxTutWLxQmk@kbusch-mbp>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <aJz9EUxTutWLxQmk@kbusch-mbp>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 8/13/25 2:01 PM, Keith Busch wrote:
-> I'm using the AHCI driver. It looks like ata_scsi_dev_config() overrides
-> the dma_alignment to sector_size - 1, and that pattern goes way back,
-> almost 20 years ago, so maybe I can't change it.
+Eric Sandeen <sandeen@sandeen.net> writes:
 
- From an AHCI specification
-(https://www.intel.com/content/dam/www/public/us/en/documents/technical-specifications/serial-ata-ahci-spec-rev1-3-1.pdf):
-"Data Base Address (DBA): Indicates the 32-bit physical address of the 
-data block. The block must be word aligned, indicated by bit 0 being 
-reserved."
+> On 8/8/25 9:13 AM, Christian Brauner wrote:
+>> On Wed, Aug 06, 2025 at 11:33:11AM -0500, Eric Sandeen wrote:
+>>> On 8/5/25 12:22 PM, Charalampos Mitrodimas wrote:
+>
+> ...
+>
+>>>> Hi, thanks for the review, and yes you're right.
+>>>>
+>>>> Maybe a potential systemic fix would be to make get_tree_single() always
+>>>> call fc->ops->reconfigure() after vfs_get_super() when reusing an
+>>>> existing superblock, fixing all affected filesystems at once.
+>>>
+>>> Yep, I'm looking into that. mount_single used to do this, and IIRC we discussed
+>>> it before but for some reason opted not to. It seems a bit trickier than I first
+>>> expected, but I might just be dense. ;)
+>> 
+>> If we can make it work generically, we should. I too don't remember what
+>> the reasons were for not doing it that way.
+>
+> Sorry for the long delay here. Talked to dhowells about this and his
+> POV (which is convincing, I think) is that even though mount_single used to
+> call do_remount_sb for an extant single sb, this was probably Bad(tm).
+> Bad, IIUC, because it's not a given that options are safe to be changed
+> in this way, and that policy really should be up to each individual
+> filesystem.
+>
+> So while we still need to audit and fix any get_tree_single()
+> filesystems that changed behavior with the new mount api, may as well
+> fix up debugfs for now since the bug was reported.
 
-Please note that I have no experience with programming AHCI controllers.
+What if we add a new flag (.fs_flags), say FS_SINGLE_RECONF, to
+file_system_type that makes get_tree_single() automatically call
+reconfigure() when reusing an existing superblock? Filesystems could
+then just opt-in by adding it to .fs_flags.
 
-Bart.
+>
+> Charalampos - 
+>
+> Your patch oopses on boot for me - I think that when you added
+>
+> 	sb->s_fs_info = fc->s_fs_info;
+
+Yes, did take notice of this yesterday when I revisited it.
+
+>
+> in debugfs_fill_super, you're actually NULLing out the one in the sb,
+> because sget_fc has already transferred fc->s_fs_info to sb->s_fs_info,
+> and NULLed fc->s_fs_info prior to this. Then when we get to
+> _debugfs_apply_options, *fsi = sb->s_fs_info; is also NULL so using it
+> there oopses.
+>
+> If you want to send a V2 with fixed up stable cc: I'd suggest following the
+> pattern of what was done for tracefs in e4d32142d1de, which I think works
+> OK and would at least lend some consistency, as the code is similar.
+>
+> If not, let me know and I'll work on an update.
+
+As a matter of fact, I have a v2 exactly like this ready to sent. Doing
+so in a bit.
+
+>
+> Thanks,
+> -Eric 
+
+Thanks!
+C. Mitrodimas
 
