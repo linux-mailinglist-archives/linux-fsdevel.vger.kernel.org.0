@@ -1,162 +1,178 @@
-Return-Path: <linux-fsdevel+bounces-57698-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57699-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77796B24A89
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 15:25:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BB836B24AA0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 15:33:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34C60173CB3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 13:23:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5CDA2A0121
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 13:32:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A528A2E92C9;
-	Wed, 13 Aug 2025 13:22:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 211D32EA48B;
+	Wed, 13 Aug 2025 13:31:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NK/oiZ5O"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fZfU1JX0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B69D72C0F71;
-	Wed, 13 Aug 2025 13:22:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ECBA80B;
+	Wed, 13 Aug 2025 13:31:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755091367; cv=none; b=lQwNW7K3/46l0q+PwtAl96XHcA9L1dXSJjPdqmb4WwHiqZwV8yj0MZgT8b79AAgDVOAEouedQG0lleTS3jxZdRvYqfeboTHP4PRHtTryGIz5QcYG3A59hIJgg6qrpkUpdkELrHju6qskcUMYRSY2CPUxwRIX77Rh0JzUJrz5h0Q=
+	t=1755091915; cv=none; b=JTyhUeMaCKzzaoEEdbmsIFxFVyK1S1pNbAD/Nd98yL3XrRIK1iguajZG9vmifqybBK4+81AJPRUiIL+QTwzYNYJvMm8Q5Pj1gXoYcSzaw15WqUKKfN54dg6kB1Cd5ICq/5n4mZRxySVsO0QK6CQeSzzc9z84RlbtjIoi5SQBwo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755091367; c=relaxed/simple;
-	bh=cC9EbcQ7W8rrnOM6u+oTWWyWJWmyEl4B4Chr82W939s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iMEQYjztn8xlJKQ0oRseA7BbLWLOHeDPuri3rtwj/EX9cTJEXNdm6ZqK/s6d4NsKDBfllKQKFWxo7Bs2mHSt7en2zXV1S2SV+QZwqdwU5nq1MuvxrLgZDZJmyHUHAkxcX3wxYdDi2p1NAVz9JGxoImLTe6NA0NiHkmLFRiwLI/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NK/oiZ5O; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-76e1fc69f86so723656b3a.0;
-        Wed, 13 Aug 2025 06:22:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755091365; x=1755696165; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LRW+1ITE4fmoTKhCIyuNHAOAPPzP4XgHdlZOizY4uIg=;
-        b=NK/oiZ5O1Nqm+9Mqjh0iewYBER3CWn+FDNP//xedCwIfixh3x/9o3MgUS2C8hJezIf
-         uXrkUZOSeW+MAuLMssRVvSpM1EZjuSkydqpbKi7+gUCW/KoDGAS6ixKmOeCg1j4B9zdN
-         GeHk/nGlsWmshUG6APQ949Mf/F2STeyECs2UFsss/MRfAIfwXbxbO+HGP04ShnnYv62w
-         ay4K45290f47eLMlz8yQZ4ToIHOqagPrTG1G+Uyu2z56z2S/P3aAJ99DTpIWWWsiykEv
-         K1yPObhFXErcZhln0N7rXXsBapCYZP6Dq6K3mztkdP9lIBoSTDZBUZ9zpywOj1fgtS/b
-         qKvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755091365; x=1755696165;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LRW+1ITE4fmoTKhCIyuNHAOAPPzP4XgHdlZOizY4uIg=;
-        b=Crws3t1u9ANXzW51OA1NKbT9/dTkgoRVMxzSpxpULsq2cXDSiTe7SQoHja+J7AkfcC
-         uM8a5MEl0OpC9QYvS81trrLmeys/8/sRRLJkXhJXOuQL/48Pwg0mTDmV+qMr9+k/4B28
-         ou+92PNgT37YyEVOC8zoa6zFIXm1YHNdzzKX+VnzAudsRbEdHxl7nsJIbzbiBuyKNIr9
-         BZ5PpgJIUUAv4So2H8BHkhGG9iv8OEzkrlXz+UVjmCcMpUkfBy1bT95CPZwXxv0cQ99o
-         GUxFxaJipw+PdsJJGVc9BmHq6i/AZKxauFQmLWMoN1JbkhZMlQd9wtNwEPFWg/F5e2KB
-         bJxg==
-X-Forwarded-Encrypted: i=1; AJvYcCUHPLaNqUSUymEMEe70w/ljFZEcwZUNWBJtZJpR4y0mXQHQLSCob0v3pi3DTGrTFb2lgC7We6F9heHHRgM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFCHNEkX/OCLWZzdBgyHlOvmMGodqhAFGWWQW+2R3XCWhZF36p
-	N5Hu8ZS25xliz3mZ+xDTzBtkrLht1eGhUlekp7kz/w3tFxPsJvozbiBr
-X-Gm-Gg: ASbGncu2FATrvhkAiHy/DV4iVAj7HTNss26BmC6xbqp0TJRidnfgsigkMG8LAREnvnP
-	l2+P8zyg2hI4LplkWPdZxyD+uSgPHLCzeKBt1IJNkVLlxFqEnlpuny9jHS7oHxzuK+LlRdtPLsq
-	cu0Cu7LuvM7ENXJVwa7Z/t5VXbrM8yoVSApWkcu8f+ek0IgpX+LqGknl4QFQ84e5xMLI5cYAuuT
-	Dv9AIEKEcLlGJ1RN+qZ1sAc/IAyZTG7cDsWWBT5+UB3IvbmlVnkRvUnrpwTg4BAoNTIYvGfeyFF
-	rhIa4XzZaXYfbEyl57XwnhwllVzPOVBJWcjX8sKfihZz4zr3YL+wmD6E9uoGHfN89Ix8bkPkIc8
-	ZcxBl2AfqWhi00svUgnViwKwOPZ5Bqv2OG1bRMTvxU5bQm+SsLsabWV/KfJfIDuK8o7ok/Lv+aY
-	Dv4PEpL7hL7dGExBXGLnLPi/NyCIei
-X-Google-Smtp-Source: AGHT+IGIrCTv1z0sW+jzBxZbAQHYFpfZ5Ano1CMYhstZsRLI+Reh4EnPb4zBaFiWYjoLURw4TansVQ==
-X-Received: by 2002:a17:903:18e:b0:240:3cab:a57a with SMTP id d9443c01a7336-2430ea7187bmr41238205ad.12.1755091364371;
-        Wed, 13 Aug 2025 06:22:44 -0700 (PDT)
-Received: from AHUANG12-3ZHH9X.lenovo.com (1-175-133-46.dynamic-ip.hinet.net. [1.175.133.46])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e899b43dsm325749645ad.136.2025.08.13.06.22.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Aug 2025 06:22:43 -0700 (PDT)
-From: "Adrian Huang (Lenovo)" <adrianhuang0701@gmail.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	ahuang12@lenovo.com,
-	"Adrian Huang (Lenovo)" <adrianhuang0701@gmail.com>
-Subject: [PATCH 1/1] pidfs: Fix memory leak in pidfd_info()
-Date: Wed, 13 Aug 2025 21:22:14 +0800
-Message-Id: <20250813132214.4426-1-adrianhuang0701@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1755091915; c=relaxed/simple;
+	bh=LBaV36kinhS2YmnWCqdbe4NeUbgwg6zlvagH3E1PDKk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ui6Shx5VJDN1niVr+/5Xanyg23qSHY570pKVBbmNBFyQwqDsq5k70BwRyz5Ytl4GPNwpQhU1MRV8Kf0AfAL7mWR1RGR7u0DG2Y4N2biaGlabX8Hpo7vI0mhplLb99X1AKvVmsQ+pkJxE1wOaaQ9kw0Ko+E/kqNcugZRKzoKk2N0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fZfU1JX0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14D8FC4CEEB;
+	Wed, 13 Aug 2025 13:31:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755091914;
+	bh=LBaV36kinhS2YmnWCqdbe4NeUbgwg6zlvagH3E1PDKk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=fZfU1JX0513KY6RQ5u4CA1XReF2EwtSPUl9mGOG2aKqICidDoOBi1VkOMqlX2VQkr
+	 OmmEn6gT/3VhI+vewT9+KaGsxvhyTKuB6GzefoHfcuAiK17iXvoIQRNBWPfOXiCOOn
+	 dxtEPT9Ia7jS+9wJ3RLJCLhWGqcDynOjlBif1A1V1LwSNnuo8T73ndSkvh3LJJv7Gy
+	 jAmazTTM6rLVo2W2fVYwP4bDT6qaLVXrA2YKdmujGgIWGaWrby/410iyVA6db7J2/B
+	 UnxdYeWn7Ec92oRndFFDFnF2fE0poDi8GSBkUJrMwP0kDKYGc+cudBBzKxPOS3P4sy
+	 PCBNuNYmFdTpA==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>,  Pratyush Yadav
+ <pratyush@kernel.org>,  Vipin Sharma <vipinsh@google.com>,  Pasha Tatashin
+ <pasha.tatashin@soleen.com>,  jasonmiu@google.com,  graf@amazon.com,
+  changyuanl@google.com,  rppt@kernel.org,  dmatlack@google.com,
+  rientjes@google.com,  corbet@lwn.net,  rdunlap@infradead.org,
+  ilpo.jarvinen@linux.intel.com,  kanie@linux.alibaba.com,
+  ojeda@kernel.org,  aliceryhl@google.com,  masahiroy@kernel.org,
+  akpm@linux-foundation.org,  tj@kernel.org,  yoann.congal@smile.fr,
+  mmaurer@google.com,  roman.gushchin@linux.dev,  chenridong@huawei.com,
+  axboe@kernel.dk,  mark.rutland@arm.com,  jannh@google.com,
+  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
+  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
+  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
+  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
+  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
+  linux-mm@kvack.org,  tglx@linutronix.de,  mingo@redhat.com,
+  bp@alien8.de,  dave.hansen@linux.intel.com,  x86@kernel.org,
+  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
+  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
+  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
+  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
+  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
+  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
+  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
+  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
+  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+  saeedm@nvidia.com,  ajayachandra@nvidia.com,  parav@nvidia.com,
+  leonro@nvidia.com,  witu@nvidia.com
+Subject: Re: [PATCH v3 29/30] luo: allow preserving memfd
+In-Reply-To: <20250813124140.GA699432@nvidia.com>
+References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
+	<20250807014442.3829950-30-pasha.tatashin@soleen.com>
+	<20250813063407.GA3182745.vipinsh@google.com>
+	<2025081310-custodian-ashamed-3104@gregkh> <mafs01ppfxwe8.fsf@kernel.org>
+	<2025081351-tinsel-sprinkler-af77@gregkh>
+	<20250813124140.GA699432@nvidia.com>
+Date: Wed, 13 Aug 2025 15:31:44 +0200
+Message-ID: <mafs0bjojwdof.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-After running the program 'ioctl_pidfd03' of Linux Test Project (LTP) or
-the program 'pidfd_info_test' in 'tools/testing/selftests/pidfd' of the
-kernel source, kmemleak reports the following memory leaks:
+On Wed, Aug 13 2025, Jason Gunthorpe wrote:
 
-  # cat /sys/kernel/debug/kmemleak
-  unreferenced object 0xff110020e5988000 (size 8216):
-    comm "ioctl_pidfd03", pid 10853, jiffies 4294800031
-    hex dump (first 32 bytes):
-      02 40 00 00 00 00 00 00 10 00 00 00 00 00 00 00  .@..............
-      00 00 00 00 af 01 00 00 80 00 00 00 00 00 00 00  ................
-    backtrace (crc 69483047):
-      kmem_cache_alloc_node_noprof+0x2fb/0x410
-      copy_process+0x178/0x1740
-      kernel_clone+0x99/0x3b0
-      __do_sys_clone3+0xbe/0x100
-      do_syscall_64+0x7b/0x2c0
-      entry_SYSCALL_64_after_hwframe+0x76/0x7e
-  ...
-  unreferenced object 0xff11002097b70000 (size 8216):
-  comm "pidfd_info_test", pid 11840, jiffies 4294889165
-  hex dump (first 32 bytes):
-    06 40 00 00 00 00 00 00 10 00 00 00 00 00 00 00  .@..............
-    00 00 00 00 b5 00 00 00 80 00 00 00 00 00 00 00  ................
-  backtrace (crc a6286bb7):
-    kmem_cache_alloc_node_noprof+0x2fb/0x410
-    copy_process+0x178/0x1740
-    kernel_clone+0x99/0x3b0
-    __do_sys_clone3+0xbe/0x100
-    do_syscall_64+0x7b/0x2c0
-    entry_SYSCALL_64_after_hwframe+0x76/0x7e
-  ...
+> On Wed, Aug 13, 2025 at 02:14:23PM +0200, Greg KH wrote:
+>> On Wed, Aug 13, 2025 at 02:02:07PM +0200, Pratyush Yadav wrote:
+>> > On Wed, Aug 13 2025, Greg KH wrote:
+>> > 
+>> > > On Tue, Aug 12, 2025 at 11:34:37PM -0700, Vipin Sharma wrote:
+>> > >> On 2025-08-07 01:44:35, Pasha Tatashin wrote:
+>> > >> > From: Pratyush Yadav <ptyadav@amazon.de>
+>> > >> > +static void memfd_luo_unpreserve_folios(const struct memfd_luo_preserved_folio *pfolios,
+>> > >> > +					unsigned int nr_folios)
+>> > >> > +{
+>> > >> > +	unsigned int i;
+>> > >> > +
+>> > >> > +	for (i = 0; i < nr_folios; i++) {
+>> > >> > +		const struct memfd_luo_preserved_folio *pfolio = &pfolios[i];
+>> > >> > +		struct folio *folio;
+>> > >> > +
+>> > >> > +		if (!pfolio->foliodesc)
+>> > >> > +			continue;
+>> > >> > +
+>> > >> > +		folio = pfn_folio(PRESERVED_FOLIO_PFN(pfolio->foliodesc));
+>> > >> > +
+>> > >> > +		kho_unpreserve_folio(folio);
+>> > >> 
+>> > >> This one is missing WARN_ON_ONCE() similar to the one in
+>> > >> memfd_luo_preserve_folios().
+>> > >
+>> > > So you really want to cause a machine to reboot and get a CVE issued for
+>> > > this, if it could be triggered?  That's bold :)
+>> > >
+>> > > Please don't.  If that can happen, handle the issue and move on, don't
+>> > > crash boxes.
+>> > 
+>> > Why would a WARN() crash the machine? That is what BUG() does, not
+>> > WARN().
+>> 
+>> See 'panic_on_warn' which is enabled in a few billion Linux systems
+>> these days :(
+>
+> This has been discussed so many times already:
+>
+> https://lwn.net/Articles/969923/
+>
+> When someone tried to formalize this "don't use WARN_ON" position 
+> in the coding-style.rst it was NAK'd:
+>
+> https://lwn.net/ml/linux-kernel/10af93f8-83f2-48ce-9bc3-80fe4c60082c@redhat.com/
+>
+> Based on Linus's opposition to the idea:
+>
+> https://lore.kernel.org/all/CAHk-=wgF7K2gSSpy=m_=K3Nov4zaceUX9puQf1TjkTJLA2XC_g@mail.gmail.com/
+>
+> Use the warn ons. Make sure they can't be triggered by userspace. Use
+> them to detect corruption/malfunction in the kernel.
+>
+> In this case if kho_unpreserve_folio() fails in this call chain it
+> means some error unwind is wrongly happening out of sequence, and we
+> are now forced to leak memory. Unwind is not something that userspace
+> should be controlling, so of course we want a WARN_ON here.
 
-The leak occurs because pidfd_info() obtains a task_struct via
-get_pid_task() but never calls put_task_struct() to drop the reference,
-leaving task->usage unbalanced.
+Yep. And if we are saying WARN() should never be used then doesn't that
+make panic_on_warn a no-op? What is even the point of that option then?
 
-Fix the issue by adding __free(put_task) to the local variable 'task',
-ensuring that put_task_struct() is automatically invoked when the
-variable goes out of scope.
+Here, we are unable to unpreserve a folio that we have preserved. This
+isn't a normal error that we expect to happen. This should _not_ happen
+unless something has gone horribly wrong.
 
-Fixes: 7477d7dce48a ("pidfs: allow to retrieve exit information")
-Signed-off-by: Adrian Huang (Lenovo) <adrianhuang0701@gmail.com>
----
- fs/pidfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+For example, the calls to kho_preserve_folio() don't WARN(), since that
+can fail for various reasons. They just return the error up the call
+chain. As an analogy, allocating a page can fail, and it is quite
+reasonable to expect the code to not throw out WARN()s for that. But if
+for some reason you can't free a page that you allocated, this is very
+unexpected and should WARN(). Of course, in Linux the page free APIs
+don't even return a status, but I hope you get my point.
 
-diff --git a/fs/pidfs.c b/fs/pidfs.c
-index edc35522d75c..857eb27c3d94 100644
---- a/fs/pidfs.c
-+++ b/fs/pidfs.c
-@@ -296,12 +296,12 @@ static __u32 pidfs_coredump_mask(unsigned long mm_flags)
- static long pidfd_info(struct file *file, unsigned int cmd, unsigned long arg)
- {
- 	struct pidfd_info __user *uinfo = (struct pidfd_info __user *)arg;
-+	struct task_struct *task __free(put_task);
- 	struct pid *pid = pidfd_pid(file);
- 	size_t usize = _IOC_SIZE(cmd);
- 	struct pidfd_info kinfo = {};
- 	struct pidfs_exit_info *exit_info;
- 	struct user_namespace *user_ns;
--	struct task_struct *task;
- 	struct pidfs_attr *attr;
- 	const struct cred *c;
- 	__u64 mask;
+If I were a system administrator who sets panic_on_warn, I would _want_
+the system to crash so no further damage happens and I can collect
+logs/crash dumps to investigate later. Without the WARN(), I never get a
+chance to debug and my system breaks silently. For all others, the
+kernel goes on with some possibly corrupted/broken state.
+
 -- 
-2.34.1
-
+Regards,
+Pratyush Yadav
 
