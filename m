@@ -1,82 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-57757-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57758-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59A9EB24EEB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 18:09:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D2FEB24EF0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 18:09:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD88388660E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 16:01:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C1885C397D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 16:01:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 471DD287263;
-	Wed, 13 Aug 2025 15:59:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5246527587D;
+	Wed, 13 Aug 2025 15:59:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k46lIir6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G+Bxw+mB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 088A8286417;
-	Wed, 13 Aug 2025 15:59:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA24C286D57;
+	Wed, 13 Aug 2025 15:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755100774; cv=none; b=eKjfid1De7IN1NZq65OfjN9/yBDAmKlo/RJ3jVR2r2Gmy6YyPclmIgqueu97zTc7ycxpLa/5Ig5MJmqYaJpzHSiDOFYd5InbHy0FmerINjvsMjq4tzS9BuCWjEiCg9GprH2AXIq63D1irr4wX1dG7BVi5E/F14qRlf8w75kjors=
+	t=1755100776; cv=none; b=UJJS9psJI9j/rbaFVTNC69FglH7yY7H455+deXspTHUoaVnDXPXLuSrvQrVFm68IMjtmDklMXKSiRHHspqsXec1rMTggkdjekD/KzDH1Pra1vCxiSYdeaRXZqeUtCA3hTnCRPHssoWX0gkw01uUWes/0+63cwasi0eZ3U5zRetg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755100774; c=relaxed/simple;
-	bh=/6Rqc6yq70/uVo2CCK0rVzt/j/mmv1WXhqKkANquG+c=;
+	s=arc-20240116; t=1755100776; c=relaxed/simple;
+	bh=F2nw+1+uvnPsEnvQVrrTk2VbbpWrYF1uYr4G8N1u7x4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=L35lF4rVufHb0UX231gNIWLeOYLSYZ+NF+0U4HAzvzJJDwh8iNh+IrnB3zW3eqGp7mVrYE6+4zGkQVXHKwclLWbVDgVew+nquGbYFnx53w03qVzMfXysk6Uub7Z/09LT7N1+KzM1ZjVlIi4v0at9+nxrXgxq5I2MapAGn4lYQIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k46lIir6; arc=none smtp.client-ip=209.85.160.170
+	 In-Reply-To:To:Cc; b=S7AZFxjCrmi9jhaZ/J3gDzi+Gwp+hcVdqjESiA7NjBVenqZ9rz2ilgE4YsfZeYH5fGMnqLZTsD++1B/RmXMDZOaFGWfxcvicgPwWx/oo/Eq3HteI4HGfzPxaqCIS9xfXxi+UIpnCZqlRTHYcRw/qDYJ3QVBLkNYs+IcZwOiLP68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G+Bxw+mB; arc=none smtp.client-ip=209.85.160.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4b109bd63d0so272871cf.2;
-        Wed, 13 Aug 2025 08:59:31 -0700 (PDT)
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4b1099126afso541401cf.0;
+        Wed, 13 Aug 2025 08:59:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755100771; x=1755705571; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1755100774; x=1755705574; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=6EC+1oIHbj40bMk7XrURGYK12FsziAijPlq/Nwpia8Q=;
-        b=k46lIir6kWR9TgZRjMU+hrx/F+iYt9EJnftVNF/5tjyEv4wz947W3HhDwebn0fk6C0
-         HphZFwTKDGrhviJmnw0+lb08HV2inhxaSXdwty183SSWA04Vhv/nSgpzmbtxnmp1OyYC
-         z8vuyLm4/NpGGUMwVyZqxt23+Kh8QMosduaa47IstfitYJ5VDfbcDH6W0cLYMEJW0BNY
-         I/0RHK4RM9yANzXYxGrsk1I+/kCAnkuk6VM/5JAzpNE4hqsNiKOTosg7E+t2E+0Uj1KL
-         22/5SRr+zspvLcdO/0nZFdqvNVrWa1D8rzJa07qHKN91GlGoE9GXjAFORxkUYVkZNEQ9
-         ofwQ==
+        bh=PQkqhCR+X2AcT/u+sPVE1u8ILZHP3FwYk8GsseoCqig=;
+        b=G+Bxw+mBXNBLXRv7LzBUg987gkV3R9Ra7D6McpvtiORJDLDbLtv11H2iOjmVjkivKB
+         SN6O07EY4/sPCMPhLLk37QsYIXtz27h1tCSPXdnGe++sVx3CSkDcYJhKYhx0EjoQBuCQ
+         utf84h8VUQMhGwnSC9I37nFVI1ocowMBZ47QleKYDwylth7/9lD3fBs4aLVoTZV5tfGZ
+         ctBp92RavnpBQ03CE4vF1c8NIXIU1E28Gx/qmIPESB6TWPac4W13C4+bBw4mhsQg4oJs
+         939Bq0+uALmGWsSSD0tu1GiOKzkG/Hy02ap1EqHHwg1UbwJ3V5pgiTR+ucjv6+RQ6ljL
+         2IUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755100771; x=1755705571;
+        d=1e100.net; s=20230601; t=1755100774; x=1755705574;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6EC+1oIHbj40bMk7XrURGYK12FsziAijPlq/Nwpia8Q=;
-        b=b5Itcfz+Nte7eY6eB2UiYenKpP3RfnZW4SCQpKXDFWW0o2J/GJceW3yoBGvzKJcNHm
-         C0zCqQw8E0BgV/0MkbckJX18OILWN5LN6fMEodCHewzzmPiDmDTpfAUCgKPubCw9/MSN
-         fz1NdLez8EDrNGA9/F98FustpvRQzcUIv4PQegblWeI8irPS+kuxI8bJEjQi+7B/FQK9
-         RLrG7lrG/CWnQRDH3fKDXYlxjpTLqYAlM+b8Sf66HeEbetx4u272tWaZUH3JBIkAUO/V
-         YALqwoLCNp3WCHesUV67mA1hiHVYThVxuhiFMoHMvXyzhf1Woy2i8eQ1GNivuUHohoy+
-         ijcw==
-X-Forwarded-Encrypted: i=1; AJvYcCU1SpfckHuuo9+onOO/5/0uhZjnSlXP3aW0eTIiHQ7imoaZl0NcIM8IrJQQiGppkhwZConM1Ww3rhcfN/810Wo=@vger.kernel.org, AJvYcCUvvqeR+gzkav/hFnAsV1MPz1xlyKhzNlkvJuQE8PPugKw9MlkEDIo5PQvnIT1rnWtJay8G+jKkEUJDlm8ZwEdC@vger.kernel.org, AJvYcCUyZOUT4pL5OZtpsp7taHl7rrjBltXFHnpyP6TBc78YM3J5V35FKWOcSoIZ/nDSQsmrpeB1r+6ht4OS1uuxRA==@vger.kernel.org, AJvYcCV+7gm+kMkNXIKdmrz6Ui6D1li6mAZ/QFq4MZSbPW6VDmrXiz/BDkZG5sRoMvKcUthMTLayFTg3t01t@vger.kernel.org, AJvYcCV95ltuVl0lUbxIRwRk+S/2QHj2cJU8SdVt6k05SZzsvZ63JpL5TEjjmt7s3uodVJupiNGpImJjktKutg==@vger.kernel.org, AJvYcCWh4rldAvDXCzASDHkHFtP3AVq1oiC6oq+PaCb4FbXhTvyiaX4Jmux4NNP/1hnTp1s13Yk/kS47q1IQbU3R@vger.kernel.org, AJvYcCXKe+bVPjkR1nU96SCsP9jC9zf2GNe4+sZvsOMP0yvWMmsL2OmJyKqKPRUVggBR6wNoe5NpHMAR@vger.kernel.org, AJvYcCXuykafyLGWW/19RhkWg6uMhKiPF3O6OHio+Uu1LjrUMp9K18yjs921RS+mTISC9ESELxM/6yi1BYIE@vger.kernel.org
-X-Gm-Message-State: AOJu0YyI9iaiRFHL/OpITOgkhD+ROkbI7fxK9YlSP19kudp6QpUK+4FX
-	EQ+R3WXSvKFCA6FoSGQwwlF4kU9MxCXhDuLXxOxichk3Tz7rv0DVlCfK
-X-Gm-Gg: ASbGncvI1g3dZ9hNdevdPvY2iXIjg4fMR3Yfcvp2JjkDzClUFZShXlV8lbO+xJLeYk7
-	3tG/WPXlCg5nTMmOWGpJ1u7YNqSnaV2MT9Wbw0+moa/7N1Rg7p5+X4il5TD1flIDCKbeCBE6Htw
-	mWJ5mMje6gK+bJTukp4qgoCTjl4Y9s8cZnGVAwb9cUhGN2pLym6Ct2BDuK3Qy/yvG2pZj23HqOQ
-	RenTThKwnb4BSeqP1/16GePfQVBqNvbpqWWBi5WzsfPYdbC4BzJ61gRPVU3oRmWYBDcpDN/p8RH
-	ydmBHZsHouq9IH/zHI5MTxBqb72AsYko14TI2JcW9dvWqUrLT+ylhO16w30r/NFnKF/wiUV+KWO
-	rW3fKxUUcMh6cun1yRVhjBhbyMYly3MceYqJtjf6YxlphTgVilx9We2Irzr+Uohytpb0cXSReWc
-	Be018GAQhJmJl4q4aqRbgWoGnEAEfkHh8VWqy2T9b/wUcQG/6acA==
-X-Google-Smtp-Source: AGHT+IGpgxrufvVbj/EAOSRbPajvrkbv1ubmtObGTneciR1xN69K//nK7cLM3mPNug8AvmxmRiJbtQ==
-X-Received: by 2002:a05:622a:1887:b0:4ab:3a31:680d with SMTP id d75a77b69052e-4b0fc71e9f9mr41676621cf.16.1755100770752;
-        Wed, 13 Aug 2025 08:59:30 -0700 (PDT)
+        bh=PQkqhCR+X2AcT/u+sPVE1u8ILZHP3FwYk8GsseoCqig=;
+        b=pOq+lOALLHFosKQoZm06mwfYOAfBmKI3E1chQx74foeqFOFNsoVFaL+U8A2hs+PU1p
+         YusURxrw4lCkgcdD8P8Z92stWeawaUCSeP4CBttWXiLpKNG2hRr2bPSVef4bxzYGxnX7
+         l+G+edx9Hl64ryFfs+/9x9608RExwaqIh2apEFEKYvLlHutZaDxF59XhOJJHEeZPLBe8
+         51107GSpsXKH3p6s7Ghvssq+OVqUa+N7op7Ypmc7S1JBunMV603oZe9KNr6bHC0A+hUV
+         mk0NFHXVJfxjakBjEO1qm4Ny/LK1MT6vBoqOY+KF8TGiffVOabUkFW6OzYlkLMq6VOBA
+         RziA==
+X-Forwarded-Encrypted: i=1; AJvYcCU+yk5WeB9i5yme7x18lrXLu975HscO6tPoFngaF5vLLQHQ0a/+BvggOep4Hp69XZ5nvYaT9O/ckxtDBQwFIA0o@vger.kernel.org, AJvYcCU0fmu41jab8k6Bg8p5SAH01vzoS3BdFk5YFmFggD2k88PXSSMUQz9wbQvcshjkPNSeUsuFedgZyvVxkA==@vger.kernel.org, AJvYcCVGRvtnLVO3Tx3Z81vtstGYkrrFPPuux1O4Ff9v2tPwpMOswfc+vpY581yn+1gfTo94RgA5+S7WKaZd@vger.kernel.org, AJvYcCVGif+4ud5xWX5ux3oRpDtuxRQPZtx5Rg9kIyGw01vNrtIY/71UIwOI3DloKvRgH19HsEpAVcQmtgAa+sAkYz0=@vger.kernel.org, AJvYcCVzIpS53AT6QjLyxISYAfkUbKEOnGP/JGRmyEXGGxt+fZ8GJEa7DA1SPFvuZoUe101xOnVLAhNwjM2I@vger.kernel.org, AJvYcCWfYhOlTFXEcs/RWaK0L0NIEcnUWgbV6TNQmxuLxSY+ZfbSkI6LBwPD+aBga6zivDp1iTb5PeyHWmKFa4jl@vger.kernel.org, AJvYcCX8GJ3OtpZPaycu1j+5OANEm1IVIcfIOmxh9+zI5hJ9dNA/rNVY2hCIEf+yZFMve/8PIFZlH80gqHc4lfvMMw==@vger.kernel.org, AJvYcCXVo88uTfa8/n6i/fO80fK9m9gUq1CZWDHUua3HCk1hEyxFQaUuBKmd/KnPSf6Pf+N81NIzTInr@vger.kernel.org
+X-Gm-Message-State: AOJu0YwglrGQs0ryitGAlfUFcduQ7ewdub46CmDEAVBUGBTvYA+lgKvt
+	ypT9jxWHGZL/M/U9e0IkRu33r5XqeONGS8f2THaSXyLGgsEiuYLkkABT
+X-Gm-Gg: ASbGncsUyKSrUI7vsOg228fzAjv77pi4yio4Th/sX0eZptxL3AmA3wYFmiK3BFmVzli
+	OrpJUcxZ1+XSyvTDd6DmdfffI7OgeLTTsTla+yzIWNBDB3c+OJXh1plLFE9JyTlxWUyhwWbHjiQ
+	61ZQycafZeJoCmv3q9SmA6u2CHEhoXtewFqDKHIUwDxaglnVayri105Mf5lSeTtPV5bo8zSQVaF
+	jvKC48w4TOzMj2XkZ4XLELsGoAzaElnPjWMN87KGvBropbPzaI4jq0bs2AXVZ3PreymDH8BAxqH
+	Ye5tHYsdeCqM5fUDu2F76z7LN5RVfWnBmUOxWrXjkmLmkkfkuIuaPTFNuxN5NPx5O98Vd2QUcJS
+	j2WiJIFwPWpdO9oTv3D82pUS0k89/cF00pqKFbMyKjaUTnPanj4r1VVENvoM76SK14YWPZ2e1fU
+	WAS1yLHOSEaZBXiiCiWwXbBg3YrL9F
+X-Google-Smtp-Source: AGHT+IHZq3i1a9XTbFXQTxJJeihLgQb42x6jyJXFxK6dZtNdBD0dLMgXlffMglfu4O/TMFdzQ1T2Rw==
+X-Received: by 2002:a05:622a:549:b0:4b0:83b4:5965 with SMTP id d75a77b69052e-4b0fc6ba555mr47290341cf.14.1755100773657;
+        Wed, 13 Aug 2025 08:59:33 -0700 (PDT)
 Received: from 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa ([2600:4808:6353:5c00:d445:7694:2051:518c])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b085ad7d08sm124482211cf.53.2025.08.13.08.59.27
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b085ad7d08sm124482211cf.53.2025.08.13.08.59.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Aug 2025 08:59:30 -0700 (PDT)
+        Wed, 13 Aug 2025 08:59:33 -0700 (PDT)
 From: Tamir Duberstein <tamird@gmail.com>
-Date: Wed, 13 Aug 2025 11:59:12 -0400
-Subject: [PATCH v2 02/19] gpu: nova-core: replace `kernel::c_str!` with
+Date: Wed, 13 Aug 2025 11:59:13 -0400
+Subject: [PATCH v2 03/19] rust: auxiliary: replace `kernel::c_str!` with
  C-Strings
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -86,7 +86,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250813-core-cstr-cstrings-v2-2-00be80fc541b@gmail.com>
+Message-Id: <20250813-core-cstr-cstrings-v2-3-00be80fc541b@gmail.com>
 References: <20250813-core-cstr-cstrings-v2-0-00be80fc541b@gmail.com>
 In-Reply-To: <20250813-core-cstr-cstrings-v2-0-00be80fc541b@gmail.com>
 To: "Rafael J. Wysocki" <rafael@kernel.org>, 
@@ -126,13 +126,13 @@ Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
  Tamir Duberstein <tamird@gmail.com>
 X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openssh-sha256; t=1755100759; l=2863;
+X-Developer-Signature: v=1; a=openssh-sha256; t=1755100759; l=1276;
  i=tamird@gmail.com; h=from:subject:message-id;
- bh=/6Rqc6yq70/uVo2CCK0rVzt/j/mmv1WXhqKkANquG+c=;
+ bh=F2nw+1+uvnPsEnvQVrrTk2VbbpWrYF1uYr4G8N1u7x4=;
  b=U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgtYz36g7iDMSkY5K7Ab51ksGX7hJgs
  MRt+XVZTrIzMVIAAAAGcGF0YXR0AAAAAAAAAAZzaGE1MTIAAABTAAAAC3NzaC1lZDI1NTE5AAAA
- QMxUD8q7sdXNIZJbqOsCnf0eKBOPnd2r+87E83qZIwccXLqO4VipK6rxEDA6qqdZDuVzG7p8Zpy
- 1WZEYV9IVxAE=
+ QGMx/5kaMnlNTrXaGDrsiX78ZIRKLC+Iqyye94EgnMxhSsrGEv9tVHC8fuvWEciKzlDqn7iENLx
+ rBu+o34IoWwg=
 X-Developer-Key: i=tamird@gmail.com; a=openssh;
  fpr=SHA256:264rPmnnrb+ERkS7DDS3tuwqcJss/zevJRzoylqMsbc
 
@@ -145,69 +145,29 @@ Reviewed-by: Benno Lossin <lossin@kernel.org>
 Acked-by: Danilo Krummrich <dakr@kernel.org>
 Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 ---
- drivers/gpu/drm/nova/driver.rs  | 10 +++++-----
- drivers/gpu/nova-core/driver.rs |  6 +++---
- 2 files changed, 8 insertions(+), 8 deletions(-)
+ samples/rust/rust_driver_auxiliary.rs | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/nova/driver.rs b/drivers/gpu/drm/nova/driver.rs
-index b28b2e05cc15..87480ee8dbae 100644
---- a/drivers/gpu/drm/nova/driver.rs
-+++ b/drivers/gpu/drm/nova/driver.rs
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
+diff --git a/samples/rust/rust_driver_auxiliary.rs b/samples/rust/rust_driver_auxiliary.rs
+index f2a820683fc3..7c916eb11b64 100644
+--- a/samples/rust/rust_driver_auxiliary.rs
++++ b/samples/rust/rust_driver_auxiliary.rs
+@@ -5,13 +5,13 @@
+ //! To make this driver probe, QEMU must be run with `-device pci-testdev`.
  
--use kernel::{auxiliary, c_str, device::Core, drm, drm::gem, drm::ioctl, prelude::*, types::ARef};
-+use kernel::{auxiliary, device::Core, drm, drm::gem, drm::ioctl, prelude::*, types::ARef};
- 
- use crate::file::File;
- use crate::gem::NovaObject;
-@@ -22,12 +22,12 @@ pub(crate) struct NovaData {
-     major: 0,
-     minor: 0,
-     patchlevel: 0,
--    name: c_str!("nova"),
--    desc: c_str!("Nvidia Graphics"),
-+    name: c"nova",
-+    desc: c"Nvidia Graphics",
+ use kernel::{
+-    auxiliary, bindings, c_str, device::Core, driver, error::Error, pci, prelude::*, InPlaceModule,
++    auxiliary, bindings, device::Core, driver, error::Error, pci, prelude::*, InPlaceModule,
  };
  
--const NOVA_CORE_MODULE_NAME: &CStr = c_str!("NovaCore");
--const AUXILIARY_NAME: &CStr = c_str!("nova-drm");
-+const NOVA_CORE_MODULE_NAME: &CStr = c"NovaCore";
-+const AUXILIARY_NAME: &CStr = c"nova-drm";
+ use pin_init::PinInit;
  
- kernel::auxiliary_device_table!(
-     AUX_TABLE,
-diff --git a/drivers/gpu/nova-core/driver.rs b/drivers/gpu/nova-core/driver.rs
-index 274989ea1fb4..2f1a37be3107 100644
---- a/drivers/gpu/nova-core/driver.rs
-+++ b/drivers/gpu/nova-core/driver.rs
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
+ const MODULE_NAME: &CStr = <LocalModule as kernel::ModuleMetadata>::NAME;
+-const AUXILIARY_NAME: &CStr = c_str!("auxiliary");
++const AUXILIARY_NAME: &CStr = c"auxiliary";
  
--use kernel::{auxiliary, bindings, c_str, device::Core, pci, prelude::*, sizes::SZ_16M, sync::Arc};
-+use kernel::{auxiliary, bindings, device::Core, pci, prelude::*, sizes::SZ_16M, sync::Arc};
+ struct AuxiliaryDriver;
  
- use crate::gpu::Gpu;
- 
-@@ -35,7 +35,7 @@ fn probe(pdev: &pci::Device<Core>, _info: &Self::IdInfo) -> Result<Pin<KBox<Self
-         pdev.set_master();
- 
-         let bar = Arc::pin_init(
--            pdev.iomap_region_sized::<BAR0_SIZE>(0, c_str!("nova-core/bar0")),
-+            pdev.iomap_region_sized::<BAR0_SIZE>(0, c"nova-core/bar0"),
-             GFP_KERNEL,
-         )?;
- 
-@@ -44,7 +44,7 @@ fn probe(pdev: &pci::Device<Core>, _info: &Self::IdInfo) -> Result<Pin<KBox<Self
-                 gpu <- Gpu::new(pdev, bar)?,
-                 _reg: auxiliary::Registration::new(
-                     pdev.as_ref(),
--                    c_str!("nova-drm"),
-+                    c"nova-drm",
-                     0, // TODO[XARR]: Once it lands, use XArray; for now we don't use the ID.
-                     crate::MODULE_NAME
-                 )?,
 
 -- 
 2.50.1
