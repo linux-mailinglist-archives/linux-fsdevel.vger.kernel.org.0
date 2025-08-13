@@ -1,129 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-57810-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57811-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 077F6B256DD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 00:42:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C3C4B2572D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 01:04:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6FCC9E0636
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 22:39:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07BF0726ED3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 23:04:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4B453009C3;
-	Wed, 13 Aug 2025 22:37:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B86A22FC863;
+	Wed, 13 Aug 2025 23:04:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="NENZjkAk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gULORzCb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F5893002CD;
-	Wed, 13 Aug 2025 22:37:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078F12F530B;
+	Wed, 13 Aug 2025 23:04:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755124671; cv=none; b=fx3lBe9AZor2RqmEBUjHCe44GfRwP/Gh35p0CskRFhA8PgRQgP4J0C357+9ZSD6uKdoOA3ltLmDa38jUrxFuDapQ0YxSNgz6WBXek2gCeuOQ/nTQdzZZBQBi7LleVD1cZPS4KLtQNuak4zFMQZJ50RyMDt+geH5Y12bMqrCwgBI=
+	t=1755126262; cv=none; b=Lco7pbKcRNLZPqix2GqraKyUr1wt0rgeDbpT114VALRGomnfL8JVxz3rDBf4Bt/HwlCE5h8lJa31z9AoiDLVCOLI3RrkdHdEqE5K/lkVgNVclJ/XMCJ1lbRGyrAQTysiAf8y7TV8LYIBZBKhwlkVHFNaXFtilCwc4mKtXf3ky5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755124671; c=relaxed/simple;
-	bh=A+N8wnRu45k2gcVZ9YAl5PweYWKQWyAh8iCFjdwnaUw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NAZK+dZQl9GJ9x6hPUXGrdTx2RN6VaAwzmKBA2zBUjF5OlqjLn8rHB3FPe6q1srGPH1sjlUv1kETcNVoFWAib2soRskyir53GpAFI67BYHIwuinfvsV5cdS0grPAl+GcfAgJAQ8YLPhQwY+8guwuUWOnDfJ3Pzh9m5qS8do5/Cc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=NENZjkAk; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Cc:To:In-Reply-To:References:Message-Id:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Cv3fcHf48DjB8ea0TBmFVJymw4b3vUHLc9r9wSKK1QU=; b=NENZjkAkg0YaCqKznsr8M1SjbV
-	xrctuqmXQ57qglbYbJnH2Bf1oqm3d1ygX6Tw1kfZDR7AfrixIH7DFML4i0aNacPPUeYsBdv1SUNP5
-	M5/8wqw2Fbx8WfbmZDHGwcSEek/855RxvZ0DPBcWHInmKrfzp2uO+KTRTKWLGoC9Ijw7O3KOzoDZ2
-	D7q+vaj2SviTgUxCb6rDnFhNrIZReIH30YqAbsYoCJz7naaQ2hYC3uVLCe04M+UB9oIio2oFrHxxp
-	1of96cxmFBzCIzzSZfiHcA07cpMWqOexgTJh7y24rh6mvmGygFX/O6bIEllwQvFa8Ok2DLqOvZDRc
-	9pPZ75Rg==;
-Received: from [152.250.7.37] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1umK6K-00Ds0c-Ic; Thu, 14 Aug 2025 00:37:44 +0200
-From: =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Date: Wed, 13 Aug 2025 19:36:45 -0300
-Subject: [PATCH v4 9/9] ovl: Allow case-insensitive lookup
+	s=arc-20240116; t=1755126262; c=relaxed/simple;
+	bh=3F+ogyrYcJ8PY1I57KN+xxu49Rm1DOvKC0zBkVlpS24=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mJPc19zqY4UrPJ3rgMzgQYwazErsyB2fJNol85h4DaWtOt1mFkOfzNbmAFYcgDZ4FjEuJn7TYl3TPIXvNoOXokU3weFT/Mv650ID1OS6kfY1JL4vAYBmxl9w8zgdv6B2yYLfHacDWG4UxHwTCMr6x0kV6JHGGsdozNdiqp6UUxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gULORzCb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F5ADC4CEF5;
+	Wed, 13 Aug 2025 23:04:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755126261;
+	bh=3F+ogyrYcJ8PY1I57KN+xxu49Rm1DOvKC0zBkVlpS24=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=gULORzCbX4t52dAfG5DuKvm4YIIqfvOAx2w15GEnWcGA3zPp1j7Cf5X0DN1XTUtdv
+	 n74MCqWqzp5i6s8L31cAIYg53ELJQ/y78Ez/QPWAtAMqFKENy687JX6LZtwcI1YySK
+	 X/4AixLfnG9jFoOCWc1ggn2g0Agkl+XXXBRlStfpOCy03YBcMGgEJ8P4X0dasp2onI
+	 ySv+D7D4PiGjXg6hX02QoDFlpOVGN/82cxQhy2q1soLdwF2tgPFkX+o6RBjn5T4ADE
+	 HhxlAxjwmBcpTl+gyAlfkbcB5xyfUjjHWZvzun5VoZ0syqCiu4T32eftEcAdCVhLqA
+	 dt4p4tG6o1mzg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id D4BCCCE0A48; Wed, 13 Aug 2025 16:04:19 -0700 (PDT)
+Date: Wed, 13 Aug 2025 16:04:19 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Dominique Martinet <asmadeus@codewreck.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	kernel test robot <lkp@intel.com>,
+	Dominique Martinet via B4 Relay <devnull+asmadeus.codewreck.org@kernel.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Christian Brauner <brauner@kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Andrew Morton <akpm@linux-foundation.org>, llvm@lists.linux.dev,
+	oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Maximilian Bosch <maximilian@mbosch.me>,
+	Ryan Lahfa <ryan@lahfa.xyz>, Christian Theune <ct@flyingcircus.io>,
+	Arnout Engelen <arnout@bzzt.net>, linux-kernel@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] iov_iter: iterate_folioq: fix handling of offset >=
+ folio size
+Message-ID: <f389ac0d-de77-4443-9302-3d8895e39daf@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250811-iot_iter_folio-v1-1-d9c223adf93c@codewreck.org>
+ <202508120250.Eooq2ydr-lkp@intel.com>
+ <20250813051633.GA3895812@ax162>
+ <aJwj4dQ3b599qKHn@codewreck.org>
+ <aJyVfWKX2eSMsfrb@black.igk.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250813-tonyk-overlayfs-v4-9-357ccf2e12ad@igalia.com>
-References: <20250813-tonyk-overlayfs-v4-0-357ccf2e12ad@igalia.com>
-In-Reply-To: <20250813-tonyk-overlayfs-v4-0-357ccf2e12ad@igalia.com>
-To: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
- Theodore Tso <tytso@mit.edu>, Gabriel Krisman Bertazi <krisman@kernel.org>
-Cc: linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- kernel-dev@igalia.com, 
- =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aJyVfWKX2eSMsfrb@black.igk.intel.com>
 
-Drop the restriction for casefold dentries lookup to enable support for
-case-insensitive filesystems in overlayfs.
+On Wed, Aug 13, 2025 at 03:39:09PM +0200, Andy Shevchenko wrote:
+> On Wed, Aug 13, 2025 at 02:34:25PM +0900, Dominique Martinet wrote:
+> > Nathan Chancellor wrote on Tue, Aug 12, 2025 at 10:16:33PM -0700:
+> > > >    1 warning generated.
+> > > 
+> > > I see this in -next now, should remain be zero initialized or is there
+> > > some other fix that is needed?
+> > 
+> > A zero-initialization is fine, I sent a v2 with zero-initialization
+> > fixed yesterday:
+> > https://lkml.kernel.org/r/20250812-iot_iter_folio-v2-1-f99423309478@codewreck.org
+> > 
+> > (and I'll send a v3 with the goto replaced with a bigger if later today
+> > as per David's request)
+> > 
+> > I assume Andrew will pick it up eventually?
+> 
+> I hope this to happen sooner as it broke my builds too (I always do now `make W=1`
+> and suggest all developers should follow).
 
-Support case-insensitive filesystems with the condition that they should
-be uniformly enabled across the stack and the layers (i.e. if the root
-mount dir has casefold enabled, so should all the dirs bellow for every
-layer).
+This build failure is showing up in my testing as well.
 
-Signed-off-by: André Almeida <andrealmeid@igalia.com>
----
-Changes from v3:
-- New patch, splited from the patch that creates ofs->casefold
----
- fs/overlayfs/namei.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+In the service of preventing bisection issues, would it be possible to
+fold the fix into the original patch?
 
-diff --git a/fs/overlayfs/namei.c b/fs/overlayfs/namei.c
-index 76d6248b625e7c58e09685e421aef616aadea40a..e93bcc5727bcafdc18a499b47a7609fd41ecaec8 100644
---- a/fs/overlayfs/namei.c
-+++ b/fs/overlayfs/namei.c
-@@ -239,13 +239,14 @@ static int ovl_lookup_single(struct dentry *base, struct ovl_lookup_data *d,
- 	char val;
- 
- 	/*
--	 * We allow filesystems that are case-folding capable but deny composing
--	 * ovl stack from case-folded directories. If someone has enabled case
--	 * folding on a directory on underlying layer, the warranty of the ovl
--	 * stack is voided.
-+	 * We allow filesystems that are case-folding capable as long as the
-+	 * layers are consistently enabled in the stack, enabled for every dir
-+	 * or disabled in all dirs. If someone has modified case folding on a
-+	 * directory on underlying layer, the warranty of the ovl stack is
-+	 * voided.
- 	 */
--	if (ovl_dentry_casefolded(base)) {
--		warn = "case folded parent";
-+	if (ofs->casefold != ovl_dentry_casefolded(base)) {
-+		warn = "parent wrong casefold";
- 		err = -ESTALE;
- 		goto out_warn;
- 	}
-@@ -259,8 +260,8 @@ static int ovl_lookup_single(struct dentry *base, struct ovl_lookup_data *d,
- 		goto out_err;
- 	}
- 
--	if (ovl_dentry_casefolded(this)) {
--		warn = "case folded child";
-+	if (ofs->casefold != ovl_dentry_casefolded(this)) {
-+		warn = "child wrong casefold";
- 		err = -EREMOTE;
- 		goto out_warn;
- 	}
-
--- 
-2.50.1
-
+							Thanx, Paul
 
