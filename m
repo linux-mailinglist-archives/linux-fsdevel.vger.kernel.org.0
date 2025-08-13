@@ -1,94 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-57710-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57711-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83D83B24B4A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 15:58:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 10F6FB24B4F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 15:58:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 289873A6AA1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 13:53:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78C4A3AAF14
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 13:53:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246D62EBDC5;
-	Wed, 13 Aug 2025 13:52:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A43782EBDDB;
+	Wed, 13 Aug 2025 13:53:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZAwj9hMe"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="2b/I8Q8C"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CCBF2EAB68;
-	Wed, 13 Aug 2025 13:52:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC68F2EAB8A;
+	Wed, 13 Aug 2025 13:53:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755093170; cv=none; b=QgHIHTLppQ17kxyZJzhLZbWTPzCM0hRYVJ9D+nnM5haKednXYJiQFqXbgWoGSDTD4gBUYbY/MZjRvpsRwXQ45qKohY5ESmuYoS8KRv6xlH6B8+02jEVn4sZ/RpNwmHOttdTJrI7x3f0Zk9PEkLSDshqWNNDIiysf/zW3yJMahAM=
+	t=1755093213; cv=none; b=nAhlRy1LxMBJoSvtOYhSWIFWcVAlfqfy9TFSz9ckXrUhUAMjphcBPVnPsfpdg1e6vPMYvGGyL/5krAQGUELI9bqpFMYb2AeAp3t/6Uyhp8RCwlo+oyy9wTuHFYA/b8ih/+raAaSnyATVdK8KQMjqoyxBPWtLNeJkhc7Ge073LTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755093170; c=relaxed/simple;
-	bh=yRzIBpcwo03V92Cu9B8zeqXJTartIC1MviVhaIBxQdM=;
+	s=arc-20240116; t=1755093213; c=relaxed/simple;
+	bh=2ZfkxvrE9evhAuNxUgTtfyeiBUjNsjnmB4p7ADpVvL4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j9YUhWaLzKBnG66U/zaEyxT6yN/eOt9KJWc4q5a6PGOAxp4rXQJFY7Gi8mHTuGpsZaqmXTqXadelceGFwUjRsoearY2pb9MZULTuAfLmRzOP7CNWpno9X5jhYV4rGeL4qvBiosWM3RBNKtE+7ZG/vk22Yiftb2wan/WKk05GHaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZAwj9hMe; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755093170; x=1786629170;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=yRzIBpcwo03V92Cu9B8zeqXJTartIC1MviVhaIBxQdM=;
-  b=ZAwj9hMeBbrlCEqTO1etqD52Ib7zYRuFfbkqzsVrMfKiNpQRlEPFCXGn
-   3nIOvMchcMhGBsxiAH9Kt2iX4/9H4G4RYXE434AsGeKcuAtwy3PXYGnwy
-   4bgJHzoYiEp+cb2DvpmEGtkiaPy+nVyQ5hoRntie97P9KMoNSj48OlRGk
-   L4CDHVaLEm2HXbZt4KZdTbdXR3E7ncapUlFhlRmJXRWTqrQKKcGDI2iTW
-   Y/MCDxfioY4Ut6THrPCEElSadYsntHEeh+e+DH+B8DJaIXnXKsfxVwhSp
-   bt9MNyzoC8EusmhT6ok2Sw4zXOxoSd8fgNV58Fkl3uzYTGOvPouGm+eUI
-   w==;
-X-CSE-ConnectionGUID: WxwWpv4/SxeMt2n2Nl4x+A==
-X-CSE-MsgGUID: mwuitVOTTWymQsL1rl8Vqg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="57289139"
-X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
-   d="scan'208";a="57289139"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 06:52:49 -0700
-X-CSE-ConnectionGUID: a6XmckWnTmOaZ0W7wn/o/A==
-X-CSE-MsgGUID: 9CE9RbIqTnCtSYCj/rZ3aA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
-   d="scan'208";a="170928900"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 06:52:44 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1umBuB-00000005RqB-41aP;
-	Wed, 13 Aug 2025 16:52:39 +0300
-Date: Wed, 13 Aug 2025 16:52:39 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Dominique Martinet <asmadeus@codewreck.org>
-Cc: Nathan Chancellor <nathan@kernel.org>,
-	kernel test robot <lkp@intel.com>,
-	Dominique Martinet via B4 Relay <devnull+asmadeus.codewreck.org@kernel.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Christian Brauner <brauner@kernel.org>,
-	David Howells <dhowells@redhat.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Andrew Morton <akpm@linux-foundation.org>, llvm@lists.linux.dev,
-	oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Maximilian Bosch <maximilian@mbosch.me>,
-	Ryan Lahfa <ryan@lahfa.xyz>, Christian Theune <ct@flyingcircus.io>,
-	Arnout Engelen <arnout@bzzt.net>, linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] iov_iter: iterate_folioq: fix handling of offset >=
- folio size
-Message-ID: <aJyYp-3VA9kJ5YMd@smile.fi.intel.com>
-References: <20250811-iot_iter_folio-v1-1-d9c223adf93c@codewreck.org>
- <202508120250.Eooq2ydr-lkp@intel.com>
- <20250813051633.GA3895812@ax162>
- <aJwj4dQ3b599qKHn@codewreck.org>
- <aJyVfWKX2eSMsfrb@black.igk.intel.com>
- <aJyW_QNI8vIdr03O@codewreck.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pSGivG9oY6s0RN06bj1V0H8DInfjamAwtJZxMGZ71PzdIdnJF3e69atSsZ4IztdX49KavN7rwlwNPRXGDyIbbhuflu0MTqh3FTlbsEmaY+a2RHQN6W/ipBNpCaVNTWCMkeeAyKl4qAd5LC+VIx39xCkEbzco+4b36sBcaNnwwVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=2b/I8Q8C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27EA6C4CEEB;
+	Wed, 13 Aug 2025 13:53:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1755093212;
+	bh=2ZfkxvrE9evhAuNxUgTtfyeiBUjNsjnmB4p7ADpVvL4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=2b/I8Q8CtrPTb9BsmMkVcw4Xk5xZ+oMPIBMOH5Ta9weUZ+2KnKkWk7qgi2m4uCduj
+	 WjJ//hLYdGC8LtH/h9D7XDYUGmxoF8P2lrecXPH2EHat2C7eRwX8Y4UFcHDH/LxUPf
+	 o38cQmCkR1Y2kcyKbUMjSZhbFEAx8hiFx9X/LXOI=
+Date: Wed, 13 Aug 2025 15:53:28 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Pratyush Yadav <pratyush@kernel.org>
+Cc: Jason Gunthorpe <jgg@nvidia.com>, Vipin Sharma <vipinsh@google.com>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>, jasonmiu@google.com,
+	graf@amazon.com, changyuanl@google.com, rppt@kernel.org,
+	dmatlack@google.com, rientjes@google.com, corbet@lwn.net,
+	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com,
+	kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com,
+	masahiroy@kernel.org, akpm@linux-foundation.org, tj@kernel.org,
+	yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev,
+	chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com,
+	jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org,
+	dan.j.williams@intel.com, david@redhat.com,
+	joel.granados@kernel.org, rostedt@goodmis.org,
+	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
+	linux@weissschuh.net, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
+	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
+	aleksander.lobakin@intel.com, ira.weiny@intel.com,
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
+	stuart.w.hayes@gmail.com, lennart@poettering.net,
+	brauner@kernel.org, linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
+	ajayachandra@nvidia.com, parav@nvidia.com, leonro@nvidia.com,
+	witu@nvidia.com
+Subject: Re: [PATCH v3 29/30] luo: allow preserving memfd
+Message-ID: <2025081338-dingo-oyster-bbbb@gregkh>
+References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
+ <20250807014442.3829950-30-pasha.tatashin@soleen.com>
+ <20250813063407.GA3182745.vipinsh@google.com>
+ <2025081310-custodian-ashamed-3104@gregkh>
+ <mafs01ppfxwe8.fsf@kernel.org>
+ <2025081351-tinsel-sprinkler-af77@gregkh>
+ <20250813124140.GA699432@nvidia.com>
+ <2025081334-rotten-visible-517a@gregkh>
+ <mafs07bz7wdfk.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -97,30 +88,38 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aJyW_QNI8vIdr03O@codewreck.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <mafs07bz7wdfk.fsf@kernel.org>
 
-On Wed, Aug 13, 2025 at 10:45:33PM +0900, Dominique Martinet wrote:
-> Andy Shevchenko wrote on Wed, Aug 13, 2025 at 03:39:09PM +0200:
-> > > I assume Andrew will pick it up eventually?
-> > 
-> > I hope this to happen sooner as it broke my builds too (I always do now `make W=1`
-> > and suggest all developers should follow).
+On Wed, Aug 13, 2025 at 03:37:03PM +0200, Pratyush Yadav wrote:
+> On Wed, Aug 13 2025, Greg KH wrote:
 > 
-> I actually test with W=1 too, but somehow this warning doesn't show up
-> in my build, I'm not quite sure why :/
-> (even if I try clang like the test robot... But there's plenty of
-> other warnings all around everywhere else, so I agree this is all way
-> too manual)
+> > On Wed, Aug 13, 2025 at 09:41:40AM -0300, Jason Gunthorpe wrote:
+> [...]
+> >> Use the warn ons. Make sure they can't be triggered by userspace. Use
+> >> them to detect corruption/malfunction in the kernel.
+> >> 
+> >> In this case if kho_unpreserve_folio() fails in this call chain it
+> >> means some error unwind is wrongly happening out of sequence, and we
+> >> are now forced to leak memory. Unwind is not something that userspace
+> >> should be controlling, so of course we want a WARN_ON here.
+> >
+> > "should be" is the key here.  And it's not obvious from this patch if
+> > that's true or not, which is why I mentioned it.
+> >
+> > I will keep bringing this up, given the HUGE number of CVEs I keep
+> > assigning each week for when userspace hits WARN_ON() calls until that
+> > flow starts to die out either because we don't keep adding new calls, OR
+> > we finally fix them all.  Both would be good...
+> 
+> Out of curiosity, why is hitting a WARN_ON() considered a vulnerability?
+> I'd guess one reason is overwhelming system console which can cause a
+> denial of service, but what about WARN_ON_ONCE() or WARN_RATELIMIT()?
 
-Depends on your config, last few releases I was specifically targetting x86
-defconfigs (32- and 64-bit) to be build with `make W=1`. There are a couple of
-changes that are still pending, but otherwise it builds with GCC and clang.
+If panic_on_warn is set, this will cause the machine to crash/reboot,
+which is considered a "vulnerability" by the CVE.org definition.  If a
+user can trigger this, it gets a CVE assigned to it.
 
--- 
-With Best Regards,
-Andy Shevchenko
+hope this helps,
 
-
+greg k-h
 
