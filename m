@@ -1,174 +1,234 @@
-Return-Path: <linux-fsdevel+bounces-57773-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57774-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 224ABB24FC4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 18:30:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6939AB251D9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 19:16:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B59C5723EE3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 16:25:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02F625C5B10
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 17:09:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88374287259;
-	Wed, 13 Aug 2025 16:24:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9219C295D99;
+	Wed, 13 Aug 2025 17:03:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NowuzJLv"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VPcb2Vux"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C58DA285053;
-	Wed, 13 Aug 2025 16:24:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EE6528D8F4
+	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Aug 2025 17:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755102287; cv=none; b=BT2zSSBRmMuHJk0IYcx55iT99Sanfzg788ljfC+vtTq+OTMyolekrwfMgjCv3N+TzxuBi97AjlBuRrZb7R0qsTjrXR6+x9Shk2h3m1/ByFXgWe913y7XGgCX9vGc+ClAkhLCnJxHyPd7Sy5RERAL+bct9CWoGDePjx9ouxxfMIg=
+	t=1755104611; cv=none; b=jrGCoNPoZZA+ZkrsRThupNpFbR+TUhHdAZ1gVSGaEvtVovCFwC468UAB2UCGYPNfqAd4sMO8HEHF+ozrlr8Xri18G5aFgOfPnO5B7a3USJFDyKjowHM03hbU8A2vWMyCoN3CXPb8wDt03/XefjZ6IO+GyypagXKgI6UZT26uDy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755102287; c=relaxed/simple;
-	bh=K1Qnz6FeiAMe891bHx38SnseQkGtn7jJpOFA1e7ci+8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TtNIV5327wJHOdlMm1X42tiRJtmpG9VZcmdBhq5G1HocIebBSMha/Qk75hKuaedodYuOgHTxel+F5pO6OVrVYYVkmKmsl3J3rIWdgxAHG+btFJKt5ysW57qqKk34WVjjCoXwjTn1wkwtrKyEGeKe4Ng8ft57CLpuLHItjLaqaJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NowuzJLv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09AF3C4CEEB;
-	Wed, 13 Aug 2025 16:24:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755102287;
-	bh=K1Qnz6FeiAMe891bHx38SnseQkGtn7jJpOFA1e7ci+8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=NowuzJLvoDcytU2mnlkUjH9a3VkVMtm7ue/1JeEievbLShowGrZYKS4ljQgIc4Tvt
-	 3+vYZnNOWzD9UQ8pSH9fEmYwxPiiGspKJ3H0P32SvVzl8AqitUBhqFYwGCZ45kSKAJ
-	 87/gu7vuZjna5FtZYWWUpp9S1G/8o7Ty64t0lObmjPlPr2MXYLPDtH4Sc4eAU6xND8
-	 ThhzDQ4hSAh1VB48U+GqBbKfJNoQAGi7b1yhwF4mFVAalvl713Ll6uzzSrl8gdzvsB
-	 qxd/OanAUdPmrliRUlwzqp8QiFiC+SAvfzE7ZdQVKX6a28IsBlnq34Yk6UcqsLFVxB
-	 8m4KWJEM4NWXw==
-From: SeongJae Park <sj@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Kees Cook <kees@kernel.org>,
-	David Hildenbrand <david@redhat.com>,
-	Zi Yan <ziy@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>,
-	Barry Song <baohua@kernel.org>,
-	Xu Xin <xu.xin16@zte.com.cn>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	David Rientjes <rientjes@google.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Peter Xu <peterx@redhat.com>,
-	Jann Horn <jannh@google.com>,
-	Pedro Falcato <pfalcato@suse.de>,
-	Matthew Wilcox <willy@infradead.org>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	linux-s390@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	sparclinux@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH 00/10] mm: make mm->flags a bitmap and 64-bit on all arches
-Date: Wed, 13 Aug 2025 09:24:45 -0700
-Message-Id: <20250813162445.5456-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <af5492d4-f8dc-4270-a4c6-73d76f098942@lucifer.local>
-References: 
+	s=arc-20240116; t=1755104611; c=relaxed/simple;
+	bh=nUqx1hY4qyRT+Qd5lt4XKpitoAocfwd1ibsjsYM0+1I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FF+phHuh1E7g3xcErinROyucu8YcvikHkDi6VMydYjb7l4LjjoY4i0xCL3myA+nHJOlo4Ty3VPR3+526hUfkCKv1q5EetBHtrLHE9pX/afZSOa/m3psUQHU47/8C9S8iggnbtk4QyulMVFMv8zuiT5Gu9wvF2JGeSmXqL3IwgSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VPcb2Vux; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4b109c59dc9so1301821cf.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Aug 2025 10:03:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755104608; x=1755709408; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CvgcXCw2/QJXgqIdPoXVHtzQe7LQ/EHJFe5VSw+1Lzo=;
+        b=VPcb2VuxlymxydZw5YeA+N3Hcc9ctM3TjKMxN9jL/5IOyrzwNSe4PBV3jC55vM2Eje
+         9aAhjVuzGv2cdahP+iJw6vAMNNqs90nMdhWMdHJONyuHxhHxVKa+MTbNeIfg0EAQOtdd
+         m3k9kXaSPghFvtNqQVqR62dp2RORm6FYSuCPXuvmUG0LCgHCxNxHmTY2A/PGw2cVUsRG
+         hhFzQEFpXJWFp7QwmUWXqejXnqPIsgfdxDYFyE2fkdBKLAJtp0nADFJbcz16B7ImFZfk
+         nFCFIOFRT+OFb4nmRuRaTC7TJQWtAoS6IWS2dUd3oUZ8DX7sCBgly95udlaQjKj0dwm5
+         RWXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755104608; x=1755709408;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CvgcXCw2/QJXgqIdPoXVHtzQe7LQ/EHJFe5VSw+1Lzo=;
+        b=OCBsCFNDz/aEz3TwTj0WM9tOTPdCm0BwfaftWQpnw19orK9wbI+awia1Cfr6CdwdsF
+         YocbYBDpY7L8RLMj3TqKf/uPiuUv56uwmu+ZCiUK/6ikzvRbNM8U3DB337b2IVoXyGRU
+         jjol6L1EJHNXG9hxKlFimBaOLKz9k11Uq1jiB76L5L6qjzcu2Hh1WPfjv3faifIXoVZz
+         Ob1rPrV/sNBiYxBadTmieEsWqJma//stGxEu/Vm6UkBh1yJpHG0wGyIzGw8J3g9eaERE
+         ledkP2HudFa474lBANklABSgj//V6ib2UwZ3wpUIu17ooKpMI6qtShujNLxYaNpWIsLn
+         tEgA==
+X-Gm-Message-State: AOJu0YyXdxnwzQ5zsihDg/am3uJZZD7fWGUR26zd3XBcgp4kzlWLkAok
+	62jL6MVneyIWBeUjWio1+Z7OFj9IZlz93+SqIKpzHdaP3AFIqFAr8RKLHocFiPTU15AcNevhABy
+	A785Uufz/7hoMlNHF2f3DzbsD620TYTc=
+X-Gm-Gg: ASbGncv1ecLox7F3B0Sx2+mkZUF1aaxs1Tc4PmueBVhcx/+skiBnoyYd9Qi+SLcdska
+	zYSqPX574D/PvYPMOLpq+YV3Az/qrnhuTbIGbMfBE1zQsv/uXAOf5ZVKRDUWQXYNK1on2GNy5xl
+	o/J8dn5+r5L/zuwcSAOcyjiFTmFP+kk04lxbC7EiuKtjKI0hWcNcAa2hyP8wCC/xqaW7oATj4tq
+	nvWSLhX
+X-Google-Smtp-Source: AGHT+IH65lrSordBtbYAKJOxKWfwVDlE5QOumW3IOPxMOMfdfQwL/BL+sXqrjzFlQzaUG05Pk6DSxJj1RtfZjjI7q0E=
+X-Received: by 2002:ac8:6909:0:b0:4b0:74ac:db35 with SMTP id
+ d75a77b69052e-4b0fc7135d8mr58197571cf.12.1755104607834; Wed, 13 Aug 2025
+ 10:03:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250813152014.100048-1-mszeredi@redhat.com> <20250813152014.100048-4-mszeredi@redhat.com>
+In-Reply-To: <20250813152014.100048-4-mszeredi@redhat.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Wed, 13 Aug 2025 10:03:17 -0700
+X-Gm-Features: Ac12FXzzp0pZWwwXpihysnH1aF5dwnT1DB_Z35wkjxCjK61QliJtqeKi1wPb6Fg
+Message-ID: <CAJnrk1bfoumJHwc5p-WASXYxWG8tzz91LfzpiEkPTSOoTDK1ig@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] fuse: add COPY_FILE_RANGE_64 that allows large copies
+To: Miklos Szeredi <mszeredi@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, Bernd Schubert <bschubert@ddn.com>, 
+	Amir Goldstein <amir73il@gmail.com>, Chunsheng Luo <luochunsheng@ustc.edu>, 
+	Florian Weimer <fweimer@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 13 Aug 2025 05:18:31 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+On Wed, Aug 13, 2025 at 8:24=E2=80=AFAM Miklos Szeredi <mszeredi@redhat.com=
+> wrote:
+>
+> The FUSE protocol uses struct fuse_write_out to convey the return value o=
+f
+> copy_file_range, which is restricted to uint32_t.  But the COPY_FILE_RANG=
+E
+> interface supports a 64-bit size copies and there's no reason why copies
+> should be limited to 32-bit.
+>
+> Introduce a new op COPY_FILE_RANGE_64, which is identical, except the
+> number of bytes copied is returned in a 64-bit value.
+>
+> If the fuse server does not support COPY_FILE_RANGE_64, fall back to
+> COPY_FILE_RANGE.
 
-> On Tue, Aug 12, 2025 at 01:13:26PM -0700, SeongJae Park wrote:
-> > On Tue, 12 Aug 2025 16:44:09 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
-[...]
-> > > In order to execute this change, we introduce a new opaque type -
-> > > mm_flags_t - which wraps a bitmap.
-> >
-> > I have no strong opinion here, but I think coding-style.rst[1] has one?  To
-> > quote,
-> >
-> >     Please don't use things like ``vps_t``.
-> >     It's a **mistake** to use typedef for structures and pointers.
-> 
-> You stopped reading the relevant section in [1] :) Keep going and you see:
-> 
-> 	Lots of people think that typedefs help readability. Not so. They
-> 	are useful only for: totally opaque objects (where the typedef is
-> 	actively used to hide what the object is).  Example: pte_t
-> 	etc. opaque objects that you can only access using the proper
-> 	accessor functions.
-> 
-> So this is what this is.
-> 
-> The point is that it's opaque, that is you aren't supposed to know about or
-> care about what's inside, you use the accessors.
-> 
-> This means we can extend the size of this thing as we like, and can enforce
-> atomicity through the accessors.
-> 
-> We further highlight the opaqueness through the use of the __private.
-> 
-> >
-> > checkpatch.pl also complains similarly.
-> >
-> > Again, I have no strong opinion, but I think adding a clarification about why
-> > we use typedef despite of the documented recommendation here might be nice?
-> 
-> I already gave one, I clearly indicate it's opaque.
+Is it unacceptable to add a union in struct fuse_write_out that
+accepts a uint64_t bytes_copied?
+struct fuse_write_out {
+    union {
+        struct {
+            uint32_t size;
+            uint32_t padding;
+        };
+        uint64_t bytes_copied;
+    };
+};
 
-You're completely right and I agree all the points.  Thank you for kindly
-enlightening me :)
+Maybe a little ugly but that seems backwards-compatible to me and
+would prevent needing a new FUSE_COPY_FILE_RANGE64.
 
+>
+> Reported-by: Florian Weimer <fweimer@redhat.com>
+> Closes: https://lore.kernel.org/all/lhuh5ynl8z5.fsf@oldenburg.str.redhat.=
+com/
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> ---
+>  fs/fuse/file.c            | 44 ++++++++++++++++++++++++++++-----------
+>  fs/fuse/fuse_i.h          |  3 +++
+>  include/uapi/linux/fuse.h | 12 ++++++++++-
+>  3 files changed, 46 insertions(+), 13 deletions(-)
+>
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index 4adcf09d4b01..867b5fde1237 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -3013,33 +3015,51 @@ static ssize_t __fuse_copy_file_range(struct file=
+ *file_in, loff_t pos_in,
+>         if (is_unstable)
+>                 set_bit(FUSE_I_SIZE_UNSTABLE, &fi_out->state);
+>
+> -       args.opcode =3D FUSE_COPY_FILE_RANGE;
+> +       args.opcode =3D FUSE_COPY_FILE_RANGE_64;
+>         args.nodeid =3D ff_in->nodeid;
+>         args.in_numargs =3D 1;
+>         args.in_args[0].size =3D sizeof(inarg);
+>         args.in_args[0].value =3D &inarg;
+>         args.out_numargs =3D 1;
+> -       args.out_args[0].size =3D sizeof(outarg);
+> -       args.out_args[0].value =3D &outarg;
+> +       args.out_args[0].size =3D sizeof(outarg_64);
+> +       args.out_args[0].value =3D &outarg_64;
+> +       if (fc->no_copy_file_range_64) {
+> +fallback:
+> +               /* Fall back to old op that can't handle large copy lengt=
+h */
+> +               args.opcode =3D FUSE_COPY_FILE_RANGE;
+> +               args.out_args[0].size =3D sizeof(outarg);
+> +               args.out_args[0].value =3D &outarg;
+> +               inarg.len =3D len =3D min_t(size_t, len, UINT_MAX & PAGE_=
+MASK);
+> +       }
+>         err =3D fuse_simple_request(fm, &args);
+>         if (err =3D=3D -ENOSYS) {
+> -               fc->no_copy_file_range =3D 1;
+> -               err =3D -EOPNOTSUPP;
+> +               if (fc->no_copy_file_range_64) {
+
+Maybe clearer here to do the if check on the args.opcode? Then this
+could just be
+if (args.opcode =3D=3D FUSE_COPY_FILE_RANGE) {
+
+which imo is a lot easier to follow.
+
+> +                       fc->no_copy_file_range =3D 1;
+> +                       err =3D -EOPNOTSUPP;
+> +               } else {
+> +                       fc->no_copy_file_range_64 =3D 1;
+> +                       goto fallback;
+> +               }
+>         }
+> -       if (!err && outarg.size > len)
+> -               err =3D -EIO;
+> -
+>         if (err)
+>                 goto out;
+>
+> +       bytes_copied =3D fc->no_copy_file_range_64 ?
+> +               outarg.size : outarg_64.bytes_copied;
+> +
+> +       if (bytes_copied > len) {
+> +               err =3D -EIO;
+> +               goto out;
+> +       }
+> +
+>         truncate_inode_pages_range(inode_out->i_mapping,
+>                                    ALIGN_DOWN(pos_out, PAGE_SIZE),
+> -                                  ALIGN(pos_out + outarg.size, PAGE_SIZE=
+) - 1);
+> +                                  ALIGN(pos_out + bytes_copied, PAGE_SIZ=
+E) - 1);
+>
+>         file_update_time(file_out);
+> -       fuse_write_update_attr(inode_out, pos_out + outarg.size, outarg.s=
+ize);
+> +       fuse_write_update_attr(inode_out, pos_out + bytes_copied, bytes_c=
+opied);
+>
+> -       err =3D outarg.size;
+> +       err =3D bytes_copied;
+>  out:
+>         if (is_unstable)
+>                 clear_bit(FUSE_I_SIZE_UNSTABLE, &fi_out->state);
+> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+> index 122d6586e8d4..94621f68a5cc 100644
+> --- a/include/uapi/linux/fuse.h
+> +++ b/include/uapi/linux/fuse.h
+> @@ -1148,6 +1153,11 @@ struct fuse_copy_file_range_in {
+>         uint64_t        flags;
+>  };
+>
+> +/* For FUSE_COPY_FILE_RANGE_64 */
+> +struct fuse_copy_file_range_out {
+
+imo having the 64 in the struct name more explicitly makes it clearer
+to the server which one they're supposed to use, eg struct
+fuse_copy_file_range64_out
 
 Thanks,
-SJ
-
-[...]
+Joanne
+> +       uint64_t        bytes_copied;
+> +};
+> +
 
