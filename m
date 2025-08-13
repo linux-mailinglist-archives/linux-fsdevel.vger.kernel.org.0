@@ -1,45 +1,45 @@
-Return-Path: <linux-fsdevel+bounces-57669-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57667-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74965B245A9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 11:40:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96206B2459C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 11:39:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06F83881223
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 09:39:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36CA05672CF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 09:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B1B2F533F;
-	Wed, 13 Aug 2025 09:38:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92D152F49EA;
+	Wed, 13 Aug 2025 09:38:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="ZVu5tv16"
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="VbDWXUUs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from m16.mail.126.com (m16.mail.126.com [117.135.210.9])
+Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A0E12F531D
-	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Aug 2025 09:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2EC2F3C07
+	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Aug 2025 09:38:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755077923; cv=none; b=c6DsvMO+KL3/ExVfNM5vCzGG//LlC+3Tf+OpbBFrPQqfo/InDMA2X8yDAhw85il7R1X4Mw9HPsE8GesedpzuhNnVb48DLxHm+9+OKRozSg72lX0u5wXXXIWmmGrGZpMimVrzS9tcW25fpGtCU8ymmS+PhdXssgvyUhEi8JxHXAY=
+	t=1755077917; cv=none; b=CUyaH4xIfltIlUPIr5OT/2lkW6i1DVHTBKHpNywwb7nWI7efpPWUUJhfW3GIKAHSzsdKMsGNmtr3ArlmpPp/X2zC+dRVmD6euuc47jxC8VhZOiJX1pGCEtahkDRUGuVmF4oYcM0dG8OoYxwmbWngBdfLUGHk0DRhrWK+xRpOP0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755077923; c=relaxed/simple;
-	bh=QjB2xE0rGsMZrUAJQP9lWS3F7+2iGF6K/AipVbh+NCc=;
+	s=arc-20240116; t=1755077917; c=relaxed/simple;
+	bh=rLQq+NcPWV9gelBv2M0UAMaigjdZb3yB5T07GZkSdpE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WRpupkvaSY4tSWxGm3P+Elnz5VLWmvLi2KjHkhOTWh9j3jFavk7MPBrW2ETkw1hmUpiKC9ImgzmY7IMwb2QrFHwBKMyZGe2MyvzVxFyj/zPXGYoNG6V8/spV/h6RvHzbu1Nn1WUQfdNcWm07GU0kPzhk8/sKecSmebPQ9D49nfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=ZVu5tv16; arc=none smtp.client-ip=117.135.210.9
+	 MIME-Version; b=QiDJV1dLF8y4xpvkug8tJRJVxNnBXs+l5VPaz9EsGGIJEpgRKjtiqvmONR6rW0l80QjEuMBjdvB9jsn8RkkCAIh8p13zcjPu/En220dyxxQUpc1wLNzvaiSlYsJ+h8S5/hql7GQeTFu9W5FPQDacI4242LV4N3B5Mw8Peo0UdYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=VbDWXUUs; arc=none smtp.client-ip=220.197.31.6
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=JX
-	rrH1GuF3TyhMQNJeF8+XDV9FdDsRz5WCLevGpnP98=; b=ZVu5tv16Ie/VC6G5No
-	GYpcdIIGziffWZpTa9IAi4MV0cJF+82KxanQMwWHGtsx+si5d97bnaLUfOuSHcJw
-	WGDGpMvMCFOwduYbSos5FQaaQUVJff3StuZIk7+bgW2V6fXzqFThT77OxRsnLqiJ
-	RVqAMgIjL7YzlbTYIv0EDlgVQ=
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=16
+	xZxNhapx1zmrqQvDVTERS6UOfNY3zsXg4rsnEQ910=; b=VbDWXUUszDSQ4pewWL
+	t58TAo3RiRBIWZLkLh+V4ZOtKXcXdR8m0ctCZUTKAcbCTGuYZg1W+9c61QbTq6P2
+	thPwjCpiJ1QDIcyXywHDJDMoXujkYvONUz2oEICFt38/1molanb04wVB4eUqwJoY
+	lxR4bG8q6uOi/ZWmd66HyLlM4=
 Received: from YLLaptop.. (unknown [])
-	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wDn_9odWZxo91unBg--.63865S9;
-	Wed, 13 Aug 2025 17:21:50 +0800 (CST)
+	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wDn_9odWZxo91unBg--.63865S10;
+	Wed, 13 Aug 2025 17:21:51 +0800 (CST)
 From: Nanzhe Zhao <nzzhao@126.com>
 To: Jaegeuk Kim <jaegeuk@kernel.org>,
 	linux-f2fs@lists.sourceforge.net,
@@ -49,9 +49,9 @@ Cc: Matthew Wilcox <willy@infradead.org>,
 	Yi Zhang <yi.zhang@huawei.com>,
 	Barry Song <21cnbao@gmail.com>,
 	Nanzhe Zhao <nzzhao@126.com>
-Subject: [RFC PATCH 7/9] f2fs:Make GC aware of large folios
-Date: Wed, 13 Aug 2025 17:21:29 +0800
-Message-Id: <20250813092131.44762-8-nzzhao@126.com>
+Subject: [RFC PATCH 8/9] f2fs: Introduce F2FS_GET_BLOCK_IOMAP and map_blocks he lpers
+Date: Wed, 13 Aug 2025 17:21:30 +0800
+Message-Id: <20250813092131.44762-9-nzzhao@126.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250813092131.44762-1-nzzhao@126.com>
 References: <20250813092131.44762-1-nzzhao@126.com>
@@ -62,127 +62,158 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDn_9odWZxo91unBg--.63865S9
-X-Coremail-Antispam: 1Uf129KBjvJXoWxZr4DXFW7WryDXw45JrW5Jrb_yoWrJw18pF
-	W5GF9xGrs5JF17urn2yFn8Zr1rta4Ivr4UAFWxCw4xXa1UXwn5K3W0y3WfZF1DtrykArWI
-	qF1rtry5WF4UJF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRkOzfUUUUU=
-X-CM-SenderInfo: xq22xtbr6rjloofrz/1tbiEwWoz2icVjsqaAAAsq
+X-CM-TRANSID:_____wDn_9odWZxo91unBg--.63865S10
+X-Coremail-Antispam: 1Uf129KBjvJXoWxKFyDXFy3ZF43WF4DKw1rZwb_yoW7Gw4DpF
+	yDAF1rGrs0grWxWF4fta1Uur1S9r1Ik3W7Ca93X3s8G3yqqr1SqFnYya43u3Z8tr4fJr1q
+	qFs8K348KayxGFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zELZ2gUUUUU=
+X-CM-SenderInfo: xq22xtbr6rjloofrz/1tbiZASoz2icUlpmFwAAsK
 
-Previously, the GC (Garbage Collection) logic for performing I/O and
-marking folios dirty only supported order-0 folios and lacked awareness
-of higher-order folios. To enable GC to correctly handle higher-order
-folios, we made two changes:
+    Introduce the `F2FS_GET_BLOCK_IOMAP` flag for `f2fs_ma
+p_blocks`.
 
-- In `move_data_page`, we now use `f2fs_iomap_set_range_dirty` to mark
-  only the sub-part of the folio corresponding to `bidx` as dirty,
-  instead of the entire folio.
+    With this flag, holes encountered during buffered I/O
+iterative mapping
+    can now be merged under `map_is_mergeable`. Furthermor
+e, when this flag
+    is passed, `f2fs_map_blocks` will by default store the
+ mapped block
+    information (from the `f2fs_map_blocks` structure) int
+o the extent cache,
+    provided the resulting extent size is greater than the
+ minimum allowed
+    length for the f2fs extent cache.
+    Notably, both holes and `NEW_ADDR`
+    extents will also be cached under the influence of thi
+s flag.
+    This improves buffered write performance for sparse fi
+les.
 
-- The `f2fs_submit_page_read` function has been augmented with an
-  `index` parameter, allowing it to precisely identify which sub-page
-  of the current folio is being submitted.
+    Additionally, two helper functions are introduced:
+    - `f2fs_map_blocks_iomap`: A simple wrapper for `f2fs_
+map_blocks` that
+      enables the `F2FS_GET_BLOCK_IOMAP` flag.
+    - `f2fs_map_blocks_prealloc`: A simple wrapper for usi
+ng
+      `f2fs_map_blocks` to preallocate blocks.
 
 Signed-off-by: Nanzhe Zhao <nzzhao@126.com>
 ---
- fs/f2fs/data.c | 13 +++++++------
- fs/f2fs/gc.c   | 37 +++++++++++++++++++++++--------------
- 2 files changed, 30 insertions(+), 20 deletions(-)
+ fs/f2fs/data.c | 49 +++++++++++++++++++++++++++++++++++++++++++------
+ fs/f2fs/f2fs.h |  5 +++++
+ 2 files changed, 48 insertions(+), 6 deletions(-)
 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index b7bef2a28c8e..5ecd08a3dd0b 100644
+index 5ecd08a3dd0b..37eaf431ab42 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -1096,7 +1096,7 @@ static struct bio *f2fs_grab_read_bio(struct inode *inode, block_t blkaddr,
- /* This can handle encryption stuffs */
- static int f2fs_submit_page_read(struct inode *inode, struct folio *folio,
- 				 block_t blkaddr, blk_opf_t op_flags,
--				 bool for_write)
-+				 pgoff_t index, bool for_write)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	struct bio *bio;
-@@ -1109,7 +1109,8 @@ static int f2fs_submit_page_read(struct inode *inode, struct folio *folio,
- 	/* wait for GCed page writeback via META_MAPPING */
- 	f2fs_wait_on_block_writeback(inode, blkaddr);
+@@ -1537,8 +1537,11 @@ static bool map_is_mergeable(struct f2fs_sb_info *sbi,
+ 		return true;
+ 	if (flag == F2FS_GET_BLOCK_PRE_DIO)
+ 		return true;
+-	if (flag == F2FS_GET_BLOCK_DIO &&
+-		map->m_pblk == NULL_ADDR && blkaddr == NULL_ADDR)
++	if (flag == F2FS_GET_BLOCK_DIO && map->m_pblk == NULL_ADDR &&
++	    blkaddr == NULL_ADDR)
++		return true;
++	if (flag == F2FS_GET_BLOCK_IOMAP && map->m_pblk == NULL_ADDR &&
++	    blkaddr == NULL_ADDR)
+ 		return true;
+ 	return false;
+ }
+@@ -1676,6 +1679,10 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
+ 			if (map->m_next_pgofs)
+ 				*map->m_next_pgofs = pgofs + 1;
+ 			break;
++		case F2FS_GET_BLOCK_IOMAP:
++			if (map->m_next_pgofs)
++				*map->m_next_pgofs = pgofs + 1;
++			break;
+ 		default:
+ 			/* for defragment case */
+ 			if (map->m_next_pgofs)
+@@ -1741,8 +1748,9 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
+ 	else if (dn.ofs_in_node < end_offset)
+ 		goto next_block;
  
--	if (!bio_add_folio(bio, folio, PAGE_SIZE, 0)) {
-+	if (!bio_add_folio(bio, folio, PAGE_SIZE,
-+			   (index - folio->index) << PAGE_SHIFT)) {
- 		iostat_update_and_unbind_ctx(bio);
- 		if (bio->bi_private)
- 			mempool_free(bio->bi_private, bio_post_read_ctx_pool);
-@@ -1276,8 +1277,8 @@ struct folio *f2fs_get_read_data_folio(struct inode *inode, pgoff_t index,
- 		return folio;
+-	if (flag == F2FS_GET_BLOCK_PRECACHE) {
+-		if (map->m_flags & F2FS_MAP_MAPPED) {
++	if (flag == F2FS_GET_BLOCK_PRECACHE || flag == F2FS_GET_BLOCK_IOMAP) {
++		if (map->m_flags & F2FS_MAP_MAPPED &&
++		    map->m_len > F2FS_MIN_EXTENT_LEN) {
+ 			unsigned int ofs = start_pgofs - map->m_lblk;
+ 
+ 			f2fs_update_read_extent_cache_range(&dn,
+@@ -1786,8 +1794,9 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
+ 		}
  	}
  
--	err = f2fs_submit_page_read(inode, folio, dn.data_blkaddr,
--						op_flags, for_write);
-+	err = f2fs_submit_page_read(inode, folio, dn.data_blkaddr, op_flags,
-+				    index, for_write);
- 	if (err)
- 		goto put_err;
- 	return folio;
-@@ -3651,8 +3652,8 @@ static int f2fs_write_begin(const struct kiocb *iocb,
- 			goto put_folio;
- 		}
- 		err = f2fs_submit_page_read(use_cow ?
--				F2FS_I(inode)->cow_inode : inode,
--				folio, blkaddr, 0, true);
-+			F2FS_I(inode)->cow_inode : inode, folio,
-+			blkaddr, 0, folio->index, true);
- 		if (err)
- 			goto put_folio;
+-	if (flag == F2FS_GET_BLOCK_PRECACHE) {
+-		if (map->m_flags & F2FS_MAP_MAPPED) {
++	if (flag == F2FS_GET_BLOCK_PRECACHE || flag == F2FS_GET_BLOCK_IOMAP) {
++		if (map->m_flags & F2FS_MAP_MAPPED &&
++		    map->m_len > F2FS_MIN_EXTENT_LEN) {
+ 			unsigned int ofs = start_pgofs - map->m_lblk;
  
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 098e9f71421e..6d28f01bec42 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -1475,22 +1475,31 @@ static int move_data_page(struct inode *inode, block_t bidx, int gc_type,
- 			err = -EAGAIN;
- 			goto out;
- 		}
--		folio_mark_dirty(folio);
- 		folio_set_f2fs_gcing(folio);
-+#ifdef CONFIG_F2FS_IOMAP_FOLIO_STATE
-+		if (!folio_test_large(folio)) {
-+			folio_mark_dirty(folio);
-+		} else {
-+			f2fs_iomap_set_range_dirty(folio, (bidx - folio->index) << PAGE_SHIFT,
-+				PAGE_SIZE);
-+		}
-+#else
-+		folio_mark_dirty(folio);
-+#endif
- 	} else {
--		struct f2fs_io_info fio = {
--			.sbi = F2FS_I_SB(inode),
--			.ino = inode->i_ino,
--			.type = DATA,
--			.temp = COLD,
--			.op = REQ_OP_WRITE,
--			.op_flags = REQ_SYNC,
--			.old_blkaddr = NULL_ADDR,
--			.folio = folio,
--			.encrypted_page = NULL,
--			.need_lock = LOCK_REQ,
--			.io_type = FS_GC_DATA_IO,
--		};
-+		struct f2fs_io_info fio = { .sbi = F2FS_I_SB(inode),
-+					    .ino = inode->i_ino,
-+					    .type = DATA,
-+					    .temp = COLD,
-+					    .op = REQ_OP_WRITE,
-+					    .op_flags = REQ_SYNC,
-+					    .old_blkaddr = NULL_ADDR,
-+					    .folio = folio,
-+					    .encrypted_page = NULL,
-+					    .need_lock = LOCK_REQ,
-+					    .io_type = FS_GC_DATA_IO,
-+					    .idx = bidx - folio->index,
-+					    .cnt = 1 };
- 		bool is_dirty = folio_test_dirty(folio);
+ 			f2fs_update_read_extent_cache_range(&dn,
+@@ -1808,6 +1817,34 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
+ 	return err;
+ }
  
- retry:
++int f2fs_map_blocks_iomap(struct inode *inode, block_t start, block_t len,
++			  struct f2fs_map_blocks *map)
++{
++	int err = 0;
++
++	map->m_lblk = start; // Logical block number for the start pos
++	map->m_len = len; // Length in blocks
++	map->m_may_create = false;
++	map->m_seg_type =
++		f2fs_rw_hint_to_seg_type(F2FS_I_SB(inode), inode->i_write_hint);
++	err = f2fs_map_blocks(inode, map, F2FS_GET_BLOCK_IOMAP);
++	return err;
++}
++
++int f2fs_map_blocks_preallocate(struct inode *inode, block_t start, block_t len,
++				struct f2fs_map_blocks *map)
++{
++	int err = 0;
++
++	map->m_lblk = start;
++	map->m_len = len; // Length in blocks
++	map->m_may_create = true;
++	map->m_seg_type =
++		f2fs_rw_hint_to_seg_type(F2FS_I_SB(inode), inode->i_write_hint);
++	err = f2fs_map_blocks(inode, map, F2FS_GET_BLOCK_PRE_AIO);
++	return err;
++}
++
+ bool f2fs_overwrite_io(struct inode *inode, loff_t pos, size_t len)
+ {
+ 	struct f2fs_map_blocks map;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index c6b23fa63588..ac9a6ac13e1f 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -788,6 +788,7 @@ enum {
+ 	F2FS_GET_BLOCK_PRE_DIO,
+ 	F2FS_GET_BLOCK_PRE_AIO,
+ 	F2FS_GET_BLOCK_PRECACHE,
++	F2FS_GET_BLOCK_IOMAP,
+ };
+ 
+ /*
+@@ -4232,6 +4233,10 @@ struct folio *f2fs_get_new_data_folio(struct inode *inode,
+ 			struct folio *ifolio, pgoff_t index, bool new_i_size);
+ int f2fs_do_write_data_page(struct f2fs_io_info *fio);
+ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag);
++int f2fs_map_blocks_iomap(struct inode *inode, block_t start, block_t len,
++			  struct f2fs_map_blocks *map);
++int f2fs_map_blocks_preallocate(struct inode *inode, block_t start, block_t len,
++				struct f2fs_map_blocks *map);
+ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 			u64 start, u64 len);
+ int f2fs_encrypt_one_page(struct f2fs_io_info *fio);
 -- 
 2.34.1
 
