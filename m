@@ -1,215 +1,256 @@
-Return-Path: <linux-fsdevel+bounces-57627-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57628-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 577BFB23F7D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 06:24:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D68BAB23FB6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 06:36:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59F0C58365A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 04:24:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 624891A28314
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 04:36:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4628F29E0FB;
-	Wed, 13 Aug 2025 04:24:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93E3C28DF34;
+	Wed, 13 Aug 2025 04:35:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="Pq8QcDdW"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="ujmrmz11"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013006.outbound.protection.outlook.com [52.101.127.6])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9263A8462;
-	Wed, 13 Aug 2025 04:24:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.6
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755059060; cv=fail; b=dizwJFCnbFux5e7w2Bf79r3EP4oy45MNkLxLrwwDJZoFgM1OnCSaAujndJ8jzizL5rf0Gk7M0vb/UbzPDM/D+eCWZ9x6sKzWb+Iya5EXozbq+xPUzHJTp6CIKxLlmLK4DrxG2Ayqrognf2SGTNU1/jaFv/jTSYo+bFgtJXK1B2g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755059060; c=relaxed/simple;
-	bh=hF0roeH7RztSpyB4pvvQ3MrSFsv3ItpYfhhM4OAd8tY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=mqfHzmzId7PJOi/CzmAusdARhoR/Msb3kGkpGklLRg7UC6eNyIV0djCI0bP+mWjx7g4PhO4sFnsy08ZlBBliLvQxd+YCOwY/64uT6McLtlboGrtPKP7SQcova9ZVWG6Alvl2/+riu7QXR3WGwmftvxUM72XTB929Zti3fNwRD7w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=Pq8QcDdW; arc=fail smtp.client-ip=52.101.127.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ow0JwOUQrkxOkLvRcNR/n1nrB6kYVX4vLYu3TtZxRcYRO38xzPxHWLyef7+1drapXEgXGnU1/8nNRJ9mQyJQX2qMx/lyvhyf69w/lnVD6xz2b4oS5gfIA5KHN0yCkvfoQzw+CK5OZB/XMLp57QvqalcasthjcWIXzgMGGUsOgOCk5NmNbqSnH5phLwcKSK6wknuIVkS8xHVYZJo3I8VWlCcnPUsgESjqm+TVGztS2C0vP+6VJT3h0Ndgm0iQQvVE5pOvQXIdBiTv6lvsl1bgzSdU9ks8Ztd7L+RkHQ2nEBkm2ARNEDd51Gpy48OvxwCcKPTJdt3GV/hjphUQPqgBzg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oMnuWgkxfpx5fdWr0sbNpU2hCL8M+HiwUdCoyCjWQG0=;
- b=Zhlr21CEtS4nliUw6uFgYZrZ7Qxzl3ZnkvOK1QveZEVZTGUyBEp2Ig6OrxTJXBVNoR2d8yVeB1XdzuV/Ou1FWohy/TIMHtUSy7zgvWqSBj9gMoyANakYcMaQVX4GWEKUmAM3ArpqLmnLD30kVZJuXuKhVxv/ZSoyjsVEdsDl6rs+NOx6aZntrMwxmHqwhVdSx0urkdGZDZEJ+4YJrcj5mSxy/mIQK+UdO4mPOlzEMyTe1wH7+HI2b7wSjUlHKKXTlav+cOEbsNlvQDFc7RDiWoGVXxQyvMov0qDRbnkyu5E63NtqQlRI4r1mUy/zVO21eaqX+knwWgVgbNBl6Dix0g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oMnuWgkxfpx5fdWr0sbNpU2hCL8M+HiwUdCoyCjWQG0=;
- b=Pq8QcDdWsH20xbjV2hoEsdrfXi9C0Knm9xyb84WH+jMQPzFlf718Due4OxEv80hQ4cNwlwWsmz+1yEAgtNck9FW1eJYka+lBvTK9+QI87QYpdecvYQUkfjKWE3UzcmNy7xxdysWct3oUjdd44DGNCSFUVyhj8dSzh169x4Ekzcecvm+s/PB3g6ZZZl9jMoCjeLlvXfZ+XIN3v5iuIFwivrKiEQp5qK7J4JlPA0EIMd/u5MIE1ZiNga85DYlv0MTPUuuCe+H3louLSq6ST6kZB4L1mMnZdqXAKga4C2hNtGMdemuf+zd2s1NgWVjtWv2CEfJzK4/3Mkdi7npTa6PK8g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
- SEZPR06MB5575.apcprd06.prod.outlook.com (2603:1096:101:ca::10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9031.15; Wed, 13 Aug 2025 04:24:11 +0000
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666%4]) with mapi id 15.20.9009.018; Wed, 13 Aug 2025
- 04:24:11 +0000
-Message-ID: <a45c7775-a6bb-413d-9cb9-e871288a8f72@vivo.com>
-Date: Wed, 13 Aug 2025 12:24:06 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm: remove redundant __GFP_NOWARN
-Content-Language: en-US
-To: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: SeongJae Park <sj@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Will Deacon <will@kernel.org>, "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
- Nick Piggin <npiggin@gmail.com>, Peter Zijlstra <peterz@infradead.org>,
- David Hildenbrand <david@redhat.com>, Rik van Riel <riel@surriel.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Harry Yoo <harry.yoo@oracle.com>,
- Uladzislau Rezki <urezki@gmail.com>, damon@lists.linux.dev,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org
-References: <20250812135225.274316-1-rongqianfeng@vivo.com>
- <b5ca3ef2-bd36-4cb5-a733-a5d4f1fb32fa@lucifer.local>
- <aJt__zOHjGcaghNf@fedora>
-From: Qianfeng Rong <rongqianfeng@vivo.com>
-In-Reply-To: <aJt__zOHjGcaghNf@fedora>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SG2PR01CA0134.apcprd01.prod.exchangelabs.com
- (2603:1096:4:8f::14) To SI2PR06MB5140.apcprd06.prod.outlook.com
- (2603:1096:4:1af::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15D00322E;
+	Wed, 13 Aug 2025 04:35:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755059745; cv=none; b=CPzBWNsrPJNtYFM5dPoklylE1sFB1oZ9WpFHIC0kmzsc1TZ9RQjNS2fetwaQ2PFWhqJkr9yHtwRg+22wXDjXBxosUm/rvkCBLHzbGv3GCLj8BbjGe0MgTSZp29W50W7ROncnA/YuoECKVqJQLeQpjz5zGySFWpJCXDVblrjR670=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755059745; c=relaxed/simple;
+	bh=lJKH8zuUwITkarJ88KZ86WorioJPXOW6GCe1uPUSAFg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ooOVc7n7cbR0jls8fRMjukBJazs982z5KTaCKmWujfAxjkvkxwY00g5NcbTFMgtByVyKw3Om4obyupKP5L1VvblVwPzNW6Aid367VJO2i/QpjMDAOG5BiMwb1+AwExHgesgebybNrWXuLemQB0JgleJWyly0BytEU1aieCKt8HY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=ujmrmz11; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=aRQkeMIJcBi46dPSzyGTrE1yBGlZq8YhFhum8N0qOrw=; b=ujmrmz11odENyDWGsZ1doM1O+f
+	Y8ohhQgxpLyQKXG15byzsNdiRPYTU2zjMSPKRiQj9M2Vh/dybrcLfUq5PbhHBnboxJP0WGDDlEvPi
+	9A0xCErpXxD/sCmgR/G6U1czvOMozgADIzBP0WPwWJcJ55+0S3b16WBTOXGVpD1dm/0qSjiVhOK8S
+	hPD9tROH5z80h2NfCQgdGE9rnf1DLujv4uajWPj45NRmRQrTUwUfZF7SwWiH99gMj8yBP8MCSJQa2
+	2NSW2NVY+PxFuXpDX1ydVTKsVlg/Vj7u0O/3wtNnbUnz2Hjo3oWnH+uv+5AaXC+VZN61DnqItTGmC
+	iI4u5yNw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1um3D2-00000005eKo-04E4;
+	Wed, 13 Aug 2025 04:35:32 +0000
+Date: Wed, 13 Aug 2025 05:35:31 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: NeilBrown <neil@brown.name>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	David Howells <dhowells@redhat.com>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+	Tyler Hicks <code@tyhicks.com>, Miklos Szeredi <miklos@szeredi.hu>,
+	Richard Weinberger <richard@nod.at>,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Steve French <sfrench@samba.org>,
+	Namjae Jeon <linkinjeon@kernel.org>,
+	Carlos Maiolino <cem@kernel.org>, linux-fsdevel@vger.kernel.org,
+	linux-afs@lists.infradead.org, netfs@lists.linux.dev,
+	ceph-devel@vger.kernel.org, ecryptfs@vger.kernel.org,
+	linux-um@lists.infradead.org, linux-nfs@vger.kernel.org,
+	linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 05/11] VFS: add rename_lookup()
+Message-ID: <20250813043531.GB222315@ZenIV>
+References: <20250812235228.3072318-1-neil@brown.name>
+ <20250812235228.3072318-6-neil@brown.name>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|SEZPR06MB5575:EE_
-X-MS-Office365-Filtering-Correlation-Id: 480304b0-3609-420e-db20-08ddda2140ad
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QkVYS2pwQ2ZiWUp5d1I4c0paT0NkcERtdis0b0d3RDFmSGxjc3BCSlJhU0NG?=
- =?utf-8?B?NS8yZlRHTXNvNFkyWFROdEwzRnFVdzRHOG1BT1pLVk1NZHhOQ0oxTVN6MkxR?=
- =?utf-8?B?UmY0ZFpSOHJoTWhyNlltS1lIZXhERU1hdEpaZkpMSUtjeUlTYXV3S3ovRTJQ?=
- =?utf-8?B?U1BNYkdNalgvWXBZN01YTk1Lejd5NDlQQ2p1TGRiSkp2QmpzQndhTjJ3WjM3?=
- =?utf-8?B?V1lCbkpMRG85dDhPeXozVzU0REhmNEZhM0JKTEFSc1RWTHpUMGpUamxaMm9P?=
- =?utf-8?B?Qk9ZQWRCeWhTdWhGWjRnSzdvZ2VQMmZ3YXYrMVp5MkdLMk0rN05rQnpWSmFQ?=
- =?utf-8?B?WHpOYUZ4UDBDZEpXZUtTcDFtL2pwbHRSbmlhbVR2WHlWYWlWUW1wMFJ1MDhu?=
- =?utf-8?B?cnkrSDFMcTJMaGNsMzl0dk15QzZvcGJWL1FMcERlcEFLUFpienllVVdIZUwy?=
- =?utf-8?B?YllsU0NXbmt1Q3lhbnNzNzcvM1ZydGpEWXJPMkNSM1RIbFhCTHFSRE9BUXFT?=
- =?utf-8?B?WmVUQS8xN1JnQXRBYWZUYVU0VXU1ZCsyakozclNtQ094SlVWK1o0enJtWkMv?=
- =?utf-8?B?aXUvMzhZaEdZNWg0Rjh2MU5odTNCYnBxWWJybW9JSythWUo4ZUIwRTRISVBZ?=
- =?utf-8?B?cVVQcmlvWFFLcnV0RDMzVjZsL0ZqY0JOSVVuQWtiTGg0U1dreGwxbVNSOGhm?=
- =?utf-8?B?Y2xzbk93eFVpR25NejdJMHF2dm0wNFdYbzIwSVd3OHMxcWdJNEZoZFAxdHJa?=
- =?utf-8?B?bkRST3VrYXhDNHRjaTYwcTkzak16TkRzTzQwRXV2WksxS0hBNHorK2hHRzAw?=
- =?utf-8?B?dFJDd2ZLZVBHM1JTNGdFeE43dlhWcWUvR1RFZnNwUkxubWQ3TjY3dFZYSmpP?=
- =?utf-8?B?eWRaYWNWVDIwWkk2bjBlUnl0dDlvR1pHWTJLRVBNbExqSS82OUtOWEhSYksw?=
- =?utf-8?B?OHdHaDFsREtzQU8vUHNFNFZoYU5xTDdsRWlWTGZ4Qzg1c1RKdmdoeWZwR0xr?=
- =?utf-8?B?ZmRNaysvMmw1MlpVNHByaUxvUFZQZjBmUkREcW9EYy9PUXVGVnkzQStLMC9x?=
- =?utf-8?B?ZGhrM3o1ZjlFZjdVWDBSQUhKbk5sSXN0cmtlRGd2OTNVK2ZYcXQ3ck9BTUpH?=
- =?utf-8?B?WERhOXdWMUZZdVV6azM5bVdweUNHWkhGYnl6ZUpBZkIreE5vK09ReFVnOUpz?=
- =?utf-8?B?YlpCTUpjZmpySGIxL2d6SlE1Z1hxeGF4WVV1eVBTaUYwZDc2UjBmZTJCR0dx?=
- =?utf-8?B?RURQOHZESVFEYXJrUlBMdlFzUENVVUdrdFZuWThkb0QwZHFUR2t5cDVTNUR6?=
- =?utf-8?B?SnR0V3liNTlReHNFMHFFbHd0NG9WSDg2eXNoTlBLQ2htSjVxWjA0SVRkZCtv?=
- =?utf-8?B?b0w1WUhCa3gyUUVwZHdnL2ZLa2V2WHY1K25TTldNWVZXcHo0ZzNyZHI4UVow?=
- =?utf-8?B?Sm9mazA1NFhIWmM3RzQ4b0Q3YVpOdXNDUnlHb1hicDFYQ3hqZXkxNWlnYVRm?=
- =?utf-8?B?T21JQ1JGbDNDeXI0eTgzYS9sNWt0OW15Y20zN2pjVVJGdWw2ZmpNaklxcFc4?=
- =?utf-8?B?MUxZSFZZTllTUTlsemZ5elhXbDBRenlZQmVWMFJlZkdjWDVPRUJLaHJzNUo0?=
- =?utf-8?B?T2UzTWlFVEJWd1Jrc0tzcktaNjRVcHRHaGd4UzFkb3hiQXNQTmdUenRPVE43?=
- =?utf-8?B?ZXF5R25CTWU2d2RRVjcveVdNVks3dk1wbTFxQnk1R3V6ajZZQ1E3TUwvR01S?=
- =?utf-8?B?d25QdFV6VmdOc2hWQnc3Z252YzZrWHBQTm1KaGgvV2lpUzdFQjdqQ0RzVFUr?=
- =?utf-8?B?ZTdvcFdyL20zM0RjNGc3UnlpOFlCNG9OUWFXVFZONm9wY3FFQTMxTWl1Wnd4?=
- =?utf-8?B?R0RiTDArUldCeUFzVUVZMHJRUE44RCtTSmdlaE5pck1JZHBqUGZWaTgyeHR3?=
- =?utf-8?Q?qo7dxRRb6yM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cU1EMVlWTU1GV0N1MGN5ZGxjMWlTUWs3L0dqWVo3MDhhNnZ0aHdHUGt4ZGtu?=
- =?utf-8?B?QzJaZXA5NXR2ZTRsNHV5TlJvYmVQZzhXa0ZMN01JSWFwR0V3MkN0UmdlalRG?=
- =?utf-8?B?VVQzeTgzTlU5V2JkVnd1VXBvWW9INDIxUlJoWG1YN3A5ZzA5dWVPUm9TSGNU?=
- =?utf-8?B?dytiMmh3Z0R4MDRQK3gvaFFVQ1BEWnF1NnBxZmZqRmR1dTBydG9HRGFsTzVa?=
- =?utf-8?B?WUZTZHd6aW1PSklBSVdHUXhKMmozb2ZVblA5TFd5cklZU3hPTGVTaU12bU4z?=
- =?utf-8?B?SjRRM2FSMU14Qzkrd0F5RXoxYmN0TkdkbEg2ZzhwekZ0dzlkTlNub0xCQjVK?=
- =?utf-8?B?Z2xvNk01WWJpSXpxZHhxL2gwVWNiOU14R2pqYjd6US9PYURmaHlIOW4zN25X?=
- =?utf-8?B?eEMvYXJIdllmWTNQZFRUTWNsV2N6cnF1QTRkSzFYRVdBU2xsVk1wNWdoRXM2?=
- =?utf-8?B?aWM3QUI4ZmF3anMreDFOTTh1Q3VKeUc5Y056RlpublAzclpHNFR4SFRRUi9Y?=
- =?utf-8?B?eVp1UDJJZmQ2cWV4aVc3ckZMSnFTMlNEampCNGdZdVJXMGVoOEZVakMxZ3FH?=
- =?utf-8?B?QmpMdDBPanNWWk1sU0puL1hhajFFcmRTZTVwUzVlMWppdG5tcTMyKzEvOEpk?=
- =?utf-8?B?R082ZFdOUTlQL0NRNHBzWjAvcTNsT0F0aFJKSlhnRGdCSFljbTVvbFRMRUpD?=
- =?utf-8?B?VmpoMkRWeE51VFpGYnVPZDZYUzlDaWFMb0ZiV0hUWWNnOXZ2SHYxTzIxRXBr?=
- =?utf-8?B?Qktqd0Ixa3NWRW0zVGtPOE9EYit3anFQZy9ObEpXNmlUV2s3UzRjcEJQRjNZ?=
- =?utf-8?B?SHNhaWpxYUYyQnJWc3BMRDMwN2JUOExhZ0FpcUFsdzVXMEtnQXBhckZka1ov?=
- =?utf-8?B?WWNvb0NMcHdSS2plWjR4RDByUFI4MkwzczdEdzEzZFI2VnpKbkxLY2M2S05v?=
- =?utf-8?B?bG5jeWFrc3FWWXFrbUJwOWRWTzhhKzI0NWx2a2dVUCtSdVd0d2JoMlIyeEF6?=
- =?utf-8?B?T2x5K2IyOHo5c24rZ0hPOW14SStZMi9FckxML3llMzFaaXdnUVlkV0kxQUw5?=
- =?utf-8?B?amdqMDNGL1RKNVlTb3FqcVY0YjR3RkNLT25BUFZRQ0xQREFVN2ozMWtzc2py?=
- =?utf-8?B?T1VtYTIzdzdLc0N6N0ttZmIzbkEwdFBqamNsZHhSbnVqaXlxUUhxdGRIQWpV?=
- =?utf-8?B?YkFudTBzYWxmTVRrVmRQcElWZTdJRXhLejc3dVNac20yNktjNnJOVXNlWU5h?=
- =?utf-8?B?TGNEM1JXOTI1TzJ3d2ZwUkxHY25qbVc1S2JRTzA5L2JMQllZeHZDUENPdzRQ?=
- =?utf-8?B?VUlWeExQR2U3bE4zZ1FnZzcrS2U4NjJ5WHBPT0FuSUNKYlV6TmtISEtkQnl4?=
- =?utf-8?B?Z0VpVEoxL2NYM1luTEdLa3Fvbk8yNXNQYkhhVzliWTdibHVJbVd4c0wzNzJ0?=
- =?utf-8?B?SGM0RFdPWCsxZGQrTGhkTk9QWWs4TmxpaW9vUWdGZWROK2NCdWcwSERBYW0r?=
- =?utf-8?B?bXljdktvUi9DKzZ4RWNaRHkzcjFrRWJlWDNrbmtXM1NQazhVSjBwYUd3Rnlp?=
- =?utf-8?B?RHZXRXF5cVFHcEsvSit2QURmM0tPNkdnV3BFYjNRbGVjM1JNc05YR245SVBj?=
- =?utf-8?B?d2h0NDhsT2dhWERMYWhDUjFmWmQxcWI2cmNvNU5LQjNSWEVLd2F4dnBYNkls?=
- =?utf-8?B?SlRKU3paeUpmc3RWV1NYQjJGT3NrckJ1bFJ3UHVIclpqSEtsS01ndThjd3I5?=
- =?utf-8?B?bksybVlBaVlPMVdWbWNkYWFyY3BzTkRFUXFocFNZcHQxZ2RXbTMxRGt5Uzli?=
- =?utf-8?B?b24rNnl1NmFtcnRQSGNTRDN6NXc5RlYweWxWK2MxWkNlRWdyQU40cGdCdm81?=
- =?utf-8?B?SGQ1Y3dpTXJTM0NuVGFtUUxaY3pna3FNa3Fxa3Z4c2R3aURkVDJ2L0xNaDh0?=
- =?utf-8?B?WVgxYzNNSEVaZTNWRUE3bHpTMG02aExydVFQRVJUeEFWYnhKekQxMGREN0sx?=
- =?utf-8?B?U3BycUVrSVVqeFA4REJESndDVXhKOTBNRUdFd1VuVFhFdHRtVmdnVnZEdlU1?=
- =?utf-8?B?MVpwSGRTZGNGeVBoQ3ZLL3p6Yis0TFFyaTA1dXUwanl4dFBqU25HeUNVT1Ra?=
- =?utf-8?Q?1na8zmbFgXReQuZwnwGQRvzSp?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 480304b0-3609-420e-db20-08ddda2140ad
-X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2025 04:24:11.2323
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: P2lFYgpHvkVZPkL15n4HZ6eJ9uxMQKepoNWdD8kmrCEPgMJryEfQYsoeQmol2tjIhFtZV8j57GX0iOGb7bAzVA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB5575
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250812235228.3072318-6-neil@brown.name>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
+On Tue, Aug 12, 2025 at 12:25:08PM +1000, NeilBrown wrote:
+> rename_lookup() combines lookup and locking for a rename.
+> 
+> Two names - new_last and old_last - are added to struct renamedata so it
+> can be passed to rename_lookup() to have the old and new dentries filled
+> in.
+> 
+> __rename_lookup() in vfs-internal and assumes that the names are already
+> hashed and skips permission checking.  This is appropriate for use after
+> filename_parentat().
+> 
+> rename_lookup_noperm() does hash the name but avoids permission
+> checking.  This will be used by debugfs.
 
-在 2025/8/13 1:55, Vishal Moola (Oracle) 写道:
-> [You don't often get email from vishal.moola@gmail.com. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
->
-> On Tue, Aug 12, 2025 at 05:46:47PM +0100, Lorenzo Stoakes wrote:
->> On Tue, Aug 12, 2025 at 09:52:25PM +0800, Qianfeng Rong wrote:
->>> Commit 16f5dfbc851b ("gfp: include __GFP_NOWARN in GFP_NOWAIT") made
->>> GFP_NOWAIT implicitly include __GFP_NOWARN.
->>>
->>> Therefore, explicit __GFP_NOWARN combined with GFP_NOWAIT (e.g.,
->>> `GFP_NOWAIT | __GFP_NOWARN`) is now redundant.  Let's clean up these
->>> redundant flags across subsystems.
->>>
->>> No functional changes.
->>>
->>> Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
->>> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
->> LGTM, I wonder if there are other such redundancies in the kernel?
-> Looks like theres a lot left for this specific case. At least 48 show up
-> that are spread out across subsystems when running 'git grep
-> "GFP_NOWAIT.*GFP_NOWARN"'.
->
-> I think they should be cleaned up in sets per-subsystem to minimize
-> merge conflicts, as suggested in the commit mentioned above (16f5dfbc851b).
+WTF would debugfs do anything of that sort?  Explain.  Unlike vfs_rename(),
+there we
+	* are given the source dentry
+	* are limited to pure name changes - same-directory only and
+target must not exist.
+	* do not take ->s_vfs_rename_mutex
+	...
 
-I agree. I submitted similar patches for each subsystem separately.
-It may take some time to see the code merged into the next branch.
+> If either old_dentry or new_dentry are not NULL, the corresponding
+> "last" is ignored and the dentry is used as-is.  This provides similar
+> functionality to dentry_lookup_continue().  After locks are obtained we
+> check that the parent is still correct.  If old_parent was not given,
+> then it is set to the parent of old_dentry which was locked.  new_parent
+> must never be NULL.
 
-Best regards,
-Qianfeng
+That screams "bad API" to me...  Again, I want to see the users; you are
+asking to accept a semantics that smells really odd, and it's impossible
+to review without seeing the users.
 
+> On success new references are geld on old_dentry, new_dentry and old_parent.
+> 
+> done_rename_lookup() unlocks and drops those three references.
+> 
+> No __free() support is provided as done_rename_lookup() cannot be safely
+> called after rename_lookup() returns an error.
+> 
+> Signed-off-by: NeilBrown <neil@brown.name>
+> ---
+>  fs/namei.c            | 318 ++++++++++++++++++++++++++++++++++--------
+>  include/linux/fs.h    |   4 +
+>  include/linux/namei.h |   3 +
+>  3 files changed, 263 insertions(+), 62 deletions(-)
+> 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index df21b6fa5a0e..cead810d53c6 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -3507,6 +3507,233 @@ void unlock_rename(struct dentry *p1, struct dentry *p2)
+>  }
+>  EXPORT_SYMBOL(unlock_rename);
+>  
+> +/**
+> + * __rename_lookup - lookup and lock names for rename
+> + * @rd:           rename data containing relevant details
+> + * @lookup_flags: extra flags to pass to ->lookup (e.g. LOOKUP_REVAL,
+> + *                LOOKUP_NO_SYMLINKS etc).
+> + *
+> + * Optionally look up two names and ensure locks are in place for
+> + * rename.
+> + * Normally @rd.old_dentry and @rd.new_dentry are %NULL and the
+> + * old and new directories and last names are given in @rd.  In this
+> + * case the names are looked up with appropriate locking and the
+> + * results stored in @rd.old_dentry and @rd.new_dentry.
+> + *
+> + * If either are not NULL, then the corresponding lookup is avoided but
+> + * the required locks are still taken.  In this case @rd.old_parent may
+> + * be %NULL, otherwise @rd.old_dentry must still have @rd.old_parent as
+> + * its d_parent after the locks are obtained.  @rd.new_parent must
+> + * always be non-NULL, and must always be the correct parent after
+> + * locking.
+> + *
+> + * On success a reference is held on @rd.old_dentry, @rd.new_dentry,
+> + * and @rd.old_parent whether they were originally %NULL or not.  These
+> + * references are dropped by done_rename_lookup().  @rd.new_parent
+> + * must always be non-NULL and no extra reference is taken.
+> + *
+> + * The passed in qstrs must have the hash calculated, and no permission
+> + * checking is performed.
+> + *
+> + * Returns: zero or an error.
+> + */
+> +static int
+> +__rename_lookup(struct renamedata *rd, int lookup_flags)
+> +{
+> +	struct dentry *p;
+> +	struct dentry *d1, *d2;
+> +	int target_flags = LOOKUP_RENAME_TARGET | LOOKUP_CREATE;
+> +	int err;
+> +
+> +	if (rd->flags & RENAME_EXCHANGE)
+> +		target_flags = 0;
+> +	if (rd->flags & RENAME_NOREPLACE)
+> +		target_flags |= LOOKUP_EXCL;
+> +
+> +	if (rd->old_dentry) {
+> +		/* Already have the dentry - need to be sure to lock the correct parent */
+> +		p = lock_rename_child(rd->old_dentry, rd->new_parent);
+> +		if (IS_ERR(p))
+> +			return PTR_ERR(p);
+> +		if (d_unhashed(rd->old_dentry) ||
+> +		    (rd->old_parent && rd->old_parent != rd->old_dentry->d_parent)) {
+> +			/* dentry was removed, or moved and explicit parent requested */
+> +			unlock_rename(rd->old_dentry->d_parent, rd->new_parent);
+> +			return -EINVAL;
+> +		}
+> +		rd->old_parent = dget(rd->old_dentry->d_parent);
+> +		d1 = dget(rd->old_dentry);
+> +	} else {
+> +		p = lock_rename(rd->old_parent, rd->new_parent);
+> +		if (IS_ERR(p))
+> +			return PTR_ERR(p);
+> +		dget(rd->old_parent);
+> +
+> +		d1 = lookup_one_qstr_excl(&rd->old_last, rd->old_parent,
+> +					  lookup_flags);
+> +		if (IS_ERR(d1))
+> +			goto out_unlock_1;
+> +	}
+> +	if (rd->new_dentry) {
+> +		if (d_unhashed(rd->new_dentry) ||
+> +		    rd->new_dentry->d_parent != rd->new_parent) {
+> +			/* new_dentry was moved or removed! */
+> +			goto out_unlock_2;
+> +		}
+> +		d2 = dget(rd->new_dentry);
+> +	} else {
+> +		d2 = lookup_one_qstr_excl(&rd->new_last, rd->new_parent,
+> +					  lookup_flags | target_flags);
+> +		if (IS_ERR(d2))
+> +			goto out_unlock_2;
+> +	}
+> +
+> +	if (d1 == p) {
+> +		/* source is an ancestor of target */
+> +		err = -EINVAL;
+> +		goto out_unlock_3;
+> +	}
+> +
+> +	if (d2 == p) {
+> +		/* target is an ancestor of source */
+> +		if (rd->flags & RENAME_EXCHANGE)
+> +			err = -EINVAL;
+> +		else
+> +			err = -ENOTEMPTY;
+> +		goto out_unlock_3;
+> +	}
+> +
+> +	rd->old_dentry = d1;
+> +	rd->new_dentry = d2;
+> +	return 0;
+> +
+> +out_unlock_3:
+> +	dput(d2);
+> +	d2 = ERR_PTR(err);
+> +out_unlock_2:
+> +	dput(d1);
+> +	d1 = d2;
+> +out_unlock_1:
+> +	unlock_rename(rd->old_parent, rd->new_parent);
+> +	dput(rd->old_parent);
+> +	return PTR_ERR(d1);
+> +}
+
+This is too fucking ugly to live, IMO.  Too many things are mixed into it.
+I will NAK that until I get a chance to see the users of all that stuff.
+Sorry.
 
