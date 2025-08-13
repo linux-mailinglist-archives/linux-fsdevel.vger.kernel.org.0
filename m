@@ -1,173 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-57796-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57797-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26B36B2563D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 00:02:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A416DB2563F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 00:03:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27EA656385E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 22:02:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEA51565590
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 22:03:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C85B2F0691;
-	Wed, 13 Aug 2025 22:02:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D5422BDC2B;
+	Wed, 13 Aug 2025 22:03:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sandeen.net header.i=@sandeen.net header.b="I5fyLp/N";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="btJDb8Ek"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FkyDKc5v"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CAAD3009DE;
-	Wed, 13 Aug 2025 22:02:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D4F33009DA
+	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Aug 2025 22:03:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755122555; cv=none; b=mRhY/Y/dMAz127GvP5bd+inOn0WrVNcc19UgtzQJvrpjOgOTU1UtYVQSY54C+IyOZYGq9xmx4vLilR4wPJliQ2tyjJIfDRm0XF900d/pqv6wXTUvhDW3hGnftO3JWhDfQhMtjYCzKtDh8uFkjfcdV/L41mLvtbG0teT0lTLrF8o=
+	t=1755122599; cv=none; b=Cr9qX1B2yepY1Pz646wAURzq7d2sSpy1nqab+HyNVRcb9AIUEeY+ejshLOEyeuZRTBOsMcqGmEe5D/BPeN9lTC4caC2bXg2o4vBcFNXzw7yWrmr/+bDlRNPF2n1vNwa97z80hEnp+0ioCGmimdz/OqZa0BDJJLyrJ2Xd94uV+V8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755122555; c=relaxed/simple;
-	bh=HnSo7rJ+M2lPlnPcnC6jBvnC68nli4MfGrp7f5zzI+w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uMESFlIlyjs6c8ZS5zI853GIe55/cTxLI5ysFgv4nbIAyoC1TaMPd27/3jvhmDkDI+5xnuzsXnHzvKpDquSK5+3DTL6JKxA750hiNjTBuNu2dRl7QGimRyX3LkQjB0VYuwicSta8JcHsF2pV8szYuhj+060VJ9kwEe1I6HNUBIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sandeen.net; spf=pass smtp.mailfrom=sandeen.net; dkim=pass (2048-bit key) header.d=sandeen.net header.i=@sandeen.net header.b=I5fyLp/N; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=btJDb8Ek; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sandeen.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sandeen.net
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id AA385EC01D0;
-	Wed, 13 Aug 2025 18:02:32 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Wed, 13 Aug 2025 18:02:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sandeen.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1755122552;
-	 x=1755208952; bh=82WxlZH9PCpxJARhloF58qJKf0NjK4Eh99jmnqfOLbk=; b=
-	I5fyLp/NHlKracOArJL9CyanPF6Pt1pPVWR4wp8pvZIDZWATGCBUaEvCyjPhs6A5
-	HbzkZ68PktCLU2gZyegd4cY0K1IJFttBWSTQha6L7FJSwlWCVPwJ7EM5MA4o2gJE
-	JRjUdGJ67ANUfVrc1y3uRtXGbx1Gh6gG5KlWFDeN87mLXc4fcvYEGmqRi8m81H/o
-	UVmSI6OuisYlBh1PSUKwOItm2q7k3dj1BP+FwNs0mL2V0Du0TDpF2CiAFcsFy4MH
-	ur6OxrxLTxDda2k8dcCLAxrbUik4dOuwTwZa9kYRxH9SYFJLPeUQ+OXUW2hfc2An
-	ahCPyBj/wCz9xjjEIiO5yg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1755122552; x=
-	1755208952; bh=82WxlZH9PCpxJARhloF58qJKf0NjK4Eh99jmnqfOLbk=; b=b
-	tJDb8Ek9UvH2Ppq7z6ubcRkdg6S54Jy7McBPUlfeBpRy3hZeJz/6AOrZtJwZTehm
-	syxT2PKw8B6IBw1gi+excJordw5HmR+Zfxib0tafJRDU7Yf9ng4pm+XkA7oTBLO5
-	fQ/FoMAC3T3J2UxhAJ6J4ub/6mTZP3BZQRd3Q8fwVi/5CTRmEmKXnhTxKsE33JCD
-	cAUaZTuEN+4RZtw+j5KO0uCgrAhW49PHe1s+B53RoCLr1/53lKoFNUV36upL2dfw
-	swXM7hnjJ4/IUjFGhJYuW1fpxZxmagxg6IsP6/1/yzVc7jDxQK5E4YuoPR/2v6WX
-	MkHLHSoLSoJGzJr1Bb6IA==
-X-ME-Sender: <xms:eAudaCaJuyCgUy6OnoDXsA738lkfH0bJ3O5f0e8BNQc9KwwWtZ8u4g>
-    <xme:eAudaF0_u-FYSTLAXqAfaFH0eConqp192ubCqu95VAAs38b7kNbDcAkpiM4voOgwt
-    2BiURsJTOQlwhfCAXs>
-X-ME-Received: <xmr:eAudaNqEajDwX35z2jOJsuLy3SplmvIXQEkO1Bp65fXTncBZw41T7LgtCmRCOZTKLgUgg-8ILmHZYK3sZ0UvqodyUg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufeelfeeiucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpefgrhhitgcu
-    ufgrnhguvggvnhcuoehsrghnuggvvghnsehsrghnuggvvghnrdhnvghtqeenucggtffrrg
-    htthgvrhhnpeevieekueetfeeujedtheeffedvgeffiedvjeejleffhfeggeejuedtjeeu
-    lefhvdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    hsrghnuggvvghnsehsrghnuggvvghnrdhnvghtpdhnsggprhgtphhtthhopeelpdhmohgu
-    vgepshhmthhpohhuthdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhrgh
-    dprhgtphhtthhopegthhgrrhhmihhtrhhosehpohhsthgvohdrnhgvthdprhgtphhtthho
-    pehsrghnuggvvghnsehrvgguhhgrthdrtghomhdprhgtphhtthhopehgrhgvghhkhheslh
-    hinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehrrghfrggvlheskhgv
-    rhhnvghlrdhorhhgpdhrtghpthhtohepuggrkhhrsehkvghrnhgvlhdrohhrghdprhgtph
-    htthhopeguhhhofigvlhhlshesrhgvughhrghtrdgtohhmpdhrtghpthhtoheplhhinhhu
-    gidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinh
-    hugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:eAudaMNTek3itWkzRuAl42gni0i0Kw0rz46VEshZQDRP9049cP2FZA>
-    <xmx:eAudaOoUwanhde6fq01EN2cv_scoA0TDnfZxI9Mg28J7fn7YzFkIzw>
-    <xmx:eAudaPskLSS3-GVd-Ys4a3I3M3ci-l7kYm_uDHda4G1EAG6ijSos5g>
-    <xmx:eAudaN0Y9BOfF6820JVAP7bzR40wzhrRAn48S3Y4iat17koOkUG0OA>
-    <xmx:eAudaF7uNhoJ2ZyW8hrKIraq-uEUGyQuxYjVJd0eBIh0-smQa58P4NUH>
-Feedback-ID: i2b59495a:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 13 Aug 2025 18:02:31 -0400 (EDT)
-Message-ID: <495848ab-2493-4701-b514-415377fe877b@sandeen.net>
-Date: Wed, 13 Aug 2025 17:02:31 -0500
+	s=arc-20240116; t=1755122599; c=relaxed/simple;
+	bh=kyq9yo0MXfpOrzqj+endN1GoKCtTgcykAtgBOd8EPQM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YQeDJ8i9ZICAk8SeS14KpvH8ed79q18S7pepMXfvOTAX1AGSfBZe3ULzseHCLCLtEY6+WkxS+Ggp6teZALBWXOKbqmEvO5kCV+FQIWM2DelXdu+QMPZynuZ6wMrGALfXFNQwNcNl5V/YrpNoQOhwhkMGx2Xgdj8K4IP9Me0eqS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FkyDKc5v; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4b109ae67fdso4895661cf.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Aug 2025 15:03:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755122597; x=1755727397; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kyq9yo0MXfpOrzqj+endN1GoKCtTgcykAtgBOd8EPQM=;
+        b=FkyDKc5v+FoVCLEjtJ7olLg1b+NEc3HWsWOUya9n0OL/FOy4986Yy+sxfNawib5NNJ
+         8pEKja3xWIukoFztlGhuEluUSYQtY6JGiTlQwyIhACd5Zbi/2/KKjHuC+zKMbElE2P8k
+         J/68Itc03BR9F/k3hIAI2lwA4qbtPYu4L3Zr22pobnsPfVM/Bje5A5LadgNgOlIdfQKH
+         B5PxJBK0uclxZAmQcOUNOoVhVd7g8C1go1FHm+FTEMfKj05pfzs9ottSiIswYABD76WT
+         VbpuCXypGNDfaeE0vnh07z/PjgwSDG3lncgWW5DCU0CN4R/dL9KJ2G/cglWb/UK/7rI4
+         aBOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755122597; x=1755727397;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kyq9yo0MXfpOrzqj+endN1GoKCtTgcykAtgBOd8EPQM=;
+        b=I2T9N5+GF+rHrFNfW0hZBbBR1Eu/7PZvFLgADAy+TsU6k1gaDXvG/trZxKRbx5UOzL
+         ttAaxyhtgUI8NmHFrSJtihSNbi8Ie61Ew66KYbi3gzRuiDWsZbvzKtYq5QSsvOJ217ps
+         z3id54KPXUbl8lb9dKLZi1SeMSc36svdwm1LQJ+JI/xxLzWRYkWGLQnpaO4rqOkOqpcY
+         4Xg37A6Av4jwExQg/ATpxVZtNX3vjFWI9xVNee5qOa2zSKrVWqPgjDY83xMXq/WbVFrM
+         Ro1MtEZOTaElrfbfE+EAlwLyAVwKtxtaawErcVaFyRyN/UuuG4sJGs7am117Pq74y2NM
+         ccqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV9NueMUWh0SwNAys6tHoF0DFz1AW3G749MQV4YPeF1XP3fOpnc89Hy46D2Ylk/0H5LFXLD6jRPLkkwjZvz@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLiCkrGNITInKvhHbLYXxow667/Pj2dCFKocL47HqI2+8P/HHy
+	ZHm1+dN4psboM4U/2D8REMKaAkv0lPyX46mpbLuhk6DLGk5XqA3zY21pI9Rkzobhc0fv2PSB+yW
+	lyzGpEHvuC9Pb4uy38mHfhoT+McCPA9M=
+X-Gm-Gg: ASbGnct5KglnaCM18ZLQst4UaSPymh5NCaaiCV6z5HGNtW94ffLHdW0A8UXEpEWMPid
+	wzVST0SzQO3flGJJO/lXq1QVREkyKQEZmN1GAjzVR/yGjjVuQV4i5LpytIioZ7lsSSRgLUJzepO
+	pp4t8wXJEFqlT14nWN/H0Wv+WWy5xfMFKWiqyfhw2TtE8I8s7WyaoMSMRYNeIEV3UBKTiKEW2me
+	diQdEKX
+X-Google-Smtp-Source: AGHT+IHJxHxj3Ac7tWubJShJXGK2CcyuwC336JwgwnqUtbLQjYPCHQAnYM9BRWX5ucHSkgF0a+u5iX1WESLxzgtlSDc=
+X-Received: by 2002:a05:622a:17c7:b0:4b0:8e0a:f095 with SMTP id
+ d75a77b69052e-4b10a9b9e4amr13619821cf.26.1755122596778; Wed, 13 Aug 2025
+ 15:03:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] debugfs: fix mount options not being applied
-To: Christian Brauner <brauner@kernel.org>
-Cc: Charalampos Mitrodimas <charmitro@posteo.net>,
- Eric Sandeen <sandeen@redhat.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
- David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org,
- linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <20250804-debugfs-mount-opts-v1-1-bc05947a80b5@posteo.net>
- <a1b3f555-acfe-4fd1-8aa4-b97f456fd6f4@redhat.com>
- <d6588ae2-0fdb-480d-8448-9c993fdc2563@redhat.com> <8734a53cpx.fsf@posteo.net>
- <cf97c467-6391-44df-8ce3-570f533623b8@sandeen.net>
- <20250808-aufrechnung-geizig-a99993c8e8f4@brauner>
-Content-Language: en-US
-From: Eric Sandeen <sandeen@sandeen.net>
-In-Reply-To: <20250808-aufrechnung-geizig-a99993c8e8f4@brauner>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250801002131.255068-1-joannelkoong@gmail.com>
+ <20250801002131.255068-11-joannelkoong@gmail.com> <aJr4D9ec7XG92G--@infradead.org>
+ <CAJnrk1aLAPqpZZJ9TLBhceVQ2-ZzDGY8qv5_bX2rt5XA5T9QTA@mail.gmail.com>
+In-Reply-To: <CAJnrk1aLAPqpZZJ9TLBhceVQ2-ZzDGY8qv5_bX2rt5XA5T9QTA@mail.gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Wed, 13 Aug 2025 15:03:05 -0700
+X-Gm-Features: Ac12FXwh9jEKYJ553fL2_do8VzdYgYiCjErR3whJjtdZ88-ia-FLAeyu-s6fzXY
+Message-ID: <CAJnrk1b=3S5YrR_wnHSuUzWHmYdY7o1Savi1DKi=GdJvQySMAw@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 10/10] iomap: add granular dirty and writeback accounting
+To: Christoph Hellwig <hch@infradead.org>
+Cc: linux-mm@kvack.org, brauner@kernel.org, willy@infradead.org, jack@suse.cz, 
+	djwong@kernel.org, linux-fsdevel@vger.kernel.org, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/8/25 9:13 AM, Christian Brauner wrote:
-> On Wed, Aug 06, 2025 at 11:33:11AM -0500, Eric Sandeen wrote:
->> On 8/5/25 12:22 PM, Charalampos Mitrodimas wrote:
+On Tue, Aug 12, 2025 at 6:10=E2=80=AFPM Joanne Koong <joannelkoong@gmail.co=
+m> wrote:
+>
+> I need to look more into whether readahead/read_folio and writeback
+> run concurrently or not but if not, maybe read_bytes_pending and
+> write_bytes_pending could be consolidated together.
 
-...
-
->>> Hi, thanks for the review, and yes you're right.
->>>
->>> Maybe a potential systemic fix would be to make get_tree_single() always
->>> call fc->ops->reconfigure() after vfs_get_super() when reusing an
->>> existing superblock, fixing all affected filesystems at once.
->>
->> Yep, I'm looking into that. mount_single used to do this, and IIRC we discussed
->> it before but for some reason opted not to. It seems a bit trickier than I first
->> expected, but I might just be dense. ;)
-> 
-> If we can make it work generically, we should. I too don't remember what
-> the reasons were for not doing it that way.
-
-Sorry for the long delay here. Talked to dhowells about this and his
-POV (which is convincing, I think) is that even though mount_single used to
-call do_remount_sb for an extant single sb, this was probably Bad(tm).
-Bad, IIUC, because it's not a given that options are safe to be changed
-in this way, and that policy really should be up to each individual
-filesystem.
-
-So while we still need to audit and fix any get_tree_single()
-filesystems that changed behavior with the new mount api, may as well
-fix up debugfs for now since the bug was reported.
-
-Charalampos - 
-
-Your patch oopses on boot for me - I think that when you added
-
-	sb->s_fs_info = fc->s_fs_info;
-
-in debugfs_fill_super, you're actually NULLing out the one in the sb,
-because sget_fc has already transferred fc->s_fs_info to sb->s_fs_info,
-and NULLed fc->s_fs_info prior to this. Then when we get to
-_debugfs_apply_options, *fsi = sb->s_fs_info; is also NULL so using it
-there oopses.
-
-If you want to send a V2 with fixed up stable cc: I'd suggest following the
-pattern of what was done for tracefs in e4d32142d1de, which I think works
-OK and would at least lend some consistency, as the code is similar.
-
-If not, let me know and I'll work on an update.
-
-Thanks,
--Eric 
-
-
-
+Nvm, that doesn't work. read_folio() can still get called for a folio
+that's under writeback if it's not fully up to date.
 
