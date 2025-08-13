@@ -1,82 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-57767-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57768-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8D04B24F41
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 18:16:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E53BB24F4C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 18:17:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D5AE1C27262
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 16:09:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADACD1C23FC2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 16:10:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF3703093AC;
-	Wed, 13 Aug 2025 16:00:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE40F309DC3;
+	Wed, 13 Aug 2025 16:00:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Un/Iykkf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C9dzMm+N"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78D7C307AC4;
-	Wed, 13 Aug 2025 16:00:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6039727FB2D;
+	Wed, 13 Aug 2025 16:00:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755100807; cv=none; b=VLg5T1HGWkcLc0UzT9h2yg2Cf2t92LlklC3kOhfO9HhZqGwCLSME+Me6PJJcqfEvaFay2I5v2e4PXDLTdLgag1Iq1zAHB9wLvBdafGIeJnWk5/HA1KQ2Y4oTQ9u+8j42nv5KYAFvzKbVGi+iicbwpVXMIsz6GVDgvxRfZfhVQrA=
+	t=1755100811; cv=none; b=lrUmqiYQ75pjv3hJpChK0bL0tBm8ky12+dDnLcCB6vxaVoJ0SI5Ul6wlznTxu3ZNdpXma0r5V0GBmKyC6gqM2RR1CoUc1ut9sa2Glx8QQkkVJ6nS4S1Ny5nVGqgEtSO5cmVTG6JBS1YyMmPSP441erm/tdryTs9x2Zjyb8CVA+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755100807; c=relaxed/simple;
-	bh=pJzkdbx9fI80O3tC2LSw31fJ1joDqXqi5o9BSlHr9bU=;
+	s=arc-20240116; t=1755100811; c=relaxed/simple;
+	bh=WdNf+rNMPJXvic2D/eUcktVEJW6IWJS1FHmVPimoUkg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JtJ4feigCLgB2NjWkccJITURdfWtRLIY4nVVp6DKneAsaNH2XpJO5DhK8TQbUP45iJ9fhTJSOZZWwecruO2fSbkF9u0EelcmSSLghK/ENWPW7U49nt2TBo0lrVAN9ayCaTkg1xEODvicNNKSc5dm5gWtdMLszhLECwjPZqNyILY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Un/Iykkf; arc=none smtp.client-ip=209.85.160.180
+	 In-Reply-To:To:Cc; b=KqAeqAwjoycUfJVwNI5r/5OIJQTsBaLgqe3NFD4zn7cJK3Ps3PgjBfj/JsNkHzfIZgeT6DLaWEK/jppWyAi3rhhNHuwdq302Um5wf7f3oCQm2FVAwi8vaIUUyS/ELVMwuNzce+L5Ze+uPzVaLf4egiOTndbU7VL8bfKO7Xe/l/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C9dzMm+N; arc=none smtp.client-ip=209.85.222.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4b109914034so649131cf.0;
-        Wed, 13 Aug 2025 09:00:05 -0700 (PDT)
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7e849d7a28dso358070685a.2;
+        Wed, 13 Aug 2025 09:00:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755100804; x=1755705604; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1755100808; x=1755705608; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=No81RyEmCPqSM5FObkHye8Zu6zoLkgwRwhVrnmuST/w=;
-        b=Un/IykkfWdOA/GKxncsQMhmB1M3BqGn5xrk9q6Vok5xaQ5IeNIeTSPSUMyFjhBk0LB
-         IIGqHt+4d9uBJfvXeD9wv/UY1V2kQMbNDshXxEpAkOp4SDoUNsj+D7OhzRhRtfQsVUG9
-         jUUpWT+Y/mgZYBo/drQ4TXZRLgMuc7mXdOSYnpo4DlJmlaW/EA3PehKD0mwIXSbQnjdG
-         t1Vcyx3KltuOBaU1xsH7isWoxsr6nZ06gaohA+sXa/IkYXDt268YoSgF/X+XHRTJThwD
-         H7MeBxqvZj17XjGZp0Itb/D+3zPrG4xOLXtUPTA0cHkskgphELyxNr/m0RCkKGDCtHrr
-         QF1A==
+        bh=3Cr4skJMToxR5ZDNlOWKhFrCtS61lHTyy++Kenuer/M=;
+        b=C9dzMm+NRpOHymKHFTR111Pd5S4yUDJDCooRWbrtpcWy5PtYfQhOreoalt76Hu+iJy
+         w/NCzf3m7vPLKsmfdfLfb23vkURklbaQr8XNBMIgjOXvKA0hHF/+x8N2NqkwCZvFv0d4
+         0N4femz4SxVB+OYiAxPjBR5U96nq784m1kSH1A20ef93HIaX2v2BGKKTdgEDY3oS51d4
+         l1c0Unqhinwa1IZD98FDzebVDKH4JwS50bS21D796+rC/thX5pSRw5RXdVuXgq5LczP1
+         +6RxA5GkB32oyA5Aw0IHfkyd1a3D/7NeZjaSlIretuxA/v0fsB2Cs69vhizAg005q/Hx
+         EKiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755100804; x=1755705604;
+        d=1e100.net; s=20230601; t=1755100808; x=1755705608;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=No81RyEmCPqSM5FObkHye8Zu6zoLkgwRwhVrnmuST/w=;
-        b=UqDI3zxyDGilm8vmGZ5lHYoy0Pvtwlk26LUIXCXs+r+nqxmODCpuU+V3UAROGki9ju
-         4RoW4B4me9zmdODru9WQKbX5hDp2uj0DTsEg5d4GLCi5L0fv0m2UrA6zh7CMx8rz2AkH
-         gvqdgeaNgYsn/JYIz1o1GlPNDWcsOVEsPs/JPu+V7D3E/dkRYAifwt47KoS/N+e8M9br
-         EdONZ/8aqP4Gt22oPGSyOFIKh/qEJ5jyezCcCxl4KikOwpFdEMP1yC7S1LoXPakrEaKm
-         NL/x0MKltL/57pdN0hNkY3CP+NfjTYQT6D+vTNEQZvpQdTqCJY4NtGIQA4ejbq4fYYbl
-         K3kQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUXeRHS6VbsAJOrs5jOWYq/wnkaZeyzweRz1yTckuF0YYAXVfwlYXg1b0S7r9816g2vwnRGJo3NJUM4OfIxC+tf@vger.kernel.org, AJvYcCUvQ6VINP/V2O5pT7KNPk3iZSeCHrN4ltUPJO4dml+svbTmamOK5D7VWf91FsWDrvKGLW+aRKW6spCvTg==@vger.kernel.org, AJvYcCVCcF43eJCiu6WGtLJM4hLBs95vc1GZmO2aF3QK5JY6XZhwE4ONiO71NbAA4Nz96QrmWdmULchJFISAVcke@vger.kernel.org, AJvYcCVGHufOHnQ23RXUKAOeGgt9H/jUJgkljdRV8IENtbiyI83P+4SZibn5HizSvHWVd6jhc4IWCl8XBdDaY7NheSY=@vger.kernel.org, AJvYcCW//SjYhW7ZH3K6IruW39nuH9VLg8RSgx/koF15Zlt1tPKOja3ukE5Y/MBGwjhiVr7U5cHuFRLl9pza@vger.kernel.org, AJvYcCWAa4M0/6E4RiWrvx3PiBCw5SJcEsUhxb/JpopzGIkB8+sD9K5AVE8LKnPNwEJk7vdAtCYdi0yv@vger.kernel.org, AJvYcCXLJudH4/L/con/E1yMfyoWa16ZUrIwn32ibbWUrG5KXbOh+Ir9BHZDgNWTwNQbsbXyZV8kwSCcV4pd@vger.kernel.org, AJvYcCXizwKfH2mOaT+dP0jK7or3et46XutKGQFsypz4cC95JqRig7fn+wCuelHbfLaylAJnLoRv0ssZX8ubk+CN3g==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyi7Tk7vFkMSXorOHLRHLNZCxZXATttEnxiouH67y0Ee/Ph/FZF
-	QAy+5IRtSGT3HzvXMRbj3uTLyocPufxnL0JmT4PG3BrtH5UyD2xAYQCh
-X-Gm-Gg: ASbGncsaEJCwr9fkpsfaXytPnx0vvWGnaUDS/qYmHcvANbhFITNcpxnXCtBpOirlyER
-	n9Ndm7e41I7Mlz0t6AwoB4H+dWJMFOV4JWbq9qmlbZiyHdwNJu4m3TV25z8d7tKikJkShRoiwHh
-	oSBeb3f99mYTIuMW8H4VhoxWE3wsv74VKGaTg5jJphpWnWWP5WDLUlS6GC41pssSIyTIcnedA9z
-	QRFfvNjPeo5moeAX0+g+DMZ/XAJzZAG5rlxblpMoEOBuQllEvSfVTK0ttHTKynlxoJof2hkzQOR
-	238j1VMLAXuUbhBLIldpC87vQnpKUQ8NnmDX1mPBGHW1Jf6H55KvEW1Go10k1rqRcAjsYGkHJ1R
-	WjVDy7yknkeLmTElm+f/L8IHqacQVWAlQMrA68xVZmT2a1kKsBe7lS66ZmppU3Jpc8OXPwrO6/e
-	2rjz6yw7RnzKqwZP91JkEFQL+jqzfXL1hS/ZX3lRQ=
-X-Google-Smtp-Source: AGHT+IFgGPvPh4bfxQucqgJHqCsG0vM6pF/+xbTUs/ykAXBszfC0kqp0dx747oGo8p7Cqazh57fRZA==
-X-Received: by 2002:a05:622a:2517:b0:4b0:7575:7de9 with SMTP id d75a77b69052e-4b0fc7cfb9emr46052741cf.29.1755100804167;
-        Wed, 13 Aug 2025 09:00:04 -0700 (PDT)
+        bh=3Cr4skJMToxR5ZDNlOWKhFrCtS61lHTyy++Kenuer/M=;
+        b=u8Hol2EynG8JP7wG9BkDuFEmEwaWQdoJEN2oghgqBWjUILs5E2A6OSFvzTwrh0oNpN
+         hZTHekaTMXZjrdVWhe4+T7ARH3D/h4XboKrqQk9Y1o5mKDrNb/XVU1elcn6hjeb/Kz95
+         NJma32JPa3bhI2lTKUcshLxTNKQlJ2DHlDWrB/WsSk6j9zsvrUpAEpqGP4rXViQ4cnc6
+         p9MgykOWtTvxTriFzVKO6X1f+LRxQ4nGo5+La6xNRW9EUkA8abGbPAS8bSgQFMlTLh8b
+         DCLrTInYWRsw4h9OPvf7TH0s4jBKm5l787miDNriSve24Pvz7A2LbFholRxpUaSdTKjb
+         tTKA==
+X-Forwarded-Encrypted: i=1; AJvYcCV9gI2JogykQPFTRbILlgDh/APqGiJRLQWV2yY7xpGKnyuHSrC5tRTWNXEB0phAhx9oszDQNo0yDtp8gE/5O0Wn@vger.kernel.org, AJvYcCVY/dX+dLDmoEsreu6iJ+924ZQ6BQJ1omuN4GQDlwhsRCsoUyKI7Rq4EQQchCuFWkkJTHBHrlvk@vger.kernel.org, AJvYcCVpdGn9cDpThofsCT7TYrDJVPsCd/I2VMF6Pj3efnwDJqBsbttHlPMU4aiA8SnkScMo8U6BXZMOi7qTKMbAcQ==@vger.kernel.org, AJvYcCW0JSdixd0I+46p09O36e1MWeTTAEr7P7LvawM3IL74IX0K1bZacFARcFHHAm8t3kicQUOEZWOBfwco@vger.kernel.org, AJvYcCW7SaZdYi9QkFx9uozsrWnpPEFvbXafvQKY+HyRCm5485aNFuRyDWHASnMilFFeFAIr1BpBCgwiK8HTFV3I@vger.kernel.org, AJvYcCWPuFYOi1TlSN+TZ4t6lPA6AV3/J1C7lMwrbVxCSQmlDM674XbIrfRDyUv0KrW7RuENhvhgLms1nklyGQ==@vger.kernel.org, AJvYcCXYx+57seYUuZKBYR4pcRggfrhAorPg+WMoyQ+YfmDX1aq8TMx6soQMpfmTa/hSDpnVhHGOcF471ZPCsS3QM50=@vger.kernel.org, AJvYcCXfZQw7RfUC3bKslfv+WY1ws4G3PRyKGCicv+DkLLSWbtsPrLAdoZ70ELP1TJepTQUJlRTNmQhdBYzq@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxhhkmeaVv8ei56igpB0uFxEv7jcybnV29Iiq6kC5pajoIHibj
+	lp3Xp1Pw/dwzj7ciQEb9zXak9on+C4FscmRBZCGJOV/VBHi11lHybu3M
+X-Gm-Gg: ASbGncsN6DozJINQ84yZxVYpTcQdebA1DCf7+guhQWzywzhgxQmSuu3X7Tp4fIpzk+s
+	xnFce6ToJfZxmgxrwIXzUjvui8nnKQqcQPOZlQo8T2h+252GPCmdJmJE2LENGB+o9H0LxTUJ3gc
+	H923wd8mabrxBv1LjMsqtuGp1fbygKNYrqveoZu68NlPQQk08li7gNWOfe7uRkMrp4Cic+r4sMS
+	F3OqT1nnn0Q7MdRJ8b8Pq5nKcYda9EFpGpXBybtqYaXFJ9nNMGz1nML8ox5kwNLXAUXyrgM218T
+	YruyfKQ2ndbarDVOZOWmsnHweJ8q44jjZC/8pvxUZ1ItI4JWfgCCO9HBlzU0MIfRH/TjOUvDxfx
+	Joe1wDeU5j5N9B6hav5x1O6ZNIv+xpoYWb4hcuOjLMF1h5KIt7g7WaDjZAHoS4auo60c/GXo75T
+	n1ItlO0W14uU6CsidskQ1stucyBPdQ
+X-Google-Smtp-Source: AGHT+IF1FFwwiRWC7nkgIovb5g4WYGiTjLbCyBJ9eafSJnT0C/86p14jE6MKiVaAhyWdeKkN/zlclQ==
+X-Received: by 2002:a05:620a:915f:b0:7e3:3894:113a with SMTP id af79cd13be357-7e86524c97cmr375547385a.16.1755100807777;
+        Wed, 13 Aug 2025 09:00:07 -0700 (PDT)
 Received: from 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa ([2600:4808:6353:5c00:d445:7694:2051:518c])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b085ad7d08sm124482211cf.53.2025.08.13.09.00.01
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b085ad7d08sm124482211cf.53.2025.08.13.09.00.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Aug 2025 09:00:03 -0700 (PDT)
+        Wed, 13 Aug 2025 09:00:07 -0700 (PDT)
 From: Tamir Duberstein <tamird@gmail.com>
-Date: Wed, 13 Aug 2025 11:59:23 -0400
-Subject: [PATCH v2 13/19] rust: pci: replace `kernel::c_str!` with
+Date: Wed, 13 Aug 2025 11:59:24 -0400
+Subject: [PATCH v2 14/19] rust: platform: replace `kernel::c_str!` with
  C-Strings
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -86,7 +86,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250813-core-cstr-cstrings-v2-13-00be80fc541b@gmail.com>
+Message-Id: <20250813-core-cstr-cstrings-v2-14-00be80fc541b@gmail.com>
 References: <20250813-core-cstr-cstrings-v2-0-00be80fc541b@gmail.com>
 In-Reply-To: <20250813-core-cstr-cstrings-v2-0-00be80fc541b@gmail.com>
 To: "Rafael J. Wysocki" <rafael@kernel.org>, 
@@ -126,13 +126,13 @@ Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
  Tamir Duberstein <tamird@gmail.com>
 X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openssh-sha256; t=1755100760; l=1469;
+X-Developer-Signature: v=1; a=openssh-sha256; t=1755100760; l=6208;
  i=tamird@gmail.com; h=from:subject:message-id;
- bh=pJzkdbx9fI80O3tC2LSw31fJ1joDqXqi5o9BSlHr9bU=;
+ bh=WdNf+rNMPJXvic2D/eUcktVEJW6IWJS1FHmVPimoUkg=;
  b=U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgtYz36g7iDMSkY5K7Ab51ksGX7hJgs
  MRt+XVZTrIzMVIAAAAGcGF0YXR0AAAAAAAAAAZzaGE1MTIAAABTAAAAC3NzaC1lZDI1NTE5AAAA
- QJF8uf3JOHjRl/3R+S1L4dcXzTZi1ecUZ6oNmqIkZFTkprDomxNGqbftfYtsMPlX0Gi4pLxpz5R
- f+K48sFdc9w8=
+ QMbMNG4YU/3mJ20aJZ2/qg6/JFicKqrYK50E3yuOLMOfQVP1/s/6nskEMQz/DX+ne69Xn25k7GG
+ 4YI8+/fuWpgo=
 X-Developer-Key: i=tamird@gmail.com; a=openssh;
  fpr=SHA256:264rPmnnrb+ERkS7DDS3tuwqcJss/zevJRzoylqMsbc
 
@@ -145,31 +145,155 @@ Reviewed-by: Benno Lossin <lossin@kernel.org>
 Acked-by: Danilo Krummrich <dakr@kernel.org>
 Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 ---
- samples/rust/rust_driver_pci.rs | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ rust/kernel/platform.rs              |  6 +++---
+ samples/rust/rust_driver_faux.rs     |  4 ++--
+ samples/rust/rust_driver_platform.rs | 30 ++++++++++++++----------------
+ 3 files changed, 19 insertions(+), 21 deletions(-)
 
-diff --git a/samples/rust/rust_driver_pci.rs b/samples/rust/rust_driver_pci.rs
-index 606946ff4d7f..e0e9d9fda484 100644
---- a/samples/rust/rust_driver_pci.rs
-+++ b/samples/rust/rust_driver_pci.rs
-@@ -4,7 +4,7 @@
+diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
+index 8f028c76f9fa..d1cc5cee1cf5 100644
+--- a/rust/kernel/platform.rs
++++ b/rust/kernel/platform.rs
+@@ -135,7 +135,7 @@ macro_rules! module_platform_driver {
+ /// # Examples
+ ///
+ ///```
+-/// # use kernel::{acpi, bindings, c_str, device::Core, of, platform};
++/// # use kernel::{acpi, bindings, device::Core, of, platform};
+ ///
+ /// struct MyDriver;
+ ///
+@@ -144,7 +144,7 @@ macro_rules! module_platform_driver {
+ ///     MODULE_OF_TABLE,
+ ///     <MyDriver as platform::Driver>::IdInfo,
+ ///     [
+-///         (of::DeviceId::new(c_str!("test,device")), ())
++///         (of::DeviceId::new(c"test,device"), ())
+ ///     ]
+ /// );
+ ///
+@@ -153,7 +153,7 @@ macro_rules! module_platform_driver {
+ ///     MODULE_ACPI_TABLE,
+ ///     <MyDriver as platform::Driver>::IdInfo,
+ ///     [
+-///         (acpi::DeviceId::new(c_str!("LNUXBEEF")), ())
++///         (acpi::DeviceId::new(c"LNUXBEEF"), ())
+ ///     ]
+ /// );
+ ///
+diff --git a/samples/rust/rust_driver_faux.rs b/samples/rust/rust_driver_faux.rs
+index ecc9fd378cbd..23add3160693 100644
+--- a/samples/rust/rust_driver_faux.rs
++++ b/samples/rust/rust_driver_faux.rs
+@@ -2,7 +2,7 @@
+ 
+ //! Rust faux device sample.
+ 
+-use kernel::{c_str, faux, prelude::*, Module};
++use kernel::{faux, prelude::*, Module};
+ 
+ module! {
+     type: SampleModule,
+@@ -20,7 +20,7 @@ impl Module for SampleModule {
+     fn init(_module: &'static ThisModule) -> Result<Self> {
+         pr_info!("Initialising Rust Faux Device Sample\n");
+ 
+-        let reg = faux::Registration::new(c_str!("rust-faux-sample-device"), None)?;
++        let reg = faux::Registration::new(c"rust-faux-sample-device", None)?;
+ 
+         dev_info!(reg.as_ref(), "Hello from faux device!\n");
+ 
+diff --git a/samples/rust/rust_driver_platform.rs b/samples/rust/rust_driver_platform.rs
+index ad08df0d73f0..b3fe45a43043 100644
+--- a/samples/rust/rust_driver_platform.rs
++++ b/samples/rust/rust_driver_platform.rs
+@@ -63,7 +63,7 @@
  //!
- //! To make this driver probe, QEMU must be run with `-device pci-testdev`.
  
--use kernel::{bindings, c_str, device::Core, devres::Devres, pci, prelude::*, types::ARef};
-+use kernel::{bindings, device::Core, devres::Devres, pci, prelude::*, types::ARef};
+ use kernel::{
+-    acpi, c_str,
++    acpi,
+     device::{
+         self,
+         property::{FwNodeReferenceArgs, NArgs},
+@@ -85,14 +85,14 @@ struct SampleDriver {
+     OF_TABLE,
+     MODULE_OF_TABLE,
+     <SampleDriver as platform::Driver>::IdInfo,
+-    [(of::DeviceId::new(c_str!("test,rust-device")), Info(42))]
++    [(of::DeviceId::new(c"test,rust-device"), Info(42))]
+ );
  
- struct Regs;
+ kernel::acpi_device_table!(
+     ACPI_TABLE,
+     MODULE_ACPI_TABLE,
+     <SampleDriver as platform::Driver>::IdInfo,
+-    [(acpi::DeviceId::new(c_str!("LNUXBEEF")), Info(0))]
++    [(acpi::DeviceId::new(c"LNUXBEEF"), Info(0))]
+ );
  
-@@ -79,7 +79,7 @@ fn probe(pdev: &pci::Device<Core>, info: &Self::IdInfo) -> Result<Pin<KBox<Self>
-         let drvdata = KBox::pin_init(
-             try_pin_init!(Self {
-                 pdev: pdev.into(),
--                bar <- pdev.iomap_region_sized::<{ Regs::END }>(0, c_str!("rust_driver_pci")),
-+                bar <- pdev.iomap_region_sized::<{ Regs::END }>(0, c"rust_driver_pci"),
-                 index: *info,
-             }),
-             GFP_KERNEL,
+ impl platform::Driver for SampleDriver {
+@@ -126,49 +126,47 @@ impl SampleDriver {
+     fn properties_parse(dev: &device::Device) -> Result {
+         let fwnode = dev.fwnode().ok_or(ENOENT)?;
+ 
+-        if let Ok(idx) =
+-            fwnode.property_match_string(c_str!("compatible"), c_str!("test,rust-device"))
+-        {
++        if let Ok(idx) = fwnode.property_match_string(c"compatible", c"test,rust-device") {
+             dev_info!(dev, "matched compatible string idx = {}\n", idx);
+         }
+ 
+-        let name = c_str!("compatible");
++        let name = c"compatible";
+         let prop = fwnode.property_read::<CString>(name).required_by(dev)?;
+         dev_info!(dev, "'{name}'='{prop:?}'\n");
+ 
+-        let name = c_str!("test,bool-prop");
+-        let prop = fwnode.property_read_bool(c_str!("test,bool-prop"));
++        let name = c"test,bool-prop";
++        let prop = fwnode.property_read_bool(c"test,bool-prop");
+         dev_info!(dev, "'{name}'='{prop}'\n");
+ 
+-        if fwnode.property_present(c_str!("test,u32-prop")) {
++        if fwnode.property_present(c"test,u32-prop") {
+             dev_info!(dev, "'test,u32-prop' is present\n");
+         }
+ 
+-        let name = c_str!("test,u32-optional-prop");
++        let name = c"test,u32-optional-prop";
+         let prop = fwnode.property_read::<u32>(name).or(0x12);
+         dev_info!(dev, "'{name}'='{prop:#x}' (default = 0x12)\n");
+ 
+         // A missing required property will print an error. Discard the error to
+         // prevent properties_parse from failing in that case.
+-        let name = c_str!("test,u32-required-prop");
++        let name = c"test,u32-required-prop";
+         let _ = fwnode.property_read::<u32>(name).required_by(dev);
+ 
+-        let name = c_str!("test,u32-prop");
++        let name = c"test,u32-prop";
+         let prop: u32 = fwnode.property_read(name).required_by(dev)?;
+         dev_info!(dev, "'{name}'='{prop:#x}'\n");
+ 
+-        let name = c_str!("test,i16-array");
++        let name = c"test,i16-array";
+         let prop: [i16; 4] = fwnode.property_read(name).required_by(dev)?;
+         dev_info!(dev, "'{name}'='{prop:?}'\n");
+         let len = fwnode.property_count_elem::<u16>(name)?;
+         dev_info!(dev, "'{name}' length is {len}\n");
+ 
+-        let name = c_str!("test,i16-array");
++        let name = c"test,i16-array";
+         let prop: KVec<i16> = fwnode.property_read_array_vec(name, 4)?.required_by(dev)?;
+         dev_info!(dev, "'{name}'='{prop:?}' (KVec)\n");
+ 
+         for child in fwnode.children() {
+-            let name = c_str!("test,ref-arg");
++            let name = c"test,ref-arg";
+             let nargs = NArgs::N(2);
+             let prop: FwNodeReferenceArgs = child.property_get_reference_args(name, nargs, 0)?;
+             dev_info!(dev, "'{name}'='{prop:?}'\n");
 
 -- 
 2.50.1
