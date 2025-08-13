@@ -1,219 +1,189 @@
-Return-Path: <linux-fsdevel+bounces-57644-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57645-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60B20B241BC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 08:41:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00A87B241CE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 08:45:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15A5A3B5D6E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 06:40:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 100FC3BFFF3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 06:44:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 524122D1F61;
-	Wed, 13 Aug 2025 06:40:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98C4D2D3734;
+	Wed, 13 Aug 2025 06:44:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BGLeTws4"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="vt6VckGn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F12A92D0C6E;
-	Wed, 13 Aug 2025 06:40:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E89DF2D2397;
+	Wed, 13 Aug 2025 06:44:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755067212; cv=none; b=Z+bDjCFj2230vVeWaRz8mzt0+iC03VlBA2RE/NEt54WU/xlZIMNiwCtzVhRu7OUsmqsSfRP6LTRxIx9wrSP2SgCtqG5GfWGW1uLs57vFC1M9tMEvssncxoRMtKSGAgeLf0cKgr48hFYP6WyIseDV+fra5BlbS6KwrhQm2AMqj0U=
+	t=1755067487; cv=none; b=RzY8CcZHBdqH5x3KwZTb8S3DtNRPn6zJFsRr6xnQQpjMQ4X2maxuzhT8H9eAzIO1giOFFJz+y5OcrfBDFjgN8JrjTu1r+sQ3GxtYmUYk72PrR54y5A42GwI1tmZOiEmVePZdQSaxemKizJrI8R7b5AayzUZtp/MqzE09zeEFmGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755067212; c=relaxed/simple;
-	bh=5BvG7TLfJ8iuSqZ7FTN6hKQa9IId382nRM+tCTRJdvY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aon2BOH1ZLBOJ7xSyPSHOwHwuQK1Lr/csenV15TtZVM2wXYMs3bQAxdFbEc28CaMBJxcxovxDPxpMaU53lZK83zXS9vm5yps1C3MpXyGaRx2x1Ys38xw9J8lMdIVjyLvcu5j9qxKBn/ltyjVM80h9C9yqcX8+IDxU5ENbiBDBTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BGLeTws4; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-af9842df867so1101869666b.1;
-        Tue, 12 Aug 2025 23:40:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755067209; x=1755672009; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CS1EFK3T+XTqUFbqX/u+OP7CHyuVknuwqvCazTFt8Ns=;
-        b=BGLeTws4FOx58qrqzr99ePzqH0kG8hSImIBL4snRJ/VY1f99BWMp9tGCcTGfRLNeN6
-         41E4XCZjvleFCmIT1lvKEw9zqBwdIZbkf1BF5ApskbYolNLo7JM9ZAYicD2sCVfJsACB
-         VELMJWEkWQGH2DR+H85U2jQ5cTCLBTijY/aD6808u+PETUIkxcEJJdWDPvVu6lgEpwIf
-         fSjJrE3Vy/Kj9f9OAKaTxEr1kuQq1j3QVh93K8Yq/YXHQnbZ2feulmq3pGmiiDvT6a+b
-         2T2X4w7fwNMm1tN7tCEV091LG/WSZtZrXO5etIUaAmv//QX96hIeKORBxpPNmJBRhoKV
-         qFYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755067209; x=1755672009;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CS1EFK3T+XTqUFbqX/u+OP7CHyuVknuwqvCazTFt8Ns=;
-        b=AUVAxT3rjBNvD79M0wTLtLq7kVQUdT6OVHJ2my4WKd1yQhOq6UZO8LCOaFExSLUQXR
-         vQmoR8jcnumhJsUL9tyN7un4KyHRCkoIPBys/dbwgntpDQtqX2PCAF+2BmZIQMaovyQI
-         kUxriMCKUlY9L/y+ZYu0VZsDaiS5DYT/OpduXMZnPMqk2W70WkHEeSt7Lc3/jPj/qOWj
-         IdlDJOZLlOCIS+3D/fzccg1t4NKKHUTF/p2WBzCIOwfKOgpKal9tM1vouP5Yu4K9cjf8
-         USzfqkwtbjZ8nEkvmBsRRFZ5iB8ZM/PlXIUI42oVY2agRJdJBpxTNY2xxj6f2aWPXAuQ
-         j/ZA==
-X-Forwarded-Encrypted: i=1; AJvYcCUcl2lda7lUyRA9XXnB2ou5gSbrc3BA2Wv+3wpUg1rB1L2kXMfIkZJYB3MIff9imlhDbVp7CnT4//2TDR6l@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8CcTsqPZqDJCy6Zh9KigOdrD6hTKt0//c4P0fuBX1oM9H5uWy
-	XVkMkkn3KqT4i9go04j6dAqmKqGibT9GXisrzevlvsB/Mhf1R4/WfKLQmZVKvrY/AyKDnofKIyq
-	Nqg5gPXvpFz9w1c+FS0pYfEoOdO9hb+k=
-X-Gm-Gg: ASbGncvf4ot03N7mSYpA/H/PdNgimIP4/D9tF2tTmrOEwN79rCQUVLqGItelPKtgPNR
-	bA0OdSYl6qUvlykj/Z7PKjSugpJ/xPo37pZ59LfSDKnXYbRtmWAheFyx8JbsVdNIYcfpkdOf/un
-	Kvudxky+ZtiVW+z+oYa5wJfVKQRrdph1pfa4D8KDzwT5wM2W5HnS/Ep5qWne54pdBXEdkGiYwXc
-	T0hdj0qLqyyPeezlw==
-X-Google-Smtp-Source: AGHT+IEg8eiuQgi8N/UxodFjhpFiZEEdB6fWZ2YPVe56UkNDsZ/q6MylhYStMbaZ8T7FuipZTIIjx6toVt6Y48mr3bw=
-X-Received: by 2002:a17:907:3f1b:b0:af9:7c1c:b4ce with SMTP id
- a640c23a62f3a-afca4e470ffmr192926666b.39.1755067209125; Tue, 12 Aug 2025
- 23:40:09 -0700 (PDT)
+	s=arc-20240116; t=1755067487; c=relaxed/simple;
+	bh=bquKFG0kbBHJUv82BQCZOUnkm2velApg2/ANEduHk8Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TsBYi47RM2dIaJiEGr4coIsATYTSPfCVkQTIKylt3iFNdzgt8+AHJnJ3AKYd64SDqv3qWC43EHT5EK74zI8pzPyT+JvPs3qkQYJfm1AlGfQtkRLsGaWJm6qA30BDa076BoxpSMw6G+/qutpOlX1t3CG+MK2gQ+ECuM9VEjuzQBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=vt6VckGn; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=0SNIdZiTJR/nPW1SdNBX7/DJYyYBUtTTIadH/4Y1HCg=; b=vt6VckGnfO/bRRiyFxmXG9ogQn
+	sU3C5xi4iIp5tuRc34S9kxl5tNaRl9AtTgEm+7SWGAGEbW4/p/dK1U9ns6ca+6XQpjKnsL6WwqfPv
+	IiWYMQMqYj6y3NQs1sn1zJub+2HYiOP4yyFS8U9o0DSMHmZUwO0/Xd42zILkkvfEL7P/0vayh8GHw
+	tQcul4hTNmy+uZj/vdV/WA6o58XjgJCGKYJTITnQenOcJRPIwOFEIqfpTy/8WEpgr1Hp+0+EilJ92
+	68d+GTcpetaDTVjn8KbX7NpVPzyNwIFk0u7npkiQcDSDEbOy7Xsl3S+yIvv1gjeukl5q9naab7Bqn
+	xPYjpGFw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1um5Dr-00000006iOl-1FbN;
+	Wed, 13 Aug 2025 06:44:31 +0000
+Date: Wed, 13 Aug 2025 07:44:31 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: NeilBrown <neil@brown.name>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	David Howells <dhowells@redhat.com>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+	Tyler Hicks <code@tyhicks.com>, Miklos Szeredi <miklos@szeredi.hu>,
+	Richard Weinberger <richard@nod.at>,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Steve French <sfrench@samba.org>,
+	Namjae Jeon <linkinjeon@kernel.org>,
+	Carlos Maiolino <cem@kernel.org>, linux-fsdevel@vger.kernel.org,
+	linux-afs@lists.infradead.org, netfs@lists.linux.dev,
+	ceph-devel@vger.kernel.org, ecryptfs@vger.kernel.org,
+	linux-um@lists.infradead.org, linux-nfs@vger.kernel.org,
+	linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/11] VFS: use global wait-queue table for
+ d_alloc_parallel()
+Message-ID: <20250813064431.GF222315@ZenIV>
+References: <20250812235228.3072318-1-neil@brown.name>
+ <20250812235228.3072318-10-neil@brown.name>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250813031647.96411-1-higuoxing@gmail.com> <CAOQ4uxg0OvDW5yJiseEOHBB2sH6Nw1iWo+CvvZ0COTGo=oYmfg@mail.gmail.com>
-In-Reply-To: <CAOQ4uxg0OvDW5yJiseEOHBB2sH6Nw1iWo+CvvZ0COTGo=oYmfg@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 13 Aug 2025 08:39:58 +0200
-X-Gm-Features: Ac12FXz4Qw46Vm-HPpPdvbK7bMIl0lwvEtSF_-usOP5jmzth9G2LxTWdW4QSknU
-Message-ID: <CAOQ4uxjJHscMEcAahVpbUDcDet7D8xa=X2rLr33femZsCy6t0A@mail.gmail.com>
-Subject: Re: [PATCH] selftests/fs/mount-notify: Fix compilation failure.
-To: Xing Guo <higuoxing@gmail.com>
-Cc: linux-kselftest@vger.kernel.org, shuah@kernel.org, jhubbard@nvidia.com, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250812235228.3072318-10-neil@brown.name>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, Aug 13, 2025 at 8:36=E2=80=AFAM Amir Goldstein <amir73il@gmail.com>=
- wrote:
->
-> On Wed, Aug 13, 2025 at 5:17=E2=80=AFAM Xing Guo <higuoxing@gmail.com> wr=
-ote:
-> >
-> > Commit c6d9775c2066 ("selftests/fs/mount-notify: build with tools inclu=
-de
-> > dir") introduces the struct __kernel_fsid_t to decouple dependency with
-> > headers_install.  The commit forgets to define a macro for __kernel_fsi=
-d_t
-> > and it will cause type re-definition issue.
-> >
-> > Signed-off-by: Xing Guo <higuoxing@gmail.com>
->
-> Thank you for fixing this!
->
-> Acked-by: Amir Goldstein <amir73il@gmail.com>
->
+On Tue, Aug 12, 2025 at 12:25:12PM +1000, NeilBrown wrote:
 
-You should probably also add:
+> +** mandatory**
+> +
+> +d_alloc_parallel() no longer requires a waitqueue_head.  It uses one
+> +from an internal table when needed.
 
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Closes: https://lore.kernel.org/oe-lkp/202508110628.65069d92-lkp@intel.com
+Misleading, IMO - that sounds like "giving it a wq is optional, it will
+pick one if needed" when reality is "calling conventions have changed,
+no more passing it a waitqueue at all".
 
-Thanks,
-Amir,
+> +#define	PAR_LOOKUP_WQ_BITS	8
+> +#define PAR_LOOKUP_WQS (1 << PAR_LOOKUP_WQ_BITS)
+> +static wait_queue_head_t par_wait_table[PAR_LOOKUP_WQS] __cacheline_aligned;
 
-> > ---
-> >  .../mount-notify/mount-notify_test.c           | 17 ++++++++---------
-> >  .../mount-notify/mount-notify_test_ns.c        | 18 ++++++++----------
-> >  2 files changed, 16 insertions(+), 19 deletions(-)
-> >
-> > diff --git a/tools/testing/selftests/filesystems/mount-notify/mount-not=
-ify_test.c b/tools/testing/selftests/filesystems/mount-notify/mount-notify_=
-test.c
-> > index 63ce708d93ed..e4b7c2b457ee 100644
-> > --- a/tools/testing/selftests/filesystems/mount-notify/mount-notify_tes=
-t.c
-> > +++ b/tools/testing/selftests/filesystems/mount-notify/mount-notify_tes=
-t.c
-> > @@ -2,6 +2,13 @@
-> >  // Copyright (c) 2025 Miklos Szeredi <miklos@szeredi.hu>
-> >
-> >  #define _GNU_SOURCE
-> > +
-> > +// Needed for linux/fanotify.h
-> > +typedef struct {
-> > +       int     val[2];
-> > +} __kernel_fsid_t;
-> > +#define __kernel_fsid_t __kernel_fsid_t
-> > +
-> >  #include <fcntl.h>
-> >  #include <sched.h>
-> >  #include <stdio.h>
-> > @@ -10,20 +17,12 @@
-> >  #include <sys/mount.h>
-> >  #include <unistd.h>
-> >  #include <sys/syscall.h>
-> > +#include <sys/fanotify.h>
-> >
-> >  #include "../../kselftest_harness.h"
-> >  #include "../statmount/statmount.h"
-> >  #include "../utils.h"
-> >
-> > -// Needed for linux/fanotify.h
-> > -#ifndef __kernel_fsid_t
-> > -typedef struct {
-> > -       int     val[2];
-> > -} __kernel_fsid_t;
-> > -#endif
-> > -
-> > -#include <sys/fanotify.h>
-> > -
-> >  static const char root_mntpoint_templ[] =3D "/tmp/mount-notify_test_ro=
-ot.XXXXXX";
-> >
-> >  static const int mark_cmds[] =3D {
-> > diff --git a/tools/testing/selftests/filesystems/mount-notify/mount-not=
-ify_test_ns.c b/tools/testing/selftests/filesystems/mount-notify/mount-noti=
-fy_test_ns.c
-> > index 090a5ca65004..9f57ca46e3af 100644
-> > --- a/tools/testing/selftests/filesystems/mount-notify/mount-notify_tes=
-t_ns.c
-> > +++ b/tools/testing/selftests/filesystems/mount-notify/mount-notify_tes=
-t_ns.c
-> > @@ -2,6 +2,13 @@
-> >  // Copyright (c) 2025 Miklos Szeredi <miklos@szeredi.hu>
-> >
-> >  #define _GNU_SOURCE
-> > +
-> > +// Needed for linux/fanotify.h
-> > +typedef struct {
-> > +       int     val[2];
-> > +} __kernel_fsid_t;
-> > +#define __kernel_fsid_t __kernel_fsid_t
-> > +
-> >  #include <fcntl.h>
-> >  #include <sched.h>
-> >  #include <stdio.h>
-> > @@ -10,21 +17,12 @@
-> >  #include <sys/mount.h>
-> >  #include <unistd.h>
-> >  #include <sys/syscall.h>
-> > +#include <sys/fanotify.h>
-> >
-> >  #include "../../kselftest_harness.h"
-> > -#include "../../pidfd/pidfd.h"
-> >  #include "../statmount/statmount.h"
-> >  #include "../utils.h"
-> >
-> > -// Needed for linux/fanotify.h
-> > -#ifndef __kernel_fsid_t
-> > -typedef struct {
-> > -       int     val[2];
-> > -} __kernel_fsid_t;
-> > -#endif
-> > -
-> > -#include <sys/fanotify.h>
-> > -
-> >  static const char root_mntpoint_templ[] =3D "/tmp/mount-notify_test_ro=
-ot.XXXXXX";
-> >
-> >  static const int mark_types[] =3D {
-> > --
-> > 2.50.1
-> >
+I wonder how hot these cachelines will be...
+
+> +static int __init par_wait_init(void)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < PAR_LOOKUP_WQS; i++)
+> +		init_waitqueue_head(&par_wait_table[i]);
+> +	return 0;
+> +}
+> +fs_initcall(par_wait_init);
+
+Let's not open _that_ can of worms; just call it from dcache_init().
+
+> +static inline void d_wake_waiters(struct wait_queue_head *d_wait,
+> +				  struct dentry *dentry)
+> +{
+> +	/* ->d_wait is only set if some thread is actually waiting.
+> +	 * If we find it is NULL - the common case - then there was no
+> +	 * contention and there are no waiters to be woken.
+> +	 */
+> +	if (d_wait)
+> +		__wake_up(d_wait, TASK_NORMAL, 0, dentry);
+
+Might be worth a note re "this is wake_up_all(), except that key is dentry
+rather than NULL" - or a helper in wait.h to that effect, for that matter.
+I see several other places where we have the same thing (do_notify_pidfd(),
+nfs4_callback_notify_lock(), etc.), so...
+
+
+> +		struct wait_queue_head *wq;
+> +		if (!dentry->d_wait)
+> +			dentry->d_wait = &par_wait_table[hash_ptr(dentry,
+> +								  PAR_LOOKUP_WQ_BITS)];
+> +		wq = dentry->d_wait;
+
+Yecchhh...  Cosmetic change: take
+	&par_wait_table[hash_ptr(dentry, PAR_LOOKUP_WQ_BITS)];
+into an inlined helper, please.
+
+BTW, while we are at it - one change I have for that function is
+(in the current form)
+static bool d_wait_lookup(struct dentry *dentry,
+			  struct dentry *parent,
+			  const struct qstr *name)
+{
+	bool valid = true;
+	spin_lock(&dentry->d_lock);
+        if (d_in_lookup(dentry)) {
+		DECLARE_WAITQUEUE(wait, current);
+		add_wait_queue(dentry->d_wait, &wait);
+		do {   
+			set_current_state(TASK_UNINTERRUPTIBLE);
+			spin_unlock(&dentry->d_lock);
+			schedule();
+			spin_lock(&dentry->d_lock);
+		} while (d_in_lookup(dentry));
+	}
+	/*
+	 * it's not in-lookup anymore; in principle the caller should repeat
+	 * everything from dcache lookup, but it's likely to be what
+	 * d_lookup() would've found anyway.  If so, they can use it as-is.
+	 */
+	if (unlikely(dentry->d_name.hash != name->hash ||
+		     dentry->d_parent != parent ||
+		     d_unhashed(dentry) ||
+		     !d_same_name(dentry, parent, name)))
+		valid = false;
+	spin_unlock(&dentry->d_lock);
+	return valid;
+}
+
+with
+	if (unlikely(d_wait_lookup(dentry, parent, name))) {
+                dput(dentry);
+		goto retry;
+	}
+	dput(new);
+	return dentry;
+in the caller (d_alloc_parallel()).  Caller easier to follow and fewer functions
+that are not neutral wrt ->d_lock...  I'm not suggesting to fold that with
+yours - just a heads-up on needing to coordinate.
+
+Anyway, modulo fs_initcall() thing it's all cosmetical; I certainly like
+the simplified callers, if nothing else.
+
+That's another patch I'd like to see pulled in front of the queue.
 
