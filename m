@@ -1,340 +1,277 @@
-Return-Path: <linux-fsdevel+bounces-57657-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57658-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50065B24399
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 10:03:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05C3BB243BC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 10:08:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D9953B1FA8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 08:00:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A31C5189DBCE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 08:05:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DBE127FB15;
-	Wed, 13 Aug 2025 08:00:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DA9E2EA151;
+	Wed, 13 Aug 2025 08:04:42 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC1651448E3;
-	Wed, 13 Aug 2025 08:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from neil.brown.name (neil.brown.name [103.29.64.221])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F438286433;
+	Wed, 13 Aug 2025 08:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755072032; cv=none; b=eYLFRB2Ko9FFlAcBs91j980tKZLrT8L6K5dKQldXbVsArohPPP+XrTyPeysJVImWMaAz3R4s6L2xeENJDiVM0BcQ7Je77Ozz5+DjRD1rKXGp9KoFINSeDmK7kPs9wmZiXcp5VLlaMyGMBLCePTuex6X3iWhAZZVDyniny5BfG/Y=
+	t=1755072282; cv=none; b=mziKFNgfCz0jmUUSsOjh5TXzjHth+UlsqcutfpmGLhrmbAutSAuoEEoLs3fQmRPxK7w6HzYab4OE7N5byqxC6Yf0H5NxvsKg33k6t6LUCsQRxOHTLs0mkIL8HcGzUbZg7fjTGMU0ejVi+TRnDYBdYDT+ghoUOMsFYpKzxchn6Gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755072032; c=relaxed/simple;
-	bh=yVcmQd4KO5KVyZacgaY7/fWYZ34Yd7oXBi80xI4fIDg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dCJSRrfXDpInDsFWajN7rmNiKOVFQ24JIvpi+CwOV0Jp3hwWnpxmFR6UTEKnnbZSEz+1asLqIta+z3I3IOLv67f1uVIgUcCyCGwKwGq7KD6t4gNAmn81fant2mD8ulZJ+IxLG6vxOeZaSVhbz+3EEy9SiNL5/weRQMbaYd9veLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5470C113E;
-	Wed, 13 Aug 2025 01:00:15 -0700 (PDT)
-Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7AFE63F5A1;
-	Wed, 13 Aug 2025 01:00:19 -0700 (PDT)
-Date: Wed, 13 Aug 2025 10:00:04 +0200
-From: Beata Michalska <beata.michalska@arm.com>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Andreas Hindborg <a.hindborg@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Janne Grunau <j@jannau.net>
-Subject: Re: [PATCH v2 3/3] rust: xarray: add `insert` and `reserve`
-Message-ID: <aJxGBHbcCdHjTo-B@arm.com>
-References: <20250713-xarray-insert-reserve-v2-0-b939645808a2@gmail.com>
- <20250713-xarray-insert-reserve-v2-3-b939645808a2@gmail.com>
- <aJnojv8AWj2isnit@arm.com>
- <CAJ-ks9=BU2jfT-MPzxDcXrZj7uQkKbVm6WhzGiJsM_628b2kmg@mail.gmail.com>
- <aJn_dtWDcoscYpgV@arm.com>
- <CAJ-ks9kECSobk0NX6SXn1US7My028POc=nLmw0AHZGiRUstP2g@mail.gmail.com>
+	s=arc-20240116; t=1755072282; c=relaxed/simple;
+	bh=FhzdVlboS0uvBRS2ec6VoJqaPXvCKsIFRA8PZ0M7YZc=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=VEpT6kl/CeIHjNET535VUxGOgrFM+XfcQnS5QZW2cO86Pdq7Itc92dsdtXEvaLJ4pZE59ztd+kYS5vZWhc12k3XGTVf1Ae9MJZaatIWxcQBlZYO6KCNM5O5d8J4/nsMdKC5qmH9WIOoo9Awkh7GI+/4r68IyDKnyhLNlPiYfYz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
+Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
+	by neil.brown.name with esmtp (Exim 4.95)
+	(envelope-from <mr@neil.brown.name>)
+	id 1um6TH-005b1O-BY;
+	Wed, 13 Aug 2025 08:04:33 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJ-ks9kECSobk0NX6SXn1US7My028POc=nLmw0AHZGiRUstP2g@mail.gmail.com>
+From: "NeilBrown" <neil@brown.name>
+To: "Al Viro" <viro@zeniv.linux.org.uk>
+Cc: "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
+ "David Howells" <dhowells@redhat.com>,
+ "Marc Dionne" <marc.dionne@auristor.com>, "Xiubo Li" <xiubli@redhat.com>,
+ "Ilya Dryomov" <idryomov@gmail.com>, "Tyler Hicks" <code@tyhicks.com>,
+ "Miklos Szeredi" <miklos@szeredi.hu>, "Richard Weinberger" <richard@nod.at>,
+ "Anton Ivanov" <anton.ivanov@cambridgegreys.com>,
+ "Johannes Berg" <johannes@sipsolutions.net>,
+ "Trond Myklebust" <trondmy@kernel.org>, "Anna Schumaker" <anna@kernel.org>,
+ "Chuck Lever" <chuck.lever@oracle.com>, "Jeff Layton" <jlayton@kernel.org>,
+ "Amir Goldstein" <amir73il@gmail.com>, "Steve French" <sfrench@samba.org>,
+ "Namjae Jeon" <linkinjeon@kernel.org>, "Carlos Maiolino" <cem@kernel.org>,
+ linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
+ netfs@lists.linux.dev, ceph-devel@vger.kernel.org, ecryptfs@vger.kernel.org,
+ linux-um@lists.infradead.org, linux-nfs@vger.kernel.org,
+ linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+ linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 05/11] VFS: add rename_lookup()
+In-reply-to: <20250813043531.GB222315@ZenIV>
+References: <>, <20250813043531.GB222315@ZenIV>
+Date: Wed, 13 Aug 2025 18:04:32 +1000
+Message-id: <175507227245.2234665.4311084523419609794@noble.neil.brown.name>
 
-On Mon, Aug 11, 2025 at 02:02:59PM -0400, Tamir Duberstein wrote:
-> On Mon, Aug 11, 2025 at 10:35 AM Beata Michalska
-> <beata.michalska@arm.com> wrote:
-> >
-> > On Mon, Aug 11, 2025 at 09:09:56AM -0400, Tamir Duberstein wrote:
-> > > On Mon, Aug 11, 2025 at 8:57 AM Beata Michalska <beata.michalska@arm.com> wrote:
-> > > >
-> > > > Hi Tamir,
-> > > >
-> > > > Apologies for such a late drop.
-> > >
-> > > Hi Beata, no worries, thanks for your review.
-> > >
-> > > >
-> > > > On Sun, Jul 13, 2025 at 08:05:49AM -0400, Tamir Duberstein wrote:
-> > [snip] ...
-> > > > > +/// A reserved slot in an array.
-> > > > > +///
-> > > > > +/// The slot is released when the reservation goes out of scope.
-> > > > > +///
-> > > > > +/// Note that the array lock *must not* be held when the reservation is filled or dropped as this
-> > > > > +/// will lead to deadlock. [`Reservation::fill_locked`] and [`Reservation::release_locked`] can be
-> > > > > +/// used in context where the array lock is held.
-> > > > > +#[must_use = "the reservation is released immediately when the reservation is unused"]
-> > > > > +pub struct Reservation<'a, T: ForeignOwnable> {
-> > > > > +    xa: &'a XArray<T>,
-> > > > > +    index: usize,
-> > > > > +}
-> > > > > +
-> > [snip] ...
-> > > > > +
-> > > > > +impl<T: ForeignOwnable> Drop for Reservation<'_, T> {
-> > > > > +    fn drop(&mut self) {
-> > > > > +        // NB: Errors here are possible since `Guard::store` does not honor reservations.
-> > > > > +        let _: Result = self.release_inner(None);
-> > > > This seems bit risky as one can drop the reservation while still holding the
-> > > > lock?
-> > >
-> > > Yes, that's true. The only way to avoid it would be to make the
-> > > reservation borrowed from the guard, but that would exclude usage
-> > > patterns where the caller wants to reserve and fulfill in different
-> > > critical sections.
-> > >
-> > > Do you have a specific suggestion?
-> > I guess we could try with locked vs unlocked `Reservation' types, which would
-> > have different Drop implementations, and providing a way to convert locked into
-> > unlocked. Just thinking out loud, so no, nothing specific here.
-> > At very least we could add 'rust_helper_spin_assert_is_held() ?'
-> 
-> I don't see how having two types of reservations would help.
-> 
-> Can you help me understand how you'd use `rust_helper_spin_assert_is_held` here?
+On Wed, 13 Aug 2025, Al Viro wrote:
+> On Tue, Aug 12, 2025 at 12:25:08PM +1000, NeilBrown wrote:
+> > rename_lookup() combines lookup and locking for a rename.
+> >=20
+> > Two names - new_last and old_last - are added to struct renamedata so it
+> > can be passed to rename_lookup() to have the old and new dentries filled
+> > in.
+> >=20
+> > __rename_lookup() in vfs-internal and assumes that the names are already
+> > hashed and skips permission checking.  This is appropriate for use after
+> > filename_parentat().
+> >=20
+> > rename_lookup_noperm() does hash the name but avoids permission
+> > checking.  This will be used by debugfs.
+>=20
+> WTF would debugfs do anything of that sort?  Explain.  Unlike vfs_rename(),
+> there we
+> 	* are given the source dentry
+> 	* are limited to pure name changes - same-directory only and
+> target must not exist.
+> 	* do not take ->s_vfs_rename_mutex
+> 	...
 
-Probably smth like:
+Sure, debugfs_change_name() could have a simplified rename_lookup()
+which doesn't just skip the perm checking but also skips other
+s_vfs_rename_mutex etc.  But is there any value in creating a neutered
+interface just because there is a case where all the functionality isn't
+needed?
 
---- a/rust/kernel/xarray.rs
-+++ b/rust/kernel/xarray.rs
-@@ -188,7 +188,12 @@ fn with_guard<F, U>(&self, guard: Option<&mut Guard<'_, T>>, f: F) -> U
-         F: FnOnce(&mut Guard<'_, T>) -> U,
-     {
-         match guard {
--            None => f(&mut self.lock()),
-+            None => {
-+                unsafe {
-+                    bindings::spin_assert_not_held(&(*self.xa.get()).xa_lock as *const _ as *mut _);
-+                }
-+                f(&mut self.lock())
-+            }
-             Some(guard) => {
-                 assert_eq!(guard.xa.xa.get(), self.xa.get());
-                 f(guard)
-
-but that requires adding the helper for 'lockdep_assert_not_held'.
-That said, it is already too late as we will hit deadlock anyway.
-I would have to ponder on that one a bit more to come up with smth more sensible.
-> 
-> > >
-> > > > > +    }
-> > > > >  }
-> > > > >
-> > > > >  // SAFETY: `XArray<T>` has no shared mutable state so it is `Send` iff `T` is `Send`.
-> > > > > @@ -282,3 +617,136 @@ unsafe impl<T: ForeignOwnable + Send> Send for XArray<T> {}
-> > > > >  // SAFETY: `XArray<T>` serialises the interior mutability it provides so it is `Sync` iff `T` is
-> > > > >  // `Send`.
-> > > > >  unsafe impl<T: ForeignOwnable + Send> Sync for XArray<T> {}
-> > > > > +
-> > > > > +#[macros::kunit_tests(rust_xarray_kunit)]
-> > > > > +mod tests {
-> > > > > +    use super::*;
-> > > > > +    use pin_init::stack_pin_init;
-> > > > > +
-> > > > > +    fn new_kbox<T>(value: T) -> Result<KBox<T>> {
-> > > > > +        KBox::new(value, GFP_KERNEL).map_err(Into::into)
-> > > > I believe this should be GFP_ATOMIC as it is being called while holding the xa
-> > > > lock.
-> > >
-> > > I'm not sure what you mean - this function can be called in any
-> > > context, and besides: it is test-only code.
-> > Actually it cannot: allocations using GFP_KERNEL can sleep so should not be
-> > called from atomic context, which is what is happening in the test cases.
-> 
-> I see. There are no threads involved in these tests, so I think it is
-> just fine to sleep with this particular lock held. Can you help me
-> understand why this is incorrect?
-Well, you won't probably see any issues with your tests, but that just seems
-like a bad practice to start with.
-Within the test, this is being called while in atomic context, and this simply
-violates the rule of not sleeping while holding a spinlock.
-The sleep might be triggered by memory reclaim which might kick in when using
-'GFP_KERNEL' flag. Which is why non-sleeping allocation should be used through
-'GFP_ATOMIC' or 'GFP_NOWAIT'. So it's either changing the flag or moving the
-allocation outside of the atomic section.
+Or maybe I misunderstand your problem with rename_lookup_noperm().
 
 
----
-I will be off for next week so apologies in any delays in replying.
+>=20
+> > If either old_dentry or new_dentry are not NULL, the corresponding
+> > "last" is ignored and the dentry is used as-is.  This provides similar
+> > functionality to dentry_lookup_continue().  After locks are obtained we
+> > check that the parent is still correct.  If old_parent was not given,
+> > then it is set to the parent of old_dentry which was locked.  new_parent
+> > must never be NULL.
+>=20
+> That screams "bad API" to me...  Again, I want to see the users; you are
+> asking to accept a semantics that smells really odd, and it's impossible
+> to review without seeing the users.
 
-BR
-Beata
-> 
-> >
+There is a git tree you could pull.....
+
+My API effectively supports both lock_rename() users and
+lock_rename_child() users.  Maybe you want to preserve the two different
+APIs.  I'd rather avoid the code duplication.
+
+>=20
+> > On success new references are geld on old_dentry, new_dentry and old_pare=
+nt.
+> >=20
+> > done_rename_lookup() unlocks and drops those three references.
+> >=20
+> > No __free() support is provided as done_rename_lookup() cannot be safely
+> > called after rename_lookup() returns an error.
+> >=20
+> > Signed-off-by: NeilBrown <neil@brown.name>
 > > ---
-> > BR
-> > Beata
-> > >
-> > > >
-> > > > Otherwise:
-> > > >
-> > > > Tested-By: Beata Michalska <beata.michalska@arm.com>
-> > >
-> > > Thanks!
-> > > Tamir
-> > >
-> > > >
-> > > > ---
-> > > > BR
-> > > > Beata
-> > > > > +    }
-> > > > > +
-> > > > > +    #[test]
-> > > > > +    fn test_alloc_kind_alloc() -> Result {
-> > > > > +        test_alloc_kind(AllocKind::Alloc, 0)
-> > > > > +    }
-> > > > > +
-> > > > > +    #[test]
-> > > > > +    fn test_alloc_kind_alloc1() -> Result {
-> > > > > +        test_alloc_kind(AllocKind::Alloc1, 1)
-> > > > > +    }
-> > > > > +
-> > > > > +    fn test_alloc_kind(kind: AllocKind, expected_index: usize) -> Result {
-> > > > > +        stack_pin_init!(let xa = XArray::new(kind));
-> > > > > +        let mut guard = xa.lock();
-> > > > > +
-> > > > > +        let reservation = guard.reserve_limit(.., GFP_KERNEL)?;
-> > > > > +        assert_eq!(reservation.index(), expected_index);
-> > > > > +        reservation.release_locked(&mut guard)?;
-> > > > > +
-> > > > > +        let insertion = guard.insert_limit(.., new_kbox(0x1337)?, GFP_KERNEL);
-> > > > > +        assert!(insertion.is_ok());
-> > > > > +        let insertion_index = insertion.unwrap();
-> > > > > +        assert_eq!(insertion_index, expected_index);
-> > > > > +
-> > > > > +        Ok(())
-> > > > > +    }
-> > > > > +
-> > > > > +    #[test]
-> > > > > +    fn test_insert_and_reserve_interaction() -> Result {
-> > > > > +        const IDX: usize = 0x1337;
-> > > > > +
-> > > > > +        fn insert<T: ForeignOwnable>(
-> > > > > +            guard: &mut Guard<'_, T>,
-> > > > > +            value: T,
-> > > > > +        ) -> Result<(), StoreError<T>> {
-> > > > > +            guard.insert(IDX, value, GFP_KERNEL)
-> > > > > +        }
-> > > > > +
-> > > > > +        fn reserve<'a, T: ForeignOwnable>(guard: &mut Guard<'a, T>) -> Result<Reservation<'a, T>> {
-> > > > > +            guard.reserve(IDX, GFP_KERNEL)
-> > > > > +        }
-> > > > > +
-> > > > > +        #[track_caller]
-> > > > > +        fn check_not_vacant<'a>(guard: &mut Guard<'a, KBox<usize>>) -> Result {
-> > > > > +            // Insertion fails.
-> > > > > +            {
-> > > > > +                let beef = new_kbox(0xbeef)?;
-> > > > > +                let ret = insert(guard, beef);
-> > > > > +                assert!(ret.is_err());
-> > > > > +                let StoreError { error, value } = ret.unwrap_err();
-> > > > > +                assert_eq!(error, EBUSY);
-> > > > > +                assert_eq!(*value, 0xbeef);
-> > > > > +            }
-> > > > > +
-> > > > > +            // Reservation fails.
-> > > > > +            {
-> > > > > +                let ret = reserve(guard);
-> > > > > +                assert!(ret.is_err());
-> > > > > +                assert_eq!(ret.unwrap_err(), EBUSY);
-> > > > > +            }
-> > > > > +
-> > > > > +            Ok(())
-> > > > > +        }
-> > > > > +
-> > > > > +        stack_pin_init!(let xa = XArray::new(Default::default()));
-> > > > > +        let mut guard = xa.lock();
-> > > > > +
-> > > > > +        // Vacant.
-> > > > > +        assert_eq!(guard.get(IDX), None);
-> > > > > +
-> > > > > +        // Reservation succeeds.
-> > > > > +        let reservation = {
-> > > > > +            let ret = reserve(&mut guard);
-> > > > > +            assert!(ret.is_ok());
-> > > > > +            ret.unwrap()
-> > > > > +        };
-> > > > > +
-> > > > > +        // Reserved presents as vacant.
-> > > > > +        assert_eq!(guard.get(IDX), None);
-> > > > > +
-> > > > > +        check_not_vacant(&mut guard)?;
-> > > > > +
-> > > > > +        // Release reservation.
-> > > > > +        {
-> > > > > +            let ret = reservation.release_locked(&mut guard);
-> > > > > +            assert!(ret.is_ok());
-> > > > > +            let () = ret.unwrap();
-> > > > > +        }
-> > > > > +
-> > > > > +        // Vacant again.
-> > > > > +        assert_eq!(guard.get(IDX), None);
-> > > > > +
-> > > > > +        // Insert succeeds.
-> > > > > +        {
-> > > > > +            let dead = new_kbox(0xdead)?;
-> > > > > +            let ret = insert(&mut guard, dead);
-> > > > > +            assert!(ret.is_ok());
-> > > > > +            let () = ret.unwrap();
-> > > > > +        }
-> > > > > +
-> > > > > +        check_not_vacant(&mut guard)?;
-> > > > > +
-> > > > > +        // Remove.
-> > > > > +        assert_eq!(guard.remove(IDX).as_deref(), Some(&0xdead));
-> > > > > +
-> > > > > +        // Reserve and fill.
-> > > > > +        {
-> > > > > +            let beef = new_kbox(0xbeef)?;
-> > > > > +            let ret = reserve(&mut guard);
-> > > > > +            assert!(ret.is_ok());
-> > > > > +            let reservation = ret.unwrap();
-> > > > > +            let ret = reservation.fill_locked(&mut guard, beef);
-> > > > > +            assert!(ret.is_ok());
-> > > > > +            let () = ret.unwrap();
-> > > > > +        };
-> > > > > +
-> > > > > +        check_not_vacant(&mut guard)?;
-> > > > > +
-> > > > > +        // Remove.
-> > > > > +        assert_eq!(guard.remove(IDX).as_deref(), Some(&0xbeef));
-> > > > > +
-> > > > > +        Ok(())
-> > > > > +    }
-> > > > > +}
-> > > > >
-> > > > > --
-> > > > > 2.50.1
-> > > > >
-> > > > >
-> > >
+> >  fs/namei.c            | 318 ++++++++++++++++++++++++++++++++++--------
+> >  include/linux/fs.h    |   4 +
+> >  include/linux/namei.h |   3 +
+> >  3 files changed, 263 insertions(+), 62 deletions(-)
+> >=20
+> > diff --git a/fs/namei.c b/fs/namei.c
+> > index df21b6fa5a0e..cead810d53c6 100644
+> > --- a/fs/namei.c
+> > +++ b/fs/namei.c
+> > @@ -3507,6 +3507,233 @@ void unlock_rename(struct dentry *p1, struct dent=
+ry *p2)
+> >  }
+> >  EXPORT_SYMBOL(unlock_rename);
+> > =20
+> > +/**
+> > + * __rename_lookup - lookup and lock names for rename
+> > + * @rd:           rename data containing relevant details
+> > + * @lookup_flags: extra flags to pass to ->lookup (e.g. LOOKUP_REVAL,
+> > + *                LOOKUP_NO_SYMLINKS etc).
+> > + *
+> > + * Optionally look up two names and ensure locks are in place for
+> > + * rename.
+> > + * Normally @rd.old_dentry and @rd.new_dentry are %NULL and the
+> > + * old and new directories and last names are given in @rd.  In this
+> > + * case the names are looked up with appropriate locking and the
+> > + * results stored in @rd.old_dentry and @rd.new_dentry.
+> > + *
+> > + * If either are not NULL, then the corresponding lookup is avoided but
+> > + * the required locks are still taken.  In this case @rd.old_parent may
+> > + * be %NULL, otherwise @rd.old_dentry must still have @rd.old_parent as
+> > + * its d_parent after the locks are obtained.  @rd.new_parent must
+> > + * always be non-NULL, and must always be the correct parent after
+> > + * locking.
+> > + *
+> > + * On success a reference is held on @rd.old_dentry, @rd.new_dentry,
+> > + * and @rd.old_parent whether they were originally %NULL or not.  These
+> > + * references are dropped by done_rename_lookup().  @rd.new_parent
+> > + * must always be non-NULL and no extra reference is taken.
+> > + *
+> > + * The passed in qstrs must have the hash calculated, and no permission
+> > + * checking is performed.
+> > + *
+> > + * Returns: zero or an error.
+> > + */
+> > +static int
+> > +__rename_lookup(struct renamedata *rd, int lookup_flags)
+> > +{
+> > +	struct dentry *p;
+> > +	struct dentry *d1, *d2;
+> > +	int target_flags =3D LOOKUP_RENAME_TARGET | LOOKUP_CREATE;
+> > +	int err;
+> > +
+> > +	if (rd->flags & RENAME_EXCHANGE)
+> > +		target_flags =3D 0;
+> > +	if (rd->flags & RENAME_NOREPLACE)
+> > +		target_flags |=3D LOOKUP_EXCL;
+> > +
+> > +	if (rd->old_dentry) {
+> > +		/* Already have the dentry - need to be sure to lock the correct paren=
+t */
+> > +		p =3D lock_rename_child(rd->old_dentry, rd->new_parent);
+> > +		if (IS_ERR(p))
+> > +			return PTR_ERR(p);
+> > +		if (d_unhashed(rd->old_dentry) ||
+> > +		    (rd->old_parent && rd->old_parent !=3D rd->old_dentry->d_parent)) {
+> > +			/* dentry was removed, or moved and explicit parent requested */
+> > +			unlock_rename(rd->old_dentry->d_parent, rd->new_parent);
+> > +			return -EINVAL;
+> > +		}
+> > +		rd->old_parent =3D dget(rd->old_dentry->d_parent);
+> > +		d1 =3D dget(rd->old_dentry);
+> > +	} else {
+> > +		p =3D lock_rename(rd->old_parent, rd->new_parent);
+> > +		if (IS_ERR(p))
+> > +			return PTR_ERR(p);
+> > +		dget(rd->old_parent);
+> > +
+> > +		d1 =3D lookup_one_qstr_excl(&rd->old_last, rd->old_parent,
+> > +					  lookup_flags);
+> > +		if (IS_ERR(d1))
+> > +			goto out_unlock_1;
+> > +	}
+> > +	if (rd->new_dentry) {
+> > +		if (d_unhashed(rd->new_dentry) ||
+> > +		    rd->new_dentry->d_parent !=3D rd->new_parent) {
+> > +			/* new_dentry was moved or removed! */
+> > +			goto out_unlock_2;
+> > +		}
+> > +		d2 =3D dget(rd->new_dentry);
+> > +	} else {
+> > +		d2 =3D lookup_one_qstr_excl(&rd->new_last, rd->new_parent,
+> > +					  lookup_flags | target_flags);
+> > +		if (IS_ERR(d2))
+> > +			goto out_unlock_2;
+> > +	}
+> > +
+> > +	if (d1 =3D=3D p) {
+> > +		/* source is an ancestor of target */
+> > +		err =3D -EINVAL;
+> > +		goto out_unlock_3;
+> > +	}
+> > +
+> > +	if (d2 =3D=3D p) {
+> > +		/* target is an ancestor of source */
+> > +		if (rd->flags & RENAME_EXCHANGE)
+> > +			err =3D -EINVAL;
+> > +		else
+> > +			err =3D -ENOTEMPTY;
+> > +		goto out_unlock_3;
+> > +	}
+> > +
+> > +	rd->old_dentry =3D d1;
+> > +	rd->new_dentry =3D d2;
+> > +	return 0;
+> > +
+> > +out_unlock_3:
+> > +	dput(d2);
+> > +	d2 =3D ERR_PTR(err);
+> > +out_unlock_2:
+> > +	dput(d1);
+> > +	d1 =3D d2;
+> > +out_unlock_1:
+> > +	unlock_rename(rd->old_parent, rd->new_parent);
+> > +	dput(rd->old_parent);
+> > +	return PTR_ERR(d1);
+> > +}
+>=20
+> This is too fucking ugly to live, IMO.  Too many things are mixed into it.
+> I will NAK that until I get a chance to see the users of all that stuff.
+> Sorry.
+>=20
+
+Can you say more about what you think it ugly?
+
+Are you OK with combining the lookup and the locking in the one
+function?
+Are you OK with passing a 'struct rename_data' rather than a list of
+assorted args?
+Are you OK with deducing the target flags in this function, or do you
+want them explicitly passed in?
+Is it just that the function can use with lock_rename or
+lock_rename_child depending on context?
+
+???
+
+Thanks,
+NeilBrown
 
