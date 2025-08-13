@@ -1,82 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-57743-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57744-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1F99B24DFA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 17:47:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 302E1B24DFE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 17:47:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 160436220D3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 15:42:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 680793B2CDB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 15:43:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE1BF28751D;
-	Wed, 13 Aug 2025 15:40:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E7A52882C7;
+	Wed, 13 Aug 2025 15:40:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nBDS44ZV"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A6fbZ9B+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91656287245;
-	Wed, 13 Aug 2025 15:40:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBAA427C150;
+	Wed, 13 Aug 2025 15:40:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755099612; cv=none; b=jEMA/Qh1mKrB/LFyVKmynb6/4jPdbwJspP+V7GzsfdZVhb0OaBNj+/iLcIpSRizvPIGSO1qricFIxI1hHvHg6dkAEwWDBYW/Y3TuOx+9zp7HlGJSJcPXRtYwDfljadj8bpAaFVZkl/cUkKVE3H3JWuYTnaCEXccyW558MFiUxAo=
+	t=1755099614; cv=none; b=E0syqDC6NfQpmtKg/7PNwHmqg2Gxc1NYcfmdBzgziR6EAA6IhVsfLOn3wbt+t9nkoIBD7kpwgroJoLuXPbJ1nVgcM3XBCeB94cAPh5tvj7FgxCUFX9QUcsAd/2cIAUAX/WV1fGkIra0szh3kYlGSPHO0J3jZPnpaze0huJIOoJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755099612; c=relaxed/simple;
-	bh=GRf55CBaIXfcLimWiztzt2WPB2t4kstaCplsKmlIKbc=;
+	s=arc-20240116; t=1755099614; c=relaxed/simple;
+	bh=crPkoR00cXYcPvikGdstY+SXedz+0EWwi2X94sQLRp0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=CI0jWZJzCN0wYTIZfaTwqb9pMKuAKl4KtgS3Z6EdJ6lkdR2aZ2yIjrK5WSGBW979cj1c7hQo6FcrxBaFa5xn0k9759apdbokr1e6WIxtR7u0OhMqUkhLu23HuVjKEbMDaj1GrcVu36sWut7N845UVi4aY5051z5DyV3CLiZkLzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nBDS44ZV; arc=none smtp.client-ip=209.85.222.179
+	 In-Reply-To:To:Cc; b=HYG1fQujCtbceRXKCevVBI91e2dRe3Q9aUsaudp7mvM26OoujGoV01CPMAAIod+uz3O93UKxOa63hCvSQnKKUiV96NDzqYEASIoztvI09+sS03sXm/3rtfByYeEHAVUWI271OeVD13gwUrP3h8UncYzNhjgn/o066X4ORPE1iCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A6fbZ9B+; arc=none smtp.client-ip=209.85.222.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7e8248b3f1cso820957285a.0;
-        Wed, 13 Aug 2025 08:40:10 -0700 (PDT)
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7e86faa158fso2381885a.1;
+        Wed, 13 Aug 2025 08:40:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755099609; x=1755704409; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1755099612; x=1755704412; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Txy/cJf0GBJ+o0igtkYkmxWlbfspCRXzkvSHCuYjmpk=;
-        b=nBDS44ZVyWsqhl6ehnXII0K9hY8sk3YCRB5CDFMkTPtkEBksBjNhI0yn2dGRg0V/ig
-         4omm9Wun7hOyzda9IWRK2L2gKBJWRTRtCEgiMJx04ncBSHRk5DIsnVvZbNY6YhQGnnds
-         vouz0DUOIJa3LBZkTyvEzMrNuHuCXqgbKJT3HN81MOLYqX8ofih4wUg7t19nRskSDUYk
-         oHctLDwzYe/bXd6CHvkYE+l33vPtwPHMTufqbSkLtFd2mKlB6BYW9Fut/EA3SxJp0qBD
-         kiO+ksa0yUmVb/wvuyt1IksetPp3GVHN5QBNJaMZ09V/eUjwnpOOWsHRX43BY5QC6MdT
-         YIUw==
+        bh=izK/WiAPZAaZKlIcAkFE0rrz+1wIUxFG7qzyjlv/jF0=;
+        b=A6fbZ9B+mWkTKfhgQ52jktCmGH4KGjJvnbB4e/kqpbEI9jytizRDioO5NIW26PRDkO
+         0z3jyQTLfU0K/ho1pRASwLJcUrefOnv3Ilg5kiCyJw1n4D9x1hBsbnUjekYB1bPO8Wlk
+         vb23pEdMN98uFbaucwlYYcJwMyK3qFeWYklcaCPdFQx6Cz6hbqNFK7Q9nbEPKQBCCtYk
+         A1IweCB4apnzkYaIlFvAynvTCSB/vO9j1wpXcT+gIKDouVyRygoTXaKNxSl4gprCmlcs
+         OWYVkl+TG52qSBxp1O4WSt4Q7d1tt8CcJ1ADZXKpt0b/uIujo/8WAcYSPAW40GX+eG58
+         fAHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755099609; x=1755704409;
+        d=1e100.net; s=20230601; t=1755099612; x=1755704412;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Txy/cJf0GBJ+o0igtkYkmxWlbfspCRXzkvSHCuYjmpk=;
-        b=abalbJW24rkQqU/AsTwNVR8XVSomnfOX7/vcmv3VCdQ6S3sDAFZVH2PFHTVBieGO+l
-         ZV3hQEK9i9FhPQyD3lNyi+q5v6bc2UL/AB9se16vc6OJpWQLM2AgJQuiT2jFMp9VcOil
-         jnCO5JfrwdHu21HHKLwZ8RDqZyxS1MoziBtXH2tfJVq6aevkE8E9Scag5BSFgujiWAMz
-         x0s2y3ooH8X8AxvSFNd54gjWea/aKZQnz18YaCk5csP7LEofhIA4dv0yuu60snKuJ7Dw
-         47QJKXYWUtdYh/pQx39n9T56jkFNrgEmhbvghf/KY3NaSqjhZk+sl6JjG4F4mdFRw0le
-         AzbA==
-X-Forwarded-Encrypted: i=1; AJvYcCUhz0xuRzazTjPy1kDAB9zPX+moyvQrt0E/vgFo4EVOc9OrHJn0+cZe7b4E0adAbgWNVw6kMp4sWX1/LEXX@vger.kernel.org, AJvYcCVAL4x4Kx3WrhF5QQItB26/lc9QMzoYDh38lnvcewOSzct4iGUHXCfg7MwbqZI6Re4ATsZS0jMIQWvx1g==@vger.kernel.org, AJvYcCWEDu+8snZAN1SbzyOyM9SPwcr7dzQrzTU2UiCxWAt/NnDrT3SFeU8xEFYzd3mkq/wpvBaPVXe0OdrkPEdOeQ==@vger.kernel.org, AJvYcCWNIt/KKIdhXZwGdkGUrmdYlqsq/iNM7Q8tESRq1J6xkSDyPLD7P9FaQZR6DqiZ1oE+80/HI0skfV8ucOvWGbci@vger.kernel.org, AJvYcCXhLtmky4oWUXPkyYywceH4/6vnd+0eX9NpyzE4biYKohjwb5jNSChyUmkT7ILlU82Gctix+xi+P0wzBjbwPjo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4b5J2OF689Jz49lhw9vGOoALiWkenvBvlSnu8B8zwkqVsGaSp
-	f+sebnKiGLd+6N2KVtMRWQj5fhy6Aj23UGYM07jbhApBu0olK1ftyXRh
-X-Gm-Gg: ASbGncvF+1Mv5etNjpkdCGMhVLSQ7LgdkYNj2zrgAco/OUtAF3VWUbOVWHsLH6xKSQR
-	CBWfaYF3pvyJyYRvFfG7qrW/Lw2gVDzfBcEkokaQC8xoTk+ZOoBCwBS8kfjZXKykRjLzIkpr6yw
-	MTp/aO0Ao2R38mv7eGkaRnzIrq/tTqNGSQB3ggn677hdNGRdBXRO9Fh+3nFWARSL8TTfjcJdqfP
-	8GoCOqf2jouMKbVTYUc6mUsJMq+F5AdeDQ57G5d52AxY72GxPHPUTMB9FEo0ZIhrnk45d0jrgQi
-	5mfBawCkrGA9K+lUVe+9UoOJZ2jMm934s+58mKoR1JTsGN8GZu6RtQFh206RZYKHaGaJpVdhGRz
-	Xm2J3s6I8RIEj3dAevZDyVgur+IeuzGXTSAGe7LdcJYme5HyphK7UeOUKt1ArbA7N6anvvqsd13
-	Tw/nW1WuH0iX3l3itZXY1QnGZkKCYuXnyXhA==
-X-Google-Smtp-Source: AGHT+IFxJagWPZZZ2hzouDkHBzhG5TPmQTOcmugjvUWSzlYtPNO6sC6jEyzc3aC/S1mkWUBCIwCCGQ==
-X-Received: by 2002:a05:620a:4897:b0:7e8:21af:3d6f with SMTP id af79cd13be357-7e865276f4emr408733985a.17.1755099609321;
-        Wed, 13 Aug 2025 08:40:09 -0700 (PDT)
+        bh=izK/WiAPZAaZKlIcAkFE0rrz+1wIUxFG7qzyjlv/jF0=;
+        b=odWbzkIQC8cWfRhlsMx3Rnt1lVE1XVH1egfrl+i7eZ3pnn4De8fyoXMh9lwH7lShXw
+         1i4oRilxPIQ20xsyT8Fa/BOyi+zuVD0RR3GCPvPgYXVVUhkIDps0c1qZcJObCA05Ozba
+         HODaOzY1iVI+4Qv/+jq1pAUx7O5BW6sAC/ufKLNTa5JXDQC2Cd/7Gaw2OWZPulkz/GfJ
+         jd0ZQcNcpMde9++7XyKVnB7vZBG05ycOU3NB26RGj5f+VS579p+hsKZQdy2Og6vmjQze
+         Ii24qV5UB6Y4zqMTYw2ySdaoFFy+Tdh4kOI0QOJWZVHSfcmZxU7+860lSIsMwfsioVpQ
+         CK9g==
+X-Forwarded-Encrypted: i=1; AJvYcCUa7olgqubRcAsxUTWvN8JebfnoORBL5VkOj/yx7dOZgD8ydZG6IN0WH7v9VvwrZIONhyGW7pi0p0rrKjvvrA==@vger.kernel.org, AJvYcCVvr4zF0Sj+qYeAg22TpOTFW/kQcnvYd1gC8aoBQ1CK57hahnHaQjcdxtrAG7I/Oe+znX89REc21fVqMOtpTqlV@vger.kernel.org, AJvYcCWje9a7Nj9pKb8TubUzc6x3eiE40SBTRuWNy7sRfCysZ0v5hP1e/nArRZkltxVRDT7OZIxAcXlvpoF60CBZ@vger.kernel.org, AJvYcCXPsWjASYUzPxqlTP/qfrWFBMRemf1eG9iP7ML925Ew3EMN34pK2uzSIMIfYDmiJAchbPzHoxfBXZsduA==@vger.kernel.org, AJvYcCXUsRgk2sy+jI4QYCf4UmiA98ktUjFT8zIc8bZbHOjJI+2rs+HtPRZuQSsgOdhQCkxjy5TGmZteVO4Qhk2yznU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGmlOD3geTVsl487zUWceArx8epQijR/ebbatt817w/T0w/LIq
+	GMCVO8r5RqI6Kh2b4mxWtGAtBJMticyqLgUOPeOOvM1rr/O9uREeXyfl
+X-Gm-Gg: ASbGncvUbbPpWbzhSfWLR8C6x6XDiqWifsnuEUngKKUYmyFatS6/S8fJyWzo0jt0zh3
+	VU2JMO17L/OWKo0J6GX6YpCRpM1O5j2zLbrngE6l5RKVAEB8ugEIOyKUGUgfKzVW0c3UmYQl/P+
+	FMZpCo5DcjZPdyj9Xxq56rM8QfHFKpozmCX3Nujk1jEWmf57SqS0cX6pgfDekqjFLruGG3/LDDL
+	noqraXkcFngGj7gtZXEATa1i/g4Dnt19ZvEOWNUPvVMqIPmJL/2aln4q85Sk3PWXcOBQ5QFxF4b
+	pLXNI16uWjGWKX8Ae1kzA9LJ9ttzLASkPVB0CH42M9wN7AfmM8hY6LbPV5t3ijewzgxPQsl+17E
+	8pDMEqnh0chIGvs2xxOlM2e0ZuywNw3E6Werz5A+vqPBIntdgRwjq6QiSOtiRAUDEimsk6QwFe9
+	K2fEimGH2MTIYe+i/fa37pYqTERQ4nOsUyWw==
+X-Google-Smtp-Source: AGHT+IHZn/g5szhfMfFQFGXYl+pBHg/EpdCIVARFA50+xJj+KXURmnbR4Sb92/OTyxkaNK5Lvur9xQ==
+X-Received: by 2002:a05:620a:4505:b0:7e6:8b21:fe8b with SMTP id af79cd13be357-7e86fa5af32mr11093685a.0.1755099611401;
+        Wed, 13 Aug 2025 08:40:11 -0700 (PDT)
 Received: from 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa ([2600:4808:6353:5c00:d445:7694:2051:518c])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e67f728a6asm1976119385a.64.2025.08.13.08.40.07
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e67f728a6asm1976119385a.64.2025.08.13.08.40.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Aug 2025 08:40:08 -0700 (PDT)
+        Wed, 13 Aug 2025 08:40:10 -0700 (PDT)
 From: Tamir Duberstein <tamird@gmail.com>
-Date: Wed, 13 Aug 2025 11:39:53 -0400
-Subject: [PATCH v3 8/9] rust: sync: use `kernel::{fmt,prelude::fmt!}`
+Date: Wed, 13 Aug 2025 11:39:54 -0400
+Subject: [PATCH v3 9/9] rust: device: use `kernel::{fmt,prelude::fmt!}`
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -85,7 +85,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250813-core-cstr-fanout-1-v3-8-a15eca059c51@gmail.com>
+Message-Id: <20250813-core-cstr-fanout-1-v3-9-a15eca059c51@gmail.com>
 References: <20250813-core-cstr-fanout-1-v3-0-a15eca059c51@gmail.com>
 In-Reply-To: <20250813-core-cstr-fanout-1-v3-0-a15eca059c51@gmail.com>
 To: Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>, 
@@ -113,47 +113,100 @@ Cc: nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
  kunit-dev@googlegroups.com, linux-fsdevel@vger.kernel.org, 
  Tamir Duberstein <tamird@gmail.com>
 X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openssh-sha256; t=1755099591; l=998;
+X-Developer-Signature: v=1; a=openssh-sha256; t=1755099591; l=3475;
  i=tamird@gmail.com; h=from:subject:message-id;
- bh=GRf55CBaIXfcLimWiztzt2WPB2t4kstaCplsKmlIKbc=;
+ bh=crPkoR00cXYcPvikGdstY+SXedz+0EWwi2X94sQLRp0=;
  b=U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgtYz36g7iDMSkY5K7Ab51ksGX7hJgs
  MRt+XVZTrIzMVIAAAAGcGF0YXR0AAAAAAAAAAZzaGE1MTIAAABTAAAAC3NzaC1lZDI1NTE5AAAA
- QOAIUsQflz2HGM4AvRq77QQJYK6O5RKw6D4n7a/7jWYfKPgD+405KYQHwXHJu4uUN1IVy1k31PV
- 2UmoGqrCUOQI=
+ QKPx7imLLl1IyTUMbn/UU9jRwKiWRs/5JaaYbOw7kxpIJQbxaN+IToLgk64d7J03HxECB5q+Z4M
+ nXv5TSbO1yAs=
 X-Developer-Key: i=tamird@gmail.com; a=openssh;
  fpr=SHA256:264rPmnnrb+ERkS7DDS3tuwqcJss/zevJRzoylqMsbc
 
 Reduce coupling to implementation details of the formatting machinery by
 avoiding direct use for `core`'s formatting traits and macros.
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-Reviewed-by: Benno Lossin <lossin@kernel.org>
 Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 ---
- rust/kernel/sync/arc.rs | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ rust/kernel/device/property.rs | 23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
 
-diff --git a/rust/kernel/sync/arc.rs b/rust/kernel/sync/arc.rs
-index 63a66761d0c7..4f3c1c2ff05e 100644
---- a/rust/kernel/sync/arc.rs
-+++ b/rust/kernel/sync/arc.rs
-@@ -20,6 +20,7 @@
-     alloc::{AllocError, Flags, KBox},
+diff --git a/rust/kernel/device/property.rs b/rust/kernel/device/property.rs
+index 49ee12a906db..3a332a8c53a9 100644
+--- a/rust/kernel/device/property.rs
++++ b/rust/kernel/device/property.rs
+@@ -11,6 +11,7 @@
+     alloc::KVec,
      bindings,
-     ffi::c_void,
+     error::{to_result, Result},
 +    fmt,
-     init::InPlaceInit,
-     try_init,
-     types::{ForeignOwnable, Opaque},
-@@ -27,7 +28,6 @@
- use core::{
-     alloc::Layout,
-     borrow::{Borrow, BorrowMut},
--    fmt,
-     marker::PhantomData,
-     mem::{ManuallyDrop, MaybeUninit},
-     ops::{Deref, DerefMut},
+     prelude::*,
+     str::{CStr, CString},
+     types::{ARef, Opaque},
+@@ -68,16 +69,16 @@ pub fn is_of_node(&self) -> bool {
+         unsafe { bindings::is_of_node(self.as_raw()) }
+     }
+ 
+-    /// Returns an object that implements [`Display`](core::fmt::Display) for
++    /// Returns an object that implements [`Display`](fmt::Display) for
+     /// printing the name of a node.
+     ///
+     /// This is an alternative to the default `Display` implementation, which
+     /// prints the full path.
+-    pub fn display_name(&self) -> impl core::fmt::Display + '_ {
++    pub fn display_name(&self) -> impl fmt::Display + '_ {
+         struct FwNodeDisplayName<'a>(&'a FwNode);
+ 
+-        impl core::fmt::Display for FwNodeDisplayName<'_> {
+-            fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
++        impl fmt::Display for FwNodeDisplayName<'_> {
++            fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+                 // SAFETY: `self` is valid by its type invariant.
+                 let name = unsafe { bindings::fwnode_get_name(self.0.as_raw()) };
+                 if name.is_null() {
+@@ -87,7 +88,7 @@ fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+                 // - `fwnode_get_name` returns null or a valid C string.
+                 // - `name` was checked to be non-null.
+                 let name = unsafe { CStr::from_char_ptr(name) };
+-                write!(f, "{name}")
++                fmt::Display::fmt(name, f)
+             }
+         }
+ 
+@@ -351,8 +352,8 @@ pub fn is_empty(&self) -> bool {
+     }
+ }
+ 
+-impl core::fmt::Debug for FwNodeReferenceArgs {
+-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
++impl fmt::Debug for FwNodeReferenceArgs {
++    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+         write!(f, "{:?}", self.as_slice())
+     }
+ }
+@@ -377,8 +378,8 @@ enum Node<'a> {
+     Owned(ARef<FwNode>),
+ }
+ 
+-impl core::fmt::Display for FwNode {
+-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
++impl fmt::Display for FwNode {
++    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+         // The logic here is the same as the one in lib/vsprintf.c
+         // (fwnode_full_name_string).
+ 
+@@ -413,9 +414,9 @@ fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+                 // SAFETY: `fwnode_get_name_prefix` returns null or a
+                 // valid C string.
+                 let prefix = unsafe { CStr::from_char_ptr(prefix) };
+-                write!(f, "{prefix}")?;
++                fmt::Display::fmt(prefix, f)?;
+             }
+-            write!(f, "{}", fwnode.display_name())?;
++            fmt::Display::fmt(&fwnode.display_name(), f)?;
+         }
+ 
+         Ok(())
 
 -- 
 2.50.1
