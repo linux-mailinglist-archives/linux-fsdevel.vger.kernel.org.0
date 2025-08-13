@@ -1,176 +1,193 @@
-Return-Path: <linux-fsdevel+bounces-57713-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57714-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFF6AB24B5C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 15:59:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85AE1B24B76
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 16:04:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B264D5C02F6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 13:55:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2AAB1C204A6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Aug 2025 13:58:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C359D1EA7DD;
-	Wed, 13 Aug 2025 13:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED04E2ED160;
+	Wed, 13 Aug 2025 13:57:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gnkAXrTO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CFoL0Yim"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA072E765B;
-	Wed, 13 Aug 2025 13:55:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8D112EACFB;
+	Wed, 13 Aug 2025 13:57:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755093332; cv=none; b=fSzv6hXI26GoNHM2kVsH4DoYb8ve3VV3uMWfMwGVPj8DFpNaSTmWxvauiiwNetzhtJN49bPckxPlijKXKwhqN8iPAJ+GH01YRdfqmXJWGfSkCovU8tOsEVvb1+UGPp5R8QfmH05M7Q/GCXBDhPuty/KWQdFPSElqbxS2rhTtuIY=
+	t=1755093450; cv=none; b=Rp7q973Kje7155Wzv6ZjQtQ6VecEYwu61ZCOr+DsfgMTTT+xlTXLku5Fl0chT53PsXXXMk7s3QTzcZsVNfjCPn7HljUoGRXyhB//SxS92jMg7uFy69daAKtpKdz29YFriMe4MXpF9M3n1hZoWg0wZwhbqjOWJZO8ees43Ej/dpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755093332; c=relaxed/simple;
-	bh=Z1FONCORgDMbbWMlyIGq1MppJNSEgOqZfpdQRbvLW+k=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=gmOJFkQ5RVnz9qT08f3EeVciXyXgfsafdmTt3at45Sf2VU1TWGWkXG/oP1dsn6RDm2YTpjLRc/QvWElZfP1GMyDnP+Lw4Gm3blOQnbKPPs/q+44uvL9RZkTr0OZY/cmPtwlz/xlKwJtqnPXGYU9L7Bfo+3NW1uDI/xs+yzaZLT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gnkAXrTO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82A15C4CEF6;
-	Wed, 13 Aug 2025 13:55:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755093331;
-	bh=Z1FONCORgDMbbWMlyIGq1MppJNSEgOqZfpdQRbvLW+k=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=gnkAXrTOpFI3ROP15wctp09tBwFzwxci6h4Y8PgwuC2CQV+he2WTSZRR+FnjF9f1x
-	 Pj07eQQVvToM6lkX1x/CDTozJVGPCLh8LDQ269n3k9lJmMdq4K3oPPOP/Dc7HCE2Fy
-	 0Ly35zrERwLE+KC5jD9+Y7eZHFOkJnC0wYk7pnWzfyehBIuVpu3pfe/eA7fu4oMh+E
-	 ZnmTH/cjAeavuoGSKKUP4jITmVsFPU5mprGHLDXDgE4BwnQRwHn1oglWjqJBsEeGbD
-	 axkt0DApgFSBC+AYL/rPSXnMQBqqfKXKyW7pWJMvrcL2WijEfmbxTjFYH6Yf5JDvGD
-	 5oB8EUJC2Qgzw==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: Pratyush Yadav <pratyush@kernel.org>,  Vipin Sharma
- <vipinsh@google.com>,  jasonmiu@google.com,  graf@amazon.com,
-  changyuanl@google.com,  rppt@kernel.org,  dmatlack@google.com,
-  rientjes@google.com,  corbet@lwn.net,  rdunlap@infradead.org,
-  ilpo.jarvinen@linux.intel.com,  kanie@linux.alibaba.com,
-  ojeda@kernel.org,  aliceryhl@google.com,  masahiroy@kernel.org,
-  akpm@linux-foundation.org,  tj@kernel.org,  yoann.congal@smile.fr,
-  mmaurer@google.com,  roman.gushchin@linux.dev,  chenridong@huawei.com,
-  axboe@kernel.dk,  mark.rutland@arm.com,  jannh@google.com,
-  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
-  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
-  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
-  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
-  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
-  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
-  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
-  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
-  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
-  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
-  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
-  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
-  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
-  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
-  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
-  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  saeedm@nvidia.com,  ajayachandra@nvidia.com,  jgg@nvidia.com,
-  parav@nvidia.com,  leonro@nvidia.com,  witu@nvidia.com
-Subject: Re: [PATCH v3 29/30] luo: allow preserving memfd
-In-Reply-To: <CA+CK2bCmQ3hY+ACnLrVZ1qwiTiVvxEBCDNFmAHn_uVRagvshhw@mail.gmail.com>
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
-	<20250807014442.3829950-30-pasha.tatashin@soleen.com>
-	<20250813063407.GA3182745.vipinsh@google.com>
-	<mafs0wm77wgjx.fsf@kernel.org>
-	<CA+CK2bCmQ3hY+ACnLrVZ1qwiTiVvxEBCDNFmAHn_uVRagvshhw@mail.gmail.com>
-Date: Wed, 13 Aug 2025 15:55:21 +0200
-Message-ID: <mafs0tt2buy0m.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1755093450; c=relaxed/simple;
+	bh=9dqxB5WnkRlLdf8v+liBnr4iOxIWUO4BTpKEIfF62p0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TZWNC/r+omOpOWxe6vE76mHLNMgs7Ag70/Ck6YlxKoJUDpv1vcaOj84E0H6IzBxjVbjYPFwxX/xhsTkSY714qX/OheyaBoM1vVy6qZOJAkV6tfxInLN3RRSbnLLxppowlPm7itnAIZ7huoIOdPaeDLQDxOrrBXcSZF1PlCTggW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CFoL0Yim; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4b070b3b7adso112911751cf.3;
+        Wed, 13 Aug 2025 06:57:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755093448; x=1755698248; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QzWUPox51DZi49hcWgUUk30VnYc4Bgc0iKM5O3Jcgw4=;
+        b=CFoL0Yim4Y1G1UDmmxRNKSmA7J/ZahQnVYQ/1A9r8wCFZzO5aXiPgxV4AJ2+7rEvun
+         VA6RcLwMTj8pH/AzfcOu7LhhKpAhz+rWGSnqN2msSPWCN7YaKQV1441RFpoc6CNnBDHi
+         HtsTuq5/pdvc27n8n07a2o2IVPdO9JJTjsjw2z7hE8nabCaHpcrxrMkZnDA+ikIb5NGz
+         in2pummd9IWcgiAoX/PDjZP/6xppZz/uQjcGvrOCR7Mujnzsy+ZllQey9MqFXK6N9h7c
+         cxlBgDKsPLoK26V584icI5NhKRqtAb3gvna3/T0fUE3nmTI+V5Hp/jhgPy4W6DQyHAWL
+         agxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755093448; x=1755698248;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QzWUPox51DZi49hcWgUUk30VnYc4Bgc0iKM5O3Jcgw4=;
+        b=YGvRXx+HIpIuvJPjn7tycspIYVM1x7jO71HxexYM5hMWDfcYUdHfVW0OMf9vhaDwVA
+         IaM2WnkJxVFi8V7znhMSBhGFTF6TcbIml0mGl0AXj8uszbbIi0Seo8viOKQURgd5lelq
+         aVe5hUKVcfUOxpnNp5iijUx3adoVwMrQk0jLfyVAw9+3i+11pkWOcj+nm1UwSk+wNXPw
+         6hdwPIsO7jLpazXUn4MjOtHqsvtWPJyk8gHHTOtGhIkPV3TR2N7ICK7oh5JToMmvjdC6
+         +Cx2L4MV1/X/wb19hnMhWRcYh3z7PdE4ldN36vOnc/7kt4xCO2G+NYuvaoMY0SM0WY72
+         VzCA==
+X-Forwarded-Encrypted: i=1; AJvYcCVyqVemgSP/HgS7PD92rwZ09x88wRjlOnjlWkpl6Zb62JbJJnu3NGvdlBT+jfb4q+rYU7FMZevgc8M=@vger.kernel.org, AJvYcCXzq7JtVaHr3HJ2EHcop5oDm7wPn9Iwx8nFrTnpJWIAgwJhlNBVfh/JgMdAKH1XclCYWVjWeexyDww7gEkS@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmpbryXwEI4qgTFtgxF1DgHXcEx12VGwbs89vU6HqOV+512ofm
+	fbl4+/wT4ITwHzeG86jNMJ7vWobJ1W0UfKVlDlo4oHJpblVFZMlpNyZV
+X-Gm-Gg: ASbGncuXyeI3VdgB7RbxFdcfoI0VNB+w9d+yD7UQgUmwN2T7rjit3+lZ55WDE5ihCvV
+	MLp0cOAQmkFYf48tnqbm0jxwd1nqDn6bfGhg3qEmlJnAI2s5dIHV1CVnZ4IF0Tk6Y6Hwby+NLIQ
+	EgvKW4sWogdOakIb9wvmrmckPMfvvGEnQVXQkWl8JnNFYBB71pnqlqSJMV6US8b7l6nzschODRI
+	iek0Ughl076kJcI1Pv9a7XlSROqpMNp3PB0ABNK8nmSe1hOGNgCs04EUaJ7JXi1pJJf0IEWyU2+
+	6L44JGH6DSB8tGFVHlgKV84rTXKStleb7a4UqnETYTR8G1RDQqa9aZDy5pW3c+4LkyPrQRtyett
+	8jR/+fbORiAQ4HfdsMEiq
+X-Google-Smtp-Source: AGHT+IHMpLHS102o5V9MYRk9uIP4OvbzgHHel8QxmDYGPR2Zk/mAM8p6YLuZt9c630uTVwr2P7e9Ag==
+X-Received: by 2002:a05:6214:20c3:b0:707:5df5:c719 with SMTP id 6a1803df08f44-709e8815919mr41371566d6.17.1755093447561;
+        Wed, 13 Aug 2025 06:57:27 -0700 (PDT)
+Received: from localhost ([2a03:2880:20ff:70::])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7077ce44849sm195552726d6.84.2025.08.13.06.57.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Aug 2025 06:57:27 -0700 (PDT)
+From: Usama Arif <usamaarif642@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	david@redhat.com,
+	linux-mm@kvack.org
+Cc: linux-fsdevel@vger.kernel.org,
+	corbet@lwn.net,
+	rppt@kernel.org,
+	surenb@google.com,
+	mhocko@suse.com,
+	hannes@cmpxchg.org,
+	baohua@kernel.org,
+	shakeel.butt@linux.dev,
+	riel@surriel.com,
+	ziy@nvidia.com,
+	laoar.shao@gmail.com,
+	dev.jain@arm.com,
+	baolin.wang@linux.alibaba.com,
+	npache@redhat.com,
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	ryan.roberts@arm.com,
+	vbabka@suse.cz,
+	jannh@google.com,
+	Arnd Bergmann <arnd@arndb.de>,
+	sj@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	kernel-team@meta.com,
+	Usama Arif <usamaarif642@gmail.com>
+Subject: [PATCH v4 0/7] prctl: extend PR_SET_THP_DISABLE to only provide THPs when advised
+Date: Wed, 13 Aug 2025 14:55:35 +0100
+Message-ID: <20250813135642.1986480-1-usamaarif642@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 13 2025, Pasha Tatashin wrote:
+This will allow individual processes to opt-out of THP = "always"
+into THP = "madvise", without affecting other workloads on the system.
+This has been extensively discussed on the mailing list and has been
+summarized very well by David in the first patch which also includes
+the links to alternatives, please refer to the first patch commit message
+for the motivation for this series.
 
-> On Wed, Aug 13, 2025 at 12:29=E2=80=AFPM Pratyush Yadav <pratyush@kernel.=
-org> wrote:
->>
->> Hi Vipin,
->>
->> Thanks for the review.
->>
->> On Tue, Aug 12 2025, Vipin Sharma wrote:
->>
->> > On 2025-08-07 01:44:35, Pasha Tatashin wrote:
->> >> From: Pratyush Yadav <ptyadav@amazon.de>
->> >> +static void memfd_luo_unpreserve_folios(const struct memfd_luo_prese=
-rved_folio *pfolios,
->> >> +                                    unsigned int nr_folios)
->> >> +{
->> >> +    unsigned int i;
->> >> +
->> >> +    for (i =3D 0; i < nr_folios; i++) {
->> >> +            const struct memfd_luo_preserved_folio *pfolio =3D &pfol=
-ios[i];
->> >> +            struct folio *folio;
->> >> +
->> >> +            if (!pfolio->foliodesc)
->> >> +                    continue;
->> >> +
->> >> +            folio =3D pfn_folio(PRESERVED_FOLIO_PFN(pfolio->foliodes=
-c));
->> >> +
->> >> +            kho_unpreserve_folio(folio);
->> >
->> > This one is missing WARN_ON_ONCE() similar to the one in
->> > memfd_luo_preserve_folios().
->>
->> Right, will add.
->>
->> >
->> >> +            unpin_folio(folio);
->>
->> Looking at this code caught my eye. This can also be called from LUO's
->> finish callback if no one claimed the memfd after live update. In that
->> case, unpin_folio() is going to underflow the pincount or refcount on
->> the folio since after the kexec, the folio is no longer pinned. We
->> should only be doing folio_put().
->>
->> I think this function should take a argument to specify which of these
->> cases it is dealing with.
->>
->> >> +    }
->> >> +}
->> >> +
->> >> +static void *memfd_luo_create_fdt(unsigned long size)
->> >> +{
->> >> +    unsigned int order =3D get_order(size);
->> >> +    struct folio *fdt_folio;
->> >> +    int err =3D 0;
->> >> +    void *fdt;
->> >> +
->> >> +    if (order > MAX_PAGE_ORDER)
->> >> +            return NULL;
->> >> +
->> >> +    fdt_folio =3D folio_alloc(GFP_KERNEL, order);
->> >
->> > __GFP_ZERO should also be used here. Otherwise this can lead to
->> > unintentional passing of old kernel memory.
->>
->> fdt_create() zeroes out the buffer so this should not be a problem.
->
-> You are right, fdt_create() zeroes the whole buffer, however, I wonder
-> if it could be `optimized` to only clear only the header part of FDT,
-> not the rest and this could potentially lead us to send an FDT buffer
-> that contains both a valid FDT and the trailing bits contain data from
-> old kernel.
+Patch 1 adds the PR_THP_DISABLE_EXCEPT_ADVISED flag to implement this, along
+with the MMF changes.
+Patch 2 is a cleanup patch for tva_flags that will allow the forced collapse
+case to be transmitted to vma_thp_disabled (which is done in patch 3).
+Patch 4 adds documentation for PR_SET_THP_DISABLE/PR_GET_THP_DISABLE.
+Patches 6-7 implement the selftests for PR_SET_THP_DISABLE for completely
+disabling THPs (old behaviour) and only enabling it at advise
+(PR_THP_DISABLE_EXCEPT_ADVISED).
 
-Fair enough. At least the API documentation does not say anything about
-the state of the buffer. My main concern was around performance since
-the FDT can be multiple megabytes long for big memfds. Anyway, this
-isn't in the blackout window so perhaps we can live with it. Will add
-the GFP_ZERO.
+The patches are tested on top of 694c8e78f486b09137ee3efadae044d01aba971b
+from mm-new.
 
---=20
-Regards,
-Pratyush Yadav
+v3 -> v4: https://lore.kernel.org/all/20250804154317.1648084-1-usamaarif642@gmail.com/
+- rebase to latest mm-new (Aug 13), which includes the mm flag changes from Lonrenzo.
+- remove mention of MM flags from admin doc in transhuge.rst and other other
+  improvements to it (David and Lorenzo)
+- extract size2ord into vm_util.h (David)
+- check if the respective prctl can be set in the fixture setup instead of the fixture
+  itself (David)
+
+v2 -> v3: https://lore.kernel.org/all/20250731122825.2102184-1-usamaarif642@gmail.com/
+- Fix sign off and added ack for patch 1 (Lorenzo and Zi Yan)
+- Fix up commit message, comments and variable names in patch 2 and 3 (Lorenzo)
+- Added documentation for PR_SET_THP_DISABLE/PR_GET_THP_DISABLE (Lorenzo)
+- remove struct test_results and enum thp_policy for prctl tests (David)
+
+v1 -> v2: https://lore.kernel.org/all/20250725162258.1043176-1-usamaarif642@gmail.com/
+- Change thp_push_settings to thp_write_settings (David)
+- Add tests for all the system policies for the prctl call (David)
+- Small fixes and cleanups
+
+
+David Hildenbrand (3):
+  prctl: extend PR_SET_THP_DISABLE to optionally exclude VM_HUGEPAGE
+  mm/huge_memory: convert "tva_flags" to "enum tva_type"
+  mm/huge_memory: respect MADV_COLLAPSE with
+    PR_THP_DISABLE_EXCEPT_ADVISED
+
+Usama Arif (4):
+  docs: transhuge: document process level THP controls
+  selftest/mm: Extract sz2ord function into vm_util.h
+  selftests: prctl: introduce tests for disabling THPs completely
+  selftests: prctl: introduce tests for disabling THPs except for
+    madvise
+
+ Documentation/admin-guide/mm/transhuge.rst    |  37 +++
+ Documentation/filesystems/proc.rst            |   5 +-
+ fs/proc/array.c                               |   2 +-
+ fs/proc/task_mmu.c                            |   4 +-
+ include/linux/huge_mm.h                       |  60 ++--
+ include/linux/mm_types.h                      |  14 +-
+ include/uapi/linux/prctl.h                    |  10 +
+ kernel/sys.c                                  |  59 +++-
+ mm/huge_memory.c                              |  11 +-
+ mm/khugepaged.c                               |  19 +-
+ mm/memory.c                                   |  20 +-
+ mm/shmem.c                                    |   2 +-
+ tools/testing/selftests/mm/.gitignore         |   1 +
+ tools/testing/selftests/mm/Makefile           |   1 +
+ tools/testing/selftests/mm/cow.c              |  12 +-
+ .../testing/selftests/mm/prctl_thp_disable.c  | 275 ++++++++++++++++++
+ tools/testing/selftests/mm/thp_settings.c     |   9 +-
+ tools/testing/selftests/mm/thp_settings.h     |   1 +
+ tools/testing/selftests/mm/uffd-wp-mremap.c   |   9 +-
+ tools/testing/selftests/mm/vm_util.h          |   5 +
+ 20 files changed, 470 insertions(+), 86 deletions(-)
+ create mode 100644 tools/testing/selftests/mm/prctl_thp_disable.c
+
+-- 
+2.47.3
+
 
