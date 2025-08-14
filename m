@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-57856-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57857-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6D76B25F2A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 10:41:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0323B25F24
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 10:40:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF2501C82C04
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 08:39:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 674C35C01A1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 08:40:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB2502E8885;
-	Thu, 14 Aug 2025 08:39:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C9D72E7F25;
+	Thu, 14 Aug 2025 08:40:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JzwSedKi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZZ5tqXiS"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE6182DE6E3;
-	Thu, 14 Aug 2025 08:39:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6061204090;
+	Thu, 14 Aug 2025 08:40:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755160759; cv=none; b=mEEYO2ZchR+JOudMjDykGe/oIrM1qlKJNjxa2gQIJ/VleOeYxe58ZqxcHx2ar5iQtuyox+O3o92CvtobOdQ9YI7FNTh1aD91UXSHP+Q0UaoLjjTqWcaxeSBDjgIoPEPO2Nrg/qWEkui/X0G+XFtRTrCNTWp/EH5ZRzGAgN9b2Jg=
+	t=1755160822; cv=none; b=fHUvCa4/6Cazr9F82DNwLXuRvBGyR9LbUOj0gkMIq+timmD1O+0JyligeWcRi9KS4KXyrYYUFdOsw1zwPvn4WFWIVbpze6Bc8JOcPr/K7DmIiyn0wC4nrXh1bxSpqMWE5604zR/Dz2q7er7w0qeXSlujSRMTk5k2Isk3cMfIPgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755160759; c=relaxed/simple;
-	bh=wfqWmiFu+hf5riWH1oiwtGbPEfN6D8DeAmej1du6BhY=;
+	s=arc-20240116; t=1755160822; c=relaxed/simple;
+	bh=zqmt4Jj8Tl4AG5pUIufRcdzVJq4JYdl8O/zAhI2YC70=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZMXcVxJCfNreOc4qPRMjxH9mc4ekPWjdgPFNvmfmb37KFp7ekrYmse3aDY9dVD1zpSRMCSU0D+za6eKgU9t06ZUSMQ1ustSRqrR3XoL9DPO55l6VJiGJFcMWFXb/aN6JA4hikm+9ujq1X5gOQbQt3dmcVAI29OsvovUS5qpTNLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JzwSedKi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7188CC4CEF4;
-	Thu, 14 Aug 2025 08:38:57 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=WuUhJSMwnl3IBTgWFspiPiloXCo2EqLLsFjLy2y4aZze6IUGsFMjcYRMHLxOs9lzirP+S9xrwN0YyZO2bVSYUp5CcZlY/LQLRAY1FZz31PsejDGbsi++/GziZZ3nt/1y63b5o8TxCBA6n1sNOvMBcc6VdBOW8pVPGPVvF6uxDJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZZ5tqXiS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FC94C4AF09;
+	Thu, 14 Aug 2025 08:40:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755160756;
-	bh=wfqWmiFu+hf5riWH1oiwtGbPEfN6D8DeAmej1du6BhY=;
+	s=k20201202; t=1755160821;
+	bh=zqmt4Jj8Tl4AG5pUIufRcdzVJq4JYdl8O/zAhI2YC70=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JzwSedKiUIueXjAwiEvvgu9Pg7k0kNpnO8Uu4NT96uQ5AFJeZLFlxMhMYmmqQKgf9
-	 vkRr6fLBH/J6KQaFSI5SL4BICjVxdtsmUGvpcNsQgVqh8n+TDsLp/ZSzZGKwJy6Vu/
-	 P26Vc0ScJ0V1qyZCwGuo5A9RurBj/wQK5MgjLtYcBOlURHX9zRDDmhud/nvuI+G1Kp
-	 7AR6ipV+2txrE2N62GVE5xzXojsCfMmVJMeTlKseveRHMqgGHGJeEa8Tt0gzNwMRjO
-	 9krcCidK65DrhHDCRoNCXT2dOKsRCBYhgtjRqtbs1HvHnV8ajX5CJxMw/Oe6FjlzvD
-	 kjMlCCcya+wJA==
-Date: Thu, 14 Aug 2025 11:38:53 +0300
+	b=ZZ5tqXiSOEwYFaq79WS5EhkFn8Z5imGYNmIePfhjJTAhyZJEgDA7Bwly8nCqYBrRu
+	 d5UBO0ASyeI4lggmFmZP5Ii3320gaokMa2FN+oxetsh12TTGQ+8oWdtIFgLAmFwDa8
+	 JmyiIhU5NvRChb93aRk4sfsoi6H8QvZGvsj0WePGnaiA2KQ0/+8V6zFvTPRMYPKrqn
+	 1S4BU4qOOBW810STnQ9C/RqF+W8yGtXS38JRPzp9ypmj54uCmkS4f0kA57Jmi573iT
+	 nQhBwXuhJUpx99j/CnWWG20Qpb4JWWkPn9hA8ESGXnWKA625fvfdzX3MjXix2LjKhh
+	 b4YJ1g7zPit1g==
+Date: Thu, 14 Aug 2025 11:39:57 +0300
 From: Mike Rapoport <rppt@kernel.org>
 To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>,
@@ -97,11 +97,11 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
 	linux-trace-kernel@vger.kernel.org,
 	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH 07/10] mm: correct sign-extension issue in MMF_* flag
- masks
-Message-ID: <aJ2gnTpRW3QLTcn6@kernel.org>
+Subject: Re: [PATCH 08/10] mm: update fork mm->flags initialisation to use
+ bitmap
+Message-ID: <aJ2g3VODv5Fp9aQL@kernel.org>
 References: <cover.1755012943.git.lorenzo.stoakes@oracle.com>
- <f92194bee8c92a04fd4c9b2c14c7e65229639300.1755012943.git.lorenzo.stoakes@oracle.com>
+ <9fb8954a7a0f0184f012a8e66f8565bcbab014ba.1755012943.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -110,99 +110,83 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f92194bee8c92a04fd4c9b2c14c7e65229639300.1755012943.git.lorenzo.stoakes@oracle.com>
+In-Reply-To: <9fb8954a7a0f0184f012a8e66f8565bcbab014ba.1755012943.git.lorenzo.stoakes@oracle.com>
 
-On Tue, Aug 12, 2025 at 04:44:16PM +0100, Lorenzo Stoakes wrote:
-> There is an issue with the mask declarations in linux/mm_types.h, which
-> naively do (1 << bit) operations. Unfortunately this results in the 1 being
-> defaulted as a signed (32-bit) integer.
+On Tue, Aug 12, 2025 at 04:44:17PM +0100, Lorenzo Stoakes wrote:
+> We now need to account for flag initialisation on fork. We retain the
+> existing logic as much as we can, but dub the existing flag mask legacy.
 > 
-> When the compiler expands the MMF_INIT_MASK bitmask it comes up with:
+> These flags are therefore required to fit in the first 32-bits of the flags
+> field.
 > 
-> (((1 << 2) - 1) | (((1 << 9) - 1) << 2) | (1 << 24) | (1 << 28) | (1 << 30)
-> | (1 << 31))
+> However, further flag propagation upon fork can be implemented in mm_init()
+> on a per-flag basis.
 > 
-> Which overflows the signed integer to -788,527,105. Implicitly casting this
-> to an unsigned integer results in sign-expansion, and thus this value
-> becomes 0xffffffffd10007ff, rather than the intended 0xd10007ff.
-> 
-> While we're limited to a maximum of 32 bits in mm->flags, this isn't an
-> issue as the remaining bits being masked will always be zero.
-> 
-> However, now we are moving towards having more bits in this flag, this
-> becomes an issue.
-> 
-> Simply resolve this by using the _BITUL() helper to cast the shifted value
-> to an unsigned long.
+> We ensure we clear the entire bitmap prior to setting it, and use
+> __mm_flags_get_word() and __mm_flags_set_word() to manipulate these legacy
+> fields efficiently.
 > 
 > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
 Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
 > ---
->  include/linux/mm_types.h | 19 +++++++++----------
->  1 file changed, 9 insertions(+), 10 deletions(-)
+>  include/linux/mm_types.h | 13 ++++++++++---
+>  kernel/fork.c            |  7 +++++--
+>  2 files changed, 15 insertions(+), 5 deletions(-)
 > 
 > diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> index 46d3fb8935c7..38b3fa927997 100644
+> index 38b3fa927997..25577ab39094 100644
 > --- a/include/linux/mm_types.h
 > +++ b/include/linux/mm_types.h
-> @@ -1756,7 +1756,7 @@ enum {
->   * the modes are SUID_DUMP_* defined in linux/sched/coredump.h
->   */
->  #define MMF_DUMPABLE_BITS 2
-> -#define MMF_DUMPABLE_MASK ((1 << MMF_DUMPABLE_BITS) - 1)
-> +#define MMF_DUMPABLE_MASK (_BITUL(MMF_DUMPABLE_BITS) - 1)
->  /* coredump filter bits */
->  #define MMF_DUMP_ANON_PRIVATE	2
->  #define MMF_DUMP_ANON_SHARED	3
-> @@ -1771,13 +1771,13 @@ enum {
->  #define MMF_DUMP_FILTER_SHIFT	MMF_DUMPABLE_BITS
->  #define MMF_DUMP_FILTER_BITS	9
->  #define MMF_DUMP_FILTER_MASK \
-> -	(((1 << MMF_DUMP_FILTER_BITS) - 1) << MMF_DUMP_FILTER_SHIFT)
-> +	((_BITUL(MMF_DUMP_FILTER_BITS) - 1) << MMF_DUMP_FILTER_SHIFT)
->  #define MMF_DUMP_FILTER_DEFAULT \
-> -	((1 << MMF_DUMP_ANON_PRIVATE) |	(1 << MMF_DUMP_ANON_SHARED) |\
-> -	 (1 << MMF_DUMP_HUGETLB_PRIVATE) | MMF_DUMP_MASK_DEFAULT_ELF)
-> +	(_BITUL(MMF_DUMP_ANON_PRIVATE) | _BITUL(MMF_DUMP_ANON_SHARED) | \
-> +	 _BITUL(MMF_DUMP_HUGETLB_PRIVATE) | MMF_DUMP_MASK_DEFAULT_ELF)
->  
->  #ifdef CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS
-> -# define MMF_DUMP_MASK_DEFAULT_ELF	(1 << MMF_DUMP_ELF_HEADERS)
-> +# define MMF_DUMP_MASK_DEFAULT_ELF	_BITUL(MMF_DUMP_ELF_HEADERS)
->  #else
->  # define MMF_DUMP_MASK_DEFAULT_ELF	0
->  #endif
-> @@ -1797,7 +1797,7 @@ enum {
->  #define MMF_UNSTABLE		22	/* mm is unstable for copy_from_user */
->  #define MMF_HUGE_ZERO_FOLIO	23      /* mm has ever used the global huge zero folio */
->  #define MMF_DISABLE_THP		24	/* disable THP for all VMAs */
-> -#define MMF_DISABLE_THP_MASK	(1 << MMF_DISABLE_THP)
-> +#define MMF_DISABLE_THP_MASK	_BITUL(MMF_DISABLE_THP)
->  #define MMF_OOM_REAP_QUEUED	25	/* mm was queued for oom_reaper */
->  #define MMF_MULTIPROCESS	26	/* mm is shared between processes */
->  /*
-> @@ -1810,16 +1810,15 @@ enum {
->  #define MMF_HAS_PINNED		27	/* FOLL_PIN has run, never cleared */
->  
->  #define MMF_HAS_MDWE		28
-> -#define MMF_HAS_MDWE_MASK	(1 << MMF_HAS_MDWE)
-> -
-> +#define MMF_HAS_MDWE_MASK	_BITUL(MMF_HAS_MDWE)
->  
->  #define MMF_HAS_MDWE_NO_INHERIT	29
->  
->  #define MMF_VM_MERGE_ANY	30
-> -#define MMF_VM_MERGE_ANY_MASK	(1 << MMF_VM_MERGE_ANY)
-> +#define MMF_VM_MERGE_ANY_MASK	_BITUL(MMF_VM_MERGE_ANY)
->  
+> @@ -1820,16 +1820,23 @@ enum {
 >  #define MMF_TOPDOWN		31	/* mm searches top down by default */
-> -#define MMF_TOPDOWN_MASK	(1 << MMF_TOPDOWN)
-> +#define MMF_TOPDOWN_MASK	_BITUL(MMF_TOPDOWN)
+>  #define MMF_TOPDOWN_MASK	_BITUL(MMF_TOPDOWN)
 >  
->  #define MMF_INIT_MASK		(MMF_DUMPABLE_MASK | MMF_DUMP_FILTER_MASK |\
+> -#define MMF_INIT_MASK		(MMF_DUMPABLE_MASK | MMF_DUMP_FILTER_MASK |\
+> +#define MMF_INIT_LEGACY_MASK	(MMF_DUMPABLE_MASK | MMF_DUMP_FILTER_MASK |\
 >  				 MMF_DISABLE_THP_MASK | MMF_HAS_MDWE_MASK |\
+>  				 MMF_VM_MERGE_ANY_MASK | MMF_TOPDOWN_MASK)
+>  
+> -static inline unsigned long mmf_init_flags(unsigned long flags)
+> +/* Legacy flags must fit within 32 bits. */
+> +static_assert((u64)MMF_INIT_LEGACY_MASK <= (u64)UINT_MAX);
+> +
+> +/*
+> + * Initialise legacy flags according to masks, propagating selected flags on
+> + * fork. Further flag manipulation can be performed by the caller.
+> + */
+> +static inline unsigned long mmf_init_legacy_flags(unsigned long flags)
+>  {
+>  	if (flags & (1UL << MMF_HAS_MDWE_NO_INHERIT))
+>  		flags &= ~((1UL << MMF_HAS_MDWE) |
+>  			   (1UL << MMF_HAS_MDWE_NO_INHERIT));
+> -	return flags & MMF_INIT_MASK;
+> +	return flags & MMF_INIT_LEGACY_MASK;
+>  }
+>  
+>  #endif /* _LINUX_MM_TYPES_H */
+> diff --git a/kernel/fork.c b/kernel/fork.c
+> index c4ada32598bd..b311caec6419 100644
+> --- a/kernel/fork.c
+> +++ b/kernel/fork.c
+> @@ -1056,11 +1056,14 @@ static struct mm_struct *mm_init(struct mm_struct *mm, struct task_struct *p,
+>  	mm_init_uprobes_state(mm);
+>  	hugetlb_count_init(mm);
+>  
+> +	mm_flags_clear_all(mm);
+>  	if (current->mm) {
+> -		mm->flags = mmf_init_flags(current->mm->flags);
+> +		unsigned long flags = __mm_flags_get_word(current->mm);
+> +
+> +		__mm_flags_set_word(mm, mmf_init_legacy_flags(flags));
+>  		mm->def_flags = current->mm->def_flags & VM_INIT_DEF_MASK;
+>  	} else {
+> -		mm->flags = default_dump_filter;
+> +		__mm_flags_set_word(mm, default_dump_filter);
+>  		mm->def_flags = 0;
+>  	}
+>  
 > -- 
 > 2.50.1
 > 
