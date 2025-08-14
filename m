@@ -1,353 +1,187 @@
-Return-Path: <linux-fsdevel+bounces-57826-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57827-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB82CB25A1D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 05:54:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 137EDB25A4C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 06:09:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8EEC5C1221
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 03:54:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E464C5A2D31
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 04:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E4D194C96;
-	Thu, 14 Aug 2025 03:54:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6C9F1E8332;
+	Thu, 14 Aug 2025 04:09:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hL3R8q5f"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lpNPRiDV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B4C2836F;
-	Thu, 14 Aug 2025 03:54:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D06652114;
+	Thu, 14 Aug 2025 04:09:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755143659; cv=none; b=DKWoIGpTnXhkvmFjP+vh8p7sBEjaZVysA7T7OrcP+agwT4/ZiFbJWfygTvUDQ/oqc8+nOw4F81YaTUGIw6WfFTMW3ZjMcvHw4tNcPLo6APLir8XANz7uXo5q1tgqdg3mgE++0jwcyN7Aid23CdcA6pcfdZ0m2rFp0tmbdZ6wA4Y=
+	t=1755144543; cv=none; b=XSo3aEhpsQP5681cZsRRYL+2qBT2kOATTgdXiiGz7+ggqLlh6ylKAwnOvz2Nx/A+h8Vk8V+BP79gv+k6Jv9iMccmrQlREDXGPR8ZQNwNGaNsWGXkUHy6B0oovc461DH6+1sW+THUT7YtDK7USg8Q98gRNeYVz8olZeEsimkmZuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755143659; c=relaxed/simple;
-	bh=wDK0eX+KK2+SpbwmEPed0XoHN6lDNAQFA8XExzq50lQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gsmGXGoSJfAI/7ZTlKcg7Ku9LKMzaEMQouPoZdPCRUzkyXPyAye2d2hw3M1ghz0/LYrxAWahGIwwt0oJhbUuTdNyofqQlWY5iuhw6A2/TnOhRrXZMp0mvViK9PDePjGCe2auA0hngKpqFc1qbF4xshChArTnF9anLeOcPTXLd5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hL3R8q5f; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755143654;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=T+Ym3fZ+AnHT9AvQuTJapbVedXNyrAy6w7aioM5SVPQ=;
-	b=hL3R8q5fyaVCwRv4/J/7aidX4LXVJPL979TL+ylHcsN/Ybo/MMMFQ+VyGGTLvRPS3xR7z2
-	b/nz976ZzX4MrN3BpVyxbrL7fQ0e3Wga2aVkeLga4Xp7W3T9jhfDuP+WGDJhcoFTt/BMV2
-	p1KykZjtwIc0Y82cuHimwtiHYiik1Q8=
-From: David Dai <david.dai@linux.dev>
-To: mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org
-Cc: dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com,
-	tj@kernel.org,
-	david.dai@linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	kernel-team@meta.com
-Subject: [RFC PATCH] cputime, proc/stat: Fix cputime reporting in /proc/stat
-Date: Wed, 13 Aug 2025 20:54:00 -0700
-Message-ID: <20250814035400.4104403-1-david.dai@linux.dev>
+	s=arc-20240116; t=1755144543; c=relaxed/simple;
+	bh=KMepZn3j6P2ZdrPCrd3OUv6DxkECDXp1XE6iQNQmjwM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e1QAvQyRomK2++H4w0XtBlKxTzE7xXRssg/6GhUOH8LI/Cr2iQbMO5P5VnAo+ZnIDdx4dwfUI8ExG8iQZKdFdrFr76iWhOW61TLqE1nkLd0MCOA/pgrtVSErxpbX1o4tSUgJwk9B76IXgMI9oJIh1cvw8+T+qDJyR/FNKyOjqEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lpNPRiDV; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-32326df0e75so441224a91.2;
+        Wed, 13 Aug 2025 21:09:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755144541; x=1755749341; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3PU+08Hj7IdON/EOEoKrMGF/qgHczkSyXAOKfclSXjI=;
+        b=lpNPRiDVFeGx58BM9EX5dZi+FWrSMEWU9EOTX77rTZeSpjna2R5jJNiMYAX8y9Ae6W
+         hSRAJ8s+6xmbQw1GR1O+5ZHru2cZkjTeZFXnwRxSgAejHWYvoZ7ikl8frzkIVW3D/0dU
+         NaewNEo6jD3w5AkCIY6cKPu89Id3KIQdV8EbnDKOVNyF4Uv9W7iwkBbiT9DiGO5pqCch
+         k55aSbNFvUxkDhP31GgadJt2z/UqzqTs6eJ8QY4PMpvSmS1yRb3FH3u/fCGZTHnoP4QF
+         ZgM0Q6X/zxMtC4i0mkS/fU3H6FS4YGF++IO8PiQDUHIZbW66ls+3iwYLXM3j0KdRWl6Q
+         5gyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755144541; x=1755749341;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3PU+08Hj7IdON/EOEoKrMGF/qgHczkSyXAOKfclSXjI=;
+        b=ETfTTeZ/Cv+ZmjP6YsTeE1EV7Rdkx71Jydt7oZDifLZiz9ghb6kAgBbrg89qTFFcIE
+         4ymGvirBpSJzSYkEGiPA3OJQHwv5Xg5Jshadv5liLTT9PSpFHX/zHlANyhTXBaHv6CCP
+         Ihp052W2waEYeV2iSqW6Ysl0eFpW37CKxYQD+vzaCgC6QsirJaXyinRQUmxYtGTE5KRg
+         FIWW22GR/s/UbX5U58u+tj394vXGNZf3kTK5VKox+45VGs32jgIpUDwU4aEqr/ZuvLMf
+         ++2y8YultDSpsemF8P0DmynCsqukSsMmxp+MpeOErv6rK4asXuEM1I3Kb5zrkDAVqTw+
+         1fLA==
+X-Forwarded-Encrypted: i=1; AJvYcCURHu+HVEvrcCCfqQ85h+qsmpH4Z6F/tLGXdr2xRPudfDnTioPKsf1T2SCjulFpn01ckpmKbEcjIdQHJLorGA==@vger.kernel.org, AJvYcCV/O654BgMVHeqYT1zrxVlOILIzrMbEeuaWHnIz67pscSD0/faK+5IpWkFiM5d5Llnb76iGA0H6VGE=@vger.kernel.org, AJvYcCVpxowCf0MW7uaJseRFH5QIvXeTvO1lMldfDbJCOpP2RhQ7gzPVoGySQeTjdnTDf6iR4v2f9qVadkG1VlI+@vger.kernel.org, AJvYcCVrqfHy/mGTj1WPXbdwaYBrwwcLZqw8/w+QkDjLp65nXH1u+bO9jow+VM3Hq3Ua2gpot8IPKEm8@vger.kernel.org
+X-Gm-Message-State: AOJu0YwS9ZuWSO+KuXX6QWgSXQkrQxoqY91CKaUZaZHu56ECKX+a5dPM
+	ZZDAfJ1zhypNVTvTZFvMPHqaB9IOjF5IRsq2YWrvvKf7KdZPxVsyNQq78KczUyER5V6zJmq0kk7
+	/jd/qOK+Rr8x9P0xk0uAWusdbPZBavsw=
+X-Gm-Gg: ASbGncvs3kETBP0cKNwppLz2G9H9cTLOOWm4e0MXmn94e89znv7W7vT+WNGT4LfSn/c
+	zoKvIrVH8UnbhbHDHefI1qVP5Sbk4ANQXpcm+Q9hT7+pa7+NfKqWYNS5Q6bX6OnG3157lRiE7GP
+	mKr59ip1li10I214BeRuftBxi/PQaOj/VEu1TC564iCVxzxhXs+uEQ7NzFkosxHAIjoxVyANlqp
+	UKYVDC6LA==
+X-Google-Smtp-Source: AGHT+IFysmNLgAgYG7lYtdrse3SHf122YqK9Usgrv1wtEBz9XZQh06wjpzoMvbc7m9/dJU9UOsdStJIh39nzZi+htsI=
+X-Received: by 2002:a17:90b:2248:b0:31f:9114:ead8 with SMTP id
+ 98e67ed59e1d1-32327a76babmr2707556a91.6.1755144540852; Wed, 13 Aug 2025
+ 21:09:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <CANaxB-xXgW1FEj6ydBT2=cudTbP=fX6x8S53zNkWcw1poL=L2A@mail.gmail.com>
+ <20250724230052.GW2580412@ZenIV> <CANaxB-xbsOMkKqfaOJ0Za7-yP2N8axO=E1XS1KufnP78H1YzsA@mail.gmail.com>
+ <20250726175310.GB222315@ZenIV> <CAEWA0a6jgj8vQhrijSJXUHBnCTtz0HEV66tmaVKPe83ng=3feQ@mail.gmail.com>
+ <20250813185601.GJ222315@ZenIV> <aJzi506tGJb8CzA3@tycho.pizza> <20250813194145.GK222315@ZenIV>
+In-Reply-To: <20250813194145.GK222315@ZenIV>
+From: Pavel Tikhomirov <snorcht@gmail.com>
+Date: Thu, 14 Aug 2025 12:08:49 +0800
+X-Gm-Features: Ac12FXwDKf6o0FeR-M8ho-Ad58OjJloPtXu94TLN21ukCAu7DxWTnnpglJ78QYM
+Message-ID: <CAE1zp77jmFD=rySJVLf6yU+JKZnUpjkBagC3qQHrxPotrccEbQ@mail.gmail.com>
+Subject: Re: do_change_type(): refuse to operate on unmounted/not ours mounts
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Tycho Andersen <tycho@tycho.pizza>, Andrei Vagin <avagin@google.com>, 
+	Andrei Vagin <avagin@gmail.com>, Christian Brauner <brauner@kernel.org>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	criu@lists.linux.dev, Linux API <linux-api@vger.kernel.org>, 
+	stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Due to the tick based time accounting found in cputime where it
-attributes an entire tick's worth of time to a cpustat bucket everytime
-it samples based on the current CPU state, significant artifacts can
-occur on system wide cpustats which can cascade into large accounting
-errors.
+On Thu, Aug 14, 2025 at 3:41=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> w=
+rote:
+>
+> On Wed, Aug 13, 2025 at 01:09:27PM -0600, Tycho Andersen wrote:
+> > On Wed, Aug 13, 2025 at 07:56:01PM +0100, Al Viro wrote:
+> > > @@ -3347,18 +3360,11 @@ static int do_set_group(struct path *from_pat=
+h, struct path *to_path)
+> > >
+> > >     namespace_lock();
+> > >
+> > > -   err =3D -EINVAL;
+> > > -   /* To and From must be mounted */
+> > > -   if (!is_mounted(&from->mnt))
+> > > -           goto out;
+> > > -   if (!is_mounted(&to->mnt))
+> > > -           goto out;
+> > > -
+> > > -   err =3D -EPERM;
+> > > -   /* We should be allowed to modify mount namespaces of both mounts=
+ */
+> > > -   if (!ns_capable(from->mnt_ns->user_ns, CAP_SYS_ADMIN))
+> > > +   err =3D may_change_propagation(from);
+> > > +   if (err)
+> > >             goto out;
+> > > -   if (!ns_capable(to->mnt_ns->user_ns, CAP_SYS_ADMIN))
+> > > +   err =3D may_change_propagation(from);
+> >
+> > Just driving by, but I guess you mean "to" here.
+>
+> D'oh...  Yes, of course.  Fun question: would our selftests have caught
+> that?
+> [checks]
+> move_mount_set_group_test.c doesn't have anything in that area, nothing i=
+n
+> LTP or xfstests either, AFAICS...
 
-In workloads running erlang, we observed that userspace threads such as
-"erts_sched" wake up every 1ms to do ~50us of work that can line up with
-the scheduler's tick(1000HZ) boundary. This resulted in a much larger
-amount of time being attributed to the user bucket, and in CPUs
-appearing to be ~30% busy while the task itself only took up ~5% of CPU
-time.
+Yes, selftest is very simple and is not covering userns checks.
 
-In addition to the inaccuracies from tick-based accounting, /proc/stat
-reports using a combination of tick-based for some buckets and more
-precise time accounting methods such as get_cpu_sleep_time_us() for idle
-which results in further discrepancies. As an example, this can be
-easily reproduced by spinning up a periodic workload with a 50% duty
-cycle that wakes every 1ms and then reading out /proc/stat every 1
-second to compare the delta.
+>  And I don't see anything in
+> https://github.com/checkpoint-restore/criu
+> either - there are uses of MOVE_MOUNT_SET_GROUP, but they are well-buried
+> and I don't see anything in their tests that would even try to poke into
+> that thing...
+>
+> Before we go and try to cobble something up, does anybody know of a place
+> where regression tests for MOVE_MOUNT_SET_GROUP could be picked from?
+>
 
-On a 1000HZ system, time delta per sec read out (converted to ms):
-user: 990 nice: 0 system: 0 idle: 480 irq: 0 softirq: 0 ...
+Basically each CRIU test that is run by zdtm (if it is in ns/uns
+flavor (which are most of them)), tests mounts checkpoint/restore. And
+each test which has shared/slave moutns leads to MOVE_MOUNT_SET_GROUP
+being used and thus tested. We have a mountinfo comparison in zdtm
+which checks that propagation is topologically the same after c/r.
 
-When more accurate time accounting is available for tracking idle time,
-we can determine non-idle time to split between the various buckets
-using ratios from tick based accounting. This is a similar technique
-used in cputime_adjust for cgroup and per task cputime accounting.
+But, yes, we do not cover userns checks, as in CRIU case, CRIU is
+expected to run in userns which has all capabilities over restored
+container, and should always pass those checks.
 
-Suggested-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: David Dai <david.dai@linux.dev>
----
- fs/proc/stat.c              |  19 ++++++
- include/linux/kernel_stat.h |  34 +++++++++++
- kernel/sched/cputime.c      | 119 +++++++++++++++++++++++++++++++++++-
- 3 files changed, 171 insertions(+), 1 deletion(-)
+JFYI:
 
-diff --git a/fs/proc/stat.c b/fs/proc/stat.c
-index 8b444e862319..6ecef606b07f 100644
---- a/fs/proc/stat.c
-+++ b/fs/proc/stat.c
-@@ -12,6 +12,7 @@
- #include <linux/time.h>
- #include <linux/time_namespace.h>
- #include <linux/irqnr.h>
-+#include <linux/sched/clock.h>
- #include <linux/sched/cputime.h>
- #include <linux/tick.h>
- 
-@@ -22,6 +23,10 @@
- #define arch_irq_stat() 0
- #endif
- 
-+#ifdef CONFIG_NO_HZ_COMMON
-+DEFINE_PER_CPU(struct prev_kcpustat, prev_cpustat);
-+#endif
-+
- u64 get_idle_time(struct kernel_cpustat *kcs, int cpu)
- {
- 	u64 idle, idle_usecs = -1ULL;
-@@ -102,6 +107,10 @@ static int show_stat(struct seq_file *p, void *v)
- 
- 		kcpustat_cpu_fetch(&kcpustat, i);
- 
-+#ifdef CONFIG_NO_HZ_COMMON
-+		split_cputime_using_ticks(cpustat, &per_cpu(prev_cpustat, i),
-+					  sched_clock_cpu(i), i);
-+#endif
- 		user		+= cpustat[CPUTIME_USER];
- 		nice		+= cpustat[CPUTIME_NICE];
- 		system		+= cpustat[CPUTIME_SYSTEM];
-@@ -142,6 +151,10 @@ static int show_stat(struct seq_file *p, void *v)
- 
- 		kcpustat_cpu_fetch(&kcpustat, i);
- 
-+#ifdef CONFIG_NO_HZ_COMMON
-+		split_cputime_using_ticks(cpustat, &per_cpu(prev_cpustat, i),
-+					  sched_clock_cpu(i), i);
-+#endif
- 		/* Copy values here to work around gcc-2.95.3, gcc-2.96 */
- 		user		= cpustat[CPUTIME_USER];
- 		nice		= cpustat[CPUTIME_NICE];
-@@ -210,6 +223,12 @@ static const struct proc_ops stat_proc_ops = {
- 
- static int __init proc_stat_init(void)
- {
-+#ifdef CONFIG_NO_HZ_COMMON
-+	int cpu;
-+
-+	for_each_possible_cpu(cpu)
-+		prev_kcpustat_init(&per_cpu(prev_cpustat, cpu));
-+#endif
- 	proc_create("stat", 0, NULL, &stat_proc_ops);
- 	return 0;
- }
-diff --git a/include/linux/kernel_stat.h b/include/linux/kernel_stat.h
-index b97ce2df376f..d649bbd3635d 100644
---- a/include/linux/kernel_stat.h
-+++ b/include/linux/kernel_stat.h
-@@ -42,6 +42,11 @@ struct kernel_stat {
- 	unsigned int softirqs[NR_SOFTIRQS];
- };
- 
-+struct prev_kcpustat {
-+	u64 cpustat[NR_STATS];
-+	raw_spinlock_t lock;
-+};
-+
- DECLARE_PER_CPU(struct kernel_stat, kstat);
- DECLARE_PER_CPU(struct kernel_cpustat, kernel_cpustat);
- 
-@@ -51,6 +56,9 @@ DECLARE_PER_CPU(struct kernel_cpustat, kernel_cpustat);
- #define kstat_cpu(cpu) per_cpu(kstat, cpu)
- #define kcpustat_cpu(cpu) per_cpu(kernel_cpustat, cpu)
- 
-+#define for_each_cpustat(cpustat)	\
-+	for ((cpustat) = 0; (cpustat) < NR_STATS; (cpustat)++)
-+
- extern unsigned long long nr_context_switches_cpu(int cpu);
- extern unsigned long long nr_context_switches(void);
- 
-@@ -141,4 +149,30 @@ extern void account_idle_ticks(unsigned long ticks);
- extern void __account_forceidle_time(struct task_struct *tsk, u64 delta);
- #endif
- 
-+extern void split_cputime_using_ticks(u64 *cpustat, struct prev_kcpustat *prev_kcpustat,
-+				      u64 now, int cpu);
-+static inline void prev_kcpustat_init(struct prev_kcpustat *prev)
-+{
-+#ifdef CONFIG_NO_HZ_COMMON
-+	int i;
-+
-+	for_each_cpustat(i)
-+		prev->cpustat[i] = 0;
-+	raw_spin_lock_init(&prev->lock);
-+#endif
-+}
-+
-+static inline bool exec_cputime(int idx)
-+{
-+	switch (idx) {
-+	case CPUTIME_USER:
-+	case CPUTIME_NICE:
-+	case CPUTIME_SYSTEM:
-+	case CPUTIME_GUEST:
-+	case CPUTIME_GUEST_NICE:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
- #endif /* _LINUX_KERNEL_STAT_H */
-diff --git a/kernel/sched/cputime.c b/kernel/sched/cputime.c
-index 7097de2c8cda..50c710f81df7 100644
---- a/kernel/sched/cputime.c
-+++ b/kernel/sched/cputime.c
-@@ -1092,5 +1092,122 @@ void kcpustat_cpu_fetch(struct kernel_cpustat *dst, int cpu)
- 	}
- }
- EXPORT_SYMBOL_GPL(kcpustat_cpu_fetch);
--
- #endif /* CONFIG_VIRT_CPU_ACCOUNTING_GEN */
-+
-+#ifdef CONFIG_NO_HZ_COMMON
-+/*
-+ * Split precisely tracked exec wall time using tick based buckets
-+ *
-+ * Use a similar technique to cputime_adjust to split the total exec wall time
-+ * used by the CPU to its respective buckets by scaling these tick based values
-+ * against the total wall time accounted. Similar to cputime_adjust, this
-+ * function guarantees monotonicity for the various buckets and total time
-+ * delta distributed does not exceed exec time passed.
-+ *
-+ * This is only useful when idle time can be accounted for accurately.
-+ *
-+ * Due to various imprecisions in tick accounting/other time accounting and
-+ * rounding errors, this is a best effort at distributing time to their
-+ * respective buckets.
-+ *
-+ */
-+void split_cputime_using_ticks(u64 *cpustat, struct prev_kcpustat *prev_kcpustat, u64 now, int cpu)
-+{
-+	u64 exec_ticks, exec_time, prev_exec_time, deficit, idle = -1ULL, iowait = -1ULL;
-+	u64 *prev_cpustat;
-+	unsigned long flags;
-+	int i;
-+
-+	raw_spin_lock_irqsave(&prev_kcpustat->lock, flags);
-+	prev_cpustat = prev_kcpustat->cpustat;
-+
-+	if (cpu_online(cpu)) {
-+		idle = get_cpu_idle_time_us(cpu, NULL);
-+		iowait = get_cpu_iowait_time_us(cpu, NULL);
-+	}
-+
-+	/*
-+	 * If the cpu is offline, we still need to update prev_kcpustat as the
-+	 * accounting changes between non-ticked vs tick based to ensure
-+	 * monotonicity for future adjustments.
-+	 */
-+	if (idle == -1ULL || iowait == -1ULL)
-+		goto update;
-+
-+	prev_exec_time = 0;
-+	for_each_cpustat(i) {
-+		if (!exec_cputime(i))
-+			continue;
-+		prev_exec_time += prev_cpustat[i];
-+	}
-+
-+	exec_time = now - (idle + iowait) * NSEC_PER_USEC -
-+		cpustat[CPUTIME_IRQ] - cpustat[CPUTIME_SOFTIRQ] -
-+		cpustat[CPUTIME_STEAL];
-+
-+	if (prev_exec_time >= exec_time) {
-+		for_each_cpustat(i) {
-+			if (!exec_cputime(i))
-+				continue;
-+			cpustat[i] = prev_cpustat[i];
-+		}
-+		goto out;
-+	}
-+
-+	exec_ticks = 0;
-+	for_each_cpustat(i) {
-+		if (!exec_cputime(i))
-+			continue;
-+		 exec_ticks += cpustat[i];
-+	}
-+
-+	/*
-+	 * To guarantee monotonicity for all buckets and to ensure we don't
-+	 * over allocate time, we keep track of deficits in the first pass to
-+	 * subtract from surpluses in the second.
-+	 */
-+	deficit = 0;
-+	for_each_cpustat(i) {
-+		if (!exec_cputime(i))
-+			continue;
-+
-+		cpustat[i] = mul_u64_u64_div_u64(cpustat[i], exec_time, exec_ticks);
-+		if (cpustat[i] < prev_cpustat[i]) {
-+			deficit += prev_cpustat[i] - cpustat[i];
-+			cpustat[i] = prev_cpustat[i];
-+		}
-+	}
-+
-+	/*
-+	 * Subtract from the time buckets that have a surplus. The way this is
-+	 * distributed isn't fair, but for simplicity's sake just go down the
-+	 * list of buckets and take time away until we balance the deficit.
-+	 */
-+	for_each_cpustat(i) {
-+		if (!exec_cputime(i))
-+			continue;
-+		if (!deficit)
-+			break;
-+		if (cpustat[i] > prev_cpustat[i]) {
-+			u64 delta = min_t(u64, cpustat[i] - prev_cpustat[i], deficit);
-+
-+			cpustat[i] -= delta;
-+			deficit -= delta;
-+		}
-+	}
-+
-+update:
-+	for_each_cpustat(i) {
-+		if (!exec_cputime(i))
-+			continue;
-+		prev_cpustat[i] = cpustat[i];
-+	}
-+out:
-+	raw_spin_unlock_irqrestore(&prev_kcpustat->lock, flags);
-+}
-+#else
-+void split_cputime_using_ticks(u64 *cpustat, struct prev_kcpustat *prev_kcpustat, u64 now, int cpu)
-+{
-+	/* Do nothing since accurate idle time accounting isn't available. */
-+}
-+#endif
--- 
-2.47.3
+The use of MOVE_MOUNT_SET_GROUP in CRIU is well-buried in:
 
+https://github.com/checkpoint-restore/criu/blob/116e56ba46382c05066d33a8bba=
+dcc495dbdb644/criu/mount-v2.c#L896
+
+  +-< move_mount_set_group
+    +-< restore_one_sharing
+      +-< restore_one_sharing_group
+        +-< restore_mount_sharing_options
+          +-< prepare_mnt_ns_v2
+
+This stack already has a set of precreated mounts and walks over their
+sharing groups saved in CRIU image files and assigns them accordingly.
+
+And we have a bunch of tests with different sharing configurations to
+test propagation c/r specifically:
+
+git grep -l "SHARING\|SLAVE" test/zdtm/static
+test/zdtm/static/mnt_ext_auto.c
+test/zdtm/static/mnt_ext_master.c
+test/zdtm/static/mnt_ext_multiple.c
+test/zdtm/static/mnt_root_ext.c
+test/zdtm/static/mntns_overmount.c
+test/zdtm/static/mntns_shared_bind03.c
+test/zdtm/static/mount_complex_sharing.c
+test/zdtm/static/mountpoints.c
+test/zdtm/static/shared_slave_mount_children.c
+
+It should be enough to run a zdtm test-suit to check that change does
+not break something for CRIU (will do).
 
