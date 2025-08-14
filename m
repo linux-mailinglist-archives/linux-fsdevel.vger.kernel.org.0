@@ -1,180 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-57925-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57926-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D441BB26D29
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 18:58:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8445DB26D2E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 18:59:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3049AA1529
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 16:55:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 217B7A05C64
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 16:55:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57CAA2FCC14;
-	Thu, 14 Aug 2025 16:54:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA7CE230D1E;
+	Thu, 14 Aug 2025 16:55:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uAijTxAu"
+	dkim=pass (2048-bit key) header.d=sandeen.net header.i=@sandeen.net header.b="m9CBxGQB";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TdpR2zJg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 935A3166F1A;
-	Thu, 14 Aug 2025 16:54:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 312A41FDA92;
+	Thu, 14 Aug 2025 16:55:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755190471; cv=none; b=Mng35y6LGam56qCAyXJJKDA/RiZjJFYarUHdAejIFJYP/JlpF5lwRgRMoBfHcok9TZ1huOeCPk3hjvTuMIR6im5lMCeI8jyoGwvnmM7vKSb40QxdIr+zF+O+OzeMSFZ4YxmRNer+mr8gj90dXq0HF11pzMAKxuJhaTWKsE5OfNU=
+	t=1755190524; cv=none; b=YYPErdCplhFjnp7dSfpDCc1ndGZtf0LOeX2wFE6OH8ml9dzrg5XA0M4NQog9tvGk7N6A8u56DhPpe494OvC6nye6sl4wophvLwf6agLah1wtEK2wX5pRSC/eZUc8Wnr3liNYquLPz5t2zDHhFc3OOe+AeCAKdJ2Yv1vjmGsXl+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755190471; c=relaxed/simple;
-	bh=l+BdPGU5s1lSz+Wn4Skj6yNZHRqBxCYdP1QbhjGj46w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dc07DHx9nFSHmzBYwR7BbcJmg7lOKpRasaYF+uZqdyptW55paegCO4RlJvEhoYTQudzshijREYsIjGbp1LXX8zMgPOB/oXPKu1+7mlVg5wLwDPGuSSj9OF7TGl2lmefY/Nxq+ZJeUybdkPscwKYRXU6alJZsBvdkUxT1Glh2pw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uAijTxAu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2593AC4CEED;
-	Thu, 14 Aug 2025 16:54:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755190471;
-	bh=l+BdPGU5s1lSz+Wn4Skj6yNZHRqBxCYdP1QbhjGj46w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uAijTxAuY3vGwM78+PrRc/fCQLGARlU2IACUe8szD/QvaX7trsuwHqBZM0fU/BkJ0
-	 PrKRsyPReVqn1jx+XoArIoQSdVBZ6pgLV5XJ3gwVZsxMoPqw64Rd5/ba5m5Giswfef
-	 +pWR5d1bRDswR628xphF8ZJg5OzExBiI+bx4OjoJXq70IScPa3+UDFRffBnH7BGs6t
-	 Z0b1epTyG+7p8SS4oKLtdLRaB4oVYY2J/7eVwEiWHaGt2ultzwauOolHjFJbFepz6P
-	 8AtC40MBVot4IzdXlUjfNKsre/FmlM+TNETCjpS5bIV9PHVY5//XDsMmFYJmeboDSM
-	 trEYUGuKC9C6A==
-Date: Thu, 14 Aug 2025 09:54:30 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-	dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
-	linux-scsi@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org, hch@lst.de,
-	tytso@mit.edu, bmarzins@redhat.com, chaitanyak@nvidia.com,
-	shinichiro.kawasaki@wdc.com, brauner@kernel.org,
-	martin.petersen@oracle.com, yi.zhang@huawei.com,
-	chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH xfsprogs v2] xfs_io: add FALLOC_FL_WRITE_ZEROES support
-Message-ID: <20250814165430.GR7942@frogsfrogsfrogs>
-References: <20250813024250.2504126-1-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1755190524; c=relaxed/simple;
+	bh=C1zyM9JboEL1dq8fts6x0fFqBZMYuVpZG5QoyF45iS0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=npwHnIkFNjrDeD7V/Uf5p+tDDbXYv6ziJlj3W5iYHlUAK0mh8HLe1IVfa14BB4hiQXJQka+KjM5qV8OcfYxm714nCJUExS4BuTyakLP/WunDEmGiOBiIkntV0wR1QNaY4KIeIXPpRq6BBT340Hd7+gFCIy3q4HbfH3gv5fbh+yI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sandeen.net; spf=pass smtp.mailfrom=sandeen.net; dkim=pass (2048-bit key) header.d=sandeen.net header.i=@sandeen.net header.b=m9CBxGQB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TdpR2zJg; arc=none smtp.client-ip=103.168.172.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sandeen.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sandeen.net
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 6931A1400141;
+	Thu, 14 Aug 2025 12:55:22 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-02.internal (MEProxy); Thu, 14 Aug 2025 12:55:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sandeen.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1755190522;
+	 x=1755276922; bh=SQdSFE3oYuJi6nGLbaOS61HME2o+m/ap/i/7e01/+Wo=; b=
+	m9CBxGQBfyDJ6aczgpzjsN5GG9uLqJV/ogyIDZut1KofCpxeBYJpEdHRLUFYSWJm
+	ZFX6djtz2JyRM+s6bHzwHV9kAFkqKQ/+7jtoTBAo1Cx77BH5++aZ/0LtHq1Y6ife
+	/joccRcPkEjRVByRYW3egdPzwMh1Ycx17onw2Jbtelk1Uf0zMvH5bjtHX0u3Ismd
+	PK0cF38eyszkVFwisyQsnteSvHKqe6OG38FAvv1NqZrFcOCT2u8YW0agRl2ZbZht
+	bKq6TW65+9+odVitqDgDdcojGUQ2VYaldFjxIGiM7WIz0SI6s56R7ig+1lD72+Vn
+	SD9ly8m7ejgC4aWK2b6x4Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1755190522; x=
+	1755276922; bh=SQdSFE3oYuJi6nGLbaOS61HME2o+m/ap/i/7e01/+Wo=; b=T
+	dpR2zJgq0eTCIwoXFbSFvDuiEVnBs+MYOm9+chs26lZyInEEo3q/bZKOULsOW27D
+	Yfuq8DLu1jGhW5l6Vb4Lytm/cB/hJHUpT5aBSRWtYKG73usk89O0dOkKZoDEChcZ
+	0FRQiRBHxra7hG+/Qr/M+QfSp4odRgkC5sAQFiSNqWt8ac6akWsHRiC6Il+dN2pt
+	7azdsPa6mIHyZNLcL7wdm15Z9VQWIyQ5+SgYRhIm2KZdiDU4OwWxXZXRU89BqQDT
+	Sf9hs4h+x/2aq9GMW9/s4Db79POb9pJhqUh5bdfdyeKLVLtpaE3usrxqQJi+QxE7
+	N9SfN14CH4dAxReEZ3ZzQ==
+X-ME-Sender: <xms:-RSeaIWSqwlbx1ybZDEGnJrQPiZzj9v53acRwkcqYfH2Ij9wHYH7UA>
+    <xme:-RSeaJ9JDUAG8i2hNNgKyHE-KBCJEFNcMS3uB8eMngmdCbkruRccmawP-WYjQmO67
+    PJCW89UNw66jzkF-R0>
+X-ME-Received: <xmr:-RSeaF5D07jrn5YNwQ119WB-7yhNqMNwql7Xi7g1P6Rh4KMffcf8I0NR0TIW5OaiBytK0QrLcF2YDWVEgu1h2Ne8eg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddugeduieduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpefgrhhitgcu
+    ufgrnhguvggvnhcuoehsrghnuggvvghnsehsrghnuggvvghnrdhnvghtqeenucggtffrrg
+    htthgvrhhnpeevieekueetfeeujedtheeffedvgeffiedvjeejleffhfeggeejuedtjeeu
+    lefhvdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hsrghnuggvvghnsehsrghnuggvvghnrdhnvghtpdhnsggprhgtphhtthhopedutddpmhho
+    uggvpehsmhhtphhouhhtpdhrtghpthhtoheprghsmhgruggvuhhssegtohguvgifrhgvtg
+    hkrdhorhhgpdhrtghpthhtohepshgrnhguvggvnhesrhgvughhrghtrdgtohhmpdhrtghp
+    thhtohepvhelfhhssehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtoheplhhinh
+    hugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehl
+    ihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhope
+    gvrhhitghvhheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhutghhohesihhonhhk
+    ohhvrdhnvghtpdhrtghpthhtoheplhhinhhugigpohhsshestghruhguvggshihtvgdrtg
+    homhdprhgtphhtthhopeguhhhofigvlhhlshesrhgvughhrghtrdgtohhm
+X-ME-Proxy: <xmx:-RSeaCnlnKguemqyiDuE1pG0FIAlPKou-uBb8VdUeDcDJIcKkWQ8VA>
+    <xmx:-RSeaIHu9PJ3uSZYvBIONnVQy7h8eOaPOlDgHmxznm218BtemWpEpQ>
+    <xmx:-RSeaJ-2yzT1Pw6VkLQTkavN1cjDMoyAWnVhbOjiNbs7YwnDl4LddA>
+    <xmx:-RSeaJluSLTN9wMFOZwbbS63WbPBl0VfYXC7K5vLIvo2vDdOot_PcA>
+    <xmx:-hSeaMQZGJb8CBKbSG9B5u-XK5WDpHvX27qq0ra1hCeElephilPsxVJp>
+Feedback-ID: i2b59495a:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 14 Aug 2025 12:55:20 -0400 (EDT)
+Message-ID: <6e965060-7b1b-4bbf-b99b-fc0f79b860f8@sandeen.net>
+Date: Thu, 14 Aug 2025 11:55:20 -0500
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250813024250.2504126-1-yi.zhang@huaweicloud.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 0/4] 9p: convert to the new mount API
+To: asmadeus@codewreck.org, Eric Sandeen <sandeen@redhat.com>
+Cc: v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, ericvh@kernel.org, lucho@ionkov.net,
+ linux_oss@crudebyte.com, dhowells@redhat.com,
+ Christian Brauner <brauner@kernel.org>
+References: <20250730192511.2161333-1-sandeen@redhat.com>
+ <aIqa3cdv3whfNhfP@codewreck.org>
+Content-Language: en-US
+From: Eric Sandeen <sandeen@sandeen.net>
+In-Reply-To: <aIqa3cdv3whfNhfP@codewreck.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 13, 2025 at 10:42:50AM +0800, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
+On 7/30/25 5:21 PM, asmadeus@codewreck.org wrote:
+> Hi Eric,
 > 
-> The Linux kernel (since version 6.17) supports FALLOC_FL_WRITE_ZEROES in
-> fallocate(2). Add support for FALLOC_FL_WRITE_ZEROES support to the
-> fallocate utility by introducing a new 'fwzero' command in the xfs_io
-> tool.
+> Eric Sandeen wrote on Wed, Jul 30, 2025 at 02:18:51PM -0500:
+>> This is an updated attempt to convert 9p to the new mount API. 9p is
+>> one of the last conversions needed, possibly because it is one of the
+>> trickier ones!
 > 
-> Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=278c7d9b5e0c
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> ---
-> v1->v2:
->  - Minor description modification to align with the kernel.
+> Thanks for this work!
 > 
->  io/prealloc.c     | 36 ++++++++++++++++++++++++++++++++++++
->  man/man8/xfs_io.8 |  6 ++++++
->  2 files changed, 42 insertions(+)
+> I think the main contention point here is that we're moving some opaque
+> logic that was in each transport into the common code, so e.g. an out of
+> tree transport can no longer have its own options (not that I'm aware of
+> such a transport existing anyway, so we probably don't have to worry
+> about this)
 > 
-> diff --git a/io/prealloc.c b/io/prealloc.c
-> index 8e968c9f..9a64bf53 100644
-> --- a/io/prealloc.c
-> +++ b/io/prealloc.c
-> @@ -30,6 +30,10 @@
->  #define FALLOC_FL_UNSHARE_RANGE 0x40
->  #endif
->  
-> +#ifndef FALLOC_FL_WRITE_ZEROES
-> +#define FALLOC_FL_WRITE_ZEROES 0x80
-> +#endif
-> +
->  static cmdinfo_t allocsp_cmd;
->  static cmdinfo_t freesp_cmd;
->  static cmdinfo_t resvsp_cmd;
-> @@ -41,6 +45,7 @@ static cmdinfo_t fcollapse_cmd;
->  static cmdinfo_t finsert_cmd;
->  static cmdinfo_t fzero_cmd;
->  static cmdinfo_t funshare_cmd;
-> +static cmdinfo_t fwzero_cmd;
->  
->  static int
->  offset_length(
-> @@ -377,6 +382,27 @@ funshare_f(
->  	return 0;
->  }
->  
-> +static int
-> +fwzero_f(
-> +	int		argc,
-> +	char		**argv)
-> +{
-> +	xfs_flock64_t	segment;
-> +	int		mode = FALLOC_FL_WRITE_ZEROES;
+> OTOH this is also a blessing because 9p used to silently ignore unknown
+> options, and will now properly refuse them (although it'd still silently
+> ignore e.g. rdma options being set for a virtio mount -- I guess there's
+> little harm in that as long as typos are caught?)
+> 
+> So I think I'm fine with the approach.
+> 
+>> I was able to test this to some degree, but I am not sure how to test
+>> all transports; there may well be bugs here. It would be great to get
+>> some feedback on whether this approach seems reasonable, and of course
+>> any further review or testing would be most welcome.
+> 
+> I still want to de-dust my test setup with rdma over siw for lack of
+> supported hardware, so I'll try to give it a try, but don't necessarily
+> wait for me as I don't know when that'll be..
+> 
 
-Shouldn't this take a -k to add FALLOC_FL_KEEP_SIZE like fzero?
+Any news on testing? :)
 
-(The code otherwise looks fine to me)
+As for "waiting for you," I assume that's more for your maintainer peers
+than for me? I'm not sure if this would go through Christian (cc'd) or
+through you?
 
---D
-
-> +
-> +	if (!offset_length(argv[1], argv[2], &segment)) {
-> +		exitcode = 1;
-> +		return 0;
-> +	}
-> +
-> +	if (fallocate(file->fd, mode, segment.l_start, segment.l_len)) {
-> +		perror("fallocate");
-> +		exitcode = 1;
-> +		return 0;
-> +	}
-> +	return 0;
-> +}
-> +
->  void
->  prealloc_init(void)
->  {
-> @@ -489,4 +515,14 @@ prealloc_init(void)
->  	funshare_cmd.oneline =
->  	_("unshares shared blocks within the range");
->  	add_command(&funshare_cmd);
-> +
-> +	fwzero_cmd.name = "fwzero";
-> +	fwzero_cmd.cfunc = fwzero_f;
-> +	fwzero_cmd.argmin = 2;
-> +	fwzero_cmd.argmax = 2;
-> +	fwzero_cmd.flags = CMD_NOMAP_OK | CMD_FOREIGN_OK;
-> +	fwzero_cmd.args = _("off len");
-> +	fwzero_cmd.oneline =
-> +	_("zeroes space and eliminates holes by allocating and submitting write zeroes");
-> +	add_command(&fwzero_cmd);
->  }
-> diff --git a/man/man8/xfs_io.8 b/man/man8/xfs_io.8
-> index b0dcfdb7..0a673322 100644
-> --- a/man/man8/xfs_io.8
-> +++ b/man/man8/xfs_io.8
-> @@ -550,6 +550,12 @@ With the
->  .B -k
->  option, use the FALLOC_FL_KEEP_SIZE flag as well.
->  .TP
-> +.BI fwzero " offset length"
-> +Call fallocate with FALLOC_FL_WRITE_ZEROES flag as described in the
-> +.BR fallocate (2)
-> +manual page to allocate and zero blocks within the range by submitting write
-> +zeroes.
-> +.TP
->  .BI zero " offset length"
->  Call xfsctl with
->  .B XFS_IOC_ZERO_RANGE
-> -- 
-> 2.39.2
-> 
-> 
+Thanks,
+-Eric
 
