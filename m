@@ -1,199 +1,260 @@
-Return-Path: <linux-fsdevel+bounces-57960-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57961-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D57FB270E0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 23:35:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00A22B27105
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 23:46:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5E65A24EA3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 21:35:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3626B5C1EA3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 21:46:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25A6B279DC4;
-	Thu, 14 Aug 2025 21:35:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A12A4274FFC;
+	Thu, 14 Aug 2025 21:46:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bpf2Hsoy"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IeoQYAyF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 226DA273D66
-	for <linux-fsdevel@vger.kernel.org>; Thu, 14 Aug 2025 21:35:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E491EB1A4
+	for <linux-fsdevel@vger.kernel.org>; Thu, 14 Aug 2025 21:46:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755207309; cv=none; b=WR8yaZRty4J8tsQPcJRJ/a7nkzoUNtNsS5aURYIdrxhR9/FTdpTP2L7cWKHnFuH6eyEar+r9zTbJLwF02GDo8jbILBHbTq8Os01htqBCHzve1cAOoXX4psy2Ko4F3asDBnb9f+bLbdtWgfogAvvPJHphqVu8qCfjVCGiiyV4ZBo=
+	t=1755207967; cv=none; b=RUZeWXWK49gmHGT7BAONiJN26Ibnqw89l9Jkfc5nGfMLJD2sXRJtLi/xGsju0nvlKx8mlBDOlcSyrzr8lYlMeXCkzhlAo6ZrgOVI3LPD//0gGoNehe4nA/PPzIEn1gWE1tulngjd8w+C5kQYftT7rMXhZmAoN8wZDu5ypQYQGP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755207309; c=relaxed/simple;
-	bh=2fuIMuEZcev0RDxuwZSy+EEzjg7NkM4Px2bVsPrQqQ8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Wddqs8X8irRtoMCL8k/N2wtlT6YCbrgrfmfA/ApX/EyKTSZNPR/SPkQ2bUSlNLjeoWGPgFov4vV6vrJf+vLjyXqQBQ0kG5XGcM+tMMoqmwnbn+ThCR9IZzdy8ekSqXJhXZXqrIO/RmdxrkIM6TCaoLtdCd6vliV+14WyD5FPcF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bpf2Hsoy; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-244581ce388so27017365ad.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Aug 2025 14:35:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755207307; x=1755812107; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oajUHZurgaJBmxaEUN9ClPIgMpw3KkdomNP4S2lFK5E=;
-        b=bpf2HsoydWKUiUdDeyV8xbTh2VAbTcJP2Z1FVet5rHKOHyATbYgOVwJHuzW1aEYQ2P
-         KvLNxGAVkdfggH5N+tg6AeqJf4vw/C3Oa69/Le10EnyCatYdwJRsgbPwVH0zikfOCMTd
-         VA685XDAszjLHrjKpjvjbmt5OOX4sesNCGiFE7pINUpXIvLDGtmFZK2KK2CdQdgTub5Y
-         8DLMoMuZ4fEv8jNZB2HzZI0RPBWt2gkmdpIK5veSX7alhArra+NJcKQNJZKK6uH1WC7H
-         5JlMmJqf3pkqYRgkXUscBIU1/pWPQzhx3GrRF4keyKbPiHBw0ogd4+AuP9bmw5Xtm8uu
-         ywKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755207307; x=1755812107;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oajUHZurgaJBmxaEUN9ClPIgMpw3KkdomNP4S2lFK5E=;
-        b=c/f8rZPFF4ubTnU4dnSbM9aYtDTGe6S5KP7L2t28c9UOf8VB+jXUGPX9jWrzoT1wH1
-         8FDqerQoiCRN7QAhDKI5fZtbTRLdEnLS3beYB7zK8IlsDzVHmPDuuXljWZm0Wex2GXuf
-         j5KQFa/wfE8qKYDCcjl5nPJPdip+fr5TjYa6H2hnHeRt0XgdHtNFJ8VhtGLpDMLgfXZI
-         x3OrKl0G8nf121euCrRRDItSp8wVKX0IgK5r4QQFxgt3HDtt4HPIrj0fTpCj53jgK+/3
-         dkG3cMmRowtB6fmuxOjsdh80GSecCE/TB1Qe+n/Li93Uttsa36GHlUUFnBSaXJhhpPTS
-         AVwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUjL3QnHjl3y8i5lsEr7BQh/Wl+uwZ4PF70iCOPIWVpdHJN7Fno9am4SBXUXHeqV3Rc6J3Px3MRwbeqQwVT@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYhgyK2Cw0tllqNDJbqueLR+/ACCBOzoEcXRhP9UtwcvgqbMmW
-	VU8GFYWh3dWgCAIuCgFuXzRAmi2bp4wE+8OoaceGzgaD8M0MEloJJDW1rQi6+umPGquCHonI751
-	FZoUpf23FrrAuOPjkI2vOa3dcoQ==
-X-Google-Smtp-Source: AGHT+IHSCWEZ4WzQFvfM7gmfwowerM9ooYJUxTCTTxPR6qD/XE6Y7uX4MPuDDOyY1Umu3SEnPhVG+BTFarjXCQhhaQ==
-X-Received: from pjboi8.prod.google.com ([2002:a17:90b:3a08:b0:321:90c5:fc2b])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:902:ef0f:b0:240:b075:577f with SMTP id d9443c01a7336-244586c4da1mr76912365ad.37.1755207307282;
- Thu, 14 Aug 2025 14:35:07 -0700 (PDT)
-Date: Thu, 14 Aug 2025 14:35:05 -0700
-In-Reply-To: <aIwD5kGbMibV7ksk@yzhao56-desk.sh.intel.com>
+	s=arc-20240116; t=1755207967; c=relaxed/simple;
+	bh=V6wXdJLrBZ8RcJqkcHRG6ySv0M1Vq3mIHeW4kuR3MGc=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=CZSNFT0hFOl70pibqKgcRYiktiuu3Ddai7HZvZTmb7/EYfWlFhFH954KzNq9tnLfikTNSKVOiwvoIl5Im74gDiZqs9m36FRCzbQf3KY9PBV4aGjARAXGXwjrnJywtby8yIef7zukt18mm4x1ZsnxgknmXALThIPK6AWKmkXdwT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IeoQYAyF; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755207962;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=hMrmnnaTuE7E24vkMuvtxjjxa9pOJBVXm+5edbNayAI=;
+	b=IeoQYAyFMoZxz3jWbLVM6OvK3VqoTscAz+IuReRDHdoG0lPzLO0YfGIE6AZgnGe6lw0rVh
+	Kzk+acqACKRwBChlETzclDIkoTKnvneoRiPO/2Z+n9nXpZm1vu255jlHqul6GUijnY9eir
+	KF3HraGlv1wp3tmo8zT+vdKJch4DxIE=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-487-HEFzikZhPcqMN1yOvb2dkA-1; Thu,
+ 14 Aug 2025 17:45:56 -0400
+X-MC-Unique: HEFzikZhPcqMN1yOvb2dkA-1
+X-Mimecast-MFC-AGG-ID: HEFzikZhPcqMN1yOvb2dkA_1755207955
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7F63318004A7;
+	Thu, 14 Aug 2025 21:45:54 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.21])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 61E0730001A2;
+	Thu, 14 Aug 2025 21:45:51 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Christian Brauner <brauner@kernel.org>,
+    Paulo Alcantara <pc@manguebit.org>, Steve French <sfrench@samba.org>
+cc: dhowells@redhat.com, Xiaoli Feng <fengxiaoli0714@gmail.com>,
+    Shyam Prasad N <sprasad@microsoft.com>, netfs@lists.linux.dev,
+    linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+    stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] netfs: Fix unbuffered write error handling
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1747264138.git.ackerleytng@google.com> <b784326e9ccae6a08388f1bf39db70a2204bdc51.1747264138.git.ackerleytng@google.com>
- <aIwD5kGbMibV7ksk@yzhao56-desk.sh.intel.com>
-Message-ID: <diqz349ta8om.fsf@ackerleytng-ctop.c.googlers.com>
-Subject: Re: [RFC PATCH v2 02/51] KVM: guest_memfd: Introduce and use
- shareability to guard faulting
-From: Ackerley Tng <ackerleytng@google.com>
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	x86@kernel.org, linux-fsdevel@vger.kernel.org, aik@amd.com, 
-	ajones@ventanamicro.com, akpm@linux-foundation.org, amoorthy@google.com, 
-	anthony.yznaga@oracle.com, anup@brainfault.org, aou@eecs.berkeley.edu, 
-	bfoster@redhat.com, binbin.wu@linux.intel.com, brauner@kernel.org, 
-	catalin.marinas@arm.com, chao.p.peng@intel.com, chenhuacai@kernel.org, 
-	dave.hansen@intel.com, david@redhat.com, dmatlack@google.com, 
-	dwmw@amazon.co.uk, erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, 
-	graf@amazon.com, haibo1.xu@intel.com, hch@infradead.org, hughd@google.com, 
-	ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz, 
-	james.morse@arm.com, jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, 
-	jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com, 
-	jun.miao@intel.com, kai.huang@intel.com, keirf@google.com, 
-	kent.overstreet@linux.dev, kirill.shutemov@intel.com, liam.merwick@oracle.com, 
-	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, maz@kernel.org, 
-	mic@digikod.net, michael.roth@amd.com, mpe@ellerman.id.au, 
-	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
-	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
-	paul.walmsley@sifive.com, pbonzini@redhat.com, pdurrant@amazon.co.uk, 
-	peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, qperret@google.com, 
-	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com, 
-	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, quic_pheragu@quicinc.com, 
-	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, richard.weiyang@gmail.com, 
-	rick.p.edgecombe@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
-	rppt@kernel.org, seanjc@google.com, shuah@kernel.org, steven.price@arm.com, 
-	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com, 
-	thomas.lendacky@amd.com, usama.arif@bytedance.com, vannapurve@google.com, 
-	vbabka@suse.cz, viro@zeniv.linux.org.uk, vkuznets@redhat.com, 
-	wei.w.wang@intel.com, will@kernel.org, willy@infradead.org, 
-	xiaoyao.li@intel.com, yilun.xu@intel.com, yuzenghui@huawei.com, 
-	zhiquan1.li@intel.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <915442.1755207950.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 14 Aug 2025 22:45:50 +0100
+Message-ID: <915443.1755207950@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Yan Zhao <yan.y.zhao@intel.com> writes:
+If all the subrequests in an unbuffered write stream fail, the subrequest
+collector doesn't update the stream->transferred value and it retains its
+initial LONG_MAX value.  Unfortunately, if all active streams fail, then w=
+e
+take the smallest value of { LONG_MAX, LONG_MAX, ... } as the value to set
+in wreq->transferred - which is then returned from ->write_iter().
 
-> On Wed, May 14, 2025 at 04:41:41PM -0700, Ackerley Tng wrote:
->> +static enum shareability kvm_gmem_shareability_get(struct inode *inode,
->> +						 pgoff_t index)
->> +{
->> +	struct maple_tree *mt;
->> +	void *entry;
->> +
->> +	mt = &kvm_gmem_private(inode)->shareability;
->> +	entry = mtree_load(mt, index);
->> +	WARN(!entry,
->> +	     "Shareability should always be defined for all indices in inode.");
->> +
->> +	return xa_to_value(entry);
->> +}
->> +
-> Hi Ackerley,
->
-> Not sure if it's a known issue. Just want to let you know in case you're unaware.
->
+LONG_MAX was chosen as the initial value so that all the streams can be
+quickly assessed by taking the smallest value of all stream->transferred -
+but this only works if we've set any of them.
 
-Thanks for informing me, and thanks for the analysis :)
+Fix this by adding a flag to indicate whether the value in
+stream->transferred is valid and checking that when we integrate the
+values.  stream->transferred can then be initialised to zero.
 
-> During a test to repeatedly launching/destroying TDs, I encountered a warning
-> from kvm_gmem_shareability_get() (see the attached log at the bottom).
-> The reproducing rate is 1 in every 20-100 times of launching TD.
->
-> After some analysis, I found that the warning was produced by
-> kvm_gmem_shareability_get() when it's called from kvm_gmem_is_private(), which
-> is not protected by any locks.
->
-> I can get rid of the warning by either fix 1 or fix 2 below.
-> (I prefer fix 1 though :))
->
-> fix 1:
->
-> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-> index e78fbebf4f53..136d46c5b2ab 100644
-> --- a/virt/kvm/guest_memfd.c
-> +++ b/virt/kvm/guest_memfd.c
-> @@ -2024,7 +2024,7 @@ static struct inode *kvm_gmem_inode_make_secure_inode(const char *name,
->
->  #ifdef CONFIG_KVM_GMEM_SHARED_MEM
->         if (flags & GUEST_MEMFD_FLAG_SUPPORT_SHARED) {
-> -               mt_init(&private->shareability);
-> +               mt_init_flags(&private->shareability, MT_FLAGS_USE_RCU);
->
->                 err = kvm_gmem_shareability_setup(private, size, flags);
->                 if (err)
->
+This was found by running the generic/750 xfstest against cifs with
+cache=3Dnone.  It splices data to the target file.  Once (if) it has used =
+up
+all the available scratch space, the writes start failing with ENOSPC.
+This causes ->write_iter() to fail.  However, it was returning
+wreq->transferred, i.e. LONG_MAX, rather than an error (because it thought
+the amount transferred was non-zero) and iter_file_splice_write() would
+then try to clean up that amount of pipe bufferage - leading to an oops
+when it overran.  The kernel log showed:
 
-Not sure about the version of the conversion patch series that you're
-using, in the version I'm preparing, I'm using
-filemap_invalidate_lock_shared() to guard shareability
-reads. filemap_invalidate_lock() is held during shareability updates, so
-I think this issue should be fixed.
+    CIFS: VFS: Send error in write =3D -28
 
-Please let me know if you're still seeing this issue in the next series
-(coming soon). Thank you!
+followed by:
 
->
-> fix 2:
-> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-> index e78fbebf4f53..9a4518104d56 100644
-> --- a/virt/kvm/guest_memfd.c
-> +++ b/virt/kvm/guest_memfd.c
-> @@ -171,7 +171,9 @@ static enum shareability kvm_gmem_shareability_get(struct inode *inode,
->         void *entry;
->
->         mt = &kvm_gmem_private(inode)->shareability;
-> +       mtree_lock(mt);
->         entry = mtree_load(mt, index);
-> +       mtree_unlock(mt);
->         WARN(!entry,
->              "Shareability should always be defined for all indices in inode.");
->
->
-> Thanks
-> Yan
->
-> 
-> [...snip...]
-> 
+    BUG: kernel NULL pointer dereference, address: 0000000000000008
+
+with:
+
+    RIP: 0010:iter_file_splice_write+0x3a4/0x520
+    do_splice+0x197/0x4e0
+
+or:
+
+    RIP: 0010:pipe_buf_release (include/linux/pipe_fs_i.h:282)
+    iter_file_splice_write (fs/splice.c:755)
+
+Also put a warning check into splice to announce if ->write_iter() returne=
+d
+that it had written more than it was asked to.
+
+Fixes: 288ace2f57c9 ("netfs: New writeback implementation")
+Reported-by: Xiaoli Feng <fengxiaoli0714@gmail.com>
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D220445
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Paulo Alcantara <pc@manguebit.org>
+cc: Steve French <sfrench@samba.org>
+cc: Shyam Prasad N <sprasad@microsoft.com>
+cc: netfs@lists.linux.dev
+cc: linux-cifs@vger.kernel.org
+cc: linux-fsdevel@vger.kernel.org
+cc: stable@vger.kernel.org
+---
+ fs/netfs/read_collect.c  |    4 +++-
+ fs/netfs/write_collect.c |   10 ++++++++--
+ fs/netfs/write_issue.c   |    4 ++--
+ fs/splice.c              |    3 +++
+ include/linux/netfs.h    |    1 +
+ 5 files changed, 17 insertions(+), 5 deletions(-)
+
+diff --git a/fs/netfs/read_collect.c b/fs/netfs/read_collect.c
+index 3e804da1e1eb..a95e7aadafd0 100644
+--- a/fs/netfs/read_collect.c
++++ b/fs/netfs/read_collect.c
+@@ -281,8 +281,10 @@ static void netfs_collect_read_results(struct netfs_i=
+o_request *rreq)
+ 		} else if (test_bit(NETFS_RREQ_SHORT_TRANSFER, &rreq->flags)) {
+ 			notes |=3D MADE_PROGRESS;
+ 		} else {
+-			if (!stream->failed)
++			if (!stream->failed) {
+ 				stream->transferred +=3D transferred;
++				stream->transferred_valid =3D true;
++			}
+ 			if (front->transferred < front->len)
+ 				set_bit(NETFS_RREQ_SHORT_TRANSFER, &rreq->flags);
+ 			notes |=3D MADE_PROGRESS;
+diff --git a/fs/netfs/write_collect.c b/fs/netfs/write_collect.c
+index 0f3a36852a4d..cbf3d9194c7b 100644
+--- a/fs/netfs/write_collect.c
++++ b/fs/netfs/write_collect.c
+@@ -254,6 +254,7 @@ static void netfs_collect_write_results(struct netfs_i=
+o_request *wreq)
+ 			if (front->start + front->transferred > stream->collected_to) {
+ 				stream->collected_to =3D front->start + front->transferred;
+ 				stream->transferred =3D stream->collected_to - wreq->start;
++				stream->transferred_valid =3D true;
+ 				notes |=3D MADE_PROGRESS;
+ 			}
+ 			if (test_bit(NETFS_SREQ_FAILED, &front->flags)) {
+@@ -356,6 +357,7 @@ bool netfs_write_collection(struct netfs_io_request *w=
+req)
+ {
+ 	struct netfs_inode *ictx =3D netfs_inode(wreq->inode);
+ 	size_t transferred;
++	bool transferred_valid =3D false;
+ 	int s;
+ =
+
+ 	_enter("R=3D%x", wreq->debug_id);
+@@ -376,12 +378,16 @@ bool netfs_write_collection(struct netfs_io_request =
+*wreq)
+ 			continue;
+ 		if (!list_empty(&stream->subrequests))
+ 			return false;
+-		if (stream->transferred < transferred)
++		if (stream->transferred_valid &&
++		    stream->transferred < transferred) {
+ 			transferred =3D stream->transferred;
++			transferred_valid =3D true;
++		}
+ 	}
+ =
+
+ 	/* Okay, declare that all I/O is complete. */
+-	wreq->transferred =3D transferred;
++	if (transferred_valid)
++		wreq->transferred =3D transferred;
+ 	trace_netfs_rreq(wreq, netfs_rreq_trace_write_done);
+ =
+
+ 	if (wreq->io_streams[1].active &&
+diff --git a/fs/netfs/write_issue.c b/fs/netfs/write_issue.c
+index 50bee2c4130d..0584cba1a043 100644
+--- a/fs/netfs/write_issue.c
++++ b/fs/netfs/write_issue.c
+@@ -118,12 +118,12 @@ struct netfs_io_request *netfs_create_write_req(stru=
+ct address_space *mapping,
+ 	wreq->io_streams[0].prepare_write	=3D ictx->ops->prepare_write;
+ 	wreq->io_streams[0].issue_write		=3D ictx->ops->issue_write;
+ 	wreq->io_streams[0].collected_to	=3D start;
+-	wreq->io_streams[0].transferred		=3D LONG_MAX;
++	wreq->io_streams[0].transferred		=3D 0;
+ =
+
+ 	wreq->io_streams[1].stream_nr		=3D 1;
+ 	wreq->io_streams[1].source		=3D NETFS_WRITE_TO_CACHE;
+ 	wreq->io_streams[1].collected_to	=3D start;
+-	wreq->io_streams[1].transferred		=3D LONG_MAX;
++	wreq->io_streams[1].transferred		=3D 0;
+ 	if (fscache_resources_valid(&wreq->cache_resources)) {
+ 		wreq->io_streams[1].avail	=3D true;
+ 		wreq->io_streams[1].active	=3D true;
+diff --git a/fs/splice.c b/fs/splice.c
+index 4d6df083e0c0..f5094b6d00a0 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -739,6 +739,9 @@ iter_file_splice_write(struct pipe_inode_info *pipe, s=
+truct file *out,
+ 		sd.pos =3D kiocb.ki_pos;
+ 		if (ret <=3D 0)
+ 			break;
++		WARN_ONCE(ret > sd.total_len - left,
++			  "Splice Exceeded! ret=3D%zd tot=3D%zu left=3D%zu\n",
++			  ret, sd.total_len, left);
+ =
+
+ 		sd.num_spliced +=3D ret;
+ 		sd.total_len -=3D ret;
+diff --git a/include/linux/netfs.h b/include/linux/netfs.h
+index 185bd8196503..98c96d649bf9 100644
+--- a/include/linux/netfs.h
++++ b/include/linux/netfs.h
+@@ -150,6 +150,7 @@ struct netfs_io_stream {
+ 	bool			active;		/* T if stream is active */
+ 	bool			need_retry;	/* T if this stream needs retrying */
+ 	bool			failed;		/* T if this stream failed */
++	bool			transferred_valid; /* T is ->transferred is valid */
+ };
+ =
+
+ /*
+
 
