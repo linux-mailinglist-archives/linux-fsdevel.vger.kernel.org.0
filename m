@@ -1,190 +1,196 @@
-Return-Path: <linux-fsdevel+bounces-57884-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57885-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26EFAB26612
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 15:01:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 558A5B2661D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 15:02:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63E8F18896AE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 13:00:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8D475C7E71
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 13:00:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65C882FFDFB;
-	Thu, 14 Aug 2025 12:59:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 526151553A3;
+	Thu, 14 Aug 2025 13:00:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GxOYGTLK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yn4EX6yu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62C4F2FE07C
-	for <linux-fsdevel@vger.kernel.org>; Thu, 14 Aug 2025 12:59:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFC9F13959D;
+	Thu, 14 Aug 2025 13:00:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755176363; cv=none; b=PMhsqG4azfMuiLhp0VAG81wTuwffLcnVBw8/T0/cHHJz8GmavNyQDcb117hAD3tyPS1Yte2AA6QL+Qr2RgwR/4WaoRsZtiPFOQ4bmkYtPEkQnp9fhnevQvjFxMz5qpupo2xTFmaljsniyUJi5ArMuPnJU3gN94keg+xD2aSx0bs=
+	t=1755176446; cv=none; b=WzYcekBeYBojaUtF0WcRL7P4TTcmxhO6qhh7bmppMG6LUeJ06AOH41HZILRx75+K7QahFMQqxlzOdn6xAz8r1x8HjIIIRvQZwpZZGiTQ1QahF/fDRc1secJdOEt7RcJLWOoHI7QtDhKoqi3igarKNy4HoqUCvzqFYMRxEBf6hFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755176363; c=relaxed/simple;
-	bh=lpcy5pD+EwYOeWX4XiJByNE9Zu6T8tfIZy/8aoPzZWc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pR/9D0RUiMaV9OMv6WL2yquj8Vt96Ai7ElucyKgXNHsFyKPdpdg8CQEd1mzw6IznNGxNgkoxf6W7ExFmuDO9QPfYQNg+3zQIAzhdSNSdJH6FVDqwfJJnS4mtWpJGeoEftljNpDJSwXRCMBGlAHSWdHy+3+lz2zti+f6vhSYKRyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GxOYGTLK; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755176360;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3t0CR39RiS9bo6V+bAaM9oWX90Si1UImEXsrmk0A3lE=;
-	b=GxOYGTLKZlwyWjv4VdVti+/5VXNdAbmUgjz/b+vPAn5JsptZpbg50OtLqCfEkYhO/ou/oo
-	/0K4CvDZ2VVNOzMCTJHkMXT6JoxujJMADv5CRpsOe8ZgFC1NL3yp/YLmaMYF7XahaeY4UW
-	JeaB71ZYasFAvPVtD6lg8qAb+Sl5mis=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-140-7_Y7f2DtPGeKHOo4w4sL3Q-1; Thu, 14 Aug 2025 08:59:17 -0400
-X-MC-Unique: 7_Y7f2DtPGeKHOo4w4sL3Q-1
-X-Mimecast-MFC-AGG-ID: 7_Y7f2DtPGeKHOo4w4sL3Q_1755176356
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45a1b05d8d0so5076135e9.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Aug 2025 05:59:16 -0700 (PDT)
+	s=arc-20240116; t=1755176446; c=relaxed/simple;
+	bh=gTFYiJzHN6NnHxWBYr+oZ+0JdJKC8PTUq8bWF2bhLpI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DsaOU63eMwB59Aw4l1VOVeYN1WWzZ1YU8PTXUkzMi6bt0rcXf5szkMNbNyLwZuCgCdgOQcR34snEi/v8T8q55MrIt2vjhEekAThByO+lMRkvV/U/bDCdUAPsm4AqPX2yJWFp7A2yK6OZ9DgiHfV10i9WpZm24FQgU2ao8s6eRJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yn4EX6yu; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6188945f471so1979859a12.0;
+        Thu, 14 Aug 2025 06:00:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755176443; x=1755781243; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+lP6JdkoxzCEOcH/8OhNo/+L2tHObF/APQ//FJkygXE=;
+        b=Yn4EX6yu5YPkYdd2Pc1o1emYHXDM0UK975jGkwnJReIhEJL1GkOtIdVKlDdM78TKaE
+         lITgMTSX9w4YJJXLbqhBFpjA267WHyTmZXZvV2VYOP7j4xOFqN2IsIVd1CPH60HDi8nX
+         ttbm+sewL2cnHujbGppydzi7U+KIwNreq8zXtenTxNJj7wNO5i/2MfAA/h27VnLTDsbj
+         w6SN4eh3CUXGaI2pPp9jWv8fCqWMyEnWkbJ2wC8yMs1FiBVRBoctklEfybY0OAX4IG0Y
+         oKk1R6Czk7ks2hQ7Q0E4t+wkrhQnMAZkFNylubTSdzjvWuzsxidf0ovPcgBQy5NIqEQW
+         NnWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755176356; x=1755781156;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3t0CR39RiS9bo6V+bAaM9oWX90Si1UImEXsrmk0A3lE=;
-        b=qD9Tq0bMvQqeHdpU1ZtcIHyIr7nFcvU863H6jlDqyUfbD9zcaP5Ljik3DMfI3OiTaE
-         6zaLSSySVvB3G6zfa6dgEqTPhhxwPTMZqEEA2UXsug22A4m7F8A8ipMWJUT2PWGX4sSF
-         FYvgfzxJhw+VwuNo8TQOoi4HhNnE1oW5tO6JD7vgWE/BSKkBHVZu5FeABs8HmwuZk2O9
-         lCmSVsc2OZsgBTTpsweyI5HckSdmHdp3QF7K5gCtolKf08UchFmM/8Mmb/DoMltV+fxD
-         08f3lcQdqCVC3KHrvKeFWzYbAaD6eOSxX7bOhxHeVeJbqOdKKTI85+e4dppbrK/Zsza/
-         prZw==
-X-Forwarded-Encrypted: i=1; AJvYcCVUUHuqMhkwgGa0aDZRZDWSU8K3hRKBQiN9neHwkBXU8QfOPXFQi8xO6OcU1oG1YwCuiz/ztWdXk9gJ2r5B@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKoHaKXBvK5nEchi0Wu3N6n+Uy/fia/SyKnl6sTkcfS45MidUh
-	Qv+Tma4EgMf4QBm7qU0ZopI982BLlJKHSYZYc9koPbUWB28auPu7w9kv9Bb9Ht91aIVhJmk0O4T
-	wDB1YlL0SIVyV9HLZDS6eEEO1FGxsNhxjgMYNEBuzb/h3xUeIAolb224dEAA2sTdngeA=
-X-Gm-Gg: ASbGnctZKt+MZLC3IkWpNjfaIhgl9b32esiIcMGQm1C1dAb/MWa5riCLQYCclySsHWQ
-	whCUy+EwvO+hoCpDl+IrdV+wcuEH3z+ygkScOpw1nWWBcIc/dIym7MRSjx9e1xMudeerV8Wzqvy
-	bF9XRnw4lgeg1Hb0MOjKT3FG3erEL/1Snkz3W8JaJZN7oz3OJ2S6aLTI6EkT/jtXQ7IS5LCjkD6
-	ixnQwcXUUXo/HyhdoHklYnLPK0cnidWiy/Cb0cIurmE2ksZwPF4Mbkqqcish40Fc0TwfS/MX2EP
-	XM6j6WyTe8aQ+/2FStnTYQvlGgFwifuiGWFkm+yyC5s/x19eQezikkOR71qLwdydB0RSEks2Biw
-	tgqXSWcSn3aj/wJEHLsdO6t8vX139FzL7fm0eLae3q0+ajofjxwhq2/NleALJLg6fQrU=
-X-Received: by 2002:a05:600c:5491:b0:43c:fc04:6d35 with SMTP id 5b1f17b1804b1-45a1faf691bmr4202215e9.4.1755176355892;
-        Thu, 14 Aug 2025 05:59:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGCXUPq3MF/2LcfaRa34zIT915GKLnG74JH+H3ePtWgYmrBLGllfjQvCJgjkywipvIy1ObAlA==
-X-Received: by 2002:a05:600c:5491:b0:43c:fc04:6d35 with SMTP id 5b1f17b1804b1-45a1faf691bmr4201945e9.4.1755176355455;
-        Thu, 14 Aug 2025 05:59:15 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f44:3e00:9fca:7d89:a265:56f3? (p200300d82f443e009fca7d89a26556f3.dip0.t-ipconnect.de. [2003:d8:2f44:3e00:9fca:7d89:a265:56f3])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1c6cfed5sm19815875e9.7.2025.08.14.05.59.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Aug 2025 05:59:14 -0700 (PDT)
-Message-ID: <1387eeb8-fc61-4894-b12f-6cae3ad920bd@redhat.com>
-Date: Thu, 14 Aug 2025 14:59:13 +0200
+        d=1e100.net; s=20230601; t=1755176443; x=1755781243;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+lP6JdkoxzCEOcH/8OhNo/+L2tHObF/APQ//FJkygXE=;
+        b=ghLxwlECyNp5xX6TaBwkLRn3FAsU9q5Hny1yWxQYBqREaP89lvAGj8uwM/TwSPfVHe
+         72/EAujVyWPrOCPpTxcWLWl+XH20HN5wjgaz4OyH1Ahk2n3f6HW1bENlrHFGQp3wdZ7o
+         0EVsnBoqybCKci7zpjyTUeT2VsV0F9vpMa7zvss/PUeFlOZmSUcbkztWyJPJwdVIm/yz
+         VldJrIetA/dLr+W+lHUqitIw2SD0rcRXjNei2XI2RvpEG48hZ1DF5imc3D453nSVUzQq
+         /k25BmJG82oYFh5ffxiTLSG62nMg5fcfnKZxw7I1Dv04cFqHAInMV9vYYcT7TMKCGMXP
+         Rciw==
+X-Forwarded-Encrypted: i=1; AJvYcCUMF5Xi15Gbfvj4hJ9ItGZvOo5+wA9Wx04Y9sjW9FvcLKyBYeEj1tqcMcRc1U6zgwziK98vMy3Whte635hWRw==@vger.kernel.org, AJvYcCUkE8JLmhfyIgSnMeZ+S4CHWInQnFBOAcTYp1qbwf+YkSAJbgtUMbcvIvKV5RJCnbSiSrFsNvBd4DIC8m10@vger.kernel.org, AJvYcCVe7hoMX+o06TP9rDtJcGBg6U+Ie35Ui8nQlXFsCFYHPt+xNkBJQNRvxEImXHmO021c7P3HJq4KZ2aFVd2U@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+6rODbAEroy4oQSvmUeQTFmrRDsEbk65tGnnOkDJ7tIkullaA
+	R3pndob701Ie5CpuSrQ4YNWyOekdqNsi6uh+N6WKE0OfZ8TUQ2oiO8F2qNJF+ZljyVfkpfrv9BZ
+	wpedRIEhn121DUma3hxbykkm7YoZ4LRw=
+X-Gm-Gg: ASbGncvM0TB2VEAWK/uNIC6u3Z/2tr3d4PI8weK5J5isYgcnKjAtZYpqdMZgkYbNfk0
+	w6CJHtFPPPt0d7Em7YXcedsJvpjZNSsoItwtOQj4tmO6s04+DiFifUIG8Gv1vK1Uh4f3Vr0aIs3
+	wPTr1ex8EJLN681nNzf5sFjHMUdfmeyKha1/XI7dj+gAKUvKHQQ9NdqeoDXmvbU/wezJG0TnG+/
+	JDmWunHL9pwoCKaDg==
+X-Google-Smtp-Source: AGHT+IHfmp1+ABxLkfX8CDNDXevMcqni0yxGxGMfAFlSEdKClivnqd4JKebFw9esK7P/7rUcyOSL9sLuls+8wXTubw0=
+X-Received: by 2002:a05:6402:34cd:b0:615:8037:df67 with SMTP id
+ 4fb4d7f45d1cf-618920ba614mr2095134a12.5.1755176442801; Thu, 14 Aug 2025
+ 06:00:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 7/7] selftests: prctl: introduce tests for disabling
- THPs except for madvise
-To: Mark Brown <broonie@kernel.org>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Usama Arif <usamaarif642@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, corbet@lwn.net, rppt@kernel.org,
- surenb@google.com, mhocko@suse.com, hannes@cmpxchg.org, baohua@kernel.org,
- shakeel.butt@linux.dev, riel@surriel.com, ziy@nvidia.com,
- laoar.shao@gmail.com, dev.jain@arm.com, baolin.wang@linux.alibaba.com,
- npache@redhat.com, Liam.Howlett@oracle.com, ryan.roberts@arm.com,
- vbabka@suse.cz, jannh@google.com, Arnd Bergmann <arnd@arndb.de>,
- sj@kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- kernel-team@meta.com
-References: <20250813135642.1986480-1-usamaarif642@gmail.com>
- <20250813135642.1986480-8-usamaarif642@gmail.com>
- <13220ee2-d767-4133-9ef8-780fa165bbeb@lucifer.local>
- <bac33bcc-8a01-445d-bc42-29dabbdd1d3f@redhat.com>
- <5b341172-5082-4df4-8264-e38a01f7c7d7@lucifer.local>
- <0b7543dd-4621-432c-9185-874963e8a6af@redhat.com>
- <5dce29cc-3fad-416f-844d-d40c9a089a5f@lucifer.local>
- <b433c998-0f7b-4ca4-a867-5d1235149843@sirena.org.uk>
- <eb90eff6-ded8-40a3-818f-fce3331df464@redhat.com>
- <47e98636-aace-4a42-b6a4-3c63880f394b@sirena.org.uk>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <47e98636-aace-4a42-b6a4-3c63880f394b@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250813-tonyk-overlayfs-v4-0-357ccf2e12ad@igalia.com> <20250813-tonyk-overlayfs-v4-7-357ccf2e12ad@igalia.com>
+In-Reply-To: <20250813-tonyk-overlayfs-v4-7-357ccf2e12ad@igalia.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 14 Aug 2025 15:00:31 +0200
+X-Gm-Features: Ac12FXzrfcF9KLSlHczSkdSacImVw4faDCeITHfNH-iHzr4UVDkCHsCvrtOBdgs
+Message-ID: <CAOQ4uxj18QP45785xk1pzMw0y=QU0K6djxHuqARVbdUOTPR59Q@mail.gmail.com>
+Subject: Re: [PATCH v4 7/9] ovl: Add S_CASEFOLD as part of the inode flag to
+ be copied
+To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>, 
+	Gabriel Krisman Bertazi <krisman@kernel.org>, linux-unionfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	kernel-dev@igalia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 14.08.25 14:09, Mark Brown wrote:
-> On Thu, Aug 14, 2025 at 02:00:27PM +0200, David Hildenbrand wrote:
-> 
->> Some people (hello :) ) run tests against distro kernels ... shame that
->> prctl just knows one sort of "EINVAL" so we cannot distinguish :(
-> 
->> But yeah, maybe one has to be more careful of filtering these failures out
->> then.
-> 
-> Perhaps this is something that needs considering in the ABI, so
-> userspace can reasonably figure out if it failed to configure whatever
-> is being configured due to a missing feature (in which case it should
-> fall back to not using that feature somehow) or due to it messing
-> something else up?  We might be happy with the tests being version
-> specific but general userspace should be able to be a bit more robust.
+On Thu, Aug 14, 2025 at 12:37=E2=80=AFAM Andr=C3=A9 Almeida <andrealmeid@ig=
+alia.com> wrote:
+>
+> To keep ovl's inodes consistent with their real inodes, create a new
+> mask for inode file attributes that needs to be copied.  Add the
+> S_CASEFOLD flag as part of the flags that need to be copied along with
+> the other file attributes.
+>
+> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
 
-Yeah, the whole prctl() ship has sailed, unfortunately :(
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
--- 
-Cheers
-
-David / dhildenb
-
+> ---
+> Changes from v3:
+> - Create new flag OVL_FATTR_I_FLAGS_MASK for the file attributes and add
+>   S_CASEFOLD in the OVL_COPY_I_FLAGS_MASK.
+> - Add WARN()s to check for inode consistency
+> - Add check for copied up directories
+>
+> Changes from v2:
+> - Instead of manually setting the flag if the realpath dentry is
+>   casefolded, just add this flag as part of the flags that need to be
+>   copied.
+> ---
+>  fs/overlayfs/copy_up.c   | 2 +-
+>  fs/overlayfs/inode.c     | 1 +
+>  fs/overlayfs/overlayfs.h | 8 +++++---
+>  fs/overlayfs/super.c     | 1 +
+>  4 files changed, 8 insertions(+), 4 deletions(-)
+>
+> diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
+> index 27396fe63f6d5b36143750443304a1f0856e2f56..66bd43a99d2e8548eecf21699=
+a9a6b97e9454d79 100644
+> --- a/fs/overlayfs/copy_up.c
+> +++ b/fs/overlayfs/copy_up.c
+> @@ -670,7 +670,7 @@ static int ovl_copy_up_metadata(struct ovl_copy_up_ct=
+x *c, struct dentry *temp)
+>         if (err)
+>                 return err;
+>
+> -       if (inode->i_flags & OVL_COPY_I_FLAGS_MASK &&
+> +       if (inode->i_flags & OVL_FATTR_I_FLAGS_MASK &&
+>             (S_ISREG(c->stat.mode) || S_ISDIR(c->stat.mode))) {
+>                 /*
+>                  * Copy the fileattr inode flags that are the source of a=
+lready
+> diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
+> index ecb9f2019395ecd01a124ad029375b1a1d13ebb5..aaa4cf579561299c50046f5de=
+d03d93f056c370c 100644
+> --- a/fs/overlayfs/inode.c
+> +++ b/fs/overlayfs/inode.c
+> @@ -1277,6 +1277,7 @@ struct inode *ovl_get_inode(struct super_block *sb,
+>         }
+>         ovl_fill_inode(inode, realinode->i_mode, realinode->i_rdev);
+>         ovl_inode_init(inode, oip, ino, fsid);
+> +       WARN_ON_ONCE(!!IS_CASEFOLDED(inode) !=3D ofs->casefold);
+>
+>         if (upperdentry && ovl_is_impuredir(sb, upperdentry))
+>                 ovl_set_flag(OVL_IMPURE, inode);
+> diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+> index bb0d7ded8e763a4a7a6fc506d966ed2f3bdb4f06..50d550dd1b9d7841723880da8=
+5359e735bfc9277 100644
+> --- a/fs/overlayfs/overlayfs.h
+> +++ b/fs/overlayfs/overlayfs.h
+> @@ -821,10 +821,12 @@ struct inode *ovl_get_inode(struct super_block *sb,
+>                             struct ovl_inode_params *oip);
+>  void ovl_copyattr(struct inode *to);
+>
+> +/* vfs fileattr flags read from overlay.protattr xattr to ovl inode */
+> +#define OVL_PROT_I_FLAGS_MASK  (S_APPEND | S_IMMUTABLE)
+> +/* vfs fileattr flags copied from real to ovl inode */
+> +#define OVL_FATTR_I_FLAGS_MASK (OVL_PROT_I_FLAGS_MASK | S_SYNC | S_NOATI=
+ME)
+>  /* vfs inode flags copied from real to ovl inode */
+> -#define OVL_COPY_I_FLAGS_MASK  (S_SYNC | S_NOATIME | S_APPEND | S_IMMUTA=
+BLE)
+> -/* vfs inode flags read from overlay.protattr xattr to ovl inode */
+> -#define OVL_PROT_I_FLAGS_MASK  (S_APPEND | S_IMMUTABLE)
+> +#define OVL_COPY_I_FLAGS_MASK  (OVL_FATTR_I_FLAGS_MASK | S_CASEFOLD)
+>
+>  /*
+>   * fileattr flags copied from lower to upper inode on copy up.
+> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+> index a99c77802efa1a6d96c43019728d3517fccdc16a..7937aa4daa9c29e8b9219f7fc=
+c2abe7fb55b2e5c 100644
+> --- a/fs/overlayfs/super.c
+> +++ b/fs/overlayfs/super.c
+> @@ -1335,6 +1335,7 @@ static struct dentry *ovl_get_root(struct super_blo=
+ck *sb,
+>         ovl_dentry_set_flag(OVL_E_CONNECTED, root);
+>         ovl_set_upperdata(d_inode(root));
+>         ovl_inode_init(d_inode(root), &oip, ino, fsid);
+> +       WARN_ON(!!IS_CASEFOLDED(d_inode(root)) !=3D ofs->casefold);
+>         ovl_dentry_init_flags(root, upperdentry, oe, DCACHE_OP_WEAK_REVAL=
+IDATE);
+>         /* root keeps a reference of upperdentry */
+>         dget(upperdentry);
+>
+> --
+> 2.50.1
+>
 
