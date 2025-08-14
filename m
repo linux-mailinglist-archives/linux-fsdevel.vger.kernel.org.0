@@ -1,139 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-57874-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57875-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10114B26493
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 13:45:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A917DB264B7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 13:52:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CB54170289
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 11:45:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B619E3BB428
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 11:51:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BAAF2F60CB;
-	Thu, 14 Aug 2025 11:45:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A37672FB966;
+	Thu, 14 Aug 2025 11:51:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OPnGEXsm"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aOpuGU1j"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C412E6106;
-	Thu, 14 Aug 2025 11:45:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78F242FABFD;
+	Thu, 14 Aug 2025 11:51:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755171950; cv=none; b=MEcGBj3Mr5mIdnbIUwOaVdMtU/HfbLubPs0LN2znD7CTpER69cAD/wup4l34h2uSIf9JGv3xyeqVAcLI5AeNH3b5FJRXwT6IjPsK5oCKzCr3j/6iqTpHves4eCG1md6y33LZAe393YVeO28iTgtEmUyOgFEGukp2pp2nEfjpzKw=
+	t=1755172297; cv=none; b=WF34y1QM7bdkLHNUThlNhLzevbwmKYj0uV4RS7eJZhcp0Tq7ihA3ZkdVv7A1F/DnSbs9oWTp/XdDI0WWASI6Lh9zme6bsBS2Mv3VxFi1FUw033ox6aIVQZZ/BI4fKc3YKVXk0OFtAFFo9+R4FCT4jkqhHZW/8xzLKgsQK/3PNs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755171950; c=relaxed/simple;
-	bh=FexkV7nvaMJKSQuSjt56VRn1ropgn6XWofqYu3VqSl0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bx1mkDSspXgCilokvH8kPICDDpkmIB5ifWSSyueAnBaXmftSTYYxPjdKOz8RsAJvhE6dxjseVgAs3sSq+KcDxavje/uHUZ5hnMTeVn31lg+LA8Oqhaf/5Gzwi7QsUgUMEo7KwElEdJ4vWDKrel6qlMJW7vc4tPLB/EZRtcy5HI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OPnGEXsm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6900C4CEF1;
-	Thu, 14 Aug 2025 11:45:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755171950;
-	bh=FexkV7nvaMJKSQuSjt56VRn1ropgn6XWofqYu3VqSl0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OPnGEXsmQefCR5XKxWgB20+CdEPRHLpwVjZ9QqpgyiEZ/0tCDnmajIc2xnznI+BzQ
-	 Is37m5tR5w39ME0RZCAMaBBsKQRSYqMs9a9tZjjyQriX3RqQOr5IihltzPkGu3m3Q4
-	 vZTJUJH1TKkWTXuh5TamQ5xvr35SXOixpW9FVi2OiCGYyXHmfuOj0dXi7B8UQAC5Q+
-	 zxQk6CKRtdavLtwGvB7gY6HSlp4w30N0rA/eF4w9gIis1iaNFxzbmJZsXiOQE7bHUr
-	 9ZJMetEeDzQbchb9v2/vyLtoHZnblpw/SncrzFzAA5/Uj9OF05Wi8okNIKcTLXJXu5
-	 tNIXry1AK4ePw==
-Date: Thu, 14 Aug 2025 12:45:42 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: David Hildenbrand <david@redhat.com>,
-	Usama Arif <usamaarif642@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, corbet@lwn.net, rppt@kernel.org,
-	surenb@google.com, mhocko@suse.com, hannes@cmpxchg.org,
-	baohua@kernel.org, shakeel.butt@linux.dev, riel@surriel.com,
-	ziy@nvidia.com, laoar.shao@gmail.com, dev.jain@arm.com,
-	baolin.wang@linux.alibaba.com, npache@redhat.com,
-	Liam.Howlett@oracle.com, ryan.roberts@arm.com, vbabka@suse.cz,
-	jannh@google.com, Arnd Bergmann <arnd@arndb.de>, sj@kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH v4 7/7] selftests: prctl: introduce tests for disabling
- THPs except for madvise
-Message-ID: <b433c998-0f7b-4ca4-a867-5d1235149843@sirena.org.uk>
-References: <20250813135642.1986480-1-usamaarif642@gmail.com>
- <20250813135642.1986480-8-usamaarif642@gmail.com>
- <13220ee2-d767-4133-9ef8-780fa165bbeb@lucifer.local>
- <bac33bcc-8a01-445d-bc42-29dabbdd1d3f@redhat.com>
- <5b341172-5082-4df4-8264-e38a01f7c7d7@lucifer.local>
- <0b7543dd-4621-432c-9185-874963e8a6af@redhat.com>
- <5dce29cc-3fad-416f-844d-d40c9a089a5f@lucifer.local>
+	s=arc-20240116; t=1755172297; c=relaxed/simple;
+	bh=4tk9bwz8coDizZfq6CK2c5VjBma58QVXrU05Sen13vo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qGcYBPzaFqo1TpzYpcD9BRbxLrMl0+rJuXOCNDDqNkVGDRBFzQicDF/bDt74quqS6RuzLAXE03nOvKkxx+SIm92dU0CKS1qJxIKrYw/Ja+ctbJGgD8kDq0v55VEp25g9159XXMvqb/gIsxBgfLjbBl/Z90YDUFNwVwh4EjIuC+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aOpuGU1j; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45a1b065d59so4182175e9.1;
+        Thu, 14 Aug 2025 04:51:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755172294; x=1755777094; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6VnTFOiEQ/KEA1BYExh4enVyNJmydSamaAd1v3h7zMU=;
+        b=aOpuGU1jf+qcwwAvXD+VrAXKD9P6O8jdO0Xyi6BlALhF66zSV/QxYf4avRSshfPoG8
+         LlRjGznS7W7Z6nu0rJG9UNciNhrSJa8Rj39lN1hT3X/jr2MZ7RQOjNXGsoJAu36IlewB
+         Ug3V8CBDjwMOQs5hDsloV/ZlYWQzPjTzRwaeXb9amijVAOyLnBOK48ageNruL8L/pwrp
+         K6dGVcKCK9dGo/N9ZVnzWBYTqGU3EvhJWfpv53K80Ik7T4QkgnmmUbUDL8KrBaNgwUgE
+         RolMnDFPTPtgDFGaQAMo37sfXKjnmf5NCTntKuS2OTlPtmC9QnO9d/lJ1P2d1K3XT4qE
+         VD4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755172294; x=1755777094;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6VnTFOiEQ/KEA1BYExh4enVyNJmydSamaAd1v3h7zMU=;
+        b=oZiVRapC/cTrOR3LJvSKhXqeTo2orzLuctHJ/cZoYJC0FQ+6WpTHDT5lqE2V21sYvP
+         uHLsIwa6ohp6egQ3Jwd8hSfz5ek+KGu2t9xTJikIkmSZlNe2jyKMMejX7LEVg3rBNcHm
+         3x088xyUqCUVP3EIWB0PbwHI/K3asMMefrODzuzip/rcTdYLtWm867cq7ekt19l4hrNB
+         yzUrTG+cvCw0qf6rt1q4vx5URNM19YqhfSO796FjZFqVbj5Em6RuDxNmamOFGsTJ9fes
+         PXsL1gj1Kr6AN+kQ7l44ROmXpd/AEvQNs7bvGyWPqJMus1IeEyf1+wI6EgHL9TwFi6gA
+         IV2g==
+X-Forwarded-Encrypted: i=1; AJvYcCVR72gMDLSLwJa2OokLeVHlQsUxqnDhvUucPU1tmxft+p+VzR1I0xluqEXcgCYyurq2fbsrunq2xiM0jCiH@vger.kernel.org, AJvYcCWAop0R5qC6KFEORbaoMrUun+1OetbA1cfMBiMOhAM30upoVNMhNPnWjNF+JkBbz7fgC08+UCoIN7bdyCdHmA==@vger.kernel.org, AJvYcCXAVLpzQKr62bTXdeIrQk1h5uLY4i2+T6NHVK/gGFoGoXqQuwoKiWUn4yU7qHnVBaB/8DPJOmyYHRs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXN66GzwNGPcDOKnU/s8PHByqF/yo8P5FMq8u6JrzjzsWwoJ8D
+	HbYBFKxuq2wrdcfC+qe+3l7skQy/EgePeF97WLA3EgAZlwhfIsictq4R
+X-Gm-Gg: ASbGncsfFOsFd7IjWRNlSV0CN2U3IEhH2ij3QRcr4G4o4F4UqExXBSMqlATXz3SVciP
+	xWMlnQajzt5q0hhivO6ozr1xh1/1dmSNNxc0gVTmK8pxogkaKylmuRYA6Lgw5QNdmIORrHv7GLi
+	eqTj9Ul4OFjQSHI9cbzHtO38Ur8xk+ryq3Art84N8O/eod7vhy8AOK4a9IL/hhDmPwDnGC+D1jz
+	hG4PsuIQVDh3+WjkOunYIXExGyElDEtNb7QTwAaQZU3wB01/dZeG0r08BkNoqnz4aXUwP6ivtzS
+	uG+mneN/PuJql7B9RKSIU+Qp4atnXk6x6kK2MkAjMf2jZbavK27Fp+zQnZVU9HNFyFyvYgS7vgo
+	wpE1DcouPnHeDU4ykaPovcvQvHTcGCveMf2CBOf0i8286G16oBritZc4Bb5fC5naEq7kb19SpyA
+	WmQCWNvQ==
+X-Google-Smtp-Source: AGHT+IHthldMbcpzDbaJ1GGbyBIqgCUgRr8Aa4x6eTmOxq4YHMkcIGai32HHy+wWjTZMm4tR/4WApw==
+X-Received: by 2002:a05:600c:1390:b0:459:db5a:b0b9 with SMTP id 5b1f17b1804b1-45a1b67a215mr16749815e9.28.1755172293482;
+        Thu, 14 Aug 2025 04:51:33 -0700 (PDT)
+Received: from ?IPV6:2a03:83e0:1126:4:14f1:c189:9748:5e5a? ([2620:10d:c092:500::7:8979])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3abeb2sm50579340f8f.11.2025.08.14.04.51.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Aug 2025 04:51:32 -0700 (PDT)
+Message-ID: <4d23ba51-e8d8-41bc-8d46-a7bccb4c3c20@gmail.com>
+Date: Thu, 14 Aug 2025 12:51:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="HgKF1GOS9//9I841"
-Content-Disposition: inline
-In-Reply-To: <5dce29cc-3fad-416f-844d-d40c9a089a5f@lucifer.local>
-X-Cookie: This sentence no verb.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 7/7] selftests: prctl: introduce tests for disabling
+ THPs except for madvise
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: David Hildenbrand <david@redhat.com>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org, corbet@lwn.net, rppt@kernel.org,
+ surenb@google.com, mhocko@suse.com, hannes@cmpxchg.org, baohua@kernel.org,
+ shakeel.butt@linux.dev, riel@surriel.com, ziy@nvidia.com,
+ laoar.shao@gmail.com, dev.jain@arm.com, baolin.wang@linux.alibaba.com,
+ npache@redhat.com, Liam.Howlett@oracle.com, ryan.roberts@arm.com,
+ vbabka@suse.cz, jannh@google.com, Arnd Bergmann <arnd@arndb.de>,
+ sj@kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ kernel-team@meta.com, Mark Brown <broonie@kernel.org>
+References: <20250813135642.1986480-1-usamaarif642@gmail.com>
+ <20250813135642.1986480-8-usamaarif642@gmail.com>
+ <13220ee2-d767-4133-9ef8-780fa165bbeb@lucifer.local>
+ <bac33bcc-8a01-445d-bc42-29dabbdd1d3f@redhat.com>
+ <5b341172-5082-4df4-8264-e38a01f7c7d7@lucifer.local>
+ <1ff24f1b-7ba2-4595-b3f6-3eb93ea5a40d@gmail.com>
+ <a8b0eb8d-442e-4cfc-ab79-3c6bc6a86ff0@lucifer.local>
+Content-Language: en-US
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <a8b0eb8d-442e-4cfc-ab79-3c6bc6a86ff0@lucifer.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
---HgKF1GOS9//9I841
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Thu, Aug 14, 2025 at 11:49:15AM +0100, Lorenzo Stoakes wrote:
-> On Thu, Aug 14, 2025 at 11:32:55AM +0200, David Hildenbrand wrote:
-> > On 13.08.25 20:52, Lorenzo Stoakes wrote:
+> 
+> Why would you move things around though? Think it's fine as-is, if something on
+> setup fails then all tests should fail.
 
-> > > I can't see anything in the kernel to #ifdef it out so I suppose you mean
-> > > running these tests on an older kernel?
+If its a "test" itself and not a check, I think its better if it belongs in TEST_F and
+not FIXTURE_SETUP.
+But yeah this is ofcourse going to be the first test, so if it fails the entire thing
+is marked as a failure and we dont proceed.
 
-...
+> 
+> Cheers, Lorenzo
 
-> > > But this is an unsupported way of running self-tests, they are tied to the
-> > > kernel version in which they reside, and test that specific version.
-
-> > > Unless I'm missing something here?
-
-> > I remember we allow for a bit of flexibility when it is simple to handle.
-
-> > Is that documented somewhere?
-
-> Not sure if it's documented, but it'd make testing extremely egregious if
-> you had to consider all of the possible kernels and interactions and etc.
-
-> I think it's 'if it happens to work then fine' but otherwise it is expected
-> that the tests match the kernel.
-
-> It's also very neat that with a revision you get a set of (hopefully)
-> working tests for that revision :)
-
-Some people do try to run the selftests with older kernels, they're
-trying to get better coverage for the stables.  For a lot of areas the
-skipping falls out natually since there's some optionality (so even with
-the same kernel version you might not have the feature in the running
-kernel) or it's a new API which has a discovery mechanism in the ABI
-anyway.  OTOH some areas have been actively hostile to the idea of
-running on older kernels so there are things that do break when you try.
-TBH so long as the tests don't crash the system or something people are
-probably just going to ignore any tests that have never passed.
-
---HgKF1GOS9//9I841
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmidzGUACgkQJNaLcl1U
-h9A7uAf/TsWdfXYkIPkM2Rj3C1HzjIuj6j4nnUhMESgtZSbf9Am99POGQmQxnUay
-Mz75k34/LOlxbUGyk2oz2tqb4Ad725WPmSqg4IEQXJ3or551O2tAApBrrbwTKfrT
-ha9jUqj/hhFasDuM9PZsHTUcEk4DKGYtFHOtrucuQMDOSNH7lsB3BEVyaY4xxHzM
-d2dWm3i1c8VlbU8gFIX794INH1sdcja2Syh0d5wraBAZ+NS+uJ5iWyZw43YgTGiX
-qQR+HWxD/m3NSNX6L58jpZYJq6Q40xDz8aQQiAd2omnwIYWln4HIitcYTpeNvQNw
-Poh6lZXtgIVoXt2Io6PYJpr3LnpP6A==
-=Xem/
------END PGP SIGNATURE-----
-
---HgKF1GOS9//9I841--
 
