@@ -1,146 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-57821-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57822-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69F7CB2593A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 03:41:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 77360B25940
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 03:45:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A8389A2493
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 01:41:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A997880412
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 01:45:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 618DC215F48;
-	Thu, 14 Aug 2025 01:41:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5840321C9F1;
+	Thu, 14 Aug 2025 01:45:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="hIGFYU4V"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YYALRBxU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD8A1207669;
-	Thu, 14 Aug 2025 01:41:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5DC521B9D6;
+	Thu, 14 Aug 2025 01:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755135667; cv=none; b=XKlI7mQuG6n134HrYCaNVm5kIrgs92e8ztlWkR+zNEb6660sV0jkHW+146ZVyU+UQsBTlNBqyqq3vl6Zb8dKW9yQBbPirX+fA/xV3Ou3HXKkZcIXlMvECFEJXTASd+uILMMi/GdmP/6Yl6sMmYuothDGV6Ypz+pOkFOLowmp+g4=
+	t=1755135918; cv=none; b=duJu1ujakaMDFhmtuo/hkrWrHA2aqWkbQz72HeKzvrT5tKjSYQKS0PebncPtL92NShUtH4Rd7FREMC/FfWWY0aL9B/1MfEqOsoCo8zXMQRItVhgia+Ue6KEPFgcSr7KfW7YdVDzvm1lxRMh10ium4g25EUcjD7+QRPrrefyH7Dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755135667; c=relaxed/simple;
-	bh=qWhVPp8UkMseXAwGoxo/AtQDC8wAu/4GsbTX6yQkXYg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nvs7DXm51462xfsJfU1cJfrDLL/yZbPDIruqgiu0y6Hyf0Ry8BeRk526qEtxa/prb+8DVuR4/Q6bV02wYeMyyf0QlDHpInUuM5chgNejl6BawXTytR5EhJxJ89NUBHwAQSwgwbq4JksjXM8EegwzGirS9qQEE8f6aZtPOoKYKYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=hIGFYU4V; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=IQGF8DRgPVwAOQowZ25KwckiYB1Wy4XRBJu7WhzZ8EM=; b=hIGFYU4Vt+WCaZlWzgIl5A5CU0
-	De4amhi2m7jG04nG/1NaPJ3AbWQoRkxTG93NyvhlWysu/cZLcnCOcSPRfD1hYYD2ECCQWEXbCypJE
-	GZLpnWK2oa2yS2wTOOkCqGEE3FF282LK2IU9gp/GXaQhYsBLB+DMsIZV1c8b7fOH/iThG/hr2l6b/
-	mUsQGhR+GwqCB+WuomF8STNbrl2krzf7kaurEkJo8XTzKdGW4DbjxCXqipSd+Ill8PMu8SyZ5+e+Y
-	B1WaauvEqWph/ur0ux8bCaPZBT+OZQCASMY+FNQGLzf9fxeeDjmbzKeoP5W42VcZwGtsD8GW2y34N
-	oYVC2XiQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1umMxW-0000000FNlW-1mZZ;
-	Thu, 14 Aug 2025 01:40:50 +0000
-Date: Thu, 14 Aug 2025 02:40:50 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: NeilBrown <neil@brown.name>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	David Howells <dhowells@redhat.com>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
-	Tyler Hicks <code@tyhicks.com>, Miklos Szeredi <miklos@szeredi.hu>,
-	Richard Weinberger <richard@nod.at>,
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Steve French <sfrench@samba.org>,
-	Namjae Jeon <linkinjeon@kernel.org>,
-	Carlos Maiolino <cem@kernel.org>, linux-fsdevel@vger.kernel.org,
-	linux-afs@lists.infradead.org, netfs@lists.linux.dev,
-	ceph-devel@vger.kernel.org, ecryptfs@vger.kernel.org,
-	linux-um@lists.infradead.org, linux-nfs@vger.kernel.org,
-	linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 05/11] VFS: add rename_lookup()
-Message-ID: <20250814014050.GL222315@ZenIV>
-References: <>
- <20250813043531.GB222315@ZenIV>
- <175507227245.2234665.4311084523419609794@noble.neil.brown.name>
+	s=arc-20240116; t=1755135918; c=relaxed/simple;
+	bh=i1y7qQa9SFhRvqFt20v8XEo9Q9dbavK0njZxN1E1hEw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QR0CiZCYxRyFtSBTcvvPfLwtRKtxqieXD6SQe+YnG49n3l8i8XXjDVRRrxLKXck+Eru6+/Aucp7dbNVXZZTTkZt80YEQ8+NllExpRUsiOnceIWgtzyr7Y1bsR+L6Uy0rdd5I8qtX6ln//GQ17g7fxlLw2r/cUo+WAjvVPehiWJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YYALRBxU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0192C4CEED;
+	Thu, 14 Aug 2025 01:45:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755135918;
+	bh=i1y7qQa9SFhRvqFt20v8XEo9Q9dbavK0njZxN1E1hEw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YYALRBxUqMJ+a9O2DJA0OI+d8U2eVb4vghGmYmkHPuACCSxiAyNFcZN9CKtvACSnq
+	 JtBXiJAprlL8dieMg+YUqZenFdoYTMQM3qCM+sFvAfw0ZJKnbklA3b1CCl2sLivabS
+	 Jyq6QcJ/hMtxUC2Eg7vb0AQozFUM9UiuiGe9B4S/t6LZGASKEg85nJKT4oYSFQfhvZ
+	 Jj7SP53EACoQARdrD4OiletkRcQ2NAy0nPdYU63lTkQNSnyXo4zTd/5YA8SzP1SlTy
+	 9W5wuCcs94qevo8gdrhzjCK1E9zTB7stWmlDMvju/ewfItbTbiTzR2/uUz/AU5OQok
+	 ggHvEA8Ed32cw==
+Message-ID: <b6860c56-e91d-45c8-8d4c-05bcae97a2bb@kernel.org>
+Date: Thu, 14 Aug 2025 10:42:35 +0900
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <175507227245.2234665.4311084523419609794@noble.neil.brown.name>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv2 1/7] block: check for valid bio while splitting
+To: Keith Busch <kbusch@kernel.org>, Bart Van Assche <bvanassche@acm.org>
+Cc: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ snitzer@kernel.org, axboe@kernel.dk, dw@davidwei.uk, brauner@kernel.org,
+ Hannes Reinecke <hare@suse.de>
+References: <20250805141123.332298-1-kbusch@meta.com>
+ <20250805141123.332298-2-kbusch@meta.com> <aJzwO9dYeBQAHnCC@kbusch-mbp>
+ <d9116c88-4098-46a7-8cbc-c900576a5da3@acm.org> <aJz9EUxTutWLxQmk@kbusch-mbp>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <aJz9EUxTutWLxQmk@kbusch-mbp>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 13, 2025 at 06:04:32PM +1000, NeilBrown wrote:
-
-> There is a git tree you could pull.....
+On 8/14/25 6:01 AM, Keith Busch wrote:
+> On Wed, Aug 13, 2025 at 01:41:49PM -0700, Bart Van Assche wrote:
+>> On 8/13/25 1:06 PM, Keith Busch wrote:
+>>> But I can't make that change because many scsi devices don't set the dma
+>>> alignment and get the default 511 value. This is fine for the memory
+>>> address offset, but the lengths sent for various inquriy commands are
+>>> much smaller, like 4 and 32 byte lengths. That length wouldn't pass the
+>>> dma alignment granularity, so I think the default value is far too
+>>> conservative. Does the address start size need to be a different limit
+>>> than minimum length? I feel like they should be the same, but maybe
+>>> that's just an nvme thing.
+>>
+>> Hi Keith,
+>>
+>> Maybe I misunderstood your question. It seems to me that the SCSI core
+>> sets the DMA alignment by default to four bytes. From
+>> drivers/scsi/hosts.c:
 > 
-> My API effectively supports both lock_rename() users and
-> lock_rename_child() users.  Maybe you want to preserve the two different
-> APIs.  I'd rather avoid the code duplication.
-
-What code duplication?  Seriously, how much of the logics is really shared?
-Error checking?  So put that into a common helper...
- 
-> > This is too fucking ugly to live, IMO.  Too many things are mixed into it.
-> > I will NAK that until I get a chance to see the users of all that stuff.
-> > Sorry.
-> > 
+> Thanks, I think you got my meaning. 
 > 
-> Can you say more about what you think it ugly?
-> 
-> Are you OK with combining the lookup and the locking in the one
-> function?
-> Are you OK with passing a 'struct rename_data' rather than a list of
-> assorted args?
-> Are you OK with deducing the target flags in this function, or do you
-> want them explicitly passed in?
-> Is it just that the function can use with lock_rename or
-> lock_rename_child depending on context?
+> I'm using the AHCI driver. It looks like ata_scsi_dev_config() overrides
+> the dma_alignment to sector_size - 1, and that pattern goes way back,
+> almost 20 years ago, so maybe I can't change it.
 
-Put it that way: you are collapsing two (if not more) constructors
-for the same object into one.  That makes describing (and proving,
-and verifying the callers, etc.) considerably more painful, with very
-little gain to be had.
+That is probably buggy now in the sense that the scsi layer should be able to
+send any command with a size not aligned to the LBA size or ATA sector (512 B)
+and libata-scsi SAT should do the translation using an internal 512B aligned
+command size.
 
-You are not so much modifying rename_data as creating an object - "state
-ready for rename".  The fact that you use the same chunk of memory
-to encode the arguments of constructor is an implementation detail;
-constraints on the contents of that chunk of memory are different both
-from each other and from the resulting object.
+What makes a mess here is that SCSI allows having a media-access command
+specifying a transfer size that is not aligned on the LBA size. The transfer
+will be "short" in that case, which is perfectly fine with SCSI. But ATA does
+not allow that. It is all or nothing and the command size thus must always be
+aligned to the LBA size.
 
-In effect, you have a weird union of several types here and the fact
-that C type system is pretty weak does not help.  Having separate
-constructors at least documents which rules apply; conflating them is
-asking for trouble.
+I think that dma_alignment was abused to check that. But I think it should not
+be too hard to check the alignment in libata-scsi when translating the command.
+SAS HBAs should be doing something similar too. Have never exactly tested that
+though, and I am afraid how many SAS HBAs will not like unaligned command to
+ATA devices...
 
-It's the same problem as with flags arguments, really.  It makes proofs
-harder.  "I'm here" is a lot easier to deal with than "such and such
-correlations hold between the values of such and such variables".
+We also have the different alignment for management commands (most of which use
+512B sector size) and media access commands which use the actual device LBA
+size alignment.
 
-If we have several constructors (and they can easily share common helpers
-- no problem with that), we can always come back and decide to fold them
-into one; splitting is a lot harder, exactly because such flags, etc.,
-do not stay local.  I've done both kinds of transformations and in the
-"split" direction it ended up with bloody painful tree-wide analysis -
-more often than not with buggy corner cases caught in process.
+So it is a mess :)
 
-Let's not go there; if, in the end of process, we look at the result and
-see that unifying some of them makes sense - good, it won't be hard to do.
-But making it as "flexible" as possible as the first step pretty much
-locks you into a lot of decisions that are better done when the final
-state is seen - and possibly had been massaged for a while.
+-- 
+Damien Le Moal
+Western Digital Research
 
