@@ -1,114 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-57817-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57818-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78145B258DB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 03:17:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9FA6B258DC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 03:17:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28C601C21B5F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 01:15:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BF8F1C2262D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 01:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99E3C19CCEC;
-	Thu, 14 Aug 2025 01:15:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FA8A163;
+	Thu, 14 Aug 2025 01:15:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="tPycMhMr"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="c/72uRa8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B1AF188000;
-	Thu, 14 Aug 2025 01:15:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2724D2C190
+	for <linux-fsdevel@vger.kernel.org>; Thu, 14 Aug 2025 01:15:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755134107; cv=none; b=t7Rhzg9ZA1cDuGZ0mfJhW27FM4BmLRGjinQ0trunmAPOrWd51Csz9tWf1NMnfoH1muvqgCZRELCJB9DjuSRlP27TOtnlDx7gmvfDtuxuaJMzS50QoCUPTKt2248qD89srGL9IIPe2RU68SQ8QFQbfSI7WebxPJggjNf8FxnCVoA=
+	t=1755134153; cv=none; b=vC9S+XEBL8kxadGEGI6RZ7eU3R3JgHBGuADX84d1kc4o/91cYPDvDo3gf80gwr+7wg9d6gej5IVIgmhy3KRaP4GFeeHKnybBXHaxYIS1WanCYUXSrAiEtyxPmxbOJvhoeK3OwOuFAVHc78efxx7dNk3vBSPmS/aadTCENdl0REM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755134107; c=relaxed/simple;
-	bh=y9PO2PO6nPeVBRQUafPLj9FIxNajLXqS18P2UUJjTFc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=T7F1Nc4HqLhv0lVl1eNXtwRVAWgXZuZ0w2rrtzmIXm87pJlyrjPor31HKVWbU/1aONuMgS5dOz3pbEs54YRtLu/GHE6DdU6XpJUybC/QEDw8oOA+npS6Rz6L84xmZQkcQLb5E65gacCWEbBJahRsgAijavvbqV43GrFWChOQa4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=tPycMhMr; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id 468D714C2D3;
-	Thu, 14 Aug 2025 03:14:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1755134096;
+	s=arc-20240116; t=1755134153; c=relaxed/simple;
+	bh=d5BLvqLX09urzN2uAU0YVQ0bDClV0GcGpl2S5bSzuvI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=enBMN06fy6zRFlR6TixVAHxFBhsQW+bJ6naz2GmbowmuNaAzHaZXDanpNkq+Lop+YOdAcuUtU2Gv5yhiP4lbpjvX+fopp4mLmYwgCB4EXjOY7RHQmmx4yqcyw27aQRQYLIrRWhM7r85qIj4xU2TO+D2/ZrVHEsEjkC8gMDUO9u0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=c/72uRa8; arc=none smtp.client-ip=91.218.175.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755134140;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to; bh=VSS/GzTf7mRkzo4sO438c/imKZ2sgMqL0KjQB+0sB9s=;
-	b=tPycMhMr7X0wubaDHNZnMqB/VEiz0UUE8omXCbl8cVPraMQEqlPqNl3No+vWVKYafyfuSA
-	xhjW37XOoQV3q0j5uHaXh7YYbCRG3IZ+tEUlLhY8SaSBmV/WqNdlGIekaFWtvKennOmXOg
-	0jP8VHStgbUj1JeXRD4kB6OG5m1l26zOxuPZDjMXERijZSNrQI3moAFxCHhbi/gpYqBfCC
-	2bzC09Ecy/3pG2mjK78rVDFpscJKNFoOvRfr4bJcTgSUHhKrooXlVZISs1Qm35JZT+XjI1
-	2qZyXvNOntTkDnzLDvryfNjAjjTCBnXfmst23VvZ/ZElMoQUN43e9Adp+48JMQ==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 5e52dd40;
-	Thu, 14 Aug 2025 01:14:49 +0000 (UTC)
-Date: Thu, 14 Aug 2025 10:14:34 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>,
-	kernel test robot <lkp@intel.com>,
-	Dominique Martinet via B4 Relay <devnull+asmadeus.codewreck.org@kernel.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Christian Brauner <brauner@kernel.org>,
-	David Howells <dhowells@redhat.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Andrew Morton <akpm@linux-foundation.org>, llvm@lists.linux.dev,
-	oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Maximilian Bosch <maximilian@mbosch.me>,
-	Ryan Lahfa <ryan@lahfa.xyz>, Christian Theune <ct@flyingcircus.io>,
-	Arnout Engelen <arnout@bzzt.net>, linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] iov_iter: iterate_folioq: fix handling of offset >=
- folio size
-Message-ID: <aJ04ej2P3ZXiBjOG@codewreck.org>
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pSvSvM4+2zysM7Te3VGN2ddfsfP4tfKOXYOL21jw4Tk=;
+	b=c/72uRa8U+SGtBAIzpSF+4uvT4rWbTWt7uyNK9ugtT8L8Ly4eYXOq0D5JQ+laqSPW8rNhc
+	6HpqT+lTfXdGQ/vYWPAqO0ggScHvkGNlph1zVAYvrTHSYKf3OqilkEJnvCESTrRT7qOPaV
+	Gf4gjW2PzmRyjJLUzQ2vysAw+X0YtQo=
+From: Yuntao Wang <yuntao.wang@linux.dev>
+To: brauner@kernel.org
+Cc: jack@suse.cz,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	viro@zeniv.linux.org.uk,
+	yuntao.wang@linux.dev
+Subject: Re: [PATCH] fs: fix incorrect lflags value in the move_mount syscall
+Date: Thu, 14 Aug 2025 09:14:59 +0800
+Message-ID: <20250814011459.270835-1-yuntao.wang@linux.dev>
+In-Reply-To: <20250811-zitat-diebe-3acc89b8c971@brauner>
+References: <20250811-zitat-diebe-3acc89b8c971@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <f389ac0d-de77-4443-9302-3d8895e39daf@paulmck-laptop>
- <aJyYp-3VA9kJ5YMd@smile.fi.intel.com>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Andy Shevchenko wrote on Wed, Aug 13, 2025 at 04:52:39PM +0300:
-> > I actually test with W=1 too, but somehow this warning doesn't show up
-> > in my build, I'm not quite sure why :/
-> > (even if I try clang like the test robot... But there's plenty of
-> > other warnings all around everywhere else, so I agree this is all way
-> > too manual)
+On Mon, 11 Aug 2025 16:06:59 +0200, Christian Brauner <brauner@kernel.org> wrote:
+
+> On Mon, 11 Aug 2025 13:24:26 +0800, Yuntao Wang wrote:
+> > The lflags value used to look up from_path was overwritten by the one used
+> > to look up to_path.
+> > 
+> > In other words, from_path was looked up with the wrong lflags value. Fix it.
+> > 
+> > 
 > 
-> Depends on your config, last few releases I was specifically targetting x86
-> defconfigs (32- and 64-bit) to be build with `make W=1`. There are a couple of
-> changes that are still pending, but otherwise it builds with GCC and clang.
-
-I meant it the other way around: the warning isn't showing up on master
-+ these patches for my config.
-
-But now I double-checked, 'CC=clang make W=1' doesn't actually use
-clang, I should have tried 'make CC=clang W=1'...
-And, yeah, it just doesn't show up with gcc so I'll know it's better to
-check both compilers...
-
-Paul E. McKenney wrote on Wed, Aug 13, 2025 at 04:04:19PM -0700:
-> > I hope this to happen sooner as it broke my builds too (I always do now `make W=1`
-> > and suggest all developers should follow).
+> Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+> Patches in the vfs.fixes branch should appear in linux-next soon.
 > 
-> This build failure is showing up in my testing as well.
+> Please report any outstanding bugs that were missed during review in a
+> new review to the original patch series allowing us to drop it.
 > 
-> In the service of preventing bisection issues, would it be possible to
-> fold the fix into the original patch?
+> It's encouraged to provide Acked-bys and Reviewed-bys even though the
+> patch has now been applied. If possible patch trailers will be updated.
+> 
+> Note that commit hashes shown below are subject to change due to rebase,
+> trailer updates or similar. If in doubt, please check the listed branch.
+> 
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+> branch: vfs.fixes
+> 
+> [1/1] fs: fix incorrect lflags value in the move_mount syscall
+>       https://git.kernel.org/vfs/vfs/c/593d9e4c3d63
 
-Andrew just picked v3 up, so there won't be any such problem, and -next
-will stop failing after today's update
+Hi Christian,
 
--- 
-Dominique Martinet | Asmadeus
+It seems the patch hasn't been applied to the vfs.fixes branch, the relevant
+code there appears unchanged.
+
+Thanks,
+Yuntao
 
