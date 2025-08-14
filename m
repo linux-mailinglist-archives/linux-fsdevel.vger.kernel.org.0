@@ -1,176 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-57942-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57943-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C733B26DFD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 19:54:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4B72B26E9D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 20:09:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 693FE7A9A37
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 17:52:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66289B802FE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 18:03:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93A4931077D;
-	Thu, 14 Aug 2025 17:54:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E585319864;
+	Thu, 14 Aug 2025 18:05:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KMqCJfnJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eEj06vMH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7545F1DE8B5
-	for <linux-fsdevel@vger.kernel.org>; Thu, 14 Aug 2025 17:54:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE848319841;
+	Thu, 14 Aug 2025 18:05:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755194051; cv=none; b=tr7esupVr9TbG1/dP5j+MiHFkw2CegNhxCBIYidWWKkcJ8mOWDbTMBumtEvJrlU7MscNab5ugAz2Lb3cJwk4TwpSwqrepGFjUE3x7kKWtr0u7eAMhdhDF11GAXZ2a5w2bY5AdBjNsM+b64XzYFsAnBNbQwFbnS2FNbTGE28k15o=
+	t=1755194713; cv=none; b=OVDTI5G2F+f1f+WH+46EtGDa+w18BkeGuGfFLCqBa107AKp79zgKKhJbOWnv605CvGnRS/VFUb3vprtirw2sPmypWVFj7qGKW0qrTC/lBMcMfkStLtE4F+u60ZhpDhYEE5doOkITbs1qGr5QFa/sWn5xF/K9CwbidKHRi+3mjow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755194051; c=relaxed/simple;
-	bh=Uh0bFpns+1Rgj+c15jFS/ZJt4z+WS/nsy2pUTvwNs4I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qzFvvpWZPayZKZ2uWjjuziPdSuPdeIes/VcXfrBI3CtDj+cscaR77u9zHay8OuD7ryu+UDYMCobYEoS/cacV4Bt5YbIUV50qfkQBrWOY3IqRl6Bk8CQ/Lar6k5/qFB69UdexLRNLw+pZ57+JgzyJpcQWeenMa/cJ9iJWyeKNo50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KMqCJfnJ; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4b109ae67fdso16033961cf.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Aug 2025 10:54:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755194048; x=1755798848; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yShu0wnupLjHzmlxEsVI6C41XoFMfVK9fKU48jbRyTA=;
-        b=KMqCJfnJ7NGcuPXh8BDS4myrievzuaC77pwIoaJEP1UgUnBqdI7gEEy7d/OQd9qrtQ
-         KtdMx6PFQa2vuBAdSXbEWB98sI2XswIKIAd2U+Dex16MEh+SuQIv5CntsHRB29h566ff
-         AiRGQ3LIsltywCylowrPSZHnafCWoEMtHE0fZOXygFWl7XonMQ5Gl/hzXRaEBla5/qyK
-         YqXm6L/9aHljc8ZGc7a6wn+UT4qd9DYc0eYrKHkBx1ENKlGiohHuSxbyIva6bDnwLmF4
-         4/fbmYsza3BBtmCj/pvpgjjpr+bgxvDOVz2rJza1O5GITs6h0Wdd7X10AsNrDfCGtb9N
-         wBVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755194048; x=1755798848;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yShu0wnupLjHzmlxEsVI6C41XoFMfVK9fKU48jbRyTA=;
-        b=K5bxiZpgaNJlzk3DEuZuDXnxByKxyE/1lBEvlMs+LnnRJ8UpQoMeG1/X2C1icFYC47
-         HA44Mv7Kmvqo3TE5ySdS4UhzKBGCqrkb2UQng8nQhC3NZIgQZqMP4cO7Vg+lyWCZzSiJ
-         W8OM55LI71YddnELWawn/QmBzI+dPJDoUGxB4kknspHo7U2awV4V7E/EObQOhWIEBhJS
-         cavyI9xqibmlt+lX4aovNoLbzu/85qS3LFe711Pw+UxGNG8xD/SWeXcWrGpyNCJjhbXF
-         vhTMGEfFHXsP+c1LwzQL2iCFd6isg7yiyj3rI0ySYDgJ03HYR7UHQnjOIkfGqKQAoyPu
-         4BjA==
-X-Forwarded-Encrypted: i=1; AJvYcCXwVp3lgDHZXBY0A/cz5YWWS3vlG0mRy5+d5NiYVnpURIFz3ksJb96AXaownSf3KuQ8HV3ol4TpWTmC+SDa@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJjiY7X8HwZH+FeLDFzU3PmvZLsm+IFtSU873AGqqA7axfqQ2r
-	xKBzq6ehhTElaQCsKoG5ZIF86YxZ7GRNcqJIo/wzsAgrah9N1sL8P31NkuXsxj20XC2m/sRbrX0
-	u3JJ+j6zxZsuTQ5aJzZBcDUjYcAVpwIc=
-X-Gm-Gg: ASbGncuHI6o0Q74ToE011J06riwjPwSlYs3Z7cSSXPMfg20WBG0FVm+qYNgWYdooNXg
-	jc/2W3b9W7Nfloqo4HL4br1pJqPvhojazCg/Zu9z4yNQzyUZ4tquvrnrhKJJ7Zv6rx3jQj0Hdug
-	+YoMXywerZxQjgs8FGc5YxeuMbvmst/JpwugMVBpHUdl3wrBmFWM8YUb4tlda6lf2p/9dZSuOnE
-	tnORD+9
-X-Google-Smtp-Source: AGHT+IF+KZMsaSr1UdOYb+EhaaTdo4amWspPcrDFUONwp3xEoMcDHqd+slYmnFxRlqRANQapA9/t0f+WgvgL0/ydsU8=
-X-Received: by 2002:a05:622a:5e0a:b0:4b0:a130:4777 with SMTP id
- d75a77b69052e-4b115d16066mr16672531cf.30.1755194048075; Thu, 14 Aug 2025
- 10:54:08 -0700 (PDT)
+	s=arc-20240116; t=1755194713; c=relaxed/simple;
+	bh=XcO2ZEADFwBfK6kPEWOR8tIjaxQkyjMynvJHLUKTg8I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RvmBF6D2e+X0z0EOR3ei7qhTc5w6H5ThbLQtClsKx+mSY2UlNrzHDFgxwX9zIfU454av7BwQyMiqACWOXHuk4EXiXmkAhqSgCprThitgMO4SC4wdtClJrEpADaQoGYTyQ5ivjGWV2h++hnFFlsfcgq64eiWUqgEzt6idriDtT8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eEj06vMH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99FE2C4CEED;
+	Thu, 14 Aug 2025 18:05:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755194712;
+	bh=XcO2ZEADFwBfK6kPEWOR8tIjaxQkyjMynvJHLUKTg8I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eEj06vMH1nQfwpU1V+P3jkjBWcHIiYZphKlnN4NnBf4JofA/Nawf0Aqgfa4Am8Hid
+	 18h9T03E7YRMCgnw/qmFEQwgTMfbhZNaAcj0FXUY0MEukRXd625/4eJi9lqTtJ5P6U
+	 z/xmMPYyBgsX4eplbTmM+AgroA2Ae+cc+H9jZqAjk9nxVT9KXFC9Afzi1zAweqdXoA
+	 Y3B30bhyGWGpWr2Mafxe/kBnGDALPvD5P1lOwnGaPczf6aoT2xGYpGrpGU2oSw8OZB
+	 KJVtTpdX8M9d3DpBWgn/qV5fHoH9CtV847eb/oXTNSLYE8idadchk1zHfMrfig/fTJ
+	 Z/CtkKdFgtGMA==
+Date: Thu, 14 Aug 2025 11:05:12 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: John Groves <John@groves.net>, Dan Williams <dan.j.williams@intel.com>,
+	Miklos Szeredi <miklos@szeredb.hu>,
+	Bernd Schubert <bschubert@ddn.com>,
+	John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Stefan Hajnoczi <shajnocz@redhat.com>,
+	Joanne Koong <joannelkoong@gmail.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Aravind Ramesh <arramesh@micron.com>,
+	Ajay Joshi <ajayjoshi@micron.com>
+Subject: Re: [RFC V2 12/18] famfs_fuse: Plumb the GET_FMAP message/response
+Message-ID: <20250814180512.GV7942@frogsfrogsfrogs>
+References: <20250703185032.46568-1-john@groves.net>
+ <20250703185032.46568-13-john@groves.net>
+ <CAJfpegv6wHOniQE6dgGymq4h1430oc2EyV3OQ2S9DqA20nZZUQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250813152014.100048-1-mszeredi@redhat.com> <20250813152014.100048-4-mszeredi@redhat.com>
- <CAJnrk1bfoumJHwc5p-WASXYxWG8tzz91LfzpiEkPTSOoTDK1ig@mail.gmail.com> <20250814170459.GS7942@frogsfrogsfrogs>
-In-Reply-To: <20250814170459.GS7942@frogsfrogsfrogs>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Thu, 14 Aug 2025 10:53:56 -0700
-X-Gm-Features: Ac12FXzs2mCHCpS5PqSS8NOH3KLJpeZcF6uHpQXNgMRDyRs8Pr6HBucAxtEbuQ8
-Message-ID: <CAJnrk1bxfmTw118bxcaa1Avr4xN0DamPFoyqtKHnR=8Ks6FJwA@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] fuse: add COPY_FILE_RANGE_64 that allows large copies
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	Bernd Schubert <bschubert@ddn.com>, Amir Goldstein <amir73il@gmail.com>, 
-	Chunsheng Luo <luochunsheng@ustc.edu>, Florian Weimer <fweimer@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegv6wHOniQE6dgGymq4h1430oc2EyV3OQ2S9DqA20nZZUQ@mail.gmail.com>
 
-On Thu, Aug 14, 2025 at 10:05=E2=80=AFAM Darrick J. Wong <djwong@kernel.org=
-> wrote:
->
-> On Wed, Aug 13, 2025 at 10:03:17AM -0700, Joanne Koong wrote:
-> > On Wed, Aug 13, 2025 at 8:24=E2=80=AFAM Miklos Szeredi <mszeredi@redhat=
-.com> wrote:
-> > >
-> > > The FUSE protocol uses struct fuse_write_out to convey the return val=
-ue of
-> > > copy_file_range, which is restricted to uint32_t.  But the COPY_FILE_=
-RANGE
-> > > interface supports a 64-bit size copies and there's no reason why cop=
-ies
-> > > should be limited to 32-bit.
-> > >
-> > > Introduce a new op COPY_FILE_RANGE_64, which is identical, except the
-> > > number of bytes copied is returned in a 64-bit value.
-> > >
-> > > If the fuse server does not support COPY_FILE_RANGE_64, fall back to
-> > > COPY_FILE_RANGE.
+On Thu, Aug 14, 2025 at 03:36:26PM +0200, Miklos Szeredi wrote:
+> On Thu, 3 Jul 2025 at 20:54, John Groves <John@groves.net> wrote:
 > >
-> > Is it unacceptable to add a union in struct fuse_write_out that
-> > accepts a uint64_t bytes_copied?
-> > struct fuse_write_out {
-> >     union {
-> >         struct {
-> >             uint32_t size;
-> >             uint32_t padding;
-> >         };
-> >         uint64_t bytes_copied;
-> >     };
-> > };
+> > Upon completion of an OPEN, if we're in famfs-mode we do a GET_FMAP to
+> > retrieve and cache up the file-to-dax map in the kernel. If this
+> > succeeds, read/write/mmap are resolved direct-to-dax with no upcalls.
+> 
+> Nothing to do at this time unless you want a side project:  doing this
+> with compound requests would save a roundtrip (OPEN + GET_FMAP in one
+> go).
+> 
+> > GET_FMAP has a variable-size response payload, and the allocated size
+> > is sent in the in_args[0].size field. If the fmap would overflow the
+> > message, the fuse server sends a reply of size 'sizeof(uint32_t)' which
+> > specifies the size of the fmap message. Then the kernel can realloc a
+> > large enough buffer and try again.
+> 
+> There is a better way to do this: the allocation can happen when we
+> get the response.  Just need to add infrastructure to dev.c.
+> 
+> > diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+> > index 6c384640c79b..dff5aa62543e 100644
+> > --- a/include/uapi/linux/fuse.h
+> > +++ b/include/uapi/linux/fuse.h
+> > @@ -654,6 +654,10 @@ enum fuse_opcode {
+> >         FUSE_TMPFILE            = 51,
+> >         FUSE_STATX              = 52,
 > >
-> > Maybe a little ugly but that seems backwards-compatible to me and
-> > would prevent needing a new FUSE_COPY_FILE_RANGE64.
->
-> I wonder, does fuse_args::out_argvar=3D=3D1 imply that you could create a
-> new 64-bit fuse_write64_out:
->
-> struct fuse_write64_out {
->         uint64_t size;
->         uint64_t padding;
-> };
->
-> and then fuse_copy_file_range declares a union:
->
-> union fuse_cfr_out {
->         struct fuse_write_out out;
->         struct fuse_write64_out out64;
-> };
->
-> passes that into fuse_args:
->
->         union fuse_cfr_out outarg;
->
->         args.out_argvar =3D 1;
->         args.out_numargs =3D 1;
->         args.out_args[0].size =3D sizeof(outarg);
->         args.out_args[0].value =3D &outarg;
->
-> and then we can switch on the results:
->
->         if (args.out_args[0].size =3D=3D sizeof(fuse_write64_out))
->                 /* 64-bit return */
->         else if (args.out_args[0].size =3D=3D sizeof(fuse_write_out))
->                 /* 32-bit return */
->         else
->                 /* error */
->
-> I guess the problem is that userspace has to know that the kernel will
-> accept a fuse_write64_out, because on an old kernel it'll get -EINVAL
-> and ... then what?  I think an error return ends the request and the
-> fuse server can't just try again with fuse_write_out.
->
+> > +       /* Famfs / devdax opcodes */
+> > +       FUSE_GET_FMAP           = 53,
+> > +       FUSE_GET_DAXDEV         = 54,
+> 
+> Introduced too early.
+> 
+> > +
+> >         /* CUSE specific operations */
+> >         CUSE_INIT               = 4096,
+> >
+> > @@ -888,6 +892,16 @@ struct fuse_access_in {
+> >         uint32_t        padding;
+> >  };
+> >
+> > +struct fuse_get_fmap_in {
+> > +       uint32_t        size;
+> > +       uint32_t        padding;
+> > +};
+> 
+> As noted, passing size to server really makes no sense.  I'd just omit
+> fuse_get_fmap_in completely.
+> 
+> > +
+> > +struct fuse_get_fmap_out {
+> > +       uint32_t        size;
+> > +       uint32_t        padding;
+> > +};
+> > +
+> >  struct fuse_init_in {
+> >         uint32_t        major;
+> >         uint32_t        minor;
+> > @@ -1284,4 +1298,8 @@ struct fuse_uring_cmd_req {
+> >         uint8_t padding[6];
+> >  };
+> >
+> > +/* Famfs fmap message components */
+> > +
+> > +#define FAMFS_FMAP_MAX 32768 /* Largest supported fmap message */
+> > +
+> 
+> Hmm, Darrick's interface gets one extents at a time.   This one tries
+> to get the whole map in one go.
+> 
+> The single extent thing can be inefficient even for plain block fs, so
+> it would be nice to get multiple extents.  The whole map has an
 
-I think this would also need the feature flag sent in the init call
-which Miklos didn't like
+The fuse/iomap series adds a mapping upsertion "notification" that the
+fuse server can use to prepopulate mappings in the kernel so that it
+doesn't have to call back to the server for reads and pure overwrites.
+Maybe it would be useful to be able to upsert mappings for more than a
+single file range, but so far it hasn't been necessary.
 
+> artificial limit that currently may seem sufficient but down the line
+> could cause pain.
+> 
+> I'm still hoping some common ground would benefit both interfaces.
+> Just not sure what it should be.
 
-> <shrug> Maybe I'm speculating stupi^Wwildly. ;)
->
-> --D
->
+It's possible that famfs could use the mapping upsertion notification to
+upload mappings into the kernel.  As far as I can tell, fuse servers can
+send notifications even when they're in the middle of handling a fuse
+request, so the famfs daemon's ->open function could upload mappings
+before completing the open operation.
+
+As for the other use of FMAP (uploading a description of striping data
+from which one can construct mappings) ... I don't know what to say
+about that.  That one isn't so useful for block filesystems. :)
+
+(onto the next reply)
+
+--D
 
