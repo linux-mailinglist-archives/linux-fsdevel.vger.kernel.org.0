@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-57852-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57853-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FF3BB25EEB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 10:34:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC56FB25EEE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 10:34:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74C051C87ACA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 08:31:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED24B5A2351
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 08:34:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63B152E763F;
-	Thu, 14 Aug 2025 08:31:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60AE52E7BB5;
+	Thu, 14 Aug 2025 08:34:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AX8cNCfp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sYJMiC+A"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D2EF254873;
-	Thu, 14 Aug 2025 08:31:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C1F2264A76;
+	Thu, 14 Aug 2025 08:34:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755160274; cv=none; b=P1vbtk3bQe+vMd8BEeGtV1810ilOgJJBBS26JyGLC3ZmJ4PsPpLHHsRUQndWb2YzxP/BTplwXSigUWidMJDl95AIZ9acKYkPyVWFhZb3ojamN1two0biYmLnZMs7iJtsV8I+TNw0QNuONyCl4M+SNaX/F9txVIjaUGejjffMvH8=
+	t=1755160461; cv=none; b=HwDx64GKDkJ+xcfTp75vcZYl0eAYpS2ItdrcRZLvZz7Bc2+d6U+8enLFrn5qWZUcr6bJC2Dpp53moI8BlJo0GkHg8RbTPYlNHTd0ZcqmRecMOZkraOOxqoIUw0xNtQUr/GTZzGoWLb6zyCDEJxSsXybTlzcEvVyZyUhNunIuqMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755160274; c=relaxed/simple;
-	bh=VZwAT4nuFzlo6iiZ+ZB4KjdwEiWrPMXFBSLlSlymS54=;
+	s=arc-20240116; t=1755160461; c=relaxed/simple;
+	bh=JJZTzu+RAz4/lXyoF8hhed0E/+6KW4y3Lc2HDHprM3E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AIi3rkwH6AiGjVlZm9jzVubBQL33lN81UhU+eFMe+4D5FU4SEWAgAkzUo/d1A+GtYg6+Y4QhOW/GV4tDy/MWb3/9/RadFPKIUVATigPCPWiWtQOojsm65r6gNaGj2noWCoHk8fcuZi0p/GKrYCzFnCQVz+5DSyQQdWxG4VsraQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AX8cNCfp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC3ABC4CEEF;
-	Thu, 14 Aug 2025 08:30:55 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=q8arL3X/cSiR7Z+dtZ4F/9RJ6eycj0WrVvc/4L2Uj9xGKVwFnJDKgurLFlWEJ+NWJ+iTmKZ5MrlaJSmq1N55S0MAbc+Q7WXrWXy83GGudtLjS4CX22lOZfj5TaXvIiU2VbYlcLUxnr6Vse/gx7+sFYngi7hyqE3/VZ+ZQAWcifM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sYJMiC+A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83461C4CEEF;
+	Thu, 14 Aug 2025 08:34:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755160274;
-	bh=VZwAT4nuFzlo6iiZ+ZB4KjdwEiWrPMXFBSLlSlymS54=;
+	s=k20201202; t=1755160460;
+	bh=JJZTzu+RAz4/lXyoF8hhed0E/+6KW4y3Lc2HDHprM3E=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AX8cNCfpn1HESKoFuAmO+ofK0K08xD2ds6IMbbIAyUZ5G1opIHUqO/jfh0dnqTs1L
-	 i+9/9TDQqyuA59+2NNHVDTjjgM3kATsYfk15tvQgNWNLysM5awURk6yWoFT7xQc8Gk
-	 FaNfrd36A6c6CWsrMpb/KjIez7XstJ11dFK4CBHKy63X9yPF4p86KG7u/aWQt9onHW
-	 cODXDHoRGXmI2Xv/sApKf6oi2erN4CbM0DD8DpC72SsJdg5XdCkoeGqdAGzN9pK35k
-	 q4EpVl+/BsX4Pl1c9wfcSUumLoc2uJ8YjQVtcbpPVBRa/degA6woRCYDWZP+OL5XKt
-	 6xP2evtyLgaAQ==
-Date: Thu, 14 Aug 2025 11:30:51 +0300
+	b=sYJMiC+A6ZsYL/xcMfF5gXE5Tqd2ONGCHOWgXGdfoS679A/WsvWY4v/yNnAdOGJ+l
+	 jTR2ZQjW5ocrjLWjjrbnOIQaPGP72w5wLeWhPEeNMh/kwb4iF3HCdoGM4lS27vlnlE
+	 C06vKS2l/dvw+L7KYiTEAmNBniJOG5U2Dg3Z8Oqi41JdMD+dOS2ox8Yt3JVFMK4Ko8
+	 yPGdi7p5vKJqhIUOiCUOT01Fp1IeSJzEyef+iKY1gvCG+p8H824C5wj+OzG16e87LX
+	 PfIthLVHmXIqBCLYKsRoqDM9o16zhFcmVnIDLFE4O9kfBbO8ZR3C0vmiLs8ODwrqV+
+	 DOhyHiLRa8bQA==
+Date: Thu, 14 Aug 2025 11:33:59 +0300
 From: Mike Rapoport <rppt@kernel.org>
 To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>,
@@ -97,11 +97,10 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
 	linux-trace-kernel@vger.kernel.org,
 	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH 04/10] mm: convert arch-specific code to mm_flags_*()
- accessors
-Message-ID: <aJ2eu1qv1KkUsSbL@kernel.org>
+Subject: Re: [PATCH 05/10] mm: convert uprobes to mm_flags_*() accessors
+Message-ID: <aJ2fd3iD6GqZ_LWw@kernel.org>
 References: <cover.1755012943.git.lorenzo.stoakes@oracle.com>
- <6e0a4563fcade8678d0fc99859b3998d4354e82f.1755012943.git.lorenzo.stoakes@oracle.com>
+ <1d4fe5963904cc0c707da1f53fbfe6471d3eff10.1755012943.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -110,9 +109,9 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6e0a4563fcade8678d0fc99859b3998d4354e82f.1755012943.git.lorenzo.stoakes@oracle.com>
+In-Reply-To: <1d4fe5963904cc0c707da1f53fbfe6471d3eff10.1755012943.git.lorenzo.stoakes@oracle.com>
 
-On Tue, Aug 12, 2025 at 04:44:13PM +0100, Lorenzo Stoakes wrote:
+On Tue, Aug 12, 2025 at 04:44:14PM +0100, Lorenzo Stoakes wrote:
 > As part of the effort to move to mm->flags becoming a bitmap field, convert
 > existing users to making use of the mm_flags_*() accessors which will, when
 > the conversion is complete, be the only means of accessing mm_struct flags.
@@ -124,66 +123,117 @@ On Tue, Aug 12, 2025 at 04:44:13PM +0100, Lorenzo Stoakes wrote:
 Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
 > ---
->  arch/s390/mm/mmap.c              | 4 ++--
->  arch/sparc/kernel/sys_sparc_64.c | 4 ++--
->  arch/x86/mm/mmap.c               | 4 ++--
->  3 files changed, 6 insertions(+), 6 deletions(-)
+>  kernel/events/uprobes.c | 32 ++++++++++++++++----------------
+>  1 file changed, 16 insertions(+), 16 deletions(-)
 > 
-> diff --git a/arch/s390/mm/mmap.c b/arch/s390/mm/mmap.c
-> index 40a526d28184..c884b580eb5e 100644
-> --- a/arch/s390/mm/mmap.c
-> +++ b/arch/s390/mm/mmap.c
-> @@ -182,10 +182,10 @@ void arch_pick_mmap_layout(struct mm_struct *mm, struct rlimit *rlim_stack)
+> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> index 7ca1940607bd..31a12b60055f 100644
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -1153,15 +1153,15 @@ static int install_breakpoint(struct uprobe *uprobe, struct vm_area_struct *vma,
+>  	 * set MMF_HAS_UPROBES in advance for uprobe_pre_sstep_notifier(),
+>  	 * the task can hit this breakpoint right after __replace_page().
 >  	 */
->  	if (mmap_is_legacy(rlim_stack)) {
->  		mm->mmap_base = mmap_base_legacy(random_factor);
-> -		clear_bit(MMF_TOPDOWN, &mm->flags);
-> +		mm_flags_clear(MMF_TOPDOWN, mm);
->  	} else {
->  		mm->mmap_base = mmap_base(random_factor, rlim_stack);
-> -		set_bit(MMF_TOPDOWN, &mm->flags);
-> +		mm_flag_set(MMF_TOPDOWN, mm);
->  	}
+> -	first_uprobe = !test_bit(MMF_HAS_UPROBES, &mm->flags);
+> +	first_uprobe = !mm_flags_test(MMF_HAS_UPROBES, mm);
+>  	if (first_uprobe)
+> -		set_bit(MMF_HAS_UPROBES, &mm->flags);
+> +		mm_flags_set(MMF_HAS_UPROBES, mm);
+>  
+>  	ret = set_swbp(&uprobe->arch, vma, vaddr);
+>  	if (!ret)
+> -		clear_bit(MMF_RECALC_UPROBES, &mm->flags);
+> +		mm_flags_clear(MMF_RECALC_UPROBES, mm);
+>  	else if (first_uprobe)
+> -		clear_bit(MMF_HAS_UPROBES, &mm->flags);
+> +		mm_flags_clear(MMF_HAS_UPROBES, mm);
+>  
+>  	return ret;
 >  }
->  
-> diff --git a/arch/sparc/kernel/sys_sparc_64.c b/arch/sparc/kernel/sys_sparc_64.c
-> index c5a284df7b41..785e9909340f 100644
-> --- a/arch/sparc/kernel/sys_sparc_64.c
-> +++ b/arch/sparc/kernel/sys_sparc_64.c
-> @@ -309,7 +309,7 @@ void arch_pick_mmap_layout(struct mm_struct *mm, struct rlimit *rlim_stack)
->  	    gap == RLIM_INFINITY ||
->  	    sysctl_legacy_va_layout) {
->  		mm->mmap_base = TASK_UNMAPPED_BASE + random_factor;
-> -		clear_bit(MMF_TOPDOWN, &mm->flags);
-> +		mm_flags_clear(MMF_TOPDOWN, mm);
->  	} else {
->  		/* We know it's 32-bit */
->  		unsigned long task_size = STACK_TOP32;
-> @@ -320,7 +320,7 @@ void arch_pick_mmap_layout(struct mm_struct *mm, struct rlimit *rlim_stack)
->  			gap = (task_size / 6 * 5);
->  
->  		mm->mmap_base = PAGE_ALIGN(task_size - gap - random_factor);
-> -		set_bit(MMF_TOPDOWN, &mm->flags);
-> +		mm_flags_set(MMF_TOPDOWN, mm);
->  	}
->  }
->  
-> diff --git a/arch/x86/mm/mmap.c b/arch/x86/mm/mmap.c
-> index 5ed2109211da..708f85dc9380 100644
-> --- a/arch/x86/mm/mmap.c
-> +++ b/arch/x86/mm/mmap.c
-> @@ -122,9 +122,9 @@ static void arch_pick_mmap_base(unsigned long *base, unsigned long *legacy_base,
->  void arch_pick_mmap_layout(struct mm_struct *mm, struct rlimit *rlim_stack)
+> @@ -1171,7 +1171,7 @@ static int remove_breakpoint(struct uprobe *uprobe, struct vm_area_struct *vma,
 >  {
->  	if (mmap_is_legacy())
-> -		clear_bit(MMF_TOPDOWN, &mm->flags);
-> +		mm_flags_clear(MMF_TOPDOWN, mm);
->  	else
-> -		set_bit(MMF_TOPDOWN, &mm->flags);
-> +		mm_flags_set(MMF_TOPDOWN, mm);
+>  	struct mm_struct *mm = vma->vm_mm;
 >  
->  	arch_pick_mmap_base(&mm->mmap_base, &mm->mmap_legacy_base,
->  			arch_rnd(mmap64_rnd_bits), task_size_64bit(0),
+> -	set_bit(MMF_RECALC_UPROBES, &mm->flags);
+> +	mm_flags_set(MMF_RECALC_UPROBES, mm);
+>  	return set_orig_insn(&uprobe->arch, vma, vaddr);
+>  }
+>  
+> @@ -1303,7 +1303,7 @@ register_for_each_vma(struct uprobe *uprobe, struct uprobe_consumer *new)
+>  			/* consult only the "caller", new consumer. */
+>  			if (consumer_filter(new, mm))
+>  				err = install_breakpoint(uprobe, vma, info->vaddr);
+> -		} else if (test_bit(MMF_HAS_UPROBES, &mm->flags)) {
+> +		} else if (mm_flags_test(MMF_HAS_UPROBES, mm)) {
+>  			if (!filter_chain(uprobe, mm))
+>  				err |= remove_breakpoint(uprobe, vma, info->vaddr);
+>  		}
+> @@ -1595,7 +1595,7 @@ int uprobe_mmap(struct vm_area_struct *vma)
+>  
+>  	if (vma->vm_file &&
+>  	    (vma->vm_flags & (VM_WRITE|VM_SHARED)) == VM_WRITE &&
+> -	    test_bit(MMF_HAS_UPROBES, &vma->vm_mm->flags))
+> +	    mm_flags_test(MMF_HAS_UPROBES, vma->vm_mm))
+>  		delayed_ref_ctr_inc(vma);
+>  
+>  	if (!valid_vma(vma, true))
+> @@ -1655,12 +1655,12 @@ void uprobe_munmap(struct vm_area_struct *vma, unsigned long start, unsigned lon
+>  	if (!atomic_read(&vma->vm_mm->mm_users)) /* called by mmput() ? */
+>  		return;
+>  
+> -	if (!test_bit(MMF_HAS_UPROBES, &vma->vm_mm->flags) ||
+> -	     test_bit(MMF_RECALC_UPROBES, &vma->vm_mm->flags))
+> +	if (!mm_flags_test(MMF_HAS_UPROBES, vma->vm_mm) ||
+> +	     mm_flags_test(MMF_RECALC_UPROBES, vma->vm_mm))
+>  		return;
+>  
+>  	if (vma_has_uprobes(vma, start, end))
+> -		set_bit(MMF_RECALC_UPROBES, &vma->vm_mm->flags);
+> +		mm_flags_set(MMF_RECALC_UPROBES, vma->vm_mm);
+>  }
+>  
+>  static vm_fault_t xol_fault(const struct vm_special_mapping *sm,
+> @@ -1823,10 +1823,10 @@ void uprobe_end_dup_mmap(void)
+>  
+>  void uprobe_dup_mmap(struct mm_struct *oldmm, struct mm_struct *newmm)
+>  {
+> -	if (test_bit(MMF_HAS_UPROBES, &oldmm->flags)) {
+> -		set_bit(MMF_HAS_UPROBES, &newmm->flags);
+> +	if (mm_flags_test(MMF_HAS_UPROBES, oldmm)) {
+> +		mm_flags_set(MMF_HAS_UPROBES, newmm);
+>  		/* unconditionally, dup_mmap() skips VM_DONTCOPY vmas */
+> -		set_bit(MMF_RECALC_UPROBES, &newmm->flags);
+> +		mm_flags_set(MMF_RECALC_UPROBES, newmm);
+>  	}
+>  }
+>  
+> @@ -2370,7 +2370,7 @@ static void mmf_recalc_uprobes(struct mm_struct *mm)
+>  			return;
+>  	}
+>  
+> -	clear_bit(MMF_HAS_UPROBES, &mm->flags);
+> +	mm_flags_clear(MMF_HAS_UPROBES, mm);
+>  }
+>  
+>  static int is_trap_at_addr(struct mm_struct *mm, unsigned long vaddr)
+> @@ -2468,7 +2468,7 @@ static struct uprobe *find_active_uprobe_rcu(unsigned long bp_vaddr, int *is_swb
+>  		*is_swbp = -EFAULT;
+>  	}
+>  
+> -	if (!uprobe && test_and_clear_bit(MMF_RECALC_UPROBES, &mm->flags))
+> +	if (!uprobe && mm_flags_test_and_clear(MMF_RECALC_UPROBES, mm))
+>  		mmf_recalc_uprobes(mm);
+>  	mmap_read_unlock(mm);
+>  
+> @@ -2818,7 +2818,7 @@ int uprobe_pre_sstep_notifier(struct pt_regs *regs)
+>  	if (!current->mm)
+>  		return 0;
+>  
+> -	if (!test_bit(MMF_HAS_UPROBES, &current->mm->flags) &&
+> +	if (!mm_flags_test(MMF_HAS_UPROBES, current->mm) &&
+>  	    (!current->utask || !current->utask->return_instances))
+>  		return 0;
+>  
 > -- 
 > 2.50.1
 > 
