@@ -1,171 +1,216 @@
-Return-Path: <linux-fsdevel+bounces-57819-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57820-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85507B25900
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 03:29:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18410B25920
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 03:32:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83F1F5A23AD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 01:29:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03F5D1C223CB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 01:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90F071C8632;
-	Thu, 14 Aug 2025 01:27:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC85A19C569;
+	Thu, 14 Aug 2025 01:31:24 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from neil.brown.name (neil.brown.name [103.29.64.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EB19189F3F;
-	Thu, 14 Aug 2025 01:27:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50DCB2FF642;
+	Thu, 14 Aug 2025 01:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755134878; cv=none; b=RbX7uUmbs1q804UJ+wZ/2ytNttUOddW7mFRDNM8iqh4sHYq3I2l2u4FPT3Kc4KX4J0LFiqyyDMKkWB/YuS6Ljby/b18Y249fNWx5Bll3c9ipSmLDPhSDKEAE8zQK1jczuhL0yHOtuuC0HMAVJkd25GYCQoWDuVFHAD8lGBLs5ok=
+	t=1755135084; cv=none; b=CkgsjCe8HXROK/HC7U3QoYXcgz3oamTN7ycxif48+ZcT053AKNSO+T3j8o88b39ePOEO3SALVhucBH4afVbNPG33bk62/UDCFYqkYw/7FG+kJgydGV0z+xes2WgO2cpPBf4bVMnhF9t3n8LtCJAjRr8yAWYX46t1z6hG2FihNEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755134878; c=relaxed/simple;
-	bh=HYvlknKOx1rKjvQkyNkvqhaEdoRV/o3tuBi9L0Uo+rg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pWlRcGlWOKUMSZpr2OlkiaN/SozXDS5YGW7NCY7hiekzWfl8MY8jgXbtEIU0CJb3IoZhFdp3X5iXYDIn/Db8oRS1SnvcyE3sUQbF4TJKpIgfEk5cgwxUOyuSpw7jgzNS7sTH/iA4BU5aSahfD0OGUcJXuO05GSXr9OjiNw/IAUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c2SKl5B90zYQv10;
-	Thu, 14 Aug 2025 09:27:55 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 5084F1A12D9;
-	Thu, 14 Aug 2025 09:27:54 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgAHgxOVO51oPzBtDg--.8664S3;
-	Thu, 14 Aug 2025 09:27:52 +0800 (CST)
-Message-ID: <42aace87-1b89-4b17-96f1-3efbabc4acf3@huaweicloud.com>
-Date: Thu, 14 Aug 2025 09:27:49 +0800
+	s=arc-20240116; t=1755135084; c=relaxed/simple;
+	bh=vsEfHr0smoZYxGwAudHUrsDK736/zS7X+6MQwm+RZ1E=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=iF4cpx11qJS/YVxLjNeo4fPdCYQ5vB+1OXqeOY40VaAGRla5pZfGAAXm/NWZfMGxCqsfmlcwSlt87LRJ/d4+tJ/wwGO88tWL8kWPUWRZvdiurunT36Vy0pzbnHiE442coNKQX9XwSIbMP/ClOqLk3Onqn0Gq+fSgRCtP6Eyli5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
+Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
+	by neil.brown.name with esmtp (Exim 4.95)
+	(envelope-from <mr@neil.brown.name>)
+	id 1umMoE-005hAB-I4;
+	Thu, 14 Aug 2025 01:31:16 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.16 000/627] 6.16.1-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
- linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
- akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
- patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
- jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
- srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
- hargar@microsoft.com, broonie@kernel.org, achill@achill.org,
- qemu-devel@nongnu.org, =?UTF-8?Q?Alex_Benn=C3=A9e?=
- <alex.bennee@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
- Dan Carpenter <dan.carpenter@linaro.org>,
- Anders Roxell <anders.roxell@linaro.org>,
- Ben Copeland <benjamin.copeland@linaro.org>, LTP List <ltp@lists.linux.it>,
- chrubis <chrubis@suse.cz>, Petr Vorel <pvorel@suse.cz>,
- Ian Rogers <irogers@google.com>, linux-perf-users@vger.kernel.org,
- Joseph Qi <jiangqi903@gmail.com>, Jan Kara <jack@suse.cz>,
- linux-fsdevel@vger.kernel.org, linux-ext4 <linux-ext4@vger.kernel.org>,
- Zhang Yi <yi.zhang@huawei.com>, Theodore Ts'o <tytso@mit.edu>,
- Baokun Li <libaokun1@huawei.com>
-References: <20250812173419.303046420@linuxfoundation.org>
- <CA+G9fYtBnCSa2zkaCn-oZKYz8jz5FZj0HS7DjSfMeamq3AXqNg@mail.gmail.com>
- <2025081300-frown-sketch-f5bd@gregkh>
- <CA+G9fYuEb7Y__CVHxZ8VkWGqfA4imWzXsBhPdn05GhOandg0Yw@mail.gmail.com>
- <2025081311-purifier-reviver-aeb2@gregkh>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <2025081311-purifier-reviver-aeb2@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgAHgxOVO51oPzBtDg--.8664S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7KF1fAFW7tF4UtrWrWr1DGFg_yoW8Zw4xpF
-	WrCF98tr45X345ArsFvw4IgFyUtrZ8Krn5Wr1rtw17C39IkryDZF4SgF1Y9F97Jr4DCFyr
-	ZrsFv3sIyryDAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvYb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26rWY6Fy7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWrXVW8
-	Jr1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
-	CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v2
-	6r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07
-	j6a0PUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+From: "NeilBrown" <neil@brown.name>
+To: "Al Viro" <viro@zeniv.linux.org.uk>
+Cc: "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
+ "David Howells" <dhowells@redhat.com>,
+ "Marc Dionne" <marc.dionne@auristor.com>, "Xiubo Li" <xiubli@redhat.com>,
+ "Ilya Dryomov" <idryomov@gmail.com>, "Tyler Hicks" <code@tyhicks.com>,
+ "Miklos Szeredi" <miklos@szeredi.hu>, "Richard Weinberger" <richard@nod.at>,
+ "Anton Ivanov" <anton.ivanov@cambridgegreys.com>,
+ "Johannes Berg" <johannes@sipsolutions.net>,
+ "Trond Myklebust" <trondmy@kernel.org>, "Anna Schumaker" <anna@kernel.org>,
+ "Chuck Lever" <chuck.lever@oracle.com>, "Jeff Layton" <jlayton@kernel.org>,
+ "Amir Goldstein" <amir73il@gmail.com>, "Steve French" <sfrench@samba.org>,
+ "Namjae Jeon" <linkinjeon@kernel.org>, "Carlos Maiolino" <cem@kernel.org>,
+ linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
+ netfs@lists.linux.dev, ceph-devel@vger.kernel.org, ecryptfs@vger.kernel.org,
+ linux-um@lists.infradead.org, linux-nfs@vger.kernel.org,
+ linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+ linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH 09/11] VFS: use global wait-queue table for d_alloc_parallel()
+In-reply-to: <20250813064431.GF222315@ZenIV>
+References: <>, <20250813064431.GF222315@ZenIV>
+Date: Thu, 14 Aug 2025 11:31:15 +1000
+Message-id: <175513507565.2234665.11138440093783281571@noble.neil.brown.name>
 
-On 2025/8/13 22:53, Greg Kroah-Hartman wrote:
-> On Wed, Aug 13, 2025 at 08:01:51PM +0530, Naresh Kamboju wrote:
->> Hi Greg,
->>
->>>> 2)
->>>>
->>>> The following list of LTP syscalls failure noticed on qemu-arm64 with
->>>> stable-rc 6.16.1-rc1 with CONFIG_ARM64_64K_PAGES=y build configuration.
->>>>
->>>> Most failures report ENOSPC (28) or mkswap errors, which may be related
->>>> to disk space handling in the 64K page configuration on qemu-arm64.
->>>>
->>>> The issue is reproducible on multiple runs.
->>>>
->>>> * qemu-arm64, ltp-syscalls - 64K page size test failures list,
->>>>
->>>>   - fallocate04
->>>>   - fallocate05
->>>>   - fdatasync03
->>>>   - fsync01
->>>>   - fsync04
->>>>   - ioctl_fiemap01
->>>>   - swapoff01
->>>>   - swapoff02
->>>>   - swapon01
->>>>   - swapon02
->>>>   - swapon03
->>>>   - sync01
->>>>   - sync_file_range02
->>>>   - syncfs01
->>>>
->>>> Reproducibility:
->>>>  - 64K config above listed test fails
->>>>  - 4K config above listed test pass.
->>>>
->>>> Regression Analysis:
->>>> - New regression? yes
->>>
->>> Regression from 6.16?  Or just from 6.15.y?
->>
->> Based on available data, the issue is not present in v6.16 or v6.15.
->>
->> Anders, bisected this regression and found,
->>
->>   ext4: correct the reserved credits for extent conversion
->>     [ Upstream commit 95ad8ee45cdbc321c135a2db895d48b374ef0f87 ]
->>
->> Report lore link,
->>
->> https://lore.kernel.org/stable/CA+G9fYtBnCSa2zkaCn-oZKYz8jz5FZj0HS7DjSfMeamq3AXqNg@mail.gmail.com/
-> 
-> Great, and that's also affecting 6.17-rc1 so we are "bug compatible"?
-> :)
-> 
+On Wed, 13 Aug 2025, Al Viro wrote:
+> On Tue, Aug 12, 2025 at 12:25:12PM +1000, NeilBrown wrote:
+>=20
+> > +** mandatory**
+> > +
+> > +d_alloc_parallel() no longer requires a waitqueue_head.  It uses one
+> > +from an internal table when needed.
+>=20
+> Misleading, IMO - that sounds like "giving it a wq is optional, it will
+> pick one if needed" when reality is "calling conventions have changed,
+> no more passing it a waitqueue at all".
 
-Hi,
+I'll rephrase it.
 
-This issue has already fixed in 6.17-rc1 through this series:
+>=20
+> > +#define	PAR_LOOKUP_WQ_BITS	8
+> > +#define PAR_LOOKUP_WQS (1 << PAR_LOOKUP_WQ_BITS)
+> > +static wait_queue_head_t par_wait_table[PAR_LOOKUP_WQS] __cacheline_alig=
+ned;
+>=20
+> I wonder how hot these cachelines will be...
 
-https://lore.kernel.org/linux-ext4/20250707140814.542883-1-yi.zhang@huaweicloud.com/
+Are you questioning the __cacheline_aligned??  I confess I just copied
+the annotation on bit_wait_table.
 
+My guess is that concurrent attempts to add the same name to the dcache
+are rare, so these wait_queue_heads will be rarely used.
 
-To fix this issue in 6.16, it's necessary to backport the whole series
-instead of just pick 5137d6c8906b ("ext4: fix insufficient credits
-calculation in ext4_meta_trans_blocks()") and 95ad8ee45cdb {"ext4: correct
-the reserved credits for extent conversion").  Otherwise, this will make
-the problem more likely to occur.
+>=20
+> > +static int __init par_wait_init(void)
+> > +{
+> > +	int i;
+> > +
+> > +	for (i =3D 0; i < PAR_LOOKUP_WQS; i++)
+> > +		init_waitqueue_head(&par_wait_table[i]);
+> > +	return 0;
+> > +}
+> > +fs_initcall(par_wait_init);
+>=20
+> Let's not open _that_ can of worms; just call it from dcache_init().
+>=20
+> > +static inline void d_wake_waiters(struct wait_queue_head *d_wait,
+> > +				  struct dentry *dentry)
+> > +{
+> > +	/* ->d_wait is only set if some thread is actually waiting.
+> > +	 * If we find it is NULL - the common case - then there was no
+> > +	 * contention and there are no waiters to be woken.
+> > +	 */
+> > +	if (d_wait)
+> > +		__wake_up(d_wait, TASK_NORMAL, 0, dentry);
+>=20
+> Might be worth a note re "this is wake_up_all(), except that key is dentry
+> rather than NULL" - or a helper in wait.h to that effect, for that matter.
+> I see several other places where we have the same thing (do_notify_pidfd(),
+> nfs4_callback_notify_lock(), etc.), so...
+>=20
+>=20
 
-Thanks,
-Yi.
+As there are no exclusive waiters, any wakeup is a wake_up_all so I
+think that emphasising the "all" adds no value.  So I could equally have
+used "1" instead of "0", but I chose "0" as the number was irrelevant.
 
+Having a "wake_up_key()" which does=20
+   __wake_up(wq, TASK_NORMAL, 1, key)
+would be nice.
+
+> > +		struct wait_queue_head *wq;
+> > +		if (!dentry->d_wait)
+> > +			dentry->d_wait =3D &par_wait_table[hash_ptr(dentry,
+> > +								  PAR_LOOKUP_WQ_BITS)];
+> > +		wq =3D dentry->d_wait;
+>=20
+> Yecchhh...  Cosmetic change: take
+> 	&par_wait_table[hash_ptr(dentry, PAR_LOOKUP_WQ_BITS)];
+> into an inlined helper, please.
+>=20
+> BTW, while we are at it - one change I have for that function is
+> (in the current form)
+> static bool d_wait_lookup(struct dentry *dentry,
+> 			  struct dentry *parent,
+> 			  const struct qstr *name)
+> {
+> 	bool valid =3D true;
+> 	spin_lock(&dentry->d_lock);
+>         if (d_in_lookup(dentry)) {
+> 		DECLARE_WAITQUEUE(wait, current);
+> 		add_wait_queue(dentry->d_wait, &wait);
+> 		do {  =20
+> 			set_current_state(TASK_UNINTERRUPTIBLE);
+> 			spin_unlock(&dentry->d_lock);
+> 			schedule();
+> 			spin_lock(&dentry->d_lock);
+> 		} while (d_in_lookup(dentry));
+> 	}
+> 	/*
+> 	 * it's not in-lookup anymore; in principle the caller should repeat
+> 	 * everything from dcache lookup, but it's likely to be what
+> 	 * d_lookup() would've found anyway.  If so, they can use it as-is.
+> 	 */
+> 	if (unlikely(dentry->d_name.hash !=3D name->hash ||
+> 		     dentry->d_parent !=3D parent ||
+> 		     d_unhashed(dentry) ||
+> 		     !d_same_name(dentry, parent, name)))
+> 		valid =3D false;
+> 	spin_unlock(&dentry->d_lock);
+> 	return valid;
+> }
+>=20
+> with
+> 	if (unlikely(d_wait_lookup(dentry, parent, name))) {
+>                 dput(dentry);
+> 		goto retry;
+> 	}
+> 	dput(new);
+> 	return dentry;
+> in the caller (d_alloc_parallel()).  Caller easier to follow and fewer func=
+tions
+> that are not neutral wrt ->d_lock...  I'm not suggesting to fold that with
+> yours - just a heads-up on needing to coordinate.
+
+I see the value in that, but it does mean the function is doing more
+than just waiting, and it might make my life a bit harder....
+
+One of the steps toward per-dentry locking involves finding a new
+solution to excluding all other accesses when rmdir() is happening.  An
+exclusive lock on the directory will no longer be sufficient.
+
+So I set a flag which says "rmdir processing has started" and cause
+d_alloc_parallel() (and dentry_lock) to wait for that flag to clear.
+A new rmdir_lock() needs to wait for all current DCACHE_PAR_LOOKUP
+dentries to complete the lookup and my code currently uses
+d_wait_lookup().  The extra test you've added at the end wouldn't be
+harmful exactly but would be unnecessary.
+Maybe we could have d_wait_lookup_and_check() for your version and
+d_wait_lookup() for me?
+
+>=20
+> Anyway, modulo fs_initcall() thing it's all cosmetical; I certainly like
+> the simplified callers, if nothing else.
+>=20
+> That's another patch I'd like to see pulled in front of the queue.
+>=20
+
+Thanks.
+
+NeilBrown
 
