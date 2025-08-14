@@ -1,165 +1,213 @@
-Return-Path: <linux-fsdevel+bounces-57866-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57867-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 500EBB26176
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 11:51:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77FF3B262CB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 12:32:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46D73188BFE2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 09:46:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F000C1C8691C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 10:29:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 022AD2ED14F;
-	Thu, 14 Aug 2025 09:45:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42231302CDA;
+	Thu, 14 Aug 2025 10:25:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IS8APo4E"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aXvlAql+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6355287241;
-	Thu, 14 Aug 2025 09:45:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9452E305E1A
+	for <linux-fsdevel@vger.kernel.org>; Thu, 14 Aug 2025 10:25:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755164740; cv=none; b=eMquOtPxV8wKKD+k6QcH7ukCuTlNY7qlla4ASwKDpCeBaAf7hv0L/0tdIPLa4Grm7VpCWoNolfp9ixEZY3Id1G5/ZyUu9iIe/Xo9Hiww4XtWcrgHfNrXIDKCnOvO2bw0k5pTYWNIo4J0BsASP3BsYnlzn2aZv/6OWTpvyatiAFM=
+	t=1755167158; cv=none; b=Iy4zwWywVOfEnmBa6u4KfyaLWUvMlTX55nlJvzarE8E6sFbajyusXW3cPfQWrqasG2I/CJSzBpw9n+hJLqnIkMGvffKJ0mf2iSVWq3E4Lk2h2IoDzSIrTFjI4Jiez58h2DhuwzJ2UHWn24JXaNjvYLgK97a6R7N08xKDTq/ua3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755164740; c=relaxed/simple;
-	bh=KM92jO8VeknSMnZUwnTA8K+PnMbF85QSmFWuuxCNr4g=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ee5tjSAGdHlyakSD4xfOz2YcMmM97vc6ZrDwkRr/jetDAaCrUrJSN7Z/dFlpfupXmEcmJ+DcH3YCtCmzQ+Ni6sp2Eq0uHAo4ShV3klhatdzrNDwvaPesERVV9Pw+sVw8uv6fN11kQUnliVkp6xB7LLUmtXznCBaexSVUjy/+ow0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IS8APo4E; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-76e2e89bebaso581101b3a.1;
-        Thu, 14 Aug 2025 02:45:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755164735; x=1755769535; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=oMN0x5Zo7hh9TITRfrQy5jjYiGyYIfO4mlcflHw2ibQ=;
-        b=IS8APo4Eww3RJyZ9ffbehmmd09h3g0j3fTngDO4cSdrOMY6Oh68WSN7TqPHFIAZ5rX
-         mGqQfVyDo+8qd/MVoEyO32rGwcVa7Lhg5DpoNWqBEB3bLETMlKf0xU1JcFrJ2Mjntwz5
-         1WfAPSTZgB6Gb8qep2f6hTw60u1K2gDHpIxnVu9L0QTdQnQU3jrRNJh2Kfaqdl66UNMh
-         3xpeCi+ziPB5mMsk91mp5wzFq0gL2tMU9aO5yhsWTQBqZjLGaBwcCwFRro8C1+j+KAmK
-         Cc+D35jrRlDU6IZG09tW+SxI58dnGsL3e7443PBY61Ss3UhqyzOsCuOpGA4KEx9FxKzf
-         ZQfw==
+	s=arc-20240116; t=1755167158; c=relaxed/simple;
+	bh=67TWpFC9kFmlTZkHoTfDgzCSeOb00SIOcx47D6NFSkE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IuO4qU/G9ykAYp3Qm0eKQWKGCpwHTVpLPfz0gt/Zy+qZwclU574Tp6mNnBTkUvYPCxoXWEoA8BJpjXH5jK4oi4g7BXHtIJHdavuAx9YmysQKxdO3+Y9RCd57In5/JzPXQq9W5UQlHf/4tzbBmolz2g14rIvXq45YTjuM64z1XA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aXvlAql+; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755167154;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dgn81Tr+8hcjcnOTiZziRVmr22vaTnfczgkfFVMrPuA=;
+	b=aXvlAql+XahO9rBv+GLROyzF5ETVx8jvkt9xhsjsIn0j7rBYiiKo+z9INSxODUcRvlCcIT
+	XQ5Z+oJHiHNLeXXw9IldtU6rbSptdCMNwdrO0OmKj1+zdQdbIdhmaUcaxcE5DBmj0msgv2
+	u6bz0Es55iNWcS+XuI+/lpeRsa2gtgY=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-411-leVCj0qHO4uDYQ5tQz9cTQ-1; Thu, 14 Aug 2025 06:25:53 -0400
+X-MC-Unique: leVCj0qHO4uDYQ5tQz9cTQ-1
+X-Mimecast-MFC-AGG-ID: leVCj0qHO4uDYQ5tQz9cTQ_1755167153
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b109ad4998so34078811cf.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Aug 2025 03:25:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755164735; x=1755769535;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oMN0x5Zo7hh9TITRfrQy5jjYiGyYIfO4mlcflHw2ibQ=;
-        b=iMnCykZ8DEVxPkVQrfBPbbjkoXXEmR7wIXMTdNjSy8IY9ywYsbzeZtOArgxo/5yXd/
-         CEPv+LAnKTApdbh348D7eIqn+qT0UK3Ao1sUnpE4higvS1hEC3hqXzE+ZUY8L2oRe8Ei
-         2OPgi4BiRMTgDZiFlEOwh4k+B78tQkCa7ipp9lhG+JqgQ3xJ8nB6n1wlilSIA6NgI3js
-         Wl1w4vaq079xFqthYoG0bVqBWXf9bPRPLCfj1jdFBMPpkRTbbrKlhwQ6AfRHxmLqClDG
-         MzhyiP8q2NO2v8xl2AdFfRj5hljBLk3rjLXat8JCBLdDDLt2TeM/5djuiQfovt/I6BBo
-         SVeA==
-X-Forwarded-Encrypted: i=1; AJvYcCXGRLOseZXhaJLTRyHXRzeAOQEzyo7s/McWJLsKdXUB79oKk8+6SHUKywNr9hR10NyeTu9heK3JhQWH9VM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4LFG1vdHyxvfOw+pRQ9RxFuduu96amguT4cGbXnXdPRF37SFj
-	SE8Y4DmCNFDPF4mdmqjGdVtb1qgy7XnSWMbQSgeycb8OmqwthQoEg5pC
-X-Gm-Gg: ASbGncvZMxSR0OnoIWakDFVwcaNTvHG9OAnR+a8ZJ8GUCFCj0RbWJGfPLZKQFGEAbtv
-	gEh+NKlEacR8/hQhXIvaYq0SBKD8aIDf8sSGaFFpZm7pAB3lzD3YH9Mr8jTX3R51javDdTUCERq
-	vDBqYIWtr3vsm3x1DVz20k4ot/ou/qiEYranWWnlpPUBK7OQ7QObNX1fWrO2q91Kw4KofhxN+gr
-	OwKN7xZ1gKCCKddm9x3sfXvCRNB8eUY78aewqnZXF2x79OHWAYf3dvUJkGYm92Vy2az1oX06k31
-	6K7nYkkem/c259adKEWEb7tPDReCJCjKdFDscuYYixTuM81ABQi+nYVLF6mw0ua58uc8jsjlYbE
-	t8Sx/EEl7MTMj5/TvZy+gVsWrDGUSpK+036crDyPv372bZDA0HYM9z8j3oCViwx35VfEox6MoVG
-	JyuH06dmM55AhZVvQn6o52+Ls0SXXG
-X-Google-Smtp-Source: AGHT+IG3C7V389BrCRAN1Uymn48CA1exKEYl6jou2mxxAV4PixPK6nvq4Y+wAWCq9YZtg3Qey1vBEg==
-X-Received: by 2002:a05:6a00:cc2:b0:748:f6a0:7731 with SMTP id d2e1a72fcca58-76e3200dbdamr3122117b3a.23.1755164735051;
-        Thu, 14 Aug 2025 02:45:35 -0700 (PDT)
-Received: from AHUANG12-3ZHH9X.lenovo.com (1-175-133-46.dynamic-ip.hinet.net. [1.175.133.46])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76c61dd2ce7sm13106519b3a.41.2025.08.14.02.45.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 02:45:34 -0700 (PDT)
-From: "Adrian Huang (Lenovo)" <adrianhuang0701@gmail.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	ahuang12@lenovo.com,
-	"Adrian Huang (Lenovo)" <adrianhuang0701@gmail.com>
-Subject: [PATCH v2 1/1] pidfs: Fix memory leak in pidfd_info()
-Date: Thu, 14 Aug 2025 17:44:53 +0800
-Message-Id: <20250814094453.15232-1-adrianhuang0701@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        d=1e100.net; s=20230601; t=1755167153; x=1755771953;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dgn81Tr+8hcjcnOTiZziRVmr22vaTnfczgkfFVMrPuA=;
+        b=IzKQWfx76LvArVj0CZoVwKgTAjbo+v9FXyDoD1sV8Od9xDMs4OlzETo4huFAk/rVnD
+         BrET5CUzHYJpGc3Ve60UmWhQ6tmF5J+KiX8G1vx3Z0Kz6An10hFOTzOL20LgujLVPUH0
+         C9rfsks/mHRan9GzNjvGnSKBe2mmOITSf80diS8+fQ2fzuC7AeLFhOe4ahLjT+IYkxOM
+         4mBkuFRKuXvyepKUkC4n7RBJ8Unb8io7IpmAjN0MobZPRyuZFM0e2des2xHTKTCRCJX/
+         7TozcWrRBrtzNf2TBAVfpsUi8uUX5zGldDBbOfUQNZPL5qg9HnBLH65ydkFvN5u40I46
+         9uow==
+X-Forwarded-Encrypted: i=1; AJvYcCWX5s1t8Qvre+D3+VgxU8XeQP8zo2/9bg7l1cbY/3TSCtHu4WbiC78gPNZTYMwQ0cXALSCZMuiu1AQXYibr@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVGUr1Ug9rPuqMwXAMEPVjxGIBaxDuU/F9YAusKceZMB5E6Nf/
+	EVnvFDVGWuHb4EeEzYQ5vHcVy+k/slZfy29Wy6rjyjqh23o80f9lWN3RSQw6CF6uQMScftalIrz
+	WBDSZSxDxPlenkOjkQRUwI2VfUttWhL9evxiLaWTvSx4GeOGrSqF2x20o+kAt3w+nS9XkbfkEWB
+	wjSXYxu2gtscO7BQcIA6rtEOAj4ikZd72nU91f0EjhVg==
+X-Gm-Gg: ASbGncupBDDq+vufZWoKoGZvNtyE2lrqxnna1ZRSpvxlYLo65wQKz8/U7pmHBFoRPhr
+	yxAS3zt3CqYwYa1RVUgJZ5U+M/Z3Cq4IDp6HKzkkJ4sjoiGYUWgQS/SSb7xC+mC62E4saWARJCk
+	zqDtqd3JimXAHNeh5Lnjtn2BGp5uNcDXltzxhYRdIjUN2O/iyzVOAu
+X-Received: by 2002:ac8:7e81:0:b0:4b1:dd3:e3a0 with SMTP id d75a77b69052e-4b10dd3eecfmr23734321cf.63.1755167152780;
+        Thu, 14 Aug 2025 03:25:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHj6Fqf8ZwqtpABxCnBRRgWEUtTuRorTGk78D6BUIRWpQRL0vtIDMWjft+v/pu6kMmSX/QebZM7wdmGQ8Fxz5E=
+X-Received: by 2002:ac8:7e81:0:b0:4b1:dd3:e3a0 with SMTP id
+ d75a77b69052e-4b10dd3eecfmr23733991cf.63.1755167152330; Thu, 14 Aug 2025
+ 03:25:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250808015134.2875430-2-lichliu@redhat.com> <20250814081339.3007358-1-safinaskar@zohomail.com>
+In-Reply-To: <20250814081339.3007358-1-safinaskar@zohomail.com>
+From: Lichen Liu <lichliu@redhat.com>
+Date: Thu, 14 Aug 2025 18:25:41 +0800
+X-Gm-Features: Ac12FXxDAq6OF9fc6qDx2bbELbCoeU3NGz_x-43ufP_dIt47GGsYNY84NXPWPG0
+Message-ID: <CAPmSd0OpjE7-kKtW08LthJXsdMi4YNEfdrKiLjmHYtHuQ+CCkg@mail.gmail.com>
+Subject: Re: [PATCH] fs: Add 'rootfsflags' to set rootfs mount options
+To: Askar Safin <safinaskar@zohomail.com>
+Cc: brauner@kernel.org, kexec@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, rob@landley.net, viro@zeniv.linux.org.uk, 
+	weilongchen@huawei.com, cyphar@cyphar.com, linux-fsdevel@vger.kernel.org, 
+	linux-api@vger.kernel.org, initramfs@vger.kernel.org, 
+	Mimi Zohar <zohar@linux.ibm.com>, Stefan Berger <stefanb@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-After running the program 'ioctl_pidfd03' of Linux Test Project (LTP) or
-the program 'pidfd_info_test' in 'tools/testing/selftests/pidfd' of the
-kernel source, kmemleak reports the following memory leaks:
+On Thu, Aug 14, 2025 at 4:15=E2=80=AFPM Askar Safin <safinaskar@zohomail.co=
+m> wrote:
+>
+> Lichen Liu <lichliu@redhat.com>:
+> > When CONFIG_TMPFS is enabled, the initial root filesystem is a tmpfs.
+> > By default, a tmpfs mount is limited to using 50% of the available RAM
+> > for its content. This can be problematic in memory-constrained
+> > environments, particularly during a kdump capture.
+> >
+> > In a kdump scenario, the capture kernel boots with a limited amount of
+> > memory specified by the 'crashkernel' parameter. If the initramfs is
+> > large, it may fail to unpack into the tmpfs rootfs due to insufficient
+> > space. This is because to get X MB of usable space in tmpfs, 2*X MB of
+> > memory must be available for the mount. This leads to an OOM failure
+> > during the early boot process, preventing a successful crash dump.
+> >
+> > This patch introduces a new kernel command-line parameter, rootfsflags,
+> > which allows passing specific mount options directly to the rootfs when
+> > it is first mounted. This gives users control over the rootfs behavior.
+> >
+> > For example, a user can now specify rootfsflags=3Dsize=3D75% to allow t=
+he
+> > tmpfs to use up to 75% of the available memory. This can significantly
+> > reduce the memory pressure for kdump.
+> >
+> > Consider a practical example:
+> >
+> > To unpack a 48MB initramfs, the tmpfs needs 48MB of usable space. With
+> > the default 50% limit, this requires a memory pool of 96MB to be
+> > available for the tmpfs mount. The total memory requirement is therefor=
+e
+> > approximately: 16MB (vmlinuz) + 48MB (loaded initramfs) + 48MB (unpacke=
+d
+> > kernel) + 96MB (for tmpfs) + 12MB (runtime overhead) =E2=89=88 220MB.
+> >
+> > By using rootfsflags=3Dsize=3D75%, the memory pool required for the 48M=
+B
+> > tmpfs is reduced to 48MB / 0.75 =3D 64MB. This reduces the total memory
+> > requirement by 32MB (96MB - 64MB), allowing the kdump to succeed with a
+> > smaller crashkernel size, such as 192MB.
+> >
+> > An alternative approach of reusing the existing rootflags parameter was
+> > considered. However, a new, dedicated rootfsflags parameter was chosen
+> > to avoid altering the current behavior of rootflags (which applies to
+> > the final root filesystem) and to prevent any potential regressions.
+> >
+> > This approach is inspired by prior discussions and patches on the topic=
+.
+> > Ref: https://www.lightofdawn.org/blog/?viewDetailed=3D00128
+> > Ref: https://landley.net/notes-2015.html#01-01-2015
+> > Ref: https://lkml.org/lkml/2021/6/29/783
+> > Ref: https://www.kernel.org/doc/html/latest/filesystems/ramfs-rootfs-in=
+itramfs.html#what-is-rootfs
+> >
+> > Signed-off-by: Lichen Liu <lichliu@redhat.com>
+> > ---
+> >  fs/namespace.c | 11 ++++++++++-
+> >  1 file changed, 10 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/fs/namespace.c b/fs/namespace.c
+> > index ddfd4457d338..a450db31613e 100644
+> > --- a/fs/namespace.c
+> > +++ b/fs/namespace.c
+> > @@ -65,6 +65,15 @@ static int __init set_mphash_entries(char *str)
+> >  }
+> >  __setup("mphash_entries=3D", set_mphash_entries);
+> >
+> > +static char * __initdata rootfs_flags;
+> > +static int __init rootfs_flags_setup(char *str)
+> > +{
+> > +     rootfs_flags =3D str;
+> > +     return 1;
+> > +}
+> > +
+> > +__setup("rootfsflags=3D", rootfs_flags_setup);
+> > +
+> >  static u64 event;
+> >  static DEFINE_XARRAY_FLAGS(mnt_id_xa, XA_FLAGS_ALLOC);
+> >  static DEFINE_IDA(mnt_group_ida);
+> > @@ -6086,7 +6095,7 @@ static void __init init_mount_tree(void)
+> >       struct mnt_namespace *ns;
+> >       struct path root;
+> >
+> > -     mnt =3D vfs_kern_mount(&rootfs_fs_type, 0, "rootfs", NULL);
+> > +     mnt =3D vfs_kern_mount(&rootfs_fs_type, 0, "rootfs", rootfs_flags=
+);
+> >       if (IS_ERR(mnt))
+> >               panic("Can't create rootfs");
+> >
+> > --
+> > 2.50.1
+>
+> Thank you for this patch!
+>
+> I suggest periodically check linux-next to see whether the patch got ther=
+e.
+>
+> If it was not applied in resonable time, then resend it.
+> But this time, please, clearly specify tree, which should accept it.
+> I think the most apropriate tree is VFS tree here.
+> So, when resending please add linux-fsdevel@vger.kernel.org to CC and say=
+ in first paragraph
+> in your mail that the patch is for VFS tree.
+Thank You!
 
-  # cat /sys/kernel/debug/kmemleak
-  unreferenced object 0xff110020e5988000 (size 8216):
-    comm "ioctl_pidfd03", pid 10853, jiffies 4294800031
-    hex dump (first 32 bytes):
-      02 40 00 00 00 00 00 00 10 00 00 00 00 00 00 00  .@..............
-      00 00 00 00 af 01 00 00 80 00 00 00 00 00 00 00  ................
-    backtrace (crc 69483047):
-      kmem_cache_alloc_node_noprof+0x2fb/0x410
-      copy_process+0x178/0x1740
-      kernel_clone+0x99/0x3b0
-      __do_sys_clone3+0xbe/0x100
-      do_syscall_64+0x7b/0x2c0
-      entry_SYSCALL_64_after_hwframe+0x76/0x7e
-  ...
-  unreferenced object 0xff11002097b70000 (size 8216):
-  comm "pidfd_info_test", pid 11840, jiffies 4294889165
-  hex dump (first 32 bytes):
-    06 40 00 00 00 00 00 00 10 00 00 00 00 00 00 00  .@..............
-    00 00 00 00 b5 00 00 00 80 00 00 00 00 00 00 00  ................
-  backtrace (crc a6286bb7):
-    kmem_cache_alloc_node_noprof+0x2fb/0x410
-    copy_process+0x178/0x1740
-    kernel_clone+0x99/0x3b0
-    __do_sys_clone3+0xbe/0x100
-    do_syscall_64+0x7b/0x2c0
-    entry_SYSCALL_64_after_hwframe+0x76/0x7e
-  ...
+I checked the linux-next and it was not applied now. I will resend
+this patch and CC linux-fsdevel@vger.kernel.org.
 
-The leak occurs because pidfd_info() obtains a task_struct via
-get_pid_task() but never calls put_task_struct() to drop the reference,
-leaving task->usage unbalanced.
-
-Fix the issue by adding '__free(put_task) = NULL' to the local variable
-'task', ensuring that put_task_struct() is automatically invoked when
-the variable goes out of scope.
-
-Fixes: 7477d7dce48a ("pidfs: allow to retrieve exit information")
-Signed-off-by: Adrian Huang (Lenovo) <adrianhuang0701@gmail.com>
----
-Changes in v2: Assign NULL to the local variable 'task'
-
----
- fs/pidfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/pidfs.c b/fs/pidfs.c
-index edc35522d75c..108e7527f837 100644
---- a/fs/pidfs.c
-+++ b/fs/pidfs.c
-@@ -296,12 +296,12 @@ static __u32 pidfs_coredump_mask(unsigned long mm_flags)
- static long pidfd_info(struct file *file, unsigned int cmd, unsigned long arg)
- {
- 	struct pidfd_info __user *uinfo = (struct pidfd_info __user *)arg;
-+	struct task_struct *task __free(put_task) = NULL;
- 	struct pid *pid = pidfd_pid(file);
- 	size_t usize = _IOC_SIZE(cmd);
- 	struct pidfd_info kinfo = {};
- 	struct pidfs_exit_info *exit_info;
- 	struct user_namespace *user_ns;
--	struct task_struct *task;
- 	struct pidfs_attr *attr;
- 	const struct cred *c;
- 	__u64 mask;
--- 
-2.34.1
+>
+> --
+> Askar Safin
+>
 
 
