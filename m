@@ -1,224 +1,197 @@
-Return-Path: <linux-fsdevel+bounces-57896-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57897-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABA13B26824
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 15:54:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0763B26823
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 15:54:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF3441C25A89
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 13:48:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E155B9E1DAE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 13:48:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98BC13009F0;
-	Thu, 14 Aug 2025 13:47:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4898B3019C4;
+	Thu, 14 Aug 2025 13:48:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="XeMACWsP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SVmMjtHj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49002FCC1A;
-	Thu, 14 Aug 2025 13:47:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF48301498;
+	Thu, 14 Aug 2025 13:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755179272; cv=none; b=jXeq86UvLUnN7dV7yydmDurWfQ0BeJ/adhQT0rRdGgqhOTWLmRTJIogYRNclSRtqKlXjyBIk1YLAJwy9WxjRjM7435lwevufZUVYvyJHGEqK/dB06bdXC001rdUM2itXf0Hgoirm0wY5D/ZJTuruA01WIGVYKmZoiSuLXz5VWpU=
+	t=1755179289; cv=none; b=rTb5V07GBWZngK/qCP0C9WgsTwe6o0sQmZsLzHszyi+XWUaRUt3iZrgDNx5CDbWEyYGpjizCyhYyzmh17lvpa8AgUAPiC6IxsbGiXtKa6b7hOK01QjUWE9fOs0VQc73g3sbBocreBgxU1QeergeEYDIlxQXNJl2g3wB0Rjlj+A4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755179272; c=relaxed/simple;
-	bh=bHLlQ+i7MUaszUfOEpThaWyGiB8ftDea67xt4jpYH7Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HwDjR5mpsMn8Q5WWY6LcLEYqzPuguB3+ZSQzTAdlH/rNTDRNxNxCiAuJwqrj+8XLjHshRDoG0+3R7/Zvty8YwXow1g3H1ww0zKBEiuxbh6SJUURE/m9VPtKzQRupE6PEM45RFH9W1UzrkNZVYm93fpeVxwXWIjip9u1IQqycn20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=XeMACWsP; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4c2mlJ3KJSz9slm;
-	Thu, 14 Aug 2025 15:47:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1755179260;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uki2al884XzKP49qjOl830kb/sNWeIrrfQ7gI47948k=;
-	b=XeMACWsPRRrEdyomOJfL2aOqZ1Synd5sgH4SEZXXzDfB+5pL8EC8Y0ZnSAjUy+m+fzaTUK
-	i7qQCHAp/Qy/Uqo+BDd67QyoFeFYa+g78T4cVS028jxGqgkM1AKk+gqqxxQ+KkBjcDz1oC
-	pxt6QyTzPkqyBe2V92fayiGQ7H83hhX527Kg5+0fYiIy3gREAuKgErRQjosUnpdbLhdppl
-	KnDnUXjk4GTQmMxljRAImWegqc3LCbGS9jwS850U4n4PdEU7udVUV0cJ3zei2som0C8oSX
-	oi3omMpBPyOlNeRlvCDpJvEUdES9vJnjPaN8/vQJgetV714WYHsasKtUQWCkTw==
-Date: Thu, 14 Aug 2025 23:47:24 +1000
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Eric Sandeen <sandeen@redhat.com>
-Cc: Charalampos Mitrodimas <charmitro@posteo.net>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Christian Brauner <brauner@kernel.org>, 
-	David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH] debugfs: fix mount options not being applied
-Message-ID: <2025-08-14.1755177392-elderly-somber-portal-duress-1AbFcr@cyphar.com>
-References: <20250804-debugfs-mount-opts-v1-1-bc05947a80b5@posteo.net>
- <a1b3f555-acfe-4fd1-8aa4-b97f456fd6f4@redhat.com>
- <d6588ae2-0fdb-480d-8448-9c993fdc2563@redhat.com>
- <2025-08-14.1755150554-popular-erased-gallons-heroism-gRtAbX@cyphar.com>
+	s=arc-20240116; t=1755179289; c=relaxed/simple;
+	bh=3nDch1TwnwnOFxnyGs00pASm7HAHD3urGrnQFPRpJis=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ISiDJqpCuCcWbMBThjKavPdFwKr82cnx7yVtYf27l4lUPZqj5bg4C7uErbDQXVNuutY9xYUK2c8GFdj95JfX0k8tEcmEm5SiM18fI2mq2z8H2nyH5rKqGTyF3+Bf+VTqVw0It7uUMRrbpe1gdApk2JeyuvLKaPjcku1MlO8+oaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SVmMjtHj; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-6188b5b11b2so1238311a12.0;
+        Thu, 14 Aug 2025 06:48:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755179285; x=1755784085; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kknE7rDUjEpODcHDSlY2nJGg21LqzdjsCFp42JS4Ico=;
+        b=SVmMjtHjyDWUAv8RYC77foqLZ64FkzLAVO+E5YBxcj8zgauvxcJk6RQKFlux1yLNP3
+         3f8HP4YvicdbqH91iKsn5YwEc/Faeoq8bMx9a4nQVr0R1TqBvK7ixdfK8UNiQB1YXv99
+         +24TYdIYlFoamRmOz44EZEBIq3rMS3LRQ1PlqRzBUR2ekMDCG5M7X3VoCvLejlYC8xDF
+         xLlHn1ESboMXuSUZsbpJOYP7eu65BRT5rJdCXn5jCNPAOao3AaXUUFlojJcc12OxvV7H
+         Bdj8/FiIZdn17RsylTeCamTst6WBS6+HDdp6dfOIiRGoRv7plTGlO4lNY/ooVDbO94uy
+         rtNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755179285; x=1755784085;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kknE7rDUjEpODcHDSlY2nJGg21LqzdjsCFp42JS4Ico=;
+        b=SPVIOlOPdCjDSEM/Ppi851QV7x6H7Rrdcj9Z7+nxnfwRi5lrriGZ10ply2ppexLA9E
+         OJutZ01AUg87uKyVwSNzf9VmQAQGewuj4zGHcSylYbqtJ9RC6Gw6H9yYxnDyHpghRhSx
+         /yuAdPfLZdTThdE7iBDtXdryOHumP7zHnUMwZ1dV61uKaK4/CpCQKZys9ocjZLu2HA5p
+         WBCPLdADBFCPSbNQwpqMfk/9sunTZCSpAu5T08gMWjjtWi7M3QJMgDKxhWfmEW974aLn
+         YFlFc8jzZjEPOd4qK7KKxUcglNOBL/4bs6gkfWELJoTewbYtpAanVi5ZbaWO5kfLSguT
+         a6Mg==
+X-Forwarded-Encrypted: i=1; AJvYcCUPPd1yk+8bkQrdGZayvR3aO78+O39btGP4Hg/Vu1+zg9fvek6R30uUMbHgI0Xzm/maRVLIFTbJA44FiBCJhg==@vger.kernel.org, AJvYcCVGOth4jlR3SQK+ZjfZSmXur7Z0B7o+yLMBEt8s7LC5RBhboqwWeU8iZesqAm9zEnU3/t3VOXJc0962@vger.kernel.org, AJvYcCVjuTGjcKpOuYDJ+gJwWPVw1c5ceo70617t82C6UtPyiwjyz9FpDUMnVPtWkrdFSXeSQt2sQ63QfetI@vger.kernel.org, AJvYcCVw87kqUXv8fkx7nEoilm+uwX5s2QVqNhQwS+FOdRA0nS2w2X6R3vRsL5dHarFu6Key81Uq7HjJgiP4+LM2bA==@vger.kernel.org, AJvYcCW4YVL5ezYSSVLmHS7BA9ubQHEnKVVdNceS8VycGNlj4W8XNSygxfo+BTnmFlC4kSM9DD/vPYcdcdVfXNpW@vger.kernel.org, AJvYcCWK+onlHzVxCAewGSF1hJjxiow87uTEGD0HfXpY41jEkD295G0NE6+y/fckuTvoYh4cMgnFjJ6EIOM=@vger.kernel.org, AJvYcCWrlqX8T5H4KCYH05jz+USPJ/2B6g6X+3LKDD8Wgpl5HPtX0FqJyZer/JW286eHzJkIY30GLGqeA7aM@vger.kernel.org, AJvYcCXD0cTu8rngZ1WDlNbtJjQe7YY7IYOl4P9e6IV5cK9E+jORsKjKH0DpkI07YMSJwA9xnDSIwPRiW41PIA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOjWpIxv9ccUFwMoKZLhoC0Wrop8ActjLNQpy8P6UM47aYKfLK
+	ZX3rLpUvYlfSrO0yECTO1djyptq42TM9UEHWhiwT5EDzrlVXzB7UCMFSAipPGnhR0p9KMsCvT0n
+	Xx76BT5aGZhJ/gcvO8cdwDrnfYle1pdU=
+X-Gm-Gg: ASbGncsJF2IVjEnva+sKKHYhcBv4pR0ab5eZJxUvkm6Cg+LoHAcOh39ibttib2NILjZ
+	oKWxN4AR1fbjptTI2L2ZCrdYHavCnuhgbH6eoWrdJ/TPgIjkKGZVHp9yK07lW0hlMJCkSYstbOl
+	7A8VrOP6a1OFohWsFoHGJ5upHMu9Zawow2AgoKx424V5ZfqiMnf9hNzwsvxUO5KXzgTzIgsgF/w
+	Ev3Ceo=
+X-Google-Smtp-Source: AGHT+IEyNlWqeAhk/LpScYt9w4g0zV4KI7o0RDFgyEsYgfPOIWzZIEz6LWnNRfl0s84eTTaO2QcDUYXHT6IzkeoX6zs=
+X-Received: by 2002:a05:6402:348e:b0:617:b2ab:fba2 with SMTP id
+ 4fb4d7f45d1cf-6188c1f81c9mr2881340a12.34.1755179284840; Thu, 14 Aug 2025
+ 06:48:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gbonwdwtpt3b6c5h"
-Content-Disposition: inline
-In-Reply-To: <2025-08-14.1755150554-popular-erased-gallons-heroism-gRtAbX@cyphar.com>
-
-
---gbonwdwtpt3b6c5h
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+References: <20250813065333.GG222315@ZenIV> <175513726277.2234665.5395852687971371437@noble.neil.brown.name>
+In-Reply-To: <175513726277.2234665.5395852687971371437@noble.neil.brown.name>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 14 Aug 2025 15:47:53 +0200
+X-Gm-Features: Ac12FXwtQAorrE4W3bWM28WxLsn_dOcgt6iMm2QuEDqDEmfUynv58IGzMVEJihs
+Message-ID: <CAOQ4uxjOvsfV7o5Mnn_VBKYCR15FkmQBDASvwq0UQKPwxh1H2g@mail.gmail.com>
+Subject: Re: [PATCH 11/11] VFS: introduce d_alloc_noblock() and d_alloc_locked()
+To: NeilBrown <neil@brown.name>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	David Howells <dhowells@redhat.com>, Marc Dionne <marc.dionne@auristor.com>, 
+	Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>, Tyler Hicks <code@tyhicks.com>, 
+	Miklos Szeredi <miklos@szeredi.hu>, Richard Weinberger <richard@nod.at>, 
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>, Johannes Berg <johannes@sipsolutions.net>, 
+	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
+	Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, 
+	Steve French <sfrench@samba.org>, Namjae Jeon <linkinjeon@kernel.org>, 
+	Carlos Maiolino <cem@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-afs@lists.infradead.org, netfs@lists.linux.dev, 
+	ceph-devel@vger.kernel.org, ecryptfs@vger.kernel.org, 
+	linux-um@lists.infradead.org, linux-nfs@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] debugfs: fix mount options not being applied
-MIME-Version: 1.0
 
-On 2025-08-14, Aleksa Sarai <cyphar@cyphar.com> wrote:
-> On 2025-08-05, Eric Sandeen <sandeen@redhat.com> wrote:
-> > On 8/4/25 12:22 PM, Eric Sandeen wrote:
-> > > On 8/4/25 9:30 AM, Charalampos Mitrodimas wrote:
-> > >> Mount options (uid, gid, mode) are silently ignored when debugfs is
-> > >> mounted. This is a regression introduced during the conversion to the
-> > >> new mount API.
-> > >>
-> > >> When the mount API conversion was done, the line that sets
-> > >> sb->s_fs_info to the parsed options was removed. This causes
-> > >> debugfs_apply_options() to operate on a NULL pointer.
-> > >>
-> > >> As an example, with the bug the "mode" mount option is ignored:
-> > >>
-> > >>   $ mount -o mode=3D0666 -t debugfs debugfs /tmp/debugfs_test
-> > >>   $ mount | grep debugfs_test
-> > >>   debugfs on /tmp/debugfs_test type debugfs (rw,relatime)
-> > >>   $ ls -ld /tmp/debugfs_test
-> > >>   drwx------ 25 root root 0 Aug  4 14:16 /tmp/debugfs_test
-> > >=20
-> > > Argh. So, this looks a lot like the issue that got fixed for tracefs =
-in:
-> > >=20
-> > > e4d32142d1de tracing: Fix tracefs mount options
-> > >=20
-> > > Let me look at this; tracefs & debugfs are quite similar, so perhaps
-> > > keeping the fix consistent would make sense as well but I'll dig
-> > > into it a bit more.
-> >=20
-> > So, yes - a fix following the pattern of e4d32142d1de does seem to reso=
-lve
-> > this issue.
-> >=20
-> > However, I think we might be playing whack-a-mole here (fixing one fs a=
-t a time,
-> > when the problem is systemic) among filesystems that use get_tree_singl=
-e()
-> > and have configurable options. For example, pstore:
-> >=20
-> > # umount /sys/fs/pstore=20
-> >=20
-> > # mount -t pstore -o kmsg_bytes=3D65536 none /sys/fs/pstore
-> > # mount | grep pstore
-> > none on /sys/fs/pstore type pstore (rw,relatime,seclabel)
-> >=20
-> > # mount -o remount,kmsg_bytes=3D65536 /sys/fs/pstore
-> > # mount | grep pstore
-> > none on /sys/fs/pstore type pstore (rw,relatime,seclabel,kmsg_bytes=3D6=
-5536)
-> > #
->=20
-> Isn't this just a standard consequence of the classic "ignore mount
-> flags if we are reusing a superblock" behaviour? Not doing this can lead
-> to us silently clearing security-related flags ("acl" is the common
-> example used) and was the main reason for FSCONFIG_CMD_CREATE_EXCL.
->=20
-> Maybe for some filesystems (like debugfs), it makes sense to permit a
-> mount operation to silently reconfigure existing mounts, but this should
-> be an opt-in knob per-filesystem.
->=20
-> Also, if we plan to do this then you almost certainly want to have
-> fs_context track which set of parameters were set and then only
-> reconfigure those parameters *which were set*. At the moment,
-> fs_context_for_reconfigure() works around this by having the current
-> sb_flags and other configuration be loaded via init_fs_context(), but if
-> you do an auto-reconfigure with an fs_context created for mounting then
-> you won't inherit _any_ of the old mount options. This could lead to a
-> situation like:
->=20
->   % mount -t pstore -o ro /sys/fs/pstore
->   % mount -t pstore -o kmsg_bytes=3D65536 /tmp
->   % # /sys/fs/pstore is now rw.
->=20
-> Which is really not ideal, as it would make it incredibly fragile for
-> anyone to try to mount these filesystems without breaking other mounts
-> on the system.
->=20
-> If fs_context tracked which parameters were configured and only applied
-> the set ones, at least you would avoid unintentionally unsetting
-> parameters of the original mount.
-
-My mistake, fs_context does this already with fc->sb_flags_mask. That
-leaves each filesystem to handle this properly for fc->s_fs_info, and
-the ones I've checked _do_ handle this properly -- false alarm! (I
-missed this on the first pass-through.)
-
-I guess then that this is more of a question of what users expect. I
-agree with what David Howells was quoted as saying, which is that
-silently doing this is really suboptimal. I still feel that logging a
-warning is more preferable -- if the VFS can be told whether
-fc->s_fs_info diverges from sb->s_fs_info, then we can log a warning (or
-alternatively, it could be done by each filesystem and VFS does it for
-the generic s_flags).
-
-This is arguably more practical than FSCONFIG_CMD_CREATE_EXCL for most
-users because it could give you feedback on what parameters were
-problematic, and if there was no warning then you don't need to worry
-about the mount sharing a superblock. FSCONFIG_CMD_CREATE_EXCL would
-then only be needed for truly paranoid programs. AFAICS, mount(8) does
-now forward warning messages from fclog, so this would mean admins would
-be able to see the warning immediately from their mount(8) call. Older
-mount(2)-based users would see it in dmesg.
-
-I can take a look writing a patch for this?
-
-> FWIW, cgroupv1 has a warning when this situation happens (see the
-> pr_warn() in cgroup1_root_to_use()). I always wondered why this wasn't
-> done on the VFS level, as a warning is probably enough to alert admins
-> about this behaviour without resorting to implicitly changing the mount
-> options of existing mounts.
+On Thu, Aug 14, 2025 at 4:08=E2=80=AFAM NeilBrown <neil@brown.name> wrote:
 >
-> > I think gadgetfs most likely has the same problem but I'm not yet sure
-> > how to test that.
-> >=20
-> > I have no real objection to merging your patch, though I like the
-> > consistency of following e4d32142d1de a bit more. But I think we should
-> > find a graceful solution so that any filesystem using get_tree_single
-> > can avoid this pitfall, if possible.
-> >=20
-> > -Eric
+> On Wed, 13 Aug 2025, Al Viro wrote:
+> > On Tue, Aug 12, 2025 at 12:25:14PM +1000, NeilBrown wrote:
+> > > Several filesystems use the results of readdir to prime the dcache.
+> > > These filesystems use d_alloc_parallel() which can block if there is =
+a
+> > > concurrent lookup.  Blocking in that case is pointless as the lookup
+> > > will add info to the dcache and there is no value in the readdir wait=
+ing
+> > > to see if it should add the info too.
+> > >
+> > > Also these calls to d_alloc_parallel() are made while the parent
+> > > directory is locked.  A proposed change to locking will lock the pare=
+nt
+> > > later, after d_alloc_parallel().  This means it won't be safe to wait=
+ in
+> > > d_alloc_parallel() while holding the directory lock.
+> > >
+> > > So this patch introduces d_alloc_noblock() which doesn't block
+> > > but instead returns ERR_PTR(-EWOULDBLOCK).  Filesystems that prime th=
+e
+> > > dcache now use that and ignore -EWOULDBLOCK errors as harmless.
+> > >
+> > > A few filesystems need more than -EWOULDBLOCK - they need to be able =
+to
+> > > create the missing dentry within the readdir.  procfs is a good examp=
+le
+> > > as the inode number is not known until the lookup completes, so readd=
+ir
+> > > must perform a full lookup.
+> > >
+> > > For these filesystems d_alloc_locked() is provided.  It will return a
+> > > dentry which is already d_in_lookup() but will also lock it against
+> > > concurrent lookup.  The filesystem's ->lookup function must co-operat=
+e
+> > > by calling lock_lookup() before proceeding with the lookup.  This way=
+ we
+> > > can ensure exclusion between a lookup performed in ->iterate_shared a=
+nd
+> > > a lookup performed in ->lookup.  Currently this exclusion is provided=
+ by
+> > > waiting in d_wait_lookup().  The proposed changed to dir locking will
+> > > mean that calling d_wait_lookup() (in readdir) while already holding
+> > > i_rwsem could deadlock.
+> >
+> > The last one is playing fast and loose with one assertion that is used
+> > in quite a few places in correctness proofs - that the only thing other
+> > threads do to in-lookup dentries is waiting on them (and that - only
+> > in d_wait_lookup()).  I can't tell whether it will be a problem without
+> > seeing what you do in the users of that thing, but that creates an
+> > unpleasant areas to watch out for in the future ;-/
+>
+> Yeah, it's not my favourite part of the series.
+>
+> >
+> > Which filesystems are those, aside of procfs?
+> >
+>
+> afs in afs_lookup_atsys().  While looking up a name that ends "@sys" it
+> need to look up the prefix with various alternate suffixes appended.
+> So this isn't readdir related, but is a lookup-within-a-lookup.
+>
+> The use of d_add_ci() in xfs is the same basic pattern.
+>
+> overlayfs does something in ovl_lookup_real_one() that I don't
+> understand yet but it seems to need a lookup while the directory is
+> locked.
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-https://www.cyphar.com/
+We decoded a connected real directory path (from file handle) and we
+are trying to lookup in overlay a directory that is referencing the
+underlying real dir that we decoded.
 
---gbonwdwtpt3b6c5h
-Content-Type: application/pgp-signature; name="signature.asc"
+This is the context. Not sure what problem exactly this code gives you.
 
------BEGIN PGP SIGNATURE-----
+>
+> ovl_cache_update is in the ovl iterate_shared code (which in fact holds
+> an exclusive lock).  I think this is the same pattern as procfs in that
+> an inode number needs to be allocated at lookup time, but there might be
+> more too it.
+>
 
-iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaJ3o7BsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG8uFAD8D6BvKVqzSuguwXOZR87r
-x3LVUElRso6HkG56g8pV8aIA/3VeQxywwXuC+Xm7tGcH0y8jmFl0E2j0zA7Fvg93
-NmIJ
-=/t/I
------END PGP SIGNATURE-----
+It's kind of a hack I guess.
+ovl has those rules (see xino) to compose a consistent inode number
+from real inode number and layer number.
+lookup of children during readdir composes the child stack to realize
+the consistent xino.
 
---gbonwdwtpt3b6c5h--
+We could do this internally in ovl by doing lookups on the real layers
+and composing the xino, but calling lookup on ovl during readdir was
+so much easier :/
+
+Thanks,
+Amir.
 
