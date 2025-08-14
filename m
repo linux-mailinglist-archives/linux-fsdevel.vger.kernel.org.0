@@ -1,219 +1,345 @@
-Return-Path: <linux-fsdevel+bounces-57891-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57892-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0005B26732
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 15:27:06 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54753B26768
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 15:32:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EC3E3AF2DC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 13:24:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EDAD04E4EAC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 13:32:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C21D63009F0;
-	Thu, 14 Aug 2025 13:22:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC166301498;
+	Thu, 14 Aug 2025 13:30:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="P/Pwgy1k"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AZox5fNR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2051.outbound.protection.outlook.com [40.107.244.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A70E72FE07B;
-	Thu, 14 Aug 2025 13:22:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755177759; cv=fail; b=Glt8mNR5uuY5oZmzZqGcJhHAeMDfqCPuYx/zTBMkqyYmpsMPFVmKwyRCLGnXmIDGRPPXmAbAwSUgUGSnPEjLu8F3wtgZKoWiLpLIhaqF8HdoVoKq5jlPACGUyBmOjvTqq2tBrYJ+GYjiDlKThUwAVgBzdm+ZqxDz9w8zkJWugbo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755177759; c=relaxed/simple;
-	bh=0lj76/+ShH7n+VIhmnye4KlD2dW3N5aMzI54yPEbBvs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Ek1uqnIYlJdXmaOQMSEgnsZAtNrele9HQqX80N+PicCOHNyOkWYqEnjXvbQZes4bo4CPCz6jMrj0tzPNw5k8MkL2g0mYd+m2hh64bJz9H/4EVC9UbZrV/1M2UZQkZNVnnu5xCXwc6kcYTdF9tOqRyfyqTkdhhn3lcemQh8dmWqw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=P/Pwgy1k; arc=fail smtp.client-ip=40.107.244.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=APTrxvHYKv69wMVAGu5LwONwBGw8pjbUiNntzy6o10Szh/3vsSG/V3I4yGGKxuJY9uzTXJbsRCRQfEHNiPzP4dg7upeBQ3XF6A4tz78dwspvNbexwWMphHHe9D9R2Cnq/faAd7RclxGzK5jeP6DnUDMhmWMbbNZw59mLaTmv/PLbthHvZfYV0uqUR/KmoQ6F0eji2Y36cdXl2P1gs3ov916z6ulxzHcocydbxFxRwK5rSMCH8PcmaKMqXbhB0jcWkZWiurn+LjOWEg+42fT8xKHincUWVFkweeiv4dR4Nb82XBQsvK3WQh/j/qxqiEdH6IqQBPyL7s+vLqUcuAPMfw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ONFAw+Ew8oIG1CXzz5SIebsF/MwG1iVVpRo8CHuo9Kw=;
- b=AWsBpEtcjHOjCn0BRJblSytYy6kYbuB8sldmQRWmfZaZA/ried4+NfMCakoicWRMyj/l1kmbHxzL1oJke/FskUPu2JyYl8YokPa75JKEsebGV+onRmOhSwUn7sZCYocmNP4aTmEzlGkzt5BLfBThOLTSR80Bb67iVqOPXAuyuYuWqNH5KN3QN9/HEXCo++2T4nzIqFWeLVlcGtgg+dVM7LfW6ZWkixJkUH9c00DxJRCJ9JyElxpd8QrECnmMmNBlDYgtCVpaQzgFoNHOeeGl9Er4UxdJ9JbaLx+hpK+NEgr5b6tkHeAWx2CgqZPIgDebCTV9D0dh6A7QCySKutcnKg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ONFAw+Ew8oIG1CXzz5SIebsF/MwG1iVVpRo8CHuo9Kw=;
- b=P/Pwgy1k18fYPU6f9BUsTk1QqkRsggf1k6Vi6ZVs+gTm1k+YA1nVQ142svxdXZq3DJGXt4iZ/zZae1tr9gmG1tQADlll3WHM+gdqdzbwsBw6wPunLRMOL8Os+n1iCfv2yQaMlUoRmiakQReMH3TRokoD76nx/hD1exHcE6ia2L+KdkyRujWiKRSrnX/3m+ouqySVJioUiEFUxEsXHUiQ9D2yW6JgVxaOeh4zeM9AsZpOCq2W/XHNi7rkxw+x7nT6ay0mWmHtXpLKm+paqHmrrCJx/S4XrBI5vimtZQ/ry5RqOYq33IL8wCklkTNdQAuNIRS6HHzElUmnts0+7uiSig==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by MN2PR12MB4223.namprd12.prod.outlook.com (2603:10b6:208:1d3::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.15; Thu, 14 Aug
- 2025 13:22:35 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.9031.012; Thu, 14 Aug 2025
- 13:22:34 +0000
-Date: Thu, 14 Aug 2025 10:22:33 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
-	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com,
-	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org,
-	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com,
-	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org,
-	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr,
-	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com,
-	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com,
-	vincent.guittot@linaro.org, hannes@cmpxchg.org,
-	dan.j.williams@intel.com, david@redhat.com,
-	joel.granados@kernel.org, rostedt@goodmis.org,
-	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
-	linux@weissschuh.net, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-mm@kvack.org,
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com,
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
-	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
-	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
-	aleksander.lobakin@intel.com, ira.weiny@intel.com,
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
-	brauner@kernel.org, linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
-	ajayachandra@nvidia.com, parav@nvidia.com, leonro@nvidia.com,
-	witu@nvidia.com
-Subject: Re: [PATCH v3 07/30] kho: add interfaces to unpreserve folios and
- physical memory ranges
-Message-ID: <20250814132233.GB802098@nvidia.com>
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
- <20250807014442.3829950-8-pasha.tatashin@soleen.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250807014442.3829950-8-pasha.tatashin@soleen.com>
-X-ClientProxiedBy: MN0P222CA0007.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:208:531::15) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B14E2FB987;
+	Thu, 14 Aug 2025 13:30:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755178209; cv=none; b=UI783B67meCSINBPTtIJqWcWeTFTyN19kt0ODTpUqoLQpOj+TF4IDPhJgg0wx2GM1p/UrxxgJZPVppWJiV3GOmt+RC+umAKA+Bnq51cUY7Ce23m3VaDFdkespI4k13bqcikVHwokQQ26RYJn4nuMI1cszUp/uWRLUKzLSAaSsMo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755178209; c=relaxed/simple;
+	bh=mz/EB8bjGVFaTkJpTORl4PmW5zhONLp9lrpEf91GTfw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WC32oC8zIvwHBZ6vIJfjtozeAv2LVCh7nCXW5SS7VcIV/UXJ2hfYSI3hpul7KsCVGVH1h18vdZkmq04UOexiA/a4GkhBPpFvQjLOovQFRxfSYmRw6cU/gd5+a61gHXOCe0CpiAn8i4dvqGFQ/M5LZlM2PCofVpUAIhlbFxapk44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AZox5fNR; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-afcb731caaaso130046166b.0;
+        Thu, 14 Aug 2025 06:30:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755178205; x=1755783005; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f+sFdasJXWxfNXSbJ4iDlEiy+aB7L4ETM4G4NZ6zYjs=;
+        b=AZox5fNR5/0tZmIs8j/g+AMYwRgWJxsDnetL6YiupXF9x5h+jcqPF0VJwptsuPOlLD
+         /VsdPJLL3Mao1nfA3GfUnTVdStGJuuVKFCVGoYkj2UlGaSIF/UDegCEH0dRpbBIUrJ5Y
+         o9/l8B2rRDA7vaIfz9mvrc1HdxRulKxTxWlD3yJSZfSjplWNi+7bYmzenS3ovKk/1Xr6
+         HVcq7UkL/g6I6KvA9P/xqF+8Er+nJlwx1xnfLKLIBSPN6QjN3hMGC6cJxUnavtetGnZh
+         9aUwx5BrDX7j++6gg05+rsWtdqikbTFo0cGtLAOr3pugKazABOfDhbKA68+mHL9R4l4k
+         e8oQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755178205; x=1755783005;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=f+sFdasJXWxfNXSbJ4iDlEiy+aB7L4ETM4G4NZ6zYjs=;
+        b=ucYduGJtgKecUUB36xLGEwfcqqVv9SE+AObZEZBCB2qAQqVrOr0tAjtrW3AmqOnkSN
+         nOvWkdVuF5eC85Hw1IRzsQmftWq3ykpeoJcOiuxSJyJ7i1hzgk1BFt+UMrRGKBbXVXIx
+         4StH7W6ce21Wx/WdTjNQcZ7iaztNI9h1oS3IiK7+qt8kZ/KSK5dS7Y8SUedfObgFwxXp
+         ZFJuhlbhwIP7QRY5FQLPhE/gdLWpJ8uK5JyAkZt2laj2Nd/+ByDG7O+0muHj+Na/Ejru
+         bFcx04M+xLOmrmBFikFVvuBn44FKahlf6h3tCiq1pSQSvqURkZ2I0nDY4pAEkFS6I65c
+         hFrg==
+X-Forwarded-Encrypted: i=1; AJvYcCUXp2ANsqI7fxYjP4wJVGbXjBi060kNOf5bmSQzFUtzKTemB5RXUMJrCB8MS1R8RIp/WbrVlZDTYXQo@vger.kernel.org, AJvYcCUqxar0cHdeGBl4QymeG2V4hU4GBYZAerpGunWb5ngYh0LnoqrxBMhvLvcz2EQqQfd2ZApSptPzboZs@vger.kernel.org, AJvYcCUs/5kQpbJ0oinGSDm8YHNIS3EJaeguMyCTLXdJxeC9vKIVDqrRZeWhvTO1avBqtDOxXJ8JTSslKZSj@vger.kernel.org, AJvYcCVxOyKBQiumJjz5Fb8hAMl19sEuqQQ8PAJP2yvmjxBKL/AOtZRtRByJ4qpwT4xKB6RXf7jo3eJoJFw=@vger.kernel.org, AJvYcCWak/ycvrvJgYxP0NHvx3tmZrs14fs+AHThT+hSoZd0UbHus7ggnDbUsqjUaQjffPNIhkVw0xnBxKJ25ODjwQ==@vger.kernel.org, AJvYcCXBmCaidTSUaUSq+9rNpqBvYR1s1uvMfvhDMGn+BmK+yqOVULwPJPpnZptztmm487oynqk2WOQaEDIu3mqIiw==@vger.kernel.org, AJvYcCXPaZoc/bcUqr7q0e8WuR/aka8RSOXjscatSuB+1rLt9su0BEAn7Y8X2yrnMlvRPDCvdqrTAyulOq6hqa5c@vger.kernel.org, AJvYcCXYC7CLSH3BA+N+hsIf+wWSf+JX5gg4Zmio0djUvILhe0h4J8x57T6QUXGJRYlz6SF1Y47xb9zTXI4ELA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YythCt3qHCVAsEhRo0PIoZIOA07lFakJKlnd7sOX96ohnj1ZZeR
+	p2fMRFAs8v8VWJUDd7FOOeEFWOmhIOZcheAKwErtuVVDUUYs8Ilu88Ew55yjHTMAf2tLF4zOHEv
+	PngJ5Gh17ksQEBsDdA7TX4CaJAcf57GE=
+X-Gm-Gg: ASbGncvBmWRnWTFLfW+mP7dn871NYXl4+ma1fPWB17e2JuydWz5kvSdVyux4w2m2uFr
+	TZUyWPs7gN9A2/TKO0cW/NF9WxzEr3CN4dlzeJp7xhxaM0R/UI3MwIPokRkpIkY2UxB3zAx3Y/k
+	BLFcbPRm2YyFsRVZ8hkJzg4gb9uHyDz8qMe27pGZOQiDkdR02nATlJ2GozyvOtywGFMUaF6sBYE
+	N/FQVY=
+X-Google-Smtp-Source: AGHT+IF84TnvlblMj92h1a2Bo7TYhB47u4luhSDqElmXWYB8ydmWjP6VQfTOERhCfol8XKnqfmbc3XrMKYns1uVE0xg=
+X-Received: by 2002:a17:907:608b:b0:af9:6e2b:f30c with SMTP id
+ a640c23a62f3a-afcb986ae60mr289124166b.34.1755178204916; Thu, 14 Aug 2025
+ 06:30:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|MN2PR12MB4223:EE_
-X-MS-Office365-Filtering-Correlation-Id: f438fe84-7be9-4ab7-37f7-08dddb35a17d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?N4xFyf8udXoRyvgmtRv1ofWmodmtJYGb8awhK1GMkR442Y9Julqn1KTXQ+jp?=
- =?us-ascii?Q?7EpZrPsxoyldyw0u3dMFeIwaJCnbTQnbCF3OsAYWfNK+wesJg09rF1SBfJBU?=
- =?us-ascii?Q?zCrpkuJ6YY2LDVyWbvRN72u2N78lNYgkkKLEa1PIj19v6YNRoOwj22got1Q0?=
- =?us-ascii?Q?kEa4LK/5NZ9/Nj/eBZmXvsCjm2lxMLUjq4Skxz2g58BkfKlTP0n9RxrjKAlA?=
- =?us-ascii?Q?9nvTkKgO/WgOYYnKsptH4jJXf8b124lHVrtmXaH759iVKl/yCM9+cxCDr+BA?=
- =?us-ascii?Q?uPgmrUZA5pWW5DLecBjz+CigSAeA94lJUT6ZO+dyiY0GlkWXI0tKkyAflFal?=
- =?us-ascii?Q?K0evhtVhGg7D9kjid4i6/blAjBu9z1+ukQJQjXiW6X/RFYtEMTWivV9rbmXD?=
- =?us-ascii?Q?+nns/N/x4ZxfOOwYjP2ejyAhVfIgib2BXLQDdeijt8BZHkCVOjx48Te4auQu?=
- =?us-ascii?Q?GFlYo7cpwC0EE/X72QPB9hp8HRSaao3gmEmGRCxtnrg2aRH9LFw80Q1mWEVV?=
- =?us-ascii?Q?3cJO1D9XtkPKteA50M8IhXiD7aUVeVVktr/4yfdcBlJuWqMasrMxGmrBVnFk?=
- =?us-ascii?Q?7KHpIXleYOj56CsUIEtRj5GEDDEilC5IfPrklbdK6q0gY9AS0EIVNQrV1Bnk?=
- =?us-ascii?Q?2HcyC12rbvdSSYHUjANtoq7RaE8Lpv0XjttfRxiEHkwcM2fs84B3lkZzRATx?=
- =?us-ascii?Q?OsPD9kRhiGXryMh3OBVC3TZ9gzfWFuTZztv4NUzHSdJwNvML6APygGTN1tTU?=
- =?us-ascii?Q?Kh67tlVoaKw3Q/4JnKBMKhIwsJ5e74KR9ZxD/hBSAskNr207uB3heOqro58P?=
- =?us-ascii?Q?fDMkzBqaDFmGS11UTKBZ/OS4u1r4FRcTPtUA3VE5sunTdwOTRlHmuwcwYXys?=
- =?us-ascii?Q?rBhqREn/mUxmbuZ7iHeiYZMCu4DWEMJ0DKtnQxiBH4XR7oMVfO/z33pm2Zlk?=
- =?us-ascii?Q?20bQnqmyhGQ1XL09u+DgmRg6hWR+xPaEcBC2e5+AHCsoaxBLcovyStpQzeD3?=
- =?us-ascii?Q?WoeXrEgUvKbD9KkTygMRIKvOytMP47cr9OY4Nr8+5adyBrkGHp89uWUTL7+9?=
- =?us-ascii?Q?HQV7ZFJnHNfGXAUaJ93nejj0iVIVyKhHQbMF13w8QXvDbYMareeHBkzy/60g?=
- =?us-ascii?Q?vKWSaW9HvrG6DDamVpfvuqblpOHpvFLwgZ76JA8XR1DZRu46Xde/SP66SneH?=
- =?us-ascii?Q?eGqqvdEwB4WpoWRfctKN/rAv8TK0NkjboFOsI5r9OIX11bcTCAqSfTbk6doQ?=
- =?us-ascii?Q?odNacQd7s/gGO8C0L9Kf4lwFL71kKlLhjlyqMWyUUahjQZl9Ss49ZnBuEi/O?=
- =?us-ascii?Q?piiGxDNLpenRq5vJ1p0Y8+dLYEfWnhcLDBkQuMkLs4hLptAC49l3YGBuh/ek?=
- =?us-ascii?Q?FRrzQdXK5kTsOlOsF6jcKDX6C82nL7Wkh6px0nr2whKgS4pgSH8MqQDGKgCM?=
- =?us-ascii?Q?tsx6BJurgbc=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Zcse3LPGgQNrAqgkotP+Nc4HjPk7ZUr8Do4lvNImnerquOxyKiy6iS94JpNE?=
- =?us-ascii?Q?F5d+yf9g4FgRZW0BMwIK7ZZ/XfZliTQo80hECxO346b3va2/zqw1KQivJUzN?=
- =?us-ascii?Q?RN6H4RuG4naQnIwg9j33gscvmyo43CWCZ/lM+Fn7EC3KPE77mP2erTB1/JEW?=
- =?us-ascii?Q?9AWCURljaDqbOagNLZ8i3NXHaTjxPJKd7eRBb+tVFzJss7GEsxJ7k1fAVkAE?=
- =?us-ascii?Q?sI7lD5cgwGLdl37+R3zJ+amxGUvTkbKZycxJZPqRFTH62y9sTSKHAOyoM8Mz?=
- =?us-ascii?Q?3+iOC3Yh50HVBkHO9nLRnFtKDBakPVmxwpNZE5y/OTzgldWLBpUJUbM2BMBh?=
- =?us-ascii?Q?2qBotNwjgYlA65jJWYN4WtNYPtRDuFtd6Zwqqvc4dR7G5srtJJprUxXxivDm?=
- =?us-ascii?Q?U0ee7ZUednuAm2vuiErLBn8eK2RnGInEeso8Ok+ZvRtftHwKILDi+u/iN3js?=
- =?us-ascii?Q?+EUCqvEzow9v3cr8K0y2wIuxZctrLFgOv5lnN2X4nei8dPGNRGRZ+3ZJMfNp?=
- =?us-ascii?Q?HJ7OvyNGQUyO6Ll0O/twQbwObkkLrOwtguB8wALGW2BMBoCCZgvMzSCiPFPx?=
- =?us-ascii?Q?i4BL9zRhpR6BxzzA8bxET7Ne0lT+4+vCy7G6gGIZSPS6Vn1DYLlHoVamsRfz?=
- =?us-ascii?Q?6dM1lBDCfYHxMrDcEhRZTPNYu8nyHsLJ4hD8wtBSlH3qvmxfSt+I2Eg348Fk?=
- =?us-ascii?Q?9Cmgifx4TV3IdFq8+TliNtRrGGC2R2ZnF1T0NYQTYse0Vgu3DNYFRFRqEjnO?=
- =?us-ascii?Q?lAeOO3JdlO8iGadvV7/dr2Z+1owSxV7YawKyBXC/R3tjeqLOJO2SbTLQiq0x?=
- =?us-ascii?Q?qo+RyUciU/8iuWFtsI/MKMLR8K2BLYqhpl5XNmaqbc173dTu8QOs3LWp4ebR?=
- =?us-ascii?Q?SD9rBu27+LWDUgB00GwoT6ZO8UoH0Ta0Wni4UGKs7VlJ1m1qKu9P3PV4V0b0?=
- =?us-ascii?Q?86pbVQ2sopfasRxMtYt5EvWnqZT86v5vzvFhDAlU6hfJk6Q0HT9qDHXYSZqF?=
- =?us-ascii?Q?D+2Wf1VuR7VYS8nbJpNvwU7Kov1BRwEi+hFEJHjtr/sULPhVTkAz6vcg9oYd?=
- =?us-ascii?Q?UEbgKmTWoXhTM48iKMjSsnCvNpExPfdIZ1TE1cg64Oomn8Pl0cCbalS9pPlz?=
- =?us-ascii?Q?mS2e3dl/h0ECiRMEP+Ie1DNjSidNZuer2tI7SnJ4v/Rc7oIJQbDRcVKgwrIK?=
- =?us-ascii?Q?EJtjaxs9QgH/qQp91zxbTy9eUp6nkR6YAm3+EqjRPbX08zICo7KmEO4GBwbH?=
- =?us-ascii?Q?4H/9PE1ziMhGN0QeIdjcwzVZ7Kaz3nAOybbdKYxjPiLsv6Rqktjw2zflD33H?=
- =?us-ascii?Q?SocoE43OtG86xfmFcv+vAQPBv+TXRQ+NNsXPLwYA8S0r4Bwv/sAwRHEqqDYb?=
- =?us-ascii?Q?CAzmgydGswZQ2O3uRedalQbvGrW8R8z4wlVex6GcJ8jn7js36wEP5SOb2rkY?=
- =?us-ascii?Q?L843vUvZiQ2BhvExoICKptsuDIwAjgFzMnNflY32C27ge/9x2DUPZLutUoHb?=
- =?us-ascii?Q?8MQJyDbsZLQcIj9x7u4fIJGncg6vwi82jUbxipcVXNZaYF82dswAgMEBIug0?=
- =?us-ascii?Q?3FQafR1hKuGoJiXqFcI=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f438fe84-7be9-4ab7-37f7-08dddb35a17d
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2025 13:22:34.8071
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2By4MfPAcGjg9PnTkE/zfaNqlt+irEo9XRYgHW/TPuwIfR5m44/tFrl3t3ZXHLCq
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4223
+References: <CAOQ4uxhU12U8g_EYkUyc4Jdpzjy3hT1hZYB0L1THwvTsti8mTw@mail.gmail.com>
+ <175513400457.2234665.11514455496974675927@noble.neil.brown.name>
+In-Reply-To: <175513400457.2234665.11514455496974675927@noble.neil.brown.name>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 14 Aug 2025 15:29:53 +0200
+X-Gm-Features: Ac12FXxaF_DShrx33OMj2V-_0xjYwSUw8hYkyRK9A3TCkQqo54t8CoTIX4YaDII
+Message-ID: <CAOQ4uxg0K8s=dB6rG19bwj6bamsUOY7mRNhhg2ES-Y1CK7+3OA@mail.gmail.com>
+Subject: Re: [PATCH 07/11] VFS: Change vfs_mkdir() to unlock on failure.
+To: NeilBrown <neil@brown.name>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	David Howells <dhowells@redhat.com>, Marc Dionne <marc.dionne@auristor.com>, 
+	Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>, Tyler Hicks <code@tyhicks.com>, 
+	Miklos Szeredi <miklos@szeredi.hu>, Richard Weinberger <richard@nod.at>, 
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>, Johannes Berg <johannes@sipsolutions.net>, 
+	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
+	Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, 
+	Steve French <sfrench@samba.org>, Namjae Jeon <linkinjeon@kernel.org>, 
+	Carlos Maiolino <cem@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-afs@lists.infradead.org, netfs@lists.linux.dev, 
+	ceph-devel@vger.kernel.org, ecryptfs@vger.kernel.org, 
+	linux-um@lists.infradead.org, linux-nfs@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 07, 2025 at 01:44:13AM +0000, Pasha Tatashin wrote:
-> +int kho_unpreserve_phys(phys_addr_t phys, size_t size)
-> +{
+On Thu, Aug 14, 2025 at 3:13=E2=80=AFAM NeilBrown <neil@brown.name> wrote:
+>
+> On Wed, 13 Aug 2025, Amir Goldstein wrote:
+> > On Wed, Aug 13, 2025 at 1:53=E2=80=AFAM NeilBrown <neil@brown.name> wro=
+te:
+> > >
+> > > Proposed changes to directory-op locking will lock the dentry rather
+> > > than the whole directory.  So the dentry will need to be unlocked.
+> > >
+> > > vfs_mkdir() consumes the dentry on error, so there will be no dentry =
+to
+> > > be unlocked.
+> >
+> > Why does it need to consume the dentry on error?
+>
+> Because when the recent change was made to have vfs_mkdir() and ->mkdir
+> handling the fact that the passed-in denty might not be used, that was
+> the interface that was deemed to be best of all that were considered.
+>
+>
+> > Why can't it leave the state as is on error and let the caller handle
+> > its own cleanup?
+>
+> There are three possible results from vfs_mkdir()
+>  - the dentry that was passed in has been instantiated
+>  - a different dentry was already attached to the inode, and it has been
+>    splice in to the given name
+>  - there was an error.
+>
+> In the second case it seems easiest to dput() the original dentry as it
+> is no longer interesting and that saves the caller from having the test
+> and maybe dput() - all callers would need identical handling.
+> It seemed most consistent to always dput() the passed-in dentry if it
+> wasn't returned.
+> >
+> > >
+> > > So this patch changes vfs_mkdir() to unlock on error as well as
+> > > releasing the dentry.  This requires various other functions in vario=
+us
+> > > callers to also unlock on error - particularly in nfsd and overlayfs.
+> > >
+> > > At present this results in some clumsy code.  Once the transition to
+> > > dentry locking is complete the clumsiness will be gone.
+> > >
+> > > Callers of vfs_mkdir() in ecrypytfs, nfsd, xfs, cachefiles, and
+> > > overlayfs are changed to make the new behaviour.
+> >
+> > I will let Al do the vfs review of this and will speak up on behalf of
+> > the vfs users of the API
+> >
+> > One problem with a change like this - subtle change to semantics
+> > with no function prototype change is that it is a "backporting land min=
+e"
+> > both AUTOSEL and human can easily not be aware of the subtle
+> > semantic change in a future time when a fix is being backported
+> > across this semantic change.
+> >
+> > Now there was a prototype change in c54b386969a5 ("VFS: Change
+> > vfs_mkdir() to return the dentry.") in v6.15 not long ago, so (big) if =
+this
+> > semantic change (or the one that follows it) both get into the 2025 LTS
+> > kernel, we are in less of a problem, but if they don't, it's kind of a =
+big
+> > problem for the stability of those subsystems in LTS kernels IMO -
+> > not being able to use "cleanly applies and build" as an indication to
+> > "likelihood of a correct backport".
+>
+> Renaming to vfs_mkdir2() might be justified.  I think we have to change
+> the interface somehow to enable per-dentry locking, and I don't think a
+> signature change would be justified.  So maybe a name change is needed.
 
-Why are we adding phys apis? Didn't we talk about this before and
-agree not to expose these?
+Fine by me. as long as we avoid the risk of hidden backport traps.
 
-The places using it are goofy:
+> >
+> > and now onto review of ovl code...
+> >
+> > > diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
+> > > index 70b8687dc45e..24f7e28b9a4f 100644
+> > > --- a/fs/overlayfs/dir.c
+> > > +++ b/fs/overlayfs/dir.c
+> > > @@ -162,14 +162,18 @@ int ovl_cleanup_and_whiteout(struct ovl_fs *ofs=
+, struct dentry *dir,
+> > >         goto out;
+> > >  }
+> > >
+> > > +/* dir will be unlocked on return */
+> > >  struct dentry *ovl_create_real(struct ovl_fs *ofs, struct dentry *pa=
+rent,
+> > > -                              struct dentry *newdentry, struct ovl_c=
+attr *attr)
+> > > +                              struct dentry *newdentry_arg, struct o=
+vl_cattr *attr)
+> > >  {
+> > >         struct inode *dir =3D parent->d_inode;
+> > > +       struct dentry *newdentry __free(dentry_lookup) =3D newdentry_=
+arg;
+> > >         int err;
+> > >
+> > > -       if (IS_ERR(newdentry))
+> > > +       if (IS_ERR(newdentry)) {
+> > > +               inode_unlock(dir);
+> > >                 return newdentry;
+> > > +       }
+> > >
+> > >         err =3D -ESTALE;
+> > >         if (newdentry->d_inode)
+> > > @@ -213,12 +217,9 @@ struct dentry *ovl_create_real(struct ovl_fs *of=
+s, struct dentry *parent,
+> > >                 err =3D -EIO;
+> > >         }
+> > >  out:
+> > > -       if (err) {
+> > > -               if (!IS_ERR(newdentry))
+> > > -                       dput(newdentry);
+> > > +       if (err)
+> > >                 return ERR_PTR(err);
+> > > -       }
+> > > -       return newdentry;
+> > > +       return dget(newdentry);
+> > >  }
+> > >
+> > >  struct dentry *ovl_create_temp(struct ovl_fs *ofs, struct dentry *wo=
+rkdir,
+> > > @@ -228,7 +229,6 @@ struct dentry *ovl_create_temp(struct ovl_fs *ofs=
+, struct dentry *workdir,
+> > >         inode_lock(workdir->d_inode);
+> > >         ret =3D ovl_create_real(ofs, workdir,
+> > >                               ovl_lookup_temp(ofs, workdir), attr);
+> > > -       inode_unlock(workdir->d_inode);
+> >
+> > Things like that putting local code out of balance make my life as
+> > maintainer very hard.
+>
+> I understand.  By the end of the change this is no longer unbalanced.
+> Keeping the code perfect at each step while making each step coherent
+> enough to be reviewed is a challenge.
+>
 
-+static int luo_fdt_setup(void)
-+{
-+       fdt_out = (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO,
-+                                          get_order(LUO_FDT_SIZE));
+I am not sure when "by the end of the change" is going to land
+but I do not feel comfortable leaving the ovl code in a hard to
+maintain state.
 
-+       ret = kho_preserve_phys(__pa(fdt_out), LUO_FDT_SIZE);
+>
+> >
+> > I prefer that you leave the explicit dir unlock in the callers until th=
+e time
+> > that you change the create() API not require holding the dir lock.
+> >
+> > I don't even understand how you changed the call semantics to an ovl
+> > function that creates a directory or non-directory when your patch only
+> > changes mkdir semantics, but I don't want to know, because even if this
+> > works and I cannot easily understand how, then I do not want the confus=
+ing
+> > semantics in ovl code.
+> >
+> > I think you should be able to scope ovl_lookup_temp() with
+> > dentry_lookup*() { } done_dentry_lookup() and use whichever semantics
+> > you like about dir lock inside the helpers, as long as ovl code looks a=
+nd feels
+> > balanced.
+> >
+> > >         return ret;
+> > >  }
+> > >
+> > > @@ -336,7 +336,6 @@ static int ovl_create_upper(struct dentry *dentry=
+, struct inode *inode,
+> > >                                     ovl_lookup_upper(ofs, dentry->d_n=
+ame.name,
+> > >                                                      upperdir, dentry=
+->d_name.len),
+> > >                                     attr);
+> > > -       inode_unlock(udir);
+> > >         if (IS_ERR(newdentry))
+> > >                 return PTR_ERR(newdentry);
+> > >
+> > > diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+> > > index 4f84abaa0d68..238c26142318 100644
+> > > --- a/fs/overlayfs/overlayfs.h
+> > > +++ b/fs/overlayfs/overlayfs.h
+> > > @@ -250,6 +250,7 @@ static inline struct dentry *ovl_do_mkdir(struct =
+ovl_fs *ofs,
+> > >
+> > >         ret =3D vfs_mkdir(ovl_upper_mnt_idmap(ofs), dir, dentry, mode=
+);
+> > >         pr_debug("mkdir(%pd2, 0%o) =3D %i\n", dentry, mode, PTR_ERR_O=
+R_ZERO(ret));
+> > > +       /* Note: dir will have been unlocked on failure */
+> > >         return ret;
+> > >  }
+> > >
+> > > diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+> > > index df85a76597e9..5a4b0a05139c 100644
+> > > --- a/fs/overlayfs/super.c
+> > > +++ b/fs/overlayfs/super.c
+> > > @@ -328,11 +328,13 @@ static struct dentry *ovl_workdir_create(struct=
+ ovl_fs *ofs,
+> > >                 }
+> > >
+> > >                 work =3D ovl_do_mkdir(ofs, dir, work, attr.ia_mode);
+> > > -               inode_unlock(dir);
+> > >                 err =3D PTR_ERR(work);
+> > >                 if (IS_ERR(work))
+> > >                         goto out_err;
+> > >
+> > > +               dget(work); /* Need to return this */
+> > > +
+> > > +               done_dentry_lookup(work);
+> >
+> > Another weird example.
+> > I would expect that dentry_lookup*()/done_dentry_lookup()
+> > would be introduced to users in the same commit, so the code
+> > always remains balanced.
+> >
+> > All in all, I think you should drop this patch from the series altogeth=
+er
+> > and drop dir unlock from callers only later after they have been
+> > converted to use the new API.
+> >
+> > Am I misunderstanding something that prevents you from doing that?
+>
+> I think I tried delaying the vfs_mkdir() change and stumbled.
+> The problem involved done_path_create(). e.g. dev_mkdir() calls
+>   kern_path_create()
+>   vfs_mkdir()
+>   done_path_create()
+>
+> Changing semantics of vfs_mkdir() necessitated a corresponding change in
+> done_path_create() and doing that necessitated prep elsewhere.
+> init_mkdir and ksmbd_vfs_mkdir follow the same pattern.
+>
+> Maybe I could temporarily introduce a done_path_create_mkdir() for
+> those.
+>
 
-+       WARN_ON_ONCE(kho_unpreserve_phys(__pa(fdt_out), LUO_FDT_SIZE));
+Can't say I went to check what all this means, but introducing
+temporary helpers as scaffolding along the way and removing them
+later is perfectly fine by me as far as the ovl code is concerned as
+long as ovl code remains readable and well balanced.
 
-It literally allocated a page and then for some reason switches to
-phys with an open coded __pa??
-
-This is ugly, if you want a helper to match __get_free_pages() then
-make one that works on void * directly. You can get the order of the
-void * directly from the struct page IIRC when using GFP_COMP.
-
-Which is perhaps another comment, if this __get_free_pages() is going
-to be a common pattern (and I guess it will be) then the API should be
-streamlined alot more:
-
- void *kho_alloc_preserved_memory(gfp, size);
- void kho_free_preserved_memory(void *);
-
-Which can wrapper the get_free_pages and the preserve logic and gives
-a nice path to possibly someday supporting non-PAGE_SIZE allocations.
-
-Jason
+Thanks,
+Amir.
 
