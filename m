@@ -1,179 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-57847-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57848-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 992C2B25E8C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 10:16:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5D25B25EB2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 10:24:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0AD51BC8202
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 08:15:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81EF79E4C57
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 08:24:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 049E52E7BAF;
-	Thu, 14 Aug 2025 08:14:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F6222E8E0E;
+	Thu, 14 Aug 2025 08:24:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="Xh8ZqHvH"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="v1YV6rWN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FDE028314E;
-	Thu, 14 Aug 2025 08:14:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755159283; cv=pass; b=r2sonxXhdh3rzyxTLpkeKvNCXhGQiScCmVmnVlIm4GTeQSX4eUTxHcF32Nxx1Ot8EWq+j1OEstOMfpXN6kpRxl/j3amsnbLN4jwyMU2YnKmnaKVr+za32tVYDtL3i7SWZla3h0Cc1Ycat1ST7ervgsw7nR2YFIqQtbgZkTeYvcY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755159283; c=relaxed/simple;
-	bh=X4h9HyUyKy86y38jJo2UkDVYgamELbS4oR4HdL7+74Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=L+KrmasoX+5V+NAhkmHJ86YFu9bfA1AQtsWirS0MpJ/KjEmIlXroNU5V8GjtVVDVfs/7/kqx1sbtqXAXiFF7Zm/q6YuMNaG44mSqS02LfQcD9pcnDOBWNptCnR7w7tf4ZRCr7JlxutLDPi4KPPQ7H5gQAd0oXjxY5MW/RBEj980=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=Xh8ZqHvH; arc=pass smtp.client-ip=136.143.188.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1755159230; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=ZLaz5SkLRvtFj6a2vO7v+77uapfVinH4TduHlsApmc64c3cnLoeRkqU6k5ANojPIW7XdZ27KDzlUEOXHcFFnPG0gT3xQZkKSDePkuUWBxHvnq9fhP6+JR/jxwboplzLNynqWyh8DS/lYnAYQdSCd9KGFnDBSblGx+LcJLCUFrMw=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1755159230; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=NANxMn0kp0MpYVpQIXpGC768jBcE/p9R2w4NOLkSmsk=; 
-	b=igdmkHJq+pDuFCgZMGeIPaXlXj5SVOtIk4l9gLkiixHczm4O/AHpCgFOVSQDbVSZkd0Mpfz9c1ys5CnDYfXg5vrQR1W1DBQRJ7faAjAc4gTzeYM6QX8KN4G2hhJ+hsXXOcerroJNpxqXcyEwLTGu4TM4C918eYbMS2fS1RfQmfo=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
-	dmarc=pass header.from=<safinaskar@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755159230;
-	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=NANxMn0kp0MpYVpQIXpGC768jBcE/p9R2w4NOLkSmsk=;
-	b=Xh8ZqHvHW22+8ifwRvkVt0kVSN4F89ke7T9oRdiwIzd/biczcmm9cdx9kv4gNwlV
-	UUnvwupRR/A7IsPVh78tNBmksp12dylkfqn1X0wtRFsA4borXsLpfAlLXJEv/cq7Gc2
-	wWy5KXJiiCdwMXziQ1+/7+Bd60XP+rBwbveHOv14=
-Received: by mx.zohomail.com with SMTPS id 17551592278291021.230660374127;
-	Thu, 14 Aug 2025 01:13:47 -0700 (PDT)
-From: Askar Safin <safinaskar@zohomail.com>
-To: lichliu@redhat.com
-Cc: brauner@kernel.org,
-	kexec@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	rob@landley.net,
-	viro@zeniv.linux.org.uk,
-	weilongchen@huawei.com,
-	cyphar@cyphar.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-api@vger.kernel.org,
-	initramfs@vger.kernel.org,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Stefan Berger <stefanb@linux.ibm.com>
-Subject: Re: [PATCH] fs: Add 'rootfsflags' to set rootfs mount options
-Date: Thu, 14 Aug 2025 11:13:32 +0300
-Message-ID: <20250814081339.3007358-1-safinaskar@zohomail.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250808015134.2875430-2-lichliu@redhat.com>
-References: <20250808015134.2875430-2-lichliu@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE1CF2E7BCC
+	for <linux-fsdevel@vger.kernel.org>; Thu, 14 Aug 2025 08:24:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755159885; cv=none; b=SX81wdqDt4BdRr3LD1d8VH57bnU/3XKtb3WqNXJz/RsHV6jlnZBOvDtmTtzMSeew/wvOmkn5Fx33qvV4hsC3g6Uhqw6QkWxsL/mMWlJbWzH4Dmhdj+1ceDDGqeNZwBI/ynwWYn1vCk0d2Mw2TBIML6YWJearudXXA5fLlMVjQGU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755159885; c=relaxed/simple;
+	bh=01JJlSModoqysW+sRDKwyF6wO+ZTlR4O5R5WhdmWmU8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=iC1GsYp5QJzxmi9U20wK0d0QkTTc0toUqdUNogaKPP1djUQfBY8NQQEZl59qWWEucZap/00tX7rYh75/97mSGwqdmm+iJahe7/1ovPbSeTf/WFPGv80LnkBZog7XXs99ii+uYpm+3bayvgaVX+DgPL0/2MtZspz8SZiQGbgd6wM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=v1YV6rWN; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-45a1b0c5377so2970865e9.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Aug 2025 01:24:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755159882; x=1755764682; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XjZ/eR6SQYjR+SXWKMp+2N2e/5Kxjm09W05WAM7WjMU=;
+        b=v1YV6rWNmU6fsaHjl4Aai9kCoub56MSu6ji+yAqRobOgvUtCVokLnu/7FVpgK43Ax5
+         VVTst6wVaTIjTD/1Dw9t+CzUf3AyOwIg5515ucymvGnfx28L/uIOGSQRS5cwKUA4csna
+         Jy2EP47cb/GBaEAA86liWMLeXlajFf2WBYhZSbbBj2Yk6GGyTyUxWoTjHI6gJC6DsLNb
+         Qg1nd5QPetY17WeE4yUUEXKSXo3V5khlF2xGZmc1qjnUrc0ctrREG8Zi9/jhAbbuCgjt
+         KSKKA7Knd9IQqfKV9AuX0icnKtdAKSnlQisnyVxIov4/yiM4Jxk3f/z9qp0CzY9kq15+
+         IqXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755159882; x=1755764682;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XjZ/eR6SQYjR+SXWKMp+2N2e/5Kxjm09W05WAM7WjMU=;
+        b=Fm0ANX7xL8mxCm6xOH7WMMBWTPjZNnyYx7X0qkFbWEdSGouJ1SQlO0BiCGnX1/Uf4P
+         jgRPB6Vw/Ym9fesbD3BFWaBHBRB6qi9ZSIPxrYRyBpE5VmrIf/80tHRklGb+p3fQlsX1
+         bJTNnJTLuf0CZPTM+th/lMGvrRD8qLhi5usRaOBsn95P2+Y2mlsHukB7qDCKhkX8pNVY
+         ln0JOTAEKgtygwdi9EqLqeWgfg5tsPod66b2Y6jZs/PVKeIm9TA/PMylce6VYizMFwkC
+         uNktfIEPE9pWf1j6JKckZ3JnM8gNm4Ht2tD9TK98Up7NE+JJ8ZuMfC39avh7nQ2AqPdW
+         KoGw==
+X-Forwarded-Encrypted: i=1; AJvYcCWPVxmBAFmtU65JRKLdSgNR6SCLzjGbtELosxH7cfO8s1QcViSNmKu6J8zIwUFTPYq+bFVqfCLV9nOOhrEl@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsApWnVpCQefZHJmOhcoY0O1Pl6uWvdZRsBG9TcFs9xPsHeOeb
+	SbFoGEnFDbM8zD7wafZ5zBQyiYwcbEyJDL0Nuwc8u8Wlpdz43h1CqfRz03i9CNWv/HfpzCWNWzn
+	sGSTQm1PH6XQIIIFcGQ==
+X-Google-Smtp-Source: AGHT+IEGivgrzos4CoGDHY7uH0CTjOvIWOyqPK2uMv3U+POUyDq1mhFpmt0OotkxsQj2w6KHcsTz1JVeOL0tM4c=
+X-Received: from wmbjg12.prod.google.com ([2002:a05:600c:a00c:b0:458:a7ae:4acf])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:190a:b0:459:d6a6:792 with SMTP id 5b1f17b1804b1-45a1b67a1ddmr13345765e9.29.1755159881981;
+ Thu, 14 Aug 2025 01:24:41 -0700 (PDT)
+Date: Thu, 14 Aug 2025 08:24:41 +0000
+In-Reply-To: <34d384af-6123-4602-bde0-85ca3d14fe09@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Feedback-ID: rr08011227466eb76ce3e4e437ad93f265000074d57b1229c1e9b231b9c15b94dc87ae5bcaaf1d296d821af2:zu08011227f9fa19961d9837b310fd6f8f000023202898679270735621609aaee0cf91119224c883476d316b:rf0801122cbba89950dff1d994ded06a600000e38d9a91600849de1c9931edb8ae6ed551c6e7af003eae833ab9b405a00a:ZohoMail
-X-ZohoMailClient: External
+Mime-Version: 1.0
+References: <20250813-core-cstr-cstrings-v2-0-00be80fc541b@gmail.com> <34d384af-6123-4602-bde0-85ca3d14fe09@sirena.org.uk>
+Message-ID: <aJ2dST9C8QLUcftA@google.com>
+Subject: Re: [PATCH v2 00/19] rust: replace `kernel::c_str!` with C-Strings
+From: Alice Ryhl <aliceryhl@google.com>
+To: Mark Brown <broonie@debian.org>
+Cc: Tamir Duberstein <tamird@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	FUJITA Tomonori <fujita.tomonori@gmail.com>, Andrew Lunn <andrew@lunn.ch>, 
+	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Breno Leitao <leitao@debian.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, 
+	Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+	Leon Romanovsky <leon@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	"Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=" <kwilczynski@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
+	Rae Moar <rmoar@google.com>, Jens Axboe <axboe@kernel.dk>, 
+	Alexandre Courbot <acourbot@nvidia.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Liam Girdwood <lgirdwood@gmail.com>, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, nouveau@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, netdev@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-Lichen Liu <lichliu@redhat.com>:
-> When CONFIG_TMPFS is enabled, the initial root filesystem is a tmpfs.
-> By default, a tmpfs mount is limited to using 50% of the available RAM
-> for its content. This can be problematic in memory-constrained
-> environments, particularly during a kdump capture.
+On Wed, Aug 13, 2025 at 09:11:51PM +0100, Mark Brown wrote:
+> On Wed, Aug 13, 2025 at 11:59:10AM -0400, Tamir Duberstein wrote:
+> > This series depends on step 3[0] which depends on steps 2a[1] and 2b[2]
+> > which both depend on step 1[3].
+> > 
+> > This series also has a minor merge conflict with a small change[4] that
+> > was taken through driver-core-testing. This series is marked as
+> > depending on that change; as such it contains the post-conflict patch.
+> > 
+> > Subsystem maintainers: I would appreciate your `Acked-by`s so that this
+> > can be taken through Miguel's tree (where the previous series must go).
 > 
-> In a kdump scenario, the capture kernel boots with a limited amount of
-> memory specified by the 'crashkernel' parameter. If the initramfs is
-> large, it may fail to unpack into the tmpfs rootfs due to insufficient
-> space. This is because to get X MB of usable space in tmpfs, 2*X MB of
-> memory must be available for the mount. This leads to an OOM failure
-> during the early boot process, preventing a successful crash dump.
-> 
-> This patch introduces a new kernel command-line parameter, rootfsflags,
-> which allows passing specific mount options directly to the rootfs when
-> it is first mounted. This gives users control over the rootfs behavior.
-> 
-> For example, a user can now specify rootfsflags=size=75% to allow the
-> tmpfs to use up to 75% of the available memory. This can significantly
-> reduce the memory pressure for kdump.
-> 
-> Consider a practical example:
-> 
-> To unpack a 48MB initramfs, the tmpfs needs 48MB of usable space. With
-> the default 50% limit, this requires a memory pool of 96MB to be
-> available for the tmpfs mount. The total memory requirement is therefore
-> approximately: 16MB (vmlinuz) + 48MB (loaded initramfs) + 48MB (unpacked
-> kernel) + 96MB (for tmpfs) + 12MB (runtime overhead) ≈ 220MB.
-> 
-> By using rootfsflags=size=75%, the memory pool required for the 48MB
-> tmpfs is reduced to 48MB / 0.75 = 64MB. This reduces the total memory
-> requirement by 32MB (96MB - 64MB), allowing the kdump to succeed with a
-> smaller crashkernel size, such as 192MB.
-> 
-> An alternative approach of reusing the existing rootflags parameter was
-> considered. However, a new, dedicated rootfsflags parameter was chosen
-> to avoid altering the current behavior of rootflags (which applies to
-> the final root filesystem) and to prevent any potential regressions.
-> 
-> This approach is inspired by prior discussions and patches on the topic.
-> Ref: https://www.lightofdawn.org/blog/?viewDetailed=00128
-> Ref: https://landley.net/notes-2015.html#01-01-2015
-> Ref: https://lkml.org/lkml/2021/6/29/783
-> Ref: https://www.kernel.org/doc/html/latest/filesystems/ramfs-rootfs-initramfs.html#what-is-rootfs
-> 
-> Signed-off-by: Lichen Liu <lichliu@redhat.com>
-> ---
->  fs/namespace.c | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index ddfd4457d338..a450db31613e 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -65,6 +65,15 @@ static int __init set_mphash_entries(char *str)
->  }
->  __setup("mphash_entries=", set_mphash_entries);
->  
-> +static char * __initdata rootfs_flags;
-> +static int __init rootfs_flags_setup(char *str)
-> +{
-> +	rootfs_flags = str;
-> +	return 1;
-> +}
-> +
-> +__setup("rootfsflags=", rootfs_flags_setup);
-> +
->  static u64 event;
->  static DEFINE_XARRAY_FLAGS(mnt_id_xa, XA_FLAGS_ALLOC);
->  static DEFINE_IDA(mnt_group_ida);
-> @@ -6086,7 +6095,7 @@ static void __init init_mount_tree(void)
->  	struct mnt_namespace *ns;
->  	struct path root;
->  
-> -	mnt = vfs_kern_mount(&rootfs_fs_type, 0, "rootfs", NULL);
-> +	mnt = vfs_kern_mount(&rootfs_fs_type, 0, "rootfs", rootfs_flags);
->  	if (IS_ERR(mnt))
->  		panic("Can't create rootfs");
->  
-> -- 
-> 2.50.1
+> Something seems to have gone wrong with your posting, both my mail
+> server and the mail archives stop at patch 15.  If it were just rate
+> limiting or greylisting I'd have expected things to have sorted
+> themselves out by now for one or the other.
 
-Thank you for this patch!
+Tamir mentioned to me that he ran into a daily limit on the number of
+emails he could send.
 
-I suggest periodically check linux-next to see whether the patch got there.
-
-If it was not applied in resonable time, then resend it.
-But this time, please, clearly specify tree, which should accept it.
-I think the most apropriate tree is VFS tree here.
-So, when resending please add linux-fsdevel@vger.kernel.org to CC and say in first paragraph
-in your mail that the patch is for VFS tree.
-
---
-Askar Safin
+Alice
 
