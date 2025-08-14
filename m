@@ -1,168 +1,344 @@
-Return-Path: <linux-fsdevel+bounces-57919-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57920-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF460B26C76
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 18:24:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7757EB26CAA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 18:40:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE3061C2698D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 16:24:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 425923B1AF2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 16:38:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7546E256C76;
-	Thu, 14 Aug 2025 16:23:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F60825A354;
+	Thu, 14 Aug 2025 16:38:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SVDdbD4V"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jXOp8cEi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6635322CBF1;
-	Thu, 14 Aug 2025 16:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF273220F52
+	for <linux-fsdevel@vger.kernel.org>; Thu, 14 Aug 2025 16:38:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755188636; cv=none; b=mpUzk5fm6i2fdYNDE9M3yDR/FruYDn+hfgWG4hobU3mTG01LEsmU88AstBG3mZ5X6M9iZGooIbcAA6qpyBsTJPU61LRnBc84UI34mH0I1xTUBe+X4bratt6mdwI7Ip33u90MnJdElzTVd9OwatLAaygYb70yfdGBryzYAVaxNr8=
+	t=1755189480; cv=none; b=CUqOzL+5gUOWbUIPE+4W23jojBVl6WDQJeyP9rJhvKTe71ZllYUFHTriLdrlr3bwq8pZTbMRWabDNCrq972Q/W0jbchYBL57YgS6u3tvmSDe1UQC9/QYt0wXZkLEyVIAedlOQAxG980ORmlCZYlcyn9Jc0NUU6G8VGQSLaUYfm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755188636; c=relaxed/simple;
-	bh=uXKbJbMicUinEbfeiG/H6iA3Pq1PMc4dgYjPt/YcZZI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BG8AiHwDDR//tbyR2Q5+MJgOsLIXR8d1Y0wiXZF0ATa5o568CiYZGrg6J93/vVq3G8fiE9AiAGieLENR6V/keT1PyZjDo+W0EhdjPQjTIQRKBSgc54cBVz1qVhR52shQehfUKtBFJh8g+T9usXAZzhgNfUipRQ/qdt8grnefTM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SVDdbD4V; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=pOaspXYmR4qnAwmVi9UcnEM5QQJXPu+Og2WEpjR85DQ=; b=SVDdbD4VmD6C+cDGsO/r4I4uwX
-	U7ypcQALJ7kJ36ofFhshw9GG1oOL/RYwBeVtq+baxpeJg72tFytdpe/KwmHwxCC04/iGvMWgVz1fn
-	eeGY8DQuGhocKJumgPkljDNyxsxUu722la293e51rVJ2FQSSLPKrF3RqN8KjtVvZ+mPTyY2egc341
-	v2FMDhtoORoVedXXYPHLEdb45BAPCmRteHNgBbkterz3OkBC025NGAWiN22YHMSeGqR1fOeS/4EhN
-	5cPSiw4G/yjugV3MjqVxu96L1XIZHLX1//RI5vnNSB38SqxVWiBfK9rJCp3YpyIBQq0rTODVeiyxN
-	Gq1mZCjQ==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1umak4-000000003k8-3S3q;
-	Thu, 14 Aug 2025 16:23:52 +0000
-Message-ID: <dd25041f-98e0-4bb5-bcd5-ba3507262c76@infradead.org>
-Date: Thu, 14 Aug 2025 09:23:52 -0700
+	s=arc-20240116; t=1755189480; c=relaxed/simple;
+	bh=7K0HQrsabxo6vKvdSE2xx5aV5V+QQq2/H8olbM0gpFg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EzVUXBJCtl4CtCxIhT4bFPsI/f+7RZRjUTAvqphOAXoxkc/ltAoA0QXNjriY9D2uTd666xGzLs8azsTmMg3yY5gnFf7uyrFLs++hUwLoyg6LCZmBJ2Om2iKtYgyOrfJb/JiBkNNs8YhmJ+ZF1ShGJ+jOsxVOp0EKa0+HeZKo2lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jXOp8cEi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49E81C4CEED;
+	Thu, 14 Aug 2025 16:38:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755189480;
+	bh=7K0HQrsabxo6vKvdSE2xx5aV5V+QQq2/H8olbM0gpFg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jXOp8cEi3e83luB6yOF0OPlVJB1ymPCOy3WWU7Zb6k2Zacict4cdINUUAyyd+n6VE
+	 YlNfCoRbX7Y1fFvoTKbwQBSROYF/9ZUAIhFiiV0LUcVKUBdH0Hbl7+f2YfjV5d/FUA
+	 LUV+zidqwOC5eclkwV8ggMuBl7bUPGFINVMd9OmYp3IQt9OsMAWbcMQbyrnV4jFn24
+	 NDnieF1/4j/dhNtKWZ1ERwylNztAoJhJnjJmbMi+hHVuSpOOrikty+2L6FxT43TO/n
+	 MDN7AnMjr7udRxbnf5nqqeQR5nWODmmB8NX+kWYF6Bd5GGEP4dKY68UqbYJgEjDrio
+	 7yl2XeZxAYjwA==
+Date: Thu, 14 Aug 2025 09:37:59 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: linux-mm@kvack.org, brauner@kernel.org, willy@infradead.org,
+	jack@suse.cz, hch@infradead.org, linux-fsdevel@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [RFC PATCH v1 10/10] iomap: add granular dirty and writeback
+ accounting
+Message-ID: <20250814163759.GN7942@frogsfrogsfrogs>
+References: <20250801002131.255068-1-joannelkoong@gmail.com>
+ <20250801002131.255068-11-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND] fs: Add 'rootfsflags' to set rootfs mount options
-To: Lichen Liu <lichliu@redhat.com>, viro@zeniv.linux.org.uk,
- brauner@kernel.org, jack@suse.cz
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- safinaskar@zohomail.com, kexec@lists.infradead.org, rob@landley.net,
- weilongchen@huawei.com, cyphar@cyphar.com, linux-api@vger.kernel.org,
- zohar@linux.ibm.com, stefanb@linux.ibm.com, initramfs@vger.kernel.org
-References: <20250814103424.3287358-2-lichliu@redhat.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250814103424.3287358-2-lichliu@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250801002131.255068-11-joannelkoong@gmail.com>
 
-Hi,
+On Thu, Jul 31, 2025 at 05:21:31PM -0700, Joanne Koong wrote:
+> Add granular dirty and writeback accounting for large folios. These
+> stats are used by the mm layer for dirty balancing and throttling.
+> Having granular dirty and writeback accounting helps prevent
+> over-aggressive balancing and throttling.
+> 
+> There are 4 places in iomap this commit affects:
+> a) filemap dirtying, which now calls filemap_dirty_folio_pages()
+> b) writeback_iter with setting the wbc->no_stats_accounting bit and
+> calling clear_dirty_for_io_stats()
+> c) starting writeback, which now calls __folio_start_writeback()
+> d) ending writeback, which now calls folio_end_writeback_pages()
+> 
+> This relies on using the ifs->state dirty bitmap to track dirty pages in
+> the folio. As such, this can only be utilized on filesystems where the
+> block size >= PAGE_SIZE.
 
-On 8/14/25 3:34 AM, Lichen Liu wrote:
-> When CONFIG_TMPFS is enabled, the initial root filesystem is a tmpfs.
-> By default, a tmpfs mount is limited to using 50% of the available RAM
-> for its content. This can be problematic in memory-constrained
-> environments, particularly during a kdump capture.
-> 
-> In a kdump scenario, the capture kernel boots with a limited amount of
-> memory specified by the 'crashkernel' parameter. If the initramfs is
-> large, it may fail to unpack into the tmpfs rootfs due to insufficient
-> space. This is because to get X MB of usable space in tmpfs, 2*X MB of
-> memory must be available for the mount. This leads to an OOM failure
-> during the early boot process, preventing a successful crash dump.
-> 
-> This patch introduces a new kernel command-line parameter, rootfsflags,
-> which allows passing specific mount options directly to the rootfs when
-> it is first mounted. This gives users control over the rootfs behavior.
-> 
-> For example, a user can now specify rootfsflags=size=75% to allow the
-> tmpfs to use up to 75% of the available memory. This can significantly
-> reduce the memory pressure for kdump.
-> 
-> Consider a practical example:
-> 
-> To unpack a 48MB initramfs, the tmpfs needs 48MB of usable space. With
-> the default 50% limit, this requires a memory pool of 96MB to be
-> available for the tmpfs mount. The total memory requirement is therefore
-> approximately: 16MB (vmlinuz) + 48MB (loaded initramfs) + 48MB (unpacked
-> kernel) + 96MB (for tmpfs) + 12MB (runtime overhead) ≈ 220MB.
-> 
-> By using rootfsflags=size=75%, the memory pool required for the 48MB
-> tmpfs is reduced to 48MB / 0.75 = 64MB. This reduces the total memory
-> requirement by 32MB (96MB - 64MB), allowing the kdump to succeed with a
-> smaller crashkernel size, such as 192MB.
-> 
-> An alternative approach of reusing the existing rootflags parameter was
-> considered. However, a new, dedicated rootfsflags parameter was chosen
-> to avoid altering the current behavior of rootflags (which applies to
-> the final root filesystem) and to prevent any potential regressions.
-> 
-> This approach is inspired by prior discussions and patches on the topic.
-> Ref: https://www.lightofdawn.org/blog/?viewDetailed=00128
-> Ref: https://landley.net/notes-2015.html#01-01-2015
-> Ref: https://lkml.org/lkml/2021/6/29/783
-> Ref: https://www.kernel.org/doc/html/latest/filesystems/ramfs-rootfs-initramfs.html#what-is-rootfs
-> 
-> Signed-off-by: Lichen Liu <lichliu@redhat.com>
-> Tested-by: Rob Landley <rob@landley.net>
+Apologies for my slow responses this month. :)
+
+I wonder, does this cause an observable change in the writeback
+accounting and throttling behavior for non-fuse filesystems like XFS
+that use large folios?  I *think* this does actually reduce throttling
+for XFS, but it might not be so noticeable because the limits are much
+more generous outside of fuse?
+
+> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
 > ---
-> Hi VFS maintainers,
+>  fs/iomap/buffered-io.c | 136 ++++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 128 insertions(+), 8 deletions(-)
 > 
-> Resending this patch as it did not get picked up.
-> This patch is intended for the VFS tree.
-> 
->  fs/namespace.c | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index 8f1000f9f3df..e484c26d5e3f 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -65,6 +65,15 @@ static int __init set_mphash_entries(char *str)
->  }
->  __setup("mphash_entries=", set_mphash_entries);
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index bcc6e0e5334e..626c3c8399cc 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -20,6 +20,8 @@ struct iomap_folio_state {
+>  	spinlock_t		state_lock;
+>  	unsigned int		read_bytes_pending;
+>  	atomic_t		write_bytes_pending;
+> +	/* number of pages being currently written back */
+> +	unsigned		nr_pages_writeback;
 >  
-> +static char * __initdata rootfs_flags;
-> +static int __init rootfs_flags_setup(char *str)
+>  	/*
+>  	 * Each block has two bits in this bitmap:
+> @@ -81,6 +83,25 @@ static inline bool ifs_block_is_dirty(struct folio *folio,
+>  	return test_bit(block + blks_per_folio, ifs->state);
+>  }
+>  
+> +static unsigned ifs_count_dirty_pages(struct folio *folio)
 > +{
-> +	rootfs_flags = str;
-> +	return 1;
+> +	struct iomap_folio_state *ifs = folio->private;
+> +	struct inode *inode = folio->mapping->host;
+> +	unsigned block_size = 1 << inode->i_blkbits;
+> +	unsigned start_blk = 0;
+> +	unsigned end_blk = min((unsigned)(i_size_read(inode) >> inode->i_blkbits),
+> +				i_blocks_per_folio(inode, folio));
+> +	unsigned nblks = 0;
+> +
+> +	while (start_blk < end_blk) {
+> +		if (ifs_block_is_dirty(folio, ifs, start_blk))
+> +			nblks++;
+> +		start_blk++;
+> +	}
+
+Hmm, isn't this bitmap_weight(ifs->state, blks_per_folio) ?
+
+Ohh wait no, the dirty bitmap doesn't start on a byte boundary because
+the format of the bitmap is [uptodate bits][dirty bits].
+
+Maybe those two should be reversed, because I bet the dirty state gets
+changed a lot more over the lifetime of a folio than the uptodate bits.
+
+> +
+> +	return nblks * (block_size >> PAGE_SHIFT);
 > +}
 > +
-> +__setup("rootfsflags=", rootfs_flags_setup);
+>  static unsigned ifs_find_dirty_range(struct folio *folio,
+>  		struct iomap_folio_state *ifs, u64 *range_start, u64 range_end)
+>  {
+> @@ -165,6 +186,63 @@ static void iomap_set_range_dirty(struct folio *folio, size_t off, size_t len)
+>  		ifs_set_range_dirty(folio, ifs, off, len);
+>  }
+>  
+> +static long iomap_get_range_newly_dirtied(struct folio *folio, loff_t pos,
+> +		unsigned len)
+> +{
+> +	struct iomap_folio_state *ifs = folio->private;
+> +	struct inode *inode = folio->mapping->host;
+> +	unsigned start_blk = pos >> inode->i_blkbits;
+> +	unsigned end_blk = min((unsigned)((pos + len - 1) >> inode->i_blkbits),
+> +				i_blocks_per_folio(inode, folio) - 1);
+> +	unsigned nblks = 0;
+> +	unsigned block_size = 1 << inode->i_blkbits;
+> +
+> +	while (start_blk <= end_blk) {
+> +		if (!ifs_block_is_dirty(folio, ifs, start_blk))
+> +			nblks++;
+> +		start_blk++;
+> +	}
 
-Please document this option (alphabetically) in
-Documentation/admin-guide/kernel-parameters.txt.
-
-Thanks.
+...then this becomes (endblk - startblk) - bitmap_weight().
 
 > +
->  static u64 event;
->  static DEFINE_XARRAY_FLAGS(mnt_id_xa, XA_FLAGS_ALLOC);
->  static DEFINE_IDA(mnt_group_ida);
-> @@ -5677,7 +5686,7 @@ static void __init init_mount_tree(void)
->  	struct mnt_namespace *ns;
->  	struct path root;
+> +	return nblks * (block_size >> PAGE_SHIFT);
+> +}
+> +
+> +static bool iomap_granular_dirty_pages(struct folio *folio)
+> +{
+> +	struct iomap_folio_state *ifs = folio->private;
+> +	struct inode *inode;
+> +	unsigned block_size;
+> +
+> +	if (!ifs)
+> +		return false;
+> +
+> +	inode = folio->mapping->host;
+> +	block_size = 1 << inode->i_blkbits;
+> +
+> +	if (block_size >= PAGE_SIZE) {
+> +		WARN_ON(block_size & (PAGE_SIZE - 1));
+> +		return true;
+> +	}
+> +	return false;
+> +}
+> +
+> +static bool iomap_dirty_folio_range(struct address_space *mapping, struct folio *folio,
+> +			loff_t pos, unsigned len)
+> +{
+> +	long nr_new_dirty_pages;
+> +
+> +	if (!iomap_granular_dirty_pages(folio)) {
+> +		iomap_set_range_dirty(folio, pos, len);
+> +		return filemap_dirty_folio(mapping, folio);
+> +	}
+> +
+> +	nr_new_dirty_pages = iomap_get_range_newly_dirtied(folio, pos, len);
+> +	if (!nr_new_dirty_pages)
+> +		return false;
+> +
+> +	iomap_set_range_dirty(folio, pos, len);
+> +	return filemap_dirty_folio_pages(mapping, folio, nr_new_dirty_pages);
+> +}
+> +
+>  static struct iomap_folio_state *ifs_alloc(struct inode *inode,
+>  		struct folio *folio, unsigned int flags)
+>  {
+> @@ -661,8 +739,7 @@ bool iomap_dirty_folio(struct address_space *mapping, struct folio *folio)
+>  	size_t len = folio_size(folio);
 >  
-> -	mnt = vfs_kern_mount(&rootfs_fs_type, 0, "rootfs", NULL);
-> +	mnt = vfs_kern_mount(&rootfs_fs_type, 0, "rootfs", rootfs_flags);
->  	if (IS_ERR(mnt))
->  		panic("Can't create rootfs");
+>  	ifs_alloc(inode, folio, 0);
+> -	iomap_set_range_dirty(folio, 0, len);
+> -	return filemap_dirty_folio(mapping, folio);
+> +	return iomap_dirty_folio_range(mapping, folio, 0, len);
+>  }
+>  EXPORT_SYMBOL_GPL(iomap_dirty_folio);
 >  
-
--- 
-~Randy
-
+> @@ -886,8 +963,8 @@ static bool __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
+>  	if (unlikely(copied < len && !folio_test_uptodate(folio)))
+>  		return false;
+>  	iomap_set_range_uptodate(folio, offset_in_folio(folio, pos), len);
+> -	iomap_set_range_dirty(folio, offset_in_folio(folio, pos), copied);
+> -	filemap_dirty_folio(inode->i_mapping, folio);
+> +	iomap_dirty_folio_range(inode->i_mapping, folio,
+> +			offset_in_folio(folio, pos), copied);
+>  	return true;
+>  }
+>  
+> @@ -1560,6 +1637,29 @@ void iomap_start_folio_write(struct inode *inode, struct folio *folio,
+>  }
+>  EXPORT_SYMBOL_GPL(iomap_start_folio_write);
+>  
+> +static void iomap_folio_start_writeback(struct folio *folio)
+> +{
+> +	struct iomap_folio_state *ifs = folio->private;
+> +
+> +	if (!iomap_granular_dirty_pages(folio))
+> +		return folio_start_writeback(folio);
+> +
+> +	__folio_start_writeback(folio, false, ifs->nr_pages_writeback);
+> +}
+> +
+> +static void iomap_folio_end_writeback(struct folio *folio)
+> +{
+> +	struct iomap_folio_state *ifs = folio->private;
+> +	long nr_pages_writeback;
+> +
+> +	if (!iomap_granular_dirty_pages(folio))
+> +		return folio_end_writeback(folio);
+> +
+> +	nr_pages_writeback = ifs->nr_pages_writeback;
+> +	ifs->nr_pages_writeback = 0;
+> +	folio_end_writeback_pages(folio, nr_pages_writeback);
+> +}
+> +
+>  void iomap_finish_folio_write(struct inode *inode, struct folio *folio,
+>  		size_t len)
+>  {
+> @@ -1569,7 +1669,7 @@ void iomap_finish_folio_write(struct inode *inode, struct folio *folio,
+>  	WARN_ON_ONCE(ifs && atomic_read(&ifs->write_bytes_pending) <= 0);
+>  
+>  	if (!ifs || atomic_sub_and_test(len, &ifs->write_bytes_pending))
+> -		folio_end_writeback(folio);
+> +		iomap_folio_end_writeback(folio);
+>  }
+>  EXPORT_SYMBOL_GPL(iomap_finish_folio_write);
+>  
+> @@ -1657,6 +1757,21 @@ static bool iomap_writeback_handle_eof(struct folio *folio, struct inode *inode,
+>  	return true;
+>  }
+>  
+> +static void iomap_update_dirty_stats(struct folio *folio)
+> +{
+> +	struct iomap_folio_state *ifs = folio->private;
+> +	long nr_dirty_pages;
+> +
+> +	if (iomap_granular_dirty_pages(folio)) {
+> +		nr_dirty_pages = ifs_count_dirty_pages(folio);
+> +		ifs->nr_pages_writeback = nr_dirty_pages;
+> +	} else {
+> +		nr_dirty_pages = folio_nr_pages(folio);
+> +	}
+> +
+> +	clear_dirty_for_io_stats(folio, nr_dirty_pages);
+> +}
+> +
+>  int iomap_writeback_folio(struct iomap_writepage_ctx *wpc, struct folio *folio)
+>  {
+>  	struct iomap_folio_state *ifs = folio->private;
+> @@ -1674,6 +1789,8 @@ int iomap_writeback_folio(struct iomap_writepage_ctx *wpc, struct folio *folio)
+>  
+>  	trace_iomap_writeback_folio(inode, pos, folio_size(folio));
+>  
+> +	iomap_update_dirty_stats(folio);
+> +
+>  	if (!iomap_writeback_handle_eof(folio, inode, &end_pos))
+>  		return 0;
+>  	WARN_ON_ONCE(end_pos <= pos);
+> @@ -1681,6 +1798,7 @@ int iomap_writeback_folio(struct iomap_writepage_ctx *wpc, struct folio *folio)
+>  	if (i_blocks_per_folio(inode, folio) > 1) {
+>  		if (!ifs) {
+>  			ifs = ifs_alloc(inode, folio, 0);
+> +			ifs->nr_pages_writeback = folio_nr_pages(folio);
+>  			iomap_set_range_dirty(folio, 0, end_pos - pos);
+>  		}
+>  
+> @@ -1698,7 +1816,7 @@ int iomap_writeback_folio(struct iomap_writepage_ctx *wpc, struct folio *folio)
+>  	 * Set the writeback bit ASAP, as the I/O completion for the single
+>  	 * block per folio case happen hit as soon as we're submitting the bio.
+>  	 */
+> -	folio_start_writeback(folio);
+> +	iomap_folio_start_writeback(folio);
+>  
+>  	/*
+>  	 * Walk through the folio to find dirty areas to write back.
+> @@ -1731,10 +1849,10 @@ int iomap_writeback_folio(struct iomap_writepage_ctx *wpc, struct folio *folio)
+>  	 */
+>  	if (ifs) {
+>  		if (atomic_dec_and_test(&ifs->write_bytes_pending))
+> -			folio_end_writeback(folio);
+> +			iomap_folio_end_writeback(folio);
+>  	} else {
+>  		if (!wb_pending)
+> -			folio_end_writeback(folio);
+> +			iomap_folio_end_writeback(folio);
+>  	}
+>  	mapping_set_error(inode->i_mapping, error);
+>  	return error;
+> @@ -1756,6 +1874,8 @@ iomap_writepages(struct iomap_writepage_ctx *wpc)
+>  			PF_MEMALLOC))
+>  		return -EIO;
+>  
+> +	wpc->wbc->no_stats_accounting = true;
+> +
+>  	while ((folio = writeback_iter(mapping, wpc->wbc, folio, &error))) {
+>  		error = iomap_writeback_folio(wpc, folio);
+>  		folio_unlock(folio);
+> -- 
+> 2.47.3
+> 
+> 
 
