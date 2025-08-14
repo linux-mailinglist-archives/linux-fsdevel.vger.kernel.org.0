@@ -1,115 +1,155 @@
-Return-Path: <linux-fsdevel+bounces-57913-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57914-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92384B26AD1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 17:25:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3D3FB26B15
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 17:34:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DF261C25A79
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 15:20:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58636A23D7A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 15:31:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2657F225761;
-	Thu, 14 Aug 2025 15:19:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 851A2225A4F;
+	Thu, 14 Aug 2025 15:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="nLbSPa6w"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="jTOR52cE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875E4221FBC
-	for <linux-fsdevel@vger.kernel.org>; Thu, 14 Aug 2025 15:19:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A34A321B9D6;
+	Thu, 14 Aug 2025 15:30:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755184775; cv=none; b=fgSzObKlZKxP5+bhslUOEwrPDhq+fThasf1QKnhQ+xGxDYAIGoWI1ZLt3RjSWFebp1CtSje3Kqf4q783Kt8Pn02Mhy48iPbzASmNi3WMhphSubS7yHHhifbEHQYuvnHZ+4wheeZLb5vIKS0K49HQ/amty7X04KWYKGMc7+p+bjY=
+	t=1755185450; cv=none; b=PhpxBbjIVakEsl81t/Pj6FJr7g4QZBrlfRMizaLeJOXEQnNQ0nguYXUJWEkur83fzvwbDpyHnM+grtG+tWAgpsmM3cVwwxTBP4G94fRbE/AKH11b0nEJ3tKIyU2u60XX7vrvo0I0DFMPbwT5A2WlCYaX7bXhHfc1RIVfCFZ2avc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755184775; c=relaxed/simple;
-	bh=w0w0dvsu6k/K6PwFlV7vPpkTwV9o99ZgnYkwYYG/8s4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dlAfRquq0DlAYkhM23GJ2j4BGpdbVLG+VeuxoDU0rs74xW5VQuhFpIA5KRwFQm+Jd8qmv691OzQHPlvZxjVqYBSMAq8ffhAb5ZG8Z3FDWwtXcd6w5LSUAYS0qcm7LTLfO/M9Oy4ugqZ7S923Ajjxeo8Lw4PQ5CUO4WEfD2yXJMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=nLbSPa6w; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4b109bd63d0so12909961cf.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Aug 2025 08:19:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1755184772; x=1755789572; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=EA1ZvFf+qWrndIFVkpDd7IpLWJx6+2D8DPmrDSfzpF0=;
-        b=nLbSPa6wSfW6iCCBQoxh4+p9jCDfOizqypU73rXtCjn1BgXV957iRTFTtfAR3X1aK2
-         ojqSsWGo4QLxAJmi5KwRfXOo3wvWLyp6gyMHoktgawOgtvte0P8E5OPp68kiup5CY1uV
-         ENnEaxbmpkhRj84GdnITQXTFiwiooHB35Gat0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755184772; x=1755789572;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EA1ZvFf+qWrndIFVkpDd7IpLWJx6+2D8DPmrDSfzpF0=;
-        b=uHnfQ/V9rhLg5k8ldCURdAsi+3nEayAPZyiiCT8SJMpOfgrjBg2btJwCAkctiFgiku
-         yV8mb4yK144wbbIQKADx6K0oUhnY8CnuVFNg20TM3wPw6a5/cnUwEF9spWdRvtJWwz9d
-         Q6u2vk5I1lFfpXylky6/j5L21OEtc7HQLCdp8rJ8adhNYbCRHDo1YaGuo/lqBRxVKmDp
-         QqQogJ6uOanQ21V9hpdYi3LyuhZuUW1zzhmuT/iZ9oaCJ2ECToxdiQ5Y75c7TJVcJL8I
-         a3+NulgwUVU//V74PgqAFjyIS8WjNTGMcS4QlHs+9gEPVkzRIBAEg6oGYjwf79mflwK+
-         lI5g==
-X-Forwarded-Encrypted: i=1; AJvYcCUL/k3JhjpJqftrv1c/wHin2Rn4qJKEou7/1qZ0feHQZz7QC1xAQn8Wi4KVOjlTl0sCJxYaEowLdNjFmgRG@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVGTdewCssuUNNA8HStH8DTNfICrl5rTIarNgdZi4mpryU+CJE
-	6TbW5eWwO2bN49wDvOw+Fh01b/UzMufDM+LblJhls+25VeuOVi656Lg4Vyw4wCGpXImivZvzZDK
-	hWH1jLcITg9kAJBL4PLyF5p/2KMkZuShMYrCRmb/3jg==
-X-Gm-Gg: ASbGncvQJrC/6D72fnIf4pduhXez6dm3hvpJvFusl9xAcocAFP7ZVUy6gGdsQNNnmdK
-	b70mjACalf40anhdj3C2vehCrgQvd9uhUbwoIv2E7T700ytHHiyjW3DU9KNkZ2eNw4nw1oKMAxt
-	jiRBa+WNrLmhDLUJ0fo7fOKxbL2Pwzwap4z7IOCh3tPsFGr0mHq1aWyJv0LO9/ZoadKeTlvQVpV
-	sSg/5jp
-X-Google-Smtp-Source: AGHT+IG2qa/e3q/lS7fdE17E/mieIqz9XZskfeQdm0xkHvlzBuR85dHk6whip69ESAWWHza3LlnZuCoCgfbTex8i3Ho=
-X-Received: by 2002:a05:622a:5c9a:b0:4b0:7327:1bf5 with SMTP id
- d75a77b69052e-4b10a958412mr55498911cf.6.1755184772275; Thu, 14 Aug 2025
- 08:19:32 -0700 (PDT)
+	s=arc-20240116; t=1755185450; c=relaxed/simple;
+	bh=cvTYcOO2SFOCDjwerP1KEOTUieXi4c8bDV0Z2qhr2s4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LCNVFuF9QEbSi1LuTJ12N7FashyRRv7NMAZgqIijJATbUTtgVnwfpXju9RKroLX001/15shT4g1HFz1/vXrqXzq4OxjXts6Br2ozB5rzgdxUgPK8Ux3GZob1A+lGtTub49ZYzQSY0rv2qBnV5OAWeOs5WBN1lbqPMp6MMNjQVVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=jTOR52cE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51789C4CEED;
+	Thu, 14 Aug 2025 15:30:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1755185450;
+	bh=cvTYcOO2SFOCDjwerP1KEOTUieXi4c8bDV0Z2qhr2s4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jTOR52cELhkyDE+NrphwZYdLWf4cfJAMhSsdNkjjGXFVbnh3vqBpW91wVEGUkEYtJ
+	 JRwUwCFEaf4x+OyYrdf0R9Ua1H5/GNFbwLX4h6vwnDEiIka6iFvJzrjB6meClf4B8X
+	 WkXh/Yp7lXXwYtX1kgmHJ7Jz6UEKqS9UWLtHT8Mc=
+Date: Thu, 14 Aug 2025 17:30:46 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, stable@vger.kernel.org,
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	hargar@microsoft.com, broonie@kernel.org, achill@achill.org,
+	qemu-devel@nongnu.org,
+	Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Ben Copeland <benjamin.copeland@linaro.org>,
+	LTP List <ltp@lists.linux.it>, chrubis <chrubis@suse.cz>,
+	Petr Vorel <pvorel@suse.cz>, Ian Rogers <irogers@google.com>,
+	linux-perf-users@vger.kernel.org, Joseph Qi <jiangqi903@gmail.com>,
+	Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+	linux-ext4 <linux-ext4@vger.kernel.org>,
+	Zhang Yi <yi.zhang@huawei.com>, Theodore Ts'o <tytso@mit.edu>,
+	Baokun Li <libaokun1@huawei.com>
+Subject: Re: [PATCH 6.16 000/627] 6.16.1-rc1 review
+Message-ID: <2025081436-upchuck-shush-adba@gregkh>
+References: <20250812173419.303046420@linuxfoundation.org>
+ <CA+G9fYtBnCSa2zkaCn-oZKYz8jz5FZj0HS7DjSfMeamq3AXqNg@mail.gmail.com>
+ <2025081300-frown-sketch-f5bd@gregkh>
+ <CA+G9fYuEb7Y__CVHxZ8VkWGqfA4imWzXsBhPdn05GhOandg0Yw@mail.gmail.com>
+ <2025081311-purifier-reviver-aeb2@gregkh>
+ <42aace87-1b89-4b17-96f1-3efbabc4acf3@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250703185032.46568-1-john@groves.net> <20250703185032.46568-12-john@groves.net>
- <20250709035911.GE2672029@frogsfrogsfrogs> <ttjh3gqk3fmykwrb7dg6xaqhkpxk7g773fkvuzvbdlefimpseg@l5ermgxixeen>
- <20250712055405.GK2672029@frogsfrogsfrogs> <CAJfpegspQYVbWVztU5_XFwbGaTQKe2NCm2mcui6J3qv1VDxdSQ@mail.gmail.com>
- <z56yzi6y4hbbvcwpqzysbmztdhgsuqavjbnhsjxp3iumzvvywv@ymudodg3mb5x>
-In-Reply-To: <z56yzi6y4hbbvcwpqzysbmztdhgsuqavjbnhsjxp3iumzvvywv@ymudodg3mb5x>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 14 Aug 2025 17:19:20 +0200
-X-Gm-Features: Ac12FXw8eO26MUJ86ncWZmuTB9wijlUFGNEwkcMvFc2CD_KfkHGAKLg17yDdXIs
-Message-ID: <CAJfpegsQxSv+x5=u1-ikR_Pk7L+h_AqNBW1XxM-b1G2TLPP4LA@mail.gmail.com>
-Subject: Re: [RFC V2 11/18] famfs_fuse: Basic famfs mount opts
-To: John Groves <John@groves.net>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, Dan Williams <dan.j.williams@intel.com>, 
-	Bernd Schubert <bschubert@ddn.com>, John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Randy Dunlap <rdunlap@infradead.org>, Jeff Layton <jlayton@kernel.org>, 
-	Kent Overstreet <kent.overstreet@linux.dev>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, 
-	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Amir Goldstein <amir73il@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	Stefan Hajnoczi <shajnocz@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, 
-	Josef Bacik <josef@toxicpanda.com>, Aravind Ramesh <arramesh@micron.com>, 
-	Ajay Joshi <ajayjoshi@micron.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <42aace87-1b89-4b17-96f1-3efbabc4acf3@huaweicloud.com>
 
-On Thu, 14 Aug 2025 at 16:39, John Groves <John@groves.net> wrote:
+On Thu, Aug 14, 2025 at 09:27:49AM +0800, Zhang Yi wrote:
+> On 2025/8/13 22:53, Greg Kroah-Hartman wrote:
+> > On Wed, Aug 13, 2025 at 08:01:51PM +0530, Naresh Kamboju wrote:
+> >> Hi Greg,
+> >>
+> >>>> 2)
+> >>>>
+> >>>> The following list of LTP syscalls failure noticed on qemu-arm64 with
+> >>>> stable-rc 6.16.1-rc1 with CONFIG_ARM64_64K_PAGES=y build configuration.
+> >>>>
+> >>>> Most failures report ENOSPC (28) or mkswap errors, which may be related
+> >>>> to disk space handling in the 64K page configuration on qemu-arm64.
+> >>>>
+> >>>> The issue is reproducible on multiple runs.
+> >>>>
+> >>>> * qemu-arm64, ltp-syscalls - 64K page size test failures list,
+> >>>>
+> >>>>   - fallocate04
+> >>>>   - fallocate05
+> >>>>   - fdatasync03
+> >>>>   - fsync01
+> >>>>   - fsync04
+> >>>>   - ioctl_fiemap01
+> >>>>   - swapoff01
+> >>>>   - swapoff02
+> >>>>   - swapon01
+> >>>>   - swapon02
+> >>>>   - swapon03
+> >>>>   - sync01
+> >>>>   - sync_file_range02
+> >>>>   - syncfs01
+> >>>>
+> >>>> Reproducibility:
+> >>>>  - 64K config above listed test fails
+> >>>>  - 4K config above listed test pass.
+> >>>>
+> >>>> Regression Analysis:
+> >>>> - New regression? yes
+> >>>
+> >>> Regression from 6.16?  Or just from 6.15.y?
+> >>
+> >> Based on available data, the issue is not present in v6.16 or v6.15.
+> >>
+> >> Anders, bisected this regression and found,
+> >>
+> >>   ext4: correct the reserved credits for extent conversion
+> >>     [ Upstream commit 95ad8ee45cdbc321c135a2db895d48b374ef0f87 ]
+> >>
+> >> Report lore link,
+> >>
+> >> https://lore.kernel.org/stable/CA+G9fYtBnCSa2zkaCn-oZKYz8jz5FZj0HS7DjSfMeamq3AXqNg@mail.gmail.com/
+> > 
+> > Great, and that's also affecting 6.17-rc1 so we are "bug compatible"?
+> > :)
+> > 
+> 
+> Hi,
+> 
+> This issue has already fixed in 6.17-rc1 through this series:
+> 
+> https://lore.kernel.org/linux-ext4/20250707140814.542883-1-yi.zhang@huaweicloud.com/
+> 
+> 
+> To fix this issue in 6.16, it's necessary to backport the whole series
+> instead of just pick 5137d6c8906b ("ext4: fix insufficient credits
+> calculation in ext4_meta_trans_blocks()") and 95ad8ee45cdb {"ext4: correct
+> the reserved credits for extent conversion").  Otherwise, this will make
+> the problem more likely to occur.
 
-> Having a generic approach rather than a '-o' option would be fine with me.
-> Also happy to entertain other ideas...
+Thanks, I'll just postpone this one for now.
 
-We could just allow arbitrary options to be set by the server.  It
-might break cases where the server just passes unknown options down
-into the kernel, which currently are rejected.  I don't think this is
-common practice, but still it sounds a bit risky.
-
-Alternatively allow INIT_REPLY to set up misc options, which can only
-be done explicitly, so no risk there.
-
-Thanks,
-Miklos
+greg k-h
 
