@@ -1,101 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-57839-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57836-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 542FBB25B4C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 07:52:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F602B25B43
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 07:52:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CC69566B23
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 05:49:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FA5217BC2B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 05:49:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EEB12253E9;
-	Thu, 14 Aug 2025 05:49:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 196BF228CB0;
+	Thu, 14 Aug 2025 05:48:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="eqn3nTfJ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hM6/zLqM";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="eqn3nTfJ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hM6/zLqM"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="F39Y3e43";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="9cxvEPi4";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="F39Y3e43";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="9cxvEPi4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BCFC224AE0
-	for <linux-fsdevel@vger.kernel.org>; Thu, 14 Aug 2025 05:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0015F2264A1
+	for <linux-fsdevel@vger.kernel.org>; Thu, 14 Aug 2025 05:48:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755150550; cv=none; b=iz9n6+WANS3xJsIj5JzSTyXyk/JpBfTTOK1mi9vVNt6h9fHQ9kOZMc3l8MKNrZvXCACHKDNKKL3z4sLGIm0exFvmsMsUhOT7D+++g+Gs42gcFH836ELbf8lfEV12CzviV7cPDewHiBXZwSQWzkdQT1zRuBj54nt3OrMbsXYd3MQ=
+	t=1755150538; cv=none; b=eEkCP8mnFhck38opeqTnOXsUya+Yu8MfnrMqoQr1qYfqiipgOWGRAZm+q0LX60WYqJtG8SmUkNIf1rcYCXVLaL3LkLvUwbaQiUpsqK7t4WC0A8P7GwukY493YRp+Oo+tnUIbiO5gavF8mpSa5R/xnfoGvT0kjb3Ms+KacSnbRsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755150550; c=relaxed/simple;
-	bh=pZ/gOI0k4sDj/lLAzb/QoiEwC4zgMq88cnBUTJoxozQ=;
+	s=arc-20240116; t=1755150538; c=relaxed/simple;
+	bh=Qy2lDVaU9tp922VLOFrG88qVJpSrPTXd5mXfHZMRND0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ns7QT8TLeC9/KYjKZtJ5RtzE1KeQ9wpsGN6A+ZnB4Z2kZwjwUXRcAYc5+q/yWMug2o0zYVxpQfPwxzeXtaL8kgTt6NSqYBR/Ej9Aq7gzo/h/dbFqHW34YxmHPLF4RyOVads5wkwKKrKiOI+IZ/GYsx0cQpu/CgXoC3p0UGedz4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=eqn3nTfJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hM6/zLqM; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=eqn3nTfJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hM6/zLqM; arc=none smtp.client-ip=195.135.223.131
+	 MIME-Version; b=GSdBdJRVjN4VSASqIZRgrzT9dZvgmcG+T1GGikmYe+EyLwXZvIvOeUB665ZcacQLxdNdL0wout+roXjfyaygFsHzcEbpl+kSRJL8Q9Ij7Sstbz1heXThFW1mev5bEmiCWv5FOnVyfuejA80aWC0wuQ/EZejO79gREwhonJiTiUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=F39Y3e43; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=9cxvEPi4; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=F39Y3e43; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=9cxvEPi4; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 0597E1F7D1;
-	Thu, 14 Aug 2025 05:48:51 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 500A921B1C;
+	Thu, 14 Aug 2025 05:48:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755150531; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1755150533; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=lnh4KOoFyfui8L9tod3Xuqssl1j5kS74I0ySiKi//IU=;
-	b=eqn3nTfJtIY5OSOrkYm3Yxi2JUXwvS8SjiwKxPUhNumfJQDnaeu+F15zeNpM3v37vy5Apn
-	duNYTSHZeM/OQJpBIir8GZzaeBenUCe0FSCxtaZz5/wEY0QyR+IbAVvQKFmUT6ib88g+p8
-	+0NYVofrLI1P0lOVTXiwjzDzznUQFG8=
+	bh=DStSVktOkl/n6gofwO0PCDNIbvcnCso3mNWL07flB1A=;
+	b=F39Y3e43R/ozFllSA2himjAv5qYWJS7wL0/ttF/+88pOO7kmgOG1e8wCqDTpXvetif9QJ1
+	Hy82jAtINnlCFcGGj74F0CyBBsNffcflCn7uiK1WkmK5NWjzZP2O8ZqOAVa+Ij1wU/0WDr
+	n8iEOG/2q15BVTIk31Wrj3wDCmAgTnk=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755150531;
+	s=susede2_ed25519; t=1755150533;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=lnh4KOoFyfui8L9tod3Xuqssl1j5kS74I0ySiKi//IU=;
-	b=hM6/zLqMQSikb1oDd88BfOctuxaa5YzMNr8G4k0XZ7/Gu5vTZEqza9ucruIxQM8VMns9mE
-	mjVWUG0OPrUq+YCQ==
-Authentication-Results: smtp-out2.suse.de;
+	bh=DStSVktOkl/n6gofwO0PCDNIbvcnCso3mNWL07flB1A=;
+	b=9cxvEPi4DKBpBHODpEOu3BsDVKPwLku8n/6t98L8QU373jynM8dRWF8F10aXJ3pvoZ6c/w
+	lunixFk5Ee8oCKBg==
+Authentication-Results: smtp-out1.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755150531; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1755150533; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=lnh4KOoFyfui8L9tod3Xuqssl1j5kS74I0ySiKi//IU=;
-	b=eqn3nTfJtIY5OSOrkYm3Yxi2JUXwvS8SjiwKxPUhNumfJQDnaeu+F15zeNpM3v37vy5Apn
-	duNYTSHZeM/OQJpBIir8GZzaeBenUCe0FSCxtaZz5/wEY0QyR+IbAVvQKFmUT6ib88g+p8
-	+0NYVofrLI1P0lOVTXiwjzDzznUQFG8=
+	bh=DStSVktOkl/n6gofwO0PCDNIbvcnCso3mNWL07flB1A=;
+	b=F39Y3e43R/ozFllSA2himjAv5qYWJS7wL0/ttF/+88pOO7kmgOG1e8wCqDTpXvetif9QJ1
+	Hy82jAtINnlCFcGGj74F0CyBBsNffcflCn7uiK1WkmK5NWjzZP2O8ZqOAVa+Ij1wU/0WDr
+	n8iEOG/2q15BVTIk31Wrj3wDCmAgTnk=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755150531;
+	s=susede2_ed25519; t=1755150533;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=lnh4KOoFyfui8L9tod3Xuqssl1j5kS74I0ySiKi//IU=;
-	b=hM6/zLqMQSikb1oDd88BfOctuxaa5YzMNr8G4k0XZ7/Gu5vTZEqza9ucruIxQM8VMns9mE
-	mjVWUG0OPrUq+YCQ==
+	bh=DStSVktOkl/n6gofwO0PCDNIbvcnCso3mNWL07flB1A=;
+	b=9cxvEPi4DKBpBHODpEOu3BsDVKPwLku8n/6t98L8QU373jynM8dRWF8F10aXJ3pvoZ6c/w
+	lunixFk5Ee8oCKBg==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4C94913479;
-	Thu, 14 Aug 2025 05:48:49 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8B5AB13479;
+	Thu, 14 Aug 2025 05:48:51 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id cB7eAcF4nWiEYQAAD6G6ig
-	(envelope-from <ddiss@suse.de>); Thu, 14 Aug 2025 05:48:49 +0000
+	id SG9BEcN4nWiEYQAAD6G6ig
+	(envelope-from <ddiss@suse.de>); Thu, 14 Aug 2025 05:48:51 +0000
 From: David Disseldorp <ddiss@suse.de>
 To: linux-kbuild@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
 Cc: linux-next@vger.kernel.org,
 	David Disseldorp <ddiss@suse.de>
-Subject: [PATCH v2 5/7] gen_initramfs.sh: use gen_init_cpio -o parameter
-Date: Thu, 14 Aug 2025 15:18:03 +1000
-Message-ID: <20250814054818.7266-6-ddiss@suse.de>
+Subject: [PATCH v2 6/7] docs: initramfs: file data alignment via name padding
+Date: Thu, 14 Aug 2025 15:18:04 +1000
+Message-ID: <20250814054818.7266-7-ddiss@suse.de>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250814054818.7266-1-ddiss@suse.de>
 References: <20250814054818.7266-1-ddiss@suse.de>
@@ -106,9 +106,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
 X-Spamd-Result: default: False [-6.80 / 50.00];
 	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[99.99%];
+	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	MID_CONTAINS_FROM(1.00)[];
 	R_MISSING_CHARSET(0.50)[];
@@ -127,46 +128,42 @@ X-Spamd-Result: default: False [-6.80 / 50.00];
 	RCPT_COUNT_THREE(0.00)[4];
 	RCVD_TLS_ALL(0.00)[]
 X-Spam-Flag: NO
-X-Spam-Level: 
 X-Spam-Score: -6.80
 
-gen_init_cpio can now write to a file directly, so use it when
-gen_initramfs.sh is called with -o (e.g. usr/Makefile invocation).
+The existing cpio extraction logic reads (maximum PATH_MAX) name_len
+bytes from the archive into the collected name buffer and ensures that
+the trailing byte is a null-terminator. This allows the actual file name
+to be shorter than name_len, with the name string simply zero-terminated
+prior to the last byte.
 
+Initramfs generators, such as dracut-cpio[1], can take advantage of name
+zero-padding to align file data segments within the archive to
+filesystem block boundaries. Block boundary alignment may allow the
+copy_file_range syscall to reflink archive source and destination
+extents.
+
+Link: https://github.com/dracutdevs/dracut/commit/300e4b116c624bca1b9e7251708b1ae656fe9157 [1]
 Signed-off-by: David Disseldorp <ddiss@suse.de>
 ---
- usr/gen_initramfs.sh | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ Documentation/driver-api/early-userspace/buffer-format.rst | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/usr/gen_initramfs.sh b/usr/gen_initramfs.sh
-index 14b5782f961a8..7eba2fddf0ef2 100755
---- a/usr/gen_initramfs.sh
-+++ b/usr/gen_initramfs.sh
-@@ -193,7 +193,8 @@ root_gid=0
- dep_list=
- timestamp=
- cpio_list=$(mktemp ${TMPDIR:-/tmp}/cpiolist.XXXXXX)
--output="/dev/stdout"
-+# gen_init_cpio writes to stdout by default
-+output=""
+diff --git a/Documentation/driver-api/early-userspace/buffer-format.rst b/Documentation/driver-api/early-userspace/buffer-format.rst
+index 726bfa2fe70da..4597a91100b7b 100644
+--- a/Documentation/driver-api/early-userspace/buffer-format.rst
++++ b/Documentation/driver-api/early-userspace/buffer-format.rst
+@@ -86,6 +86,11 @@ c_mtime is ignored unless CONFIG_INITRAMFS_PRESERVE_MTIME=y is set.
+ The c_filesize should be zero for any file which is not a regular file
+ or symlink.
  
- trap "rm -f $cpio_list" EXIT
- 
-@@ -207,7 +208,7 @@ while [ $# -gt 0 ]; do
- 			shift
- 			;;
- 		"-o")	# generate cpio image named $1
--			output="$1"
-+			output="-o $1"
- 			shift
- 			;;
- 		"-u")	# map $1 to uid=0 (root)
-@@ -246,4 +247,4 @@ done
- 
- # If output_file is set we will generate cpio archive
- # we are careful to delete tmp files
--usr/gen_init_cpio $timestamp $cpio_list > $output
-+usr/gen_init_cpio $output $timestamp $cpio_list
++c_namesize may account for more than one trailing '\0', as long as the
++value doesn't exceed PATH_MAX.  This can be useful for ensuring that a
++subsequent file data segment is aligned, e.g. to a filesystem block
++boundary.
++
+ The c_chksum field contains a simple 32-bit unsigned sum of all the
+ bytes in the data field.  cpio(1) refers to this as "crc", which is
+ clearly incorrect (a cyclic redundancy check is a different and
 -- 
 2.43.0
 
