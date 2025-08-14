@@ -1,101 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-57834-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57839-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDD55B25B40
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 07:52:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 542FBB25B4C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 07:52:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5B44564DEE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 05:49:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CC69566B23
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 05:49:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1481226D0C;
-	Thu, 14 Aug 2025 05:48:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EEB12253E9;
+	Thu, 14 Aug 2025 05:49:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0LCyhDQ/";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="oDVE42l4";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0LCyhDQ/";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="oDVE42l4"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="eqn3nTfJ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hM6/zLqM";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="eqn3nTfJ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hM6/zLqM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D74D22576E
-	for <linux-fsdevel@vger.kernel.org>; Thu, 14 Aug 2025 05:48:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BCFC224AE0
+	for <linux-fsdevel@vger.kernel.org>; Thu, 14 Aug 2025 05:49:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755150532; cv=none; b=LGHz32UVddoWc52NzlWrOWwyb1q7+SfcVJxh86GHRZO+Zkq+1o7P95gD7zIXyOZo6dmRULgr//+iVbKFjngS9vWRo4DXm3UfqdkkKn8O9u4DSfyKoN+PSsE9zxdn8jHWiZMx+whNMbyNzNGFGbAAZmNPKLvnPsgvuuedYQONOlQ=
+	t=1755150550; cv=none; b=iz9n6+WANS3xJsIj5JzSTyXyk/JpBfTTOK1mi9vVNt6h9fHQ9kOZMc3l8MKNrZvXCACHKDNKKL3z4sLGIm0exFvmsMsUhOT7D+++g+Gs42gcFH836ELbf8lfEV12CzviV7cPDewHiBXZwSQWzkdQT1zRuBj54nt3OrMbsXYd3MQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755150532; c=relaxed/simple;
-	bh=8iEMOUgevb7D7UbQKo3u95ICyaLuLlZmoy6yd8JtojY=;
+	s=arc-20240116; t=1755150550; c=relaxed/simple;
+	bh=pZ/gOI0k4sDj/lLAzb/QoiEwC4zgMq88cnBUTJoxozQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=enIA7bTqGYY6iJBb3Ph6P0za4Ku6FX+3PVyc3y/6JAwOflGl5FRh8eIeVyrCVl9aIRXb39C25Gali+hmgSXrU44CAP1IhnG5vXKgG4xBbNZ5r8Qi2iP0yFHxHRwYjXKhx9922pUJ2KzWUtrfVKIeby3PlpGW92l+Vqm63C2UMbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0LCyhDQ/; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=oDVE42l4; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0LCyhDQ/; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=oDVE42l4; arc=none smtp.client-ip=195.135.223.130
+	 MIME-Version; b=Ns7QT8TLeC9/KYjKZtJ5RtzE1KeQ9wpsGN6A+ZnB4Z2kZwjwUXRcAYc5+q/yWMug2o0zYVxpQfPwxzeXtaL8kgTt6NSqYBR/Ej9Aq7gzo/h/dbFqHW34YxmHPLF4RyOVads5wkwKKrKiOI+IZ/GYsx0cQpu/CgXoC3p0UGedz4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=eqn3nTfJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hM6/zLqM; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=eqn3nTfJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hM6/zLqM; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id BB89921B2B;
-	Thu, 14 Aug 2025 05:48:48 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 0597E1F7D1;
+	Thu, 14 Aug 2025 05:48:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755150528; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1755150531; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=r0yrDH9Ni57tPz3BsabzDXrZ59llVGyMyh1ch+c/vYc=;
-	b=0LCyhDQ/Qu+PNcIHW6UlXikXR65n3aNBj3CbS1vJrLkjozXCbJTaC6YgcNbyN7Pyq/MEzE
-	1E66nl339F7+vamiyx1avLDIixPjaw5qUbrVNaIBxcLihTO6SEePUlvqVFbegQPqqIEhb1
-	btbUH3uOTe9W/x8/j4d5teSk//fQQYs=
+	bh=lnh4KOoFyfui8L9tod3Xuqssl1j5kS74I0ySiKi//IU=;
+	b=eqn3nTfJtIY5OSOrkYm3Yxi2JUXwvS8SjiwKxPUhNumfJQDnaeu+F15zeNpM3v37vy5Apn
+	duNYTSHZeM/OQJpBIir8GZzaeBenUCe0FSCxtaZz5/wEY0QyR+IbAVvQKFmUT6ib88g+p8
+	+0NYVofrLI1P0lOVTXiwjzDzznUQFG8=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755150528;
+	s=susede2_ed25519; t=1755150531;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=r0yrDH9Ni57tPz3BsabzDXrZ59llVGyMyh1ch+c/vYc=;
-	b=oDVE42l4IO/3Ze0eKsgALfivQI5eoxbs9KzTDh2i7YQxPx7QQus1H29QXXqGmyguT73MUI
-	dFxicy56qGUFFYAw==
-Authentication-Results: smtp-out1.suse.de;
+	bh=lnh4KOoFyfui8L9tod3Xuqssl1j5kS74I0ySiKi//IU=;
+	b=hM6/zLqMQSikb1oDd88BfOctuxaa5YzMNr8G4k0XZ7/Gu5vTZEqza9ucruIxQM8VMns9mE
+	mjVWUG0OPrUq+YCQ==
+Authentication-Results: smtp-out2.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755150528; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1755150531; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=r0yrDH9Ni57tPz3BsabzDXrZ59llVGyMyh1ch+c/vYc=;
-	b=0LCyhDQ/Qu+PNcIHW6UlXikXR65n3aNBj3CbS1vJrLkjozXCbJTaC6YgcNbyN7Pyq/MEzE
-	1E66nl339F7+vamiyx1avLDIixPjaw5qUbrVNaIBxcLihTO6SEePUlvqVFbegQPqqIEhb1
-	btbUH3uOTe9W/x8/j4d5teSk//fQQYs=
+	bh=lnh4KOoFyfui8L9tod3Xuqssl1j5kS74I0ySiKi//IU=;
+	b=eqn3nTfJtIY5OSOrkYm3Yxi2JUXwvS8SjiwKxPUhNumfJQDnaeu+F15zeNpM3v37vy5Apn
+	duNYTSHZeM/OQJpBIir8GZzaeBenUCe0FSCxtaZz5/wEY0QyR+IbAVvQKFmUT6ib88g+p8
+	+0NYVofrLI1P0lOVTXiwjzDzznUQFG8=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755150528;
+	s=susede2_ed25519; t=1755150531;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=r0yrDH9Ni57tPz3BsabzDXrZ59llVGyMyh1ch+c/vYc=;
-	b=oDVE42l4IO/3Ze0eKsgALfivQI5eoxbs9KzTDh2i7YQxPx7QQus1H29QXXqGmyguT73MUI
-	dFxicy56qGUFFYAw==
+	bh=lnh4KOoFyfui8L9tod3Xuqssl1j5kS74I0ySiKi//IU=;
+	b=hM6/zLqMQSikb1oDd88BfOctuxaa5YzMNr8G4k0XZ7/Gu5vTZEqza9ucruIxQM8VMns9mE
+	mjVWUG0OPrUq+YCQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0DA4213479;
-	Thu, 14 Aug 2025 05:48:46 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4C94913479;
+	Thu, 14 Aug 2025 05:48:49 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id OIkaLr54nWiEYQAAD6G6ig
-	(envelope-from <ddiss@suse.de>); Thu, 14 Aug 2025 05:48:46 +0000
+	id cB7eAcF4nWiEYQAAD6G6ig
+	(envelope-from <ddiss@suse.de>); Thu, 14 Aug 2025 05:48:49 +0000
 From: David Disseldorp <ddiss@suse.de>
 To: linux-kbuild@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
 Cc: linux-next@vger.kernel.org,
 	David Disseldorp <ddiss@suse.de>
-Subject: [PATCH v2 4/7] gen_init_cpio: avoid duplicate strlen calls
-Date: Thu, 14 Aug 2025 15:18:02 +1000
-Message-ID: <20250814054818.7266-5-ddiss@suse.de>
+Subject: [PATCH v2 5/7] gen_initramfs.sh: use gen_init_cpio -o parameter
+Date: Thu, 14 Aug 2025 15:18:03 +1000
+Message-ID: <20250814054818.7266-6-ddiss@suse.de>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250814054818.7266-1-ddiss@suse.de>
 References: <20250814054818.7266-1-ddiss@suse.de>
@@ -106,10 +106,9 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
 X-Spamd-Result: default: False [-6.80 / 50.00];
 	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[100.00%];
+	BAYES_HAM(-3.00)[99.99%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	MID_CONTAINS_FROM(1.00)[];
 	R_MISSING_CHARSET(0.50)[];
@@ -128,181 +127,46 @@ X-Spamd-Result: default: False [-6.80 / 50.00];
 	RCPT_COUNT_THREE(0.00)[4];
 	RCVD_TLS_ALL(0.00)[]
 X-Spam-Flag: NO
+X-Spam-Level: 
 X-Spam-Score: -6.80
 
-We determine the filename length for the cpio header, so shouldn't
-recalculate it when writing out the filename.
+gen_init_cpio can now write to a file directly, so use it when
+gen_initramfs.sh is called with -o (e.g. usr/Makefile invocation).
 
 Signed-off-by: David Disseldorp <ddiss@suse.de>
 ---
- usr/gen_init_cpio.c | 40 ++++++++++++++++++++++++----------------
- 1 file changed, 24 insertions(+), 16 deletions(-)
+ usr/gen_initramfs.sh | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/usr/gen_init_cpio.c b/usr/gen_init_cpio.c
-index 64421d410a88b..40f4cbd95844e 100644
---- a/usr/gen_init_cpio.c
-+++ b/usr/gen_init_cpio.c
-@@ -25,6 +25,7 @@
- #define str(s) xstr(s)
- #define MIN(a, b) ((a) < (b) ? (a) : (b))
- #define CPIO_HDR_LEN 110
-+#define CPIO_TRAILER "TRAILER!!!"
- #define padlen(_off, _align) (((_align) - ((_off) & ((_align) - 1))) % (_align))
+diff --git a/usr/gen_initramfs.sh b/usr/gen_initramfs.sh
+index 14b5782f961a8..7eba2fddf0ef2 100755
+--- a/usr/gen_initramfs.sh
++++ b/usr/gen_initramfs.sh
+@@ -193,7 +193,8 @@ root_gid=0
+ dep_list=
+ timestamp=
+ cpio_list=$(mktemp ${TMPDIR:-/tmp}/cpiolist.XXXXXX)
+-output="/dev/stdout"
++# gen_init_cpio writes to stdout by default
++output=""
  
- static char padding[512];
-@@ -40,9 +41,8 @@ struct file_handler {
- 	int (*handler)(const char *line);
- };
+ trap "rm -f $cpio_list" EXIT
  
--static int push_string(const char *name)
-+static int push_buf(const char *name, size_t name_len)
- {
--	unsigned int name_len = strlen(name) + 1;
- 	ssize_t len;
+@@ -207,7 +208,7 @@ while [ $# -gt 0 ]; do
+ 			shift
+ 			;;
+ 		"-o")	# generate cpio image named $1
+-			output="$1"
++			output="-o $1"
+ 			shift
+ 			;;
+ 		"-u")	# map $1 to uid=0 (root)
+@@ -246,4 +247,4 @@ done
  
- 	len = write(outfd, name, name_len);
-@@ -69,9 +69,8 @@ static int push_pad(size_t padlen)
- 	return 0;
- }
- 
--static int push_rest(const char *name)
-+static int push_rest(const char *name, size_t name_len)
- {
--	unsigned int name_len = strlen(name) + 1;
- 	ssize_t len;
- 
- 	len = write(outfd, name, name_len);
-@@ -85,8 +84,8 @@ static int push_rest(const char *name)
- 
- static int cpio_trailer(void)
- {
--	const char name[] = "TRAILER!!!";
- 	int len;
-+	unsigned int namesize = sizeof(CPIO_TRAILER);
- 
- 	len = dprintf(outfd, "%s%08X%08X%08lX%08lX%08X%08lX"
- 	       "%08X%08X%08X%08X%08X%08X%08X",
-@@ -102,12 +101,12 @@ static int cpio_trailer(void)
- 		0,			/* minor */
- 		0,			/* rmajor */
- 		0,			/* rminor */
--		(unsigned)strlen(name)+1, /* namesize */
-+		namesize,		/* namesize */
- 		0);			/* chksum */
- 	offset += len;
- 
- 	if (len != CPIO_HDR_LEN
--	 || push_rest(name) < 0
-+	 || push_rest(CPIO_TRAILER, namesize) < 0
- 	 || push_pad(padlen(offset, 512)) < 0)
- 		return -1;
- 
-@@ -118,9 +117,12 @@ static int cpio_mkslink(const char *name, const char *target,
- 			 unsigned int mode, uid_t uid, gid_t gid)
- {
- 	int len;
-+	unsigned int namesize, targetsize = strlen(target) + 1;
- 
- 	if (name[0] == '/')
- 		name++;
-+	namesize = strlen(name) + 1;
-+
- 	len = dprintf(outfd, "%s%08X%08X%08lX%08lX%08X%08lX"
- 	       "%08X%08X%08X%08X%08X%08X%08X",
- 		do_csum ? "070702" : "070701", /* magic */
-@@ -130,19 +132,19 @@ static int cpio_mkslink(const char *name, const char *target,
- 		(long) gid,		/* gid */
- 		1,			/* nlink */
- 		(long) default_mtime,	/* mtime */
--		(unsigned)strlen(target)+1, /* filesize */
-+		targetsize,		/* filesize */
- 		3,			/* major */
- 		1,			/* minor */
- 		0,			/* rmajor */
- 		0,			/* rminor */
--		(unsigned)strlen(name) + 1,/* namesize */
-+		namesize,		/* namesize */
- 		0);			/* chksum */
- 	offset += len;
- 
- 	if (len != CPIO_HDR_LEN
--	 || push_string(name) < 0
-+	 || push_buf(name, namesize) < 0
- 	 || push_pad(padlen(offset, 4)) < 0
--	 || push_string(target) < 0
-+	 || push_buf(target, targetsize) < 0
- 	 || push_pad(padlen(offset, 4)) < 0)
- 		return -1;
- 
-@@ -172,9 +174,12 @@ static int cpio_mkgeneric(const char *name, unsigned int mode,
- 		       uid_t uid, gid_t gid)
- {
- 	int len;
-+	unsigned int namesize;
- 
- 	if (name[0] == '/')
- 		name++;
-+	namesize = strlen(name) + 1;
-+
- 	len = dprintf(outfd, "%s%08X%08X%08lX%08lX%08X%08lX"
- 	       "%08X%08X%08X%08X%08X%08X%08X",
- 		do_csum ? "070702" : "070701", /* magic */
-@@ -189,12 +194,12 @@ static int cpio_mkgeneric(const char *name, unsigned int mode,
- 		1,			/* minor */
- 		0,			/* rmajor */
- 		0,			/* rminor */
--		(unsigned)strlen(name) + 1,/* namesize */
-+		namesize,		/* namesize */
- 		0);			/* chksum */
- 	offset += len;
- 
- 	if (len != CPIO_HDR_LEN
--	 || push_rest(name) < 0)
-+	 || push_rest(name, namesize) < 0)
- 		return -1;
- 
- 	return 0;
-@@ -265,6 +270,7 @@ static int cpio_mknod(const char *name, unsigned int mode,
- 		       unsigned int maj, unsigned int min)
- {
- 	int len;
-+	unsigned int namesize;
- 
- 	if (dev_type == 'b')
- 		mode |= S_IFBLK;
-@@ -273,6 +279,8 @@ static int cpio_mknod(const char *name, unsigned int mode,
- 
- 	if (name[0] == '/')
- 		name++;
-+	namesize = strlen(name) + 1;
-+
- 	len = dprintf(outfd, "%s%08X%08X%08lX%08lX%08X%08lX"
- 	       "%08X%08X%08X%08X%08X%08X%08X",
- 		do_csum ? "070702" : "070701", /* magic */
-@@ -287,12 +295,12 @@ static int cpio_mknod(const char *name, unsigned int mode,
- 		1,			/* minor */
- 		maj,			/* rmajor */
- 		min,			/* rminor */
--		(unsigned)strlen(name) + 1,/* namesize */
-+		namesize,		/* namesize */
- 		0);			/* chksum */
- 	offset += len;
- 
- 	if (len != CPIO_HDR_LEN
--	 || push_rest(name) < 0)
-+	 || push_rest(name, namesize) < 0)
- 		return -1;
- 
- 	return 0;
-@@ -426,7 +434,7 @@ static int cpio_mkfile(const char *name, const char *location,
- 		offset += len;
- 
- 		if (len != CPIO_HDR_LEN
--		 || push_string(name) < 0
-+		 || push_buf(name, namesize) < 0
- 		 || push_pad(padlen(offset, 4)) < 0)
- 			goto error;
- 
+ # If output_file is set we will generate cpio archive
+ # we are careful to delete tmp files
+-usr/gen_init_cpio $timestamp $cpio_list > $output
++usr/gen_init_cpio $output $timestamp $cpio_list
 -- 
 2.43.0
 
