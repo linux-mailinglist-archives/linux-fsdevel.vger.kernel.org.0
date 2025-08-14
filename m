@@ -1,200 +1,280 @@
-Return-Path: <linux-fsdevel+bounces-57916-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57917-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6028EB26B6B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 17:48:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26D69B26B90
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 17:53:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23CB2A05EF0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 15:43:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 422C51CE2EEC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Aug 2025 15:48:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3328022577C;
-	Thu, 14 Aug 2025 15:41:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2A4423BD04;
+	Thu, 14 Aug 2025 15:47:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R+BzqK/1"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="PeABPxhb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2082.outbound.protection.outlook.com [40.107.101.82])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D579A1B4248;
-	Thu, 14 Aug 2025 15:41:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755186084; cv=none; b=cv12lddJ1mNSLk8a37xMIufIq1Qi/V4/2UDVaL1j0ewti74CbyyPZiIEvwhJKbYOMaxfimlB6okwVpLqc1pLiFxXV7B6o+ZAl6XbZCPCLluT6PqC6VEYqmwBypS2nl4MUibMngTIH8ZDBL2MWOwNig3dg0ByHuu4rq054zQNYJ0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755186084; c=relaxed/simple;
-	bh=E1acSe5dsxNOq0OBgSQhYrtNCDT4l3dYQWs9asGQvIU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DartpbSW9BLj1b/reKT/GWYIKfMtpoK72faQbI63FjVNcWJOMjqEur+wUGK3zL9T0l5jn26HBpB6R9o5x4O0EHgUEQYXT4kV83tWS+mdvq9vkiypXp1MYcG+Bz3ewIjLSprfUdijLsl1Beii+S1+WQ/iWIJa7LhRVAf4zOVjuiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R+BzqK/1; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45a1b065d58so7137745e9.1;
-        Thu, 14 Aug 2025 08:41:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755186081; x=1755790881; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Snu4TW99vD6eKnQ20z+tTcXAXQFZQCSrz3K4OLsk2tI=;
-        b=R+BzqK/1g0U47mgS37WWJhTx7F8jR0v+1rllrkmT2fNAjwitf1IqCtibjFCBpnn4cX
-         0FjvoLAAEWLYAeACJWaNHxEg06zhsyU7ScwRgf/MAMgFNxGvztsfvlc2By5QoCQIepbY
-         cgQ/6xp5nbHeZAY1w7UwO529tiwZ8mnrvuracEco1UaXt6CDRAadvc9ckt3PTjcN+59k
-         0N3JwisRobY2aJPCcuRlGdMJFxU3JCpMoZhinVucQdYNx6CaAIdsJsrzvIZxmnG+VkMB
-         NSCIMeoKuhAhUn5a6LjoffgPInuNS7YcEJmG/KDegX699OyxLzaXQ8WAofUomsTsyxea
-         C/ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755186081; x=1755790881;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Snu4TW99vD6eKnQ20z+tTcXAXQFZQCSrz3K4OLsk2tI=;
-        b=DGNbKNeJZaTxSS4GbMAwao1raxi+G8YI5PR9rmz1XZbeEPFXjUUhFrbAQ8l1AHbvbq
-         XQ98yweQrHlXcwBkUiEN0vuqsEfmhIanGLp6TqnIdCr2Q6CImfbBdnDkluqHuIlnA+/B
-         OFEgDZFzX6ds2nQaGgsxGMc63a3vlENJfPqrXCUpykf+jhHp5R7IVmxk5e4eKhLr8KK1
-         /3fWeMkMF3PbtZr9E1j0+6Pah7QGrXZvRDUNNcvXnVlNrCyzE4jM8z0yUAJFNr4J7zQv
-         PZCk8udwQhtfmbSMaxiWZQdknPgLMsAeTGO5LdhbCCY0nbYTFaHLQWcqNtPCkifcIseT
-         sK8g==
-X-Forwarded-Encrypted: i=1; AJvYcCU8TX9zamlTSBYFQ7SWkOEY2qBrq+OJ4SmFG+xNtKVnD6V7ieQnXREyT+nNQfEq92NYSuvxlWIWLTmqA5Ca@vger.kernel.org, AJvYcCVodA4HP/oqzRfybQOpG16cmq1KDNfFMoYV4AOkqokWrcJs/hR3jn/rMRduL9kF119ex/BA0bqY8pI=@vger.kernel.org, AJvYcCXvG/d9HnUBWSfU3WK9TZhjeffnOMw2zXYtfOLTZNs2QF4RkT0hRPSZTuSqLwLnIoG8Cnv1YOUsERYgom3clA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEg9Rw4DE6TCS4gfoyY8BmF56me3BCfUGrHZU3eD7SmJPm/Qth
-	njdqstiK2FaeZze6zwnl3RU+LO5J8t7iDAfRZ2SJUI60insKrGwIONvR
-X-Gm-Gg: ASbGncsWiwSHkAJRD0WnrxWLyERwdcgi+8n6ySftT6nYOr8b4anvezVOHcYX56WUQC7
-	EoJbqFgGS5M1F8XAE02UrIEcpcpmyR8iFM3XOrOIzaTeBrLxXA7eooVrBaBVMyt/pMiu0hw06hg
-	q2o9MJ4m9o6VP/lRks7sJyP/Jq6L3ghheoT5IgtcDkeDSAi2gwObLnpc/SGQcB8bK3Z7jGGtXQn
-	UGr5bqJUZbpxB8C63iZkL1xg4SRMwKvWrj7+FF1L111qW5oXq0THRAyGJq+llNHqeKjUvlJMPp4
-	3j9Ql5XZgqKAw+X5KgZ+wvQUqaKRm8y8j5KvS+jtGvDf+X/nNCvlcGt/aOv3pmPVmbyUjkyt6Eq
-	/5oMnec4iO5YvHGE4EbQP0xAwo/wdaTJ1sOCy7mV1Az+9VLBUdLhdgrImHMsOpOeahVA6eTjn+q
-	yEkj/iaA==
-X-Google-Smtp-Source: AGHT+IFR6kyS0MwCFXecgpL+CkpUW4A1Qwi/ZDuTfTRfuJxCm+OLfkLiLdmsUzftuDIX9sgmP/813w==
-X-Received: by 2002:a05:600c:4e87:b0:458:f70d:ebdd with SMTP id 5b1f17b1804b1-45a1b646ab1mr37271215e9.16.1755186080861;
-        Thu, 14 Aug 2025 08:41:20 -0700 (PDT)
-Received: from ?IPV6:2a03:83e0:1126:4:14f1:c189:9748:5e5a? ([2620:10d:c092:500::7:8979])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1b7c18d7sm16194935e9.2.2025.08.14.08.41.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Aug 2025 08:41:20 -0700 (PDT)
-Message-ID: <0879b2c9-3088-4f92-8d73-666493ec783a@gmail.com>
-Date: Thu, 14 Aug 2025 16:41:16 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FFCA18DB02;
+	Thu, 14 Aug 2025 15:47:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.82
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755186459; cv=fail; b=hgYCTINDvndy1EZYBOD5iZ5LAgDm3yb5P95Ii4lz2iJ1CL/jNM7LcNIsPfv4y+bc8fbWNktGjzt8iV0jIuBAxlaA8X+f96QixVAH8bjALKfMcfKLDv5UK1lmq6YK/AZjnwK5phd3zeoDrD6W7IQBjQnGl9Xjf6NrroQeRozJ4Xo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755186459; c=relaxed/simple;
+	bh=9ZjtsOuHZMkHIiS5cxlaRVpCwUf11KqdximyhmID1gA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=mqcvA9qZc1aH9f1Ojcu+n2hbh+Jtn3aRbUpA4KO9d6KBXWrUqxB7/g4bNZiOsPe3lWdV/MfXR/cBzTmzxiU7y4YqwrbjWywFlix14Vx8czyLxozuGOeqdzQJ8hm7QWCIBPB00AYo9kQ8YPrPws2ikaQ4gqtFuyalZUPppaSLZVo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=PeABPxhb; arc=fail smtp.client-ip=40.107.101.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xVrZlDc+GDhuo//2azGHSXqvmDYbNdArkn08lQUSRY5mex0gdruy2IyuhvwJo4Bb7yXngdeUHfH3p9ElhAN5+3O4od80RC026pyF4QiG1/m0kRWfDdOohUYZwafqX5gewRyOWTrRTPGOxk0wRjCoK106Z7CRsp0n5rUNRiCIQGgmvL6FU+3ozcZ4wauIreL+MmJZwC0ZPmlz62cQPdzirh23ZCM35MlFkeyD9ghttk5o/ExOCfbui5zsaBTXrJBV2lzjFBLBSVgrNMiqO/X8JQxOJfte4e5pdsR0Xo5nrKCjUOQ+zne+9DdYUKfIJKGAJwk3kr+pWVBt6s4CYfOK+Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Jgn7eU/VZvXcwPXX2b0pkEHAfwD86UlC78I2BnhOTuk=;
+ b=Fzvk1bN4kBUYLa07TxYdiWUXsAwUSm/dMst5cQKewW6h6zTH8Y56BDeI0KUzTtt5QKQpEaHS/BEA3Kkxn7PAkV2Bs89tv/enP6XgUpoAJSk1c5OGFZ6bAOTt4KXSRWnLH4T7fS/EdPch4sh5IRLdtRKL6JBNEmmOy3cEQ5ATiJd9fJKBHgBe2RSgCGSINroRRBK1Ttas3XV1YPHEIcI3npklLWztGS+J5j1DylzRwtLfp0hNvqMhkB96nlDWRnMk+o/UfxUX3+qJFivOIUgQK/G3dDdCfWGjd9bh34ew0k55BQi9h47wc3j9jHBs4swCmenMfZD87Ts7PdpYFIzZbA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Jgn7eU/VZvXcwPXX2b0pkEHAfwD86UlC78I2BnhOTuk=;
+ b=PeABPxhbcSVSObWXzwLoPsYmVKQtWkQmsNk2CPr0vxitZKCDsmtREJ0HBxDTLSBiCO2A6oxbbLGZjaoVvX99cnQETKDcmASCvH4d5MK13CmsKTI1KfUZCZ9BTJpHD89gvnnVCOYOO+RMHcesCGMSabzl9wvfDDgJfiUqPmtrSQ+o77aTLATdZVBkoqSpbZ1pqD58c+0Llr7xNS5etpy8g7nArK2KvAjTkoRIMGWfm/+fINQC8jtewycA6JkgMD7SLuLX7XW2YBJQJ0mP3/7IXBF7hum24y6tdEBnlmwvDeBSx5gNsGO7WcN6vt8VCj3hkNuytpeCNxf13gwoa4/buQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ DS7PR12MB6120.namprd12.prod.outlook.com (2603:10b6:8:98::5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9031.14; Thu, 14 Aug 2025 15:47:32 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a%6]) with mapi id 15.20.9031.014; Thu, 14 Aug 2025
+ 15:47:32 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: Usama Arif <usamaarif642@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, david@redhat.com,
+ linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, corbet@lwn.net,
+ rppt@kernel.org, surenb@google.com, mhocko@suse.com, hannes@cmpxchg.org,
+ baohua@kernel.org, shakeel.butt@linux.dev, riel@surriel.com,
+ laoar.shao@gmail.com, dev.jain@arm.com, baolin.wang@linux.alibaba.com,
+ npache@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+ ryan.roberts@arm.com, vbabka@suse.cz, jannh@google.com,
+ Arnd Bergmann <arnd@arndb.de>, sj@kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH v4 4/7] docs: transhuge: document process level THP
+ controls
+Date: Thu, 14 Aug 2025 11:47:29 -0400
+X-Mailer: MailMate (2.0r6272)
+Message-ID: <608379FD-DCBA-414A-A0A1-58E0CAECBDEB@nvidia.com>
+In-Reply-To: <20250813135642.1986480-5-usamaarif642@gmail.com>
+References: <20250813135642.1986480-1-usamaarif642@gmail.com>
+ <20250813135642.1986480-5-usamaarif642@gmail.com>
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: MN0P220CA0026.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:208:52e::19) To DS7PR12MB9473.namprd12.prod.outlook.com
+ (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 7/7] selftests: prctl: introduce tests for disabling
- THPs except for madvise
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Mark Brown <broonie@kernel.org>
-Cc: David Hildenbrand <david@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, corbet@lwn.net, rppt@kernel.org,
- surenb@google.com, mhocko@suse.com, hannes@cmpxchg.org, baohua@kernel.org,
- shakeel.butt@linux.dev, riel@surriel.com, ziy@nvidia.com,
- laoar.shao@gmail.com, dev.jain@arm.com, baolin.wang@linux.alibaba.com,
- npache@redhat.com, Liam.Howlett@oracle.com, ryan.roberts@arm.com,
- vbabka@suse.cz, jannh@google.com, Arnd Bergmann <arnd@arndb.de>,
- sj@kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- kernel-team@meta.com
-References: <13220ee2-d767-4133-9ef8-780fa165bbeb@lucifer.local>
- <bac33bcc-8a01-445d-bc42-29dabbdd1d3f@redhat.com>
- <5b341172-5082-4df4-8264-e38a01f7c7d7@lucifer.local>
- <0b7543dd-4621-432c-9185-874963e8a6af@redhat.com>
- <5dce29cc-3fad-416f-844d-d40c9a089a5f@lucifer.local>
- <b433c998-0f7b-4ca4-a867-5d1235149843@sirena.org.uk>
- <eb90eff6-ded8-40a3-818f-fce3331df464@redhat.com>
- <47e98636-aace-4a42-b6a4-3c63880f394b@sirena.org.uk>
- <1387eeb8-fc61-4894-b12f-6cae3ad920bd@redhat.com>
- <620a586e-54a2-4ce0-9cf7-2ddf4b6ef59d@sirena.org.uk>
- <de8da320-3286-4639-8f61-b99d1186ca41@lucifer.local>
-Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <de8da320-3286-4639-8f61-b99d1186ca41@lucifer.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|DS7PR12MB6120:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6ccdd8ec-6a57-43fc-5665-08dddb49e1c0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|1800799024|7416014|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?5YQVpbi9xn3C/+DJKwSHuW7vV+d9G9VovFN1iTAyIz67e8H/wt7zZj+WSj2J?=
+ =?us-ascii?Q?HqinddyzjHmxP7N1bUPKGn47jGCDISpEKaguw+jnJ30rRiPA6U7VLfmpaQDE?=
+ =?us-ascii?Q?YTFJ0gHD1I0KpxgTB7YTIFHeqc9C/yx3gwIf1A+2T5dql3WR/KYz0Z1bg1AO?=
+ =?us-ascii?Q?GItBqDEN1p8vXdVr18rD9EDcUAgWKhOZKTtPWNhg++e8asIoAn/dEKxns4KG?=
+ =?us-ascii?Q?c/t5cVqm1FxXP2HPCNSSVPiyERGD2aHRpslDiLQs8UxWZHW9Q7B5POCyB9Nq?=
+ =?us-ascii?Q?yq3lH2wkGdprQjL9NXH4bHbhj/1Z4hqP68vGjLDZNHaCbPZHeoKITF2pDCDa?=
+ =?us-ascii?Q?eq11Gzow09LX7PU6mVqjFShgZFWcWGZIkEU8XwuHxuj0iOR1ld8lEH0on8lx?=
+ =?us-ascii?Q?OrC4MrHbS5BZeghleQoUE8PbYFSDEsOXXukrZxM/Zib3ztUyhxrMQ63nPZCr?=
+ =?us-ascii?Q?omoqPTdW8yneH+s/ZvYZuxL8UV6nPDfJkYGikskOMgK2OPiztgYZdhCW4ory?=
+ =?us-ascii?Q?Gr75CK4ICRM0sbgeEx/HRSfhlNm6SBr6q1EdC3oo0+Ebl4TzcAuDbuolrpDb?=
+ =?us-ascii?Q?PUTW3B8sDRS0g2Vd9A5Qt4XoEhHZBP916FdGaFF16HeWiOcNTRZKh5vm1fx1?=
+ =?us-ascii?Q?b6YwblvUWC4NxIeruhGaZmEKRRE3z7Dzy2pqDCeHaEn3+KAH6ODPUsXi7gol?=
+ =?us-ascii?Q?9nhmpqSKLqW0wuRbn4sbGmNfU3EziPJrWkGo1HWrUuhhNQN/UI7RG/Ig4Jbz?=
+ =?us-ascii?Q?btzzj/6VkjYouaHme3SwckMbgbwTm2kagJ9MV9peLDWXHR6PCsu3YQq89q3S?=
+ =?us-ascii?Q?98Val+qVX0kYI/JHSOSLRgvOCa5LOqh7d4z6wPG1/PHyJfPOLj5m81GDvD1r?=
+ =?us-ascii?Q?Ej1YNJIa/r91jNmd0QzDtqjJH571dqI46PdO9ZNM/c975zZyR502F4D+iOlO?=
+ =?us-ascii?Q?KDv64LORqLaUdtYr6vadT38Bi0xLigiobRjmhRtwE5PZA9yGREjLBGYPNZaq?=
+ =?us-ascii?Q?Z9PqAMYpbo6VDQr4AqxfDpkrnmrQsZTQgdpKJ//5vmHJ+0HOz6GLixrc3l05?=
+ =?us-ascii?Q?HnvOThUu6aHo8KBEyvCnWq7/l8ILZ3O++ALRHkcMSA2Rx5bP4REbQOUaIAP6?=
+ =?us-ascii?Q?VSKGnewp3KiL6OQ4kBv9NHc9hqgiH3zEziX2VZbDggyCLhxR+IGwt6lmIFzJ?=
+ =?us-ascii?Q?1aObOnsGvQ0QWIPpO2+D/NnujRdTZ6GpYTLiK1a1Y4d0k9AMVBoIcd4ImjX4?=
+ =?us-ascii?Q?CCsmsemuTJIR4R/ORMU6LpNb5e82tXzofD9g7h6r9SGDIBvaz9HfaNhiOHbp?=
+ =?us-ascii?Q?vTCqdfvnaCIImqfWWKIt80ZH/qFOgt0bsQsrsu+kNL7CwApjfdWBbxccjtHF?=
+ =?us-ascii?Q?nLEGsPdQ23MfOt5XVWTzut++aOvaX2JqnZ5bhk3tJmFeVWz6FXg0ju62hgjX?=
+ =?us-ascii?Q?NnLSVkRM+EM=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?HpFGUNjQEUNR7qIA36tyDJdfbeEHD3sT7SJwV7J0CkUAKouUbIvaxVp709F6?=
+ =?us-ascii?Q?ZkEqU790ua3v/aRJ+7UjU4tlyGU9dkQY/gmbKicwmJJeBCxPsYSC7hR/l+vE?=
+ =?us-ascii?Q?qeMuY/h3bDMSB0PsxVjUfJHWEXS4zxqsTXmT6NEVW2KLPA/fOVNDGnV1PCsJ?=
+ =?us-ascii?Q?Zbccu75XSGoV/BVYGYXTW9XEQlRTiO29lep+vVA1cjc5WCUlZqlggiJaPeEG?=
+ =?us-ascii?Q?i4vd+HskkTTHqGbGwwW+AUqxX4Rrvj5RyL834GBxo+QeZQmtH6/kbT07ctud?=
+ =?us-ascii?Q?HiK8zcARIbPkd2MNm2oacM9AfBXZIxUg+flhPn4T7uf1Qvtm6+DKdORaPdwU?=
+ =?us-ascii?Q?k2EZSOnTB0QIxuNLNoy9P7f56G5EpDhOKAfyV5d69ti5U8rMtqB/pOkpCflq?=
+ =?us-ascii?Q?8RIejK5A/vzSsPkYywGsDQePMajGjcRAKRnhgN/0ljJ6pSyyFXU1y70Akn+Z?=
+ =?us-ascii?Q?Rdz88EOqY4uECUt2oxvXk7Wq3xteQhYAgo2zWbRXBe1hYP2GhXPFZD5tI6bn?=
+ =?us-ascii?Q?RB9B6rctO+VMf6VYJt2ckv/qUSRKD056dzgfyipcEP+0e1HMfPSSEegZSCCm?=
+ =?us-ascii?Q?Hq3nbsrie1ZHYV7lO5scMHjZYx5/g4mpYVi1iuTG/MXX+pYIWzazouPPdkrx?=
+ =?us-ascii?Q?b5VI4EhGKnSivJnVzohuum9E0BXSHIBEWnmFN1qH0y8uT/hRRbyqStgFqGeO?=
+ =?us-ascii?Q?GjSr/L6LxP79zFgle+UbrvLf9lE+5atxDdG5coxfRnF20nrAvuyxJ36J4UUP?=
+ =?us-ascii?Q?36wTAYmRIhuIeMoZRiTL8Sq7SfeBXgX7AG/cUD6rDfXlq8oyMwH5MOXRuuiR?=
+ =?us-ascii?Q?ShocEqeDdbtN/PPP+T+Qz/hjU3bm4yIbanYjT0wRO5B4oMxTxgQbIE/bqXHH?=
+ =?us-ascii?Q?hPq6Drdff0MYrHGgtfqtFi83XuIn5BdaYBIsGOKPbjOUbLrwPzCN/RzHL51T?=
+ =?us-ascii?Q?fF/cRwOIQtftMX+YS9nQ+rU9+wek4MF39+QjtcBjV4UW5yZQ7tCb8W/rOLpB?=
+ =?us-ascii?Q?AoNQqLE7a6SIKXnsgrEbx7j66mex55c+DCavJ2YfZg37rh9wDJOS7nJ3irEM?=
+ =?us-ascii?Q?MHySMPOEPKo69JW5Jwj7vv/+6Lz7/QTLzs/R8vZMmbK9EmZaI3L95JBBmcWI?=
+ =?us-ascii?Q?n3FNotjzVz/t0IdciNu/ofjvPiiLjzWjCRMKZ3t8Xdi1YjFgyAHtwInwpsDk?=
+ =?us-ascii?Q?jKI9JB/dmg2d9KXxHm09W9CFIxxpppgMowPcXIZ4bJPyIURBbp7FZxpD7iYO?=
+ =?us-ascii?Q?ZCN/xKV26TaEVxAD5M6Y7xAU1sUFjIezHP0SiNKAGO7DHT0NANzGWZJ4AEfl?=
+ =?us-ascii?Q?88noXXzm9e1XH229YyINckrF1XG24EiX6TtDSxlnCZDpB71DDq6JgjkagdqV?=
+ =?us-ascii?Q?SdJ4OyxtJYreSHKu0nkwztVAayUErOCzaxampXFqhdv4Qg+4fdUqi3Y2aCc9?=
+ =?us-ascii?Q?CBsJo7efzrg3U8a/gYLgJWZYlwBQXd6TLv0O787UmJouUhA45Fyz+OKq+ICs?=
+ =?us-ascii?Q?c3/p3GYippksowvKkDTbyVKJ3h8yawk0CiNCAYwWx3VFBXySD2bDkmv30bw3?=
+ =?us-ascii?Q?FEN4OpG8ZR00GHHxMANJyeJgnhbBscozwV5CMdLC?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6ccdd8ec-6a57-43fc-5665-08dddb49e1c0
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2025 15:47:32.4524
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: mxXFoTdQ4gyc1UXGxSkVPlfHSGM9hoeMMjrkYAu+qiAmpT6eVJGeKC+tx2LfhDxS
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6120
+
+On 13 Aug 2025, at 9:55, Usama Arif wrote:
+
+> This includes the PR_SET_THP_DISABLE/PR_GET_THP_DISABLE pair of
+> prctl calls as well the newly introduced PR_THP_DISABLE_EXCEPT_ADVISED
+> flag for the PR_SET_THP_DISABLE prctl call.
+>
+> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+> ---
+>  Documentation/admin-guide/mm/transhuge.rst | 37 ++++++++++++++++++++++=
+
+>  1 file changed, 37 insertions(+)
+>
+> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation=
+/admin-guide/mm/transhuge.rst
+> index 370fba1134606..fa8242766e430 100644
+> --- a/Documentation/admin-guide/mm/transhuge.rst
+> +++ b/Documentation/admin-guide/mm/transhuge.rst
+> @@ -225,6 +225,43 @@ to "always" or "madvise"), and it'll be automatica=
+lly shutdown when
+>  PMD-sized THP is disabled (when both the per-size anon control and the=
+
+>  top-level control are "never")
+>
+> +process THP controls
+> +--------------------
+> +
+> +A process can control its own THP behaviour using the ``PR_SET_THP_DIS=
+ABLE``
+> +and ``PR_GET_THP_DISABLE`` pair of prctl(2) calls. The THP behaviour s=
+et using
+> +``PR_SET_THP_DISABLE`` is inherited across fork(2) and execve(2). Thes=
+e calls
+> +support the following arguments::
+> +
+> +	prctl(PR_SET_THP_DISABLE, 1, 0, 0, 0):
+> +		This will disable THPs completely for the process, irrespective
+> +		of global THP controls or MADV_COLLAPSE.
+> +
+> +	prctl(PR_SET_THP_DISABLE, 1, PR_THP_DISABLE_EXCEPT_ADVISED, 0, 0):
+> +		This will disable THPs for the process except when the usage of THPs=
+ is
+> +		advised. Consequently, THPs will only be used when:
+> +		- Global THP controls are set to "always" or "madvise" and
+
+> +		  the area either has VM_HUGEPAGE set (e.g., due do MADV_HUGEPAGE) o=
+r
+> +		  MADV_COLLAPSE is used.
+
+It is better to change the above sentence to:
+
+madvise(..., MADV_HUGEPAGE) or madvise(..., MADV_COLLAPSE) is used.
+
+Since this document is for sysadmin, who does not need to know the implem=
+entation
+details like VM_HUGEPAGE. And I do not see any kernel internal is mention=
+ed
+in the rest of the document.
+
+> +		- Global THP controls are set to "never" and MADV_COLLAPSE is used. =
+This
+> +		  is the same behavior as if THPs would not be disabled on a process=
+
+> +		  level.
+
+> +		Note that MADV_COLLAPSE is currently always rejected if VM_NOHUGEPAG=
+E is
+> +		set on an area.
+
+The same for the above sentence.
+
+Something like:
+
+Note that MADV_COLLAPSE is always rejected if madvise(..., MADV_NOHUGEPAG=
+E) is
+used.
 
 
 
-On 14/08/2025 16:02, Lorenzo Stoakes wrote:
-> On Thu, Aug 14, 2025 at 02:08:57PM +0100, Mark Brown wrote:
->> On Thu, Aug 14, 2025 at 02:59:13PM +0200, David Hildenbrand wrote:
->>> On 14.08.25 14:09, Mark Brown wrote:
->>
->>>> Perhaps this is something that needs considering in the ABI, so
->>>> userspace can reasonably figure out if it failed to configure whatever
->>>> is being configured due to a missing feature (in which case it should
->>>> fall back to not using that feature somehow) or due to it messing
->>>> something else up?  We might be happy with the tests being version
->>>> specific but general userspace should be able to be a bit more robust.
->>
->>> Yeah, the whole prctl() ship has sailed, unfortunately :(
->>
->> Perhaps a second call or sysfs file or something that returns the
->> supported mask?  You'd still have a boostrapping issue with existing
->> versions but at least at any newer stuff would be helped.
-> 
-> Ack yeah I do wish we had better APIs for expressing what was
-> available/not. Will put this sort of thing on the TODO...
-> 
-> Overall I don't want to hold this up unnecesarily, and I bow to the
-> consensus if others feel we ought not to _assume_ same kernel at least best
-> effort.
-> 
-> Usama - It's ok to leave it as is in this case since obviously only tip
-> kernel will have this feature.
+> +
+> +	prctl(PR_SET_THP_DISABLE, 0, 0, 0, 0):
+> +		This will re-enabled THPs for the process, as if they would never ha=
+ve
 
-ah ok, so will keep it at skipping if prctl doesnt work in fixture as is
-in the current v4 version.
+s/re-enabled/re-enable/
 
-I only have the below diff and its equivalent for patch 7 as a difference over
-this version. Will wait until tomorrow morning incase there are more comments
-and hopefully send out a last revision!
+> +		been disabled. Whether THPs will actually be used depends on global =
+THP
+> +		controls.
 
-Thanks!
+and madvise() calls.
 
+> +
+> +	prctl(PR_GET_THP_DISABLE, 0, 0, 0, 0):
+> +		This returns a value whose bit indicate how THP-disable is configure=
+d:
 
+s/bit/bits
 
-diff --git a/tools/testing/selftests/mm/prctl_thp_disable.c b/tools/testing/selftests/mm/prctl_thp_disable.c
-index 8845e9f414560..e9e519c85224c 100644
---- a/tools/testing/selftests/mm/prctl_thp_disable.c
-+++ b/tools/testing/selftests/mm/prctl_thp_disable.c
-@@ -18,6 +18,7 @@
- 
- enum thp_collapse_type {
-        THP_COLLAPSE_NONE,
-+       THP_COLLAPSE_MADV_NOHUGEPAGE,
-        THP_COLLAPSE_MADV_HUGEPAGE,     /* MADV_HUGEPAGE before access */
-        THP_COLLAPSE_MADV_COLLAPSE,     /* MADV_COLLAPSE after access */
- };
-@@ -49,6 +50,8 @@ static int test_mmap_thp(enum thp_collapse_type madvise_buf, size_t pmdsize)
- 
-        if (madvise_buf == THP_COLLAPSE_MADV_HUGEPAGE)
-                madvise(mem, pmdsize, MADV_HUGEPAGE);
-+       else if (madvise_buf == THP_COLLAPSE_MADV_NOHUGEPAGE)
-+               madvise(mem, pmdsize, MADV_NOHUGEPAGE);
- 
-        /* Ensure memory is allocated */
-        memset(mem, 1, pmdsize);
-@@ -73,6 +76,8 @@ static void prctl_thp_disable_completely_test(struct __test_metadata *const _met
-        /* tests after prctl overrides global policy */
-        ASSERT_EQ(test_mmap_thp(THP_COLLAPSE_NONE, pmdsize), 0);
- 
-+       ASSERT_EQ(test_mmap_thp(THP_COLLAPSE_MADV_NOHUGEPAGE, pmdsize), 0);
-+
-        ASSERT_EQ(test_mmap_thp(THP_COLLAPSE_MADV_HUGEPAGE, pmdsize), 0);
- 
-        ASSERT_EQ(test_mmap_thp(THP_COLLAPSE_MADV_COLLAPSE, pmdsize), 0);
-@@ -84,6 +89,8 @@ static void prctl_thp_disable_completely_test(struct __test_metadata *const _met
-        ASSERT_EQ(test_mmap_thp(THP_COLLAPSE_NONE, pmdsize),
-                  thp_policy == THP_ALWAYS ? 1 : 0);
- 
-+       ASSERT_EQ(test_mmap_thp(THP_COLLAPSE_MADV_NOHUGEPAGE, pmdsize), 0);
-+
-        ASSERT_EQ(test_mmap_thp(THP_COLLAPSE_MADV_HUGEPAGE, pmdsize),
-                  thp_policy == THP_NEVER ? 0 : 1);
+> +		Bits
+> +		 1 0  Value  Description
+> +		|0|0|   0    No THP-disable behaviour specified.
+> +		|0|1|   1    THP is entirely disabled for this process.
+> +		|1|1|   3    THP-except-advised mode is set for this process.
+> +
+>  Khugepaged controls
+>  -------------------
+>
+> -- =
 
-> 
-> Cheers, Lorenzo
+> 2.47.3
 
+Otherwise, LGTM. Reviewed-by: Zi Yan <ziy@nvidia.com>
+
+Best Regards,
+Yan, Zi
 
