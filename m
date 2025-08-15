@@ -1,229 +1,208 @@
-Return-Path: <linux-fsdevel+bounces-57993-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57994-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C60E6B27D8C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 11:52:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4782BB27DC6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 12:03:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44F2B5A717C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 09:52:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C905AE4D7F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 10:00:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7058A2F60D9;
-	Fri, 15 Aug 2025 09:52:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AN5wKq9r"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3D1C2FF152;
+	Fri, 15 Aug 2025 09:59:11 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D592E2F1E;
-	Fri, 15 Aug 2025 09:52:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 777922FCBEC;
+	Fri, 15 Aug 2025 09:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755251553; cv=none; b=sea620NXouhc03sn5yoUxcYA45dH9I+uWfPDz584ovmLph/ZeO1GGRmhciwfRDmT32fBC8lLsUejcHHqnBoupHXn6/B7Nn0R1r4rMU+RM5k/UvorYxN226eIPaXrMtgvfCtjUBA3UAR8J1IDArcU0smdxhr5Axurtt8HKIbVWZ4=
+	t=1755251951; cv=none; b=ssJt6KgS570w+hF7B53+f5eY3uTvQXBoM4OWLfywehuk78wXzSb4RYfUX+6hhUtiw68h+Q1ZoSEPQCl0Yv6iqTk28eiIVEEn2DybLActnL7KPI6WGn0OPDUm7R5RbtxCMN0lfo5l8cRnv3nJoKmR01/MkELekgZfeWtfeWEYpL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755251553; c=relaxed/simple;
-	bh=rK0LrA4zSH9O3dZ4jH9jEs9yueXGcZLsdHBrnZIcYuU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FDqiUorOb0kHoHR2C54RgsHPUdG+bffbsuXH4e9OhAkzoSep0Qce2oXSHuYpOh98CsxYNnc9wFnUKx9zHbXeTjotoGVa6/IRYl3X7qLjMicXtVW1DfUKBCWFNmqRMzINfAKVORtgw7rI7P9v3Tusft7WKhZ6NdWwVzVTy51nmxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AN5wKq9r; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-618690a80e8so4161396a12.1;
-        Fri, 15 Aug 2025 02:52:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755251550; x=1755856350; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AnpDR0b7uzGMP+NK7SOaQ07XY0U63GM3V7Y+bWzIhIs=;
-        b=AN5wKq9r+NhixE6OTAk04unDPWlwVs5o6F6NewRNNC8Oji7ZVijlp+m1ZRAgcgvmw3
-         uvzeeDwOOVDnMoy5A85nUyERkHTudH1jUXRzDaC1lOVZNBB/7c/y05oQDi6lFLFnTVdA
-         jkDroWZUEr+xXJxQXK8+ljIQyBNtAiQpl8FOU+3+IqE4SAM9C+rLkoJxL4WTPfWP3Xj8
-         TKUARQbdru0ImxDOw81es1HcVDaWLsWsnrz4C4e/uLIXc988eoSDwiuOK/pMkCo2KnCI
-         zHR8bROR35vHQFqBW5dw2AqLbDuKdaoCdW0pxCp9uKS6UxDtSMs/R4UgH186Idh3KvZh
-         K+2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755251550; x=1755856350;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AnpDR0b7uzGMP+NK7SOaQ07XY0U63GM3V7Y+bWzIhIs=;
-        b=GUW1oVKJDuC3cl0yFxOGEwu3foszRBiSu7I57/zwLOHg+v8IjHiRlQNTVyOd6UtXoH
-         +Nz+QzQz7Tcwp6hYinvr371EyC+FeocjwkSS/fyHsd/c7tiB3hr7JkrAUZjELOaDCaxm
-         TqPfHOiNKKCLMEev5jVbgKr3n11VeLa8J2T6VuySBn52ryvVOzrrrBf+6G505iouZAeX
-         YPzzangW8dm3yooLJGem+L+KNWk7438cBGINjgNOjCUQ7fNnlr4Z6ZbYcYyuyhcgOQPG
-         qexTCy7SQnjGGtiWqeWSkNbnZ0DdqGB5my6FZQFqhOzh8aADkt/KRaLok8vWot5kPQs9
-         aTyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW/5xmWQIgDMPQacg4SnDjLMUoswmQHWWgy25aVOun5lUsi8KuZL5exjbFrBPs3TxaQJdlI4kBrS0Dl@vger.kernel.org, AJvYcCXEtCJ9ynepsM6HFziNjPOT1krSApeGzk5MZsDUJKn+89Qb5CmYEty7mg0439lCPwBcEnull6AazH0P9do6@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfHcLrALRdd3fF4FidFmbB+CMB8hEAWplZSsxQdDK17ey9bnr1
-	2IwdEvArqe3K+vpR92BEINz2GPUW3PGWdng1A0KgQvuTF0zvoP62fjPI0a/J24d7KkkzfFNqj+1
-	5P2fEl4Jq9DKKUABIVLBifzJ7wb7vYwY=
-X-Gm-Gg: ASbGncvd83oRSW+pu3ciQMkdcseRapzcJ4ixFQBAkppEJA+ASjVDKCcxCxEhpupNnhK
-	XhJ5esZk61NJkfjWf0yc9nFFL03wESMCl+zzq/F5lRN5qnJBDAgc9MoRfTrvKzMFdhnTDywzUll
-	GVuOojtq2xRrc9uDxk1uUA7b7+/FrEMxlIOHHadd1merXWKjVurGNkNL6rIKCCatj1SR9JemLOp
-	Jr21Xo=
-X-Google-Smtp-Source: AGHT+IExSbuXWYH0j7gS9fP+6TCMuhSbfMKdNcI/x10kAMTAzTZXZv4tZoCmn7/tNiOxDS9H61lK6BRFyy6hdMIBTYY=
-X-Received: by 2002:a05:6402:1941:b0:615:a5f0:2704 with SMTP id
- 4fb4d7f45d1cf-618aed27465mr1306756a12.17.1755251549937; Fri, 15 Aug 2025
- 02:52:29 -0700 (PDT)
+	s=arc-20240116; t=1755251951; c=relaxed/simple;
+	bh=BPj2WyclCZXem/yITttTFUz9oSCQhbl2IdcrQ+sLCf8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sdd421YGTHLAH5SrvKhNNAVSB23Zs9hRuWm5z8UTY1fbeRQFB4gvIv3pUT1lZNQMYc5XBZYiVPv3NLFMHzWb0RLv7ShpnCd6MJ5c4mz9ZM+Q9Dbj7h6NVH44/0Zy7Ksnw+lXjvNKBZqWmUVprdunBUGZk791tv49FrYEZWeFhO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c3Hd56804zKHMnb;
+	Fri, 15 Aug 2025 17:59:05 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 2707D1A0A8D;
+	Fri, 15 Aug 2025 17:59:05 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgDnrxDlBJ9or8EHDw--.35151S3;
+	Fri, 15 Aug 2025 17:59:03 +0800 (CST)
+Message-ID: <1428e3fe-ae7a-410d-97b5-7dd0249c41c0@huaweicloud.com>
+Date: Fri, 15 Aug 2025 17:59:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250814235431.995876-1-tahbertschinger@gmail.com>
-In-Reply-To: <20250814235431.995876-1-tahbertschinger@gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 15 Aug 2025 11:52:18 +0200
-X-Gm-Features: Ac12FXzLUFABMGMXFMpZDhNVxn8oRYBasH8TVJRvOD796bRN0oySsL2R8qX35As
-Message-ID: <CAOQ4uxij17qNiTq6Gjy0Q_aOv8-k9ggsZ3vFA1Uz-tw-gS7xxQ@mail.gmail.com>
-Subject: Re: [PATCHSET RFC 0/6] add support for name_to, open_by_handle_at(2)
- to io_uring
-To: Thomas Bertschinger <tahbertschinger@gmail.com>
-Cc: io-uring@vger.kernel.org, axboe@kernel.dk, linux-fsdevel@vger.kernel.org, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, linux-nfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH xfsprogs v2] xfs_io: add FALLOC_FL_WRITE_ZEROES support
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+ dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
+ linux-scsi@vger.kernel.org, linux-xfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-api@vger.kernel.org, hch@lst.de,
+ tytso@mit.edu, bmarzins@redhat.com, chaitanyak@nvidia.com,
+ shinichiro.kawasaki@wdc.com, brauner@kernel.org, martin.petersen@oracle.com,
+ yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com,
+ yangerkun@huawei.com
+References: <20250813024250.2504126-1-yi.zhang@huaweicloud.com>
+ <20250814165430.GR7942@frogsfrogsfrogs>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <20250814165430.GR7942@frogsfrogsfrogs>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgDnrxDlBJ9or8EHDw--.35151S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxAw4fKFyrGry8tFWkJF4UXFb_yoW5uF17pa
+	47XF1jkFW5Xry7uayfKw4kuF98Xws3tF43Gr4xWr10v3Z8ZF1fKF1DGwsY93s7ur1xCa10
+	qFn0gFy3C3WSy37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
+	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
+	s2-5UUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Fri, Aug 15, 2025 at 1:50=E2=80=AFAM Thomas Bertschinger
-<tahbertschinger@gmail.com> wrote:
->
-> This series adds support for name_to_handle_at() and open_by_handle_at()
-> to io_uring. The idea is for these opcodes to be useful for userspace
-> NFS servers that want to use io_uring.
->
-> name_to_handle_at()
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> Support for name_to_handle_at() is added in patches 1 and 2.
->
-> In order to do a non-blocking name_to_handle_at(), a new helper
-> do_name_to_handle_at() is created that takes a lookup_flags argument.
->
-> This is to support non-blocking lookup when called with
-> IO_URING_F_NONBLOCK--user_path_at() will be called with LOOKUP_CACHED
-> in that case.
->
-> Aside from the lookup, I don't think there is anything else that
-> do_name_to_handle_at() does that would be a problem in the non-blocking
-> case. There is a GFP_KERNEL allocation:
->
-> do_name_to_handle_at()
->   -> do_path_to_handle()
->     -> kzalloc(..., GFP_KERNEL)
->
-> But I think that's OK? Let me know if there's anything else I'm
-> missing...
->
-> open_by_handle_at()
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> Patch 3 is a fixup to fhandle.c:do_handle_open() that (I believe) fixes
-> a bug and can exist independently of this series, but it fits in with
-> these changes so I'm including it here.
->
-> Support for open_by_handle_at() is added in patches 4 - 6.
->
-> A helper __do_handle_open() is created that does the file open without
-> installing a file descriptor for it. This is needed because io_uring
-> needs to decide between using a file descriptor or a fixed file.
->
-> No attempt is made to support a non-blocking open_by_handle_at()--the
-> attempt is always immediately returned with -EAGAIN if
-> IO_URING_F_NONBLOCK is set.
->
-> This isn't ideal and it would be nice to add support for non-blocking
-> open by handle in the future. This would presumably require updates to
-> the ->encode_fh() implementation for filesystems that want to
-> support this.
+On 2025/8/15 0:54, Darrick J. Wong wrote:
+> On Wed, Aug 13, 2025 at 10:42:50AM +0800, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> The Linux kernel (since version 6.17) supports FALLOC_FL_WRITE_ZEROES in
+>> fallocate(2). Add support for FALLOC_FL_WRITE_ZEROES support to the
+>> fallocate utility by introducing a new 'fwzero' command in the xfs_io
+>> tool.
+>>
+>> Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=278c7d9b5e0c
+>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+>> ---
+>> v1->v2:
+>>  - Minor description modification to align with the kernel.
+>>
+>>  io/prealloc.c     | 36 ++++++++++++++++++++++++++++++++++++
+>>  man/man8/xfs_io.8 |  6 ++++++
+>>  2 files changed, 42 insertions(+)
+>>
+>> diff --git a/io/prealloc.c b/io/prealloc.c
+>> index 8e968c9f..9a64bf53 100644
+>> --- a/io/prealloc.c
+>> +++ b/io/prealloc.c
+>> @@ -30,6 +30,10 @@
+>>  #define FALLOC_FL_UNSHARE_RANGE 0x40
+>>  #endif
+>>  
+>> +#ifndef FALLOC_FL_WRITE_ZEROES
+>> +#define FALLOC_FL_WRITE_ZEROES 0x80
+>> +#endif
+>> +
+>>  static cmdinfo_t allocsp_cmd;
+>>  static cmdinfo_t freesp_cmd;
+>>  static cmdinfo_t resvsp_cmd;
+>> @@ -41,6 +45,7 @@ static cmdinfo_t fcollapse_cmd;
+>>  static cmdinfo_t finsert_cmd;
+>>  static cmdinfo_t fzero_cmd;
+>>  static cmdinfo_t funshare_cmd;
+>> +static cmdinfo_t fwzero_cmd;
+>>  
+>>  static int
+>>  offset_length(
+>> @@ -377,6 +382,27 @@ funshare_f(
+>>  	return 0;
+>>  }
+>>  
+>> +static int
+>> +fwzero_f(
+>> +	int		argc,
+>> +	char		**argv)
+>> +{
+>> +	xfs_flock64_t	segment;
+>> +	int		mode = FALLOC_FL_WRITE_ZEROES;
+> 
+> Shouldn't this take a -k to add FALLOC_FL_KEEP_SIZE like fzero?
+> 
 
-Correction: ->encode_fh() is for name_to_handle()
-You want to say that ->fh_to_dentry() need to support cached lookup,
-but FWIW, the blocking code is more likely to come from the
-lookup in exportfs_decode_fh_raw() =3D> ... reconnect_one()
-not from the filesystem code.
-
-The fs would "only" need to be taught to return an alias to a
-cached inode and generic code would "only" need to be taught
-to give up on a disconnected dir dentry.
-
-Doesn't sound too hard (famous last words).
+Since allocating blocks with written extents beyond the inode size
+is not permitted, the FALLOC_FL_WRITE_ZEROES flag cannot be used
+together with the FALLOC_FL_KEEP_SIZE.
 
 Thanks,
-Amir.
+Yi.
 
->
-> I see that lack of support for non-blocking operation was a dealbreaker
-> for adding getdents to io_uring previously:
->
-> https://lore.kernel.org/io-uring/20230428050640.GA1969623@dread.disaster.=
-area/
->
-> On the other hand, AFAICT, support for openat() was originally added in
-> 15b71abe7b52 (io_uring: add support for IORING_OP_OPENAT) without a non-
-> blocking lookup, and the possibility of non-blocking lookup later added
-> in 3a81fd02045c (io_uring: enable LOOKUP_CACHED path resolution for
-> filename lookups).
->
-> (To be honest I'm a little confused by the history here. The commit
-> message of 15b71abe7b52 says
->
-> > For the normal case of a non-blocking path lookup this will complete
-> > inline. If we have to do IO to perform the open, it'll be done from
-> > async context.
->
-> but from the commit contents this would NOT appear to be the case:
->
-> > +       if (force_nonblock) {
-> > +               req->work.flags |=3D IO_WQ_WORK_NEEDS_FILES;
-> > +               return -EAGAIN;
-> > +       }
->
-> until the support is really added in the later commit. Am I confused or
-> is the commit message wrong?)
->
-> In any event, based on my reading of the history, it would appear to be
-> OK to add open_by_handle_at() initially without support for inline
-> completion, and then later add that when the filesystem implementations
-> can be updated to support this.
->
-> Please let me know if I am wrong on my interpretation of the history or
-> if anyone disagrees with the conclusion.
->
-> Testing
-> =3D=3D=3D=3D=3D=3D=3D
->
-> A liburing branch that includes support for the new opcodes, as well as
-> a test, is available at:
->
-> https://github.com/bertschingert/liburing/tree/open_by_handle_at
->
-> To run the test:
->
-> $ ./test/open_by_handle_at.t
->
-> Thomas Bertschinger (6):
->   fhandle: create helper for name_to_handle_at(2)
->   io_uring: add support for IORING_OP_NAME_TO_HANDLE_AT
->   fhandle: do_handle_open() should get FD with user flags
->   fhandle: create __do_handle_open() helper
->   io_uring: add __io_open_prep() helper
->   io_uring: add support for IORING_OP_OPEN_BY_HANDLE_AT
->
->  fs/fhandle.c                  |  85 ++++++++++++---------
->  fs/internal.h                 |   9 +++
->  include/uapi/linux/io_uring.h |   2 +
->  io_uring/opdef.c              |  14 ++++
->  io_uring/openclose.c          | 137 +++++++++++++++++++++++++++++++---
->  io_uring/openclose.h          |   5 ++
->  6 files changed, 209 insertions(+), 43 deletions(-)
->
-> --
-> 2.50.1
->
->
+> (The code otherwise looks fine to me)
+> 
+> --D
+> 
+>> +
+>> +	if (!offset_length(argv[1], argv[2], &segment)) {
+>> +		exitcode = 1;
+>> +		return 0;
+>> +	}
+>> +
+>> +	if (fallocate(file->fd, mode, segment.l_start, segment.l_len)) {
+>> +		perror("fallocate");
+>> +		exitcode = 1;
+>> +		return 0;
+>> +	}
+>> +	return 0;
+>> +}
+>> +
+>>  void
+>>  prealloc_init(void)
+>>  {
+>> @@ -489,4 +515,14 @@ prealloc_init(void)
+>>  	funshare_cmd.oneline =
+>>  	_("unshares shared blocks within the range");
+>>  	add_command(&funshare_cmd);
+>> +
+>> +	fwzero_cmd.name = "fwzero";
+>> +	fwzero_cmd.cfunc = fwzero_f;
+>> +	fwzero_cmd.argmin = 2;
+>> +	fwzero_cmd.argmax = 2;
+>> +	fwzero_cmd.flags = CMD_NOMAP_OK | CMD_FOREIGN_OK;
+>> +	fwzero_cmd.args = _("off len");
+>> +	fwzero_cmd.oneline =
+>> +	_("zeroes space and eliminates holes by allocating and submitting write zeroes");
+>> +	add_command(&fwzero_cmd);
+>>  }
+>> diff --git a/man/man8/xfs_io.8 b/man/man8/xfs_io.8
+>> index b0dcfdb7..0a673322 100644
+>> --- a/man/man8/xfs_io.8
+>> +++ b/man/man8/xfs_io.8
+>> @@ -550,6 +550,12 @@ With the
+>>  .B -k
+>>  option, use the FALLOC_FL_KEEP_SIZE flag as well.
+>>  .TP
+>> +.BI fwzero " offset length"
+>> +Call fallocate with FALLOC_FL_WRITE_ZEROES flag as described in the
+>> +.BR fallocate (2)
+>> +manual page to allocate and zero blocks within the range by submitting write
+>> +zeroes.
+>> +.TP
+>>  .BI zero " offset length"
+>>  Call xfsctl with
+>>  .B XFS_IOC_ZERO_RANGE
+>> -- 
+>> 2.39.2
+>>
+>>
+
 
