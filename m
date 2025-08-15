@@ -1,179 +1,189 @@
-Return-Path: <linux-fsdevel+bounces-57978-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57979-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28B97B27649
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 04:47:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1363B276AE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 05:19:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BE2818824F3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 02:45:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 594DA16F4B3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 03:19:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7C727FB30;
-	Fri, 15 Aug 2025 02:45:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E812D296148;
+	Fri, 15 Aug 2025 03:19:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ah5CVm2Y"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SSe4YfHO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE08E29BD9D
-	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Aug 2025 02:45:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC1D51C5D77
+	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Aug 2025 03:19:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755225909; cv=none; b=WjsuV01nQ0XEhf76v8dWZLsKI6oPiwcD8qgsOTQCvZ/Sjxzei6sONQwFuZe9Ywid/72QtpG8EalFPF09Fvko+0z74iqsTw2I7NDvAnNVeZh+3eTs0xw/cBlnSEsgrczAyptfdg5/BkkKuIxcg+FBzk9ud10YLT326F1rFLbVfN8=
+	t=1755227979; cv=none; b=inhYTs3wPi9zzzNyXrOfY4pYKewDqEOedOm9BbllUiaPXIp0mbxYnO34CLJ4Xv7zYUX5DdJMPWFEXeaFsfib/HjcQqjuI60FEWnpmyZlsCBLA85P0IC5ozSuGVPNodXMLCpB0XaNjJZHzpMlvcqFXniNHWxXkONHsYAoNDrzlW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755225909; c=relaxed/simple;
-	bh=I4FD3v+VUZikNRwYd+gBHMrLUQ4CPjiLRoYKNpa0koM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CnvMbPMt/3a3PWKuB311MiXvz9Ro4r3kZJMnixZ2Lw5w6iJTN8ZmwynyvJmdiE0iz7TCIDIxPiTW2A4575oOF2TZYD4einvJm1otSJ8rhI87C3pXfbF7qSUcHnfmG2J9RZD8o4m7ksuCmfpq+KogzOiym4vmNUV8sQLuZDrFlvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ah5CVm2Y; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755225906;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=D0MkfgQ8bxQYxWpTPhXMKMd18J4d8CIS4VwAx8IBZF0=;
-	b=Ah5CVm2YMQS86+n2CRwmBCAqo3byXU0m3vN8NeVfOCV0YXgoBLN/tifbzxu0bpx0NmSaD5
-	mVQGLbGFYjF/DgKzmalxCt7KGDZeZqNZGBmuSEZIz9N45ZQsobbbQBZAMZNZxfcz9yLkpc
-	61hT8fta9Z94OV6nwdPYTj1ksh0uV3g=
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com
- [209.85.166.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-253-9a7G9WXgMBqbJcrRwj8qCQ-1; Thu, 14 Aug 2025 22:45:05 -0400
-X-MC-Unique: 9a7G9WXgMBqbJcrRwj8qCQ-1
-X-Mimecast-MFC-AGG-ID: 9a7G9WXgMBqbJcrRwj8qCQ_1755225904
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-88428cc6d2fso280210239f.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Aug 2025 19:45:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755225904; x=1755830704;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=D0MkfgQ8bxQYxWpTPhXMKMd18J4d8CIS4VwAx8IBZF0=;
-        b=GOVRqOqO7JuFW5Huu49gqgiKXsiV1ET9hrxlyk48IuRrJyVLnA48qp47mL0IGMIuEx
-         IM3VuBxmIeCdksC6r1Fm9lILO/ysL6iws1l+ieFp9wFZN6d3b8FVP/aV5/Q0KsWQum3x
-         Y6gdb+7avxQyvxe6jWTjE5Vby8I80j/X1qLKXZXluSPljz1pEisecRNIeWO1GKZX6I2x
-         TVhoH0H7XZ7Nfd1oALFycoB+yzH/opwpv4KiXwCeiqzn4+ju1em5/RuqsWvkZHY2rUbL
-         eFB1DoMtbCSlmIzsJ6yDOT0gUSYxTQ203Sm3OikQwKk8JxTXmMJj3eXj9tdavM/zy6rf
-         1Ogg==
-X-Forwarded-Encrypted: i=1; AJvYcCUtvi42O/CeJXMuHUSS4QYkyib2P/WE01/2S6KHZRnwzs9ZfegS4WYuEZBPKpHbSF4/Pvha46OTnzLHG06c@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4jnL4WAI9x9Et2t5yh7414AhO+n7AreXAS/iUWlxQweuzV4jO
-	Izpjc9crINFd6F/7fEMpTTj7eAYLJKc5xYSoIwjMDlDo2Q2+koZIA8CRy5726tnCv7KHgA+i1kF
-	v3+b7I+D5RXgM2PbulYHK90Afi/DffuIbdGMfKdDlHmyXgV9bOvsVTgPWocMh0UtGsm0=
-X-Gm-Gg: ASbGncuWdTnTOSCT18RVSzbqlrdVi7BgNGleYz+v35AFFL0ghFjaSPPPWxs3Lk8yajt
-	9leNHrTZDK8oGR6mrRrbEcJ2s51+JSdPUWo8e3mfI1irJh8rlPlcmjEwloCO3heGHn9GScmUeCw
-	dyYnIwqRiAAv8j7yNVPkU7JbBinM7nOcNaJWdaAabGSiq8uSCkJoE2Xxy38wLq01ddYBt1WJ818
-	7TE6tcHFpNImooBlM732bY2v3t8EXj1XTeTf+Mr0KsQO/quBYF+QgNzTpCycIGN0Pg87etuJdjO
-	JcWI9uiSjnHRd3qZMlsjSwzVZXzVr3ZqZuT90ZihbKTi24WEXb3/q/bDC6qOgtL9Y7NbPUJYcfv
-	y
-X-Received: by 2002:a5d:87cb:0:b0:883:f98c:d346 with SMTP id ca18e2360f4ac-884344a12f8mr663499139f.8.1755225904411;
-        Thu, 14 Aug 2025 19:45:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGPO2/dpIhfW88S7AVny5BTqTTrhXRStv9g3Vy3tFeK3kWPbXDX/MhOKhT4XvAfrxexA31dhA==
-X-Received: by 2002:a5d:87cb:0:b0:883:f98c:d346 with SMTP id ca18e2360f4ac-884344a12f8mr663494839f.8.1755225904012;
-        Thu, 14 Aug 2025 19:45:04 -0700 (PDT)
-Received: from [10.0.0.82] (75-168-243-62.mpls.qwest.net. [75.168.243.62])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50c94999fe0sm79448173.57.2025.08.14.19.45.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Aug 2025 19:45:03 -0700 (PDT)
-Message-ID: <0d8d55ab-f21c-4e4f-8951-87398f382112@redhat.com>
-Date: Thu, 14 Aug 2025 21:45:02 -0500
+	s=arc-20240116; t=1755227979; c=relaxed/simple;
+	bh=lqpDLYaw52mUtUuCc1h7LX26PmiquULT03cQeR3XKhw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AZXalcX8TbIJ5kl7ephy2armwUUvEXfSefTYqovGL5OVMusELnkRWloppFwf5Th9IXQMBBy7dO/7LyPT62zUf5i75Wy7Do7ae879JPAcQ3pYC+x5OUVgh2+vipjqwfZ1LOpk0cA4klDLhuloJCxckTqpvKXmjnkgQQL6tTY3uUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SSe4YfHO; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755227977; x=1786763977;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=lqpDLYaw52mUtUuCc1h7LX26PmiquULT03cQeR3XKhw=;
+  b=SSe4YfHOdZf2eNsihLA0Ha4ogeoRjxLzBXkMdxUcDBvHc4sDsA1F3yZ0
+   8wYLB/L+AkB2YlcVA+8i3bEk9+gzDtUdS1Hjz4oLhgPf6/3UU96MYKX/J
+   0xGfFpbZwAr5W8uUMJk6dLNR9ZilmvpqRebNd3pnBaptNlCGjgI0/M0fX
+   IYN5/V3oSRDiNOkxEa5/jYAr8Ds49TDdSyVYD2ZceAtLeGt4bEEIGADxY
+   pOpsSfcS7WGCnIIzWr94Tu+lrFarVqXrRQF9ajQj8Gdutp0QY1Ckubt8u
+   NTkU54N/yLZJjV6KpgDfbKyTiyy9IMv0Cs94auGTnrhMsGQOMqKlJEeeH
+   Q==;
+X-CSE-ConnectionGUID: FQn9tjM2Q5CtGOPJoQf6YA==
+X-CSE-MsgGUID: 1JpDJLZ5QwiVI4SFyhF1Sw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="69007114"
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="69007114"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 20:19:36 -0700
+X-CSE-ConnectionGUID: uPFYWGINRxCDnLtndWdzQA==
+X-CSE-MsgGUID: j1uKGlAAT6qGpIuGKXimtQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="166138269"
+Received: from ly-workstation.sh.intel.com (HELO ly-workstation) ([10.239.182.53])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 20:19:34 -0700
+Date: Fri, 15 Aug 2025 11:19:31 +0800
+From: "Lai, Yi" <yi1.lai@linux.intel.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org, yi1.lai@intel.com,
+	ebiederm@xmission.com, jack@suse.cz, torvalds@linux-foundation.org
+Subject: Re: [PATCH v3 44/48] copy_tree(): don't link the mounts via mnt_list
+Message-ID: <aJ6nQzZx6/pWou/j@ly-workstation>
+References: <20250630025148.GA1383774@ZenIV>
+ <20250630025255.1387419-1-viro@zeniv.linux.org.uk>
+ <20250630025255.1387419-44-viro@zeniv.linux.org.uk>
+ <aJw0hU0u9smq8aHq@ly-workstation>
+ <20250813071303.GH222315@ZenIV>
+ <20250813073224.GI222315@ZenIV>
+ <20250814232114.GQ222315@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 0/4] 9p: convert to the new mount API
-To: Dominique Martinet <asmadeus@codewreck.org>,
- Eric Sandeen <sandeen@sandeen.net>
-Cc: v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, ericvh@kernel.org, lucho@ionkov.net,
- linux_oss@crudebyte.com, dhowells@redhat.com,
- Christian Brauner <brauner@kernel.org>
-References: <20250730192511.2161333-1-sandeen@redhat.com>
- <aIqa3cdv3whfNhfP@codewreck.org>
- <6e965060-7b1b-4bbf-b99b-fc0f79b860f8@sandeen.net>
- <aJ6SPLaYUEtkTFWc@codewreck.org>
-Content-Language: en-US
-From: Eric Sandeen <sandeen@redhat.com>
-In-Reply-To: <aJ6SPLaYUEtkTFWc@codewreck.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814232114.GQ222315@ZenIV>
 
-On 8/14/25 8:49 PM, Dominique Martinet wrote:
-> Eric Sandeen wrote on Thu, Aug 14, 2025 at 11:55:20AM -0500:
-
-...
-
->> Any news on testing? :)
+On Fri, Aug 15, 2025 at 12:21:14AM +0100, Al Viro wrote:
+> On Wed, Aug 13, 2025 at 08:32:24AM +0100, Al Viro wrote:
+> > On Wed, Aug 13, 2025 at 08:13:03AM +0100, Al Viro wrote:
+> > > On Wed, Aug 13, 2025 at 02:45:25PM +0800, Lai, Yi wrote:
+> > > > Syzkaller repro code:
+> > > > https://github.com/laifryiee/syzkaller_logs/tree/main/250813_093835_attach_recursive_mnt/repro.c
+> > > 
+> > > 404: The main branch of syzkaller_logs does not contain the path 250813_093835_attach_recursive_mnt/repro.c.
+> > 
+> > https://github.com/laifryiee/syzkaller_logs/blob/main/250813_093835_attach_recursive_mnt/repro.c
+> > 
+> > does get it...  Anyway, I'm about to fall down right now (half past 3am here),
+> > will take a look once I get some sleep...
 > 
-> Thanks for the prompting, that's the kind of things I never get around
-> to if not reminded...
+> OK, I think I understand what's going on there.  FWIW, reproducer can be
+> greatly simplified:
 > 
-> I got this to run with a fedora-based host (unlike debian siw is
-> built-in):
+> cd /tmp
+> mkdir a
+> mount --bind a a
+> mount --make-shared a
+> while mount --bind a a do echo splat; done
 > 
-> - host side
-> ```
-> $ sudo modprobe siw
-> $ sudo rdma link add siw0 type siw netdev br0
-> (sanity check)
-> $ ibv_devices
->     device          	  node GUID
->     ------          	----------------
->     siw0            	020000fffe000001
-> ( https://github.com/chaos/diod build)
-> $ ./configure --enable-rdma --disable-auth && make -j
-> (diod run, it runs rdma by default; not squashing as root fails with
->   rdma because of the ib_safe_file_access check:
->   [611503.258375] uverbs_write: process 1490213 (diod) changed security contexts after opening file descriptor, this is not allowed.
-> )
-> $ sudo ./diod -f -e /tmp/linux-test/ --no-auth -U root -S 
-> ```
-> - guest side (with -net user)
-> ```
-> # modprobe siw
-> # rdma link add siw0 type siw netdev eth0
-> # mount -t 9p -o trans=rdma,aname=/tmp/linux-test <hostip> /mnt
-> ```
+> Beginning of that thing is to make it possible to clean the resulting mess
+> out, when after about 16 iterations you run out of limit on the number of
+> mounts - you are explicitly asking to double the number under /tmp/a
+> on each iteration.  And default /proc/sys/fs/mount-max is set to 100000...
 > 
-> I've tested both the new and old mount api (with util-linux mount and
-> busybox mount) and it all seems in order to me;
-> as discussed in the other part of the thread we're now failing on
-> unknown options but I think that's a feature and we can change that if
-> someone complains.
-
-Super, thanks.
-
->> As for "waiting for you," I assume that's more for your maintainer peers
->> than for me? I'm not sure if this would go through Christian (cc'd) or
->> through you?
+> As for cleaning up, umount2("/tmp/a", MNT_DETACH); will do it...
 > 
-> Sorry, I wasn't paying attention and confused you with another Eric
-> (Van Hensbergen) who is a 9p maintainer, so I was thinking you'd take
-> the patches, but that wasn't correct.
-> And that's after seeing your name all the time in #xfs, I'm sorry..
+> The minimal fix should be to do commit_tree() just *before* the preceding
+> if (q) {...} in attach_recursive_mnt().
+> 
+> Said that, this is not the only problem exposed by that reproducer - with
+> that kind of long chain of overmounts, all peers to each other, we hit
+> two more stupidities on the umount side - reparent() shouldn't fucking
+> bother if the overmount is also going to be taken out and change_mnt_type()
+> only needs to look for propagation source if the victim has slaves (those
+> will need to be moved to new master) *or* if the victim is getting turned
+> into a slave.
+> 
+> See if the following recovers the performance:
+> 
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index a191c6519e36..88db58061919 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -1197,10 +1197,7 @@ static void commit_tree(struct mount *mnt)
+>  
+>  	if (!mnt_ns_attached(mnt)) {
+>  		for (struct mount *m = mnt; m; m = next_mnt(m, mnt))
+> -			if (unlikely(mnt_ns_attached(m)))
+> -				m = skip_mnt_tree(m);
+> -			else
+> -				mnt_add_to_ns(n, m);
+> +			mnt_add_to_ns(n, m);
+>  		n->nr_mounts += n->pending_mounts;
+>  		n->pending_mounts = 0;
+>  	}
+> @@ -2704,6 +2701,7 @@ static int attach_recursive_mnt(struct mount *source_mnt,
+>  			lock_mnt_tree(child);
+>  		q = __lookup_mnt(&child->mnt_parent->mnt,
+>  				 child->mnt_mountpoint);
+> +		commit_tree(child);
+>  		if (q) {
+>  			struct mountpoint *mp = root.mp;
+>  			struct mount *r = child;
+> @@ -2713,7 +2711,6 @@ static int attach_recursive_mnt(struct mount *source_mnt,
+>  				mp = shorter;
+>  			mnt_change_mountpoint(r, mp, q);
+>  		}
+> -		commit_tree(child);
+>  	}
+>  	unpin_mountpoint(&root);
+>  	unlock_mount_hash();
+> diff --git a/fs/pnode.c b/fs/pnode.c
+> index 81f7599bdac4..040a8559b8f5 100644
+> --- a/fs/pnode.c
+> +++ b/fs/pnode.c
+> @@ -111,7 +111,8 @@ void change_mnt_propagation(struct mount *mnt, int type)
+>  		return;
+>  	}
+>  	if (IS_MNT_SHARED(mnt)) {
+> -		m = propagation_source(mnt);
+> +		if (type == MS_SLAVE || !hlist_empty(&mnt->mnt_slave_list))
+> +			m = propagation_source(mnt);
+>  		if (list_empty(&mnt->mnt_share)) {
+>  			mnt_release_group_id(mnt);
+>  		} else {
+> @@ -595,6 +596,8 @@ static void reparent(struct mount *m)
+>  	struct mount *p = m;
+>  	struct mountpoint *mp;
+>  
+> +	if (will_be_unmounted(m))
+> +		return;
+>  	do {
+>  		mp = p->mnt_mp;
+>  		p = p->mnt_parent;
 
-No worries! I don't mind being confused with awesome people ;)
+After applying this patch on top of linux-next, issue cannot be reproduced.
 
-> Christian is "just" a reviewer (for now!), and none of the other
-> maintainers pick much up lately, so I'll give this a second look and
-> take the patches.
-> Linus just closed up 6.17-rc1 so I guess this will get in 6.18 in the
-> next cycle, unless there'd be a reason to hurry?
-
-No reason to hurry. This has been a long process, and a little longer will
-not hurt.
-
-Thanks!
--Eric (Sandeen)
-
-> Thanks,
+Regards,
+Yi Lai
 
 
