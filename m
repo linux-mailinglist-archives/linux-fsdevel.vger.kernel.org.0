@@ -1,191 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-57997-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57998-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2A31B27E79
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 12:40:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB67DB27EC5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 13:01:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 316323AD3F5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 10:40:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B4BAAC3F0C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 11:01:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9E212FF16D;
-	Fri, 15 Aug 2025 10:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B910275B19;
+	Fri, 15 Aug 2025 11:01:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i57ytt/V"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="MLfDP79h"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DD0021FF5D;
-	Fri, 15 Aug 2025 10:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 716A5319855
+	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Aug 2025 11:01:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755254446; cv=none; b=WAEke12Swdl1oohjWt6Nydl8+JPwV5CHMIGAdPrc5VOIsZiVIRYDoBHf2XegWA2DwmvJxY8lR/Yo2f/Uq6ktMXCGuTAv6cM6vFFysj2baNaode9OW06yypa2FLkrcE9x2O3Lkq9JxDgbSeHL8ICXBr9/EACd7why+fQaEozls4c=
+	t=1755255715; cv=none; b=ukDRNPLBKLh+hMNmt6oOQfwIWrYFy4QP2t7B4goKX52Uml29bss3F5VkTeZ4hirGxyGBWWGRfQR8lgYjPhg0k9W5teobs3l9+6fu7PRD2QdetnHVmLYP2ED1Ycg7frarCu2WwD/MlDw/xeDupMI6rTTm7w0lzScMx4O++Ki03HI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755254446; c=relaxed/simple;
-	bh=T2zmVJzu63dIJxj/InbZiHhVIQ76K9RRNnQS9NdUg6I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q11eYRk4fKlCz7P8XNBK77oo2za+ZnL0MgoR+urquyasdWibccQF941YmvTOO3xQSZDCLFfrno8uZ6ZIva58qhadFkXXU+z2QeM3r2SZ2pVsuFUYX31TvVVxyVKHsaQj8OYoapzcvhztPBQEWZPM3HcnkcJxwVVNTS1yo5KbiTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i57ytt/V; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6188b656159so3016261a12.1;
-        Fri, 15 Aug 2025 03:40:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755254443; x=1755859243; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6saLdyCKyWgYTitSChnqlSV/HwqtSRKtrlc/BKwH1uI=;
-        b=i57ytt/Vw8aiZKmJdDEEQSBwQE8Zqyg/lx7adk70ut8tRz1DP1MCqjUMgjpLyYt/6K
-         4UCwe/09jSd4jrvZf0IUNHyGIktFTHvJB+367SwTv3i2lOrTS8OmbdFVvyRCn22YhUdm
-         G3aZ4XorcWTVz41kL3YavONjJjw9J8/EQ+D0cOja3hsZwPAUQYjnXKJvZx8Q8mszEwgB
-         //dHJfl8Mu4eC44l5RK6Xd6l89TNgq2WRfXOUlT8C9eHlzGf4U+JJ7/rcXrDR+gzUURj
-         i5hS4/px1Zdi2W/VNSMJHt98Lm0RQYfkpYa87aoaKuEnueA0xm6LHa5hpDwiiCwPU6G3
-         6qDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755254443; x=1755859243;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6saLdyCKyWgYTitSChnqlSV/HwqtSRKtrlc/BKwH1uI=;
-        b=oCURSa2wwMwM9wtZHw4qedBOiMYDPM2yG+/as9lYEuoZcT35+zxEYqTNefbQNN5zJm
-         QR2YMp2y4Cg97ceNEFxxXDEMRgOELNXbbWVKBknUyrZD+YFa753dQdDeoh+7onlg5bQU
-         JM2Q2C5u/ajObvuVcv5M31iolqNJ9wOQ5rTohFFwakLzfFHMQJ00fvZj6u87XRhJ5SVW
-         kbE9UDV6eQbD1CLw/RqAmtfeiI0FsEyBWF7DpymVxLdo7JEZfotMSh71pRnziSA3hm9r
-         1Z695cWAsQoZ0DRtWI/cH6Z6lrrMayMm7BdCx6Hq1PClMQTG1HGq46WgURZeYntLmEVR
-         3CkA==
-X-Forwarded-Encrypted: i=1; AJvYcCXk2cXbUfDVPRaRlR4bdIhnmCv1PXvv9v8sZA9Qq61lqmPnKeU+EanzHCjCpJzjZlzQIsyMz8lQiVVt@vger.kernel.org, AJvYcCXu95VMmtUiEKy6gVF3+4OrC9YL6/JUjkf/nKVNUFH99wstDIsiiSSn6ekS73XzZOUI6OKAtIwATa9GGdRP@vger.kernel.org
-X-Gm-Message-State: AOJu0Yygg2NlVL1nAv/pugx5k3u+SZNyizJF9VpKrUMhhIL2Fb9CLWtR
-	lGscWmAL1jFg0uorfrwm6ew17DBNiqrEh+ACUhJJqDuuLLLVLMIrXgsEeFKLEW8R89Xl85VWR39
-	5wRdFxfvwgSAis/3pJHlNAK8M9Aoduac=
-X-Gm-Gg: ASbGncthVluSaBW/S89xgFuuvybVviq+2irzuiWY05eU5pfDdlX/vCNeXjQRwgmP+Bi
-	YKYckPggWdkXSrAiWWOUjmFL3n9V7MlemTKdJHAaU1ULHo7r4Fonqku684aK7CFm459dmvtmsLA
-	/peKVLf/LoI1OhL5FW1vbCXNZmYxLs8OosSuouxqgQQZnUjasBiwS/Zx+c6vs2/JcLq/sTMu4jM
-	ggpkCI=
-X-Google-Smtp-Source: AGHT+IHr1mQiEi5hGc8LoTPvGoLdd5QVhL+mSQ6I7Z+WHas2N2JwqHmxzeClECMUR7o+kDNlLieag+nrqU2AUyIwDLQ=
-X-Received: by 2002:a05:6402:274c:b0:618:28c3:aee0 with SMTP id
- 4fb4d7f45d1cf-618b0514affmr1311507a12.8.1755254442790; Fri, 15 Aug 2025
- 03:40:42 -0700 (PDT)
+	s=arc-20240116; t=1755255715; c=relaxed/simple;
+	bh=WYpFKbfeaT8HNEBSy4zAigMvXb0z6zq4KvCwXFzDsDs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hi2zlZZMAcj0WbUwZtulhoRd6LpuxUXqAq3sL6ryuZEOiG7wvM/jFCbS6hzunzjYQa16NopgE820ZJ+PwvG5zLDzWAEjtUfnXFm9I/shOnFZ1Sh/iEnKZGka0DQIbyyMuCftQ6m01q8ZfALxfcKuMWZMqKpvbKRulqg2hk8NexY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=MLfDP79h; arc=none smtp.client-ip=115.124.30.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1755255710; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=6NKoxmUD6OnVO63NZ5ScVxYujCChgDolKtXO6Jal5vw=;
+	b=MLfDP79hCTtbKK2MDuCWgy4huj4u9bBVqK9U6Tj6CQbCZrAS9Ez+Ru/82mzljmCN8mKgWcjVG1doivFMcNQ5nlkVAti6OcvelDeP9wh0vkhP9JmgDBfvb55r89ApCnjb2Zm489iGJF0fiC3yTIySYcCv2+85VgSovOXYTAreMhA=
+Received: from 30.221.147.6(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0Wlot7ch_1755255687 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 15 Aug 2025 19:01:49 +0800
+Message-ID: <6bd47f03-8638-4460-9349-deebd1184b45@linux.alibaba.com>
+Date: Fri, 15 Aug 2025 19:01:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250814235431.995876-1-tahbertschinger@gmail.com> <20250814235431.995876-3-tahbertschinger@gmail.com>
-In-Reply-To: <20250814235431.995876-3-tahbertschinger@gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 15 Aug 2025 12:40:31 +0200
-X-Gm-Features: Ac12FXwxDqoYDV52a6isgUjTEqvFVvz0jiyF8Xvn6aAFtsGWkEQS--xwOQ3NvtQ
-Message-ID: <CAOQ4uxhAOFyei+7GqR3L9WHp4SqhC7oVpwW9eDpxe1o7mDzjoQ@mail.gmail.com>
-Subject: Re: [PATCH 2/6] io_uring: add support for IORING_OP_NAME_TO_HANDLE_AT
-To: Thomas Bertschinger <tahbertschinger@gmail.com>
-Cc: io-uring@vger.kernel.org, axboe@kernel.dk, linux-fsdevel@vger.kernel.org, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, linux-nfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fuse: enable large folios (if writeback cache is unused)
+To: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu
+Cc: linux-fsdevel@vger.kernel.org, bernd.schubert@fastmail.fm,
+ willy@infradead.org, kernel-team@meta.com
+References: <20250811204008.3269665-1-joannelkoong@gmail.com>
+Content-Language: en-US
+From: Jingbo Xu <jefflexu@linux.alibaba.com>
+In-Reply-To: <20250811204008.3269665-1-joannelkoong@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 15, 2025 at 1:51=E2=80=AFAM Thomas Bertschinger
-<tahbertschinger@gmail.com> wrote:
->
-> Add support for name_to_handle_at(2) to io_uring.
->
-> Like openat*(), this tries to do a non-blocking lookup first and resorts
-> to async lookup when that fails.
->
-> This uses sqe->addr for the path, ->addr2 for the file handle which is
-> filled in by the kernel, and ->addr3 for the mouint_id which is filled
-> in by the kernel.
->
-> Signed-off-by: Thomas Bertschinger <tahbertschinger@gmail.com>
+
+
+On 8/12/25 4:40 AM, Joanne Koong wrote:
+> Large folios are only enabled if the writeback cache isn't on.
+> (Strictlimiting needs to be turned off if the writeback cache is used in
+> conjunction with large folios, else this tanks performance.)
+> 
+> Benchmarks showed noticeable improvements for writes (both sequential
+> and random). There were no performance differences seen for random reads
+> or direct IO. For sequential reads, there was no performance difference
+> seen for the first read (which populates the page cache) but subsequent
+> sequential reads showed a huge speedup.
+> 
+> Benchmarks were run using fio on the passthrough_hp fuse server:
+> ~/libfuse/build/example/passthrough_hp ~/libfuse ~/fuse_mnt --nopassthrough --nocache
+> 
+> run fio in ~/fuse_mnt:
+> fio --name=test --ioengine=sync --rw=write --bs=1M --size=5G --numjobs=2 --ramp_time=30 --group_reporting=1
+> 
+> Results (tested on bs=256K, 1M, 5M) showed roughly a 15-20% increase in
+> write throughput and for sequential reads after the page cache has
+> already been populated, there was a ~800% speedup seen.
+> 
+> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
 > ---
->  include/uapi/linux/io_uring.h |  1 +
->  io_uring/opdef.c              |  7 ++++++
->  io_uring/openclose.c          | 43 +++++++++++++++++++++++++++++++++++
->  io_uring/openclose.h          |  3 +++
->  4 files changed, 54 insertions(+)
->
-> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.=
-h
-> index 6957dc539d83..596bae788b48 100644
-> --- a/include/uapi/linux/io_uring.h
-> +++ b/include/uapi/linux/io_uring.h
-> @@ -289,6 +289,7 @@ enum io_uring_op {
->         IORING_OP_READV_FIXED,
->         IORING_OP_WRITEV_FIXED,
->         IORING_OP_PIPE,
-> +       IORING_OP_NAME_TO_HANDLE_AT,
->
->         /* this goes last, obviously */
->         IORING_OP_LAST,
-> diff --git a/io_uring/opdef.c b/io_uring/opdef.c
-> index 9568785810d9..ff2672bbd583 100644
-> --- a/io_uring/opdef.c
-> +++ b/io_uring/opdef.c
-> @@ -574,6 +574,10 @@ const struct io_issue_def io_issue_defs[] =3D {
->                 .prep                   =3D io_pipe_prep,
->                 .issue                  =3D io_pipe,
->         },
-> +       [IORING_OP_NAME_TO_HANDLE_AT] =3D {
-> +               .prep                   =3D io_name_to_handle_at_prep,
-> +               .issue                  =3D io_name_to_handle_at,
-> +       },
->  };
->
->  const struct io_cold_def io_cold_defs[] =3D {
-> @@ -824,6 +828,9 @@ const struct io_cold_def io_cold_defs[] =3D {
->         [IORING_OP_PIPE] =3D {
->                 .name                   =3D "PIPE",
->         },
-> +       [IORING_OP_NAME_TO_HANDLE_AT] =3D {
-> +               .name                   =3D "NAME_TO_HANDLE_AT",
-> +       },
->  };
->
->  const char *io_uring_get_opcode(u8 opcode)
-> diff --git a/io_uring/openclose.c b/io_uring/openclose.c
-> index d70700e5cef8..f15a9307f811 100644
-> --- a/io_uring/openclose.c
-> +++ b/io_uring/openclose.c
-> @@ -27,6 +27,15 @@ struct io_open {
->         unsigned long                   nofile;
->  };
->
-> +struct io_name_to_handle {
-> +       struct file                     *file;
-> +       int                             dfd;
-> +       int                             open_flag;
+>  fs/fuse/file.c | 18 ++++++++++++++++--
+>  1 file changed, 16 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index adc4aa6810f5..2e7aae294c9e 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -1167,9 +1167,10 @@ static ssize_t fuse_fill_write_pages(struct fuse_io_args *ia,
+>  		pgoff_t index = pos >> PAGE_SHIFT;
+>  		unsigned int bytes;
+>  		unsigned int folio_offset;
+> +		fgf_t fgp = FGP_WRITEBEGIN | fgf_set_order(num);
+>  
+>   again:
+> -		folio = __filemap_get_folio(mapping, index, FGP_WRITEBEGIN,
+> +		folio = __filemap_get_folio(mapping, index, fgp,
+>  					    mapping_gfp_mask(mapping));
+>  		if (IS_ERR(folio)) {
+>  			err = PTR_ERR(folio);
+> @@ -3155,11 +3156,24 @@ void fuse_init_file_inode(struct inode *inode, unsigned int flags)
+>  {
+>  	struct fuse_inode *fi = get_fuse_inode(inode);
+>  	struct fuse_conn *fc = get_fuse_conn(inode);
+> +	unsigned int max_pages, max_order;
+>  
+>  	inode->i_fop = &fuse_file_operations;
+>  	inode->i_data.a_ops = &fuse_file_aops;
+> -	if (fc->writeback_cache)
+> +	if (fc->writeback_cache) {
+>  		mapping_set_writeback_may_deadlock_on_reclaim(&inode->i_data);
+> +	} else {
+> +		/*
+> +		 * Large folios are only enabled if the writeback cache isn't on.
+> +		 * If the writeback cache is on, large folios should only be
+> +		 * enabled in conjunction with strictlimiting turned off, else
+> +		 * performance tanks.
+> +		 */
+> +		max_pages = min(min(fc->max_write, fc->max_read) >> PAGE_SHIFT,
+> +				fc->max_pages);
+> +		max_order = ilog2(max_pages);
+> +		mapping_set_folio_order_range(inode->i_mapping, 0, max_order);
+> +	}
 
-These are not open_flags, there are handle_flags
-(e.g. AT_HANDLE_FID)
+JFYI fc->max_read shall also be honored when calculating max_order,
+otherwise the following warning in fuse_readahead() may be triggered.
 
-> +       struct file_handle __user       *ufh;
-> +       char __user                     *path;
-> +       void __user                     *mount_id;
-> +};
-> +
->  struct io_close {
->         struct file                     *file;
->         int                             fd;
-> @@ -187,6 +196,40 @@ void io_open_cleanup(struct io_kiocb *req)
->                 putname(open->filename);
->  }
->
-> +int io_name_to_handle_at_prep(struct io_kiocb *req, const struct io_urin=
-g_sqe *sqe)
-> +{
-> +       struct io_name_to_handle *nh =3D io_kiocb_to_cmd(req, struct io_n=
-ame_to_handle);
-> +
-> +       nh->dfd =3D READ_ONCE(sqe->fd);
-> +       nh->open_flag =3D READ_ONCE(sqe->open_flags);
+			/*
+                         * Large folios belonging to fuse will never
+                         * have more pages than max_pages.
+                         */
+                         WARN_ON(!pages);
 
-Please also create union member sqe->handle_flags
-or name_to_handle_flags.
 
+-- 
 Thanks,
-Amir.
+Jingbo
+
 
