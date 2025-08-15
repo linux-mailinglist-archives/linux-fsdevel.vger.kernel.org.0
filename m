@@ -1,216 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-58045-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58046-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8E63B28575
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 20:01:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ED00B285A7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 20:13:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8320EAA8A50
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 18:01:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 085CC16F88F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 18:13:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A226304BD7;
-	Fri, 15 Aug 2025 18:01:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A4443090F5;
+	Fri, 15 Aug 2025 18:13:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TS6inqFM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hyri/WCF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4AE6302770
-	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Aug 2025 18:01:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 311042F9C3B;
+	Fri, 15 Aug 2025 18:13:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755280882; cv=none; b=Tx8hecYjAYR8sbxQIEgM9kgfxp+f8R8j+fdHAvgNdpdxfyFEY7XfTGE3gwEP8qtzSubxgFZzbqMcB7PmUHAxXfuxPQS2XtpPE/0qmuxWcsD7PY4q+YEhkfeI3WKKvTEX+t7Wt1j8W03psBkwCLyxxXZau7ei6bdPcJC/YjQc3/c=
+	t=1755281596; cv=none; b=OBgXKimaLcGssZ3wC97CLr/EyQDk5zSVssliNFniFURaZObRXrrCFQZ/PIkiX/orhw4BvYZrrHl63LRc3vabCVX9Ar51+mN0J97nMZh5IvAd11srMZg4I6hHvCSbW7Bg75vKfRoLp5WVvEo4izfYyVCHJOFYZbFuqxiiBmI7RNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755280882; c=relaxed/simple;
-	bh=jU0VG/C9WbDZaoJ2m4pcEuv6CfAI+oDvZSyB3XC+yGU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GuLWSSWW1txeznRLmJ9KwuQBAIih1HXXfWcBMoy4aelE5IiiTBW5SBH/RphkmnQK5dA3vtQyD9PqMfjuatWpuO7iGUKIUv6s62k0yANgj1KyqG1yB6GfvPozPfri7XGNfVbAJdBftgpZtthTUMjA8d77154ltQtI6J1SuuT16zY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TS6inqFM; arc=none smtp.client-ip=209.85.160.175
+	s=arc-20240116; t=1755281596; c=relaxed/simple;
+	bh=fFYyh5J/EOcbKjLUREgW3XR+vjT/ijh4iRwnyj4BFpc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=oOzyZFs4hrChSL5Gm3O5w3F8DzdVmvNFN8apN8x+qeMPJFkwLDozMPKEKMAxneUKnfDPCPlyStRGjhp923IusjG3mYJAvycV2NezI7155N4p+Zn3aldjv/iZ0UTcXiTCWZQ1ogkalZ/5b880rrwdF7IAzouJtLDfinmm5UlWy3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hyri/WCF; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4b109a95dddso31899111cf.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Aug 2025 11:01:20 -0700 (PDT)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-24457f47492so15255455ad.0;
+        Fri, 15 Aug 2025 11:13:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755280879; x=1755885679; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1755281594; x=1755886394; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=eicv0MlgVfV4tNn8wjOXqDAerFFe0sF36+d2mA/eqIg=;
-        b=TS6inqFMsCVd76lS0TV5+SpabDFfYiAd+oAToEZjndF2+D4L0Pw4Ol7PK3LHyFtomk
-         e3mnNhQcp4ABPNOKRUrKT1scPXgbGzx72oHLbqwavtr86lfe7cOTr/6IC/H8X30UXXBb
-         4oP2E91VHE/hsjcrEhMt2z7n35DzYpOc6Jll5BEjTZ2bqwkVYuvjMFxSVSrpV9XK6ZVd
-         dEU+Apy7/iMzpiep4sQ1Eh3g9KOT0U2VEYPi0Q6qBfi6s5OScm4qsDdBgkevi7KJb0z+
-         oZjT9yx5HQw3fkQXsnZBMuBYBKQXGXpqMzpuqfXeGlo++T2oMg5bkMO4Jk2MDHiHjrI+
-         5voA==
+        bh=JyFLdgUQkPQ1EBi1OP2pK+ChQ9j+YhjltNfXhrruJdc=;
+        b=Hyri/WCFQASc5sPmRX3r/WEdq+EgDNCfaoqN0KTfERAzeB/4xdEgAdlmYfuUO1CXC5
+         JHSsFlYKekAzcUIlBVt3/YteOpNOnSblhbfWeCiaT8tWUs/oHq96i1wPqNhhagA3cy9G
+         Uz0gpmcQGOCi+/7kP0BayokdxOFJsiCTJcocw/xm7TU9zduYryHbTE54ldiO9zBN1uFk
+         /Tz4q8uuE853RszzUe1Jisb/DvacymAIEqyydOn5vk7j1ThAW7UK49WIb3BmsrbSuG+P
+         yyCV6eXN0PLG0X7ivBJVIa2ZHRQKNV/A/bwPBBA1YnkQKbLsMp+OZGr0wXTMfl5IW7Dp
+         uJiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755280879; x=1755885679;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eicv0MlgVfV4tNn8wjOXqDAerFFe0sF36+d2mA/eqIg=;
-        b=KgBBmiTd/wNsxBf8n92GA/tbxo5SsLEWykTgPLV5vyAvDqOSyHcRYcX3pJHURJKExj
-         zDMacRmJD6FlcQgZ3EZNGOp30TIMInk3qeXO1j30AyKWGvVvVoGgsRzHZUerjnpm+9gD
-         uWFMt3QZni2srNDl9igtFz1C9u/tcTxWWTAcXZgV+8UQU5e2b46s/fDdSngFV9x11l7f
-         qRMqw4Tl4NQ7dlNsMxasz7eUkUF8w+gIU4lU3D9qXOA7+Ly/wpLIbzVjdx0xQIBEvDXm
-         AjnCeeT6A17K/ooT4hwloMszjB6j2+vwLPXi3RpTxqKSlgZC80UDyTOGJMAzCrPl7X9E
-         rdYw==
-X-Forwarded-Encrypted: i=1; AJvYcCVDw0kZWWqVKacUdyWQUnpmJvdMGSd8Jqb2DCvvOUhf7htFXg7nViXE8Rrzx0N1suhp+8uQZ/sC2YYuSZce@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaOIXf36n4mtyv4uSH3Qu8rlH8Ujxm1Kad8Ebd9wSuiiTVKsMS
-	Z0XmU1nPLQTxn5StTLrcL+Pg8F/k2eMVDW2Uebz00V0f65aDmufDlSqLDLMKF8SmWTLb5lS+h+s
-	isq9bwvJW3lUlWCKOn8WY77RGBiOPVE8OM9ga
-X-Gm-Gg: ASbGncu8jXTjCT4uvsuu+uQIkhGbavvBTqKKQcOAVcss8aFsdHu3k+FgVtJ5OjAYl+0
-	esARRkmWnsu1vjSR9eloY7pKrkn2qO2bsgnA44ac063dz2zAGsDqBzOJdFc8Bfl7lEcL/NBFZC2
-	IaiMxcZdWznPCKjHbTs112TTsNeiyreqF1GQchK3by5n+cbC1a9kxBnmnZh2RZIbrdMIKJjz760
-	tenzw+ihCjYeSiEKI0=
-X-Google-Smtp-Source: AGHT+IEoOKNKueCEinrk7C+j867xNbmE42EmIzzMgi/4RBzH9T+qIZYJfsISVlNn+nX4lDMYtbqKPOOrreobRgb+TVQ=
-X-Received: by 2002:a05:622a:1189:b0:4af:157e:3823 with SMTP id
- d75a77b69052e-4b11e2cffccmr41539821cf.42.1755280877670; Fri, 15 Aug 2025
- 11:01:17 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755281594; x=1755886394;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=JyFLdgUQkPQ1EBi1OP2pK+ChQ9j+YhjltNfXhrruJdc=;
+        b=YKiDVK7wcsV20lic1Aodh5hmXw4e4Rd9+E5BvyEX7HVjRSZG0yVVCfIaiRDGMBJ9JU
+         e5RR+MW//vCAcve5WUHaEy9sf5VKXFIUoPP72SuIchR6jBnWk+XIvJjPZWzppXaIMtr8
+         +JKp+gjY+bQzppOZAwApbo7CG6H0qrjeNeVmVOsKCj6NyBci8tfFvVhe16iuCzt0gDtl
+         8ReJzQZJJLtJV2bEz62wbjWrsdNO5jIjsd1VWWBA9y2OkmJCG01D38vzSPwJ6nJTxTVE
+         kpFJn/s8pHsob8eC7gDW/ckE0BNW4aIsgkS+eWxWPaY5ISVb8RPe/3U0jfB8Ib/ymsD1
+         bULQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUoxCEPxS2AiLALX+swgEYgyalGNrL24mMwtFs+IBZMgeEIEINB2zrRwWLdflZJEUG3fCsrxLCaQrGc@vger.kernel.org, AJvYcCVhG1W/o/QlhTxxYIwsrVnv6ybgVhD0zQUxUybMl+yWxsh2vaYEz5Ohx3Uxrzsk4vvrzP2DVQwWW+0h9SJX@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5zwNbZkdRH/w0PjCsdl9984d0Uw8TvFBwhfxLIQ0ko8+vFf8k
+	GQcOcYTd3UXCbtgbIv5cjaCCBgp0G6d0T9hBb33jfNgkPrmj+j1xoce7
+X-Gm-Gg: ASbGncsKQ1cFN44KPw/cwRIeeK9MwiRYq9KE+CrReOk2ODXxT1korHaSmeDiJHYIvu1
+	adez26F7WGkBE0rT99aiKuKTt3qqCDntrhxuGd5xir0kZZt6E2vc4qTshLWk4pjJS2ZHBF3/54M
+	jWzqbDfW8IaunHYJbDT3w0CPR+fDa+osc+aNkySJQzXDtxQWF3VS+fl5FaE5R/k6IJEKq3epa2C
+	cIqowEVVNhVmwGZdzypDkO7hCVTj0ALh8HJTUg3YWuUpvC8dAOCoY41enpGl2O0/yikgYi+6Vgp
+	8p7muhQi5+9EhcbPvYnfLlFeRxYFV/10kF7toBzUiHz/KQroj+DfBhrJmODlHa4vF5ur9E6zQ5/
+	HhxODHoZthVj/rR0qYV9jJTIYGQ==
+X-Google-Smtp-Source: AGHT+IHhLAqcn6t3IKYb9FoYhIYSVfavKpTay3V9ds/iGSURETjrjA8ktGyW8ESLrAQPBiPxojQ7nQ==
+X-Received: by 2002:a17:902:e80a:b0:240:63a9:30c9 with SMTP id d9443c01a7336-2446d71ebadmr46619365ad.17.1755281594292;
+        Fri, 15 Aug 2025 11:13:14 -0700 (PDT)
+Received: from localhost ([65.144.169.45])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446cb07105sm18948305ad.55.2025.08.15.11.13.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Aug 2025 11:13:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250813223521.734817-1-joannelkoong@gmail.com>
- <20250813223521.734817-3-joannelkoong@gmail.com> <20250814182506.GY7942@frogsfrogsfrogs>
-In-Reply-To: <20250814182506.GY7942@frogsfrogsfrogs>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Fri, 15 Aug 2025 11:01:06 -0700
-X-Gm-Features: Ac12FXxtHQ7zQEkazfEYhRIDGEvTJpqRsFA4G1k-_tGE4apsgwf9M7geiuFXWFo
-Message-ID: <CAJnrk1ayHG=yg+ZXYNsohi0AcPjXQ=iwLKgthg3Wx7zLOfW4RQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] fuse: fix fuseblk i_blkbits for iomap partial writes
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: brauner@kernel.org, miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, 
-	kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 15 Aug 2025 12:17:44 -0600
+Message-Id: <DC37HOOZSBJA.3ADYC1VKXSHJ6@gmail.com>
+Cc: <io-uring@vger.kernel.org>, <axboe@kernel.dk>,
+ <linux-fsdevel@vger.kernel.org>, <viro@zeniv.linux.org.uk>,
+ <brauner@kernel.org>, <linux-nfs@vger.kernel.org>
+Subject: Re: [PATCH 1/6] fhandle: create helper for name_to_handle_at(2)
+From: "Thomas Bertschinger" <tahbertschinger@gmail.com>
+To: "Amir Goldstein" <amir73il@gmail.com>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
+References: <20250814235431.995876-1-tahbertschinger@gmail.com>
+ <20250814235431.995876-2-tahbertschinger@gmail.com>
+ <CAOQ4uxhPMOoJEK_nVn-fyBX+TzE_EJBb8wmXPg2ZCWfyEA+utQ@mail.gmail.com>
+In-Reply-To: <CAOQ4uxhPMOoJEK_nVn-fyBX+TzE_EJBb8wmXPg2ZCWfyEA+utQ@mail.gmail.com>
 
-On Thu, Aug 14, 2025 at 11:25=E2=80=AFAM Darrick J. Wong <djwong@kernel.org=
-> wrote:
+On Fri Aug 15, 2025 at 4:21 AM MDT, Amir Goldstein wrote:
+> On Fri, Aug 15, 2025 at 1:51=E2=80=AFAM Thomas Bertschinger
+> <tahbertschinger@gmail.com> wrote:
+>> +/*
+>> + * fs/fhandle.c
+>> + */
+>> +long do_name_to_handle_at(int dfd, const char __user *name,
+>> +                         struct file_handle __user *handle,
+>> +                         void __user *mnt_id, int flag, int lookup_flag=
+s);
 >
-> On Wed, Aug 13, 2025 at 03:35:21PM -0700, Joanne Koong wrote:
-> > On regular fuse filesystems, i_blkbits is set to PAGE_SHIFT which means
-> > any iomap partial writes will mark the entire folio as uptodate. Howeve=
-r
-> > fuseblk filesystems work differently and allow the blocksize to be less
-> > than the page size. As such, this may lead to data corruption if fusebl=
-k
-> > sets its blocksize to less than the page size, uses the writeback cache=
-,
-> > and does a partial write, then a read and the read happens before the
-> > write has undergone writeback, since the folio will not be marked
-> > uptodate from the partial write so the read will read in the entire
-> > folio from disk, which will overwrite the partial write.
-> >
-> > The long-term solution for this, which will also be needed for fuse to
-> > enable large folios with the writeback cache on, is to have fuse also
-> > use iomap for folio reads, but until that is done, the cleanest
-> > workaround is to use the page size for fuseblk's internal kernel inode
-> > blksize/blkbits values while maintaining current behavior for stat().
-> >
-> > This was verified using ntfs-3g:
-> > $ sudo mkfs.ntfs -f -c 512 /dev/vdd1
-> > $ sudo ntfs-3g /dev/vdd1 ~/fuseblk
-> > $ stat ~/fuseblk/hi.txt
-> > IO Block: 512
-> >
-> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> > Fixes: a4c9ab1d4975 ("fuse: use iomap for buffered writes")
-> > ---
-> >  fs/fuse/dir.c    |  2 +-
-> >  fs/fuse/fuse_i.h |  8 ++++++++
-> >  fs/fuse/inode.c  | 13 ++++++++++++-
-> >  3 files changed, 21 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> > index db44d05c8d02..a6aa16422c30 100644
-> > --- a/fs/fuse/fuse_i.h
-> > +++ b/fs/fuse/fuse_i.h
-> > @@ -975,6 +975,14 @@ struct fuse_conn {
-> >               /* Request timeout (in jiffies). 0 =3D no timeout */
-> >               unsigned int req_timeout;
-> >       } timeout;
-> > +
-> > +     /*
-> > +      * This is a workaround until fuse uses iomap for reads.
-> > +      * For fuseblk servers, this represents the blocksize passed in a=
-t
-> > +      * mount time and for regular fuse servers, this is equivalent to
-> > +      * inode->i_blkbits.
-> > +      */
-> > +     unsigned char blkbits;
+> I really dislike do_XXX() helpers because we use them interchangeably
+> sometimes to wrap vfs_XXX() helpers and sometimes the other way around,
+> so exporting them in the vfs internal interface is a very bad pattern IMO=
+.
 >
-> uint8_t, since the value is an integer quantity, not a character.
+> io_uring has a common pattern that requires a helper with all the syscall
+> args and for that purpose, it uses do_renameat2(), do_unlinkat(), ...
+>
+> I would much rather that we stop this pattern and start with following
+> the do_sys_XXX() pattern as in the do_sys_ftruncate() helper.
+>
+> Lucky for us, you just renamed the confusing helper named
+> do_sys_name_to_handle(), so you are free to reuse this name
+> (+ _at) in a non confusing placement.
+>
+> Thanks,
+> Amir.
 
-Ohh interesting, I copied this directly from the sb->s_blocksize_bits
-type, which in the super_block struct gets defined as an unsigned
-char. Your point makes sense to me though, I'll make this change and
-send out v3!
->
-> >  };
-> >
-> >  /*
-> > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> > index 3bfd83469d9f..7ddfd2b3cc9c 100644
-> > --- a/fs/fuse/inode.c
-> > +++ b/fs/fuse/inode.c
-> > @@ -292,7 +292,7 @@ void fuse_change_attributes_common(struct inode *in=
-ode, struct fuse_attr *attr,
-> >       if (attr->blksize)
-> >               fi->cached_i_blkbits =3D ilog2(attr->blksize);
-> >       else
-> > -             fi->cached_i_blkbits =3D inode->i_sb->s_blocksize_bits;
-> > +             fi->cached_i_blkbits =3D fc->blkbits;
-> >
-> >       /*
-> >        * Don't set the sticky bit in i_mode, unless we want the VFS
-> > @@ -1810,10 +1810,21 @@ int fuse_fill_super_common(struct super_block *=
-sb, struct fuse_fs_context *ctx)
-> >               err =3D -EINVAL;
-> >               if (!sb_set_blocksize(sb, ctx->blksize))
-> >                       goto err;
-> > +             /*
-> > +              * This is a workaround until fuse hooks into iomap for r=
-eads.
-> > +              * Use PAGE_SIZE for the blocksize else if the writeback =
-cache
-> > +              * is enabled, buffered writes go through iomap and a rea=
-d may
-> > +              * overwrite partially written data if blocksize < PAGE_S=
-IZE
-> > +              */
-> > +             fc->blkbits =3D sb->s_blocksize_bits;
-> > +             if (ctx->blksize !=3D PAGE_SIZE &&
-> > +                 !sb_set_blocksize(sb, PAGE_SIZE))
-> > +                     goto err;
-> >  #endif
-> >       } else {
-> >               sb->s_blocksize =3D PAGE_SIZE;
-> >               sb->s_blocksize_bits =3D PAGE_SHIFT;
-> > +             fc->blkbits =3D sb->s_blocksize_bits;
-> >       }
->
-> Heh. :)
-> Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
->
-
-Thanks for reviewing this patchset!
-
-> (How long until readahead? ;))
-
-Haha I have readahead in the same patchset as read, planning to send
-that out in 2 weeks after I'm back from PTO :D
-
->
-> --D
->
-> >       sb->s_subtype =3D ctx->subtype;
-> > --
-> > 2.47.3
-> >
-> >
+That makes sense, I can adjust it like that in v2. Thanks!
 
