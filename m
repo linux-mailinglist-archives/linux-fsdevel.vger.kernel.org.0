@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-58057-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58058-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B80EB288CF
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Aug 2025 01:34:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C93F7B288D1
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Aug 2025 01:36:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E045B638B0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 23:32:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A9B11C8297D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 23:35:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 030522836B4;
-	Fri, 15 Aug 2025 23:34:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8762E23C503;
+	Fri, 15 Aug 2025 23:34:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="CqgqpMJF"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="qi9+FOU/"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19DE8165F16
-	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Aug 2025 23:34:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55BF0165F16
+	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Aug 2025 23:34:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755300860; cv=none; b=PdZ4dWZ+mZriaSGSM004oSRmEJ/sfX9/GNyegyP6OzjTJc/Rwatz526BNl99+ZSSw6MrLBNpykDWDBRwsBjV4TpCqzhQKQAXVMNcB1RDIgyJbBcGrygnfQ6bQ1Ur+q+ur42c4/RNIQhCThu6s3/z2yNRn+22EvNaWh5TFXVzl4U=
+	t=1755300894; cv=none; b=gwddI3YbY/YAJmZrW8UZeMBfWciQMErWl62to/ILlDWXLu5LAXj0QVJazqhhry6Kx/JwBoLNdzRUODElql8+9uZmaDnESIFDRp3y4Q9jZf7VceF0O1dyH4FXWBBAJLKPxRStvqrCG1zGOebCIIJAbdlkqyjmADMl/WpLsSDN3KI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755300860; c=relaxed/simple;
-	bh=6tz8s6KSLuXt3N3QbyJS0aJQm9pRXVe3ayOMQMf4/zU=;
+	s=arc-20240116; t=1755300894; c=relaxed/simple;
+	bh=DUEByRUel3ecKDpii0ymUDawhn4NOZ+aGuMbOxNb1RY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WA/rgrFv8H+oIvGZfoq05DGQ46saFMkGiB62VFWUVZMSihWbnSgmPRso/ToK0IqcltB/5rZMTAoZzPSGo1qCAIsY0PGgDD8Kidpsevlf5GDwiogF6eZO/mNlq7xmvFyMOOUTsgEwJOP+oEzCshLMLBcmqH4rHpGXKTLs/81Y65k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=CqgqpMJF; arc=none smtp.client-ip=62.89.141.173
+	 Content-Type:Content-Disposition:In-Reply-To; b=SYpt9fhaqhbMhjG1JAxPB5fk2CLKQKccdOdIgavUqCsdPQV2xNFZLyXtFY2bXblxSSsfNGL91SfrQh6bRKsRW/KxPCuSRCmSRA5JnnHbIFx509Rel3n3e4+Zj/NIITIsoBTOcItFZWWmhQi8RGbIN4dU5tWhAp3wVqyysFNWPEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=qi9+FOU/; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
 	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=OoU2MWvtIxxk7QL+VprX57oprk9XoTEuLPD7IXER5eU=; b=CqgqpMJFBIp2C7/b/kjVD8rGCx
-	zRLp9+KlYyuR0UKHNbJc/EzdBnL+OZVSwxq1/GbP1DhC1nZYfCEB//OJJZJiOLoIh5lV58x1UUktb
-	YhDFfIDT7kXXBoLU96Ne7gsSrpJcJrrnzs5hIZkf+JvKRhpnhUA+ioJMLUIPJ83ZmzVekf+huQbU3
-	BHSE1AjzxO9nGAcsNQeEV6tnVnc3lRT06nu51xIOURJ7yot/mbMvIk6oPyGFVUu4FlrDIT8C7VK57
-	4cMcGbhB0QFSsQSg0H9noBNlM1poj6/be80Tr/FPz5MXcU/IeLBdlkGgy6ifJDTaDXjV7CSUAF3UG
-	RVEr61OQ==;
+	bh=1OX+URpavSUVC5udDAadgXXw/t7EG8Yoccc1Jb+E61Y=; b=qi9+FOU/gHY0Z32phE8PzJCYe5
+	3cR52AXfKJzRAJECRuRn6gEQ5jIMYA7l7LWOcMsSkpk+esKjzTxFR5XiPk6c+ANp5dT4N78u79D1U
+	NUaA81QH++9mGhSUaFjKP6pCptK3s8UaR4u0lCBgh3meW4JREN5ohWW/n76OCqIaDLXvtm4ylOpVW
+	v71LpSVEl7K3n5hjRkZTDWBwS9VEaWlem6wM3ALyJXHfAcPpVNqC1dwnPtn8AxsR984dDMwZ9qI6F
+	0Fi5dVgEnKyqaBvxrjrvQwBZsvAyWZmMXgShncXe0HhanHZr4xFXtVXC5qcC1mOCpbDR1vwB7v2pW
+	N1tbwUlw==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1un3w6-00000008tX9-0RNc;
-	Fri, 15 Aug 2025 23:34:14 +0000
-Date: Sat, 16 Aug 2025 00:34:14 +0100
+	id 1un3wg-00000008tnS-1hNR;
+	Fri, 15 Aug 2025 23:34:50 +0000
+Date: Sat, 16 Aug 2025 00:34:50 +0100
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: Linus Torvalds <torvalds@linux-foundation.org>,
@@ -53,8 +53,9 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
 	Tycho Andersen <tycho@tycho.pizza>,
 	Andrei Vagin <avagin@google.com>,
 	Pavel Tikhomirov <snorcht@gmail.com>
-Subject: [PATCH 1/4] fix the softlockups in attach_recursive_mnt()
-Message-ID: <20250815233414.GA2117906@ZenIV>
+Subject: [PATCH 2/4] propagate_umount(): only surviving overmounts should be
+ remounted
+Message-ID: <20250815233450.GB2117906@ZenIV>
 References: <20250815233316.GS222315@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -67,57 +68,38 @@ Content-Disposition: inline
 In-Reply-To: <20250815233316.GS222315@ZenIV>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-In case when we mounting something on top of a large stack of overmounts,
-all of them being peers of each other, we get quadratic time by the
-depth of overmount stack.  Easily fixed by doing commit_tree() before
-reparenting the overmount; simplifies commit_tree() as well - it doesn't
-need to skip the already mounted stuff that had been reparented on top
-of the new mounts.
+... as the comments in reparent() clearly say.  As it is, we reparent
+*all* overmounts of the mounts being taken out, including those that
+are taken out themselves.  It's not only a potentially massive slowdown
+(on a pathological setup we might end up with O(N^2) time for N mounts
+being kicked out), it can end up with incorrect ->overmount in the
+surviving mounts.
 
-Since we are holding mount_lock through both reparenting and call of
-commit_tree(), the order does not matter from the mount hash point
-of view.
-
-Reported-by: "Lai, Yi" <yi1.lai@linux.intel.com>
-Tested-by: "Lai, Yi" <yi1.lai@linux.intel.com>
-Fixes: 663206854f02 "copy_tree(): don't link the mounts via mnt_list"
+Fixes: f0d0ba19985d "Rewrite of propagate_umount()"
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/namespace.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ fs/pnode.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index ddfd4457d338..1c97f93d1865 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -1197,10 +1197,7 @@ static void commit_tree(struct mount *mnt)
+diff --git a/fs/pnode.c b/fs/pnode.c
+index 81f7599bdac4..1c789f88b3d2 100644
+--- a/fs/pnode.c
++++ b/fs/pnode.c
+@@ -637,10 +637,11 @@ void propagate_umount(struct list_head *set)
+ 	}
  
- 	if (!mnt_ns_attached(mnt)) {
- 		for (struct mount *m = mnt; m; m = next_mnt(m, mnt))
--			if (unlikely(mnt_ns_attached(m)))
--				m = skip_mnt_tree(m);
--			else
--				mnt_add_to_ns(n, m);
-+			mnt_add_to_ns(n, m);
- 		n->nr_mounts += n->pending_mounts;
- 		n->pending_mounts = 0;
+ 	// now to_umount consists of all acceptable candidates
+-	// deal with reparenting of remaining overmounts on those
++	// deal with reparenting of surviving overmounts on those
+ 	list_for_each_entry(m, &to_umount, mnt_list) {
+-		if (m->overmount)
+-			reparent(m->overmount);
++		struct mount *over = m->overmount;
++		if (over && !will_be_unmounted(over))
++			reparent(over);
  	}
-@@ -2704,6 +2701,7 @@ static int attach_recursive_mnt(struct mount *source_mnt,
- 			lock_mnt_tree(child);
- 		q = __lookup_mnt(&child->mnt_parent->mnt,
- 				 child->mnt_mountpoint);
-+		commit_tree(child);
- 		if (q) {
- 			struct mountpoint *mp = root.mp;
- 			struct mount *r = child;
-@@ -2713,7 +2711,6 @@ static int attach_recursive_mnt(struct mount *source_mnt,
- 				mp = shorter;
- 			mnt_change_mountpoint(r, mp, q);
- 		}
--		commit_tree(child);
- 	}
- 	unpin_mountpoint(&root);
- 	unlock_mount_hash();
+ 
+ 	// and fold them into the set
 -- 
 2.47.2
 
