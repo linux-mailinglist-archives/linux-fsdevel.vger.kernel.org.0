@@ -1,161 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-58031-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58032-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9DD7B281CD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 16:31:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32E3CB281CE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 16:31:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6A3618927AC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 14:30:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C7785E500D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 14:31:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B54B0235C01;
-	Fri, 15 Aug 2025 14:29:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF70D22A808;
+	Fri, 15 Aug 2025 14:30:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s69DztBf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YrtaHYEA"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E931C1E230E;
-	Fri, 15 Aug 2025 14:29:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317D8224247
+	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Aug 2025 14:30:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755268149; cv=none; b=jMShbJBWOfUuXKYQ/JD5stk5qu1hBquKi7r6z+WfzpXudUXxl3duHhk1wc+6Qx0lzIKzoCq6VxBmYQoR94xbbNTgHU0MQ2RgOwwfiQ+339cxNn6C4yjzlDvaliS0Y2xt9EuQ900mXqmi9aHFXNp9orZpyxJQjD1aKDh8X/bW1C0=
+	t=1755268203; cv=none; b=K2wL1tGrHnx1BOp4uw7ppUz2ByQWteUn9uTaOjJDyl5UxyUBSECKVlohpbiQFi5MmlDxq2q3JS7OpHm0zkiULKGjalIkfu1WBw9UC6CXgO8AuwthNy70nHki3pHpIBeYSM+ptkCHOAIJHShBUPlUUgGm+qV5rXkS3npRW9FoQDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755268149; c=relaxed/simple;
-	bh=H81prq1QS9ngg/A1qE6OG7MnMnv7zcnpHYeSRdGdZx8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LmnZjzKB0I23fV3BZt96Gfxoq0Qw8o2OMJ5/Qq+T/xOola8VpZKY0ZPkPrCxRrySmKPwhIdQxCqhfHuVxdM0Bs3f/kWpOMgNMCgi5ilrFQ/5O/NOL7SgUelqK1xVfDuV9ZPQB/CV0mZp4/W7hoGc414K2xjUh+GKFuNSpFCw44I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s69DztBf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF939C4CEEB;
-	Fri, 15 Aug 2025 14:29:08 +0000 (UTC)
+	s=arc-20240116; t=1755268203; c=relaxed/simple;
+	bh=z/Rojt1rqB5YZDqPCQ/VaENIWhVOa+GpUgH+I6AqbaU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LBLO64t2f+L/we+uA2ki0AJuQrXYKoJKiOrOaq/kVjDNpSLWG9owYgj7nz/UjfUK/OCzwEaBIUhtq4yEAK90+JAWkbYUBLq1lNc6ENCC6yKlMdJpT4vIdE59fL5lh8uUK54DwPe3sEc3CJFvNYceHJU7irRvcVJop6RyPFqIsfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YrtaHYEA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CD9DC4CEEB;
+	Fri, 15 Aug 2025 14:30:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755268148;
-	bh=H81prq1QS9ngg/A1qE6OG7MnMnv7zcnpHYeSRdGdZx8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s69DztBfXres7T+IGhWSm85kpDCZD1LuzBjTqvlPeazZ2xDoT7onrcIjC0CaPq8bs
-	 iD6N/+Zk/GT+qO4Ph8IN5wbiy8vunaKBWLp5btluDma1LO0TQFm/UeTe7cUSECYDhd
-	 DzGkZQIC1cHW6+P9IxTaGO+r8/nCY+AvJObL29xsrIxfGfEOyqHTP+DnWzN90UVIUd
-	 0ARf0GxAJW30/LZPs4pIVYqqTtSAX2Mh5ft7njos/J8iAMdMypui9QR0elLt3ThP5j
-	 AZ66f2EC/SlK7IDOn1Q1JLgG6Iare8/Wc96BkubrlFWA+SyzHZClNs1G44Ht9zQ41y
-	 +aC7ReJZAkj3A==
-Date: Fri, 15 Aug 2025 07:29:08 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-	dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
-	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-api@vger.kernel.org, hch@lst.de, tytso@mit.edu,
-	bmarzins@redhat.com, chaitanyak@nvidia.com,
-	shinichiro.kawasaki@wdc.com, brauner@kernel.org,
-	martin.petersen@oracle.com, yi.zhang@huawei.com,
-	chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH util-linux v2] fallocate: add FALLOC_FL_WRITE_ZEROES
- support
-Message-ID: <20250815142908.GG7981@frogsfrogsfrogs>
-References: <20250813024015.2502234-1-yi.zhang@huaweicloud.com>
- <20250814165218.GQ7942@frogsfrogsfrogs>
- <a0eda581-ae6c-4b49-8b4f-7bb039b17487@huaweicloud.com>
+	s=k20201202; t=1755268202;
+	bh=z/Rojt1rqB5YZDqPCQ/VaENIWhVOa+GpUgH+I6AqbaU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=YrtaHYEA90Koem1kehK6ZsSB7goOBkU0rBrfUP1qFPD2R+9pezT0a2+vNBrjpZdUe
+	 VM4qGUSTpdoJIiivtc0kBPQUxSDV53POWhK7z9sAmsTUDHuie9gsvXz6PFw87tGu7e
+	 xaJvfKrCtIPu4q9x4rPNOoiNeqF/rJng+py43rU1lYeSbC6AfLJ1SAC9YHN91cn8JW
+	 JJcfY0ZP3e8mc6p/2yRVw6CisXCoI+YbOv3BB/4awD/9KI+rMqiERQNaTcTk01Xj+V
+	 74DX9YdWBEcKeGs3+0cQ6mKCi89sQ0ASdHnTVNm0me7N+v62NrBGdB2Jh3fNirDrEb
+	 UlHr9RGpEOlDg==
+From: Christian Brauner <brauner@kernel.org>
+To: Ye Bin <yebin@huaweicloud.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-fsdevel@vger.kernel.org,
+	yebin10@huawei.com
+Subject: Re: [PATCH RFC] fs/buffer: fix use-after-free when call bh_read() helper
+Date: Fri, 15 Aug 2025 16:29:46 +0200
+Message-ID: <20250815-nieselregen-anpacken-4d4cbfce2d2e@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250811141830.343774-1-yebin@huaweicloud.com>
+References: <20250811141830.343774-1-yebin@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a0eda581-ae6c-4b49-8b4f-7bb039b17487@huaweicloud.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1643; i=brauner@kernel.org; h=from:subject:message-id; bh=z/Rojt1rqB5YZDqPCQ/VaENIWhVOa+GpUgH+I6AqbaU=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTMd0lj+p4782+63pkDqrvnb/335gX/gpVf73+bkDu1+ vkJ/oP7mTtKWRjEuBhkxRRZHNpNwuWW81RsNsrUgJnDygQyhIGLUwAmcq6NkaF36qMFynMO+gWd 5GX3k3VaKPaRvfbnvY0fE79zVNrN8pNg+Gf0tvjiiU0zriecf+vydXaM04PzdyS9/kRvZxdSN/q 9oZEPAA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 15, 2025 at 05:29:19PM +0800, Zhang Yi wrote:
-> Thank you for your review comments!
+On Mon, 11 Aug 2025 22:18:30 +0800, Ye Bin wrote:
+> There's issue as follows:
+> BUG: KASAN: stack-out-of-bounds in end_buffer_read_sync+0xe3/0x110
+> Read of size 8 at addr ffffc9000168f7f8 by task swapper/3/0
+> CPU: 3 UID: 0 PID: 0 Comm: swapper/3 Not tainted 6.16.0-862.14.0.6.x86_64
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996)
+> Call Trace:
+>  <IRQ>
+>  dump_stack_lvl+0x55/0x70
+>  print_address_description.constprop.0+0x2c/0x390
+>  print_report+0xb4/0x270
+>  kasan_report+0xb8/0xf0
+>  end_buffer_read_sync+0xe3/0x110
+>  end_bio_bh_io_sync+0x56/0x80
+>  blk_update_request+0x30a/0x720
+>  scsi_end_request+0x51/0x2b0
+>  scsi_io_completion+0xe3/0x480
+>  ? scsi_device_unbusy+0x11e/0x160
+>  blk_complete_reqs+0x7b/0x90
+>  handle_softirqs+0xef/0x370
+>  irq_exit_rcu+0xa5/0xd0
+>  sysvec_apic_timer_interrupt+0x6e/0x90
+>  </IRQ>
 > 
-> On 2025/8/15 0:52, Darrick J. Wong wrote:
-> > On Wed, Aug 13, 2025 at 10:40:15AM +0800, Zhang Yi wrote:
-> >> From: Zhang Yi <yi.zhang@huawei.com>
-> >>
-> >> The Linux kernel (since version 6.17) supports FALLOC_FL_WRITE_ZEROES in
-> >> fallocate(2). Add support for FALLOC_FL_WRITE_ZEROES to the fallocate
-> >> utility by introducing a new option -w|--write-zeroes.
-> >>
-> >> Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=278c7d9b5e0c
-> >> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> >> ---
-> >> v1->v2:
-> >>  - Minor description modification to align with the kernel.
-> >>
-> >>  sys-utils/fallocate.1.adoc | 11 +++++++++--
-> >>  sys-utils/fallocate.c      | 20 ++++++++++++++++----
-> >>  2 files changed, 25 insertions(+), 6 deletions(-)
-> >>
-> >> diff --git a/sys-utils/fallocate.1.adoc b/sys-utils/fallocate.1.adoc
-> >> index 44ee0ef4c..0ec9ff9a9 100644
-> >> --- a/sys-utils/fallocate.1.adoc
-> >> +++ b/sys-utils/fallocate.1.adoc
-> >> @@ -12,7 +12,7 @@ fallocate - preallocate or deallocate space to a file
-> > 
-> > <snip all the long lines>
-> > 
-> >> +*-w*, *--write-zeroes*::
-> >> +Zeroes space in the byte range starting at _offset_ and continuing
-> >> for _length_ bytes. Within the specified range, blocks are
-> >> preallocated for the regions that span the holes in the file. After a
-> >> successful call, subsequent reads from this range will return zeroes,
-> >> subsequent writes to that range do not require further changes to the
-> >> file mapping metadata.
-> > 
-> > "...will return zeroes and subsequent writes to that range..." ?
-> > 
-> 
-> Yeah.
-> 
-> >> ++
-> >> +Zeroing is done within the filesystem by preferably submitting write
-> > 
-> > I think we should say less about what the filesystem actually does to
-> > preserve some flexibility:
-> > 
-> > "Zeroing is done within the filesystem. The filesystem may use a
-> > hardware accelerated zeroing command, or it may submit regular writes.
-> > The behavior depends on the filesystem design and available hardware."
-> > 
-> 
-> Sure.
-> 
-> >> zeores commands, the alternative way is submitting actual zeroed data,
-> >> the specified range will be converted into written extents. The write
-> >> zeroes command is typically faster than write actual data if the
-> >> device supports unmap write zeroes, the specified range will not be
-> >> physically zeroed out on the device.
-> >> ++
-> >> +Options *--keep-size* can not be specified for the write-zeroes
-> >> operation.
-> >> +
-> >>  include::man-common/help-version.adoc[]
-> >>  
-> >>  == AUTHORS
-> [..]
-> >> @@ -429,6 +438,9 @@ int main(int argc, char **argv)
-> >>  			else if (mode & FALLOC_FL_ZERO_RANGE)
-> >>  				fprintf(stdout, _("%s: %s (%ju bytes) zeroed.\n"),
-> >>  								filename, str, length);
-> >> +			else if (mode & FALLOC_FL_WRITE_ZEROES)
-> >> +				fprintf(stdout, _("%s: %s (%ju bytes) write zeroed.\n"),
-> > 
-> > "write zeroed" is a little strange, but I don't have a better
-> > suggestion. :)
-> > 
-> 
-> Hmm... What about simply using "zeroed", the same to FALLOC_FL_ZERO_RANGE?
-> Users should be aware of the parameters they have passed to fallocate(),
-> so they should not use this print for further differentiation.
+> [...]
 
-No thanks, different inputs should produce different outputs. :)
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
---D
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-> Thanks,
-> Yi.
-> 
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] fs/buffer: fix use-after-free when call bh_read() helper
+      https://git.kernel.org/vfs/vfs/c/fb6d0f63f46d
 
