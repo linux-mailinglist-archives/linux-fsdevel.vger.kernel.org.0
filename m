@@ -1,212 +1,202 @@
-Return-Path: <linux-fsdevel+bounces-58002-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58003-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF737B27FD0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 14:15:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58AB6B28005
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 14:34:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6AD31CE3227
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 12:15:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83ADA1D00884
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 12:34:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B1562FF673;
-	Fri, 15 Aug 2025 12:15:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1B0C2FB995;
+	Fri, 15 Aug 2025 12:34:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YTnokOg1"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="pftKXj6j";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Wo/Zp3I5";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0b6K2XDb";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1QhShcHr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F2972853F9
-	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Aug 2025 12:15:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A5C21A238C
+	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Aug 2025 12:34:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755260130; cv=none; b=iazkRxfDL6sG8SUYCPR3dHDLQP93WRU/TsUPuLpqwFz9u4XkfpdxRaWa2gVU/MDfiC8aeV1hyUX/GXnQE10oEFB7HBsDsqnu/AYFRq4yIQKMtU1bHm2DBS1sPmMFsauY8LgbA9T1rzqPQhTzKNnsh9SuKVO89BLKOA1Vlj2Oy7o=
+	t=1755261247; cv=none; b=CR8ofDS33egWcex2WLGL3VUJ9sK2OZT0OhdmvoeTKRGyF0HCR+hp8sH0oV3Q1XMXUl3A/rlh591srByKSBGMe0LR+x0UV8BAc8EeL+AITGWHp87Qif1ducr2EplWRSB8MNzRTvvmc4vwCCfWBcV4yVmW8cvnLWl3ax+GtRQBuXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755260130; c=relaxed/simple;
-	bh=gEv2g7BGtpAQgouGWzFDZzg0811yav0QrVZT75lMYmU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mvQVi+Y7Zxqk91u0aH3bsCC//a6m+hIFrGGOYrpuvJ2q5qZQxPKQ7iQ9BZXGkUZfr+NdqId8gLERl9rDxT2HUy0ahl9xDjRws6NdEq7pHD7dkpGOJvN7VGbmp0pdttSjI3+osxn9PgGjIQHhthOMdDZf0G9TX/LFT9M3/Q4JMzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YTnokOg1; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755260127;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=aoEbLDIBvIED/1Ge3yK9oelt843+Qxf+G9/P7ezt/24=;
-	b=YTnokOg110rrhZOvhjiWPTn8zihPeI1BvMrkPJDpwOfTRusvTkxQ+fq3WOcFnV1UUhghRR
-	BlDr93SNB2w8OGbzahtzAv2QfcGhvcKSlc2nvcVDhcBQ1WFQL+AzTT7LxfmoH+tXYpK8dG
-	0iK5Vcjwsau7CmjRtmj1GGFJjTils8A=
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
- [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-99-kF1UFvy_PhutDYWrqPhO4Q-1; Fri, 15 Aug 2025 08:15:24 -0400
-X-MC-Unique: kF1UFvy_PhutDYWrqPhO4Q-1
-X-Mimecast-MFC-AGG-ID: kF1UFvy_PhutDYWrqPhO4Q_1755260124
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-24458264c5aso18447185ad.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Aug 2025 05:15:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755260123; x=1755864923;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aoEbLDIBvIED/1Ge3yK9oelt843+Qxf+G9/P7ezt/24=;
-        b=BYC15kvPniL4ktyZip/6/pb8RvwVcB8EaIQqtrqEVds3KDVBlXSHfXpBWUtGJdDIn/
-         GLehm86HkCBkMdpNgt/yNURjC3tYvssrwnI8+VUC8lTTE7oyDJgWh9cUVzayu7KeqxGF
-         QCR3rJBRH69kcdEq2oCdKFq/w+v275iLJWiL92PP61OSlHhl9SFJEixxj0DvqKtnXr86
-         r+UaDY0dmGYUQtQT5+RyMLqOQPqh/Su6JwT4kwDPKMGBBfDd4QYLWqDhEN/uCAT/yP34
-         yjT0b0ckStf7GLtQ6kme/lA6wCXDg0R5Vwxg6WEszRTBmTbmBGX2lOzbSpjk0l0uBYE7
-         Mayg==
-X-Gm-Message-State: AOJu0YzwNCF3dbc0WSl5jZadEPq9uPu0+5UK9NUO8sbSuaJT2lGyTwgX
-	OHC8LLHKxAeMoJkymoysCZUP96EGmZafSzXJy6kWZWN57N8CQJmKO7swQdClXkopnNjDiVab3vH
-	dKy+WKC0OIyhjhx9ynUTnQ41ESLl8p9u/MU3QZA1E7avuWjtfBgaBlLqbp3DUvGT7j+c=
-X-Gm-Gg: ASbGnctJLvLEd+Lo60in1eyZG1ZibJqEOCWwqJn7mhgCqYPkyI/tu5uZICoUZ2s9WVE
-	ETYpazmx1lOAGd/TIEoKsXiOYa3XAaqXPITIY/Yo0yCbUlbRajzRxFI5XqhW2TKiOYiHmpqCwvO
-	8JD2g4rEIXA3edB3FD6mJ8uSCBLg4sqoc3q7dYzYZ4TuQBwEh9Vw7/I4yhuffxokHt1dQeB2LdN
-	AJ23MIQUhoV9KhhMVLYaJK0+VEmaYKfXM9D+Vt5xb+5CvZaCJ3XgQkxud07gHBbT4fSe62432zX
-	n09zdsevMdOwqtU6LdqkIf7aG1AuYTorv6NXGi7G7qdn7+i+Yg==
-X-Received: by 2002:a17:903:906:b0:240:49d1:6347 with SMTP id d9443c01a7336-2446d8b1ef5mr28472995ad.35.1755260123362;
-        Fri, 15 Aug 2025 05:15:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHEGS5d2wzwEmY71Sxbu2mJGMdxqpSOcx9nx9YZK43BD2pagvwbnN2eEpAtX7LvuEgnSJ4lNw==
-X-Received: by 2002:a17:903:906:b0:240:49d1:6347 with SMTP id d9443c01a7336-2446d8b1ef5mr28472675ad.35.1755260122913;
-        Fri, 15 Aug 2025 05:15:22 -0700 (PDT)
-Received: from f37.llcblog.cn.com ([2408:8212:9001:a40:5c04:f864:9735:818c])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b472d74bb8asm1157463a12.31.2025.08.15.05.15.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Aug 2025 05:15:22 -0700 (PDT)
-From: Lichen Liu <lichliu@redhat.com>
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	safinaskar@zohomail.com,
-	kexec@lists.infradead.org,
-	rob@landley.net,
-	weilongchen@huawei.com,
-	cyphar@cyphar.com,
-	linux-api@vger.kernel.org,
-	zohar@linux.ibm.com,
-	stefanb@linux.ibm.com,
-	initramfs@vger.kernel.org,
-	corbet@lwn.net,
-	linux-doc@vger.kernel.org,
-	Lichen Liu <lichliu@redhat.com>
-Subject: [PATCH v2] fs: Add 'rootfsflags' to set rootfs mount options
-Date: Fri, 15 Aug 2025 20:14:59 +0800
-Message-ID: <20250815121459.3391223-1-lichliu@redhat.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1755261247; c=relaxed/simple;
+	bh=S7/XPMO0d+W6nIw8W5IyAf52ou3icGbH/Rx+JGDtyGI=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CFMGpHzuW98eIEJUH+cTdcauUqezudRSQc+QbCFUiImY2/jWAg7CFQQbJBJ7KQY9/a4Wx8UxIUax6QrCxbN9Synde5ynAsOn/dLsjcQroEhPjOuo7VTkO4mMQHlFJ7wGmVEhWfCptGXEJMIaMPVi2IVT0s87dGWdGwy0DKu7o3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=pftKXj6j; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Wo/Zp3I5; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0b6K2XDb; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1QhShcHr; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 545001F83E;
+	Fri, 15 Aug 2025 12:34:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755261243; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XbKW3m79yzVvWd4c4oeFxoOPejDr9ro0zvoA9q/+lL0=;
+	b=pftKXj6j6PflFjz2In7gvs+RV0Y8qhkGDb6PZ4y7+rzDZrIxXULvojkcqqPh8iwTzEdno0
+	t0fkPgA4nkv5qshCOFXPS9L0fwIG+maJ0tAJBrbr3S2Fouy4camlszFTG8rqjB6VERTg6t
+	eqGTGeGjoHhl7T695DNEWBJPIjZrprU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755261243;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XbKW3m79yzVvWd4c4oeFxoOPejDr9ro0zvoA9q/+lL0=;
+	b=Wo/Zp3I5Sgxy1iMwvGxmiNjWV9Gfgb6MOxL/pPJ9FiTS5D6rmJmYExVUZXvuvJxD/7saaQ
+	liN2MD3wVE3KiIAw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755261241; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XbKW3m79yzVvWd4c4oeFxoOPejDr9ro0zvoA9q/+lL0=;
+	b=0b6K2XDbFirJwyeNjzVe/NtQ2QWdZPG8fwGIo/40zzhCHxFLewXI2GmrpQfPPlaPRO54Ys
+	SsiLlTw4OF4g/UkdjoBKbpkZFQGD3NH7KhlvTRQIr51CNqQw5PXa34XFkOasU8H9PD7Hok
+	AFfK1Mf76dM/RaMkfPi2uB/OYlr99ns=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755261241;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XbKW3m79yzVvWd4c4oeFxoOPejDr9ro0zvoA9q/+lL0=;
+	b=1QhShcHrjb+96XnMqazaYYsnkahj8edGVGHZGhwGL0Iu59wGl7xBM3cbXktVrJpRhaELXf
+	B/zOwfneMk60jfDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A137F13876;
+	Fri, 15 Aug 2025 12:34:00 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id R7KUIzgpn2hMYwAAD6G6ig
+	(envelope-from <pfalcato@suse.de>); Fri, 15 Aug 2025 12:34:00 +0000
+Date: Fri, 15 Aug 2025 13:34:02 +0100
+From: Pedro Falcato <pfalcato@suse.de>
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Matthew Wilcox <willy@infradead.org>, Sidhartha Kumar <sidhartha.kumar@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, maple-tree@lists.infradead.org, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] testing/radix-tree/maple: hack around kfree_rcu not
+ existing
+Message-ID: <fcbr3lvd2aa6m4cjl666ksbf5px25htnh5slahj4pk2id54ygn@llqqfn5urq52>
+References: <20250814064927.27345-1-lorenzo.stoakes@oracle.com>
+ <kq3y4okddkjpl3yk3ginadnynysukiuxx3wlxk63yhudeuidcc@pu5gysfsrgrb>
+ <20250814180217.da2ab57d5b940b52aa45b238@linux-foundation.org>
+ <wh2wvfa5zt5zoztq3eqvjhicgsf3ywcmr6sto2zynkjlpjqj2b@bt7cdc4f7u3j>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <wh2wvfa5zt5zoztq3eqvjhicgsf3ywcmr6sto2zynkjlpjqj2b@bt7cdc4f7u3j>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[linux-foundation.org:email,oracle.com:email,imap1.dmz-prg2.suse.org:helo,suse.de:email]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-When CONFIG_TMPFS is enabled, the initial root filesystem is a tmpfs.
-By default, a tmpfs mount is limited to using 50% of the available RAM
-for its content. This can be problematic in memory-constrained
-environments, particularly during a kdump capture.
+On Thu, Aug 14, 2025 at 10:09:15PM -0400, Liam R. Howlett wrote:
+> * Andrew Morton <akpm@linux-foundation.org> [250814 21:02]:
+> > On Thu, 14 Aug 2025 13:40:03 +0100 Pedro Falcato <pfalcato@suse.de> wrote:
+> > 
+> > > On Thu, Aug 14, 2025 at 07:49:27AM +0100, Lorenzo Stoakes wrote:
+> > > > From: Pedro Falcato <pfalcato@suse.de>
+> > > > 
+> > > > liburcu doesn't have kfree_rcu (or anything similar). Despite that, we can
+> > > > hack around it in a trivial fashion, by adding a wrapper.
+> > > > 
+> > > > This wrapper only works for maple_nodes, and not anything else (due to us
+> > > > not being able to know rcu_head offsets in any way), and thus we take
+> > > > advantage of the type checking to avoid future silent breakage.
+> > > > 
+> > > > This fixes the build for the VMA userland tests.
+> > > > 
+> > > > Additionally remove the existing implementation in maple.c, and have
+> > > > maple.c include the maple-shared.c header.
+> > > > 
+> > > > Reviewed-by: Sidhartha Kumar <sidhartha.kumar@oracle.com>
+> > > > Tested-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> > > > Signed-off-by: Pedro Falcato <pfalcato@suse.de>
+> > > > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> > > > ---
+> > > > 
+> > > > Andrew - please attribute this as Pedro's patch (Pedro - please mail to
+> > > > confirm), as this is simply an updated version of [0], pulled out to fix the
+> > > > VMA tests which remain broken.
+> > > >
+> > > 
+> > > ACK, this is fine. The future of the series is still unclear, so if this fixes
+> > > the build then all good from my end :)
+> > 
+> > Well, can we have this as a standalone thing, rather than as a
+> > modification to a patch whose future is uncertain?
+> > 
+> > Then we can just drop "testing/radix-tree/maple: hack around kfree_rcu
+> > not existing", yes?
+> > 
+> > Some expansion of "fixes the build for the VMA userland tests" would be
+> > helpful.
+> 
+> Ah, this is somewhat messy.
+> 
+> Pedro removed unnecessary rcu calls with the newer slab reality as you
+> can directly call kfree instead of specifying the kmem_cache.
+> 
+> But the patch is partially already in Vlastimil's sheaves work and we'd
+> like his work to go through his branch, so the future of this particular
+> patch is a bit messy.
+> 
+> Maybe we should just drop the related patches that caused the issue from
+> the mm-new branch?  That way we don't need a fix at all.
+> 
+> And when Vlastimil is around, we can get him to pick up the set
+> including the fix.
+> 
+> Doing things this way will allow Vlastimil the avoid conflicts on
+> rebase, and restore the userspace testing in mm-new.
+> 
+> Does that make sense to everyone?
+>
 
-In a kdump scenario, the capture kernel boots with a limited amount of
-memory specified by the 'crashkernel' parameter. If the initramfs is
-large, it may fail to unpack into the tmpfs rootfs due to insufficient
-space. This is because to get X MB of usable space in tmpfs, 2*X MB of
-memory must be available for the mount. This leads to an OOM failure
-during the early boot process, preventing a successful crash dump.
+I agree. This sounds sensible. I don't think it makes much sense to let the
+patchset rot in mm-new.
 
-This patch introduces a new kernel command-line parameter, rootfsflags,
-which allows passing specific mount options directly to the rootfs when
-it is first mounted. This gives users control over the rootfs behavior.
-
-For example, a user can now specify rootfsflags=size=75% to allow the
-tmpfs to use up to 75% of the available memory. This can significantly
-reduce the memory pressure for kdump.
-
-Consider a practical example:
-
-To unpack a 48MB initramfs, the tmpfs needs 48MB of usable space. With
-the default 50% limit, this requires a memory pool of 96MB to be
-available for the tmpfs mount. The total memory requirement is therefore
-approximately: 16MB (vmlinuz) + 48MB (loaded initramfs) + 48MB (unpacked
-kernel) + 96MB (for tmpfs) + 12MB (runtime overhead) ≈ 220MB.
-
-By using rootfsflags=size=75%, the memory pool required for the 48MB
-tmpfs is reduced to 48MB / 0.75 = 64MB. This reduces the total memory
-requirement by 32MB (96MB - 64MB), allowing the kdump to succeed with a
-smaller crashkernel size, such as 192MB.
-
-An alternative approach of reusing the existing rootflags parameter was
-considered. However, a new, dedicated rootfsflags parameter was chosen
-to avoid altering the current behavior of rootflags (which applies to
-the final root filesystem) and to prevent any potential regressions.
-
-Also add documentation for the new kernel parameter "rootfsflags"
-
-This approach is inspired by prior discussions and patches on the topic.
-Ref: https://www.lightofdawn.org/blog/?viewDetailed=00128
-Ref: https://landley.net/notes-2015.html#01-01-2015
-Ref: https://lkml.org/lkml/2021/6/29/783
-Ref: https://www.kernel.org/doc/html/latest/filesystems/ramfs-rootfs-initramfs.html#what-is-rootfs
-
-Signed-off-by: Lichen Liu <lichliu@redhat.com>
-Tested-by: Rob Landley <rob@landley.net>
----
-Changes in v2:
-  - Add documentation for the new kernel parameter.
-
- Documentation/admin-guide/kernel-parameters.txt |  3 +++
- fs/namespace.c                                  | 11 ++++++++++-
- 2 files changed, 13 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index fb8752b42ec8..0c00f651d431 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -6220,6 +6220,9 @@
- 
- 	rootflags=	[KNL] Set root filesystem mount option string
- 
-+	rootfsflags=	[KNL] Set initial root filesystem mount option string
-+			(e.g. tmpfs for initramfs)
-+
- 	rootfstype=	[KNL] Set root filesystem type
- 
- 	rootwait	[KNL] Wait (indefinitely) for root device to show up.
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 8f1000f9f3df..e484c26d5e3f 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -65,6 +65,15 @@ static int __init set_mphash_entries(char *str)
- }
- __setup("mphash_entries=", set_mphash_entries);
- 
-+static char * __initdata rootfs_flags;
-+static int __init rootfs_flags_setup(char *str)
-+{
-+	rootfs_flags = str;
-+	return 1;
-+}
-+
-+__setup("rootfsflags=", rootfs_flags_setup);
-+
- static u64 event;
- static DEFINE_XARRAY_FLAGS(mnt_id_xa, XA_FLAGS_ALLOC);
- static DEFINE_IDA(mnt_group_ida);
-@@ -5677,7 +5686,7 @@ static void __init init_mount_tree(void)
- 	struct mnt_namespace *ns;
- 	struct path root;
- 
--	mnt = vfs_kern_mount(&rootfs_fs_type, 0, "rootfs", NULL);
-+	mnt = vfs_kern_mount(&rootfs_fs_type, 0, "rootfs", rootfs_flags);
- 	if (IS_ERR(mnt))
- 		panic("Can't create rootfs");
- 
 -- 
-2.47.0
-
+Pedro
 
