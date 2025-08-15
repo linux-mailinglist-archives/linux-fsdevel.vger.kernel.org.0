@@ -1,62 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-58033-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58034-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80587B28242
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 16:44:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACE86B2829A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 17:06:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24CB85E36C2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 14:43:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55A84AE4322
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 15:06:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE07724C076;
-	Fri, 15 Aug 2025 14:42:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63A2A22616C;
+	Fri, 15 Aug 2025 15:06:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ozEwDeal"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HElOWDL3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B8552367CD;
-	Fri, 15 Aug 2025 14:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D935720297B;
+	Fri, 15 Aug 2025 15:06:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755268965; cv=none; b=ID/Xgn3sqz/h0UomyDUnDruF9iTxN5vodOyauyQuGdbM1wf+8PLD7L3zxcouLXfh3PsTuqbnctm8nJ3WL7uJXdql+qovffwrzt2UZGvvqgG5oE96q/lvpbF2ie2M881urin8N5K7rdU+HfNGfrI+Jw5C+9z4MZxeVNi0d0MYUO4=
+	t=1755270367; cv=none; b=VJrNcz2jAHxwfZI0V/D+PU6WdyTtE2+BlrPdIMCA9Bbcs9b0RQ9UWCwTVkBfg89nranksTZJEkXw+S0pOfd9aC5XTDWqxdCDWDrY/pdGRo+/YNImF/t9kad2Y4vaWpZJ4RD1ep4sHEK7Guq0fuABAcTLV2exTn1IoxCu50ed9gY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755268965; c=relaxed/simple;
-	bh=DmOtZ+shegw3Xq2qbIvm9MhD1J8beNXNffYo5DT55zc=;
+	s=arc-20240116; t=1755270367; c=relaxed/simple;
+	bh=Hv6COFjM439OcVUsu3MmySHKd9Z183npAzo+Lkk0SrQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QkVcYTI5UBJENyWb45g4brJG3FXzeH/9lm5njo6Y6hyUAqLpPXCcRQMFLsSRPwPnNX59Ko6dcAfrBcYHeagi8PNrehu4h1UqjSFfkjKOlA73eGr3b76WTkDOiaH5QZv6geAbWlcab9COeRvveRUGym1Z1snOOleZPuUE875+nUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ozEwDeal; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C4B5C4CEEB;
-	Fri, 15 Aug 2025 14:42:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755268964;
-	bh=DmOtZ+shegw3Xq2qbIvm9MhD1J8beNXNffYo5DT55zc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ozEwDealkGjrGu3EotSAhGBDHyTGe4g5x5IxOg3UEZ8mb0DQqoaqSO0Ki/NfMsbUJ
-	 bc15UYRtOJd1XvEdMxz2z5bPx0u7YKl/LupzoCtJGWsG0ZfJimJRMQu/7YmE7P7atv
-	 4P6DzOPMydN16VsrJLYZRRh22gsjTDrrPlhrEMALPezXRmTzibl1cRW9EMwOOGw7Pl
-	 JJI0p5mepNTHPaq+Hu6ThslkuJBckHvlWIndnLddlc9zRfj0vGHHeIcIzOasceWL8i
-	 oKl8FrSmHPqTq8yBCT1dYiqC47ScOv7F3eiq1LFCN43P8XXcbLtjrZMl4s13uBjyv0
-	 cqUAIaoZ2taog==
-Date: Fri, 15 Aug 2025 07:42:43 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-	dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
-	linux-scsi@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org, hch@lst.de,
-	tytso@mit.edu, bmarzins@redhat.com, chaitanyak@nvidia.com,
-	shinichiro.kawasaki@wdc.com, brauner@kernel.org,
-	martin.petersen@oracle.com, yi.zhang@huawei.com,
-	chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH xfsprogs v2] xfs_io: add FALLOC_FL_WRITE_ZEROES support
-Message-ID: <20250815144243.GU7965@frogsfrogsfrogs>
-References: <20250813024250.2504126-1-yi.zhang@huaweicloud.com>
- <20250814165430.GR7942@frogsfrogsfrogs>
- <1428e3fe-ae7a-410d-97b5-7dd0249c41c0@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MJOlqZ1mh7/82Mx7al7bcu4ZVt9QQ8Og7zzVnq4GU5BhMdEakeWJDJnQTnrQW0etGcinlhgqP3kBG2HFejRj5RzZH1Ur1SdJJPlp6cBTYswt2AiNFhM086Yl+fESR02IZMAPnh5qR+aoZr/bmE0CVtqmkzt0fx5TRVlUsyuZ/EE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HElOWDL3; arc=none smtp.client-ip=209.85.210.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-74381dd4c61so1106991a34.0;
+        Fri, 15 Aug 2025 08:06:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755270365; x=1755875165; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AMU3P7S8F7Aw6uN0IIUSqn9Ly+qBjCwhp5TaPqOj3Q8=;
+        b=HElOWDL3C/1zYBi+41Tp/rAmEPkkn8kULFhXq1w0efYcfvvRNtMkSEJHfIx4yiNjzR
+         tCnCWLp4ZQa06DF89gUALJ0GZ7LwIxDoA7yObwe5aVwXJ4GAIfJeWV33Kc3vqfOetKRH
+         HzsWUS/ab2BT6pKEQLyD1dI9QAEx6cFjw0ycQRO2JJnVYx/t+gyey4nxy/SJYfoUZeLu
+         9Uo/lD1nN2xwpx+SohnrnoqK17U/qhofcKh/8EOhhl5ufgncC+mTNXP4GvGsiJ+WXOJu
+         O+NRxne3kafjWwREN/26w1tCLsIuQlfJOjw36T0kR/lt39zzxrjZ5Xxe2TFEAUD2gP+W
+         UTfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755270365; x=1755875165;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AMU3P7S8F7Aw6uN0IIUSqn9Ly+qBjCwhp5TaPqOj3Q8=;
+        b=gedPEsQsRquR0AtYmp1lvwYNzeX0a0N2rn5/FUFVBIqxLP4Nv6kGtEGdZJP7CYPMwo
+         2758cFy61kzAP2O/BrMrbw/h4Fee8aBZqAFSzhKeM2PtHB0w2efG+MqCPArGCziAPdcD
+         eTegeijDYbM8TufaUNNVCXIbVu2KE3cefr4WRT/4RpdmrMXYhHOI/vsmpcInGOpcsaN2
+         tu7jykWzN5S0VD1NhBNH/f37nUg/W8IDMFo+ul5aqSU5Om8JV//9HZI0hMrerWvpNjNv
+         T3cgNi5zQCA73Ac1Qu3W+KFTx3vsiieuTZiY8R9LI0cGTVF5n7o++Bb3BI7GqBPsXKEj
+         Jj8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUBs/64NF2jLPSFMxKkk+R8X7qs0vSOdeTkfYjAVad5rSdg/Hs//1BVgw84CUthoQZYA/SkvPh6kJ4M4rpyLQ==@vger.kernel.org, AJvYcCUNBQTNiD3ba2SvpiTx3pK5mODP+vOUSVEpHOj4+mRcItPI1beC4BbysFwt5Xu1tlwOqtz9/EcEhMcD@vger.kernel.org, AJvYcCVhjqMXs+KdCr2RIxof3ixCAkxR9UPqqi56Leymk58ZqudFkgHelRtiCBEKYR7cOnguwLd4F+2ev4Y=@vger.kernel.org, AJvYcCW63xILkbyj4ruDJKwlCr7skI5fPPZ8ZMTxIxVrmAeUh209Y0Ph7P6jacLk0PAZlnEdTh5mwOhDrU8JocY/@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx22IKCZp/Ii5wSm5qDayNjEg1A1VgxEytD0UhMvbj7GuLYJ06K
+	RLAFBldkXXl/UXG1SQeOoImbZJlU7m/ytg/5CtYphAeEMczzW9+tLNfQ
+X-Gm-Gg: ASbGnct1IFGI09miu0nnHFwFH0rnuv7Jwo4xqlPM+QQwGEYzUEqMxhM++PqHO5fX5XD
+	N28q+6F9bP9BJrMFV8/Vk66yqlOmJbtJQEZh4vXqrPg/wtN3jM+iB2yG331bBYw6/kzC1Tt1Ps0
+	E5Jv7CzN16OzSPkDVzfhGqPUHdyI+GoybAiNWaw1Z9MyhKN7MBMR0kwg2YHwQSMZd8T16MfFeYS
+	TP1sbHOfctWXksCxbu1s2ru5v9yIhT+KhdEqZQUv7Bzul4hZ+AINAaMKQpcLZNDTzQ/WJdEi0AN
+	fCZrx0NnO0st/NYmNJTvDj1PSjFyaYBGtQqT3Fgq4z6mdOBHMjBsvP0iBb75FipbI2EBdCuWEyJ
+	ImG0bVNpW1lyIazWLm5gdNJJHGZ9RULVG46yL
+X-Google-Smtp-Source: AGHT+IExS7Qt3BoP7WsTyBTrr1V2BYGnO3GcQJg9xqGFg1jMcr6eYkPlR3LXsnRgQW/iQZY9uRNbxw==
+X-Received: by 2002:a05:6830:448c:b0:739:f3b2:80f6 with SMTP id 46e09a7af769-743924651c2mr1338051a34.14.1755270364063;
+        Fri, 15 Aug 2025 08:06:04 -0700 (PDT)
+Received: from groves.net ([2603:8080:1500:3d89:c95b:3a76:bbcf:777c])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-61bec13e5c6sm145880eaf.25.2025.08.15.08.06.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Aug 2025 08:06:03 -0700 (PDT)
+Sender: John Groves <grovesaustin@gmail.com>
+Date: Fri, 15 Aug 2025 10:06:01 -0500
+From: John Groves <John@groves.net>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, 
+	Dan Williams <dan.j.williams@intel.com>, Bernd Schubert <bschubert@ddn.com>, 
+	John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Randy Dunlap <rdunlap@infradead.org>, Jeff Layton <jlayton@kernel.org>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Amir Goldstein <amir73il@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Stefan Hajnoczi <shajnocz@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, 
+	Josef Bacik <josef@toxicpanda.com>, Aravind Ramesh <arramesh@micron.com>, 
+	Ajay Joshi <ajayjoshi@micron.com>
+Subject: Re: [RFC V2 12/18] famfs_fuse: Plumb the GET_FMAP message/response
+Message-ID: <hd3tancdc6pgjka44nwhk6laawnasob44jqagwxawrmxtevihe@2orrcse6xyjx>
+References: <20250703185032.46568-1-john@groves.net>
+ <20250703185032.46568-13-john@groves.net>
+ <CAJfpegv6wHOniQE6dgGymq4h1430oc2EyV3OQ2S9DqA20nZZUQ@mail.gmail.com>
+ <CAJfpegv=ACZchaG-xt0k481W1ZUKb3hWmLi-Js-aKg92d=yObw@mail.gmail.com>
+ <20250814182022.GW7942@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,137 +105,80 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1428e3fe-ae7a-410d-97b5-7dd0249c41c0@huaweicloud.com>
+In-Reply-To: <20250814182022.GW7942@frogsfrogsfrogs>
 
-On Fri, Aug 15, 2025 at 05:59:01PM +0800, Zhang Yi wrote:
-> On 2025/8/15 0:54, Darrick J. Wong wrote:
-> > On Wed, Aug 13, 2025 at 10:42:50AM +0800, Zhang Yi wrote:
-> >> From: Zhang Yi <yi.zhang@huawei.com>
-> >>
-> >> The Linux kernel (since version 6.17) supports FALLOC_FL_WRITE_ZEROES in
-> >> fallocate(2). Add support for FALLOC_FL_WRITE_ZEROES support to the
-> >> fallocate utility by introducing a new 'fwzero' command in the xfs_io
-> >> tool.
-> >>
-> >> Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=278c7d9b5e0c
-> >> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> >> ---
-> >> v1->v2:
-> >>  - Minor description modification to align with the kernel.
-> >>
-> >>  io/prealloc.c     | 36 ++++++++++++++++++++++++++++++++++++
-> >>  man/man8/xfs_io.8 |  6 ++++++
-> >>  2 files changed, 42 insertions(+)
-> >>
-> >> diff --git a/io/prealloc.c b/io/prealloc.c
-> >> index 8e968c9f..9a64bf53 100644
-> >> --- a/io/prealloc.c
-> >> +++ b/io/prealloc.c
-> >> @@ -30,6 +30,10 @@
-> >>  #define FALLOC_FL_UNSHARE_RANGE 0x40
-> >>  #endif
-> >>  
-> >> +#ifndef FALLOC_FL_WRITE_ZEROES
-> >> +#define FALLOC_FL_WRITE_ZEROES 0x80
-> >> +#endif
-> >> +
-> >>  static cmdinfo_t allocsp_cmd;
-> >>  static cmdinfo_t freesp_cmd;
-> >>  static cmdinfo_t resvsp_cmd;
-> >> @@ -41,6 +45,7 @@ static cmdinfo_t fcollapse_cmd;
-> >>  static cmdinfo_t finsert_cmd;
-> >>  static cmdinfo_t fzero_cmd;
-> >>  static cmdinfo_t funshare_cmd;
-> >> +static cmdinfo_t fwzero_cmd;
-> >>  
-> >>  static int
-> >>  offset_length(
-> >> @@ -377,6 +382,27 @@ funshare_f(
-> >>  	return 0;
-> >>  }
-> >>  
-> >> +static int
-> >> +fwzero_f(
-> >> +	int		argc,
-> >> +	char		**argv)
-> >> +{
-> >> +	xfs_flock64_t	segment;
-> >> +	int		mode = FALLOC_FL_WRITE_ZEROES;
+On 25/08/14 11:20AM, Darrick J. Wong wrote:
+> On Thu, Aug 14, 2025 at 04:36:57PM +0200, Miklos Szeredi wrote:
+> > On Thu, 14 Aug 2025 at 15:36, Miklos Szeredi <miklos@szeredi.hu> wrote:
 > > 
-> > Shouldn't this take a -k to add FALLOC_FL_KEEP_SIZE like fzero?
+> > > I'm still hoping some common ground would benefit both interfaces.
+> > > Just not sure what it should be.
 > > 
-> 
-> Since allocating blocks with written extents beyond the inode size
-> is not permitted, the FALLOC_FL_WRITE_ZEROES flag cannot be used
-> together with the FALLOC_FL_KEEP_SIZE.
-
-Heh, apparently I didn't read the manpage well enough.
-
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
-
---D
-
-
-> Thanks,
-> Yi.
-> 
-> > (The code otherwise looks fine to me)
+> > Something very high level:
 > > 
-> > --D
+> >  - allow several map formats: say a plain one with a list of extents
+> > and a famfs one
+> 
+> Yes, I think that's needed.
+
+Agreed
+
+> 
+> >  - allow several types of backing files: say regular and dax dev
+> 
+> "block device", for iomap.
+> 
+> >  - querying maps has a common protocol, format of maps is opaque to this
+> >  - maps are cached by a common facility
+> 
+> I've written such a cache already. :)
+
+I guess I need to take a look at that. Can you point me to the right place?
+
+> 
+> >  - each type of mapping has a decoder module
+> 
+> I don't know that you need much "decoding" -- for famfs, the regular
+> mappings correspond to FUSE_IOMAP_TYPE_MAPPED.  The one goofy part is
+> the device cookie in each IO mapping: fuse-iomap maps each block device
+> you give it to a device cookie, so I guess famfs will have to do the
+> same.
+> 
+> OTOH you can then have a famfs backed by many persistent memory
+> devices.
+
+That's handled in the famfs fmaps already. When an fmap is ingested,
+if it references any previously-unknown daxdevs, they get retrieved
+(FUSE_GET_DAXDEV).
+
+Oversimplifying a bit, I assume that famfs fmaps won't really change,
+they'll just be retrieved by a more flexible method and be preceded
+by a header that identifies the payload as a famfs fmap.
+
+> 
+> >  - each type of backing file has a module for handling I/O
 > > 
-> >> +
-> >> +	if (!offset_length(argv[1], argv[2], &segment)) {
-> >> +		exitcode = 1;
-> >> +		return 0;
-> >> +	}
-> >> +
-> >> +	if (fallocate(file->fd, mode, segment.l_start, segment.l_len)) {
-> >> +		perror("fallocate");
-> >> +		exitcode = 1;
-> >> +		return 0;
-> >> +	}
-> >> +	return 0;
-> >> +}
-> >> +
-> >>  void
-> >>  prealloc_init(void)
-> >>  {
-> >> @@ -489,4 +515,14 @@ prealloc_init(void)
-> >>  	funshare_cmd.oneline =
-> >>  	_("unshares shared blocks within the range");
-> >>  	add_command(&funshare_cmd);
-> >> +
-> >> +	fwzero_cmd.name = "fwzero";
-> >> +	fwzero_cmd.cfunc = fwzero_f;
-> >> +	fwzero_cmd.argmin = 2;
-> >> +	fwzero_cmd.argmax = 2;
-> >> +	fwzero_cmd.flags = CMD_NOMAP_OK | CMD_FOREIGN_OK;
-> >> +	fwzero_cmd.args = _("off len");
-> >> +	fwzero_cmd.oneline =
-> >> +	_("zeroes space and eliminates holes by allocating and submitting write zeroes");
-> >> +	add_command(&fwzero_cmd);
-> >>  }
-> >> diff --git a/man/man8/xfs_io.8 b/man/man8/xfs_io.8
-> >> index b0dcfdb7..0a673322 100644
-> >> --- a/man/man8/xfs_io.8
-> >> +++ b/man/man8/xfs_io.8
-> >> @@ -550,6 +550,12 @@ With the
-> >>  .B -k
-> >>  option, use the FALLOC_FL_KEEP_SIZE flag as well.
-> >>  .TP
-> >> +.BI fwzero " offset length"
-> >> +Call fallocate with FALLOC_FL_WRITE_ZEROES flag as described in the
-> >> +.BR fallocate (2)
-> >> +manual page to allocate and zero blocks within the range by submitting write
-> >> +zeroes.
-> >> +.TP
-> >>  .BI zero " offset length"
-> >>  Call xfsctl with
-> >>  .B XFS_IOC_ZERO_RANGE
-> >> -- 
-> >> 2.39.2
-> >>
-> >>
+> > Does this make sense?
 > 
+> More or less.
+
+I'm nervous about going for too much generalization too soon here,
+but otherwise yeah.
+
 > 
+> > This doesn't have to be implemented in one go, but for example
+> > GET_FMAP could be renamed to GET_READ_MAP with an added offset and
+> > size parameter.  For famfs the offset/size would be set to zero/inf.
+> > I'd be content with that for now.
+> 
+> I'll try to cough up a RFC v4 next week.
+
+Darrick, let's try to chat next week to compare notes.
+
+Based on this thinking, I will keep my rework of GET_FMAP to a minimum
+since that will likely be a new shared message/response. I think that
+part can be merged later in the cycle...
+
+John
+
 
