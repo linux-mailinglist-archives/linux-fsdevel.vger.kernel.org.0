@@ -1,56 +1,67 @@
-Return-Path: <linux-fsdevel+bounces-58028-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58029-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7A5AB2818F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 16:23:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E7D7B2819B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 16:25:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F19BB68065
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 14:21:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1A2E3B0DD4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 14:25:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B827221557;
-	Fri, 15 Aug 2025 14:22:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA343225765;
+	Fri, 15 Aug 2025 14:25:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FEYTbFjm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LYMz9gcS"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B35919004E
-	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Aug 2025 14:22:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37A1622333D;
+	Fri, 15 Aug 2025 14:25:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755267764; cv=none; b=ju9jYyFO/m6RMq9qFswo3PH3KvyUdthbJfWINx/cXV5IMMcdbNYnVoL/jYQQ7Qa2FxeoXMoCmZg0R07JLnGbIr1aVwHXvVbNOem+Mvgy1x96G3Sh9Hz+HfZWrmOygnw24gwo5Q6b4UuDeurbdS1xzAetMPUHhsp9X64d9tKBT6o=
+	t=1755267944; cv=none; b=KBKHlA53RS6xUL03+bLqfX23pXhwvc3ds3hiuDWk0cdb7fZpnTDUHhvGKkEGcDKh5yxOtJ8yHUvtKA96coRW5wpwVCNOJkN/irp9UCdmUH6RSUo3TcrceowwQsezPd7efIgFTDK18x5mlMVF/8b63Gf4S7xs3duu+lCsRPAdQAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755267764; c=relaxed/simple;
-	bh=2dJE08vXOq+D0VSVgiR+Zcz4TiBPBxuaWW5XkclJ/mg=;
+	s=arc-20240116; t=1755267944; c=relaxed/simple;
+	bh=IZndjDUGqtf8qtTgBD7buye/s0ai0XN3SlKIaNaEeUg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uMzTDzhHOyVpMnxyr3j/DReP9mRNPbG9LAb2GXHA7zzvk7cWizQQ/AXFdc83Jb4llVSvVSlZ01IX7LFum+VmguH1vi60eTCJwwUcakVUzv3oJAi6VyknYjhHHJJF9CD4JLsn+B0kRsPp5p+a7r7LeFkGLDbDvuFcVw1ScTCJzy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FEYTbFjm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08EA6C4CEEB;
-	Fri, 15 Aug 2025 14:22:42 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=KBL+v8gBfZGH6KdVVJIz4n+PnZ3K+zSQoIzliQ4cx6mNGK4B67XO5lThMtQCydMS5NdApcDEeYf3P0JpopXbevf2Mu8vXnBaMCvt9IU1dq+bQklQPBaU6jWFfJZfVw7JTDruzJ6+1th4ufbXrV2FUeJZtZSDKdaejXnVR6u7eBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LYMz9gcS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58D40C4CEEB;
+	Fri, 15 Aug 2025 14:25:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755267764;
-	bh=2dJE08vXOq+D0VSVgiR+Zcz4TiBPBxuaWW5XkclJ/mg=;
+	s=k20201202; t=1755267943;
+	bh=IZndjDUGqtf8qtTgBD7buye/s0ai0XN3SlKIaNaEeUg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FEYTbFjmX5tFYnrbSL9WIAAf0FECljuf/j0yQtdg43B+WENfBsK6t4RL6OY9J4YCs
-	 VCW0r+s1RnIPiZxqmlY4nFUGjrjdzWmorr3oOlVAl/ruRCv3/Hs8r7JunKCVbeXu8q
-	 Xk0F4amDDNbuVSEjwaAUgghhnwDgQj8moOtrmrGN9aqlbbIpFAGhWENt0tircoHucU
-	 cFCjcoY8wia3LfTuW3D4Wm+4QYeoNAG131KHwRdKg8PLwkZKngLZfZFiHzmLISi4zx
-	 wR9ZawXZx3YTe4ToOiweokIkbE256a5OIgKgJqRB9jHGIbBkkHb74L8tNqdxzG+kyG
-	 rlg0fkNV7Kd7g==
-Date: Fri, 15 Aug 2025 16:22:40 +0200
+	b=LYMz9gcShwpMMEiSo1WWYlkuM6E6kInrV6Orrl+JK6yk+Nmb+ijdYckIwQMbcFNfQ
+	 K6JY4LCJjGuxU19K6lhWn7JGx64MrXiXBPUbjankFoUaJLuutbAjbUfJek1z101hVZ
+	 lVkptAmAoeaI1Oadk7bEdUJWvBYWFw5vfQZ7dlREPuHGXt2ZV4j2DOq10T94SrKIF/
+	 W4ha2iCGy5MT1UjKcFAUTnJNPl1PVEs4pNPIia6uskrefrJtsoZ4k9mX7gs5XBB4CK
+	 1rWslMwRVoFSeCggAdB93nlk++9zly/qqTLOp4SJLt7MCQoljkpLe+L2HEfUAB1qtF
+	 Nx4ukXSNcVIvQ==
+Date: Fri, 15 Aug 2025 16:25:36 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-fsdevel@vger.kernel.org, Florian Weimer <fweimer@redhat.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH 2/2] copy_file_range: limit size if in compat mode
-Message-ID: <20250815-zander-eklig-142f14ac9921@brauner>
-References: <20250805183017.4072973-1-mszeredi@redhat.com>
- <20250805183017.4072973-2-mszeredi@redhat.com>
- <CAJfpegsiyv52MX_JgkT8jUx194R=vB_BX8VY00muvaVVJGeJoA@mail.gmail.com>
+To: Daniel Gomez <da.gomez@kernel.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, 
+	Christoph Hellwig <hch@infradead.org>, Peter Zijlstra <peterz@infradead.org>, 
+	David Hildenbrand <david@redhat.com>, Shivank Garg <shivankg@amd.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Jiri Slaby (SUSE)" <jirislaby@kernel.org>, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Nicolas Schier <nicolas.schier@linux.dev>, Daniel Gomez <da.gomez@samsung.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Matthias Maennich <maennich@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v4] module: Rename EXPORT_SYMBOL_GPL_FOR_MODULES to
+ EXPORT_SYMBOL_FOR_MODULES
+Message-ID: <20250815-darstellen-pappen-90a9edb193e5@brauner>
+References: <20250808-export_modules-v4-1-426945bcc5e1@suse.cz>
+ <20250811-wachen-formel-29492e81ee59@brauner>
+ <2472a139-064c-4381-bc6e-a69245be01df@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,18 +70,32 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAJfpegsiyv52MX_JgkT8jUx194R=vB_BX8VY00muvaVVJGeJoA@mail.gmail.com>
+In-Reply-To: <2472a139-064c-4381-bc6e-a69245be01df@kernel.org>
 
-On Tue, Aug 12, 2025 at 01:21:00PM +0200, Miklos Szeredi wrote:
-> On Tue, 5 Aug 2025 at 20:30, Miklos Szeredi <mszeredi@redhat.com> wrote:
-> >
-> > If the process runs in 32-bit compat mode, copy_file_range results can be
-> > in the in-band error range.  In this case limit copy length to MAX_RW_COUNT
-> > to prevent a signed overflow.
+On Tue, Aug 12, 2025 at 09:54:43AM +0200, Daniel Gomez wrote:
+> On 11/08/2025 07.18, Christian Brauner wrote:
+> > On Fri, 08 Aug 2025 15:28:47 +0200, Vlastimil Babka wrote:
+> >> Christoph suggested that the explicit _GPL_ can be dropped from the
+> >> module namespace export macro, as it's intended for in-tree modules
+> >> only. It would be possible to restrict it technically, but it was
+> >> pointed out [2] that some cases of using an out-of-tree build of an
+> >> in-tree module with the same name are legitimate. But in that case those
+> >> also have to be GPL anyway so it's unnecessary to spell it out in the
+> >> macro name.
+> >>
+> >> [...]
+> > 
+> > Ok, so last I remember we said that this is going upstream rather sooner
+> > than later before we keep piling on users. If that's still the case I'll
+> > take it via vfs.fixes unless I hear objections.
 > 
-> This is VFS territory, so if it looks okay, can you please apply this,
-> Christian?
+> This used to go through Masahiro's kbuild tree. However, since he is not
+> available anymore [1] I think it makes sense that this goes through the modules
+> tree. The only reason we waited until rc1 was released was because of Greg's
+> advise [2]. Let me know if that makes sense to you and if so, I'll merge this
+> ASAP.
 
-I did so now! Thank you. Fyi, I'm on vacation in Sweden and will be back
-on Tuesday so that's why there's a few delays.
+At this point it would mean messing up all of vfs.fixes to drop it from
+there. So I'd just leave it in there and send it to Linus. Next time
+I know where it'll end up.
 
