@@ -1,147 +1,141 @@
-Return-Path: <linux-fsdevel+bounces-57987-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57988-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03A0CB27CF8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 11:24:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE05AB27D0B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 11:27:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C75B1D21280
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 09:16:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 019061D22999
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 09:19:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76771262D0C;
-	Fri, 15 Aug 2025 09:12:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0EDB26C384;
+	Fri, 15 Aug 2025 09:17:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k64qKfJ6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BmB/GsHO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0834248891;
-	Fri, 15 Aug 2025 09:12:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F971259CBF;
+	Fri, 15 Aug 2025 09:17:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755249157; cv=none; b=JI+V65cY2eHHojZ/e8wuICqipEHoBbCAGh3TCstVa2569FJ5Cb/ivHAzoJVxjfBfASyYtMjrgTwIL9Vmh2afBxvU9U4YiQUMWXi27pWjrxzQMGJGyXdK3V64We+YJ+PPNdXmaYav1mOBgJtAEwRONw8MB0MpvZwntajCQrkj9+c=
+	t=1755249463; cv=none; b=ApbXFzL/4aipjYB8jPa1rwpYOJUbuPsuyGIhXQQZiPaaS19t98xTB7mzB3mb9saSPhhct2Wa2PXOzLG2SL7CdokO1LmF7Oe5Xf4DIPWE5YUSzNUGGaLW3MItDpkXXDamN/U0qD4pNLjBnUV/5nFRW8GLK6PpX5tgpHm9nEUg7zA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755249157; c=relaxed/simple;
-	bh=NCVfEVQN6LHwkNoCyqO9selISDvFLOPAgNrIg0ejz0k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JniuZN8wD8ZYubEAW3MoKWWtH4KH4YnhpEw7tpgG3rFPrs94cPAlUijpv+sAj8lpkoniQhk4qT3Z2iQY0Yp5B43M9WEiPcg25uu5MBL6CoYcIFGlj6UG9b1ne4+KxVqbUehk1sXgRcmjs5gJAMozrIvOmbHMl+lE0BiT41sCQRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k64qKfJ6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36ED2C4CEEB;
-	Fri, 15 Aug 2025 09:12:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755249154;
-	bh=NCVfEVQN6LHwkNoCyqO9selISDvFLOPAgNrIg0ejz0k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=k64qKfJ6zNJDhsnuWxR0fgqX3BVaqQwvdZElR/klQAEoCxi1g56cxeHTAZN0/wswK
-	 Pq+3GThmFMau+x8U6BogKChu5yqp5BwT3RbxGdJVY+yxVsA/3n3361XvguUQYtAzo0
-	 CwsxkbStJHs9RAUy1BQLHDF5j08YA23EQWtialVtSTBmcZtV4ZgvbsnBJMyvgGhChp
-	 CJH00Qs5o00iwlgrtxYWMVa2jp4VjDFoGjgtjzcCsiVePDp+01FqKPujeYxhNnJ5cJ
-	 L4zaOZ7N9WkPfF3VfgjAaCkkSQpngOXjnWintiz60FKc8w0raVBwqKL8kvbukYzLFm
-	 Bt1jthD93yq4g==
-Date: Fri, 15 Aug 2025 12:12:10 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Pasha Tatashin <pasha.tatashin@soleen.com>, pratyush@kernel.org,
-	jasonmiu@google.com, graf@amazon.com, changyuanl@google.com,
-	dmatlack@google.com, rientjes@google.com, corbet@lwn.net,
-	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com,
-	kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com,
-	masahiroy@kernel.org, akpm@linux-foundation.org, tj@kernel.org,
-	yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev,
-	chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com,
-	jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org,
-	dan.j.williams@intel.com, david@redhat.com,
-	joel.granados@kernel.org, rostedt@goodmis.org,
-	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
-	linux@weissschuh.net, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-mm@kvack.org,
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com,
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
-	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
-	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
-	aleksander.lobakin@intel.com, ira.weiny@intel.com,
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
-	brauner@kernel.org, linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
-	ajayachandra@nvidia.com, parav@nvidia.com, leonro@nvidia.com,
-	witu@nvidia.com
-Subject: Re: [PATCH v3 07/30] kho: add interfaces to unpreserve folios and
- physical memory ranges
-Message-ID: <aJ756q-wWJV37fMm@kernel.org>
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
- <20250807014442.3829950-8-pasha.tatashin@soleen.com>
- <20250814132233.GB802098@nvidia.com>
+	s=arc-20240116; t=1755249463; c=relaxed/simple;
+	bh=4lb2nhzhOh4J+oq+Tf+VHBjUjMl6+VNGdCEVkE4qIt4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sk8MVaUBw7yypk3o+knQ7xW6YbEgeX7U+YdvTBmcqp62dj0flE0D6XB+AVkCRzgCiiYPbmFCi/nmyHkJtRjDcPTrpggjiE7qkdsOeeGfcAIr2qLH2VsIk4Gm2DRgl141dfLvwinmYb42KMEnDsBfzo/IMSZ1ie1Yd3l87kBVL8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BmB/GsHO; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-afcb79db329so241537666b.2;
+        Fri, 15 Aug 2025 02:17:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755249458; x=1755854258; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RrnDlRuXmoG8LkU7jAkwnOj3EM8GV8NHzXfjcHUe/N0=;
+        b=BmB/GsHOKHEaRjKJSWEemUtyGMTwUQe40cKAoIIcReYPG2Xu3Qf+GF2sZ3ot4JwaP9
+         +eiSRk+0g7aXNxQrwOMzGrlZzMrpclTsFFsUY0ugHJ693iOzV+DfdwcBqnENgGVLlrUr
+         lWvNGkASJ3kGxdDXqVw/o4DaYMb9Tv2xUwTSV0IuKcYWgiOYU0AHXGxxz65+LFe4Zwfo
+         pywYcb3cqSeN4HAwezdlClxTO7aCqj+7micvnKNYziLfGwWI87lpnQCn/OqXsbCerUJC
+         Yg2+xRey1duwZmYsDIKndUso5eH2HVJtmW4u9oFifbmqw6aO9gl2lMTEjn3sDnkbVOc7
+         JjbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755249458; x=1755854258;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RrnDlRuXmoG8LkU7jAkwnOj3EM8GV8NHzXfjcHUe/N0=;
+        b=iEjSbrgq4XQgczlp3jWkB3IrROnf4N5M+icAEjrLQ7np+J8DJKj3gwOMgZlQZgE3KQ
+         2T69kqT3ObefH5p0PWsyXl5IH9DHNPbi6bSWdDO8NrmgfpV0HqnWikTCmF1ejUD20OX2
+         zF9E5NWsOxaL47yXqt7DPORRyjIDzjvaegybD8lMVo7ZDiNis5ooa5/3F6Sda3bVyLJV
+         J3PgwGy6H+a4jEeY3VETh0FMNWFZWrHodyin8LLi9iWJdTnRP/5I1h77GT/8Df/6s0Mn
+         WVskGl9q0qjk/n8c2L93fDcAmmGDGTBsD7la0L4tf2jgrFT9hOcpUv3x0apJ775Yvfhh
+         4Lbw==
+X-Forwarded-Encrypted: i=1; AJvYcCVg/BJwm0ovgrJMiP+Vnd5imuPoWE09f+Zn1uHh+LZIVNrbtcxTlSeZCIpEg3H5CdCgpRBSHunqcZdzjsLc@vger.kernel.org, AJvYcCXnjyp2ixHiyoNQ+8v7TPQ75L/ipraU4ZbtBa8nNTErj1giLW/lhyGmOE6mRFnv5xY6Liv5Nb8dIacw@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw38J0YqPxXRdPrJCijFDU8SSzGBTQ3TdQYj0pmqalH0LaPmedb
+	HEJebPv6SNYrCOyNIvYUVtezuMn9nEG8zbBHZJ9lIomXmKYYaH98S7izu8X68IsbC4HEeoyaenV
+	cKuSXY65wX6jMoxgNqdpVec0WhhY3k0k=
+X-Gm-Gg: ASbGncs5sQQygkVPGDG7NnCwh02dqDyDb6lW30rp6iKy6WrlTQalh6dkSyPtDDeN3sh
+	bT1zhqvlCGj0XatjRuPmOLYar6ATG0pn7mNsNhz8PKspOD7j8h7Sth40DRh445JwtMseZ2pJoVm
+	N06MIUVxKPMneKTgqkUwHdW0wwOI2aTeEAngaTC392OdWxZ+hh15XeXcEj6FerqATn47WKT05PX
+	+fArKM=
+X-Google-Smtp-Source: AGHT+IHuXBMfyghsRB4ltM/E02Aya9aFwOzWO2c3Vy09/HrhEhzAiHccyzTS7sMQopaK/q0KoHre7G8IToVzJp719EM=
+X-Received: by 2002:a17:906:c113:b0:ae0:bee7:ad7c with SMTP id
+ a640c23a62f3a-afcdc288e23mr104940666b.46.1755249457698; Fri, 15 Aug 2025
+ 02:17:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250814132233.GB802098@nvidia.com>
+References: <20250814235431.995876-1-tahbertschinger@gmail.com> <20250814235431.995876-4-tahbertschinger@gmail.com>
+In-Reply-To: <20250814235431.995876-4-tahbertschinger@gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 15 Aug 2025 11:17:26 +0200
+X-Gm-Features: Ac12FXy0btvM0I7I7k3TZ8czVbyLSOE2zdmS_n_URJM0jPRfM0nz8gZ-cz0aA1Q
+Message-ID: <CAOQ4uxhhSRVyyfZuuPpbF7GpcTiPcxt3RAywbtNVVV_QDPkBRQ@mail.gmail.com>
+Subject: Re: [PATCH 3/6] fhandle: do_handle_open() should get FD with user flags
+To: Thomas Bertschinger <tahbertschinger@gmail.com>
+Cc: io-uring@vger.kernel.org, axboe@kernel.dk, linux-fsdevel@vger.kernel.org, 
+	viro@zeniv.linux.org.uk, brauner@kernel.org, linux-nfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 14, 2025 at 10:22:33AM -0300, Jason Gunthorpe wrote:
-> On Thu, Aug 07, 2025 at 01:44:13AM +0000, Pasha Tatashin wrote:
-> > +int kho_unpreserve_phys(phys_addr_t phys, size_t size)
-> > +{
-> 
-> Why are we adding phys apis? Didn't we talk about this before and
-> agree not to expose these?
-> 
-> The places using it are goofy:
-> 
-> +static int luo_fdt_setup(void)
-> +{
-> +       fdt_out = (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO,
-> +                                          get_order(LUO_FDT_SIZE));
-> 
-> +       ret = kho_preserve_phys(__pa(fdt_out), LUO_FDT_SIZE);
-> 
-> +       WARN_ON_ONCE(kho_unpreserve_phys(__pa(fdt_out), LUO_FDT_SIZE));
-> 
-> It literally allocated a page and then for some reason switches to
-> phys with an open coded __pa??
-> 
-> This is ugly, if you want a helper to match __get_free_pages() then
-> make one that works on void * directly. You can get the order of the
-> void * directly from the struct page IIRC when using GFP_COMP.
-> 
-> Which is perhaps another comment, if this __get_free_pages() is going
-> to be a common pattern (and I guess it will be) then the API should be
-> streamlined alot more:
-> 
->  void *kho_alloc_preserved_memory(gfp, size);
->  void kho_free_preserved_memory(void *);
+On Fri, Aug 15, 2025 at 1:52=E2=80=AFAM Thomas Bertschinger
+<tahbertschinger@gmail.com> wrote:
+>
+> In f07c7cc4684a, do_handle_open() was switched to use the automatic
+> cleanup method for getting a FD. In that change it was also switched
+> to pass O_CLOEXEC unconditionally to get_unused_fd_flags() instead
+> of passing the user-specified flags.
+>
+> I don't see anything in that commit description that indicates this was
+> intentional, so I am assuming it was an oversight.
+>
+> With this fix, the FD will again be opened with, or without, O_CLOEXEC
+> according to what the user requested.
+>
+> Fixes: f07c7cc4684a ("fhandle: simplify error handling")
+> Signed-off-by: Thomas Bertschinger <tahbertschinger@gmail.com>
 
-This looks backwards to me. KHO should not deal with memory allocation,
-it's responsibility to preserve/restore memory objects it supports.
+This patch does not seem to be conflicting with earlier patches in the seri=
+es
+but it is still preferred to start the series with the backportable fix pat=
+ch.
 
-For __get_free_pages() the natural KHO API is kho_(un)preserve_pages().
-With struct page/mesdesc we always have page_to_<specialized object> from
-one side and page_to_pfn from the other side.
+Fee free to add:
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
-Then folio and phys/virt APIS just become a thin wrappers around the _page
-APIs. And down the road we can add slab and maybe vmalloc. 
+Thanks,
+Amir.
 
-Once folio won't overlap struct page, we'll have a hard time with only
-kho_preserve_folio() for memory that's not actually folio (i.e. anon and
-page cache)
- 
-> Which can wrapper the get_free_pages and the preserve logic and gives
-> a nice path to possibly someday supporting non-PAGE_SIZE allocations.
-> 
-> Jason
-> 
-
--- 
-Sincerely yours,
-Mike.
+> ---
+>  fs/fhandle.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/fhandle.c b/fs/fhandle.c
+> index 57da648ca866..dbb273a26214 100644
+> --- a/fs/fhandle.c
+> +++ b/fs/fhandle.c
+> @@ -409,7 +409,7 @@ static long do_handle_open(int mountdirfd, struct fil=
+e_handle __user *ufh,
+>         if (retval)
+>                 return retval;
+>
+> -       CLASS(get_unused_fd, fd)(O_CLOEXEC);
+> +       CLASS(get_unused_fd, fd)(open_flag);
+>         if (fd < 0)
+>                 return fd;
+>
+> --
+> 2.50.1
+>
+>
 
