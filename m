@@ -1,78 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-58016-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58017-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB425B280FE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 15:56:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF70FB2810E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 15:59:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FB11AE7A8E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 13:56:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18D43621A65
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 13:57:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D280305E27;
-	Fri, 15 Aug 2025 13:56:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01ABF306D4A;
+	Fri, 15 Aug 2025 13:56:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KHnn9gXY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i9co7TLv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 131F330497F;
-	Fri, 15 Aug 2025 13:56:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9795730499E;
+	Fri, 15 Aug 2025 13:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755266163; cv=none; b=hZW1Pm9dbD15KPOV9nmXbudBR7E0uqA3QrZLgZ8e2n1FhcoMSb1Tc24dedkKKQE1i3pGFrs100zekp2TNePGtczkW/WSltnznuSH436+3a5/V1VewemvdqH6LjYQ7LCRQ5ahZhzXf8JVB7cmCOJM35hcYVJVLbvJsN4t56UhBi8=
+	t=1755266165; cv=none; b=GBzIBvmVZrm1vmSGOqaMA0BkmeW2Klrt7lxa03Kvm9GjFYYSH8N+GyFe0BtMIwmqunEkdJuvzwy5CDKlc91SP781qrU7czLWpJCCg+QL9+YNZLcM1a5H0B/ssNfNUz0pONI3YawTpwuovq9JmDZ12tJ1AGGdThxkX5mtwruNO4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755266163; c=relaxed/simple;
-	bh=+aC8tuxth/3ftzMsKGRiTm7dbkZ167G+8GUSLlXDjmI=;
+	s=arc-20240116; t=1755266165; c=relaxed/simple;
+	bh=QO39INygjINebWP8oHh/0VwVoIxsdAq/h6+u4bYW3Bs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NcJLhGPgPYiceNu7rUjc0sBjC7XKqYScIyqxqXcDm0FvDrrNkPSiSpMDhj46BlPm4xwI3n51sl2Yp3qGSQBuva1pwJGjog23+rs+gDZT3di/ZjmWNYL23mTmvxzyEge7M/zA+qTKtR/xPyrZl9jFrB6zwJF8DoAOcHwRhhOlbh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KHnn9gXY; arc=none smtp.client-ip=209.85.160.176
+	 MIME-Version; b=ke7fQLduDI80Gi7kARkouypPKOjjzX3SiKG91qQxdGR1zZaPkydOTMzjnkMq16WaoSfFKaj30C/1aVN/P6d05jFrxI9ij/MGBDQOu/6nXRlDqUTQq6/p5Spu24nNIfHOfrTbOlZOtt3TZsvKgdbLHPR6O+Iscl630M1YOLjtGwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i9co7TLv; arc=none smtp.client-ip=209.85.219.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4b109919a09so25629961cf.0;
-        Fri, 15 Aug 2025 06:56:01 -0700 (PDT)
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-70a88daec47so11518586d6.0;
+        Fri, 15 Aug 2025 06:56:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755266161; x=1755870961; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1755266162; x=1755870962; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=htOuw1jckUm3cFOQCy2Ez0sym5NjcBkm+jIoTXRQCgk=;
-        b=KHnn9gXYPTVSMjYVnMApEgnAs2Y+UC6Bz045BRy9QJ02oa0ptX9p81ComlfkugnEtb
-         5F0VHblHPJb7oulmLHiM/Q1RVNWJOpboiJ9qfCT4cU07P3oADUowNQBu5Na9l9Si7wSQ
-         TfBzUrx/+pVdO03QqZsV9aEZKjcdbS1YeoV0EDQQod3oTtakWxGuI2byTXccfcHH+zp8
-         dqVXiEeQcR+7LePQq+hgaiVguQmv9tOlBkzsxyWQlYeuw34bnuo9LUGL5zy0j5kXRO4x
-         0D1KA3tZGh6C14m2ESB+PxZ59rHTGjw9GOXHXWAid8BqgTXFCvtSq7v9exQM5+JJ+Jlf
-         cnCQ==
+        bh=zKLbQqBppRJDcJgKqWsD8LPR5qN9TJ+cj2ycCND4QA8=;
+        b=i9co7TLvwSqCKkwJ2Xh+rN2BtLC9z5zu6rQFp5JIVGAtj7PcfNY6YSayVbGpEbgipF
+         wzqrcV5hqyiN8KCl+w/iwpxYLdRX4wug+AOZ2zi4/ErEXSiPcfx+SkR5zd0Yp14QalHT
+         ja+LCpNToKPOFDHoJ/Cy9BJUQINs3A8vCdPoIMuM5FhBTNPzsO6QLFmBMQmLvVp0Z/44
+         L7/oR7AlHlnxHBHl5Vs2t1/fhhX5n17hroHyjNIlvqmIY8PELuPdHqpZ9InZseOCFrXD
+         DbffaukHQhnvM2KOmXXKRyP4WzoTCUelTWKha8gpMuC69YHTthr8mMMyr4CqqJFUVxNR
+         TjyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755266161; x=1755870961;
+        d=1e100.net; s=20230601; t=1755266162; x=1755870962;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=htOuw1jckUm3cFOQCy2Ez0sym5NjcBkm+jIoTXRQCgk=;
-        b=wW2VKHx8d8lyAVTkEmYjfxqpRk0M0AACapt2+Ry99BgGAc0v0t6PLyoMPe3H3SQBlq
-         J3rtLvMLmA3Yut87sGdJr/eMPSWWLh5rEK8VAOwbmUbzb+dlM3lklls1ifZC+CjIHx3G
-         g7lzL89iP2CO3PzAVTPV3kC6z1oTfb4D7wD6Fj5CF0hMUAUgYVza28flPtW1Hyn6ZzuI
-         ZhXj+NiabPiqJJ6vzwyDnvesblOMMWc3Wsw5hJkZQyzbGd3A49yGyFFcrD8nj20w3zam
-         bRDgitOREQ6nfS9uS8aWzgwKkQjXEu2Q9Da0UIEO3iuaDUqpLg49Sf99cxGvBotWC+0Y
-         3NsA==
-X-Forwarded-Encrypted: i=1; AJvYcCVpNlpl4x/q9D7hB4harZcRLlVP8Q7k0Fnm9rssnYoe3ZmOY9czubq/xkVR+FRMUr+sjL6EqW0hKbPE6GrF@vger.kernel.org, AJvYcCWnBwW/U5GOryfizVXASZ+l5VCbkU/uKSrfB74atqVomk2RUwbKiBZD7P3OQRjV8ITSxsC3rsfMXmk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzE9FJfovdwj5zr/VWB9wjP3nMxqnhjzWc/AwO/C/Il7QWQCN29
-	qauC20yPs9/ck2N41UQljwQx3dUOfoZcUq4U8pzRtcNxSE3LY/9bosr5
-X-Gm-Gg: ASbGncuzUGEFilfE081lGZ6qJ3nV5lV30o06nIxoKAzicnjX/X+M0Y7nA704rg1B/JS
-	6JLCFta/ZoFfhClK5mgJy70gjyQ9qvGtGEgjofvTV4fRkL3lyxm7ZTNfAtcXz3bXP2T7s9jbKm/
-	rNfA2MfP6/hySZ0o26e4fwuH1kxIApz1cV3rA8ogM7Fg/zfRHyRMcb4lfQEFxLH7oB0Si8YuEHv
-	lDA3hIa4Cz9DEP0REuV3871mg98hVjE7u1c9hUfsDMHZsT5aFv1kuw6ZzhIKawRXP2n+1P2judd
-	O18Nqfkw9bFNkoC01N8PGC+FGxxsRMuGdom/8eZPoYPiLFpQpPo1ldlnZUzxCNYCloSoF5Y5+1l
-	auIOpmvj4tkoMkgsx7Z2V
-X-Google-Smtp-Source: AGHT+IFA5ocU0t0P6Vd1e5Jiomncb95U626f/HquasQ6giNUDflHW0b1pvVh3BD+6pcW5GWRqf2ajg==
-X-Received: by 2002:ac8:57d0:0:b0:4b0:89c2:68e0 with SMTP id d75a77b69052e-4b11e2c638cmr30410701cf.60.1755266160836;
-        Fri, 15 Aug 2025 06:56:00 -0700 (PDT)
-Received: from localhost ([2a03:2880:20ff:71::])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b11de55b61sm9255701cf.56.2025.08.15.06.56.00
+        bh=zKLbQqBppRJDcJgKqWsD8LPR5qN9TJ+cj2ycCND4QA8=;
+        b=QaAqBkiodQwhu7lj/Me2aBz62V6216snHHVZ2ai3zBlVksuoK+WxcPmBnMn+Fv1NmM
+         S6o4Z/UedU4dFYms8xpMzQ2lQu1iLlkz9fs5M0gON+A9mKP6Lo+mzw7dlU5NuSqybVGd
+         4gNKYcx3RJdJAGnZ9XDBR04qIc96ZDKqGXVPOtog84fD4V94vmiw+6NLS9ejggvO5o9x
+         BTH/g+1q4Ib/ahMCkYIY1FEa9PQAmMvXXkW+zG4/YYWLo6qe06ypRsDpl7shGniolChV
+         X6k6byGBP7vch6JWONPbmCf9FwZsVMxbhPT6eA5aQP5/vYnHeNoPq/AZWtp7jyd/WpaP
+         OV5w==
+X-Forwarded-Encrypted: i=1; AJvYcCWP/Ctcx8MrCx5p03P/AlqUkt2C2QbSlRdPsuGrqOKWcobLJKZZro1X1nLKtMkdG0fIlFXwINznxliYLHKy@vger.kernel.org, AJvYcCWXolaNwVQznarkZDnJwEBBrwLjF2M5qc2R9q8qaw5lUp5d1AOFm856OmDW2JDebsmm0/gIYZtEIM0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuXIHwdi3lamocvFTiOyVo5QWzQTlC5+gusYHbyLSdF9soD+jf
+	ixd8pwr7VipyUuX9InuWiYhcdWthT+O1cszAN957eaLdX0YQtSGZksfg
+X-Gm-Gg: ASbGncuaFMedzKnYEwQgxTDXwcm9lUAveiWQVtarFZ7Qk/7PNfyZJmXhIa4HJhyJ05S
+	rPAYIHUbz+B6UZRuQC0X7aIZ+mTCe17LsRh5uVV/rhu9rJ3QwSEZUKiZaIrJSGzZ0McBnoEemjM
+	N7N3XHhpBiRJ63aJMmqQFAXwcDHFFROWrCPhmkJjYuOpa2fCI+6cCW5zBlewyYiZ+hJwP0EBxnb
+	7lcF4rHdrIj1vZY5bOIgF/nl2zn61Nkgj/RwZJaltjtsdryEYyugJ1b1ytUna9W/6NYSDRe0aTd
+	5gKqKwAitPBkNwrHSNkV8mTqO4c/0VktDsM4oHD2FGKrd6p1x/JB7eg0byiiMG30C4pSlni+EON
+	n5NWpYH0TI8R1+Rjo46Y=
+X-Google-Smtp-Source: AGHT+IFRUMVXwq9t9zoppX3jUjPgp5npqXSGShrgHAx927648lNHSf66xRhiQlIDhKL6ceNqK3JUkQ==
+X-Received: by 2002:a05:6214:c43:b0:707:3cb1:3fac with SMTP id 6a1803df08f44-70ba7af6bfbmr21560886d6.15.1755266162144;
+        Fri, 15 Aug 2025 06:56:02 -0700 (PDT)
+Received: from localhost ([2a03:2880:20ff:3::])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70ba92f8c73sm8074566d6.44.2025.08.15.06.56.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Aug 2025 06:56:00 -0700 (PDT)
+        Fri, 15 Aug 2025 06:56:01 -0700 (PDT)
 From: Usama Arif <usamaarif642@gmail.com>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	david@redhat.com,
@@ -102,9 +102,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	linux-doc@vger.kernel.org,
 	kernel-team@meta.com,
 	Usama Arif <usamaarif642@gmail.com>
-Subject: [PATCH v5 4/7] docs: transhuge: document process level THP controls
-Date: Fri, 15 Aug 2025 14:54:56 +0100
-Message-ID: <20250815135549.130506-5-usamaarif642@gmail.com>
+Subject: [PATCH v5 5/7] selftest/mm: Extract sz2ord function into vm_util.h
+Date: Fri, 15 Aug 2025 14:54:57 +0100
+Message-ID: <20250815135549.130506-6-usamaarif642@gmail.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20250815135549.130506-1-usamaarif642@gmail.com>
 References: <20250815135549.130506-1-usamaarif642@gmail.com>
@@ -116,63 +116,108 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This includes the PR_SET_THP_DISABLE/PR_GET_THP_DISABLE pair of
-prctl calls as well the newly introduced PR_THP_DISABLE_EXCEPT_ADVISED
-flag for the PR_SET_THP_DISABLE prctl call.
+The function already has 2 uses and will have a 3rd one
+in prctl selftests. The pagesize argument is added into
+the function, as it's not a global variable anymore.
+No functional change intended with this patch.
 
+Suggested-by: David Hildenbrand <david@redhat.com>
 Signed-off-by: Usama Arif <usamaarif642@gmail.com>
 Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 Reviewed-by: Zi Yan <ziy@nvidia.com>
 ---
- Documentation/admin-guide/mm/transhuge.rst | 36 ++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+ tools/testing/selftests/mm/cow.c            | 12 ++++--------
+ tools/testing/selftests/mm/uffd-wp-mremap.c |  9 ++-------
+ tools/testing/selftests/mm/vm_util.h        |  5 +++++
+ 3 files changed, 11 insertions(+), 15 deletions(-)
 
-diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
-index 370fba1134606..a16a04841b960 100644
---- a/Documentation/admin-guide/mm/transhuge.rst
-+++ b/Documentation/admin-guide/mm/transhuge.rst
-@@ -225,6 +225,42 @@ to "always" or "madvise"), and it'll be automatically shutdown when
- PMD-sized THP is disabled (when both the per-size anon control and the
- top-level control are "never")
+diff --git a/tools/testing/selftests/mm/cow.c b/tools/testing/selftests/mm/cow.c
+index 90ee5779662f3..a568fe629b094 100644
+--- a/tools/testing/selftests/mm/cow.c
++++ b/tools/testing/selftests/mm/cow.c
+@@ -41,10 +41,6 @@ static size_t hugetlbsizes[10];
+ static int gup_fd;
+ static bool has_huge_zeropage;
  
-+process THP controls
-+--------------------
+-static int sz2ord(size_t size)
+-{
+-	return __builtin_ctzll(size / pagesize);
+-}
+ 
+ static int detect_thp_sizes(size_t sizes[], int max)
+ {
+@@ -57,7 +53,7 @@ static int detect_thp_sizes(size_t sizes[], int max)
+ 	if (!pmdsize)
+ 		return 0;
+ 
+-	orders = 1UL << sz2ord(pmdsize);
++	orders = 1UL << sz2ord(pmdsize, pagesize);
+ 	orders |= thp_supported_orders();
+ 
+ 	for (i = 0; orders && count < max; i++) {
+@@ -1216,8 +1212,8 @@ static void run_anon_test_case(struct test_case const *test_case)
+ 		size_t size = thpsizes[i];
+ 		struct thp_settings settings = *thp_current_settings();
+ 
+-		settings.hugepages[sz2ord(pmdsize)].enabled = THP_NEVER;
+-		settings.hugepages[sz2ord(size)].enabled = THP_ALWAYS;
++		settings.hugepages[sz2ord(pmdsize, pagesize)].enabled = THP_NEVER;
++		settings.hugepages[sz2ord(size, pagesize)].enabled = THP_ALWAYS;
+ 		thp_push_settings(&settings);
+ 
+ 		if (size == pmdsize) {
+@@ -1868,7 +1864,7 @@ int main(void)
+ 	if (pmdsize) {
+ 		/* Only if THP is supported. */
+ 		thp_read_settings(&default_settings);
+-		default_settings.hugepages[sz2ord(pmdsize)].enabled = THP_INHERIT;
++		default_settings.hugepages[sz2ord(pmdsize, pagesize)].enabled = THP_INHERIT;
+ 		thp_save_settings();
+ 		thp_push_settings(&default_settings);
+ 
+diff --git a/tools/testing/selftests/mm/uffd-wp-mremap.c b/tools/testing/selftests/mm/uffd-wp-mremap.c
+index 13ceb56289701..b2b6116e65808 100644
+--- a/tools/testing/selftests/mm/uffd-wp-mremap.c
++++ b/tools/testing/selftests/mm/uffd-wp-mremap.c
+@@ -19,11 +19,6 @@ static size_t thpsizes[20];
+ static int nr_hugetlbsizes;
+ static size_t hugetlbsizes[10];
+ 
+-static int sz2ord(size_t size)
+-{
+-	return __builtin_ctzll(size / pagesize);
+-}
+-
+ static int detect_thp_sizes(size_t sizes[], int max)
+ {
+ 	int count = 0;
+@@ -87,9 +82,9 @@ static void *alloc_one_folio(size_t size, bool private, bool hugetlb)
+ 		struct thp_settings settings = *thp_current_settings();
+ 
+ 		if (private)
+-			settings.hugepages[sz2ord(size)].enabled = THP_ALWAYS;
++			settings.hugepages[sz2ord(size, pagesize)].enabled = THP_ALWAYS;
+ 		else
+-			settings.shmem_hugepages[sz2ord(size)].enabled = SHMEM_ALWAYS;
++			settings.shmem_hugepages[sz2ord(size, pagesize)].enabled = SHMEM_ALWAYS;
+ 
+ 		thp_push_settings(&settings);
+ 
+diff --git a/tools/testing/selftests/mm/vm_util.h b/tools/testing/selftests/mm/vm_util.h
+index 148b792cff0fc..e5cb72bf3a2ab 100644
+--- a/tools/testing/selftests/mm/vm_util.h
++++ b/tools/testing/selftests/mm/vm_util.h
+@@ -135,6 +135,11 @@ static inline void log_test_result(int result)
+ 	ksft_test_result_report(result, "%s\n", test_name);
+ }
+ 
++static inline int sz2ord(size_t size, size_t pagesize)
++{
++	return __builtin_ctzll(size / pagesize);
++}
 +
-+A process can control its own THP behaviour using the ``PR_SET_THP_DISABLE``
-+and ``PR_GET_THP_DISABLE`` pair of prctl(2) calls. The THP behaviour set using
-+``PR_SET_THP_DISABLE`` is inherited across fork(2) and execve(2). These calls
-+support the following arguments::
-+
-+	prctl(PR_SET_THP_DISABLE, 1, 0, 0, 0):
-+		This will disable THPs completely for the process, irrespective
-+		of global THP controls or madvise(..., MADV_COLLAPSE) being used.
-+
-+	prctl(PR_SET_THP_DISABLE, 1, PR_THP_DISABLE_EXCEPT_ADVISED, 0, 0):
-+		This will disable THPs for the process except when the usage of THPs is
-+		advised. Consequently, THPs will only be used when:
-+		- Global THP controls are set to "always" or "madvise" and
-+		  madvise(..., MADV_HUGEPAGE) or madvise(..., MADV_COLLAPSE) is used.
-+		- Global THP controls are set to "never" and madvise(..., MADV_COLLAPSE)
-+		  is used. This is the same behavior as if THPs would not be disabled on
-+		  a process level.
-+		Note that MADV_COLLAPSE is currently always rejected if
-+		madvise(..., MADV_NOHUGEPAGE) is set on an area.
-+
-+	prctl(PR_SET_THP_DISABLE, 0, 0, 0, 0):
-+		This will re-enable THPs for the process, as if they were never disabled.
-+		Whether THPs will actually be used depends on global THP controls and
-+		madvise() calls.
-+
-+	prctl(PR_GET_THP_DISABLE, 0, 0, 0, 0):
-+		This returns a value whose bits indicate how THP-disable is configured:
-+		Bits
-+		 1 0  Value  Description
-+		|0|0|   0    No THP-disable behaviour specified.
-+		|0|1|   1    THP is entirely disabled for this process.
-+		|1|1|   3    THP-except-advised mode is set for this process.
-+
- Khugepaged controls
- -------------------
+ void *sys_mremap(void *old_address, unsigned long old_size,
+ 		 unsigned long new_size, int flags, void *new_address);
  
 -- 
 2.47.3
