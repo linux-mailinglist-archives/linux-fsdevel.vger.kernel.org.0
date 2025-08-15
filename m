@@ -1,140 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-58041-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58043-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67FB4B2846E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 18:56:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D98FB284BA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 19:11:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE0A6B0227F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 16:53:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A1187AF150
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 17:09:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED089257820;
-	Fri, 15 Aug 2025 16:53:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDCE9304BC9;
+	Fri, 15 Aug 2025 17:11:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dAClpBLc"
+	dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b="LSXvTUJi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE302E5D2A;
-	Fri, 15 Aug 2025 16:53:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C380D304BA0
+	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Aug 2025 17:11:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755276801; cv=none; b=BfbNqUW8DBKWeH1IIoOuiuT7kJx25CoGpMTvMKMDsunKFFFxf7tyQr5MsQ9/dP9IcwBo5TXUyPB0RKADBE5vY+qUmyymAPUDtzTYoBSCGOZTILbqitgGV8oIYKmhc6cY9g8v+uINQ3Bd9C/RcS/iQ7TrebmEdUH8085b9AWzC4s=
+	t=1755277869; cv=none; b=EZQ0ejyTxLCJraV8uqYIAUt3Pcy/3Ti2+HL0nx89myrvYzCSOblp+lSw7oOU7B+IE58P2y49/LjPrGS6A41ClcPPrdbG1igPDJC8CDndrDPiohy7PXYd9WeFkv6S2tqnuWo1HVfHGkcBAX4mWAdfsFiMyTuRahbmRIxyiXkU+xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755276801; c=relaxed/simple;
-	bh=ncsZMcaEaRyKrG7bCrmhKqxgcGm35QtHCgV+5Alx7ik=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V6UQHgHIg9HayVJkIk9tw/8EVG6zKFw1Fcl1iY1MhQmPAtNqUoA/vph/oR8708FamWVPsiHQS1lnAe1An9bdoD9MhfmaemL0pCpY3FX9UJEhizNxHUQLvzSXcsfDUSc5uZOGq98+idZZOfwIbBSavaZAHG7WV6hdRpRvSecujB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dAClpBLc; arc=none smtp.client-ip=209.85.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-74381e0a227so1536369a34.0;
-        Fri, 15 Aug 2025 09:53:19 -0700 (PDT)
+	s=arc-20240116; t=1755277869; c=relaxed/simple;
+	bh=4HZvWAZF07QdILcKFutV17g/5NFytQp/MNr45fSPPwY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sl9Os63frEfUwGKQ+hTN6lwrYKRPWfCdbRjbfK7Oc4iPinxzI2Phqq17saI1iO/GT16K0hvCdT+oncN52AN91WoZxCxiai9DLsEA9XB3DBaVJDjk4dSRHL2fFS8F8BoXVQiy66mFCGDC9RdXlcrHjUrxN2SYw/3Q1waRo3BfQrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zetier.com; spf=pass smtp.mailfrom=zetier.com; dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b=LSXvTUJi; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zetier.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zetier.com
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7e8704b7a3dso248342285a.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Aug 2025 10:11:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755276799; x=1755881599; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=M1YfSXIbwb8SN2s4kprGpkOdh2b7v2KrGx+xJwdVO5E=;
-        b=dAClpBLcYa4tzwsNFpw/fEJgFQBIzcnTEpibvytbj1c4YO4hpLHebu0duiBT2c9b70
-         23d31tl7t0vdU6dE3MoKe4SsRgOPKVrxGVOE7Ln9hqdspHec7cKcN0d/kYOxCI9K+PlZ
-         q1MP292YOBL0GOGykAjcJNYdTiWLoUob+clzY+Pyd2ZDRVjGbplZ44aRoJHWSogOeHk5
-         YzaCRvOQfNUmKjtLsEfsGWtRJBjfv+I4SojMvfywZIESaIFhvRVBBbjfgQIMRutStYzI
-         ACohHlasjTAETE1CfB+syoQWoTiLQe1wLUIooT5qId8qlsLjrZ9MCOQYt8lU5zYD7gNl
-         wSMQ==
+        d=zetier.com; s=gm; t=1755277866; x=1755882666; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=T2O89Zv9S18NKrgTrkfOWonDcQRK/xVnFV6RgQGjH5w=;
+        b=LSXvTUJih8oI/e/FUv12Ro4gfFCL/ie11mAEY/P37H0fVuqO/djQehS+GAGOUquPPt
+         DULqPILJIpa+zZ3iYev9aUD8jSVijJxtmXufo64pTjzjFiFAXhdk5I3fu3xy5KYMN8NS
+         1H1eovrWabB7OCvzsCcWBNF8pMpxpzQOuCtguu3cwLAPFYuw0dEmta3o5i7QujEnSMT3
+         FVZU9tZKEINe+F3Oan/6xRW6YBUWlFy60ntB4dl2nnXoFLAA1AWG94GJBerUG0XyHGch
+         aTfPwn5HJsvBhlCPnHGHI/faYgr3SQbMjaMx0zXclg/4K3Fn6Ccx3fWXdafGXHS2Ug3q
+         TBCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755276799; x=1755881599;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=M1YfSXIbwb8SN2s4kprGpkOdh2b7v2KrGx+xJwdVO5E=;
-        b=plfVWbp0XZ5IKi7wOMEpF2FJXE1YP74ry3+p6alvAaUQNic2YFIm4mJHU/DhrHVAJi
-         SNr/7MFJqUEk8WEwrc7KH5XHvBT6C0Uhh9Lji/XI9vVvlA8jmWdQ5Y/IaGQ0jFue/LPx
-         9Tb2r0MrQfHnd46ZG/OiRw8hvAMITRsypPSi2HvjNuyDDiP33yYrfDFqngiKW6kqRvs0
-         gVneNZFfmq71nqnpOI+rXBbZt45UyL2gyZNzBdw6ZGp9S2BaJvlzBW0+Hg7+28y66vaP
-         MIxHauDo/u73gFFvF89ZMU8/w50D2Qsprny7hCKEWB9r832JXCuR6xwW+NNJNWbK0UDk
-         tmZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUZc9pqHdF7q0SQziWHlf3UHplusRXUyAGjEpMtfUq4bhjl+zeNUI0xABAy3Yi7NYnUKVbk1vOVrWw1FRfpUA==@vger.kernel.org, AJvYcCV/7/MY2XWqasYHVixVi+4Y+hH7Fq2lI7VQ4riSFTmZX2ltVM29RNhzUMHv4O1VRW0E0AUG1dZzuXA=@vger.kernel.org, AJvYcCX39WZA3z00B5eaD0nRYyzqMB0UCsM5rfhqDcrnoDbAjlGd+oOPIzWjYs3zy7w+Cuao0HbGLKKc+JsvSPTN@vger.kernel.org, AJvYcCXuMMnkDMgBRO8ZbKxIy5uKQ/12Q1zM0/HwKA/9O2nxdMBWrBeTo4cEWlL3/EaWk5K/hW3BkbiAk1PR@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2xxw1tdxO0abbYAh1KjQejC8DCPdYocbZGgEWAfmdfHJqaVHJ
-	p9i8Ai/2eYt3FZLzkvGEuZqEfS+T8KFii3R6u6dquKO0MBIS1ZxzWpGQ
-X-Gm-Gg: ASbGncu1z7sKIV4oHIOl2Mu0L+a5ghSTqYE9n0qB2jgNsU6lLA8SkH8rXftJIGovWQz
-	pE0Z58D6zjFPNhUUTfCJbMua1jWK2p0sTqc8ZjV6eYdsjtEKwKsQIflRri9M8ldQaSp8xmvoKH0
-	EYSXeoCpc+xw09xjjSReEz0/B5BipIwb7RAcpE0fpcehKEkYgxzc9Sjrf4d9CeMbtLU8qYz7FPu
-	gnT52//Of9WIwLxNzlOCG6KlYFErRXFNVG57oKwVeZe2fSq44Ov1JoxtcJ2hBAh1SPC02dw0yzx
-	us40SCmRgw6ITZgOIeZgiGARRYORRz47JpXh/u++66nkYLYmkjDuKSUYQeq/vrC75SjTBJOB+ZA
-	4uLFtQpBx5yg9BbxkwI1xymbP9nhunUYN2yJe
-X-Google-Smtp-Source: AGHT+IHh7gvLqat09ID5S5eotjMgSZM/1+QH28GoD8XLJ484jicmNbL1KHnEftKM0DAmNzUxwWibZg==
-X-Received: by 2002:a9d:7c8a:0:b0:73e:5cb9:e576 with SMTP id 46e09a7af769-743924963b0mr1268395a34.27.1755276798837;
-        Fri, 15 Aug 2025 09:53:18 -0700 (PDT)
-Received: from groves.net ([2603:8080:1500:3d89:c95b:3a76:bbcf:777c])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-74392073461sm377891a34.49.2025.08.15.09.53.17
+        d=1e100.net; s=20230601; t=1755277866; x=1755882666;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=T2O89Zv9S18NKrgTrkfOWonDcQRK/xVnFV6RgQGjH5w=;
+        b=svCGNQhhUcY3tRQlXjPIN1ZP2+fxAl1TLAH6EKBrHiuIxe+Fk0FOzKXZlEPp2lLuYo
+         YDkzyEoCZ1sfOwmhD0L0T6Lge1RglFYFJ913PaOWGnF7lD/29bl/g8/b7d6ey8pe6VT4
+         8eWIugBYFbsm7MN0/WQWwuDfPT17MXQuVrG/OXTrKKI549l3EU3jePH2VnLEH99oJUyb
+         XFBVNoprCsOs8A4D1ivJbK3CGDprirSriogdShe2tt7wimgirUN1vn60IYEYzR7KryQu
+         OZ4P5Rb7foTCf/9/Vpr0VXtrLgYooHiCGbQAJZE3hURWyik8yR1yaP+yyMSdRPlXPA7n
+         6gdg==
+X-Forwarded-Encrypted: i=1; AJvYcCWYnMlBaE2ryKZ2Tkq4CewfLxnMyYmRGyLPXLBj7VSx6ISh6qw1+rcxAAnmTX4crYFxUEZf6keXehykYs6x@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLD8Q0Vk8BIMzD5ojY2uZYhqI9eBtXGIG02ATiHg2V1iXHuymm
+	qQx6z5R6aDXuQA4S+YJ59OmOW7YKdoDnLIc120NSykiMAzeHVbbB9qrMDSnUNG4mMFA=
+X-Gm-Gg: ASbGncv1CaSsQtiTFvFkfp3vgN5u3NBn4rkN45j1Nfmc6XGByZYHUwdFdFmpS7Wb66Z
+	bE4dVN0f6jy5TVT8grqTNl3ae0VQ6grg6aLOwCUlcSbaf+IDVyw3WaOzlDkVggmwOcmdpBERl/h
+	hae2ZbG3KPiVTkEULu1lcPbsngD1U95FPecWx1aotZcfTKHVq8t544WMIKd5G2R88M+7j14dg+6
+	WAGQShQqDM0yA6o4KkflNlIjTgO0XRdhHdi0wdSQGsAsU7WT78pESkjZd/IYzRd03NNdUe8FLuh
+	/6uPKeuXzLBjaibGqg99/Qw0UZZG8IGFxcnV2cPUKSgoeGsT8zoXVgQpaEiEH4XXnYi3Zwmlfk5
+	D5pH0wnMp+BgmUhyeipDfpCId64GnPtn3E3nGxg==
+X-Google-Smtp-Source: AGHT+IE1qwoo21Lj7SAsZna8oIYdgZg/fuhK6Zw4I5IO8vhRUjpgFxAFqTwYNfEozZCGITzVt4qWlg==
+X-Received: by 2002:a05:620a:f12:b0:7e8:5ac9:7d53 with SMTP id af79cd13be357-7e87e07d13dmr314529285a.43.1755277865505;
+        Fri, 15 Aug 2025 10:11:05 -0700 (PDT)
+Received: from ethanf.zetier.com ([65.222.209.234])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e87e192d8esm137659985a.41.2025.08.15.10.11.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Aug 2025 09:53:18 -0700 (PDT)
-Sender: John Groves <grovesaustin@gmail.com>
-Date: Fri, 15 Aug 2025 11:53:16 -0500
-From: John Groves <John@groves.net>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Dan Williams <dan.j.williams@intel.com>, 
-	Bernd Schubert <bschubert@ddn.com>, John Groves <jgroves@micron.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Vishal Verma <vishal.l.verma@intel.com>, 
-	Dave Jiang <dave.jiang@intel.com>, Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	"Darrick J . Wong" <djwong@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, 
-	Jeff Layton <jlayton@kernel.org>, Kent Overstreet <kent.overstreet@linux.dev>, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, 
-	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Amir Goldstein <amir73il@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	Stefan Hajnoczi <shajnocz@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, 
-	Josef Bacik <josef@toxicpanda.com>, Aravind Ramesh <arramesh@micron.com>, 
-	Ajay Joshi <ajayjoshi@micron.com>, john@groves.net
-Subject: Re: [RFC V2 12/18] famfs_fuse: Plumb the GET_FMAP message/response
-Message-ID: <mwnzafopjjpcgf3mznua3nphgmhdpiaato5pvojz7uz3bdw57n@zl7x2uz2hkfj>
-References: <20250703185032.46568-1-john@groves.net>
- <20250703185032.46568-13-john@groves.net>
- <CAJfpegv6wHOniQE6dgGymq4h1430oc2EyV3OQ2S9DqA20nZZUQ@mail.gmail.com>
- <CAJfpegv=ACZchaG-xt0k481W1ZUKb3hWmLi-Js-aKg92d=yObw@mail.gmail.com>
+        Fri, 15 Aug 2025 10:11:05 -0700 (PDT)
+From: Ethan Ferguson <ethan.ferguson@zetier.com>
+To: linkinjeon@kernel.org,
+	sj1557.seo@samsung.com
+Cc: yuezhang.mo@sony.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ethan Ferguson <ethan.ferguson@zetier.com>
+Subject: [PATCH 0/1] exfat: Add support for FS_IOC_{GET,SET}FSLABEL
+Date: Fri, 15 Aug 2025 13:10:55 -0400
+Message-Id: <20250815171056.103751-1-ethan.ferguson@zetier.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegv=ACZchaG-xt0k481W1ZUKb3hWmLi-Js-aKg92d=yObw@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On 25/08/14 04:36PM, Miklos Szeredi wrote:
-> On Thu, 14 Aug 2025 at 15:36, Miklos Szeredi <miklos@szeredi.hu> wrote:
-> 
-> > I'm still hoping some common ground would benefit both interfaces.
-> > Just not sure what it should be.
-> 
-> Something very high level:
-> 
->  - allow several map formats: say a plain one with a list of extents
-> and a famfs one
->  - allow several types of backing files: say regular and dax dev
->  - querying maps has a common protocol, format of maps is opaque to this
->  - maps are cached by a common facility
->  - each type of mapping has a decoder module
->  - each type of backing file has a module for handling I/O
-> 
-> Does this make sense?
-> 
-> This doesn't have to be implemented in one go, but for example
-> GET_FMAP could be renamed to GET_READ_MAP with an added offset and
-> size parameter.  For famfs the offset/size would be set to zero/inf.
-> I'd be content with that for now.
+Add support for reading / writing to the exfat volume label from the
+FS_IOC_GETFSLABEL and FS_IOC_SETFSLABEL ioctls
 
-Maybe GET_FILE_MAP or GET_FILE_IOMAP if we want to keep overloading 
-the term iomap. Maps are to backing-dev for regular file systems,
-and to device memory (devdax) for famfs - in all cases both read
-and write (when write is allowed).
+Ethan Ferguson (1):
+  exfat: Add support for FS_IOC_{GET,SET}FSLABEL
 
-Thanks,
-John
+ fs/exfat/exfat_fs.h  |  2 +
+ fs/exfat/exfat_raw.h |  6 +++
+ fs/exfat/file.c      | 56 +++++++++++++++++++++++++
+ fs/exfat/super.c     | 99 ++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 163 insertions(+)
+
+base-commit: 37816488247ddddbc3de113c78c83572274b1e2e
+-- 
+2.34.1
 
 
