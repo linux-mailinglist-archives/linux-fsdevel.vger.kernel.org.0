@@ -1,267 +1,229 @@
-Return-Path: <linux-fsdevel+bounces-57992-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57993-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA7C9B27D77
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 11:49:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C60E6B27D8C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 11:52:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1FD9173959
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 09:48:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44F2B5A717C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Aug 2025 09:52:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19E4A2D8382;
-	Fri, 15 Aug 2025 09:48:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7058A2F60D9;
+	Fri, 15 Aug 2025 09:52:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="cwfKlMGQ";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="mrQpk8aE"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AN5wKq9r"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E868A27147F;
-	Fri, 15 Aug 2025 09:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755251295; cv=fail; b=r37Qs6cP/GKLx9+XG7mrcupGIIUGNlV6VZeD375r+E0XPneIMtonyNxM1FcFPK0kMAg6t+GmiMY42tQZ2/YrHtkTcjQTWefnC7N7SDtQBw7RrVM33RBgeSOKWlOo4DmYaT39GPGvqwnxVyDpB9iK6RKzpgZy2LXpVFzx8ylslJs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755251295; c=relaxed/simple;
-	bh=1KOKpHDOKIAbNlrZn+cI1IFVSfxytra2cwiJ1VR/l9g=;
-	h=Date:From:To:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=EKEx0ASOtveyIG+J8SnJ9Ijr0St8SxjMTsB0cl/CsDT8yTTwPnb8a3afMHu2qu8NrkYg8MSpBaSexrqQUbB5X3RcFAnMUt08UvdEgBW5B3ZUR624EH7shprb9EBupRttTrq5loUlmQ5+57fM+kkBtP0bPH1xzURJexJPxN8XUVc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=cwfKlMGQ; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=mrQpk8aE; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57F8g5sO010379;
-	Fri, 15 Aug 2025 09:47:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=W3Xrc/DVc/S92zw2x2
-	Y8LGP9Rz9xq6nPlwiy5UW19UA=; b=cwfKlMGQLghIA/EaXvEqBcSR+CxBj6PK0B
-	kRpJJA8s9Q1gJ5zMDQEJO3IQoluqwVBgZhZFm22w760WJOUHGU3bfee173AmMM5/
-	boUEX4/CIIychQMUPKWfT1Jx1Pl/HU4u1BSrVg26J8OzjbGbRjk9r8Zn520MixxP
-	rQTdPWfNy0280mo3lxquSwaxxFuHHPlB0dZu/uxLKOFoGYhjBjaOdvM+xICet5pa
-	LA7UBUKxwiutDLetM4RjJFQ5UwEvyOTPiCkklipY9gGJ38bJfkA0UK4YzTz0zkvZ
-	41auv2kC59rFEetp5DTla7vl1lGAK7jAb1twOZayK7RQ/eXiEdww==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48dxvx3k47-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 15 Aug 2025 09:47:57 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57F7J5kq030396;
-	Fri, 15 Aug 2025 09:47:57 GMT
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10on2054.outbound.protection.outlook.com [40.107.92.54])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 48dvsdteyj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 15 Aug 2025 09:47:56 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AD1nMITJN3KWGtyzqwbfiWuGXQ5h6HhYIv3LzBEIZZmBBPaXoU46V3v0lFfQKpys54MdpgX0Ta1fZeKVd+LObP2Y+mVLPJ2ZTRvSNkIvMX2mW/clHw1+zSrJm3LHpNTLZ0FE4UEssLj07CYuiQAIcFOyLY5ha3Ree2MR0NNuV/SYhAw2WcZquurPRN4W/tpsXDgXClVrzS1GaHW8hq+7rOWffIWSGloDks6duIstSeC40R12KR+mJ/eer2JrzXgtUzbk6tWkJNnSyhrSWYXAqJTxRRuiEDcDzakZcKd5I1dUGWpvksQPDjRQpdeGrNLHAM/xOPdJFETpmmwiKY169Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=W3Xrc/DVc/S92zw2x2Y8LGP9Rz9xq6nPlwiy5UW19UA=;
- b=lN2coCK3k0tP2qTVPZ43JJDu/JnOTA6FYVmhhvk28RgJQC6Rh4XGPgTFu5nxyJTwgoFeQ2mGBN88O08XQ5luNKqEAypzjPdBEj1V5tUeskH6fseTq4uaCovwcf1doJj6V42mtdsnseIopt4BzQPqzlj1ZnyCPzVAdfCMnD0YBNiHwxx+wNb0ffn9oNjGat7adDe465R3wrnW2KHeMp1Y+fEURsEdOYhjzxq5f0L/Rpd809ysvyckciGhe49mSZgYSU0P3KyL0AtS/V0Yf+ppaasbwpJpFyi+g4TzlLDWgu2sAq4JObp9iuUBk6mXKclTcxtUFIoL000DmkLA5IDR0Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D592E2F1E;
+	Fri, 15 Aug 2025 09:52:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755251553; cv=none; b=sea620NXouhc03sn5yoUxcYA45dH9I+uWfPDz584ovmLph/ZeO1GGRmhciwfRDmT32fBC8lLsUejcHHqnBoupHXn6/B7Nn0R1r4rMU+RM5k/UvorYxN226eIPaXrMtgvfCtjUBA3UAR8J1IDArcU0smdxhr5Axurtt8HKIbVWZ4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755251553; c=relaxed/simple;
+	bh=rK0LrA4zSH9O3dZ4jH9jEs9yueXGcZLsdHBrnZIcYuU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FDqiUorOb0kHoHR2C54RgsHPUdG+bffbsuXH4e9OhAkzoSep0Qce2oXSHuYpOh98CsxYNnc9wFnUKx9zHbXeTjotoGVa6/IRYl3X7qLjMicXtVW1DfUKBCWFNmqRMzINfAKVORtgw7rI7P9v3Tusft7WKhZ6NdWwVzVTy51nmxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AN5wKq9r; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-618690a80e8so4161396a12.1;
+        Fri, 15 Aug 2025 02:52:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=W3Xrc/DVc/S92zw2x2Y8LGP9Rz9xq6nPlwiy5UW19UA=;
- b=mrQpk8aESonKAiy5FSDnpZ16zqLRdgcn2gFGYUSaA1Wr0zFUaxSElo0K6LpNLygHnoJHqXxDEwa8cPJPuyH05V0ae6vXJa+2IuNPyJj02TXeW314w8jVtyEmXaGERiT8rybCLs6f7gCqbhJa+2ISAA3wjSeuPOXyeheaBFv1kEs=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by SN7PR10MB6667.namprd10.prod.outlook.com (2603:10b6:806:299::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.16; Fri, 15 Aug
- 2025 09:47:53 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.9031.014; Fri, 15 Aug 2025
- 09:47:53 +0000
-Date: Fri, 15 Aug 2025 10:47:50 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Pedro Falcato <pfalcato@suse.de>, Matthew Wilcox <willy@infradead.org>,
-        Sidhartha Kumar <sidhartha.kumar@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, maple-tree@lists.infradead.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] testing/radix-tree/maple: hack around kfree_rcu not
- existing
-Message-ID: <0a3e9837-0e45-47db-9e24-2f9099ea6075@lucifer.local>
-References: <20250814064927.27345-1-lorenzo.stoakes@oracle.com>
- <kq3y4okddkjpl3yk3ginadnynysukiuxx3wlxk63yhudeuidcc@pu5gysfsrgrb>
- <20250814180217.da2ab57d5b940b52aa45b238@linux-foundation.org>
- <wh2wvfa5zt5zoztq3eqvjhicgsf3ywcmr6sto2zynkjlpjqj2b@bt7cdc4f7u3j>
- <97e3a596-ca5c-41ec-b6b2-8b7afafca88f@lucifer.local>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <97e3a596-ca5c-41ec-b6b2-8b7afafca88f@lucifer.local>
-X-ClientProxiedBy: MM0P280CA0028.SWEP280.PROD.OUTLOOK.COM (2603:10a6:190:a::8)
- To DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+        d=gmail.com; s=20230601; t=1755251550; x=1755856350; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AnpDR0b7uzGMP+NK7SOaQ07XY0U63GM3V7Y+bWzIhIs=;
+        b=AN5wKq9r+NhixE6OTAk04unDPWlwVs5o6F6NewRNNC8Oji7ZVijlp+m1ZRAgcgvmw3
+         uvzeeDwOOVDnMoy5A85nUyERkHTudH1jUXRzDaC1lOVZNBB/7c/y05oQDi6lFLFnTVdA
+         jkDroWZUEr+xXJxQXK8+ljIQyBNtAiQpl8FOU+3+IqE4SAM9C+rLkoJxL4WTPfWP3Xj8
+         TKUARQbdru0ImxDOw81es1HcVDaWLsWsnrz4C4e/uLIXc988eoSDwiuOK/pMkCo2KnCI
+         zHR8bROR35vHQFqBW5dw2AqLbDuKdaoCdW0pxCp9uKS6UxDtSMs/R4UgH186Idh3KvZh
+         K+2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755251550; x=1755856350;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AnpDR0b7uzGMP+NK7SOaQ07XY0U63GM3V7Y+bWzIhIs=;
+        b=GUW1oVKJDuC3cl0yFxOGEwu3foszRBiSu7I57/zwLOHg+v8IjHiRlQNTVyOd6UtXoH
+         +Nz+QzQz7Tcwp6hYinvr371EyC+FeocjwkSS/fyHsd/c7tiB3hr7JkrAUZjELOaDCaxm
+         TqPfHOiNKKCLMEev5jVbgKr3n11VeLa8J2T6VuySBn52ryvVOzrrrBf+6G505iouZAeX
+         YPzzangW8dm3yooLJGem+L+KNWk7438cBGINjgNOjCUQ7fNnlr4Z6ZbYcYyuyhcgOQPG
+         qexTCy7SQnjGGtiWqeWSkNbnZ0DdqGB5my6FZQFqhOzh8aADkt/KRaLok8vWot5kPQs9
+         aTyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW/5xmWQIgDMPQacg4SnDjLMUoswmQHWWgy25aVOun5lUsi8KuZL5exjbFrBPs3TxaQJdlI4kBrS0Dl@vger.kernel.org, AJvYcCXEtCJ9ynepsM6HFziNjPOT1krSApeGzk5MZsDUJKn+89Qb5CmYEty7mg0439lCPwBcEnull6AazH0P9do6@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfHcLrALRdd3fF4FidFmbB+CMB8hEAWplZSsxQdDK17ey9bnr1
+	2IwdEvArqe3K+vpR92BEINz2GPUW3PGWdng1A0KgQvuTF0zvoP62fjPI0a/J24d7KkkzfFNqj+1
+	5P2fEl4Jq9DKKUABIVLBifzJ7wb7vYwY=
+X-Gm-Gg: ASbGncvd83oRSW+pu3ciQMkdcseRapzcJ4ixFQBAkppEJA+ASjVDKCcxCxEhpupNnhK
+	XhJ5esZk61NJkfjWf0yc9nFFL03wESMCl+zzq/F5lRN5qnJBDAgc9MoRfTrvKzMFdhnTDywzUll
+	GVuOojtq2xRrc9uDxk1uUA7b7+/FrEMxlIOHHadd1merXWKjVurGNkNL6rIKCCatj1SR9JemLOp
+	Jr21Xo=
+X-Google-Smtp-Source: AGHT+IExSbuXWYH0j7gS9fP+6TCMuhSbfMKdNcI/x10kAMTAzTZXZv4tZoCmn7/tNiOxDS9H61lK6BRFyy6hdMIBTYY=
+X-Received: by 2002:a05:6402:1941:b0:615:a5f0:2704 with SMTP id
+ 4fb4d7f45d1cf-618aed27465mr1306756a12.17.1755251549937; Fri, 15 Aug 2025
+ 02:52:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|SN7PR10MB6667:EE_
-X-MS-Office365-Filtering-Correlation-Id: eb3a7743-e2e5-4a08-e0f8-08dddbe0ce24
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|1800799024|7053199007|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?j6jmnOSXAU8s+FZA5ej8XaK/jhSN9ei9t1YXoBRhWseJRfrV90/7/OTQqS+l?=
- =?us-ascii?Q?uVR3cnCDRVW+Vtwa2Ji4SZvWM7AMOo6Zs61btlYPjVaiMsJNGeOGojFLFk/D?=
- =?us-ascii?Q?L5jc36drnrOB6W5AQafcFntVIXbWpgCVZJ85C0t7Hv880ACZCj1yH6r8Rgvk?=
- =?us-ascii?Q?LV2uAFzJgOTcINuTqbvGVJK8Gcm8753Lh6KsHzZDKDRoxXcJYf+Mw87zuBvn?=
- =?us-ascii?Q?BqYv6MJy5IBIzk0LLVh6gQRNFU6pdCyVpQB4giuta62PCLSYigF8cH2DCQQZ?=
- =?us-ascii?Q?3KwsGRUoYdiB1jgkTFIlAi9+q3HLOml5/2bN4XV5IvUOW+MLu4FvEVTDU81M?=
- =?us-ascii?Q?SX4BiymeErcQlr5OlspoYRfvL+U/YmpJaUPprqwpHyrUre8w1od8/9XoyV/5?=
- =?us-ascii?Q?IaHNEV2O76FuR8+Q2x6/zEvjiXkp7JciFHrQuoy4f6KTAJCR7PJPVZDtFbh8?=
- =?us-ascii?Q?NOReOCOxekpSBopEpbsHD5GdOe+O8oBZMr+tEA1uV/oylt1Yj/lzb8I5pUWT?=
- =?us-ascii?Q?bSRkSmh5YiIWiMni462MLDRnzn1T0g7jzRdsv8fWxpNjqFgRUUGpdF/4sBle?=
- =?us-ascii?Q?5usR0/mG1mWbJviB9URhEq1rBsjry+H2iscRplFnZHsDukFJH599PfLuoXuv?=
- =?us-ascii?Q?/OjEKYkdIzqMojnvw8hy3uyspruBkbiubJ6LQzz7qXkxwaRDmxZaUmlrezBO?=
- =?us-ascii?Q?K16+0Q3fHI1LjhxM1gtA+57WGUk1IY8iSiQm0AqsWRHckuWe2+kwn1a2yYFn?=
- =?us-ascii?Q?YsSYWn2qLTL6BdjFSahd4LbeTps/QEk7r1wT9ddFJH5RGYAfBU4w+qftBK1w?=
- =?us-ascii?Q?f9OkcJaLKpkGCuB6e9h7oq4xlT4RM3vAvam26ZWUc/cG0JJNhfgaNTHESu8M?=
- =?us-ascii?Q?fS6a6e2JI8z3rvyUxs8tMGu/6cJ+i/GcGw4385CoXceNKbPDTTAmSo6Q7SPC?=
- =?us-ascii?Q?bsT1tcdEg4PiANSTl+defULuneWgYJqMqSittvAR/Y09KJRpOlLV5hTVoqc3?=
- =?us-ascii?Q?0wgQCE0BbxNpCsS0dA4G3YVWAJI8jm8Q5qyBWF1pLJxnJulOTVp6pzIY5yRI?=
- =?us-ascii?Q?1wcoft4ceN0YdpyXVQBJqpRhEz4klG7irdvKHKH6DRaG9eWjBXKmesEvBcHr?=
- =?us-ascii?Q?ZISZnKsDUv/Y1B4dKZSlErFbYQ6LOMWFXfLPrjD72HHhKOh3OFcLcwv8m6qB?=
- =?us-ascii?Q?Bf3Aqu37tM35fpjLNTmJ/kJ8TX6uCYnVvfT8Eb6aXGXA6s0e3LA5a01K+h4N?=
- =?us-ascii?Q?i5bBEUL9jkj6cWdcEm7L0DNSbL/oJh5jQftpvFd2rZKG3NhkksQC18luR/LD?=
- =?us-ascii?Q?IyHpsOXvdidfeBMjvoQRgos+Zalc/OCbP4Iw6OINACfNUxGqQX8Oen/1c3+f?=
- =?us-ascii?Q?qdlh3Af6lCEXkPgXv3OsTbYbVbw+mw+hHy44DJOkPhd3eMnTNUVvmQ8PlOcQ?=
- =?us-ascii?Q?eSOEZsAhm5MTY9XP+z4SXI8Fy8Ak04/ZfyZaSOMBQqknpMGZZvDkAkzO/UKt?=
- =?us-ascii?Q?GgTEa2KAOmraw9Y=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7053199007)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?T9/YBb4toS8mDK+9NlEvUZeXse6wlGLeCDl0IEyxhmFzlX1vbSSgDXzazIY/?=
- =?us-ascii?Q?lOFg/4Odvf8e5amBDlcwSO6ms7JRH5Z7BvMwgG814Yl0rwYt2MtvhOJgXhJL?=
- =?us-ascii?Q?xTmuYFBDgIE539SGLuXEH51mCBY4tUzr/V4/s87/m8YwkSKOa+ga2b2JSRmg?=
- =?us-ascii?Q?CunNjBbzgIYgkTiFmRptgvzdArYGmzesIRo3kDdvtvNlcuDB0hA2jWGyve6v?=
- =?us-ascii?Q?smTEyGcY8A1Bi4lz0H4aHNS4whv/eOgEkV6hHZYI+acfyav7m2MVmVT8bRny?=
- =?us-ascii?Q?KSh1jSbMGochMFTyOxvyUMsDxza0sl5wIIVNvhsuGEmpYh/sIoMkB1o0q4mu?=
- =?us-ascii?Q?nAwXjsud9h/lvmBCyDeFa4YWd00CRq3Q1kgyGQRczTSvCNh7vVwIxPHh3LOL?=
- =?us-ascii?Q?zpFgvTrurRnZsaplUGhLzzkdgblAb1Gv/gIdhdnrZCXFqqsbpaAdk6ZWOMik?=
- =?us-ascii?Q?mBsbXa385tDMg8mFtMlknX9JKYTsbTwi2DumilsSTqsjprzMj4bPM8uBZYH7?=
- =?us-ascii?Q?TDQgu5aKZ5ebL5DwT3tamOi5y7L4FCvohaKDq40kt7BLQNSBkpfoBCyWoBDo?=
- =?us-ascii?Q?GvllkBkK5QRN4nl3i8fmZcwB9265iKunx5jrvfq761etPKPRP/XyJDwItZxq?=
- =?us-ascii?Q?L+iqr6rP18hGQdOOzF299IyFWm77qRIRgGHAvzMHF7BRb4jnv9Fz13ylnEOY?=
- =?us-ascii?Q?/ECqHWiMkhIuQYh+8DjjCEuQBD/Hc/ftnOIUhiPs9w1LalL5WZxzJao8meus?=
- =?us-ascii?Q?whVfQIp5BBtO551+xmcYmzGHDBzhpVZqNkaHKgwiFWWaEB9bubluKaRu2RX9?=
- =?us-ascii?Q?5vLJ3xtIdlhhSE+kZvqye8HIlQR5kddZlzY+AgAjINPDXotpecQF33aTMUSM?=
- =?us-ascii?Q?RD7o7t1sgH9IxwLFQTCG7WxvPtPumgDhjcFUI85n2s8Otye80Dckg66ABhte?=
- =?us-ascii?Q?Bzg8pQkOMxXLnLgHYzFyEwOvvtnfFpMyO6E/PhW/b5AVcXBu37ZuzpIyIOle?=
- =?us-ascii?Q?Knmaochu+gN6ZpdHyKWHF1OpKmg+PdTVX+DhLpEmQekEzHWKTxwiZR8pd8Ll?=
- =?us-ascii?Q?gosf7u70NG207fikWz0gUsylcz/mOhVSHAEOD5IkvzdwfH7F+bxTQGlQEd5o?=
- =?us-ascii?Q?KAoD9NjAKRnuQVZAYR3BecNUJR+/4TTxYfKXgdTbIbDkEwRApU8zs+ZOR09Q?=
- =?us-ascii?Q?hl9EvN0xOmM5qUSCu2USfOUk8cs+EeN0yR1HBDl/PrQOB0/Pt+SCOszaL7GB?=
- =?us-ascii?Q?P86qArbUzLeKk4K/ocLBVk570lsRBXI6ekukbcw3O0SG9vwLIrDn8gPSB0bx?=
- =?us-ascii?Q?Jjx2fNsFdYGi8msLNd6Amf3Qbbl3xr0LVVTZg53Ibq/ocrLpjc8TAxEuwt65?=
- =?us-ascii?Q?J7uBdp1pys+QOEXievIRgRt4rGc2hTLAj4mu40535MnCUIKQ3iR0URxma1UM?=
- =?us-ascii?Q?L3LzNPEA/p4Mp6t02OsdkmHcavsfkbNY91b/l66btnr8nexaK02z98v9o+iH?=
- =?us-ascii?Q?YxCSyc8QFnlG9WD9IiyX2nLCtYvFhQLmP6bNqOQD52QiwSVEARqqQzxES2fl?=
- =?us-ascii?Q?imaGjGJb+h1xGqp8nhT5PVMKOV1znWMW6czYaanqTX7iKzhp+DDDvCXHferY?=
- =?us-ascii?Q?+w=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	qnykYZML41JNjS9vEd5pKspIfh/2j2AN+M6KiLaj1hMPg8a+Al/RintNEMm7tXS6W5TijAns/P+qFKs9806Hc3uyHIG6hNf5R/AOWm4A1dwtXo8LAXvyJyguy90Ia4+9NB1K8yAbk0VzsAfxsfODF6sgv0vOqHnc6H2xpHEcxr+tgm21PIjsr2JBz+fZQR99o0tXHD4Nek8EFqUR765LnkcjuprBmieiIkSzrVZqV9UUw23p4ZaP4CdLCWSGI3CuWONRz2OpP5Tdq7ILGtzl//fe1t9KYA8zCoh806/3I+tPweQexaRHNfq3jDh1CYPnnEY6e+dfl6yT3RMxS0Mqf4RiSpY0m7OWwfN8vFWMezefw2pRc0FwjLKUvYzLuNQEWljSK9y88W4CkFgyClcrYUv2Eb6S8HmWRTOf83WRf8uysj7XFJCIKQTvtExws0vomaGVYTXab7B3GNkGhrp/2O/dl8r2GheVoAtKDE57RuYdpLX603gkZkrh5bcIAwBeDFBMtl4lIMuPG5Q7BDV2cCkRUtVCP1rHhoRXwT5dxs6Ed92aRXjnmLUwbQ0IMR51qsW/nBZy3kERrqfDtm/Y3q2dRawZAXzha1OdkeD3DJE=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: eb3a7743-e2e5-4a08-e0f8-08dddbe0ce24
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Aug 2025 09:47:53.4759
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: LZlpraM+I+kgr+6ZbQI7r+V88rWXRVv2odr98wB2+QbYeGXyTOWH/IZ2ubHchR22dE2j3MTO7/axqzFbFBRkoa4VI5bz8mWWgpFT2Yg/f6I=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR10MB6667
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-15_03,2025-08-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 phishscore=0
- adultscore=0 mlxscore=0 bulkscore=0 spamscore=0 mlxlogscore=999
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2507300000 definitions=main-2508150078
-X-Proofpoint-GUID: rA59Gxm28YTgY3MNpaHZnynNlwyK63a_
-X-Proofpoint-ORIG-GUID: rA59Gxm28YTgY3MNpaHZnynNlwyK63a_
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE1MDA3OSBTYWx0ZWRfX2iNUWbX6b4su
- 49dhnntBlhmehnmHtOrZOt+QsHH8NBQUv9Sjf+sNlCW9X2Wu5qDnnhVfiXGZusorrzkh2Y/5BEf
- EKyvxw9F9mBWf/liAZizqvuPtI9isaCDOBIfgVfgU9Bj5aN4lN1duaG3ovH+x/4anUBzJ91jOln
- 2Y7hY9pZfWi0urgkpzhnzVknkakv8WZm9iAu7TjLyruCOkrV68mHMAQTXKfkGBtB9rJCrfANu0A
- CR3JOtU/VINMrTjlWVVkAnnCEwWmNw4csS3nW6D/gqHixaUiToMfMaq9GCKxKnpoD1KM+J0CHOJ
- I7Axt4MSC5OZ9yy87XHa2vQ6LWSfY3xGTpQ2tUkPuxDYbgMb4WY5soqWDaVv1D8Ap9MW6XU2bBZ
- 12ZnvjBCeiHo3PqAIYVU+116QRdeC323OGyDeLPgnTbufP+lT+muamrfveWdsmetZ/jpetZj
-X-Authority-Analysis: v=2.4 cv=dpnbC0g4 c=1 sm=1 tr=0 ts=689f024d cx=c_pps
- a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=2OwXVqhp2XgA:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=Z4Rwk6OoAAAA:8
- a=APn3Q-FPb2jb5AWkj-YA:9 a=CjuIK1q_8ugA:10 a=HkZW87K1Qel5hWWM3VKY:22
+References: <20250814235431.995876-1-tahbertschinger@gmail.com>
+In-Reply-To: <20250814235431.995876-1-tahbertschinger@gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 15 Aug 2025 11:52:18 +0200
+X-Gm-Features: Ac12FXzLUFABMGMXFMpZDhNVxn8oRYBasH8TVJRvOD796bRN0oySsL2R8qX35As
+Message-ID: <CAOQ4uxij17qNiTq6Gjy0Q_aOv8-k9ggsZ3vFA1Uz-tw-gS7xxQ@mail.gmail.com>
+Subject: Re: [PATCHSET RFC 0/6] add support for name_to, open_by_handle_at(2)
+ to io_uring
+To: Thomas Bertschinger <tahbertschinger@gmail.com>
+Cc: io-uring@vger.kernel.org, axboe@kernel.dk, linux-fsdevel@vger.kernel.org, 
+	viro@zeniv.linux.org.uk, brauner@kernel.org, linux-nfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 15, 2025 at 05:28:02AM +0100, Lorenzo Stoakes wrote:
-> On Thu, Aug 14, 2025 at 10:09:15PM -0400, Liam R. Howlett wrote:
-> > * Andrew Morton <akpm@linux-foundation.org> [250814 21:02]:
-> > > Well, can we have this as a standalone thing, rather than as a
-> > > modification to a patch whose future is uncertain?
-> > >
-> > > Then we can just drop "testing/radix-tree/maple: hack around kfree_rcu
-> > > not existing", yes?
-> > >
-> > > Some expansion of "fixes the build for the VMA userland tests" would be
-> > > helpful.
-> >
-> > Ah, this is somewhat messy.
-> >
-> > Pedro removed unnecessary rcu calls with the newer slab reality as you
-> > can directly call kfree instead of specifying the kmem_cache.
-> >
-> > But the patch is partially already in Vlastimil's sheaves work and we'd
-> > like his work to go through his branch, so the future of this particular
-> > patch is a bit messy.
-> >
-> > Maybe we should just drop the related patches that caused the issue from
-> > the mm-new branch?  That way we don't need a fix at all.
-> >
-> > And when Vlastimil is around, we can get him to pick up the set
-> > including the fix.
-> >
-> > Doing things this way will allow Vlastimil the avoid conflicts on
-> > rebase, and restore the userspace testing in mm-new.
-> >
-> > Does that make sense to everyone?
+On Fri, Aug 15, 2025 at 1:50=E2=80=AFAM Thomas Bertschinger
+<tahbertschinger@gmail.com> wrote:
 >
-> Sounds good to me, I didn't realise that both the original series at [0])
-> (which introduced the test fail) and the follow up at [1] were intended to
-> be dropped, I thought only [1] but dropping [0] obviously also fixes it!
+> This series adds support for name_to_handle_at() and open_by_handle_at()
+> to io_uring. The idea is for these opcodes to be useful for userspace
+> NFS servers that want to use io_uring.
 >
-> And it looks like Andrew's done so and tests now fully working in mm-new
-> again so I'm happy :)
+> name_to_handle_at()
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> Support for name_to_handle_at() is added in patches 1 and 2.
+>
+> In order to do a non-blocking name_to_handle_at(), a new helper
+> do_name_to_handle_at() is created that takes a lookup_flags argument.
+>
+> This is to support non-blocking lookup when called with
+> IO_URING_F_NONBLOCK--user_path_at() will be called with LOOKUP_CACHED
+> in that case.
+>
+> Aside from the lookup, I don't think there is anything else that
+> do_name_to_handle_at() does that would be a problem in the non-blocking
+> case. There is a GFP_KERNEL allocation:
+>
+> do_name_to_handle_at()
+>   -> do_path_to_handle()
+>     -> kzalloc(..., GFP_KERNEL)
+>
+> But I think that's OK? Let me know if there's anything else I'm
+> missing...
+>
+> open_by_handle_at()
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> Patch 3 is a fixup to fhandle.c:do_handle_open() that (I believe) fixes
+> a bug and can exist independently of this series, but it fits in with
+> these changes so I'm including it here.
+>
+> Support for open_by_handle_at() is added in patches 4 - 6.
+>
+> A helper __do_handle_open() is created that does the file open without
+> installing a file descriptor for it. This is needed because io_uring
+> needs to decide between using a file descriptor or a fixed file.
+>
+> No attempt is made to support a non-blocking open_by_handle_at()--the
+> attempt is always immediately returned with -EAGAIN if
+> IO_URING_F_NONBLOCK is set.
+>
+> This isn't ideal and it would be nice to add support for non-blocking
+> open by handle in the future. This would presumably require updates to
+> the ->encode_fh() implementation for filesystems that want to
+> support this.
 
-OK this isn't the case.
+Correction: ->encode_fh() is for name_to_handle()
+You want to say that ->fh_to_dentry() need to support cached lookup,
+but FWIW, the blocking code is more likely to come from the
+lookup in exportfs_decode_fh_raw() =3D> ... reconnect_one()
+not from the filesystem code.
 
-Can you clarify that you want to drop [0] and explicitly reply there asking
-Andrew to drop it just so all is certain?
+The fs would "only" need to be taught to return an alias to a
+cached inode and generic code would "only" need to be taught
+to give up on a disconnected dir dentry.
 
-Because right now VMA tests are still broken in mm-new :(
+Doesn't sound too hard (famous last words).
+
+Thanks,
+Amir.
 
 >
-> Cheers, Lorenzo
+> I see that lack of support for non-blocking operation was a dealbreaker
+> for adding getdents to io_uring previously:
 >
-> [0]:https://lore.kernel.org/all/20250718172138.103116-1-pfalcato@suse.de/
-> [1]:https://lore.kernel.org/all/20250812162124.59417-1-pfalcato@suse.de/
-
-Thanks, Lorenzo
+> https://lore.kernel.org/io-uring/20230428050640.GA1969623@dread.disaster.=
+area/
+>
+> On the other hand, AFAICT, support for openat() was originally added in
+> 15b71abe7b52 (io_uring: add support for IORING_OP_OPENAT) without a non-
+> blocking lookup, and the possibility of non-blocking lookup later added
+> in 3a81fd02045c (io_uring: enable LOOKUP_CACHED path resolution for
+> filename lookups).
+>
+> (To be honest I'm a little confused by the history here. The commit
+> message of 15b71abe7b52 says
+>
+> > For the normal case of a non-blocking path lookup this will complete
+> > inline. If we have to do IO to perform the open, it'll be done from
+> > async context.
+>
+> but from the commit contents this would NOT appear to be the case:
+>
+> > +       if (force_nonblock) {
+> > +               req->work.flags |=3D IO_WQ_WORK_NEEDS_FILES;
+> > +               return -EAGAIN;
+> > +       }
+>
+> until the support is really added in the later commit. Am I confused or
+> is the commit message wrong?)
+>
+> In any event, based on my reading of the history, it would appear to be
+> OK to add open_by_handle_at() initially without support for inline
+> completion, and then later add that when the filesystem implementations
+> can be updated to support this.
+>
+> Please let me know if I am wrong on my interpretation of the history or
+> if anyone disagrees with the conclusion.
+>
+> Testing
+> =3D=3D=3D=3D=3D=3D=3D
+>
+> A liburing branch that includes support for the new opcodes, as well as
+> a test, is available at:
+>
+> https://github.com/bertschingert/liburing/tree/open_by_handle_at
+>
+> To run the test:
+>
+> $ ./test/open_by_handle_at.t
+>
+> Thomas Bertschinger (6):
+>   fhandle: create helper for name_to_handle_at(2)
+>   io_uring: add support for IORING_OP_NAME_TO_HANDLE_AT
+>   fhandle: do_handle_open() should get FD with user flags
+>   fhandle: create __do_handle_open() helper
+>   io_uring: add __io_open_prep() helper
+>   io_uring: add support for IORING_OP_OPEN_BY_HANDLE_AT
+>
+>  fs/fhandle.c                  |  85 ++++++++++++---------
+>  fs/internal.h                 |   9 +++
+>  include/uapi/linux/io_uring.h |   2 +
+>  io_uring/opdef.c              |  14 ++++
+>  io_uring/openclose.c          | 137 +++++++++++++++++++++++++++++++---
+>  io_uring/openclose.h          |   5 ++
+>  6 files changed, 209 insertions(+), 43 deletions(-)
+>
+> --
+> 2.50.1
+>
+>
 
