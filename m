@@ -1,115 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-58077-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58078-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23B00B28E8F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Aug 2025 16:45:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EDE8B28EB8
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Aug 2025 17:02:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79055AA6AB0
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Aug 2025 14:45:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AD2E1C28324
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Aug 2025 15:00:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 304DC2F39DF;
-	Sat, 16 Aug 2025 14:44:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63B8926FA4E;
+	Sat, 16 Aug 2025 15:00:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L4bEG7Vh"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UkL77OLk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F109A2F39B2;
-	Sat, 16 Aug 2025 14:44:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B9F62E8888;
+	Sat, 16 Aug 2025 15:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755355496; cv=none; b=rkLYopVuE1vRsJT6O0arUwu82FuicD5MliGQuKcf9cxv4tqlTOCLql1X+vuxHbIzaFF50iLxk2ypUfcPBp4IVzDMyJmtqFeB+SmvCOWmSeXokGvyJIneK2QOBa6gGa1V5ixTzsyuMhYmYbvLTwsfVYeRWJyDr+902mCxNkCpDS4=
+	t=1755356428; cv=none; b=LdoqxFmnhdKjyTo0Guzlm09gZfJV5UkiRKKFp6B2m9ybdghT9+rGn9rPUp/WEz1xzvFkm6angdgdSDSNe7kWqEOKMm5YeHLINRO9qiMDWYvtM2EjS7MPwurzagKznFgbr0Q/tUSedNDBcTjrJMvX5DlXEOV3uR2xx9+setWkKrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755355496; c=relaxed/simple;
-	bh=Ad0rqTBKrC07+KLGJQvOoukB6wwe2MaDDb656sA5fHg=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=m5PwsB68AFYl0zgM+cj8w4jOebiw9WQh7wRa2fyyHUfIAwwtpcYrOX43wNKaoqF0aDrwHS+zmpD4YWqm8x45W7gaZMB2QvubrBWN0gZ+qEMZWRzBH5DQ5wxVgrqOuQTpksq6PdTpd39fWJwaRrT9dCaKUNn0I4Vck1OPtyMJc2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L4bEG7Vh; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1755356428; c=relaxed/simple;
+	bh=VigReBL8M6MI529Z8Xk8Ix7rUQBlX7NkF4iKwyADbaA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W5ijLIhlLMVGJSGaKp2pLMzjJljEsU5Ukty7swrVFvGRZpCNieycy5gz4grA6MhsjjCZ3YU89kll7Sr96B0zeOMbDvvXveunNdJaolTZhCSTKfyMwohEY+nHoE3nfgiLIGtw7rigQV8fOFusOXbtrPLC021sk+YvEwG2IUXvEXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UkL77OLk; arc=none smtp.client-ip=209.85.210.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-55ce5097493so2797873e87.0;
-        Sat, 16 Aug 2025 07:44:54 -0700 (PDT)
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-74381f0664fso726846a34.1;
+        Sat, 16 Aug 2025 08:00:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755355493; x=1755960293; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ad0rqTBKrC07+KLGJQvOoukB6wwe2MaDDb656sA5fHg=;
-        b=L4bEG7Vhx4m8xNxjog2TobZ9jx0q2GnPAHAyWNEFPtcEJC8zNx42nEh9+wacQRra2L
-         LTj3xFCgksFhKm0AATIXrMYAW64FU4GeKhMUv2BNpPz08VHv0rugYoTI7zGOVjsTxO4f
-         V3g6CVmQsnrUX5F9KjIoCqwK1dG8Sm1nVmGugyW5FiJ2FTisr7A1jhUczzrjPYl0Om+6
-         keJychKWiFf7bwfMZ0nPOf8aLsfV1Z+3xUY9FXj2uELRkaLqlPn40DBDMbIivPmSREjB
-         GIT0JQ9GZWS4RmQmE8vuZteFYsfJZl7uNFb/9LXYo2T6qlrFgAKH/DMkJIPV7lzmj66A
-         7f7g==
+        d=gmail.com; s=20230601; t=1755356426; x=1755961226; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gwjPbg8KA3rFGnPGiayWOqsstlBug/9B8GI8n0PblXs=;
+        b=UkL77OLkX7p6VannEj3vOtKP97PuW9J4n3Zu7493Dhko2jD9zwElp+uOMs8TKqexwp
+         WLXQyvtHiHV9wGaehxDVSBvPgXIVVXc0uRw9Ne6vF/bPYibJSW8STbUpwvm+BZm8JirG
+         b7eziMbpCzv9yNv3aWikd6UxdMiYvNs8VLUpoevV7haf1LVwbtLX/5pSAsts6Ms2Cnec
+         ZiarLkZ4al0KPa88wAO9mYNkhzRX0rn+LTkXJsfhFCkLDqBNbET+p69SF8rsrhAWfPHC
+         Yw8psL5p0NZ7LGRHoSBTEzySQYHZNy/dmqWo3yPGr22pJQ5dJKb7tbbQXf6BzK7AryJ6
+         54EA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755355493; x=1755960293;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Ad0rqTBKrC07+KLGJQvOoukB6wwe2MaDDb656sA5fHg=;
-        b=rdyOeccNlgIIzjI3S5F7pnZ1cYEYrV/GvNifEiDLJhVlVPpyLDCqAYvj2DrazON0xo
-         fhFMTa9pwTO6ohCaG6EZOY3c0Xf6hka/Ec93N2cXc1iUQF/n1kEnlKY/V4JGcN/Lhn3Q
-         qp886BQQRxdMPg6WDxUNwrBeaCRnXCK3W3w8hJH+ufnpKY1nySU1RnsPMi54+NlPEElu
-         Tu8Yxh2fhBEl+eztTrd52K8rLS6cGfk0zEbV5pXbCuMnrQNumRvZ2OCGdzUoJHWRr6zV
-         FRdLo8S0aBzJr12V5dCcM2ym6jwWa9n1EJbTLOETsrTPXno45tsBbx4MLytYex63eQSw
-         x0MA==
-X-Gm-Message-State: AOJu0YygqezPGHNycic9qpphKJBFTgNNuszgUj1tLK07t1O22RExu3uW
-	Mjwgr11p36cFHxEEIyF+jHKCuPQNFeEMshusHR6Tp3W5T9yHGIKRGRD8g2gx8g==
-X-Gm-Gg: ASbGnctrMlpzSg/pbdgUa4Y1gnj0akAHt/P0pS1vRyx3QAlHDBggOYhPANsKDX2YFGd
-	qYdyReHPYZW6jL+ARRDKRF/o40AIDJQiqjJdag7kF3gKkdwdOoJmu/Abz8qMRRhj7OBzIeHoh7p
-	KehwFYdVG/JzF+jzpjOAvbwWwtXlriLucvHs53ktaR/i9uQw0TaMHGtj8UoJW1iKaPcoYLy/9Zy
-	YgirKtxIFXR6/20SKmKr+MkzjaLPQwWO3JdQJn6My04a8wZhbcA4XvOfJrfltOsD92C1CGe53o5
-	0Z1TDmvnxvnl0IAW961axuVsXZq98BimTS6AUIIktN6H2cU8Y1Sd+72zZkbNEPWFDznDnUoeacu
-	B8EjMh66x1+AJwCmnbNV8PACTkQmp2bWo6G0tDf6q86ulbUT/PIdKwTDx5PNVtOPxodyxlnsQL+
-	GQai3fst23mU0UQ8ag5LHL34Z9
-X-Google-Smtp-Source: AGHT+IHFziVeSKf3pFW9oNtzz07cnSMCtCUhRlcd67X/iT7qKpqZQJWJuSLgmtztlQ4qh6kKS6K6yA==
-X-Received: by 2002:a05:6512:620c:b0:55b:8f02:c9ee with SMTP id 2adb3069b0e04-55ceeba008amr1280651e87.55.1755355492622;
-        Sat, 16 Aug 2025 07:44:52 -0700 (PDT)
-Received: from [85.229.209.79] (c-85-229-209-79.bbcust.telenor.se. [85.229.209.79])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cef3f3568sm868489e87.117.2025.08.16.07.44.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 16 Aug 2025 07:44:52 -0700 (PDT)
-Message-ID: <d38f7ae8-d10e-428d-b72f-a1fb490a45ab@gmail.com>
-Date: Sat, 16 Aug 2025 16:44:51 +0200
+        d=1e100.net; s=20230601; t=1755356426; x=1755961226;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gwjPbg8KA3rFGnPGiayWOqsstlBug/9B8GI8n0PblXs=;
+        b=grMWlTnfJcSpp7q+qKC6mjQ9ediT5hWQVE8pXmTOZUuhGtxCTLhBw2mr+XedtD/Ca7
+         Ynvy9LhWWMC2wTZSYiupI5eSYChYWaMKpQUVryNC+Ywe8XvR6Q9+LMKJsbNu7XD/x91l
+         GvLDd/Sl6fG6BUofQsFUta63ETZnuNAdoZDu1z0+F4aDSe3sD/uml2gzCwFsFlbmiMlb
+         qWDNGRiozZXtDj40EoJmyQu0m6ATHFs6Q4OQJcKLg5st3IpREOgSBNQuXgRwDMsWEjjy
+         cVG0/b5TcJQfuSvzlTGwY0L7hHYTzESlipN0PDw+mnLn26QssV12N/AtWBSqQQY7INRR
+         l6/A==
+X-Forwarded-Encrypted: i=1; AJvYcCU2iMlm4+lBuSR5g+m5oxfNIWF9E4dNrOs1cVMaWs41nx5/pPX5QlpZznWoB3rhxai2xQF2qy6XnW0=@vger.kernel.org, AJvYcCU33Rl/eYYalb0aB0sLnEhyKO4cKZgOq295cD5YT3yjkV3KmvGe7EZq35MZO/5G6sJC6Kl1j5M7mHJGD6EVGQ==@vger.kernel.org, AJvYcCU6j2tRC/QtR+qODQ/SQH+l3wHcyUaEnkuIuKvFxrUV+I9ThtZ+0tvGUBh0mLiOHRrj7wHk6HLIrxME@vger.kernel.org, AJvYcCVWrt4BDTGIy/SuFzLC3NyykpXiomaAxVSyC16AOKi3D3yjVmpUxtsj3xsj2ElEz5xe2ue33mEwfCQ+WoOX@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqV5L9ULYO+g54J/QN0Hot/OKvxtYPYC2w+8aC4OM/SxEn+QIN
+	NkuzzIVUjc/bGxL9GMfay/pqiTAnO4noyRMfDT1vFzVrxcmuuFcPxaexV4amR1af
+X-Gm-Gg: ASbGncsKmmcHMB8RWk8DHqqNwhYl6sZP9QAEpCj3OoFQSvr8UR1/NBveLnLPy1HlpqZ
+	UfUkTXY2p8tlsO+IjXbOm1gzLgu9LtwvvHvhMNg66N6iV9JkUBizPyAPN5ptq+z8QLsl4RbDfC0
+	B5h0kbvuG83hd9D0XUxTF0x0VT4d3FIyQb8zS+fXsZ7teBOlWp+p9U4FwyTu5mMI/GlRMeUBRXC
+	mkh+9KKBFl08Czia9zN72Y+82ZYqc/XgodRbLSWZB/bLvyJVU+1XXmVKCe9EBB7PVmtfojzEwEU
+	qYU/l0IEORzq9qmFG3Ub8p7NTwSE4kPlqJasEoNtJnmucHEbZgZfCJUU8cu6kmDX9f2srMWxCXu
+	D2n9kjDGlq0YWYEVpK2irY1L8mz17/viiZ1DN
+X-Google-Smtp-Source: AGHT+IFFQO6oO7eKhRJoor1ccKngWoereGVcBCKxuKO/JrshNXE7oZADMU90CYmE2ChdFmofXtpRPQ==
+X-Received: by 2002:a05:6830:912:b0:731:e808:be5f with SMTP id 46e09a7af769-743924f57b2mr4023050a34.28.1755356426238;
+        Sat, 16 Aug 2025 08:00:26 -0700 (PDT)
+Received: from groves.net ([2603:8080:1500:3d89:1d43:22e9:7ffa:494a])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-74391bd220fsm881978a34.13.2025.08.16.08.00.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 16 Aug 2025 08:00:25 -0700 (PDT)
+Sender: John Groves <grovesaustin@gmail.com>
+Date: Sat, 16 Aug 2025 10:00:23 -0500
+From: John Groves <John@groves.net>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, 
+	Dan Williams <dan.j.williams@intel.com>, Miklos Szeredi <miklos@szeredb.hu>, 
+	Bernd Schubert <bschubert@ddn.com>, John Groves <jgroves@micron.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Vishal Verma <vishal.l.verma@intel.com>, 
+	Dave Jiang <dave.jiang@intel.com>, Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Randy Dunlap <rdunlap@infradead.org>, Jeff Layton <jlayton@kernel.org>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Amir Goldstein <amir73il@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Stefan Hajnoczi <shajnocz@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, 
+	Josef Bacik <josef@toxicpanda.com>, Aravind Ramesh <arramesh@micron.com>, 
+	Ajay Joshi <ajayjoshi@micron.com>, john@groves.net
+Subject: Re: [RFC V2 12/18] famfs_fuse: Plumb the GET_FMAP message/response
+Message-ID: <a6smxrjvz5zifw2wattd7abmxhsizkh7vmwrkruqe3l4k6tg7e@gjwj44tqgpnq>
+References: <20250703185032.46568-1-john@groves.net>
+ <20250703185032.46568-13-john@groves.net>
+ <CAJfpegv6wHOniQE6dgGymq4h1430oc2EyV3OQ2S9DqA20nZZUQ@mail.gmail.com>
+ <20250814180512.GV7942@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-GB
-To: linux-fsdevel@vger.kernel.org
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-From: Thomas Lindroth <thomas.lindroth@gmail.com>
-Subject: Is it normal for the user and sys times in /proc/stat to move
- backwards with NO_HZ?
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814180512.GV7942@frogsfrogsfrogs>
 
-I have noticed that some of the values in /proc/stat, such as user, nice, and sys time,
-can decrease on subsequent reads. The file Documentation/filesystems/proc.rst states:
-"The value of iowait field in /proc/stat will decrease in certain conditions".
-Since the documentation specifically mentions iowait I assume that the other values
-should not decrease.
+On 25/08/14 11:05AM, Darrick J. Wong wrote:
+<snip>
+> It's possible that famfs could use the mapping upsertion notification to
+> upload mappings into the kernel.  As far as I can tell, fuse servers can
+> send notifications even when they're in the middle of handling a fuse
+> request, so the famfs daemon's ->open function could upload mappings
+> before completing the open operation.
+> 
 
-A simple way to test this is by running:
-while true; do grep -F "cpu1 " /proc/stat;done| awk 'NR>1{diff=$2-p;if(diff<0)print diff}{p=$2}'
+Famfs dax mappings don't change (and might or might not ever change).
+Plus, famfs is exposing memory, so it must run at memory speed - which
+is why it needs to cache the entire fmap for any active file. That way
+mapping faults happen at lookup-in-fmap speed (which is order 1 for
+interleaved fmaps, and order-small-n for non-interleaved.
 
-I believe this issue is related to the use of NO_HZ. I use nohz_full=1-23 on an
-Intel i7-13700K CPU with 24 logical cores. I have never seen decreasing values on cpu0,
-which is the housekeeping CPU with ticks always enabled. I have seen decreasing user,
-nice, and sys times on all other cores on kernel 6.12.38 and an older 6.1.140 kernel.
+I wouldn't rule out ever using upsert, but probably not before we
+integrate famfs with PNFS, or some other major generalizing event.
 
-I boot the kernel with the following arguments:
-nohz_full=1-23 rcu_nocbs=1-23 intel_iommu=on kvm.ignore_msrs=1 kvm-intel.nested=0
-kvm.report_ignored_msrs=0 vfio-pci.disable_vga=1 split_lock_detect=off
+Thanks,
+John
 
-If this is expected behaviour it would be helpful if the documentation could be updated
-to better clarify this.
+<snip>
 
-/Thomas Lindroth
 
