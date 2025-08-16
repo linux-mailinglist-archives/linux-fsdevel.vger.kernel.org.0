@@ -1,168 +1,195 @@
-Return-Path: <linux-fsdevel+bounces-58080-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58081-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8BF5B28F6D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Aug 2025 18:23:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06DD8B29019
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Aug 2025 20:28:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2C731B6333E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Aug 2025 16:23:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7380FAC402B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Aug 2025 18:28:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A06BC2EF644;
-	Sat, 16 Aug 2025 16:22:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB9AE2EAB95;
+	Sat, 16 Aug 2025 18:28:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cIGyBKU4"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jMij7Coy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55DEF33086;
-	Sat, 16 Aug 2025 16:22:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E66B2E8885
+	for <linux-fsdevel@vger.kernel.org>; Sat, 16 Aug 2025 18:28:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755361376; cv=none; b=RafKloZcuH5Pyw7x4zi3Nq8c3I0Q6ViV/EA5A9oaqErbwaC9Yw6G6ogTpW0Ar/SZ1epsBvs6kND4ZttnsBCRSi9J9dRf4NWbyhUpNxAGdgJ4Az7zGYQr8z1766uquXTxSkyiCx5jdIDX49rOVS3oi8monigkH7pI+qGtyAXY3vw=
+	t=1755368910; cv=none; b=ikQppmFtoB5JO1f8V9oO57YfvZtBak7rJFHBhq/jONea7nChXFAzXHdvJfQAYKifHFIG1dTowLnbn7ZfGh0rQbj7ObO2eia12R8bKswZ9cfnG5LtA9WIUFN8Cd6hh245B5lbktJ8Y8qEhPVOsBz35rjw0Qn/C+Er4NKu86KTl/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755361376; c=relaxed/simple;
-	bh=NZM13o2Exswd9U+U96wypdU8sDgj2Ia3oSNRi53SxnI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BcAQGIc17fwD04XrY9EbPCu6wfhGtgcwXH3G6Xoe9aDRQnbGeC0zBjNw7eORut6+i5hq2rQQeK1/SLjJhfzOdZUey/uPS5ropXRSpog5exCZNUPXqYv2fp9ruT34KabVfdeOoDXo24mVm99oz4gi/l1fkUyVMexYmnbbSZsl6sM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cIGyBKU4; arc=none smtp.client-ip=209.85.160.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-30cce58bb89so2599749fac.0;
-        Sat, 16 Aug 2025 09:22:53 -0700 (PDT)
+	s=arc-20240116; t=1755368910; c=relaxed/simple;
+	bh=rZgnD0zZFc/ywO/kew9ze9owGRvbbsp0tSGSf4cIUhw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ajkYN8w0xjMlDYKDTDD08c5ghnoJlnhoXEFdb082epACWcTcgJB6dEGVPWsx0oCbEbeUJG4mGWTDuLWzbKDI4GnnV7d1pxrtHET/R+6Tp4TDgSAIz3ArLLXN8BT9pf9FC6tBqp4ebdUAk/wOiw9aLwSQ9AMgTCCt85DJ3kOYtIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jMij7Coy; arc=none smtp.client-ip=209.85.166.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3e57fa6e5dbso132125ab.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 16 Aug 2025 11:28:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755361372; x=1755966172; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+Rtpc5s7M7/+q1cABKsKTJfzX3/F+/4NGbX+n4VhZH8=;
-        b=cIGyBKU4ukL+l+lzIL85FrzttJMEoqq2eHc7WbB1iAr/K1zYthOV6jwEI1T/rCeB8T
-         MFkGcSSnGY3+E5KRdaMUsi/Dlu+bpqCiRh2+Z6BImuWvZwrbx4cUVruorh/HPY6uqs8f
-         Cq/ZpMJMLh06K7CTPoOUOaWft8iZvBm+F2CcNTi4g4IgeHUc97qO5NNd5R4Wyl7Kf1Ma
-         a55qTJIK63NIBd71jBm3pq/cXPlK/hjwaGBNPb0fOGFv93t5fZ2kasjrfkoqG8Oq+39z
-         AueKoyuQGYOsF5WnREomdlFXvbMVCnw2u/Odw6RiE/izFlmjCEA6BBLCJjyTGNN/gND6
-         7vsA==
+        d=google.com; s=20230601; t=1755368908; x=1755973708; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I5yC7S8oCiJG7TFutzjycr6CeD4ZzxSCBJoO8pVq8kw=;
+        b=jMij7CoyL9jU/S8PrRG+HZOglnmC52l+C9OSYLYe5NOeAB6MnqulJD9GMQKyVdXg7J
+         rkigHGQy3U91P6mQG/Wrn3gYHbeRpMdmO1kJbkoVL+tQVsfaEIlPyQsoQAIiiudj2f9F
+         1EdPFkO5DXarQS3y8Dvl5SuFhdbdqYWgU3Li3tbGEUPuKQUjdG0J9PMTzvvYCxdqJUu4
+         vyGPRucU9x7gOnWtSjOGZb5gPNuVl2hjyClxYvkLqq5KUTaHc/A6BQCOEUxSTuMd0mom
+         D6tFsOJxxSxwAYRQGkfpPKCoJbiFkvrmDZbnz8KcIjGeq96dQe7KwOqLyHgooaO8ShdQ
+         SVXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755361372; x=1755966172;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1755368908; x=1755973708;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+Rtpc5s7M7/+q1cABKsKTJfzX3/F+/4NGbX+n4VhZH8=;
-        b=XtjHNmD0TMBTN0kPAtjSHtjL5vsYC7LeY+okFJzlFu5i1b8GYkUpghKXeDH0dNiuen
-         OLVuSAhd1oNpV6Ji9Q4n1bzd5q2XMxGMnj63Z+t+sKrwMBfBqyP43g2LOKhW39XYi30g
-         mNIIP0l28mzeY9HyXKBk44nK4OwJC2kmJz3PE1onid3jwDGROFMUDLNqsB/pPTDrGMTC
-         sdduoDNjH+puLBRfiTVvPnzgR00oIjC0KzCquf6gN3w4JvPGiIJlos+EuULQrWKuSq5K
-         N1AP/kAkPiUQXv1IHY+B/5DvY0hzEUpSbP7f9lvUeEndx5tAQvn3xyuN26/qestUzM5/
-         +mrw==
-X-Forwarded-Encrypted: i=1; AJvYcCVWn0yvHl8Gz0jtF5htXRuzzv99SmIrMvm72qPgdbCVL8z4jHp2QTflaYqTufdzsRwjJF5nucDMEfk=@vger.kernel.org, AJvYcCVbuLxnCBl2WgUzwZXLFY5r+vlX4dTa+UJy5CtEuNtBWOfF9f5BPA0F4FCy9/bj5ylbsZuoKEjF4ReoDL+e@vger.kernel.org, AJvYcCWYCulUJlN+9MYSD2LWpIMxxG7+EmchaKgmP03wDZsr8fPlvsoI5cNMsMQGKuOxg+jCseh3P4zsGtAP@vger.kernel.org, AJvYcCXpM4Re49A4EEqwH+LznVVm8UNsaoNMzHVSJEDHzhXe9G6pEI3deG7Sl8ow8DJ88aoCCYC/hIIfMTqwGI1XNA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0ewsyApcKvOdEeVh8XoxdT4KdW1/xd/8sVVa/pLQJHcMfdp2J
-	FGTMPzN/xw5QfD35YO7bTw5dM8UxR9qayoJUF9Fk3o2OS3ykjJGDOaQ5
-X-Gm-Gg: ASbGncus3hshJJMG7lsK0lcHXePF4F1vdlTht6vZH0EaNjuLqLolRGnBrxnJBGVp0qt
-	yDUvRBF6ZIpncURZbfvbH/udZfcEddomfzt0EYMTiMKzLTWNtZfK/gKZoySYvzFZQCAiiF7qnp/
-	1O8H/jqJki/pY7brZg58XVP798G/zyrAsLdReN9anQH2XvRtehJq2FmpAvqkWsg85rSksokKC9D
-	S9LvdOvMF+sNdfHPyoXaa4KxQ1EEvyUYUGKzPBadh8wdBcYuNbhGYVGb6si5rtzcQ7o2qY6FZ4S
-	tH/Gid2AdmJCiY0c42yI6afWP2uDrNy38ppLcqkT8u4PEu7I6MB1Q8OpB5K3smqRyKkC0f87LYp
-	cjTE249zGjr7lnGQtUaaIgs6DNcbsSqMrWxAo
-X-Google-Smtp-Source: AGHT+IHCxUIkdlGxbKhRgkda2hbannURDDEsuMBjaUCvPESePWFZyXXJu5EUcQ/LJ4zZvF6BnvAeCQ==
-X-Received: by 2002:a05:6870:15c8:b0:30c:5189:5707 with SMTP id 586e51a60fabf-310aae9750cmr3295321fac.28.1755361372333;
-        Sat, 16 Aug 2025 09:22:52 -0700 (PDT)
-Received: from groves.net ([2603:8080:1500:3d89:1d43:22e9:7ffa:494a])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-74391bd20a3sm911591a34.21.2025.08.16.09.22.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 16 Aug 2025 09:22:51 -0700 (PDT)
-Sender: John Groves <grovesaustin@gmail.com>
-Date: Sat, 16 Aug 2025 11:22:49 -0500
-From: John Groves <John@groves.net>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, 
-	Dan Williams <dan.j.williams@intel.com>, Bernd Schubert <bschubert@ddn.com>, 
-	John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Randy Dunlap <rdunlap@infradead.org>, Jeff Layton <jlayton@kernel.org>, 
-	Kent Overstreet <kent.overstreet@linux.dev>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Amir Goldstein <amir73il@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	Stefan Hajnoczi <shajnocz@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, 
-	Josef Bacik <josef@toxicpanda.com>, Aravind Ramesh <arramesh@micron.com>, 
-	Ajay Joshi <ajayjoshi@micron.com>, john@groves.net
-Subject: Re: [RFC V2 14/18] famfs_fuse: GET_DAXDEV message and daxdev_table
-Message-ID: <vfg7t7dzqjf6g6374wavesakk332n4dqabgokw4xobsar5jnxm@m7xfan6vhyty>
-References: <20250703185032.46568-1-john@groves.net>
- <20250703185032.46568-15-john@groves.net>
- <CAJfpegv19wFrT0QFkwFrKbc6KXmktt0Ba2Lq9fZoihA=eb8muA@mail.gmail.com>
- <20250814171941.GU7942@frogsfrogsfrogs>
- <CAJfpegv8Ta+w4CTb7gvYUTx3kka1-pxcWX_ik=17wteU9XBT1g@mail.gmail.com>
+        bh=I5yC7S8oCiJG7TFutzjycr6CeD4ZzxSCBJoO8pVq8kw=;
+        b=rQrAHQj2/kp2gny37nx3msAZJLBPPahVTnUgNCksQcgGfDHMut0FlQEtprZJwTxbmk
+         ljhbTJ0s3DWZSjLC+s3lpDQ6EE8MkZGe+asdEXMLH//V1pSQh2Kgyu5I1scoG3MNYBKj
+         Atf93dlLXqwHjluJUqAaRIUx3c/KvhGa6fkrzGxHnDFKOWA2sIvVKemi5irv7L3pjuij
+         BvAbyfqwKUJ+NOlzh72hXDdlDuSzChuex/2o5Aw24ASV+ojWjVElzOmaWqxKJPjYO/m+
+         hBLPlL3yfANkX0Dbe24T+sRny4jf0ZXZdR1G3D7LHCyB3YdTG6sBKze714QOC4WvEOqw
+         zlxA==
+X-Gm-Message-State: AOJu0YzqV249W8OCoGcJKZhWlqNDTpGobclzBl7exMWoT6vuBSDhHEjs
+	czGvgP0pqRjvDIQnYHOeKAYj9HeeP1XOMEOqB29vN5uGd/ZvizS+ESNUmkDeb/2A+RTBRLdTSln
+	K01RSZ2i/e22bg5J9E+KTddhxfiYrbA5QKnZKuMTS
+X-Gm-Gg: ASbGncsQhh9znyGMlgt7xpZ/2hbljX1SdFNUHuOTa/I3BkDi7aB6OevyaWcghTS2VMm
+	zp2yOlzzLm/nIOX2YuAtunTOQzJqC5Im2D+W+uCmZfVaY9vzz5pXa/U/zOZKG9UNRnbZr0gfAPA
+	iZ/q8Nmpt8/IuIOwQctv0bVrTBPxPzpsIzd3BwXG7bI2PV1/xr9Euj+vFhvRq4s7A1oBPxbcCw8
+	vCJAlg=
+X-Google-Smtp-Source: AGHT+IG5k93sJe300fdlxnct8tJ9zdfWStAVS4BKWDLqOI3cAdjmJkF2gBOyq02tpGhbV3MZbq0vTU17zIGVB2kTMFM=
+X-Received: by 2002:a05:6e02:2184:b0:3e5:7d5b:8ac with SMTP id
+ e9e14a558f8ab-3e5836aaa1dmr4489355ab.8.1755368907414; Sat, 16 Aug 2025
+ 11:28:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegv8Ta+w4CTb7gvYUTx3kka1-pxcWX_ik=17wteU9XBT1g@mail.gmail.com>
+References: <20250815233316.GS222315@ZenIV> <20250815233524.GC2117906@ZenIV>
+In-Reply-To: <20250815233524.GC2117906@ZenIV>
+From: Andrei Vagin <avagin@google.com>
+Date: Sat, 16 Aug 2025 11:28:15 -0700
+X-Gm-Features: Ac12FXxJJu2rlJVPcM9KvxRWr1y8nXeaMflbMQKb07wEOPrwwRhy_BjY5InFBkU
+Message-ID: <CAEWA0a5VvrVuBiBk3hFTzh2o3tswhRd69Ukjzd4qTBPYMwpNDg@mail.gmail.com>
+Subject: Re: [PATCH 3/4] use uniform permission checks for all mount
+ propagation changes
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, 
+	Jan Kara <jack@suse.cz>, "Lai, Yi" <yi1.lai@linux.intel.com>, 
+	Tycho Andersen <tycho@tycho.pizza>, Pavel Tikhomirov <snorcht@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 25/08/14 08:25PM, Miklos Szeredi wrote:
-> On Thu, 14 Aug 2025 at 19:19, Darrick J. Wong <djwong@kernel.org> wrote:
-> > What happens if you want to have a fuse server that hosts both famfs
-> > files /and/ backing files?  That'd be pretty crazy to mix both paths in
-> > one filesystem, but it's in theory possible, particularly if the famfs
-> > server wanted to export a pseudofile where everyone could find that
-> > shadow file?
-> 
-> Either FUSE_DEV_IOC_BACKING_OPEN detects what kind of object it has
-> been handed, or we add a flag that explicitly says this is a dax dev
-> or a block dev or a regular file.  I'd prefer the latter.
-> 
-> Thanks,
-> Miklos
+On Fri, Aug 15, 2025 at 4:35=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> w=
+rote:
+>
+> do_change_type() and do_set_group() are operating on different
+> aspects of the same thing - propagation graph.  The latter
+> asks for mounts involved to be mounted in namespace(s) the caller
+> has CAP_SYS_ADMIN for.  The former is a mess - originally it
+> didn't even check that mount *is* mounted.  That got fixed,
+> but the resulting check turns out to be too strict for userland -
+> in effect, we check that mount is in our namespace, having already
+> checked that we have CAP_SYS_ADMIN there.
+>
+> What we really need (in both cases) is
+>         * we only touch mounts that are mounted.  Hard requirement,
+> data corruption if that's get violated.
+>         * we don't allow to mess with a namespace unless you already
+> have enough permissions to do so (i.e. CAP_SYS_ADMIN in its userns).
+>
+> That's an equivalent of what do_set_group() does; let's extract that
+> into a helper (may_change_propagation()) and use it in both
+> do_set_group() and do_change_type().
+>
 
-I have future ideas of famfs supporting non-dax-memory files in a mixed
-namespace with normal famfs dax files. This seems like the simplest way 
-to relax the "files are strictly pre-allocated" rule. But I think this 
-is orthogonal to how fmaps and backing devs are passed into the kernel. 
+Al, thank you for the fix.
 
-The way I'm thinking about it, the difference would be handled in
-read/write/mmap. Taking fuse_file_read_iter as the example, the code 
-currently looks like this:
+Acked-by: Andrei Vagin <avagin@gmail.com>
 
-	if (FUSE_IS_VIRTIO_DAX(fi))
-		return fuse_dax_read_iter(iocb, to);
-	if (fuse_file_famfs(fi))
-		return famfs_fuse_read_iter(iocb, to);
-
-	/* FOPEN_DIRECT_IO overrides FOPEN_PASSTHROUGH */
-	if (ff->open_flags & FOPEN_DIRECT_IO)
-		return fuse_direct_read_iter(iocb, to);
-	else if (fuse_file_passthrough(ff))
-		return fuse_passthrough_read_iter(iocb, to);
-	else
-		return fuse_cache_read_iter(iocb, to);
-
-If the famfs fuse servert wants a particular file handled via another 
-mechanism -- e.g. READ message to server or passthrough -- the famfs 
-fuse server can just provide an fmap that indicates such.  Then 
-fuse_file_famfs(fi) would return false for that file, and it would be 
-handled through other existing mechanisms (which the famfs fuse 
-server would have to handle correctly).
-
-Famfs could, for example, allow files to be created as generic or
-passthrough, and then have a "commit" step that allocated dax memory, 
-moved the data from a non-dax into dax, and appended the file to the 
-famfs metadata log - flipping the file to full-monty-famfs (tm). 
-Prior to the "commit", performance is less but all manner of mutations 
-could be allowed.
-
-So I don't think this looks very be hard, and it's independent of the 
-mechanism by which fmaps get into the kernel.
-
-Regards,
-John
-
-
+> Fixes: 12f147ddd6de "do_change_type(): refuse to operate on unmounted/not=
+ ours mounts"
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> ---
+>  fs/namespace.c | 34 ++++++++++++++++++++--------------
+>  1 file changed, 20 insertions(+), 14 deletions(-)
+>
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index 1c97f93d1865..88db58061919 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -2859,6 +2859,19 @@ static int graft_tree(struct mount *mnt, struct mo=
+unt *p, struct mountpoint *mp)
+>         return attach_recursive_mnt(mnt, p, mp);
+>  }
+>
+> +static int may_change_propagation(const struct mount *m)
+> +{
+> +        struct mnt_namespace *ns =3D m->mnt_ns;
+> +
+> +        // it must be mounted in some namespace
+> +        if (IS_ERR_OR_NULL(ns))         // is_mounted()
+> +                return -EINVAL;
+> +        // and the caller must be admin in userns of that namespace
+> +        if (!ns_capable(ns->user_ns, CAP_SYS_ADMIN))
+> +                return -EPERM;
+> +        return 0;
+> +}
+> +
+>  /*
+>   * Sanity check the flags to change_mnt_propagation.
+>   */
+> @@ -2895,10 +2908,10 @@ static int do_change_type(struct path *path, int =
+ms_flags)
+>                 return -EINVAL;
+>
+>         namespace_lock();
+> -       if (!check_mnt(mnt)) {
+> -               err =3D -EINVAL;
+> +       err =3D may_change_propagation(mnt);
+> +       if (err)
+>                 goto out_unlock;
+> -       }
+> +
+>         if (type =3D=3D MS_SHARED) {
+>                 err =3D invent_group_ids(mnt, recurse);
+>                 if (err)
+> @@ -3344,18 +3357,11 @@ static int do_set_group(struct path *from_path, s=
+truct path *to_path)
+>
+>         namespace_lock();
+>
+> -       err =3D -EINVAL;
+> -       /* To and From must be mounted */
+> -       if (!is_mounted(&from->mnt))
+> -               goto out;
+> -       if (!is_mounted(&to->mnt))
+> -               goto out;
+> -
+> -       err =3D -EPERM;
+> -       /* We should be allowed to modify mount namespaces of both mounts=
+ */
+> -       if (!ns_capable(from->mnt_ns->user_ns, CAP_SYS_ADMIN))
+> +       err =3D may_change_propagation(from);
+> +       if (err)
+>                 goto out;
+> -       if (!ns_capable(to->mnt_ns->user_ns, CAP_SYS_ADMIN))
+> +       err =3D may_change_propagation(to);
+> +       if (err)
+>                 goto out;
+>
+>         err =3D -EINVAL;
+> --
+> 2.47.2
+>
 
