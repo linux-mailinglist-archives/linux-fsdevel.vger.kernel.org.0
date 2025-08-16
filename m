@@ -1,78 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-58074-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58075-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CC6FB28CB4
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Aug 2025 12:12:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0A6EB28DBE
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Aug 2025 14:39:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48B0016D4AB
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Aug 2025 10:11:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E2541CC6952
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Aug 2025 12:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 955C728CF75;
-	Sat, 16 Aug 2025 10:11:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D86E22E2DFD;
+	Sat, 16 Aug 2025 12:38:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T79D3kzH"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HEJQoFsg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B69E728CF5C;
-	Sat, 16 Aug 2025 10:11:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A50881E47BA;
+	Sat, 16 Aug 2025 12:38:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755339064; cv=none; b=PDpr7gIMBoICsl4kqVpt603ZPIV0Iz0UI76hcOWcrO2aNjS/BnJtb7wfnzTgitZsu+rZdk2YxvBo8Zp7JHL3Y1KD74jeOjrMrNVn5Y6iqbKR2qzHk/WFm64hRFNcNBzBnCbwwKaf9bzGyhc9xJ9QRB8MZ0BmD+c3NcMMupTLc+g=
+	t=1755347936; cv=none; b=McA5PaPoQPSYEVPfTA6mM2pUE5XycjslCc6jAdjEQxVwu2Kzrxr809K7U0JVu+pL7Rmz42Y2qOVmebz8sfD4CclZ7XxcjSl3cA8vpm+a/GXjLc75At8H1r7Yi+xyy1Y1nPgIW9pt5mr+niFMKiRiBQQdqXsxdKLixbQxQ7HehIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755339064; c=relaxed/simple;
-	bh=axqTjNFlmphNfFORcQmFtJ3vQU2+7Fg2Z26+WcSA7r0=;
+	s=arc-20240116; t=1755347936; c=relaxed/simple;
+	bh=9Ff9XpXiB0v1ne2KOkPiaqcFp1+8SqSRbJO7Ur2WlXo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S4GOnxBFIXN9BkSLj88H10aujClfqrQ5s4nsZxroX9b10747BROhunLEPibtScbrqOTSnv+0+x9P9l2qFtW6LhbUKx6D9ebRQHyhNMIYOm2oxrPWyRjJeuIedB/Zs07IH/59fFOtnpyIzKhPeljN2LYnOLGh+0A/OoH1efgYthA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T79D3kzH; arc=none smtp.client-ip=198.175.65.15
+	 Content-Type:Content-Disposition:In-Reply-To; b=ITWPFRB3GBFBGnEFNOH3lN816ECBrcb68Q7jQuoMiWkYl9NQ4bo6Am03YR4pM0E8A/rKndHgD0j0tkJyDeaZhrcQ2qURQ8Dc2iF004JEtyoBEifLsJ303TjHa4cWPckmjjizWPO+OScOva12tbvnUHoE5Nxum7FGopC0+uOMteg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HEJQoFsg; arc=none smtp.client-ip=198.175.65.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755339062; x=1786875062;
+  t=1755347934; x=1786883934;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=axqTjNFlmphNfFORcQmFtJ3vQU2+7Fg2Z26+WcSA7r0=;
-  b=T79D3kzH+sTdIZFCORWXnle2/olgx1WJG6mdbeyrR52kWJmXIb1Ke4Li
-   8349VcXxqfSh4HnLBttKqqKwczm13AhUndNPvuTINqjpKMvGi6OCdNtSG
-   SZL4Ini/19mFPK4tnoHZHxLKkVPdA0MHUGXTvvOgCRcrCiGhNHxTaIj0J
-   NAnKzCNf4lPn+NNsgbgJNMM8xIEG+485gjuPe0qJgokT+hJY5p2JxaCum
-   ZWAkVFSMa8ex+AGDHge3gfLSduT/9NbRNCU+gRZ5H/xJE8wY7HIiIw9vT
-   CWQhbI+jZ1reHkCuXmzm2NuDpqBHg/dezvC4JyVaw8TRrRl3BgLoPeXgT
-   w==;
-X-CSE-ConnectionGUID: X+DJaioYT0K8YQcyluUfXg==
-X-CSE-MsgGUID: 3SALENQ9TtaaaspQUEFVog==
-X-IronPort-AV: E=McAfee;i="6800,10657,11523"; a="61274085"
+  bh=9Ff9XpXiB0v1ne2KOkPiaqcFp1+8SqSRbJO7Ur2WlXo=;
+  b=HEJQoFsggjhccBTQa+GG85VOKixp0M6J/9vmLS1CprXSexOtnas5jYke
+   HIuzqky2grAeqqo0LE626wN4NHHtgH7hYMShGo2acGU6dgmGH4EF3181Z
+   6QT8awX04vaIP+AEODYW/e/VxaQkBYeNv9VHyEaRkHhsIOZ3N3w1Hi2+i
+   +7y3m9VU6+KBV18plpYn3G+AsOYTNBSKKcMsDpaR/2s18Nq3gbqiHHch+
+   g6u9oVEpSqUdVzXBbOTn8PH08/EyOki3Kt15QeKPhfW2j2JmTTSaMEoW5
+   3TzieTvbxOwt07B8W+jH/uMMuAwO96ox/p2sC5h8MACovjRWE8elvM5Lm
+   A==;
+X-CSE-ConnectionGUID: Duhv+9jPS9up4h9iFbmC5Q==
+X-CSE-MsgGUID: s/QA/zKmSNydt3u1eZ/jyA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11523"; a="57791381"
 X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="61274085"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2025 03:11:02 -0700
-X-CSE-ConnectionGUID: wf4JgEWbQZ+I66zReqgvtg==
-X-CSE-MsgGUID: 6b3a/uRcR8iSvvHTBhGd8A==
+   d="scan'208";a="57791381"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2025 05:38:54 -0700
+X-CSE-ConnectionGUID: tUtM56dmQgmETyjyvMS6iA==
+X-CSE-MsgGUID: F2DpgUMHRCyHS+sAVqky4w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="198044644"
+   d="scan'208";a="166827334"
 Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa001.fm.intel.com with ESMTP; 16 Aug 2025 03:10:59 -0700
+  by orviesa009.jf.intel.com with ESMTP; 16 Aug 2025 05:38:52 -0700
 Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1unDro-000Cnw-2d;
-	Sat, 16 Aug 2025 10:10:39 +0000
-Date: Sat, 16 Aug 2025 18:10:13 +0800
+	id 1unGBM-000Cs8-2m;
+	Sat, 16 Aug 2025 12:38:49 +0000
+Date: Sat, 16 Aug 2025 20:38:24 +0800
 From: kernel test robot <lkp@intel.com>
-To: Thomas Bertschinger <tahbertschinger@gmail.com>,
-	io-uring@vger.kernel.org, axboe@kernel.dk,
-	linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, linux-nfs@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev,
-	Thomas Bertschinger <tahbertschinger@gmail.com>
-Subject: Re: [PATCH 6/6] io_uring: add support for IORING_OP_OPEN_BY_HANDLE_AT
-Message-ID: <202508161702.2Ey3J7m9-lkp@intel.com>
-References: <20250814235431.995876-7-tahbertschinger@gmail.com>
+To: Ethan Ferguson <ethan.ferguson@zetier.com>, linkinjeon@kernel.org,
+	sj1557.seo@samsung.com
+Cc: oe-kbuild-all@lists.linux.dev, yuezhang.mo@sony.com,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Ethan Ferguson <ethan.ferguson@zetier.com>
+Subject: Re: [PATCH 1/1] exfat: Add support for FS_IOC_{GET,SET}FSLABEL
+Message-ID: <202508162026.aFXpZAKm-lkp@intel.com>
+References: <20250815171056.103751-2-ethan.ferguson@zetier.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -81,84 +80,64 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250814235431.995876-7-tahbertschinger@gmail.com>
+In-Reply-To: <20250815171056.103751-2-ethan.ferguson@zetier.com>
 
-Hi Thomas,
+Hi Ethan,
 
-kernel test robot noticed the following build errors:
+kernel test robot noticed the following build warnings:
 
-[auto build test ERROR on brauner-vfs/vfs.all]
-[also build test ERROR on linus/master v6.17-rc1 next-20250815]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+[auto build test WARNING on 37816488247ddddbc3de113c78c83572274b1e2e]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Thomas-Bertschinger/fhandle-create-helper-for-name_to_handle_at-2/20250815-075417
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
-patch link:    https://lore.kernel.org/r/20250814235431.995876-7-tahbertschinger%40gmail.com
-patch subject: [PATCH 6/6] io_uring: add support for IORING_OP_OPEN_BY_HANDLE_AT
-config: parisc-randconfig-r132-20250816 (https://download.01.org/0day-ci/archive/20250816/202508161702.2Ey3J7m9-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 11.5.0
-reproduce: (https://download.01.org/0day-ci/archive/20250816/202508161702.2Ey3J7m9-lkp@intel.com/reproduce)
+url:    https://github.com/intel-lab-lkp/linux/commits/Ethan-Ferguson/exfat-Add-support-for-FS_IOC_-GET-SET-FSLABEL/20250816-011428
+base:   37816488247ddddbc3de113c78c83572274b1e2e
+patch link:    https://lore.kernel.org/r/20250815171056.103751-2-ethan.ferguson%40zetier.com
+patch subject: [PATCH 1/1] exfat: Add support for FS_IOC_{GET,SET}FSLABEL
+config: nios2-randconfig-r121-20250816 (https://download.01.org/0day-ci/archive/20250816/202508162026.aFXpZAKm-lkp@intel.com/config)
+compiler: nios2-linux-gcc (GCC) 11.5.0
+reproduce: (https://download.01.org/0day-ci/archive/20250816/202508162026.aFXpZAKm-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508161702.2Ey3J7m9-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508162026.aFXpZAKm-lkp@intel.com/
 
-All errors (new ones prefixed by >>):
+sparse warnings: (new ones prefixed by >>)
+>> fs/exfat/super.c:656:28: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned short const [usertype] *ucs1 @@     got restricted __le16 * @@
+   fs/exfat/super.c:656:28: sparse:     expected unsigned short const [usertype] *ucs1
+   fs/exfat/super.c:656:28: sparse:     got restricted __le16 *
 
-   hppa-linux-ld: io_uring/openclose.o: in function `io_name_to_handle_at':
-   io_uring/openclose.c:241:(.text+0x870): undefined reference to `do_name_to_handle_at'
-   hppa-linux-ld: io_uring/openclose.o: in function `io_open_by_handle_at':
->> io_uring/openclose.c:287:(.text+0x990): undefined reference to `__do_handle_open'
+vim +656 fs/exfat/super.c
 
-
-vim +287 io_uring/openclose.c
-
-   266	
-   267	int io_open_by_handle_at(struct io_kiocb *req, unsigned int issue_flags)
-   268	{
-   269		struct io_open *open = io_kiocb_to_cmd(req, struct io_open);
-   270		struct file *file;
-   271		bool fixed = !!open->file_slot;
-   272		int ret;
-   273	
-   274		/*
-   275		 * Always try again if we aren't supposed to block, because there is no
-   276		 * way of preventing the FS implementation from blocking.
-   277		 */
-   278		if (issue_flags & IO_URING_F_NONBLOCK)
-   279			return -EAGAIN;
-   280	
-   281		if (!fixed) {
-   282			ret = __get_unused_fd_flags(open->how.flags, open->nofile);
-   283			if (ret < 0)
-   284				goto err;
-   285		}
-   286	
- > 287		file = __do_handle_open(open->dfd, open->ufh, open->how.flags);
-   288	
-   289		if (IS_ERR(file)) {
-   290			if (!fixed)
-   291				put_unused_fd(ret);
-   292			ret = PTR_ERR(file);
-   293			goto err;
-   294		}
-   295	
-   296		if (!fixed)
-   297			fd_install(ret, file);
-   298		else
-   299			ret = io_fixed_fd_install(req, issue_flags, file,
-   300						  open->file_slot);
-   301	
-   302	err:
-   303		if (ret < 0)
-   304			req_set_fail(req);
-   305		io_req_set_res(req, ret, 0);
-   306		return IOU_COMPLETE;
-   307	}
-   308	
+   639	
+   640	int exfat_write_volume_label(struct super_block *sb)
+   641	{
+   642		int ret;
+   643		struct exfat_sb_info *sbi = EXFAT_SB(sb);
+   644		struct buffer_head *bh;
+   645		struct exfat_dentry *ep;
+   646	
+   647		ret = exfat_get_volume_label_ptrs(sb, &bh, &ep);
+   648		if (ret < 0)
+   649			goto cleanup;
+   650	
+   651		mutex_lock(&sbi->s_lock);
+   652		memcpy(ep->dentry.volume_label.volume_label, sbi->volume_label,
+   653					sizeof(sbi->volume_label));
+   654	
+   655		ep->dentry.volume_label.char_count =
+ > 656			UniStrnlen(ep->dentry.volume_label.volume_label,
+   657					EXFAT_VOLUME_LABEL_LEN);
+   658		mutex_unlock(&sbi->s_lock);
+   659	
+   660	cleanup:
+   661		if (bh) {
+   662			exfat_update_bh(bh, true);
+   663			brelse(bh);
+   664		}
+   665	
+   666		return ret;
+   667	}
+   668	
 
 -- 
 0-DAY CI Kernel Test Service
