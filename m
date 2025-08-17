@@ -1,362 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-58083-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58084-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A6C3B29106
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Aug 2025 02:31:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6344B2918F
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Aug 2025 06:44:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E908C4E541F
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Aug 2025 00:31:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE4711689C4
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Aug 2025 04:44:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4B1917A300;
-	Sun, 17 Aug 2025 00:31:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A79A1F0E50;
+	Sun, 17 Aug 2025 04:44:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b="a9/N9X3A"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=126.com header.i=@126.com header.b="ZqWuRZOH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EEC113E02D
-	for <linux-fsdevel@vger.kernel.org>; Sun, 17 Aug 2025 00:31:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FA2D16DEB1;
+	Sun, 17 Aug 2025 04:44:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755390671; cv=none; b=DY7CMGxihGP3zPSvmRHVEI71JKqW8dcVYRq8jXCvNZLz3Pv/C/nm/Uahjf+iFJPAHTQoaYNdyt9c/5wbHLfnbOZia7U9xQKBh+U/9KurSGNEucKZlGOvVxcTIU17NTN2M6LACrT1OrrwvppRVRtF2wKKKxV34JkbF/h0Rxvxcxk=
+	t=1755405849; cv=none; b=TIBff+BFtz9tP2hIUKLS8qPdB35npgvBydFTN0cgLi/HLhKoZnM3gO1e+oDlkNn0WDMavLLl7AO5Cv4NSp6S1OmW6ub5X0TVaXaqMgPTEc3SCtihrppEbrhD3tMZ+K6o1n8kmDJkKjFsEZkAy6Y/L9vQoHIi2rFBHFcNSYBlK6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755390671; c=relaxed/simple;
-	bh=Vu2m/Gloo/Gq5O5egK9ONMehCPuYhaGAnYaEh8ktB6U=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fNOAr94JTZ2HqFBInidv6sk2K/70tf9230rr/81fkadgAPitHEjFpPlvI3KKQL8P342+hHpqCxHU16AUrV6cdaSQXuAFbdS4Mq5/2OqHrC7kqk+5qPNawmUHhg+T/0Iu+Std6a+kKSA9zIrYecg5pis/sUM9ZHpjorA6jVN04p4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zetier.com; spf=pass smtp.mailfrom=zetier.com; dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b=a9/N9X3A; arc=none smtp.client-ip=209.85.222.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zetier.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zetier.com
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7e87063d4a9so354408785a.2
-        for <linux-fsdevel@vger.kernel.org>; Sat, 16 Aug 2025 17:31:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=zetier.com; s=gm; t=1755390666; x=1755995466; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dy1/zvuC4+goM8wozcoBMWOiVW+TcsBSAjjXJc9QiE8=;
-        b=a9/N9X3AVjmpmPcB5+zVdW1pDp9I1xFbMzgcmr/2M6bAofIUJXjptfodY8b/bv24X/
-         w4UZnANmipo628brzQX1OOKk6qTJLrY1S3YXj+4sjiCLb4w3ERXLyP90kyH9SHKotjoT
-         A6QVYh9k4WwbC/0Z3jvtyjavwPsGET1Favio0DyFtZwnhYwFA5BnQd++uLD4Nid1vMsi
-         eW3fxBxk7YJ5B/OYdpjI/UKYsqn+JyNliZMXXzvdARferkqcSxFldBO3lE4irAIEF/4p
-         +anO6PRlDiDbIOVDY7nXpYDbCEXEoHGPNVz+NoAYwBYvGEg/09L4l4Hy3T8mUlPLeZmv
-         uhoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755390666; x=1755995466;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dy1/zvuC4+goM8wozcoBMWOiVW+TcsBSAjjXJc9QiE8=;
-        b=b9AAWQhrUKDx5oNwm8MiAi27lnj8N6Vwr24wXlHDx60gbB3ifPmiXGK6GPGeCBpP5l
-         tv4+KwTFunoZqheqby+fpO3Hi1SZM+hOzCORNLaSeUwhROnVA5C6r+XpHJQe5ltZfdd8
-         LXLcKdYkWMx9bqjxEitP8lc1k74lFP0COk8+2nx1oD0kWz7p4tmL09Y9oVejPvL2pIoh
-         9/rLd6sf0Blt62doazhGgmGp9Cn+3qfqrEnJM2zKAZJSa9MMyTB8h2vCwz4MCwUk02sk
-         F6TEysyTzC3ZjAd8eWnJKrNLP0rAQlS7C6lr8dkTX4Yawe2KkMpVGL31dzPh61XbucmM
-         cLfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX36QNLQFgdF+FxrNOIOHu6yB0xC7s5LiCpU5R0cSNbYo36R9rcyIPLRtMTYanwOWKAbEls0FpLNc1VzSqQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqrusW3KdM2pST3zY+YVCzMD6D+BYP3gHnDqGkogl0jX4/RTpF
-	QxsGwTK7ijQuCk9aw80h21RsEcr9rmR10d+6PteqhB4tu1ONPcVs9WS2Hm0bouiELkwOUmWekLl
-	FWZNP
-X-Gm-Gg: ASbGncu5fYcgYB2kFIn9bmJ0tukjsiqJZeTK5nj8goEfTC2TfOzwMpdythnA81G3uyU
-	EtwuKASjEAAg0fXRCC9LmkBK5P313aY2YbWrcR5wAwGJrQaxknNpQ0BcZqpfaEA0OWw+p6luH1w
-	MYqBppcyBhaNKQdyQ8NoX7YEv0VUQTxU/x5vGQyFA2JwDOCA8SZVdUvdV3jhfDlR/ErKdrr6yOf
-	FuqQ58fBh9W2DPnT0Ihp95WeJClvPV1umGBHJyMffBXAVp5Es1IX3kDWpcJDKpU56RHEqZ2uEvz
-	SepyEbg4scN5RFDTOCYFw2Oqff/W83gg754Ekt99QnKyOncKt3MBCOFPY05FHL5WOsqAVUrEWq6
-	2qWXQIu/XkTYMwKQn0Cy956ksTXT/feNBzRvZMA==
-X-Google-Smtp-Source: AGHT+IFUEEG3aNG7TFNiJw1J5Pdf2J2ZLkFUnQ4Xcc0NaWWwKnAm7udVxn1hKUYfQsRw9aJcImUFNA==
-X-Received: by 2002:a05:620a:4043:b0:7e6:2f6a:5bae with SMTP id af79cd13be357-7e87e137b50mr1128487285a.62.1755390665845;
-        Sat, 16 Aug 2025 17:31:05 -0700 (PDT)
-Received: from ethanf.zetier.com ([65.222.209.234])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e87e1c42e5sm342402885a.65.2025.08.16.17.31.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 16 Aug 2025 17:31:05 -0700 (PDT)
-From: Ethan Ferguson <ethan.ferguson@zetier.com>
-To: linkinjeon@kernel.org,
-	sj1557.seo@samsung.com
-Cc: yuezhang.mo@sony.com,
+	s=arc-20240116; t=1755405849; c=relaxed/simple;
+	bh=P3VOaa2AHqjcGObv6vHwnEfq1cYCBzytJb2Lv6uoxLc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=ecrOcRXWupQltifaypoYMbj5WKQY853uGVkxvaMk00F2DG0BGC8Qux++eZQffqdkY/rh0ec4reFI/zarffwOKy6IMjO8DL129S226yz3NKBVwq+FWTnPrlhJ3/yqhW4InwKUYEiPRrdKaPjYh4QxR8Bki6YWv+N5GtduaMKS4V0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=fail (1024-bit key) header.d=126.com header.i=@126.com header.b=ZqWuRZOH reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=TTUBPNPGlI/pbOhVvgZ3yq4pwbsl1IdZ8XlTgeU2je8=; b=Z
+	qWuRZOHVv42DOWA7lmZrS5T2RT7r8sMZgEZd0LkTIKIK8fn/aSVpbiVFwOMdi5e/
+	zN14ZRHH3qYUgZO56ujLR6nvRmGcgdHoaV81amxsp9yYf+0zgX/mCedep/aB5nHW
+	hnbW0G6kwuceGZ1u7dK7fdiXDppfLdkxFlnTErrbQs=
+Received: from nzzhao$126.com ( [112.86.116.50] ) by
+ ajax-webmail-wmsvr-41-110 (Coremail) ; Sun, 17 Aug 2025 12:43:11 +0800
+ (CST)
+Date: Sun, 17 Aug 2025 12:43:11 +0800 (CST)
+From: "Nanzhe Zhao" <nzzhao@126.com>
+To: "Christoph Hellwig" <hch@infradead.org>
+Cc: "Jaegeuk Kim" <jaegeuk@kernel.org>,
+	linux-f2fs-devel@lists.sourceforge.net,
 	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ethan Ferguson <ethan.ferguson@zetier.com>
-Subject: [PATCH v2 1/1] exfat: Add support for FS_IOC_{GET,SET}FSLABEL
-Date: Sat, 16 Aug 2025 20:30:46 -0400
-Message-Id: <20250817003046.313497-2-ethan.ferguson@zetier.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250817003046.313497-1-ethan.ferguson@zetier.com>
-References: <20250817003046.313497-1-ethan.ferguson@zetier.com>
+	"Matthew Wilcox" <willy@infradead.org>, "Chao Yu" <chao@kernel.org>,
+	"Yi Zhang" <yi.zhang@huawei.com>, "Barry Song" <21cnbao@gmail.com>,
+	"Darrick J. Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org
+Subject: Re:Re:Re: [f2fs-dev] [RFC PATCH 0/9] f2fs: Enable buffered
+ read/write large folios support with extended iomap
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2023.4-cmXT build
+ 20250723(a044bf12) Copyright (c) 2002-2025 www.mailtech.cn 126com
+In-Reply-To: <e81c31e.56a.198a604868e.Coremail.nzzhao@126.com>
+References: <20250813092131.44762-1-nzzhao@126.com>
+ <aJytvfsMcR2hzWKI@infradead.org>
+ <e81c31e.56a.198a604868e.Coremail.nzzhao@126.com>
+X-NTES-SC: AL_Qu2eB/ibuk8i5yWRZOkfmUgRgOw3XMSyu/oi2o9UO5FwjDHjwAEMdlNvPmP86+SWEwalmwasXgpj785Bco1jU44bXwcKXxuA31xYV6iKzEAS+w==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <6be3b4b7.83a.198b656b16c.Coremail.nzzhao@126.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:bikvCgD3v9XfXaFoM9AbAA--.3364W
+X-CM-SenderInfo: xq22xtbr6rjloofrz/1tbiZBWrz2igkwCEcQAKsx
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-Add support for reading / writing to the exfat volume label from the
-FS_IOC_GETFSLABEL and FS_IOC_SETFSLABEL ioctls
-
-Signed-off-by: Ethan Ferguson <ethan.ferguson@zetier.com>
-
----
- fs/exfat/exfat_fs.h  |  2 +
- fs/exfat/exfat_raw.h |  6 +++
- fs/exfat/file.c      | 56 +++++++++++++++++++++++++
- fs/exfat/super.c     | 99 ++++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 163 insertions(+)
-
-diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
-index f8ead4d47ef0..a764e6362172 100644
---- a/fs/exfat/exfat_fs.h
-+++ b/fs/exfat/exfat_fs.h
-@@ -267,6 +267,7 @@ struct exfat_sb_info {
- 	struct buffer_head **vol_amap; /* allocation bitmap */
- 
- 	unsigned short *vol_utbl; /* upcase table */
-+	unsigned short volume_label[EXFAT_VOLUME_LABEL_LEN]; /* volume name */
- 
- 	unsigned int clu_srch_ptr; /* cluster search pointer */
- 	unsigned int used_clusters; /* number of used clusters */
-@@ -431,6 +432,7 @@ static inline loff_t exfat_ondisk_size(const struct inode *inode)
- /* super.c */
- int exfat_set_volume_dirty(struct super_block *sb);
- int exfat_clear_volume_dirty(struct super_block *sb);
-+int exfat_write_volume_label(struct super_block *sb);
- 
- /* fatent.c */
- #define exfat_get_next_cluster(sb, pclu) exfat_ent_get(sb, *(pclu), pclu)
-diff --git a/fs/exfat/exfat_raw.h b/fs/exfat/exfat_raw.h
-index 971a1ccd0e89..af04cef81c0c 100644
---- a/fs/exfat/exfat_raw.h
-+++ b/fs/exfat/exfat_raw.h
-@@ -80,6 +80,7 @@
- #define BOOTSEC_OLDBPB_LEN		53
- 
- #define EXFAT_FILE_NAME_LEN		15
-+#define EXFAT_VOLUME_LABEL_LEN		11
- 
- #define EXFAT_MIN_SECT_SIZE_BITS		9
- #define EXFAT_MAX_SECT_SIZE_BITS		12
-@@ -159,6 +160,11 @@ struct exfat_dentry {
- 			__le32 start_clu;
- 			__le64 size;
- 		} __packed upcase; /* up-case table directory entry */
-+		struct {
-+			__u8 char_count;
-+			__le16 volume_label[EXFAT_VOLUME_LABEL_LEN];
-+			__u8 reserved[8];
-+		} __packed volume_label;
- 		struct {
- 			__u8 flags;
- 			__u8 vendor_guid[16];
-diff --git a/fs/exfat/file.c b/fs/exfat/file.c
-index 538d2b6ac2ec..c57d266aae3d 100644
---- a/fs/exfat/file.c
-+++ b/fs/exfat/file.c
-@@ -12,6 +12,7 @@
- #include <linux/security.h>
- #include <linux/msdos_fs.h>
- #include <linux/writeback.h>
-+#include "../nls/nls_ucs2_utils.h"
- 
- #include "exfat_raw.h"
- #include "exfat_fs.h"
-@@ -486,6 +487,57 @@ static int exfat_ioctl_shutdown(struct super_block *sb, unsigned long arg)
- 	return exfat_force_shutdown(sb, flags);
- }
- 
-+static int exfat_ioctl_get_volume_label(struct super_block *sb, unsigned long arg)
-+{
-+	int ret;
-+	char utf8[FSLABEL_MAX] = {0};
-+	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-+	size_t len = UniStrnlen(sbi->volume_label, EXFAT_VOLUME_LABEL_LEN);
-+
-+	mutex_lock(&sbi->s_lock);
-+	ret = utf16s_to_utf8s(sbi->volume_label, len,
-+				UTF16_HOST_ENDIAN, utf8, FSLABEL_MAX);
-+	mutex_unlock(&sbi->s_lock);
-+
-+	if (ret < 0)
-+		return ret;
-+
-+	if (copy_to_user((char __user *)arg, utf8, FSLABEL_MAX))
-+		return -EFAULT;
-+
-+	return 0;
-+}
-+
-+static int exfat_ioctl_set_volume_label(struct super_block *sb, unsigned long arg)
-+{
-+	int ret = 0;
-+	char utf8[FSLABEL_MAX];
-+	size_t len;
-+	unsigned short utf16[EXFAT_VOLUME_LABEL_LEN] = {0};
-+	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-+
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	if (copy_from_user(utf8, (char __user *)arg, FSLABEL_MAX))
-+		return -EFAULT;
-+
-+	len = strnlen(utf8, FSLABEL_MAX);
-+	if (len > EXFAT_VOLUME_LABEL_LEN)
-+		exfat_info(sb, "Volume label length too long, truncating");
-+
-+	mutex_lock(&sbi->s_lock);
-+	ret = utf8s_to_utf16s(utf8, len, UTF16_HOST_ENDIAN, utf16, EXFAT_VOLUME_LABEL_LEN);
-+	mutex_unlock(&sbi->s_lock);
-+
-+	if (ret < 0)
-+		return ret;
-+
-+	memcpy(sbi->volume_label, utf16, sizeof(sbi->volume_label));
-+
-+	return exfat_write_volume_label(sb);
-+}
-+
- long exfat_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- {
- 	struct inode *inode = file_inode(filp);
-@@ -500,6 +552,10 @@ long exfat_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 		return exfat_ioctl_shutdown(inode->i_sb, arg);
- 	case FITRIM:
- 		return exfat_ioctl_fitrim(inode, arg);
-+	case FS_IOC_GETFSLABEL:
-+		return exfat_ioctl_get_volume_label(inode->i_sb, arg);
-+	case FS_IOC_SETFSLABEL:
-+		return exfat_ioctl_set_volume_label(inode->i_sb, arg);
- 	default:
- 		return -ENOTTY;
- 	}
-diff --git a/fs/exfat/super.c b/fs/exfat/super.c
-index 8926e63f5bb7..96cd4bb7cb19 100644
---- a/fs/exfat/super.c
-+++ b/fs/exfat/super.c
-@@ -18,6 +18,7 @@
- #include <linux/nls.h>
- #include <linux/buffer_head.h>
- #include <linux/magic.h>
-+#include "../nls/nls_ucs2_utils.h"
- 
- #include "exfat_raw.h"
- #include "exfat_fs.h"
-@@ -573,6 +574,98 @@ static int exfat_verify_boot_region(struct super_block *sb)
- 	return 0;
- }
- 
-+static int exfat_get_volume_label_ptrs(struct super_block *sb,
-+				       struct buffer_head **out_bh,
-+				       struct exfat_dentry **out_dentry)
-+{
-+	int i;
-+	unsigned int type;
-+	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-+	struct exfat_chain clu;
-+	struct exfat_dentry *ep;
-+	struct buffer_head *bh;
-+
-+	clu.dir = sbi->root_dir;
-+	clu.flags = ALLOC_FAT_CHAIN;
-+
-+	while (clu.dir != EXFAT_EOF_CLUSTER) {
-+		for (i = 0; i < sbi->dentries_per_clu; i++) {
-+			ep = exfat_get_dentry(sb, &clu, i, &bh);
-+
-+			if (!ep)
-+				return -EIO;
-+
-+			type = exfat_get_entry_type(ep);
-+			if (type == TYPE_UNUSED) {
-+				brelse(bh);
-+				return -EIO;
-+			}
-+
-+			if (type == TYPE_VOLUME) {
-+				*out_bh = bh;
-+				*out_dentry = ep;
-+				return 0;
-+			}
-+
-+			brelse(bh);
-+		}
-+
-+		if (exfat_get_next_cluster(sb, &(clu.dir)))
-+			return -EIO;
-+	}
-+
-+	return -EIO;
-+}
-+
-+static int exfat_read_volume_label(struct super_block *sb)
-+{
-+	int ret, i;
-+	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-+	struct buffer_head *bh;
-+	struct exfat_dentry *ep;
-+
-+	ret = exfat_get_volume_label_ptrs(sb, &bh, &ep);
-+	if (ret < 0)
-+		goto cleanup;
-+
-+	for (i = 0; i < EXFAT_VOLUME_LABEL_LEN; i++)
-+		sbi->volume_label[i] = le16_to_cpu(ep->dentry.volume_label.volume_label[i]);
-+
-+cleanup:
-+	if (bh)
-+		brelse(bh);
-+
-+	return ret;
-+}
-+
-+int exfat_write_volume_label(struct super_block *sb)
-+{
-+	int ret, i;
-+	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-+	struct buffer_head *bh;
-+	struct exfat_dentry *ep;
-+
-+	ret = exfat_get_volume_label_ptrs(sb, &bh, &ep);
-+	if (ret < 0)
-+		goto cleanup;
-+
-+	mutex_lock(&sbi->s_lock);
-+	for (i = 0; i < EXFAT_VOLUME_LABEL_LEN; i++)
-+		ep->dentry.volume_label.volume_label[i] = cpu_to_le16(sbi->volume_label[i]);
-+
-+	ep->dentry.volume_label.char_count =
-+		UniStrnlen(sbi->volume_label, EXFAT_VOLUME_LABEL_LEN);
-+	mutex_unlock(&sbi->s_lock);
-+
-+cleanup:
-+	if (bh) {
-+		exfat_update_bh(bh, true);
-+		brelse(bh);
-+	}
-+
-+	return ret;
-+}
-+
- /* mount the file system volume */
- static int __exfat_fill_super(struct super_block *sb,
- 		struct exfat_chain *root_clu)
-@@ -616,6 +709,12 @@ static int __exfat_fill_super(struct super_block *sb,
- 		goto free_bh;
- 	}
- 
-+	ret = exfat_read_volume_label(sb);
-+	if (ret) {
-+		exfat_err(sb, "failed to read volume label");
-+		goto free_bh;
-+	}
-+
- 	ret = exfat_count_used_clusters(sb, &sbi->used_clusters);
- 	if (ret) {
- 		exfat_err(sb, "failed to scan clusters");
--- 
-2.50.1
-
+ClRoZXJlJ3MgYW5vdGhlciBpbXBvcnRhbnQgcmVhc29uIHRvIHV0aWxpemUgYW4gZjJmc19pb21h
+cF9mb2xpb19zdGF0ZS7CoAoKQmVjYXVzZSBmMmZzIGRvZXNuJ3QgcG9zc2VzcyBhIHBlciBibG9j
+ayBzdGF0ZSB0cmFja2luZyBkYXRhIHN0cnVjdHVyZSAKbGlrZSBidWZmZXIgaGVhZHMgb3Igc3Vi
+cGFnZXMswqBpdCBjYW4ndCB0cmFjayBwZXIgYmxvY2sgZGlydHkgc3RhdGUgb3IgCnJlYWQvd3Jp
+dGUgYnl0ZXMgcGVuZGluZyBpdHNlbGYuIEdyb3dpbmcgc3VjaCBhIHN0cnVjdHVyZSBmb3IgZjJm
+cyBhbmQgIAphcHBseWluZyBpdCB0byBhbGwgY29kZSBwYXRocyBjb3VsZCBiZSBhIHRyZW1lbmRv
+dXMgYW5kIGRlc3RydWN0aXZlIAp0YXNrLsKgCgpTbyBJIHRoaW5rIGl0J3MgY29udmVuaWVudCB0
+byBwb3NzZXNzIGFuIGYyZnMgb3duIHBlciBmb2xpbyAKcHJpdmF0ZSBkYXRhIHN0cnVjdHVyZSB0
+aGF0IGNhbiBib3RoIGJlIGNvbXBhdGlibGXCoAp3aXRoIGlvbWFwIGFuZCBmMmZzJ3MgIG5lZWRz
+LCBlc3BlY2lhbGx5IGhlbHBmdWwgZm9yIG90aGVyIGYyZnMncyBpL28gcGF0aHMKIHRoYXQgbmVl
+ZCB0byAgc3VwcG9ydMKgbGFyZ2UgZm9saW9zIGFsdG9nZXRoZXIgd2l0aCBidWZmZXJlZCBpbyBi
+dXQgY2FuJ3QgCmdvIGludG8gaW9tYXAgIHBhdGggKGkuZS4sIGdhcmJhZ2UgY29sbGVjdGlvbiku
+CgogSXQgY2FuIGFsc28gYmUgZXh0ZW5kZWQgd2l0aCBmaWVsZHMgdG8KIG1lZXQgdGhlIG5lZWRz
+IG9mIG90aGVyIHR5cGVzIG9mIGYyZnMgZmlsZXMgKGUuZy4sIGNvbXByZXNzZWQgZmlsZXMpIGlm
+CiB0aGV5IG5lZWQgdG8gc3VwcG9ydCBsYXJnZSBmb2xpb3MgdG9vLgoKCgoKCkF0IDIwMjUtMDgt
+MTQgMDg6Mzk6MzEsICLotbXljZflk7IgIiA8bnp6aGFvQDEyNi5jb20+IHdyb3RlOgo+SGkgTXIu
+Q2hyaXN0b3BoLAo+Cj5UaGFua3MgZm9yIHRoZSBxdWljayBmZWVkYmFjayEKPgo+PiBUaGF0J3Mg
+cHJldHR5IHVnbHkuICBXaGF0IGFkZGl0aW9uYWwgZmxhZ3MgZG8geW91IG5lZWQ/ICAKPgo+RjJG
+UyBjYW4gdXRpbGl6ZSB0aGUgZm9saW8ncyBwcml2YXRlIGZpZWxkIGluIGEgbm9uLXBvaW50ZXIg
+bW9kZSB0byBzdG9yZSBpdHMgZXh0cmEgZmxhZ3MsIHdoaWNoIGluZGljYXRlIHRoZSBmb2xpbydz
+IGFkZGl0aW9uYWwgc3RhdHVzLiAKPlBsZWFzZSB0YWtlIGEgbG9vayBhdCB0aGUgZjJmcy5oIGZp
+bGUgZnJvbSBQQUdFX1BSSVZBVEVfR0VUX0ZVTkMgdG8gdGhlIGVuZCBvZiBjbGVhcl9wYWdlX3By
+aXZhdGVfYWxsKCkuCj4KPlRoZXNlIGZsYWdzIHBlcnNpc3QgdGhyb3VnaG91dCB0aGUgZW50aXJl
+IGxpZmV0aW1lIG9mIGEgZm9saW8sIHdoaWNoIGNvbmZsaWN0cyB3aXRoIHRoZSBpb21hcF9mb2xp
+b19zdGF0ZSBwb2ludGVyLgo+Q3VycmVudGx5LCB0aGUgcHJpdmF0ZSBmaWVsZHMgb2YgaW9tYXAn
+cyBleGlzdGluZyBkYXRhIHN0cnVjdHVyZXMsbmFtZWx5IHN0cnVjdCBpb21hcCdzIHByaXZhdGUs
+IHN0cnVjdCBpb21hcF9pdGVyJ3MgcHJpdmF0ZSwgCj5hbmQgc3RydWN0IGlvbWFwX2lvZW5kJ3Mg
+aW9fcHJpdmF0ZSxhcmUgZWl0aGVyIGFsbG9jYXRlZCBsb2NhbGx5IG9uIHRoZSBzdGFjayBvciBo
+YXZlIGEgbGlmZWN5Y2xlIG9uIHRoZSBoZWFwIHRoYXQgb25seSBleGlzdHMgCj5mb3IgdGhlIGR1
+cmF0aW9uIG9mIHRoZSBJL08gcm91dGluZS4gVGhpcyBjYW5ub3QgbWVldCBGMkZTJ3MgcmVxdWly
+ZW1lbnRzLgo+Cj4+IFdlIHNob3VsZCAgdHJ5IHRvIGZpZ3VyZSBvdXQgaWYgdGhlcmUgaXMgYSBz
+ZW5zaWJsZSB3YXkgdG8gc3VwcG9ydCB0aGUgbmVlZHMKPj4gd2l0aCBhIHNpbmdsZSBjb2RlYmFz
+ZSBhbmQgZGF0YSBzdHJ1Y3R1cmUuCj4KPkFzIGZhciBhcyBJIGtub3csIG9ubHkgRjJGUyBoYXMg
+dGhpcyByZXF1aXJlbWVudCwgd2hpbGUgb3RoZXIgZmlsZSBzeXN0ZW1zIGRvIG5vdC4gCj5UaGVy
+ZWZvcmUsIG15IGluaXRpYWwgdGhvdWdodCB3YXMgdG8gYXZvaWQgZGlyZWN0bHkgbW9kaWZ5aW5n
+IHRoZSBnZW5lcmljIGxvZ2ljIGluIGZzL2lvbWFwLiBJbnN0ZWFkLCBJIHByb3Bvc2UgZGVzaWdu
+aW5nIAo+YSB3cmFwcGVyIHN0cnVjdHVyZSBmb3IgaW9tYXBfZm9saW9fc3RhdGUgc3BlY2lmaWNh
+bGx5IGZvciBGMkZTIHRvIHNhdGlzZnkgYm90aCBpb21hcCdzIGFuZCBGMkZTJ3Mgb3duIG5lZWRz
+Lgo+Cj5Bbm90aGVyIGlzc3VlIGlzIHRoZSBoYW5kbGluZyBvZiBvcmRlci0wIGZvbGlvcy4gU2lu
+Y2UgdGhlIGlvbWFwIGZyYW1ld29yayBkb2VzIG5vdCBhbGxvY2F0ZSBhbiBpb21hcF9mb2xpb19z
+dGF0ZSBmb3IgdGhlc2UgZm9saW9zLCAKPkYyRlMgd2lsbCBhbHdheXMgc3RvcmVzIGl0cyBwcml2
+YXRlIGZsYWdzIGluIHRoZSBmb2xpby0+cHJpdmF0ZSBmaWVsZC4gVGhlbiBpb21hcCBmcmFtZXdv
+cmsgd291bGQgbWlzdGFrZW5seSBpbnRlcnByZXQgdGhlc2UgZmxhZ3MgYXMgYSBwb2ludGVyLiAK
+Pgo+SWYgd2UgYXJlIHRvIHNvbHZlIHRoaXMgaXNzdWUgaW4gZ2VuZXJpYyBpb21hcCBsYXllciwg
+YSBtaW5pbWFsIGNoYW5nZXMgbWV0aG9kIHRvIGlvbWFwIGZyYW1ld29yayBJIHN1cHBvc2UgaXMg
+dG8gbGV0IGlvbWFwIGxvZ2ljIGNhbgo+Ym90aCBkaXN0aW5ndWlzaCBwb2ludGVyIGFuZCBub24g
+cG9pbnRlciBtb2RlIG9mIGZvbGlvLT5wcml2YXRlLiBXZSBzaG91bGQgYWxzbyBhZGQgYSBwcml2
+YXRlIGZpZWxkIHRvIGlvbWFwX2ZvbGlvX3N0YXRlICwgb3IgZXh0ZW5kIGhlIHN0YXRlIAo+Zmxl
+eGlibGUgYXJyYXkgdG8gc3RvcmUgdGhlIGV4dHJhIGluZm9tYXRpb24uIElmIGlvbWFwIGRldGVj
+dHMgYSBvcmRlcj4wIGZvbGlvJ3MgZm9saW8tPnByaXZhdGUgaXMgdXNlZCBpbiBub24gcG9pbnRl
+ciBtb2RlLCB0aGVuIGl0IHN0b3JlIHRoZSBmbGFncyBpbiBhIG5ld2x5IAo+YWxsb2N0ZWQgaW9t
+YXBfZm9saW9fc3RhdGUgZmlyc3QgLCBjbGVhciB0aGUgcHJpdmF0ZSBmaWVsZCBhbmQgdGhlbiBz
+dG9yZSdzIGl0cyBhZGRyZXNzIGluIGl0Lgo+Cj5QLlMuICBJIGp1c3Qgbm90aWNlZCB5b3UgZGlk
+bid0IHJlcGx5IHZpYSBteSByZXNlbmQgcGF0Y2guIEkgbWlzc3BlbGxlZCBmMmZzJ3Mgc3Vic3l0
+ZW0gbWFpbCBhZGRyZXNzIGluIHRoZSBvcmlnaW5hbCBwYXRjaCBhbmQgSSBzaW5jZXJlbHkgYXBv
+bG9naXplIGZvciB0aGF0Lgo+SSBhbHJlYWR5IHJlLXNlbnQgdGhlIHNlcmllcyBhcyAgCj4gIltm
+MmZzLWRldl0gW1JFU0VORCBSRkMgUEFUQ0ggMC85XSBmMmZzOiBFbmFibGUgYnVmZmVyZWQgcmVh
+ZC93cml0ZSBsYXJnZSBmb2xpb3Mgc3VwcG9ydCB3aXRoIGV4dGVuZGVkIGlvbWFwIgo+Q291bGQg
+d2UgY29udGludWUgdGhlIGRpc2N1c3Npb24gb24gdGhhdCB0aHJlYWQgc28gdGhlIHJpZ2h0IGxp
+c3QgZ2V0cyB0aGUKPmZ1bGwgY29udGV4dD8gIFRoYW5rcyEKPgo+QmVzdCByZWdhcmRzLAo+TmFu
+emhlIFpoYW8KPgo+QXQgMjAyNS0wOC0xMyAyMzoyMjozNywgIkNocmlzdG9waCBIZWxsd2lnIiA8
+aGNoQGluZnJhZGVhZC5vcmc+IHdyb3RlOgo+Pk9uIFdlZCwgQXVnIDEzLCAyMDI1IGF0IDA1OjIx
+OjIyUE0gKzA4MDAsIE5hbnpoZSBaaGFvIHdyb3RlOgo+Pj4gKiAqKldoeSBleHRlbmRzIGlvbWFw
+KioKPj4+ICAgKiBGMkZTIHN0b3JlcyBpdHMgZmxhZ3MgaW4gdGhlIGZvbGlvJ3MgcHJpdmF0ZSBm
+aWVsZCwKPj4+ICAgICB3aGljaCBjb25mbGljdHMgd2l0aCBpb21hcF9mb2xpb19zdGF0ZS4KPj4+
+ICAgKiBUbyByZXNvbHZlIHRoaXMsIHdlIGRlc2lnbmVkIGYyZnNfaW9tYXBfZm9saW9fc3RhdGUs
+Cj4+PiAgICAgY29tcGF0aWJsZSB3aXRoIGlvbWFwX2ZvbGlvX3N0YXRlJ3MgbGF5b3V0IHdoaWxl
+IGV4dGVuZGluZwo+Pj4gICAgIGl0cyBmbGV4aWJsZSBzdGF0ZSBhcnJheSBmb3IgRjJGUyBwcml2
+YXRlIGZsYWdzLgo+Pj4gICAqIFdlIHN0b3JlIGEgbWFnaWMgbnVtYmVyIGluIHJlYWRfYnl0ZXNf
+cGVuZGluZyB0byBkaXN0aW5ndWlzaAo+Pj4gICAgIHdoZXRoZXIgYSBmb2xpbyB1c2VzIHRoZSBv
+cmlnaW5hbCBvciBGMkZTJ3MgaW9tYXBfZm9saW9fc3RhdGUuCj4+PiAgICAgSXQncyBjaG9zZW4g
+YmVjYXVzZSBpdCByZW1haW5zIDAgYWZ0ZXIgcmVhZGFoZWFkIGNvbXBsZXRlcy4KPj4KPj5UaGF0
+J3MgcHJldHR5IHVnbHkuICBXaGF0IGFkZGl0aW9uYWxzIGZsYWdzIGRvIHlvdSBuZWVkPyAgV2Ug
+c2hvdWxkCj4+dHJ5IHRvIGZpZ3VyZSBvdXQgaWYgdGhlcmUgaXMgYSBzZW5zaWJsZSB3YXkgdG8g
+c3VwcG9ydCB0aGUgbmVlZHMKPj53aXRoIGEgc2luZ2xlIGNvZGViYXNlIGFuZCBkYXRhIHN0cnVj
+dHVyZSBpZiB0aGF0IHRoZSByZXF1aXJlbWVudHMKPj5hcmUgc2Vuc2libGUuCg==
 
