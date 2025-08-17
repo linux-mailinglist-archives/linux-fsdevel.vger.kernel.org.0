@@ -1,281 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-58086-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58087-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1FECB29216
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Aug 2025 09:53:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DE42B29245
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Aug 2025 10:34:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 244541B23F8F
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Aug 2025 07:54:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FD95178804
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Aug 2025 08:34:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C43C242D88;
-	Sun, 17 Aug 2025 07:53:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="GloQMCCj"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDFE521CA03;
+	Sun, 17 Aug 2025 08:34:48 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B7147F4A;
-	Sun, 17 Aug 2025 07:53:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755417221; cv=pass; b=YZCHfnaLAE/3/xWhi8NI+3Baq6b0nRvGqLBwu4kl1q+ImpjJHi3JJJDhFSO1LwnC/IbdmO+D8uoA1/DAXTaYfs/zKK9PBi/Yx2APqq5r30Oba6l4De/wHLX2v+hqCqcSFuSU4qb9vnah8gLW3/xDiXONI4Z5OLTrp8DVtegsqfo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755417221; c=relaxed/simple;
-	bh=+A/lL2Vivktg9Fcjb1RlmK8N9LuyWC8xYg1ZWXsLqfs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VXIByBQcIWAzUZRWDCwEtZx9eRaNlU7p28NT6ZKX3CW6n8YBvGqiebEsBF6vlq5xaCSgAFotJ61Yz9Mae78IFn/TZKIu8cYErCKjJnzSVcHPjfWW7sDxqNyqwJKU5txythi5rXlTjx0imflzQQP3KLYiUhHVjCcvm7AUCuCfWjA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=GloQMCCj; arc=pass smtp.client-ip=136.143.188.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1755417184; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=XK9TUXUIImJ+S6YxKYji5AxuTW5lGuY8dd+ySQD4ic6g5ZDtTft9jYBjdCI+5FyosXuofqwB+nCkpkEFM7W0VGmSf64na/FokUFLwYLOw5pTk6sGkTREJJjB/90VsWUZY8fPbZpHUGm8gM9nJzXErl01GzxCs1romYVAWmn77p8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1755417184; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=FxEUlubSzS/ImSmy9LZfYIWs7jCDlWOHoKLlk40PBY4=; 
-	b=E3FC664HU6sv2FfICrC6I2ocZIAHg3Wu62IZIDTidy3mS2+MG1I3wEDbngmIia/DSK2HopvDaZ9jY3obHlBApOMooPia9WscG77uG5ocWMZA8nem5XD5Us05VqOe3NYJiDapox1BupcV2oO9IG3dVufo5gOJYs9VwxVdPpJSWiY=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
-	dmarc=pass header.from=<safinaskar@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755417183;
-	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=FxEUlubSzS/ImSmy9LZfYIWs7jCDlWOHoKLlk40PBY4=;
-	b=GloQMCCjcT4dXCZ2G2ZJdEWJgRqPoJbiEklJhtk+J8XF2yYPEtvD98cparmnXsgN
-	GmDKDhQAdViSTL2lCQvyUXpHTq5nS2FyQ0+J+mIVX6Ic8VAZDDHBjG3CHfUszRZ6nhv
-	WTsEmeuP54CPO+LOSkL33GMaBolI2yELwHnt6t0U=
-Received: by mx.zohomail.com with SMTPS id 1755417180137848.3990767083374;
-	Sun, 17 Aug 2025 00:53:00 -0700 (PDT)
-From: Askar Safin <safinaskar@zohomail.com>
-To: cyphar@cyphar.com
-Cc: alx@kernel.org,
-	brauner@kernel.org,
-	dhowells@redhat.com,
-	g.branden.robinson@gmail.com,
-	jack@suse.cz,
-	linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-man@vger.kernel.org,
-	mtk.manpages@gmail.com,
-	safinaskar@zohomail.com,
-	viro@zeniv.linux.org.uk,
-	Ian Kent <raven@themaw.net>,
-	autofs mailing list <autofs@vger.kernel.org>
-Subject: Re: [PATCH v3 00/12] man2: document "new" mount API
-Date: Sun, 17 Aug 2025 10:52:52 +0300
-Message-ID: <20250817075252.4137628-1-safinaskar@zohomail.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com>
-References: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9648E1D63D8
+	for <linux-fsdevel@vger.kernel.org>; Sun, 17 Aug 2025 08:34:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755419688; cv=none; b=WWtCx2eC01lStdNvgc7UVSueL/O1QMGlWlGEHAEd7JdojvT9Ts1diRWW6m7g9SW8v0fvWqzbniwqBmDcZN09ogzzUjpxtv3V6v074dFyqP5GxUiWf28joBuNbWbpHzvI4r5wZjiFl5XBTBvqqU9X5pcIFvvtt8vEEmmxc3fjjaY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755419688; c=relaxed/simple;
+	bh=wH/Ubat2+7BnZ75tSogI77zPUJTcOLjX8OSOefRzHNQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=Fk9vXbupYy+ULAJn52bn76/BMz0Y/cyxW1husfJUF8XwRlDM3QN/DSQ4OpNVRXlJFAZVWtB4CPBjdvoZRDCPsOLTmSjesFArMQu6F01pbuyBJt0KMnKsc1bXrFQMs2/O8Ryww75lg+j7QXzPv9a5dJe9xOiQJiSHAJDgPTjFPrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-88432e62d01so435105639f.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 17 Aug 2025 01:34:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755419685; x=1756024485;
+        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/XbfEN1k/gSsBEABxdcrTawukqj9qiBDPSr2V37dmic=;
+        b=qbeQ2BrbvTrlDpY0JecvHZTnugSNYh4I3ZQUEr9afzGR1/9TpwOQfiPtJjjJT4EzHn
+         iQQ0+r9tq/+5MM8uk9vZJX0gpjFs92RjJPoGpTF/WBNmEeiq8GDcj3AvFOYsoh1D9Bmc
+         bIi3Xw2yEvVj8HdhGZH2VvAuXNOKXMsEGw2jQi6yFAipgyrupUrBV5kSElUe51To+w5u
+         Pf1flhwM4oqe7oU+BfNQKuLkJ40NdVvn1kTYtj1mXQMS+STBfZdcXJaKCKt+GrLoluwW
+         NiGmrs9byzrSoHfddqGFuaSy61r23I0iETNW/HIXPEtnKysbuohBjSMTVrKeqKrDrTv2
+         2+og==
+X-Forwarded-Encrypted: i=1; AJvYcCUYWxXsdCflVMSr2fjEsMKTp5R4mVLCmzOzQKBNvicVA2IU+1CbHu2PIO0h/toez81FCF9lSAkfaCyYi57Z@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3B+eqeapdmymiGY6ETyazqK0KdYqABmzD6VBoJ3cGlRm4NEs3
+	Gjye8dKp+ss3mUkCpZ+dFfnJWyNrcqCZK2gERZ6CWQobu0ZKAfREPm+vq4QuJ2x0O8yUIaqz4jz
+	i1UUOwunR9nO+oQRMH3q2LKDBAWvwWfc6t9IsnTWm943hhbzkR3JLWTllntY=
+X-Google-Smtp-Source: AGHT+IGiWqrm1nJEcVFM1ZVWdN0l9BXcpBE0JAq4jPEYdSb0wjl90ebdKLrv0nt+wJuydm1ouwQt+qpV+rodHXLfAEpOXkVHEmO3
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Feedback-ID: rr0801122748e966da49482809fcfa4ba9000041892980e08522db2c57f7da5fd32461398966667a65ec4920:zu0801122761e17a577db9357d25cc90f1000019da1d41d054edff11faa48fb5cc9ad3192d1c4f5edfc9c349:rf0801122b16bfbc0e5b8ba3441d3450190000fa2c120cde899195b935c940a75f78d1882c67a53c1470cea4170e57be:ZohoMail
-X-ZohoMailClient: External
+X-Received: by 2002:a05:6e02:1545:b0:3e5:66a6:a46a with SMTP id
+ e9e14a558f8ab-3e57e9c4a5emr131036615ab.17.1755419684780; Sun, 17 Aug 2025
+ 01:34:44 -0700 (PDT)
+Date: Sun, 17 Aug 2025 01:34:44 -0700
+In-Reply-To: <cover.1755300815.git.boris@bur.io>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68a19424.050a0220.e29e5.0065.GAE@google.com>
+Subject: [syzbot ci] Re: introduce uncharged file mapped folios
+From: syzbot ci <syzbot+ciacf14517a343602e@syzkaller.appspotmail.com>
+To: boris@bur.io, kernel-team@fb.com, linux-btrfs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, shakeel.butt@linux.dev, 
+	willy@infradead.org, wqu@suse.com
+Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-I noticed that you changed docs for automounts.
-So I dig into automounts implementation.
-And I found a bug in openat2.
-If RESOLVE_NO_XDEV is specified, then name resolution
-doesn't cross automount points (i. e. we get EXDEV),
-but automounts still happen!
-I think this is a bug.
-Bug is reproduced in 6.17-rc1.
-In the end of this mail you will find reproducer.
-And miniconfig.
+syzbot ci has tested the following series
 
-If you send patches for this bug, please, CC me.
+[v2] introduce uncharged file mapped folios
+https://lore.kernel.org/all/cover.1755300815.git.boris@bur.io
+* [PATCH v2 1/3] mm/filemap: add AS_UNCHARGED
+* [PATCH v2 2/3] mm: add vmstat for cgroup uncharged pages
+* [PATCH v2 3/3] btrfs: set AS_UNCHARGED on the btree_inode
 
-Are automounts actually used? Is it possible to deprecate or
-remove them? It seems for me automounts are rarely tested obscure
-feature, which affects core namei code.
+and found the following issue:
+WARNING in folio_lruvec_lock_irqsave
 
-This reproducer is based on "tracing" automount, which
-actually *IS* already deprecated. But automount mechanism
-itself is not deprecated, as well as I know.
+Full report is available here:
+https://ci.syzbot.org/series/15fd2538-1138-43c0-b4d6-6d7f53b0be69
 
-Also, I did read namei code, and I think that
-options AT_NO_AUTOMOUNT, FSPICK_NO_AUTOMOUNT, etc affect
-last component only, not all of them. I didn't test this yet.
-I plan to test this within next days.
+***
 
-Also, I still didn't finish my experiments. Hopefully I will
-finish them in 7 days. :)
+WARNING in folio_lruvec_lock_irqsave
 
-Askar Safin
+tree:      torvalds
+URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux
+base:      dfc0f6373094dd88e1eaf76c44f2ff01b65db851
+arch:      amd64
+compiler:  Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+config:    https://ci.syzbot.org/builds/5b3f7bc8-d0c2-4985-8ae6-d51ea4e2baed/config
+C repro:   https://ci.syzbot.org/findings/f02552bd-e7e6-4c3f-8cc3-04a5a946771d/c_repro
+syz repro: https://ci.syzbot.org/findings/f02552bd-e7e6-4c3f-8cc3-04a5a946771d/syz_repro
 
-====
+ do_new_mount+0x2a2/0x9e0 fs/namespace.c:3805
+ do_mount fs/namespace.c:4133 [inline]
+ __do_sys_mount fs/namespace.c:4344 [inline]
+ __se_sys_mount+0x317/0x410 fs/namespace.c:4321
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 5951 at ./include/linux/memcontrol.h:734 folio_lruvec include/linux/memcontrol.h:734 [inline]
+WARNING: CPU: 0 PID: 5951 at ./include/linux/memcontrol.h:734 folio_lruvec_lock_irqsave+0x184/0x1d0 mm/memcontrol.c:1252
+Modules linked in:
+CPU: 0 UID: 0 PID: 5951 Comm: syz-executor Not tainted 6.17.0-rc1-syzkaller-00036-gdfc0f6373094-dirty #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+RIP: 0010:folio_lruvec include/linux/memcontrol.h:734 [inline]
+RIP: 0010:folio_lruvec_lock_irqsave+0x184/0x1d0 mm/memcontrol.c:1252
+Code: 74 0c 4c 89 f7 e8 cc 53 f8 ff 48 8b 04 24 49 89 06 eb a0 48 89 df 48 c7 c6 60 4e 98 8b e8 a4 36 fd fe c6 05 52 a1 62 0d 01 90 <0f> 0b 90 e9 a5 fe ff ff 44 89 e1 80 e1 07 80 c1 03 38 c1 0f 8c 22
+RSP: 0018:ffffc9000359f540 EFLAGS: 00010246
+RAX: f0f9782cf8520600 RBX: ffffea0000807140 RCX: f0f9782cf8520600
+RDX: 0000000000000002 RSI: ffffffff8dba6067 RDI: ffff888020a73980
+RBP: ffffc9000359f5e0 R08: ffff88804b024253 R09: 1ffff1100960484a
+R10: dffffc0000000000 R11: ffffed100960484b R12: ffff88804b032fe8
+R13: ffff88801ba80918 R14: ffff888106950000 R15: 0000000000000000
+FS:  0000555587fa3500(0000) GS:ffff8880b861c000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000c00003e720 CR3: 0000000029a9c000 CR4: 00000000000006f0
+Call Trace:
+ <TASK>
+ folio_lruvec_relock_irqsave include/linux/memcontrol.h:1544 [inline]
+ folio_batch_move_lru+0x20a/0x3a0 mm/swap.c:167
+ lru_add_drain_cpu+0x119/0x880 mm/swap.c:647
+ lru_add_drain+0x122/0x3e0 mm/swap.c:735
+ __folio_batch_release+0x48/0x90 mm/swap.c:1054
+ folio_batch_release include/linux/pagevec.h:101 [inline]
+ invalidate_inode_pages2_range+0x889/0xa80 mm/truncate.c:707
+ close_ctree+0x6ff/0x1380 fs/btrfs/disk-io.c:4408
+ generic_shutdown_super+0x135/0x2c0 fs/super.c:643
+ kill_anon_super+0x3b/0x70 fs/super.c:1282
+ btrfs_kill_super+0x41/0x50 fs/btrfs/super.c:2114
+ deactivate_locked_super+0xbc/0x130 fs/super.c:474
+ cleanup_mnt+0x425/0x4c0 fs/namespace.c:1378
+ task_work_run+0x1d4/0x260 kernel/task_work.c:227
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop+0xec/0x110 kernel/entry/common.c:43
+ exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
+ syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
+ syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
+ do_syscall_64+0x2bd/0x3b0 arch/x86/entry/syscall_64.c:100
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f4a78b8ff17
+Code: a8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 a8 ff ff ff f7 d8 64 89 02 b8
+RSP: 002b:00007ffe33fe80a8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+RAX: 0000000000000000 RBX: 00007f4a78c11c05 RCX: 00007f4a78b8ff17
+RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007ffe33fe8160
+RBP: 00007ffe33fe8160 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000ffffffff R11: 0000000000000246 R12: 00007ffe33fe91f0
+R13: 00007f4a78c11c05 R14: 000000000000f471 R15: 00007ffe33fe9230
+ </TASK>
 
-miniconfig:
 
-CONFIG_64BIT=y
+***
 
-CONFIG_EXPERT=y
+If these findings have caused you to resend the series or submit a
+separate fix, please add the following tag to your commit message:
+Tested-by: syzbot@syzkaller.appspotmail.com
 
-CONFIG_PRINTK=y
-CONFIG_PRINTK_TIME=y
-
-CONFIG_TTY=y
-CONFIG_VT=y
-CONFIG_VT_CONSOLE=y
-CONFIG_FRAMEBUFFER_CONSOLE=y
-
-CONFIG_PROC_FS=y
-CONFIG_DEVTMPFS=y
-CONFIG_SYSFS=y
-CONFIG_TMPFS=y
-CONFIG_DEBUG_FS=y
-CONFIG_USER_EVENTS=y
-CONFIG_FTRACE=y
-CONFIG_MULTIUSER=y
-CONFIG_NAMESPACES=y
-CONFIG_USER_NS=y
-CONFIG_PID_NS=y
-
-
-CONFIG_SERIAL_8250=y
-CONFIG_SERIAL_8250_CONSOLE=y
-
-CONFIG_BLK_DEV_INITRD=y
-CONFIG_RD_GZIP=y
-
-CONFIG_BINFMT_ELF=y
-CONFIG_BINFMT_SCRIPT=y
-
-CONFIG_TRACEFS_AUTOMOUNT_DEPRECATED=y
-
-CONFIG_DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT=y
-
-====
-
-/*
-Author: Askar Safin
-Public domain
-
-Make sure your kernel is compiled with CONFIG_TRACEFS_AUTOMOUNT_DEPRECATED=y
-
-If that openat2 bug reproduces, then this program will
-print "BUG REPRODUCED". If openat2 is fixed, then
-the program will print "BUG NOT REPRODUCED".
-Any other output means that something gone wrong,
-i. e. results are indeterminate.
-
-This program requires root in initial user namespace
-*/
-
-#define _GNU_SOURCE
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sched.h>
-#include <errno.h>
-#include <sys/stat.h>
-#include <sys/mount.h>
-#include <sys/syscall.h>
-#include <linux/openat2.h>
-
-int
-main (void)
-{
-    if (unshare (CLONE_NEWNS) != 0)
-        {
-            perror ("unshare");
-            return 1;
-        }
-    if (mount (NULL, "/", NULL, MS_REC | MS_PRIVATE, NULL) != 0)
-        {
-            perror ("mount(NULL, /, NULL, MS_REC | MS_PRIVATE, NULL)");
-            return 1;
-        }
-    if (mount (NULL, "/tmp", "tmpfs", 0, NULL) != 0)
-        {
-            perror ("mount tmpfs");
-            return 1;
-        }
-    if (mkdir ("/tmp/debugfs", 0777) != 0)
-        {
-            perror ("mkdir(/tmp/debugfs)");
-            return 1;
-        }
-    if (mount (NULL, "/tmp/debugfs", "debugfs", 0, NULL) != 0)
-        {
-            perror ("mount debugfs");
-            return 1;
-        }
-    {
-        struct statx tracing;
-        if (statx (AT_FDCWD, "/tmp/debugfs/tracing", AT_NO_AUTOMOUNT, 0, &tracing) != 0)
-            {
-                perror ("statx tracing");
-                return 1;
-            }
-        if (!(tracing.stx_attributes_mask & STATX_ATTR_MOUNT_ROOT))
-            {
-                fprintf (stderr, "???\n");
-                return 1;
-            }
-        // Let's check that nothing is mounted at /tmp/debugfs/tracing yet
-        if (tracing.stx_attributes & STATX_ATTR_MOUNT_ROOT)
-            {
-                fprintf (stderr, "Something already mounted at /tmp/debugfs/tracing\n");
-                return 1;
-            }
-    }
-    if (chdir ("/tmp/debugfs") != 0)
-        {
-            perror ("chdir");
-            return 1;
-        }
-    {
-        struct open_how how;
-        memset (&how, 0, sizeof how);
-        how.flags = O_DIRECTORY;
-        how.mode = 0;
-        how.resolve = RESOLVE_NO_XDEV | RESOLVE_NO_MAGICLINKS | RESOLVE_NO_SYMLINKS;
-        if (syscall (SYS_openat2, AT_FDCWD, "tracing", &how, sizeof how) != -1)
-            {
-                fprintf (stderr, "openat2 crossed automount point");
-                return 1;
-            }
-        if (errno != EXDEV)
-            {
-                fprintf (stderr, "wrong errno");
-                return 1;
-            }
-    }
-    {
-        struct statx tracing;
-        if (statx (AT_FDCWD, "/tmp/debugfs/tracing", AT_NO_AUTOMOUNT, 0, &tracing) != 0)
-            {
-                perror ("statx tracing (2)");
-                return 1;
-            }
-        if (!(tracing.stx_attributes_mask & STATX_ATTR_MOUNT_ROOT))
-            {
-                fprintf (stderr, "???\n");
-                return 1;
-            }
-        if (tracing.stx_attributes & STATX_ATTR_MOUNT_ROOT)
-            {
-                fprintf (stderr, "BUG REPRODUCED. Something mounted at /tmp/debugfs/tracing\n");
-                return 0;
-            }
-        else
-            {
-                fprintf (stderr, "BUG NOT REPRODUCED\n");
-                return 0;
-            }
-    }
-}
+---
+This report is generated by a bot. It may contain errors.
+syzbot ci engineers can be reached at syzkaller@googlegroups.com.
 
