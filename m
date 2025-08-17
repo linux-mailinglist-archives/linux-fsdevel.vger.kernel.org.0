@@ -1,168 +1,162 @@
-Return-Path: <linux-fsdevel+bounces-58094-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58095-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0756CB293B8
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Aug 2025 17:04:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 95A96B293D8
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Aug 2025 17:30:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9120206C32
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Aug 2025 15:04:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7295E207B2A
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Aug 2025 15:30:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAA81223301;
-	Sun, 17 Aug 2025 15:04:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36D182E5426;
+	Sun, 17 Aug 2025 15:29:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RezlY0wC"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eNJF3g+/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F4B186A;
-	Sun, 17 Aug 2025 15:04:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC4E2D661E;
+	Sun, 17 Aug 2025 15:29:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755443045; cv=none; b=ekTakK40FlZ4xecGQ649v6vzbBNlt3sBZswZIfaIJYMrix0HBfFhWYJy5Ke2qMHo2A3y2T0nxmDu0xoFZktvqCQYIsZ880qb1b7eVcRAgscdQrfUWy0jKCB5aXd1bnXT5gSH0rz04vjFfR1pjsvaR3nqmkGVCCE9XU5AHkaSiM8=
+	t=1755444590; cv=none; b=e2ziq8CiA4+zyRYoau/tKTLjSK81OQPMg1FZ/+J4PwzIvHG5rLUU5XCKYx/ec8qumzcYY6CE+scrBvfj7btWhCaXLe8Jceys00zlvUa8DBpuZcv6oOpH2W9oA6Sy8ZtH4gQaxkFQQA853CdgCK6MXAZyDQH5GapHMmxVXw2/qKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755443045; c=relaxed/simple;
-	bh=ur5KkraNPuEYqHRyd33DJMmkfD9qgU9wZRmFor3Sagg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HA+twe+Jp5Gc3fX1dcuWZu9oxZkVcHmFdjMPLEKZmN/ah7W6uL9MxQjFF6e5VN2b31kh+2QXaNEMtk8qOUPQHY/ftFcE55P8SmSupRguTkHZugGb20bjhTtklabn2h5uahwZp/1wksnW/lhMKJKBhf7rhSypwt/j27Y1HqBUj+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RezlY0wC; arc=none smtp.client-ip=209.85.208.44
+	s=arc-20240116; t=1755444590; c=relaxed/simple;
+	bh=ORgNpsPbbGzaR+Sl3YhShI7w5aioHRH3PTbk28B7N/o=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oip6e5K+ruI3/mVXAaCIKTwFUHIrR3CX7Vp5+mxqDyVBF0q82W4h9ZGXjD+SqFD06zc2GDWVNLDr7glWfYXqioQ8kgX79gAI3JQHJnGIzEuS8hCq+APlyZvteFe6A2Co6FAqJKaTEM0UxUmGRAe2iNE9Mc4Ul67sF55vPWuRirc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eNJF3g+/; arc=none smtp.client-ip=209.85.221.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-61a2a5b0689so1068077a12.1;
-        Sun, 17 Aug 2025 08:04:03 -0700 (PDT)
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3b9d41d2a5cso2559986f8f.0;
+        Sun, 17 Aug 2025 08:29:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755443042; x=1756047842; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1755444587; x=1756049387; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2oDBK2IHSfeCUc+llP0hNqW2uaLUwPC5fWWUTdXGDvk=;
-        b=RezlY0wCEXJKFkhPfd7NRJvv5bLm7TkyfmuImICA4kU6JcOh1PuDzciDcyCwRLfzrE
-         RH++TrccBbeBdJ9ezEEY50u0iO0YWmI74tbtAV3usi4//uYHFT7jm9G0fcT0N8xZ7EVA
-         5hf5kCjOjWJ4EApcE3ZfuR+ip5CetWRJyfWqfojCdSSAIeLT/OA9V2mpi7QesyeORjgE
-         f0ArJHSUAVuVn9F8gI4BY53TTYzgvYuVnw11EOnUZAo/m7y8gaM3gVLR34lGqtv5NP6z
-         bbihOwIZpydGt7/qSfrkFmphCKKzjg+37BhXoDlBbBFNembS1UN/xkIh7Km+ZMpb7msm
-         HE6Q==
+        bh=/yTHuHE5ww4jge6UHTnIQ3bluATGxTVCe1o4/JqSzM8=;
+        b=eNJF3g+/F1mQXSMvqLnRPl8LSszHbtx0JrEQrJ6fotpe/E2GN4kNIeFRILb8RDWeNT
+         zWbSXaWk+d5ptYpEYKTp9yXxBsAOS419gzKWjA/jeBUbP0uLNsUdNgXw58Mp6AJQtVfL
+         iAXZ2orjrfcDrNtl0qa8fUSa1RsgmoelhcbMd8oPm1deXTMS/OYmt6Y85x2SkH7IORSn
+         SUjsJo2lEICGmtxK1mDqbcYzOFqYjuPvQ0pWk1lWbNK6ZOvpE/nbX30mQ5qimIns0ucq
+         5Hukh7dNgum06/AwccOPA+NVI9nnuoRJNNePZ9lMlVi6cbciekLLl0zx7tIxhzWc8TNl
+         23mw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755443042; x=1756047842;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1755444587; x=1756049387;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2oDBK2IHSfeCUc+llP0hNqW2uaLUwPC5fWWUTdXGDvk=;
-        b=SZksJGCxOE5uoP3yaB/p1SdSdaGxjCHmM1sLpyyFX6jAoiFIpwUFIzmj/SSjaNgtN8
-         yvJ4KAa9RG5+BAjiMbgKYDTV2a3F0s+x6uXS+ihvxVfTqfSrxU2nltV2xf/CtMTf2bVn
-         4Kghrmej5tY0reMDE8OLraDeUP8wYT9zpr/tO0neQ24Mnz8v4MYO2HqKPC92BAv2jguM
-         Lg/n/4fJkyRu4+DYfQrUyoDGdrJYyPuYcRcuf2isxGX7yCmQh49h8PS+SMm8Xfd6gCwp
-         g26gfZ3gU/i+CKIa8kO1S+M/BtFOCUAEvTxtKyPzmZyasfvYNzPeNYd916BFkhUREXtx
-         KSew==
-X-Forwarded-Encrypted: i=1; AJvYcCUqhgCMGo+vXm7Gru20oEkAErop+IefzNV++oJ/z+Al5oJdoWm4munE8wfjy9e8EU9McJ26/xV72y9w6XyB@vger.kernel.org, AJvYcCW5f/uMnY8MhUTHLJUnomO6cD7m6ICFGKh3KXP0f19P5bozEMXagAIebYCTrV7GMQIDYSLK7uMGWR239KV0ew==@vger.kernel.org, AJvYcCXd39jh3MSNwJjoTMkgiw9UxIrQBwBSIcFWtv9gWcq/UL4lAV1DeyerpSyHouCi5OnaUX9vjjU9aPuwLQAW@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+r7ls+HZ2q53hGNBUBhfWWTZY90b6ijSolJt6Ew/CidpFfyD0
-	HmH3O0zko196ch6ubTEUrNotUmfbGewFdjX5tLQ5YdeuYqa38Ww9kQb6Fb3/ztAzU2+P3+K1Xvw
-	UWnpNAQyUXzRMqbDO61grI4RrMWkQIgk=
-X-Gm-Gg: ASbGnctWn9vmeFTJmfcLQ2TVzuda7L9rDlGY6z8CFUxVJRKZmqaHKSFQEktK5oZX8Je
-	cOyDzyb+Rx7hU5AxULr+gzM7F1LB4aRrjvYJV2Hm35KLBYMZvaOStGZluVW3JhV/CsINjRhJ+VN
-	1sEtZgSsTltUyDmrXLCXGCd0Chf9tDw5lDpxMqJpdpk1X77N6kXEDtJAHiLFjTHJCtew4YJcGNB
-	7bIn4A=
-X-Google-Smtp-Source: AGHT+IHHwbsDRdYapi0Vuk3RyS86pXBaT5CViMbWdMAUOe2YX8fWP8ckFW5lM4R+7o8U08hw27G0sMnBBYaAaISNym8=
-X-Received: by 2002:a05:6402:518c:b0:618:363a:2c58 with SMTP id
- 4fb4d7f45d1cf-619b7077f75mr5218607a12.11.1755443041584; Sun, 17 Aug 2025
- 08:04:01 -0700 (PDT)
+        bh=/yTHuHE5ww4jge6UHTnIQ3bluATGxTVCe1o4/JqSzM8=;
+        b=fvjGiCHhj9/zHIErk0pjn5k6D2fJqu82c3docVF75+8doGxMCSQLb04OezDS82zsSw
+         W6DTYRkgeLJE5EhFyUZDxTclMibuMCwZy+P1QkVZ9L0OWsO7Dwb7jHnlh539G/QccfRe
+         3bf2g0CpDldlfkUWYss5jrz8vzr888PO0LInqprndIwesEPChKp46D46F4rq2jzZfGvV
+         zJoCZJHNNNVwP9ypGUP3qPkscY3KOz9b9XxT7HvSr4mnDqXx/VjtXIijziBoKOfeH1vm
+         8QhBM+3b3/PLCKYKKjpTkObYP4OjMXbLhwsCA5+A36aiC1os3EPF9+CiqrWtGlDPCw9Q
+         p7uQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU2kZ3/xcz2+JRhd/SHZrDlVldcesI+iVr8R0Z3VlsXJE67SIwnihTMMhozHGaHr72a9lOQLQbnHlr7FlsM@vger.kernel.org, AJvYcCWKyuWf050Nq9XHfsHvzhoS7Xgn9YFP9Y8u9YA/vtCFAX88v7XZmboACD7K1GMCgu6C8PXuOiytpceLp0ET@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQiJ31t4GzXftIhsIDQQH/RSA4oHZUM07P9j5GWGODJ/pCoYN6
+	S4XBioZGpxJhzuqwIfy5L18rgTNQwGf3B8o/qM9v3cgKW8O/+o8Uu4Zi
+X-Gm-Gg: ASbGncvNY2cYc86Htyw5jJIPhJ8lgKgauoawIwQlzFwFnE5z7OTzPVkUiSjRDz+aUMw
+	ceI3cFr9154AqS+K1pj7ZI8wr1s0sVCnJeCPXukpIaivw/HYKioG/PNUx49W31lkkkUgXmt8ude
+	HZxDYgLAj7nAZYQV7B9YZMFcoKeEHk7QqPyVKhGHbmTgHKUXPeAKlMjmraj/M1/M/MYWIQAjbld
+	TizPZrLoereQclPAeMvOjmionnH/gU0Ku3F1Kqr6RiN42FF7OsS5D4WPvKAuJ2Ucqgr6G8VMcLN
+	pHaSY6YZajgQmVUtxUFmh+3wjq0ceYC4MsRPTnKCr5dSce+QpOZAVh22NlPFZVQr0gRxnYU5dbf
+	7cAwIqRRy1pi68XWf2j8L5BlXQy7u3Ug2tGVP/VxBHSKJR1bu0xPySTYzp+wI
+X-Google-Smtp-Source: AGHT+IHgsmH0hMubdi6x7XMRlTjBKxUwul3MRRgiwRc4EmKLcW9mFOg8cJ9x2JcckF2vyUVXUEYhbQ==
+X-Received: by 2002:a05:6000:4027:b0:3a5:2599:4178 with SMTP id ffacd0b85a97d-3bc684d7b99mr5033090f8f.19.1755444587049;
+        Sun, 17 Aug 2025 08:29:47 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3bb6475863dsm9895754f8f.5.2025.08.17.08.29.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 Aug 2025 08:29:46 -0700 (PDT)
+Date: Sun, 17 Aug 2025 16:29:45 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, LKML
+ <linux-kernel@vger.kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>,
+ Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>,
+ =?UTF-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>, x86@kernel.org,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+ <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org
+Subject: Re: [patch 0/4] uaccess: Provide and use helpers for user masked
+ access
+Message-ID: <20250817162945.64c943e1@pumpkin>
+In-Reply-To: <CAHk-=wjsACUbLM-dAikbHzHBy6RFqyB1TdpHOMAJiGyNYM+FHA@mail.gmail.com>
+References: <20250813150610.521355442@linutronix.de>
+	<20250817144943.76b9ee62@pumpkin>
+	<CAHk-=wjsACUbLM-dAikbHzHBy6RFqyB1TdpHOMAJiGyNYM+FHA@mail.gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250814-tonyk-overlayfs-v5-0-c5b80a909cbd@igalia.com>
- <cffb248a-87ce-434e-bd64-2c8112872a18@igalia.com> <CAOQ4uxiVFubhiC9Ftwt3kG=RoGSK7rBpPv5Z0GdZfk17dBO6YQ@mail.gmail.com>
- <e2238a17-3d0a-4c30-bc81-65c8c4da98e6@igalia.com> <CAOQ4uxgfKcey301gZRBHf=2YfWmNg5zkj7Bh+DwVwpztMR1uOg@mail.gmail.com>
-In-Reply-To: <CAOQ4uxgfKcey301gZRBHf=2YfWmNg5zkj7Bh+DwVwpztMR1uOg@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Sun, 17 Aug 2025 17:03:50 +0200
-X-Gm-Features: Ac12FXz70SOaoH7XewpUKh3kqYrDwJFeBzKMp9Yd2G-ODp9NqVlb28dD1iZJGGE
-Message-ID: <CAOQ4uxjf6S7xX+LiMaxoz7Rg03jU1-4A4o3FZ_Hi8z6EyEc7PQ@mail.gmail.com>
-Subject: Re: [PATCH v5 0/9] ovl: Enable support for casefold layers
-To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>, linux-unionfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	kernel-dev@igalia.com, Gabriel Krisman Bertazi <krisman@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 15, 2025 at 3:50=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
- wrote:
->
-> On Fri, Aug 15, 2025 at 3:34=E2=80=AFPM Andr=C3=A9 Almeida <andrealmeid@i=
-galia.com> wrote:
+On Sun, 17 Aug 2025 07:00:17 -0700
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
+
+> On Sun, 17 Aug 2025 at 06:50, David Laight <david.laight.linux@gmail.com> wrote:
 > >
-> > Hi Amir,
-> >
-> > On 8/14/25 21:06, Amir Goldstein wrote:
-> > > On Thu, Aug 14, 2025 at 7:30=E2=80=AFPM Andr=C3=A9 Almeida <andrealme=
-id@igalia.com> wrote:
-> > >> Em 14/08/2025 14:22, Andr=C3=A9 Almeida escreveu:
-> > >>> Hi all,
-> > >>>
-> > >>> We would like to support the usage of casefold layers with overlayf=
-s to
-> > >>> be used with container tools. This use case requires a simple setup=
-,
-> > >>> where every layer will have the same encoding setting (i.e. Unicode
-> > >>> version and flags), using one upper and one lower layer.
-> > >>>
-> > >> Amir,
-> > >>
-> > >> I tried to run your xfstest for casefolded ovl[1] but I can see that=
- it
-> > >> still requires some work. I tried to fix some of the TODO's but I di=
-dn't
-> > >> managed to mkfs the base fs with casefold enabled...
-> > > When you write mkfs the base fs, I suspect that you are running
-> > > check -overlay or something.
-> > >
-> > > This is not how this test should be run.
-> > > It should run as a normal test on ext4 or any other fs  that supports=
- casefold.
-> > >
-> > > When you run check -g casefold, the generic test generic/556 will
-> > > be run if the test fs supports casefold (e.g. ext4).
-> > >
-> > > The new added test belongs to the same group and should run
-> > > if you run check -g casefold if the test fs supports casefold (e.g. e=
-xt4).
-> > >
-> > I see, I used `check -overlay` indeed, thanks!
-> >
->
-> Yeh that's a bit confusing I'll admit.
-> It's an overlayfs test that "does not run on overlayfs"
-> but requires extra overlayfs:
->
-> _exclude_fs overlay
-> _require_extra_fs overlay
->
-> Because it does the overlayfs mount itself.
-> That's the easiest way to test features (e.g. casefold) in basefs
->
+> > Linus didn't like it, but I've forgotten why.  
+> 
+> I think the reason I didn't love it is that it has a bit subtle
+> semantics, and I think you just proved my point:
 
-I tried to run the new test, which is able to mount an overlayfs
-with layers with disabled casefolding with kernel 6.17-rc1.
+Just requiring the caller pass &user_ptr would make it more obvious.
+The generated code (with 'src' -> *&src) will be the same.
 
-It does not even succeed in passing this simple test with
-your patches, so something is clearly off.
+> 
+> > I'm also not convinced of the name.
+> > There isn't any 'masking' involved, so it shouldn't be propagated.  
+> 
+> Sure there is. Look closer at that patch:
+> 
+> +       if (can_do_masked_user_access())                                \
+> +               src = masked_user_access_begin(src);                    \
+> 
+> IOW, that macro changes the argument and masks it.
 
-> You should also run check -overlay -g overlay/quick,
-> but that's only to verify your patches did not regress any
-> non-casefolded test.
->
->
+Except the change has never been a 'mask' in the traditional sense.
+Neither the original cmp+sbb+or nor current cmp+cmov is really applying a mask.
+I think the 'guard page' might even be the highest user page, so it isn't
+even the case that kernel addresses get their low bits masked off.
 
-My tests also indicate that there are several regressions, so your patches
-must have changed code paths that should not have been changed.
+The function could just be user_read_begin(void __user *addr, unsigned long len);
+Although since it is the start of an unsafe_get_user() sequence perhaps
+is should be unsafe_get_user_begin() ?
 
-Thanks,
-Amir.
+> 
+> So it's actually really easy to use, but it's also really easy to miss
+> that it does that.
+> 
+> We've done this before, and I have done it myself. The classic example
+> is the whole "do_div()" macro that everybody hated because it did
+> exactly the same thing
+
+Divide is (well was, I think my zen5 has a fast divide) also slow enough that
+I doubt it would have mattered.
+
+- can you drop a 'must_check' on the div_u64() that people keep putting in
+patches as a drop-in replacement for do_div()?
+
+	David
+
+> (we also have "save_flags()" etc that have this
+> behavior).
+> 
+> So I don't love it - but I can't claim I've not done the same thing,
+> and honestly, it does make it very easy to use, so when Thomas sent
+> this series out I didn't speak out against it.
+> 
+>            Linus
+
 
