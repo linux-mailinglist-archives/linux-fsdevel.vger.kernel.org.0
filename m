@@ -1,182 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-58140-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58141-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4021B2A051
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 13:28:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4EF7B2A080
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 13:35:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E22A2188359E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 11:25:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 565A3560380
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 11:29:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA48319851;
-	Mon, 18 Aug 2025 11:25:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6027126F290;
+	Mon, 18 Aug 2025 11:28:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=honor.com header.i=@honor.com header.b="arFx1KDr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GWbYQfj7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mta22.hihonor.com (mta22.honor.com [81.70.192.198])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56C222765E9;
-	Mon, 18 Aug 2025 11:24:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.192.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD5131B132;
+	Mon, 18 Aug 2025 11:28:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755516302; cv=none; b=Q4acPYeBYmKKDg4ssIYjAkY6uBuQ7vTcZQOgSrAF43K/UpkhWWsfPrFa0VsLqiqjUWfT2HsqFswpShWQb6xzKIkBL5l/tEGq+95AW9fS5gqNNlRatBaph0IaqfMU8kdV6dRNijiY+QHqyOkdYQcPXwzjeC1TlVfz+FdWPjWzmTA=
+	t=1755516506; cv=none; b=TXqkJ8Kvi78B98rn4oYTTfLx97w199Z7m5ad4yzImz/dvzGNUJIDTe1urhHF1IiLx7ScqqZH02IB9q4rif/JhrxLxhXo2/hxKwaHLFfArj9mfFNYPvB9ma1tqecUpg23Be8MYH2Z6Y3L6qPjI8hPI1/9VKtahesKnXaSvYScGr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755516302; c=relaxed/simple;
-	bh=Qkbr+uQCuilHZLSmb/1/G8odbybj74cC3/YfI227FYI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lFHKHo8N5PZzfaDFpGLs9DxyLpceuOqZ8KXn7AlyEj+554xnyYF2Zl/GcDBZAbWB1Xtxmsv8mfsz5bPZC7kfwK9d17uPM4ModK4oPNlKtjXOhU2/wx0svSwd1AxM596lB04r6RUrS7MmxCiKv7gEVU4+8Low/fk/lcV4a8XaY60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; dkim=pass (1024-bit key) header.d=honor.com header.i=@honor.com header.b=arFx1KDr; arc=none smtp.client-ip=81.70.192.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-dkim-signature: v=1; a=rsa-sha256; d=honor.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=To:From;
-	bh=UxZbz9psm4mpR+SeH60qIj7pVbyxVdlqxbXa5D5Xxhw=;
-	b=arFx1KDryvlRqvvhPYG6oYfE5ivJ1gxdCmv+ydI3uSSKl724tQDCuxar0BqNiYAeAU38uOvvH
-	GAMu7vomlkrMcchvyV4Yr10+3pFJ36k3uPSaUS9o9d68czax7LspoJx54hCwE6xlGCt/ag4Hp23
-	NRjOLcxLGmqkYhaL+m+pNh8=
-Received: from w003.hihonor.com (unknown [10.68.17.88])
-	by mta22.hihonor.com (SkyGuard) with ESMTPS id 4c59Nd1yQ9zYlvVq;
-	Mon, 18 Aug 2025 19:24:49 +0800 (CST)
-Received: from a011.hihonor.com (10.68.31.243) by w003.hihonor.com
- (10.68.17.88) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 18 Aug
- 2025 19:24:57 +0800
-Received: from localhost.localdomain (10.144.23.14) by a011.hihonor.com
- (10.68.31.243) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 18 Aug
- 2025 19:24:57 +0800
-From: wangzijie <wangzijie1@honor.com>
-To: <akpm@linux-foundation.org>, <viro@zeniv.linux.org.uk>,
-	<adobriyan@gmail.com>, <rick.p.edgecombe@intel.com>, <ast@kernel.org>,
-	<k.shutemov@gmail.com>, <jirislaby@kernel.org>,
-	<linux-fsdevel@vger.kernel.org>
-CC: <polynomial-c@gmx.de>, <gregkh@linuxfoundation.org>,
-	<stable@vger.kernel.org>, <regressions@lists.linux.dev>, wangzijie
-	<wangzijie1@honor.com>
-Subject: [PATCH v2] proc: fix missing pde_set_flags() for net proc files
-Date: Mon, 18 Aug 2025 19:24:28 +0800
-Message-ID: <20250818112428.953835-1-wangzijie1@honor.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1755516506; c=relaxed/simple;
+	bh=0cXLqzl2kIYkuFrnOJI+PvHQezksNq5IXAPpAXVsBJ8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AU8vALOSHD1RrWl1dv7GjpqAN5WFRbMIqdjTkt2aKucJ5U8EhALo/u7HIcu8VQMP67poDnZMUuEvsSB6IcAH7Er5mEAvtj49m/Ch7MNmmiYPEl0smFqDwWaOBklN491QVcTTB6rMR4K/POSvl4FWm2q2C5/pkGUeVw/jac9N6Mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GWbYQfj7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 286A0C19421;
+	Mon, 18 Aug 2025 11:28:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755516506;
+	bh=0cXLqzl2kIYkuFrnOJI+PvHQezksNq5IXAPpAXVsBJ8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=GWbYQfj75VXNAYhYFmMCX4PGDcqOSNsrLz3wbazilJmceMu+x6Cc07epg8WvSR/Ji
+	 IFtQ4MP/IKzxA2KKcyhSNsiee+nmwHvFR/M9/eHIclU9mLoy04qO8lNT7OLaR4HfxR
+	 PiMYCo43Kqium9bp1qTA+xa91yBtvOOWztDhVKRPZw0OHHzkL6gSpjVgDFN97STqsn
+	 KOoC5Lh+2Al0CaqJ/CmDzHjGWcKmmd/4a0dbhZ/pD4H9V2YU//qD3+s1B6UH5vlX+V
+	 haphhoV/FefiaA10XPI1cMNdbSilfDoTyVWyVhTMuj5EnFRbOMXm4BPHlOS3cGUprN
+	 nxQq1jSrna1IQ==
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-afcb7a3a085so625903266b.2;
+        Mon, 18 Aug 2025 04:28:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU4+ZR2y8fcjRvE2pbBSwhpK/Rl0ez4s7YyuFgPFubmXODMPhXORYdppw6PApYnCCrkqoYoqnn+pTMDYbzN@vger.kernel.org, AJvYcCXHC8b0Hoa4elUcxzjkEv5KbgycDni8zLAallo2NHMIhh41NxvKIwqQaNq3BNOgfgvkKh9aWUyO8N/T8KPA@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxuct9K2YQOWD712KKV+zTbjxxsdO8PCbWPAmxrxXU69yOOyznq
+	IHLZ+ExNteuNSuBjZCADSGWekLAUouCQg+JyaTMl3ZzHMjuQ3PznTuU0BDtmDSxwDpu0v7//yNL
+	wC889iF6kiC4K103qRxx1+4urbPpboss=
+X-Google-Smtp-Source: AGHT+IGTVh4XzFYQebSSJw3OOadi47fhkE/vh7j0KQC0lfEt4QSU5uHIm8E8ES2FCw5OOfPb2/YPHgm4ZPZYrdTMw0U=
+X-Received: by 2002:a17:906:38c8:b0:af9:3ed3:eda2 with SMTP id
+ a640c23a62f3a-afcdc375ec6mr803869666b.60.1755516504666; Mon, 18 Aug 2025
+ 04:28:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: w001.hihonor.com (10.68.25.235) To a011.hihonor.com
- (10.68.31.243)
+References: <20250818092815.556750-1-zhao.xichao@vivo.com>
+In-Reply-To: <20250818092815.556750-1-zhao.xichao@vivo.com>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Mon, 18 Aug 2025 20:28:12 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd90NvZyNdHM5-OkqOvROfPLX8X=7wUnBWZ_mPiJ3WCH1w@mail.gmail.com>
+X-Gm-Features: Ac12FXyvJ6Eef0zfdHBZramoIi_sRNQuvwNIFPijNRMSwXfxGMDchY1plAVbX8A
+Message-ID: <CAKYAXd90NvZyNdHM5-OkqOvROfPLX8X=7wUnBWZ_mPiJ3WCH1w@mail.gmail.com>
+Subject: Re: [PATCH] exfat: drop redundant conversion to bool
+To: Xichao Zhao <zhao.xichao@vivo.com>
+Cc: sj1557.seo@samsung.com, yuezhang.mo@sony.com, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-To avoid potential UAF issues during module removal races, we use pde_set_flags()
-to save proc_ops flags in PDE itself before proc_register(), and then use
-pde_has_proc_*() helpers instead of directly dereferencing pde->proc_ops->*.
-
-However, the pde_set_flags() call was missing when creating net related proc files.
-This omission caused incorrect behavior which FMODE_LSEEK was being cleared
-inappropriately in proc_reg_open() for net proc files. Lars reported it in this link[1].
-
-Fix this by ensuring pde_set_flags() is called when register proc entry, and add
-NULL check for proc_ops in pde_set_flags().
-
-[1]: https://lore.kernel.org/all/20250815195616.64497967@chagall.paradoxon.rec/
-
-Fixes: ff7ec8dc1b64 ("proc: use the same treatment to check proc_lseek as ones for proc_read_iter et.al)
-Reported-by: Lars Wendler <polynomial-c@gmx.de>
-Signed-off-by: wangzijie <wangzijie1@honor.com>
----
-v2:
-- followed by Jiri's suggestion to refractor code and reformat commit message
----
- fs/proc/generic.c | 36 +++++++++++++++++++-----------------
- 1 file changed, 19 insertions(+), 17 deletions(-)
-
-diff --git a/fs/proc/generic.c b/fs/proc/generic.c
-index 76e800e38..003031839 100644
---- a/fs/proc/generic.c
-+++ b/fs/proc/generic.c
-@@ -367,6 +367,23 @@ static const struct inode_operations proc_dir_inode_operations = {
- 	.setattr	= proc_notify_change,
- };
- 
-+static void pde_set_flags(struct proc_dir_entry *pde)
-+{
-+	if (!pde->proc_ops)
-+		return;
-+
-+	if (pde->proc_ops->proc_flags & PROC_ENTRY_PERMANENT)
-+		pde->flags |= PROC_ENTRY_PERMANENT;
-+	if (pde->proc_ops->proc_read_iter)
-+		pde->flags |= PROC_ENTRY_proc_read_iter;
-+#ifdef CONFIG_COMPAT
-+	if (pde->proc_ops->proc_compat_ioctl)
-+		pde->flags |= PROC_ENTRY_proc_compat_ioctl;
-+#endif
-+	if (pde->proc_ops->proc_lseek)
-+		pde->flags |= PROC_ENTRY_proc_lseek;
-+}
-+
- /* returns the registered entry, or frees dp and returns NULL on failure */
- struct proc_dir_entry *proc_register(struct proc_dir_entry *dir,
- 		struct proc_dir_entry *dp)
-@@ -374,6 +391,8 @@ struct proc_dir_entry *proc_register(struct proc_dir_entry *dir,
- 	if (proc_alloc_inum(&dp->low_ino))
- 		goto out_free_entry;
- 
-+	pde_set_flags(dp);
-+
- 	write_lock(&proc_subdir_lock);
- 	dp->parent = dir;
- 	if (pde_subdir_insert(dir, dp) == false) {
-@@ -561,20 +580,6 @@ struct proc_dir_entry *proc_create_reg(const char *name, umode_t mode,
- 	return p;
- }
- 
--static void pde_set_flags(struct proc_dir_entry *pde)
--{
--	if (pde->proc_ops->proc_flags & PROC_ENTRY_PERMANENT)
--		pde->flags |= PROC_ENTRY_PERMANENT;
--	if (pde->proc_ops->proc_read_iter)
--		pde->flags |= PROC_ENTRY_proc_read_iter;
--#ifdef CONFIG_COMPAT
--	if (pde->proc_ops->proc_compat_ioctl)
--		pde->flags |= PROC_ENTRY_proc_compat_ioctl;
--#endif
--	if (pde->proc_ops->proc_lseek)
--		pde->flags |= PROC_ENTRY_proc_lseek;
--}
--
- struct proc_dir_entry *proc_create_data(const char *name, umode_t mode,
- 		struct proc_dir_entry *parent,
- 		const struct proc_ops *proc_ops, void *data)
-@@ -585,7 +590,6 @@ struct proc_dir_entry *proc_create_data(const char *name, umode_t mode,
- 	if (!p)
- 		return NULL;
- 	p->proc_ops = proc_ops;
--	pde_set_flags(p);
- 	return proc_register(parent, p);
- }
- EXPORT_SYMBOL(proc_create_data);
-@@ -636,7 +640,6 @@ struct proc_dir_entry *proc_create_seq_private(const char *name, umode_t mode,
- 	p->proc_ops = &proc_seq_ops;
- 	p->seq_ops = ops;
- 	p->state_size = state_size;
--	pde_set_flags(p);
- 	return proc_register(parent, p);
- }
- EXPORT_SYMBOL(proc_create_seq_private);
-@@ -667,7 +670,6 @@ struct proc_dir_entry *proc_create_single_data(const char *name, umode_t mode,
- 		return NULL;
- 	p->proc_ops = &proc_single_ops;
- 	p->single_show = show;
--	pde_set_flags(p);
- 	return proc_register(parent, p);
- }
- EXPORT_SYMBOL(proc_create_single_data);
--- 
-2.25.1
-
+On Mon, Aug 18, 2025 at 6:28=E2=80=AFPM Xichao Zhao <zhao.xichao@vivo.com> =
+wrote:
+>
+> The result of integer comparison already evaluates to bool. No need for
+> explicit conversion.
+>
+> No functional impact.
+>
+> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
+Applied it to #dev.
+Thanks!
 
