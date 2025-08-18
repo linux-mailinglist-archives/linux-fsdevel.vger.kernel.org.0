@@ -1,107 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-58199-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58200-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ABD0B2B042
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 20:26:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE2A3B2B049
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 20:27:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7CE41B606AC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 18:26:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EA7156679C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 18:27:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B5043314BE;
-	Mon, 18 Aug 2025 18:26:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38AA03314B1;
+	Mon, 18 Aug 2025 18:27:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="X9diEnfv"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kJEbi1py"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f195.google.com (mail-pg1-f195.google.com [209.85.215.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A323314A2;
-	Mon, 18 Aug 2025 18:26:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 464AF3314A2;
+	Mon, 18 Aug 2025 18:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755541585; cv=none; b=CEmekWpdkKH/TjPFxvmV/a/pGD5rdt8TARwiAlFRrqplZ8B59msOl14Mfkh/kKnyHOLP2T1pY5P1+fa+x3B9GKnj2vD0ZC8O58JBW9pCyozbE2CC0j4bjjUojd/wlEwAcU4z8ba4C4PWnHbLtozGk1tdZUudE1B5SrXlUKjkAq8=
+	t=1755541646; cv=none; b=F8R+KsSE3Qsh7RlUb/YaL8LxbfCgu8NOH5G7vbdrjDxlp19ItXC3wfsevECOl4SajXGRb6ccdPzCWEItNn3Aa9l//zj1Lw/O0U7BU8D6bGJ9ZTsHqvErYgLY6mvLEUyKAeNowt9ujUxy21pMoXXPtdrgHZAC6npIT8kMOhJTfgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755541585; c=relaxed/simple;
-	bh=EgalRbjYn9XvJ6vqxWwAZdqnhgYsrm33nDAWgv9wClU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=akgzklxreDsuEEl7UmQpxY2weo0cVy4CwtrxMNRnM6YuO1uZozJol1FIvVYm6eEcGbnfbl2M4AKhc8F3yx7w3521EjP0IUyNI8HEtWX4cEl0b82Gs9rxLwM02FEgWCgks+DjAYPqJn7gV3tOJAVjtOUrW28K3vjpqnwD/fvyPUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=X9diEnfv; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=O75UIUPO5Nhi6baLItc5aorQTbl3aXRmvPV/kSs4z1U=; b=X9diEnfvb8vsZSK7H4Ybwyad7Z
-	VGXrBAuw2mdZ8xiMQYV7DxC1p7tKM3M5WM/UjU+XMGlCrjrjI0Mq0M2JvEz6MXJ/BXJXw3nLzU4eB
-	F31BmJj5GovtvGO5IMSUv5I5qPzczC99qT8PEQtKonLLVan26mNpujoOC6QIPU+yvJoFIl9SUOf76
-	2hseD7EdBenfHkZApwqQFF0MXHvA3024HDtRdCoDNq+Ckj524lpzzRDJl5aRZcKllFh0tupl83bby
-	fcgTywetRcz6pD8NZawdz1QNwugUBHj9I4e7ncdz+FXNc7WYaaBKRPGbtmb4pGRJIetez3cU3LH64
-	+7DImIsA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uo4Yi-000000078b6-0d8k;
-	Mon, 18 Aug 2025 18:26:16 +0000
-Date: Mon, 18 Aug 2025 19:26:16 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: syzbot <syzbot+1ec0f904ba50d06110b1@syzkaller.appspotmail.com>
-Cc: andrii@kernel.org, ast@kernel.org, bigeasy@linutronix.de,
-	bpf@vger.kernel.org, brauner@kernel.org, daniel@iogearbox.net,
-	davem@davemloft.net, eddyz87@gmail.com, edumazet@google.com,
-	haoluo@google.com, jack@suse.cz, jiri@resnulli.us,
-	john.fastabend@gmail.com, jolsa@kernel.org,
-	kerneljasonxing@gmail.com, kpsingh@kernel.org, kuba@kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, martin.lau@linux.dev, netdev@vger.kernel.org,
-	pabeni@redhat.com, sdf@fomichev.me, song@kernel.org,
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
-	yonghong.song@linux.dev
-Subject: Re: [syzbot] [mm?] INFO: rcu detected stall in sys_umount (3)
-Message-ID: <20250818182616.GB222315@ZenIV>
-References: <67555b72.050a0220.2477f.0026.GAE@google.com>
- <68a2f584.050a0220.e29e5.009d.GAE@google.com>
+	s=arc-20240116; t=1755541646; c=relaxed/simple;
+	bh=JCKUiyE7LvQKokD1Uq6GmQAvtruiQweC9XXHp0iTSkI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KbE9lzSP0EPRL8TNnfYGImv3tZQ2Du0Y2JzO9/gbsdjflVKpzCLXMVnFf8bLeklU5/dM5sVt+RAEni/ztPUiZPSBLb1YOx6IStj7dsD9LuM1g/962Ek1TfqdfMTLJdSaEAn41a7yzFP03rR+iprsKPlgIIelPbSPJ9hQKirkPlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kJEbi1py; arc=none smtp.client-ip=209.85.215.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f195.google.com with SMTP id 41be03b00d2f7-b47156b3b79so3328833a12.0;
+        Mon, 18 Aug 2025 11:27:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755541644; x=1756146444; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1UBICNtV01HOUgPFmy2kmdepvqLkWf1wTnkenSpn6Mc=;
+        b=kJEbi1py1EgtZuF9iamw3yU5fLp70od7KchmM/gYHg2i5nowyPRMSFawTZn5xxmMh9
+         ZZcJ0pvCugHFXUQL8RLTqOkQ6No56qBydMrVTVJNjQ83cG3SmKnHFTv29dasdQtWrhEN
+         tW14dplwrR4gnqiBVfmOHBc6WUrjfN1hpuxSCm/DGkgytfwA2K84Ti3WJSEI4HC3j1jk
+         2nb4Rd3mGUXma8LnWjWXQP5F3TOLiXwzSVPz9fAw5M9lsFtSikykyVqwU09RxH0YVi6x
+         8bGUTGJ9E2GB1uWBjUfLl+MA8a6gf8lE/C+GZ7b1LithCS1rwD7CtLRTadX00LCiXui+
+         Aqfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755541644; x=1756146444;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1UBICNtV01HOUgPFmy2kmdepvqLkWf1wTnkenSpn6Mc=;
+        b=hqbZBVa5R8IZm9KDS6EVCRG2JFL6ZmXUd1orHpkxIE3ZFuL0vjJQMFLqc6BnwlPpuv
+         nxdxjaRn365OqYb6AbfyWO2tmf/49xY39l+n4In87dM/+CbhRGY3Xuq3CWPcpHDYSt0n
+         pFkiwocivSZShfsVxPoo5QFpkjgh9q1n08gvg0OI0twmg68A/RjbP8LAzoIqlazYOyPr
+         oaa1HJsKvjiw8JqcfmmdQ1Gg5rNyiHUQ/gYj2NrdPj7qe1HtlihTRFCb0ui1vyWf7hsz
+         RPW8ikXbkZziilNA00ZiXsH2HQX5XJZRT0Xw92G0w3Z/PTBA6v+HfQf9ht56Wp8KLk3s
+         QmgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXLfNHDkrxfJJEsH+0K//12bcod9KBApLWynYy0Hs5lLdNf1AlOZ/HwOU5kiyStC2IbgYB77jc+ShkLtF9T@vger.kernel.org, AJvYcCXVanXIhf67CDRusINzw72qDIB6FiYinWRfpa1c9P50N+6zHdo/cmzBwSA2u4df+4G3q2XjrqLrMuw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxh0wwKFmZdt+eAnPjtB10B4rHwgFmNy3+4cUhRmn4v26HVy2ve
+	78TN5EEiKFRRWlyOMXICRzspKnwV2uwdvWoo0KnmyDIkcfj9d0p1d+xN
+X-Gm-Gg: ASbGncttNPDsA2iBKqNeTd41YovI8LGYbZ9zkprbPzaQ77aBadnQYjK3ZpEeTulssA6
+	LOFN35PTXCbD0B8rKfSjsTV3nGv+SVC/iAj+XZx6232bxh7a5FUyTbuBoRsp7bfzf2Akk9itnSB
+	g21ykp64Cn8x0N+Dsi9vVT35W+nB7rSVMAeoJOY2HY+4FvgjQgOkZzW9q+zY6wcNJC14uplCseC
+	pTxnYyDh+Orz3e08mQvVDTXK1HktF2t9Aov5MnPhhHeOglI9wFlgo4QbqkAtldEp+6rgfdXHHEA
+	KUhZ5RI8YcabyHFPgfEpKeOsrl1J+bDggYQNZxQ3REU4AOtDdEAjnHyPDjeT+1BLj1eb7Y2dgCt
+	947U+YUvT4kNwnlQ24W5CzExbH7rqGU/py1mU
+X-Google-Smtp-Source: AGHT+IFo9q22uJAU9Cy1g8OPxX2RxfH+wNKYrCEg9SFElzcpE0VunUzB4MWZu5dWrCeB513oCefNkg==
+X-Received: by 2002:a17:902:ecca:b0:240:5bf7:97ac with SMTP id d9443c01a7336-2449c9be48cmr6168945ad.16.1755541644414;
+        Mon, 18 Aug 2025 11:27:24 -0700 (PDT)
+Received: from Ubuntu24.. ([103.187.64.31])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d50f576sm87080265ad.101.2025.08.18.11.27.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Aug 2025 11:27:23 -0700 (PDT)
+From: Shrikant Raskar <raskar.shree97@gmail.com>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	Shrikant Raskar <raskar.shree97@gmail.com>
+Subject: [PATCH] fs: document 'name' parameter in name_contains_dotdot()
+Date: Mon, 18 Aug 2025 23:56:52 +0530
+Message-ID: <20250818182652.29092-1-raskar.shree97@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <68a2f584.050a0220.e29e5.009d.GAE@google.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 18, 2025 at 02:42:28AM -0700, syzbot wrote:
-> syzbot has found a reproducer for the following issue on:
-> 
-> HEAD commit:    8f5ae30d69d7 Linux 6.17-rc1
-> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1321eba2580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=8c5ac3d8b8abfcb
-> dashboard link: https://syzkaller.appspot.com/bug?extid=1ec0f904ba50d06110b1
-> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-> userspace arch: arm64
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10cba442580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10a1eba2580000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/18a2e4bd0c4a/disk-8f5ae30d.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/3b5395881b25/vmlinux-8f5ae30d.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/e875f4e3b7ff/Image-8f5ae30d.gz.xz
-> mounted in repro: https://storage.googleapis.com/syzbot-assets/43186d9e448c/mount_0.gz
->   fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=174ba442580000)
-> 
-> The issue was bisected to:
-> 
-> commit d15121be7485655129101f3960ae6add40204463
-> Author: Paolo Abeni <pabeni@redhat.com>
-> Date:   Mon May 8 06:17:44 2023 +0000
-> 
->     Revert "softirq: Let ksoftirqd do its job"
+Adds a brief description of the 'name' parameter to resolve
+the kernel-doc warning.
 
-Would be interesting to see how it behaves on 
+Signed-off-by: Shrikant Raskar <raskar.shree97@gmail.com>
+---
+ include/linux/fs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #fixes (cda250b0fc83)
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index d7ab4f96d705..9f5c91962e85 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3281,7 +3281,7 @@ static inline bool is_dot_dotdot(const char *name, size_t len)
+ 
+ /**
+  * name_contains_dotdot - check if a file name contains ".." path components
+- *
++ * @name: file name or path string to check
+  * Search for ".." surrounded by either '/' or start/end of string.
+  */
+ static inline bool name_contains_dotdot(const char *name)
+-- 
+2.43.0
+
 
