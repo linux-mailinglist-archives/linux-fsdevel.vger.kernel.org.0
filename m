@@ -1,137 +1,177 @@
-Return-Path: <linux-fsdevel+bounces-58214-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58215-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4157B2B381
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 23:38:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73FC0B2B3C0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 23:53:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82EA13A990D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 21:37:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 520FF1BA45E6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 21:53:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FEAC21CA0D;
-	Mon, 18 Aug 2025 21:36:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="RCLNIcaS"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CE3C224234;
+	Mon, 18 Aug 2025 21:53:04 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from neil.brown.name (neil.brown.name [103.29.64.221])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C15202C5C
-	for <linux-fsdevel@vger.kernel.org>; Mon, 18 Aug 2025 21:36:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F725BAF0;
+	Mon, 18 Aug 2025 21:53:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755553018; cv=none; b=uO5dhBtuonWc0PRBgRfLY6Hnh9gEZC5X+tfDMmwwkNRTyP05YLsiowQIA+pj64KxBcHFE3qerc12A+NLwoiVlBX5zOcwcnphBHSIlkPZp2bAK6zotBwgeYyaOkIsuE3+J+73c662vuw4dcdj0Tc9xCNN9frmIqlgF0D583xUdBA=
+	t=1755553983; cv=none; b=fxQbzjpHBb02KM6Y0ENJTqANnT2Jd4yW4Szm2rRQMubeJ/sONfT9P1Bct+gjroT6W0Zt8RMSktWxe2TtuFA7bc1v1x0jwhHkU1syBlRYL8H47XJlqWyNjjnvlVFNhw3yPKCjdoU/bYoPy8orYtQtqlFcbVW/gs0Yb+5L9TGkIyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755553018; c=relaxed/simple;
-	bh=qSXmxjkE7tWxGF9GYswWGcUoeX7dBav9UeXc81vA4C0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sgYZxfJGuiIuaA9zYyOdOGDQWtY2P7ilvQtfj0ggrVdSnPd7YuUPukyGhRNzhJnqlp29Uz4KXwwAcyu/YpgnQLa/B2wFV6UT6lJAYkoDOTlpKLaeIVIydtpKgvllYtMmUuoY3YqKg2tPKs3mHcSYvVbspCqctulduKpBHWso85Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=RCLNIcaS; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-afcb78f5df4so760887566b.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Aug 2025 14:36:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1755553013; x=1756157813; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=aQ6Xr/RwWLTuxcCIJ1FhU8AVBTTArUeQ/AN3U4J5Pw8=;
-        b=RCLNIcaSeSb5wrjoblYxSQYxqLQ5ZYf7xqeeYnMh/FGTgHgIJGXo/ZLfOo6vLA1XaY
-         5ks7B0DI7bxvKZqGQV9qY6gaDiQIXlPkdgPeTKwVkezzeSsbclo18Jqf7nWDiCC5pmLR
-         ouenLhi+I5sJf36D25Z/i79RsU2Vfn+xRaaAg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755553013; x=1756157813;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aQ6Xr/RwWLTuxcCIJ1FhU8AVBTTArUeQ/AN3U4J5Pw8=;
-        b=N5OGzgcQf6YzZlL0VgpVCrHd7ULTTSiy+fCB6jvvn+i6f6L71K57wQnZI4lTJykKrK
-         Gb3ltHaO+huHnd4syKFJRCOXOZus5VirTLD3JvpDKiQ3xFGevRfV9dzI4Rmt3n+BlYtX
-         lEZeqAyUticCu2+RcYzuMAOfZOZfNajHI7ubQ9p4xwEzBGJDXBRa3swyN0d4/js1i95n
-         EWkOsBvMLfBEOhfa8KlEBht4xBitnzKgX8OCH+0p4BS34lsy34eqt2F2WDGqJ2EB57pp
-         XKoeEizBcITF9nxm+DCovtsIEey71AONVDcu/1teHyrtHpJvXBgv2snz4nRGqYrIppR+
-         vTjA==
-X-Forwarded-Encrypted: i=1; AJvYcCWQwWE0c8GcK+c7LD8kniX04FTHd02+zk1tzNBPnAuHWZnWWYTRQpHNbdXefkCcYPfdxUC2gyuG8z/LdW3d@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6SJlf4KLi7FkgYcUhFZ99J78vkAZf1hRkrj+v0pYv0kS0EsE8
-	8cw41KRf90jQSx4fTKE7l3PZSc+Jfb24Cm8plHe/NquqTLcn/u0OmRGPFBeLt7NmDddmTOG/uhv
-	n3UEL+aU=
-X-Gm-Gg: ASbGnctnxZob6zY0Yh11zHjRigBp6IbDvBjOhEoKu1hUZG7ajyZd3Kdqql0e2NqXRb3
-	s14Bm9IJojAqKiSm5d+otISbwPMGzL6lODPFqco7gdWfW0blubcRUt/B7hEfDFG3ktlwkK2kEih
-	KUJgLTdkvsQ4H7MwA7cW3BNOHkFOAtYgkcGMiPImiRkQTk0pxksrVptKIlAO1TObnvVec8XvfYB
-	PIozBz4FK8lJ8ZNCmuAKpH0U9idhXBDuHFMSa/tLoofNIQevRD1FRMys89RgHTxhopnHHvZUJMn
-	uxK+lkK/0b9+6Eggh5RGWWZAZQstggf8W5JXS1bn+jkuPEhsu5frXHizAygLoKAWyaxGpUFjtpF
-	UfTBP67n8A8uoACYJDX8X/JTVi8yisCRIc8YrQlKm3v45qhAjQOQDWIXiiJ5K7D/kl+6oUT9z
-X-Google-Smtp-Source: AGHT+IFbewUORizN7d6gBe6D5rm8aP0a+Qkem6jmn37rQdHH748CsspzWh8yuJdgVC98FIwgpkxHgg==
-X-Received: by 2002:a17:907:6d0e:b0:ae6:abe9:4daa with SMTP id a640c23a62f3a-afddccddda2mr27331366b.27.1755553013084;
-        Mon, 18 Aug 2025 14:36:53 -0700 (PDT)
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com. [209.85.208.44])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afcdce53c3bsm865962566b.23.2025.08.18.14.36.49
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Aug 2025 14:36:49 -0700 (PDT)
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-6188b793d21so7056454a12.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Aug 2025 14:36:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX11aMruPWYDlzeEsvshfg9/PMZqMfl68qjRHGQLqAwGIUKyeDIpu5HYFV/+F/RflJGX8/i/AOxPQjxP0Bu@vger.kernel.org
-X-Received: by 2002:a05:6402:274f:b0:615:cb9c:d5a2 with SMTP id
- 4fb4d7f45d1cf-61a7e737ccemr64589a12.18.1755553008944; Mon, 18 Aug 2025
- 14:36:48 -0700 (PDT)
+	s=arc-20240116; t=1755553983; c=relaxed/simple;
+	bh=DRMHdG3YWKwtd/b4JUaXjeLRAB0QV9VPh5fLSKg7/3g=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=M67OWXZDympLyU5ZO9+VBC7a0VAHNq88LPWc3bU+DuLBL0DMcQwJCnjuZvCOwM1o+R3BYGSiFcaiuJdIJYiSRDyPGUIhO6q+B4NuFS2Mg1KQOgY/U6XWbcMuNs/P8g5eBBalss3vJH8EGR1b7uq2/PJp1fj9UDouNr+73azUx7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
+Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
+	by neil.brown.name with esmtp (Exim 4.95)
+	(envelope-from <mr@neil.brown.name>)
+	id 1uo7mP-006FjJ-U7;
+	Mon, 18 Aug 2025 21:52:39 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250813150610.521355442@linutronix.de> <20250817144943.76b9ee62@pumpkin>
- <20250818222106.714629ee@pumpkin>
-In-Reply-To: <20250818222106.714629ee@pumpkin>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 18 Aug 2025 14:36:31 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wibAE=yDhWdY7jQ7xvCtbmW5Tjtt_zMJcEzey3xfL=ViA@mail.gmail.com>
-X-Gm-Features: Ac12FXxf0x77QebHuGiALx_MGnJLRb3R5d6KhLXyrQWXnGFnx9g-2vQrxqt1ti0
-Message-ID: <CAHk-=wibAE=yDhWdY7jQ7xvCtbmW5Tjtt_zMJcEzey3xfL=ViA@mail.gmail.com>
-Subject: Re: [patch 0/4] uaccess: Provide and use helpers for user masked access
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, 
-	=?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, x86@kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+From: "NeilBrown" <neil@brown.name>
+To: "Amir Goldstein" <amir73il@gmail.com>
+Cc: "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
+ "David Howells" <dhowells@redhat.com>,
+ "Marc Dionne" <marc.dionne@auristor.com>, "Xiubo Li" <xiubli@redhat.com>,
+ "Ilya Dryomov" <idryomov@gmail.com>, "Tyler Hicks" <code@tyhicks.com>,
+ "Miklos Szeredi" <miklos@szeredi.hu>, "Richard Weinberger" <richard@nod.at>,
+ "Anton Ivanov" <anton.ivanov@cambridgegreys.com>,
+ "Johannes Berg" <johannes@sipsolutions.net>,
+ "Trond Myklebust" <trondmy@kernel.org>, "Anna Schumaker" <anna@kernel.org>,
+ "Chuck Lever" <chuck.lever@oracle.com>, "Jeff Layton" <jlayton@kernel.org>,
+ "Steve French" <sfrench@samba.org>, "Namjae Jeon" <linkinjeon@kernel.org>,
+ "Carlos Maiolino" <cem@kernel.org>, linux-fsdevel@vger.kernel.org,
+ linux-afs@lists.infradead.org, netfs@lists.linux.dev,
+ ceph-devel@vger.kernel.org, ecryptfs@vger.kernel.org,
+ linux-um@lists.infradead.org, linux-nfs@vger.kernel.org,
+ linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+ linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 04/11] VFS: introduce dentry_lookup_continue()
+In-reply-to:
+ <CAOQ4uxjFPOZe004Cv+tT=NyQg2JOY6MOYQniSjaefVcg+3s-Kg@mail.gmail.com>
+References:
+ <>, <CAOQ4uxjFPOZe004Cv+tT=NyQg2JOY6MOYQniSjaefVcg+3s-Kg@mail.gmail.com>
+Date: Tue, 19 Aug 2025 07:52:39 +1000
+Message-id: <175555395905.2234665.9441673384189011517@noble.neil.brown.name>
 
-On Mon, 18 Aug 2025 at 14:21, David Laight <david.laight.linux@gmail.com> wrote:
->
-> Would something like this work (to avoid the hidden update)?
+On Mon, 18 Aug 2025, Amir Goldstein wrote:
+> On Wed, Aug 13, 2025 at 1:53=E2=80=AFAM NeilBrown <neil@brown.name> wrote:
+> >
+> > A few callers operate on a dentry which they already have - unlike the
+> > normal case where a lookup proceeds an operation.
+> >
+> > For these callers dentry_lookup_continue() is provided where other
+> > callers would use dentry_lookup().  The call will fail if, after the
+> > lock was gained, the child is no longer a child of the given parent.
+> >
+> > There are a couple of callers that want to lock a dentry in whatever
+> > its current parent is.  For these a NULL parent can be passed, in which
+> > case ->d_parent is used.  In this case the call cannot fail.
+> >
+> > The idea behind the name is that the actual lookup occurred some time
+> > ago, and now we are continuing with an operation on the dentry.
+> >
+> > When the operation completes done_dentry_lookup() must be called.  An
+> > extra reference is taken when the dentry_lookup_continue() call succeeds
+> > and will be dropped by done_dentry_lookup().
+> >
+> > This will be used in smb/server, ecryptfs, and overlayfs, each of which
+> > have their own lock_parent() or parent_lock() or similar; and a few
+> > other places which lock the parent but don't check if the parent is
+> > still correct (often because rename isn't supported so parent cannot be
+> > incorrect).
+> >
+> > Signed-off-by: NeilBrown <neil@brown.name>
+> > ---
+> >  fs/namei.c            | 39 +++++++++++++++++++++++++++++++++++++++
+> >  include/linux/namei.h |  2 ++
+> >  2 files changed, 41 insertions(+)
+> >
+> > diff --git a/fs/namei.c b/fs/namei.c
+> > index 7af9b464886a..df21b6fa5a0e 100644
+> > --- a/fs/namei.c
+> > +++ b/fs/namei.c
+> > @@ -1874,6 +1874,45 @@ struct dentry *dentry_lookup_killable(struct mnt_i=
+dmap *idmap,
+> >  }
+> >  EXPORT_SYMBOL(dentry_lookup_killable);
+> >
+> > +/**
+> > + * dentry_lookup_continue: lock a dentry if it is still in the given par=
+ent, prior to dir ops
+> > + * @child: the dentry to lock
+> > + * @parent: the dentry of the assumed parent
+> > + *
+> > + * The child is locked - currently by taking i_rwsem on the parent - to
+> > + * prepare for create/remove operations.  If the given parent is not
+> > + * %NULL and is no longer the parent of the dentry after the lock is
+> > + * gained, the lock is released and the call fails (returns
+> > + * ERR_PTR(-EINVAL).
+> > + *
+> > + * On success a reference to the child is taken and returned.  The lock
+> > + * and reference must both be dropped by done_dentry_lookup() after the
+> > + * operation completes.
+> > + */
+> > +struct dentry *dentry_lookup_continue(struct dentry *child,
+> > +                                     struct dentry *parent)
+> > +{
+> > +       struct dentry *p =3D parent;
+> > +
+> > +again:
+> > +       if (!parent)
+> > +               p =3D dget_parent(child);
+> > +       inode_lock_nested(d_inode(p), I_MUTEX_PARENT);
+> > +       if (child->d_parent !=3D p) {
+>=20
+> || d_unhashed(child))
+>=20
+> ;)
 
-It would certainly work, but I despise code inside macro arguments
-even more than I dislike the hidden update.
+As you say!
 
-If we want something like this, we should just make that last argument
-be a label, the same way unsafe_{get,put}_user() already works.
+>=20
+> and what about silly renames? are those also d_unhashed()?
 
-That would not only match existing user access exception handling, it
-might allow for architecture-specific asm code that uses synchronous
-trap instructions (ie the label might turn into an exception entry)
+With NFS it is not unhashed (i.e.  it is still hashed, but with a
+different name).  I haven't checked AFS.
 
-It's basically "manual exception handling", whether it then uses
-actual exceptions (like user accesses do) or ends up being some
-software implementation with just a "goto label" for the error case.
+But does it matter?  As long as it has the right parent and is not
+unhashed, it is a suitable dentry to pass to vfs_unlink() etc.
 
-I realize some people have grown up being told that "goto is bad". Or
-have been told that exception handling should be baked into the
-language and be asynchronous. Both of those ideas are complete and
-utter garbage, and the result of minds that cannot comprehend reality.
+If this race happened with NFS then ovl could try to remove the .nfsXXX
+file and would get ETXBUSY due to DCACH_NFSFS_RENAMED.  I don't think
+this is a problem.
 
-Asynchronous exceptions are horrific and tend to cause huge
-performance problems (think setjmp()). The Linux kernel exception
-model with explicit exception points is not only "that's how you have
-to do it in C", it's also technically superior.
+If we really wanted to be sure the name hadn't changed we could do a
+lookup and check that the same dentry is returned.
 
-And "goto" is fine, as long as you have legible syntax and don't use
-it to generate spaghetti code. Being able to write bad code with goto
-doesn't make 'goto' bad - you can write bad code with *anything*.
+OVL is by nature exposed to possible races if something else tried to
+modify the upper directory tree.  I don't think it needs to provide
+perfect semantics in that case, it only needs to fail-safe.  I think
+this recent change is enough to be safe in the face of concurrent
+unlinks.
 
-            Linus
+Thanks,
+NeilBrown
+
+=20
+> Thanks,
+> Amir.
+>=20
+
 
