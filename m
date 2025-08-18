@@ -1,96 +1,183 @@
-Return-Path: <linux-fsdevel+bounces-58150-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58151-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66C34B2A195
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 14:31:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C24ECB2A206
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 14:47:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14BE73B5FA2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 12:30:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E34C189D0FD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 12:33:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EBE732277A;
-	Mon, 18 Aug 2025 12:28:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9837B31E0ED;
+	Mon, 18 Aug 2025 12:31:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="QknxQMXO"
+	dkim=pass (1024-bit key) header.d=honor.com header.i=@honor.com header.b="V8apBO3p"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mta22.hihonor.com (mta22.hihonor.com [81.70.192.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36A01322778
-	for <linux-fsdevel@vger.kernel.org>; Mon, 18 Aug 2025 12:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41C7827B359;
+	Mon, 18 Aug 2025 12:31:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.192.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755520113; cv=none; b=f0x8/gsxQhTfupFF8otPt3oU2WuSNrvDX4zrKr3XMpcGhPsGXX4YQnomHX10W72qcUlGe5T3UT73bR0HGYYKIYYu4btbOxIgOuIGzoq7LZWaFScuZop0jsBaE0QdYkQJHH4nqVCJEf+WNfyZ9rwPEEiutk000QsnYWzcF8HtrFI=
+	t=1755520270; cv=none; b=uv5mptn3ZEzrrWUehzEFKalB6cqwv5OET7dSez8JMMwQBNqW6trq9MEoqGey2IE1kB8OrS0s6GsVecddOkDvKh86pZTHe45dqvcGERJH5yBB65xq3WYwLUSsJJmmlxC1Ex2zNLelbRSpOL5KV1BiPyFZ1ZM1Q+hf0+1ts+kqRoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755520113; c=relaxed/simple;
-	bh=/tfsHKMqr8nTfKg4Ex6rYrCn/i03jqipVdnJ6D3y+jM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cELi58BSu07MM7oFFWVMOeCSurvk9zeHfLgMB+Hcu4FeQj4QDR1hGg8yitu5b2LdYy+vS6peldtitsa6v6L504E2d1qLnUqXSju4/e0jRMhlu37/V6U8y50NyPdjKQVZUHavsTk0TlASUsdJfECfgRkDn9nRLv0crorHimZImZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=QknxQMXO; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4b113500aebso29297221cf.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Aug 2025 05:28:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1755520109; x=1756124909; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/tfsHKMqr8nTfKg4Ex6rYrCn/i03jqipVdnJ6D3y+jM=;
-        b=QknxQMXOuWkZxGjgtKdFHpficqCfx4EC2QllJOMznq4HBFgNp4cI94hf6xPKcBwX6T
-         5lMmXkwAv9D6vxxTTR5w/UPNOu8CvUzswndt0UtjG618WgJIVfdDIb+xY0jz2MRNp719
-         FRiJSI9GHuodddPDl4231nz9ddwQqbeoVTHJo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755520109; x=1756124909;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/tfsHKMqr8nTfKg4Ex6rYrCn/i03jqipVdnJ6D3y+jM=;
-        b=wSS9SYmPm5GLkiUeJzPa7O+UnGu435vPDFSKAnns9WZBpBUM/i80jseo+k66fgsOWt
-         6bzfKi7fVbOLH+IqOObjcKf4/J4sW1yNkU/hoJZb7bOONyszXBnsgIgb0s+x6L9RGOCP
-         h3M2xUN8Jq8L1Ym7K11JkoCkUOfyUiA5YXtFtSw7B/o6e7KF1vkJoiE+J88o3jKN4p19
-         opOHuDNI9B+KXvgMyj2arSnjGKn4QFaN9R/45IUNVX9hbwNR/tHXbiyqeLM/q0dmK4y5
-         /Owtcws5lMuOBn1r1eiHPbakJmyhUxB2pYVtU5fFk9eoGAipOKkWBFS7JjEdc+Eut9fH
-         n+kQ==
-X-Gm-Message-State: AOJu0YzcIPhrpGmpxhkGoUHrNEFMf1ryFLig3azmcNRGZpPXlTvCNaJO
-	Oz4XGETbPWW6EhHfLG8CMpOWdwG2RWli+B2syAmyfdQdH0tOkym/9gE3pFBMgzdY1OMQYmVbJaR
-	s6hGb231J5hUKNR4+MiN6rnYSa1/fzN7W2A4c6qT7Lg==
-X-Gm-Gg: ASbGncunLpQ/k/skjAWeGmUXc9/9xbZ2GcsmfN6TsHJggFNL18UeppNQ5A75iwhrCrp
-	dKbphq4IIm8ltKJ31dQn8HaZj67u2JhObuOQ7+zPsfZbKQlok38/Z5WPtukkk/qZMLNH+XqNK56
-	yQprfTh4S1aVD5CwgmAxguCwhO2edXv7GuUkmwFxoUfrkuHQAkH6ALuwPxLpDkmvUcLilvvVTvx
-	ejulbCJ1g==
-X-Google-Smtp-Source: AGHT+IETaYzj9o6mi8HTSIHcmGZ4YAGl4BNS9GKIhc6/SFw9vhRuJ8/nuysjKePoxZ+D12kQMPCu9H/2WXb1Kiwz20w=
-X-Received: by 2002:ac8:7f91:0:b0:4ab:b1d5:3b77 with SMTP id
- d75a77b69052e-4b11e2b399amr170728641cf.45.1755520108954; Mon, 18 Aug 2025
- 05:28:28 -0700 (PDT)
+	s=arc-20240116; t=1755520270; c=relaxed/simple;
+	bh=4U2B/X3PRDwfwp26Gl11jaTCuX399Kk4OZWVEFIKFIo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FXo/22jWAY0xn402qUAQBAg34SSaKKnb4Yaby2SRJmvJKVus6LJz/ptJ24Hn/BkCgZDqsNHN8NwXRUIlrvhsmN6TeWi5a8YmyultmsL41p/8w/1MAj1/NVeFgOzuYm1PDiixfAQvL9sXIh+1uNioavGZHugS+Pt4S7wayCdEhIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; dkim=pass (1024-bit key) header.d=honor.com header.i=@honor.com header.b=V8apBO3p; arc=none smtp.client-ip=81.70.192.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+dkim-signature: v=1; a=rsa-sha256; d=honor.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=To:From;
+	bh=0Gm2+0Aa6dZlz65Fncjx6A1ibL2iyGuaPR5i1Xp2Ln0=;
+	b=V8apBO3pUxsnyYSwLu+8vq+IdZtxaSunARICmPjOEaDUsSrQvZR3EUEcWe/BYV6IDbczNHCJS
+	L0wO/XeEwVPYG/GVA3MoHsB8In9doPEupFD7awI97Dm0tShcVbBp3aEvXiXwSG11DF049qw4A3n
+	UMtxRhTjmZv4jH8hOhybQZc=
+Received: from w002.hihonor.com (unknown [10.68.28.120])
+	by mta22.hihonor.com (SkyGuard) with ESMTPS id 4c5Brv3MCGzYlTHY;
+	Mon, 18 Aug 2025 20:30:55 +0800 (CST)
+Received: from a011.hihonor.com (10.68.31.243) by w002.hihonor.com
+ (10.68.28.120) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 18 Aug
+ 2025 20:31:03 +0800
+Received: from localhost.localdomain (10.144.23.14) by a011.hihonor.com
+ (10.68.31.243) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 18 Aug
+ 2025 20:31:03 +0800
+From: wangzijie <wangzijie1@honor.com>
+To: <akpm@linux-foundation.org>, <viro@zeniv.linux.org.uk>,
+	<adobriyan@gmail.com>, <rick.p.edgecombe@intel.com>, <ast@kernel.org>,
+	<k.shutemov@gmail.com>, <jirislaby@kernel.org>,
+	<linux-fsdevel@vger.kernel.org>
+CC: <polynomial-c@gmx.de>, <gregkh@linuxfoundation.org>,
+	<stable@vger.kernel.org>, <regressions@lists.linux.dev>, wangzijie
+	<wangzijie1@honor.com>
+Subject: [PATCH RESEND v2] proc: fix missing pde_set_flags() for net proc files
+Date: Mon, 18 Aug 2025 20:31:02 +0800
+Message-ID: <20250818123102.959595-1-wangzijie1@honor.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250707234606.2300149-1-joannelkoong@gmail.com>
-In-Reply-To: <20250707234606.2300149-1-joannelkoong@gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Mon, 18 Aug 2025 14:28:18 +0200
-X-Gm-Features: Ac12FXymHDCzlIMnSJnWCmYUd9R25CB8Q82pVKBYoFceyuXw-_2IvffVHMZ-N18
-Message-ID: <CAJfpegtgiwNMpjw9vv+Bveht4f==E+HNBpoTVVM0BXQ5PjDx5g@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] fuse/mm: remove BDI_CAP_WRITEBACK_ACCT
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, david@redhat.com, willy@infradead.org, 
-	linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: w011.hihonor.com (10.68.20.122) To a011.hihonor.com
+ (10.68.31.243)
 
-On Tue, 8 Jul 2025 at 01:46, Joanne Koong <joannelkoong@gmail.com> wrote:
->
-> With the changes in commit 0c58a97f919c ("fuse: remove tmp folio for
-> writebacks and internal rb tree") which removed using temp folios for dirty
-> page writeback, fuse can now use the default writeback accounting instead of
-> doing its own accounting. This allows us to get rid of BDI_CAP_WRITEBACK_ACCT
-> altogether.
+To avoid potential UAF issues during module removal races, we use pde_set_flags()
+to save proc_ops flags in PDE itself before proc_register(), and then use
+pde_has_proc_*() helpers instead of directly dereferencing pde->proc_ops->*.
 
-Applied, thanks.
+However, the pde_set_flags() call was missing when creating net related proc files.
+This omission caused incorrect behavior which FMODE_LSEEK was being cleared
+inappropriately in proc_reg_open() for net proc files. Lars reported it in this link[1].
 
-Miklos
+Fix this by ensuring pde_set_flags() is called when register proc entry, and add
+NULL check for proc_ops in pde_set_flags().
+
+[1]: https://lore.kernel.org/all/20250815195616.64497967@chagall.paradoxon.rec/
+
+Fixes: ff7ec8dc1b64 ("proc: use the same treatment to check proc_lseek as ones for proc_read_iter et.al)
+Cc: stable@vger.kernel.org
+Reported-by: Lars Wendler <polynomial-c@gmx.de>
+Signed-off-by: wangzijie <wangzijie1@honor.com>
+---
+v2:
+- followed by Jiri's suggestion to refractor code and reformat commit message
+---
+ fs/proc/generic.c | 36 +++++++++++++++++++-----------------
+ 1 file changed, 19 insertions(+), 17 deletions(-)
+
+diff --git a/fs/proc/generic.c b/fs/proc/generic.c
+index 76e800e38..003031839 100644
+--- a/fs/proc/generic.c
++++ b/fs/proc/generic.c
+@@ -367,6 +367,23 @@ static const struct inode_operations proc_dir_inode_operations = {
+ 	.setattr	= proc_notify_change,
+ };
+ 
++static void pde_set_flags(struct proc_dir_entry *pde)
++{
++	if (!pde->proc_ops)
++		return;
++
++	if (pde->proc_ops->proc_flags & PROC_ENTRY_PERMANENT)
++		pde->flags |= PROC_ENTRY_PERMANENT;
++	if (pde->proc_ops->proc_read_iter)
++		pde->flags |= PROC_ENTRY_proc_read_iter;
++#ifdef CONFIG_COMPAT
++	if (pde->proc_ops->proc_compat_ioctl)
++		pde->flags |= PROC_ENTRY_proc_compat_ioctl;
++#endif
++	if (pde->proc_ops->proc_lseek)
++		pde->flags |= PROC_ENTRY_proc_lseek;
++}
++
+ /* returns the registered entry, or frees dp and returns NULL on failure */
+ struct proc_dir_entry *proc_register(struct proc_dir_entry *dir,
+ 		struct proc_dir_entry *dp)
+@@ -374,6 +391,8 @@ struct proc_dir_entry *proc_register(struct proc_dir_entry *dir,
+ 	if (proc_alloc_inum(&dp->low_ino))
+ 		goto out_free_entry;
+ 
++	pde_set_flags(dp);
++
+ 	write_lock(&proc_subdir_lock);
+ 	dp->parent = dir;
+ 	if (pde_subdir_insert(dir, dp) == false) {
+@@ -561,20 +580,6 @@ struct proc_dir_entry *proc_create_reg(const char *name, umode_t mode,
+ 	return p;
+ }
+ 
+-static void pde_set_flags(struct proc_dir_entry *pde)
+-{
+-	if (pde->proc_ops->proc_flags & PROC_ENTRY_PERMANENT)
+-		pde->flags |= PROC_ENTRY_PERMANENT;
+-	if (pde->proc_ops->proc_read_iter)
+-		pde->flags |= PROC_ENTRY_proc_read_iter;
+-#ifdef CONFIG_COMPAT
+-	if (pde->proc_ops->proc_compat_ioctl)
+-		pde->flags |= PROC_ENTRY_proc_compat_ioctl;
+-#endif
+-	if (pde->proc_ops->proc_lseek)
+-		pde->flags |= PROC_ENTRY_proc_lseek;
+-}
+-
+ struct proc_dir_entry *proc_create_data(const char *name, umode_t mode,
+ 		struct proc_dir_entry *parent,
+ 		const struct proc_ops *proc_ops, void *data)
+@@ -585,7 +590,6 @@ struct proc_dir_entry *proc_create_data(const char *name, umode_t mode,
+ 	if (!p)
+ 		return NULL;
+ 	p->proc_ops = proc_ops;
+-	pde_set_flags(p);
+ 	return proc_register(parent, p);
+ }
+ EXPORT_SYMBOL(proc_create_data);
+@@ -636,7 +640,6 @@ struct proc_dir_entry *proc_create_seq_private(const char *name, umode_t mode,
+ 	p->proc_ops = &proc_seq_ops;
+ 	p->seq_ops = ops;
+ 	p->state_size = state_size;
+-	pde_set_flags(p);
+ 	return proc_register(parent, p);
+ }
+ EXPORT_SYMBOL(proc_create_seq_private);
+@@ -667,7 +670,6 @@ struct proc_dir_entry *proc_create_single_data(const char *name, umode_t mode,
+ 		return NULL;
+ 	p->proc_ops = &proc_single_ops;
+ 	p->single_show = show;
+-	pde_set_flags(p);
+ 	return proc_register(parent, p);
+ }
+ EXPORT_SYMBOL(proc_create_single_data);
+-- 
+2.25.1
+
 
