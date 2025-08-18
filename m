@@ -1,126 +1,148 @@
-Return-Path: <linux-fsdevel+bounces-58209-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58210-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC7BCB2B224
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 22:14:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 778F3B2B2AC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 22:43:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 834F53B231A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 20:14:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AE5F561FF6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 20:43:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CA8A273D7B;
-	Mon, 18 Aug 2025 20:14:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F0122737E3;
+	Mon, 18 Aug 2025 20:42:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="vTV6n8y5"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="2ZsNTs0+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C2F69475;
-	Mon, 18 Aug 2025 20:14:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E67F9271462
+	for <linux-fsdevel@vger.kernel.org>; Mon, 18 Aug 2025 20:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755548073; cv=none; b=Xt5AyLhy+Rcg69958lRnHOGSJ8kYDReEz5VbLnd+fwryjAhuTa+nJe8hn8KB2libm1+DJFszDlSScuMJoed3xuWOj/Whf+ENzldsxFh9SfGzdZiG2yn/X3JLvxsXHA0TXlcstYIVlSXm9V1K/wR50D6kjT66JF+atmuTQyru6Ys=
+	t=1755549778; cv=none; b=SwF4xP9qGytKn6UBf2nUx7rswHkC18ZkqWo5xtoBLcCSky58xvotxl3Ovk++oYlr54t3f+ZunfD/LJpCpOQ9lx0m44cn39Jjw0TAsXOBWRLBbs7061rJCl7sxaaMAApOJ7/zVXwLYWxLuw5G3CBPFm1Ma+n07JON7411UPgEJEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755548073; c=relaxed/simple;
-	bh=nl/IWC/Nvzc8t2ULH6NtHlrLaRZWiMXPP9CMSUVcwvg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hIEJgY7kogXrRXx9muevpqjCEVOqWvTuYIpK9U25j83EOPv7hikZz6EFY4XPdrHtPoX+0OWrUf/bxmv9bBQ9DahTWlP1gL8Ulkzjjz9Rdq1auWcyhV8CSFjEVE5rDEoEMiKA+WHBlKLHChC6WXk59k9AfDBLo2uctFa/rN3ihBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=vTV6n8y5; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=PQ15qKsPUaZyRbSFVHZobmG/J+b1QS6GyW39N1u8Wiw=; b=vTV6n8y5enEba8WE6DA53X/k/t
-	6mlfe2+he+LJBB/CRvd5hcnb1l8uzkjIiEHoJv9/g3V1XEtlwlbmEJQGAcKKsw58SFtH7jiJYhBOn
-	2F+EULn1lUNJAsS4qEUyPRoaDM38E2euDHJAu9asB6AukQVh7TGsYc+6SVHPhNbXWRfn+pX5G0lwB
-	JlTO5J/mFqDtuKQbe915qzP1l4djqBn5WIH1sg78t6UbzY7rMZQUWkuy87SrvXBLMaUZywvJoZohS
-	I74/E8s1ud8ww4uYW6dUmkY21Aa31Y0DJBsHY3vmRWC9g04Bgi0nxY3v2rj+d8oI7NbcA+KLWvp+N
-	nvi3cCHw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uo6FQ-000000083dD-2Kdv;
-	Mon, 18 Aug 2025 20:14:28 +0000
-Date: Mon, 18 Aug 2025 21:14:28 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Ryan Chung <seokwoo.chung130@gmail.com>
-Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev,
-	kernel test robot <lkp@intel.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [RFC] {do_,}lock_mount() behaviour wrt races and move_mount(2) with
- empty to_path (was Re: [PATCH] fs/namespace.c: fix mountpath handling in
- do_lock_mount())
-Message-ID: <20250818201428.GC222315@ZenIV>
-References: <20250818172235.178899-1-seokwoo.chung130@gmail.com>
+	s=arc-20240116; t=1755549778; c=relaxed/simple;
+	bh=xcRhqrtnt1tMRpk74abDPEHOwtTCJMPQBi4qr3vXQBw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q+e1KAi1RH3RVNMegNCCwsMYIZZDaVtQRjZ/Pa2aO+hWBfaueYk56L8QmIUzmoUr9v6dGgJKkbYH79mqTFiHSHemNqKRoPsEobQrjt09ztGFFE0f6GJxKe9CQ7ytuXepK4a8f0AeJLVtDqzMOeG1AC0/BhxqwKcIzfoie734ur4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=2ZsNTs0+; arc=none smtp.client-ip=209.85.167.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-4360056a2adso604695b6e.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Aug 2025 13:42:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1755549776; x=1756154576; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1NHuipRaHUViNyMWtT/RF9yQ8D7EPRscQGwUmEz/0mc=;
+        b=2ZsNTs0+tPhDla0Z1oHswqZ8kQQCYDi/T4AujusMEcOMTiXeHCZ4vta/S6k7/fqHMC
+         TgzkP27BGOZtvWVw94uDiaTxKqbfC+oaX4EA+RA4/IyJ7oDUzjyJIAmTBbnxqD5E7qqA
+         zRKJ+Kxhy+RqFTwR0WbwBNjszQQOVmNcnGWrFDqIID7aCbKcpATg9UUIHUWaH7IHJWkb
+         sWBdTUIxaTsWJgY0dAUZCmJc2PbNr5cQgZqJ/l0P3DBRpJL3hKBkc5mkCgKGYGwNoont
+         7wDRlKP0Rd4BKU4619EN+TZIWvhc0WP0/Lo7ql/r3HrINgiG5YQE4xCJfwtuDmyU8kEO
+         B2vg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755549776; x=1756154576;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1NHuipRaHUViNyMWtT/RF9yQ8D7EPRscQGwUmEz/0mc=;
+        b=uRU7BxAd9AnS9LGiFEmDwM3OEnQXvonKttBq1GZmWSDv6mwW3QSOxuKyt0qDqOAQ3S
+         ZFCfSUnVR7K/7dl+vknuJrDgT1eWOhik3G5NGbpER6dmyY42Sm4o45v+LeT36cJvX+i8
+         NIwu/w5K3n1VfwnCfIRue7l9lGmGsMmwe4RZhG/SpIaw4HT9T3AbrMnDzOUt3vFFlRMg
+         rx8gDEQ66MR4cy4Pdm+7gHQrtqVmPzZhea16Z9mGJm7WMIcNjMR3nC6ctq/wfZqDktac
+         etWRiY1MWtd/9nEaMAwLWC7LPU3EqTGCLJ8A46i3tKCdy/NJGTjjp2Zdqv57Fhrl+VLv
+         3o8w==
+X-Forwarded-Encrypted: i=1; AJvYcCUOQup7Ijh5x0bG0d3ZbqKeHDuBtF0BgaFwr0UXcMez0/vj1w9zVT6JqtbBCPiN5xrlHz5MEAIvFH90Id++@vger.kernel.org
+X-Gm-Message-State: AOJu0YzndWsLC3dsV2uBLs3q8SuWyDVwJRQwUaFWF7gpWRQXgrWSAt8f
+	fQjyHQWsQvRtEOcC+w9yF7TXvsnn199AIKRFYeUgcNW2Nai1WMcyc0TUF9mV6xO016E=
+X-Gm-Gg: ASbGncv4ZFgSMFOwNAF/1/Bio7j2zF0m0Oi5LKmTFcv8e/IVZ/jjSlQntfT4M4m33+9
+	MeJxfIWsKchz+WbvbHMUAW4SI+Tv9L29gnWVdUnR7ndBvzS/M7EE1FimuPVotQS9GbyaFf4K0P6
+	KbtEfxcB+G3vNS7jHBdKqODCJcNIW1eaM9Z48cVbMt6KnAXTyxPxAGGUE1WNEPzUZWiMSiXuVT+
+	S/EKMw1mvwtCEueDYF//OdTlCEc+ld4Ayp7KrPoFXqblduJkHMCgxZT0f5+S8C2ojJGy9xm8qbo
+	nFGjZn18q4zRzOx5nZ7hTETQjtWEdvdusVLnxekQDz0JJFpu6+dAJ3XJBRO6klRRF3XcXzx+1lq
+	Y0bwWG7NeQ2UwHM7S/VbRX/HMuvVWfQ==
+X-Google-Smtp-Source: AGHT+IGPhtuFN4Dzph6D1atIUw0DIFb/7njiZN34Nya1860YPD6PWiMY42VBGEzk96pHMoNDcC84pw==
+X-Received: by 2002:a05:6808:1523:b0:41e:9fd0:bd2c with SMTP id 5614622812f47-436da4b17c5mr80262b6e.18.1755549775951;
+        Mon, 18 Aug 2025 13:42:55 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50c94998c2asm2737262173.51.2025.08.18.13.42.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Aug 2025 13:42:55 -0700 (PDT)
+Message-ID: <af82ddad-82c1-4941-a5b5-25529deab129@kernel.dk>
+Date: Mon, 18 Aug 2025 14:42:54 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250818172235.178899-1-seokwoo.chung130@gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: RWF_DONTCACHE documentation
+To: Alejandro Colomar <alx@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>, linux-fsdevel@vger.kernel.org,
+ linux-man@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>
+References: <aD28onWyzS-HgNcB@infradead.org>
+ <cb062be5-04e4-4131-94cc-6a8d90a809ac@kernel.dk>
+ <a8a96487-99d9-442d-bf05-2df856458b39@kernel.dk>
+ <sxmgk5dskiuq6wdfmdffsk4qtd42dgiyzwjmxv22xchj5gbuls@sln3lw6x2fkh>
+ <409ec862-de32-4ea0-aae3-73ac6a59cc25@kernel.dk>
+ <dargd4lgdazaqxrw7gz6drrzzgonn34qllkcgei4uxs6ft7jbz@avkuehcbaok6>
+From: Jens Axboe <axboe@kernel.dk>
+Content-Language: en-US
+In-Reply-To: <dargd4lgdazaqxrw7gz6drrzzgonn34qllkcgei4uxs6ft7jbz@avkuehcbaok6>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 19, 2025 at 02:22:35AM +0900, Ryan Chung wrote:
-> Updates documentation for do_lock_mount() in fs/namespace.c
-> to clarify its parameters and return description to fix
-> warning reported by syzbot.
+On 8/17/25 10:01 PM, Alejandro Colomar wrote:
+> Hi Jens,
 > 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202506301911.uysRaP8b-lkp@intel.com/
-> Signed-off-by: Ryan Chung <seokwoo.chung130@gmail.com>
-> ---
->  fs/namespace.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> On Mon, Aug 11, 2025 at 11:25:52AM -0600, Jens Axboe wrote:
+>>> Other than this comments, the text looks good to me.  Thanks!
+>>
+>> I kind of walked away from this one as I didn't have time or motivation
+>> to push it forward. FWIW, if you want to massage it into submission
+>> that'd be greatly appreciated. I'm not a regular man page contributor
+>> nor do I aim to be, but I do feel like we should this feature
+>> documented.
 > 
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index ddfd4457d338..577fdff9f1a8 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -2741,6 +2741,7 @@ static int attach_recursive_mnt(struct mount *source_mnt,
->  /**
->   * do_lock_mount - lock mount and mountpoint
->   * @path:    target path
-> + * @pinned: on success, holds a pin guarding the mountpoint
+> I understand your lack of interest in writing quality man(7) source code
+> if that means iterations of patches.  However, you may find the build
 
-I'm not sure if 'pin' is suitable here and in any case, that's not the
-only problem in that description - take a look at "Return:" part in there.
+It's not really lack of interest, it's just that there's only so much
+time and the idea of a back and forth on documentation isn't high on the
+list :-)
 
-The underlying problem is the semantics of function itself.  lock_mount()
-assumed that it was called on the result of pathname resolution; the
-question is what to do if we race with somebody mounting something
-on top of the same location while we had been grabbing namespace_sem?
-"Follow through to the root of whatever's been mounted on top, same as
-we'd done if pathname resolution happened slightly later" used to be a
-reasonable answer, but these days we have move_mount(2), where we have
-	* MOVE_MOUNT_T_EMPTY_PATH combined with empty pathname, which
-will have us start with whatever the descriptor is pointing to, mounts
-or no mounts.  Choosing to treat that as "follow mounts anyway" is not
-a big deal.
-	* MOVE_MOUNT_BENEATH - treated as "follow mounts and slip the
-damn thing under the topmost one".  Again, OK for non-empty pathname,
-but... for empty ones the rationale is weaker.
+> system helpful to find some of the most obvious mistakes by yourself.
+> This might help you in future patches.
+> 
+> 	$ make lint-man build-all -R
+> 	TROFF		.tmp/man/man2/readv.2.cat.set
+> 	an.tmac:.tmp/man/man2/readv.2:316: style: .IR expects at least 2 arguments, got 1
+> 	an.tmac:.tmp/man/man2/readv.2:395: style: .IR expects at least 2 arguments, got 1
+> 	make: *** [/srv/alx/src/linux/man-pages/man-pages/contrib/share/mk/build/catman/troff.mk:66: .tmp/man/man2/readv.2.cat.set] Error 1
+> 	make: *** Deleting file '.tmp/man/man2/readv.2.cat.set'
 
-Alternative would be to treat these races as "act as if we'd won and
-the other guy had overmounted ours", i.e. *NOT* follow mounts.  Again,
-for old syscalls that's fine - if another thread has raced with us and
-mounted something on top of the place we want to mount on, it could just
-as easily have come *after* we'd completed mount(2) and mounted their
-stuff on top of ours.  If userland is not fine with such outcome, it needs
-to provide serialization between the callers.  For move_mount(2)... again,
-the only real question is empty to_path case.
+I'll remember for next time!
 
-Comments?
+> Here's a diff with all the issues I raised fixed.  Please add a commit
+> message, and I'll apply it.
 
-Note, BTW, that attach_recursive_mnt() used to require dest_mnt/dest_mp
-to be on the very top; since 6.16 it treats that as "slip it under
-whatever's on top of that" - that's exactly what happens in 'beneath'
-case.  So the second alternative is easily doable these days.  And
-it would really simplify the lock_mount()/do_lock_mount()...
+Beautiful, thank you! Maybe paste the same section into writev.2 as
+well? For commit message, something ala
+
+man/man2/readv.2: document RWF_DONTCACHE
+
+Add a description of the RWF_DONTCACHE IO flag, which tells the kernel
+that any page cache instantiated by this IO, should be dropped when the
+operation has completed.
+
+?
+
+-- 
+Jens Axboe
 
