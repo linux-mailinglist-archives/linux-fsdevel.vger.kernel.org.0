@@ -1,57 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-58157-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58161-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3D24B2A25F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 14:56:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBED3B2A416
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 15:16:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E446621B66
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 12:55:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0D491B61A73
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 13:11:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75861322744;
-	Mon, 18 Aug 2025 12:53:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD7D631CA6E;
+	Mon, 18 Aug 2025 13:10:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="szE4Czje"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="x2KjOzGG"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC67C31B120;
-	Mon, 18 Aug 2025 12:53:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08DFC31CA5C;
+	Mon, 18 Aug 2025 13:10:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755521594; cv=none; b=Hm9cKLIs/P2ltuqD3hYEIfFZZS+1P1YsecBmL9xC02z9HVH9Yn1RfEYZX/KIpWzEjdmuLlZS0PxEwBbvAsGxEceFGtG7gog3ibOSycANDbnI50Hd69JVZ9IgR+bXyFBoeeM7wgtvmiI71maBNIOJTfypYW1C0ZvX8Cj9Rs/xy3g=
+	t=1755522619; cv=none; b=jhngKRIdGIFQCHIvVvYstvSu9YrLjBx0OTeHCzR8CYL8EfiZaGL1wY+MLHXZHV0kwDx5vzi1PcSmniQEDQz16qri8JW72dqGr59SMKZcJ45iiX/54HDpJ4Jycwxd2kBjtfRO2MDwm706HjbDmCWrSvXRWAMaBSq8DS97c8WiPjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755521594; c=relaxed/simple;
-	bh=oqCopS5ao4+4alk2zDMmyE0yzpGiN9Iv4TPq2IVjwCM=;
+	s=arc-20240116; t=1755522619; c=relaxed/simple;
+	bh=O2oIcunaZi9UXmj3GKIsyy671wHBj2sNzVgNOxPiXH0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fe0fwiDDKaupeXqOZ/qb9c8mzEDJOS/zh0sXgMExlVmibMzyG9SkXZNYipXdmrOzCOyFjNQOBq3T7w94E7dDaMPjQ2ZxvlPIsRfVcO13c8AOBjMgVeqwA0zDm+mwzdYJCiIgHiR9y4tn6YO7gGWA3ELo2kEbO0c5BYJD8OlCcvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=szE4Czje; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3ABDCC4CEEB;
-	Mon, 18 Aug 2025 12:53:14 +0000 (UTC)
+	 MIME-Version; b=VXe7to37lR2va8hkmdxoMTfyRcWbGHSelIFCfLTytIvYxOB/xoQKCN8HfYHmP2SjbRdx1j79fcRJKh0qa0LJ15H8zBIVegL+YrdMyofIA8lIRLIQC6S0jdnopSrxCEoSQ6FMmSns2MV/38UB9fUd/QXbBf5rHlxzhjT1I+eyPeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=x2KjOzGG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C1AFC4CEEB;
+	Mon, 18 Aug 2025 13:10:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1755521594;
-	bh=oqCopS5ao4+4alk2zDMmyE0yzpGiN9Iv4TPq2IVjwCM=;
+	s=korg; t=1755522618;
+	bh=O2oIcunaZi9UXmj3GKIsyy671wHBj2sNzVgNOxPiXH0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=szE4CzjeGHJf2IW7YgSNGiZBf5Kd1k9BimwYRPC+0TK2aOuDvmyCG5AQpAMaRQWev
-	 B99WfA8lynq2qWOhnVlR+X77a70bhoKi6grFbAf03F2g4o3OLNvs4rHiWVOkoLr3I6
-	 fRmOshCG+U+TfsTS/EY0UX8MsSTdwCTj/CEDA31U=
+	b=x2KjOzGGaWOuNCfGLL+Nks4Zc0Pal39FOVByA/l3OhMVgV/2v4nlyFGscyVeSUSCN
+	 SgAPaD+9XlYXnz1pqrnblXaBLN2uaCcWv19lXTYLILVUUDgFJ1Luifrt9v7gqUcG4D
+	 aLb1QAiP/SfqusBoQPP2fhAa1DlM8Nhj7xPI/j2Y=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	patches@lists.linux.dev,
-	Wenzhi Wang <wenzhi.wang@uwaterloo.ca>,
-	Liu Shixin <liushixin2@huawei.com>,
-	Viacheslav Dubeyko <slava@dubeyko.com>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Yangtao Li <frank.li@vivo.com>,
+	David Howells <dhowells@redhat.com>,
+	"Paulo Alcantara (Red Hat)" <pc@manguebit.org>,
+	Enzo Matsumiya <ematsumiya@suse.de>,
+	Shyam Prasad N <sprasad@microsoft.com>,
+	Tom Talpey <tom@talpey.com>,
+	linux-cifs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
+	Steve French <stfrench@microsoft.com>,
 	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.12 067/444] hfsplus: fix slab-out-of-bounds read in hfsplus_uni2asc()
-Date: Mon, 18 Aug 2025 14:41:33 +0200
-Message-ID: <20250818124451.459342641@linuxfoundation.org>
+Subject: [PATCH 6.12 370/444] cifs: Fix collect_sample() to handle any iterator type
+Date: Mon, 18 Aug 2025 14:46:36 +0200
+Message-ID: <20250818124502.769605330@linuxfoundation.org>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250818124448.879659024@linuxfoundation.org>
 References: <20250818124448.879659024@linuxfoundation.org>
@@ -70,177 +72,130 @@ Content-Transfer-Encoding: 8bit
 
 ------------------
 
-From: Viacheslav Dubeyko <slava@dubeyko.com>
+From: David Howells <dhowells@redhat.com>
 
-[ Upstream commit 94458781aee6045bd3d0ad4b80b02886b9e2219b ]
+[ Upstream commit b63335fb3d32579c5ff0b7038b9cc23688fff528 ]
 
-The hfsplus_readdir() method is capable to crash by calling
-hfsplus_uni2asc():
+collect_sample() is used to gather samples of the data in a Write op for
+analysis to try and determine if the compression algorithm is likely to
+achieve anything more quickly than actually running the compression
+algorithm.
 
-[  667.121659][ T9805] ==================================================================
-[  667.122651][ T9805] BUG: KASAN: slab-out-of-bounds in hfsplus_uni2asc+0x902/0xa10
-[  667.123627][ T9805] Read of size 2 at addr ffff88802592f40c by task repro/9805
-[  667.124578][ T9805]
-[  667.124876][ T9805] CPU: 3 UID: 0 PID: 9805 Comm: repro Not tainted 6.16.0-rc3 #1 PREEMPT(full)
-[  667.124886][ T9805] Hardware name: QEMU Ubuntu 24.04 PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-[  667.124890][ T9805] Call Trace:
-[  667.124893][ T9805]  <TASK>
-[  667.124896][ T9805]  dump_stack_lvl+0x10e/0x1f0
-[  667.124911][ T9805]  print_report+0xd0/0x660
-[  667.124920][ T9805]  ? __virt_addr_valid+0x81/0x610
-[  667.124928][ T9805]  ? __phys_addr+0xe8/0x180
-[  667.124934][ T9805]  ? hfsplus_uni2asc+0x902/0xa10
-[  667.124942][ T9805]  kasan_report+0xc6/0x100
-[  667.124950][ T9805]  ? hfsplus_uni2asc+0x902/0xa10
-[  667.124959][ T9805]  hfsplus_uni2asc+0x902/0xa10
-[  667.124966][ T9805]  ? hfsplus_bnode_read+0x14b/0x360
-[  667.124974][ T9805]  hfsplus_readdir+0x845/0xfc0
-[  667.124984][ T9805]  ? __pfx_hfsplus_readdir+0x10/0x10
-[  667.124994][ T9805]  ? stack_trace_save+0x8e/0xc0
-[  667.125008][ T9805]  ? iterate_dir+0x18b/0xb20
-[  667.125015][ T9805]  ? trace_lock_acquire+0x85/0xd0
-[  667.125022][ T9805]  ? lock_acquire+0x30/0x80
-[  667.125029][ T9805]  ? iterate_dir+0x18b/0xb20
-[  667.125037][ T9805]  ? down_read_killable+0x1ed/0x4c0
-[  667.125044][ T9805]  ? putname+0x154/0x1a0
-[  667.125051][ T9805]  ? __pfx_down_read_killable+0x10/0x10
-[  667.125058][ T9805]  ? apparmor_file_permission+0x239/0x3e0
-[  667.125069][ T9805]  iterate_dir+0x296/0xb20
-[  667.125076][ T9805]  __x64_sys_getdents64+0x13c/0x2c0
-[  667.125084][ T9805]  ? __pfx___x64_sys_getdents64+0x10/0x10
-[  667.125091][ T9805]  ? __x64_sys_openat+0x141/0x200
-[  667.125126][ T9805]  ? __pfx_filldir64+0x10/0x10
-[  667.125134][ T9805]  ? do_user_addr_fault+0x7fe/0x12f0
-[  667.125143][ T9805]  do_syscall_64+0xc9/0x480
-[  667.125151][ T9805]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[  667.125158][ T9805] RIP: 0033:0x7fa8753b2fc9
-[  667.125164][ T9805] Code: 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 48
-[  667.125172][ T9805] RSP: 002b:00007ffe96f8e0f8 EFLAGS: 00000217 ORIG_RAX: 00000000000000d9
-[  667.125181][ T9805] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fa8753b2fc9
-[  667.125185][ T9805] RDX: 0000000000000400 RSI: 00002000000063c0 RDI: 0000000000000004
-[  667.125190][ T9805] RBP: 00007ffe96f8e110 R08: 00007ffe96f8e110 R09: 00007ffe96f8e110
-[  667.125195][ T9805] R10: 0000000000000000 R11: 0000000000000217 R12: 0000556b1e3b4260
-[  667.125199][ T9805] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-[  667.125207][ T9805]  </TASK>
-[  667.125210][ T9805]
-[  667.145632][ T9805] Allocated by task 9805:
-[  667.145991][ T9805]  kasan_save_stack+0x20/0x40
-[  667.146352][ T9805]  kasan_save_track+0x14/0x30
-[  667.146717][ T9805]  __kasan_kmalloc+0xaa/0xb0
-[  667.147065][ T9805]  __kmalloc_noprof+0x205/0x550
-[  667.147448][ T9805]  hfsplus_find_init+0x95/0x1f0
-[  667.147813][ T9805]  hfsplus_readdir+0x220/0xfc0
-[  667.148174][ T9805]  iterate_dir+0x296/0xb20
-[  667.148549][ T9805]  __x64_sys_getdents64+0x13c/0x2c0
-[  667.148937][ T9805]  do_syscall_64+0xc9/0x480
-[  667.149291][ T9805]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[  667.149809][ T9805]
-[  667.150030][ T9805] The buggy address belongs to the object at ffff88802592f000
-[  667.150030][ T9805]  which belongs to the cache kmalloc-2k of size 2048
-[  667.151282][ T9805] The buggy address is located 0 bytes to the right of
-[  667.151282][ T9805]  allocated 1036-byte region [ffff88802592f000, ffff88802592f40c)
-[  667.152580][ T9805]
-[  667.152798][ T9805] The buggy address belongs to the physical page:
-[  667.153373][ T9805] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x25928
-[  667.154157][ T9805] head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-[  667.154916][ T9805] anon flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-[  667.155631][ T9805] page_type: f5(slab)
-[  667.155997][ T9805] raw: 00fff00000000040 ffff88801b442f00 0000000000000000 dead000000000001
-[  667.156770][ T9805] raw: 0000000000000000 0000000080080008 00000000f5000000 0000000000000000
-[  667.157536][ T9805] head: 00fff00000000040 ffff88801b442f00 0000000000000000 dead000000000001
-[  667.158317][ T9805] head: 0000000000000000 0000000080080008 00000000f5000000 0000000000000000
-[  667.159088][ T9805] head: 00fff00000000003 ffffea0000964a01 00000000ffffffff 00000000ffffffff
-[  667.159865][ T9805] head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000008
-[  667.160643][ T9805] page dumped because: kasan: bad access detected
-[  667.161216][ T9805] page_owner tracks the page as allocated
-[  667.161732][ T9805] page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN9
-[  667.163566][ T9805]  post_alloc_hook+0x1c0/0x230
-[  667.164003][ T9805]  get_page_from_freelist+0xdeb/0x3b30
-[  667.164503][ T9805]  __alloc_frozen_pages_noprof+0x25c/0x2460
-[  667.165040][ T9805]  alloc_pages_mpol+0x1fb/0x550
-[  667.165489][ T9805]  new_slab+0x23b/0x340
-[  667.165872][ T9805]  ___slab_alloc+0xd81/0x1960
-[  667.166313][ T9805]  __slab_alloc.isra.0+0x56/0xb0
-[  667.166767][ T9805]  __kmalloc_cache_noprof+0x255/0x3e0
-[  667.167255][ T9805]  psi_cgroup_alloc+0x52/0x2d0
-[  667.167693][ T9805]  cgroup_mkdir+0x694/0x1210
-[  667.168118][ T9805]  kernfs_iop_mkdir+0x111/0x190
-[  667.168568][ T9805]  vfs_mkdir+0x59b/0x8d0
-[  667.168956][ T9805]  do_mkdirat+0x2ed/0x3d0
-[  667.169353][ T9805]  __x64_sys_mkdir+0xef/0x140
-[  667.169784][ T9805]  do_syscall_64+0xc9/0x480
-[  667.170195][ T9805]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[  667.170730][ T9805] page last free pid 1257 tgid 1257 stack trace:
-[  667.171304][ T9805]  __free_frozen_pages+0x80c/0x1250
-[  667.171770][ T9805]  vfree.part.0+0x12b/0xab0
-[  667.172182][ T9805]  delayed_vfree_work+0x93/0xd0
-[  667.172612][ T9805]  process_one_work+0x9b5/0x1b80
-[  667.173067][ T9805]  worker_thread+0x630/0xe60
-[  667.173486][ T9805]  kthread+0x3a8/0x770
-[  667.173857][ T9805]  ret_from_fork+0x517/0x6e0
-[  667.174278][ T9805]  ret_from_fork_asm+0x1a/0x30
-[  667.174703][ T9805]
-[  667.174917][ T9805] Memory state around the buggy address:
-[  667.175411][ T9805]  ffff88802592f300: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[  667.176114][ T9805]  ffff88802592f380: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[  667.176830][ T9805] >ffff88802592f400: 00 04 fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-[  667.177547][ T9805]                       ^
-[  667.177933][ T9805]  ffff88802592f480: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-[  667.178640][ T9805]  ffff88802592f500: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-[  667.179350][ T9805] ==================================================================
+However, collect_sample() assumes that the data it is going to be sampling
+is stored in an ITER_XARRAY-type iterator (which it now should never be)
+and doesn't actually check that it is before accessing the underlying
+xarray directly.
 
-The hfsplus_uni2asc() method operates by struct hfsplus_unistr:
+Fix this by replacing the code with a loop that just uses the standard
+iterator functions to sample every other 2KiB block, skipping the
+intervening ones.  It's not quite the same as the previous algorithm as it
+doesn't necessarily align to the pages within an ordinary write from the
+pagecache.
 
-struct hfsplus_unistr {
-	__be16 length;
-	hfsplus_unichr unicode[HFSPLUS_MAX_STRLEN];
-} __packed;
+Note that the btrfs code from which this was derived samples the inode's
+pagecache directly rather than the iterator - but that doesn't necessarily
+work for network filesystems if O_DIRECT is in operation.
 
-where HFSPLUS_MAX_STRLEN is 255 bytes. The issue happens if length
-of the structure instance has value bigger than 255 (for example,
-65283). In such case, pointer on unicode buffer is going beyond of
-the allocated memory.
-
-The patch fixes the issue by checking the length value of
-hfsplus_unistr instance and using 255 value in the case if length
-value is bigger than HFSPLUS_MAX_STRLEN. Potential reason of such
-situation could be a corruption of Catalog File b-tree's node.
-
-Reported-by: Wenzhi Wang <wenzhi.wang@uwaterloo.ca>
-Signed-off-by: Liu Shixin <liushixin2@huawei.com>
-Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
-cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-cc: Yangtao Li <frank.li@vivo.com>
+Fixes: 94ae8c3fee94 ("smb: client: compress: LZ77 code improvements cleanup")
+Signed-off-by: David Howells <dhowells@redhat.com>
+Acked-by: Paulo Alcantara (Red Hat) <pc@manguebit.org>
+cc: Enzo Matsumiya <ematsumiya@suse.de>
+cc: Shyam Prasad N <sprasad@microsoft.com>
+cc: Tom Talpey <tom@talpey.com>
+cc: linux-cifs@vger.kernel.org
 cc: linux-fsdevel@vger.kernel.org
-Reviewed-by: Yangtao Li <frank.li@vivo.com>
-Link: https://lore.kernel.org/r/20250710230830.110500-1-slava@dubeyko.com
-Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/hfsplus/unicode.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ fs/smb/client/compress.c | 71 ++++++++++++----------------------------
+ 1 file changed, 21 insertions(+), 50 deletions(-)
 
-diff --git a/fs/hfsplus/unicode.c b/fs/hfsplus/unicode.c
-index 73342c925a4b..36b6cf2a3abb 100644
---- a/fs/hfsplus/unicode.c
-+++ b/fs/hfsplus/unicode.c
-@@ -132,7 +132,14 @@ int hfsplus_uni2asc(struct super_block *sb,
+diff --git a/fs/smb/client/compress.c b/fs/smb/client/compress.c
+index 766b4de13da7..db709f5cd2e1 100644
+--- a/fs/smb/client/compress.c
++++ b/fs/smb/client/compress.c
+@@ -155,58 +155,29 @@ static int cmp_bkt(const void *_a, const void *_b)
+ }
  
- 	op = astr;
- 	ip = ustr->unicode;
+ /*
+- * TODO:
+- * Support other iter types, if required.
+- * Only ITER_XARRAY is supported for now.
++ * Collect some 2K samples with 2K gaps between.
+  */
+-static int collect_sample(const struct iov_iter *iter, ssize_t max, u8 *sample)
++static int collect_sample(const struct iov_iter *source, ssize_t max, u8 *sample)
+ {
+-	struct folio *folios[16], *folio;
+-	unsigned int nr, i, j, npages;
+-	loff_t start = iter->xarray_start + iter->iov_offset;
+-	pgoff_t last, index = start / PAGE_SIZE;
+-	size_t len, off, foff;
+-	void *p;
+-	int s = 0;
+-
+-	last = (start + max - 1) / PAGE_SIZE;
+-	do {
+-		nr = xa_extract(iter->xarray, (void **)folios, index, last, ARRAY_SIZE(folios),
+-				XA_PRESENT);
+-		if (nr == 0)
+-			return -EIO;
+-
+-		for (i = 0; i < nr; i++) {
+-			folio = folios[i];
+-			npages = folio_nr_pages(folio);
+-			foff = start - folio_pos(folio);
+-			off = foff % PAGE_SIZE;
+-
+-			for (j = foff / PAGE_SIZE; j < npages; j++) {
+-				size_t len2;
+-
+-				len = min_t(size_t, max, PAGE_SIZE - off);
+-				len2 = min_t(size_t, len, SZ_2K);
+-
+-				p = kmap_local_page(folio_page(folio, j));
+-				memcpy(&sample[s], p, len2);
+-				kunmap_local(p);
+-
+-				s += len2;
+-
+-				if (len2 < SZ_2K || s >= max - SZ_2K)
+-					return s;
+-
+-				max -= len;
+-				if (max <= 0)
+-					return s;
+-
+-				start += len;
+-				off = 0;
+-				index++;
+-			}
+-		}
+-	} while (nr == ARRAY_SIZE(folios));
++	struct iov_iter iter = *source;
++	size_t s = 0;
 +
- 	ustrlen = be16_to_cpu(ustr->length);
-+	if (ustrlen > HFSPLUS_MAX_STRLEN) {
-+		ustrlen = HFSPLUS_MAX_STRLEN;
-+		pr_err("invalid length %u has been corrected to %d\n",
-+			be16_to_cpu(ustr->length), ustrlen);
++	while (iov_iter_count(&iter) >= SZ_2K) {
++		size_t part = umin(umin(iov_iter_count(&iter), SZ_2K), max);
++		size_t n;
++
++		n = copy_from_iter(sample + s, part, &iter);
++		if (n != part)
++			return -EFAULT;
++
++		s += n;
++		max -= n;
++
++		if (iov_iter_count(&iter) < PAGE_SIZE - SZ_2K)
++			break;
++
++		iov_iter_advance(&iter, SZ_2K);
 +	}
-+
- 	len = *len_p;
- 	ce1 = NULL;
- 	compose = !test_bit(HFSPLUS_SB_NODECOMPOSE, &HFSPLUS_SB(sb)->flags);
+ 
+ 	return s;
+ }
 -- 
-2.39.5
+2.50.1
 
 
 
