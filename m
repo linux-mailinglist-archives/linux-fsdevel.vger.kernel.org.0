@@ -1,179 +1,377 @@
-Return-Path: <linux-fsdevel+bounces-58155-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58163-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39737B2A205
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 14:47:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9550AB2A54D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 15:32:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBCF5171A7E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 12:40:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 672D058088D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 13:25:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED31C31CA6B;
-	Mon, 18 Aug 2025 12:39:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F9B333472B;
+	Mon, 18 Aug 2025 13:18:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JCkg6G/d"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="EahsDX2x"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940D731B11D;
-	Mon, 18 Aug 2025 12:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 999AE2C234A;
+	Mon, 18 Aug 2025 13:18:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755520776; cv=none; b=VZeojTLQ/+sA6/jMY9TsyljqdVf411zhKbty/KdNOXaaIUDXFopuPIryp1qdNN09/aMunrA0W1gltvuWIPSg48RIJa6H5ewOLkHIIqfJyrRgAeKgUgfOIFG8XBQVczdc6MNsyXoapZjO09Emphx4PGKSWferBkKXZU5XMhzGgcM=
+	t=1755523129; cv=none; b=OrGNA3Bw7q8QepNul9sPKtr/DN2051i5PMBm8jKNrd8m2qCiPMVgLfDD28BTrVBaRv5MBbAvb8yR3EYaxcQMn6Nx+NmQ/lIi4au280i+n05EXKqTBSX3T3uDIQZktLFVq7pjaCCthhuMEYTd3hMBfe0J4MM88IqfNQJtgAYUU9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755520776; c=relaxed/simple;
-	bh=iRiQFMBV+DKdPhtateZaMw71WRCGXS+1o0qcYMlsaNw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BA/AuoVy7T1bDJcoXnCcE0sq46g/D68UrXpWiFGoFLeLKPR1hz4YxV5egp7PtAvV/pJrMGSrCuH1WnkzCg0fGnlvTTdGnL3Yt5kl/SGyyK0izEQvAe3BtwXrrdAkL4pZvpMSfkTIGeaF3se3zmzpNJQT7Xwd8cQ/BYd3CxgLodk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JCkg6G/d; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-6188b73bef3so7369849a12.3;
-        Mon, 18 Aug 2025 05:39:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755520773; x=1756125573; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ubbjo8h4cvXI+kpbxgHKGsgNRSO5oS6kJQNOdicLg+U=;
-        b=JCkg6G/dEzZAyztvOMPrbTJUURh1ZfaJwZJvoJFNYb1IhakyprOGSklKUBjfkUiDRz
-         ZLxndigssEOiOXVJkEE1SO7jA/Q83wH27/mduR/zIQqBoDewr8m7XnV4lTiwEvW1l6kH
-         YG+W7RkxeuB5QgMdG7wdLpt+k8XQld/5LSTqYqxCLsKsTT2nlMAvZKlVKxLKiJNZpW/M
-         Cm7Xmf58QxLWGb8fxjDaQznds6deqC3AXmsuappwZg3OhtDLpUfyb80Wvf2hNy0ru774
-         6c7sPpDfl5dYsK1/OzTWPs/Fz83B2fvy2vieXvlhLsrmPdkASen6klQoAQd7jS9buzIT
-         bKYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755520773; x=1756125573;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ubbjo8h4cvXI+kpbxgHKGsgNRSO5oS6kJQNOdicLg+U=;
-        b=Ml2paIi0BRiZidRnxAFMA29PlPUhRC2Pjf3myF4lAcGAvpi74r9XundLc3oKE4vTo+
-         5iiPVSH/BOjTGXfKmzWbt6tSmC7ROgBuWL7/IJc5Bt4esHWT9G1osAvMHmP5aPjv33lU
-         xTJHKjxTudTJq6vcU9RChsWfkPeBvgEDArfGG+v1z5K9SIVakF4jPdtVwmXJsy6D8vUt
-         OhDpXpfZwVkg1GNHR6Yc1X/XWJeQLb1w0ndQbUd0XQ7V1cNmU3YOehZoW7loRAKB0lIU
-         ewaeHEmni6VeGtXbBzxda5xlXEmBjg3RpB76+qbPF+bNA1K+jsRW+GMbSq/WzPtjQkur
-         a/YA==
-X-Forwarded-Encrypted: i=1; AJvYcCUGH52+LRpXAuQYgtnvNZkh2xvRGBikEGYyI2kU3YZsABSYTZ8u3+P1o0KkkUJgYvVZvwF9fsw2mfSF@vger.kernel.org, AJvYcCUHzAO8Vlcbwj1aTT2OHmpiqINDYD722CRI1haOnsbMpYoXjs+jXRrPeRP9hWdb8D0k/Va1DX4SuXE=@vger.kernel.org, AJvYcCUbO0DM9dONilK5jCRh/k+10NLexU9h8QGx7OTYkyuf1o9pZqfSuH1to7R4qVbMRarBXNu2KqeaUH7KOtQ57Q==@vger.kernel.org, AJvYcCVJIo6t8ftsTupNlRWC1VpqeDOyhWwvKNXksIj+IvLPTLfHHXAFTVLkNmjBBYdXNjCMELV/OQjTPuFpE0Lh@vger.kernel.org, AJvYcCVehUBlbpVCzwLALZh1Zc8m6BMjqxdxleqW01NiN086UgIUJKkXcdwhcz+CIHklfIcKTntiEZK7IVEd@vger.kernel.org, AJvYcCWKgkWcC5I/qRD+EVGTTQChe8UW1440sD+MogJqkALxV09CwbmuVL0LQ1GdM1Mziz1MSRtSizZ0NPHoc+6akQ==@vger.kernel.org, AJvYcCWmuqJIVhdHseERtcLDubnOqNoa7mm9SaIysp7mDCkOyJC3ftjuzcccXfqXkV14Oumea2Pb84zT2QiM@vger.kernel.org, AJvYcCX/f/0UMtL3kYMtTv9NLfSzy+RljlR0bk9EP1aTfImiSfY6lRnEvnnuVvZTH16Zn7azJpiUFa0lGbuPZQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnE4h9ZL8/PjdHeccvqkKQyTZymbijRnJEG8letTMeYXuN+rVk
-	Ea58tGhbbbBuKInNh6mYWWTiCK/sponVjvt4y/8Q2lJORImSHP4t9MYTYMZXBfVnnzb8hInyd3Z
-	hA5Txoc2oDndm6eJj2lNU8J9VX9sH+TzDHxTQoMHKIQ==
-X-Gm-Gg: ASbGnctF7TubNPR8nXjABLwAbAovoikkJJWyA2KxcojMSOmbXvqweSrxDkZ0z8WdyZO
-	hS7gmDYDrbMKsh3Lm+4g7hG/8fh3OQVpBJYJi+EOgspVXLlNS+9zcSFMfuh6tUnSUC3ReVBou4w
-	pPZtiBxVLIqvrnCLZ31DbopEaU4czkD9UadP8R8V45Bdv7U1uUdJUy6ZJe+S5rTT8+d+24bjL9x
-	7Sxwaw=
-X-Google-Smtp-Source: AGHT+IHreI+It7iS6Rfr+brWbz70Us6HtoYs+C56L+JOM9s0ucMSXKqtnWOloo9akQbTFfs/x14TcE577HD2A1hPXyo=
-X-Received: by 2002:a05:6402:278f:b0:612:d3cf:d1e4 with SMTP id
- 4fb4d7f45d1cf-619b707c2a0mr6715378a12.8.1755520772728; Mon, 18 Aug 2025
- 05:39:32 -0700 (PDT)
+	s=arc-20240116; t=1755523129; c=relaxed/simple;
+	bh=4j5nAqoKaPIs5BWv8O2nS8WPMDR0bBKLcq0o+ArE/M4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=nZLKRLor1dkqoMOnpLnNCWI1Q0IFmuzVLsTzkJZRf4/e088FtKdusRIleWJUzhrPIrhYGDgbNbeNaMCGrD0SuHgLPs+DL7Fae3IyNyAQyXgl+yUyDg62HAObSErZCyxMKj96LJggWVdLOILhCgte8OCDl2ppR0qS8qDk1iEp+Es=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=EahsDX2x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 069BBC4CEEB;
+	Mon, 18 Aug 2025 13:18:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1755523129;
+	bh=4j5nAqoKaPIs5BWv8O2nS8WPMDR0bBKLcq0o+ArE/M4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=EahsDX2xRhKNraBoqEiB+6JrSNAbW0l9WPbQXzzFpSfdWdP3HGjlYCbVf0ha97k5R
+	 sfpNB9aYGJhVdi5Sz6IzN2FaCvsCPgpxFg5v0uZDdFiWErTw7Ndrk53XgqNBV7YMn+
+	 OX+czVbbiffFP/VcsVEsD6Iz3mMNdefPmnyxdLyM=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	Wenzhi Wang <wenzhi.wang@uwaterloo.ca>,
+	Viacheslav Dubeyko <slava@dubeyko.com>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Yangtao Li <frank.li@vivo.com>,
+	linux-fsdevel@vger.kernel.org,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 6.15 078/515] hfs: fix general protection fault in hfs_find_init()
+Date: Mon, 18 Aug 2025 14:41:04 +0200
+Message-ID: <20250818124501.383534394@linuxfoundation.org>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20250818124458.334548733@linuxfoundation.org>
+References: <20250818124458.334548733@linuxfoundation.org>
+User-Agent: quilt/0.68
+X-stable: review
+X-Patchwork-Hint: ignore
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812235228.3072318-1-neil@brown.name> <20250812235228.3072318-5-neil@brown.name>
-In-Reply-To: <20250812235228.3072318-5-neil@brown.name>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 18 Aug 2025 14:39:21 +0200
-X-Gm-Features: Ac12FXwaOAmOjlUtH5bpB7wOuhOZPTQBUdVvt2kp3aUZBDH4-UANLHNzz7IOKqs
-Message-ID: <CAOQ4uxjFPOZe004Cv+tT=NyQg2JOY6MOYQniSjaefVcg+3s-Kg@mail.gmail.com>
-Subject: Re: [PATCH 04/11] VFS: introduce dentry_lookup_continue()
-To: NeilBrown <neil@brown.name>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	David Howells <dhowells@redhat.com>, Marc Dionne <marc.dionne@auristor.com>, 
-	Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>, Tyler Hicks <code@tyhicks.com>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Richard Weinberger <richard@nod.at>, 
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>, Johannes Berg <johannes@sipsolutions.net>, 
-	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, 
-	Steve French <sfrench@samba.org>, Namjae Jeon <linkinjeon@kernel.org>, 
-	Carlos Maiolino <cem@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-afs@lists.infradead.org, netfs@lists.linux.dev, 
-	ceph-devel@vger.kernel.org, ecryptfs@vger.kernel.org, 
-	linux-um@lists.infradead.org, linux-nfs@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 13, 2025 at 1:53=E2=80=AFAM NeilBrown <neil@brown.name> wrote:
->
-> A few callers operate on a dentry which they already have - unlike the
-> normal case where a lookup proceeds an operation.
->
-> For these callers dentry_lookup_continue() is provided where other
-> callers would use dentry_lookup().  The call will fail if, after the
-> lock was gained, the child is no longer a child of the given parent.
->
-> There are a couple of callers that want to lock a dentry in whatever
-> its current parent is.  For these a NULL parent can be passed, in which
-> case ->d_parent is used.  In this case the call cannot fail.
->
-> The idea behind the name is that the actual lookup occurred some time
-> ago, and now we are continuing with an operation on the dentry.
->
-> When the operation completes done_dentry_lookup() must be called.  An
-> extra reference is taken when the dentry_lookup_continue() call succeeds
-> and will be dropped by done_dentry_lookup().
->
-> This will be used in smb/server, ecryptfs, and overlayfs, each of which
-> have their own lock_parent() or parent_lock() or similar; and a few
-> other places which lock the parent but don't check if the parent is
-> still correct (often because rename isn't supported so parent cannot be
-> incorrect).
->
-> Signed-off-by: NeilBrown <neil@brown.name>
-> ---
->  fs/namei.c            | 39 +++++++++++++++++++++++++++++++++++++++
->  include/linux/namei.h |  2 ++
->  2 files changed, 41 insertions(+)
->
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 7af9b464886a..df21b6fa5a0e 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -1874,6 +1874,45 @@ struct dentry *dentry_lookup_killable(struct mnt_i=
-dmap *idmap,
->  }
->  EXPORT_SYMBOL(dentry_lookup_killable);
->
-> +/**
-> + * dentry_lookup_continue: lock a dentry if it is still in the given par=
-ent, prior to dir ops
-> + * @child: the dentry to lock
-> + * @parent: the dentry of the assumed parent
-> + *
-> + * The child is locked - currently by taking i_rwsem on the parent - to
-> + * prepare for create/remove operations.  If the given parent is not
-> + * %NULL and is no longer the parent of the dentry after the lock is
-> + * gained, the lock is released and the call fails (returns
-> + * ERR_PTR(-EINVAL).
-> + *
-> + * On success a reference to the child is taken and returned.  The lock
-> + * and reference must both be dropped by done_dentry_lookup() after the
-> + * operation completes.
-> + */
-> +struct dentry *dentry_lookup_continue(struct dentry *child,
-> +                                     struct dentry *parent)
-> +{
-> +       struct dentry *p =3D parent;
-> +
-> +again:
-> +       if (!parent)
-> +               p =3D dget_parent(child);
-> +       inode_lock_nested(d_inode(p), I_MUTEX_PARENT);
-> +       if (child->d_parent !=3D p) {
+6.15-stable review patch.  If anyone has any objections, please let me know.
 
-|| d_unhashed(child))
+------------------
 
-;)
+From: Viacheslav Dubeyko <slava@dubeyko.com>
 
-and what about silly renames? are those also d_unhashed()?
+[ Upstream commit 736a0516a16268995f4898eded49bfef077af709 ]
 
-Thanks,
-Amir.
+The hfs_find_init() method can trigger the crash
+if tree pointer is NULL:
+
+[   45.746290][ T9787] Oops: general protection fault, probably for non-canonical address 0xdffffc0000000008: 0000 [#1] SMP KAI
+[   45.747287][ T9787] KASAN: null-ptr-deref in range [0x0000000000000040-0x0000000000000047]
+[   45.748716][ T9787] CPU: 2 UID: 0 PID: 9787 Comm: repro Not tainted 6.16.0-rc3 #10 PREEMPT(full)
+[   45.750250][ T9787] Hardware name: QEMU Ubuntu 24.04 PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[   45.751983][ T9787] RIP: 0010:hfs_find_init+0x86/0x230
+[   45.752834][ T9787] Code: c1 ea 03 80 3c 02 00 0f 85 9a 01 00 00 4c 8d 6b 40 48 c7 45 18 00 00 00 00 48 b8 00 00 00 00 00 fc
+[   45.755574][ T9787] RSP: 0018:ffffc90015157668 EFLAGS: 00010202
+[   45.756432][ T9787] RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff819a4d09
+[   45.757457][ T9787] RDX: 0000000000000008 RSI: ffffffff819acd3a RDI: ffffc900151576e8
+[   45.758282][ T9787] RBP: ffffc900151576d0 R08: 0000000000000005 R09: 0000000000000000
+[   45.758943][ T9787] R10: 0000000080000000 R11: 0000000000000001 R12: 0000000000000004
+[   45.759619][ T9787] R13: 0000000000000040 R14: ffff88802c50814a R15: 0000000000000000
+[   45.760293][ T9787] FS:  00007ffb72734540(0000) GS:ffff8880cec64000(0000) knlGS:0000000000000000
+[   45.761050][ T9787] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   45.761606][ T9787] CR2: 00007f9bd8225000 CR3: 000000010979a000 CR4: 00000000000006f0
+[   45.762286][ T9787] Call Trace:
+[   45.762570][ T9787]  <TASK>
+[   45.762824][ T9787]  hfs_ext_read_extent+0x190/0x9d0
+[   45.763269][ T9787]  ? submit_bio_noacct_nocheck+0x2dd/0xce0
+[   45.763766][ T9787]  ? __pfx_hfs_ext_read_extent+0x10/0x10
+[   45.764250][ T9787]  hfs_get_block+0x55f/0x830
+[   45.764646][ T9787]  block_read_full_folio+0x36d/0x850
+[   45.765105][ T9787]  ? __pfx_hfs_get_block+0x10/0x10
+[   45.765541][ T9787]  ? const_folio_flags+0x5b/0x100
+[   45.765972][ T9787]  ? __pfx_hfs_read_folio+0x10/0x10
+[   45.766415][ T9787]  filemap_read_folio+0xbe/0x290
+[   45.766840][ T9787]  ? __pfx_filemap_read_folio+0x10/0x10
+[   45.767325][ T9787]  ? __filemap_get_folio+0x32b/0xbf0
+[   45.767780][ T9787]  do_read_cache_folio+0x263/0x5c0
+[   45.768223][ T9787]  ? __pfx_hfs_read_folio+0x10/0x10
+[   45.768666][ T9787]  read_cache_page+0x5b/0x160
+[   45.769070][ T9787]  hfs_btree_open+0x491/0x1740
+[   45.769481][ T9787]  hfs_mdb_get+0x15e2/0x1fb0
+[   45.769877][ T9787]  ? __pfx_hfs_mdb_get+0x10/0x10
+[   45.770316][ T9787]  ? find_held_lock+0x2b/0x80
+[   45.770731][ T9787]  ? lockdep_init_map_type+0x5c/0x280
+[   45.771200][ T9787]  ? lockdep_init_map_type+0x5c/0x280
+[   45.771674][ T9787]  hfs_fill_super+0x38e/0x720
+[   45.772092][ T9787]  ? __pfx_hfs_fill_super+0x10/0x10
+[   45.772549][ T9787]  ? snprintf+0xbe/0x100
+[   45.772931][ T9787]  ? __pfx_snprintf+0x10/0x10
+[   45.773350][ T9787]  ? do_raw_spin_lock+0x129/0x2b0
+[   45.773796][ T9787]  ? find_held_lock+0x2b/0x80
+[   45.774215][ T9787]  ? set_blocksize+0x40a/0x510
+[   45.774636][ T9787]  ? sb_set_blocksize+0x176/0x1d0
+[   45.775087][ T9787]  ? setup_bdev_super+0x369/0x730
+[   45.775533][ T9787]  get_tree_bdev_flags+0x384/0x620
+[   45.775985][ T9787]  ? __pfx_hfs_fill_super+0x10/0x10
+[   45.776453][ T9787]  ? __pfx_get_tree_bdev_flags+0x10/0x10
+[   45.776950][ T9787]  ? bpf_lsm_capable+0x9/0x10
+[   45.777365][ T9787]  ? security_capable+0x80/0x260
+[   45.777803][ T9787]  vfs_get_tree+0x8e/0x340
+[   45.778203][ T9787]  path_mount+0x13de/0x2010
+[   45.778604][ T9787]  ? kmem_cache_free+0x2b0/0x4c0
+[   45.779052][ T9787]  ? __pfx_path_mount+0x10/0x10
+[   45.779480][ T9787]  ? getname_flags.part.0+0x1c5/0x550
+[   45.779954][ T9787]  ? putname+0x154/0x1a0
+[   45.780335][ T9787]  __x64_sys_mount+0x27b/0x300
+[   45.780758][ T9787]  ? __pfx___x64_sys_mount+0x10/0x10
+[   45.781232][ T9787]  do_syscall_64+0xc9/0x480
+[   45.781631][ T9787]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[   45.782149][ T9787] RIP: 0033:0x7ffb7265b6ca
+[   45.782539][ T9787] Code: 48 8b 0d c9 17 0d 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48
+[   45.784212][ T9787] RSP: 002b:00007ffc0c10cfb8 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
+[   45.784935][ T9787] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007ffb7265b6ca
+[   45.785626][ T9787] RDX: 0000200000000240 RSI: 0000200000000280 RDI: 00007ffc0c10d100
+[   45.786316][ T9787] RBP: 00007ffc0c10d190 R08: 00007ffc0c10d000 R09: 0000000000000000
+[   45.787011][ T9787] R10: 0000000000000048 R11: 0000000000000206 R12: 0000560246733250
+[   45.787697][ T9787] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+[   45.788393][ T9787]  </TASK>
+[   45.788665][ T9787] Modules linked in:
+[   45.789058][ T9787] ---[ end trace 0000000000000000 ]---
+[   45.789554][ T9787] RIP: 0010:hfs_find_init+0x86/0x230
+[   45.790028][ T9787] Code: c1 ea 03 80 3c 02 00 0f 85 9a 01 00 00 4c 8d 6b 40 48 c7 45 18 00 00 00 00 48 b8 00 00 00 00 00 fc
+[   45.792364][ T9787] RSP: 0018:ffffc90015157668 EFLAGS: 00010202
+[   45.793155][ T9787] RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff819a4d09
+[   45.794123][ T9787] RDX: 0000000000000008 RSI: ffffffff819acd3a RDI: ffffc900151576e8
+[   45.795105][ T9787] RBP: ffffc900151576d0 R08: 0000000000000005 R09: 0000000000000000
+[   45.796135][ T9787] R10: 0000000080000000 R11: 0000000000000001 R12: 0000000000000004
+[   45.797114][ T9787] R13: 0000000000000040 R14: ffff88802c50814a R15: 0000000000000000
+[   45.798024][ T9787] FS:  00007ffb72734540(0000) GS:ffff8880cec64000(0000) knlGS:0000000000000000
+[   45.799019][ T9787] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   45.799822][ T9787] CR2: 00007f9bd8225000 CR3: 000000010979a000 CR4: 00000000000006f0
+[   45.800747][ T9787] Kernel panic - not syncing: Fatal exception
+
+The hfs_fill_super() calls hfs_mdb_get() method that tries
+to construct Extents Tree and Catalog Tree:
+
+HFS_SB(sb)->ext_tree = hfs_btree_open(sb, HFS_EXT_CNID, hfs_ext_keycmp);
+if (!HFS_SB(sb)->ext_tree) {
+	pr_err("unable to open extent tree\n");
+	goto out;
+}
+HFS_SB(sb)->cat_tree = hfs_btree_open(sb, HFS_CAT_CNID, hfs_cat_keycmp);
+if (!HFS_SB(sb)->cat_tree) {
+	pr_err("unable to open catalog tree\n");
+	goto out;
+}
+
+However, hfs_btree_open() calls read_mapping_page() that
+calls hfs_get_block(). And this method calls hfs_ext_read_extent():
+
+static int hfs_ext_read_extent(struct inode *inode, u16 block)
+{
+	struct hfs_find_data fd;
+	int res;
+
+	if (block >= HFS_I(inode)->cached_start &&
+	    block < HFS_I(inode)->cached_start + HFS_I(inode)->cached_blocks)
+		return 0;
+
+	res = hfs_find_init(HFS_SB(inode->i_sb)->ext_tree, &fd);
+	if (!res) {
+		res = __hfs_ext_cache_extent(&fd, inode, block);
+		hfs_find_exit(&fd);
+	}
+	return res;
+}
+
+The problem here that hfs_find_init() is trying to use
+HFS_SB(inode->i_sb)->ext_tree that is not initialized yet.
+It will be initailized when hfs_btree_open() finishes
+the execution.
+
+The patch adds checking of tree pointer in hfs_find_init()
+and it reworks the logic of hfs_btree_open() by reading
+the b-tree's header directly from the volume. The read_mapping_page()
+is exchanged on filemap_grab_folio() that grab the folio from
+mapping. Then, sb_bread() extracts the b-tree's header
+content and copy it into the folio.
+
+Reported-by: Wenzhi Wang <wenzhi.wang@uwaterloo.ca>
+Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
+cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+cc: Yangtao Li <frank.li@vivo.com>
+cc: linux-fsdevel@vger.kernel.org
+Link: https://lore.kernel.org/r/20250710213657.108285-1-slava@dubeyko.com
+Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/hfs/bfind.c  |  3 +++
+ fs/hfs/btree.c  | 57 +++++++++++++++++++++++++++++++++++++++----------
+ fs/hfs/extent.c |  2 +-
+ fs/hfs/hfs_fs.h |  1 +
+ 4 files changed, 51 insertions(+), 12 deletions(-)
+
+diff --git a/fs/hfs/bfind.c b/fs/hfs/bfind.c
+index ef9498a6e88a..34e9804e0f36 100644
+--- a/fs/hfs/bfind.c
++++ b/fs/hfs/bfind.c
+@@ -16,6 +16,9 @@ int hfs_find_init(struct hfs_btree *tree, struct hfs_find_data *fd)
+ {
+ 	void *ptr;
+ 
++	if (!tree || !fd)
++		return -EINVAL;
++
+ 	fd->tree = tree;
+ 	fd->bnode = NULL;
+ 	ptr = kmalloc(tree->max_key_len * 2 + 4, GFP_KERNEL);
+diff --git a/fs/hfs/btree.c b/fs/hfs/btree.c
+index 2fa4b1f8cc7f..e86e1e235658 100644
+--- a/fs/hfs/btree.c
++++ b/fs/hfs/btree.c
+@@ -21,8 +21,12 @@ struct hfs_btree *hfs_btree_open(struct super_block *sb, u32 id, btree_keycmp ke
+ 	struct hfs_btree *tree;
+ 	struct hfs_btree_header_rec *head;
+ 	struct address_space *mapping;
+-	struct page *page;
++	struct folio *folio;
++	struct buffer_head *bh;
+ 	unsigned int size;
++	u16 dblock;
++	sector_t start_block;
++	loff_t offset;
+ 
+ 	tree = kzalloc(sizeof(*tree), GFP_KERNEL);
+ 	if (!tree)
+@@ -75,12 +79,40 @@ struct hfs_btree *hfs_btree_open(struct super_block *sb, u32 id, btree_keycmp ke
+ 	unlock_new_inode(tree->inode);
+ 
+ 	mapping = tree->inode->i_mapping;
+-	page = read_mapping_page(mapping, 0, NULL);
+-	if (IS_ERR(page))
++	folio = filemap_grab_folio(mapping, 0);
++	if (IS_ERR(folio))
+ 		goto free_inode;
+ 
++	folio_zero_range(folio, 0, folio_size(folio));
++
++	dblock = hfs_ext_find_block(HFS_I(tree->inode)->first_extents, 0);
++	start_block = HFS_SB(sb)->fs_start + (dblock * HFS_SB(sb)->fs_div);
++
++	size = folio_size(folio);
++	offset = 0;
++	while (size > 0) {
++		size_t len;
++
++		bh = sb_bread(sb, start_block);
++		if (!bh) {
++			pr_err("unable to read tree header\n");
++			goto put_folio;
++		}
++
++		len = min_t(size_t, folio_size(folio), sb->s_blocksize);
++		memcpy_to_folio(folio, offset, bh->b_data, sb->s_blocksize);
++
++		brelse(bh);
++
++		start_block++;
++		offset += len;
++		size -= len;
++	}
++
++	folio_mark_uptodate(folio);
++
+ 	/* Load the header */
+-	head = (struct hfs_btree_header_rec *)(kmap_local_page(page) +
++	head = (struct hfs_btree_header_rec *)(kmap_local_folio(folio, 0) +
+ 					       sizeof(struct hfs_bnode_desc));
+ 	tree->root = be32_to_cpu(head->root);
+ 	tree->leaf_count = be32_to_cpu(head->leaf_count);
+@@ -95,22 +127,22 @@ struct hfs_btree *hfs_btree_open(struct super_block *sb, u32 id, btree_keycmp ke
+ 
+ 	size = tree->node_size;
+ 	if (!is_power_of_2(size))
+-		goto fail_page;
++		goto fail_folio;
+ 	if (!tree->node_count)
+-		goto fail_page;
++		goto fail_folio;
+ 	switch (id) {
+ 	case HFS_EXT_CNID:
+ 		if (tree->max_key_len != HFS_MAX_EXT_KEYLEN) {
+ 			pr_err("invalid extent max_key_len %d\n",
+ 			       tree->max_key_len);
+-			goto fail_page;
++			goto fail_folio;
+ 		}
+ 		break;
+ 	case HFS_CAT_CNID:
+ 		if (tree->max_key_len != HFS_MAX_CAT_KEYLEN) {
+ 			pr_err("invalid catalog max_key_len %d\n",
+ 			       tree->max_key_len);
+-			goto fail_page;
++			goto fail_folio;
+ 		}
+ 		break;
+ 	default:
+@@ -121,12 +153,15 @@ struct hfs_btree *hfs_btree_open(struct super_block *sb, u32 id, btree_keycmp ke
+ 	tree->pages_per_bnode = (tree->node_size + PAGE_SIZE - 1) >> PAGE_SHIFT;
+ 
+ 	kunmap_local(head);
+-	put_page(page);
++	folio_unlock(folio);
++	folio_put(folio);
+ 	return tree;
+ 
+-fail_page:
++fail_folio:
+ 	kunmap_local(head);
+-	put_page(page);
++put_folio:
++	folio_unlock(folio);
++	folio_put(folio);
+ free_inode:
+ 	tree->inode->i_mapping->a_ops = &hfs_aops;
+ 	iput(tree->inode);
+diff --git a/fs/hfs/extent.c b/fs/hfs/extent.c
+index 4a0ce131e233..580c62981dbd 100644
+--- a/fs/hfs/extent.c
++++ b/fs/hfs/extent.c
+@@ -71,7 +71,7 @@ int hfs_ext_keycmp(const btree_key *key1, const btree_key *key2)
+  *
+  * Find a block within an extent record
+  */
+-static u16 hfs_ext_find_block(struct hfs_extent *ext, u16 off)
++u16 hfs_ext_find_block(struct hfs_extent *ext, u16 off)
+ {
+ 	int i;
+ 	u16 count;
+diff --git a/fs/hfs/hfs_fs.h b/fs/hfs/hfs_fs.h
+index a0c7cb0f79fc..732c5c4c7545 100644
+--- a/fs/hfs/hfs_fs.h
++++ b/fs/hfs/hfs_fs.h
+@@ -190,6 +190,7 @@ extern const struct inode_operations hfs_dir_inode_operations;
+ 
+ /* extent.c */
+ extern int hfs_ext_keycmp(const btree_key *, const btree_key *);
++extern u16 hfs_ext_find_block(struct hfs_extent *ext, u16 off);
+ extern int hfs_free_fork(struct super_block *, struct hfs_cat_file *, int);
+ extern int hfs_ext_write_extent(struct inode *);
+ extern int hfs_extend_file(struct inode *);
+-- 
+2.39.5
+
+
+
 
