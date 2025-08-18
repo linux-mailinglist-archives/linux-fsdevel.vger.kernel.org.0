@@ -1,73 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-58177-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58178-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 409B2B2AACA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 16:36:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 079C2B2AB68
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 16:48:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6EAF7211F6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 14:26:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6085E1B64BBB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 14:32:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25C2F320CD4;
-	Mon, 18 Aug 2025 14:17:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E372A340DBD;
+	Mon, 18 Aug 2025 14:22:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="nqcYzZUr"
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="iOZFTTSa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013042.outbound.protection.outlook.com [52.101.127.42])
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013026.outbound.protection.outlook.com [40.107.44.26])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0037320CB3;
-	Mon, 18 Aug 2025 14:17:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AEE9322745;
+	Mon, 18 Aug 2025 14:22:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.26
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755526675; cv=fail; b=O21jpb1U2QQYr9ctsYYsC+poaanf+ezc4cfQsLk/kBDYtv6sAGO6Odq3VyOlm9OUG7w8Yn57dpTO8xty2ExArZlhax0KQCoHphVbHq/ejWBUz09CYoL5jU0AmKquprWHhq5zfesl/fogDK/mYCoDa6T18S+0G3FeqJRipaocsrs=
+	t=1755526927; cv=fail; b=BtcgZ3/m4FNhecU2MjZWpNHOTNEynlXqTsjLKpDvlQbWKGjYXXrs34WNJ8NaMK9effrcYBSJEiKc44xZa1LyowI1U5hrb829mScqm6B6pe4gH4kdfPWgJY5YvXcskvY6q9aim4VIh/zEP3S8KIRwTalp2icsrErJRzCLGhF0nO4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755526675; c=relaxed/simple;
-	bh=I98SyTanDFQnLyxnzG0n+TP/HNvWSZdYk3Z8jzfzzA4=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=ZwSH01VBS9DY2wmPQ3iVCmDY6EGTlGnim1P1v61sBHFc8+7wRCQ/pHLb59HH/++ohf9eAdw4Y9lMdvDSzHeP68FntkmwPPsaeVD3O8/JEbQVuskt2zh6w4z3wUbzOfRZNmq7iuWEig4m1TARyTDdggtzKXGTPYXOgETFmKNSQOI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=nqcYzZUr; arc=fail smtp.client-ip=52.101.127.42
+	s=arc-20240116; t=1755526927; c=relaxed/simple;
+	bh=PHOPtgB+jKjGA0RXtjNaIn7OpayuyMt6R3mSjmhLEdc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=sGwgUEs4wD/WtSOg3/qJ0lCTiKMU+DcAGzeBAHoaJS0s02NUsq3h+Aqu0TPjpRVXyz14ZtaBRbEHyHgtBl/iBNQaRca3wyt3RL817wRNov/MHWimUQeF/zmYFqAEoFC+zkCapT+wFb/EF4yfGhEDCQEa9nExL0dBKa5aoRp82fw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=iOZFTTSa; arc=fail smtp.client-ip=40.107.44.26
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YgbEnEvUEUp/NJCobfPZcZEIl0bvps2vJK5DzScUZh+zvKwkT1zx09Dk4V9W9FlV0vyVnbMj/yutYI3zxkmtnwouy5UpE40veKnK5kp1bqQgRoc0LelmTtkkvWvySwgp8hl8LhfTxM7VT90LWdnA9mAvpa+IqHpqC8yzxODVgcR9083QNlME1s/GEDmk9S2R0WSQUclItrhB2bBDi2zAo2OFx4npv0YxbHYAUG+SKCmZQiIYAFxC/E176AHdacCDwYb6O8qlHQh2brK8FQzC1TJdTTpZuO+1W2b4tKrFs1Jy2P+XNHj0Z9D/XTTKGtmnReNu7ad2Ib+XQjXNnz/d6Q==
+ b=Eu8h+m9DDRuL6Zmkjd2QyvCmBB/PbubYsP43jj8kKFvSFgIAKeu8S/jqBUZq4cpURYbQTvArqT7Ee3UsC3HOp/ZokVOI1dA+TGCQluqN2H7mKTCsenTT8VlQhJ9jbYp7aprtBO38yGQgCI+MMJPR7rIFeeZT+zaGmWfG16UBmrnljtMercY1/cUpZXS0rb8YzqlaQI9ctvFdbacrLQ67Oc2gPiNK/St06OfNTn6XuZv8/bDr9vT7lvIpVyUKYFh3bugK0IrZMOLcvWXuN9G7DN88Kp/fHnmJW0+UOwicqD2xiRW05LpUmDBKta0weqKaUVmh/2e3DQFslnkB3jlseg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PkdL2WbQMv55jnDBiXeI6smMb1rnYCLpd+K4ZkZUrWo=;
- b=S7MAJk6PHpqt+hBxVWysRXt58qicQOA91/+le/usXpOZtnpbCbbXFh+G8ROL1klcDzLnv+yAwH4sjl00Ojcp245S3OLi0mf0UmA81lsTZu64cA+Umo9qNg+cxLi9nmu3Y4E03++BgiqY8g2fV3zd2vPwdQw3OZqu/swIWgPr2Kkn7rc8klgsYmgyohnonjxLzjbPb8OihIr+Qmmy0OOJMSDsVeBGZlYQRO4Pbm0SfR7vPskI8vuS7KjEz7fzATCbOBUY029e/q3M7/dA5T0OB1g2XID6P7zm+Xv6IEa45NUw/6Q+seVfXkgIvBBReEBBIzpDHtNYlcGA9GLrTlaGaQ==
+ bh=RXn/gciF340nSmHrqPx1/TfGjvU1l2yYjJqjxW9SFkM=;
+ b=qWUf8jAA6Qv+p+nyJ2SZIzFbt4+Fww0IyqMjU2DoUD4yx57vB6dtfW2l84YJLmPdR4BHXBQpSTEoNFktjUAvH1z2T8L0J3e6lbFPlhoSrpqvJWz/YR+LHiGk8vuf9BSedgQq+7PEgm7DpMnKdEd0N5IsCt0GrGbkGHqqoojcqbdZb98zXCS37SdwKuecMZxeig+DFzATV3h5iXnftaTRXRkbK+K8SKcUOjCnp6G2z1b/OevDfYYyr47T1YHqlzokNgGzftttcQe3utTaSoEPi9036wBvWnIG5A5a5MlXGU7ciXlPDQeJPi/H8JY8DigwQidL3ObUdQqw6t1uQD+LuA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
  dkim=pass header.d=vivo.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PkdL2WbQMv55jnDBiXeI6smMb1rnYCLpd+K4ZkZUrWo=;
- b=nqcYzZUr0kyLHqsR3Fco2jMWB5uThDyqk/CaMr6eSUXAZyf4ObCIGAEL+11Se67Bxmpd+iQgvH2C4jRclt3B6cZTFJojo3uZ2y8EmQ6csZuuTxAvX3r9X1QOXha6+OW4i3GIWVnZkGjjxtnM7gfwXtlgPTVQoFRxeiJDAJOPW/bv3dDaW+52ifdlx8wghNZbXpnP/CKEpbiTJWmoADKlAKoEVUJyRizJWRAhEATp8q/ZQEetUYToZarIluvrGcrGMrMQgCNSr5ca75tQW8AhvGWGr40ALLCozIfV1wYm92W2zLDsYqFG1mDDplj/2pBG10M6iySZvNc8mUUw8jmOnQ==
+ bh=RXn/gciF340nSmHrqPx1/TfGjvU1l2yYjJqjxW9SFkM=;
+ b=iOZFTTSa/mjqlfOcv2dkedTf9KosgyXoXy/oAmGszZiqj5x+BGwBZIRALeXXgCsnIo2Y/BL3tGVdHKZSPKm+1BtlR2oGhPYIatgpMZvowHnEh/Bwknu9iKLJKCiiIrHF+qGY41atDxKoI3ytDeLYzGq+pes8j/RJlau4VC3UqsUJ58bNXUcj8kin5R30Sj6P2c3vbhVR3wojx/E6pUNdOcmQlWAFP1f41diRdZX2EgbGTuiOWnE7U+N+z4fSz6VTs2DKowYfc51X3t+l2tXPbOQAVCqgPbOw5JFxmplNfudQJnm4s/qR8A0asQFNdD27oVSiXWgXqwAskUCpxIMyNA==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=vivo.com;
 Received: from SE1PPF54561D20A.apcprd06.prod.outlook.com
- (2603:1096:108:1::416) by SEYPR06MB6482.apcprd06.prod.outlook.com
- (2603:1096:101:178::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Mon, 18 Aug
- 2025 14:17:47 +0000
+ (2603:1096:108:1::416) by TYZPR06MB6115.apcprd06.prod.outlook.com
+ (2603:1096:400:33d::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.23; Mon, 18 Aug
+ 2025 14:22:01 +0000
 Received: from SE1PPF54561D20A.apcprd06.prod.outlook.com
  ([fe80::460e:a381:581a:aad4]) by SE1PPF54561D20A.apcprd06.prod.outlook.com
  ([fe80::460e:a381:581a:aad4%7]) with mapi id 15.20.9031.021; Mon, 18 Aug 2025
- 14:17:46 +0000
+ 14:22:01 +0000
 From: Chenzhi Yang <yang.chenzhi@vivo.com>
 To: slava@dubeyko.com,
 	glaubitz@physik.fu-berlin.de,
 	frank.li@vivo.com
 Cc: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Yang Chenzhi <yang.chenzhi@vivo.com>
-Subject: [PATCH 0/1] hfs: discuss to add offset/length validation in hfs_brec_lenoff
-Date: Mon, 18 Aug 2025 22:17:33 +0800
-Message-Id: <20250818141734.8559-1-yang.chenzhi@vivo.com>
+	Yang Chenzhi <yang.chenzhi@vivo.com>,
+	syzbot+356aed408415a56543cd@syzkaller.appspotmail.com
+Subject: [PATCH 1/1] hfs: validate record offset in hfsplus_bmap_alloc
+Date: Mon, 18 Aug 2025 22:17:34 +0800
+Message-Id: <20250818141734.8559-2-yang.chenzhi@vivo.com>
 X-Mailer: git-send-email 2.34.1
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20250818141734.8559-1-yang.chenzhi@vivo.com>
+References: <20250818141734.8559-1-yang.chenzhi@vivo.com>
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-ClientProxiedBy: SI2PR02CA0040.apcprd02.prod.outlook.com
  (2603:1096:4:196::6) To SE1PPF54561D20A.apcprd06.prod.outlook.com
  (2603:1096:108:1::416)
@@ -78,124 +82,283 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SE1PPF54561D20A:EE_|SEYPR06MB6482:EE_
-X-MS-Office365-Filtering-Correlation-Id: ee4186fb-b242-469c-b5c1-08ddde620110
+X-MS-TrafficTypeDiagnostic: SE1PPF54561D20A:EE_|TYZPR06MB6115:EE_
+X-MS-Office365-Filtering-Correlation-Id: 988f0ca6-7ce2-413a-3988-08ddde629923
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|52116014|366016|38350700014;
+	BCL:0;ARA:13230040|366016|52116014|376014|1800799024|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ODVRRUJLbEkxNnpXTzlucWRvdUdjWTV0K0hoK3Nrd2VxZ3ZDTEM2NEkzeS9r?=
- =?utf-8?B?OXdUcXNqMGU3YTZoSkdZaWVCRk1SVWNybjBxQmpDTzNFME1DS3lwSDUxKzlt?=
- =?utf-8?B?TEwzK3dzekRvVUV2T0VVaGNWR3U5TkNtZWVhdlhMNEQ2MklXWFFMWFhTd3E4?=
- =?utf-8?B?dzVpbnU4VnpTM0V5ejB4WnBYTnJGWnU2ei9pKytuMkt3ZnpTTVU4czc4L0VX?=
- =?utf-8?B?c3g3S2d6QkxNd01FUUhCZG9kQmFCcEhYbFlGY3l5ZEtVQ0xUSmkwNmsvdS9T?=
- =?utf-8?B?Q01aeFdHM0g3QjhNczZEZGh0WmdpS21qRDhVTFdRWFhaUzNDbnNCRnBGeDdB?=
- =?utf-8?B?QWlRNnlUWVBzWDJiMktiU3NCYWdjc0lJcVJDNHJWMlovUDVZSTlBWm9IaHBE?=
- =?utf-8?B?R3d1Z1c2ejhNYS9nUmkreVdpSE1XK0FRTVBCTlhBa2MyZ2NvRElsTDRFcURP?=
- =?utf-8?B?bCt0bXozTFpYSHVyQ0RYdWl5SnVKd1NITkdPQXZHTEUxVFdlR3BBSUZMMEQv?=
- =?utf-8?B?RkxFWHNzUXkzdnBBdEdiVzFzYTNDdTlZbGJkRHpoN1pTeUpwdlh1cU1lYU4w?=
- =?utf-8?B?Z3g0bmNzMDlpa3o3Sm9oNTUzVlBuN2lJYjdWc1VwOE4rNmZiYlVMSTU0WEc5?=
- =?utf-8?B?aTVHZVB3QTgveHdXNXVnSWlYT2RRWjJ1RGl6TVpmMnUwNXdPY1Z3UXJRZFpC?=
- =?utf-8?B?YUhkYXNmL0d3SWRLbU16dGo2aHl5eld2MmI2TkRhNHIxY2xBeFA3N3hkdjBI?=
- =?utf-8?B?d1dRQUtQZnJLUTdUdzFXcENUcmFIMUVmVWlSdHFWWnU1UjFTWFUyMFlJTE5i?=
- =?utf-8?B?RkNIdDFmWVdlQ090Mm1kanNSOXJRUmRaRklaZVJ3NEM4ck1HQmdpY1lRRVFO?=
- =?utf-8?B?NU9HZENkbm11b0RaSi9tNDVQeVpqMG1wcVF2ZXphVlR1WU5RWStuMDU5NkdV?=
- =?utf-8?B?ZVFXZzNzZXJuWjJ2c3FWUksxbUQ2QmJNOE84UWM2VjEwa3o0NnlQZmNuSDFp?=
- =?utf-8?B?b3NkSWhoWWRWRGhnUlF2Vk5MNVI2OUdOU1N1Y0ZVZ1pzWlEwcVZ6QWJkcG5t?=
- =?utf-8?B?ckhCdTA0RGJ1dHVsdXJCMk51aUQ3ZW03d1JpUXF2elJ1M3d3M0g4aFZDelNk?=
- =?utf-8?B?UEdOK0VVTS90RHpHTlJJVExzWUlUbUh1dWFscG5YKzRBa2w4RDRndDBEcysr?=
- =?utf-8?B?TTRJek5rR0RFSk5sOFkzaVhYQUN1dXBsbm9JdGdsY2RVWjhySmJqT3ZySDZv?=
- =?utf-8?B?cGpjN0dIUHpkRjAzSGpvU0hVQXNqdXZXdGhSTHNYOGZ4TlB5NEorTTVObkk5?=
- =?utf-8?B?U3NuZXd3WU5hT3ZjclBuTjVpZGhmUldWdVFYMURHUEdVdDdudXJZczZmNThR?=
- =?utf-8?B?RDRrb3lCUDhwVVpzMHQwc05pdTRyWE5LbjE3SnFadGxUY2JRN0c3T3RVaFZ0?=
- =?utf-8?B?ZGxtV3hVYzF4dWxNSnRrSEQ4MEZ2S2JZYThrNHVOQ1BSUW1PVE5JNm5JbFpT?=
- =?utf-8?B?Y1pxaU8wSTFQZzJ3NThiWEtyQUNTa1UzVWJvN25PaWhJaUNRcmRGamE1ZlRQ?=
- =?utf-8?B?NVRmMU9NMUZSL1JsYUVlVmpldjRZcjNqeTVueVBiQ3lwa01xRThpNCtDelBS?=
- =?utf-8?B?K2YvSksweUlhRW9iWmlKcE1NdmR3dU84OUJEVEFBUXVsL3JncU1KNFp6REZE?=
- =?utf-8?B?Vks1M3dDSWtiK1RXMG5nc0xySmMvMk4xMlJmK0s1Q3lKMS9xU3BuZzNSWXh0?=
- =?utf-8?B?ZjdnRUNRSGc3QTlOQmN1c0srM1FYKzFuRjRFMTlJZ21nQVg4R2xCTHhXWW5s?=
- =?utf-8?B?ajN0QmVDaWtmS2FnVVNMUU4yVjMxREpEZEFXWi9XbStBMkhmOWVuMU9kaS85?=
- =?utf-8?B?WjFERXNzUXphdDZROXJVZk9TTEtwbWd4VE5OcVgvQmgxNWdTd1U0Q2V6UG1Q?=
- =?utf-8?B?ZjJMTWN0WDc4UExUa0Z1aGNUUk50QSs2cElvODdYRlBnWkNFRlpmL0FtRkxV?=
- =?utf-8?B?cGE1WlJaQVhnPT0=?=
+	=?us-ascii?Q?0DxGlObfw6HPYLU2c0XMcwsWFrMevpYMONLf/0YUZYSgsybEMfW7qA2IBJ+9?=
+ =?us-ascii?Q?P161WGFoydOeQArkRVF8fWRDx9JGH3SyGlGUz/5aioOuKgsYUCJ2oA5ySkGW?=
+ =?us-ascii?Q?FYXaFtwwp79SNPvsFs9H8Umw5bTGLVQBSEAqB7YRsfTu4DCLZjhb6kOzlQcM?=
+ =?us-ascii?Q?6D7kPTaAaF9Ws4yl5lchFi1z+n+iB3k9JlpIxxMcJCFuZ3pzUkTXeT5EfA51?=
+ =?us-ascii?Q?5DPXioa7qF1HORS2Jfqs7e1d4V/uccbAPZqXINrd2ExB0TepxLs9VvKcEWZt?=
+ =?us-ascii?Q?FDbOLmxSRVIknGy/aet2dmfiVxWML0lAT1QwhQNQf/KIa8Z5b7PBoSsQIzM9?=
+ =?us-ascii?Q?MZ336hKbLyaoTGm6k4kU0TW9EJfVHBfAgzMJhXkZRcBy74LEt3hQX+Q8Uzit?=
+ =?us-ascii?Q?Lnq5H0+JF+pc5u2SeHq7WZlOwr7xk7ubiUXLnXEcH6bJy72UXYxdP35fZN3N?=
+ =?us-ascii?Q?wOs1GdLw+RlTVbWbfXAPhDHGlEceGLLGELzq8BrKZcj0KN0O3bgaMpR6ejTM?=
+ =?us-ascii?Q?Ti5hdUKL61JAt10bhAjksDcJ5LoxG0DkyIgHWS17Sah+XQScnlKEFc2z1TM4?=
+ =?us-ascii?Q?CkCWzYqCHLbmshHhFc5iYaiRWxoYHHaCo/C3/qoGbpi6hjw4yJR7FzkjQTDY?=
+ =?us-ascii?Q?ukGfnEph/8Y4FZ4jXz6H9eItAVrnzTAA9Nx4PPJcq7V89HBLasjqtA8ckPT1?=
+ =?us-ascii?Q?HwFGFPs2I38rUmqY4SO3teqv1BP94IOSHbO2Z1zFtzhv8zqi1YIPzSMom27E?=
+ =?us-ascii?Q?y38S1tV2Orx6O6jz0TTap3ZBoa8PMDWAv6fstihea5hPvJo1xcsjJpX221wr?=
+ =?us-ascii?Q?Cu71Bd4bN3N99lKXGpMtNsqIMVGCdwDIVsdjc1duKTIaJimUS6ArJDve3BYu?=
+ =?us-ascii?Q?utsQdC/PBxFULcAIsuFtH69r/UWmL4/EoODcnKcmUqldGo8ULnX859+jnozx?=
+ =?us-ascii?Q?ZdG/by3vl5frcLNkO0hMjNc/Fw9DvIQBXHFvKUZg2Mb5SpffcByFHvWUZfHl?=
+ =?us-ascii?Q?5X5sLBEgaSzmd3nuxLVgSR+NOSpKELJUbSoPbRDPE/A9cGUjpDjgGcwxFl4E?=
+ =?us-ascii?Q?4t8mcj+Stl8qWTLBMuQ34Ed61MSM/S2m+iky8kclxR0mrDe8CHpTIEBJQlSe?=
+ =?us-ascii?Q?+GOW/MX7pLKspzjoKdJorfrwvoRd/Byf/4aRXCtiAcodVeCKfTs+5JztKhbE?=
+ =?us-ascii?Q?u2wioKNEQcxK5cJ3XcM477P1RIzQqXgRyw6zuKhAobv2xrCph7iRVqE43/k4?=
+ =?us-ascii?Q?fyUHVLfMh28aTSqcJ8gaKIrhIV5TLlZu9Cx6HqOdpgVGNPYIy6tYDQeX92X5?=
+ =?us-ascii?Q?XuuiUKpduEo3uhSk6cwundcXbwQI2KwnHzH2XOrZLkKKytdJd+B0PPx9HO8j?=
+ =?us-ascii?Q?+BdZCY+bxkHPFnUJxjVYUEwPivWB7ZOwvHhxFmMxA/2w85ubQexmfelqvbou?=
+ =?us-ascii?Q?p2JFHlfRHDo=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SE1PPF54561D20A.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(52116014)(366016)(38350700014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SE1PPF54561D20A.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dTU4OXN1KzgvU0VHeFAraFVOOGZrekpmWXViblh5U1ZueWhjNWpsVlBsTFhw?=
- =?utf-8?B?ekMrWHpWVFY0Q2ZyNTBlaXQ5YlZOaEJTY1ZZRTl6THpYRDVnTUJuVGt4dkZO?=
- =?utf-8?B?Y2VKSWEwenp2MS81cStTVkYzdkNIR09XekswU2JIOTBRUmFCdmd5cG1TS1pm?=
- =?utf-8?B?Q29yOHR6NXc5MjhwM1RyRUhNV1dIRHZTanNENXVxQmNBTkcydTltdkM2VXFS?=
- =?utf-8?B?cXMydVpLODNyUDY1NmhmcmZLclJxVWJHSmFEVGx0V3VnWXBHTGR2bnd4VXpM?=
- =?utf-8?B?ODV1WkY0anNKeFRDWnFmVzVZTDVMdmFwOUIwemluVUpsS00wYURDd0RqOE8v?=
- =?utf-8?B?bENqS3hhdnYzNDBEbGUrRWFkMUlLYUJJMm84NjRBUURCTC9GaFpDVFZuWmEx?=
- =?utf-8?B?Y1JOczM2TGFvREx6Lzd6dEJRWWdFRWYrbTB2ZmxPeDNHYVVJanZnWWcyL1FB?=
- =?utf-8?B?aFBMNkdWR1dGdm5oVnBzOUphc0U3dVFYK2x4ZE9hNDVBWldLcElxY1E4R2xn?=
- =?utf-8?B?SUthZC9KN2pERHBGTXFUdUFHdDl5cWszNjdnaXVzSW04T0pIelJjMjVmSG9S?=
- =?utf-8?B?RzdEZXJMbWJaa3pGRXhMdmowZ1c1VzhQTVNCTm9FN2w0MHNyUWZ0ZDJhQTRl?=
- =?utf-8?B?L1ZRZFlYQkVFT0laYjVYT20yaXEvdzFsYzNtLzY2cklvRUpWVVJWb04rNDFL?=
- =?utf-8?B?MnNpaHhjbGRoQjA0aEpCclVYM3lRckpsWk44akxkSjk2UTdWRHpGT2M2UnVx?=
- =?utf-8?B?S3o0TmlQcDB6d0gzK0t5bitpSFV4TlgrU1pNTWYzSCsrVzZJcHFjTzhzVUZv?=
- =?utf-8?B?N2EramlUa2xGREYydE02N2l3akRTQXliZHE1MFR3blMybHBkZWVwd0V5Tk1W?=
- =?utf-8?B?YlYzd3RYcjZvbThMb2ZuMHBrWEE5MTFmSzNGUXpLaDlaSzhBZVZKbGJMeW5l?=
- =?utf-8?B?dWtnZ3N3LzVwM3UrS0VZMS84c3NmdTJpa1p0azRhWlFsNitsTVdxdmFxTEtJ?=
- =?utf-8?B?R0RoelpwTVJ3VVpZK1hWMFliTTJZOUNVRkQzcEFZVnRDL0MwbnIySnM4cHdx?=
- =?utf-8?B?bGszUjV3U3V1eXVFblJPeU9IcGk5bGMwN2JCZDVnMkRISEVsYXMzTGYwcVJO?=
- =?utf-8?B?N3EvaWlXQ0hUTlNmQWozZnE0T1F2YmlZYU9EOHhzQVhmUTVnVlIzVHZVenIw?=
- =?utf-8?B?cUM3MDNwZTZjN3NPRCtMU1RVa0dmbksrQlYvR1lXcjFrR2pUVXJkczRtY0JJ?=
- =?utf-8?B?NG0vRHJFaXZoVFhxdXppdkpPekJDNVpiTERhRFZjRTJ6a2V5VU9Pay9GVFdH?=
- =?utf-8?B?YmJYYVovS2dwV25MTSsremYzVmp6SG11QWJGTUFqL29nVDdYVlNQenY0d0Vz?=
- =?utf-8?B?MzhaYzlzcWwxNnR6OXFWVFNOcjJmS3JoVkQvcGRhZktQZ1RPY0tKVWh6dUcx?=
- =?utf-8?B?cVJoQ2hRMVoxOTRhbHNPMll0N1FJeVVLYzJHajRLbEFEMHluYXA4R0I0ZzY4?=
- =?utf-8?B?Tk9pYllMM2ZYQU9hM1ZUYkZWZWo5eDVZUmd6bW9FVTdzb2MvWWlaUUhTa1FJ?=
- =?utf-8?B?Zm5COHFrWjVjVk1LNUVUdS9ad3hrVjh1UzlzeEg1eTYwTS81b08xMmwyZ1Qr?=
- =?utf-8?B?WHZQdDV3Q1dUYlQ5cTY4SlQwU3lPczNKMEZFZ00wQ2N6Uit3N0RwVjFOQ0kv?=
- =?utf-8?B?SWhwMHJiVENPT0gwOSt4MWZZcUNPdVh5STQ5djhDRWVKVVRCZCsxdGx0NDEr?=
- =?utf-8?B?K3czVTZjUlZwaVM3ay9zaEdtWFNicUxDVU5LR1ZwYTJuRVlFT3ExL3ovaHlI?=
- =?utf-8?B?R1BRZFMwNGs3WWZZd3E5QmZKMmhJMzVTbUY0WXhqcTFVamVXdEhneWlCSGtI?=
- =?utf-8?B?U2pHbUg2WHRwdjNOSGQxQ1dDMm0zb2dpeGJsVG9KMStMdm1KOXd2UDVGd2s5?=
- =?utf-8?B?Qzc3aTNZaFJhNk10bER3UTJwWnYzOGs0WnIxK1UvZjFhVHFJb2g1NFdSTjd6?=
- =?utf-8?B?OERBaWJHZUttUGRKRWNpR09FTEVIOExldTZUeG9EVUFVMUFaUHpYOWppK2Zq?=
- =?utf-8?B?SjJ5MEs0bXNodTFieUZ4akw1Q2lsVXNjWUcyRFJxNkthMFQvRU1NWFNnU1NQ?=
- =?utf-8?Q?rdq732QV/lg4rRAKbVfMZ119v?=
+	=?us-ascii?Q?7IVdzkF2clBmD9bMXZh/NXGjf+y62HenRuaaeaIV4yfy+svGy4RcH4M2clLZ?=
+ =?us-ascii?Q?ZBE0+Z4SIXp9dEB+z00/3CIx+buXu6fuukRyidHp/fDctQ799Bzxg5/vX4OP?=
+ =?us-ascii?Q?Up4foGMiD3wDBRJJceYU23gYv1jPXuuH34lQqoJH/UPOJHFdpqpkeWETwfzO?=
+ =?us-ascii?Q?cDCRrTPaOHsclpcR5EQKFRWPP7B7dER3mDCdrUtOjmkf2EeufrpyCbFQg+LY?=
+ =?us-ascii?Q?OXOR5QU5B5txA7If2H/yMIJS5bQ4mcJaYMAclRr8FXC3rob9qDGnMw4wNK2m?=
+ =?us-ascii?Q?9mkRIhpcUx6qZ1t2Xw0tRDFvm9gDQ/6nCuG7fQ3rDtZkKQZOUbUIdvLJPJ1h?=
+ =?us-ascii?Q?BAGd1udgd3QJBQrHx+qveAgXPBQ5Ci0CJZrNN6oWMs2FqtpmCTV94sJS9HiP?=
+ =?us-ascii?Q?2ES4MG2Qmu3Z1y9J8Ys96IamUy4gu2yfiZbJ8s3uBsYQfEYgbXTLWvmQzQQr?=
+ =?us-ascii?Q?V1jaPm/Kkk8KYX+dRnTQ6XWYH5/ta65O5Vkgj8iLcB7jfFCHTBsVHLCUHe+5?=
+ =?us-ascii?Q?yUeUDUpvAhyJ4GGYhceHDs6v/ipqk2ox27BwMxsIoQAXMK2rRBnz9HpT3fzs?=
+ =?us-ascii?Q?Di/rZm9FNWXk98FIJKXcgg3IM7ppQu7UibkG2EUjXkZRmtZHsNuDjQ8DkZps?=
+ =?us-ascii?Q?gW2melmlWMFoezlSd1O62/mIhUYhXFTjWosuUTiY0MJk5LPzpQlxln8aIDE+?=
+ =?us-ascii?Q?PvZzqRV+UWN62rlj7WKfTdvb7mqfL5S1efmor/Bl1b59p/MJ7Qv/EHUliFN6?=
+ =?us-ascii?Q?cWOPNyHyq+WJ49S/9QPMuvG2VsfbAWzPAm2gqMTzt7iqU+ybPeHArxPZ7tEG?=
+ =?us-ascii?Q?Tb4M6m2TyjwzBkZjEiAvn01iCHm0aAPnB7IqKIMHp13goO8EhPgs6+XYWGIT?=
+ =?us-ascii?Q?qJWQsJb54ZWBkqjT5O/DjDIdYRF+KrWBZ8CzSZ5zIv+uE3RD8fcvq3gEHez7?=
+ =?us-ascii?Q?RtqxMDfHfXg/DSeZkbnRKlnw39L/RStkggJFvB6A4iLsqsxLpl+2VTdYqFKp?=
+ =?us-ascii?Q?6mNALopFz+tWVYmO20441+2s6hMcdbNX4HjYwlTP2oXgnR0ibhUY+mU4u2H5?=
+ =?us-ascii?Q?Qo2Bd/VXRH1NFS6JkLmg8lBP5/dsBLwKZxo0gRly3YBPS1W7ELYQSW7Lh1LR?=
+ =?us-ascii?Q?wNm16aMnogidz1BJunWd19H8ut4cJrD9LKbc4WHG+4ij7Ll0g7yLVYAknNfE?=
+ =?us-ascii?Q?w6hfJPm+BO8biUQFFep1XhH0F3c90CZdvS6I4yj8Q+K1AepfYCtdTZOKke99?=
+ =?us-ascii?Q?ylFtUNNIZzzH/O0vguuSN00cV9x3h029UsRm6AuRfBxsMhmZ4fOmq7Maxvtl?=
+ =?us-ascii?Q?M8gmOvZGQRVGviq/3b6qNjOF5ctyx9nsy0o03hp5cBz9e1UZt/2FJfY6ylkW?=
+ =?us-ascii?Q?yHc1dNzaKXKvkT+aH9LNrhJQCYt6cKtc1OQ6jC1oxiPFMTklbCkN41XCEuNq?=
+ =?us-ascii?Q?lWeatkmNfSvVgn/af7ylj9RFFk6wLBwBCj7aetPoFxYT6N3+M4IJ9f4BJKqq?=
+ =?us-ascii?Q?XKOOOepegS+LjWRnf87f0BREXJzz5fU5uxlch5aWHP6FAo6Lx/1N5UjMcUSu?=
+ =?us-ascii?Q?hpKcLv14/T1FXygrRXUDJhq7yMLagEA7t9NR2dxa?=
 X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ee4186fb-b242-469c-b5c1-08ddde620110
+X-MS-Exchange-CrossTenant-Network-Message-Id: 988f0ca6-7ce2-413a-3988-08ddde629923
 X-MS-Exchange-CrossTenant-AuthSource: SE1PPF54561D20A.apcprd06.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2025 14:17:46.7542
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2025 14:22:01.6460
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: wTzdKs6b/mo30QWlLg0a4lTQUA0/lU6oK/K24arh5Uh5XxwnStElqu/ZsOk8iJzwxDSVzB2AYK0UxKHNIScezw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB6482
+X-MS-Exchange-CrossTenant-UserPrincipalName: EzMkOw/xSIUSSsTye1+tHWVGaFbhZKEeVpE5MyZ+AAzzQhPZ5WavzZKlF92JGpgfoWuvDB+i4E+sqa7V88KWew==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB6115
 
 From: Yang Chenzhi <yang.chenzhi@vivo.com>
 
-When running syzbot with a crafted HFS/HFS+ disk image containing
-invalid record offsets or lengths, the filesystem may hang. For
-example, in this case syzbot set the header’s second record offset
-to 0x7f00 while node_size is 4096. HFS/HFS+ failed to detect this
-fault, which eventually led to a crash.
+hfsplus_bmap_alloc can trigger a crash if a
+record offset or length is larger than node_size
 
-Since HFS/HFS+ makes heavy use of hfs_brec_lenoff, adding manual
-offset/length checks at every call site would be tedious and
-error-prone.
+[   15.264282] BUG: KASAN: slab-out-of-bounds in hfsplus_bmap_alloc+0x887/0x8b0
+[   15.265192] Read of size 8 at addr ffff8881085ca188 by task test/183
+[   15.265949]
+[   15.266163] CPU: 0 UID: 0 PID: 183 Comm: test Not tainted 6.17.0-rc2-gc17b750b3ad9 #14 PREEMPT(voluntary)
+[   15.266165] Hardware name: QEMU Ubuntu 24.04 PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[   15.266167] Call Trace:
+[   15.266168]  <TASK>
+[   15.266169]  dump_stack_lvl+0x53/0x70
+[   15.266173]  print_report+0xd0/0x660
+[   15.266181]  kasan_report+0xce/0x100
+[   15.266185]  hfsplus_bmap_alloc+0x887/0x8b0
+[   15.266208]  hfs_btree_inc_height.isra.0+0xd5/0x7c0
+[   15.266217]  hfsplus_brec_insert+0x870/0xb00
+[   15.266222]  __hfsplus_ext_write_extent+0x428/0x570
+[   15.266225]  __hfsplus_ext_cache_extent+0x5e/0x910
+[   15.266227]  hfsplus_ext_read_extent+0x1b2/0x200
+[   15.266233]  hfsplus_file_extend+0x5a7/0x1000
+[   15.266237]  hfsplus_get_block+0x12b/0x8c0
+[   15.266238]  __block_write_begin_int+0x36b/0x12c0
+[   15.266251]  block_write_begin+0x77/0x110
+[   15.266252]  cont_write_begin+0x428/0x720
+[   15.266259]  hfsplus_write_begin+0x51/0x100
+[   15.266262]  cont_write_begin+0x272/0x720
+[   15.266270]  hfsplus_write_begin+0x51/0x100
+[   15.266274]  generic_perform_write+0x321/0x750
+[   15.266285]  generic_file_write_iter+0xc3/0x310
+[   15.266289]  __kernel_write_iter+0x2fd/0x800
+[   15.266296]  dump_user_range+0x2ea/0x910
+[   15.266301]  elf_core_dump+0x2a94/0x2ed0
+[   15.266320]  vfs_coredump+0x1d85/0x45e0
+[   15.266349]  get_signal+0x12e3/0x1990
+[   15.266357]  arch_do_signal_or_restart+0x89/0x580
+[   15.266362]  irqentry_exit_to_user_mode+0xab/0x110
+[   15.266364]  asm_exc_page_fault+0x26/0x30
+[   15.266366] RIP: 0033:0x41bd35
+[   15.266367] Code: bc d1 f3 0f 7f 27 f3 0f 7f 6f 10 f3 0f 7f 77 20 f3 0f 7f 7f 30 49 83 c0 0f 49 29 d0 48 8d 7c 17 31 e9 9f 0b 00 00 66 0f ef c0 <f3> 0f 6f 0e f3 0f 6f 56 10 66 0f 74 c1 66 0f d7 d0 49 83 f8f
+[   15.266369] RSP: 002b:00007ffc9e62d078 EFLAGS: 00010283
+[   15.266371] RAX: 00007ffc9e62d100 RBX: 0000000000000000 RCX: 0000000000000000
+[   15.266372] RDX: 00000000000000e0 RSI: 0000000000000000 RDI: 00007ffc9e62d100
+[   15.266373] RBP: 0000400000000040 R08: 00000000000000e0 R09: 0000000000000000
+[   15.266374] R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+[   15.266375] R13: 0000000000000000 R14: 0000000000000000 R15: 0000400000000000
+[   15.266376]  </TASK>
 
-Instead, it may be more robust to introduce validation directly
-inside hfs_brec_lenoff (or at a similar central point), ensuring
-that all callers can safely rely on the returned offset and length
-without additional checks.
+When calling hfsplus_bmap_alloc to allocate a free node, this function
+first retrieves the bitmap from header node and map node using node->page
+together with the offset and length from hfs_brec_lenoff
 
-Yang Chenzhi (1):
-  hfs: validate record offset in hfsplus_bmap_alloc
+```
+len = hfs_brec_lenoff(node, 2, &off16);
+off = off16;
 
+off += node->page_offset;
+pagep = node->page + (off >> PAGE_SHIFT);
+data = kmap_local_page(*pagep);
+```
+
+However, if the retrieved offset or length is invalid(i.e. exceeds
+node_size), the code may end up accessing pages outside the allocated
+range for this node.
+
+This patch adds proper validation of both offset and length before use,
+preventing out-of-bounds page access. Move is_bnode_offset_valid and
+check_and_correct_requested_length to hfsplus_fs.h, as they may be
+required by other functions.
+
+Reported-by: syzbot+356aed408415a56543cd@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/67bcb4a6.050a0220.bbfd1.008f.GAE@google.com/
+Signed-off-by: Yang Chenzhi <yang.chenzhi@vivo.com>
+---
  fs/hfsplus/bnode.c      | 41 ----------------------------------------
  fs/hfsplus/btree.c      |  6 ++++++
  fs/hfsplus/hfsplus_fs.h | 42 +++++++++++++++++++++++++++++++++++++++++
  3 files changed, 48 insertions(+), 41 deletions(-)
 
+diff --git a/fs/hfsplus/bnode.c b/fs/hfsplus/bnode.c
+index 14f4995588ff..407d5152eb41 100644
+--- a/fs/hfsplus/bnode.c
++++ b/fs/hfsplus/bnode.c
+@@ -18,47 +18,6 @@
+ #include "hfsplus_fs.h"
+ #include "hfsplus_raw.h"
+ 
+-static inline
+-bool is_bnode_offset_valid(struct hfs_bnode *node, int off)
+-{
+-	bool is_valid = off < node->tree->node_size;
+-
+-	if (!is_valid) {
+-		pr_err("requested invalid offset: "
+-		       "NODE: id %u, type %#x, height %u, "
+-		       "node_size %u, offset %d\n",
+-		       node->this, node->type, node->height,
+-		       node->tree->node_size, off);
+-	}
+-
+-	return is_valid;
+-}
+-
+-static inline
+-int check_and_correct_requested_length(struct hfs_bnode *node, int off, int len)
+-{
+-	unsigned int node_size;
+-
+-	if (!is_bnode_offset_valid(node, off))
+-		return 0;
+-
+-	node_size = node->tree->node_size;
+-
+-	if ((off + len) > node_size) {
+-		int new_len = (int)node_size - off;
+-
+-		pr_err("requested length has been corrected: "
+-		       "NODE: id %u, type %#x, height %u, "
+-		       "node_size %u, offset %d, "
+-		       "requested_len %d, corrected_len %d\n",
+-		       node->this, node->type, node->height,
+-		       node->tree->node_size, off, len, new_len);
+-
+-		return new_len;
+-	}
+-
+-	return len;
+-}
+ 
+ /* Copy a specified range of bytes from the raw data of a node */
+ void hfs_bnode_read(struct hfs_bnode *node, void *buf, int off, int len)
+diff --git a/fs/hfsplus/btree.c b/fs/hfsplus/btree.c
+index 9e1732a2b92a..fe6a54c4083c 100644
+--- a/fs/hfsplus/btree.c
++++ b/fs/hfsplus/btree.c
+@@ -393,6 +393,12 @@ struct hfs_bnode *hfs_bmap_alloc(struct hfs_btree *tree)
+ 	len = hfs_brec_lenoff(node, 2, &off16);
+ 	off = off16;
+ 
++	if (!is_bnode_offset_valid(node, off)) {
++		hfs_bnode_put(node);
++		return ERR_PTR(-EIO);
++	}
++	len = check_and_correct_requested_length(node, off, len);
++
+ 	off += node->page_offset;
+ 	pagep = node->page + (off >> PAGE_SHIFT);
+ 	data = kmap_local_page(*pagep);
+diff --git a/fs/hfsplus/hfsplus_fs.h b/fs/hfsplus/hfsplus_fs.h
+index 96a5c24813dd..49965cd45261 100644
+--- a/fs/hfsplus/hfsplus_fs.h
++++ b/fs/hfsplus/hfsplus_fs.h
+@@ -577,6 +577,48 @@ hfsplus_btree_lock_class(struct hfs_btree *tree)
+ 	return class;
+ }
+ 
++static inline
++bool is_bnode_offset_valid(struct hfs_bnode *node, int off)
++{
++	bool is_valid = off < node->tree->node_size;
++
++	if (!is_valid) {
++		pr_err("requested invalid offset: "
++		       "NODE: id %u, type %#x, height %u, "
++		       "node_size %u, offset %d\n",
++		       node->this, node->type, node->height,
++		       node->tree->node_size, off);
++	}
++
++	return is_valid;
++}
++
++static inline
++int check_and_correct_requested_length(struct hfs_bnode *node, int off, int len)
++{
++	unsigned int node_size;
++
++	if (!is_bnode_offset_valid(node, off))
++		return 0;
++
++	node_size = node->tree->node_size;
++
++	if ((off + len) > node_size) {
++		int new_len = (int)node_size - off;
++
++		pr_err("requested length has been corrected: "
++		       "NODE: id %u, type %#x, height %u, "
++		       "node_size %u, offset %d, "
++		       "requested_len %d, corrected_len %d\n",
++		       node->this, node->type, node->height,
++		       node->tree->node_size, off, len, new_len);
++
++		return new_len;
++	}
++
++	return len;
++}
++
+ /* compatibility */
+ #define hfsp_mt2ut(t)		(struct timespec64){ .tv_sec = __hfsp_mt2ut(t) }
+ #define hfsp_ut2mt(t)		__hfsp_ut2mt((t).tv_sec)
 -- 
 2.43.0
 
