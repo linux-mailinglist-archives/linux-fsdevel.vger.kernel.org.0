@@ -1,185 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-58107-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58108-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DB23B29650
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 03:39:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10DCCB29655
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 03:43:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B7061965E1C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 01:39:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4837D7AED35
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 01:41:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2AC32222D8;
-	Mon, 18 Aug 2025 01:39:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OpKv2a2R"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB9C231A30;
+	Mon, 18 Aug 2025 01:43:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C0B1B7F4
-	for <linux-fsdevel@vger.kernel.org>; Mon, 18 Aug 2025 01:39:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AFDF2264B1;
+	Mon, 18 Aug 2025 01:43:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755481160; cv=none; b=Y9KC+gUAsxcXYO6356ZDi6cu9m5p0IWKdy54LrcCEW8clIXNegPg+E+uje9fI08EqRqXUVtlyKZzSy4IeRSP1tosWP7Es9YNYzAqKWfiZFIEeoWMEueHci01uYq7NGET/cLPBbj9s8NaB9EaNngHQHvGGxXwF3UaDb6B1RNQoz4=
+	t=1755481386; cv=none; b=ctQEW1YCjkW2RAlKRRJ0ycLxKTikY+X0/qXoSwikPggBpOTfRuuS3/ekXwSq1PvSPjfL77DAkpRuYJVrmFy/rckmPYyACJqFE/NPtrU7GlGBFhbIZDycI7v2r10on+9nsC9KYLlWTlRN0/ZJKJ/O6RPBDdDHcFHtcgB0E8YyDAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755481160; c=relaxed/simple;
-	bh=Rb8yRjwTHujDI/KtC91QPXecIRV7gIEqLM3IjrDwPh8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LcB5y1kXe2iv1c2pk2LypTWp+OPXyV+cFDKXT1JJRL3mQLWymEjNzVllab+02RqjvmWdkCG+BK+VcabPW/hLimbzYdqSc7+Wx4ta3Uo+lA8PnmQFihRwo0fcB+nGfl4toy/u/lOkDXaIfmEV94f2GlNskgi81sWQnwagStfQwh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OpKv2a2R; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-afcb72d51dcso517208766b.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 17 Aug 2025 18:39:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755481157; x=1756085957; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rC1BccjsbYL36CPp7CsaS9jGmztyFwsXC53xiY/CEtc=;
-        b=OpKv2a2ROue46daPByaL5D+v1Wc+yODjUz3LvuFvenz2wr3PKB/fb2ojdNg8vurHCS
-         Fb9d8FuJ+HQTTvFCUHoKLe5GBqjtCiMJUWD8k82EV695NIyTu9yvgiMfMacnl2M1z70i
-         53W/exN5rFXvHEgZL4Mc+5FvkU4kV2uiXW73bayx41Xg0ctCVj02PQNQX6U7Dpg5QhwN
-         QJzdHG22Hy82mzWt+MTyCtREx19+K1+bUiHyM5btYfnEq0Dr+TYSDvzubVzqh8apa+VR
-         jkMPbNhI+SWBwg6kz2IqTz6VTQvvv4+GyKEsbmvmgdcsKT4LPT0JWQsryDZjPQauJsmC
-         2FKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755481157; x=1756085957;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rC1BccjsbYL36CPp7CsaS9jGmztyFwsXC53xiY/CEtc=;
-        b=LuHcYhYWV1saegITOjIHwcEfC5Lj+fHcRnuuiaaD7p2DkcU7bedrjhDJQuxQfL2qHL
-         s8ag64vRQWfy8iHF8nQvuRTWnw5rv9OktMXS9Z0oO4mDsV5w6B74KuRXAN+ubmbB+CWg
-         rqiKYde3FVLzqDjqBla8ua8nAoAS3GcSCDj39E1Gn0DfMgvmNwDqRAdNDLHP09LGdfMl
-         KC3ipDZAZ3GaDGpJWnzoVqIQw39TIMHyS4Iw0SxKqZcQYs9aTkX9Jjf/DEijDxK+ZbFp
-         zIhjERnbS/JOWFzW7abWg7EXiDem/BaWMCLtE1X2I3mi6FFZX6DOsbQtG/O+QUiIy1Eg
-         YqKw==
-X-Gm-Message-State: AOJu0YwspSJcE82IYj32iR0xdhguq3vzleohKYsuXhBgGimG//txqBL5
-	oI0x9qmTu8i316QpSVgSLKT9KCYQNQ+XMXxXWDJzY2hyLYKoIuFYF8soyu5HNxCZsckhG/f9DHN
-	mC8DObtB92g5l4x0h+L80s1xw5gbN/OnaOAgRWos=
-X-Gm-Gg: ASbGncs3B/tZhdjbTMnjIFrVBMR/weou4XzXJlaDuWd91sXvDBromk2843ZmXFqTonQ
-	Te2KnxP2ZdmXDZGoZtThVGIYwEiyI58pF/AYa5sRlsqVGwtW2SaumkgIe4Fcqzt+ptTsZ3pZdNt
-	Xl8ehUfqA7vu6L4ScXWURmvg8AqPAjvawsslifEZe7WObY6JyM/tIHPa93+JT+ZvCtj9XIY2TpQ
-	LRX/Q==
-X-Google-Smtp-Source: AGHT+IF3ZhSRZgSiEd8LxGef+hfRvGrQE+d8Z3Da3xPpLldPEog1tbMaWXJWoS4WyDny9rxNB6Hjg3VnUZRl/dHW2A4=
-X-Received: by 2002:a17:907:6d22:b0:ae3:f16a:c165 with SMTP id
- a640c23a62f3a-afceae2d340mr708727966b.31.1755481156691; Sun, 17 Aug 2025
- 18:39:16 -0700 (PDT)
+	s=arc-20240116; t=1755481386; c=relaxed/simple;
+	bh=3BrdEm9YWQ4b9T8dYVemL7Ff85aMXjPNNHmqsSoFDS4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rFuLyyJ63V4nRgl+Y2V8qKQmGQ56b88dudhjhvHwlBN7pMl+oOqbGQyaI3ny9p881epnPFs4S0vx4ImYfAUBuG5nXME+W357Efi41RfBW28vqgeXNOCinjAhZkhcxhbEdeN0LTa0I47fPh3FTwdgAYBBHoxEfDERO5hDkjXmwdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c4wTL0jTWzYQv8W;
+	Mon, 18 Aug 2025 09:43:02 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id A71FF1A018D;
+	Mon, 18 Aug 2025 09:43:00 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgAHgxMfhaJo6Ns1EA--.15154S3;
+	Mon, 18 Aug 2025 09:42:57 +0800 (CST)
+Message-ID: <95a4a94b-7aa0-4e3c-a386-7692dde66a4f@huaweicloud.com>
+Date: Mon, 18 Aug 2025 09:42:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAGmFzScM+UFXCuw5F3B3rZ8iFFyZxwSwBHJD6XwPnHVtqr5JMg@mail.gmail.com>
- <E1CDDCDF-0461-4522-985E-07EF212FE927@bsbernd.com>
-In-Reply-To: <E1CDDCDF-0461-4522-985E-07EF212FE927@bsbernd.com>
-From: Gang He <dchg2000@gmail.com>
-Date: Mon, 18 Aug 2025 09:39:04 +0800
-X-Gm-Features: Ac12FXx8XqajJCSWDntI1tQfgeNM4n_vXMeqXoe332YKO2SoQ4Y3ioLyALskZp8
-Message-ID: <CAGmFzSe+Qcpmtrav_LUxJtehwXQ3K=5Srd1Y2mvs4Y-k7m05zQ@mail.gmail.com>
-Subject: Re: Fuse over io_uring mode cannot handle iodepth > 1 case properly
- like the default mode
-To: Bernd Schubert <bernd@bsbernd.com>
-Cc: linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH blktests v2 0/3] blktest: add unmap write zeroes tests
+To: Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+ "dm-devel@lists.linux.dev" <dm-devel@lists.linux.dev>,
+ "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+ "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ hch <hch@lst.de>, "tytso@mit.edu" <tytso@mit.edu>,
+ "djwong@kernel.org" <djwong@kernel.org>,
+ "bmarzins@redhat.com" <bmarzins@redhat.com>,
+ "chaitanyak@nvidia.com" <chaitanyak@nvidia.com>,
+ "brauner@kernel.org" <brauner@kernel.org>,
+ "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+ "yi.zhang@huawei.com" <yi.zhang@huawei.com>,
+ "chengzhihao1@huawei.com" <chengzhihao1@huawei.com>,
+ "yukuai3@huawei.com" <yukuai3@huawei.com>,
+ "yangerkun@huawei.com" <yangerkun@huawei.com>
+References: <20250813024421.2507446-1-yi.zhang@huaweicloud.com>
+ <7dswufawxmyqblokjesulhdexqld3bx7sycgmylbaeqs43ougk@25rseyqm3beg>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <7dswufawxmyqblokjesulhdexqld3bx7sycgmylbaeqs43ougk@25rseyqm3beg>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgAHgxMfhaJo6Ns1EA--.15154S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7WFy3tFy8uFWrXr15tr1rXrb_yoW8tw15pr
+	W5Xa4Dtws8GrWDJa4vvayq9Fy3Jws7Zry7A3Z5tr18Cr15ZFyfWrZ8Xw4aga17KrnxGw1I
+	v3W2gryS93WUJ3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
+	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
+	s2-5UUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Hi Bernd,
+On 8/17/2025 2:14 PM, Shinichiro Kawasaki wrote:
+> On Aug 13, 2025 / 10:44, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> Change since v2:
+>>  - Modify the sysfs interfaces according to the kernel implementation.
+>>  - Determine whether the kernel supports it by directly checking the
+>>    existence of the sysfs interface, instead of using device_requries(). 
+>>  - Drop _short_dev() helper and directly use _real_dev() to acquire dm
+>>    path.
+>>  - Check the return value of setup_test_device().
+>>  - Fix the '"make check'" errors.
+>>
+>>
+>> The Linux kernel (since version 6.17)[1] supports FALLOC_FL_WRITE_ZEROES
+>> in fallocate(2) and add max_{hw|user}_wzeroes_unmap_sectors parameters
+>> to the block device queue limit. These tests test those block device
+>> unmap write zeroes sysfs interface
+>>
+>>         /sys/block/<disk>/queue/write_zeroes_max_bytes
+>>         /sys/block/<disk>/queue/write_zeroes_unmap_max_hw_bytes
+>>
+>> with various SCSI/NVMe/device-mapper devices.
+>>
+>> The value of /sys/block//queue/write_zeroes_unmap_max_hw_bytes should be
+>> equal to a nonzero value of /sys/block//queue/write_zeroes_max_bytes if
+>> the block device supports the unmap write zeroes command; otherwise, it
+>> should return 0. We can also disable unmap write zeroes command by
+>> setting /sys/block/<disk>/queue/write_zeroes_max_bytes to 0.
+>>
+>>  - scsi/010 test SCSI devices.
+>>  - dm/003 test device mapper stacked devices.
+>>  - nvme/065 test NVMe devices.
+>>
+>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=278c7d9b5e0c
+> 
+> I applied this v2 series. Of note is that I amended the 2nd and 3rd patches to
+> fix the shellcheck warnings below. Anyway, thanks for the patches!
+> 
+> $ make check
+> shellcheck -x -e SC2119 -f gcc check common/* \
+>         tests/*/rc tests/*/[0-9]*[0-9] src/*.sh
+> common/rc:679:7: note: Double quote to prevent globbing and word splitting. [SC2086]
+> tests/nvme/065:44:7: warning: Quote this to prevent word splitting. [SC2046]
+> tests/nvme/065:44:7: note: Useless echo? Instead of 'echo $(cmd)', just use 'cmd'. [SC2005]
+> make: *** [Makefile:21: check] Error 1
 
-Bernd Schubert <bernd@bsbernd.com> =E4=BA=8E2025=E5=B9=B48=E6=9C=8816=E6=97=
-=A5=E5=91=A8=E5=85=AD 04:56=E5=86=99=E9=81=93=EF=BC=9A
->
-> On August 15, 2025 9:45:34 AM GMT+02:00, Gang He <dchg2000@gmail.com> wro=
-te:
-> >Hi Bernd,
-> >
-> >Sorry for interruption.
-> >I tested your fuse over io_uring patch set with libfuse null example,
-> >the fuse over io_uring mode has better performance than the default
-> >mode. e.g., the fio command is as below,
-> >fio -direct=3D1 --filename=3D/mnt/singfile --rw=3Dread  -iodepth=3D1
-> >--ioengine=3Dlibaio --bs=3D4k --size=3D4G --runtime=3D60 --numjobs=3D1
-> >-name=3Dtest_fuse1
-> >
-> >But, if I increased fio iodepth option, the fuse over io_uring mode
-> >has worse performance than the default mode. e.g., the fio command is
-> >as below,
-> >fio -direct=3D1 --filename=3D/mnt/singfile --rw=3Dread  -iodepth=3D4
-> >--ioengine=3Dlibaio --bs=3D4k --size=3D4G --runtime=3D60 --numjobs=3D1
-> >-name=3Dtest_fuse2
-> >
-> >The test result showed the fuse over io_uring mode cannot handle this
-> >case properly. could you take a look at this issue? or this is design
-> >issue?
-> >
-> >I went through the related source code, I do not understand each
-> >fuse_ring_queue thread has only one  available ring entry? this design
-> >will cause the above issue?
-> >the related code is as follows,
-> >dev_uring.c
-> >1099
-> >1100     queue =3D ring->queues[qid];
-> >1101     if (!queue) {
-> >1102         queue =3D fuse_uring_create_queue(ring, qid);
-> >1103         if (!queue)
-> >1104             return err;
-> >1105     }
-> >1106
-> >1107     /*
-> >1108      * The created queue above does not need to be destructed in
-> >1109      * case of entry errors below, will be done at ring destruction=
- time.
-> >1110      */
-> >1111
-> >1112     ent =3D fuse_uring_create_ring_ent(cmd, queue);
-> >1113     if (IS_ERR(ent))
-> >1114         return PTR_ERR(ent);
-> >1115
-> >1116     fuse_uring_do_register(ent, cmd, issue_flags);
-> >1117
-> >1118     return 0;
-> >1119 }
-> >
-> >
-> >Thanks
-> >Gang
->
->
-> Hi Gang,
->
-> we are just slowly traveling back with my family from Germany to France -=
- sorry for delayed responses.
->
-> Each queue can have up to N ring entries - I think I put in max 65535.
->
-> The code you are looking at will just add new entries to per queue lists.
->
-> I don't know why higher fio io-depth results in lower performance. A poss=
-ible reason is that /dev/fuse request get distributed to multiple threads, =
-while fuse-io-uring might all go the same thread/ring. I had posted patches=
- recently that add request  balancing between queues.
-Io-depth > 1 case means asynchronous IO implementation, but from the
-code in the fuse_uring_commit_fetch() function, this function
-completes one IO request, then fetches the next request. This logic
-will block handling more IO requests before the last request is being
-processed in this thread. Can each thread accept more IO requests
-before the last request in the thread is being processed? Maybe this
-is the root cause for fio (iodepth>1) test case.
+Sorry for missing these warnings, and thank you for fixing them! :-)
 
-Thanks
-Gang
+Thanks.
+Yi.
 
-
->
-> Cheers,
-> Bernd
->
->
->
-> Cheers,
-> Bernd
 
