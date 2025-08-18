@@ -1,113 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-58173-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58174-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40ECAB2A9DE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 16:25:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25846B2A951
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 16:18:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 552371B63E94
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 14:08:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F1DD5867F7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 14:11:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A2C1322DCF;
-	Mon, 18 Aug 2025 13:59:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA09F3375DF;
+	Mon, 18 Aug 2025 14:01:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="E9j1yP6x"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CWLoY4B4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF5FC322A39;
-	Mon, 18 Aug 2025 13:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB8E308F02;
+	Mon, 18 Aug 2025 14:01:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755525595; cv=none; b=qatoY2sRIv7DCyWjtLuDLRzY4/P+oivtEEVdN5h8PB1Wpw/5ibk5JP9xsaKdMGRGl01qCbP/oH4g4987CmYTyfbFs+DXhy8g1hjCWjzv6TPfY2VFQ3hTBfMx8Fb3V3xrGRClgwzBf3wUOwFWU4l4ZHaA1chFjGUO7m+wBbFHcAs=
+	t=1755525709; cv=none; b=jrOpoyMpFWvfK02DK8/WN6Q00KAxO4Ob7vXJ1ptRnqY1EnWEUbahvrjnCV/lFCZEOt3eMQF2xcq1VFYmjyOxL4WHB96999UZ72Zx/chuLmHi96kF1/416lg0EZfUboBtU3IWoGnD/KDVDJ+njMyZpOrmkrBSVd8BH+5i+5XKm/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755525595; c=relaxed/simple;
-	bh=jj53V94zqaHhX9kDmLB5IOaA+ZJ0TvHlFvFNhVaoAyw=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=pfhUBb5igOOvQJLXtuBT7mFBk0mPOdcPTMvtl3WPan2MnjugefjEy/cQ3kIEh2bUXYcytjI/yb0p7p5bP4Vb8us5JIS0p3p+AUH/BPhn3B5r/ssTfGdTkV9JLmlfUxn/Cv41JolvHYyNN/Xa6YoN2YqTFHLYtTCh7mzjFYbvsx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=E9j1yP6x; arc=none smtp.client-ip=43.163.128.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1755525590; bh=jO6mm0SEtl/dOnAj5fjSuDHUXJTe4jEIzLbN9ric9mE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=E9j1yP6xB/FVZKl3MZ5Jbl4KeFZ3CUdAatvjnj3U70z1SvU7KDFnzBfJtZObSLvIp
-	 zcIqwhn8+JB0mznKoD9rPmflmFlfGycghdH/SEIBQFP3Xtwm20YAjga+FhRebRcCiW
-	 wmfhOfMHpUYLp0cFf03z7yGgGmhvmAZYEfdInG8U=
-Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.230.220])
-	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
-	id E9707618; Mon, 18 Aug 2025 21:58:23 +0800
-X-QQ-mid: xmsmtpt1755525503ta32cnhnn
-Message-ID: <tencent_44D70651C9BAEEF1EEC70C85A7DF46D71206@qq.com>
-X-QQ-XMAILINFO: NrNHTFHgCqYay8hiWnes+LpuXKDZczPVfsB5vT53Rni7ByHTB2ibBRUXX1XttM
-	 yQXsRWCkVr0TF/fWCln+paXfY9fn9/CsA2QeZiaGxDYVDM4Ld/E32gxv7uhzZ2kaDuaDsYvA/oej
-	 Hc8NZpU2MMuFMDWmGNn6iU41wvyAowKFpPstpk21ZO/LHn+lV0gS9utlsMWbbxkMV98bObycHxDg
-	 1h/v3t2x/2NsuSdjsj+RhlX+uLA+7LhbHoZs7hn9/Ucphnr2W+MeDV1PdLKMQxh6oUXZVmFRyOZ/
-	 fEXvqCz+2MQ2U42P0JcZfnugMZezqwSg0DE8i14eXtS4HWJ1PqR5d8ICS7KWyxd7y8AnwiTgHd2j
-	 J7bO/JeRMY+qS32K4WxSV1KpGL/nVva0NmVRLSCFYCSufAERIDZD025WTH1RUOXIXjvAJcTLPAob
-	 Rey1E26RWOPuCmYS57Uh56vsOUIHB5/6aK3UmTjR/OnU8cCgBbLjTM6PjTa6+DdyGArNUUFt89OM
-	 uPgp1I8Mo27UKfxe0Lu+L23FReHi5b2vGiwmWUeu0j4R8Edq/RWIkKWjRi3VYUd/28WD+TNyc/UL
-	 gRn3hRRjqf6wcclOV2MgIK+iSFlsaITohuFOIWLp/2pKeJNaQjOIbMGMYYMc638yd/Z+NNOmtUTV
-	 5pU/krEfyNrQPB9bqcy1c6dhiQtUCt2AGAeK7fbbje+SdVxQOd7ik/ZlcNmeqal6b/yIecE/MRWP
-	 JLmTtladJTUq2thrJWGLylJB/mN6gDu/NZZO99FyH6B8mZBg+/5lusgViH4ita5Kf7KtJy2oqxlE
-	 dTBLNiaeeGoa+WlJQtpl5E5NOj5w068Na5emcbbWymGkB6KP2/P6WW62qNu80/56tifoQJ+WJd3p
-	 Sj1zSJm9M98Apx1W+YnRpMg34aBnVjkjWIXZggTZs8M3yt4Q8ltYslc9jDtqdw6ceAkyDQwUxWBI
-	 dEAvXikeZ2yFFhFgaGvAEjclnn/5KK4zMjLjTglS5iPEy97GsIJiEH/tj+KiX8uMmkVzvQJt89wR
-	 U/yHIJZkNZ2Cjr460V73nKJi7GWCM=
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-From: Edward Adam Davis <eadavis@qq.com>
-To: viro@zeniv.linux.org.uk
-Cc: eadavis@qq.com,
-	hirofumi@mail.parknet.co.jp,
-	linkinjeon@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	sj1557.seo@samsung.com,
-	syzbot+d3c29ed63db6ddf8406e@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH V2] fat: Prevent the race of read/write the FAT32 entry
-Date: Mon, 18 Aug 2025 21:58:23 +0800
-X-OQ-MSGID: <20250818135822.535841-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250729100635.GH222315@ZenIV>
-References: <20250729100635.GH222315@ZenIV>
+	s=arc-20240116; t=1755525709; c=relaxed/simple;
+	bh=y2Nw6yRVcmnnk3DER/vCk4B9KctzAxdvSFV70vMgIxI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KoQqatGmn/Cwsb1OFWn7xy3OexBOFOdtFF5P5ckXes+Z+xRMirvAM6Vt4YhhdKOFd+R+jCOD+Nrv0inMh3tHtVwghi/d4weDf0Rt6mQtAjDb3G2z+qktLfVBO0c0AovQ22EH7DTzZqr02xLzAKhUWeKpM35Yoa694avpd8rn88M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CWLoY4B4; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45a1b05fe23so24674575e9.1;
+        Mon, 18 Aug 2025 07:01:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755525706; x=1756130506; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=u7aSm/eI7kfLNdmsL2BItZGDfjAkMGxOsO5FNkHNx+Y=;
+        b=CWLoY4B4P8KdBXyE9lrcLnL2QSpu7dwHtjHTbe7MyI5+ig1tm512UxXtXeghwHyIf4
+         kGyzomKseczkKwcvckCwuq0fYwMoXrY5vQPBwB5DowHtcyKUWihwAM4MO8g+fclj+JNE
+         cyCPMRzjfPLYSlTsLVT6E2/1CRC3lIM5RIRAhnd81DKM9JWcFpf+HJgO5/7J0BHNFOUd
+         QJ0/wautwc1UiEh4JBtVx+8ZLn9YULBj2Ws8tNg7NaiWAmxPruVKa7McMnqLlCBUdstH
+         QtzWuWc2c2NFWQvADg55kcthHVJpRqkaYRX/GS3hHPNLpTA1Irkp+oXMs3A8+Azopplz
+         rTWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755525706; x=1756130506;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=u7aSm/eI7kfLNdmsL2BItZGDfjAkMGxOsO5FNkHNx+Y=;
+        b=p9+5UgQXB6MsKEKgyP3GH98FnteQHffM7YlioPEDMGTHPG1MGZlrMDVaOcLIGn17fG
+         zxXR85ypkBH5MZaW9OCeMDA7Z0JqjTkyRVf5HyNDhjjirCe8QSuaAU/RQQLoC4LVQ7AK
+         1AgknEofeHEFd+OUNouvV3b0rgVzMf71Zm7by2f0NBV2lDtj9goig30wbL6DfQeEX/vd
+         05wTdKTuJYsncWFt47Zlmm0E9NPR8Bi5G/7MtjwYroIMtpSbOYA01zOSiCW7pXv6po3f
+         l+3gmK1q0l8r9mn6qN7o6diomyy8EkPJghwqt0bz/sJm0May7gF5V41lKfAkZCaxB0wr
+         Nn5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU6Dihqtrco0uzFPF65ciEjH8ftihHUAAn6lHGkWRehQLvfntBwUCbB0szjRzi4eL5T257zXcoXD+mfaDLo@vger.kernel.org, AJvYcCWp83bf5Psb/iw+Oqf3qqQ+P0PKfaxeWwcPM62W8zjh7RiXrwRKL80weXZerurbBS6HBr5KFROs@vger.kernel.org, AJvYcCWwxu2iEuIfKXcu7RoDvR/1kPhfUGzEC53UVr+Tb7GSq9O+ZNJYWvSe64LtEN0Qr+XdWFrAf/HDnvAOrlqV@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfKCFRIwEDYXsoaxgVE04ZKLShAY5K7hOaxLDfJO7DXzL0+LG9
+	eLKOfYDtBH0nngqJGFFJld0EfIeJhiEI8ERXb0BCJ4hnJuELyBNHK5FH
+X-Gm-Gg: ASbGncvZsLSag9YpKZiNSfJW7EtVkyliB95+GXsceJ8RpzYEggg4SiVg3UC5sM2jnHM
+	4K1+HagWYgO7p3nqCWcNfRjxRVXcumcWHu8tuZpNLQAMPq2762Z2y+Q+0WMXg3ZWQLmKJiQc+By
+	ybzHr+vTwuHiyfhcjEf0dl/lP5Do6VaT37Fci95aonoq4u+dXxwoMbYamriyxaAfEiiwdtZn+iq
+	wdd8i8Ts/g6Ttxujs5R/mOoMKlIU7PLKlLegl5g5azVwBy+S6z2WW85sRpYyv6nCr32Nl/KfO6k
+	azxKG9MFi6qMtyd3fCjqTbST1kRRJKR3SNRAyRTbLTgCY4EIPirsUTW6hfEDs4g2JViANtzD4Xj
+	yOzJaThMvvAqI0OBsaxa0hwlIvv+QhUaK69it9Ss7/MsHy3LJf80fC0M=
+X-Google-Smtp-Source: AGHT+IHo1jNpqNRhxvdXmyRhn4pc2gYVNGj28wCYI+06cBtWEKoBFRZ4/BiPgAXoKdGQaE5FzdBuhg==
+X-Received: by 2002:a05:600c:190e:b0:458:bc3f:6a7b with SMTP id 5b1f17b1804b1-45a21859692mr91052485e9.18.1755525705541;
+        Mon, 18 Aug 2025 07:01:45 -0700 (PDT)
+Received: from eldamar.lan (c-82-192-244-13.customer.ggaweb.ch. [82.192.244.13])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a23323c56sm70600845e9.9.2025.08.18.07.01.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Aug 2025 07:01:44 -0700 (PDT)
+Sender: Salvatore Bonaccorso <salvatore.bonaccorso@gmail.com>
+Received: by eldamar.lan (Postfix, from userid 1000)
+	id E4231BE2DE0; Mon, 18 Aug 2025 16:01:42 +0200 (CEST)
+Date: Mon, 18 Aug 2025 16:01:42 +0200
+From: Salvatore Bonaccorso <carnil@debian.org>
+To: Benoit Panizzon <benoit.panizzon@imp.ch>
+Cc: Max Kellermann <max.kellermann@ionos.com>,
+	David Howells <dhowells@redhat.com>,
+	Paulo Alcantara <pc@manguebit.org>, netfs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Benoit Panizzon <bp@imp.ch>, 1111455@bugs.debian.org,
+	stable@vger.kernel.org, regressions@lists.linux.dev
+Subject: Re: [bp@imp.ch: Bug#1111455: linux-image-6.12.41+deb13-amd64: kernel
+ BUG at fs/netfs/read_collect.c:316 netfs: Can't donate prior to front]
+Message-ID: <aKMyRpQig9j1M8gF@eldamar.lan>
+References: <aKMdIgkSWw9koCPC@eldamar.lan>
+ <20250818151814.18d5dcd4@go.imp.ch>
+ <20250818152409.2d2db023@go.imp.ch>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250818152409.2d2db023@go.imp.ch>
 
-On Tue, 29 Jul 2025 11:06:35 +0100, Al Viro wrote:
-syzbot reports data-race in fat32_ent_get/fat32_ent_put.
+Hi,
 
-	CPU0(Task A)			CPU1(Task B)
-	====				====
-	vfs_write
-	new_sync_write
-	generic_file_write_iter
-	fat_write_begin
-	block_write_begin
-	fat_get_block			vfs_statfs
-	fat_add_cluster			statfs_by_dentry
-	fat_chain_add			fat_statfs
-	fat_ent_write			fat_count_free_clusters
-	fat32_ent_put			fat32_ent_get
+On Mon, Aug 18, 2025 at 03:24:09PM +0200, Benoit Panizzon wrote:
+> Hi
+> 
+> May be related:
+> https://security-tracker.debian.org/tracker/CVE-2025-21988
 
-In fat_add_cluster(), fat_alloc_clusters() retrieves an free
-cluster and marks the entry with a value of FAT_ENT_EOF, protected
-by lock_fat(). There is no lock protection in fat_chain_add().
-When fat_ent_write() writes the last entry to new_dclus, this has
-no effect on fat_count_free_clusters() in the statfs operation.
-The last entry is not FAT_ENT_FREE before or after the write.
+This *might* be a different issue. We had the metadata wrong in the
+security-tracker in Debian.
 
-Therefore, the race condition reported here is invalid.
+The mentioned commit was specific to 6.13.y and 6.12.y and for 6.12.y
+it landed already in v6.12.20 as 62b9ad7e52d4 ("fs/netfs/read_collect:
+add to next->prev_donated"). 
 
-BR,
-Edward
-
+Regards,
+Salvatore
 
