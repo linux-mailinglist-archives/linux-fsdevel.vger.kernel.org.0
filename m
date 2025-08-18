@@ -1,94 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-58193-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58194-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E5E8B2AEF6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 19:09:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DEA6B2AF4F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 19:22:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C6ED1BA52EE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 17:06:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 102785E6DC2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 17:22:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCBE8343D63;
-	Mon, 18 Aug 2025 17:04:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 222DC34573F;
+	Mon, 18 Aug 2025 17:22:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ukz6/cLQ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="haOCffmM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B206342CB1;
-	Mon, 18 Aug 2025 17:04:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3601F271453;
+	Mon, 18 Aug 2025 17:22:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755536685; cv=none; b=dBZK63YsKiGwXjKNpZoYx/2A7Lavu3Kbe3Vtf/EPIKQw6X0ord01bzmlc6JhjEFSHLHbo25mPkB+z5OR93mWf/KvqvgciKjM9Fh7JyUkcIO+tujeYJMnDZdnLrUvSqDUAIfZySBU6u0cGdnZLG2SD7m76lI9qcpDWCxsE6DWLSA=
+	t=1755537770; cv=none; b=l7g8VGiAbMB7fi2/+LcVRATw9eFTMI4Ks7R2zpbqLMh/j6VfQgNu9upbBMqrhjgWzNRuVudECbFdMt9b/9wK1f85xnIRmRWXCR36gQC0iqw9+fNSpekEwnIIPtSoJXY8hpu07VDuXmnGUd6+GT0naKdY2vEQi79Cf6hvJ5vj8/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755536685; c=relaxed/simple;
-	bh=2Fy+XHUKRZ28bhDCCibyjvaWjBvBQ0t2pg8SThG+d04=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LP90K+yltmdTo1m8fvgXCmCGVIwFk500NJMZxIncPyg6vPz7t79T1Bx57HK1AbglQLVm5MTaVflckbYeHzMzCNWewmSAIXGCuxFikJpRIyAtwXMtLE1V4WM6/RJ5DI695gCNUMWy/7blbYJD6mvXAomLKGu6qPWi8HM66oLS14g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ukz6/cLQ; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=r0zFopsz6LczyNVaD27yL2LZrYKfKAHdjGdtV6Y6zj8=; b=ukz6/cLQUHkJnAguajM2dRdJcg
-	s6mnfOcBCOhxA+WTGOxABbdEdCp/O/B3IbBtXUw8Z6aIMkJyt2UFRWIJprWLSfzzLKJXoscBXM1ST
-	/RrJTQO/QyO+7kYUbd4VuRgyXZBHRNh12cgsMn1ifEoM2K2HEVgmx8NsHOOmLU5Q++bFN64zBNOWu
-	JlZEW86J2fy+3xBhtHRzpWXY6WRGAsgw/JZdIrqIr936mPnQ03nwDu9cJS9qMULGh/gAVIiL27s2a
-	uP9ISbvU/hP3AG5U7Evo3V2SggIKsMtOgbv1Cz3+um+HnwoyKi7S5XISHJhm0EyWrMu2tBN26+jg3
-	a2mFn3Kg==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uo3Hl-00000008rF9-1nVO;
-	Mon, 18 Aug 2025 17:04:41 +0000
-Date: Mon, 18 Aug 2025 18:04:41 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Trond Myklebust <trondmy@kernel.org>
-Cc: Anna Schumaker <anna@kernel.org>, linux-nfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, Mike Snitzer <snitzer@kernel.org>
-Subject: Re: [PATCH v3 2/2] NFS: Enable the RWF_DONTCACHE flag for the NFS
- client
-Message-ID: <aKNdKRy65hv8sNon@casper.infradead.org>
-References: <cover.1755527537.git.trond.myklebust@hammerspace.com>
- <001e5575d7ddbcdb925626151a7dcc7353445543.1755527537.git.trond.myklebust@hammerspace.com>
- <aKNE9UnyBoaE_UzJ@casper.infradead.org>
- <88e2e70a827618b5301d92b094ef07efacba0577.camel@kernel.org>
- <aKNNkFJ3mt0svnyw@casper.infradead.org>
- <c3d5dead2b76161ba96187b85497e55a8a01032a.camel@kernel.org>
+	s=arc-20240116; t=1755537770; c=relaxed/simple;
+	bh=uHAOJ797snaDrkcy+tcW05va71LSdkDm6EybUIj4G2Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nTl+Nm7FAgDNq35HEdIdJH6bGSjX81fyaR3LB6HjFrYl3KijpM3tlDhZMRbf3ewobKcpR53ac9sQV7Qy9gKC/7DQr8RLcQdzVCPgXRY3s3/X3DqiCiFNm1fFf4SoaE7OB+VRo6sNoO6c+77laSWfedg2GYA2JIVubju5Drt+CfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=haOCffmM; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-76e6cbb9956so890711b3a.0;
+        Mon, 18 Aug 2025 10:22:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755537768; x=1756142568; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wUa68E1nteoaGSXTMTcC9sqWgdV9aURqk+eyEEJTUS4=;
+        b=haOCffmMyRtG4y82WsXcbRiP3FEgAt9GeBMdY98EzspHVvzFRuV9EfHYhX4TVXAuxN
+         ZAjVOFmnCmo3F/yx446irfUclppMH0N9Bi22kkuArR4KMcf383EbtADHsKXZB4J7I2iU
+         6GqhWZV/H9Uf1ePQ5DDQ8WE1Iag7DTsFpfJKoVQOX388KEmx31qsNhLcw+MIQTloA5tj
+         +X3NhuYA/cJKaLzKJWKtbGMM/raTOoqpsiJ1HrbrGt07Ukug0pridsXYXNhYmqWT/8Tg
+         KSAV7AzV9chpzKSHm0neJ8gajI5OosK1cdeqdjdG93gNLNvY4Hobl4vQPuzcyFQZ34Rn
+         7fcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755537768; x=1756142568;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wUa68E1nteoaGSXTMTcC9sqWgdV9aURqk+eyEEJTUS4=;
+        b=czz/kuZFey5XCzEZ3oRQrQ2FoXqBWXGR/T/2aJ39VOyamByGHFaF612GdV7S5cjCZU
+         XNufzF10JQkvfHgk9IctRqAUJNJTzJaxfPgMPkGhMepRshDcEUlAIeE32B6taQ9GEteZ
+         xwY3Kyn0dk8DXgF3oSKScBjmCcL7y2qriwsq4/8zvPJq1guYUbJx8/u6Oqo3Vh2XoTNN
+         M+jTb2iHUiDtXvsEYFNPp+grR5KDapouGa03gBsl/V5GSI5ig7aJlXZZHT0Ca2ZdzC9G
+         iqNuuq5xBuA+/MYxrESMJ++wRpON42lfZ3eNMC0V+LQAdM3CWlys+rzPjdeGswb55Ko1
+         IzLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUgCRhTRTIs3EPheNpjzmw4vMHLMWTzQRwFj29GMp1VrcuJcKXilSQxvJevfJY0WuYSdePjqTa2JaSS0uE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNDwbOjMAUtQr985YCyAYyWdWxcW9F2kPOmEPuR833pviFjTB6
+	8nmosHu69JbfTLXWW4VHlmJOW45io3thfH44yIADFbCAVdjQ//pDyhEn
+X-Gm-Gg: ASbGncvy6mJDHccvKF311438hLRUKnAp+KmxkCHCyIX8/pT/NlVT2vr10D+rl4hZ6JQ
+	MtAdcOJ9RjE2Xrb6/tvKvW7vYd50kde+HtF7EBra6GsdHsCtRAAPgfEi2sWhzedtwnOdF2BOBey
+	9WQS0zksjaBt92ESOcSY+n4vzChAi51HicoRa4w8p1yu9FdSYFgQFEBPA5K1tYhNrFRiN4sb4YR
+	icNoIrNH/ibtyRPuUSoM0qF056HAIdlrEyBlF5Tqnho7Vnjbgr0zunjpCpJhwKXhd95JB0juUrn
+	3VeO0a6tRZM9QNoIxVAc6X3QfjCY4sPn89R2ElovJ+AnXeGb0gbcl2tre/gVNgj1w2UIXC1CrdW
+	TWKmhBJ9vUlAyb0+yr0tuAflc
+X-Google-Smtp-Source: AGHT+IFpIFoFxxk/K0di9Ho4RhhPZWQ934ntdvj1PbqjitsJusNWV5Esu4Fkoi7xUxfhnpPn0P+4AA==
+X-Received: by 2002:a17:902:e550:b0:242:fb7d:1d57 with SMTP id d9443c01a7336-24478f9e7famr120733685ad.42.1755537768429;
+        Mon, 18 Aug 2025 10:22:48 -0700 (PDT)
+Received: from localhost.localdomain ([2406:5900:2:f21::2a1])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d5769a9sm85242985ad.151.2025.08.18.10.22.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Aug 2025 10:22:48 -0700 (PDT)
+From: Ryan Chung <seokwoo.chung130@gmail.com>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev,
+	Ryan Chung <seokwoo.chung130@gmail.com>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH] fs/namespace.c: fix mountpath handling in do_lock_mount()
+Date: Tue, 19 Aug 2025 02:22:35 +0900
+Message-ID: <20250818172235.178899-1-seokwoo.chung130@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c3d5dead2b76161ba96187b85497e55a8a01032a.camel@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 18, 2025 at 09:49:47AM -0700, Trond Myklebust wrote:
-> > Can you remind me why we clear the writeback flag as soon as the
-> > WRITE
-> > completes instead of leaving it set until the COMMIT completes?
-> 
-> It's about reducing latency.
-> 
-> An unstable WRITE is typically a quick operation because it only
-> requires the server to cache the data.
-> 
-> COMMIT requires persistence, and so it is typically slower.
-> Furthermore, the intention of COMMIT is to also allow the batching of
-> writeback on the server, so that disk wakeup and seeks are minimised.
-> While that is probably much less of a concern with modern SSDs vs older
-> hard drives, the NFS client design has to cater to both.
-> 
-> So by clearing the writeback flag after the WRITE, we allow operations
-> that want to further modify a specific folio to proceed without having
-> to wait for persistence of the entire batch.
+Updates documentation for do_lock_mount() in fs/namespace.c
+to clarify its parameters and return description to fix
+warning reported by syzbot.
 
-Ah; NFS sets SB_I_STABLE_WRITES.  Unfortunately, 6c17260ca4ae is
-a little light on details about why.
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202506301911.uysRaP8b-lkp@intel.com/
+Signed-off-by: Ryan Chung <seokwoo.chung130@gmail.com>
+---
+ fs/namespace.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index ddfd4457d338..577fdff9f1a8 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -2741,6 +2741,7 @@ static int attach_recursive_mnt(struct mount *source_mnt,
+ /**
+  * do_lock_mount - lock mount and mountpoint
+  * @path:    target path
++ * @pinned: on success, holds a pin guarding the mountpoint
+  * @beneath: whether the intention is to mount beneath @path
+  *
+  * Follow the mount stack on @path until the top mount @mnt is found. If
+@@ -2769,8 +2770,7 @@ static int attach_recursive_mnt(struct mount *source_mnt,
+  * to @mnt->mnt_mp->m_dentry. But if @mnt has been unmounted it will
+  * point to @mnt->mnt_root and @mnt->mnt_mp will be NULL.
+  *
+- * Return: Either the target mountpoint on the top mount or the top
+- *         mount's mountpoint.
++ * Return: On success, 0 is returned. On failure, err is returned.
+  */
+ static int do_lock_mount(struct path *path, struct pinned_mountpoint *pinned, bool beneath)
+ {
+-- 
+2.43.0
 
 
