@@ -1,68 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-58114-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58115-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61BE9B298D5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 07:17:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D20C9B298EA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 07:31:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 047217A33CD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 05:16:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6991D189EB51
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 05:32:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C4DE25F7A5;
-	Mon, 18 Aug 2025 05:17:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D03A126A0D5;
+	Mon, 18 Aug 2025 05:31:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="xeIEMq+J"
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="u5cu/RKM"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D7DF31771E;
-	Mon, 18 Aug 2025 05:17:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9164F199BC;
+	Mon, 18 Aug 2025 05:31:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755494258; cv=none; b=aFwYovFuNj6tlSbRFnZy/qnNlfGBR0bZ2LuDQiadzaaw4+Rh2AgliBi00iXT8MkCP9lB+Y5JSWWm6NWbzxisIRn33NN9+eUWF3idAySYMnbmQgB1zo/2nm6cHjjUbBZx93IMIAKH9kIOGkNu6NfvsXS12p1oevHNT461IT+fFqU=
+	t=1755495104; cv=none; b=Nxh9OOxdfWtuOid/wX1GemjnIgIKY0CaGm/yKwIfBiR4V5aM5MKoZEYqJVCUejsWZP/DMKTViP7YPcnYPiZLVXRaJraFWtznnRlTTD5zbf+TNCwG/ELVQzGJQp3/Qtzh/AJaed7gxLd8nic/bijiLrP8215RnROKoNvCGeCwQa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755494258; c=relaxed/simple;
-	bh=Jfd2dTFyeKB2xDn34tvF4QC2QdcK0s/wj6YimXhuieo=;
+	s=arc-20240116; t=1755495104; c=relaxed/simple;
+	bh=NfBH7/Ee62pjMpOmYJA3Sx2YYKyVORswUSvb+evmdp4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pMJZtmQkWuF9S/7TIom7IAJ3DGh2o/YRU+fnWQnKSHt2zuu2GRbQo2srq/G88VBIOoUHgRcgUevcixUVVEDNZvd+fTD4FHXzkP2RztYrBwzlNJuxKK5/y+8UObBkPLbakfgrT0loFK6nBYjovDr98cKz6P0qkNKrHgrHhHKjQ/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=xeIEMq+J; arc=none smtp.client-ip=80.241.56.161
+	 Content-Type:Content-Disposition:In-Reply-To; b=rp9MN2LONQrtOyxZf0Q+fNZazYyanzQAA/CrjMEkmnFhOC0fhFOFs25VH7LobKczeVaxdNbLu2rCBNxWaKp9vKG+LbuUxjaO7SFeDI7DBiXWh1iQNzANnC16x0FoMxjnZXVwzZph89r4FM6MqYWJL/1NJqW9vJsuyrOrwku17rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=u5cu/RKM; arc=none smtp.client-ip=80.241.56.161
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4c51Dr2Jp2z9ss7;
-	Mon, 18 Aug 2025 07:17:32 +0200 (CEST)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4c51Y63Lj0z9svR;
+	Mon, 18 Aug 2025 07:31:38 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1755494252;
+	t=1755495098;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=syTe/uAIV0t2r9xXhONHX6f7WtloSr6P6gMiq4MxqOE=;
-	b=xeIEMq+J1v3//TRDOFKVvHZOHOSXlvHahsW4EQSTkTDsD88ScDLolCYEp1fQPVw52wiAb7
-	CXB6e7u+3OELIG4E955g5VRTrxCidMVUbQkF7g3aRwIGwMLXsKyOMplcWP3kBZl5bgRSpG
-	ho+yueGVKMxEtIDIkKIr2fK/joKjRFTpJNNlbtcp5+xIhDLnQVEuO0FNzzQzZMbrykZ6kx
-	3m2NSoauOcWkCC8fboHzHNMFOacc7N68ap8G+AT5iHio74HqtU9sUXwrALwk6SU/YonCC7
-	EkKi82gr+zBkugBbIjOeBZlQNLUJJ90ZxnyOZUZxqVYodAz9ORy91kyOmWZywg==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
-Date: Mon, 18 Aug 2025 15:17:20 +1000
+	bh=kpXQX+unFOnNS04HN7ZiWoRHNGQv85EMscVXVNZ6kwM=;
+	b=u5cu/RKMowvK3lgM4syg+AgCUtfPnqjwHjY7WqjinPlPR8eCRlhTGhBjDWZf7Xob4DKXBS
+	jdU544bTmKoLeCC44EqRlsSJTxW0dfNW3rYN+47dshKOKZvIw2tJcZ9knbnW62E7bCgznU
+	WOrESitghkoUJ0D388EnxcLK/qsrBKjlG2xjnL/dPWg+oOmF4oqddtwsNUN7l9CUrEAzHy
+	S/6CfF3Oy+t1/3bYZRlU5YHq0sxcq+hEgEZrtEgtqxHGikkZA3tB++YuSDylE9paEiaZ3M
+	4shvzfb3orsivUA+Vq58Z2s7BVegYtpB85kwdGUcDk8XZGt2qDmNZUAikZKtwQ==
+Date: Mon, 18 Aug 2025 15:31:27 +1000
 From: Aleksa Sarai <cyphar@cyphar.com>
 To: Askar Safin <safinaskar@zohomail.com>
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
 	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Ian Kent <raven@themaw.net>, 
 	linux-fsdevel@vger.kernel.org, David Howells <dhowells@redhat.com>, 
 	autofs mailing list <autofs@vger.kernel.org>, patches@lists.linux.dev
-Subject: Re: [PATCH 4/4] vfs: fs/namei.c: if RESOLVE_NO_XDEV passed to
- openat2, don't *trigger* automounts
-Message-ID: <2025-08-18.1755493390-violent-felt-issues-dares-AIMnxT@cyphar.com>
+Subject: Re: [PATCH 0/4] vfs: if RESOLVE_NO_XDEV passed to openat2, don't
+ *trigger* automounts
+Message-ID: <2025-08-18.1755494302-front-sloped-tweet-dancers-cO03JX@cyphar.com>
 References: <20250817171513.259291-1-safinaskar@zohomail.com>
- <20250817171513.259291-5-safinaskar@zohomail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -70,91 +66,83 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="jsoapanaxm6je7aj"
+	protocol="application/pgp-signature"; boundary="jykgkqcslnnbmqso"
 Content-Disposition: inline
-In-Reply-To: <20250817171513.259291-5-safinaskar@zohomail.com>
-X-Rspamd-Queue-Id: 4c51Dr2Jp2z9ss7
+In-Reply-To: <20250817171513.259291-1-safinaskar@zohomail.com>
 
 
---jsoapanaxm6je7aj
+--jykgkqcslnnbmqso
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 4/4] vfs: fs/namei.c: if RESOLVE_NO_XDEV passed to
- openat2, don't *trigger* automounts
+Subject: Re: [PATCH 0/4] vfs: if RESOLVE_NO_XDEV passed to openat2, don't
+ *trigger* automounts
 MIME-Version: 1.0
 
 On 2025-08-17, Askar Safin <safinaskar@zohomail.com> wrote:
 > openat2 had a bug: if we pass RESOLVE_NO_XDEV, then openat2
 > doesn't traverse through automounts, but may still trigger them.
-> (See the link for full bug report with reproducer.)
+> See this link for full bug report with reproducer:
+> https://lore.kernel.org/linux-fsdevel/20250817075252.4137628-1-safinaskar=
+@zohomail.com/
 >=20
-> This commit fixes this bug.
+> This patchset fixes the bug.
 >=20
-> Link: https://lore.kernel.org/linux-fsdevel/20250817075252.4137628-1-safi=
-naskar@zohomail.com/
-> Fixes: fddb5d430ad9fa91b49b1 ("open: introduce openat2(2) syscall")
-> Signed-off-by: Askar Safin <safinaskar@zohomail.com>
-
-Reviewed-by: Aleksa Sarai <cyphar@cyphar.com>
-
-> ---
->  fs/namei.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
+> RESOLVE_NO_XDEV logic hopefully becomes more clear:
+> now we immediately fail when we cross mountpoints.
 >=20
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 6f43f96f506d..55e2447699a4 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -1449,6 +1449,18 @@ static int follow_automount(struct path *path, int=
- *count, unsigned lookup_flags
->  	    dentry->d_inode)
->  		return -EISDIR;
-> =20
-> +	/* "if" above returned -EISDIR if we want to get automount point itself
-> +	 * as opposed to new mount. Getting automount point itself is, of cours=
-e,
-> +	 * totally okay even if we have LOOKUP_NO_XDEV.
-> +	 *
-> +	 * But if we got here, then we want to get
-> +	 * new mount. Let's deny this if LOOKUP_NO_XDEV is specified.
-> +	 * If we have LOOKUP_NO_XDEV, then we want to deny not only
-> +	 * traversing through automounts, but also triggering them
-> +	 */
+> I think this patchset should get to -fixes and stable trees.
 
-This comment really could be one sentence:
+You need to add
 
-  /* No need to trigger automounts if mountpoint crossing is disabled. */
+  Cc: <stable@vger.kernel.org> # v5.2+
 
-Or if you really want to mention -EISDIR, then:
+(along with a Fixes: ... tag) for each commit you would like to be
+backported.
 
-  /*
-   * No need to trigger automounts if mountpoint crossing is disabled.
-   * If the caller is trying to check the autmount point itself, -EISDIR
-   * above handles that case for us.
-   */
+> I split everything to very small commits to make
+> everything as bisectable as possible.
 
-> +	if (lookup_flags & LOOKUP_NO_XDEV)
-> +		return -EXDEV;
-> +
->  	if (count && (*count)++ >=3D MAXSYMLINKS)
->  		return -ELOOP;
-> =20
-> @@ -1472,6 +1484,10 @@ static int __traverse_mounts(struct path *path, un=
-signed flags, bool *jumped,
->  		/* Allow the filesystem to manage the transit without i_rwsem
->  		 * being held. */
->  		if (flags & DCACHE_MANAGE_TRANSIT) {
-> +			if (lookup_flags & LOOKUP_NO_XDEV) {
-> +				ret =3D -EXDEV;
-> +				break;
-> +			}
->  			ret =3D path->dentry->d_op->d_manage(path, false);
->  			flags =3D smp_load_acquire(&path->dentry->d_flags);
->  			if (ret < 0)
-> --=20
-> 2.47.2
+I would merge the first three patches -- adding and removing code like
+that is a little unnecessary. I also don't think you need those patches
+to be backported, right? (Especially since they are touching stuff that
+Al has reworked a few times since openat2 was merged back in Linux 5.2.)
+
+I only think the last one needs to be in stable.
+
+> Minimal testing was performed. I tested that my original
+> reproducer doesn't reproduce anymore. And I did boot-test
+> with localmodconfig in qemu
 >=20
+> I'm not very attached to this patchset. I. e. I will not be offended
+> if someone else will submit different fix for this bug.
+>=20
+> Askar Safin (4):
+>   vfs: fs/namei.c: move cross-device check to traverse_mounts
+>   vfs: fs/namei.c: remove LOOKUP_NO_XDEV check from handle_mounts
+>   vfs: fs/namei.c: move cross-device check to __traverse_mounts
+
+This is a minor nit, but could you use something like "namei: ..." (or
+"fs: namei: ...") as a prefix for commit subjects? If you merge them
+all, something like:
+
+  namei: move LOOKUP_NO_XDEV checks to __traverse_mounts
+
+would be fine.
+
+>   vfs: fs/namei.c: if RESOLVE_NO_XDEV passed to openat2, don't *trigger*
+>     automounts
+
+and this one should read a bit clearer with
+
+  openat2: don't trigger automounts with RESOLVE_NO_XDEV
+
+or if you prefer
+
+  namei: don't trigger automounts with LOOKUP_NO_XDEV
+
+>  fs/namei.c | 29 +++++++++++++++++++++++------
+>  1 file changed, 23 insertions(+), 6 deletions(-)
 
 --=20
 Aleksa Sarai
@@ -162,17 +150,17 @@ Senior Software Engineer (Containers)
 SUSE Linux GmbH
 https://www.cyphar.com/
 
---jsoapanaxm6je7aj
+--jykgkqcslnnbmqso
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaKK3YBsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG/zZwEA3uOoe6tqsP76hjwmV8US
-yYybxOB07UZ/EkSRCgRv5EABAKd138R9BsEp5wytLcgmgqcD88nt35SD9RDYoi6g
-i/UF
-=778d
+iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaKK6rxsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG/MdgEA3L11gQ26eeut41lKi7q4
+7n2gN4rrq2DIZWXWZpHtkfgBANt0yDfXcO5np7+gcF/vq1zJbGDtSicfc16mvHLX
+/ysM
+=7uJm
 -----END PGP SIGNATURE-----
 
---jsoapanaxm6je7aj--
+--jykgkqcslnnbmqso--
 
