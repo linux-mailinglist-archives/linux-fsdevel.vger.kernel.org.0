@@ -1,137 +1,164 @@
-Return-Path: <linux-fsdevel+bounces-58212-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58213-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11492B2B2FF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 22:57:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A6F1B2B34D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 23:21:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8ACC217F04D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 20:56:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49E923B4471
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Aug 2025 21:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C6B322DFA8;
-	Mon, 18 Aug 2025 20:56:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F6B2266EE7;
+	Mon, 18 Aug 2025 21:21:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="pX1JEWFA"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gRy6NIba"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E5C3451B2;
-	Mon, 18 Aug 2025 20:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1D36223DDF;
+	Mon, 18 Aug 2025 21:21:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755550571; cv=none; b=KT7npvCGwpgWdMX+ENwkvaWAiHJ1F//JHuskx1wOsHLfJXu5CnAzFtlAUeAC0+YN1Vz6TKALLqoBcRI+6M1eS9LNJb2fHnv0qbiwMQRpd+hf7TUF2dHCq6+SFwfMyttn38p2/zroQiAIAhINWitwbUaOOW5pT30R87I/FfjtidM=
+	t=1755552073; cv=none; b=fnSx2mnYx4Dg5BB9N7U8RE6Gg2YVcZ/3Uy10rWhEOalzPbAlv/2Q7/0ZkOwaL45mD7ccWUvaZWj2WvF2XOwX1MJ1jJqJnpCgf9XGMxSnT4eSikkuxZLIK9vXF+YScMt1lljW5zSr+w6Ei9NNpTIw1NpaiLcqYWg0b5eVtiZK/j0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755550571; c=relaxed/simple;
-	bh=iHNS6FhLliru/r+JtYwvqPttXpvmBgwqpvAicyftaPM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vvu3kLLrGOqKmaQJxY8Ya3dKQVSGM3wt9CG5DlJvpnGF5yzrB7V9ZVgT1X4DN/Gn9zqhH9GQE6mAsHGmW8LuI5vlY6ctxiKsAsA+rkGI9PUMn7PFtAIabwx2CtXVsihRYmqtVRShMXGkeJzZbq5lCC13Lk8oIHrBZA3fCS30pHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=pX1JEWFA; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=mdNreSZpM1rgTL5F3WLSo0lukmMLp8Ss+6FskITPhHM=; b=pX1JEWFAZTUAV02v7rtvCcy8XC
-	2wh23p1LNYd4KhG36CEH95Lq9FLdwTPUvd2ubiglDgI3/0MB7HrXM3mWW5ATsmwkM1CBdkhi1OXS/
-	XsmhVSwBM3SgZm9w0RmN9ruzax/6QNXeS3biMM4vxSi1BRALJuGWI71b+Ydlx3faJmBkgtQgkBoLz
-	EOshfsYwxb7osDFoi//lUIysZpSF+1RjsrsKnLb7TtRCdX99Q1sux6//u5wFsugbvqQhhQVOx89p1
-	8Pcnmst8H04EemB91V8ujDTaPyQqKcDxyzGjX12QlRqUWHk66hIbikPq5oqWWghvpCSWv5XbCt7Rh
-	NRdQUHcw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uo6ti-00000008Pwj-0gmz;
-	Mon, 18 Aug 2025 20:56:06 +0000
-Date: Mon, 18 Aug 2025 21:56:06 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: linux-fsdevel@vger.kernel.org
-Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Ryan Chung <seokwoo.chung130@gmail.com>
-Subject: Re: [RFC] {do_,}lock_mount() behaviour wrt races and move_mount(2)
- with empty to_path (was Re: [PATCH] fs/namespace.c: fix mountpath handling
- in do_lock_mount())
-Message-ID: <20250818205606.GD222315@ZenIV>
-References: <20250818172235.178899-1-seokwoo.chung130@gmail.com>
- <20250818201428.GC222315@ZenIV>
+	s=arc-20240116; t=1755552073; c=relaxed/simple;
+	bh=8sYxEPPi5m6As2djnx+RUdD2DWFle8xZd3DGnUL2Uyc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QDWDn6KN7IMBXjzov9+k9j9b9rdLl5l7xd02zdSEKXLeC06UoCKlBDUxfgWyxoBtC7k9UDgf00eBJlzcKjjkqbOhROwbQKVcRpA/TSw5PUdAcV5qmLairl8VmMhvOYKCPSTF/+jFAHUGPsVHow55VdX/4vqd6jusJCOBnBq2z3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gRy6NIba; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45a1b0cbbbaso32619035e9.3;
+        Mon, 18 Aug 2025 14:21:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755552070; x=1756156870; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7Mq5OOEmUE9OkgN/VAU4XTp9x+IbIBr1PXu6WZVa1WQ=;
+        b=gRy6NIbavEVTvVJoPpyAG715kJPRGDwiluehhS/DqH3YExDDF6z/lcVDP5dTXWwRBt
+         5laBolh4nrL0QjVx10YGVwTxXAd/upMViLWWbwBfYncb5Q2/nwCHPtndIQatiViPJR1g
+         uw7ymtaZC+tmw7zj6scp8RfFjMn2dgMAjlTXBC0prv6GoFbV0+cfK4TgFqOp9Z8VyDPO
+         t/zH5tC1iUmxK3TwiH7DFHrRd0vKes8gIp75n3imv0yc8dluCeTBGpxCBnCujb5dIZ50
+         /Hn5aXvZMA2EX/mQnoHVpySG3dKKMLQzGXhwuGPqkj3LBMgYY+foekuGaAyttsu4i+7V
+         KL6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755552070; x=1756156870;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7Mq5OOEmUE9OkgN/VAU4XTp9x+IbIBr1PXu6WZVa1WQ=;
+        b=X0s2wpwyDZWOf9uf2lIxuD5ysSVdWJQve1oJyfzQdpdqR1fsT2cuwWpWBLJUhta7td
+         XTBZYTPLeoySQNLTMO4vRIu2ddMgTyLYrY7VWpltg1yE3wR3MpuuwRXO3X3ehCBFj/ad
+         IwJ0wsIxTArdWB0WgWAaNk4g3JeXDWM6vcXAPs5qsYy2NF4f2zFEEPcRhixtVmfq4dnO
+         oxoIIWpAYplDtnjP3Hy3E7TSGypZchyr/nyPTDTNBJ5HpIpbh9OanKbMS5JWwil7M/lP
+         VVSZOCzt8xJRkCH2gE1apJbidYkxGVwMPT8p4As3ji3B446bM36W9Zn/uyLRysCifntI
+         QDrw==
+X-Forwarded-Encrypted: i=1; AJvYcCXvgw658G2ZVGO4EcFK9mauMuKkbFHoeGrV1ofWbfhRg+IK9f+Kamb689vyKpUj60Pa24wZ7YEALx1Vm38p@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+stMYiiqBQwHsmOsTe8Pvlz5sbIPSLAqqKI9Fhw1Efw6L2s8M
+	5VNGAneXEvQTW237yf9HESfqKd653YElyNHHDvV2Q+lUmQBmkLRAAApk
+X-Gm-Gg: ASbGnctO+/RrPGajS7fBSrklCTkt8xvXqWzcX/bNhMkNuVYqvU0HgYBuvDZ1zA3OKBq
+	cYvV0dRXV9qFUHoq1J2ycnPeScHCkr5TkYmdDJnfwTmx2joX48n43DPMZnLFG/++nGk4QG/DvWq
+	pwdcQ8qU5IRGXbTJ3Ymiz9+gAqQLb2TZmMg5+o8fMXotNxuGFXDUInl44u4VpIRT89xlthZxg/V
+	huTKYpbxxbhiC52foV3rY3IkU/G8Qig+4FZAuSWsrEjQj+qDccc6hCuj/d0fkAEbRM+WT0r3eAj
+	jT4lJXlW4YFNsmjBschJs/bIwqoxpM4f+mClfml4FdeZKhbkTUTTJa64fkcqvaYjRtAGDhHuGqe
+	8dct/Q41oPpCH38CN+bOEBO9zYdtCWcNeRSRZe6gfbc/Nb5fy+nd4g/fJa74z
+X-Google-Smtp-Source: AGHT+IFjeJcl/CIROyINJYz2N4GIyL7wH/l6ez3R9eVxdJEOCoo9/uJ8oeF1uCKxLhDwqBW8u1rNuA==
+X-Received: by 2002:a05:600c:1c0c:b0:456:1dd2:4e3a with SMTP id 5b1f17b1804b1-45b43db662amr522955e9.3.1755552069892;
+        Mon, 18 Aug 2025 14:21:09 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b42a6d7b7sm14313195e9.1.2025.08.18.14.21.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Aug 2025 14:21:09 -0700 (PDT)
+Date: Mon, 18 Aug 2025 22:21:06 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>,
+ Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>,
+ =?UTF-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>, x86@kernel.org,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+ <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org
+Subject: Re: [patch 0/4] uaccess: Provide and use helpers for user masked
+ access
+Message-ID: <20250818222106.714629ee@pumpkin>
+In-Reply-To: <20250817144943.76b9ee62@pumpkin>
+References: <20250813150610.521355442@linutronix.de>
+	<20250817144943.76b9ee62@pumpkin>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250818201428.GC222315@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 18, 2025 at 09:14:28PM +0100, Al Viro wrote:
+On Sun, 17 Aug 2025 14:49:43 +0100
+David Laight <david.laight.linux@gmail.com> wrote:
 
-> Alternative would be to treat these races as "act as if we'd won and
-> the other guy had overmounted ours", i.e. *NOT* follow mounts.  Again,
-> for old syscalls that's fine - if another thread has raced with us and
-> mounted something on top of the place we want to mount on, it could just
-> as easily have come *after* we'd completed mount(2) and mounted their
-> stuff on top of ours.  If userland is not fine with such outcome, it needs
-> to provide serialization between the callers.  For move_mount(2)... again,
-> the only real question is empty to_path case.
+> On Wed, 13 Aug 2025 17:57:00 +0200 (CEST)
+> Thomas Gleixner <tglx@linutronix.de> wrote:
 > 
-> Comments?
+> > commit 2865baf54077 ("x86: support user address masking instead of
+> > non-speculative conditional") provided an optimization for
+> > unsafe_get/put_user(), which optimizes the Spectre-V1 mitigation in an
+> > architecture specific way. Currently only x86_64 supports that.
+> > 
+> > The required code pattern screams for helper functions before it is copied
+> > all over the kernel. So far the exposure is limited to futex, x86 and
+> > fs/select.
+> > 
+> > Provide a set of helpers for common single size access patterns:  
+> 
+> (gmail hasn't decided to accept 1/4 yet - I need to find a better
+> mail relay...)
+> 
+> +/*
+> + * Conveniance macros to avoid spreading this pattern all over the place
+>     ^ spelling...
+> + */
+> +#define user_read_masked_begin(src) ({					\
+> +	bool __ret = true;						\
+> +									\
+> +	if (can_do_masked_user_access())				\
+> +		src = masked_user_access_begin(src);			\
+> +	else if (!user_read_access_begin(src, sizeof(*src)))		\
+> +		__ret = false;						\
+> +	__ret;								\
+> +})
 
-Thinking about it a bit more...  Unfortunately, there's another corner
-case: "." as mountpoint.  That would affect that old syscalls as well
-and I'm not sure that there's no userland code that relies upon the
-current behaviour.
+Would something like this work (to avoid the hidden update)?
 
-Background: pathname resolution does *NOT* follow mounts on the starting
-point and it does not follow mounts after "."
+#define user_read_begin(uaddr, size, error_code) ({	\
+	typeof(uaddr) __uaddr;				\
+	if (can_do_masked_user_access())		\
+		__uaddr = masked_user_access_begin(uaddr);\
+	else if (user_read_access_begin(uaddr, size))	\
+		__uaddr = uaddr;			\
+	else {						\
+		error_code;				\
+	}						\
+	__uaddr;					\
+})
 
-; mkdir /tmp/foo
-; mount -t tmpfs none /tmp/foo
-; cd /tmp/foo
-; echo under > a
-; cat /tmp/foo/a
-under
-; mount -t tmpfs none /tmp/foo
-; cat a
-under
-; cat /tmp/foo/a
-cat: /tmp/foo/a: no such file or directory
-; echo under > b
-; cat b
-under
-; cat /tmp/foo/b
-cat: /tmp/foo/b: no such file or directory
-;
+With typical use being either:
+	uaddr = user_read_begin(uaddr, sizeof (*uaddr), return -EFAULT);
+or:
+	uaddr = user_read_begin(uaddr, sizeof (*uaddr), goto bad_uaddr);
 
-It's been a bad decision (if it can be called that - it's been more
-of an accident, AFAICT), but it's decades too late to change it.
-And interaction with mount is also fun: mount(2) *DOES* follow mounts
-on the end of any pathname, no matter what.  So in case when we are
-standing in an overmounted directory, ls . will show the contents of
-that directory, but mount <something> . will mount on top of whatever's
-mounted there.
+One problem is I don't think you can easily enforce the assignment.
+Ideally you'd want something that made the compiler think that 'uaddr' was unset.
+It could be done for in a debug/diagnostic compile by adding 'uaddr = NULL'
+at the bottom of the #define and COMPILE_ASSERT(!staticically_true(uaddr == NULL))
+inside unsafe_get/put_user().
 
-So the alternative I've mentioned above would change the behaviour of
-old syscalls in a corner case that just might be actually used in userland
-code - including the scripts run at the boot time, of all things ;-/
+	David
 
-IOW, it probably falls under "can't touch that, no matter how much we'd
-like to" ;-/  Pity, that...
-
-That leaves the question of MOVE_MOUNT_BENEATH with empty pathname -
-do we want a variant that would say "slide precisely under the opened
-directory I gave you, no matter what might overmount it"?
-
-At the very least this corner case needs to be documented in move_mount(2)
-- behaviour of
-	move_mount(_, _, dir_fd, "",
-		   MOVE_MOUNT_T_EMPTY | MOVE_MOUNT_BENEATH)
-has two apriori reasonable variants ("slide right under the top of
-whatever pile there might be over dir_fd" and "slide right under dir_fd
-itself, no matter what pile might be on top of that") and leaving it
-unspecified is not good, IMO...
 
