@@ -1,96 +1,86 @@
-Return-Path: <linux-fsdevel+bounces-58285-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58286-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ABD5B2BE8B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 12:11:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78842B2BEAE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 12:16:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05FA816EA43
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 10:10:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C55F68075B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 10:14:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EFA7321F2C;
-	Tue, 19 Aug 2025 10:10:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0CBD32275F;
+	Tue, 19 Aug 2025 10:14:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qWDEn94v"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="efWNmM2L"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638331E5207;
-	Tue, 19 Aug 2025 10:10:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B2D31985A;
+	Tue, 19 Aug 2025 10:14:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755598215; cv=none; b=dsEI12RHPe4Wa7WN8335tfMC3+Z/S9xVvFrANKDRWX++StbTnXulMhc+U5HpJDHNxizVyoX0YmNZ/whD4/VdRkqqmmGOwMIDnWmPfZUFV7c6C/kgxg5upnazJpApm6uvJ8URewXBrnlq0KebShrnfVVw9lFoHejjSp7Rkqgkcws=
+	t=1755598473; cv=none; b=lWXmgVIBkGhAqJXtRXRGC7oJnO4B5VB3Z4dnH9/GgS5rGbXmBRQHSTbINORELJxrP8O51M/i8a1JalLjZEiHLpUr0RR2RS/4Qpqo/ev7BUnNLDRpjJUUUJo3N3+FEZNSG6uAqauUQsGX8dIvF88l+MUXzaVXS+dNmF8s3GIdo/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755598215; c=relaxed/simple;
-	bh=Fl0SI0iL/x3g7XAYgUPV3q2YJFaf9uqWYJInRzelkcU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=f04g9SN1s6iVX9JKl/F6dFYp0nC3mpHI/eGesegukd1hBxUwWrqp8fkRuxMTli6FbMglsqVeenFr9QZqFskAWtA+tay9eoTVurTwt5DJkGk0hCu+aXgW1sqHhcVqOyz7NmFIrsul5pshrKryXw0Ez1Uln8DvjSX5aOkIZnuRjy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qWDEn94v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E919C4CEF1;
-	Tue, 19 Aug 2025 10:10:13 +0000 (UTC)
+	s=arc-20240116; t=1755598473; c=relaxed/simple;
+	bh=TiLlIk4Fixo6wPEGz4mvdKa8pnoU6LhJEhVBh2gxK00=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QcjdV6kv+dd4W3t6b1wWDcihnn8mL8Qh3zTiSS85sKlEgWEyiiQH16dFWO1D8a+fbVEqcpMKl44bm1vD8NftnXn/qKYIuq10JDYf1nc8fn2j2jL+b7dtTE68xSWvYJVyeGDWlEfXwBLFZseeenHXtpC366BsL9vrtnotFYuxvEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=efWNmM2L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12CCDC4CEF1;
+	Tue, 19 Aug 2025 10:14:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755598214;
-	bh=Fl0SI0iL/x3g7XAYgUPV3q2YJFaf9uqWYJInRzelkcU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qWDEn94vaaKVggOeZwM2QSuAXcS8TzDp5OGpwkfbComxpu10jXwSrdSNYB55QUE5e
-	 sgHFMkpIzu2JxpN9k0QPxR7O9tfkw6LjqGUvathkz+ObfH37ErjhFeKFAZwrtkbMLU
-	 3ZacutnHIP5C73pXB2nf6XxPqrOBNDHpXPLY/Hbm1P/cDZxFNuWrRYvBw2xfEErPQ9
-	 StOegzuQvfSXQ1r4x1B1I+35TZ5jg+cHEKyLgPLddS2WaVtwcPo7qvR1NrDs5QuqCP
-	 Dp7kyTHC7z9Fp2I864ECd8Q22eOsjM/po6bx4Kxwm95A9T6ZXJuqFc8VR3jj0kKSGq
-	 QKoj+eghNYcog==
+	s=k20201202; t=1755598471;
+	bh=TiLlIk4Fixo6wPEGz4mvdKa8pnoU6LhJEhVBh2gxK00=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=efWNmM2L6Ah0+EStqwlMp5Fl8iNHaCsx40H/IlRXq56nk5MUnzcCQ0n8RW+TDb4R/
+	 kBz1jHYYn81X4ap1++GUHWcjHgSaqHPLEPBxz/OJ6/VXuyyGYu1UNDByxOemte7ibA
+	 /0JEh4WMykGAxEmaVqqezwjqjmLrT5yu8wgj3GqwtODW1POmb/PQ67QwDcwPZFQ8RN
+	 +XXvPRrHsVr8LarDG2Td7UnruAMAY86LPFJZqnW2Y7fuu5JqNMa+rD2UVQSaesD/+v
+	 Ddbzn71uuyV7Lrvj7tAI725+Vx3++1EFgrm7llchNUO8j0am5WxF6oA/e+hp0HEE9r
+	 OJRkmB7hDlUzA==
+Date: Tue, 19 Aug 2025 12:14:26 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] coredump: Fix return value in coredump_parse()
-Date: Tue, 19 Aug 2025 12:10:09 +0200
-Message-ID: <20250819-vorweg-scherzen-e5449a0bb785@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <aKRGu14w5vPSZLgv@stanley.mountain>
-References: <aKRGu14w5vPSZLgv@stanley.mountain>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, Anuj Gupta <anuj20.g@samsung.com>, 
+	Kanchan Joshi <joshi.k@samsung.com>, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	io-uring@vger.kernel.org
+Subject: Re: [PATCH 1/2] fs: add a FMODE_ flag to indicate IOCB_HAS_METADATA
+ availability
+Message-ID: <20250819-verrichten-bagger-d139351bb033@brauner>
+References: <20250819082517.2038819-1-hch@lst.de>
+ <20250819082517.2038819-2-hch@lst.de>
+ <20250819-erwirbt-freischaffend-e3d3c1e8967a@brauner>
+ <20250819092219.GA6234@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1149; i=brauner@kernel.org; h=from:subject:message-id; bh=Fl0SI0iL/x3g7XAYgUPV3q2YJFaf9uqWYJInRzelkcU=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQs8W1Ke5M3PekE84G7Bct5vk698rri7PEHJeynF62e9 2snr82ego5SFgYxLgZZMUUWh3aTcLnlPBWbjTI1YOawMoEMYeDiFICJTNrFyHB7v96SJR2iJ27M /KC5eEro7l9f2TqXnGSryS6uE7y2640Hw/+8AyuDl562nxjLMaeYqyeilOGNoOlOk4oFpy+U5f8 ++Y0BAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250819092219.GA6234@lst.de>
 
-On Tue, 19 Aug 2025 12:41:15 +0300, Dan Carpenter wrote:
-> The coredump_parse() function is bool type.  It should return true on
-> success and false on failure.  The cn_printf() returns zero on success
-> or negative error codes.  This mismatch means that when "return err;"
-> here, it is treated as success instead of failure.  Change it to return
-> false instead.
+On Tue, Aug 19, 2025 at 11:22:19AM +0200, Christoph Hellwig wrote:
+> On Tue, Aug 19, 2025 at 11:14:41AM +0200, Christian Brauner wrote:
+> > It kind of feels like that f_iocb_flags should be changed so that
+> > subsystems like block can just raise some internal flags directly
+> > instead of grabbing a f_mode flag everytime they need to make some
+> > IOCB_* flag conditional on the file. That would mean changing the
+> > unconditional assigment to file->f_iocb_flags to a |= to not mask flags
+> > raised by the kernel itself.
 > 
-> 
-> [...]
+> This isn't about block.  I will be setting this for a file system
+> operation as well and use the same io_uring code for that.  That's
+> how I ran into the issue.
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] coredump: Fix return value in coredump_parse()
-      https://git.kernel.org/vfs/vfs/c/55f6e0b265d6
+Yes, I get that. That's not what this is about. If IOCB_* flags keep
+getting added that then need an additional opt-out via an FMODE_* flag
+it's very annoying because you keep taking FMODE_* bits. The thing is
+that it should be possible to keep that information completely contained
+to f_iocb_flags without polluting f_mode.
 
