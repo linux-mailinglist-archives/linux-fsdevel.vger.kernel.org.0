@@ -1,200 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-58297-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58298-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83EB1B2C412
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 14:48:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BF69B2C422
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 14:51:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2F4B7A4EA6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 12:46:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4594E16B7C2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 12:49:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 237F232C333;
-	Tue, 19 Aug 2025 12:48:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90867334723;
+	Tue, 19 Aug 2025 12:49:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lVPewsaq"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RhclXTXB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B74C1DC9B5;
-	Tue, 19 Aug 2025 12:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5848F218EB1;
+	Tue, 19 Aug 2025 12:49:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755607686; cv=none; b=OZnyHXgKg3SB8gkjIOxx/uCwA/0iZBuC8zg3mIFwU5y71Uq40VEdmdSw3bHykXdHhTcUvAHoi8+iku1Yo4GnZUjK2Sfimq42cenhfHiu447/63gAApLOVYVYVeuKJmt08YPM8Amk6Wfh0NY2517sVtD9egkiNk+FX2t+nb9eKwM=
+	t=1755607770; cv=none; b=mEsPur+CgIbvXKqvz55sfyikzwfgcm+Dtvobd8tnsaDitoLzHxwy9FQAYdt/MEGkDryTh4WaV1lm+kLnmVzkRyvM2TfRUYDS9hBsoOAuKywYhAMVJzsUdh+2c3p2QR5h0ChbSMGrXBnUHf5peEFWbTStEKFxWwyTRqAEMS6Tokw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755607686; c=relaxed/simple;
-	bh=v+nlukooyHgiiAzOjRBCWU5iDkofOBDlFVD92uktfbw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TXzT2Rh9sSJUuOVJPRQwR2VAsmtR/7eABEIpmrWxmOmSPSx/yGZft1jXUpem/wciGALEMld6DuXhPnky9Xuz8pn5+4OmVtySxBJdRIPDcy5czXKlHIw1vmieZ//TIQxI9dqq6++GHs7J3lbEx8eHBxHl1foztTc/HPsCVbKpI2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lVPewsaq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBE68C4CEF1;
-	Tue, 19 Aug 2025 12:48:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755607686;
-	bh=v+nlukooyHgiiAzOjRBCWU5iDkofOBDlFVD92uktfbw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=lVPewsaqbQIuJ0t3bzUzChQT0LnErbAOZDM9m+oOYqjM00Q2YkRPG6p3+yEpNge2v
-	 bp0RWxBaEda/G05TMyw+ZNpcA+Ib73LZMKmFhoJWgII0sHL4cLjKr3kKe/yPzYpb/W
-	 5iCGXYu+jMzNkULPP6dfmT7CLDiXSeQpeXEuqMNXBJ6VrzJz3WEP5C27Hx1qoFRAGH
-	 E+IREyOQao9jlZUCQLO9Bm1p6ukXRaK58KczZdprloFe3xc5zHcMmwqhx+hzWWYX7W
-	 PS1s/z7Ji177TU9MNZ3jO5iie6udBd1hWfoZsfU5NvACSxanGXUAWErLQBW3d5c+Pp
-	 oDQCK/y1l0KQA==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
+	s=arc-20240116; t=1755607770; c=relaxed/simple;
+	bh=qhVpFzoBqfd+RgjOal3oIe+9WXyASUdDms79CPbr8Rg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SZp1roGQZqU0hLCmSpfibRaVslPg9vXZskPrLsnfCJuBQJgjN2P4URvko6XdLutLGMxlQKZLySfe3tbqHc1eHLU3LJ4rBSigepoJKSc+f0YxI+Ve2i4D5uUIkYhR9bLOH6XHBp11W8rnpLTEccpSO2v3gTFEwO7Wx43xJKun8Ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RhclXTXB; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-55ce5284d63so4706901e87.0;
+        Tue, 19 Aug 2025 05:49:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755607766; x=1756212566; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XyjnKLZ5WWpemxO8ebds83k13DRtYec6BqZXeYTy3EQ=;
+        b=RhclXTXBIvEfZSBIHFbN6UOjexRV1OBEyd2eceR/wRAqWngVtgMVH6xs4PnGB94eQH
+         jInsIyvzcf677l6ZAAKyM/XX7qFQvf3nPxWQYLUhcWxN7niNhCI9J0O7lP6PLedB/tGa
+         g2rIUah7OJQLUzIgbbIhWQOQDH4UrNvkD54DqKQbEyLtH2uC4TUSnmDOUSrSdI3I6noi
+         Cyr7WQoU3hb/JIyEb1UA85X7yE2Clk00kTCZ1aLEB41RoYTKzZk+5h9X9TYdPdrrU9u6
+         LeBmHFhvLdrwhv0TE7V/XngeddTG166ybSeOj8axLEeXVaiHxyPDQsnrFAWsu4DRnhgr
+         Tgcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755607766; x=1756212566;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XyjnKLZ5WWpemxO8ebds83k13DRtYec6BqZXeYTy3EQ=;
+        b=Wlc/O/Wt7bxbFhgR0ZHvPYS9BOwILm6rWHtK8Y+H5IzmTVfyXLt7EvXN9TRCmoc+YL
+         n/ELhAekPXzaK9wIM6gIUE2sQkpVHGbpQ5iZ9aUIF+0OZ9Mlyd6AdqRYDX4CUN0KL4Uj
+         9W05zuu9U6D5XjwUZPYZyTUJ44DoQAKgO91YxqWJlPfYPAPu9ZdEVB9f4bTlECFquB0d
+         VS9aScZbmCFW4Is3cdIc/6T2DqvJTf3iCMXJhtmizqbYlUNTu2LYjelRWEoA1iN6x7RM
+         MWygu7eJSSxnIQI0kBwymBAPFH9LHzHgNABZXhlf3jfBJV5Fcno6g0RWfVqmcMLIXIKW
+         wowg==
+X-Forwarded-Encrypted: i=1; AJvYcCUi5piZ6LH7C9IQb2VGavMhEFrUv4T4s7apMYEjwMUiIE725zEOPKYJBdIkVsaIdBzGARxj4j75TkmaoX77+TS5@vger.kernel.org, AJvYcCXfMEgntJdRxLFkm0d9VMpqIW3weOnMQ0VNapfNj3wy3BHj0mDKKFokTE2evqpFO4bff6TnDEoAP9/BeuLN@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiEeBchcR1VK3NsP83nOnO3YeOI+j1R7cWmECtYyjAata+6bgn
+	ZFiFCoAHP4G1QGPxaGpgZkuEurdDH7IRxJwgyX2gi1HVHFgco9TKE9q0
+X-Gm-Gg: ASbGncvrurls+4JumlTI+Xj5Eqpl0Xc6hkEbNcBT071HCbhK+/vRnJxt5PuPz3JJcHZ
+	s5oJzBgmxO1oF8uf0qpBeVkgVXNZq4RtoAJSja2rc6atSQTx88SABUMW1Dq39Jy58pbew5eG/vP
+	kTitOs1Ff1ej+R6W6tasNxEzI1k8Q2nwhwpISWt1h2HdyEYsEv59gnfc7FkwXuvPgtE22otZ5Nt
+	MIEaaUNM6SpsY6gxx5MKSkFvmVgsNKbmpu+/PaHq7cGaCl6axbWxVP7hlyPxAIuEYb5WF95lMwQ
+	UH9mV4g91/3HXX8KkqCau0CLhPacrxGBBAxA9j+SNAJ37dKxvzqfvIbyGVRYKIO2nxy2GrAvnL5
+	ImAjKGAzYqc4STpY75OcSbpDOd03MtBqzPbkJZpGr1bmKebe0DbdjGhcS42ktEVNZ9n67BTNUIw
+	BUD8/kvjYPNUzjj6yIfsEVzHJGPFwafnubi6Iv/q+AoaUOO4aVbqZY4A==
+X-Google-Smtp-Source: AGHT+IF/ijueuST2FzGRO5KJQvLOr6+fvvF8eW23F6aUlibk+kIAn4JNAVQY5TPYyrPNiWB6hR5YOg==
+X-Received: by 2002:ac2:4f07:0:b0:55b:8285:3f31 with SMTP id 2adb3069b0e04-55e00e87612mr708782e87.24.1755607766277;
+        Tue, 19 Aug 2025 05:49:26 -0700 (PDT)
+Received: from ip-172-31-45-110.eu-north-1.compute.internal (ec2-16-170-211-41.eu-north-1.compute.amazonaws.com. [16.170.211.41])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55df8db7463sm742057e87.166.2025.08.19.05.49.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Aug 2025 05:49:25 -0700 (PDT)
+From: Mallikarjun Thammanavar <mallikarjunst09@gmail.com>
+To: shuah@kernel.org
+Cc: linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs fixes
-Date: Tue, 19 Aug 2025 14:46:16 +0200
-Message-ID: <20250819-vfs-fixes-69c14bc8543f@brauner>
-X-Mailer: git-send-email 2.47.2
+	linux-kselftest@vger.kernel.org,
+	Mallikarjun Thammanavar <mallikarjunst09@gmail.com>
+Subject: [PATCH] proc: /proc filesystem check error message
+Date: Tue, 19 Aug 2025 12:49:23 +0000
+Message-ID: <20250819124923.9094-1-mallikarjunst09@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4524; i=brauner@kernel.org; h=from:subject:message-id; bh=v+nlukooyHgiiAzOjRBCWU5iDkofOBDlFVD92uktfbw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQsKSpbe0SvdwPH4Zdflhc55M/5OPdLb0DL9nVHz7Jdu uD+wNRod0cpC4MYF4OsmCKLQ7tJuNxynorNRpkaMHNYmUCGMHBxCsBE8lgYGRYKnfPzOC5cmlo9 oy7VxoWnnf2MzP99aoxnJzGd3iYwOY6RYa1s1K+19Rp27Xy50bZBjXs0f7/a+fO5tXVAkGUi7+E 5zAA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-Hey Linus,
+Improve /proc filesystem check error message when filesystem type
+is unexpected
 
-/* Summary */
+Signed-off-by: Mallikarjun Thammanavar <mallikarjunst09@gmail.com>
+---
+ tools/testing/selftests/proc/read.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This contains a few fixes for this cycle:
+diff --git a/tools/testing/selftests/proc/read.c b/tools/testing/selftests/proc/read.c
+index 35ee78dff144..c0f44ee71e79 100644
+--- a/tools/testing/selftests/proc/read.c
++++ b/tools/testing/selftests/proc/read.c
+@@ -138,7 +138,7 @@ int main(void)
+ 		return 1;
+ 	}
+ 	if (sfs.f_type != 0x9fa0) {
+-		fprintf(stderr, "error: unexpected f_type %lx\n", (long)sfs.f_type);
++		fprintf(stderr, "error: /proc is not procfs (f_type = %lx)\n", (long)sfs.f_type);
+ 		return 2;
+ 	}
+ 
+-- 
+2.43.0
 
-- Fix two memory leaks in pidfs.
-
-- Prevent changing the idmapping of an already idmapped mount without
-  OPEN_TREE_CLONE through open_tree_attr().
-
-- Don't fail listing extended attributes in kernfs when no extended
-  attributes are set.
-
-- Fix the return value in coredump_parse().
-
-- Fix the error handling for unbuffered writes in netfs.
-
-- Fix broken data integrity guarantees for O_SYNC writes via iomap.
-
-- Fix UAF in __mark_inode_dirty().
-
-- Keep inode->i_blkbits constant in fuse.
-
-- Fix coredump selftests.
-
-- Fix get_unused_fd_flags() usage in do_handle_open().
-
-- Rename EXPORT_SYMBOL_GPL_FOR_MODULES to EXPORT_SYMBOL_FOR_MODULES.
-
-- Fix use-after-free in bh_read().
-
-- Fix incorrect lflags value in the move_mount() syscall.
-
-/* Testing */
-
-gcc (Debian 14.2.0-19) 14.2.0
-Debian clang version 19.1.7 (3)
-
-No build failures or warnings were observed.
-
-/* Conflicts */
-
-Merge conflicts with mainline
-=============================
-
-No known conflicts.
-
-Merge conflicts with other trees
-================================
-
-No known conflicts.
-
-The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
-
-  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.17-rc3.fixes
-
-for you to fetch changes up to a2c1f82618b0b65f1ef615aa9cfdac8122537d69:
-
-  signal: Fix memory leak for PIDFD_SELF* sentinels (2025-08-19 13:51:28 +0200)
-
-Please consider pulling these changes from the signed vfs-6.17-rc3.fixes tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-vfs-6.17-rc3.fixes
-
-----------------------------------------------------------------
-Adrian Huang (Lenovo) (2):
-      pidfs: Fix memory leak in pidfd_info()
-      signal: Fix memory leak for PIDFD_SELF* sentinels
-
-Aleksa Sarai (2):
-      open_tree_attr: do not allow id-mapping changes without OPEN_TREE_CLONE
-      selftests/mount_setattr: add smoke tests for open_tree_attr(2) bug
-
-Christian Brauner (2):
-      Merge patch series "open_tree_attr: do not allow id-mapping changes without OPEN_TREE_CLONE"
-      kernfs: don't fail listing extended attributes
-
-Dan Carpenter (1):
-      coredump: Fix return value in coredump_parse()
-
-David Howells (1):
-      netfs: Fix unbuffered write error handling
-
-Jan Kara (1):
-      iomap: Fix broken data integrity guarantees for O_SYNC writes
-
-Jiufei Xue (1):
-      fs: writeback: fix use-after-free in __mark_inode_dirty()
-
-Joanne Koong (1):
-      fuse: keep inode->i_blkbits constant
-
-Nam Cao (1):
-      selftests/coredump: Remove the read() that fails the test
-
-Thomas Bertschinger (1):
-      fhandle: do_handle_open() should get FD with user flags
-
-Vlastimil Babka (1):
-      module: Rename EXPORT_SYMBOL_GPL_FOR_MODULES to EXPORT_SYMBOL_FOR_MODULES
-
-Ye Bin (1):
-      fs/buffer: fix use-after-free when call bh_read() helper
-
-Yuntao Wang (1):
-      fs: fix incorrect lflags value in the move_mount syscall
-
- Documentation/core-api/symbol-namespaces.rst       | 11 ++--
- drivers/tty/serial/8250/8250_rsa.c                 |  8 +--
- fs/anon_inodes.c                                   |  2 +-
- fs/buffer.c                                        |  2 +-
- fs/coredump.c                                      |  2 +-
- fs/fhandle.c                                       |  2 +-
- fs/fs-writeback.c                                  |  9 +--
- fs/fuse/inode.c                                    |  5 --
- fs/iomap/direct-io.c                               | 14 ++--
- fs/kernfs/inode.c                                  |  4 +-
- fs/namespace.c                                     | 35 ++++++----
- fs/netfs/read_collect.c                            |  4 +-
- fs/netfs/write_collect.c                           | 10 ++-
- fs/netfs/write_issue.c                             |  4 +-
- fs/pidfs.c                                         |  2 +-
- fs/splice.c                                        |  3 +
- include/linux/export.h                             |  2 +-
- include/linux/netfs.h                              |  1 +
- kernel/signal.c                                    |  6 +-
- tools/testing/selftests/coredump/stackdump_test.c  |  3 -
- .../selftests/mount_setattr/mount_setattr_test.c   | 77 ++++++++++++++++++----
- 21 files changed, 138 insertions(+), 68 deletions(-)
 
