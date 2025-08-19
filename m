@@ -1,120 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-58279-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58280-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E634BB2BDB1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 11:41:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 63679B2BDBA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 11:43:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACBDF1790D2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 09:41:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EB8317F750
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 09:43:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF50331AF17;
-	Tue, 19 Aug 2025 09:41:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B69231AF05;
+	Tue, 19 Aug 2025 09:43:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vECM7eRe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KJGMW5S3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10DD31A046
-	for <linux-fsdevel@vger.kernel.org>; Tue, 19 Aug 2025 09:41:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6824A31A048;
+	Tue, 19 Aug 2025 09:43:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755596482; cv=none; b=T/G+bZKdcB6C5q5bnPDsUcWJmO7CsD++OtmuRWN+nq4h6SgsEZHzHkcf1q6D9CyschpPWwpndkQEh7P3Q95nJ3bCgiR+usgerp6O70EVGLrHdn8MbVSZSx8yxYMcXjt+ojGbpWINXtiDumLiN5wlWJPm8tg3qBSv+/1gUu9WKcc=
+	t=1755596609; cv=none; b=YLntwHb9pSRWrnvNzOY8KUfgYLdkwRjffruwbhN2KSMDfTgZ2X9u4PI6C1NrxF88jmpBVSFlAaAqd2tPqZzWaKuMiZUmToFwTvvd6M1QS17L2Hui0bwQa01JES/I8LTcAf97nN2T31AgcK5KsEEPSQ1b9FrHzvj6bYSJTS4lEHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755596482; c=relaxed/simple;
-	bh=8OzrB53Bn5TxGHC664tdW+P0TA2+NR/DwiZkzjNkzZg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=BI8KeM61nRCqqAE53piPGbeKsg9QDdk9mHOFLDZ0LJl6vqV7PuzmEyBQdixb7m0oLvcJo4P6s7KarrdLAmb+7Gb3eWxkTudlFK0oIMFSbMiGWHbmDYrOcKAfdBPA5mKe7X+hwO7nI+tDiiubRgKOMglp3aJpkbTVftjL2e8bkHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vECM7eRe; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3b9d41cd38dso3902722f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Aug 2025 02:41:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755596479; x=1756201279; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vKExw4rCJH6z3V+PveKbUj2X+7GksrW0bl8/wkUvABY=;
-        b=vECM7eRed+zPnhTQQ6tRAwVWn5fTpl368Jau591Wr2fZij3Yr7XyNaVxSrPIjzKD5w
-         U16QCwvxBZNdS3ZsHQ6cgPoyv9Bmlr3Ub4+W5BRNpGxEzumyL3Uj2nkzD51YcDGg0Lb7
-         FK3qHQLqJ7VyCygn+ttLObvv+YOmIls+svsyHnG0bvIaNds/2ezTKyvyu8HOeG2Zi60U
-         fuqEX/vstVyYMt+Qf0AfuqdeqwH7lyRoHhaZu3xtOiG0iVHqec9plpW5BLTs1IX3wXOD
-         NK8c7/I/WvA9O0TvVPR//s1nf4R8Mv1FkLHOF4deJ6PHn6Xf+w37CJR6hGO+Wiwb3frb
-         PJnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755596479; x=1756201279;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vKExw4rCJH6z3V+PveKbUj2X+7GksrW0bl8/wkUvABY=;
-        b=eW2jVSQq+xL6jRjnM2ZOH41PZT0DXjJHBYzH9yJOAzjognw/il8phn+525C9C4gB2A
-         yWiVf3WHj2nveGGWJmT/5e+4ugoCD/D644zd2kyOXrCM1FQGAaqFUQOMVToYDB+Tot8U
-         2tg5rP0cvrBdDBzUgtotkHqPiKBOlPbcnHr+iIx7xj6Zh0+JvAg/JXwayW9DcWeeG2wr
-         IsO0MdyHKxY9KfztAJ/sxlIndE2sCmFcfHq/gd16W2kTTPiFqhJwAORXO/J6ljjFKF7o
-         bPyN4d7g2SmAGj+2n+0TzSFlQlfT/k+O4b2I0vGljap4PhBJhXoM2Naioei+SIw0NHdX
-         xLyw==
-X-Forwarded-Encrypted: i=1; AJvYcCXoI5ecD9kgU42b8YsKMnY9ARdr3i1wSjlgmG9o1WJnWmP/slw91qvQ5wwAucbFAC2ewDCm6zOCltFh+5Dj@vger.kernel.org
-X-Gm-Message-State: AOJu0YznX0fmzRjU+w3bEKhBKsek6Uo5mC9NMfOm2O8fFyBJ8FYRl0C4
-	Fz/YiHK7N/5+bzJtUilzETk9BxiUFUGBxud6PbeK0C4YYDK18+wKPvcHQw6vVi3irlI=
-X-Gm-Gg: ASbGncvgtmEBBSIFdfHP5wqbJFomgikLiPnKFRTtK7u74jRDCXHZWOAqtjabBTjmifD
-	+vb/RMckC72uPmEVy24+ThbR1MULf0CeAKV8RJsgkAJmcKNZxOk3FaQfrUMwHCJSNyAjULTDjlm
-	NOy4/rSJefFtjlilau0yFewUV2HUuUqgr9iImBtwFkfBB5nWS9mUW4Bhx3qFLC2tzKBteLn18J8
-	paWB2cKV6YWTCzQzoxkRSAciOwR2UzwNdTZhn8ED01hk61SCO1rPDA9IEPrdOpUYuybKH0rIa46
-	kU+ral/FxZMeVs1f0tXzBfNS8R5SJMFGOa28OwXiZa9vrYTHg9duhnmlaIlCRL1v7MsnVxMVasP
-	HnGrDrVHW+C4ZwzCcxn/rfJ/whc4=
-X-Google-Smtp-Source: AGHT+IFPnGBxUMbzp7/ciRb/4QDD/AoPuRkeVnisBhwmTgmtd+TF2XWKrPM0uJzG+Ht4NJS9oAj7Vw==
-X-Received: by 2002:a05:6000:178b:b0:3b8:12a6:36b8 with SMTP id ffacd0b85a97d-3c0ec195bb7mr1400850f8f.46.1755596478926;
-        Tue, 19 Aug 2025 02:41:18 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45b42a97c02sm35092625e9.23.2025.08.19.02.41.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 02:41:18 -0700 (PDT)
-Date: Tue, 19 Aug 2025 12:41:15 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] coredump: Fix return value in coredump_parse()
-Message-ID: <aKRGu14w5vPSZLgv@stanley.mountain>
+	s=arc-20240116; t=1755596609; c=relaxed/simple;
+	bh=tdTkeisceSQV+wOrvcB1lSQqOqyddwQ9F5klGtSfUXA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XLuOGRc+fcy+w5NpsII3+ksIaCG+qBbfdIFdtUPSWRiaPqs61obI/NNXElfSKQotWkqTbHR/gB3gNXwkPbBWNp/+2SEpUOENg3R0wCrnnQ6WGdc25kxuOEEGTDpbCekvlSC70poAvmJ/djhPihDRIpOVeD0vHj7e1lQHC3tPDdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KJGMW5S3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE3B2C4CEF1;
+	Tue, 19 Aug 2025 09:43:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755596608;
+	bh=tdTkeisceSQV+wOrvcB1lSQqOqyddwQ9F5klGtSfUXA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KJGMW5S37jKqU+1+bgbURyL096oJ30LdcqjT4u22TMsUwrn6Aif82gIU7884w8kJJ
+	 MljlaIpAIdt5VkekmX23efVQLQDyqOKRcOHp2Xkzmfr7FB5BwIOXMuvAPeBeDp0PFZ
+	 FdgDjpmp1srFE7HV2X3vnBsSk+cMT2anVsVtea5GUNyO14Mbe+kkFOFLvQS1+oqxcy
+	 5TirnPTdOjJX8it8lOvGK2NS6zb+lwWkZDSU3UXZpy/9KpahrPbvPFkCIzur8f3p/6
+	 lsB/9REytYv8PszfD2vEpOH9SFepps8lNvLB2mPxkMc7XyE/ZIZoGUOQbcvg5bFKhh
+	 sbWy/5vcu0geA==
+Date: Tue, 19 Aug 2025 11:43:24 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Thomas Bertschinger <tahbertschinger@gmail.com>, 
+	io-uring@vger.kernel.org, axboe@kernel.dk, linux-fsdevel@vger.kernel.org, 
+	viro@zeniv.linux.org.uk, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH 3/6] fhandle: do_handle_open() should get FD with user
+ flags
+Message-ID: <20250819-gezeugt-umeinander-e354e377c266@brauner>
+References: <20250814235431.995876-1-tahbertschinger@gmail.com>
+ <20250814235431.995876-4-tahbertschinger@gmail.com>
+ <CAOQ4uxhhSRVyyfZuuPpbF7GpcTiPcxt3RAywbtNVVV_QDPkBRQ@mail.gmail.com>
+ <20250815-raupen-erdgeschichte-f16f3bf454ea@brauner>
+ <CAOQ4uxgBXeE3N5Pq8p=3AgH_cFnkzOK=ipiZHwx6i_C6Oghc3w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxgBXeE3N5Pq8p=3AgH_cFnkzOK=ipiZHwx6i_C6Oghc3w@mail.gmail.com>
 
-The coredump_parse() function is bool type.  It should return true on
-success and false on failure.  The cn_printf() returns zero on success
-or negative error codes.  This mismatch means that when "return err;"
-here, it is treated as success instead of failure.  Change it to return
-false instead.
+On Fri, Aug 15, 2025 at 03:51:53PM +0200, Amir Goldstein wrote:
+> On Fri, Aug 15, 2025 at 3:46 PM Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > On Fri, Aug 15, 2025 at 11:17:26AM +0200, Amir Goldstein wrote:
+> > > On Fri, Aug 15, 2025 at 1:52 AM Thomas Bertschinger
+> > > <tahbertschinger@gmail.com> wrote:
+> > > >
+> > > > In f07c7cc4684a, do_handle_open() was switched to use the automatic
+> > > > cleanup method for getting a FD. In that change it was also switched
+> > > > to pass O_CLOEXEC unconditionally to get_unused_fd_flags() instead
+> > > > of passing the user-specified flags.
+> > > >
+> > > > I don't see anything in that commit description that indicates this was
+> > > > intentional, so I am assuming it was an oversight.
+> > > >
+> > > > With this fix, the FD will again be opened with, or without, O_CLOEXEC
+> > > > according to what the user requested.
+> > > >
+> > > > Fixes: f07c7cc4684a ("fhandle: simplify error handling")
+> > > > Signed-off-by: Thomas Bertschinger <tahbertschinger@gmail.com>
+> > >
+> > > This patch does not seem to be conflicting with earlier patches in the series
+> > > but it is still preferred to start the series with the backportable fix patch.
+> > >
+> > > Fee free to add:
+> > > Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> >
+> > I'm kinda tempted to last let it slide because I think that's how it
+> > should actually be... But ofc, we'll fix.
+> 
+> You mean forcing O_CLOEXEC. right?
 
-Fixes: a5715af549b2 ("coredump: make coredump_parse() return bool")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- fs/coredump.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Yes, of course. :)
 
-diff --git a/fs/coredump.c b/fs/coredump.c
-index e5d9d6276990..f9d82ffc4b88 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -345,7 +345,7 @@ static bool coredump_parse(struct core_name *cn, struct coredump_params *cprm,
- 				was_space = false;
- 				err = cn_printf(cn, "%c", '\0');
- 				if (err)
--					return err;
-+					return false;
- 				(*argv)[(*argc)++] = cn->used;
- 			}
- 		}
--- 
-2.47.2
+> Not ignoring the rest of O_ flags...
 
+No, I think that would be unwise. :)
 
