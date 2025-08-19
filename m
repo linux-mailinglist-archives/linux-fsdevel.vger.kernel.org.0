@@ -1,48 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-58302-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58303-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9383DB2C5CC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 15:39:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9184BB2C5F5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 15:44:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 229961BA19C0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 13:35:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E51225A6305
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 13:39:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0E86338F29;
-	Tue, 19 Aug 2025 13:34:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77D5433EAFA;
+	Tue, 19 Aug 2025 13:39:39 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58367305049;
-	Tue, 19 Aug 2025 13:34:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F267262F;
+	Tue, 19 Aug 2025 13:39:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755610494; cv=none; b=OM49tTvSjEEkdU3Ssc/iDCA7dsXVzAw8Rn3zfLAfnZlxmcjevXgsTHdwqqWdszqjZgwyBr00rlaxSFzbWfVzqtPOlwaJeXQDu0mVunjnBSdmkUk49ElGl/f8EaLnUwfkkpS+EqhVPIvq5DRsGhawRslSv1DetibMFWenuLiHerA=
+	t=1755610779; cv=none; b=Km6qeqxdzjdtdegedYkKQCQ68RU6fhSGDV6DA+nr7MWA5vyB8Q/QdoeMzxk8jvxViU585Xdp5V4qDBmqLBUlaKbEUG6mKWG7l6kss9rZL9VPUDcWiHfqWxMvixBCsnGxYxslvTkDr6d89fnUGJRGAjipCBnO8ywEdHNOAw5ODcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755610494; c=relaxed/simple;
-	bh=OXvJDQRaCwawJzmJTJjCyfLVOfXK/kHnUGhG4J6vNak=;
+	s=arc-20240116; t=1755610779; c=relaxed/simple;
+	bh=1/4cIOt+U4/hlR420fqjfHC6lNwfpZSERDpwpJmgoEY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jym/iwxbnm+7mvxCUDO00xMP6lpkz4xE+ieGrAHUzfejxKqcJlPfNYGxyQCJgYz95OT4YOHQvhnAQ+zx3Get8fsz98Rr0a3cBRZk4/bVk+eZ87MLPq3MN+bQn5Ci5LaKCns9oC4SJQc87TN+T3d6gRJl1thHov7Jj3WkV1AzXDA=
+	 Content-Type:Content-Disposition:In-Reply-To; b=MU2ygLPRS5sOVpN7auUKim/X+sHdhLagHNseuyMHax+UYDdnRTgPM1rAQFiZLDXJXmMzS5I+E15bXRF+i6CqmWswpn3BSqeCGnYe1olHf7Cwu6DxDwNVo1Ztt7j3qiglll52c60ZMM1LFPGtjvPi3wGz9AkI7kPdkWZbYw5JUg8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
 Received: by verein.lst.de (Postfix, from userid 2407)
-	id CA92C227A88; Tue, 19 Aug 2025 15:34:47 +0200 (CEST)
-Date: Tue, 19 Aug 2025 15:34:47 +0200
+	id 6963E227A88; Tue, 19 Aug 2025 15:39:32 +0200 (CEST)
+Date: Tue, 19 Aug 2025 15:39:32 +0200
 From: Christoph Hellwig <hch@lst.de>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	Anuj Gupta <anuj20.g@samsung.com>,
-	Kanchan Joshi <joshi.k@samsung.com>, linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [PATCH 1/2] fs: add a FMODE_ flag to indicate
- IOCB_HAS_METADATA availability
-Message-ID: <20250819133447.GA16775@lst.de>
-References: <20250819082517.2038819-1-hch@lst.de> <20250819082517.2038819-2-hch@lst.de> <20250819-erwirbt-freischaffend-e3d3c1e8967a@brauner> <20250819092219.GA6234@lst.de> <20250819-verrichten-bagger-d139351bb033@brauner>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Christoph Hellwig <hch@lst.de>, Christoph Hellwig <hch@infradead.org>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-nvme@lists.infradead.org
+Subject: Re: Do we need an opt-in for file systems use of hw atomic writes?
+Message-ID: <20250819133932.GA16857@lst.de>
+References: <20250714131713.GA8742@lst.de> <6c3e1c90-1d3d-4567-a392-85870226144f@oracle.com> <aHULEGt3d0niAz2e@infradead.org> <6babdebb-45d1-4f33-b8b5-6b1c4e381e35@oracle.com> <20250715060247.GC18349@lst.de> <072b174d-8efe-49d6-a7e3-c23481fdb3fc@oracle.com> <20250715090357.GA21818@lst.de> <bd7b1eea-18bc-431e-bc29-42b780ff3c31@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -51,36 +49,32 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250819-verrichten-bagger-d139351bb033@brauner>
+In-Reply-To: <bd7b1eea-18bc-431e-bc29-42b780ff3c31@oracle.com>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Tue, Aug 19, 2025 at 12:14:26PM +0200, Christian Brauner wrote:
-> On Tue, Aug 19, 2025 at 11:22:19AM +0200, Christoph Hellwig wrote:
-> > On Tue, Aug 19, 2025 at 11:14:41AM +0200, Christian Brauner wrote:
-> > > It kind of feels like that f_iocb_flags should be changed so that
-> > > subsystems like block can just raise some internal flags directly
-> > > instead of grabbing a f_mode flag everytime they need to make some
-> > > IOCB_* flag conditional on the file. That would mean changing the
-> > > unconditional assigment to file->f_iocb_flags to a |= to not mask flags
-> > > raised by the kernel itself.
-> > 
-> > This isn't about block.  I will be setting this for a file system
-> > operation as well and use the same io_uring code for that.  That's
-> > how I ran into the issue.
-> 
-> Yes, I get that. That's not what this is about. If IOCB_* flags keep
-> getting added that then need an additional opt-out via an FMODE_* flag
-> it's very annoying because you keep taking FMODE_* bits.
+On Tue, Aug 19, 2025 at 12:42:01PM +0100, John Garry wrote:
+> nothing has been happening on this thread for a while. I figure that it is 
+> because we have no good or obvious options.
+>
+> I think that it's better deal with the NVMe driver handling of AWUPF first, 
+> as this applies to block fops as well.
+>
+> As for the suggestion to have an opt-in to use AWUPF, you wrote above that 
+> users may not know when to enable this opt-in or not.
+>
+> It seems to me that we can give the option, but clearly label that it is 
+> potentially dangerous. Hopefully the $RANDOMUSER with the $CHEAPO SSD will 
+> be wise and steer clear.
+>
+> If we always ignore AWUPF, I fear that lots of sound NVMe implementations 
+> will be excluded from HW atomics.
 
-Agreed.
+I think ignoring AWUPF is a good idea, but I've also hard some folks
+not liking that.
 
-> The thing is
-> that it should be possible to keep that information completely contained
-> to f_iocb_flags without polluting f_mode.
-
-I don't really understand how that would work.  The basic problem is that
-we add optional features/flags to read and write, and we need a way to
-check that they are supported and reject them without each time having
-to update all instances.  For that VFS-level code needs some way to do
-a per-instance check of available features.
+The reason why I prefer a mount option is because we add that to fstab
+and the kernel command line easily.  For block layer or driver options
+we'd either need a sysfs file which is always annoying to apply at boot
+time, or a module option which has the downside of applying to all
+devices.
 
