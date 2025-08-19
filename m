@@ -1,58 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-58351-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58352-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46209B2D011
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 01:36:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CA6FB2D06D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 01:47:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA1A91C27590
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 23:36:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A1871C44AC5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 23:47:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99E3A270EAB;
-	Tue, 19 Aug 2025 23:36:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E7AA26F2A9;
+	Tue, 19 Aug 2025 23:46:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VrixnQh9"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aS/up6TF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD37735337A;
-	Tue, 19 Aug 2025 23:36:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F07C2144CF;
+	Tue, 19 Aug 2025 23:46:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755646578; cv=none; b=oiHegR6HhrS65dhkXmiT6sQyMOb2VfyQQnQQ5KRLRcVTA1HwvqfPx/AabABHAbGiUJVxhdSm3yFljmE/n2MKc68x7qOTS/Gj+gz2u9XczA/yy9uSWehltLBsUB5/A7/fcR9jy6yKTkmXeSxKJDSgldFnanuurZGc7jfHYi0Ucvo=
+	t=1755647210; cv=none; b=TIGV5b13XFkSM2NQ6jWWK4HkjmEIgE+WSmjtnNFxqMEt4uve2v0esYkrzrqjPDeMJNPvtaWJ47q/ON4fsHwWGXKuI/k2xlcB1X1g20xJMovLcOY8rsuTmWF3r+fJzLmLhA9vNITdBcJLPQeKhvkwSUcNzX9+fk8tCiBkNFf7iU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755646578; c=relaxed/simple;
-	bh=OUiImZ/OymQmu2CCcYUgaGwLWJ5r4RdCQDFeCi6weYA=;
+	s=arc-20240116; t=1755647210; c=relaxed/simple;
+	bh=HUJtDAvIqdYHH1g4yk/efkwTUsCC8OsmnwxTPAC3dhU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tVxJlyHaQxNFv3oGkoeDeK985IFUc1wA5TAcuqQZIRjjLbLvdKg79t98r9DuaJ4/iEnQMZq5e81pJ1EZ43keBSsiQtIoauUeAwI9g9+ypFUxNPWQbQkanzeHU36yR5NZh8g2G5TmggmnDzk2keqyKLgXuqD0pT5v0icFEP68xck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VrixnQh9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25E2CC4CEF1;
-	Tue, 19 Aug 2025 23:36:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755646577;
-	bh=OUiImZ/OymQmu2CCcYUgaGwLWJ5r4RdCQDFeCi6weYA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VrixnQh9594Z7RH6439sNQIWdZdIU00qc0OaUNkjIcyqP6trzqwtQVt6EobTTxyaE
-	 3bpl/pniyJrmm5NBnukzjrgxWpdJCES+qMrAmfmetRKMKnrr73G9FxFrg28BbK464K
-	 hGGgKGTObXEyt6vNmoIl2CpZQu9QEu+LVrqIS9La6rRKFJ+v4NXKcSykYD4MGd6BXl
-	 71FnPAhBFyBrOQPlgIwu4x4lU0aTpdeRrYFyTBFmDIvnf3n65abApMxJ1Nlhwffg3R
-	 zrW8SO0INsR+5r25/9+PGcTps5xkWF+DqX75Vs900riF7ILGKzAttE/zRIvVbmeReR
-	 bmQhAEROCcOZA==
-Date: Tue, 19 Aug 2025 19:36:16 -0400
-From: Mike Snitzer <snitzer@kernel.org>
-To: Keith Busch <kbusch@meta.com>
-Cc: linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, axboe@kernel.dk, dw@davidwei.uk,
-	brauner@kernel.org, hch@lst.de, martin.petersen@oracle.com,
-	djwong@kernel.org, linux-xfs@vger.kernel.org,
-	viro@zeniv.linux.org.uk, Keith Busch <kbusch@kernel.org>,
-	linux-nfs@vger.kernel.org
-Subject: Re: [PATCHv3 0/8] direct-io: even more flexible io vectors
-Message-ID: <aKUKcCIGDc79ulZ_@kernel.org>
-References: <20250819164922.640964-1-kbusch@meta.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mIQuZlETMUhfIG3HqJQyngaOsdcFe3pn8PaEAd7mtaX7Cq0aGTofrXRwZ3NV4UuusjplBCs8JyBZLhyOcCO31yGp+C5RqtlbltAM2pBedZq1AzR3leUPNRMru6fvggVs9fhQ15ZRgMbUX7QVVElp8kiaP5PV6D+84tO5ZZfgWBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=aS/up6TF; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=HEUPIQNacF5PxxegBqbsUnaXiJZQ0xuzwBbC1vo0iYE=; b=aS/up6TFfUES39twyNhHcGUqhQ
+	2LbOzNknbl7g1/yUUQZydAWqxAyuy2e9u5wgiuF4bjCY5NA2/4SremYME0vfgd0N0ze1tyaYjwkmQ
+	PopQ7jcFhndtS2D6BklWFz8raGWRRvXKNF24dDrLnvmFCPxqvUdmRf1i9yu1iy62WI0nmEjdJhYQk
+	SSou+oZF1u9gKQG5RBnIvp80YXgpVpdvR0BkpJH9/uqV3CGBpcI1Q6B0A1WYcxQRlCDSoUkkLy6jh
+	powKvt5Y8cun2DJP82W2jBsIud7NAnejHd4nmDHQbkTeTmNWxIBZYmAB1/LXwPtc7PjdfBkjsqj0M
+	5zaqkVWA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uoW2N-0000000E9dY-1uMv;
+	Tue, 19 Aug 2025 23:46:43 +0000
+Date: Wed, 20 Aug 2025 00:46:43 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Boris Burkov <boris@bur.io>, akpm@linux-foundation.org,
+	linux-btrfs@vger.kernel.org, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org, kernel-team@fb.com, wqu@suse.com,
+	mhocko@kernel.org, muchun.song@linux.dev, roman.gushchin@linux.dev,
+	hannes@cmpxchg.org
+Subject: Re: [PATCH v3 2/4] mm: add vmstat for cgroup uncharged pages
+Message-ID: <aKUM49I-4D24MmwZ@casper.infradead.org>
+References: <cover.1755562487.git.boris@bur.io>
+ <04b3a5c9944d79072d752c85dac1294ca9bee183.1755562487.git.boris@bur.io>
+ <aKPmiWAwDPNdNBUA@casper.infradead.org>
+ <tw5qydmgv35v63lhqgl7zbjmgwxm2cujqdjq3deicdz2k26ymh@mnxhz43e6jwl>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,109 +66,22 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250819164922.640964-1-kbusch@meta.com>
+In-Reply-To: <tw5qydmgv35v63lhqgl7zbjmgwxm2cujqdjq3deicdz2k26ymh@mnxhz43e6jwl>
 
-On Tue, Aug 19, 2025 at 09:49:14AM -0700, Keith Busch wrote:
-> From: Keith Busch <kbusch@kernel.org>
+On Tue, Aug 19, 2025 at 08:53:59AM -0700, Shakeel Butt wrote:
+> My initial thinking was based on Qu's original proposal which was using
+> root memcg where there will not be any difference between accounted
+> file pages and system wide file pages. However with Boris's change, we
+> can actually get the estimate, as you pointed out, by subtracting the
+> number of accounted file pages from system wide number of file pages.
 > 
-> Previous version:
-> 
->   https://lore.kernel.org/linux-block/20250805141123.332298-1-kbusch@meta.com/
-> 
-> This series removes the direct io requirement that io vector lengths
-> align to the logical block size.
-> 
-> I tested this on a few raw block device types including nvme,
-> virtio-blk, ahci, and loop. NVMe is the only one I tested with 4k
-> logical sectors; everything else was 512.
-> 
-> On each of those, I tested several iomap filesystems: xfs, ext4, and
-> btrfs. I found it interesting that each behave a little
-> differently with handling invalid vector alignments:
-> 
->   - XFS is the most straight forward and reports failures on invalid
->     vector conditions, same as raw blocks devices.
-> 
->   - EXT4 falls back to buffered io for writes but not for reads.
-> 
->   - BTRFS doesn't even try direct io for any unusual alignments; it
->     chooses buffered io from the start.
-> 
-> So it has been a little slow going figuring out which results to expect
-> from various tests, but I think I've got all the corner cases covered. I
-> can submit the tests cases to blktests and fstests for consideration
-> separately, too.
-> 
-> I'm not 100% sure where we're at with the last patch. I think Mike
-> initially indicated this was okay to remove, but I could swear I read
-> something saying that might not be the case anymore. I just can't find
-> the message now. Mike?
+> However I still think we should keep this new metric because of
+> performance reason. To get accounted file pages, we need to read
+> memory.stat of the root memcg which can be very expensive. Basically it
+> may have to flush the rstat update trees on all the CPUs on the system.
+> Since this new metric will be used to calculate system overhead, the
+> high cost will limit how frequently a user can query the latest stat.
 
-Hey,
-
-Yes, I don't have pointers immediately available but I did mention it
-and cc'd you.  I have found that my work relative to NFS and NFSD does
-still need to use iov_iter_aligned_bvec -- otherwise misaligned DIO
-can get issued to the underlying filesystem.
-
-I did try to push all the relevant checking down to NFS/NFSD code that
-assembles their respective bvec into an iov_iter, like you suggested,
-but came up short after my first attempt.
-
-I don't want to speak for the NFS or NFSD miantainers, but I'm
-personally still OK with the broader iov_iter_is_aligned() interface
-and even iov_iter_aligned_bvec() going away (and NFS/NFSD carrying
-their own until I can circle back to hopefully eliminating the need).
-
-Either that, or we remove all but iov_iter_aligned_bvec() and export
-it so that NFS/NFSD can use it, _and_  tweak it so that it offers more
-coarse-grained length checking, like so:
-https://lore.kernel.org/linux-nfs/20250708160619.64800-5-snitzer@kernel.org/
-(this is probably the best intermediate solution actually, though it'd
-force my NFS and NFSD changes to be dependent on your series landing
--- which is probably a perfectly appropriate constraint)
-
-Thanks,
-Mike
-
-
-> 
-> Changes from v2:
-> 
->   Include vector lengths when validating a split. The length check is
->   only valid for r/w commands, and skipped for passthrough
->   DRV_IN/DRV_OUT commands.
-> 
->   Introduce a prep patch having bio_iov_iter_get_pages() take the
->   caller's desired length alignment.
-> 
->   Additional code comments explaing less obvious error conditions.
-> 
->   Added reviews on the patches that haven't changed.
-> 
-> Keith Busch (8):
->   block: check for valid bio while splitting
->   block: add size alignment to bio_iov_iter_get_pages
->   block: align the bio after building it
->   block: simplify direct io validity check
->   iomap: simplify direct io validity check
->   block: remove bdev_iter_is_aligned
->   blk-integrity: use simpler alignment check
->   iov_iter: remove iov_iter_is_aligned
-> 
->  block/bio-integrity.c  |  4 +-
->  block/bio.c            | 64 ++++++++++++++++++----------
->  block/blk-map.c        |  2 +-
->  block/blk-merge.c      | 20 +++++++--
->  block/fops.c           | 13 +++---
->  fs/iomap/direct-io.c   |  6 +--
->  include/linux/bio.h    | 13 ++++--
->  include/linux/blkdev.h | 20 +++++----
->  include/linux/uio.h    |  2 -
->  lib/iov_iter.c         | 95 ------------------------------------------
->  10 files changed, 94 insertions(+), 145 deletions(-)
-> 
-> -- 
-> 2.47.3
-> 
+OK, but couldn't we make that argument for anything else?  Like slab,
+say.  Why's "file" memory different?
 
