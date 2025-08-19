@@ -1,229 +1,183 @@
-Return-Path: <linux-fsdevel+bounces-58271-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58272-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1F4AB2BC02
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 10:38:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F538B2BC36
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 10:51:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1A9152856D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 08:38:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17D041BA419D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 08:51:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 685BA311965;
-	Tue, 19 Aug 2025 08:37:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49275315761;
+	Tue, 19 Aug 2025 08:50:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HbD+nLdc"
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="RicbzZWT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07091255F5E;
-	Tue, 19 Aug 2025 08:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A328B1E98EF;
+	Tue, 19 Aug 2025 08:50:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755592666; cv=none; b=WWlY1Q0VVT93mrzU50voTLX2r/srHdG/Wz2S8mAGwTsCFhLd5dOu52nm0b9XgnhZCcnZxM+A1hPl8zDbCJpknyLRN0Qcn6OLERVUeqppH4yFGEFOYaY8+NrDZDfBFVMzvQeyzF6JJ2D05s3in34+hBAhX6opg+dRSx7HPPZCIcw=
+	t=1755593458; cv=none; b=X37fqK5kl42I87toVDwE2k4YlQPwYoZNjrWd+s714B0igqtmsdrGa4xntj2J9I2OA4vxOGrWV+iCwzoP/sHCVn1TpCYs4mdKdXpa5va5QCkcanXPmLgwc0mEPP+E2C68ultjwN7okEouvwfGUyHE5qI6PWmdiDmR5Q7Atd+hxJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755592666; c=relaxed/simple;
-	bh=ov/SDoBL+KsjXinmNBAv6oD0ygTe84CUkHPGDAYLt90=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pwi8kncZlyUYUOf8gtiWsB5E9ZuCeXd1ASDAQHq/gP5BKFfXms6rbi6SMWcWLauoGF5H38S6yGq/yxCDxsB8FWZrnfmpFNKnv1T9gL8dvqUpbUWyb7oVp/rxRN+XJWszYJILayioRflH1MEbiJQ+PDNrD+7ElEJDPr7zBzHyU8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HbD+nLdc; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-6188b654241so8938557a12.1;
-        Tue, 19 Aug 2025 01:37:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755592663; x=1756197463; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eFsGbO5uv2uZgsEZblgTie/lOV7b8K80hkUH8T7DIVU=;
-        b=HbD+nLdciHnzHGLZWK7rd9vx0k0s77RcTGDq8lOzaIT+iDewhaTDddhEYxHG4qw7rh
-         B1NvvruURnsOqmVA1Nrf1F/vD87IPKfcqDRejCCUkn8/EM5pXAvxfs2dkF1/mgAxFLQu
-         VM7ywV7oxpnn8wnbtOxxabzCMlmaOr7eLRCEPe5OcnHVoaEf3UOMts0s+3HRALMd4Pfp
-         yb4bsrne6PJG10xbjRgiovkXGwXUfiASPJt5wIT7ntNnDZj9PqM7y5sbtz30I/c/APfa
-         T5o/jXRmXUaSn1qKFliWXSvu/PxggqmeoSApI4UF+nw1FMmgbJetKueGHJO6tXgPflGN
-         wZPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755592663; x=1756197463;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eFsGbO5uv2uZgsEZblgTie/lOV7b8K80hkUH8T7DIVU=;
-        b=GbckA80S61lQ0FmSJ/5ztmHpIFNvst27brsThRMb49dpxu9iCfsk75+TduGDkZiO7W
-         J5BNoVoSz6CaoqFg+5Ur7MbIcIFKNR3wnzdlyBSV7BdS0suJpZthcehyu7QmtdMKv9O/
-         q4bUe3h9SxlSiyQkFb3sdP4xjDQMQyrk+YEvlzwSNXVnOyY5FFamCSYrSHe6d7fHBvNZ
-         +FBFg47TQOcKmfIHn5dUQEIYdlzLY5Ufa0T31ppY8ppv2Ac+97xsW4uOR3HVwjrmvMqD
-         9G6MBh8pyZ0J3ZvJydtuumqGMkAOoVoisGAsgrJDApU2SAULiYDBe915thBfod6ll5Rz
-         oujg==
-X-Forwarded-Encrypted: i=1; AJvYcCUOsiP1464NzzQh3WzreCrFHFnIwQGXVInlAGJWViWbIzJol9/GSq/j2X0d6tf056fcYvxNeMEv/2yT@vger.kernel.org, AJvYcCUXOv5DdF2hpb5lmRczwUv7p3jgU//L/F1NV/iFJ4DOXJPu4sgGvH1eOSqBxQy04Khea4eLMdM1igYlDP9m4A==@vger.kernel.org, AJvYcCV1V4yajExvvO6y3YRNXCe6gi73ZdYXalQC+ovfmVHJpyHMTWSvio3pDQqBwwmFfwppB9uV6y919e8=@vger.kernel.org, AJvYcCV1uynxGQfVPGCeewu+nXUYe6x8Eg5L6Wzot/zf4foycowdbQEC7eaUjXHf9717ldvs+4n4gxDA/XkVCg==@vger.kernel.org, AJvYcCVnG2Vv3oiREGpxvl0SdKVVN1HuZEclV8HHApm/iX7eakfGsJQGFTULqbA52Mt7AozSPWYq/4b353Ft@vger.kernel.org, AJvYcCWOAKHOImEHcKf3Vrl66I4SfDsbrANijYoPN95Oh1TYJ3GSR164mAeX7H8+5X0wx5fwx8bgYgGyOjHfuZh+@vger.kernel.org, AJvYcCXEznR2b3GRPEiHg/61Z9vxqEyTo8L+8ZN63bRJwe90t6aZadX13KIlmfRcmx2zj6PjKLPqmkxDhtan/1jEGA==@vger.kernel.org, AJvYcCXsNJvpXGrtSi6lbopAh993v3NYlL8eI1sc+GzzoeUp3x1T+J6WXzuk6VQFv/onmMdfAzEbI5B5yJ/2@vger.kernel.org
-X-Gm-Message-State: AOJu0YxruDJCD/jFhY51OgsbHuZP33F5unKwJfsEhMH+szfytiT5tMZ6
-	9rhwkSxir8u+Zdvya9/EM0mRG9fNTtcdeuxcbfEv/Ql/ZodrmyXamr3JKOb/lli5JhyhE+t4eQJ
-	xubISonmenC/LpaGSbqMNPwje4LMAA4A=
-X-Gm-Gg: ASbGncvFAVpBL5pKgjzSv6iuPA5cXcHN+/N7ZTj6EkZD8iMLb5APF9OCikGtMQI2hYq
-	pLgLv1Xu5BJGtCmRKTWUMKILZyPHumeCnMuQe3PiU27N9ipAprtnt5xaFN/1KshaCZ2d1jamWR0
-	c4YtJ2RlYB2ItzQnxEYYa3hR1WsSYnW/Z6/6pVvL8lw+Wh0O7ZGLKF3vwXr6fPN5A9CeAcJZJhp
-	dZn3/w=
-X-Google-Smtp-Source: AGHT+IFPkGLsERbAFWtJMeBST+thbMymAyNwr9qtEZC9tmGauxnR7YuwZ/KcrAjTg48I0n7BxxoUhzcNK86fTEQQ3U8=
-X-Received: by 2002:a05:6402:2110:b0:61a:8956:80da with SMTP id
- 4fb4d7f45d1cf-61a89568752mr355544a12.17.1755592662958; Tue, 19 Aug 2025
- 01:37:42 -0700 (PDT)
+	s=arc-20240116; t=1755593458; c=relaxed/simple;
+	bh=s4tkw0agwNjoZbMEvc5Aube6vc6jbp2vPgiUvx0ojac=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g+S157NMTxAfsDlCt6jkADlRBWyBjaksGgNGPeIFA32UOEMweL1X/Edh2Ot6TCuBRK8i2wWv/M9lBd2MY2gJS7dxAGKTOdkLXZEo+IHez+CTkuKssFPISNC2eQIhnNmxUkMPJ4QytkIIVqYNL58zSvQ3+rQOmg6+jWilh63LkHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=RicbzZWT; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4c5jwQ6SDDz9sdD;
+	Tue, 19 Aug 2025 10:50:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1755593446;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s4tkw0agwNjoZbMEvc5Aube6vc6jbp2vPgiUvx0ojac=;
+	b=RicbzZWTrhdND/IB6LktMwM2bHb9SNceUOR1HugqfrOVbjaT7EEwoYahgdXjiFv9lnaC9O
+	kFFArJKEhM88Q8nO9o9qJvp9hEXzCPvYt7y/EOVzVhPPjUDByRVD7FOqHcrwWiPNY9NEwR
+	mGj2xmSVGYV++vmtiHd2s/s0Y/xpuszB/SeivMtGiqLfY0cS5y+MRjEUvpztv/Sctmstk/
+	s5GNiM3D5vHEtNjEcL8rI3vXa5ZOtIGEkHT4KW2DuzE287qAqckLZ+IhGEsKmbKE4dDE6K
+	DgEW802cfS3NOk9uj4XoILSonoXY5XMm4ANAo3E4gTxBdPdQA83dvJJYZ04MKw==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
+Date: Tue, 19 Aug 2025 18:50:31 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Askar Safin <safinaskar@zohomail.com>, alx@kernel.org, 
+	dhowells@redhat.com, g.branden.robinson@gmail.com, jack@suse.cz, 
+	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-man@vger.kernel.org, mtk.manpages@gmail.com, viro@zeniv.linux.org.uk, 
+	Ian Kent <raven@themaw.net>, autofs mailing list <autofs@vger.kernel.org>
+Subject: Re: [PATCH v3 00/12] man2: document "new" mount API
+Message-ID: <2025-08-19.1755593370-twitchy-liquid-houses-wink-kqgdBL@cyphar.com>
+References: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com>
+ <20250817075252.4137628-1-safinaskar@zohomail.com>
+ <2025-08-17.1755446479-rotten-curled-charms-robe-vWOBH5@cyphar.com>
+ <20250819-erhitzen-knacken-e4d52248ca3e@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAOQ4uxjFPOZe004Cv+tT=NyQg2JOY6MOYQniSjaefVcg+3s-Kg@mail.gmail.com>
- <175555395905.2234665.9441673384189011517@noble.neil.brown.name>
-In-Reply-To: <175555395905.2234665.9441673384189011517@noble.neil.brown.name>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 19 Aug 2025 10:37:30 +0200
-X-Gm-Features: Ac12FXy8T19V7sCZ2PjPpODnDn2SH0EuiMx3-E257rrZ7RxWX_LLM7LKSQroU_c
-Message-ID: <CAOQ4uxjh1RmAEWV22V_tdazOGxekmKUy6bdu13OhtoXboT3neg@mail.gmail.com>
-Subject: Re: [PATCH 04/11] VFS: introduce dentry_lookup_continue()
-To: NeilBrown <neil@brown.name>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	David Howells <dhowells@redhat.com>, Marc Dionne <marc.dionne@auristor.com>, 
-	Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>, Tyler Hicks <code@tyhicks.com>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Richard Weinberger <richard@nod.at>, 
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>, Johannes Berg <johannes@sipsolutions.net>, 
-	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, 
-	Steve French <sfrench@samba.org>, Namjae Jeon <linkinjeon@kernel.org>, 
-	Carlos Maiolino <cem@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-afs@lists.infradead.org, netfs@lists.linux.dev, 
-	ceph-devel@vger.kernel.org, ecryptfs@vger.kernel.org, 
-	linux-um@lists.infradead.org, linux-nfs@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="mmwkuzmuzol2efok"
+Content-Disposition: inline
+In-Reply-To: <20250819-erhitzen-knacken-e4d52248ca3e@brauner>
+X-Rspamd-Queue-Id: 4c5jwQ6SDDz9sdD
+
+
+--mmwkuzmuzol2efok
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 00/12] man2: document "new" mount API
+MIME-Version: 1.0
 
-On Mon, Aug 18, 2025 at 11:53=E2=80=AFPM NeilBrown <neil@brown.name> wrote:
->
-> On Mon, 18 Aug 2025, Amir Goldstein wrote:
-> > On Wed, Aug 13, 2025 at 1:53=E2=80=AFAM NeilBrown <neil@brown.name> wro=
-te:
-> > >
-> > > A few callers operate on a dentry which they already have - unlike th=
-e
-> > > normal case where a lookup proceeds an operation.
-> > >
-> > > For these callers dentry_lookup_continue() is provided where other
-> > > callers would use dentry_lookup().  The call will fail if, after the
-> > > lock was gained, the child is no longer a child of the given parent.
-> > >
-> > > There are a couple of callers that want to lock a dentry in whatever
-> > > its current parent is.  For these a NULL parent can be passed, in whi=
-ch
-> > > case ->d_parent is used.  In this case the call cannot fail.
-> > >
-> > > The idea behind the name is that the actual lookup occurred some time
-> > > ago, and now we are continuing with an operation on the dentry.
-> > >
-> > > When the operation completes done_dentry_lookup() must be called.  An
-> > > extra reference is taken when the dentry_lookup_continue() call succe=
-eds
-> > > and will be dropped by done_dentry_lookup().
-> > >
-> > > This will be used in smb/server, ecryptfs, and overlayfs, each of whi=
-ch
-> > > have their own lock_parent() or parent_lock() or similar; and a few
-> > > other places which lock the parent but don't check if the parent is
-> > > still correct (often because rename isn't supported so parent cannot =
-be
-> > > incorrect).
-> > >
-> > > Signed-off-by: NeilBrown <neil@brown.name>
-> > > ---
-> > >  fs/namei.c            | 39 +++++++++++++++++++++++++++++++++++++++
-> > >  include/linux/namei.h |  2 ++
-> > >  2 files changed, 41 insertions(+)
-> > >
-> > > diff --git a/fs/namei.c b/fs/namei.c
-> > > index 7af9b464886a..df21b6fa5a0e 100644
-> > > --- a/fs/namei.c
-> > > +++ b/fs/namei.c
-> > > @@ -1874,6 +1874,45 @@ struct dentry *dentry_lookup_killable(struct m=
-nt_idmap *idmap,
-> > >  }
-> > >  EXPORT_SYMBOL(dentry_lookup_killable);
-> > >
-> > > +/**
-> > > + * dentry_lookup_continue: lock a dentry if it is still in the given=
- parent, prior to dir ops
-> > > + * @child: the dentry to lock
-> > > + * @parent: the dentry of the assumed parent
-> > > + *
-> > > + * The child is locked - currently by taking i_rwsem on the parent -=
- to
-> > > + * prepare for create/remove operations.  If the given parent is not
-> > > + * %NULL and is no longer the parent of the dentry after the lock is
-> > > + * gained, the lock is released and the call fails (returns
-> > > + * ERR_PTR(-EINVAL).
-> > > + *
-> > > + * On success a reference to the child is taken and returned.  The l=
-ock
-> > > + * and reference must both be dropped by done_dentry_lookup() after =
-the
-> > > + * operation completes.
-> > > + */
-> > > +struct dentry *dentry_lookup_continue(struct dentry *child,
-> > > +                                     struct dentry *parent)
-> > > +{
-> > > +       struct dentry *p =3D parent;
-> > > +
-> > > +again:
-> > > +       if (!parent)
-> > > +               p =3D dget_parent(child);
-> > > +       inode_lock_nested(d_inode(p), I_MUTEX_PARENT);
-> > > +       if (child->d_parent !=3D p) {
-> >
-> > || d_unhashed(child))
-> >
-> > ;)
->
-> As you say!
->
-> >
-> > and what about silly renames? are those also d_unhashed()?
->
-> With NFS it is not unhashed (i.e.  it is still hashed, but with a
-> different name).  I haven't checked AFS.
->
-> But does it matter?  As long as it has the right parent and is not
-> unhashed, it is a suitable dentry to pass to vfs_unlink() etc.
->
-> If this race happened with NFS then ovl could try to remove the .nfsXXX
-> file and would get ETXBUSY due to DCACH_NFSFS_RENAMED.  I don't think
-> this is a problem.
->
+On 2025-08-19, Christian Brauner <brauner@kernel.org> wrote:
+> On Mon, Aug 18, 2025 at 02:16:04AM +1000, Aleksa Sarai wrote:
+> > On 2025-08-17, Askar Safin <safinaskar@zohomail.com> wrote:
+> > > I noticed that you changed docs for automounts. So I dig into
+> > > automounts implementation. And I found a bug in openat2. If
+> > > RESOLVE_NO_XDEV is specified, then name resolution doesn't cross
+> > > automount points (i. e. we get EXDEV), but automounts still happen! I
+> > > think this is a bug. Bug is reproduced in 6.17-rc1. In the end of this
+> > > mail you will find reproducer. And miniconfig.
+> >=20
+> > Yes, this is a bug -- we check LOOKUP_NO_XDEV after traverse_mounts()
+> > because we want to error out if we actually jumped to a different mount.
+> > We should probably be erroring out in follow_automount() as well, and I
+> > missed this when I wrote openat2().
+> >=20
+> > openat2() also really needs RESOLVE_NO_AUTOMOUNT (and probably
+> > RESOLVE_NO_DOTDOT as well as some other small features). I'll try to
+> > send something soon.
+> >=20
+> > > Are automounts actually used? Is it possible to deprecate or
+> > > remove them? It seems for me automounts are rarely tested obscure
+> > > feature, which affects core namei code.
+> >=20
+> > I use them for auto-mounting NFS shares on my laptop, and I'm sure there
+> > are plenty of other users. They are little bit funky but I highly doubt
+> > they are "unused". Howells probably disagrees in even stronger terms.
+> > Most distributions provide autofs as a supported package (I think it
+> > even comes pre-installed for some distros).
+> >=20
+> > They are not tested by fstests AFAICS, but that's more of a flaw in
+> > fstests (automount requires you to have a running autofs daemon, which
+> > probably makes testing it in fstests or selftests impractical) not the
+> > feature itself.
+> >=20
+> > > This reproducer is based on "tracing" automount, which
+> > > actually *IS* already deprecated. But automount mechanism
+> > > itself is not deprecated, as well as I know.
+> >=20
+> > The automount behaviour of tracefs is different to the general automount
+> > mechanism which is managed by userspace with the autofs daemon. I don't
+> > know the history behind the deprecation, but I expect that it was
+> > deprecated in favour of configuring it with autofs (or just enabling it
+> > by default).
+> >=20
+> > > Also, I did read namei code, and I think that
+> > > options AT_NO_AUTOMOUNT, FSPICK_NO_AUTOMOUNT, etc affect
+> > > last component only, not all of them. I didn't test this yet.
+> > > I plan to test this within next days.
+> >=20
+> > No, LOOKUP_AUTOMOUNT affects all components. I double-checked this with
+> > Christian.
+>=20
+> Hm? I was asking the question in the chat because I was unsure and not
+> in front of a computer you then said that it does affect all components. =
+:)
 
-Not a problem IMO.
+Yeah I misunderstood what you said -- didn't mean to throw you under the
+bus, sorry about that!
 
-FYI, ovl does not accept NFS as a valid upper fs
-on account of ->d_revalidate() and no RENAME_WHITEOUT support.
+> > You would think that it's only the last component (like O_DIRECTORY,
+> > O_NOFOLLOW, AT_SYMLINK_{,NO}FOLLOW) but follow_automount() is called for
+> > all components (i.e., as part of step_into()). It hooks into the regular
+> > lookup flow for mountpoints.
+> >=20
+> > Yes, it is quite funky that AT_NO_AUTOMOUNT is the only AT_* flag that
+> > works this way -- hence why I went with a different RESOLVE_* namespace
+> > for openat2() (which _always_ act on _all_ components).
+> >=20
+> > --=20
+> > Aleksa Sarai
+> > Senior Software Engineer (Containers)
+> > SUSE Linux GmbH
+> > https://www.cyphar.com/
+>=20
+>=20
 
-        if (ovl_dentry_remote(ofs->workdir) &&
-            (!d_type || !rename_whiteout || ofs->noxattr)) {
-                pr_err("upper fs missing required features.\n");
-                err =3D -EINVAL;
-                goto out;
-        }
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+https://www.cyphar.com/
 
-> If we really wanted to be sure the name hadn't changed we could do a
-> lookup and check that the same dentry is returned.
->
-> OVL is by nature exposed to possible races if something else tried to
-> modify the upper directory tree.  I don't think it needs to provide
-> perfect semantics in that case, it only needs to fail-safe.  I think
-> this recent change is enough to be safe in the face of concurrent
-> unlinks.
+--mmwkuzmuzol2efok
+Content-Type: application/pgp-signature; name="signature.asc"
 
-<nod>
+-----BEGIN PGP SIGNATURE-----
 
-Thanks,
-Amir.
+iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaKQ61xsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG+T+wEAlSeMmOrEV2wl+utJcEEb
+qpQ16Td0Br0wrJGYcTw/IfgA/2UtFxJ9pT6LUkwX14HPqUCCpRZipLkUkxiN3Nda
+9XsP
+=88Ba
+-----END PGP SIGNATURE-----
+
+--mmwkuzmuzol2efok--
 
