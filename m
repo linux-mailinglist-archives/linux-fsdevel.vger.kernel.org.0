@@ -1,80 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-58303-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58304-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9184BB2C5F5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 15:44:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73303B2C69D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 16:10:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E51225A6305
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 13:39:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF3AD3B842B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 14:07:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77D5433EAFA;
-	Tue, 19 Aug 2025 13:39:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE4A3218AC1;
+	Tue, 19 Aug 2025 14:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="J0LjJdue"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F267262F;
-	Tue, 19 Aug 2025 13:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828AC2EB850
+	for <linux-fsdevel@vger.kernel.org>; Tue, 19 Aug 2025 14:07:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755610779; cv=none; b=Km6qeqxdzjdtdegedYkKQCQ68RU6fhSGDV6DA+nr7MWA5vyB8Q/QdoeMzxk8jvxViU585Xdp5V4qDBmqLBUlaKbEUG6mKWG7l6kss9rZL9VPUDcWiHfqWxMvixBCsnGxYxslvTkDr6d89fnUGJRGAjipCBnO8ywEdHNOAw5ODcY=
+	t=1755612454; cv=none; b=DsvbDobMuU3QLAPaWa6nfCyzHbbezymEtoOKu6TsVNxuJA32ZTlECid1ftht6G+wAUI6GJjK96YlCIFxyyFRkzHKu0qmfe9nrj1UCBQqwKem7iegwhTu4BXvIHLPFNhfpXjRAFBNmd01++cqGbv3M8o38JAosO8yRs5JtEx6C0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755610779; c=relaxed/simple;
-	bh=1/4cIOt+U4/hlR420fqjfHC6lNwfpZSERDpwpJmgoEY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MU2ygLPRS5sOVpN7auUKim/X+sHdhLagHNseuyMHax+UYDdnRTgPM1rAQFiZLDXJXmMzS5I+E15bXRF+i6CqmWswpn3BSqeCGnYe1olHf7Cwu6DxDwNVo1Ztt7j3qiglll52c60ZMM1LFPGtjvPi3wGz9AkI7kPdkWZbYw5JUg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 6963E227A88; Tue, 19 Aug 2025 15:39:32 +0200 (CEST)
-Date: Tue, 19 Aug 2025 15:39:32 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Christoph Hellwig <hch@lst.de>, Christoph Hellwig <hch@infradead.org>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-nvme@lists.infradead.org
-Subject: Re: Do we need an opt-in for file systems use of hw atomic writes?
-Message-ID: <20250819133932.GA16857@lst.de>
-References: <20250714131713.GA8742@lst.de> <6c3e1c90-1d3d-4567-a392-85870226144f@oracle.com> <aHULEGt3d0niAz2e@infradead.org> <6babdebb-45d1-4f33-b8b5-6b1c4e381e35@oracle.com> <20250715060247.GC18349@lst.de> <072b174d-8efe-49d6-a7e3-c23481fdb3fc@oracle.com> <20250715090357.GA21818@lst.de> <bd7b1eea-18bc-431e-bc29-42b780ff3c31@oracle.com>
+	s=arc-20240116; t=1755612454; c=relaxed/simple;
+	bh=I/r7XFfAmZT7gE1c9PozZ4C2qUQHNUKLRFQPvVIdUC8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hdgEHIqLaAWI6XU/vGdV+iqWZiXYkGyEXYjQiiL5n87YVYESQH3T0srxKMuIK81VzhL3KuDevkO+azu7l2+wzm7Nf8w7xfAUDid/LsIscYq6Pt7OwvXc8+aigy7utc2a+m8i/5Jd3lIN5YK90Job+Ewgt6w6qOdIC5JMumsPL9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=J0LjJdue; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4b133b24e66so19309101cf.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Aug 2025 07:07:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1755612451; x=1756217251; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=I/r7XFfAmZT7gE1c9PozZ4C2qUQHNUKLRFQPvVIdUC8=;
+        b=J0LjJdue71a+qYjzMx+CQjn73jm0Od0nLJupjShdsW5TAaD31FADG4T9WR/Aad4bze
+         AlJerWoK1jvfGIwMRp4AyM7PRC8mMwW1Wy6Hjnmrx2kw7KcBvUg1767NRI6Z2DtGqZxk
+         n/z3ztMa8vs1BeCeoMKAvxtjcY5HCCbn9Hk9w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755612451; x=1756217251;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=I/r7XFfAmZT7gE1c9PozZ4C2qUQHNUKLRFQPvVIdUC8=;
+        b=r6EE5j1or6kZFGk6H3lRCh3slZKebvjr8dYkq8XBSvMRKbKdkN+80jh7Qlf28xAOor
+         qmMSeXT4oCFPNw+ByqzLzF/NuLVXJRXcqkxe+MUWxloWSEdI3rBko/Wg0jwR8qO6F8f1
+         XUyCRTMZ7d7cBia0qVEfWmIaJCdtfUO7FzZGFJvlbeDzyhk8A3RPNh8hfn9i/p9ChrQQ
+         HXHGE6Bbah4wR34MRg+UacgRUCH+o3sy2icG2n94lPlAoT14Ia9G1rpzetlqusui+xeu
+         jglRlRBq6qtnURjlUcR5pvVAlxQMqC3swrERRA1z8MjdbcXXywCRQTIRfDorANbUQxKa
+         luuw==
+X-Gm-Message-State: AOJu0Yw5uUlfoVFGjRq9+FelEEuq5zJHtbnzGMAJHs+5y2Kbu+RWYgQG
+	zx1rLyMzAlqXf1nKUYKJURIyUZ6lWjQnRTVz4eUsUaziRz+u3E63fVHzofFLr0Wbuhqm7G3MTMU
+	Xg6bzuloZRLB25httZEnbwCiTsChCSDCHcHN4tcBiyBgQrIujdwUs
+X-Gm-Gg: ASbGncsnVygE0Yn/pik4MPmotjNZilaNNfSUsX0bQNS5wOKFVsdTqt4DqImi0MF6UrZ
+	4YeyvgEHkKrZ5urTaIm6v70JYuyGc01dGD+mK/Z/KqifYqLqiwjbIdmySMQ/tAKq0E8sYuFv+DP
+	XHcy93HRzhCOb4BwhkoCZTKKNeFqZVnXft0vleHkNn5/Wsr2q1/4GDRAHIPuaHw+RZMgiWXlAQV
+	4wjeipOHA==
+X-Google-Smtp-Source: AGHT+IEm+RDY4x+KUMjDy2xSe/+nwcq7x6ypDW5zM5ME3kChnUS0sUlVc9tK6EdPKsiQBcM6wp5ioyyEcctMgWEXnIE=
+X-Received: by 2002:a05:622a:1801:b0:4b2:8ac4:f083 with SMTP id
+ d75a77b69052e-4b28ac4fe9amr13087951cf.65.1755612450990; Tue, 19 Aug 2025
+ 07:07:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bd7b1eea-18bc-431e-bc29-42b780ff3c31@oracle.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+References: <20250818132905.323-1-luochunsheng@ustc.edu>
+In-Reply-To: <20250818132905.323-1-luochunsheng@ustc.edu>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 19 Aug 2025 16:07:19 +0200
+X-Gm-Features: Ac12FXyDNAF4QEKI6FENCC8ukwJbwkgNXuP0OKFGWgQOjTPz6NfZYwdmQefpnMI
+Message-ID: <CAJfpegsz3fScMWh4BVuzax1ovVN5qEm1yr8g=XEU0DnsHbXCvQ@mail.gmail.com>
+Subject: Re: [PATCH] fuse: clarify extending writes handling
+To: Chunsheng Luo <luochunsheng@ustc.edu>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Aug 19, 2025 at 12:42:01PM +0100, John Garry wrote:
-> nothing has been happening on this thread for a while. I figure that it is 
-> because we have no good or obvious options.
+On Mon, 18 Aug 2025 at 15:29, Chunsheng Luo <luochunsheng@ustc.edu> wrote:
 >
-> I think that it's better deal with the NVMe driver handling of AWUPF first, 
-> as this applies to block fops as well.
->
-> As for the suggestion to have an opt-in to use AWUPF, you wrote above that 
-> users may not know when to enable this opt-in or not.
->
-> It seems to me that we can give the option, but clearly label that it is 
-> potentially dangerous. Hopefully the $RANDOMUSER with the $CHEAPO SSD will 
-> be wise and steer clear.
->
-> If we always ignore AWUPF, I fear that lots of sound NVMe implementations 
-> will be excluded from HW atomics.
+> Only flush extending writes (up to LLONG_MAX) for files with upcoming
+> write operations, and Fix confusing 'end' parameter usage.
 
-I think ignoring AWUPF is a good idea, but I've also hard some folks
-not liking that.
+Patch looks correct, but it changes behavior on input file of
+copy_file_range(), which is not explained here.
 
-The reason why I prefer a mount option is because we add that to fstab
-and the kernel command line easily.  For block layer or driver options
-we'd either need a sysfs file which is always annoying to apply at boot
-time, or a module option which has the downside of applying to all
-devices.
+Thanks,
+Miklos
 
