@@ -1,226 +1,362 @@
-Return-Path: <linux-fsdevel+bounces-58230-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58231-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63B57B2B5DE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 03:21:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB715B2B66F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 03:45:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4DB324E1E06
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 01:21:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 665F93BA1F8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 01:45:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCDBD1DF258;
-	Tue, 19 Aug 2025 01:21:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5801E27F19F;
+	Tue, 19 Aug 2025 01:45:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="CdnDemJi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RcDBWQmH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx07-001d1705.pphosted.com (mx07-001d1705.pphosted.com [185.132.183.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 804743451D0;
-	Tue, 19 Aug 2025 01:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.132.183.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755566480; cv=fail; b=RPdPg7pTUzI2HLmOqzFvmuofJaA0iXQWxdHhfC9VDL05Rk66VX0D4lfKoq4Os/y6TaK9t+zRCjbXc4ULhb0d8zffCUZ0NaIriao0bG5anp0x66GHGs7irD0Qdn/prIOBDQD/dTnMGSW6uunI7cjdnUNC1+5pzkz8ypQPPaq0UM4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755566480; c=relaxed/simple;
-	bh=mGQERiaxgFpu1SOz+QoSely0/XF+fAfFnj15ZQs6ZBs=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=US44dYY1JgShB33y412D9aSoW3yNJLEmNEbKiNn6BO1b6YPsYSqvjXMOW4mV3ueqTkJcUxQ9zpA7N3WpEMv5wHJMoKAmwpRPMC76U8Fx35dLuhdBfqTacKZXqw9DkXHP74zMa4DWGEyw+9qWe0kff3wySo4Jkv+FU9UYRn6/LqI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=pass smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=CdnDemJi; arc=fail smtp.client-ip=185.132.183.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sony.com
-Received: from pps.filterd (m0209327.ppops.net [127.0.0.1])
-	by mx08-001d1705.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57INZJTR017767;
-	Tue, 19 Aug 2025 01:21:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sony.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=S1; bh=KeZQxRc
-	O241MpXE4Qh3EoZvvw9OmI+YKXppN/6x48DE=; b=CdnDemJiahNIDeyI2agspii
-	oix1TyEZf6ipFkvSJ9So7+0WvJqenu+gOJnb/k5clwfjTC5NR+TSUPtN3Z4giQRo
-	9XiOmyRRQow8IJV3uNrcjasvkW9ho8gLL3i9J5WL2cMy24CoQGpOHD5TIkgQA17f
-	fjegMlxncAysf3BmE9qXwVRFIXFi8V9uVnMM8+s9A89mXxdrAg0vtqXgtx2AwlSf
-	J7fO5sSoVq1zIwC+ojekafzDEw4OZ4v3VsaxAosqViauAH6YQ+1Ng7XBICqt9ll6
-	AoOB0tc0GvRREp4Nf+TMOjTtKIwbL9Kl9IX3XmxrouQHg0tUTmycs76LksYfnFA=
-	=
-Received: from seypr02cu001.outbound.protection.outlook.com (mail-koreacentralazon11013054.outbound.protection.outlook.com [40.107.44.54])
-	by mx08-001d1705.pphosted.com (PPS) with ESMTPS id 48jgv0abe8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 19 Aug 2025 01:21:01 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jBGGSsGnMSuttJbndmvb0X+YoIHAjT6RExJJ8hyDcnZTc+1mQFzDPyXWn92xC8uP/5MH5lOUWFC+fWY9WHAuSP1IYKi9C5OzlelmoUe/XlQ3hW2dYquPfjfHfss2UBKg7O+fdJIIXWSD5NOwTQbdcyJhCKWAMxVTLhtDZjAehZAioDH7uUCfgdhXzl5r8V+yn/X+eCQI/fnUFhzscPCQSjKo/AEA+qyR8aSmpjygslfoqbhsLXxDDxEc9VZ5CaDv26x9l4s6aZxeMZnedeZ6gxDxM5MqDOxT8vf3GiEKNjUxNFAzjla7tLfhy/aN8LlA16txXJzqAOWtU7k9D7GSpA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KeZQxRcO241MpXE4Qh3EoZvvw9OmI+YKXppN/6x48DE=;
- b=Wq49P9ddgfGIOc4JrUzVqsXxJhkKfvGVnyF5IvTEq2Pr8TrerFWBhj12a7xqJ/GgyLCewHpmkR5+xJeFuNN74mXvHOq6UeH17kYz5EUh6/syXGRwZ8ylPRXAPlGIOMp3IWFgPaKLbRG9MUCWFxvmzqbWEpXYcIgQ8aHH3kGd3vsaz75NWUgEY6//eeMFgNhlCF9+XKKqvQ7A7EgloHEPMesFouNY5R2n5d48Wkt2y682kWcBDU40bn4ujfZ51fYgG7n7Je70dL57rX2CcawKP5yjAzskR6X/sgkUNOhqxUFR5yiibCHPsKpgusXEbibkGplgm/4hx61lBlw2X00QEw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=sony.com; dmarc=pass action=none header.from=sony.com;
- dkim=pass header.d=sony.com; arc=none
-Received: from PUZPR04MB6316.apcprd04.prod.outlook.com (2603:1096:301:fc::7)
- by PUZPR04MB6582.apcprd04.prod.outlook.com (2603:1096:301:f2::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Tue, 19 Aug
- 2025 01:20:47 +0000
-Received: from PUZPR04MB6316.apcprd04.prod.outlook.com
- ([fe80::409e:64d3:cee0:7b06]) by PUZPR04MB6316.apcprd04.prod.outlook.com
- ([fe80::409e:64d3:cee0:7b06%5]) with mapi id 15.20.9031.019; Tue, 19 Aug 2025
- 01:20:47 +0000
-From: "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
-To: Xichao Zhao <zhao.xichao@vivo.com>,
-        "linkinjeon@kernel.org"
-	<linkinjeon@kernel.org>,
-        "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>
-CC: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] exfat: drop redundant conversion to bool
-Thread-Topic: [PATCH] exfat: drop redundant conversion to bool
-Thread-Index: AQHcECJ7ZqfQ0Y3OPEe/47/6mQyy4bRpKfW9
-Date: Tue, 19 Aug 2025 01:20:47 +0000
-Message-ID:
- <PUZPR04MB6316487B10F6F2F62C0249598130A@PUZPR04MB6316.apcprd04.prod.outlook.com>
-References: <20250818092815.556750-1-zhao.xichao@vivo.com>
-In-Reply-To: <20250818092815.556750-1-zhao.xichao@vivo.com>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PUZPR04MB6316:EE_|PUZPR04MB6582:EE_
-x-ms-office365-filtering-correlation-id: 77b78e98-02f5-4095-5621-08dddebea080
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|366016|10070799003|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?PA26CJBpibtxoAEmh8gXdctWYDxBoMoStAzWwnYqvcSbsbMHE5ppRraq4M?=
- =?iso-8859-1?Q?ew3rbC2opcIe3f3AfM0NaXIVStWFMHyXqKK+kfGNNijASg0jIeo7/tf511?=
- =?iso-8859-1?Q?O2hstZK6gKJ7NSQUvATdhMsescZBTsVVWdBfXqEbKjhzGa1rLpdU+w6dvI?=
- =?iso-8859-1?Q?+Hj7FacHnWImf3kSXI6MuaA8hieW5F7V6j0yPWhI1fjMQy+G5OmxVHP/PR?=
- =?iso-8859-1?Q?SRc3LNcY/D85Rgmdx9JXIv5rvyyXXyIyRpWSDFpiQ0qt9KTcmxZktBtKbO?=
- =?iso-8859-1?Q?zhxnNwlewqcZJddkWeh4QJdAzAyA06+qOuEAesW4Ez05xEBMFjxONIrL43?=
- =?iso-8859-1?Q?bh8Fm665YAOrHfOYCvZJcVp5xE2ch+2ATnbKlGtcyrp8MEYxkR9bUVyNyA?=
- =?iso-8859-1?Q?JZnvHLmhW+s5gNw/votpayxTmV2ttxurXarXuP+R8fonM+FGAWsUKY3kBa?=
- =?iso-8859-1?Q?hNYpomACy+mhtkNBc9azhX66sh2tRzmtaFKmdcHKQeb3gDW62M8zBkm5tn?=
- =?iso-8859-1?Q?P5g6F1J1OTWTrVLFZleXrcnnLxFDNwuNpBPie9t9R1GrD2j7OEIf7v+tjC?=
- =?iso-8859-1?Q?IYg5RlF6L0Rp4L20MhOWqCz6uued5yuKFp6JEJqGJuy6KFtXrqx3NqFRrV?=
- =?iso-8859-1?Q?K0jxlNP2CLfSF5XsbXG8VEWGgpUn+MmfXJ5HVzF1xOZeeI+M34Iad/MAr2?=
- =?iso-8859-1?Q?s48bp1EKeaxOYvzC1zjrvOhaGX0Pemom4TRnXPfaOqiAdm2qfzYWrxFrmn?=
- =?iso-8859-1?Q?aDSQndfX8UVCGThU9acrblz9R/0PSeKvcTwsMQjNJWW9zwHnGcqDytNj+V?=
- =?iso-8859-1?Q?N4kN6HuQOcw6xFhQCTM7ZTdgPd9ByJ9pgboRgsofUbuq1NfkB46ZwO3SfP?=
- =?iso-8859-1?Q?xU20m9Hr8ZK9PtOym4z5Ny8oY9qYdjYbqfxhN17fPOhoLxFl5sTFADezGp?=
- =?iso-8859-1?Q?vHJhnm9dnAupJbUxV39uQw+ps1bzZswuSmR/t+jp+jo3yDuLxtncXukuX/?=
- =?iso-8859-1?Q?geuTszpfjL7WbqmXEAo0ibLCxOAub8b8Zb8Vix8umYKqpDsvdbG2ASOVz3?=
- =?iso-8859-1?Q?+uiuI4aC24CODZVcFjUz31d2rivd2P+EyvrorsRcCJXblQOJmlZJXsf8g+?=
- =?iso-8859-1?Q?iJYUxjWCvUF8krPbT7Xk7i4gybAqEITEHBoEIum+mC0/yvOVZsFOOsivD0?=
- =?iso-8859-1?Q?5cKZ0g3+NmWAFs5bGCPNQGbNq4Hpac4O/x0z8Xmf1xe7dTV5MvrwfqdR0m?=
- =?iso-8859-1?Q?KFnCnVhBIVZOxlD8rs2laVT+sTS+cRkvrUK/93Kt0crS1l/du0M6ipFIs9?=
- =?iso-8859-1?Q?gAR56uu3gy1fb9uk4Hv3wGYw7KKJd5X7PEUg55lCAsG5aNu5Vfs5rnxMMQ?=
- =?iso-8859-1?Q?ldw1OLu8pAWSVPJ8C9beKL+9keW2FtgD1shXyaisIIWSEFi3lv3C8mDfgW?=
- =?iso-8859-1?Q?iZT4qrpXAP08wHt8TjOPNvOc6IFJiutKGiEtYBFVuuKPtqMUlOZcI4TXJ7?=
- =?iso-8859-1?Q?akLqOxoQHkWPXtOPY+v2NPKxt71P4NKc1Ib7PzwZmRmw=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR04MB6316.apcprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(10070799003)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?2raGMYrvSHmTu7Bwg5YS+hchTozXucZPrMrCsH57MRgiRPqPrKdISgYL/p?=
- =?iso-8859-1?Q?pi7MrTfORd4OvGhfyoybzUpIpyCLNnYnJHrtH5kadqwtV02GfGmjcOBvic?=
- =?iso-8859-1?Q?7UbhydRAcZVQheS3cR0Bsty//p+0rAL1dhqD+x6Zs+5uIsrCQlL7jxLOdG?=
- =?iso-8859-1?Q?7Fa+X4j4Ir3zzp9UDToKzVp/eb66QwuPcUajKcyWgUrxaLIN45WoyBCE/a?=
- =?iso-8859-1?Q?JLHZYlNBaeyPzGEHr6KZGqhSTqVeMdDGVpymTS959KRiqBT68jqbTkQ2hY?=
- =?iso-8859-1?Q?KTxiUyoLBGDfghCIxEl1u8u+MhPKooHDc5fL76f/d9C+4YbTcu+4zqF8Lv?=
- =?iso-8859-1?Q?WChK+1r5U1r9n4u22kdAneD/DQ/KsgpvzeG9WMd731/gU2atN7u8Ms1mhX?=
- =?iso-8859-1?Q?hQjLbCkhRfFfGQ8qmEdw2c6wCrLwSUkAbz/Y20fdtejGi/XlUWkX9qrzNc?=
- =?iso-8859-1?Q?94sTEy0RAZ6UKlmpw2QTJ7QbFlQcTXOkwCP+Dc6WrdgD38Hf82pBn8FTaZ?=
- =?iso-8859-1?Q?2zHTKSk/IPa/OouVzah5t2M6LPLi6+wL+GYzQ1N3S256VhySrltuGLyW7d?=
- =?iso-8859-1?Q?gaNUrkfmaGQNDmjPnQATSs4T7mjXKEEdGyY66slEaT+gKldv0BYKeF+9ib?=
- =?iso-8859-1?Q?x4unjD39tFKxlXXGlFt2F9vdJumCSdjBNADFNDYqiKKDocRwMkJHeewzvw?=
- =?iso-8859-1?Q?axsqhVUKFKgdKWA3ny9980aaDFY6G55PZahHLWEvSomhiIa13QJJV4hVoj?=
- =?iso-8859-1?Q?mFSYuK3J+0T9+LVY060q9uvRLU7kYXUu1unqfvioJhPQZDbgMQHCX4Zw6o?=
- =?iso-8859-1?Q?cTMZXqmt0ugmylYDQ2knYIIDLfHTkMGUjZKAiOeOWPfbFFtOXyTbVjiMsI?=
- =?iso-8859-1?Q?LYvewMVvwI1rxuUZN78C+khPVh7q0Gf4wSg9Ck4VlL8nFSNO0DQBwXJs2Z?=
- =?iso-8859-1?Q?99EJduO1a2HsYxko80I8pGHOJEavBi5x9N8hXqRpopElTlfeP2aSuLAqvs?=
- =?iso-8859-1?Q?4R6vB7NZ+QXIvhCWdgCFvMliz4cPLE2mkUQxiGmzOcH5WsHvOkz6je/aGZ?=
- =?iso-8859-1?Q?Dt2C1XjoLEXrNfnHINhdlq8PxM2vWBbBA0VLtWjBrQkbhL62EDluDYreYg?=
- =?iso-8859-1?Q?eYeBsbYPMj0OA4SF5hmniHxCdz1vefswbZY3o00JMle3f8uuCzdKlkuA8y?=
- =?iso-8859-1?Q?dvH3xsJ+oBqeiiwdSqXo3adeKC2O1YALITmuoDlQoYE+NWdR1zrRBUeGYk?=
- =?iso-8859-1?Q?gfH9osHHYkcKuXMBjemxMshr3jzFONzM57q40Hyq16lf6P4J8azFxSlmDD?=
- =?iso-8859-1?Q?JkipXJqBsGbljR/J+NSQe4p4Yp0Ug+b/GMcBUgUO5DS/1Y6/ekYxU+tKi1?=
- =?iso-8859-1?Q?o44pLbAcI5ktwyvTjw3sQnNTtwQD2nn33vFNW3+ErMobFSoKcSvw2viz0e?=
- =?iso-8859-1?Q?zStkQG91vdJI0rEsWlGSm9U5U5593sQuoIKROykkIt6xCTnbJ29qYNysFO?=
- =?iso-8859-1?Q?wP9bd4INgM2p2c+kIGIWGin5EsdPbPoU9h+oUcOY0u+aFNFn33FVv6DKvB?=
- =?iso-8859-1?Q?mbFyicSugN5fTPCoC+DNGGiJIBEG+JdjhsE/Y6SUdrbAFiu6RCXdxFhucT?=
- =?iso-8859-1?Q?0Sx1jNzvKphO7z6osVuVOrttf6r6fKCiV5cq8mr4xQICN+w3lL2fXzYU1r?=
- =?iso-8859-1?Q?IWMro0jt7JLFKqtUCmk=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B043B27FD64;
+	Tue, 19 Aug 2025 01:45:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755567935; cv=none; b=p7vI4VYkzc/ue8jYEzNrdo/6A3x3GJ7QxTTnHL6mJKziXv2JcxN0ypyxqWLTGZduSOmod/rgF+6Z9sC7ekUSCjIY12EzjbMLKOsdjonqBfPx+sVpAAKNH+zbKKv1S1FIihcE8sxQSObFt8am9W9y/cJ6sVLWiOUhg2QjxToiahA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755567935; c=relaxed/simple;
+	bh=1KsVypTLDNM1qpD4WGU8wxo7f40aOCtqdSmuoshZXrM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f8VBApUjC/3w3CVSPrSfms11I3INJw39FCkvF476aiBu5jzxkxjJObW7DOG5MmQbJMO7035po1joFgDvVOm3Vn1eNZ1h1P6jht2vUgmsbIIwkC4EPa+7itiZim8W6ATpccPGCoLDxKQ9b1doViM9Z0xZCI86QYfakuO3iQuAGW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RcDBWQmH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44705C4CEEB;
+	Tue, 19 Aug 2025 01:45:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755567935;
+	bh=1KsVypTLDNM1qpD4WGU8wxo7f40aOCtqdSmuoshZXrM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=RcDBWQmHkk/mILCZsOCiFYBd1Mro7OA1SMQAyO3XuRdHWLB9f427IRXZA8pOnj3+f
+	 tWnHZcjUvgBUBfmMH9fS8rhyNnEwkWqIUomYgBCorQEQfBrM/6c/nvWvDVf4UBiPuR
+	 lX+emADvCohwiKZ/tf/hTyM0HLtxGPJmlI9KEMQGoZlJEwNov/iOsTqVJwz/iQTwAi
+	 cu3MRioL5gqHc6uENbHE1YN5E/vQw+DGHbO71P967c7jAQM1gyvzQBH5cwKg6QvYr7
+	 igytf8ef3o0C0ZELExrNeF6Fy0ubub+1GqpYrjO3ycVjmrXmLZCrficw+O7reLeQse
+	 Rneudqz5lhhYw==
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-61a2a5b0689so3663092a12.1;
+        Mon, 18 Aug 2025 18:45:35 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUva03fuPhXwqZFfYkpnI6hi+iCswY3a8H8xvuyhJ06qG97/cErNQnJ9Kffn8g3JWMZSnyBZZ+JBHIBs/7x@vger.kernel.org, AJvYcCXw2Gi4aUKOW3AakulyArXCedSpK1t3Krzx7Ol/zsACCf8uCzHfcz17jxB0G0SsqLyPKRIwFSQTpAjv8s4H@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuIXcOKQm0mNIVRThAc9YwaiEC+D4j3woBWw3DO7n8pz5Facwc
+	WZTZxdyD/K+uuNZ9kx/ZQTaG+KemUBlDD+gnZ5BnEwxHOaXva/B4lU6UpNMkgKxMVSaYe3Pdcsj
+	Cfy/1i4xrM9kaSkk/henFp60lubCVzVM=
+X-Google-Smtp-Source: AGHT+IEjooJwD1L8N4595UKPwoGnCdDVKf7n1R9E5Sju52DByr3+JHOUp/9rkO353ornS2qWB4Nq0MSTvnD7Jtc8Rws=
+X-Received: by 2002:a17:906:6a1f:b0:afd:d62f:939 with SMTP id
+ a640c23a62f3a-afddcfb4b68mr67048366b.36.1755567933831; Mon, 18 Aug 2025
+ 18:45:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	xeI+O2ZzuwDLQMBoP3HsuTkaCIv253tg/Z/atzNC3YnSaEbjxYpM50sadVQXK4EWfC8w6kkSM3dyTAVfTHDuvLgEK9wim/Nf5OnKoL+wqrqeo1SFSuHBVKGG0HX4Z/Pg7DaNNN5O8WaAOb01QuwM7oBy8e7CEtdS149PihYVLC3vydieRTOc02XOHEIcBUSlbIH7YMKsVuhj/lk/815kZJ4rHuu0et52wvNLmjNJlIj/mqRRiO9JKJ3ArheJxCHq9NAyDWtOxKKrs3iaCxiJdweESTDszSkcJoBBcgYsLZjH3/Knq0GKE7AxWxYpZOulwiGoKfYYfs9UtecgQFSiCYf9t1nXe0GKB/ePrX5CWq8Knvdb0Tyx+kNp5f7Qc2Rd19xLjrclKqEfM0kOpzeZS1eA9DYsDXkf+qgq03oZ/Mxt2yaRhwqMynTldVMrX8rW+YoUEm/i2OpzFX7xQBLDHRR/8kfTa+cc2SXNNznJuNAQn/Och/xIw257vSMXegMzrKf8CVvqyZcB05v/MTfolbgeBS0dc9axBK/LoyXvggSAImCTsQv4CaUAQTdjagVV/eM/TMqY2xSOrvUT8M6ksRrMV7vviJ/nQgEBml98C4JdGCF5nvixycDfqayyM4Nv
-X-OriginatorOrg: sony.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PUZPR04MB6316.apcprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 77b78e98-02f5-4095-5621-08dddebea080
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Aug 2025 01:20:47.3878
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 66c65d8a-9158-4521-a2d8-664963db48e4
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Ft+Yobq62LjsZ1+d3CNNyf24mREioZpx0d38rW1naASoHhmijhYtUwbkf0YSZ5bzvZtMUW97wBI6pO2UuCAqGQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR04MB6582
-X-Proofpoint-ORIG-GUID: Yp2nAbUNYqdWsRhL7BXZsw5VJZqhtAk1
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE2MDAxOSBTYWx0ZWRfX0ZDz9o+MNui+ Lqq8P3Q/4qaEtKxB/rHPOG670TKYBuXc0U78v7njZPs6ePK23RffUYBwjHlcn+1T4508vWyzMGA gDaEznzSfOJqMNr6kdCWJJnMhslIXgTgFd+M6bzk9bc8J3Jlcx8J5vyImHDeq344NA/NmrYf/Nh
- Hw74a45lCgcmtfJb6iuwJOEGSqr/qDMQYH+3nMGi2cEWzeMGd4knqjuItyjghoX0J7n+uSRHs+X SlUa3SGyKUMmwI9g9Ao5jnkkOOFpBmRUOWfq8lHhkfbCay00BX+hfZhcqUL+BVCeOXW2AEijtfn ltT6i0ahdGzn3a2tPKhqqFqvVofCPONf5pOYBEKtNMhRx0R4xrFY0afORFJLNH5Cbpg1jx6kQ99 2PoCZ73A
-X-Proofpoint-GUID: Yp2nAbUNYqdWsRhL7BXZsw5VJZqhtAk1
-X-Authority-Analysis: v=2.4 cv=EZTIQOmC c=1 sm=1 tr=0 ts=68a3d17d cx=c_pps a=XGx4pVl+Z3fbdeBOhh1HLw==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
- a=xqWC_Br6kY4A:10 a=8nJEP1OIZ-IA:10 a=2OwXVqhp2XgA:10 a=7j0FZ4iXMVMA:10 a=xR56lInIT_wA:10 a=1WtWmnkvAAAA:8 a=PBW8ILOAHC6i8a6gHb8A:9 a=wPNLvfGTeEIA:10
-X-Sony-Outbound-GUID: Yp2nAbUNYqdWsRhL7BXZsw5VJZqhtAk1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-19_01,2025-08-14_01,2025-03-28_01
+References: <20250817003046.313497-1-ethan.ferguson@zetier.com> <20250817003046.313497-2-ethan.ferguson@zetier.com>
+In-Reply-To: <20250817003046.313497-2-ethan.ferguson@zetier.com>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Tue, 19 Aug 2025 10:45:22 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd-o3TpAaBS65cZFzchCfPdJ8YrN9HHEn_ttr69QB+BFew@mail.gmail.com>
+X-Gm-Features: Ac12FXwNO0EDZHtNFqgVSnbzoE7pt1b9tiI0Hg9HdgDzUH6GHa_W6Br6F8kon_8
+Message-ID: <CAKYAXd-o3TpAaBS65cZFzchCfPdJ8YrN9HHEn_ttr69QB+BFew@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] exfat: Add support for FS_IOC_{GET,SET}FSLABEL
+To: Ethan Ferguson <ethan.ferguson@zetier.com>
+Cc: sj1557.seo@samsung.com, yuezhang.mo@sony.com, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> The result of integer comparison already evaluates to bool. No need for=
-=0A=
-> explicit conversion.=0A=
-> =0A=
-> No functional impact.=0A=
-> =0A=
-> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>=0A=
-> ---=0A=
->  fs/exfat/inode.c | 2 +-=0A=
->  1 file changed, 1 insertion(+), 1 deletion(-)=0A=
-> =0A=
-> diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c=0A=
-> index c10844e1e16c..f9501c3a3666 100644=0A=
-> --- a/fs/exfat/inode.c=0A=
-> +++ b/fs/exfat/inode.c=0A=
-> @@ -25,7 +25,7 @@ int __exfat_write_inode(struct inode *inode, int sync)=
-=0A=
->         struct super_block *sb =3D inode->i_sb;=0A=
->         struct exfat_sb_info *sbi =3D EXFAT_SB(sb);=0A=
->         struct exfat_inode_info *ei =3D EXFAT_I(inode);=0A=
-> -       bool is_dir =3D (ei->type =3D=3D TYPE_DIR) ? true : false;=0A=
-> +       bool is_dir =3D (ei->type =3D=3D TYPE_DIR);=0A=
->         struct timespec64 ts;=0A=
-> =0A=
->         if (inode->i_ino =3D=3D EXFAT_ROOT_INO)=0A=
-=0A=
-The following two if statements both check whether the directory is the roo=
-t. =0A=
-Can we remove the second if statement? I don't know its background.=0A=
-=0A=
-        if (inode->i_ino =3D=3D EXFAT_ROOT_INO)=0A=
-                return 0;=0A=
-=0A=
-        if (is_dir && ei->dir.dir =3D=3D sbi->root_dir && ei->entry =3D=3D =
--1) =0A=
-                return 0;=0A=
+On Sun, Aug 17, 2025 at 9:31=E2=80=AFAM Ethan Ferguson
+<ethan.ferguson@zetier.com> wrote:
+>
+> Add support for reading / writing to the exfat volume label from the
+> FS_IOC_GETFSLABEL and FS_IOC_SETFSLABEL ioctls
+>
+> Signed-off-by: Ethan Ferguson <ethan.ferguson@zetier.com>
+>
+> ---
+>  fs/exfat/exfat_fs.h  |  2 +
+>  fs/exfat/exfat_raw.h |  6 +++
+>  fs/exfat/file.c      | 56 +++++++++++++++++++++++++
+>  fs/exfat/super.c     | 99 ++++++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 163 insertions(+)
+>
+> diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
+> index f8ead4d47ef0..a764e6362172 100644
+> --- a/fs/exfat/exfat_fs.h
+> +++ b/fs/exfat/exfat_fs.h
+> @@ -267,6 +267,7 @@ struct exfat_sb_info {
+>         struct buffer_head **vol_amap; /* allocation bitmap */
+>
+>         unsigned short *vol_utbl; /* upcase table */
+> +       unsigned short volume_label[EXFAT_VOLUME_LABEL_LEN]; /* volume na=
+me */
+There's no reason to have this in sbi. I think it's better to read the
+volume name in ioctl fslabel and return it.
+
+>
+>         unsigned int clu_srch_ptr; /* cluster search pointer */
+>         unsigned int used_clusters; /* number of used clusters */
+> @@ -431,6 +432,7 @@ static inline loff_t exfat_ondisk_size(const struct i=
+node *inode)
+>  /* super.c */
+>  int exfat_set_volume_dirty(struct super_block *sb);
+>  int exfat_clear_volume_dirty(struct super_block *sb);
+> +int exfat_write_volume_label(struct super_block *sb);
+>
+>  /* fatent.c */
+>  #define exfat_get_next_cluster(sb, pclu) exfat_ent_get(sb, *(pclu), pclu=
+)
+> diff --git a/fs/exfat/exfat_raw.h b/fs/exfat/exfat_raw.h
+> index 971a1ccd0e89..af04cef81c0c 100644
+> --- a/fs/exfat/exfat_raw.h
+> +++ b/fs/exfat/exfat_raw.h
+> @@ -80,6 +80,7 @@
+>  #define BOOTSEC_OLDBPB_LEN             53
+>
+>  #define EXFAT_FILE_NAME_LEN            15
+> +#define EXFAT_VOLUME_LABEL_LEN         11
+>
+>  #define EXFAT_MIN_SECT_SIZE_BITS               9
+>  #define EXFAT_MAX_SECT_SIZE_BITS               12
+> @@ -159,6 +160,11 @@ struct exfat_dentry {
+>                         __le32 start_clu;
+>                         __le64 size;
+>                 } __packed upcase; /* up-case table directory entry */
+> +               struct {
+> +                       __u8 char_count;
+> +                       __le16 volume_label[EXFAT_VOLUME_LABEL_LEN];
+> +                       __u8 reserved[8];
+> +               } __packed volume_label;
+>                 struct {
+>                         __u8 flags;
+>                         __u8 vendor_guid[16];
+> diff --git a/fs/exfat/file.c b/fs/exfat/file.c
+> index 538d2b6ac2ec..c57d266aae3d 100644
+> --- a/fs/exfat/file.c
+> +++ b/fs/exfat/file.c
+> @@ -12,6 +12,7 @@
+>  #include <linux/security.h>
+>  #include <linux/msdos_fs.h>
+>  #include <linux/writeback.h>
+> +#include "../nls/nls_ucs2_utils.h"
+>
+>  #include "exfat_raw.h"
+>  #include "exfat_fs.h"
+> @@ -486,6 +487,57 @@ static int exfat_ioctl_shutdown(struct super_block *=
+sb, unsigned long arg)
+>         return exfat_force_shutdown(sb, flags);
+>  }
+>
+> +static int exfat_ioctl_get_volume_label(struct super_block *sb, unsigned=
+ long arg)
+> +{
+> +       int ret;
+> +       char utf8[FSLABEL_MAX] =3D {0};
+> +       struct exfat_sb_info *sbi =3D EXFAT_SB(sb);
+> +       size_t len =3D UniStrnlen(sbi->volume_label, EXFAT_VOLUME_LABEL_L=
+EN);
+> +
+> +       mutex_lock(&sbi->s_lock);
+> +       ret =3D utf16s_to_utf8s(sbi->volume_label, len,
+> +                               UTF16_HOST_ENDIAN, utf8, FSLABEL_MAX);
+> +       mutex_unlock(&sbi->s_lock);
+> +
+> +       if (ret < 0)
+> +               return ret;
+> +
+> +       if (copy_to_user((char __user *)arg, utf8, FSLABEL_MAX))
+> +               return -EFAULT;
+> +
+> +       return 0;
+> +}
+> +
+> +static int exfat_ioctl_set_volume_label(struct super_block *sb, unsigned=
+ long arg)
+> +{
+> +       int ret =3D 0;
+> +       char utf8[FSLABEL_MAX];
+> +       size_t len;
+> +       unsigned short utf16[EXFAT_VOLUME_LABEL_LEN] =3D {0};
+> +       struct exfat_sb_info *sbi =3D EXFAT_SB(sb);
+> +
+> +       if (!capable(CAP_SYS_ADMIN))
+> +               return -EPERM;
+> +
+> +       if (copy_from_user(utf8, (char __user *)arg, FSLABEL_MAX))
+> +               return -EFAULT;
+> +
+> +       len =3D strnlen(utf8, FSLABEL_MAX);
+> +       if (len > EXFAT_VOLUME_LABEL_LEN)
+Is FSLABEL_MAX in bytes or the number of characters ?
+
+> +               exfat_info(sb, "Volume label length too long, truncating"=
+);
+> +
+> +       mutex_lock(&sbi->s_lock);
+> +       ret =3D utf8s_to_utf16s(utf8, len, UTF16_HOST_ENDIAN, utf16, EXFA=
+T_VOLUME_LABEL_LEN);
+> +       mutex_unlock(&sbi->s_lock);
+> +
+> +       if (ret < 0)
+> +               return ret;
+> +
+> +       memcpy(sbi->volume_label, utf16, sizeof(sbi->volume_label));
+> +
+> +       return exfat_write_volume_label(sb);
+> +}
+> +
+>  long exfat_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+>  {
+>         struct inode *inode =3D file_inode(filp);
+> @@ -500,6 +552,10 @@ long exfat_ioctl(struct file *filp, unsigned int cmd=
+, unsigned long arg)
+>                 return exfat_ioctl_shutdown(inode->i_sb, arg);
+>         case FITRIM:
+>                 return exfat_ioctl_fitrim(inode, arg);
+> +       case FS_IOC_GETFSLABEL:
+> +               return exfat_ioctl_get_volume_label(inode->i_sb, arg);
+> +       case FS_IOC_SETFSLABEL:
+> +               return exfat_ioctl_set_volume_label(inode->i_sb, arg);
+>         default:
+>                 return -ENOTTY;
+>         }
+> diff --git a/fs/exfat/super.c b/fs/exfat/super.c
+> index 8926e63f5bb7..96cd4bb7cb19 100644
+> --- a/fs/exfat/super.c
+> +++ b/fs/exfat/super.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/nls.h>
+>  #include <linux/buffer_head.h>
+>  #include <linux/magic.h>
+> +#include "../nls/nls_ucs2_utils.h"
+>
+>  #include "exfat_raw.h"
+>  #include "exfat_fs.h"
+> @@ -573,6 +574,98 @@ static int exfat_verify_boot_region(struct super_blo=
+ck *sb)
+>         return 0;
+>  }
+>
+> +static int exfat_get_volume_label_ptrs(struct super_block *sb,
+> +                                      struct buffer_head **out_bh,
+> +                                      struct exfat_dentry **out_dentry)
+> +{
+> +       int i;
+> +       unsigned int type;
+> +       struct exfat_sb_info *sbi =3D EXFAT_SB(sb);
+> +       struct exfat_chain clu;
+> +       struct exfat_dentry *ep;
+> +       struct buffer_head *bh;
+> +
+> +       clu.dir =3D sbi->root_dir;
+> +       clu.flags =3D ALLOC_FAT_CHAIN;
+> +
+> +       while (clu.dir !=3D EXFAT_EOF_CLUSTER) {
+> +               for (i =3D 0; i < sbi->dentries_per_clu; i++) {
+> +                       ep =3D exfat_get_dentry(sb, &clu, i, &bh);
+> +
+> +                       if (!ep)
+> +                               return -EIO;
+> +
+> +                       type =3D exfat_get_entry_type(ep);
+> +                       if (type =3D=3D TYPE_UNUSED) {
+> +                               brelse(bh);
+> +                               return -EIO;
+> +                       }
+> +
+> +                       if (type =3D=3D TYPE_VOLUME) {
+> +                               *out_bh =3D bh;
+> +                               *out_dentry =3D ep;
+> +                               return 0;
+> +                       }
+> +
+> +                       brelse(bh);
+> +               }
+> +
+> +               if (exfat_get_next_cluster(sb, &(clu.dir)))
+> +                       return -EIO;
+> +       }
+> +
+> +       return -EIO;
+> +}
+> +
+> +static int exfat_read_volume_label(struct super_block *sb)
+> +{
+> +       int ret, i;
+> +       struct exfat_sb_info *sbi =3D EXFAT_SB(sb);
+> +       struct buffer_head *bh;
+> +       struct exfat_dentry *ep;
+> +
+> +       ret =3D exfat_get_volume_label_ptrs(sb, &bh, &ep);
+> +       if (ret < 0)
+> +               goto cleanup;
+> +
+> +       for (i =3D 0; i < EXFAT_VOLUME_LABEL_LEN; i++)
+> +               sbi->volume_label[i] =3D le16_to_cpu(ep->dentry.volume_la=
+bel.volume_label[i]);
+> +
+> +cleanup:
+> +       if (bh)
+> +               brelse(bh);
+> +
+> +       return ret;
+> +}
+> +
+> +int exfat_write_volume_label(struct super_block *sb)
+> +{
+> +       int ret, i;
+> +       struct exfat_sb_info *sbi =3D EXFAT_SB(sb);
+> +       struct buffer_head *bh;
+> +       struct exfat_dentry *ep;
+> +
+> +       ret =3D exfat_get_volume_label_ptrs(sb, &bh, &ep);
+> +       if (ret < 0)
+> +               goto cleanup;
+> +
+> +       mutex_lock(&sbi->s_lock);
+> +       for (i =3D 0; i < EXFAT_VOLUME_LABEL_LEN; i++)
+> +               ep->dentry.volume_label.volume_label[i] =3D cpu_to_le16(s=
+bi->volume_label[i]);
+> +
+> +       ep->dentry.volume_label.char_count =3D
+> +               UniStrnlen(sbi->volume_label, EXFAT_VOLUME_LABEL_LEN);
+> +       mutex_unlock(&sbi->s_lock);
+> +
+> +cleanup:
+> +       if (bh) {
+> +               exfat_update_bh(bh, true);
+> +               brelse(bh);
+> +       }
+> +
+> +       return ret;
+> +}
+> +
+>  /* mount the file system volume */
+>  static int __exfat_fill_super(struct super_block *sb,
+>                 struct exfat_chain *root_clu)
+> @@ -616,6 +709,12 @@ static int __exfat_fill_super(struct super_block *sb=
+,
+>                 goto free_bh;
+>         }
+>
+> +       ret =3D exfat_read_volume_label(sb);
+It will affect mount time if volume label entry is located at the end.
+So, we can read it in ioctl fslabel as I said above.
+> +       if (ret) {
+> +               exfat_err(sb, "failed to read volume label");
+> +               goto free_bh;
+> +       }
+> +
+>         ret =3D exfat_count_used_clusters(sb, &sbi->used_clusters);
+>         if (ret) {
+>                 exfat_err(sb, "failed to scan clusters");
+> --
+> 2.50.1
+>
 
