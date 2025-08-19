@@ -1,119 +1,166 @@
-Return-Path: <linux-fsdevel+bounces-58327-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58330-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3A62B2CA65
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 19:19:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCC1FB2CA78
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 19:23:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E49C217C2F3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 17:19:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08AD83BC206
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 17:22:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E2A92FE067;
-	Tue, 19 Aug 2025 17:19:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AF173019C0;
+	Tue, 19 Aug 2025 17:21:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Ld9qVrrG"
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="AQqJaPyd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sonic305-20.consmr.mail.gq1.yahoo.com (sonic305-20.consmr.mail.gq1.yahoo.com [98.137.64.83])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68ABF2FABED
-	for <linux-fsdevel@vger.kernel.org>; Tue, 19 Aug 2025 17:19:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.64.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6187F2FFDF0
+	for <linux-fsdevel@vger.kernel.org>; Tue, 19 Aug 2025 17:21:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755623963; cv=none; b=QtTq2aRyBJleovzkAWzRkCSaYbkBx155ZdLoMiYBUzIlcSkhMYDqC0qPIgi148n1buJ0UnfBd/e0t/a5SNmJHBPNtGwvqzdyr7Nqzg2xc6k/Sf2HR4w25dnnFoJDY1v+BVm6Q1jHVqbzor5HbDnNzbjIGR5EvfLgsSlCmX4ADSI=
+	t=1755624117; cv=none; b=rK5QBDLy9YizaobHDFRf8sJHtAFmHqo5TvsFr1IUEezaUUhVc6ZM2GRXOMk5cnHWhHR49FzdZsB9VIBCAf2gG6tuLuSgLF0LNfjLUeur20zBxUAyLhTZzqH4hbXV1hlstYvejJdfPdmwnAiYtUhuYIRifLq8hq5LtskBkyOFuJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755623963; c=relaxed/simple;
-	bh=ZzlugSwr1NuiDTXaRBuI6egiVVmhVYhSAWDLJ2hyFUQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:References; b=cW/B2fFlvB+3Ez+NfQ46ABQ/+skh9XgkoSY2nsZvzLZjW7iTj98tGgSLhw0fpn8+UbFjkaMYYJoGFALImgkTL31LqNmCXuCgwvSOhcacGgVzshDv9ulFUovwymZHvxIPMGHeKE+SHUtzTy7qAZK3iXw24jZ2pv0GV2a7Pkcjcbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=Ld9qVrrG; arc=none smtp.client-ip=98.137.64.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1755623956; bh=A8SWyyT0DiX2Rnzy5SGMSBgCFA0refGm5qe5v8qneCE=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=Ld9qVrrG+vXYqPrnwQ8PemwK2awvRhBm4NEaL0lhw2c7W5oOOscXAeQQkw7/1Gym8y1J/N6GpGVWnFMX0UunsHnv7ecvTVs/IwQHHdEi0K+YU+xJC6a9WVy7PUJzlaawTI2MNA5zuIBdBzQ8jT2yd66NiFsVapzJylflXPbN/jrQU0UPvE6+SEiyIK+sYQkjWM1BRWnC/pGmi7l33um/CfM65H2AGizGSdDf9gR7dWMTiLp5T/V8utVpMk+x6rh5FodNtV8iMWt3sA4f1P+bKjDv8zY5wGi1G/v9Ko9gxY1ViKvxp4C4CuyuapowfRS11aZNGS2TpMfS3PGpTgYQPA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1755623956; bh=LZgPGdGtabNL3cHsLkok8SowjA4e0niobUSHkP8kDIm=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=Ca5sJU+uA+x9oeaeZS7p4rwDT2lwxD2PRx1c6M8fGhGiayckyY4MbzGXj3BiHQE7dJGJYlRT7RWAPMsknVRqpecwzL4rKcCFMZ2RFUXQ4WnAPBkcGXOGms9/t+ipKAjgnr6ytZNEavMcO6HAABGXRU2g+Kxqh4d/6Jw5Ero75fWfOU8qORgJsNYngkbeFa3ClPrbSYa9ZWG2Ub5+uYUjvN9S2YxhrQY17UfcVzU9VkzTC9oJ1fKLzeG5C2xsZsYPTStRq/LepYOyiyYc6shtea8gkIPHCD0FbY8CggyEunyn+w0hGTDWyKOjV8T8lTs+nxRSyOjGh/xfHnfhhwbVEw==
-X-YMail-OSG: 3mftnr4VM1lN0NAgHCOnPyNyN9yV1.nSXllhOSAFyQyekOmLRW9EWYQToQE5X8o
- 7UcdkL1OuSohjdWNamCAScUg9.NNg.BWdlENSxXR2RRmhvQLDl5wUg0kNSyPPkgSo6HlF3c1EUCV
- 0KNqf3bAnYBK9vtciSbY.LGpredRwMYTnHuttkpZjSqFVyTSwrByx1E_GqHIZF.pAxgVlJPOGMHC
- r3sVmmMTdtMSyG_XDtjGaIL2ZPwXBAqVY1J5O8cLcHOSeM7Clf4i4tQV3jfvSVED428arI5aJTVY
- aoqX.2WzTaxcJTiViFYU3YQPLNoObY_tH9_E88KqNM4JMJlnE2r_dvzxvmsG05ZJvUeG.nvV0Rmh
- rFpFpICM6.Q3XoC75kzenAon9jFtl4e3Tz1dHOsOzzb4.7vHozZlNbVaIFWdbJBT9RKpcsPhUlGk
- bCEkdz9TdyV0T8gKg.ifgoy3YryiQgKoVygkeRZXXsM8l.1y2eucN7rmOeMwopQiUvGVUsKyVRi7
- U0auA_FFdJtBxjEfVCxGRz5qhSHA1kpCB_ODm3RC2XBnxJROh2ZlmiWWA.Ig_MNSbgQYNo3ey6c.
- pNVfwEt.4wl4s.gNkyNDCfMIwlhD_Vlw3nun9QrOMjSGLcn7QhQA.W7ZHB_fm95F6IsoD6eIt6e_
- Ic7cq1lxwJuubt1Abmjg6_6tbrqXdz8y9yP.rbDk6QNl.SjDbuOjQWrKVvfmHisUc7mrTCMosRT7
- OlQhdGbTeEKWfgYMq0ZRzKNPwLATeAcWEamxBx0VGsgPN2_azMEj5ABlGNqIEO3VvJj3pQa1XndZ
- nSyErD.thxwNSwwVAQ6Fm2DiDs6nbV01KXbSa9p3M8mXmIl8FUZ2CfeFrKFV0VqCpMwV77DLzfsT
- oy1KJ6gOtpLqPTuPQYFeXH6dU0QGxaRCJgZtPUEaNQugxWhTSG2OEmlmqGRVYH5hxKN0x2wucgL6
- HMcHht70U8KW1YxxPfiE.cp1dRpUuVZ.3pPUTaMqYx75N9em_drcCyoVKRrqWx2n9oVVSAFm1GCR
- .IXABYTwcDoTlFTGQZ0D3QhutMmhG2jUNE0kjRBRmKuGJ0rn39b03IoSsy2xqdaCb_Cdk6UqxXEr
- uZSZvW5ivnu_3LHjdeBJ1QJDl9caqxPpeX1vO_RJpfX71AGXTjQVpEAzHehSYHekq6yy1mcajCun
- OVF5fldCON3RyWGx0txTucPzUp.Fwh_HKx9PwvkiTGFY5v9My3k7Qs1y2bx4wEPoKZjii08alhJG
- 0yscs0Cac1zhWdF.Ih9j475mTeZYJ036TahKflzK0m2tO8v2N8DNUDciqBOjaCbJIy4mHLEpQocP
- s86dtR_t3nGg5GjfyMlE_Xv8A9uZuDmD7dkGjSDRp5.0KNEyUoOFhIYdKz9dJaHoAo.MLRt1VuhV
- qOtwWYj2D_CQdND0hPz51c6tYUB9qznGUTUBAx9_MzKp2jeXnqdpbmfVEM9QlyFzBpr2w.MtEYZo
- 4FOlKICy.HchnVpQvyEVGg._Zl6vJIvgfzfVjL8MAIr24yanjETQ7r4BPZICfXNvWjj0Z__SEy0_
- ycfCeODNXeFYhlD7QZPqSvk3ChzPnC38C9in8h4EEnEqUUBs5c7yztpMRw11KFwuVaVcRkpHd6yA
- UnpL39ns6dQ7qJ0ZLEjvLCFuyiA57Nba12UNigjuO5LCrF2WX4ygZeZrvv8oDMB9aR0Jd6bEkk25
- Q4322QmsUbsfiKdwiCb46H0x2yEw8Aebto5zJH607hoeV5VC1QAwocnofvPh4.fL8B9mfsybKnC9
- PM0KGqZu8afJw8rSR2nhjLHki5xtB40zJ6jn2hlp1XDSldLAlc6OYfGTA9HgAx._7oTy6kxw14Zc
- ljpYGX_zzoQWgMl5iIkXhhJoURTwd5630SjSI3JfYv2QjjkWoCjVI.9mkYcsPIrl0IeNiDe2EQLX
- a5kkGMtzMwt306jB4cMoz_IkXJjVbHIJQzXgXTUkLXXkP9FK1e79q7RjVnM_kP0hy61h46swCXDM
- 0t4OPbWJryETp_NJ9MUOz97Z8iW02adIsiZwQHm17jVz1zsqozuPIWHfk1I8BFSEnazeYORuZFTc
- qbdnYfuZDyxwwQCNHw3purDihdHrP4.Da0Pj2Ft7J74OqN0rjJABIQbhxReITEz6tleSMl9gPAcy
- tplyl0YYcrexDSeFJs1a8SMfZkCtlvAS4Q1.aQcp_S5ICuOR5riN_mpFxbmXhjbXiIgyMb1K4.AL
- xTtVYkabv_S0E3q8zuQBY.kQ39L1vfpWqCplbB4Tc0ChuzbyvwQ2nxzLC7i97Ww--
-X-Sonic-MF: <adelodunolaoluwa@yahoo.com>
-X-Sonic-ID: 014cbe4a-0fbd-4d25-84d7-25c8930f871f
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.gq1.yahoo.com with HTTP; Tue, 19 Aug 2025 17:19:16 +0000
-Received: by hermes--production-bf1-689c4795f-67vx2 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 5d23dd5995e0d4828092d9660ef3af68;
-          Tue, 19 Aug 2025 16:48:52 +0000 (UTC)
-From: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org
-Cc: jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Sunday Adelodun <adelodunolaoluwa@yahoo.com>
-Subject: [PATCH] fs: Add missing parameter docs for name_contains_dotdot()
-Date: Tue, 19 Aug 2025 17:48:22 +0100
-Message-ID: <20250819164822.15518-1-adelodunolaoluwa@yahoo.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1755624117; c=relaxed/simple;
+	bh=u8CUQOY8/EREFQYCcY9v/DJloGR6JgP5IHbgTrpSkCA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YIkNIzlIq4DzrNb3Xi+O++pGwPC4vp8EPjNti6Ktsd/HQidYZO4T5PV+VFqDCOE5F2cMEBrvAAye0jCdJFtBwefttg245dGjg5ZSaUrqkOqoHmreDd3TxLCxf3SZLNf7l/yuf6qSFKKVCj29JSych4lCcUolnwn9OGaKdUf0ZDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=AQqJaPyd; arc=none smtp.client-ip=67.231.153.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
+	by m0089730.ppops.net (8.18.1.11/8.18.1.11) with ESMTP id 57JFU33H1487476
+	for <linux-fsdevel@vger.kernel.org>; Tue, 19 Aug 2025 10:21:55 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=s2048-2025-q2; bh=KtCwlMEhG0RsGldP36
+	Ve6P74IWk64MUyHAtcgQQUDzk=; b=AQqJaPyd9vJSsaY8zFXsJYfocwBIEwFFxS
+	76nthlUQ6vDPSs386508HVdXq84bQQDBATrDLsc0zDHx5r5HivWDbr6aHcvlPV8b
+	7C7LxI754W9gQ6TBcFXeeqQqMAFgQA+lOeVtE/jEcBIlcO5vuhC1NCuiIKpkHQ/V
+	5wcEU9ocPkGiQDTumDNdDRelnRm4bJJncquiE6eP4P2X7x1OQaPlOw+DjVhg/IQ8
+	V4OqLIfZWviESnBTLatLvDbJt9bWaiyPfB7cLsshzAVcsSCeI4mJ7JL4cTG4rN0Q
+	u4bFOv0D8/IShKQjjLjUpQpZLb3I2bujBL70WHmRngXaO4I0Eodw==
+Received: from mail.thefacebook.com ([163.114.134.16])
+	by m0089730.ppops.net (PPS) with ESMTPS id 48muy9153p-6
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-fsdevel@vger.kernel.org>; Tue, 19 Aug 2025 10:21:54 -0700 (PDT)
+Received: from twshared51809.40.frc1.facebook.com (2620:10d:c085:208::f) by
+ mail.thefacebook.com (2620:10d:c08b:78::c78f) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.17; Tue, 19 Aug 2025 17:21:52 +0000
+Received: by devbig197.nha3.facebook.com (Postfix, from userid 544533)
+	id 67233C89F1A; Tue, 19 Aug 2025 09:49:48 -0700 (PDT)
+From: Keith Busch <kbusch@meta.com>
+To: <linux-block@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <snitzer@kernel.org>, <axboe@kernel.dk>, <dw@davidwei.uk>,
+        <brauner@kernel.org>, <hch@lst.de>, <martin.petersen@oracle.com>,
+        <djwong@kernel.org>, <linux-xfs@vger.kernel.org>,
+        <viro@zeniv.linux.org.uk>, Keith Busch <kbusch@kernel.org>
+Subject: [PATCHv3 0/8] direct-io: even more flexible io vectors
+Date: Tue, 19 Aug 2025 09:49:14 -0700
+Message-ID: <20250819164922.640964-1-kbusch@meta.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-References: <20250819164822.15518-1-adelodunolaoluwa.ref@yahoo.com>
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE5MDE2MSBTYWx0ZWRfXxPOs/gDdcHmm
+ FlDHzzHV+l4awfe5po1ELYnmVRhLZQOP6DfTZ7EgcFSItNd8al4tXaqYOJtu7qMhTRMW4PzjLE1
+ lVd4ROwyocaewi2WEO8YdwoUIXRQbfOxlOBT93Ft/n46XTZsACb52pnpOV8z6l1ftY605BePl4V
+ d68RKi5txLSRt2Z9EKJxyVDIxtHkmd9W/WzHnnWyR6p1oMat1EKDoodPmYQpg9QZ0a7IO/ztffs
+ 4/S0I8fP6q3zf8Vvd7+vEdbXsRty2KA8rCeDuT8xfOxpF0uYqJbRthiVeYjF4joWyUk8o4fYxyB
+ 2nATaK64XHmvYfslBLjKzy9S/Wi+UQyru74pTx8gxcwJLUphXsDSbCxJymySWxLPk5vESSFnDxw
+ x+9b512kBTqNngmDuHGxsx+iDw6V6gZqQJzWgCisNdz2g8vslcDxe24mX2rRRbJuE/KBZNO0
+X-Proofpoint-GUID: WA5PpYnTXpWXq9fHu_37S-ISLC5y1SlJ
+X-Proofpoint-ORIG-GUID: WA5PpYnTXpWXq9fHu_37S-ISLC5y1SlJ
+X-Authority-Analysis: v=2.4 cv=Qatmvtbv c=1 sm=1 tr=0 ts=68a4b2b2 cx=c_pps
+ a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17
+ a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=VabnemYjAAAA:8 a=9U2CUVk9dIh-JB3WyvAA:9
+ a=gKebqoRLp9LExxC7YDUY:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-19_02,2025-08-14_01,2025-03-28_01
 
-Fix kernel-doc warning by adding missing @name
-parameter description for the name_contains_dotdot()
-function.
+From: Keith Busch <kbusch@kernel.org>
 
-Fixes the following warning:
+Previous version:
 
-WARNING: ./include/linux/fs.h:3287 function parameter
-'name' not described in 'name_contains_dotdot'
-Signed-off-by: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
----
- include/linux/fs.h | 1 +
- 1 file changed, 1 insertion(+)
+  https://lore.kernel.org/linux-block/20250805141123.332298-1-kbusch@meta=
+.com/
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index d7ab4f96d705..48a726839e22 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3281,6 +3281,7 @@ static inline bool is_dot_dotdot(const char *name, size_t len)
- 
- /**
-  * name_contains_dotdot - check if a file name contains ".." path components
-+ *@name: the file name or path to check
-  *
-  * Search for ".." surrounded by either '/' or start/end of string.
-  */
--- 
-2.43.0
+This series removes the direct io requirement that io vector lengths
+align to the logical block size.
+
+I tested this on a few raw block device types including nvme,
+virtio-blk, ahci, and loop. NVMe is the only one I tested with 4k
+logical sectors; everything else was 512.
+
+On each of those, I tested several iomap filesystems: xfs, ext4, and
+btrfs. I found it interesting that each behave a little
+differently with handling invalid vector alignments:
+
+  - XFS is the most straight forward and reports failures on invalid
+    vector conditions, same as raw blocks devices.
+
+  - EXT4 falls back to buffered io for writes but not for reads.
+
+  - BTRFS doesn't even try direct io for any unusual alignments; it
+    chooses buffered io from the start.
+
+So it has been a little slow going figuring out which results to expect
+from various tests, but I think I've got all the corner cases covered. I
+can submit the tests cases to blktests and fstests for consideration
+separately, too.
+
+I'm not 100% sure where we're at with the last patch. I think Mike
+initially indicated this was okay to remove, but I could swear I read
+something saying that might not be the case anymore. I just can't find
+the message now. Mike?
+
+Changes from v2:
+
+  Include vector lengths when validating a split. The length check is
+  only valid for r/w commands, and skipped for passthrough
+  DRV_IN/DRV_OUT commands.
+
+  Introduce a prep patch having bio_iov_iter_get_pages() take the
+  caller's desired length alignment.
+
+  Additional code comments explaing less obvious error conditions.
+
+  Added reviews on the patches that haven't changed.
+
+Keith Busch (8):
+  block: check for valid bio while splitting
+  block: add size alignment to bio_iov_iter_get_pages
+  block: align the bio after building it
+  block: simplify direct io validity check
+  iomap: simplify direct io validity check
+  block: remove bdev_iter_is_aligned
+  blk-integrity: use simpler alignment check
+  iov_iter: remove iov_iter_is_aligned
+
+ block/bio-integrity.c  |  4 +-
+ block/bio.c            | 64 ++++++++++++++++++----------
+ block/blk-map.c        |  2 +-
+ block/blk-merge.c      | 20 +++++++--
+ block/fops.c           | 13 +++---
+ fs/iomap/direct-io.c   |  6 +--
+ include/linux/bio.h    | 13 ++++--
+ include/linux/blkdev.h | 20 +++++----
+ include/linux/uio.h    |  2 -
+ lib/iov_iter.c         | 95 ------------------------------------------
+ 10 files changed, 94 insertions(+), 145 deletions(-)
+
+--=20
+2.47.3
 
 
