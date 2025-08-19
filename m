@@ -1,66 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-58282-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58283-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C100CB2BE4A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 12:01:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EA42B2BE77
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 12:07:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB16316368F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 09:59:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 660FF7B8F89
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 10:04:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AFE131B12D;
-	Tue, 19 Aug 2025 09:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68AA931B12D;
+	Tue, 19 Aug 2025 10:06:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="QCbr7fqv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OeUekBQh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9C0311C14;
-	Tue, 19 Aug 2025 09:59:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5365214A94;
+	Tue, 19 Aug 2025 10:06:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755597576; cv=none; b=RyY6i9CmMp6yIWaIhNfxg4dSAeP62lKkerzfAhV1dSFjDkdDARziwaSMqD4CY20c+zn4kK5eeNQ2cJ6PjsaK1gI9QFuCPH8bNxKEQ9OBXZxoDhWHrhb70ynsuc2xZCqSbt2H7xKxCJlj7UvbE9fC3T9R/sy9dYMkI2+FroLyJgQ=
+	t=1755597967; cv=none; b=qr2YLCNC/m5LU1crOM2b3l+bqHc3IpGON7736BiIkfn/A+hBfq2Ka3hZf1fn6XZk8SW49aWzq4UlzTvSjwj/QhzTh4jPMzSBeutov+TDQx//UpjqkjIhG+FCB+BAoULrCZPMBTSqD79K6hCauw+EPWl/elLoEJT2gbr4lgt9FMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755597576; c=relaxed/simple;
-	bh=0SjpREjI2Q2MvQZ5ydpsq9i5rbV3TEayh25joekAxCA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=iadV2jBxg2Q/zxRZT7GFQO0sz8Q0FuPma7vHhEd1IyuYiAujk1GnTzDnpy8BSUsHbPTmAJxMm3ScXsLevdAgsSTWDoE9BPK2xrPLHyycoVftdBq8pGUEFZ50vbpar9LA0no5QrSLtbhGFR6r/Wv8vBGouJYHD18sB3Em1glCins=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=QCbr7fqv; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=pycWx3rjPc7De/ejdEMCmkQrKPJf3+jrXK0iLEWbk5Y=; b=QCbr7fqvzAUs3krt69zwNama4b
-	4nLQ0QIDtrDUDUbUSejfj/XHJgfVcIMn2S8WjbPUnPMoGSYKQkE3Ir9z1fNEds3vc/4RT8RcjbZfG
-	cY/7CkAYBjkDXcd747MPEkE8GtFv4UGaNOFC5ZVamsM7dhHljcFilVB7NWEBB9bfK7UPW/covzlt/
-	dBbwCiPABnB+kAilUBl5MMsGUOpIniX8jp6YqwR+y4Utd6+6myV5bZcP9Grvw2Bv7rTeLyN0TLyAi
-	AMWzo7GrxUhTYRIiU/jV+uomnnsR+3hDmMsD/sqwCS/1cqvMujCRVhWISYQoqA6LI1elzTix8ytcI
-	Oi/tT9Ig==;
-Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1uoJ7g-00GF2k-FM; Tue, 19 Aug 2025 11:59:20 +0200
-From: Luis Henriques <luis@igalia.com>
-To: Chunsheng Luo <luochunsheng@ustc.edu>
-Cc: bernd@bsbernd.com,  david@fromorbit.com,  kernel-dev@igalia.com,
-  laura.promberger@cern.ch,  linux-fsdevel@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  mharvey@jumptrading.com,
-  miklos@szeredi.hu
-Subject: Re: [PATCH v4] fuse: new work queue to periodically invalidate
- expired dentries
-In-Reply-To: <20250819035208.540-1-luochunsheng@ustc.edu> (Chunsheng Luo's
-	message of "Tue, 19 Aug 2025 11:52:08 +0800")
-References: <20250707153413.19393-1-luis@igalia.com>
-	<20250819035208.540-1-luochunsheng@ustc.edu>
-Date: Tue, 19 Aug 2025 10:59:14 +0100
-Message-ID: <87ldnfmy31.fsf@wotan.olymp>
+	s=arc-20240116; t=1755597967; c=relaxed/simple;
+	bh=f11Nx1TP9s58QGMUEaL0dUNWCcSlCF3s7K3LOMVa4Sk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FHh9X5+3Yzqclgw7Eg8SfCe8w1/OIvDPKIsVqQOEEr+wry0TW5tEY/M7fy2vh4ofBalMw1tksJt5rEzwswHdDj4vT2up0jouyU22kvvZJmGHunPMJPekKhehSJHzIqaFPsIiVsg/qBqnAUfC79FGKNzrYU9Hia+Xx9qtqBQk+KM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OeUekBQh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32BB8C4CEF1;
+	Tue, 19 Aug 2025 10:06:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755597967;
+	bh=f11Nx1TP9s58QGMUEaL0dUNWCcSlCF3s7K3LOMVa4Sk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OeUekBQhoKymirQThWTQEUSmYYDqL0zpi6B3Ib4UAq3xnwHAWPbwoz0k1VYryWLn0
+	 yD30OJJeQtEwe8gdRIJWv+g1OMyvJBWtCGsSfMmHCzRBrQ5PlIJB6eRKT1u1fO9w/U
+	 G7+zck9mUM9Q2g24o05MB+OX51y7ELkCM/6u4a++l8nCC89xx4v6mlrKDw0/n5njb7
+	 aMXoBPe3YqNdc0Sbl4xL97yIZfpuTZolYVwXU9BcvU63MBWPAbYzSc2q2AAxg9N/oU
+	 9jBt2xBByNtZVpNDjiaEYRhtTqKFGfaJZHGrhhRFquay3tkFoWSqb3u26l8G9cM4X7
+	 x5PorQse9sWKQ==
+Date: Tue, 19 Aug 2025 12:05:58 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>, 
+	Song Liu <song@kernel.org>, bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, kernel-team@meta.com, 
+	andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, daniel@iogearbox.net, 
+	martin.lau@linux.dev, viro@zeniv.linux.org.uk, jack@suse.cz, kpsingh@kernel.org, 
+	mattbobrowski@google.com, amir73il@gmail.com, gregkh@linuxfoundation.org, tj@kernel.org, 
+	daan.j.demeyer@gmail.com, Will McVicker <willmcvicker@google.com>, 
+	Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	kernel-team@android.com
+Subject: Re: [PATCH v3 bpf-next 1/4] kernfs: remove iattr_mutex
+Message-ID: <20250819-tonstudio-abgas-7feaac93f501@brauner>
+References: <20250623063854.1896364-1-song@kernel.org>
+ <20250623063854.1896364-2-song@kernel.org>
+ <78b13bcdae82ade95e88f315682966051f461dde.camel@linaro.org>
+ <20250702-hochmoderne-abklatsch-af9c605b57b2@brauner>
+ <8f53c544-fd4a-4526-957f-9264a36aead6@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -68,78 +67,12 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+In-Reply-To: <8f53c544-fd4a-4526-957f-9264a36aead6@siemens.com>
 
-On Tue, Aug 19 2025, Chunsheng Luo wrote:
+> ...but it looks like v3 was merged as-is in the end, without this fixup.
+> Is there some separate patch in the pipeline, or was this forgotten?
 
-> On Mon,  7 Jul 2025 16:34:13 Luis Henriques wrote:
->
->>+static void fuse_dentry_tree_add_node(struct dentry *dentry)
->>+{
->>+	struct fuse_conn *fc =3D get_fuse_conn_super(dentry->d_sb);
->>+	struct fuse_dentry *fd =3D dentry->d_fsdata;
->>+	struct fuse_dentry *cur;
->>+	struct rb_node **p, *parent =3D NULL;
->>+	bool start_work =3D false;
->>+
->>+	if (!fc->inval_wq)
->>+		return;
->
-> First check.
->
->>+
->>+	spin_lock(&fc->dentry_tree_lock);
->>+
->>+	if (!fc->inval_wq) {
->>+		spin_unlock(&fc->dentry_tree_lock);
->>+		return;
->>+	}
->
-> Check again.
->
-> I don't think the if (!fc->inval_wq) check needs to be re-evaluated
-> while holding the lock. The reason is that the inval_wq variable=20
-> doesn't appear to require lock protection. It only gets assigned=20
-> during fuse_conn_init and fuse_conn_destroy. Furthermore,=20
-> in fuse_conn_destroy we set inval_wq to zero without holding a lock,=20
-> and then synchronously cancel any pending work items.=20
->
-> Therefore, performing this check twice with if (!fc->inval_wq)=20
-> seems unnecessary.
-
-Thank you for your feedback, Chunsheng.  Having two checks here was just a
-small optimisation, the second one is the _real_ one.  So yeah, I guess
-it's fine to drop the first one.
-
-Cheers,
---=20
-Lu=C3=ADs
-
-> Also, in the subject, it would be more appropriate to change
-> "work queue" to "workqueue".
->
-> Thanks
-> Chunsheng Luo
->
->>+
->>+	start_work =3D RB_EMPTY_ROOT(&fc->dentry_tree);
->>+	__fuse_dentry_tree_del_node(fc, fd);
->>+
->>+	p =3D &fc->dentry_tree.rb_node;
->>+	while (*p) {
->>+		parent =3D *p;
->>+		cur =3D rb_entry(*p, struct fuse_dentry, node);
->>+		if (fd->time > cur->time)
->>+			p =3D &(*p)->rb_left;
->>+		else
->>+			p =3D &(*p)->rb_right;
->>+	}
->>+	rb_link_node(&fd->node, parent, p);
->>+	rb_insert_color(&fd->node, &fc->dentry_tree);
->>+	spin_unlock(&fc->dentry_tree_lock);
->>+
->>+	if (start_work)
->>+		schedule_delayed_work(&fc->dentry_tree_work,
->>+				      secs_to_jiffies(fc->inval_wq));
->>+}
+This is a result of the trees diverging which we discussed earlier.
+I sent a fix.
 
