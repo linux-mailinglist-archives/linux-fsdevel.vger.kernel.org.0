@@ -1,58 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-58290-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58291-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0677CB2BEC3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 12:20:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A62DB2BECF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 12:22:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 795F15640B3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 10:20:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F0581BC2D3A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 10:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5668D279DC4;
-	Tue, 19 Aug 2025 10:20:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C439427700C;
+	Tue, 19 Aug 2025 10:21:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cs9krP8v"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o+nU4IS0"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B608C1990C7
-	for <linux-fsdevel@vger.kernel.org>; Tue, 19 Aug 2025 10:20:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 302D727A13A
+	for <linux-fsdevel@vger.kernel.org>; Tue, 19 Aug 2025 10:21:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755598810; cv=none; b=KZFpptetFrDHNRlEd85kjgrijG7zKwW1/e9cy00Wo4IzbtrT1TOaDy4pGxmhUa+CcCWiPoefthbvVV/Mlh0yD38E7GNBaBkglWNKAu+RNHiGmb9WGUc0d1+4j7631OwciFKYV2ZznHh8/WxqOVSK1rX+8oyRLXyXVpx1VpbEi5A=
+	t=1755598860; cv=none; b=HK8CnIWEoPirdfmeN4FqCJqayGJOxYlz4mAuFW9R/25AHBNNY8HrNWG2jQ93bA96RGkV1SIVrLBoM6DqxzH77liVoeSTYsg5AO6+x5Jz6Yl1FzboDuoWmJU+/IYKEsgSyFF147Ul8G9p5iwthHI9UgiPe3fqZgHrQBXFpopL9Nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755598810; c=relaxed/simple;
-	bh=h2ECP+XahocfVOQXVyfY2YF59pnhPKQ9aJZsGc01fhE=;
+	s=arc-20240116; t=1755598860; c=relaxed/simple;
+	bh=sHXkZ/k9kb5SoOWS4pX+L3Ij7OEuTvK3oELl8BWyl70=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E9ZEnv1e7k3nrDMU1Esz1f2GfuXmAqTHluVC0025wHoYboQFnZh5fS4aQa+VMNg862q5iVBH0oJkar1EkllzqBuN8P3rBGVKNptJMH0i6opzmAkCJ7T6+A/Pid23CFeDzWk7yAx9CMEOqb7TEfTi7rdcO380DoWV0vyWQBUPuMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cs9krP8v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 493C1C4CEF1;
-	Tue, 19 Aug 2025 10:20:08 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=rOW08JsIBa0ZrVTDcaGgyzBvaZgc3pcPNotoQBgdztyyZg1Z2CptlBSXkPrv37H2P1E2qiX3tVeEdpat0nqR/n2t/dWewQWmUv9Ftw9OkIy9TKBCS9MINYEGIl2nX3wUrYvg4+0/zjcaYEBEPSc+U5AxdmZisEYUVY+499DyXgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o+nU4IS0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6A6EC4CEF1;
+	Tue, 19 Aug 2025 10:20:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755598810;
-	bh=h2ECP+XahocfVOQXVyfY2YF59pnhPKQ9aJZsGc01fhE=;
+	s=k20201202; t=1755598860;
+	bh=sHXkZ/k9kb5SoOWS4pX+L3Ij7OEuTvK3oELl8BWyl70=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cs9krP8vV9XdgfxtUZTrifTNK+OgMiegRwzxhVUv/lwAFnUyAxTbe+9qlGyhCjUMT
-	 ane05R2hgAst8o9H60ymus6aZk6rg6IswJ76qjGoYCdw+XBcybYhn/XmZgRw/lNll/
-	 /YBVCQQW0Q/9SeVhas/mMTgTVnF1QGXqc9WbaRudtWKYC+o0WwhDuw7dWBrx9KxcA8
-	 60d5wjTe4VaBoVEDZF8YNX4GJamlIG+6GryCGgJ6yzx5fw/k2LNrl0LJL4yS2Kgxgn
-	 3lVcjfMCadXfF68q4CYWMgggfnvrBb6NNR7+F6jH1/EN7cHbQ5rfWFOFKevZOimN7Z
-	 qt2fRqo7VkKbQ==
-Date: Tue, 19 Aug 2025 12:20:06 +0200
+	b=o+nU4IS0tokT7Bfs/aYub0IDCVylkCjPHbcJ7csHsGATqdbspQpetM57/D2XjLpXo
+	 QD2VYkaR0zXrsKSmTq3h3bUAHrcPdH5tZQTseaVeaRqZlFmhHyuNvroKfUw4MeSbWb
+	 6i5dTTnKE8s9HaEMElSFMedsM1zGINukuxwCvHP+cniu1/W3xgkdIHEzcDLgqeZkD0
+	 io4yNdZsSvHWd3gP5yWU53CqWRYDNWkqCG1y8bzJ/pDCFmGUe5UisgE9r/EJawwj8t
+	 WenK1p2OcTjAmNwphYoTGnShqRt+RKZD3NpjcNsjeUsxVmVM18bRHmJ8LIrt1UbEoQ
+	 uNkyQx5wsxGoQ==
+Date: Tue, 19 Aug 2025 12:20:55 +0200
 From: Christian Brauner <brauner@kernel.org>
 To: Al Viro <viro@zeniv.linux.org.uk>
 Cc: linux-fsdevel@vger.kernel.org, 
 	Linus Torvalds <torvalds@linux-foundation.org>, Jan Kara <jack@suse.cz>, "Lai, Yi" <yi1.lai@linux.intel.com>, 
 	Tycho Andersen <tycho@tycho.pizza>, Andrei Vagin <avagin@google.com>, 
 	Pavel Tikhomirov <snorcht@gmail.com>
-Subject: Re: [PATCH 3/4] use uniform permission checks for all mount
- propagation changes
-Message-ID: <20250819-wahren-petersilie-b2d1632bcf22@brauner>
+Subject: Re: [PATCH 4/4] change_mnt_propagation(): calculate propagation
+ source only if we'll need it
+Message-ID: <20250819-kundtat-schiffen-4982aa593106@brauner>
 References: <20250815233316.GS222315@ZenIV>
- <20250815233524.GC2117906@ZenIV>
+ <20250815233645.GD2117906@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,29 +61,22 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250815233524.GC2117906@ZenIV>
+In-Reply-To: <20250815233645.GD2117906@ZenIV>
 
-On Sat, Aug 16, 2025 at 12:35:24AM +0100, Al Viro wrote:
-> do_change_type() and do_set_group() are operating on different
-> aspects of the same thing - propagation graph.  The latter
-> asks for mounts involved to be mounted in namespace(s) the caller
-> has CAP_SYS_ADMIN for.  The former is a mess - originally it
-> didn't even check that mount *is* mounted.  That got fixed,
-> but the resulting check turns out to be too strict for userland -
-> in effect, we check that mount is in our namespace, having already
-> checked that we have CAP_SYS_ADMIN there.
+On Sat, Aug 16, 2025 at 12:36:45AM +0100, Al Viro wrote:
+> We only need it when mount in question was sending events downstream (then
+> recepients need to switch to new master) or the mount is being turned into
+> slave (then we need a new master for it).
 > 
-> What we really need (in both cases) is
-> 	* we only touch mounts that are mounted.  Hard requirement,
-> data corruption if that's get violated.
-> 	* we don't allow to mess with a namespace unless you already
-> have enough permissions to do so (i.e. CAP_SYS_ADMIN in its userns).
+> That wouldn't be a big deal, except that it causes quite a bit of work
+> when umount_tree() is taking a large peer group out.  Adding a trivial
+> "don't bother calling propagation_source() unless we are going to use
+> its results" logics improves the things quite a bit.
 > 
-> That's an equivalent of what do_set_group() does; let's extract that
-> into a helper (may_change_propagation()) and use it in both
-> do_set_group() and do_change_type().
+> We are still doing unnecessary work on bulk removals from propagation graph,
+> but the full solution for that will have to wait for the next merge window.
 > 
-> Fixes: 12f147ddd6de "do_change_type(): refuse to operate on unmounted/not ours mounts"
+> Fixes: 955336e204ab "do_make_slave(): choose new master sanely"
 > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 > ---
 
