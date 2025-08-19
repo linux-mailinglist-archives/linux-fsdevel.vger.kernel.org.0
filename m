@@ -1,84 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-58291-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58292-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A62DB2BECF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 12:22:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C71F5B2BF70
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 12:54:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F0581BC2D3A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 10:21:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82662683090
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 10:54:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C439427700C;
-	Tue, 19 Aug 2025 10:21:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729B4322DC6;
+	Tue, 19 Aug 2025 10:54:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o+nU4IS0"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="BJTLR2EL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 302D727A13A
-	for <linux-fsdevel@vger.kernel.org>; Tue, 19 Aug 2025 10:21:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD41C22615
+	for <linux-fsdevel@vger.kernel.org>; Tue, 19 Aug 2025 10:54:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755598860; cv=none; b=HK8CnIWEoPirdfmeN4FqCJqayGJOxYlz4mAuFW9R/25AHBNNY8HrNWG2jQ93bA96RGkV1SIVrLBoM6DqxzH77liVoeSTYsg5AO6+x5Jz6Yl1FzboDuoWmJU+/IYKEsgSyFF147Ul8G9p5iwthHI9UgiPe3fqZgHrQBXFpopL9Nc=
+	t=1755600890; cv=none; b=tpn+Uuvflf7rpXA4u5oV44vuC4Jgmip39JD2l3Qsv3NniOhZy4q6i38OJYLwYsmzB6r4kEBq4t9vExE80f9Y3AKux1MF95WzWEiRMY8sF6Ycz1wFvFO8yL0787IW4e69VIudtKJ6Rk8HLx6YB8YMT2eDVcZgb66ECW3PBs0NfjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755598860; c=relaxed/simple;
-	bh=sHXkZ/k9kb5SoOWS4pX+L3Ij7OEuTvK3oELl8BWyl70=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rOW08JsIBa0ZrVTDcaGgyzBvaZgc3pcPNotoQBgdztyyZg1Z2CptlBSXkPrv37H2P1E2qiX3tVeEdpat0nqR/n2t/dWewQWmUv9Ftw9OkIy9TKBCS9MINYEGIl2nX3wUrYvg4+0/zjcaYEBEPSc+U5AxdmZisEYUVY+499DyXgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o+nU4IS0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6A6EC4CEF1;
-	Tue, 19 Aug 2025 10:20:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755598860;
-	bh=sHXkZ/k9kb5SoOWS4pX+L3Ij7OEuTvK3oELl8BWyl70=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o+nU4IS0tokT7Bfs/aYub0IDCVylkCjPHbcJ7csHsGATqdbspQpetM57/D2XjLpXo
-	 QD2VYkaR0zXrsKSmTq3h3bUAHrcPdH5tZQTseaVeaRqZlFmhHyuNvroKfUw4MeSbWb
-	 6i5dTTnKE8s9HaEMElSFMedsM1zGINukuxwCvHP+cniu1/W3xgkdIHEzcDLgqeZkD0
-	 io4yNdZsSvHWd3gP5yWU53CqWRYDNWkqCG1y8bzJ/pDCFmGUe5UisgE9r/EJawwj8t
-	 WenK1p2OcTjAmNwphYoTGnShqRt+RKZD3NpjcNsjeUsxVmVM18bRHmJ8LIrt1UbEoQ
-	 uNkyQx5wsxGoQ==
-Date: Tue, 19 Aug 2025 12:20:55 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Jan Kara <jack@suse.cz>, "Lai, Yi" <yi1.lai@linux.intel.com>, 
-	Tycho Andersen <tycho@tycho.pizza>, Andrei Vagin <avagin@google.com>, 
-	Pavel Tikhomirov <snorcht@gmail.com>
-Subject: Re: [PATCH 4/4] change_mnt_propagation(): calculate propagation
- source only if we'll need it
-Message-ID: <20250819-kundtat-schiffen-4982aa593106@brauner>
-References: <20250815233316.GS222315@ZenIV>
- <20250815233645.GD2117906@ZenIV>
+	s=arc-20240116; t=1755600890; c=relaxed/simple;
+	bh=6yCHoVaGq+4SdzPbm/a2+uFQTdad0EyYgYe4cmXoxlk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M56cSQQvxXMQtdHhCZRVTf4Ds3qZW5E/wTXmN4HJRGUKCdCWVHZC03UrZCV6SeO2zpJyq42gU6RYPEDIourkzfmuzThyA+XXynbrvETVBZQTKzw031DwTchrnPpApqAkyXKHqLP/OpSzC3HoGQ2/jDzkp5RIF96gX6iTfXxL40w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=BJTLR2EL; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4b134a96ea9so20195191cf.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Aug 2025 03:54:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1755600887; x=1756205687; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=6yCHoVaGq+4SdzPbm/a2+uFQTdad0EyYgYe4cmXoxlk=;
+        b=BJTLR2ELRf/MVqCh8zo9iCGS9EpbeFMvrQ7m5X9MYOR74eO28dfLq6t7bTo7QbqzRX
+         TJYDhzYAIGCgbz1NajUidQ6VUQ4EGxs/hO73BVyU602gprEOKhj+bMLElDIrParUF+0h
+         IfEsnTxTfYkfzg3yalcY74m42Ef0kwLH+oczY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755600887; x=1756205687;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6yCHoVaGq+4SdzPbm/a2+uFQTdad0EyYgYe4cmXoxlk=;
+        b=rIhe2YtXJoYJSjO0HrKXQtkBeAp8QOg6fKgcjrGeU0+cslG1BqRvzCnNnkK5mfUQgp
+         64RgU/p4hs+ffAKwwgHn0497Q5R+DOo/yb+MMhmZo5OvsvV1HWfRpNnrQ5N/mHhQnZqj
+         P8vOtQSu8EabAvvDQ7kFBxuAWY8JfjXSRgtCqhSedXV3d3+DpKRelbc2z3vlK39v4DCQ
+         o8p10eCnLnOmC+D+bOLZZskHdxp1eg+3m8qLZyzeMeKqqkEWzfg8lFtqWvjGZbv/kc28
+         O6qim1lyc/vthv7+dtnK6sDkLvZQTs0BIKW43TLa7aBSAQw/H5MVnRyGsa6JKYJenoCk
+         hQlg==
+X-Forwarded-Encrypted: i=1; AJvYcCVDfdGdt/c+4KU1yQuEqeLO3wJkA+LbVg2S5bWISp8QWkd1od2ztqz/McRq9h9gmT6uJDrYTrJLD3CmwmO9@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzRbafqSnQXeK4utoUORKyNKwFPHeV0xar7TygzI9yUbZshmPd
+	eHFzvR4WzHpPgB8j6LzQyq8cU4ptLovQ72Jmrr3x2xZdi+mYPuRD4xbe4tobanvw5g3VkRRSU9O
+	tZ7zleRSdcKsfII//HBdIi+JY8oV6H/chw2ItX1eGog==
+X-Gm-Gg: ASbGncs2heQNBABVhmVVnCUI0uurl3OZtxq3FCy1n36ugL9Hc1dboLXSLJPtRq65fGg
+	ZqI0nWb2ta8b7ma+nzU2Kgd3jbPnSqwtmy5cvPFs2UA7+9bofAhDrP4PPlRK1zXXGIZ5+tZOKnU
+	sFvFoMMytaJKn2y+19nuWtmBXKsEmepYd/6VPTeZBmfQ7EX3xnvsDCHoD4OSTy1APApFwnU1cSY
+	ralxWEwAw==
+X-Google-Smtp-Source: AGHT+IGoA0MFmlo2xnMlSxpzDsHBCn43Y/FZNExD/OWKDz6VX3pZm1Ai94Gc4ty5kd2FKGmS9chdojXJrkCtR7ErajI=
+X-Received: by 2002:a05:622a:4e07:b0:4ab:80e0:955f with SMTP id
+ d75a77b69052e-4b286d1c17emr22020411cf.34.1755600886672; Tue, 19 Aug 2025
+ 03:54:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250815233645.GD2117906@ZenIV>
+References: <20250730130604.4374-1-luochunsheng@ustc.edu>
+In-Reply-To: <20250730130604.4374-1-luochunsheng@ustc.edu>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 19 Aug 2025 12:54:34 +0200
+X-Gm-Features: Ac12FXzTUa6B2gqZdV53Nbqmh2rOu1I6mJta-4Jhozqr_obCpMz3u73DhKy8jF0
+Message-ID: <CAJfpeguVSwfgR+O2AwpTof-k3g57ZCkS0mfGLGYT23ocSqDNig@mail.gmail.com>
+Subject: Re: [PATCH] fuse: remove unused 'inode' parameter in fuse_passthrough_open
+To: Chunsheng Luo <luochunsheng@ustc.edu>
+Cc: mszeredi@redhat.com, amir73il@gmail.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Aug 16, 2025 at 12:36:45AM +0100, Al Viro wrote:
-> We only need it when mount in question was sending events downstream (then
-> recepients need to switch to new master) or the mount is being turned into
-> slave (then we need a new master for it).
-> 
-> That wouldn't be a big deal, except that it causes quite a bit of work
-> when umount_tree() is taking a large peer group out.  Adding a trivial
-> "don't bother calling propagation_source() unless we are going to use
-> its results" logics improves the things quite a bit.
-> 
-> We are still doing unnecessary work on bulk removals from propagation graph,
-> but the full solution for that will have to wait for the next merge window.
-> 
-> Fixes: 955336e204ab "do_make_slave(): choose new master sanely"
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> ---
+On Wed, 30 Jul 2025 at 15:06, Chunsheng Luo <luochunsheng@ustc.edu> wrote:
+>
+> The 'inode' parameter in fuse_passthrough_open() is never referenced
+> in the function implementation.
+>
+> Signed-off-by: Chunsheng Luo <luochunsheng@ustc.edu>
 
-Reviewed-by: Christian Brauner <brauner@kernel.org>
+Applied, thanks.
+
+Miklos
 
