@@ -1,129 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-58318-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58319-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C5DFB2C854
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 17:21:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15948B2C874
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 17:29:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BEAC16C961
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 15:19:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 821185641C6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 15:28:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93F91284B59;
-	Tue, 19 Aug 2025 15:19:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53FA2868AD;
+	Tue, 19 Aug 2025 15:27:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JOSyij5e"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SBeDAK/y"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C76E284883;
-	Tue, 19 Aug 2025 15:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2677E275AF7
+	for <linux-fsdevel@vger.kernel.org>; Tue, 19 Aug 2025 15:27:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755616782; cv=none; b=CsU3rO+aPfWHgxgnUYQgrxhiItHvCLmooFWf71Me2/+pjNE0cPZ2kj+soE4AOXX7RBqrO1rS2LEIVnm/U573x9xQrS10lXmmP1Wgk5IVQ1H0G18CpliM84XiP9+KbF0EczOqV+97uWObwNgX4mTTntXpBjQCKlWSjFo+MibLMUA=
+	t=1755617269; cv=none; b=X7OvQtY5Y21qFmpKfT+99cYyKbxlLiJjTut6DQVoAlmuvhjzD+nB8JalMTAYosQDGlA3cRxhd1LN3nsKdNzmrQ9QN6UrrBSxMvcCHQLeZm4r1XLO9fe2Mb5yOH4G9C8wHc7D2JXonTejCELlg6L79EiFv8EIgZ4Dbd8vsP4i2es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755616782; c=relaxed/simple;
-	bh=TIeo1xuKKfF1R/j1XwRimq5gSQyHHJeAjKwlW6WoV1Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LxhGbXV2xnxvfYf+nRPioMgL4yta11yzzHawGqSJFk5Bhm+exYXXGBslnDt0ze1Igl84dixJ5NQOxMKNe5Z82EcBkJBxGjSL3rMj4Um00bXEat9g1vqKm4ByBvkg5/iC9vwv7me4wLeZC/QuUl2rBtYMxyRAGbSmk9lqzREuqts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JOSyij5e; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-55ce5097638so5706642e87.0;
-        Tue, 19 Aug 2025 08:19:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755616778; x=1756221578; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BjfrgqJY3ktAihSvQOIHVGRGiDJldrhQiydaCwMMydc=;
-        b=JOSyij5ewb/rX2x9LDSv3LNLHlFTx5/kRu8kgGVvfuHl5SnVTHzaOuGhh0b6VPf4SH
-         CI0m/pdRAKIijb2/Qvx+4VTQPLc0XP52d+6g4gJ7la3XiqembsoDbaXZcZCE08NsFDtw
-         o8jQ4immlbdW/hN9/Lj70qEt5/Dp/UbPDpmJVPsE5Ll2cbV0FYBszt31DMOwB+fm1xZB
-         V2ke8+4UfVWemFi3EuZJZIcGAEsRLbfWNvNr0QB5Q3LiA6RyuS76sHQ74K1tsS+KnsYA
-         RL3U5900rvD6lsofEHirvdZjMA49eO7OEZ8SW9l4f4eKMCLwU7Acp1o1zJ7CQjB3rG+R
-         UscA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755616778; x=1756221578;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BjfrgqJY3ktAihSvQOIHVGRGiDJldrhQiydaCwMMydc=;
-        b=AcQLiiba4oUBuKmj+xGuxbe1GNqreCquZeyLZoKBKnDf+7jQbXQ6EDxzwKqmh8Z+Wo
-         Pdp20Wq0NMJQSYbpS5/XaZI/AwjIT3dbwiZMpl2QuHrOP1He9doNc0CCa/n24ujJZ9P6
-         qedK0068KqjC16p5sd2jRBeg4CZ98ERYEcb1PlUa7NykkHa1m9ALfuBlWP8jYIECJsn7
-         66miK6We1dwjaLC+OXXMWlriygj/+H1NF9q8Xxo2JVl2UBAAuykG6tEyJr5e9jRVdeFt
-         F0nOlSVBhuW9O6rAvXUS6uKcK0adUpB2ZPRiGfJXCIKOJAek2yQCj/0eXs4fpJnrJbFS
-         qSKg==
-X-Forwarded-Encrypted: i=1; AJvYcCVfbHPqzdaqD4I7zdySx/UJjlVTD42WSfcNlMGpRKBq7Xk1MFShdLy8Pjg+Fimxwp0/lcF+s8fY86iAUC3A@vger.kernel.org, AJvYcCVm4T7ZLLF0rJIly9i7eUWNkiY9O/qNkaYyqpjjxjinBIXd9TUD3a0KZVSdl5StRF7NbHyLzuxRwv54YIMRLg==@vger.kernel.org, AJvYcCXuA5RMCTCfEXjWP5QTSDsoIjOrs5wU3hMo22f7H4UBqMhvJG5ObhPoAeEE9SLJeKHsf6iThvs7hM7CkdP+@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbgMB681U8My28HdnBiyk1aJ9kavBd0nLdyIQGvltFcHYEMbFf
-	bFFylJu94RnfYqF7uit1tdTyRM2oCHWo/P0oBOWj9HoG+Uy5m1pi9q7mGU4ycm15
-X-Gm-Gg: ASbGnctvE9T5LcGPHBGMfRexbA/juA73j1EIoVbnqup4ca7ORBLltaqpxg9j9C9RJ1b
-	KhUqobSFHxYKFaJmpeOAAOiaPAYKg1cwFOzpt4bzAjKqSIHkqy164KtSVzGgdGQe971lGs5Xm5f
-	H6J88tRNFyB1qx3Q8Eh3jfFZYtar2++JOj/Ao3Kf+t4I3Iyw9jK69I9Ix/Czg57oDaYND/AK3M/
-	lfBcLFF55mhSN43jeAt+kIe6KFpewkDbNF9CEuhOjZzLlb6KErqii04ZcLeAox+38DnrtA6lUii
-	nwY254wY1GuF2w9FV3o5vZ5LORH2B33Ey6F/0hnoDMAmGeNnJBGEJZts2bfUUhVgysX4H2Y5cG0
-	T42NC/CPtXi+knEA1MBTpdpcGiVCE3Y5vBPO9nDnZrmQKlOHRaNXO7cfg1dxxryXVl9SORKSlD/
-	pRwNXRgKBiaI1q
-X-Google-Smtp-Source: AGHT+IGtID1z0YmR2i4wueCGyyoAY7Kcui1N5y3waYxRkqTCDXDFmLebk42/gxigc0vQTMajTi5+vA==
-X-Received: by 2002:a05:6512:3ba8:b0:55b:8e7b:8afe with SMTP id 2adb3069b0e04-55e0082d2d3mr866385e87.27.1755616778027;
-        Tue, 19 Aug 2025 08:19:38 -0700 (PDT)
-Received: from amir-ThinkPad-T480.ctera.local (92-109-99-123.cable.dynamic.v4.ziggo.nl. [92.109.99.123])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cef221c79sm2141266e87.0.2025.08.19.08.19.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 08:19:37 -0700 (PDT)
-From: Amir Goldstein <amir73il@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>,
-	Christian Brauner <brauner@kernel.org>,
-	NeilBrown <neil@brown.name>,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-unionfs@vger.kernel.org
-Subject: [GIT PULL] overlayfs fixes for 6.17-rc1
-Date: Tue, 19 Aug 2025 17:19:33 +0200
-Message-ID: <20250819151933.681698-1-amir73il@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1755617269; c=relaxed/simple;
+	bh=DCYZlwnE4o4mAMqqWM8IObFLQHnKgFfq0UR0RkjtI+k=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=iCxtYHrKHyBy3o8IILl3urmVQDk3Np1to53StEIvg+EXW0pw+i5joM2kMTZL/rN9ttcuJxlGrUx83TtsPdD+JJ9CnpUW9Jc916nT6QEJzzsjG318K1Bk/96xGyQJej5j/DCI8k0mcdkNpcGmVQ5TlLxZeSWe6iBzOC1Vs03FKgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SBeDAK/y; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755617263;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=u33GPzTf0Y6X5C/J4UkpcoeZDurx+dDSDRDqaezIuhw=;
+	b=SBeDAK/y5GGRwWYcR2RoyB1F80AEIlhu5slDHTrIPJZAnPJN39ur6ZbWYFcZyJ5X6uVPNv
+	nGkxSs0fhh9Q2GLDwnppO15gjnISY4+EnbATcVnkTvGEiUftlpGiE5mYhddoTXCsO6pHlD
+	uANQI1b0SeFnFpMHhBMDBUMnKLSlP0A=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-259-mbmbiZVcM_uTK08YJzvqig-1; Tue,
+ 19 Aug 2025 11:27:41 -0400
+X-MC-Unique: mbmbiZVcM_uTK08YJzvqig-1
+X-Mimecast-MFC-AGG-ID: mbmbiZVcM_uTK08YJzvqig_1755617260
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id ED5881800346;
+	Tue, 19 Aug 2025 15:27:39 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.132])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id F2F1D180047F;
+	Tue, 19 Aug 2025 15:27:37 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Steve French <sfrench@samba.org>
+cc: dhowells@redhat.com, Paulo Alcantara <pc@manguebit.org>,
+    linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: [PATCH] cifs: Fix oops due to uninitialised variable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1977958.1755617256.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 19 Aug 2025 16:27:36 +0100
+Message-ID: <1977959.1755617256@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-Hi Linus,
+Fix smb3_init_transform_rq() to initialise buffer to NULL before calling
+netfs_alloc_folioq_buffer() as netfs assumes it can append to the buffer i=
+t
+is given.  Setting it to NULL means it should start a fresh buffer, but th=
+e
+value is currently undefined.
 
-Please pull overlayfs fixes for 6.17-rc1 with fixes for
-two fallouts from Neil's directory locking changes in 6.17-rc1.
+Fixes: a2906d3316fc ("cifs: Switch crypto buffer to use a folio_queue rath=
+er than an xarray")
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Steve French <sfrench@samba.org>
+cc: Paulo Alcantara <pc@manguebit.org>
+cc: linux-cifs@vger.kernel.org
+cc: linux-fsdevel@vger.kernel.org
+---
+ fs/smb/client/smb2ops.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Amir.
+diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
+index ad8947434b71..cd0c9b5a35c3 100644
+--- a/fs/smb/client/smb2ops.c
++++ b/fs/smb/client/smb2ops.c
+@@ -4487,7 +4487,7 @@ smb3_init_transform_rq(struct TCP_Server_Info *serve=
+r, int num_rqst,
+ 	for (int i =3D 1; i < num_rqst; i++) {
+ 		struct smb_rqst *old =3D &old_rq[i - 1];
+ 		struct smb_rqst *new =3D &new_rq[i];
+-		struct folio_queue *buffer;
++		struct folio_queue *buffer =3D NULL;
+ 		size_t size =3D iov_iter_count(&old->rq_iter);
+ =
 
-----------------------------------------------------------------
-The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
+ 		orig_len +=3D smb_rqst_len(server, old);
 
-  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/overlayfs/vfs.git ovl-fixes-6.17-rc1
-
-for you to fetch changes up to e8bd877fb76bb9f35253e8f41ce0c772269934dd:
-
-  ovl: fix possible double unlink (2025-08-18 13:16:49 +0200)
-
-----------------------------------------------------------------
-overlayfs fixes for 6.17-rc1
-
-----------------------------------------------------------------
-Amir Goldstein (1):
-      ovl: fix possible double unlink
-
-NeilBrown (1):
-      ovl: use I_MUTEX_PARENT when locking parent in ovl_create_temp()
-
- fs/overlayfs/dir.c  | 2 +-
- fs/overlayfs/util.c | 3 ++-
- 2 files changed, 3 insertions(+), 2 deletions(-)
 
