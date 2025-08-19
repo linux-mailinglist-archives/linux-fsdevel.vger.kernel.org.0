@@ -1,75 +1,86 @@
-Return-Path: <linux-fsdevel+bounces-58301-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58302-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 812E2B2C5AA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 15:33:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9383DB2C5CC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 15:39:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCAFC1683A3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 13:27:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 229961BA19C0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 13:35:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16CDD22615;
-	Tue, 19 Aug 2025 13:27:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0E86338F29;
+	Tue, 19 Aug 2025 13:34:54 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BBBB2EB84E;
-	Tue, 19 Aug 2025 13:27:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58367305049;
+	Tue, 19 Aug 2025 13:34:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755610057; cv=none; b=b8X5cgmk9TALLtfQBckzNyy5ZIw4/FA8Q6iExiNmDNW46KJDGRM3Cs1RjBMN3TSE6DAtQA6AeGS5qAKXCQ9lGJp979j4DeJ9kvke3K3w4hSlK/VTig9E94WPGJB68vWxhz/WrlrvemFs6m6y48/+Jeg4AeqGx4bQA2fnSS+KlIc=
+	t=1755610494; cv=none; b=OM49tTvSjEEkdU3Ssc/iDCA7dsXVzAw8Rn3zfLAfnZlxmcjevXgsTHdwqqWdszqjZgwyBr00rlaxSFzbWfVzqtPOlwaJeXQDu0mVunjnBSdmkUk49ElGl/f8EaLnUwfkkpS+EqhVPIvq5DRsGhawRslSv1DetibMFWenuLiHerA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755610057; c=relaxed/simple;
-	bh=TpRj8vHAZFWNXYc4ffjIewJw/0AxhglDFbUbRX9Yl8w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dbceL6sGHC47ajuJzz7PnYX/4KT5YZf7PqNzIbicZ79ZPNI4P+RE8nBtprRMPWHD4qM+FO3pokfodj3krFvfVrD51U0ntUJQBiBpYNgSe1PR3JTwqBCrgshz1yGc0W3YXHXj9vj0M3bd95F14I/ujV5FwjVrpjcCNQnOFEvsSGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ustc.edu; spf=pass smtp.mailfrom=ustc.edu; arc=none smtp.client-ip=101.71.155.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ustc.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ustc.edu
-Received: from localhost (unknown [14.22.11.165])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1fe378c2a;
-	Tue, 19 Aug 2025 21:22:16 +0800 (GMT+08:00)
-From: Chunsheng Luo <luochunsheng@ustc.edu>
-To: luochunsheng@ustc.edu
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	miklos@szeredi.hu
-Subject: Re:[PATCH] fuse: Replace hardcoded 4096 with PAGE_SIZE
-Date: Tue, 19 Aug 2025 21:22:15 +0800
-Message-ID: <20250819132215.861-1-luochunsheng@ustc.edu>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250819130817.845-1-luochunsheng@ustc.edu>
-References: <20250819130817.845-1-luochunsheng@ustc.edu>
+	s=arc-20240116; t=1755610494; c=relaxed/simple;
+	bh=OXvJDQRaCwawJzmJTJjCyfLVOfXK/kHnUGhG4J6vNak=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jym/iwxbnm+7mvxCUDO00xMP6lpkz4xE+ieGrAHUzfejxKqcJlPfNYGxyQCJgYz95OT4YOHQvhnAQ+zx3Get8fsz98Rr0a3cBRZk4/bVk+eZ87MLPq3MN+bQn5Ci5LaKCns9oC4SJQc87TN+T3d6gRJl1thHov7Jj3WkV1AzXDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id CA92C227A88; Tue, 19 Aug 2025 15:34:47 +0200 (CEST)
+Date: Tue, 19 Aug 2025 15:34:47 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	Anuj Gupta <anuj20.g@samsung.com>,
+	Kanchan Joshi <joshi.k@samsung.com>, linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [PATCH 1/2] fs: add a FMODE_ flag to indicate
+ IOCB_HAS_METADATA availability
+Message-ID: <20250819133447.GA16775@lst.de>
+References: <20250819082517.2038819-1-hch@lst.de> <20250819082517.2038819-2-hch@lst.de> <20250819-erwirbt-freischaffend-e3d3c1e8967a@brauner> <20250819092219.GA6234@lst.de> <20250819-verrichten-bagger-d139351bb033@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a98c27ea45403a2kunmfd51ba9c3fe998
-X-HM-MType: 10
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaGBkYVhkaTh9LTk5PSU9JGlYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlKT1VJSVVKSlVKTU5ZV1kWGg8SFR0UWUFZT0tIVUpLSUJNS0pVSktLVUtZBg
-	++
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250819-verrichten-bagger-d139351bb033@brauner>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Hi everyone,
+On Tue, Aug 19, 2025 at 12:14:26PM +0200, Christian Brauner wrote:
+> On Tue, Aug 19, 2025 at 11:22:19AM +0200, Christoph Hellwig wrote:
+> > On Tue, Aug 19, 2025 at 11:14:41AM +0200, Christian Brauner wrote:
+> > > It kind of feels like that f_iocb_flags should be changed so that
+> > > subsystems like block can just raise some internal flags directly
+> > > instead of grabbing a f_mode flag everytime they need to make some
+> > > IOCB_* flag conditional on the file. That would mean changing the
+> > > unconditional assigment to file->f_iocb_flags to a |= to not mask flags
+> > > raised by the kernel itself.
+> > 
+> > This isn't about block.  I will be setting this for a file system
+> > operation as well and use the same io_uring code for that.  That's
+> > how I ran into the issue.
+> 
+> Yes, I get that. That's not what this is about. If IOCB_* flags keep
+> getting added that then need an additional opt-out via an FMODE_* flag
+> it's very annoying because you keep taking FMODE_* bits.
 
-I have a question about the historical use of hardcoded 4096 values for 
-max_read and max_write defaults in FUSE code, rather than using PAGE_SIZE.
+Agreed.
 
-fc->max_read = max_t(unsigned, arg->max_read, 4096);
-fc->max_write = max_t(unsigned, arg->max_write, 4096); 
+> The thing is
+> that it should be possible to keep that information completely contained
+> to f_iocb_flags without polluting f_mode.
 
-Is there any historical reason or compatibility concern for keeping the
-hardcoded 4096? Would it make sense to use PAGE_SIZE?
-
-Any insights would be appreciated.
-
-Thanks
-Chunsheng Luo
+I don't really understand how that would work.  The basic problem is that
+we add optional features/flags to read and write, and we need a way to
+check that they are supported and reject them without each time having
+to update all instances.  For that VFS-level code needs some way to do
+a per-instance check of available features.
 
