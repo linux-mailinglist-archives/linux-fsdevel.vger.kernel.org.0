@@ -1,137 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-58324-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58327-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A987B2C987
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 18:26:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3A62B2CA65
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 19:19:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F30D83B52DF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 16:23:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E49C217C2F3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 17:19:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DAD6258EDD;
-	Tue, 19 Aug 2025 16:22:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E2A92FE067;
+	Tue, 19 Aug 2025 17:19:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xwb1rpT4"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Ld9qVrrG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+Received: from sonic305-20.consmr.mail.gq1.yahoo.com (sonic305-20.consmr.mail.gq1.yahoo.com [98.137.64.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0779825742C;
-	Tue, 19 Aug 2025 16:22:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68ABF2FABED
+	for <linux-fsdevel@vger.kernel.org>; Tue, 19 Aug 2025 17:19:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.64.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755620553; cv=none; b=lh3g6LNdIzFMkpowSAcdu8AdCC+K7aHCueLACx4qO8pEN7kVNlpiOZ8mL4cVLcpZqI0ZQXfTVKIIM94zAkE6YU7pUeQ60sEum//S+uGMXIkkCDuoLwrHR8lcKdrRszLLEuMSxzhze5fRa1R5dWvkijln+Zpn/J0vVSsvkaU44G0=
+	t=1755623963; cv=none; b=QtTq2aRyBJleovzkAWzRkCSaYbkBx155ZdLoMiYBUzIlcSkhMYDqC0qPIgi148n1buJ0UnfBd/e0t/a5SNmJHBPNtGwvqzdyr7Nqzg2xc6k/Sf2HR4w25dnnFoJDY1v+BVm6Q1jHVqbzor5HbDnNzbjIGR5EvfLgsSlCmX4ADSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755620553; c=relaxed/simple;
-	bh=DK+G00MTC6IEA0l14sAqCIguKVjz1FSApDz4hMHCrRU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NIBtFxuNXcZmD6jKurwKR0lXQJZAKjATDAEB+w5KR/wx0mHxgjyx7icvEohGZ14Ax+OdGI0Hhj1BgyX3v4Yn9j5rEjyvbqyfN60HSbCM1s0g6uXL9Ei43cvn/eSTufYoaLoH9YZ2VfKzVAhafnH7r+hB7oO0PDUoNYpNF2Vky14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xwb1rpT4; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-70a9f556d65so43160106d6.2;
-        Tue, 19 Aug 2025 09:22:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755620550; x=1756225350; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=phTspbikDXoNyfPxHuBq2N0+fGYwriMvgatS5/gXfiI=;
-        b=Xwb1rpT41zlevZMKb3VBUFe0YgGZ53y1uW6mMqR7kX2rarFZTZWgdP28NV6ZnLGR+8
-         oc3kApkpMC9IF2D34iju/vw0v2sKWcrQlKvjpZ7+2p5baoKPwqHyWp+SCsiUBA+kXCb8
-         8aULyAaQzgvcdqzkZXtEULnbrY8eGcUmplUJioFhiwBnXmhucn3OZULMT6TV6+ujAvZB
-         IbOliVpxvz7aA3N7hteUYbVLs3hBLmMWOApjN0sRgFdy9wYIMrVeuOgKDU132l+pS7P8
-         9c8VdsirMeuzmTgnNhwouwaPbJ2B5RXS7sbMDaB+Cts8SlVwyEIURsgc6JwLoWYMcf0B
-         IB+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755620550; x=1756225350;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=phTspbikDXoNyfPxHuBq2N0+fGYwriMvgatS5/gXfiI=;
-        b=ZyeOu0N7xxdZEcBP9xGrqPpIMPtl8ES3qXsjrIwvurPyLCf9GhMH4txAOzocyVji7I
-         CAgM8Rh9YYIJqWaaHzKj3r3roZcaGS0IoCwCFhfW+WY3yzBwuYI+CHWTIP7nAotMFk1O
-         MLzjTjIKKmK0DdKKb7JJkk3SmkaEtWYjAoRVFvC+uWmpdJTsKO0JWeUU38eORd2SBR1x
-         sTnzdu+ifGbDucWinfVDBNkFc/DZP/4g49rbgg9IHmRlA+2s5WDb390bxz0htD1IOB5x
-         uraUfGRvHLb4A4P+kvSSNaKdSUAMghsjPFBpp7AvutJBjdE4G84JC1aBWX6jZuTGrQAK
-         aTvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUkEWvMbiH8UJO2S/+C2BI2RCzu8Whkz9srjPBHVPlaeRJcJJOMvzxyBFrgrq+3RXDDrHanajYh@vger.kernel.org, AJvYcCV6O0bvoJqgxSg5mpij70p38nh+YQZYqhv6y8Jha4iieR4R75BQWfEK0RX72Zv7uVkg4+eLVc2fjV63UTU7@vger.kernel.org, AJvYcCVyNybhSBKWblx+nzPfuPi7N42OnkIAw7Aq9tDzaxPO8LtgwzsDjidpl7alWV3OtIIrEvc+75Ne5LIbDafMbQ==@vger.kernel.org, AJvYcCWHLnhuLjNV3KLRaFViIcm1zw7jbNzcrLsHdsufwyIyxFe2AqnqMj9Sc2bjnuLBV1+BsbTOsY0HGlfa@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzyz7oJPiNYIK0DH8dYCo0FU9ENY7zx7L/rovLWOeMci9BmHxD5
-	KG/k4tZhGCdL+FnLEHOOrSX5A876ucdImImGFugVnqxBq3m+qeiAAmOzFlk3m1gnHE4ZdllMbcZ
-	HMY6Ut1TUaXDIzKSCRPkkjQx0LtplmQ4=
-X-Gm-Gg: ASbGncsWVPFUaKzcvV5A6SJudMm2RU+UUn9wvaNLigUE7l7ZR8yybNW4SKxFStdtfFG
-	2t/ysgtT6rJAVX1MDYFZIi002YV501jiF/B4ncz3U39G3AecigiL3/axS272Ad3JA7HdUCNq4bj
-	W8tINsXTD3c8srOMzBbLy/CJKJLlQAspOzaLjtMemVV1YUEiOD+SpwvwSILRW5z/1XkTNyIwNmh
-	u4CfZIDqfwjRTdVzM4/kG6CSSpVJKcy90ixj42ZjJxRN3+niJU=
-X-Google-Smtp-Source: AGHT+IE5gDw665mp62jMJfp1L2Q9tLdJaFXr4f6/P9JWF9HBc/OxhbBB+bGeSjIntXuGiItqxA4ZmCiHgjWs4ESpHDA=
-X-Received: by 2002:a05:6214:20e7:b0:709:d70e:adcc with SMTP id
- 6a1803df08f44-70c2b67205fmr32393756d6.15.1755620549650; Tue, 19 Aug 2025
- 09:22:29 -0700 (PDT)
+	s=arc-20240116; t=1755623963; c=relaxed/simple;
+	bh=ZzlugSwr1NuiDTXaRBuI6egiVVmhVYhSAWDLJ2hyFUQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:References; b=cW/B2fFlvB+3Ez+NfQ46ABQ/+skh9XgkoSY2nsZvzLZjW7iTj98tGgSLhw0fpn8+UbFjkaMYYJoGFALImgkTL31LqNmCXuCgwvSOhcacGgVzshDv9ulFUovwymZHvxIPMGHeKE+SHUtzTy7qAZK3iXw24jZ2pv0GV2a7Pkcjcbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=Ld9qVrrG; arc=none smtp.client-ip=98.137.64.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1755623956; bh=A8SWyyT0DiX2Rnzy5SGMSBgCFA0refGm5qe5v8qneCE=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=Ld9qVrrG+vXYqPrnwQ8PemwK2awvRhBm4NEaL0lhw2c7W5oOOscXAeQQkw7/1Gym8y1J/N6GpGVWnFMX0UunsHnv7ecvTVs/IwQHHdEi0K+YU+xJC6a9WVy7PUJzlaawTI2MNA5zuIBdBzQ8jT2yd66NiFsVapzJylflXPbN/jrQU0UPvE6+SEiyIK+sYQkjWM1BRWnC/pGmi7l33um/CfM65H2AGizGSdDf9gR7dWMTiLp5T/V8utVpMk+x6rh5FodNtV8iMWt3sA4f1P+bKjDv8zY5wGi1G/v9Ko9gxY1ViKvxp4C4CuyuapowfRS11aZNGS2TpMfS3PGpTgYQPA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1755623956; bh=LZgPGdGtabNL3cHsLkok8SowjA4e0niobUSHkP8kDIm=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=Ca5sJU+uA+x9oeaeZS7p4rwDT2lwxD2PRx1c6M8fGhGiayckyY4MbzGXj3BiHQE7dJGJYlRT7RWAPMsknVRqpecwzL4rKcCFMZ2RFUXQ4WnAPBkcGXOGms9/t+ipKAjgnr6ytZNEavMcO6HAABGXRU2g+Kxqh4d/6Jw5Ero75fWfOU8qORgJsNYngkbeFa3ClPrbSYa9ZWG2Ub5+uYUjvN9S2YxhrQY17UfcVzU9VkzTC9oJ1fKLzeG5C2xsZsYPTStRq/LepYOyiyYc6shtea8gkIPHCD0FbY8CggyEunyn+w0hGTDWyKOjV8T8lTs+nxRSyOjGh/xfHnfhhwbVEw==
+X-YMail-OSG: 3mftnr4VM1lN0NAgHCOnPyNyN9yV1.nSXllhOSAFyQyekOmLRW9EWYQToQE5X8o
+ 7UcdkL1OuSohjdWNamCAScUg9.NNg.BWdlENSxXR2RRmhvQLDl5wUg0kNSyPPkgSo6HlF3c1EUCV
+ 0KNqf3bAnYBK9vtciSbY.LGpredRwMYTnHuttkpZjSqFVyTSwrByx1E_GqHIZF.pAxgVlJPOGMHC
+ r3sVmmMTdtMSyG_XDtjGaIL2ZPwXBAqVY1J5O8cLcHOSeM7Clf4i4tQV3jfvSVED428arI5aJTVY
+ aoqX.2WzTaxcJTiViFYU3YQPLNoObY_tH9_E88KqNM4JMJlnE2r_dvzxvmsG05ZJvUeG.nvV0Rmh
+ rFpFpICM6.Q3XoC75kzenAon9jFtl4e3Tz1dHOsOzzb4.7vHozZlNbVaIFWdbJBT9RKpcsPhUlGk
+ bCEkdz9TdyV0T8gKg.ifgoy3YryiQgKoVygkeRZXXsM8l.1y2eucN7rmOeMwopQiUvGVUsKyVRi7
+ U0auA_FFdJtBxjEfVCxGRz5qhSHA1kpCB_ODm3RC2XBnxJROh2ZlmiWWA.Ig_MNSbgQYNo3ey6c.
+ pNVfwEt.4wl4s.gNkyNDCfMIwlhD_Vlw3nun9QrOMjSGLcn7QhQA.W7ZHB_fm95F6IsoD6eIt6e_
+ Ic7cq1lxwJuubt1Abmjg6_6tbrqXdz8y9yP.rbDk6QNl.SjDbuOjQWrKVvfmHisUc7mrTCMosRT7
+ OlQhdGbTeEKWfgYMq0ZRzKNPwLATeAcWEamxBx0VGsgPN2_azMEj5ABlGNqIEO3VvJj3pQa1XndZ
+ nSyErD.thxwNSwwVAQ6Fm2DiDs6nbV01KXbSa9p3M8mXmIl8FUZ2CfeFrKFV0VqCpMwV77DLzfsT
+ oy1KJ6gOtpLqPTuPQYFeXH6dU0QGxaRCJgZtPUEaNQugxWhTSG2OEmlmqGRVYH5hxKN0x2wucgL6
+ HMcHht70U8KW1YxxPfiE.cp1dRpUuVZ.3pPUTaMqYx75N9em_drcCyoVKRrqWx2n9oVVSAFm1GCR
+ .IXABYTwcDoTlFTGQZ0D3QhutMmhG2jUNE0kjRBRmKuGJ0rn39b03IoSsy2xqdaCb_Cdk6UqxXEr
+ uZSZvW5ivnu_3LHjdeBJ1QJDl9caqxPpeX1vO_RJpfX71AGXTjQVpEAzHehSYHekq6yy1mcajCun
+ OVF5fldCON3RyWGx0txTucPzUp.Fwh_HKx9PwvkiTGFY5v9My3k7Qs1y2bx4wEPoKZjii08alhJG
+ 0yscs0Cac1zhWdF.Ih9j475mTeZYJ036TahKflzK0m2tO8v2N8DNUDciqBOjaCbJIy4mHLEpQocP
+ s86dtR_t3nGg5GjfyMlE_Xv8A9uZuDmD7dkGjSDRp5.0KNEyUoOFhIYdKz9dJaHoAo.MLRt1VuhV
+ qOtwWYj2D_CQdND0hPz51c6tYUB9qznGUTUBAx9_MzKp2jeXnqdpbmfVEM9QlyFzBpr2w.MtEYZo
+ 4FOlKICy.HchnVpQvyEVGg._Zl6vJIvgfzfVjL8MAIr24yanjETQ7r4BPZICfXNvWjj0Z__SEy0_
+ ycfCeODNXeFYhlD7QZPqSvk3ChzPnC38C9in8h4EEnEqUUBs5c7yztpMRw11KFwuVaVcRkpHd6yA
+ UnpL39ns6dQ7qJ0ZLEjvLCFuyiA57Nba12UNigjuO5LCrF2WX4ygZeZrvv8oDMB9aR0Jd6bEkk25
+ Q4322QmsUbsfiKdwiCb46H0x2yEw8Aebto5zJH607hoeV5VC1QAwocnofvPh4.fL8B9mfsybKnC9
+ PM0KGqZu8afJw8rSR2nhjLHki5xtB40zJ6jn2hlp1XDSldLAlc6OYfGTA9HgAx._7oTy6kxw14Zc
+ ljpYGX_zzoQWgMl5iIkXhhJoURTwd5630SjSI3JfYv2QjjkWoCjVI.9mkYcsPIrl0IeNiDe2EQLX
+ a5kkGMtzMwt306jB4cMoz_IkXJjVbHIJQzXgXTUkLXXkP9FK1e79q7RjVnM_kP0hy61h46swCXDM
+ 0t4OPbWJryETp_NJ9MUOz97Z8iW02adIsiZwQHm17jVz1zsqozuPIWHfk1I8BFSEnazeYORuZFTc
+ qbdnYfuZDyxwwQCNHw3purDihdHrP4.Da0Pj2Ft7J74OqN0rjJABIQbhxReITEz6tleSMl9gPAcy
+ tplyl0YYcrexDSeFJs1a8SMfZkCtlvAS4Q1.aQcp_S5ICuOR5riN_mpFxbmXhjbXiIgyMb1K4.AL
+ xTtVYkabv_S0E3q8zuQBY.kQ39L1vfpWqCplbB4Tc0ChuzbyvwQ2nxzLC7i97Ww--
+X-Sonic-MF: <adelodunolaoluwa@yahoo.com>
+X-Sonic-ID: 014cbe4a-0fbd-4d25-84d7-25c8930f871f
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.gq1.yahoo.com with HTTP; Tue, 19 Aug 2025 17:19:16 +0000
+Received: by hermes--production-bf1-689c4795f-67vx2 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 5d23dd5995e0d4828092d9660ef3af68;
+          Tue, 19 Aug 2025 16:48:52 +0000 (UTC)
+From: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org
+Cc: jack@suse.cz,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Sunday Adelodun <adelodunolaoluwa@yahoo.com>
+Subject: [PATCH] fs: Add missing parameter docs for name_contains_dotdot()
+Date: Tue, 19 Aug 2025 17:48:22 +0100
+Message-ID: <20250819164822.15518-1-adelodunolaoluwa@yahoo.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1977959.1755617256@warthog.procyon.org.uk>
-In-Reply-To: <1977959.1755617256@warthog.procyon.org.uk>
-From: Steve French <smfrench@gmail.com>
-Date: Tue, 19 Aug 2025 11:22:18 -0500
-X-Gm-Features: Ac12FXxwk1pb1bwCRB51KO_sGuoA0z2A_s1GsLC0-6GsbrD-TooPyfXCaTpQPGQ
-Message-ID: <CAH2r5mubYwUSF-JjRyb-zdLJjDQqKG+nAz6sqjF_RHdBWXBNRA@mail.gmail.com>
-Subject: Re: [PATCH] cifs: Fix oops due to uninitialised variable
-To: David Howells <dhowells@redhat.com>
-Cc: Paulo Alcantara <pc@manguebit.org>, linux-cifs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+References: <20250819164822.15518-1-adelodunolaoluwa.ref@yahoo.com>
 
-merged into cifs-2.6.git for-next
+Fix kernel-doc warning by adding missing @name
+parameter description for the name_contains_dotdot()
+function.
 
-On Tue, Aug 19, 2025 at 10:28=E2=80=AFAM David Howells <dhowells@redhat.com=
-> wrote:
->
-> Fix smb3_init_transform_rq() to initialise buffer to NULL before calling
-> netfs_alloc_folioq_buffer() as netfs assumes it can append to the buffer =
-it
-> is given.  Setting it to NULL means it should start a fresh buffer, but t=
-he
-> value is currently undefined.
->
-> Fixes: a2906d3316fc ("cifs: Switch crypto buffer to use a folio_queue rat=
-her than an xarray")
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Steve French <sfrench@samba.org>
-> cc: Paulo Alcantara <pc@manguebit.org>
-> cc: linux-cifs@vger.kernel.org
-> cc: linux-fsdevel@vger.kernel.org
-> ---
->  fs/smb/client/smb2ops.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
-> index ad8947434b71..cd0c9b5a35c3 100644
-> --- a/fs/smb/client/smb2ops.c
-> +++ b/fs/smb/client/smb2ops.c
-> @@ -4487,7 +4487,7 @@ smb3_init_transform_rq(struct TCP_Server_Info *serv=
-er, int num_rqst,
->         for (int i =3D 1; i < num_rqst; i++) {
->                 struct smb_rqst *old =3D &old_rq[i - 1];
->                 struct smb_rqst *new =3D &new_rq[i];
-> -               struct folio_queue *buffer;
-> +               struct folio_queue *buffer =3D NULL;
->                 size_t size =3D iov_iter_count(&old->rq_iter);
->
->                 orig_len +=3D smb_rqst_len(server, old);
->
->
+Fixes the following warning:
 
+WARNING: ./include/linux/fs.h:3287 function parameter
+'name' not described in 'name_contains_dotdot'
+Signed-off-by: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
+---
+ include/linux/fs.h | 1 +
+ 1 file changed, 1 insertion(+)
 
---=20
-Thanks,
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index d7ab4f96d705..48a726839e22 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3281,6 +3281,7 @@ static inline bool is_dot_dotdot(const char *name, size_t len)
+ 
+ /**
+  * name_contains_dotdot - check if a file name contains ".." path components
++ *@name: the file name or path to check
+  *
+  * Search for ".." surrounded by either '/' or start/end of string.
+  */
+-- 
+2.43.0
 
-Steve
 
