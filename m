@@ -1,246 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-58244-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58238-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8774B2B80D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 05:50:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A7CBFB2B777
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 05:14:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FD1952561D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 03:50:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22C7917AC71
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 03:14:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C502D660D;
-	Tue, 19 Aug 2025 03:50:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CE8A2D24A7;
+	Tue, 19 Aug 2025 03:14:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="KnkHt8KQ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="t7A+CCoI";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="KnkHt8KQ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="t7A+CCoI"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="WTePi9Ls"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53FB225784B
-	for <linux-fsdevel@vger.kernel.org>; Tue, 19 Aug 2025 03:50:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D745E2D2494;
+	Tue, 19 Aug 2025 03:14:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755575442; cv=none; b=qwByBPdCizx5kGdsk7CG+MKNkdmkB4dP3OZqzEF1lU/NttS+l1B7HJYvfst1zsYilT0FiTKYwLiQczPjPoslgtNflkskWDOBrStYxefxCIROQMGegrsbj70WhKJeAm1mCyfzIBefO3EBUXMNSJvADj6qmkp7MLjEBs9y+MgNyLA=
+	t=1755573245; cv=none; b=GuHfAhwaXwcNWJUkjZXJ54B+Wd8/5P8zVgbSBUPKI9XInnH1sxnEt8jWvRwyxw4cVva+svUe6sMgs83QSUHEfR6Dlr/Vnu6NoMBwsVIVbzTQKB0OAg5v/as5NMTR6DW/x1ShpnbGhbtkhS+3Vze9JZEW6CsMWMmxl6D7/RwAOqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755575442; c=relaxed/simple;
-	bh=RW4wYWIJhtqqYYBC2aKHqMhZLuAZjsN8UUSvPoQSz4k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=U4IujogUe9k/tSY5nvt06nFQdl1z1xNqXuBD8kv12+pqAF3+1K07kOOS9ilGbBl8BhI/Bovhe/l/PcujU1KImaoOjKr5uqFngaiywd735FPOZcBwDcZddQ/GoHtZ2y9QYXJeho5WfGppf9O13RBm/p9BJTN2fZ+4sfa9mF6YDGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KnkHt8KQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=t7A+CCoI; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KnkHt8KQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=t7A+CCoI; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A51362125E;
-	Tue, 19 Aug 2025 03:50:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755575418; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uph1rJ9889A4PIBKKjZ919Kq1UXJobYp7az5TPK9/tQ=;
-	b=KnkHt8KQlUCZfFoG6ZcTPRZ6a670UGyxtB0gniCgM4qD98po3RdR5dsRnJDA1Z8UPYF4Xs
-	VbwIevOMcotk8raJzjtBr35MMpr/38WkleWkba2zyqe03qEsV2O5XxrC+bWzbJSjZRroI5
-	HEPzg3znUbyBGzKXU8oFtE4bOjx3GVU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755575418;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uph1rJ9889A4PIBKKjZ919Kq1UXJobYp7az5TPK9/tQ=;
-	b=t7A+CCoIua6h+10X01n5925lmUMreQBm7WG/Z8tpYnecUxFoggtBc9SS70ZZL1Zr5GSv23
-	E5xSbEXGKm5HUvBA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=KnkHt8KQ;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=t7A+CCoI
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755575418; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uph1rJ9889A4PIBKKjZ919Kq1UXJobYp7az5TPK9/tQ=;
-	b=KnkHt8KQlUCZfFoG6ZcTPRZ6a670UGyxtB0gniCgM4qD98po3RdR5dsRnJDA1Z8UPYF4Xs
-	VbwIevOMcotk8raJzjtBr35MMpr/38WkleWkba2zyqe03qEsV2O5XxrC+bWzbJSjZRroI5
-	HEPzg3znUbyBGzKXU8oFtE4bOjx3GVU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755575418;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uph1rJ9889A4PIBKKjZ919Kq1UXJobYp7az5TPK9/tQ=;
-	b=t7A+CCoIua6h+10X01n5925lmUMreQBm7WG/Z8tpYnecUxFoggtBc9SS70ZZL1Zr5GSv23
-	E5xSbEXGKm5HUvBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 97EA813686;
-	Tue, 19 Aug 2025 03:50:16 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id yBHME3j0o2gJawAAD6G6ig
-	(envelope-from <ddiss@suse.de>); Tue, 19 Aug 2025 03:50:16 +0000
-From: David Disseldorp <ddiss@suse.de>
-To: linux-kbuild@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Cc: linux-next@vger.kernel.org,
-	ddiss@suse.de,
-	nsc@kernel.org
-Subject: [PATCH v3 8/8] initramfs_test: add filename padding test case
-Date: Tue, 19 Aug 2025 13:05:51 +1000
-Message-ID: <20250819032607.28727-9-ddiss@suse.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250819032607.28727-1-ddiss@suse.de>
-References: <20250819032607.28727-1-ddiss@suse.de>
+	s=arc-20240116; t=1755573245; c=relaxed/simple;
+	bh=U9AiP79eOCXHplDIH6RSly7Iv7lDrsiyxvq1wFnhkVc=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=UMHbvDwJ3BOt3ngzJjyzZp4rxe7+iXJJ8SEmN1c2XBiwxnaii5zX1E3y3oc2TluWT7e/i3/5fhYnRThBibr1NEyalIicirFaGtJrjkg8HZGnTi+TZPWAyyyv502O5uIpwiHrB2BO6pne0RXTcFvjl6RSismOdTbAdMB645q6fUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=WTePi9Ls; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BDE6C4CEF4;
+	Tue, 19 Aug 2025 03:14:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1755573244;
+	bh=U9AiP79eOCXHplDIH6RSly7Iv7lDrsiyxvq1wFnhkVc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=WTePi9LshSVeRNN3OaGOdUsgrXFAjHRGQTU/CkE5uCy7CIayQmOw/QPiM1jS60e40
+	 wKSixI0ZMt4u02QXsDpLM4VgEreEWYPxRU50R/bChCrwWB2vlQUsR0vcSZBlLiVcDL
+	 aF2EDjH7DW0eS0oF/2HRYVCV3kL3YyoSi9YJ7cdo=
+Date: Mon, 18 Aug 2025 20:14:03 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Pankaj Raghav <p.raghav@samsung.com>
+Cc: =?UTF-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>, Christoph Hellwig
+ <hch@infradead.org>, Christian Brauner <brauner@kernel.org>, Stephen
+ Rothwell <sfr@canb.auug.org.au>, "Darrick J . Wong" <djwong@kernel.org>,
+ "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
+ <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+ <mcgrof@kernel.org>, <gost.dev@samsung.com>, <linux-xfs@vger.kernel.org>
+Subject: Re: [PATCH] iomap: use largest_zero_folio() in iomap_dio_zero()
+Message-Id: <20250818201403.33f469f169957d46ef061d52@linux-foundation.org>
+In-Reply-To: <43bca78e-fa89-4b0e-94f1-de7385818950@samsung.com>
+References: <20250814142137.45469-1-kernel@pankajraghav.com>
+	<20250815-gauner-brokkoli-1855864a9dff@brauner>
+	<aKKu7jN6HrcXt3WC@infradead.org>
+	<CGME20250818141331eucas1p21bf686b508f2b37883a954fd8aed891f@eucas1p2.samsung.com>
+	<4b225908-f788-413b-ba07-57a0d6012145@igalia.com>
+	<43bca78e-fa89-4b0e-94f1-de7385818950@samsung.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: A51362125E
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_DN_NONE(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,suse.de:email];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RCPT_COUNT_FIVE(0.00)[5];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Score: -3.01
 
-Confirm that cpio filenames with multiple trailing zeros (accounted for
-in namesize) extract successfully.
+On Mon, 18 Aug 2025 16:35:04 +0200 Pankaj Raghav <p.raghav@samsung.com> wrote:
 
-Signed-off-by: David Disseldorp <ddiss@suse.de>
----
- init/initramfs_test.c | 68 ++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 67 insertions(+), 1 deletion(-)
+> >>> Applied to the vfs-6.18.iomap branch of the vfs/vfs.git tree.
+> >>> Patches in the vfs-6.18.iomap branch should appear in linux-next soon.
+> >>
+> >> Hmm, AFAIK largest_zero_folio just showed up in mm.git a few days ago.
+> >> Wouldn't it be better to queue up this change there?
+> >>
+> >>
+> > 
+> > Indeed, compiling vfs/vfs.all as of today fails with:
+> > 
+> > fs/iomap/direct-io.c:281:36: error: implicit declaration of function 
+> > ‘largest_zero_folio’; did you mean ‘is_zero_folio’? [-Wimplicit- 
+> > function-declaration]
+> > 
+> > Reverting "iomap: use largest_zero_folio() in iomap_dio_zero()" fixes 
+> > the compilation.
+> > 
+> 
+> I also got some reports from Stephen in linux-next. As Christoph 
+> suggested, maybe we drop the patches from Christian's tree and queue it 
+> up via Andrew's tree
 
-diff --git a/init/initramfs_test.c b/init/initramfs_test.c
-index 517e5e04e5ccf..da16b012322b9 100644
---- a/init/initramfs_test.c
-+++ b/init/initramfs_test.c
-@@ -45,8 +45,11 @@ static size_t fill_cpio(struct initramfs_test_cpio *cs, size_t csz, char *out)
- 			c->mtime, c->filesize, c->devmajor, c->devminor,
- 			c->rdevmajor, c->rdevminor, c->namesize, c->csum,
- 			c->fname) + 1;
-+
- 		pr_debug("packing (%zu): %.*s\n", thislen, (int)thislen, pos);
--		off += thislen;
-+		if (thislen != CPIO_HDRLEN + c->namesize)
-+			pr_debug("padded to: %u\n", CPIO_HDRLEN + c->namesize);
-+		off += CPIO_HDRLEN + c->namesize;
- 		while (off & 3)
- 			out[off++] = '\0';
- 
-@@ -383,6 +386,68 @@ static void __init initramfs_test_many(struct kunit *test)
- 	kfree(cpio_srcbuf);
- }
- 
-+/*
-+ * An initramfs filename is namesize in length, including the zero-terminator.
-+ * A filename can be zero-terminated prior to namesize, with the remainder used
-+ * as padding. This can be useful for e.g. alignment of file data segments with
-+ * a 4KB filesystem block, allowing for extent sharing (reflinks) between cpio
-+ * source and destination. This hack works with both GNU cpio and initramfs, as
-+ * long as PATH_MAX isn't exceeded.
-+ */
-+static void __init initramfs_test_fname_pad(struct kunit *test)
-+{
-+	char *err;
-+	size_t len;
-+	struct file *file;
-+	char fdata[] = "this file data is aligned at 4K in the archive";
-+	struct test_fname_pad {
-+		char padded_fname[4096 - CPIO_HDRLEN];
-+		char cpio_srcbuf[CPIO_HDRLEN + PATH_MAX + 3 + sizeof(fdata)];
-+	} *tbufs = kzalloc(sizeof(struct test_fname_pad), GFP_KERNEL);
-+	struct initramfs_test_cpio c[] = { {
-+		.magic = "070701",
-+		.ino = 1,
-+		.mode = S_IFREG | 0777,
-+		.uid = 0,
-+		.gid = 0,
-+		.nlink = 1,
-+		.mtime = 1,
-+		.filesize = 0,
-+		.devmajor = 0,
-+		.devminor = 1,
-+		.rdevmajor = 0,
-+		.rdevminor = 0,
-+		/* align file data at 4K archive offset via padded fname */
-+		.namesize = 4096 - CPIO_HDRLEN,
-+		.csum = 0,
-+		.fname = tbufs->padded_fname,
-+		.data = fdata,
-+		.filesize = sizeof(fdata),
-+	} };
-+
-+	memcpy(tbufs->padded_fname, "padded_fname", sizeof("padded_fname"));
-+	len = fill_cpio(c, ARRAY_SIZE(c), tbufs->cpio_srcbuf);
-+
-+	err = unpack_to_rootfs(tbufs->cpio_srcbuf, len);
-+	KUNIT_EXPECT_NULL(test, err);
-+
-+	file = filp_open(c[0].fname, O_RDONLY, 0);
-+	if (IS_ERR(file)) {
-+		KUNIT_FAIL(test, "open failed");
-+		goto out;
-+	}
-+
-+	/* read back file contents into @cpio_srcbuf and confirm match */
-+	len = kernel_read(file, tbufs->cpio_srcbuf, c[0].filesize, NULL);
-+	KUNIT_EXPECT_EQ(test, len, c[0].filesize);
-+	KUNIT_EXPECT_MEMEQ(test, tbufs->cpio_srcbuf, c[0].data, len);
-+
-+	fput(file);
-+	KUNIT_EXPECT_EQ(test, init_unlink(c[0].fname), 0);
-+out:
-+	kfree(tbufs);
-+}
-+
- /*
-  * The kunit_case/_suite struct cannot be marked as __initdata as this will be
-  * used in debugfs to retrieve results after test has run.
-@@ -394,6 +459,7 @@ static struct kunit_case __refdata initramfs_test_cases[] = {
- 	KUNIT_CASE(initramfs_test_csum),
- 	KUNIT_CASE(initramfs_test_hardlink),
- 	KUNIT_CASE(initramfs_test_many),
-+	KUNIT_CASE(initramfs_test_fname_pad),
- 	{},
- };
- 
--- 
-2.43.0
-
+Thanks, I added it to mm.git.
 
