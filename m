@@ -1,144 +1,71 @@
-Return-Path: <linux-fsdevel+bounces-58267-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58268-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42501B2BBCE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 10:26:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B9B2B2BBD3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 10:27:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBC843AE4F2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 08:25:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E17135E49C2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 08:26:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CB79315762;
-	Tue, 19 Aug 2025 08:25:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C892731159B;
+	Tue, 19 Aug 2025 08:26:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="u3mj74ip"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QGaOTeOv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B4EA31195C;
-	Tue, 19 Aug 2025 08:25:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 347E52D24A0
+	for <linux-fsdevel@vger.kernel.org>; Tue, 19 Aug 2025 08:26:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755591930; cv=none; b=m9e7ZeqMRz9Drtu3EjueL6Q7I04qzyxFtnDPeKpATTNphfEKQslzWPr5l6VHvsvSwrdX8VbWkRar2ZG5h0hKbEa21w/dsGngi14iqb8c5UgMtP6nSXT+T4D+J2GcLUa4dDTG3xAWIbiDtXdPQnGgzcjDeOFzAXa+tJXdJ5QI5S0=
+	t=1755592009; cv=none; b=as61LQVqXGn0sk5/U/o9gLXD3MgeJLp5sM1NYHXFZAN1Swq+xTfnq4YwssZqGfsYYyXEB7sKPZabqPGHtHddc1vWGwjuX7j7YW9WTKz7lq9QUxDzw1vX0h/MO1vus6SKGYKrOTdoTGL6oqZq0qcBPb4WeIxoCZ1hdv9vm3a6SNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755591930; c=relaxed/simple;
-	bh=PXTU745VSyhx2OEIHWoNelqS0egAOcoigGskH1Ncr0w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cYzbRzUUFRU5C2rhfBC7lgrEFjeGs9SB2MF8b49EJyDqKreZjK5y/eu1l5NYid6n0F4NcM3qTe5w7dLie0C4k9d1VWvSki0YRtfeH5GPnj0GPIfR8o0VKyceAzp0cG6+ZIzarwQqdsqFtHwk4jck9AnBqqPuabbT0bRiAvVKdkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=u3mj74ip; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
-	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=2U+UZbwX1uaJHylf2E08XkTUURX8c5kOBefobOHX2Zw=; b=u3mj74ipo6P+nNAy+apNM91SK8
-	GcO4JJg5OIkLKtDL7EINXtqvUeLkANRbL3BelbbUosbg9ajydHIXSed8gV6P4NzJGgiGV6+yyg3Ur
-	bf2tv+so/X4aTKRntuBVH6mLA1qf+5iZeepF+7nVrsqqRbwC6m6fpkwU4vAzlGgQodj4MSwumiF7Z
-	D2i+4JZrdIydps6IVNKd+keV1M2Ayd2GMCl1XIp8Y8MPGskjcomCpvPDroPdTfz134itS5Qkhuht5
-	xJOQfsBKcKMY2znJmI8ajixW43qa2aWJdzVKqh+Kavuq4cUY/mhOQzVqRxUJ2345dH6KC5dqbbZaJ
-	Er7hAyXQ==;
-Received: from 2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uoHep-00000009nW6-09nL;
-	Tue, 19 Aug 2025 08:25:27 +0000
-From: Christoph Hellwig <hch@lst.de>
-To: Jens Axboe <axboe@kernel.dk>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>,
-	Anuj Gupta <anuj20.g@samsung.com>,
-	Kanchan Joshi <joshi.k@samsung.com>,
-	linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	io-uring@vger.kernel.org
-Subject: [PATCH 2/2] block: don't silently ignore metadata for sync read/write
-Date: Tue, 19 Aug 2025 10:25:01 +0200
-Message-ID: <20250819082517.2038819-3-hch@lst.de>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250819082517.2038819-1-hch@lst.de>
-References: <20250819082517.2038819-1-hch@lst.de>
+	s=arc-20240116; t=1755592009; c=relaxed/simple;
+	bh=nmnWoaa+srg/27QGdSKycia19G24zfT4q88QZFqFd/o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XKTfN8xsuG5ISh5P98kxCYmZHolTI2CkNBjjyiB27ygLC2cZXjKo95b+vRqB4S6lQMcg2IdG4c3EmfzD0dJSPt0s22KtGPaZLZowk86YyBNDlBAWmbFLWUSHIu3G521YcUhR+WdTnYT/XB0SMf2phKRBjOyej1JnYrSBXegpGLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QGaOTeOv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73256C4CEF1;
+	Tue, 19 Aug 2025 08:26:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755592009;
+	bh=nmnWoaa+srg/27QGdSKycia19G24zfT4q88QZFqFd/o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QGaOTeOvyten/gsJsdA/ZOWgL4/ZGJ/V7wmuV4UjVAPELMcyPzqxnoe4ELyzao2vl
+	 7parzdeR9+uidGAk05Z/OBypVr7svwtTEiUefVzTlbIy5bQG2V2t/hdZ5/zPs1KXkg
+	 zgFLLMlmxR4sKaJgk/94OA/M86JaewmNyPsqMdh6JJIHtw/+Lldz1BHHJs8F2UvByr
+	 zTCUYeU3yL3qbUtQb6QciKBTZtCawcsYYkMGcJVTcGIeVImTLMW3IqDg88q+o/kNNz
+	 2+fjnUQpkvqMTu/Z98+sYgHwIMQ3k5SwQAQ7ZPxCUnj5c+J1xaYw8MQPOknii+Ktn/
+	 /BEFE+kAMhxVg==
+Date: Tue, 19 Aug 2025 10:26:44 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: miklos@szeredi.hu, djwong@kernel.org, linux-fsdevel@vger.kernel.org, 
+	kernel-team@meta.com
+Subject: Re: [PATCH v3 0/2] fuse: inode blocksize fixes for iomap integration
+Message-ID: <20250819-inbegriff-titelbild-8c0421cf4bbd@brauner>
+References: <20250815182539.556868-1-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250815182539.556868-1-joannelkoong@gmail.com>
 
-The block fops don't try to handle metadata for synchronous requests,
-probably because the completion handler looks at dio->iocb which is not
-valid for synchronous requests.
+On Fri, Aug 15, 2025 at 11:25:37AM -0700, Joanne Koong wrote:
+> These 2 patches are fixes for inode blocksize usage in fuse.
+> The first is neededed to maintain current stat() behavior for clients in the
+> case where fuse uses cached values for stat, and the second is needed for
+> fuseblk filesystems as a workaround until fuse implements iomap for reads.
+> 
+> These patches are on top of Christian's vfs.fixes tree.
 
-But silently ignoring metadata (or warning in case of
-__blkdev_direct_IO_simple) is a really bad idea as that can cause
-silent data corruption if a user ever shows up.
-
-Instead simply handle metadata for synchronous requests as the completion
-handler can simply check for bio_integrity() as the block layer default
-integrity will already be freed at this point, and thus bio_integrity()
-will only return true for user mapped integrity.
-
-Fixes: 3d8b5a22d404 ("block: add support to pass user meta buffer")
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- block/fops.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/block/fops.c b/block/fops.c
-index 08e7c21bd9f1..ddbc69c0922b 100644
---- a/block/fops.c
-+++ b/block/fops.c
-@@ -55,7 +55,6 @@ static ssize_t __blkdev_direct_IO_simple(struct kiocb *iocb,
- 	struct bio bio;
- 	ssize_t ret;
- 
--	WARN_ON_ONCE(iocb->ki_flags & IOCB_HAS_METADATA);
- 	if (nr_pages <= DIO_INLINE_BIO_VECS)
- 		vecs = inline_vecs;
- 	else {
-@@ -132,7 +131,7 @@ static void blkdev_bio_end_io(struct bio *bio)
- 	if (bio->bi_status && !dio->bio.bi_status)
- 		dio->bio.bi_status = bio->bi_status;
- 
--	if (!is_sync && (dio->iocb->ki_flags & IOCB_HAS_METADATA))
-+	if (bio_integrity(bio))
- 		bio_integrity_unmap_user(bio);
- 
- 	if (atomic_dec_and_test(&dio->ref)) {
-@@ -234,7 +233,7 @@ static ssize_t __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
- 			}
- 			bio->bi_opf |= REQ_NOWAIT;
- 		}
--		if (!is_sync && (iocb->ki_flags & IOCB_HAS_METADATA)) {
-+		if (iocb->ki_flags & IOCB_HAS_METADATA) {
- 			ret = bio_integrity_map_iter(bio, iocb->private);
- 			if (unlikely(ret))
- 				goto fail;
-@@ -302,7 +301,7 @@ static void blkdev_bio_end_io_async(struct bio *bio)
- 		ret = blk_status_to_errno(bio->bi_status);
- 	}
- 
--	if (iocb->ki_flags & IOCB_HAS_METADATA)
-+	if (bio_integrity(bio))
- 		bio_integrity_unmap_user(bio);
- 
- 	iocb->ki_complete(iocb, ret);
-@@ -423,7 +422,8 @@ static ssize_t blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 	}
- 
- 	nr_pages = bio_iov_vecs_to_alloc(iter, BIO_MAX_VECS + 1);
--	if (likely(nr_pages <= BIO_MAX_VECS)) {
-+	if (likely(nr_pages <= BIO_MAX_VECS &&
-+		   !(iocb->ki_flags & IOCB_HAS_METADATA))) {
- 		if (is_sync_kiocb(iocb))
- 			return __blkdev_direct_IO_simple(iocb, iter, bdev,
- 							nr_pages);
--- 
-2.47.2
-
+Thanks! This all looks straightforward to me.
 
