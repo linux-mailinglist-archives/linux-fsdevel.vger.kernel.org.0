@@ -1,91 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-58262-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58263-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85110B2BB8F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 10:16:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FF18B2BBA8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 10:22:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A3AB3A8A5E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 08:15:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B684B1BA69B4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 08:22:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 601563101CD;
-	Tue, 19 Aug 2025 08:15:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A27EA286884;
+	Tue, 19 Aug 2025 08:21:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="xM/wFLEe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kFwQGaOl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EEF43451D7;
-	Tue, 19 Aug 2025 08:15:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078A41DF75B;
+	Tue, 19 Aug 2025 08:21:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755591341; cv=none; b=o9lWIb9pj9eI/xYm1vHRriKtJVOntbRjFdtII2zjrmSHOv+TjHSc3GMhdCVyiBSynO+OjjRamWi9kPlfqi4SUFWOhFl1vw+PmdzK4lY7tYLd/6ZQr8CKHOvpsxjKyo5bbBBUXb+FGZ/ynvMP0iHWTtb0BsUFIlbRI99eJMaTNXc=
+	t=1755591699; cv=none; b=Juwa41U2MqOtbe6vcyRZa7bm80Ngnjcfg40Cb06S730OjSK5jAi9bif8kxun5dREoUlGMTkjjT60yfrG8ia3WAZXWMXMXeTdnfnwL+GnT11gJssK9k5AFJQxg/tYuTLgaiXMdt03IkbrMR96gscjw0uo+yaalzeKpiyj+tHEtI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755591341; c=relaxed/simple;
-	bh=k6y6AF54juU7kl6kbKvDXfrb4wSrYoD5+fTUFg6zBto=;
+	s=arc-20240116; t=1755591699; c=relaxed/simple;
+	bh=1AqYxFw9YNhOVd5rohljfcXYRqZ5rqJ/niJ0Cw6cvLE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TUf3HTFqTTJJW13yLxHk6wRI7CkriWF0jOvnc8o4cq5jSZBBbG4USTrTnWEZ/+uAxjvxZAIP6IHYKcGbF2E59goAECSZppaaVuahZlMSf8MpG8IKRcknl+Me6hbROxwQNhoxFw9jA2EJSDbF169tK7YcjSl8dMKy2dpbdTLRRqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=xM/wFLEe; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=fRcvtU+W6HkjI1y5wLjk7QWRQYSRuxCjLLd23beixwY=; b=xM/wFLEeMOGcYpFv+dN0VueW/A
-	TAHSYW6NlFW/ySvzvulmO4zXxTC3hsKn2cWEMzJHIZeZHtfo16WoZ/fkFl/B6EnYl3U3RD5Q3s55S
-	Rnj0SFoFdtZrfncphbJ9d5Bz6JMvHdZuB2n+JSTth/njx+9ARiJtMY9g1rKZE2cXif8SBhgzh+mNF
-	7B7ROiBTMx5wK3RXf9VZpwKSkYH/ZiXdmj06DYuP3iGA0rEgUzmueUmUPy5LYU2iSU2Ob1f4kKD3a
-	yglYDgygL4zKj69GwJZ8cT94WCx0o4NI5AzrzX8YnP+mr0TjHpq0GD//sCFe/AYj+Wj30jBKMgWCK
-	tRjEZ8lg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uoHVM-00000009mHF-0bHD;
-	Tue, 19 Aug 2025 08:15:40 +0000
-Date: Tue, 19 Aug 2025 01:15:40 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Ethan Ferguson <ethan.ferguson@zetier.com>
-Cc: hch@infradead.org, linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com,
-	yuezhang.mo@sony.com
-Subject: Re: [PATCH v2 0/1] exfat: Add support for FS_IOC_{GET,SET}FSLABEL
-Message-ID: <aKQyrMX7xS5A8cv6@infradead.org>
-References: <aKK_qq9ySdYDjhAD@infradead.org>
- <20250818174911.365889-1-ethan.ferguson@zetier.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y/r/MScyTe6XHDS5CoTxOx4YX+lAG//uC5tgQL90ZK0BuHbjTxUWnRpsyQezi7gYfQvhZSYKCfP2Lqvh3JtHeyVa+g4R6aU7VmLDaaogUqYTWyKhbZSgSzhKzsC0znEw7QKUSu4mO5Ia4DMzB2/zgD6RXzfAFR5sdG76Xoc3+og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kFwQGaOl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4270C4CEF1;
+	Tue, 19 Aug 2025 08:21:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755591698;
+	bh=1AqYxFw9YNhOVd5rohljfcXYRqZ5rqJ/niJ0Cw6cvLE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kFwQGaOl7DICDDZHktsb4boMX8GP5uC9XXr7IcgcMCGnq8oADQf2ZdFYgAqNNZdsh
+	 fc9MsqBwKB4dvgXK5zPPxCGg/R593mhKfWpZYnJcYckZ2MXQQsz3Av8sntxAp3XZQ3
+	 48SQyI3GlCJ4Da8bZ/kAgzG0Sma4+RN6jKzV9hjI0DJOSVW8DSiPId/dTyj7clynr7
+	 vpyTUXUTaHf0VlrXP7QDVu8uovVZOAM+vaZ+Q8poK8vFWyJ8YwSj7gw6pgdBxN9msx
+	 NZntt9fVrVVYMJAkcFvGzEMYInt7JA3tOeUHIjAoInz5ugahec2v49rOPSPL3Be6LY
+	 3AKLtejYc2uiQ==
+Date: Tue, 19 Aug 2025 10:21:33 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: Askar Safin <safinaskar@zohomail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Ian Kent <raven@themaw.net>, 
+	linux-fsdevel@vger.kernel.org, David Howells <dhowells@redhat.com>, 
+	autofs mailing list <autofs@vger.kernel.org>, patches@lists.linux.dev
+Subject: Re: [PATCH 0/4] vfs: if RESOLVE_NO_XDEV passed to openat2, don't
+ *trigger* automounts
+Message-ID: <20250819-direkt-unsympathisch-27ffa5cefb4e@brauner>
+References: <20250817171513.259291-1-safinaskar@zohomail.com>
+ <2025-08-18.1755494302-front-sloped-tweet-dancers-cO03JX@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250818174911.365889-1-ethan.ferguson@zetier.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <2025-08-18.1755494302-front-sloped-tweet-dancers-cO03JX@cyphar.com>
 
-On Mon, Aug 18, 2025 at 01:49:11PM -0400, Ethan Ferguson wrote:
-> That's fair. I took a look at how btrfs guards against this, it seems
-> as if they use mnt_want_write_file to guard against bad writes, and
-> only write to the in-memory superblock, and commit the transaction
-> afterwards. However, this (during my testing with
-> CONFIG_BLK_DEV_WRITE_MOUNTED both on and off) still results in an
-> immediate disk flush.
+On Mon, Aug 18, 2025 at 03:31:27PM +1000, Aleksa Sarai wrote:
+> On 2025-08-17, Askar Safin <safinaskar@zohomail.com> wrote:
+> > openat2 had a bug: if we pass RESOLVE_NO_XDEV, then openat2
+> > doesn't traverse through automounts, but may still trigger them.
+> > See this link for full bug report with reproducer:
+> > https://lore.kernel.org/linux-fsdevel/20250817075252.4137628-1-safinaskar@zohomail.com/
+> > 
+> > This patchset fixes the bug.
+> > 
+> > RESOLVE_NO_XDEV logic hopefully becomes more clear:
+> > now we immediately fail when we cross mountpoints.
+> > 
+> > I think this patchset should get to -fixes and stable trees.
 > 
-> My changes from this thread also seem to work with
-> CONFIG_BLK_DEV_WRITE_MOUNTED both disabled and enabled.
+> You need to add
+> 
+>   Cc: <stable@vger.kernel.org> # v5.2+
+> 
+> (along with a Fixes: ... tag) for each commit you would like to be
+> backported.
+> 
+> > I split everything to very small commits to make
+> > everything as bisectable as possible.
+> 
+> I would merge the first three patches -- adding and removing code like
 
-What I meant to say is that we actually need your change to work with
-CONFIG_BLK_DEV_WRITE_MOUNTED, as the current way in tunefs is broken,
-even if that's something a few Linux file systems have historically
-done.
-
-> Maybe an alternative would be to only write to sbi->volume_label (with
-> mutex guarding), and only flush to disk on exfat_put_super? And to use
-> mnt_want_write_file as well.
-
-I think your patch is fine as-is.  I've just been trying to give you
-additional ammunition.
-
+Agreed.
 
