@@ -1,111 +1,129 @@
-Return-Path: <linux-fsdevel+bounces-58316-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58318-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E323EB2C839
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 17:16:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C5DFB2C854
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 17:21:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F54B5609DD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 15:11:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BEAC16C961
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Aug 2025 15:19:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B480127FB2D;
-	Tue, 19 Aug 2025 15:11:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93F91284B59;
+	Tue, 19 Aug 2025 15:19:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="CCEsgIa7"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JOSyij5e"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66F7D21772D
-	for <linux-fsdevel@vger.kernel.org>; Tue, 19 Aug 2025 15:11:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C76E284883;
+	Tue, 19 Aug 2025 15:19:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755616294; cv=none; b=JEUXQf2/WCEV19+C+dmE+KpNY5hKr/s8P0j3Tup9H8P5MEXuVqGrC3tZ5qKxDXIiZ6kXLf2hWzzprH8zrkgVAIxA8Va+88XszG+LpzM+/9ouvVL4R94U/ZjYbRuVfWVL82gnT5td5UdzAtAAPEaMoTiqSzgUqfGV39eGncODUNg=
+	t=1755616782; cv=none; b=CsU3rO+aPfWHgxgnUYQgrxhiItHvCLmooFWf71Me2/+pjNE0cPZ2kj+soE4AOXX7RBqrO1rS2LEIVnm/U573x9xQrS10lXmmP1Wgk5IVQ1H0G18CpliM84XiP9+KbF0EczOqV+97uWObwNgX4mTTntXpBjQCKlWSjFo+MibLMUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755616294; c=relaxed/simple;
-	bh=QycJOek0v5nhJbP+MM3OL5pORRB5+KjDcuVnGbqGgEs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=oP0D4lPPmgrWckfdLjvmSe4uC7/n1HugZElqFk3O3SDD3zWcvURdRLz52JEojBkMLfAVdftswCLGTIZRcNlKrI0Bm+Lb+Ou6KsvsoZqT/mN1t/Ov50ejOb8SA59wYYgN/yxarcQ4F9GJc8HE8LwZ5u971NkvFR1AaU+KLtepEXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=CCEsgIa7; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3e57376f655so42446885ab.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Aug 2025 08:11:31 -0700 (PDT)
+	s=arc-20240116; t=1755616782; c=relaxed/simple;
+	bh=TIeo1xuKKfF1R/j1XwRimq5gSQyHHJeAjKwlW6WoV1Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LxhGbXV2xnxvfYf+nRPioMgL4yta11yzzHawGqSJFk5Bhm+exYXXGBslnDt0ze1Igl84dixJ5NQOxMKNe5Z82EcBkJBxGjSL3rMj4Um00bXEat9g1vqKm4ByBvkg5/iC9vwv7me4wLeZC/QuUl2rBtYMxyRAGbSmk9lqzREuqts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JOSyij5e; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-55ce5097638so5706642e87.0;
+        Tue, 19 Aug 2025 08:19:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1755616290; x=1756221090; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=XJa+KTXC3mY3I1CFmfiLeW6ge9cWEkwQYxycSXbruFw=;
-        b=CCEsgIa7xYOHvvlqiCVHe4ie/qZUUblJzn4Nn4zr3bH3GFuHl14BSH8r8ga/rpLdWY
-         q+9cjg1h2aSWmnK4CDPyuhgk2wkY7ieSwu97m4qzPsgBicZVkwrRbzCaCzYYYEGJfzLY
-         bZl8+bxAt/qLxqOADPEg8gJZf2nEB29m6nCr7Z00ty7EbEpSQjfGHxG5R8Oc+32sF1tF
-         /IuUaeuRPP7IhkBc+vPbBR+hPPB+oGXsG85wQ6YXiud3Y8MKTuUV9P5SpdqIUNOKD8pb
-         VI7Uw+eQxcjWL1lvRtp98o7hcBZwcaqzACXpjBMCXv+1Wzejtq9ohnbmg8LAaUK0AN08
-         Lzpw==
+        d=gmail.com; s=20230601; t=1755616778; x=1756221578; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BjfrgqJY3ktAihSvQOIHVGRGiDJldrhQiydaCwMMydc=;
+        b=JOSyij5ewb/rX2x9LDSv3LNLHlFTx5/kRu8kgGVvfuHl5SnVTHzaOuGhh0b6VPf4SH
+         CI0m/pdRAKIijb2/Qvx+4VTQPLc0XP52d+6g4gJ7la3XiqembsoDbaXZcZCE08NsFDtw
+         o8jQ4immlbdW/hN9/Lj70qEt5/Dp/UbPDpmJVPsE5Ll2cbV0FYBszt31DMOwB+fm1xZB
+         V2ke8+4UfVWemFi3EuZJZIcGAEsRLbfWNvNr0QB5Q3LiA6RyuS76sHQ74K1tsS+KnsYA
+         RL3U5900rvD6lsofEHirvdZjMA49eO7OEZ8SW9l4f4eKMCLwU7Acp1o1zJ7CQjB3rG+R
+         UscA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755616290; x=1756221090;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XJa+KTXC3mY3I1CFmfiLeW6ge9cWEkwQYxycSXbruFw=;
-        b=oLMfqH+MmpIj5IqXbzWZihT8vC1GVwJu8dbTmZYPJPO6RRbPJSREoEcbRneWADtiKj
-         NE5tWSLLAqvwqrbEPlLBCda1t+/FJto6qIexziwYDXB3fKze5inq6BL5FJwyhIsXi0gb
-         6lCuzhODNbpXt0qpQ9vLflHFAM99EGbo9iEu/e0rHw0/rf/kyCKVtHorFvcOrQWuQIBU
-         yRhixnczd++dHsBjcEUKMBx8zrNN04895a3eFgTwJBhNW2X9RLyCgqHGBUshuofJhoHK
-         RWFr2c3SgzzUlmIdl6Hf0olmleCfNkHLyDH19hyix8GlsVH+V8AmoLfknXMC0PUNip6R
-         PPaw==
-X-Forwarded-Encrypted: i=1; AJvYcCWWIdbC+ZOd5yuu4I3YBqaiSdM6ZRjLZxrm/0PYemZx//XV0ezLz6niU26XRCnuul/+RXUAA96GS+iQZo4F@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/GsFrAS0SFaLAdw4hJ4kxRG/p4fmzmOtElqiBY5CzO3YSStbV
-	+obm6ozS4WRgnRned96r73QFrT5Rpayu3D5gqW9X0oB5qVlbpuXv/uEeu7G/1K1xNO8=
-X-Gm-Gg: ASbGnctbK6tIb5vM9R4avmqGi/3llrt1jKQQCrtNW/kELy4Q8rdMAts3v6+DlBdggDH
-	4lW83xOikguYIXKB0Z3ukyRD0RPIJmOzXD7Xkf1zKDzaxJrvWkBuiRjS4ZdNhUgYiMT90a0U8qP
-	k6FCmT2YCCy96tJP3Zc9YvplOM67NQqzrkGfFTQz148a8qchJHMcOtxvgl0Jx2Q0/rxDdED0ESX
-	JL+Pv4f/gtckRycBs0qBCGilzGihZN0icdjZ5rggdGEToj3JvYiO5jOJtOr8uGob2TASyXSCo4v
-	K/QsWQavY6a8yvGAUzQCb54xlYHUaTnjpGbnL80sbpkwiuIEGJyeVhOhYU0lTJw8nQourzZ+zPF
-	xsUnCmWY6JRY4zxSvFwiaK8pX7yZ6Vw==
-X-Google-Smtp-Source: AGHT+IFY0exKSpm0+f6H/wzlf9xavbPn8hy9QGoJ0cK7LCW8RzIzjH4Cjwh92XwtseArqsfz0PbY1w==
-X-Received: by 2002:a05:6e02:1549:b0:3e5:262b:8303 with SMTP id e9e14a558f8ab-3e67665cad6mr49090925ab.20.1755616290212;
-        Tue, 19 Aug 2025 08:11:30 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e58398cce3sm38224325ab.19.2025.08.19.08.11.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Aug 2025 08:11:29 -0700 (PDT)
-Message-ID: <e914d653-a1b6-477d-8afa-0680a703d68f@kernel.dk>
-Date: Tue, 19 Aug 2025 09:11:28 -0600
+        d=1e100.net; s=20230601; t=1755616778; x=1756221578;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BjfrgqJY3ktAihSvQOIHVGRGiDJldrhQiydaCwMMydc=;
+        b=AcQLiiba4oUBuKmj+xGuxbe1GNqreCquZeyLZoKBKnDf+7jQbXQ6EDxzwKqmh8Z+Wo
+         Pdp20Wq0NMJQSYbpS5/XaZI/AwjIT3dbwiZMpl2QuHrOP1He9doNc0CCa/n24ujJZ9P6
+         qedK0068KqjC16p5sd2jRBeg4CZ98ERYEcb1PlUa7NykkHa1m9ALfuBlWP8jYIECJsn7
+         66miK6We1dwjaLC+OXXMWlriygj/+H1NF9q8Xxo2JVl2UBAAuykG6tEyJr5e9jRVdeFt
+         F0nOlSVBhuW9O6rAvXUS6uKcK0adUpB2ZPRiGfJXCIKOJAek2yQCj/0eXs4fpJnrJbFS
+         qSKg==
+X-Forwarded-Encrypted: i=1; AJvYcCVfbHPqzdaqD4I7zdySx/UJjlVTD42WSfcNlMGpRKBq7Xk1MFShdLy8Pjg+Fimxwp0/lcF+s8fY86iAUC3A@vger.kernel.org, AJvYcCVm4T7ZLLF0rJIly9i7eUWNkiY9O/qNkaYyqpjjxjinBIXd9TUD3a0KZVSdl5StRF7NbHyLzuxRwv54YIMRLg==@vger.kernel.org, AJvYcCXuA5RMCTCfEXjWP5QTSDsoIjOrs5wU3hMo22f7H4UBqMhvJG5ObhPoAeEE9SLJeKHsf6iThvs7hM7CkdP+@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbgMB681U8My28HdnBiyk1aJ9kavBd0nLdyIQGvltFcHYEMbFf
+	bFFylJu94RnfYqF7uit1tdTyRM2oCHWo/P0oBOWj9HoG+Uy5m1pi9q7mGU4ycm15
+X-Gm-Gg: ASbGnctvE9T5LcGPHBGMfRexbA/juA73j1EIoVbnqup4ca7ORBLltaqpxg9j9C9RJ1b
+	KhUqobSFHxYKFaJmpeOAAOiaPAYKg1cwFOzpt4bzAjKqSIHkqy164KtSVzGgdGQe971lGs5Xm5f
+	H6J88tRNFyB1qx3Q8Eh3jfFZYtar2++JOj/Ao3Kf+t4I3Iyw9jK69I9Ix/Czg57oDaYND/AK3M/
+	lfBcLFF55mhSN43jeAt+kIe6KFpewkDbNF9CEuhOjZzLlb6KErqii04ZcLeAox+38DnrtA6lUii
+	nwY254wY1GuF2w9FV3o5vZ5LORH2B33Ey6F/0hnoDMAmGeNnJBGEJZts2bfUUhVgysX4H2Y5cG0
+	T42NC/CPtXi+knEA1MBTpdpcGiVCE3Y5vBPO9nDnZrmQKlOHRaNXO7cfg1dxxryXVl9SORKSlD/
+	pRwNXRgKBiaI1q
+X-Google-Smtp-Source: AGHT+IGtID1z0YmR2i4wueCGyyoAY7Kcui1N5y3waYxRkqTCDXDFmLebk42/gxigc0vQTMajTi5+vA==
+X-Received: by 2002:a05:6512:3ba8:b0:55b:8e7b:8afe with SMTP id 2adb3069b0e04-55e0082d2d3mr866385e87.27.1755616778027;
+        Tue, 19 Aug 2025 08:19:38 -0700 (PDT)
+Received: from amir-ThinkPad-T480.ctera.local (92-109-99-123.cable.dynamic.v4.ziggo.nl. [92.109.99.123])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cef221c79sm2141266e87.0.2025.08.19.08.19.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Aug 2025 08:19:37 -0700 (PDT)
+From: Amir Goldstein <amir73il@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>,
+	Christian Brauner <brauner@kernel.org>,
+	NeilBrown <neil@brown.name>,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-unionfs@vger.kernel.org
+Subject: [GIT PULL] overlayfs fixes for 6.17-rc1
+Date: Tue, 19 Aug 2025 17:19:33 +0200
+Message-ID: <20250819151933.681698-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHSET RFC 0/6] add support for name_to, open_by_handle_at(2)
- to io_uring
-To: Thomas Bertschinger <tahbertschinger@gmail.com>,
- io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- viro@zeniv.linux.org.uk, brauner@kernel.org, linux-nfs@vger.kernel.org
-References: <20250814235431.995876-1-tahbertschinger@gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20250814235431.995876-1-tahbertschinger@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-I'll take a look at this, but wanted to mention that I dabbled in this
-too a while ago, here's what I had:
+Hi Linus,
 
-https://git.kernel.dk/cgit/linux/log/?h=io_uring-handle
+Please pull overlayfs fixes for 6.17-rc1 with fixes for
+two fallouts from Neil's directory locking changes in 6.17-rc1.
 
-Probably pretty incomplete, but I did try and handle some of the
-cases that won't block to avoid spurious -EAGAIN and io-wq usage.
+Thanks,
+Amir.
 
-Anyway, take a look at that too, and I'll take a look at your probably
-more complete set.
+----------------------------------------------------------------
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
 
--- 
-Jens Axboe
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
 
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/overlayfs/vfs.git ovl-fixes-6.17-rc1
+
+for you to fetch changes up to e8bd877fb76bb9f35253e8f41ce0c772269934dd:
+
+  ovl: fix possible double unlink (2025-08-18 13:16:49 +0200)
+
+----------------------------------------------------------------
+overlayfs fixes for 6.17-rc1
+
+----------------------------------------------------------------
+Amir Goldstein (1):
+      ovl: fix possible double unlink
+
+NeilBrown (1):
+      ovl: use I_MUTEX_PARENT when locking parent in ovl_create_temp()
+
+ fs/overlayfs/dir.c  | 2 +-
+ fs/overlayfs/util.c | 3 ++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
