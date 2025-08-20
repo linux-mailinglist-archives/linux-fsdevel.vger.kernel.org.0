@@ -1,95 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-58387-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58388-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42323B2DD99
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 15:19:42 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F3FEB2DDF7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 15:38:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 399FC1C80AA3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 13:19:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 82E2B4E34F9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 13:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BD4B31CA68;
-	Wed, 20 Aug 2025 13:19:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MxDKVRCi"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1B773277AF;
+	Wed, 20 Aug 2025 13:35:22 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 353E327BF99;
-	Wed, 20 Aug 2025 13:19:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3EC22D3231;
+	Wed, 20 Aug 2025 13:35:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755695970; cv=none; b=bLkGfkHbShX5NbkzIym83cG6IONI1KswWnrVbeoUW7tZc3gev1uBLYzF3O0aX1L39gpIKIrsnwu4s12pv7Mv5y35sfqHBT5dQlEbO6ilWcjW34HhERcpnnnyFxLvHuJCnucG/tNmeauNIzA92XvaIbDnQGdmkh7WCaESjyYmBis=
+	t=1755696922; cv=none; b=HQZYeZR5cTGpUqIKiaS5P0oIEpRgfQkbjzh7V/9gcQ1/mkZRjSTICOrkT6Y9V1eIw8QbnR1hehOqm7WSt+GD2UlANBgtWG43oc9OoaW96lIKT7ZzKMU02UrTMejw6FYOFdq19/msdh5bxIEzdE/j89kSQNHw840mu4HrS/JLvAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755695970; c=relaxed/simple;
-	bh=H54lFfaLHCN+ofvzv859ScHjwUJrYa8gSwr0xBMg1X4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m2MI8kPk039FUABk/lkyyhvKJMT0Zbpuo/ZAjBoXs2iNZT6OIc1Xu4Oy9s3S1Wa31yVdC1hE9f6bt3z1COIYL/h0Dy+89LN/Bg9eu3CbJ5vUGy/BJ7j9FDBLjM+cXqiE2NWr4Bia1Ccci0iKNn1mokgDaGcsA6tXYATRToqn31c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MxDKVRCi; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=/Rf1gRvfsQcsfD3pWbw3tEq8WPxbn5ncB2F5gE38IRc=; b=MxDKVRCiAxCdKxMNwjP7qRKHEu
-	Tjs+AegVgBtZ3NoDzVBCPmIdeNfzc65MHMoiz7gNjJHVktqIm/JezxB/RFkKwc+PQBV8Ni90ia+t0
-	NkvOdBJx7WOeUsJLk3pTyyM+CWKyzkQ9uNhb7rZq1DeT7XbSTrOw0w6D1Xdh0QYeA2DPrXyW4J0Se
-	zHjFOHzPAny6IsoT2wUP/sX/tKGvYr+o7STD7b3cylwyn8q8QdFxAmb4El2WMnXfYZX2jS8d9JnJa
-	h01FBXB7akxZE/hu676Kp9Xi6QQRkBKrQCijkHXaAin8JWKRsH8/NNKYQKKChJ1EY9IF/Kb5mI2kD
-	k8637daQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uoiiq-00000006rUZ-453Y;
-	Wed, 20 Aug 2025 13:19:25 +0000
-Date: Wed, 20 Aug 2025 14:19:24 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Boris Burkov <boris@bur.io>, akpm@linux-foundation.org,
-	linux-btrfs@vger.kernel.org, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, kernel-team@fb.com, wqu@suse.com,
-	mhocko@kernel.org, muchun.song@linux.dev, roman.gushchin@linux.dev,
-	hannes@cmpxchg.org
-Subject: Re: [PATCH v3 2/4] mm: add vmstat for cgroup uncharged pages
-Message-ID: <aKXLXJw7m-TSkZOI@casper.infradead.org>
-References: <cover.1755562487.git.boris@bur.io>
- <04b3a5c9944d79072d752c85dac1294ca9bee183.1755562487.git.boris@bur.io>
- <aKPmiWAwDPNdNBUA@casper.infradead.org>
- <tw5qydmgv35v63lhqgl7zbjmgwxm2cujqdjq3deicdz2k26ymh@mnxhz43e6jwl>
- <aKUM49I-4D24MmwZ@casper.infradead.org>
- <i4hg4g75ywbera643uhtshkj6xrriqi4mi5dg3oga5os3tp6m5@u2dcv2snbiqs>
+	s=arc-20240116; t=1755696922; c=relaxed/simple;
+	bh=YRYktNFFgTk/blFCWFAsBlNr++wW/px3N+hR3EFl8+M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ejNQt9uaQQ0Gh5VA/0edBSD5YyNvx8kqwy0NSXJYTTi/E0p17wIC2u5PIKC58nlEjClY6mZo8oqDncgKnUhmV6tpSpCgjym3vGaFmD3XcCwhAMZIdFeEZ8+MJoeRRW+ebkUqyV0Sq1O8po7EOmWKoIi0A1XS6pkhbJ8j9EJQFiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 789171f47dca11f0b29709d653e92f7d-20250820
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
+	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
+	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
+	HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME
+	IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_EXISTED, SN_UNTRUSTED
+	SN_UNFAMILIAR, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_BAD
+	CIE_GOOD, CIE_GOOD_SPF, GTI_FG_BS, GTI_RG_INFO, GTI_C_BU
+	AMN_T1, AMN_GOOD, AMN_C_TI, AMN_C_BU, ABX_MISS_RDNS
+X-CID-UNFAMILIAR: 1
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:eb32aa9a-7641-4351-973f-f00cae767eed,IP:10,
+	URL:0,TC:0,Content:-5,EDM:0,RT:0,SF:8,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:13
+X-CID-INFO: VERSION:1.1.45,REQID:eb32aa9a-7641-4351-973f-f00cae767eed,IP:10,UR
+	L:0,TC:0,Content:-5,EDM:0,RT:0,SF:8,FILE:0,BULK:0,RULE:Release_HamU,ACTION
+	:release,TS:13
+X-CID-META: VersionHash:6493067,CLOUDID:9ad44a6ea3e5f4a61a3174d9144e2e8a,BulkI
+	D:250820213504ZXR79S3G,BulkQuantity:0,Recheck:0,SF:16|19|24|38|44|66|78|10
+	2,TC:nil,Content:0|50,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,B
+	EC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_USA,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,TF_CID_SPAM_SNR
+X-UUID: 789171f47dca11f0b29709d653e92f7d-20250820
+X-User: zhangguopeng@kylinos.cn
+Received: from localhost.localdomain [(223.70.159.239)] by mailgw.kylinos.cn
+	(envelope-from <zhangguopeng@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 1597698993; Wed, 20 Aug 2025 21:35:00 +0800
+From: Guopeng Zhang <zhangguopeng@kylinos.cn>
+To: viro@zeniv.linux.org.uk,
+	linux-kernel@vger.kernel.org
+Cc: brauner@kernel.org,
+	festevam@denx.de,
+	jack@suse.cz,
+	linux-fsdevel@vger.kernel.org,
+	Guopeng Zhang <zhangguopeng@kylinos.cn>
+Subject: [PATCH] fs: fix indentation style
+Date: Wed, 20 Aug 2025 21:34:24 +0800
+Message-Id: <20250820133424.1667467-1-zhangguopeng@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <i4hg4g75ywbera643uhtshkj6xrriqi4mi5dg3oga5os3tp6m5@u2dcv2snbiqs>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 19, 2025 at 06:25:36PM -0700, Shakeel Butt wrote:
-> On Wed, Aug 20, 2025 at 12:46:43AM +0100, Matthew Wilcox wrote:
-> > OK, but couldn't we make that argument for anything else?  Like slab,
-> > say.  Why's "file" memory different?
-> 
-> Good point and I think it does apply to other memory types too. I would
-> call "file" memory to be more important as it is one of the largest
-> consumer of DRAM on, at least, Meta infra. Slab needs a bit more thought.
-> At the system level (i.e. /proc/meminfo), we account at the page (or
-> slab) level while for memcg, we account per-object (plus obj_cgroup
-> pointer).
+Replace 8 leading spaces with a tab to follow kernel coding style.
 
-That was supposed to be a reductio ad absurdum, not an invitation to
-add more counters.
+Signed-off-by: Guopeng Zhang <zhangguopeng@kylinos.cn>
+---
+ fs/namespace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Look, if this is information you really need, I think you should come
-up with a better way of collecting it than by adding new counters and
-new complexity to everything involved in GFP_ACCOUNT activities.
+diff --git a/fs/namespace.c b/fs/namespace.c
+index ef9521e06cae..7673e52f437a 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -2455,7 +2455,7 @@ struct vfsmount *clone_private_mount(const struct path *path)
+ 			return ERR_PTR(-EINVAL);
+ 	}
+ 
+-        if (!ns_capable(old_mnt->mnt_ns->user_ns, CAP_SYS_ADMIN))
++	if (!ns_capable(old_mnt->mnt_ns->user_ns, CAP_SYS_ADMIN))
+ 		return ERR_PTR(-EPERM);
+ 
+ 	if (__has_locked_children(old_mnt, path->dentry))
+-- 
+2.25.1
 
-The unaccounted address_spaces are a very tiny percentage of file
-memory, at least as far as this patch set goes.  I don't think this
-patch is justifiable on its face.
 
