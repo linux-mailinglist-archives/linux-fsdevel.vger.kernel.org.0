@@ -1,193 +1,369 @@
-Return-Path: <linux-fsdevel+bounces-58414-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58415-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D1E1B2E874
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 01:07:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E15DB2E87C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 01:15:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F29FA1C881A6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 23:07:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5B1D3AD284
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 23:15:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 293092C21EA;
-	Wed, 20 Aug 2025 23:07:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 262702DCBFB;
+	Wed, 20 Aug 2025 23:15:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="Ik9mJkFv"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gPPzOL+3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 349B636CE0E
-	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Aug 2025 23:07:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755731233; cv=none; b=qxNaNMudk7ZRAEARfAUIercrZuW1k0DV+KzXmHb7FzTMLuEdc5umJI2ii39+YQHrtm+WfWPnxqkxSrKRmrRD7hSO7RZWfSAWPkEhSsKYGtpQKNWL3xV3Bq1NnW0ceT83v5Fpirpe3/odCE6Nha0NTvki7ItRzAynWnC/CwSml64=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755731233; c=relaxed/simple;
-	bh=eu4K9BPfPMpWajlPHDxKCtKJIFb8MMTnD8A9Uf5ojgk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HoovN1h4w6gPgVUXDAN78oBYKXUzUFssHV2pMBbdJEk55iOVMKm7H3oTPrXnQArmDuSE3hnEYjvcNcFSXpwjQ9H4kP8CuXF3+eiRJ5o1kpZVhKYJp+smVyWPQhq+e3mfN4Hss6lMmKo0kIhkQSLcSvf/7M3wblNjh+wtGXJkVmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=Ik9mJkFv; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e95026b33eeso591341276.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Aug 2025 16:07:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1755731230; x=1756336030; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vJMnwFAoUK8fi5vLuEhOZdeebfJBc6a5q8PCtng4nG4=;
-        b=Ik9mJkFvY7sIg/lizwHy8L/N+ibS6cykvxlcbwKgTd/eLiH4ixDEfGc2BgbAYZLjCb
-         xN5LmPRNqkWjbkIC+7q1Kq74DozW9OqPngRTtkxHA9auHhHOgcGneJlDQDEvbVQ3/eEf
-         4YuEPsbxepJl3MNS1sWF5DrpoIKcv1kf4fXUdbxojYS8x7jpf8SnAdWOpZ3tCD1vYFJ9
-         wXD+8wyw/6apQRow3zmabpWDCdtf/JUX+wAN+jb1B8Ur6sal0PrgLRsTpNahFhY7sk/d
-         C4K4fEJHxhaK5DXvy0pQPnT+/H3ZGpBTFbR+wpKSZ091VbJkAwO9OzNbhbKqvn/YaBMW
-         S8oA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755731230; x=1756336030;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vJMnwFAoUK8fi5vLuEhOZdeebfJBc6a5q8PCtng4nG4=;
-        b=LTMBify68xrlDvr6J3hotgEwcg8QEpafFLaUV4dtQoy4a43rwwB9Rowe2Blc42AO1S
-         5igoWOgwuzQSmlm+B9TcNRJdJ7dAztEdDP9AJ8gOGpfzuLjXqDYJs4ZEbiL2MoYrsGns
-         33o2ijIPukp8a9oeyyke2upKI38EJggi3Adl34cCJu4XoMelFhgz6YCZQUa7NXBBrN/D
-         pO0JozAMw8Zk+sZGelvvwqVjFLe0uDlEy3s+X40fsJ4VVbhZyLHumP9aVgS3EGygZ4pG
-         hRyi6s1cRoE1VwNz/tRlxQgRrQuXEOZoFOZoJeq8xn7z6jWnoRBwmUjZ0XIEnyE6mUPN
-         WK9A==
-X-Forwarded-Encrypted: i=1; AJvYcCUrBQinUy2b15RRRDR1Dsukz1Bez8EW7XYMia4O1MPJ0J6JxNzvSdx0ZY+WqeMao7Fm82Ju9wa4/dRi2csu@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxp9q75bS2IW51/nIzs3S/qHBlUkdysOxQXsviD6kiNEEI0KBN+
-	bkqdNo/QpmRp7DxmOzpmN314VzyP9KQbRDmuMwI1dMZuKEPI4ytVhpiV4XxJZFgO/9s=
-X-Gm-Gg: ASbGnct/1PsV3I0/lD7/zz7EUaUIu42w7+LatrkUFcYsPIj4VShPsUEy/bc+T4IhQ99
-	t1cwvqNo4e6Z7Z+NWi/KJM4ZRHdFKArNJAJAbOMaxagRVCtkPG16h0viU1K2s56xobhrxTx4NG0
-	VnNLqtFfn3nczbaRafoTkbDqxhzA08e7kEoJqrkNBvda2sPu6zL1eEx3Jbxt2C0Mg6B7pf6gHO+
-	tjFGz3+yh04a1NQRTU8kGi95OodFQ4oXMlpGRRs5ZAlBE+ATBlhH7BIpVLfHKLafIyREJz2rIp6
-	NxKOu/Jo5On8eKd3xSmyzI3zGECjqQTWe4M9V5lhlVOMSaUYw9Ugr4cQrwbmPFsyAMcB0bYbxBD
-	gt0dx3Ybtfxs56F/DNuTQS8vRQw6rGK+l
-X-Google-Smtp-Source: AGHT+IG0jBZc/J7E8q0mResKxUfwGEs7jeUVT2UU93RV5mF42S7fBH5jNA5STWCCDsA/oJI4lo9ttA==
-X-Received: by 2002:a05:690c:708d:b0:71f:9a36:d333 with SMTP id 00721157ae682-71fc9f6aa89mr3378207b3.22.1755731229770;
-        Wed, 20 Aug 2025 16:07:09 -0700 (PDT)
-Received: from pop-os.attlocal.net ([2600:1700:6476:1430:3803:c8a:daa8:762e])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-71e6e0c1a39sm39966747b3.67.2025.08.20.16.07.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 16:07:09 -0700 (PDT)
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-To: glaubitz@physik.fu-berlin.de,
-	linux-fsdevel@vger.kernel.org,
-	frank.li@vivo.com
-Cc: Slava.Dubeyko@ibm.com,
-	Viacheslav Dubeyko <slava@dubeyko.com>,
-	syzbot <syzbot+773fa9d79b29bd8b6831@syzkaller.appspotmail.com>
-Subject: [PATCH] hfs: fix KMSAN uninit-value issue in hfs_find_set_zero_bits()
-Date: Wed, 20 Aug 2025 16:06:38 -0700
-Message-Id: <20250820230636.179085-1-slava@dubeyko.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A3412DA76E;
+	Wed, 20 Aug 2025 23:15:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755731703; cv=fail; b=TZ5Y3BOX4NSrJnSx9fZr6DDXyzlsZts9rdYXOb2ZmQ5qtVVbRfAW0mqCo9Mg8KwAzPxfuviLzj7rSXz7zv/QGHPrvFt3Bgf6Igt1WeBnd0TDkFy+hSiQVM6WS0mqCC/8ACkqiHfr/hV5efVFiOF3PbHQBk+wyNQY5o5Qy2Dy6RM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755731703; c=relaxed/simple;
+	bh=MenjGkEtpqgBjXwIiwzRXS5XPE4HsgHmP+0uq66x+o4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=hYpcsxL8D49S7N9hdWAjwZAemMJ466DQQX9giMKf6Vcb8aXkf5z5g+iJ86KqGNnOdiN5wLwWhB4lhJs5fVCE6N6YAhr/P/ivRbfeVKcOadqpw9POS5uuwe5/1u7O4atfhSBZq9L5NZ2QNrVsOaEQS5sCAsTULSmmggeNm9kGZCs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gPPzOL+3; arc=fail smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755731701; x=1787267701;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=MenjGkEtpqgBjXwIiwzRXS5XPE4HsgHmP+0uq66x+o4=;
+  b=gPPzOL+3j4XUBjq5XXSOlufyNjGlc5Ql2Jlouv6GKOoeaup8aQ65U3D8
+   W6gzMg2V4bIgW6rJ0zZh7BssyoxJsQSS62MAizWD6XEPWqdK0q77wgLfi
+   xLRdhwz7ZaNeGoKU3BGToqbRuk9W6qkkACyTqEbMlW8YO4vrCSHOFePWM
+   IA4y+qFT56UoBl3Dxb2PGFvMvhLfOvrMppYXRwJvP5K60ZZ5DyH4ZYHN/
+   H/RQZtLtxltInNoLkoQmSfmoSYs6XmVf5IV34oO954fHB0lWXWO92gFbT
+   kZ53t+2l9HYM33ATmL3d7bZAiNR3IqcVw9MoN60Fws4qrVDrilmkdfyFX
+   g==;
+X-CSE-ConnectionGUID: MvxWi4hAR6CEKTRo3+c2yQ==
+X-CSE-MsgGUID: JKetJJf2TraK/J8aIKVAtw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="69386152"
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="69386152"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 16:15:00 -0700
+X-CSE-ConnectionGUID: 1wIyD1A/R9eGModLIFnm0Q==
+X-CSE-MsgGUID: Wr7tyi3UTDy8W/pZzdLMgA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="168179287"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 16:15:00 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Wed, 20 Aug 2025 16:15:00 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Wed, 20 Aug 2025 16:14:59 -0700
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (40.107.212.40)
+ by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Wed, 20 Aug 2025 16:14:59 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YdpOCikQGdW73vc6HVnSueAJ69xV38fkDWfOPIA/RfxoU6LabZu///psuImO2QcNJ0Dan9ZI9OtbSuhNZVc5qPW64eg/ZsUYZUH+2vZt9DdMva31Rj3exWtJUk+TGJmIVEBsiOzjcKNV4jOeAGwx/Mw7ZTDl/q1/aJpUqIyyGETFLO9lOVnKMJEPTFsWo7TEpxV90HzMNPJTKWSQ/sMZhMdcrQZMXpHNfyGj+5KoBxrGBi5QZC58nD2/9HJc3Bkg3M3D5BZ6IMf28fZPBtXucENAmH/obrVbaM3dRlVuE2Mth3/Sk9Jsu31WNj2EScivMyJqe36M1Esnk5boWj4izg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1eTOpL5jkjn1EKdPdH7PwGmR4CSfmRY/WhfLVO0Yx2E=;
+ b=AdbaPYBA0S5wPerA75qdw9cKiUnC4DZ2apQL1ZDbzb5O57hq3VnLeIQpNFp4A4UdblDg2D7sKFvFyT2QB4HwrPelQYdL6TwpsBBhuAIyN1f/PWPEBmxgYnKb+5Cw1i96YpGdiapdP0peZwXzdC1XMVXUcn+y9hdnyZjLGMttLO2eVhIkBNCerMl6T1H7wdJ9xXfAzOWCa8XTDcFz3sB55dUfyIoWwy5hcW7F8OL8f+MBVJf55y0A3N8MNdLtUK089un3xavAw6/uaLJviUtoDiYXdDOWY89skI7wegTQYTu6i+qecrbrnNs6zvBX9qnrdDygwuJnoyxr/TZMwmanlQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS4PPF0BAC23327.namprd11.prod.outlook.com (2603:10b6:f:fc02::9)
+ by SJ2PR11MB7672.namprd11.prod.outlook.com (2603:10b6:a03:4cd::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Wed, 20 Aug
+ 2025 23:14:56 +0000
+Received: from DS4PPF0BAC23327.namprd11.prod.outlook.com
+ ([fe80::4e89:bb6b:bb46:4808]) by DS4PPF0BAC23327.namprd11.prod.outlook.com
+ ([fe80::4e89:bb6b:bb46:4808%5]) with mapi id 15.20.9031.023; Wed, 20 Aug 2025
+ 23:14:56 +0000
+Date: Wed, 20 Aug 2025 16:14:45 -0700
+From: Alison Schofield <alison.schofield@intel.com>
+To: "Zhijian Li (Fujitsu)" <lizhijian@fujitsu.com>
+CC: "dan.j.williams@intel.com" <dan.j.williams@intel.com>, Smita Koralahalli
+	<Smita.KoralahalliChannabasappa@amd.com>, "linux-cxl@vger.kernel.org"
+	<linux-cxl@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "nvdimm@lists.linux.dev"
+	<nvdimm@lists.linux.dev>, "linux-fsdevel@vger.kernel.org"
+	<linux-fsdevel@vger.kernel.org>, "linux-pm@vger.kernel.org"
+	<linux-pm@vger.kernel.org>, Davidlohr Bueso <dave@stgolabs.net>, "Jonathan
+ Cameron" <jonathan.cameron@huawei.com>, Dave Jiang <dave.jiang@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, "Rafael J .
+ Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>, Pavel Machek
+	<pavel@kernel.org>, Li Ming <ming.li@zohomail.com>, Jeff Johnson
+	<jeff.johnson@oss.qualcomm.com>, Ying Huang <huang.ying.caritas@gmail.com>,
+	"Xingtao Yao (Fujitsu)" <yaoxt.fnst@fujitsu.com>, Peter Zijlstra
+	<peterz@infradead.org>, Greg KH <gregkh@linuxfoundation.org>, Nathan Fontenot
+	<nathan.fontenot@amd.com>, Terry Bowman <terry.bowman@amd.com>, "Robert
+ Richter" <rrichter@amd.com>, Benjamin Cheatham <benjamin.cheatham@amd.com>,
+	PradeepVineshReddy Kodamati <PradeepVineshReddy.Kodamati@amd.com>
+Subject: Re: [PATCH v5 3/7] cxl/acpi: Add background worker to coordinate
+ with cxl_mem probe completion
+Message-ID: <aKZW5exydL4G37gk@aschofie-mobl2.lan>
+References: <20250715180407.47426-1-Smita.KoralahalliChannabasappa@amd.com>
+ <20250715180407.47426-4-Smita.KoralahalliChannabasappa@amd.com>
+ <68808fb4e4cbf_137e6b100cc@dwillia2-xfh.jf.intel.com.notmuch>
+ <68810a42ec985_1196810094@dwillia2-mobl4.notmuch>
+ <01956e38-5dc7-45f3-8c56-e98c9b8a3b5c@fujitsu.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <01956e38-5dc7-45f3-8c56-e98c9b8a3b5c@fujitsu.com>
+X-ClientProxiedBy: BYAPR11CA0044.namprd11.prod.outlook.com
+ (2603:10b6:a03:80::21) To DS4PPF0BAC23327.namprd11.prod.outlook.com
+ (2603:10b6:f:fc02::9)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS4PPF0BAC23327:EE_|SJ2PR11MB7672:EE_
+X-MS-Office365-Filtering-Correlation-Id: 99178011-3256-493d-a15a-08dde03f6069
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?+vPSYxI6ajzo5L7Qz12NZiHk4KYDVruEIXoF98z32ve4IesMYqWPoWR9MF6I?=
+ =?us-ascii?Q?Zw69Pu8P7qfVOfTIyzkPLRJ4vjIL1GQE4SyV2eUAsWzF7nrW6O/KPSEuOqMt?=
+ =?us-ascii?Q?FWt/3eSZTgRKSPBDXm1pfj7tgtGQ/mMiOymDTjKE/lfbOA7vdudZ2huPduAz?=
+ =?us-ascii?Q?9AseFHYfTK9uo2WDSF+0HDAki5RNYMpjhv9oDLvOCxewAnt8TphL3cXyRebt?=
+ =?us-ascii?Q?zkPTciz+P3/QXhdMa5n1JYj8ZaiLdwnOa5SChbHqkLQpcaRc7eMCbc9EXzq3?=
+ =?us-ascii?Q?HC/cpBgkAKo5rdqvOGTdc5W5NNuAf7Agy4JV67zpCfwAemoK5eQ3CxAmuBBZ?=
+ =?us-ascii?Q?Rzo9YtGmPa/Jxr78ANoA0hb/41jfQ24EAWN9NijF+5fmb/M2on3AeeibC90B?=
+ =?us-ascii?Q?Tuy/kYAF0HTWHqwBVWusOg6lnPjN3VFaTjxBsZ3rFeUkOessiG/+/zPNoRx0?=
+ =?us-ascii?Q?sh3ONR5cQT23x7NoTtH8msxLw8Luk+JpkCwsimfdvi+H6ZqUQQ/vLPTVfyq7?=
+ =?us-ascii?Q?zcG3CmsyN06cYXe1SmQs0WuN0nbl8ZeBxT4SdGI69bPA2QZQs+lhCN5etreb?=
+ =?us-ascii?Q?vuYXE00vGX7CuXOv9JMJ+KPyv5of+eckcSNj22Fs+jjTi8UksQ+wrckqUVhX?=
+ =?us-ascii?Q?zIFEn7Q1v8Ui4Zywplo2Xtua7mnVcFpTb5CFnkwwlEHKE0t8PpMsCBBuhA6+?=
+ =?us-ascii?Q?8l7Kcx7CIDL9lU7tA8ZS2qOWSIA+7YWDQi/uVEkSlXcZJoWK3/J/MnwxEYe4?=
+ =?us-ascii?Q?tGdrOtf3t44K1tx0sjx1TWnu76e1vTmPSDppOiItaSkwKLN01ZYRfL6kYYTf?=
+ =?us-ascii?Q?Q0pRiME22pNWEh6N81HmATcM3oZJpj6A96YxOOVO4llbj852IYTZ+3S5i12u?=
+ =?us-ascii?Q?ruurMDB/51bdOTjlcH8UIHXkG5228vykS/a5JQfPBFkz9jszjW1hDmZxEIoQ?=
+ =?us-ascii?Q?w2nOhEMDLbSduv1y3f5wLHiPY3BNCCSVQZo1VVsPgqXexMjLY/suYDZKRlUg?=
+ =?us-ascii?Q?+7uEZ02BlQrryfrFVIIJAKXJtfmIjO6HBZ1c5k8ZLlFTCIWWLwjcbDrpBttt?=
+ =?us-ascii?Q?soNhN+RddeB3DIeaILrlL7G3WwIlBMPrcXf97tBt9jkxEy6IFY544fBkAF64?=
+ =?us-ascii?Q?GUXP6BnE6fnXZw9fsRM3KFtwCM9UxBKuEaeOjVezPQhULkTVnHiYDmh8FKPS?=
+ =?us-ascii?Q?sR07GH8jULbpZZLhiS8tPZoXaaCrQUxiu+T5IKN/8zUbAp5gc+KgD73aRVy0?=
+ =?us-ascii?Q?7H36PnHi2rIf3I1hGUbm977CFnFRPAzP7SAFDrXeFeGK+kW5sP9QiMdLu5eP?=
+ =?us-ascii?Q?Qu0/ufq7QJ3b7SPuC8cW5e7G2hIVoyhmuOfN8XzDim4qH6iyQJqV3/kNENK5?=
+ =?us-ascii?Q?eXQ3gfsE/lezeVN4cSfUBzW7TNqmx85K8l7ItUBFUwKFTM7UyYHJXwPNTzNw?=
+ =?us-ascii?Q?Xl9XHb59DVk=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS4PPF0BAC23327.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?QoWFE4hpyIAqYXGk2PSuigg+XroqwNd1Zu60mvOv3hlBA5AT1xPpjzDEiT82?=
+ =?us-ascii?Q?Hw1MDNpkkDhDKf1HY7CX1wutSjJaU+PARnv/QZCVOztfNRuWbH+YJlYECQeh?=
+ =?us-ascii?Q?D8Eg7QSwhyjMNEsL9mL18wKT4QBjTg5Hnlbo2q5nqAXqZdJU3CoC1QwxYVL9?=
+ =?us-ascii?Q?Pz4tlIY1Y+9L0poOPHIrfXJlwpsUIFlvPEl0lWSapEszZIQlDjG3seDFfZBb?=
+ =?us-ascii?Q?CI+RNu0G53lYYFz8iBNV6PkyAWc9z7EATlfEb2gb9F8NFpLOzaz5Wrzo8YQi?=
+ =?us-ascii?Q?t4qJCgGPShIeAwcF8f7ocD4g0BjPytISxyUbxsHbahjOA7xsXlPkAkt2MjEM?=
+ =?us-ascii?Q?fYXcOjA2HQWY962XjLf2Oa1rmVuXP+LOklykIoNfP4F5jcnfG4s+VetHILqi?=
+ =?us-ascii?Q?LEdbuQFUqp61EAZPcx0JLeWZATkl8VBWf1iL39/GeHT6XRARLciKYgh8I8nf?=
+ =?us-ascii?Q?kf47Khza7xkrqtE27YKhBTjDQaz/gGrTWRTDlZFM98Q0LTVSjh6LG2WgUjrc?=
+ =?us-ascii?Q?eBm23N7tbAxPrytLrI+AGAAG9+tc/JxZOUhT9FTOx2R/GjwWzEJh7uAb151d?=
+ =?us-ascii?Q?D7SXUJwDaLPqDjoaDHb3MbmaFr738lnYNtbw8apG1YcINql7b3O4/5lG86Hq?=
+ =?us-ascii?Q?GpGRN8FcSe8qWJEHEe3NVnFc2SmTyGuug46aA7Tf3/TTBGr/L4L0Q5dvkzDg?=
+ =?us-ascii?Q?93lSU+nGU10/FMgcOZRUfIuUwJw1Daizm7t1ya2Py8wrGqspYEBHpVu3917Z?=
+ =?us-ascii?Q?TpKS6EAbt70HcrBOz7/7/tabw6PDbOrlpVRCAPd46foB1Lbg6oX7CK9ZzNe9?=
+ =?us-ascii?Q?ZXFNm8dLOcGcSR7DEPr8T58Nw2e/OoYjAHN4GrtFH+keVLb7dE+cBXtMZ2V1?=
+ =?us-ascii?Q?oilX2/GCf85SbcxWNGPi5a7hZM49BDYLSVSsXZ3u7ycaV7EOZo15Jbdmis3g?=
+ =?us-ascii?Q?T0GS/UrJnK+4hz+xTt4O5j8YSb4JaoBMDm70DtMNFCfndZ/7fibKWZGx1uGg?=
+ =?us-ascii?Q?cL2KNKlpA23w98QM1nmSSlWY+Y0NjvVhc01nw0m+yi+KSt/4goMKptIvCu4w?=
+ =?us-ascii?Q?413uI2Eh7SEnqFsPIffCJeZrw3MuTwrscuTrqotoiLv1FF6STre3338WCmn1?=
+ =?us-ascii?Q?9JOaWKmLuUUva60XoWfF6S6BPN8fR4uRe6ytwELI7qb61lrjmCQMiHxM2jNH?=
+ =?us-ascii?Q?78U17JClAhUJUZpsATLVv4IgJeAcJBHli7BHhKhvsFXVnOtRCeAJX/MPr8EY?=
+ =?us-ascii?Q?yEmVpjiaNUtXG/DPIxHwSWPIl+lqtxBOYauRO824BhC6pVnxcrdN4sNG2EdD?=
+ =?us-ascii?Q?c4K1i76xApSxuxEaHdwNiKKL1gn7dxulO+t9izmMBkdLQtNcJhUOWzCO6llX?=
+ =?us-ascii?Q?yuC5hHX3UpkbW3VwfHzkbf7gUj0QDU5q3hoUDp3vX0079u1P0nN7aFGqqd5B?=
+ =?us-ascii?Q?Et5JVIzSiG+sC8ltyH8TdsQF8FZjEfvnrgb4h+x7q8TXLcPUWp2ZcUSR2wi3?=
+ =?us-ascii?Q?usHgdbWIQUff8Fzh+4H+ZAt4qdxygU1KI7EUn4KStgwn3s+Cwvw/AYsRNZaz?=
+ =?us-ascii?Q?pRDwoJLYJAJNvZtxImZp5Hoh6LXUykr4myNuOqIsWnMVwS5Yrm0NR5OfPe+6?=
+ =?us-ascii?Q?+A=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 99178011-3256-493d-a15a-08dde03f6069
+X-MS-Exchange-CrossTenant-AuthSource: DS4PPF0BAC23327.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2025 23:14:56.6643
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: R9sDwJs4QSo2x1fFiAWl8PlJI8P0Bck3e4v4ke5plC7l82aqBNc1QBE0sgv6deWfir7Z6a7gQ8fanA/swAPIvrsWfjDmdUzlj4xS4wqZaeE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR11MB7672
+X-OriginatorOrg: intel.com
 
-The syzbot reported issue in hfs_find_set_zero_bits():
+On Tue, Aug 05, 2025 at 03:58:41AM +0000, Zhijian Li (Fujitsu) wrote:
+> Hi Dan and Smita,
+> 
+> 
+> On 24/07/2025 00:13, dan.j.williams@intel.com wrote:
+> > dan.j.williams@ wrote:
+> > [..]
+> >> If the goal is: "I want to give device-dax a point at which it can make
+> >> a go / no-go decision about whether the CXL subsystem has properly
+> >> assembled all CXL regions implied by Soft Reserved instersecting with
+> >> CXL Windows." Then that is something like the below, only lightly tested
+> >> and likely regresses the non-CXL case.
+> >>
+> >> -- 8< --
+> >>  From 48b25461eca050504cf5678afd7837307b2dd14f Mon Sep 17 00:00:00 2001
+> >> From: Dan Williams <dan.j.williams@intel.com>
+> >> Date: Tue, 22 Jul 2025 16:11:08 -0700
+> >> Subject: [RFC PATCH] dax/cxl: Defer Soft Reserved registration
+> > 
+> > Likely needs this incremental change to prevent DEV_DAX_HMEM from being
+> > built-in when CXL is not. This still leaves the awkward scenario of CXL
+> > enabled, DEV_DAX_CXL disabled, and DEV_DAX_HMEM built-in. I believe that
+> > safely fails in devdax only / fallback mode, but something to
+> > investigate when respinning on top of this.
+> > 
+> 
+> Thank you for your RFC; I find your proposal remarkably compelling, as it adeptly addresses the issues I am currently facing.
+> 
+> 
+> To begin with, I still encountered several issues with your patch (considering the patch at the RFC stage, I think it is already quite commendable):
 
-=====================================================
-BUG: KMSAN: uninit-value in hfs_find_set_zero_bits+0x74d/0xb60 fs/hfs/bitmap.c:45
- hfs_find_set_zero_bits+0x74d/0xb60 fs/hfs/bitmap.c:45
- hfs_vbm_search_free+0x13c/0x5b0 fs/hfs/bitmap.c:151
- hfs_extend_file+0x6a5/0x1b00 fs/hfs/extent.c:408
- hfs_get_block+0x435/0x1150 fs/hfs/extent.c:353
- __block_write_begin_int+0xa76/0x3030 fs/buffer.c:2151
- block_write_begin fs/buffer.c:2262 [inline]
- cont_write_begin+0x10e1/0x1bc0 fs/buffer.c:2601
- hfs_write_begin+0x85/0x130 fs/hfs/inode.c:52
- cont_expand_zero fs/buffer.c:2528 [inline]
- cont_write_begin+0x35a/0x1bc0 fs/buffer.c:2591
- hfs_write_begin+0x85/0x130 fs/hfs/inode.c:52
- hfs_file_truncate+0x1d6/0xe60 fs/hfs/extent.c:494
- hfs_inode_setattr+0x964/0xaa0 fs/hfs/inode.c:654
- notify_change+0x1993/0x1aa0 fs/attr.c:552
- do_truncate+0x28f/0x310 fs/open.c:68
- do_ftruncate+0x698/0x730 fs/open.c:195
- do_sys_ftruncate fs/open.c:210 [inline]
- __do_sys_ftruncate fs/open.c:215 [inline]
- __se_sys_ftruncate fs/open.c:213 [inline]
- __x64_sys_ftruncate+0x11b/0x250 fs/open.c:213
- x64_sys_call+0xfe3/0x3db0 arch/x86/include/generated/asm/syscalls_64.h:78
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Hi Zhijian,
 
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:4154 [inline]
- slab_alloc_node mm/slub.c:4197 [inline]
- __kmalloc_cache_noprof+0x7f7/0xed0 mm/slub.c:4354
- kmalloc_noprof include/linux/slab.h:905 [inline]
- hfs_mdb_get+0x1cc8/0x2a90 fs/hfs/mdb.c:175
- hfs_fill_super+0x3d0/0xb80 fs/hfs/super.c:337
- get_tree_bdev_flags+0x6e3/0x920 fs/super.c:1681
- get_tree_bdev+0x38/0x50 fs/super.c:1704
- hfs_get_tree+0x35/0x40 fs/hfs/super.c:388
- vfs_get_tree+0xb0/0x5c0 fs/super.c:1804
- do_new_mount+0x738/0x1610 fs/namespace.c:3902
- path_mount+0x6db/0x1e90 fs/namespace.c:4226
- do_mount fs/namespace.c:4239 [inline]
- __do_sys_mount fs/namespace.c:4450 [inline]
- __se_sys_mount+0x6eb/0x7d0 fs/namespace.c:4427
- __x64_sys_mount+0xe4/0x150 fs/namespace.c:4427
- x64_sys_call+0xfa7/0x3db0 arch/x86/include/generated/asm/syscalls_64.h:166
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Like you, I tried this RFC out. It resolved the issue of soft reserved
+resources preventing teardown and replacement of a region in place.
 
-CPU: 1 UID: 0 PID: 12609 Comm: syz.1.2692 Not tainted 6.16.0-syzkaller #0 PREEMPT(none)
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-=====================================================
+I looked at the issues you found, and have some questions comments
+included below.
 
-The HFS_SB(sb)->bitmap buffer is allocated in hfs_mdb_get():
+> 
+> 1. Some resources described by SRAT are wrongly identified as System RAM (kmem), such as the following: 200000000-5bffffff.
+>     
+>     ```
+>     200000000-5bffffff : dax6.0
+>       200000000-5bffffff : System RAM (kmem)
+>     5c0001128-5c00011b7 : port1
+>     5d0000000-64ffffff : CXL Window 0
+>       5d0000000-64ffffff : region0
+>         5d0000000-64ffffff : dax0.0
+>           5d0000000-64ffffff : System RAM (kmem)
+>     680000000-e7ffffff : PCI Bus 0000:00
+> 
+>     [root@rdma-server ~]# dmesg | grep -i -e soft -e hotplug
+>     [    0.000000] Command line: BOOT_IMAGE=(hd0,msdos1)/boot/vmlinuz-6.16.0-rc4-lizhijian-Dan+ root=UUID=386769a3-cfa5-47c8-8797-d5ec58c9cb6c ro earlyprintk=ttyS0 no_timer_check net.ifnames=0 console=tty1 console=ttyS0,115200n8 softlockup_panic=1 printk.devkmsg=on oops=panic sysrq_always_enabled panic_on_warn ignore_loglevel kasan.fault=panic
+>     [    0.000000] BIOS-e820: [mem 0x0000000180000000-0x00000001ffffffff] soft reserved
+>     [    0.000000] BIOS-e820: [mem 0x00000005d0000000-0x000000064ffffff] soft reserved
+>     [    0.072114] ACPI: SRAT: Node 3 PXM 3 [mem 0x200000000-0x5bffffff] hotplug
+>     ```
 
-HFS_SB(sb)->bitmap = kmalloc(8192, GFP_KERNEL);
+Is that range also labelled as soft reserved?  
+I ask, because I'm trying to draw a parallel between our test platforms.
+I see - 
 
-Finally, it can trigger the reported issue because kmalloc()
-doesn't clear the allocated memory. If allocated memory contains
-only zeros, then everything will work pretty fine.
-But if the allocated memory contains the "garbage", then
-it can affect the bitmap operations and it triggers
-the reported issue.
+[] BIOS-e820: [mem 0x0000024080000000-0x000004407fffffff] soft reserved
+.
+.
+[] reserve setup_data: [mem 0x0000024080000000-0x000004407fffffff] soft reserved
+.
+.
+[] ACPI: SRAT: Node 6 PXM 14 [mem 0x24080000000-0x4407fffffff] hotplug
 
-This patch simply exchanges the kmalloc() on kzalloc()
-with the goal to guarantee the correctness of bitmap operations.
-Because, newly created allocation bitmap should have all
-available blocks free. Potentially, initialization bitmap's read
-operation could not fill the whole allocated memory and
-"garbage" in the not initialized memory will be the reason of
-volume coruptions and file system driver bugs.
+/proc/iomem - as expected
+24080000000-5f77fffffff : CXL Window 0
+  24080000000-4407fffffff : region0
+    24080000000-4407fffffff : dax0.0
+      24080000000-4407fffffff : System RAM (kmem)
 
-Reported-by: syzbot <syzbot+773fa9d79b29bd8b6831@syzkaller.appspotmail.com>
-Closes: https://syzkaller.appspot.com/bug?extid=773fa9d79b29bd8b6831
-Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
-cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-cc: Yangtao Li <frank.li@vivo.com>
-cc: linux-fsdevel@vger.kernel.org
----
- fs/hfs/mdb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/hfs/mdb.c b/fs/hfs/mdb.c
-index 8082eb01127c..bf811347bb07 100644
---- a/fs/hfs/mdb.c
-+++ b/fs/hfs/mdb.c
-@@ -172,7 +172,7 @@ int hfs_mdb_get(struct super_block *sb)
- 		pr_warn("continuing without an alternate MDB\n");
- 	}
- 
--	HFS_SB(sb)->bitmap = kmalloc(8192, GFP_KERNEL);
-+	HFS_SB(sb)->bitmap = kzalloc(8192, GFP_KERNEL);
- 	if (!HFS_SB(sb)->bitmap)
- 		goto out;
- 
--- 
-2.43.0
+I'm also seeing this message:
+[] resource: Unaddressable device  [mem 0x24080000000-0x4407fffffff] conflicts with [mem 0x24080000000-0x4407fffffff]
 
+> 
+> 2. Triggers dev_warn and dev_err:
+>     
+>     ```
+>     [root@rdma-server ~]# journalctl -p err -p warning --dmesg
+>     ...snip...
+>     Jul 29 13:17:36 rdma-server kernel: cxl root0: Extended linear cache calculation failed rc:-2
+>     Jul 29 13:17:36 rdma-server kernel: hmem hmem.1: probe with driver hmem failed with error -12
+>     Jul 29 13:17:36 rdma-server kernel: hmem hmem.2: probe with driver hmem failed with error -12
+>     Jul 29 13:17:36 rdma-server kernel: kmem dax3.0: mapping0: 0x100000000-0x17ffffff could not reserve region
+>     Jul 29 13:17:36 rdma-server kernel: kmem dax3.0: probe with driver kmem failed with error -16
+
+I see the kmem dax messages also. It seems the kmem probe is going after
+every range (except hotplug) in the SRAT, and failing.
+
+>     ```
+> 
+> 3. When CXL_REGION is disabled, there is a failure to fallback to dax_hmem, in which case only CXL Window X is visible.
+
+Haven't tested !CXL_REGION yet.
+
+>     
+>     On failure:
+>     
+>     ```
+>     100000000-27ffffff : System RAM
+>     5c0001128-5c00011b7 : port1
+>     5c0011128-5c00111b7 : port2
+>     5d0000000-6cffffff : CXL Window 0
+>     6d0000000-7cffffff : CXL Window 1
+>     7000000000-700000ffff : PCI Bus 0000:0c
+>       7000000000-700000ffff : 0000:0c:00.0
+>         7000001080-70000010d7 : mem1
+>     ```
+> 
+>     On success:
+>     
+>     ```
+>     5d0000000-7cffffff : dax0.0
+>       5d0000000-7cffffff : System RAM (kmem)
+>         5d0000000-6cffffff : CXL Window 0
+>         6d0000000-7cffffff : CXL Window 1
+>     ```
+> 
+> In term of issues 1 and 2, this arises because hmem_register_device() attempts to register resources of all "HMEM devices," whereas we only need to register the IORES_DESC_SOFT_RESERVED resources. I believe resolving the current TODO will address this.
+> 
+> ```
+> -   rc = region_intersects(res->start, resource_size(res), IORESOURCE_MEM,
+> -                          IORES_DESC_SOFT_RESERVED);
+> -   if (rc != REGION_INTERSECTS)
+> -       return 0;
+> +   /* TODO: insert "Soft Reserved" into iomem here */
+> ```
+
+Above makes sense.
+
+I'll probably wait for an update from Smita to test again, but if you
+or Smita have anything you want me to try out on my hardwware in the
+meantime, let me know.
+
+-- Alison
+
+
+> 
+> Regarding issue 3 (which exists in the current situation), this could be because it cannot ensure that dax_hmem_probe() executes prior to cxl_acpi_probe() when CXL_REGION is disabled.
+> 
+> I am pleased that you have pushed the patch to the cxl/for-6.18/cxl-probe-order branch, and I'm looking forward to its integration into the upstream during the v6.18 merge window.
+> Besides the current TODO, you also mentioned that this RFC PATCH must be further subdivided into several patches, so there remains significant work to be done.
+> If my understanding is correct, you would be personally continuing to push forward this patch, right?
+> 
+> 
+> Smita,
+> 
+> Do you have any additional thoughts on this proposal from your side?
+> 
+> 
+> Thanks
+> Zhijian
+> 
+snip
 
