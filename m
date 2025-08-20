@@ -1,201 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-58371-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58372-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1C96B2D928
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 11:51:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 037D1B2D937
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 11:52:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12EC4A07CC4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 09:46:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7D8B1C48348
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 09:47:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B99212E2DF6;
-	Wed, 20 Aug 2025 09:40:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F73D2E3AE3;
+	Wed, 20 Aug 2025 09:41:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dTFXohb7"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="jSGj1ahj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14E2E29B233;
-	Wed, 20 Aug 2025 09:40:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EECF52E3713
+	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Aug 2025 09:41:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755682842; cv=none; b=EsqIfIwy06KLyiGZVv0oW0k67HsWk2T8LlD4JxwRdTC08b8b4MOM+M11G5m+8zCcjCY2OxSQwm2QyiD/rA/srncKTJtwbqqrSiBy2G3EchwYiOTUF/32cPAucO5YZR5YYwyBkuhISysqwbtb2PMfif6a/YhN98ahffa/SRNZmNQ=
+	t=1755682865; cv=none; b=fS3+tIUM8wSVUSP50znKVlQpAgh27YpmJnuzysuL9hIxvxkwyw0AKpWUYYV+3qi8HvK8mI4my4r2+XyY4nI5cxIkjQtBZkCPWJp7Upjps9/29yBlUZLfSJ5DafVvuJD39DPl4lUz/4S7LcpgyLGz7Fq51wAhiRz9rocnJK0KiCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755682842; c=relaxed/simple;
-	bh=ltG/L6we3mCVlQzjBWr+in9Aol+egLkobfWb0flWf74=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MDBktybvo6YwOTJTG7pWtK268mlNzSzBta+4VSzIkJr6MYvU1/b1/sH7P1MAO9y+t+l0EpG3vJxQz6YQ/OhJ58lUEd6HiGXBy6w8joINYvz/oY4peumArDsDQQQDl4Ms2PnkyBRf2y8tW4WjUn0RY73JZSCHuQxWwh/8zqwpuDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dTFXohb7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 845AAC4CEEB;
-	Wed, 20 Aug 2025 09:40:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755682841;
-	bh=ltG/L6we3mCVlQzjBWr+in9Aol+egLkobfWb0flWf74=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dTFXohb7iMZisDMnBL0h+PyNNbKRQd1kkI+7a+nvA7m1iv+MltZfTCc+5h0JBf1TV
-	 L8vr7awj0WZ0GaOUc5k51Ro3AciFBaUg44IqoJKE7tg2D/wrLtXo+065AGUnctxbOj
-	 FN1gWHzU1GB7XayukPAZmdgkaITOjFZFePsDywcQypZcqMEq8NiLV2uI8KWFRzr+KN
-	 ThmcFIaHdIl2Fdq+N4S/2swgD9+YvbXsswRsGJCgloQHJfl42e4oUPBW1MnxxnVedy
-	 Yuqz4yMJnjKjC1PGrxRrmHuG8afYqch944YRE6dtVKd2GyuWftVdv/j40UpO0g6ULw
-	 ZnfpNRHQGwIZQ==
-Date: Wed, 20 Aug 2025 11:40:36 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jan Kara <jack@suse.cz>, Anuj Gupta <anuj20.g@samsung.com>, 
-	Kanchan Joshi <joshi.k@samsung.com>, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	io-uring@vger.kernel.org
-Subject: Re: [PATCH 1/2] fs: add a FMODE_ flag to indicate IOCB_HAS_METADATA
- availability
-Message-ID: <20250820-voruntersuchung-fehlzeiten-4dcf7e45c29f@brauner>
-References: <20250819082517.2038819-1-hch@lst.de>
- <20250819082517.2038819-2-hch@lst.de>
- <20250819-erwirbt-freischaffend-e3d3c1e8967a@brauner>
- <20250819092219.GA6234@lst.de>
- <20250819-verrichten-bagger-d139351bb033@brauner>
- <20250819133447.GA16775@lst.de>
+	s=arc-20240116; t=1755682865; c=relaxed/simple;
+	bh=6wqUwsH8WzM+3ALt2g9Eaqthf4maZrIXS2rpbAZW8fE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uCUAc64pJEiPKBEbquCe3Csqz5yjRfBxQxOzxw9zjicv+pydtmjSEhunVH3MJjAqidvGcS53+YDhSogpv8XYUBmb1k3aLg9y0NY0GE8xSjZxwekMkPwHX5yrL87cQUCZ3SxIv6mzj7tNShkDbVQAY6whmN3bmNuSOx4E9Gsdt3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=jSGj1ahj; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4b134aa13f5so40297121cf.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Aug 2025 02:41:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1755682862; x=1756287662; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=6wqUwsH8WzM+3ALt2g9Eaqthf4maZrIXS2rpbAZW8fE=;
+        b=jSGj1ahjX1hW3YQDzObf7fVgf09L9taWsYACuFJW+K/C3E4FvjBYvFDXvr2JchVM93
+         rb6yZdGWknrP86kazUSQDi2wW0hYPBuMjR4Bf1kms4abvJAwsjwmo0D+vWQyHI/ECk6D
+         tfafpZ53U3G9e+t9qveWn9MGO1Pnr37uZ0dgU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755682862; x=1756287662;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6wqUwsH8WzM+3ALt2g9Eaqthf4maZrIXS2rpbAZW8fE=;
+        b=u5/zODO3uAQQWY6vv5G9ExqKvkIXbKpvCBk2rq2ehZZA0ohTM7NaTKK6p5uyZG74TT
+         GJhuU28pJ3nAM/IVt1YixSfqv6mBJDCtmuw2JrV9pE4PPw9AK+daPy++z8yC0izDSozd
+         2h8uJibLNpsKF3GolnhgeRjDA2Nz92c5fcSMfhWQi8Mk6L+poTkKqETX6JxEYJv3vYjK
+         sk/0HK/iXGP4OTpWa3aNPk6xy9pR0nD8BEEv3PDcYeLZX2+UCU7aqsspF1kcH7Mc6s3Y
+         DDdnHIVSVeeGmB1y7qf2x5WCoED8hwkXvvWHQfkgJ1SRwQs8+2/hzrp27RHDNBtch1a5
+         6L4Q==
+X-Gm-Message-State: AOJu0YzBMGcv9YmTXNonHRLhNMAkBXdOtTnGESxJ8oB8FaRUWSQgJ6cG
+	naxJMcP2JEoNmbUQjvO90CBkx9s0mcDB0tf5jUOClbSUtI+P4rtY/69YbjXGh4WIBD+POo6Aj+f
+	ZLiOZ9c2t++ZdL2/jRSGWky5bYsTKNCJve3w1aLLjrg==
+X-Gm-Gg: ASbGnctRfVtsTq4gGBP/ZobcE+WRPHAE5SVnlhvvKLxPnl8AIulPQyqb1J3FHBuCp8p
+	3ZYNrOMcAoxdd/7fG7YY2GcreDv4Hf2q7gko7M3THg0UHm0tmMxSzCKug5cyhfSLc71hBJ5v9U5
+	kosyH9d+mn6O3J8sIocyysP6smMECFSO98cw/2Oz61Oo3xtzAmzGO2uPPCPwnFuZ+2+dlQkgJpN
+	a2aDFyggA==
+X-Google-Smtp-Source: AGHT+IFe5PYxr6z8JeerhWQOZqxR9975GI9X5HUWBjAueFNTiRkzfKZ+rCuFl+eHlpTLUnEOF2z9+9bGiL6EUxu1WqA=
+X-Received: by 2002:a05:622a:1456:b0:4b0:701c:9435 with SMTP id
+ d75a77b69052e-4b291be7279mr23846641cf.60.1755682861891; Wed, 20 Aug 2025
+ 02:41:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250819133447.GA16775@lst.de>
+References: <175279449418.710975.17923641852675480305.stgit@frogsfrogsfrogs>
+ <175279449542.710975.4026114067817403606.stgit@frogsfrogsfrogs>
+ <CAJfpegvwGw_y1rXZtmMf_8xJ9S6D7OUeN7YK-RU5mSaOtMciqA@mail.gmail.com>
+ <20250818200155.GA7942@frogsfrogsfrogs> <CAJfpegtC4Ry0FeZb_13DJuTWWezFuqR=B8s=Y7GogLLj-=k4Sg@mail.gmail.com>
+ <20250819225127.GI7981@frogsfrogsfrogs> <CAJfpegt38osEYbDYUP64+qY5j_y9EZBeYFixHgc=TDn=2n7D4w@mail.gmail.com>
+In-Reply-To: <CAJfpegt38osEYbDYUP64+qY5j_y9EZBeYFixHgc=TDn=2n7D4w@mail.gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Wed, 20 Aug 2025 11:40:50 +0200
+X-Gm-Features: Ac12FXxukz_JmdqODUdFh4uN6WVp_RjEftxDofCVybJA4SYAQelAJHdNeChxXhY
+Message-ID: <CAJfpegv4RJqpFC0K5SVi6vhTMGpxrd672qbPE4zbe0nO-=2SqQ@mail.gmail.com>
+Subject: Re: [PATCH 4/7] fuse: implement file attributes mask for statx
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, neal@gompa.dev, John@groves.net, 
+	bernd@bsbernd.com, joannelkoong@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Aug 19, 2025 at 03:34:47PM +0200, Christoph Hellwig wrote:
-> On Tue, Aug 19, 2025 at 12:14:26PM +0200, Christian Brauner wrote:
-> > On Tue, Aug 19, 2025 at 11:22:19AM +0200, Christoph Hellwig wrote:
-> > > On Tue, Aug 19, 2025 at 11:14:41AM +0200, Christian Brauner wrote:
-> > > > It kind of feels like that f_iocb_flags should be changed so that
-> > > > subsystems like block can just raise some internal flags directly
-> > > > instead of grabbing a f_mode flag everytime they need to make some
-> > > > IOCB_* flag conditional on the file. That would mean changing the
-> > > > unconditional assigment to file->f_iocb_flags to a |= to not mask flags
-> > > > raised by the kernel itself.
-> > > 
-> > > This isn't about block.  I will be setting this for a file system
-> > > operation as well and use the same io_uring code for that.  That's
-> > > how I ran into the issue.
-> > 
-> > Yes, I get that. That's not what this is about. If IOCB_* flags keep
-> > getting added that then need an additional opt-out via an FMODE_* flag
-> > it's very annoying because you keep taking FMODE_* bits.
-> 
-> Agreed.
-> 
-> > The thing is
-> > that it should be possible to keep that information completely contained
-> > to f_iocb_flags without polluting f_mode.
-> 
-> I don't really understand how that would work.  The basic problem is that
-> we add optional features/flags to read and write, and we need a way to
-> check that they are supported and reject them without each time having
-> to update all instances.  For that VFS-level code needs some way to do
-> a per-instance check of available features.
+On Wed, 20 Aug 2025 at 11:16, Miklos Szeredi <miklos@szeredi.hu> wrote:
 
-I meant something like this which should effectively be the same thing
-just that we move the burden of having to use two bits completely into
-file->f_iocb_flags instead of wasting a file->f_mode bit:
+> As an optimization of the above, the filesystem clearing the
+> request_mask for these uncached attributes means that that attribute
+> is not supported by the filesystem and that *can* be cheaply cached
+> (e.g. clearing fi->inval_mask).
 
-diff --git a/block/fops.c b/block/fops.c
-index ddbc69c0922b..a90f1127d035 100644
---- a/block/fops.c
-+++ b/block/fops.c
-@@ -689,7 +689,7 @@ static int blkdev_open(struct inode *inode, struct file *filp)
-        if (bdev_can_atomic_write(bdev))
-                filp->f_mode |= FMODE_CAN_ATOMIC_WRITE;
-        if (blk_get_integrity(bdev->bd_disk))
--               filp->f_mode |= FMODE_HAS_METADATA;
-+               filp->f_iocb_flags |= IOCB_MAY_USE_METADATA;
+Even better: add sx_supported to fuse_init_out, so that unsupported
+ones don't generate unnecessary requests.
 
-        ret = bdev_open(bdev, mode, filp->private_data, NULL, filp);
-        if (ret)
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 601d036a6c78..a40a1bf7bad5 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -149,9 +149,6 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
- /* Expect random access pattern */
- #define FMODE_RANDOM           ((__force fmode_t)(1 << 12))
-
--/* Supports IOCB_HAS_METADATA */
--#define FMODE_HAS_METADATA     ((__force fmode_t)(1 << 13))
--
- /* File is opened with O_PATH; almost nothing can be done with it */
- #define FMODE_PATH             ((__force fmode_t)(1 << 14))
-
-@@ -384,25 +381,27 @@ struct readahead_control;
- /* kiocb is a read or write operation submitted by fs/aio.c. */
- #define IOCB_AIO_RW            (1 << 23)
- #define IOCB_HAS_METADATA      (1 << 24)
-+#define IOCB_MAY_USE_METADATA  (1 << 25)
-
- /* for use in trace events */
- #define TRACE_IOCB_STRINGS \
--       { IOCB_HIPRI,           "HIPRI" }, \
--       { IOCB_DSYNC,           "DSYNC" }, \
--       { IOCB_SYNC,            "SYNC" }, \
--       { IOCB_NOWAIT,          "NOWAIT" }, \
--       { IOCB_APPEND,          "APPEND" }, \
--       { IOCB_ATOMIC,          "ATOMIC" }, \
--       { IOCB_DONTCACHE,       "DONTCACHE" }, \
--       { IOCB_EVENTFD,         "EVENTFD"}, \
--       { IOCB_DIRECT,          "DIRECT" }, \
--       { IOCB_WRITE,           "WRITE" }, \
--       { IOCB_WAITQ,           "WAITQ" }, \
--       { IOCB_NOIO,            "NOIO" }, \
--       { IOCB_ALLOC_CACHE,     "ALLOC_CACHE" }, \
--       { IOCB_DIO_CALLER_COMP, "CALLER_COMP" }, \
--       { IOCB_AIO_RW,          "AIO_RW" }, \
--       { IOCB_HAS_METADATA,    "AIO_HAS_METADATA" }
-+       { IOCB_HIPRI,                   "HIPRI" }, \
-+       { IOCB_DSYNC,                   "DSYNC" }, \
-+       { IOCB_SYNC,                    "SYNC" }, \
-+       { IOCB_NOWAIT,                  "NOWAIT" }, \
-+       { IOCB_APPEND,                  "APPEND" }, \
-+       { IOCB_ATOMIC,                  "ATOMIC" }, \
-+       { IOCB_DONTCACHE,               "DONTCACHE" }, \
-+       { IOCB_EVENTFD,                 "EVENTFD"}, \
-+       { IOCB_DIRECT,                  "DIRECT" }, \
-+       { IOCB_WRITE,                   "WRITE" }, \
-+       { IOCB_WAITQ,                   "WAITQ" }, \
-+       { IOCB_NOIO,                    "NOIO" }, \
-+       { IOCB_ALLOC_CACHE,             "ALLOC_CACHE" }, \
-+       { IOCB_DIO_CALLER_COMP,         "CALLER_COMP" }, \
-+       { IOCB_AIO_RW,                  "AIO_RW" }, \
-+       { IOCB_HAS_METADATA,            "AIO_HAS_METADATA" }, \
-+       { IOCB_MAY_USE_METADATA,        "AIO_MAY_USE_METADATA" }
-
- struct kiocb {
-        struct file             *ki_filp;
-@@ -3786,6 +3785,10 @@ static inline bool vma_is_fsdax(struct vm_area_struct *vma)
- static inline int iocb_flags(struct file *file)
- {
-        int res = 0;
-+
-+       /* Retain flags that the kernel raises internally. */
-+       res |= (file->f_iocb_flags & (IOCB_HAS_METADATA | IOCB_MAY_USE_METADATA));
-+
-        if (file->f_flags & O_APPEND)
-                res |= IOCB_APPEND;
-        if (file->f_flags & O_DIRECT)
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index af5a54b5db12..23e9103c62d4 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -886,7 +886,7 @@ static int io_rw_init_file(struct io_kiocb *req, fmode_t mode, int rw_type)
-        if (req->flags & REQ_F_HAS_METADATA) {
-                struct io_async_rw *io = req->async_data;
-
--               if (!(file->f_mode & FMODE_HAS_METADATA))
-+               if (!(file->f_iocb_flags & IOCB_MAY_USE_METADATA))
-                        return -EINVAL;
-
-                /*
-
+Thanks,
+Miklos
 
