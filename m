@@ -1,134 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-58391-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58392-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72CA5B2E06C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 17:13:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 639DAB2E0A3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 17:19:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E76077B2E91
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 15:11:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC4C2B643E0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 15:16:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 480F2321F3F;
-	Wed, 20 Aug 2025 15:00:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C628F327791;
+	Wed, 20 Aug 2025 15:09:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F0fitD2+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U7cWBJ7W"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B20F34924E;
-	Wed, 20 Aug 2025 15:00:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29A68322C95
+	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Aug 2025 15:09:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755702027; cv=none; b=FL0AttlrczAxvsKDx7YsV68Gw/mauENWDf64TpKdFUUBhyrztJZ70hjOhxs+97kKQb5NQcAYby40x3eZrw+LkUJGimpEKgWDn3598ujyNuBHMyfnwGN5A4dzU0ziQnsH0NRqVfyu1Ekd689V4cuZZqeWttn6Xk4UOp3r8H29rq4=
+	t=1755702559; cv=none; b=UqjMfHG1QN3Tl/qhEM/ZvGTlbB9iVY6ZNiab32p8HR0rBRwlyYq6dQ0uHjaDrNHEMlw72bupfbjMrrHKcd9gV2EMAgfMsQoVEmJM3UX8DEziBcKGB4ydB35l37ntC4KESHJlIHYovVcThSt5SjnX/ylirPW6VSX+E6wHAuRrEJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755702027; c=relaxed/simple;
-	bh=HcUocu8ykYcNQNL7uxc8gkzCEymZ97/xUCXbX2OkNnk=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=XIj883l6oU48qCNWsZgS0Rz/bac+9gdZ2Hvjest74bjslIHGQW5hwYwmHuWWfZEwNC5Sl1Vr8q/qX0er2v0+7q2jSw7TLvXahrzptSjOmtJr4fNNNXyObq+KqUQrFE3OF1zfauxGV8fR5knD8lA36haluwuOgj/LwP7yGOaNcwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F0fitD2+; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b476cfc2670so401796a12.3;
-        Wed, 20 Aug 2025 08:00:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755702025; x=1756306825; darn=vger.kernel.org;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HcUocu8ykYcNQNL7uxc8gkzCEymZ97/xUCXbX2OkNnk=;
-        b=F0fitD2+4pC2lxTxhuWYNswlcIYKo2pQOMNHk7A44OfKweCRNX5leDabR42wq9GHZr
-         gWC/0NNoMxIMti2KM+QSzhJtGXnreEEKXdtDIsDYtYlqMgP0dhQWY4PwN4vlUdcMMld7
-         O9IkUB/aN0jdG3zWOqZLFjfUXp4hNT7l+c+017VxLCcu2uu1K5IM1fTCDMaLAi12rfgH
-         Rp1Jt5ZAlvXTIPG7RhmS6duBqsX4UN6pOzZVI9eFRCdCC6c2dc2yOUWxoOd5ew9lJmMK
-         5QEJY+9NuUYjQWRqHZmO94gXTTj/NONIzdsEoH2Jap3GJCSzkreT9Bv+GAHgyWWYKLTm
-         nWyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755702025; x=1756306825;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=HcUocu8ykYcNQNL7uxc8gkzCEymZ97/xUCXbX2OkNnk=;
-        b=pq7/6n1/bzwo9nKC//2CNQ7aYVBd5SV9SwErdTkzl8QpyPu3WeKb4YRa2eave7RVpM
-         Y/ckYhiihjTY/F+9OiR6QKg9E5CrqVL7TikBEZScYsq0nnqLB254dKXW0BuqScrl1GhP
-         mh8Dt4QiZilggOtwjLYLb8mtIoxyCKlD2NhlRXbNVH899I6uG26YsNbZrKXThH2x8IAa
-         JB8s9uCX9PV4P8+y65gIDNHcE/HOK7xNXakj6FZWRkvprSJazK79rgW3EPnZ82tF9iu8
-         qnV/SQ3V4847l1w5Y+KUD64aBvF8aL/H6eNVbobPXo1EwLSOZ+oJMYtr41l557g42Chx
-         hQBw==
-X-Forwarded-Encrypted: i=1; AJvYcCVSgHOBzvnikGIhEvY6WXE5BOn3JMD6Mivb/UiCk2bO3SWqF5S95ApXa5qZfsiiSQgYEDwnitXwd3/h@vger.kernel.org, AJvYcCWo6/wRWZdA2BAi7nUCA5A+qxLMjMkqq/ebqbHuL8xUTXleIZcb6mQNOrReN4G30S0je89PeJaVfg==@vger.kernel.org, AJvYcCXg58IP8hToUFV4u/8Jh0Wxecz0tkYCFKFTdbOpKbUv0fO353QuXON4GHmea6iZIzfxhFDz3rrmDyvbbfjCXw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCzGhNt6VUiQ4UdWxxMgvwuHBfPpQ01rV+l7QjnSBdJSqtM6CH
-	Upja8uakv/3Ih8oRbaIyLARNy+Mg/3afDJUtuaSysM0z6ViqZXX7qwqt
-X-Gm-Gg: ASbGncsQRWxgIaKdjorqQxT1mAtaXWRmFVmV5+G+ojdwmvxGpjSOCaPn2Skjod2+DpI
-	D5/AhferN+WwbH3FW6CKYgthIrncL/z58z1psybNitJ0RECoCMAfQEFK2OgFfQZ1JRTWKX9oZ4M
-	giLbln05l0y4nVda1OeJ5mPFOJDncR7mItHjwXuMWSKHaXjZ8hL7gwDpFxLgFFv6LAq3JcDhVgU
-	3cT+XPqk8Ve5Y+VEh6kRqjplTpAnGLBat6YsBm1YD+x3oj3/QGZrNcLvOUxWNG4IuXwBEeJS1Pj
-	5qTCRUs9MK9txOoB4Q32mIuPc+VkOZu1/TTi9JVo2d8macFQpYfoDG/t53FA17J3TdOpQvxzptZ
-	YIilwfjB5fXRzv+kVV08rjjsgpAs=
-X-Google-Smtp-Source: AGHT+IF+xR/A0UKdUrdig4MsgN3farISyyfZyVO405kQD0hK/nbh996Heg9FE8bJhKV3B3WmVAwkUA==
-X-Received: by 2002:a17:902:f691:b0:23f:f68b:fa0b with SMTP id d9443c01a7336-245ef22dc84mr33747695ad.37.1755702025126;
-        Wed, 20 Aug 2025 08:00:25 -0700 (PDT)
-Received: from localhost ([65.144.169.45])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-324e254e59esm2579224a91.17.2025.08.20.08.00.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Aug 2025 08:00:23 -0700 (PDT)
+	s=arc-20240116; t=1755702559; c=relaxed/simple;
+	bh=PN4EFUTHRBP54dg39SWgOY3/hwCnfw4bc/Jj4n+45Dk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t3Ce2ShzyEVk0xB4jsZ6dSaCkCZb9hD19pqjJlGogP0En7bIqAn84tNkPNpoJvgCkAkPQYvxHcNuEFvh1lEzX/5NCHUJrQ9hqZBs0PYiZDCMa5M3q/WKbTx/7C0kCSibq4kbe8TcUxJQyeVbM+79D014TVWwwaR5NOZ5Yuoitoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U7cWBJ7W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 893D7C4CEEB;
+	Wed, 20 Aug 2025 15:09:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755702558;
+	bh=PN4EFUTHRBP54dg39SWgOY3/hwCnfw4bc/Jj4n+45Dk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=U7cWBJ7W9pHf2L0zL8E75xvcjhNWJ0wUAUEPyQjaQ15CXAFMIyJhGd4pINe8bpIZP
+	 u/A2g0hFXmyKpu7HFFaYF9D09XhDvSscnFElsGJzmVEx8cdZqWaLE5W8Rr2eMIsaFz
+	 s5Mwd6uCKnn8SCyCs6YrchSE1e2ocg4gDP3WThtiWZEgvbdXdi9ZrQaZpLaCPt0Ngo
+	 gfX+C98Wz2WlKJjOWI5GMLoxgxRenqmZ/VWgOtYeqfQhAN4ijYNid5fVOQvKiU+vG4
+	 tY2pfsATWzigFD3uXEQyj6q7udPUG56BZC/Mhnyzy4x8pETcVNuft1ZHIBNFINcpbM
+	 aBtLTAkDDkJfA==
+Date: Wed, 20 Aug 2025 08:09:18 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: linux-fsdevel@vger.kernel.org, neal@gompa.dev, John@groves.net,
+	bernd@bsbernd.com, joannelkoong@gmail.com
+Subject: Re: [PATCH 4/7] fuse: implement file attributes mask for statx
+Message-ID: <20250820150918.GK7981@frogsfrogsfrogs>
+References: <175279449418.710975.17923641852675480305.stgit@frogsfrogsfrogs>
+ <175279449542.710975.4026114067817403606.stgit@frogsfrogsfrogs>
+ <CAJfpegvwGw_y1rXZtmMf_8xJ9S6D7OUeN7YK-RU5mSaOtMciqA@mail.gmail.com>
+ <20250818200155.GA7942@frogsfrogsfrogs>
+ <CAJfpegtC4Ry0FeZb_13DJuTWWezFuqR=B8s=Y7GogLLj-=k4Sg@mail.gmail.com>
+ <20250819225127.GI7981@frogsfrogsfrogs>
+ <CAJfpegt38osEYbDYUP64+qY5j_y9EZBeYFixHgc=TDn=2n7D4w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 20 Aug 2025 09:05:07 -0600
-Message-Id: <DC7CIXI2T3FD.1I8C9PE5V0TRI@gmail.com>
-Subject: Re: [PATCHSET RFC 0/6] add support for name_to,
- open_by_handle_at(2) to io_uring
-From: "Thomas Bertschinger" <tahbertschinger@gmail.com>
-To: "Amir Goldstein" <amir73il@gmail.com>
-Cc: "Jens Axboe" <axboe@kernel.dk>, <io-uring@vger.kernel.org>,
- <linux-fsdevel@vger.kernel.org>, <viro@zeniv.linux.org.uk>,
- <brauner@kernel.org>, <linux-nfs@vger.kernel.org>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250814235431.995876-1-tahbertschinger@gmail.com>
- <e914d653-a1b6-477d-8afa-0680a703d68f@kernel.dk>
- <DC6X58YNOC3F.BPB6J0245QTL@gmail.com>
- <CAOQ4uxj=XOFqHBmYY1aBFAnJtSkxzSyPu5G3xP1rx=ZfPfe-kg@mail.gmail.com>
-In-Reply-To: <CAOQ4uxj=XOFqHBmYY1aBFAnJtSkxzSyPu5G3xP1rx=ZfPfe-kg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegt38osEYbDYUP64+qY5j_y9EZBeYFixHgc=TDn=2n7D4w@mail.gmail.com>
 
-On Wed Aug 20, 2025 at 2:34 AM MDT, Amir Goldstein wrote:
-> On Wed, Aug 20, 2025 at 4:57=E2=80=AFAM Thomas Bertschinger
-> <tahbertschinger@gmail.com> wrote:
->> Any thoughts on that? This seemed to me like there wasn't an obvious
->> easy solution, hence why I just didn't attempt it at all in v1.
->> Maybe I'm missing something, though.
->>
->
-> Since FILEID_IS_CONNECTABLE, we started using the high 16 bits of
-> fh_type for FILEID_USER_FLAGS, since fs is not likely expecting a fh_type
-> beyond 0xff (Documentation/filesystems/nfs/exporting.rst):
-> "A filehandle fragment consists of an array of 1 or more 4byte words,
-> together with a one byte "type"."
->
-> The name FILEID_USER_FLAGS may be a bit misleading - it was
-> never the intention for users to manipulate those flags, although they
-> certainly can and there is no real harm in that.
->
-> These flags are used in the syscall interface only, but
-> ->fh_to_{dentry,parent}() function signature also take an int fh_flags
-> argument, so we can use that to express the non-blocking request.
->
-> Untested patch follows (easier than explaining):
+On Wed, Aug 20, 2025 at 11:16:42AM +0200, Miklos Szeredi wrote:
+> On Wed, 20 Aug 2025 at 00:51, Darrick J. Wong <djwong@kernel.org> wrote:
+> 
+> > Something like this, maybe?
+> >
+> > #define FUSE_UNCACHED_STATX_MASK        (STATX_DIOALIGN | \
+> >                                          STATX_SUBVOL | \
+> >                                          STATX_WRITE_ATOMIC)
+> >
+> > and then in fuse_update_get_attr,
+> >
+> >         if (!request_mask)
+> >                 sync = false;
+> >         else if (request_mask & FUSE_UNCACHED_STATX_MASK) {
+> >                 if (flags & AT_STATX_DONT_SYNC) {
+> >                         request_mask &= ~FUSE_UNCACHED_STATX_MASK;
+> >                         sync = false;
+> >                 } else {
+> >                         sync = true;
+> >                 }
+> >         } else if (flags & AT_STATX_FORCE_SYNC)
+> >                 sync = true;
+> >         else if (flags & AT_STATX_DONT_SYNC)
+> >                 sync = false;
+> >         else if (request_mask & inval_mask & ~cache_mask)
+> >                 sync = true;
+> >         else
+> >                 sync = time_before64(fi->i_time, get_jiffies_64());
+> 
+> Yes.
+> 
+> > Way back in 2017, dhowells implied that it synchronises the attributes
+> > with the backing store in the same way that network filesystems do[1].
+> > But the question is, does fuse count as a network fs?
+> >
+> > I guess it does.  But the discussion from 2016 also provided "this is
+> > very filesystem specific" so I guess we can do whatever we want??  XFS
+> > and ext4 ignore that value.  The statx(2) manpage repeats that "whatever
+> > stat does" language, but the stat(2) and stat(3) manpages don't say a
+> > darned thing.
 
-Ah, that makes sense and makes this seem feasible. Thanks for pointing
-that out!
+Ohhh, only now I noticed that it's one of those trickster flags symbols
+like O_RDONLY that are #define'd to 0.  That's why there's no
+(flags & SYNC_AS_STAT) anywhere in the codebase.
 
-It also seems that each FS could opt in to this with a new EXPORT_OP
-flag so that the FSes that want to support this can be updated
-individually. Then, updating most or every exportable FS isn't a
-requirement for this.
+> Actually we can't ignore it, since it's the default (i.e. if neither
+> FORCE_SYNC nor DONT_SYNC is in effect, then that implies
+> SYNC_AS_STAT).
+> 
+> I guess the semantics you codified above make sense.  In words:
+> 
+> "If neither forcing nor forbidding sync, then statx shall always
+> attempt to return attributes that are defined on that filesystem, but
+> may return stale values."
 
-Do you have an opinion on that, versus expecting every ->fh_to_dentry()
-implementation to respect the new flag?
+Where is that written?  I'd like to read the rest of it to clear my
+head. :)
+
+> As an optimization of the above, the filesystem clearing the
+> request_mask for these uncached attributes means that that attribute
+> is not supported by the filesystem and that *can* be cheaply cached
+> (e.g. clearing fi->inval_mask).
+
+Hrmm.  I wouldn't want to set fi->inval_mask bits just because a
+FUSE_STATX message ignored a mask bit one time -- imagine a filesystem
+with tiered storage.  A file might be on slow hdd storage which means no
+fancy things like atomic writes, but later it might get promoted to
+faster nvme which does support that.
+
+Anyway I'll send out rfcv4 today, which has the above update_get_attr
+logic in it.
+
+--D
+
+> Thanks,
+> Miklos
 
