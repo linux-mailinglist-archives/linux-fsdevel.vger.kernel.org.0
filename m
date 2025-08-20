@@ -1,103 +1,129 @@
-Return-Path: <linux-fsdevel+bounces-58382-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58383-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B362DB2DBD3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 13:54:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 938F1B2DC3B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 14:17:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65FE91887ACF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 11:54:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69C167AADBC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 12:15:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0F5B2E7F1E;
-	Wed, 20 Aug 2025 11:54:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C57C12E337E;
+	Wed, 20 Aug 2025 12:17:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="F3r7A2l8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KXPzLRdH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C72C1ACED7;
-	Wed, 20 Aug 2025 11:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755690852; cv=pass; b=W5Zn+V4qqQ4PPaoLy67WuROcl9npCyML+qq4zBy40WQ/i4pC+90jhsaOe/L4bpt1Pf7aIFFYTn4Vh9kxT8cw+525lw2uQE4+cg0OWTCq6OeW24UfaAfPMo9dYM2LW85VnFxZ/WxJaL0ewtHsTiLsHzj1n29Xyxngu+ERsyYUOiA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755690852; c=relaxed/simple;
-	bh=QE3RL+5Xhpp9wP3bUWghKuI9Z1KJ+Taaxn+LmcWtcXU=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=eyOuct90WPTf+kUs6dOTj7LAZO58fJjwmSqAM8z4WuD2BBYp+D/adM0C8Hpgi9zCRvEXpEb69dHU8BJZY8f03zudxQ5VScxxi6ZfjVkhbjftIIXskxTiG/LNmoqJkA5ZqrdP+//IyNaV7XeoHtJUQM0Z3dYFHIeuIEfe4Ebov4E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=F3r7A2l8; arc=pass smtp.client-ip=136.143.188.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1755690824; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=d1wsPUhTDxNDGmMqav7AGfIeLP3DO96Ui0RCHMOcky8/JRxu9UB9xyM7raHE2qxc9u0pzV51FpAV5gNyJ36lAFVvtFh4rolqFmFMlmcu/i1duIscuDcV01yMn6iy4A4UefTU8jfWkYdCRc38FTmSBPZeoxSVb7DZEcytXyQLmic=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1755690824; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=QI1kAdmfGcNT+wdNrzq4R6c3p8F9w78AD4YJwFXjfL4=; 
-	b=W1uQiJ+F927AQfFCeVF3dxkXJSyiJ9LsySXbHsrRkv7K+mhHb1L5A8JGoSRK6zjdWh9/2vMcRa0dS5+uZNE2ENd6u7gWZdWs+/gVTwbWxQAgIAgGe+D3YWoDbGzoiq1D8ErmSTrxX3jcqKoTzgW10+kePpsTdCG2FJ3RJHHE5qA=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
-	dmarc=pass header.from=<safinaskar@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755690824;
-	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=QI1kAdmfGcNT+wdNrzq4R6c3p8F9w78AD4YJwFXjfL4=;
-	b=F3r7A2l8jhBHn6BvOyWElJ6fi7AyfbsZ/KOjb4jsKzfp7lXZn3DfuQRusS4hH69H
-	V7vgVeJVEQCWJvzgJWo2mSg14xxnfeYM1VhIqKGamuacoAQeOT8F9g2EjVW6e+PBufC
-	SEzK4bTxM6JGLyvLqNj28ZKKjLAXgc9RjtsAYgB8=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 1755690822547169.44702397528795; Wed, 20 Aug 2025 04:53:42 -0700 (PDT)
-Received: from  [212.73.77.104] by mail.zoho.com
-	with HTTP;Wed, 20 Aug 2025 04:53:42 -0700 (PDT)
-Date: Wed, 20 Aug 2025 15:53:42 +0400
-From: Askar Safin <safinaskar@zohomail.com>
-To: "Aleksa Sarai" <cyphar@cyphar.com>
-Cc: "Alejandro Colomar" <alx@kernel.org>,
-	"Michael T. Kerrisk" <mtk.manpages@gmail.com>,
-	"Alexander Viro" <viro@zeniv.linux.org.uk>,
-	"Jan Kara" <jack@suse.cz>,
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>,
-	"linux-man" <linux-man@vger.kernel.org>,
-	"linux-api" <linux-api@vger.kernel.org>,
-	"linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel" <linux-kernel@vger.kernel.org>,
-	"David Howells" <dhowells@redhat.com>,
-	"Christian Brauner" <brauner@kernel.org>
-Message-ID: <198c753eb85.10c26821075264.8127819840821026944@zohomail.com>
-In-Reply-To: <2025-08-20.1755686261-lurid-sleepy-lime-quarry-j42HLU@cyphar.com>
-References: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com>
- <20250809-new-mount-api-v3-7-f61405c80f34@cyphar.com>
- <1989d90de76.d3b8b3cc73065.2447955224950374755@zohomail.com>
- <2025-08-12.1755007445-rural-feudal-spacebar-forehead-28QkCN@cyphar.com>
- <198c6e76d3e.113f774e874302.5490092759974557634@zohomail.com> <2025-08-20.1755686261-lurid-sleepy-lime-quarry-j42HLU@cyphar.com>
-Subject: Re: [PATCH v3 07/12] man/man2/fsmount.2: document "new" mount API
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A03497262A;
+	Wed, 20 Aug 2025 12:17:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755692223; cv=none; b=CG/e6/VWU5iphEuNLbFLCeHSQXe018pMHBCdcJ0ALhA50CryJKHTrAZZEVi+RropzbbFXYNumJHKD+pN/aiS/Q2bADULLMqf1fw+9XtqMTI5hzrvl4PbEG4eSK5t1n+e9MXvNA+E2LmAw9coT8Ka3YXjPmTht+tERQPH+Px3M6A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755692223; c=relaxed/simple;
+	bh=JLWRcDRoHtReAtj03ta+zZeRHOPlCQfZ79cMMGoUmJw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QK3jtRDYFRqLf5gChFVimSmmnHUuvg/b9r0HMi7Z0oLN+f5/+jIrj+D0HmcsekO2Jr/IhcmPsin/Q/bQ1FGIdhFYpEOBbDEUgCL4o44v3G/k0rWEzBJQ1jYEpTsuT1ALD6bV05k17cNdm/YKllmCOfe2DXcDULQcDPgOlrCQHpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KXPzLRdH; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45a1b0b4d13so8072215e9.2;
+        Wed, 20 Aug 2025 05:17:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755692220; x=1756297020; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gAyuXmmTiExKl6ZtNupk//S3JQWiRitMbriQKBEbaFc=;
+        b=KXPzLRdHNN4Zg7nGZfo8drP6Nvr9bfNPv1nO4xafovZ6hEtLQtaASm4ayhSqnbMpHG
+         YNkdLbf/k5Rgv986BRMZTWzDc8iuzuO9opsgyF6QjVvex4Ej7flBMwztBI/nTSfrBXYV
+         T52s4ULxLd61pgcke8Wl26EFL7MO3sTCC5d4kzKbUUCTSnsB6/FGg9q+iscQS5EK2qcH
+         jhqugXs4FOBsHcenGW2Es/JOUf4pzskGWk735lwb4hXpBlaxSeyPLtQGhiBmhK1qRte4
+         vtNSfmE28US5A+E49cyxKC4MjN3667BMtz8WgtG2LIVreOwd9295lMLyvOaPec6vpXRz
+         trsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755692220; x=1756297020;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gAyuXmmTiExKl6ZtNupk//S3JQWiRitMbriQKBEbaFc=;
+        b=wvCKAEFc1bRUQ5fhVFuiQm49ZX8T9fb05n8mTMMaTM6VrM31AwjQtCJNtfCbslZOUE
+         dL6MjbQ3y6tCTGKChFE+W2+mNr45Xu54+z2xZk3Kue3LgXl/QYh+mJ2EM8hPVHQJ4y70
+         UhcKsLDyDuJa1xNYMmGc4SvPAO6Hr77o5stKxyA4VT9ewc9AlbjAZKsNm2e3qp9Ca0N/
+         epVOt3P3VgBR/liBOiWckfP3eZaeaz4pt77ak+mTd5w/GJ3Rh9RJsjG/vaHQU9WnzZDX
+         edyy0VFioxwXbgP2BvTH91nUijzIntFdYSTSTItz4ku/Wf7DJQiL4lHXvrQIIDwQUbCZ
+         xgVw==
+X-Forwarded-Encrypted: i=1; AJvYcCUg+rhHWYJ0AF6LYHXwZJ5FndT9oN0SFbCz5El+cZki9KVEhfygetVmat32Lg5x84YAv4VyLFMgavwXhR1Jzw==@vger.kernel.org, AJvYcCWfqSt3qBf78u69PNWpPT0ujf6JM6Djo0ETutfRdHJI6DUKxwngD9rtC7YsoJWe88ZbqjdMC8vL@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4XrCrQ6lw6Gp+fnJN0ffGlhJpX/e4lo1QxysDFVW6FLLYNfCr
+	JFHsW5wd1TDs+tFHm/D81P5f7wvOQuI3Sk+3igg1DXGYZE6X2K0haEG5
+X-Gm-Gg: ASbGnctHSYzZ/DGcxcZMZoYQOa0GaioNLSuxUhykHXz3WcN7qvJFIypCrV77IMlQUzz
+	B+YmqGDjx0D2rEB3DUXOrYbC787yOaPPn9ydhkDNM6E1TIGHaNbyZrc24v9y5Oz/C6GDPuL9QaO
+	v2fCVSYO3k1bKMHGACUtRSZURypQnXDXXIPVg4ZbCjc46B9RWUqC3izOFQDubZGI4Rlf3Zk8UWf
+	TwpUsKb5/GXGrzOZ436io7ACSVdWMbsLfKT8P5j5sHPMErpuOs+pTCf479RCeA/DvyeZlc3A9TC
+	wYF2Hfn6KjeUKFaruOqkaBUyfTXsgZpqlce2Ndxgy1SZ4S/QXrUSQqyzxyurgzUiUMzon56Q4Me
+	tCDqB0plvsLefgJnuL7YZzAlZ+gc4ANC8bRX92g7z6nRuGlsZfIjr
+X-Google-Smtp-Source: AGHT+IEmicsSzxkK7EC0Py2jIPsFAnlzPswIDNRsBjO5fusLnw8AUn6MeAd7fI3HWXtD3hpJxw4JkA==
+X-Received: by 2002:a05:6000:2282:b0:3b7:8f9a:2e2c with SMTP id ffacd0b85a97d-3c32df48f48mr941403f8f.6.1755692219725;
+        Wed, 20 Aug 2025 05:16:59 -0700 (PDT)
+Received: from [192.168.100.5] ([149.3.87.76])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c077c57aa0sm7531506f8f.66.2025.08.20.05.16.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Aug 2025 05:16:59 -0700 (PDT)
+Message-ID: <24119aa3-f6ef-4467-80a0-475989e19625@gmail.com>
+Date: Wed, 20 Aug 2025 16:16:56 +0400
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
-Feedback-ID: rr0801122723c7726d214c058bb706d0670000b4acc5212ff9e3d42d907a53aceef1bc2f847c914a98d5e146:zu0801122768410bec87a26549bb2b37970000b04b3e7f072a62d0a61e94999743faf58684bd37cf2236fbfd:rf0801122c37d12711bae2ca8e4f7f84210000fe188faa4866b06a0272b0623bab8f3b46040c29b92d259e00a7af51d553:ZohoMail
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] memcg, writeback: Don't wait writeback completion
+To: Julian Sun <sunjunchao@bytedance.com>, linux-fsdevel@vger.kernel.org,
+ cgroups@vger.kernel.org, linux-mm@kvack.org
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+ hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev,
+ shakeel.butt@linux.dev, muchun.song@linux.dev, axboe@kernel.dk, tj@kernel.org
+References: <20250820111940.4105766-1-sunjunchao@bytedance.com>
+Content-Language: en-US
+From: Giorgi Tchankvetadze <giorgitchankvetadze1997@gmail.com>
+In-Reply-To: <20250820111940.4105766-1-sunjunchao@bytedance.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
- ---- On Wed, 20 Aug 2025 14:38:48 +0400  Aleksa Sarai <cyphar@cyphar.com> wrote --- 
- > The reason I wanted to include the comparison is that you can create
- > multiple mount objects from the same underlying object using
- > open_tree(2) but that's not possible with fsmount(2) (at least, not
- > without creating a new filesystem context each time).
+Could we add wb_pending_pages to memory.events?
+Very cheap and useful.
+A single atomic counter is already kept internally; exposing it is one 
+line in memcontrol.c plus one line in the ABI doc.
 
-Okay, you may write that.
 
---
-Askar Safin
-https://types.pl/@safinaskar
+On 8/20/2025 3:19 PM, Julian Sun wrote:
+> This patch series aims to eliminate task hangs in mem_cgroup_css_free()
+> caused by calling wb_wait_for_completion().
+> This is because there may be a large number of writeback tasks in the
+> foreign memcg, involving millions of pages, and the situation is
+> exacerbated by WBT rate limiting—potentially leading to task hangs
+> lasting several hours.
+> 
+> Patch 1 is preparatory work and involves no functional changes.
+> Patch 2 implements the automatic release of wb_completion.
+> Patch 3 removes wb_wait_for_completion() from mem_cgroup_css_free().
+> 
+> 
+> Julian Sun (3):
+>    writeback: Rename wb_writeback_work->auto_free to free_work.
+>    writeback: Add wb_writeback_work->free_done
+>    memcg: Don't wait writeback completion when release memcg.
+> 
+>   fs/fs-writeback.c                | 22 ++++++++++++++--------
+>   include/linux/backing-dev-defs.h |  6 ++++++
+>   include/linux/memcontrol.h       |  2 +-
+>   mm/memcontrol.c                  | 29 ++++++++++++++++++++---------
+>   4 files changed, 41 insertions(+), 18 deletions(-)
+> 
 
 
