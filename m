@@ -1,93 +1,148 @@
-Return-Path: <linux-fsdevel+bounces-58354-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58355-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3286B2D15E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 03:25:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67F41B2D1B7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 03:59:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D41011BA757D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 01:26:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3E62584E94
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 01:57:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EFB92135DD;
-	Wed, 20 Aug 2025 01:25:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Gg9GIEH9"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7839D278E5D;
+	Wed, 20 Aug 2025 01:57:09 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C97ED1459F6
-	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Aug 2025 01:25:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+Received: from mail.189.cn (unknown [14.29.118.224])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 948CD277C96;
+	Wed, 20 Aug 2025 01:57:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.29.118.224
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755653146; cv=none; b=WQwIZ984K900J/Mpb8joFBBAC52U6OhY4E4/Qa4l+DoTKtfQQ6+i7l/JK6eE3vvEEoKs1XncZOAHMskgAwz27Dmwq0Pfm8KqFiaFpMUKbFNMtDvwASFz/n5YAuqA7rMwVXg78D0dJE/imEGVrskDD8eV2R1/3N7T+dKbBDEwicA=
+	t=1755655029; cv=none; b=rEm7JzngIuaHBY+vi0bjt1kWQsLpe/7d0d8QFnRG7dc6tlapoANryYAtdy/TOa8FgXkHcA7Y5Md6rzEqiC3AHvv/q5UOAgdlHtptbh1LK+0N2VtXTakzzPNAUM1UK9nBXMJT1CJmfjAkX8gYkJMjUGANf3/oAJuwcFnlNdBIf5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755653146; c=relaxed/simple;
-	bh=tzkDKFAR8xWlPva04fv2NHk79SlfL3VC/idJkLxZQoU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KDH5VNdkzMZTA7ndoE+LGjyzdutZk0oRQQRAynY4sw7yDp3b8trcqDIqw1/NuqMZ3pLa6wLg7arbDXRhEN4GLr1fi6bmfkQWTU7u9Y++ukYmlvYxUlO4vKyfriRDR7teqkd3bEFfVg9G9mgjtLgXHh+Q5iJBj4wgPPmpZ6eUuJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Gg9GIEH9; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 19 Aug 2025 18:25:36 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755653141;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DkCULZqBLybzeAKmdXAlETYe7ipFpeIMTG5c5FRzUbI=;
-	b=Gg9GIEH9q0a7IsSCOvI6pgjSSlTFw/gjrCNDmj7tWlpKN4PIdTswdIvd+cUZlvJuG7GQr9
-	OFSMilzzKNRMpGI63hXW+N3n18A1v+sA6c7rXhdjxwYhObCMeWB6fhbvXzCX007PY8FYOq
-	ULwmU12vfOoJej8VZFbJtEil+/3KH4s=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Boris Burkov <boris@bur.io>, akpm@linux-foundation.org, 
-	linux-btrfs@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	kernel-team@fb.com, wqu@suse.com, mhocko@kernel.org, muchun.song@linux.dev, 
-	roman.gushchin@linux.dev, hannes@cmpxchg.org
-Subject: Re: [PATCH v3 2/4] mm: add vmstat for cgroup uncharged pages
-Message-ID: <i4hg4g75ywbera643uhtshkj6xrriqi4mi5dg3oga5os3tp6m5@u2dcv2snbiqs>
-References: <cover.1755562487.git.boris@bur.io>
- <04b3a5c9944d79072d752c85dac1294ca9bee183.1755562487.git.boris@bur.io>
- <aKPmiWAwDPNdNBUA@casper.infradead.org>
- <tw5qydmgv35v63lhqgl7zbjmgwxm2cujqdjq3deicdz2k26ymh@mnxhz43e6jwl>
- <aKUM49I-4D24MmwZ@casper.infradead.org>
+	s=arc-20240116; t=1755655029; c=relaxed/simple;
+	bh=JljQWhyzIJt7C788pKgaXNB1oPW5minMsML/GRveAao=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lgkV/ODLZFmUOxZiXJEIb/OgBlfhspXlCoT9fnarr0Qa+DEzAYqI4VQbqg94j884npeck4tJPhkyfG8QR3OXdbxL7C5bVTT+ooBv5Rwr5z1yxPC0b+/te1StiBXsLxIhhB2hjAkeXwmDYI0x6svA5Lhyf3vwK7lkNSIytxoxrp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn; spf=pass smtp.mailfrom=189.cn; arc=none smtp.client-ip=14.29.118.224
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=189.cn
+HMM_SOURCE_IP:10.158.242.145:0.323270274
+HMM_ATTACHE_NUM:0000
+HMM_SOURCE_TYPE:SMTP
+Received: from clientip-221.238.56.48 (unknown [10.158.242.145])
+	by mail.189.cn (HERMES) with SMTP id 554F2400310;
+	Wed, 20 Aug 2025 09:52:37 +0800 (CST)
+Received: from  ([221.238.56.48])
+	by gateway-153622-dep-cdbdfc76c-6vnnj with ESMTP id 1fa85400c497490182ac2cbe6ac6ffa0 for kbusch@meta.com;
+	Wed, 20 Aug 2025 09:52:39 CST
+X-Transaction-ID: 1fa85400c497490182ac2cbe6ac6ffa0
+X-Real-From: chensong_2000@189.cn
+X-Receive-IP: 221.238.56.48
+X-MEDUSA-Status: 0
+Sender: chensong_2000@189.cn
+Message-ID: <5706ae6d-5ffd-445d-bfb3-d44fc2afa350@189.cn>
+Date: Wed, 20 Aug 2025 09:52:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aKUM49I-4D24MmwZ@casper.infradead.org>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv3 0/8] direct-io: even more flexible io vectors
+To: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: snitzer@kernel.org, axboe@kernel.dk, dw@davidwei.uk, brauner@kernel.org,
+ hch@lst.de, martin.petersen@oracle.com, djwong@kernel.org,
+ linux-xfs@vger.kernel.org, viro@zeniv.linux.org.uk,
+ Keith Busch <kbusch@kernel.org>
+References: <20250819164922.640964-1-kbusch@meta.com>
+Content-Language: en-US
+From: Song Chen <chensong_2000@189.cn>
+In-Reply-To: <20250819164922.640964-1-kbusch@meta.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 20, 2025 at 12:46:43AM +0100, Matthew Wilcox wrote:
-> On Tue, Aug 19, 2025 at 08:53:59AM -0700, Shakeel Butt wrote:
-> > My initial thinking was based on Qu's original proposal which was using
-> > root memcg where there will not be any difference between accounted
-> > file pages and system wide file pages. However with Boris's change, we
-> > can actually get the estimate, as you pointed out, by subtracting the
-> > number of accounted file pages from system wide number of file pages.
-> > 
-> > However I still think we should keep this new metric because of
-> > performance reason. To get accounted file pages, we need to read
-> > memory.stat of the root memcg which can be very expensive. Basically it
-> > may have to flush the rstat update trees on all the CPUs on the system.
-> > Since this new metric will be used to calculate system overhead, the
-> > high cost will limit how frequently a user can query the latest stat.
+Hi,
+
+在 2025/8/20 00:49, Keith Busch 写道:
+> From: Keith Busch <kbusch@kernel.org>
 > 
-> OK, but couldn't we make that argument for anything else?  Like slab,
-> say.  Why's "file" memory different?
+> Previous version:
+> 
+>    https://lore.kernel.org/linux-block/20250805141123.332298-1-kbusch@meta.com/
+> 
+> This series removes the direct io requirement that io vector lengths
+> align to the logical block size.
+> 
+> I tested this on a few raw block device types including nvme,
+> virtio-blk, ahci, and loop. NVMe is the only one I tested with 4k
+> logical sectors; everything else was 512.
+> 
+> On each of those, I tested several iomap filesystems: xfs, ext4, and
+> btrfs. I found it interesting that each behave a little
+> differently with handling invalid vector alignments:
+> 
+>    - XFS is the most straight forward and reports failures on invalid
+>      vector conditions, same as raw blocks devices.
+> 
+>    - EXT4 falls back to buffered io for writes but not for reads.
 
-Good point and I think it does apply to other memory types too. I would
-call "file" memory to be more important as it is one of the largest
-consumer of DRAM on, at least, Meta infra. Slab needs a bit more thought.
-At the system level (i.e. /proc/meminfo), we account at the page (or
-slab) level while for memcg, we account per-object (plus obj_cgroup
-pointer).
+I found it in ext4 too, i tried to fall the misaligned dio read request 
+back to buffered io and submitted a patch[1], but haven't received any 
+comments yet.
+
+[1]:https://lore.kernel.org/all/20250710085910.123168-1-chensong_2000@189.cn/
+
+Song
+> 
+>    - BTRFS doesn't even try direct io for any unusual alignments; it
+>      chooses buffered io from the start.
+> 
+> So it has been a little slow going figuring out which results to expect
+> from various tests, but I think I've got all the corner cases covered. I
+> can submit the tests cases to blktests and fstests for consideration
+> separately, too.
+> 
+> I'm not 100% sure where we're at with the last patch. I think Mike
+> initially indicated this was okay to remove, but I could swear I read
+> something saying that might not be the case anymore. I just can't find
+> the message now. Mike?
+> 
+> Changes from v2:
+> 
+>    Include vector lengths when validating a split. The length check is
+>    only valid for r/w commands, and skipped for passthrough
+>    DRV_IN/DRV_OUT commands.
+> 
+>    Introduce a prep patch having bio_iov_iter_get_pages() take the
+>    caller's desired length alignment.
+> 
+>    Additional code comments explaing less obvious error conditions.
+> 
+>    Added reviews on the patches that haven't changed.
+> 
+> Keith Busch (8):
+>    block: check for valid bio while splitting
+>    block: add size alignment to bio_iov_iter_get_pages
+>    block: align the bio after building it
+>    block: simplify direct io validity check
+>    iomap: simplify direct io validity check
+>    block: remove bdev_iter_is_aligned
+>    blk-integrity: use simpler alignment check
+>    iov_iter: remove iov_iter_is_aligned
+> 
+>   block/bio-integrity.c  |  4 +-
+>   block/bio.c            | 64 ++++++++++++++++++----------
+>   block/blk-map.c        |  2 +-
+>   block/blk-merge.c      | 20 +++++++--
+>   block/fops.c           | 13 +++---
+>   fs/iomap/direct-io.c   |  6 +--
+>   include/linux/bio.h    | 13 ++++--
+>   include/linux/blkdev.h | 20 +++++----
+>   include/linux/uio.h    |  2 -
+>   lib/iov_iter.c         | 95 ------------------------------------------
+>   10 files changed, 94 insertions(+), 145 deletions(-)
+> 
 
