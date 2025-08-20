@@ -1,78 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-58378-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58379-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58EA7B2DAB9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 13:19:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EAA5B2DABB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 13:20:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 479A15C07E3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 11:19:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02FBD5C0941
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 11:20:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFBE92E3B16;
-	Wed, 20 Aug 2025 11:19:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BF092E4270;
+	Wed, 20 Aug 2025 11:19:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="MV0p48cm"
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="j04Lu8UV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF9622E11B8
-	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Aug 2025 11:19:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6639C2E2EFC
+	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Aug 2025 11:19:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755688790; cv=none; b=k1dfekad0LuqtPqTDZHLwnsYTioh7n/JsfuCOHsO1cjOy9VfvXGz9ISdoys50wR9SKz6d3Gl/rST0P7rps4uh+9blZAjg8Iohs5tCtTYEEEEMtiqHkoRIJJOyWjEcosZcxBf3suyCsrErTPIKWuzNg/z0CLtU2BOAI801+wGTYE=
+	t=1755688793; cv=none; b=bbArkylsbUPTPQyJHoRbeFsn/ToX9hPSaBAuUoYpENiMOdyaBzS956ohA9UNGFtyq1cjySUlLK8nGP5Z/Quul9e9EujksWqvAlWfiXhsGQyYh4dpcQF6abAzTToByN1LRg7VP0mq6/f9FwBtbllchPxMC3YpaZpcDNrfcEN8Liw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755688790; c=relaxed/simple;
-	bh=hXLqaup/UTK9p2mVp9/xR9s14HjfzRczKFSEI1siwYY=;
+	s=arc-20240116; t=1755688793; c=relaxed/simple;
+	bh=I8eEAlb8CZTOJDVpTC1DVhT7/pwV/0gX3Eqm6Eus7eA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QOo0OBwT7meYotfRNGKS8O7thS2/ZxSVl9KMGH8IcTQYvUagtFV8CZsEtt1sOQpsOdHhdk0Off5Y7m5EYHZ3egnhurjvIx6zsgavsMvJjj2i0I6IJ/wx+qOAXzaogtQ4gnNLvbpkDgyTZ9z5RUh+iiqIr8OFHTm+X9cKGBU5+gQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=MV0p48cm; arc=none smtp.client-ip=209.85.215.178
+	 MIME-Version; b=oHyzxq9Iv739D5stDRBWblvhEJknKhPofrrAaSgDEKLd2Llb09FkV6+2PUIucYBmoFih0e6HNkPPXd0FHwL2eu41g62BI/VJqAgbJgH2XtJuGYBVc/YPGxJEnK1+sR1Rsiu2MRoD9RhY01z3vnlqmfiANaCp/TG8S7MLdDHTDxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=j04Lu8UV; arc=none smtp.client-ip=209.85.214.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b4716fa7706so4282685a12.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Aug 2025 04:19:48 -0700 (PDT)
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-24458317464so71465725ad.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Aug 2025 04:19:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1755688788; x=1756293588; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1755688792; x=1756293592; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nmUl5kz80SYgDggauq/gcrY9lNJu+BoyJNt4pf6QvUk=;
-        b=MV0p48cmBbwH7Sd0duvNterUav5fdWNjI2zkTltPhhGgH+ykfEJcoVsYGS5S3Yx/nT
-         Cd+wHknvgZXaLt7oezoOEJzq1oBf8qIZ1mHATFJI5lbVDSZb+AqKdx3G/9YS1m+PlLNE
-         KtXQGrbY++XbKMkZvaeLJgyjF1TFAuaprFSqhRoNEee2hMZAaJWkp4XVBqMmG+5GDI9f
-         A5OznW85YN2oLou6+XWuQOayh6H0jEwitXGRQTWkxWlEo7kesbpk5UE/mOf/KVh2FXFX
-         diOmxNB4GWbiRjXAgJJFMR49uGRtr9yZL9i3/cpBAAbhetmIV9irlPT+IOjlutIEJgYA
-         acCQ==
+        bh=etfq7Z3ynN+Xhnf5fpj8hv4AyY95nd/Rrih5Sc1jrvk=;
+        b=j04Lu8UVG+LUKzT5l0MrLTwVYMnfjKmJHs8TJXwi6bW9+z3LCH+l11amJC9r15jBKJ
+         UPb9NVac8Mk215EnHi81lUhoRlfo/w/boF2gJTqM9OV6NWSj6mrAHtiRyEMuog90fm7H
+         GfNfqrCBmJnkRHpmj0+sgkZtDvV/9S2M7zYwJZYDvwJAdTMjBoR0G1VdNPK3Ih7JJoyU
+         KPG6dTEB8U9/dqce6j9w1hq0fQB105+c49vPmEVx1+8m+6UsSkYUhmAGOdSKYdwE+dx8
+         hStS0GYxmWMOxg8mj46gIn5YGF9X8yQ+IAiXMyW80nP2iw3Gs4NPbmC5+QlzPi17Q+Vc
+         zpnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755688788; x=1756293588;
+        d=1e100.net; s=20230601; t=1755688792; x=1756293592;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=nmUl5kz80SYgDggauq/gcrY9lNJu+BoyJNt4pf6QvUk=;
-        b=Zgjn/EdE0HojOxYy8iJtViak9EPIPxgGPedra7Hy7/LHPhppXcTb7ZbNUsv5sQMFV3
-         uA31d5c8bRlJIjEMnC5+OeMt7MdXafmvd9aaM+iIZSfURPAgz8+/SLduu7gVs8qdxCsA
-         CRPCkd+6ITJawPR/iHF556/4C5nOBVUxLSeXVISo3U5ctA6zZKTvgI/v86ThcyAzeaxg
-         XydBzwgEomYC2ecy/RT4NpzXr6oTY+NCbcCCXMHkTwQinMUhJA5HDliDl2zLebXppAbQ
-         TnSCWF3vFy2gyDKFuSLAMqTSIqqUdUpQmx7/fqNpYISVhVeVXG7OUtaXdm5Uzg7D+LTC
-         JmfA==
-X-Gm-Message-State: AOJu0Ywy4wm51G6kxmKz9iNWbMI/y62ai5YyLqMcI2c2DttV2lPKIIdk
-	xZKp2YMZel6Z0nOpcM1Jjj0eh4vmkpZPsuQLNMxEN+K5y+hIumNFDsHPy8uaA93y2QHg/1Ng4br
-	S4RudpwQ=
-X-Gm-Gg: ASbGnctz3DIZCyDbGjdi8JQ6r6zi0vHstRAYwyREwKJ3i0jN8otrcZ8qsMpOCNPqXSL
-	3h88CptLh3F/X2uh5Pj1gA3GVxWX8Fyfaghyc8ZVPOTIlsFapWJE+lgHe3RpkJznXWnR/kcJ0Y6
-	Ke66ywlfEeIDctKe4MoMLIG+a2PYc6w6MKa1jxPk3eovze2Sv76YG+nUzpwfVgTt1502E8R5uhF
-	piaAEdY0hSG/XRDEQ6I7GDbX/0AS/rMtVCGT84KO6N3Kf/ash95eL0UIM6txur964MDVnWyDC20
-	KrDG1OmPAwVP8X3IqByfaAgNjiAW0so9GZ+9igCgqq7jLqvEcLseXKjpsVk2Vl0c6G1bNyj/I/2
-	AUb/Eb3VUKn5XUKJW7YS9myQtQaS6hIw=
-X-Google-Smtp-Source: AGHT+IGXmQtILlfaeO0KNXbpv61Pi7GHyLtGfxlkUeNc5eSE1p9UKZu8WVkmKp1RbNxVnH2+bLRYDQ==
-X-Received: by 2002:a17:902:d548:b0:244:6c39:3361 with SMTP id d9443c01a7336-245ef238c60mr29969545ad.44.1755688787898;
-        Wed, 20 Aug 2025 04:19:47 -0700 (PDT)
-Received: from localhost ([106.38.226.178])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed359300sm24062325ad.39.2025.08.20.04.19.46
+        bh=etfq7Z3ynN+Xhnf5fpj8hv4AyY95nd/Rrih5Sc1jrvk=;
+        b=snovIUSKPMMXozDxAOkNc4g2PyVuyTdbVfmVqot7fTjxNlsSnO6nf7uvFdMLmGDNtx
+         QA56o0tzdj1xv+E55ScfRBm+MXmpy69t6GODvmRbvvzKJpXe+wotaDyQYL7nyk3vCvPZ
+         TUBN3zmfZoK4HTm4rPfocaerCudtbNkQZYeO/OxaduUSIcwv2BcZzZSQN4FT8+GK06FL
+         xMtTqStuu8b/kr58ganZjtykpukaJB9IvW10Ul1uCkYVvPAYsJTEw7Knfl2SsRFlk9Uw
+         fTVyKk6WGByZHYwQGLEW1PKB5Np0FhLyDj1pjdmukduzglwSmKddGb+uT9zBYfm6OC9m
+         NCEA==
+X-Gm-Message-State: AOJu0YzoXvREs/Q7GmDLUUIAK7Yk2b674MOULcEgFFL6Ik5GjkQ5xFuM
+	IVS8AtxnYdE5iQ2GKjDF/9Tj63cIldaQXdYWIChrfzmBN9mDGYLXaJiNLWTeTlbwqHosSw9NLpJ
+	ijNuVnQ4=
+X-Gm-Gg: ASbGncubP2ZOAxneDJgYg2TvkrPJfgtB+djjTwwfRSHmrEL+NBIdngrf4f+yCpk7Lus
+	MgCx6PK4CSuB40yhS2Ad+VmGRqemPGc7wCiVgbhHJEgHziRaUM9gj1NK3inejFXdItnI6GJIgnd
+	83OgmN7WFYHXLhhklmuAjIxMrHGnHArqz/KuXEDWnPNc4h2A/dzpDgWxDeJAwyNszcsNl0yQ/n4
+	wvKW1Nn59PuYHbQlVpzkrgbSLlflAJJL+D9cHDVP+zuCNZtbcToN2i4lyJoctb5SANDfVsR7/Kx
+	tj4Th8PiLxVUrCYnZauYTR2Hmgx0DvB4CABKj4etQFZJG/R4a+itTbyZW1efD3krvjjMlLSoXZl
+	cD/HN9O9grrgAbqpadkR2dhQBDQg4HIg=
+X-Google-Smtp-Source: AGHT+IF9yMAQzAeu7oFSZbN1hEkzdOyEwI7/xKUKHr1JqovbQHv/4TBbJdLBUdslaIF5hPaYBQQ47w==
+X-Received: by 2002:a17:902:f70e:b0:245:f1ea:2a4f with SMTP id d9443c01a7336-245f1ea2d96mr20929305ad.37.1755688791478;
+        Wed, 20 Aug 2025 04:19:51 -0700 (PDT)
+Received: from localhost ([106.38.226.198])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-324e7fcff9bsm671051a91.23.2025.08.20.04.19.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 04:19:47 -0700 (PDT)
+        Wed, 20 Aug 2025 04:19:51 -0700 (PDT)
 From: Julian Sun <sunjunchao@bytedance.com>
 To: linux-fsdevel@vger.kernel.org,
 	cgroups@vger.kernel.org,
@@ -87,9 +87,9 @@ Cc: viro@zeniv.linux.org.uk,
 	muchun.song@linux.dev,
 	axboe@kernel.dk,
 	tj@kernel.org
-Subject: [PATCH 1/3] writeback: Rename wb_writeback_work->auto_free to free_work.
-Date: Wed, 20 Aug 2025 19:19:38 +0800
-Message-Id: <20250820111940.4105766-2-sunjunchao@bytedance.com>
+Subject: [PATCH] writeback: Add wb_writeback_work->free_done
+Date: Wed, 20 Aug 2025 19:19:39 +0800
+Message-Id: <20250820111940.4105766-3-sunjunchao@bytedance.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20250820111940.4105766-1-sunjunchao@bytedance.com>
 References: <20250820111940.4105766-1-sunjunchao@bytedance.com>
@@ -101,72 +101,48 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch is to prepare for subsequent patches. It only does
-'s/auto_free/free_work' with no functional changes.
+Add wb_writeback_work->free_done, which is used to free the
+wb_completion variable when the reference count becomes zero.
 
 Signed-off-by: Julian Sun <sunjunchao@bytedance.com>
 ---
- fs/fs-writeback.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ fs/fs-writeback.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
 diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index cc57367fb641..4a6c22df5649 100644
+index 4a6c22df5649..56faf5c3d064 100644
 --- a/fs/fs-writeback.c
 +++ b/fs/fs-writeback.c
-@@ -48,7 +48,7 @@ struct wb_writeback_work {
- 	unsigned int range_cyclic:1;
+@@ -49,6 +49,7 @@ struct wb_writeback_work {
  	unsigned int for_background:1;
  	unsigned int for_sync:1;	/* sync(2) WB_SYNC_ALL writeback */
--	unsigned int auto_free:1;	/* free on completion */
-+	unsigned int free_work:1;	/* free work on completion */
+ 	unsigned int free_work:1;	/* free work on completion */
++	unsigned int free_done:1;	/* free wb_completion on completion */
  	enum wb_reason reason;		/* why was writeback initiated? */
  
  	struct list_head list;		/* pending work list */
-@@ -170,7 +170,7 @@ static void finish_writeback_work(struct wb_writeback_work *work)
+@@ -169,15 +170,19 @@ static void wb_wakeup_delayed(struct bdi_writeback *wb)
+ static void finish_writeback_work(struct wb_writeback_work *work)
  {
  	struct wb_completion *done = work->done;
++	bool free_done = work->free_done;
  
--	if (work->auto_free)
-+	if (work->free_work)
+ 	if (work->free_work)
  		kfree(work);
  	if (done) {
  		wait_queue_head_t *waitq = done->waitq;
-@@ -1029,7 +1029,7 @@ static void bdi_split_work_to_wbs(struct backing_dev_info *bdi,
- 		if (work) {
- 			*work = *base_work;
- 			work->nr_pages = nr_pages;
--			work->auto_free = 1;
-+			work->free_work = 1;
- 			wb_queue_work(wb, work);
- 			continue;
- 		}
-@@ -1048,7 +1048,7 @@ static void bdi_split_work_to_wbs(struct backing_dev_info *bdi,
- 		work = &fallback_work;
- 		*work = *base_work;
- 		work->nr_pages = nr_pages;
--		work->auto_free = 0;
-+		work->free_work = 0;
- 		work->done = &fallback_work_done;
  
- 		wb_queue_work(wb, work);
-@@ -1130,7 +1130,7 @@ int cgroup_writeback_by_id(u64 bdi_id, int memcg_id,
- 		work->range_cyclic = 1;
- 		work->reason = reason;
- 		work->done = done;
--		work->auto_free = 1;
-+		work->free_work = 1;
- 		wb_queue_work(wb, work);
- 		ret = 0;
- 	} else {
-@@ -1237,7 +1237,7 @@ static void bdi_split_work_to_wbs(struct backing_dev_info *bdi,
- 	might_sleep();
- 
- 	if (!skip_if_busy || !writeback_in_progress(&bdi->wb)) {
--		base_work->auto_free = 0;
-+		base_work->free_work = 0;
- 		wb_queue_work(&bdi->wb, base_work);
+-		/* @done can't be accessed after the following dec */
+-		if (atomic_dec_and_test(&done->cnt))
++		/* @done can't be accessed after the following dec unless free_done is true */
++		if (atomic_dec_and_test(&done->cnt)) {
+ 			wake_up_all(waitq);
++			if (free_done)
++				kfree(done);
++		}
  	}
  }
+ 
 -- 
 2.20.1
 
