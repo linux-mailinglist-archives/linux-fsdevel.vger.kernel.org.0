@@ -1,62 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-58398-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58399-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 463E1B2E233
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 18:22:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8482B2E244
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 18:27:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F07B31C4732E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 16:22:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B25F7B5871
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 16:26:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A75F322C96;
-	Wed, 20 Aug 2025 16:22:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0603D14AA9;
+	Wed, 20 Aug 2025 16:27:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fRssMe4x"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cySH4xMt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50BC731E0FD
-	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Aug 2025 16:22:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DDD12869E;
+	Wed, 20 Aug 2025 16:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755706925; cv=none; b=JoRaghOCD2oaKbMuoti39drvT7Pfg0/i6YRWMkcaACaRlcOtQUr6qvnCWF3HMpSMBeKciyPCWRqte5yeRKPOzfuIeSNfM2vssR6UWJ3lX1PucZ1DBuTrgyS52smT2S7+Ba7Q+NqRxiK1cglX31vEOFCVCQrN/+tCpxoxwa5Mkug=
+	t=1755707245; cv=none; b=pz9nymdyrGDtzA+hh3Blk4cNslOEMsB94JeH9y5KzRE7AeJ/RdW++7uTZPJAWvUFpDJielHlomm+QCgCAD7XIYTRP3wTaai4tITAHlYiK13ouMAjYQCi+OpXtkc4SFQIBNLe9oQc06FncCqoBjy3rVkJ22xGse/e3CVVKLRIUiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755706925; c=relaxed/simple;
-	bh=IsFyELa9QPrqBJgwucGOJ0VEdl9y/5Oh61mhguqB+ic=;
+	s=arc-20240116; t=1755707245; c=relaxed/simple;
+	bh=6b0KLUQmQqEXc+dre+tvQYRy/Qs3uwqYitS62zeXa3Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SqMtYNo9LE9D6Jw+lNkbbgNacA/Q4vjg3Rj+Hrw89o5OOE+k0tBp7sUaeutVsabzsJdUDcxDH8rJu28Sei6OkNNxuofngPdEoPXi3rvMGpOX8BQVwV09uFb1QfQ7IeoqTsMJJAyogJcKMSGo/zN6LGGzaJ3/ErIfu85IkbdjVT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fRssMe4x; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 20 Aug 2025 09:21:49 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755706918;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vBLYyaohMUoNQ9X3he/qnSrc95mW/vnc+a+/vaGlBWU=;
-	b=fRssMe4x4fjWLKNWxp9No6Dt3tT/XKMTSIz4exFpUGvwlVWtQ9hM1hkvC54a+RUloUG33v
-	0F2yFukgQwfF1ekGUJ3up1lB8CT6ifF13pr6i/0mgLfGuYbsq0W66fsruIpbmgjtE4Ir6Z
-	fnJoz9vzguWadvcdAyHnRc7Gwiz7Mp0=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Boris Burkov <boris@bur.io>, akpm@linux-foundation.org, 
-	linux-btrfs@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	kernel-team@fb.com, wqu@suse.com, mhocko@kernel.org, muchun.song@linux.dev, 
-	roman.gushchin@linux.dev, hannes@cmpxchg.org
-Subject: Re: [PATCH v3 2/4] mm: add vmstat for cgroup uncharged pages
-Message-ID: <6xccsmpdtvweriimshfvgz7yzxcdodbxhzfvxraigdqiomkgze@wb2i46neozwu>
-References: <cover.1755562487.git.boris@bur.io>
- <04b3a5c9944d79072d752c85dac1294ca9bee183.1755562487.git.boris@bur.io>
- <aKPmiWAwDPNdNBUA@casper.infradead.org>
- <tw5qydmgv35v63lhqgl7zbjmgwxm2cujqdjq3deicdz2k26ymh@mnxhz43e6jwl>
- <aKUM49I-4D24MmwZ@casper.infradead.org>
- <i4hg4g75ywbera643uhtshkj6xrriqi4mi5dg3oga5os3tp6m5@u2dcv2snbiqs>
- <aKXLXJw7m-TSkZOI@casper.infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mvA/9R3XD9MkOSnRGHyityCeuBclrl2Gh6AqLvzo0K1uNh6TDb1SCQzYxDuccoseznTYPK5SkeF9lKDBph9DwfKBCcB7eK1OXAKd044nowF8DWhdc49GBx70yj+I9I5leoY8NjkW1qlPh3rXBK19BEnxShmyWVjp11gFa9HsJAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cySH4xMt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E417FC113CF;
+	Wed, 20 Aug 2025 16:27:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755707245;
+	bh=6b0KLUQmQqEXc+dre+tvQYRy/Qs3uwqYitS62zeXa3Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cySH4xMtjGxHrDny/M0+6aZHAZ5pW2iDZqp19u4pVNLv2AgPVT/v+WT7sGMHByOGJ
+	 /BQ2dhHH8JWotA4bNrX8uJ1uGe3Wa1VWjZPinMYhRcNNHiIRgZuhSK98ghczmTrFGO
+	 jn/Xq6O0EHAzQor25Elsiy3yh1a+RuZ/VNHXTUSb4P+RdvhoUmccbiN6yHBCVi80et
+	 fMvSoif7REFgdclhPGwcsr0g64hTEc9nRvfhFH3aXTo4aLujwg3MW6lGZiCBfZKrfy
+	 LKWSBAGJtdu6nDzP7dl8f0TvIyBcQg7Lt0GwpVjgfFeSy0A2R2ckz6o2sUXGv9SLjt
+	 KJfH0YAOmX7Nw==
+Date: Wed, 20 Aug 2025 09:27:24 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Chunsheng Luo <luochunsheng@ustc.edu>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fuse: clarify extending writes handling
+Message-ID: <20250820162724.GL7942@frogsfrogsfrogs>
+References: <CAJfpegsz3fScMWh4BVuzax1ovVN5qEm1yr8g=XEU0DnsHbXCvQ@mail.gmail.com>
+ <20250820021143.1069-1-luochunsheng@ustc.edu>
+ <20250820052043.GJ7942@frogsfrogsfrogs>
+ <CAJfpegtXUekKPaCxEG29SWAK0CTz-fdGvH=_1G5rcK9=eHt6wQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,48 +60,121 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aKXLXJw7m-TSkZOI@casper.infradead.org>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <CAJfpegtXUekKPaCxEG29SWAK0CTz-fdGvH=_1G5rcK9=eHt6wQ@mail.gmail.com>
 
-On Wed, Aug 20, 2025 at 02:19:24PM +0100, Matthew Wilcox wrote:
-> On Tue, Aug 19, 2025 at 06:25:36PM -0700, Shakeel Butt wrote:
-> > On Wed, Aug 20, 2025 at 12:46:43AM +0100, Matthew Wilcox wrote:
-> > > OK, but couldn't we make that argument for anything else?  Like slab,
-> > > say.  Why's "file" memory different?
-> > 
-> > Good point and I think it does apply to other memory types too. I would
-> > call "file" memory to be more important as it is one of the largest
-> > consumer of DRAM on, at least, Meta infra. Slab needs a bit more thought.
-> > At the system level (i.e. /proc/meminfo), we account at the page (or
-> > slab) level while for memcg, we account per-object (plus obj_cgroup
-> > pointer).
+On Wed, Aug 20, 2025 at 08:52:35AM +0200, Miklos Szeredi wrote:
+> On Wed, 20 Aug 2025 at 07:20, Darrick J. Wong <djwong@kernel.org> wrote:
 > 
-> That was supposed to be a reductio ad absurdum, not an invitation to
-> add more counters.
+> > I don't understand the current behavior at all -- why do the callers of
+> > fuse_writeback_range pass an @end parameter when it ignores @end in
+> > favor of LLONG_MAX?  And why is it necessary to flush to EOF at all?
+> > fallocate and copy_file_range both take i_rwsem, so what could they be
+> > racing with?  Or am I missing something here?
 > 
-> Look, if this is information you really need, I think you should come
-> up with a better way of collecting it than by adding new counters and
-> new complexity to everything involved in GFP_ACCOUNT activities.
+> commit 59bda8ecee2f ("fuse: flush extending writes")
 > 
+> The issue AFAICS is that if writes beyond the range end are not
+> flushed, then EOF on backing file could be below range end (if pending
+> writes create a hole), hence copy_file_range() will stop copying at
+> the start of that hole.
+> 
+> So this patch is incorrect, since not flushing copy_file_range input
+> file could result in a short copy.
 
-Please elaborate more on this complexity. To me, particularly for this
-specific case, a dedicated counter seems more cleaner compared to error
-prone and costly alternatives. I am not getting the complexity argument.
+<nod> As far as Mr. Luo's patch is concerned, I agree that a strict "no
+behavior changes" patch should have changed the inode_in writeback_range
+call to:
 
-> The unaccounted address_spaces are a very tiny percentage of file
-> memory, at least as far as this patch set goes.
+	err = fuse_writeback_range(inode_in, pos_in, LLONG_MAX);
 
-From [1], Qu noted "On a real world system, the metadata itself can
-easily go hundreds of GiBs...".
+Though if all callsites are going to pass LLONG_MAX in as @end, then
+why not eliminate the parameter entirely?
 
-This does not seem tiny.
+What I'm (still) wondering is why was it necessary to flush the source
+and destination ranges between (pos + len - 1) and LLONG_MAX?  But let's
+see, what did 59bda8ecee2f have to say?
 
-> I don't think this
-> patch is justifiable on its face.
+| fuse: flush extending writes
+|
+| Callers of fuse_writeback_range() assume that the file is ready for
+| modification by the server in the supplied byte range after the call
+| returns.
 
-I think I have provided enough justifications. However I don't want to
-force push this until I fully understand your concerns. This will become
-part of API and I don't want a situation where we regret this later.
+Ok, so far so good.
 
-[1] https://lore.kernel.org/linux-mm/08ccb40d-6261-4757-957d-537d295d2cf5@suse.com/
+| If there's a write that extends the file beyond the end of the supplied
+| range, then the file needs to be extended to at least the end of the range,
+| but currently that's not done.
+|
+| There are at least two cases where this can cause problems:
+|
+|  - copy_file_range() will return short count if the file is not extended
+|    up to end of the source range.
+
+That suggests to me
+
+filemap_write_and_wait_range(inode_in, pos_in, pos_in + pos_len - 1)
+
+but I don't see why we need to flush more bytes than that?  The server's
+CFR implementation has all the bytes it needs to read the source data.
+
+Hum.  But what if CFR is actually reflink?  I guess you'd want to
+buffer-copy the unaligned head and tail regions, and reflink the
+allocation units in the middle, but I still don't see why the fuse
+server needs more of the source file than (pos, pos + len - 1)?
+
+|  - FALLOC_FL_ZERO_RANGE | FALLOC_FL_KEEP_SIZE will not extend the file,
+|    hence the region may not be fully allocated.
+
+Hrm, ZERO | KEEP_SIZE is supposed to allow preallocation of blocks
+beyond EOF, or at least that's what XFS does:
+
+$ truncate -s 10m /mnt/test
+$ xfs_io -c 'fzero -k 100m 64k' /mnt/test
+$ filefrag -v /mnt/test
+Filesystem type is: 58465342
+File size of /mnt/test is 10485760 (2560 blocks of 4096 bytes)
+ ext:     logical_offset:        physical_offset: length:   expected: flags:
+   0:    25600..   25615:         24..        39:     16:      25600: last,unwritten,eof
+/mnt/test: 1 extent found
+
+as does ext4:
+
+$ truncate -s 10m /mnt/test
+$ xfs_io -c 'fzero -k 100m 64k' /mnt/test
+$ filefrag -v /mnt/test
+Filesystem type is: ef53
+File size of /mnt/test is 10485760 (2560 blocks of 4096 bytes)
+ ext:     logical_offset:        physical_offset: length:   expected: flags:
+   0:    25600..   25615:      33808..     33823:     16:      25600: last,unwritten,eof
+/mnt/test: 1 extent found
+
+(Notice that the 10M file has one extent starting at 100M)
+
+I can see why you'd want to flush the target range in case the fuse
+server has a better trick up its sleeve to zero the already-written
+region that isn't the punch-and-realloc behavior that xfs and ext4 have.
+But here too I don't see why the fuse server would need more than the
+target region.
+
+Though I think for both cases we end up flushing more than the target
+region, because the page cache rounds start down and end up to PAGE_SIZE
+boundaries.
+
+| Fix by flushing writes from the start of the range up to the end of the
+| file.  This could be optimized if the writes are non-extending, etc, but
+| it's probably not worth the trouble.
+
+<shrug> Was there a bug report associated with this commit?  I couldn't
+find the any hits on the subject line in lore.  Was this simply a big
+hammer that solved whatever corruption problems were occuring?  Or
+something found in code inspection?
+
+<confused>
+
+--D
+
+> Thanks,
+> Miklos
+> 
 
