@@ -1,117 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-58384-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58385-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32C79B2DC72
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 14:29:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B9C0B2DCCB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 14:43:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6EEF5E06F5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 12:27:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2F941887C10
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 12:39:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 462F33090C1;
-	Wed, 20 Aug 2025 12:27:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5C102E764C;
+	Wed, 20 Aug 2025 12:39:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iatrAwy7"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="s65pGudP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD801305E37;
-	Wed, 20 Aug 2025 12:27:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0AB8302CA4;
+	Wed, 20 Aug 2025 12:39:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755692866; cv=none; b=ofpjMSD2HNyyfmfBTiLmgYPs9OiZY//cdZacyLWrYlkf9VWMogn0uyrafxomWJGbsC+NlvFqX75/LoqCPcVtgFFAW2HHmQN9TVGaE+ed94K3iax0mOHSfzCzqdzYnAas/fgrC6/aRXKwNO7q81loqb0bc7fY9GqMuBadfgRcOqs=
+	t=1755693554; cv=none; b=iOC6DHACuFRA5ovoi+/lejYfpwdYKsC4HXR5lqRmmmgZQbNwM9SliidDoImQNT1F1IHp8yREULyfFdT4Gk7tBB8ZnG55b0D3jb9ztGFnp7IDM5II+87XKGbLqRcSRhL+6GQxRuPKvec5OBVbybhMRimYXBhziGN+mVL/+m4iQAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755692866; c=relaxed/simple;
-	bh=fozkKZ+7TYpGVtVQqcJ9yue6BIaaRtrQLet9kli0FTY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HzoCTbCJhsE6d73cYzj7G1Vs4SGvBWecvr2GBpRj8ZhsNGmeXvSo/LQR8K9jRBu5z5xnKZGxslUB36Lzd239Ry4RWAzE8oj25UnmlAofWEYQN3TnPVRg6+RtXz8cergshgR/pyDhNMgUoJrbsdzIauzE/2lKEYIBzp1qgDDmWzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iatrAwy7; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b4756244423so1250789a12.1;
-        Wed, 20 Aug 2025 05:27:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755692863; x=1756297663; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dS/Qz4iPQ/6vsa3rpI9isTAuo5vfnUUc5hPRAtnu9g8=;
-        b=iatrAwy71yX/gHN5GjXXmzyAFW9GG2RKv92UYTVaa064HGFyy9W3PQxkSu7BLzVQeP
-         Qo2PsJld/hxVn7fqVUr60rJV1vCRDlfTu8qJhXMc3gV8RpMxDHuQI+LY3y3suSEZZ396
-         6lSss2N2LbYyeguGmLLmoj+2HWfP1TE7gBvXqLkKxbcVADNZ+Hy/qGgD4sS+76ZC2Icn
-         E2RE59FOviscuZkWHOLMD2H3hmgyF6ACJ6mOrHh70VPKtEuMZVlyRqPdgNsm4l2ITIL6
-         tvmFEV1qNvPxanPN6Hx4dWtstTEcY+MiCgTjK/wRvw6kokhrCNJ6CblKeO+UTd+wuqbS
-         hMeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755692863; x=1756297663;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dS/Qz4iPQ/6vsa3rpI9isTAuo5vfnUUc5hPRAtnu9g8=;
-        b=Q7qlrZcfoSTQhTfOt0jcRK8VxheaPVwSQdagH3oC8po+xgVlVn35uzQvwFWqmbmPim
-         fp0CH55cjwdtzZHV7dgddIp50znt9ugGFj9z+CuVxlHC9mEjevGGVkVi5NRfeGcWRb/6
-         VQSNzkwiGh0DdVFIZ7F4iohWzPcT4+2bSGW3i2JOrAQt+kbNg8g5NA0PtuThSMa2uQSR
-         4N4jTm203UVJeBTpy8yNjQBMKsLML2tGUsVNPWABUZFV+uZ9K417PtSIjlpWVTstfSBO
-         gvhVZoB2uls/lUDFcTqOI0FrnTr66Hy42/1DCFRBEz9+OaRhuRiNSYEZJ+YQaJa35WrO
-         csDg==
-X-Forwarded-Encrypted: i=1; AJvYcCX9Wrtvf0uNXwVkIBbkf946TYO38V6L7LH94iA1LETzm3bYR1+cltgndy4mpaX1jRJxzVOLXBmKg5ws2VY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzS7h+vvf5dx7R7gX/DjhG0lZGdCNY+7ueX+pbYLEmTET2aJqV/
-	usytjtgc7wkXAKmazoILikgknO8SRl0XKojcWAa7SAg84kX/l6ErhGxe
-X-Gm-Gg: ASbGnctWoXhh0Wp3bH2VxbLfXhpn3KNOsveX+oOv052DR/aw6HoUPJA14yU8ZWk2ETw
-	JQHFzUS2JOsZaCPRKWdZQeiV+cjjwISYVpFXrSkQ04e8yRepoPRHrWXnLIiQlP049xWIAYl/Iog
-	o956Ax5rlq46Lv5CWyYqAtE8r8ZlPu81lkwzns0f1WYwrQIdSYoE97+EArVX5GrKeBgKG+WHb6C
-	8myCYdo7xBosaZA8Zel4r3kDDVYZC+yDmhNdkfntuCSOHMLD8RfrontWRyRpvx7CeAZRWhkKud7
-	crVTaIcN3TkC9rqun9gb80QD84iIMpkru+6vH/8M/EVptGkP5CbQYoBkxEQtFjy5cDDcoMCP+Kp
-	Z113NHV4/pzN6ANZJifS47vxEuiv76dADJQ==
-X-Google-Smtp-Source: AGHT+IFuCwF1+L+JyamxJlydbb7ZqbPnkIJic9UgO8fWBqUJFoxgkpvrESkqezbmIhEtaDPhbD7EfQ==
-X-Received: by 2002:a17:902:f691:b0:23f:f68b:fa0b with SMTP id d9443c01a7336-245ef22dc84mr27967745ad.37.1755692862794;
-        Wed, 20 Aug 2025 05:27:42 -0700 (PDT)
-Received: from OSC.. ([106.222.231.87])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed336002sm25949565ad.5.2025.08.20.05.27.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 05:27:42 -0700 (PDT)
-From: Pavan Bobba <opensource206@gmail.com>
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Pavan Bobba <opensource206@gmail.com>
-Subject: [PATCH] Documentation: warning fix
-Date: Wed, 20 Aug 2025 17:57:37 +0530
-Message-ID: <20250820122737.13501-1-opensource206@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1755693554; c=relaxed/simple;
+	bh=vRs6O2QQYZ1Qz3nbRAs8QyWrRXLj0KnjhKbnXslYIeY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nq2OQ7XV+jEFppLjqyf1118ENKAY+XiUX/6SHOkBIlE5dQK7hA2S2VMoEsgIv29xwaqr1GkpHEHhZslHPsZSGVqgoqFaHtALbJA7lp8/ABwBkfyjb1JEo5LYqmNMRffE9MQFbXpcgT3sjrOCWGCFMOxZynRoHTJtVmGjlN+moWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=s65pGudP; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=gCbIzlOhtOecIDyn8V6GPgdB5z0VOBcPUH7fh+l4b+E=; b=s65pGudPm6U7T8BIRWIPozjuvE
+	HxqlTG0yAzsPk1nuGhc+aCVZqi+VHkrE/6OZzmjxcKGIL2jgxl+d3aK/2+ZUbUk1uRn6F/hqLOtIs
+	ng+jWEgFbSoPWXwwTzUp73wFKqhJgnaEzlvRtRJeOySXiMa28MqXhfqI15xiRDiPQ3mHINxrnO3kU
+	t5wSLsmqW+4XvHaznpTTznR8d0IzmNgAWRnWSFRrn4ZZ8DzGYw2bYnTELJhK/MOsVSaVEmXRsskwj
+	cmcpa/dUjkUceFFeK7IgOaxkPHfzwE6+EsNMChcqw9RqKv8yqkcG21BxuAC1qj2xdFdWtikM9sdEE
+	dk8ALVSg==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uoi5t-00000006QJC-42JS;
+	Wed, 20 Aug 2025 12:39:10 +0000
+Date: Wed, 20 Aug 2025 13:39:09 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Pavan Bobba <opensource206@gmail.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Documentation: warning fix
+Message-ID: <aKXB7Ux8_C_IIrkB@casper.infradead.org>
+References: <20250820122737.13501-1-opensource206@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820122737.13501-1-opensource206@gmail.com>
 
-This fix is to mitigate below warning while generating documentation
+On Wed, Aug 20, 2025 at 05:57:37PM +0530, Pavan Bobba wrote:
+> This fix is to mitigate below warning while generating documentation
 
-WARNING: ./include/linux/fs.h:3287 function parameter 'name' not described in 'name_contains_dotdot'
-Signed-off-by: Pavan Bobba <opensource206@gmail.com>
----
- include/linux/fs.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+You're the fifth.  You know you can read mailing lists as well as
+send to them?  Also, reviews are more useful than new patches.
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index d7ab4f96d705..1c87f9861ce2 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3281,7 +3281,7 @@ static inline bool is_dot_dotdot(const char *name, size_t len)
- 
- /**
-  * name_contains_dotdot - check if a file name contains ".." path components
-- *
-+ * @name: file name to check
-  * Search for ".." surrounded by either '/' or start/end of string.
-  */
- static inline bool name_contains_dotdot(const char *name)
--- 
-2.43.0
-
+https://lore.kernel.org/linux-fsdevel/?q=name_contains_dotdot
 
