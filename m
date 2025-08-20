@@ -1,217 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-58400-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58401-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A26E0B2E471
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 19:55:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46DD6B2E473
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 19:56:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4EEAA25CE4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 17:50:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 931E31BA5144
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 17:56:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E941B272E43;
-	Wed, 20 Aug 2025 17:50:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4965F276045;
+	Wed, 20 Aug 2025 17:56:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JtLF7o4T"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bIL4sZY7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DBDE25A352;
-	Wed, 20 Aug 2025 17:50:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34CA0266B6B;
+	Wed, 20 Aug 2025 17:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755712238; cv=none; b=XBqLSywySmwFLbqfECaC/iO7vN6LUjAG+5bsnXZ/NjJI8mIWXpT1oVMeakDZjBRWxJ6XW8Wq2nhezBKVT5yGTZiBTKK95gneYx8B8DAUAGj8LXkQ+DhvkJTyqAWBl2So29bE2aCOCfRnX69m99AbNTT+cyH1EuEDgJS9hyVkjeA=
+	t=1755712580; cv=none; b=Ez7bJRnhZcrFP9PtugzjHPRDu16qdAoeh5oOcE5UWooqraQFnPMB7jIo7+aV4dMg3J92+rXXEz3q5s/FhEzNqjtQRbnnJx8akjgKHv0tfBem7BE1c/nMyFdMWNcMdv8POeI9+U0eUFw3TwJUcC7N5TYnDaSNtAF69MK++azjUfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755712238; c=relaxed/simple;
-	bh=WKGdVU7WkPGRn6n7Ocqx6xoiPc/q7PCmfXCFdh7Q86g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZjtCFeIDNl1+VIw3ZKsRgHmOPfYteGe5ysfMD3fBnVQ69jes9MPVbmO7I0xm/dW7fPaqoU1w/TkBnCIPHyEMky/ND4X+McOlA2shRfQP+mkPz4mu3b7u+aDfyuI+OVaxe/8T71TjoLV0eNspsidF0QNykN+vlDBPeId30NDcnqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JtLF7o4T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3373C4CEE7;
-	Wed, 20 Aug 2025 17:50:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755712237;
-	bh=WKGdVU7WkPGRn6n7Ocqx6xoiPc/q7PCmfXCFdh7Q86g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JtLF7o4TD79tNlPUFPTyI9EfHMk1NzZ05ZM3oWrOCwq2b1WU7TOTFn97M3gTMZSDj
-	 Fj4JAClIBRK75OBVY68pysedsYjgPY+41IN5EpNIECmBxFNlMbRgCllmTpLs+kjtAf
-	 FNIrB8GvrMRTVEsjI2ozafuZIP0Tirse/3oOsBM9+uqk9nez/GF7v5Ri6sQeBrk6Q/
-	 fXZwrNJZ1c8lw7VYKs8cd029TES4ET99Ly470cjXPxqlQ3QNsM2nwVeb++96UrreP9
-	 Qb3aOdYuVyUkV1fCCSpBU0TdpLPQMys5IdaHwbYX65P4QFq5h/g4h5bx7vP7Hk6YmP
-	 OudKDcUzpL57A==
-Date: Wed, 20 Aug 2025 10:50:37 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-	dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
-	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	hch@lst.de, tytso@mit.edu, bmarzins@redhat.com,
-	chaitanyak@nvidia.com, shinichiro.kawasaki@wdc.com,
-	brauner@kernel.org, martin.petersen@oracle.com, yi.zhang@huawei.com,
-	chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH util-linux v3] fallocate: add FALLOC_FL_WRITE_ZEROES
- support
-Message-ID: <20250820175037.GN7981@frogsfrogsfrogs>
-References: <20250820085632.1879239-1-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1755712580; c=relaxed/simple;
+	bh=OpMONjBtUOi/QSNOr/+nhfqsjkMyCFbyzjsLnThXOo0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IU/N8TFTYFy+4bQbb0wWtoj/qKIIfQUJdEAxpMz8a6J5jvA2DxCtQiehjeWYMEhpzQYHfuZI9nB2n29Iys4LxIBDekEeNue5js6OuO1cMLBDQTN8nR+3tf+EwWUr8Iy1V3o8KBwpcZq5kNd0MaBdYDJ1iJ/5mlFaHx6qqVLm3Ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bIL4sZY7; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-76e2e89e89fso267730b3a.1;
+        Wed, 20 Aug 2025 10:56:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755712578; x=1756317378; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OpkKXvg2DGMCCtE6dEYGs6b3fg4sVj3U6sdfAgSI6Qs=;
+        b=bIL4sZY7nI3rbNX2phu7p59WrGGn54Th0v3RImyCczJAZ9/Mq+qnSZz33D+vtYmfsB
+         +Izzk7h326YurhHh/4MT//TPnTN1snrjOoyeZHGFfDyN1buhl13AK6OafWdE0y2oUVtF
+         S+IMDqoffnxmIqs076CPcXboGvyopN2VOXcKXCLC+0Y0Cy1Kt+CSS2p79O9J6yNdWk7Z
+         31fxCoNqVs0rgxQZcI14Fa+1MNZ9bQli3lBMhZ359sKBwoz1thDpBSE30RblyXJl+b5y
+         fF+b5i/6W3hfqJC/X67IIzX/x0NxsRu4GHa6yK4P4NcxWBPI4YEwfe7DHsdLDBM5Zcl7
+         C39g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755712578; x=1756317378;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OpkKXvg2DGMCCtE6dEYGs6b3fg4sVj3U6sdfAgSI6Qs=;
+        b=cP1utrahXTimWJEMepC9ZhTeUl1Syx+M7Hyq2NaXEDdCeqljenJQwyUj/tUeCrVc1t
+         ESXgs/g2iwn2oLKoLMWV+P3TQOwNU/OuL9bxs/ohTb3mSRva6LpTecN9V78YphNQP5Rc
+         VuZEbyH/UR1OKmjBMwX83PcJtTAQ/64NDQBBqs7Qw0YQZUsOLzVCEFgk4E7bXMipCo9z
+         XdSFJgPqD3jQszRXWQzt6CnGbpblVuqBSR/4Q2fz4sdohA4uBwR2RC7SyVCeoVwHB8jA
+         R0TxQP32NIschw1VLyH1L9rNgkiGcvZC+eUICk5wYqxzkl18oV2mY7ppjV9SEwxuN3J2
+         ylag==
+X-Forwarded-Encrypted: i=1; AJvYcCU6JzNlDdVzmiXlxggKYQFDLO+C0EhtiLKKjMhrY35eOhiIcAXfBVqUc2USTXh7NBcza+eJahzCIYyf2vW0nu0S@vger.kernel.org, AJvYcCWTdWX5550+mdV4uX20YO1SQi3lPfIis1t/GqJi4VcCsjz1QXMLxdbH5HHpduRf8tjmaAeetML7/JGbLlG+@vger.kernel.org, AJvYcCWlmlpLUZOVk1LEkMNl9GNGRSxn4sCopwBlr5eMWQx3mV4nv6FPfbXbOiRpxUxND3ntBj3uSrqEjDAJMIxD@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkSeeriLCdU21E9V2GokiWlTOWs9ItkSaVuXa8fuHmgfhxR3oO
+	gmb3JPA5pwWoYzDlE1cHgUrYbpadkst0RHzMOGEEPHfegqa0286Ku6Ap
+X-Gm-Gg: ASbGncsu0Zpjn9g2LGL0YJ0LW2G63KEyIbXQATuB7d7nAM6N0qtAdRZZQo3nZNY89IF
+	2V3UOgcZ52sgrVQc/s1q6+3qVsCnOMCyLlUL6/bzKvjgwFB+Gh849rDWtJdWxoKzvm4cCjAZE1O
+	KgJy564NQIWcHrJLFFe7Y4b5T659mkQSrT6QP/TYHoAUKZGsy3nc55nsPBvG0R+bmtcM1Gh20lJ
+	ZJhtlWoftWLsRzMhqYQLX57GCdzbyXYy67291MpyzIcy7UKZ6c+LnmiCn3qt69kngB+VSHJwPSm
+	qfG4md/XqLm1pmYMV4riZORCcwXnWhpfZ45jLSdVUY2XKRs29C2/t2P2ljpLIdUHh/8LSV1mVz3
+	6a83tUzNEQlgdXsj5xL72voGA3lqZRNAnvQ==
+X-Google-Smtp-Source: AGHT+IHUZKGHRdExYpj6kJNm30eqT1Ccbq83SzG1Im1hgBPAnKcFamJmgGS3Q2KZP3PJ2sZ1xLv69g==
+X-Received: by 2002:a05:6a20:3945:b0:243:15b9:7796 with SMTP id adf61e73a8af0-2431b9be0eamr6362611637.58.1755712578350;
+        Wed, 20 Aug 2025 10:56:18 -0700 (PDT)
+Received: from server.. ([103.250.145.167])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4763fba4c2sm2826739a12.5.2025.08.20.10.56.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 10:56:17 -0700 (PDT)
+From: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
+To: shuah@kernel.org
+Cc: surenb@google.com,
+	akpm@linux-foundation.org,
+	skhan@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
+Subject: [PATCH] selftests: proc: mark vsyscall strings maybe-unused
+Date: Wed, 20 Aug 2025 23:26:10 +0530
+Message-ID: <20250820175610.83014-1-reddybalavignesh9979@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250820085632.1879239-1-yi.zhang@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 20, 2025 at 04:56:32PM +0800, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
-> 
-> The Linux kernel (since version 6.17) supports FALLOC_FL_WRITE_ZEROES in
-> fallocate(2). Add support for FALLOC_FL_WRITE_ZEROES to the fallocate
-> utility by introducing a new option -w|--write-zeroes.
-> 
-> Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=278c7d9b5e0c
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> ---
-> v2->v3:
->  - Say less about what the filesystem actually implements as Darrick
->    suggested and clarify the reason why "--keep-size" cannot be used
->    together in the man page.
->  - Modify the verbose output message.
-> v1->v2:
->  - Minor description modification to align with the kernel.
-> 
->  sys-utils/fallocate.1.adoc | 11 +++++++++--
->  sys-utils/fallocate.c      | 20 ++++++++++++++++----
->  2 files changed, 25 insertions(+), 6 deletions(-)
-> 
-> diff --git a/sys-utils/fallocate.1.adoc b/sys-utils/fallocate.1.adoc
-> index 44ee0ef4c..a06cf7a50 100644
-> --- a/sys-utils/fallocate.1.adoc
-> +++ b/sys-utils/fallocate.1.adoc
-> @@ -12,7 +12,7 @@ fallocate - preallocate or deallocate space to a file
->  
->  == SYNOPSIS
->  
-> -*fallocate* [*-c*|*-p*|*-z*] [*-o* _offset_] *-l* _length_ [*-n*] _filename_
-> +*fallocate* [*-c*|*-p*|*-z*|*-w*] [*-o* _offset_] *-l* _length_ [*-n*] _filename_
->  
->  *fallocate* *-d* [*-o* _offset_] [*-l* _length_] _filename_
->  
-> @@ -28,7 +28,7 @@ The exit status returned by *fallocate* is 0 on success and 1 on failure.
->  
->  The _length_ and _offset_ arguments may be followed by the multiplicative suffixes KiB (=1024), MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB, and YiB (the "iB" is optional, e.g., "K" has the same meaning as "KiB") or the suffixes KB (=1000), MB (=1000*1000), and so on for GB, TB, PB, EB, ZB, and YB.
->  
-> -The options *--collapse-range*, *--dig-holes*, *--punch-hole*, *--zero-range* and *--posix* are mutually exclusive.
-> +The options *--collapse-range*, *--dig-holes*, *--punch-hole*, *--zero-range*, *--write-zeroes* and *--posix* are mutually exclusive.
->  
->  *-c*, *--collapse-range*::
->  Removes a byte range from a file, without leaving a hole. The byte range to be collapsed starts at _offset_ and continues for _length_ bytes. At the completion of the operation, the contents of the file starting at the location __offset__+_length_ will be appended at the location _offset_, and the file will be _length_ bytes smaller. The option *--keep-size* may not be specified for the collapse-range operation.
-> @@ -76,6 +76,13 @@ Option *--keep-size* can be specified to prevent file length modification.
->  +
->  Available since Linux 3.14 for ext4 (only for extent-based files) and XFS.
->  
-> +*-w*, *--write-zeroes*::
-> +Zeroes space in the byte range starting at _offset_ and continuing for _length_ bytes. Within the specified range, written blocks are preallocated for the regions that span the holes in the file. After a successful call, subsequent reads from this range will return zeroes and subsequent writes to that range do not require further changes to the file mapping metadata.
-> ++
-> +Zeroing is done within the filesystem. The filesystem may use a hardware-accelerated zeroing command or may submit regular writes. The behavior depends on the filesystem design and the available hardware.
-> ++
-> +Options *--keep-size* can not be specified for the write-zeroes operation because allocating written blocks beyond the inode size is not permitted.
+The str_vsyscall_* constants in proc-pid-vm.c triggers
+-Wunused-const-variable warnings with gcc-13.32 and clang 18.1.
 
-Nit: s/can not/cannot/
+Define and apply __maybe_unused locally to suppress the warnings.
+No functional change
 
-With that fixed, this looks fine to me, so
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+Fixes compiler warning:
+warning: ‘str_vsyscall_*’ defined but not used[-Wunused-const-variable]
 
---D
+Signed-off-by: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
+---
+ tools/testing/selftests/proc/proc-pid-vm.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-> +
->  include::man-common/help-version.adoc[]
->  
->  == AUTHORS
-> diff --git a/sys-utils/fallocate.c b/sys-utils/fallocate.c
-> index 13bf52915..afd615537 100644
-> --- a/sys-utils/fallocate.c
-> +++ b/sys-utils/fallocate.c
-> @@ -40,7 +40,7 @@
->  #if defined(HAVE_LINUX_FALLOC_H) && \
->      (!defined(FALLOC_FL_KEEP_SIZE) || !defined(FALLOC_FL_PUNCH_HOLE) || \
->       !defined(FALLOC_FL_COLLAPSE_RANGE) || !defined(FALLOC_FL_ZERO_RANGE) || \
-> -     !defined(FALLOC_FL_INSERT_RANGE))
-> +     !defined(FALLOC_FL_INSERT_RANGE) || !defined(FALLOC_FL_WRITE_ZEROES))
->  # include <linux/falloc.h>	/* non-libc fallback for FALLOC_FL_* flags */
->  #endif
->  
-> @@ -65,6 +65,10 @@
->  # define FALLOC_FL_INSERT_RANGE		0x20
->  #endif
->  
-> +#ifndef FALLOC_FL_WRITE_ZEROES
-> +# define FALLOC_FL_WRITE_ZEROES		0x80
-> +#endif
-> +
->  #include "nls.h"
->  #include "strutils.h"
->  #include "c.h"
-> @@ -94,6 +98,7 @@ static void __attribute__((__noreturn__)) usage(void)
->  	fputs(_(" -o, --offset <num>   offset for range operations, in bytes\n"), out);
->  	fputs(_(" -p, --punch-hole     replace a range with a hole (implies -n)\n"), out);
->  	fputs(_(" -z, --zero-range     zero and ensure allocation of a range\n"), out);
-> +	fputs(_(" -w, --write-zeroes   write zeroes and ensure allocation of a range\n"), out);
->  #ifdef HAVE_POSIX_FALLOCATE
->  	fputs(_(" -x, --posix          use posix_fallocate(3) instead of fallocate(2)\n"), out);
->  #endif
-> @@ -304,6 +309,7 @@ int main(int argc, char **argv)
->  	    { "dig-holes",      no_argument,       NULL, 'd' },
->  	    { "insert-range",   no_argument,       NULL, 'i' },
->  	    { "zero-range",     no_argument,       NULL, 'z' },
-> +	    { "write-zeroes",   no_argument,       NULL, 'w' },
->  	    { "offset",         required_argument, NULL, 'o' },
->  	    { "length",         required_argument, NULL, 'l' },
->  	    { "posix",          no_argument,       NULL, 'x' },
-> @@ -312,8 +318,8 @@ int main(int argc, char **argv)
->  	};
->  
->  	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
-> -		{ 'c', 'd', 'i', 'p', 'x', 'z'},
-> -		{ 'c', 'i', 'n', 'x' },
-> +		{ 'c', 'd', 'i', 'p', 'w', 'x', 'z'},
-> +		{ 'c', 'i', 'n', 'w', 'x' },
->  		{ 0 }
->  	};
->  	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
-> @@ -323,7 +329,7 @@ int main(int argc, char **argv)
->  	textdomain(PACKAGE);
->  	close_stdout_atexit();
->  
-> -	while ((c = getopt_long(argc, argv, "hvVncpdizxl:o:", longopts, NULL))
-> +	while ((c = getopt_long(argc, argv, "hvVncpdizwxl:o:", longopts, NULL))
->  			!= -1) {
->  
->  		err_exclusive_options(c, longopts, excl, excl_st);
-> @@ -353,6 +359,9 @@ int main(int argc, char **argv)
->  		case 'z':
->  			mode |= FALLOC_FL_ZERO_RANGE;
->  			break;
-> +		case 'w':
-> +			mode |= FALLOC_FL_WRITE_ZEROES;
-> +			break;
->  		case 'x':
->  #ifdef HAVE_POSIX_FALLOCATE
->  			posix = 1;
-> @@ -429,6 +438,9 @@ int main(int argc, char **argv)
->  			else if (mode & FALLOC_FL_ZERO_RANGE)
->  				fprintf(stdout, _("%s: %s (%ju bytes) zeroed.\n"),
->  								filename, str, length);
-> +			else if (mode & FALLOC_FL_WRITE_ZEROES)
-> +				fprintf(stdout, _("%s: %s (%ju bytes) written as zeroes.\n"),
-> +								filename, str, length);
->  			else
->  				fprintf(stdout, _("%s: %s (%ju bytes) allocated.\n"),
->  								filename, str, length);
-> -- 
-> 2.39.2
-> 
+diff --git a/tools/testing/selftests/proc/proc-pid-vm.c b/tools/testing/selftests/proc/proc-pid-vm.c
+index d04685771952..978cbcb3eb11 100644
+--- a/tools/testing/selftests/proc/proc-pid-vm.c
++++ b/tools/testing/selftests/proc/proc-pid-vm.c
+@@ -47,6 +47,10 @@
+ #include <sys/resource.h>
+ #include <linux/fs.h>
+ 
++#ifndef __maybe_unused
++#define __maybe_unused __attribute__((__unused__))
++#endif
++
+ #include "../kselftest.h"
+ 
+ static inline long sys_execveat(int dirfd, const char *pathname, char **argv, char **envp, int flags)
+@@ -218,12 +222,12 @@ static int make_exe(const uint8_t *payload, size_t len)
+  * 2: vsyscall VMA is r-xp		vsyscall=emulate
+  */
+ static volatile int g_vsyscall;
+-static const char *str_vsyscall;
++static const char *str_vsyscall __maybe_unused;
+ 
+-static const char str_vsyscall_0[] = "";
+-static const char str_vsyscall_1[] =
++static const char str_vsyscall_0[] __maybe_unused = "";
++static const char str_vsyscall_1[] __maybe_unused =
+ "ffffffffff600000-ffffffffff601000 --xp 00000000 00:00 0                  [vsyscall]\n";
+-static const char str_vsyscall_2[] =
++static const char str_vsyscall_2[] __maybe_unused =
+ "ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                  [vsyscall]\n";
+ 
+ #ifdef __x86_64__
+-- 
+2.43.0
+
 
