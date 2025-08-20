@@ -1,116 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-58397-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58398-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 994E0B2E14E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 17:38:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 463E1B2E233
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 18:22:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91CC3189ACE9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 15:32:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F07B31C4732E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 16:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9B7F2C21C3;
-	Wed, 20 Aug 2025 15:31:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A75F322C96;
+	Wed, 20 Aug 2025 16:22:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="FbpltdNE"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fRssMe4x"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A644182D2
-	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Aug 2025 15:31:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50BC731E0FD
+	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Aug 2025 16:22:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755703907; cv=none; b=t0/LPNG1KUo1pyGmNvn6PI7xFoLVv5yB6TUhPZ/ZK/kdXX+JAW7oVTqhLQoHGKleZF6uSpk1+W6ZS+SPvfdkUiPoPZ4unJNT3p1dKfP8Ytho6M79xkjFXKEMi/UDcmKrK7D62C8fyGlcgi7ck0MOVXfF5UabolSxVusutvgrAYQ=
+	t=1755706925; cv=none; b=JoRaghOCD2oaKbMuoti39drvT7Pfg0/i6YRWMkcaACaRlcOtQUr6qvnCWF3HMpSMBeKciyPCWRqte5yeRKPOzfuIeSNfM2vssR6UWJ3lX1PucZ1DBuTrgyS52smT2S7+Ba7Q+NqRxiK1cglX31vEOFCVCQrN/+tCpxoxwa5Mkug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755703907; c=relaxed/simple;
-	bh=AocFYfdVxdzjcLBZxLF6mkq2kPn8AKv3ZWf4tdyTOeM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ibyz2c6L0okpk2zyFKSzhdRmhdLUQkYFQI2Id179Cvs88eIhqyOIV53JuCT/Uv4jJcMdY/Kc97+9L1enpYMuk+/irrG9OQQVDOw73A839aLXJ99zqawur9yRDihfxLdvt7qIlG6jgH/41mPsAkik3KSMKY2Rxz6u/vdEzROLsPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=FbpltdNE; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4b1099192b0so591131cf.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Aug 2025 08:31:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1755703904; x=1756308704; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=xcJBgFKPQZsO3+QTwweAqcsrbYI6nQfbfPFo7nZBAhU=;
-        b=FbpltdNEIxWBWB5DW5Pe6HoPXlqoeGXnlume0+/YVhPsVUj+t8byR/OUhjwDFYJoAS
-         sPilKHLPjaZdItVQLpJVmZCTEH1lgVoK6uPMB0Z0TPyvcub+SXRRxfBwE/zyP/ziYvMC
-         AvKIKIDYMca91mOb3UQFMDDCYotl7aU37jkio=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755703904; x=1756308704;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xcJBgFKPQZsO3+QTwweAqcsrbYI6nQfbfPFo7nZBAhU=;
-        b=rU98F2Yv4AoGSC6RJsITIwnX3vvD/al2++DSLwXnUfL5wxayA2z4+14dRnFkETstwC
-         7T0de3xpQQ9BBqyG3UuZsa8ZmPNzmjJkySdC5dfcpn3J5mcyQz5MZfGYD2AhbqySThBa
-         z945olFVnWAY0L/1elMkNMke6BzWSPX3kjtt1hpG4yA8MhoNkl2tJaIQrsfviN9TUIDY
-         Q7vBWlS3LFYubwrMnq5aeI9le5Q6iAnLN6dJm8UO9tQbUtXCT3pioB/s/HNF0UuvjTzS
-         J5BaWOAkgBrysdgbxJNcSfI+NGHuGme8GUvyIP92BLQpHcWVDUg0lpasFw43SBHbJHzo
-         R4nQ==
-X-Gm-Message-State: AOJu0YzSOyRH987yFDrvRonvACI94JlPnoxjQZwsO+B9+8zZ4pDbIfSk
-	wr/2S2zG2BGrgWvtYuH6zGjBRsVwzQr0b5grrCb+l9ZizTkF8EoZJ6hVPjzb9A2U1pdw0tEh1Jd
-	CtzJ8t671q+6HggW1dvwEGDcahR1pmLtqfPxiNvHzjVOTZrZzgnaFSoI=
-X-Gm-Gg: ASbGncuSYrqjjF0ycWSv1GXbYCPf/YcHuueMZMUN/NXKgN/SbZbupUTr1nxdrr6YqMQ
-	/mvwp5s+JJ4AYaMUv6xnN1GHpvCHWH1/YcTAyZCJmcoD1miFPdMMtFLq5Bw+EYHZRfT1qpv1Cad
-	AxPPL5pYP/HIpA/7E4xu+ly3u0ws+IBKsDBgqpQFp9dCZIo/V3XTDtdr4SbiSNu+xAwhLe4KkfA
-	KmJNFLSHg==
-X-Google-Smtp-Source: AGHT+IEuMM5u87H8F7qHuveN1ty/VhLc9lBHP5NH/DRG+CIyy0O71ORnNHkLMgC6Fj83J9Ncz1RofaO426HdXut4Q9Q=
-X-Received: by 2002:a05:622a:1896:b0:4b1:233a:6eb9 with SMTP id
- d75a77b69052e-4b291b9e39dmr39519061cf.46.1755703903637; Wed, 20 Aug 2025
- 08:31:43 -0700 (PDT)
+	s=arc-20240116; t=1755706925; c=relaxed/simple;
+	bh=IsFyELa9QPrqBJgwucGOJ0VEdl9y/5Oh61mhguqB+ic=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SqMtYNo9LE9D6Jw+lNkbbgNacA/Q4vjg3Rj+Hrw89o5OOE+k0tBp7sUaeutVsabzsJdUDcxDH8rJu28Sei6OkNNxuofngPdEoPXi3rvMGpOX8BQVwV09uFb1QfQ7IeoqTsMJJAyogJcKMSGo/zN6LGGzaJ3/ErIfu85IkbdjVT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fRssMe4x; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 20 Aug 2025 09:21:49 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755706918;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vBLYyaohMUoNQ9X3he/qnSrc95mW/vnc+a+/vaGlBWU=;
+	b=fRssMe4x4fjWLKNWxp9No6Dt3tT/XKMTSIz4exFpUGvwlVWtQ9hM1hkvC54a+RUloUG33v
+	0F2yFukgQwfF1ekGUJ3up1lB8CT6ifF13pr6i/0mgLfGuYbsq0W66fsruIpbmgjtE4Ir6Z
+	fnJoz9vzguWadvcdAyHnRc7Gwiz7Mp0=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Boris Burkov <boris@bur.io>, akpm@linux-foundation.org, 
+	linux-btrfs@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	kernel-team@fb.com, wqu@suse.com, mhocko@kernel.org, muchun.song@linux.dev, 
+	roman.gushchin@linux.dev, hannes@cmpxchg.org
+Subject: Re: [PATCH v3 2/4] mm: add vmstat for cgroup uncharged pages
+Message-ID: <6xccsmpdtvweriimshfvgz7yzxcdodbxhzfvxraigdqiomkgze@wb2i46neozwu>
+References: <cover.1755562487.git.boris@bur.io>
+ <04b3a5c9944d79072d752c85dac1294ca9bee183.1755562487.git.boris@bur.io>
+ <aKPmiWAwDPNdNBUA@casper.infradead.org>
+ <tw5qydmgv35v63lhqgl7zbjmgwxm2cujqdjq3deicdz2k26ymh@mnxhz43e6jwl>
+ <aKUM49I-4D24MmwZ@casper.infradead.org>
+ <i4hg4g75ywbera643uhtshkj6xrriqi4mi5dg3oga5os3tp6m5@u2dcv2snbiqs>
+ <aKXLXJw7m-TSkZOI@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <175279449418.710975.17923641852675480305.stgit@frogsfrogsfrogs>
- <175279449542.710975.4026114067817403606.stgit@frogsfrogsfrogs>
- <CAJfpegvwGw_y1rXZtmMf_8xJ9S6D7OUeN7YK-RU5mSaOtMciqA@mail.gmail.com>
- <20250818200155.GA7942@frogsfrogsfrogs> <CAJfpegtC4Ry0FeZb_13DJuTWWezFuqR=B8s=Y7GogLLj-=k4Sg@mail.gmail.com>
- <20250819225127.GI7981@frogsfrogsfrogs> <CAJfpegt38osEYbDYUP64+qY5j_y9EZBeYFixHgc=TDn=2n7D4w@mail.gmail.com>
- <CAJfpegv4RJqpFC0K5SVi6vhTMGpxrd672qbPE4zbe0nO-=2SqQ@mail.gmail.com> <20250820151619.GL7981@frogsfrogsfrogs>
-In-Reply-To: <20250820151619.GL7981@frogsfrogsfrogs>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 20 Aug 2025 17:31:31 +0200
-X-Gm-Features: Ac12FXzFnXIM3zQfATJFdXcyg6OaNIi1srA6MV9jX2uP2PjLlif7p9u0ci01_i8
-Message-ID: <CAJfpegsPZMnk-0_MrRVtSo_o-Ywi4fC4sExe36APJsRt_TvvQA@mail.gmail.com>
-Subject: Re: [PATCH 4/7] fuse: implement file attributes mask for statx
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, neal@gompa.dev, John@groves.net, 
-	bernd@bsbernd.com, joannelkoong@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aKXLXJw7m-TSkZOI@casper.infradead.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, 20 Aug 2025 at 17:16, Darrick J. Wong <djwong@kernel.org> wrote:
+On Wed, Aug 20, 2025 at 02:19:24PM +0100, Matthew Wilcox wrote:
+> On Tue, Aug 19, 2025 at 06:25:36PM -0700, Shakeel Butt wrote:
+> > On Wed, Aug 20, 2025 at 12:46:43AM +0100, Matthew Wilcox wrote:
+> > > OK, but couldn't we make that argument for anything else?  Like slab,
+> > > say.  Why's "file" memory different?
+> > 
+> > Good point and I think it does apply to other memory types too. I would
+> > call "file" memory to be more important as it is one of the largest
+> > consumer of DRAM on, at least, Meta infra. Slab needs a bit more thought.
+> > At the system level (i.e. /proc/meminfo), we account at the page (or
+> > slab) level while for memcg, we account per-object (plus obj_cgroup
+> > pointer).
+> 
+> That was supposed to be a reductio ad absurdum, not an invitation to
+> add more counters.
+> 
+> Look, if this is information you really need, I think you should come
+> up with a better way of collecting it than by adding new counters and
+> new complexity to everything involved in GFP_ACCOUNT activities.
+> 
 
-> How does one add a new field to struct fuse_init_out without breaking
-> old libfuse / fuse servers which still have the old fuse_init_out?
+Please elaborate more on this complexity. To me, particularly for this
+specific case, a dedicated counter seems more cleaner compared to error
+prone and costly alternatives. I am not getting the complexity argument.
 
-There's currently 22 bytes unused at the end, so it's easy unless you
-want to add more.
+> The unaccounted address_spaces are a very tiny percentage of file
+> memory, at least as far as this patch set goes.
 
-Ideally there should also be a matching feature flag indicating that
-a) kernel supports this feature b) field contains valid data.
+From [1], Qu noted "On a real world system, the metadata itself can
+easily go hundreds of GiBs...".
 
-> AFAICT, fuse_send_init sets out_argvar, so fuse_copy_out_args will
-> handle a short reply from old libfuse.  But a new libfuse running on an
-> old kernel can't send the kernel what it will think is an oversized
-> init reply, right?
->
-> So I think we end up having to declare a new flags bit for struct
-> fuse_init_in, and the kernel sets the bit unconditionally.  libfuse
-> sends the larger fuse_init_out reply if the new flag bit is set, or the
-> old size if it isn't.  Does that sound correct?
+This does not seem tiny.
 
-I think that's exactly what the previous size extension did
-(FUSE_INIT_EXT flag).
+> I don't think this
+> patch is justifiable on its face.
 
-Thanks,
-Miklos
+I think I have provided enough justifications. However I don't want to
+force push this until I fully understand your concerns. This will become
+part of API and I don't want a situation where we regret this later.
+
+[1] https://lore.kernel.org/linux-mm/08ccb40d-6261-4757-957d-537d295d2cf5@suse.com/
 
