@@ -1,112 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-58376-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58377-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5223B2DABE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 13:20:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67E86B2DAB7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 13:19:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FBD8189D5C2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 11:19:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4483E5C1341
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 11:19:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0BDD2E3AE0;
-	Wed, 20 Aug 2025 11:18:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A1612E3AF0;
+	Wed, 20 Aug 2025 11:19:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="Ci+1gREv"
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="UfDho3dH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72102DCF58;
-	Wed, 20 Aug 2025 11:18:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755688731; cv=pass; b=fra4OXZVhCho14iWMtkwZwee2UrfKrsq2gp+fNIRd6N8raEn/oMkHkQyHI5/8SxsJ8jq7kE3Tw1UM0ZadYfuBP7Vgxizui6SbDlXh7cJtRZTYTp/8DvEj7KkSUSX6zyVI6VKx5FRDTufy4dKdAMUySYNYp7J2nDgMueNt7Qsmzw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755688731; c=relaxed/simple;
-	bh=gh4JMVoWx2g9QVgzTZ1UfSG+u2iBWGemYGCyImRUOKc=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=n8CB41UFZRKN1Up8aDYz761+yGdGu9qfruIpevTmGHYhUaBwXc0yy4+exSgOSQDnR4MWOpusbGNy5AfFMSmoogA/1ywIIOvm9dXbKXRThIRw1JypGQ1gqdLv4SPMXdVLKEPenYnZcizbYTh67i4OBPmey92/UvtoVfMocV6bXSk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=Ci+1gREv; arc=pass smtp.client-ip=136.143.188.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1755688691; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=MDoaSJ5MgzobSjosdP9fpEfA6II5Slqm7R3BM+7UTFKrkfe539jOafletTRLKxBcNQD2HNnPaYFliHLXQFJKB0ef3Wvz5B8qVrbk1C9c7tC8BcwtiEcUZiR2+B0cuXm+Q3+Lj9J2URg5JZknwej4oNVcEI9JlodUsyqYpJzAFmM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1755688691; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Tln7FpGzb6hM5a2Y6c1iMqDX53JGUcU2Cq7EbnEbdno=; 
-	b=Uuz+L0hvM3P9VjgsY7xGlmO4axlUpFR/SYYASQ35os4vswhAFDtQ7Q2kBiYdpPFPqqryNdXW7d6fHA2HYFafuv9KRcD9807LekS6btih+SeuzOgBl/bVFutM0Qqim3WyFcxFd/qyjLFo6S+pjiv4HgGQzGifetbzREedGwoD0wY=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
-	dmarc=pass header.from=<safinaskar@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755688691;
-	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=Tln7FpGzb6hM5a2Y6c1iMqDX53JGUcU2Cq7EbnEbdno=;
-	b=Ci+1gREvG+DwWma+t9QNxApmObHsHCFrQa2Olv/9IDr9ISX661oPPFttzFFOz+yl
-	jiz5j03xVX+0P+J0nuO7iBmKKq4GaqkKNURB1pDAjcUgmIKUD/lgxi119cK7iJxXdy+
-	ntJEDLqijT2SLkxVNyg44OKagmGzkkE730ugJXRA=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 1755688689152183.7487823630272; Wed, 20 Aug 2025 04:18:09 -0700 (PDT)
-Received: from  [212.73.77.104] by mail.zoho.com
-	with HTTP;Wed, 20 Aug 2025 04:18:09 -0700 (PDT)
-Date: Wed, 20 Aug 2025 15:18:09 +0400
-From: Askar Safin <safinaskar@zohomail.com>
-To: "Aleksa Sarai" <cyphar@cyphar.com>
-Cc: "Alejandro Colomar" <alx@kernel.org>,
-	"Michael T. Kerrisk" <mtk.manpages@gmail.com>,
-	"Alexander Viro" <viro@zeniv.linux.org.uk>,
-	"Jan Kara" <jack@suse.cz>,
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>,
-	"linux-man" <linux-man@vger.kernel.org>,
-	"linux-api" <linux-api@vger.kernel.org>,
-	"linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel" <linux-kernel@vger.kernel.org>,
-	"David Howells" <dhowells@redhat.com>,
-	"Christian Brauner" <brauner@kernel.org>
-Message-ID: <198c7335dba.d74f2e4174912.2623547306023456362@zohomail.com>
-In-Reply-To: <2025-08-12.1755009210-quick-best-oranges-coats-BNJpCV@cyphar.com>
-References: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com>
- <20250809-new-mount-api-v3-8-f61405c80f34@cyphar.com>
- <1989db97e30.b71849c573511.8013418925525314426@zohomail.com> <2025-08-12.1755009210-quick-best-oranges-coats-BNJpCV@cyphar.com>
-Subject: Re: [PATCH v3 08/12] man/man2/move_mount.2: document "new" mount
- API
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEB582E2EFD
+	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Aug 2025 11:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755688786; cv=none; b=KqIc4KIowN+JwcUQZFoSmLJ0h2pCs9jiDAni8A85fEWoj42AZFdNZC5NaCt4FDZ0ectyRR6HZBK+e5JOALs4cteBYjS+VxDdN8/QtkguWeicCzHU4Lr6z+BUYNTFzEognegvFRtEYfMCvLzHjperyiIynqAqIduyZwyejM8ZD1Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755688786; c=relaxed/simple;
+	bh=KaQ9auFfWLXLrFtqqYpe03HYn25VyYsifWwwgHBKCp8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=qEmLEZ77geMAbF82vAE603gR42YBT7u9T5XSAi49Cg1DfEJ8LYKWNKOC2IW+zfnxQlmwa3ZKslRHrgRiPjbTAlUyRyZU4yvWXcte3xn7pVXg+r20xN4RzcRPXUhGEBuEJUSaWvOWqYe1pSksq5PRGwaD59BsEEp+eiJavw9heBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=UfDho3dH; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-32326e66dbaso4424258a91.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Aug 2025 04:19:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1755688784; x=1756293584; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8nzxfwrJ7tgF8TbO628wBC8gRICp1yIHaSa6RvJ5d0k=;
+        b=UfDho3dHMzWdBeHwChSE0YocxX7s6yZI5Wdhkm8/WjswyBVLemq1HFdDssybUNzdq4
+         dxcCsPDcPlkFIStr0pCQQqP1w99pGT8Tza7jQZjKD5qbBvSr1jquhePABzGAT6Frjomc
+         3lCIkxZ2nsH9Jm0vB0LrGmVE5Ehed08KKUJ7jhXKMziGpkKiL7+EKbe+t3c4avNNQuBj
+         NsAhH3SIRUpLF9G9eHp08uEtkIo1yxlbfs4dPDiiWQPOyeN4GfQKjp6+lV9VU7xhwcEX
+         SQHgC8A0PBn0hjrLXdzUmRUYjpV5duYhn7Pa12fZGvDj6gQ1cwpSSR6suDuaGH022KJz
+         DcXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755688784; x=1756293584;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8nzxfwrJ7tgF8TbO628wBC8gRICp1yIHaSa6RvJ5d0k=;
+        b=In+N+Yhutl5/4A87gYq4a4TqoMERx0jIDQWJ81FhYpyXfxkfEFT9VwCN4tA+9MoYVU
+         FUgKDkJUuWLXGSvNqCLyrs/NbZlmPR66uQdRXwm/1x0DJcOEk3hiPoTfn9FmTF2UQwR3
+         IuV8mOY/zO+38Oesl4YD6tDZyR3wLuj8amGFys9hmPjzKl/GytU9Wpu6roxatGuRSM/y
+         DLEHlwJZJNzlUTblctMEKxgKiZf0kAtK9CWUMfsdWfR/psqt7xk86yht40RB6LELzS4e
+         5HQlJXEXOy0hLSA2pKWlP+O95KZNF7bp+5jmEWyftnkSlgJpt6Z0pvPrQwF7UvFxUfRM
+         8eNg==
+X-Gm-Message-State: AOJu0YzydYl44IraqteKljtcQ7XrSaCBVEKKmH5Bl+yUY7yORJrqTp62
+	Ed7AWSF08xbmN1zitQhFKrMAOGmsu1P08kjRKA4aJrn8INZJ9gQVWapym4TvYcJKfrR+biA+hxT
+	MGyJWYNk=
+X-Gm-Gg: ASbGnctgzzjsoOKhykk00E4FA0OPAKXTMWqUpVzWvx1Dm2BsW0U27Xj6q9n1XYpyY77
+	aYWA6hDlDg/EfeZVfrQGo1aZYOajqxN7AvQR5txDCtdcDFAhtAkYtSCkw9/FXfl4VcpPhoq1Kik
+	ZJ9UVxHhbf/VzTdrkqZV6U8IBtEpsCulJv4APUXHAMLS+uE5DnUB9/nswVdcaf7IYMai8ZZ5vSg
+	IJNnr4xLuucdq55msebd6GjcKp9RA593+D5gM2gpvsNnNgQEySnV5bvPZiL4VXn6ejJ4DMBm0zK
+	SEJTBoY2kiZL698MEEFW8cYVSiUTedEScV5cb+96sSk74ByElh97bzw82WjmlTEIsqVaggbIOt8
+	OAagnCgEbbMje/Z068JZ001NAFkB8QMdbE0PRLRkYDA==
+X-Google-Smtp-Source: AGHT+IFDp+oQlv/0Q/A7/4baOQAwYfujcstAPbmMtif5cwe4FhwyrJsEGhnc01bdJasIBQ+A45Febw==
+X-Received: by 2002:a17:90b:5187:b0:323:7e80:881a with SMTP id 98e67ed59e1d1-324e1489895mr3679710a91.37.1755688783865;
+        Wed, 20 Aug 2025 04:19:43 -0700 (PDT)
+Received: from localhost ([106.38.226.108])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-324422a8bb2sm2827379a91.0.2025.08.20.04.19.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 04:19:43 -0700 (PDT)
+From: Julian Sun <sunjunchao@bytedance.com>
+To: linux-fsdevel@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	linux-mm@kvack.org
+Cc: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	hannes@cmpxchg.org,
+	mhocko@kernel.org,
+	roman.gushchin@linux.dev,
+	shakeel.butt@linux.dev,
+	muchun.song@linux.dev,
+	axboe@kernel.dk,
+	tj@kernel.org
+Subject: [PATCH 0/3] memcg, writeback: Don't wait writeback completion
+Date: Wed, 20 Aug 2025 19:19:37 +0800
+Message-Id: <20250820111940.4105766-1-sunjunchao@bytedance.com>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
-Feedback-ID: rr0801122771423f3748bc7f61e1a7cc360000d64f8919ecb0ec0828783973dc22df6f86a68cd109d6a5d5b9:zu080112274a76baa063a7b02b2b81fa3f0000c46fc46491f547e719d9515a2cb4a06be1ad67f4e14f6fac4a:rf0801122c61455fb55853888d67840f080000c977eb60d6801d08e08b75bfeb8549a36767e5d9f8114056a0e5efb69309:ZohoMail
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
- ---- On Tue, 12 Aug 2025 18:36:53 +0400  Aleksa Sarai <cyphar@cyphar.com> wrote --- 
- > > "Filesystem root" can be understood as "root of superblock".
- > > So, please, change this to "root directory" or something.
- > 
- > Maybe I should borrow the "root mount" terminology from pivot_root(2)?
+This patch series aims to eliminate task hangs in mem_cgroup_css_free() 
+caused by calling wb_wait_for_completion(). 
+This is because there may be a large number of writeback tasks in the 
+foreign memcg, involving millions of pages, and the situation is 
+exacerbated by WBT rate limiting—potentially leading to task hangs 
+lasting several hours.
 
-I don't like this. For me "root mount" is initial root mount, i. e. initramfs.
-It is not what you mean here.
+Patch 1 is preparatory work and involves no functional changes.
+Patch 2 implements the automatic release of wb_completion.
+Patch 3 removes wb_wait_for_completion() from mem_cgroup_css_free().
 
- > I didn't like using "rootfs" as
- > shorthand in a man-page.
 
-I agree.
+Julian Sun (3):
+  writeback: Rename wb_writeback_work->auto_free to free_work.
+  writeback: Add wb_writeback_work->free_done
+  memcg: Don't wait writeback completion when release memcg.
 
-What you mean by "filesystem root" here? "Thing, which is changed by chroot(2)", right?
-Then, please, write "root directory" (or "root"), this is standard term for that thing.
-Or you can just write "/".
+ fs/fs-writeback.c                | 22 ++++++++++++++--------
+ include/linux/backing-dev-defs.h |  6 ++++++
+ include/linux/memcontrol.h       |  2 +-
+ mm/memcontrol.c                  | 29 ++++++++++++++++++++---------
+ 4 files changed, 41 insertions(+), 18 deletions(-)
 
---
-Askar Safin
-https://types.pl/@safinaskar
+-- 
+2.20.1
 
 
