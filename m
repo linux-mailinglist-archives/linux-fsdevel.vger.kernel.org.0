@@ -1,101 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-58372-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58373-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 037D1B2D937
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 11:52:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B747B2D971
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 11:59:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7D8B1C48348
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 09:47:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8BFB18932D5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 09:56:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F73D2E3AE3;
-	Wed, 20 Aug 2025 09:41:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D4D12D9ED7;
+	Wed, 20 Aug 2025 09:55:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="jSGj1ahj"
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="SCzCHqQO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EECF52E3713
-	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Aug 2025 09:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755682865; cv=none; b=fS3+tIUM8wSVUSP50znKVlQpAgh27YpmJnuzysuL9hIxvxkwyw0AKpWUYYV+3qi8HvK8mI4my4r2+XyY4nI5cxIkjQtBZkCPWJp7Upjps9/29yBlUZLfSJ5DafVvuJD39DPl4lUz/4S7LcpgyLGz7Fq51wAhiRz9rocnJK0KiCw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755682865; c=relaxed/simple;
-	bh=6wqUwsH8WzM+3ALt2g9Eaqthf4maZrIXS2rpbAZW8fE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uCUAc64pJEiPKBEbquCe3Csqz5yjRfBxQxOzxw9zjicv+pydtmjSEhunVH3MJjAqidvGcS53+YDhSogpv8XYUBmb1k3aLg9y0NY0GE8xSjZxwekMkPwHX5yrL87cQUCZ3SxIv6mzj7tNShkDbVQAY6whmN3bmNuSOx4E9Gsdt3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=jSGj1ahj; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4b134aa13f5so40297121cf.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Aug 2025 02:41:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1755682862; x=1756287662; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=6wqUwsH8WzM+3ALt2g9Eaqthf4maZrIXS2rpbAZW8fE=;
-        b=jSGj1ahjX1hW3YQDzObf7fVgf09L9taWsYACuFJW+K/C3E4FvjBYvFDXvr2JchVM93
-         rb6yZdGWknrP86kazUSQDi2wW0hYPBuMjR4Bf1kms4abvJAwsjwmo0D+vWQyHI/ECk6D
-         tfafpZ53U3G9e+t9qveWn9MGO1Pnr37uZ0dgU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755682862; x=1756287662;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6wqUwsH8WzM+3ALt2g9Eaqthf4maZrIXS2rpbAZW8fE=;
-        b=u5/zODO3uAQQWY6vv5G9ExqKvkIXbKpvCBk2rq2ehZZA0ohTM7NaTKK6p5uyZG74TT
-         GJhuU28pJ3nAM/IVt1YixSfqv6mBJDCtmuw2JrV9pE4PPw9AK+daPy++z8yC0izDSozd
-         2h8uJibLNpsKF3GolnhgeRjDA2Nz92c5fcSMfhWQi8Mk6L+poTkKqETX6JxEYJv3vYjK
-         sk/0HK/iXGP4OTpWa3aNPk6xy9pR0nD8BEEv3PDcYeLZX2+UCU7aqsspF1kcH7Mc6s3Y
-         DDdnHIVSVeeGmB1y7qf2x5WCoED8hwkXvvWHQfkgJ1SRwQs8+2/hzrp27RHDNBtch1a5
-         6L4Q==
-X-Gm-Message-State: AOJu0YzBMGcv9YmTXNonHRLhNMAkBXdOtTnGESxJ8oB8FaRUWSQgJ6cG
-	naxJMcP2JEoNmbUQjvO90CBkx9s0mcDB0tf5jUOClbSUtI+P4rtY/69YbjXGh4WIBD+POo6Aj+f
-	ZLiOZ9c2t++ZdL2/jRSGWky5bYsTKNCJve3w1aLLjrg==
-X-Gm-Gg: ASbGnctRfVtsTq4gGBP/ZobcE+WRPHAE5SVnlhvvKLxPnl8AIulPQyqb1J3FHBuCp8p
-	3ZYNrOMcAoxdd/7fG7YY2GcreDv4Hf2q7gko7M3THg0UHm0tmMxSzCKug5cyhfSLc71hBJ5v9U5
-	kosyH9d+mn6O3J8sIocyysP6smMECFSO98cw/2Oz61Oo3xtzAmzGO2uPPCPwnFuZ+2+dlQkgJpN
-	a2aDFyggA==
-X-Google-Smtp-Source: AGHT+IFe5PYxr6z8JeerhWQOZqxR9975GI9X5HUWBjAueFNTiRkzfKZ+rCuFl+eHlpTLUnEOF2z9+9bGiL6EUxu1WqA=
-X-Received: by 2002:a05:622a:1456:b0:4b0:701c:9435 with SMTP id
- d75a77b69052e-4b291be7279mr23846641cf.60.1755682861891; Wed, 20 Aug 2025
- 02:41:01 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2004927781D;
+	Wed, 20 Aug 2025 09:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755683744; cv=pass; b=DMIcahWzgnuvp3Vrz5e7xus3aaRfI3H58iouPYawdZ+TkRQnOXaRHco8L3LJaPGHU0pqcQxjI1iS+rJcISQnvGSyGYnXI8/OvgcxXHVQwwh6MsaCaopt9G/wc209Rh3G8QN50TpCLrCMqx4n+PuUFIPnt7LpuDkORKxJIq8ORf0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755683744; c=relaxed/simple;
+	bh=IKpQmKnl94o09xHTfN0Qj4qrIjMXgULlD1i7dOwaeqQ=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=ntom1PhbT4JmGSfAWFEsVzTnTpo/tkYV6YBDjEEDwOa0mtJKZ0aAPUnPYTYalB+L3nKOFBVOh5+9NoHTiCGqiX5UJ3hO7YlEZWD81Khxbgds3jFwo4/tlwQTKe6Eehlb8e2Khxdx+YlR6VtoWaxRyeH0lTpR+uiTIk4ACmWmmIY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=SCzCHqQO; arc=pass smtp.client-ip=136.143.188.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1755683714; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=FF7XtyYZ1iC1yi/0BToMG1xTw7ue//z0f1Nvxmf+q5/EZ+BjTNnJaaWHWFbsD+Z7Rtli8CR0icjj87BiBZ6RvRYMm3aqfgl2vqGnnb5naMWk1WMQEEnGSGjV580fEQcq73b3p6zzItsxbxSOOjb8sL4PxDuu91Mu+27GYIxXJ8o=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1755683714; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=BUPX1b+b29tEGwDxGtup37O9TfSUrxsSkkD/2ccJ4RQ=; 
+	b=HTlwjIB7O1lKFyuMn4BDWXBxcTTa8ofQkSpV7fESlsBQhU9GxY+oYdhCBCJkeURd3A7jq7VVeKc3fTk8hNilDHXSjXOPGxMp9vnCR4aX+Bto4k1E0QP81fWC5nZZn+OTwR71hYk9IZVVR61EQnJDDUEVxef51Wx3A2U0JLJMKJo=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
+	dmarc=pass header.from=<safinaskar@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755683714;
+	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=BUPX1b+b29tEGwDxGtup37O9TfSUrxsSkkD/2ccJ4RQ=;
+	b=SCzCHqQO/eOp9SQ7wF1v79eZ23Z9t5uCIVtz3wpGnLTmPinoLn0oElvc4vu7rAPw
+	KPFq1DLa3l6mN2VsibDdJJD79imFIhguGRp4lZWTBUE64/rooO33HG6pWCOz2it8bPo
+	pq3PjriF625OJQwOAPudxnhdwG/tD3ogz/WpYj9c=
+Received: from mail.zoho.com by mx.zohomail.com
+	with SMTP id 1755683712335934.369788539951; Wed, 20 Aug 2025 02:55:12 -0700 (PDT)
+Received: from  [212.73.77.104] by mail.zoho.com
+	with HTTP;Wed, 20 Aug 2025 02:55:12 -0700 (PDT)
+Date: Wed, 20 Aug 2025 13:55:12 +0400
+From: Askar Safin <safinaskar@zohomail.com>
+To: "Aleksa Sarai" <cyphar@cyphar.com>
+Cc: "Alejandro Colomar" <alx@kernel.org>,
+	"Michael T. Kerrisk" <mtk.manpages@gmail.com>,
+	"Alexander Viro" <viro@zeniv.linux.org.uk>,
+	"Jan Kara" <jack@suse.cz>,
+	"G. Branden Robinson" <g.branden.robinson@gmail.com>,
+	"linux-man" <linux-man@vger.kernel.org>,
+	"linux-api" <linux-api@vger.kernel.org>,
+	"linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel" <linux-kernel@vger.kernel.org>,
+	"David Howells" <dhowells@redhat.com>,
+	"Christian Brauner" <brauner@kernel.org>
+Message-ID: <198c6e76d3e.113f774e874302.5490092759974557634@zohomail.com>
+In-Reply-To: <2025-08-12.1755007445-rural-feudal-spacebar-forehead-28QkCN@cyphar.com>
+References: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com>
+ <20250809-new-mount-api-v3-7-f61405c80f34@cyphar.com>
+ <1989d90de76.d3b8b3cc73065.2447955224950374755@zohomail.com> <2025-08-12.1755007445-rural-feudal-spacebar-forehead-28QkCN@cyphar.com>
+Subject: Re: [PATCH v3 07/12] man/man2/fsmount.2: document "new" mount API
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <175279449418.710975.17923641852675480305.stgit@frogsfrogsfrogs>
- <175279449542.710975.4026114067817403606.stgit@frogsfrogsfrogs>
- <CAJfpegvwGw_y1rXZtmMf_8xJ9S6D7OUeN7YK-RU5mSaOtMciqA@mail.gmail.com>
- <20250818200155.GA7942@frogsfrogsfrogs> <CAJfpegtC4Ry0FeZb_13DJuTWWezFuqR=B8s=Y7GogLLj-=k4Sg@mail.gmail.com>
- <20250819225127.GI7981@frogsfrogsfrogs> <CAJfpegt38osEYbDYUP64+qY5j_y9EZBeYFixHgc=TDn=2n7D4w@mail.gmail.com>
-In-Reply-To: <CAJfpegt38osEYbDYUP64+qY5j_y9EZBeYFixHgc=TDn=2n7D4w@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 20 Aug 2025 11:40:50 +0200
-X-Gm-Features: Ac12FXxukz_JmdqODUdFh4uN6WVp_RjEftxDofCVybJA4SYAQelAJHdNeChxXhY
-Message-ID: <CAJfpegv4RJqpFC0K5SVi6vhTMGpxrd672qbPE4zbe0nO-=2SqQ@mail.gmail.com>
-Subject: Re: [PATCH 4/7] fuse: implement file attributes mask for statx
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, neal@gompa.dev, John@groves.net, 
-	bernd@bsbernd.com, joannelkoong@gmail.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
+Feedback-ID: rr08011227545c51e94901738994e1f5e2000047135d7af27e819aaa01fe2a47021fcd9af6db3fa45b746c76:zu08011227107231d3fae46b62a6258fc10000e8860ecb7f121ef78d2f53533e95725069394e9c0054f229bb:rf0801122caa7c5d6c6320fed86a2713960000dcd6057744201fc24466520d20ac336f526c27f94dab53187a27f20c08a3:ZohoMail
 
-On Wed, 20 Aug 2025 at 11:16, Miklos Szeredi <miklos@szeredi.hu> wrote:
+ ---- On Tue, 12 Aug 2025 18:33:04 +0400  Aleksa Sarai <cyphar@cyphar.com> wrote --- 
+ >   Unlike open_tree(2) with OPEN_TREE_CLONE, fsmount() can only be called
+ >   once in the lifetime of a filesystem context.
 
-> As an optimization of the above, the filesystem clearing the
-> request_mask for these uncached attributes means that that attribute
-> is not supported by the filesystem and that *can* be cheaply cached
-> (e.g. clearing fi->inval_mask).
+Weird. open_tree doesn't get filesystem context as argument at all.
+I suggest just this:
 
-Even better: add sx_supported to fuse_init_out, so that unsupported
-ones don't generate unnecessary requests.
+  fsmount() can only be called
+  once in the lifetime of a filesystem context.
 
-Thanks,
-Miklos
+--
+Askar Safin
+https://types.pl/@safinaskar
+
 
