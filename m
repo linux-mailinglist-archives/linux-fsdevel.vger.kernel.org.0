@@ -1,94 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-58408-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58410-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7C54B2E722
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 23:04:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CF46B2E79E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 23:41:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B5D674E4EEF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 21:04:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18EDCAA5BE6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Aug 2025 21:40:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AD822D8DCE;
-	Wed, 20 Aug 2025 21:04:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD5D13314DC;
+	Wed, 20 Aug 2025 21:39:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="muvPG7aV"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="XkLLiJ2d"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92D6C1E7C05;
-	Wed, 20 Aug 2025 21:04:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8AB52DC32D;
+	Wed, 20 Aug 2025 21:39:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755723841; cv=none; b=nLKeD6jRqEQshjP3A5Pj/MZ7MOOQpAtOJORVCbDXl5bVYjz0TX67b2TQC8Zto+DspL5iLxfsU67OBFaNKdXjXDiRTALhvxxTf+SKb+YkGdBztg6SUjvfCDqY1vlrCsXeQm8pYojo8W2op8TzkiON69NhsyDTYEKb+8LLjSg/38g=
+	t=1755725996; cv=none; b=X004UhAk6DF0oCEnR9YPclHMtzL/cegpu8C+bEJ/fDxsJb6JbMCB4XZuDwuiQ7YoR3SV1H+Eee71SbdYua6DnxAlLIAFDZbZ6eIfbQz1tDhInEDTGk8yz02k2nEQne/VGVJMV4EVWllPCfYCwDm+lGSovq5+lWme01CWKJT1nM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755723841; c=relaxed/simple;
-	bh=RPKPmzf+C+b50/0CKUd/keQZ/bZJA+dnbto9tcMq0NE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KGmqkUx+ntiApbXnHQTnTOxUplEt3sTYNRVkrnODns3xJUoeI/c1vNTXJDe9jRmkp4kvHcvjJKL+Vh5LQLQzQAtNchGQ0RJAznUKsDOAj4fq/J9rOl4nb6hB1em+wXogH3hBj0eIyxxZXfbL3kDAR5zP2T9hGppy95izjbq2WsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=muvPG7aV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9DAAC4CEE7;
-	Wed, 20 Aug 2025 21:04:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755723841;
-	bh=RPKPmzf+C+b50/0CKUd/keQZ/bZJA+dnbto9tcMq0NE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=muvPG7aV4Fn8WnL362DUP1IHygT3kO0fwEJ/FP3sHKR1jEARFMAYxxY+yK9CNsRsJ
-	 u8dTLY4Elf8R0pEbgXd5NbstaUwn+lMEiH//qqHFxDaTt9puz05XNCx7CNfkCPIjIj
-	 T3inlJ5sGrMVvRL/6X+bBDQ2g8tGVQQhQiS/2k956v6BLi90Nv+iZhezHZW26j7u+8
-	 NNg/yFPYGolkarrU/JetCoY2TRixw/6DZcwiKUcp836HAYLv3VCMY5WHheYKliLZd6
-	 cvKGv5gXBsodFpZeY4cFA2UDBYM5GTlV3U2qyBsR2L3HP3vhUNZI92aemFCMfQNx3C
-	 OmpOWDWnzZiog==
-Date: Wed, 20 Aug 2025 23:02:33 +0200
-From: Nicolas Schier <nsc@kernel.org>
-To: Nathan Chancellor <nathan@kernel.org>, David Disseldorp <ddiss@suse.de>
-Cc: kernel test robot <lkp@intel.com>, linux-kbuild@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, oe-kbuild-all@lists.linux.dev,
-	linux-next@vger.kernel.org
-Subject: Re: [PATCH v3 8/8] initramfs_test: add filename padding test case
-Message-ID: <aKY36YpNQTnd1d7Y@levanger>
-References: <20250819032607.28727-9-ddiss@suse.de>
- <202508200304.wF1u78il-lkp@intel.com>
- <20250820111334.51e91938.ddiss@suse.de>
+	s=arc-20240116; t=1755725996; c=relaxed/simple;
+	bh=i0jbInS0+2DRpfh54p9PsOb2qESAlY24P6B5UDaXAhY=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=RvBJBgIDYPefhd0fWkSnPAE2FSm9NnkdO7Ah1mWz9EucuzMmERUB63V6IQOxPUE+RKLfxeWtk4Rrfy4LXu/y15R6KQlX/CO/FRlII9OGicn/9LevgJ4OKoCmM1nDvxY9+D9aAp8quF+RYj+MQTGzPuz0aOHar01CM6Z3h5rSQl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=XkLLiJ2d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 167B6C4CEE7;
+	Wed, 20 Aug 2025 21:39:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1755725995;
+	bh=i0jbInS0+2DRpfh54p9PsOb2qESAlY24P6B5UDaXAhY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=XkLLiJ2dzln8lUa212EB1pPOLnuKRgYTcHSM7dJFeB2yCytytNCkkTlZCcws8yRux
+	 jyTRFW67gE1MiJGVEcxW8PUO/Ejz1gS3UE1qrjVvaYJCESGCTdNj9CYjdcdcMqggsC
+	 wVv8RXgAiGSlrS/JGxJs5Ol4X1tJ0Rh/FK5WewFg=
+Date: Wed, 20 Aug 2025 14:39:54 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
+Cc: shuah@kernel.org, surenb@google.com, skhan@linuxfoundation.org,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, Mike Rapoport <rppt@kernel.org>
+Subject: Re: [PATCH] selftests: proc: mark vsyscall strings maybe-unused
+Message-Id: <20250820143954.33d95635e504e94df01930d0@linux-foundation.org>
+In-Reply-To: <20250820175610.83014-1-reddybalavignesh9979@gmail.com>
+References: <20250820175610.83014-1-reddybalavignesh9979@gmail.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250820111334.51e91938.ddiss@suse.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 20, 2025 at 11:13:34AM +1000, David Disseldorp wrote:
-> On Wed, 20 Aug 2025 04:16:48 +0800, kernel test robot wrote:
+On Wed, 20 Aug 2025 23:26:10 +0530 Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com> wrote:
+
+> The str_vsyscall_* constants in proc-pid-vm.c triggers
+> -Wunused-const-variable warnings with gcc-13.32 and clang 18.1.
+
+OT but lol.  My head is spinning at the term "const-variable".  I
+understand what they mean, but it's oxymoronic.
+
+> Define and apply __maybe_unused locally to suppress the warnings.
+> No functional change
 > 
-> > sparse warnings: (new ones prefixed by >>)
-> > >> init/initramfs_test.c:415:18: sparse: sparse: Initializer entry defined twice  
-> >    init/initramfs_test.c:425:18: sparse:   also defined here
+> Fixes compiler warning:
+> warning: ‘str_vsyscall_*’ defined but not used[-Wunused-const-variable]
+>
 > ...
-> >    407		struct initramfs_test_cpio c[] = { {
-> >    408			.magic = "070701",
-> >    409			.ino = 1,
-> >    410			.mode = S_IFREG | 0777,
-> >    411			.uid = 0,
-> >    412			.gid = 0,
-> >    413			.nlink = 1,
-> >    414			.mtime = 1,
-> >  > 415			.filesize = 0,  
-> ...
-> >    425			.filesize = sizeof(fdata),
-> >    426		} };
-> 
-> Thanks. I can send a v4 patchset to address this, or otherwise happy to
-> have line 415 removed by a maintainer when merged.
+>
+> --- a/tools/testing/selftests/proc/proc-pid-vm.c
+> +++ b/tools/testing/selftests/proc/proc-pid-vm.c
+> @@ -47,6 +47,10 @@
+>  #include <sys/resource.h>
+>  #include <linux/fs.h>
+>  
+> +#ifndef __maybe_unused
+> +#define __maybe_unused __attribute__((__unused__))
+> +#endif
 
-With that change:
+This would be approximately the seventh definition of __maybe_unused
+under tools/testing/selftests.  And there's another in
+tools/testing/memblock, which, as if admitting that its directory is in
+the wrong place, had to go and include ../selftests/kselftest.h.
 
-Acked-by: Nicolas Schier <nsc@kernel.org>
+So it would be pleasing if some kind soul were to define __maybe_unused
+in a common place, which looks to be
+tools/testing/selftests/kselftest.h.  Then go zap all those private
+definitions.
 
-Thanks and kind regards
-Nicolas
+This could be done either before or after your patch.
+
+>  #include "../kselftest.h"
+
+And we have 350 occurrences of "../kselftest.h".  Shouldn't the build
+system be providing -Itools/testing/selftests?
+
+Anyway, patch looks OK - I'll add it to mm.git, thanks.
 
