@@ -1,54 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-58424-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58425-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 073EAB2E9AA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 02:48:13 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 440BAB2E9AB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 02:48:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ABACC7BA2F8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 00:46:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CCFAC4E17F4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 00:48:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71DE21E493C;
-	Thu, 21 Aug 2025 00:48:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E9521E32D3;
+	Thu, 21 Aug 2025 00:48:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XVGe+AUA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SW3fSUGK"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D20381DDA15
-	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Aug 2025 00:48:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C7DD1B2186
+	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Aug 2025 00:48:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755737282; cv=none; b=rvzNN+nx3jqtaoPoiXPKDk7lx+6Nwzlyk459/ONC7+USnnMEKvyME8zks0eyar8NReKHvXoXH+5NquwHrr47Qmmj+ez6kTfbYbklICJd3ny4iUD5tL9r9aAlfa0tN8fvymuWutDQjXn7C6hHo+nfX/pM6a+Bcf2JZOSnEnC8TAU=
+	t=1755737298; cv=none; b=hJuPo2htYO22tOHQF5fboBv9BqFdY7Kw2bHzytbrpNGDmr+EDVM4kXAtIG0eHka/NqioLDbqd1k8fTn5AEB1a/6hZ1kdOf4cDQk4F3jFzeMl7VEUneiyjcVE1GNjn+nuP59o3S0Y+xFeD/Caq9y8npcquP9kGxyHN0Ag+BKTffk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755737282; c=relaxed/simple;
-	bh=0da6TpeIV8SNJacoczQNiyhG+o/yEh0X79lvFy0SLqw=;
+	s=arc-20240116; t=1755737298; c=relaxed/simple;
+	bh=x94rOtR88DtMviWe6z9XukoN9p+lmc+Y16UCOPU2hMw=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=vBZMvsCxSTbl0c56sv5XQrb5aWq9/hrczrZ/rjUzDXKjS50s/EuMSUaU9RNN3LP+ZaHVgQTo85kN7lEUtoUBIsDv6L3JOLXDrFv2K8XMStHjX0hwr3KKbQZ8SsVPrzWwM3RCknDUbFIkK1KZ16z1pBgc5QZY4yoBB16aMNCMZjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XVGe+AUA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59AC1C4CEE7;
-	Thu, 21 Aug 2025 00:48:02 +0000 (UTC)
+	 MIME-Version:Content-Type; b=ICFmDMQKs1J2QLo6NiWKPgm4lBNaCaYj4irBmgzhUKZVH6iu8gcR2ePsdlDT6u5cTtou9FS2QO7fshTLkoikZ1CQzZbJBt+69by6gznh/ctMbKvepklLCY5JMXgjT5onx70weXQjOwqxh63VlcBPxhWHq45Q9BbSRWXRwRNCi4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SW3fSUGK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02864C4CEE7;
+	Thu, 21 Aug 2025 00:48:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755737282;
-	bh=0da6TpeIV8SNJacoczQNiyhG+o/yEh0X79lvFy0SLqw=;
+	s=k20201202; t=1755737298;
+	bh=x94rOtR88DtMviWe6z9XukoN9p+lmc+Y16UCOPU2hMw=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=XVGe+AUALAhS+FSAvKgsLFdHA0uA89SZTVIEjSMNSwcaJnPeH7GIMGRL80L5ylG+6
-	 dLiEL8Ddq8hr31vx5S2UD+mpqxHURBTdNN4hMY7YdOpDUvrrZWaUlCa0QskMj19FTl
-	 4+56FwCklki/VOh+NgNLPYnQT0VyHRg8Fu23bjSoe5gtSAYVUU1KGcC4nyOk5AYq2/
-	 ggPVgy0hvpu12v83KuGjP3LWNHz1yE+FrR5J9Vnw1LYuKCcDSnGoSsqZRgFQEOkKQ1
-	 WglzpLg69SnWmMzsxaX6CK6CPoZA2SLF0gjTrKJzpL/VjGpHpRg5rDTkP7McQ5DGt7
-	 2u0aCrnDVsbDQ==
-Date: Wed, 20 Aug 2025 17:48:01 -0700
-Subject: [PATCHSET RFC v4 4/4] fuse: handle timestamps and ACLs correctly when
- iomap is enabled
+	b=SW3fSUGKjAVgMbAEGSj6wwZtSCl4GIfGOKSvCYQ81sh9DvK+WAVfFKthiboeai8qT
+	 NJUBYG7UcbEmK5myTalpWEUfaMucLo1OpKxm2KnGE0C3wwBYwY1WA6rINAt1jVPMzN
+	 6+zW2lOuDE4F6iTx9cMJEZqjiu7z37jDa9TElA1EFyyyRXCxMEfYPZcrDM3+TaQpfx
+	 kY/OmM8KjYAeRYPlgSbKZfTH/PCBpfeeT9EQVLojg0DLYFj3VlLpyYBliQUPHNFR2Y
+	 0R7Kw0BA3gRGAnB90sh+CKpOSgCcMcarTJ3XWb8jCgJbOn/T2OZ8sIMvP2vH2IeEsc
+	 HzNUIlpspSvxQ==
+Date: Wed, 20 Aug 2025 17:48:17 -0700
+Subject: [PATCHSET RFC v4 1/4] libfuse: general bug fixes
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: djwong@kernel.org, miklos@szeredi.hu
-Cc: bernd@bsbernd.com, neal@gompa.dev, John@groves.net,
- linux-fsdevel@vger.kernel.org, joannelkoong@gmail.com
-Message-ID: <175573710148.18622.12330106999267016022.stgit@frogsfrogsfrogs>
+To: djwong@kernel.org, bschubert@ddn.com
+Cc: John@groves.net, joannelkoong@gmail.com, bernd@bsbernd.com,
+ linux-fsdevel@vger.kernel.org, miklos@szeredi.hu, neal@gompa.dev
+Message-ID: <175573710975.19062.7329425679466983566.stgit@frogsfrogsfrogs>
 In-Reply-To: <20250821003720.GA4194186@frogsfrogsfrogs>
 References: <20250821003720.GA4194186@frogsfrogsfrogs>
 Precedence: bulk
@@ -62,52 +61,28 @@ Content-Transfer-Encoding: 7bit
 
 Hi all,
 
-When iomap is enabled for a fuse file, we try to keep as much of the
-file IO path in the kernel as we possibly can.  That means no calling
-out to the fuse server in the IO path when we can avoid it.  However,
-the existing FUSE architecture defers all file attributes to the fuse
-server -- [cm]time updates, ACL metadata management, set[ug]id removal,
-and permissions checking thereof, etc.
-
-We'd really rather do all these attribute updates in the kernel, and
-only push them to the fuse server when it's actually necessary (e.g.
-fsync).  Furthermore, the POSIX ACL code has the weird behavior that if
-the access ACL can be represented entirely by i_mode bits, it will
-change the mode and delete the ACL, which fuse servers generally don't
-seem to implement.
-
-IOWs, we want consistent and correct (as defined by fstests) behavior
-of file attributes in iomap mode.  Let's make the kernel manage all that
-and push the results to userspace as needed.  This improves performance
-even further, since it's sort of like writeback_cache mode but more
-aggressive.
+Here's a collection of fixes that I *think* are bugs in libfuse.
 
 If you're going to start using this code, I strongly recommend pulling
 from my git trees, which are linked below.
 
-This has been running on the djcloud for months with no problems.  Enjoy!
+With a bit of luck, this should all go splendidly.
 Comments and questions are, as always, welcome.
 
 --D
 
 kernel git tree:
-https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=fuse-iomap-attrs
+https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=fuse-fixes
 ---
 Commits in this patchset:
- * fuse: force a ctime update after a fileattr_set call when in iomap mode
- * fuse: synchronize inode->i_flags after fileattr_[gs]et
- * fuse: cache atime when in iomap mode
- * fuse: let the kernel handle KILL_SUID/KILL_SGID for iomap filesystems
- * fuse: update ctime when updating acls on an iomap inode
- * fuse: always cache ACLs when using iomap
+ * libfuse: don't put HAVE_STATX in a public header
 ---
- fs/fuse/fuse_i.h     |    1 
- fs/fuse/fuse_trace.h |   81 ++++++++++++++++++++++++++++++++++++++++
- fs/fuse/acl.c        |   24 ++++++++++--
- fs/fuse/dir.c        |   32 +++++++++++++---
- fs/fuse/inode.c      |   20 ++++++++--
- fs/fuse/ioctl.c      |  101 ++++++++++++++++++++++++++++++++++++++++++++++++++
- fs/fuse/readdir.c    |    3 +
- 7 files changed, 249 insertions(+), 13 deletions(-)
+ include/fuse.h           |    2 --
+ include/fuse_lowlevel.h  |    2 --
+ example/memfs_ll.cc      |    2 +-
+ example/passthrough.c    |    2 +-
+ example/passthrough_fh.c |    2 +-
+ example/passthrough_ll.c |    2 +-
+ 6 files changed, 4 insertions(+), 8 deletions(-)
 
 
