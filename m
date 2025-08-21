@@ -1,91 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-58692-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58693-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 688EEB308A9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 23:55:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B559B308AC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 23:55:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 402BE5A7611
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 21:55:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12B0C1C28252
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 21:55:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B74C2E9EC2;
-	Thu, 21 Aug 2025 21:55:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 675AB2EA735;
+	Thu, 21 Aug 2025 21:55:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bur.io header.i=@bur.io header.b="TtRxgGJT";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZvMZ4not"
+	dkim=pass (2048-bit key) header.d=bur.io header.i=@bur.io header.b="o15FyfC+";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FZcoMawA"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B2B920766E;
-	Thu, 21 Aug 2025 21:55:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1A742E92D0;
+	Thu, 21 Aug 2025 21:55:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755813312; cv=none; b=h0bHhdzV+LkCxm9L2sUEuiAq2GUgTUifFBPRz4YTzHa+cwAtZ5/yaDDrCJ3P/wy4RRH+4jJsF9v2Z3+SjdDyfROZnyZbEttSZoA+uuAFUjasaqCOLS7frIQ1FifGDbnudD84MJ71YqjKgnRHf7FW72ndK5lJ4zE6+XmQKAke0jc=
+	t=1755813314; cv=none; b=A8nXDgKgu6mEXdu5qfl87lzaaU3pB1+qCGjQCXY5//PvfZpXVaH23rO8S8QhXvsNKMb4wuSt/b5UCIuTkxfj2Q2osXYbx5wbcI2Xa7sMrU6y4U0SnUWaX/lQDj9/bVArlUPhD8KKS+EzmixE08EYJSSnWDhUSSllcIB386sDqgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755813312; c=relaxed/simple;
-	bh=P0mFJkiz2HMJ55XEoGvIpPbp5gcB0tYOBBeSXaOTU50=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YCGvGjEblLTu3pjFRvs9ucwqi1xee17FqESQzB1+uPN0DaC3OXcyOGO6U0qg14S5Co5vkAo3UGT0my9OLxCXh11vcc11XldWBO3o5I46VsiRIBvUQd1KLn6gr5gB/8OTpiaXojN7ZrSjISOPpgZZMCmV41PC6GZOtmn3Z+8HDWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bur.io; spf=pass smtp.mailfrom=bur.io; dkim=pass (2048-bit key) header.d=bur.io header.i=@bur.io header.b=TtRxgGJT; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ZvMZ4not; arc=none smtp.client-ip=202.12.124.159
+	s=arc-20240116; t=1755813314; c=relaxed/simple;
+	bh=GQQZ4/LHZA4wwIm+2DVqeFKvb38DA3XroHGNOKvmQ+s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=UVSTmswMGgI/l0lZF0JIKsDKT9bCe2lco0QUiy/U44h32IZl6phP6kgD3GLuaXopy7xrb0uwaXE0VIdssjv16+KmG30az22la7F/Ut/hNjMYXcFaZxirWXxuT9kr7DKjHZcSl6z01OQQaKP+3YUAz3UzSygZCwf13ElVT/8z+Rk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bur.io; spf=pass smtp.mailfrom=bur.io; dkim=pass (2048-bit key) header.d=bur.io header.i=@bur.io header.b=o15FyfC+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FZcoMawA; arc=none smtp.client-ip=202.12.124.159
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bur.io
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bur.io
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id A92E57A0140;
-	Thu, 21 Aug 2025 17:55:08 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Thu, 21 Aug 2025 17:55:09 -0400
+Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 9F7AE7A013E;
+	Thu, 21 Aug 2025 17:55:11 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-12.internal (MEProxy); Thu, 21 Aug 2025 17:55:11 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bur.io; h=cc:cc
 	:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=fm1; t=1755813308; x=1755899708; bh=XtWHWCopUVQb2SD2YU/s0
-	ucRlC4xraBcZGfo9PxpLrY=; b=TtRxgGJT7BCqDJxnitfo46+BAatMP7H8Gt4OX
-	GD3i+jutYLtWRcT1Vom0jeZxHEXnKqBVJz+S4xw6HbHfcDLI2bd2ei1V+7Ebbeoa
-	lbi2x3dPHGOgRGHhTmixNtytihU1xerplil4H+6aZKNki8iA+gCcO/QVuq3zBxKy
-	BAj6CTGcCcgsh0P0lgiYzD6r8t1FI9EvJOALii8jid5F1E8Z2PUiwT2s20Fk2YrM
-	d+Ut6sAh/C6nZLsN8YWN1ayH+2Gzf2S9bU3M5IQ2U9VDnHBB/Tc4AwKgOtvu5K+A
-	x4+dWLSc1PG0fwPiko+Chka3SdUEtT0VcLM9UVtf2YRMK4/Xw==
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1755813311; x=
+	1755899711; bh=KTjJpIvPC3sSZ8qeQ6s9N5Jc2/0IphFglsc/jRyQy4k=; b=o
+	15FyfC+Zds+sXQkGP85yff98CZCNS05vSrD7tg78D8+LPswpNTSfvCOtwaaGl3Eu
+	q62CMRF7VGjY9rUw9IaXKIiOKBjUhmxcrQKk22Mcix+lPf64/k5DgEr6WiAY96Aq
+	J7uIXFUTxteL8E4AFxecjEnARoYLtIr1yZ5SjtB6M50nUxDIRKR4IrTzK6k3Bp1m
+	FJij1tI5QVNgI9DXUiDtwbd//GSCIUruJylUtOa/dPfbsvsOHyESqIzENXXSKB9A
+	lJD6FklzUN372LC469iMrM09DRLvlPFKfStmt78DARJE9SJ2lRXHW9q5bVqxC9qz
+	ZeDW3wRsHN60OrR0N50kg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1755813308; x=1755899708; bh=XtWHWCopUVQb2SD2YU/s0ucRlC4xraBcZGf
-	o9PxpLrY=; b=ZvMZ4not7qHw0rSobjS2kIjctumomqiFxTuXs6nYBVi7W+lKQME
-	OFHgfNDHTUgY7T+QbS/L6RUsRYw+4zdHeyoedy/sEqKuPdDzFziWiJMxevWRmiYC
-	xmFdMcD8fpCcNRfyWGVHQNnBCECMU7YAPJmTS4XCJlZOHjnDxNDLZ0iyeEw3Uy2+
-	dGh+FIPapwb1qaKXwArCJtv4oQ8s3OQ6/4s0tSq1By4sVLjDO1Pn0eRgGKONQ4mu
-	V170j+4KZGAsgWYziIvV4FQ60IcoyJmeOp6JM9zQjTBqIkpksibXEOtWkzuDVc0h
-	xMU9Y4G5zgCfpieeXltY0ILa69VguT5/H9A==
-X-ME-Sender: <xms:u5WnaLL6ECbe-06Mfkdes9QihAsRdJYcWYpVbubwAQLsyyYLvA9wLw>
-    <xme:u5WnaEpAGTVlLTvah7aKe2YrCy5vOZA4inIX56-fZBUHBP1NhRnX5Nr1JCByJ7qw6
-    q-TuRfrhOlWNyrZg2E>
-X-ME-Received: <xmr:u5WnaCytuebL1fvAOSvZBiC29vEEEh1VzLGb1uc-B3km_HlHVn7_blDPcX_WSHikpppLI3mCZxsloaCTnkpIde86aCk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduiedvvdejucetufdoteggodetrf
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
+	:x-me-sender:x-sasl-enc; s=fm3; t=1755813311; x=1755899711; bh=K
+	TjJpIvPC3sSZ8qeQ6s9N5Jc2/0IphFglsc/jRyQy4k=; b=FZcoMawA/ebPtt9X8
+	amYjTE5rrnagLUkcr9vdFqG3uanNnGsAkaWO22oynxPRexKTsjgQyLz9Yvso3aVy
+	WEs6EGonhJctObBS384o0+n97+qiq70jyLkgB7GgtLuZZ9v1WfUWD8TG6/3r7l91
+	6iiiLenRNa4ZoN0ANapRN1448n/A9KfYIgKrq58agw/EwgzOcgQyRH9pB9EkrM3w
+	tkqIxXCcXB7ZFfI9Gfih2BDdOEA1Kh0gBxGVKhvNC9reMSMr+UodkWv+ITq39FbR
+	/+NVlskBSJCvoVJmH3tSSlzgEvZl9S7ujjOJgwBnzNlHyHxXX0zKxyJl9V03NqMk
+	BO7TA==
+X-ME-Sender: <xms:vpWnaG09pjrcjRvv1n_XQuN6M-uBletMQu1_Dd21mq1cg_Ugek-3zQ>
+    <xme:vpWnaOmr_sBi6wNiL0DfapYL8ZW8uKsz_G0xcW_7ixmtfeHr1LjKbC4vcaX10IBli
+    BYeroR_6aGHZsrie2g>
+X-ME-Received: <xmr:vpWnaN9Zra7jauUSe61g6WfIk8fmD0PfIcb8j4Mgf4vQN3h59h6TNOh7iW997Z6KjqXurQXFIk4mR5_D5kf_DmUUMaY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduiedvvdekucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffoggfgsedtkeertdertd
-    dtnecuhfhrohhmpeeuohhrihhsuceuuhhrkhhovhcuoegsohhrihhssegsuhhrrdhioheq
-    necuggftrfgrthhtvghrnhepieegleehjeelfeeifeeiuefhfefgvefgkedtjefhiedvve
-    etgfduleejheeifffgnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushht
-    vghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhrihhssegsuhhrrd
-    hiohdpnhgspghrtghpthhtohepuddvpdhmohguvgepshhmthhpohhuthdprhgtphhtthho
-    pegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheplh
-    hinhhugidqsghtrhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehl
-    ihhnuhigqdhmmheskhhvrggtkhdrohhrghdprhgtphhtthhopehlihhnuhigqdhfshguvg
-    hvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgvrhhnvghlqdht
-    vggrmhesfhgsrdgtohhmpdhrtghpthhtohepshhhrghkvggvlhdrsghuthhtsehlihhnuh
-    igrdguvghvpdhrtghpthhtohepfihquhesshhushgvrdgtohhmpdhrtghpthhtohepfihi
-    lhhlhiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehmhhhotghkoheskhgvrh
-    hnvghlrdhorhhg
-X-ME-Proxy: <xmx:u5WnaItRzaTziVeon9XijMTWjhlMSNOYJXTznHn0Fl7xQ4bixrR_BA>
-    <xmx:u5WnaL0YPasEVfVe_1HejUAnol-cdN0FdwhJX7CC8d8k4GBryk1bYw>
-    <xmx:u5WnaAB4af7ttrkD4obF4RvD2ETO_vniZXY5YCkXWAjUvk8BS_mazg>
-    <xmx:u5WnaJC3JRo1dywVeUMLc_jLk4vBEEqwFHCdTjDm2ogkV2hS5CwKUA>
-    <xmx:vJWnaKGP0zu5PKMd-Rf2prRyEzmOo2kvCqY-wTfm2tVSnxR0GVVky3Xy>
+    rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffojghfggfgsedtkeertd
+    ertddtnecuhfhrohhmpeeuohhrihhsuceuuhhrkhhovhcuoegsohhrihhssegsuhhrrdhi
+    oheqnecuggftrfgrthhtvghrnhephfevkeffkeffheeffffhuefggffhhedugfetudetud
+    etueefveeijeefvdduudegnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhu
+    shhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhrihhssegsuh
+    hrrdhiohdpnhgspghrtghpthhtohepuddvpdhmohguvgepshhmthhpohhuthdprhgtphht
+    thhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoh
+    eplhhinhhugidqsghtrhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthho
+    pehlihhnuhigqdhmmheskhhvrggtkhdrohhrghdprhgtphhtthhopehlihhnuhigqdhfsh
+    guvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgvrhhnvghl
+    qdhtvggrmhesfhgsrdgtohhmpdhrtghpthhtohepshhhrghkvggvlhdrsghuthhtsehlih
+    hnuhigrdguvghvpdhrtghpthhtohepfihquhesshhushgvrdgtohhmpdhrtghpthhtohep
+    fihilhhlhiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehmhhhotghkoheskh
+    gvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:vpWnaMKruiPdU6x_UleUEPSEWzdCDBTdOiBhhagNwhADnjcb-lxccA>
+    <xmx:vpWnaCjsDdJvZefGmRGi5H_THVIpUQ5X_typei7ANTDfm1at4OddRw>
+    <xmx:vpWnaI-e6dN1aX_LIRCXFZHs4l0bubMB5xORYLQEC_lBc600ga4ZQw>
+    <xmx:vpWnaHOcLrIl8gHMLNvjzvn4cIilb-Ih3IIjO5IbM8iFVYGkwdIFcQ>
+    <xmx:v5WnaNwxx5FGZYMeitHe83t-5KuMs6-IFqArjWql4NPpOHISiQhE50FW>
 Feedback-ID: i083147f8:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 21 Aug 2025 17:55:07 -0400 (EDT)
+ 21 Aug 2025 17:55:10 -0400 (EDT)
 From: Boris Burkov <boris@bur.io>
 To: akpm@linux-foundation.org
 Cc: linux-btrfs@vger.kernel.org,
@@ -99,10 +102,12 @@ Cc: linux-btrfs@vger.kernel.org,
 	muchun.song@linux.dev,
 	roman.gushchin@linux.dev,
 	hannes@cmpxchg.org
-Subject: [PATCH v4 0/3] introduce kernel file mapped folios
-Date: Thu, 21 Aug 2025 14:55:34 -0700
-Message-ID: <cover.1755812945.git.boris@bur.io>
+Subject: [PATCH v4 1/3] mm/filemap: add AS_KERNEL_FILE
+Date: Thu, 21 Aug 2025 14:55:35 -0700
+Message-ID: <f09c4e2c90351d4cb30a1969f7a863b9238bd291.1755812945.git.boris@bur.io>
 X-Mailer: git-send-email 2.50.1
+In-Reply-To: <cover.1755812945.git.boris@bur.io>
+References: <cover.1755812945.git.boris@bur.io>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -111,45 +116,80 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-I would like to revisit Qu's proposal to not charge btrfs extent_buffer
-allocations to the user's cgroup.
+Btrfs currently tracks its metadata pages in the page cache, using a
+fake inode (fs_info->btree_inode) with offsets corresponding to where
+the metadata is stored in the filesystem's full logical address space.
 
-https://lore.kernel.org/linux-mm/b5fef5372ae454a7b6da4f2f75c427aeab6a07d6.1727498749.git.wqu@suse.com/
+A consequence of this is that when btrfs uses filemap_add_folio(), this
+usage is charged to the cgroup of whichever task happens to be running
+at the time. These folios don't belong to any particular user cgroup, so
+I don't think it makes much sense for them to be charged in that way.
+Some negative consequences as a result:
+- A task can be holding some important btrfs locks, then need to lookup
+  some metadata and go into reclaim, extending the duration it holds
+  that lock for, and unfairly pushing its own reclaim pain onto other
+  cgroups.
+- If that cgroup goes into reclaim, it might reclaim these folios a
+  different non-reclaiming cgroup might need soon. This is naturally
+  offset by LRU reclaim, but still.
 
-I believe it is detrimental to account these global pages to the cgroup
-using them, basically at random. A bit more justification and explanation
-in the patches themselves.
+We have two options for how to manage such file pages:
+1. charge them to the root cgroup.
+2. don't charge them to any cgroup at all.
 
+2. breaks the invariant that every mapped page has a cgroup. This is
+workable, but unnecessarily risky. Therefore, go with 1.
+
+A very similar proposal to use the root cgroup was previously made by
+Qu, where he eventually proposed the idea of setting it per
+address_space. This makes good sense for the btrfs use case, as the
+behavior should apply to all use of the address_space, not select
+allocations. I.e., if someone adds another filemap_add_folio() call
+using btrfs's btree_inode, we would almost certainly want to account
+that to the root cgroup as well.
+
+Link: https://lore.kernel.org/linux-mm/b5fef5372ae454a7b6da4f2f75c427aeab6a07d6.1727498749.git.wqu@suse.com/
+Suggested-by: Qu Wenruo <wqu@suse.com>
+Suggested-by: Shakeel Butt <shakeel.butt@linux.dev>
+Tested-by: syzbot@syzkaller.appspotmail.com
+Signed-off-by: Boris Burkov <boris@bur.io>
 ---
-Changelog:
-v4:
-- change the concept from "uncharged" to "kernel_file"
-- no longer violates the invariant that each mapped folio has a memcg
-  when CONFIG_MEMCG=y
-- no longer really tied to memcg conceptually, so simplify build/helpers
-v3:
-- use mod_node_page_state since we will never count cgroup stats
-- include Shakeel's patch that removes a WARNING triggered by this series
-v2:
-- switch from filemap_add_folio_nocharge() to AS_UNCHARGED on the
-  address_space.
-- fix an interrupt safety bug in the vmstat patch.
-- fix some foolish build errors for CONFIG_MEMCG=n
+ include/linux/pagemap.h | 2 ++
+ mm/filemap.c            | 6 ++++++
+ 2 files changed, 8 insertions(+)
 
-
-
-Boris Burkov (3):
-  mm/filemap: add AS_KERNEL_FILE
-  mm: add vmstat for kernel_file pages
-  btrfs: set AS_KERNEL_FILE on the btree_inode
-
- fs/btrfs/disk-io.c      |  1 +
- include/linux/mmzone.h  |  1 +
- include/linux/pagemap.h |  2 ++
- mm/filemap.c            | 13 +++++++++++++
- mm/vmstat.c             |  1 +
- 5 files changed, 18 insertions(+)
-
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index c9ba69e02e3e..a3e16d74792f 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -211,6 +211,8 @@ enum mapping_flags {
+ 				   folio contents */
+ 	AS_INACCESSIBLE = 8,	/* Do not attempt direct R/W access to the mapping */
+ 	AS_WRITEBACK_MAY_DEADLOCK_ON_RECLAIM = 9,
++	AS_KERNEL_FILE = 10,	/* mapping for a fake kernel file that shouldn't
++				   account usage to user cgroups */
+ 	/* Bits 16-25 are used for FOLIO_ORDER */
+ 	AS_FOLIO_ORDER_BITS = 5,
+ 	AS_FOLIO_ORDER_MIN = 16,
+diff --git a/mm/filemap.c b/mm/filemap.c
+index e4a5a46db89b..05c1384bd611 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -960,8 +960,14 @@ int filemap_add_folio(struct address_space *mapping, struct folio *folio,
+ {
+ 	void *shadow = NULL;
+ 	int ret;
++	struct mem_cgroup *tmp;
++	bool kernel_file = test_bit(AS_KERNEL_FILE, &mapping->flags);
+ 
++	if (kernel_file)
++		tmp = set_active_memcg(root_mem_cgroup);
+ 	ret = mem_cgroup_charge(folio, NULL, gfp);
++	if (kernel_file)
++		set_active_memcg(tmp);
+ 	if (ret)
+ 		return ret;
+ 
 -- 
 2.50.1
 
