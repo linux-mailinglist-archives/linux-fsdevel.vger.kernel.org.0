@@ -1,66 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-58577-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58578-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C114B2F006
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 09:47:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59966B2F00E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 09:48:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 575536869CF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 07:45:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F588188EA29
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 07:48:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7289212D7C;
-	Thu, 21 Aug 2025 07:45:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CE3A283FF4;
+	Thu, 21 Aug 2025 07:47:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e7e99MJq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RilZfr5U"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085342745E;
-	Thu, 21 Aug 2025 07:45:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F17CF19F135;
+	Thu, 21 Aug 2025 07:47:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755762328; cv=none; b=SkDbWZBEZE/86zZF2up1kvAE+1Z2p/RjfpqxfnFiNFLG5oPaAOuSfJgMwT3p7WwrEaHDT/EvMi+6B4sxEAJFP+fhdiYV+tpMuC5/lF/QyQBopkA2/dJTXxiN9Q0RDcknx8m9aUfBbG4w8lIzS7AhqH20j1yHR3bLdLEAE0N2KBs=
+	t=1755762466; cv=none; b=fIS5h3DcFVb7ZRQBSMYg/ehGXfb62tWJMjD3qmo6skFjEILeovRmQylhDX7vaVsutqKc77aVUZQa4AfkznNrfCPQMNFFgfrMX3gbYpZhMrrxrlnyojc5tsFYaryXRzuedUVKLw3G07Cch9Kk4efqD+3DlZoqyA4ZXCZz35EJ+Pk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755762328; c=relaxed/simple;
-	bh=422P2Pgks4HS6zHxMZma3U/z4rUYA1FhR348AlY5h3E=;
+	s=arc-20240116; t=1755762466; c=relaxed/simple;
+	bh=eEvFGmHk4o/xiRTP7rYXNelXLR+78ohx+6Uf3/9nIYk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V5ruNNuH951PyJgUslmpQ7Hj5PlGWns2p57ApXdlnSfkh8JKvT97Y5p9PUfgUJW/pRQxCNd8YL8czw6hr2het/svrwtzT26N5UBPoa4rfWLh+d618I31deN/36ElxUNaa8kV//0Iqkbv7VkZfgi9Kbfx0Fx+mdmqMCBOuzRnq78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e7e99MJq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E8F6C4CEED;
-	Thu, 21 Aug 2025 07:45:24 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=f88abJLM203a+vR+XHj1FQhUO5TsqXvvz6KP6qxHh8ocE+VbbKRc3BHt3zPwdZ7c1gV7cjXE+q5eTy0CJDhQFHSKHRPYyDyBDsPyIpNsOL4JkOlsQtkFDsiq2UDvd2qfA7NXb72E4YrQPTAHK9VFGtAXpCCOK5zSSvwUQxXgURs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RilZfr5U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB9B2C19421;
+	Thu, 21 Aug 2025 07:47:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755762327;
-	bh=422P2Pgks4HS6zHxMZma3U/z4rUYA1FhR348AlY5h3E=;
+	s=k20201202; t=1755762465;
+	bh=eEvFGmHk4o/xiRTP7rYXNelXLR+78ohx+6Uf3/9nIYk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e7e99MJqS8P/+i5jz5OraVdWgEmkQnrzKdlmYPnBMXUmy1nfhakK89fAOBHh0aWRY
-	 rVPskH5dzNp1qmEwMqDRZVepUK9Xnw14CT7bxZIU2WRxOV/2a39Es177IdNolpGr8n
-	 1igp4V+E8LatvrXp7+bbvVeSFRp1wI+HfDqHDQJJ7fabOpInL59NBFG/ShmbaWWgRu
-	 S8+0HTOCXCDymQvKlSFAi/2gU0MnLMjNSV7xaGcBUxF/lzKL95MJUCeQawtZjzrdeS
-	 Z0SajRLiPF6wHsNaP7lXSrHaAVb7yitP0zePsHLsFYWypMOU4V56g667Oz4GFCK61T
-	 BDNs8O9CnRtGg==
-Date: Thu, 21 Aug 2025 09:45:22 +0200
+	b=RilZfr5UKaSKIoAFq/Q157n2pcqvRnrUDTnYbKIu9RjOm7/SlxZ3dO2UgCSb9ECGM
+	 pKBmVy8XWH6MggyREIF02kmb88faATfH0pVt8dWztV++pjuWxViirYSwJqwMAJFQ47
+	 wfZkJ08cwLrT67YgeJUkjHOnTv4KZWg6XRSUdl/oSPgFTi8qfnZ4hSrWzMet5qQacX
+	 HkAN1wRxypLP4OrU7Rroc3tvV9Dz0FMyWhs51vl7YVV21GSbstBHSXAOZUEnVw7wnd
+	 kKGq5La0JjnUuKPlJ0x6DMknEwhdYAd6TEMdqn98M/uOWSgZG6v2cdSCrbAdT6UCyz
+	 x/h7h1YLieLqg==
+Date: Thu, 21 Aug 2025 09:47:41 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	David Laight <david.laight.linux@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	LKML <linux-kernel@vger.kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>, 
-	Davidlohr Bueso <dave@stgolabs.net>, =?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>, 
-	x86@kernel.org, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: Re: [patch 0/4] uaccess: Provide and use helpers for user masked
- access
-Message-ID: <20250821-erkunden-gazellen-924d52f0a1c6@brauner>
-References: <20250813150610.521355442@linutronix.de>
- <20250817144943.76b9ee62@pumpkin>
- <20250818222106.714629ee@pumpkin>
- <CAHk-=wibAE=yDhWdY7jQ7xvCtbmW5Tjtt_zMJcEzey3xfL=ViA@mail.gmail.com>
- <20250818222111.GE222315@ZenIV>
- <CAHk-=whvSAi1+fr=YSXU=Ax204V1TP-1c_3Y3p2TjznxSo=_3Q@mail.gmail.com>
- <20250819003908.GF222315@ZenIV>
- <20250820234815.GA656679@ZenIV>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Thomas Bertschinger <tahbertschinger@gmail.com>, 
+	Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	viro@zeniv.linux.org.uk, linux-nfs@vger.kernel.org
+Subject: Re: [PATCHSET RFC 0/6] add support for name_to, open_by_handle_at(2)
+ to io_uring
+Message-ID: <20250821-putzig-bockig-ad93ba46e12e@brauner>
+References: <20250814235431.995876-1-tahbertschinger@gmail.com>
+ <e914d653-a1b6-477d-8afa-0680a703d68f@kernel.dk>
+ <DC6X58YNOC3F.BPB6J0245QTL@gmail.com>
+ <CAOQ4uxj=XOFqHBmYY1aBFAnJtSkxzSyPu5G3xP1rx=ZfPfe-kg@mail.gmail.com>
+ <DC7CIXI2T3FD.1I8C9PE5V0TRI@gmail.com>
+ <CAOQ4uximiUryMV=z_3TrEN1KCSA-2YdCt0t7v1M1gRZpnWec=Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -69,27 +64,65 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250820234815.GA656679@ZenIV>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uximiUryMV=z_3TrEN1KCSA-2YdCt0t7v1M1gRZpnWec=Q@mail.gmail.com>
 
-On Thu, Aug 21, 2025 at 12:48:15AM +0100, Al Viro wrote:
-> On Tue, Aug 19, 2025 at 01:39:09AM +0100, Al Viro wrote:
-> > I'm still trying to come up with something edible for lock_mount() -
-> > the best approximation I've got so far is
-> > 
-> > 	CLASS(lock_mount, mp)(path);
-> > 	if (IS_ERR(mp.mp))
-> > 		bugger off
+On Wed, Aug 20, 2025 at 09:58:15PM +0200, Amir Goldstein wrote:
+> On Wed, Aug 20, 2025 at 5:00 PM Thomas Bertschinger
+> <tahbertschinger@gmail.com> wrote:
+> >
+> > On Wed Aug 20, 2025 at 2:34 AM MDT, Amir Goldstein wrote:
+> > > On Wed, Aug 20, 2025 at 4:57 AM Thomas Bertschinger
+> > > <tahbertschinger@gmail.com> wrote:
+> > >> Any thoughts on that? This seemed to me like there wasn't an obvious
+> > >> easy solution, hence why I just didn't attempt it at all in v1.
+> > >> Maybe I'm missing something, though.
+> > >>
+> > >
+> > > Since FILEID_IS_CONNECTABLE, we started using the high 16 bits of
+> > > fh_type for FILEID_USER_FLAGS, since fs is not likely expecting a fh_type
+> > > beyond 0xff (Documentation/filesystems/nfs/exporting.rst):
+> > > "A filehandle fragment consists of an array of 1 or more 4byte words,
+> > > together with a one byte "type"."
+> > >
+> > > The name FILEID_USER_FLAGS may be a bit misleading - it was
+> > > never the intention for users to manipulate those flags, although they
+> > > certainly can and there is no real harm in that.
+> > >
+> > > These flags are used in the syscall interface only, but
+> > > ->fh_to_{dentry,parent}() function signature also take an int fh_flags
+> > > argument, so we can use that to express the non-blocking request.
+> > >
+> > > Untested patch follows (easier than explaining):
+> >
+> > Ah, that makes sense and makes this seem feasible. Thanks for pointing
+> > that out!
+> >
+> > It also seems that each FS could opt in to this with a new EXPORT_OP
+> > flag so that the FSes that want to support this can be updated
+> > individually. Then, updating most or every exportable FS isn't a
+> > requirement for this.
 > 
-> ... and that does not work, since DEFINE_CLASS() has constructor return
-> a value that gets copied into the local variable in question.
+> Makes a lot of sense. yes.
 > 
-> Which is unusable for situations when a part of what constructor is
-> doing is insertion of that local variable into a list.
+> >
+> > Do you have an opinion on that, versus expecting every ->fh_to_dentry()
+> > implementation to respect the new flag?
 > 
-> __cleanup() per se is still usable, but... no DEFINE_CLASS for that kind
-> of data structures ;-/
+> Technically, you do not need every fs to respect this flag, you only need them
+> to not ignore it.
+> 
+> Generally, if you pass (fileid_type | EXPORT_FH_CACHED) as the type
+> argument, most filesystems will not accept this value anyway and return
+> NULL or PTR_ERR(-ESTALE), so not ignoring.
+> 
+> But I think it is much preferred to check the opt-in EXPORT_OP
+> flag and return EAGAIN from generic code in the case that fs does
+> not support non-blocking decode.
+> 
+> And fs that do opt in should probably return PTR_ERR(-EAGAIN)
+> when the file type is correct but non-blocking decode is not possible.
 
-Just add the custom infrastructure that we need for this to work out imho.
-If it's useful outside of our own realm then we can add it to cleanup.h
-and if not we can just add our own header...
+I like your idea as it's in line with other extensions we've done
+recently to open_by_handle_at().
 
