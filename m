@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-58437-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58438-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02FB7B2E9BF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 02:51:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC86FB2E9C0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 02:51:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C07031CC31FB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 00:51:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82C851CC32A7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 00:52:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE17018991E;
-	Thu, 21 Aug 2025 00:51:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E9CF1E7C23;
+	Thu, 21 Aug 2025 00:51:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EkKEYke2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B3HcmuW0"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18779190685
-	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Aug 2025 00:51:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9A218991E
+	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Aug 2025 00:51:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755737488; cv=none; b=sI76h72qd46OJDZlj7zYg+Zh1/BJQpk8dcNMMPFi1/xqVoDB89wd2ripaGyRWBbwuHpW26gD5vvB3KgaSU9rTtsYr7nGVt9/TtmdHiwVAAsSSC9JxNgBTZEewbwfxjtifrSVIUXDeW22Aa3QX/dnURvqyR50n4k94PzKg3QC7xQ=
+	t=1755737503; cv=none; b=qy5FeJAK6UHk8L2TMarQhdKVl1NP+bw1dzJLBmLnaEy8BSzedF2UNxl/ztHolW0t/1M4PLo2rAEAevhk39H5CVBvxVqF7Ar+NJVg8uxnT9jcCWAUqdr8t9S8Uy1T6d509LOxVkuEm1glTDe5nZ5wCGhddPOWNJY8oQORhIUieH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755737488; c=relaxed/simple;
-	bh=bynaqyxP2GE2Tm66bcM0Si/TURu/8fF2771Se0Oc4zo=;
+	s=arc-20240116; t=1755737503; c=relaxed/simple;
+	bh=PBG9o2bAc/Fbq4+TUo+ZsFaPuOM/gK17C8GHOGq1R+k=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QqaKqQOxJuT1xFgokQJ1HNu+GjXAz1eOLAObY2pdXVC14JkVWFeRY4m3F09dnI0gQbAlFHDzX8TxKU4zCWpqPi/VhpAgq1+dlWji2xCq8prGR9vDAYkgtv39WhEOsOjchdgAw89x/ajAX2LhV/4jfWstTNMe+60VcJXJYSJLiyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EkKEYke2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D81C8C4CEE7;
-	Thu, 21 Aug 2025 00:51:27 +0000 (UTC)
+	 MIME-Version:Content-Type; b=X+cHnlapGOiZl94gitcdq8yAt0i/l1o2sl3leIeEmFJDwJ+IB3RH1y9bBedY/B1xFuYIfVpk9SQx2lodlqMnYRnRx+wc3fB8l0GA4/GHCkyGjx4NQcIzuruEft3LubpTA9lOslCVsbwHWaQpXEBOGcHbd4lsx92LdTPt6yGW39A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B3HcmuW0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7528BC4CEE7;
+	Thu, 21 Aug 2025 00:51:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755737487;
-	bh=bynaqyxP2GE2Tm66bcM0Si/TURu/8fF2771Se0Oc4zo=;
+	s=k20201202; t=1755737503;
+	bh=PBG9o2bAc/Fbq4+TUo+ZsFaPuOM/gK17C8GHOGq1R+k=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=EkKEYke202MxbDqNZZfL8AVIfNXWt7kaf8jHeVIFi5w5YtERl3mK200BfJYYCILp2
-	 3vOfTa44Hz7gTUgvSsawHzrmzzv9WwBFhZxt/KtDj/WZDhLNTvaX6BjDWyYuxK3Pdy
-	 iIH6kluGJHJZRacWhKipGSID09dBV7J4MOwtKMGa1Dz4vnMX8EboHPj/SDwV+rHL4T
-	 27M9LAt8oQTdYxbsgteZG9xVmH5y1giiYQ0JFOMQ9F6h5t/dgTjVtxuWuZgW9riIUP
-	 +czacxsgPfVOrFLac7T4OsqM24afSe4B7IX2tZ4a2g4v8wJ1yZ1sSJ/t2+vOjHSz06
-	 2tdgomMV2kjsg==
-Date: Wed, 20 Aug 2025 17:51:27 -0700
-Subject: [PATCH 3/7] fuse: capture the unique id of fuse commands being sent
+	b=B3HcmuW0GcXCM6n5nBIZjtoKu+5WUC3f9h61knt1mzh1iEpmOBR3brqnsucD5iZmV
+	 H2tLKf3qyJo16WHCZndypfCooQg+Kf6uswjZoocMX0A+I1VYjrh2sy7hC2YJkRbuXP
+	 1QNRe3NN3v/0u8T1I6Mr20miwyszS8+Jr+QeYFhWXODEP11lCnJxUryUqe4n6hckYP
+	 ldHfg6lsuWSo8h7kKO5mBspDO99IqBHWQUOhXrMHsWCQ+ewaTZMaVTji5SQCy1Dy/S
+	 BSsJ61ynzK7XsFXAO9vcJuSJfRBX1cVplS35otcN6oF1h4kEMpUHmg7bL5kPOo8GFo
+	 odPuFGTaKtGHQ==
+Date: Wed, 20 Aug 2025 17:51:43 -0700
+Subject: [PATCH 4/7] fuse: implement file attributes mask for statx
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, miklos@szeredi.hu
 Cc: bernd@bsbernd.com, neal@gompa.dev, John@groves.net,
  linux-fsdevel@vger.kernel.org, joannelkoong@gmail.com
-Message-ID: <175573708609.15537.12935438672031544498.stgit@frogsfrogsfrogs>
+Message-ID: <175573708630.15537.1057407663556817922.stgit@frogsfrogsfrogs>
 In-Reply-To: <175573708506.15537.385109193523731230.stgit@frogsfrogsfrogs>
 References: <175573708506.15537.385109193523731230.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -61,84 +61,66 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-The fuse_request_{send,end} tracepoints capture the value of
-req->in.h.unique in the trace output.  It would be really nice if we
-could use this to match a request to its response for debugging and
-latency analysis, but the call to trace_fuse_request_send occurs before
-the unique id has been set:
-
-fuse_request_send:    connection 8388608 req 0 opcode 1 (FUSE_LOOKUP) len 107
-fuse_request_end:     connection 8388608 req 6 len 16 error -2
-
-Move the callsites to trace_fuse_request_send to after the unique id has
-been set, or right before we decide to cancel a request having not set
-one.
+Actually copy the attributes/attributes_mask from userspace.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- fs/fuse/dev.c       |    6 +++++-
- fs/fuse/dev_uring.c |    8 +++++++-
- 2 files changed, 12 insertions(+), 2 deletions(-)
+ fs/fuse/fuse_i.h |    4 ++++
+ fs/fuse/dir.c    |    4 ++++
+ fs/fuse/inode.c  |    3 +++
+ 3 files changed, 11 insertions(+)
 
 
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 6f2b277973ca7d..05d6e7779387a4 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -376,10 +376,15 @@ static void fuse_dev_queue_req(struct fuse_iqueue *fiq, struct fuse_req *req)
- 	if (fiq->connected) {
- 		if (req->in.h.opcode != FUSE_NOTIFY_REPLY)
- 			req->in.h.unique = fuse_get_unique_locked(fiq);
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index 2b5d56e3cb4eaf..bb1fdae0bbc906 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -140,6 +140,10 @@ struct fuse_inode {
+ 	/** Version of last attribute change */
+ 	u64 attr_version;
+ 
++	/** statx file attributes */
++	u64 statx_attributes;
++	u64 statx_attributes_mask;
 +
-+		/* tracepoint captures in.h.unique */
-+		trace_fuse_request_send(req);
+ 	union {
+ 		/* read/write io cache (regular file only) */
+ 		struct {
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index 2d817d7cab2649..2e4d1131ab8cbe 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -1278,6 +1278,8 @@ static int fuse_do_statx(struct mnt_idmap *idmap, struct inode *inode,
+ 		stat->result_mask = sx->mask & (STATX_BASIC_STATS | STATX_BTIME);
+ 		stat->btime.tv_sec = sx->btime.tv_sec;
+ 		stat->btime.tv_nsec = min_t(u32, sx->btime.tv_nsec, NSEC_PER_SEC - 1);
++		stat->attributes = sx->attributes;
++		stat->attributes_mask = sx->attributes_mask;
+ 		fuse_fillattr(idmap, inode, &attr, stat);
+ 		stat->result_mask |= STATX_TYPE;
+ 	}
+@@ -1381,6 +1383,8 @@ static int fuse_update_get_attr(struct mnt_idmap *idmap, struct inode *inode,
+ 			stat->btime = fi->i_btime;
+ 			stat->result_mask |= STATX_BTIME;
+ 		}
++		stat->attributes = fi->statx_attributes;
++		stat->attributes_mask = fi->statx_attributes_mask;
+ 	}
+ 
+ 	return err;
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index b3b0c0f5598b4a..463879830ecf34 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -287,6 +287,9 @@ void fuse_change_attributes_common(struct inode *inode, struct fuse_attr *attr,
+ 			fi->i_btime.tv_sec = sx->btime.tv_sec;
+ 			fi->i_btime.tv_nsec = sx->btime.tv_nsec;
+ 		}
 +
- 		list_add_tail(&req->list, &fiq->pending);
- 		fuse_dev_wake_and_unlock(fiq);
- 	} else {
- 		spin_unlock(&fiq->lock);
-+		trace_fuse_request_send(req);
- 		req->out.h.error = -ENOTCONN;
- 		clear_bit(FR_PENDING, &req->flags);
- 		fuse_request_end(req);
-@@ -398,7 +403,6 @@ static void fuse_send_one(struct fuse_iqueue *fiq, struct fuse_req *req)
- 	req->in.h.len = sizeof(struct fuse_in_header) +
- 		fuse_len_args(req->args->in_numargs,
- 			      (struct fuse_arg *) req->args->in_args);
--	trace_fuse_request_send(req);
- 	fiq->ops->send_req(fiq, req);
- }
++		fi->statx_attributes = sx->attributes;
++		fi->statx_attributes_mask = sx->attributes_mask;
+ 	}
  
-diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-index 249b210becb1cc..14f263d4419392 100644
---- a/fs/fuse/dev_uring.c
-+++ b/fs/fuse/dev_uring.c
-@@ -7,6 +7,7 @@
- #include "fuse_i.h"
- #include "dev_uring_i.h"
- #include "fuse_dev_i.h"
-+#include "fuse_trace.h"
- 
- #include <linux/fs.h>
- #include <linux/io_uring/cmd.h>
-@@ -1265,12 +1266,17 @@ void fuse_uring_queue_fuse_req(struct fuse_iqueue *fiq, struct fuse_req *req)
- 
- 	err = -EINVAL;
- 	queue = fuse_uring_task_to_queue(ring);
--	if (!queue)
-+	if (!queue) {
-+		trace_fuse_request_send(req);
- 		goto err;
-+	}
- 
- 	if (req->in.h.opcode != FUSE_NOTIFY_REPLY)
- 		req->in.h.unique = fuse_get_unique(fiq);
- 
-+	/* tracepoint captures in.h.unique */
-+	trace_fuse_request_send(req);
-+
- 	spin_lock(&queue->lock);
- 	err = -ENOTCONN;
- 	if (unlikely(queue->stopped))
+ 	if (attr->blksize != 0)
 
 
