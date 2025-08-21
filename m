@@ -1,54 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-58472-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58473-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E72D6B2E9E4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 03:00:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29A5EB2E9E8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 03:02:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7FC9A25566
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 01:00:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28E2A18871AB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 01:01:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53BE01991DD;
-	Thu, 21 Aug 2025 01:00:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD5AA1991DD;
+	Thu, 21 Aug 2025 01:00:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e5bfkLIA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GQ+0V2FI"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0DB74315A
-	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Aug 2025 01:00:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ADDB3B29E
+	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Aug 2025 01:00:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755738035; cv=none; b=gJJE1c9fLgUTTIrPwZfVB/vcDGWolbDdEuUJMcI4UaJJv738J4dA43aFueKQm+yk3ohF+QMqf2zAI0l5dCxPt3o3lvoEu9a+b1n40aXPKu7rbQiQzQtmfJai0oQSzqRB28Z8k+4JCiqX1E2kXfrsrYfFBlXUa5GxafZQUx1Kzrg=
+	t=1755738051; cv=none; b=EHFGzWaXUGcVO620ATK64HjXq1USlsstrYyLIpdphJ4A/sa6WylkcXjLmGc2byJxs71bANS9gsQnpm9Mc+PXbzsFcpMDYAZ036jWdN7K1sUFfGv6SmXd/4OcbCrG/ewIa0vtG9Y1zSWroxAVNeqOsTI+U3PS+ytMUjpjNgh796I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755738035; c=relaxed/simple;
-	bh=TQv6eHT+kAyPHzYX2TMM2WYEZzB0PbzSVDDlhrwh33k=;
+	s=arc-20240116; t=1755738051; c=relaxed/simple;
+	bh=yjQ1k31c4CuGNKDPUClRquF7Yrilu45QAluFIFV1Fzs=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HugjiBAuMjnB4fNjMn1B8E1EYDo3laGeEwUjpc6a3DwjwsMf2pXVkTZLhWISBNESFxgsVECCzdVrbRwh3+BsPDb8ri2HpmFsh+ctAhWd0r/Y2+tKk/OLooJUdlK4dynroSlOiQS/CKDlmeZPVeMOy2MMzvnbwp+QcCAQLhQb+aY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e5bfkLIA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CEB3C4CEE7;
-	Thu, 21 Aug 2025 01:00:35 +0000 (UTC)
+	 MIME-Version:Content-Type; b=qkBVDbN1ApIHprRFHEBiYBA+1thp5RMxslw8hewu/k94Ie9MD7/iPVbwIvamEo+CMlUKehDS3nC8oeiSSq9810azVQ7+R72Bsc+Uj0YbDvnUq2RFFn1LOMDJ75vZ++7mPvDX6zJRBYzK6s/HkestvFqv4iWeOnqrU7fktpcJFc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GQ+0V2FI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22EB9C4CEE7;
+	Thu, 21 Aug 2025 01:00:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755738035;
-	bh=TQv6eHT+kAyPHzYX2TMM2WYEZzB0PbzSVDDlhrwh33k=;
+	s=k20201202; t=1755738051;
+	bh=yjQ1k31c4CuGNKDPUClRquF7Yrilu45QAluFIFV1Fzs=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=e5bfkLIAwNoSsB75wD2NZgjeAIB4MRPqRwKSxQRjkOHZiIzPUZMx4Il0VZsJ8PTsN
-	 BgqxI0l280kEsR/DuJDID8WFUB9tm1HBqZOK9+zmNQc9q6SJJcXehSCg4to1jfSLIR
-	 rrGAwa0+ECccVqvMi37ftyEZCjM8LJYfYlJe4zv64oEJFO9yj/h93tudO67YDHpyTG
-	 EbK9rkWQA8MDbb8Up/5yuPCJt8INiCt2QQwMXjcY7/92LyLocBuGtTYT3O0ZocwPNu
-	 0ZJNP9NuzfsQJ0HVhI7nHLFOavAd9JU7VYNMBhKJdiRGCVkqlhytVJF6oPLKbaM9BQ
-	 cCYWqsVkiawbg==
-Date: Wed, 20 Aug 2025 18:00:35 -0700
-Subject: [PATCH 4/6] fuse: let the kernel handle KILL_SUID/KILL_SGID for iomap
- filesystems
+	b=GQ+0V2FIx3cFVJUHrcRwWVsd1LwklLqLxF51Wvt7iwgRDHvVN/b4IVdUjAyPZfp5h
+	 mfC1QMIZjfWfrXrEp2H7Jg0Ya8gTBUXeReTw4y4SZ1gzLRaOPvEJlP0/j/aPClL49E
+	 wRV2ROX2NfNtN3xAgdYyAcZzCEOyRDgn5slXj4rQU8mmstUJLrqSC5LOD+GDs2ElnV
+	 XshO/+3CRgNKP6VMLiO51nBRafhUXxFKMCtH2+Q152O0lIZbzEACUASJKDyZYxx3B/
+	 ld43TyX1Zh82Qs/aH9agO1eDkwePAqWrPj3obRZYwEa+j+IQXRm/oaphUjogFQ4D1a
+	 nApGOWk3HuWSA==
+Date: Wed, 20 Aug 2025 18:00:50 -0700
+Subject: [PATCH 5/6] fuse: update ctime when updating acls on an iomap inode
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, miklos@szeredi.hu
 Cc: bernd@bsbernd.com, neal@gompa.dev, John@groves.net,
  linux-fsdevel@vger.kernel.org, joannelkoong@gmail.com
-Message-ID: <175573710267.18622.654364301804267394.stgit@frogsfrogsfrogs>
+Message-ID: <175573710289.18622.15987761983808620236.stgit@frogsfrogsfrogs>
 In-Reply-To: <175573710148.18622.12330106999267016022.stgit@frogsfrogsfrogs>
 References: <175573710148.18622.12330106999267016022.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -62,132 +61,44 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Let the kernel handle killing the suid/sgid bits because the
-write/falloc/truncate/chown code already does this, and we don't have to
-worry about external modifications that are only visible to the fuse
-server (i.e. we're not a cluster fs).
+In iomap mode, the fuse kernel driver is in charge of updating file
+attributes, so we need to update ctime after an ACL change.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- fs/fuse/fuse_trace.h |   58 ++++++++++++++++++++++++++++++++++++++++++++++++++
- fs/fuse/dir.c        |   15 ++++++++++---
- 2 files changed, 70 insertions(+), 3 deletions(-)
+ fs/fuse/acl.c |   16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
 
-diff --git a/fs/fuse/fuse_trace.h b/fs/fuse/fuse_trace.h
-index aea9ea0835d497..18606eb0bf8dd7 100644
---- a/fs/fuse/fuse_trace.h
-+++ b/fs/fuse/fuse_trace.h
-@@ -199,6 +199,64 @@ TRACE_EVENT(fuse_fileattr_update_inode,
- 		  __entry->new_iflags)
- );
+diff --git a/fs/fuse/acl.c b/fs/fuse/acl.c
+index 4f37390e3f3ce7..efab333415131c 100644
+--- a/fs/fuse/acl.c
++++ b/fs/fuse/acl.c
+@@ -169,10 +169,24 @@ int fuse_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
+ 			ret = 0;
+ 	}
  
-+TRACE_EVENT(fuse_setattr_fill,
-+	TP_PROTO(const struct inode *inode,
-+		 const struct fuse_setattr_in *inarg),
-+	TP_ARGS(inode, inarg),
-+
-+	TP_STRUCT__entry(
-+		FUSE_INODE_FIELDS
-+		__field(umode_t,		mode)
-+		__field(uint32_t,		valid)
-+		__field(umode_t,		new_mode)
-+		__field(uint64_t,		new_size)
-+	),
-+
-+	TP_fast_assign(
-+		FUSE_INODE_ASSIGN(inode, fi, fm);
-+		__entry->mode		=	inode->i_mode;
-+		__entry->valid		=	inarg->valid;
-+		__entry->new_mode	=	inarg->mode;
-+		__entry->new_size	=	inarg->size;
-+	),
-+
-+	TP_printk(FUSE_INODE_FMT " mode 0%o valid 0x%x new_mode 0%o new_size 0x%llx",
-+		  FUSE_INODE_PRINTK_ARGS,
-+		  __entry->mode,
-+		  __entry->valid,
-+		  __entry->new_mode,
-+		  __entry->new_size)
-+);
-+
-+TRACE_EVENT(fuse_setattr,
-+	TP_PROTO(const struct inode *inode,
-+		 const struct iattr *inarg),
-+	TP_ARGS(inode, inarg),
-+
-+	TP_STRUCT__entry(
-+		FUSE_INODE_FIELDS
-+		__field(umode_t,		mode)
-+		__field(uint32_t,		valid)
-+		__field(umode_t,		new_mode)
-+		__field(uint64_t,		new_size)
-+	),
-+
-+	TP_fast_assign(
-+		FUSE_INODE_ASSIGN(inode, fi, fm);
-+		__entry->mode		=	inode->i_mode;
-+		__entry->valid		=	inarg->ia_valid;
-+		__entry->new_mode	=	inarg->ia_mode;
-+		__entry->new_size	=	inarg->ia_size;
-+	),
-+
-+	TP_printk(FUSE_INODE_FMT " mode 0%o valid 0x%x new_mode 0%o new_size 0x%llx",
-+		  FUSE_INODE_PRINTK_ARGS,
-+		  __entry->mode,
-+		  __entry->valid,
-+		  __entry->new_mode,
-+		  __entry->new_size)
-+);
-+
- #ifdef CONFIG_FUSE_BACKING
- #define FUSE_BACKING_PASSTHROUGH	(1U << 0)
- #define FUSE_BACKING_IOMAP		(1U << 1)
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index a3ea50b99054ff..e8eef46d8e1b52 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -7,6 +7,7 @@
- */
+-	/* If we scheduled a mode update above, push that to userspace now. */
+ 	if (!ret) {
+ 		struct iattr attr = { };
  
- #include "fuse_i.h"
-+#include "fuse_trace.h"
- 
- #include <linux/pagemap.h>
- #include <linux/file.h>
-@@ -1999,6 +2000,8 @@ static void fuse_setattr_fill(struct fuse_conn *fc, struct fuse_args *args,
- 			      struct fuse_setattr_in *inarg_p,
- 			      struct fuse_attr_out *outarg_p)
- {
-+	trace_fuse_setattr_fill(inode, inarg_p);
++		/*
++		 * When we're running in iomap mode, we need to update mode and
++		 * ctime ourselves instead of letting the fuse server figure
++		 * that out.
++		 */
++		if (fuse_has_iomap(inode)) {
++			attr.ia_valid |= ATTR_CTIME;
++			inode_set_ctime_current(inode);
++			attr.ia_ctime = inode_get_ctime(inode);
++		}
 +
- 	args->opcode = FUSE_SETATTR;
- 	args->nodeid = get_node_id(inode);
- 	args->in_numargs = 1;
-@@ -2273,15 +2276,21 @@ static int fuse_setattr(struct mnt_idmap *idmap, struct dentry *entry,
- 	if (!fuse_allow_current_process(get_fuse_conn(inode)))
- 		return -EACCES;
- 
--	if (attr->ia_valid & (ATTR_KILL_SUID | ATTR_KILL_SGID)) {
-+	trace_fuse_setattr(inode, attr);
-+
-+	if (!fuse_has_iomap(inode) &&
-+	    (attr->ia_valid & (ATTR_KILL_SUID | ATTR_KILL_SGID))) {
- 		attr->ia_valid &= ~(ATTR_KILL_SUID | ATTR_KILL_SGID |
- 				    ATTR_MODE);
- 
- 		/*
- 		 * The only sane way to reliably kill suid/sgid is to do it in
--		 * the userspace filesystem
-+		 * the userspace filesystem if this isn't an iomap file.  For
-+		 * iomap filesystems we let the kernel kill the setuid/setgid
-+		 * bits.
- 		 *
--		 * This should be done on write(), truncate() and chown().
-+		 * This should be done on write(), truncate(), chown(), and
-+		 * fallocate().
- 		 */
- 		if (!fc->handle_killpriv && !fc->handle_killpriv_v2) {
- 			/*
++		/*
++		 * If we scheduled a mode update above, push that to userspace
++		 * now.
++		 */
+ 		if (mode != inode->i_mode) {
+ 			attr.ia_valid |= ATTR_MODE;
+ 			attr.ia_mode = mode;
 
 
