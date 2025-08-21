@@ -1,128 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-58614-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58615-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E755B2FC58
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 16:25:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4699B2FCB0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 16:32:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6050D68012C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 14:19:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25A751D21EB6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 14:22:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC07128505D;
-	Thu, 21 Aug 2025 14:18:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56DB5266565;
+	Thu, 21 Aug 2025 14:21:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b1Xdq+Wd"
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="Kr5/s2BQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF3782512F5;
-	Thu, 21 Aug 2025 14:18:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C01762EC551;
+	Thu, 21 Aug 2025 14:21:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755785903; cv=none; b=mxK0ojU2BXI4GKlSfU70XRxp/LOKKyBf+xiXUG71O/UpXL0NRHWICYbb2/inYWLJgmRYLVcQ6veHy+x86JFTCa2pT2tNvPQTdj0zXDURNA3FDxdCSqKiFALnmfGVFxfDeRMiqqhvgEAxekK80Rn9xlYBU/li7YQpGCziqG31LLo=
+	t=1755786093; cv=none; b=mg6sGOJ3wSfz1FYZu7ve4mBwFpKiJABay7GsWTuLjczhLyEl+cYcrrOHeW6xY+zqVJXtiGHO2O30MwozpeVCrixCvmZM/P3uqWDCYu8vWuT6X/ljF4hsuE9dw8KmEUtt5GbVpDKGXdDK/7WBT2vG71HgZoQfWkHXfBdXe9cLE6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755785903; c=relaxed/simple;
-	bh=TcX8NeHWAwuUuwKE2XUJCBatenrLJsTQIQah1pf8+4M=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Z/q84LRkrfJ+fovMZ8EiaGWP4J1RDbCqcc1DHpqw2N9J7RSHcYMHHwYuSzoT4TnAeiOqF9f4pps9sqEpoo5kSe8b0yUaa1z2rWWGNrbyKoreC32ge48W+kxb0tsvQzxOp2QK2rubtM09kImXCwNJ28M95/Ba5/5/wc3EHwThqVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b1Xdq+Wd; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-24458263458so10250665ad.3;
-        Thu, 21 Aug 2025 07:18:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755785901; x=1756390701; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=KFANnOdyDEFo5mH6635NFLlXzZy5eqLkP42uOn6+63g=;
-        b=b1Xdq+WdystSp0qmCIO2GfZBa5jcvIfM2GJpslkozYnglH3evh3O6luwW+0m901Nec
-         IXPvGNzLUk+1IFjej9m3BnNEMW1bV5dNPn0Tm8fptn318NvnDfg/j8a3EUJSVy/6dW/h
-         0jD8UAX1uPEY+jXRuNjvp/HXZvVHyHNzhuXS3hVQFe/4DojMY25WKuaJ8n/ZJqQE96R3
-         XCitd1rYLODM5RyTJPlphQ7in25DxJ+vj/iP6VA5gM3D1SjBntfB2DHBWZ20f4xT4q91
-         KzsEZpBribZV93PuQmIzyLU1rXzVBV9iDSKtNnZ7kwt7VMvKoIX8FS8CwcfZt/gDuRLn
-         lpmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755785901; x=1756390701;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KFANnOdyDEFo5mH6635NFLlXzZy5eqLkP42uOn6+63g=;
-        b=iKiT8p8IyXbVTnDyuPsH4YwygKs4gwwESp/16EeP0MdvnCWezqlDp40+CAJdF9AZmw
-         RlMe7XPZzlhZvAJu2EfDRneoO2lXAuVE0Dottl3qdhlx8eSfxxYy0pzFhCeYHeT05y3t
-         v3uMFge7YamJYFonAUmeXBLtNX0lvuR/O1MTdiM6OR+EBj1E0Qd3vlonKzt6El1WIJiN
-         dd1gvgCJn2qmZ+M6edGuHkJUQESBhYaTCuQ7HdkLcdw9YEvqGmIifcsTn5v46MxbY/zr
-         +ZwbV/oN6Jun+vNy8WRsY4EX8943bSPMEEcFZMafufiob4eXTHwn2h6+MNqrlI2x5siN
-         zgKg==
-X-Forwarded-Encrypted: i=1; AJvYcCVTQJDxeCA1UXm13K6ZnGUPcME8dy8igVPHytrD1ScwNS/RipNSyiZcHH0HSPmefJ8Mq9YXYrL0Q1fPcQUg@vger.kernel.org, AJvYcCVcuUPO3YVYy+rr5WnE1lpG/GFy1LSWubDXfv4lSNdnhKC/ocSciefYC4suZFWoGbPuU333td4xukvdWKWM@vger.kernel.org, AJvYcCVyVlXYskZ9Z2Wha8+MWoGv9/Ry6ajJqgL5sdBcopb9rjO7uI6Z1gCjHXHNzs8YpPQELK7b7qrwsfzPYALu@vger.kernel.org
-X-Gm-Message-State: AOJu0YytTXAy6nNxpaZehkxnwNxqoYiHT4LhvbYiF4V08r6UolvLB/Ru
-	Uv4sfODhYx99eTLwfqnfMA3JmlnKQEUpKSA8sHurJQzxp4p2Cp3agImEqK5jkdhf
-X-Gm-Gg: ASbGncvBC2tppUmLTNZAci8bRTe3lpw2wBZDQr0vzXdPlt+ffFsB5JRrurAauGBmCcj
-	IekFm3PoQUSx82UJyMtRy7yXxE6D3MHhrPPFZ+Y2AZE0GBUm6N0pwZIqpnWvCWC2hcwwmvs8plt
-	jnFXARDwT31NdRgX2PaqJwu8nTF2vOGVt+Q56RWxqcNxyLIEW7WEzhLE2epC9GCA+3wKDjriSbG
-	iiwFVRM69gswCAFdMVL3eWq4rZ+pBRtZIxu1mMAas0PfVjdoTspVyBYKnHv3hpSB9Va6i+jBqla
-	bByybTXlZoS4xz6dcoa89yUnn2OjY/8lVxQh/9R2DZof4cVsZwm5MmzWpLuanMTlD/7wuj/F31V
-	1+vuWluRK5OkkQTxy98sqzcOl1XLzJ9fOfXC+PHef1C39tZ4rDrRxy5xGQbS06HxidpL/M87+D1
-	4kuK+FL/cRWtTgpz2f
-X-Google-Smtp-Source: AGHT+IFLFpPiTVyjcFsYb/cKD5JLPSua34vdSAQhD2DIOBMCjS2avgMVs9Vs0BZDgrJDpAEIdzE0Bw==
-X-Received: by 2002:a17:902:ce83:b0:240:49d1:6347 with SMTP id d9443c01a7336-245fedcae38mr35274225ad.35.1755785900849;
-        Thu, 21 Aug 2025 07:18:20 -0700 (PDT)
-Received: from ranegod-HP-ENVY-x360-Convertible-13-bd0xxx.www.tendawifi.com ([14.139.108.62])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e7d4fd29fsm8438611b3a.72.2025.08.21.07.18.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 07:18:20 -0700 (PDT)
-From: ssranevjti@gmail.com
-X-Google-Original-From: ssrane_b23@ee.vjti.ac.in
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	skhan@linuxfoundation.org
-Cc: jack@suse.cz,
-	masahiroy@kernel.org,
-	nathan@kernel.org,
-	nicolas.schier@linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kbuild@vger.kernel.org,
-	Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
-Subject: [PATCH] docs: fs: fix kernel-doc warning in name_contains_dotdot
-Date: Thu, 21 Aug 2025 19:48:11 +0530
-Message-Id: <20250821141811.41965-1-ssrane_b23@ee.vjti.ac.in>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1755786093; c=relaxed/simple;
+	bh=Vb2F+1YyfLyYDbBvxHKpFvzAWDyxW1OpfmWp6x/xB0c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZmM9WpbjSXaBIiLln+CxseXhn9to8SNeaeEutNGYM2N6EPxNEqeM3PauahvvnwOD0mbvCzu4zn4FjqQ/+DXvZFxRZoJO2pRIO0MiTmVbpwKki7FlgeTJL0aSBPwYAUa9q/KW2mk0U/8ftvLnDsE6Bt4iAxVLZL34ATBaW56j7ks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=Kr5/s2BQ; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4c758y38mCz9smF;
+	Thu, 21 Aug 2025 16:21:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1755786082;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fW3Zzx4J8tGS72KjNJnVUhaHtHsXE0Z0H9CSM70UsDs=;
+	b=Kr5/s2BQubpmBB8hHQQAUB6etiNM4h6E6thzMmaQnKfCymVva8DBHBG54j6HuhDhkxWwrV
+	5/447MFJJp07PckYe5JoOrb6tPddsM7HT83PDLziKjKa05mbw9zoBA2Yx7u5FtJZlDd55T
+	251bJnqvZc/jFMQMz61+I+/zh9yN6agNsuIISsWqd3Kjv1tu1/917TPqqqorL5Rii7pP2z
+	pv1L6Uow8egV7ut9UB8zvAQu6CbqawXBxVMvkzOs6ne37GeHV2Lbyzl3RisrJwbiutAWXQ
+	BnXDxMojrt/hYumfmgxISnUJEwF+9TghaS4jDP3VyfYuoHAkcdrSBsbUyy21ew==
+Date: Fri, 22 Aug 2025 00:21:06 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Askar Safin <safinaskar@zohomail.com>
+Cc: Alejandro Colomar <alx@kernel.org>, 
+	"Michael T. Kerrisk" <mtk.manpages@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, "G. Branden Robinson" <g.branden.robinson@gmail.com>, 
+	linux-man <linux-man@vger.kernel.org>, linux-api <linux-api@vger.kernel.org>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, 
+	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v3 00/12] man2: document "new" mount API
+Message-ID: <2025-08-21.1755785636-rusted-ivory-corgi-salad-fYNRl1@cyphar.com>
+References: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com>
+ <198cc8d3da6.124bd761f86893.6196757670555212232@zohomail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="jsdomwd2btigmqhb"
+Content-Disposition: inline
+In-Reply-To: <198cc8d3da6.124bd761f86893.6196757670555212232@zohomail.com>
 
-From: Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
 
-Add missing @name parameter documentation for name_contains_dotdot()
-to fix the following htmldocs warning:
+--jsdomwd2btigmqhb
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 00/12] man2: document "new" mount API
+MIME-Version: 1.0
 
-  WARNING: ./include/linux/fs.h:3287 function parameter 'name'
-  not described in 'name_contains_dotdot'
+On 2025-08-21, Askar Safin <safinaskar@zohomail.com> wrote:
+> There is one particular case when open_tree is more powerful than openat =
+with O_PATH. open_tree supports AT_EMPTY_PATH, and openat supports nothing =
+similar.
+> This means that we can convert normal O_RDONLY file descriptor to O_PATH =
+descriptor using open_tree! I. e.:
+>   rd =3D openat(AT_FDCWD, "/tmp/a", O_RDONLY, 0); // Regular file
+>   open_tree(rd, "", AT_EMPTY_PATH);
+> You can achieve same effect using /proc:
+>   rd =3D openat(AT_FDCWD, "/tmp/a", O_RDONLY, 0); // Regular file
+>   snprintf(buf, sizeof(buf), "/proc/self/fd/%d", rd);
+>   openat(AT_FDCWD, buf, O_PATH, 0);
+> But still I think this has security implications. This means that even if=
+ we deny access to /proc for container, it still is able to convert O_RDONLY
+> descriptors to O_PATH descriptors using open_tree. I. e. this is yet anot=
+her thing to think about when creating sandboxes.
+> I know you delivered a talk about similar things a lot of time ago: https=
+://lwn.net/Articles/934460/ . (I tested this.)
 
-Signed-off-by: Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
----
- include/linux/fs.h | 1 +
- 1 file changed, 1 insertion(+)
+O_RDONLY -> O_PATH is less of an issue than the other way around. There
+isn't much you can do with O_PATH that you can't do with a properly open
+file (by design you actually should have strictly less privileges but
+some operations are only really possible with O_PATH, but they're not
+security-critical in that way).
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index d7ab4f96d705..945d04419caf 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3281,6 +3281,7 @@ static inline bool is_dot_dotdot(const char *name, size_t len)
- 
- /**
-  * name_contains_dotdot - check if a file name contains ".." path components
-+ * @name: file name string to check
-  *
-  * Search for ".." surrounded by either '/' or start/end of string.
-  */
--- 
-2.34.1
+I was working on a new patchset for resolving this issue (and adding
+O_EMPTYPATH support) late last year but other things fell on my plate
+and the design was quite difficult to get to a place where everyone
+agreed to it.
 
+The core issue is that we would need to block not just re-opening but
+also any operation that is a write (or read) in disguise, which kind of
+implies you need to have capabilities attached to file descriptors. This
+is already slightly shaky ground if you look at the history of projects
+like capsicum -- but also my impression was that just adding it to
+"file_permission" was not sufficient, you need to put it in
+"path_permission" which means we have to either bloat "struct path" or
+come up with some extended structure that you need to plumb through
+everywhere.
+
+But yes, this is a thing that is still on my list of things to do, but
+not in the immediate future.
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+https://www.cyphar.com/
+
+--jsdomwd2btigmqhb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaKcrThsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG9TSwD9Ez8Vfzuiim607l6uNQY4
+4f9TZbwHuIVkqc4PsjYgz3UBANuelZQN20hYZ3EVADF7hQ6wiLdCEdTVMElYczRh
+XRIJ
+=fSGM
+-----END PGP SIGNATURE-----
+
+--jsdomwd2btigmqhb--
 
