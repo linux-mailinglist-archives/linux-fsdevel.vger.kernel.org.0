@@ -1,126 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-58696-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58697-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BF64B308FB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 00:18:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4354FB30928
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 00:24:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D8BC74E197B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 22:18:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6E643AA552
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 22:22:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 968052D3ED2;
-	Thu, 21 Aug 2025 22:18:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 258802EAD1C;
+	Thu, 21 Aug 2025 22:21:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZoUjC+7J"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="K9hhFLJy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E3C81E5206
-	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Aug 2025 22:18:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA4102E5B3F;
+	Thu, 21 Aug 2025 22:21:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755814705; cv=none; b=m9dwMZUq1EnhLrxczMQPEDost+LcjCk514AfcuIwvgyO82YKaHtG03afiOS4HMGY/GzmKv1mUu0ST5aKST/bcrBYyG4Mf8EthIjx4Wd9UL7ciZlFIaSSJGd43O4XPcOTGeTl5xAjP9dkICAOsXhghHl2CQkusy/jyU8zpFfiucc=
+	t=1755814903; cv=none; b=krOQuOSXCIO4cPKwiEPpHRNeD9+OLFLBM8J5ejT0qst8jQJ/Pki1Sj/iNn1d1PliPJ9e5tEMT8m13lmp6lYEC+QfIDGG/B4+r8oID9FFg+31juwpUdjYtUo/WvqqR8ONeoN4SHg99IqVNoe3brAjoThSH8tc1drkvZVyYvLzXVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755814705; c=relaxed/simple;
-	bh=6/xsa/YG3zsXWGJ1Qgb38Dp8r8mUSHBNab06PeMA4vw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RMcEkIiLff6e0ub7pjyTOybeVrJy4/wB3LO40AfthwZKbxX2boOyt4FrkdhY7xzmionYEa+4rAevmOyFe8HR4CThT2Og4uuNed46Kb9d+IF4aFrrdBOQSXBp341B44kn7ZK1f1JNSF6SBi8vKZgQJOSodVlW8tq5K0Jg+vOqxYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZoUjC+7J; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4b134aa13f5so18332131cf.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Aug 2025 15:18:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755814702; x=1756419502; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RZxN3R/tLf4dDldDVKK4PKpHY/0W1RUm9jFEc3Q/kSQ=;
-        b=ZoUjC+7JIHwXOAUsaxe4LU0l4tNeDPpma7s13KOTpp55WIfJlpT5EUHxcKJ3VJyVS5
-         LhQeozLmeClS1LivrseI3kyMtjB5/3ju5YVbEVXeR3dkK4B1jqm6mOjdBPE91sIYXMRH
-         UQygIFdcHXgo3FufGE/0hk8TepKovhwK38QMQJn6tASYc+0YnBXALRe1+XRHCR9wJLuu
-         fi3AsfwTXK9czPnyovSQ8OFxkATEUE3e9+pz9Zmy91NsmWEC/1rWnkITRcG2p+K61ccx
-         i0kkVfkgi6wG9qdayfssZsv2z8tPUbic+udYsnJnm1Owarldf6JljcYCP+K9Z57Shpw/
-         fDaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755814702; x=1756419502;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RZxN3R/tLf4dDldDVKK4PKpHY/0W1RUm9jFEc3Q/kSQ=;
-        b=uCiTCnsKpipKBB31uIvM8QMm8KmDYl/I4UJk6mB1ABZRroV8X/veihVXy2K6A0tt4V
-         ucJQJn7nQghjhY5yU7Y+5dM41Ts143whAK4EhbMGyMx8p27yqCpDYCI1xKFnmbOCGYjM
-         Cau/5AAek7eVaG1yD5/G/ldqHWRBkaTC/kh9824DUvrgEnpi6r080dgKz2JlVTKjLJOA
-         Bux2lV+sklF8YAHVOoX+jxfDnZa2L/WBnZJvIxm+gmR34LbfQavbqvm88msQ3GSfPt4p
-         uEMQOTPL/8o6++Cbd+K+xjsGrlKuA3G+jN3TAJ3iBqrb4CdZWjitixg3GD9zQAwZuomp
-         WyOg==
-X-Forwarded-Encrypted: i=1; AJvYcCXFjD6R8h5CU4dDhKN1Z9+ZePjUAL8HaOKgO/bMsEiu8+aGY9R0DghXcBwCsojlBEmsANcbqZ9Ha1BEC2NN@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaJ2zxP3L2mZ/cnEFqsmlY68j4l3PID8X7iC9dr6SQBiTyxX7y
-	suwKXTldaK8nYRgEQgtATxNl17eGQrDsgABD0BSFHYR9ppw+51/6DlKEbkJIiWnSCCxSsuDhGSG
-	XQ+gSt6BOz6owKQCrQBPzHw6QwY7zDdrKOQ==
-X-Gm-Gg: ASbGncudLID1kvf+gqqWLQHpYQGu9jnRJZUl9RtD6Bz3G2tebYMmFYnjvWayjxAH2wM
-	xDP3yhMMlaZWHNPauN0tJR4wIcXPrmFkRZRjhVS5g+M+RaVuw4FpaPEO8imBPK/6R2Jnyus4WLk
-	VgF+go52YVo0eJm3OisvkPlCtV+h1Ba+AjhOaD8e82M0xJ4sgVA/8NT92xqAl4WIdGQGXMg09iS
-	pR6itXX
-X-Google-Smtp-Source: AGHT+IHlTS2y/btV1DGLPnKV01hvDRwiV+uRGLRANXR4AT4werHnJSYkxVNQlQmhRkWkWOZaFINluzmG+3+0ls8KuEc=
-X-Received: by 2002:a05:622a:199e:b0:4b2:9a9b:de41 with SMTP id
- d75a77b69052e-4b2aaa051dfmr16137781cf.13.1755814702309; Thu, 21 Aug 2025
- 15:18:22 -0700 (PDT)
+	s=arc-20240116; t=1755814903; c=relaxed/simple;
+	bh=E9AxT6oQKzAi3PCee/hi6lbfPnHdyA8NZ4C26Db8lB8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kt2YYrxNpYn72dJ/MQHDTsgGzOWT/fNkjyYNe4mi7xyurocvh930swvIh1eNGiWmyVVMHljXbwPwylWz0y6VqiMr+inIXbcG53gGnPZdodIhaT0uSAp/GQnv0YPZv8yYTRRhaT1an0+hTtfO5hXOd2Nm9VUguhTYt3+ChLgasgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=K9hhFLJy; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=iAnjSHVca4QKBa6RZo8xZY7/SB/V9H3bxiE51Kzwc94=; b=K9hhFLJyUw9DIS4iRwzx03qqBA
+	g721xwDGbB50ENH0Gf5Z0OgQLT+nnmexVWX2quNbuRkq9mkEAz7zY7h2kqQ9IaiX67Byn/VHcr6SE
+	Ekz3KuvqFBZq/EVkpYuTzOJAOB3xKsUGo4+L1zA+Hdx64CVW9Uwluz0pWHIqdbC2q3Kn2lQ5Umc2i
+	+pI9k5Kxg6X8QA9uevAGWENS7vwF+RI9iu+MxdoqCm3gZV0/CIJU85j4aqGZS8bghNX6Zg087IePF
+	aT3xBN4QHAc6k00tjdMinFuWDnozdj36TkzR2G1p16JqYUjY9V3KutEM3BkED0HP1WEDTM+WDmSHj
+	F5tHe7bA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1upDf8-0000000Er0I-32r9;
+	Thu, 21 Aug 2025 22:21:38 +0000
+Date: Thu, 21 Aug 2025 23:21:38 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: James Bottomley <James.Bottomley@hansenpartnership.com>,
+	ksummit@lists.linux.dev, linux-fsdevel@vger.kernel.org
+Subject: Re: [MAINTAINER SUMMIT] Adding more formality around feature
+ inclusion and ejection
+Message-ID: <aKeb8vf2OsOI19NA@casper.infradead.org>
+References: <fc0994de40776609928e8e438355a24a54f1ad10.camel@HansenPartnership.com>
+ <20250821203407.GA1284215@mit.edu>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <175573708506.15537.385109193523731230.stgit@frogsfrogsfrogs> <175573708692.15537.2841393845132319610.stgit@frogsfrogsfrogs>
-In-Reply-To: <175573708692.15537.2841393845132319610.stgit@frogsfrogsfrogs>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Thu, 21 Aug 2025 15:18:11 -0700
-X-Gm-Features: Ac12FXzurDH6eVdA4JWV8fYg2aHPdX1M5FngZJI1n_o85iTP_OUKD8uhMQE4Ih4
-Message-ID: <CAJnrk1Z3JpJM-hO7Hw9_KUN26PHLnoYdiw1BBNMTfwPGJKFiZQ@mail.gmail.com>
-Subject: Re: [PATCH 7/7] fuse: enable FUSE_SYNCFS for all servers
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: miklos@szeredi.hu, bernd@bsbernd.com, neal@gompa.dev, John@groves.net, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250821203407.GA1284215@mit.edu>
 
-On Wed, Aug 20, 2025 at 5:52=E2=80=AFPM Darrick J. Wong <djwong@kernel.org>=
- wrote:
->
-> From: Darrick J. Wong <djwong@kernel.org>
->
-> Turn on syncfs for all fuse servers so that the ones in the know can
-> flush cached intermediate data and logs to disk.
->
-> Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
-> ---
->  fs/fuse/inode.c |    1 +
->  1 file changed, 1 insertion(+)
->
->
-> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> index 463879830ecf34..b05510799f93e1 100644
-> --- a/fs/fuse/inode.c
-> +++ b/fs/fuse/inode.c
-> @@ -1814,6 +1814,7 @@ int fuse_fill_super_common(struct super_block *sb, =
-struct fuse_fs_context *ctx)
->                 if (!sb_set_blocksize(sb, ctx->blksize))
->                         goto err;
->  #endif
-> +               fc->sync_fs =3D 1;
+On Thu, Aug 21, 2025 at 04:34:07PM -0400, Theodore Ts'o wrote:
+> There is the saying that "bad facts make bad law", and the specifics
+> of this most recent controversy are especially challenging.  I would
+> urge caution before trying to create a complex set of policies and
+> mechanim when we've only had one such corner case in over 35 years.
 
-AFAICT, this enables syncfs only for fuseblk servers. Is this what you
-intended?
+Well. we may have dodged a few bullets before now.  Just in filesystems,
+I can think of Hans Reiser, Jeff Merkey, Boaz Harrosh, Daniel Phillips
+(no, i'm not saying any of the others did anything as heinous as Hans,
+but they were all pretty disastrous in their own ways).
 
-
-Thanks,
-Joanne
->         } else {
->                 sb->s_blocksize =3D PAGE_SIZE;
->                 sb->s_blocksize_bits =3D PAGE_SHIFT;
->
+I don't think we can necessarily generalise from these examples to,
+say, Lustre.  That has its own unique challenges, and I don't think that
+making them do more paperwork will be helpful.
 
