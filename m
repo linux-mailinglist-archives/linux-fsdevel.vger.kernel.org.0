@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-58538-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58539-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D99F4B2EA6D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 03:19:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5DC8B2EA74
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 03:20:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BCCD5A85B9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 01:17:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54C755E0E79
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 01:18:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E04B31FAC42;
-	Thu, 21 Aug 2025 01:17:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA20B1FAC42;
+	Thu, 21 Aug 2025 01:18:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OiO4WEZ2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zuq5y0YW"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 494EF36CE02;
-	Thu, 21 Aug 2025 01:17:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4148636CE02;
+	Thu, 21 Aug 2025 01:18:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755739068; cv=none; b=CFrBMSbQlF1NJ6Z3S7nZWVD/QQ5me8U1/KzYhdnCbSeN+8ZNYiAhITI2hy8CcZyimeN/DRnLNobp4f8mKU8tRsz+Iauf5rUBmXo3cBdwJ0Qq6GRULHDBTK7gYoIK77w4x8Gl+u8CJotpCBKKL5tJXjotVvoAk3S+v1E1CoCDHpI=
+	t=1755739084; cv=none; b=cxwlNsQqBP+eyVp022nsKT+ERBzBR7Om4Fu5ki1xgfzEJNa0rVQBjU5ZReL9Edvne6DXm+W0qaSJA2y9+GsWimKClGYx8k4vlgWeFLRANCmGH/fzeABz3qYUXTNng+EDXm7mSIjNAIJ99xypxKOVW4E4hbHp+6Ie1dAzZe/asTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755739068; c=relaxed/simple;
-	bh=/gPbcysrjtMctzAG0T7R6pjzx6LNUnc6Lm5he4s1L08=;
+	s=arc-20240116; t=1755739084; c=relaxed/simple;
+	bh=geMGclj+G3S+zniYTxarX14FrdNwelJDGvlS3TzV4nQ=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MN/QOOA7vHlDDW9vv57XCMBiD6AoGvEe5+ht4uu+/9CeVuLbLRh2f2cC438vdtqYcDUxAaK3/dgy7TipyFooOLMTeIq74Cu2HQ6BRJoK9oNzlgOQoNlK5RawEnXxiWjYuqRmACxe32HTF8avptFB1Rpwrj3iih52arOH7joKHW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OiO4WEZ2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1ED25C4CEEB;
-	Thu, 21 Aug 2025 01:17:48 +0000 (UTC)
+	 MIME-Version:Content-Type; b=r2c4m5LK+0aDCCErORtyQFl3cYXAI5/BNX7CSI3Xr1U1X5sG5s0PEY3pb7nAebwXq/bGYydguxPeKJGD+u4+ACfhEcykMvNOkt0o+FgXEXq4UpNfxhYUVVUOy9Vu/KX7O0wNrgNLvKFwr7SCGJI6r468soi/iG+MOgc44Z3tdYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zuq5y0YW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEF00C4CEE7;
+	Thu, 21 Aug 2025 01:18:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755739068;
-	bh=/gPbcysrjtMctzAG0T7R6pjzx6LNUnc6Lm5he4s1L08=;
+	s=k20201202; t=1755739083;
+	bh=geMGclj+G3S+zniYTxarX14FrdNwelJDGvlS3TzV4nQ=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=OiO4WEZ2XtvXNyRAc+ZjzkYhl22GU4/ROmKlJNaxXV3SCMhoxYwcYUKhAwPnO5JRR
-	 /Tp+GEq81tZxiEuPZQNebtlu4JBwvResguMU8dsRfdhp2cNke9ApTcBR/UiRsOVye8
-	 s5vqlNSpBKUNTJE5HTFzBAMI+4bI1tJut+PuYEjfQA1OmNa4pGYSWNl44I1MXSIxrm
-	 ijKmn3h3Hd7mfu9nkFAD4CU9TMSHiK05PLCKJWR5eyJpxjhSyq6URRQ3WvkThDMQqw
-	 2yB2CGegxx6lUaiJMb8c95NxlFW2zT61aQ3QLbcbmNL/kMLcyGhn6IHeJNnSa7ZEwj
-	 /x/NGWVn2PBMg==
-Date: Wed, 20 Aug 2025 18:17:47 -0700
-Subject: [PATCH 08/19] fuse2fs: turn on iomap for pagecache IO
+	b=Zuq5y0YWfHhwZYw1pKufA5mjYZO0UzHPO0TkqkQ5zwZv+XL0xJkT0MW9mkXtcguNg
+	 9T/OGkDoTjGx64lPhRace7K/Xq0v6Cu+thUQ4AUEMsTxl3qeOdkiPmzO20dv7+Mmiz
+	 Do4ZPq78DeUqbqbJAW4I8mL7HUwIIMaDBGoJVdBkk1qcoxtOyTBrm2ELP4GeV/hxA3
+	 YkaOI9rgixHMhlBE0JAzByLVLUxoqwpiC21APYP9An52uALyK7TsNTW7JcCdYfFJTU
+	 jLCiwnRlRBY5eujd3uI2D1SK4l7LgiLgI4LVI1rjgwP6yxdLPF+WrZg5BSjTZgZnA3
+	 rRhVusNsPvvhA==
+Date: Wed, 20 Aug 2025 18:18:03 -0700
+Subject: [PATCH 09/19] fuse2fs: don't zero bytes in punch hole
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: tytso@mit.edu
 Cc: John@groves.net, bernd@bsbernd.com, linux-fsdevel@vger.kernel.org,
  linux-ext4@vger.kernel.org, miklos@szeredi.hu, joannelkoong@gmail.com,
  neal@gompa.dev
-Message-ID: <175573713874.21970.7909523404730526756.stgit@frogsfrogsfrogs>
+Message-ID: <175573713892.21970.18164422790433615852.stgit@frogsfrogsfrogs>
 In-Reply-To: <175573713645.21970.9783397720493472605.stgit@frogsfrogsfrogs>
 References: <175573713645.21970.9783397720493472605.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -62,211 +62,76 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Turn on iomap for pagecache IO to regular files.
+When iomap is in use for the pagecache, it will take care of zeroing the
+unaligned parts of punched out regions so we don't have to do it
+ourselves.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- misc/fuse2fs.c |   61 ++++++++++++++++++++++++++++++++++++++++++++++++++------
- misc/fuse4fs.c |   61 ++++++++++++++++++++++++++++++++++++++++++++++++++------
- 2 files changed, 108 insertions(+), 14 deletions(-)
+ misc/fuse2fs.c |    9 +++++++++
+ misc/fuse4fs.c |    8 ++++++++
+ 2 files changed, 17 insertions(+)
 
 
 diff --git a/misc/fuse2fs.c b/misc/fuse2fs.c
-index e8e9056a661e71..895addcbc59e04 100644
+index 895addcbc59e04..dcf002f380b843 100644
 --- a/misc/fuse2fs.c
 +++ b/misc/fuse2fs.c
-@@ -5427,9 +5427,6 @@ static int fuse2fs_iomap_begin_read(struct fuse2fs *ff, ext2_ino_t ino,
- 				    uint64_t count, uint32_t opflags,
- 				    struct fuse_file_iomap *read)
- {
--	if (!(opflags & FUSE_IOMAP_OP_DIRECT))
--		return -ENOSYS;
--
- 	/* fall back to slow path for inline data reads */
- 	if (inode->i_flags & EXT4_INLINE_DATA_FL)
- 		return -ENOSYS;
-@@ -5517,9 +5514,6 @@ static int fuse2fs_iomap_begin_write(struct fuse2fs *ff, ext2_ino_t ino,
- 	off_t max_size = fuse2fs_max_file_size(ff, inode);
- 	int ret;
- 
--	if (!(opflags & FUSE_IOMAP_OP_DIRECT))
--		return -ENOSYS;
--
- 	if (pos >= max_size)
- 		return -EFBIG;
- 
-@@ -5611,11 +5605,50 @@ static int op_iomap_begin(const char *path, uint64_t nodeid, uint64_t attr_ino,
- 	return ret;
+@@ -576,6 +576,7 @@ static inline int fuse2fs_iomap_enabled(const struct fuse2fs *ff)
  }
+ #else
+ # define fuse2fs_iomap_enabled(...)	(0)
++# define fuse2fs_iomap_enabled(...)	(0)
+ #endif
  
-+static int fuse2fs_iomap_append_setsize(struct fuse2fs *ff, ext2_ino_t ino,
-+					loff_t newsize)
-+{
-+	ext2_filsys fs = ff->fs;
-+	struct ext2_inode_large inode;
-+	ext2_off64_t isize;
-+	errcode_t err;
-+
-+	dbg_printf(ff, "%s: ino=%u newsize=%llu\n", __func__, ino,
-+		   (unsigned long long)newsize);
-+
-+	err = fuse2fs_read_inode(fs, ino, &inode);
-+	if (err)
-+		return translate_error(fs, ino, err);
-+
-+	isize = EXT2_I_SIZE(&inode);
-+	if (newsize <= isize)
+ static inline void fuse2fs_dump_extents(struct fuse2fs *ff, ext2_ino_t ino,
+@@ -4857,6 +4858,10 @@ static errcode_t clean_block_middle(struct fuse2fs *ff, ext2_ino_t ino,
+ 	int retflags;
+ 	errcode_t err;
+ 
++	/* the kernel does this for us in iomap mode */
++	if (fuse2fs_iomap_enabled(ff))
 +		return 0;
 +
-+	dbg_printf(ff, "%s: ino=%u oldsize=%llu newsize=%llu\n", __func__, ino,
-+		   (unsigned long long)isize,
-+		   (unsigned long long)newsize);
-+
-+	/*
-+	 * XXX cheesily update the ondisk size even though we only want to do
-+	 * the incore size until writeback happens
-+	 */
-+	err = ext2fs_inode_size_set(fs, EXT2_INODE(&inode), newsize);
-+	if (err)
-+		return translate_error(fs, ino, err);
-+
-+	err = fuse2fs_write_inode(fs, ino, &inode);
-+	if (err)
-+		return translate_error(fs, ino, err);
-+
-+	return 0;
-+}
-+
- static int op_iomap_end(const char *path, uint64_t nodeid, uint64_t attr_ino,
- 			off_t pos, uint64_t count, uint32_t opflags,
- 			ssize_t written, const struct fuse_file_iomap *iomap)
- {
- 	struct fuse2fs *ff = fuse2fs_get();
-+	int ret = 0;
+ 	if (!*buf) {
+ 		err = ext2fs_get_mem(fs->blocksize, buf);
+ 		if (err)
+@@ -4893,6 +4898,10 @@ static errcode_t clean_block_edge(struct fuse2fs *ff, ext2_ino_t ino,
+ 	off_t residue;
+ 	errcode_t err;
  
- 	FUSE2FS_CHECK_CONTEXT(ff);
- 
-@@ -5630,7 +5663,21 @@ static int op_iomap_end(const char *path, uint64_t nodeid, uint64_t attr_ino,
- 		   written,
- 		   iomap->flags);
- 
--	return 0;
-+	fuse2fs_start(ff);
++	/* the kernel does this for us in iomap mode */
++	if (fuse2fs_iomap_enabled(ff))
++		return 0;
 +
-+	/* XXX is this really necessary? */
-+	if ((opflags & FUSE_IOMAP_OP_WRITE) &&
-+	    !(opflags & FUSE_IOMAP_OP_DIRECT) &&
-+	    (iomap->flags & FUSE_IOMAP_F_SIZE_CHANGED) &&
-+	    written > 0) {
-+		ret = fuse2fs_iomap_append_setsize(ff, attr_ino, pos + written);
-+		if (ret)
-+			goto out_unlock;
-+	}
-+
-+out_unlock:
-+	fuse2fs_finish(ff, ret);
-+	return ret;
- }
- 
- /*
+ 	residue = FUSE2FS_OFF_IN_FSB(ff, offset);
+ 	if (residue == 0)
+ 		return 0;
 diff --git a/misc/fuse4fs.c b/misc/fuse4fs.c
-index ff50182b929974..2373c5a371e2b0 100644
+index 2373c5a371e2b0..3082c23e398adf 100644
 --- a/misc/fuse4fs.c
 +++ b/misc/fuse4fs.c
-@@ -5835,9 +5835,6 @@ static int fuse4fs_iomap_begin_read(struct fuse4fs *ff, ext2_ino_t ino,
- 				    uint64_t count, uint32_t opflags,
- 				    struct fuse_file_iomap *read)
- {
--	if (!(opflags & FUSE_IOMAP_OP_DIRECT))
--		return -ENOSYS;
--
- 	/* fall back to slow path for inline data reads */
- 	if (inode->i_flags & EXT4_INLINE_DATA_FL)
- 		return -ENOSYS;
-@@ -5928,9 +5925,6 @@ static int fuse4fs_iomap_begin_write(struct fuse4fs *ff, ext2_ino_t ino,
- 	off_t max_size = fuse4fs_max_file_size(ff, inode);
- 	int ret;
+@@ -5265,6 +5265,10 @@ static errcode_t fuse4fs_zero_middle(struct fuse4fs *ff, ext2_ino_t ino,
+ 	int retflags;
+ 	errcode_t err;
  
--	if (!(opflags & FUSE_IOMAP_OP_DIRECT))
--		return -ENOSYS;
--
- 	if (pos >= max_size)
- 		return -EFBIG;
- 
-@@ -6023,12 +6017,51 @@ static void op_iomap_begin(fuse_req_t req, fuse_ino_t fino, uint64_t dontcare,
- 		fuse_reply_iomap_begin(req, &read, NULL);
- }
- 
-+static int fuse4fs_iomap_append_setsize(struct fuse4fs *ff, ext2_ino_t ino,
-+					loff_t newsize)
-+{
-+	ext2_filsys fs = ff->fs;
-+	struct ext2_inode_large inode;
-+	ext2_off64_t isize;
-+	errcode_t err;
-+
-+	dbg_printf(ff, "%s: ino=%u newsize=%llu\n", __func__, ino,
-+		   (unsigned long long)newsize);
-+
-+	err = fuse4fs_read_inode(fs, ino, &inode);
-+	if (err)
-+		return translate_error(fs, ino, err);
-+
-+	isize = EXT2_I_SIZE(&inode);
-+	if (newsize <= isize)
++	/* the kernel does this for us in iomap mode */
++	if (fuse4fs_iomap_enabled(ff))
 +		return 0;
 +
-+	dbg_printf(ff, "%s: ino=%u oldsize=%llu newsize=%llu\n", __func__, ino,
-+		   (unsigned long long)isize,
-+		   (unsigned long long)newsize);
-+
-+	/*
-+	 * XXX cheesily update the ondisk size even though we only want to do
-+	 * the incore size until writeback happens
-+	 */
-+	err = ext2fs_inode_size_set(fs, EXT2_INODE(&inode), newsize);
-+	if (err)
-+		return translate_error(fs, ino, err);
-+
-+	err = fuse4fs_write_inode(fs, ino, &inode);
-+	if (err)
-+		return translate_error(fs, ino, err);
-+
-+	return 0;
-+}
-+
- static void op_iomap_end(fuse_req_t req, fuse_ino_t fino, uint64_t dontcare,
- 			 off_t pos, uint64_t count, uint32_t opflags,
- 			 ssize_t written, const struct fuse_file_iomap *iomap)
- {
- 	struct fuse4fs *ff = fuse4fs_get(req);
- 	ext2_ino_t ino;
-+	int ret = 0;
+ 	if (!*buf) {
+ 		err = ext2fs_get_mem(fs->blocksize, buf);
+ 		if (err)
+@@ -5301,6 +5305,10 @@ static errcode_t fuse4fs_zero_edge(struct fuse4fs *ff, ext2_ino_t ino,
+ 	off_t residue;
+ 	errcode_t err;
  
- 	FUSE4FS_CHECK_CONTEXT(req);
- 	FUSE4FS_CONVERT_FINO(req, &ino, fino);
-@@ -6042,7 +6075,21 @@ static void op_iomap_end(fuse_req_t req, fuse_ino_t fino, uint64_t dontcare,
- 		   written,
- 		   iomap->flags);
- 
--	fuse_reply_err(req, 0);
-+	fuse4fs_start(ff);
++	/* the kernel does this for us in iomap mode */
++	if (fuse4fs_iomap_enabled(ff))
++		return 0;
 +
-+	/* XXX is this really necessary? */
-+	if ((opflags & FUSE_IOMAP_OP_WRITE) &&
-+	    !(opflags & FUSE_IOMAP_OP_DIRECT) &&
-+	    (iomap->flags & FUSE_IOMAP_F_SIZE_CHANGED) &&
-+	    written > 0) {
-+		ret = fuse4fs_iomap_append_setsize(ff, ino, pos + written);
-+		if (ret)
-+			goto out_unlock;
-+	}
-+
-+out_unlock:
-+	fuse4fs_finish(ff, ret);
-+	fuse_reply_err(req, -ret);
- }
- 
- /*
+ 	residue = FUSE4FS_OFF_IN_FSB(ff, offset);
+ 	if (residue == 0)
+ 		return 0;
 
 
