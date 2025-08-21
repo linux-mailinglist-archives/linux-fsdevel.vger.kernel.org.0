@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-58497-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58498-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60303B2EA06
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 03:07:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B66AB2EA08
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 03:07:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC41D5A1013
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 01:07:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 586A57BC960
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 01:05:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2A891F418D;
-	Thu, 21 Aug 2025 01:07:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 945111E32D3;
+	Thu, 21 Aug 2025 01:07:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tby8D83y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QzudeDP+"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F76E1632DD
-	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Aug 2025 01:07:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 003465FEE6
+	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Aug 2025 01:07:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755738426; cv=none; b=t3D5UBbQuLGCTTYFgVmP4rw+UPkK/pnxOqtPZlfcSPfnQiXXo3vLlwlRlYjoa5DvCqNLgdnoFbvdfaCGQi+mAyUXhnqULgtvAswCzocVVo2RIJVPv7KE72oTi9QO1g4+VDpd6EfGrJUe0NWnlxkGM+OkwZGxVBF/40jcO3mMP7M=
+	t=1755738442; cv=none; b=oVYwQacN8NPLw5wct+2th/4a9TXsll/Ly/8QxsoG9ux+NWc6J+jqNutlmxRH7YQhjnS6z6ocSulRH4snRh0lS+jZMPK8nJFU32wl1VGHiARikKj8pwLwuCul5NIkLprIkwgDp+g7+EY2/VuOklZMVmjCsCFMTeW2sDuFmP2daZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755738426; c=relaxed/simple;
-	bh=VNOV0BJ7dKQPmlVF/BZoZFimcm5mBc/nD1SE33Bkatc=;
+	s=arc-20240116; t=1755738442; c=relaxed/simple;
+	bh=p/qlYUnyYwo6ybjtI34KGB0M9WsosmkUOvtfqFuHR0Y=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P+9dpgsGAY6Sga9pnItL1Pt10GlY46uJWB9TnQoA5TTg/+lC9xZ/6a8+/PmRLlC0KZU6rPAn3aAx4IbjcH5uAflhUNNczaP4EMtIsLRPqeIEE5lSS/d8T4+Y14odoDttXkmZDUZ7lanmSrDKwatlLEDipVb6/359KUDS40kn0UQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tby8D83y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAE52C4CEE7;
-	Thu, 21 Aug 2025 01:07:05 +0000 (UTC)
+	 MIME-Version:Content-Type; b=sEFdBYlSjz+kbB5NWsZZjM8hF5DeuHn3plhDRNnlOtU1+6xQ5es/qkrRThnQy+XSsfp5ZbaLkpjKDY65ei+bDhRPP0kMSVWuo+WZ+h9YMbWum6DW0bBs4HHTotzvqAvDK/FpHqpvf+ms42mvPlnE3mW6YnjkT2EMPoeFiPtMr3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QzudeDP+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B298C4CEE7;
+	Thu, 21 Aug 2025 01:07:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755738426;
-	bh=VNOV0BJ7dKQPmlVF/BZoZFimcm5mBc/nD1SE33Bkatc=;
+	s=k20201202; t=1755738441;
+	bh=p/qlYUnyYwo6ybjtI34KGB0M9WsosmkUOvtfqFuHR0Y=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=tby8D83ybXjo05kYLLkoldDcrKrfonEj8teziq9eWYDnRYW/NnGSScaAYskBTvDhG
-	 OAItPk2w2dMdx3CgengZYAVVrBCT55l7bBrsQctyYsfFd6gKtGwZteuKHkdifkaBuQ
-	 F+h86U63gFKRRuo03/qrSrRbQbEWLTvhC4HwrB5puQcCSScFX3UD3jXWP1p+L6hhMn
-	 ychn8n9pqUE/sKHWixmy01aEd+yt6FGSneL2Y4qVQwdE6aaLiOuSU5K4QjHMkJh2PN
-	 WXUEuhwqWDJ2p6NPFBAdZPOoNPAwZAgYodxsttUiwIDOcFVnjYtaHo74+zrgPyXoN7
-	 J1S+VsXjneo5A==
-Date: Wed, 20 Aug 2025 18:07:05 -0700
-Subject: [PATCH 1/2] libfuse: enable iomap cache management for lowlevel fuse
+	b=QzudeDP+yHywVFTVo8gDWji9RPsldxGXvASTg8Vxaylg7EdWFg0tfjJB08rBFkPEu
+	 8T8FHIrGyjmNjHF3mGsgs5LaKqKFPCrx4adK5NK5eFUWVjEIjtle+zgV2FSRbay0y4
+	 ZBbpJ6AGhc5L50nhrtj//MyYfRP4R2DP5XeWM+yLaOLdPOkCMi/Rbv05nlBn1DFr93
+	 I0PgM34UuDDMnuhlI7GHk0u5hXHxpGNxJN941kPzcOV0yqZEdsbse79hOCrEy2THDW
+	 c67TTyi4jrnk6bxwAKpz1SIIS29gzo+UuXNxojaBn+HbBMiZfqykIKnwz3xXVMklKX
+	 Il2TgR1QnhCkg==
+Date: Wed, 20 Aug 2025 18:07:21 -0700
+Subject: [PATCH 2/2] libfuse: add upper-level iomap cache management
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, bschubert@ddn.com
 Cc: John@groves.net, joannelkoong@gmail.com, bernd@bsbernd.com,
  linux-fsdevel@vger.kernel.org, miklos@szeredi.hu, neal@gompa.dev
-Message-ID: <175573711888.19984.5716356720672601314.stgit@frogsfrogsfrogs>
+Message-ID: <175573711907.19984.5913525640876473699.stgit@frogsfrogsfrogs>
 In-Reply-To: <175573711864.19984.18094782290166570853.stgit@frogsfrogsfrogs>
 References: <175573711864.19984.18094782290166570853.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -61,107 +61,23 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Add the library methods so that fuse servers can manage an in-kernel
-iomap cache.  This enables better performance on small IOs and is
-required if the filesystem needs synchronization between pagecache
-writes and writeback.
+Make it so that upper-level fuse servers can use the iomap cache too.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- include/fuse_common.h   |   12 ++++++++
- include/fuse_kernel.h   |   26 +++++++++++++++++
- include/fuse_lowlevel.h |   41 ++++++++++++++++++++++++++
- lib/fuse_lowlevel.c     |   73 +++++++++++++++++++++++++++++++++++++++++++++++
- lib/fuse_versionscript  |    2 +
- 5 files changed, 154 insertions(+)
+ include/fuse.h         |   31 +++++++++++++++++++++++++++++++
+ lib/fuse.c             |   30 ++++++++++++++++++++++++++++++
+ lib/fuse_versionscript |    2 ++
+ 3 files changed, 63 insertions(+)
 
 
-diff --git a/include/fuse_common.h b/include/fuse_common.h
-index 19770262c4b518..a1c5199f2cb4ee 100644
---- a/include/fuse_common.h
-+++ b/include/fuse_common.h
-@@ -1168,6 +1168,10 @@ int fuse_convert_to_conn_want_ext(struct fuse_conn_info *conn);
- 
- /* fuse-specific mapping type indicating that writes use the read mapping */
- #define FUSE_IOMAP_TYPE_PURE_OVERWRITE	(255)
-+/* fuse-specific mapping type saying the server has populated the cache */
-+#define FUSE_IOMAP_TYPE_RETRY_CACHE	(254)
-+/* do not upsert this mapping */
-+#define FUSE_IOMAP_TYPE_NOCACHE		(253)
- 
- #define FUSE_IOMAP_DEV_NULL		(0U)	/* null device cookie */
- 
-@@ -1273,6 +1277,14 @@ struct fuse_iomap_config{
- 	int64_t s_maxbytes;	/* max file size */
- };
- 
-+/* invalidate to end of file */
-+#define FUSE_IOMAP_INVAL_TO_EOF		(~0ULL)
-+
-+struct fuse_iomap_inval {
-+	uint64_t offset;	/* file offset to invalidate, bytes */
-+	uint64_t length;	/* length to invalidate, bytes */
-+};
-+
- /* ----------------------------------------------------------- *
-  * Compatibility stuff					       *
-  * ----------------------------------------------------------- */
-diff --git a/include/fuse_kernel.h b/include/fuse_kernel.h
-index fcf02c9371ba3a..0c30aebaf95c32 100644
---- a/include/fuse_kernel.h
-+++ b/include/fuse_kernel.h
-@@ -243,6 +243,8 @@
-  *  - add FUSE_IOMAP_CONFIG so the fuse server can configure more fs geometry
-  *  - add FUSE_NOTIFY_IOMAP_DEV_INVAL to invalidate iomap bdev ranges
-  *  - add FUSE_ATTR_ATOMIC for single-fsblock atomic write support
-+ *  - add FUSE_NOTIFY_IOMAP_UPSERT and FUSE_NOTIFY_IOMAP_INVAL so fuse servers
-+ *    can cache iomappings in the kernel
+diff --git a/include/fuse.h b/include/fuse.h
+index e53e92786cea08..f8a57154017a2a 100644
+--- a/include/fuse.h
++++ b/include/fuse.h
+@@ -1450,6 +1450,37 @@ bool fuse_fs_can_enable_iomap(const struct stat *statbuf);
   */
- 
- #ifndef _LINUX_FUSE_H
-@@ -696,6 +698,8 @@ enum fuse_notify_code {
- 	FUSE_NOTIFY_RESEND = 7,
- 	FUSE_NOTIFY_INC_EPOCH = 8,
- 	FUSE_NOTIFY_IOMAP_DEV_INVAL = 9,
-+	FUSE_NOTIFY_IOMAP_UPSERT = 10,
-+	FUSE_NOTIFY_IOMAP_INVAL = 11,
- 	FUSE_NOTIFY_CODE_MAX,
- };
- 
-@@ -1401,4 +1405,26 @@ struct fuse_iomap_dev_inval {
- 	uint64_t offset;	/* range to invalidate pagecache, bytes */
- 	uint64_t length;
- };
-+
-+struct fuse_iomap_inval_out {
-+	uint64_t nodeid;	/* Inode ID */
-+	uint64_t attr_ino;	/* matches fuse_attr:ino */
-+
-+	uint64_t read_offset;	/* range to invalidate read iomaps, bytes */
-+	uint64_t read_length;	/* can be FUSE_IOMAP_INVAL_TO_EOF */
-+
-+	uint64_t write_offset;	/* range to invalidate write iomaps, bytes */
-+	uint64_t write_length;	/* can be FUSE_IOMAP_INVAL_TO_EOF */
-+};
-+
-+struct fuse_iomap_upsert_out {
-+	uint64_t nodeid;	/* Inode ID */
-+	uint64_t attr_ino;	/* matches fuse_attr:ino */
-+
-+	/* read file data from here */
-+	struct fuse_iomap_io	read;
-+
-+	/* write file data to here, if applicable */
-+	struct fuse_iomap_io	write;
-+};
- #endif /* _LINUX_FUSE_H */
-diff --git a/include/fuse_lowlevel.h b/include/fuse_lowlevel.h
-index b7a099bea6921e..326c8f061aecfa 100644
---- a/include/fuse_lowlevel.h
-+++ b/include/fuse_lowlevel.h
-@@ -2173,6 +2173,47 @@ int fuse_lowlevel_iomap_device_remove(struct fuse_session *se, int device_id);
- int fuse_lowlevel_iomap_device_invalidate(struct fuse_session *se, int dev,
- 					  off_t offset, off_t length);
+ bool fuse_fs_can_enable_iomapx(const struct statx *statxbuf);
  
 +/*
 + * Upsert some file mapping information into the kernel.  This is necessary
@@ -169,138 +85,85 @@ index b7a099bea6921e..326c8f061aecfa 100644
 + * buffered writes and writeback, and desirable for better performance
 + * elsewhere.
 + *
-+ * Added in FUSE protocol version 7.99. If the kernel does not support
-+ * this (or a newer) version, the function will return -ENOSYS and do
-+ * nothing.
-+ *
-+ * @param se the session object
 + * @param nodeid the inode number
 + * @param attr_ino inode number as told by fuse_attr::ino
 + * @param read mapping information for file reads
 + * @param write mapping information for file writes
 + * @return zero for success, -errno for failure
 + */
-+int fuse_lowlevel_notify_iomap_upsert(struct fuse_session *se,
-+				      fuse_ino_t nodeid, uint64_t attr_ino,
-+				      const struct fuse_file_iomap *read,
-+				      const struct fuse_file_iomap *write);
++int fuse_fs_iomap_upsert(uint64_t nodeid, uint64_t attr_ino,
++			 const struct fuse_file_iomap *read,
++			 const struct fuse_file_iomap *write);
 +
 +/**
 + * Invalidate some file mapping information in the kernel.
 + *
-+ * Added in FUSE protocol version 7.99. If the kernel does not support
-+ * this (or a newer) version, the function will return -ENOSYS and do
-+ * nothing.
-+ *
-+ * @param se the session object
 + * @param nodeid the inode number
 + * @param attr_ino inode number as told by fuse_attr::ino
-+ * @param read read mapping range to invalidate
-+ * @param write write mapping range to invalidate
++ * @param read_off start of the range of read mappings to invalidate
++ * @param read_len length of the range of read mappings to invalidate
++ * @param write_off start of the range of write mappings to invalidate
++ * @param write_len length of the range of write mappings to invalidate
 + * @return zero for success, -errno for failure
 + */
-+int fuse_lowlevel_notify_iomap_inval(struct fuse_session *se,
-+				     fuse_ino_t nodeid, uint64_t attr_ino,
-+				     const struct fuse_iomap_inval *read,
-+				     const struct fuse_iomap_inval *write);
++int fuse_fs_iomap_inval(uint64_t nodeid, uint64_t attr_ino, loff_t read_off,
++			uint64_t read_len, loff_t write_off,
++			uint64_t write_len);
 +
- /* ----------------------------------------------------------- *
-  * Utility functions					       *
-  * ----------------------------------------------------------- */
-diff --git a/lib/fuse_lowlevel.c b/lib/fuse_lowlevel.c
-index ee73de4a8950be..721abe2686d9c4 100644
---- a/lib/fuse_lowlevel.c
-+++ b/lib/fuse_lowlevel.c
-@@ -3504,6 +3504,79 @@ int fuse_lowlevel_iomap_device_invalidate(struct fuse_session *se, int dev,
- 	return send_notify_iov(se, FUSE_NOTIFY_IOMAP_DEV_INVAL, iov, 2);
+ int fuse_notify_poll(struct fuse_pollhandle *ph);
+ 
+ /**
+diff --git a/lib/fuse.c b/lib/fuse.c
+index 1c813ec5a697a0..7b28f848116abb 100644
+--- a/lib/fuse.c
++++ b/lib/fuse.c
+@@ -2963,6 +2963,36 @@ static int fuse_fs_iomap_config(struct fuse_fs *fs, uint64_t flags,
+ 	return fs->op.iomap_config(flags, maxbytes, cfg);
  }
  
-+int fuse_lowlevel_notify_iomap_upsert(struct fuse_session *se,
-+				      fuse_ino_t nodeid, uint64_t attr_ino,
-+				      const struct fuse_file_iomap *read,
-+				      const struct fuse_file_iomap *write)
++int fuse_fs_iomap_upsert(uint64_t nodeid, uint64_t attr_ino,
++			 const struct fuse_file_iomap *read,
++			 const struct fuse_file_iomap *write)
 +{
-+	struct fuse_iomap_upsert_out outarg = {
-+		.nodeid		= nodeid,
-+		.attr_ino	= attr_ino,
-+		.read		= {
-+			.type	= FUSE_IOMAP_TYPE_NOCACHE,
-+		},
-+		.write		= {
-+			.type	= FUSE_IOMAP_TYPE_NOCACHE,
-+		}
-+	};
-+	struct iovec iov[2];
++	struct fuse_context *ctxt = fuse_get_context();
++	struct fuse_session *se = fuse_get_session(ctxt->fuse);
 +
-+	if (!se)
-+		return -EINVAL;
-+
-+	if (se->conn.proto_minor < 99)
-+		return -ENOSYS;
-+
-+	if (!read && !write)
-+		return 0;
-+
-+	if (read)
-+		fuse_iomap_to_kernel(&outarg.read, read);
-+
-+	if (write)
-+		fuse_iomap_to_kernel(&outarg.write, write);
-+
-+	iov[1].iov_base = &outarg;
-+	iov[1].iov_len = sizeof(outarg);
-+
-+	return send_notify_iov(se, FUSE_NOTIFY_IOMAP_UPSERT, iov, 2);
++	return fuse_lowlevel_notify_iomap_upsert(se, nodeid, attr_ino,
++						 read, write);
 +}
 +
-+int fuse_lowlevel_notify_iomap_inval(struct fuse_session *se,
-+				     fuse_ino_t nodeid, uint64_t attr_ino,
-+				     const struct fuse_iomap_inval *read,
-+				     const struct fuse_iomap_inval *write)
++int fuse_fs_iomap_inval(uint64_t nodeid, uint64_t attr_ino, loff_t read_off,
++			uint64_t read_len, loff_t write_off,
++			uint64_t write_len)
 +{
-+	struct fuse_iomap_inval_out outarg = {
-+		.nodeid		= nodeid,
-+		.attr_ino	= attr_ino,
++	struct fuse_context *ctxt = fuse_get_context();
++	struct fuse_session *se = fuse_get_session(ctxt->fuse);
++	struct fuse_iomap_inval read = {
++		.offset = read_off,
++		.length = read_len,
 +	};
-+	struct iovec iov[2];
++	struct fuse_iomap_inval write = {
++		.offset = write_off,
++		.length = write_len,
++	};
 +
-+	if (!se)
-+		return -EINVAL;
-+
-+	if (se->conn.proto_minor < 99)
-+		return -ENOSYS;
-+
-+	if (!read && !write)
-+		return 0;
-+
-+	if (read) {
-+		outarg.read_offset = read->offset;
-+		outarg.read_length = read->length;
-+	}
-+	if (write) {
-+		outarg.write_offset = write->offset;
-+		outarg.write_length = write->length;
-+	}
-+
-+	iov[1].iov_base = &outarg;
-+	iov[1].iov_len = sizeof(outarg);
-+
-+	return send_notify_iov(se, FUSE_NOTIFY_IOMAP_INVAL, iov, 2);
++	return fuse_lowlevel_notify_iomap_inval(se, nodeid, attr_ino, &read,
++						&write);
 +}
 +
- struct fuse_retrieve_req {
- 	struct fuse_notify_req nreq;
- 	void *cookie;
+ static void fuse_lib_setattr(fuse_req_t req, fuse_ino_t ino, struct stat *attr,
+ 			     int valid, struct fuse_file_info *fi)
+ {
 diff --git a/lib/fuse_versionscript b/lib/fuse_versionscript
-index 102f449d28a0be..a83966b9e48018 100644
+index a83966b9e48018..9a4baed32bc477 100644
 --- a/lib/fuse_versionscript
 +++ b/lib/fuse_versionscript
-@@ -235,6 +235,8 @@ FUSE_3.99 {
- 		fuse_reply_iomap_config;
- 		fuse_lowlevel_iomap_device_invalidate;
+@@ -237,6 +237,8 @@ FUSE_3.99 {
  		fuse_fs_iomap_device_invalidate;
-+		fuse_lowlevel_notify_iomap_upsert;
-+		fuse_lowlevel_notify_iomap_inval;
+ 		fuse_lowlevel_notify_iomap_upsert;
+ 		fuse_lowlevel_notify_iomap_inval;
++		fuse_fs_iomap_upsert;
++		fuse_fs_iomap_inval;
  } FUSE_3.18;
  
  # Local Variables:
