@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-58519-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58520-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F3C7B2EA32
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 03:13:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D544AB2EA42
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 03:14:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 171577B8498
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 01:11:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CFCDA062B6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 01:13:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E34881F78E6;
-	Thu, 21 Aug 2025 01:12:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C10351F8676;
+	Thu, 21 Aug 2025 01:13:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C2uwZ1gR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DT0gyjge"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA445FEE6;
-	Thu, 21 Aug 2025 01:12:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2957A5FEE6;
+	Thu, 21 Aug 2025 01:13:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755738770; cv=none; b=L9Ld7BlAyGiDi4AELTtR12wKLT40znzkFBwrkC78CdkVflIrd2EkLiNa4RLia48Yjl12xgnnktihky74FS/ps+Iz94M0C1JHhvMJhcqqNKyEeM2XNQmMgYiCMVAP/7KBmNM+QM24lrwb9xYC99d9+QRHgP1/WK+MHU/2R8Dq+6Q=
+	t=1755738786; cv=none; b=Ew7RI2QhKRvPD+2pJH9frj9iaRqgkra5TWyduEIZWhCut1oM+k6Q6AsZs4bx06rR5bMfyhpY8TFUC/Ym/zG6USkSd1pMfkCktAxp/Ji/da07D6RSCXBKlLES9BSClNB0E1TWUDVcXAjt18owVSHR8QtyVdp391Ysw0jYKvu3rLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755738770; c=relaxed/simple;
-	bh=Umet8DtOkxOIUhigosai572holc7Mp/rM32XMr7tsM4=;
+	s=arc-20240116; t=1755738786; c=relaxed/simple;
+	bh=qwOYLvi4G/65/MfehudT/ed/1/CiKRVbaDsLpiMtdfA=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LV54xj7DfoOLIMNaaMoP4YrakM9AIvX53jiPtMhm4qHpfENBWSKZlo0EJVZsPvJqEj9+lqGgESN5xh3StjkuFKxYtXfV5IBOA8bRmJx/txiAOqTuvPPZ1KdTMyPi3j7QqViN0UU1/8ytCRP81R1iXchmURFewYAxf7ytEqw5cco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C2uwZ1gR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21290C4CEE7;
-	Thu, 21 Aug 2025 01:12:50 +0000 (UTC)
+	 MIME-Version:Content-Type; b=fud3QSXTxVs+DObtLgLQ79RjFQbjOJXBq8heIua8BbkhnSi6dogOHVtZGvPT023lgNcJkbCQ92Bv8CGefty/bq55tCd4Gm6Uro//diiyEEsWZ7b1Zlz4sW0HUnRnDeDqEbcNNQdq+pkQAJuw45TE5MkTVjXAdwW6G6OXUuqHuEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DT0gyjge; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A899DC4CEEB;
+	Thu, 21 Aug 2025 01:13:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755738770;
-	bh=Umet8DtOkxOIUhigosai572holc7Mp/rM32XMr7tsM4=;
+	s=k20201202; t=1755738785;
+	bh=qwOYLvi4G/65/MfehudT/ed/1/CiKRVbaDsLpiMtdfA=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=C2uwZ1gRTVoQBt64eArM+d2c3pnhO4HlBjS8mcszFwFS6z/Woq1oBzgHBwaaqmALw
-	 D95MpSeSSyzrreVsJBF+eR4uPcTSPck/ZV9OOLGFB1DSAV/S4qpTZMI/H1tNs8tx3A
-	 eIZt73by+Ay/de4w8VuIG8Si6g21lmR1jYj/09QZuyDTfs9iTGFFn7eEjzvRdQS9iv
-	 TfOj+FJj62+n6wRTMWFYBUBV5ETyW1L38k/z1Bg4Gau7AN+9bVwkQIoe+GISLbd+5s
-	 KKeNJuALZ3hRFWND6JW0ftLxZwSgufTuNuePrpVv6E9FvSnD5SIfbevBybQKisAxiD
-	 59hR584kCPvFQ==
-Date: Wed, 20 Aug 2025 18:12:49 -0700
-Subject: [PATCH 19/20] fuse4fs: implement FUSE_TMPFILE
+	b=DT0gyjgegj2TUX3TaGbgnYEd0OAtoJGG32RM7ayIsQ4NQGpHB/WTYchzLhiH0dObh
+	 bWd89izSPiVBPwfLrM499l6Z1UMUpSyxcEvLb1BKrPjNw5GS9zaN4y1OqjjvqicxsO
+	 XyBQfsqrs7wg8zwG77jQwxNp7JaOsGNXZ9f1KWxP2XGWumB3zMmn7KIjribDaYwiZx
+	 hJ99f/qTugdGyyX3dDvKaIT38ReqrhstSuu4KMhtPvkuynPuC5E7+Pk3SLojj+Tsu3
+	 uSc6YZDU+Xu0SQijJ7QKh4mTJof5Vk/aE9QSxRULxmeFIeAmEwMyi0dNevORXFGUZg
+	 iSqwNEc0+2g+w==
+Date: Wed, 20 Aug 2025 18:13:05 -0700
+Subject: [PATCH 20/20] fuse4fs: create incore reverse orphan list
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: tytso@mit.edu
 Cc: John@groves.net, bernd@bsbernd.com, linux-fsdevel@vger.kernel.org,
  linux-ext4@vger.kernel.org, miklos@szeredi.hu, amir73il@gmail.com,
  joannelkoong@gmail.com, neal@gompa.dev
-Message-ID: <175573713150.20753.7509097760351998845.stgit@frogsfrogsfrogs>
+Message-ID: <175573713168.20753.5541232630143908826.stgit@frogsfrogsfrogs>
 In-Reply-To: <175573712721.20753.5223489399594191991.stgit@frogsfrogsfrogs>
 References: <175573712721.20753.5223489399594191991.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -62,211 +62,267 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Allow creation of O_TMPFILE files now that we know how to use the
-unlinked list.
+Create an incore orphan list so that removing open unlinked inodes
+doesn't take forever.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- misc/fuse4fs.c |   93 ++++++++++++++++++++++++++++++++++++++++----------------
- 1 file changed, 67 insertions(+), 26 deletions(-)
+ misc/fuse4fs.c |  178 +++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 174 insertions(+), 4 deletions(-)
 
 
 diff --git a/misc/fuse4fs.c b/misc/fuse4fs.c
-index 1d1797a483a139..3f88e98a20c203 100644
+index 3f88e98a20c203..cd7e30eaeb7757 100644
 --- a/misc/fuse4fs.c
 +++ b/misc/fuse4fs.c
-@@ -897,22 +897,25 @@ static inline int fuse4fs_want_check_owner(struct fuse4fs *ff,
- 
- /* Test for append permission */
- #define A_OK	16
-+/* Test for linked file */
-+#define L_OK	32
- 
- static int fuse4fs_iflags_access(struct fuse4fs *ff, ext2_ino_t ino,
- 				 const struct ext2_inode *inode, int mask)
- {
--	EXT2FS_BUILD_BUG_ON((A_OK & (R_OK | W_OK | X_OK | F_OK)) != 0);
-+	EXT2FS_BUILD_BUG_ON(((A_OK | L_OK) & (R_OK | W_OK | X_OK | F_OK)) != 0);
- 
- 	/* no writing or metadata changes to read-only or broken fs */
- 	if ((mask & (W_OK | A_OK)) && !fuse4fs_is_writeable(ff))
- 		return -EROFS;
- 
--	dbg_printf(ff, "access ino=%d mask=e%s%s%s%s iflags=0x%x\n",
-+	dbg_printf(ff, "access ino=%d mask=e%s%s%s%s%s iflags=0x%x\n",
- 		   ino,
- 		   (mask & R_OK ? "r" : ""),
- 		   (mask & W_OK ? "w" : ""),
- 		   (mask & X_OK ? "x" : ""),
- 		   (mask & A_OK ? "a" : ""),
-+		   (mask & L_OK ? "l" : ""),
- 		   inode->i_flags);
- 
- 	/* is immutable? */
-@@ -945,21 +948,31 @@ static int fuse4fs_inum_access(struct fuse4fs *ff, const struct fuse_ctx *ctxt,
- 		return translate_error(fs, ino, err);
- 	perms = inode.i_mode & 0777;
- 
--	dbg_printf(ff, "access ino=%d mask=e%s%s%s%s perms=0%o iflags=0x%x "
-+	dbg_printf(ff, "access ino=%d mask=e%s%s%s%s%s perms=0%o iflags=0x%x "
- 		   "fuid=%d fgid=%d uid=%d gid=%d\n", ino,
- 		   (mask & R_OK ? "r" : ""),
- 		   (mask & W_OK ? "w" : ""),
- 		   (mask & X_OK ? "x" : ""),
- 		   (mask & A_OK ? "a" : ""),
-+		   (mask & L_OK ? "l" : ""),
- 		   perms, inode.i_flags,
- 		   inode_uid(inode), inode_gid(inode),
- 		   ctxt->uid, ctxt->gid);
- 
--	/* linked files cannot be on the unlinked list or deleted */
--	if (inode.i_dtime != 0) {
--		dbg_printf(ff, "%s: unlinked ino=%d dtime=0x%x\n",
--			   __func__, ino, inode.i_dtime);
--		return -ENOENT;
-+	if (mask & L_OK) {
-+		/* linked files cannot be on the unlinked list or deleted */
-+		if (inode.i_dtime != 0) {
-+			dbg_printf(ff, "%s: unlinked ino=%d dtime=0x%x\n",
-+				   __func__, ino, inode.i_dtime);
-+			return -ENOENT;
-+		}
-+	} else {
-+		/* unlinked files cannot be deleted */
-+		if (inode.i_dtime >= fs->super->s_inodes_count) {
-+			dbg_printf(ff, "%s: deleted ino=%d dtime=0x%x\n",
-+				   __func__, ino, inode.i_dtime);
-+			return -ENOENT;
-+		}
- 	}
- 
- 	/* existence check */
-@@ -3123,7 +3136,7 @@ static void detect_linux_executable_open(int kernel_flags, int *access_check,
- #endif /* __linux__ */
- 
- static int fuse4fs_open_file(struct fuse4fs *ff, const struct fuse_ctx *ctxt,
--			     ext2_ino_t ino,
-+			     ext2_ino_t ino, bool linked,
- 			     struct fuse_file_info *fp)
- {
- 	ext2_filsys fs = ff->fs;
-@@ -3153,6 +3166,9 @@ static int fuse4fs_open_file(struct fuse4fs *ff, const struct fuse_ctx *ctxt,
- 		break;
- 	}
- 
-+	if (linked)
-+		check |= L_OK;
-+
- 	/*
- 	 * If the caller wants to truncate the file, we need to ask for full
- 	 * write access even if the caller claims to be appending.
-@@ -3219,7 +3235,7 @@ static void op_open(fuse_req_t req, fuse_ino_t fino, struct fuse_file_info *fp)
- 	dbg_printf(ff, "%s: ino=%d\n", __func__, ino);
- 
- 	fuse4fs_start(ff);
--	ret = fuse4fs_open_file(ff, ctxt, ino, fp);
-+	ret = fuse4fs_open_file(ff, ctxt, ino, true, fp);
- 	fuse4fs_finish(ff, ret);
- 
- 	if (ret)
-@@ -4128,22 +4144,28 @@ static void op_create(fuse_req_t req, fuse_ino_t fino, const char *name,
- 		goto out2;
- 	}
- 
--	dbg_printf(ff, "%s: creating dir=%d name='%s' child=%d\n",
--		   __func__, parent, name, child);
--	err = ext2fs_link(fs, parent, name, child,
--			  filetype | EXT2FS_LINK_EXPAND);
--	if (err) {
--		ret = translate_error(fs, parent, err);
--		goto out2;
-+	if (name) {
-+		dbg_printf(ff, "%s: creating dir=%d name='%s' child=%d\n",
-+			   __func__, parent, name, child);
-+
-+		err = ext2fs_link(fs, parent, name, child,
-+				  filetype | EXT2FS_LINK_EXPAND);
-+		if (err) {
-+			ret = translate_error(fs, parent, err);
-+			goto out2;
-+		}
-+
-+		ret = update_mtime(fs, parent, NULL);
-+		if (ret)
-+			goto out2;
-+	} else {
-+		dbg_printf(ff, "%s: creating dir=%d tempfile=%d\n",
-+			   __func__, parent, child);
- 	}
- 
--	ret = update_mtime(fs, parent, NULL);
--	if (ret)
--		goto out2;
--
- 	memset(&inode, 0, sizeof(inode));
- 	inode.i_mode = mode;
--	inode.i_links_count = 1;
-+	inode.i_links_count = name ? 1 : 0;
- 	fuse4fs_set_extra_isize(ff, child, &inode);
- 	fuse4fs_set_uid(&inode, ctxt->uid);
- 	fuse4fs_set_gid(&inode, gid);
-@@ -4161,6 +4183,12 @@ static void op_create(fuse_req_t req, fuse_ino_t fino, const char *name,
- 		ext2fs_extent_free(handle);
- 	}
- 
-+	if (!name) {
-+		ret = fuse4fs_add_to_orphans(ff, child, &inode);
-+		if (ret)
-+			goto out2;
-+	}
-+
- 	err = ext2fs_write_new_inode(fs, child, EXT2_INODE(&inode));
- 	if (err) {
- 		ret = translate_error(fs, child, err);
-@@ -4182,13 +4210,15 @@ static void op_create(fuse_req_t req, fuse_ino_t fino, const char *name,
- 		goto out2;
- 
- 	fp->flags &= ~O_TRUNC;
--	ret = fuse4fs_open_file(ff, ctxt, child, fp);
-+	ret = fuse4fs_open_file(ff, ctxt, child, name != NULL, fp);
- 	if (ret)
- 		goto out2;
- 
--	ret = fuse4fs_dirsync_flush(ff, parent, NULL);
--	if (ret)
--		goto out2;
-+	if (name) {
-+		ret = fuse4fs_dirsync_flush(ff, parent, NULL);
-+		if (ret)
-+			goto out2;
-+	}
- 
- 	ret = fuse4fs_stat_inode(ff, child, NULL, &fstat);
- 	if (ret)
-@@ -4203,6 +4233,14 @@ static void op_create(fuse_req_t req, fuse_ino_t fino, const char *name,
- 		fuse_reply_create(req, &fstat.entry, fp);
+@@ -351,10 +351,20 @@ static inline int u_log2(unsigned int arg)
+ 	return l;
  }
  
-+#if FUSE_VERSION >= FUSE_MAKE_VERSION(3, 17)
-+static void op_tmpfile(fuse_req_t req, fuse_ino_t fino, mode_t mode,
-+		       struct fuse_file_info *fp)
-+{
-+	op_create(req, fino, NULL, mode, fp);
-+}
-+#endif
++/* inode is not on unlinked list */
++#define FUSE4FS_NULL_INO	((ext2_ino_t)~0ULL)
 +
- enum fuse4fs_time_action {
- 	TA_NOW,		/* set to current time */
- 	TA_OMIT,	/* do not set timestamp */
-@@ -5161,6 +5199,9 @@ static struct fuse_lowlevel_ops fs_ops = {
- 	.fsyncdir = op_fsync,
- 	.access = op_access,
- 	.create = op_create,
-+#if FUSE_VERSION >= FUSE_MAKE_VERSION(3, 17)
-+	.tmpfile = op_tmpfile,
-+#endif
- 	.bmap = op_bmap,
- #ifdef SUPERFLUOUS
- 	.lock = op_lock,
+ struct fuse4fs_inode {
+ 	struct cache_node	i_cnode;
+ 	ext2_ino_t		i_ino;
+ 	unsigned int		i_open_count;
++
++	/*
++	 * FUSE4FS_NULL_INO: inode is not on the orphan list
++	 * 0: inode is the first on the orphan list
++	 * otherwise: inode is in the middle of the list
++	 */
++	ext2_ino_t		i_prev_orphan;
+ };
+ 
+ struct fuse4fs_ikey {
+@@ -396,12 +406,15 @@ static struct cache_node *icache_alloc(struct cache *c, cache_key_t key)
+ 		return NULL;
+ 
+ 	fi->i_ino = ikey->i_ino;
++	fi->i_prev_orphan = FUSE4FS_NULL_INO;
+ 	return &fi->i_cnode;
+ }
+ 
+ static bool icache_flush(struct cache *c, struct cache_node *node)
+ {
+-	return false;
++	struct fuse4fs_inode *fi = ICNODE(node);
++
++	return fi->i_prev_orphan != FUSE4FS_NULL_INO;
+ }
+ 
+ static void icache_relse(struct cache *c, struct cache_node *node)
+@@ -2164,10 +2177,31 @@ static int fuse4fs_add_to_orphans(struct fuse4fs *ff, ext2_ino_t ino,
+ 				  struct ext2_inode_large *inode)
+ {
+ 	ext2_filsys fs = ff->fs;
++	struct fuse4fs_inode *fi;
++	ext2_ino_t orphan_ino = fs->super->s_last_orphan;
++	errcode_t err;
+ 
+ 	dbg_printf(ff, "%s: orphan ino=%d dtime=%d next=%d\n",
+ 		   __func__, ino, inode->i_dtime, fs->super->s_last_orphan);
+ 
++	/* Make the first orphan on the list point back to us */
++	if (orphan_ino != 0) {
++		err = fuse4fs_iget(ff, orphan_ino, &fi);
++		if (err)
++			return translate_error(fs, orphan_ino, err);
++
++		fi->i_prev_orphan = ino;
++		fuse4fs_iput(ff, fi);
++	}
++
++	/* Add ourselves to the head of the orphan list */
++	err = fuse4fs_iget(ff, ino, &fi);
++	if (err)
++		return translate_error(fs, ino, err);
++
++	fi->i_prev_orphan = 0;
++	fuse4fs_iput(ff, fi);
++
+ 	inode->i_dtime = fs->super->s_last_orphan;
+ 	fs->super->s_last_orphan = ino;
+ 	ext2fs_mark_super_dirty(fs);
+@@ -2175,24 +2209,158 @@ static int fuse4fs_add_to_orphans(struct fuse4fs *ff, ext2_ino_t ino,
+ 	return 0;
+ }
+ 
++/*
++ * Given the orphan list excerpt: prev_orphan -> ino -> next_orphan, set
++ * next_orphan's backpointer to ino's backpointer (prev_orphan), having removed
++ * ino from the orphan list.
++ */
++static int fuse2fs_update_next_orphan_backlink(struct fuse4fs *ff,
++					       ext2_ino_t prev_orphan,
++					       ext2_ino_t ino,
++					       ext2_ino_t next_orphan)
++{
++	struct fuse4fs_inode *fi;
++	errcode_t err;
++	int ret = 0;
++
++	err = fuse4fs_iget(ff, next_orphan, &fi);
++	if (err)
++		return translate_error(ff->fs, next_orphan, err);
++
++	dbg_printf(ff, "%s: ino=%d cached next=%d nextprev=%d prev=%d\n",
++		   __func__, ino, next_orphan, fi->i_prev_orphan,
++		   prev_orphan);
++
++	if (fi->i_prev_orphan != ino) {
++		ret = translate_error(ff->fs, next_orphan,
++				      EXT2_ET_FILESYSTEM_CORRUPTED);
++		goto out_iput;
++	}
++
++	fi->i_prev_orphan = prev_orphan;
++out_iput:
++	fuse4fs_iput(ff, fi);
++	return ret;
++}
++
++/*
++ * Remove ino from the orphan list the fast way.  Returns 1 for success, 0 if
++ * it didn't do anything, or a negative errno.
++ */
++static int fuse4fs_fast_remove_from_orphans(struct fuse4fs *ff, ext2_ino_t ino,
++					    struct ext2_inode_large *inode)
++{
++	struct ext2_inode_large orphan;
++	ext2_filsys fs = ff->fs;
++	struct fuse4fs_inode *fi;
++	ext2_ino_t prev_orphan;
++	ext2_ino_t next_orphan = 0;
++	errcode_t err;
++	int ret = 0;
++
++	err = fuse4fs_iget(ff, ino, &fi);
++	if (err)
++		return translate_error(fs, ino, err);
++
++	prev_orphan = fi->i_prev_orphan;
++	switch (prev_orphan) {
++	case 0:
++		/* First inode in the list */
++		dbg_printf(ff, "%s: ino=%d cached superblock\n", __func__, ino);
++
++		fs->super->s_last_orphan = inode->i_dtime;
++		next_orphan = inode->i_dtime;
++		inode->i_dtime = 0;
++		ext2fs_mark_super_dirty(fs);
++		fi->i_prev_orphan = FUSE4FS_NULL_INO;
++		break;
++	case FUSE4FS_NULL_INO:
++		/* unknown */
++		dbg_printf(ff, "%s: ino=%d broken list??\n", __func__, ino);
++		ret = 0;
++		goto out_iput;
++	default:
++		/* We're in the middle of the list */
++		err = fuse4fs_read_inode(fs, prev_orphan, &orphan);
++		if (err) {
++			ret = translate_error(fs, prev_orphan, err);
++			goto out_iput;
++		}
++
++		dbg_printf(ff,
++ "%s: ino=%d cached prev=%d prevnext=%d next=%d\n",
++			   __func__, ino, prev_orphan, orphan.i_dtime,
++			   inode->i_dtime);
++
++		if (orphan.i_dtime != ino) {
++			ret = translate_error(fs, prev_orphan,
++					      EXT2_ET_FILESYSTEM_CORRUPTED);
++			goto out_iput;
++		}
++
++		fi->i_prev_orphan = FUSE4FS_NULL_INO;
++		orphan.i_dtime = inode->i_dtime;
++		next_orphan = inode->i_dtime;
++		inode->i_dtime = 0;
++
++		err = fuse4fs_write_inode(fs, prev_orphan, &orphan);
++		if (err) {
++			ret = translate_error(fs, prev_orphan, err);
++			goto out_iput;
++		}
++
++		break;
++	}
++
++	/*
++	 * Make the next orphaned inode point back to the our own previous list
++	 * entry
++	 */
++	if (next_orphan != 0) {
++		ret = fuse2fs_update_next_orphan_backlink(ff, prev_orphan, ino,
++							  next_orphan);
++		if (ret)
++			goto out_iput;
++	}
++	ret = 1;
++
++out_iput:
++	fuse4fs_iput(ff, fi);
++	return ret;
++}
++
+ static int fuse4fs_remove_from_orphans(struct fuse4fs *ff, ext2_ino_t ino,
+ 				       struct ext2_inode_large *inode)
+ {
+ 	ext2_filsys fs = ff->fs;
+ 	ext2_ino_t prev_orphan;
++	ext2_ino_t next_orphan;
+ 	errcode_t err;
++	int ret;
+ 
+ 	dbg_printf(ff, "%s: super=%d ino=%d next=%d\n",
+ 		   __func__, fs->super->s_last_orphan, ino, inode->i_dtime);
+ 
+-	/* If we're lucky, the ondisk superblock points to us */
++	/*
++	 * Fast way: use the incore list, which doesn't include any orphans
++	 * that were already on the superblock when we mounted.
++	 */
++	ret = fuse4fs_fast_remove_from_orphans(ff, ino, inode);
++	if (ret < 0)
++		return ret;
++	if (ret == 1)
++		return 0;
++
++	/* Slow way: If we're lucky, the ondisk superblock points to us */
+ 	if (fs->super->s_last_orphan == ino) {
+ 		dbg_printf(ff, "%s: superblock\n", __func__);
+ 
++		next_orphan = inode->i_dtime;
+ 		fs->super->s_last_orphan = inode->i_dtime;
+ 		inode->i_dtime = 0;
+ 		ext2fs_mark_super_dirty(fs);
+-		return 0;
++		return fuse2fs_update_next_orphan_backlink(ff, 0, ino,
++							   next_orphan);
+ 	}
+ 
+ 	/* Otherwise walk the ondisk orphan list. */
+@@ -2212,6 +2380,7 @@ static int fuse4fs_remove_from_orphans(struct fuse4fs *ff, ext2_ino_t ino,
+ 			dbg_printf(ff, "%s: prev=%d\n",
+ 				   __func__, prev_orphan);
+ 
++			next_orphan = inode->i_dtime;
+ 			orphan.i_dtime = inode->i_dtime;
+ 			inode->i_dtime = 0;
+ 
+@@ -2219,7 +2388,8 @@ static int fuse4fs_remove_from_orphans(struct fuse4fs *ff, ext2_ino_t ino,
+ 			if (err)
+ 				return translate_error(fs, prev_orphan, err);
+ 
+-			return 0;
++			return fuse2fs_update_next_orphan_backlink(ff,
++					prev_orphan, ino, next_orphan);
+ 		}
+ 
+ 		dbg_printf(ff, "%s: orphan=%d next=%d\n",
 
 
