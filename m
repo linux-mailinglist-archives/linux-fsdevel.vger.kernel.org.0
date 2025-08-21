@@ -1,171 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-58569-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58570-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2291DB2ECC2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 06:28:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 803CFB2ED67
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 07:04:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2D355E1D3F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 04:28:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CE556807C1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 05:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49A4B29BD88;
-	Thu, 21 Aug 2025 04:28:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B60822A7E2;
+	Thu, 21 Aug 2025 05:04:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="juwRfV9v"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="IZhEjeAs";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vPN3FU6d";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="IZhEjeAs";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vPN3FU6d"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7591B2505AF;
-	Thu, 21 Aug 2025 04:28:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AD753C17
+	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Aug 2025 05:04:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755750494; cv=none; b=XPPl+uEkRzipIFqm+4AFC/8lJF7dZU2qanCEhShAgnEFrDkRTk3A3QOU9vQe0qgxTCCJloWMkh4FHEI2FpUCBIynd5l6B7S9c5Ci43Fj6al170zEUQNzDEPAmC9bH73UP+O59adzQIhx5aYFtQTzm5k8aXt3syxT+w78n2ZhgJw=
+	t=1755752690; cv=none; b=qv8qWkQ44Nr/X3IsjXplvfaLTFw8G4LAnopll0fr7jeTFfIWBgXoui83TW5g3/C7G1VHpa++29gpT6Zr+rtb2c1JalqLQbrHzdE5JNJh5zuZfdC6HsiwClf32sOT/zJrFJwLp8yTG7Zq+qs2PI6VInU6V3BlfnL6YXT4iJ/Jslo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755750494; c=relaxed/simple;
-	bh=RDfnmzzPX++z+63Ey3kzotU4RgnwxVs4lGGAkN3elMs=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=cjj21EMUeHARGz/n7skLvKtT7AZWWGWu7xwISKAyWo2o+DmvonWtOrZUFtJeyManfF/2t4g1+6+gqAD/TfROLzpMln/xvlrz4+amLgE/oenymehJxmoz2+IOkwKtUFYO9yPG3zWGPwAKaDX3eeXsDB/pF3x4+WkJVaomILUQ80A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=juwRfV9v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E897C4CEF4;
-	Thu, 21 Aug 2025 04:28:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1755750494;
-	bh=RDfnmzzPX++z+63Ey3kzotU4RgnwxVs4lGGAkN3elMs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=juwRfV9vhHWViddcXw05roJDr5pxqizoarclX2HveNTDlj5zJRIFaMBeYpokItVYZ
-	 25/2bbWNHVNbZ84ghT1IqO4qD/nEErsZq50cFcfji0BdW4lCaLkCk5hHk7FSuJZZPH
-	 f8rRpa+A4MVo9EgkTQ7DtE5WztLz3CFueToY+9YA=
-Date: Wed, 20 Aug 2025 21:28:12 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: wangzijie <wangzijie1@honor.com>
-Cc: <viro@zeniv.linux.org.uk>, <adobriyan@gmail.com>,
- <rick.p.edgecombe@intel.com>, <ast@kernel.org>, <k.shutemov@gmail.com>,
- <jirislaby@kernel.org>, <linux-fsdevel@vger.kernel.org>,
- <polynomial-c@gmx.de>, <gregkh@linuxfoundation.org>,
- <stable@vger.kernel.org>, <regressions@lists.linux.dev>
-Subject: Re: [PATCH RESEND v2] proc: fix missing pde_set_flags() for net
- proc files
-Message-Id: <20250820212812.566490412bc5e342bd373c4c@linux-foundation.org>
-In-Reply-To: <20250818123102.959595-1-wangzijie1@honor.com>
-References: <20250818123102.959595-1-wangzijie1@honor.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755752690; c=relaxed/simple;
+	bh=34x1qdQH8P+r9MyBaDu1WiwJ13BCxG5ek5aWuksirF4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iV/LdT+vxnBkcolziHkU5HG+JNI4KNvLG74QnJH0dnGwyc+kRaVY5VpAnSPZYIRXDiMA0SiJjmtUdRHSNC4fNhqTP/pAPByXtF0ubqDy3OwCfCophLPE747BEZFrBMoyIwrCsl1nX+v3XIsv8HSmS62lINqC923rUTR2KbN3w54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=IZhEjeAs; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vPN3FU6d; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=IZhEjeAs; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vPN3FU6d; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 5F42021288;
+	Thu, 21 Aug 2025 05:04:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755752687; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IsGVJCXEBAq5aBbSQuh3KsHAn4nHmOhKYCwUt+Knp7E=;
+	b=IZhEjeAscpTbz/3zFvOGadUQnugsv6qpstfvnOxLMxXJLk+odQOk2DvVJWrkQKoOW72KaJ
+	OL8EpRRPRhyrfGADMm8lx4nnXyxvRB47fEJsdVO95zJMfYfLJUzr0SQhp45cb5oesWnvzG
+	2g0BiT8ZqhVSllRG0/2jRNov+ATM6oM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755752687;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IsGVJCXEBAq5aBbSQuh3KsHAn4nHmOhKYCwUt+Knp7E=;
+	b=vPN3FU6dChOOEBcTk7gXZIDxbNP+YfckMyKaOXl/gIbVYmIv1aUCY/q9XP+Uoxr8lWjC88
+	un/V6D82pM2EVCBg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755752687; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IsGVJCXEBAq5aBbSQuh3KsHAn4nHmOhKYCwUt+Knp7E=;
+	b=IZhEjeAscpTbz/3zFvOGadUQnugsv6qpstfvnOxLMxXJLk+odQOk2DvVJWrkQKoOW72KaJ
+	OL8EpRRPRhyrfGADMm8lx4nnXyxvRB47fEJsdVO95zJMfYfLJUzr0SQhp45cb5oesWnvzG
+	2g0BiT8ZqhVSllRG0/2jRNov+ATM6oM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755752687;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IsGVJCXEBAq5aBbSQuh3KsHAn4nHmOhKYCwUt+Knp7E=;
+	b=vPN3FU6dChOOEBcTk7gXZIDxbNP+YfckMyKaOXl/gIbVYmIv1aUCY/q9XP+Uoxr8lWjC88
+	un/V6D82pM2EVCBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0DFDF13867;
+	Thu, 21 Aug 2025 05:04:44 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id IdgdLuyopmiuXgAAD6G6ig
+	(envelope-from <ddiss@suse.de>); Thu, 21 Aug 2025 05:04:44 +0000
+Date: Thu, 21 Aug 2025 15:04:26 +1000
+From: David Disseldorp <ddiss@suse.de>
+To: Nicolas Schier <nsc@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, linux-kbuild@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, oe-kbuild-all@lists.linux.dev,
+ linux-next@vger.kernel.org
+Subject: Re: [PATCH v3 8/8] initramfs_test: add filename padding test case
+Message-ID: <20250821150426.40f14b7f.ddiss@suse.de>
+In-Reply-To: <aKY36YpNQTnd1d7Y@levanger>
+References: <20250819032607.28727-9-ddiss@suse.de>
+	<202508200304.wF1u78il-lkp@intel.com>
+	<20250820111334.51e91938.ddiss@suse.de>
+	<aKY36YpNQTnd1d7Y@levanger>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
+X-Spam-Flag: NO
+X-Spam-Score: -3.30
 
-On Mon, 18 Aug 2025 20:31:02 +0800 wangzijie <wangzijie1@honor.com> wrote:
+On Wed, 20 Aug 2025 23:02:33 +0200, Nicolas Schier wrote:
 
-> To avoid potential UAF issues during module removal races, we use pde_set_flags()
-> to save proc_ops flags in PDE itself before proc_register(), and then use
-> pde_has_proc_*() helpers instead of directly dereferencing pde->proc_ops->*.
+> > >  > 415			.filesize = 0,    
+> > ...  
+> > >    425			.filesize = sizeof(fdata),
+> > >    426		} };  
+> > 
+> > Thanks. I can send a v4 patchset to address this, or otherwise happy to
+> > have line 415 removed by a maintainer when merged.  
 > 
-> However, the pde_set_flags() call was missing when creating net related proc files.
-> This omission caused incorrect behavior which FMODE_LSEEK was being cleared
-> inappropriately in proc_reg_open() for net proc files. Lars reported it in this link[1].
+> With that change:
 > 
-> Fix this by ensuring pde_set_flags() is called when register proc entry, and add
-> NULL check for proc_ops in pde_set_flags().
-> 
-> [1]: https://lore.kernel.org/all/20250815195616.64497967@chagall.paradoxon.rec/
-> 
-> Fixes: ff7ec8dc1b64 ("proc: use the same treatment to check proc_lseek as ones for proc_read_iter et.al)
-> Cc: stable@vger.kernel.org
-> Reported-by: Lars Wendler <polynomial-c@gmx.de>
-> Signed-off-by: wangzijie <wangzijie1@honor.com>
+> Acked-by: Nicolas Schier <nsc@kernel.org>
 
-Could someone(s) please review this?
+Thanks Nicolas!
+Do you have any suggestions regarding how this patchset should proceed -
+would git://git.kernel.org/pub/scm/linux/kernel/git/kbuild/linux.git
+kbuild-next be suitable as a pre-merge-window staging area?
 
-> diff --git a/fs/proc/generic.c b/fs/proc/generic.c
-> index 76e800e38..003031839 100644
-> --- a/fs/proc/generic.c
-> +++ b/fs/proc/generic.c
-> @@ -367,6 +367,23 @@ static const struct inode_operations proc_dir_inode_operations = {
->  	.setattr	= proc_notify_change,
->  };
->  
-> +static void pde_set_flags(struct proc_dir_entry *pde)
-> +{
-> +	if (!pde->proc_ops)
-> +		return;
-> +
-> +	if (pde->proc_ops->proc_flags & PROC_ENTRY_PERMANENT)
-> +		pde->flags |= PROC_ENTRY_PERMANENT;
-> +	if (pde->proc_ops->proc_read_iter)
-> +		pde->flags |= PROC_ENTRY_proc_read_iter;
-> +#ifdef CONFIG_COMPAT
-> +	if (pde->proc_ops->proc_compat_ioctl)
-> +		pde->flags |= PROC_ENTRY_proc_compat_ioctl;
-> +#endif
-> +	if (pde->proc_ops->proc_lseek)
-> +		pde->flags |= PROC_ENTRY_proc_lseek;
-> +}
-> +
->  /* returns the registered entry, or frees dp and returns NULL on failure */
->  struct proc_dir_entry *proc_register(struct proc_dir_entry *dir,
->  		struct proc_dir_entry *dp)
-> @@ -374,6 +391,8 @@ struct proc_dir_entry *proc_register(struct proc_dir_entry *dir,
->  	if (proc_alloc_inum(&dp->low_ino))
->  		goto out_free_entry;
->  
-> +	pde_set_flags(dp);
-> +
->  	write_lock(&proc_subdir_lock);
->  	dp->parent = dir;
->  	if (pde_subdir_insert(dir, dp) == false) {
-> @@ -561,20 +580,6 @@ struct proc_dir_entry *proc_create_reg(const char *name, umode_t mode,
->  	return p;
->  }
->  
-> -static void pde_set_flags(struct proc_dir_entry *pde)
-> -{
-> -	if (pde->proc_ops->proc_flags & PROC_ENTRY_PERMANENT)
-> -		pde->flags |= PROC_ENTRY_PERMANENT;
-> -	if (pde->proc_ops->proc_read_iter)
-> -		pde->flags |= PROC_ENTRY_proc_read_iter;
-> -#ifdef CONFIG_COMPAT
-> -	if (pde->proc_ops->proc_compat_ioctl)
-> -		pde->flags |= PROC_ENTRY_proc_compat_ioctl;
-> -#endif
-> -	if (pde->proc_ops->proc_lseek)
-> -		pde->flags |= PROC_ENTRY_proc_lseek;
-> -}
-> -
->  struct proc_dir_entry *proc_create_data(const char *name, umode_t mode,
->  		struct proc_dir_entry *parent,
->  		const struct proc_ops *proc_ops, void *data)
-> @@ -585,7 +590,6 @@ struct proc_dir_entry *proc_create_data(const char *name, umode_t mode,
->  	if (!p)
->  		return NULL;
->  	p->proc_ops = proc_ops;
-> -	pde_set_flags(p);
->  	return proc_register(parent, p);
->  }
->  EXPORT_SYMBOL(proc_create_data);
-> @@ -636,7 +640,6 @@ struct proc_dir_entry *proc_create_seq_private(const char *name, umode_t mode,
->  	p->proc_ops = &proc_seq_ops;
->  	p->seq_ops = ops;
->  	p->state_size = state_size;
-> -	pde_set_flags(p);
->  	return proc_register(parent, p);
->  }
->  EXPORT_SYMBOL(proc_create_seq_private);
-> @@ -667,7 +670,6 @@ struct proc_dir_entry *proc_create_single_data(const char *name, umode_t mode,
->  		return NULL;
->  	p->proc_ops = &proc_single_ops;
->  	p->single_show = show;
-> -	pde_set_flags(p);
->  	return proc_register(parent, p);
->  }
->  EXPORT_SYMBOL(proc_create_single_data);
-> -- 
-> 2.25.1
-> 
+Cheers, David
 
