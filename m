@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-58562-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58563-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D17E5B2EA9C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 03:24:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29CBBB2EAA0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 03:24:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C450D4E47B0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 01:24:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BB7C5E02D8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 01:24:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55E2B218AC4;
-	Thu, 21 Aug 2025 01:24:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF9CA2192E1;
+	Thu, 21 Aug 2025 01:24:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A1k1nF2Q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XRC6yFqd"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF19020B81B;
-	Thu, 21 Aug 2025 01:24:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EC8920B81B;
+	Thu, 21 Aug 2025 01:24:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755739443; cv=none; b=pUc76Ar9iFMkMFe4B2SdQ+UmVAMXaDkDXsBPVNWiPAXDaEbdr2gLllGHWvGh8dtMDQcgCiL3V6hG+y2761BbCN6dVONAl+OhwJuvxgdwEKS/7nG5+/dsI61fC1AB7mAU3ys51mLrX2HFbvhHdS0IunT8cbRjTTyiVw0pIprmtwk=
+	t=1755739459; cv=none; b=KxGZExkOsbTdARhI9jNdbNKkkDYliTvbdv4LWQh6CDtGe2YBUJi5U59T9FnVW7XaM5KfDzSeKLaIv5kMkTBXAIYbs/voe0bzgGDPFHj2q+Y+aaeLkA/MYhq85CxeUGSwqIwxpHKD0Cjq+rXxJTAEh0d0BJ6Y1cheyVXUJ0lIHvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755739443; c=relaxed/simple;
-	bh=BtgeHQ0V3GS2KYWplr9owAhAadOHkJzfP4WUMSgNtIk=;
+	s=arc-20240116; t=1755739459; c=relaxed/simple;
+	bh=Jg09vQW2AVBFX+bSpdrR6pI0ApRxyywjbnd4+lgnAv4=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=km08bKNmPyTd9jUC+0Ex25Q7IFV+YN7qP0dByUZ9GNDUd+ueYiD5OTznnuSd/0Ok2tg7AyJWM1N3W3LEcBUa1HMTcjCg1T0oHVWr/RNvOT+Stohr754X7PZuOZkuyM74QpOSVLUS90hOPXubimTi+HUGxMpHp+R2Ea+S4KX+Q98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A1k1nF2Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FCAAC4CEE7;
-	Thu, 21 Aug 2025 01:24:03 +0000 (UTC)
+	 MIME-Version:Content-Type; b=PmXZG81JV1lOSFtfRpYiD8Ax9kBRmb2+H74/maobn17vcClSGBMOKB1Q7K6rKo9+Ga5Mu9zM8nWVdJLr9VXnTRxd9uBywzG0IEar1OcuZqNKq7q1Qb17kGxAGGhITj0svIqgIpsQTVRL4h452Z47usE4N9KjavMuJe8C75qM700=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XRC6yFqd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22185C4CEE7;
+	Thu, 21 Aug 2025 01:24:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755739443;
-	bh=BtgeHQ0V3GS2KYWplr9owAhAadOHkJzfP4WUMSgNtIk=;
+	s=k20201202; t=1755739459;
+	bh=Jg09vQW2AVBFX+bSpdrR6pI0ApRxyywjbnd4+lgnAv4=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=A1k1nF2Q1bk5vTowM4pXJVQZuf/ub3PjApkCLeU6zP4KeGoOK733/2n2hJIRD+Cfa
-	 rHPDbweGCYfyudmXYp9yu1GqlQljgnyAMuSjmjcwVNCFLEfQGglsM60Nt//PkN4Cqe
-	 OmYdJbKmKsfikH2vrcEaxIB0Zjw0LPtdY83jPY4buO/gIczi3um7mAI5udHSo9baym
-	 HorDThTXbxiAoCIsGB/VvkVrOHhUZtd0AK3RVTHuWGoBSgcyDyWqT9Iu4fA0hxkNby
-	 A7wxSHiJbNsxVbdd0e+ecXoziB6TuBvdVzv8NNtQexiYcIjCJP7rZe9rNcSi9aPIO9
-	 Kh35Bg0GanSDg==
-Date: Wed, 20 Aug 2025 18:24:02 -0700
-Subject: [PATCH 3/6] iocache: bump buffer mru priority every 50 accesses
+	b=XRC6yFqdtzoBcHEtVh2/CgaZ3rHOc10Sutl9CYSUF50dp1in6NTJk3raT6URGzyB8
+	 kM6yKzwIy4JaabqX/sVsdrfzjibGRIgAFbg8Tc0yKGSPs404z7DuWS1qMB3wCQ89M4
+	 ABVRtoXb0fXjOfx9ILhAyYwer0GTppNkvQth6wfq8QDwjWU7M7ELvOid5s3ni8KPqv
+	 QTMxOCfwt6pLWKaM0knzRmJMeC9Jtv4qKVMHjA7yj0mUifBUixHyCg3xf6+RlTnPN7
+	 07PUCgVmJUJRI6zkX+COMmyHRBSHBuz8DH1ai8qRe+/qJKlMqWT57C7f31ypZRZm7p
+	 mQwDtcECm93vA==
+Date: Wed, 20 Aug 2025 18:24:18 -0700
+Subject: [PATCH 4/6] fuse2fs: enable caching IO manager
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: tytso@mit.edu
 Cc: John@groves.net, bernd@bsbernd.com, linux-fsdevel@vger.kernel.org,
  linux-ext4@vger.kernel.org, miklos@szeredi.hu, joannelkoong@gmail.com,
  neal@gompa.dev
-Message-ID: <175573714739.23206.12116207842770589907.stgit@frogsfrogsfrogs>
+Message-ID: <175573714757.23206.14015594018065840662.stgit@frogsfrogsfrogs>
 In-Reply-To: <175573714661.23206.877359205706511372.stgit@frogsfrogsfrogs>
 References: <175573714661.23206.877359205706511372.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -62,88 +62,343 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-If a buffer is hot enough to survive more than 50 access without being
-reclaimed, bump its priority to the next MRU so it sticks around longer.
+Enable the new dynamic iocache I/O manager in the fuse server, and turn
+off all the other cache control.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- lib/support/cache.h   |    1 +
- lib/support/cache.c   |   16 ++++++++++++++++
- lib/support/iocache.c |    9 +++++++++
- 3 files changed, 26 insertions(+)
+ misc/Makefile.in |    7 ++++-
+ misc/fuse2fs.c   |   71 ++++--------------------------------------------------
+ misc/fuse4fs.c   |   69 ++--------------------------------------------------
+ 3 files changed, 13 insertions(+), 134 deletions(-)
 
 
-diff --git a/lib/support/cache.h b/lib/support/cache.h
-index f482948a3b6331..5a8e19f5d18e78 100644
---- a/lib/support/cache.h
-+++ b/lib/support/cache.h
-@@ -173,5 +173,6 @@ int cache_node_purge(struct cache *, cache_key_t, struct cache_node *);
- void cache_report(FILE *fp, const char *, struct cache *);
- int cache_overflowed(struct cache *);
- struct cache_node *cache_node_grab(struct cache *cache, struct cache_node *node);
-+void cache_node_bump_priority(struct cache *cache, struct cache_node *node);
+diff --git a/misc/Makefile.in b/misc/Makefile.in
+index 36694d682d3b59..8a31b7fc42e643 100644
+--- a/misc/Makefile.in
++++ b/misc/Makefile.in
+@@ -891,7 +891,9 @@ fuse2fs.o: $(srcdir)/fuse2fs.c $(top_builddir)/lib/config.h \
+  $(top_srcdir)/lib/ext2fs/ext2_ext_attr.h $(top_srcdir)/lib/ext2fs/hashmap.h \
+  $(top_srcdir)/lib/ext2fs/bitops.h $(top_srcdir)/lib/ext2fs/ext2fsP.h \
+  $(top_srcdir)/lib/ext2fs/ext2fs.h $(top_srcdir)/version.h \
+- $(top_srcdir)/lib/e2p/e2p.h
++ $(top_srcdir)/lib/e2p/e2p.h $(top_srcdir)/lib/support/cache.h \
++ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/support/xbitops.h \
++ $(top_srcdir)/lib/support/iocache.h
+ fuse4fs.o: $(srcdir)/fuse4fs.c $(top_builddir)/lib/config.h \
+  $(top_builddir)/lib/dirpaths.h $(top_srcdir)/lib/ext2fs/ext2fs.h \
+  $(top_builddir)/lib/ext2fs/ext2_types.h $(top_srcdir)/lib/ext2fs/ext2_fs.h \
+@@ -901,7 +903,8 @@ fuse4fs.o: $(srcdir)/fuse4fs.c $(top_builddir)/lib/config.h \
+  $(top_srcdir)/lib/ext2fs/bitops.h $(top_srcdir)/lib/ext2fs/ext2fsP.h \
+  $(top_srcdir)/lib/ext2fs/ext2fs.h $(top_srcdir)/version.h \
+  $(top_srcdir)/lib/e2p/e2p.h $(top_srcdir)/lib/support/cache.h \
+- $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/support/xbitops.h
++ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/support/xbitops.h \
++ $(top_srcdir)/lib/support/iocache.h
+ e2fuzz.o: $(srcdir)/e2fuzz.c $(top_builddir)/lib/config.h \
+  $(top_builddir)/lib/dirpaths.h $(top_srcdir)/lib/ext2fs/ext2_fs.h \
+  $(top_builddir)/lib/ext2fs/ext2_types.h $(top_srcdir)/lib/ext2fs/ext2fs.h \
+diff --git a/misc/fuse2fs.c b/misc/fuse2fs.c
+index f5d68cc549ad69..d3ac5f7b6627cd 100644
+--- a/misc/fuse2fs.c
++++ b/misc/fuse2fs.c
+@@ -50,6 +50,9 @@
+ #include "ext2fs/ext2fs.h"
+ #include "ext2fs/ext2_fs.h"
+ #include "ext2fs/ext2fsP.h"
++#include "support/list.h"
++#include "support/cache.h"
++#include "support/iocache.h"
+ #if FUSE_VERSION >= FUSE_MAKE_VERSION(3, 0)
+ # define FUSE_PLATFORM_OPTS	""
+ #else
+@@ -290,7 +293,6 @@ struct fuse2fs {
+ 	unsigned int blockmask;
+ 	unsigned long offset;
+ 	unsigned int next_generation;
+-	unsigned long long cache_size;
+ 	char *lockfile;
+ #ifdef HAVE_CLOCK_MONOTONIC
+ 	struct timespec lock_start_time;
+@@ -1122,7 +1124,7 @@ static errcode_t fuse2fs_open(struct fuse2fs *ff, int libext2_flags)
  
- #endif	/* __CACHE_H__ */
-diff --git a/lib/support/cache.c b/lib/support/cache.c
-index 7e1ddc3cc8788d..34df5cb51cd5e4 100644
---- a/lib/support/cache.c
-+++ b/lib/support/cache.c
-@@ -649,6 +649,22 @@ cache_node_put(
- 		cache_shrink(cache);
+ 	dbg_printf(ff, "opening with flags=0x%x\n", flags);
+ 
+-	err = ext2fs_open2(ff->device, options, flags, 0, 0, unix_io_manager,
++	err = ext2fs_open2(ff->device, options, flags, 0, 0, iocache_io_manager,
+ 			   &ff->fs);
+ 	if (err == EPERM) {
+ 		err_printf(ff, "%s.\n",
+@@ -1150,25 +1152,6 @@ static inline bool fuse2fs_on_bdev(const struct fuse2fs *ff)
+ 	return ff->fs->io->flags & CHANNEL_FLAGS_BLOCK_DEVICE;
  }
  
-+/* Bump the priority of a cache node.  Caller must hold cn_mutex. */
-+void
-+cache_node_bump_priority(
-+	struct cache		*cache,
-+	struct cache_node	*node)
-+{
-+	int			*priop;
-+
-+	if (node->cn_priority == CACHE_DIRTY_PRIORITY)
-+		priop = &node->cn_old_priority;
-+	else
-+		priop = &node->cn_priority;
-+	if (*priop < CACHE_MAX_PRIORITY)
-+		(*priop)++;
-+}
-+
- void
- cache_node_set_priority(
- 	struct cache *		cache,
-diff --git a/lib/support/iocache.c b/lib/support/iocache.c
-index ab879e85d18f2a..92d88331bfa54d 100644
---- a/lib/support/iocache.c
-+++ b/lib/support/iocache.c
-@@ -56,6 +56,7 @@ struct iocache_buf {
- 	blk64_t			block;
- 	void			*buf;
- 	errcode_t		write_error;
-+	uint8_t			access;
- 	unsigned int		uptodate:1;
- 	unsigned int		dirty:1;
- };
-@@ -552,6 +553,10 @@ static errcode_t iocache_read_blk64(io_channel channel,
+-static errcode_t fuse2fs_config_cache(struct fuse2fs *ff)
+-{
+-	char buf[128];
+-	errcode_t err;
+-
+-	snprintf(buf, sizeof(buf), "cache_blocks=%llu",
+-		 FUSE2FS_B_TO_FSBT(ff, ff->cache_size));
+-	err = io_channel_set_options(ff->fs->io, buf);
+-	if (err) {
+-		err_printf(ff, "%s %lluk: %s\n",
+-			   _("cannot set disk cache size to"),
+-			   ff->cache_size >> 10,
+-			   error_message(err));
+-		return err;
+-	}
+-
+-	return 0;
+-}
+-
+ static errcode_t fuse2fs_check_support(struct fuse2fs *ff)
+ {
+ 	ext2_filsys fs = ff->fs;
+@@ -6829,7 +6812,6 @@ enum {
+ 	FUSE2FS_VERSION,
+ 	FUSE2FS_HELP,
+ 	FUSE2FS_HELPFULL,
+-	FUSE2FS_CACHE_SIZE,
+ 	FUSE2FS_DIRSYNC,
+ 	FUSE2FS_ERRORS_BEHAVIOR,
+ #ifdef HAVE_FUSE_IOMAP
+@@ -6879,7 +6861,6 @@ static struct fuse_opt fuse2fs_opts[] = {
+ 	FUSE_OPT_KEY("user_xattr",	FUSE2FS_IGNORED),
+ 	FUSE_OPT_KEY("noblock_validity", FUSE2FS_IGNORED),
+ 	FUSE_OPT_KEY("nodelalloc",	FUSE2FS_IGNORED),
+-	FUSE_OPT_KEY("cache_size=%s",	FUSE2FS_CACHE_SIZE),
+ 	FUSE_OPT_KEY("dirsync",		FUSE2FS_DIRSYNC),
+ 	FUSE_OPT_KEY("errors=%s",	FUSE2FS_ERRORS_BEHAVIOR),
+ #ifdef HAVE_FUSE_IOMAP
+@@ -6918,16 +6899,6 @@ static int fuse2fs_opt_proc(void *data, const char *arg,
+ 			return 0;
  		}
- 		if (ubuf->uptodate)
- 			memcpy(buf, ubuf->buf, channel->block_size);
-+		if (++ubuf->access > 50) {
-+			cache_node_bump_priority(&data->cache, node);
-+			ubuf->access = 0;
-+		}
- 		iocache_buf_unlock(ubuf);
- 		cache_node_put(&data->cache, node);
- 		if (retval)
-@@ -613,6 +618,10 @@ static errcode_t iocache_write_blk64(io_channel channel,
- 				     ubuf->uptodate ? CACHE_HIT : CACHE_MISS);
- 		ubuf->dirty = 1;
- 		ubuf->uptodate = 1;
-+		if (++ubuf->access > 50) {
-+			cache_node_bump_priority(&data->cache, node);
-+			ubuf->access = 0;
-+		}
- 		iocache_buf_unlock(ubuf);
- 		cache_node_put(&data->cache, node);
+ 		return 1;
+-	case FUSE2FS_CACHE_SIZE:
+-		ff->cache_size = parse_num_blocks2(arg + 11, -1);
+-		if (ff->cache_size < 1 || ff->cache_size > INT32_MAX) {
+-			fprintf(stderr, "%s: %s\n", arg,
+- _("cache size must be between 1 block and 2GB."));
+-			return -1;
+-		}
+-
+-		/* do not pass through to libfuse */
+-		return 0;
+ 	case FUSE2FS_ERRORS_BEHAVIOR:
+ 		if (strcmp(arg + 7, "continue") == 0)
+ 			ff->errors_behavior = EXT2_ERRORS_CONTINUE;
+@@ -6984,7 +6955,6 @@ static int fuse2fs_opt_proc(void *data, const char *arg,
+ 	"    -o kernel              run this as if it were the kernel, which sets:\n"
+ 	"                           allow_others,default_permissions,suid,dev\n"
+ 	"    -o directio            use O_DIRECT to read and write the disk\n"
+-	"    -o cache_size=N[KMG]   use a disk cache of this size\n"
+ 	"    -o errors=             behavior when an error is encountered:\n"
+ 	"                           continue|remount-ro|panic\n"
+ #ifdef HAVE_FUSE_IOMAP
+@@ -7028,28 +6998,6 @@ static const char *get_subtype(const char *argv0)
+ 	return "ext4";
+ }
+ 
+-/* Figure out a reasonable default size for the disk cache */
+-static unsigned long long default_cache_size(void)
+-{
+-	long pages = 0, pagesize = 0;
+-	unsigned long long max_cache;
+-	unsigned long long ret = 32ULL << 20; /* 32 MB */
+-
+-#ifdef _SC_PHYS_PAGES
+-	pages = sysconf(_SC_PHYS_PAGES);
+-#endif
+-#ifdef _SC_PAGESIZE
+-	pagesize = sysconf(_SC_PAGESIZE);
+-#endif
+-	if (pages > 0 && pagesize > 0) {
+-		max_cache = (unsigned long long)pagesize * pages / 20;
+-
+-		if (max_cache > 0 && ret > max_cache)
+-			ret = max_cache;
+-	}
+-	return ret;
+-}
+-
+ #ifdef HAVE_FUSE_IOMAP
+ static inline bool fuse2fs_discover_iomap(struct fuse2fs *ff)
+ {
+@@ -7170,6 +7118,7 @@ int main(int argc, char *argv[])
+ 		fctx.alloc_all_blocks = 1;
  	}
+ 
++	iocache_set_backing_manager(unix_io_manager);
+ 	err = fuse2fs_open(&fctx, EXT2_FLAG_EXCLUSIVE);
+ 	if (err) {
+ 		ret = 32;
+@@ -7206,16 +7155,6 @@ int main(int argc, char *argv[])
+ 		goto out;
+ 	}
+ 
+-	if (!fctx.cache_size)
+-		fctx.cache_size = default_cache_size();
+-	if (fctx.cache_size) {
+-		err = fuse2fs_config_cache(&fctx);
+-		if (err) {
+-			ret = 32;
+-			goto out;
+-		}
+-	}
+-
+ 	err = fuse2fs_check_support(&fctx);
+ 	if (err) {
+ 		ret = 32;
+diff --git a/misc/fuse4fs.c b/misc/fuse4fs.c
+index 6f03c6a0933a3d..85d73a9088d237 100644
+--- a/misc/fuse4fs.c
++++ b/misc/fuse4fs.c
+@@ -53,6 +53,7 @@
+ #include "ext2fs/ext2fsP.h"
+ #include "support/list.h"
+ #include "support/cache.h"
++#include "support/iocache.h"
+ 
+ #include "../version.h"
+ #include "uuid/uuid.h"
+@@ -286,7 +287,6 @@ struct fuse4fs {
+ 	unsigned int blockmask;
+ 	unsigned long offset;
+ 	unsigned int next_generation;
+-	unsigned long long cache_size;
+ 	char *lockfile;
+ #ifdef HAVE_CLOCK_MONOTONIC
+ 	struct timespec lock_start_time;
+@@ -1281,7 +1281,7 @@ static errcode_t fuse4fs_open(struct fuse4fs *ff, int libext2_flags)
+ 
+ 	dbg_printf(ff, "opening with flags=0x%x\n", flags);
+ 
+-	err = ext2fs_open2(ff->device, options, flags, 0, 0, unix_io_manager,
++	err = ext2fs_open2(ff->device, options, flags, 0, 0, iocache_io_manager,
+ 			   &ff->fs);
+ 	if (err == EPERM) {
+ 		err_printf(ff, "%s.\n",
+@@ -1313,25 +1313,6 @@ static inline bool fuse4fs_on_bdev(const struct fuse4fs *ff)
+ 	return ff->fs->io->flags & CHANNEL_FLAGS_BLOCK_DEVICE;
+ }
+ 
+-static errcode_t fuse4fs_config_cache(struct fuse4fs *ff)
+-{
+-	char buf[128];
+-	errcode_t err;
+-
+-	snprintf(buf, sizeof(buf), "cache_blocks=%llu",
+-		 FUSE4FS_B_TO_FSBT(ff, ff->cache_size));
+-	err = io_channel_set_options(ff->fs->io, buf);
+-	if (err) {
+-		err_printf(ff, "%s %lluk: %s\n",
+-			   _("cannot set disk cache size to"),
+-			   ff->cache_size >> 10,
+-			   error_message(err));
+-		return err;
+-	}
+-
+-	return 0;
+-}
+-
+ static errcode_t fuse4fs_check_support(struct fuse4fs *ff)
+ {
+ 	ext2_filsys fs = ff->fs;
+@@ -7113,7 +7094,6 @@ enum {
+ 	FUSE4FS_VERSION,
+ 	FUSE4FS_HELP,
+ 	FUSE4FS_HELPFULL,
+-	FUSE4FS_CACHE_SIZE,
+ 	FUSE4FS_DIRSYNC,
+ 	FUSE4FS_ERRORS_BEHAVIOR,
+ #ifdef HAVE_FUSE_IOMAP
+@@ -7163,7 +7143,6 @@ static struct fuse_opt fuse4fs_opts[] = {
+ 	FUSE_OPT_KEY("user_xattr",	FUSE4FS_IGNORED),
+ 	FUSE_OPT_KEY("noblock_validity", FUSE4FS_IGNORED),
+ 	FUSE_OPT_KEY("nodelalloc",	FUSE4FS_IGNORED),
+-	FUSE_OPT_KEY("cache_size=%s",	FUSE4FS_CACHE_SIZE),
+ 	FUSE_OPT_KEY("dirsync",		FUSE4FS_DIRSYNC),
+ 	FUSE_OPT_KEY("errors=%s",	FUSE4FS_ERRORS_BEHAVIOR),
+ #ifdef HAVE_FUSE_IOMAP
+@@ -7202,16 +7181,6 @@ static int fuse4fs_opt_proc(void *data, const char *arg,
+ 			return 0;
+ 		}
+ 		return 1;
+-	case FUSE4FS_CACHE_SIZE:
+-		ff->cache_size = parse_num_blocks2(arg + 11, -1);
+-		if (ff->cache_size < 1 || ff->cache_size > INT32_MAX) {
+-			fprintf(stderr, "%s: %s\n", arg,
+- _("cache size must be between 1 block and 2GB."));
+-			return -1;
+-		}
+-
+-		/* do not pass through to libfuse */
+-		return 0;
+ 	case FUSE4FS_ERRORS_BEHAVIOR:
+ 		if (strcmp(arg + 7, "continue") == 0)
+ 			ff->errors_behavior = EXT2_ERRORS_CONTINUE;
+@@ -7268,7 +7237,6 @@ static int fuse4fs_opt_proc(void *data, const char *arg,
+ 	"    -o kernel              run this as if it were the kernel, which sets:\n"
+ 	"                           allow_others,default_permissions,suid,dev\n"
+ 	"    -o directio            use O_DIRECT to read and write the disk\n"
+-	"    -o cache_size=N[KMG]   use a disk cache of this size\n"
+ 	"    -o errors=             behavior when an error is encountered:\n"
+ 	"                           continue|remount-ro|panic\n"
+ #ifdef HAVE_FUSE_IOMAP
+@@ -7311,28 +7279,6 @@ static const char *get_subtype(const char *argv0)
+ 	return "ext4";
+ }
+ 
+-/* Figure out a reasonable default size for the disk cache */
+-static unsigned long long default_cache_size(void)
+-{
+-	long pages = 0, pagesize = 0;
+-	unsigned long long max_cache;
+-	unsigned long long ret = 32ULL << 20; /* 32 MB */
+-
+-#ifdef _SC_PHYS_PAGES
+-	pages = sysconf(_SC_PHYS_PAGES);
+-#endif
+-#ifdef _SC_PAGESIZE
+-	pagesize = sysconf(_SC_PAGESIZE);
+-#endif
+-	if (pages > 0 && pagesize > 0) {
+-		max_cache = (unsigned long long)pagesize * pages / 20;
+-
+-		if (max_cache > 0 && ret > max_cache)
+-			ret = max_cache;
+-	}
+-	return ret;
+-}
+-
+ #ifdef HAVE_FUSE_IOMAP
+ static inline bool fuse4fs_discover_iomap(struct fuse4fs *ff)
+ {
+@@ -7554,6 +7500,7 @@ int main(int argc, char *argv[])
+ 		fctx.alloc_all_blocks = 1;
+ 	}
+ 
++	iocache_set_backing_manager(unix_io_manager);
+ 	err = fuse4fs_open(&fctx, EXT2_FLAG_EXCLUSIVE);
+ 	if (err) {
+ 		ret = 32;
+@@ -7603,16 +7550,6 @@ int main(int argc, char *argv[])
+ 		fctx.translate_inums = 0;
+ 	}
+ 
+-	if (!fctx.cache_size)
+-		fctx.cache_size = default_cache_size();
+-	if (fctx.cache_size) {
+-		err = fuse4fs_config_cache(&fctx);
+-		if (err) {
+-			ret = 32;
+-			goto out;
+-		}
+-	}
+-
+ 	err = fuse4fs_check_support(&fctx);
+ 	if (err) {
+ 		ret = 32;
 
 
