@@ -1,54 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-58539-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58540-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5DC8B2EA74
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 03:20:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA11BB2EA65
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 03:18:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54C755E0E79
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 01:18:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A55D41C237A6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 01:18:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA20B1FAC42;
-	Thu, 21 Aug 2025 01:18:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2734B1F9A89;
+	Thu, 21 Aug 2025 01:18:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zuq5y0YW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p0ChXSR1"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4148636CE02;
-	Thu, 21 Aug 2025 01:18:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8471F36CE02;
+	Thu, 21 Aug 2025 01:18:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755739084; cv=none; b=cxwlNsQqBP+eyVp022nsKT+ERBzBR7Om4Fu5ki1xgfzEJNa0rVQBjU5ZReL9Edvne6DXm+W0qaSJA2y9+GsWimKClGYx8k4vlgWeFLRANCmGH/fzeABz3qYUXTNng+EDXm7mSIjNAIJ99xypxKOVW4E4hbHp+6Ie1dAzZe/asTA=
+	t=1755739099; cv=none; b=TobQAkkbRBNaOPJXS5WdDcjWbDSKoQs2nlc8JzdbBFZpOl8d3FTegkRoOzBbjyagGQdMWSsrEejziZQoTXlB7kvmleNsyRcKXupss4IUTMrm/inDYAnsbiH+Jos0NhUfGjAGUUxEVZnLgIV5lZDtkCCQBkiZ6LoIX9OmLBT/e2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755739084; c=relaxed/simple;
-	bh=geMGclj+G3S+zniYTxarX14FrdNwelJDGvlS3TzV4nQ=;
+	s=arc-20240116; t=1755739099; c=relaxed/simple;
+	bh=muvZo+H/gQjNtsUUjd2MzO03K6bEwjdULby8divz+N0=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=r2c4m5LK+0aDCCErORtyQFl3cYXAI5/BNX7CSI3Xr1U1X5sG5s0PEY3pb7nAebwXq/bGYydguxPeKJGD+u4+ACfhEcykMvNOkt0o+FgXEXq4UpNfxhYUVVUOy9Vu/KX7O0wNrgNLvKFwr7SCGJI6r468soi/iG+MOgc44Z3tdYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zuq5y0YW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEF00C4CEE7;
-	Thu, 21 Aug 2025 01:18:03 +0000 (UTC)
+	 MIME-Version:Content-Type; b=pbIlswbrouxENNOrtLfeXOfT2wGQkOMMIp/9mtyw4gv88nY6IdNTNrDverZFhKCaJ7eer38Ip1kNf3akQNqQXhSPvK9LGWa0SohVmcLFHj5jF0otHPvYWIwkElOi8XEGYgAqByWKTAubtEE6p5tCn5Ud3W5K5bcpasPx1spjkLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p0ChXSR1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AC73C4CEE7;
+	Thu, 21 Aug 2025 01:18:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755739083;
-	bh=geMGclj+G3S+zniYTxarX14FrdNwelJDGvlS3TzV4nQ=;
+	s=k20201202; t=1755739099;
+	bh=muvZo+H/gQjNtsUUjd2MzO03K6bEwjdULby8divz+N0=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=Zuq5y0YWfHhwZYw1pKufA5mjYZO0UzHPO0TkqkQ5zwZv+XL0xJkT0MW9mkXtcguNg
-	 9T/OGkDoTjGx64lPhRace7K/Xq0v6Cu+thUQ4AUEMsTxl3qeOdkiPmzO20dv7+Mmiz
-	 Do4ZPq78DeUqbqbJAW4I8mL7HUwIIMaDBGoJVdBkk1qcoxtOyTBrm2ELP4GeV/hxA3
-	 YkaOI9rgixHMhlBE0JAzByLVLUxoqwpiC21APYP9An52uALyK7TsNTW7JcCdYfFJTU
-	 jLCiwnRlRBY5eujd3uI2D1SK4l7LgiLgI4LVI1rjgwP6yxdLPF+WrZg5BSjTZgZnA3
-	 rRhVusNsPvvhA==
-Date: Wed, 20 Aug 2025 18:18:03 -0700
-Subject: [PATCH 09/19] fuse2fs: don't zero bytes in punch hole
+	b=p0ChXSR1Ki3bXFU/mvLmHTPHM36BlfRv9BQQCqAG1lCQl1HaVDcehkbw+rFSLnwLb
+	 S9UaNPmAIJ2LRJ94u0OuTeyZRlDAMytfr52xgLfxdf3ZDfUVLFOr2B5xCy6OCvWyjm
+	 tKiWdhUMAWIu98OWJqyQwZeWzoa+s4bjKAyDd1uPvaMKCxP9v5DEK6c1AYdoRTEQ1y
+	 X0VIAiFfQeb+E49GwFdeTU7oFZS/AEgAwnf5AB4myeIeBXm7Ut0scfMF/E5Waq27r/
+	 VzQJyapTXVLOwFiyENfWSf6DgCNU6HCEOQ7DFa/UPnzzDGuF3Ww9RI8uAQ0klD6KrN
+	 Il42I+SN60FPQ==
+Date: Wed, 20 Aug 2025 18:18:18 -0700
+Subject: [PATCH 10/19] fuse2fs: don't do file data block IO when iomap is
+ enabled
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: tytso@mit.edu
 Cc: John@groves.net, bernd@bsbernd.com, linux-fsdevel@vger.kernel.org,
  linux-ext4@vger.kernel.org, miklos@szeredi.hu, joannelkoong@gmail.com,
  neal@gompa.dev
-Message-ID: <175573713892.21970.18164422790433615852.stgit@frogsfrogsfrogs>
+Message-ID: <175573713910.21970.597991894155936504.stgit@frogsfrogsfrogs>
 In-Reply-To: <175573713645.21970.9783397720493472605.stgit@frogsfrogsfrogs>
 References: <175573713645.21970.9783397720493472605.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -62,76 +63,148 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-When iomap is in use for the pagecache, it will take care of zeroing the
-unaligned parts of punched out regions so we don't have to do it
-ourselves.
+When iomap is in use for the page cache, the kernel will take care of
+all the file data block IO for us, including zeroing of punched ranges
+and post-EOF bytes.  fuse2fs only needs to do IO for inline data.
+
+Therefore, set the NOBLOCKIO ext2_file flag so that libext2fs will not
+do any regular file IO to or from disk blocks at all.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- misc/fuse2fs.c |    9 +++++++++
- misc/fuse4fs.c |    8 ++++++++
- 2 files changed, 17 insertions(+)
+ misc/fuse2fs.c |   72 +++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ misc/fuse4fs.c |   11 ++++++++-
+ 2 files changed, 81 insertions(+), 2 deletions(-)
 
 
 diff --git a/misc/fuse2fs.c b/misc/fuse2fs.c
-index 895addcbc59e04..dcf002f380b843 100644
+index dcf002f380b843..588b0053f43c95 100644
 --- a/misc/fuse2fs.c
 +++ b/misc/fuse2fs.c
-@@ -576,6 +576,7 @@ static inline int fuse2fs_iomap_enabled(const struct fuse2fs *ff)
+@@ -3158,15 +3158,72 @@ static int fuse2fs_punch_posteof(struct fuse2fs *ff, ext2_ino_t ino,
+ 	return 0;
  }
- #else
- # define fuse2fs_iomap_enabled(...)	(0)
-+# define fuse2fs_iomap_enabled(...)	(0)
- #endif
  
- static inline void fuse2fs_dump_extents(struct fuse2fs *ff, ext2_ino_t ino,
-@@ -4857,6 +4858,10 @@ static errcode_t clean_block_middle(struct fuse2fs *ff, ext2_ino_t ino,
- 	int retflags;
- 	errcode_t err;
- 
-+	/* the kernel does this for us in iomap mode */
-+	if (fuse2fs_iomap_enabled(ff))
++/*
++ * Decide if file IO for this inode can use iomap.
++ *
++ * It turns out that libfuse creates internal node ids that have nothing to do
++ * with the ext2_ino_t that we give it.  These internal node ids are what
++ * actually gets igetted in the kernel, which means that there can be multiple
++ * fuse_inode objects in the kernel for a single hardlinked ondisk ext2 inode.
++ *
++ * What this means, horrifyingly, is that on a fuse filesystem that supports
++ * hard links, the in-kernel i_rwsem does not protect against concurrent writes
++ * between files that point to the same inode.  That in turn means that the
++ * file mode and size can get desynchronized between the multiple fuse_inode
++ * objects.  This also means that we cannot cache iomaps in the kernel AT ALL
++ * because the caches will get out of sync, leading to WARN_ONs from the iomap
++ * zeroing code and probably data corruption after that.
++ *
++ * Therefore, libfuse won't let us create hardlinks of iomap files, and we must
++ * never turn on iomap for existing hardlinked files.  Long term it means we
++ * have to find a way around this loss of functionality.  fuse4fs gets around
++ * this by being a low level fuse driver and controlling the nodeids itself.
++ *
++ * Returns 0 for no, 1 for yes, or a negative errno.
++ */
++#ifdef HAVE_FUSE_IOMAP
++static int fuse2fs_file_uses_iomap(struct fuse2fs *ff, ext2_ino_t ino)
++{
++	struct stat statbuf;
++	int ret;
++
++	if (!fuse2fs_iomap_enabled(ff))
 +		return 0;
 +
- 	if (!*buf) {
- 		err = ext2fs_get_mem(fs->blocksize, buf);
- 		if (err)
-@@ -4893,6 +4898,10 @@ static errcode_t clean_block_edge(struct fuse2fs *ff, ext2_ino_t ino,
- 	off_t residue;
- 	errcode_t err;
- 
-+	/* the kernel does this for us in iomap mode */
-+	if (fuse2fs_iomap_enabled(ff))
-+		return 0;
++	ret = stat_inode(ff->fs, ino, &statbuf);
++	if (ret)
++		return ret;
 +
- 	residue = FUSE2FS_OFF_IN_FSB(ff, offset);
- 	if (residue == 0)
- 		return 0;
++	/* the kernel handles all block IO for us in iomap mode */
++	return fuse_fs_can_enable_iomap(&statbuf);
++}
++#else
++# define fuse2fs_file_uses_iomap(...)	(0)
++#endif
++
+ static int fuse2fs_truncate(struct fuse2fs *ff, ext2_ino_t ino, off_t new_size)
+ {
+ 	ext2_filsys fs = ff->fs;
+ 	ext2_file_t file;
+ 	__u64 old_isize;
+ 	errcode_t err;
++	int flags = EXT2_FILE_WRITE;
+ 	int ret = 0;
+ 
+-	err = ext2fs_file_open(fs, ino, EXT2_FILE_WRITE, &file);
++	/* the kernel handles all eof zeroing for us in iomap mode */
++	ret = fuse2fs_file_uses_iomap(ff, ino);
++	switch (ret) {
++	case 0:
++		break;
++	case 1:
++		flags |= EXT2_FILE_NOBLOCKIO;
++		ret = 0;
++		break;
++	default:
++		return ret;
++	}
++
++	err = ext2fs_file_open(fs, ino, flags, &file);
+ 	if (err)
+ 		return translate_error(fs, ino, err);
+ 
+@@ -3324,6 +3381,19 @@ static int __op_open(struct fuse2fs *ff, const char *path,
+ 			goto out;
+ 	}
+ 
++	/* the kernel handles all block IO for us in iomap mode */
++	ret = fuse2fs_file_uses_iomap(ff, file->ino);
++	switch (ret) {
++	case 0:
++		break;
++	case 1:
++		file->open_flags |= EXT2_FILE_NOBLOCKIO;
++		ret = 0;
++		break;
++	default:
++		goto out;
++	}
++
+ 	if (fp->flags & O_TRUNC) {
+ 		ret = fuse2fs_truncate(ff, file->ino, 0);
+ 		if (ret)
 diff --git a/misc/fuse4fs.c b/misc/fuse4fs.c
-index 2373c5a371e2b0..3082c23e398adf 100644
+index 3082c23e398adf..e08c5af5abfd27 100644
 --- a/misc/fuse4fs.c
 +++ b/misc/fuse4fs.c
-@@ -5265,6 +5265,10 @@ static errcode_t fuse4fs_zero_middle(struct fuse4fs *ff, ext2_ino_t ino,
- 	int retflags;
+@@ -3375,9 +3375,14 @@ static int fuse4fs_truncate(struct fuse4fs *ff, ext2_ino_t ino, off_t new_size)
+ 	ext2_file_t file;
+ 	__u64 old_isize;
  	errcode_t err;
++	int flags = EXT2_FILE_WRITE;
+ 	int ret = 0;
  
-+	/* the kernel does this for us in iomap mode */
+-	err = ext2fs_file_open(fs, ino, EXT2_FILE_WRITE, &file);
++	/* the kernel handles all eof zeroing for us in iomap mode */
 +	if (fuse4fs_iomap_enabled(ff))
-+		return 0;
++		flags |= EXT2_FILE_NOBLOCKIO;
 +
- 	if (!*buf) {
- 		err = ext2fs_get_mem(fs->blocksize, buf);
- 		if (err)
-@@ -5301,6 +5305,10 @@ static errcode_t fuse4fs_zero_edge(struct fuse4fs *ff, ext2_ino_t ino,
- 	off_t residue;
- 	errcode_t err;
++	err = ext2fs_file_open(fs, ino, flags, &file);
+ 	if (err)
+ 		return translate_error(fs, ino, err);
  
-+	/* the kernel does this for us in iomap mode */
+@@ -3472,6 +3477,10 @@ static int fuse4fs_open_file(struct fuse4fs *ff, const struct fuse_ctx *ctxt,
+ 	if (linked)
+ 		check |= L_OK;
+ 
++	/* the kernel handles all block IO for us in iomap mode */
 +	if (fuse4fs_iomap_enabled(ff))
-+		return 0;
++		file->open_flags |= EXT2_FILE_NOBLOCKIO;
 +
- 	residue = FUSE4FS_OFF_IN_FSB(ff, offset);
- 	if (residue == 0)
- 		return 0;
+ 	/*
+ 	 * If the caller wants to truncate the file, we need to ask for full
+ 	 * write access even if the caller claims to be appending.
 
 
