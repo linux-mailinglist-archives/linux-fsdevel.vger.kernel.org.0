@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-58542-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58543-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D904DB2EA77
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 03:20:25 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43816B2EA6A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 03:19:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 403EA5E4FCC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 01:18:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 02D254E366A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 01:19:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65AE21F463B;
-	Thu, 21 Aug 2025 01:18:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5D21F463B;
+	Thu, 21 Aug 2025 01:19:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QFuiVj0N"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kpvhZ/Zb"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24CE1CAA92;
-	Thu, 21 Aug 2025 01:18:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B771D36CE02;
+	Thu, 21 Aug 2025 01:19:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755739130; cv=none; b=jORmi6riXE62LDCJHXlRf+mkq9ICJJOIK4yEeTsfk/tQD7JAULwp02YoQ4n7GR276v3NF8S/6MS/7rsxCRkGZ+tdkpO/Fx2ew8rAt4apZvs8xXE8j6XEQLb9jLm6x0AXICxxrwZA96T5yBw6yu68+lS8l9XhIeqgfHZImZOPF9M=
+	t=1755739146; cv=none; b=jL6JMw7LiclQBtnzp3QQC8EqGH1hl+OY8HzmE1qtfsxBqv/Il5QEHYgbW8ULDQv5p2E79cCVaQy22mE0/kDqID+LU4OlqkpelsoaSA38idaD5eWRhavyIlKam8R9QL5OqkqLQv33PoAUvbUJRMaK4Gj8Lxgznh1JSKwdMYr5d2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755739130; c=relaxed/simple;
-	bh=Q1taKmFXXyT3dKN1BCsgRDSVhZOTaQzSic6s4biQqnw=;
+	s=arc-20240116; t=1755739146; c=relaxed/simple;
+	bh=i/QGbXZHUQ1n19/dIs2qFKU0cNt4lhICYxxB60yjeqY=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MWf5xebjyVrBcJHasRs0Vy/9vo4eNC3J8V85WrpGqwJIsn6xaUoepwnVnI970DFpLWfZRpLyRnTA0UfarWmf/ZtNoi2Q1Au3As+/ZejfNG+rOd13bRzrWs+wrAAPE4oBvw5ufuiCjNRy3bb7E6JacaKT09nJxx1wkn9dzkVjCXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QFuiVj0N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97435C4CEE7;
-	Thu, 21 Aug 2025 01:18:50 +0000 (UTC)
+	 MIME-Version:Content-Type; b=E2w64zhUm68DFAcBnuz0wwUvjI9YKZSA7XDgafr72zF3YL9Jw8ck3lF5LHFM68tliY6VTBQJKUzgdw3AHFoOD71/fpFgu87HFfIRunBt2G1+9rEhOL8iKmGUqaAyWlShEKmVjuyB/mi7aiD28LPS3K04kjYsRdkRNn1LzP/f/pQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kpvhZ/Zb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34E8BC4CEE7;
+	Thu, 21 Aug 2025 01:19:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755739130;
-	bh=Q1taKmFXXyT3dKN1BCsgRDSVhZOTaQzSic6s4biQqnw=;
+	s=k20201202; t=1755739146;
+	bh=i/QGbXZHUQ1n19/dIs2qFKU0cNt4lhICYxxB60yjeqY=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=QFuiVj0Ncjspc2fiQ97vzBh7z6WWFE6Ht2a0amO74VlMD/OCvlZfotd9l7Y9/fgwj
-	 1s+IKdSJvzotE3DDmK2QJV106VX4MdnhsE+6LCJZVg8N+7wHkRszTlF3YGgIeJAX+y
-	 6t1ITMcavKCJqyG+eMYBamxsRcWbUZrS9n0yb8cxWEWw6/dJDrk8DAdsIXwLG1Fwrb
-	 vqMZi8rA/FJGN90Z5rI1R/cIjI78ykuqGk7V53Ie5DYkLlqA8eRJXHIl/CV7WX8db0
-	 d2pIjj1H/OiA9AiNKZ+djipn34vYmgtPISPXdEzVnAy2vH6j+gvRMg+MIXQ/V8GrDa
-	 2XPYWZZNHqr0g==
-Date: Wed, 20 Aug 2025 18:18:50 -0700
-Subject: [PATCH 12/19] fuse2fs: enable file IO to inline data files
+	b=kpvhZ/ZbKDKkVffPC9pWhP+LsrELwBC5A4s7+Rcuatd2FnuSP07/3Q69pH4jf+fMs
+	 HubYF07wphvTECG6JyErVA0JD3DECNDEOGAeiZEPRx0qKG3Xvp+r5sh2YAjGSly4/D
+	 GTOtPitPLFMXPHqT9yBqgoprtBYwAaScueU0jmMpOjMaOvLm4kqMvxq7LZEZwKIEpZ
+	 7NE/PdFnIdRlyPE5Bl2cu4tdT5UeH3v8qKaaqWAXbL1z65plkUgMv0WXxCuuN7zsZC
+	 A0HI8EOZQO3xDFxdIkZjxXJkgpVehpY6bUJvx9MiNXMyIUsQIZyyoAew0Lauiptkdy
+	 hlPia9IFHE7xQ==
+Date: Wed, 20 Aug 2025 18:19:05 -0700
+Subject: [PATCH 13/19] fuse2fs: set iomap-related inode flags
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: tytso@mit.edu
 Cc: John@groves.net, bernd@bsbernd.com, linux-fsdevel@vger.kernel.org,
  linux-ext4@vger.kernel.org, miklos@szeredi.hu, joannelkoong@gmail.com,
  neal@gompa.dev
-Message-ID: <175573713947.21970.1566678961444283000.stgit@frogsfrogsfrogs>
+Message-ID: <175573713965.21970.7942804309936907088.stgit@frogsfrogsfrogs>
 In-Reply-To: <175573713645.21970.9783397720493472605.stgit@frogsfrogsfrogs>
 References: <175573713645.21970.9783397720493472605.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -62,127 +62,162 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Enable file reads and writes from inline data files.
+Set FUSE_IFLAG_* when we do a getattr, so that all files will have iomap
+enabled.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- misc/fuse2fs.c |   42 ++++++++++++++++++++++++++++++++++++++++--
- misc/fuse4fs.c |    3 ++-
- 2 files changed, 42 insertions(+), 3 deletions(-)
+ misc/fuse2fs.c |   20 ++++++++++++++++++++
+ misc/fuse4fs.c |   46 +++++++++++++++++++++++++++++++++++-----------
+ 2 files changed, 55 insertions(+), 11 deletions(-)
 
 
 diff --git a/misc/fuse2fs.c b/misc/fuse2fs.c
-index 97b010b8dc1055..fc83d2d21c600b 100644
+index fc83d2d21c600b..291416afb93d6c 100644
 --- a/misc/fuse2fs.c
 +++ b/misc/fuse2fs.c
-@@ -1472,7 +1472,16 @@ static void *op_init(struct fuse_conn_info *conn
- 	cfg->use_ino = 1;
- 	if (ff->debug)
- 		cfg->debug = 1;
--	cfg->nullpath_ok = 1;
+@@ -1620,6 +1620,23 @@ static int op_getattr(const char *path, struct stat *statbuf
+ 	return ret;
+ }
+ 
++#if FUSE_VERSION >= FUSE_MAKE_VERSION(3, 99)
++static int op_getattr_iflags(const char *path, struct stat *statbuf,
++			     unsigned int *iflags, struct fuse_file_info *fi)
++{
++	int ret = op_getattr(path, statbuf, fi);
 +
-+	/*
-+	 * Inline data file io depends on op_read/write being fed a path, so we
-+	 * have to slow everyone down to look up the path from the nodeid.
-+	 */
-+	if (fuse2fs_iomap_enabled(ff) &&
-+	    ext2fs_has_feature_inline_data(ff->fs->super))
-+		cfg->nullpath_ok = 0;
-+	else
-+		cfg->nullpath_ok = 1;
++	if (ret)
++		return ret;
++
++	if (fuse_fs_can_enable_iomap(statbuf))
++		*iflags |= FUSE_IFLAG_IOMAP;
++
++	return 0;
++}
++#endif
++
++
+ static int op_readlink(const char *path, char *buf, size_t len)
+ {
+ 	struct fuse2fs *ff = fuse2fs_get();
+@@ -6339,6 +6356,9 @@ static struct fuse_operations fs_ops = {
+ 	.fallocate = op_fallocate,
+ # endif
  #endif
- 
- 	if (ff->kernel) {
-@@ -3427,6 +3436,9 @@ static int op_read(const char *path EXT2FS_ATTR((unused)), char *buf,
- 		   size_t len, off_t offset,
- 		   struct fuse_file_info *fp)
- {
-+	struct fuse2fs_file_handle fhurk = {
-+		.magic = FUSE2FS_FILE_MAGIC,
-+	};
- 	struct fuse2fs *ff = fuse2fs_get();
- 	struct fuse2fs_file_handle *fh = fuse2fs_get_handle(fp);
- 	ext2_filsys fs;
-@@ -3436,10 +3448,21 @@ static int op_read(const char *path EXT2FS_ATTR((unused)), char *buf,
- 	int ret = 0;
- 
- 	FUSE2FS_CHECK_CONTEXT(ff);
-+
-+	if (!fh)
-+		fh = &fhurk;
-+
- 	FUSE2FS_CHECK_HANDLE(ff, fh);
- 	dbg_printf(ff, "%s: ino=%d off=0x%llx len=0x%zx\n", __func__, fh->ino,
- 		   (unsigned long long)offset, len);
- 	fs = fuse2fs_start(ff);
-+
-+	if (fh == &fhurk) {
-+		ret = fuse2fs_file_ino(ff, path, NULL, &fhurk.ino);
-+		if (ret)
-+			goto out;
-+	}
-+
- 	err = ext2fs_file_open(fs, fh->ino, fh->open_flags, &efp);
- 	if (err) {
- 		ret = translate_error(fs, fh->ino, err);
-@@ -3481,6 +3504,10 @@ static int op_write(const char *path EXT2FS_ATTR((unused)),
- 		    const char *buf, size_t len, off_t offset,
- 		    struct fuse_file_info *fp)
- {
-+	struct fuse2fs_file_handle fhurk = {
-+		.magic = FUSE2FS_FILE_MAGIC,
-+		.open_flags = EXT2_FILE_WRITE,
-+	};
- 	struct fuse2fs *ff = fuse2fs_get();
- 	struct fuse2fs_file_handle *fh = fuse2fs_get_handle(fp);
- 	ext2_filsys fs;
-@@ -3490,6 +3517,10 @@ static int op_write(const char *path EXT2FS_ATTR((unused)),
- 	int ret = 0;
- 
- 	FUSE2FS_CHECK_CONTEXT(ff);
-+
-+	if (!fh)
-+		fh = &fhurk;
-+
- 	FUSE2FS_CHECK_HANDLE(ff, fh);
- 	dbg_printf(ff, "%s: ino=%d off=0x%llx len=0x%zx\n", __func__, fh->ino,
- 		   (unsigned long long) offset, len);
-@@ -3504,6 +3535,12 @@ static int op_write(const char *path EXT2FS_ATTR((unused)),
- 		goto out;
- 	}
- 
-+	if (fh == &fhurk) {
-+		ret = fuse2fs_file_ino(ff, path, NULL, &fhurk.ino);
-+		if (ret)
-+			goto out;
-+	}
-+
- 	err = ext2fs_file_open(fs, fh->ino, fh->open_flags, &efp);
- 	if (err) {
- 		ret = translate_error(fs, fh->ino, err);
-@@ -5511,7 +5548,8 @@ static int fuse2fs_iomap_begin_read(struct fuse2fs *ff, ext2_ino_t ino,
- {
- 	/* fall back to slow path for inline data reads */
- 	if (inode->i_flags & EXT4_INLINE_DATA_FL)
--		return -ENOSYS;
-+		return fuse2fs_iomap_begin_inline(ff, ino, inode, pos, count,
-+						  read);
- 
- 	if (inode->i_flags & EXT4_EXTENTS_FL)
- 		return fuse2fs_iomap_begin_extent(ff, ino, inode, pos, count,
++#if FUSE_VERSION >= FUSE_MAKE_VERSION(3, 99)
++	.getattr_iflags = op_getattr_iflags,
++#endif
+ #ifdef HAVE_FUSE_IOMAP
+ 	.iomap_begin = op_iomap_begin,
+ 	.iomap_end = op_iomap_end,
 diff --git a/misc/fuse4fs.c b/misc/fuse4fs.c
-index 3bb6140b35570e..6de9f69d05de0b 100644
+index 6de9f69d05de0b..37a7ab3a3718e4 100644
 --- a/misc/fuse4fs.c
 +++ b/misc/fuse4fs.c
-@@ -5857,7 +5857,8 @@ static int fuse4fs_iomap_begin_read(struct fuse4fs *ff, ext2_ino_t ino,
- {
- 	/* fall back to slow path for inline data reads */
- 	if (inode->i_flags & EXT4_INLINE_DATA_FL)
--		return -ENOSYS;
-+		return fuse4fs_iomap_begin_inline(ff, ino, inode, pos, count,
-+						  read);
+@@ -1659,6 +1659,7 @@ static void op_init(void *userdata, struct fuse_conn_info *conn)
  
- 	if (inode->i_flags & EXT4_EXTENTS_FL)
- 		return fuse4fs_iomap_begin_extent(ff, ino, inode, pos, count,
+ struct fuse4fs_stat {
+ 	struct fuse_entry_param	entry;
++	unsigned int iflags;
+ };
+ 
+ static int fuse4fs_stat_inode(struct fuse4fs *ff, ext2_ino_t ino,
+@@ -1724,9 +1725,29 @@ static int fuse4fs_stat_inode(struct fuse4fs *ff, ext2_ino_t ino,
+ 	entry->attr_timeout = FUSE4FS_ATTR_TIMEOUT;
+ 	entry->entry_timeout = FUSE4FS_ATTR_TIMEOUT;
+ 
++	fstat->iflags = 0;
++#ifdef HAVE_FUSE_IOMAP
++	if (fuse4fs_iomap_enabled(ff))
++		fstat->iflags |= FUSE_IFLAG_IOMAP;
++#endif
++
+ 	return 0;
+ }
+ 
++#if FUSE_VERSION < FUSE_MAKE_VERSION(3, 99)
++#define fuse_reply_entry_iflags(req, entry, iflags) \
++	fuse_reply_entry((req), (entry))
++
++#define fuse_reply_attr_iflags(req, entry, iflags, timeout) \
++	fuse_reply_attr((req), (entry), (timeout))
++
++#define fuse_add_direntry_plus_iflags(req, buf, sz, name, iflags, entry, dirpos) \
++	fuse_add_direntry_plus((req), (buf), (sz), (name), (entry), (dirpos))
++
++#define fuse_reply_create_iflags(req, entry, iflags, fp) \
++	fuse_reply_create((req), (entry), (fp))
++#endif
++
+ static void op_lookup(fuse_req_t req, fuse_ino_t fino, const char *name)
+ {
+ 	struct fuse4fs_stat fstat;
+@@ -1757,7 +1778,7 @@ static void op_lookup(fuse_req_t req, fuse_ino_t fino, const char *name)
+ 	if (ret)
+ 		fuse_reply_err(req, -ret);
+ 	else
+-		fuse_reply_entry(req, &fstat.entry);
++		fuse_reply_entry_iflags(req, &fstat.entry, fstat.iflags);
+ }
+ 
+ static void op_getattr(fuse_req_t req, fuse_ino_t fino,
+@@ -1777,8 +1798,8 @@ static void op_getattr(fuse_req_t req, fuse_ino_t fino,
+ 	if (ret)
+ 		fuse_reply_err(req, -ret);
+ 	else
+-		fuse_reply_attr(req, &fstat.entry.attr,
+-				fstat.entry.attr_timeout);
++		fuse_reply_attr_iflags(req, &fstat.entry.attr, fstat.iflags,
++				       fstat.entry.attr_timeout);
+ }
+ 
+ static void op_readlink(fuse_req_t req, fuse_ino_t fino)
+@@ -2056,7 +2077,7 @@ static void fuse4fs_reply_entry(fuse_req_t req, ext2_ino_t ino,
+ 		return;
+ 	}
+ 
+-	fuse_reply_entry(req, &fstat.entry);
++	fuse_reply_entry_iflags(req, &fstat.entry, fstat.iflags);
+ }
+ 
+ static void op_mknod(fuse_req_t req, fuse_ino_t fino, const char *name,
+@@ -4317,10 +4338,13 @@ static int op_readdir_iter(ext2_ino_t dir EXT2FS_ATTR((unused)),
+ 	namebuf[dirent->name_len & 0xFF] = 0;
+ 
+ 	if (i->readdirplus) {
+-		entrysize = fuse_add_direntry_plus(i->req, i->buf + i->bufused,
+-						   i->bufsz - i->bufused,
+-						   namebuf, &fstat.entry,
+-						   i->dirpos);
++		entrysize = fuse_add_direntry_plus_iflags(i->req,
++							  i->buf + i->bufused,
++							  i->bufsz - i->bufused,
++							  namebuf,
++							  fstat.iflags,
++							  &fstat.entry,
++							  i->dirpos);
+ 	} else {
+ 		entrysize = fuse_add_direntry(i->req, i->buf + i->bufused,
+ 					      i->bufsz - i->bufused, namebuf,
+@@ -4545,7 +4569,7 @@ static void op_create(fuse_req_t req, fuse_ino_t fino, const char *name,
+ 	if (ret)
+ 		fuse_reply_err(req, -ret);
+ 	else
+-		fuse_reply_create(req, &fstat.entry, fp);
++		fuse_reply_create_iflags(req, &fstat.entry, fstat.iflags, fp);
+ }
+ 
+ #if FUSE_VERSION >= FUSE_MAKE_VERSION(3, 17)
+@@ -4744,8 +4768,8 @@ static void op_setattr(fuse_req_t req, fuse_ino_t fino, struct stat *attr,
+ 	if (ret)
+ 		fuse_reply_err(req, -ret);
+ 	else
+-		fuse_reply_attr(req, &fstat.entry.attr,
+-				fstat.entry.attr_timeout);
++		fuse_reply_attr_iflags(req, &fstat.entry.attr, fstat.iflags,
++				       fstat.entry.attr_timeout);
+ }
+ 
+ #define FUSE4FS_MODIFIABLE_IFLAGS \
 
 
