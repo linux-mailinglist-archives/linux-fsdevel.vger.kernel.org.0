@@ -1,71 +1,71 @@
-Return-Path: <linux-fsdevel+bounces-58694-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58695-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61EB4B308AF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 23:55:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C80DEB308AD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 23:55:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB4431C28524
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 21:55:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3EE15A71B9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 21:55:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57A422EA75F;
-	Thu, 21 Aug 2025 21:55:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C58E62EAB97;
+	Thu, 21 Aug 2025 21:55:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bur.io header.i=@bur.io header.b="ZliUIqZz";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MyQ/SECt"
+	dkim=pass (2048-bit key) header.d=bur.io header.i=@bur.io header.b="kespNPe3";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LXqRumNz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
+Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A952EA49E;
-	Thu, 21 Aug 2025 21:55:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65CA62EAB6D;
+	Thu, 21 Aug 2025 21:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755813316; cv=none; b=f7b0HQSM8Lt7Q/dCTvJF2KM1sLA+JijLf3ONVh60CyFdE0oKAMYc4QxXqISe/liY/enuuadvDtnE6K4A2ZOZZv9DSwq8MEj+3pUkOu8outWJ1CyDvv+MfVtGp6GHMS6pIGSECZYf05P4ZyJyD7apsfcP8/XZQvzN5CSAyoDqFE0=
+	t=1755813319; cv=none; b=XAsco3bJH0YF8nsG1e8TcJY7jMx9J6U6jaJ8LAjlFZiWg/HPagLI+S2VzR0YZEBSQOptG4D1jSF+CAFejMEdiCB8fNOVReyqueLzeJRQFkHTQs1h61QfByv7zyZUgaB+sDH9Z2ucfJC8Afbw8TcKqZ07mUZNFyd5VqrQzNmQcpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755813316; c=relaxed/simple;
-	bh=A5UKWU0qdxNX4elEcAdRgAcWHa82UeHBvpyRIO/3xCw=;
+	s=arc-20240116; t=1755813319; c=relaxed/simple;
+	bh=NxA4sp3tQYv9PA6qiE7eM8cVlqHOtjGXYDB6fEDR0jM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Swi+JLQmmonXlC63tZCu7P4HuJfhXpCNuaqMf+pAcPDMB99cKnRI/bHycX071Qkq/SJwse4UjzUW4tOH/L4nMba2POB2pWht5F49woQAp4hOQ1eUQvBowhwTu+JB8uLTwdsUCxn551RNrpXlU6fZNLfynRPlpzxVbE1qnWlbTv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bur.io; spf=pass smtp.mailfrom=bur.io; dkim=pass (2048-bit key) header.d=bur.io header.i=@bur.io header.b=ZliUIqZz; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MyQ/SECt; arc=none smtp.client-ip=202.12.124.159
+	 MIME-Version; b=BQt8jB4+iECnZ5jBGJtXr52yJDynHEg2pyFntf+72vqJQzMgQVZfZNaf9eGcLig6jFQQ3SFAUpeJXPRevlDLdtcwlA3TBiz7U+WDVO5BLCJ1c/ROuDgNmvYeHRmL6aluZJoQbl3530xkcV3vx36/KS2gYARYbQgGZv1Wh8OyQ4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bur.io; spf=pass smtp.mailfrom=bur.io; dkim=pass (2048-bit key) header.d=bur.io header.i=@bur.io header.b=kespNPe3; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=LXqRumNz; arc=none smtp.client-ip=202.12.124.148
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bur.io
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bur.io
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id CE3157A0119;
-	Thu, 21 Aug 2025 17:55:13 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-03.internal (MEProxy); Thu, 21 Aug 2025 17:55:14 -0400
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfout.stl.internal (Postfix) with ESMTP id 2C6B41D001B1;
+	Thu, 21 Aug 2025 17:55:16 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-04.internal (MEProxy); Thu, 21 Aug 2025 17:55:16 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bur.io; h=cc:cc
 	:content-transfer-encoding:content-type:date:date:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1755813313; x=
-	1755899713; bh=nqjmOG7AetCjXRm+3fjXeKcj0uJWknxrBI8B7x2fxgY=; b=Z
-	liUIqZz6ANVuxcMBevSJ7rGSbuVR8NeCuoYlPCyegwFHmgm3kyQwH08bhhh74a/u
-	1E/OyFkduL2OKm8oms3pSwAmfngxhora6yLBNS6gbRSYtEFPKU9ytpLKzUvOIINg
-	htwv89LSHXgwMWJ0XLmvXuL9NAZfQi1Q/NLtU1O7Y5C52/iBkblcnAv41ZFX8c+U
-	FHgDaIS4G7oHPAvOCgl40SaEl1VugPEqRpQOnrlZzSeNuHaPo1tm+cTyDffO3KTf
-	gVBnBs/rjR+xk57H0c4KBmFiTGm2uVwJfnwsvAZG21Xd6K6lc/ICXT2btwA5HulQ
-	vmO1Y6aG+zDUFF9vd4Ypg==
+	:reply-to:subject:subject:to:to; s=fm1; t=1755813316; x=
+	1755899716; bh=+Y/NEyt7ymKiMS/llOk2P8t/dM0OZDpztKj3DY9zQ/I=; b=k
+	espNPe33CZp4MkiZnmymRTInr4O6gVX21JVIX1LVEVkUhxfFhoYJvp+U8leobhuy
+	R6E09ZhM1ZjyTOusns3MH1OSHwyP8VTPim1WYX8v1axHRpyI08XFB/tGGF+lOsQv
+	Sft5VVU66aTU6yln9IFyVYbcqp8RREEnPRLYY/w6qohIW3U43udueydOIl3j76l8
+	C85cKMmcl4nG2v0uq57h5E15aVJxjx25nkHpI1oT9nAPeUJI2vp5x2NAsCuGsn10
+	jnIlkix+ctQxFV4rritS08Qn6vWV38F2qYorWGR0QJOcWfdGuY7y9ImkZqgprSYD
+	vbaFVQUIE+BO86z3Isaqg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm3; t=1755813313; x=1755899713; bh=n
-	qjmOG7AetCjXRm+3fjXeKcj0uJWknxrBI8B7x2fxgY=; b=MyQ/SECt4H3X6baiB
-	2xd7fQp2eTClIWp1ptcXQO/GHsEw0t4K47oeYSfXrSDLv4diOpT9W1jsqW7RRO0B
-	WNKFJSOke2goC68FvvRgab3CqTdGuFYz7/z7V4LV1sk0R12N2IUgRTe+3AXRXN8T
-	w1JGGECerAePtCFtQzelCSP6Rw067vu3QnH7od/SLsszvQt6fNLOnEoUHWw2wyAU
-	OKlSdQHeferfT8vrznXZnkUNjbLHai3sdHO189ukGfEZ9NtHipmGuTimRhO2cpB/
-	/j1OMaeTV8zD4mOwa5fcK4W2Z9MmPQDXlX0Bm/Tid1HjQ7y2DNgz1BxOZ2sAOoR2
-	3ulTA==
-X-ME-Sender: <xms:wZWnaM0qvTgSNrGpqMZBJm_7UW7zhkUzB1Xt1lwtEjcbo9pYgICJ7A>
-    <xme:wZWnaMn9hZ7Bo7M78Bssk7Ho3Y9DESaJq9iEJ8zCywNs0CQRgLL0_UR24AsQTmXam
-    21K44YFjjdSr7lAYnQ>
-X-ME-Received: <xmr:wZWnaD92Wk_0xAhRBtLH6n0-Y76E_or2eEo4bZwR7sD6KhZZO1fJoz0V5u9l1qHZMXo8yrD6QTbrLDGCmj1erQf8qEw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduiedvvdejucetufdoteggodetrf
+	:x-me-sender:x-sasl-enc; s=fm3; t=1755813316; x=1755899716; bh=+
+	Y/NEyt7ymKiMS/llOk2P8t/dM0OZDpztKj3DY9zQ/I=; b=LXqRumNzkuckFJRPU
+	qzJzpfdM3cJvj/6k1ZvGr8VujS1ssmvl0/lqX3wXPAKFpwgq+uux87v9gAQC112C
+	13o6qTbGWrOH/CHenhofd5rtvJ9m+PmAEtX2rVOGMxNlW9R9Lin7tGh9jdlxLCGy
+	5zeH00caQdwQQbCr0lZWZxnt5fG2+ub5upJHT655RNjEVc1SZLZMdAIr6Foj5jGq
+	RSm7j1PaqzrbK4uTLmPeRs+lsSo7Tt7lR+RyaWuStO7iQcaqpDbPtRYNDsh6b7xv
+	9ceiGJbBBy0YLcWUsG3UINEr5m0JjHpnwHYy26wNnfnOZxDTSYCPZaPz8XvCk8XM
+	Ghbqw==
+X-ME-Sender: <xms:w5WnaIOrFOU2YEFkx1D2A_4I5uHbHGUeZ4TGoQFg-9Iq6l3AMe3i_g>
+    <xme:w5WnaEdPMxnFe_OpZ9pIZAu-lF6rjj2KH7b_rGulYkNuaBKDnr4AaWa-BL32X5Okm
+    V1uZG84YwIOsmuov_k>
+X-ME-Received: <xmr:w5WnaOVchaYxyB6SOx34RF8E9yaTODM3UwCHPwnXzdv9_5zch_vLxxoBloJNfgHJGRszNFcqOtqhppw-r2e9LZrgt-I>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduiedvvdekucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
     rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffojghfggfgsedtkeertd
     ertddtnecuhfhrohhmpeeuohhrihhsuceuuhhrkhhovhcuoegsohhrihhssegsuhhrrdhi
@@ -80,14 +80,14 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduiedvvdejucetufdote
     pehshhgrkhgvvghlrdgsuhhttheslhhinhhugidruggvvhdprhgtphhtthhopeifqhhuse
     hsuhhsvgdrtghomhdprhgtphhtthhopeifihhllhihsehinhhfrhgruggvrggurdhorhhg
     pdhrtghpthhtohepmhhhohgtkhhosehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:wZWnaKIAbn2E68OZAUwx6keXs5Rr_kJepx0AO6ObYGNPS4Sm-v690w>
-    <xmx:wZWnaIhPKqADRjDWWp4pozZa8UsRVGTBYnkYu8vlP53Wnfxkkw_iXg>
-    <xmx:wZWnaG8uyPNuWlGt1BlKS_XE7oV1ZZ4pr1wu9s6KOyi4RmIiUZ9ecQ>
-    <xmx:wZWnaNMetRvX1GvB9K22w0MTxhUtuu2qhCX642k4DKHNEUSMY2oOFg>
-    <xmx:wZWnaDwPub9bf9ZF2lj6heYwwlKWvbm59hn9YYaONVNkH4_tVkmGF48M>
+X-ME-Proxy: <xmx:w5WnaFBZ87pqek2e3ZxXTRUAJDqKID1CS-K8Bc56OJ0YJm-xhOq37w>
+    <xmx:w5WnaJ5lBUTYVO2YthjeG7VrYUHlmRUog3LkfSQt6SjS98znEkcakw>
+    <xmx:w5WnaM1ZMP7_c16eUIAJgJFNMu_L0d2prMs_BP7QiBZniUl-SLaIkA>
+    <xmx:w5WnaNkJrp9i4GxudzhYN7rhxrbaAVwFAOMHzpG3GMV2t7RkxO9tVg>
+    <xmx:xJWnaPJuxooOsIZzeuAG1Ob2seij3jbCgPxyx0XS6M0Hdjso4YcSM1Px>
 Feedback-ID: i083147f8:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 21 Aug 2025 17:55:13 -0400 (EDT)
+ 21 Aug 2025 17:55:15 -0400 (EDT)
 From: Boris Burkov <boris@bur.io>
 To: akpm@linux-foundation.org
 Cc: linux-btrfs@vger.kernel.org,
@@ -101,9 +101,9 @@ Cc: linux-btrfs@vger.kernel.org,
 	muchun.song@linux.dev,
 	roman.gushchin@linux.dev,
 	hannes@cmpxchg.org
-Subject: [PATCH v4 2/3] mm: add vmstat for kernel_file pages
-Date: Thu, 21 Aug 2025 14:55:36 -0700
-Message-ID: <08ff633e3a005ed5f7691bfd9f58a5df8e474339.1755812945.git.boris@bur.io>
+Subject: [PATCH v4 3/3] btrfs: set AS_KERNEL_FILE on the btree_inode
+Date: Thu, 21 Aug 2025 14:55:37 -0700
+Message-ID: <2ee99832619a3fdfe80bf4dc9760278662d2d746.1755812945.git.boris@bur.io>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <cover.1755812945.git.boris@bur.io>
 References: <cover.1755812945.git.boris@bur.io>
@@ -115,76 +115,32 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Kernel file pages are tricky to track because they are indistinguishable
-from files whose usage is accounted to the root cgroup.
+extent_buffers are global and shared so their pages should not belong to
+any particular cgroup (currently whichever cgroups happens to allocate
+the extent_buffer).
 
-To maintain good accounting, introduce a vmstat counter tracking kernel
-file pages.
+Btrfs tree operations should not arbitrarily block on cgroup reclaim or
+have the shared extent_buffer pages on a cgroup's reclaim lists.
 
-Confirmed that these work as expected at a high level by mounting a
-btrfs using AS_KERNEL_FILE for metadata pages, and seeing the counter
-rise with fs usage then go back to a minimal level after drop_caches and
-finally down to 0 after unmounting the fs.
-
-Suggested-by: Shakeel Butt <shakeel.butt@linux.dev>
 Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
 Tested-by: syzbot@syzkaller.appspotmail.com
 Signed-off-by: Boris Burkov <boris@bur.io>
 ---
- include/linux/mmzone.h | 1 +
- mm/filemap.c           | 7 +++++++
- mm/vmstat.c            | 1 +
- 3 files changed, 9 insertions(+)
+ fs/btrfs/disk-io.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index fe13ad175fed..f3272ef5131b 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -259,6 +259,7 @@ enum node_stat_item {
- 	NR_HUGETLB,
- #endif
- 	NR_BALLOON_PAGES,
-+	NR_KERNEL_FILE_PAGES,
- 	NR_VM_NODE_STAT_ITEMS
- };
+diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+index 70fc4e7cc5a0..7fab5057cf8e 100644
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -1930,6 +1930,7 @@ static int btrfs_init_btree_inode(struct super_block *sb)
+ 	BTRFS_I(inode)->root = btrfs_grab_root(fs_info->tree_root);
+ 	set_bit(BTRFS_INODE_DUMMY, &BTRFS_I(inode)->runtime_flags);
+ 	__insert_inode_hash(inode, hash);
++	set_bit(AS_KERNEL_FILE, &inode->i_mapping->flags);
+ 	fs_info->btree_inode = inode;
  
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 05c1384bd611..344ab106c21c 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -190,6 +190,9 @@ static void filemap_unaccount_folio(struct address_space *mapping,
- 		__lruvec_stat_mod_folio(folio, NR_FILE_THPS, -nr);
- 		filemap_nr_thps_dec(mapping);
- 	}
-+	if (test_bit(AS_KERNEL_FILE, &folio->mapping->flags))
-+		mod_node_page_state(folio_pgdat(folio),
-+				    NR_KERNEL_FILE_PAGES, -nr);
- 
- 	/*
- 	 * At this point folio must be either written or cleaned by
-@@ -989,6 +992,10 @@ int filemap_add_folio(struct address_space *mapping, struct folio *folio,
- 		if (!(gfp & __GFP_WRITE) && shadow)
- 			workingset_refault(folio, shadow);
- 		folio_add_lru(folio);
-+		if (kernel_file)
-+			mod_node_page_state(folio_pgdat(folio),
-+					    NR_KERNEL_FILE_PAGES,
-+					    folio_nr_pages(folio));
- 	}
- 	return ret;
- }
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index e74f0b2a1021..e522decf6a72 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1290,6 +1290,7 @@ const char * const vmstat_text[] = {
- 	[I(NR_HUGETLB)]				= "nr_hugetlb",
- #endif
- 	[I(NR_BALLOON_PAGES)]			= "nr_balloon_pages",
-+	[I(NR_KERNEL_FILE_PAGES)]		= "nr_kernel_file_pages",
- #undef I
- 
- 	/* system-wide enum vm_stat_item counters */
+ 	return 0;
 -- 
 2.50.1
 
