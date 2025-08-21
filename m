@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-58499-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58500-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 260C9B2EA07
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 03:07:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1899B2EA09
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 03:08:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BE9F189E890
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 01:08:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B14707BCC84
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 01:06:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12E981E32D3;
-	Thu, 21 Aug 2025 01:07:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3A611E32D3;
+	Thu, 21 Aug 2025 01:07:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NCcSWqBQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aWH/xBAk"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 724F75FEE6
-	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Aug 2025 01:07:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C89E5FEE6
+	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Aug 2025 01:07:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755738457; cv=none; b=Rhe5x/a4utAwkBToDp1fafOli0lm2dgYWhGcQ0oncPIVGpFuB6IxhLUFYNrIPRDIblz4LLnW04cgPWcdy7clrD8GiZ1Gj6SCm89mD1ACvP+FQ8qAJM7QIc3GObkPMhWwQrv1lz6WjO9NpO79jMgHGtdcFdA82CQuYCicEcdt23Q=
+	t=1755738473; cv=none; b=VE1y0bPvZIaoIXr5nZE7hytHbi2w08mkCsJRAcNr9aMbf4evL3DPzZ243BBe6fmEo2Gs1p2B22n0yL8GN5Q3e+xv19YKjNLbrzOsd8GgRQ7t3WOup9+T/d5BsqTzxzTHPmXU0xdmbhLfRD/8RMWtsVhuKtGKXroq+Xt1kfrlbB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755738457; c=relaxed/simple;
-	bh=542lLe08h6aeZOFkkM+nINTNxBKEzBFfcc7pXsaYet0=;
+	s=arc-20240116; t=1755738473; c=relaxed/simple;
+	bh=4S6+DJydNZZZ4tPz+Rp9nTzYehO0C+xlV3fCjRnQHQ8=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DPkV0VHB1F4yAnY4GZUDCa+2k8fpp57YQhkkKb5xDg1eV4rZy2AZo8gt67Dh9VGwkIQeO6jU+vGI3WiSw/EUamg71jZMHQy39jDejdaQjVpgEWNMLvjsUPEkKf1EhvN5sfoYaj7q3AsSLiT5oQz1mO3IEhnBN8ZHn3wp1qyXLuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NCcSWqBQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44AB9C4CEE7;
-	Thu, 21 Aug 2025 01:07:37 +0000 (UTC)
+	 MIME-Version:Content-Type; b=k+XjKFY09VAqDfvkmV74kHnEMNs9mavU3ltH9SwRnQtcl895e1v5uunlzgJnWLwoPgfw3qG5WdGf1f83CbRBw7iwyX90SFZ8uQK1SuU+Ig153CE67k3+wngQvZ7keNvGE8ODNjfI3QsbN4ZUOq4/zJImuzGx1yzJMQ2iFbLEdII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aWH/xBAk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E57CAC4CEE7;
+	Thu, 21 Aug 2025 01:07:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755738457;
-	bh=542lLe08h6aeZOFkkM+nINTNxBKEzBFfcc7pXsaYet0=;
+	s=k20201202; t=1755738473;
+	bh=4S6+DJydNZZZ4tPz+Rp9nTzYehO0C+xlV3fCjRnQHQ8=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=NCcSWqBQfgwC5rKNz9bawbqKIi8x7Y74wM3YLoBviqAMNdBccExJvhywajxZau1Hl
-	 DISemcsSLe2L/Hkh4i6cSNMajKg261zmaIZh98vhwosiLY9Cxeqjtxqh3s5ry3T5Kc
-	 XkAQmC3aAT+AY//gc0xwqKY5yaI1v/dbcD2AceqWUVHCqBbjLHki72euWnW58ISXSF
-	 u7xzCzYPQpNdZRqAtCuPKSJd3vf3HsO4ZJeD4Sxk8KHdE0Upq5eRJ44AzZKfaZQ2+D
-	 Qw0MNpn2Vt4S//ur83+3QMpyqGfTu4ZmMarOR80L3SQUFGgVmt1FWXkPfJW85YcMir
-	 XdP5ikjFeDfNA==
-Date: Wed, 20 Aug 2025 18:07:36 -0700
-Subject: [PATCH 1/2] libfuse: wire up FUSE_SYNCFS to the low level library
+	b=aWH/xBAkHiaPevSfTM1ouTvrVhUS2qwDIrG9es8oucshtN8vt/0YIkjlUtQo2f+Sy
+	 VuBrzp7U3LefuPEOqzXdaBru/rv/PcuDuEiuhHcgIPqPPhXTb7zHOMfwQ1qEO4q0JP
+	 xUTREShZYfjn5QfqqLXCRSYzno4iLFbPmjvi3czrHlBo/1+17QBtfTSsQ8N8g3z04E
+	 KDJprV4tkvUJzZDdVd8246GI04YoKbrYH16FyYcswmQdZDaCLx8kiRGlbK0WemvG4q
+	 goeuhmw4UHZ4CHh8c7TceRuy/+TsTf1/d/O5TmIUYUzNFxJus95nOaGdOQHQWdrSxI
+	 GFqCwQre+LF5Q==
+Date: Wed, 20 Aug 2025 18:07:52 -0700
+Subject: [PATCH 2/2] libfuse: add syncfs support to the upper library
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, bschubert@ddn.com
 Cc: John@groves.net, joannelkoong@gmail.com, bernd@bsbernd.com,
  linux-fsdevel@vger.kernel.org, miklos@szeredi.hu, neal@gompa.dev
-Message-ID: <175573712212.20121.18374471818685508198.stgit@frogsfrogsfrogs>
+Message-ID: <175573712231.20121.7895589272128230472.stgit@frogsfrogsfrogs>
 In-Reply-To: <175573712188.20121.2758227627402346100.stgit@frogsfrogsfrogs>
 References: <175573712188.20121.2758227627402346100.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -61,85 +61,86 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Create hooks in the lowlevel library for syncfs.
+Support syncfs in the upper level library.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- include/fuse_lowlevel.h |   16 ++++++++++++++++
- lib/fuse_lowlevel.c     |   19 +++++++++++++++++++
- 2 files changed, 35 insertions(+)
+ include/fuse.h |    5 +++++
+ lib/fuse.c     |   31 +++++++++++++++++++++++++++++++
+ 2 files changed, 36 insertions(+)
 
 
-diff --git a/include/fuse_lowlevel.h b/include/fuse_lowlevel.h
-index 326c8f061aecfa..90a09b066c71f0 100644
---- a/include/fuse_lowlevel.h
-+++ b/include/fuse_lowlevel.h
-@@ -1422,6 +1422,22 @@ struct fuse_lowlevel_ops {
+diff --git a/include/fuse.h b/include/fuse.h
+index f8a57154017a2a..baf7a2e90af5e7 100644
+--- a/include/fuse.h
++++ b/include/fuse.h
+@@ -903,6 +903,11 @@ struct fuse_operations {
  	 */
- 	void (*iomap_config) (fuse_req_t req, uint64_t flags,
- 			      uint64_t maxbytes);
+ 	int (*iomap_config) (uint64_t supported_flags, off_t maxbytes,
+ 			     struct fuse_iomap_config *cfg);
 +
 +	/**
 +	 * Flush the entire filesystem to disk.
-+	 *
-+	 * If this request is answered with an error code of ENOSYS, this is
-+	 * treated as a permanent failure, i.e. all future syncfs() requests
-+	 * will fail with the same error code without being sent to the
-+	 * filesystem process.
-+	 *
-+	 * Valid replies:
-+	 *   fuse_reply_err
-+	 *
-+	 * @param req request handle
-+	 * @param ino the inode number
 +	 */
-+	void (*syncfs) (fuse_req_t req, fuse_ino_t ino);
++	int (*syncfs) (const char *path);
  };
  
- /**
-diff --git a/lib/fuse_lowlevel.c b/lib/fuse_lowlevel.c
-index 721abe2686d9c4..e5c7c4487cef8c 100644
---- a/lib/fuse_lowlevel.c
-+++ b/lib/fuse_lowlevel.c
-@@ -2776,6 +2776,23 @@ static void do_iomap_config(fuse_req_t req, const fuse_ino_t nodeid,
- 	_do_iomap_config(req, nodeid, inarg, NULL);
+ /** Extra context that may be needed by some filesystems
+diff --git a/lib/fuse.c b/lib/fuse.c
+index 7b28f848116abb..4e207491532e8b 100644
+--- a/lib/fuse.c
++++ b/lib/fuse.c
+@@ -2993,6 +2993,16 @@ int fuse_fs_iomap_inval(uint64_t nodeid, uint64_t attr_ino, loff_t read_off,
+ 						&write);
  }
  
-+static void _do_syncfs(fuse_req_t req, const fuse_ino_t nodeid,
-+		      const void *op_in, const void *in_payload)
++static int fuse_fs_syncfs(struct fuse_fs *fs, const char *path)
 +{
-+	(void)op_in;
-+	(void)in_payload;
-+
-+	if (req->se->op.syncfs)
-+		req->se->op.syncfs(req, nodeid);
-+	else
-+		fuse_reply_err(req, ENOSYS);
++	fuse_get_context()->private_data = fs->user_data;
++	if (!fs->op.syncfs)
++		return -ENOSYS;
++	if (fs->debug)
++		fuse_log(FUSE_LOG_DEBUG, "syncfs[%s]\n", path);
++	return fs->op.syncfs(path);
 +}
 +
-+static void do_syncfs(fuse_req_t req, const fuse_ino_t nodeid, const void *inarg)
-+{
-+	_do_syncfs(req, nodeid, inarg, NULL);
-+}
-+
- static bool want_flags_valid(uint64_t capable, uint64_t want)
+ static void fuse_lib_setattr(fuse_req_t req, fuse_ino_t ino, struct stat *attr,
+ 			     int valid, struct fuse_file_info *fi)
  {
- 	uint64_t unknown_flags = want & (~capable);
-@@ -3756,6 +3773,7 @@ static struct {
- 	[FUSE_COPY_FILE_RANGE] = { do_copy_file_range, "COPY_FILE_RANGE" },
- 	[FUSE_LSEEK]	   = { do_lseek,       "LSEEK"	     },
- 	[FUSE_STATX]	   = { do_statx,       "STATX"	     },
-+	[FUSE_SYNCFS]	   = { do_syncfs,	"SYNCFS"     },
- 	[FUSE_IOMAP_CONFIG]= { do_iomap_config, "IOMAP_CONFIG" },
- 	[FUSE_IOMAP_BEGIN] = { do_iomap_begin,	"IOMAP_BEGIN" },
- 	[FUSE_IOMAP_END]   = { do_iomap_end,	"IOMAP_END" },
-@@ -3815,6 +3833,7 @@ static struct {
- 	[FUSE_COPY_FILE_RANGE]	= { _do_copy_file_range, "COPY_FILE_RANGE" },
- 	[FUSE_LSEEK]		= { _do_lseek,		"LSEEK" },
- 	[FUSE_STATX]		= { _do_statx,		"STATX" },
-+	[FUSE_SYNCFS]		= { _do_syncfs,		"SYNCFS" },
- 	[FUSE_IOMAP_CONFIG]	= { _do_iomap_config,	"IOMAP_CONFIG" },
- 	[FUSE_IOMAP_BEGIN]	= { _do_iomap_begin,	"IOMAP_BEGIN" },
- 	[FUSE_IOMAP_END]	= { _do_iomap_end,	"IOMAP_END" },
+@@ -4866,6 +4876,26 @@ static void fuse_lib_iomap_config(fuse_req_t req, uint64_t flags,
+ 	fuse_reply_iomap_config(req, &cfg);
+ }
+ 
++static void fuse_lib_syncfs(fuse_req_t req, fuse_ino_t ino)
++{
++	struct fuse *f = req_fuse_prepare(req);
++	struct fuse_intr_data d;
++	char *path;
++	int err;
++
++	err = get_path(f, ino, &path);
++	if (err) {
++		reply_err(req, err);
++		return;
++	}
++
++	fuse_prepare_interrupt(f, req, &d);
++	err = fuse_fs_syncfs(f->fs, path);
++	fuse_finish_interrupt(f, req, &d);
++	free_path(f, ino, path);
++	reply_err(req, err);
++}
++
+ static int clean_delay(struct fuse *f)
+ {
+ 	/*
+@@ -4967,6 +4997,7 @@ static struct fuse_lowlevel_ops fuse_path_ops = {
+ #ifdef HAVE_STATX
+ 	.statx = fuse_lib_statx,
+ #endif
++	.syncfs = fuse_lib_syncfs,
+ 	.iomap_begin = fuse_lib_iomap_begin,
+ 	.iomap_end = fuse_lib_iomap_end,
+ 	.iomap_ioend = fuse_lib_iomap_ioend,
 
 
