@@ -1,59 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-58697-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58698-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4354FB30928
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 00:24:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3D34B3092E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 00:26:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6E643AA552
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 22:22:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 047341CE5405
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 22:26:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 258802EAD1C;
-	Thu, 21 Aug 2025 22:21:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF07C2E173F;
+	Thu, 21 Aug 2025 22:25:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="K9hhFLJy"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="A5PI+cn1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA4102E5B3F;
-	Thu, 21 Aug 2025 22:21:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10C842E0916
+	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Aug 2025 22:25:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755814903; cv=none; b=krOQuOSXCIO4cPKwiEPpHRNeD9+OLFLBM8J5ejT0qst8jQJ/Pki1Sj/iNn1d1PliPJ9e5tEMT8m13lmp6lYEC+QfIDGG/B4+r8oID9FFg+31juwpUdjYtUo/WvqqR8ONeoN4SHg99IqVNoe3brAjoThSH8tc1drkvZVyYvLzXVs=
+	t=1755815148; cv=none; b=HXde5QTx5kKUJF/ub3BJnmsyN4C6nY1+BYhmVhQv2p/ogJ0M/zXpBc0/CvOxSx/kqcDnftXUfrYKULSTKLccdSosuVKRYYTZsl8IY7w6XT7gp6+/Nq5WnOYAEvmIi/Y+ciB1zyTtPSPIOslqcacY3DKXoPyAtacbDzcX2ycf+NQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755814903; c=relaxed/simple;
-	bh=E9AxT6oQKzAi3PCee/hi6lbfPnHdyA8NZ4C26Db8lB8=;
+	s=arc-20240116; t=1755815148; c=relaxed/simple;
+	bh=ZTnMa5o0Amfk/bGrq/w6uEQq6RJYm2T4rt9xu4U0kLA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kt2YYrxNpYn72dJ/MQHDTsgGzOWT/fNkjyYNe4mi7xyurocvh930swvIh1eNGiWmyVVMHljXbwPwylWz0y6VqiMr+inIXbcG53gGnPZdodIhaT0uSAp/GQnv0YPZv8yYTRRhaT1an0+hTtfO5hXOd2Nm9VUguhTYt3+ChLgasgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=K9hhFLJy; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=iAnjSHVca4QKBa6RZo8xZY7/SB/V9H3bxiE51Kzwc94=; b=K9hhFLJyUw9DIS4iRwzx03qqBA
-	g721xwDGbB50ENH0Gf5Z0OgQLT+nnmexVWX2quNbuRkq9mkEAz7zY7h2kqQ9IaiX67Byn/VHcr6SE
-	Ekz3KuvqFBZq/EVkpYuTzOJAOB3xKsUGo4+L1zA+Hdx64CVW9Uwluz0pWHIqdbC2q3Kn2lQ5Umc2i
-	+pI9k5Kxg6X8QA9uevAGWENS7vwF+RI9iu+MxdoqCm3gZV0/CIJU85j4aqGZS8bghNX6Zg087IePF
-	aT3xBN4QHAc6k00tjdMinFuWDnozdj36TkzR2G1p16JqYUjY9V3KutEM3BkED0HP1WEDTM+WDmSHj
-	F5tHe7bA==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1upDf8-0000000Er0I-32r9;
-	Thu, 21 Aug 2025 22:21:38 +0000
-Date: Thu, 21 Aug 2025 23:21:38 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: James Bottomley <James.Bottomley@hansenpartnership.com>,
-	ksummit@lists.linux.dev, linux-fsdevel@vger.kernel.org
-Subject: Re: [MAINTAINER SUMMIT] Adding more formality around feature
- inclusion and ejection
-Message-ID: <aKeb8vf2OsOI19NA@casper.infradead.org>
-References: <fc0994de40776609928e8e438355a24a54f1ad10.camel@HansenPartnership.com>
- <20250821203407.GA1284215@mit.edu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tRtSrCN0DMa/BhVoQ5e3HD6llQmHAcHKuxFLsq4+3et0Bq+qfrcrDh+c0KLOa28FhIVjKbwqdGqXky+AJc6uoyHwb6q6YTqMgLHz8h3HVKgeK8IU6h4pw7j/mAPpwjKbhel0zH/wZpx46M3qfout8S8OGGYbzfowP2CIG8cbFNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=A5PI+cn1; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 21 Aug 2025 15:25:28 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755815133;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UxGwaneklEuoMgdpuTZgMXLt8KwC3lX/BurqK3SzmgQ=;
+	b=A5PI+cn1DU9QLvz2iLs8e7hbKx5Tu80+L3JyEkBLiwMXENfZDbmMKIUR7U3/BcGTymVzpF
+	i7IKbkQUN9fZryt8R4lKD+3aA2vUbSthhaFICBXDkNDbwwhL+vJrhudaRREzYcJ5Drv5v7
+	UD9So2ZuJwcfvQ+FZ0dcxI5UNWsUOEk=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Boris Burkov <boris@bur.io>
+Cc: akpm@linux-foundation.org, linux-btrfs@vger.kernel.org, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, kernel-team@fb.com, wqu@suse.com, 
+	willy@infradead.org, mhocko@kernel.org, muchun.song@linux.dev, 
+	roman.gushchin@linux.dev, hannes@cmpxchg.org
+Subject: Re: [PATCH v4 1/3] mm/filemap: add AS_KERNEL_FILE
+Message-ID: <kagqatguxrcxsb7ka3vq5xfm2vbjly7ixletkxwbyyq2uisnly@frthso35okfd>
+References: <cover.1755812945.git.boris@bur.io>
+ <f09c4e2c90351d4cb30a1969f7a863b9238bd291.1755812945.git.boris@bur.io>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,20 +60,47 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250821203407.GA1284215@mit.edu>
+In-Reply-To: <f09c4e2c90351d4cb30a1969f7a863b9238bd291.1755812945.git.boris@bur.io>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Aug 21, 2025 at 04:34:07PM -0400, Theodore Ts'o wrote:
-> There is the saying that "bad facts make bad law", and the specifics
-> of this most recent controversy are especially challenging.  I would
-> urge caution before trying to create a complex set of policies and
-> mechanim when we've only had one such corner case in over 35 years.
+On Thu, Aug 21, 2025 at 02:55:35PM -0700, Boris Burkov wrote:
+> Btrfs currently tracks its metadata pages in the page cache, using a
+> fake inode (fs_info->btree_inode) with offsets corresponding to where
+> the metadata is stored in the filesystem's full logical address space.
+> 
+> A consequence of this is that when btrfs uses filemap_add_folio(), this
+> usage is charged to the cgroup of whichever task happens to be running
+> at the time. These folios don't belong to any particular user cgroup, so
+> I don't think it makes much sense for them to be charged in that way.
+> Some negative consequences as a result:
+> - A task can be holding some important btrfs locks, then need to lookup
+>   some metadata and go into reclaim, extending the duration it holds
+>   that lock for, and unfairly pushing its own reclaim pain onto other
+>   cgroups.
+> - If that cgroup goes into reclaim, it might reclaim these folios a
+>   different non-reclaiming cgroup might need soon. This is naturally
+>   offset by LRU reclaim, but still.
+> 
+> We have two options for how to manage such file pages:
+> 1. charge them to the root cgroup.
+> 2. don't charge them to any cgroup at all.
+> 
+> 2. breaks the invariant that every mapped page has a cgroup. This is
+> workable, but unnecessarily risky. Therefore, go with 1.
+> 
+> A very similar proposal to use the root cgroup was previously made by
+> Qu, where he eventually proposed the idea of setting it per
+> address_space. This makes good sense for the btrfs use case, as the
+> behavior should apply to all use of the address_space, not select
+> allocations. I.e., if someone adds another filemap_add_folio() call
+> using btrfs's btree_inode, we would almost certainly want to account
+> that to the root cgroup as well.
+> 
+> Link: https://lore.kernel.org/linux-mm/b5fef5372ae454a7b6da4f2f75c427aeab6a07d6.1727498749.git.wqu@suse.com/
+> Suggested-by: Qu Wenruo <wqu@suse.com>
+> Suggested-by: Shakeel Butt <shakeel.butt@linux.dev>
+> Tested-by: syzbot@syzkaller.appspotmail.com
+> Signed-off-by: Boris Burkov <boris@bur.io>
 
-Well. we may have dodged a few bullets before now.  Just in filesystems,
-I can think of Hans Reiser, Jeff Merkey, Boaz Harrosh, Daniel Phillips
-(no, i'm not saying any of the others did anything as heinous as Hans,
-but they were all pretty disastrous in their own ways).
-
-I don't think we can necessarily generalise from these examples to,
-say, Lustre.  That has its own unique challenges, and I don't think that
-making them do more paperwork will be helpful.
+Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
 
