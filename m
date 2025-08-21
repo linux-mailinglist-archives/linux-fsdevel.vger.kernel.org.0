@@ -1,111 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-58626-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58627-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5B41B300A3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 18:59:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27C61B300DD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 19:19:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE05B17ECC7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 16:59:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A97811897B58
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 17:19:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F7EF2E764B;
-	Thu, 21 Aug 2025 16:59:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760F4307AEB;
+	Thu, 21 Aug 2025 17:19:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="af+Hak+N"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TXj5nqQD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4832E7198;
-	Thu, 21 Aug 2025 16:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60FE91DFCE;
+	Thu, 21 Aug 2025 17:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755795586; cv=none; b=CYEJHcR4t9tBwr6/cDmnLTuOHxk9cQE8J9dVvpXZceU7wMakuUVWpgA4DcZ/mFh3rw8DztotySjn3fAnUaV0hfqQE8x+mbL0avJNqnSuqu0xQl3H9STI+m6i2qD8t3TPMIFakK7JJ925Uu26xiheEOkhicfVAnpy//eYiZXLZkU=
+	t=1755796755; cv=none; b=TQHDlHmcOJd06VOdE/SM25zta25h5vPt2/4tM0hL9zL+UgdXMsmKLv8/+x6W/jIHewTIj2SQwihd8mel5saiJoCK4q0lfJQ5GNP0wW1nVuCsNrEksMirDx1Cw9nwpB/WDe5DBLZQsdYwZy1AE52w9ahDAYTEjYfQgtsUc3sr+Wc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755795586; c=relaxed/simple;
-	bh=pp/gk4pOi/0v1HmMWUiDkoQlsk+QIM6imhIi2GSSpK0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QjpV4h2ulMTe15ipobwA0VAF51SysyXza/5fpnFuw8t06PNUBh2hXyV9ikNeqGaNmPMCC16EEnoFzW4Jj2qp8vqMJaY7jOSFywL9255E7ebobYKn+wMxPBkkxfqv/0HQxxMIhvUe3R+tsWH5CO1sxevDiVXvPdCsNGE7KIVo0UI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=af+Hak+N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2A4DC4CEEB;
-	Thu, 21 Aug 2025 16:59:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755795586;
-	bh=pp/gk4pOi/0v1HmMWUiDkoQlsk+QIM6imhIi2GSSpK0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=af+Hak+Nfuz0y6X0Qr8P866fWXKOmFsFqBUtxHcrew5O8pLnWjiqhMEcRwul5lFqf
-	 uDCDxPRYZ1BuFhfghVTm+7r4DJWCvD+ES0luQVuh3/4x9Mio9Q9Yzn0bjAvy4EQp3I
-	 3tgigV4T3NrYBKO4FVr7LkF0SpONlzLKAPcdDMQ8F0ZwA3Hc3HO69utwGNyFYsu0LI
-	 Xnzid3gnttQZM4kZTUzOAs5IHLkuMBGVw+hZ6Krg4nXe/KsdTdSTPFMoxT+8RVAYg7
-	 H0GuZPtY4Z0BcnLVXy3ZUiltSZMtcwU+VLqIB+ll+7ePtZufzYkWmSsMRfPsEJB0L8
-	 63lviEWaVEnfg==
-Date: Thu, 21 Aug 2025 06:59:44 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Julian Sun <sunjunchao@bytedance.com>
-Cc: linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
-	linux-mm@kvack.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
-	jack@suse.cz, hannes@cmpxchg.org, mhocko@kernel.org,
-	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
-	muchun.song@linux.dev, axboe@kernel.dk
-Subject: Re: [External] Re: [PATCH] memcg: Don't wait writeback completion
- when release memcg.
-Message-ID: <aKdQgIvZcVCJWMXl@slm.duckdns.org>
-References: <20250820111940.4105766-1-sunjunchao@bytedance.com>
- <20250820111940.4105766-4-sunjunchao@bytedance.com>
- <aKY2-sTc5qQmdea4@slm.duckdns.org>
- <CAHSKhtf--qn3TH3LFMrwqb-Nng2ABwV2gOX0PyAerd7h612X5Q@mail.gmail.com>
+	s=arc-20240116; t=1755796755; c=relaxed/simple;
+	bh=kJOoCHsdPAISSR4HcFlHZ0fIcM/ZbT9tK9WAAjen35Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aElcM0QiErqTIUB0tvLoTfjJqvf9Fmx8Jam2EUql8qHXbSFBtcNU0H/+F6M2MV1y8g6S+iEJAJIvsqbMmgv4SbRyIbjuIzpYKm9mj7x2D16cPHZPcGLEjrbhS0kT2OJmLQId26Zu4Mg/aqIKbQRs3v6InDL+wdFHamaCF1Cy0EI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TXj5nqQD; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-76e6cbb991aso1223835b3a.1;
+        Thu, 21 Aug 2025 10:19:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755796753; x=1756401553; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tcYrZ6OBHDvhQxq+aUNrUDX0E+CGMcdoNU7ZBepwhNQ=;
+        b=TXj5nqQDTb/7P/Jvoyh/lYTlAip9VPbLtd0DGpxuYE744oRdPTbA914Sy+9SNVrhLZ
+         VVtiBdzfyVVIZKveu55gokdnZyerr4riFL+Q/6Z9y0q3+Hn7OTRmz+SNGQ0VYB3rsh/e
+         B3LKjmqt9ah8nMvAkF9s7Ve8fYGakIJwAaX1XR/1mTiOqzwaIBLV0anzJTSI4ViSrC3j
+         0Ng9ee0SsVyfv0NeG0FlBqDg5jKwNSRHWDqqNs5WFxwPA/GtEYyESZ6w4CE95wfuaskX
+         8LipEgVaQBYAcV7tpkJTY4fJLbL6tgjicvr5Rm7QCaymGWTYUJXkfun8hhwlspBPf66G
+         ZcaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755796754; x=1756401554;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tcYrZ6OBHDvhQxq+aUNrUDX0E+CGMcdoNU7ZBepwhNQ=;
+        b=IhdB+lPLiX2RsnKXIWsAmBgyqEEudEaRB5fFOd2EjxYFgqYxLwubdK6FecG6CYQGSK
+         Yh/mi44vB+wKaII9QG1H/HXplsutojRuzGkAdC013bpD5UXNT2xEmqEuxzgvKWCg+TVE
+         xXqeB3yWXJ6sl5ChiKv+foZeND2XYCipGe41RkvBIPx8DfN6AXGoQxzAe2w6oMK5liIv
+         AbCM4TZtwcb8B/u8/ajPtEfW/8Lsmz3fZhYyH1Rn7C6pcP2wr9l/xMj8c7kfEMqHtACD
+         CV2aFHXkXLvk/qW3MDDLSWjftdwGbJwLzV76SEhOBYuCxWfsirIeWsJGOhajJdL44MEf
+         r4sg==
+X-Forwarded-Encrypted: i=1; AJvYcCXeOOO9Zco1C/eK7W4c1yMxyVYfL3iBZ420l6och5hIoluAWXLG3eOPcfTDW8ZFFB/N3oL++wzogL34M1vk@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUEVisma47ZbRa2QLqUNwfl1CY+6wQdfAtXpAxySLfZmUQlJ3p
+	iFCmbuvM0RR15g1pvIjtnViqBLfagDj+grseWfRH600D2GZWHE5sKY1h
+X-Gm-Gg: ASbGncs070EXOFU5j6Xb8zjCY7/MgSPX7eYa54Ps/7dIOQ7a0FFDl5pOAgAjEFnn2qM
+	wpiIV825xUlJMMSqNPxTCJNXlTP4qy1duKYhA/4wgYLZ8puwCu2LjDaIqhGHKoTVNXaEuyEfoJk
+	8bM8NjQMi+r1+Qq9d7sVbut8yhhVqYiJCUMA5Og0kZoRzo5tD8lZertWWYQQvDXlWP3KbLcSgVs
+	uig3sYyHBcZv3j3/wOwVPUtx8iAr7kUwEIi3SyxZ4LY75tCA21RvGxy8+USXZpb8+Eatnwqxxz+
+	mUL8HjQQCFEMaXHEY1juI0WNx8iPVvpM2NBaWqnndOpQ1n07xrLW3aSaVID1WUzkdV0d5VjCe+L
+	RNXQ8y+sHMStIArDhkTnUI/j5TX1tug==
+X-Google-Smtp-Source: AGHT+IHBucu8OwcgFnbMcDmdfHatcMrjkcrIifXC+JFyAq9nGFkI3xdW1Hyw9uXfRdw3ENPPJJZBMQ==
+X-Received: by 2002:a05:6a00:3e01:b0:748:e9e4:d970 with SMTP id d2e1a72fcca58-7702fa091a4mr233913b3a.1.1755796753292;
+        Thu, 21 Aug 2025 10:19:13 -0700 (PDT)
+Received: from archlinux ([205.254.163.81])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e7d14e531sm8626591b3a.50.2025.08.21.10.19.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Aug 2025 10:19:12 -0700 (PDT)
+From: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev,
+	Suchit Karunakaran <suchitkarunakaran@gmail.com>
+Subject: [PATCH] fs/namespace: describe @pinned parameter in do_lock_mount()
+Date: Thu, 21 Aug 2025 22:49:05 +0530
+Message-ID: <20250821171905.10251-1-suchitkarunakaran@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHSKhtf--qn3TH3LFMrwqb-Nng2ABwV2gOX0PyAerd7h612X5Q@mail.gmail.com>
 
-Hello,
+Add a description for the @pinned parameter in do_lock_mount() to suppress
+a compiler warning. No functional changes
 
-On Thu, Aug 21, 2025 at 10:30:30AM +0800, Julian Sun wrote:
-> On Thu, Aug 21, 2025 at 4:58 AM Tejun Heo <tj@kernel.org> wrote:
-> >
-> > On Wed, Aug 20, 2025 at 07:19:40PM +0800, Julian Sun wrote:
-> > > @@ -3912,8 +3921,12 @@ static void mem_cgroup_css_free(struct cgroup_subsys_state *css)
-> > >       int __maybe_unused i;
-> > >
-> > >  #ifdef CONFIG_CGROUP_WRITEBACK
-> > > -     for (i = 0; i < MEMCG_CGWB_FRN_CNT; i++)
-> > > -             wb_wait_for_completion(&memcg->cgwb_frn[i].done);
-> > > +     for (i = 0; i < MEMCG_CGWB_FRN_CNT; i++) {
-> > > +             struct wb_completion *done = memcg->cgwb_frn[i].done;
-> > > +
-> > > +             if (atomic_dec_and_test(&done->cnt))
-> > > +                     kfree(done);
-> > > +     }
-> > >  #endif
-> >
-> > Can't you just remove done? I don't think it's doing anything after your
-> > changes anyway.
-> 
-> Thanks for your review.
-> 
-> AFAICT done is also used to track free slots in
-> mem_cgroup_track_foreign_dirty_slowpath() and
-> mem_cgroup_flush_foreign(), otherwise we have no method to know which
-> one is free and might flush more than what MEMCG_CGWB_FRN_CNT allow.
-> 
-> Am I missing something?
+Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+---
+ fs/namespace.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-No, I missed that. I don't think we need to add extra mechanisms in wb for
-this tho. How about shifting wb_wait_for_completion() and kfree(memcg) into
-a separate function and punt those to a separate work item? That's going to
-be a small self-contained change in memcg.
-
-Thanks.
-
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 0a5fec7065d7..52394a2ebaf3 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -2738,6 +2738,9 @@ static int attach_recursive_mnt(struct mount *source_mnt,
+ /**
+  * do_lock_mount - lock mount and mountpoint
+  * @path:    target path
++ * @pinned:  holds a reference to the mountpoint pinned during the
++ *           mount operation to prevent it from being unmounted or
++ *           moved concurrently
+  * @beneath: whether the intention is to mount beneath @path
+  *
+  * Follow the mount stack on @path until the top mount @mnt is found. If
 -- 
-tejun
+2.50.1
+
 
