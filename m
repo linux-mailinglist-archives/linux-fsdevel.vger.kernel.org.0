@@ -1,116 +1,258 @@
-Return-Path: <linux-fsdevel+bounces-58589-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58590-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE8BBB2F456
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 11:45:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A1ECB2F4E2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 12:12:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92B776033BF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 09:43:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3C931C2754E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 10:12:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48E782EF67F;
-	Thu, 21 Aug 2025 09:43:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B197B2F1FEB;
+	Thu, 21 Aug 2025 10:12:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="dJWh1pCD"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bKsQvKo6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F33AE2E7F36;
-	Thu, 21 Aug 2025 09:43:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755769390; cv=pass; b=XkkZcctBfehMZRtpgJuvM051zL1MVHEWeaWOR1YJQhU8P4mlu2q92qyqhU8WTTAMzCNQURouLAFUqSDwLl6n0UoocHBg+jvlcNsM+EBC9PvLtPryVPCoA/BHKsTBvLeCKaTpO6mGVGOXlOegPNjvdaXEyPE+2lKk8BgCrFq8/QU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755769390; c=relaxed/simple;
-	bh=00IT2GFNBj2sojSpzKRrz+QslCt09lqE4RCqCNWAukE=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=To1CJrqezodL+yAjUo4sZoOMGKhP3q4Q08y4EA6XLE5w9nhZad+2tLe1jiDR4uRFuOjlLmQ1Y+JCEXPyQ6FynxSbFbNutxsBI6IoLq+tHAZOtywSbIWv2D2UQVLRGsoJn7TZsIIatDmlnXx77L81Whrl3y8CbL+9+zGwM456to4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=dJWh1pCD; arc=pass smtp.client-ip=136.143.188.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1755769364; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=l79hCeiMG1l+JPmpZCe8qHRC4Hw9jk65n7+Tuc+HGAhrvKMTkrr/zF+7cSSEvNIFEWIDaBdSevBTy4G/U8UB50pxabkBIko7WpiTllcg3eUpCaTprjBSYNUSVrg0J8mxJN8agXQyTvpW9640Oov6MVlET3iplytezyohkuu3rW8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1755769364; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=CLyI4kDf1dViZxhG8N82OEUcewRrHXnbAp3Ib/mYQAc=; 
-	b=iMusWNu/SUzGw0qp5Puhy3vtsa7pq7OcwshQJQcyV7Sb78De6ED6zuKnc33cufbjpNnsCWWBvv0O7AMCSxzfOjpdj7tzcep0OH1YnkifBTs0qBBtzlMFpOoqy7Qxw487bxbq/RFED0+htEQovHN+ppVRSqu7MF1In3ahYOJEtUY=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
-	dmarc=pass header.from=<safinaskar@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755769364;
-	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=CLyI4kDf1dViZxhG8N82OEUcewRrHXnbAp3Ib/mYQAc=;
-	b=dJWh1pCDaI/Hgfi3czd40BPYxe8FijbYwjSagzIu3yA54qwK1FudyMjdqbVxavMQ
-	vEtp4mLEsBJrXIdUzQ2mff6km61VevEJarHx9s2SR33/pGr7L4nlvlPieD59aEYqvuV
-	iJX88puT/SItBSlof6u3pg0cB30KDl8pabo07EP4=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 175576936248297.23526332386348; Thu, 21 Aug 2025 02:42:42 -0700 (PDT)
-Received: from  [212.73.77.104] by mail.zoho.com
-	with HTTP;Thu, 21 Aug 2025 02:42:42 -0700 (PDT)
-Date: Thu, 21 Aug 2025 13:42:42 +0400
-From: Askar Safin <safinaskar@zohomail.com>
-To: "Aleksa Sarai" <cyphar@cyphar.com>
-Cc: "Alejandro Colomar" <alx@kernel.org>,
-	"Michael T. Kerrisk" <mtk.manpages@gmail.com>,
-	"Alexander Viro" <viro@zeniv.linux.org.uk>,
-	"Jan Kara" <jack@suse.cz>,
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>,
-	"linux-man" <linux-man@vger.kernel.org>,
-	"linux-api" <linux-api@vger.kernel.org>,
-	"linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel" <linux-kernel@vger.kernel.org>,
-	"David Howells" <dhowells@redhat.com>,
-	"Christian Brauner" <brauner@kernel.org>
-Message-ID: <198cc025823.ea44e3f585444.6907980660506284461@zohomail.com>
-In-Reply-To: <2025-08-12.1755022847-yummy-native-bandage-dorm-8U46ME@cyphar.com>
-References: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com>
- <20250809-new-mount-api-v3-6-f61405c80f34@cyphar.com> <2025-08-12.1755022847-yummy-native-bandage-dorm-8U46ME@cyphar.com>
-Subject: Re: [PATCH v3 06/12] man/man2/fsconfig.2: document "new" mount API
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D9D264F99;
+	Thu, 21 Aug 2025 10:12:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755771134; cv=none; b=pkksMoLA3r+enOhLskD8xFZT4LcTcwnCgTODiblyt9eSSyQlXSEABh1Ete/+U1RlF5YVEEXSx5p/CvfqSuEfUD6rjcu1d0+ldrHyrHvsu53g7QTlgbu3w7QBWyvYhJkNB5Cw2FaXMM5XbhPbFB0z96ymjOAQvFCAUl4nlIwXxWk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755771134; c=relaxed/simple;
+	bh=UqbPJ04Skx3qeuN8AslDJpOBSlWMMOu7RTbaxK6CX1g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JZowApDLrQVqzjJwdd3jwTnfZVwzFx8xMZM1ksmW4iz3ZXZX57MnkqmRR30PvRtwzPrsQ2/JNF+E8fCizM409/rCzsMByR48WR0RyYWmCDaWhqPrYAAgU0wFqGr3ErfvDUjgKgACxMfOMJ/AhV146gGmUkSxsAOnP6TIkhEHh24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bKsQvKo6; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-323266cdf64so638809a91.0;
+        Thu, 21 Aug 2025 03:12:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755771132; x=1756375932; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jOIaU+ivLyUInrFo1z4/NdrgXjFotuRBDXDYangsfLc=;
+        b=bKsQvKo6cP8+LOP6Kbj4W2C21rxVPTw1HB+GnuzSDygyx4NvOJtgSQkmxOd4gjMCqb
+         ycQbAze9R2xwyMcv2s4LFkSNqnryc3IxnJY3baKcmw2jTXimUXEfffTblk6EDvp5nn9S
+         b9lZZ9Y0eDf6SDlsycnx7qX/L+rA8wRb7toOtl1oWw3SmUzqm8LSGmjyvaUjITVqvFdg
+         /NLPdyuEz+SbRyYD9YGy9GC0LgGOAiqUFaYwwEpNoHgNgh7Ll6gunDpGhEU+E2xzIcLh
+         n0PcOf87/IKFvDpwFZ0WVmcIS1SyrEajXzVYPZTSL8SBmsSmCq/6/cOG3b0jDg0yOkyv
+         qZ+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755771132; x=1756375932;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jOIaU+ivLyUInrFo1z4/NdrgXjFotuRBDXDYangsfLc=;
+        b=jCIKzDmwOxrShlfw2A8d3YncxLKw6qtMTwIgw6zhBhA2n9pJZbuF89dW3ixthUhn38
+         yClnt2MEPHDAOgxcpix85qS2loNVc/CG2JKNRXfoDzR+RXP5Oyu9zDJ6ZLPHFesZGBIv
+         wWclEBrpWebrdQHSSZLH8I7c3MBfek76m63E2hNYri+Q/nfWt6WG8bXOMMpaH7G7/oLl
+         53kdvCsvdG5p5niGyMJz0iZ4Dhgd215gbL0XEuIUG03nbSy/B7EJimsHEuTbPRSaKCSU
+         l5na0uOd3MY2UUrYG2sU9VE3wXlPxJUq4snAysRAHSGT0kgjFIUjPfebh6Ke4t16krWX
+         Y7GQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVVDujfSkQGSKXAgm05fJLH3SZ8zgEkG2Xwyyoyy6IMkcu9uxxzaH0+CSkcEhThubAwi9GiUkP6QyULvcZzGw==@vger.kernel.org, AJvYcCVdZH9mGJFzYypX3rtp1Rp2t56O9GuMAIvgSxOh+Or5t72bgZpZa85piwSGq8cDSLktw1ct+/yX4AXGvtvt@vger.kernel.org, AJvYcCVrNOXtnjQGNaXLa2FjJeGiNY/TwZRoNJkyzaQu5mKuAWs8dg9J3Kwx+cyWG6lssN/DFFFJvAxQ@vger.kernel.org, AJvYcCWrkoTXCAw6D6Sc7v0/eoGl0ReUBppcNwniYIZE8BqbwiSxFSLwb8/2zaubA2kVs8/qCeNx/xq/8P6zaw==@vger.kernel.org, AJvYcCX4IiGwFsa+LRM9Qt7WgfWVlXXClKUqBJbaWUXLHaYcLft20H3NhMd0ecmbrcdhRK41YY+adM5sLMVDaZr+Jz2TpUGRWQQu@vger.kernel.org, AJvYcCXktRHU8DJu1TAeFizaw2GkX8uo8PymfLFf6zl3Ik2flAPecbgQPqfdqDj3rkzZS2m7NB66Cl5CbcZkaR1pew+G@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPfziuyNdT6yq5UqyXfInSpGsTtp/kIS2LS+9h+VPn+SNQzQpm
+	v2SYwUPY2g6tSjNP9skBCuA+XRG+DgX9+OWm2X+bJ4R+qJunVgYQDLuw
+X-Gm-Gg: ASbGncsQRM2iLR6bBWp248oBK+YhIUzJ/1kfANVL4GKkv8Fy4iGsu8doUEJFCwNFkC5
+	ch7y+mgc1Q7Mz73KrX5l2BGK0JB6uThNaGrgPgk/urXFyz3W0jftUdY0auoUmrywQlwBeJngygA
+	DPMqlFxEaLq4m+f3D7+IH0tnjbONNXt7iWz1K7VxWGfqTXFX7QG0O1BcyqzU/xipxcrIUHYfuxs
+	W+F9VSQySyfzojYH16WIcWSldPw4GiXuJTD4xNoTwTwplJigPzpm0zoFD88xaC6y5XcfuPiTRvj
+	1uaCslzYEjOZjaAJ5q49e+axGF7xz3iZXAUN1MsOY6f2UsUlmMJzvY8uCG1ksr5Mftpcd4znQh0
+	7+iFMCkDoCdDqjKEJNvFFmybaf2YN5wiytw==
+X-Google-Smtp-Source: AGHT+IGyEK2exr+k/V0w8XXUmSIzv3Ytbu6vvsSe7eRwRcTsYn2OH5a5icQQPi/utnU7cQhUneD/0w==
+X-Received: by 2002:a17:90b:224e:b0:323:7e80:8819 with SMTP id 98e67ed59e1d1-324ed15d2c5mr2462627a91.36.1755771131489;
+        Thu, 21 Aug 2025 03:12:11 -0700 (PDT)
+Received: from server.. ([103.250.145.167])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e7ccfa8d1sm7835815b3a.0.2025.08.21.03.12.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Aug 2025 03:12:10 -0700 (PDT)
+From: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
+To: akpm@linux-foundation.org,
+	shuah@kernel.org
+Cc: mic@digikod.net,
+	gnoack@google.com,
+	david@redhat.com,
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	vbabka@suse.cz,
+	rppt@kernel.org,
+	surenb@google.com,
+	mhocko@suse.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	ming.lei@redhat.com,
+	skhan@linuxfoundation.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-mm@kvack.org,
+	netdev@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	reddybalavignesh9979@gmail.com
+Subject: [PATCH] selftests: centralise maybe-unused definition in kselftest.h
+Date: Thu, 21 Aug 2025 15:41:59 +0530
+Message-ID: <20250821101159.2238-1-reddybalavignesh9979@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
-Feedback-ID: rr08011227dee011c4ba359fc500e9059100007db79ba7484654c5a5653498434b216f50461561059d32dbf7:zu08011227a5cb7776ba5e89f37adeb9890000f68e1e3f1def807e9a70a6be15172071ba36f84ae63e892f2f:rf0801122cb48f3615ec900817651bd8180000abdc6db1be998902154ea5eec4aa5d2718197cb8c3f3aba5b4253436ffea:ZohoMail
+Content-Transfer-Encoding: 8bit
 
- ---- On Tue, 12 Aug 2025 22:25:40 +0400  Aleksa Sarai <cyphar@cyphar.com> wrote --- 
- > On 2025-08-09, Aleksa Sarai <cyphar@cyphar.com> wrote:
- > > +Note that the Linux kernel reuses filesystem instances
- > > +for many filesystems,
- > > +so (depending on the filesystem being configured and parameters used)
- > > +it is possible for the filesystem instance "created" by
- > > +.B \%FSCONFIG_CMD_CREATE
- > > +to, in fact, be a reference
- > > +to an existing filesystem instance in the kernel.
- > > +The kernel will attempt to merge the specified parameters
- > > +of this filesystem configuration context
- > > +with those of the filesystem instance being reused,
- > > +but some parameters may be
- > > +.IR "silently ignored" .
- > 
- > While looking at this again, I realised this explanation is almost
- > certainly incorrect in a few places (and was based on a misunderstanding
- > of how sget_fc() works and how it interacts with vfs_get_tree()).
- > 
- > I'll rewrite this in the next version.
+Several selftests subdirectories duplicated the define __maybe_unused,
+leading to redundant code. Moved to kselftest.h header and removed
+other definition.
 
-This recent patch seems to be relevant:
-https://lore.kernel.org/all/20250816-debugfs-mount-opts-v3-1-d271dad57b5b@posteo.net/
+This addresses the duplication noted in the proc-pid-vm warning fix
 
---
-Askar Safin
-https://types.pl/@safinaskar
+Suggested-by: Andrew Morton <akpm@linux-foundation.org>
+Link:https://lore.kernel.org/lkml/20250820143954.33d95635e504e94df01930d0@linux-foundation.org/
+
+Signed-off-by: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
+---
+ tools/testing/selftests/kselftest.h                    | 4 ++++
+ tools/testing/selftests/landlock/audit.h               | 6 ++----
+ tools/testing/selftests/landlock/common.h              | 4 ----
+ tools/testing/selftests/mm/pkey-helpers.h              | 3 ---
+ tools/testing/selftests/net/psock_lib.h                | 4 ----
+ tools/testing/selftests/perf_events/watermark_signal.c | 2 --
+ tools/testing/selftests/proc/proc-pid-vm.c             | 4 ----
+ tools/testing/selftests/ublk/utils.h                   | 2 --
+ 8 files changed, 6 insertions(+), 23 deletions(-)
+
+diff --git a/tools/testing/selftests/kselftest.h b/tools/testing/selftests/kselftest.h
+index c3b6d2604b1e..661d31c4b558 100644
+--- a/tools/testing/selftests/kselftest.h
++++ b/tools/testing/selftests/kselftest.h
+@@ -92,6 +92,10 @@
+ #endif
+ #define __printf(a, b)   __attribute__((format(printf, a, b)))
+ 
++#ifndef __maybe_unused
++#define __maybe_unused __attribute__((__unused__))
++#endif
++
+ /* counters */
+ struct ksft_count {
+ 	unsigned int ksft_pass;
+diff --git a/tools/testing/selftests/landlock/audit.h b/tools/testing/selftests/landlock/audit.h
+index b16986aa6442..02fd1393947a 100644
+--- a/tools/testing/selftests/landlock/audit.h
++++ b/tools/testing/selftests/landlock/audit.h
+@@ -20,14 +20,12 @@
+ #include <sys/time.h>
+ #include <unistd.h>
+ 
++#include "../kselftest.h"
++
+ #ifndef ARRAY_SIZE
+ #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
+ #endif
+ 
+-#ifndef __maybe_unused
+-#define __maybe_unused __attribute__((__unused__))
+-#endif
+-
+ #define REGEX_LANDLOCK_PREFIX "^audit([0-9.:]\\+): domain=\\([0-9a-f]\\+\\)"
+ 
+ struct audit_filter {
+diff --git a/tools/testing/selftests/landlock/common.h b/tools/testing/selftests/landlock/common.h
+index 88a3c78f5d98..9acecae36f51 100644
+--- a/tools/testing/selftests/landlock/common.h
++++ b/tools/testing/selftests/landlock/common.h
+@@ -22,10 +22,6 @@
+ 
+ #define TMP_DIR "tmp"
+ 
+-#ifndef __maybe_unused
+-#define __maybe_unused __attribute__((__unused__))
+-#endif
+-
+ /* TEST_F_FORK() should not be used for new tests. */
+ #define TEST_F_FORK(fixture_name, test_name) TEST_F(fixture_name, test_name)
+ 
+diff --git a/tools/testing/selftests/mm/pkey-helpers.h b/tools/testing/selftests/mm/pkey-helpers.h
+index ea404f80e6cb..fa15f006fa68 100644
+--- a/tools/testing/selftests/mm/pkey-helpers.h
++++ b/tools/testing/selftests/mm/pkey-helpers.h
+@@ -84,9 +84,6 @@ extern void abort_hooks(void);
+ #ifndef noinline
+ # define noinline __attribute__((noinline))
+ #endif
+-#ifndef __maybe_unused
+-# define __maybe_unused __attribute__((__unused__))
+-#endif
+ 
+ int sys_pkey_alloc(unsigned long flags, unsigned long init_val);
+ int sys_pkey_free(unsigned long pkey);
+diff --git a/tools/testing/selftests/net/psock_lib.h b/tools/testing/selftests/net/psock_lib.h
+index 6e4fef560873..067265b0a554 100644
+--- a/tools/testing/selftests/net/psock_lib.h
++++ b/tools/testing/selftests/net/psock_lib.h
+@@ -22,10 +22,6 @@
+ 
+ #define PORT_BASE			8000
+ 
+-#ifndef __maybe_unused
+-# define __maybe_unused		__attribute__ ((__unused__))
+-#endif
+-
+ static __maybe_unused void pair_udp_setfilter(int fd)
+ {
+ 	/* the filter below checks for all of the following conditions that
+diff --git a/tools/testing/selftests/perf_events/watermark_signal.c b/tools/testing/selftests/perf_events/watermark_signal.c
+index e03fe1b9bba2..b3a72f0ac522 100644
+--- a/tools/testing/selftests/perf_events/watermark_signal.c
++++ b/tools/testing/selftests/perf_events/watermark_signal.c
+@@ -17,8 +17,6 @@
+ 
+ #include "../kselftest_harness.h"
+ 
+-#define __maybe_unused __attribute__((__unused__))
+-
+ static int sigio_count;
+ 
+ static void handle_sigio(int signum __maybe_unused,
+diff --git a/tools/testing/selftests/proc/proc-pid-vm.c b/tools/testing/selftests/proc/proc-pid-vm.c
+index 978cbcb3eb11..2a72d37ad008 100644
+--- a/tools/testing/selftests/proc/proc-pid-vm.c
++++ b/tools/testing/selftests/proc/proc-pid-vm.c
+@@ -47,10 +47,6 @@
+ #include <sys/resource.h>
+ #include <linux/fs.h>
+ 
+-#ifndef __maybe_unused
+-#define __maybe_unused __attribute__((__unused__))
+-#endif
+-
+ #include "../kselftest.h"
+ 
+ static inline long sys_execveat(int dirfd, const char *pathname, char **argv, char **envp, int flags)
+diff --git a/tools/testing/selftests/ublk/utils.h b/tools/testing/selftests/ublk/utils.h
+index 36545d1567f1..a852e0b7153e 100644
+--- a/tools/testing/selftests/ublk/utils.h
++++ b/tools/testing/selftests/ublk/utils.h
+@@ -2,8 +2,6 @@
+ #ifndef KUBLK_UTILS_H
+ #define KUBLK_UTILS_H
+ 
+-#define __maybe_unused __attribute__((unused))
+-
+ #ifndef min
+ #define min(a, b) ((a) < (b) ? (a) : (b))
+ #endif
+-- 
+2.43.0
 
 
