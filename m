@@ -1,100 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-58633-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58634-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF79DB302A6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 21:10:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFC9DB302B5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 21:15:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CFE91CE045F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 19:10:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AFBB583FF2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 19:15:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C147F346A0C;
-	Thu, 21 Aug 2025 19:09:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a9C4qLEK"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 516D42E8B67;
+	Thu, 21 Aug 2025 19:15:12 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F78F3451DB;
-	Thu, 21 Aug 2025 19:09:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A2C3451A4
+	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Aug 2025 19:15:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755803399; cv=none; b=ZuePimokJOR37EKw1NVLeZ4PhyMbvsilreY9VjJpdfWEIjXLvVoR6740ZTIMIqxcJ39NiyI0KGSQDHdl1D5P1qqsOGpdiUR3YBuykEtl+BKiaRcEVxw7kldOQQ/f1KDarIOk3YSDmgq/f320ca1ZkxeocOfg7xBsXpEFaKjVWnc=
+	t=1755803711; cv=none; b=O77AUAVGgnWALctBBd4Rqp0+zHpCZSpJY20jgxTNfKEHXCpaIr2N7G/Ij8gAGCFRebgoGmqAeIgdcQgC2sMFkIGV+GUJwohQB2nK8wwQRWYFUk1OQs6ndrfNN1Ozqi7e/k0UF3Ltneu2Mu6l2VqlCp7o3dQQBvEBJwDVGKtsZHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755803399; c=relaxed/simple;
-	bh=YIdL6akO0KLrTYwBK6SwuRLLUSW2a562UXW3vk87x3A=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=gJ9ggQb+hXmT/mHLURNCuKJT5qj0zeFH+racWjPhSg9yUbr6nenGroAG0OlFLPwmwuV98CEk794SoUahCvC8FAgwRCoCoIfB/xgjXeU0xnKU9SupZ9VK77+JmddgBCqqjLjE0XOpcSBrfR7tcuxkeO1RIRWKHOmRqjNCQOJg710=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a9C4qLEK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E289C4CEEB;
-	Thu, 21 Aug 2025 19:09:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755803398;
-	bh=YIdL6akO0KLrTYwBK6SwuRLLUSW2a562UXW3vk87x3A=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=a9C4qLEKD+YNd2/a5UY87jx5f7O+tkE1oVCnCvAmvf9giIfUEYo83N8WfNXBkw6aC
-	 eyEINQh0Umv7fm1oR7+v3m9EyhA+eW57ldudDGSOxdrWsSw+RAzy57K1Dj6xYvNNM0
-	 wyBPHGLRGkBerUNzm7iy0UBLk2vB26Wv3s4ccD3Urt2cRniuOeES3vJN1p92WTHvu9
-	 FSeXbwx2K1RISArfzvDkdi1BnKhoP5EMmRjj145Y9Nii6u/oo0fkpMn53glMGE5JTE
-	 rARhtizT77RrRfK4aVZtikH31dK8Y2hw/Niu7O49VDo9d76KCgBcmduc3ToGSlrY9W
-	 /TNqKMyM4lDHw==
-From: Nathan Chancellor <nathan@kernel.org>
-To: linux-kbuild@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- David Disseldorp <ddiss@suse.de>
-Cc: linux-next@vger.kernel.org, nsc@kernel.org
-In-Reply-To: <20250819032607.28727-1-ddiss@suse.de>
-References: <20250819032607.28727-1-ddiss@suse.de>
-Subject: Re: [PATCH v3 0/8] gen_init_cpio: add copy_file_range / reflink
- support
-Message-Id: <175580339739.1482542.13736702939659184221.b4-ty@kernel.org>
-Date: Thu, 21 Aug 2025 12:09:57 -0700
+	s=arc-20240116; t=1755803711; c=relaxed/simple;
+	bh=v9DXLBdAVysgMetYRE1Go8LQdkE/8szQv91HZLHyA7Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gfI5Dqykm2unNncLgvya3EoEIA/dB2Gig5gdXMB6AqMXEB9/2Joq+Dpr+LE9dVoCyhkXyh1sPO2yTtflFhopo6HmD6cdWhMkalbj2+Za1xd9oAAR/q8XiJWpqxoK8vnpcP7ckQFPTxEPh2u2upWc4z6yLQW3+7hEt9ueoEriPTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf16.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay06.hostedemail.com (Postfix) with ESMTP id D3611117EE7;
+	Thu, 21 Aug 2025 19:15:08 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf16.hostedemail.com (Postfix) with ESMTPA id 3A4222000E;
+	Thu, 21 Aug 2025 19:15:07 +0000 (UTC)
+Date: Thu, 21 Aug 2025 15:15:12 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: ksummit@lists.linux.dev, linux-fsdevel@vger.kernel.org
+Subject: Re: [MAINTAINER SUMMIT] Adding more formality around feature
+ inclusion and ejection
+Message-ID: <20250821151512.6b42336b@gandalf.local.home>
+In-Reply-To: <64ca315de44a6a5d8e5992a67a592b97f12f0098.camel@HansenPartnership.com>
+References: <fc0994de40776609928e8e438355a24a54f1ad10.camel@HansenPartnership.com>
+	<20250821122750.66a2b101@gandalf.local.home>
+	<64ca315de44a6a5d8e5992a67a592b97f12f0098.camel@HansenPartnership.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev
+X-Stat-Signature: ph9kqrdt9mm5urqd851hknqwxnkkggss
+X-Rspamd-Server: rspamout03
+X-Rspamd-Queue-Id: 3A4222000E
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+AD2CcoiU0hmsHn3FS7CFMuWvB/hEIYmA=
+X-HE-Tag: 1755803707-560238
+X-HE-Meta: U2FsdGVkX1/PNGF+zzWiRNllOOraKWPJbFKKs3pytWrbJ5MaHOJsc+AYKFfe+qMak1aqfSB4fHrCuZ0c8fMTXDjmNDynWwreM9+reBuZ9ejbovF7RIBXYnwo1iatgI3tDsxNrx9LUspY/cTUV4MGUIdWNoeR0Gb/qVzlbb36F9SGc4oByvRlDw3Mo52zKRrwTfcOLlv9lxz9fWJFOvbrH8th18Za3QOhhNdcZKVgjah56J6WydkAxA9VwCuvToKtIi1weysefsYxlMu3g0soSabruaw1cwTeQaITZ/Yg6xMuXAZAvHfSdWC5Bf3OyAyrSQ1GwtvL83ht/LclBhqB2utMWNcS1OM4adJYf8CV7qcCwys4XmVyyGgAS5pSmGEt
 
+On Thu, 21 Aug 2025 18:44:07 +0100
+James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
 
-On Tue, 19 Aug 2025 13:05:43 +1000, David Disseldorp wrote:
-> This patchset adds copy_file_range() support to gen_init_cpio. When
-> combined with data segment alignment, large-file archiving performance
-> is improved on Btrfs and XFS due to reflinks (see patch 7 benchmarks).
+> > I share my scripts and explain how to do a pull request. How to use
+> > linux-next and what to and more importantly, what not to send during
+> > during the -rc releases.  
 > 
-> cpio data segment alignment is provided by "bending" the newc spec
-> to zero-pad the filename field. GNU cpio and Linux initramfs
-> extractors handle this fine as long as PATH_MAX isn't exceeded. A
-> kernel initramfs extraction unit test for this is provided.
+> I'm not sure that covers it.  As I read the situation it was more about
+> how you work with others when there are things in the kernel you'd like
+> to introduce or change to support your feature.  Hence it's really
+> about working with rather than against the community.
+
+What I'm suggesting is to have a program to help newcomers that are taking
+on a maintainer role. This program can not only teach what needs to be done
+to be a maintainer, but also vet the people that are coming into our
+ecosystem. If there's a lot of push back from the individual on how to
+interact with the community, then that individual can be denied becoming a
+maintainer.
+
+
 > 
-> [...]
+> > I'm sure others have helped developers become maintainers as well.
+> > Perhaps we should get together and come up with a formal way to
+> > become a maintainer? Because honestly, it's currently done by trial
+> > and error. I think that should change.  
+> 
+> That wouldn't hurt, but that problem that I see is that some fairly
+> drastic action has been taken on what can be characterised as a whim,
+> so I think we need some formality around how and when this happens.
 
-Applied, thanks!
+If it was policy for Kent to work with a mentor before he could send
+patches directly to Linus, would this have uncovered the issues before they
+became as large as they had become?
 
-[1/8] gen_init_cpio: write to fd instead of stdout stream
-      https://git.kernel.org/kbuild/c/1400227773201
-[2/8] gen_init_cpio: support -o <output_file> parameter
-      https://git.kernel.org/kbuild/c/ae18b94099b04
-[3/8] gen_init_cpio: attempt copy_file_range for file data
-      https://git.kernel.org/kbuild/c/97169cd6d95b3
-[4/8] gen_init_cpio: avoid duplicate strlen calls
-      https://git.kernel.org/kbuild/c/348ff9e3c1cf1
-[5/8] gen_initramfs.sh: use gen_init_cpio -o parameter
-      https://git.kernel.org/kbuild/c/9135564db4904
-[6/8] docs: initramfs: file data alignment via name padding
-      https://git.kernel.org/kbuild/c/7c1f14f6e8e7f
-[7/8] gen_init_cpio: add -a <data_align> as reflink optimization
-      https://git.kernel.org/kbuild/c/5467e85508fd1
-[8/8] initramfs_test: add filename padding test case
-      https://git.kernel.org/kbuild/c/6da752f55bc48
-
-Best regards,
--- 
-Nathan Chancellor <nathan@kernel.org>
-
+-- Steve
 
