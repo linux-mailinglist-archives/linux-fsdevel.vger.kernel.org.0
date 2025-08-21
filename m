@@ -1,48 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-58623-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58624-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5730B30029
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 18:35:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74E62B30065
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 18:47:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 909A31CE0E79
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 16:28:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF2581759ED
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 16:43:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34E0A2DE6F8;
-	Thu, 21 Aug 2025 16:27:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA8A62E371B;
+	Thu, 21 Aug 2025 16:43:28 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 502B322FE0A
-	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Aug 2025 16:27:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 555BC2E2829;
+	Thu, 21 Aug 2025 16:43:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755793671; cv=none; b=fyyw31wtca41g79dYx5NZ4XxZNS7A01DAaVrgtF5bNnOY6bRDxNtYTiHwic+ospKc3YJO/uUgnpsq9lBg2hZ4gMoOHXzTyvyELhVj+VbtbWnXMU42NKy5hbbt+tBF5PVIIYHoenDYu90tyVHJ/LSPly+r/qF/rx+VB5YgKqWjdo=
+	t=1755794608; cv=none; b=W9hpp61zgjGb3cpPsuk9YSklTL3IAo0lcohnbeVR7bvSQX77ZRLw/YLr9Dmbq7rFwAkMWRNK65oiYmEQQYYV17iaFtrbM9WGQN6iSC8TOeklEL2SiRg44iv3TOOku50OblTGURFxpgc6s+pb1BHmcBAwjh99A+ECa3LeUFlrJ2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755793671; c=relaxed/simple;
-	bh=bxMXYy+zXhd8IdvDf4l1l2BfrFDUaWsDErHagNPkAu8=;
+	s=arc-20240116; t=1755794608; c=relaxed/simple;
+	bh=4v0idbTXzPKg9a6oIy2TErpjIQpXjlyAJfPy7bGdEH8=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JJM5n+LnSH6Wc7FtzwfE6FZmrLmfjVbTY6B9sA4KmI0g00PahLxXdUZPUZjVag50tvg+J66zQFVjmBy6NGdP0EZcDhxjU2PJk2apBwezIhvrSB9TEXjgO/TayAlK95C37pgFSNikPAhcwWw1SCI8S6k0uK5W7483w0jzIavYJ6E=
+	 MIME-Version:Content-Type; b=fuNYyyhNUWMLc4IZ/FKT1qz6lmFXPU0BdcjomfGj12MF/nvZam1nedX7aOJSIkyz4VLA9y1sehe57QJxqrSLFK3KsnZ5tzMOwgJ3Gx5yAVNaOKX0h1nf9Oj6+R/RV5Bx51qDCmI935xYQuIxLyfE0lnfK2chIYAM5rVUyXmrWnk=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf17.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay09.hostedemail.com (Postfix) with ESMTP id E4F1B83682;
-	Thu, 21 Aug 2025 16:27:47 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf17.hostedemail.com (Postfix) with ESMTPA id 4CEFA17;
-	Thu, 21 Aug 2025 16:27:46 +0000 (UTC)
-Date: Thu, 21 Aug 2025 12:27:50 -0400
+Received: from omf10.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay10.hostedemail.com (Postfix) with ESMTP id BCE8BC04A4;
+	Thu, 21 Aug 2025 16:43:21 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf10.hostedemail.com (Postfix) with ESMTPA id AAB9B41;
+	Thu, 21 Aug 2025 16:43:14 +0000 (UTC)
+Date: Thu, 21 Aug 2025 12:43:19 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: ksummit@lists.linux.dev, linux-fsdevel@vger.kernel.org
-Subject: Re: [MAINTAINER SUMMIT] Adding more formality around feature
- inclusion and ejection
-Message-ID: <20250821122750.66a2b101@gandalf.local.home>
-In-Reply-To: <fc0994de40776609928e8e438355a24a54f1ad10.camel@HansenPartnership.com>
-References: <fc0994de40776609928e8e438355a24a54f1ad10.camel@HansenPartnership.com>
+To: Bhupesh <bhupesh@igalia.com>
+Cc: akpm@linux-foundation.org, kernel-dev@igalia.com,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, oliver.sang@intel.com, lkp@intel.com,
+ laoar.shao@gmail.com, pmladek@suse.com, mathieu.desnoyers@efficios.com,
+ arnaldo.melo@gmail.com, alexei.starovoitov@gmail.com,
+ andrii.nakryiko@gmail.com, mirq-linux@rere.qmqm.pl, peterz@infradead.org,
+ willy@infradead.org, david@redhat.com, viro@zeniv.linux.org.uk,
+ keescook@chromium.org, ebiederm@xmission.com, brauner@kernel.org,
+ jack@suse.cz, mingo@redhat.com, juri.lelli@redhat.com, bsegall@google.com,
+ mgorman@suse.de, vschneid@redhat.com, linux-trace-kernel@vger.kernel.org,
+ kees@kernel.org, torvalds@linux-foundation.org
+Subject: Re: [PATCH v8 4/5] treewide: Switch memcpy() users of 'task->comm'
+ to a more safer implementation
+Message-ID: <20250821124319.07843e17@gandalf.local.home>
+In-Reply-To: <20250821102152.323367-5-bhupesh@igalia.com>
+References: <20250821102152.323367-1-bhupesh@igalia.com>
+	<20250821102152.323367-5-bhupesh@igalia.com>
 X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -52,42 +64,34 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Server: rspamout04
-X-Rspamd-Queue-Id: 4CEFA17
-X-Stat-Signature: 7dmpeqz9peocjqmn1f6jrcx4uc8ssp7e
+X-Rspamd-Queue-Id: AAB9B41
+X-Stat-Signature: 1oa1t5qqbkks8kqanx8ka8mut54jjjfi
+X-Rspamd-Server: rspamout02
 X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/mxB/npHbdufTge3T3jVDA+GAOZ8p7IEk=
-X-HE-Tag: 1755793666-164900
-X-HE-Meta: U2FsdGVkX19vdMypWTZ+cu7jHudpAlel61kV0fW9B/td3BmXi6urpbqeTBLgyTzQkmegFOCBODcATQI7pWGDK1ujOop++8skVD1S7QPrXUK9apEJdjGIXa4Xwj6pT4QWlDfsN3xvhN9S3c2jxjWV8xI6lAdhYz3ZUAQQ54znYDkB1CYG87vbAmKnYwYtpzRe5S62bYlOml1SUWVu17UyPv64LuoJWfBheM5LchJlDEkmqiThhFK59sRMRW4AJJtUr/nBGJLmcxKFSdQmoW8mqm4W66v1W89UohIOtX7aZL8VhABedv2B5YiGujzvhbBaDk9elb64u5Nc6zWXEuaduh6IaXlFodfPtXAsZ9dBPO4rmzFnWwn8HTrTigomYIWN
+X-Session-ID: U2FsdGVkX1+mRtTllI9WHAwDf6lxFlPKg37+M3gy9xo=
+X-HE-Tag: 1755794594-825770
+X-HE-Meta: U2FsdGVkX18d4x1NK/MTRDnXGK4K44au4CLBgnuOsLPMQS97oEClGF08S1UQPBqAXUhOYT2+eq5/sAi1mgXdeKmHe3pcFulqgI53Ec4Rb67snLuAtLtfVEavfPmRoD5y7JYHmGcn4Hro2p6dSjq/gIi4DyWBoVzCq3mxjRVILe6FugSo/lVjVT/il2NZmD1RMZHIRrrhVfKMIF217v1uQBErnO0+KI+hW1t4ZB4lPrmLe/Kkw2XO1RYIw7qhRDsjjiko4PcHZx8Idw7WLpJYEFX460Pa2NxLzazRNb+PG3fgUrLoiUP922YDshk8ps52PLY+fC+cpSKl/2qsrZy3Iu9bWaI9/zhmCvlMP6SAHTFm1f+GPmbrHkxx6vkxlhCB
 
-On Thu, 21 Aug 2025 09:56:15 +0100
-James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
+On Thu, 21 Aug 2025 15:51:51 +0530
+Bhupesh <bhupesh@igalia.com> wrote:
 
-What exactly do you mean by "feature inclusion"?
+> +static __always_inline void
+> +	__cstr_array_copy(char *dst, const char *src,
+> +			  __kernel_size_t size)
+> +{
+> +	memcpy(dst, src, size);
+> +	dst[size] = 0;
 
-Something that requires a new maintainer? As with the bcachefs, the issue
-was with how the new maintainer worked with the current workflow.
+Shouldn't this be: dst[size - 1] = 0;
 
-Maybe you mean "maintainer inclusion and ejection"?
+?
 
-> However, I'm sure others will have different ideas.
+Perhaps also add:
 
-The thing is, I believe there's a lot of features and maintainers that are
-added. Most go unnoticed as the feature is a niche (much like bcachefs was).
-
-Perhaps we should have a maintainer mentorship program. I try to work with
-others to help them become a new maintainer. I was doing that with Daniel
-Bristot, and I've done it for Masami Hiramatsu and I'm currently helping
-others to become maintainers for the trace and verification tooling.
-
-I share my scripts and explain how to do a pull request. How to use
-linux-next and what to and more importantly, what not to send during during
-the -rc releases.
-
-I'm sure others have helped developers become maintainers as well. Perhaps
-we should get together and come up with a formal way to become a maintainer?
-Because honestly, it's currently done by trial and error. I think that
-should change.
+	BUILD_BUG_ON(size == 0);
 
 -- Steve
+
+> +}
+> +
 
