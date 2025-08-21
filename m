@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-58452-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58453-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B2CCB2E9D1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 02:55:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D19BDB2E9D2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 02:55:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6A641C84257
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 00:55:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90EDBA08547
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 00:55:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF00B1F151C;
-	Thu, 21 Aug 2025 00:55:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60CE01E7C23;
+	Thu, 21 Aug 2025 00:55:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bg2ChMj+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="acmgzmEL"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A1EC1E5B70
-	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Aug 2025 00:55:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B009C190685
+	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Aug 2025 00:55:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755737723; cv=none; b=SP6mpbcQwNM80yPVRNzLQrqqkzEfAbxVXeG+wtIj/SReb8+ovEPL7XL1dh3HYxil0kr3ZdrBcI2WlYBX71jJdPvFAIVVslEFfDTY8qOEavGCSf/Eujtitoc9oqkT9u9rl/IoaKGLaypndd6kxhfBdL9z8+YXvF/ebH8KM04J9qg=
+	t=1755737738; cv=none; b=TWns6SMB+lwj0KyySFor6NKlaJG+J3FRi6tTXidrYhRCTX6Ehj7vA5RQlKpCUHpdj4XGVuOgzeGkM1mCimGTAEwnULDed2NYEBPDYF2Cf66fqnx0f4kbuvlWUvqJru5FAZK8Le6ELoWLh8SC2j6E8WlgfUrm25UuBc+V7NoMIFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755737723; c=relaxed/simple;
-	bh=pVbUVvyjka2YaeJ1DUTlSipLd8brGvACNzufD6xytSg=;
+	s=arc-20240116; t=1755737738; c=relaxed/simple;
+	bh=qFrAYlZhVp9vp3B7mPyIRcggoFjxksAGryflMQKgIFI=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=I90Jop0zclLPHjubsEpEpkNm4+gqpr6ug1asNtJwzipni2SBTDDche2HXXZvI/060nHKPB2VRHTVfkjMnBG0t2LxabEjhH37YPfiRys684BZtu8XeRgkDwHMoEuikWtay7utrxqxXiTgpV3J8xqQ+Pi27n6OfvfV8zr653B8ygs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bg2ChMj+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97A2FC4CEE7;
-	Thu, 21 Aug 2025 00:55:22 +0000 (UTC)
+	 MIME-Version:Content-Type; b=jsn3ExVR4fx58PggAOxLEtjVtLInckZJLNuicYJdWTm/8k4SC8T6HHVUBLTa8SOq7H1wDw8NZc7bF6Hp99IZz+S7QWC6oV8DBe3Omxzyq0XkuWtIFqsQUMSD/yUvYYUOok7i2Rtmli+WuRoaBE5AQavCi2ZFLen50Ifjk3B1Rvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=acmgzmEL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34BC8C4CEE7;
+	Thu, 21 Aug 2025 00:55:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755737722;
-	bh=pVbUVvyjka2YaeJ1DUTlSipLd8brGvACNzufD6xytSg=;
+	s=k20201202; t=1755737738;
+	bh=qFrAYlZhVp9vp3B7mPyIRcggoFjxksAGryflMQKgIFI=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=Bg2ChMj+tKoKqZiKJEafyoSw7a2AaoYrqUKI+atqWYgTxsIqQbdxMNfmr27cKVogs
-	 pW4jTt2DyR/tqrR2LmhY8Q5XqRGZnw4JuiSVN53p9VcPTqBCXNC+BdGlfuPxJJyl5J
-	 byQ4GXqfFAP23XP4DuVBTsStZz7aMcNIKwUK278yPm7557KoBvOoD/s4D0mU/tSo0p
-	 sdPJLLPPUeBkWYdq3eUZ9AU4ZH27IHSV5RksupihLZtg5ehiPp2J7JHLYmVNaFi/fs
-	 NtcxL2B/lqSDmUXAbkf91D6VdcmfN4S5oy+LBP9iRqi0MibSw/vXGpfHcI5Mu42kKk
-	 syTj8/3+0zuPQ==
-Date: Wed, 20 Aug 2025 17:55:22 -0700
-Subject: [PATCH 11/23] fuse: enable caching of timestamps
+	b=acmgzmELeUtqrWjMOKnMlCyRoa4XvfaGp++AimjU8TEalnZOfSMfyDAMCkhQlGs6R
+	 wbLEmbnqt2Y9yryalS0cLsq3jtVbNn5w8ETgqKq/dvgg2F5MhTEt/cmLhyz/yQSLPc
+	 2GjcsbeQ+K/vthMc2sgJJXjv83iXI+Y8elUUXyw8+GB0/972ftYBZPEzrG4HM7sXGD
+	 AKH+A7ikI4RpQFgL3aeEy9DCOU9ojgvuHVOHCsHC/C7Vjo3tr5NBPAaaCuy+asz1l6
+	 e8a3ymgmD3M+rY/lmg1g/ds+KA2/mICX+vrvGjFo2fe+0GEAgbiW7bpl6khHO7bW5J
+	 j5d8kSHzEveog==
+Date: Wed, 20 Aug 2025 17:55:37 -0700
+Subject: [PATCH 12/23] fuse: implement large folios for iomap pagecache files
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, miklos@szeredi.hu
 Cc: bernd@bsbernd.com, neal@gompa.dev, John@groves.net,
  linux-fsdevel@vger.kernel.org, joannelkoong@gmail.com
-Message-ID: <175573709353.17510.11755202776509077020.stgit@frogsfrogsfrogs>
+Message-ID: <175573709375.17510.10859593872676063736.stgit@frogsfrogsfrogs>
 In-Reply-To: <175573708972.17510.972367243402147687.stgit@frogsfrogsfrogs>
 References: <175573708972.17510.972367243402147687.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -61,155 +61,37 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Cache the timestamps in the kernel so that the kernel sends FUSE_SETATTR
-calls to the fuse server after writes, because the iomap infrastructure
-won't do that for us.
+Use large folios when we're using iomap.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- fs/fuse/dir.c        |    3 ++-
- fs/fuse/file.c       |   20 ++++++++++++++------
  fs/fuse/file_iomap.c |    6 ++++++
- fs/fuse/inode.c      |   13 +++++++------
- 4 files changed, 29 insertions(+), 13 deletions(-)
+ 1 file changed, 6 insertions(+)
 
 
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 6195ac3232ff22..07aa338208b5cc 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -2005,7 +2005,8 @@ int fuse_do_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 	struct fuse_setattr_in inarg;
- 	struct fuse_attr_out outarg;
- 	bool is_truncate = false;
--	bool is_wb = fc->writeback_cache && S_ISREG(inode->i_mode);
-+	bool is_wb = S_ISREG(inode->i_mode) &&
-+			(fuse_inode_has_iomap(inode) || fc->writeback_cache);
- 	loff_t oldsize;
- 	int err;
- 	bool trust_local_cmtime = is_wb;
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 43f3e2d4eacb8e..825b7ac9158d08 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -239,7 +239,8 @@ static int fuse_open(struct inode *inode, struct file *file)
- 	struct fuse_file *ff;
- 	int err;
- 	bool is_truncate = (file->f_flags & O_TRUNC) && fc->atomic_o_trunc;
--	bool is_wb_truncate = is_truncate && fc->writeback_cache;
-+	bool is_wb_truncate = is_truncate && (fuse_inode_has_iomap(inode) ||
-+					      fc->writeback_cache);
- 	bool dax_truncate = is_truncate && FUSE_IS_DAX(inode);
- 
- 	if (fuse_is_bad(inode))
-@@ -459,7 +460,9 @@ static int fuse_flush(struct file *file, fl_owner_t id)
- 	if (fuse_is_bad(inode))
- 		return -EIO;
- 
--	if (ff->open_flags & FOPEN_NOFLUSH && !fm->fc->writeback_cache)
-+	if ((ff->open_flags & FOPEN_NOFLUSH) &&
-+	    !fm->fc->writeback_cache &&
-+	    !fuse_inode_has_iomap(inode))
- 		return 0;
- 
- 	err = write_inode_now(inode, 1);
-@@ -495,7 +498,7 @@ static int fuse_flush(struct file *file, fl_owner_t id)
- 	 * In memory i_blocks is not maintained by fuse, if writeback cache is
- 	 * enabled, i_blocks from cached attr may not be accurate.
- 	 */
--	if (!err && fm->fc->writeback_cache)
-+	if (!err && (fuse_inode_has_iomap(inode) || fm->fc->writeback_cache))
- 		fuse_invalidate_attr_mask(inode, STATX_BLOCKS);
- 	return err;
- }
-@@ -793,8 +796,10 @@ static void fuse_short_read(struct inode *inode, u64 attr_ver, size_t num_read,
- 	 * If writeback_cache is enabled, a short read means there's a hole in
- 	 * the file.  Some data after the hole is in page cache, but has not
- 	 * reached the client fs yet.  So the hole is not present there.
-+	 * If iomap is enabled, a short read means we hit EOF so there's
-+	 * nothing to adjust.
- 	 */
--	if (!fc->writeback_cache) {
-+	if (!fc->writeback_cache && !fuse_inode_has_iomap(inode)) {
- 		loff_t pos = folio_pos(ap->folios[0]) + num_read;
- 		fuse_read_update_size(inode, pos, attr_ver);
- 	}
-@@ -1409,6 +1414,8 @@ static int fuse_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
- 			    unsigned int flags, struct iomap *iomap,
- 			    struct iomap *srcmap)
- {
-+	WARN_ON(fuse_inode_has_iomap(inode));
-+
- 	iomap->type = IOMAP_MAPPED;
- 	iomap->length = length;
- 	iomap->offset = offset;
-@@ -1976,7 +1983,7 @@ static void fuse_writepage_end(struct fuse_mount *fm, struct fuse_args *args,
- 	 * Do this only if writeback_cache is not enabled.  If writeback_cache
- 	 * is enabled, we trust local ctime/mtime.
- 	 */
--	if (!fc->writeback_cache)
-+	if (!fc->writeback_cache && !fuse_inode_has_iomap(inode))
- 		fuse_invalidate_attr_mask(inode, FUSE_STATX_MODIFY);
- 	spin_lock(&fi->lock);
- 	fi->writectr--;
-@@ -3057,7 +3064,8 @@ static ssize_t __fuse_copy_file_range(struct file *file_in, loff_t pos_in,
- 	ssize_t err;
- 	/* mark unstable when write-back is not used, and file_out gets
- 	 * extended */
--	bool is_unstable = (!fc->writeback_cache) &&
-+	bool is_unstable = (!fc->writeback_cache &&
-+			    !fuse_inode_has_iomap(inode_out)) &&
- 			   ((pos_out + len) > inode_out->i_size);
- 
- 	if (fc->no_copy_file_range)
 diff --git a/fs/fuse/file_iomap.c b/fs/fuse/file_iomap.c
-index ff9298de193a26..6aa9269b504713 100644
+index 6aa9269b504713..92cc85b5b8a8b5 100644
 --- a/fs/fuse/file_iomap.c
 +++ b/fs/fuse/file_iomap.c
-@@ -1389,6 +1389,12 @@ static inline void fuse_inode_set_iomap(struct inode *inode)
+@@ -1386,6 +1386,7 @@ static const struct address_space_operations fuse_iomap_aops = {
+ static inline void fuse_inode_set_iomap(struct inode *inode)
+ {
+ 	struct fuse_inode *fi = get_fuse_inode(inode);
++	unsigned int min_order = 0;
  
  	ASSERT(fuse_has_iomap(inode));
  
-+	/*
-+	 * Manage timestamps ourselves, don't make the fuse server do it.  This
-+	 * is critical for mtime updates to work correctly with page_mkwrite.
-+	 */
-+	inode->i_flags &= ~S_NOCMTIME;
-+	inode->i_flags &= ~S_NOATIME;
- 	inode->i_data.a_ops = &fuse_iomap_aops;
- 
+@@ -1400,6 +1401,11 @@ static inline void fuse_inode_set_iomap(struct inode *inode)
  	INIT_WORK(&fi->ioend_work, fuse_iomap_end_io);
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 72ba71c609a248..b08b1961d03b3e 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -331,10 +331,11 @@ u32 fuse_get_cache_mask(struct inode *inode)
- {
- 	struct fuse_conn *fc = get_fuse_conn(inode);
- 
--	if (!fc->writeback_cache || !S_ISREG(inode->i_mode))
--		return 0;
-+	if (S_ISREG(inode->i_mode) &&
-+	    (fuse_inode_has_iomap(inode) || fc->writeback_cache))
-+		return STATX_MTIME | STATX_CTIME | STATX_SIZE;
- 
--	return STATX_MTIME | STATX_CTIME | STATX_SIZE;
-+	return 0;
+ 	INIT_LIST_HEAD(&fi->ioend_list);
+ 	spin_lock_init(&fi->ioend_lock);
++
++	if (inode->i_blkbits > PAGE_SHIFT)
++		min_order = inode->i_blkbits - PAGE_SHIFT;
++
++	mapping_set_folio_min_order(inode->i_mapping, min_order);
+ 	set_bit(FUSE_I_IOMAP, &fi->state);
  }
  
- static void fuse_change_attributes_i(struct inode *inode, struct fuse_attr *attr,
-@@ -349,9 +350,9 @@ static void fuse_change_attributes_i(struct inode *inode, struct fuse_attr *attr
- 
- 	spin_lock(&fi->lock);
- 	/*
--	 * In case of writeback_cache enabled, writes update mtime, ctime and
--	 * may update i_size.  In these cases trust the cached value in the
--	 * inode.
-+	 * In case of writeback_cache or iomap enabled, writes update mtime,
-+	 * ctime and may update i_size.  In these cases trust the cached value
-+	 * in the inode.
- 	 */
- 	cache_mask = fuse_get_cache_mask(inode);
- 	if (cache_mask & STATX_SIZE)
 
 
