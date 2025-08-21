@@ -1,128 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-58578-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58579-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59966B2F00E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 09:48:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7B90B2F02B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 09:54:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F588188EA29
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 07:48:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BE265C416C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 07:54:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CE3A283FF4;
-	Thu, 21 Aug 2025 07:47:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3D22283FCB;
+	Thu, 21 Aug 2025 07:54:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RilZfr5U"
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="c1XQAWIl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F17CF19F135;
-	Thu, 21 Aug 2025 07:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755762466; cv=none; b=fIS5h3DcFVb7ZRQBSMYg/ehGXfb62tWJMjD3qmo6skFjEILeovRmQylhDX7vaVsutqKc77aVUZQa4AfkznNrfCPQMNFFgfrMX3gbYpZhMrrxrlnyojc5tsFYaryXRzuedUVKLw3G07Cch9Kk4efqD+3DlZoqyA4ZXCZz35EJ+Pk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755762466; c=relaxed/simple;
-	bh=eEvFGmHk4o/xiRTP7rYXNelXLR+78ohx+6Uf3/9nIYk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f88abJLM203a+vR+XHj1FQhUO5TsqXvvz6KP6qxHh8ocE+VbbKRc3BHt3zPwdZ7c1gV7cjXE+q5eTy0CJDhQFHSKHRPYyDyBDsPyIpNsOL4JkOlsQtkFDsiq2UDvd2qfA7NXb72E4YrQPTAHK9VFGtAXpCCOK5zSSvwUQxXgURs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RilZfr5U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB9B2C19421;
-	Thu, 21 Aug 2025 07:47:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755762465;
-	bh=eEvFGmHk4o/xiRTP7rYXNelXLR+78ohx+6Uf3/9nIYk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RilZfr5UKaSKIoAFq/Q157n2pcqvRnrUDTnYbKIu9RjOm7/SlxZ3dO2UgCSb9ECGM
-	 pKBmVy8XWH6MggyREIF02kmb88faATfH0pVt8dWztV++pjuWxViirYSwJqwMAJFQ47
-	 wfZkJ08cwLrT67YgeJUkjHOnTv4KZWg6XRSUdl/oSPgFTi8qfnZ4hSrWzMet5qQacX
-	 HkAN1wRxypLP4OrU7Rroc3tvV9Dz0FMyWhs51vl7YVV21GSbstBHSXAOZUEnVw7wnd
-	 kKGq5La0JjnUuKPlJ0x6DMknEwhdYAd6TEMdqn98M/uOWSgZG6v2cdSCrbAdT6UCyz
-	 x/h7h1YLieLqg==
-Date: Thu, 21 Aug 2025 09:47:41 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Thomas Bertschinger <tahbertschinger@gmail.com>, 
-	Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	viro@zeniv.linux.org.uk, linux-nfs@vger.kernel.org
-Subject: Re: [PATCHSET RFC 0/6] add support for name_to, open_by_handle_at(2)
- to io_uring
-Message-ID: <20250821-putzig-bockig-ad93ba46e12e@brauner>
-References: <20250814235431.995876-1-tahbertschinger@gmail.com>
- <e914d653-a1b6-477d-8afa-0680a703d68f@kernel.dk>
- <DC6X58YNOC3F.BPB6J0245QTL@gmail.com>
- <CAOQ4uxj=XOFqHBmYY1aBFAnJtSkxzSyPu5G3xP1rx=ZfPfe-kg@mail.gmail.com>
- <DC7CIXI2T3FD.1I8C9PE5V0TRI@gmail.com>
- <CAOQ4uximiUryMV=z_3TrEN1KCSA-2YdCt0t7v1M1gRZpnWec=Q@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48873188906
+	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Aug 2025 07:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755762881; cv=pass; b=Jh7/SvWm5Gu+8+KOsyPrz88SUvPgMyn7wL3ulncMGlhDooa7Umhv5/KrU35Q++k1Lqbu9eyfyiQxgAioMMozITAe9ZP+WAzZGLJ3KhQBtL82/7ap8iHxK1jqQ91WhvBnl1gOnZ2KCRkqkSNHSRHTtruPUjdKM9wjdDOnUyF9+G4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755762881; c=relaxed/simple;
+	bh=ByIlTuut10mitMJ5VgXN30BouWWoxM56LFqXsOv6Oco=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:Subject:MIME-Version:
+	 Content-Type; b=HQxLkD4YdBj0f/O35NQxFlOBvDdg1g5I2nlJZHeHYRRNvpJQqKgmISEhSPyGAoyEuLUaxVax/QFUfl5dq3Ze85xHRE6M+NS7kRPBVV7ff6j4o6Zco2miec8Ie03UCH8BSIorxSVvWEeeGVkxO00FLmAn3jkbf+mqSJG0gAXBhMo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=c1XQAWIl; arc=pass smtp.client-ip=136.143.188.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1755762840; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=SIwZiQ/wOi+VfCzGhdLbFu8vzCTxN9QfBq5F/xmFQ7lEkMb8u/gZ39IKLfXwLowtrlUub7VYpRdWJJIitmoi6tBlCLcu78l1u3tYc4ZVS3cBd4RW4Qdsy4kgtizdGSMbcWkqSyrODynGGjCQXOCrl9NpZpmugGzy473JQzRPLhw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1755762840; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=ByIlTuut10mitMJ5VgXN30BouWWoxM56LFqXsOv6Oco=; 
+	b=QH4dG4wvaXGHeT+V6nVHNW23P66rhv04My9rC9uRMV/TogzQIagSSqEWBianw42wDYgmntq465CDBb412bt33ufywKgcwTrG059JXcQr89m35rRrlQE9N8mV2eZLC6wIOrhFRb7vWez6Lp9aAWW2L0g9W565QMNbr91TvIKzV3U=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
+	dmarc=pass header.from=<safinaskar@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755762840;
+	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=ByIlTuut10mitMJ5VgXN30BouWWoxM56LFqXsOv6Oco=;
+	b=c1XQAWIl1TRYJtK2PcZnD4IdXQJ8yWEja40d8vwdd1IsCHBOI6CPF81tS19ZgBvI
+	35BVnJcnp8py68EibNkkQwjItogp+VDfibqxrysy/mHtxVCEmGFbfLmX8wFD4lLvUVJ
+	5mhG5GCmtpipOxIKxnVe1uAG7gR2xGX8bSOCfPbI=
+Received: from mail.zoho.com by mx.zohomail.com
+	with SMTP id 1755762838350148.54268594130883; Thu, 21 Aug 2025 00:53:58 -0700 (PDT)
+Received: from  [212.73.77.104] by mail.zoho.com
+	with HTTP;Thu, 21 Aug 2025 00:53:58 -0700 (PDT)
+Date: Thu, 21 Aug 2025 11:53:58 +0400
+From: Askar Safin <safinaskar@zohomail.com>
+To: "Ian Kent" <raven@themaw.net>
+Cc: "autofs mailing list" <autofs@vger.kernel.org>,
+	"linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
+	"cyphar" <cyphar@cyphar.com>, "viro" <viro@zeniv.linux.org.uk>
+Message-ID: <198cb9ecb3f.11d0829dd84663.7100887892816504587@zohomail.com>
+In-Reply-To: 
+Subject: Serious error in autofs docs, which has design implications
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uximiUryMV=z_3TrEN1KCSA-2YdCt0t7v1M1gRZpnWec=Q@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
+Feedback-ID: rr08011227b2d2fca8b18d2b918a7a07350000d02a1b5b4804ed5d9cd074adc6e811c1276d652845d7662084:zu080112278e8398b6583a74f01e74011f000082b712e1f9b3cc5761894bdda92474ff633a4d06199a7ae9ff:rf0801122cdc325dddc41d7172a753f6fb0000aa9258eb201d4c47637105abbbd5245d9aae768ee31be6bdaa69532943a3:ZohoMail
 
-On Wed, Aug 20, 2025 at 09:58:15PM +0200, Amir Goldstein wrote:
-> On Wed, Aug 20, 2025 at 5:00 PM Thomas Bertschinger
-> <tahbertschinger@gmail.com> wrote:
-> >
-> > On Wed Aug 20, 2025 at 2:34 AM MDT, Amir Goldstein wrote:
-> > > On Wed, Aug 20, 2025 at 4:57 AM Thomas Bertschinger
-> > > <tahbertschinger@gmail.com> wrote:
-> > >> Any thoughts on that? This seemed to me like there wasn't an obvious
-> > >> easy solution, hence why I just didn't attempt it at all in v1.
-> > >> Maybe I'm missing something, though.
-> > >>
-> > >
-> > > Since FILEID_IS_CONNECTABLE, we started using the high 16 bits of
-> > > fh_type for FILEID_USER_FLAGS, since fs is not likely expecting a fh_type
-> > > beyond 0xff (Documentation/filesystems/nfs/exporting.rst):
-> > > "A filehandle fragment consists of an array of 1 or more 4byte words,
-> > > together with a one byte "type"."
-> > >
-> > > The name FILEID_USER_FLAGS may be a bit misleading - it was
-> > > never the intention for users to manipulate those flags, although they
-> > > certainly can and there is no real harm in that.
-> > >
-> > > These flags are used in the syscall interface only, but
-> > > ->fh_to_{dentry,parent}() function signature also take an int fh_flags
-> > > argument, so we can use that to express the non-blocking request.
-> > >
-> > > Untested patch follows (easier than explaining):
-> >
-> > Ah, that makes sense and makes this seem feasible. Thanks for pointing
-> > that out!
-> >
-> > It also seems that each FS could opt in to this with a new EXPORT_OP
-> > flag so that the FSes that want to support this can be updated
-> > individually. Then, updating most or every exportable FS isn't a
-> > requirement for this.
-> 
-> Makes a lot of sense. yes.
-> 
-> >
-> > Do you have an opinion on that, versus expecting every ->fh_to_dentry()
-> > implementation to respect the new flag?
-> 
-> Technically, you do not need every fs to respect this flag, you only need them
-> to not ignore it.
-> 
-> Generally, if you pass (fileid_type | EXPORT_FH_CACHED) as the type
-> argument, most filesystems will not accept this value anyway and return
-> NULL or PTR_ERR(-ESTALE), so not ignoring.
-> 
-> But I think it is much preferred to check the opt-in EXPORT_OP
-> flag and return EAGAIN from generic code in the case that fs does
-> not support non-blocking decode.
-> 
-> And fs that do opt in should probably return PTR_ERR(-EAGAIN)
-> when the file type is correct but non-blocking decode is not possible.
+Hi, Ian Kent and other autofs people.
 
-I like your idea as it's in line with other extensions we've done
-recently to open_by_handle_at().
+autofs.rst says:
+> mounting onto a directory is considered to be "beyond a `stat`"
+in https://elixir.bootlin.com/linux/v6.17-rc2/source/Documentation/filesystems/autofs.rst#L109
+
+This is not true. Mounting does not trigger automounts.
+
+mount syscall (
+https://elixir.bootlin.com/linux/v6.17-rc2/source/fs/namespace.c#L4321
+) calls "do_mount" (
+https://elixir.bootlin.com/linux/v6.17-rc2/source/fs/namespace.c#L4124
+), which calls "user_path_at" without LOOKUP_AUTOMOUNT.
+This means automounts are not followed.
+I didn't test this, but I'm pretty sure about this by reading code.
+
+But what is worse, autofs.rst then proceeds to use this as an argument in
+favor of introducing DCACHE_MANAGE_TRANSIT!
+
+I. e. it seems that introducing DCACHE_MANAGE_TRANSIT rests on
+wrong premise.
+
+Thus, it seems (from reading autofs.rst) that DCACHE_MANAGE_TRANSIT and all accociated logic
+can be removed from kernel.
+
+--
+Askar Safin
+https://types.pl/@safinaskar
+
 
