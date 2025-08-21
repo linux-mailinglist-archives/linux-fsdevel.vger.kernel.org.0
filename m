@@ -1,156 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-58570-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58571-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 803CFB2ED67
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 07:04:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF6A2B2EDA4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 07:43:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CE556807C1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 05:04:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B2AA5C46A8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 05:43:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B60822A7E2;
-	Thu, 21 Aug 2025 05:04:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F8B2C21CA;
+	Thu, 21 Aug 2025 05:43:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="IZhEjeAs";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vPN3FU6d";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="IZhEjeAs";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vPN3FU6d"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L5WXVH4E"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AD753C17
-	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Aug 2025 05:04:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A7D826A0A7;
+	Thu, 21 Aug 2025 05:43:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755752690; cv=none; b=qv8qWkQ44Nr/X3IsjXplvfaLTFw8G4LAnopll0fr7jeTFfIWBgXoui83TW5g3/C7G1VHpa++29gpT6Zr+rtb2c1JalqLQbrHzdE5JNJh5zuZfdC6HsiwClf32sOT/zJrFJwLp8yTG7Zq+qs2PI6VInU6V3BlfnL6YXT4iJ/Jslo=
+	t=1755755027; cv=none; b=E9SQDF2AoMXeTbaDDuegrmR/L7iOU71Q67NQnH+6CI35DBY0KmuzULQPOGHCTXViUz+7Zh4MbJkXqYPj5nXYSdCi2BEJBIKUPjhUipECW4bZvQCvORTGlQM9HN0UDOGMKrV65doijp8HccaYj/BznxhZHAPAsDZWm25dGxx403I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755752690; c=relaxed/simple;
-	bh=34x1qdQH8P+r9MyBaDu1WiwJ13BCxG5ek5aWuksirF4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iV/LdT+vxnBkcolziHkU5HG+JNI4KNvLG74QnJH0dnGwyc+kRaVY5VpAnSPZYIRXDiMA0SiJjmtUdRHSNC4fNhqTP/pAPByXtF0ubqDy3OwCfCophLPE747BEZFrBMoyIwrCsl1nX+v3XIsv8HSmS62lINqC923rUTR2KbN3w54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=IZhEjeAs; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vPN3FU6d; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=IZhEjeAs; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vPN3FU6d; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 5F42021288;
-	Thu, 21 Aug 2025 05:04:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755752687; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IsGVJCXEBAq5aBbSQuh3KsHAn4nHmOhKYCwUt+Knp7E=;
-	b=IZhEjeAscpTbz/3zFvOGadUQnugsv6qpstfvnOxLMxXJLk+odQOk2DvVJWrkQKoOW72KaJ
-	OL8EpRRPRhyrfGADMm8lx4nnXyxvRB47fEJsdVO95zJMfYfLJUzr0SQhp45cb5oesWnvzG
-	2g0BiT8ZqhVSllRG0/2jRNov+ATM6oM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755752687;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IsGVJCXEBAq5aBbSQuh3KsHAn4nHmOhKYCwUt+Knp7E=;
-	b=vPN3FU6dChOOEBcTk7gXZIDxbNP+YfckMyKaOXl/gIbVYmIv1aUCY/q9XP+Uoxr8lWjC88
-	un/V6D82pM2EVCBg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755752687; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IsGVJCXEBAq5aBbSQuh3KsHAn4nHmOhKYCwUt+Knp7E=;
-	b=IZhEjeAscpTbz/3zFvOGadUQnugsv6qpstfvnOxLMxXJLk+odQOk2DvVJWrkQKoOW72KaJ
-	OL8EpRRPRhyrfGADMm8lx4nnXyxvRB47fEJsdVO95zJMfYfLJUzr0SQhp45cb5oesWnvzG
-	2g0BiT8ZqhVSllRG0/2jRNov+ATM6oM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755752687;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IsGVJCXEBAq5aBbSQuh3KsHAn4nHmOhKYCwUt+Knp7E=;
-	b=vPN3FU6dChOOEBcTk7gXZIDxbNP+YfckMyKaOXl/gIbVYmIv1aUCY/q9XP+Uoxr8lWjC88
-	un/V6D82pM2EVCBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0DFDF13867;
-	Thu, 21 Aug 2025 05:04:44 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id IdgdLuyopmiuXgAAD6G6ig
-	(envelope-from <ddiss@suse.de>); Thu, 21 Aug 2025 05:04:44 +0000
-Date: Thu, 21 Aug 2025 15:04:26 +1000
-From: David Disseldorp <ddiss@suse.de>
-To: Nicolas Schier <nsc@kernel.org>
+	s=arc-20240116; t=1755755027; c=relaxed/simple;
+	bh=Wp7I+WJEXQro1T1vaqb0a2EcFW3Ob8v7DjHO+Wlw9UQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OcH0boVH/mFLs2MYF0hEW+SsV6ITdtRqc/DR9uo9uGm7FP5Vak/nxhYo+gRLhaeqDACHoKCxXCbMypbno6sfXA6mwnsFOkImeV2d8BxanTLs7Nxe15L7TzH7gRYfJaCVGfkoDAtiQ3P+5XI1obIpzF/0jGrGJPmHxGImOm00gLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L5WXVH4E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 039C2C4CEED;
+	Thu, 21 Aug 2025 05:43:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755755025;
+	bh=Wp7I+WJEXQro1T1vaqb0a2EcFW3Ob8v7DjHO+Wlw9UQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=L5WXVH4E4xGegsERez0gsqzU5rqIayhns1AWpNjI/Xnt4p2EBLk+Xur9KeQ1RumrS
+	 N7mGDEfOX/1aPNmz2weXWJJQKbAfIbZTC6kcDHs5Yfgv9+LtwF7U4Zv5Q98xocjRjU
+	 FupBzrI1Ob/51kGKvudssay5daZwbNdrD0ng73G8oApHG+Y3Ye1wPdgowAWCR0knKQ
+	 3HmT2FlocjoVyUyv5kVvbsXxN1heZDLm1SNUUt+dlgbZ18/8S7gsPEkQNwfKy6zzrL
+	 jgyIcLv+0ESP23BBo4Yu/nyH7UvoHf/x8UlEMSh3bw6EPQ4OHMEQd1XO1fb64UsFCx
+	 +NhctmiG9Q/TA==
+Date: Thu, 21 Aug 2025 07:40:36 +0200
+From: Nicolas Schier <nsc@kernel.org>
+To: David Disseldorp <ddiss@suse.de>
 Cc: Nathan Chancellor <nathan@kernel.org>, linux-kbuild@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, oe-kbuild-all@lists.linux.dev,
- linux-next@vger.kernel.org
+	linux-fsdevel@vger.kernel.org, oe-kbuild-all@lists.linux.dev,
+	linux-next@vger.kernel.org
 Subject: Re: [PATCH v3 8/8] initramfs_test: add filename padding test case
-Message-ID: <20250821150426.40f14b7f.ddiss@suse.de>
-In-Reply-To: <aKY36YpNQTnd1d7Y@levanger>
+Message-ID: <aKaxVPGMRX7ywI5L@levanger>
 References: <20250819032607.28727-9-ddiss@suse.de>
-	<202508200304.wF1u78il-lkp@intel.com>
-	<20250820111334.51e91938.ddiss@suse.de>
-	<aKY36YpNQTnd1d7Y@levanger>
+ <202508200304.wF1u78il-lkp@intel.com>
+ <20250820111334.51e91938.ddiss@suse.de>
+ <aKY36YpNQTnd1d7Y@levanger>
+ <20250821150426.40f14b7f.ddiss@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Score: -3.30
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Kv6GRpoejpiXQgac"
+Content-Disposition: inline
+In-Reply-To: <20250821150426.40f14b7f.ddiss@suse.de>
 
-On Wed, 20 Aug 2025 23:02:33 +0200, Nicolas Schier wrote:
 
-> > >  > 415			.filesize = 0,    
-> > ...  
-> > >    425			.filesize = sizeof(fdata),
-> > >    426		} };  
-> > 
-> > Thanks. I can send a v4 patchset to address this, or otherwise happy to
-> > have line 415 removed by a maintainer when merged.  
-> 
-> With that change:
-> 
-> Acked-by: Nicolas Schier <nsc@kernel.org>
+--Kv6GRpoejpiXQgac
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks Nicolas!
-Do you have any suggestions regarding how this patchset should proceed -
-would git://git.kernel.org/pub/scm/linux/kernel/git/kbuild/linux.git
-kbuild-next be suitable as a pre-merge-window staging area?
+On Thu, Aug 21, 2025 at 03:04:26PM +1000, David Disseldorp wrote:
+> On Wed, 20 Aug 2025 23:02:33 +0200, Nicolas Schier wrote:
+>=20
+> > > >  > 415			.filesize =3D 0,   =20
+> > > ... =20
+> > > >    425			.filesize =3D sizeof(fdata),
+> > > >    426		} }; =20
+> > >=20
+> > > Thanks. I can send a v4 patchset to address this, or otherwise happy =
+to
+> > > have line 415 removed by a maintainer when merged. =20
+> >=20
+> > With that change:
+> >=20
+> > Acked-by: Nicolas Schier <nsc@kernel.org>
+>=20
+> Thanks Nicolas!
+> Do you have any suggestions regarding how this patchset should proceed -
+> would git://git.kernel.org/pub/scm/linux/kernel/git/kbuild/linux.git
+> kbuild-next be suitable as a pre-merge-window staging area?
 
-Cheers, David
+yes, Nathan agreed to pick it up for kbuild-next.
+
+Kind regards,
+Nicolas
+
+--Kv6GRpoejpiXQgac
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEh0E3p4c3JKeBvsLGB1IKcBYmEmkFAmimsUkACgkQB1IKcBYm
+Emn/IQ/+P+a+p7M0Ns20jJUitDgWVvbYO4R8Q5fJwFtXczz4wJl2Fcp/J4WjRP2y
+GK3HZurpArA98cQIt8TcStCN+wHZUy7mZ2HsGhaOP/o1H6lifHV8vkm29p1Z2Va9
+CAOyLIwP29Gltzmg+RY7iI/FUaeni3+hA3zfMF2653tRLk7shdciwCBBs8xvLRhQ
+6SZTjXEblKMNSpKkLdw5tpm2o7o2+XduGubKWDLfNsLgFfcN/c2r2c7tKsRlpR9o
+MoAwt2wvFfyPMpdvfwHIgmwxjSa3QzntJ7D4gLB6Sa+bIevuikVmj0KtZmG8LCWm
+YvP/BilEaCfmIZK9eNwuLAto2w8sz1HDyD0+8gWaYv5uULnL6XnDQihM3KUWfVLP
+LDtWMGF7THd+Xjlax5cw/ulZOOhNWYFxu3GLVaLLCNa3YGBL6xMn4HoDZ2G0X6Oa
+aWagT4BOJSkeGjAV2W25b3A+AV2fdFyTeVZnBTURPwzfZDOJSt0W/Qqadk4DyeDE
+8YftgcGkOijuUN/yGCNSaF19DQ4cWsnLvIiCVFnUQG9S3P9fRnLiLJ9lmrmjRbqq
+3GiEnhPQtFHufN20kCrTjQoovEnvIunxeTTuEpfXk+aCXMAS8Ffcohba2HG8A197
+J9mxSiVlxUU1qt2kTMI0TPp7zOsFBycNyIIFe+skN6NLGR0L6b0=
+=8UJn
+-----END PGP SIGNATURE-----
+
+--Kv6GRpoejpiXQgac--
 
