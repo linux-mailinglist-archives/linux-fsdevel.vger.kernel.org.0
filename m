@@ -1,54 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-58511-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58512-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 061F9B2EA1F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 03:10:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C848EB2EA24
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 03:11:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B864B5C3B39
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 01:10:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6D4DA26469
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 01:11:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E48771F8676;
-	Thu, 21 Aug 2025 01:10:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85B261F4188;
+	Thu, 21 Aug 2025 01:11:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="atRPT4D6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NeL8BmIW"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484891A9F9F;
-	Thu, 21 Aug 2025 01:10:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD5D61A9F9F;
+	Thu, 21 Aug 2025 01:11:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755738645; cv=none; b=bYPHcvXhxGIeht7TquAtzOicw7ZNQHRri/OdSk69ja6dnX+romYpvcNOQXVHDPIR2PWg4ePGWui7jMolhsco8M9fGYQdo3KONoBTJDTi+nhlBAK1wU50oJtc4h9T1VNwypWEvr6fJMCRf6fagZcmEXSF1pSkyHqUredkb18QnbE=
+	t=1755738661; cv=none; b=CSKB+pgE6cludFCaeVstt1wBC0ueHj+xXN5FmtW2rwhbbr2fgALLSpYg4YfQKxtmkSMwFZjTDbrwhBT4CEnMleL/uvz9LGo5rLyerwyCJK6SE3b6mrQE2UXUNtku/ha0wiJuibs1n5/jWSSDN/qMm8devqtIyVlGXWLa10ddEr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755738645; c=relaxed/simple;
-	bh=kH3tS7Hq5CGgPHb5lxqLbD4Ht7mOLKTOsTO5tt7a/CA=;
+	s=arc-20240116; t=1755738661; c=relaxed/simple;
+	bh=Zy/lgbaMNU/aksDpuurbkD6dJt6D+7X3gyD4CGi6WJw=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Us3w/6cIRoKFKW3VcCnAfnglVV1Wq0ojlSC60soBp49iruW0gmoeuIn0f2a+Vx/vrJDOG174xfI5lGOaGuzeG1ny0oRneZvWdcN060fUn0kgnoZbCzGJkJkf08RI4vbGgCrPerSEAD/NTQPMYsSXmE+ylbiiLKy6hywKwswngPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=atRPT4D6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18C2BC4CEE7;
-	Thu, 21 Aug 2025 01:10:45 +0000 (UTC)
+	 MIME-Version:Content-Type; b=OHCfJ3aoACr3uAjYPfb8MpekTF66q8E3OoqqfSV5WrowEfHVOHzseZ0147uhUwNJno/woTsLtGDc4PsGSnO8QbV0THUiANBt6u8h1xQo4EXw8vygYu/nDbnsFhpfYQf9aSg2XRq9EBksZqNAn8UvqeP1Gnfn5MkCknm9pM32HS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NeL8BmIW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB4B1C4CEE7;
+	Thu, 21 Aug 2025 01:11:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755738645;
-	bh=kH3tS7Hq5CGgPHb5lxqLbD4Ht7mOLKTOsTO5tt7a/CA=;
+	s=k20201202; t=1755738660;
+	bh=Zy/lgbaMNU/aksDpuurbkD6dJt6D+7X3gyD4CGi6WJw=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=atRPT4D6ER/Z7NCxs7/eNt5sftA7/K+D6W5krkPBJF2oImAxRNrdITchTYW2CxUkQ
-	 FmN1nIbBaN+vn8G7+biUiummgE+GKkZEYXLUgBt51eb2Cr253cuHPSxAnBKkWu3feO
-	 8Y19F3L49kOSJmCo0kiaL6PXrYZY6p7JAytVwsP5hh7eHDv+sp9zm6ncMB563icpxc
-	 A5u6WgE3if709KN3WPduqBNSseig3d8kgq3erexuAMIN+W6t/pzItHtq5HTMIneBM2
-	 cJfrCxsjyCOIYuUIV8QMJd4fAEyezG14Oc72laay0GI2hKvoCQ5vBTAvQaGpXPmNZj
-	 qzXk9pq95rn6A==
-Date: Wed, 20 Aug 2025 18:10:44 -0700
-Subject: [PATCH 11/20] cache: pass a private data pointer through cache_walk
+	b=NeL8BmIWyDPiFyElc4O6XACV+8DtFJJE7hN3snuz/gNBUrlA5dFEhpPebJIbkV+ns
+	 EayvzLwUCKc2cBPYMzCzWdlBDHVQ+5luSIy0QMKbGL2ILjzlRgWmWXqIjn8uocKrIQ
+	 LqET9IjDJt0vj0SH4RaJ+zgJsKpUu/ubrPffGIqVQq2y8RROaJF7aQjY8NY5Ay/v/C
+	 GiMPI5XK+oIiy2EgDsuDc5Otr927i/pEb6LZKI4ytQkJxt5+5k+M2bHN1PrZv0fBxJ
+	 L4hUCXk1sNcU6y32PbZGBTLwAMDrlvmZljMB78rlGjo93njCkDDVDhpyoq3ooXHzOH
+	 D5QBwHbBRmgWg==
+Date: Wed, 20 Aug 2025 18:11:00 -0700
+Subject: [PATCH 12/20] cache: add a helper to grab a new refcount for a
+ cache_node
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: tytso@mit.edu
 Cc: John@groves.net, bernd@bsbernd.com, linux-fsdevel@vger.kernel.org,
  linux-ext4@vger.kernel.org, miklos@szeredi.hu, amir73il@gmail.com,
  joannelkoong@gmail.com, neal@gompa.dev
-Message-ID: <175573713006.20753.6517578177154029451.stgit@frogsfrogsfrogs>
+Message-ID: <175573713023.20753.17208085171701652235.stgit@frogsfrogsfrogs>
 In-Reply-To: <175573712721.20753.5223489399594191991.stgit@frogsfrogsfrogs>
 References: <175573712721.20753.5223489399594191991.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -62,78 +63,108 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Allow cache_walk callers to pass a pointer to the callback function.
+Create a helper to bump the refcount of a cache node.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- lib/support/cache.h |    4 ++--
- lib/support/cache.c |   10 ++++++----
- 2 files changed, 8 insertions(+), 6 deletions(-)
+ lib/support/cache.h |    1 +
+ lib/support/cache.c |   57 +++++++++++++++++++++++++++++----------------------
+ 2 files changed, 33 insertions(+), 25 deletions(-)
 
 
 diff --git a/lib/support/cache.h b/lib/support/cache.h
-index 0168fdca027896..b18b6d3325e9ad 100644
+index b18b6d3325e9ad..e8f1c82ef7869c 100644
 --- a/lib/support/cache.h
 +++ b/lib/support/cache.h
-@@ -56,7 +56,7 @@ struct cache_node;
+@@ -141,5 +141,6 @@ int cache_node_get_priority(struct cache_node *);
+ int cache_node_purge(struct cache *, cache_key_t, struct cache_node *);
+ void cache_report(FILE *fp, const char *, struct cache *);
+ int cache_overflowed(struct cache *);
++struct cache_node *cache_node_grab(struct cache *cache, struct cache_node *node);
  
- typedef void *cache_key_t;
- 
--typedef void (*cache_walk_t)(struct cache *c, struct cache_node *cn);
-+typedef void (*cache_walk_t)(struct cache *c, struct cache_node *cn, void *d);
- typedef struct cache_node * (*cache_node_alloc_t)(struct cache *c, cache_key_t k);
- typedef int (*cache_node_flush_t)(struct cache *c, struct cache_node *cn);
- typedef void (*cache_node_relse_t)(struct cache *c, struct cache_node *cn);
-@@ -130,7 +130,7 @@ static inline bool cache_initialized(const struct cache *cache)
- int cache_init(int flags, unsigned int size,
- 	       const struct cache_operations *ops, struct cache *cache);
- void cache_destroy(struct cache *cache);
--void cache_walk(struct cache *, cache_walk_t);
-+void cache_walk(struct cache *cache, cache_walk_t fn, void *data);
- void cache_purge(struct cache *);
- void cache_flush(struct cache *);
- 
+ #endif	/* __CACHE_H__ */
 diff --git a/lib/support/cache.c b/lib/support/cache.c
-index 2e2e36ccc3ef78..606acd5453cf10 100644
+index 606acd5453cf10..49568ffa6de2e4 100644
 --- a/lib/support/cache.c
 +++ b/lib/support/cache.c
-@@ -101,7 +101,8 @@ cache_expand(
- void
- cache_walk(
- 	struct cache		*cache,
--	cache_walk_t		visit)
-+	cache_walk_t		visit,
-+	void			*data)
+@@ -362,6 +362,35 @@ __cache_node_purge(
+ 	return 0;
+ }
+ 
++/* Grab a new refcount to the cache node object.  Caller must hold cn_mutex. */
++struct cache_node *cache_node_grab(struct cache *cache, struct cache_node *node)
++{
++	struct cache_mru *mru;
++
++	if (node->cn_count == 0 && cache->get) {
++		int err = cache->get(cache, node);
++		if (err)
++			return NULL;
++	}
++	if (node->cn_count == 0) {
++		ASSERT(node->cn_priority >= 0);
++		ASSERT(!list_empty(&node->cn_mru));
++		mru = &cache->c_mrus[node->cn_priority];
++		pthread_mutex_lock(&mru->cm_mutex);
++		mru->cm_count--;
++		list_del_init(&node->cn_mru);
++		pthread_mutex_unlock(&mru->cm_mutex);
++		if (node->cn_old_priority != -1) {
++			ASSERT(node->cn_priority ==
++					CACHE_DIRTY_PRIORITY);
++			node->cn_priority = node->cn_old_priority;
++			node->cn_old_priority = -1;
++		}
++	}
++	node->cn_count++;
++	return node;
++}
++
+ /*
+  * Lookup in the cache hash table.  With any luck we'll get a cache
+  * hit, in which case this will all be over quickly and painlessly.
+@@ -377,7 +406,6 @@ cache_node_get(
+ 	struct cache_node	**nodep)
  {
  	struct cache_hash	*hash;
- 	struct cache_node	*pos;
-@@ -111,7 +112,7 @@ cache_walk(
- 		hash = &cache->c_hash[i];
- 		pthread_mutex_lock(&hash->ch_mutex);
- 		list_for_each_entry(pos, &hash->ch_list, cn_hash)
--			visit(cache, pos);
-+			visit(cache, pos, data);
- 		pthread_mutex_unlock(&hash->ch_mutex);
- 	}
- }
-@@ -126,7 +127,8 @@ cache_walk(
- static void
- cache_zero_check(
- 	struct cache		*cache,
--	struct cache_node	*node)
-+	struct cache_node	*node,
-+	void			*data)
- {
- 	if (node->cn_count > 0) {
- 		fprintf(stderr, "%s: refcount is %u, not zero (node=%p)\n",
-@@ -134,7 +136,7 @@ cache_zero_check(
- 		cache_abort();
- 	}
- }
--#define cache_destroy_check(c)	cache_walk((c), cache_zero_check)
-+#define cache_destroy_check(c)	cache_walk((c), cache_zero_check, NULL)
- #else
- #define cache_destroy_check(c)	do { } while (0)
- #endif
+-	struct cache_mru	*mru;
+ 	struct cache_node	*node = NULL, *n;
+ 	unsigned int		hashidx;
+ 	int			priority = 0;
+@@ -411,31 +439,10 @@ cache_node_get(
+ 			 * from its MRU list, and update stats.
+ 			 */
+ 			pthread_mutex_lock(&node->cn_mutex);
+-
+-			if (node->cn_count == 0 && cache->get) {
+-				int err = cache->get(cache, node);
+-				if (err) {
+-					pthread_mutex_unlock(&node->cn_mutex);
+-					goto next_object;
+-				}
++			if (!cache_node_grab(cache, node)) {
++				pthread_mutex_unlock(&node->cn_mutex);
++				goto next_object;
+ 			}
+-			if (node->cn_count == 0) {
+-				ASSERT(node->cn_priority >= 0);
+-				ASSERT(!list_empty(&node->cn_mru));
+-				mru = &cache->c_mrus[node->cn_priority];
+-				pthread_mutex_lock(&mru->cm_mutex);
+-				mru->cm_count--;
+-				list_del_init(&node->cn_mru);
+-				pthread_mutex_unlock(&mru->cm_mutex);
+-				if (node->cn_old_priority != -1) {
+-					ASSERT(node->cn_priority ==
+-							CACHE_DIRTY_PRIORITY);
+-					node->cn_priority = node->cn_old_priority;
+-					node->cn_old_priority = -1;
+-				}
+-			}
+-			node->cn_count++;
+-
+ 			pthread_mutex_unlock(&node->cn_mutex);
+ 			pthread_mutex_unlock(&hash->ch_mutex);
+ 
 
 
