@@ -1,122 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-58635-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58636-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 823DEB302F0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 21:33:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37154B30310
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 21:39:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF5427B406C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 19:31:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 779106821F5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 19:37:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC1642EA720;
-	Thu, 21 Aug 2025 19:33:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E44134AAF6;
+	Thu, 21 Aug 2025 19:37:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="LVbo7EzD"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="f6lHv4Ea"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FDD82C21E8
-	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Aug 2025 19:33:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A6F4345752
+	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Aug 2025 19:37:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755804792; cv=none; b=AgiFJkRWXwjzm1tBGZ7jR7jrju3elQDGTCOaUAhUuL/wqXSOqhOOrkhLeSNn9/jaL2lfdHCfL4z80Tb+4rXkBkympBfvWazkGjB5eFx4lWXRMBnnIX1k5XNqQnfPTtbVAwy36lsiWmr2UOfxOz/fdv+HpvtPsaE1HvTE0OymdDA=
+	t=1755805065; cv=none; b=CYB6UpAGYG4Zxo1ICJNmqL5xZ+lJ16rNSik4C7LRgDrELhxFiGE7oFTiLRKX5NJ4PpU4qYJc5awsgcpmTPaqKrmDdNttdABufrNOu1aQwNo2kv2NTMHnRjKwzKc42vMFatdwDd4IqF7cnQjL0KPOh9lFmy4mym1wpmCAP21UObQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755804792; c=relaxed/simple;
-	bh=FNKdQ2Q9j36mgXRTTKI7GXB4mhjWXXIWbw7majwblus=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DeqYBbQ6M3EC9ac6RTIYPArRvr3zL3AUf4ctqsJS+sSKKjrDbU2K2w0O7zoMKWjByjdrsQ1tV70GRZ9cQhDMMgceo6toCvAdC8WTRdHdlI8sy6Ej9LQiUTGwjaYg1m98PulLeBSthN2XF1SbcLtabkYzEZ2Z5nfkMmpes3sCcTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=LVbo7EzD; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-32326e71c31so1109025a91.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Aug 2025 12:33:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1755804789; x=1756409589; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wpJ1JUIhWo3zxoVLim9BIZbHFtWsNpYjF3/W08jmiX8=;
-        b=LVbo7EzDlmxLzkUHkEkta7XVamX764NCABUuYBQJrJMzTZn00cA8KYPydNuasEiMs9
-         wDe2u8m24gK0hDSO1mjYTKNARMYFR98rQiqWgAqT8VJn5uNVK9/Lg2CHDHrrwIjPdTiK
-         NkMkbQIHOgMH3M0Iw+yNn25j1EXJg5bSU6MchRiLmBBYyqpSmjrr7AT9U4k354PEsyOx
-         u5zK70PX2trYw1JFkqjSMx/naqD4fI7o4B33p55HDWoC+B7Q3rJ/tK3a1ze9mUqODZN2
-         qjLXPIDyrjYc/zg6frHm76P0nWuOuyYM59Uinvj/smGCJNDHN5g7XPiMVS7/J2oa2twm
-         JDVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755804789; x=1756409589;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wpJ1JUIhWo3zxoVLim9BIZbHFtWsNpYjF3/W08jmiX8=;
-        b=FZqDOO7De9rvvcDGWUIAiNin+ToqZVNhvX/Oc/SQt8BGWO0ggS/8ZNVydprryrX2J4
-         XFKWlNKR5Y8h5JVtDOszNbbb72AiBDmX6522NQvW32SLmmXFlX9pL5OIPJIa73IPMtAH
-         w6rUqTY6jkhx91ISNlvKTEpwtuDAziM2GIDQBtXSq9G5zdPv4VKbC+Q02SfKzkjk7lKW
-         UGwQlu811KDf4jBvddruZ4UkEn2FVHPJPd/j6DjW6LpJ6gPBIk6I9y/nKWklNs9YNeqE
-         1GiEWBJ/trrfcQCaBVqqsZ+TW6grOP/8+Yczv9NJ6eZfclRgbzz728xmwF9E3g5Bbqew
-         OEFw==
-X-Forwarded-Encrypted: i=1; AJvYcCWVq5J1Y8qquu8tS5UtG0L/bGYfm44v7wua0PvYS5mYWQCRaDX3g4koEhKXIkYn8cbkjE6gw5RIZSd/ITOD@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyrecUUtb7Ya3Z7ABtYEcFaJaShq1WNYIv0mxbl3l2rKbIK9PA
-	Cfh0D0iTwIh6CY5lj8rHNzHvtQg4lgouoAQHT/zy1gqHl7FS1/B89tA1bVjUoZXAKNke2t02AgZ
-	IWnhKUOWg56pj8oCu3fiALhG+1UR5AIvUPjbo92rb
-X-Gm-Gg: ASbGncsR8jyRrHa9Rt0C2GcbitArhS6z6YqnVuu+szU8rFwoKF2zb/TGh3XIHO277LM
-	cqf+olv8LS1f+/NaXWMPkmMvwS7b2T1gqff6xTtdSbGtTQStWtUpW28RBb1n3zhmmjOlqy2Ecap
-	MOHxpPoN0eUimxbzGbgHArZn4UkMW1M4jhqikXUI52hTEbP50NWpCcKSwww8kkgKT1EFlnec92t
-	7u8VnBTYupFwxkfGw==
-X-Google-Smtp-Source: AGHT+IE3rSz/S9joHsxzgn3nqrAjaVgh+JNeXVJWaeHVu8UKpssEwvNF8sTjGNJifciDTputJMBgY0zCaDMpzHhVtr0=
-X-Received: by 2002:a17:90b:2752:b0:325:1548:f0f with SMTP id
- 98e67ed59e1d1-32515ee0104mr777322a91.14.1755804788711; Thu, 21 Aug 2025
- 12:33:08 -0700 (PDT)
+	s=arc-20240116; t=1755805065; c=relaxed/simple;
+	bh=B+uEjhInfGB7hkP8pqGSroW61xpgF6sGneODEFFgLYY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AoI0BFqkaVIJ4nvJzS03fGoi96PrXjAULn97j2ZMcv+AHVgzwKaixJktFMkDpWakkjFa0vbxyD8S5zEwJlJm3jwjKg4OZQ3uakuWv4j1vbsG5MA8gMYjubfvFncBVmwsY6EYc6LKxcsY5cHErO22k4wn8KNPY1OcFpHLeUoelRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=f6lHv4Ea; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 21 Aug 2025 12:37:34 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755805060;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qbcsp/HYAITfGuo2SXY/LG2h8CV6ti2SdCWAHkmo3yU=;
+	b=f6lHv4Eaw6bRrMmsg1ePkmBAFmqMjou73pU0z8ovbs+rKATqeaaDENg7sZDADG5f9XhQ21
+	8xgKJTX3fZM44T8tqukNb1IG45fTEJ2evsqB8Ms8WH2STndSR3678yyHb1ASpWqe/3KJBO
+	ZEfQWqDlyKUcXnTDtlQy6c/p7mFdDSg=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Boris Burkov <boris@bur.io>
+Cc: Klara Modin <klarasmodin@gmail.com>, akpm@linux-foundation.org, 
+	linux-btrfs@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	kernel-team@fb.com, wqu@suse.com, willy@infradead.org, mhocko@kernel.org, 
+	muchun.song@linux.dev, roman.gushchin@linux.dev, hannes@cmpxchg.org
+Subject: Re: [PATCH v3 1/4] mm/filemap: add AS_UNCHARGED
+Message-ID: <jewggm6jdhjmd2hlnxr4qgaqelst5ue4hviza6v6hgiivkxmiz@eiyng4pg2ilk>
+References: <cover.1755562487.git.boris@bur.io>
+ <43fed53d45910cd4fa7a71d2e92913e53eb28774.1755562487.git.boris@bur.io>
+ <hbdekl37pkdsvdvzgsz5prg5nlmyr67zrkqgucq3gdtepqjilh@ovc6untybhbg>
+ <20250820225222.GA4100662@zen.localdomain>
+ <p7uqfmtrl5duh4zekgtf3vtl4jsstbdefar5nramp4aflcn25t@7pmvft4zmsid>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <fc0994de40776609928e8e438355a24a54f1ad10.camel@HansenPartnership.com>
- <20250821122750.66a2b101@gandalf.local.home>
-In-Reply-To: <20250821122750.66a2b101@gandalf.local.home>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 21 Aug 2025 15:32:56 -0400
-X-Gm-Features: Ac12FXyBGe0rSMh1OHfkwA4myJIJvSYM_gON_hNIj_jpU_PMzU1SrEYwDaM3olM
-Message-ID: <CAHC9VhRoFb0xmmfzqqMhHqABLnnP0vCiPJHiVgLPbrVzi6djDw@mail.gmail.com>
-Subject: Re: [MAINTAINER SUMMIT] Adding more formality around feature
- inclusion and ejection
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: James Bottomley <James.Bottomley@hansenpartnership.com>, ksummit@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <p7uqfmtrl5duh4zekgtf3vtl4jsstbdefar5nramp4aflcn25t@7pmvft4zmsid>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Aug 21, 2025 at 12:35=E2=80=AFPM Steven Rostedt <rostedt@goodmis.or=
-g> wrote:
->
-> Perhaps we should have a maintainer mentorship program. I try to work wit=
-h
-> others to help them become a new maintainer. I was doing that with Daniel
-> Bristot, and I've done it for Masami Hiramatsu and I'm currently helping
-> others to become maintainers for the trace and verification tooling.
+On Wed, Aug 20, 2025 at 04:53:08PM -0700, Shakeel Butt wrote:
+> On Wed, Aug 20, 2025 at 03:52:22PM -0700, Boris Burkov wrote:
+> [...]
+> > 
+> > Thanks so much for the report and fix! I fear there might be some other
+> > paths that try to get memcg from lruvec or folio or whatever without
+> > checking it. I feel like in this exact case, I would want to go to the
+> > first sign of trouble and fix it at lruvec_memcg(). But then who knows
+> > what else we've missed.
+> 
+> lruvec_memcg() is not an issue but folio_memcg() can be. I found
+> following instances of folio_memcg() which are problematic (on
+> next-20250819):
+> 
+> mm/memcontrol.c:3246:   css_get_many(&__folio_memcg(folio)->css, new_refs);
+> 
+> include/trace/events/writeback.h:269:           __entry->page_cgroup_ino = cgroup_ino(folio_memcg(folio)->css.cgroup);
+> 
+> mm/workingset.c:244:    struct mem_cgroup *memcg = folio_memcg(folio);
+> 
+> mm/huge_memory.c:4020:  WARN_ON_ONCE(!mem_cgroup_disabled() && !folio_memcg(folio));
+> 
+> > 
+> > May I ask what you were running to trigger this? My fstests run (clearly
+> > not exercising enough interesting memory paths) did not hit it.
+> > 
+> > This does make me wonder if the superior approach to the original patch
+> > isn't just to go back to the very first thing Qu did and account these
+> > to the root cgroup rather than do the whole uncharged thing.
+> 
+> I don't have any strong preference one way or the other.
 
-I realize this wasn't the original focus of James' mail, my apologies
-for continuing on the tangent, but I do think some form of a
-maintainer/reviewer/developer/etc. mentorship program is a good idea.
-Like Steven, and surely many others (staging tree?), I've done similar
-things in the security space, and even in the most informal
-arrangements I believe it has helped people get up to speed with our
-somewhat unusual development practices and not-always-documented
-processes.
-
-I would expect the program to be fairly informal, especially at first,
-with perhaps an hour every week or two where an existing maintainer
-could work with a mentee off-list to answer questions, explain
-process, code, or anything else relevant to kernel
-development/maintenance.  Time zones would be a challenge for any
-interactive discussions, but that's a common problem for community
-development these days, and finding ways to resolve that would be an
-important part of the mentorship.
-
---
-paul-moore.com
+After thinking a bit more, I think root memcg approach by Qu should be
+preferred. Using that we will avoid this unnecessary code churn for NULL
+memcg checks and I am pretty sure I might have missed some places I
+listed above.
 
