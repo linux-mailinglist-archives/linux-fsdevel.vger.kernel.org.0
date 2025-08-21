@@ -1,54 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-58469-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58470-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF67EB2E9E6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 03:02:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0F35B2E9E2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 03:00:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15D7018834FD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 01:00:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97D8E3AA4BC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Aug 2025 01:00:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ECEA1E7C23;
-	Thu, 21 Aug 2025 00:59:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43A0A1F4C8E;
+	Thu, 21 Aug 2025 01:00:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bEChEyax"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d2d/kajv"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085111C3BF7
-	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Aug 2025 00:59:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE7C1A9FBC
+	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Aug 2025 01:00:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755737989; cv=none; b=SoOoWJmI0r+0+3DAWXTL8LLHYRmD3jo5aOXpM3mNdByysNs7taF8+lmc71O72m+uEbpZ1jHKcgJsOne4dbP4vtwCpBl+wBlCvbPGEWL888EuEVnNq4tPYOSlvOTtrhSkfX3v8+vM+ZdhfrvhaYHs8pr9fLgHYNF3K4yR8CkQ5qE=
+	t=1755738004; cv=none; b=pDt+D2weO1T8j0Xdd5xBrRIksHS9mxRBY2eUxBrix0NyUmpc/wUzzRHuTePaG2b9iU/Gbmir8l99bWB4MAgr5xX5Gy7EXhXhYVJQNNShE7uvqd3pDPGWPmRUFQQf1ejq5LK1xAoJcTUx2qRCqOhPbSEn7pP8CwKyTYA56PA46CA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755737989; c=relaxed/simple;
-	bh=8w9aGfsGt8rVh9Gj9L12Vnx7Xo297HkVb7IyVvvn6KM=;
+	s=arc-20240116; t=1755738004; c=relaxed/simple;
+	bh=F/JDrfcA5rJccWCSORn22XuZKEdlePw3fBPuwRIcIBI=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=emSdOpbEG1CQNq5SVVkD0NOo9Ye7ceEcpjElTWEIFqubYajsHIx7AMunV+ZFrehL5xHM6YRpU7m4/b7CUDXICoNTElrDibuW7Ew8FZ8Q1Jl4+r7gUGAXkYMNHD0HPtVkOTljTFcn2wX9ES0ye/V5dWCT3zUgxMIzNVmEn+nKG6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bEChEyax; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7215EC4CEE7;
-	Thu, 21 Aug 2025 00:59:48 +0000 (UTC)
+	 MIME-Version:Content-Type; b=mnuvJrFT5bM04yYXUK8O7bMCUnXQQk/xfNYEgRih6w1iK8YUzFcxj6zOem7BNBhYV5D29H/l8NlAULvAT71dhhEf98nwQ2A9pPBz0pcv6gna3Kq4ZPkzqGCJ2+nHAqGO5PJ1UMHpNmU9CtVliXwS6zRoVXxwd0JY9wrVb3KuyF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d2d/kajv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 478CAC4CEE7;
+	Thu, 21 Aug 2025 01:00:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755737988;
-	bh=8w9aGfsGt8rVh9Gj9L12Vnx7Xo297HkVb7IyVvvn6KM=;
+	s=k20201202; t=1755738004;
+	bh=F/JDrfcA5rJccWCSORn22XuZKEdlePw3fBPuwRIcIBI=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=bEChEyaxa7gATlBBsMLU21Bx3o15sOyB3mC6bSE5WfdLx/YMII+Tl4TxeK7c0tH+8
-	 GiVf7th25mF+thrKpWjt6aDM35SEo9+ytI9Davga9zt03wwTf4C6mEqMAB7uTyHwwZ
-	 A9037NRur1oBmrPKK/YfNd8MNoY4kzaENIhRXK7DHriT8ELOzGPtjXD6ZvgqyjEsF5
-	 s6rbndP4f7+lRhs+FetWaTqk/qrdEHteYbC7NtQGdJMCqLa2vQ1jwAFG9K78Az8Q/D
-	 q4O9T0SP4w6H+gYw1VOaRivKHsLXwzvQdB0HRnpLBna1XLzk9iuYdf7OeiPsiA6G+v
-	 U7Uk3QGWG7bjw==
-Date: Wed, 20 Aug 2025 17:59:47 -0700
-Subject: [PATCH 1/6] fuse: force a ctime update after a fileattr_set call when
- in iomap mode
+	b=d2d/kajvmYgGVjQ8tIG4Z1bxeEBwP4F9oYCDZurm+ODXZahuwuE058jSH/s9qx+fJ
+	 1ZWi1r48nQiJVatWZlVAMXXuvQxHUZFIA7iMCjoG22vk0w9wbD3QYWm6IsXiEj1JKU
+	 3WYtuQPaHSiJ8YOesbtZu8QBg6Ug8cb+J+G+JoMTK/dD5f1nm0W2r14TGRtcFOUwb0
+	 zyOodF6ZH7FBJ3GGhqStfIVodr2W+HBHmzTRyVIKVIz4bEv84sypdpKcI4xkoQeUb3
+	 vGbhZvttqYLiDsr1RsrTJLRDvJOYLVpO4UgOegci5KRZ6/fQrnVPE4SNP/vG4ymruw
+	 Z+n1uFIJDGrOg==
+Date: Wed, 20 Aug 2025 18:00:03 -0700
+Subject: [PATCH 2/6] fuse: synchronize inode->i_flags after fileattr_[gs]et
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, miklos@szeredi.hu
 Cc: bernd@bsbernd.com, neal@gompa.dev, John@groves.net,
  linux-fsdevel@vger.kernel.org, joannelkoong@gmail.com
-Message-ID: <175573710204.18622.13869238214569408777.stgit@frogsfrogsfrogs>
+Message-ID: <175573710225.18622.5729581662089321433.stgit@frogsfrogsfrogs>
 In-Reply-To: <175573710148.18622.12330106999267016022.stgit@frogsfrogsfrogs>
 References: <175573710148.18622.12330106999267016022.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -62,49 +61,205 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-In iomap mode, the kernel is in charge of driving ctime updates to
-the fuse server and ignores updates coming from the fuse server.
-Therefore, when someone calls fileattr_set to change file attributes, we
-must force a ctime update.
-
-Found by generic/277.
+There are three inode flags (immutable, append, sync) that are enforced
+by the VFS.  Whenever we go around setting iflags, let's update the VFS
+state so that they actually work.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- fs/fuse/ioctl.c |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+ fs/fuse/fuse_i.h     |    1 +
+ fs/fuse/fuse_trace.h |   23 +++++++++++++
+ fs/fuse/dir.c        |    1 +
+ fs/fuse/inode.c      |    1 +
+ fs/fuse/ioctl.c      |   90 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 116 insertions(+)
 
 
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index a710c56b205e30..f7a7d8ad641d5b 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -1588,6 +1588,7 @@ long fuse_file_compat_ioctl(struct file *file, unsigned int cmd,
+ int fuse_fileattr_get(struct dentry *dentry, struct file_kattr *fa);
+ int fuse_fileattr_set(struct mnt_idmap *idmap,
+ 		      struct dentry *dentry, struct file_kattr *fa);
++void fuse_fileattr_init(struct inode *inode, const struct fuse_attr *attr);
+ 
+ /* iomode.c */
+ int fuse_file_cached_io_open(struct inode *inode, struct fuse_file *ff);
+diff --git a/fs/fuse/fuse_trace.h b/fs/fuse/fuse_trace.h
+index 80af541a54c5bd..aea9ea0835d497 100644
+--- a/fs/fuse/fuse_trace.h
++++ b/fs/fuse/fuse_trace.h
+@@ -176,6 +176,29 @@ TRACE_EVENT(fuse_request_end,
+ 		  __entry->unique, __entry->len, __entry->error)
+ );
+ 
++TRACE_EVENT(fuse_fileattr_update_inode,
++	TP_PROTO(const struct inode *inode, unsigned int old_iflags),
++
++	TP_ARGS(inode, old_iflags),
++
++	TP_STRUCT__entry(
++		FUSE_INODE_FIELDS
++		__field(unsigned int,		old_iflags)
++		__field(unsigned int,		new_iflags)
++	),
++
++	TP_fast_assign(
++		FUSE_INODE_ASSIGN(inode, fi, fm);
++		__entry->old_iflags	=	old_iflags;
++		__entry->new_iflags	=	inode->i_flags;
++	),
++
++	TP_printk(FUSE_INODE_FMT " old_iflags 0x%x iflags 0x%x",
++		  FUSE_INODE_PRINTK_ARGS,
++		  __entry->old_iflags,
++		  __entry->new_iflags)
++);
++
+ #ifdef CONFIG_FUSE_BACKING
+ #define FUSE_BACKING_PASSTHROUGH	(1U << 0)
+ #define FUSE_BACKING_IOMAP		(1U << 1)
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index 05cb79beb8e426..d2f9bcccd776f0 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -1254,6 +1254,7 @@ static void fuse_fillattr(struct mnt_idmap *idmap, struct inode *inode,
+ 		blkbits = inode->i_sb->s_blocksize_bits;
+ 
+ 	stat->blksize = 1 << blkbits;
++	generic_fill_statx_attr(inode, stat);
+ }
+ 
+ static void fuse_statx_to_attr(struct fuse_statx *sx, struct fuse_attr *attr)
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index 18dc9492d19174..b1793df3cbbd1a 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -524,6 +524,7 @@ struct inode *fuse_iget(struct super_block *sb, u64 nodeid,
+ 			inode->i_flags |= S_NOCMTIME;
+ 		inode->i_generation = generation;
+ 		fuse_init_inode(inode, attr, fc);
++		fuse_fileattr_init(inode, attr);
+ 		unlock_new_inode(inode);
+ 	} else if (fuse_stale_inode(inode, generation, attr)) {
+ 		/* nodeid was reused, any I/O on the old inode should fail */
 diff --git a/fs/fuse/ioctl.c b/fs/fuse/ioctl.c
-index 57032eadca6c27..f5f7d806262cdf 100644
+index f5f7d806262cdf..c320ea80cb3db8 100644
 --- a/fs/fuse/ioctl.c
 +++ b/fs/fuse/ioctl.c
-@@ -548,8 +548,13 @@ int fuse_fileattr_set(struct mnt_idmap *idmap,
- 	struct fuse_file *ff;
- 	unsigned int flags = fa->flags;
- 	struct fsxattr xfa;
-+	struct file_kattr old_ma = { };
-+	bool is_wb = (fuse_get_cache_mask(inode) & STATX_CTIME);
- 	int err;
+@@ -4,6 +4,7 @@
+  */
  
-+	if (is_wb)
-+		vfs_fileattr_get(dentry, &old_ma);
+ #include "fuse_i.h"
++#include "fuse_trace.h"
+ 
+ #include <linux/uio.h>
+ #include <linux/compat.h>
+@@ -502,6 +503,92 @@ static void fuse_priv_ioctl_cleanup(struct inode *inode, struct fuse_file *ff)
+ 	fuse_file_release(inode, ff, O_RDONLY, NULL, S_ISDIR(inode->i_mode));
+ }
+ 
++static inline void update_iflag(struct inode *inode, unsigned int iflag,
++				bool set)
++{
++	if (set)
++		inode->i_flags |= iflag;
++	else
++		inode->i_flags &= ~iflag;
++}
 +
- 	ff = fuse_priv_ioctl_prepare(inode);
- 	if (IS_ERR(ff))
- 		return PTR_ERR(ff);
-@@ -573,6 +578,12 @@ int fuse_fileattr_set(struct mnt_idmap *idmap,
++static void fuse_fileattr_update_inode(struct inode *inode,
++				       const struct file_kattr *fa)
++{
++	unsigned int old_iflags = inode->i_flags;
++
++	/*
++	 * Prior to iomap, the fuse driver sent all file IO operations to the
++	 * fuse server, which was wholly responsible for enforcing the
++	 * immutable and append bits.  With iomap, we let more of the kernel IO
++	 * path stay within the kernel, so we actually have to set the VFS
++	 * flags now so that the enforcement can take place inside the kernel.
++	 */
++	if (!fuse_has_iomap(inode))
++		return;
++
++	/*
++	 * Configure VFS enforcement of the three inode flags that we support.
++	 * XXX: still need to figure out what's going on wrt NOATIME in fuse.
++	 */
++	if (fa->flags_valid) {
++		update_iflag(inode, S_SYNC, fa->flags & FS_SYNC_FL);
++		update_iflag(inode, S_IMMUTABLE, fa->flags & FS_IMMUTABLE_FL);
++		update_iflag(inode, S_APPEND, fa->flags & FS_APPEND_FL);
++	} else if (fa->fsx_xflags) {
++		update_iflag(inode, S_SYNC, fa->fsx_xflags & FS_XFLAG_SYNC);
++		update_iflag(inode, S_IMMUTABLE,
++					fa->fsx_xflags & FS_XFLAG_IMMUTABLE);
++		update_iflag(inode, S_APPEND, fa->fsx_xflags & FS_XFLAG_APPEND);
++	}
++
++	trace_fuse_fileattr_update_inode(inode, old_iflags);
++
++	if (old_iflags != inode->i_flags)
++		fuse_invalidate_attr(inode);
++}
++
++void fuse_fileattr_init(struct inode *inode, const struct fuse_attr *attr)
++{
++	struct file_kattr fa;
++	struct fsxattr xfa = { };
++	struct fuse_file *ff;
++	struct fuse_conn *fc = get_fuse_conn(inode);
++	unsigned int flags = 0;
++	int err;
++
++	if (!fuse_has_iomap(inode))
++		return;
++
++	/*
++	 * Don't do this when we're setting up the root inode because the
++	 * connection workers haven't been set up yet.
++	 */
++	if (attr->ino == fc->root_nodeid && attr->blksize == 0)
++		return;
++
++	ff = fuse_priv_ioctl_prepare(inode);
++	if (IS_ERR(ff))
++		return;
++
++	err = fuse_priv_ioctl(inode, ff, FS_IOC_FSGETXATTR, &xfa, sizeof(xfa));
++	if (!err) {
++		fileattr_fill_xflags(&fa, xfa.fsx_xflags);
++		fuse_fileattr_update_inode(inode, &fa);
++		goto cleanup;
++	}
++
++	err = fuse_priv_ioctl(inode, ff, FS_IOC_GETFLAGS, &flags, sizeof(flags));
++	if (!err) {
++		fileattr_fill_flags(&fa, flags);
++		fuse_fileattr_update_inode(inode, &fa);
++		goto cleanup;
++	}
++
++cleanup:
++	fuse_priv_ioctl_cleanup(inode, ff);
++}
++
+ int fuse_fileattr_get(struct dentry *dentry, struct file_kattr *fa)
+ {
+ 	struct inode *inode = d_inode(dentry);
+@@ -574,7 +661,10 @@ int fuse_fileattr_set(struct mnt_idmap *idmap,
+ 
+ 		err = fuse_priv_ioctl(inode, ff, FS_IOC_FSSETXATTR,
+ 				      &xfa, sizeof(xfa));
++		if (err)
++			goto cleanup;
+ 	}
++	fuse_fileattr_update_inode(inode, fa);
  
  cleanup:
  	fuse_priv_ioctl_cleanup(inode, ff);
-+	/*
-+	 * If we cache ctime updates and the fileattr changed, then force a
-+	 * ctime update.
-+	 */
-+	if (is_wb && memcmp(&old_ma, fa, sizeof(old_ma)))
-+		fuse_update_ctime(inode);
- 
- 	if (err == -ENOTTY)
- 		err = -EOPNOTSUPP;
 
 
