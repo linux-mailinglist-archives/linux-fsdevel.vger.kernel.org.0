@@ -1,136 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-58833-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58834-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2DF4B31E6B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 17:26:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 67575B31EA3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 17:32:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B290D1D61175
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 15:20:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D18CA189CD7B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 15:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECCB42E7BC3;
-	Fri, 22 Aug 2025 15:19:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 383B31B0F19;
+	Fri, 22 Aug 2025 15:28:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="sIqUTtrV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lKcXE9PV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3538121254A
-	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Aug 2025 15:19:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 887981C5D7B;
+	Fri, 22 Aug 2025 15:28:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755875973; cv=none; b=iqFvQZNJOarwlYLZejupA7nqaUI1CqrW2NrAJUXMc6mdUJyfCRscHbNhQGignqrjztMGG3gf9LhKTueJ9QNHddMF61gjmJKKMcAjt9Z5yo6wDWhpeU7ATpIyvXkah3vcP+XcjjJhH25ak1r1UUYvRrQlZP7Kxw79UbjGWMM9Bys=
+	t=1755876480; cv=none; b=oD1BEMWM1wMa9OLUSzf6CJXDL9KW/Mi4NApt05IgJzEzVEB/PTIGPz1qDDsFIllu+3mVT6JbsxC7WbxnQWclYOGgS2r7coL4CAKBfJj6I3YrCuhMqWIktAecVefkTKEbw9oDuNBsLol+FK5BufWJAohRnW5JLswn/EjK7g1nMb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755875973; c=relaxed/simple;
-	bh=1isU46vUHqoa+u9zMlp96k5S5rYnQ9d3txtRd9BBR8c=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=NSp/zfHg0w9JiGtgivF71kc676exL7FhR1sNCV5Ec8hEpLRGlxkAtc9CdtNblZUsODrSdakMMNwB36mX5Oz+McSvZtKRUcn8y+GsAwyucslkSyX5k4ed6zeborCVLx/3sxJlahYSbybO2BO2GaBTp6XhmgCNq40RzNN40fCkNf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=sIqUTtrV; arc=none smtp.client-ip=198.37.111.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1755875970;
-	bh=1isU46vUHqoa+u9zMlp96k5S5rYnQ9d3txtRd9BBR8c=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=sIqUTtrValxi/No7Wppcg5Fa8hQsGff+WXQ/J8MTjV47jrAmDE3Ht+0xZelGz9+ub
-	 5fcEb7s/y5F4O6kgixy3ACldheVh42aBHPku81CM5IuynY3rsfdYOKg5bQy8fwt6+D
-	 cLF+VNZcfGiZtYdHvqKHRThM7Tdun8wpvtF1T7wQ=
-Received: from [IPv6:2a00:23c8:101e:bb01:5bfe:95b6:ba99:a97b] (unknown [IPv6:2a00:23c8:101e:bb01:5bfe:95b6:ba99:a97b])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 643BF1C024D;
-	Fri, 22 Aug 2025 11:19:29 -0400 (EDT)
-Message-ID: <d876450623204fa278bea8ffb7fbe1a20b0eecae.camel@HansenPartnership.com>
-Subject: Re: [MAINTAINER SUMMIT] Adding more formality around feature
- inclusion and ejection
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Greg KH <greg@kroah.com>
-Cc: Theodore Ts'o <tytso@mit.edu>, ksummit@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org
-Date: Fri, 22 Aug 2025 16:19:27 +0100
-In-Reply-To: <2025082202-lankiness-talisman-3803@gregkh>
-References: 
-	<fc0994de40776609928e8e438355a24a54f1ad10.camel@HansenPartnership.com>
-	 <20250821203407.GA1284215@mit.edu>
-	 <940ac5ad8a6b1daa239d748e8f77479a140b050d.camel@HansenPartnership.com>
-	 <2025082202-lankiness-talisman-3803@gregkh>
-Autocrypt: addr=James.Bottomley@HansenPartnership.com;
- prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3 
+	s=arc-20240116; t=1755876480; c=relaxed/simple;
+	bh=muNdSXseEu/rJMTulvsFLDBQqTzFlcX+DPy3jXqZ7Uc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bHtnO3BCqegsSQDwu7Yd1K1cCDNHm78C5rWSKUnOrgYiXW7V0QoYLoX/pSrYTwaeqM9F9Ma+gSkFn2lF6V1c2Hccb38VTVn7Gq391UyJw4tLiB9z+RmpyheWasrzwYST4uxkua5KZ/lEcu0vaU36eiOXooCJCcFA66c183UQxqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lKcXE9PV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6415AC4CEED;
+	Fri, 22 Aug 2025 15:27:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755876480;
+	bh=muNdSXseEu/rJMTulvsFLDBQqTzFlcX+DPy3jXqZ7Uc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lKcXE9PVGNET2gtGcgqz+g2YJRH4nIhWIjneaBa9U0x/P1cKWlR9GNky6U9FXeDHf
+	 MbkkDBlqfwt52qWAZPQTT1Vz6rzpOrMGBaeqksnQm8YHRKfmTmDpoeztkVL87iLriY
+	 JdDOi8BYdZ/DEu5YHUilhCrnjakcX/5pJ6qgEikPVc6eqNeEyILAw0NA8gpYB5Z+zW
+	 dFmoWyJf9SJHil+J19xnRVXguIe3zBNooDn9I0uJJGq0N0dn7IU2TujOBsqhXtsWyE
+	 fX+ej3rX+H1rThLz4b13rHvEr3d2p484J+ZEn/qhXy05v85mmN0rcNTS4oI2WGzb2f
+	 A/Y4BD0IhboHw==
+Date: Fri, 22 Aug 2025 17:27:56 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org, 
+	kernel-team@fb.com, linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	viro@zeniv.linux.org.uk
+Subject: Re: [PATCH 15/50] fs: delete the inode from the LRU list on lookup
+Message-ID: <20250822-werden-hinein-419c34f78154@brauner>
+References: <cover.1755806649.git.josef@toxicpanda.com>
+ <d595f459d9574e980628eb43f617cbf4fd1a9137.1755806649.git.josef@toxicpanda.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <d595f459d9574e980628eb43f617cbf4fd1a9137.1755806649.git.josef@toxicpanda.com>
 
-On Fri, 2025-08-22 at 14:03 +0200, Greg KH wrote:
-> On Fri, Aug 22, 2025 at 09:09:04AM +0100, James Bottomley wrote:
-> > So what I saw is that as developers exercised this and effectively
-> > disengaged unless directly attacked, it pretty much became all on
-> > Linus because no-one was left in the chain. This is precisely where
-> > I think we could do with an alternative mechanism.
->=20
-> You are implying here that we all just "ran away" and left Linus to
-> hold the bag here, which is NOT the case at all.=C2=A0 This specific issu=
-e
-> has been discussed to death in a lot of different threads, public and
-> private with lots of people involved and none of that would have been
-> any different had we had some sort of "process document" ahead of
-> time.
+On Thu, Aug 21, 2025 at 04:18:26PM -0400, Josef Bacik wrote:
+> When we move to holding a full reference on the inode when it is on an
+> LRU list we need to have a mechanism to re-run the LRU add logic. The
+> use case for this is btrfs's snapshot delete, we will lookup all the
+> inodes and try to drop them, but if they're on the LRU we will not call
+> ->drop_inode() because their refcount will be elevated, so we won't know
+> that we need to drop the inode.
+> 
+> Fix this by simply removing the inode from it's respective LRU list when
+> we grab a reference to it in a way that we have active users.  This will
+> ensure that the logic to add the inode to the LRU or drop the inode will
+> be run on the final iput from the user.
+> 
+> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+> ---
+>  fs/inode.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/fs/inode.c b/fs/inode.c
+> index adcba0a4d776..72981b890ec6 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -1146,6 +1146,7 @@ static struct inode *find_inode(struct super_block *sb,
+>  			return ERR_PTR(-ESTALE);
+>  		}
+>  		__iget(inode);
+> +		inode_lru_list_del(inode);
+>  		spin_unlock(&inode->i_lock);
+>  		rcu_read_unlock();
+>  		return inode;
+> @@ -1187,6 +1188,7 @@ static struct inode *find_inode_fast(struct super_block *sb,
+>  			return ERR_PTR(-ESTALE);
+>  		}
+>  		__iget(inode);
+> +		inode_lru_list_del(inode);
+>  		spin_unlock(&inode->i_lock);
+>  		rcu_read_unlock();
+>  		return inode;
+> @@ -1653,6 +1655,7 @@ struct inode *igrab(struct inode *inode)
+>  	spin_lock(&inode->i_lock);
+>  	if (!(inode->i_state & (I_FREEING|I_WILL_FREE))) {
+>  		__iget(inode);
+> +		inode_lru_list_del(inode);
+>  		spin_unlock(&inode->i_lock);
+>  	} else {
+>  		spin_unlock(&inode->i_lock);
 
-I didn't ask for a process document.  I was clear about what I was
-asking for in the part of the email you cut in your reply.
+Interesting, so the previous behavior implies that igrab(),
+find_inode(), find_inode_fast() are called on inodes that are hashed and
+on an LRU. None of them even raise I_REFERENCED.
 
-> So I don't think that attempting to codify the very rare occurances
-> like this is going to really help out much, given that they are all
-> unique to their time/place/subsystem based on our past history like
-> this.
->=20
-> > > Now, the above is inherently very messy.=C2=A0 But fortunately, it's
-> > > only happened once in thirty five years, and before we propose to
-> > > put some kind of mechanism in place, we need to make sure that
-> > > the side effects of that mechanism don't end up making things
-> > > worse off.
-> >=20
-> > Well, what we ended up with is one person in the chain (Linus), no
-> > actual decision except a failed pull request and nothing actually
-> > said which has lead to a raft of internet speculation.
->=20
-> It's not our job to quell "internet speculation", sorry.
+I would think that this means that there are callers that grab very
+temporary references to inodes that they immediately drop without
+wanting to prevent reclaim.
 
-I didn't say it was.
-
-> =C2=A0 Just because we normally work in public for almost everything,
-> doesn't mean that some things can't be done in private as well.=C2=A0 And
-> again, just because you haven't seen a public decision doesn't mean
-> that there hasn't been one made :)
-
-I get that in the current political climate transparency is taking a
-back seat.  However, it does lie at the heart of the open in open
-source so I think we should be making a bit more effort to be better.
-
-Being transparent would have controlled (not quelled because there's
-always conspiracy theorists) the internet speculation not because it
-would make it someone's job but because it's simply a natural
-consequence of doing the right thing.
-
-Regards,
-
-James
-
+Oh, because btrfs subvolume delete is effectively a recursive directory
+removal and that's why that happens? I wonder if there are other users.
+So if this regresses someone it would regress btrfs I guess. :)
 
