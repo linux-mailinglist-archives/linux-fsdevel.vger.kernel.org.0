@@ -1,191 +1,189 @@
-Return-Path: <linux-fsdevel+bounces-58849-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58850-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA25FB32174
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 19:21:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECB16B32177
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 19:22:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59BF91D62F79
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 17:22:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FF685C22F3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 17:22:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52704280A29;
-	Fri, 22 Aug 2025 17:21:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD27A27CB04;
+	Fri, 22 Aug 2025 17:21:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dloSzF+R"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iDqXCxCe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0601F1A0BE0;
-	Fri, 22 Aug 2025 17:21:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B361F1A0BE0
+	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Aug 2025 17:21:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755883310; cv=none; b=t55ki9UT7Un6Sl1Ilftu7210micwXGa2bDJF4JuJFjY6iDsDmU9C9rTLxUTMNz2wtSwNEvjMp+/qFwBOuYPgoaGYcAhvUBf5QDHWx/BaIY7DJiHFr9ZN78iSTBhJa/asL1r/X6vTeQ7B1rN1+G9D9gVA8Od+pwgNQvDP4q0nG3U=
+	t=1755883319; cv=none; b=b4HnZtrD28LpOLQKpUbFF/mrO9FHHcRYQ5lxAnSUkvyjKJStvh8JuX0zS0sOSpzJ7L/fGh667/vdcX1lN5BkjXALA46x0jHMorldVMBaUHriODkU9uT3n9bECPG4Py6+wZzFNHpcReuvcYdTMSmtS1yjEImHCy+2POTMeyVBJiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755883310; c=relaxed/simple;
-	bh=UQVmH+W2b3VdbyYnjMav2xV0xKXp+0QKEtY33NRm3pM=;
+	s=arc-20240116; t=1755883319; c=relaxed/simple;
+	bh=oKRgK3jkdnNEgxI96HLZYFGPCfFoDJEYQazzXkG4Ylk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GXxMFaIy9yRmsYHa1qvieGQfXd9FUK6L5A8jrE8WbijTdg2qvbS6Q3Rt23pQsONTqe7h4GAimN49erIfvyF1BlzHA5oM7JaOERC1Zkjujw6KFCl8Fp/FIVL4aneirpb4ms/fUGTPg7dFM6/B3ths/i3c/7pjj4C5uDBJtJyEjJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dloSzF+R; arc=none smtp.client-ip=209.85.218.54
+	 To:Cc:Content-Type; b=tVIJToemZzQOie/1YcMEV+UdzvGSIv3+GXBroKOhDMehZlZ/l0qdtPvrph+8nxUhLXiaJTrHJVjkkxfca/rBCVG0EmLhyX6+aMW9ZVEczi/BcEHQ+5uZ83mpy16Oj4YUdNB7z/ZdOQlhmVwnMQVq5pTQ5fnitbjO74hAY0hHHyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iDqXCxCe; arc=none smtp.client-ip=209.85.160.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-afcb7af30a5so386172866b.3;
-        Fri, 22 Aug 2025 10:21:48 -0700 (PDT)
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4b109919a09so28594521cf.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Aug 2025 10:21:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755883307; x=1756488107; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1755883316; x=1756488116; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NgDuTNLynSXNTkQgfpkIz1Ab0tGbrgPIhu41LDy/Qgs=;
-        b=dloSzF+RYkFReJw1TSBBfhxjvVzzl+JclxGwHkSCd55O128vbCwwhM+xH+9Zuf1ZF1
-         1ji2SohYJWicV4I5kEvZithGYHviHBFIMvrCgUEcFBgHLJNN4fsHQ6MeiXIJcr2beNOR
-         FPYHpSMq5AiMo5xz6dD3APDKTy0gPCrLHsv0uI41oet74H7sSOWF0vyhNO0GOGAmRmj2
-         stmimSrrttJtMOe/SDtXupjhH6uXqwZV0j7tBN8sW/pJD8tBNWBVDGeR6QmyfEq+AnWp
-         JljlIIpplkVZ24QoDFQar5CpMyNp9klK7p1EZ8kBNRZa1auAcn0j9QA31pJxVtBWjalf
-         MYfQ==
+        bh=dTZO5/pB1R02+lnZhViB2JVpBq/zqUvUf3MyM+tMcDQ=;
+        b=iDqXCxCeYqdidV+7dZqpaCzXH013rVOPQVcfCqatWslBfeqw2kPtu2/0rwzQsjfawm
+         x3ad5vlMD3SupvALrpvtGJRPlLvbPb8F6FvXk/baGOok/VCdOqblTM8I8ed/vG8+AlGy
+         2XnOltzw9+yfF2StcHFg1kSoP8XfmopUZ0v/lGoJar1wPi6Qs3g7s3GVNLankU15t5kO
+         50+XbzuLx2616jR3e346LzSBi0y27ynovw+Py6L1xDgjIzWJNCPV35kEy7Jn+tFGbq2g
+         9HG6euuwW0Wqe1l+4kYUApigfdDSkPpqeH2AkygXWHht0sOi5F6kq1PO/jMyfHD0EGoA
+         SQLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755883307; x=1756488107;
+        d=1e100.net; s=20230601; t=1755883316; x=1756488116;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NgDuTNLynSXNTkQgfpkIz1Ab0tGbrgPIhu41LDy/Qgs=;
-        b=ef8kPagSkIpU+wnnB+nqr+4iM6q8tJxvQhbKWHQ0zjU/QEoP0AsQ01ucMLEwtZSWZQ
-         xHfiRX9eMTMLwGSBxmUZrWISFhZXtpHnk1S1MgusKW0bKfRH43qizDZYihfuI31VVnd1
-         zmbiLmxxS70v1Ajy0iQi1cbNvAuF26squKZRKpxe9JwEerywjuboJU0j18hiaGYc7jqB
-         F0ZqL6Ny0FORrxf8cakF1C0BfJ6tGV0j0EQhiiBCq39QAgb2LFpRXB0EcI21UBdYGiDn
-         yJ6JzRNfNu7/Vkf5iOAF8zcPECrb3Bpi3mO8FvOp5eJjZerhM/MsQaxvEiCXxb8OlhHV
-         l8ng==
-X-Forwarded-Encrypted: i=1; AJvYcCUQuy5mF/kbESSVA/3cHSeuwAFs7sMtOtc/NsL04bhTGhh5QS7oJ0rgblGffht9rtbqfaJC+TxqepFhbqWP9Q==@vger.kernel.org, AJvYcCUmXHEwQDaTi6IxLYmJH1tnNh250hL5+A5PH97DhIFjYo+zi7nKsn/u02DnbjJIdW0s1nTs8icPhj63so3l@vger.kernel.org, AJvYcCXs53Ms3FTXZiKuFquR2OLhphnlkjP5z1j2sXpPOcnr8R9n+wjKk5Q3tqkeK3TOhgqRk0lmvXKc+412ZM42@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfOn4iKgWsijbDsJP6ptN503bU9Tcg1s63ZHc3Wxl/TSOup4ef
-	VQHTtf54hieXUOZ0AQIRzi2QON3Lhsa4pQCkBozzYRqfdehrlPkmupxKCvV6NE+ZPDG2NX/VL6o
-	JYAbLpUrGPERQOVVw4048zvyfZFC4LSuV1id0nq4=
-X-Gm-Gg: ASbGncueu6T8hL13btYcEG0V24RHciGo4jvEn+XWXK7lWunMHU011X/x3cG04LUSpnI
-	fii7gmNRv0RMUm5v2zi2DqNnA7fQOdIqeAx/SXM8txoddxO9Vk9ZoZO1Ply5stKbvxsi63b3oBi
-	yK9zJaOGL3YdZg5wUDgK/dJrS+Sbm+kDNnfgo0FlQV6aItR9DNkR6onuMChi6CLnkdJdgpG0V4p
-	O7ddJQ=
-X-Google-Smtp-Source: AGHT+IFIPX+o5BtzIBMWnGiIi3/9pweFKAEQNA/aM2RgKA/e/9JlzGrNSwMeGUPGXgMjqLDzgsWPGJrm6bpifoek04w=
-X-Received: by 2002:a17:907:3f29:b0:af9:3ed3:eda2 with SMTP id
- a640c23a62f3a-afe2963b02cmr333013866b.60.1755883307128; Fri, 22 Aug 2025
- 10:21:47 -0700 (PDT)
+        bh=dTZO5/pB1R02+lnZhViB2JVpBq/zqUvUf3MyM+tMcDQ=;
+        b=uyLKd3xDX5gvcMswtj0OfUVorYfK1T0uGcF0+GQx5kvK8LL8Su8tddZPn9XCilAzPd
+         acrTHSLNlLGIqgFJDTuRsOwlKsed9GYqrBTe9j5d3LQIQGOZ6P4Q8HUMaAXMwMQUT759
+         bwWqa/7Q2N/BGakxH5QY49wce7IyTgJN4iGZ9KNBvLFBh1cYWq2ePABzIFdHc2TZz8NI
+         75ujh/kVrH23yby5EYRAwy/omUMOmCCIadi18yoBVMfQYbFBAZXTz7KM0VR8XHPtfZY6
+         8+YNzAdYX+MBARje4nFTesEekyL6/1e4OE8GpwoCcx1cFEiZB5GCiqWwPW+r7poYFwDq
+         k93g==
+X-Forwarded-Encrypted: i=1; AJvYcCUlYC9531SHpn/lWiiYLNBZfffv/PUKS0Xammh8D58Rm2RJOdFkMDelrV91pu1kfBjHEIVtyOaK5syOThh4@vger.kernel.org
+X-Gm-Message-State: AOJu0YxR1wXBqsPA1zjm/Lg5sz3Qth2kFr4Cx28smA41yL2XQ3tIDdyC
+	KpQsJx//PcpxhVFSEmOjnL5A9Sk88ilwQHJPV8XEEBMUjg8/sYQ3rKRb2CGNTihrHXP1Z/XunpV
+	FThpWubQAS/jG4EO+vyZbzFF6eErfuhRJZQ==
+X-Gm-Gg: ASbGncvKCWQKADdp6KTxdeTnIh6pyxWOxndgzekTCf9G/BDTqEKWpGjOF45lEspnLwG
+	nud6bmIuxOpQVDNh1JGDPgcxqKCzUvkye6E2c1taVzhyqbsH7vvAITvQ+9FIzFJ3yLZqwcnRi3V
+	wRp6yb3yy+HoaChXRnlRuNg1xNCxK5AAEpIdcq53YhD605YRBkApH1GFs1iPQynUyNE+U3OTCDQ
+	dF1Q8PJrNtzcfHe+0k=
+X-Google-Smtp-Source: AGHT+IGZiEK/Mv0s9OPEks6r/3e9n937N4ny9IMw6rXM07EEPCWI/XW6MDQrgsbKYwzkcJga3f2DX8IXHLVWojR0KLw=
+X-Received: by 2002:a05:622a:181c:b0:4b1:103b:bb82 with SMTP id
+ d75a77b69052e-4b2aab5caf9mr52045791cf.64.1755883316375; Fri, 22 Aug 2025
+ 10:21:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250814-tonyk-overlayfs-v5-0-c5b80a909cbd@igalia.com>
- <cffb248a-87ce-434e-bd64-2c8112872a18@igalia.com> <CAOQ4uxiVFubhiC9Ftwt3kG=RoGSK7rBpPv5Z0GdZfk17dBO6YQ@mail.gmail.com>
- <e2238a17-3d0a-4c30-bc81-65c8c4da98e6@igalia.com> <CAOQ4uxgfKcey301gZRBHf=2YfWmNg5zkj7Bh+DwVwpztMR1uOg@mail.gmail.com>
- <CAOQ4uxjf6S7xX+LiMaxoz7Rg03jU1-4A4o3FZ_Hi8z6EyEc7PQ@mail.gmail.com> <5da6b0f4-2730-4783-9c57-c46c2d13e848@igalia.com>
-In-Reply-To: <5da6b0f4-2730-4783-9c57-c46c2d13e848@igalia.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 22 Aug 2025 19:21:36 +0200
-X-Gm-Features: Ac12FXzjdRE-FW95dgJeQZId-J94AmwhsO1uTKTsNjV-vzA_p72a4t3oR2NACBM
-Message-ID: <CAOQ4uxiOYFf_qUZAwCZ2DO0qemUdAbOWyUD2+oqewVPGn2+0cw@mail.gmail.com>
-Subject: Re: [PATCH v5 0/9] ovl: Enable support for casefold layers
-To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>, linux-unionfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	kernel-dev@igalia.com, Gabriel Krisman Bertazi <krisman@kernel.org>
+References: <175573708506.15537.385109193523731230.stgit@frogsfrogsfrogs>
+ <175573708692.15537.2841393845132319610.stgit@frogsfrogsfrogs>
+ <CAJnrk1Z3JpJM-hO7Hw9_KUN26PHLnoYdiw1BBNMTfwPGJKFiZQ@mail.gmail.com>
+ <20250821222811.GQ7981@frogsfrogsfrogs> <851a012d-3f92-4f9d-8fa5-a57ce0ff9acc@bsbernd.com>
+ <CAL_uBtfa-+oG9zd-eJmTAyfL-usqe+AXv15usunYdL1LvCHeoA@mail.gmail.com>
+In-Reply-To: <CAL_uBtfa-+oG9zd-eJmTAyfL-usqe+AXv15usunYdL1LvCHeoA@mail.gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Fri, 22 Aug 2025 10:21:44 -0700
+X-Gm-Features: Ac12FXyu1___h7CrOHUB8OyiX0K8PtWewo0C-lfcE8xBtOMa4qdF1jsGdqS_dQ8
+Message-ID: <CAJnrk1aoZbfRGk+uhWsgq2q+0+GR2kCLpvNJUwV4YRj4089SEg@mail.gmail.com>
+Subject: Re: [PATCH 7/7] fuse: enable FUSE_SYNCFS for all servers
+To: synarete@gmail.com
+Cc: Bernd Schubert <bernd@bsbernd.com>, "Darrick J. Wong" <djwong@kernel.org>, miklos@szeredi.hu, 
+	neal@gompa.dev, John@groves.net, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 22, 2025 at 4:16=E2=80=AFPM Andr=C3=A9 Almeida <andrealmeid@iga=
-lia.com> wrote:
+On Fri, Aug 22, 2025 at 4:32=E2=80=AFAM Shachar Sharon <synarete@gmail.com>=
+ wrote:
 >
-> Em 17/08/2025 12:03, Amir Goldstein escreveu:
-> > On Fri, Aug 15, 2025 at 3:50=E2=80=AFPM Amir Goldstein <amir73il@gmail.=
-com> wrote:
-> >>
-> >> On Fri, Aug 15, 2025 at 3:34=E2=80=AFPM Andr=C3=A9 Almeida <andrealmei=
-d@igalia.com> wrote:
-> >>>
-> >>> Hi Amir,
-> >>>
-> >>> On 8/14/25 21:06, Amir Goldstein wrote:
-> >>>> On Thu, Aug 14, 2025 at 7:30=E2=80=AFPM Andr=C3=A9 Almeida <andrealm=
-eid@igalia.com> wrote:
-> >>>>> Em 14/08/2025 14:22, Andr=C3=A9 Almeida escreveu:
-> >>>>>> Hi all,
-> >>>>>>
-> >>>>>> We would like to support the usage of casefold layers with overlay=
-fs to
-> >>>>>> be used with container tools. This use case requires a simple setu=
-p,
-> >>>>>> where every layer will have the same encoding setting (i.e. Unicod=
-e
-> >>>>>> version and flags), using one upper and one lower layer.
-> >>>>>>
-> >>>>> Amir,
-> >>>>>
-> >>>>> I tried to run your xfstest for casefolded ovl[1] but I can see tha=
-t it
-> >>>>> still requires some work. I tried to fix some of the TODO's but I d=
-idn't
-> >>>>> managed to mkfs the base fs with casefold enabled...
-> >>>> When you write mkfs the base fs, I suspect that you are running
-> >>>> check -overlay or something.
-> >>>>
-> >>>> This is not how this test should be run.
-> >>>> It should run as a normal test on ext4 or any other fs  that support=
-s casefold.
-> >>>>
-> >>>> When you run check -g casefold, the generic test generic/556 will
-> >>>> be run if the test fs supports casefold (e.g. ext4).
-> >>>>
-> >>>> The new added test belongs to the same group and should run
-> >>>> if you run check -g casefold if the test fs supports casefold (e.g. =
-ext4).
-> >>>>
-> >>> I see, I used `check -overlay` indeed, thanks!
-> >>>
-> >>
-> >> Yeh that's a bit confusing I'll admit.
-> >> It's an overlayfs test that "does not run on overlayfs"
-> >> but requires extra overlayfs:
-> >>
-> >> _exclude_fs overlay
-> >> _require_extra_fs overlay
-> >>
-> >> Because it does the overlayfs mount itself.
-> >> That's the easiest way to test features (e.g. casefold) in basefs
-> >>
-> >
-> > I tried to run the new test, which is able to mount an overlayfs
-> > with layers with disabled casefolding with kernel 6.17-rc1.
-> >
-> > It does not even succeed in passing this simple test with
-> > your patches, so something is clearly off.
->
-> Apart from the other changes I had done for v6, I also had to change the
-> test itself. The directories need to be empty to set the +F attribute,
-> so I had to do this change:
+> To the best of my understanding, there are two code paths which may
+> yield FUSE_SYNCFS: one from user-space syscall syncfs(2) and the other
+> from within the kernel itself. Unfortunately, there is no way to
+> distinguish between the two at sb->s_op->sync_fs level, and the DoS
+> argument refers to the second (kernel) case. If we could somehow
+> propagate this info all the way down to the fuse layer then I see no
+> reason for preventing (non-privileged) user-space programs from
+> calling syncfs(2) over FUSE mounted file-systems.
 
-Nice, so I suppose this test is passing with v6. I will try it.
-Can you help to complete the TODO:
-
-# TODO: test non-casefold subdir and casefold disabled after mount
-The test now ends with the ofs->casefold =3D=3D true mount,
-but we need to test the error conditions same as the test cases
-for ofs->casefold =3D=3D false:
-
-1. Casefold disabled after mount
-2. Casefold disabled lower subdir
-
-Those test cases are designed to trigger the "wrong parent casefold"
-and "wrong child casefold" lookup warnings.
-
-If you have an idea how to trigger the "wrong inherited casefold"
-warning that would be nice.
-
-Technically, test can delete the whiteout file inside $workdir/work
-and remove casefold from $workdir/work and then trigger a copy up.
-It may work. I am not sure if deleting the whietout file from work dir
-is going to break something though.
+I interpreted the DoS comment as referring to the scenario where a
+userspace program calls generic sync()  and if an untrusted fuse
+server deliberately hangs on servicing that request then it'll hang
+sync forever. I think if this only affected the syncfs() syscall then
+it wouldn't be a problem since the caller is directly invoking it on a
+fuse fd, but if it affects generic sync() that seems like a big issue
+to me. Or at least that's my understanding of the code with
+ksys_sync() -> iterate_supers(sync_fs_one_sb, &wait).
 
 Thanks,
-Amir.
+Joanne
+>
+>
+> Please correct me if I am wrong with my analysis.
+>
+>
+> - Shachar.
+>
+> On Fri, Aug 22, 2025 at 1:57=E2=80=AFAM Bernd Schubert <bernd@bsbernd.com=
+> wrote:
+> >
+> >
+> >
+> > On 8/22/25 00:28, Darrick J. Wong wrote:
+> > > On Thu, Aug 21, 2025 at 03:18:11PM -0700, Joanne Koong wrote:
+> > >> On Wed, Aug 20, 2025 at 5:52=E2=80=AFPM Darrick J. Wong <djwong@kern=
+el.org> wrote:
+> > >>>
+> > >>> From: Darrick J. Wong <djwong@kernel.org>
+> > >>>
+> > >>> Turn on syncfs for all fuse servers so that the ones in the know ca=
+n
+> > >>> flush cached intermediate data and logs to disk.
+> > >>>
+> > >>> Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
+> > >>> ---
+> > >>>  fs/fuse/inode.c |    1 +
+> > >>>  1 file changed, 1 insertion(+)
+> > >>>
+> > >>>
+> > >>> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> > >>> index 463879830ecf34..b05510799f93e1 100644
+> > >>> --- a/fs/fuse/inode.c
+> > >>> +++ b/fs/fuse/inode.c
+> > >>> @@ -1814,6 +1814,7 @@ int fuse_fill_super_common(struct super_block=
+ *sb, struct fuse_fs_context *ctx)
+> > >>>                 if (!sb_set_blocksize(sb, ctx->blksize))
+> > >>>                         goto err;
+> > >>>  #endif
+> > >>> +               fc->sync_fs =3D 1;
+> > >>
+> > >> AFAICT, this enables syncfs only for fuseblk servers. Is this what y=
+ou
+> > >> intended?
+> > >
+> > > I meant to say for all fuseblk servers, but TBH I can't see why you
+> > > wouldn't want to enable it for non-fuseblk servers too?
+> > >
+> > > (Maybe I was being overly cautious ;))
+> >
+> > Just checked, the initial commit message has
+> >
+> >
+> > <quote 2d82ab251ef0f6e7716279b04e9b5a01a86ca530>
+> > Note that such an operation allows the file server to DoS sync(). Since=
+ a
+> > typical FUSE file server is an untrusted piece of software running in
+> > userspace, this is disabled by default. Only enable it with virtiofs fo=
+r
+> > now since virtiofsd is supposedly trusted by the guest kernel.
+> > </quote>
+> >
+> >
+> > With that we could at least enable for all privileged servers? And for
+> > non-privileged this could be an async?
+> >
+> >
+> > Thanks,
+> > Bernd
+> >
+> >
+> >
 
