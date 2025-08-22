@@ -1,160 +1,184 @@
-Return-Path: <linux-fsdevel+bounces-58824-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58825-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 970AEB31B4C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 16:25:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A91C3B31BB8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 16:35:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F87716CA27
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 14:19:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AB11B26DA1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 14:27:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5749307AF0;
-	Fri, 22 Aug 2025 14:17:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68B58309DCB;
+	Fri, 22 Aug 2025 14:20:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="NqtK8EZV"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1XZeje6J";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="w3ZLqxK8";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1XZeje6J";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="w3ZLqxK8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 797303126D7;
-	Fri, 22 Aug 2025 14:17:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D230309DA1
+	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Aug 2025 14:20:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755872268; cv=none; b=i3bR6iMnusjlyQ2Pw7GQ6kKs97OKsDLRsILYPiGihWSh/kW6DNEtH6sA3kYFLeANIbQHPbnfx0mi4D61glAHLSHlUSiP/CSfQNDKicd9nC2HddDxwIIP+BVie+WI/s1GWe3pxhYc16nkSv6vZjoBgy4CSBYG2xmcut2cu9IgJWU=
+	t=1755872411; cv=none; b=IrlBy8vvfJIM09rNAAODv2xL1TVNF2r9SZpfPBLxzGjPrRt0WD9IhqyolK+LJLpYV8i+MvHfwSDsuyLaKARo4ztaP2lo0rCZdLCQLjEX08Qa4KfdcuDLV09ah5XqTIZBBR/rjccnj4bBN6yVoxN6ujlODTS3ns2moAnD7Pxwfb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755872268; c=relaxed/simple;
-	bh=x4GIvsnaFstOMmOBwXDM+594L7MHxBPoRgjSdURJhGk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aP0TQjl3MfyQVpVB/OrWjXT1fp5Ihj+X3B20ZFFSTQCGzws2SrYowl2Ozy1C3C3/OywIzbb3wXAO4NNTdxGi2l61Yw599BCubOmtru2kHPqaD40i15w2dWkUD1ELBqzlNL31UgiqVh3XIsHbpr7j8QlBfQDNYJ1+jPSpOs56QIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=NqtK8EZV; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Cc:To:In-Reply-To:References:Message-Id:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=JGTiZxRmj6JH4X0L7nkW20BnnStEx5Bz8ugRV0G6/pk=; b=NqtK8EZVhTNUgBoslKePg73Wxv
-	cu+748t16yyJIScOhOHL1SMyqbY9E7i5+zayKIoTJ2x8pZpOYTbYUjnohtrnxUuAAR0WlA9YBWFZp
-	yV9r3YsoL6KpsPVnvvQeWmAUVjJ5JkQHHtP29wldWSzvkWzEXTPfQJwhsLIFewdcGC5WLq6GcQZBL
-	gr0iVVFdsjCyRoMmRbuA5Nvi0+Yomh++jQMRSP5qh7Vh6k6RDJ8cZlmPvF+nTCbwSMJ2luD3jF6z3
-	Kp+/0XBh50PDYv+szdko0tkG0g/PtwAjwaI215tSy7la8cXuzkmQvo5PfGWf5xGaN/QF1t16YdCYG
-	aFynchfw==;
-Received: from [152.250.7.37] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1upSaL-0008Fn-33; Fri, 22 Aug 2025 16:17:41 +0200
-From: =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Date: Fri, 22 Aug 2025 11:17:12 -0300
-Subject: [PATCH v6 9/9] ovl: Support mounting case-insensitive enabled
- layers
+	s=arc-20240116; t=1755872411; c=relaxed/simple;
+	bh=nQE9r7G5CWavUuRBc3xAi37pI2d0WQHU+eeMs11R1B4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kQhjOlYQmzBVnFHKAzBC6Wg/F329saD4HmTOii1FLjcBFNT0E9IGYY5g48C+XxgWGTpg3JVfzhMUOYldj4mqKwPPJ0SR72yVVFHCqlMYy1nGGKoN+XtNwni8+cAq26fBZCZ7c5mOR0Kid1WRa/uOZ7ZYORzxhpsV7jGesa0vf6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1XZeje6J; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=w3ZLqxK8; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1XZeje6J; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=w3ZLqxK8; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 68B8221BC3;
+	Fri, 22 Aug 2025 14:20:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1755872408; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hKc5BTdPu3Rsof7yJN5Q89HpTL4t7IT0AhCdAIGjIGw=;
+	b=1XZeje6JpV21b0deiZIfKyuFyWZG8zYeiWaPRpGC4aTISdq7wwCNkxUG1Gv1vgLOS1q+7C
+	whwBRdZErFT5IwIAURP1XBimffXwgSqDQP5W4S817ekZunrdcDF1OnmHxalbqJt+chjVfr
+	QpaHBjCwWZkIcwN9Zn9CEmRT4Ggdzdk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1755872408;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hKc5BTdPu3Rsof7yJN5Q89HpTL4t7IT0AhCdAIGjIGw=;
+	b=w3ZLqxK8WTq0uRmLih3bDrgKzhG9ldjdSutiL9c8iL5gvGJmJOevxIFFa7R7ckDrp0sqF8
+	azLEVZXQXK8P0gAg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1755872408; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hKc5BTdPu3Rsof7yJN5Q89HpTL4t7IT0AhCdAIGjIGw=;
+	b=1XZeje6JpV21b0deiZIfKyuFyWZG8zYeiWaPRpGC4aTISdq7wwCNkxUG1Gv1vgLOS1q+7C
+	whwBRdZErFT5IwIAURP1XBimffXwgSqDQP5W4S817ekZunrdcDF1OnmHxalbqJt+chjVfr
+	QpaHBjCwWZkIcwN9Zn9CEmRT4Ggdzdk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1755872408;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hKc5BTdPu3Rsof7yJN5Q89HpTL4t7IT0AhCdAIGjIGw=;
+	b=w3ZLqxK8WTq0uRmLih3bDrgKzhG9ldjdSutiL9c8iL5gvGJmJOevxIFFa7R7ckDrp0sqF8
+	azLEVZXQXK8P0gAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2C3F513931;
+	Fri, 22 Aug 2025 14:20:08 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id aRPECph8qGh3CAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 22 Aug 2025 14:20:08 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 7A5F4A0999; Fri, 22 Aug 2025 16:20:07 +0200 (CEST)
+Date: Fri, 22 Aug 2025 16:20:07 +0200
+From: Jan Kara <jack@suse.cz>
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH] fs: Use try_cmpxchg() in sb_init_done_wq()
+Message-ID: <kh7s7k4hipfppnthiq463svhzfqr7m2ovl3zehofmqyxps3d4s@jlklhf5mtrdx>
+References: <20250811132326.620521-1-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250822-tonyk-overlayfs-v6-9-8b6e9e604fa2@igalia.com>
-References: <20250822-tonyk-overlayfs-v6-0-8b6e9e604fa2@igalia.com>
-In-Reply-To: <20250822-tonyk-overlayfs-v6-0-8b6e9e604fa2@igalia.com>
-To: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
- Theodore Tso <tytso@mit.edu>, Gabriel Krisman Bertazi <krisman@kernel.org>
-Cc: linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- kernel-dev@igalia.com, 
- =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250811132326.620521-1-ubizjak@gmail.com>
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -3.80
 
-Drop the restriction for casefold dentries lookup to enable support for
-case-insensitive layers in overlayfs.
+On Mon 11-08-25 15:23:03, Uros Bizjak wrote:
+> Use !try_cmpxchg() instead of cmpxchg(*ptr, old, new) != old.
+> 
+> The x86 CMPXCHG instruction returns success in the ZF flag,
+> so this change saves a compare after CMPXCHG.
+> 
+> No functional change intended.
+> 
+> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Jan Kara <jack@suse.cz>
 
-Support case-insensitive layers with the condition that they should be
-uniformly enabled across the stack and (i.e. if the root mount dir has
-casefold enabled, so should all the dirs bellow for every layer).
+Looks good. Feel free to add:
 
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: André Almeida <andrealmeid@igalia.com>
----
-Changes from v5:
-- Fix mounting layers without casefold flag
----
- fs/overlayfs/namei.c | 17 +++++++++--------
- fs/overlayfs/util.c  | 10 ++++++----
- 2 files changed, 15 insertions(+), 12 deletions(-)
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-diff --git a/fs/overlayfs/namei.c b/fs/overlayfs/namei.c
-index 76d6248b625e7c58e09685e421aef616aadea40a..e93bcc5727bcafdc18a499b47a7609fd41ecaec8 100644
---- a/fs/overlayfs/namei.c
-+++ b/fs/overlayfs/namei.c
-@@ -239,13 +239,14 @@ static int ovl_lookup_single(struct dentry *base, struct ovl_lookup_data *d,
- 	char val;
- 
- 	/*
--	 * We allow filesystems that are case-folding capable but deny composing
--	 * ovl stack from case-folded directories. If someone has enabled case
--	 * folding on a directory on underlying layer, the warranty of the ovl
--	 * stack is voided.
-+	 * We allow filesystems that are case-folding capable as long as the
-+	 * layers are consistently enabled in the stack, enabled for every dir
-+	 * or disabled in all dirs. If someone has modified case folding on a
-+	 * directory on underlying layer, the warranty of the ovl stack is
-+	 * voided.
- 	 */
--	if (ovl_dentry_casefolded(base)) {
--		warn = "case folded parent";
-+	if (ofs->casefold != ovl_dentry_casefolded(base)) {
-+		warn = "parent wrong casefold";
- 		err = -ESTALE;
- 		goto out_warn;
- 	}
-@@ -259,8 +260,8 @@ static int ovl_lookup_single(struct dentry *base, struct ovl_lookup_data *d,
- 		goto out_err;
- 	}
- 
--	if (ovl_dentry_casefolded(this)) {
--		warn = "case folded child";
-+	if (ofs->casefold != ovl_dentry_casefolded(this)) {
-+		warn = "child wrong casefold";
- 		err = -EREMOTE;
- 		goto out_warn;
- 	}
-diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
-index a33115e7384c129c543746326642813add63f060..52582b1da52598fbb14866f8c33eb27e36adda36 100644
---- a/fs/overlayfs/util.c
-+++ b/fs/overlayfs/util.c
-@@ -203,6 +203,8 @@ void ovl_dentry_init_flags(struct dentry *dentry, struct dentry *upperdentry,
- 
- bool ovl_dentry_weird(struct dentry *dentry)
- {
-+	struct ovl_fs *ofs = OVL_FS(dentry->d_sb);
-+
- 	if (!d_can_lookup(dentry) && !d_is_file(dentry) && !d_is_symlink(dentry))
- 		return true;
- 
-@@ -210,11 +212,11 @@ bool ovl_dentry_weird(struct dentry *dentry)
- 		return true;
- 
- 	/*
--	 * Allow filesystems that are case-folding capable but deny composing
--	 * ovl stack from case-folded directories.
-+	 * Exceptionally for layers with casefold, we accept that they have
-+	 * their own hash and compare operations
- 	 */
--	if (sb_has_encoding(dentry->d_sb))
--		return IS_CASEFOLDED(d_inode(dentry));
-+	if (ofs->casefold)
-+		return false;
- 
- 	return dentry->d_flags & (DCACHE_OP_HASH | DCACHE_OP_COMPARE);
- }
+								Honza
 
+> ---
+>  fs/super.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/super.c b/fs/super.c
+> index 7f876f32343a..e91718017701 100644
+> --- a/fs/super.c
+> +++ b/fs/super.c
+> @@ -2318,13 +2318,15 @@ int sb_init_dio_done_wq(struct super_block *sb)
+>  						      sb->s_id);
+>  	if (!wq)
+>  		return -ENOMEM;
+> +
+> +	old = NULL;
+>  	/*
+>  	 * This has to be atomic as more DIOs can race to create the workqueue
+>  	 */
+> -	old = cmpxchg(&sb->s_dio_done_wq, NULL, wq);
+> -	/* Someone created workqueue before us? Free ours... */
+> -	if (old)
+> +	if (!try_cmpxchg(&sb->s_dio_done_wq, &old, wq)) {
+> +		/* Someone created workqueue before us? Free ours... */
+>  		destroy_workqueue(wq);
+> +	}
+>  	return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(sb_init_dio_done_wq);
+> -- 
+> 2.50.1
+> 
 -- 
-2.50.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
