@@ -1,133 +1,164 @@
-Return-Path: <linux-fsdevel+bounces-58794-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58795-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 966B3B31816
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 14:41:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 443ACB31844
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 14:49:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C361A27C9B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 12:41:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 997881CE3AF2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 12:49:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936C92FC00E;
-	Fri, 22 Aug 2025 12:41:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5E22FD1C6;
+	Fri, 22 Aug 2025 12:48:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="jwWpU4pg"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X+lwg6V/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D898719007D;
-	Fri, 22 Aug 2025 12:41:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 447512F6196
+	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Aug 2025 12:48:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755866469; cv=none; b=kHdnu2SfOTdT0CbcxpuqZsUfk/jlDPBapSL3MqY3yRiQYYoYol+nRWCV/DpqpDD0QRLQdIAHkm03Oaoy+RoUkQYXOXG8Un3vzyZCOVS9JGSIK5HeWHb40YKmZfuncxRmLK7iur3EMs+WBM6GfkFGKapyFAkonHl8ZmOGFkfCcFE=
+	t=1755866918; cv=none; b=CMPfh2JTISsWy0YpBZBr1HOcxfIMF4hCcJpJ0RMtjIlSacHBjzpEzAO/vSS96S1TlZq4Y7XneQMF0+Smm2jn6UnGdDTqVf6onLpqzv4Ng9oS0BoPeHKCT1MSixusENlYuczh2o8kzh/07Z0dVvorQyBoUeWVe784YBViA/sQIGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755866469; c=relaxed/simple;
-	bh=/nP5nOeslRb8udPMkJJlnSbloy7uRJBAUq0VTBExCok=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bpWR96Sg7Jec+RIF0/m0JkoEFwggARP0fhPKPqYwnjE4cS68v1Ba+y1p1uJwBp9vcYeKhyT7BUcIgB7t+ZhdVqjZ74EClUqtRQRT9Zma22G0WcArr2wtibzFjoJ2/9DbKZNicjM/bWBm2MtpWgSzYkIiZgK2YDEXn3LXS0aVVFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=jwWpU4pg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2720C4CEED;
-	Fri, 22 Aug 2025 12:41:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1755866468;
-	bh=/nP5nOeslRb8udPMkJJlnSbloy7uRJBAUq0VTBExCok=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jwWpU4pglCONCINeNN1LegyA9F+ogN37/JzXnEG2ULT/YLKMWxRc2phsXKwNnDOBw
-	 dSsZXqvAREhrYASPBvr1VH7eAYMtu72aM2+aQkS5ATxMNdqHlu78pL6CoC5+H2K/RF
-	 hYsBZCqhTjQF6REKTZ6xx3/OdfBb8QbLY2lOsNf8=
-Date: Fri, 22 Aug 2025 14:41:05 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
-	Zhang Yi <yi.zhang@huaweicloud.com>, stable@vger.kernel.org,
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	hargar@microsoft.com, broonie@kernel.org, achill@achill.org,
-	linux-ext4 <linux-ext4@vger.kernel.org>,
-	linux-fsdevel@vger.kernel.org, Joseph Qi <jiangqi903@gmail.com>,
-	Jan Kara <jack@suse.cz>, Theodore Ts'o <tytso@mit.edu>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Ben Copeland <benjamin.copeland@linaro.org>
-Subject: Re: [PATCH 6.16 000/564] 6.16.2-rc2 review
-Message-ID: <2025082200-straw-grunt-0009@gregkh>
-References: <20250819122844.483737955@linuxfoundation.org>
- <CA+G9fYsjac=SLhzVCZqVHnHGADv1KmTAnTdfcrnhnhcLuko+SQ@mail.gmail.com>
- <aKg41GMffk9t1p56@stanley.mountain>
- <2025082242-skyward-mascot-f992@gregkh>
+	s=arc-20240116; t=1755866918; c=relaxed/simple;
+	bh=YYE5x3rpclM2L3Vjf+QXn3YHsE6nuL4ZAjscgygCnLU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Msn1ucLJLp1ypAUZtcos0Y0lCNZ+7Fjo8yPQrpC2UQXsd0Vx9W1Rv8yQodztEpXejPmN+l39/RHuk7L2fGGnfqmJyrcvWJiMJjwXUAwhhIjhfZ2eEyqRx/43RSiqyERv3LuS2CYf1zx2HKipS6g4iTQ0G13bBPyFITN/kbBjdrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X+lwg6V/; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755866914;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kbVxxqHKodZYFsug0blUFZKne7Mtc5nkor9jm2rzIMY=;
+	b=X+lwg6V/tsyqsdnTjfTw0mhQiP4HDdgDrhvh70E6+L4CE7IUChXnHwtVdRwtr813/2khKq
+	v30fPC2pejK7u9ZxriWBfypSLCMpc+OMb4KF4NPeQGnjGLAukxsMCoQ6doRUj0gr1GkKhG
+	Aafciu6dFfidcWWh8X/ww/yGz1/2OjM=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-34-pSYZzbXvPNqDdffsYl-8jg-1; Fri, 22 Aug 2025 08:48:32 -0400
+X-MC-Unique: pSYZzbXvPNqDdffsYl-8jg-1
+X-Mimecast-MFC-AGG-ID: pSYZzbXvPNqDdffsYl-8jg_1755866912
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7e864817cb8so845176985a.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Aug 2025 05:48:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755866912; x=1756471712;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kbVxxqHKodZYFsug0blUFZKne7Mtc5nkor9jm2rzIMY=;
+        b=Vxk2S5kA8gE6zJAag1rXFezmCDHm/KC+W9YvtII7nRdLH+RTh7ciYoTgT9X8PJMmk9
+         tnxG56Zy9iO1o/pvczc/YJ/gGPEhNd+xyc7t67jypGZL+TaLps44HA3jBo9+q1HwqMvw
+         FoUpQuFiZuxbW7b0KsyLQJ3yndZWM7DLBLzsYxL7c1h95PkhBKF3HEvU/R1nVkPGARos
+         fDCVjskMA5XNVYrgfhZRO+ihO4V0JgkqRwNyOEsl3N/2Q87TN7PGZnlWU7mOOY0KCzdg
+         Pj53S/VvVlJw4l8nwggdqQjGGVK9gcBzUMB1YT5sYOYMc+H0bsDnEP84f8mefz+sesj/
+         z9lw==
+X-Gm-Message-State: AOJu0YwULuSm/TNfj8xOvtHVc2mzP6mh7yOVujiXwvmk8w2vnFCCJO8v
+	+8zRsvwt4EB+/4cBZJ8Mk8CODrmdczEil77ZURFrtKeeRsVfDsV9TDSRFLTDp5ATvT3LSv4sub6
+	Fa0ekscKAR9MFnnxxPCPwR5ZL3rdfM7X37RLfD1lB/l77dT8EP22eaG6TLotaH66pFcyULLQduX
+	a3rM/ZUpGWlrZ5jAB/nOiZSKmi827TqK5JmzNIq0923A==
+X-Gm-Gg: ASbGncshm8sdhHpEBdrWQxgtNvCDdmRQTVwKHG3slNdPwCiUJ1tXazyqRJzyyQO4vaj
+	8ntT7u2EsSe/G1Et3wTCac4Km0F9zZwRp62CEzc4NUdWYPUFaktNq/m+xO3rJmvDpRyIu8aKu89
+	zLi1J1OAcHvP9mAsug9o9+Ajsm5Ps/B7DPWBgZpbOCJStI3tSstcZk
+X-Received: by 2002:a05:622a:2b06:b0:4b2:8ac5:2594 with SMTP id d75a77b69052e-4b2aaf88157mr32970321cf.39.1755866912235;
+        Fri, 22 Aug 2025 05:48:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGclQR87zmWeT+VM3r9gdWgWNuVTR3jL5gvhn+oOXtGpF8D4a5y/GyCDWpLgzvoOApqTGx9rQ3k9v8uTyYsc/g=
+X-Received: by 2002:a05:622a:2b06:b0:4b2:8ac5:2594 with SMTP id
+ d75a77b69052e-4b2aaf88157mr32970021cf.39.1755866911689; Fri, 22 Aug 2025
+ 05:48:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2025082242-skyward-mascot-f992@gregkh>
+References: <20250815121459.3391223-1-lichliu@redhat.com> <20250821-zirkel-leitkultur-2653cba2cd5b@brauner>
+In-Reply-To: <20250821-zirkel-leitkultur-2653cba2cd5b@brauner>
+From: Lichen Liu <lichliu@redhat.com>
+Date: Fri, 22 Aug 2025 20:48:20 +0800
+X-Gm-Features: Ac12FXwQJbPmbQRxMp7qGDkCOTeicgMXQCgW-fagYfwyy8_vEsAkdFyogKGO5Zk
+Message-ID: <CAPmSd0MikBnSRvMvb5eTa=WZrfsjP-Wy11PSCRY4X7u4=T-bUg@mail.gmail.com>
+Subject: Re: [PATCH v2] fs: Add 'rootfsflags' to set rootfs mount options
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	safinaskar@zohomail.com, kexec@lists.infradead.org, rob@landley.net, 
+	weilongchen@huawei.com, cyphar@cyphar.com, linux-api@vger.kernel.org, 
+	zohar@linux.ibm.com, stefanb@linux.ibm.com, initramfs@vger.kernel.org, 
+	corbet@lwn.net, linux-doc@vger.kernel.org, viro@zeniv.linux.org.uk, 
+	jack@suse.cz
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 22, 2025 at 02:14:10PM +0200, Greg Kroah-Hartman wrote:
-> On Fri, Aug 22, 2025 at 12:31:00PM +0300, Dan Carpenter wrote:
-> > On Wed, Aug 20, 2025 at 08:06:01PM +0530, Naresh Kamboju wrote:
-> > > On Tue, 19 Aug 2025 at 18:02, Greg Kroah-Hartman
-> > > <gregkh@linuxfoundation.org> wrote:
-> > > >
-> > > > This is the start of the stable review cycle for the 6.16.2 release.
-> > > > There are 564 patches in this series, all will be posted as a response
-> > > > to this one.  If anyone has any issues with these being applied, please
-> > > > let me know.
-> > > >
-> > > > Responses should be made by Thu, 21 Aug 2025 12:27:23 +0000.
-> > > > Anything received after that time might be too late.
-> > > >
-> > > > The whole patch series can be found in one patch at:
-> > > >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.16.2-rc2.gz
-> > > > or in the git tree and branch at:
-> > > >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.16.y
-> > > > and the diffstat can be found below.
-> > > >
-> > > > thanks,
-> > > >
-> > > > greg k-h
-> > > 
-> > > As I have reported last week on 6.16.1-rc1 as regression is
-> > > still noticed on 6.16.2-rc2.
-> > > 
-> > > WARNING: CPU: 0 PID: 7012 at fs/jbd2/transaction.c:334 start_this_handle
-> > > 
-> > > Full test log:
-> > > ------------[ cut here ]------------
-> > > [  153.965287] WARNING: CPU: 0 PID: 7012 at fs/jbd2/transaction.c:334
-> > > start_this_handle+0x4df/0x500
-> > 
-> > The problem is that we only applied the last two patches in:
-> > https://lore.kernel.org/linux-ext4/20250707140814.542883-1-yi.zhang@huaweicloud.com/
-> > 
-> > Naresh is on vacation until Monday, but he tested the patchset on
-> > linux-next and it fixed the issues.  So we need to cherry-pick the
-> > following commits.
-> > 
-> > 1bfe6354e097 ext4: process folios writeback in bytes
-> > f922c8c2461b ext4: move the calculation of wbc->nr_to_write to mpage_folio_done()
-> > ded2d726a304 ext4: fix stale data if it bail out of the extents mapping loop
-> > 2bddafea3d0d ext4: refactor the block allocation process of ext4_page_mkwrite()
-> > e2c4c49dee64 ext4: restart handle if credits are insufficient during allocating blocks
-> > 6b132759b0fe ext4: enhance tracepoints during the folios writeback
-> > 95ad8ee45cdb ext4: correct the reserved credits for extent conversion
-> > bbbf150f3f85 ext4: reserved credits for one extent during the folio writeback
-> > 57661f28756c ext4: replace ext4_writepage_trans_blocks()
-> > 
-> > They all apply cleanly to 6.16.3-rc1.
-> 
-> Ugh.  Ok, let me go push out a -rc for JUST this issue now so that
-> people can test and I can get it released for those that are tripped up
-> by it.  Thanks for the information, much appreciated.
+Thanks for reviewing and merging the code!
 
-Now pushed out.
+I used "rootfsflags" here because it is shown as "rootfs" in the mountinfo.
+
+My opinion on naming is similar to Rob=E2=80=99s. However, for me, the func=
+tion=E2=80=99s
+implementation is more important than the variable names, so I don=E2=80=99=
+t have a
+strong opinion on this.
+
+(Christian may see this message twice, sorry for that because I clicked rep=
+ly
+button instead of reply-all)
+
+Thanks,
+Lichen
+
+On Thu, Aug 21, 2025 at 4:26=E2=80=AFPM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> On Fri, 15 Aug 2025 20:14:59 +0800, Lichen Liu wrote:
+> > When CONFIG_TMPFS is enabled, the initial root filesystem is a tmpfs.
+> > By default, a tmpfs mount is limited to using 50% of the available RAM
+> > for its content. This can be problematic in memory-constrained
+> > environments, particularly during a kdump capture.
+> >
+> > In a kdump scenario, the capture kernel boots with a limited amount of
+> > memory specified by the 'crashkernel' parameter. If the initramfs is
+> > large, it may fail to unpack into the tmpfs rootfs due to insufficient
+> > space. This is because to get X MB of usable space in tmpfs, 2*X MB of
+> > memory must be available for the mount. This leads to an OOM failure
+> > during the early boot process, preventing a successful crash dump.
+> >
+> > [...]
+>
+> This seems rather useful but I've renamed "rootfsflags" to
+> "initramfs_options" because "rootfsflags" is ambiguous and it's not
+> really just about flags.
+>
+> Other than that I think it would make sense to just raise the limit to
+> 90% for the root_fs_type mount. I'm not sure why this super privileged
+> code would only be allowed 50% by default.
+>
+> ---
+>
+> Applied to the vfs-6.18.misc branch of the vfs/vfs.git tree.
+> Patches in the vfs-6.18.misc branch should appear in linux-next soon.
+>
+> Please report any outstanding bugs that were missed during review in a
+> new review to the original patch series allowing us to drop it.
+>
+> It's encouraged to provide Acked-bys and Reviewed-bys even though the
+> patch has now been applied. If possible patch trailers will be updated.
+>
+> Note that commit hashes shown below are subject to change due to rebase,
+> trailer updates or similar. If in doubt, please check the listed branch.
+>
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+> branch: vfs-6.18.misc
+>
+> [1/1] fs: Add 'rootfsflags' to set rootfs mount options
+>       https://git.kernel.org/vfs/vfs/c/278033a225e1
+>
+
 
