@@ -1,173 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-58796-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58797-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83CAEB31859
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 14:52:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 25EFDB31860
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 14:53:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48AE31CE5980
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 12:51:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AD5A1C82682
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 12:53:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38BC02FE57D;
-	Fri, 22 Aug 2025 12:49:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F7A62FC034;
+	Fri, 22 Aug 2025 12:52:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GHBwW5pQ"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fY2Ll00Z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8341E2FCBFE;
-	Fri, 22 Aug 2025 12:49:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07AC2FC00E;
+	Fri, 22 Aug 2025 12:52:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755866993; cv=none; b=sYpyU2fMVn/HHfHnGc8FNx1+NRwgACDar2kmxXRGiAiDjYwl84tHg2yfawQz1vLJ6E5j2OdJv0Odr1D5Yf+Jki3KzIRrwhPQ0CNouyYaZlcuMI22faXFMo3PwHC7bBtbzfuyNiqE0IRqyJp4/jH0j/s6xX9j8SHR/NdOGu4a1m0=
+	t=1755867165; cv=none; b=HczlzOJIPXztTDV/Sxf23XyV7h+Y2VcUAEGhdEL1U+G5E7aEtVaPzwHEA29WYm4LM62x0r2fTbn4iT3I2AS1TSuAyAh/RNuywUNVLKjWLZk2fvQuyEZl98glgbkS0e+DASiA5pBY2xDNawhuFUe3F5RiFKjM3RnTifpNh1nCD3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755866993; c=relaxed/simple;
-	bh=GgoITKPkk885/G9vmfvVHPZiDboFUVRXgRiLfhRuKoM=;
+	s=arc-20240116; t=1755867165; c=relaxed/simple;
+	bh=SPEn7P3mjkWhID617eIY0l+bYfag61lfCySYeoLUzIs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iUk4AZJsXqE+PqcvAFnOZzTOLSmnTrGasgCEVE6t+5//gOpN9+fC7xToAXBknRd1/NbkG0No/VqikdxmO5Lbldl6vmMEqZOkIqIbbTcqb9NZtJohE6cq9x/iT+5h7O7CAD87PfcwNNPD55vb7O0L5gXzIWH5GdbWBnE3tfUblL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GHBwW5pQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EE4BC4CEED;
-	Fri, 22 Aug 2025 12:49:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755866993;
-	bh=GgoITKPkk885/G9vmfvVHPZiDboFUVRXgRiLfhRuKoM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GHBwW5pQBB924uS2EvEaTMVScgoVBGSPTv+vOQDPcBjSqDfUIEij5aS8BqxQbjMlY
-	 kjNUu/m5271lML9lw0oX5sfXNPqCTGNWVeBFNHFHEvfMzffdzRuM4Xg4NHYJdz8FDX
-	 lIm70hfEXyVOV1Dt5lbf+mEz34DfOyhaEHGY0SotkQ8ELJjFiYj7EJyXb13FPEEWwO
-	 U9g9H5iDiqXlmi/2xQ441LdSbrvQMyHtNyWWC4i1iSZGLMqtPIAp15y9ybzeRGssnm
-	 WwkqXsuqWvKLS4lPlLmzdV4VYcd2bmM3BelQXhdQb/l9ygWtNhgIISAr93M45ElwX7
-	 lVsyqvIWi97wA==
-Date: Fri, 22 Aug 2025 14:49:47 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Askar Safin <safinaskar@zohomail.com>
-Cc: Aleksa Sarai <cyphar@cyphar.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>, 
-	linux-man@vger.kernel.org
-Subject: Re: [PATCH 1/1] man2/mount.2: expand and clarify docs for MS_REMOUNT
- | MS_BIND
-Message-ID: <ir47jua4jwi2ram5jevqxog637nhzyr7vqmkzl22ttisubucmq@skjlfbhez45v>
-References: <20250822114315.1571537-1-safinaskar@zohomail.com>
- <20250822114315.1571537-2-safinaskar@zohomail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=B/tq37sia6aiSiqwiYTe2VKYADioplFzc/q7vQoVjCqRDrZZv6vGA1qGUrwXqkQvK1IJOmdBpKIREH/A1HWTCVeEcZfzof9OXY8PbCn3HDdQ5bIbrPswSL/txIulfir7JP+qsRWQUjLsKC5Dn7Fykz8hMbK5NeweWkbqGiSV18A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fY2Ll00Z; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755867162; x=1787403162;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=SPEn7P3mjkWhID617eIY0l+bYfag61lfCySYeoLUzIs=;
+  b=fY2Ll00Ze4JaH0RsxomjY5kF9BZ0PuFxwBhZfOePPf6o66mir7004RHa
+   CD2zpaYt1Iq85O0SELHBuS1WFvs0dgRzdChsK1ZO/Mr98WRNJfwH0A9xW
+   ReJWJMoHizc0B3z7Rfg3iVnYo3VPNHBYhl1DVjbiHhWumyxMC6Y0SH1Xe
+   37WEbDZ95Urn6OkxIrJlC4+nl3wXsczFhUr1QimgI4CpEeBDk8jYdvE1o
+   92KrL4j3PpplTcX1T6bx+QEFbN6xcb/AOvu1HnDWzEAkrwRqSSW3Javip
+   72sTienAisroHCoTwMIIA01Uh+pO8RTtncBHQBGS+jmptldyS3hOPdcjZ
+   A==;
+X-CSE-ConnectionGUID: CKpvkZe2RZ6GbQTzIGqgmw==
+X-CSE-MsgGUID: MrUdWte5Qh22Uz7TknZuJA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="57191227"
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
+   d="scan'208";a="57191227"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 05:52:42 -0700
+X-CSE-ConnectionGUID: Z3/yPDQiRuS5zxcdPa/slQ==
+X-CSE-MsgGUID: W3HnWrRlQDmSxTL4bCDOWg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
+   d="scan'208";a="169104621"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa009.fm.intel.com with ESMTP; 22 Aug 2025 05:52:40 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1upRFQ-000LHr-1P;
+	Fri, 22 Aug 2025 12:52:07 +0000
+Date: Fri, 22 Aug 2025 20:50:50 +0800
+From: kernel test robot <lkp@intel.com>
+To: NeilBrown <neil@brown.name>, Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH v2 03/16] Introduce wake_up_key()
+Message-ID: <202508222051.JpjiLYJb-lkp@intel.com>
+References: <20250822000818.1086550-4-neil@brown.name>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gasaowf4ey5r47ax"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250822114315.1571537-2-safinaskar@zohomail.com>
+In-Reply-To: <20250822000818.1086550-4-neil@brown.name>
+
+Hi NeilBrown,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on brauner-vfs/vfs.all]
+[also build test ERROR on trondmy-nfs/linux-next linus/master v6.17-rc2 next-20250822]
+[cannot apply to tip/sched/core]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/NeilBrown/VFS-discard-err2-in-filename_create/20250822-081444
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
+patch link:    https://lore.kernel.org/r/20250822000818.1086550-4-neil%40brown.name
+patch subject: [PATCH v2 03/16] Introduce wake_up_key()
+config: sh-randconfig-r073-20250822 (https://download.01.org/0day-ci/archive/20250822/202508222051.JpjiLYJb-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 10.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250822/202508222051.JpjiLYJb-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508222051.JpjiLYJb-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/gpio/gpiolib-cdev.c: In function 'linereq_put_event':
+>> drivers/gpio/gpiolib-cdev.c:596:2: error: 'else' without a previous 'if'
+     596 |  else
+         |  ^~~~
+   drivers/gpio/gpiolib-cdev.c: In function 'lineevent_irq_thread':
+   drivers/gpio/gpiolib-cdev.c:2018:2: error: 'else' without a previous 'if'
+    2018 |  else
+         |  ^~~~
+   drivers/gpio/gpiolib-cdev.c: In function 'lineinfo_changed_func':
+   drivers/gpio/gpiolib-cdev.c:2536:2: error: 'else' without a previous 'if'
+    2536 |  else
+         |  ^~~~
 
 
---gasaowf4ey5r47ax
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Askar Safin <safinaskar@zohomail.com>
-Cc: Aleksa Sarai <cyphar@cyphar.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>, 
-	linux-man@vger.kernel.org
-Subject: Re: [PATCH 1/1] man2/mount.2: expand and clarify docs for MS_REMOUNT
- | MS_BIND
-References: <20250822114315.1571537-1-safinaskar@zohomail.com>
- <20250822114315.1571537-2-safinaskar@zohomail.com>
-MIME-Version: 1.0
-In-Reply-To: <20250822114315.1571537-2-safinaskar@zohomail.com>
+vim +596 drivers/gpio/gpiolib-cdev.c
 
-Hi Askar,
+a0dda508bd66b9e Bartosz Golaszewski 2023-08-17  581  
+73e0341992b68bb Kent Gibson         2020-09-28  582  static void linereq_put_event(struct linereq *lr,
+73e0341992b68bb Kent Gibson         2020-09-28  583  			      struct gpio_v2_line_event *le)
+73e0341992b68bb Kent Gibson         2020-09-28  584  {
+73e0341992b68bb Kent Gibson         2020-09-28  585  	bool overflow = false;
+73e0341992b68bb Kent Gibson         2020-09-28  586  
+0ebeaab4d59eb37 Kent Gibson         2023-12-19  587  	scoped_guard(spinlock, &lr->wait.lock) {
+73e0341992b68bb Kent Gibson         2020-09-28  588  		if (kfifo_is_full(&lr->events)) {
+73e0341992b68bb Kent Gibson         2020-09-28  589  			overflow = true;
+73e0341992b68bb Kent Gibson         2020-09-28  590  			kfifo_skip(&lr->events);
+73e0341992b68bb Kent Gibson         2020-09-28  591  		}
+73e0341992b68bb Kent Gibson         2020-09-28  592  		kfifo_in(&lr->events, le, 1);
+0ebeaab4d59eb37 Kent Gibson         2023-12-19  593  	}
+73e0341992b68bb Kent Gibson         2020-09-28  594  	if (!overflow)
+73e0341992b68bb Kent Gibson         2020-09-28  595  		wake_up_poll(&lr->wait, EPOLLIN);
+73e0341992b68bb Kent Gibson         2020-09-28 @596  	else
+73e0341992b68bb Kent Gibson         2020-09-28  597  		pr_debug_ratelimited("event FIFO is full - event dropped\n");
+73e0341992b68bb Kent Gibson         2020-09-28  598  }
+73e0341992b68bb Kent Gibson         2020-09-28  599  
 
-On Fri, Aug 22, 2025 at 11:43:15AM +0000, Askar Safin wrote:
-> My edit is based on experiments and reading Linux code
->=20
-> Signed-off-by: Askar Safin <safinaskar@zohomail.com>
-
-You could add Cc: tags there for people you CC'd in the patch.
-(For next time.)
-
-I'll wait before applying the patch, to allow anyone to review it, in
-case they want to comment.
-
-
-Have a lovely day!
-Alex
-
-> ---
->  man/man2/mount.2 | 21 ++++++++++++++++++---
->  1 file changed, 18 insertions(+), 3 deletions(-)
->=20
-> diff --git a/man/man2/mount.2 b/man/man2/mount.2
-> index 5d83231f9..909b82e88 100644
-> --- a/man/man2/mount.2
-> +++ b/man/man2/mount.2
-> @@ -405,7 +405,19 @@ flag can be used with
->  to modify only the per-mount-point flags.
->  .\" See https://lwn.net/Articles/281157/
->  This is particularly useful for setting or clearing the "read-only"
-> -flag on a mount without changing the underlying filesystem.
-> +flag on a mount without changing flags of the underlying filesystem.
-> +The
-> +.I data
-> +argument is ignored if
-> +.B MS_REMOUNT
-> +and
-> +.B MS_BIND
-> +are specified.
-> +The
-> +.I mountflags
-> +should specify existing per-mount-point flags,
-> +except for those parameters
-> +that are deliberately changed.
->  Specifying
->  .I mountflags
->  as:
-> @@ -416,8 +428,11 @@ MS_REMOUNT | MS_BIND | MS_RDONLY
->  .EE
->  .in
->  .P
-> -will make access through this mountpoint read-only, without affecting
-> -other mounts.
-> +will make access through this mountpoint read-only
-> +(and clear all other per-mount-point flags),
-> +without affecting
-> +other mounts
-> +of this filesystem.
->  .\"
->  .SS Creating a bind mount
->  If
-> --=20
-> 2.47.2
->=20
-
---=20
-<https://www.alejandro-colomar.es/>
-
---gasaowf4ey5r47ax
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmioZ2oACgkQ64mZXMKQ
-wqnqvg//aN4s81y1rtPJJkKk72QTf7oVzKnY0ehD8XDJoxz0DX2vz6J/AEJt67UK
-iu5+bIrLKgt2kcFhNeTo87Rk+3/5WtyoA2J13jvK8XaGLnNwyCdbydkNLkotv/kt
-dIczU5tt8QmG3TAwIkDseGhYioL4REVwQTyDEXLPHEkqL8BY5IsXL+fY0uIkiDPA
-O7Kfemrpc1pnkAFdu/2FCoQLpGKmnZp9ly+lQ8pr7MI62n3L62PIaAskimZwGlZs
-bDBfd1TB26TYakpu+t27l29HGvomPj5Ihw2mmhjiPNS2cLT7DCMSkFoLieDXmusI
-HpU0Ubmr20yR6+hWIuSGwGkhKwKIWjHVwJvk0DnCMxgNro5A2EjIhRSNE4j206Rk
-TagmrTOF5Qwlxa3UP3v24ERYJ6uKaW2MU9u8qi0h5UVNsG6P5HGL7i7T5Gidodxa
-MF9BqH8+xec5e1GFcM6HOJKVZEy10DAnbdvVrgFzDzGg+y3501mBqB6uQlNbMqNM
-XRq8l0TawnioJLjThrwTTjb2oRR3X7OnDHlW/ClF0yILCQ/8VHv1Bgp4JcoJDA6o
-QpMkTZZvB1AA7x6X02W43mANn8tswECBVfXGZ+fOzjzD9hQbzACjXPSMV5ewK/o1
-RdKfIjccUIEapdTJlBvD3SwU6e8wJk/tSgCvAkvrP0jotrKfCPo=
-=hypr
------END PGP SIGNATURE-----
-
---gasaowf4ey5r47ax--
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
