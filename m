@@ -1,93 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-58791-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58792-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B045B317DE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 14:32:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A796B317E3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 14:33:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79B6C1C849A6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 12:32:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BDA15A7EBD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 12:33:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 055032FB621;
-	Fri, 22 Aug 2025 12:31:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55DBA2FB633;
+	Fri, 22 Aug 2025 12:33:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="Hc1lna26";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="aTw4yilO"
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="bLB3y1oG";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Mv7pSZfn"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE9C78F58;
-	Fri, 22 Aug 2025 12:31:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B977F2FB624
+	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Aug 2025 12:33:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755865916; cv=none; b=FbTY+eeaGXb/8XoI6YIWDIWh4TRzHZOYCLGobPk3Djl18xZPtlkyop5Y/3WYzvMXSJiQCsw3E7U9ZqiUkKHFQVSlq7Ne1nWt5rPsp5fCKXsnwKxSYLJFNm6Z9OsXlE+R5Bsk+uTCw7C7EzLSU+Pxck3uc61IEKr5DadQijtDWzs=
+	t=1755866003; cv=none; b=N5nDiy9QifmMvNmpjA8TXzcqdxcR1ZXeVeG4awFduSUQ9wAyBr0xQ9WPQTiuaN7z6Ccw9FqdXjXcsoMXkO18BOZcD3psWI9bwvgng07hiDaMc9fCLZTzKLIGlyxU5h7bfuZqVqNAad18F0tPL27B2Bk4xcPHi99WFam9BugVmbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755865916; c=relaxed/simple;
-	bh=8O6P+KnBSM9tsYHgrhKmCq6XLjltsmW23yXffgDZ92o=;
+	s=arc-20240116; t=1755866003; c=relaxed/simple;
+	bh=7nJvkcpQ+lsP1sjG6dEmpvqmMPn2p8ajF3940NAo3TQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=axaXiqhrnhqww3kkiAo6ino1pSYfQNnwxjyHU3NgEpTThV6QHjN58xVYl/6d14/MPL3lwStneNX7CfGHmT3+YSn9b5YuVpojWElgC9AIy5HuqZLq+2GMs3ZmVCNxzhSt6XPWD752KucBEp2AQMOSPa7wpi8/2oErkjfJf7FbF20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=themaw.net; spf=pass smtp.mailfrom=themaw.net; dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b=Hc1lna26; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=aTw4yilO; arc=none smtp.client-ip=202.12.124.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=themaw.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=themaw.net
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id A9B1A7A015A;
-	Fri, 22 Aug 2025 08:31:51 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-03.internal (MEProxy); Fri, 22 Aug 2025 08:31:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
+	 In-Reply-To:Content-Type; b=AI5heYVrpmtJskxH2I+cLtLd02W6jNZVHq+wx60Z9ENYErytv117UYhXB3Y/pbPsaz84JghCu9eTP+ypiq1kauZyjY25iN1xJ/z17APwM26liC43UK3uuqWtNaFGP0+sjbTZWnf4kLVPGLPqpOxSjjWyJFiM8MtqXbG7IFq0wWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=bLB3y1oG; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Mv7pSZfn; arc=none smtp.client-ip=202.12.124.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id A82137A015A;
+	Fri, 22 Aug 2025 08:33:19 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-04.internal (MEProxy); Fri, 22 Aug 2025 08:33:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
 	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1755865911;
-	 x=1755952311; bh=8O6P+KnBSM9tsYHgrhKmCq6XLjltsmW23yXffgDZ92o=; b=
-	Hc1lna26W7MspI/ZK5z8IVAEKJAVFrEijbanjkPSqVDR+1mUcN89BoX+KCbhazXc
-	qrY2DebY/+/w+xkG8dXT5q49uOeML46/ayDyqcxP1GA5Fahx9RJ331zHXOrVrnO1
-	sB/FWh2VfPPsm+k25/SwABpObfJBx31lp84hs6DeLvjdjteF5xmiV70LhVjCLW8q
-	KyAJulfMz+LnDdIwf9T3mlrSRT1zy/1TL1uFVztxwPKexyamgLWlhA3OeNR3hgTb
-	WSkMiryuTNhnzPLYYuLOiFmLkKmcfamOnHz8ryagSZlu3GxDYtgu5Z/Gki+i2bkO
-	ovrvY+BijTMu2X3Xq5Xu8g==
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1755865999;
+	 x=1755952399; bh=N1h28bmnLzTUfsPTCv4I4krq8s3e4hZhOuwUXpzFJY8=; b=
+	bLB3y1oGrqH7KdlDuVpJKtWeN4y7hANoBWeeTElCrhacYvy8/1pzst0g1NQWlgRH
+	uR28Slxt67yNIrUx5/xn5abytK/EOi9/JUZXeH9QLKHS6Z5kwLJY8p2tg7icWMHE
+	VwQDPy7R56LVlrb6s/hxiNsvYrtk2C2o9hKBykT9oeufCOOksXS8GO7BYxZeYo7E
+	MhChHfVdaTo23SDnQFV6ZMXY7zTBe77DdlnRdqSC8UkBk4Dn86iT7skkp39jCMJI
+	H3qWbt7xhK0uoi3f53G+UJwNHS0TfmKTd/BH4sQW2RmW72Qy5Fif6oX0qVhF496E
+	ZxY1dWpUzYPfdZ4hf5mW4A==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1755865911; x=
-	1755952311; bh=8O6P+KnBSM9tsYHgrhKmCq6XLjltsmW23yXffgDZ92o=; b=a
-	Tw4yilOCRgZCQ/v4Ug6sDG18jXn6JbswyMxNwBHk9tNEQAP911IGkNK6gN7Kna8P
-	lehILgZJ20um5J9TFS6mw4MtHykTZKKJXCseKh32Lia9hpWiW13jabIEq0S/aryM
-	BPufGU6s63n7ABKM7cE6RCs/67scctccHxq8Drslc3AQcRJaL04aU7jKDwqRhX1k
-	aQF8y5G3fDbeiSseAW3semwv0S3q9ZG5cLndT+C5kNRO1VDqHnDo848wyuW16+A7
-	5i0r6ULyWYTXRD4iqVz1105KmRAgqgxWX4qRkVfo+o/RhUrN/Kq+g1G7OUjuu1YH
-	bQXBTHXySa3k/de/uckag==
-X-ME-Sender: <xms:N2OoaC-oovpkVSvMlCDyNj93nJI5U_c0iOe2gtM4-JGGXGsEs-VC4w>
-    <xme:N2OoaLIwc_ANE70TFQKJ0LfDWYPS4I0ZNImR5vCpGiy0oLTrUYxyv0tKbR2BTWV7d
-    QUtHeEUoZ9R>
-X-ME-Received: <xmr:N2OoaIcX0QKopzcaweyFEClteRdUM42WCU1SgKGe0mHaUeAgiKNO5hACpHWAPW-pTfCmuR1zbwgdwu7NQV3m6OBBVMUib-tO2vmuJ83uh-ZLCgEY_jjuX-8>
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1755865999; x=
+	1755952399; bh=N1h28bmnLzTUfsPTCv4I4krq8s3e4hZhOuwUXpzFJY8=; b=M
+	v7pSZfn1pT2qvIQh75+bi/1ixmATx6WfD+ws2tjDTrZfmbIVUSLOCtPTdI4zTJiy
+	CaFoJfD/Qm4oRwK9pwbuhTwaYL6gkkAhnm4STVcg28yOW5c56uiRDFH9lTJ8xIq5
+	W/jpsTTMLm99Fym8C6pbLrnT6rY173SrbmS1d75Xf9OU5KmR2n3nR8d39WDDvcg2
+	FWlvLd2zmpFeICfawHAlTMM7mhGoqRXhmNRssh/6kWqxz7gT+wPSI3/mxsZMgGKC
+	TqPE9jkOA5tYBZVW+uCWQ/QYhABxy5vzKh73baoWpflHwxevEhrz8dR6wnM+0CZc
+	nNm4Ezmu2WPWujqXLWiPQ==
+X-ME-Sender: <xms:j2OoaAwiXj2HUKxnJZDTsVLHKAk8AodziTG3Xf7STJzR2xWXPnvXcg>
+    <xme:j2OoaPzZzSHzIMjJTN94KiUmxxgl88aROWR8wysZu3WbtJa9fOyGzgJfKeL8JRFkF
+    dRUOADC7e_ylxLG>
+X-ME-Received: <xmr:j2OoaIxib1jTQzP2EEO4sfz1EhgwKZSJ-jABeZKk95DNt2RniigBOGWEtkcYCndc6qRa83y3j2J6ehCPLIKcDovdG_M7dC3cWonbzCpUxdQI9S4tEIUr>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduieefjeejucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
     rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpefkrghnucfm
-    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnhepud
-    ffudegkeefgfevtdeffeetkeetudelkefgffetfefgvefgleettdevkeevffetnecuffho
-    mhgrihhnpegsohhothhlihhnrdgtohhmnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomheprhgrvhgvnhesthhhvghmrgifrdhnvghtpdhnsggprhgt
-    phhtthhopeehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehsrghfihhnrghskh
-    grrhesiihohhhomhgrihhlrdgtohhmpdhrtghpthhtoheprghuthhofhhssehvghgvrhdr
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvg
-    hrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegthihphhgrrhestgihphhhrghrrdgt
-    ohhmpdhrtghpthhtohepvhhirhhoseiivghnihhvrdhlihhnuhigrdhorhhgrdhukh
-X-ME-Proxy: <xmx:N2OoaK8dFDddwEt1milTa2OlsmtN5SagXC2RXMXUTPgCj0NB3GEEPQ>
-    <xmx:N2OoaFr8vzTEotGoenKwCQHuVxUzfYgp3M7LtCRj4D9sVnJIjnlv8g>
-    <xmx:N2OoaPDEd6_qf50B5Si4Oeku9KogsOi2ER27E0c--rzdEJ5iVq-JzQ>
-    <xmx:N2OoaHx-_PxhtFdpcnF6ByKItKlxct7OKvlGnWQ_Qiagu6-oxw85lA>
-    <xmx:N2OoaMi0Onp1WBCvm8VJZciK4ZiSwR8sprBPWMY5M3vq1o0GMhxD8TaS>
-Feedback-ID: i31e841b0:Fastmail
+    gurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeeuvghrnhgu
+    ucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvghrnhgurdgtohhmqeenucggtffrrg
+    htthgvrhhnpeehhfejueejleehtdehteefvdfgtdelffeuudejhfehgedufedvhfehueev
+    udeugeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    gsvghrnhgusegsshgsvghrnhgurdgtohhmpdhnsggprhgtphhtthhopeehpdhmohguvgep
+    shhmthhpohhuthdprhgtphhtthhopehmshiivghrvgguihesrhgvughhrghtrdgtohhmpd
+    hrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhr
+    ghdprhgtphhtthhopegujhifohhngheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjh
+    horghnnhgvlhhkohhonhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepjhhohhhnsehg
+    rhhovhgvshdrnhgvth
+X-ME-Proxy: <xmx:j2OoaJZ6HDC_bfh2tE1-A17Ed8oKbW_0W7U94eb3EpaaWkWhw7BdUg>
+    <xmx:j2OoaJVPhyySTAniBpU3ocCpnfGuIkN4aAoMwLh6_4JQkVdjoyR_zw>
+    <xmx:j2OoaHgIsnCWZUUtUSnO845kGm8ia4gWKjpkxQEaGZAnJGnkf56jvw>
+    <xmx:j2OoaHusesVDLVOAfWMz_3HxNUTeMT__zRx9B1wttgEJqiBkgTTNsw>
+    <xmx:j2OoaHoszyhsEZXtOes0pFpvUjhF6h1kpzeurMTVv3H9_lbyNX6C0u5j>
+Feedback-ID: i5c2e48a5:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 22 Aug 2025 08:31:49 -0400 (EDT)
-Message-ID: <f83491c4-e535-4ee2-a2a8-935ccebec292@themaw.net>
-Date: Fri, 22 Aug 2025 20:31:46 +0800
+ 22 Aug 2025 08:33:18 -0400 (EDT)
+Message-ID: <4dda12a5-e676-4733-bbf7-ee1eb9e4a6d0@bsbernd.com>
+Date: Fri, 22 Aug 2025 14:33:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -95,173 +95,385 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Serious error in autofs docs, which has design implications
-To: Askar Safin <safinaskar@zohomail.com>
-Cc: autofs mailing list <autofs@vger.kernel.org>,
- linux-fsdevel <linux-fsdevel@vger.kernel.org>, cyphar <cyphar@cyphar.com>,
- viro <viro@zeniv.linux.org.uk>
-References: <198cb9ecb3f.11d0829dd84663.7100887892816504587@zohomail.com>
-Content-Language: en-AU
-From: Ian Kent <raven@themaw.net>
-Autocrypt: addr=raven@themaw.net;
- keydata= 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
-In-Reply-To: <198cb9ecb3f.11d0829dd84663.7100887892816504587@zohomail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH] fuse: allow synchronous FUSE_INIT
+To: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org
+Cc: "Darrick J. Wong" <djwong@kernel.org>,
+ Joanne Koong <joannelkoong@gmail.com>, John Groves <John@groves.net>
+References: <20250822114436.438844-1-mszeredi@redhat.com>
+From: Bernd Schubert <bernd@bsbernd.com>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <20250822114436.438844-1-mszeredi@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 21/8/25 15:53, Askar Safin wrote:
-> Hi, Ian Kent and other autofs people.
->
-> autofs.rst says:
->> mounting onto a directory is considered to be "beyond a `stat`"
-> in https://elixir.bootlin.com/linux/v6.17-rc2/source/Documentation/filesystems/autofs.rst#L109
->
-> This is not true. Mounting does not trigger automounts.
-
-I don't understand that statement either, it's been many years
-
-since this was done and I can't remember the exact details. I
-
-didn't write this Neil Brown did and I have spoken with Neil
-
-many times over the years and although I'm quite sure we talked
-
-about this document at the time it was so long I don't actually
-
-remember what was said.
 
 
-It's quite likely that what I said at the time was misunderstood
+On 8/22/25 13:44, Miklos Szeredi wrote:
+> FUSE_INIT has always been asynchronous with mount.  That means that the
+> server processed this request after the mount syscall returned.
+> 
+> This means that FUSE_INIT can't supply the root inode's ID, hence it
+> currently has a hardcoded value.  There are other limitations such as not
+> being able to perform getxattr during mount, which is needed by selinux.
+> 
+> To remove these limitations allow server to process FUSE_INIT while
+> initializing the in-core super block for the fuse filesystem.  This can
+> only be done if the server is prepared to handle this, so add
+> FUSE_DEV_IOC_SYNC_INIT ioctl, which
+> 
+>  a) lets the server know whether this feature is supported, returning
+>  ENOTTY othewrwise.
+> 
+>  b) lets the kernel know to perform a synchronous initialization
+> 
+> The implementation is slightly tricky, since fuse_dev/fuse_conn are set up
+> only during super block creation.  This is solved by setting the private
+> data of the fuse device file to a special value ((struct fuse_dev *) 1) and
+> waiting for this to be turned into a proper fuse_dev before commecing with
+> operations on the device file.
 
-but the discussion following this is reasonably clear and describes
+I really like the ida. Another reason is that fuse-server might want to
+abort during FUSE_INIT and it then leaves a stale mount that in worst
+case might have gotten requests already.
 
-the uses of the callback. The need to not race with an ongoing
+> 
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> ---
+> I tested this with my raw-interface tester, so no libfuse update yet.  Will
+> work on that next.
+> 
+>  fs/fuse/cuse.c            |  3 +-
+>  fs/fuse/dev.c             | 74 +++++++++++++++++++++++++++++----------
+>  fs/fuse/dev_uring.c       |  4 +--
+>  fs/fuse/fuse_dev_i.h      | 13 +++++--
+>  fs/fuse/fuse_i.h          |  3 ++
+>  fs/fuse/inode.c           | 46 +++++++++++++++++++-----
+>  include/uapi/linux/fuse.h |  1 +
+>  7 files changed, 112 insertions(+), 32 deletions(-)
+> 
+> diff --git a/fs/fuse/cuse.c b/fs/fuse/cuse.c
+> index b39844d75a80..28c96961e85d 100644
+> --- a/fs/fuse/cuse.c
+> +++ b/fs/fuse/cuse.c
+> @@ -52,6 +52,7 @@
+>  #include <linux/user_namespace.h>
+>  
+>  #include "fuse_i.h"
+> +#include "fuse_dev_i.h"
+>  
+>  #define CUSE_CONNTBL_LEN	64
+>  
+> @@ -547,7 +548,7 @@ static int cuse_channel_open(struct inode *inode, struct file *file)
+>   */
+>  static int cuse_channel_release(struct inode *inode, struct file *file)
+>  {
+> -	struct fuse_dev *fud = file->private_data;
+> +	struct fuse_dev *fud = __fuse_get_dev(file);
+>  	struct cuse_conn *cc = fc_to_cc(fud->fc);
+>  
+>  	/* remove from the conntbl, no more access from this point on */
+> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> index 8ac074414897..948f45c6e0ef 100644
+> --- a/fs/fuse/dev.c
+> +++ b/fs/fuse/dev.c
+> @@ -1530,14 +1530,34 @@ static int fuse_dev_open(struct inode *inode, struct file *file)
+>  	return 0;
+>  }
+>  
+> +struct fuse_dev *fuse_get_dev(struct file *file)
+> +{
+> +	struct fuse_dev *fud = __fuse_get_dev(file);
+> +	int err;
+> +
+> +	if (likely(fud))
+> +		return fud;
+> +
+> +	err = wait_event_interruptible(fuse_dev_waitq,
+> +				       READ_ONCE(file->private_data) != FUSE_DEV_SYNC_INIT);
+> +	if (err)
+> +		return ERR_PTR(err);
+> +
+> +	fud = __fuse_get_dev(file);
+> +	if (!fud)
+> +		return ERR_PTR(-EPERM);
+> +
+> +	return fud;
+> +}
+> +
+>  static ssize_t fuse_dev_read(struct kiocb *iocb, struct iov_iter *to)
+>  {
+>  	struct fuse_copy_state cs;
+>  	struct file *file = iocb->ki_filp;
+>  	struct fuse_dev *fud = fuse_get_dev(file);
+>  
+> -	if (!fud)
+> -		return -EPERM;
+> +	if (IS_ERR(fud))
+> +		return PTR_ERR(fud);
+>  
+>  	if (!user_backed_iter(to))
+>  		return -EINVAL;
+> @@ -1557,8 +1577,8 @@ static ssize_t fuse_dev_splice_read(struct file *in, loff_t *ppos,
+>  	struct fuse_copy_state cs;
+>  	struct fuse_dev *fud = fuse_get_dev(in);
+>  
+> -	if (!fud)
+> -		return -EPERM;
+> +	if (IS_ERR(fud))
+> +		return PTR_ERR(fud);
+>  
+>  	bufs = kvmalloc_array(pipe->max_usage, sizeof(struct pipe_buffer),
+>  			      GFP_KERNEL);
+> @@ -2233,8 +2253,8 @@ static ssize_t fuse_dev_write(struct kiocb *iocb, struct iov_iter *from)
+>  	struct fuse_copy_state cs;
+>  	struct fuse_dev *fud = fuse_get_dev(iocb->ki_filp);
+>  
+> -	if (!fud)
+> -		return -EPERM;
+> +	if (IS_ERR(fud))
+> +		return PTR_ERR(fud);
+>  
+>  	if (!user_backed_iter(from))
+>  		return -EINVAL;
+> @@ -2258,8 +2278,8 @@ static ssize_t fuse_dev_splice_write(struct pipe_inode_info *pipe,
+>  	ssize_t ret;
+>  
+>  	fud = fuse_get_dev(out);
+> -	if (!fud)
+> -		return -EPERM;
+> +	if (IS_ERR(fud))
+> +		return PTR_ERR(fud);
+>  
+>  	pipe_lock(pipe);
+>  
+> @@ -2343,7 +2363,7 @@ static __poll_t fuse_dev_poll(struct file *file, poll_table *wait)
+>  	struct fuse_iqueue *fiq;
+>  	struct fuse_dev *fud = fuse_get_dev(file);
+>  
+> -	if (!fud)
+> +	if (IS_ERR(fud))
+>  		return EPOLLERR;
+>  
+>  	fiq = &fud->fc->iq;
+> @@ -2490,7 +2510,7 @@ void fuse_wait_aborted(struct fuse_conn *fc)
+>  
+>  int fuse_dev_release(struct inode *inode, struct file *file)
+>  {
+> -	struct fuse_dev *fud = fuse_get_dev(file);
+> +	struct fuse_dev *fud = __fuse_get_dev(file);
+>  
+>  	if (fud) {
+>  		struct fuse_conn *fc = fud->fc;
+> @@ -2521,8 +2541,8 @@ static int fuse_dev_fasync(int fd, struct file *file, int on)
+>  {
+>  	struct fuse_dev *fud = fuse_get_dev(file);
+>  
+> -	if (!fud)
+> -		return -EPERM;
+> +	if (IS_ERR(fud))
+> +		return PTR_ERR(fud);
+>  
+>  	/* No locking - fasync_helper does its own locking */
+>  	return fasync_helper(fd, file, on, &fud->fc->iq.fasync);
+> @@ -2532,7 +2552,7 @@ static int fuse_device_clone(struct fuse_conn *fc, struct file *new)
+>  {
+>  	struct fuse_dev *fud;
+>  
+> -	if (new->private_data)
+> +	if (__fuse_get_dev(new))
+>  		return -EINVAL;
+>  
+>  	fud = fuse_dev_alloc_install(fc);
+> @@ -2563,7 +2583,7 @@ static long fuse_dev_ioctl_clone(struct file *file, __u32 __user *argp)
+>  	 * uses the same ioctl handler.
+>  	 */
+>  	if (fd_file(f)->f_op == file->f_op)
+> -		fud = fuse_get_dev(fd_file(f));
+> +		fud = __fuse_get_dev(fd_file(f));
+>  
+>  	res = -EINVAL;
+>  	if (fud) {
+> @@ -2581,8 +2601,8 @@ static long fuse_dev_ioctl_backing_open(struct file *file,
+>  	struct fuse_dev *fud = fuse_get_dev(file);
+>  	struct fuse_backing_map map;
+>  
+> -	if (!fud)
+> -		return -EPERM;
+> +	if (IS_ERR(fud))
+> +		return PTR_ERR(fud);
+>  
+>  	if (!IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
+>  		return -EOPNOTSUPP;
+> @@ -2598,8 +2618,8 @@ static long fuse_dev_ioctl_backing_close(struct file *file, __u32 __user *argp)
+>  	struct fuse_dev *fud = fuse_get_dev(file);
+>  	int backing_id;
+>  
+> -	if (!fud)
+> -		return -EPERM;
+> +	if (IS_ERR(fud))
+> +		return PTR_ERR(fud);
+>  
+>  	if (!IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
+>  		return -EOPNOTSUPP;
+> @@ -2610,6 +2630,19 @@ static long fuse_dev_ioctl_backing_close(struct file *file, __u32 __user *argp)
+>  	return fuse_backing_close(fud->fc, backing_id);
+>  }
+>  
+> +static long fuse_dev_ioctl_sync_init(struct file *file)
+> +{
+> +	int err = -EINVAL;
+> +
+> +	mutex_lock(&fuse_mutex);
+> +	if (!__fuse_get_dev(file)) {
+> +		WRITE_ONCE(file->private_data, FUSE_DEV_SYNC_INIT);
+> +		err = 0;
+> +	}
+> +	mutex_unlock(&fuse_mutex);
+> +	return err;
+> +}
+> +
+>  static long fuse_dev_ioctl(struct file *file, unsigned int cmd,
+>  			   unsigned long arg)
+>  {
+> @@ -2625,6 +2658,9 @@ static long fuse_dev_ioctl(struct file *file, unsigned int cmd,
+>  	case FUSE_DEV_IOC_BACKING_CLOSE:
+>  		return fuse_dev_ioctl_backing_close(file, argp);
+>  
+> +	case FUSE_DEV_IOC_SYNC_INIT:
+> +		return fuse_dev_ioctl_sync_init(file);
+> +
+>  	default:
+>  		return -ENOTTY;
+>  	}
+> @@ -2633,7 +2669,7 @@ static long fuse_dev_ioctl(struct file *file, unsigned int cmd,
+>  #ifdef CONFIG_PROC_FS
+>  static void fuse_dev_show_fdinfo(struct seq_file *seq, struct file *file)
+>  {
+> -	struct fuse_dev *fud = fuse_get_dev(file);
+> +	struct fuse_dev *fud = __fuse_get_dev(file);
+>  	if (!fud)
+>  		return;
+>  
+> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+> index 249b210becb1..bef38ed78249 100644
+> --- a/fs/fuse/dev_uring.c
+> +++ b/fs/fuse/dev_uring.c
+> @@ -1139,9 +1139,9 @@ int fuse_uring_cmd(struct io_uring_cmd *cmd, unsigned int issue_flags)
+>  		return -EINVAL;
+>  
+>  	fud = fuse_get_dev(cmd->file);
+> -	if (!fud) {
+> +	if (IS_ERR(fud)) {
+>  		pr_info_ratelimited("No fuse device found\n");
+> -		return -ENOTCONN;
+> +		return PTR_ERR(fud);
+>  	}
+>  	fc = fud->fc;
+>  
+> diff --git a/fs/fuse/fuse_dev_i.h b/fs/fuse/fuse_dev_i.h
+> index 5a9bd771a319..6e8373f97040 100644
+> --- a/fs/fuse/fuse_dev_i.h
+> +++ b/fs/fuse/fuse_dev_i.h
+> @@ -12,6 +12,8 @@
+>  #define FUSE_INT_REQ_BIT (1ULL << 0)
+>  #define FUSE_REQ_ID_STEP (1ULL << 1)
+>  
+> +extern struct wait_queue_head fuse_dev_waitq;
+> +
+>  struct fuse_arg;
+>  struct fuse_args;
+>  struct fuse_pqueue;
+> @@ -37,15 +39,22 @@ struct fuse_copy_state {
+>  	} ring;
+>  };
+>  
+> -static inline struct fuse_dev *fuse_get_dev(struct file *file)
+> +#define FUSE_DEV_SYNC_INIT ((struct fuse_dev *) 1)
+> +#define FUSE_DEV_PTR_MASK (~1UL)
+> +
+> +static inline struct fuse_dev *__fuse_get_dev(struct file *file)
+>  {
+>  	/*
+>  	 * Lockless access is OK, because file->private data is set
+>  	 * once during mount and is valid until the file is released.
+>  	 */
+> -	return READ_ONCE(file->private_data);
+> +	struct fuse_dev *fud = READ_ONCE(file->private_data);
+> +
+> +	return (typeof(fud)) ((unsigned long) fud & FUSE_DEV_PTR_MASK);
+>  }
+>  
+> +struct fuse_dev *fuse_get_dev(struct file *file);
+> +
+>  unsigned int fuse_req_hash(u64 unique);
+>  struct fuse_req *fuse_request_find(struct fuse_pqueue *fpq, u64 unique);
+>  
+> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> index 486fa550c951..54121207cfb2 100644
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -904,6 +904,9 @@ struct fuse_conn {
+>  	/* Is link not implemented by fs? */
+>  	unsigned int no_link:1;
+>  
+> +	/* Is synchronous FUSE_INIT allowed? */
+> +	unsigned int sync_init:1;
+> +
+>  	/* Use io_uring for communication */
+>  	unsigned int io_uring;
+>  
+> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> index 9d26a5bc394d..d5f9f2abc569 100644
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -7,6 +7,7 @@
+>  */
+>  
+>  #include "fuse_i.h"
+> +#include "fuse_dev_i.h"
+>  #include "dev_uring_i.h"
+>  
+>  #include <linux/dax.h>
+> @@ -34,6 +35,7 @@ MODULE_LICENSE("GPL");
+>  static struct kmem_cache *fuse_inode_cachep;
+>  struct list_head fuse_conn_list;
+>  DEFINE_MUTEX(fuse_mutex);
+> +DECLARE_WAIT_QUEUE_HEAD(fuse_dev_waitq);
+>  
+>  static int set_global_limit(const char *val, const struct kernel_param *kp);
+>  
+> @@ -1466,7 +1468,7 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
+>  	wake_up_all(&fc->blocked_waitq);
+>  }
+>  
+> -void fuse_send_init(struct fuse_mount *fm)
+> +static struct fuse_init_args *fuse_new_init(struct fuse_mount *fm)
+>  {
+>  	struct fuse_init_args *ia;
+>  	u64 flags;
+> @@ -1525,8 +1527,15 @@ void fuse_send_init(struct fuse_mount *fm)
+>  	ia->args.out_args[0].value = &ia->out;
+>  	ia->args.force = true;
+>  	ia->args.nocreds = true;
+> -	ia->args.end = process_init_reply;
+>  
+> +	return ia;
+> +}
+> +
+> +void fuse_send_init(struct fuse_mount *fm)
+> +{
 
-expire of an automounted mount is important and the transit through
+I'm going to review more carefully later on, but how about renaming
+this to fuse_send_bg_init()?
 
-a non-empty directory in the case the automount map in use specifies
-
-a tree of mounts is important too (no this is not kernel only
-
-automounting such as is used by the likes of NFS it's functionality
-
-implemented by automount(8) based the mount map constructs it uses).
-
-So much of this is needed by the autofs file system during path
-
-traversal which is used by automount (not general file systems).
+> +	struct fuse_init_args *ia = fuse_new_init(fm);
+> +
+> +	ia->args.end = process_init_reply;
+>  	if (fuse_simple_background(fm, &ia->args, GFP_KERNEL) != 0)
+>  		process_init_reply(fm, &ia->args, -ENOTCONN);
 
 
->
-> mount syscall (
-> https://elixir.bootlin.com/linux/v6.17-rc2/source/fs/namespace.c#L4321
-> ) calls "do_mount" (
-> https://elixir.bootlin.com/linux/v6.17-rc2/source/fs/namespace.c#L4124
-> ), which calls "user_path_at" without LOOKUP_AUTOMOUNT.
-> This means automounts are not followed.
-> I didn't test this, but I'm pretty sure about this by reading code.
 
-Explain what you mean please.
-
-
->
-> But what is worse, autofs.rst then proceeds to use this as an argument in
-> favor of introducing DCACHE_MANAGE_TRANSIT!
-
-I don't think that's the way you should be looking at this.
-
-
-At the time this was implemented into the VFS there were several things
-
-that autofs needed to do for automount(8) and David Howells chose to do
-
-it this way at the time after discussing what was needed with me.
-
-
->
-> I. e. it seems that introducing DCACHE_MANAGE_TRANSIT rests on
-> wrong premise.
-
-I don't think so myself.
-
-
-But it may be possible to do it differently if there are reasons to
-
-do so.
-
-
-IIRC Al doesn't much like this either but even so I would need a clear
-
-description and discussion of how the cases I need are covered before
-
-changing this to some other method.
-
-
->
-> Thus, it seems (from reading autofs.rst) that DCACHE_MANAGE_TRANSIT and all accociated logic
-> can be removed from kernel.
-
-Again I don't think that's the case at all, certainly automount(8) will
-
-see various breakage without changes to it and probably the autofs file
-
-system.
-
-
-IIRC (and I likely don't) I would probably need to re-introduce
-
-->d_revalidate() to autofs and make sure that the VFS locking is
-
-consistent (which it wasn't at the when this was originally done
-
-and what was needed didn't seem to fit sensibly into ->d_revalidate()
-
-either) wrt. autofs's needs.
-
-
-So why do you need to change this?
-
-
-Ian
-
+Thanks,
+Bernd
 
