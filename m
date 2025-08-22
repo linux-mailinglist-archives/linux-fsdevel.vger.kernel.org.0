@@ -1,262 +1,381 @@
-Return-Path: <linux-fsdevel+bounces-58770-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58771-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1DEAB31608
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 13:01:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 001DFB3161B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 13:08:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A6231D033DA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 11:02:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9962D1D029B3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 11:08:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C4292E8B74;
-	Fri, 22 Aug 2025 11:01:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D1C2E92C6;
+	Fri, 22 Aug 2025 11:08:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="XSvCLbN2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MJmBvEoX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FB3020330
-	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Aug 2025 11:01:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D3420330;
+	Fri, 22 Aug 2025 11:08:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755860500; cv=none; b=kZgYpDNIZ1ZRZqiSOntfgLPX657xLPKxhswUs86iuyq6mPbcFCpt7tZtYxyaOhqDnwDJyHILKPXMvO5FE2QCX7BQt/OncvihazWiOP5aOJWvCab04DUyVihd5mx9JCTVuwfHBSLJN/EspvmzNRLZiLODGLPVBj239KN3GypDCYA=
+	t=1755860891; cv=none; b=Dq2EWQLMBUMp0xEcx3J5ddkfFzVTGUyAI2S2R9PiLNxercV24iKJ09j027o+J4cxy8o9hCfyHD76igHVbGaUGQ6icSqlGV/EYiPnRxN5QcPUpPIqIU7PYceo8cDI4DlXjQWvILFSV+wGP3xFO07/0exTmCgS0/SYNuKlJFA6J8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755860500; c=relaxed/simple;
-	bh=1IHNt0/1brQj47Ov/jVwg4jF3VQiol7BwP5Ik/r8oIs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=WI4USGVEVo1ilck1nXSOn8oqCxv9PcqytbCoJMVbVTfPOFQc87QIxpbWIBce+gEJHkYamnT5yy0dcvNJMLdhtp6xOQGBBAC+ddcXl4jRswrLvO9679gN9MTZ69MU/i1EzZ2wzG6TaNwaXPRaSLVHoevsG74XCdEDWIeasNsPxh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=XSvCLbN2; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250822110134euoutp0226767367fe220a54494875d8aae2f429~eEdENgxtT2616026160euoutp02a
-	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Aug 2025 11:01:34 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250822110134euoutp0226767367fe220a54494875d8aae2f429~eEdENgxtT2616026160euoutp02a
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1755860494;
-	bh=9KskoGBFOs28/Mda6h0wj3uBIF0p2biNPs4pw1Y7qMU=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=XSvCLbN2gOkeveRq3jDm90QxT2zPFO5+lvs7w0yr7uj7WpxPNUUyYsfjHaA/3woux
-	 HBFJ00BIOa1rK+QG+mG9I21NsJRWaflrG2me6uvYKGS7juZoBQ6yl0LO59N4e6VNjS
-	 3p5s3hX41XzBjaYet9qwjS47J/cm7xwyQ0TXQuvc=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250822110133eucas1p2378459d1e802c718ef6028efc06625dc~eEdD32zgD1178111781eucas1p2y;
-	Fri, 22 Aug 2025 11:01:33 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250822110133eusmtip1965119ff684e33aef3b2ab78de9aa4f6~eEdDTj8sl1109711097eusmtip1t;
-	Fri, 22 Aug 2025 11:01:33 +0000 (GMT)
-Message-ID: <a91010a8-e715-4f3d-9e22-e4c34efc0408@samsung.com>
-Date: Fri, 22 Aug 2025 13:01:32 +0200
+	s=arc-20240116; t=1755860891; c=relaxed/simple;
+	bh=AGlpMmC5hFjO+G2P1kCw42ZzRLVCyBl0jY9K/8ptXkU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e+dUAMATXiMVB4CHlcw9U90J0B8yJios1moljK5rDoLecWUUgLh/EtUFpDPXxJB4oedtxX391d+zihrD+j1mF75nzSHNQy6QucbuF+en/u1R6VkkBtE/AZotSpXQvl7qGkPtlUANEctse24BctXaR0DZwlKyY1eYQmmaKz04RL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MJmBvEoX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71A14C4CEED;
+	Fri, 22 Aug 2025 11:08:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755860891;
+	bh=AGlpMmC5hFjO+G2P1kCw42ZzRLVCyBl0jY9K/8ptXkU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MJmBvEoXfECrXz87V7e6tBeiJoR5/oWf9ORdwDL8Z4ZJpm1k4nNLb9tjL3DLc/KSH
+	 zI4upUTn2lutdSKFnPosWFFkf/gP/AMoap70z9QxJB4j5BX5ss0rGaDx0dEDPTIMSG
+	 3ioKWqlO5A7+xU70tG20Wba8jX4aY3qOt9Q4EBc8MriMU9ju7AzJtLrscAnv3Jur1j
+	 VfMZkrLnRUpOnLfns8lo8eBhEV1siey5JT6pwj5fssmRBCx7pkFSnKJqeSXg2UfJNv
+	 Bph3k217DOoHLP7CsWeGgDWrWJnbcXWIsDaKFHRtVXac9a5B5vTD31Wq6fdQmErjGh
+	 9YKbMxuYlul4w==
+Date: Fri, 22 Aug 2025 13:08:07 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org, 
+	kernel-team@fb.com, linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	viro@zeniv.linux.org.uk
+Subject: Re: [PATCH 02/50] fs: make the i_state flags an enum
+Message-ID: <20250822-orcas-bemannten-728c9946b160@brauner>
+References: <cover.1755806649.git.josef@toxicpanda.com>
+ <02211105388c53dc68b7f4332f9b5649d5b66b71.1755806649.git.josef@toxicpanda.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH v2 2/2] mm: remove BDI_CAP_WRITEBACK_ACCT
-To: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu
-Cc: linux-fsdevel@vger.kernel.org, david@redhat.com, willy@infradead.org,
-	linux-mm@kvack.org
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20250707234606.2300149-3-joannelkoong@gmail.com>
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250822110133eucas1p2378459d1e802c718ef6028efc06625dc
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250822110133eucas1p2378459d1e802c718ef6028efc06625dc
-X-EPHeader: CA
-X-CMS-RootMailID: 20250822110133eucas1p2378459d1e802c718ef6028efc06625dc
-References: <20250707234606.2300149-1-joannelkoong@gmail.com>
-	<20250707234606.2300149-3-joannelkoong@gmail.com>
-	<CGME20250822110133eucas1p2378459d1e802c718ef6028efc06625dc@eucas1p2.samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <02211105388c53dc68b7f4332f9b5649d5b66b71.1755806649.git.josef@toxicpanda.com>
 
-On 08.07.2025 01:46, Joanne Koong wrote:
-> There are no users of BDI_CAP_WRITEBACK_ACCT now that fuse doesn't do
-> its own writeback accounting. This commit removes
-> BDI_CAP_WRITEBACK_ACCT.
->
-> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> Acked-by: David Hildenbrand <david@redhat.com>
-
-This patch landed recently in linux-next as commit 167f21a81a9c ("mm: 
-remove BDI_CAP_WRITEBACK_ACCT"). In my tests I found that it triggers 
-the ./include/linux/backing-dev.h:239 warning. Reverting $subject on top 
-of current linux-next fixes/hides this issue. Here is a detailed log:
-
-------------[ cut here ]------------
-WARNING: ./include/linux/backing-dev.h:239 at 
-__folio_start_writeback+0x25a/0x26a, CPU#1: swapper/0/1
-Modules linked in:
-CPU: 1 UID: 0 PID: 1 Comm: swapper/0 Not tainted 
-6.17.0-rc2-next-20250822 #10852 NONE
-Hardware name: StarFive VisionFive 2 v1.2A (DT)
-epc : __folio_start_writeback+0x25a/0x26a
-  ra : __folio_start_writeback+0x258/0x26a
-
-[<ffffffff80202222>] __folio_start_writeback+0x25a/0x26a
-[<ffffffff802f3260>] __block_write_full_folio+0x124/0x39c
-[<ffffffff802f4b6e>] block_write_full_folio+0x8a/0xbc
-[<ffffffff804dbf42>] blkdev_writepages+0x3e/0x8a
-[<ffffffff802030fa>] do_writepages+0x78/0x11a
-[<ffffffff801f2e0e>] filemap_fdatawrite_wbc+0x4a/0x62
-[<ffffffff801f6d66>] __filemap_fdatawrite_range+0x52/0x78
-[<ffffffff801f6fdc>] filemap_write_and_wait_range+0x40/0x68
-[<ffffffff804dacae>] set_blocksize+0xd8/0x152
-[<ffffffff804dae18>] sb_min_blocksize+0x44/0xce
-[<ffffffff803a0c7a>] ext4_fill_super+0x182/0x2914
-[<ffffffff802a72e6>] get_tree_bdev_flags+0xf0/0x168
-[<ffffffff802a736c>] get_tree_bdev+0xe/0x16
-[<ffffffff8039a09e>] ext4_get_tree+0x14/0x1c
-[<ffffffff802a5062>] vfs_get_tree+0x1a/0xa4
-[<ffffffff802d17d4>] path_mount+0x23a/0x8ae
-[<ffffffff80c20cd4>] init_mount+0x4e/0x86
-[<ffffffff80c01622>] do_mount_root+0xe0/0x166
-[<ffffffff80c01814>] mount_root_generic+0x11e/0x2d6
-[<ffffffff80c02746>] initrd_load+0xf8/0x2b6
-[<ffffffff80c01d38>] prepare_namespace+0x150/0x258
-[<ffffffff80c01310>] kernel_init_freeable+0x2f2/0x316
-[<ffffffff80b6d896>] kernel_init+0x1e/0x13a
-[<ffffffff80012288>] ret_from_fork_kernel+0x14/0x208
-[<ffffffff80b79392>] ret_from_fork_kernel_asm+0x16/0x18
-irq event stamp: 159263
-hardirqs last  enabled at (159263): [<ffffffff805e7e4a>] 
-percpu_counter_add_batch+0xa6/0xda
-hardirqs last disabled at (159262): [<ffffffff805e7e40>] 
-percpu_counter_add_batch+0x9c/0xda
-softirqs last  enabled at (159248): [<ffffffff8002e972>] 
-handle_softirqs+0x3ca/0x462
-softirqs last disabled at (159241): [<ffffffff8002eb72>] 
-__irq_exit_rcu+0xe2/0x10c
----[ end trace 0000000000000000 ]---
-
-
+On Thu, Aug 21, 2025 at 04:18:13PM -0400, Josef Bacik wrote:
+> Adjusting i_state flags always means updating the values manually. Bring
+> these forward into the 2020's and make a nice clean macro for defining
+> the i_state values as an enum, providing __ variants for the cases where
+> we need the bit position instead of the actual value, and leaving the
+> actual NAME as the 1U << bit value.
+> 
+> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 > ---
->   include/linux/backing-dev.h |  4 +---
->   mm/backing-dev.c            |  2 +-
->   mm/page-writeback.c         | 43 ++++++++++++++++---------------------
->   3 files changed, 20 insertions(+), 29 deletions(-)
->
-> diff --git a/include/linux/backing-dev.h b/include/linux/backing-dev.h
-> index 9a1e895dd5df..3e64f14739dd 100644
-> --- a/include/linux/backing-dev.h
-> +++ b/include/linux/backing-dev.h
-> @@ -108,12 +108,10 @@ int bdi_set_strict_limit(struct backing_dev_info *bdi, unsigned int strict_limit
->    *
->    * BDI_CAP_WRITEBACK:		Supports dirty page writeback, and dirty pages
->    *				should contribute to accounting
-> - * BDI_CAP_WRITEBACK_ACCT:	Automatically account writeback pages
->    * BDI_CAP_STRICTLIMIT:		Keep number of dirty pages below bdi threshold
->    */
->   #define BDI_CAP_WRITEBACK		(1 << 0)
-> -#define BDI_CAP_WRITEBACK_ACCT		(1 << 1)
-> -#define BDI_CAP_STRICTLIMIT		(1 << 2)
-> +#define BDI_CAP_STRICTLIMIT		(1 << 1)
->   
->   extern struct backing_dev_info noop_backing_dev_info;
->   
-> diff --git a/mm/backing-dev.c b/mm/backing-dev.c
-> index 783904d8c5ef..35f11e75e30e 100644
-> --- a/mm/backing-dev.c
-> +++ b/mm/backing-dev.c
-> @@ -1026,7 +1026,7 @@ struct backing_dev_info *bdi_alloc(int node_id)
->   		kfree(bdi);
->   		return NULL;
->   	}
-> -	bdi->capabilities = BDI_CAP_WRITEBACK | BDI_CAP_WRITEBACK_ACCT;
-> +	bdi->capabilities = BDI_CAP_WRITEBACK;
->   	bdi->ra_pages = VM_READAHEAD_PAGES;
->   	bdi->io_pages = VM_READAHEAD_PAGES;
->   	timer_setup(&bdi->laptop_mode_wb_timer, laptop_mode_timer_fn, 0);
-> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-> index 72b0ff0d4bae..11f9a909e8de 100644
-> --- a/mm/page-writeback.c
-> +++ b/mm/page-writeback.c
-> @@ -3016,26 +3016,22 @@ bool __folio_end_writeback(struct folio *folio)
->   
->   	if (mapping && mapping_use_writeback_tags(mapping)) {
->   		struct inode *inode = mapping->host;
-> -		struct backing_dev_info *bdi = inode_to_bdi(inode);
-> +		struct bdi_writeback *wb = inode_to_wb(inode);
->   		unsigned long flags;
->   
->   		xa_lock_irqsave(&mapping->i_pages, flags);
->   		ret = folio_xor_flags_has_waiters(folio, 1 << PG_writeback);
->   		__xa_clear_mark(&mapping->i_pages, folio_index(folio),
->   					PAGECACHE_TAG_WRITEBACK);
-> -		if (bdi->capabilities & BDI_CAP_WRITEBACK_ACCT) {
-> -			struct bdi_writeback *wb = inode_to_wb(inode);
->   
-> -			wb_stat_mod(wb, WB_WRITEBACK, -nr);
-> -			__wb_writeout_add(wb, nr);
-> -			if (!mapping_tagged(mapping, PAGECACHE_TAG_WRITEBACK))
-> -				wb_inode_writeback_end(wb);
-> +		wb_stat_mod(wb, WB_WRITEBACK, -nr);
-> +		__wb_writeout_add(wb, nr);
-> +		if (!mapping_tagged(mapping, PAGECACHE_TAG_WRITEBACK)) {
-> +			wb_inode_writeback_end(wb);
-> +			if (mapping->host)
-> +				sb_clear_inode_writeback(mapping->host);
->   		}
->   
-> -		if (mapping->host && !mapping_tagged(mapping,
-> -						     PAGECACHE_TAG_WRITEBACK))
-> -			sb_clear_inode_writeback(mapping->host);
-> -
->   		xa_unlock_irqrestore(&mapping->i_pages, flags);
->   	} else {
->   		ret = folio_xor_flags_has_waiters(folio, 1 << PG_writeback);
-> @@ -3060,7 +3056,7 @@ void __folio_start_writeback(struct folio *folio, bool keep_write)
->   	if (mapping && mapping_use_writeback_tags(mapping)) {
->   		XA_STATE(xas, &mapping->i_pages, folio_index(folio));
->   		struct inode *inode = mapping->host;
-> -		struct backing_dev_info *bdi = inode_to_bdi(inode);
-> +		struct bdi_writeback *wb = inode_to_wb(inode);
->   		unsigned long flags;
->   		bool on_wblist;
->   
-> @@ -3071,21 +3067,18 @@ void __folio_start_writeback(struct folio *folio, bool keep_write)
->   		on_wblist = mapping_tagged(mapping, PAGECACHE_TAG_WRITEBACK);
->   
->   		xas_set_mark(&xas, PAGECACHE_TAG_WRITEBACK);
-> -		if (bdi->capabilities & BDI_CAP_WRITEBACK_ACCT) {
-> -			struct bdi_writeback *wb = inode_to_wb(inode);
-> -
-> -			wb_stat_mod(wb, WB_WRITEBACK, nr);
-> -			if (!on_wblist)
-> -				wb_inode_writeback_start(wb);
-> +		wb_stat_mod(wb, WB_WRITEBACK, nr);
-> +		if (!on_wblist) {
-> +			wb_inode_writeback_start(wb);
-> +			/*
-> +			 * We can come through here when swapping anonymous
-> +			 * folios, so we don't necessarily have an inode to
-> +			 * track for sync.
-> +			 */
-> +			if (mapping->host)
-> +				sb_mark_inode_writeback(mapping->host);
->   		}
->   
-> -		/*
-> -		 * We can come through here when swapping anonymous
-> -		 * folios, so we don't necessarily have an inode to
-> -		 * track for sync.
-> -		 */
-> -		if (mapping->host && !on_wblist)
-> -			sb_mark_inode_writeback(mapping->host);
->   		if (!folio_test_dirty(folio))
->   			xas_clear_mark(&xas, PAGECACHE_TAG_DIRTY);
->   		if (!keep_write)
+>  include/linux/fs.h | 234 +++++++++++++++++++++++----------------------
+>  1 file changed, 122 insertions(+), 112 deletions(-)
+> 
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 9a1ce67eed33..e741dc453c2c 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -665,6 +665,127 @@ is_uncached_acl(struct posix_acl *acl)
+>  #define IOP_MGTIME	0x0020
+>  #define IOP_CACHED_LINK	0x0040
+>  
+> +/*
+> + * Inode state bits.  Protected by inode->i_lock
+> + *
+> + * Four bits determine the dirty state of the inode: I_DIRTY_SYNC,
+> + * I_DIRTY_DATASYNC, I_DIRTY_PAGES, and I_DIRTY_TIME.
+> + *
+> + * Four bits define the lifetime of an inode.  Initially, inodes are I_NEW,
+> + * until that flag is cleared.  I_WILL_FREE, I_FREEING and I_CLEAR are set at
+> + * various stages of removing an inode.
+> + *
+> + * Two bits are used for locking and completion notification, I_NEW and I_SYNC.
+> + *
+> + * I_DIRTY_SYNC		Inode is dirty, but doesn't have to be written on
+> + *			fdatasync() (unless I_DIRTY_DATASYNC is also set).
+> + *			Timestamp updates are the usual cause.
+> + * I_DIRTY_DATASYNC	Data-related inode changes pending.  We keep track of
+> + *			these changes separately from I_DIRTY_SYNC so that we
+> + *			don't have to write inode on fdatasync() when only
+> + *			e.g. the timestamps have changed.
+> + * I_DIRTY_PAGES	Inode has dirty pages.  Inode itself may be clean.
+> + * I_DIRTY_TIME		The inode itself has dirty timestamps, and the
+> + *			lazytime mount option is enabled.  We keep track of this
+> + *			separately from I_DIRTY_SYNC in order to implement
+> + *			lazytime.  This gets cleared if I_DIRTY_INODE
+> + *			(I_DIRTY_SYNC and/or I_DIRTY_DATASYNC) gets set. But
+> + *			I_DIRTY_TIME can still be set if I_DIRTY_SYNC is already
+> + *			in place because writeback might already be in progress
+> + *			and we don't want to lose the time update
+> + * I_NEW		Serves as both a mutex and completion notification.
+> + *			New inodes set I_NEW.  If two processes both create
+> + *			the same inode, one of them will release its inode and
+> + *			wait for I_NEW to be released before returning.
+> + *			Inodes in I_WILL_FREE, I_FREEING or I_CLEAR state can
+> + *			also cause waiting on I_NEW, without I_NEW actually
+> + *			being set.  find_inode() uses this to prevent returning
+> + *			nearly-dead inodes.
+> + * I_WILL_FREE		Must be set when calling write_inode_now() if i_count
+> + *			is zero.  I_FREEING must be set when I_WILL_FREE is
+> + *			cleared.
+> + * I_FREEING		Set when inode is about to be freed but still has dirty
+> + *			pages or buffers attached or the inode itself is still
+> + *			dirty.
+> + * I_CLEAR		Added by clear_inode().  In this state the inode is
+> + *			clean and can be destroyed.  Inode keeps I_FREEING.
+> + *
+> + *			Inodes that are I_WILL_FREE, I_FREEING or I_CLEAR are
+> + *			prohibited for many purposes.  iget() must wait for
+> + *			the inode to be completely released, then create it
+> + *			anew.  Other functions will just ignore such inodes,
+> + *			if appropriate.  I_NEW is used for waiting.
+> + *
+> + * I_SYNC		Writeback of inode is running. The bit is set during
+> + *			data writeback, and cleared with a wakeup on the bit
+> + *			address once it is done. The bit is also used to pin
+> + *			the inode in memory for flusher thread.
+> + *
+> + * I_REFERENCED		Marks the inode as recently references on the LRU list.
+> + *
+> + * I_WB_SWITCH		Cgroup bdi_writeback switching in progress.  Used to
+> + *			synchronize competing switching instances and to tell
+> + *			wb stat updates to grab the i_pages lock.  See
+> + *			inode_switch_wbs_work_fn() for details.
+> + *
+> + * I_OVL_INUSE		Used by overlayfs to get exclusive ownership on upper
+> + *			and work dirs among overlayfs mounts.
+> + *
+> + * I_CREATING		New object's inode in the middle of setting up.
+> + *
+> + * I_DONTCACHE		Evict inode as soon as it is not used anymore.
+> + *
+> + * I_SYNC_QUEUED	Inode is queued in b_io or b_more_io writeback lists.
+> + *			Used to detect that mark_inode_dirty() should not move
+> + *			inode between dirty lists.
+> + *
+> + * I_PINNING_FSCACHE_WB	Inode is pinning an fscache object for writeback.
+> + *
+> + * I_LRU_ISOLATING	Inode is pinned being isolated from LRU without holding
+> + *			i_count.
+> + *
+> + * Q: What is the difference between I_WILL_FREE and I_FREEING?
+> + *
+> + * __I_{SYNC,NEW,LRU_ISOLATING} are used to derive unique addresses to wait
+> + * upon. There's one free address left.
+> + */
+> +
+> +/*
+> + * As simple macro to define the inode state bits, __NAME will be the bit value
+> + * (0, 1, 2, ...), and NAME will be the bit mask (1U << __NAME). The __NAME_SEQ
+> + * is used to reset the sequence number so the next name gets the next bit value
+> + * in the sequence.
+> + */
+> +#define INODE_BIT(name)			\
+> +	__ ## name,			\
+> +	name = (1U << __ ## name),	\
+> +	__ ## name ## _SEQ = __ ## name
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+I'm not sure if this is the future we want :D
+I think it's harder to parse than what we have now.
 
+> +
+> +enum inode_state_bits {
+> +	INODE_BIT(I_NEW),
+> +	INODE_BIT(I_SYNC),
+> +	INODE_BIT(I_LRU_ISOLATING),
+> +	INODE_BIT(I_DIRTY_SYNC),
+> +	INODE_BIT(I_DIRTY_DATASYNC),
+> +	INODE_BIT(I_DIRTY_PAGES),
+> +	INODE_BIT(I_WILL_FREE),
+> +	INODE_BIT(I_FREEING),
+> +	INODE_BIT(I_CLEAR),
+> +	INODE_BIT(I_REFERENCED),
+> +	INODE_BIT(I_LINKABLE),
+> +	INODE_BIT(I_DIRTY_TIME),
+> +	INODE_BIT(I_WB_SWITCH),
+> +	INODE_BIT(I_OVL_INUSE),
+> +	INODE_BIT(I_CREATING),
+> +	INODE_BIT(I_DONTCACHE),
+> +	INODE_BIT(I_SYNC_QUEUED),
+> +	INODE_BIT(I_PINNING_NETFS_WB),
+> +};
+
+Good idea but I really dislike this macro indirection.
+Can't we just do the really boring?
+
+enum inode_state_bits {
+	__I_BIT_NEW		= 0U
+	__I_BIT_SYNC		= 1U
+	__I_BIT_LRU_ISOLATING	= 2U
+}
+
+enum inode_state_flags_t {
+	I_NEW			= (1U << __I_BIT_NEW)
+	I_SYNC			= (1U << __I_BIT_SYNC)
+	I_LRU_ISOLATING		= (1U << __I_BIT_LRU_ISOLATING)
+	I_DIRTY_SYNC		= (1U << 3)
+	I_DIRTY_DATASYNC	= (1U << 4)
+	I_DIRTY_PAGES		= (1U << 5)
+	I_WILL_FREE		= (1U << 6)
+	I_FREEING		= (1U << 7)
+	I_CLEAR			= (1U << 8)
+	I_REFERENCED		= (1U << 9)
+	I_LINKABLE		= (1U << 10)
+	I_DIRTY_TIME		= (1U << 11)
+	I_WB_SWITCH		= (1U << 12)
+	I_OVL_INUSE		= (1U << 13)
+	I_CREATING		= (1U << 14)
+	I_DONTCACHE		= (1U << 15)
+	I_SYNC_QUEUED		= (1U << 16)
+	I_PINNING_NETFS_WB	= (1U << 17)
+};
+
+Note that inode_state_wait_address() and that only works on four bits so
+we can't really use higher bits anyway without switching back to a
+scheme where we have to use unsigned long and waste for bytes for
+nothing on 64 bit.
+
+With that out of the way,
+
+Reviewed-by: Christian Brauner <brauner@kernel.org>
+
+> +#define I_DIRTY_INODE (I_DIRTY_SYNC | I_DIRTY_DATASYNC)
+> +#define I_DIRTY (I_DIRTY_INODE | I_DIRTY_PAGES)
+> +#define I_DIRTY_ALL (I_DIRTY | I_DIRTY_TIME)
+> +
+>  /*
+>   * Keep mostly read-only and often accessed (especially for
+>   * the RCU path lookup and 'stat' data) fields at the beginning
+> @@ -723,7 +844,7 @@ struct inode {
+>  #endif
+>  
+>  	/* Misc */
+> -	u32			i_state;
+> +	enum inode_state_bits	i_state;
+>  	/* 32-bit hole */
+>  	struct rw_semaphore	i_rwsem;
+>  
+> @@ -2484,117 +2605,6 @@ static inline void kiocb_clone(struct kiocb *kiocb, struct kiocb *kiocb_src,
+>  	};
+>  }
+>  
+> -/*
+> - * Inode state bits.  Protected by inode->i_lock
+> - *
+> - * Four bits determine the dirty state of the inode: I_DIRTY_SYNC,
+> - * I_DIRTY_DATASYNC, I_DIRTY_PAGES, and I_DIRTY_TIME.
+> - *
+> - * Four bits define the lifetime of an inode.  Initially, inodes are I_NEW,
+> - * until that flag is cleared.  I_WILL_FREE, I_FREEING and I_CLEAR are set at
+> - * various stages of removing an inode.
+> - *
+> - * Two bits are used for locking and completion notification, I_NEW and I_SYNC.
+> - *
+> - * I_DIRTY_SYNC		Inode is dirty, but doesn't have to be written on
+> - *			fdatasync() (unless I_DIRTY_DATASYNC is also set).
+> - *			Timestamp updates are the usual cause.
+> - * I_DIRTY_DATASYNC	Data-related inode changes pending.  We keep track of
+> - *			these changes separately from I_DIRTY_SYNC so that we
+> - *			don't have to write inode on fdatasync() when only
+> - *			e.g. the timestamps have changed.
+> - * I_DIRTY_PAGES	Inode has dirty pages.  Inode itself may be clean.
+> - * I_DIRTY_TIME		The inode itself has dirty timestamps, and the
+> - *			lazytime mount option is enabled.  We keep track of this
+> - *			separately from I_DIRTY_SYNC in order to implement
+> - *			lazytime.  This gets cleared if I_DIRTY_INODE
+> - *			(I_DIRTY_SYNC and/or I_DIRTY_DATASYNC) gets set. But
+> - *			I_DIRTY_TIME can still be set if I_DIRTY_SYNC is already
+> - *			in place because writeback might already be in progress
+> - *			and we don't want to lose the time update
+> - * I_NEW		Serves as both a mutex and completion notification.
+> - *			New inodes set I_NEW.  If two processes both create
+> - *			the same inode, one of them will release its inode and
+> - *			wait for I_NEW to be released before returning.
+> - *			Inodes in I_WILL_FREE, I_FREEING or I_CLEAR state can
+> - *			also cause waiting on I_NEW, without I_NEW actually
+> - *			being set.  find_inode() uses this to prevent returning
+> - *			nearly-dead inodes.
+> - * I_WILL_FREE		Must be set when calling write_inode_now() if i_count
+> - *			is zero.  I_FREEING must be set when I_WILL_FREE is
+> - *			cleared.
+> - * I_FREEING		Set when inode is about to be freed but still has dirty
+> - *			pages or buffers attached or the inode itself is still
+> - *			dirty.
+> - * I_CLEAR		Added by clear_inode().  In this state the inode is
+> - *			clean and can be destroyed.  Inode keeps I_FREEING.
+> - *
+> - *			Inodes that are I_WILL_FREE, I_FREEING or I_CLEAR are
+> - *			prohibited for many purposes.  iget() must wait for
+> - *			the inode to be completely released, then create it
+> - *			anew.  Other functions will just ignore such inodes,
+> - *			if appropriate.  I_NEW is used for waiting.
+> - *
+> - * I_SYNC		Writeback of inode is running. The bit is set during
+> - *			data writeback, and cleared with a wakeup on the bit
+> - *			address once it is done. The bit is also used to pin
+> - *			the inode in memory for flusher thread.
+> - *
+> - * I_REFERENCED		Marks the inode as recently references on the LRU list.
+> - *
+> - * I_WB_SWITCH		Cgroup bdi_writeback switching in progress.  Used to
+> - *			synchronize competing switching instances and to tell
+> - *			wb stat updates to grab the i_pages lock.  See
+> - *			inode_switch_wbs_work_fn() for details.
+> - *
+> - * I_OVL_INUSE		Used by overlayfs to get exclusive ownership on upper
+> - *			and work dirs among overlayfs mounts.
+> - *
+> - * I_CREATING		New object's inode in the middle of setting up.
+> - *
+> - * I_DONTCACHE		Evict inode as soon as it is not used anymore.
+> - *
+> - * I_SYNC_QUEUED	Inode is queued in b_io or b_more_io writeback lists.
+> - *			Used to detect that mark_inode_dirty() should not move
+> - * 			inode between dirty lists.
+> - *
+> - * I_PINNING_FSCACHE_WB	Inode is pinning an fscache object for writeback.
+> - *
+> - * I_LRU_ISOLATING	Inode is pinned being isolated from LRU without holding
+> - *			i_count.
+> - *
+> - * Q: What is the difference between I_WILL_FREE and I_FREEING?
+> - *
+> - * __I_{SYNC,NEW,LRU_ISOLATING} are used to derive unique addresses to wait
+> - * upon. There's one free address left.
+> - */
+> -#define __I_NEW			0
+> -#define I_NEW			(1 << __I_NEW)
+> -#define __I_SYNC		1
+> -#define I_SYNC			(1 << __I_SYNC)
+> -#define __I_LRU_ISOLATING	2
+> -#define I_LRU_ISOLATING		(1 << __I_LRU_ISOLATING)
+> -
+> -#define I_DIRTY_SYNC		(1 << 3)
+> -#define I_DIRTY_DATASYNC	(1 << 4)
+> -#define I_DIRTY_PAGES		(1 << 5)
+> -#define I_WILL_FREE		(1 << 6)
+> -#define I_FREEING		(1 << 7)
+> -#define I_CLEAR			(1 << 8)
+> -#define I_REFERENCED		(1 << 9)
+> -#define I_LINKABLE		(1 << 10)
+> -#define I_DIRTY_TIME		(1 << 11)
+> -#define I_WB_SWITCH		(1 << 12)
+> -#define I_OVL_INUSE		(1 << 13)
+> -#define I_CREATING		(1 << 14)
+> -#define I_DONTCACHE		(1 << 15)
+> -#define I_SYNC_QUEUED		(1 << 16)
+> -#define I_PINNING_NETFS_WB	(1 << 17)
+> -
+> -#define I_DIRTY_INODE (I_DIRTY_SYNC | I_DIRTY_DATASYNC)
+> -#define I_DIRTY (I_DIRTY_INODE | I_DIRTY_PAGES)
+> -#define I_DIRTY_ALL (I_DIRTY | I_DIRTY_TIME)
+> -
+>  extern void __mark_inode_dirty(struct inode *, int);
+>  static inline void mark_inode_dirty(struct inode *inode)
+>  {
+> -- 
+> 2.49.0
+> 
 
