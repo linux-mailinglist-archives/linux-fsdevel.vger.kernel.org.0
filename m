@@ -1,158 +1,205 @@
-Return-Path: <linux-fsdevel+bounces-58840-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58841-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BDB4B3206B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 18:24:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0714FB320A4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 18:38:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67EB31CC35E9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 16:21:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 603BFA061FF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 16:34:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED4928137A;
-	Fri, 22 Aug 2025 16:20:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D4230DEB7;
+	Fri, 22 Aug 2025 16:34:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="w5HR0ADz";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="t8eHg1iS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="emKPveLf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43FDB279DC3;
-	Fri, 22 Aug 2025 16:20:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5025822F384;
+	Fri, 22 Aug 2025 16:34:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755879646; cv=none; b=njM/abb9UciWRjdDsqaA48fj8W72s5xPIDZakasq5AjImq67gmfCsUB7R2PBo5EXOErT8TY/9OIzc8CdFhNFz3y0uFwfcXsq/XhwuSqzLNRyX6Y/KGOiwyRmWmzpSXqPLwBqBlM5S/ZTWKh1szjBgtw22FOqzViRuS6vZzUBKTk=
+	t=1755880469; cv=none; b=p7+lbJ7bboyHuQOQdm5FN5DVmXFpdTmC6Ohjt2WbkIIpbfhzb0O/eqWJ9TtYrSaxELDkIs9pF1nZxkXeXcFie85sW8/LhmIuewHU2Z80QNXLyiZZvmtVZsUSZTKABcW4LGBODWRNs5Npn9z3KgGurwp4fYlo9ZPWGipV+EgIhHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755879646; c=relaxed/simple;
-	bh=pUefhvtx3fa9NKd7t7x8qj/cQQxg+Sux7Educwfd/bI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hy0KI4rtAvOOW1U22qs/lj03E3tQIwkn9faiR8KzJfNmmAwcr3A/3mmT4bgFADdUiuv8KqNI+5CbHh2qk0aDNNAcUK1dIeqGF5VzPlCCwizThVinxG4X0QqmjzMwDRxqcNV62YQ5zKIcbKCe4qjllcM70m8Z4FPChHc99BifLBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=w5HR0ADz; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=t8eHg1iS; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 22 Aug 2025 18:20:41 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755879643;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AtQFGIIZgwtLl5kOnn6MiSKJx7hARPjf03xjlGYheR0=;
-	b=w5HR0ADzMEB1gfQs/FxLabGL0IVBvCgZa4l5SuQsyDFRdOPQx+ZhKiqJI34Wuj3hVmGW06
-	hQUEDXb8L3M7t2jUIhXFFH/hjM17MRMoc4Kopg+FHAMWPmBW7NXiFLa+RdBquNMoXzAfsW
-	UpJCcUEzYibM2RtnROSzOdl8Aec92GC3w5PvTONy6O6laAF7hZNei5od2tj7DkomsFNgk3
-	Klz4WEA/ytY8c78nOd6bpPXZV+elMG8zSoYJ56J0RXGp+KB79bdHrhWQKF9taPQ79DW+fy
-	p5aDZ6WrsELON3+KwZN9UAtQuOyYEQssQnIqeyABWgdGook1WhCrDuZAjn9MUA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755879643;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AtQFGIIZgwtLl5kOnn6MiSKJx7hARPjf03xjlGYheR0=;
-	b=t8eHg1iSaaYcDhGsPl+SqXNKwRd9lmq9DvOkVx/LQLla7fm/FVfwAYbPCLYQOTXimi7WmX
-	yQ9e7cWWtwYKCiDA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: syzbot <syzbot+a725ab460fc1def9896f@syzkaller.appspotmail.com>
-Cc: brauner@kernel.org, jack@suse.cz, linkinjeon@kernel.org,
-	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com,
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
-	viro@zeniv.linux.org.uk
-Subject: Re: [syzbot] [exfat?] [ext4?] WARNING in __rt_mutex_slowlock_locked
-Message-ID: <20250822162041.gXcLgwIW@linutronix.de>
-References: <68a72860.050a0220.3d78fd.002a.GAE@google.com>
+	s=arc-20240116; t=1755880469; c=relaxed/simple;
+	bh=8QG8d1+IwB3R/mb6KsOMEkpxPevsaHOLgmQCzq052Q8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EtfntqGkgJ6CY2Jkq3JADA6buIcCGdCgScp+CpXy6oNrmGF1mKIGKTj5zcKIDDKQobusUDdfoDsGEkVxq9VsaUbjMnJzBh1RP74dQhEinS9EpzKxkvh8+Gb2/Z7LOx57BKcN4ERQiuY8wGaxrNKv9R37DRWopF1IfmuFjZt2NOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=emKPveLf; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-61c212c3986so1134465a12.0;
+        Fri, 22 Aug 2025 09:34:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755880465; x=1756485265; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6HlMkeQu40ULVawvf6RgU1vq8bta7oLaRc7sTa0rxxo=;
+        b=emKPveLffUspHfGi8d2YSIBI/2loiZjGTA79l2S6d40DhWlcJY7sYO6sVS6Wu4u5B5
+         HadA8ryHWNBIiQr0XQzhW6UJisFyPhIFG/9XsddDuZLUcpMW9dOA9Vwjs6o8N8cLEGN6
+         F2lLffaTtfpKV+e1ZVjebsJsZxyyXDzqlULyMYMZYrij12cLRrFiYh/3o68/sBWut6Oq
+         uJV4oPs2xLgfwi+Xb0DwGTemspm1fdWIhIdY8uv/NCyRtkOW133GitKNXEMAqnOFAFYT
+         TX/X0Gj4a1cojDo65cy9GZunI+qqWRF7y5/UbCfOO5zffz1XD2gxB8Z9VvlRqDxdycD0
+         EMww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755880465; x=1756485265;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6HlMkeQu40ULVawvf6RgU1vq8bta7oLaRc7sTa0rxxo=;
+        b=hkSrLaYHyL/0xH4YX9nStLfK0EWhYETpu+QVfFl+kknRCuxZkpeyIQ8/zGkNI6drbi
+         d3bErEbi484iGfS9uMU4p4JmheHDH0Gd0fadgft5Cjbg67bUQ7q0sre0AeRzN+jU2/h8
+         YPljdl/8kEmdv+2dZbpBWdr7n5QY+4D0cvmNSfiBe1Az3Ip1C3k+AIIVGlFzGJpvuSBt
+         J/De6cN6u8jYrfHd3Mvr1iSVGx3CGDEABbH6UtlcGRNVaht3vtm2wK3JHoiY2rtmChhO
+         VS5jPk9avVF+iS+8Ck5OK9QtdGuIGr6ykvNBgdwyMFzyQ/dp+Z0Y8wNF+IvSvtXRppuO
+         afHw==
+X-Forwarded-Encrypted: i=1; AJvYcCU3RFCjFV8YbyXS18fxTSi/ABiUE4WakmMW0CLvXzGMtpDplE34b0DUUShBqjZxp9j0sS4rO27YtF9U5h3z@vger.kernel.org, AJvYcCXTAij8qZgUlJKvWF4rJMpo9A2KRuRqjQoRv+4ANj/pCBYrAevrGSo2nYTsKpOhJl9YU8/RDZG9y4vU7A7jbQ==@vger.kernel.org, AJvYcCXlZ27meaPQh15lltPAk+EvI1GY7+ehJ7L8UCxJ77Wz7V+o93GI9ggbo3EpmixKuxOnZ2vNCx5v+0OMnZ0q@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxfejv9FDmxyQWY76bSN+eMCVVuiJlpVMjJYM1PoHOKQb6LqYIL
+	6zv8IHjCmkYXbwlpiZnaVfZC20duFFSRUUUPKYSg9g9y5Hy4IIXxkustCBRJBt/hCoW7x7A53ph
+	3CUQYt7QuHEGJ19LGI+g5Bjtirs9bTHvFCrkOono=
+X-Gm-Gg: ASbGncv5HRdrvdZ6taPaVWVsZM3gszWYUeHIlimaJits2uYX4UjOwHV5T88dhhYjfbC
+	2jM10zGLhjH87Mdg2SZVOqvZCPGQsfIf+QIn8ryQYHKdVGdDmTkv2j+PQgI45iNkTwFlGvm5DHB
+	BcAU0is+iO4IYhBKVDj5kWy1N80kx/xdQSrn2Q4BDwswlJBcqqDdX9fLaIO5beMLlafOCgSjnMq
+	fPaKSA=
+X-Google-Smtp-Source: AGHT+IGHwn0+TuaT3RcDkehu2d++Wqd2sJcLskS7Ol47UNfLau3oRkNj1nFp3WqMuG0+GDSiv+ZCvmVASTso72CvPYE=
+X-Received: by 2002:a05:6402:270a:b0:615:5f47:8873 with SMTP id
+ 4fb4d7f45d1cf-61c1b1cee08mr3281998a12.14.1755880465210; Fri, 22 Aug 2025
+ 09:34:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20250822-tonyk-overlayfs-v6-0-8b6e9e604fa2@igalia.com> <20250822-tonyk-overlayfs-v6-9-8b6e9e604fa2@igalia.com>
+In-Reply-To: <20250822-tonyk-overlayfs-v6-9-8b6e9e604fa2@igalia.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 22 Aug 2025 18:34:13 +0200
+X-Gm-Features: Ac12FXx1A_g7Xzez-KtpzTlCyVmrWWuKs2KmuS2dQABuISj33sThEK0TOuWWIg4
+Message-ID: <CAOQ4uxhWE=5_+DBx7OJ94NVCZXztxf1d4sxyMuakDGKUmbNyTg@mail.gmail.com>
+Subject: Re: [PATCH v6 9/9] ovl: Support mounting case-insensitive enabled layers
+To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>, 
+	Gabriel Krisman Bertazi <krisman@kernel.org>, linux-unionfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	kernel-dev@igalia.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <68a72860.050a0220.3d78fd.002a.GAE@google.com>
 
-On 2025-08-21 07:08:32 [-0700], syzbot wrote:
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3Da725ab460fc1def=
-9896f
-=E2=80=A6
-> The issue was bisected to:
->=20
-> commit d2d6422f8bd17c6bb205133e290625a564194496
-> Author: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> Date:   Fri Sep 6 10:59:04 2024 +0000
->=20
->     x86: Allow to enable PREEMPT_RT.
->=20
-=E2=80=A6
-> exFAT-fs (loop0): Medium has reported failures. Some data may be lost.
-> exFAT-fs (loop0): failed to load upcase table (idx : 0x00010000, chksum :=
- 0xe5674ec2, utbl_chksum : 0xe619d30d)
-> ------------[ cut here ]------------
-> rtmutex deadlock detected
-> WARNING: CPU: 0 PID: 6000 at kernel/locking/rtmutex.c:1674 rt_mutex_handl=
-e_deadlock kernel/locking/rtmutex.c:1674 [inline]
-> WARNING: CPU: 0 PID: 6000 at kernel/locking/rtmutex.c:1674 __rt_mutex_slo=
-wlock kernel/locking/rtmutex.c:1734 [inline]
-> WARNING: CPU: 0 PID: 6000 at kernel/locking/rtmutex.c:1674 __rt_mutex_slo=
-wlock_locked+0xed2/0x25e0 kernel/locking/rtmutex.c:1760
+On Fri, Aug 22, 2025 at 4:17=E2=80=AFPM Andr=C3=A9 Almeida <andrealmeid@iga=
+lia.com> wrote:
+>
+> Drop the restriction for casefold dentries lookup to enable support for
+> case-insensitive layers in overlayfs.
+>
+> Support case-insensitive layers with the condition that they should be
+> uniformly enabled across the stack and (i.e. if the root mount dir has
+> casefold enabled, so should all the dirs bellow for every layer).
+>
+> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
+> ---
+> Changes from v5:
+> - Fix mounting layers without casefold flag
+> ---
+>  fs/overlayfs/namei.c | 17 +++++++++--------
+>  fs/overlayfs/util.c  | 10 ++++++----
+>  2 files changed, 15 insertions(+), 12 deletions(-)
+>
+> diff --git a/fs/overlayfs/namei.c b/fs/overlayfs/namei.c
+> index 76d6248b625e7c58e09685e421aef616aadea40a..e93bcc5727bcafdc18a499b47=
+a7609fd41ecaec8 100644
+> --- a/fs/overlayfs/namei.c
+> +++ b/fs/overlayfs/namei.c
+> @@ -239,13 +239,14 @@ static int ovl_lookup_single(struct dentry *base, s=
+truct ovl_lookup_data *d,
+>         char val;
+>
+>         /*
+> -        * We allow filesystems that are case-folding capable but deny co=
+mposing
+> -        * ovl stack from case-folded directories. If someone has enabled=
+ case
+> -        * folding on a directory on underlying layer, the warranty of th=
+e ovl
+> -        * stack is voided.
+> +        * We allow filesystems that are case-folding capable as long as =
+the
+> +        * layers are consistently enabled in the stack, enabled for ever=
+y dir
+> +        * or disabled in all dirs. If someone has modified case folding =
+on a
+> +        * directory on underlying layer, the warranty of the ovl stack i=
+s
+> +        * voided.
+>          */
+> -       if (ovl_dentry_casefolded(base)) {
+> -               warn =3D "case folded parent";
+> +       if (ofs->casefold !=3D ovl_dentry_casefolded(base)) {
+> +               warn =3D "parent wrong casefold";
+>                 err =3D -ESTALE;
+>                 goto out_warn;
+>         }
+> @@ -259,8 +260,8 @@ static int ovl_lookup_single(struct dentry *base, str=
+uct ovl_lookup_data *d,
+>                 goto out_err;
+>         }
+>
+> -       if (ovl_dentry_casefolded(this)) {
+> -               warn =3D "case folded child";
+> +       if (ofs->casefold !=3D ovl_dentry_casefolded(this)) {
+> +               warn =3D "child wrong casefold";
+>                 err =3D -EREMOTE;
+>                 goto out_warn;
+>         }
+> diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
+> index a33115e7384c129c543746326642813add63f060..52582b1da52598fbb14866f8c=
+33eb27e36adda36 100644
+> --- a/fs/overlayfs/util.c
+> +++ b/fs/overlayfs/util.c
+> @@ -203,6 +203,8 @@ void ovl_dentry_init_flags(struct dentry *dentry, str=
+uct dentry *upperdentry,
+>
+>  bool ovl_dentry_weird(struct dentry *dentry)
+>  {
+> +       struct ovl_fs *ofs =3D OVL_FS(dentry->d_sb);
+> +
+>         if (!d_can_lookup(dentry) && !d_is_file(dentry) && !d_is_symlink(=
+dentry))
+>                 return true;
+>
+> @@ -210,11 +212,11 @@ bool ovl_dentry_weird(struct dentry *dentry)
+>                 return true;
+>
+>         /*
+> -        * Allow filesystems that are case-folding capable but deny compo=
+sing
+> -        * ovl stack from case-folded directories.
+> +        * Exceptionally for layers with casefold, we accept that they ha=
+ve
+> +        * their own hash and compare operations
+>          */
+> -       if (sb_has_encoding(dentry->d_sb))
+> -               return IS_CASEFOLDED(d_inode(dentry));
+> +       if (ofs->casefold)
+> +               return false;
 
-RT detected a deadlock and complained. The same testcase on !RT results
-in:
+I think this is better as:
+        if (sb_has_encoding(dentry->d_sb))
+                return false;
 
-| [   15.363878] loop0: detected capacity change from 0 to 256
-| [   15.367981] exFAT-fs (loop0): Volume was not properly unmounted. Some =
-data may be corrupt. Please run fsck.
-| [   15.373808] exFAT-fs (loop0): Medium has reported failures. Some data =
-may be lost.
-| [   15.380396] exFAT-fs (loop0): failed to load upcase table (idx : 0x000=
-10000, chksum : 0xe5674ec2, utbl_chksum : 0xe619d30d)
-| [   62.668182] INFO: task exfat-repro:2155 blocked for more than 30 secon=
-ds.
-| [   62.669405]       Not tainted 6.17.0-rc2+ #10
-| [   62.670181] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disable=
-s this message.
-| [   62.671612] task:exfat-repro     state:D stack:0     pid:2155  tgid:21=
-55  ppid:1      task_flags:0x400140 flags:0x00004006
-| [   62.673557] Call Trace:
-| [   62.674008]  <TASK>
-| [   62.674400]  __schedule+0x4ef/0xbb0
-| [   62.675069]  schedule+0x22/0xd0
-| [   62.675656]  schedule_preempt_disabled+0x10/0x20
-| [   62.676495]  rwsem_down_write_slowpath+0x1e2/0x6c0
-| [   62.679028]  down_write+0x66/0x70
-| [   62.679645]  vfs_rename+0x5c6/0xc30
-| [   62.681734]  do_renameat2+0x3c4/0x570
-| [   62.682395]  __x64_sys_renameat2+0x7b/0xc0
-| [   62.683187]  do_syscall_64+0x7f/0x290
-| [   62.695576]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+I don't think there is a reason to test ofs->casefold here.
+a "weird" dentry is one that overlayfs doesn't know how to
+handle. Now it known how to handle dentries with hash()/compare()
+on casefolding capable filesysytems.
 
-After ctrl+c that testcase terminates but one thread remains in D state.
-This is from=20
-|         lock_new_subdir =3D new_dir !=3D old_dir || !(flags & RENAME_EXCH=
-ANGE);
-|         if (is_dir) {
-|                 if (lock_old_subdir)
-|                         inode_lock_nested(source, I_MUTEX_CHILD);
-                          ^^^
-| 5 locks held by exfat-repro/2156:
-|  #0: ffff888113b69400 (sb_writers#11){.+.+}-{0:0}, at: do_renameat2+0x1c8=
-/0x580
-|  #1: ffff888113b69710 (&type->s_vfs_rename_key){+.+.}-{4:4}, at: do_renam=
-eat2+0x24d/0x580
-|  #2: ffff88810fb79b88 (&sb->s_type->i_mutex_key#16/1){+.+.}-{4:4}, at: lo=
-ck_two_directories+0x6c/0x110
-|  #3: ffff88810fb7a1c0 (&sb->s_type->i_mutex_key#17/5){+.+.}-{4:4}, at: lo=
-ck_two_directories+0x82/0x110
-|  #4: ffffffff82f618a0 (rcu_read_lock){....}-{1:3}, at: debug_show_all_loc=
-ks+0x3d/0x184
+Can you please push v6 after this fix to your gitlab branch?
 
-#2 and #3 are from the "(r =3D=3D p1)" case. The lock it appears to acquire
-is #2.
-Could an exfat take a look, please?
-
-Sebastian
+Thanks,
+Amir.
 
