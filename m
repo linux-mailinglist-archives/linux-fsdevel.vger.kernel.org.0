@@ -1,325 +1,169 @@
-Return-Path: <linux-fsdevel+bounces-58772-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58773-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B359B3162E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 13:18:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9FC9B3164B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 13:29:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 619AC580FBA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 11:18:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39B31A26E35
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 11:28:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F274B2F656A;
-	Fri, 22 Aug 2025 11:18:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E002FABEC;
+	Fri, 22 Aug 2025 11:27:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bCYDHOso"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ArygcnHe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f196.google.com (mail-pf1-f196.google.com [209.85.210.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4FAD393DE1;
-	Fri, 22 Aug 2025 11:18:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5E62F6184;
+	Fri, 22 Aug 2025 11:27:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755861515; cv=none; b=rmbb9VlBVRppXACcS7fJjbHzSuX1UBp6iiMaG8XARxrh8BJr2mr2V9MPwa9WE4uBPcMdi0+8mQOd93qOxFrQCZcdfbUCxkwDacCdYWEvaJ/6CDQlUaL548pggGc3wVBRObTQKIBCB8iZ1ZrpdzZoAgNctCwypbse4AcgVr14vAg=
+	t=1755862072; cv=none; b=RTEKDA3qlHpxiiJid3QsbnTkK6sZ7LyrKVBxRAVwjGs82+LWWEzs/9z8sYoTtEAIXZsJolh1aD1Tn7QYxUxu8XnbiOsZvNfn3wXZSwYKpNhCa1bMKkMg9iB2nQhkwuSYhFUbdceNPMDW86FwIlh+M8MIzABy71088BoYdafJyEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755861515; c=relaxed/simple;
-	bh=LhqP36IElPtFhrvJR890PX1pgAiMypg72GaWxkdzZr4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type; b=S6nrK1duIJ6TP3UXmXYaaK1qGcLiOf1TmN5TlpFUBPUJ27Z1Fax5QXUlwC0/NbM6WBiPx1nYreNSdtnyRjAkWKCCPx3DTK2yhDQHJo7wq701raB6XDt+SHbK0oVByP/SWhxxMoWxY9eYoqxIGP2VmpkB4B3vYad5aXUMrwXb1YY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bCYDHOso; arc=none smtp.client-ip=209.85.210.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f196.google.com with SMTP id d2e1a72fcca58-77030079854so57263b3a.2;
-        Fri, 22 Aug 2025 04:18:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755861513; x=1756466313; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:in-reply-to:message-id:date
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=UPyo+BQRvjYiG8qClzyl0xKDtaYoJ5/2WSpqoaBh7dM=;
-        b=bCYDHOsosV4SQ/horuXVezNDVYzKOg6Bpnq8WirZkH+vEyvsfkaQTzMavJZUd/Qo9H
-         YKj4fd4DxM2rzhHur7UlHyc77biaUPz8KhfBEctxvr1YBbMJhJhYByWmfMm6x9+/D0DD
-         LJerBa/+Sxig0RQeb8+EDUMc01XLPLc99N+YzwLCPXhv4IjEx+By7AY1FPY5OvjUg1oO
-         1CIwVAj3JOak1FVRY6mDXhtc9V9dTko5IYTh+ujxDVvbiltT0e/alVQQWS8XwmmXCU26
-         S+yLfKWGrrVr7aqd42TxiwWS7/J+E/e4IK8PPSrH+FZDHund49oA0+yoLVodxUtWeSAJ
-         aeFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755861513; x=1756466313;
-        h=content-transfer-encoding:mime-version:in-reply-to:message-id:date
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UPyo+BQRvjYiG8qClzyl0xKDtaYoJ5/2WSpqoaBh7dM=;
-        b=uOE3PTcCIeNYzIdHtj32c0rWUBIvNJ7xADrOxbOLvo6LL8oW6gf3fACnQEaSrIGab4
-         XA5PO/a5ahznoeZxY25FkSWV+Mc0O6a3njSVljVB/1xDM47D3m/qPW9vA3U3LcePn97i
-         nGDQb6UYN0cDdD0bFWWEagKptM0Dbhuj5yxlQ3E3rXw1Oq1Nfl00BdgiLkfLoQGWwqjO
-         2En195u+8g7/jCgF0pfW22Ik40zc08X0bJHD6Zkrs3fwOEcPAXyTTcgvm/xOCZzl5Lh3
-         5oC+ATXPmxAOVSrDdkrUj44aHF/H5SU4kKmzZyMXAPHxQuOMkogh5+vG89fnZGUXH3gb
-         9bkA==
-X-Forwarded-Encrypted: i=1; AJvYcCU1NFuP1KgvyCSJAttzGR1GBzYgAhUu/kG2boP1MMHf7cwKD3pQx/4eKOGw1JgPRzREJKRaGxbz3U9bcw==@vger.kernel.org, AJvYcCUYrtJrelpyLQZQ7Q/1lOyAcqlImXPxYCMYfZ+AfxjTMiclWa71VOe5qwwfkjXvErku4k58GnNU/canzUOrYg==@vger.kernel.org, AJvYcCUgtifC7uY6jQrnuv991CZRmvdOVHn8Lny2KDhiipEtjEhWbCFv+BHmjowBccobskcCWS1AHj7bWM5F@vger.kernel.org, AJvYcCXydjKD//kws1UPH2n0FefEURshFUCgxK7k5MCZmYhPCNC7Le4V42fP4PKbwN6Lfk4VSJgT9g54Tr30wg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKLddaAuw7WO18ArwDxA+pDFrDlqm++4w72e7WvCmnYnKrdAcP
-	cLpWq8Ykw1l5PmSEaFw8rvQgIGYHkgM9CnZX7zXraX9x7E3NwR858AM4PAv0tagsU/AxGK8P
-X-Gm-Gg: ASbGncsB5wqFZHsmFuZCpXs3jmIEEeZqkHT4OG5tlkkg1hgOzx3taVR99wpA86QV7nJ
-	rrsv6S0CYFz1eyIOGDuLqiZmOZ7/xBNREDT6gHDC/IVFEe3Ny4NMGYnSxhIIbuFry52rQkoXQ2b
-	zqsPezTZiYha/kH/CKpAWaMKIWl6JqYWGjT7dq8Wyap5XBuPqCTmRJ4Vlo8hVVxEfMj84r6GczE
-	ek6dJzBkR2x/nUDh4QVWTjmWSIQZBY0V/dvT+0G3WJ4zQruMDYl0P+4flrVJ2gkUJe1VGbmCnzk
-	XoUqwES1XtG6BgDbRJzp5UnkossoYQ1DUfdVEV87PYV/B1llY/iQlJsF7g58yttOPA/K0j+Kfjk
-	QDmT8QOBy2AqIzYCRX0P+/A1QMp25xJ+k/yzKm59e3UX+320DDcBvI1Y=
-X-Google-Smtp-Source: AGHT+IH9mjr26UJ3g0LmaRv/b0ZvoFG+9xOWGwrJkUAX2nsn0RpxVR7Fe/yi0mFpPp+Mg7DWG+ghOg==
-X-Received: by 2002:a05:6a20:729a:b0:235:5818:66a3 with SMTP id adf61e73a8af0-24340dbe60emr2267284637.8.1755861512983;
-        Fri, 22 Aug 2025 04:18:32 -0700 (PDT)
-Received: from saltykitkat.localnet ([154.31.112.144])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-325213788ffsm1803655a91.19.2025.08.22.04.18.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Aug 2025 04:18:32 -0700 (PDT)
-From: Sun YangKai <sunk67188@gmail.com>
-To: josef@toxicpanda.com
-Cc: brauner@kernel.org, kernel-team@fb.com, linux-btrfs@vger.kernel.org,
- linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-xfs@vger.kernel.org, viro@zeniv.linux.org.uk
-Subject: Re: [PATCH 02/50] fs: make the i_state flags an enum
-Date: Fri, 22 Aug 2025 19:18:26 +0800
-Message-ID: <3307530.5fSG56mABF@saltykitkat>
-In-Reply-To:
- <02211105388c53dc68b7f4332f9b5649d5b66b71.1755806649.git.josef@toxicpanda.com>
+	s=arc-20240116; t=1755862072; c=relaxed/simple;
+	bh=WpWiRLhNlzKzziHrtTeGg8bZVKhIKrv23ZA8D5pstQQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rl2lH7MCMNuLonlUPx4hT4rO0B3IQT08zQNrdkUag8pVim2lh13RFWP8Or4OuwAlELULcLsVoCpdI9Y8xfVw8w8EzMnprCkolKciVtmlLnn33VlO088A+yU8T+hBHwHLoAhTXVUPSXS+O0ucR5CXxSUV3vP4A2+KrHY2+dchE10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ArygcnHe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11F62C4CEED;
+	Fri, 22 Aug 2025 11:27:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755862071;
+	bh=WpWiRLhNlzKzziHrtTeGg8bZVKhIKrv23ZA8D5pstQQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ArygcnHeqgYR+aKUGakpG1htxfUHJvCuask3y27mI50i23hfQN8iLBSFS3l3QqNsX
+	 9IeZX9N3sLYDOpew6SwZ7qHYJ2L6b9faGXEPThhdhhik4o4XqtxD8oK8FJd9b7YxLY
+	 E+Q2pjX6Dw6bcwCy70LtKz61MMqUDWsJ+xknDVO0l6q6DY3KgOd9C4kdZQ05L1qVoR
+	 BrWGaS6+GnB/R0qYtOhur4VQios4d9I+GHGtuEwAnFxbLE7OZFXEwFKi4CFuB1oy2B
+	 FADAUucp0y/zOnBkI4QXjUWXFZRdhaQeuG5ge1PeLm58cbiUjt1r1I/hl3BNEyiIMQ
+	 DJnebdtKIlR5g==
+Date: Fri, 22 Aug 2025 13:27:47 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org, 
+	kernel-team@fb.com, linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	viro@zeniv.linux.org.uk
+Subject: Re: [PATCH 04/50] fs: hold an i_obj_count reference for the i_wb_list
+Message-ID: <20250822-donnerstag-sowas-477e66bd0cf1@brauner>
+References: <cover.1755806649.git.josef@toxicpanda.com>
+ <39379ac2620e98987f185dcf3a20f7b273d7ca33.1755806649.git.josef@toxicpanda.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="nextPart6088876.MhkbZ0Pkbq"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <39379ac2620e98987f185dcf3a20f7b273d7ca33.1755806649.git.josef@toxicpanda.com>
 
-This is a multi-part message in MIME format.
+On Thu, Aug 21, 2025 at 04:18:15PM -0400, Josef Bacik wrote:
+> If we're holding the inode on one of the writeback lists we need to have
+> a reference on that inode. Grab a reference when we add i_wb_list to
+> something, drop it when it's removed.
+> 
+> This is potentially dangerous, because we remove the inode from the
+> i_wb_list potentially under IRQ via folio_end_writeback(). This will be
+> mitigated by making sure all writeback is completed on the final iput,
+> before the final iobj_put, preventing a potential free under IRQ.
+> 
+> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+> ---
+>  fs/fs-writeback.c | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
+> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+> index 001773e6e95c..c2437e3d320a 100644
+> --- a/fs/fs-writeback.c
+> +++ b/fs/fs-writeback.c
+> @@ -1332,6 +1332,7 @@ void sb_mark_inode_writeback(struct inode *inode)
+>  	if (list_empty(&inode->i_wb_list)) {
+>  		spin_lock_irqsave(&sb->s_inode_wblist_lock, flags);
+>  		if (list_empty(&inode->i_wb_list)) {
+> +			iobj_get(inode);
+>  			list_add_tail(&inode->i_wb_list, &sb->s_inodes_wb);
+>  			trace_sb_mark_inode_writeback(inode);
+>  		}
+> @@ -1346,15 +1347,26 @@ void sb_clear_inode_writeback(struct inode *inode)
+>  {
+>  	struct super_block *sb = inode->i_sb;
+>  	unsigned long flags;
+> +	bool drop = false;
+>  
+>  	if (!list_empty(&inode->i_wb_list)) {
+>  		spin_lock_irqsave(&sb->s_inode_wblist_lock, flags);
+>  		if (!list_empty(&inode->i_wb_list)) {
+> +			drop = true;
+>  			list_del_init(&inode->i_wb_list);
+>  			trace_sb_clear_inode_writeback(inode);
+>  		}
+>  		spin_unlock_irqrestore(&sb->s_inode_wblist_lock, flags);
+>  	}
+> +
+> +	/*
+> +	 * This can be called in IRQ context when we're clearing writeback on
+> +	 * the folio. This should not be the last iobj_put() on the inode, we
+> +	 * run all of the writeback before we free the inode in order to avoid
+> +	 * this possibility.
+> +	 */
+> +	if (drop)
+> +		iobj_put(inode);
 
---nextPart6088876.MhkbZ0Pkbq
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+In that case it might be valuable to have a:
 
-Hi Josef,
+VFS_WARN_ON_ONCE(refcount_read(&inode->i_obj_count) < 2);
 
-Sorry for the bothering, and I hope this isn't too far off-topic for the 
-current patch series discussion.
+before calling iobj_put() here? It'll compile out without
+CONFIG_VFS_DEBUG set.
 
-I recently learned about the x-macro trick and was wondering if it might be 
-suitable for use in this context since we are rewriting this. I'd appreciate 
-any thoughts or feedback on whether this approach could be applied here.
+Btw, you should also be able to write this as removing the condition.
 
-Thanks in advance for your insights!
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index 2e10cc2f955f..cfdb2c2793cb 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -1366,13 +1366,13 @@ void sb_mark_inode_writeback(struct inode *inode)
+ void sb_clear_inode_writeback(struct inode *inode)
+ {
+        struct super_block *sb = inode->i_sb;
++       struct inode *drop = NULL;
+        unsigned long flags;
+-       bool drop = false;
 
-Below is the patch for reference:
+        if (!list_empty(&inode->i_wb_list)) {
+                spin_lock_irqsave(&sb->s_inode_wblist_lock, flags);
+                if (!list_empty(&inode->i_wb_list)) {
+-                       drop = true;
++                       drop = inode;
+                        list_del_init(&inode->i_wb_list);
+                        trace_sb_clear_inode_writeback(inode);
+                }
+@@ -1385,8 +1385,7 @@ void sb_clear_inode_writeback(struct inode *inode)
+         * run all of the writeback before we free the inode in order to avoid
+         * this possibility.
+         */
+-       if (drop)
+-               iobj_put(inode);
++       iobj_put(drop);
+ }
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index d7ab4f96d705..6a766aaa457e 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2576,28 +2576,36 @@ static inline void kiocb_clone(struct kiocb *kiocb, 
-struct kiocb *kiocb_src,
-  * __I_{SYNC,NEW,LRU_ISOLATING} are used to derive unique addresses to wait
-  * upon. There's one free address left.
-  */
--#define __I_NEW			0
--#define I_NEW			(1 << __I_NEW)
--#define __I_SYNC		1
--#define I_SYNC			(1 << __I_SYNC)
--#define __I_LRU_ISOLATING	2
--#define I_LRU_ISOLATING		(1 << __I_LRU_ISOLATING)
--
--#define I_DIRTY_SYNC		(1 << 3)
--#define I_DIRTY_DATASYNC	(1 << 4)
--#define I_DIRTY_PAGES		(1 << 5)
--#define I_WILL_FREE		(1 << 6)
--#define I_FREEING		(1 << 7)
--#define I_CLEAR			(1 << 8)
--#define I_REFERENCED		(1 << 9)
--#define I_LINKABLE		(1 << 10)
--#define I_DIRTY_TIME		(1 << 11)
--#define I_WB_SWITCH		(1 << 12)
--#define I_OVL_INUSE		(1 << 13)
--#define I_CREATING		(1 << 14)
--#define I_DONTCACHE		(1 << 15)
--#define I_SYNC_QUEUED		(1 << 16)
--#define I_PINNING_NETFS_WB	(1 << 17)
-+#define INODE_STATE(X)		\
-+	X(I_NEW),		\
-+	X(I_SYNC),		\
-+	X(I_LRU_ISOLATING),	\
-+	X(I_DIRTY_SYNC),	\
-+	X(I_DIRTY_DATASYNC),	\
-+	X(I_DIRTY_PAGES),	\
-+	X(I_WILL_FREE),		\
-+	X(I_FREEING),		\
-+	X(I_CLEAR),		\
-+	X(I_REFERENCED),	\
-+	X(I_LINKABLE),		\
-+	X(I_DIRTY_TIME),	\
-+	X(I_WB_SWITCH),		\
-+	X(I_OVL_INUSE),		\
-+	X(I_CREATING),		\
-+	X(I_DONTCACHE),		\
-+	X(I_SYNC_QUEUED),	\
-+	X(I_PINNING_NETFS_WB)
-+
-+enum __inode_state_bits {
-+	#define X(state) __##state
-+	INODE_STATE(X)
-+	#undef X
-+};
-+enum inode_state_bits {
-+	#define X(state) state = (1 << __##state)
-+	INODE_STATE(X)
-+	#undef X
-+};
- 
- #define I_DIRTY_INODE (I_DIRTY_SYNC | I_DIRTY_DATASYNC)
- #define I_DIRTY (I_DIRTY_INODE | I_DIRTY_PAGES)
-diff --git a/include/trace/events/writeback.h b/include/trace/events/
-writeback.h
-index 1e23919c0da9..4c545c72c40a 100644
---- a/include/trace/events/writeback.h
-+++ b/include/trace/events/writeback.h
-@@ -9,26 +9,10 @@
- #include <linux/backing-dev.h>
- #include <linux/writeback.h>
- 
--#define show_inode_state(state)					\
--	__print_flags(state, "|",				\
--		{I_DIRTY_SYNC,		"I_DIRTY_SYNC"},	\
--		{I_DIRTY_DATASYNC,	"I_DIRTY_DATASYNC"},	\
--		{I_DIRTY_PAGES,		"I_DIRTY_PAGES"},	\
--		{I_NEW,			"I_NEW"},		\
--		{I_WILL_FREE,		"I_WILL_FREE"},		\
--		{I_FREEING,		"I_FREEING"},		\
--		{I_CLEAR,		"I_CLEAR"},		\
--		{I_SYNC,		"I_SYNC"},		\
--		{I_DIRTY_TIME,		"I_DIRTY_TIME"},	\
--		{I_REFERENCED,		"I_REFERENCED"},	\
--		{I_LINKABLE,		"I_LINKABLE"},		\
--		{I_WB_SWITCH,		"I_WB_SWITCH"},		\
--		{I_OVL_INUSE,		"I_OVL_INUSE"},		\
--		{I_CREATING,		"I_CREATING"},		\
--		{I_DONTCACHE,		"I_DONTCACHE"},		\
--		{I_SYNC_QUEUED,		"I_SYNC_QUEUED"},	\
--		{I_PINNING_NETFS_WB,	"I_PINNING_NETFS_WB"},	\
--		{I_LRU_ISOLATING,	"I_LRU_ISOLATING"}	\
-+#define inode_state_name(s) { s, #s }
-+#define show_inode_state(state)		\
-+	__print_flags(state, "|",	\
-+		INODE_STATE(inode_state_name)	\
- 	)
- 
- /* enums need to be exported to user space */
-
-Best regards,
-Sun YangKai
-
---nextPart6088876.MhkbZ0Pkbq
-Content-Disposition: attachment; filename="x-macro.patch"
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/x-patch; charset="UTF-8"; name="x-macro.patch"
-
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index d7ab4f96d705..6a766aaa457e 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2576,28 +2576,36 @@ static inline void kiocb_clone(struct kiocb *kiocb, struct kiocb *kiocb_src,
-  * __I_{SYNC,NEW,LRU_ISOLATING} are used to derive unique addresses to wait
-  * upon. There's one free address left.
-  */
--#define __I_NEW			0
--#define I_NEW			(1 << __I_NEW)
--#define __I_SYNC		1
--#define I_SYNC			(1 << __I_SYNC)
--#define __I_LRU_ISOLATING	2
--#define I_LRU_ISOLATING		(1 << __I_LRU_ISOLATING)
--
--#define I_DIRTY_SYNC		(1 << 3)
--#define I_DIRTY_DATASYNC	(1 << 4)
--#define I_DIRTY_PAGES		(1 << 5)
--#define I_WILL_FREE		(1 << 6)
--#define I_FREEING		(1 << 7)
--#define I_CLEAR			(1 << 8)
--#define I_REFERENCED		(1 << 9)
--#define I_LINKABLE		(1 << 10)
--#define I_DIRTY_TIME		(1 << 11)
--#define I_WB_SWITCH		(1 << 12)
--#define I_OVL_INUSE		(1 << 13)
--#define I_CREATING		(1 << 14)
--#define I_DONTCACHE		(1 << 15)
--#define I_SYNC_QUEUED		(1 << 16)
--#define I_PINNING_NETFS_WB	(1 << 17)
-+#define INODE_STATE(X)		\
-+	X(I_NEW),		\
-+	X(I_SYNC),		\
-+	X(I_LRU_ISOLATING),	\
-+	X(I_DIRTY_SYNC),	\
-+	X(I_DIRTY_DATASYNC),	\
-+	X(I_DIRTY_PAGES),	\
-+	X(I_WILL_FREE),		\
-+	X(I_FREEING),		\
-+	X(I_CLEAR),		\
-+	X(I_REFERENCED),	\
-+	X(I_LINKABLE),		\
-+	X(I_DIRTY_TIME),	\
-+	X(I_WB_SWITCH),		\
-+	X(I_OVL_INUSE),		\
-+	X(I_CREATING),		\
-+	X(I_DONTCACHE),		\
-+	X(I_SYNC_QUEUED),	\
-+	X(I_PINNING_NETFS_WB)
-+
-+enum __inode_state_bits {
-+	#define X(state) __##state
-+	INODE_STATE(X)
-+	#undef X
-+};
-+enum inode_state_bits {
-+	#define X(state) state = (1 << __##state)
-+	INODE_STATE(X)
-+	#undef X
-+};
- 
- #define I_DIRTY_INODE (I_DIRTY_SYNC | I_DIRTY_DATASYNC)
- #define I_DIRTY (I_DIRTY_INODE | I_DIRTY_PAGES)
-diff --git a/include/trace/events/writeback.h b/include/trace/events/writeback.h
-index 1e23919c0da9..4c545c72c40a 100644
---- a/include/trace/events/writeback.h
-+++ b/include/trace/events/writeback.h
-@@ -9,26 +9,10 @@
- #include <linux/backing-dev.h>
- #include <linux/writeback.h>
- 
--#define show_inode_state(state)					\
--	__print_flags(state, "|",				\
--		{I_DIRTY_SYNC,		"I_DIRTY_SYNC"},	\
--		{I_DIRTY_DATASYNC,	"I_DIRTY_DATASYNC"},	\
--		{I_DIRTY_PAGES,		"I_DIRTY_PAGES"},	\
--		{I_NEW,			"I_NEW"},		\
--		{I_WILL_FREE,		"I_WILL_FREE"},		\
--		{I_FREEING,		"I_FREEING"},		\
--		{I_CLEAR,		"I_CLEAR"},		\
--		{I_SYNC,		"I_SYNC"},		\
--		{I_DIRTY_TIME,		"I_DIRTY_TIME"},	\
--		{I_REFERENCED,		"I_REFERENCED"},	\
--		{I_LINKABLE,		"I_LINKABLE"},		\
--		{I_WB_SWITCH,		"I_WB_SWITCH"},		\
--		{I_OVL_INUSE,		"I_OVL_INUSE"},		\
--		{I_CREATING,		"I_CREATING"},		\
--		{I_DONTCACHE,		"I_DONTCACHE"},		\
--		{I_SYNC_QUEUED,		"I_SYNC_QUEUED"},	\
--		{I_PINNING_NETFS_WB,	"I_PINNING_NETFS_WB"},	\
--		{I_LRU_ISOLATING,	"I_LRU_ISOLATING"}	\
-+#define inode_state_name(s) { s, #s }
-+#define show_inode_state(state)		\
-+	__print_flags(state, "|",	\
-+		INODE_STATE(inode_state_name)	\
- 	)
- 
- /* enums need to be exported to user space */
-
---nextPart6088876.MhkbZ0Pkbq--
-
-
-
+>  }
+>  
+>  /*
+> @@ -2683,6 +2695,8 @@ static void wait_sb_inodes(struct super_block *sb)
+>  		 * to preserve consistency between i_wb_list and the mapping
+>  		 * writeback tag. Writeback completion is responsible to remove
+>  		 * the inode from either list once the writeback tag is cleared.
+> +		 * At that point the i_obj_count reference will be dropped for
+> +		 * the i_wb_list reference.
+>  		 */
+>  		list_move_tail(&inode->i_wb_list, &sb->s_inodes_wb);
+>  
+> -- 
+> 2.49.0
+> 
 
