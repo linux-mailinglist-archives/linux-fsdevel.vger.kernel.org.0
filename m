@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-58724-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58725-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55734B30A24
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 02:13:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10C54B30A25
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 02:14:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E4D31D06898
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 00:14:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B99DD7BC778
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 00:12:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A6E1F4E57;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D5120EB;
 	Fri, 22 Aug 2025 00:11:28 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from neil.brown.name (neil.brown.name [103.29.64.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A4B615539A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C130156230;
 	Fri, 22 Aug 2025 00:11:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755821488; cv=none; b=bk6eX8GyiGSyYwLWgsheTW1OU22QmAByhPzGiniZbnEsiOEp/IE9jAemdqOuC1ohE51YlXFLU/CQTbzqdCo/6PCDiWYfCV8yoHpUZqOeQHV1IHA7bs1CVuWw9SVp50vnfqqFIJPRyHVfWkCHhtb7beyDtT4Yn7oECjfXKH+0haw=
+	t=1755821488; cv=none; b=Zmke0E1F3SdYdNrfioxtikplH3xBiCAM+Rtw9FfYRFxJc5cKR9toqLrFk9goKOZd1loapACMjQPam1i/9BAB5dx9MnpjtB8ZSk87+brJmEnQiuzE54hyakzpCOHlR+c3uyfeFXMrwE0Hv7/37JB90nwBS1MdPJJPiQbzid17cOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755821488; c=relaxed/simple;
-	bh=cLxOonLPhU4Ns4lppuaRfso35+0UkceNyrDxB0iS+uQ=;
+	bh=l6xkNp1lPiYCT5DKAQ0xm8yzAbNf3BW5XyqA/xo4kDI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=neSzbm0GV8pc1Z8r2RxOuehrWJpMAq6g2Qe6b5dnW3gZl1lF+srzjj1Vpm4AC4ELamhFp/jGgyuzmN6I6IlH96luo6Mp6VKHKTH3COxiUhCy1/GihrYl/RIPiqFtGcswSTZVq/PkHcSdA9aq6XkrrbU1ufGxcgA6hOOZX1OqB14=
+	 MIME-Version; b=T5bJHjNNm+4rsmQY5wIi9JfrQCSCVl4sG2clHGL6dx5dp1iy369V7c9m/4kxZpq7JdgpCK+WZYf/An86cXshpi7Tj7E3w2TogvGYND2er0u0bFmbErtvUaoTEm5kEkMbbArE2nF03aCE3/mzZJVV/JEMGrECsOX2f4POXG7V62E=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
 Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
 	by neil.brown.name with esmtp (Exim 4.95)
 	(envelope-from <mr@neil.brown.name>)
-	id 1upFND-006nbL-WB;
-	Fri, 22 Aug 2025 00:11:17 +0000
+	id 1upFNE-006nbW-Eq;
+	Fri, 22 Aug 2025 00:11:18 +0000
 From: NeilBrown <neil@brown.name>
 To: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>
 Cc: Jan Kara <jack@suse.cz>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 13/16] VFS/nfsd/cachefiles: introduce start_removing()
-Date: Fri, 22 Aug 2025 10:00:31 +1000
-Message-ID: <20250822000818.1086550-14-neil@brown.name>
+Subject: [PATCH v2 14/16] VFS: introduce start_creating_noperm() and start_removing_noperm()
+Date: Fri, 22 Aug 2025 10:00:32 +1000
+Message-ID: <20250822000818.1086550-15-neil@brown.name>
 X-Mailer: git-send-email 2.50.0.107.gf914562f5916.dirty
 In-Reply-To: <20250822000818.1086550-1-neil@brown.name>
 References: <20250822000818.1086550-1-neil@brown.name>
@@ -54,129 +54,108 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-start_removing() is similar to start_creating() to will only return a
-positive dentry and the expectation is that it will be removed.
-This is used by nfsd and cachefiles.  They are changed to also
-use end_dirop() to terminate the action begun by start_removing().
+xfs, fuse, ipc/mqueue need variants of start_creating or start_removing
+which do not check permissions.
+This patch adds _noperm versions of these functions.
 
 Signed-off-by: NeilBrown <neil@brown.name>
 ---
- fs/cachefiles/namei.c | 25 ++++++++++---------------
- fs/namei.c            | 27 +++++++++++++++++++++++++++
- fs/nfsd/nfs4recover.c | 24 +++++++-----------------
- fs/nfsd/vfs.c         | 26 ++++++++++----------------
- include/linux/namei.h |  2 ++
- 5 files changed, 56 insertions(+), 48 deletions(-)
+ fs/fuse/dir.c            | 19 +++++++---------
+ fs/namei.c               | 48 ++++++++++++++++++++++++++++++++++++++++
+ fs/xfs/scrub/orphanage.c | 11 ++++-----
+ include/linux/namei.h    |  2 ++
+ ipc/mqueue.c             |  7 ++----
+ 5 files changed, 64 insertions(+), 23 deletions(-)
 
-diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
-index 9af324473967..ddced50afb66 100644
---- a/fs/cachefiles/namei.c
-+++ b/fs/cachefiles/namei.c
-@@ -260,6 +260,7 @@ static int cachefiles_unlink(struct cachefiles_cache *cache,
-  * - File backed objects are unlinked
-  * - Directory backed objects are stuffed into the graveyard for userspace to
-  *   delete
-+ * On entry dir must be locked.  It will be unlocked on exit.
-  */
- int cachefiles_bury_object(struct cachefiles_cache *cache,
- 			   struct cachefiles_object *object,
-@@ -275,7 +276,8 @@ int cachefiles_bury_object(struct cachefiles_cache *cache,
- 	_enter(",'%pd','%pd'", dir, rep);
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index 2d817d7cab26..043896278380 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -1403,27 +1403,25 @@ int fuse_reverse_inval_entry(struct fuse_conn *fc, u64 parent_nodeid,
+ 	if (!parent)
+ 		return -ENOENT;
  
- 	if (rep->d_parent != dir) {
--		inode_unlock(d_inode(dir));
-+		dget(rep);
-+		end_dirop(rep);
- 		_leave(" = -ESTALE");
- 		return -ESTALE;
+-	inode_lock_nested(parent, I_MUTEX_PARENT);
+ 	if (!S_ISDIR(parent->i_mode))
+-		goto unlock;
++		goto put_parent;
+ 
+ 	err = -ENOENT;
+ 	dir = d_find_alias(parent);
+ 	if (!dir)
+-		goto unlock;
++		goto put_parent;
+ 
+-	name->hash = full_name_hash(dir, name->name, name->len);
+-	entry = d_lookup(dir, name);
++	entry = start_removing_noperm(dir, name);
+ 	dput(dir);
+-	if (!entry)
+-		goto unlock;
++	if (IS_ERR(entry))
++		goto put_parent;
+ 
+ 	fuse_dir_changed(parent);
+ 	if (!(flags & FUSE_EXPIRE_ONLY))
+ 		d_invalidate(entry);
+ 	fuse_invalidate_entry_cache(entry);
+ 
+-	if (child_nodeid != 0 && d_really_is_positive(entry)) {
++	if (child_nodeid != 0) {
+ 		inode_lock(d_inode(entry));
+ 		if (get_node_id(d_inode(entry)) != child_nodeid) {
+ 			err = -ENOENT;
+@@ -1451,10 +1449,9 @@ int fuse_reverse_inval_entry(struct fuse_conn *fc, u64 parent_nodeid,
+ 	} else {
+ 		err = 0;
  	}
-@@ -286,16 +288,16 @@ int cachefiles_bury_object(struct cachefiles_cache *cache,
- 			    * by a file struct.
- 			    */
- 		ret = cachefiles_unlink(cache, object, dir, rep, why);
--		dput(rep);
-+		end_dirop(rep);
+-	dput(entry);
  
--		inode_unlock(d_inode(dir));
- 		_leave(" = %d", ret);
- 		return ret;
- 	}
- 
- 	/* directories have to be moved to the graveyard */
- 	_debug("move stale object to graveyard");
--	inode_unlock(d_inode(dir));
-+	dget(rep);
-+	end_dirop(rep);
- 
- try_again:
- 	/* first step is to make up a grave dentry in the graveyard */
-@@ -745,26 +747,20 @@ static struct dentry *cachefiles_lookup_for_cull(struct cachefiles_cache *cache,
- 	struct dentry *victim;
- 	int ret = -ENOENT;
- 
--	inode_lock_nested(d_inode(dir), I_MUTEX_PARENT);
-+	victim = start_removing(&nop_mnt_idmap, dir, &QSTR(filename));
- 
--	victim = lookup_one(&nop_mnt_idmap, &QSTR(filename), dir);
- 	if (IS_ERR(victim))
- 		goto lookup_error;
--	if (d_is_negative(victim))
--		goto lookup_put;
- 	if (d_inode(victim)->i_flags & S_KERNEL_FILE)
- 		goto lookup_busy;
- 	return victim;
- 
- lookup_busy:
- 	ret = -EBUSY;
--lookup_put:
--	inode_unlock(d_inode(dir));
--	dput(victim);
-+	end_dirop(victim);
- 	return ERR_PTR(ret);
- 
- lookup_error:
--	inode_unlock(d_inode(dir));
- 	ret = PTR_ERR(victim);
- 	if (ret == -ENOENT)
- 		return ERR_PTR(-ESTALE); /* Probably got retired by the netfs */
-@@ -812,18 +808,17 @@ int cachefiles_cull(struct cachefiles_cache *cache, struct dentry *dir,
- 
- 	ret = cachefiles_bury_object(cache, NULL, dir, victim,
- 				     FSCACHE_OBJECT_WAS_CULLED);
-+	dput(victim);
- 	if (ret < 0)
- 		goto error;
- 
- 	fscache_count_culled();
--	dput(victim);
- 	_leave(" = 0");
- 	return 0;
- 
- error_unlock:
--	inode_unlock(d_inode(dir));
-+	end_dirop(victim);
- error:
--	dput(victim);
- 	if (ret == -ENOENT)
- 		return -ESTALE; /* Probably got retired by the netfs */
- 
+- unlock:
+-	inode_unlock(parent);
++	end_dirop(entry);
++ put_parent:
+ 	iput(parent);
+ 	return err;
+ }
 diff --git a/fs/namei.c b/fs/namei.c
-index 407f3516b335..27a99c276137 100644
+index 27a99c276137..34895487045e 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
-@@ -3186,6 +3186,33 @@ struct dentry *start_creating(struct mnt_idmap *idmap, struct dentry *parent,
+@@ -3213,6 +3213,54 @@ struct dentry *start_removing(struct mnt_idmap *idmap, struct dentry *parent,
  }
- EXPORT_SYMBOL(start_creating);
+ EXPORT_SYMBOL(start_removing);
  
 +/**
-+ * start_removing - prepare to remove a given name with permission checking
-+ * @idmap - idmap of the mount
++ * start_creating_noperm - prepare to create a given name without permission checking
++ * @parent - directory in which to prepare to create the name
++ * @name - the name to be created
++ *
++ * Locks are taken and a lookup in performed prior to creating
++ * an object in a directory.
++ *
++ * If the name already exists, a positive dentry is returned.
++ *
++ * Returns: a negative or positive dentry, or an error.
++ */
++struct dentry *start_creating_noperm(struct dentry *parent,
++				     struct qstr *name)
++{
++	int err = lookup_noperm_common(name, parent);
++
++	if (err)
++		return ERR_PTR(err);
++	return start_dirop(parent, name, LOOKUP_CREATE);
++}
++EXPORT_SYMBOL(start_creating_noperm);
++
++/**
++ * start_removing_noperm - prepare to remove a given name without permission checking
 + * @parent - directory in which to find the name
 + * @name - the name to be removed
 + *
 + * Locks are taken and a lookup in performed prior to removing
-+ * an object from a directory.  Permission checking (MAY_EXEC) is performed
-+ * against @idmap.
++ * an object from a directory.
 + *
 + * If the name doesn't exist, an error is returned.
 + *
@@ -184,150 +163,105 @@ index 407f3516b335..27a99c276137 100644
 + *
 + * Returns: a positive dentry, or an error.
 + */
-+struct dentry *start_removing(struct mnt_idmap *idmap, struct dentry *parent,
-+			      struct qstr *name)
++struct dentry *start_removing_noperm(struct dentry *parent,
++				     struct qstr *name)
 +{
-+	int err = lookup_one_common(idmap, name, parent);
++	int err = lookup_noperm_common(name, parent);
 +
 +	if (err)
 +		return ERR_PTR(err);
 +	return start_dirop(parent, name, 0);
 +}
-+EXPORT_SYMBOL(start_removing);
++EXPORT_SYMBOL(start_removing_noperm);
 +
  #ifdef CONFIG_UNIX98_PTYS
  int path_pts(struct path *path)
  {
-diff --git a/fs/nfsd/nfs4recover.c b/fs/nfsd/nfs4recover.c
-index f65cf7ecea6d..8d4bb22db3b7 100644
---- a/fs/nfsd/nfs4recover.c
-+++ b/fs/nfsd/nfs4recover.c
-@@ -335,20 +335,12 @@ nfsd4_unlink_clid_dir(char *name, struct nfsd_net *nn)
- 	dprintk("NFSD: nfsd4_unlink_clid_dir. name %s\n", name);
- 
- 	dir = nn->rec_file->f_path.dentry;
--	inode_lock_nested(d_inode(dir), I_MUTEX_PARENT);
--	dentry = lookup_one(&nop_mnt_idmap, &QSTR(name), dir);
--	if (IS_ERR(dentry)) {
--		status = PTR_ERR(dentry);
--		goto out_unlock;
--	}
--	status = -ENOENT;
--	if (d_really_is_negative(dentry))
--		goto out;
-+	dentry = start_removing(&nop_mnt_idmap, dir, &QSTR(name));
-+	if (IS_ERR(dentry))
-+		return PTR_ERR(dentry);
-+
- 	status = vfs_rmdir(&nop_mnt_idmap, d_inode(dir), dentry);
--out:
--	dput(dentry);
--out_unlock:
--	inode_unlock(d_inode(dir));
-+	end_dirop(dentry);
- 	return status;
- }
- 
-@@ -435,16 +427,14 @@ purge_old(struct dentry *parent, char *cname, struct nfsd_net *nn)
- 	if (nfs4_has_reclaimed_state(name, nn))
- 		goto out_free;
- 
--	inode_lock_nested(d_inode(parent), I_MUTEX_PARENT);
--	child = lookup_one(&nop_mnt_idmap, &QSTR(cname), parent);
-+	child = start_removing(&nop_mnt_idmap, parent, &QSTR(cname));
- 	if (!IS_ERR(child)) {
- 		status = vfs_rmdir(&nop_mnt_idmap, d_inode(parent), child);
- 		if (status)
- 			printk("failed to remove client recovery directory %pd\n",
- 			       child);
--		dput(child);
-+		end_dirop(child);
+diff --git a/fs/xfs/scrub/orphanage.c b/fs/xfs/scrub/orphanage.c
+index 9c12cb844231..aa2f747039e8 100644
+--- a/fs/xfs/scrub/orphanage.c
++++ b/fs/xfs/scrub/orphanage.c
+@@ -152,11 +152,10 @@ xrep_orphanage_create(
  	}
--	inode_unlock(d_inode(parent));
  
- out_free:
- 	kfree(name.data);
-diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-index 5c809cbc05fe..5bdd068dbdd7 100644
---- a/fs/nfsd/vfs.c
-+++ b/fs/nfsd/vfs.c
-@@ -2013,7 +2013,7 @@ nfsd_unlink(struct svc_rqst *rqstp, struct svc_fh *fhp, int type,
- {
- 	struct dentry	*dentry, *rdentry;
- 	struct inode	*dirp;
--	struct inode	*rinode;
-+	struct inode	*rinode = NULL;
- 	__be32		err;
- 	int		host_err;
- 
-@@ -2032,24 +2032,21 @@ nfsd_unlink(struct svc_rqst *rqstp, struct svc_fh *fhp, int type,
- 
- 	dentry = fhp->fh_dentry;
- 	dirp = d_inode(dentry);
--	inode_lock_nested(dirp, I_MUTEX_PARENT);
- 
--	rdentry = lookup_one(&nop_mnt_idmap, &QSTR_LEN(fname, flen), dentry);
-+	rdentry = start_removing(&nop_mnt_idmap, dentry, &QSTR_LEN(fname, flen));
-+
- 	host_err = PTR_ERR(rdentry);
- 	if (IS_ERR(rdentry))
--		goto out_unlock;
-+		goto out_drop_write;
- 
--	if (d_really_is_negative(rdentry)) {
--		dput(rdentry);
--		host_err = -ENOENT;
--		goto out_unlock;
--	}
--	rinode = d_inode(rdentry);
- 	err = fh_fill_pre_attrs(fhp);
- 	if (err != nfs_ok)
- 		goto out_unlock;
- 
-+	rinode = d_inode(rdentry);
-+	/* Prevent truncation until after locks dropped */
- 	ihold(rinode);
-+
- 	if (!type)
- 		type = d_inode(rdentry)->i_mode & S_IFMT;
- 
-@@ -2071,10 +2068,10 @@ nfsd_unlink(struct svc_rqst *rqstp, struct svc_fh *fhp, int type,
+ 	/* Try to find the orphanage directory. */
+-	inode_lock_nested(root_inode, I_MUTEX_PARENT);
+-	orphanage_dentry = lookup_noperm(&QSTR(ORPHANAGE), root_dentry);
++	orphanage_dentry = start_creating_noperm(root_dentry, &QSTR(ORPHANAGE));
+ 	if (IS_ERR(orphanage_dentry)) {
+ 		error = PTR_ERR(orphanage_dentry);
+-		goto out_unlock_root;
++		goto out_dput_root;
  	}
- 	fh_fill_post_attrs(fhp);
  
--	inode_unlock(dirp);
--	if (!host_err)
-+out_unlock:
-+	end_dirop(rdentry);
-+	if (!err && !host_err)
- 		host_err = commit_metadata(fhp);
--	dput(rdentry);
- 	iput(rinode);    /* truncate the inode here */
- 
- out_drop_write:
-@@ -2092,9 +2089,6 @@ nfsd_unlink(struct svc_rqst *rqstp, struct svc_fh *fhp, int type,
+ 	/*
+@@ -170,7 +169,7 @@ xrep_orphanage_create(
+ 					     orphanage_dentry, 0750);
+ 		error = PTR_ERR(orphanage_dentry);
+ 		if (IS_ERR(orphanage_dentry))
+-			goto out_unlock_root;
++			goto out_dput_orphanage;
  	}
+ 
+ 	/* Not a directory? Bail out. */
+@@ -200,9 +199,7 @@ xrep_orphanage_create(
+ 	sc->orphanage_ilock_flags = 0;
+ 
+ out_dput_orphanage:
+-	dput(orphanage_dentry);
+-out_unlock_root:
+-	inode_unlock(VFS_I(sc->mp->m_rootip));
++	end_dirop_mkdir(orphanage_dentry, root_dentry);
+ out_dput_root:
+ 	dput(root_dentry);
  out:
- 	return err != nfs_ok ? err : nfserrno(host_err);
--out_unlock:
--	inode_unlock(dirp);
--	goto out_drop_write;
- }
- 
- /*
 diff --git a/include/linux/namei.h b/include/linux/namei.h
-index 7371f586e318..5feb92b84d84 100644
+index 5feb92b84d84..d765a23c87e4 100644
 --- a/include/linux/namei.h
 +++ b/include/linux/namei.h
-@@ -83,6 +83,8 @@ struct dentry *lookup_one_positive_unlocked(struct mnt_idmap *idmap,
- 
- struct dentry *start_creating(struct mnt_idmap *idmap, struct dentry *parent,
+@@ -85,6 +85,8 @@ struct dentry *start_creating(struct mnt_idmap *idmap, struct dentry *parent,
  			      struct qstr *name);
-+struct dentry *start_removing(struct mnt_idmap *idmap, struct dentry *parent,
-+			      struct qstr *name);
+ struct dentry *start_removing(struct mnt_idmap *idmap, struct dentry *parent,
+ 			      struct qstr *name);
++struct dentry *start_creating_noperm(struct dentry *parent, struct qstr *name);
++struct dentry *start_removing_noperm(struct dentry *parent, struct qstr *name);
  
  void end_dirop(struct dentry *de);
  void end_dirop_mkdir(struct dentry *de, struct dentry *parent);
+diff --git a/ipc/mqueue.c b/ipc/mqueue.c
+index 093551fe66a7..407ef49f2dbc 100644
+--- a/ipc/mqueue.c
++++ b/ipc/mqueue.c
+@@ -913,13 +913,11 @@ static int do_mq_open(const char __user *u_name, int oflag, umode_t mode,
+ 		goto out_putname;
+ 
+ 	ro = mnt_want_write(mnt);	/* we'll drop it in any case */
+-	inode_lock(d_inode(root));
+-	path.dentry = lookup_noperm(&QSTR(name->name), root);
++	path.dentry = start_creating_noperm(root, &QSTR(name->name));
+ 	if (IS_ERR(path.dentry)) {
+ 		error = PTR_ERR(path.dentry);
+ 		goto out_putfd;
+ 	}
+-	path.mnt = mntget(mnt);
+ 	error = prepare_open(path.dentry, oflag, ro, mode, name, attr);
+ 	if (!error) {
+ 		struct file *file = dentry_open(&path, oflag, current_cred());
+@@ -928,13 +926,12 @@ static int do_mq_open(const char __user *u_name, int oflag, umode_t mode,
+ 		else
+ 			error = PTR_ERR(file);
+ 	}
+-	path_put(&path);
+ out_putfd:
+ 	if (error) {
+ 		put_unused_fd(fd);
+ 		fd = error;
+ 	}
+-	inode_unlock(d_inode(root));
++	end_dirop(path.dentry);
+ 	if (!ro)
+ 		mnt_drop_write(mnt);
+ out_putname:
 -- 
 2.50.0.107.gf914562f5916.dirty
 
