@@ -1,216 +1,162 @@
-Return-Path: <linux-fsdevel+bounces-58753-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58754-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5653B31395
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 11:42:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82A75B31396
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 11:42:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75CA4B030BC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 09:37:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A1021D20D69
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 09:37:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C08EC2FE56C;
-	Fri, 22 Aug 2025 09:30:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FA6B2F1FC4;
+	Fri, 22 Aug 2025 09:31:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RzmtH7sl"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rNFc+wEr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67D082FDC45;
-	Fri, 22 Aug 2025 09:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6F302F28ED
+	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Aug 2025 09:31:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755855032; cv=none; b=syPTQHHtg0uFVdr8cxmTdpz4eF2D4Z/LfyfgsEHL/WrsukuPstXiSCIA/ccqo8c1VyCgzM92BlqdGIqnAZvxNAb2wllKs7NZQLLMl/Bd5l5HD3MzwfXqcV37uDnzcGgHrRtkTSaVnWqq1UmREi27cvyXcmuIqES8pCI6B7+bpzg=
+	t=1755855073; cv=none; b=RKkFcpVf5Tu03eRJClUjfkzJyvt9bCYR547+Hd8cwB2b8EVw8KJt9D/vOzr5duzLz+iozCo3e/D2qtgGKiQsLn+tS9wUGP+9koK/uRan1m30r5n6XgXanSCtITxo5nxt9P3fN9D9WfS7SOtTKq8PISNPN096HNSo9/M8JM/SEMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755855032; c=relaxed/simple;
-	bh=AmRI0+n40n0XBbEDIk0Yz7g74l6q6EXrVnNBDvSy+qQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Plu7oAG2r7T01tWtcVr2f8S9E9GWC+GvceViWfUZFgK0+A55uZzK+KN2fDrYdtoAATwlruV3pcq3KVcExmxPBBWGW6/hcL2TA7yhYKGaT1QbTG62tCGH+MvH1mbb3l0f2jebusBo3z1DhAxEamh62A/a6dFA01ko+3uDy3J6Lbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RzmtH7sl; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-6188b5ad4f0so2728457a12.0;
-        Fri, 22 Aug 2025 02:30:30 -0700 (PDT)
+	s=arc-20240116; t=1755855073; c=relaxed/simple;
+	bh=0208ISyKu10cUE7W9YgFPUpUsfgz36ubVskvnrbBoYI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JduARQ4nXHr7BPk/hojALQTnWvfb4K8xpf+HHJBS4VsuYM7EM/KwbFv81joQpn6l0MEjY+50Nkazp6aDF+5tAWcdzv+l3RNnIVswvOwEq327SFz9SriFkoE3VmcD8KLyCk9YPF0SMvZnaOE0ob9P4hda7LT/6PdL5Q2LgYxs+QU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rNFc+wEr; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3b9dc5c8ee7so1709161f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Aug 2025 02:31:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755855029; x=1756459829; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QA11vh0vytRcgWuvXCyfPl/I98dGtmkbOJTfVhMA26s=;
-        b=RzmtH7sls8HuXxkHGFV4WyQKNKl3XY+TQDC+83reXwww3R12MFy57fP/wToipFtt6A
-         wRTV7axJmj6yyq68bVu4nYQfWAMdB2m9TY4+lWBSCCf+Ns2X3QXZ3XsT74i9hsexoBF+
-         I6JCWulEGapGHwCYFnC5qxcZticYPIPMUlhlp7hdMerrw09jRNO4qd81G55QG7bg3bCL
-         qQM8xXh/KR75oESpge4DGZkIyHaoY75fcN1/zw19VfVq96+QwLHGhRYx5mrXPMDV3KCi
-         e7Y5DHl+RBcsL3EaRPhKRQWAIisOJusOopq9SUvMHmFT3tiH+cHZjtXsfLL/xPUhWUJj
-         3Z2Q==
+        d=linaro.org; s=google; t=1755855065; x=1756459865; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xg8+uWPzi2Mjr9MpPBcmahRsPpi30DI4NUSUxz6VBQs=;
+        b=rNFc+wEr/fsbRkz67OsdEajGw6jjOXw3VflRwkTLgv6k/n5SIIjfOwyTaphWDuM+5a
+         lbdtpXzIZflwbqnFv5bj5dx2lsIukjcdAaGIjJsC9k0ItbHhD7qS1zgif+0ZOSZoG98d
+         wTncx7mtA2GuuvmG3roiJW0/quoI0P66YeuS97CPAPkzYPyY/Mo/3tywcztd/dSDEUaK
+         z5AbbP3gjmk2y3AjLLc+jJx+v8bYJOllxbgHGmZYAFZ/CJJUWpVXemUaktux5AVeqt1D
+         HySCfOPBDVyj4hXf1F9ogBjKTsKZyOKzQAREk5ImrFS53hFpli/4MNLRyfZfdIQUbwGk
+         kO2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755855029; x=1756459829;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QA11vh0vytRcgWuvXCyfPl/I98dGtmkbOJTfVhMA26s=;
-        b=cFSTYu8BgsjeFMggHGPSOsTmz/8UYVcqyUt3a0IDp6P4yBtu0DFuElTeRjJAPs8BEv
-         DmaaoPG6rJ91x0n/ugaOGDEBwXEGB61DvIoOK5Nycgh1p+PFvN5zI9ie3oMJeaiikPjU
-         P5f6J6a3sRv4P29v6Zo1gVM/vh35bgz3nw1BoBSW+BVHomTN3Jd5EKER0H4WZo+lSkDm
-         oh2O4lbpDSLNFXN3Ja6IJZY7gUJN6oOLHNRWbDjBsDS6M1kSStbciQCocvms5tkikjs+
-         oFGKBhQXsyZ0+VKMqJO+tvTGKzsbKD+ISmxFYDtmfUDerrLaE9agfK2FKWIRSjZbRnub
-         EcUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVNkJeFi0S0/MM1/5m0KbwvBDaNAA3lEpgxfPvVGJ96TeFYKVr+YshrmIr76qtm2ajanzdfqS/icdEGPmLL@vger.kernel.org, AJvYcCVNkX7ivCguk2HnIGqwJT62An7NOTlfFsJBkPT/jQEPjUUBUORD8dXt601DnRMVW6U87VBpGbOfuvP+fxbt@vger.kernel.org
-X-Gm-Message-State: AOJu0YzStv/QIj1Nwrny/pPJtFGP6g5RrtqB+B0tihymfFCWObuIVdAQ
-	JTrP41SJUnYd3JV3+LKvBNSr6BdE7wOY4nbeYqeetr1Mn4Uc3IeaERZ99/FhGbn5RHcTu5fM6jt
-	13pgcvvRGLkgReedeUIpjkYcv9XQTbOE=
-X-Gm-Gg: ASbGncucCiqfYks1JKiaijTjw3g5tMIlLll9VCJwJvcExDdg+lxP4tSYfvS2w7MACUr
-	qu+kUVLVG5v6yGBNpA6ndSvk35EsH0vKGjdNbPHPQv/zb0XVx3h7/hmrfDA0ejiQR1TTnYjx19n
-	3Yk9FH3jougdEdoWdh8EEUkUmXJ5KzA+OguQ7n0WfIDPM74sXWl8e0H069zFWMbQOj4s1EfoUFn
-	uoQ7a0=
-X-Google-Smtp-Source: AGHT+IF42KkZ2c0sI4b9Dq+zLsMgfB67YMP8ZCw2mWLwKxZ00wxQHbBagdfyv/4Eo0By453jWgy8EGcritB0Mpv9/TE=
-X-Received: by 2002:a17:907:1c1a:b0:afd:e6df:3d4f with SMTP id
- a640c23a62f3a-afe28fea97dmr200343966b.5.1755855028421; Fri, 22 Aug 2025
- 02:30:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755855065; x=1756459865;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Xg8+uWPzi2Mjr9MpPBcmahRsPpi30DI4NUSUxz6VBQs=;
+        b=wEYtJR+1V/lMU6RHYD0fYaV4RYwb6coME1WejAzRH/iTIuXzKbOJ72/8ipAFWwtEX8
+         qPdzsGy7mk8mbWju4P5R/PehnLT8WYMv3oYrRyVkC3Mu/NWRBE8FuUDBgMv+su2+SiJ2
+         5ZaAK5n64i0oE3c/tfspI6jCAuc7cmSKE8ufnjMe+/YzcebmFECj90toDGJ2OK8M55uX
+         65wyHKSpnj78bdGkYqmq8mK8GkJM7KSrhiDZMrfQtiR7X9Vk6R3NXAbaoRJn5adrnlAs
+         WJAuEt3fQF82jNGQpJZbYsr1Gdcf0aIFHOdzvaR5pViKEglcke3kBEwGmRZfy2Dw6Ugm
+         cFqw==
+X-Forwarded-Encrypted: i=1; AJvYcCU7oimxgnZtLb7yd87H6ix8QU8oU42yeRZ0Y5oxnZgO7dOfdZC5zK6dy4t0yBA4g0gklGRUTi6rAtYxZEmC@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw39spVPjrcgj3o50M8duKzUgfskGhl25YeOCzkPuB2cWWFVT19
+	QGNe0Yy5S4TPZD/X7oNcNzP6G7e47BstSdFAuqMhmxMZ2mIp5DtqWSXI2D1WvwHKKog=
+X-Gm-Gg: ASbGncv8gjfqW+Bie8CA07MxyQwhsahDkj5LuvEF69cnevUefUPzIPCq6h8I/8qqaGM
+	vpHLTdV15vWMOOZxnSe68qxDdYUdBMzBW9tpuweFQlOU7/wFoVcaY4ZF2IIZRhURb+Y1aJLshDY
+	k2zv1VnnkAL11pBNcrvxE/JN7DYq2WJmoyqgbULv4dr81xSE3zu8RnbgquUwvdiANamPp5r7TGu
+	F/pm4DKSeRxkbYCElMcPkb5MTh+9Vesnf8iRvlazBP6DNbKdd3uX3B9j9FfT1NfK1legrAORFef
+	PqxF49mGb0st2tA41rWLMSe+xMD7Ut5PWNGWuNohjWIl8M6zaJ02lrcaPjMo6ne0TEjXBcW2Yzb
+	czjdGdJ4Z5DoC0NaBAXfs8lQEpTE=
+X-Google-Smtp-Source: AGHT+IETQifX60xNpED57w605gzuRtVMT1h5myncjmf4CiJxMRcoa/HpI34Al4mQ3T46Kr36eWGX/Q==
+X-Received: by 2002:a05:6000:18ad:b0:3b8:fb31:a42d with SMTP id ffacd0b85a97d-3c5dc6385e1mr1345579f8f.34.1755855065462;
+        Fri, 22 Aug 2025 02:31:05 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3c598e067b1sm3192314f8f.59.2025.08.22.02.31.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Aug 2025 02:31:04 -0700 (PDT)
+Date: Fri, 22 Aug 2025 12:31:00 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>,
+	Zhang Yi <yi.zhang@huaweicloud.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+	achill@achill.org, linux-ext4 <linux-ext4@vger.kernel.org>,
+	linux-fsdevel@vger.kernel.org, Joseph Qi <jiangqi903@gmail.com>,
+	Jan Kara <jack@suse.cz>, Theodore Ts'o <tytso@mit.edu>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Ben Copeland <benjamin.copeland@linaro.org>
+Subject: Re: [PATCH 6.16 000/564] 6.16.2-rc2 review
+Message-ID: <aKg41GMffk9t1p56@stanley.mountain>
+References: <20250819122844.483737955@linuxfoundation.org>
+ <CA+G9fYsjac=SLhzVCZqVHnHGADv1KmTAnTdfcrnhnhcLuko+SQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822000818.1086550-1-neil@brown.name> <20250822000818.1086550-8-neil@brown.name>
-In-Reply-To: <20250822000818.1086550-8-neil@brown.name>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 22 Aug 2025 11:30:15 +0200
-X-Gm-Features: Ac12FXyhOIFCzZv3P0etaYzEGIILa_RfGf74HnMQksOoAHIt4QBZGVkYhr2T5cU
-Message-ID: <CAOQ4uxj37GYrg=wfPRSr-7meK_QOpRbefJ_sShuVpzVfb2iisQ@mail.gmail.com>
-Subject: Re: [PATCH v2 07/16] VFS: introduce end_dirop() and end_dirop_mkdir()
-To: NeilBrown <neil@brown.name>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+G9fYsjac=SLhzVCZqVHnHGADv1KmTAnTdfcrnhnhcLuko+SQ@mail.gmail.com>
 
-On Fri, Aug 22, 2025 at 2:39=E2=80=AFAM NeilBrown <neil@brown.name> wrote:
->
-> end_dirop() is the partner of start_dirop().  It drops the lock and
+On Wed, Aug 20, 2025 at 08:06:01PM +0530, Naresh Kamboju wrote:
+> On Tue, 19 Aug 2025 at 18:02, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > This is the start of the stable review cycle for the 6.16.2 release.
+> > There are 564 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Thu, 21 Aug 2025 12:27:23 +0000.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.16.2-rc2.gz
+> > or in the git tree and branch at:
+> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.16.y
+> > and the diffstat can be found below.
+> >
+> > thanks,
+> >
+> > greg k-h
+> 
+> As I have reported last week on 6.16.1-rc1 as regression is
+> still noticed on 6.16.2-rc2.
+> 
+> WARNING: CPU: 0 PID: 7012 at fs/jbd2/transaction.c:334 start_this_handle
+> 
+> Full test log:
+> ------------[ cut here ]------------
+> [  153.965287] WARNING: CPU: 0 PID: 7012 at fs/jbd2/transaction.c:334
+> start_this_handle+0x4df/0x500
 
-If they are partners I think it is better to introduce them together
-in the same patch.
+The problem is that we only applied the last two patches in:
+https://lore.kernel.org/linux-ext4/20250707140814.542883-1-yi.zhang@huaweicloud.com/
 
-This goes for all the pairs that your series introduces.
+Naresh is on vacation until Monday, but he tested the patchset on
+linux-next and it fixed the issues.  So we need to cherry-pick the
+following commits.
 
-It simply makes sense from review POV to be able to
-verify that all callers have been properly converted.
+1bfe6354e097 ext4: process folios writeback in bytes
+f922c8c2461b ext4: move the calculation of wbc->nr_to_write to mpage_folio_done()
+ded2d726a304 ext4: fix stale data if it bail out of the extents mapping loop
+2bddafea3d0d ext4: refactor the block allocation process of ext4_page_mkwrite()
+e2c4c49dee64 ext4: restart handle if credits are insufficient during allocating blocks
+6b132759b0fe ext4: enhance tracepoints during the folios writeback
+95ad8ee45cdb ext4: correct the reserved credits for extent conversion
+bbbf150f3f85 ext4: reserved credits for one extent during the folio writeback
+57661f28756c ext4: replace ext4_writepage_trans_blocks()
 
-> releases the reference on the dentry.
-> It *is* exported and can be used by all callers.
->
-> As vfs_mkdir() drops the dentry on error we cannot use end_dirop() as
-> that won't unlock when the dentry IS_ERR().  For those cases we have
-> end_dirop_mkdir().
->
-> end_dirop() can always be called on the result of start_dirop(), but not
-> after vfs_mkdir().
-> end_dirop_mkdir() can only be called on the result of start_dirop() if
-> that was not an error, and can also be called on the result of
-> vfs_mkdir().
+They all apply cleanly to 6.16.3-rc1.
 
-These are very confusing semantics.
-I doubt these can hold for a long time,
-but I guess if this is temporary then maybe...
+regards,
+dan carpenter
 
->
-> We can change vfs_mkdir() to drop the lock when it drops the dentry,
-> end_dirop_mkdir() can be discarded.
 
-Fixed some typos above ^
-
->
-> Signed-off-by: NeilBrown <neil@brown.name>
-> ---
->  fs/namei.c            | 50 +++++++++++++++++++++++++++++++++++--------
->  include/linux/namei.h |  3 +++
->  2 files changed, 44 insertions(+), 9 deletions(-)
->
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 4f1eddaff63f..8121550f20aa 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -2778,6 +2778,43 @@ static struct dentry *start_dirop(struct dentry *p=
-arent, struct qstr *name,
->         return dentry;
->  }
->
-> +/**
-> + * end_dirop - signal completion of a dirop
-> + * @de - the dentry which was returned by start_dirop or similar.
-> + *
-> + * If the de is an error, nothing happens. Otherwise any lock taken to
-> + * protect the dentry is dropped and the dentry itself is release (dput(=
-)).
-> + */
-> +void end_dirop(struct dentry *de)
-> +{
-> +       if (!IS_ERR(de)) {
-> +               inode_unlock(de->d_parent->d_inode);
-> +               dput(de);
-> +       }
-> +}
-> +EXPORT_SYMBOL(end_dirop);
-> +
-> +/**
-> + * end_dirop_mkdir - signal completion of a dirop which could have been =
-vfs_mkdir
-> + * @de - the dentry which was returned by start_dirop or similar.
-> + * @parent - the parent in which the mkdir happened.
-> + *
-> + * Because vfs_mkdir() dput()s the dentry on failure, end_dirop() cannot=
- be
-> + * used with it.  Instead this function must be used, and it must not be=
- caller
-> + * if the original lookup failed.
-> + *
-> + * If de is an error the parent is unlocked, else this behaves the same =
-as
-> + * end_dirop().
-> + */
-> +void end_dirop_mkdir(struct dentry *de, struct dentry *parent)
-> +{
-> +       if (IS_ERR(de))
-> +               inode_unlock(parent->d_inode);
-> +       else
-> +               end_dirop(de);
-> +}
-> +EXPORT_SYMBOL(end_dirop_mkdir);
-> +
->  /* does lookup, returns the object with parent locked */
->  static struct dentry *__kern_path_locked(int dfd, struct filename *name,=
- struct path *path)
->  {
-> @@ -4174,9 +4211,8 @@ static struct dentry *filename_create(int dfd, stru=
-ct filename *name,
->
->         return dentry;
->  fail:
-> -       dput(dentry);
-> +       end_dirop(dentry);
->         dentry =3D ERR_PTR(error);
-> -       inode_unlock(path->dentry->d_inode);
->  out_drop_write:
->         if (!error)
->                 mnt_drop_write(path->mnt);
-> @@ -4198,9 +4234,7 @@ EXPORT_SYMBOL(kern_path_create);
->
->  void done_path_create(struct path *path, struct dentry *dentry)
->  {
-> -       if (!IS_ERR(dentry))
-> -               dput(dentry);
-> -       inode_unlock(path->dentry->d_inode);
-> +       end_dirop_mkdir(dentry, path->dentry);
-
-Like here we have end_dirop_mkdir() after operations that
-are certainly not mkdir.
-
-It's setting developers to fail IMO.
-
-Thanks,
-Amir.
 
