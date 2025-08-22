@@ -1,205 +1,296 @@
-Return-Path: <linux-fsdevel+bounces-58743-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58744-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7C4FB31157
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 10:14:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B8288B311B3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 10:25:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3591A1D02051
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 08:09:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96E581CC3FD1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 08:22:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A2C72EAB6F;
-	Fri, 22 Aug 2025 08:09:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84AE82EB5A6;
+	Fri, 22 Aug 2025 08:22:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="bilvgLxQ"
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="BVgBJakd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CFDB26C393
-	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Aug 2025 08:09:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45B3021A92F
+	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Aug 2025 08:22:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755850149; cv=none; b=G/zxA4NQueiPCdPYuBtn7DuqBHERSx2/zudrya+WofkFSXjDi2smLRJAkGAxIshBLAN73UYfNbheUTigz+fFeWArhtHZY1eFvZx2WNNlhnnjqxkOUvlhf1rJ7Pcc9xOVL/eXAtY7uBn202TcXT4JVT7HlrLUNJCvIgc3aOiOjmY=
+	t=1755850939; cv=none; b=g0tNFjzLI9e9UYbXhmd19k2nS0PA9V68YLg+DwANrFBn6GjPOR9FXpajVV8t++1jvSCDZZb5cFjclGB4nfnJ5KkSgj1KpFZPna/Dq8dIH93QhxCO9v9j5mbRVS2z9cSbWuNsi3ZH5OHy383iwzBPm4oiCZ4ElbWVDM90XUsW07Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755850149; c=relaxed/simple;
-	bh=qCvhZSDve372n/Nzp1I1h2coPGZsX8ZE4OtxRB5iLRY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=CVDA6rdgGlC2kRcyBeV53CV0u4T4vf5XKUW6GOZXddnuT2yIkacPBI4oSWofAkLZWn4C8MqNp9SNTQRxkVDOaL45mHNfJU2qOZJtYQxxN8k1DAZaV11xdb0mlU0ysV+oQQmi272galS/Dxh8n3k27sAMnUYLkNw4ImmyfBFiZGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=bilvgLxQ; arc=none smtp.client-ip=198.37.111.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1755850146;
-	bh=qCvhZSDve372n/Nzp1I1h2coPGZsX8ZE4OtxRB5iLRY=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=bilvgLxQunarJ4qrF126MRDQ5cJkIsDr1OIJI+XEqvCi3LrMspQTJu/AntSF3H8iW
-	 EjBBtpRI+doDZRzu2Z17VdpKrxsueeehfPr7PHZT06uGCJKLi4oavuguaFQ8O+0r9d
-	 0BTolpxsTky5+FolwdnsDGwQlpRRN8k2HTet3VhI=
-Received: from [IPv6:2a00:23c8:101e:bb01:5bfe:95b6:ba99:a97b] (unknown [IPv6:2a00:23c8:101e:bb01:5bfe:95b6:ba99:a97b])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519)
-	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id D59221C00A4;
-	Fri, 22 Aug 2025 04:09:05 -0400 (EDT)
-Message-ID: <940ac5ad8a6b1daa239d748e8f77479a140b050d.camel@HansenPartnership.com>
-Subject: Re: [MAINTAINER SUMMIT] Adding more formality around feature
- inclusion and ejection
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: ksummit@lists.linux.dev, linux-fsdevel@vger.kernel.org
-Date: Fri, 22 Aug 2025 09:09:04 +0100
-In-Reply-To: <20250821203407.GA1284215@mit.edu>
-References: 
-	<fc0994de40776609928e8e438355a24a54f1ad10.camel@HansenPartnership.com>
-	 <20250821203407.GA1284215@mit.edu>
-Autocrypt: addr=James.Bottomley@HansenPartnership.com;
- prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3 
+	s=arc-20240116; t=1755850939; c=relaxed/simple;
+	bh=9ockR9/UqGDJ7YDW+57JW/6GHiulGWCbF/dbUijcd30=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tPd9S59JVhD62yYFys9ibiBhR6HEaX3Q8uabK6M3H+q2Vnwrqlkbo1CyrF6BXWV4OI1dF2PDpHtDFfToMfFUNpIzUffFMRCWNqv5zAdx9nRdeW7AybVXVeavrHs3+E0amQ7yJfRZ+WKGJrHL04EAflbM7Uygq+2Dht34Ty4hsYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=BVgBJakd; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-245f19a324bso17415985ad.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Aug 2025 01:22:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1755850936; x=1756455736; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7B+ym3G57Ia0gA7b5M2w0v/DPMFIwfx3MWwyn0oTnOk=;
+        b=BVgBJakdEnYu0R+r4KHj+p+2/NGUna6XWXiHpRfP9wK8c3dn0Dv0NqE7SePPEZ9omi
+         w+il8xtRs4reGoMC9ge2we84brfLGUjsHDnQdAxjd+yT4mvagVwFQ1dZj31/ykG/XavJ
+         OvcS0fNSjEdRoli+Q4SohIwCAgeIJxdhF5Hdh3V1ZBLny293n8YWijCWNW34uNBDqJjb
+         oKgxkkRagGVSigzeQNnxFNlqjfKtwtV9c0F9oOhBjvEw2j5n4Og8hIEiqQx8QygojFGd
+         m9CKlbnqCtRb6D6KjJSYnsfambv4c/fgurXejUAwzqukq1fNrCyRxYm6oT8Nm+r/X/s2
+         AkIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755850936; x=1756455736;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=7B+ym3G57Ia0gA7b5M2w0v/DPMFIwfx3MWwyn0oTnOk=;
+        b=LLgtGysy9xHhZpyA/ALi/e0kw9gB9/P5zW/a2RFURVveGu1GtwNaR3z8CDZEBA8Zz7
+         ROIagLo7vg28wts9rQhGcCxAQdD3/4/yq2/mOnK0NC6caVtvHsfO1SoK2l1k4LQzIjT2
+         P/opLRfQhAh2I4P9ix5NNNK0RABTRT/0mnyVUos+bFEygKZHvidAsVZzhFu8EfF/rUG9
+         OynepEkAOCISoLun1wGNU8XTVXiHovxVPKzJJ6605Pu12b/OCSyoxPhELelKgZduMXi1
+         1n1vumYMT9kVINKAYmU48lesP+A2aok4N+YEenaDx8i+h/TRlxTBl2Q7GutNqFjwbe7g
+         UDeg==
+X-Gm-Message-State: AOJu0YwuTC6C6wsx23j4385xEVk9qWL8XcDVPSNbCOhgtUm7YCk8hh96
+	A532WDp566a35LDgTc9TNo4i682p/tVbUfTyetOzDx74Wf9Py0CRdamkEt3zwpho/Ic=
+X-Gm-Gg: ASbGncuLAlp8cafAnRm7pCQ1G/mqp7yuK4FbaSMmk0Yg+bb+aHweV87it5K41k8ISjv
+	0tnoUFPi+eJJxDq1tRM7OUEjBzbmZSt55kySg4UNbzpfqrWkLu6sUe7dq6p7HmEGDTp+UiGKiNd
+	BNuUl+ReLH9tidRLpenGgcoMrO1HZEcf2ThHdJd+Uhgdwh7FEcZO3mWWamZSG16aN+90oaKIsvW
+	2hKPFNd2Nokeeodf5R+vItZsriqb+3xNWVoa13xto2Wn+IsHmmFoBDgMI/G3UJ/sS39vFgKZha2
+	kHhbpvu3IbzlbJjKLs6pN8W5tqBAMojTLVfeFsITEIUhjT66gY7OVpk37dUcXjD/hi3mExEXbxl
+	19QkPWHSi9K9pV8Te2hCXS02jEjfRIjtETYm5DBIM0nk2otHG7cn+mrh7ZxhwsvD4046NeBE=
+X-Google-Smtp-Source: AGHT+IHA3KlrKcHXxuSYhV08ESuEZcmN965/xf1VGEqc9csUX32ZI75YP7zuuOvOsZxoR4o3CXJJ4A==
+X-Received: by 2002:a17:902:db0c:b0:245:f2c2:650c with SMTP id d9443c01a7336-2462edeec4dmr30370225ad.18.1755850936362;
+        Fri, 22 Aug 2025 01:22:16 -0700 (PDT)
+Received: from [10.88.210.107] ([61.213.176.57])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed4c7489sm76648585ad.70.2025.08.22.01.22.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 22 Aug 2025 01:22:15 -0700 (PDT)
+Message-ID: <f1ff9656-6633-4a32-ab32-9ee60400b9b0@bytedance.com>
+Date: Fri, 22 Aug 2025 16:22:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [External] Re: [PATCH] memcg: Don't wait writeback completion
+ when release memcg.
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
+ linux-mm@kvack.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
+ jack@suse.cz, hannes@cmpxchg.org, mhocko@kernel.org,
+ roman.gushchin@linux.dev, shakeel.butt@linux.dev, muchun.song@linux.dev,
+ axboe@kernel.dk
+References: <20250820111940.4105766-1-sunjunchao@bytedance.com>
+ <20250820111940.4105766-4-sunjunchao@bytedance.com>
+ <aKY2-sTc5qQmdea4@slm.duckdns.org>
+ <CAHSKhtf--qn3TH3LFMrwqb-Nng2ABwV2gOX0PyAerd7h612X5Q@mail.gmail.com>
+ <aKdQgIvZcVCJWMXl@slm.duckdns.org>
+ <CAHSKhtdhj-AuApc8yw+wDNNHMRH-XNMVD=8G7Mk_=1o2FQASQg@mail.gmail.com>
+ <aKds9ZMUTC8VztEt@slm.duckdns.org>
+From: Julian Sun <sunjunchao@bytedance.com>
+In-Reply-To: <aKds9ZMUTC8VztEt@slm.duckdns.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 2025-08-21 at 16:34 -0400, Theodore Ts'o wrote:
-> On Thu, Aug 21, 2025 at 09:56:15AM +0100, James Bottomley wrote:
-> > I think the only point of agreement on this topic will be that how
-> > bcachefs was handled wasn't correct at many levels.=C2=A0 I think this
-> > shows
-> > we need more formality around feature inclusion, including a
-> > possible
-> > probationary period and even things like mentorship and we
-> > definitely
-> > need a formal process that extends beyond Linus for deciding we can
-> > no
-> > longer work with someone any more.
->=20
-> I think we are conflating three different things in this discussion
-> thread, and it would be helpful if we separated them out.
->=20
-> =C2=A0 1.=C2=A0 What is the process by which a particular feature be incl=
-uded
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 or ejected?
-> =C2=A0 2.=C2=A0 What is the process by which a developer should be exclud=
-ed
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 from the deevlopment com=
-munity?=C2=A0 And this goes beyond
-> Code of Conduct violations, but in the case of a maintainer,
-> when that person has displayed toxic tendencies which are
-> sufficiently bad that other deevlopersa and maintainers refuse to
-> work with the individual, and when that person has been accused of
-> promoting a toxic environmet which is harming the entire
-> community?
-> =C2=A0 3.=C2=A0 The question of maintainer mentorship, which is very diff=
-erent
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 from (2) as there are a =
-large set of skills which a much
-> broader
-> front including avoiding maintainer burnout, the product management
-> side of being a maintainer (e.g. working with companies to
-> motivate them to invest in a featrue which benefits not only the
-> companies' business interest, but the community as a whole),
-> managing volunteer, etc.
->=20
-> (2) is a very hard problem, and so there is a tendency to focus on
-> solving problems (1) and (2).=C2=A0 However, using bcachefs and its
-> maintainera as a motivating case for solutions to address (1) and (3)
-> very likely going to result in skewing the discussion around the best
-> ways of addressing (1) and (3).
+On 8/22/25 3:01 AM, Tejun Heo wrote:
 
-I agree that 1 (at least for inclusion) and 3 are pretty much in hand:
-1 runs by itself naturally and Steve wants to do 3.
+Hi,
 
-> As far as (2), our baseline way of handling things is quite ad hoc.
-> At the moment, individual developers will simply refuse to work
-> someone who is accused of being toxic, by doing things such as:
->=20
-> =C2=A0=C2=A0 (a) using mail filters to redirect e-mail from that person
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 to /dev/null,
-> =C2=A0=C2=A0 (b) telling a higher-level maintainer that because of (a) th=
-ey
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 would appreciate it if any pull requ=
-ests from that individual
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 include changes to their subsystem o=
-r sub-subsysttem,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 that those commits should be presume=
-d to be auto-NACK'ed,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 and requesting that the PULL request=
- should be rejected,
-> =C2=A0=C2=A0 (c) if the behaviour of said person exasperates a higher-lev=
-el
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 maintainer to such an extent that th=
-e higher-level maintainer
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 refuse to accept patches or pull req=
-uests from said
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 individual, and
-> =C2=A0=C2=A0 (d) informing program committees of invite-only workshops an=
-d/or
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 conferences that if that individual =
-attends, they will refuse
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 to attend because of that individual=
-'s toxicity.
->=20
-> I will note that (b) and (c) can be appealed to someone higher up on
-> the maintainer hierarchy, unless that higher-level maintainer is
-> Linus, at which point there is no higher level authority to take that
-> appeal, and that (b), (c), and (d) are effectivly a way that
-> developers and maintainers are effectively saying, "it's either him
-> or me!",
+> Hello,
+> 
+> On Fri, Aug 22, 2025 at 02:00:10AM +0800, Julian Sun wrote:
+> ...
+>> Do you mean logic like this?
+>>
+>>      for (i = 0; i < MEMCG_CGWB_FRN_CNT; i++)
+>>          wb_wait_for_completion(&memcg->cgwb_frn[i].done);
+>>      kfree(memcg);
+>>
+>> But there still exist task hang issues as long as
+>> wb_wait_for_completion() exists.
+> 
+> Ah, right. I was just thinking about the workqueue being stalled. The
+> problem is that the wait itself is too long.
+> 
+>> I think the scope of impact of the current changes should be
+>> manageable. I have checked all the other places where wb_queue_work()
+>> is called, and their free_done values are all 0, and I also tested
+>> this patch with the reproducer in [1] with kasan and kmemleak enabled.
+>> The test result looks fine, so this should not have a significant
+>> impact.
+>> What do you think?
+> 
+> My source of reluctance is that it's a peculiar situation where flushing of
+> a cgroup takes that long due to hard throttling and the self-freeing
+> mechanism isn't the prettiest thing. Do you think you can do the same thing
+> through custom waitq wakeup function?
 
-So what I saw is that as developers exercised this and effectively
-disengaged unless directly attacked, it pretty much became all on Linus
-because no-one was left in the chain. This is precisely where I think
-we could do with an alternative mechanism.
+Yeah, this method looks more general if I understand correctly.
 
-> and as someone who has to manage volunteers, if a sufficiently
-> large number of volunteers are sufficiently p*ssed off that they are
-> threatening to withdraw, the wise maintainer (or program committee)
-> should take heed.
->=20
-> Now, the above is inherently very messy.=C2=A0 But fortunately, it's only
-> happened once in thirty five years, and before we propose to put some
-> kind of mechanism in place, we need to make sure that the side
-> effects of that mechanism don't end up making things worse off.
+If the idea of the following code makes sense to you, I'd like to split
+and convert it into formal patches.
 
-Well, what we ended up with is one person in the chain (Linus), no
-actual decision except a failed pull request and nothing actually said
-which has lead to a raft of internet speculation.
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index a07b8cf73ae2..10fede792178 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -172,13 +172,8 @@ static void finish_writeback_work(struct 
+wb_writeback_work *work)
 
-I agree whatever gets put in place will be messy, I just think it could
-be a bit less messy and a bit more definitive.
+  	if (work->auto_free)
+  		kfree(work);
+-	if (done) {
+-		wait_queue_head_t *waitq = done->waitq;
+-
+-		/* @done can't be accessed after the following dec */
+-		if (atomic_dec_and_test(&done->cnt))
+-			wake_up_all(waitq);
+-	}
++	if (done)
++		done->wb_waitq->wb_wakeup_func(done->wb_waitq, done);
+  }
 
-> There is the saying that "bad facts make bad law", and the specifics
-> of this most recent controversy are especially challenging.=C2=A0 I would
-> urge caution before trying to create a complex set of policies and
-> mechanim when we've only had one such corner case in over 35 years.
+  static void wb_queue_work(struct bdi_writeback *wb,
+@@ -213,7 +208,7 @@ static void wb_queue_work(struct bdi_writeback *wb,
+  void wb_wait_for_completion(struct wb_completion *done)
+  {
+  	atomic_dec(&done->cnt);		/* put down the initial count */
+-	wait_event(*done->waitq, !atomic_read(&done->cnt));
++	wait_event(done->wb_waitq->waitq, !atomic_read(&done->cnt));
+  }
 
-The banks were very keen on not being stress tested before 2008 and we
-all saw where that lead. The crisis forced them to confront the issue,
-which does argue that when something like this comes along you take the
-opportunity to improve. I'm also not arguing for a labyrinthine
-process. I think I'd be happy if we sort out two things
+  #ifdef CONFIG_CGROUP_WRITEBACK
+diff --git a/include/linux/backing-dev-defs.h 
+b/include/linux/backing-dev-defs.h
+index 2ad261082bba..04699458ac50 100644
+--- a/include/linux/backing-dev-defs.h
++++ b/include/linux/backing-dev-defs.h
+@@ -60,13 +60,56 @@ enum wb_reason {
+  	WB_REASON_MAX,
+  };
 
-   1. That the decision be taken by more than one person rather than
-      abdicating to last man standing
-   2. The outcome be documented clearly.
++struct wb_completion;
++typedef struct wb_wait_queue_head wb_wait_queue_head_t;
++typedef void (*wb_wait_wakeup_func_t)(wb_wait_queue_head_t *wq_waitq,
++									  struct wb_completion *done);
++struct wb_wait_queue_head {
++	wait_queue_head_t waitq;
++	wb_wait_wakeup_func_t wb_wakeup_func;
++};
++
+  struct wb_completion {
+  	atomic_t		cnt;
+-	wait_queue_head_t	*waitq;
++	wb_wait_queue_head_t	*wb_waitq;
+  };
 
-Regards,
++static inline void wb_default_wakeup_func(wb_wait_queue_head_t *wq_waitq,
++										  struct wb_completion *done)
++{
++	/* @done can't be accessed after the following dec */
++	if (atomic_dec_and_test(&done->cnt))
++		wake_up_all(&wq_waitq->waitq);
++}
++
++/* used for cgwb_frn, be careful here, @done can't be accessed */
++static inline void wb_empty_wakeup_func(wb_wait_queue_head_t *wq_waitq,
++										struct wb_completion *done)
++{
++}
++
++#define __init_wb_waitqueue_head(wb_waitq, func) 	\
++	do {											\
++		init_waitqueue_head(&wb_waitq.waitq);		\
++		wb_waitq.wb_wakeup_func = func; 			\
++	} while (0)
++
++#define init_wb_waitqueue_head(wb_waitq) 	\
++	__init_wb_waitqueue_head(wb_waitq, wb_default_wakeup_func)
++
++#define __WB_WAIT_QUEUE_HEAD_INITIALIZER(name, func) {	\
++	.waitq = __WAIT_QUEUE_HEAD_INITIALIZER(name.waitq),	\
++	.wb_wakeup_func = func, 							\
++}
++
++#define __DECLARE_WB_WAIT_QUEUE_HEAD(name, func) \
++	struct wb_wait_queue_head name = 
+__WB_WAIT_QUEUE_HEAD_INITIALIZER(name, func)
++
++#define DECLARE_WB_WAIT_QUEUE_HEAD(name) \
++	__DECLARE_WB_WAIT_QUEUE_HEAD(name, wb_default_wakeup_func)
++
+  #define __WB_COMPLETION_INIT(_waitq)	\
+-	(struct wb_completion){ .cnt = ATOMIC_INIT(1), .waitq = (_waitq) }
++	(struct wb_completion){ .cnt = ATOMIC_INIT(1), .wb_waitq = (_waitq) }
 
-James
+  /*
+   * If one wants to wait for one or more wb_writeback_works, each work's
+@@ -190,7 +233,7 @@ struct backing_dev_info {
+  	struct mutex cgwb_release_mutex;  /* protect shutdown of wb structs */
+  	struct rw_semaphore wb_switch_rwsem; /* no cgwb switch while syncing */
+  #endif
+-	wait_queue_head_t wb_waitq;
++	wb_wait_queue_head_t wb_waitq;
 
+  	struct device *dev;
+  	char dev_name[64];
+diff --git a/mm/backing-dev.c b/mm/backing-dev.c
+index 783904d8c5ef..c4fec9e22978 100644
+--- a/mm/backing-dev.c
++++ b/mm/backing-dev.c
+@@ -1008,7 +1008,7 @@ int bdi_init(struct backing_dev_info *bdi)
+  	bdi->max_prop_frac = FPROP_FRAC_BASE;
+  	INIT_LIST_HEAD(&bdi->bdi_list);
+  	INIT_LIST_HEAD(&bdi->wb_list);
+-	init_waitqueue_head(&bdi->wb_waitq);
++	init_wb_waitqueue_head(bdi->wb_waitq);
+  	bdi->last_bdp_sleep = jiffies;
+
+  	return cgwb_bdi_init(bdi);
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 8dd7fbed5a94..999624535470 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -99,7 +99,7 @@ static struct kmem_cache *memcg_cachep;
+  static struct kmem_cache *memcg_pn_cachep;
+
+  #ifdef CONFIG_CGROUP_WRITEBACK
+-static DECLARE_WAIT_QUEUE_HEAD(memcg_cgwb_frn_waitq);
++static __DECLARE_WB_WAIT_QUEUE_HEAD(memcg_cgwb_frn_waitq, 
+wb_empty_wakeup_func);
+  #endif
+
+  static inline bool task_is_dying(void)
+@@ -3909,12 +3909,7 @@ static void mem_cgroup_css_released(struct 
+cgroup_subsys_state *css)
+  static void mem_cgroup_css_free(struct cgroup_subsys_state *css)
+  {
+  	struct mem_cgroup *memcg = mem_cgroup_from_css(css);
+-	int __maybe_unused i;
+
+-#ifdef CONFIG_CGROUP_WRITEBACK
+-	for (i = 0; i < MEMCG_CGWB_FRN_CNT; i++)
+-		wb_wait_for_completion(&memcg->cgwb_frn[i].done);
+-#endif
+  	if (cgroup_subsys_on_dfl(memory_cgrp_subsys) && !cgroup_memory_nosocket)
+  		static_branch_dec(&memcg_sockets_enabled_key);
+
+
+
+> 
+> Thanks.
+> 
+
+Thanks,
+-- 
+Julian Sun <sunjunchao@bytedance.com>
 
