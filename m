@@ -1,102 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-58839-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58840-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4383FB3203E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 18:14:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BDB4B3206B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 18:24:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74D511895400
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 16:10:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67EB31CC35E9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 16:21:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 436B5238C3A;
-	Fri, 22 Aug 2025 16:10:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED4928137A;
+	Fri, 22 Aug 2025 16:20:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="Agj5yhd8"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="w5HR0ADz";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="t8eHg1iS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F5EC242D86
-	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Aug 2025 16:10:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43FDB279DC3;
+	Fri, 22 Aug 2025 16:20:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755879033; cv=none; b=jykVLRi4qIm+ARpD/xLMQ4oSbsdAQYiUKbmCtL+zFuykS6JN7XSGG2KVBdVI9MwIeMRWpsNCBlNS6P8aVquNA1RKi7vXGzCI+Ok4dxiPcBbdMhAU8pnE3nKelaKlIvpswUBm4QvxWqT4jgPClvl7IzQtzXjmYgWaS+BwZF4UmPw=
+	t=1755879646; cv=none; b=njM/abb9UciWRjdDsqaA48fj8W72s5xPIDZakasq5AjImq67gmfCsUB7R2PBo5EXOErT8TY/9OIzc8CdFhNFz3y0uFwfcXsq/XhwuSqzLNRyX6Y/KGOiwyRmWmzpSXqPLwBqBlM5S/ZTWKh1szjBgtw22FOqzViRuS6vZzUBKTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755879033; c=relaxed/simple;
-	bh=CFy9qRbdsQ1UILnFsarvyMKHCGH+d4LwaaXk+Ox+dHU=;
+	s=arc-20240116; t=1755879646; c=relaxed/simple;
+	bh=pUefhvtx3fa9NKd7t7x8qj/cQQxg+Sux7Educwfd/bI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iB2H5Mw80o852TxKov7kBHqQ4gHd7shEvI3X3nBHIyQTNRhUm3g28powBlhIkHPXXSUcFjfpfTkqAtRz+wLLrol+MtBqV4K7NehXtqGmIldvlFgwDNlnMpArF/F8FNv89aRARwKdZpTvO6iB+1ZyrsFOzWZL1CSlW+TgaQqsqSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=Agj5yhd8; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from macsyma.thunk.org (pool-173-48-112-142.bstnma.fios.verizon.net [173.48.112.142])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 57MGAJGB020237
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Aug 2025 12:10:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1755879022; bh=zXMZEZbcw0IXXeWvArqy3HEE3YJogsMRE11Bzh6buRY=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=Agj5yhd80SQ264QRMIlYFA0ULIrtOYdOF7PAjMSEcQj4EdD+Z406ioUp2nJQ2lpDx
-	 WWchoEQiuiyzRTGe4AbRg7pMWx4zpBO/ErG3YiLBspe8bYLRBhRpjZXO6Tpg0jSung
-	 w3FFb5S6Ixf67SpwatdSmY0bSTBMRRTTLL06v1K0+gaNvWPzQKBfHr52S8UWA/cx2F
-	 U43PsW57QtPuqU19D4fVTFkjTgslLBEp4fgy55LqMtZJFkrfgrp7ByIYl2g1+TmHBd
-	 77ynXZGTgj6J+EAGpUI80RJz1m2zdK5UOhwH1zxd9WooC7w/ngBIy+YD+r/t/PanZg
-	 BhG0bG9/S2log==
-Received: by macsyma.thunk.org (Postfix, from userid 15806)
-	id BAA203FE341F; Fri, 22 Aug 2025 12:09:18 -0400 (EDT)
-Date: Fri, 22 Aug 2025 12:09:18 -0400
-From: "Theodore Tso" <tytso@mit.edu>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: Greg KH <greg@kroah.com>, ksummit@lists.linux.dev,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [MAINTAINER SUMMIT] Adding more formality around feature
- inclusion and ejection
-Message-ID: <20250822160918.GA49788@macsyma.lan>
-References: <fc0994de40776609928e8e438355a24a54f1ad10.camel@HansenPartnership.com>
- <20250821203407.GA1284215@mit.edu>
- <940ac5ad8a6b1daa239d748e8f77479a140b050d.camel@HansenPartnership.com>
- <2025082202-lankiness-talisman-3803@gregkh>
- <20250822122424.GA34412@macsyma.lan>
- <62aea685546cee80b18cfd7e1ea50b1a590d5edd.camel@HansenPartnership.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hy0KI4rtAvOOW1U22qs/lj03E3tQIwkn9faiR8KzJfNmmAwcr3A/3mmT4bgFADdUiuv8KqNI+5CbHh2qk0aDNNAcUK1dIeqGF5VzPlCCwizThVinxG4X0QqmjzMwDRxqcNV62YQ5zKIcbKCe4qjllcM70m8Z4FPChHc99BifLBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=w5HR0ADz; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=t8eHg1iS; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 22 Aug 2025 18:20:41 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755879643;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AtQFGIIZgwtLl5kOnn6MiSKJx7hARPjf03xjlGYheR0=;
+	b=w5HR0ADzMEB1gfQs/FxLabGL0IVBvCgZa4l5SuQsyDFRdOPQx+ZhKiqJI34Wuj3hVmGW06
+	hQUEDXb8L3M7t2jUIhXFFH/hjM17MRMoc4Kopg+FHAMWPmBW7NXiFLa+RdBquNMoXzAfsW
+	UpJCcUEzYibM2RtnROSzOdl8Aec92GC3w5PvTONy6O6laAF7hZNei5od2tj7DkomsFNgk3
+	Klz4WEA/ytY8c78nOd6bpPXZV+elMG8zSoYJ56J0RXGp+KB79bdHrhWQKF9taPQ79DW+fy
+	p5aDZ6WrsELON3+KwZN9UAtQuOyYEQssQnIqeyABWgdGook1WhCrDuZAjn9MUA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755879643;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AtQFGIIZgwtLl5kOnn6MiSKJx7hARPjf03xjlGYheR0=;
+	b=t8eHg1iSaaYcDhGsPl+SqXNKwRd9lmq9DvOkVx/LQLla7fm/FVfwAYbPCLYQOTXimi7WmX
+	yQ9e7cWWtwYKCiDA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: syzbot <syzbot+a725ab460fc1def9896f@syzkaller.appspotmail.com>
+Cc: brauner@kernel.org, jack@suse.cz, linkinjeon@kernel.org,
+	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com,
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
+	viro@zeniv.linux.org.uk
+Subject: Re: [syzbot] [exfat?] [ext4?] WARNING in __rt_mutex_slowlock_locked
+Message-ID: <20250822162041.gXcLgwIW@linutronix.de>
+References: <68a72860.050a0220.3d78fd.002a.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <62aea685546cee80b18cfd7e1ea50b1a590d5edd.camel@HansenPartnership.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <68a72860.050a0220.3d78fd.002a.GAE@google.com>
 
-On Fri, Aug 22, 2025 at 04:31:49PM +0100, James Bottomley wrote:
-> 
-> When did this become about how our current maintainer pull system
-> works?  I'm certainly not advocating changing it.
+On 2025-08-21 07:08:32 [-0700], syzbot wrote:
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3Da725ab460fc1def=
+9896f
+=E2=80=A6
+> The issue was bisected to:
+>=20
+> commit d2d6422f8bd17c6bb205133e290625a564194496
+> Author: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> Date:   Fri Sep 6 10:59:04 2024 +0000
+>=20
+>     x86: Allow to enable PREEMPT_RT.
+>=20
+=E2=80=A6
+> exFAT-fs (loop0): Medium has reported failures. Some data may be lost.
+> exFAT-fs (loop0): failed to load upcase table (idx : 0x00010000, chksum :=
+ 0xe5674ec2, utbl_chksum : 0xe619d30d)
+> ------------[ cut here ]------------
+> rtmutex deadlock detected
+> WARNING: CPU: 0 PID: 6000 at kernel/locking/rtmutex.c:1674 rt_mutex_handl=
+e_deadlock kernel/locking/rtmutex.c:1674 [inline]
+> WARNING: CPU: 0 PID: 6000 at kernel/locking/rtmutex.c:1674 __rt_mutex_slo=
+wlock kernel/locking/rtmutex.c:1734 [inline]
+> WARNING: CPU: 0 PID: 6000 at kernel/locking/rtmutex.c:1674 __rt_mutex_slo=
+wlock_locked+0xed2/0x25e0 kernel/locking/rtmutex.c:1760
 
-  ...
+RT detected a deadlock and complained. The same testcase on !RT results
+in:
 
-> Well I did ask for two concrete things, but I can certainly repeat:
-> 
-> On Fri, 2025-08-22 at 09:09 +0100, James Bottomley wrote:
-> >  I think I'd be happy if we sort out two things
-> > 
-> >    1. That the decision be taken by more than one person rather than
-> >       abdicating to last man standing
+| [   15.363878] loop0: detected capacity change from 0 to 256
+| [   15.367981] exFAT-fs (loop0): Volume was not properly unmounted. Some =
+data may be corrupt. Please run fsck.
+| [   15.373808] exFAT-fs (loop0): Medium has reported failures. Some data =
+may be lost.
+| [   15.380396] exFAT-fs (loop0): failed to load upcase table (idx : 0x000=
+10000, chksum : 0xe5674ec2, utbl_chksum : 0xe619d30d)
+| [   62.668182] INFO: task exfat-repro:2155 blocked for more than 30 secon=
+ds.
+| [   62.669405]       Not tainted 6.17.0-rc2+ #10
+| [   62.670181] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disable=
+s this message.
+| [   62.671612] task:exfat-repro     state:D stack:0     pid:2155  tgid:21=
+55  ppid:1      task_flags:0x400140 flags:0x00004006
+| [   62.673557] Call Trace:
+| [   62.674008]  <TASK>
+| [   62.674400]  __schedule+0x4ef/0xbb0
+| [   62.675069]  schedule+0x22/0xd0
+| [   62.675656]  schedule_preempt_disabled+0x10/0x20
+| [   62.676495]  rwsem_down_write_slowpath+0x1e2/0x6c0
+| [   62.679028]  down_write+0x66/0x70
+| [   62.679645]  vfs_rename+0x5c6/0xc30
+| [   62.681734]  do_renameat2+0x3c4/0x570
+| [   62.682395]  __x64_sys_renameat2+0x7b/0xc0
+| [   62.683187]  do_syscall_64+0x7f/0x290
+| [   62.695576]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-Well, if we keep the current maintainer pull system, then the natural
-consequence is that it *is* up to the higher-level maintainer to make
-the decision.  In the case where we don't have maintainer teams, then
-it will be a single person.
+After ctrl+c that testcase terminates but one thread remains in D state.
+This is from=20
+|         lock_new_subdir =3D new_dir !=3D old_dir || !(flags & RENAME_EXCH=
+ANGE);
+|         if (is_dir) {
+|                 if (lock_old_subdir)
+|                         inode_lock_nested(source, I_MUTEX_CHILD);
+                          ^^^
+| 5 locks held by exfat-repro/2156:
+|  #0: ffff888113b69400 (sb_writers#11){.+.+}-{0:0}, at: do_renameat2+0x1c8=
+/0x580
+|  #1: ffff888113b69710 (&type->s_vfs_rename_key){+.+.}-{4:4}, at: do_renam=
+eat2+0x24d/0x580
+|  #2: ffff88810fb79b88 (&sb->s_type->i_mutex_key#16/1){+.+.}-{4:4}, at: lo=
+ck_two_directories+0x6c/0x110
+|  #3: ffff88810fb7a1c0 (&sb->s_type->i_mutex_key#17/5){+.+.}-{4:4}, at: lo=
+ck_two_directories+0x82/0x110
+|  #4: ffffffff82f618a0 (rcu_read_lock){....}-{1:3}, at: debug_show_all_loc=
+ks+0x3d/0x184
 
-So I don't know how to square your request with your assertion that
-you don't want to advocate changing how our current maintainer
-hierarchy works.  Could you clarify your thinking here?
+#2 and #3 are from the "(r =3D=3D p1)" case. The lock it appears to acquire
+is #2.
+Could an exfat take a look, please?
 
-Thanks,
-
-							- Ted
+Sebastian
 
