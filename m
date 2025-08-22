@@ -1,61 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-58736-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58733-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A87FB30CC1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 05:43:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D8CEB30CBD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 05:42:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4B001CE2D67
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 03:43:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D82CF7BD979
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 03:41:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B45299951;
-	Fri, 22 Aug 2025 03:42:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1EB828E59E;
+	Fri, 22 Aug 2025 03:42:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="WGnVk+x7"
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="t7SNxVho"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2045.outbound.protection.outlook.com [40.107.244.45])
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2046.outbound.protection.outlook.com [40.107.243.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7581028D83D;
-	Fri, 22 Aug 2025 03:42:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD5C926B0A9;
+	Fri, 22 Aug 2025 03:42:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.46
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755834145; cv=fail; b=VkrH3hap1BNBJqdFjAJeEE2E5Bew+A7dJlbEOvGlwkKa8tSsaErTwz2e7YdKtVyGx1MNnkZzC/i+LNUrv43uIt/PG86M4wflbXfh+AYzDwQ3q+UZbh8YQoNHCZkLHso5Cs9UTb/+0XbkrDQtgA/VmOYM74AZ9PwDxv+6SUjzfbY=
+	t=1755834143; cv=fail; b=K2SFHTbJCyLiavH5D0nvRaZrm8sf53DOuhjQuNuK4l4aRL42fD95xOCBsg9SB6yisdkYWx6iTPgicjPgoJGXsekw2aP77kwK6TJEaigRZsHzKi6oZ8BLER45OM8MjIqJezp98hVgZw2HqoSytTomWZ9Tctv85rEhvnVKRWvu0KA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755834145; c=relaxed/simple;
-	bh=GLsjNpbsy1Jpga/89eMrs0wbKIHAEjhOIPLfUG2hgV8=;
+	s=arc-20240116; t=1755834143; c=relaxed/simple;
+	bh=SWE7FHFRT3ZWvaPD7FTVEpgdCQte8FOOcuBuaL5niSs=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=haDg1O6O+4WCNLntuBtmyTy44jZm1XuM2q62LKItrJaNRgi6+HvyA+FJzHLxYQKNGhAv2YKOvzNqEISPPVqEFH3cERCI4cm2JOcVZYQPg/deBHYRWNsvcDcDoMUmvcIIRkR4QwHCv4jfXZb9UjrCoHMRmmx4Y73xcaAnif6MhbU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=WGnVk+x7; arc=fail smtp.client-ip=40.107.244.45
+	 MIME-Version:Content-Type; b=YDUXNusrCkN0TS+qRoPdqiNpj96+FPLN6TbAy0cqWNWJN+i1XS0JMiB8dsyUqLTTmERxpQJF/Y8/fhrS+ncLjWWZqdEH4jBRG7KSPPFx9o8tu55lsHQC8WtR7Ee20HOzbtb9amm210MBKGk0g3XWGtO9wDjWb6Fl2J4rrlkRYIc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=t7SNxVho; arc=fail smtp.client-ip=40.107.243.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jVbv0BUAsCoxa7inhqEZpnYD1ZDVpyzecSolDLJnnEHdYHpt73DMzMBzizL4SJeUSqlS4/8NrRBm252rRkz4f9xJ6g8is0CnUKQt2Aly61iYHFR4X9b5i2vmE+8xt+tzgfOG0FYZ0pTHExr4J4t9wgy6TCyaSBQPyoMx5K0tpaMNxoYR3Ot/jBT0aY2b8ON1nus2GbrsHnjQ99gf7+mcBhGHLCQvoj0DZlVRkrUJbt2MCDyLTiA/OK4ym5eQbxVEqGwyPcYlkQOk4tvS10F7mufWHAkCIcuWjeMATrwslofofMycsh5Yt11NnocHAwQf4k23qzpDt3DBhYfsbU9BKg==
+ b=VT8AYoJVwtnjkY7rewqbSfQvImE11qXG4ovko4oiZ/UIFBFxCiy6l6qsuqFdnj9N1OI1gEmDWzKaC1Q+cT9Is/7Vw9vhFFYzRgP7Bm8YWS5d+lm5TPEFNyZbR0M5e/eHt4LLgMZ3v+cYOM4bB8MPirmDO1pes/nUdutQyl1C7h6CrqkEaE+wIrnXYoTbw74Yx2YAKWlbxapz8BsYYcOPAMNlL4/5OwSpmnxffo3o/W5cFDEHL43918Rx1B5EMJN4kP/Hx6i6CpwK3WzTn3jXdQ9G6+qf5PHiiYVQDAJ4DsSvDDJOw/oMAt1Nj9OYWoT+KkiWWawJbj9X1W8a5CISPg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QvvpaH957xAQl6KpXPvvoBnQ0bdUsdx6q8ABmS07MFE=;
- b=x7mZVcnwMfU3yo8B0+7WRwvIgTrpOfty7GoxqSeLqq8T9kuvcp0ZcApSFRw6Zs8m8gp2IOIB9bDZgQPVOP7sEsAadpvBIvQXawMWPOBhGvqAiF24/w5Q/kdz+BHKG68nhPwRGODKCxpC/B5yL8sbTyOgiWeAA4kgPl1XSOprKy/W9qYNLEGcPi0ieU6Zzga6fAGW0Qr1V1AjIA1gJtlkmUuuhvHWvhPbP1sFYLH2P/Kp+JBIWCNvt3P9qn7sStiBK//SKEOgfkA0Te4CoKQ+G2BDDqjiNS0NCiFGo/pRNGQA9Kn2NDxuwxZVbNe424XSu11v4iTjPOWq2wdk1vkHFA==
+ bh=iTAWbdqN8kd2OY7GYH1ultj6kEbWvczlW6XDc4bODfc=;
+ b=WceSnKQ65NtxuMAH1jdUyq0I+YUR5FoDsFc6KPeJYucqDDVeya0EWQne403/4mRyZ/GXbbGKWL3d47ymb3WiZ3C30Dc9MN7Mp1bsMY5GNi57tcMG6fDClW6wm9DS0DFTlZr/YscLcnJdFyk1mad/i+KnbybngD8fAsAOdemeKNleZetoBV45Fc6wfVWNOfwxx/UBn9+tgUOYYOpLin8xKeHUJZ6i3Z8LMPaWiuBHZthx0WZkCH9HfZ+feuVQXAxBMi+QQaRvvrCPVkVpwS/Y7xNCUKQCIuN+TXPzuzTOKR9EChcgyTvSaQKfKmPH53y7h+OgCWjUnj3+hci7LgzlnQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QvvpaH957xAQl6KpXPvvoBnQ0bdUsdx6q8ABmS07MFE=;
- b=WGnVk+x7fqrpUAPKctGl5ei7t/Zzn7xyUv331S/fFfhHlTN2UNsAP3sg6VW0ph8lK/hVrS5nhkpN6/kgDIMIIWYP7Ef+in2LNLqcLFSysaEqb2dDlG5P7UdPd+mgepJP2jSftylkAIb5M59+XpaoK5n6cGKBh9hDWOyQvZnj4d4=
-Received: from YTBP288CA0004.CANP288.PROD.OUTLOOK.COM (2603:10b6:b01:14::17)
- by DS7PR12MB8083.namprd12.prod.outlook.com (2603:10b6:8:e4::21) with
+ bh=iTAWbdqN8kd2OY7GYH1ultj6kEbWvczlW6XDc4bODfc=;
+ b=t7SNxVhoPdIPsWUpsNOHC3Crq+09CscYKPWjBC5H0UUPqgJaGutjVWk3osj+nSPgLE7w7irWLsxZISuA0lQyhqvuULV4xylcjzpGtuCeU6aRfX5wPbRVM6VS5/jzqAIPwc2REy3Uj/J6vi3GpqEczyD4ePuLfsjMreIRUMAx3lA=
+Received: from SJ0PR03CA0380.namprd03.prod.outlook.com (2603:10b6:a03:3a1::25)
+ by DS0PR12MB7874.namprd12.prod.outlook.com (2603:10b6:8:141::11) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Fri, 22 Aug
- 2025 03:42:17 +0000
-Received: from BN3PEPF0000B076.namprd04.prod.outlook.com
- (2603:10b6:b01:14:cafe::c6) by YTBP288CA0004.outlook.office365.com
- (2603:10b6:b01:14::17) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.21; Fri, 22 Aug
+ 2025 03:42:18 +0000
+Received: from SJ1PEPF000026C5.namprd04.prod.outlook.com
+ (2603:10b6:a03:3a1:cafe::1b) by SJ0PR03CA0380.outlook.office365.com
+ (2603:10b6:a03:3a1::25) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.16 via Frontend Transport; Fri,
- 22 Aug 2025 03:41:37 +0000
+ 22 Aug 2025 03:42:18 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -63,13 +63,13 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN3PEPF0000B076.mail.protection.outlook.com (10.167.243.121) with Microsoft
+ SJ1PEPF000026C5.mail.protection.outlook.com (10.167.244.102) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9052.8 via Frontend Transport; Fri, 22 Aug 2025 03:42:17 +0000
+ 15.20.9052.8 via Frontend Transport; Fri, 22 Aug 2025 03:42:18 +0000
 Received: from ethanolx50f7host.amd.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 21 Aug
- 2025 22:42:15 -0500
+ 2025 22:42:16 -0500
 From: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
 To: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<nvdimm@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
@@ -89,9 +89,9 @@ CC: Davidlohr Bueso <dave@stgolabs.net>, Jonathan Cameron
 	<terry.bowman@amd.com>, Robert Richter <rrichter@amd.com>, Benjamin Cheatham
 	<benjamin.cheatham@amd.com>, PradeepVineshReddy Kodamati
 	<PradeepVineshReddy.Kodamati@amd.com>, Zhijian Li <lizhijian@fujitsu.com>
-Subject: [PATCH 2/6] dax/hmem: Request cxl_acpi and cxl_pci before walking Soft Reserved ranges
-Date: Fri, 22 Aug 2025 03:41:58 +0000
-Message-ID: <20250822034202.26896-3-Smita.KoralahalliChannabasappa@amd.com>
+Subject: [PATCH 3/6] dax/hmem, cxl: Tighten dependencies on DEV_DAX_CXL and dax_hmem
+Date: Fri, 22 Aug 2025 03:41:59 +0000
+Message-ID: <20250822034202.26896-4-Smita.KoralahalliChannabasappa@amd.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20250822034202.26896-1-Smita.KoralahalliChannabasappa@amd.com>
 References: <20250822034202.26896-1-Smita.KoralahalliChannabasappa@amd.com>
@@ -106,111 +106,100 @@ X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
  (10.181.40.145)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PEPF0000B076:EE_|DS7PR12MB8083:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8a2867ee-4414-4bf5-c8c1-08dde12de41f
+X-MS-TrafficTypeDiagnostic: SJ1PEPF000026C5:EE_|DS0PR12MB7874:EE_
+X-MS-Office365-Filtering-Correlation-Id: cd952e4c-7c80-40af-2fa1-08dde12de4cd
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|7416014|30052699003|376014|82310400026;
+	BCL:0;ARA:13230040|30052699003|36860700013|1800799024|82310400026|7416014|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?gkz5EkIK+O8jYkSilkB1ps8zkxY7kxLhaHCTUSbssgUVyXD2hC5w/UvIu8k6?=
- =?us-ascii?Q?ISLrb1AkkSa4MWDdAYGpRr+MdEiBXYw1Kep+tiUCrWitmyAurKAJ5p8JdGTk?=
- =?us-ascii?Q?KiAeuh81ZxnJlBsyKNxTZdZ2KhhEGGnl8kD697HgxEkc03kOxzht+ZjBBahD?=
- =?us-ascii?Q?mRPlKlGSJkvALzNLjEWO5HNNEBbw7GyCDsweWfWNJLW0bAaO8IVGWLl4LMC2?=
- =?us-ascii?Q?RWv90yQ6NELmsPeOXuVzHVQlT+m0FBJ7p7Y/QUcXTGndgWytGRSWmPt9YzoT?=
- =?us-ascii?Q?mvwBAI/+M+elod1VZW9dN588eLhp7a1Vp9QN8Xl83yIUq56ei594b8KrSqGg?=
- =?us-ascii?Q?hH5KWZnphOsV7ne4Ip1hNyT29TNO0XYgF/Ie6oZh37Z95To2L8aiKMl4xNqC?=
- =?us-ascii?Q?z6nqpBsrCDYGG92W0PQLltQC1lgHLOWjy5fn7CQra74ehPjRzCXQ10GwgBNZ?=
- =?us-ascii?Q?CVALSBegUGSZIulwl7BGBUDrWuBaJZSewDZ3NL7s7C/pBmc+uIL7oTcJXEo3?=
- =?us-ascii?Q?iwIoTQlm1oFLnQYylaHDcv6c387g/0H7ZJutnFFVm9q4XGwkXu0icZBd64jq?=
- =?us-ascii?Q?XuN2z3LpcZRKHT8RgbrsLwgvMrsTVnaYaFCrCo8xW6EQiBXPDY7l4ndH0jX1?=
- =?us-ascii?Q?KXQVp50jxaPqWV2eiHF4PQsAhxV2L3Ub0iXfJNJyzdAqymCQsgB9ISjFfIpK?=
- =?us-ascii?Q?nGjILySIQ24ZryGKBqW2gA2i3Q571TA0ZtTs7/k5+y1o+eZ6QkVzYMIj6G1x?=
- =?us-ascii?Q?STpfhwS2kphZnKFfUBTul1nSGrxjjjSOrw+n/gM6yGNO06YZNuTdgslk18DE?=
- =?us-ascii?Q?st+n31mGv8pOHS79FYRLPYrvAD0E7OKyrotPNucNuw270hRNbp74s3unjuVV?=
- =?us-ascii?Q?91VXyOZkEnK0IWL40WmrkyyfDHWJXc1cFlnf0lDo2ZHo1ao3j2F/JadXWBmZ?=
- =?us-ascii?Q?uNmBdD09GuHtGftqJuZ1aq/EyinOnE1lZGDA5KdB8aOz135KBVV2lsJkSvFA?=
- =?us-ascii?Q?C5OEdNDnYtiqAiJiU5jkIByNwjUkiemLMLY6OR7ePAuCr5yaTlx5FnIBWEJd?=
- =?us-ascii?Q?qwDeEiH5dQzxalCDKj5FdG9zx4ONzIyACGq7IqSRreBkXkwABb61ZmsgOKyM?=
- =?us-ascii?Q?SC57Prea/qQ6cT33s+e/AMI4b3sARrLU1Y95CRZD8i/BlcCAjeY92RxHbbDx?=
- =?us-ascii?Q?gxdl5I116/z5a7sszEjHogWuI/DUzNJ3cT5LHk1cSl5ywAPI+Hrukj08tRsM?=
- =?us-ascii?Q?dXAUvMdaMHRnBNx7QK4VwQslOEGP/cJb1hxKl0ddPYbhJftFMKfKnZW8vMP7?=
- =?us-ascii?Q?7aVqvV2Q8/0LCWzvCwoAWRh7XOjt9ktFE5xpeJKyQjGTElq1w2tVsjen+9JT?=
- =?us-ascii?Q?s3SyQVs1regWZuffxRWv0EJFryP0SwEfC6S/ZRMgajQQ4FCcBSOSG+lTuTK0?=
- =?us-ascii?Q?6PdX74uoQchVYG7oC5korREc6bw+BaOGEYB74nMpPdO/NCG4187mNYHwxA7g?=
- =?us-ascii?Q?/UMoIhsYEJYn7HchXJS+wswgJjjzKGd4ro+E?=
+	=?us-ascii?Q?j+BxH58AIV0IzVnSzWde204ZhMtXDWdzKsG3LNoLr3G2GHogNohk0WiRuR6u?=
+ =?us-ascii?Q?bK1qQznmjpOwbxvnmkEhaAtxIZkS91ilv5SoI7ARdt7yK7QTfLgr90e9vGWf?=
+ =?us-ascii?Q?aCj1To5SUwRs+v4QD6pbkv/yZsW0mwQO13boga+iIsNVUx9rFxuObbdKhP6b?=
+ =?us-ascii?Q?apdmad3C5Y7b/EkN3j9U7+hQeDe6rEl3dJ8+3CiMeeOxyJJ6Xjk+oils5QgR?=
+ =?us-ascii?Q?/AzuUDK3QLTsRSR0rTR+4A9Q4y9lPhngmJvjGpHCkfkPPjxOlqo1otiLiDvr?=
+ =?us-ascii?Q?X3ZnQwKonRuOrCp+IefaE8MHaHuI7Dz+QrqNL2AxflEuqrTta/8JoHhSBldf?=
+ =?us-ascii?Q?8Jt6kGLSgTmOBbtj8gwXxhzTPLCCIwxem36BbBrNwwSdBk8QzM2qO60R0YhW?=
+ =?us-ascii?Q?DtoiGrRC1jbnCGRHly4TdlWYFFbu+79brbFlfQjQ04CqoUitke5d9eZg0b/3?=
+ =?us-ascii?Q?2zRs6Nw2zKX2xgPAgota0sw2BkDSC9FWoJO5vFXXB509VarX3WrUpez8U9rb?=
+ =?us-ascii?Q?QcsXojGUSYUP8A62VxeCWIBydqHAbyk8oFiUfzd7hL5vj9+FxNZF+/qLG2L3?=
+ =?us-ascii?Q?btao5V8Cgr/4hXH3VujBBhSnmXVn2ua9tW3ASX6RiRvAHdIg8PR2H/nrVnhD?=
+ =?us-ascii?Q?6utJh+gppEFluVYC5fr0IxRrV6o6eTGa6dWzFhjBzBxFVHO/d2R4fLlwAfwx?=
+ =?us-ascii?Q?403SzOc1Y/l7sMvea1lr5ipR4eWgZz9rzoxCcBQF9oXqzqt6mauY3X+91HHh?=
+ =?us-ascii?Q?HnITAPlN0EbcCS9tC4Kz+NDGT2CtsecbdT791TyzWGwg3ZuUEgokVwBKYBJN?=
+ =?us-ascii?Q?YlIIk9JTx/9/j8zlF4w3zP+wlwJaYxIAy2Um+2xEX0Z3tpS6xGqshGMb4GyX?=
+ =?us-ascii?Q?HMrg8zAxxTnTxiuqVvHNZr33N60twRdxQCtkKZq+D3UhJ+h0dBR0cidQW7BR?=
+ =?us-ascii?Q?VL/hXgNMSQJzH7siQuVtmLkoH1lJCQyP++zaoF6s2fi/rWX1s1iuN5icvhbT?=
+ =?us-ascii?Q?Qb69DQp/JP35wr3Xh/c7kv9dbKA+j+alyb6NNyNCe2oyqOM+edavqzX/lUSn?=
+ =?us-ascii?Q?3p1d0L7W1V9SKAFEf7e4Zjy4q1pdo3nncKO8ooMN1RvAXldfUUnHlzPfNb+7?=
+ =?us-ascii?Q?4QeZSZm3rmnUil2uHB86rZsmIHzVjZVbUx1pKCZRgV6YOruToeFGbBHiQV9B?=
+ =?us-ascii?Q?X+WMjovVXdHtWcU9fL2p7IcYtsz6Ce8yIL5HKB6Sb4uDG3XiNgQ6pzyi6bKH?=
+ =?us-ascii?Q?CTGjh9jJN72ky+8s4tSyDKpFzm//ZLSnpxqOhjRLn+e2tdxrJmUDb5W+sbnk?=
+ =?us-ascii?Q?Vo5CM6UrU3b3DHj7oF1a92V0ogyRkBCL3FHcVr5QUreINNfuSbbB+F/u9rau?=
+ =?us-ascii?Q?V1AVryc5QmmmYBzlFNBAoZkpenlvppE1k6xvuXk8NVA0e6i0iXx5DZJpmQqk?=
+ =?us-ascii?Q?ykdtiFrm4EnmKb5+NkC34eGUqRTT9mvaoONoR4XW75n//afqMz5xgKmvosUV?=
+ =?us-ascii?Q?W+NHH3tE7pOfx0iBC/pGountslIZXvBC9Vvs?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(7416014)(30052699003)(376014)(82310400026);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(30052699003)(36860700013)(1800799024)(82310400026)(7416014)(376014);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2025 03:42:17.3127
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2025 03:42:18.3552
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8a2867ee-4414-4bf5-c8c1-08dde12de41f
+X-MS-Exchange-CrossTenant-Network-Message-Id: cd952e4c-7c80-40af-2fa1-08dde12de4cd
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	BN3PEPF0000B076.namprd04.prod.outlook.com
+	SJ1PEPF000026C5.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8083
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7874
 
-Ensure that cxl_acpi has published CXL Window resources before dax_hmem
-walks Soft Reserved ranges.
+Update Kconfig and runtime checks to better coordinate dax_cxl and dax_hmem
+registration.
 
-Replace MODULE_SOFTDEP("pre: cxl_acpi") with an explicit, synchronous
-request_module("cxl_acpi"). MODULE_SOFTDEP() only guarantees eventual
-loading, it does not enforce that the dependency has finished init
-before the current module runs. This can cause dax_hmem to start before
-cxl_acpi has populated the resource tree, breaking detection of overlaps
-between Soft Reserved and CXL Windows.
+Add explicit Kconfig ordering so that CXL_ACPI and CXL_PCI must be
+initialized before DEV_DAX_HMEM. This prevents dax_hmem from consuming
+Soft Reserved ranges before CXL drivers have had a chance to claim them.
 
-Also, request cxl_pci before dax_hmem walks Soft Reserved ranges. Unlike
-cxl_acpi, cxl_pci attach is asynchronous and creates dependent devices
-that trigger further module loads. Asynchronous probe flushing
-(wait_for_device_probe()) is added later in the series in a deferred
-context before dax_hmem makes ownership decisions for Soft Reserved
-ranges.
+Replace IS_ENABLED(CONFIG_CXL_REGION) with IS_ENABLED(CONFIG_DEV_DAX_CXL)
+so the code more precisely reflects when CXL-specific DAX coordination is
+expected.
+
+This ensures that ownership of Soft Reserved ranges is consistently
+handed off to the CXL stack when DEV_DAX_CXL is configured.
 
 Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
- drivers/dax/hmem/hmem.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+ drivers/dax/Kconfig     | 2 ++
+ drivers/dax/hmem/hmem.c | 2 +-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/dax/Kconfig b/drivers/dax/Kconfig
+index d656e4c0eb84..3683bb3f2311 100644
+--- a/drivers/dax/Kconfig
++++ b/drivers/dax/Kconfig
+@@ -48,6 +48,8 @@ config DEV_DAX_CXL
+ 	tristate "CXL DAX: direct access to CXL RAM regions"
+ 	depends on CXL_BUS && CXL_REGION && DEV_DAX
+ 	default CXL_REGION && DEV_DAX
++	depends on CXL_ACPI >= DEV_DAX_HMEM
++	depends on CXL_PCI >= DEV_DAX_HMEM
+ 	help
+ 	  CXL RAM regions are either mapped by platform-firmware
+ 	  and published in the initial system-memory map as "System RAM", mapped
 diff --git a/drivers/dax/hmem/hmem.c b/drivers/dax/hmem/hmem.c
-index d5b8f06d531e..9277e5ea0019 100644
+index 9277e5ea0019..7ada820cb177 100644
 --- a/drivers/dax/hmem/hmem.c
 +++ b/drivers/dax/hmem/hmem.c
-@@ -146,6 +146,16 @@ static __init int dax_hmem_init(void)
- {
+@@ -66,7 +66,7 @@ static int hmem_register_device(struct device *host, int target_nid,
+ 	long id;
  	int rc;
  
-+	/*
-+	 * Ensure that cxl_acpi and cxl_pci have a chance to kick off
-+	 * CXL topology discovery at least once before scanning the
-+	 * iomem resource tree for IORES_DESC_CXL resources.
-+	 */
-+	if (IS_ENABLED(CONFIG_DEV_DAX_CXL)) {
-+		request_module("cxl_acpi");
-+		request_module("cxl_pci");
-+	}
-+
- 	rc = platform_driver_register(&dax_hmem_platform_driver);
- 	if (rc)
- 		return rc;
-@@ -166,13 +176,6 @@ static __exit void dax_hmem_exit(void)
- module_init(dax_hmem_init);
- module_exit(dax_hmem_exit);
- 
--/* Allow for CXL to define its own dax regions */
--#if IS_ENABLED(CONFIG_CXL_REGION)
--#if IS_MODULE(CONFIG_CXL_ACPI)
--MODULE_SOFTDEP("pre: cxl_acpi");
--#endif
--#endif
--
- MODULE_ALIAS("platform:hmem*");
- MODULE_ALIAS("platform:hmem_platform*");
- MODULE_DESCRIPTION("HMEM DAX: direct access to 'specific purpose' memory");
+-	if (IS_ENABLED(CONFIG_CXL_REGION) &&
++	if (IS_ENABLED(CONFIG_DEV_DAX_CXL) &&
+ 	    region_intersects(res->start, resource_size(res), IORESOURCE_MEM,
+ 			      IORES_DESC_CXL) != REGION_DISJOINT) {
+ 		dev_dbg(host, "deferring range to CXL: %pr\n", res);
 -- 
 2.17.1
 
