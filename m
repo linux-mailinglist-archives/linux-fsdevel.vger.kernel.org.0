@@ -1,60 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-58827-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58828-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E010B31C11
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 16:39:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB69AB31C3A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 16:42:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A82141D64C8B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 14:33:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D264B27DBC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 14:36:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEBF93126BE;
-	Fri, 22 Aug 2025 14:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4247E3074B0;
+	Fri, 22 Aug 2025 14:36:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vNAKblhD"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HHoQ7xt9";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tJZzUELy";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HHoQ7xt9";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tJZzUELy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23D483126A2;
-	Fri, 22 Aug 2025 14:30:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 160932FDC59
+	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Aug 2025 14:36:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755873017; cv=none; b=tYNcR6SFtJVyuF5Qu98D2Bd65AOJ9BGBVmJV3HjvQqhsmz0wBHyJ5/MC/816X1oEYyC4SF2gTRWDSveLMJYXSWFI+rS1QS7s6+9Zf9HYlLnA1mWfZwerupUWcatQDaAWSEIhUa/hVF/sdG11VWnOIrTS6SUqU2X3iRsoQrQmggw=
+	t=1755873406; cv=none; b=HSMwwcwRvx2ixdvJpXeVko7kZSox1bsy5fsPwSw9MYyVEzFQ2J+LhROjRAjBKQR9Kpi8822tXCkCiWLh4il5eeSJj79gTAortijuhwGqpcEGvX86CW40CEByNQv9afiLYnJEoLuni77rIpx2IHgzBMAOrCVDHvw9A3HHKh/uFCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755873017; c=relaxed/simple;
-	bh=Fb4Tl08JSw5g4q+81h38d4NVzRH5WJTAHSr9V3+/Yw0=;
+	s=arc-20240116; t=1755873406; c=relaxed/simple;
+	bh=7oxvdhim/c9I6QlXho3s3/in/jQastEzhsBmUipvo40=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ixRRJjdM0C211GyDKMgd3cKW+LYnI7PKYg1tEACb/wCP/3jcUGoJoPsQgfDB/+ybkGq6oCbPdjBD8kfS8DcdDaOWef7mVMRykK3ZO2+VBGdCRZ0zME3F22AnUEFconH0vwee456Rv1zwdXR+G+Q1aUYApRXfcDqixtwnVr3pckE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vNAKblhD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40953C113CF;
-	Fri, 22 Aug 2025 14:30:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755873017;
-	bh=Fb4Tl08JSw5g4q+81h38d4NVzRH5WJTAHSr9V3+/Yw0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vNAKblhDR8m6nfud4a/26IwU9QfI8+bkN+RmS9yQ3m9qkj7Gwl9RCz4xRJ+MfWHNw
-	 WoDAQxKRV6CvRtdZIHFVXB607VLpEnoP/ZNPReoXPUZ2K40OZYiKalWD63kmtVhNtb
-	 xRihznT8R1caRb6ZNN5fhuikz6TLFJRyGuTGryFA2zIR+7Qx72hls2HaVFyLTdRIi1
-	 fRUQyow3diyyBXgjCjTQIcOBhI/TBWv8vjALaHjQ/i/Ia+xQZlPX7rWl8QY021WLPK
-	 D5ugYIdBVpwH1BJkmz2hYc3ulmJouUmYGWZwWeB6RWFLsJcDzr2oI6Tuvysz97Sjig
-	 A34b+v9w6UQsw==
-Date: Fri, 22 Aug 2025 08:30:14 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Ritesh Harjani <ritesh.list@gmail.com>
-Cc: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-ext4@vger.kernel.org, snitzer@kernel.org, axboe@kernel.dk,
-	dw@davidwei.uk, brauner@kernel.org, hch@lst.de,
-	martin.petersen@oracle.com, djwong@kernel.org,
-	linux-xfs@vger.kernel.org, viro@zeniv.linux.org.uk,
-	Jan Kara <jack@suse.com>
-Subject: Re: [PATCHv3 0/8] direct-io: even more flexible io vectors
-Message-ID: <aKh-9nOqiSbMAtwo@kbusch-mbp>
-References: <20250819164922.640964-1-kbusch@meta.com>
- <87a53ra3mb.fsf@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZxwChNORcqlfPTcE3QLkR5hUmVBO5gIIUQxWEbkca8grZyHZ2ScSgZOEtC1366HbU/o1KKKnH6OzEH1Tcaai30Um8ZM090LJiEA1ap0Hvh+22THHQbsV91yWdEuo+tbZF/bt3O65XExihw1OPc1Iupb0CNTaMhrA7m5ot/lGKB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HHoQ7xt9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tJZzUELy; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HHoQ7xt9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tJZzUELy; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 514D5218F8;
+	Fri, 22 Aug 2025 14:36:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1755873403;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QhDluULNtxBc6G4/WOfw0KgPIwSPIoDZiu6tki5OZHw=;
+	b=HHoQ7xt9OntMCJsuXdPdBxXaZmiBo5E6RXhcAk9PCsovY3hluzkte2kDVmN90NqcrazBbH
+	ufp/zhJePIh0+cCxTMxpffVDOho1AO9UVQ1sWNmu9RTW31sDNrjuO+zhEEQ8b52m/B+7KK
+	4gB0HFk8FbRrIpO3W4BBfVL47k7qopU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1755873403;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QhDluULNtxBc6G4/WOfw0KgPIwSPIoDZiu6tki5OZHw=;
+	b=tJZzUELyF+9ee9JrSm+aj6blFHGh/Ely25UYLdaitzaZEpfCcKLu59oUksbxtGyFelpGJz
+	Jo3izNm+iQ0NF8DQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1755873403;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QhDluULNtxBc6G4/WOfw0KgPIwSPIoDZiu6tki5OZHw=;
+	b=HHoQ7xt9OntMCJsuXdPdBxXaZmiBo5E6RXhcAk9PCsovY3hluzkte2kDVmN90NqcrazBbH
+	ufp/zhJePIh0+cCxTMxpffVDOho1AO9UVQ1sWNmu9RTW31sDNrjuO+zhEEQ8b52m/B+7KK
+	4gB0HFk8FbRrIpO3W4BBfVL47k7qopU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1755873403;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QhDluULNtxBc6G4/WOfw0KgPIwSPIoDZiu6tki5OZHw=;
+	b=tJZzUELyF+9ee9JrSm+aj6blFHGh/Ely25UYLdaitzaZEpfCcKLu59oUksbxtGyFelpGJz
+	Jo3izNm+iQ0NF8DQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 34B5C13931;
+	Fri, 22 Aug 2025 14:36:43 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 7s9cDHuAqGhDDQAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Fri, 22 Aug 2025 14:36:43 +0000
+Date: Fri, 22 Aug 2025 16:36:41 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org,
+	linux-btrfs@vger.kernel.org, kernel-team@fb.com,
+	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+	viro@zeniv.linux.org.uk
+Subject: Re: [PATCH 02/50] fs: make the i_state flags an enum
+Message-ID: <20250822143641.GW22430@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <cover.1755806649.git.josef@toxicpanda.com>
+ <02211105388c53dc68b7f4332f9b5649d5b66b71.1755806649.git.josef@toxicpanda.com>
+ <20250822-orcas-bemannten-728c9946b160@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,34 +107,55 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87a53ra3mb.fsf@gmail.com>
+In-Reply-To: <20250822-orcas-bemannten-728c9946b160@brauner>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Score: -4.00
 
-On Fri, Aug 22, 2025 at 06:57:08PM +0530, Ritesh Harjani wrote:
-> Keith Busch <kbusch@meta.com> writes:
+On Fri, Aug 22, 2025 at 01:08:07PM +0200, Christian Brauner wrote:
+> On Thu, Aug 21, 2025 at 04:18:13PM -0400, Josef Bacik wrote:
+> > +/*
+> > + * As simple macro to define the inode state bits, __NAME will be the bit value
+> > + * (0, 1, 2, ...), and NAME will be the bit mask (1U << __NAME). The __NAME_SEQ
+> > + * is used to reset the sequence number so the next name gets the next bit value
+> > + * in the sequence.
+> > + */
+> > +#define INODE_BIT(name)			\
+> > +	__ ## name,			\
+> > +	name = (1U << __ ## name),	\
+> > +	__ ## name ## _SEQ = __ ## name
 > 
-> BTW - I did some basic testing of the series against block device, XFS &
-> EXT4 and it worked as expected (for both DIO & AIO-DIO) i.e.
-> 1. Individial iov_len need not be aligned to the logical block size anymore.
-> 2. Total length of iovecs should be logical block size aligned though.
-> 
-> i.e. this combination works with this patch series now:
-> 
->     posix_memalign((void**)&aligned_buf, mem_align, 2 * BLOCK_SIZE);
->     struct iovec iov[4] = {
->         {.iov_base = aligned_buf, .iov_len = 500},
->         {.iov_base = aligned_buf + 500, .iov_len = 1500},
->         {.iov_base = aligned_buf + 2000, .iov_len = 2000},
->         {.iov_base = aligned_buf + 4000, .iov_len = 4192}
->     }; // 500 + 1500 + 2000 + 4192 = 8192
+> I'm not sure if this is the future we want :D
+> I think it's harder to parse than what we have now.
 
-Yep, the kernel would have rejected that before, but should work now. An
-added bonus, the code doesn't spend CPU cycles walking the iovec early
-anymore.
+If it would be a generic sounding name like ENUM_BIT
 
-Your test, though, is not getting to the real good stuff! :) Your
-vectors are virtually contiguous, so the block layer will merge them to
-maybe only one block sized segment. Add some offsets to create gaps, but
-still adhere to your device's dma and virtual boundary limits. Your
-offset options may be constrained if you're using NVMe, but I have a
-follow up series fixing that for capable hardware.
+https://elixir.bootlin.com/linux/v6.16.2/source/fs/btrfs/misc.h#L16
+
+one does not have to parse anything and the meaning is understandable in
+the context of enum. We've converted everything to that in btrfs and
+it's convenient to change just one line when adding or removing entries,
+not caring about the exact values.
 
