@@ -1,62 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-58742-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58743-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C34F4B310F8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 10:00:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7C4FB31157
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 10:14:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ED21A00CF1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 07:59:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3591A1D02051
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 08:09:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 741722EAB6B;
-	Fri, 22 Aug 2025 07:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A2C72EAB6F;
+	Fri, 22 Aug 2025 08:09:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="id+smjyW"
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="bilvgLxQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E358B2EACE0
-	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Aug 2025 07:59:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CFDB26C393
+	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Aug 2025 08:09:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755849576; cv=none; b=Fj673bgdySYcD0d9ZxRDV0uxE1kjO+5f+6cwp9PyRSfql+pYWZ8P5QT4Ysr5+qnHbU1ngRxbYRhQbGgzSXDokx8CIDdNDJ8u7IsICEUEYDW5tddEvNfokrATK0LyjGBsLhL2JlHTzh8xemc5G10Bobf1aamJ5BP1jOaPJqqsbxk=
+	t=1755850149; cv=none; b=G/zxA4NQueiPCdPYuBtn7DuqBHERSx2/zudrya+WofkFSXjDi2smLRJAkGAxIshBLAN73UYfNbheUTigz+fFeWArhtHZY1eFvZx2WNNlhnnjqxkOUvlhf1rJ7Pcc9xOVL/eXAtY7uBn202TcXT4JVT7HlrLUNJCvIgc3aOiOjmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755849576; c=relaxed/simple;
-	bh=zSPdyFXEI7Zv/E3DWI1B20aSH10cIhcbegpdTgKprvI=;
+	s=arc-20240116; t=1755850149; c=relaxed/simple;
+	bh=qCvhZSDve372n/Nzp1I1h2coPGZsX8ZE4OtxRB5iLRY=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=owrDqqfhzW8oBj9hviclLjGGU5MqR1rMC0PWU5VFVU38yHqSZxOmpUBjoV/Dk7igoNry5mMBmmVsReP471HIz1+Cwsc8m6mefRbm6W65qZ482mEx0nyjYGlf0PcZ/OfTPEL6lt09LuMk/P3tzUWELCIzBoBaUo4EUiEQtvTdrgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=id+smjyW; arc=none smtp.client-ip=198.37.111.173
+	 Content-Type:MIME-Version; b=CVDA6rdgGlC2kRcyBeV53CV0u4T4vf5XKUW6GOZXddnuT2yIkacPBI4oSWofAkLZWn4C8MqNp9SNTQRxkVDOaL45mHNfJU2qOZJtYQxxN8k1DAZaV11xdb0mlU0ysV+oQQmi272galS/Dxh8n3k27sAMnUYLkNw4ImmyfBFiZGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=bilvgLxQ; arc=none smtp.client-ip=198.37.111.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1755849573;
-	bh=zSPdyFXEI7Zv/E3DWI1B20aSH10cIhcbegpdTgKprvI=;
+	d=hansenpartnership.com; s=20151216; t=1755850146;
+	bh=qCvhZSDve372n/Nzp1I1h2coPGZsX8ZE4OtxRB5iLRY=;
 	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=id+smjyW+y+ht/0FRXHyBqc6+PKTHUP1WGt2qzdviq4R/PLaErBSYYm3/8kMOpdic
-	 iF86mbYKW3qFwbh1vpR0F0msuERFp3TvzliAO+3CuU1+pjJ/nuLuvBnE0bPawUyfL/
-	 c21N8rqrFnTthjYmW7rTT5NIxMwd6F4Ze7+lknkc=
+	b=bilvgLxQunarJ4qrF126MRDQ5cJkIsDr1OIJI+XEqvCi3LrMspQTJu/AntSF3H8iW
+	 EjBBtpRI+doDZRzu2Z17VdpKrxsueeehfPr7PHZT06uGCJKLi4oavuguaFQ8O+0r9d
+	 0BTolpxsTky5+FolwdnsDGwQlpRRN8k2HTet3VhI=
 Received: from [IPv6:2a00:23c8:101e:bb01:5bfe:95b6:ba99:a97b] (unknown [IPv6:2a00:23c8:101e:bb01:5bfe:95b6:ba99:a97b])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange x25519)
 	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 50F481C0283;
-	Fri, 22 Aug 2025 03:59:33 -0400 (EDT)
-Message-ID: <fa6de8282a80306d1ecfb9513a63aa97f6d406eb.camel@HansenPartnership.com>
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id D59221C00A4;
+	Fri, 22 Aug 2025 04:09:05 -0400 (EDT)
+Message-ID: <940ac5ad8a6b1daa239d748e8f77479a140b050d.camel@HansenPartnership.com>
 Subject: Re: [MAINTAINER SUMMIT] Adding more formality around feature
  inclusion and ejection
 From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Steven Rostedt <rostedt@goodmis.org>
+To: Theodore Ts'o <tytso@mit.edu>
 Cc: ksummit@lists.linux.dev, linux-fsdevel@vger.kernel.org
-Date: Fri, 22 Aug 2025 08:59:31 +0100
-In-Reply-To: <20250821151512.6b42336b@gandalf.local.home>
+Date: Fri, 22 Aug 2025 09:09:04 +0100
+In-Reply-To: <20250821203407.GA1284215@mit.edu>
 References: 
 	<fc0994de40776609928e8e438355a24a54f1ad10.camel@HansenPartnership.com>
-	 <20250821122750.66a2b101@gandalf.local.home>
-	 <64ca315de44a6a5d8e5992a67a592b97f12f0098.camel@HansenPartnership.com>
-	 <20250821151512.6b42336b@gandalf.local.home>
+	 <20250821203407.GA1284215@mit.edu>
 Autocrypt: addr=James.Bottomley@HansenPartnership.com;
  prefer-encrypt=mutual;
  keydata=mQENBE58FlABCADPM714lRLxGmba4JFjkocqpj1/6/Cx+IXezcS22azZetzCXDpm2MfNElecY3qkFjfnoffQiw5rrOO0/oRSATOh8+2fmJ6el7naRbDuh+i8lVESfdlkoqX57H5R8h/UTIp6gn1mpNlxjQv6QSZbl551zQ1nmkSVRbA5TbEp4br5GZeJ58esmYDCBwxuFTsSsdzbOBNthLcudWpJZHURfMc0ew24By1nldL9F37AktNcCipKpC2U0NtGlJjYPNSVXrCd1izxKmO7te7BLP+7B4DNj1VRnaf8X9+VIApCi/l4Kdx+ZR3aLTqSuNsIMmXUJ3T8JRl+ag7kby/KBp+0OpotABEBAAG0N0phbWVzIEJvdHRvbWxleSA8SmFtZXMuQm90dG9tbGV5QEhhbnNlblBhcnRuZXJzaGlwLmNvbT6JAVgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAhkBFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAmBLmY0FCRs1hL0ACgkQgUrkfCFIVNaEiQgAg18F4G7PGWQ68xqnIrccke7Reh5thjUz6kQIii6Dh64BDW6/UvXn20UxK2uSs/0TBLO81k1mV4c6rNE+H8b7IEjieGR9frBsp/+Q01JpToJfzzMUY7ZTDV1IXQZ+AY9L7vRzyimnJHx0Ba4JTlAyHB+Ly5i4Ab2+uZcnNfBXquWrG3oPWz+qPK88LJLya5Jxse1m1QT6R/isDuPivBzntLOooxPk+Cwf5sFAAJND+idTAzWzslexr9j7rtQ1UW6FjO4CvK9yVNz7dgG6FvEZl6J/HOr1rivtGgpCZTBzKNF8jg034n49zGfKkkzWLuXbPUOp3/oGfsKv8pnEu1c2GbQpSmFtZXMgQm90dG9tbGV5IDxqZWpiQGxpbnV4LnZuZXQuaWJtLmNvbT6JAVYEEwEIAEACGwMHCwkIBwMCAQYVC
@@ -77,52 +75,128 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Thu, 2025-08-21 at 15:15 -0400, Steven Rostedt wrote:
-> On Thu, 21 Aug 2025 18:44:07 +0100
-> James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
+On Thu, 2025-08-21 at 16:34 -0400, Theodore Ts'o wrote:
+> On Thu, Aug 21, 2025 at 09:56:15AM +0100, James Bottomley wrote:
+> > I think the only point of agreement on this topic will be that how
+> > bcachefs was handled wasn't correct at many levels.=C2=A0 I think this
+> > shows
+> > we need more formality around feature inclusion, including a
+> > possible
+> > probationary period and even things like mentorship and we
+> > definitely
+> > need a formal process that extends beyond Linus for deciding we can
+> > no
+> > longer work with someone any more.
 >=20
-> > > I share my scripts and explain how to do a pull request. How to
-> > > use linux-next and what to and more importantly, what not to send
-> > > during during the -rc releases.=C2=A0=20
-> >=20
-> > I'm not sure that covers it.=C2=A0 As I read the situation it was more
-> > about how you work with others when there are things in the kernel
-> > you'd like to introduce or change to support your feature.=C2=A0 Hence
-> > it's really about working with rather than against the community.
+> I think we are conflating three different things in this discussion
+> thread, and it would be helpful if we separated them out.
 >=20
-> What I'm suggesting is to have a program to help newcomers that are
-> taking on a maintainer role. This program can not only teach what
-> needs to be done to be a maintainer, but also vet the people that are
-> coming into our ecosystem. If there's a lot of push back from the
-> individual on how to interact with the community, then that
-> individual can be denied becoming a maintainer.
-
-As I said, I think this is a good idea, it just wouldn't have solved
-the problems we saw.  The initial pull request has a huge thread which,
-when summarized, pretty much predicted the issues that were seen.=20
-Although he went into MAINTAINERS with an R tag, Brian Foster did
-attempt to act as a buffer, something which I don't think we've thanked
-Brian for enough, but something which ultimately failed probably due to
-lack of empowerment.
-
-> > > I'm sure others have helped developers become maintainers as
-> > > well. Perhaps we should get together and come up with a formal
-> > > way to become a maintainer? Because honestly, it's currently done
-> > > by trial and error. I think that should change.=C2=A0=20
-> >=20
-> > That wouldn't hurt, but that problem that I see is that some fairly
-> > drastic action has been taken on what can be characterised as a
-> > whim, so I think we need some formality around how and when this
-> > happens.
+> =C2=A0 1.=C2=A0 What is the process by which a particular feature be incl=
+uded
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 or ejected?
+> =C2=A0 2.=C2=A0 What is the process by which a developer should be exclud=
+ed
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 from the deevlopment com=
+munity?=C2=A0 And this goes beyond
+> Code of Conduct violations, but in the case of a maintainer,
+> when that person has displayed toxic tendencies which are
+> sufficiently bad that other deevlopersa and maintainers refuse to
+> work with the individual, and when that person has been accused of
+> promoting a toxic environmet which is harming the entire
+> community?
+> =C2=A0 3.=C2=A0 The question of maintainer mentorship, which is very diff=
+erent
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 from (2) as there are a =
+large set of skills which a much
+> broader
+> front including avoiding maintainer burnout, the product management
+> side of being a maintainer (e.g. working with companies to
+> motivate them to invest in a featrue which benefits not only the
+> companies' business interest, but the community as a whole),
+> managing volunteer, etc.
 >=20
-> If it was policy for Kent to work with a mentor before he could send
-> patches directly to Linus, would this have uncovered the issues
-> before they became as large as they had become?
+> (2) is a very hard problem, and so there is a tendency to focus on
+> solving problems (1) and (2).=C2=A0 However, using bcachefs and its
+> maintainera as a motivating case for solutions to address (1) and (3)
+> very likely going to result in skewing the discussion around the best
+> ways of addressing (1) and (3).
 
-Well, no, the thread I pointed to as part of this proposal pretty much
-predicted what actually happened.  So the problems were known ahead of
-time and didn't need to be discovered, we just needed a better
-mitigation mechanism (which a supervision program could form part of).
+I agree that 1 (at least for inclusion) and 3 are pretty much in hand:
+1 runs by itself naturally and Steve wants to do 3.
+
+> As far as (2), our baseline way of handling things is quite ad hoc.
+> At the moment, individual developers will simply refuse to work
+> someone who is accused of being toxic, by doing things such as:
+>=20
+> =C2=A0=C2=A0 (a) using mail filters to redirect e-mail from that person
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 to /dev/null,
+> =C2=A0=C2=A0 (b) telling a higher-level maintainer that because of (a) th=
+ey
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 would appreciate it if any pull requ=
+ests from that individual
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 include changes to their subsystem o=
+r sub-subsysttem,
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 that those commits should be presume=
+d to be auto-NACK'ed,
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 and requesting that the PULL request=
+ should be rejected,
+> =C2=A0=C2=A0 (c) if the behaviour of said person exasperates a higher-lev=
+el
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 maintainer to such an extent that th=
+e higher-level maintainer
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 refuse to accept patches or pull req=
+uests from said
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 individual, and
+> =C2=A0=C2=A0 (d) informing program committees of invite-only workshops an=
+d/or
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 conferences that if that individual =
+attends, they will refuse
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 to attend because of that individual=
+'s toxicity.
+>=20
+> I will note that (b) and (c) can be appealed to someone higher up on
+> the maintainer hierarchy, unless that higher-level maintainer is
+> Linus, at which point there is no higher level authority to take that
+> appeal, and that (b), (c), and (d) are effectivly a way that
+> developers and maintainers are effectively saying, "it's either him
+> or me!",
+
+So what I saw is that as developers exercised this and effectively
+disengaged unless directly attacked, it pretty much became all on Linus
+because no-one was left in the chain. This is precisely where I think
+we could do with an alternative mechanism.
+
+> and as someone who has to manage volunteers, if a sufficiently
+> large number of volunteers are sufficiently p*ssed off that they are
+> threatening to withdraw, the wise maintainer (or program committee)
+> should take heed.
+>=20
+> Now, the above is inherently very messy.=C2=A0 But fortunately, it's only
+> happened once in thirty five years, and before we propose to put some
+> kind of mechanism in place, we need to make sure that the side
+> effects of that mechanism don't end up making things worse off.
+
+Well, what we ended up with is one person in the chain (Linus), no
+actual decision except a failed pull request and nothing actually said
+which has lead to a raft of internet speculation.
+
+I agree whatever gets put in place will be messy, I just think it could
+be a bit less messy and a bit more definitive.
+
+> There is the saying that "bad facts make bad law", and the specifics
+> of this most recent controversy are especially challenging.=C2=A0 I would
+> urge caution before trying to create a complex set of policies and
+> mechanim when we've only had one such corner case in over 35 years.
+
+The banks were very keen on not being stress tested before 2008 and we
+all saw where that lead. The crisis forced them to confront the issue,
+which does argue that when something like this comes along you take the
+opportunity to improve. I'm also not arguing for a labyrinthine
+process. I think I'd be happy if we sort out two things
+
+   1. That the decision be taken by more than one person rather than
+      abdicating to last man standing
+   2. The outcome be documented clearly.
 
 Regards,
 
