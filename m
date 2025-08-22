@@ -1,158 +1,216 @@
-Return-Path: <linux-fsdevel+bounces-58752-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58753-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C0DDB31376
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 11:40:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5653B31395
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 11:42:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0CA56274C4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 09:35:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75CA4B030BC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 09:37:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E8F2F0660;
-	Fri, 22 Aug 2025 09:29:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C08EC2FE56C;
+	Fri, 22 Aug 2025 09:30:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="euDu6Rsj"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RzmtH7sl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDEF92FABF0;
-	Fri, 22 Aug 2025 09:29:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67D082FDC45;
+	Fri, 22 Aug 2025 09:30:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755854967; cv=none; b=PDOxuP4GkG66S2wIt+wZT9u28+sDb9Go1SclF4W6GGNdohSkVZdwXo4/6JNmGSW8owzVFklE5xH2RtEcBXUa/qKSQotGP/WQBvP8HgTO0oEfl4I6JwNpGv0CQQaew4iRrTVA6bzT1lONAFsY6ztAxVS0Hx/sgsl7RMlukWV8ST4=
+	t=1755855032; cv=none; b=syPTQHHtg0uFVdr8cxmTdpz4eF2D4Z/LfyfgsEHL/WrsukuPstXiSCIA/ccqo8c1VyCgzM92BlqdGIqnAZvxNAb2wllKs7NZQLLMl/Bd5l5HD3MzwfXqcV37uDnzcGgHrRtkTSaVnWqq1UmREi27cvyXcmuIqES8pCI6B7+bpzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755854967; c=relaxed/simple;
-	bh=CfKrq5QkiedU+xlmiVUmkVN2mw3x49TJsoVaLdQ6fFk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a6Fd2deRCTy+4E257YB//P3CPZn6iluSctWpZ9ZA7k3UEirj7vTG/laJica7T+hYuTD4aZY18Adusc25YhTc4Xv6eRvHs+THembmg9/Hn03hFJeesKvF4Inzj6LLoZxs4YZstwxvhbahbkXjSNmDthnWcMfwVkYdq94GUNk/p7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=euDu6Rsj; arc=none smtp.client-ip=209.85.128.51
+	s=arc-20240116; t=1755855032; c=relaxed/simple;
+	bh=AmRI0+n40n0XBbEDIk0Yz7g74l6q6EXrVnNBDvSy+qQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Plu7oAG2r7T01tWtcVr2f8S9E9GWC+GvceViWfUZFgK0+A55uZzK+KN2fDrYdtoAATwlruV3pcq3KVcExmxPBBWGW6/hcL2TA7yhYKGaT1QbTG62tCGH+MvH1mbb3l0f2jebusBo3z1DhAxEamh62A/a6dFA01ko+3uDy3J6Lbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RzmtH7sl; arc=none smtp.client-ip=209.85.208.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45a1b0ce15fso1925995e9.3;
-        Fri, 22 Aug 2025 02:29:24 -0700 (PDT)
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-6188b5ad4f0so2728457a12.0;
+        Fri, 22 Aug 2025 02:30:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755854963; x=1756459763; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+EnH/VSEGlluJ4BD0faCMmagpwL1mCpFcxo1StPT+Ao=;
-        b=euDu6Rsj+GhkRrQQ6UplhHqc8UwzSOdM19V/nZXnwoPtQ9O5ThSxJWR5sWgdY7hjgZ
-         JNa7+cpkva2IbqzvvojrmhOKGRSKldsdmzisnFRGD1/HlO0MXuJ4SdQ+mcn2Md4KMcI4
-         Fn6c5O40KUCu3yB7xVJ4zSLDg+1mirUCaQ9NroDaWJG+1wH/wPErm3zOITo87Lm13nnF
-         FdoUZz1+3EhjebbRr3DtEYQuDy92+7MfoENUeef1HJHfqQN1R61Nc8qqmc80KjVDLAph
-         //qtV8//Ft00mISB7Y2axdiAQ8wC6g8kgZo5+QUDNX9C0UHAKAQ9j6ftBBZKQZlZXkpU
-         Gkyw==
+        d=gmail.com; s=20230601; t=1755855029; x=1756459829; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QA11vh0vytRcgWuvXCyfPl/I98dGtmkbOJTfVhMA26s=;
+        b=RzmtH7sls8HuXxkHGFV4WyQKNKl3XY+TQDC+83reXwww3R12MFy57fP/wToipFtt6A
+         wRTV7axJmj6yyq68bVu4nYQfWAMdB2m9TY4+lWBSCCf+Ns2X3QXZ3XsT74i9hsexoBF+
+         I6JCWulEGapGHwCYFnC5qxcZticYPIPMUlhlp7hdMerrw09jRNO4qd81G55QG7bg3bCL
+         qQM8xXh/KR75oESpge4DGZkIyHaoY75fcN1/zw19VfVq96+QwLHGhRYx5mrXPMDV3KCi
+         e7Y5DHl+RBcsL3EaRPhKRQWAIisOJusOopq9SUvMHmFT3tiH+cHZjtXsfLL/xPUhWUJj
+         3Z2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755854963; x=1756459763;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+EnH/VSEGlluJ4BD0faCMmagpwL1mCpFcxo1StPT+Ao=;
-        b=pEW1AVGz/aCQwY/eXfajTIxokTI0pR++6dsFBSE3hnGJT52c566+5RlE2kUyMvE5Jt
-         xBFyXxBCOhexTYkReQX3FGepgjdzU+FoJD0qIKukERiJN8orMhSi1gY/bjBzg0rg4Q9x
-         oafApEQWe12tg7vqd9+kKbWnM17+rb5xqoeLjv5n9Or0PJXDF5KXN0Zxl99yCpliAZCQ
-         x8mzRppoy2FGY6kypS5Skr0bd3Pp2siO02A6csjj+k4NsHOtBWskgzf9PUX2cQ6a6c9S
-         EmnB1LaJ7kSdtvqNM/K3hFhkkv1CMgHuCeIYuqTl6o1nVL5bEDD1B+eLClJmwJJjCZE/
-         CBhg==
-X-Forwarded-Encrypted: i=1; AJvYcCWVC5tdTOlweYOX+eAEcRIaHPvhzWm+/PDfswKnIAsviT9022vVAz47lQ3xPmhmdrri9GEJk7OA@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRSCM39RcvSDRC++6/EtIYOHwBf8cz3WAfJ/97IEhreOTMk/nH
-	Ci3Ff8IRf4IFWWgDadr/Wn8/2jLFCVsHDTj1M2YJbXMBV/2mIEjtlpfl
-X-Gm-Gg: ASbGncty9JbGEsGULB4DsG37U7yTVHrAu+NrrRHwmP51dq/hWt+A/SAM+b/UYR8VEJg
-	A1k1RlHIeR1HmgN8TypPqDJsqqpEy/cirVjxja4tyPIV3pyfZSU0kFOml+J60OGNVUgB6nJhqJN
-	P2pf53x6AeK14vjU90n6ja08Qm/ZjoFksntqnaHepJ3Yp9a1Du58cv4cPUOynNpzeqI1r1X+pCP
-	BttvKDhn+as1Csqo4Dw5xNkNPgwBuW9tsZ5a+GeA3adVSmifh4UqYWlt6U+A8gFxSVMLDEn4ehh
-	HWjJVMrNbw1XyvWmo6YrSij2MyPfWbygns1WP1wT9UKVsoGwqGZLMW3ScZdl4vIooHmpms6JPAU
-	sTw8DHeDPo6C6WJeBIChY+hmK06GjdkqGRUdIk4NWcqdxOda27PEJfADmaiTp9VEH46iZ4DQ8CJ
-	KbW8SiaL/o
-X-Google-Smtp-Source: AGHT+IEeFhCgKs//0TYPpq0tr4htOV8qx42B9wgXqgLJ+zxDdcN5KH4lqW/B9Qr2BTax1Xm0EqzTVg==
-X-Received: by 2002:a05:600c:3ba7:b0:456:7cf:5268 with SMTP id 5b1f17b1804b1-45b517ca4bfmr8096065e9.4.1755854962861;
-        Fri, 22 Aug 2025 02:29:22 -0700 (PDT)
-Received: from [192.168.100.6] ([149.3.87.76])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b50dc40b7sm31644325e9.2.2025.08.22.02.29.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Aug 2025 02:29:22 -0700 (PDT)
-Message-ID: <e5ef25e7-e4bd-40d4-9f0a-f1d4c1c8acbe@gmail.com>
-Date: Fri, 22 Aug 2025 13:29:18 +0400
+        d=1e100.net; s=20230601; t=1755855029; x=1756459829;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QA11vh0vytRcgWuvXCyfPl/I98dGtmkbOJTfVhMA26s=;
+        b=cFSTYu8BgsjeFMggHGPSOsTmz/8UYVcqyUt3a0IDp6P4yBtu0DFuElTeRjJAPs8BEv
+         DmaaoPG6rJ91x0n/ugaOGDEBwXEGB61DvIoOK5Nycgh1p+PFvN5zI9ie3oMJeaiikPjU
+         P5f6J6a3sRv4P29v6Zo1gVM/vh35bgz3nw1BoBSW+BVHomTN3Jd5EKER0H4WZo+lSkDm
+         oh2O4lbpDSLNFXN3Ja6IJZY7gUJN6oOLHNRWbDjBsDS6M1kSStbciQCocvms5tkikjs+
+         oFGKBhQXsyZ0+VKMqJO+tvTGKzsbKD+ISmxFYDtmfUDerrLaE9agfK2FKWIRSjZbRnub
+         EcUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVNkJeFi0S0/MM1/5m0KbwvBDaNAA3lEpgxfPvVGJ96TeFYKVr+YshrmIr76qtm2ajanzdfqS/icdEGPmLL@vger.kernel.org, AJvYcCVNkX7ivCguk2HnIGqwJT62An7NOTlfFsJBkPT/jQEPjUUBUORD8dXt601DnRMVW6U87VBpGbOfuvP+fxbt@vger.kernel.org
+X-Gm-Message-State: AOJu0YzStv/QIj1Nwrny/pPJtFGP6g5RrtqB+B0tihymfFCWObuIVdAQ
+	JTrP41SJUnYd3JV3+LKvBNSr6BdE7wOY4nbeYqeetr1Mn4Uc3IeaERZ99/FhGbn5RHcTu5fM6jt
+	13pgcvvRGLkgReedeUIpjkYcv9XQTbOE=
+X-Gm-Gg: ASbGncucCiqfYks1JKiaijTjw3g5tMIlLll9VCJwJvcExDdg+lxP4tSYfvS2w7MACUr
+	qu+kUVLVG5v6yGBNpA6ndSvk35EsH0vKGjdNbPHPQv/zb0XVx3h7/hmrfDA0ejiQR1TTnYjx19n
+	3Yk9FH3jougdEdoWdh8EEUkUmXJ5KzA+OguQ7n0WfIDPM74sXWl8e0H069zFWMbQOj4s1EfoUFn
+	uoQ7a0=
+X-Google-Smtp-Source: AGHT+IF42KkZ2c0sI4b9Dq+zLsMgfB67YMP8ZCw2mWLwKxZ00wxQHbBagdfyv/4Eo0By453jWgy8EGcritB0Mpv9/TE=
+X-Received: by 2002:a17:907:1c1a:b0:afd:e6df:3d4f with SMTP id
+ a640c23a62f3a-afe28fea97dmr200343966b.5.1755855028421; Fri, 22 Aug 2025
+ 02:30:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [External] Re: [PATCH 0/3] memcg, writeback: Don't wait writeback
- completion
-To: Julian Sun <sunjunchao@bytedance.com>
-Cc: linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
- linux-mm@kvack.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
- jack@suse.cz, hannes@cmpxchg.org, mhocko@kernel.org,
- roman.gushchin@linux.dev, shakeel.butt@linux.dev, muchun.song@linux.dev,
- axboe@kernel.dk, tj@kernel.org
-References: <20250820111940.4105766-1-sunjunchao@bytedance.com>
- <24119aa3-f6ef-4467-80a0-475989e19625@gmail.com>
- <CAHSKhtch+eT2ehQ5weRGEJwTj1sw0vo0_4Tu=bfBuSsHXGm3ZQ@mail.gmail.com>
-Content-Language: en-US
-From: Giorgi Tchankvetadze <giorgitchankvetadze1997@gmail.com>
-In-Reply-To: <CAHSKhtch+eT2ehQ5weRGEJwTj1sw0vo0_4Tu=bfBuSsHXGm3ZQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250822000818.1086550-1-neil@brown.name> <20250822000818.1086550-8-neil@brown.name>
+In-Reply-To: <20250822000818.1086550-8-neil@brown.name>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 22 Aug 2025 11:30:15 +0200
+X-Gm-Features: Ac12FXyhOIFCzZv3P0etaYzEGIILa_RfGf74HnMQksOoAHIt4QBZGVkYhr2T5cU
+Message-ID: <CAOQ4uxj37GYrg=wfPRSr-7meK_QOpRbefJ_sShuVpzVfb2iisQ@mail.gmail.com>
+Subject: Re: [PATCH v2 07/16] VFS: introduce end_dirop() and end_dirop_mkdir()
+To: NeilBrown <neil@brown.name>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Aug 22, 2025 at 2:39=E2=80=AFAM NeilBrown <neil@brown.name> wrote:
+>
+> end_dirop() is the partner of start_dirop().  It drops the lock and
 
-`memory.stat:writeback` already gives you the exact real-time count of 
-pages still waiting to finish write-back for that cgroup, and it is 
-updated atomically in the hot path (`set_page_writeback()` / 
-`end_page_writeback()`). Reading it is just an `atomic_long_read()` (or 
-per-cpu equivalent), so the extra CPU cost of exposing it is essentially 
-zero. I was thinking that extra additional info would help us
+If they are partners I think it is better to introduce them together
+in the same patch.
+
+This goes for all the pairs that your series introduces.
+
+It simply makes sense from review POV to be able to
+verify that all callers have been properly converted.
+
+> releases the reference on the dentry.
+> It *is* exported and can be used by all callers.
+>
+> As vfs_mkdir() drops the dentry on error we cannot use end_dirop() as
+> that won't unlock when the dentry IS_ERR().  For those cases we have
+> end_dirop_mkdir().
+>
+> end_dirop() can always be called on the result of start_dirop(), but not
+> after vfs_mkdir().
+> end_dirop_mkdir() can only be called on the result of start_dirop() if
+> that was not an error, and can also be called on the result of
+> vfs_mkdir().
+
+These are very confusing semantics.
+I doubt these can hold for a long time,
+but I guess if this is temporary then maybe...
+
+>
+> We can change vfs_mkdir() to drop the lock when it drops the dentry,
+> end_dirop_mkdir() can be discarded.
+
+Fixed some typos above ^
+
+>
+> Signed-off-by: NeilBrown <neil@brown.name>
+> ---
+>  fs/namei.c            | 50 +++++++++++++++++++++++++++++++++++--------
+>  include/linux/namei.h |  3 +++
+>  2 files changed, 44 insertions(+), 9 deletions(-)
+>
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 4f1eddaff63f..8121550f20aa 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -2778,6 +2778,43 @@ static struct dentry *start_dirop(struct dentry *p=
+arent, struct qstr *name,
+>         return dentry;
+>  }
+>
+> +/**
+> + * end_dirop - signal completion of a dirop
+> + * @de - the dentry which was returned by start_dirop or similar.
+> + *
+> + * If the de is an error, nothing happens. Otherwise any lock taken to
+> + * protect the dentry is dropped and the dentry itself is release (dput(=
+)).
+> + */
+> +void end_dirop(struct dentry *de)
+> +{
+> +       if (!IS_ERR(de)) {
+> +               inode_unlock(de->d_parent->d_inode);
+> +               dput(de);
+> +       }
+> +}
+> +EXPORT_SYMBOL(end_dirop);
+> +
+> +/**
+> + * end_dirop_mkdir - signal completion of a dirop which could have been =
+vfs_mkdir
+> + * @de - the dentry which was returned by start_dirop or similar.
+> + * @parent - the parent in which the mkdir happened.
+> + *
+> + * Because vfs_mkdir() dput()s the dentry on failure, end_dirop() cannot=
+ be
+> + * used with it.  Instead this function must be used, and it must not be=
+ caller
+> + * if the original lookup failed.
+> + *
+> + * If de is an error the parent is unlocked, else this behaves the same =
+as
+> + * end_dirop().
+> + */
+> +void end_dirop_mkdir(struct dentry *de, struct dentry *parent)
+> +{
+> +       if (IS_ERR(de))
+> +               inode_unlock(parent->d_inode);
+> +       else
+> +               end_dirop(de);
+> +}
+> +EXPORT_SYMBOL(end_dirop_mkdir);
+> +
+>  /* does lookup, returns the object with parent locked */
+>  static struct dentry *__kern_path_locked(int dfd, struct filename *name,=
+ struct path *path)
+>  {
+> @@ -4174,9 +4211,8 @@ static struct dentry *filename_create(int dfd, stru=
+ct filename *name,
+>
+>         return dentry;
+>  fail:
+> -       dput(dentry);
+> +       end_dirop(dentry);
+>         dentry =3D ERR_PTR(error);
+> -       inode_unlock(path->dentry->d_inode);
+>  out_drop_write:
+>         if (!error)
+>                 mnt_drop_write(path->mnt);
+> @@ -4198,9 +4234,7 @@ EXPORT_SYMBOL(kern_path_create);
+>
+>  void done_path_create(struct path *path, struct dentry *dentry)
+>  {
+> -       if (!IS_ERR(dentry))
+> -               dput(dentry);
+> -       inode_unlock(path->dentry->d_inode);
+> +       end_dirop_mkdir(dentry, path->dentry);
+
+Like here we have end_dirop_mkdir() after operations that
+are certainly not mkdir.
+
+It's setting developers to fail IMO.
 
 Thanks,
-Giorgi
-
-On 8/21/2025 6:37 AM, Julian Sun wrote:
-> Hi, thanks for your review.
-> 
-> On Wed, Aug 20, 2025 at 8:17 PM Giorgi Tchankvetadze
-> <giorgitchankvetadze1997@gmail.com> wrote:
->>
->> Could we add wb_pending_pages to memory.events?
->> Very cheap and useful.
->> A single atomic counter is already kept internally; exposing it is one
->> line in memcontrol.c plus one line in the ABI doc.
-> 
-> Not sure what do you mean by wb_pending_pages? Another counter besides
-> existing MEMCG_LOW MEMCG_HIGH MEMCG_MAX, etc.? And AFAIK there's no
-> pending pages in this patch set. Could you give more details?
-> 
-> Thanks,
->>
->>
->> On 8/20/2025 3:19 PM, Julian Sun wrote:
->>> This patch series aims to eliminate task hangs in mem_cgroup_css_free()
->>> caused by calling wb_wait_for_completion().
->>> This is because there may be a large number of writeback tasks in the
->>> foreign memcg, involving millions of pages, and the situation is
->>> exacerbated by WBT rate limiting—potentially leading to task hangs
->>> lasting several hours.
->>>
->>> Patch 1 is preparatory work and involves no functional changes.
->>> Patch 2 implements the automatic release of wb_completion.
->>> Patch 3 removes wb_wait_for_completion() from mem_cgroup_css_free().
->>>
->>>
->>> Julian Sun (3):
->>>     writeback: Rename wb_writeback_work->auto_free to free_work.
->>>     writeback: Add wb_writeback_work->free_done
->>>     memcg: Don't wait writeback completion when release memcg.
->>>
->>>    fs/fs-writeback.c                | 22 ++++++++++++++--------
->>>    include/linux/backing-dev-defs.h |  6 ++++++
->>>    include/linux/memcontrol.h       |  2 +-
->>>    mm/memcontrol.c                  | 29 ++++++++++++++++++++---------
->>>    4 files changed, 41 insertions(+), 18 deletions(-)
->>>
->>
-
+Amir.
 
