@@ -1,97 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-58793-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58794-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F1F9B3180F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 14:40:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 966B3B31816
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 14:41:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94DFC188496C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 12:40:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C361A27C9B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 12:41:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC4192FC006;
-	Fri, 22 Aug 2025 12:39:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936C92FC00E;
+	Fri, 22 Aug 2025 12:41:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RHPyZ14/"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="jwWpU4pg"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089EB271443;
-	Fri, 22 Aug 2025 12:39:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D898719007D;
+	Fri, 22 Aug 2025 12:41:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755866369; cv=none; b=IGqWGdiy/SeGoF8nj1Lx/Gr4ZLHVpw9nCjCW8DEIdLSE8G3VB3q9DWFa2sSCRuIYJmjwjC5bONGZUM2IzCBfgHFj7Uc7Bj3M/Swqx2BCs3orjTfm7Grc35jSWNErLE6Jf0q2hdXA8jziSUW9DRqeRoBfsqLyKAff6USbtWYQ15o=
+	t=1755866469; cv=none; b=kHdnu2SfOTdT0CbcxpuqZsUfk/jlDPBapSL3MqY3yRiQYYoYol+nRWCV/DpqpDD0QRLQdIAHkm03Oaoy+RoUkQYXOXG8Un3vzyZCOVS9JGSIK5HeWHb40YKmZfuncxRmLK7iur3EMs+WBM6GfkFGKapyFAkonHl8ZmOGFkfCcFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755866369; c=relaxed/simple;
-	bh=/Njx2dKk/x0Bia9w57MBf+NAh2t8oZ/tfmxV2nmmPsk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sej6HX71a56Y2DTHVrfzF3/0iXUF34iQgIlyOttWOLEhdEKiQkm8CxxO9V+G2mywcmbVxvLeBAL1Q9qjUgf7Df0HnCnI7TsDGoWu5RkqcuT3q7/qQqCLWNGXTenPYU3RWyjvEmn4dRrIPwJaZszPeUD7G3RYl+C6XWYLwQWgf40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RHPyZ14/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BBD2C4CEED;
-	Fri, 22 Aug 2025 12:39:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755866368;
-	bh=/Njx2dKk/x0Bia9w57MBf+NAh2t8oZ/tfmxV2nmmPsk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=RHPyZ14/mYOIxYRjgFsWWN1VjlE5GZ3L18a9Gz5QTrU7WFrzouwKxWxICcO7yV0ZE
-	 +wu2q4K45HR31VYAt3wZeWqaayvRGpR3vIlxEbTzp0aRySEx93fxc96gchdUuk4XaH
-	 DBZk4IX5qUjqee7ffUEPmYv9t9zKoVs8VvX824KoavmyBhzRVTVgdUDf1t3dXPi9Sl
-	 9ggCeXj6N8IywTR5MyR+eh5nb8334O1T9dlD4w9WhlNF7mAUncWe7aguxJowSQgPBK
-	 /O/GxyqPfQxF6hP3x5LTkMYYWG460AY5bW9PMcsMUR64wLG9Lf4tFpPOw0MS7lO+vO
-	 B88g+kGECUMNg==
-From: Christian Brauner <brauner@kernel.org>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-btrfs@vger.kernel.org,
-	kernel-team@fb.com,
-	linux-ext4@vger.kernel.org,
-	linux-xfs@vger.kernel.org,
-	viro@ZenIV.linux.org.uk
-Subject: Re: (subset) [PATCH 10/50] fs: stop accessing ->i_count directly in f2fs and gfs2
-Date: Fri, 22 Aug 2025 14:38:56 +0200
-Message-ID: <20250822-herdplatte-fotomodell-8b323246552e@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <b8e6eb8a3e690ce082828d3580415bf70dfa93aa.1755806649.git.josef@toxicpanda.com>
-References: <b8e6eb8a3e690ce082828d3580415bf70dfa93aa.1755806649.git.josef@toxicpanda.com>
+	s=arc-20240116; t=1755866469; c=relaxed/simple;
+	bh=/nP5nOeslRb8udPMkJJlnSbloy7uRJBAUq0VTBExCok=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bpWR96Sg7Jec+RIF0/m0JkoEFwggARP0fhPKPqYwnjE4cS68v1Ba+y1p1uJwBp9vcYeKhyT7BUcIgB7t+ZhdVqjZ74EClUqtRQRT9Zma22G0WcArr2wtibzFjoJ2/9DbKZNicjM/bWBm2MtpWgSzYkIiZgK2YDEXn3LXS0aVVFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=jwWpU4pg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2720C4CEED;
+	Fri, 22 Aug 2025 12:41:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1755866468;
+	bh=/nP5nOeslRb8udPMkJJlnSbloy7uRJBAUq0VTBExCok=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jwWpU4pglCONCINeNN1LegyA9F+ogN37/JzXnEG2ULT/YLKMWxRc2phsXKwNnDOBw
+	 dSsZXqvAREhrYASPBvr1VH7eAYMtu72aM2+aQkS5ATxMNdqHlu78pL6CoC5+H2K/RF
+	 hYsBZCqhTjQF6REKTZ6xx3/OdfBb8QbLY2lOsNf8=
+Date: Fri, 22 Aug 2025 14:41:05 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
+	Zhang Yi <yi.zhang@huaweicloud.com>, stable@vger.kernel.org,
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	hargar@microsoft.com, broonie@kernel.org, achill@achill.org,
+	linux-ext4 <linux-ext4@vger.kernel.org>,
+	linux-fsdevel@vger.kernel.org, Joseph Qi <jiangqi903@gmail.com>,
+	Jan Kara <jack@suse.cz>, Theodore Ts'o <tytso@mit.edu>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Ben Copeland <benjamin.copeland@linaro.org>
+Subject: Re: [PATCH 6.16 000/564] 6.16.2-rc2 review
+Message-ID: <2025082200-straw-grunt-0009@gregkh>
+References: <20250819122844.483737955@linuxfoundation.org>
+ <CA+G9fYsjac=SLhzVCZqVHnHGADv1KmTAnTdfcrnhnhcLuko+SQ@mail.gmail.com>
+ <aKg41GMffk9t1p56@stanley.mountain>
+ <2025082242-skyward-mascot-f992@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=985; i=brauner@kernel.org; h=from:subject:message-id; bh=/Njx2dKk/x0Bia9w57MBf+NAh2t8oZ/tfmxV2nmmPsk=; b=kA0DAAoWkcYbwGV43KIByyZiAGioZPqhAHO5rjUmOvZjutYrMq8SDVrCRLqSgH58/v8POYeBx Yh1BAAWCgAdFiEEQIc0Vx6nDHizMmkokcYbwGV43KIFAmioZPoACgkQkcYbwGV43KKtogD7B+Kw pOiih3Mh0kqt9h7Xhx1Bpyxd3e8pJe4GvX5Y0v4BAImNQgSp9e8pFC/+5tZY8uJlNFBjNln9Kse Sp5NG2uQJ
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025082242-skyward-mascot-f992@gregkh>
 
-On Thu, 21 Aug 2025 16:18:21 -0400, Josef Bacik wrote:
-> Instead of accessing ->i_count directly in these file systems, use the
-> appropriate __iget and iput helpers.
+On Fri, Aug 22, 2025 at 02:14:10PM +0200, Greg Kroah-Hartman wrote:
+> On Fri, Aug 22, 2025 at 12:31:00PM +0300, Dan Carpenter wrote:
+> > On Wed, Aug 20, 2025 at 08:06:01PM +0530, Naresh Kamboju wrote:
+> > > On Tue, 19 Aug 2025 at 18:02, Greg Kroah-Hartman
+> > > <gregkh@linuxfoundation.org> wrote:
+> > > >
+> > > > This is the start of the stable review cycle for the 6.16.2 release.
+> > > > There are 564 patches in this series, all will be posted as a response
+> > > > to this one.  If anyone has any issues with these being applied, please
+> > > > let me know.
+> > > >
+> > > > Responses should be made by Thu, 21 Aug 2025 12:27:23 +0000.
+> > > > Anything received after that time might be too late.
+> > > >
+> > > > The whole patch series can be found in one patch at:
+> > > >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.16.2-rc2.gz
+> > > > or in the git tree and branch at:
+> > > >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.16.y
+> > > > and the diffstat can be found below.
+> > > >
+> > > > thanks,
+> > > >
+> > > > greg k-h
+> > > 
+> > > As I have reported last week on 6.16.1-rc1 as regression is
+> > > still noticed on 6.16.2-rc2.
+> > > 
+> > > WARNING: CPU: 0 PID: 7012 at fs/jbd2/transaction.c:334 start_this_handle
+> > > 
+> > > Full test log:
+> > > ------------[ cut here ]------------
+> > > [  153.965287] WARNING: CPU: 0 PID: 7012 at fs/jbd2/transaction.c:334
+> > > start_this_handle+0x4df/0x500
+> > 
+> > The problem is that we only applied the last two patches in:
+> > https://lore.kernel.org/linux-ext4/20250707140814.542883-1-yi.zhang@huaweicloud.com/
+> > 
+> > Naresh is on vacation until Monday, but he tested the patchset on
+> > linux-next and it fixed the issues.  So we need to cherry-pick the
+> > following commits.
+> > 
+> > 1bfe6354e097 ext4: process folios writeback in bytes
+> > f922c8c2461b ext4: move the calculation of wbc->nr_to_write to mpage_folio_done()
+> > ded2d726a304 ext4: fix stale data if it bail out of the extents mapping loop
+> > 2bddafea3d0d ext4: refactor the block allocation process of ext4_page_mkwrite()
+> > e2c4c49dee64 ext4: restart handle if credits are insufficient during allocating blocks
+> > 6b132759b0fe ext4: enhance tracepoints during the folios writeback
+> > 95ad8ee45cdb ext4: correct the reserved credits for extent conversion
+> > bbbf150f3f85 ext4: reserved credits for one extent during the folio writeback
+> > 57661f28756c ext4: replace ext4_writepage_trans_blocks()
+> > 
+> > They all apply cleanly to 6.16.3-rc1.
 > 
->
+> Ugh.  Ok, let me go push out a -rc for JUST this issue now so that
+> people can test and I can get it released for those that are tripped up
+> by it.  Thanks for the information, much appreciated.
 
-I'll take that as a fix.
-
----
-
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[10/50] fs: stop accessing ->i_count directly in f2fs and gfs2
-        https://git.kernel.org/vfs/vfs/c/2c2be4cb82c2
+Now pushed out.
 
