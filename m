@@ -1,225 +1,201 @@
-Return-Path: <linux-fsdevel+bounces-58731-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58732-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 892ABB30C54
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 05:11:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63CDCB30CB6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 05:42:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F78E563662
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 03:09:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 222316056DE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 03:42:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE92E26D4CA;
-	Fri, 22 Aug 2025 03:08:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 805C728D8CE;
+	Fri, 22 Aug 2025 03:42:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pq826WrM"
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="KCqTb0ZI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2081.outbound.protection.outlook.com [40.107.93.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28BD92652B4;
-	Fri, 22 Aug 2025 03:08:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755832084; cv=none; b=erxwrKxigNrMCX/7tYXeO0K1diU7JsUWvZwA/PHT1PfRUlYDbXVQlmZLWhkVe7eS6MYmpHFCYxvdzOsSU1SjfQpUzk3NKh7SzEX2Hqr4emB2wK+uVRxNf4BlcrzJs8oeova21l5rThgdO71/NerImhmxVF4qIviT5q4OGjTaUMM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755832084; c=relaxed/simple;
-	bh=SCWJsd9vjE1VJ9L3wefl1VGRbBT52yKi9plp6KLTV/M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pemkkggPRbPeP8RGGkaO9Pgfy+KK3/FagthQ0cXR9uA28eOkU79IEJJKmDwyeD1QZl8ca2m/A0guWEihPUfnjA0YQogsFtzMLMrRQXJxjF1/H/C8hxSaxZ2siNlc/SIBjO+pXFt2xqSFcpd/JzJp6Fg69UKGFKgZC4e3PTbzohI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pq826WrM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1398C4CEEB;
-	Fri, 22 Aug 2025 03:08:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755832084;
-	bh=SCWJsd9vjE1VJ9L3wefl1VGRbBT52yKi9plp6KLTV/M=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=pq826WrMct/ELjpuRCD360hXL5d6eRZjJlhvi1ZvcFso6C915lRq4I8Y/MQvxFvuk
-	 c61/R4JqIAiKBru31s6kf8r+L9NUyoUKZCg6JNEZe0OcRQuHHIMqM/76MFRuT22g53
-	 EvSqtDBdC+41GoPOdTB132X/U0RD6+K8MlKPfINpB+ZXjeAXb553Z4Sm5j5PG3Gy3X
-	 lC1UGWW/biRSQpqlW/VV98IVGwveT907OhGljIOMQ0ZFb9OvETPWO4iIzZwUjETta/
-	 neRSqnMgpnVKPZyGmhuL1i4ab5jXoogzvcbjqSkVXHBUNsTIryEqKRjwSDMQcl9deU
-	 FAFNC8olFBgiQ==
-From: Sasha Levin <sashal@kernel.org>
-To: stable@vger.kernel.org
-Cc: David Howells <dhowells@redhat.com>,
-	Xiaoli Feng <fengxiaoli0714@gmail.com>,
-	Paulo Alcantara <pc@manguebit.org>,
-	Steve French <sfrench@samba.org>,
-	Shyam Prasad N <sprasad@microsoft.com>,
-	netfs@lists.linux.dev,
-	linux-cifs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>,
-	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.12.y] netfs: Fix unbuffered write error handling
-Date: Thu, 21 Aug 2025 23:08:00 -0400
-Message-ID: <20250822030800.1054685-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <2025082157-dedicator-hurled-4d65@gregkh>
-References: <2025082157-dedicator-hurled-4d65@gregkh>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C0EA21ADB9;
+	Fri, 22 Aug 2025 03:42:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755834142; cv=fail; b=hPAHJVG99X8hLKYXv6XLApCFUuO2QvIG835oRYCvLMY9Pf1EsEhBUUww6CaiilE019uagQ5KBR2YMth8NRLEgRvV7eH/8TRF1izavH+rNcVh5O1x9WQbhYullgD7w+MDeXvxiypu0odWTyxx0kXslluEg8gBW2xPCIc/kSehHH8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755834142; c=relaxed/simple;
+	bh=fP/kU3u1PXVfB56QwbN2qt/HkRBGg0JwZhucaZttopM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eYBYfyDdpSV2g7FMGEy4NHjMbXiRMEcHHm0dn0L9suiWZ7HQZLuLHDR6NxjJ1WQ7TssUGLesXhg3JDHpJsJ3hbxCB0S/7l+Kf43SKASaEbNHB26UyAwesQyrhWbI0RAEhHEwul5R+fTXigATJjuOwN5Bm4m2GCB39g0YQBQPOR8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=KCqTb0ZI; arc=fail smtp.client-ip=40.107.93.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=BjidWx9LRRx+cLE5BnWrAV0PbDERltcLNafnF8ue/RwzxOSjiXUfu93q67SWOU8/mtOuSp55Dej8HIuCOMVU44ft89EwHYv2Xx8PPAM8xaeCpj8GJt+9J5yfr+T0GDtMDu68MSzxbCm6hwVbW673IkG1pNjhBRH8wxbHUQsQzufMbit5O8u6lnD2uCNW4PDWGeSdzUEdn+0unaLSr9tojD+/ogR+H2OqZEPLVKpSccI8iOp2+eoxTsPtdXhQ2SDRcrcko1e5agouSedtJHU7MEINXVe/HSbeaAepS2rLbQTVL+MjZw34B9bR8xfNwAelhvJopylsnvfbgYd1BZ7Jyw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bnX8NOuDrjMcEvgu+GzHgV2VKEObj9qh3j5GHJqwHoc=;
+ b=cZPOc5LvMLKIMMFkcbUwes5FyQ1suL4HdAhZUm9jlxwmy0SMoRKXF1UkJzXMccblp/eB56+mza/8oEdJVQTMeFhdV+VNsrRjLIjl/uq0rg9TH3WtLcb05fn/t1aKT0mRn6yDY6gikN5ydwP9oLXlZv0hJNUc3qSqrKZvsrDrSP36eI8VjAD1Nx8kOy6bR94iqC78iPffNqqk8pb8SQFTKiPXc4WfDD8hkoN34VO9rz1eqRUa23LrKdCWPYiFTFZ2qDLiutHYAHcMkZ4jiV75CvHVT94HbQR2C8amWKKS3emM9skG+3cI5uJ1unjsIzkpB5fslJLKdZdi6u0Gr5cPxA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bnX8NOuDrjMcEvgu+GzHgV2VKEObj9qh3j5GHJqwHoc=;
+ b=KCqTb0ZIGVaD28c9MnFpiSVWXmHRXuQlVKt9EmDCYqF81LLak9e5AcVRlwiEGiwh15LdeYeRInlcnUkcJgcnmLWIFDhJPZ3zTV55rJyEGun6jhInhZenxCNvZ4fkEDYHpaJSjBtbFN62dmByzjSxpynN7/cJT9HmUDtnt/V9D6I=
+Received: from SJ0PR03CA0385.namprd03.prod.outlook.com (2603:10b6:a03:3a1::30)
+ by CH3PR12MB9394.namprd12.prod.outlook.com (2603:10b6:610:1cf::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.15; Fri, 22 Aug
+ 2025 03:42:15 +0000
+Received: from SJ1PEPF000026C5.namprd04.prod.outlook.com
+ (2603:10b6:a03:3a1:cafe::23) by SJ0PR03CA0385.outlook.office365.com
+ (2603:10b6:a03:3a1::30) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.17 via Frontend Transport; Fri,
+ 22 Aug 2025 03:42:14 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ1PEPF000026C5.mail.protection.outlook.com (10.167.244.102) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9052.8 via Frontend Transport; Fri, 22 Aug 2025 03:42:14 +0000
+Received: from ethanolx50f7host.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 21 Aug
+ 2025 22:42:13 -0500
+From: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+To: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<nvdimm@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
+	<linux-pm@vger.kernel.org>
+CC: Davidlohr Bueso <dave@stgolabs.net>, Jonathan Cameron
+	<jonathan.cameron@huawei.com>, Dave Jiang <dave.jiang@intel.com>, "Alison
+ Schofield" <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
+	<dan.j.williams@intel.com>, Matthew Wilcox <willy@infradead.org>, Jan Kara
+	<jack@suse.cz>, "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown
+	<len.brown@intel.com>, Pavel Machek <pavel@kernel.org>, Li Ming
+	<ming.li@zohomail.com>, Jeff Johnson <jeff.johnson@oss.qualcomm.com>, "Ying
+ Huang" <huang.ying.caritas@gmail.com>, Yao Xingtao <yaoxt.fnst@fujitsu.com>,
+	Peter Zijlstra <peterz@infradead.org>, Greg KH <gregkh@linuxfoundation.org>,
+	Nathan Fontenot <nathan.fontenot@amd.com>, Smita Koralahalli
+	<Smita.KoralahalliChannabasappa@amd.com>, Terry Bowman
+	<terry.bowman@amd.com>, Robert Richter <rrichter@amd.com>, Benjamin Cheatham
+	<benjamin.cheatham@amd.com>, PradeepVineshReddy Kodamati
+	<PradeepVineshReddy.Kodamati@amd.com>, Zhijian Li <lizhijian@fujitsu.com>
+Subject: [PATCH 0/6] dax/hmem, cxl: Coordinate Soft Reserved handling with CXL
+Date: Fri, 22 Aug 2025 03:41:56 +0000
+Message-ID: <20250822034202.26896-1-Smita.KoralahalliChannabasappa@amd.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF000026C5:EE_|CH3PR12MB9394:EE_
+X-MS-Office365-Filtering-Correlation-Id: f76bc764-f21f-4510-01c0-08dde12de2ab
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|36860700013|82310400026|1800799024|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UFpJVzRFVU5NK0JGWFpUTmZieFlKR1JpTmF0ZWFxSVJVSHA2WHM0ZUQ3ZFpX?=
+ =?utf-8?B?RWNHNVN5dE5CRktwUGdMcTh3aEJoKzBXTHBaRkYwdzkzQko3Zk5PTUwyQUVi?=
+ =?utf-8?B?UktCbFpJR09NeVlKUUtVdjBHVUNWUlFobTVCS1JjaGFwbEFlRVQ5eXVQV3pR?=
+ =?utf-8?B?bjgrV2FZUmlhT0U2SEQwTzhUcDNIdW9EZ3kvWUJzSUZ2OU53NUwzcCtGZDJv?=
+ =?utf-8?B?Wkdja2VhMHZWYUZwMjFsTkFKN0lJM3NKbEkxcCt0UFR5bENKUjhZTkRORWhI?=
+ =?utf-8?B?d3pTZjQ0Q2dhS2pqZ2pkWDE5NlN2Z3UwQlFxZlV2WUYyWWJLV29peDJCU0xN?=
+ =?utf-8?B?Y2JrVXlUVkcxcStERmtBbU5FYk0zUWgxcEtTTHpBZ0FlM1JhYjFNenBDUm9N?=
+ =?utf-8?B?dG5RZGV4WVMzSnhndUEvZlkxMC9wekJtam1EbUlLY1RrN0xpQkV0N2g3RW8x?=
+ =?utf-8?B?ZGRyRFJENElZTGRBK2tTMGhEQkY5Sm5qMU90NjJVanZSZGxuTzZxeEhBZThP?=
+ =?utf-8?B?UGJCMmdINUpuU2pLRG1YVGJadWFDT1g2R0NSNng4NkRDWlFybEtSV24yWGNa?=
+ =?utf-8?B?ZG1kU2FZVWZhdmdxMHk1WUpXM01tWExuRUkxZWdwRXBLc1hZSXc3V0Nvb1hB?=
+ =?utf-8?B?OHFuVWZVVG43R3MzYmpsR2ZKckxYblBTV28va2w3MEc1NkE1TGdETTV1MVly?=
+ =?utf-8?B?YzMyOHNwTkg3TzhMeTF6cGp6ZkFsWWMyejhQcHp1SE9ZOFE4MC93NFYvdFdp?=
+ =?utf-8?B?SGFleVF4MFgvTGFYMll5bHNxN0NoOGhPc0tzZ2xuVHJOUGtpZ1dsRkd5L3BF?=
+ =?utf-8?B?QllGYTJnOTN3cCtSZDAzKzRZSmw0UE9Nc0hhaE1aaWt3bVl1QkxtMkNtSzdu?=
+ =?utf-8?B?VldHUDE1Vy85UHZUY05vY1ovcGNkVVJjL1NLL2RtdjM1YTZ2VjZoODlFVUJy?=
+ =?utf-8?B?VWx3MTdYbGNjdUpXSGNFSTlRc2MxK3dSQVhrZnJXV200K21PalhNVmZnOGJp?=
+ =?utf-8?B?a2MvNHRtT01VZ1NiWjZZRGhsZldIUDkrNTJKQllMQ3lhQnFXWEprRUdMMVBG?=
+ =?utf-8?B?NWZCTDlVQzl5L0tFVm9KWUlqRWl4T1V5OE9BR3FuRjh1N1VibjFxd0VmM05Z?=
+ =?utf-8?B?SElCZXZoRzdxUDZBdjNaMXpwZ0c4SktkdU1URFFKSE5HR3NGNDZXVU4rZUxR?=
+ =?utf-8?B?cWFZdWM1YjRoS0hvYjJ3UWF2RzhVZWlZTGdTQUh0eVg5WW1pZXFLVjh2Vkk4?=
+ =?utf-8?B?b25Ud2hQaTBrR3prSXQySzNMMFUrMDFFSFNXS0VSVmdYWG1rdmR3OGNVQTFB?=
+ =?utf-8?B?V3p2Y1REa0Rqbzlsa3BJa0NoVHZia2o1VnpxTFVVQjQ2L3FuTGNaZmJjMWtU?=
+ =?utf-8?B?cGplcTUrZXFnWTRHUHQvQjY5RVhNdGRLRWRrWnlleU1ZOS9rQkpGYjBtcUNS?=
+ =?utf-8?B?TTYyUmFlN2dacWdubFp3cUNJb2dBdUlUbVNvOFoydFlRSUFJS0dQbCsyZWc5?=
+ =?utf-8?B?TmdaTUo2RUxvS1lseGk1ZVM4d3lxdnRKb3diMXlSc3NTbVp3dndraGtlR0JF?=
+ =?utf-8?B?WndGamI2UCtmWTZuRlFQV1IrQUhIOE5oQjllWlZYMHh3TjNPaFQ2WXRSUERm?=
+ =?utf-8?B?cDVlTVk2L0tSR1dMcFdVUGtGV0VxUVRVSXRwcDYzYVN3dyt1OTZwUlh6UnBk?=
+ =?utf-8?B?SnpnYngxVHM5WlZYMlpRTWsxcEZuVXpWQ2dLaHdPMjF5QUlQaXZzYlN4TzhZ?=
+ =?utf-8?B?OTk1ZXh6dklZOG5QTGF6bTV1YUN0cXRtbDBOSkJIZ0JPaTdDcnRqNnNLZHlW?=
+ =?utf-8?B?NkpjakFVSjc5dVdrMDV0b3ZQc3ZzOGdHRTZZcCs4QjFESlZtVVE4WjlsbitU?=
+ =?utf-8?B?VlBiMFUwTGpkY3RxNEpZRExyVnBPeUJhenZDTWlzSEhlOU81T1A0NUdFRTdE?=
+ =?utf-8?B?RVBUaUJ2dGlGYnV5bGg0bFR5NHM5Z2NpZzZpaWhEOUxHeUI4cVVxZWpuRTcy?=
+ =?utf-8?B?WFpoemFVY0hoNlVGRDJDUVFUc2p2RDMrYmtRZjJjSmdMVzZGY3dEbUhTK0k3?=
+ =?utf-8?B?L1FXWVk0eGI5VDJJdHIxZENCSEQ2dUdvUDZ3dz09?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(36860700013)(82310400026)(1800799024)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2025 03:42:14.7769
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f76bc764-f21f-4510-01c0-08dde12de2ab
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF000026C5.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9394
 
-From: David Howells <dhowells@redhat.com>
+This series aims to address long-standing conflicts between dax_hmem and
+CXL when handling Soft Reserved memory ranges.
 
-[ Upstream commit a3de58b12ce074ec05b8741fa28d62ccb1070468 ]
+I have considered adding support for DAX_CXL_MODE_REGISTER, but I do not
+yet have a solid approach. Since this came up in discussion yesterday,
+I am sending the current work and would appreciate inputs on how best to
+handle the DAX_CXL_MODE_REGISTER case.
 
-If all the subrequests in an unbuffered write stream fail, the subrequest
-collector doesn't update the stream->transferred value and it retains its
-initial LONG_MAX value.  Unfortunately, if all active streams fail, then we
-take the smallest value of { LONG_MAX, LONG_MAX, ... } as the value to set
-in wreq->transferred - which is then returned from ->write_iter().
+Reworked from Dan's patch:
+https://git.kernel.org/pub/scm/linux/kernel/git/cxl/cxl.git/patch/?id=ab70c6227ee6165a562c215d9dcb4a1c55620d5d
 
-LONG_MAX was chosen as the initial value so that all the streams can be
-quickly assessed by taking the smallest value of all stream->transferred -
-but this only works if we've set any of them.
+Previous work:
+https://lore.kernel.org/all/20250715180407.47426-1-Smita.KoralahalliChannabasappa@amd.com/
 
-Fix this by adding a flag to indicate whether the value in
-stream->transferred is valid and checking that when we integrate the
-values.  stream->transferred can then be initialised to zero.
+Smita Koralahalli (6):
+  dax/hmem, e820, resource: Defer Soft Reserved registration until hmem
+    is ready
+  dax/hmem: Request cxl_acpi and cxl_pci before walking Soft Reserved
+    ranges
+  dax/hmem, cxl: Tighten dependencies on DEV_DAX_CXL and dax_hmem
+  dax/hmem: Defer Soft Reserved overlap handling until CXL region
+    assembly completes
+  dax/hmem: Reintroduce Soft Reserved ranges back into the iomem tree
+  cxl/region, dax/hmem: Guard CXL DAX region creation and tighten HMEM
+    deps
 
-This was found by running the generic/750 xfstest against cifs with
-cache=none.  It splices data to the target file.  Once (if) it has used up
-all the available scratch space, the writes start failing with ENOSPC.
-This causes ->write_iter() to fail.  However, it was returning
-wreq->transferred, i.e. LONG_MAX, rather than an error (because it thought
-the amount transferred was non-zero) and iter_file_splice_write() would
-then try to clean up that amount of pipe bufferage - leading to an oops
-when it overran.  The kernel log showed:
+ arch/x86/kernel/e820.c    |   2 +-
+ drivers/cxl/core/region.c |   4 +-
+ drivers/dax/Kconfig       |   3 +
+ drivers/dax/hmem/device.c |   4 +-
+ drivers/dax/hmem/hmem.c   | 137 +++++++++++++++++++++++++++++++++++---
+ include/linux/ioport.h    |  24 +++++++
+ kernel/resource.c         |  73 +++++++++++++++++---
+ 7 files changed, 222 insertions(+), 25 deletions(-)
 
-    CIFS: VFS: Send error in write = -28
-
-followed by:
-
-    BUG: kernel NULL pointer dereference, address: 0000000000000008
-
-with:
-
-    RIP: 0010:iter_file_splice_write+0x3a4/0x520
-    do_splice+0x197/0x4e0
-
-or:
-
-    RIP: 0010:pipe_buf_release (include/linux/pipe_fs_i.h:282)
-    iter_file_splice_write (fs/splice.c:755)
-
-Also put a warning check into splice to announce if ->write_iter() returned
-that it had written more than it was asked to.
-
-Fixes: 288ace2f57c9 ("netfs: New writeback implementation")
-Reported-by: Xiaoli Feng <fengxiaoli0714@gmail.com>
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=220445
-Signed-off-by: David Howells <dhowells@redhat.com>
-Link: https://lore.kernel.org/915443.1755207950@warthog.procyon.org.uk
-cc: Paulo Alcantara <pc@manguebit.org>
-cc: Steve French <sfrench@samba.org>
-cc: Shyam Prasad N <sprasad@microsoft.com>
-cc: netfs@lists.linux.dev
-cc: linux-cifs@vger.kernel.org
-cc: linux-fsdevel@vger.kernel.org
-cc: stable@vger.kernel.org
-Signed-off-by: Christian Brauner <brauner@kernel.org>
-[ Dropped read_collect.c hunk ]
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/netfs/write_collect.c | 10 ++++++++--
- fs/netfs/write_issue.c   |  4 ++--
- fs/splice.c              |  3 +++
- include/linux/netfs.h    |  1 +
- 4 files changed, 14 insertions(+), 4 deletions(-)
-
-diff --git a/fs/netfs/write_collect.c b/fs/netfs/write_collect.c
-index a968688a7323..c349867d74c3 100644
---- a/fs/netfs/write_collect.c
-+++ b/fs/netfs/write_collect.c
-@@ -433,6 +433,7 @@ static void netfs_collect_write_results(struct netfs_io_request *wreq)
- 			if (front->start + front->transferred > stream->collected_to) {
- 				stream->collected_to = front->start + front->transferred;
- 				stream->transferred = stream->collected_to - wreq->start;
-+				stream->transferred_valid = true;
- 				notes |= MADE_PROGRESS;
- 			}
- 			if (test_bit(NETFS_SREQ_FAILED, &front->flags)) {
-@@ -538,6 +539,7 @@ void netfs_write_collection_worker(struct work_struct *work)
- 	struct netfs_io_request *wreq = container_of(work, struct netfs_io_request, work);
- 	struct netfs_inode *ictx = netfs_inode(wreq->inode);
- 	size_t transferred;
-+	bool transferred_valid = false;
- 	int s;
- 
- 	_enter("R=%x", wreq->debug_id);
-@@ -568,12 +570,16 @@ void netfs_write_collection_worker(struct work_struct *work)
- 			netfs_put_request(wreq, false, netfs_rreq_trace_put_work);
- 			return;
- 		}
--		if (stream->transferred < transferred)
-+		if (stream->transferred_valid &&
-+		    stream->transferred < transferred) {
- 			transferred = stream->transferred;
-+			transferred_valid = true;
-+		}
- 	}
- 
- 	/* Okay, declare that all I/O is complete. */
--	wreq->transferred = transferred;
-+	if (transferred_valid)
-+		wreq->transferred = transferred;
- 	trace_netfs_rreq(wreq, netfs_rreq_trace_write_done);
- 
- 	if (wreq->io_streams[1].active &&
-diff --git a/fs/netfs/write_issue.c b/fs/netfs/write_issue.c
-index bf6d507578e5..b7830a15ae40 100644
---- a/fs/netfs/write_issue.c
-+++ b/fs/netfs/write_issue.c
-@@ -115,12 +115,12 @@ struct netfs_io_request *netfs_create_write_req(struct address_space *mapping,
- 	wreq->io_streams[0].prepare_write	= ictx->ops->prepare_write;
- 	wreq->io_streams[0].issue_write		= ictx->ops->issue_write;
- 	wreq->io_streams[0].collected_to	= start;
--	wreq->io_streams[0].transferred		= LONG_MAX;
-+	wreq->io_streams[0].transferred		= 0;
- 
- 	wreq->io_streams[1].stream_nr		= 1;
- 	wreq->io_streams[1].source		= NETFS_WRITE_TO_CACHE;
- 	wreq->io_streams[1].collected_to	= start;
--	wreq->io_streams[1].transferred		= LONG_MAX;
-+	wreq->io_streams[1].transferred		= 0;
- 	if (fscache_resources_valid(&wreq->cache_resources)) {
- 		wreq->io_streams[1].avail	= true;
- 		wreq->io_streams[1].active	= true;
-diff --git a/fs/splice.c b/fs/splice.c
-index 38f8c9426731..ed8177f6d620 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -744,6 +744,9 @@ iter_file_splice_write(struct pipe_inode_info *pipe, struct file *out,
- 		sd.pos = kiocb.ki_pos;
- 		if (ret <= 0)
- 			break;
-+		WARN_ONCE(ret > sd.total_len - left,
-+			  "Splice Exceeded! ret=%zd tot=%zu left=%zu\n",
-+			  ret, sd.total_len, left);
- 
- 		sd.num_spliced += ret;
- 		sd.total_len -= ret;
-diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-index 474481ee8b7c..83d313718cd5 100644
---- a/include/linux/netfs.h
-+++ b/include/linux/netfs.h
-@@ -150,6 +150,7 @@ struct netfs_io_stream {
- 	bool			active;		/* T if stream is active */
- 	bool			need_retry;	/* T if this stream needs retrying */
- 	bool			failed;		/* T if this stream failed */
-+	bool			transferred_valid; /* T is ->transferred is valid */
- };
- 
- /*
 -- 
-2.50.1
+2.17.1
 
 
