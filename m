@@ -1,144 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-58781-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58784-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D825BB316DD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 14:04:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D1F4B3172F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 14:11:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F2A3B01638
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 12:03:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78E0EB0351A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 12:09:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C284D28AB1E;
-	Fri, 22 Aug 2025 12:03:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 541CE2FDC26;
+	Fri, 22 Aug 2025 12:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="6P8oBcT2";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="El9pqWkU"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m6+dkYrP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9494A17B402
-	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Aug 2025 12:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37AC2FB607;
+	Fri, 22 Aug 2025 12:07:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755864200; cv=none; b=uTwVr2of+xkiPBZ3dtjP19EWWCF7YilLj5p32XO7jTP7APvKh6qsjmpFYDKW6KzaoThnt87Vmc0W5JT5DwgPOrjZa1rwKpkA009uYUd9TGOO8y753RVq/VBrixhVFP2dUMX8jgVKjBGAHP0KhmHsOUWH+KjX8dRY/rukHPWrdS4=
+	t=1755864449; cv=none; b=TzxyTKMtb+ADyZiCJYhuusE9477rs3UX4+OdfjHhcXUvEK/GW1BKeXUnXyARV1ycvz6QdUDuzD9l6xJeVJ4bzqOzmM2SKiPPqJvS9cP7zCd8X8psuNJ8TlX+vgxM4xwvpqHsHIJHFCmvLFZwPZBVN2coze3TwWN40b68pts5wIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755864200; c=relaxed/simple;
-	bh=8lgAd5vyyWTcwHr7084ZIO+LBkWU2qgpnRjFcZD7Gco=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O4s1WDHGBivEKo8rM0plbuXxXSF660reaZVA+5As8+7yPXduL8cSYWgVYJkeg/kDhzFBrfB0TYC9h6xwM4ID3K3ZuY2tY25MzsjSTWcoQw2bWUEn+4cXt/j6ZqogDmp5I87dY2ZRrwxSAIApo8RXy5H6JAmWreCyHE2QLClD2aU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=6P8oBcT2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=El9pqWkU; arc=none smtp.client-ip=202.12.124.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 82C287A0092;
-	Fri, 22 Aug 2025 08:03:16 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-03.internal (MEProxy); Fri, 22 Aug 2025 08:03:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1755864196;
-	 x=1755950596; bh=cEEPRIBWy9/8u3eeW7uLIZrfX/pjIbJxcEgs6t8llQI=; b=
-	6P8oBcT2tyKD6NoheNsrhCv/PLjwRNNHgynwlLt3a/tW7eDV6FGNwwm8vIm/yqsc
-	tPO9DM7HNXfLKDRYtFstXefz2mCIawifCk4/3feKfSCgf87yRQPeul6usjTyS2lj
-	wxu8RdRxZg25gBd3NAeJfGap4k1rSbGPQ4teGC6RdHxciSsSpAn+06YyDN58VGWC
-	Vhd6jHiwqimy/Cw3vhs98VKiM2zKKL87mzv7fJsX1bA0Y42cz4ztHWRgeYPhIF7u
-	Y0Ydw/h2OFM/qF1Qb1+m4+X4n8sY4FMzS0HA1B+aJKN4VVosFGWimHDiPWUayfha
-	2XxtkZdbpJx15pblNhwd7A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1755864196; x=
-	1755950596; bh=cEEPRIBWy9/8u3eeW7uLIZrfX/pjIbJxcEgs6t8llQI=; b=E
-	l9pqWkUgLBKuwY3x57OIc0ODDKvXDBUHdfZdQqohRQBqsTaaEF3d4TrsThLaY0p0
-	j0hgwlPGqItxA9rXGND9fxriBbGKurjy8JhJot0D6RI0cHQh4cFGds4Ed1voy8wI
-	T1R/WDhSVHpvzs6hSkMlZpOFZfyf20ZpSiP6uCJGoQi9v8AgDx6kh44bv0rrmtbo
-	0OK+mPGnakHPQPKdvNAVusE+6ywkiP9zISyCGGL30FfBkfdwrRkfC4APrlekYpGA
-	AS9aIxw5qdsgw0gJoVZa43FnByAZWRA8QHD3+mdGD7YGwdEP6PRUOZzCAiWRENn+
-	OLdPUYg2HNPJBmDQ3Loug==
-X-ME-Sender: <xms:hFyoaMWmXn8bcksfRCTDDKyETy0mT4aqWX5vfuq7Y4k7PYr2wcJeGw>
-    <xme:hFyoaNfU21-hT1TWsYHznjjyDY4mh98KKk6TtBR0WjNo2qrmMOLBTsE9iRCZ7Bmqa
-    8vGs4-oIDh0_A>
-X-ME-Received: <xmr:hFyoaAJ_kwfA_DstAP57AnDHmzYog-FU9RJkGchzEpOW0uiTEPwVuWhhcNgBiZ9fDXAw-q66ZbCgWuz9qnOJiL4Y8ueOWq4QP-a09A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduieefjeduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggugfgjsehtkeertddttddunecuhfhrohhmpefirhgvghcu
-    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpeelheehud
-    duueeggeejgfehueduffehveeukefgkeeufeeltdejteeiuedtkeekleenucevlhhushht
-    vghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhh
-    drtghomhdpnhgspghrtghpthhtohepkedpmhhouggvpehsmhhtphhouhhtpdhrtghpthht
-    ohepjhgrmhgvshdrsghothhtohhmlhgvhieshhgrnhhsvghnphgrrhhtnhgvrhhshhhiph
-    drtghomhdprhgtphhtthhopehthihtshhosehmihhtrdgvughupdhrtghpthhtohepkhhs
-    uhhmmhhitheslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehlihhnuhigqd
-    hfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:hFyoaKwPQRFLZpYBk0kOfBnaZIy88qvVSIVVe7yNedSGppn0MDk-SQ>
-    <xmx:hFyoaGvq-XglLXIEirGk1Sx1fxXmrUzpxwIEmgfAQq2_MitYiC8iHg>
-    <xmx:hFyoaNDtr7h6cMu7bxNb07ZNLU2uujR3xixxzFxuFlYZJH4fIJmluA>
-    <xmx:hFyoaIEIHcbUlSUKB4cc8aUC23VM_qN4V_aaJQiIVj_7zFLwzfv27Q>
-    <xmx:hFyoaLQiCrkLNPR0J2FcY3yuHh1IJSnUqklEUOlV70zQuwilPvCL5Mq3>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 22 Aug 2025 08:03:15 -0400 (EDT)
-Date: Fri, 22 Aug 2025 14:03:13 +0200
-From: Greg KH <greg@kroah.com>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Theodore Ts'o <tytso@mit.edu>, ksummit@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [MAINTAINER SUMMIT] Adding more formality around feature
- inclusion and ejection
-Message-ID: <2025082202-lankiness-talisman-3803@gregkh>
-References: <fc0994de40776609928e8e438355a24a54f1ad10.camel@HansenPartnership.com>
- <20250821203407.GA1284215@mit.edu>
- <940ac5ad8a6b1daa239d748e8f77479a140b050d.camel@HansenPartnership.com>
+	s=arc-20240116; t=1755864449; c=relaxed/simple;
+	bh=w9LDDKbbCU32z8mFAmsc72r+haOmtzzbI1hp4FHEhZk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iSAjNWQzBIUh5OPmNSXX/EGCBwBoAOlDuJ0xlKYDH0SLp1jBbhKCm88rLRwFZ5IJFLd6wjLuI1zaxHmGNJlFIqwFBqOA9e37q5HdZFc7YXgQZbr0GlJFyJm5z/RU6y3SJPzLeYsjqn9iBhy09IwtfztfaBEYNuRbAnzr5p325yg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m6+dkYrP; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3b9e7437908so1368383f8f.3;
+        Fri, 22 Aug 2025 05:07:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755864446; x=1756469246; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G8l8c6RdN9SEwzhMIPJOr5f2j416dT55akZSctyPtco=;
+        b=m6+dkYrPSdl4HDLTuMoH9qJhUVNvoMcYD+zpbuuF0vmKgglHm2rnboNewb0Sba6+QA
+         ydD0+3jHfidGfTM/CRyhCqosrVj8R5G9DbvBFMiHuzhYMuc/igPx5rQea6j5hXSlscUf
+         TzQPXFh35msrBxs1BUWmH8GLmeu/hDU246phHFfKq7jOByqvbmObZoorrBgPkuMO0PaC
+         8ZlriJolMHzuXAeZXA/m2hiR3TyeYVu4RBGz/5OYQVMOduQ2/S37r5o3kquAhYIWrEyI
+         6EheMNkw+dn4fg1kqigozjOY6eDl730J4aeu+l2i2yLrBZ5NrYvQEL68RO487BsnhxKW
+         TIHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755864446; x=1756469246;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=G8l8c6RdN9SEwzhMIPJOr5f2j416dT55akZSctyPtco=;
+        b=FsZcDpIHoaCqiZPmaGaHa86PUndeoD82NXaBx8zvx8X4/t2xO+nndY+Y0W/p1PYFcg
+         uMv/soajR/eBNbP38dybmWsCIAUIF2wgLcyIq0U1jhvRcGk816WiRc9dnuB+QHAEf+AI
+         ighrxeWoHLAdfA8kbsICOSwTANItghaTh7uccPzFrAbcf+cVtfKHkAcdJHNURISeTx6N
+         ZiJcRzVrHKw3FXpAJFQFHM/GN+mzwdF4VE4Cq820D3ncWCGjOvPpuzBSKI0FbYX+trGQ
+         /lKT7bWHvlMa25dFVL+L2FU6NvT9PVvuQGwU730oTdw7izoR+isk6JhpAx0HHkPCo76g
+         Ez/w==
+X-Forwarded-Encrypted: i=1; AJvYcCUCxEGTT5XsQkOAeicpVsd+dEPfB7EDUao9xdV7Rm5jemmSuVfcayoBwtIiEnICR9AZclQBl3dCXK7ite+89w==@vger.kernel.org, AJvYcCWaLbaLuBHcGQoi5a/dsOPk8SDjodIv3E+833+cOmxYAKDD3fT80tMZQrPTRJbmRzwwhfJLARYwB5mHlQ==@vger.kernel.org, AJvYcCX/MgQIW0L71/4jl+8qV+Hfg+EMSWp69rcnQmQq4rl/ZIm/X+mLRoIxfY+j/MUFUjMGCK71m/Yyij8ZNLEn@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrvH4cw4eRHlNXlKs92s40R/1R6DvmK4zPIejTHd8N/wfxc/FN
+	pKjbkdNvZJ1JYiX7M0/BthVqdw8k4fkpAoPht/t2RPMzultC+b+o7Nov
+X-Gm-Gg: ASbGncuB2bEPKstd0LhF/R683NhYZQ49vOaYwehLPJl2Qpv9sjKQZgt+TE+6szEDaRb
+	bey6GeCirIrAWvn72uJrl8Ucv8g5uqFgUg2q4y1wtAVOGzKD6iJCP3U9YXbjnlZiOXHdXLfDePo
+	swx7LTKcq/B7gr3yeTwYT1gRJmC83JIMYJiASxzyIeIaR/1k+I2w7rAcmhhSKrL0z/uNgesw1r8
+	lL9HDGpIzGtColioLby0HeOGU0sTla7eb4PV89Hn/Wn7/mVTKJDCIAQ7E6F/E1x9GTGMHoBEXfe
+	181SFwHBHdyW+MJ6bTT1WD3xQIYox+O1ntiRMkDEvNl3TxjdbHQveodSvAqBRRhjtc/DsN8dz0f
+	BuwGoOI9COigNj3L37lrmLY5tNCccRNL3Ll5hp/cxWxfPiJgpjus+zv2bPZTacbPe
+X-Google-Smtp-Source: AGHT+IF32esv8LZscvwNHgYR6ljsLtgAqraMmy0VAs35rpd70926148m7dEBX/SFBT9exOpIVVtZSg==
+X-Received: by 2002:a5d:5d0f:0:b0:3b8:d0bb:7541 with SMTP id ffacd0b85a97d-3c5dc5426ccmr2223990f8f.40.1755864446093;
+        Fri, 22 Aug 2025 05:07:26 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c5393b797csm5054822f8f.39.2025.08.22.05.07.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Aug 2025 05:07:25 -0700 (PDT)
+Date: Fri, 22 Aug 2025 13:04:20 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
+ <npiggin@gmail.com>, Madhavan Srinivasan <maddy@linux.ibm.com>, Alexander
+ Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan
+ Kara <jack@suse.cz>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+ <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Darren Hart
+ <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, "Andre
+ Almeida" <andrealmeid@igalia.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, Daniel Borkmann
+ <daniel@iogearbox.net>, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-block@vger.kernel.org
+Subject: Re: [PATCH v2 09/10] powerpc/32: Automatically adapt TASK_SIZE
+ based on constraints
+Message-ID: <20250822130420.6c6a3fce@pumpkin>
+In-Reply-To: <db7f9b12d731d88ac612a27e2caf4d99d76472d2.1755854833.git.christophe.leroy@csgroup.eu>
+References: <cover.1755854833.git.christophe.leroy@csgroup.eu>
+	<db7f9b12d731d88ac612a27e2caf4d99d76472d2.1755854833.git.christophe.leroy@csgroup.eu>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <940ac5ad8a6b1daa239d748e8f77479a140b050d.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 22, 2025 at 09:09:04AM +0100, James Bottomley wrote:
-> So what I saw is that as developers exercised this and effectively
-> disengaged unless directly attacked, it pretty much became all on Linus
-> because no-one was left in the chain. This is precisely where I think
-> we could do with an alternative mechanism.
+On Fri, 22 Aug 2025 11:58:05 +0200
+Christophe Leroy <christophe.leroy@csgroup.eu> wrote:
 
-You are implying here that we all just "ran away" and left Linus to hold
-the bag here, which is NOT the case at all.  This specific issue has
-been discussed to death in a lot of different threads, public and
-private with lots of people involved and none of that would have been
-any different had we had some sort of "process document" ahead of time.
-
-So I don't think that attempting to codify the very rare occurances like
-this is going to really help out much, given that they are all unique to
-their time/place/subsystem based on our past history like this.
-
-> > Now, the above is inherently very messy.  But fortunately, it's only
-> > happened once in thirty five years, and before we propose to put some
-> > kind of mechanism in place, we need to make sure that the side
-> > effects of that mechanism don't end up making things worse off.
+> At the time being, TASK_SIZE can be customized by the user via Kconfig
+> but it is not possible to check all constraints in Kconfig. Impossible
+> setups are detected at compile time with BUILD_BUG() but that leads
+> to build failure when setting crazy values. It is not a problem on its
+> own because the user will usually either use the default value or set
+> a well thought value. However build robots generate crazy random
+> configs that lead to build failures, and build robots see it as a
+> regression every time a patch adds such a constraint.
 > 
-> Well, what we ended up with is one person in the chain (Linus), no
-> actual decision except a failed pull request and nothing actually said
-> which has lead to a raft of internet speculation.
+> So instead of failing the build when the custom TASK_SIZE is too
+> big, just adjust it to the maximum possible value matching the setup.
+> 
+> Several architectures already calculate TASK_SIZE based on other
+> parameters and options.
+> 
+> In order to do so, move MODULES_VADDR calculation into task_size_32.h
+> and ensure that:
+> - On book3s/32, userspace and module area have their own segments (256M)
+> - On 8xx, userspace has its own full PGDIR entries (4M)
+> 
+> Then TASK_SIZE is garantied to be correct so remove related
+                    ^ guaranteed
 
-It's not our job to quell "internet speculation", sorry.  Just because
-we normally work in public for almost everything, doesn't mean that some
-things can't be done in private as well.  And again, just because you
-haven't seen a public decision doesn't mean that there hasn't been one
-made :)
-
-sorry,
-
-greg k-h
+> BUILD_BUG()s.
 
