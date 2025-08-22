@@ -1,164 +1,173 @@
-Return-Path: <linux-fsdevel+bounces-58795-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58796-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 443ACB31844
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 14:49:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83CAEB31859
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 14:52:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 997881CE3AF2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 12:49:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48AE31CE5980
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 12:51:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5E22FD1C6;
-	Fri, 22 Aug 2025 12:48:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38BC02FE57D;
+	Fri, 22 Aug 2025 12:49:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X+lwg6V/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GHBwW5pQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 447512F6196
-	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Aug 2025 12:48:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8341E2FCBFE;
+	Fri, 22 Aug 2025 12:49:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755866918; cv=none; b=CMPfh2JTISsWy0YpBZBr1HOcxfIMF4hCcJpJ0RMtjIlSacHBjzpEzAO/vSS96S1TlZq4Y7XneQMF0+Smm2jn6UnGdDTqVf6onLpqzv4Ng9oS0BoPeHKCT1MSixusENlYuczh2o8kzh/07Z0dVvorQyBoUeWVe784YBViA/sQIGg=
+	t=1755866993; cv=none; b=sYpyU2fMVn/HHfHnGc8FNx1+NRwgACDar2kmxXRGiAiDjYwl84tHg2yfawQz1vLJ6E5j2OdJv0Odr1D5Yf+Jki3KzIRrwhPQ0CNouyYaZlcuMI22faXFMo3PwHC7bBtbzfuyNiqE0IRqyJp4/jH0j/s6xX9j8SHR/NdOGu4a1m0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755866918; c=relaxed/simple;
-	bh=YYE5x3rpclM2L3Vjf+QXn3YHsE6nuL4ZAjscgygCnLU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Msn1ucLJLp1ypAUZtcos0Y0lCNZ+7Fjo8yPQrpC2UQXsd0Vx9W1Rv8yQodztEpXejPmN+l39/RHuk7L2fGGnfqmJyrcvWJiMJjwXUAwhhIjhfZ2eEyqRx/43RSiqyERv3LuS2CYf1zx2HKipS6g4iTQ0G13bBPyFITN/kbBjdrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X+lwg6V/; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755866914;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kbVxxqHKodZYFsug0blUFZKne7Mtc5nkor9jm2rzIMY=;
-	b=X+lwg6V/tsyqsdnTjfTw0mhQiP4HDdgDrhvh70E6+L4CE7IUChXnHwtVdRwtr813/2khKq
-	v30fPC2pejK7u9ZxriWBfypSLCMpc+OMb4KF4NPeQGnjGLAukxsMCoQ6doRUj0gr1GkKhG
-	Aafciu6dFfidcWWh8X/ww/yGz1/2OjM=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-34-pSYZzbXvPNqDdffsYl-8jg-1; Fri, 22 Aug 2025 08:48:32 -0400
-X-MC-Unique: pSYZzbXvPNqDdffsYl-8jg-1
-X-Mimecast-MFC-AGG-ID: pSYZzbXvPNqDdffsYl-8jg_1755866912
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7e864817cb8so845176985a.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Aug 2025 05:48:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755866912; x=1756471712;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kbVxxqHKodZYFsug0blUFZKne7Mtc5nkor9jm2rzIMY=;
-        b=Vxk2S5kA8gE6zJAag1rXFezmCDHm/KC+W9YvtII7nRdLH+RTh7ciYoTgT9X8PJMmk9
-         tnxG56Zy9iO1o/pvczc/YJ/gGPEhNd+xyc7t67jypGZL+TaLps44HA3jBo9+q1HwqMvw
-         FoUpQuFiZuxbW7b0KsyLQJ3yndZWM7DLBLzsYxL7c1h95PkhBKF3HEvU/R1nVkPGARos
-         fDCVjskMA5XNVYrgfhZRO+ihO4V0JgkqRwNyOEsl3N/2Q87TN7PGZnlWU7mOOY0KCzdg
-         Pj53S/VvVlJw4l8nwggdqQjGGVK9gcBzUMB1YT5sYOYMc+H0bsDnEP84f8mefz+sesj/
-         z9lw==
-X-Gm-Message-State: AOJu0YwULuSm/TNfj8xOvtHVc2mzP6mh7yOVujiXwvmk8w2vnFCCJO8v
-	+8zRsvwt4EB+/4cBZJ8Mk8CODrmdczEil77ZURFrtKeeRsVfDsV9TDSRFLTDp5ATvT3LSv4sub6
-	Fa0ekscKAR9MFnnxxPCPwR5ZL3rdfM7X37RLfD1lB/l77dT8EP22eaG6TLotaH66pFcyULLQduX
-	a3rM/ZUpGWlrZ5jAB/nOiZSKmi827TqK5JmzNIq0923A==
-X-Gm-Gg: ASbGncshm8sdhHpEBdrWQxgtNvCDdmRQTVwKHG3slNdPwCiUJ1tXazyqRJzyyQO4vaj
-	8ntT7u2EsSe/G1Et3wTCac4Km0F9zZwRp62CEzc4NUdWYPUFaktNq/m+xO3rJmvDpRyIu8aKu89
-	zLi1J1OAcHvP9mAsug9o9+Ajsm5Ps/B7DPWBgZpbOCJStI3tSstcZk
-X-Received: by 2002:a05:622a:2b06:b0:4b2:8ac5:2594 with SMTP id d75a77b69052e-4b2aaf88157mr32970321cf.39.1755866912235;
-        Fri, 22 Aug 2025 05:48:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGclQR87zmWeT+VM3r9gdWgWNuVTR3jL5gvhn+oOXtGpF8D4a5y/GyCDWpLgzvoOApqTGx9rQ3k9v8uTyYsc/g=
-X-Received: by 2002:a05:622a:2b06:b0:4b2:8ac5:2594 with SMTP id
- d75a77b69052e-4b2aaf88157mr32970021cf.39.1755866911689; Fri, 22 Aug 2025
- 05:48:31 -0700 (PDT)
+	s=arc-20240116; t=1755866993; c=relaxed/simple;
+	bh=GgoITKPkk885/G9vmfvVHPZiDboFUVRXgRiLfhRuKoM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iUk4AZJsXqE+PqcvAFnOZzTOLSmnTrGasgCEVE6t+5//gOpN9+fC7xToAXBknRd1/NbkG0No/VqikdxmO5Lbldl6vmMEqZOkIqIbbTcqb9NZtJohE6cq9x/iT+5h7O7CAD87PfcwNNPD55vb7O0L5gXzIWH5GdbWBnE3tfUblL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GHBwW5pQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EE4BC4CEED;
+	Fri, 22 Aug 2025 12:49:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755866993;
+	bh=GgoITKPkk885/G9vmfvVHPZiDboFUVRXgRiLfhRuKoM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GHBwW5pQBB924uS2EvEaTMVScgoVBGSPTv+vOQDPcBjSqDfUIEij5aS8BqxQbjMlY
+	 kjNUu/m5271lML9lw0oX5sfXNPqCTGNWVeBFNHFHEvfMzffdzRuM4Xg4NHYJdz8FDX
+	 lIm70hfEXyVOV1Dt5lbf+mEz34DfOyhaEHGY0SotkQ8ELJjFiYj7EJyXb13FPEEWwO
+	 U9g9H5iDiqXlmi/2xQ441LdSbrvQMyHtNyWWC4i1iSZGLMqtPIAp15y9ybzeRGssnm
+	 WwkqXsuqWvKLS4lPlLmzdV4VYcd2bmM3BelQXhdQb/l9ygWtNhgIISAr93M45ElwX7
+	 lVsyqvIWi97wA==
+Date: Fri, 22 Aug 2025 14:49:47 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Askar Safin <safinaskar@zohomail.com>
+Cc: Aleksa Sarai <cyphar@cyphar.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>, 
+	linux-man@vger.kernel.org
+Subject: Re: [PATCH 1/1] man2/mount.2: expand and clarify docs for MS_REMOUNT
+ | MS_BIND
+Message-ID: <ir47jua4jwi2ram5jevqxog637nhzyr7vqmkzl22ttisubucmq@skjlfbhez45v>
+References: <20250822114315.1571537-1-safinaskar@zohomail.com>
+ <20250822114315.1571537-2-safinaskar@zohomail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250815121459.3391223-1-lichliu@redhat.com> <20250821-zirkel-leitkultur-2653cba2cd5b@brauner>
-In-Reply-To: <20250821-zirkel-leitkultur-2653cba2cd5b@brauner>
-From: Lichen Liu <lichliu@redhat.com>
-Date: Fri, 22 Aug 2025 20:48:20 +0800
-X-Gm-Features: Ac12FXwQJbPmbQRxMp7qGDkCOTeicgMXQCgW-fagYfwyy8_vEsAkdFyogKGO5Zk
-Message-ID: <CAPmSd0MikBnSRvMvb5eTa=WZrfsjP-Wy11PSCRY4X7u4=T-bUg@mail.gmail.com>
-Subject: Re: [PATCH v2] fs: Add 'rootfsflags' to set rootfs mount options
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	safinaskar@zohomail.com, kexec@lists.infradead.org, rob@landley.net, 
-	weilongchen@huawei.com, cyphar@cyphar.com, linux-api@vger.kernel.org, 
-	zohar@linux.ibm.com, stefanb@linux.ibm.com, initramfs@vger.kernel.org, 
-	corbet@lwn.net, linux-doc@vger.kernel.org, viro@zeniv.linux.org.uk, 
-	jack@suse.cz
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="gasaowf4ey5r47ax"
+Content-Disposition: inline
+In-Reply-To: <20250822114315.1571537-2-safinaskar@zohomail.com>
+
+
+--gasaowf4ey5r47ax
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Askar Safin <safinaskar@zohomail.com>
+Cc: Aleksa Sarai <cyphar@cyphar.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>, 
+	linux-man@vger.kernel.org
+Subject: Re: [PATCH 1/1] man2/mount.2: expand and clarify docs for MS_REMOUNT
+ | MS_BIND
+References: <20250822114315.1571537-1-safinaskar@zohomail.com>
+ <20250822114315.1571537-2-safinaskar@zohomail.com>
+MIME-Version: 1.0
+In-Reply-To: <20250822114315.1571537-2-safinaskar@zohomail.com>
 
-Thanks for reviewing and merging the code!
+Hi Askar,
 
-I used "rootfsflags" here because it is shown as "rootfs" in the mountinfo.
+On Fri, Aug 22, 2025 at 11:43:15AM +0000, Askar Safin wrote:
+> My edit is based on experiments and reading Linux code
+>=20
+> Signed-off-by: Askar Safin <safinaskar@zohomail.com>
 
-My opinion on naming is similar to Rob=E2=80=99s. However, for me, the func=
-tion=E2=80=99s
-implementation is more important than the variable names, so I don=E2=80=99=
-t have a
-strong opinion on this.
+You could add Cc: tags there for people you CC'd in the patch.
+(For next time.)
 
-(Christian may see this message twice, sorry for that because I clicked rep=
-ly
-button instead of reply-all)
+I'll wait before applying the patch, to allow anyone to review it, in
+case they want to comment.
 
-Thanks,
-Lichen
 
-On Thu, Aug 21, 2025 at 4:26=E2=80=AFPM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> On Fri, 15 Aug 2025 20:14:59 +0800, Lichen Liu wrote:
-> > When CONFIG_TMPFS is enabled, the initial root filesystem is a tmpfs.
-> > By default, a tmpfs mount is limited to using 50% of the available RAM
-> > for its content. This can be problematic in memory-constrained
-> > environments, particularly during a kdump capture.
-> >
-> > In a kdump scenario, the capture kernel boots with a limited amount of
-> > memory specified by the 'crashkernel' parameter. If the initramfs is
-> > large, it may fail to unpack into the tmpfs rootfs due to insufficient
-> > space. This is because to get X MB of usable space in tmpfs, 2*X MB of
-> > memory must be available for the mount. This leads to an OOM failure
-> > during the early boot process, preventing a successful crash dump.
-> >
-> > [...]
->
-> This seems rather useful but I've renamed "rootfsflags" to
-> "initramfs_options" because "rootfsflags" is ambiguous and it's not
-> really just about flags.
->
-> Other than that I think it would make sense to just raise the limit to
-> 90% for the root_fs_type mount. I'm not sure why this super privileged
-> code would only be allowed 50% by default.
->
+Have a lovely day!
+Alex
+
 > ---
->
-> Applied to the vfs-6.18.misc branch of the vfs/vfs.git tree.
-> Patches in the vfs-6.18.misc branch should appear in linux-next soon.
->
-> Please report any outstanding bugs that were missed during review in a
-> new review to the original patch series allowing us to drop it.
->
-> It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> patch has now been applied. If possible patch trailers will be updated.
->
-> Note that commit hashes shown below are subject to change due to rebase,
-> trailer updates or similar. If in doubt, please check the listed branch.
->
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> branch: vfs-6.18.misc
->
-> [1/1] fs: Add 'rootfsflags' to set rootfs mount options
->       https://git.kernel.org/vfs/vfs/c/278033a225e1
->
+>  man/man2/mount.2 | 21 ++++++++++++++++++---
+>  1 file changed, 18 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/man/man2/mount.2 b/man/man2/mount.2
+> index 5d83231f9..909b82e88 100644
+> --- a/man/man2/mount.2
+> +++ b/man/man2/mount.2
+> @@ -405,7 +405,19 @@ flag can be used with
+>  to modify only the per-mount-point flags.
+>  .\" See https://lwn.net/Articles/281157/
+>  This is particularly useful for setting or clearing the "read-only"
+> -flag on a mount without changing the underlying filesystem.
+> +flag on a mount without changing flags of the underlying filesystem.
+> +The
+> +.I data
+> +argument is ignored if
+> +.B MS_REMOUNT
+> +and
+> +.B MS_BIND
+> +are specified.
+> +The
+> +.I mountflags
+> +should specify existing per-mount-point flags,
+> +except for those parameters
+> +that are deliberately changed.
+>  Specifying
+>  .I mountflags
+>  as:
+> @@ -416,8 +428,11 @@ MS_REMOUNT | MS_BIND | MS_RDONLY
+>  .EE
+>  .in
+>  .P
+> -will make access through this mountpoint read-only, without affecting
+> -other mounts.
+> +will make access through this mountpoint read-only
+> +(and clear all other per-mount-point flags),
+> +without affecting
+> +other mounts
+> +of this filesystem.
+>  .\"
+>  .SS Creating a bind mount
+>  If
+> --=20
+> 2.47.2
+>=20
 
+--=20
+<https://www.alejandro-colomar.es/>
+
+--gasaowf4ey5r47ax
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmioZ2oACgkQ64mZXMKQ
+wqnqvg//aN4s81y1rtPJJkKk72QTf7oVzKnY0ehD8XDJoxz0DX2vz6J/AEJt67UK
+iu5+bIrLKgt2kcFhNeTo87Rk+3/5WtyoA2J13jvK8XaGLnNwyCdbydkNLkotv/kt
+dIczU5tt8QmG3TAwIkDseGhYioL4REVwQTyDEXLPHEkqL8BY5IsXL+fY0uIkiDPA
+O7Kfemrpc1pnkAFdu/2FCoQLpGKmnZp9ly+lQ8pr7MI62n3L62PIaAskimZwGlZs
+bDBfd1TB26TYakpu+t27l29HGvomPj5Ihw2mmhjiPNS2cLT7DCMSkFoLieDXmusI
+HpU0Ubmr20yR6+hWIuSGwGkhKwKIWjHVwJvk0DnCMxgNro5A2EjIhRSNE4j206Rk
+TagmrTOF5Qwlxa3UP3v24ERYJ6uKaW2MU9u8qi0h5UVNsG6P5HGL7i7T5Gidodxa
+MF9BqH8+xec5e1GFcM6HOJKVZEy10DAnbdvVrgFzDzGg+y3501mBqB6uQlNbMqNM
+XRq8l0TawnioJLjThrwTTjb2oRR3X7OnDHlW/ClF0yILCQ/8VHv1Bgp4JcoJDA6o
+QpMkTZZvB1AA7x6X02W43mANn8tswECBVfXGZ+fOzjzD9hQbzACjXPSMV5ewK/o1
+RdKfIjccUIEapdTJlBvD3SwU6e8wJk/tSgCvAkvrP0jotrKfCPo=
+=hypr
+-----END PGP SIGNATURE-----
+
+--gasaowf4ey5r47ax--
 
