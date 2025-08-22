@@ -1,169 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-58773-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58774-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9FC9B3164B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 13:29:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 648E2B31654
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 13:30:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39B31A26E35
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 11:28:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E050D7B46CB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 11:28:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E002FABEC;
-	Fri, 22 Aug 2025 11:27:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A6502F83B7;
+	Fri, 22 Aug 2025 11:29:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ArygcnHe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GuFB6ivF"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5E62F6184;
-	Fri, 22 Aug 2025 11:27:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A162291C3F;
+	Fri, 22 Aug 2025 11:29:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755862072; cv=none; b=RTEKDA3qlHpxiiJid3QsbnTkK6sZ7LyrKVBxRAVwjGs82+LWWEzs/9z8sYoTtEAIXZsJolh1aD1Tn7QYxUxu8XnbiOsZvNfn3wXZSwYKpNhCa1bMKkMg9iB2nQhkwuSYhFUbdceNPMDW86FwIlh+M8MIzABy71088BoYdafJyEg=
+	t=1755862188; cv=none; b=D3WNR890uZxbjRL3R68pCudY8t+O3Jc5I7lr1RPr+4nW1tDlxikemO13/ZSlpY/nOVN1YLD+UBdACXmMwltfzUW9HS/xK5A+c7+1JouQ29+JlDbhD51PyP4Z8EgxCVYIB3C7eUQrsohJ6XKv1Uq+lavcAX2GJc9zetNk7ZDmsio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755862072; c=relaxed/simple;
-	bh=WpWiRLhNlzKzziHrtTeGg8bZVKhIKrv23ZA8D5pstQQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rl2lH7MCMNuLonlUPx4hT4rO0B3IQT08zQNrdkUag8pVim2lh13RFWP8Or4OuwAlELULcLsVoCpdI9Y8xfVw8w8EzMnprCkolKciVtmlLnn33VlO088A+yU8T+hBHwHLoAhTXVUPSXS+O0ucR5CXxSUV3vP4A2+KrHY2+dchE10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ArygcnHe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11F62C4CEED;
-	Fri, 22 Aug 2025 11:27:49 +0000 (UTC)
+	s=arc-20240116; t=1755862188; c=relaxed/simple;
+	bh=bbC1YUgNLlBy5q2Utej8KQ1LJRsDhI7+Q/Jkxo3uDXE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BuMfTqRX9TH618bgHzksSYdtlDUKP2N+4idhnzxpMLmD7q7V9k+lOqyyYz9yrwwstKtt+l1X1LSVWe93ybYrr6G3d33BaxUFqC64A/zVDqJ4VK1DOFbsanI9jgSaxjI5Y2Plcal+SyUPoy93lXrB1+abf4RjMNSt0CX8kIKEjKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GuFB6ivF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AC67C4CEED;
+	Fri, 22 Aug 2025 11:29:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755862071;
-	bh=WpWiRLhNlzKzziHrtTeGg8bZVKhIKrv23ZA8D5pstQQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ArygcnHeqgYR+aKUGakpG1htxfUHJvCuask3y27mI50i23hfQN8iLBSFS3l3QqNsX
-	 9IeZX9N3sLYDOpew6SwZ7qHYJ2L6b9faGXEPThhdhhik4o4XqtxD8oK8FJd9b7YxLY
-	 E+Q2pjX6Dw6bcwCy70LtKz61MMqUDWsJ+xknDVO0l6q6DY3KgOd9C4kdZQ05L1qVoR
-	 BrWGaS6+GnB/R0qYtOhur4VQios4d9I+GHGtuEwAnFxbLE7OZFXEwFKi4CFuB1oy2B
-	 FADAUucp0y/zOnBkI4QXjUWXFZRdhaQeuG5ge1PeLm58cbiUjt1r1I/hl3BNEyiIMQ
-	 DJnebdtKIlR5g==
-Date: Fri, 22 Aug 2025 13:27:47 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org, 
-	kernel-team@fb.com, linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	viro@zeniv.linux.org.uk
-Subject: Re: [PATCH 04/50] fs: hold an i_obj_count reference for the i_wb_list
-Message-ID: <20250822-donnerstag-sowas-477e66bd0cf1@brauner>
-References: <cover.1755806649.git.josef@toxicpanda.com>
- <39379ac2620e98987f185dcf3a20f7b273d7ca33.1755806649.git.josef@toxicpanda.com>
+	s=k20201202; t=1755862187;
+	bh=bbC1YUgNLlBy5q2Utej8KQ1LJRsDhI7+Q/Jkxo3uDXE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=GuFB6ivF+/M5Oqce003YMkEhK6a3TME8O9Aztjv8iDW8HikUnT84GXV88NJSn90Gz
+	 uliB2R+wGtK/9MCSnUZkv/nHMBFPpln1kUXos9JeC8wg7OzbVhiZg2gLhUUcnLPdlD
+	 t6vvcgziZ1GM4W36WF6kcOfZJe3TGG+z/2rm18etBWL3kUvelnP6QA0Xca24UOvVv3
+	 rIvDqfccJysDWF1duqPf1sHyLm8P+DIhS793WMZaMqVrLQ4g8MhSCbV4iKrgFqUFzV
+	 N5Zel6LZcHkPsE5BS6169mumdF7VyOUuspFWgJDPM4A7CWtH2SaH8lWL4w2BoPgsEp
+	 eq9xEGkEdfQTw==
+Date: Fri, 22 Aug 2025 13:29:43 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Theodore Ts'o <tytso@mit.edu>, James Bottomley
+ <James.Bottomley@hansenpartnership.com>, ksummit@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org
+Subject: Re: [MAINTAINER SUMMIT] Adding more formality around feature
+ inclusion and ejection
+Message-ID: <20250822132943.1ca76a8a@foz.lan>
+In-Reply-To: <aKeb8vf2OsOI19NA@casper.infradead.org>
+References: <fc0994de40776609928e8e438355a24a54f1ad10.camel@HansenPartnership.com>
+	<20250821203407.GA1284215@mit.edu>
+	<aKeb8vf2OsOI19NA@casper.infradead.org>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <39379ac2620e98987f185dcf3a20f7b273d7ca33.1755806649.git.josef@toxicpanda.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 21, 2025 at 04:18:15PM -0400, Josef Bacik wrote:
-> If we're holding the inode on one of the writeback lists we need to have
-> a reference on that inode. Grab a reference when we add i_wb_list to
-> something, drop it when it's removed.
+Em Thu, 21 Aug 2025 23:21:38 +0100
+Matthew Wilcox <willy@infradead.org> escreveu:
+
+> On Thu, Aug 21, 2025 at 04:34:07PM -0400, Theodore Ts'o wrote:
+> > There is the saying that "bad facts make bad law", and the specifics
+> > of this most recent controversy are especially challenging.  I would
+> > urge caution before trying to create a complex set of policies and
+> > mechanim when we've only had one such corner case in over 35 years.  
 > 
-> This is potentially dangerous, because we remove the inode from the
-> i_wb_list potentially under IRQ via folio_end_writeback(). This will be
-> mitigated by making sure all writeback is completed on the final iput,
-> before the final iobj_put, preventing a potential free under IRQ.
-> 
-> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-> ---
->  fs/fs-writeback.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
-> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> index 001773e6e95c..c2437e3d320a 100644
-> --- a/fs/fs-writeback.c
-> +++ b/fs/fs-writeback.c
-> @@ -1332,6 +1332,7 @@ void sb_mark_inode_writeback(struct inode *inode)
->  	if (list_empty(&inode->i_wb_list)) {
->  		spin_lock_irqsave(&sb->s_inode_wblist_lock, flags);
->  		if (list_empty(&inode->i_wb_list)) {
-> +			iobj_get(inode);
->  			list_add_tail(&inode->i_wb_list, &sb->s_inodes_wb);
->  			trace_sb_mark_inode_writeback(inode);
->  		}
-> @@ -1346,15 +1347,26 @@ void sb_clear_inode_writeback(struct inode *inode)
->  {
->  	struct super_block *sb = inode->i_sb;
->  	unsigned long flags;
-> +	bool drop = false;
->  
->  	if (!list_empty(&inode->i_wb_list)) {
->  		spin_lock_irqsave(&sb->s_inode_wblist_lock, flags);
->  		if (!list_empty(&inode->i_wb_list)) {
-> +			drop = true;
->  			list_del_init(&inode->i_wb_list);
->  			trace_sb_clear_inode_writeback(inode);
->  		}
->  		spin_unlock_irqrestore(&sb->s_inode_wblist_lock, flags);
->  	}
-> +
-> +	/*
-> +	 * This can be called in IRQ context when we're clearing writeback on
-> +	 * the folio. This should not be the last iobj_put() on the inode, we
-> +	 * run all of the writeback before we free the inode in order to avoid
-> +	 * this possibility.
-> +	 */
-> +	if (drop)
-> +		iobj_put(inode);
+> Well. we may have dodged a few bullets before now.  Just in filesystems,
+> I can think of Hans Reiser, Jeff Merkey, Boaz Harrosh, Daniel Phillips
+> (no, i'm not saying any of the others did anything as heinous as Hans,
+> but they were all pretty disastrous in their own ways).
 
-In that case it might be valuable to have a:
+There are other cases as well: there was a media driver maintainer that
+did pretty bad things, including physical threats against other
+maintainers. I even got a report that he did threat to life another
+maintainer who complained he would be violating GPL copyrights.
 
-VFS_WARN_ON_ONCE(refcount_read(&inode->i_obj_count) < 2);
+> I don't think we can necessarily generalise from these examples to,
+> say, Lustre.  That has its own unique challenges, and I don't think that
+> making them do more paperwork will be helpful.
 
-before calling iobj_put() here? It'll compile out without
-CONFIG_VFS_DEBUG set.
+Agreed. I don't think those few examples have much in common:
+each had different types of issues. So, I don't think any text
+would be enough to cover such cases, as they're punctual.
 
-Btw, you should also be able to write this as removing the condition.
+Probably the only thing that could be more effective would be to have
+an e-signed CLA for the ones which become maintainers.
 
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index 2e10cc2f955f..cfdb2c2793cb 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -1366,13 +1366,13 @@ void sb_mark_inode_writeback(struct inode *inode)
- void sb_clear_inode_writeback(struct inode *inode)
- {
-        struct super_block *sb = inode->i_sb;
-+       struct inode *drop = NULL;
-        unsigned long flags;
--       bool drop = false;
 
-        if (!list_empty(&inode->i_wb_list)) {
-                spin_lock_irqsave(&sb->s_inode_wblist_lock, flags);
-                if (!list_empty(&inode->i_wb_list)) {
--                       drop = true;
-+                       drop = inode;
-                        list_del_init(&inode->i_wb_list);
-                        trace_sb_clear_inode_writeback(inode);
-                }
-@@ -1385,8 +1385,7 @@ void sb_clear_inode_writeback(struct inode *inode)
-         * run all of the writeback before we free the inode in order to avoid
-         * this possibility.
-         */
--       if (drop)
--               iobj_put(inode);
-+       iobj_put(drop);
- }
-
->  }
->  
->  /*
-> @@ -2683,6 +2695,8 @@ static void wait_sb_inodes(struct super_block *sb)
->  		 * to preserve consistency between i_wb_list and the mapping
->  		 * writeback tag. Writeback completion is responsible to remove
->  		 * the inode from either list once the writeback tag is cleared.
-> +		 * At that point the i_obj_count reference will be dropped for
-> +		 * the i_wb_list reference.
->  		 */
->  		list_move_tail(&inode->i_wb_list, &sb->s_inodes_wb);
->  
-> -- 
-> 2.49.0
-> 
+Thanks,
+Mauro
 
