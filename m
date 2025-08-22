@@ -1,34 +1,34 @@
-Return-Path: <linux-fsdevel+bounces-58817-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58818-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86A96B31B32
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 16:22:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDF67B31B40
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 16:24:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A58B91CC0AC5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 14:18:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A6CCB2557B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 14:18:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B98AA309DAA;
-	Fri, 22 Aug 2025 14:17:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC29D30AAD4;
+	Fri, 22 Aug 2025 14:17:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="Edb6G7cY"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="ipoYR2z6"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E893093CE;
-	Fri, 22 Aug 2025 14:17:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B933127511A;
+	Fri, 22 Aug 2025 14:17:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755872249; cv=none; b=Qx83Wzl1/30nIPohqNX7rqvrjkaKNsa7B9uqMs/bnAizLjijZWcVXg6xdEYrOZYvvKKNk5sZwArztp0dyLOgErbufpMURG9r6yRP/g57YcTpa8UGaTE5Pc1kQJLkLMR/eImKmUTc27YOJFrgA2kZJKByLRk8CEKloK/AqM4e8S8=
+	t=1755872251; cv=none; b=C8T3lKm0rb47vjAJ+92K912CuqfBv4ku8C9xGz+wR4Tyry5aSxc9RoqEMO7dythk02NNttMTIHNOJUjBxAwsZUplyBlbKBeT5gSYvz8hQvzXlHX0fGBGChgawnpFinrigzapiDGT4LLAJsysrRSle8s+YugOITr+PiXV45t9DMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755872249; c=relaxed/simple;
-	bh=64EfOAJcRYK5YZfzicvstPgggpHXkHVvupCKq4e0Xd8=;
+	s=arc-20240116; t=1755872251; c=relaxed/simple;
+	bh=4Y/tloE8879M1KX5EI2MrQlo3AnJR9c0+ORkZE1z5WE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WUPiD/MsuL529YxCXjkZhc5Da2GWxCQm9r0xEUL3TYlUfp7jC0bMPKyYVUuUvKbu7kfmbswRj70GfzTO9iEA52K8GTQ0JBg0nVVPO9/MLHwYy+1sgjth1RSJSVk7kMuq6iWEqVxMF4YGrJs8kWd3H2F72R7/B6n8fzoI46O9edA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=Edb6G7cY; arc=none smtp.client-ip=213.97.179.56
+	 In-Reply-To:To:Cc; b=PtCwSHp27QcnZGKyGcnufhFAw4Z+2jf/yTS4iF1eQUWpzzFXzScNR7IOg9fblDbKwbMHZyGVMEk+rtguqO5olic1HCPqvmaQc4Uow4bwL4cW4Ey/EWmYxloBNA1XGQvgatFxZ9orU9eUqpOPNYE4FxqvnAMxzXvqqWNJeCgTCog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=ipoYR2z6; arc=none smtp.client-ip=213.97.179.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
@@ -37,19 +37,20 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
 	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=pzWqMgKLsmEWWxxW2dCCfSH+z4bHQFSst+1kAmOTkXU=; b=Edb6G7cYZwYAebOJ8/l8tfuLpd
-	0APSJhB5e3tfdQXK7mMy5RJPt73XhFOW30PW5dD3/f2na4NbCAHdOPgKHef215z5FZDkp4JNfhKw0
-	ztz3AtwF4dyUDWDDSt5MGZMSIVveKHmKaui0gJYmd15mOoCb/+dfKb0pkNrer3vd1ZOabJgfC8usx
-	08C+kTo0Dq9xEBeTPBZaUfXO4xxIdaVIhhkUTyoPFGVbJG/6wn4N3+PH8GrCKkGs8lx9/pN3t346t
-	pC/iOJGGsMVPkVrfE4t0vNiSymEhikIA49VxdwE1QUZek4oX/1H4XQNl/x1Wd2h1ebvetv6l6ppF1
-	nHBeadhw==;
+	bh=ELBStr8/C5FITsG6YtRLizalkpojCNupoxSwZOodRWs=; b=ipoYR2z6lX/cvxzjGw+N/5aUZq
+	GgeVAJ/p81COIZhldxSoItEQb1zYUqURq0xTuWdb+s/cpm2M8WnwgutFWJocOhurk6qCZGuy+RcgJ
+	9T4rsOD86QB4cUTKgVk4Ti2ZkNqLmwNTSNgXGvfH8bg4D0J5ImCO6EalzQpaM+FvHLofHP7tOH2n5
+	7x+l+uV61WkiNW+bRu5IX8vjMYxsTSpqPyBmmYgTNUlcfMjI4zxILkeGB3lA09kNLESE45DkmRunR
+	LOvnDPme/vh7jsJ/uJtKMylZ0FPAG5s+E9+eWGsuGcL+YgLKpCkCmNa/hVarAtPZ7wbYgy9LWYqRH
+	ofCfs+IA==;
 Received: from [152.250.7.37] (helo=[192.168.15.100])
 	by fanzine2.igalia.com with esmtpsa 
 	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1upSa1-0008Fn-6r; Fri, 22 Aug 2025 16:17:21 +0200
+	id 1upSa4-0008Fn-1T; Fri, 22 Aug 2025 16:17:24 +0200
 From: =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Date: Fri, 22 Aug 2025 11:17:05 -0300
-Subject: [PATCH v6 2/9] fs: Create sb_same_encoding() helper
+Date: Fri, 22 Aug 2025 11:17:06 -0300
+Subject: [PATCH v6 3/9] ovl: Prepare for mounting case-insensitive enabled
+ layers
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -58,7 +59,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250822-tonyk-overlayfs-v6-2-8b6e9e604fa2@igalia.com>
+Message-Id: <20250822-tonyk-overlayfs-v6-3-8b6e9e604fa2@igalia.com>
 References: <20250822-tonyk-overlayfs-v6-0-8b6e9e604fa2@igalia.com>
 In-Reply-To: <20250822-tonyk-overlayfs-v6-0-8b6e9e604fa2@igalia.com>
 To: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
@@ -70,45 +71,76 @@ Cc: linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org,
  =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
 X-Mailer: b4 0.14.2
 
-For cases where a file lookup can look in different filesystems (like in
-overlayfs), both super blocks must have the same encoding and the same
-flags. To help with that, create a sb_same_encoding() function.
+Prepare for mounting layers with case-insensitive dentries in order to
+supporting such layers in overlayfs, while enforcing uniform casefold
+layers.
 
 Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 Signed-off-by: André Almeida <andrealmeid@igalia.com>
 ---
- include/linux/fs.h | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ fs/overlayfs/ovl_entry.h |  1 +
+ fs/overlayfs/params.c    | 15 ++++++++++++---
+ fs/overlayfs/params.h    |  1 +
+ 3 files changed, 14 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index a4d353a871b094b562a87ddcffe8336a26c5a3e2..7de9e1e4839a2726f4355ddf20b9babb74cc9681 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3747,6 +3747,24 @@ static inline bool sb_has_encoding(const struct super_block *sb)
- 	return !!sb_encoding(sb);
- }
+diff --git a/fs/overlayfs/ovl_entry.h b/fs/overlayfs/ovl_entry.h
+index 4c1bae935ced274f93a0d23fe10d34455e226ec4..1d4828dbcf7ac4ba9657221e601bbf79d970d225 100644
+--- a/fs/overlayfs/ovl_entry.h
++++ b/fs/overlayfs/ovl_entry.h
+@@ -91,6 +91,7 @@ struct ovl_fs {
+ 	struct mutex whiteout_lock;
+ 	/* r/o snapshot of upperdir sb's only taken on volatile mounts */
+ 	errseq_t errseq;
++	bool casefold;
+ };
  
-+/*
-+ * Compare if two super blocks have the same encoding and flags
-+ */
-+static inline bool sb_same_encoding(const struct super_block *sb1,
-+				    const struct super_block *sb2)
-+{
-+#if IS_ENABLED(CONFIG_UNICODE)
-+	if (sb1->s_encoding == sb2->s_encoding)
-+		return true;
+ /* Number of lower layers, not including data-only layers */
+diff --git a/fs/overlayfs/params.c b/fs/overlayfs/params.c
+index f4e7fff909ac49e2f8c58a76273426c1158a7472..63b7346c5ee1c127a9c33b12c3704aa035ff88cf 100644
+--- a/fs/overlayfs/params.c
++++ b/fs/overlayfs/params.c
+@@ -276,17 +276,26 @@ static int ovl_mount_dir(const char *name, struct path *path)
+ static int ovl_mount_dir_check(struct fs_context *fc, const struct path *path,
+ 			       enum ovl_opt layer, const char *name, bool upper)
+ {
++	bool is_casefolded = ovl_dentry_casefolded(path->dentry);
+ 	struct ovl_fs_context *ctx = fc->fs_private;
++	struct ovl_fs *ofs = fc->s_fs_info;
+ 
+ 	if (!d_is_dir(path->dentry))
+ 		return invalfc(fc, "%s is not a directory", name);
+ 
+ 	/*
+ 	 * Allow filesystems that are case-folding capable but deny composing
+-	 * ovl stack from case-folded directories.
++	 * ovl stack from inconsistent case-folded directories.
+ 	 */
+-	if (ovl_dentry_casefolded(path->dentry))
+-		return invalfc(fc, "case-insensitive directory on %s not supported", name);
++	if (!ctx->casefold_set) {
++		ofs->casefold = is_casefolded;
++		ctx->casefold_set = true;
++	}
 +
-+	return (sb1->s_encoding && sb2->s_encoding &&
-+	       (sb1->s_encoding->version == sb2->s_encoding->version) &&
-+	       (sb1->s_encoding_flags == sb2->s_encoding_flags));
-+#else
-+	return true;
-+#endif
-+}
-+
- int may_setattr(struct mnt_idmap *idmap, struct inode *inode,
- 		unsigned int ia_valid);
- int setattr_prepare(struct mnt_idmap *, struct dentry *, struct iattr *);
++	if (ofs->casefold != is_casefolded) {
++		return invalfc(fc, "case-%ssensitive directory on %s is inconsistent",
++			       is_casefolded ? "in" : "", name);
++	}
+ 
+ 	if (ovl_dentry_weird(path->dentry))
+ 		return invalfc(fc, "filesystem on %s not supported", name);
+diff --git a/fs/overlayfs/params.h b/fs/overlayfs/params.h
+index c96d939820211ddc63e265670a2aff60d95eec49..ffd53cdd84827cce827e8852f2de545f966ce60d 100644
+--- a/fs/overlayfs/params.h
++++ b/fs/overlayfs/params.h
+@@ -33,6 +33,7 @@ struct ovl_fs_context {
+ 	struct ovl_opt_set set;
+ 	struct ovl_fs_context_layer *lower;
+ 	char *lowerdir_all; /* user provided lowerdir string */
++	bool casefold_set;
+ };
+ 
+ int ovl_init_fs_context(struct fs_context *fc);
 
 -- 
 2.50.1
