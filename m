@@ -1,141 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-58740-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58741-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AE50B30D1D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 06:02:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A55A8B30D37
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 06:04:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2B873B3459
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 04:02:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B7AD5E8CA0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 04:04:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 164AE2690D1;
-	Fri, 22 Aug 2025 04:02:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ME2tEbbv"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B5D0274B32;
+	Fri, 22 Aug 2025 04:04:07 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3ECE4C79;
-	Fri, 22 Aug 2025 04:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F9E957C9F;
+	Fri, 22 Aug 2025 04:04:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755835333; cv=none; b=ftTQw//uohXDEo2dxrQl3OpZB1mYUmfzkdWAqX7OdfVq4KADesnI889z3jz8vRQu/F4Nd/uIAe57/KMHx4y8grTKb5SwagLOskp7ZTa1BNU6xR+opgQBg2X9s18dn43yr94beZGU5NUqiVCltzuZDshQLuIdEeqfsFGmArfY8/M=
+	t=1755835447; cv=none; b=Ul/nPeX6Ew2Xums+s7cP4SNEP5hC0HNo6IQ8/FJtsRosmWyXZmf3z9enZyZjAR0UZ4mWwV84QGiSsA6xknV+1CaQ51U+s6GW3UeLokGNXj8z8DI48ZVMcxfOvdxUinx1boXjHT353KGfmn0B7BkIEjSuB3qfFcN/J36NX9FJDAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755835333; c=relaxed/simple;
-	bh=/2ROtHmJaUr9LhJbv1++PQhIJX2V9C+1ND0616Z6a24=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H8Vk/1jIO11nkd/YhRNFitK/LX5AMeZkKLmJwmLyYc4MZ7eO9mLd0rjkJE5yxaEyFFzPa6A+9YSfBZE1CESDi/mlL6jUPmv2niPRqwlbr4Qbj39cLDk9kzniQKrnu7P6chH+czP5MxgEdqxrto9mwEp3y7UpOJ1Jx9md2tGdznQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ME2tEbbv; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755835332; x=1787371332;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/2ROtHmJaUr9LhJbv1++PQhIJX2V9C+1ND0616Z6a24=;
-  b=ME2tEbbveJiTW4jdCGO2fupVttYZUHzsdx4XQaSBnqhmfbUczoTL38+O
-   QZAryClPx/tzwdlAfe5ES7zO3m7uxu9UQSYJDAbpJoaHRUaQo/zqzhpRo
-   DNQCFalIWdZWDzPRoqDoxlvbrk8pDWXb/sbYiGPmPZY4KTpnjKtqeCRsW
-   +3tr1XA2sAOThdLaWsT5P4kj0BSu5myfPegKF8H6ldqLXDcpz4LfxPGJ8
-   8+gXP4BUV/ThWG6m8u2HLwNlWJ2npMAFzd2J7/fxM8PnUwTfNAKKKCkuk
-   TtcvQ5YH5YgmnrAA1v987D5YJmdbrFDMrwDaLN+PDvoPh8cd5EOmbp/mP
-   w==;
-X-CSE-ConnectionGUID: lULCvBr3RtGcngP/jnDofw==
-X-CSE-MsgGUID: AEfzbNM0ThOXg1C+V4Xt8Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="57339843"
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="57339843"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 21:02:04 -0700
-X-CSE-ConnectionGUID: HoNmLB6YRbmMZ5elSlrDeg==
-X-CSE-MsgGUID: VVHpgrRVTgiUxTAicaXTvQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="168804505"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa008.jf.intel.com with ESMTP; 21 Aug 2025 21:01:53 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1upIxI-000Ktb-17;
-	Fri, 22 Aug 2025 04:01:12 +0000
-Date: Fri, 22 Aug 2025 11:59:51 +0800
-From: kernel test robot <lkp@intel.com>
-To: Bhupesh <bhupesh@igalia.com>, akpm@linux-foundation.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, bhupesh@igalia.com,
-	kernel-dev@igalia.com, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	oliver.sang@intel.com, lkp@intel.com, laoar.shao@gmail.com,
-	pmladek@suse.com, rostedt@goodmis.org,
-	mathieu.desnoyers@efficios.com, arnaldo.melo@gmail.com,
-	alexei.starovoitov@gmail.com, andrii.nakryiko@gmail.com,
-	mirq-linux@rere.qmqm.pl, peterz@infradead.org, willy@infradead.org,
-	david@redhat.com, viro@zeniv.linux.org.uk, keescook@chromium.org,
-	ebiederm@xmission.com, brauner@kernel.org, jack@suse.cz,
-	mingo@redhat.com, juri.lelli@redhat.com, bsegall@google.com,
-	mgorman@suse.de
-Subject: Re: [PATCH v8 3/5] treewide: Replace 'get_task_comm()' with
- 'strscpy_pad()'
-Message-ID: <202508221127.LiaxcbdW-lkp@intel.com>
-References: <20250821102152.323367-4-bhupesh@igalia.com>
+	s=arc-20240116; t=1755835447; c=relaxed/simple;
+	bh=H3gxW7YmnjIPD6JXPWUWwYW03Mq53VKP8bsqinIGGAY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=A5enPI8j0fMjI3m9R6IVPn95qoFbF5nxkIK+sZfvKx/v95IgWF4kK7g/drhGCmsP6Eh/yz/qIj9ExCMYDMJFJE7IjmG7YLGGCLDsCHMFLXEu5mdZGYhrBbggibPMVZ44zIidBM3IP/+Hl0wOBKFfUhhxf4wI7op9bWeX7jwH4oU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4c7RK46Yvkz2CgGc;
+	Fri, 22 Aug 2025 11:59:36 +0800 (CST)
+Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
+	by mail.maildlp.com (Postfix) with ESMTPS id 740E71400DA;
+	Fri, 22 Aug 2025 12:04:00 +0800 (CST)
+Received: from [127.0.0.1] (10.174.177.71) by dggpemf500013.china.huawei.com
+ (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 22 Aug
+ 2025 12:03:59 +0800
+Message-ID: <b5e588cf-1408-4b67-b21f-04ff94314936@huawei.com>
+Date: Fri, 22 Aug 2025 12:03:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250821102152.323367-4-bhupesh@igalia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] tmpfs: preserve SB_I_VERSION on remount
+Content-Language: en-GB
+To: Hugh Dickins <hughd@google.com>
+CC: Jeff Layton <jlayton@kernel.org>, <libaokun@huaweicloud.com>,
+	<linux-mm@kvack.org>, <baolin.wang@linux.alibaba.com>,
+	<akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>
+References: <20250819061803.1496443-1-libaokun@huaweicloud.com>
+ <0a5c4b7deb443ac5f62d00b0bd0e1dd649bef8fe.camel@kernel.org>
+ <848440d1-72d9-e9ce-5da6-3e67490f0197@google.com>
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <848440d1-72d9-e9ce-5da6-3e67490f0197@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ dggpemf500013.china.huawei.com (7.185.36.188)
 
-Hi Bhupesh,
+On 2025-08-22 10:49, Hugh Dickins wrote:
+> On Tue, 19 Aug 2025, Jeff Layton wrote:
+>> On Tue, 2025-08-19 at 14:18 +0800, libaokun@huaweicloud.com wrote:
+>>> From: Baokun Li <libaokun1@huawei.com>
+>>>
+>>> Now tmpfs enables i_version by default and tmpfs does not modify it. But
+>>> SB_I_VERSION can also be modified via sb_flags, and reconfigure_super()
+>>> always overwrites the existing flags with the latest ones. This means that
+>>> if tmpfs is remounted without specifying iversion, the default i_version
+>>> will be unexpectedly disabled.
+> Wow, what a surprise! Thank you so much for finding and fixing this.
+>
+>>> To ensure iversion remains enabled, SB_I_VERSION is now always set for
+>>> fc->sb_flags in shmem_init_fs_context(), instead of for sb->s_flags in
+>>> shmem_fill_super().
+> I have to say that your patch looks to me like a hacky workaround. But 
+> after spending ages trying to work out how this came about, have concluded
+> that it's an artifact of "iversion" and/or "noiversion" being or having
+> been a mount option in some filesystems, with MS_I_VERSION in MS_RMT_MASK
+> getting propagated to sb_flags_mask, implying that the remounter is
+> changing the option when they have no such intention. 
+Exactly!
+>  And any attempt
+> to fix this in a better way would be too likely to cause more trouble
+> than it's worth - unless other filesystems are also still surprised.
+Other filesystems supporting i_version (ext4, xfs, btrfs) have encountered
+similar issues. The solution adopted was either resetting SB_I_VERSION
+during remount operations or setting SB_I_VERSION in init_fs_context().
 
-kernel test robot noticed the following build errors:
+Given that the overhead of iversion is now minimal, all supported
+filesystems in the kernel enable it by default. I previously considered
+converting SB_I_VERSION to FS_I_VERSION and setting it in
+file_system_type->fs_flags, but since XFS only supports iversion in v5,
+this idea was ultimately abandoned. Alternatively, removing MS_I_VERSION
+from MS_RMT_MASK might also be a viable approach.
+> I had to worry, does the same weird disappearance-on-remount happen to
+> tmpfs's SB_POSIXACL too?  But it looks like not, because MS_POSIXACL is
+> not in MS_RMT_MASK - a relic of history why one in but not the other.
+Yes.
+> But I've added linux-fsdevel to the Ccs, mainly as a protest at this
+> unexpected interface (though no work for Christian to do: Andrew has
+> already taken the patch, thanks).
+Okay.
+>
+>>> Fixes: 36f05cab0a2c ("tmpfs: add support for an i_version counter")
+>>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+>>> ---
+>>>  mm/shmem.c | 5 ++++-
+>>>  1 file changed, 4 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/mm/shmem.c b/mm/shmem.c
+>>> index e2c76a30802b..eebe12ff5bc6 100644
+>>> --- a/mm/shmem.c
+>>> +++ b/mm/shmem.c
+>>> @@ -5081,7 +5081,7 @@ static int shmem_fill_super(struct super_block *sb, struct fs_context *fc)
+>>>  		sb->s_flags |= SB_NOUSER;
+>>>  	}
+>>>  	sb->s_export_op = &shmem_export_ops;
+>>> -	sb->s_flags |= SB_NOSEC | SB_I_VERSION;
+>>> +	sb->s_flags |= SB_NOSEC;
+>>>  
+>>>  #if IS_ENABLED(CONFIG_UNICODE)
+>>>  	if (!ctx->encoding && ctx->strict_encoding) {
+>>> @@ -5385,6 +5385,9 @@ int shmem_init_fs_context(struct fs_context *fc)
+>>>  
+>>>  	fc->fs_private = ctx;
+>>>  	fc->ops = &shmem_fs_context_ops;
+>>> +#ifdef CONFIG_TMPFS
+> Ah, you're being very punctilious with that #ifdef: yes, the original
+> code happened not to set it in the #ifndef CONFIG_TMPFS case (when the
+> i_version would be invisible anyway).  But I bet that if we had done it
+> this way originally, we would have preferred not to clutter the source
+> with #ifdef and #else here.  Oh well, perhaps they will vanish in the
+> night sometime, it's a nit not worth you resending.
+Yes, I kept this macro to maintain consistency with shmem_fill_super().
+If i_version is not supported but SB_I_VERSION is set, it may cause
+confusion for IMA or NFS.
+>
+>>> +	fc->sb_flags |= SB_I_VERSION;
+>>> +#endif
+>>>  	return 0;
+>>>  }
+>>>  
+>> Reviewed-by: Jeff Layton <jlayton@kernel.org>
+> Acked-by: Hugh Dickins <hughd@google.com>
+>
+Thanks,
+Baokun
 
-[auto build test ERROR on 5303936d609e09665deda94eaedf26a0e5c3a087]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Bhupesh/exec-Remove-obsolete-comments/20250821-182426
-base:   5303936d609e09665deda94eaedf26a0e5c3a087
-patch link:    https://lore.kernel.org/r/20250821102152.323367-4-bhupesh%40igalia.com
-patch subject: [PATCH v8 3/5] treewide: Replace 'get_task_comm()' with 'strscpy_pad()'
-config: x86_64-buildonly-randconfig-001-20250822 (https://download.01.org/0day-ci/archive/20250822/202508221127.LiaxcbdW-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250822/202508221127.LiaxcbdW-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508221127.LiaxcbdW-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/gpu/drm/panthor/panthor_sched.c:3420:2: error: call to undeclared function 'get_task_comm'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-    3420 |         get_task_comm(group->task_info.comm, task);
-         |         ^
-   drivers/gpu/drm/panthor/panthor_sched.c:3420:2: note: did you mean 'get_task_mm'?
-   include/linux/sched/mm.h:151:26: note: 'get_task_mm' declared here
-     151 | extern struct mm_struct *get_task_mm(struct task_struct *task);
-         |                          ^
-   1 error generated.
-
-
-vim +/get_task_comm +3420 drivers/gpu/drm/panthor/panthor_sched.c
-
-de85488138247d Boris Brezillon 2024-02-29  3414  
-33b9cb6dcda252 Chia-I Wu       2025-07-17  3415  static void group_init_task_info(struct panthor_group *group)
-33b9cb6dcda252 Chia-I Wu       2025-07-17  3416  {
-33b9cb6dcda252 Chia-I Wu       2025-07-17  3417  	struct task_struct *task = current->group_leader;
-33b9cb6dcda252 Chia-I Wu       2025-07-17  3418  
-33b9cb6dcda252 Chia-I Wu       2025-07-17  3419  	group->task_info.pid = task->pid;
-33b9cb6dcda252 Chia-I Wu       2025-07-17 @3420  	get_task_comm(group->task_info.comm, task);
-33b9cb6dcda252 Chia-I Wu       2025-07-17  3421  }
-33b9cb6dcda252 Chia-I Wu       2025-07-17  3422  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
