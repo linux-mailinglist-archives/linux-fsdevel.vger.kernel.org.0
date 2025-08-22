@@ -1,363 +1,148 @@
-Return-Path: <linux-fsdevel+bounces-58757-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58756-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0F6AB31518
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 12:20:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1930EB314D2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 12:10:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C5D95A41E0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 10:20:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED6A4BA04AB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 10:08:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 953752D4805;
-	Fri, 22 Aug 2025 10:20:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58ADC2C11CA;
+	Fri, 22 Aug 2025 10:09:30 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313F6263F22;
-	Fri, 22 Aug 2025 10:20:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588242C029D
+	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Aug 2025 10:09:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755858037; cv=none; b=c0noFGD8KAmE96LAyqmKUGaLd3uZ6lRRIrIUVLAfTPQJDqyBkDs98hh1AYMOeiWYG/lzdXA3wYf0+MWmwNNUVdrHj/vgYzXEksocJuY8Lkq8JWoCD9XIIyqS48dWKzoyiy+67iJ/7D9e531PHzj6TDvQ9eN3T62LX8ju+cQw/LE=
+	t=1755857370; cv=none; b=YdUfCuH6M/oqCsB/lffozs5q4jQ6ijHnnkr797Qa2fLFY+EiZO5TrWsy9kd+UXJriFMaD0fgz0Pu3YEZwYY69sLWAF/MyqUIJ821zq9FUHowmJLXPmYlo1dZcjJ+DZxGQTsaL9ukSBvEUcsRERDyZxFm6p7T/lSzYyKpyuaobVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755858037; c=relaxed/simple;
-	bh=q9/M8Q+ftujvIXBI8Gi8mugr1rBy3l/64IF7f26s3Hk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pfHGBUF3rWBILAr+mcZvvmSIdvSnIAQoIJhBSfvdZI6fgpboYfF1hqobne+VudbXrp2NzAod6cEPz0JG9nukjsGFAXztM//zU7xjE1Bqw9rnn3BYy7CRjWbrAM395uKQfsr8mRR0IipWDnSrCHvAlUEd30FxPZ5nYZWpB1Wq9cc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4c7bGx4vLcz9sSn;
-	Fri, 22 Aug 2025 11:58:17 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id HI4itv72BwNb; Fri, 22 Aug 2025 11:58:17 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4c7bGx3rHXz9sSm;
-	Fri, 22 Aug 2025 11:58:17 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 6E4278B780;
-	Fri, 22 Aug 2025 11:58:17 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id estqZpMBN6oi; Fri, 22 Aug 2025 11:58:17 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 41FF48B775;
-	Fri, 22 Aug 2025 11:58:16 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	"Andre Almeida" <andrealmeid@igalia.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Laight <david.laight.linux@gmail.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Daniel Borkmann <daniel@iogearbox.net>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-block@vger.kernel.org
-Subject: [PATCH v2 10/10] powerpc/uaccess: Implement masked user access
-Date: Fri, 22 Aug 2025 11:58:06 +0200
-Message-ID: <647f1b1db985aec8ec1163bf97688563ae6f9609.1755854833.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1755854833.git.christophe.leroy@csgroup.eu>
-References: <cover.1755854833.git.christophe.leroy@csgroup.eu>
+	s=arc-20240116; t=1755857370; c=relaxed/simple;
+	bh=lTIPtZ/FQiu+wxGIVysw/XvafV7SUmZ7l1qW2Z9KJuc=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=SfuP9eTQbe0RZd5ArpR7lXjtgEluONuyOQUWtFgAyOiWODjIk39da/nEwhBhPPBHJvfPavDPRquKwzSJmUaG5+K12xtg8FI6eeH/hubEriilBhMyQg1WVp+4yZMqLrOyw4BHq49PEZQZ8W61oA3msMpB6uDozlzHrsxNE4MpHi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3e6688959easo16875075ab.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Aug 2025 03:09:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755857367; x=1756462167;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VRc3xIFCTnSdLY/FderHjqmKE6fBYoDej+8lK7B2w/Y=;
+        b=CnvNWF4TD3isDyAf7u0xDv8rpxnaMLf/O1J171+2oM5c0erFK56xx+4aU6PAycVtz8
+         cVemgs5N3QYyXekfQOQS+huGDx2iIBwyGULAtji18BcWJXAZGfBzm3NNVt7Ve+GZdOrM
+         m2yVKmBy6d86ok7MIF4rNMZA3OxDajlyswuO0KQhwXNETHqZPhIFGUIZ+CetIdCiiw3C
+         pXwDxu7dpUa13U49/wYiviIGojrYImGZuEv0uP7HFg7Yb/pHC2LH0bzdIO9iAQu/sKPd
+         xSJCiTdZUfkc40+uFz8avmZHPr8gbNES+98eN5a2/N3yIbx1ndX6ptpJpjHo/D+hkcKH
+         Y8qg==
+X-Forwarded-Encrypted: i=1; AJvYcCWbaYFMJk86pTCfYal6Vze8zen0M6zVfDs0141O4mhkXCW/eNwyVO+30KlLDvnwm0ad6RmrEe9eeYigeTOr@vger.kernel.org
+X-Gm-Message-State: AOJu0YyE2rIvOupfN4Of/cZNKPVyQPTI8Y9i3+oXolC7YNLct6+lRSsM
+	XECv4W7JthqtfpxHAE6hw2co7PbwtofXc9Sqbt4sNsy2cjOvJ8RmyTqTQqgJKMbA1v6ZEbE1PIJ
+	1QZJSebsNa/P9292UGP+NONkIt1rh3SosiZnmMntYr4dAR2nG9DsReaHAbIU=
+X-Google-Smtp-Source: AGHT+IEMLm27wvZOVdNUPQaksCYCLLv5JHT+qmWWsl120o7UXyJbn/3MaL4zxA8MZvdeNNKsO1umGhqr7ga7N23ZAe1QhU0QLrqE
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755856679; l=9837; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=q9/M8Q+ftujvIXBI8Gi8mugr1rBy3l/64IF7f26s3Hk=; b=K3xf3z43dFsltMyTX9/FeBTo0ZJE+/+vNuU0tZKfVHy2dQRAppsf5eI17BJXf1WTeoOGv7Hnv mgeQe9mMJ2sAIfxJZdRjjRVvZi7V7gEkwodQqwQD7Bd0BT1gIsJZ+bV
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:16c5:b0:3e5:4db8:2f1a with SMTP id
+ e9e14a558f8ab-3e921a5cce4mr36780815ab.11.1755857367275; Fri, 22 Aug 2025
+ 03:09:27 -0700 (PDT)
+Date: Fri, 22 Aug 2025 03:09:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68a841d7.050a0220.37038e.0051.GAE@google.com>
+Subject: [syzbot] [fs?] [mm?] linux-next test error: WARNING in __folio_start_writeback
+From: syzbot <syzbot+0630e71306742d4b2aea@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-next@vger.kernel.org, 
+	sfr@canb.auug.org.au, syzkaller-bugs@googlegroups.com, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-Masked user access avoids the address/size verification by access_ok().
-Allthough its main purpose is to skip the speculation in the
-verification of user address and size hence avoid the need of spec
-mitigation, it also has the advantage of reducing the amount of
-instructions required so it even benefits to platforms that don't
-need speculation mitigation, especially when the size of the copy is
-not know at build time.
+Hello,
 
-So implement masked user access on powerpc. The only requirement is
-to have memory gap that faults between the top user space and the
-real start of kernel area.
+syzbot found the following issue on:
 
-On 64 bits platforms the address space is divided that way:
+HEAD commit:    0f4c93f7eb86 Add linux-next specific files for 20250822
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=172c07bc580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=21eed27c0deadb92
+dashboard link: https://syzkaller.appspot.com/bug?extid=0630e71306742d4b2aea
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
 
-	0xffffffffffffffff	+------------------+
-				|                  |
-				|   kernel space   |
- 		 		|                  |
-	0xc000000000000000	+------------------+  <== PAGE_OFFSET
-				|//////////////////|
-				|//////////////////|
-	0x8000000000000000	|//////////////////|
-				|//////////////////|
-				|//////////////////|
-	0x0010000000000000	+------------------+  <== TASK_SIZE_MAX
-				|                  |
-				|    user space    |
-				|                  |
-	0x0000000000000000	+------------------+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/669ede8f5d66/disk-0f4c93f7.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/50feda89fe89/vmlinux-0f4c93f7.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/317a0d3516fb/bzImage-0f4c93f7.xz
 
-Kernel is always above 0x8000000000000000 and user always
-below, with a gap in-between. It leads to a 4 instructions sequence:
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+0630e71306742d4b2aea@syzkaller.appspotmail.com
 
-  80:	7c 69 1b 78 	mr      r9,r3
-  84:	7c 63 fe 76 	sradi   r3,r3,63
-  88:	7d 29 18 78 	andc    r9,r9,r3
-  8c:	79 23 00 4c 	rldimi  r3,r9,0,1
+------------[ cut here ]------------
+WARNING: ./include/linux/backing-dev.h:243 at inode_to_wb include/linux/backing-dev.h:239 [inline], CPU#1: kworker/u8:6/2949
+WARNING: ./include/linux/backing-dev.h:243 at __folio_start_writeback+0x9d5/0xb70 mm/page-writeback.c:3027, CPU#1: kworker/u8:6/2949
+Modules linked in:
+CPU: 1 UID: 0 PID: 2949 Comm: kworker/u8:6 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+Workqueue: writeback wb_workfn (flush-8:0)
+RIP: 0010:inode_to_wb include/linux/backing-dev.h:239 [inline]
+RIP: 0010:__folio_start_writeback+0x9d5/0xb70 mm/page-writeback.c:3027
+Code: 28 4c 89 f8 48 c1 e8 03 42 80 3c 28 00 74 08 4c 89 ff e8 ce a2 29 00 49 8b 07 25 ff 3f 00 00 e9 1b fa ff ff e8 7c 04 c6 ff 90 <0f> 0b 90 e9 d6 fb ff ff e8 6e 04 c6 ff 48 c7 c7 a0 f8 5f 8e 4c 89
+RSP: 0018:ffffc9000bb06ea0 EFLAGS: 00010293
+RAX: ffffffff81fad344 RBX: ffffea00050de8c0 RCX: ffff88802ee29e00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc9000bb07010 R08: ffffc9000bb06f97 R09: 0000000000000000
+R10: ffffc9000bb06f80 R11: fffff52001760df3 R12: ffffea00050de8c8
+R13: 0000000000000000 R14: ffff888023060880 R15: ffff888023060660
+FS:  0000000000000000(0000) GS:ffff8881258c3000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f7354907000 CR3: 000000000e338000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ __block_write_full_folio+0x75f/0xe10 fs/buffer.c:1928
+ blkdev_writepages+0xd1/0x170 block/fops.c:484
+ do_writepages+0x32e/0x550 mm/page-writeback.c:2604
+ __writeback_single_inode+0x145/0xff0 fs/fs-writeback.c:1680
+ writeback_sb_inodes+0x6c7/0x1010 fs/fs-writeback.c:1976
+ __writeback_inodes_wb+0x111/0x240 fs/fs-writeback.c:2047
+ wb_writeback+0x44f/0xaf0 fs/fs-writeback.c:2158
+ wb_check_old_data_flush fs/fs-writeback.c:2262 [inline]
+ wb_do_writeback fs/fs-writeback.c:2315 [inline]
+ wb_workfn+0xaef/0xef0 fs/fs-writeback.c:2343
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0xade/0x17b0 kernel/workqueue.c:3319
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
+ kthread+0x711/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x47c/0x820 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
 
-This sequence leaves r3 unmodified when it is below 0x8000000000000000
-and clamps it to 0x8000000000000000 if it is above.
 
-On 32 bits it is more tricky. In theory user space can go up to
-0xbfffffff while kernel will usually start at 0xc0000000. So a gap
-needs to be added in-between. Allthough in theory a single 4k page
-would suffice, it is easier and more efficient to enforce a 128k gap
-below kernel, as it simplifies the masking.
-
-e500 has the isel instruction which allows selecting one value or
-the other without branch and that instruction is not speculative, so
-use it. Allthough GCC usually generates code using that instruction,
-it is safer to use inline assembly to be sure. The result is:
-
-  14:	3d 20 bf fe 	lis     r9,-16386
-  18:	7c 03 48 40 	cmplw   r3,r9
-  1c:	7c 69 18 5e 	iselgt  r3,r9,r3
-
-On other ones, when kernel space is over 0x80000000 and user space
-is below, the logic in mask_user_address_simple() leads to a
-3 instruction sequence:
-
-  14:	7c 69 fe 70 	srawi   r9,r3,31
-  18:	7c 63 48 78 	andc    r3,r3,r9
-  1c:	51 23 00 00 	rlwimi  r3,r9,0,0,0
-
-This is the default on powerpc 8xx.
-
-When the limit between user space and kernel space is not 0x80000000,
-mask_user_address_32() is used and a 6 instructions sequence is
-generated:
-
-  24:	54 69 7c 7e 	srwi    r9,r3,17
-  28:	21 29 57 ff 	subfic  r9,r9,22527
-  2c:	7d 29 fe 70 	srawi   r9,r9,31
-  30:	75 2a b0 00 	andis.  r10,r9,45056
-  34:	7c 63 48 78 	andc    r3,r3,r9
-  38:	7c 63 53 78 	or      r3,r3,r10
-
-The constraint is that TASK_SIZE be aligned to 128K in order to get
-the most optimal number of instructions.
-
-When CONFIG_PPC_BARRIER_NOSPEC is not defined, fallback on the
-test-based masking as it is quicker than the 6 instructions sequence
-but not quicker than the 3 instructions sequences above.
-
-As an exemple, allthough barrier_nospec() voids on the 8xx, this
-change has the following impact on strncpy_from_user(): the length of
-the function is reduced from 488 to 340 bytes:
-
-Start of the function with the patch:
-
-00000000 <strncpy_from_user>:
-   0:	7c ab 2b 79 	mr.     r11,r5
-   4:	40 81 01 48 	ble     14c <strncpy_from_user+0x14c>
-   8:	7c 89 fe 70 	srawi   r9,r4,31
-   c:	7c 84 48 78 	andc    r4,r4,r9
-  10:	51 24 00 00 	rlwimi  r4,r9,0,0,0
-  14:	94 21 ff f0 	stwu    r1,-16(r1)
-  18:	3d 20 dc 00 	lis     r9,-9216
-  1c:	7d 3a c3 a6 	mtspr   794,r9
-  20:	2f 8b 00 03 	cmpwi   cr7,r11,3
-  24:	40 9d 00 b8 	ble     cr7,dc <strncpy_from_user+0xdc>
-...
-
-Start of the function without the patch:
-
-00000000 <strncpy_from_user>:
-   0:	7c a0 2b 79 	mr.     r0,r5
-   4:	40 81 01 10 	ble     114 <strncpy_from_user+0x114>
-   8:	2f 84 00 00 	cmpwi   cr7,r4,0
-   c:	41 9c 01 30 	blt     cr7,13c <strncpy_from_user+0x13c>
-  10:	3d 20 80 00 	lis     r9,-32768
-  14:	7d 24 48 50 	subf    r9,r4,r9
-  18:	7f 80 48 40 	cmplw   cr7,r0,r9
-  1c:	7c 05 03 78 	mr      r5,r0
-  20:	41 9d 01 00 	bgt     cr7,120 <strncpy_from_user+0x120>
-  24:	3d 20 80 00 	lis     r9,-32768
-  28:	7d 25 48 50 	subf    r9,r5,r9
-  2c:	7f 84 48 40 	cmplw   cr7,r4,r9
-  30:	38 e0 ff f2 	li      r7,-14
-  34:	41 9d 00 e4 	bgt     cr7,118 <strncpy_from_user+0x118>
-  38:	94 21 ff e0 	stwu    r1,-32(r1)
-  3c:	3d 20 dc 00 	lis     r9,-9216
-  40:	7d 3a c3 a6 	mtspr   794,r9
-  44:	2b 85 00 03 	cmplwi  cr7,r5,3
-  48:	40 9d 01 6c 	ble     cr7,1b4 <strncpy_from_user+0x1b4>
-...
- 118:	7c e3 3b 78 	mr      r3,r7
- 11c:	4e 80 00 20 	blr
- 120:	7d 25 4b 78 	mr      r5,r9
- 124:	3d 20 80 00 	lis     r9,-32768
- 128:	7d 25 48 50 	subf    r9,r5,r9
- 12c:	7f 84 48 40 	cmplw   cr7,r4,r9
- 130:	38 e0 ff f2 	li      r7,-14
- 134:	41 bd ff e4 	bgt     cr7,118 <strncpy_from_user+0x118>
- 138:	4b ff ff 00 	b       38 <strncpy_from_user+0x38>
- 13c:	38 e0 ff f2 	li      r7,-14
- 140:	4b ff ff d8 	b       118 <strncpy_from_user+0x118>
-...
-
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 ---
-v2: Added 'likely()' to the test in mask_user_address_fallback()
----
- arch/powerpc/include/asm/task_size_32.h |  6 +-
- arch/powerpc/include/asm/uaccess.h      | 78 +++++++++++++++++++++++++
- 2 files changed, 81 insertions(+), 3 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/arch/powerpc/include/asm/task_size_32.h b/arch/powerpc/include/asm/task_size_32.h
-index 42a64bbd1964..725ddbf06217 100644
---- a/arch/powerpc/include/asm/task_size_32.h
-+++ b/arch/powerpc/include/asm/task_size_32.h
-@@ -13,7 +13,7 @@
- #define MODULES_SIZE	(CONFIG_MODULES_SIZE * SZ_1M)
- #define MODULES_VADDR	(MODULES_END - MODULES_SIZE)
- #define MODULES_BASE	(MODULES_VADDR & ~(UL(SZ_4M) - 1))
--#define USER_TOP	MODULES_BASE
-+#define USER_TOP	(MODULES_BASE - SZ_4M)
- #endif
- 
- #ifdef CONFIG_PPC_BOOK3S_32
-@@ -21,11 +21,11 @@
- #define MODULES_SIZE	(CONFIG_MODULES_SIZE * SZ_1M)
- #define MODULES_VADDR	(MODULES_END - MODULES_SIZE)
- #define MODULES_BASE	(MODULES_VADDR & ~(UL(SZ_256M) - 1))
--#define USER_TOP	MODULES_BASE
-+#define USER_TOP	(MODULES_BASE - SZ_4M)
- #endif
- 
- #ifndef USER_TOP
--#define USER_TOP	ASM_CONST(CONFIG_PAGE_OFFSET)
-+#define USER_TOP	((ASM_CONST(CONFIG_PAGE_OFFSET) - SZ_128K) & ~(UL(SZ_128K) - 1))
- #endif
- 
- #if CONFIG_TASK_SIZE < USER_TOP
-diff --git a/arch/powerpc/include/asm/uaccess.h b/arch/powerpc/include/asm/uaccess.h
-index 49254f7d9069..0b8e8ed37a14 100644
---- a/arch/powerpc/include/asm/uaccess.h
-+++ b/arch/powerpc/include/asm/uaccess.h
-@@ -2,6 +2,8 @@
- #ifndef _ARCH_POWERPC_UACCESS_H
- #define _ARCH_POWERPC_UACCESS_H
- 
-+#include <linux/sizes.h>
-+
- #include <asm/processor.h>
- #include <asm/page.h>
- #include <asm/extable.h>
-@@ -435,6 +437,82 @@ static __must_check __always_inline bool __user_access_begin(const void __user *
- #define user_access_save	prevent_user_access_return
- #define user_access_restore	restore_user_access
- 
-+/*
-+ * Masking the user address is an alternative to a conditional
-+ * user_access_begin that can avoid the fencing. This only works
-+ * for dense accesses starting at the address.
-+ */
-+static inline void __user *mask_user_address_simple(const void __user *ptr)
-+{
-+	unsigned long addr = (unsigned long)ptr;
-+	unsigned long mask = (unsigned long)((long)addr >> (BITS_PER_LONG - 1));
-+
-+	addr = ((addr & ~mask) & (~0UL >> 1)) | (mask & (1UL << (BITS_PER_LONG - 1)));
-+
-+	return (void __user *)addr;
-+}
-+
-+static inline void __user *mask_user_address_isel(const void __user *ptr)
-+{
-+	unsigned long addr;
-+
-+	asm("cmplw %1, %2; iselgt %0, %2, %1" : "=r"(addr) : "r"(ptr), "r"(TASK_SIZE) : "cr0");
-+
-+	return (void __user *)addr;
-+}
-+
-+/* TASK_SIZE is a multiple of 128K for shifting by 17 to the right */
-+static inline void __user *mask_user_address_32(const void __user *ptr)
-+{
-+	unsigned long addr = (unsigned long)ptr;
-+	unsigned long mask = (unsigned long)((long)((TASK_SIZE >> 17) - 1 - (addr >> 17)) >> 31);
-+
-+	addr = (addr & ~mask) | (TASK_SIZE & mask);
-+
-+	return (void __user *)addr;
-+}
-+
-+static inline void __user *mask_user_address_fallback(const void __user *ptr)
-+{
-+	unsigned long addr = (unsigned long)ptr;
-+
-+	return (void __user *)(likely(addr < TASK_SIZE) ? addr : TASK_SIZE);
-+}
-+
-+static inline void __user *mask_user_address(const void __user *ptr)
-+{
-+#ifdef MODULES_VADDR
-+	const unsigned long border = MODULES_VADDR;
-+#else
-+	const unsigned long border = PAGE_OFFSET;
-+#endif
-+
-+	if (IS_ENABLED(CONFIG_PPC64))
-+		return mask_user_address_simple(ptr);
-+	if (IS_ENABLED(CONFIG_E500))
-+		return mask_user_address_isel(ptr);
-+	if (TASK_SIZE <= UL(SZ_2G) && border >= UL(SZ_2G))
-+		return mask_user_address_simple(ptr);
-+	if (IS_ENABLED(CONFIG_PPC_BARRIER_NOSPEC))
-+		return mask_user_address_32(ptr);
-+	return mask_user_address_fallback(ptr);
-+}
-+
-+static __always_inline void __user *__masked_user_access_begin(const void __user *p,
-+							       unsigned long dir)
-+{
-+	void __user *ptr = mask_user_address(p);
-+
-+	might_fault();
-+	allow_user_access(ptr, dir);
-+
-+	return ptr;
-+}
-+
-+#define masked_user_access_begin(p) __masked_user_access_begin(p, KUAP_READ_WRITE)
-+#define masked_user_read_access_begin(p) __masked_user_access_begin(p, KUAP_READ)
-+#define masked_user_write_access_begin(p) __masked_user_access_begin(p, KUAP_WRITE)
-+
- #define unsafe_get_user(x, p, e) do {					\
- 	__long_type(*(p)) __gu_val;				\
- 	__typeof__(*(p)) __user *__gu_addr = (p);		\
--- 
-2.49.0
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
