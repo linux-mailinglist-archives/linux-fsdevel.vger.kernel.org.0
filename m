@@ -1,170 +1,225 @@
-Return-Path: <linux-fsdevel+bounces-58730-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58731-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 832DBB30C07
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 04:49:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 892ABB30C54
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 05:11:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E929C1BA57FE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 02:50:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F78E563662
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 03:09:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71D91223DDD;
-	Fri, 22 Aug 2025 02:49:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE92E26D4CA;
+	Fri, 22 Aug 2025 03:08:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eoY4MGbM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pq826WrM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC1022156B
-	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Aug 2025 02:49:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28BD92652B4;
+	Fri, 22 Aug 2025 03:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755830978; cv=none; b=NM44VfNBr3Z9DotrcRL9DDehzj7TE4Q7pyD5fZy7dTrdmhcnc7HmeGW4ZAg710iZJJyyo07YYajSfAa/FsgLS2RsdX0SIe+2KqxFW3fSObF1irek2AkcCli3trR0LBGCq1YCcn8u+og7eJLahY75TmNVsUtXPkhgI++CFy3Hc/w=
+	t=1755832084; cv=none; b=erxwrKxigNrMCX/7tYXeO0K1diU7JsUWvZwA/PHT1PfRUlYDbXVQlmZLWhkVe7eS6MYmpHFCYxvdzOsSU1SjfQpUzk3NKh7SzEX2Hqr4emB2wK+uVRxNf4BlcrzJs8oeova21l5rThgdO71/NerImhmxVF4qIviT5q4OGjTaUMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755830978; c=relaxed/simple;
-	bh=aPMU73DCWf8/P6XI7AoYL68J4ATtSo5EbLoBMnWRAlU=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=LDTlimxWOTdBDASX86ybimTszBefCnn/jl6ORvZf2TwV5tct2ysNudgXrXDb7Zfcs6rwlTTnEAGM7pEdB2jjXlm7MsVi1s5qzWF6TCb5t2fqqmeN1oZfEUolNgivEpP6A+D4AHU0Ifr9yw1IuxkYyNX13PCh6hfHgLPmVSSLu+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eoY4MGbM; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e94e3c3621fso1654960276.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Aug 2025 19:49:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755830976; x=1756435776; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eJgMemiOWP2L5ptavtO9iXqPmjWF2lP/8znZnsFWHb0=;
-        b=eoY4MGbM402OJ3yhrE1mKjH5TZ134E3HTMrSg/+AHNJLIay1MQ3HOpA57tp35+VjW6
-         xosXkvimtclE8OVPszgWfnoe178YCPyI/jqLEX44wCJ+54tGGDBorXLyvDvIx3mAOJxH
-         EOQIE8wLkcMYHmsoh0zNZppf3CJ1jzxtGmJy+GaW0E3HULVECxg8hx1K6Xz596TiNKHk
-         D11IEd5BdZiE98G9wUXSJC2VvJWS4OL5vYJZujf/jBF9tfMXw5Pc515w8RE71EqdvajA
-         TwyD0a/sMTQh1VVRwDAZ3tODhS4YJWGsGHB2XnvIrUAtvm6jiRCcM+A0HZKw+hsBowKB
-         q6XQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755830976; x=1756435776;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eJgMemiOWP2L5ptavtO9iXqPmjWF2lP/8znZnsFWHb0=;
-        b=aSIawHjzjSo9gD80BHChA9RS1yrlbBcG2wgDAgRjUBUBQZmZ2wYRjtWDROwmknharn
-         LCrR9zPTNRH38mf2GsnsrGojobR86Kxw77cG91ghid/SGtBXYMbZD+JA1ru33tFLMF5P
-         QZGet+tTtIYohyx695PV+i3QI/l9G8qurdry+9MNqKqefqkU5gbCGtIJ4V0V7shK3Y2r
-         ef/UtPh/24QWohSE5Jh2M+pkyyq7RYTP0vJu6AVbIAqJ/eZZ9uEt1qQTNcwWjx1cqyBb
-         E82O5HLT9CnV2r2oSc62bAwwKNRnVPGohpdyxT5IT9JlXJgrvPk7wXlH7mkG7/0qt1EX
-         f+lQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVd3kang+YCssJ/bL+s9+Vg+AUDCrlrjOWAcFA9IMfA/baQyKEhpsjppf0FJ+Jz2uZtagBzemusQHoQ9970@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPSfc+BrFTKwwv8dEMmGty/yCyhLzt82isH0xMNBzJyJ0oXUVA
-	/Lic7D1fsnT71DXGbfzfaSI2wCaLZyy/6B5QDWHCjx4Q5Q2Kr9KNsnUnnkL2besulg==
-X-Gm-Gg: ASbGnct2U8zerKlVbVUE6hiujW6//esvElKNU6cbvCfb1FaejXkmvFM/0dIERDwBl2L
-	vOQluYFICxCiIg6E7nPCdeJ+n3zYgXjP+Ob9tg1APc8Pyfs5fp6kEcPVi3ft1JwyGuWPR8UN4xm
-	W1pVMZA+pJQB9HNxHbicE5olZpVONu0+cSIqJ94A/e1EC8CAOswEArFTxXYDl3JH+k95vTH08wM
-	jVfKLLqFjDwtMMqUIRBQ+b0zwF4Gsz2v33M8kiMkb9I75d3TZCikp0ABnD3IpowNKLGkEBG+shm
-	AcwdGI1tsgpHD4FcHM7/LCGs9JjyStlEU2aXu8p3CpMGBtvQBlL82PbrKQW5R9MPBMIZ4bO7ebw
-	D6VkHnTZLAvcXq29lnXfqF07/WbP6UjqGf52CnM64kM6dT0AUj1hKDKOK9OuFRZ6fNTz+UQi8Yi
-	UFcFmnkSlLXvepXg==
-X-Google-Smtp-Source: AGHT+IGBZ1EWD4PIYFLvPV8xxJfPnPb/H3KLSOuO3XXH9AV7TfrQ42b2K1Lv37wXn0rhaPYprrXvjw==
-X-Received: by 2002:a05:690c:6c0a:b0:71a:17fa:bf07 with SMTP id 00721157ae682-71fdc423f88mr12035667b3.40.1755830975699;
-        Thu, 21 Aug 2025 19:49:35 -0700 (PDT)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-71e6e0a9a26sm48207697b3.55.2025.08.21.19.49.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 19:49:34 -0700 (PDT)
-Date: Thu, 21 Aug 2025 19:49:00 -0700 (PDT)
-From: Hugh Dickins <hughd@google.com>
-To: Baokun Li <libaokun1@huawei.com>
-cc: Jeff Layton <jlayton@kernel.org>, libaokun@huaweicloud.com, 
-    linux-mm@kvack.org, hughd@google.com, baolin.wang@linux.alibaba.com, 
-    akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
-    linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] tmpfs: preserve SB_I_VERSION on remount
-In-Reply-To: <0a5c4b7deb443ac5f62d00b0bd0e1dd649bef8fe.camel@kernel.org>
-Message-ID: <848440d1-72d9-e9ce-5da6-3e67490f0197@google.com>
-References: <20250819061803.1496443-1-libaokun@huaweicloud.com> <0a5c4b7deb443ac5f62d00b0bd0e1dd649bef8fe.camel@kernel.org>
+	s=arc-20240116; t=1755832084; c=relaxed/simple;
+	bh=SCWJsd9vjE1VJ9L3wefl1VGRbBT52yKi9plp6KLTV/M=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=pemkkggPRbPeP8RGGkaO9Pgfy+KK3/FagthQ0cXR9uA28eOkU79IEJJKmDwyeD1QZl8ca2m/A0guWEihPUfnjA0YQogsFtzMLMrRQXJxjF1/H/C8hxSaxZ2siNlc/SIBjO+pXFt2xqSFcpd/JzJp6Fg69UKGFKgZC4e3PTbzohI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pq826WrM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1398C4CEEB;
+	Fri, 22 Aug 2025 03:08:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755832084;
+	bh=SCWJsd9vjE1VJ9L3wefl1VGRbBT52yKi9plp6KLTV/M=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=pq826WrMct/ELjpuRCD360hXL5d6eRZjJlhvi1ZvcFso6C915lRq4I8Y/MQvxFvuk
+	 c61/R4JqIAiKBru31s6kf8r+L9NUyoUKZCg6JNEZe0OcRQuHHIMqM/76MFRuT22g53
+	 EvSqtDBdC+41GoPOdTB132X/U0RD6+K8MlKPfINpB+ZXjeAXb553Z4Sm5j5PG3Gy3X
+	 lC1UGWW/biRSQpqlW/VV98IVGwveT907OhGljIOMQ0ZFb9OvETPWO4iIzZwUjETta/
+	 neRSqnMgpnVKPZyGmhuL1i4ab5jXoogzvcbjqSkVXHBUNsTIryEqKRjwSDMQcl9deU
+	 FAFNC8olFBgiQ==
+From: Sasha Levin <sashal@kernel.org>
+To: stable@vger.kernel.org
+Cc: David Howells <dhowells@redhat.com>,
+	Xiaoli Feng <fengxiaoli0714@gmail.com>,
+	Paulo Alcantara <pc@manguebit.org>,
+	Steve French <sfrench@samba.org>,
+	Shyam Prasad N <sprasad@microsoft.com>,
+	netfs@lists.linux.dev,
+	linux-cifs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 6.12.y] netfs: Fix unbuffered write error handling
+Date: Thu, 21 Aug 2025 23:08:00 -0400
+Message-ID: <20250822030800.1054685-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <2025082157-dedicator-hurled-4d65@gregkh>
+References: <2025082157-dedicator-hurled-4d65@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 
-On Tue, 19 Aug 2025, Jeff Layton wrote:
-> On Tue, 2025-08-19 at 14:18 +0800, libaokun@huaweicloud.com wrote:
-> > From: Baokun Li <libaokun1@huawei.com>
-> > 
-> > Now tmpfs enables i_version by default and tmpfs does not modify it. But
-> > SB_I_VERSION can also be modified via sb_flags, and reconfigure_super()
-> > always overwrites the existing flags with the latest ones. This means that
-> > if tmpfs is remounted without specifying iversion, the default i_version
-> > will be unexpectedly disabled.
+From: David Howells <dhowells@redhat.com>
 
-Wow, what a surprise! Thank you so much for finding and fixing this.
+[ Upstream commit a3de58b12ce074ec05b8741fa28d62ccb1070468 ]
 
-> > 
-> > To ensure iversion remains enabled, SB_I_VERSION is now always set for
-> > fc->sb_flags in shmem_init_fs_context(), instead of for sb->s_flags in
-> > shmem_fill_super().
+If all the subrequests in an unbuffered write stream fail, the subrequest
+collector doesn't update the stream->transferred value and it retains its
+initial LONG_MAX value.  Unfortunately, if all active streams fail, then we
+take the smallest value of { LONG_MAX, LONG_MAX, ... } as the value to set
+in wreq->transferred - which is then returned from ->write_iter().
 
-I have to say that your patch looks to me like a hacky workaround. But 
-after spending ages trying to work out how this came about, have concluded
-that it's an artifact of "iversion" and/or "noiversion" being or having
-been a mount option in some filesystems, with MS_I_VERSION in MS_RMT_MASK
-getting propagated to sb_flags_mask, implying that the remounter is
-changing the option when they have no such intention.  And any attempt
-to fix this in a better way would be too likely to cause more trouble
-than it's worth - unless other filesystems are also still surprised.
+LONG_MAX was chosen as the initial value so that all the streams can be
+quickly assessed by taking the smallest value of all stream->transferred -
+but this only works if we've set any of them.
 
-I had to worry, does the same weird disappearance-on-remount happen to
-tmpfs's SB_POSIXACL too?  But it looks like not, because MS_POSIXACL is
-not in MS_RMT_MASK - a relic of history why one in but not the other.
+Fix this by adding a flag to indicate whether the value in
+stream->transferred is valid and checking that when we integrate the
+values.  stream->transferred can then be initialised to zero.
 
-But I've added linux-fsdevel to the Ccs, mainly as a protest at this
-unexpected interface (though no work for Christian to do: Andrew has
-already taken the patch, thanks).
+This was found by running the generic/750 xfstest against cifs with
+cache=none.  It splices data to the target file.  Once (if) it has used up
+all the available scratch space, the writes start failing with ENOSPC.
+This causes ->write_iter() to fail.  However, it was returning
+wreq->transferred, i.e. LONG_MAX, rather than an error (because it thought
+the amount transferred was non-zero) and iter_file_splice_write() would
+then try to clean up that amount of pipe bufferage - leading to an oops
+when it overran.  The kernel log showed:
 
-> > 
-> > Fixes: 36f05cab0a2c ("tmpfs: add support for an i_version counter")
-> > Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> > ---
-> >  mm/shmem.c | 5 ++++-
-> >  1 file changed, 4 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/mm/shmem.c b/mm/shmem.c
-> > index e2c76a30802b..eebe12ff5bc6 100644
-> > --- a/mm/shmem.c
-> > +++ b/mm/shmem.c
-> > @@ -5081,7 +5081,7 @@ static int shmem_fill_super(struct super_block *sb, struct fs_context *fc)
-> >  		sb->s_flags |= SB_NOUSER;
-> >  	}
-> >  	sb->s_export_op = &shmem_export_ops;
-> > -	sb->s_flags |= SB_NOSEC | SB_I_VERSION;
-> > +	sb->s_flags |= SB_NOSEC;
-> >  
-> >  #if IS_ENABLED(CONFIG_UNICODE)
-> >  	if (!ctx->encoding && ctx->strict_encoding) {
-> > @@ -5385,6 +5385,9 @@ int shmem_init_fs_context(struct fs_context *fc)
-> >  
-> >  	fc->fs_private = ctx;
-> >  	fc->ops = &shmem_fs_context_ops;
-> > +#ifdef CONFIG_TMPFS
+    CIFS: VFS: Send error in write = -28
 
-Ah, you're being very punctilious with that #ifdef: yes, the original
-code happened not to set it in the #ifndef CONFIG_TMPFS case (when the
-i_version would be invisible anyway).  But I bet that if we had done it
-this way originally, we would have preferred not to clutter the source
-with #ifdef and #else here.  Oh well, perhaps they will vanish in the
-night sometime, it's a nit not worth you resending.
+followed by:
 
-> > +	fc->sb_flags |= SB_I_VERSION;
-> > +#endif
-> >  	return 0;
-> >  }
-> >  
-> 
-> Reviewed-by: Jeff Layton <jlayton@kernel.org>
+    BUG: kernel NULL pointer dereference, address: 0000000000000008
 
-Acked-by: Hugh Dickins <hughd@google.com>
+with:
+
+    RIP: 0010:iter_file_splice_write+0x3a4/0x520
+    do_splice+0x197/0x4e0
+
+or:
+
+    RIP: 0010:pipe_buf_release (include/linux/pipe_fs_i.h:282)
+    iter_file_splice_write (fs/splice.c:755)
+
+Also put a warning check into splice to announce if ->write_iter() returned
+that it had written more than it was asked to.
+
+Fixes: 288ace2f57c9 ("netfs: New writeback implementation")
+Reported-by: Xiaoli Feng <fengxiaoli0714@gmail.com>
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=220445
+Signed-off-by: David Howells <dhowells@redhat.com>
+Link: https://lore.kernel.org/915443.1755207950@warthog.procyon.org.uk
+cc: Paulo Alcantara <pc@manguebit.org>
+cc: Steve French <sfrench@samba.org>
+cc: Shyam Prasad N <sprasad@microsoft.com>
+cc: netfs@lists.linux.dev
+cc: linux-cifs@vger.kernel.org
+cc: linux-fsdevel@vger.kernel.org
+cc: stable@vger.kernel.org
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+[ Dropped read_collect.c hunk ]
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/netfs/write_collect.c | 10 ++++++++--
+ fs/netfs/write_issue.c   |  4 ++--
+ fs/splice.c              |  3 +++
+ include/linux/netfs.h    |  1 +
+ 4 files changed, 14 insertions(+), 4 deletions(-)
+
+diff --git a/fs/netfs/write_collect.c b/fs/netfs/write_collect.c
+index a968688a7323..c349867d74c3 100644
+--- a/fs/netfs/write_collect.c
++++ b/fs/netfs/write_collect.c
+@@ -433,6 +433,7 @@ static void netfs_collect_write_results(struct netfs_io_request *wreq)
+ 			if (front->start + front->transferred > stream->collected_to) {
+ 				stream->collected_to = front->start + front->transferred;
+ 				stream->transferred = stream->collected_to - wreq->start;
++				stream->transferred_valid = true;
+ 				notes |= MADE_PROGRESS;
+ 			}
+ 			if (test_bit(NETFS_SREQ_FAILED, &front->flags)) {
+@@ -538,6 +539,7 @@ void netfs_write_collection_worker(struct work_struct *work)
+ 	struct netfs_io_request *wreq = container_of(work, struct netfs_io_request, work);
+ 	struct netfs_inode *ictx = netfs_inode(wreq->inode);
+ 	size_t transferred;
++	bool transferred_valid = false;
+ 	int s;
+ 
+ 	_enter("R=%x", wreq->debug_id);
+@@ -568,12 +570,16 @@ void netfs_write_collection_worker(struct work_struct *work)
+ 			netfs_put_request(wreq, false, netfs_rreq_trace_put_work);
+ 			return;
+ 		}
+-		if (stream->transferred < transferred)
++		if (stream->transferred_valid &&
++		    stream->transferred < transferred) {
+ 			transferred = stream->transferred;
++			transferred_valid = true;
++		}
+ 	}
+ 
+ 	/* Okay, declare that all I/O is complete. */
+-	wreq->transferred = transferred;
++	if (transferred_valid)
++		wreq->transferred = transferred;
+ 	trace_netfs_rreq(wreq, netfs_rreq_trace_write_done);
+ 
+ 	if (wreq->io_streams[1].active &&
+diff --git a/fs/netfs/write_issue.c b/fs/netfs/write_issue.c
+index bf6d507578e5..b7830a15ae40 100644
+--- a/fs/netfs/write_issue.c
++++ b/fs/netfs/write_issue.c
+@@ -115,12 +115,12 @@ struct netfs_io_request *netfs_create_write_req(struct address_space *mapping,
+ 	wreq->io_streams[0].prepare_write	= ictx->ops->prepare_write;
+ 	wreq->io_streams[0].issue_write		= ictx->ops->issue_write;
+ 	wreq->io_streams[0].collected_to	= start;
+-	wreq->io_streams[0].transferred		= LONG_MAX;
++	wreq->io_streams[0].transferred		= 0;
+ 
+ 	wreq->io_streams[1].stream_nr		= 1;
+ 	wreq->io_streams[1].source		= NETFS_WRITE_TO_CACHE;
+ 	wreq->io_streams[1].collected_to	= start;
+-	wreq->io_streams[1].transferred		= LONG_MAX;
++	wreq->io_streams[1].transferred		= 0;
+ 	if (fscache_resources_valid(&wreq->cache_resources)) {
+ 		wreq->io_streams[1].avail	= true;
+ 		wreq->io_streams[1].active	= true;
+diff --git a/fs/splice.c b/fs/splice.c
+index 38f8c9426731..ed8177f6d620 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -744,6 +744,9 @@ iter_file_splice_write(struct pipe_inode_info *pipe, struct file *out,
+ 		sd.pos = kiocb.ki_pos;
+ 		if (ret <= 0)
+ 			break;
++		WARN_ONCE(ret > sd.total_len - left,
++			  "Splice Exceeded! ret=%zd tot=%zu left=%zu\n",
++			  ret, sd.total_len, left);
+ 
+ 		sd.num_spliced += ret;
+ 		sd.total_len -= ret;
+diff --git a/include/linux/netfs.h b/include/linux/netfs.h
+index 474481ee8b7c..83d313718cd5 100644
+--- a/include/linux/netfs.h
++++ b/include/linux/netfs.h
+@@ -150,6 +150,7 @@ struct netfs_io_stream {
+ 	bool			active;		/* T if stream is active */
+ 	bool			need_retry;	/* T if this stream needs retrying */
+ 	bool			failed;		/* T if this stream failed */
++	bool			transferred_valid; /* T is ->transferred is valid */
+ };
+ 
+ /*
+-- 
+2.50.1
+
 
