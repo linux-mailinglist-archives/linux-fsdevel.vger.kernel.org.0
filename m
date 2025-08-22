@@ -1,97 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-58746-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58747-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64C0EB31203
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 10:43:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC269B31205
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 10:43:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89F1F56805D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 08:43:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93F0B1CC7070
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 08:43:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAAFE2EC55A;
-	Fri, 22 Aug 2025 08:42:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53D92ECD12;
+	Fri, 22 Aug 2025 08:42:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dCVMJT3N"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rbJ3fk7E"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5A18287276
-	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Aug 2025 08:42:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C31D2EBDC9
+	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Aug 2025 08:42:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755852171; cv=none; b=nokWEi5D088+i38lLby5GHz6DVRa4bvxbpiHtYZ0c63kGWdtehi2Ck+OiEqks16f0Ke5uzXrVDKKGQ1vIu7t56HbAXk7F3F7ORU5uxM/i3hiULtPRmPSIexcTGRUOYfHoX1dRiI9g/HPytYXpVlGSpQSg2H5NKiWxk4B3cp+VqI=
+	t=1755852172; cv=none; b=cMWfPXhk0w4WzEo8klNOjPAmknmF/dI3Qv7oq87MHgv58rtaLDSjEOw0RdirBr+A60m6FBCvcdKVulddxPZHCJl0ZAVBI3hl5yprK96WEkTPwA5ETsPGUta0hE3XwjzyL2tJXL8hb7Rq6M8I6OZBrZXrfwn/tE7dWJvS5Rv/jVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755852171; c=relaxed/simple;
-	bh=P8lEjSUsH8QKYWIsvl6nW02/qSfsT+NKwD9w8/tPzfc=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=q14VFH/+QgmtpPpQ9X3GGRkBhA3LTw7tp/MNnYEYcuJlmNkfvQBYnip9G09oyRBaWmpbRVJiv0OIzIidr2cqETryvVurKyfbhb4b9KYtba5g6cgG/tLAvO8v8250vHx90SJqku/O3cxo8CpvqY1Q6Au8ss8yAgzzK4qvpucXdMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dCVMJT3N; arc=none smtp.client-ip=209.85.221.73
+	s=arc-20240116; t=1755852172; c=relaxed/simple;
+	bh=in5mD66dF6MWhJFhTOWar9Vd/EkPs7Wos8Q4bTZR/Uw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Vvr3E96d0cF5R6XpzAdR+WREwP9ChtHV9jtGU+CrOiP78zQDDGL+gaPIt0DqMQxSOs3TVyW/VCCY7eqcDiNR8Ng9rJfYrtQBRQWawqQqZ+/hAQ1os3TWkxlhTst7Gpp1o3OLElwBAnO8ej02OwdxjNDttTWM28ByV8oW+IXNi1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rbJ3fk7E; arc=none smtp.client-ip=209.85.128.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3b9e4146902so774206f8f.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Aug 2025 01:42:48 -0700 (PDT)
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-45a1b0071c1so8845555e9.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Aug 2025 01:42:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755852167; x=1756456967; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=X6mLoGvz5QfzWBhRmSqYhb91n+mvi4YwgTmTcFMvHXo=;
-        b=dCVMJT3N1dNqUQaqAyaAh4cc10TzFeTZk/e2PFJ8UPmuA/AqFZL2AXFGAy/JnY+gJM
-         n91Pfy+jiNxuK5z/mW/CGym5In0+85MzgnWOAIkHx+FPh1LF41QCjiUa4P6LNpIOdcY8
-         4l7zX/l4y+vr6Gvya2IFKqrT2G6cvlxydzdPAAhT6hu3CZD29+SRR0SYNqRToP/tk/q4
-         eD5hO7vdlGbJCbPbysI5aT0WYR9vWhMfZYXdZmHwbD8bo44OkLUVvCXe0tK9a+PDm/MD
-         DKz6HupM0y39fSYWm1q1RuI6rldE1KIpKgEXewhzuUf/qC2a9VsLmpqv6rx2afjZSMeh
-         T18Q==
+        d=google.com; s=20230601; t=1755852168; x=1756456968; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DDkpJcAPlE9LIu6Ir4cHL/5Mh0mGhXKda2sSeyuNZGU=;
+        b=rbJ3fk7EEesZMyWmDdBwsuMINSteB4sysS9TqU6xmDCjVFkr6vX9Z2wdOllC50AddP
+         +z87TwKSixwzuRSl4kWZWlwTQM+TpjyAx6d4IAqKWSv2De0zbEKiIYtN/hHWyIMbejOh
+         HtV2vHcuIUyO8it0vAvUH5Jmd8VurKWmzz6HPvzoM3JU65aTbVbJdgN+wQBQEVK/3fXS
+         LBsNNFEU6iGtg5hsXI6SHX6Ttz8h3ziQ9Irkq15zQiWUqqG5ow5D9KNTEStRrKQ2kg2f
+         mpN01qEOzwkE+ut1oURpor0L9nYD/OCFazKAK6pU4T5qMwlUDiAAGltcjVOrrQ5J1P/m
+         +c8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755852167; x=1756456967;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=X6mLoGvz5QfzWBhRmSqYhb91n+mvi4YwgTmTcFMvHXo=;
-        b=Q8ZQvXczMggwL0nTueRpqm8mrrur38+M8An5gG06CNY3KQAgz+vWteZXAIxfjme1JU
-         RwTlmZpH/kO/Ah+lBM2ehzvTD8XxwzGsMNntORJoCWwj1La1ctLAvusy4TYRht//hEhJ
-         HmRXdiHLf7yhu2SqopW+f3mJI8FKJF4w37xyZdvR5x1PRfoWMzsQx3Nn5bsfMMCwvWJb
-         0AHca7SW7NpBfTtZ0N1o20lXO50V/g7DT6GPZ4AxH1rdpNXh2/PPd/m9Bne2TmnwmnRr
-         AyZLOkUHSk1eGBvFfvbOINYBE4IAYKgyeH6O6+LZmTIrTxlq4PjKc2W8W8Br3SjBtzUV
-         zq1g==
-X-Forwarded-Encrypted: i=1; AJvYcCXNakClTP05sF9GDl+RShMB36LVkTs2nRN8c9uLpW6ODcGeIx4TN4cTcN2oR+2PO3d9Tjhri7WWv4kkEkbP@vger.kernel.org
-X-Gm-Message-State: AOJu0YzN0SsqSTjxo3pGODqSlEACIyOLdK4aGZOfSOHE545LrfQHKjWu
-	jU4vYTh0T5NyAr8xAUBoW3qWWmVNMK6gutlJUmt0ggDcvrKZC027D4kT8yST7/lSNXDoIAoH5W4
-	fV+PKsmACvY+HXthDqQ==
-X-Google-Smtp-Source: AGHT+IG2MVK6IFNgGPhqjx6K1gtb1tj5Bpp0bHY0Ebu75ec1bz0Rc5e1CB45/ZkAluF7rZv7IAdkUdDkmwWQE34=
-X-Received: from wrml11.prod.google.com ([2002:adf:e58b:0:b0:3c0:65f3:525e])
+        d=1e100.net; s=20230601; t=1755852168; x=1756456968;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DDkpJcAPlE9LIu6Ir4cHL/5Mh0mGhXKda2sSeyuNZGU=;
+        b=B2GT7elQ3RACfuUOmqFzyB50PivodNh8vwL1Q/1GkV1JQPyjhkvu0LvJhzARBcCwbs
+         mYwGv3JuqKkJLUUP/jBXbPZN29TWGIxNc+z3xOq5257WrK6dIh+pQyL4cSUldTC+sLvW
+         rdE2q6T8aIqAy2a4Hv4V84alsQtuaTTriCfWULM4hCObs3Y+y86G9N4MPu8ts2rtm4EL
+         eV4EDt+JPoZ6uwNm5NwOP/pXtjeI+DXLzgkwRtwNx8bspPCsFqseoitNIt3V6sc7i3UD
+         LGBct1GENQYN9h/sFz2XA5uH1/hgZbWaFAq+iFNr9FEPrJm2PdZmft7rDHWDeJQdTv+l
+         W7bg==
+X-Forwarded-Encrypted: i=1; AJvYcCXs/UMmA3R2BZSuogAlQ6KjmA0Ptm/QhvASukpMCKS5HKUTkEHam8ABnUg8UbaVdeDvuGt/7Wc2k475qf4R@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxz4gwcYTzI2iPtuufCeTVCx8yK6xzo7NImEQpIsUA4wta6uot7
+	3pHvuL/50PVk3PZYd5P/hKiW1z1TVPImppwxIYGy0oXzhWv8esiL67397bFVBxKFclP5VKxG/vJ
+	D9H/B0xYWndfyE3ri5g==
+X-Google-Smtp-Source: AGHT+IHieDBnpYGPhS67rf2immtvBi64zMak8Dg1tvpotMZwHEiKosyrEMG2JuFJ23cpjKzqAfYVaIKwsvo9eWg=
+X-Received: from wmti4.prod.google.com ([2002:a05:600c:8b84:b0:459:8c48:6c34])
  (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:2085:b0:391:3aaf:1d5f with SMTP id ffacd0b85a97d-3c5dcdfb740mr1300665f8f.52.1755852167021;
- Fri, 22 Aug 2025 01:42:47 -0700 (PDT)
-Date: Fri, 22 Aug 2025 08:42:31 +0000
+ 2002:a05:600c:4fcd:b0:456:133f:a02d with SMTP id 5b1f17b1804b1-45b517cfe71mr20458965e9.17.1755852168517;
+ Fri, 22 Aug 2025 01:42:48 -0700 (PDT)
+Date: Fri, 22 Aug 2025 08:42:32 +0000
+In-Reply-To: <20250822-iov-iter-v5-0-6ce4819c2977@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIAHctqGgC/23QwW4CIRAG4FfZcC6GGdhd8NT3MD0gDitJFQsra
- WN89456cBt7/GG+//BfRKWSqIp1dxGFWqopHzn0b50Ie3+cSKYdZ4EKe6UBZMpNppmKDM4aT16
- NO7CCz0+FYvq+V20+OO9TnXP5uTc3uL3+U9JAKhmH4EAb8hbN+5Tz9EmrkA/i1tLwKUdlFhJZ0
- uC8HwNEo+hF6oVEXEjNUlMMLmBA6/SLNE9pQS+kYRlMBKdxq3qKf+T1MUKhrzPPOD+WEFtfSfL /Ic3rrg0rGGUJwNfXXy8y1aR8AQAA
-X-Change-Id: 20250311-iov-iter-c984aea07d18
+References: <20250822-iov-iter-v5-0-6ce4819c2977@google.com>
 X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2737; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=P8lEjSUsH8QKYWIsvl6nW02/qSfsT+NKwD9w8/tPzfc=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBoqC2APu5gKuYwVpcN5S1631tfhGnyMdQYL4EK7
- xhxysljiFWJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaKgtgAAKCRAEWL7uWMY5
- RrhPD/40MWfQD+mmamwG+cKjMvljxMtFQzgUnhAT1LDJT0RD8Ng7Dy1vn+Gtujze1VH3njVLN2g
- J0cZ0KHXixSW7xf/cpu/U6ddL6nXzJCu3NjsecXCel2qd2lulzOTIPcPnGSyWyvcaUYG7dkLfve
- hbVzPJvV6vWLWGdRKYV1rySJJoz9UUZOw1EhE/EVuzSTmsWECyBsF+e2mk7c+8Y5+F246sPwUJk
- OaGDRZPaSx+BBJLVJbZsmyJmxJU9oFCdUONEMGNLBsfmfao4g1ECk4MP5KJt9Qmd47Q+aDLb+aF
- pfCw0MH/xYSo5UQ7CYQvUD4XMqrmxSDAuZJXiGftHwMWBHQ+9uTh/yks5gBqcudqAa3F9DwEL7g
- F6QJpAfwQlXBtO5qLxZwxD0t14nW44Iuv3jQjuxFniPPXMCFKEanvZuX0OPVRzTQrOC1XDY3hIh
- B7FBsrlo7bZ26j78xQ+iZT0Z9IJRMdU2Y4zOb/Z4uU0CJsydT0WLJST3dVcU8moOFSboLBrg5gz
- 7msbUU7uDt+heMHtFcBEp58HgzMTiW4YydCsM4YGutt5qqu/AJhulnjFpf6NSSJuhYfW5rlYgza
- PrRm5cSb4lBC5dJ9iCBrwpk7rQJhO37HMtgwYA60v8rQ89gEmXal+WDGJk/IZYoXlqCpjNiN/Ne UkIFukF15Sihsow==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=8638; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=in5mD66dF6MWhJFhTOWar9Vd/EkPs7Wos8Q4bTZR/Uw=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBoqC2F22YR29+Ubnecs5fZRxU0+A+AJdwXcwKsQ
+ eZ0iB4pWlmJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaKgthQAKCRAEWL7uWMY5
+ RlGdD/kBn5yX8w7kpqATUgaD9ysh5C16EdeBS8XFLIF8wArSA0+fmcK/8Y22neUFqc1llH/H0nX
+ 7yp3G7ZkR/tMxusJEUoinP+wnr+zOX1dxi+hvcpwwE9agyX1DWQOrNotk/UFeZaXjE8Bt/ZTO8N
+ xxRu49PsgOjfj+I3SS/V8DXOkmC//03VLf5RqPaouORGQ58PaoWzB+2ZDGDi9S9H46goqXYTqHE
+ jsZGpJHc67/VZdX1/+IWxt9iGRgXQGeTId8vtzj7LfdeCkbmvZDCqF34pNTaesvxAHWKl6PlQ6m
+ 5Jk/+/8jxp7yI2kqO6vBEVJefeGaxW2F1/M/PbiTPthCBKLI5EtJcsg/BUFgv236pWNW2V15x09
+ jrFX0gqqkFMDIULTHGTEAcGKkRbEWEr2PF3vZHmYitP7TWABpEpDgSJDaswL+I0Gu4abj8tIi39
+ xfG61HCKxcTZeYsVnunAIXQV0rlgBEjrgtvu3odywpdN0vFRuY2YAgu/tmJDxYzTVbV4qxfDWuR
+ KUKJHl6cVouQgY43rp/Y/VDtthw87yu69hYoJ2ngXCDSTPIXO+cKOGHCCwBEguIuWv1DveiJB3D
+ WYb5aVhf4cM0gnFJZbKkvNhC70nk5ZMVul7MS0PnzpHPXmuKJMaWvYs2CAPwFMsapP/r4BxSvE3 3vkAJGdDn1lXmiQ==
 X-Mailer: b4 0.14.2
-Message-ID: <20250822-iov-iter-v5-0-6ce4819c2977@google.com>
-Subject: [PATCH v5 0/5] Rust support for `struct iov_iter`
+Message-ID: <20250822-iov-iter-v5-1-6ce4819c2977@google.com>
+Subject: [PATCH v5 1/5] rust: iov: add iov_iter abstractions for ITER_SOURCE
 From: Alice Ryhl <aliceryhl@google.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
 	Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda <ojeda@kernel.org>
@@ -100,80 +98,220 @@ Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
 	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Matthew Maurer <mmaurer@google.com>, 
 	Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org, 
 	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Alice Ryhl <aliceryhl@google.com>, Benno Lossin <lossin@kernel.org>, 
-	Christian Brauner <brauner@kernel.org>
+	Alice Ryhl <aliceryhl@google.com>, Benno Lossin <lossin@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 
-This series adds support for the `struct iov_iter` type. This type
-represents an IO buffer for reading or writing, and can be configured
-for either direction of communication.
+This adds abstractions for the iov_iter type in the case where
+data_source is ITER_SOURCE. This will make Rust implementations of
+fops->write_iter possible.
 
-In Rust, we define separate types for reading and writing. This will
-ensure that you cannot mix them up and e.g. call copy_from_iter in a
-read_iter syscall.
+This series only has support for using existing IO vectors created by C
+code. Additional abstractions will be needed to support the creation of
+IO vectors in Rust code.
 
-To use the new abstractions, miscdevices are given new methods read_iter
-and write_iter that can be used to implement the read/write syscalls on
-a miscdevice. The miscdevice sample is updated to provide read/write
-operations.
+These abstractions make the assumption that `struct iov_iter` does not
+have internal self-references, which implies that it is valid to move it
+between different local variables.
 
-Intended for Greg's miscdevice tree.
-
+Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
+Reviewed-by: Danilo Krummrich <dakr@kernel.org>
 Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
-Changes in v5:
-- Reword "struct invariants" to "type invariants"
-- Reword inc_len safety comment.
-- Split Kiocb into separate patch.
-- Link to v4: https://lore.kernel.org/r/20250813-iov-iter-v4-0-c4f1932b05ef@google.com
+ rust/kernel/iov.rs | 171 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs |   1 +
+ 2 files changed, 172 insertions(+)
 
-Changes in v4:
-- Rebase on v6.17-rc1. No longer any dependencies.
-- Adjust wording of `revert` safety comment.
-- Adjust "deinitialize" wording to "write uninitialized".
-- Adjust several comments' wording in `rust/kernel/fs/kiocb.rs`.
-- Link to v3: https://lore.kernel.org/r/20250722-iov-iter-v3-0-3efc9c2c2893@google.com
+diff --git a/rust/kernel/iov.rs b/rust/kernel/iov.rs
+new file mode 100644
+index 0000000000000000000000000000000000000000..01f4b90ff8b494f0089cb756d6f64d34966c4b7d
+--- /dev/null
++++ b/rust/kernel/iov.rs
+@@ -0,0 +1,171 @@
++// SPDX-License-Identifier: GPL-2.0
++
++// Copyright (C) 2025 Google LLC.
++
++//! IO vectors.
++//!
++//! C headers: [`include/linux/iov_iter.h`](srctree/include/linux/iov_iter.h),
++//! [`include/linux/uio.h`](srctree/include/linux/uio.h)
++
++use crate::{
++    alloc::{Allocator, Flags},
++    bindings,
++    prelude::*,
++    types::Opaque,
++};
++use core::{marker::PhantomData, mem::MaybeUninit, ptr, slice};
++
++const ITER_SOURCE: bool = bindings::ITER_SOURCE != 0;
++
++/// An IO vector that acts as a source of data.
++///
++/// The data may come from many different sources. This includes both things in kernel-space and
++/// reading from userspace. It's not necessarily the case that the data source is immutable, so
++/// rewinding the IO vector to read the same data twice is not guaranteed to result in the same
++/// bytes. It's also possible that the data source is mapped in a thread-local manner using e.g.
++/// `kmap_local_page()`, so this type is not `Send` to ensure that the mapping is read from the
++/// right context in that scenario.
++///
++/// # Invariants
++///
++/// Must hold a valid `struct iov_iter` with `data_source` set to `ITER_SOURCE`. For the duration
++/// of `'data`, it must be safe to read from this IO vector using the standard C methods for this
++/// purpose.
++#[repr(transparent)]
++pub struct IovIterSource<'data> {
++    iov: Opaque<bindings::iov_iter>,
++    /// Represent to the type system that this value contains a pointer to readable data it does
++    /// not own.
++    _source: PhantomData<&'data [u8]>,
++}
++
++impl<'data> IovIterSource<'data> {
++    /// Obtain an `IovIterSource` from a raw pointer.
++    ///
++    /// # Safety
++    ///
++    /// * The referenced `struct iov_iter` must be valid and must only be accessed through the
++    ///   returned reference for the duration of `'iov`.
++    /// * The referenced `struct iov_iter` must have `data_source` set to `ITER_SOURCE`.
++    /// * For the duration of `'data`, it must be safe to read from this IO vector using the
++    ///   standard C methods for this purpose.
++    #[track_caller]
++    #[inline]
++    pub unsafe fn from_raw<'iov>(ptr: *mut bindings::iov_iter) -> &'iov mut IovIterSource<'data> {
++        // SAFETY: The caller ensures that `ptr` is valid.
++        let data_source = unsafe { (*ptr).data_source };
++        assert_eq!(data_source, ITER_SOURCE);
++
++        // SAFETY: The caller ensures the type invariants for the right durations, and
++        // `IovIterSource` is layout compatible with `struct iov_iter`.
++        unsafe { &mut *ptr.cast::<IovIterSource<'data>>() }
++    }
++
++    /// Access this as a raw `struct iov_iter`.
++    #[inline]
++    pub fn as_raw(&mut self) -> *mut bindings::iov_iter {
++        self.iov.get()
++    }
++
++    /// Returns the number of bytes available in this IO vector.
++    ///
++    /// Note that this may overestimate the number of bytes. For example, reading from userspace
++    /// memory could fail with `EFAULT`, which will be treated as the end of the IO vector.
++    #[inline]
++    pub fn len(&self) -> usize {
++        // SAFETY: We have shared access to this IO vector, so we can read its `count` field.
++        unsafe {
++            (*self.iov.get())
++                .__bindgen_anon_1
++                .__bindgen_anon_1
++                .as_ref()
++                .count
++        }
++    }
++
++    /// Returns whether there are any bytes left in this IO vector.
++    ///
++    /// This may return `true` even if there are no more bytes available. For example, reading from
++    /// userspace memory could fail with `EFAULT`, which will be treated as the end of the IO vector.
++    #[inline]
++    pub fn is_empty(&self) -> bool {
++        self.len() == 0
++    }
++
++    /// Advance this IO vector by `bytes` bytes.
++    ///
++    /// If `bytes` is larger than the size of this IO vector, it is advanced to the end.
++    #[inline]
++    pub fn advance(&mut self, bytes: usize) {
++        // SAFETY: By the type invariants, `self.iov` is a valid IO vector.
++        unsafe { bindings::iov_iter_advance(self.as_raw(), bytes) };
++    }
++
++    /// Advance this IO vector backwards by `bytes` bytes.
++    ///
++    /// # Safety
++    ///
++    /// The IO vector must not be reverted to before its beginning.
++    #[inline]
++    pub unsafe fn revert(&mut self, bytes: usize) {
++        // SAFETY: By the type invariants, `self.iov` is a valid IO vector, and the caller
++        // ensures that `bytes` is in bounds.
++        unsafe { bindings::iov_iter_revert(self.as_raw(), bytes) };
++    }
++
++    /// Read data from this IO vector.
++    ///
++    /// Returns the number of bytes that have been copied.
++    #[inline]
++    pub fn copy_from_iter(&mut self, out: &mut [u8]) -> usize {
++        // SAFETY: `Self::copy_from_iter_raw` guarantees that it will not write any uninitialized
++        // bytes in the provided buffer, so `out` is still a valid `u8` slice after this call.
++        let out = unsafe { &mut *(ptr::from_mut(out) as *mut [MaybeUninit<u8>]) };
++
++        self.copy_from_iter_raw(out).len()
++    }
++
++    /// Read data from this IO vector and append it to a vector.
++    ///
++    /// Returns the number of bytes that have been copied.
++    #[inline]
++    pub fn copy_from_iter_vec<A: Allocator>(
++        &mut self,
++        out: &mut Vec<u8, A>,
++        flags: Flags,
++    ) -> Result<usize> {
++        out.reserve(self.len(), flags)?;
++        let len = self.copy_from_iter_raw(out.spare_capacity_mut()).len();
++        // SAFETY:
++        // - `len` is the length of a subslice of the spare capacity, so `len` is at most the
++        //   length of the spare capacity.
++        // - `Self::copy_from_iter_raw` guarantees that the first `len` bytes of the spare capacity
++        //   have been initialized.
++        unsafe { out.inc_len(len) };
++        Ok(len)
++    }
++
++    /// Read data from this IO vector into potentially uninitialized memory.
++    ///
++    /// Returns the sub-slice of the output that has been initialized. If the returned slice is
++    /// shorter than the input buffer, then the entire IO vector has been read.
++    ///
++    /// This will never write uninitialized bytes to the provided buffer.
++    #[inline]
++    pub fn copy_from_iter_raw(&mut self, out: &mut [MaybeUninit<u8>]) -> &mut [u8] {
++        let capacity = out.len();
++        let out = out.as_mut_ptr().cast::<u8>();
++
++        // GUARANTEES: The C API guarantees that it does not write uninitialized bytes to the
++        // provided buffer.
++        // SAFETY:
++        // * By the type invariants, it is still valid to read from this IO vector.
++        // * `out` is valid for writing for `capacity` bytes because it comes from a slice of
++        //   that length.
++        let len = unsafe { bindings::_copy_from_iter(out.cast(), capacity, self.as_raw()) };
++
++        // SAFETY: The underlying C api guarantees that initialized bytes have been written to the
++        // first `len` bytes of the spare capacity.
++        unsafe { slice::from_raw_parts_mut(out, len) }
++    }
++}
+diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+index ed53169e795c0badf548025a57f946fa18bc73e3..99dbb7b2812e018ac45989487816ce020f38aa61 100644
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@ -92,6 +92,7 @@
+ pub mod init;
+ pub mod io;
+ pub mod ioctl;
++pub mod iov;
+ pub mod jump_label;
+ #[cfg(CONFIG_KUNIT)]
+ pub mod kunit;
 
-Changes in v3:
-- Rebase on rust-next.
-- Use ptr::from_mut to silence warning.
-- Move Kiocb to rust::fs.
-- Rename Kiocb::device() to Kiocb::file() as it's no longer miscdevice
-  specific.
-- Significant rewording of docs and safety comments, especially patch 1
-  and 2.
-- Link to v2: https://lore.kernel.org/r/20250704-iov-iter-v2-0-e69aa7c1f40e@google.com
-
-Changes in v2:
-- Remove Send/Sync/Copy impls.
-- Reword docs significantly.
-- Rename Kiocb::private_data() to Kiocb::device().
-- Rebase on v6.16-rc2.
-- Link to v1: https://lore.kernel.org/r/20250311-iov-iter-v1-0-f6c9134ea824@google.com
-
----
-Alice Ryhl (4):
-      rust: iov: add iov_iter abstractions for ITER_SOURCE
-      rust: iov: add iov_iter abstractions for ITER_DEST
-      rust: fs: add Kiocb struct
-      rust: miscdevice: Provide additional abstractions for iov_iter and kiocb structures
-
-Lee Jones (1):
-      samples: rust_misc_device: Expand the sample to support read()ing from userspace
-
- rust/kernel/fs.rs                |   3 +
- rust/kernel/fs/kiocb.rs          |  68 +++++++++
- rust/kernel/iov.rs               | 314 +++++++++++++++++++++++++++++++++++++++
- rust/kernel/lib.rs               |   1 +
- rust/kernel/miscdevice.rs        |  63 +++++++-
- samples/rust/rust_misc_device.rs |  36 ++++-
- 6 files changed, 482 insertions(+), 3 deletions(-)
----
-base-commit: 062b3e4a1f880f104a8d4b90b767788786aa7b78
-change-id: 20250311-iov-iter-c984aea07d18
-
-Best regards,
 -- 
-Alice Ryhl <aliceryhl@google.com>
+2.51.0.rc2.233.g662b1ed5c5-goog
 
 
