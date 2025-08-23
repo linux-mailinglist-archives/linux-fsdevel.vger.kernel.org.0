@@ -1,211 +1,155 @@
-Return-Path: <linux-fsdevel+bounces-58878-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58879-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89DE7B3279B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Aug 2025 10:23:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD128B327AE
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Aug 2025 10:43:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B3621C80431
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Aug 2025 08:23:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14CDF7B81CC
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Aug 2025 08:41:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7D302356BC;
-	Sat, 23 Aug 2025 08:23:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D90AF23ABB0;
+	Sat, 23 Aug 2025 08:43:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Dhgw3tS+"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HYw45MI/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AF65150997
-	for <linux-fsdevel@vger.kernel.org>; Sat, 23 Aug 2025 08:23:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C331F0E3E
+	for <linux-fsdevel@vger.kernel.org>; Sat, 23 Aug 2025 08:43:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755937392; cv=none; b=jwpPHK7ncpvh1QdZXUfqLVwPLygpK5bzvuUrUHZ8Uy/fIR5pMQmnVUlXP+BFS8cjTz295fqLDRq/3DvIfcvsZGgI5VG03feNDmnBGVtaCcCQ0frTshE5P/jBMxLEpyZwTSIQ9zrHLJJ9mFW8dQobvPcRVkQXUmk8jNyBM0XGMRY=
+	t=1755938587; cv=none; b=VoEaXIt+cRGAeYpnLd4PVJD9PFC+DTG2SV23gJEgg6uFnXwShMkCXkO1/yLHAFbGENywaVg54TGrdNJsvUtRZfRtRE7f+EtEPYAkQ6PPej/h7nonnZP2xdp9jv8iMev4b4tz5RT21lnBLfjAogZF0aXiEHu7uDo0PFr9056DNGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755937392; c=relaxed/simple;
-	bh=0YFVWJ6mEe6+mn0X64o0CABy88FGkC9zJTxkoaKV3IM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hm2Iwm/SFXYkcLLwTgAdX3aBsFWfWA5Ku+/dOX9dd/c3D4VZT2DtAnEYLsHNnwQpFvhtJTxkM1g/MRdvvvfs1wYh52TYgxJ3dcF5EFc2xDFNzhk+1qA5S3p+ncDvkJCPBvJhor6YERxoND+RWkqFaDjh4wlkMfIIxXwcByToNXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Dhgw3tS+; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e951f2eddf0so1239855276.3
-        for <linux-fsdevel@vger.kernel.org>; Sat, 23 Aug 2025 01:23:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1755937388; x=1756542188; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6ECUzsLpIGLfSNANJzOpUlmNgO6Xf1gnfi/48aM/B14=;
-        b=Dhgw3tS+SvAzJux3hluqYJKg7APtQ8TJ/1Fq5DdVm25l75SwrR2kHrsB55ytJQ9Zzv
-         4IEir0wJa3+zVIHK78a/zeNvREH0WzBTheId471/fshWK0oIfUtZ9ZCgLw7Uhfr3ke3o
-         iUt6Earv4gBcScQ1E59H0lkqiyTQaNevKyVKp39CTX/IkbJOClRpHOeYwas404VktLE4
-         BaenDxDLAQ/pISyebGhWCaEdVIQKyXEYe/XdeYleu9w5P+FWN8EYcxzCLKYkp9ZfQFLy
-         S/9SxE/HooS077EbnnSAvSgmNtgVvvWmZYNPK8eLLuPpcli2LWuBljW12D2SRYqXFYH9
-         PKVg==
+	s=arc-20240116; t=1755938587; c=relaxed/simple;
+	bh=37X3jjXwUHjejovSWpjADkwKpBcCQqf/BM1PK964nAo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GQJUqel01dd8u5Q7ffWhOiPXQE56TLNP70CQcsPbX265uMKAObmpZFiRGe18DwA6jMlcvfQMo+Y8YYdZYILzqIzWz9GSfusUQXKQs8bPTblFCXSLSFi9ksMRz0I4+DF4WIm5zaEYf2sx+zNCI3sqhVDNSbt71X0uR+Nc4amT4PU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HYw45MI/; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755938579;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6FnRHJFSV3SreC1w0p6QNKVoKyAgLeDGHlww9MpDPB0=;
+	b=HYw45MI/SfOEzMMiruhlfDk1FqwMjJcSRi9souKhcexGApxVGG+yJ4oez3MpO9agSie0xj
+	NAjc0lspNu7wV9sKgQF1+Dg5SbJG17P5sJDpcRrFJNUfB9ne5wksyITBW2A7fctp7PgOkK
+	XJiQo6GZX4l07DuEv16sQx6briQlC0s=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-503-6HiIPj5lMJCVeQGr3e7hqw-1; Sat, 23 Aug 2025 04:42:57 -0400
+X-MC-Unique: 6HiIPj5lMJCVeQGr3e7hqw-1
+X-Mimecast-MFC-AGG-ID: 6HiIPj5lMJCVeQGr3e7hqw_1755938577
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45a1b0045a0so18511085e9.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 23 Aug 2025 01:42:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755937388; x=1756542188;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6ECUzsLpIGLfSNANJzOpUlmNgO6Xf1gnfi/48aM/B14=;
-        b=qV3CQrmq/cmfkXsdSIgzhDzVW4pnGiXrljbk5BbpjjcnTpkJxhokJAszaJ0j5WLXF0
-         qiXZZXV4EbGT0ecDDo72VrLAALLRJpXaEqJghsq7lqyLcb5xJEykVTx6nrFa4kGltcZk
-         zHuv86rRuaaaFkYntP4+fhPxWKuJ0D06X2S3ElTNa/LBb95yh3tUOw65vuzYIN3ZL38+
-         NuWpKVuvrOqo0eVipUC+hUgtgHh7VMFBj9mIZ+UABs5WqEPXBdMJXQs5pu66RhVZ+95g
-         xweUZJu99uEslm1I/sIvQ1VvCHYooZmhn5PMoV/RnnTpeENE2+6B728CV30QZq+sWQmI
-         debA==
-X-Forwarded-Encrypted: i=1; AJvYcCVclGqMIuKXtVHHaCQSMcTAC+CLJ2Rcy3vozSG0WOj/SeC3GVw0HevagzCy3oZofVTOkbUOmUtHJS1nwCx1@vger.kernel.org
-X-Gm-Message-State: AOJu0Yznqa6sHajUQq3wVXm0AskM29qvYo5J7mPVoNZRCytjOlvDrdsx
-	PMQMW9RBbdujio/sQUdPnVLMigzjUbEwX+j7qcPjNnEWw0QmR9KpnvXwUvULmbhc2d0J+hZRjWr
-	v+aeUcmETkpgkJyYcQFC67+UrCjwuDjyuOBzSDZZBzg==
-X-Gm-Gg: ASbGnctwvj1pYpUgMpc2hQvuvcSdRQi0Pbs1Vd+HJSa+3m9lS8DUEilJHfPAaYBywQF
-	M5ZcAT5cfqjuGnBn77TLM8+Kn2vt41cb5hzfJqjBD4S9gtOTfQTuYMghlH65qbPA7kXJq81D94a
-	+Ha1GL0/pApL9098gws2ieGjlY5JgDXaVIyOHvOksWhCSNW2APlwNM3TZuCWaLNamJfc/cnPwWL
-	ccMHKDGtyIi
-X-Google-Smtp-Source: AGHT+IH0BVIyZiw5bWrCKqslz5gV80c6AufAKs2rnSguLnlMSKmrPRYkojH4j4/wRFQ/wNMvYf2Fi3seu0hZ9/B27eE=
-X-Received: by 2002:a05:690c:4c09:b0:719:f37e:e69c with SMTP id
- 00721157ae682-71fdc421889mr66924497b3.36.1755937388335; Sat, 23 Aug 2025
- 01:23:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755938577; x=1756543377;
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6FnRHJFSV3SreC1w0p6QNKVoKyAgLeDGHlww9MpDPB0=;
+        b=cW6Ibsja4z6DM7RHJ2nff0N5SVrhHRPcvtKDqKzOmhttyD7hJS2y802yMujKW1vLQF
+         hKEyXdq3/a2q3L0CuggP1CSrIpq+tVnQnRJE1z2GteQS5njMJs3alhFLOQrHn7uNMHWw
+         VKXYsujPxy4DzRVR7y86eoYjQdv0BVDTvMmHKvzS8uSfmiVG74YJMpsrxHvcKNJMEt7f
+         rzM1eOiKYNzhJD1JNQVDzlR3kgTFsGuxvzRyiCTrAFlkmeaKFxeVoSa7PbUdz8cwRnrx
+         +PtoDoOc3JpwMR+9T1ANlGrqqHNubwLYQP8DfHWS2mjRYyUMDaHjU8p3ZqSgxqZhtFG9
+         4gUw==
+X-Gm-Message-State: AOJu0YxZHkQvUyBq8xlUygmdAgf2sMJ2VyNeaU7OSHkEXtwYvPMT+gHl
+	wrvFQqQ1cVqmSEb5Yzxrk5EepfFUkyRDAIZXB91LrIJRIxX7zwU/V31xWjapebUMQb03gLH091s
+	1y0JvyyW0DDZNe9P4DjhWBY3MQZWcadkAUjVND2yK3//rdo5cQJP/XuGGUOlLsg+Hd+E=
+X-Gm-Gg: ASbGncsXzjkBQhNXfPy+umJMhv1OTGbubmUTzetdzM1o2ey2Y+oOw3iautyLajgsy5c
+	ORdKTgpXo9coWjlapRdC0PuEr/gk+03/D8OX5sBQMmTfQh1Wftxi0MOQ2/z32yxdWNOr6PcCnsK
+	IfilF61cNfJ2GctFLwLigJbd3bP8i0zdDIE/NMpN7Cs0T6ioYeiXCPokFFbvctr9iNR/tuMxbha
+	gvZMiwLnJIjVV0n5WOtz4EHzhv3WRWQLew94+6Prk6tA4LsU/frRKCRxPN7Czlvc9AUmyzrY9t6
+	kNecMJo4AYPWyC63/axssTrcqGjVcsjDMWPaAOZUBb/M98uTJqQ=
+X-Received: by 2002:a05:600c:5493:b0:459:d709:e5a1 with SMTP id 5b1f17b1804b1-45b53af6c77mr48705545e9.6.1755938576705;
+        Sat, 23 Aug 2025 01:42:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH6NjHGHYqMJ8ulZ9is0JehUqd1MHmd37Qkuu9GJeF/qPZl1+eYwVAU/3Y3IK1AImm7nVQHsw==
+X-Received: by 2002:a05:600c:5493:b0:459:d709:e5a1 with SMTP id 5b1f17b1804b1-45b53af6c77mr48705185e9.6.1755938576230;
+        Sat, 23 Aug 2025 01:42:56 -0700 (PDT)
+Received: from maya.myfinge.rs (ifcgrfdd.trafficplex.cloud. [2a10:fc81:a806:d6a9::1])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b57444963sm31535055e9.3.2025.08.23.01.42.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 23 Aug 2025 01:42:55 -0700 (PDT)
+Date: Sat, 23 Aug 2025 10:42:51 +0200
+From: Stefano Brivio <sbrivio@redhat.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, wangzijie
+ <wangzijie1@honor.com>, Alexey Dobriyan <adobriyan@gmail.com>, Christian
+ Brauner <brauner@kernel.org>, passt-dev@passt.top, Al Viro
+ <viro@zeniv.linux.org.uk>, Ye Bin <yebin10@huawei.com>, Alexei Starovoitov
+ <ast@kernel.org>, "Rick P . Edgecombe" <rick.p.edgecombe@intel.com>,
+ "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCH] proc: Bring back lseek() operations for /proc/net
+ entries
+Message-ID: <20250823104251.49a8caba@elisabeth>
+In-Reply-To: <20250822160904.6c5468bce2200cf8561970d7@linux-foundation.org>
+References: <20250822172335.3187858-1-sbrivio@redhat.com>
+	<20250822160904.6c5468bce2200cf8561970d7@linux-foundation.org>
+Organization: Red Hat
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHSKhtebXWE5m0RcesWe_w2z1Gpqt1n5X0wuE9oD1tX6VxztUg@mail.gmail.com>
- <76a95839-00b1-43b8-af78-af4da8a2941c@gmail.com>
-In-Reply-To: <76a95839-00b1-43b8-af78-af4da8a2941c@gmail.com>
-From: Julian Sun <sunjunchao@bytedance.com>
-Date: Sat, 23 Aug 2025 16:22:57 +0800
-X-Gm-Features: Ac12FXyXLbqkgSJ552CB_VB52RDuHyiA8g2c5o9dPYHcJpfZiX_QPTNVRfVvNBQ
-Message-ID: <CAHSKhtd_oM8yXBwgm1-6FGhDEaDGCWunohMnb4AtV8Y-__z-zg@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH] memcg: Don't wait writeback completion
- when release memcg.
-To: Giorgi Tchankvetadze <giorgitchankvetadze1997@gmail.com>
-Cc: axboe@kernel.dk, brauner@kernel.org, cgroups@vger.kernel.org, 
-	hannes@cmpxchg.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, mhocko@kernel.org, muchun.song@linux.dev, 
-	roman.gushchin@linux.dev, shakeel.butt@linux.dev, tj@kernel.org, 
-	viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On Fri, 22 Aug 2025 16:09:04 -0700
+Andrew Morton <akpm@linux-foundation.org> wrote:
 
-On Sat, Aug 23, 2025 at 4:08=E2=80=AFPM Giorgi Tchankvetadze
-<giorgitchankvetadze1997@gmail.com> wrote:
->
-> Hi there. Can we fix this by allowing callers to set work->done =3D NULL
-> when no completion is desired?
+> On Fri, 22 Aug 2025 19:23:35 +0200 Stefano Brivio <sbrivio@redhat.com> wrote:
+> 
+> > Commit ff7ec8dc1b64 ("proc: use the same treatment to check proc_lseek
+> > as ones for proc_read_iter et.al") breaks lseek() for all /proc/net
+> > entries, as shown for instance by pasta(1), a user-mode network
+> > implementation using those entries to scan for bound ports:
+> > 
+> >   $ strace -e openat,lseek -e s=none pasta -- true
+> >   [...]
+> >   openat(AT_FDCWD, "/proc/net/tcp", O_RDONLY|O_CLOEXEC) = 12
+> >   openat(AT_FDCWD, "/proc/net/tcp6", O_RDONLY|O_CLOEXEC) = 13
+> >   lseek(12, 0, SEEK_SET)                  = -1 ESPIPE (Illegal seek)
+> >   lseek() failed on /proc/net file: Illegal seek
+> >   lseek(13, 0, SEEK_SET)                  = -1 ESPIPE (Illegal seek)
+> >   lseek() failed on /proc/net file: Illegal seek
+> >   openat(AT_FDCWD, "/proc/net/udp", O_RDONLY|O_CLOEXEC) = 14
+> >   openat(AT_FDCWD, "/proc/net/udp6", O_RDONLY|O_CLOEXEC) = 15
+> >   lseek(14, 0, SEEK_SET)                  = -1 ESPIPE (Illegal seek)
+> >   lseek() failed on /proc/net file: Illegal seek
+> >   lseek(15, 0, SEEK_SET)                  = -1 ESPIPE (Illegal seek)
+> >   lseek() failed on /proc/net file: Illegal seek
+> >   [...]
+> > 
+> > That's because PROC_ENTRY_proc_lseek isn't set for /proc/net entries,
+> > and it's now mandatory for lseek(). In fact, flags aren't set at all
+> > for those entries because pde_set_flags() isn't called for them.
+> > 
+> > As commit d919b33dafb3 ("proc: faster open/read/close with "permanent"
+> > files") introduced flags for procfs directory entries, along with the
+> > pde_set_flags() helper, they weren't relevant for /proc/net entries,
+> > so the lack of pde_set_flags() calls in proc_create_net_*() functions
+> > was harmless.
+> > 
+> > Now that the calls are strictly needed for lseek() functionality,
+> > add them.  
+> 
+> Thanks.  We already have
+> https://lkml.kernel.org/r/20250821105806.1453833-1-wangzijie1@honor.com
+> - does that look suitable?
 
-No, we can't do that. Because cgwb_frn needs to track the state of wb
-work by work->done.cnt, if we set work->done =3D Null, then we can not
-know whether the wb work finished or not. See
-mem_cgroup_track_foreign_dirty_slowpath() and
-mem_cgroup_flush_foreign() for details.
+Sorry, I didn't spot that one. It sure does!
 
-> The already-existing "if (done)" check in finish_writeback_work()
-> already provides the necessary protection, so the change is purely
-> mechanical.
->
->
->
-> On 8/23/2025 10:18 AM, Julian Sun wrote:
-> > Hi,
-> >
-> > On Sat, Aug 23, 2025 at 1:56=E2=80=AFAM Tejun Heo <tj@kernel.org> wrote=
-:
-> >> > Hello, > > On Fri, Aug 22, 2025 at 04:22:09PM +0800, Julian Sun
-> > wrote: > > +struct wb_wait_queue_head { > > + wait_queue_head_t waitq; =
->
-> >  > + wb_wait_wakeup_func_t wb_wakeup_func; > > +}; > > wait_queue_head_=
-t
-> > itself already allows overriding the wakeup function. > Please look for
-> > init_wait_func() usages in the tree. Hopefully, that should > contain
-> > the changes within memcg.
-> > Well... Yes, I checked this function before, but it can't do the same
-> > thing as in the previous email. There are some differences=E2=80=94plea=
-se
-> > check the code in the last email.
-> >
-> > First, let's clarify: the key point here is that if we want to remove
-> > wb_wait_for_completion() and avoid self-freeing, we must not access
-> > "done" in finish_writeback_work(), otherwise it will cause a UAF.
-> > However, init_wait_func() can't achieve this. Of course, I also admit
-> > that the method in the previous email seems a bit odd.
-> >
-> > To summarize again, the root causes of the problem here are:
-> > 1. When memcg is released, it calls wb_wait_for_completion() to
-> > prevent UAF, which is completely unnecessary=E2=80=94cgwb_frn only need=
-s to
-> > issue wb work and no need to wait writeback finished.
-> > 2. The current finish_writeback_work() will definitely dereference
-> > "done", which may lead to UAF.
-> >
-> > Essentially, cgwb_frn introduces a new scenario where no wake-up is
-> > needed. Therefore, we just need to make finish_writeback_work() not
-> > dereference "done" and not wake up the waiting thread. However, this
-> > cannot keep the modifications within memcg...
-> >
-> > Please correct me if my understanding is incorrect.
-> >> > Thanks. > > -- > tejun
-> >
-> > Thanks,
-> > --
-> > Julian Sun <sunjunchao@bytedance.com>
-> >
->
->
-> > Hi,
-> >
-> > On Sat, Aug 23, 2025 at 1:56=E2=80=AFAM Tejun Heo <tj@kernel.org> wrote=
-:
-> >> > Hello, > > On Fri, Aug 22, 2025 at 04:22:09PM +0800, Julian Sun
-> > wrote: > > +struct wb_wait_queue_head { > > + wait_queue_head_t waitq; =
->
-> >  > + wb_wait_wakeup_func_t wb_wakeup_func; > > +}; > > wait_queue_head_=
-t
-> > itself already allows overriding the wakeup function. > Please look for
-> > init_wait_func() usages in the tree. Hopefully, that should > contain
-> > the changes within memcg.
-> > Well... Yes, I checked this function before, but it can't do the same
-> > thing as in the previous email. There are some differences=E2=80=94plea=
-se
-> > check the code in the last email.
-> >
-> > First, let's clarify: the key point here is that if we want to remove
-> > wb_wait_for_completion() and avoid self-freeing, we must not access
-> > "done" in finish_writeback_work(), otherwise it will cause a UAF.
-> > However, init_wait_func() can't achieve this. Of course, I also admit
-> > that the method in the previous email seems a bit odd.
-> >
-> > To summarize again, the root causes of the problem here are:
-> > 1. When memcg is released, it calls wb_wait_for_completion() to
-> > prevent UAF, which is completely unnecessary=E2=80=94cgwb_frn only need=
-s to
-> > issue wb work and no need to wait writeback finished.
-> > 2. The current finish_writeback_work() will definitely dereference
-> > "done", which may lead to UAF.
-> >
-> > Essentially, cgwb_frn introduces a new scenario where no wake-up is
-> > needed. Therefore, we just need to make finish_writeback_work() not
-> > dereference "done" and not wake up the waiting thread. However, this
-> > cannot keep the modifications within memcg...
-> >
-> > Please correct me if my understanding is incorrect.
-> >> > Thanks. > > -- > tejun
-> >
-> > Thanks,
-> > --
-> > Julian Sun <sunjunchao@bytedance.com>
-> >
->
->
+-- 
+Stefano
 
-Thanks,
---=20
-Julian Sun <sunjunchao@bytedance.com>
 
