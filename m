@@ -1,229 +1,216 @@
-Return-Path: <linux-fsdevel+bounces-58865-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58866-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 471CAB32564
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Aug 2025 01:22:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50FB6B3260B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Aug 2025 02:54:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70E521CE258C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Aug 2025 23:21:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21F305E5BE7
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Aug 2025 00:54:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F29F2877D2;
-	Fri, 22 Aug 2025 23:20:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF3B8146588;
+	Sat, 23 Aug 2025 00:54:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mqv6QTdC"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R6cbKchF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F7DE1BC4E
-	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Aug 2025 23:20:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60EAA2DF68;
+	Sat, 23 Aug 2025 00:54:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755904858; cv=none; b=i2NIsuHVGucESKfvOZthEBN1Jo6Yu1TwfkuKiA8yPT23jlpi/RTDyAlAw1jKzNsLJ3eCcV1G+XZwjHc4W9rqiOQOUoFD6itXiy23DYont+LUsHWcy4LGOxXjJoo0XGnWV+VjI+1Ud6BNFnMdtTEnIJW7N4J5469O+eo7slt1HSo=
+	t=1755910452; cv=none; b=JExuoch7ikdVZS9Geo/F8kZDky/9fPUOZBTs5wMkNdVW2Q7SWqa5nAIswmXeLFDfWWRhWO8hBk1CqD28rPW2ctfeUVkbX73MB0hmuzEkM2GNAClX0J4+Ul61WRWH7pdHP6tpHAqJ+RELbqady96tZQbYN+jwUafRcrJk7MeDV2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755904858; c=relaxed/simple;
-	bh=7J5fYsTgLsgead2/A8+gAwzfnlftOXE6YLd2tr4goiQ=;
+	s=arc-20240116; t=1755910452; c=relaxed/simple;
+	bh=TOvtwkvLXbhmk+7X8flgWnWXgBUdF+/gzHPzLJMg2cs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PqsQlIgD/ra8JROux/7VToVehVsV0FiL26bIi+1WDVbSvViYpSpN5v5XDTSMQzyEcccACFVJa1s9p94m7maNbX0CrmuAtlUJIK95fCumYBN+cYarQLF9Kv1BaaQyAMl1fy3XfFNMXbdoPEr4Vg1niVFlf9YM/HqgyLjVmFmIwHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mqv6QTdC; arc=none smtp.client-ip=209.85.160.172
+	 To:Cc:Content-Type; b=LUJlKyAJgU1mC3w2prL8bwm+7dafv4NbNGUkkQKgz8Ze+7l5SVIhzKGffGUW7WzS4+mm9X8t35ReIpTEiQLPxw+TLvKb1I8Vrr9I3kGAxETZxDgfPDkrR/DYV7tr1yQvIBaJxYGGA782giPqGN9ehJOpX6DYkRXX0Rm6/iF7jGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R6cbKchF; arc=none smtp.client-ip=209.85.160.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4b109c6b9fcso28372191cf.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Aug 2025 16:20:55 -0700 (PDT)
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4b297962525so24511391cf.1;
+        Fri, 22 Aug 2025 17:54:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755904855; x=1756509655; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1755910449; x=1756515249; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5sh6IXcuBHAVTh39jo2RRgKkLW87v0FUt1zqpSwM4a0=;
-        b=Mqv6QTdCAxQeH8ezvD+EWh9fnu0FX8gKcNXmChzZQ89yERE8REFxUXXrsv3fhQJOKb
-         qO9yjxHwTkhH2cVh5573eaogvZAm2EfWgLyqBL0LvamnXN8+qbFeXhM3qk8iOF0dU+c4
-         XhOuJVybdNuOPClvk3BM7OQRetigsELdKTaAnTqCKMMqBbnfIBCB/Snc+NnNPh6TtCOF
-         RJA/4a5/N2oPe/0wkEc7ItAH+Z8Bst8bGEg8wFLLwfVs/d5b1D6K6X29dAoROaFnVIO+
-         Toutis/+gVrsJx5f55r4f0TdW9NK5p/wQR13o3zNKQg1UKNL2HMSlFwhgamcUfmjr/Tb
-         PRJw==
+        bh=53GjFjykpPBqD5WgL54wNUpUBUx+3gxukD1+nTnxWog=;
+        b=R6cbKchF2nrHss7ygZ/6AxPiDi6ZEVYf5Tmhp6V/OSwVHeeBr7FVYIXwB2Bx7TOhqe
+         ESvFRK8P+ozB38BGU3Srrm1B/5r/2GFRtmFQNC+aZUD2/jWbiwbi4LAMHGgiGOMdHcCj
+         lShLRDmHQkGOliLpomPLUa8q/b9KGFwfqOXPJJn69E6vWALc7Yqpl/Ibnc/VRVp5vg12
+         JwK7Q3raoWHS4wqQfoLC19TnLT8PjkO043RaQAyXMPeziei5POv30ZbIH0nZWYOAjyTn
+         esaiKry9zESz4TYu5zAd6gBQs5D9xQ/R82PHqIfrjxGmX86mI38jYnEgMeTazx6RaHGz
+         M4tA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755904855; x=1756509655;
+        d=1e100.net; s=20230601; t=1755910449; x=1756515249;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5sh6IXcuBHAVTh39jo2RRgKkLW87v0FUt1zqpSwM4a0=;
-        b=ISrqca4fMLbK9CStzkiQIpi6tLEiaFOcKqFRZ6avp9X+buESLbXNNTJvMGpb6wMIqw
-         nAYUGJ3EAkmqHBiJ8Bt8HTuK1eLRrTmq30GPX5rttfjXdX9yhNIJFDLzR2e3XX9KT7My
-         hx73FiXcUYfvZTF4R462L1lGCLP/QGoG21aAnZkCatzCFFNZm/7Eb/oegFclIoA16gFn
-         ayVHqifhrXoSfDv8IIlkpiYYbMVaMrdEvIDdX3hF3TJ5HuYFmleWjO/Fqqjl7yM0lrPo
-         NUoJkTDwg3L9n5i5YPEtqsNknahiONFU0B07LOl+51v6SbRZJM0wNDaxEeOMFolciy7B
-         G4BQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWwNy15sHbqsWWyBza9/sBIHsq9PykSvScCMlWNoPu+mH+fPQUjP+xnjqlEGcbDWTbC/5PSrUmkKrGy11vf@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3D2ZibY71gWYr/X3AfaW5PRc0DZtNGQLk+cx6+jmrv8pq6+t/
-	4ZpqE9fOV8U+utz72jnAAgqG/36eSGMSpt+ZekuqxGYJt28HR0RYR/LA2BqNr+92ARwSAC7LJt5
-	k21oO6U4RSuhRw9w8bqNcRhFr5Q29v+M=
-X-Gm-Gg: ASbGncuimwbdmZZ6axbM05kJsapDKi8A+tEP/VqSZ88sbbL8uHQoNLgwr2zh2IPsuK8
-	SAX7X/x4AjsVg7ZvB7uv/hJugQh5d9d+5Wx7/pqVcHqXhd0UDaxJKsJhZwrKyfjMkDfALdE9vpD
-	S0mWl/35LRH2tMz5iUrwDUgNHopDjM4RZDJMoUj7TEGBw+ACg6i3jYwjweYmPQPzVgSJ9LjOCF0
-	vzndaXv
-X-Google-Smtp-Source: AGHT+IGehqz+qgc08Xs+YcOkmGwrUy5qnS9rSdL99LHlB32v780kpomgNOcSXYPk2NxdUlswHHM85BCB9iIqMOXXNU8=
-X-Received: by 2002:a05:622a:1b14:b0:4b1:aed:7480 with SMTP id
- d75a77b69052e-4b2aaa401ddmr51256831cf.23.1755904854960; Fri, 22 Aug 2025
- 16:20:54 -0700 (PDT)
+        bh=53GjFjykpPBqD5WgL54wNUpUBUx+3gxukD1+nTnxWog=;
+        b=FTWLU+2hYBAMuiiDagpXogDWMX6uqLyt3GG6XEUl9XbYBpGvP56ExMx3LHUjoDIBm/
+         GLZBm78TZXcosTugvRajuWE9CgelWmLCCXmVgQuFkhh5M1WmCJuqiiPpNzeVXdNgKi1v
+         uEA56i/GuYXAx0jdbExa1Ax0DekRNEYDoHgXOazb0PTVU/WNe079pFQTTuFYPlXQWdNt
+         KDFjFgGTHgJLGi5MaXGNGYZyQUzlDed1KyhyeUMqAC3XhCjrcRVB3jNzhSDoBZ/rGHeN
+         XB85miXCx7dbO/oTdn2Pecyr8m4VZunkixk//vzhspve8c+4RGyj/8J6DceJhuS6Kr7V
+         vReA==
+X-Forwarded-Encrypted: i=1; AJvYcCUcC7jSkRwytBT2yL2PM+h0XFtwdqFRndq/xlIsNZW6EmJMmQPoz1gr2Vc/WAK5O8EcKWJJl8vCJ3jFSS0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAd0hM93O9I6BXtBgKeFIcDdP4o+X0FrBy7OEDxaY1Z1WaqKj2
+	Hyl9qRiY1Fi5BGchqvDHjSPFo6Yc6b0X9CGJzoaqqN6uOW6Ngyx2WTAe5+pWFtYxST3cUUEXKdY
+	BefC64bQMMWyJnDkSq//GfHhBzuMIIVc=
+X-Gm-Gg: ASbGncufu6SMeiA+MeGkl3Dp0+TSZ9WmkaCrz/smxelkYBdQxgKAT2BikHNT8w77CS9
+	RNY4cfJpl83ohPNb0+KretFKmTzFnjRAXLQJhwKpBOaPk2voL7O1Yt9hTDSCmfnPFxZWKzSbuID
+	SqFclfgX7fVGmdilHEM65uuBWk3gfePm+PtL4NP3CdawjAXLhxmgUKL7vCFDXrcp0YpFc4w/wG8
+	6gewIFB
+X-Google-Smtp-Source: AGHT+IFHms8iyND1wi//Z1dZcvUEce1eZQqqkPGz+r6Yfau+D9asJnAr08DF/wv6dZF01ZM+kZkKPL0XCJNGeRSY2k4=
+X-Received: by 2002:a05:622a:581a:b0:4af:4bac:e539 with SMTP id
+ d75a77b69052e-4b2aae2e387mr77427581cf.3.1755910449130; Fri, 22 Aug 2025
+ 17:54:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250707234606.2300149-1-joannelkoong@gmail.com>
- <20250707234606.2300149-3-joannelkoong@gmail.com> <CGME20250822214238eucas1p16934a3c0a9575e6044b61e11f3635af0@eucas1p1.samsung.com>
- <a91010a8-e715-4f3d-9e22-e4c34efc0408@samsung.com> <2acaa457-2c9f-4285-8403-2896a152f929@samsung.com>
-In-Reply-To: <2acaa457-2c9f-4285-8403-2896a152f929@samsung.com>
+References: <68a8f5db.a00a0220.33401d.02e1.GAE@google.com>
+In-Reply-To: <68a8f5db.a00a0220.33401d.02e1.GAE@google.com>
 From: Joanne Koong <joannelkoong@gmail.com>
-Date: Fri, 22 Aug 2025 16:20:44 -0700
-X-Gm-Features: Ac12FXwS07sm5a02yhNB9fOsIW7cbSN95w93gPogkIo9eiP3evKdHTcMTXPf8kc
-Message-ID: <CAJnrk1agKVGUr6jVapjHBaYJHrkV8zcmDVKr6k0mUu+n=iUqxA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] mm: remove BDI_CAP_WRITEBACK_ACCT
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, david@redhat.com, 
-	willy@infradead.org, linux-mm@kvack.org
+Date: Fri, 22 Aug 2025 17:53:57 -0700
+X-Gm-Features: Ac12FXykfvJlT3U4O50PYkeJ9A-cM0Cr4LFU_PlCErQyFP1u9wxCcYdE2rFp1VI
+Message-ID: <CAJnrk1bSD+HfwLqbFv8gsRsPt0kRsr8JZcEXdqBWuKh2Qnz_yA@mail.gmail.com>
+Subject: Re: [syzbot] [fuse?] KASAN: slab-out-of-bounds Write in fuse_dev_do_write
+To: syzbot <syzbot+2d215d165f9354b9c4ea@syzkaller.appspotmail.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 22, 2025 at 2:42=E2=80=AFPM Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
+On Fri, Aug 22, 2025 at 4:24=E2=80=AFPM syzbot
+<syzbot+2d215d165f9354b9c4ea@syzkaller.appspotmail.com> wrote:
 >
-> On 22.08.2025 13:01, Marek Szyprowski wrote:
-> > On 08.07.2025 01:46, Joanne Koong wrote:
-> >> There are no users of BDI_CAP_WRITEBACK_ACCT now that fuse doesn't do
-> >> its own writeback accounting. This commit removes
-> >> BDI_CAP_WRITEBACK_ACCT.
-> >>
-> >> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> >> Acked-by: David Hildenbrand <david@redhat.com>
-> >
-> > This patch landed recently in linux-next as commit 167f21a81a9c ("mm:
-> > remove BDI_CAP_WRITEBACK_ACCT"). In my tests I found that it triggers
-> > the ./include/linux/backing-dev.h:239 warning. Reverting $subject on
-> > top of current linux-next fixes/hides this issue. Here is a detailed lo=
-g:
-> >
-> > ------------[ cut here ]------------
-> > WARNING: ./include/linux/backing-dev.h:239 at
-> > __folio_start_writeback+0x25a/0x26a, CPU#1: swapper/0/1
-> > Modules linked in:
-> > CPU: 1 UID: 0 PID: 1 Comm: swapper/0 Not tainted
-> > 6.17.0-rc2-next-20250822 #10852 NONE
-> > Hardware name: StarFive VisionFive 2 v1.2A (DT)
-> > epc : __folio_start_writeback+0x25a/0x26a
-> >  ra : __folio_start_writeback+0x258/0x26a
-> >
-> > [<ffffffff80202222>] __folio_start_writeback+0x25a/0x26a
-> > [<ffffffff802f3260>] __block_write_full_folio+0x124/0x39c
-> > [<ffffffff802f4b6e>] block_write_full_folio+0x8a/0xbc
-> > [<ffffffff804dbf42>] blkdev_writepages+0x3e/0x8a
-> > [<ffffffff802030fa>] do_writepages+0x78/0x11a
-> > [<ffffffff801f2e0e>] filemap_fdatawrite_wbc+0x4a/0x62
-> > [<ffffffff801f6d66>] __filemap_fdatawrite_range+0x52/0x78
-> > [<ffffffff801f6fdc>] filemap_write_and_wait_range+0x40/0x68
-> > [<ffffffff804dacae>] set_blocksize+0xd8/0x152
-> > [<ffffffff804dae18>] sb_min_blocksize+0x44/0xce
-> > [<ffffffff803a0c7a>] ext4_fill_super+0x182/0x2914
-> > [<ffffffff802a72e6>] get_tree_bdev_flags+0xf0/0x168
-> > [<ffffffff802a736c>] get_tree_bdev+0xe/0x16
-> > [<ffffffff8039a09e>] ext4_get_tree+0x14/0x1c
-> > [<ffffffff802a5062>] vfs_get_tree+0x1a/0xa4
-> > [<ffffffff802d17d4>] path_mount+0x23a/0x8ae
-> > [<ffffffff80c20cd4>] init_mount+0x4e/0x86
-> > [<ffffffff80c01622>] do_mount_root+0xe0/0x166
-> > [<ffffffff80c01814>] mount_root_generic+0x11e/0x2d6
-> > [<ffffffff80c02746>] initrd_load+0xf8/0x2b6
-> > [<ffffffff80c01d38>] prepare_namespace+0x150/0x258
-> > [<ffffffff80c01310>] kernel_init_freeable+0x2f2/0x316
-> > [<ffffffff80b6d896>] kernel_init+0x1e/0x13a
-> > [<ffffffff80012288>] ret_from_fork_kernel+0x14/0x208
-> > [<ffffffff80b79392>] ret_from_fork_kernel_asm+0x16/0x18
-> > irq event stamp: 159263
-> > hardirqs last  enabled at (159263): [<ffffffff805e7e4a>]
-> > percpu_counter_add_batch+0xa6/0xda
-> > hardirqs last disabled at (159262): [<ffffffff805e7e40>]
-> > percpu_counter_add_batch+0x9c/0xda
-> > softirqs last  enabled at (159248): [<ffffffff8002e972>]
-> > handle_softirqs+0x3ca/0x462
-> > softirqs last disabled at (159241): [<ffffffff8002eb72>]
-> > __irq_exit_rcu+0xe2/0x10c
-> > ---[ end trace 0000000000000000 ]---
+> Hello,
 >
-> I've played a bit with the code modified by the $subject patch and it
-> looks that the following change fixes the issue, although I didn't
-> analyze exactly where struct bdi_writeback is being modified:
+> syzbot found the following issue on:
+>
+> HEAD commit:    cf6fc5eefc5b Merge tag 's390-6.17-3' of git://git.kernel.=
+o..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D15348c4258000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Db7511150b112b=
+9c3
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3D2d215d165f9354b=
+9c4ea
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for D=
+ebian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D147a5062580=
+000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D139caa3458000=
+0
+>
+> Downloadable assets:
+> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d=
+900f083ada3/non_bootable_disk-cf6fc5ee.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/a27518272e48/vmlinu=
+x-cf6fc5ee.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/cf3f4cc06dfd/b=
+zImage-cf6fc5ee.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the comm=
+it:
+> Reported-by: syzbot+2d215d165f9354b9c4ea@syzkaller.appspotmail.com
+>
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> BUG: KASAN: slab-out-of-bounds in fuse_retrieve fs/fuse/dev.c:1911 [inlin=
+e]
+> BUG: KASAN: slab-out-of-bounds in fuse_notify_retrieve fs/fuse/dev.c:1959=
+ [inline]
+> BUG: KASAN: slab-out-of-bounds in fuse_notify fs/fuse/dev.c:2067 [inline]
+> BUG: KASAN: slab-out-of-bounds in fuse_dev_do_write+0x308b/0x3420 fs/fuse=
+/dev.c:2158
+> Write of size 4 at addr ffff88803b8fc6dc by task syz.0.17/6135
+>
+> CPU: 0 UID: 0 PID: 6135 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(f=
+ull)
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.=
+16.3-2~bpo12+1 04/01/2014
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+>  print_address_description mm/kasan/report.c:378 [inline]
+>  print_report+0xcd/0x630 mm/kasan/report.c:482
+>  kasan_report+0xe0/0x110 mm/kasan/report.c:595
+>  fuse_retrieve fs/fuse/dev.c:1911 [inline]
+>  fuse_notify_retrieve fs/fuse/dev.c:1959 [inline]
+>  fuse_notify fs/fuse/dev.c:2067 [inline]
+>  fuse_dev_do_write+0x308b/0x3420 fs/fuse/dev.c:2158
+>  fuse_dev_write+0x155/0x1e0 fs/fuse/dev.c:2242
+>  new_sync_write fs/read_write.c:593 [inline]
+>  vfs_write+0x7d3/0x11d0 fs/read_write.c:686
+>  ksys_write+0x12a/0x250 fs/read_write.c:738
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f440eb8ebe9
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f=
+7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff=
+ ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007f440f9e1038 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+> RAX: ffffffffffffffda RBX: 00007f440edb5fa0 RCX: 00007f440eb8ebe9
+> RDX: 0000000000000030 RSI: 0000200000000140 RDI: 0000000000000004
+> RBP: 00007f440ec11e19 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 00007f440edb6038 R14: 00007f440edb5fa0 R15: 00007ffddcd08da8
+>  </TASK>
 
-Hi Marek,
+Thanks for the report. I think the issue arises in cases where the
+calculation for num_pages has to get rounded down to fc->max_pages and
+a non-zero offset is passed in.
 
-Thank you for the report and analysis.
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
 
-The comment in the warning you linked to
-(./include/linux/backing-dev.h:239) says:
-"The caller [of inode_to_wb()] must be holding either @inode->i_lock,
-the i_pages lock, or the associated wb's list_lock". (This was added
-in commit aaa2cacf8184 "writeback: add lockdep annotation to
-inode_to_wb()").
+#syz test: upstream cf6fc5eefc5bbbbff92a085039ff74cdbd065c29
 
-The original code before my change set "wb =3D inode_to_wb(inode);" only
-after the inode->i_mapping->i_pages.xa_lock was held, so your patch
-below which reverts it back to this behavior, fixes the lockdep
-warning. That looks correct to me. Thanks for the fix.
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index e80cd8f2c049..e84e05de9cdb 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -1893,7 +1893,7 @@ static int fuse_retrieve(struct fuse_mount *fm,
+struct inode *inode,
 
+        index =3D outarg->offset >> PAGE_SHIFT;
 
->
-> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-> index 99e80bdb3084..3887ac2e6475 100644
-> --- a/mm/page-writeback.c
-> +++ b/mm/page-writeback.c
-> @@ -2984,7 +2984,7 @@ bool __folio_end_writeback(struct folio *folio)
->
->          if (mapping && mapping_use_writeback_tags(mapping)) {
->                  struct inode *inode =3D mapping->host;
-> -               struct bdi_writeback *wb =3D inode_to_wb(inode);
-> +               struct bdi_writeback *wb;
->                  unsigned long flags;
->
->                  xa_lock_irqsave(&mapping->i_pages, flags);
-> @@ -2992,6 +2992,7 @@ bool __folio_end_writeback(struct folio *folio)
->                  __xa_clear_mark(&mapping->i_pages, folio_index(folio),
->                                          PAGECACHE_TAG_WRITEBACK);
->
-> +               wb =3D inode_to_wb(inode);
->                  wb_stat_mod(wb, WB_WRITEBACK, -nr);
->                  __wb_writeout_add(wb, nr);
->                  if (!mapping_tagged(mapping, PAGECACHE_TAG_WRITEBACK)) {
-> @@ -3024,7 +3025,7 @@ void __folio_start_writeback(struct folio *folio,
-> bool keep_write)
->          if (mapping && mapping_use_writeback_tags(mapping)) {
->                  XA_STATE(xas, &mapping->i_pages, folio_index(folio));
->                  struct inode *inode =3D mapping->host;
-> -               struct bdi_writeback *wb =3D inode_to_wb(inode);
-> +               struct bdi_writeback *wb;
->                  unsigned long flags;
->                  bool on_wblist;
->
-> @@ -3035,6 +3036,7 @@ void __folio_start_writeback(struct folio *folio,
-> bool keep_write)
->                  on_wblist =3D mapping_tagged(mapping,
-> PAGECACHE_TAG_WRITEBACK);
->
->                  xas_set_mark(&xas, PAGECACHE_TAG_WRITEBACK);
-> +               wb =3D inode_to_wb(inode);
->                  wb_stat_mod(wb, WB_WRITEBACK, nr);
->                  if (!on_wblist) {
->                          wb_inode_writeback_start(wb);
->
->
-> > ...
->
-> Best regards
-> --
-> Marek Szyprowski, PhD
-> Samsung R&D Institute Poland
->
+-       while (num) {
++       while (num && num_pages) {
+                struct folio *folio;
+                unsigned int folio_offset;
+                unsigned int nr_bytes;
+@@ -1914,6 +1914,7 @@ static int fuse_retrieve(struct fuse_mount *fm,
+struct inode *inode,
+
+                offset =3D 0;
+                num -=3D nr_bytes;
++               num_pages -=3D nr_pages;
+                total_len +=3D nr_bytes;
+                index +=3D nr_pages;
+        }
 
