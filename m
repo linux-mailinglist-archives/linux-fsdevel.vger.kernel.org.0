@@ -1,148 +1,189 @@
-Return-Path: <linux-fsdevel+bounces-58876-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58877-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D9A0B3270C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Aug 2025 08:18:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D9CEB32790
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Aug 2025 10:08:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 258F61CC00BE
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Aug 2025 06:18:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C0335E6B9D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Aug 2025 08:08:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF0B41F3FDC;
-	Sat, 23 Aug 2025 06:18:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3DEF23183C;
+	Sat, 23 Aug 2025 08:08:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="PGNSn4Do"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iGahfWHP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69DB216D9C2
-	for <linux-fsdevel@vger.kernel.org>; Sat, 23 Aug 2025 06:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B30222A4FC;
+	Sat, 23 Aug 2025 08:08:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755929907; cv=none; b=sunkip/qI739hW7JeB5CfzMEGCniXfz0MCgGFnGpryRa4XCRznHlEaIGqHJ9HcJD2tlzAZQG01XFid5BmMJpVLS4Lvp9qD15OW9H0Lf2S1Y1SfbnkMExuAOqs8HsceAQ04vL9KLyJkRCBp/md+w2fMhKP5MljZCoXBasPV5nb0Y=
+	t=1755936522; cv=none; b=f8iZV3CbxNIbF1Wm45LsySGqwqauA8Xkctg8VFEmAxBTi02D7EmKID0ee7VCMYFPJH2s2zONqssLkd5JtRADVbmk+Db+dxii4bb33/AAbpYvpEW4cF878jb6FRGUfHGhHM8UoPQpYNU8T/uOAMO1Hdw37rdLZbhyLoK67rdxrkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755929907; c=relaxed/simple;
-	bh=bZn48aC+rqGXuq7Wic6Vfcgf2lcjG4wRkDvwUbEzKNo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lPVNaLaMxj+LtlA9j4AEPkn2i4r8b6p6wMzyFC0f5Xl14peyQuGpiQzofpeHSYigZBJLGabNshLku13z3a1rXNuQX6s/+r0P0TpbFwtsIPOBpYsDaRnSGH3LZQNxZ/cJIr27naA3Yg962t+lPBENwAyzE0gDodT8RBs0OE5cVBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=PGNSn4Do; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e94eec0de32so2707889276.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Aug 2025 23:18:25 -0700 (PDT)
+	s=arc-20240116; t=1755936522; c=relaxed/simple;
+	bh=tTD11JbHTfHg6i9CjRyH2Hm1rKrlshvNqqVRx9VgPPg=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=R3R1SKiO69NyIvyJIECVxrGHUT2fCNVVMHZch74W62U3Su4h/4xmTZyneM/Q9bJj+X9wwX8V8q3M6mKYBoJHjycAprts9v90+dvx+7wyfYUC2rRq52QlYLDcY++mCwizzkaEAjkSVyCnOICHcSSgcsbVgU8tn/r0PQ54JVavS/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iGahfWHP; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3c68c6a3f0bso153808f8f.0;
+        Sat, 23 Aug 2025 01:08:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1755929904; x=1756534704; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fe9B4QogL1CNYXei3YboAYYKAny2QBbn+ipsHUDuLLk=;
-        b=PGNSn4Doc4DrpCbZBg+W9kVm2HD84GKTeHinvyiuGVCG6FGWbaN5stY9NHdMHifVky
-         dGbeuBEFVVYfpoVCBY4iuC14qaywjY48x8JSnJApAeM6IeJaoONe/j6kMEbAyAWCGVOz
-         IPQFEQFNewrnzMdse9olSGa5Ckt19PtGgLNPBoU8O28ZLh2GcTKgjnu1KYeF8ulUh3br
-         8NS+g3i7g4nteWo6c5OueH3BjFWSieej9SOM/JlGfVKZtBhAcNIKjoYDE9zOnX1AECX6
-         vebTVvEJaMOQK8uLcEDz9JD0+k8H/5hF+O1q7ScmwD9RfHQ9BMUHwb0WUezU0Y6Kmlp5
-         VD/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755929904; x=1756534704;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=gmail.com; s=20230601; t=1755936519; x=1756541319; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language:subject
+         :references:cc:to:user-agent:mime-version:date:message-id:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fe9B4QogL1CNYXei3YboAYYKAny2QBbn+ipsHUDuLLk=;
-        b=JMrEv06YegVDm/e9dVLdb5AVipFc+0rSkC8uP/Y8puqHAwVQEmWCxDYVFn79iTfAjA
-         Vr7m1Ykl9iENON1RQoLSrluNd6VMiwP2lDWI0LS8qj4soRF7r5hgaExTu0K3OL1q2pgb
-         bKN+tQM9nfN0N5AjOt99kzFPaUkAruATivtfKd4cWjzAlIbFuu94DvSKc9rdNRrelmnM
-         foZriHXdfPl54sKbWnQyvO30jzrMnU18/F0Pf4XTmmBLW1NvbzBRYcJ+lSxg1Z+IXxAG
-         J7wtJUboclV5jiiTZeOC/I4GpedB5ncfnMQPxA6CV+wHIhIfHg2xChQiTbuRSI8y0+v/
-         9udA==
-X-Gm-Message-State: AOJu0YzFIl5KcVK46Y9O4UARi6CkHV9IT0PAPPQ4+kBt6D8gHqBkoTIe
-	t1vdWHT1nQoPXqID1fQ5slvgF4gZgQe9AWcohPL2cH4mOmPf2NHok54PRsI2kgvMDLhdtCHyZK0
-	f0/SVnGB8wpk88BFgLXbTRfjyd3L1BJRX8Nha5B94mHkKioScaSwW4upIHSNNTyi3mA==
-X-Gm-Gg: ASbGncus4iLXqDEKwjGnOsnBUlwuYSIWFCRXvT8MWC4PX40YviKMIihvldyYzW/tPzp
-	HiDE4lRjTx3/OuYgFLS/k7eUkWqPtXTOPcqqJMW3PuIMWcDGb7Pta605GEYdxCvVAszVoCv8GAy
-	VCAyQ16flzS87FcumVyw8miYxvcF6K1T0N9hYq8hyMzPuoGqWqdXgx+PjAUg1uPpI7C3g6ojXAZ
-	CvfoI8NOwiE
-X-Google-Smtp-Source: AGHT+IF+4VwJabSmHqm1OuJrLC1EunTidnKe7Nj1y/1G8DjRIDBILmH+4G2nb1e4//UM1cfwf01YJ8iFcUXks3HwKOc=
-X-Received: by 2002:a05:6902:18c6:b0:e95:2702:6816 with SMTP id
- 3f1490d57ef6-e95270268d0mr3510223276.30.1755929904301; Fri, 22 Aug 2025
- 23:18:24 -0700 (PDT)
+        bh=j5D7eeNdQSiGOasqKX/gQg+YtICOsftnZGJhgOnqSco=;
+        b=iGahfWHPySfW9IXlRPArClRuzh25L6q7GEwgHj20nN5ofbGbhJ+5itCHAil6ECQupT
+         a0Af/SFf7dhjME/xqW+XUkq3TvIevs4x6UK2INwRngaBaq9EnBrrbprvKFj2mJysr92h
+         sENc245T1uS1eDS84JJQY7g+72ayGwN8bALQWJ8rL6PruhZCkGR5hOvzCtpZsL0xK8K5
+         yNJodsx/p9aIPWrTF4iUKCTG4JNz5L5Kt6Yq0jXiHkVDoNkELfWbrWh9Sxw2BXOHuqk0
+         /YyPE1ArYL3n8Op1QIUJmh/MFbCpbfBtzMlryNjF00GWwsr9IaaBx70U/Ombo+iEXYdw
+         y8zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755936519; x=1756541319;
+        h=content-transfer-encoding:in-reply-to:from:content-language:subject
+         :references:cc:to:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=j5D7eeNdQSiGOasqKX/gQg+YtICOsftnZGJhgOnqSco=;
+        b=NTnR7g/nmrbJd91B9/2ZMWiECVV0l4LgND0PrtMOc49oU6NT5IIWMGd8Mttfms6MBp
+         Fkpty04NNw/RXuUsTEJk9rntQ1CG6u11J04kqQK4eBUXJpa+dqDhZTAUXxhcd0j7l2Cq
+         vmw7PpGf2Mroj95jgXIHBAMEWNoduNNpPc6HN+uCWosn0Y3Eh1Do74MdTBOv2mFo9Vrh
+         kYzzDWWmBkWIlQdrGMAFmWP8woys5NvXqhRYCjIk8IJK0RbRjW0a6VRMyEtudt8jsg9w
+         hMjV6ruGFH6PsUtTvhSSrDU0gOnLYQM1WwZtBKLFHTpU/DFOiqYGxbsZmGJq94EVQi2m
+         +O/g==
+X-Forwarded-Encrypted: i=1; AJvYcCWB6bRHE6PW76FBdZgVPyxRcLzskCgfBJBDWOTMjh6tLscXnPvXTQI7qtahT7Gio/TdlMUmevpa+xdOu40TbA==@vger.kernel.org, AJvYcCWZo+HT+IiDOzijr1zdXxamVzqxAKj/eqRbHFqKUKJP0S+6a5WiApjYHqoQMTUaEvWyZaEUscsk@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9lsCzjQOgwlencw4bgN0vR8a4d08aFXOTlaJ1wNwWdr1Gg/qQ
+	wW/EA+S55ahwOVt3kfbhqiZKgY1k0H/Y8LJI0nKHGeBVoyZ3eRnbsyBW
+X-Gm-Gg: ASbGnctnqHFQdh4ppESrYf9FSXNb/kShzS5JUX6aIFEB+Z0YaklJo+CZEVMb9L3z5m9
+	ZKtVOqJ9tPymoJzAURbii1Lpaa5J7gZWhEDcoG3PSQprfGPDKDGWlsg0iqzZKSTwM6WafdMjpNO
+	2EnJFYoEClCMEhmd/uW9DCvFYQ01fUBWZwMG9w6D6/VmkrYnrpJcGYdH7oBI+w4dkLWkf8ZMJM8
+	dOnVIhK4zOw//HJNY97jtWlqwX5QUh860x6H9ll6uqmpHuDQ+UaccfWg8wwEMrAxXc1wvTHhoQi
+	ccpcSLObG7Yx/WXsAGwzI4t2whWObP13quHZpbNiY9mKgz7iakxacpw5no66gmeEHGYNnMcV7yb
+	oshI1WB6iy0YpMdsE1qA3YDi8+HWYdNeSlX4LO+kibvnF8AeKhOWT
+X-Google-Smtp-Source: AGHT+IEv8VRJb23jt4k+0hi/sSmMwmxJXBH4vxmaxMRWzlSs87Du3ko2O/AtvHKpOGNtNV9nguhH2Q==
+X-Received: by 2002:a05:600c:45c6:b0:456:2137:5662 with SMTP id 5b1f17b1804b1-45b517df7c3mr25336325e9.7.1755936518408;
+        Sat, 23 Aug 2025 01:08:38 -0700 (PDT)
+Received: from [192.168.100.6] ([149.3.87.76])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c7117d5977sm2616715f8f.51.2025.08.23.01.08.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 23 Aug 2025 01:08:38 -0700 (PDT)
+Message-ID: <76a95839-00b1-43b8-af78-af4da8a2941c@gmail.com>
+Date: Sat, 23 Aug 2025 12:08:33 +0400
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250820111940.4105766-1-sunjunchao@bytedance.com>
- <20250820111940.4105766-4-sunjunchao@bytedance.com> <aKY2-sTc5qQmdea4@slm.duckdns.org>
- <CAHSKhtf--qn3TH3LFMrwqb-Nng2ABwV2gOX0PyAerd7h612X5Q@mail.gmail.com>
- <aKdQgIvZcVCJWMXl@slm.duckdns.org> <CAHSKhtdhj-AuApc8yw+wDNNHMRH-XNMVD=8G7Mk_=1o2FQASQg@mail.gmail.com>
- <aKds9ZMUTC8VztEt@slm.duckdns.org> <f1ff9656-6633-4a32-ab32-9ee60400b9b0@bytedance.com>
- <aKivUT2fSetErPMJ@slm.duckdns.org>
-In-Reply-To: <aKivUT2fSetErPMJ@slm.duckdns.org>
-From: Julian Sun <sunjunchao@bytedance.com>
-Date: Sat, 23 Aug 2025 14:18:11 +0800
-X-Gm-Features: Ac12FXyOfNLp8q4yZni7XXqfZzc-Xc0uBvm0JA-Rlo4tH5dpdniIQM2_tzLTwkk
-Message-ID: <CAHSKhtebXWE5m0RcesWe_w2z1Gpqt1n5X0wuE9oD1tX6VxztUg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+To: sunjunchao@bytedance.com
+Cc: axboe@kernel.dk, brauner@kernel.org, cgroups@vger.kernel.org,
+ hannes@cmpxchg.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, mhocko@kernel.org, muchun.song@linux.dev,
+ roman.gushchin@linux.dev, shakeel.butt@linux.dev, tj@kernel.org,
+ viro@zeniv.linux.org.uk
+References: <CAHSKhtebXWE5m0RcesWe_w2z1Gpqt1n5X0wuE9oD1tX6VxztUg@mail.gmail.com>
 Subject: Re: [External] Re: [PATCH] memcg: Don't wait writeback completion
  when release memcg.
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org, linux-mm@kvack.org, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, hannes@cmpxchg.org, 
-	mhocko@kernel.org, roman.gushchin@linux.dev, shakeel.butt@linux.dev, 
-	muchun.song@linux.dev, axboe@kernel.dk
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+From: Giorgi Tchankvetadze <giorgitchankvetadze1997@gmail.com>
+In-Reply-To: <CAHSKhtebXWE5m0RcesWe_w2z1Gpqt1n5X0wuE9oD1tX6VxztUg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi,
-
-On Sat, Aug 23, 2025 at 1:56=E2=80=AFAM Tejun Heo <tj@kernel.org> wrote:
->
-> Hello,
->
-> On Fri, Aug 22, 2025 at 04:22:09PM +0800, Julian Sun wrote:
-> > +struct wb_wait_queue_head {
-> > +     wait_queue_head_t waitq;
-> > +     wb_wait_wakeup_func_t wb_wakeup_func;
-> > +};
->
-> wait_queue_head_t itself already allows overriding the wakeup function.
-> Please look for init_wait_func() usages in the tree. Hopefully, that shou=
-ld
-> contain the changes within memcg.
-
-Well... Yes, I checked this function before, but it can't do the same
-thing as in the previous email. There are some differences=E2=80=94please
-check the code in the last email.
-
-First, let's clarify: the key point here is that if we want to remove
-wb_wait_for_completion() and avoid self-freeing, we must not access
-"done" in finish_writeback_work(), otherwise it will cause a UAF.
-However, init_wait_func() can't achieve this. Of course, I also admit
-that the method in the previous email seems a bit odd.
-
-To summarize again, the root causes of the problem here are:
-1. When memcg is released, it calls wb_wait_for_completion() to
-prevent UAF, which is completely unnecessary=E2=80=94cgwb_frn only needs to
-issue wb work and no need to wait writeback finished.
-2. The current finish_writeback_work() will definitely dereference
-"done", which may lead to UAF.
-
-Essentially, cgwb_frn introduces a new scenario where no wake-up is
-needed. Therefore, we just need to make finish_writeback_work() not
-dereference "done" and not wake up the waiting thread. However, this
-cannot keep the modifications within memcg...
-
-Please correct me if my understanding is incorrect.
->
-> Thanks.
->
-> --
-> tejun
+Hi there. Can we fix this by allowing callers to set work->done = NULL 
+when no completion is desired?
+The already-existing "if (done)" check in finish_writeback_work() 
+already provides the necessary protection, so the change is purely 
+mechanical.
 
 
-Thanks,
---=20
-Julian Sun <sunjunchao@bytedance.com>
+
+On 8/23/2025 10:18 AM, Julian Sun wrote:
+> Hi,
+> 
+> On Sat, Aug 23, 2025 at 1:56 AM Tejun Heo <tj@kernel.org> wrote:
+>> > Hello, > > On Fri, Aug 22, 2025 at 04:22:09PM +0800, Julian Sun 
+> wrote: > > +struct wb_wait_queue_head { > > + wait_queue_head_t waitq; > 
+>  > + wb_wait_wakeup_func_t wb_wakeup_func; > > +}; > > wait_queue_head_t 
+> itself already allows overriding the wakeup function. > Please look for 
+> init_wait_func() usages in the tree. Hopefully, that should > contain 
+> the changes within memcg.
+> Well... Yes, I checked this function before, but it can't do the same
+> thing as in the previous email. There are some differences—please
+> check the code in the last email.
+> 
+> First, let's clarify: the key point here is that if we want to remove
+> wb_wait_for_completion() and avoid self-freeing, we must not access
+> "done" in finish_writeback_work(), otherwise it will cause a UAF.
+> However, init_wait_func() can't achieve this. Of course, I also admit
+> that the method in the previous email seems a bit odd.
+> 
+> To summarize again, the root causes of the problem here are:
+> 1. When memcg is released, it calls wb_wait_for_completion() to
+> prevent UAF, which is completely unnecessary—cgwb_frn only needs to
+> issue wb work and no need to wait writeback finished.
+> 2. The current finish_writeback_work() will definitely dereference
+> "done", which may lead to UAF.
+> 
+> Essentially, cgwb_frn introduces a new scenario where no wake-up is
+> needed. Therefore, we just need to make finish_writeback_work() not
+> dereference "done" and not wake up the waiting thread. However, this
+> cannot keep the modifications within memcg...
+> 
+> Please correct me if my understanding is incorrect.
+>> > Thanks. > > -- > tejun
+> 
+> Thanks,
+> -- 
+> Julian Sun <sunjunchao@bytedance.com>
+> 
+
+
+> Hi,
+> 
+> On Sat, Aug 23, 2025 at 1:56 AM Tejun Heo <tj@kernel.org> wrote:
+>> > Hello, > > On Fri, Aug 22, 2025 at 04:22:09PM +0800, Julian Sun 
+> wrote: > > +struct wb_wait_queue_head { > > + wait_queue_head_t waitq; > 
+>  > + wb_wait_wakeup_func_t wb_wakeup_func; > > +}; > > wait_queue_head_t 
+> itself already allows overriding the wakeup function. > Please look for 
+> init_wait_func() usages in the tree. Hopefully, that should > contain 
+> the changes within memcg.
+> Well... Yes, I checked this function before, but it can't do the same
+> thing as in the previous email. There are some differences—please
+> check the code in the last email.
+> 
+> First, let's clarify: the key point here is that if we want to remove
+> wb_wait_for_completion() and avoid self-freeing, we must not access
+> "done" in finish_writeback_work(), otherwise it will cause a UAF.
+> However, init_wait_func() can't achieve this. Of course, I also admit
+> that the method in the previous email seems a bit odd.
+> 
+> To summarize again, the root causes of the problem here are:
+> 1. When memcg is released, it calls wb_wait_for_completion() to
+> prevent UAF, which is completely unnecessary—cgwb_frn only needs to
+> issue wb work and no need to wait writeback finished.
+> 2. The current finish_writeback_work() will definitely dereference
+> "done", which may lead to UAF.
+> 
+> Essentially, cgwb_frn introduces a new scenario where no wake-up is
+> needed. Therefore, we just need to make finish_writeback_work() not
+> dereference "done" and not wake up the waiting thread. However, this
+> cannot keep the modifications within memcg...
+> 
+> Please correct me if my understanding is incorrect.
+>> > Thanks. > > -- > tejun
+> 
+> Thanks,
+> -- 
+> Julian Sun <sunjunchao@bytedance.com>
+> 
+
+
 
