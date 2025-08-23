@@ -1,146 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-58870-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58871-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73DFEB32626
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Aug 2025 03:14:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1901DB3262B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Aug 2025 03:15:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F370A05794
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Aug 2025 01:14:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A24E4B63B58
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Aug 2025 01:13:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9855C19C553;
-	Sat, 23 Aug 2025 01:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kH8RMLMG"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E290190664;
+	Sat, 23 Aug 2025 01:15:09 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A1991991CA;
-	Sat, 23 Aug 2025 01:13:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E62190472
+	for <linux-fsdevel@vger.kernel.org>; Sat, 23 Aug 2025 01:15:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755911634; cv=none; b=IZienuAdJ4xdsmyPjDS+Z6PndHcmLwEiow8xTxrWqW2j330gLddADrEeL8/5rCYCmDVLcV14PAV18UgiDHW08hqOEpQmM61iIfduYLzjdxw5WH2btbgRZaNoVFuWXHLyD9Go79tCuSEi6LismFt78HZDw5R8RZ8PNr89mzVxenY=
+	t=1755911708; cv=none; b=BIdEXryn0m+TPd59Xeaq86i31S6zXMF/UQTZnPeg5gewCn5VY0eb2kCrGZGbM9Yvh+3jZ0Qa5cHQoH62NIiMmFYUdPBenLhi3Zbgxb37X1JQItDJaPWdJ0F6KZ7mG1js3VUZREs+ahubhE84D5y3+dP855RncehT1cuyw40rBmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755911634; c=relaxed/simple;
-	bh=YVdoctcN+sBLlB3ATTxVT2x+pbYz16y0zZVCJswXHjY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o5aYkIm/P9WUQjADgDhPn7kIk22zz/jDQ7fqfQfoIg+UeyUoqN37JvyHXkgV/GaGGCytcetpi9Ykjlv4wr86vZetU2xJzkUjA7hMf1YmD0vimDJ97sk8m4j9j0NqGIpSEc6Frk+BbwZO5UQKM1RQ3APLjsAHGzYUoXSioOtE/es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kH8RMLMG; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4b133b24e66so20584691cf.2;
-        Fri, 22 Aug 2025 18:13:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755911632; x=1756516432; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KElVxybZfgeP8XY/4ZhNJAL4TJBTMTr+Odgn1YjwqBM=;
-        b=kH8RMLMGYhvNBND8T592R7Mcogqy8ZyUvcwCo0Q1f2gnL6BELOJiqA0hnpEVYHih8S
-         SS7AvoRfzQE58aSND9bsK15j7nr6afZyisnmnWfccto0LJ2Osrir5QKbTiSNGIRuzDgI
-         X9ZTx7kOZ1HqHa6WNPhdiHiJjFRFdDQZL7+PnJlWvX2me1X8kpSU/ggExF/Y1dLfebdF
-         pEl0JOYcLk+4DFzx9XKM7ve9cIe/Ye9m+bEaVWlCk8KZ/BkWF11855VHDljOFxDBNlnI
-         2ZhuQbuQrEICHXfoZ1V3s+t52XV/yKHUdghGvNRi/7mvdPLLJB8jeWSoCV1A0FaKzgyK
-         zcKw==
+	s=arc-20240116; t=1755911708; c=relaxed/simple;
+	bh=WIpmha6yRgyzZP/XXUhbXg/SZnSd3Df6L1V2A7dvw2I=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=RS5yA6w879Cbx3AhoBg5aWzVxtZxBaDmZ4H6ZW/KWNpIaPECKh/Vf1NY5a5kDa1aV9VYrD/TJGaA4RTgFgCSVwlLr19XCOicT6mCEIFM2Vx/V+Xh0+q8HarszymKxNc3/qT1tsAXotNq6hdp6883X5L6jx4tnsdb0J20/MnCvR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3e7172deaedso28635585ab.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Aug 2025 18:15:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755911632; x=1756516432;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KElVxybZfgeP8XY/4ZhNJAL4TJBTMTr+Odgn1YjwqBM=;
-        b=mm12Za/dHz8dJJln6ClUbsLwO1j6OdNpxIwk0UvEqOwSfZ+3r4tL2eY6XE7pDtpYWn
-         6qvT2dWMs0TKPa2iCNUF7uU6HNPrdYqpEj+tQO5UQ1Y2G+ioqzU6L3U6G6EahcoOCqYn
-         Pcy5oujcbd4pG+J210gwsQrvmOBriNkGT/mxt0meu60rPlJyyt2Cb44mUjL/5qKoHO9Y
-         GLWjzbFxYYmWmItve9FaahYOfAkuT9It6N+/POIle8CpvqfwT1asx2qMCN7MlHZ5wMPa
-         UajE0sKcH3IwNzBeA6lPqpZnAXNZL14tvf1L+RdPFuBVs/RccHW4l0B/3PQSGMVavrPr
-         FDCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV6u4FlUCo14/SJVAQnQNUXqkNvJCmt7AILKXk8d7sQVM4L9Gr3iwLRi5A/Z1lu0J0XlzKKFUEwC60dmfA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yws7/pI9yy6H5BI2/3MtLiigqUKj43ZZdc62zebMxsSeiUuOQ4t
-	8yAjrMs4z4H0I6CsM/nFtoEnpOT4QpzapMcLWn/9vRF41kWvD3Oulw1l4h8lsKrMKzzmvBCflG3
-	a/APonQ47CmDouTfnKku7NuI96aheztU=
-X-Gm-Gg: ASbGncs0XziK2VcUmX0vC4SjrP3wAZM4E2qMXSvC5KtDABW40zJD51c7Fn/5kfo6I7i
-	lS+kJEmxB0hCdF+T6vJ7YKfaFVFOIMWDHwGKjK72DcUAhnKBHW+/d81xOEBb5Bxd/S1OJ3mnBkX
-	uABVea+2l4pPItiJkcRqjzqcBs8GttNjXWvwbnhVSzTmwwk2tHZoSjsKK81k8QCFksOiXzQyq4K
-	X/527hSFADqKa2wH2E=
-X-Google-Smtp-Source: AGHT+IFcjp7QQ/odZxGauu+mzp49jt71QsGNfiNq/lI88r6TmV6tR9rQUoypMqW865FmGR9rUahMDJYkjBOxvWdLD44=
-X-Received: by 2002:a05:622a:5515:b0:4b2:8ac4:f08e with SMTP id
- d75a77b69052e-4b2aab2b995mr75090931cf.76.1755911632200; Fri, 22 Aug 2025
- 18:13:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755911705; x=1756516505;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wqUXO+FOaOrb+XauyDwN5HD/zcxSWBI9Ntihmw2iN+8=;
+        b=Y2Di924Rrohac1cLl9gIljN7HogxkJGrXqq8Dh2NcfDHblkYvTeQ0fmxsfrLxBZZ4B
+         3JhA/PgaSFJJCCZKJGol8W2QwG0jmQQEiwNvlnw9QL31tmwbzuUYrpHoYRUcuET9wLYL
+         o/WLNkBvCxF6gZbcmdYs5b9P8F/FjdCWA1xhSfWO3m+3NB2TWHVIvFKQlaRFIszr9Uoi
+         B7Tf1XsFx7N2NLXD0qc0lh2ZM1+mAYaiz9F23NZB4iNeFz50UnHAUlqm+JYwV2hw9k7o
+         hStBddX4tVOTlJA5zQSkTf39E4RIPo6SF615t+H0CwSjb1jK8LCwbh4MHD9Y08bADPTY
+         3DNw==
+X-Forwarded-Encrypted: i=1; AJvYcCUcapRVUaQWypyDkOBY5yZ/5/g4AChwEyzpnKM31qjgIHgb8kPYACkjjNk5jfmkj5M7eLAkIlFmtkredbs4@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAODRDhcNLT4zchGcPe/5xtUzqLKdPB/xWECY357DUIt861XDt
+	+k9UmL4MHFXEvW93pgAAiLNW11zUlbIJLIm6uzprWbojBPfET+Bo98QJAK1wkKpg3fpK0WtxKmz
+	A3DLl+1DMDtaw2Pao4LqMtl5S6vVXEzDLhvS4MRumxi9H0oQufxb17zH+dv0=
+X-Google-Smtp-Source: AGHT+IG0QAWYiXBjMJfzTwoFkjQtMiqtXumBdeXTiefK1lehTc8/t3Be6xv20/K3TfVkkqj9LCRKxjbMAoKWWJA+XKCTeiyD11K6
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJnrk1bSD+HfwLqbFv8gsRsPt0kRsr8JZcEXdqBWuKh2Qnz_yA@mail.gmail.com>
- <68a91168.a00a0220.33401d.02f0.GAE@google.com>
-In-Reply-To: <68a91168.a00a0220.33401d.02f0.GAE@google.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Fri, 22 Aug 2025 18:13:41 -0700
-X-Gm-Features: Ac12FXxF7i427SMTeJeGjZ1IpuCRZXZWX91V6g-W3Tg7hLiH_aRXdPxI6_yiiKs
-Message-ID: <CAJnrk1Y1UJ54+4kjHvfJvjh2Dp1J_vVJVGmqfh04zoRFDQy04w@mail.gmail.com>
+X-Received: by 2002:a05:6e02:2187:b0:3e5:4fee:75e7 with SMTP id
+ e9e14a558f8ab-3e921c4db98mr68836805ab.17.1755911705506; Fri, 22 Aug 2025
+ 18:15:05 -0700 (PDT)
+Date: Fri, 22 Aug 2025 18:15:05 -0700
+In-Reply-To: <CAJnrk1Y1UJ54+4kjHvfJvjh2Dp1J_vVJVGmqfh04zoRFDQy04w@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68a91619.050a0220.37038e.005f.GAE@google.com>
 Subject: Re: [syzbot] [fuse?] KASAN: slab-out-of-bounds Write in fuse_dev_do_write
-To: syzbot <syzbot+2d215d165f9354b9c4ea@syzkaller.appspotmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
+From: syzbot <syzbot+2d215d165f9354b9c4ea@syzkaller.appspotmail.com>
+To: joannelkoong@gmail.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, miklos@szeredi.hu, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 22, 2025 at 5:55=E2=80=AFPM syzbot
-<syzbot+2d215d165f9354b9c4ea@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot tried to test the proposed patch but the build/boot failed:
->
-> failed to apply patch:
-> checking file fs/fuse/dev.c
-> patch: **** unexpected end of file in patch
->
->
->
-> Tested on:
->
-> commit:         cf6fc5ee Merge tag 's390-6.17-3' of git://git.kernel.o..
-> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/li=
-nux.git
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Db7511150b112b=
-9c3
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3D2d215d165f9354b=
-9c4ea
-> compiler:
-> patch:          https://syzkaller.appspot.com/x/patch.diff?x=3D116eaa3458=
-0000
->
+Hello,
 
-#syz test: upstream cf6fc5eefc5bbbbff92a085039ff74cdbd065c29
+syzbot tried to test the proposed patch but the build/boot failed:
 
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index e80cd8f2c049..e84e05de9cdb 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -1893,7 +1893,7 @@ static int fuse_retrieve(struct fuse_mount *fm,
-struct inode *inode,
+failed to apply patch:
+checking file fs/fuse/dev.c
+patch: **** unexpected end of file in patch
 
-        index =3D outarg->offset >> PAGE_SHIFT;
 
--       while (num) {
-+       while (num && num_pages) {
-                struct folio *folio;
-                unsigned int folio_offset;
-                unsigned int nr_bytes;
-@@ -1914,6 +1914,7 @@ static int fuse_retrieve(struct fuse_mount *fm,
-struct inode *inode,
 
-                offset =3D 0;
-                num -=3D nr_bytes;
-+               num_pages -=3D nr_pages;
-                total_len +=3D nr_bytes;
-                index +=3D nr_pages;
-        }
---
-2.47.3
+Tested on:
+
+commit:         cf6fc5ee Merge tag 's390-6.17-3' of git://git.kernel.o..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b7511150b112b9c3
+dashboard link: https://syzkaller.appspot.com/bug?extid=2d215d165f9354b9c4ea
+compiler:       
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=12393fa2580000
+
 
