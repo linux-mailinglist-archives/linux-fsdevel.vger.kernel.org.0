@@ -1,90 +1,113 @@
-Return-Path: <linux-fsdevel+bounces-58871-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58872-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1901DB3262B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Aug 2025 03:15:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31D75B3262F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Aug 2025 03:17:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A24E4B63B58
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Aug 2025 01:13:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10CE31CC7688
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Aug 2025 01:17:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E290190664;
-	Sat, 23 Aug 2025 01:15:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A17817A2F5;
+	Sat, 23 Aug 2025 01:17:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="cLSqCdSZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out203-205-221-239.mail.qq.com (out203-205-221-239.mail.qq.com [203.205.221.239])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E62190472
-	for <linux-fsdevel@vger.kernel.org>; Sat, 23 Aug 2025 01:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B0128F4;
+	Sat, 23 Aug 2025 01:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755911708; cv=none; b=BIdEXryn0m+TPd59Xeaq86i31S6zXMF/UQTZnPeg5gewCn5VY0eb2kCrGZGbM9Yvh+3jZ0Qa5cHQoH62NIiMmFYUdPBenLhi3Zbgxb37X1JQItDJaPWdJ0F6KZ7mG1js3VUZREs+ahubhE84D5y3+dP855RncehT1cuyw40rBmE=
+	t=1755911843; cv=none; b=k/X6nxunu03MU4S3TBzHwCWP/0IEcRt9yH8wU7zyGjOKFlQKTn1O/FE4/6FwCnRmCjplqrL0NU1ugEczT5VEajuhmW1TKPAJFKJR26IKFkVrbvgChvE+lAnH8Q5JeZOKZw0NtUodRwBzaMvGe/4c01gijEGdTZwJ6DUjn9uS5ZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755911708; c=relaxed/simple;
-	bh=WIpmha6yRgyzZP/XXUhbXg/SZnSd3Df6L1V2A7dvw2I=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=RS5yA6w879Cbx3AhoBg5aWzVxtZxBaDmZ4H6ZW/KWNpIaPECKh/Vf1NY5a5kDa1aV9VYrD/TJGaA4RTgFgCSVwlLr19XCOicT6mCEIFM2Vx/V+Xh0+q8HarszymKxNc3/qT1tsAXotNq6hdp6883X5L6jx4tnsdb0J20/MnCvR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3e7172deaedso28635585ab.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Aug 2025 18:15:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755911705; x=1756516505;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wqUXO+FOaOrb+XauyDwN5HD/zcxSWBI9Ntihmw2iN+8=;
-        b=Y2Di924Rrohac1cLl9gIljN7HogxkJGrXqq8Dh2NcfDHblkYvTeQ0fmxsfrLxBZZ4B
-         3JhA/PgaSFJJCCZKJGol8W2QwG0jmQQEiwNvlnw9QL31tmwbzuUYrpHoYRUcuET9wLYL
-         o/WLNkBvCxF6gZbcmdYs5b9P8F/FjdCWA1xhSfWO3m+3NB2TWHVIvFKQlaRFIszr9Uoi
-         B7Tf1XsFx7N2NLXD0qc0lh2ZM1+mAYaiz9F23NZB4iNeFz50UnHAUlqm+JYwV2hw9k7o
-         hStBddX4tVOTlJA5zQSkTf39E4RIPo6SF615t+H0CwSjb1jK8LCwbh4MHD9Y08bADPTY
-         3DNw==
-X-Forwarded-Encrypted: i=1; AJvYcCUcapRVUaQWypyDkOBY5yZ/5/g4AChwEyzpnKM31qjgIHgb8kPYACkjjNk5jfmkj5M7eLAkIlFmtkredbs4@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAODRDhcNLT4zchGcPe/5xtUzqLKdPB/xWECY357DUIt861XDt
-	+k9UmL4MHFXEvW93pgAAiLNW11zUlbIJLIm6uzprWbojBPfET+Bo98QJAK1wkKpg3fpK0WtxKmz
-	A3DLl+1DMDtaw2Pao4LqMtl5S6vVXEzDLhvS4MRumxi9H0oQufxb17zH+dv0=
-X-Google-Smtp-Source: AGHT+IG0QAWYiXBjMJfzTwoFkjQtMiqtXumBdeXTiefK1lehTc8/t3Be6xv20/K3TfVkkqj9LCRKxjbMAoKWWJA+XKCTeiyD11K6
+	s=arc-20240116; t=1755911843; c=relaxed/simple;
+	bh=DkCtyXPX+y2jfq7vMKfHqEsjaUAWfzSIF6DlJCdQSD0=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=SG2WTiK4fkHnr4o/VT/Tr/aWU3A8bizSFtwBlBOY70syQOjYFSM/Ru5BP3uS92zq8tlBG/8uePOrV8fQ/h9tAA6muzB9I/J+LAOoE26MAM17v3jHFd2C+ovOosZQfP8a3zq/tqoF382dus2BWW1jjMUYGqT5xwz1PxU5ZDiAAqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=cLSqCdSZ; arc=none smtp.client-ip=203.205.221.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1755911837; bh=2MpJbxTAdsXSbHIcD9m74B6dZkiCe6Zt1dqe5uXqKRA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=cLSqCdSZ8lMABvwaIBOvCxgz0tdlIfaLfoPLCORkbUbWoN3cG/C6uujaDp0rKHd2F
+	 yqjcK5nNfBoFVnYyLeL8WSpiGgLq9N33QCkyARq7ekZ0i6oExV+WfGobRKUNgOJr0u
+	 x3Vsg+USDbTzQVTuxQZr6imEXKO/0sPunoor33i4=
+Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.230.220])
+	by newxmesmtplogicsvrszc41-0.qq.com (NewEsmtp) with SMTP
+	id 44F37E8D; Sat, 23 Aug 2025 09:17:15 +0800
+X-QQ-mid: xmsmtpt1755911835t5z22u9gn
+Message-ID: <tencent_F0CF4B761BAA2549BAA0BB1E33D09E561B08@qq.com>
+X-QQ-XMAILINFO: MzNwb/pqyJTkR+tgqlDhJfQ6Y81DDgs+ktDGMBgkusIuKADNSKX/5nB4xM+Y9+
+	 8kslEkBeH7Z/EsTzYQHzuYctJTULo7cqVu40BapoWD+OEB1KwxdqqQs8FPAnCo+6SR0Sr3cddg05
+	 bneBec4ZUm8Mm6j7/2Llsmz6yBzI6MP/vuH7sqy6XSf0sTIXZthMgF86ibQ9xohqNqm+iWL3BK6T
+	 jIJfzCsWZfrnTRNVuaujHCyQyXmptXOwuJ0klrrclfzgJpDPV1jLVHt9KsQKCrXG7elj9KPwmTy2
+	 k13gxey1uoNsvP3EQF3/kXRz3y9G7KNyQ6jVWWUOduldZFEFob6HQUY6jSjNLjcSinGUbbI47VQf
+	 MBKeYRxb9EZWsAZdItbnFgpWXSMacmbAVnhr4G7OXPVWWe2JHcA9IXNuA1hjjo9a24/lZn6Eg+qn
+	 eXXwn36gzC67q0QCOtyaO5fFGSea67Ekqul7g13OQLxGhi/PGNc+VQI8Dmxv7yYMyk7f/bOvMjV4
+	 dsHS4oZI5MIG1jBqhqkVy8HTEBcgzqUmu73rySwiEt91yvqeGNc0pF8EMLCmSsjCCoL/9t4pPypa
+	 oTPjX940bVhbpbn1MJiBGuvPMGxCpLXU+072CUNtJP03/8XQaMSUt6Pcd/vDR3ImtCH1pWVt48Tq
+	 ifaP433x+0LrfB6vbUXS0go/SkUv0Y7hhKQJVICImgUvtpRmMG4oGGtnCMsjHYiu+NWyPBYY0B/u
+	 CtfSESzbcRxYbh031/bc0f94cBem7xqfZFFK4F+B1VuIdR29vaOvjwbkZWosdH2p8iAdxhdjRwwg
+	 3rU41t8vV8oCGFjr6EBsSTG3z2n0ChRkWnPRhOW58/ZcZv4I1EA/GXSuEIO2YurHwU5qNpEwU04w
+	 9DkQPEGBhwlrgHiZ464ePT412iYVWdBS/KdA7Hdz+zaJaQ9JB8Gzsj2FvTq/yh1HxlWeFXRluFao
+	 oJRqZv8vevW4zzN6ywmLzwNVSAJ9ccswcI+PKh5OoAKq+bJo23Xns4uAkw5U4xsbQxbXXg4yE=
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+2d215d165f9354b9c4ea@syzkaller.appspotmail.com
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	miklos@szeredi.hu,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH] fuse: Block access to folio overlimit
+Date: Sat, 23 Aug 2025 09:17:13 +0800
+X-OQ-MSGID: <20250823011712.2621959-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <68a8f5db.a00a0220.33401d.02e1.GAE@google.com>
+References: <68a8f5db.a00a0220.33401d.02e1.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2187:b0:3e5:4fee:75e7 with SMTP id
- e9e14a558f8ab-3e921c4db98mr68836805ab.17.1755911705506; Fri, 22 Aug 2025
- 18:15:05 -0700 (PDT)
-Date: Fri, 22 Aug 2025 18:15:05 -0700
-In-Reply-To: <CAJnrk1Y1UJ54+4kjHvfJvjh2Dp1J_vVJVGmqfh04zoRFDQy04w@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68a91619.050a0220.37038e.005f.GAE@google.com>
-Subject: Re: [syzbot] [fuse?] KASAN: slab-out-of-bounds Write in fuse_dev_do_write
-From: syzbot <syzbot+2d215d165f9354b9c4ea@syzkaller.appspotmail.com>
-To: joannelkoong@gmail.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, miklos@szeredi.hu, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+syz reported a slab-out-of-bounds Write in fuse_dev_do_write.
 
-syzbot tried to test the proposed patch but the build/boot failed:
+Using the number of bytes alone as the termination condition in a loop
+can prematurely exhaust the allocated memory if the incremented byte count
+is less than PAGE_SIZE.
 
-failed to apply patch:
-checking file fs/fuse/dev.c
-patch: **** unexpected end of file in patch
+Add a loop termination condition to prevent overruns.
 
+Fixes: 3568a9569326 ("fuse: support large folios for retrieves")
+Reported-by: syzbot+2d215d165f9354b9c4ea@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=2d215d165f9354b9c4ea
+Tested-by: syzbot+2d215d165f9354b9c4ea@syzkaller.appspotmail.com
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ fs/fuse/dev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-Tested on:
-
-commit:         cf6fc5ee Merge tag 's390-6.17-3' of git://git.kernel.o..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b7511150b112b9c3
-dashboard link: https://syzkaller.appspot.com/bug?extid=2d215d165f9354b9c4ea
-compiler:       
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=12393fa2580000
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index e80cd8f2c049..5150aa25e64b 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -1893,7 +1893,7 @@ static int fuse_retrieve(struct fuse_mount *fm, struct inode *inode,
+ 
+ 	index = outarg->offset >> PAGE_SHIFT;
+ 
+-	while (num) {
++	while (num && ap->num_folios < num_pages) {
+ 		struct folio *folio;
+ 		unsigned int folio_offset;
+ 		unsigned int nr_bytes;
+-- 
+2.43.0
 
 
