@@ -1,258 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-58890-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58891-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65425B32DD5
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Aug 2025 08:54:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89068B32E99
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Aug 2025 11:08:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30F631B63322
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Aug 2025 06:54:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D49784453A7
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Aug 2025 09:07:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D3524467B;
-	Sun, 24 Aug 2025 06:54:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 960FB2561C9;
+	Sun, 24 Aug 2025 09:07:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="eB85a7AW"
+	dkim=pass (2048-bit key) header.d=excello.cz header.i=@excello.cz header.b="iUFShxkw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
+Received: from out2.virusfree.cz (out2.virusfree.cz [89.187.156.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E4D123CEF8;
-	Sun, 24 Aug 2025 06:53:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756018440; cv=pass; b=dpFks6tMPvK097GgY0NkgdG3GUW0wpD99IRj6nVzTVDdZQgkAD4HzNGCYpd1L9mJ3vdCZiS+Q+vi2UGN4MWp7f0rHKFAC1tpVv/KP+VWtXl/1x5LFCoRJ9S8M6uEJfzyKftrQABml5kk2WCwflMeF/NbgDpUljGgD6GhQHj9eOg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756018440; c=relaxed/simple;
-	bh=+4XoOBwthGbTDE9PU0DUIm1xaKeE3/th2pNghjeB5i0=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=u1ANQO3KswEnXr14HkCT12GhgyqT7fU/M+bpAj3CqajiyhVAuNO4WtMnBJQu+vZ8Uhyy3wUlu+4zSPSycv2H+15KhVdLma6KLLQxZxQnClw0jiExb0OUpkhdATwZ0kZaA9+0bHO4l3Wu5QMkorZLolw5QU2y6roylHiWB/k8LIE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=eB85a7AW; arc=pass smtp.client-ip=136.143.188.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1756018408; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=dzardkVqzZnifGLcaYi4bmitkepMEb8oakoncb+VQvmlgoJfO/2Z3CE0duAd9m/sD0KHP+UYktpk4Nx3l0teQFDTm9Lj6NoxjKmwa9l3ZUAVqrQI088EUxhymZHRGLb1FusbtO1nIdWkXCYkhXfqBzqSCcIygWJvA04ZCTLsrvo=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1756018408; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=LCIkqG/tRneiiilxl8xXwZbENVetREmCB1vmx+zhNnI=; 
-	b=VY/+AvvKTokwVXO/ZcpKuXiugtwCAHyMI1WVwtHHObNyN3SQnWlFVLHuhL7VDv/CD/xw5Gz+8BJq3jugRt28TMoMLbtu42a+uPbXF6jM4pdmcw9IjCxFzR3x8/6YvKc6ro+BZYIUGEUqiaPtOiOSjuftUrTV9W/XEwGtwyHexVg=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
-	dmarc=pass header.from=<safinaskar@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756018408;
-	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=LCIkqG/tRneiiilxl8xXwZbENVetREmCB1vmx+zhNnI=;
-	b=eB85a7AW85vifSc34CnyqoAz8kqea+9A+0jZXQAYSI1nN8aiENwle2CtHGAR17Cf
-	8IfokoV0wly+Q9YhikNVuWFyue2dr7reF85LsC2p3XG3RBiu0zJP0jNus/COAg5Mof6
-	I/uA75CAtE05fntirSmgypnsLB5zUGTws7gzSku0=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 1756018407325384.3192467565557; Sat, 23 Aug 2025 23:53:27 -0700 (PDT)
-Received: from  [212.73.77.104] by mail.zoho.com
-	with HTTP;Sat, 23 Aug 2025 23:53:27 -0700 (PDT)
-Date: Sun, 24 Aug 2025 10:53:27 +0400
-From: Askar Safin <safinaskar@zohomail.com>
-To: "Aleksa Sarai" <cyphar@cyphar.com>
-Cc: "Alejandro Colomar" <alx@kernel.org>,
-	"Michael T. Kerrisk" <mtk.manpages@gmail.com>,
-	"Alexander Viro" <viro@zeniv.linux.org.uk>,
-	"Jan Kara" <jack@suse.cz>,
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>,
-	"linux-man" <linux-man@vger.kernel.org>,
-	"linux-api" <linux-api@vger.kernel.org>,
-	"linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel" <linux-kernel@vger.kernel.org>,
-	"David Howells" <dhowells@redhat.com>,
-	"Christian Brauner" <brauner@kernel.org>
-Message-ID: <198dada778e.ed8ccab115437.3102752488507757202@zohomail.com>
-In-Reply-To: <20250809-new-mount-api-v3-9-f61405c80f34@cyphar.com>
-References: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com> <20250809-new-mount-api-v3-9-f61405c80f34@cyphar.com>
-Subject: Re: [PATCH v3 09/12] man/man2/open_tree.2: document "new" mount API
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E467620322
+	for <linux-fsdevel@vger.kernel.org>; Sun, 24 Aug 2025 09:07:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.187.156.40
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756026474; cv=none; b=irYXmyonqonsguMKqoMQvkzK+Q0fNEKlShKEyKFdjx36ZpZMj1EIDiYRn1ba6mdvQBemuAEAKO/arYI9N3mBOL8c8B+ljrrWfDaBg99kMXx2t2C2zmpWWJdCbGd028j3ADGVn3dp+KJw3JfJHum9msn8l2Ezbxlahj4lZBVAu8M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756026474; c=relaxed/simple;
+	bh=Mq+/hYWq0cVG+amD6qkQ0L109sYYur24JCBfR8TL8t0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rpMd5VvcbItIYcbOD87qIk9/OaJzskfmegF3ljGMesNNyBpLIJkthKu3QA4XUXhvi/4nsL1hhi67oQzQWlZW74G0UCTMrdYydDpMnq3jX2pZDyyXU1dwFthTXrar8njv6WtFWu569jHOqBnIZsjJTUcAxEGm81nil8HGQE0+3Mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=excello.cz; spf=pass smtp.mailfrom=excello.cz; dkim=pass (2048-bit key) header.d=excello.cz header.i=@excello.cz header.b=iUFShxkw; arc=none smtp.client-ip=89.187.156.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=excello.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=excello.cz
+Received: (qmail 4870 invoked from network); 24 Aug 2025 11:01:05 +0200
+Received: from vm1.excello.cz by vm1.excello.cz
+ (VF-Scanner: Clear:RC:0(2001:67c:1591::6):SC:0(-0.410381/5.0):CC:0:;
+ processed in 0.2 s); 24 Aug 2025 09:01:05 +0000
+X-VF-Scanner-Mail-From: pv@excello.cz
+X-VF-Scanner-Rcpt-To: linux-fsdevel@vger.kernel.org
+X-VF-Scanner-ID: 20250824090105.522754.4861.vm1.excello.cz.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=excello.cz; h=
+	date:message-id:from:to:subject:reply-to; q=dns/txt; s=default2;
+	 t=1756026065; bh=FTo/8VYVYhnYGdhHVBkoNGOEq4VXoYQoUU679M2OnzU=; b=
+	iUFShxkwGE5M91seUaCupubbd0REupQrlEdDr+5UElVX9zPwONCVb+RHzIWz4lGc
+	nPkLtQu+w+dQMLi9J/KW9lEDbqzxdcYvN0D+aS1ojtZvwT8V706P7lL/fBN5gmKV
+	Fnejk2tLq3is2q4n98ib6p0h4XUfP1Ye2cXa/eZ+ihyMGSHEBWsJejScSOGnU9Pl
+	YEIQ1IKrxoGJ+F8QKaDKcPmS5/N0Su1m/AXwQg3h6Qa2k/ftO4PjyJ9fiWhdimmH
+	1jDCccnzv+DVc2OMx98HUlSurk4FtmYVtsHSwZEnlxZjmXNASWEOSxH+k+R3J82O
+	z7Yj48HpEb3h5Dfc4JNNWw==
+Received: from posta.excello.cz (2001:67c:1591::6)
+  by out2.virusfree.cz with ESMTPS (TLSv1.3, TLS_AES_256_GCM_SHA384); 24 Aug 2025 11:01:05 +0200
+Received: from arkam (nat-86g.starnet.cz [109.164.54.86])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by posta.excello.cz (Postfix) with ESMTPSA id 4FA8F9D7482;
+	Sun, 24 Aug 2025 11:00:57 +0200 (CEST)
+Date: Sun, 24 Aug 2025 11:00:55 +0200
+From: Petr =?utf-8?B?VmFuxJtr?= <pv@excello.cz>
+To: wangzijie <wangzijie1@honor.com>
+Cc: akpm@linux-foundation.org, brauner@kernel.org, viro@zeniv.linux.org.uk,
+	adobriyan@gmail.com, rick.p.edgecombe@intel.com, ast@kernel.org,
+	k.shutemov@gmail.com, jirislaby@kernel.org,
+	linux-fsdevel@vger.kernel.org, polynomial-c@gmx.de,
+	gregkh@linuxfoundation.org, stable@vger.kernel.org,
+	regressions@lists.linux.dev
+Subject: Re: [PATCH v3] proc: fix missing pde_set_flags() for net proc files
+Message-ID: <20258249055-aKrUxz36A3Yw6qDd-pv@excello.cz>
+References: <20250821105806.1453833-1-wangzijie1@honor.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
-Feedback-ID: rr080112273b3413fe257506eb17a55fda0000ca0e09a7f2e4ac1c359e0adddad2b9d03fa24eb0015b84ffd8:zu08011227d8ea003d4d0ccd2d2540c7290000c4b397b06582726fdb91176843d6ae36498ee0c66abb641979:rf0801122c9742ec2d7fd45827a620cf2e0000a813831b7b5a12ce00a6b3d543b3e024b67e1b21a185726a366956ede2c4:ZohoMail
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250821105806.1453833-1-wangzijie1@honor.com>
 
- ---- On Sat, 09 Aug 2025 00:39:53 +0400  Aleksa Sarai <cyphar@cyphar.com> wrote --- 
- > +If
- > +.I flags
- > +does not contain
- > +.BR \%OPEN_TREE_CLONE ,
- > +.BR open_tree ()
- > +returns a file descriptor
- > +that is exactly equivalent to
- > +one produced by
- > +.BR openat (2)
+On Thu, Aug 21, 2025 at 06:58:06PM +0800, wangzijie wrote:
+> To avoid potential UAF issues during module removal races, we use pde_set_flags()
+> to save proc_ops flags in PDE itself before proc_register(), and then use
+> pde_has_proc_*() helpers instead of directly dereferencing pde->proc_ops->*.
+> 
+> However, the pde_set_flags() call was missing when creating net related proc files.
+> This omission caused incorrect behavior which FMODE_LSEEK was being cleared
+> inappropriately in proc_reg_open() for net proc files. Lars reported it in this link[1].
+> 
+> Fix this by ensuring pde_set_flags() is called when register proc entry, and add
+> NULL check for proc_ops in pde_set_flags().
+> 
+> [1]: https://lore.kernel.org/all/20250815195616.64497967@chagall.paradoxon.rec/
+> 
+> Fixes: ff7ec8dc1b64 ("proc: use the same treatment to check proc_lseek as ones for proc_read_iter et.al")
+> Cc: stable@vger.kernel.org
+> Reported-by: Lars Wendler <polynomial-c@gmx.de>
+> Signed-off-by: wangzijie <wangzijie1@honor.com>
 
-This is not true. They differ in handling of automounts.
-open_tree follows them in final component (by default),
-and openat - not.
+Tested-by: Petr Vaněk <pv@excello.cz>
 
-See reproducer in the end of this letter.
+We have noticed lseek issue with /proc/self/net/sockstat file recently
+and this patch fixes it for us.
 
-I suggest merely adding this:
-> that is exactly equivalent to one produced by openat(2) (modulo automounts)
-
---
-Askar Safin
-https://types.pl/@safinaskar
-
-
-// Root in initial user namespace
-
-#define _GNU_SOURCE
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <string.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sched.h>
-#include <errno.h>
-#include <sys/stat.h>
-#include <sys/mount.h>
-#include <sys/syscall.h>
-#include <linux/openat2.h>
-
-#define MY_ASSERT(cond) do { \
-    if (!(cond)) { \
-        fprintf (stderr, "%s: assertion failed\n", #cond); \
-        exit (1); \
-    } \
-} while (0)
-
-bool
-tracing_mounted (void)
-{
-    struct statx tracing;
-    if (statx (AT_FDCWD, "/tmp/debugfs/tracing", AT_NO_AUTOMOUNT, 0, &tracing) != 0)
-        {
-            perror ("statx tracing");
-            exit (1);
-        }
-    if (!(tracing.stx_attributes_mask & STATX_ATTR_MOUNT_ROOT))
-        {
-            fprintf (stderr, "???\n");
-            exit (1);
-        }
-    return tracing.stx_attributes & STATX_ATTR_MOUNT_ROOT;
-}
-
-void
-mount_debugfs (void)
-{
-    if (mount (NULL, "/tmp/debugfs", "debugfs", 0, NULL) != 0)
-        {
-            perror ("mount debugfs");
-            exit (1);
-        }
-    MY_ASSERT (!tracing_mounted ());
-}
-
-void
-umount_debugfs (void)
-{
-    umount ("/tmp/debugfs/tracing"); // Ignore errors
-    if (umount ("/tmp/debugfs") != 0)
-        {
-            perror ("umount debugfs");
-            exit (1);
-        }
-}
-
-int
-main (void)
-{
-    // Init
-    {
-        if (chdir ("/") != 0)
-            {
-                perror ("chdir /");
-                exit (1);
-            }
-        if (unshare (CLONE_NEWNS) != 0)
-            {
-                perror ("unshare");
-                exit (1);
-            }
-        if (mount (NULL, "/", NULL, MS_REC | MS_PRIVATE, NULL) != 0)
-            {
-                perror ("mount(NULL, /, NULL, MS_REC | MS_PRIVATE, NULL)");
-                exit (1);
-            }
-        if (mount (NULL, "/tmp", "tmpfs", 0, NULL) != 0)
-            {
-                perror ("mount tmpfs");
-                exit (1);
-            }
-    }
-    if (mkdir ("/tmp/debugfs", 0777) != 0)
-        {
-            perror ("mkdir(/tmp/debugfs)");
-            exit (1);
-        }
-
-    // open(O_PATH) doesn't follow automounts
-    {
-        mount_debugfs ();
-        {
-            int fd = open ("/tmp/debugfs/tracing", O_PATH);
-            MY_ASSERT (fd >= 0);
-            MY_ASSERT (close (fd) == 0);
-        }
-        MY_ASSERT (!tracing_mounted ());
-        umount_debugfs ();
-    }
-
-    // open_tree does follow automounts (by default)
-    {
-        mount_debugfs ();
-        {
-            int fd = open_tree (AT_FDCWD, "/tmp/debugfs/tracing", 0);
-            MY_ASSERT (fd >= 0);
-            MY_ASSERT (close (fd) == 0);
-        }
-        MY_ASSERT (tracing_mounted ());
-        umount_debugfs ();
-    }
-
-    // open (O_PATH | O_DIRECTORY)
-    {
-        mount_debugfs ();
-        {
-            int fd = open ("/tmp/debugfs/tracing", O_PATH | O_DIRECTORY);
-            MY_ASSERT (fd >= 0);
-            MY_ASSERT (close (fd) == 0);
-        }
-        MY_ASSERT (tracing_mounted ());
-        umount_debugfs ();
-    }
-
-    // AT_NO_AUTOMOUNT
-    {
-        mount_debugfs ();
-        {
-            int fd = open_tree (AT_FDCWD, "/tmp/debugfs/tracing", AT_NO_AUTOMOUNT);
-            MY_ASSERT (fd >= 0);
-            MY_ASSERT (close (fd) == 0);
-        }
-        MY_ASSERT (!tracing_mounted ());
-        umount_debugfs ();
-    }
-
-    printf ("All tests passed\n");
-    exit (0);
-}
-
+Thanks,
+Petr
 
