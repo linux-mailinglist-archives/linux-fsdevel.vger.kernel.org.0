@@ -1,103 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-58898-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58899-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08447B33254
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Aug 2025 21:19:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AD5AB33327
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 00:14:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D64192011CC
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Aug 2025 19:19:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E9911881A11
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Aug 2025 22:11:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD5F221B9DA;
-	Sun, 24 Aug 2025 19:19:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EE2D2571CD;
+	Sun, 24 Aug 2025 22:11:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="D394cjco"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HynLNXxe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17C8214A4F9;
-	Sun, 24 Aug 2025 19:19:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA8021ABB1;
+	Sun, 24 Aug 2025 22:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756063151; cv=none; b=WFCRkr8vZ4cU+ZltSFhVSx3DGPDcN6zpju6wZKBQQxgwSxWKh73ZJxUbCCEJd9HY+bOc60nFgF+6KsJrYwHIKoSowRwnr8p1fosibI7MMdMjhW40EFmhXHjSKU2cpI6iZlvVAXAuKVXAnb8/u5hNS7PeHEoJvZN4uTKGour0aXg=
+	t=1756073460; cv=none; b=l9/+wTabTZXsELcu5bgjz3vp2i5PTeBgFtlv1kBMCQmgYdA5PMsZi8B3MFKcdEbranJDctaqIPM6ew2F6F8OpWbzADI2VdXeJM8OGp0nnQkV5lQn3ised7hcGfwF/o9qXhTbzJXe6zZNZxqEpQDxfTzWvjAu0jhUekQbcwbbGRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756063151; c=relaxed/simple;
-	bh=/1xtDA2ZP2iTb5TKj4DY26eJQ8cZ+dH0KLRsU3nZgYQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DwNfOEo69C/KhWjYlmHSGpa75hYe43hBGIPd9f+mE6yh4TLy+u7jXR3fsj3UD0qyxbGA3Yzx/CxmO3/m+XPzTFaMdWfWBt+ZokWvx+UFNMO1nGvJ8ddYg8qlWN5tuzWLhHuDJsDWbOF3p4XOrCnMsrKXie5obXEVXNz4GxykhOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=D394cjco; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+	s=arc-20240116; t=1756073460; c=relaxed/simple;
+	bh=F2I8ehYbuOZkroeVyTJBplw4uA0f86+T2vgg5gXzd4M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EAUuuniBjSTb+LKR+1UQQ5Ah9czbeEW+pmI8EQmHdnwTyK8tcXDzPEpTlrEQCDiSxO6Ocgx7P6/ZPeYEizlvMeliNT3icHTqmcZJ4zDfqxgFEuOk+YZ8/cm/OyOWtajHSBBkU9WtkwukkUNd71vbLs3LCUZShXjWlnSo6BAncRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HynLNXxe; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=POwG9kiQjmCUvTSc5Dkeyc+aw3vynEXhqi2lvc1CRck=; b=D394cjcoM4mbtwaybjgR9Cwh9i
-	ZvDdE8lF0uG/d+jd0Fzw7cIX+0paPQM+qxi3grXdJiPXlJ3UUgMkq6nJo9KPOiPFL8lvzoLzxMPhL
-	wp9RgnpwmyFtPv+sFxIKy4XWY93XDnLiIkOeY4Q6wE43qEgslIHwa7cP7DHLRH53W3qvosL+FtpTw
-	PBmaO9MwNMQa2vOsVFRbme0R4DRczcHLSc7x6mNCf/V4riaCYUuuCQnSuoyFTFTmiysCfLvAl3iXN
-	iOZLdAkSDFUYquTCuV4JN2onEwAM6sepKJnp4AD4HsYFPy6kS7C4PsMKEGkFBt7jjH+/8VWNKdDoc
-	9mlI28rg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uqGF9-0000000GFuA-01gc;
-	Sun, 24 Aug 2025 19:19:07 +0000
-Date: Sun, 24 Aug 2025 20:19:06 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: ssranevjti@gmail.com
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	brauner@kernel.org, jack@suse.cz,
-	syzbot+0cee785b798102696a4b@syzkaller.appspotmail.com,
-	Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
-Subject: Re: [PATCH] fs/namei: fix WARNING in do_mknodat due to invalid inode
- unlock
-Message-ID: <20250824191906.GH39973@ZenIV>
-References: <20250824185303.18519-1-ssrane_b23@ee.vjti.ac.in>
- <20250824190714.GG39973@ZenIV>
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=zOkyzVYHPHDLXgXeS6e7XGbTKHi06uVL/QHgq6g0IY8=; b=HynLNXxe/bZhVm0/0FOqHqQl5q
+	JZx5GKNa/J7ryvKZEtWykMeS3U9D5YlJVRfuYBDaf7HpC7t2xcnB1aeAozOEqP0JNIYNdBwdIE6M5
+	QcCid2oqWIDYHMYz7w2/UV4IqVeKtsqnc9U2JXkNKGT68E2gX6fF1Uq5ize+iziXCH8NSOPPacasK
+	mm+xmLgTCt6DVAamypIofiCepPqNq9XfB9riS/LaXsfFBfFC8iGu7EyytjUqJdMLHia8j4bH9GtI0
+	79IkRSmlytTH+1dTsUH8GVzU3W6uOGTqnBSfgDy48FuCS1+ixhZ5wXsAtd9fH+W6/ONhSG/j336kl
+	3orhoxbA==;
+Received: from [50.53.25.54] (helo=bombadil.infradead.org)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uqIvQ-00000006aHc-1oZn;
+	Sun, 24 Aug 2025 22:10:56 +0000
+From: Randy Dunlap <rdunlap@infradead.org>
+To: linux-kernel@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Alexander Aring <alex.aring@gmail.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Aleksa Sarai <cyphar@cyphar.com>,
+	Jan Kara <jack@suse.cz>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-api@vger.kernel.org
+Subject: [PATCH] uapi/fcntl: conditionally define AT_RENAME* macros
+Date: Sun, 24 Aug 2025 15:10:55 -0700
+Message-ID: <20250824221055.86110-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250824190714.GG39973@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Aug 24, 2025 at 08:07:14PM +0100, Al Viro wrote:
-> On Mon, Aug 25, 2025 at 12:23:03AM +0530, ssranevjti@gmail.com wrote:
-> > From: Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
-> > 
-> > The done_path_create() function unconditionally calls inode_unlock() on
-> > path->dentry->d_inode without verifying that the path and inode are valid.
-> > Under certain error conditions or race scenarios, this can lead to attempting
-> > to unlock an inode that was never locked or has been corrupted, resulting in
-> > a WARNING from the rwsem debugging code.
-> > 
-> > Add defensive checks to ensure both path->dentry and path->dentry->d_inode
-> > are valid before attempting to unlock. This prevents the rwsem warning while
-> > maintaining existing behavior for normal cases.
-> > 
-> > Reported-by: syzbot+0cee785b798102696a4b@syzkaller.appspotmail.com
-> 
-> No.  You are papering over some bugs you have not even bothered to describe -
-> "certain error conditions or race scenarios" is as useless as it gets.
-> 
-> Don't do that.  Fixing a bug found by syzbot is useful; papering over
-> it does no good whatsoever.
-> 
-> NAK.
+Don't define the AT_RENAME_* macros when __USE_GNU is defined since
+/usr/include/stdio.h defines them in that case (i.e. when _GNU_SOURCE
+is defined, which causes __USE_GNU to be defined).
 
-Incidentally, syzbot report in question seems to be the one at
+Having them defined in 2 places causes build warnings (duplicate
+definitions) in both samples/watch_queue/watch_test.c and
+samples/vfs/test-statx.c.
 
-https://lore.kernel.org/all/689edffb.050a0220.e29e5.000d.GAE@google.com/
-"[syzbot] [gfs2?] WARNING in do_mknodat (3)"
+Fixes: b4fef22c2fb9 ("uapi: explain how per-syscall AT_* flags should be allocated")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+---
+Cc: Amir Goldstein <amir73il@gmail.com>
+Cc: Jeff Layton <jlayton@kernel.org>
+Cc: Chuck Lever <chuck.lever@oracle.com>
+Cc: Alexander Aring <alex.aring@gmail.com>
+Cc: Josef Bacik <josef@toxicpanda.com>
+Cc: Aleksa Sarai <cyphar@cyphar.com>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org
+CC: linux-api@vger.kernel.org
 
-I won't have time to look at it in details until tomorrow, though.
+ include/uapi/linux/fcntl.h |    2 ++
+ 1 file changed, 2 insertions(+)
 
-Again, the patch upthread is no-go.  Whatever is going on with that
-reporducer, this is not a fix.
+--- linux-next-20250819.orig/include/uapi/linux/fcntl.h
++++ linux-next-20250819/include/uapi/linux/fcntl.h
+@@ -155,10 +155,12 @@
+  * as possible, so we can use them for generic bits in the future if necessary.
+  */
+ 
++#ifndef __USE_GNU
+ /* Flags for renameat2(2) (must match legacy RENAME_* flags). */
+ #define AT_RENAME_NOREPLACE	0x0001
+ #define AT_RENAME_EXCHANGE	0x0002
+ #define AT_RENAME_WHITEOUT	0x0004
++#endif
+ 
+ /* Flag for faccessat(2). */
+ #define AT_EACCESS		0x200	/* Test access permitted for
 
