@@ -1,284 +1,198 @@
-Return-Path: <linux-fsdevel+bounces-59147-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59148-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6386AB34F81
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 01:07:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A9F2B34FC8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 01:44:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CD1B1B2678B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 23:07:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD55B3AC55D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 23:44:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C0BB2BF3F4;
-	Mon, 25 Aug 2025 23:07:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ACDB2C15AE;
+	Mon, 25 Aug 2025 23:44:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XpPjAQHm"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="MNhPpxwU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0514C271475
-	for <linux-fsdevel@vger.kernel.org>; Mon, 25 Aug 2025 23:07:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44C3273F9
+	for <linux-fsdevel@vger.kernel.org>; Mon, 25 Aug 2025 23:44:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756163238; cv=none; b=l8+Y89bH+X10YeKECy88GFQzcNOQpCSbBj1f2YEOE0/jJXnozbT/+A7ymMHvbGqC8QOuZSlTtBJVfVwIRSGEh2MVioI2rgTojWQmDus3NcgioL28lhwbYBhmwtt2O2Xuh4ahtsjKCsogd49fDGjubYpYwv3zIpLm4viiRNFVTHk=
+	t=1756165458; cv=none; b=NN7CLvoq3Zz76HZ8q1dL/GkiWOYLOUziToVoYcpWqaTJ9qL4ekASOno6h6N+yq6UgEIUtgImprgpPeTtfxhyTRPfk7qV/0s1hqkr0Js9pSZ3YHYrgLM9pxtiW/K92kwv+BvX7pUP+W6/4XN0F0utju2JBluBgJZAhpLSQRajYPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756163238; c=relaxed/simple;
-	bh=r7HxHZFAB4nVSfSxKE+8VIcX37QZj7bnbJDOmxZXzgI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y5gMH3rRoYcelgI0vM1yd5L5BjVStuMSS/zlgWmo48STXrysjgAq9lkyLAxlvKOgJaHRK3ouQTvAazAWBSWOCyrcV3dqSWquXe6gNmSJgmF4KnO1dB1eIdaTWrR0rFrf6GbOrdsmtzK3eJGyyO3km9itvrH8IwwxUnXwRL7VbXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XpPjAQHm; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-459fbc92e69so27345e9.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Aug 2025 16:07:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756163234; x=1756768034; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+L5AsGrJuImxDbD9S66ptTgGaLweygGmtz10pt7M4KI=;
-        b=XpPjAQHmjg+uz22+Vmi/PzT4V4XC6f84C9DDCIWL0ovyN5rmOphxsuhdsxRtBm/4fi
-         7Bcp/hTF4tB2tZvW4xDrLQUO6F/BeWXP01/f69zt9ovUbUjOHUL9KUaO2JFypuI6FgOi
-         AJXQLffesDhUwMhvcd7ustwtZQjp5T/Onhx26Z5M4Sm/dgR/zm0pKEoi/mb+IL3ECm0o
-         7LVdRsun1TUh1+CdsQQClKJ2Fe1vHJsHEUJmAA7dMuqIaT78ew+MmVsTSDyPHcPHZy5T
-         79FOEEFFhwPxQnMNpZ700f6QW2Z6hWpkQRkr5WHzH63daLsBwVr6UbTwSxbLSQhgk7m8
-         hj+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756163234; x=1756768034;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+L5AsGrJuImxDbD9S66ptTgGaLweygGmtz10pt7M4KI=;
-        b=YBb8HBhbIE+s6lF40l7LiFj2QkM4PA9SvF4ivE0rXY6GaBzcC8wkMcTC0/hClonGt/
-         MJy8yeHIMem/LkfojVs32eD2XmAs5RQ2rOH5a3+ViDSNvm2kNkbN4ZZyfONSbN2mlfbx
-         j6w0exavzhDY7Jv1THn02nuwUqquS4zNoB5DXqOjCPzI9+nD2Hb8clKYXxVdQgFsiuKi
-         UM6QX7aWRZ+Ru2KBOlgAy+Yvh8Gk2IbHdflx4OKpYG7yEGALZ2kv4MCp4al91ejAKkNQ
-         XXt+J7YNjvuJfksiwVlhutdphLhieLtIsbqnH+Vwht7fqDhbmQ8uhiDsspba+H/MiGx5
-         PthQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWYOFFAD6BpXYIo1g5m3Bez41AR2FfCsLJZ6ODXs9z65m7fmtwstNst/v1oSwpEJZUBqq59HZTyk2h262QO@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywb0ftZumfVnEkypPEzpZGA51eaep67Cudxa7hilP4XdqRVt5Yv
-	lCrsbOpyAWi9mUQVbkEK2G40k2DAHnx4hshzHtfhk6GqpO/nslnIidkSCaTDL74DtW/yf0v+fFK
-	yhirkXFMxDw+bRGP0i6U0eR9ueVCoNBV8zisu04Of
-X-Gm-Gg: ASbGnctWwWxXdW7ID8IbOaF0oXH29aEZae0it3MnKjVubt4oF/+w+UpIYlviwsF/Z54
-	Imntj36Cx0Fev/aREeBx6ffWiJX4A/ONgZx0SqcremdhQO/26U9vT5MkaCqsDtZFSoY4w0cWpLG
-	n2/8smN7yEilFCfFEgAMToaFPnJU/KVbt1glO50Voc97EO7DKUUum2UrGnF/dCkegRwOcYeYLJf
-	18wm8KRVTs38ewSnZNcX8fq5n1KdONWa7K+tQymZOra
-X-Google-Smtp-Source: AGHT+IHIdI2gVCWLS0AakXMTgfvOfywSQxcckFQOuk+b+Ouf9TyXhvGefpAayJFTAxmqY/j4TP3DjIWphxCApJMvrZE=
-X-Received: by 2002:a05:600c:793:b0:442:feea:622d with SMTP id
- 5b1f17b1804b1-45b669691bcmr131075e9.1.1756163233954; Mon, 25 Aug 2025
- 16:07:13 -0700 (PDT)
+	s=arc-20240116; t=1756165458; c=relaxed/simple;
+	bh=yQiHOkjz0/5ngZp0I1XSp5ghEYVSCe8db/yQIStTb14=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mW/Grmj+6p3yjkSHc0ceMGyXsQcIYvI/Yvu8DeBWJ4i8ZE4s6yVmrMimvrqgWMcTqpJh793+ihcrT1hxB9Xs8zfLRIeHr3XxPPmJGch7KHrIGP5IqzQK/FemEWuShOkenu94ZuX280IHE5gW4Do5zYskmiJ1KMgizOIAlLnp2xE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=MNhPpxwU; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=34D+Lknin95BDmVnxH0FOybEL5Ad3zNpWSOxoPlyzfw=; b=MNhPpxwU3wgDbt226RI/uiMnPm
+	bVLG+JhHVeJLDg39hDcM4OgEOqDOotsH5Yaut99RbDajcI92BYuuDT2PaJq+3d14gr65FyeYCBWqJ
+	vv3U80ofwT3yWfpCJHXKaUwcNxLavHMdG17eO11x+MUouV7voODscmhv6DwZ+YWvpzYaK0msc8I7L
+	KxAnF6iOCGWSvj59BE97IAgf5iyoUFIMX8Dz8PNJStKr9BIxMVL9S33q80T8ix5lRhBm/BuCtX7H0
+	V69bzeHYI74XMztQ9dY6nY2WVVhjpiFZ4UXyMwgElUMa4Bt+yfWjyCNkOuR1ViRefUk299E4t5OVy
+	LiNfg+dA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uqgrF-00000005cwW-0wqH;
+	Mon, 25 Aug 2025 23:44:13 +0000
+Date: Tue, 26 Aug 2025 00:44:13 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, jack@suse.cz,
+	torvalds@linux-foundation.org
+Subject: Re: [PATCH 02/52] introduced guards for mount_lock
+Message-ID: <20250825234413.GR39973@ZenIV>
+References: <20250825044046.GI39973@ZenIV>
+ <20250825044355.1541941-1-viro@zeniv.linux.org.uk>
+ <20250825044355.1541941-2-viro@zeniv.linux.org.uk>
+ <20250825-repressiv-selektiert-7496db0b38aa@brauner>
+ <20250825134604.GJ39973@ZenIV>
+ <20250825202141.GA220312@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <F0E70FC7-8DCE-4057-8E91-9FA1AC5BC758@amacapital.net>
-In-Reply-To: <F0E70FC7-8DCE-4057-8E91-9FA1AC5BC758@amacapital.net>
-From: Jeff Xu <jeffxu@google.com>
-Date: Mon, 25 Aug 2025 16:06:34 -0700
-X-Gm-Features: Ac12FXyT_7DxME9htDUZJHRjmIirfag-BknO_I14rcxQwO3Vxf2xOZIPpcG4k04
-Message-ID: <CALmYWFuijKhKO+xOJfcLT2OQnJJTC1WrNG5yevLdRBNdVtWcUA@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 1/2] fs: Add O_DENY_WRITE
-To: Andy Lutomirski <luto@amacapital.net>
-Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	Jann Horn <jannh@google.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Paul Moore <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>, 
-	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Christian Heimes <christian@python.org>, 
-	Dmitry Vyukov <dvyukov@google.com>, Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
-	Luca Boccassi <bluca@debian.org>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Robert Waite <rowait@microsoft.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Scott Shell <scottsh@microsoft.com>, 
-	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
-	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	Jeff Xu <jeffxu@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250825202141.GA220312@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Mon, Aug 25, 2025 at 2:56=E2=80=AFPM Andy Lutomirski <luto@amacapital.ne=
-t> wrote:
->
->
-> > On Aug 25, 2025, at 11:10=E2=80=AFAM, Jeff Xu <jeffxu@google.com> wrote=
-:
-> >
-> > =EF=BB=BFOn Mon, Aug 25, 2025 at 9:43=E2=80=AFAM Andy Lutomirski <luto@=
-amacapital.net> wrote:
-> >>> On Mon, Aug 25, 2025 at 2:31=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic=
-@digikod.net> wrote:
-> >>> On Sun, Aug 24, 2025 at 11:04:03AM -0700, Andy Lutomirski wrote:
-> >>>> On Sun, Aug 24, 2025 at 4:03=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mi=
-c@digikod.net> wrote:
-> >>>>> On Fri, Aug 22, 2025 at 09:45:32PM +0200, Jann Horn wrote:
-> >>>>>> On Fri, Aug 22, 2025 at 7:08=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <=
-mic@digikod.net> wrote:
-> >>>>>>> Add a new O_DENY_WRITE flag usable at open time and on opened fil=
-e (e.g.
-> >>>>>>> passed file descriptors).  This changes the state of the opened f=
-ile by
-> >>>>>>> making it read-only until it is closed.  The main use case is for=
- script
-> >>>>>>> interpreters to get the guarantee that script' content cannot be =
-altered
-> >>>>>>> while being read and interpreted.  This is useful for generic dis=
-tros
-> >>>>>>> that may not have a write-xor-execute policy.  See commit a5874fd=
-e3c08
-> >>>>>>> ("exec: Add a new AT_EXECVE_CHECK flag to execveat(2)")
-> >>>>>>> Both execve(2) and the IOCTL to enable fsverity can already set t=
-his
-> >>>>>>> property on files with deny_write_access().  This new O_DENY_WRIT=
-E make
-> >>>>>> The kernel actually tried to get rid of this behavior on execve() =
-in
-> >>>>>> commit 2a010c41285345da60cece35575b4e0af7e7bf44.; but sadly that h=
-ad
-> >>>>>> to be reverted in commit 3b832035387ff508fdcf0fba66701afc78f79e3d
-> >>>>>> because it broke userspace assumptions.
-> >>>>> Oh, good to know.
-> >>>>>>> it widely available.  This is similar to what other OSs may provi=
-de
-> >>>>>>> e.g., opening a file with only FILE_SHARE_READ on Windows.
-> >>>>>> We used to have the analogous mmap() flag MAP_DENYWRITE, and that =
-was
-> >>>>>> removed for security reasons; as
-> >>>>>> https://man7.org/linux/man-pages/man2/mmap.2.html says:
-> >>>>>> |        MAP_DENYWRITE
-> >>>>>> |               This flag is ignored.  (Long ago=E2=80=94Linux 2.0=
- and earlier=E2=80=94it
-> >>>>>> |               signaled that attempts to write to the underlying =
-file
-> >>>>>> |               should fail with ETXTBSY.  But this was a source o=
-f denial-
-> >>>>>> |               of-service attacks.)"
-> >>>>>> It seems to me that the same issue applies to your patch - it woul=
-d
-> >>>>>> allow unprivileged processes to essentially lock files such that o=
-ther
-> >>>>>> processes can't write to them anymore. This might allow unprivileg=
-ed
-> >>>>>> users to prevent root from updating config files or stuff like tha=
-t if
-> >>>>>> they're updated in-place.
-> >>>>> Yes, I agree, but since it is the case for executed files I though =
-it
-> >>>>> was worth starting a discussion on this topic.  This new flag could=
- be
-> >>>>> restricted to executable files, but we should avoid system-wide loc=
-ks
-> >>>>> like this.  I'm not sure how Windows handle these issues though.
-> >>>>> Anyway, we should rely on the access control policy to control writ=
-e and
-> >>>>> execute access in a consistent way (e.g. write-xor-execute).  Thank=
-s for
-> >>>>> the references and the background!
-> >>>> I'm confused.  I understand that there are many contexts in which on=
-e
-> >>>> would want to prevent execution of unapproved content, which might
-> >>>> include preventing a given process from modifying some code and then
-> >>>> executing it.
-> >>>> I don't understand what these deny-write features have to do with it=
-.
-> >>>> These features merely prevent someone from modifying code *that is
-> >>>> currently in use*, which is not at all the same thing as preventing
-> >>>> modifying code that might get executed -- one can often modify
-> >>>> contents *before* executing those contents.
-> >>> The order of checks would be:
-> >>> 1. open script with O_DENY_WRITE
-> >>> 2. check executability with AT_EXECVE_CHECK
-> >>> 3. read the content and interpret it
-> >> Hmm.  Common LSM configurations should be able to handle this without
-> >> deny write, I think.  If you don't want a program to be able to make
-> >> their own scripts, then don't allow AT_EXECVE_CHECK to succeed on a
-> >> script that the program can write.
-> > Yes, Common LSM could handle this, however, due to historic and app
-> > backward compability reason, sometimes it is impossible to enforce
-> > that kind of policy in practice, therefore as an alternative, a
-> > machinism such as AT_EXECVE_CHECK is really useful.
->
-> Can you clarify?  I=E2=80=99m suspicious that we=E2=80=99re taking past e=
-ach other.
->
-Apology, my response isn't clear.
+On Mon, Aug 25, 2025 at 09:21:41PM +0100, Al Viro wrote:
 
-> AT_EXECVE_CHECK solves a problem that there are actions that effectively =
-=E2=80=9Cexecute=E2=80=9D a file that don=E2=80=99t execute literal CPU ins=
-tructions for it. Sometimes open+read has the effect of interpreting the co=
-ntents of the file as something code-like.
->
-Yes. We have the same understanding of this.
-As an example, shell script or java byte code, their file permission
-can be rw, but no x bit set. The interpreter reads those and executes
-them.
+> 	FWIW, I'm considering the possibility of having copy_tree() delay
+> hashing all nodes in the copy and having them hashed all at once; fewer disruptions
+> for lockless readers that way.  All nodes in the copy are reachable only for the
+> caller; we do need mount_locked_reader for attaching a new node to copy (it has
+> to be inserted into the per-mountpoint lists of mounts), but we don't need to
+> bump the seqcount every time - and we can't hold a spinlock over allocations.
+> It's not even that hard; all we'd need is a bit of a change in commit_tree()
+> and in a couple of places where we create a namespace with more than one node -
+> we have the loops in those places already where we insert the mounts into
+> per-namespace rbtrees; same loops could handle hashing them.
 
-> But, as I see it, deny-write is almost entirely orthogonal. If you open a=
- file with the intent of executing it (mmap-execute or interpret =E2=80=94 =
-makes little practical difference here), then the kernel can enforce some p=
-olicy. If the file is writable by a process that ought not have permission =
-to execute code in the context of the opening-for-execute process, then LSM=
-s need deny-write to be enforced so that they can verify the contents at th=
-e time of opening.
->
-> But let=E2=80=99s step back a moment: is there any actual sensible securi=
-ty policy that does this?  If I want to *enforce* that a process only execu=
-te approved code, then wouldn=E2=80=99t I do it be only allowing executing =
-files that the process can=E2=80=99t write?
->
-I imagine the following situation: an app has both "rw" access to the
-file that holds the script code, the "w" is needed because the app
-updates the script sometimes.
+The main issue I'm having with that is that currently "in list of children" implies
+"hashed"; equivalent, even, except for a transient state seen only in mount_writer.
+OTOH, having that not true for unreachable mounts...  I'm trying to find anything
+that might care, but I don't see any candidates.
 
-What is a reasonable sandbox solution for such an app? There are maybe
-two options:
+It would be nice to have regardless of doing fewer mount_lock seqcount bumps -
+better isolation from shared data structures until we glue them in place would
+make for simpler correctness proofs...
 
-1> split the app as two processes: processA has "w" access to the
-script for updating when needed. Process B has "r" access but no "w",
-for executing. ProcessA and ProcessB will coordinate to avoid racing
-on the script update.
+Anyway,
+	copy_tree() call chains:
+1.  copy_tree() <- propagate_mnt() <- attach_recursive_mnt(), with the call
+chain prior to that point being one the
+		<- graft_tree() <- do_loopback()
+		<- graft_tree() <- do_add_mount() <- do_new_mount_fc()
+		<- graft_tree() <- do_add_mount() <- finish_automount()
+		<- do_move_mount().
+All of those start inside a lock_mount scope.
+Result gets passed (prior to return from attach_recursive_mnt(), within
+an mnt_writer scope there) either to commit_tree() or to umount_tree(),
+without having been visible to others prior to that.
+	That's creation of secondary copies from mount propagation, for
+various pathways to mounting stuff.
 
-2> The process will use AT_EXECVE_CHECK (added by interpreter) to
-validate the file before opening , and the file content held by the
-process should be immutable while being validated and executed later
-by interpreter.
+2.  copy_tree() <- __do_loopback() <- do_loopback().  Inside a lock_mount scope.
+Result gets passed into graft_tree() -> attach_recursive_mnt().  In the latter
+either it gets passed to commit_tree() (within mount_writer scope, without
+having been visible to others prior to that), in which case success is reported,
+or it is left alone and error gets reported; in that case back in do_loopback()
+it gets passed to umount_tree(), again in mount_writer scope and without having
+been visible to others prior to that.
+	That's MS_BIND|MS_REC mount(2).
 
-option 1 is the ideal, and IIUC, you promote this too. However, that
-requires refactoring the app as two processes.
-option 2 is an alternative. Because it doesn't require the change from
-the apps, therefore a solution worth considering.
+3.  copy_tree() <- __do_loopback() <- open_detached_copy().  In namespace_excl
+scope.  Result is fed through a loop that inserts those mounts into rbtree
+of new namespace (in mount_writer scope) and its root is stored as ->root
+of that new namespace.  Once out of namespace_excl scope, the tree becomes
+visible (and an extra reference is attached to the file we are opening).
+	That's open_tree(2)/open_tree_attr(2) with OPEN_TREE_CLONE.
+	BTW, a bit of mystery there: insertions into rbtree don't need to be in
+mount_writer - we do have places where it's done without that, all readers are
+in namespace_shared scopes *and* the namespace, along with its rbtree, is not
+visible to anyone yet to start with.  If we delay hashing until there it will
+need mount_writer, though.
 
-> The reason that the removal of deny-write wasn=E2=80=99t security =E2=80=
-=94 it was a functionality issue: a linker accidentally modified an in-use =
-binary. If you have permission to use gcc or lld, etc to create binaries, a=
-nd you have permission to run them, then you pretty much have permission to=
- run whatever code you like.
->
-> So, if there=E2=80=99s a real security use case for deny-write, I=E2=80=
-=99m still not seeing it.
->
-Although the current patch might not be ideal due to the potential DOS
-attack, it does offer a starting point to address the needs. Let's
-continue the discussion based on this patch and explore different
-ideas.
+4.  copy_tree() <- copy_mnt_ns().  In namespace_excl scope.  Somewhat similar
+to the previous, but the namespace is not an anonymous one and we have a couple
+of extra passes - one might do lock_mnt_tree() (under mount_writer, almost
+certainly excessive - mount_locked_reader would do just fine) and another
+(combined with rbtree insertions) finds the counterparts of root and pwd of
+the caller and flips over to those.  Old ones get dropped after we leave
+the scope.
 
-Thanks and regards,
--Jeff
+Looks like we should be able to unify quite a bit of logics in populating
+a new namespace and yes, delaying hash insertions past copy_tree() looks
+plausible...
 
-> >> Keep in mind that trying to lock this down too hard is pointless for
-> >> users who are allowed to to ptrace-write to their own processes.  Or
-> >> for users who can do JIT, or for users who can run a REPL, etc.
-> > The ptrace-write and /proc/pid/mem writing are on my radar, at least
-> > for ChomeOS and Android.
-> > AT_EXECVE_CHECK is orthogonal to those IMO, I hope eventually all
-> > those paths will be hardened.
-> >
-> > Thanks and regards,
-> > -Jeff
+	Incidentally, destruction of new namespace on copy_tree() failure
+is another mystery: here we do
+                ns_free_inum(&new_ns->ns);
+		dec_mnt_namespaces(new_ns->ucounts);
+		mnt_ns_release(new_ns);
+and in open_detached_copy() it's
+	free_mnt_ns(ns);
+
+They are similar - free_mnt_ns() is
+	if (!is_anon_ns(ns))
+		ns_free_inum(&ns->ns);
+	dec_mnt_namespaces(ns->ucounts);
+	mnt_ns_tree_remove(ns);
+and mnt_ns_tree_remove() is a bunch of !is_anon_ns() code, followed by
+an rcu-delayed mnt_ns_release().  So in case of open_detached_copy(),
+where the namespace is anonymous, it boils down to an RCU-delayed
+call of mnt_ns_release()...
+
+AFAICS the only possible reasons not to use free_mnt_ns() here are
+	1) avoiding an RCU-delayed call and
+	2) conditional removal of ns from mnt_ns_tree.
+
+As for the second, couldn't we simply use !list_empty(&ns->mnt_ns_list)
+as a condition?  And avoiding an RCU delay... nice, in principle, but
+the case when that would've saved us anything is CLONE_NEWNS clone(2) or
+unshare(2) failing due to severe OOM.  Do we give a damn about one extra
+call_rcu() for each of such failures?
+
+mnt_ns_tree handling is your code; do you see any problems with
+
+static void mnt_ns_tree_remove(struct mnt_namespace *ns)
+{
+	/* remove from global mount namespace list */
+	if (!list_empty(&ns->mnt_ns_list)) {
+		mnt_ns_tree_write_lock();
+		rb_erase(&ns->mnt_ns_tree_node, &mnt_ns_tree);
+		list_bidir_del_rcu(&ns->mnt_ns_list);
+		mnt_ns_tree_write_unlock();
+	}
+
+	call_rcu(&ns->mnt_ns_rcu, mnt_ns_release_rcu);
+}
+and
+	mnt = __do_loopback(path, recursive);
+	if (IS_ERR(mnt)) {
+		emptied_ns = ns;
+		namespace_unlock();
+		return ERR_CAST(mnt);
+	}
+in open_detached_copy() and
+	new = copy_tree(old, old->mnt.mnt_root, copy_flags);
+	if (IS_ERR(new)) {
+		emptied_ns = new_ns;
+		namespace_unlock();
+		return ERR_CAST(new);
+	}
+in copy_mnt_ns()?
 
