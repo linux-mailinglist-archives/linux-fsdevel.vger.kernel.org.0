@@ -1,67 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-59000-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59001-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACBB8B33DC8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 13:17:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C803BB33DD9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 13:21:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23F937A9E3F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 11:15:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC8031A82CA0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 11:22:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6347A2E54C3;
-	Mon, 25 Aug 2025 11:17:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86FFD2E62D6;
+	Mon, 25 Aug 2025 11:21:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="ntGJgKcP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EVWFA3Hf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11D032E5411;
-	Mon, 25 Aug 2025 11:17:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7DB62C08DA;
+	Mon, 25 Aug 2025 11:21:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756120629; cv=none; b=L70j6v2wo4GRWSWThtmcrvLFSfzWSYjbWD5DF6LiBQRlDpnTb2UDTWtQNjRaPQgD5L1dv5WcBJnqnZ5OFVGGlCq6mOg8gi3JCbDLSXLcW2Pw49kgq6ZztzJtDLrSw8Ypg1YoVHOoblx51xxQiY8rIiB2W3akLdHZYAyB3BeBOIc=
+	t=1756120893; cv=none; b=rwWztyj4hdSHMEuK8poufW9LYlmb31EkdtybL6NaV6Tk0bwC2Xr9EbQusSdBBxx5lBXGmK81w3EIS3PiieC4Q36rctyKO9HLwMYQapgdHgSW3TD+31HudKHiO1X2+IzMzOdnQdhYLcJJYiaexzbZsBiMl4NNqgqE64Y9jiFh0qQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756120629; c=relaxed/simple;
-	bh=Nex9WygFR2p/2v+xa5Xt7H2GQpWFE3o8wISvk7723OA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=VK77lbF08+JUm7+KsdDIrao8V4oETjlUjfuHvt8YRxCw5R59DLGWpokOj3std9BfAgJL2akj3Y4uF8VkIKW7firTgKg4DN9E1A+P1tWbyEAXE5yc/Xw4bNm+Zy/S6SpaKkRo6t9np3IHNzs9ybwB03mMkNnmkIiEjaKgQJGowNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be; spf=pass smtp.mailfrom=krisman.be; dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b=ntGJgKcP; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=krisman.be
-Received: by mail.gandi.net (Postfix) with ESMTPSA id EF3EB43252;
-	Mon, 25 Aug 2025 11:17:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=gm1;
-	t=1756120625;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5HDYS8rY76FdOS8DdrTzgO2ornOcFriVXaaNrkTiLRc=;
-	b=ntGJgKcPwygDSo8XHovhiLbW8PanYDet/O1PWhUNSekNiUb0bFkN7rczY03UNHCMrFFocl
-	def0G2ZHn7xwYDw2R5Jyfo0qsQdA3JBc41uaxKQdBsGJvqTfQ7R3A8aXqOD2BkqGdWqNON
-	8DEjJfTiBtbZI08SUw3p4ByWCLukuPH94fLmbtAmZBqhYPnp3WW+WgwA+EBvAOfQDQ9o65
-	3RLAl1rygZVlIqtdDkorK5OffrSMZp8B51KsmiXTSS+jTEqxPOXp2nGDCh58/2wvy7p9d9
-	VDxbi1//c1DrurpszuQgOV36JKnSDWM09MCiECPYLoIPnNpkXdqhZ1xyG3e4vg==
-From: Gabriel Krisman Bertazi <gabriel@krisman.be>
-To: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>,  Amir Goldstein
- <amir73il@gmail.com>,  Theodore Tso <tytso@mit.edu>,
-  linux-unionfs@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-fsdevel@vger.kernel.org,  Alexander Viro <viro@zeniv.linux.org.uk>,
-  Christian Brauner <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,
-  kernel-dev@igalia.com
-Subject: Re: [PATCH v6 5/9] ovl: Ensure that all layers have the same encoding
-In-Reply-To: <20250822-tonyk-overlayfs-v6-5-8b6e9e604fa2@igalia.com>
- (=?utf-8?Q?=22Andr=C3=A9?=
-	Almeida"'s message of "Fri, 22 Aug 2025 11:17:08 -0300")
-References: <20250822-tonyk-overlayfs-v6-0-8b6e9e604fa2@igalia.com>
-	<20250822-tonyk-overlayfs-v6-5-8b6e9e604fa2@igalia.com>
-Date: Mon, 25 Aug 2025 07:17:02 -0400
-Message-ID: <871poz647l.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1756120893; c=relaxed/simple;
+	bh=zaEkbmbDR/+qcQobbzpKW9uvKEvz5Rlhx8O6GTrlejA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ilC+UCDs/8dXspzxUNBoPK3KD66vCSLU/Hb5WvIHnZNpU0eelnsOu+AOlY6y6ATKXysqp6kt1EVhuYfGNhOhQyeKVkfivGNuc9RO4BQWzICY7kUUBuENlAf7bGskiQ3r8tsZw3Enm94DFio2zwEt1zzmrUvUd1TrtVA/4Be0MCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EVWFA3Hf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 274CBC4CEED;
+	Mon, 25 Aug 2025 11:21:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756120892;
+	bh=zaEkbmbDR/+qcQobbzpKW9uvKEvz5Rlhx8O6GTrlejA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EVWFA3HfN6A/Yay+ZMosizwnG0PNVeppOiGxlWZoWyU23LMmnbOA0NO/NvejLwVnM
+	 r5mdFbJ1o9NtKjQg1/4XdI3pzbwPwEVfuohui9tzaZn03+KIqc1OBc/HdHJtKoOdTv
+	 AmSucisSFgrqsNOtLZPIj8R23XBqxiYsZyhyiTMaFFGbvI6H/cyF720FUPwnUxY+im
+	 bEzbG4L1pPvky6CgNHUF2kSdqbXV1FHBFKus6uRbDGtRn6a4KYeJ1ubJ5oGIYNrUPU
+	 GNwgE2ieFm1K0gwoXTCRMDxOpIqmsSiZ6fdynanWw1ayF+1wbvAmMLiFuBCwevT8k5
+	 2s+p2B9IMKVNw==
+Date: Mon, 25 Aug 2025 13:21:28 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org, 
+	kernel-team@fb.com, linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	viro@zeniv.linux.org.uk
+Subject: Re: [PATCH 21/50] fs: use refcount_inc_not_zero in igrab
+Message-ID: <20250825-bahnnetz-fragen-c6571104ea56@brauner>
+References: <cover.1755806649.git.josef@toxicpanda.com>
+ <27904789c7dc983dce3f65be80c76919dd1765bf.1755806649.git.josef@toxicpanda.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -69,88 +58,107 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddujedvvdegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufgjfhffkfgfgggtgfesthhqredttderjeenucfhrhhomhepifgrsghrihgvlhcumfhrihhsmhgrnhcuuegvrhhtrgiiihcuoehgrggsrhhivghlsehkrhhishhmrghnrdgsvgeqnecuggftrfgrthhtvghrnhepfedtvdehffevtddujeffffejudeuuefgvdeujeduhedtgfehkeefheegjefgueeknecukfhppeejtddrkedvrddukedvrdeikeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeejtddrkedvrddukedvrdeikedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepghgrsghrihgvlheskhhrihhsmhgrnhdrsggvpdhnsggprhgtphhtthhopeduuddprhgtphhtthhopegrnhgurhgvrghlmhgvihgusehighgrlhhirgdrtghomhdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtoheprghmihhrjeefihhlsehgmhgrihhlrdgtohhmpdhrtghpthhtohepthihthhsohesmhhithdrvgguuhdprhgtphhtthhopehlihhnuhigqdhunhhiohhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvr
- hhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhk
-X-GND-Sasl: gabriel@krisman.be
+Content-Disposition: inline
+In-Reply-To: <27904789c7dc983dce3f65be80c76919dd1765bf.1755806649.git.josef@toxicpanda.com>
 
-Andr=C3=A9 Almeida <andrealmeid@igalia.com> writes:
-
-> When merging layers from different filesystems with casefold enabled,
-> all layers should use the same encoding version and have the same flags
-> to avoid any kind of incompatibility issues.
->
-> Also, set the encoding and the encoding flags for the ovl super block as
-> the same as used by the first valid layer.
->
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
+On Thu, Aug 21, 2025 at 04:18:32PM -0400, Josef Bacik wrote:
+> We are going to use igrab everywhere we want to acquire a live inode.
+> Update it to do a refcount_inc_not_zero on the i_count, and if
+> successful grab an reference to i_obj_count. Add a comment explaining
+> why we do this and the safety.
+> 
+> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 > ---
->  fs/overlayfs/super.c | 25 +++++++++++++++++++++++++
->  1 file changed, 25 insertions(+)
->
-> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> index df85a76597e910d00323018f1d2cd720c5db921d..b1dbd3c79961094d00c7f99cc=
-622e515d544d22f 100644
-> --- a/fs/overlayfs/super.c
-> +++ b/fs/overlayfs/super.c
-> @@ -991,6 +991,18 @@ static int ovl_get_data_fsid(struct ovl_fs *ofs)
->  	return ofs->numfs;
+>  fs/inode.c         | 26 +++++++++++++-------------
+>  include/linux/fs.h | 27 +++++++++++++++++++++++++++
+>  2 files changed, 40 insertions(+), 13 deletions(-)
+> 
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 28d197731914..b9122c1eee1d 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -1648,20 +1648,20 @@ EXPORT_SYMBOL(iunique);
+>  
+>  struct inode *igrab(struct inode *inode)
+>  {
+> +	lockdep_assert_not_held(&inode->i_lock);
+> +
+> +	inode = inode_tryget(inode);
+> +	if (!inode)
+> +		return NULL;
+> +
+> +	/*
+> +	 * If this inode is on the LRU, take it off so that we can re-run the
+> +	 * LRU logic on the next iput().
+> +	 */
+>  	spin_lock(&inode->i_lock);
+> -	if (!(inode->i_state & (I_FREEING|I_WILL_FREE))) {
+> -		__iget(inode);
+> -		inode_lru_list_del(inode);
+> -		spin_unlock(&inode->i_lock);
+> -	} else {
+> -		spin_unlock(&inode->i_lock);
+> -		/*
+> -		 * Handle the case where s_op->clear_inode is not been
+> -		 * called yet, and somebody is calling igrab
+> -		 * while the inode is getting freed.
+> -		 */
+> -		inode = NULL;
+> -	}
+> +	inode_lru_list_del(inode);
+> +	spin_unlock(&inode->i_lock);
+> +
+>  	return inode;
 >  }
->=20=20
-> +/*
-> + * Set the ovl sb encoding as the same one used by the first layer
-> + */
-> +static void ovl_set_encoding(struct super_block *sb, struct super_block =
-*fs_sb)
+>  EXPORT_SYMBOL(igrab);
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 34fb40ba8a94..b731224708be 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -3393,6 +3393,33 @@ static inline void iobj_get(struct inode *inode)
+>  	refcount_inc(&inode->i_obj_count);
+>  }
+>  
+> +static inline struct inode *inode_tryget(struct inode *inode)
 > +{
-> +#if IS_ENABLED(CONFIG_UNICODE)
-> +	if (sb_has_encoding(fs_sb)) {
-> +		sb->s_encoding =3D fs_sb->s_encoding;
-> +		sb->s_encoding_flags =3D fs_sb->s_encoding_flags;
+> +	/*
+> +	 * We are using inode_tryget() because we're interested in getting a
+> +	 * live reference to the inode, which is ->i_count. Normally we would
+> +	 * grab i_obj_count first, as it is the highe priority reference.
+> +	 * However we're only interested in making sure we have a live inode,
+> +	 * and we know that if we get a reference for i_count then we can safely
+> +	 * acquire i_obj_count because we always drop i_obj_count after dropping
+> +	 * an i_count reference.
+> +	 *
+> +	 * This is meant to be used either in a place where we have an existing
+> +	 * i_obj_count reference on the inode, or under rcu_read_lock() so we
+> +	 * know we're safe in accessing this inode still.
+
+Maybe add a debug assert to that effect?
+
+VFS_WAR_ON_ONCE(!icount_read(inode) && !rcu_read_lock_held());
+
+> +	 */
+> +	if (!refcount_inc_not_zero(&inode->i_count)) {
+> +		/*
+> +		 * If we failed to increment the reference count, then the
+> +		 * inode is being freed or has been freed.  We return NULL
+> +		 * in this case.
+> +		 */
+> +		return NULL;
 > +	}
-> +#endif
-> +}
->=20=20
->  static int ovl_get_layers(struct super_block *sb, struct ovl_fs *ofs,
->  			  struct ovl_fs_context *ctx, struct ovl_layer *layers)
-> @@ -1024,6 +1036,9 @@ static int ovl_get_layers(struct super_block *sb, s=
-truct ovl_fs *ofs,
->  	if (ovl_upper_mnt(ofs)) {
->  		ofs->fs[0].sb =3D ovl_upper_mnt(ofs)->mnt_sb;
->  		ofs->fs[0].is_lower =3D false;
-> +
-> +		if (ofs->casefold)
-> +			ovl_set_encoding(sb, ofs->fs[0].sb);
->  	}
->=20=20
->  	nr_merged_lower =3D ctx->nr - ctx->nr_data;
-> @@ -1083,6 +1098,16 @@ static int ovl_get_layers(struct super_block *sb, =
-struct ovl_fs *ofs,
->  		l->name =3D NULL;
->  		ofs->numlayer++;
->  		ofs->fs[fsid].is_lower =3D true;
-> +
-> +		if (ofs->casefold) {
-> +			if (!ovl_upper_mnt(ofs) && !sb_has_encoding(sb))
-> +				ovl_set_encoding(sb, ofs->fs[fsid].sb);
-> +
-> +			if (!sb_has_encoding(sb) || !sb_same_encoding(sb, mnt->mnt_sb)) {
 
-Minor nit, but isn't the sb_has_encoding()  check redundant here?  sb_same_=
-encoding
-will check the sb->encoding matches the mnt_sb already.
+I would invert the logic here?
 
-> +				pr_err("all layers must have the same encoding\n");
-> +				return -EINVAL;
-> +			}
-> +		}
->  	}
->
->  	/*
+	if (refcount_inc_not_zero()) {
+		iobj_get(inode);
+		return inode;
+	}
 
---=20
-Gabriel Krisman Bertazi
+        /*
+         * If we failed to increment the reference count, then the
+         * inode is being freed or has been freed.  We return NULL
+         * in this case.
+         */
+	return NULL;
 
