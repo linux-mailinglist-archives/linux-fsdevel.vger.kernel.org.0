@@ -1,286 +1,237 @@
-Return-Path: <linux-fsdevel+bounces-59141-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59142-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A30A4B34E75
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 23:54:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C14A0B34E86
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 23:56:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65C8C20093F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 21:54:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A76161B2291D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 21:57:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B94D29D29B;
-	Mon, 25 Aug 2025 21:54:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FBD829D29B;
+	Mon, 25 Aug 2025 21:56:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="sK2oNKee"
+	dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b="sWa0A0Mv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80BC12367C9;
-	Mon, 25 Aug 2025 21:54:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.158.5
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756158842; cv=fail; b=cx8aAlDS3SupVPxki3yfqs1IBdwYcWeUwEHHwoclcrFYm4Zpqc66DH43TsIVSoHMrTDpNMe4ANOT+NEpf7KjB+PQNOXLWoRwVr1fO/cov+/Op/zs4DOOoiH8Mj+xPNc6GPPG3JeRbvcXewkl25TMGnDobJKEp9Ke3mdia7vsCnQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756158842; c=relaxed/simple;
-	bh=AZbWn3K8CInlyrFEQqPhTczt2BwclVIKHj8wcgdqQmE=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=H2f/Cuas3W6mQ5J+R8LtB67ptoJ8EgvcUWaV3lEJ1N9ditI+CtK6F0qo+WbHSiA16jAuYMqJN+FVOr2eVuO4EJxpaHmdWI2wdeCOcyW05uk+GjblHc8Vc35JBr+Mrt3cf2QBUP6c6Q4YFqmGiIxrlTQueiDeqp18Mgjn5PNk4uo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=sK2oNKee; arc=fail smtp.client-ip=148.163.158.5
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57PJ6mlL015750;
-	Mon, 25 Aug 2025 21:53:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-id:content-transfer-encoding:content-type:date:from
-	:message-id:mime-version:subject:to; s=pp1; bh=AZbWn3K8CInlyrFEQ
-	qPhTczt2BwclVIKHj8wcgdqQmE=; b=sK2oNKeeoGPYFQWLUifFHPGbIQRdauuCo
-	Yhyqf9TysybDXutwvS0Zix5eaynVudiDKLwhfDbYKpT1IAtia9LzWGi45jrTfXiV
-	Mr2tr5ZUAUJLwzcc+eRBB2cRDXPty7k+WsBMdWR2Hu3yYJjFfmFgw+Py7nQyGWmQ
-	/BHSP0teN7Tj+3qUX/93OWQhy0AzcNbxC3vqXMG3hsWUrn2hVHD8Ge/wo2UtSq5E
-	+SjsfMQGlEiTYqan2sTD1sK1f05/aCSmQ3TgCng/SPT9TeeuoSoqW1tLy2x7ujIF
-	+OSFAT4j7khhmZXc1eQ9rKGHvGgzLa0Og0zrFYZL9k4kR0ssnKWvA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48q42hud7k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 25 Aug 2025 21:53:54 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57PLnZur032458;
-	Mon, 25 Aug 2025 21:53:54 GMT
-Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11on2040.outbound.protection.outlook.com [40.107.220.40])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48q42hud7h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 25 Aug 2025 21:53:54 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=k+fYVz+iAUjeA5AbYZMN3z/LmbNvMjnRTh2SG6YkcnHy0NiwgoIGmgmi5/rg8Qsr3zIxEyjJfAmzW/9AaI9AYJEuJUPwBJtUjMX9GqsjDaeufjG7N+QY6Np6evwkmZte2zB6T0ueziUjmMpM773F0REbFq0RUdAvXewmX3qY2X0Aigh3skVyfG17Eh4VeDGL6tzcPyBSbuk4VsuSaIFjaKq2not5wo0ioOiXuOrPFK+35CfjwKpdO8AS/2vVk1UaxiLSiyMro2E/OPv5AdiwwTNI+vUO8eKN4XW183eHx/9MFZcyGuAvzVa2XGEZHJ6b7W9YcGxVl6TFmgWb+TLirw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AZbWn3K8CInlyrFEQqPhTczt2BwclVIKHj8wcgdqQmE=;
- b=eyoytaRrcboI0FO/GvbdKebOi4VfLxUBaccuhXKTZ61RwW2OZ2D+OZaAHskLOhsi+H45YObs1tGDH83q3f6pA/Eg8I87doxIYuY9o7NLi3vH2UHY5r4+yt/1OndEYoyDIGi6ZRQGREmO16fxBUJk6V3fKGtSOfgElWB7K+6c0qD58AuuSzKGpfHtO3cZDPqBWZ7DxxpwOjPuG6M/qAQ1QNtPURXk0u4Ym950CHIfWlPwUPIl1c6MovP+WTpQpLPjzTYsjX3WX0lEwr6rFQmS5wGuTkrHJ2G277ByWp/tpHbqVIfzncTxf+Qzr2ik+wSlS/9C5SgldK8arRuXIcGtmQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=ibm.com; dmarc=pass action=none header.from=ibm.com; dkim=pass
- header.d=ibm.com; arc=none
-Received: from SA1PR15MB5819.namprd15.prod.outlook.com (2603:10b6:806:338::8)
- by BL1PPFF6F37B74B.namprd15.prod.outlook.com (2603:10b6:20f:fc04::e55) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.20; Mon, 25 Aug
- 2025 21:53:48 +0000
-Received: from SA1PR15MB5819.namprd15.prod.outlook.com
- ([fe80::6fd6:67be:7178:d89b]) by SA1PR15MB5819.namprd15.prod.outlook.com
- ([fe80::6fd6:67be:7178:d89b%3]) with mapi id 15.20.9031.023; Mon, 25 Aug 2025
- 21:53:48 +0000
-From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-To: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "brauner@kernel.org"
-	<brauner@kernel.org>
-CC: "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-        "idryomov@gmail.com" <idryomov@gmail.com>,
-        Patrick Donnelly
-	<pdonnell@redhat.com>,
-        Alex Markuze <amarkuze@redhat.com>,
-        Pavan Rallabhandi
-	<Pavan.Rallabhandi@ibm.com>,
-        Greg Farnum <gfarnum@ibm.com>
-Subject: [RFC] ceph: strange mount/unmount behavior
-Thread-Topic: [RFC] ceph: strange mount/unmount behavior
-Thread-Index: AQHcFgq8up/kVXqx70yqH8FeecslxA==
-Date: Mon, 25 Aug 2025 21:53:48 +0000
-Message-ID: <b803da9f0591b4f894f60906d7804a4181fd7455.camel@ibm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR15MB5819:EE_|BL1PPFF6F37B74B:EE_
-x-ms-office365-filtering-correlation-id: 83e4baaf-9259-4bbf-e19e-08dde421df3f
-x-ld-processed: fcf67057-50c9-4ad4-98f3-ffca64add9e9,ExtAddr,ExtFwd
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|376014|10070799003|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?V3lpcGVLVzZwRWREc1FtcVhZeHN3bDhkYjE4eGVKdmVUV0NpRVFBbHJTb1k3?=
- =?utf-8?B?ekxUYkx1Y01zU29vaUU3emVYdTBIQ1VPbE0xaE1HS1VZLytWQjVZQXhEaU9R?=
- =?utf-8?B?SytNV3RjbCtTb1pvTzN0T2V1c0ZsbUQyM0M2cUNMTXdPWlBZclBxMVIvZGcv?=
- =?utf-8?B?QlBWMkdGcHB6NlRNclFIWnc3K1AwS2FSVlpEeFlRekRpeER0WWx6d2FpUThz?=
- =?utf-8?B?U1o0Tks3RFJQY3ZiWFduVEY2dFdTZkxwTmFyUmszeVBtNEorWGJXTjA0SFpN?=
- =?utf-8?B?MW1tVDhrM040MmlFZlZqcnJwZnlJNlJnY1piWnErK1VSd0k4V2k5TjVBWlp2?=
- =?utf-8?B?Znp2SS83YzlBdGU0alE2TUx1a1Z4UDNWZndLS3hQZEVhbWJPMTVoUHRHV1Rx?=
- =?utf-8?B?bUVwWGZmMXlWMFVPTHF2bkdURDZuMkxqK3FyUENjeC84eUJuSndqN1hWWlNt?=
- =?utf-8?B?Q2wwZjd0S2VNWTQyc0FqOEpVdlhVWXF4eVJuc0lxWU82alV5ZVIwdmhCYTZt?=
- =?utf-8?B?U2NRVUxqbkNIZnNBM2d0a3poWlZEc21xMWhOaGYzeFFuZ1pESlRFU1BmVk5k?=
- =?utf-8?B?YzBKSHN5RVp5dHVnZ0NMS2ptRzhvWnBHT1lDemxWTzBSNlI5dFBoSTRSeWU4?=
- =?utf-8?B?V3F2eGR5ZjlQS0lnUmZ2L2RvbWxab2J1VnM3R0FRTk0wQU41eXFUTmJzWlRK?=
- =?utf-8?B?YVNPbHFZQUpTdzEzNExBQXhYSVdnbEtyZVhDcTVpOXhSbFdEWjQ4NEx5V29J?=
- =?utf-8?B?NXUwcjZxajFNU2ZHRjFvZmc4U0ZmczJZeVdjRVNpLzFjbG5kN3hIV1BKZW0x?=
- =?utf-8?B?RTVTQ280Mzg2QmZHRWhPZTNLaUVlVDZsNzNJNjh5ckw1L2xxbmJEZy9sODdL?=
- =?utf-8?B?Q1I3UE5yaWk3SG1SL2FGWkxFU1ZxdHpJdGlxZGtuTFlEMSt2YjROV3lZUTA3?=
- =?utf-8?B?T0VMeU5ybmxTWWs3UURtRjRtV1BqazlwN3lqeHM4QkVUKzREdzFyUVBEcGZJ?=
- =?utf-8?B?M2FWNlZtZG5heVEreS9tU3NudVVWMWI0OC85K0swTUlTR25WQWVHNmZRRkp4?=
- =?utf-8?B?a0owZFZGZzZoRml3MEFIZjhzT20zclhCR05aNEtXbDgyN0RYd1MycWtzYmpl?=
- =?utf-8?B?N3FWZG9OOFkva05JVStiYm9GZi85QmJjcHVpNVh1RmU5MFZUMkVJU05UOGd2?=
- =?utf-8?B?azIxa1c5T1hhTWhKUzJWZVJrc211WndUWW1aeWtYQmh1MHdCL1hGWkZ1VGRM?=
- =?utf-8?B?R3pIdGVxMnFlWkFiUS92bjdpSCtRYnBFOFdHRDdkZ3QyRjRiWkhEWXJSQi9S?=
- =?utf-8?B?VjV6SW9GVHhOcjZDZW9Md1lRbzRyOWdiaWtNOHJlcHAvNHV5RDMwYUdUWmh4?=
- =?utf-8?B?QkNUZlhBOHhuL3MrWmNGUm1KM0tWU2hWcXZuUlRzQ1VnWkVyRmV3bTU4Y2cr?=
- =?utf-8?B?dzRUcDZvV2RSUHlEVDVRVENHcHpRRzdKNUZIWkkvMW9YUVlhRXNZWi9GTXlt?=
- =?utf-8?B?aTN3a2RmTU1aRjJ5MUxxV3YraEY5RXR3Zlg2b1B5R0s5Y1BVOTlOSGYyZWkw?=
- =?utf-8?B?elNyblk0M0lNVVlDZDI5MDA4czk0VnRKZlRTaGtyT0cwVFFEQmN1cG8zUmhx?=
- =?utf-8?B?MFJ0MVNsYTIzdU1LNlEwVm9SQVpYUU1sNVp2TWt5dWFlQ014OFIvOEpqUGp2?=
- =?utf-8?B?YlJwUmE1SVN5cldwb3dMZnJJRU1UZWlocEt4TW0zd0tGZ24yMUtpQjFxVG1k?=
- =?utf-8?B?YzdFM1hmUzZtZWpJOHRueDRtbkd4dmh2ZkRNRW1WRTdwZWpNMnBkdWsvQk9n?=
- =?utf-8?B?U3d2YlZZUWZObEJYM0hVSnZQRTg0LzNnam93bnNseDFkQ3R1WTlhM2cxWXNr?=
- =?utf-8?B?MHJUUEViSFZPSmFUc0hQaE9VZ1BLNE5xQ0ZFa1VxdzBhWDNWc1FVWURrSGp4?=
- =?utf-8?Q?rAhvkv9myxs=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB5819.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(10070799003)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?VmhJb0QvbzR6WDZmcU8yVEIyQzZhQTlXTkYxekdqQTBta0N2cGFJN2ltV05V?=
- =?utf-8?B?TUVpUy9ERUpINHFWcVdzVG55VWNWSy9UTC84VFBlWS9scUxZcHU2NjlHOFBD?=
- =?utf-8?B?OEJFSEVNTlkrcHZvb0VMZCtsbWxtOWl6NjZUeDVmeHdZaVFib1BocFQ0K2hv?=
- =?utf-8?B?clZMaFpoaGdNclBDa1N2YU9DRVFjYnZmdW1kVFFQMEVrNmQ3eXVNSUdacXhp?=
- =?utf-8?B?R09UWHZORnhXcHlOU1JXRnpENENVY3g1b3dBM1M2VlZZSk11OE9PUnZVdHlq?=
- =?utf-8?B?SHRTRE5aTG51REhsU1d3YitIam1HRWxZNzFPMzNuRWNXK2U4K2tjd1BoaHp1?=
- =?utf-8?B?MjA3Z0ZrUnd5S1pmdUY5VXM0WGpsZmdnWUxEQ3A5WnVaTVg0R25rcTdYRVBO?=
- =?utf-8?B?bVRPZlc2ZE8wbVk2RWhiQVZtbmhLNkVlalVDTmJZbks3VHhaRFNZN1dNdngr?=
- =?utf-8?B?Ty8yRlVzbmJGWDVwZ3Y1dFFXRXpYSlJ3SmxUMFZrTzdCWDhmMUE5WnNiRVpo?=
- =?utf-8?B?bGhNWVVzRkRIeVNucUs2ME5BaTRGWXFFOGprNVIxaE95NmVJTlQ3eGJIUUFE?=
- =?utf-8?B?Y3ZlZWpHZU1WREtwWWZ1TFZiZDBqaUtkTDZqVE90ODhXSEc3UFlkdndtK1JE?=
- =?utf-8?B?dTErczA2OEwyZk1Zd1E3NHRPZllxTk1ESmdRVWhwdGNocmMxcDA1bjdXQm9m?=
- =?utf-8?B?KytZRTAzYjhYaTk3TFowd1JDQnI3SkxDT2NxS0tUMnRiQ0hPeEIva1lpaEds?=
- =?utf-8?B?V1R4MFVJblYrUlBwZHN5TSt1UTM1WC9wQUl2N3NtWnliVGVPRmZoT1dHcW1E?=
- =?utf-8?B?T1JBcERaeFRocTNhR012TlBHeXIxaVg5andUUXBxZ3hiaTk4WnZaUFNCdUJP?=
- =?utf-8?B?SHJrbTNNdk81eUxaeWpsMzNmVkl1b0pwZTFqOVR1bmRxMDVHSldubG1RVXJ2?=
- =?utf-8?B?RXF4dSszMGpFNU9DUGJ4TTdqdWY3NnNPNmFpZlJWbnJCSmgycDg2YzBrZCtt?=
- =?utf-8?B?L1pxSnRybEEvOWNNMEt5M1JLdjVJMGxRVDNNMTZ5aXVpVjl6cjE4Zy9sdHVo?=
- =?utf-8?B?ZXdjN1dHWGhrbE95OFpqQTRvQ3RwenovWmc0bjlXMkpLd1hsTHRrVlFramRa?=
- =?utf-8?B?bkpZZ3pmczMveU1Rb0diRVZ3SVNvMHNBVnhtclN0dGZISDB1d0E5Znh3aTht?=
- =?utf-8?B?VVBFbnhTQlRyQUUrRUVDRDl0MzJSOU9VaGRsQnZhTjNtMDZBSC9WUW4xOW0x?=
- =?utf-8?B?VDNaS2l3VUJWVjNPekdlemtzMnlScXlNdUJkbHJHRVEybFN5L0t1YjN4NlJ1?=
- =?utf-8?B?azVsMGFZcTdOV3ErZ0l5V2Yyc25GSi83ZUl4aFBJUGFqUTV2OGgwSWVLTzZV?=
- =?utf-8?B?S05ld2YxR3pNYUpIK2l0WjZ6SVlDb2orV2s4SE9HZHZJU1FXY20zay9tcmEx?=
- =?utf-8?B?dGlXSkYzTFF6UHB6VFdFdmhrNjl5WGJTNjhFNzFpbnB2aEFWK2hoT3dyVk05?=
- =?utf-8?B?TEplcStMV3ViUXV5MjBKVjEzRVE2MXVBNU8vVUFIb2NZMDhIelZpYlRSUmhT?=
- =?utf-8?B?M0hFQzBvV1djaTNSNS9hdUJaTGlERWRiV3p5ZmVTQjJCY1RzK3JNTG9ackZL?=
- =?utf-8?B?YWgxNTdnSjlsMWRtWGQ1cEVSd0MrcjFVeW1mQ2g4WE1xeFN4dUdqY0xPTU1F?=
- =?utf-8?B?d1BsVGk0VWswWTFISWhUaFZna0Vsb01UMklJQ3NGV1ZPUnByYVZTTXpKMjB6?=
- =?utf-8?B?R09aWER6b3lZbmczSjV5UGZ6dzJQOVRISFNYdkMxK0RvU1JXc05EcVQwa0VR?=
- =?utf-8?B?bGxVWjJNYVVlMit0eXBCUitlM2Y5aG1mdUhUcFN1UzFtckN6ZjZTcFVTL1g5?=
- =?utf-8?B?SnJKQkhFUTg4R0R2MTdwNzdsZGs0Z1ltRXg5eHpGZWErSWVqUk1VdWlKZWFG?=
- =?utf-8?B?eDNrMlVaWDh5VklNZmpnUnpCN0tJNDdFYVlqQTlXaFc4RzVtR3Fick14N240?=
- =?utf-8?B?OWFhb2FqQnFmTTJzd1JYQlRNRDV6Z1M2Ui8zdWoya3JKdjNOcFkyTFJHR1NC?=
- =?utf-8?B?d2l4RFRKMFR1eXNaWXV6bnc5OFduNURrM1Rrd2tuY0hrY2grK0VCVjNiNmtr?=
- =?utf-8?B?ZXFCRGhCOURTSVoyaHkvakh0WDZLbEFZeFl2ais5b0Vxbk9oemN4QnlqaUtN?=
- =?utf-8?Q?YeHGcGZJsorHLTHvmqf64f8=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <9EFD8F4A182E564CAFAB18A0FB864EF5@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF3B429D292
+	for <linux-fsdevel@vger.kernel.org>; Mon, 25 Aug 2025 21:56:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756158994; cv=none; b=TAj3ay2qD3RB/Gi/YVEUVOrpPcaM0d1XNuIZXQz+MU6rIhk0wiJOgNrZ+6Sv1dNQgyWkM6rfi71y6FxBVjJ2Nf2Ad1CFfKJ5WUQFj90P1z1Qtw4v+EMFLBe9BRhMxe9QdWonRmFJqODT5Y+CdaCnYn1OHCAKv9lp9Ltqj8hPKbw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756158994; c=relaxed/simple;
+	bh=E4NpwkGR+z7tCPgrXM61r560kh8CJ5QMAuInswiHxfM=;
+	h=Content-Type:From:Mime-Version:Subject:Message-Id:Date:Cc:To; b=aieOjGT3Xhmoozr76ZSZDShdkzZFQOmKDyA/l3xAa384mZCg+feKaNlYwH2GiTITLPW+s1Uj3EMfK2TIMyw4Uq974/XfAjErtHhyTJteNZ/ploTOz3txpUHLkMlhvfL02MWqmB/qill+2sLKwtsv9c1CgxJfYY2NkTeTbf5Io10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b=sWa0A0Mv; arc=none smtp.client-ip=209.85.210.52
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-74381ee9bc9so3737708a34.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Aug 2025 14:56:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20230601.gappssmtp.com; s=20230601; t=1756158992; x=1756763792; darn=vger.kernel.org;
+        h=to:cc:date:message-id:subject:mime-version:from
+         :content-transfer-encoding:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0vMUZfpgo6grl0jsKLi/4oV66VhEtUf3p7bHbykWpng=;
+        b=sWa0A0MvK5+P5uaeMOcaaeZpDL2Y6ytjQXSyZTZkXg+xvVVoXEoTN4YGeJubfYcmyB
+         g7edQF+a1SiQualHi5WBULobkH5fTtG6LKkDY2wngITDX+z2M+1DT2OUYJxX9WrHw3Ad
+         mhh/vDlaHjEkWT+mgPGx6/T1vwNlkBeRfb7GeneOGj9uqtZK/Z1PBfv+E7PZVHo7YD6H
+         2W8Tme9LnoJ449eSyRNSDZRNQrV9XGcRtDKxmvTe59lUglpQkeYS7+zaPDfXg8rkl3zk
+         x1pmh9mOOLEuO2UADtj7onjEAPKN5enRnChLRno1AksFToU2pJgpuMG91InYZ8Xc+o91
+         8nhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756158992; x=1756763792;
+        h=to:cc:date:message-id:subject:mime-version:from
+         :content-transfer-encoding:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=0vMUZfpgo6grl0jsKLi/4oV66VhEtUf3p7bHbykWpng=;
+        b=sDal4AiPlJhB8Pc25vYmfPWndTSv3cw6fDNElX9IDbXOhi1GbLCWWTqF5NEJhcyy6D
+         owo+xeiO7Ll9cgVGH7dWeITerHJjSdJXTzXUvR1mZ3s+k5O0aW9nWIuws3EHR7gtDSRH
+         xkbLk+egYMEl6A/mfo8DmzKiG9ln6+WqZBg26Zsqk2qYVcj75EUrBUkBa4sq8/8HXksv
+         mYDB1rE5g4kFQ8XqTxLBnuIjQ5vBrArp9ThLJe5KrKes/xmEDWYLWjDs5tcF6Z8M5VLt
+         eonO8OyJDtouJWmh05vXVvkQnCy17XbHHaAvUxLRhQxlqR1JBini8bokXYQyRKP3BuLt
+         nNwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV6Ph8Bq+XJOI9TLne+hWyOtBLipYOjnLCTiy15oPkJYbvFstQ5lI96o377CiJDDi2iVdDYPRj4kAiDLf4l@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiSj16JhKnTgXSmyYEgdPIhHb22cD2droz99CrTNNeYtC6tfuq
+	ZDhYyYUOgXqm4lsZlsmpcTDQhfTELHLFDY5vRDV79xhGgOLi2HIRt7T6hxX4KkGaQg==
+X-Gm-Gg: ASbGnctZB/xFXV2m7IclyH10HV57mOylRvO/rWfRAiNK9zUahTj5h8Ifn3WOTos4s1B
+	AP/j/q8noeQD7Ujkw2tdSs0uIwY+GsgzJC0fzywX0nv08RPgcSP8Gnv4Hx08Op50fhfQA9TSh/1
+	uGYOYFRuInyq7/sgcpzE8fy1UAs7lNhaf0fMftpNZOzLLLue12PYHvZNbItSYcOmqRQ6dW5YzL1
+	ELGobaLAPDBLAQ4f/jO4NmU7789rpDDhw33DH47h9cJ8X/tlPThaZOGfO7lfPp+fHc95j/oNxfP
+	KD2WWn8+RhU460eych8oBIwODsiDE6Oa/23Gjtc88l61geO4t30ftbF6FjuEgP0z9emMxJttR8A
+	EteTG4zSnRg+MNyRmu1alkV5GXcSPpOZhFi553RfLW//tIwm1
+X-Google-Smtp-Source: AGHT+IH0zqh5am1c9LUhvOIUND3Fr27yx9vrRpjaozAjD1PSKH7Z/Iy6+QDwmQ4jNnG1UUqeW6IVzg==
+X-Received: by 2002:a05:6830:2801:b0:744:f08e:4d30 with SMTP id 46e09a7af769-74500ae61e4mr8071485a34.35.1756158991618;
+        Mon, 25 Aug 2025 14:56:31 -0700 (PDT)
+Received: from smtpclient.apple ([2600:381:488a:4661:cde9:746f:9e0b:3479])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7450e28a027sm1987573a34.18.2025.08.25.14.56.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Aug 2025 14:56:30 -0700 (PDT)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From: Andy Lutomirski <luto@amacapital.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-OriginatorOrg: ibm.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB5819.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 83e4baaf-9259-4bbf-e19e-08dde421df3f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Aug 2025 21:53:48.6824
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: fcf67057-50c9-4ad4-98f3-ffca64add9e9
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: s9PI8o68ln/4xCJrr7FzeYPLC8qxU1s6SpVNosng1nzGJLf2C6Ndg9t9bPPYa3FMsJUUAdozBmKNbovGWlQm6Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PPFF6F37B74B
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAxMCBTYWx0ZWRfX/e1fSG5ukQXQ
- bVURgmf8SNdEnFU3lBFNlRM+BZIe22SCafWVmX4Si6eBS97ZeBMKIEesXyRty9iXkJoMN230XJ9
- RMgWHY7hDCtrZrUreRz0GH+2WUgHAj/Utrnyo+G2x/K6ZAx/PBlbRpegqjShzraIS+3C8qx+QQp
- XKLEec+ifCeqU+lqhbyh3oNUjSFj9z9Ti8BNDzNvmL2Mafu1JSMojknLp8NDBD92urJJ9IE+47y
- gkGQEJXVuPhUq9voRymaViYRZ+buZvCiNnlP3IIA3UTFX5AUDntGE/emekUe5MWpmfCMm4fbW92
- vSbeV2NCkS0/CWvFElIaT1yHtcitiDU2TLOEQEncEEjlbGd33ciW2kPImExSXHhJCdKsSzqU11x
- YKhVAVDh
-X-Proofpoint-ORIG-GUID: tMDxokKWea3z-3HFYXRUnoQumSMoY5PJ
-X-Proofpoint-GUID: V9FcUaQCmZg3gwz6xfXCTSsc7oFy3MQq
-X-Authority-Analysis: v=2.4 cv=evffzppX c=1 sm=1 tr=0 ts=68acdb72 cx=c_pps
- a=fuPBXZG3M7Sc+qedpsXBqw==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=2OwXVqhp2XgA:10 a=P-IC7800AAAA:8 a=KxHa3Zix7xUVjHfBVFMA:9 a=QEXdDO2ut3YA:10
- a=d3PnA9EDa4IxuAV0gXij:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-25_10,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 adultscore=0 malwarescore=0 spamscore=0 bulkscore=0
- impostorscore=0 clxscore=1015 priorityscore=1501 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230010
+Mime-Version: 1.0 (1.0)
+Subject: Re: [RFC PATCH v1 1/2] fs: Add O_DENY_WRITE
+Message-Id: <F0E70FC7-8DCE-4057-8E91-9FA1AC5BC758@amacapital.net>
+Date: Mon, 25 Aug 2025 14:56:18 -0700
+Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ Jann Horn <jannh@google.com>, Al Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>,
+ Paul Moore <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>,
+ Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ Christian Heimes <christian@python.org>,
+ Dmitry Vyukov <dvyukov@google.com>, Elliott Hughes <enh@google.com>,
+ Fan Wu <wufan@linux.microsoft.com>, Florian Weimer <fweimer@redhat.com>,
+ Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>,
+ Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+ Luca Boccassi <bluca@debian.org>,
+ Matt Bobrowski <mattbobrowski@google.com>,
+ Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>,
+ Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,
+ Robert Waite <rowait@microsoft.com>,
+ Roberto Sassu <roberto.sassu@huawei.com>,
+ Scott Shell <scottsh@microsoft.com>, Steve Dower <steve.dower@python.org>,
+ Steve Grubb <sgrubb@redhat.com>, kernel-hardening@lists.openwall.com,
+ linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@chromium.org>
+To: Jeff Xu <jeffxu@google.com>
+X-Mailer: iPhone Mail (22G100)
 
-SGVsbG8sDQoNCkkgYW0gaW52ZXN0aWdhdGluZyBhbiBpc3N1ZSB3aXRoIGdlbmVyaWMvNjA0Og0K
-DQpzdWRvIC4vY2hlY2sgZ2VuZXJpYy82MDQNCkZTVFlQICAgICAgICAgLS0gY2VwaA0KUExBVEZP
-Uk0gICAgICAtLSBMaW51eC94ODZfNjQgY2VwaC0wMDA1IDYuMTcuMC1yYzErICMyOSBTTVAgUFJF
-RU1QVF9EWU5BTUlDIE1vbg0KQXVnIDI1IDEzOjA2OjEwIFBEVCAyMDI1DQpNS0ZTX09QVElPTlMg
-IC0tIDE5Mi4xNjguMS4yMTM6Njc4OTovc2NyYXRjaA0KTU9VTlRfT1BUSU9OUyAtLSAtbyBuYW1l
-PWFkbWluIDE5Mi4xNjguMS4yMTM6Njc4OTovc2NyYXRjaCAvbW50L2NlcGhmcy9zY3JhdGNoDQoN
-CmdlbmVyaWMvNjA0IDEwcyAuLi4gLSBvdXRwdXQgbWlzbWF0Y2ggKHNlZQ0KWEZTVEVTVFMveGZz
-dGVzdHNkZXYvcmVzdWx0cy8vZ2VuZXJpYy82MDQub3V0LmJhZCkNCiAgICAtLS0gdGVzdHMvZ2Vu
-ZXJpYy82MDQub3V0CTIwMjUtMDItMjUgMTM6MDU6MzIuNTE1NjY4NTQ4IC0wODAwDQogICAgKysr
-IFhGU1RFU1RTL3hmc3Rlc3RzLWRldi9yZXN1bHRzLy9nZW5lcmljLzYwNC5vdXQuYmFkCTIwMjUt
-MDgtMjUNCjE0OjI1OjQ5LjI1Njc4MDM5NyAtMDcwMA0KICAgIEBAIC0xLDIgKzEsMyBAQA0KICAg
-ICBRQSBvdXRwdXQgY3JlYXRlZCBieSA2MDQNCiAgICArdW1vdW50OiAvbW50L2NlcGhmcy9zY3Jh
-dGNoOiB0YXJnZXQgaXMgYnVzeS4NCiAgICAgU2lsZW5jZSBpcyBnb2xkZW4NCiAgICAuLi4NCiAg
-ICAoUnVuICdkaWZmIC11IFhGU1RFU1RTL3hmc3Rlc3RzLWRldi90ZXN0cy9nZW5lcmljLzYwNC5v
-dXQgWEZTVEVTVFMveGZzdGVzdHMtDQpkZXYvcmVzdWx0cy8vZ2VuZXJpYy82MDQub3V0LmJhZCcg
-IHRvIHNlZSB0aGUgZW50aXJlIGRpZmYpDQpSYW46IGdlbmVyaWMvNjA0DQpGYWlsdXJlczogZ2Vu
-ZXJpYy82MDQNCkZhaWxlZCAxIG9mIDEgdGVzdHMNCg0KQXMgZmFyIGFzIEkgY2FuIHNlZSwgdGhl
-IGdlbmVyaWMvNjA0IGludGVudGlvbmFsbHkgZGVsYXlzIHRoZSB1bm1vdW50IGFuZCBtb3VudA0K
-b3BlcmF0aW9uIHN0YXJ0cyBiZWZvcmUgdW5tb3VudCBmaW5pc2g6DQoNCiMgRm9yIG92ZXJsYXlm
-cywgYXZvaWQgdW5tb3VudGluZyB0aGUgYmFzZSBmcyBhZnRlciBfc2NyYXRjaF9tb3VudCB0cmll
-cyB0bw0KIyBtb3VudCB0aGUgYmFzZSBmcy4gIERlbGF5IHRoZSBtb3VudCBhdHRlbXB0IGJ5IGEg
-c21hbGwgYW1vdW50IGluIHRoZSBob3BlDQojIHRoYXQgdGhlIG1vdW50KCkgY2FsbCB3aWxsIHRy
-eSB0byBsb2NrIHNfdW1vdW50IC9hZnRlci8gdW1vdW50IGhhcyBhbHJlYWR5DQojIHRha2VuIGl0
-Lg0KJFVNT1VOVF9QUk9HICRTQ1JBVENIX01OVCAmDQpzbGVlcCAwLjAxcyA7IF9zY3JhdGNoX21v
-dW50DQp3YWl0DQoNCkFzIGEgcmVzdWx0LCB3ZSBoYXZlIHRoaXMgaXNzdWUgYmVjYXVzZSBhIG1u
-dF9jb3VudCBpcyBiaWdnZXIgdGhhbiBleHBlY3RlZCBvbmUNCmluIHByb3BhZ2F0ZV9tb3VudF9i
-dXN5KCkgWzFdOg0KDQoJfSBlbHNlIHsNCgkJc21wX21iKCk7IC8vIHBhaXJlZCB3aXRoIF9fbGVn
-aXRpbWl6ZV9tbnQoKQ0KCQlzaHJpbmtfc3VibW91bnRzKG1udCk7DQoJCXJldHZhbCA9IC1FQlVT
-WTsNCgkJaWYgKCFwcm9wYWdhdGVfbW91bnRfYnVzeShtbnQsIDIpKSB7DQoJCQl1bW91bnRfdHJl
-ZShtbnQsIFVNT1VOVF9QUk9QQUdBVEV8VU1PVU5UX1NZTkMpOw0KCQkJcmV0dmFsID0gMDsNCgkJ
-fQ0KCX0NCg0KDQpbICAgNzEuMzQ3MzcyXSBwaWQgMzc2MiBkb191bW91bnQoKToyMDIyIGZpbmlz
-aGVkOiAgbW50X2dldF9jb3VudChtbnQpIDMNCg0KQnV0IGlmIEkgYW0gdHJ5aW5nIHRvIHVuZGVy
-c3RhbmQgd2hhdCBpcyBnb2luZyBvbiBkdXJpbmcgbW91bnQsIHRoZW4gSSBjYW4gc2VlDQp0aGF0
-IEkgY2FuIG1vdW50IHRoZSBzYW1lIGZpbGUgc3lzdGVtIGluc3RhbmNlIG11bHRpcGxlIHRpbWVz
-IGV2ZW4gZm9yIHRoZSBzYW1lDQptb3VudCBwb2ludDoNCg0KMTkyLjE2OC4xLjE5NTo2Nzg5LDE5
-Mi4xNjguMS4yMTI6Njc4OSwxOTIuMTY4LjEuMjEzOjY3ODk6LyBvbiAvbW50L2NlcGhmcyB0eXBl
-DQpjZXBoIChydyxyZWxhdGltZSxuYW1lPWFkbWluLHNlY3JldD08aGlkZGVuPixmc2lkPTMxOTc3
-YjA2LThjZGItNDJhOS05N2FkLQ0KZDZhN2Q1OWE0MmRkLGFjbCxtZHNfbmFtZXNwYWNlPWNlcGhm
-cykNCjE5Mi4xNjguMS4xOTU6Njc4OSwxOTIuMTY4LjEuMjEyOjY3ODksMTkyLjE2OC4xLjIxMzo2
-Nzg5Oi8gb24gL21udC9UZXN0Q2VwaEZTDQp0eXBlIGNlcGggKHJ3LHJlbGF0aW1lLG5hbWU9YWRt
-aW4sc2VjcmV0PTxoaWRkZW4+LGZzaWQ9MzE5NzdiMDYtOGNkYi00MmE5LTk3YWQtDQpkNmE3ZDU5
-YTQyZGQsYWNsLG1kc19uYW1lc3BhY2U9Y2VwaGZzKQ0KMTkyLjE2OC4xLjE5NTo2Nzg5LDE5Mi4x
-NjguMS4yMTI6Njc4OSwxOTIuMTY4LjEuMjEzOjY3ODk6LyBvbiAvbW50L2NlcGhmcyB0eXBlDQpj
-ZXBoIChydyxyZWxhdGltZSxuYW1lPWFkbWluLHNlY3JldD08aGlkZGVuPixmc2lkPTMxOTc3YjA2
-LThjZGItNDJhOS05N2FkLQ0KZDZhN2Q1OWE0MmRkLGFjbCxtZHNfbmFtZXNwYWNlPWNlcGhmcykN
-CjE5Mi4xNjguMS4xOTU6Njc4OSwxOTIuMTY4LjEuMjEyOjY3ODksMTkyLjE2OC4xLjIxMzo2Nzg5
-Oi8gb24gL21udC9jZXBoZnMgdHlwZQ0KY2VwaCAocncscmVsYXRpbWUsbmFtZT1hZG1pbixzZWNy
-ZXQ9PGhpZGRlbj4sZnNpZD0zMTk3N2IwNi04Y2RiLTQyYTktOTdhZC0NCmQ2YTdkNTlhNDJkZCxh
-Y2wsbWRzX25hbWVzcGFjZT1jZXBoZnMpDQoxOTIuMTY4LjEuMTk1OjY3ODksMTkyLjE2OC4xLjIx
-Mjo2Nzg5LDE5Mi4xNjguMS4yMTM6Njc4OTovIG9uIC9tbnQvY2VwaGZzIHR5cGUNCmNlcGggKHJ3
-LHJlbGF0aW1lLG5hbWU9YWRtaW4sc2VjcmV0PTxoaWRkZW4+LGZzaWQ9MzE5NzdiMDYtOGNkYi00
-MmE5LTk3YWQtDQpkNmE3ZDU5YTQyZGQsYWNsLG1kc19uYW1lc3BhY2U9Y2VwaGZzKQ0KDQpBbmQg
-aXQgbG9va3MgcmVhbGx5IGNvbmZ1c2luZyB0byBtZS4gT0ssIGxldCdzIGltYWdpbmUgdGhhdCBt
-b3VudGluZyB0aGUgc2FtZQ0KZmlsZSBzeXN0ZW0gaW5zdGFuY2UgaW50byBkaWZmZXJlbnQgZm9s
-ZGVycyAoZm9yIGV4YW1wbGUsIC9tbnQvVGVzdENlcGhGUyBhbmQNCi9tbnQvY2VwaGZzKSBjb3Vs
-ZCBtYWtlIHNlbnNlLiBIb3dldmVyLCBJIGFtIG5vdCBzdXJlIHRoYXQgaXQgaXMgY29ycmVjdA0K
-YmVoYXZpb3IuIEJ1dCBtb3VudGluZyB0aGUgc2FtZSBmaWxlIHN5c3RlbSBpbnN0YW5jZSBpbnRv
-IHRoZSBzYW1lIGZvbGRlcg0KZG9lc24ndCBtYWtlIHNlbnNlIHRvIG1lLiBNYXliZSwgSSBhbSBt
-aXNzaW5nIHNvbWV0aGluZyBpbXBvcnRhbnQgaGVyZS4NCg0KQW0gSSBjb3JyZWN0IGhlcmU/IElz
-IGl0IGV4cGVjdGVkIGJlaGF2aW9yPyBJIGFzc3VtZSB0aGF0IENlcGhGUyBoYXMgaW5jb3JyZWN0
-DQptb3VudCBsb2dpYyB0aGF0IGNyZWF0ZXMgdGhlIGlzc3VlIGR1cmluZyB1bW91bnQgb3BlcmF0
-aW9uPyBBbnkgdGhvdWdodHM/DQoNClRoYW5rcywNClNsYXZhLg0KDQpbMV0gaHR0cHM6Ly9lbGl4
-aXIuYm9vdGxpbi5jb20vbGludXgvdjYuMTctcmMxL3NvdXJjZS9mcy9uYW1lc3BhY2UuYyNMMjAw
-Mg0K
+=EF=BB=BF
+> On Aug 25, 2025, at 11:10=E2=80=AFAM, Jeff Xu <jeffxu@google.com> wrote:
+>=20
+> =EF=BB=BFOn Mon, Aug 25, 2025 at 9:43=E2=80=AFAM Andy Lutomirski <luto@ama=
+capital.net> wrote:
+>>> On Mon, Aug 25, 2025 at 2:31=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@di=
+gikod.net> wrote:
+>>> On Sun, Aug 24, 2025 at 11:04:03AM -0700, Andy Lutomirski wrote:
+>>>> On Sun, Aug 24, 2025 at 4:03=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@d=
+igikod.net> wrote:
+>>>>> On Fri, Aug 22, 2025 at 09:45:32PM +0200, Jann Horn wrote:
+>>>>>> On Fri, Aug 22, 2025 at 7:08=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic=
+@digikod.net> wrote:
+>>>>>>> Add a new O_DENY_WRITE flag usable at open time and on opened file (=
+e.g.
+>>>>>>> passed file descriptors).  This changes the state of the opened file=
+ by
+>>>>>>> making it read-only until it is closed.  The main use case is for sc=
+ript
+>>>>>>> interpreters to get the guarantee that script' content cannot be alt=
+ered
+>>>>>>> while being read and interpreted.  This is useful for generic distro=
+s
+>>>>>>> that may not have a write-xor-execute policy.  See commit a5874fde3c=
+08
+>>>>>>> ("exec: Add a new AT_EXECVE_CHECK flag to execveat(2)")
+>>>>>>> Both execve(2) and the IOCTL to enable fsverity can already set this=
+
+>>>>>>> property on files with deny_write_access().  This new O_DENY_WRITE m=
+ake
+>>>>>> The kernel actually tried to get rid of this behavior on execve() in
+>>>>>> commit 2a010c41285345da60cece35575b4e0af7e7bf44.; but sadly that had
+>>>>>> to be reverted in commit 3b832035387ff508fdcf0fba66701afc78f79e3d
+>>>>>> because it broke userspace assumptions.
+>>>>> Oh, good to know.
+>>>>>>> it widely available.  This is similar to what other OSs may provide
+>>>>>>> e.g., opening a file with only FILE_SHARE_READ on Windows.
+>>>>>> We used to have the analogous mmap() flag MAP_DENYWRITE, and that was=
+
+>>>>>> removed for security reasons; as
+>>>>>> https://man7.org/linux/man-pages/man2/mmap.2.html says:
+>>>>>> |        MAP_DENYWRITE
+>>>>>> |               This flag is ignored.  (Long ago=E2=80=94Linux 2.0 an=
+d earlier=E2=80=94it
+>>>>>> |               signaled that attempts to write to the underlying fil=
+e
+>>>>>> |               should fail with ETXTBSY.  But this was a source of d=
+enial-
+>>>>>> |               of-service attacks.)"
+>>>>>> It seems to me that the same issue applies to your patch - it would
+>>>>>> allow unprivileged processes to essentially lock files such that othe=
+r
+>>>>>> processes can't write to them anymore. This might allow unprivileged
+>>>>>> users to prevent root from updating config files or stuff like that i=
+f
+>>>>>> they're updated in-place.
+>>>>> Yes, I agree, but since it is the case for executed files I though it
+>>>>> was worth starting a discussion on this topic.  This new flag could be=
+
+>>>>> restricted to executable files, but we should avoid system-wide locks
+>>>>> like this.  I'm not sure how Windows handle these issues though.
+>>>>> Anyway, we should rely on the access control policy to control write a=
+nd
+>>>>> execute access in a consistent way (e.g. write-xor-execute).  Thanks f=
+or
+>>>>> the references and the background!
+>>>> I'm confused.  I understand that there are many contexts in which one
+>>>> would want to prevent execution of unapproved content, which might
+>>>> include preventing a given process from modifying some code and then
+>>>> executing it.
+>>>> I don't understand what these deny-write features have to do with it.
+>>>> These features merely prevent someone from modifying code *that is
+>>>> currently in use*, which is not at all the same thing as preventing
+>>>> modifying code that might get executed -- one can often modify
+>>>> contents *before* executing those contents.
+>>> The order of checks would be:
+>>> 1. open script with O_DENY_WRITE
+>>> 2. check executability with AT_EXECVE_CHECK
+>>> 3. read the content and interpret it
+>> Hmm.  Common LSM configurations should be able to handle this without
+>> deny write, I think.  If you don't want a program to be able to make
+>> their own scripts, then don't allow AT_EXECVE_CHECK to succeed on a
+>> script that the program can write.
+> Yes, Common LSM could handle this, however, due to historic and app
+> backward compability reason, sometimes it is impossible to enforce
+> that kind of policy in practice, therefore as an alternative, a
+> machinism such as AT_EXECVE_CHECK is really useful.
+
+Can you clarify?  I=E2=80=99m suspicious that we=E2=80=99re taking past each=
+ other.
+
+AT_EXECVE_CHECK solves a problem that there are actions that effectively =E2=
+=80=9Cexecute=E2=80=9D a file that don=E2=80=99t execute literal CPU instruc=
+tions for it. Sometimes open+read has the effect of interpreting the content=
+s of the file as something code-like.
+
+But, as I see it, deny-write is almost entirely orthogonal. If you open a fi=
+le with the intent of executing it (mmap-execute or interpret =E2=80=94 make=
+s little practical difference here), then the kernel can enforce some policy=
+. If the file is writable by a process that ought not have permission to exe=
+cute code in the context of the opening-for-execute process, then LSMs need d=
+eny-write to be enforced so that they can verify the contents at the time of=
+ opening.
+
+But let=E2=80=99s step back a moment: is there any actual sensible security p=
+olicy that does this?  If I want to *enforce* that a process only execute ap=
+proved code, then wouldn=E2=80=99t I do it be only allowing executing files t=
+hat the process can=E2=80=99t write?
+
+The reason that the removal of deny-write wasn=E2=80=99t security =E2=80=94 i=
+t was a functionality issue: a linker accidentally modified an in-use binary=
+. If you have permission to use gcc or lld, etc to create binaries, and you h=
+ave permission to run them, then you pretty much have permission to run what=
+ever code you like.
+
+So, if there=E2=80=99s a real security use case for deny-write, I=E2=80=99m s=
+till not seeing it.
+
+>> Keep in mind that trying to lock this down too hard is pointless for
+>> users who are allowed to to ptrace-write to their own processes.  Or
+>> for users who can do JIT, or for users who can run a REPL, etc.
+> The ptrace-write and /proc/pid/mem writing are on my radar, at least
+> for ChomeOS and Android.
+> AT_EXECVE_CHECK is orthogonal to those IMO, I hope eventually all
+> those paths will be hardened.
+>=20
+> Thanks and regards,
+> -Jeff
 
