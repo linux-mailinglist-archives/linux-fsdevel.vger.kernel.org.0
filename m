@@ -1,99 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-59104-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59105-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81CCDB34717
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 18:22:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C41EFB34729
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 18:23:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B2822A5865
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 16:22:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6D641A885FC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 16:23:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B642C301470;
-	Mon, 25 Aug 2025 16:21:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34DFE301006;
+	Mon, 25 Aug 2025 16:23:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="JgBmagAI"
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="Z2mbH88b"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F51301029
-	for <linux-fsdevel@vger.kernel.org>; Mon, 25 Aug 2025 16:21:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756138884; cv=none; b=Mk0yh7GBSoV/mV6//YN3kotwIQQ0y6ycCNYEtORlOURTo8hulW9o5qeqwbHBOhnOE4W24MJ7iGsGSJ6iLhwzZg7kFRzQT0vd8WpGO41TUjgsMNiTEt/d9gA/Sb8Ps0TJSYYkJ4twMMD9ykv1S10vpmqizCw40eZIHQhq9s376Mw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756138884; c=relaxed/simple;
-	bh=Z9caLutQEhVyT+pZMKa+xjKkb5GzAdagbjYfBS/W2Yc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OEebfsBWHxpHcKBnqxlMt4YKXzfNCDYYQJ35sV/Z/25VvORMbB5OSI8MmOiP/LPcgO42ElSg6C2LTgI/6FjPg+oK8cNwcPRQiEU7cf/TaVjUKrBI5wWaNfguNOmogfJcrqHL/+kqZS/k/bIzkdr1odiICeMhUuX6sE6rGvPKJl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=JgBmagAI; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ya0ljvtcAK8qBQ3Alu0GIckJZht3u2+psLRiTHbdmQo=; b=JgBmagAIHSpYHDPliqMvHxqDiq
-	A0SU9tlqGuoYHz8nX7Gox5TlHJ0oXRgx0/6lu35wGAyMPTCVYHjMsW8q1X77/IjSNCwU99+f2YtIt
-	6vfF3FXADvWmYllCvwXPDPiRGGqvZJN7T4fINy8GoiRbRsLcqNPzutSBco2Kd2LKfdH2Dug8iNXbk
-	xAjVehpnjmuC6T7hCSo2AhGZtgfonTPM0WADwJEOgeB+vQFLdSmhZr2AEghix+PseL/n3IqsiN+oe
-	76Nd2BobiuMJbGPmaDBu22GkjEXZtIHDE+wjRlA2g7xcTfZgjmDyMXtQF79P7wsi5Ypg0UblNq88J
-	4iXKPbHA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uqZwe-0000000GKEK-1MiD;
-	Mon, 25 Aug 2025 16:21:20 +0000
-Date: Mon, 25 Aug 2025 17:21:20 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, jack@suse.cz,
-	torvalds@linux-foundation.org
-Subject: Re: [PATCH 09/52] put_mnt_ns(): use guards
-Message-ID: <20250825162120.GN39973@ZenIV>
-References: <20250825044046.GI39973@ZenIV>
- <20250825044355.1541941-1-viro@zeniv.linux.org.uk>
- <20250825044355.1541941-9-viro@zeniv.linux.org.uk>
- <20250825-hohen-brokkoli-377019b30a94@brauner>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF8D22FF643;
+	Mon, 25 Aug 2025 16:23:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756139003; cv=pass; b=fg3FraZ3yd8utCAAbOysweTRAkFfQ0LDSAGwRwNW+mV3P6HS4Wlo5fKUn55R2vQTJd+O3W6RNYCwkYhEMs3NGRDFqre3rModsK2MdJ7DLXiHm/uncaxQvgmzJ6pE67ManPJnlWeWhkZxSRswn4CK4vQdxbBKMFmYBeZ+kmTsxW8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756139003; c=relaxed/simple;
+	bh=Ot3Cby7vnWjdS324TAkSDK/FRhMj+hur58Pfr1nvpBE=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=lBuxErxIQhxPsGpy4NUphUxvV59CVbFLTHxhEHkuem09dR3bjfvLrDSnQoAhakGsEaLX1XS1e3fawWyyWZ9hckG5o/RBY4MNfR4R5l4Cvzc0JUbhSv3ItzCpiLpoHuqpWtwwQkJAVYX1seHbjs+VwL5GFGWXpeG2it5v3eSmeD4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=Z2mbH88b; arc=pass smtp.client-ip=136.143.188.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1756138977; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=SQtasbswibAJ4WMRqmVEvIJqktnSAoEOL3OpdtSqDA8RGWKfUTEv69NnZ9/WqdCXa9I309MbEdRHunNNvUbWJPLcpczE6g4gQ3k8Rx9MNgliDubxkPbv0e+LLPaYRNGx1Ts8L5ZKCCdA29l0KzHVvujMcdCOrS37Wxa0cj3zdio=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1756138977; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=KM1jORzEtfwKNV4NwQFUqoNRg3Nu+/yOFx85Kkh0vk4=; 
+	b=XrH3esGSyj1Pxkh0V/mLHVfQAPQXJI3OytHNDYG2z1pFPKZ4MvZ1gzCwM9tu3g0qej1YU4LOhaDrjMexjAbT8Eq4wMWjc/l9epaHjwzK4uTtAL2H95CnuV56yuWKCWw2c9gF3QRzcuQUYgC98bmnnsbSQkdQgR1Pw1DfHukAYQk=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
+	dmarc=pass header.from=<safinaskar@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756138977;
+	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=KM1jORzEtfwKNV4NwQFUqoNRg3Nu+/yOFx85Kkh0vk4=;
+	b=Z2mbH88bKtxQtN5eXIOoUIoHDQURn9y+gPLlnDT1q9ojFTe5U2Rdp3tIfFHG8s9+
+	eE4YYve7JUxFcN7fS9OTS+ECy/RONyIdolp2dSVlnWGQqXrh8Ezab9JaBbD2KVhuap6
+	fNZ6BDa2KWdpPyEBnD6JUkaJQawOLP5zmN04KoVY=
+Received: from mail.zoho.com by mx.zohomail.com
+	with SMTP id 1756138975381478.39810192964376; Mon, 25 Aug 2025 09:22:55 -0700 (PDT)
+Received: from  [212.73.77.104] by mail.zoho.com
+	with HTTP;Mon, 25 Aug 2025 09:22:55 -0700 (PDT)
+Date: Mon, 25 Aug 2025 20:22:55 +0400
+From: Askar Safin <safinaskar@zohomail.com>
+To: "Aleksa Sarai" <cyphar@cyphar.com>
+Cc: "Alejandro Colomar" <alx@kernel.org>,
+	"Michael T. Kerrisk" <mtk.manpages@gmail.com>,
+	"Alexander Viro" <viro@zeniv.linux.org.uk>,
+	"Jan Kara" <jack@suse.cz>,
+	"G. Branden Robinson" <g.branden.robinson@gmail.com>,
+	"linux-man" <linux-man@vger.kernel.org>,
+	"linux-api" <linux-api@vger.kernel.org>,
+	"linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel" <linux-kernel@vger.kernel.org>,
+	"David Howells" <dhowells@redhat.com>,
+	"Christian Brauner" <brauner@kernel.org>
+Message-ID: <198e20a3088.ef79515d27409.5672203109742133398@zohomail.com>
+In-Reply-To: <2025-08-22.1755869779-quirky-demur-grunts-mace-Hoxz0h@cyphar.com>
+References: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com>
+ <20250809-new-mount-api-v3-5-f61405c80f34@cyphar.com>
+ <198d1f2e189.11dbac16b2998.3847935512688537521@zohomail.com> <2025-08-22.1755869779-quirky-demur-grunts-mace-Hoxz0h@cyphar.com>
+Subject: Re: [PATCH v3 05/12] man/man2/fspick.2: document "new" mount API
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250825-hohen-brokkoli-377019b30a94@brauner>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
+Feedback-ID: rr08011227d6e3807cdfc5cfa01b04b0b00000cc4a99c65cf763561414276e55d6c27b40f61f457bd2718012:zu08011227d5b102457715986c01d227670000a0501beb61a5fc231420d02b2f604cf344dc5aabca20522440:rf0801122ce5c664ea73491759ac9acb390000b7dc1f0dc6587399277118a6be2d8a2118936d7af68d3ae4aa4ddff9747e:ZohoMail
 
-On Mon, Aug 25, 2025 at 02:40:53PM +0200, Christian Brauner wrote:
+ ---- On Fri, 22 Aug 2025 17:40:18 +0400  Aleksa Sarai <cyphar@cyphar.com> wrote --- 
+ > On 2025-08-22, Askar Safin <safinaskar@zohomail.com> wrote:
+ > >  ---- On Sat, 09 Aug 2025 00:39:49 +0400  Aleksa Sarai <cyphar@cyphar.com> wrote --- 
+ > >  > +The above procedure is functionally equivalent to
+ > >  > +the following mount operation using
+ > >  > +.BR mount (2):
+ > > 
+ > > This is not true.
+ > > 
+ > > fspick adds options to superblock. It doesn't remove existing ones.
+ > 
+ > fspick "copies the existing parameters" would be more accurate. I can
+ > reword this, but it's an example and I don't think it makes sense to add
+ > a large amount of clarifying text for each example.
 
-> Another thing, did I miss
-> 
-> commit aab771f34e63ef89e195b63d121abcb55eebfde6
-> Author:     Al Viro <viro@zeniv.linux.org.uk>
-> AuthorDate: Wed Jun 18 18:23:41 2025 -0400
-> Commit:     Al Viro <viro@zeniv.linux.org.uk>
-> CommitDate: Sun Jun 29 19:03:46 2025 -0400
-> 
->     take freeing of emptied mnt_namespace to namespace_unlock()
-> 
-> on the list somehow? I just saw that "emptied_ns" thing for the first
-> time and was very confused where that came from. I don't see any lore
-> link attached to the commit message.
+I suggest adding "but mount(2) clears existing parameters here, and fspick/fsconfig doesn't".
 
-https://lore.kernel.org/all/20250623045428.1271612-35-viro@zeniv.linux.org.uk/
+--
+Askar Safin
+https://types.pl/@safinaskar
 
-and
-
-https://lore.kernel.org/all/20250630025255.1387419-45-viro@zeniv.linux.org.uk/
-
-in the next iteration of the same patchset, both Cc'd to you.
-
-As for the reasons, there are nasty hidden constraints caused by mount notifications;
-even though all mounts are out of that namespace, we can't free it until the calls
-of mnt_notify(), which come from notify_mnt_list(), from namespace_unlock().
-
-Better handle it that way than have a recurring headache; besides, it helps with
-cleaning post-unlock_mount() stuff.
 
