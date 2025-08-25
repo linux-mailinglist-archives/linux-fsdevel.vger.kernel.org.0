@@ -1,56 +1,68 @@
-Return-Path: <linux-fsdevel+bounces-58998-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58999-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43335B33D81
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 13:03:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 858D9B33DB8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 13:09:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3002B1A81C19
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 11:03:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49AA0205D32
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 11:09:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A10062E1C63;
-	Mon, 25 Aug 2025 11:03:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D7AB2E1EEB;
+	Mon, 25 Aug 2025 11:09:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L/quDcXi"
+	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="D5vErNKa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFFC72D0623;
-	Mon, 25 Aug 2025 11:03:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2192D5406;
+	Mon, 25 Aug 2025 11:09:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756119789; cv=none; b=gdWAVqhqiaQLy3Y4egO/Nlhr8uR1fTNxl83zJ5TC+uwC+oDRQUpslz5JOwUVr68UHKVGalTnSEs6MiRiRdkj/fTJAUKFE9LBk1kYYb1sXv1hx5EYkf6j1uRvxbM6hDnXQJ4eefBSwuW4PReVFH5Nmc1ctLX6Dww3P81DAV9duBc=
+	t=1756120157; cv=none; b=dIvgzuMWMpg+zE8VuKWJSJQ9Cf39nWRc3fT9FwP3bpsBYp/03aQUSzZBU1S4nZ2eFcLgnz977aXBimDE5K0WF3atTvRbrtvNKwlMMTVasjbhc1DtJXMghX3VeOIUAXkTO/rrvphM3hkMiWvJ2Wi37n5nx67Iq+7QfxG2ujDDi7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756119789; c=relaxed/simple;
-	bh=fwrctz1rF3tI30wat7xXKwqxu7qkIBSRaE8+WXj1AL0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H605DuXvI7cZAKJVq4Sx614le0s6cl4izvu9GvPtgFljpQUhxcy/oHKlwBfDztbyihJPohm+8T4SoI0VN5Mi2V5vO9S6ZZXP82MLlZcLNFDByqmkfO3OKH3PI6/5YjTkwVng8e3fEJEkXLCbc9OSd217CYYBqCF6E59CjhZgIQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L/quDcXi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAF04C4CEED;
-	Mon, 25 Aug 2025 11:03:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756119788;
-	bh=fwrctz1rF3tI30wat7xXKwqxu7qkIBSRaE8+WXj1AL0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L/quDcXit+tuqXQuhp0NXL46YUg8fwuQhIbmxR23KTq+Sczg0RmSOejw/CjOse1QE
-	 a/IZrQvQeDbQQ9zgovHruQmNIaTSXqCGVxxV7+pEeaoEf7cBcFEkacjz90usZj3boW
-	 1WmFy+DxeJ6L9h7NwE2R6UjaTT6IhBs4atAeanR8mB099FM01dFnL9Vp1W5q0sh+T7
-	 BbnqS/pb4MHMosYyNtg5FAh5/8uU8An7bfwK0fsPx1zaIIymgoRJs7LyK0W+s8GR2p
-	 AC9+1z7HepCJRvFDmSRhTSizNf0O9MfJ/5NuFGrDfy1qpPYnUpIxyaWIaD0uyNf7mp
-	 6HlYVWdl/lE4Q==
-Date: Mon, 25 Aug 2025 13:03:04 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org, 
-	kernel-team@fb.com, linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	viro@zeniv.linux.org.uk
-Subject: Re: [PATCH 20/50] fs: convert i_count to refcount_t
-Message-ID: <20250825-gemein-eierkuchen-fab7184a080b@brauner>
-References: <cover.1755806649.git.josef@toxicpanda.com>
- <6a12e35a078d765b50bc7ced7030d6cd98065528.1755806649.git.josef@toxicpanda.com>
+	s=arc-20240116; t=1756120157; c=relaxed/simple;
+	bh=E/rJutjjHAOnQijuJDlErN8XamGuSWBFfQFN6zLLTDw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=XtbA0cFdQJezL8i58Ch4Ei+qzRdmP1iKFG+Kzj5iUKoyce3rWMcGQ6K8UztFVIZrQf/WXLNqzYWDS1a6gfUALyyM21txFNZc9a/DhkMEteVhXAZNX8Uct88q6E77yEP172YArylQG19fv14yqEmkLEPWuXq/lqYd0raygdIDV24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be; spf=pass smtp.mailfrom=krisman.be; dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b=D5vErNKa; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=krisman.be
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 176614335A;
+	Mon, 25 Aug 2025 11:09:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=gm1;
+	t=1756120152;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7TZWh2miVjNMMNtsl3nXpBGayog/kcpFFnfG2ACtIow=;
+	b=D5vErNKafppXWWBOBlYIVIdTLzRbPMOrAxfaXtyov9Kf0dwdPu1or+5sypFCTYuxsIqhEx
+	b6O93tBullTXXbXaMPBkRrEvBIN1mFIhTONryC/X3996tiLOtp6o4CBRASPnDXjUeSZWq3
+	PhzbV9PUuskan5IgFPuRxv+UPe/DsDc3E3D5ULdt9o8NvuXIa8ETy15g31s2sJfa9bIiIT
+	xiXLMKLsjAqWSjD2rVk+aFLVOqZZvAbtEsItNPl32LYoeWNHvv7ZJGMaOll07jyz+qvFh/
+	m63P2K7vnDsMjvQLofg744IsSz0lRwZd4rCkXdQ37q0bvjsgOhRFj5St5FJ//w==
+From: Gabriel Krisman Bertazi <gabriel@krisman.be>
+To: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>,  Amir Goldstein
+ <amir73il@gmail.com>,  Theodore Tso <tytso@mit.edu>,
+  linux-unionfs@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-fsdevel@vger.kernel.org,  Alexander Viro <viro@zeniv.linux.org.uk>,
+  Christian Brauner <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,
+  kernel-dev@igalia.com
+Subject: Re: [PATCH v6 4/9] ovl: Create ovl_casefold() to support casefolded
+ strncmp()
+In-Reply-To: <20250822-tonyk-overlayfs-v6-4-8b6e9e604fa2@igalia.com>
+ (=?utf-8?Q?=22Andr=C3=A9?=
+	Almeida"'s message of "Fri, 22 Aug 2025 11:17:07 -0300")
+References: <20250822-tonyk-overlayfs-v6-0-8b6e9e604fa2@igalia.com>
+	<20250822-tonyk-overlayfs-v6-4-8b6e9e604fa2@igalia.com>
+Date: Mon, 25 Aug 2025 07:09:07 -0400
+Message-ID: <875xeb64ks.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -58,302 +70,334 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <6a12e35a078d765b50bc7ced7030d6cd98065528.1755806649.git.josef@toxicpanda.com>
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddujedvvdefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufgjfhffkfgfgggtgfesthhqredttderjeenucfhrhhomhepifgrsghrihgvlhcumfhrihhsmhgrnhcuuegvrhhtrgiiihcuoehgrggsrhhivghlsehkrhhishhmrghnrdgsvgeqnecuggftrfgrthhtvghrnhepfedtvdehffevtddujeffffejudeuuefgvdeujeduhedtgfehkeefheegjefgueeknecukfhppeejtddrkedvrddukedvrdeikeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeejtddrkedvrddukedvrdeikedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepghgrsghrihgvlheskhhrihhsmhgrnhdrsggvpdhnsggprhgtphhtthhopeduuddprhgtphhtthhopegrnhgurhgvrghlmhgvihgusehighgrlhhirgdrtghomhdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtoheprghmihhrjeefihhlsehgmhgrihhlrdgtohhmpdhrtghpthhtohepthihthhsohesmhhithdrvgguuhdprhgtphhtthhopehlihhnuhigqdhunhhiohhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvr
+ hhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhk
+X-GND-Sasl: gabriel@krisman.be
 
-On Thu, Aug 21, 2025 at 04:18:31PM -0400, Josef Bacik wrote:
-> Now that we do not allow i_count to drop to 0 and be used we can convert
-> it to a refcount_t and benefit from the protections those helpers add.
-> 
-> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+Andr=C3=A9 Almeida <andrealmeid@igalia.com> writes:
+
+> To add overlayfs support casefold layers, create a new function
+> ovl_casefold(), to be able to do case-insensitive strncmp().
+>
+> ovl_casefold() allocates a new buffer and stores the casefolded version
+> of the string on it. If the allocation or the casefold operation fails,
+> fallback to use the original string.
+>
+> The case-insentive name is then used in the rb-tree search/insertion
+> operation. If the name is found in the rb-tree, the name can be
+> discarded and the buffer is freed. If the name isn't found, it's then
+> stored at struct ovl_cache_entry to be used later.
+>
+> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
 > ---
-
-I've commented on that earlier in the series:
-We should have no plain accesses to ->i_count anywhere outside of core
-vfs. We should always use accessors. So please add icount_read() and
-iobj_count_read() or something similar like we have file_ref_read().
-
->  arch/powerpc/platforms/cell/spufs/file.c |  2 +-
->  fs/btrfs/inode.c                         |  4 ++--
->  fs/ceph/mds_client.c                     |  2 +-
->  fs/ext4/ialloc.c                         |  4 ++--
->  fs/fs-writeback.c                        |  2 +-
->  fs/hpfs/inode.c                          |  2 +-
->  fs/inode.c                               | 11 ++++++-----
->  fs/nfs/inode.c                           |  4 ++--
->  fs/notify/fsnotify.c                     |  2 +-
->  fs/ubifs/super.c                         |  2 +-
->  fs/xfs/xfs_inode.c                       |  2 +-
->  fs/xfs/xfs_trace.h                       |  2 +-
->  include/linux/fs.h                       |  4 ++--
->  include/trace/events/filelock.h          |  2 +-
->  security/landlock/fs.c                   |  2 +-
->  15 files changed, 24 insertions(+), 23 deletions(-)
-> 
-> diff --git a/arch/powerpc/platforms/cell/spufs/file.c b/arch/powerpc/platforms/cell/spufs/file.c
-> index d5a2c77bc908..3f768b003838 100644
-> --- a/arch/powerpc/platforms/cell/spufs/file.c
-> +++ b/arch/powerpc/platforms/cell/spufs/file.c
-> @@ -1430,7 +1430,7 @@ static int spufs_mfc_open(struct inode *inode, struct file *file)
->  	if (ctx->owner != current->mm)
->  		return -EINVAL;
->  
-> -	if (atomic_read(&inode->i_count) != 1)
-> +	if (refcount_read(&inode->i_count) != 1)
->  		return -EBUSY;
->  
->  	mutex_lock(&ctx->mapping_lock);
-> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-> index bbbcd96e8f5c..e85e38df3ea0 100644
-> --- a/fs/btrfs/inode.c
-> +++ b/fs/btrfs/inode.c
-> @@ -3418,7 +3418,7 @@ void btrfs_add_delayed_iput(struct btrfs_inode *inode)
->  	struct btrfs_fs_info *fs_info = inode->root->fs_info;
->  	unsigned long flags;
->  
-> -	if (atomic_add_unless(&inode->vfs_inode.i_count, -1, 1)) {
-> +	if (refcount_dec_not_one(&inode->vfs_inode.i_count)) {
->  		iobj_put(&inode->vfs_inode);
->  		return;
->  	}
-> @@ -4559,7 +4559,7 @@ static void btrfs_prune_dentries(struct btrfs_root *root)
->  
->  	inode = btrfs_find_first_inode(root, min_ino);
->  	while (inode) {
-> -		if (atomic_read(&inode->vfs_inode.i_count) > 1)
-> +		if (refcount_read(&inode->vfs_inode.i_count) > 1)
->  			d_prune_aliases(&inode->vfs_inode);
->  
->  		min_ino = btrfs_ino(inode) + 1;
-> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> index 0f497c39ff82..ff666d18f6ad 100644
-> --- a/fs/ceph/mds_client.c
-> +++ b/fs/ceph/mds_client.c
-> @@ -2221,7 +2221,7 @@ static int trim_caps_cb(struct inode *inode, int mds, void *arg)
->  			int count;
->  			dput(dentry);
->  			d_prune_aliases(inode);
-> -			count = atomic_read(&inode->i_count);
-> +			count = refcount_read(&inode->i_count);
->  			if (count == 1)
->  				(*remaining)--;
->  			doutc(cl, "%p %llx.%llx cap %p pruned, count now %d\n",
-> diff --git a/fs/ext4/ialloc.c b/fs/ext4/ialloc.c
-> index df4051613b29..9a3c7f22a57e 100644
-> --- a/fs/ext4/ialloc.c
-> +++ b/fs/ext4/ialloc.c
-> @@ -252,10 +252,10 @@ void ext4_free_inode(handle_t *handle, struct inode *inode)
->  		       "nonexistent device\n", __func__, __LINE__);
->  		return;
->  	}
-> -	if (atomic_read(&inode->i_count) > 1) {
-> +	if (refcount_read(&inode->i_count) > 1) {
->  		ext4_msg(sb, KERN_ERR, "%s:%d: inode #%lu: count=%d",
->  			 __func__, __LINE__, inode->i_ino,
-> -			 atomic_read(&inode->i_count));
-> +			 refcount_read(&inode->i_count));
->  		return;
->  	}
->  	if (inode->i_nlink) {
-> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> index 111a9d8215bf..789c4228412c 100644
-> --- a/fs/fs-writeback.c
-> +++ b/fs/fs-writeback.c
-> @@ -1796,7 +1796,7 @@ static int writeback_single_inode(struct inode *inode,
->  	int ret = 0;
->  
->  	spin_lock(&inode->i_lock);
-> -	if (!atomic_read(&inode->i_count))
-> +	if (!refcount_read(&inode->i_count))
->  		WARN_ON(!(inode->i_state & (I_WILL_FREE|I_FREEING)));
->  	else
->  		WARN_ON(inode->i_state & I_WILL_FREE);
-> diff --git a/fs/hpfs/inode.c b/fs/hpfs/inode.c
-> index a59e8fa630db..ee23a941d8f5 100644
-> --- a/fs/hpfs/inode.c
-> +++ b/fs/hpfs/inode.c
-> @@ -184,7 +184,7 @@ void hpfs_write_inode(struct inode *i)
->  	struct hpfs_inode_info *hpfs_inode = hpfs_i(i);
->  	struct inode *parent;
->  	if (i->i_ino == hpfs_sb(i->i_sb)->sb_root) return;
-> -	if (hpfs_inode->i_rddir_off && !atomic_read(&i->i_count)) {
-> +	if (hpfs_inode->i_rddir_off && !refcount_read(&i->i_count)) {
->  		if (*hpfs_inode->i_rddir_off)
->  			pr_err("write_inode: some position still there\n");
->  		kfree(hpfs_inode->i_rddir_off);
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 07c8edb4b58a..28d197731914 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -236,7 +236,7 @@ int inode_init_always_gfp(struct super_block *sb, struct inode *inode, gfp_t gfp
->  	inode->i_state = 0;
->  	atomic64_set(&inode->i_sequence, 0);
->  	refcount_set(&inode->i_obj_count, 1);
-> -	atomic_set(&inode->i_count, 1);
-> +	refcount_set(&inode->i_count, 1);
->  	inode->i_op = &empty_iops;
->  	inode->i_fop = &no_open_fops;
->  	inode->i_ino = 0;
-> @@ -561,7 +561,8 @@ static void init_once(void *foo)
->  void ihold(struct inode *inode)
->  {
->  	iobj_get(inode);
-> -	WARN_ON(atomic_inc_return(&inode->i_count) < 2);
-> +	refcount_inc(&inode->i_count);
-> +	WARN_ON(refcount_read(&inode->i_count) < 2);
+> Changes from v6:
+>  - Last version was using `strncmp(... tmp->len)` which was causing
+>    regressions. It should be `strncmp(... len)`.
+>  - Rename cf_len to c_len
+>  - Use c_len for tree operation: (cmp < 0 || len < tmp->c_len)
+>  - Remove needless kfree(cf_name)
+> ---
+>  fs/overlayfs/readdir.c | 113 ++++++++++++++++++++++++++++++++++++++++---=
+------
+>  1 file changed, 94 insertions(+), 19 deletions(-)
+>
+> diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
+> index b65cdfce31ce27172d28d879559f1008b9c87320..dfc661b7bc3f87efbf14991e9=
+7cee169400d823b 100644
+> --- a/fs/overlayfs/readdir.c
+> +++ b/fs/overlayfs/readdir.c
+> @@ -27,6 +27,8 @@ struct ovl_cache_entry {
+>  	bool is_upper;
+>  	bool is_whiteout;
+>  	bool check_xwhiteout;
+> +	const char *c_name;
+> +	int c_len;
+>  	char name[];
+>  };
+>=20=20
+> @@ -45,6 +47,7 @@ struct ovl_readdir_data {
+>  	struct list_head *list;
+>  	struct list_head middle;
+>  	struct ovl_cache_entry *first_maybe_whiteout;
+> +	struct unicode_map *map;
+>  	int count;
+>  	int err;
+>  	bool is_upper;
+> @@ -66,6 +69,27 @@ static struct ovl_cache_entry *ovl_cache_entry_from_no=
+de(struct rb_node *n)
+>  	return rb_entry(n, struct ovl_cache_entry, node);
 >  }
->  EXPORT_SYMBOL(ihold);
->  
-> @@ -614,7 +615,7 @@ static void __inode_add_lru(struct inode *inode, bool rotate)
->  
->  	if (inode->i_state & (I_FREEING | I_WILL_FREE))
->  		return;
-> -	if (atomic_read(&inode->i_count) != 1)
-> +	if (refcount_read(&inode->i_count) != 1)
->  		return;
->  	if (inode->__i_nlink == 0)
->  		return;
-> @@ -2019,7 +2020,7 @@ static void __iput(struct inode *inode, bool skip_lru)
->  		return;
->  	BUG_ON(inode->i_state & I_CLEAR);
->  
-> -	if (atomic_add_unless(&inode->i_count, -1, 1)) {
-> +	if (refcount_dec_not_one(&inode->i_count)) {
->  		iobj_put(inode);
->  		return;
+>=20=20
+> +static int ovl_casefold(struct unicode_map *map, const char *str, int le=
+n, char **dst)
+> +{
+> +	const struct qstr qstr =3D { .name =3D str, .len =3D len };
+> +	int cf_len;
+> +
+> +	if (!IS_ENABLED(CONFIG_UNICODE) || !map || is_dot_dotdot(str, len))
+> +		return 0;
+> +
+> +	*dst =3D kmalloc(NAME_MAX, GFP_KERNEL);
+> +
+> +	if (dst) {
+> +		cf_len =3D utf8_casefold(map, &qstr, *dst, NAME_MAX);
+> +
+> +		if (cf_len > 0)
+> +			return cf_len;
+> +	}
+> +
+> +	kfree(*dst);
+> +	return 0;
+> +}
+
+Hi,
+
+I should just note this does not differentiates allocation errors from
+casefolding errors (invalid encoding).  It might be just a theoretical
+error because GFP_KERNEL shouldn't fail (wink, wink) and the rest of the
+operation is likely to fail too, but if you have an allocation failure, you
+can end up with an inconsistent cache, because a file is added under the
+!casefolded name and a later successful lookup will look for the
+casefolded version.
+
+> +
+>  static bool ovl_cache_entry_find_link(const char *name, int len,
+>  				      struct rb_node ***link,
+>  				      struct rb_node **parent)
+> @@ -79,10 +103,10 @@ static bool ovl_cache_entry_find_link(const char *na=
+me, int len,
+>=20=20
+>  		*parent =3D *newp;
+>  		tmp =3D ovl_cache_entry_from_node(*newp);
+> -		cmp =3D strncmp(name, tmp->name, len);
+> +		cmp =3D strncmp(name, tmp->c_name, len);
+>  		if (cmp > 0)
+>  			newp =3D &tmp->node.rb_right;
+> -		else if (cmp < 0 || len < tmp->len)
+> +		else if (cmp < 0 || len < tmp->c_len)
+>  			newp =3D &tmp->node.rb_left;
+>  		else
+>  			found =3D true;
+> @@ -101,10 +125,10 @@ static struct ovl_cache_entry *ovl_cache_entry_find=
+(struct rb_root *root,
+>  	while (node) {
+>  		struct ovl_cache_entry *p =3D ovl_cache_entry_from_node(node);
+>=20=20
+> -		cmp =3D strncmp(name, p->name, len);
+> +		cmp =3D strncmp(name, p->c_name, len);
+>  		if (cmp > 0)
+>  			node =3D p->node.rb_right;
+> -		else if (cmp < 0 || len < p->len)
+> +		else if (cmp < 0 || len < p->c_len)
+>  			node =3D p->node.rb_left;
+>  		else
+>  			return p;
+> @@ -145,6 +169,7 @@ static bool ovl_calc_d_ino(struct ovl_readdir_data *r=
+dd,
+>=20=20
+>  static struct ovl_cache_entry *ovl_cache_entry_new(struct ovl_readdir_da=
+ta *rdd,
+>  						   const char *name, int len,
+> +						   const char *c_name, int c_len,
+>  						   u64 ino, unsigned int d_type)
+>  {
+>  	struct ovl_cache_entry *p;
+> @@ -167,6 +192,14 @@ static struct ovl_cache_entry *ovl_cache_entry_new(s=
+truct ovl_readdir_data *rdd,
+>  	/* Defer check for overlay.whiteout to ovl_iterate() */
+>  	p->check_xwhiteout =3D rdd->in_xwhiteouts_dir && d_type =3D=3D DT_REG;
+>=20=20
+> +	if (c_name && c_name !=3D name) {
+> +		p->c_name =3D c_name;
+> +		p->c_len =3D c_len;
+> +	} else {
+> +		p->c_name =3D p->name;
+> +		p->c_len =3D len;
+> +	}
+> +
+>  	if (d_type =3D=3D DT_CHR) {
+>  		p->next_maybe_whiteout =3D rdd->first_maybe_whiteout;
+>  		rdd->first_maybe_whiteout =3D p;
+> @@ -174,48 +207,55 @@ static struct ovl_cache_entry *ovl_cache_entry_new(=
+struct ovl_readdir_data *rdd,
+>  	return p;
+>  }
+>=20=20
+> -static bool ovl_cache_entry_add_rb(struct ovl_readdir_data *rdd,
+> -				  const char *name, int len, u64 ino,
+> +/* Return 0 for found, 1 for added, <0 for error */
+> +static int ovl_cache_entry_add_rb(struct ovl_readdir_data *rdd,
+> +				  const char *name, int len,
+> +				  const char *c_name, int c_len,
+> +				  u64 ino,
+>  				  unsigned int d_type)
+>  {
+>  	struct rb_node **newp =3D &rdd->root->rb_node;
+>  	struct rb_node *parent =3D NULL;
+>  	struct ovl_cache_entry *p;
+>=20=20
+> -	if (ovl_cache_entry_find_link(name, len, &newp, &parent))
+> -		return true;
+> +	if (ovl_cache_entry_find_link(c_name, c_len, &newp, &parent))
+> +		return 0;
+>=20=20
+> -	p =3D ovl_cache_entry_new(rdd, name, len, ino, d_type);
+> +	p =3D ovl_cache_entry_new(rdd, name, len, c_name, c_len, ino, d_type);
+>  	if (p =3D=3D NULL) {
+>  		rdd->err =3D -ENOMEM;
+> -		return false;
+> +		return -ENOMEM;
 >  	}
-> @@ -2039,7 +2040,7 @@ static void __iput(struct inode *inode, bool skip_lru)
->  	 */
->  	drop = maybe_add_lru(inode, skip_lru);
->  
-> -	if (atomic_dec_and_test(&inode->i_count))
-> +	if (refcount_dec_and_test(&inode->i_count))
->  		iput_final(inode, drop);
+>=20=20
+>  	list_add_tail(&p->l_node, rdd->list);
+>  	rb_link_node(&p->node, parent, newp);
+>  	rb_insert_color(&p->node, rdd->root);
+>=20=20
+> -	return true;
+> +	return 1;
+>  }
+>=20=20
+> -static bool ovl_fill_lowest(struct ovl_readdir_data *rdd,
+> +/* Return 0 for found, 1 for added, <0 for error */
+> +static int ovl_fill_lowest(struct ovl_readdir_data *rdd,
+>  			   const char *name, int namelen,
+> +			   const char *c_name, int c_len,
+>  			   loff_t offset, u64 ino, unsigned int d_type)
+>  {
+>  	struct ovl_cache_entry *p;
+>=20=20
+> -	p =3D ovl_cache_entry_find(rdd->root, name, namelen);
+> +	p =3D ovl_cache_entry_find(rdd->root, c_name, c_len);
+>  	if (p) {
+>  		list_move_tail(&p->l_node, &rdd->middle);
+> +		return 0;
+>  	} else {
+> -		p =3D ovl_cache_entry_new(rdd, name, namelen, ino, d_type);
+> +		p =3D ovl_cache_entry_new(rdd, name, namelen, c_name, c_len,
+> +					ino, d_type);
+>  		if (p =3D=3D NULL)
+>  			rdd->err =3D -ENOMEM;
+>  		else
+>  			list_add_tail(&p->l_node, &rdd->middle);
+>  	}
+>=20=20
+> -	return rdd->err =3D=3D 0;
+> +	return rdd->err ?: 1;
+>  }
+>=20=20
+>  void ovl_cache_free(struct list_head *list)
+> @@ -223,8 +263,11 @@ void ovl_cache_free(struct list_head *list)
+>  	struct ovl_cache_entry *p;
+>  	struct ovl_cache_entry *n;
+>=20=20
+> -	list_for_each_entry_safe(p, n, list, l_node)
+> +	list_for_each_entry_safe(p, n, list, l_node) {
+> +		if (p->c_name !=3D p->name)
+> +			kfree(p->c_name);
+>  		kfree(p);
+> +	}
+>=20=20
+>  	INIT_LIST_HEAD(list);
+>  }
+> @@ -260,12 +303,36 @@ static bool ovl_fill_merge(struct dir_context *ctx,=
+ const char *name,
+>  {
+>  	struct ovl_readdir_data *rdd =3D
+>  		container_of(ctx, struct ovl_readdir_data, ctx);
+> +	struct ovl_fs *ofs =3D OVL_FS(rdd->dentry->d_sb);
+> +	const char *c_name =3D NULL;
+> +	char *cf_name =3D NULL;
+> +	int c_len =3D 0, ret;
+> +
+> +	if (ofs->casefold)
+> +		c_len =3D ovl_casefold(rdd->map, name, namelen, &cf_name);
+> +
+> +	if (c_len <=3D 0) {
+> +		c_name =3D name;
+> +		c_len =3D namelen;
+> +	} else {
+> +		c_name =3D cf_name;
+> +	}
+>=20=20
+>  	rdd->count++;
+>  	if (!rdd->is_lowest)
+> -		return ovl_cache_entry_add_rb(rdd, name, namelen, ino, d_type);
+> +		ret =3D ovl_cache_entry_add_rb(rdd, name, namelen, c_name, c_len, ino,=
+ d_type);
 >  	else
->  		spin_unlock(&inode->i_lock);
-> diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
-> index 338ef77ae423..9cc84f0afa9a 100644
-> --- a/fs/nfs/inode.c
-> +++ b/fs/nfs/inode.c
-> @@ -608,7 +608,7 @@ nfs_fhget(struct super_block *sb, struct nfs_fh *fh, struct nfs_fattr *fattr)
->  		inode->i_sb->s_id,
->  		(unsigned long long)NFS_FILEID(inode),
->  		nfs_display_fhandle_hash(fh),
-> -		atomic_read(&inode->i_count));
-> +		refcount_read(&inode->i_count));
->  
->  out:
->  	return inode;
-> @@ -2229,7 +2229,7 @@ static int nfs_update_inode(struct inode *inode, struct nfs_fattr *fattr)
->  	dfprintk(VFS, "NFS: %s(%s/%lu fh_crc=0x%08x ct=%d info=0x%llx)\n",
->  			__func__, inode->i_sb->s_id, inode->i_ino,
->  			nfs_display_fhandle_hash(NFS_FH(inode)),
-> -			atomic_read(&inode->i_count), fattr->valid);
-> +			refcount_read(&inode->i_count), fattr->valid);
->  
->  	if (!(fattr->valid & NFS_ATTR_FATTR_FILEID)) {
->  		/* Only a mounted-on-fileid? Just exit */
-> diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-> index 079b868552c2..0883696f873d 100644
-> --- a/fs/notify/fsnotify.c
-> +++ b/fs/notify/fsnotify.c
-> @@ -66,7 +66,7 @@ static void fsnotify_unmount_inodes(struct super_block *sb)
->  		 * removed all zero refcount inodes, in any case.  Test to
->  		 * be sure.
->  		 */
-> -		if (!atomic_read(&inode->i_count)) {
-> +		if (!refcount_read(&inode->i_count)) {
->  			spin_unlock(&inode->i_lock);
->  			continue;
->  		}
-> diff --git a/fs/ubifs/super.c b/fs/ubifs/super.c
-> index f3e3b2068608..79526f71fa8a 100644
-> --- a/fs/ubifs/super.c
-> +++ b/fs/ubifs/super.c
-> @@ -358,7 +358,7 @@ static void ubifs_evict_inode(struct inode *inode)
->  		goto out;
->  
->  	dbg_gen("inode %lu, mode %#x", inode->i_ino, (int)inode->i_mode);
-> -	ubifs_assert(c, !atomic_read(&inode->i_count));
-> +	ubifs_assert(c, !refcount_read(&inode->i_count));
->  
->  	truncate_inode_pages_final(&inode->i_data);
->  
-> diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-> index 9c39251961a3..06af749fe5f3 100644
-> --- a/fs/xfs/xfs_inode.c
-> +++ b/fs/xfs/xfs_inode.c
-> @@ -1035,7 +1035,7 @@ xfs_itruncate_extents_flags(
->  	int			error = 0;
->  
->  	xfs_assert_ilocked(ip, XFS_ILOCK_EXCL);
-> -	if (atomic_read(&VFS_I(ip)->i_count))
-> +	if (refcount_read(&VFS_I(ip)->i_count))
->  		xfs_assert_ilocked(ip, XFS_IOLOCK_EXCL);
->  	ASSERT(new_size <= XFS_ISIZE(ip));
->  	ASSERT(tp->t_flags & XFS_TRANS_PERM_LOG_RES);
-> diff --git a/fs/xfs/xfs_trace.h b/fs/xfs/xfs_trace.h
-> index ac344e42846c..167d33b8095c 100644
-> --- a/fs/xfs/xfs_trace.h
-> +++ b/fs/xfs/xfs_trace.h
-> @@ -1152,7 +1152,7 @@ DECLARE_EVENT_CLASS(xfs_iref_class,
->  	TP_fast_assign(
->  		__entry->dev = VFS_I(ip)->i_sb->s_dev;
->  		__entry->ino = ip->i_ino;
-> -		__entry->count = atomic_read(&VFS_I(ip)->i_count);
-> +		__entry->count = refcount_read(&VFS_I(ip)->i_count);
->  		__entry->pincount = atomic_read(&ip->i_pincount);
->  		__entry->iflags = ip->i_flags;
->  		__entry->caller_ip = caller_ip;
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 8384ed81a5ad..34fb40ba8a94 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -880,7 +880,7 @@ struct inode {
+> -		return ovl_fill_lowest(rdd, name, namelen, offset, ino, d_type);
+> +		ret =3D ovl_fill_lowest(rdd, name, namelen, c_name, c_len, offset, ino=
+, d_type);
+> +
+> +	/*
+> +	 * If ret =3D=3D 1, that means that c_name is being used as part of str=
+uct
+> +	 * ovl_cache_entry and will be freed at ovl_cache_free(). Otherwise,
+> +	 * c_name was found in the rb-tree so we can free it here.
+> +	 */
+> +	if (ret !=3D 1 && c_name !=3D name)
+> +		kfree(c_name);
+> +
+
+The semantics of this being conditionally freed is a bit annoying, as
+it is already replicated in 3 places. I suppose a helper would come in
+hand.
+
+In this specific case, it could just be:
+
+if (ret !=3D 1)
+        kfree(cf_name);
+
+
+> +	return ret >=3D 0;
+>  }
+>=20=20
+>  static int ovl_check_whiteouts(const struct path *path, struct ovl_readd=
+ir_data *rdd)
+> @@ -357,12 +424,18 @@ static int ovl_dir_read_merged(struct dentry *dentr=
+y, struct list_head *list,
+>  		.list =3D list,
+>  		.root =3D root,
+>  		.is_lowest =3D false,
+> +		.map =3D NULL,
 >  	};
->  	atomic64_t		i_version;
->  	atomic64_t		i_sequence; /* see futex */
-> -	atomic_t		i_count;
-> +	refcount_t		i_count;
->  	atomic_t		i_dio_count;
->  	atomic_t		i_writecount;
->  #if defined(CONFIG_IMA) || defined(CONFIG_FILE_LOCKING)
-> @@ -3399,7 +3399,7 @@ static inline void iobj_get(struct inode *inode)
->  static inline void __iget(struct inode *inode)
->  {
->  	iobj_get(inode);
-> -	atomic_inc(&inode->i_count);
-> +	refcount_inc(&inode->i_count);
->  }
->  
->  extern void iget_failed(struct inode *);
-> diff --git a/include/trace/events/filelock.h b/include/trace/events/filelock.h
-> index b8d1e00a7982..e745436cfcd2 100644
-> --- a/include/trace/events/filelock.h
-> +++ b/include/trace/events/filelock.h
-> @@ -189,7 +189,7 @@ TRACE_EVENT(generic_add_lease,
->  		__entry->i_ino = inode->i_ino;
->  		__entry->wcount = atomic_read(&inode->i_writecount);
->  		__entry->rcount = atomic_read(&inode->i_readcount);
-> -		__entry->icount = atomic_read(&inode->i_count);
-> +		__entry->icount = refcount_read(&inode->i_count);
->  		__entry->owner = fl->c.flc_owner;
->  		__entry->flags = fl->c.flc_flags;
->  		__entry->type = fl->c.flc_type;
-> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> index c04f8879ad03..570f851dc469 100644
-> --- a/security/landlock/fs.c
-> +++ b/security/landlock/fs.c
-> @@ -1281,7 +1281,7 @@ static void hook_sb_delete(struct super_block *const sb)
->  		struct landlock_object *object;
->  
->  		/* Only handles referenced inodes. */
-> -		if (!atomic_read(&inode->i_count))
-> +		if (!refcount_read(&inode->i_count))
->  			continue;
->  
->  		/*
-> -- 
-> 2.49.0
-> 
+>  	int idx, next;
+>  	const struct ovl_layer *layer;
+> +	struct ovl_fs *ofs =3D OVL_FS(dentry->d_sb);
+>=20=20
+>  	for (idx =3D 0; idx !=3D -1; idx =3D next) {
+>  		next =3D ovl_path_next(idx, dentry, &realpath, &layer);
+> +
+> +		if (ofs->casefold)
+> +			rdd.map =3D sb_encoding(realpath.dentry->d_sb);
+> +
+>  		rdd.is_upper =3D ovl_dentry_upper(dentry) =3D=3D realpath.dentry;
+>  		rdd.in_xwhiteouts_dir =3D layer->has_xwhiteouts &&
+>  					ovl_dentry_has_xwhiteouts(dentry);
+> @@ -555,7 +628,7 @@ static bool ovl_fill_plain(struct dir_context *ctx, c=
+onst char *name,
+>  		container_of(ctx, struct ovl_readdir_data, ctx);
+>=20=20
+>  	rdd->count++;
+> -	p =3D ovl_cache_entry_new(rdd, name, namelen, ino, d_type);
+> +	p =3D ovl_cache_entry_new(rdd, name, namelen, NULL, 0, ino, d_type);
+>  	if (p =3D=3D NULL) {
+>  		rdd->err =3D -ENOMEM;
+>  		return false;
+> @@ -1023,6 +1096,8 @@ int ovl_check_empty_dir(struct dentry *dentry, stru=
+ct list_head *list)
+>=20=20
+>  del_entry:
+>  		list_del(&p->l_node);
+> +		if (p->c_name !=3D p->name)
+> +			kfree(p->c_name);
+>  		kfree(p);
+>  	}
+
+--=20
+Gabriel Krisman Bertazi
 
