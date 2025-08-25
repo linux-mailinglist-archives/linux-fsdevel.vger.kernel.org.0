@@ -1,142 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-58950-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58955-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B877B33594
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 06:47:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AC58B335AD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 06:56:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D51CE1B23CCB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 04:46:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6CEC7A9930
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 04:54:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1477A285CAD;
-	Mon, 25 Aug 2025 04:44:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E190722758F;
+	Mon, 25 Aug 2025 04:56:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="oLUDPI2L"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JOGhfvXq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0729C267B90
-	for <linux-fsdevel@vger.kernel.org>; Mon, 25 Aug 2025 04:44:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C763194C96
+	for <linux-fsdevel@vger.kernel.org>; Mon, 25 Aug 2025 04:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756097046; cv=none; b=CZtEhqweDPgxfbbKDwln5V+llQFgxHGnl5FhaRGl/hplFYZnTk06B5/u273ur8adtb2ROC0gICKr0q9fb9XdXBPEPV260wpPQcvV876J7/vtoNo2GLqvXWx9lCI06zFS5ZqKViixgoBzJgrmkG1sCBjkcxMKOkrmuCT70LQAB1Y=
+	t=1756097778; cv=none; b=fRZZnoFxlVcqRUaL8aWIG4KCXGUj/G0aW85KRYA75gkX4guk2JwFMs5wEo0kQiCZBd5fTR6AIA7d/JK/AnrdQIWULuuvbjTy0rQD0Dm6sq1OK3+54zCJKmXJPSnIzkbpofcp47YqxRezfwByWK+Do/JBvhEwdR+Mg7BjBa/XTjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756097046; c=relaxed/simple;
-	bh=PnsSPbb5lr8fTf6CHWqeYNvI4WZdn8NCjFqDEIzaYdM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mBzI8VvaRv0gGR3y8fU/7G8giZamskh3nl5+1S8eANJZjCdG3E3XMoftjpFxnX+cr/Vi50FEY7NMNT22PsiSo/eyERYIHqYrZ3EsnPPQjH873h2Ktx+5VKU8YKpyKvBw4VjQhSxRzwuD4eHKicv9DMHxs9Sil5+EGj7N2oNwQvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=oLUDPI2L; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=5XRJskihhLRpaj5d+ADekVWOnIqzfFDLhDWIXe0OIPY=; b=oLUDPI2Lr0z7chmyX1pv3ztQiY
-	MLcjQpD2+PfPo9ee5s8soj4LrXK3q0QFi1awI1K+uky1vxpn01xX/P0VyOENVf9eLOcjsEhV+9OAw
-	BUQN8brIxwPWBxOe9dDhacTsjAvJIod3fE2ToZsSAcm7nhJFpieCi+CiUZ/E1gZ88xDiQ3FWgXeGJ
-	LnFnToEyoMJehYnxLbe43tpfF6T99EZuF+KMtyt81Vp8TFdlzf86y/1wH1dn1hdVuT4SbMD8qgGv7
-	Nrew/Bqr6zECB7xivVbZMCTaoKzXHAx5EbZ78din+D7ww/OWI5BSvJEyLhHtdzcszWEehFGasFtJX
-	z60qVCMQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uqP3q-00000006TGE-0uw3;
-	Mon, 25 Aug 2025 04:44:02 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: linux-fsdevel@vger.kernel.org
-Cc: brauner@kernel.org,
-	jack@suse.cz,
-	torvalds@linux-foundation.org
-Subject: [PATCH 52/52] fs/namespace.c: sanitize descriptions for {__,}lookup_mnt()
-Date: Mon, 25 Aug 2025 05:43:55 +0100
-Message-ID: <20250825044355.1541941-52-viro@zeniv.linux.org.uk>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250825044355.1541941-1-viro@zeniv.linux.org.uk>
-References: <20250825044046.GI39973@ZenIV>
- <20250825044355.1541941-1-viro@zeniv.linux.org.uk>
+	s=arc-20240116; t=1756097778; c=relaxed/simple;
+	bh=yD/4/GtdSSGMIHV32MZmfSinvuKhgCP3JnI6sOZx0+g=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Ro1f5UixV7x2mUUqzfpPmb/6UyZUt7z/TyhpeawedLkLAm2SsEQxR9rnNJVJn+ZI5a1sI6/korkYEY4ZJY+tHUCkuFDrr+TURpBOzU60CbNXpvNSAjZwvZcElDnYTTqI3Pc/LTYFuLjD1YIAE0eJuqKtxdPLHMWTsd+msKS+Yvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JOGhfvXq; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756097776; x=1787633776;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=yD/4/GtdSSGMIHV32MZmfSinvuKhgCP3JnI6sOZx0+g=;
+  b=JOGhfvXqrXtgKU/9QVkeFXRuXYbMXlSlnXZv5BHMhHvisZ80wr+zE4WX
+   FOYPcvSua4vQRDqydKDT+FSn5oYlsr5oLVK9FcK8khrbkAxiUsLL9jwy/
+   vtug8/+5+cIYKv/cq+AX9CiQACFuoGUE9WqIxYdosT95spkPrTH8ue33n
+   Kb+WOe1/OAeBcS+OpJxg1jW3FwFU4ueoLR6m+PpCiGHBz5kdLEPTb0P/g
+   VHlmdjBCkSAv8tcM2fWgBuJ8cfMI37gsWlASRsCezJlSivLJTmoSOKFrB
+   F418CS/IDiK7SLy/uj4O3loV6lB0vdT2tWjf9n8HnVRKBTqLP98wQvy+N
+   w==;
+X-CSE-ConnectionGUID: 3d625sQnTKS6vzSJ6ERgIQ==
+X-CSE-MsgGUID: 4xwv4+nRSYGf4GEQNBsMIA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11532"; a="75754175"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="75754175"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Aug 2025 21:56:16 -0700
+X-CSE-ConnectionGUID: 2Mg2yANFRneAEVHQFFu3qQ==
+X-CSE-MsgGUID: MczH5WZAS0abVM2divR8CQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="169120774"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa006.fm.intel.com with ESMTP; 24 Aug 2025 21:56:14 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uqPFb-000NNF-3C;
+	Mon, 25 Aug 2025 04:56:11 +0000
+Date: Mon, 25 Aug 2025 12:55:47 +0800
+From: kernel test robot <lkp@intel.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org
+Subject: [viro-vfs:work.mount 30/52] Warning: fs/namespace.c:2616 function
+ parameter 'dest' not described in 'attach_recursive_mnt'
+Message-ID: <202508251237.lxoKs2Su-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Comments regarding "shadow mounts" were stale - no such thing anymore.
-Document the locking requirements for __lookup_mnt().
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.mount
+head:   8c371c607cea3ffbfcd655e6fc1b36343e03009e
+commit: 892335f340ef10da4b58631594ae8068e2edef82 [30/52] graft_tree(), attach_recursive_mnt() - pass pinned_mountpoint
+config: arc-allnoconfig (https://download.01.org/0day-ci/archive/20250825/202508251237.lxoKs2Su-lkp@intel.com/config)
+compiler: arc-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250825/202508251237.lxoKs2Su-lkp@intel.com/reproduce)
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
- fs/namespace.c | 41 ++++++++++++-----------------------------
- 1 file changed, 12 insertions(+), 29 deletions(-)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508251237.lxoKs2Su-lkp@intel.com/
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 82cab5459ec7..538313b3b7d9 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -825,24 +825,16 @@ static bool legitimize_mnt(struct vfsmount *bastard, unsigned seq)
- }
- 
- /**
-- * __lookup_mnt - find first child mount
-+ * __lookup_mnt - mount hash lookup
-  * @mnt:	parent mount
-- * @dentry:	mountpoint
-+ * @dentry:	dentry of mountpoint
-  *
-- * If @mnt has a child mount @c mounted @dentry find and return it.
-+ * If @mnt has a child mount @c mounted on @dentry find and return it.
-+ * Caller must either hold the spinlock component of @mount_lock or
-+ * hold rcu_read_lock(), sample the seqcount component before the call
-+ * and recheck it afterwards.
-  *
-- * Note that the child mount @c need not be unique. There are cases
-- * where shadow mounts are created. For example, during mount
-- * propagation when a source mount @mnt whose root got overmounted by a
-- * mount @o after path lookup but before @namespace_sem could be
-- * acquired gets copied and propagated. So @mnt gets copied including
-- * @o. When @mnt is propagated to a destination mount @d that already
-- * has another mount @n mounted at the same mountpoint then the source
-- * mount @mnt will be tucked beneath @n, i.e., @n will be mounted on
-- * @mnt and @mnt mounted on @d. Now both @n and @o are mounted at @mnt
-- * on @dentry.
-- *
-- * Return: The first child of @mnt mounted @dentry or NULL.
-+ * Return: The child of @mnt mounted on @dentry or %NULL.
-  */
- struct mount *__lookup_mnt(struct vfsmount *mnt, struct dentry *dentry)
- {
-@@ -855,21 +847,12 @@ struct mount *__lookup_mnt(struct vfsmount *mnt, struct dentry *dentry)
- 	return NULL;
- }
- 
--/*
-- * lookup_mnt - Return the first child mount mounted at path
-- *
-- * "First" means first mounted chronologically.  If you create the
-- * following mounts:
-- *
-- * mount /dev/sda1 /mnt
-- * mount /dev/sda2 /mnt
-- * mount /dev/sda3 /mnt
-- *
-- * Then lookup_mnt() on the base /mnt dentry in the root mount will
-- * return successively the root dentry and vfsmount of /dev/sda1, then
-- * /dev/sda2, then /dev/sda3, then NULL.
-+/**
-+ * lookup_mnt - Return the child mount mounted at given location
-+ * @path:	location in the namespace
-  *
-- * lookup_mnt takes a reference to the found vfsmount.
-+ * Acquires and returns a new reference to mount at given location
-+ * or %NULL if nothing is mounted there.
-  */
- struct vfsmount *lookup_mnt(const struct path *path)
- {
+All warnings (new ones prefixed by >>):
+
+>> Warning: fs/namespace.c:2616 function parameter 'dest' not described in 'attach_recursive_mnt'
+
 -- 
-2.47.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
