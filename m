@@ -1,203 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-59010-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59011-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7862BB33E72
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 13:53:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C559EB33E7A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 13:55:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 494022049D8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 11:53:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 151713A85BF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 11:55:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36BF72E7BD4;
-	Mon, 25 Aug 2025 11:53:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C2802E5437;
+	Mon, 25 Aug 2025 11:55:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i7lTvDmv"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="A4faTD7l"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548922D23B5;
-	Mon, 25 Aug 2025 11:53:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EFF526B765
+	for <linux-fsdevel@vger.kernel.org>; Mon, 25 Aug 2025 11:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756122808; cv=none; b=C6lTbCEjR3/qUG2BeR7IJ05QIJw99zY/+xo4lMvQjSCd1STeowjPGvd2VngIGor1j8GMQMcXxNOQKrZJdPnNFWpeprGtY6g72e63F9TwtCBwNbNpPDjGsf0V/dyh6dV6uQTenY6egxVTbe/I4ElkZThTlaMR1S+DPjVf1wLbAUM=
+	t=1756122907; cv=none; b=puKFBZFLhSQBjD6UJWnKrY/EO9+ML4FIuq+vo5hJzbob5GGS97v2qa0YOuI3GUa0ZINRI6A3ScK6xCIBeu32GXH5yDjFdDaQ2zD4gojp+w3IdVe6oBaYpbBMWNdGtK5wOjTe0yv3vWv+GsG+qFq2erSMdy1vyRuqn879H3IkhPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756122808; c=relaxed/simple;
-	bh=0hhkEvAKCKYwPCsyx9LPA3uyUWRLJOb4k+WN+qfOLKY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iaB8N+bCMk9yFJfI5AvzXicI7UivhyK2Lk060mVCJSE/tvIfRXtmXa14n6h/lLy1QH0UAH5sYNEskMlXGDJqO5OJFrR6rHbAKrdVhQ4LNqI0ufJdwNNp0A+FyVoItg0EBa9C+c42F//YhutSaqnMV1xp9iTmEX7b8GdoeIoCNE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i7lTvDmv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1600C4CEED;
-	Mon, 25 Aug 2025 11:53:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756122807;
-	bh=0hhkEvAKCKYwPCsyx9LPA3uyUWRLJOb4k+WN+qfOLKY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i7lTvDmvkLY5qx5OKllmYcuRYoUQayp0NeBdl1wnI3F21YYVJsxgN/UCAr2kEReYd
-	 LsyovDDS0WTfZPFQj1gnvR+Sa3x3+qni3tS6Ot8zhy7hvVr5a8y/EcnXimaXSO5MsN
-	 Rw9IDwMbLsGQLkd42O8utqwH2R4hBtcfY+Bnmk3MY6p0jLsaPSbv/02HRwRunARdqw
-	 sf9XLBcA62qVs2asfUhGkSmTsLo6EfuQO7O2aq5QI2Vj7OWVeyoRPzJhuXv+4G5rDc
-	 tyHxrlP96q2op4V2fYTNSZxt/FxQ+cvxPnJknzTzAbFy/12YyEkVNtqN6BsHUFhN3M
-	 e+eChJI+zzPcA==
-Date: Mon, 25 Aug 2025 13:53:23 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org, 
-	kernel-team@fb.com, linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	viro@zeniv.linux.org.uk
-Subject: Re: [PATCH 49/50] fs: remove I_FREEING|I_WILL_FREE
-Message-ID: <20250825-zellteilung-investieren-90b030b10963@brauner>
-References: <cover.1755806649.git.josef@toxicpanda.com>
- <986e757c6b725231500556c68967588b23081e79.1755806649.git.josef@toxicpanda.com>
+	s=arc-20240116; t=1756122907; c=relaxed/simple;
+	bh=99spx2sm3BCvKBTMSbWBPwLbsPis8CbtH66bNFz0EKI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qaB23DLKqXy29i81PgAVGywPeigGUkx4KmZCq/vsQByAJ6+2RRHUpCfOh+k+GmTajWbZ7hjjFyxO7fb24W95d/+ZROgYlasZU8SzZbDGu1PhsPCztbtiuk3jy62NKOWkKs352aUyM/GpdlgfItG5MTpJJ4p4Y/OQ9Wp7j2JVNv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=A4faTD7l; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-afcb6856dfbso790706266b.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Aug 2025 04:55:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1756122903; x=1756727703; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=YxYgRpNWttBrFhhF+VQ1HY1PKweqtOc9jIbbRZXomY8=;
+        b=A4faTD7lQkF//nulQgwGqdVIgd2WgePkjwYceXYEfWbe0BKHRrYlJlfrGRKo8FJQ2v
+         obch/S1XT83rmQc3NScGjkRdI43QhbVme+SqiM/M0DV3w8LrTXN+U/IZ4/Q5Bi/zcqbc
+         +7+L+4CrwKlYfIAQHPj6xEN3oWtJ8NzoMuF7U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756122903; x=1756727703;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YxYgRpNWttBrFhhF+VQ1HY1PKweqtOc9jIbbRZXomY8=;
+        b=EExKUNWhhJRWnK5tHvFdUQZbjZ3B+Y/Gxdq5zSoR2Z/+m8VXI5drn52hU2vnZHRs8P
+         c1VtjhDBA/3nu4S+5lr9Ebw+9SJGbnYJdy0RI/LwNXW+arxlz6mEJfpNupx6q3ij/A/7
+         1qVS+mBxo0i1g8pc+ji0FAnGfNeeEjfHv/lwtKZQRh3LQPf9u0shAmCJseS9dafHEhaM
+         TRUmQfDhFtwYRVTiNB2TV09+HVVN5Pk2SMV3Dh7y69BY8m+reRPDz4Pp/SawH55w94Qr
+         dTMB9fKh3eYjUNLOMJknZLelScSoaoBmFbMDnWAgls/DRVkatp8j6VIETx9sRbl/ncv3
+         zfQQ==
+X-Gm-Message-State: AOJu0YxmfPY7bMtsXpFtpY+igmRHy3ANZ/ywMQNqtOxY5OLo3QegvQdr
+	V7nD8MkrfkyR9wBWcKADwOKT+MU1epghZhfywHvMNRJdtLckNhOA2d7TUH7N3X5bCIKLhqH+bsy
+	M3ZtgW0o=
+X-Gm-Gg: ASbGnctI4vBQ0LaQB2UMKCyb5tKPfaFBh/IIREIDbYeNA+kwMphybnFTIxi3r/lxCKF
+	AVnWxvU/NyMmUsS4nf50I8jePbD2oPeAxcWQi/k1k1dpM2x+mL9K03UwtXtlrgDe775HICOUO09
+	ee98RtqJ7LCbajYvzFuGVqAnDhE7ti1vcNoUNkTvFiY/0F04ObjuB5x0Ta91004j3WHs9pc8rWN
+	duuf5q5Xkc6Z+mfFEd6iSgKQONr4ApLXKxFvWYHLR9DrfzDHAezHhrhfwCF30MioEPsH2H2EXgl
+	hFJecgDB6C/FbZxIo82hIw/Vh7MC9caRquLzBdUImNoplXvY02HvHfvaVhU78ukGwiQqhUMSjuP
+	wWEC+5NlqsfsnHCeg6DKfM0CXHc0A0z2l+T5DVXPXjVqLFPH36Ijq1MtBjB/aD8XUx6IFE7LEXD
+	SoFiWDYJg=
+X-Google-Smtp-Source: AGHT+IEraah+/x8iDTWLoiN0mj3+uGCjQHAuDwn2W5sM+RziAqOKgZLxWyE6rzzAXEd/k7cUYEgyzQ==
+X-Received: by 2002:a17:907:7f0c:b0:af6:2f1b:46a with SMTP id a640c23a62f3a-afe28fd043dmr1222217566b.6.1756122903054;
+        Mon, 25 Aug 2025 04:55:03 -0700 (PDT)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afe77f33f83sm263248066b.31.2025.08.25.04.55.01
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Aug 2025 04:55:02 -0700 (PDT)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-61c30ceacdcso3279437a12.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Aug 2025 04:55:01 -0700 (PDT)
+X-Received: by 2002:a05:6402:1650:b0:615:9247:e2fa with SMTP id
+ 4fb4d7f45d1cf-61c21345964mr6027320a12.8.1756122901451; Mon, 25 Aug 2025
+ 04:55:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <986e757c6b725231500556c68967588b23081e79.1755806649.git.josef@toxicpanda.com>
+References: <20250825044046.GI39973@ZenIV> <20250825044355.1541941-1-viro@zeniv.linux.org.uk>
+ <20250825044355.1541941-13-viro@zeniv.linux.org.uk>
+In-Reply-To: <20250825044355.1541941-13-viro@zeniv.linux.org.uk>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 25 Aug 2025 07:54:45 -0400
+X-Gmail-Original-Message-ID: <CAHk-=wh9H_EQZ+RH6POYvZBuGESa63-cn5yJHUD0CKEH7-=htw@mail.gmail.com>
+X-Gm-Features: Ac12FXx_j9f5PdhHoUEKXmXXf4DWMtYVdIBSesLCMDBhM_W9nWpaPVSJNG78ww8
+Message-ID: <CAHk-=wh9H_EQZ+RH6POYvZBuGESa63-cn5yJHUD0CKEH7-=htw@mail.gmail.com>
+Subject: Re: [PATCH 13/52] has_locked_children(): use guards
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org, jack@suse.cz
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Aug 21, 2025 at 04:19:00PM -0400, Josef Bacik wrote:
-> Now that we're using the i_count reference count as the ultimate arbiter
-> of whether or not an inode is life we can remove the I_FREEING and
-> I_WILL_FREE flags.
-> 
-> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-> ---
+[ diff edited to be just the end result ]
 
-Very nice.
-
->  fs/inode.c                       |  8 ++------
->  include/linux/fs.h               | 32 +++++++++++---------------------
->  include/trace/events/writeback.h |  2 --
->  3 files changed, 13 insertions(+), 29 deletions(-)
-> 
-> diff --git a/fs/inode.c b/fs/inode.c
-> index f715504778d2..1bb528405b3d 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -878,7 +878,7 @@ void clear_inode(struct inode *inode)
->  	BUG_ON(inode->i_state & I_CLEAR);
->  	BUG_ON(!list_empty(&inode->i_wb_list));
->  	/* don't need i_lock here, no concurrent mods to i_state */
-> -	inode->i_state = I_FREEING | I_CLEAR;
-> +	inode->i_state = I_CLEAR;
+On Mon, 25 Aug 2025 at 00:44, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+>  bool has_locked_children(struct mount *mnt, struct dentry *dentry)
+>  {
+> +       scoped_guard(mount_locked_reader)
+> +               return __has_locked_children(mnt, dentry);
 >  }
->  EXPORT_SYMBOL(clear_inode);
->  
-> @@ -942,7 +942,7 @@ static void evict(struct inode *inode)
->  	 * This also means we don't need any fences for the call below.
->  	 */
->  	inode_wake_up_bit(inode, __I_NEW);
-> -	BUG_ON(inode->i_state != (I_FREEING | I_CLEAR));
-> +	BUG_ON(inode->i_state != I_CLEAR);
->  }
->  
->  static void iput_evict(struct inode *inode);
-> @@ -1975,7 +1975,6 @@ static void iput_final(struct inode *inode, bool drop)
->  
->  	state = inode->i_state;
->  	if (!drop) {
-> -		WRITE_ONCE(inode->i_state, state | I_WILL_FREE);
->  		spin_unlock(&inode->i_lock);
->  
->  		write_inode_now(inode, 1);
-> @@ -1983,10 +1982,7 @@ static void iput_final(struct inode *inode, bool drop)
->  		spin_lock(&inode->i_lock);
->  		state = inode->i_state;
->  		WARN_ON(state & I_NEW);
-> -		state &= ~I_WILL_FREE;
->  	}
-> -
-> -	WRITE_ONCE(inode->i_state, state | I_FREEING);
->  	spin_unlock(&inode->i_lock);
->  
->  	evict(inode);
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 9d9acbea6433..0599faef0d6a 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -672,8 +672,8 @@ is_uncached_acl(struct posix_acl *acl)
->   * I_DIRTY_DATASYNC, I_DIRTY_PAGES, and I_DIRTY_TIME.
->   *
->   * Four bits define the lifetime of an inode.  Initially, inodes are I_NEW,
-> - * until that flag is cleared.  I_WILL_FREE, I_FREEING and I_CLEAR are set at
-> - * various stages of removing an inode.
-> + * until that flag is cleared.  I_CLEAR is set when the inode is clean and ready
-> + * to be freed.
->   *
->   * Two bits are used for locking and completion notification, I_NEW and I_SYNC.
->   *
-> @@ -697,24 +697,18 @@ is_uncached_acl(struct posix_acl *acl)
->   *			New inodes set I_NEW.  If two processes both create
->   *			the same inode, one of them will release its inode and
->   *			wait for I_NEW to be released before returning.
-> - *			Inodes in I_WILL_FREE, I_FREEING or I_CLEAR state can
-> - *			also cause waiting on I_NEW, without I_NEW actually
-> - *			being set.  find_inode() uses this to prevent returning
-> + *			Inodes with an i_count == 0 or I_CLEAR state can also
-> + *			cause waiting on I_NEW, without I_NEW actually being
-> + *			set.  find_inode() uses this to prevent returning
->   *			nearly-dead inodes.
-> - * I_WILL_FREE		Must be set when calling write_inode_now() if i_count
-> - *			is zero.  I_FREEING must be set when I_WILL_FREE is
-> - *			cleared.
-> - * I_FREEING		Set when inode is about to be freed but still has dirty
-> - *			pages or buffers attached or the inode itself is still
-> - *			dirty.
->   * I_CLEAR		Added by clear_inode().  In this state the inode is
-> - *			clean and can be destroyed.  Inode keeps I_FREEING.
-> + *			clean and can be destroyed.
->   *
-> - *			Inodes that are I_WILL_FREE, I_FREEING or I_CLEAR are
-> - *			prohibited for many purposes.  iget() must wait for
-> - *			the inode to be completely released, then create it
-> - *			anew.  Other functions will just ignore such inodes,
-> - *			if appropriate.  I_NEW is used for waiting.
-> + *			Inodes that have i_count == 0 or I_CLEAR are prohibited
-> + *			for many purposes.  iget() must wait for the inode to be
-> + *			completely released, then create it anew.  Other
-> + *			functions will just ignore such inodes, if appropriate.
-> + *			I_NEW is used for waiting.
->   *
->   * I_SYNC		Writeback of inode is running. The bit is set during
->   *			data writeback, and cleared with a wakeup on the bit
-> @@ -752,8 +746,6 @@ is_uncached_acl(struct posix_acl *acl)
->   * I_CACHED_LRU		Inode is cached because it is dirty or isn't shrinkable,
->   *			and thus is on the s_cached_inode_lru list.
->   *
-> - * Q: What is the difference between I_WILL_FREE and I_FREEING?
-> - *
->   * __I_{SYNC,NEW,LRU_ISOLATING} are used to derive unique addresses to wait
->   * upon. There's one free address left.
->   */
-> @@ -776,8 +768,6 @@ enum inode_state_bits {
->  	INODE_BIT(I_DIRTY_SYNC),
->  	INODE_BIT(I_DIRTY_DATASYNC),
->  	INODE_BIT(I_DIRTY_PAGES),
-> -	INODE_BIT(I_WILL_FREE),
-> -	INODE_BIT(I_FREEING),
->  	INODE_BIT(I_CLEAR),
->  	INODE_BIT(I_REFERENCED),
->  	INODE_BIT(I_LINKABLE),
-> diff --git a/include/trace/events/writeback.h b/include/trace/events/writeback.h
-> index 6949329c744a..58ee61f3d91d 100644
-> --- a/include/trace/events/writeback.h
-> +++ b/include/trace/events/writeback.h
-> @@ -15,8 +15,6 @@
->  		{I_DIRTY_DATASYNC,	"I_DIRTY_DATASYNC"},	\
->  		{I_DIRTY_PAGES,		"I_DIRTY_PAGES"},	\
->  		{I_NEW,			"I_NEW"},		\
-> -		{I_WILL_FREE,		"I_WILL_FREE"},		\
-> -		{I_FREEING,		"I_FREEING"},		\
->  		{I_CLEAR,		"I_CLEAR"},		\
->  		{I_SYNC,		"I_SYNC"},		\
->  		{I_DIRTY_TIME,		"I_DIRTY_TIME"},	\
-> -- 
-> 2.49.0
-> 
+
+So the use of scoped_guard() looks a bit odd to me. Why create a new
+scope for when the existing scope is identical? It would seem to be
+more straightforward to just do
+
+        guard(mount_locked_reader);
+        return __has_locked_children(mnt, dentry);
+
+instead. Was there some code generation issue or other thing that made
+you go the 'scoped' way?
+
+There was at least one other patch that did the same pattern (but I
+haven't gone through the whole series, maybe there are explanations
+later).
+
+               Linus
 
