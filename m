@@ -1,73 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-59081-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59082-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78B52B341CF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 15:51:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFCCFB34228
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 15:54:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7665A7B669E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 13:44:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F115816AD1E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 13:54:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C795298CBE;
-	Mon, 25 Aug 2025 13:43:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 722FA225388;
+	Mon, 25 Aug 2025 13:46:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uah0WCHc"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="KNE+lxgo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FAE82ED16C
-	for <linux-fsdevel@vger.kernel.org>; Mon, 25 Aug 2025 13:43:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F9CD20F09C
+	for <linux-fsdevel@vger.kernel.org>; Mon, 25 Aug 2025 13:46:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756129432; cv=none; b=V9vG58f6/ajmTL0mQuwd98+I3LRivtgDmm4IXRqGc7F3MeQpBEMxL8vvVl27UTpoAwukwG3h9RiuqauJuwVodzt5FLe1WpXLyyBneASKwiez9W58P2BELYnLp7fIs7kKCoS1E1NSGnm7uUb9Xpl8Rmr7Wr/NYRhOvAROxejd3Cw=
+	t=1756129569; cv=none; b=TOZt795gJ6zzI7hb0ZclnsfyBbdlvDGi7KYfj5XVutpyHBEUNS6+ck2VDk1Pa7bMU0UOWd6QxgZxdOpDuTrQRy+eVf937GVX2kBQAHalMPaDENVgZSPSYIIpVapTEM8KtJmAbHxjKTMhlDzFQ9R2kFFFilqNVYt82i7YKQw0bJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756129432; c=relaxed/simple;
-	bh=NM6kgoLuDsyk+cZwlhjt3gTcQCxup8oPxRgk4yIugPs=;
+	s=arc-20240116; t=1756129569; c=relaxed/simple;
+	bh=mFZ4kh7ExsXHa4BivsWXyMFN3/vjrEZrqj4IApF6iC0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XzQ0x7ZlnWYjl9TLWXG9ZuOgEL7ss8Uk9pYZDaKKyC7ruchS0jm41vNJTbvM+biuieiOis3e2um0JbTh6xrIYUBXaLaIL6qwh7Wq5zASLP11CBQYPavK2Tdj2S0BApowB6Dj74jndW6Uzl4yUPFu2dTFSwgQdtXJIZoFxmHKW6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uah0WCHc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23704C116D0;
-	Mon, 25 Aug 2025 13:43:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756129432;
-	bh=NM6kgoLuDsyk+cZwlhjt3gTcQCxup8oPxRgk4yIugPs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Uah0WCHc5ZavruRuvvWjks6bat1BZgMvfWoBJ0gYFfGQC8cc/JzOqRcF5CwRKOz9A
-	 S8MVuKfGotqWLIVb0YKforYyzG+5Y7TSTCzsMJgdBaryNcvfNEpttig8ZiBeP2iPoR
-	 9kPrL/vtutn5KSjpsEsTfKce6+Q6WJE8IWItqf0ZEkPMDmrC+YP4g7TPoR1cMBKK+s
-	 ZzADiJrIQrDVlDnq+A4FMLDVOf14GU30W+5/FkPq5TdzZCKfkUu0am0FYhxsUjCuRT
-	 ZhK6qDGDokC1O0hpu/4m65r5kIC5Lm9mSqsUCFoLKkG0hTlHxZCCbNGReDyGBSi/yc
-	 grEzqaMXG2+1A==
-Date: Mon, 25 Aug 2025 15:43:48 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, jack@suse.cz, 
+	 Content-Type:Content-Disposition:In-Reply-To; b=qm+PaUkQax3JcnTkSMBQ2N6LkZ5lPFusCKFpzQZAAT2Wuoa6e5wbnvt+xwpXhijSNLMckyuTCHRMRZZJVCjvK58FuswNSq27fr5ktcGyEgIemMYh4+bJmJosmwbCLMDqiWucPXv9PpXKcCxn0IYEmJf7gc4fnlPTjRMCjOdTZBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=KNE+lxgo; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=wTDFHymgMQa907TAu//SLgPvBtT6O6hUnLPcr1GhXq8=; b=KNE+lxgom/UHsLKu2jx5Yr09ft
+	ACX9KQs9sUyO9CpWFjsB0qgNeLjWujfqcWD7Y5tsD4pz1G2r3D69ui6TXyCvs54SBbpeqSlYgNK1T
+	2zZ8pdRX77uRzhcIk47mGWyycRt83LApucs29f2jwANnnex/v2l+D7E/S0O5eAouWjnM/5U8WhlXk
+	EOhaeJLGgGxY9sKs9axboSnZpJI1s26REmUyn6wXTKsqoIc54nznti+dLcm2+cRmPo48B7RzW3FJ7
+	0GtBiHF1Uv1adIsaldXHhTMv699L/fzmZvP1LNzBUc2720QW5Avky1M6/UAl3nzAT11l7AtP/OSbq
+	iBqs2sSg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uqXWO-0000000Dxui-2sid;
+	Mon, 25 Aug 2025 13:46:04 +0000
+Date: Mon, 25 Aug 2025 14:46:04 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, jack@suse.cz,
 	torvalds@linux-foundation.org
-Subject: Re: [PATCH 31/52] pivot_root(2): use old_mp.mp->m_dentry instead of
- old.dentry
-Message-ID: <20250825-erfanden-anwandlungen-6c4715ea641a@brauner>
+Subject: Re: [PATCH 02/52] introduced guards for mount_lock
+Message-ID: <20250825134604.GJ39973@ZenIV>
 References: <20250825044046.GI39973@ZenIV>
  <20250825044355.1541941-1-viro@zeniv.linux.org.uk>
- <20250825044355.1541941-31-viro@zeniv.linux.org.uk>
+ <20250825044355.1541941-2-viro@zeniv.linux.org.uk>
+ <20250825-repressiv-selektiert-7496db0b38aa@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250825044355.1541941-31-viro@zeniv.linux.org.uk>
+In-Reply-To: <20250825-repressiv-selektiert-7496db0b38aa@brauner>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Mon, Aug 25, 2025 at 05:43:34AM +0100, Al Viro wrote:
-> That kills the last place where callers of lock_mount(path, &mp)
-> used path->dentry.
+On Mon, Aug 25, 2025 at 02:32:38PM +0200, Christian Brauner wrote:
+> On Mon, Aug 25, 2025 at 05:43:05AM +0100, Al Viro wrote:
+> > mount_writer: write_seqlock; that's an equivalent of {un,}lock_mount_hash()
+> > mount_locked_reader: read_seqlock_excl; these tend to be open-coded.
 > 
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> ---
+> Do we really need the "locked" midfix in there? Doesn't seem to buy any
+> clarity. I'd drop it so the naming is nicely consistent.
 
-Reviewed-by: Christian Brauner <brauner@kernel.org>
+It's a seqlock.  "Readers" is this context are lockless ones - sample/retry under
+rcu_read_lock() kind.  The only difference between writer and locked reader is
+that locked reader does not disrupt those sample/retry loops.
+
+Note that for something that is never traversed locklessly (expiry lists,
+lists of children, etc.) locked reader is fine for all accesses, including
+modifications.
+
+If you have better suggestions re terminology, I'd love to hear those, but
+simply "writer"/"reader" is misleadingly similar to rw-semaphors/links/whatnot.
+
+Basically, there are 3 kinds of contexts here:
+	1) lockless, must be under RCU, fairly limited in which pointers they
+can traverse, read-only access to structures in question.  Must sample
+the seqcount side of mount_lock first, then verifying that it has not changed
+after everything.
+
+	2) hold the spinlock side of mount_lock, _without_ bumping the seqcount
+one.  Can be used for reads and writes, as long as the stuff being modified
+is not among the things that is traversed locklessly.  Do not disrupt the previous
+class, have full exclusion with calles 2 and 3
+
+	3) hold the spinlock side of mount_lock, and bump the seqcount one on
+entry and leave.  Any reads and writes.  Full exclusion with classes 2 and 3,
+invalidates the checks for class 1 (i.e. will push it into retries/fallbacks/
+whatnot).
+
+I'm used to "lockless reader" for 1, "writer" for 3. "locked reader" kinda
+works for 2 - that's what it is wrt things that can be accessed by lockless
+readers, but for the things that are *not* traversed without a lock it
+can be actually used as a less disruptive form of 3.  Is used that way in
+mount locking for some of the data structures.
 
