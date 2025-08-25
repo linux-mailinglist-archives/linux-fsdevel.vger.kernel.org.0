@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-58929-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58931-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 858EBB33585
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 06:46:27 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54484B33575
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 06:45:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CA6C18898D5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 04:45:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 478524E25C1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 04:45:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E850E28315A;
-	Mon, 25 Aug 2025 04:44:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F858283FE6;
+	Mon, 25 Aug 2025 04:44:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="OtqgZDOd"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="UKJ4l+dg"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F7A32797A1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805C625A357
 	for <linux-fsdevel@vger.kernel.org>; Mon, 25 Aug 2025 04:44:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756097043; cv=none; b=doyCxMnlIurWtQJdLBtY0ivfiDKFQ5VEPKpEcZ3A5wthD9J5apXYdeMjmQQDRlPr9uTiVOiKatuswKuQxB88SvJfkqt7C9G9G1KHD1uiGTH3CWMDc+tqpevoFHMvFnJoD2NFuHRm4JyyaNXRH/tzO7UEz1LuHEaLIbf2Vg4+P2k=
+	t=1756097043; cv=none; b=jhfCaTfRLWvi9D+j3QvlT02PU3TPXml7Ey22C6aQh/ZqO1EqFcBD2yLHTUJcSyt7HIm375UKjhPd7ljJxEjuOSr/BR/PvNx5RRYQHI+6tiEBG9DpFYOcIvd/1GvpjVThZkuGihuMxYZmmv0L/RITEGbiP3LV5GG7X6s4q/Oj2TQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756097043; c=relaxed/simple;
-	bh=axkvnzD8zgXfeG7xPfWTFjQfekKLAt8A/L9atO27SEA=;
+	bh=QLFUWM/DL9ahOJA7cLgfjWPvxmUahoATJDF9ya38QlU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=guFczs2Tg3VikXW8QImMaWOHantNQtw4L/yz56a5pM5rc4OlIYWBFx/sIbLQf/fTmFco9l4PRkdB5dEmld8IuOljK7C8UfSb6QU5ng4bQRFgSuROitLBSJjFlF3ZprPJOvvd3kXDDgVk52hcDdJlaAArrUuLdhGj/Dvzb/KdVBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=OtqgZDOd; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=dTRlvzwzchtqdiu88mxFuQptSNAo0Q/9sgo+5+e5NEaiWlxlJsw6XLK7KiAwX16bCAHsQEav+e9o23YI+xPQKizrCe8pcbXJmT+m5/Q2yWV8H8bDMo6T5UxNgXGbQlp/DxL6csj5GCYvRCVhNXEjn6pZDKCrZ4pqztwOiVUN0kM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=UKJ4l+dg; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=zD7PiBrM0uyl66GMtGe4/AB9K5Yi/tbGdGRmXai1bA4=; b=OtqgZDOdWy4h48BIP2lwfYPUVb
-	DOMwQty+FLPNdUhpb4iMQEA69MdukvMqrTxJ65B7OTGWan1iuidZoeVzRmLJPWA5qm/m0JC+5UUPD
-	lxD+09MSqpJO4oZMQ2tNrEIU4BgmdZIOJpheKTq2mRdfrmLqJDDBMdHcz5ApLnhNDNXGOzaYomyZz
-	j9sadNrl+XfkFHCatDRFxK+vOOqPZrstITt96/ChZPtYkDYsqf2SjLp+WHNGqH2IWeTOFcL6AiXRf
-	LDEdwWZu1I9KZolB00TlrbZsDtjbekTQ+3mFoD8RNQnJLczPra74/X9u9Zy8MxEP2nvTC4+0liufB
-	Rj9E25BA==;
+	bh=Hu8tMiEiWI+Z/aAK2DSkePkRb/62Nj4/vbot0SXVUyc=; b=UKJ4l+dgsobN007ZIEt/C2xNxj
+	5PNRtSl6W7yZ7iYk3SoV0PFYQ97yrdj1sFnXDDzTxsXpeLSQ89Nze527khk4BmuR35nKPox7LfS48
+	2H79g42NMRFY7oAqwLFbL93ctEw8r7oatZJMLYjludzStrali2myqmqOojHEZ5P0Y/pmf4vpKeomt
+	XPIfwTTbyS3yFAGLq8kzjI6+JcbuuplnveYDOwyZu87QgXUwCZ6Inw0L4ssvO/lq6FFfzx0b3KeJp
+	PLaydt25nnC4uDCFYAMZOV/PO+SWZS9hM2w5My/JcFEXPKq09MAFXrtaOS9DBX+VKI4gaqqHSKUB2
+	T4rXtS/g==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uqP3n-00000006TCt-2Mjz;
+	id 1uqP3n-00000006TD5-2no9;
 	Mon, 25 Aug 2025 04:43:59 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: brauner@kernel.org,
 	jack@suse.cz,
 	torvalds@linux-foundation.org
-Subject: [PATCH 31/52] pivot_root(2): use old_mp.mp->m_dentry instead of old.dentry
-Date: Mon, 25 Aug 2025 05:43:34 +0100
-Message-ID: <20250825044355.1541941-31-viro@zeniv.linux.org.uk>
+Subject: [PATCH 32/52] don't bother passing new_path->dentry to can_move_mount_beneath()
+Date: Mon, 25 Aug 2025 05:43:35 +0100
+Message-ID: <20250825044355.1541941-32-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250825044355.1541941-1-viro@zeniv.linux.org.uk>
 References: <20250825044046.GI39973@ZenIV>
@@ -65,27 +65,49 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-That kills the last place where callers of lock_mount(path, &mp)
-used path->dentry.
-
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/namespace.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/namespace.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
 diff --git a/fs/namespace.c b/fs/namespace.c
-index 9ffdbb093f57..494433d2e04b 100644
+index 494433d2e04b..7d51763fc76c 100644
 --- a/fs/namespace.c
 +++ b/fs/namespace.c
-@@ -4682,7 +4682,7 @@ SYSCALL_DEFINE2(pivot_root, const char __user *, new_root,
- 	if (!mnt_has_parent(new_mnt))
- 		return -EINVAL; /* absolute root */
- 	/* make sure we can reach put_old from new_root */
--	if (!is_path_reachable(old_mnt, old.dentry, &new))
-+	if (!is_path_reachable(old_mnt, old_mp.mp->m_dentry, &new))
+@@ -3451,8 +3451,8 @@ static bool mount_is_ancestor(const struct mount *p1, const struct mount *p2)
+ /**
+  * can_move_mount_beneath - check that we can mount beneath the top mount
+  * @mnt_from: mount we are trying to move
+- * @to:   mount under which to mount
+- * @mp:   mountpoint of @to
++ * @mnt_to:   mount under which to mount
++ * @mp:   mountpoint of @mnt_to
+  *
+  * - Make sure that nothing can be mounted beneath the caller's current
+  *   root or the rootfs of the namespace.
+@@ -3468,11 +3468,10 @@ static bool mount_is_ancestor(const struct mount *p1, const struct mount *p2)
+  * Return: On success 0, and on error a negative error code is returned.
+  */
+ static int can_move_mount_beneath(struct mount *mnt_from,
+-				  const struct path *to,
++				  struct mount *mnt_to,
+ 				  const struct mountpoint *mp)
+ {
+-	struct mount *mnt_to = real_mount(to->mnt),
+-		     *parent_mnt_to = mnt_to->mnt_parent;
++	struct mount *parent_mnt_to = mnt_to->mnt_parent;
+ 
+ 	if (IS_MNT_LOCKED(mnt_to))
  		return -EINVAL;
- 	/* make certain new is below the root */
- 	if (!is_path_reachable(new_mnt, new.dentry, &root))
+@@ -3619,7 +3618,7 @@ static int do_move_mount(struct path *old_path,
+ 	}
+ 
+ 	if (beneath) {
+-		err = can_move_mount_beneath(old, new_path, mp.mp);
++		err = can_move_mount_beneath(old, real_mount(new_path->mnt), mp.mp);
+ 		if (err)
+ 			return err;
+ 	}
 -- 
 2.47.2
 
