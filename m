@@ -1,146 +1,300 @@
-Return-Path: <linux-fsdevel+bounces-58901-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58902-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EFCBB3335A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 01:55:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58043B3356D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 06:44:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD01817F02C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Aug 2025 23:55:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D42072037D6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 04:42:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A89B4270548;
-	Sun, 24 Aug 2025 23:54:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BFB6267B90;
+	Mon, 25 Aug 2025 04:40:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZGSTosll"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="GKkZHNec"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E52921FF2A;
-	Sun, 24 Aug 2025 23:54:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0EF827BF93
+	for <linux-fsdevel@vger.kernel.org>; Mon, 25 Aug 2025 04:40:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756079694; cv=none; b=iP1KnsL1I5yT4P/K4ATjCszq7GqE6sXuWDx6uCEi0+urzaUXyj0XJT8UKSlhmiWlqG1QheWpVOK/TbHQFohpQo062d1OutM7ZqeNUvBvXcq6mlF0Z9BmLd0mbOKaHcBIUvvoMKoDw5suKthwepCIOmxkRwRWQkYLEcKIQnfqABo=
+	t=1756096855; cv=none; b=MqyAY1iWZIu1lDBHAlTYS29wthlLCGGF+MdbHC9cGIVvdNnFbscsRtYBZ7CQX9+Oh/d1ZrJQnsbrhzKHQdFwfvcYit7orFBnFG6Uc0u5CLV/8rh634QaH4Je4Bgd+yBxYtlGqF+6xrzlFO2/UgXXnk/MhW3xbEU14pZrixDpBU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756079694; c=relaxed/simple;
-	bh=EPvpw/HB0JIK9on+shXgvx1Fgh9VbjJay+vox4FNxD0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nFaVT6zPvKxQD08xSkiuYse652lHCMezPiCeFw5eg5+KHimQIRyVOL0uxppv28QrSkVgY+Q1Nw2qwRcSgXzSx1Wil2F1rHdqbDMJOyN7fgO0KhYYRwY2pqfr4qknCp8nLKjU0t08lrQtnxKTF2SiZdhUUt0dJn8I0EIYKLDCcuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZGSTosll; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1756096855; c=relaxed/simple;
+	bh=Ed5/0BgDK+fegb+APydeu9N1m3ndB0VNr1OGctOoCK0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=XFSNvkQ0LB0kYurlc+zix3stPHhcq/JkLBiwv2GJi9uaYbBnUoiPncKawwwWVdc0wmNHEhyhUr3Riuzuf4qLKqNvumklH+4sKB7XYXtxZgqZp1P24GujiMcht5S1xeljuWLGBGRvstv8JWCR6lhT8Mwa5Xaaq8QazBTttruyiJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=GKkZHNec; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=IbALCsfsR+MAiQYJZNzeI91q7zOev/5ha7scZVR2jKc=; b=ZGSTosllZqZB0fkvFXI+A3NcTA
-	iw280Bnsv6VawvGDy2YjR53X90BvQh5KXR80VUbZWeOOcFuVM56kElkzFr04bK6EDHP/7oYqX7fwn
-	3/kRaUlyQcxM1Oof0LNVbv/fIkHjpcgV0gZjnz16W70QFX5GMRncdIoFovZsz++bUahmNQlgQZsoK
-	TQ85L8FrBvydryZWP3atiAdgfT6wMtomnUPXcfHTsC6Okg4d13n4SvU2qCzcnHKNrPzRhBsj5LMLt
-	m0s7AfRUUePLhGsmas0/Nj+UeMktfnOtlOaOmGlEYPIOHWNzDDL3lSgZiB5d/a53H3Gc6uAywT2AI
-	fkHw8LxA==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uqKXy-00000006ds0-3UN7;
-	Sun, 24 Aug 2025 23:54:50 +0000
-Message-ID: <9b2c8fe2-cf17-445b-abd7-a1ed44812a73@infradead.org>
-Date: Sun, 24 Aug 2025 16:54:50 -0700
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
+	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=QCxOdp/kiggdCtBlSxAnuMPd9rhqxJceBVXkLkW2Vbg=; b=GKkZHNecozZit6qf+r5dGIzOCG
+	m59UUHMHf9FDempruODUR8ObyjHY3IZoDFZ71KtV3Id0sMnONPKkE1YsRWTiUs/s7LkDpiDl53T3Y
+	qpkbpN3SrRkf20/ZVbSBNEHYZL86YA6s1pLRqfyqWIZoPyUMwYn4TMpH1huJ34TFcxfZLqunJyHtZ
+	a1jXEr6oPhhV8WQ5vkWFmqCyw7SzEiSmcSGVYvFQu2/lYNWi5/cvc87jz4+daK16AApb1uIuQLANP
+	L25gTgmUulfTl5OdPzQPD5wgJ8ybjDmKohHho5AH9R3Qq3NeynTpF0/z6V0TALX+/S3mFMxZoKQyl
+	neDUD4GA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uqP0g-00000006QnG-1cfG;
+	Mon, 25 Aug 2025 04:40:46 +0000
+Date: Mon, 25 Aug 2025 05:40:46 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: linux-fsdevel@vger.kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Subject: [PATCHED][RFC][CFT] mount-related stuff
+Message-ID: <20250825044046.GI39973@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] uapi/fcntl: conditionally define AT_RENAME* macros
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-kernel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
- Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
- Alexander Aring <alex.aring@gmail.com>, Josef Bacik <josef@toxicpanda.com>,
- Aleksa Sarai <cyphar@cyphar.com>, Jan Kara <jack@suse.cz>,
- Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
- linux-api@vger.kernel.org
-References: <20250824221055.86110-1-rdunlap@infradead.org>
- <aKuedOXEIapocQ8l@casper.infradead.org>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <aKuedOXEIapocQ8l@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Sender: Al Viro <viro@ftp.linux.org.uk>
+
+	Most of this pile is basically an attempt to see how well do
+cleanup.h-style mechanisms apply in mount handling.  That stuff lives in
+git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #work.mount
+Rebased to -rc3 (used to be a bit past -rc2, branched at mount fixes merge)
+Individual patches in followups.
+
+	Please, help with review and testing.  It seems to survive the
+local beating and code generation seems to be OK, but more testing
+would be a good thing and I would really like to see comments on that
+stuff.
+
+	This is not all I've got around mount handling, but I'd rather
+get that thing out for review before starting to sort out other local
+mount-related branches.
+
+	Series overview:
+
+	Part 1: guards.
+
+	This part starts with infrastructure, followed by one-by-one
+conversions to the guard/scoped_guard in some of the places that fit
+that well enough.  Note that one of those places turned out to be taking
+mount_lock for no reason whatsoever; I already see places where we do
+write_seqlock when read_seqlock_excl would suffice, etc.
+
+	Folks, _please_ don't do any bulk conversions in that area.
+IMO one area where RAII becomes dangerous is locking; usually it's not
+a big deal to delay freeing some object a bit, but delay dropping a
+lock and you risk introducing deadlocks that will be bloody hard to spot.
+It _has_ to be done carefully; we had trouble in that area several times
+over the last year or so in fs/namespace.c alone.  Another fun problem
+is that quite a few comments regarding the locking in there are stale.
+We still have the comments that talk about mount lock as if it had been
+an rwlock-like thing.  It hadn't been that for more than a decade now.
+It needs to be documented sanely; so do the access rules to the data
+structures involved.  I hope to get some of that into the tree this cycle,
+but it's still in progress.
+
+1/52)  fs/namespace.c: fix the namespace_sem guard mess
+	New guards: namespace_excl and namespace_shared.  The former implies
+the latter, as for anything rwsem-like.  No inode locks, no dropping the final
+references, no opening files, etc. in scope of those.
+2/52)  introduced guards for mount_lock
+	New guards: mount_writer, mount_locked_reader.  That's write_seqlock
+and read_seqlock_excl on mount_lock; obviously, nothing blocking should be
+done in scope of those.
+3/52)  fs/namespace.c: allow to drop vfsmount references via __free(mntput)
+	Missing DEFINE_FREE (for mntput()); local in fs/namespace.c, to be
+used only for keeping shit out of namespace_... and mount_... scopes.
+4/52)  __detach_mounts(): use guards
+5/52)  __is_local_mountpoint(): use guards
+6/52)  do_change_type(): use guards
+7/52)  do_set_group(): use guards
+8/52)  mark_mounts_for_expiry(): use guards
+9/52)  put_mnt_ns(): use guards
+10/52)  mnt_already_visible(): use guards
+	a bunch of clear-cut conversions, with explanations of the reasons
+why this or that guard is needed.
+11/52)  check_for_nsfs_mounts(): no need to take locks
+	... and here we have one where it turns out that locking had been
+excessive.  Iterating through a subtree in mount_locked_reader scope is
+safe, all right, but (1) mount_writer is not needed here at all and (2)
+namespace_shared + a reference held to the root of subtree is also enough.
+All callers had (2) already.  Documented the locking requirements for
+function, removed {,un}lock_mount_hash() in it...
+12/52)  propagate_mnt(): use scoped_guard(mount_locked_reader) for mnt_set_mountpoint()
+	This one is interesting - existing code had been equivalent to
+scoped_guard(mount_locked_reader), and it's right for that call.  However,
+mnt_set_mountpoint() generally requires mount_writer - the only reason we
+get away with that here is that the mount in question never had been
+reachable from the mounts visible to other threads.
+13/52)  has_locked_children(): use guards
+14/52)  mnt_set_expiry(): use guards
+15/52)  path_is_under(): use guards
+	more clear-cut conversions with explanations.
+16/52)  current_chrooted(): don't bother with follow_down_one()
+17/52)  current_chrooted(): use guards
+	this pair might be better off with #16 taken to the beginning
+of the series (or to a separate branch merge into this one); no better
+reason to do as I had than wanting to keep the guard infrastructure
+in the very beginning.
+
+	Part 2: turning unlock_mount() into __cleanup.
+
+	Environment for mounting something on given location consists of:
+1) namespace_excl scope
+2) parent mount - the one we'll be attaching things to.
+3) mountpoint to be, protected from disappearing under us.
+4) inode of that mountpoint's dentry held exclusive.
+	Unfortunately, we can't take inode locks in namespace_excl scopes.
+And we want to cope with the possibility that somebody has managed to
+mount something on that place while we'd been taking locks.  "Cope" part
+is simple for finish_automount() ("drop our mount and go away quietly;
+somebody triggered it before we did"), but for everything else it's
+trickier - "use whatever's overmounting that place now (with the right
+locks, please)".
+	lock_mount() does all of that (do_lock_mount(), actually), with
+unlock_mount() closing the scope.  And it's definitely a good candidate
+for __cleanup()-based approach, except that
+* the damn thing can return an error and conditional variants of that
+infrastructure are too revolting.
+* parent mount is returned in a fucking awful way - we modify the struct
+path passed to us as location to mount on and then its ->mnt is the parent
+to be... except for the "beneath" variant where we play convoluted games
+with "no, here we want the parent of that".  Implementation is also
+vulnerable to umount propagtion races.
+* the structure we set up (everything except the parent) is inserted
+into a linked list by lock_mount().  That excludes DEFINE_CLASS() -
+it wants the value formed and then copied to the variable we are
+defining.
+* it contains an implicit namespace_excl scope, so path_put() and its
+ilk *must* be done after the unlock_mount().  And most of the users have
+gotos past that.
+	The first two problems are solved by adding an explicit pointer
+to parent mount into struct pinned_mountpoint.	Having lock_mount()
+failure reported by setting it to ERR_PTR(-E...) allows to avoid the
+problem with expressing the constructor failure.  The third one is dealt
+with by defining local macros to be used instead of CLASS - I went with
+LOCK_MOUNT(mp, path) which defines struct pinned_mountpoint mp with
+__cleanup(unlock_mount) and sets it up.  If anybody has better suggestions,
+I'll be glad to hear those.
+	The last one is dealt with by massaging the users to form that
+would have all post-unlock_mount() stuff done by __free().
+
+	First, several trivial cleanups:
+18/52)  do_move_mount(): trim local variables
+19/52)  do_move_mount(): deal with the checks on old_path early
+20/52)  move_mount(2): take sanity checks in 'beneath' case into do_lock_mount()
+21/52)  finish_automount(): simplify the ELOOP check
+
+	Getting rid of post-unlock_mount() stuff:
+22/52)  do_loopback(): use __free(path_put) to deal with old_path
+23/52)  pivot_root(2): use __free() to deal with struct path in it
+24/52)  finish_automount(): take the lock_mount() analogue into a helper
+	this one turns the open-coded logics into lock_mount_exact() with
+the same kind of calling conventions as lock_mount() and do_lock_mount()
+25/52)  do_new_mount_rc(): use __free() to deal with dropping mnt on failure
+26/52)  finish_automount(): use __free() to deal with dropping mnt on failure
+
+	This is the main part:
+27/52)  change calling conventions for lock_mount() et.al.
+
+	Followups, cleaning up the games with parent mount in the user:
+28/52)  do_move_mount(): use the parent mount returned by do_lock_mount()
+29/52)  do_add_mount(): switch to passing pinned_mountpoint instead of mountpoint + path
+30/52)  graft_tree(), attach_recursive_mnt() - pass pinned_mountpoint
+
+	Part 3: getting rid of mutating struct path there.
+
+	do_lock_mount() is still playing silly buggers with struct path it
+had been given - the logics in that thing hadn't changed.  It's not a pretty
+function and it's racy as well; the thing is, by this point its users have
+almost no use for the changed contents of struct path - dentry can be derived
+from struct mountpoint, parent mount to use is provided directly and we
+want that a lot more than modified path->mnt.  There's only one place
+(in can_move_mount_beneath()) where we still want that and it's not hard
+to reconstruct the value by *original* path->mnt value + parent mount to
+be used.
+
+	Getting rid of ->dentry uses.
+31/52)  pivot_root(2): use old_mp.mp->m_dentry instead of old.dentry
+32/52)  don't bother passing new_path->dentry to can_move_mount_beneath()
+
+	A helper, already open-coded in a couple of places; carved out of
+the next patch to keep it reasonably small
+33/52)  new helper: topmost_overmount()
+
+	Rewrite of do_lock_mount() to keep path constant + trivial change
+in do_move_mount() to adjust the argument it passes to can_move_mount_beneath():
+34/52)  do_lock_mount(): don't modify path.
+	
+
+	Part 5: a bunch of trivial cleanups (mostly constifications)
+
+35/52)  constify check_mnt()
+36/52)  do_mount_setattr(): constify path argument
+37/52)  do_set_group(): constify path arguments
+38/52)  drop_collected_paths(): constify arguments
+39/52)  collect_paths(): constify the return value
+40/52)  do_move_mount(), vfs_move_mount(), do_move_mount_old(): constify struct path argument(s)
+41/52)  mnt_warn_timestamp_expiry(): constify struct path argument
+42/52)  do_new_mount{,_fc}(): constify struct path argument
+43/52)  do_{loopback,change_type,remount,reconfigure_mnt}(): constify struct path argument
+44/52)  path_mount(): constify struct path argument
+45/52)  may_copy_tree(), __do_loopback(): constify struct path argument
+46/52)  path_umount(): constify struct path argument
+47/52)  constify can_move_mount_beneath() arguments
+48/52)  do_move_mount_old(): use __free(path_put)
+49/52)  do_mount(): use __free(path_put)
+
+	Part 6: assorted stuff, will grow.
+
+50/52)  umount_tree(): take all victims out of propagation graph at once
+[had been earlier]
+	For each removed mount we need to calculate where the slaves
+will end up.  To avoid duplicating that work, do it for all mounts to be
+removed at once, taking the mounts themselves out of propagation graph as
+we go, then do all transfers; the duplicate work on finding destinations
+is avoided since if we run into a mount that already had destination
+found, we don't need to trace the rest of the way.  That's guaranteed
+O(removed mounts) for finding destinations and removing from propagation
+graph and O(surviving mounts that have master removed) for transfers.
+
+51/52)  ecryptfs: get rid of pointless mount references in ecryptfs dentries
+	->lower_path.mnt has the same value for all dentries on given
+ecryptfs instance and if somebody goes for mountpoint-crossing variant
+where that would not be true, we can deal with that when it happens
+(and _not_ with duplicating these reference into each dentry).
+	As it is, we are better off just sticking a reference into
+ecryptfs-private part of superblock and keeping it pinned until
+->kill_sb().
+	That way we can stick a reference to underlying dentry right into
+->d_fsdata of ecryptfs one, getting rid of indirection through struct
+ecryptfs_dentry_info, along with the entire struct ecryptfs_dentry_info
+machinery.
+
+52/52)  fs/namespace.c: sanitize descriptions for {__,}lookup_mnt()
+	Comments regarding "shadow mounts" were stale - no such thing
+anymore.  Document the locking requirements for __lookup_mnt()...
 
 
+FWIW, the current diffstat:
 
-On 8/24/25 4:21 PM, Matthew Wilcox wrote:
-> On Sun, Aug 24, 2025 at 03:10:55PM -0700, Randy Dunlap wrote:
->> Don't define the AT_RENAME_* macros when __USE_GNU is defined since
->> /usr/include/stdio.h defines them in that case (i.e. when _GNU_SOURCE
->> is defined, which causes __USE_GNU to be defined).
->>
->> Having them defined in 2 places causes build warnings (duplicate
->> definitions) in both samples/watch_queue/watch_test.c and
->> samples/vfs/test-statx.c.
-> 
-> It does?  What flags?
-> 
-
-for samples/vfs/test-statx.c:
-
-In file included from ../samples/vfs/test-statx.c:23:
-usr/include/linux/fcntl.h:159:9: warning: ‘AT_RENAME_NOREPLACE’ redefined
-  159 | #define AT_RENAME_NOREPLACE     0x0001
-In file included from ../samples/vfs/test-statx.c:13:
-/usr/include/stdio.h:171:10: note: this is the location of the previous definition
-  171 | # define AT_RENAME_NOREPLACE RENAME_NOREPLACE
-usr/include/linux/fcntl.h:160:9: warning: ‘AT_RENAME_EXCHANGE’ redefined
-  160 | #define AT_RENAME_EXCHANGE      0x0002
-/usr/include/stdio.h:173:10: note: this is the location of the previous definition
-  173 | # define AT_RENAME_EXCHANGE RENAME_EXCHANGE
-usr/include/linux/fcntl.h:161:9: warning: ‘AT_RENAME_WHITEOUT’ redefined
-  161 | #define AT_RENAME_WHITEOUT      0x0004
-/usr/include/stdio.h:175:10: note: this is the location of the previous definition
-  175 | # define AT_RENAME_WHITEOUT RENAME_WHITEOUT
-
-for samples/watch_queue/watch_test.c:
-
-In file included from usr/include/linux/watch_queue.h:6,
-                 from ../samples/watch_queue/watch_test.c:19:
-usr/include/linux/fcntl.h:159:9: warning: ‘AT_RENAME_NOREPLACE’ redefined
-  159 | #define AT_RENAME_NOREPLACE     0x0001
-In file included from ../samples/watch_queue/watch_test.c:11:
-/usr/include/stdio.h:171:10: note: this is the location of the previous definition
-  171 | # define AT_RENAME_NOREPLACE RENAME_NOREPLACE
-usr/include/linux/fcntl.h:160:9: warning: ‘AT_RENAME_EXCHANGE’ redefined
-  160 | #define AT_RENAME_EXCHANGE      0x0002
-/usr/include/stdio.h:173:10: note: this is the location of the previous definition
-  173 | # define AT_RENAME_EXCHANGE RENAME_EXCHANGE
-usr/include/linux/fcntl.h:161:9: warning: ‘AT_RENAME_WHITEOUT’ redefined
-  161 | #define AT_RENAME_WHITEOUT      0x0004
-/usr/include/stdio.h:175:10: note: this is the location of the previous definition
-  175 | # define AT_RENAME_WHITEOUT RENAME_WHITEOUT
-
-
-> #define AT_RENAME_NOREPLACE     0x0001
-> #define AT_RENAME_NOREPLACE     0x0001
-> 
-> int main(void)
-> {
-> 	return AT_RENAME_NOREPLACE;
-> }
-> 
-> gcc -W -Wall testA.c -o testA
-> 
-> (no warnings)
-> 
-> I'm pretty sure C says that duplicate definitions are fine as long
-> as they're identical.
-The vales are identical but the strings are not identical.
-
-We can't fix stdio.h, but we could just change uapi/linux/fcntl.h
-to match stdio.h. I suppose.
-
--- 
-~Randy
-
+ fs/ecryptfs/dentry.c          |  14 +-
+ fs/ecryptfs/ecryptfs_kernel.h |  27 +-
+ fs/ecryptfs/file.c            |  15 +-
+ fs/ecryptfs/inode.c           |  19 +-
+ fs/ecryptfs/main.c            |  24 +-
+ fs/internal.h                 |   4 +-
+ fs/mount.h                    |  12 +
+ fs/namespace.c                | 775 +++++++++++++++++++-----------------------
+ fs/pnode.c                    |  75 ++--
+ fs/pnode.h                    |   1 +
+ include/linux/mount.h         |   4 +-
+ kernel/audit_tree.c           |  12 +-
+ 12 files changed, 464 insertions(+), 518 deletions(-)
 
