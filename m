@@ -1,56 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-59042-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59043-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D361B33FE2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 14:48:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F26AEB33FEE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 14:49:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23A081A84557
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 12:49:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3B4D3A594D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 12:49:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB8D1DF723;
-	Mon, 25 Aug 2025 12:48:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A411E6DC5;
+	Mon, 25 Aug 2025 12:49:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WHxmCk70"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BN+H2JLV"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FD851D31B9
-	for <linux-fsdevel@vger.kernel.org>; Mon, 25 Aug 2025 12:48:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE720220F37
+	for <linux-fsdevel@vger.kernel.org>; Mon, 25 Aug 2025 12:49:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756126126; cv=none; b=cL+ScItYKIqDBIJfhRWRQUi4dUg5+MxHdr166fX4IdHTwStqcp6YuFyWFFnFJCQNC0msK0R76KmANUFX1yW0Mw4YlKNDk6kkuXIGuoDptShgJPqcAKibrmALgf08AtPzDqbF8q0GhOEH/zoupkvR2jz2OWn5DHlpqLfgeSc70t4=
+	t=1756126147; cv=none; b=OlECFH5fo94SdEhu7KWsRYzC8RnN0lfzzkuaPr0g5O7zpRwPpQpVtg44vrUjiG5stk/SkH8qon7ZPfaIQg2YZ/We8zCeAs+IhV3HxBaUmhvOWJGmX6YM+sUd9AbkwxuhI3cch/6At0vAX8JgYxN6ApvyZUrb21ccoTZqFOJSdaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756126126; c=relaxed/simple;
-	bh=IZmg2vpGJZ3BNcgT3e/A5MYvST32CuvMaXtkjelbGZE=;
+	s=arc-20240116; t=1756126147; c=relaxed/simple;
+	bh=lxMCmr5lgyO38Cw8CuwjBabPCmE6iKUZyQBtfwyAswQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e01VyYBzL+Pnscmd7RJgVHG1CkgLZZKvc0Mp9t6lIvb/tALlo+Dp8wToQEGmw6qcGDzLKbpl5kUhp/pzT+A9KIzPYUXKPQprPFPgfe5c0ol7NlH7zhfZEDoXXlC2ree9MM2VC35/YAWGt5LTFqP1JHtycOZFEnMoUioMzNJjzyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WHxmCk70; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F09FAC4CEED;
-	Mon, 25 Aug 2025 12:48:44 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=gbAuLGlEDRxSk13wMmF3XZwF56+T0bD3kFbs/0g0iFg9XkhbUpVkc5xumaU6G4UHqM2IbQgoD6uvFKDFZj35tmH+RgVsA8hOFwcotwM26x71jE54jrWXLkCNz2OlI30vUFcg9X2MaO3Bo3HmEhm3aB2K9at8hdb/D5IBXpgmwH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BN+H2JLV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD740C113D0;
+	Mon, 25 Aug 2025 12:49:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756126126;
-	bh=IZmg2vpGJZ3BNcgT3e/A5MYvST32CuvMaXtkjelbGZE=;
+	s=k20201202; t=1756126147;
+	bh=lxMCmr5lgyO38Cw8CuwjBabPCmE6iKUZyQBtfwyAswQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WHxmCk70MZL+uGJMStSaUdbPQ59NtgOje/6XfSdtPuJtR+JgrEQFkxQh8ul45eeGA
-	 +a0Bf9DEbATfMZf0t4TF5L0ILXm0/5JpBiEF8PB/fkZvQxEdoI1ojQiKxxdtC6tvv1
-	 YJzH4rwskbXeFGbH4SZajJOqU713bmmM8YyKBLHyZ9ynPKfX6paoZVw9OvjIyD3sCv
-	 Jw7mCQd6pKzF/yiqDV0jX69bYvlHN6hs+7BAlNZCO3BFSSuNUpiK+3PLvmBIH2w6H7
-	 fzBJqppAQtB8554FLr1ikyHgJfZU3BQ2VgxPUC5TwdwmA6SQ9B9wjfRdhlBF9MOBRf
-	 fbyikXl995n5A==
-Date: Mon, 25 Aug 2025 14:48:42 +0200
+	b=BN+H2JLVYlatVUIqk7wi/LII8zD/RbLA1xXxEz3ygeutjpxsWbTS2nEL8OLvm0pju
+	 86p5lhHbSj8RfeNIj7iAKBfNeD/2DxN5tC8J+OblRmhW1i+v2y94PCrSSBrkbCzb4f
+	 /LlKulNiS6yLZvT7+aGNcLwWILGYKRuheN10uVnQr0J7Qa6b0t//FJFsJ3wbUNPjsS
+	 zEkGIJXxG1F2g61orY5Uz1UD85r4XWAEZMZd5dMJ96tdQpfydo7VQx81GlntuCaVcB
+	 /DvSHlHa/zhN9yN4dRBLOniRvPqFWlH5njGFiyLDLXD5yQ9xqq0WQBarp5++uYRVHB
+	 Akqb3DdM2j9Ug==
+Date: Mon, 25 Aug 2025 14:49:03 +0200
 From: Christian Brauner <brauner@kernel.org>
 To: Al Viro <viro@zeniv.linux.org.uk>
 Cc: linux-fsdevel@vger.kernel.org, jack@suse.cz, 
 	torvalds@linux-foundation.org
-Subject: Re: [PATCH 11/52] check_for_nsfs_mounts(): no need to take locks
-Message-ID: <20250825-begnadet-lageplan-ad709e089343@brauner>
+Subject: Re: [PATCH 12/52] propagate_mnt(): use
+ scoped_guard(mount_locked_reader) for mnt_set_mountpoint()
+Message-ID: <20250825-gefrieren-zerreden-b1fd001d540f@brauner>
 References: <20250825044046.GI39973@ZenIV>
  <20250825044355.1541941-1-viro@zeniv.linux.org.uk>
- <20250825044355.1541941-11-viro@zeniv.linux.org.uk>
+ <20250825044355.1541941-12-viro@zeniv.linux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,22 +60,9 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250825044355.1541941-11-viro@zeniv.linux.org.uk>
+In-Reply-To: <20250825044355.1541941-12-viro@zeniv.linux.org.uk>
 
-On Mon, Aug 25, 2025 at 05:43:14AM +0100, Al Viro wrote:
-> Currently we are taking mount_writer; what that function needs is
-> either mount_locked_reader (we are not changing anything, we just
-> want to iterate through the subtree) or namespace_shared and
-> a reference held by caller on the root of subtree - that's also
-> enough to stabilize the topology.
-> 
-> The thing is, all callers are already holding at least namespace_shared
-> as well as a reference to the root of subtree.
-> 
-> Let's make the callers provide locking warranties - don't mess with
-> mount_lock in check_for_nsfs_mounts() itself and document the locking
-> requirements.
-> 
+On Mon, Aug 25, 2025 at 05:43:15AM +0100, Al Viro wrote:
 > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 > ---
 
