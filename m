@@ -1,57 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-59012-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59013-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6505B33E80
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 13:56:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 427CDB33E95
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 14:01:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 98E314E3243
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 11:56:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB9AC1A826B1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 12:01:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5AB32E5437;
-	Mon, 25 Aug 2025 11:56:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0D7A26B771;
+	Mon, 25 Aug 2025 12:01:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CPkoEoxv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G4ftXcAQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400CF38D;
-	Mon, 25 Aug 2025 11:56:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C1FC22A4E5;
+	Mon, 25 Aug 2025 12:01:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756122971; cv=none; b=ZwgmIwLU4fHuSpmfAQ9kGCgoySurTUY2lQ1IfCUDsJoU81coPCt3odiCxxo2zL0uvT9wjkssobfsJ1Nt56eC5Onn5Vy6AhNKKcR6aSWrSSKT7Cb8E+o1w3pqYJJPJdc3hD5XcPj7oKXmaQXz/7//JomMjaFCiAxAZgHPdTdXuao=
+	t=1756123273; cv=none; b=Z9kl+ToG4Fovgoq+pdYGIV0HcjWJeTwUCme0RBu1FxQ5UWW/QX6hXKuigpOIQfRUuWz6xGefIYzqSmif1TT/9PdoIAI4a4sY9ysacOgNHqPz8wbZi+fDvPFskjiIH6yl9EpyTn7MCe6jVA1gZOEnTAC/irOgs/dZBhE3+act1nQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756122971; c=relaxed/simple;
-	bh=MDSWgn6WKv+gJIuM/KMh250oQpC7dHfexKwoxreXAtc=;
+	s=arc-20240116; t=1756123273; c=relaxed/simple;
+	bh=coPKTGDhD+vmF6gBi7FlpvcCk8kMW+tsVWXxq4ug5/0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kbFoxBXxK4STmFlVQ1hfE8xdSyq4hkgCX5OWeEllQYjThmY+BCvKcQx3uhh1EebT9voHAtwcFv7BCIlNKBaj5jJyWdZEghqwwM+1idBVr5CLWJVEStre9RxYF04ccb8gB/lPgV5CipUvNsrS/msfbOhbkRLKu/ddmyhxa/28rag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CPkoEoxv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26FF5C4CEED;
-	Mon, 25 Aug 2025 11:56:08 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=drG2adxa+G5WeAVKYEybwjJeKorKIRxbuKmS9khK667YVfUl+Pf27Rlfn/QXaenehmJqA1OZdnW9l0n/5rsF/AvqCidVEVHDiTFyC2YxH78g5lNH5FL7kplDYgDcH+2hy/jzFm0GqOdFUpe4ov/L2tiCeRVdCjz1btamaJrnMww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G4ftXcAQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB09EC116D0;
+	Mon, 25 Aug 2025 12:01:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756122970;
-	bh=MDSWgn6WKv+gJIuM/KMh250oQpC7dHfexKwoxreXAtc=;
+	s=k20201202; t=1756123271;
+	bh=coPKTGDhD+vmF6gBi7FlpvcCk8kMW+tsVWXxq4ug5/0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CPkoEoxvHfgM+V7S4D/WFHpuNZ0OztvUfx+8JrDAC6WCCyKOGfofT392bUTFo+d0L
-	 jUByDTZKk77wKlMuRUbbnMUhzDELt76eEAGciBD9sdxdT4RpifTPanfxRY2Mp29O+7
-	 c6dCbh1KXx8QNOici8N5M6SEhafagC+bQJqvDaxEen/vU+1omdfRx6ryn/+Hlxfnly
-	 H4+YagonfpyWr0RcyGTP5/8S+fGG7AIemHsqHbL8Ef7+Gn7pbp1fUjCEXpBgX6Cw47
-	 p5TO56K1k/U/Ubwe24Vg8UeHicfrpmmPYjZZ0hTzCqK6HnzyWfo57OQo0v8jOhFil4
-	 5yltmj8H7f2/A==
-Date: Mon, 25 Aug 2025 13:56:06 +0200
+	b=G4ftXcAQj9nVXAhf53Q4/KaXLmbbkd7sTsZiuId2nskg7EGyKX5EeZxBxu04q9ZnP
+	 x49RdbEsxMoEPmYOF/41EXhjo52rgow5IFG/wHk1V+OzXvHRfzzRdlvMR/AAABddfr
+	 qRNJp25k9eH/szL9bTKY8NbzYAH8fsfcdMF48jq8Y/cy8KIhGHpsylEm6JKimrcIB7
+	 iOMTeLx94sBDeMRInCJHOCQA/9MXcjS6mWoAVVTDah/yuzN4QDcvAQL1SIHqDrkqeQ
+	 AExoalx0xkabeQ39PpoG1gahqDN/vWYKnxC6oewQndNk31SCFRmAVb2xnhQ8PMr1aM
+	 9cPLcBOMv7nmQ==
+Date: Mon, 25 Aug 2025 14:01:07 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org, 
-	kernel-team@fb.com, linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	viro@zeniv.linux.org.uk
-Subject: Re: [PATCH 50/50] fs: add documentation explaining the reference
- count rules for inodes
-Message-ID: <20250825-evakuieren-ansetzen-105f384692dc@brauner>
-References: <cover.1755806649.git.josef@toxicpanda.com>
- <e0bdfc839c71c8e7264e570125cc4573d9613df4.1755806649.git.josef@toxicpanda.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, Anuj Gupta <anuj20.g@samsung.com>, 
+	Kanchan Joshi <joshi.k@samsung.com>, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	io-uring@vger.kernel.org
+Subject: Re: [PATCH 1/2] fs: add a FMODE_ flag to indicate IOCB_HAS_METADATA
+ availability
+Message-ID: <20250825-randbemerkung-machbar-ae3dde406069@brauner>
+References: <20250819082517.2038819-1-hch@lst.de>
+ <20250819082517.2038819-2-hch@lst.de>
+ <20250819-erwirbt-freischaffend-e3d3c1e8967a@brauner>
+ <20250819092219.GA6234@lst.de>
+ <20250819-verrichten-bagger-d139351bb033@brauner>
+ <20250819133447.GA16775@lst.de>
+ <20250820-voruntersuchung-fehlzeiten-4dcf7e45c29f@brauner>
+ <20250821084213.GA29944@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,53 +67,19 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <e0bdfc839c71c8e7264e570125cc4573d9613df4.1755806649.git.josef@toxicpanda.com>
+In-Reply-To: <20250821084213.GA29944@lst.de>
 
-On Thu, Aug 21, 2025 at 04:19:01PM -0400, Josef Bacik wrote:
-> Now that we've made these changes to the inode, document the reference
-> count rules in the vfs documentation.
+On Thu, Aug 21, 2025 at 10:42:13AM +0200, Christoph Hellwig wrote:
+> On Wed, Aug 20, 2025 at 11:40:36AM +0200, Christian Brauner wrote:
+> > I meant something like this which should effectively be the same thing
+> > just that we move the burden of having to use two bits completely into
+> > file->f_iocb_flags instead of wasting a file->f_mode bit:
 > 
-> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-> ---
->  Documentation/filesystems/vfs.rst | 23 +++++++++++++++++++++++
->  1 file changed, 23 insertions(+)
-> 
-> diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
-> index 229eb90c96f2..5bfe7863a5de 100644
-> --- a/Documentation/filesystems/vfs.rst
-> +++ b/Documentation/filesystems/vfs.rst
-> @@ -457,6 +457,29 @@ The Inode Object
->  
->  An inode object represents an object within the filesystem.
->  
-> +Reference counting rules
-> +------------------------
-> +
-> +The inode is reference counted in two distinct ways, an i_obj_count refcount and
-> +an i_count refcount. These control two different lifetimes of the inode. The
-> +i_obj_count is the simplest, think of it as a reference count on the object
-> +itself. When the i_obj_count reaches zero, the inode is freed.  Inode freeing
-> +happens in the RCU context, so the inode is not freed immediately, but rather
-> +after a grace period.
-> +
-> +The i_count reference is the indicator that the inode is "alive". That is to
-> +say, it is available for use by all the ways that a user can access the inode.
-> +Once this count reaches zero, we begin the process of evicting the inode. This
-> +is where the final truncate of an unlinked inode will normally occur.  Once
-> +i_count has reached 0, only the final iput() is allowed to do things like
-> +writeback, truncate, etc. All users that want to do these style of operation
-> +must use igrab() or, in very rare and specific circumstances, use
-> +inode_tryget().
-> +
-> +Every access to an inode must include one of these two references. Generally
-> +i_obj_count is reserved for internal VFS references, the s_inode_list for
-> +example. All file systems should use igrab()/lookup() to get a live reference on
-> +the inode, with very few exceptions.
+> Yeah, that could work.  But I think the double use of f_iocb_flags is
+> a bit confusing.  Another option at least for this case would be to
+> have a FOP_ flag, and then check inside the operation if it is supported
+> for this particular instance.
 
-It would be awesome if you could document in more detail how LRU
-handling and reference counts works.
-
-I_FREEING | I_WILL_FREE was tightly interconnected with LRU handling and
-it was frankly a mess to understand so having the new stuff clearly
-documented would help us all a lot. Thanks!
+Do you want to try something like that? Maybe we can do this for other
+FMODE_*-based IOCB_* opt{in,outs}?
 
