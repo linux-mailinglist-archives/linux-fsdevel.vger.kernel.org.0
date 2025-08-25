@@ -1,95 +1,86 @@
-Return-Path: <linux-fsdevel+bounces-59125-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59126-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A521B34A51
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 20:28:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFBC0B34A92
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 20:45:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 736781A87503
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 18:28:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 895AB5E2100
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 18:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EF2F304BBF;
-	Mon, 25 Aug 2025 18:27:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F2EE248869;
+	Mon, 25 Aug 2025 18:45:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="f8iMl/O/"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Z/BJIZ1I"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21EDB25A2B5;
-	Mon, 25 Aug 2025 18:27:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756146477; cv=pass; b=EXZv3DARzNJdwHgPzw63iZV+p3RSSPYh06sOITPsDi++GvTTG8vNNsddi8eHMb5t2IMlqbHmiLn4Ypb/fzpI7V0y9SuCxN2rwpap7f24NXfTFA3HBr8o2nRk/pCP0C/odh7KogByGwR/2Ess9JjbQ3vT5ttq0LhrzdkaFmXpSSo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756146477; c=relaxed/simple;
-	bh=meEgaTKp6Xdw2PLSai+5PZYRpi9n928iTriksJb8pOc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Vbklceqsfg5H1IZuLMl5sfr8mW12+x2fTlTykKCRF8905unvvE/2K233yn8pMfU5DEwe1wFGeE5B3okieaP8SiBZ9RPqTuMJF4k2ZF5rdphv7h4MuEEe6KOElzX8zWEet3y31SUHIafdVyon2BPKZpakiNr2jaV1CO0AykgRMAk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=f8iMl/O/; arc=pass smtp.client-ip=136.143.188.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1756146440; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=KAd+cLom/5YBkeqycVaYIXWJ2wWP0/QvPfkIE0axSr2lh8F8dw+bBx7lfUudb7nJichgf5jD3zk+YMpfPZGRWl7IkqyH+UGsIHNc/0HhmQlX0y3C+AMohoWVbkZgifkMrKZUMOQtdsHvTTe7zy6lvRgQ6a6RDSLBXcwnkVfrrDs=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1756146440; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=m12lHGWa3KhdTQWlE8Rr94S+wcigP6qe2knefY5rEqg=; 
-	b=CNbu37vw/e7iqfj6DNqCQx5erasdloFagoK5qwAUY6FasWcmdFUdSd9qr4jsstRKX7EO8xWO/OL3Mx3oXAc/lPoOrMHBRyYQFEZ0+CWtzY6S8DHhKrquyE9G2nqnpcWMiFy/KsvQBc9v7uhCULxkxmkIFYS6KV/gHdxcF37VGIA=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
-	dmarc=pass header.from=<safinaskar@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756146440;
-	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=m12lHGWa3KhdTQWlE8Rr94S+wcigP6qe2knefY5rEqg=;
-	b=f8iMl/O/Yg9xNAAcmCF2H7ZmkfpD2XuKkKtp/VcG3gUWLjzU47C2XgAIrKxsdtbS
-	Us7+C70Pb09n4mdOP1B+xj2XkxtdOoztc5xyzYtjmUVFLoQ0i4eoTms0q2G7LPxjTlf
-	Bk3l6XT/fdAi//lSSl45PMRcpBrUdgKRRmh9qosg=
-Received: by mx.zohomail.com with SMTPS id 1756146439310997.1212989347032;
-	Mon, 25 Aug 2025 11:27:19 -0700 (PDT)
-From: Askar Safin <safinaskar@zohomail.com>
-To: hch@lst.de
-Cc: gregkh@linuxfoundation.org,
-	julian.stecklina@cyberus-technology.de,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	rafael@kernel.org,
-	torvalds@linux-foundation.org,
-	viro@zeniv.linux.org.uk,
-	Gao Xiang <hsiangkao@linux.alibaba.com>,
-	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Subject: Re: [PATCH] initrd: support erofs as initrd
-Date: Mon, 25 Aug 2025 21:27:13 +0300
-Message-ID: <20250825182713.2469206-1-safinaskar@zohomail.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250321050114.GC1831@lst.de>
-References: <20250321050114.GC1831@lst.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D65023BCEF;
+	Mon, 25 Aug 2025 18:45:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756147527; cv=none; b=YSat/k9+syANQ2jT/qVU6MShF1VCGFRWQkR4foNKm8qGTlTX4B9M1gA664QLHU10XcLco6vasuU9f87PhU+4GVp74nnJVn+w0LFV2zEHA+qpBt/xsu5ALWjC3E3Waqf0sQ+UGn7W5tkMPrGm428vahMqKOSHG6lOvkWzBqCgD/8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756147527; c=relaxed/simple;
+	bh=smi+KmAxojiQhsj6Muma/DlYlWlX97XxL12GLasWTj8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dcCwBSbsBXipEDH40nypdAFUPGrmttc/3L7PcwSfjxx8bJMXBeXj460vAjzk2jZQ9LLkXe3Snm1TFnaXO0NUEAicGIKfKmsGgLfz3522SGjGfNZB+HBz7ulm/6uomHBmDP9Kb3QZAIZlBwm4mlDtVyFNhdtoB0KlvxYu8YN5uMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Z/BJIZ1I; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=jcGbJRKn457P/rPO1gB7SWr02nQvJ1OsIbhHBpeMdqg=; b=Z/BJIZ1I0NTgESi4GXRCKzX2lh
+	QDcmdcZxfsRzEK6xF2oJXHrXPVg9XGhyrWRRxJY2PM+Kn1xyyafarRDtsrR3yrFfI8pGCoIPgRngJ
+	sJjt0PJ+qmvwUgb/Lpua6Wphg5Y9VRKtOCu6gy1Gaw+RvzSneUECj4gma/khgjGOQLjHitEh/TFO7
+	DuUvyEZy5kk0i4q/A3t32DuCFk6syusf0rDiu19aiJfu1ocx9g7cRb8i3XNLnW7mHBvrASYwuI9vv
+	9ftJRCffm1PEgNiHHIYYyWI38K4v9hM9gpkzDjTCuPWCWr67ZLSMzuyJSN25nyGZkGB8gp0kmagll
+	82EUSUcw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uqcBv-00000002XL4-2rbx;
+	Mon, 25 Aug 2025 18:45:15 +0000
+Date: Mon, 25 Aug 2025 19:45:15 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: linux-kernel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Alexander Aring <alex.aring@gmail.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Aleksa Sarai <cyphar@cyphar.com>, Jan Kara <jack@suse.cz>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH] uapi/fcntl: conditionally define AT_RENAME* macros
+Message-ID: <aKyvO2bvPCZEzuBd@casper.infradead.org>
+References: <20250824221055.86110-1-rdunlap@infradead.org>
+ <aKuedOXEIapocQ8l@casper.infradead.org>
+ <9b2c8fe2-cf17-445b-abd7-a1ed44812a73@infradead.org>
+ <aKxfGix_o4glz8-Z@casper.infradead.org>
+ <0c755ddc-9ed1-462e-a9f1-16762ebe0a19@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Feedback-ID: rr080112270baee35dc5311e33b64052940000252d03bbe4d16dee78348dc27b1e6bf0455e8e1d18fd4a103c:zu08011227f8165d847c5e766d85d9776c00004a796f562a9284a1b19f8ba53791b06519e43ede7488b100a8:rf0801122cb69044e998ad7c93d492d3f70000bfc00a88b96aa5e27a37851e3c823ee70d414282c543039636ff4e7a7a49:ZohoMail
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0c755ddc-9ed1-462e-a9f1-16762ebe0a19@infradead.org>
 
-> We've been trying to kill off initrd in favor of initramfs for about
-> two decades.  I don't think adding new file system support to it is
-> helpful.
+On Mon, Aug 25, 2025 at 10:52:31AM -0700, Randy Dunlap wrote:
+> $ grep -r AT_RENAME_NOREPLACE /usr/include
+> /usr/include/stdio.h:# define AT_RENAME_NOREPLACE RENAME_NOREPLACE
+> /usr/include/linux/fcntl.h:#define AT_RENAME_NOREPLACE	0x0001
+> 
+> I have libc 2.42-1.1 (openSUSE).
 
-I totally agree.
-
-What prevents us from removing initrd right now?
-
-The only reason is lack of volunteers?
-
-If yes, then may I remove initrd?
-
---
-Askar Safin
+I wonder if we can fix it by changing include/uapi/linux/fcntl.h
+from being an explicit 0x0001 to RENAME_NOREPLACE?  There's probably
+a horrendous include problem between linux/fcntl.h and linux/fs.h
+though?
 
