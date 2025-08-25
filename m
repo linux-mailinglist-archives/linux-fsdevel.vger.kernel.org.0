@@ -1,147 +1,108 @@
-Return-Path: <linux-fsdevel+bounces-59139-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59140-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24C10B34E28
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 23:37:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2C90B34E36
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 23:43:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 097741A8781A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 21:37:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E94B61B25C38
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 21:43:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AA0729B778;
-	Mon, 25 Aug 2025 21:37:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8213F2989BF;
+	Mon, 25 Aug 2025 21:43:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cHK0J2XK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="egDfgIxN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A4C27A917;
-	Mon, 25 Aug 2025 21:37:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F936221FC3;
+	Mon, 25 Aug 2025 21:43:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756157832; cv=none; b=q3OMa9klER5kcD5hfQzcH5gEW7TqnE/VhFRTneqUwrlw9Ruy4lQnon4v6dAnVBJVeyxj47K7EVeVDBtSpzNjA3D0XmVWwws2RJuLrKb1iZuZqoyYDzXpZh+InipMXWpFSo/36P6fq4/tqnZ9SPk1Di+jP/zgFVDtia5yEbTg33M=
+	t=1756158194; cv=none; b=IkHGgnfljKktHthSm74AreLA1RAuEnZnu8q+Ygs1sedKKBDjNYq0OU0juc+hIlTy6FYdN4JegufO66ky856kKWOq2CQISDBxqSjz09tMC4w9b8cxokAP4K8S7Q/64qXnRkc+t3tA7qrhNHq0SFeepGI3IaTYWsLcFu2bLbiSxdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756157832; c=relaxed/simple;
-	bh=R44bcAauESCYgLUnJio9oy6n01PzJ9gIprVhrTrJHrw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jysYVL6zkgDrCW3NlDdD4AKsp+HbcYV1IbcdhXRmL27yEHvsChfnOoa0Eh/Sq0iLbiQTuWFctTWTUn1oA5Ht2e0dBAdZcuP7w+a0W00fpZ8DJEaQfG8LtOvNTZ4Em1HCnXspuWpMbk/plehaBPNhO5YXS/jHcvh/teyxa9FO+2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cHK0J2XK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49A2DC4CEED;
-	Mon, 25 Aug 2025 21:37:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756157832;
-	bh=R44bcAauESCYgLUnJio9oy6n01PzJ9gIprVhrTrJHrw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cHK0J2XKD7O53HrO4WZ8mbIIVXn1J5qjjnP+8NSiRBKE3qlSqot7fO4LiyDmh3qgE
-	 994EaQi3GxaYUTiVcTdNq2CGuy4qPwf/BZ6vvOP7yQ30A6KQwyOxLpJ4d9L/7pKqbH
-	 63qLEryMSPxlPH2YhbRhXt0pRoKURT7ELLjHiKpyDkSL4+J1AcoW5Sk8qXCImM2+ak
-	 p+lYv9xx85LoSuSqFv4ayEsXAVqjvuHqIqMi44uUedVEGuxxRKPPODQHHSRnAgIdh6
-	 6clMMLqdhTofD9UT8HCFqf2Jy7NMLg5RmykPuzN+FoKKgILHRb4q6/nyDxdavQQRRP
-	 2Gu14gyBVu0BQ==
-Date: Mon, 25 Aug 2025 14:37:11 -0700
-From: Kees Cook <kees@kernel.org>
-To: Uladzislau Rezki <urezki@gmail.com>
-Cc: Mike Rapoport <rppt@kernel.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Harry Yoo <harry.yoo@oracle.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"David S . Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>,
-	Zi Yan <ziy@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-	Xu Xin <xu.xin16@zte.com.cn>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Hugh Dickins <hughd@google.com>, Vlastimil Babka <vbabka@suse.cz>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>, Jann Horn <jannh@google.com>,
-	Pedro Falcato <pfalcato@suse.de>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Qi Zheng <zhengqi.arch@bytedance.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org,
-	sparclinux@vger.kernel.org, linux-sgx@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	nvdimm@lists.linux.dev, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] mm: update core kernel code to use vm_flags_t
- consistently
-Message-ID: <202508251436.762035B@keescook>
-References: <cover.1750274467.git.lorenzo.stoakes@oracle.com>
- <d1588e7bb96d1ea3fe7b9df2c699d5b4592d901d.1750274467.git.lorenzo.stoakes@oracle.com>
- <aIgSpAnU8EaIcqd9@hyeyoo>
- <73764aaa-2186-4c8e-8523-55705018d842@lucifer.local>
- <aIkVRTouPqhcxOes@pc636>
- <69860c97-8a76-4ce5-b1d6-9d7c8370d9cd@lucifer.local>
- <aJCRXVP-ZFEPtl1Y@pc636>
- <aJHQ9XCLtibFjt93@kernel.org>
- <aJItxJNfn8B2JBbn@pc636>
+	s=arc-20240116; t=1756158194; c=relaxed/simple;
+	bh=xxIzkGDR321pyccex9pUY6O9+bueEK+mXm6r/XKg7Oc=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=duY6qo4PKdXbZ+7CZ8IKghf2AJkgRShVPs8oCY9TLKTiCJNYxlTHNwtnySxMsxEUM7pZHMR/wiavmwwdnpN4CrFbjcnNmItmE21mCkkr4rFCKg+826ohTl9JtlpxuXNtBJlISHJVhOWLEMctwdi/wPerkrxm4SXpxJrngUeLhMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=egDfgIxN; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-afcb7322da8so788391966b.0;
+        Mon, 25 Aug 2025 14:43:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756158192; x=1756762992; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=L1ZdiOQ+ocy7kIerFqAydo3pqaL3JBB3Sf5gIxDSEQs=;
+        b=egDfgIxNg24wgktpx5OdMrRJUQ18JLsphm206i2yWmm2e2VikSU4qPluq0D6AkGqDk
+         GC80ndzt1MmH8ZnPktKmzz9ZdIxFQGzzj3Yq+Rr1KxHbc5QvU1OJzjdisG2c7/BdItZO
+         YP70/6viOAPUxWUSBTEuyeZu/w5Irxcq5saGewcohO+lGwTawf31S3KRJjdGbBgEproD
+         tZLOnng9MCpgBZTNliKRNZ1/SL7qUDdd2JURsQ5q/CAu6hISZ+YIx0Q3yKQ80fa4Bj0y
+         Y89+kBcKNkxFHsKIAvKZQ5DOaB8HYl0XVkODqRsDxePbStbCaKPUJHQUR5xV+tyaM/2f
+         Zs6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756158192; x=1756762992;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=L1ZdiOQ+ocy7kIerFqAydo3pqaL3JBB3Sf5gIxDSEQs=;
+        b=iPLjYfdlrnXGGY9fSJwiUcJ5ecNCTTWz9K1Yrpif+bZEIzb5n9g6aSa+h0sU6f250M
+         URv/DCoHVZZzMCkDcABuXVPtzLizG4bQrYre3M7ka3gAAlC7e4UqiJqyg4n+ch3QBYsD
+         tG8wX9tCiHRP8KBdU84vFW9jVxkrEdskvzTnprF5lVOUhY+DUvezyPFxhbExfXnd93Fy
+         z2yW4e6cHhLI9F1AoyMq825Wkp0XglG/GMYVVi4WCViA6x9OlkRyecLLrRjYpqiU7hyr
+         FRRcpr7jql+IMbK7s73Cnnc3DYbOjxqqX3sAS1aeJ5sqA6BNvfwpc1Vl0T88rWKui1EM
+         ZnPA==
+X-Forwarded-Encrypted: i=1; AJvYcCUCleWHptCy0O2SjKL8BDY9rAE7V1mrxxEhVU9e0PubuWa3hE+c+Qjr7vXf0kiQ28epGuDYuBEze7jdCf8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuCmJ3E/raKWPEghTOzqZOawkp+Bcyim8KJyR8pZ4jiOS4dnBr
+	crUg6TUYrP4IQ9HSbsmlPUuMI2rpu7VBGIN3zL5i5C0TbGGTfjkQCePaeAM3hU+BPoW5Cn+16Tg
+	/Yx0MjUzb+qdnYOf1JPsH3D/Rp8McBT4zNXG5
+X-Gm-Gg: ASbGncvq7vXyXDdno9VchGG2djomQqbT5DzW8r92b6c9DzGAb8rafMZ6GVsD1GP9RhW
+	f3oxNKaLc9/qs17LEm3VtwOc+USQ9lvLr8DL87KCybvN4kqGRpVtJhbhPjNmOrmwPAxottTDUFt
+	au9eryaqpaVrPNUGhicfWulk82Ci1AWMznt0bW15iUma1GhpoNAIZenunEX+373x05UqzFjqkwl
+	tcr/g==
+X-Google-Smtp-Source: AGHT+IG2yTyhHVml4GPr3jglTwK6YUTCOb2EGrJ1BJ46haG6NyaV3qSUMq0IRz5ulurjXu4Fv+OZ98jwWRmXcs+Tpg4=
+X-Received: by 2002:a17:907:d28:b0:ae0:d201:a333 with SMTP id
+ a640c23a62f3a-afe295d28f5mr1398848566b.30.1756158191684; Mon, 25 Aug 2025
+ 14:43:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aJItxJNfn8B2JBbn@pc636>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Mon, 25 Aug 2025 23:43:00 +0200
+X-Gm-Features: Ac12FXx9MwjgcuYmezIpIsQMoDHzInyHPpVRZ_U2ucNETDbC6af76PejKfFTQAA
+Message-ID: <CAGudoHHBRhU+XidV9U4osc2Ta4w0Lgi2XiFkYukKQoH45zT6vw@mail.gmail.com>
+Subject: Infinite loop in get_file_rcu() in face of a saturated ref count
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Aug 05, 2025 at 06:13:56PM +0200, Uladzislau Rezki wrote:
-> I agree. Also it can be even moved under vmalloc.c. There is only one
-> user which needs it globally, it is usercopy.c. It uses find_vmap_area()
-> which is wrong. See:
-> 
-> <snip>
-> 	if (is_vmalloc_addr(ptr) && !pagefault_disabled()) {
-> 		struct vmap_area *area = find_vmap_area(addr);
-> 
-> 		if (!area)
-> 			usercopy_abort("vmalloc", "no area", to_user, 0, n);
-> 
-> 		if (n > area->va_end - addr) {
-> 			offset = addr - area->va_start;
-> 			usercopy_abort("vmalloc", NULL, to_user, offset, n);
-> 		}
-> 		return;
-> 	}
-> <snip>
-> 
-> we can add a function which just assign va_start, va_end as input
-> parameters and use them in the usercopy.c. 
+__get_file_rcu() bails early:
 
-Yes please! I'd must rather use some exported validation routine than
-having it hand-coded in usercopy.c. :)
+        if (unlikely(!file_ref_get(&file->f_ref)))
+                return ERR_PTR(-EAGAIN);
 
+But get_file_rcu():
+       for (;;) {
+                struct file __rcu *file;
+
+                file = __get_file_rcu(f);
+                if (!IS_ERR(file))
+                        return file;
+        }
+
+So if this encounters a saturated refcount, the loop with never end.
+
+I don't know what makes the most sense to do here and I'm no position
+to mess with any patches.
+
+This is not a serious problem either, so I would put this on the back
+burner. Just reporting for interested.
 -- 
-Kees Cook
+Mateusz Guzik <mjguzik gmail.com>
 
