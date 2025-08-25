@@ -1,55 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-59094-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59095-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 701B9B34642
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 17:49:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 034D9B34648
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 17:50:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A18F1A81315
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 15:49:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61C9D3A3656
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 15:49:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB973275AFC;
-	Mon, 25 Aug 2025 15:49:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE3A22FC008;
+	Mon, 25 Aug 2025 15:49:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="M5tZA1Nl"
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="M7zvo4UJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 569DC233D85;
-	Mon, 25 Aug 2025 15:49:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F8128507F;
+	Mon, 25 Aug 2025 15:49:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756136961; cv=pass; b=OP40zUJrfGDwzgR+/95296IkkPZHlzl/bnq2bPpP2Y8FQIGClQ3EkNXf0FhYe5R8tLheMsXAhw4COCsK99ejTmGeECfpSCfTZhmCOk5DV03LMrtqgvGCEubWcAPN0cXx1hJibAnBGgxNM1mlFpLUskRO4pjXLaJsIEhzG0KGTVg=
+	t=1756136988; cv=pass; b=ds6nvzP64z9YFMjApeIwo53asKd1iwi2NF0zJVV9fEeGCm4dfHkteYwov6Pc+ocg6x6DqpbOYH66GCM2P6JHswnp1ZwuZ61AZWERpNwYm1Ld0QrRr8A8dChXGvcwNDLXfmaJRtbqgXf2kFEuD4GAOj8vu471ZQKinmymJhwuFqw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756136961; c=relaxed/simple;
-	bh=NHhGyTC0CIDD3nexoTzGCRdJXob9bOWVrY7Sx72p54I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tJZjPwHeW9CqEFI48i9BMS5LlnmRHtur/xm9D/9BHdvpItG7+d4sucdYr1nQv6swPjtFYNiYM1+AhorIzAIXBIbCZzH7h+9GDtZKfPqbL21f9P/JmccZ3hSUTA431OAcdEQQh1rIEP+PKoN0VsO4JQeSChCUxSfNyjMMuyimxmo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=M5tZA1Nl; arc=pass smtp.client-ip=136.143.188.95
+	s=arc-20240116; t=1756136988; c=relaxed/simple;
+	bh=I+q1BthxYCk8fgELwI4xkFWQWOTltTq/SzZ3t96PRlc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ODSJBEcpec5lB6an5gCm5lo0CZrgXZ/UeikzGJJ0yR/gTe5kE9Iy1nmYUOSBp4K6qeuvOrpBy5OdoB5k5Y8Dy8P7GTJp7R7sLkWMOVt8aqtzJv2Dz96AQEKHFL7UMDJahTRg9jUlXpw224eIhAEbd5xSfZXRo74x2D6qee7QQ1M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=M7zvo4UJ; arc=pass smtp.client-ip=136.143.188.95
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1756136932; cv=none; 
+ARC-Seal: i=1; a=rsa-sha256; t=1756136938; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=MRjlxNmE4xUYTct0dQSRagWGTJtb+XNvwRIRmFTkwP17VqVKZLSxnQEYPJav5CxedmppGKWirOOlZCkGe/hDR+HP/t5ddQgsXWujP/xiD2drXcJCQiq5mlT3/HKYXkeoz/nHGHYELDWt1PoR6tCFqbMlKRyFVnNRqlj5KOEpBcw=
+	b=Ie+n+ZdNIFMSL3ga44UVMraww8zW9ehGjuHX1jCTNShkG9ey13mrkR0kLhG2h3nzxpJg66SmEgeuvM1O5JTL/5Gm0xpcjAuKZmUwQo4KLjtBlSAe40Im84jKhGRn6KQhB1ScEtRmRhSsU5WrcsTbaLvyd/Ya5ER87P2htU1byGQ=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1756136932; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=V51R1iwyrmIj748S/Lu12/RnCnSxNIFUCGC/ghODhMQ=; 
-	b=KJWI3nC2yBHJkq0yt7t8CXq9bibORFTRw8HgyJ1FifBDcU84OmBFDUBSHYjzhfOoCh7kWOJIqshBF7ZD/3OeABYSbrlqJlRVY0s6YtsT0RnY4mGytJ71lXbyFxgdu7W+u+wE893fDAKg1CP1hhJ6+dzW/wdbKsv+Po4jhQhTj+U=
+	t=1756136938; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=UPV8+E4P3p9RhFaxu0y3FWNJCHVVwszDOOXCHLEHtos=; 
+	b=npcqi3Xd/kehHHW1QtIKstDfmSX7TyfxCEQuz0nMc882g8c+uv/KAKDlYGM+o/Xd6eZJn0rAW9gOCMANcN4f5sz2/5Ui8Ib3dDERMWY7UpUIZauyKA02of0CMBDlNJ7vkizmGWFO9Lobz3kpQX5A9qPjukCIgRHKapUgWmsb50k=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=zohomail.com;
 	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
 	dmarc=pass header.from=<safinaskar@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756136932;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756136938;
 	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=V51R1iwyrmIj748S/Lu12/RnCnSxNIFUCGC/ghODhMQ=;
-	b=M5tZA1Nljahg+K6pBPF9afUX9L1kRaYWoCAKnooW0bMTZxK2cnA/spZN/e6bCshj
-	Ah4knSQ9rE80Ov7F0moDMJeJ2H8+d0oGEzSqrcbemeyNonUVbBcJip5dtZUxMx8trmz
-	d2hQdJ/JLCbosMYX4os56pZGaaFOegMS/TL1A27s=
-Received: by mx.zohomail.com with SMTPS id 1756136929960496.92655408087285;
-	Mon, 25 Aug 2025 08:48:49 -0700 (PDT)
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=UPV8+E4P3p9RhFaxu0y3FWNJCHVVwszDOOXCHLEHtos=;
+	b=M7zvo4UJB+0A1pMR3y4hiL+6FN+uwfzo+oDyillAhAmSQw85D71hJ0g+9roAVs3P
+	41MizvyNwRIfLkzwhyRKKAkOUsAyRI0n9e1hLiCTs/qCJbMIFh8zejeOIpgMDDeW4B6
+	qeCnGx3rs1O3Gt1+FRqoh20YIDSZ2q7fP8pjyh+I=
+Received: by mx.zohomail.com with SMTPS id 1756136932963249.35841563530198;
+	Mon, 25 Aug 2025 08:48:52 -0700 (PDT)
 From: Askar Safin <safinaskar@zohomail.com>
 To: Alejandro Colomar <alx@kernel.org>
 Cc: Aleksa Sarai <cyphar@cyphar.com>,
@@ -59,10 +60,12 @@ Cc: Aleksa Sarai <cyphar@cyphar.com>,
 	David Howells <dhowells@redhat.com>,
 	Christian Brauner <brauner@kernel.org>,
 	linux-man@vger.kernel.org
-Subject: [PATCH v2 0/1] man2/mount.2: expand and clarify docs for MS_REMOUNT | MS_BIND
-Date: Mon, 25 Aug 2025 15:48:38 +0000
-Message-ID: <20250825154839.2422856-1-safinaskar@zohomail.com>
+Subject: [PATCH v2 1/1] man2/mount.2: expand and clarify docs for MS_REMOUNT | MS_BIND
+Date: Mon, 25 Aug 2025 15:48:39 +0000
+Message-ID: <20250825154839.2422856-2-safinaskar@zohomail.com>
 X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250825154839.2422856-1-safinaskar@zohomail.com>
+References: <20250825154839.2422856-1-safinaskar@zohomail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -70,230 +73,67 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Feedback-ID: rr080112272d2c216ff3da290558e2750400003e42034302ec1870eeaf87d378ee03381bac80c72a0665d558:zu080112272e3f51a11e5ee7a518369a880000be5fd7925b765a9a46a9627d98f198b9f84a0c0ec753279acf:rf0801122c19da234dafb63a0c24bdd7b40000225c498ce742e8c51f947d53d0926b6cdb40513a5cd41e6779c2e6c9f811:ZohoMail
+Feedback-ID: rr08011227f0fd73cea18eb987789a3de5000052122010156806263eed801299d1ae0e3666c20e45588fe1f4:zu08011227463164dd7fe0a38ceb3917aa000098b4a2dfa54ac34c32b486ad829c8765f4758c9338424edbb2:rf0801122c622da22d229d1c9d3e7f0dfd000062624541cd281dc38de84889689d84d58ca110541451fb174fc3c3c41102:ZohoMail
 X-ZohoMailClient: External
 
 My edit is based on experiments and reading Linux code
 
-You will find C code I used for experiments below
-
-v1: https://lore.kernel.org/linux-man/20250822114315.1571537-1-safinaskar@zohomail.com/
-
-Askar Safin (1):
-  man2/mount.2: expand and clarify docs for MS_REMOUNT | MS_BIND
-
+Signed-off-by: Askar Safin <safinaskar@zohomail.com>
+---
  man/man2/mount.2 | 32 +++++++++++++++++++++++++++++---
  1 file changed, 29 insertions(+), 3 deletions(-)
 
+diff --git a/man/man2/mount.2 b/man/man2/mount.2
+index 5d83231f9..47fc2d21f 100644
+--- a/man/man2/mount.2
++++ b/man/man2/mount.2
+@@ -405,7 +405,30 @@ flag can be used with
+ to modify only the per-mount-point flags.
+ .\" See https://lwn.net/Articles/281157/
+ This is particularly useful for setting or clearing the "read-only"
+-flag on a mount without changing the underlying filesystem.
++flag on a mount without changing the underlying filesystem parameters.
++The
++.I data
++argument is ignored if
++.B MS_REMOUNT
++and
++.B MS_BIND
++are specified.
++Note that the mountpoint will
++have its existing per-mount-point flags
++cleared and replaced with those in
++.I mountflags
++when
++.B MS_REMOUNT
++and
++.B MS_BIND
++are specified.
++This means that if
++you wish to preserve
++any existing per-mount-point flags,
++you need to include them in
++.IR mountflags ,
++along with the per-mount-point flags you wish to set
++(or with the flags you wish to clear missing).
+ Specifying
+ .I mountflags
+ as:
+@@ -416,8 +439,11 @@ MS_REMOUNT | MS_BIND | MS_RDONLY
+ .EE
+ .in
+ .P
+-will make access through this mountpoint read-only, without affecting
+-other mounts.
++will make access through this mountpoint read-only
++(clearing all other per-mount-point flags),
++without affecting
++other mounts
++of this filesystem.
+ .\"
+ .SS Creating a bind mount
+ If
 -- 
 2.47.2
 
-// You need to be root in initial user namespace
-
-#define _GNU_SOURCE
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <string.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sched.h>
-#include <errno.h>
-#include <sys/stat.h>
-#include <sys/mount.h>
-#include <sys/syscall.h>
-#include <sys/sysmacros.h>
-#include <linux/openat2.h>
-
-#define MY_ASSERT(cond) do { \
-    if (!(cond)) { \
-        fprintf (stderr, "%d: %s: assertion failed\n", __LINE__, #cond); \
-        exit (1); \
-    } \
-} while (0)
-
-int
-main (void)
-{
-    // Init
-    {
-        MY_ASSERT (chdir ("/") == 0);
-        MY_ASSERT (unshare (CLONE_NEWNS) == 0);
-        MY_ASSERT (mount (NULL, "/", NULL, MS_PRIVATE | MS_REC, NULL) == 0);
-        MY_ASSERT (mount (NULL, "/tmp", "tmpfs", 0, NULL) == 0);
-    }
-
-    MY_ASSERT (mkdir ("/tmp/a", 0777) == 0);
-    MY_ASSERT (mkdir ("/tmp/b", 0777) == 0);
-
-    // MS_REMOUNT sets options for superblock
-    {
-        MY_ASSERT (mount (NULL, "/tmp/a", "tmpfs", 0, NULL) == 0);
-        MY_ASSERT (mount ("/tmp/a", "/tmp/b", NULL, MS_BIND, NULL) == 0);
-        MY_ASSERT (mount (NULL, "/tmp/a", NULL, MS_REMOUNT | MS_RDONLY, NULL) == 0);
-        MY_ASSERT (mkdir ("/tmp/a/c", 0777) == -1);
-        MY_ASSERT (errno == EROFS);
-        MY_ASSERT (mkdir ("/tmp/b/c", 0777) == -1);
-        MY_ASSERT (errno == EROFS);
-        MY_ASSERT (umount ("/tmp/a") == 0);
-        MY_ASSERT (umount ("/tmp/b") == 0);
-    }
-
-    // MS_REMOUNT | MS_BIND sets options for vfsmount
-    {
-        MY_ASSERT (mount (NULL, "/tmp/a", "tmpfs", 0, NULL) == 0);
-        MY_ASSERT (mount ("/tmp/a", "/tmp/b", NULL, MS_BIND, NULL) == 0);
-        MY_ASSERT (mount (NULL, "/tmp/a", NULL, MS_REMOUNT | MS_BIND | MS_RDONLY, NULL) == 0);
-        MY_ASSERT (mkdir ("/tmp/a/c", 0777) == -1);
-        MY_ASSERT (errno == EROFS);
-        MY_ASSERT (mkdir ("/tmp/b/c", 0777) == 0);
-        MY_ASSERT (rmdir ("/tmp/b/c") == 0);
-        MY_ASSERT (umount ("/tmp/a") == 0);
-        MY_ASSERT (umount ("/tmp/b") == 0);
-    }
-
-    // fspick sets options for superblock
-    {
-        MY_ASSERT (mount (NULL, "/tmp/a", "tmpfs", 0, NULL) == 0);
-        MY_ASSERT (mount ("/tmp/a", "/tmp/b", NULL, MS_BIND, NULL) == 0);
-        {
-            int fsfd = fspick (AT_FDCWD, "/tmp/a", 0);
-            MY_ASSERT (fsfd >= 0);
-            MY_ASSERT (fsconfig (fsfd, FSCONFIG_SET_FLAG, "ro", NULL, 0) == 0);
-            MY_ASSERT (fsconfig (fsfd, FSCONFIG_CMD_RECONFIGURE, NULL, NULL, 0) == 0);
-            MY_ASSERT (close (fsfd) == 0);
-        }
-        MY_ASSERT (mkdir ("/tmp/a/c", 0777) == -1);
-        MY_ASSERT (errno == EROFS);
-        MY_ASSERT (mkdir ("/tmp/b/c", 0777) == -1);
-        MY_ASSERT (errno == EROFS);
-        MY_ASSERT (umount ("/tmp/a") == 0);
-        MY_ASSERT (umount ("/tmp/b") == 0);
-    }
-
-    // mount_setattr sets options for vfsmount
-    {
-        MY_ASSERT (mount (NULL, "/tmp/a", "tmpfs", 0, NULL) == 0);
-        MY_ASSERT (mount ("/tmp/a", "/tmp/b", NULL, MS_BIND, NULL) == 0);
-        {
-            struct mount_attr attr;
-            memset (&attr, 0, sizeof attr);
-            attr.attr_set = MOUNT_ATTR_RDONLY;
-            MY_ASSERT (mount_setattr (AT_FDCWD, "/tmp/a", 0, &attr, sizeof attr) == 0);
-        }
-        MY_ASSERT (mkdir ("/tmp/a/c", 0777) == -1);
-        MY_ASSERT (errno == EROFS);
-        MY_ASSERT (mkdir ("/tmp/b/c", 0777) == 0);
-        MY_ASSERT (rmdir ("/tmp/b/c") == 0);
-        MY_ASSERT (umount ("/tmp/a") == 0);
-        MY_ASSERT (umount ("/tmp/b") == 0);
-    }
-
-    // "ro" as a string works for MS_REMOUNT
-    {
-        MY_ASSERT (mount (NULL, "/tmp/a", "tmpfs", 0, NULL) == 0);
-        MY_ASSERT (mount ("/tmp/a", "/tmp/b", NULL, MS_BIND, NULL) == 0);
-        MY_ASSERT (mount (NULL, "/tmp/a", NULL, MS_REMOUNT, "ro") == 0);
-        MY_ASSERT (mkdir ("/tmp/a/c", 0777) == -1);
-        MY_ASSERT (errno == EROFS);
-        MY_ASSERT (mkdir ("/tmp/b/c", 0777) == -1);
-        MY_ASSERT (errno == EROFS);
-        MY_ASSERT (umount ("/tmp/a") == 0);
-        MY_ASSERT (umount ("/tmp/b") == 0);
-    }
-
-    // "ro" as a string doesn't work for MS_REMOUNT | MS_BIND
-    // Option string is ignored
-    {
-        MY_ASSERT (mount (NULL, "/tmp/a", "tmpfs", 0, NULL) == 0);
-        MY_ASSERT (mount ("/tmp/a", "/tmp/b", NULL, MS_BIND, NULL) == 0);
-        MY_ASSERT (mount (NULL, "/tmp/a", NULL, MS_REMOUNT | MS_BIND, "ro") == 0);
-        MY_ASSERT (mkdir ("/tmp/a/c", 0777) == 0);
-        MY_ASSERT (rmdir ("/tmp/a/c") == 0);
-        MY_ASSERT (mkdir ("/tmp/b/c", 0777) == 0);
-        MY_ASSERT (rmdir ("/tmp/b/c") == 0);
-        MY_ASSERT (umount ("/tmp/a") == 0);
-        MY_ASSERT (umount ("/tmp/b") == 0);
-    }
-
-    // Removing MS_RDONLY makes mount writable again (in case of MS_REMOUNT | MS_BIND)
-    // Same for other options (not tested, but I did read code)
-    {
-        MY_ASSERT (mount (NULL, "/tmp/a", "tmpfs", 0, NULL) == 0);
-        MY_ASSERT (mount (NULL, "/tmp/a", NULL, MS_REMOUNT | MS_BIND | MS_RDONLY, NULL) == 0);
-        MY_ASSERT (mkdir ("/tmp/a/c", 0777) == -1);
-        MY_ASSERT (errno == EROFS);
-        MY_ASSERT (mount (NULL, "/tmp/a", NULL, MS_REMOUNT | MS_BIND, NULL) == 0);
-        MY_ASSERT (mkdir ("/tmp/a/c", 0777) == 0);
-        MY_ASSERT (umount ("/tmp/a") == 0);
-    }
-
-    // Removing "ro" from option string makes mount writable again (in case of MS_REMOUNT)
-    // I. e. mount(2) works exactly as documented
-    // This works even if option string is NULL, i. e. NULL works as default option string
-    {
-        typedef const char *c_string;
-        c_string opts[3] = {NULL, "", "rw"};
-        for (int i = 0; i != 3; ++i)
-            {
-                for (int j = 0; j != 3; ++j)
-                    {
-                        MY_ASSERT (mount (NULL, "/tmp/a", "tmpfs", 0, opts[i]) == 0);
-                        MY_ASSERT (mkdir ("/tmp/a/c", 0777) == 0);
-                        MY_ASSERT (rmdir ("/tmp/a/c") == 0);
-                        MY_ASSERT (mount (NULL, "/tmp/a", NULL, MS_REMOUNT, "ro") == 0);
-                        MY_ASSERT (mkdir ("/tmp/a/c", 0777) == -1);
-                        MY_ASSERT (errno == EROFS);
-                        MY_ASSERT (mount (NULL, "/tmp/a", NULL, MS_REMOUNT, opts[j]) == 0);
-                        MY_ASSERT (mkdir ("/tmp/a/c", 0777) == 0);
-                        MY_ASSERT (umount ("/tmp/a") == 0);
-                    }
-            }
-    }
-
-    // Removing MS_RDONLY makes mount writable again (in case of MS_REMOUNT)
-    // I. e. mount(2) works exactly as documented
-    {
-        MY_ASSERT (mount (NULL, "/tmp/a", "tmpfs", 0, NULL) == 0);
-        MY_ASSERT (mkdir ("/tmp/a/c", 0777) == 0);
-        MY_ASSERT (rmdir ("/tmp/a/c") == 0);
-        MY_ASSERT (mount (NULL, "/tmp/a", NULL, MS_REMOUNT | MS_RDONLY, NULL) == 0);
-        MY_ASSERT (mkdir ("/tmp/a/c", 0777) == -1);
-        MY_ASSERT (errno == EROFS);
-        MY_ASSERT (mount (NULL, "/tmp/a", NULL, MS_REMOUNT, NULL) == 0);
-        MY_ASSERT (mkdir ("/tmp/a/c", 0777) == 0);
-        MY_ASSERT (rmdir ("/tmp/a/c") == 0);
-        MY_ASSERT (umount ("/tmp/a") == 0);
-    }
-
-    // Setting MS_RDONLY (without other flags) removes all other flags, such as MS_NODEV (in case of MS_REMOUNT | MS_BIND)
-    {
-        MY_ASSERT (mount (NULL, "/tmp/a", "tmpfs", 0, NULL) == 0);
-        MY_ASSERT (mknod ("/tmp/a/mynull", S_IFCHR | 0666, makedev (1, 3)) == 0);
-
-        MY_ASSERT (mkdir ("/tmp/a/c", 0777) == 0);
-        MY_ASSERT (rmdir ("/tmp/a/c") == 0);
-        {
-            int fd = open ("/tmp/a/mynull", O_WRONLY);
-            MY_ASSERT (fd >= 0);
-            MY_ASSERT (write (fd, "a", 1) == 1);
-            MY_ASSERT (close (fd) == 0);
-        }
-        MY_ASSERT (mount (NULL, "/tmp/a", NULL, MS_REMOUNT | MS_BIND | MS_NODEV, NULL) == 0);
-        MY_ASSERT (mkdir ("/tmp/a/c", 0777) == 0);
-        MY_ASSERT (rmdir ("/tmp/a/c") == 0);
-        MY_ASSERT (open ("/tmp/a/mynull", O_WRONLY) == -1);
-        MY_ASSERT (mount (NULL, "/tmp/a", NULL, MS_REMOUNT | MS_BIND | MS_RDONLY, NULL) == 0);
-        MY_ASSERT (mkdir ("/tmp/a/c", 0777) == -1);
-        {
-            int fd = open ("/tmp/a/mynull", O_WRONLY);
-            MY_ASSERT (fd >= 0);
-            MY_ASSERT (write (fd, "a", 1) == 1);
-            MY_ASSERT (close (fd) == 0);
-        }
-        MY_ASSERT (umount ("/tmp/a") == 0);
-    }
-    printf ("All tests passed\n");
-    exit (0);
-}
 
