@@ -1,60 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-59058-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59059-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 546A0B34075
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 15:15:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4710B340B5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 15:30:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 025637A215A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 13:13:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D9C77AD5A4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 13:28:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48401FF60A;
-	Mon, 25 Aug 2025 13:14:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3092274FE8;
+	Mon, 25 Aug 2025 13:29:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sxQucU9M"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fy2r4gUs"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 161BEDF71;
-	Mon, 25 Aug 2025 13:14:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A4B2274B22
+	for <linux-fsdevel@vger.kernel.org>; Mon, 25 Aug 2025 13:29:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756127694; cv=none; b=ormHSOVFYySaahz9C2iUz+lLhtMDfSGe7fLDE9RnoxQtNx+xseESazQNqXltFDH5cn9oyZPgAMmQtGLqCrvyE/ih7pvA5gcDuDeTAHAAaeCQ90U91bctSXdVBWLNA41q8JaTch4v4UQ/SHR9uel3QfqOJCWUTVk/k+cH8Lomymk=
+	t=1756128579; cv=none; b=g77gc/WGO3UdEAMtTydw90y+ilS9cW1PfnHyKHy/NroZX268xOsrlGUrZg8HUHzf9NVu144pAzKL65s2VuUfb/qKkS9pxcDy7P/ucWh1++jH4ygrrNRlu6L3jfsFSo6D1H89bZtugwmfaY5ZW9fuoPkkUqwZYRDxwbcsOuhSNe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756127694; c=relaxed/simple;
-	bh=5zMXK+mlZFNma3gJEndOhDDPwfxNjOAVz0/p9JD6wJY=;
+	s=arc-20240116; t=1756128579; c=relaxed/simple;
+	bh=L42Fq0EGG1m2he92U0ghpdM4GbQXxp4bdk+yuDPw5Nk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NejHFllx5VOL5jQ19oOWqCrn1aVR0b49eSfKq34q/TwgCR6nf/NzPaSsw23GWUHofAVvR2P8U0ZamDZvqsh5u1Wyh2QgVwDl/0RGmDXOa/BJ9Ffrchr4jXrOS5Z1T5/YKs+qgs5Z/O5VGxPC2HvMoeO+LGEZm1oB01l0myRphs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sxQucU9M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3625C4CEED;
-	Mon, 25 Aug 2025 13:14:51 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=kekZz2LF2ltp/kLc57mPvkaBAgmiE5zKpdyPbx6McGdvnarzCf6ct7+8nXqmPWYmhHMZtj8ypm2p+wEdD+MMlHE8eliTl2AUEiswQ36SHs/xGpR4wqkpPUBWbQhULJEoPpxDIo3CDYphEjZhPI6fcLyWKJD1gnlgYlnD49mT/Ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fy2r4gUs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E962C4CEED;
+	Mon, 25 Aug 2025 13:29:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756127693;
-	bh=5zMXK+mlZFNma3gJEndOhDDPwfxNjOAVz0/p9JD6wJY=;
+	s=k20201202; t=1756128576;
+	bh=L42Fq0EGG1m2he92U0ghpdM4GbQXxp4bdk+yuDPw5Nk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sxQucU9MGpEKJinxjV8SzQ+jYJdobmsejsaICYu99+loMGXs7KDUMIv9c59D6FBlq
-	 QXHd6OWxgq6jK1P/4hypVueVd8JUvbLQ/em5LhW5Hgxlp8HDKmF4ErOfNIdZhkAC3l
-	 e02NnOFNRyDr6mwKtpVbMbBqgt45egu7a58SphQHwD8mpDY8yQagN2+n94mTBqSlMO
-	 mu+ktLnqhmavwHTWgBTgD9yoeuFaoqhTFEh+4FqTrfMIn1LmGjhx+jel+NQQtIUdIY
-	 bxu59gbU4gL9rJD6ERzBBPTvJJvMqkKfvdiw4NThgeBcmcN9AF5ulBdi6UR5dgXrJG
-	 QwLmi7PqtZ8Ig==
-Date: Mon, 25 Aug 2025 15:14:49 +0200
+	b=Fy2r4gUsVENkZZco5CicgFf02WN12NUlElysQTt+/yvD4JEyvgjHgs04FuPGS1kXM
+	 LOS5gkJgf3mJ9e1sCTTIBgvoVHD9UmAIVRmHcDbrhYB7Bwp4PjM5m00JrOlykYQY+z
+	 YSQL0peYNjCJKGxeC8Z36Q+Ql301ar1Or2v/kDGeks/L7z8wheTWuLV4Ft2ns/1irQ
+	 XdruzpmYMciwCN2pF8AxfzCllT6HrL2qpqb6B6/9ItBq/CzCIwYoOepIokc9kymnus
+	 FvFgkfsm7tCwblcM7bm7z5exj4rRtf0f8/m42NEKhYa2redz2Fplc7SxSsoWsJv94f
+	 dPkh9Q4o8Ibgg==
+Date: Mon, 25 Aug 2025 15:29:33 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Askar Safin <safinaskar@zohomail.com>
-Cc: Aleksa Sarai <cyphar@cyphar.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Ian Kent <raven@themaw.net>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, David Howells <dhowells@redhat.com>, 
-	autofs mailing list <autofs@vger.kernel.org>, patches <patches@lists.linux.dev>
-Subject: Re: [PATCH 0/4] vfs: if RESOLVE_NO_XDEV passed to openat2, don't
- *trigger* automounts
-Message-ID: <20250825-wimpel-umschalten-e1159287e5b4@brauner>
-References: <20250817171513.259291-1-safinaskar@zohomail.com>
- <2025-08-18.1755494302-front-sloped-tweet-dancers-cO03JX@cyphar.com>
- <20250819-direkt-unsympathisch-27ffa5cefb4e@brauner>
- <198e1441f72.ff66ccf525195.4502015239657084211@zohomail.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, jack@suse.cz, 
+	torvalds@linux-foundation.org
+Subject: Re: [PATCH 25/52] do_new_mount_rc(): use __free() to deal with
+ dropping mnt on failure
+Message-ID: <20250825-zugute-verkohlen-945073b3851f@brauner>
+References: <20250825044046.GI39973@ZenIV>
+ <20250825044355.1541941-1-viro@zeniv.linux.org.uk>
+ <20250825044355.1541941-25-viro@zeniv.linux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,51 +60,60 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <198e1441f72.ff66ccf525195.4502015239657084211@zohomail.com>
+In-Reply-To: <20250825044355.1541941-25-viro@zeniv.linux.org.uk>
 
-On Mon, Aug 25, 2025 at 04:46:34PM +0400, Askar Safin wrote:
+On Mon, Aug 25, 2025 at 05:43:28AM +0100, Al Viro wrote:
+> do_add_mount() consumes vfsmount on success; just follow it with
+> conditional retain_and_null_ptr() on success and we can switch
+> to __free() for mnt and be done with that - unlock_mount() is
+> in the very end.
 > 
->  ---- On Tue, 19 Aug 2025 12:21:33 +0400  Christian Brauner <brauner@kernel.org> wrote --- 
->  > On Mon, Aug 18, 2025 at 03:31:27PM +1000, Aleksa Sarai wrote:
->  > > I would merge the first three patches -- adding and removing code like
->  > Agreed.
-> 
-> May I still not merge these patches?
-> 
-> All they may (hypothetically) fail on their own.
-> 
-> If they do, then it will be valuable to know from bisection which of them failed.
-> 
-> Let's discuss them one-by-one.
-> 
-> The first patch moves checks from handle_mounts to traverse_mounts.
-> But handle_mounts is not the only caller of traverse_mounts.
-> traverse_mounts is also called by follow_down.
-> I. e. theoretically follow_down-related code paths can lead to problems.
-> I just checked all them, none of them set LOOKUP_NO_XDEV.
-> So, they should not lead to problems. But in kernel we, of course, never
-> can be sure. They should not lead to problems, but still can.
-> 
-> The second patch removes LOOKUP_NO_XDEV check.
-> This is okay, because if "jumped" is set and "LOOKUP_NO_XDEV" is set, then
-> this means that we already set error, and thus ND_JUMPED should
-> not be read, because it is not read in error path. But this is not obvious, and
-> so Al asked me add comment (
-> https://lore.kernel.org/linux-fsdevel/20250817180057.GA222315@ZenIV/
-> ), and, of course, I will add it in the second version in any case.
-> So, ND_JUMPED should not be checked in error path, and thus this should
-> not lead to problems. But still can.
-> 
-> The third patch makes traverse_mounts fail
-> immidiately after first mount-crossing
-> (if LOOKUP_NO_XDEV is set). As opposed to very end.
-> This should not lead to problems. But can.
-> 
-> So, again, any of these 3 patches can (hypothetically)
-> lead to its own problems.
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> ---
 
-You can send them separately if you like but I'll still reserve the
-right to squash them when applying. I don't see the value in these
-minimal changes yet and the regression potential is completely
-theoretical so far.
+
+>  fs/namespace.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index 99757040a39a..79c87937a7dd 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -3694,7 +3694,6 @@ static bool mount_too_revealing(const struct super_block *sb, int *new_mnt_flags
+>  static int do_new_mount_fc(struct fs_context *fc, struct path *mountpoint,
+>  			   unsigned int mnt_flags)
+>  {
+> -	struct vfsmount *mnt;
+>  	struct pinned_mountpoint mp = {};
+>  	struct super_block *sb = fc->root->d_sb;
+>  	int error;
+> @@ -3710,7 +3709,7 @@ static int do_new_mount_fc(struct fs_context *fc, struct path *mountpoint,
+>  
+>  	up_write(&sb->s_umount);
+>  
+> -	mnt = vfs_create_mount(fc);
+> +	struct vfsmount *mnt __free(mntput) = vfs_create_mount(fc);
+
+Ugh, can we please not start declaring variables in the middle of a
+scope.
+
+>  	if (IS_ERR(mnt))
+>  		return PTR_ERR(mnt);
+>  
+> @@ -3720,10 +3719,10 @@ static int do_new_mount_fc(struct fs_context *fc, struct path *mountpoint,
+>  	if (!error) {
+>  		error = do_add_mount(real_mount(mnt), mp.mp,
+>  				     mountpoint, mnt_flags);
+> +		if (!error)
+> +			retain_and_null_ptr(mnt); // consumed on success
+>  		unlock_mount(&mp);
+>  	}
+> -	if (error < 0)
+> -		mntput(mnt);
+>  	return error;
+>  }
+>  
+> -- 
+> 2.47.2
+> 
 
