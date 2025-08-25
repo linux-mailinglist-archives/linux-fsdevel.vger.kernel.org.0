@@ -1,227 +1,219 @@
-Return-Path: <linux-fsdevel+bounces-59133-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59134-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9641FB34AF4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 21:35:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5D10B34B39
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 21:56:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 271211A85B18
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 19:35:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CC0D7B544A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 19:54:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE94284B5B;
-	Mon, 25 Aug 2025 19:35:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFA8C2877EA;
+	Mon, 25 Aug 2025 19:54:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="ouM+Sjx8"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="NFHy6sRt";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="IYMDSg/B"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E41169AE6
-	for <linux-fsdevel@vger.kernel.org>; Mon, 25 Aug 2025 19:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756150507; cv=none; b=usBFFZNqutGEDNosd94ijIAWUEb1EbiLptoSSgKS0b3wOZpVgwqf7MnQ8IDUExFDEsOMj50tQLvz06jOrt3h+nxvGPoLMzXQVqQ+1j3huSFHQ3LP3gdRz96ihJ7ma6ixJz6zCoY7xHrEs4hK4UKXT2s+kPaLSR0kBDBUTJ+uOVo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756150507; c=relaxed/simple;
-	bh=oezHH2OV9IQAQTvmhi0PGkJGTakD8P6Kca8eDrWjLaw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L+O6OLqPy9rOUYfbRp+s2pF+8bG4HFxlDie9PHnMJtNXD6Lnp8aRTI5710NCfqK+EOanL1dTT1i2wKoBeVdP+nFl2gc9CWjDIE/hSWebzrijxOvE04HdtAIJdnAYsJhTd6QBu3Xskjv7m7I9vX982DFAm6ROIDh3gTcSE1HgF3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=ouM+Sjx8; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-71d60504db9so36626477b3.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Aug 2025 12:35:05 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827991B87C0;
+	Mon, 25 Aug 2025 19:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756151692; cv=fail; b=OxrR+vab4wFxdQgnuHIom38rNVUEe+RYVvEYU0YdazTiVoXLIhSl/SiFMHxxRHtHy8Cu/M5uQGJOyiXz9FeIuAOZ4eo8psvtlbggyEvr+lEu3uMPlfulQY3MIuOv5S1Kz6fyDebaUaaOyysY0vnWeIafrenPzqkhnd56iDhmB6w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756151692; c=relaxed/simple;
+	bh=/LFE941AkFsG75sNV1OV7pEkUcKbj9BznVoifU3rjz8=;
+	h=To:Cc:Subject:From:In-Reply-To:Message-ID:References:Date:
+	 Content-Type:MIME-Version; b=cBkvJA9EKaoU/Hqu/GCRctqYFy+M0BWJ2TyNWdiwmcSfDyZW4A0YygnC0Uf7TPLcxInUce1HQKAst+ODcrIId8mrnsUTn3AcJoiJQnl+laiyufBCAkM2y2HKzGHYDC91YDlmpcbj701gghvt94WbGVrfaMwKMDtHlBiwbXL1jjk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=NFHy6sRt; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=IYMDSg/B; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57PJDWLL024981;
+	Mon, 25 Aug 2025 19:54:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=B6L9mBXrz/KGuf9xBX
+	cChV05DVEkH17z2SIXrlALDpg=; b=NFHy6sRtMUHPhpJeGjAICr4pFvFcw3YOPk
+	cLv3jBkWOppvGxhnIDybtkFIcKrFjCo7F+vFEgrbz1l5Wt/DBK5rTrS+92+hzOmf
+	RLfzNSXN0mNDyMQ51852FslCtVKIOWC+s68MByzvzErmrtBEQpkQPV9IIDG6lQoo
+	9vXwlSlnwW99JtUS2iXmON/8E5884vkLFFIqBeg41B+++vSRpa3R6hd0bbVMzM8L
+	gszRJuI+vNw4Zee2NQXqbSx1Bblf7p1Jii3HBSJBP1X4GpX4aAPcOfInkuFloMnZ
+	LrUwcEZsCs3bX+Feyg0cC6z0LpwvT/GY+MtUz4c6M45XaF5ZloiA==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48r8tw9u50-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 25 Aug 2025 19:54:28 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57PJ9KlN004952;
+	Mon, 25 Aug 2025 19:54:28 GMT
+Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11on2085.outbound.protection.outlook.com [40.107.236.85])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 48q438uerf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 25 Aug 2025 19:54:28 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=G8DyfgWYgbl4dRS3rdLfckU3G73MpnyYovzPi+88M+FvUfQbqLh1UayhPM+GyIX9nuu0ALSJKHb0U6qj3R+wPOEgnSKpa3R9KamtFVjv+3ZxReuMADVKvYa64fT8VCAAqOsSIEGRapWzuEfr3G0n4XmR7SJpX6HV1EONd33AZ9McYcK5bwZded+Lx+Jsbu3QHCoE730+aITFDOqT5YtUwRF2p/i9EpT0WPHe8+27HYTmdm+ej4UEnqnUlQYYHcIgjr7sBca1OVAM8HTkUxmchshg7zQiPNAa/SMjv44vFZnDtjV5frEOkwbDur8ur7qSxIQzshD9iJ9BL/xB+imGcw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=B6L9mBXrz/KGuf9xBXcChV05DVEkH17z2SIXrlALDpg=;
+ b=Dw2rOCP1EdcDqDechKZtkuzyUpDcpi4qCYd4uCgn7nBiWlrSQQyiL9sUzetAFgLO26Zx1XqwMNk61u/Bqh6/E0QlMn3wYG/NOFce9ZpCVf4V+G++4r+nynj20c+YSy27wzJ5OX6+hxjEzQO4+eNK9dQMfWq2tzWYoBWBz7LcY5VinFqBZK/ZRXIpiGf+w/s6CjK0+HH+QeOL2Sod1tCzkn0QS5mNBcsoByixZkFFIxaXi4gF/gh1+8vFr2OljuADbTu7skp+y1KFr3l5CngQr3c6C8bytistzemLS0vQStMVebLGvMzoC8B2XhqIWufZ+43D1iXO1k7TuQg+eoii2Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1756150505; x=1756755305; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wYuLPKGcVdOQFox0yjz3XsNMcHe6CSns2VOTsCthOLA=;
-        b=ouM+Sjx8atQGgmj2FimpaoUdomTlALAZka266IV6mj3TaqOcCow8jyOp+dcRRd4EkT
-         RgAgZI0lX0wXbstYYt29tyJNeT3KJaAj+s1wMbw3TJvqzkGjX7/qE4lcyB+IdGmziZPa
-         whjKTplbsKkCXGNIbX/NyvMOHso406xqfdf45lEz2IPyhKPnKN5klGtJQ7k31aRheFdO
-         zuNh/df6hj2eqgNQh5y4pJssR7fo/vQn6Iu5ncKRTOsMs2ILDkjh4dYWsiAMJPENB8ev
-         jHfwv9mOXuGHxscgSLSQaMVgmd9pJ65ls3EMqElVwoqUPIitBryejqcna3FuQrC2DVID
-         pb8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756150505; x=1756755305;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wYuLPKGcVdOQFox0yjz3XsNMcHe6CSns2VOTsCthOLA=;
-        b=Ch0gZFbtfQF6/JZx5sOpHl1fqwGHod6rYarslw7umsNfF+raDTXDEW3JwpHf5U0/lY
-         shQ3KEzf0Qvse0/Gxm1aAYmF+4q4YWbsVKasmRCzZwTVPSfGW+eLP42fmq3wMl9KYwho
-         PeubGLpGSnzpOx2SLDLdZEY5EWnjwTVCTiDQug3kfZB5/WVnkGrxmV7hYoao0odv68Cr
-         LrjJns9OU0tBURm7YDxVi5i549fnupYLTjC8CRJS3Eq1cxEssBua9OmjyBe5LAcdP4tO
-         gwUQKW2dJ/dHKB+uwGcW3bCvG744wC3KrAnlksgL48wO+jlr8bhAzX68LotZSFLX7kPx
-         l3fw==
-X-Gm-Message-State: AOJu0Yyqf4VsUtnNQ/VKDsfXOX3IJrevBp6L8gnG2OTWN2jyy9C0MUYC
-	pJEjb68a8t9nUakRhlIK6IyOuBV8gZW4GROITLGI/Rvz2WuF9BfOVzV9P1oQJSf1c70=
-X-Gm-Gg: ASbGncuwq00coGprkgTcyU9rmUOqv3Ah8hS8VLleI/IYkUhoR71tycXHD3ZmV8isM96
-	B0hkwGmBWi8TQH0zEPBPsRr3Z2l/ff/PrAccjikaZhciXj0+i7gwKNxrdCA6T33RC0FWPeMtNPR
-	aQikU8ClPqtlkDAGXuJ6yQfUlJdec+5W6TOtDmu6ukRLTnKjRZlsSdNHeyJT/rkGCXjkunuX+Bq
-	xQscgRoXxMLt97MjnBvUXMHBdJXfQeEOYKogNbmb06WEJbOo0w5DWN+OYjK0bb121u/GkmlBWim
-	ETeOaugOHX2VRBJVwR2BuPPbZEandzrDzjEG2fcHvpiR5sJikIKghMMNve/AddXzxckZ0CmdrfO
-	igEfFF8gUAi6Xx+DjbsECLWHLYSUEktIvWaVh4JHiPl2IcNbUNw/xyAf8Ulc=
-X-Google-Smtp-Source: AGHT+IG2LKen8WXlKCVG4rUuv5H4Bl3N4h2X8DwUeXxNFNEgbfsUd99hFbjqhhw3cYiYoTH7LHEqTg==
-X-Received: by 2002:a05:690c:6c83:b0:71f:9a36:d339 with SMTP id 00721157ae682-71fdc40fcebmr122974027b3.43.1756150504855;
-        Mon, 25 Aug 2025 12:35:04 -0700 (PDT)
-Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-71ff18b3794sm19383027b3.63.2025.08.25.12.35.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 12:35:03 -0700 (PDT)
-Date: Mon, 25 Aug 2025 15:35:02 -0400
-From: Josef Bacik <josef@toxicpanda.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	kernel-team@fb.com, linux-ext4@vger.kernel.org,
-	linux-xfs@vger.kernel.org, viro@zeniv.linux.org.uk
-Subject: Re: [PATCH 16/50] fs: change evict_inodes to use iput instead of
- evict directly
-Message-ID: <20250825193502.GB1310133@perftesting>
-References: <cover.1755806649.git.josef@toxicpanda.com>
- <1198cd4cd35c5875fbf95dc3dca68650bb176bb1.1755806649.git.josef@toxicpanda.com>
- <20250825-entbinden-kehle-2e1f8b67b190@brauner>
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=B6L9mBXrz/KGuf9xBXcChV05DVEkH17z2SIXrlALDpg=;
+ b=IYMDSg/BOHkY3SVlfKr9VQBgp1IaF/EgNoPnH0vHIVOEI6o7QeS+8r/Clj/PBcn6yQx0gnGvWmDZCj2/zcc2zUBfzpF5MywfXFHp0CU1i00z0HXXKyt11Ei46z56ptwy44vJQl618q8H1RhdR2jYmql8o7k4FaZjw03B+miedCc=
+Received: from CH0PR10MB5338.namprd10.prod.outlook.com (2603:10b6:610:cb::8)
+ by CH3PR10MB7258.namprd10.prod.outlook.com (2603:10b6:610:124::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Mon, 25 Aug
+ 2025 19:54:25 +0000
+Received: from CH0PR10MB5338.namprd10.prod.outlook.com
+ ([fe80::5cca:2bcc:cedb:d9bf]) by CH0PR10MB5338.namprd10.prod.outlook.com
+ ([fe80::5cca:2bcc:cedb:d9bf%6]) with mapi id 15.20.9031.014; Mon, 25 Aug 2025
+ 19:54:25 +0000
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: <linux-block@vger.kernel.org>, <linux-raid@vger.kernel.org>,
+        <drbd-dev@lists.linbit.com>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <john.g.garry@oracle.com>,
+        <hch@lst.de>, <martin.petersen@oracle.com>, <axboe@kernel.dk>,
+        <yi.zhang@huawei.com>, <yukuai3@huawei.com>, <yangerkun@huawei.com>
+Subject: Re: [PATCH 0/2] Fix the initialization of
+ max_hw_wzeroes_unmap_sectors for stacking drivers
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+In-Reply-To: <20250825083320.797165-1-yi.zhang@huaweicloud.com> (Zhang Yi's
+	message of "Mon, 25 Aug 2025 16:33:18 +0800")
+Organization: Oracle Corporation
+Message-ID: <yq1zfbnp480.fsf@ca-mkp.ca.oracle.com>
+References: <20250825083320.797165-1-yi.zhang@huaweicloud.com>
+Date: Mon, 25 Aug 2025 15:54:22 -0400
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR13CA0060.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c2::35) To CH0PR10MB5338.namprd10.prod.outlook.com
+ (2603:10b6:610:cb::8)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250825-entbinden-kehle-2e1f8b67b190@brauner>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH0PR10MB5338:EE_|CH3PR10MB7258:EE_
+X-MS-Office365-Filtering-Correlation-Id: a0bfee12-0a34-4cd0-f8a9-08dde411315b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?lyXPQ4uTIC1exS4kvnBggKuyb6O/4AEwFZ0PkixTmdZ5XwF4oAlBuMQpH7t+?=
+ =?us-ascii?Q?nA8vJZ0pv25AkrgyVpHqDHq89EgK9hR2i9E0BkOuP3ZCZHCnlrEs7cVAVAdE?=
+ =?us-ascii?Q?dsIumqwJ4nkismZ9I8yquxzsBjdtHu4ugm26FpNLMd5N1zggm5l27ziB+bdu?=
+ =?us-ascii?Q?UykI+THfhB9cspZzwBZeVkRWrJDDgJtygko1qF1IlVz8bulPmyO2jzVL86sV?=
+ =?us-ascii?Q?632gqzOfl70XZppjQKI1cmQ0c730IIyroCoGu4nck6xvhLLK9AbC9pCtZY5F?=
+ =?us-ascii?Q?jv3yBOylENMXVlBoL0utUeYSSL/gCVH0+aOUu/Tx1I5S1TbjTSehUpbcPVRs?=
+ =?us-ascii?Q?O+DfWBba2WlF8R0phXs6t7/dzP8RgDqzpAepOWZR2XvgaOJpEH1wurFXRgP6?=
+ =?us-ascii?Q?8lkqIxX9OYVQQ+UfYq241yYJneR3rbrXxZFzaoWeWg6A+Zmp74QhxfM4SuNu?=
+ =?us-ascii?Q?jIcZWuuPFgwbT2vHKhbzkBz3ugEGR3KGkraRoSppiHXWeAEFivzH30ukkxfv?=
+ =?us-ascii?Q?FSRXZwDp7LhW+f9gMl5LryyE61DMl/1GkFcVDrQmUnpdB7YudqiIGSAmNAyc?=
+ =?us-ascii?Q?mrmpU27XTrEsRdm/Q4v717ykUSAoeuz3OKsevl39++hN4SJAalVrKErwXTaq?=
+ =?us-ascii?Q?qSyqwNB0QSL5bxSru0o24x6hJ34C4QKla3zvDAESL2IWCPDZOeTMakGnQ5no?=
+ =?us-ascii?Q?AUhhhYr50dlIACeBtrGwpYpxYJEWzdfeL9dmqD6WL8OGJ6o0nn4W96DkEv79?=
+ =?us-ascii?Q?o/106xWIl/vl1vR1jyGxprf1gKEKrUA+xZwimDM2b7B4+KM82ebmpecVR1fY?=
+ =?us-ascii?Q?jjULc2nZMgmFEekKx45GTQLTac/agpsDDn5j64h7fDvLO++GnQxRvLjBwbJv?=
+ =?us-ascii?Q?TRDhzL4wIdLLcQWaUAhIgDt6Ky9OshCHvGf8sc5Zs7TyaiB72sdU8uZzKZpi?=
+ =?us-ascii?Q?yptnYKYrl6a7smrj6YguUNcJ+SySht5/InyqaY0nBW00YlWQjp0Moh1hjv6c?=
+ =?us-ascii?Q?bm0Ev2NiYYFEy4gta+T7q7WtxX46n8USsOiW9lGZXfUoju1sGiIwQ4DlObdX?=
+ =?us-ascii?Q?pzR5GfaKc6tsgyke2KZiAZD+JZXYXxAfTrw0VpKH+N0FLH1618rqkrs5PrH5?=
+ =?us-ascii?Q?LoVczcHuaQ5FhQVLQoBxJ797KLW6BkwrDYOCVKpG+6MU6IJ4STtDYGZfJyDO?=
+ =?us-ascii?Q?HW6rlFedp6sw04+ibh1k+maXBErTpbbvPX1GO3/kG29MKDUqy0EaY4ob6G/R?=
+ =?us-ascii?Q?NUG1YEFw34XBTkeKCsxcq+VF/Z/WNYRU7ZWcfnzpIw/lnBjtauYOPQDAJI4C?=
+ =?us-ascii?Q?fX3IktsCw2Up5Q22rdOUT+Yq/rs/G9TeXo6WGGocm7xy+iYSbFFeSvtVTAfQ?=
+ =?us-ascii?Q?nWP+c/Q8ZLervbsN1VWZu1LLzP5B+/i5+oC+lajYRxf7sn7Ndw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR10MB5338.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?P5yySbzcDTH+88ocEf2NNQqbnZL29Po43vG/WT4K1WLLAdMDTTCD25hy5QAh?=
+ =?us-ascii?Q?UZhg9QCpNuWmG3gbi57hV0YX06AOleYBO/KPoBG1oBoJ0wEpQSu1/hpl0TCs?=
+ =?us-ascii?Q?VmHa+W3inCBWijS7+l0ZGXM7dCqMHp+lXtIsI4zTXUgin4oH5DNrdUtVNc+u?=
+ =?us-ascii?Q?ytdDQvWKESZnjuCuVZb+9+o5k9KWtS7FQdOpga5eyDapFF4lx2V6PcX2zwgv?=
+ =?us-ascii?Q?+kjylEdZsQJrYfw+gzgnulnwDSx3tFabfq03tqfMQDt1gGwf0zFF/j/WHiTT?=
+ =?us-ascii?Q?/hPEKE1sHyMMOOsBK/OxX2hqXSZG44HN63mPUiDuxnthCUiQZF/hZAz4yQll?=
+ =?us-ascii?Q?qzxQtEm7ABWVlpqE124z2aMOaTAyJDXP4esfsWRFBRD9NTS3Kjdhs6DVBShu?=
+ =?us-ascii?Q?bHNp/0ed3HFTFhl0bv5RDBOmzOvj8RXAfbK7IJX6lKPZDEoGTFKOPmJtM0xZ?=
+ =?us-ascii?Q?c+VoPVgeCdoEC86aSNThcGaXgPkaakWkmeNw5xJvby3yjDOeQfKCo1jf+6Rk?=
+ =?us-ascii?Q?LeZEvYs50dbEJs6JnS37+JYXpvBxlFYGYCwjwXtx66U8YDsLJRC1ZRnJgpgT?=
+ =?us-ascii?Q?GSGMT9ZQI/4npZTYZyZwNFxw2hrMEBcMIZ7x1SndUB6aCwsb3JSgNTps1+Kq?=
+ =?us-ascii?Q?hpNrORVkfGo9SB6HEi6PKbEQmAGym3DEZI3fNJ1y5b3nfgVlMYrBVe35H94B?=
+ =?us-ascii?Q?XtFdI2q9qpSFVWIM2SYmu4sUkn9UJSnOTmAJbZXc/UIaCzq44eJr/5mLmvbB?=
+ =?us-ascii?Q?KhokmVFOaDpt97C7dWYpmfKV0D9uIxsbiCu7eBSt7Gy/X57K2Lzp80rQCnTd?=
+ =?us-ascii?Q?6sw5SIbd7XcE4E4JdGpxvisF4Ozmyb8vLSLc799jcBWvBleKKbg7JDp3JQP9?=
+ =?us-ascii?Q?XJ0eCwVqYhSCCQBUxsy8Fj0w4ZtItgiRe5JgCBbYyZFm5kV0lvO/Z17538Yv?=
+ =?us-ascii?Q?Y9IW7sIGbN7DntcJme5MjLsiOqq2gHP+ZwIncKE6yPQg/yaJc+uCnm5/6J7n?=
+ =?us-ascii?Q?dUf+zh0CMvFmXui7Evlsa838GUNguZSVAI1/CILmWBE/vGSI9AbFTAUteCZa?=
+ =?us-ascii?Q?ovHAi8n84dPFNRofeO9ikDYMCWaVE14frl2iPYLOtUXRdfEdXjfxkcsGv1zw?=
+ =?us-ascii?Q?J0x627+Lzg3twzo0eajNgpEL8nSbFxpPQOPTgXurq15op5hK5ALMbGHeqErg?=
+ =?us-ascii?Q?k8IE69e149egeXoConajmvgAuBbCKw8U1UtYW09WDTYn2HFDSXev0dx1cZyN?=
+ =?us-ascii?Q?YGtxHfXhlqeUPWqGwmfJNPsDnQHUi5lNGqOOy8Dd8r1oxMKCHv2L4LV1ghiB?=
+ =?us-ascii?Q?SnmZ1NZ2uqwtIP9vF/zYaZE4QHa0klo09k0cr6GZay+DDpKF8xJRuabIPCyx?=
+ =?us-ascii?Q?aGBqT4dR8W8CTGoFq1ZvXSz8THhbZHDOy1wyNmjrz/kH16dnJqnX8QUqW6AE?=
+ =?us-ascii?Q?4dzumQF87sVHFf0qSbBa6iS7UKjbXqlHbpY/Qj1mjK2fdWbPUA9T5iiEyRN5?=
+ =?us-ascii?Q?3BFqBcsr17H0c4NQbomYVVgK3sWhLd/+wSH9xlHMFNX8tCrw7gpT9l7EdUb5?=
+ =?us-ascii?Q?ChvtNQOhxbg9ULesKvkxSNWgPHLgBEVzhfWQgDwLl8xHKXQ9WJuIiaRVQYWx?=
+ =?us-ascii?Q?bg=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	IJTDuzMnGNYL4/2RgLeXTI+HZRkBIguGUVvrKnvdrFFzZYVHZniGw079UpbIteIKowmhjUaLoAaOWduu5irThgAZOnLXau7MykLIc+KEdV8fVA3OfAap5eQNMKFTPcytBNuUcOC9995R5CT2vWFHtK5kREPqJGMRpPV5P8aMg1M0WdPOffVnSZ/kvM3x9h3Ua4ebMDZ7ScMOHzGfusGUGVmB59YLuztHRXbeLAiSXCD3qIgLNusQbGu6WZfJeeqc/xdK2foMi4F4OpkUhM6efrvmpcu3M+SPVxQPRkProC2/8/JNqA2t6D+dJwX8ayDD5uf28X1C9hvQHI8UV/A/cvBB0o6dJlukDk/nP/JdgHlkiq4V/qLPr6EpLoeN8ztqAeilZ5dNGpUCikvPEdnQukb4WYVN3rs2hfU7YclogSuM5idJVnlNv5xmFBzlLvhUPIkDiTMGL+AJfUTO0cgSAVvN8qGXO4AVTXNieh472dyEn4RazA77g8QlUorw00oG1oLPMZk9v2M07NcUOr9B+mHFdQQfnLfYZtdst8A7dZHILypkIydLTOGOqBaiCjpjBt86eiwWDkBWAYuo1pTrNUshyXMte37ga0VIc/B1PSA=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a0bfee12-0a34-4cd0-f8a9-08dde411315b
+X-MS-Exchange-CrossTenant-AuthSource: CH0PR10MB5338.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2025 19:54:25.1482
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: m0QwzpgCuTEOKuypG4F0eBwfPK3INCDTE+I1JvalIG11cIGIhkbQ/vJipR5Fi7gEeTFq6jWCoPintSuV5TbBsALXrXmiymVvuhKffsi24ck=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB7258
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-25_09,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 bulkscore=0
+ mlxlogscore=999 spamscore=0 suspectscore=0 malwarescore=0 mlxscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2508110000 definitions=main-2508250180
+X-Proofpoint-ORIG-GUID: QmLqiM-iqEbodTTT6ufEYRj4zIuJkFmU
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI0MDE4NCBTYWx0ZWRfXwdQ5tnBK+EpO
+ GEFlFqlwrCD/CyOGNiOkg3xqPs4T/0akv79GiBG85Ts9tghjRtk2/T9YjD3FKRUX0sgZWVhJSGm
+ 0bA2z686A9fci8JjA0AZX5I+LrpUg3xDjcx1Epl2V/3oaLd26ulo4oDfUhJ6ienN3qWmefSkKPr
+ 1WkZfl/3yKz2/p1HUL0tKlofESeNHMr2fuRlLiAXGw5jtyAsSAbCtlyYoEpnY+0jgwcvnZdFD1O
+ NlHmyxiYZJX9vWjjebNhfqnvGJE4gei/K0byh2Ks5vbT0QMyp7QT481T/JRQZnq8oWRdVUoTy5J
+ OxTTiLyE66HgWI94HC/VzGJXHPh+pQdremanQRtcugWXh7W4ce1YQUaZCGRQKN/itnvBd5B8sMG
+ TwIGfeN7
+X-Proofpoint-GUID: QmLqiM-iqEbodTTT6ufEYRj4zIuJkFmU
+X-Authority-Analysis: v=2.4 cv=IciHWXqa c=1 sm=1 tr=0 ts=68acbf74 b=1 cx=c_pps
+ a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=2OwXVqhp2XgA:10
+ a=GoEa3M9JfhUA:10 a=yPCof4ZbAAAA:8 a=NWDrhqrOra_wOMGATk4A:9
 
-On Mon, Aug 25, 2025 at 11:07:55AM +0200, Christian Brauner wrote:
-> On Thu, Aug 21, 2025 at 04:18:27PM -0400, Josef Bacik wrote:
-> > At evict_inodes() time, we no longer have SB_ACTIVE set, so we can
-> > easily go through the normal iput path to clear any inodes. Update
-> 
-> I'm a bit lost why SB_ACTIVE is used here as a justification to call
-> iput(). I think it's because iput_final() would somehow add it back to
-> the LRU if SB_ACTIVE was still set and the filesystem somehow would
-> indicate it wouldn't want to drop the inode.
-> 
-> I'm confused where that would even happen. IOW, which filesystem would
-> indicate "don't drop the inode" even though it's about to vanish. But
-> anyway, that's probably not important because...
-> 
-> > dispose_list() to check how we need to free the inode, and then grab a
-> > full reference to the inode while we're looping through the remaining
-> > inodes, and simply iput them at the end.
-> > 
-> > Since we're just calling iput we don't really care about the i_count on
-> > the inode at the current time.  Remove the i_count checks and just call
-> > iput on every inode we find.
-> > 
-> > Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-> > ---
-> >  fs/inode.c | 26 +++++++++++---------------
-> >  1 file changed, 11 insertions(+), 15 deletions(-)
-> > 
-> > diff --git a/fs/inode.c b/fs/inode.c
-> > index 72981b890ec6..80ad327746a7 100644
-> > --- a/fs/inode.c
-> > +++ b/fs/inode.c
-> > @@ -933,7 +933,7 @@ static void evict(struct inode *inode)
-> >   * Dispose-list gets a local list with local inodes in it, so it doesn't
-> >   * need to worry about list corruption and SMP locks.
-> >   */
-> > -static void dispose_list(struct list_head *head)
-> > +static void dispose_list(struct list_head *head, bool for_lru)
-> >  {
-> >  	while (!list_empty(head)) {
-> >  		struct inode *inode;
-> > @@ -941,8 +941,12 @@ static void dispose_list(struct list_head *head)
-> >  		inode = list_first_entry(head, struct inode, i_lru);
-> >  		list_del_init(&inode->i_lru);
-> >  
-> > -		evict(inode);
-> > -		iobj_put(inode);
-> > +		if (for_lru) {
-> > +			evict(inode);
-> > +			iobj_put(inode);
-> > +		} else {
-> > +			iput(inode);
-> > +		}
-> 
-> ... Afaict, if we end up in dispose_list() we came from one of two
-> locations:
-> 
-> (1) prune_icache_sb()
->     In which case inode_lru_isolate() will have only returned inodes
->     that prior to your changes would have inode->i_count zero.
-> 
-> (2) evict_inodes()
->     Similar story, this only hits inodes with inode->i_count zero.
-> 
-> With your change you're adding an increment from zero for (2) via
-> __iget() so that you always end up with a full refcount, and that is
-> backing your changes to dispose_list() later.
-> 
-> I don't see the same done for (1) though and so your later call to
-> iput() drops the reference below zero? It's accidently benign because
-> iiuc atomic_dec_and_test() will simply tell you that reference count
-> didn't go to zero and so iput() will back off. But still this should be
-> fixed if I'm right.
 
-Because (1) at this point doesn't have a full reference, it only has an
-i_obj_count reference. The next patch converts this, and removes this bit. I did
-it this way to clearly mark the change in behavior.
+Zhang,
 
-prune_icache_sb() will call dispose_list(&list, true), which will do the
-evict(inode) and iobj_put(inode). This is correct because the inodes on the list
-from prune_icache_sb() will have an i_count == and have I_WILL_FREE set, so it
-will never have it's i_count increased to 1.
+> This series fixes the initialization of max_hw_wzeroes_unmap_sectors
+> in queue_limits for all md raid and drbd drivers, preventing
+> blk_validate_limits() failures on underlying devices that support the
+> unmap write zeroes command.
 
-The change here is to change evict_inodes() to simply call iput(), as it calls
-dispose_list(&list, false). We will increase the i_count to 1 from zero via
-__iget(), which at this point in the series is completely correct behavior. Then
-we will call iput() which will drop the i_count back to zero, and then call
-iput_final, and since SB_ACTIVE is not set, it will call evict(inode) and clean
-everything up properly.
+Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
 
-> 
-> The conversion to iput() is introducing a lot of subtlety in the middle
-> of the series. If I'm right then the iput() is a always a nop because in
-> all cases it was an increment from zero. But it isn't really a nop
-> because we still do stuff like call ->drop_inode() again. Maybe it's
-> fine because no filesystem would have issues with this but I wouldn't
-> count on it and also it feels rather unclean to do it this way.
-
-So I'm definitely introducing another call to ->drop_inode() here, but
-->drop_inode() has always been a "do we want to keep this inode on the LRU"
-call, calling it again doesn't really change anything.
-
-That being said it is a subtle functional change. I put it here specifically
-because it is a functional change. If it bites us in the ass in some unforseen
-way we'll be able to bisect it down to here and then we can all laugh at Josef
-because he missed something.
-
-> 
-> So, under the assumption, that after the increment from zero you did, we
-> really only have a blatant zombie inode on our hands and we only need to
-> get rid of the i_count we took make that explicit and do:
-> 
-> 	if (for_lru) {
-> 		evict(inode);
-> 		iobj_put(inode);
-> 	} else {
-> 		/* This inode was always incremented from zero.
-> 		 * Get rid of that reference without doing anything else.
-> 		 */
-> 		WARN_ON_ONCE(!atomic_dec_and_test(&inode->i_count));
-> 	}
-
-We still need the evict() to actually free the inode.  We're just getting there
-via iput_final() now instead of directly calling evict().
-
-> 
-> Btw, for the iobj_put() above, I assume that we're not guaranteed that
-> i_obj_count == 1?
-
-Right, it's purely dropping the LRU list i_obj_count reference.  Thanks,
-
-Josef
+-- 
+Martin K. Petersen
 
