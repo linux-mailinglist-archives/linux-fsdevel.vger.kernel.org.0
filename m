@@ -1,105 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-59114-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59115-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68802B3494C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 19:49:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F59CB34959
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 19:52:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 394E517AF4B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 17:49:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B79C7AC91A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 17:51:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 468EA303C80;
-	Mon, 25 Aug 2025 17:48:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE15304975;
+	Mon, 25 Aug 2025 17:52:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="On0ohUOB"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TpJqZ5zP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 217852D7D3A;
-	Mon, 25 Aug 2025 17:48:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756144131; cv=pass; b=FU6PV2DJnBxLniETPgpue7x+bY1vtkSmEaeMcMEpPBw5ABHW3vyCKnGeUaxMlo7sSSZMY1tbSfWwVW/njOlNKD+X5792DZuVYvA2nZVBA3e2tZCi/9MrlhsbwUM7gyoIk5weXoA3mTf+Ucc+KdbJv7xr7yKqCoB9aKcyXnpDaJo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756144131; c=relaxed/simple;
-	bh=pFpAZ6/+tuhgVQ/tVmNw2+7Gi5jfRwf1ydAsfOOZ1c0=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=dY6cWkAU7u5aswZoNKS1TedSEPUlr0x2UIeG9Y+NFPcL+0yWF98b9E5+I0qtRGBTICXVlGJxWw74hTo/5cpATjYidHiD7qvWonJ7le4yPRQRcV0hpTyGMb1MMezDTPFx6XuNEm9gZdxg/1AlIv3N+PvRXK8R29Ni4wc2EBceePc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=On0ohUOB; arc=pass smtp.client-ip=136.143.188.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1756144099; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=WwgA4eCtepSTJxg7SRbWXEBp2Sej5QS6Vp0rQ11jy6WT7XUJddtEEsgypBFWHwgxJdJ3YAiZr7tHhg1rfiRW2x5Gg1yb9N0wSA0GWrRZ/OFgp1j+kAeLKoZIzEnHLCki3uQu9fQ5GNbMYit5AZRv4Zp1/uok1YUKEO3JRzxWm4c=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1756144099; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=w9O1yPvqufsvxRA4exPaj+gPXTjYubFjFbod212n8qs=; 
-	b=j5zIUT3bapMR9PnovbGhztfDMlofmtw4X06YyZf2zyJCWK2lZJOWbr0j2qCJj2lfPUsZE+ba9YT/KjR47QT8EVcw+vhBpGvpxsWWA3VNHQp6jIKLUACX9BposGCcKrKniYCfTPoV51CD7KPxX+f9pcV3gZnSrQUpAHbEA/eXmlM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
-	dmarc=pass header.from=<safinaskar@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756144099;
-	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=w9O1yPvqufsvxRA4exPaj+gPXTjYubFjFbod212n8qs=;
-	b=On0ohUOBInVRvYafJmttDqHaLOKC30vgto0XmCqeRlITDU0p5LIhdBoA7MOE/usq
-	qFl2inWMG4JvgdekN+Km7NWq8qrZAGD2X5Xo+3yINF0GyUtgY2l7v+BkqAO8lH/emcQ
-	qXZ+eMRr2osgWRK2BP7T+7vmz7t0hYFTUwCe4wMM=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 1756144097840227.0333466039475; Mon, 25 Aug 2025 10:48:17 -0700 (PDT)
-Received: from  [212.73.77.104] by mail.zoho.com
-	with HTTP;Mon, 25 Aug 2025 10:48:17 -0700 (PDT)
-Date: Mon, 25 Aug 2025 21:48:17 +0400
-From: Askar Safin <safinaskar@zohomail.com>
-To: "Aleksa Sarai" <cyphar@cyphar.com>
-Cc: "Alexander Viro" <viro@zeniv.linux.org.uk>,
-	"Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
-	"Ian Kent" <raven@themaw.net>,
-	"linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
-	"David Howells" <dhowells@redhat.com>,
-	"autofs mailing list" <autofs@vger.kernel.org>,
-	"patches" <patches@lists.linux.dev>
-Message-ID: <198e2585a21.11b3f90ad28165.4887709828549472380@zohomail.com>
-In-Reply-To: <2025-08-18.1755500319-dumb-naughty-errors-dash-YpWnja@cyphar.com>
-References: <20250817171513.259291-1-safinaskar@zohomail.com>
- <20250817171513.259291-5-safinaskar@zohomail.com>
- <2025-08-18.1755493390-violent-felt-issues-dares-AIMnxT@cyphar.com> <2025-08-18.1755500319-dumb-naughty-errors-dash-YpWnja@cyphar.com>
-Subject: Re: [PATCH 4/4] vfs: fs/namei.c: if RESOLVE_NO_XDEV passed to
- openat2, don't *trigger* automounts
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CB632E1EE6;
+	Mon, 25 Aug 2025 17:52:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756144355; cv=none; b=rx+vQOMGPl5jgKKb8WvWvAtwXoH9hp5Awn0OkM3zjxh160DtjtVBf1/e/Lon6UOuz7ljXgdxAGU1WxBVJmDA8XV593GYLBxHn8peD1XelUtN6JA48xvGS7+7yijLdCWBzErmtGJdiXMTVmcGzHHRsXKfHpWxd+XKx7nSOhElnQ0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756144355; c=relaxed/simple;
+	bh=+r4/vSpjwmPmrdxo+7nWUwBlgS2KHEGTtd/DtLd7Srg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s+xNTtD2abajoZz3pE93UTIAdeJpWJ+xpPB86fQlm/RsJbiapvo1T3AX8Q5DiAWkynpxU71IaiQl5yvRjkPwLMos/ROILCHgehjl5vIXCuk63n+3rrAASfkC3HcaTYzfY4jAxDOcHMycmkroKUG1jF2CKDAwmGqg9HrB1/2fAgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=TpJqZ5zP; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=EeQgxrkP4KH8iLZz1W6HjZ1yyvbTPOkIS8xnCG44mfw=; b=TpJqZ5zP4aP8kC7kxuzuTyDmFB
+	LbuF+KWibzw6hBm8c9QgHskTJw2Pkocli8jtUywKunC11x7Ncb6hBSWydOfPV2nWDmOpF2bGboY1H
+	61BSY76yrYLFuMniFEMyPVo7Ed8a7UHjdaJ0zU6v96NEfw6XUZnsFpMpLXxNtJt6sXgKSpRdAAkIL
+	F3/5sRKP0G2coy8HdzL6Q4TKRrdsBmawmaQ7rhoaMxn6gyWDb4hQjLnNXSjPjcMSTGqc0grFIYO/g
+	1ZXJ48x/vJ/bII6LenY4CYMV4KHdKptQ2lR05Nz7/pJOXJCnE2T8FamtBK9oQwscCvPSbYhwn+tiu
+	tR5Z9ihw==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uqbMu-00000008sEr-0IDV;
+	Mon, 25 Aug 2025 17:52:32 +0000
+Message-ID: <0c755ddc-9ed1-462e-a9f1-16762ebe0a19@infradead.org>
+Date: Mon, 25 Aug 2025 10:52:31 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
-Feedback-ID: rr08011227bedd04d36cc79f327257c44f00002555878cfb6e35e4dbc59498dd44f339c34d491f1475af421e:zu08011227bbe600540125c4bba0a24583000023832f6ab693eb8da42f7bb18e6565add98338dc8dc2df0ccc:rf0801122cd8c46131bd8860e3f4d9692f0000908284c610cec6fca7169d07dc3782783c330ed91bd7eea7f39c7104c386:ZohoMail
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] uapi/fcntl: conditionally define AT_RENAME* macros
+To: Matthew Wilcox <willy@infradead.org>
+Cc: linux-kernel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
+ Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
+ Alexander Aring <alex.aring@gmail.com>, Josef Bacik <josef@toxicpanda.com>,
+ Aleksa Sarai <cyphar@cyphar.com>, Jan Kara <jack@suse.cz>,
+ Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
+ linux-api@vger.kernel.org
+References: <20250824221055.86110-1-rdunlap@infradead.org>
+ <aKuedOXEIapocQ8l@casper.infradead.org>
+ <9b2c8fe2-cf17-445b-abd7-a1ed44812a73@infradead.org>
+ <aKxfGix_o4glz8-Z@casper.infradead.org>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <aKxfGix_o4glz8-Z@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
- ---- On Mon, 18 Aug 2025 11:15:16 +0400  Aleksa Sarai <cyphar@cyphar.com> wrote --- 
- > but we should have O_PATH|O_DIRECTORY produce
- > identical behaviour to O_PATH in this case IMHO.
 
-I agree.
 
-Original intention of autofs was so: stat should not trigger automounts
-in final component, and everything else - should trigger (by default).
-See
-https://elixir.bootlin.com/linux/v6.17-rc2/source/Documentation/filesystems/autofs.rst#L93
-.
+On 8/25/25 6:03 AM, Matthew Wilcox wrote:
+> On Sun, Aug 24, 2025 at 04:54:50PM -0700, Randy Dunlap wrote:
+>> In file included from ../samples/vfs/test-statx.c:23:
+>> usr/include/linux/fcntl.h:159:9: warning: ‘AT_RENAME_NOREPLACE’ redefined
+>>   159 | #define AT_RENAME_NOREPLACE     0x0001
+>> In file included from ../samples/vfs/test-statx.c:13:
+>> /usr/include/stdio.h:171:10: note: this is the location of the previous definition
+>>   171 | # define AT_RENAME_NOREPLACE RENAME_NOREPLACE
+> 
+> Oh dear.  This is going to be libc-version-dependent.
+> 
 
-So, yes, theoretically both O_PATH and O_PATH | O_DIRECTORY
-should follow automounts (and nearly all other syscalls should, too).
+I am not surprised at that.
 
---
-Askar Safin
-https://types.pl/@safinaskar
+> $ grep -r AT_RENAME_NOREPLACE /usr/include
+> /usr/include/linux/fcntl.h:#define AT_RENAME_NOREPLACE	0x0001
+> 
+> It's not in stdio.h at all.  This is with libc6 2.41-10
+
+It was added 2025-04-22:
+2025-04-22  Joseph Myers  <josmyers@redhat.com>
+
+	COMMIT: cf9241107d12e79073ddb03bab9de115e5e0e856
+	Add AT_* constants from Linux 6.12
+
+$ grep -r AT_RENAME_NOREPLACE /usr/include
+/usr/include/stdio.h:# define AT_RENAME_NOREPLACE RENAME_NOREPLACE
+/usr/include/linux/fcntl.h:#define AT_RENAME_NOREPLACE	0x0001
+
+I have libc 2.42-1.1 (openSUSE).
+
+thanks.
+-- 
+~Randy
 
 
