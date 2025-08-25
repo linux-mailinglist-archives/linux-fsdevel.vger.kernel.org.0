@@ -1,92 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-58993-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58994-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60EE0B33C79
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 12:20:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20AB2B33CE9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 12:40:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 342F618873BF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 10:20:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEC3F203FD7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 10:40:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 464C72D8DCE;
-	Mon, 25 Aug 2025 10:20:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A4952D7D30;
+	Mon, 25 Aug 2025 10:40:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iram.es header.i=@iram.es header.b="f276yTAV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P6bTBvGx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx08-006a4e02.pphosted.com (mx08-006a4e02.pphosted.com [143.55.148.243])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703022C0F84;
-	Mon, 25 Aug 2025 10:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=143.55.148.243
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D496E29AAF3;
+	Mon, 25 Aug 2025 10:40:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756117222; cv=none; b=dIrcBxPpZXkFViYJ9/Sl6H7pSZ2l0ehuWFLjQaDDb+9gUdYRvKzwr9SE5QAWbcaaRGUdMNpNm16N6fY/5jOcya9XmyVF5fuSOC6S2t4rz0OWHaGA8987p3k1fXjN6gxO8pDc2shKtGBGF81XTikgb0T23QiwW8zwEEbZ+rTv50U=
+	t=1756118443; cv=none; b=tSMLQUlAGmbLeix7o3em7hHRhN42qd1HmCN0Y+fTV3vP3vxIMjRJGzlxSIDSNXtQUxvX871dOZCcH4RfEhZOU70eluBu9e7XPENSpVUEV5cgjzepRJc8QO5rs39YnEwi7QWZi1p75Pd59cqT0gfmJZpjgpbb5OHFhBuBz0/Fb1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756117222; c=relaxed/simple;
-	bh=EOYa/83/mPvbS46RIHex0d0IdkRkDgz6A9nE8p9HOOE=;
+	s=arc-20240116; t=1756118443; c=relaxed/simple;
+	bh=jD8unm5fFokP8vboFdQvT37W8Gl10f+xmS3ubNRFNcQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OK1fMOlEagTLv6pD8FVPjXchuxedMS3GIDct4D/KHC0sqND/60gKs+ouShJJwJ/+FYKED77cFWdwIXzPsRyGgH9CVAPdtfHuQocPCtCFx8FYHW4Hea/QI7owg9dqLHYrBCd9VSvgCoy4bgnePw4fUeaswg9lyE1OfticgEf+5l4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=iram.es; spf=pass smtp.mailfrom=iram.es; dkim=pass (2048-bit key) header.d=iram.es header.i=@iram.es header.b=f276yTAV; arc=none smtp.client-ip=143.55.148.243
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=iram.es
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iram.es
-Received: from pps.filterd (m0316694.ppops.net [127.0.0.1])
-	by m0316694.ppops.net (8.18.1.2/8.18.1.2) with ESMTP id 57P6PW3W020069;
-	Mon, 25 Aug 2025 12:18:43 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iram.es; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=dkim3; bh=D2RQ
-	QU+xVYCIYE9iCJ4jbQxYZO59NkcR2A8V0GUG+Mo=; b=f276yTAVV1SD26/ulkZ2
-	ssJY8XTewysYT4tMLHnjnSIBPzgblP8WuCw3pnh/XAa52lQyDLxmxShvX17t1EXs
-	AoQda248LCfIMXON/nZwXpeu4+MTA43njmbgfGliPSIcYHT6eGt5tvWcsz+Ebm8/
-	4lIyyZv8wrgSbUY90OllDWqU/MTlR6SEhvM2DfGVcewE1Kv7qk7AtlaNhqjqabwW
-	IOCDoLYjGRp5sJ9N4qvDQOAd9gPixccJfFHXTLWq+WrJuREyVW1zYVGsiH/zFMSl
-	OAyS7jVvPh7W7XrmyRecvqRovk6Azt/V4iwX6CHVY52rTnzQCWQmiOXOKm2ygevf
-	nw==
-Received: from sim.rediris.es (mta-out04.sim.rediris.es [130.206.24.46])
-	by m0316694.ppops.net (PPS) with ESMTPS id 48qs26hbtk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 25 Aug 2025 12:18:43 +0200 (MEST)
-Received: from sim.rediris.es (localhost.localdomain [127.0.0.1])
-	by sim.rediris.es (Postfix) with ESMTPS id 26F1D181FAE;
-	Mon, 25 Aug 2025 12:18:42 +0200 (CEST)
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by sim.rediris.es (Postfix) with ESMTP id 00B66181FAC;
-	Mon, 25 Aug 2025 12:18:41 +0200 (CEST)
-X-Amavis-Modified: Mail body modified (using disclaimer) -
- mta-out04.sim.rediris.es
-Received: from sim.rediris.es ([127.0.0.1])
- by localhost (mta-out04.sim.rediris.es [127.0.0.1]) (amavis, port 10026)
- with ESMTP id T0a5k0mKOE42; Mon, 25 Aug 2025 12:18:41 +0200 (CEST)
-Received: from lt-gp.iram.es (haproxy02.sim.rediris.es [130.206.24.70])
-	by sim.rediris.es (Postfix) with ESMTPA id 4570418007C;
-	Mon, 25 Aug 2025 12:18:40 +0200 (CEST)
-Date: Mon, 25 Aug 2025 12:18:38 +0200
-From: Gabriel Paubert <paubert@iram.es>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Andre Almeida <andrealmeid@igalia.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Laight <david.laight.linux@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Daniel Borkmann <daniel@iogearbox.net>, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH v2 10/10] powerpc/uaccess: Implement masked user access
-Message-ID: <aKw4frSacjCoruSJ@lt-gp.iram.es>
-References: <cover.1755854833.git.christophe.leroy@csgroup.eu>
- <647f1b1db985aec8ec1163bf97688563ae6f9609.1755854833.git.christophe.leroy@csgroup.eu>
- <aKwnMo7UllLZkOcK@lt-gp.iram.es>
- <16679d56-5ee0-469d-a11c-475a45a1c2b9@csgroup.eu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qDVgEhsI+QDuRF6IccDvnR+F2x9NhmN73vWSELo+KSrz+DjsSl0LRtovzaBVjqeIpWU5gWrP7CUpCM9z9j5mtXPlTbCgqP2Cru8I2mwCXD47ifonmeLtWTpiTPVMfC8SAO4PHDRXgVGwF+435sVHrkk+X8GQrxJwyieqyITxFko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P6bTBvGx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF8BCC4CEED;
+	Mon, 25 Aug 2025 10:40:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756118442;
+	bh=jD8unm5fFokP8vboFdQvT37W8Gl10f+xmS3ubNRFNcQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=P6bTBvGx0abIEUekQ6EITDjfQaHcwIBqw7u2oDl7tnhdbHPjFoJe7KVXjh7OYAh8C
+	 gOnFmMaVgYxVUn6warb9iV4Giv2isXmTtLCGC1HKk2awn7zrnOvGgq30qSZPqe+9fJ
+	 zmdMXuosbw2UdcQfhh8tZ23x44rFFda3BO+T8rZJup9xw1ad8JWwojxtep39C0uA/n
+	 IiWAWQaGV/BdSGbHzRZi74N4t4SA+I942Trvsjmo2zKrhMczsWqndPjWdpxmgOA+8o
+	 1ha7QY9A6Ot3L44qXqXMH/EvZ77nfZibjPfFs2CsirZ0WJgW/XnVnJnhobOI6uqN6d
+	 gMnmymif4vvHg==
+Date: Mon, 25 Aug 2025 12:40:38 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org, 
+	kernel-team@fb.com, linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	viro@zeniv.linux.org.uk
+Subject: Re: [PATCH 17/50] fs: hold a full ref while the inode is on a LRU
+Message-ID: <20250825-bekommen-nashorn-9971054b7d45@brauner>
+References: <cover.1755806649.git.josef@toxicpanda.com>
+ <113ec167162bbaccc02fa3c3bf1a2c7d3e5a3e82.1755806649.git.josef@toxicpanda.com>
+ <20250825-affekt-ruckartig-e7da04294931@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -95,145 +60,319 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <16679d56-5ee0-469d-a11c-475a45a1c2b9@csgroup.eu>
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI0MDAxMSBTYWx0ZWRfXyQKmoH9DesXw
- ky5qpDKRbPVEO1j5P6RR/dl92Vu5gG46S+qU0RD2h9TCpiV9lxYjE4Rf4eAAbziJN1WFf5iKIoL
- vwHyFf4hVFUMvanQ6xRm7ygYHGMCvWURJrObfA0zrkO/dAoKD6EpbGdosihHgY3UjjtywmHeIhh
- zadbuk6ri8Bjd//t+fuudKJvFfCA6JbBQ9N+HL1oXH8gyaqcVqF4z95oY0uvqMW92ZBVK+g2n6Z
- F5336k0OeSJ784mGbOt0xTivvX2ToRO8PW2UCuoqsfP7MIu8uTDDGoglgFl+oLkNRfmAFLuzTMV
- j3inHZqHmiMrvZjyNxDRXcurMFxlSzfQPLVCuFgRq2ZkLrTZLm79a044/SvNKtbKXHZ8D77pt49
- kvezQV2k
-X-Proofpoint-GUID: gpjt9l5GPC7skcU5Z664_moW2gPMxUzU
-X-Authority-Analysis: v=2.4 cv=GqFC+l1C c=1 sm=1 tr=0 ts=68ac3883 cx=c_pps
- a=Kke4r4mcy+kRAsMtzpf9hg==:117 a=Kke4r4mcy+kRAsMtzpf9hg==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=_EeEMxcBAAAA:8 a=LQ9UBoVtz5yYhqZLJvEA:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: gpjt9l5GPC7skcU5Z664_moW2gPMxUzU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-25_05,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=salida_notspam policy=salida score=0
- priorityscore=1501 malwarescore=0 phishscore=0 bulkscore=0 adultscore=0
- spamscore=0 suspectscore=0 clxscore=1011 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508240011
+In-Reply-To: <20250825-affekt-ruckartig-e7da04294931@brauner>
 
-On Mon, Aug 25, 2025 at 11:40:48AM +0200, Christophe Leroy wrote:
-> Hi Gabriel,
->=20
-> Le 25/08/2025 =C3=A0 11:04, Gabriel Paubert a =C3=A9crit=C2=A0:
-> > [Vous ne recevez pas souvent de courriers de paubert@iram.es. D?couvr=
-ez pourquoi ceci est important ? https://urldefense.com/v3/__https://aka.=
-ms/LearnAboutSenderIdentification__;!!D9dNQwwGXtA!QUcSIXoDBBj9wAtcyQ-z3nP=
-EAj-RnJpPgYwjOeb6LZWLejdLzq4uYsPMecQuK5Qy3147APjCNc-hcXGT71XuBh1AJI2M$  ]
-> >=20
-> > Hi Christophe,
-> >=20
-> > On Fri, Aug 22, 2025 at 11:58:06AM +0200, Christophe Leroy wrote:
-> > > Masked user access avoids the address/size verification by access_o=
-k().
-> > > Allthough its main purpose is to skip the speculation in the
-> > > verification of user address and size hence avoid the need of spec
-> > > mitigation, it also has the advantage of reducing the amount of
-> > > instructions required so it even benefits to platforms that don't
-> > > need speculation mitigation, especially when the size of the copy i=
-s
-> > > not know at build time.
-> > >=20
-> > > So implement masked user access on powerpc. The only requirement is
-> > > to have memory gap that faults between the top user space and the
-> > > real start of kernel area.
-> > >=20
-> > > On 64 bits platforms the address space is divided that way:
-> > >=20
-> > >        0xffffffffffffffff      +------------------+
-> > >                                |                  |
-> > >                                |   kernel space   |
-> > >                                |                  |
-> > >        0xc000000000000000      +------------------+  <=3D=3D PAGE_O=
-FFSET
-> > >                                |//////////////////|
-> > >                                |//////////////////|
-> > >        0x8000000000000000      |//////////////////|
-> > >                                |//////////////////|
-> > >                                |//////////////////|
-> > >        0x0010000000000000      +------------------+  <=3D=3D TASK_S=
-IZE_MAX
-> > >                                |                  |
-> > >                                |    user space    |
-> > >                                |                  |
-> > >        0x0000000000000000      +------------------+
-> > >=20
-> > > Kernel is always above 0x8000000000000000 and user always
-> > > below, with a gap in-between. It leads to a 4 instructions sequence=
-:
-> > >=20
-> > >    80: 7c 69 1b 78     mr      r9,r3
-> > >    84: 7c 63 fe 76     sradi   r3,r3,63
-> > >    88: 7d 29 18 78     andc    r9,r9,r3
-> > >    8c: 79 23 00 4c     rldimi  r3,r9,0,1
-> > >=20
-> > > This sequence leaves r3 unmodified when it is below 0x8000000000000=
-000
-> > > and clamps it to 0x8000000000000000 if it is above.
-> > >=20
-> >=20
-> > This comment looks wrong: the second instruction converts r3 to a
-> > replicated sign bit of the address ((addr>0)?0:-1) if treating the
-> > address as signed. After that the code only modifies the MSB of r3. S=
-o I
-> > don't see how r3 could be unchanged from the original value...
->=20
-> Unless I'm missing something, the above rldimi leaves the MSB of r3
-> unmodified and replaces all other bits by the same in r9.
->=20
-> This is the code generated by GCC for the following:
->=20
-> 	unsigned long mask =3D (unsigned long)((long)addr >> 63);
->=20
-> 	addr =3D ((addr & ~mask) & (~0UL >> 1)) | (mask & (1UL << 63));
->=20
->=20
-> >=20
-> > OTOH, I believe the following 3 instructions sequence would work,
-> > input address (a) in r3, scratch value (tmp) in r9, both intptr_t:
-> >=20
-> >          sradi r9,r3,63  ; tmp =3D (a >=3D 0) ? 0L : -1L;
-> >          andc r3,r3,r9   ; a =3D a & ~tmp; (equivalently a =3D (a >=3D=
- 0) ? a : 0)
-> >          rldimi r3,r9,0,1 ; copy MSB of tmp to MSB of a
-> >=20
-> > But maybe I goofed...
-> >=20
->=20
-> From my understanding of rldimi, your proposed code would:
-> - Keep r3 unmodified when it is above 0x8000000000000000
-> - Set r3 to 0x7fffffffffffffff when it is below 0x8000000000000000
->=20
-> Extract of ppc64 ABI:
->=20
-> rldimi RA,RS,SH,MB
->=20
-> The contents of register RS are rotated 64 left SH bits.
-> A mask is generated having 1-bits from bit MB
-> through bit 63=E2=88=92 SH and 0-bits elsewhere. The rotated
-> data are inserted into register RA under control of the
-> generated mask.
+On Mon, Aug 25, 2025 at 11:20:07AM +0200, Christian Brauner wrote:
+> On Thu, Aug 21, 2025 at 04:18:28PM -0400, Josef Bacik wrote:
+> > We want to eliminate 0 refcount inodes that can be used. To that end,
+> > make the LRU's hold a full reference on the inode while it is on an LRU
+> > list. From there we can change the eviction code to always just iput the
+> > inode, and the LRU operations will just add or drop a full reference
+> > where appropriate.
+> > 
+> > We also now must take into account unlink, and drop our LRU reference
+> > when we go to an nlink of 0.  We will also avoid adding inodes with a
+> > nlink of 0 as they can be reclaimed immediately.
+> > 
+> > Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+> > ---
+> >  fs/inode.c | 105 +++++++++++++++++++++++++++++------------------------
+> >  1 file changed, 57 insertions(+), 48 deletions(-)
+> > 
+> > diff --git a/fs/inode.c b/fs/inode.c
+> > index 80ad327746a7..de0ec791f9a3 100644
+> > --- a/fs/inode.c
+> > +++ b/fs/inode.c
+> > @@ -434,8 +434,18 @@ void drop_nlink(struct inode *inode)
+> >  {
+> >  	WARN_ON(inode->i_nlink == 0);
+> >  	inode->__i_nlink--;
+> > -	if (!inode->i_nlink)
+> > +	if (!inode->i_nlink) {
+> > +		/*
+> > +		 * LRU's hold a full ref on the inode, but if we've unlinked it
+> > +		 * then we want the inode to be freed when the last user goes,
+> > +		 * so delete the inode from the LRU list.
+> > +		 */
+> > +		spin_lock(&inode->i_lock);
+> > +		inode_lru_list_del(inode);
+> > +		spin_unlock(&inode->i_lock);
+> > +
+> >  		atomic_long_inc(&inode->i_sb->s_remove_count);
+> > +	}
+> 
+> As written this doesn't work because you can have callers that have
+> already acquired inode->i_lock(). For example, afs:
+> 
+>         new_inode = d_inode(new_dentry);
+>         if (new_inode) {
+>                 spin_lock(&new_inode->i_lock);
+>                 if (S_ISDIR(new_inode->i_mode))
+>                         clear_nlink(new_inode);
+>                 else if (new_inode->i_nlink > 0)
+>                         drop_nlink(new_inode);
+>                 spin_unlock(&new_inode->i_lock);
+>         }
 
-Sorry, you are right, I got the polarity of the mask reversed in my
-head.
+I think it should be possible to do LRU list deletion locklessly so you
+don't need to hold i_lock. The plain lru lists can already be walked
+locklessly and removal is also possible without locks.
 
+So we only seem to take i_lock because of i_state. If we can get rid of
+a bunch i_lock grabs for the sake of i_state by just using atomic bit
+operations on i_state I'm willing to sacrifice my hard-won 32bits and
+make i_state an unsigned long again...
 
-Once again I may goof, but I believe that the following sequence
-would work:
+If I'm right then this would allow us to make lru list removal lockless
+and then you can avoid this problem here in clear_nlink()/drop_nlink().
 
-	sradi r9,r3,63
-	andc r3,r3,r9
-	rldimi r3,r9,63,0  ; insert LSB of r9 into MSB of R3
+Let me know if that's not working or you have other ideas.
 
-Cheers,
-Gabriel
- 
-
+> 
+> >  }
+> >  EXPORT_SYMBOL(drop_nlink);
+> >  
+> > @@ -451,6 +461,12 @@ void clear_nlink(struct inode *inode)
+> >  {
+> >  	if (inode->i_nlink) {
+> >  		inode->__i_nlink = 0;
+> > +
+> > +		/* See comment in drop_nlink(). */
+> > +		spin_lock(&inode->i_lock);
+> > +		inode_lru_list_del(inode);
+> > +		spin_unlock(&inode->i_lock);
+> > +
+> >  		atomic_long_inc(&inode->i_sb->s_remove_count);
+> >  	}
+> >  }
+> > @@ -555,6 +571,8 @@ static void inode_add_cached_lru(struct inode *inode)
+> >  
+> >  	if (inode->i_state & I_CACHED_LRU)
+> >  		return;
+> > +	if (inode->__i_nlink == 0)
+> > +		return;
+> >  	if (!list_empty(&inode->i_lru))
+> >  		return;
+> >  
+> > @@ -562,7 +580,7 @@ static void inode_add_cached_lru(struct inode *inode)
+> >  	spin_lock(&inode->i_sb->s_cached_inodes_lock);
+> >  	list_add(&inode->i_lru, &inode->i_sb->s_cached_inodes);
+> >  	spin_unlock(&inode->i_sb->s_cached_inodes_lock);
+> > -	iobj_get(inode);
+> > +	__iget(inode);
+> >  }
+> >  
+> >  static bool __inode_del_cached_lru(struct inode *inode)
+> > @@ -582,7 +600,7 @@ static bool __inode_del_cached_lru(struct inode *inode)
+> >  static bool inode_del_cached_lru(struct inode *inode)
+> >  {
+> >  	if (__inode_del_cached_lru(inode)) {
+> > -		iobj_put(inode);
+> > +		iput(inode);
+> >  		return true;
+> >  	}
+> >  	return false;
+> > @@ -598,6 +616,8 @@ static void __inode_add_lru(struct inode *inode, bool rotate)
+> >  		return;
+> >  	if (atomic_read(&inode->i_count))
+> >  		return;
+> > +	if (inode->__i_nlink == 0)
+> > +		return;
+> >  	if (!(inode->i_sb->s_flags & SB_ACTIVE))
+> >  		return;
+> >  	if (inode_needs_cached(inode)) {
+> > @@ -609,7 +629,7 @@ static void __inode_add_lru(struct inode *inode, bool rotate)
+> >  	if (list_lru_add_obj(&inode->i_sb->s_inode_lru, &inode->i_lru)) {
+> >  		inode->i_state |= I_LRU;
+> >  		if (need_ref)
+> > -			iobj_get(inode);
+> > +			__iget(inode);
+> >  		this_cpu_inc(nr_unused);
+> >  	} else if (rotate) {
+> >  		inode->i_state |= I_REFERENCED;
+> > @@ -655,7 +675,7 @@ void inode_lru_list_del(struct inode *inode)
+> >  
+> >  	if (list_lru_del_obj(&inode->i_sb->s_inode_lru, &inode->i_lru)) {
+> >  		inode->i_state &= ~I_LRU;
+> > -		iobj_put(inode);
+> > +		iput(inode);
+> >  		this_cpu_dec(nr_unused);
+> >  	}
+> >  }
+> > @@ -926,6 +946,7 @@ static void evict(struct inode *inode)
+> >  	BUG_ON(inode->i_state != (I_FREEING | I_CLEAR));
+> >  }
+> >  
+> > +static void iput_evict(struct inode *inode);
+> >  /*
+> >   * dispose_list - dispose of the contents of a local list
+> >   * @head: the head of the list to free
+> > @@ -933,20 +954,14 @@ static void evict(struct inode *inode)
+> >   * Dispose-list gets a local list with local inodes in it, so it doesn't
+> >   * need to worry about list corruption and SMP locks.
+> >   */
+> > -static void dispose_list(struct list_head *head, bool for_lru)
+> > +static void dispose_list(struct list_head *head)
+> >  {
+> >  	while (!list_empty(head)) {
+> >  		struct inode *inode;
+> >  
+> >  		inode = list_first_entry(head, struct inode, i_lru);
+> >  		list_del_init(&inode->i_lru);
+> > -
+> > -		if (for_lru) {
+> > -			evict(inode);
+> > -			iobj_put(inode);
+> > -		} else {
+> > -			iput(inode);
+> > -		}
+> > +		iput_evict(inode);
+> >  		cond_resched();
+> >  	}
+> >  }
+> > @@ -987,13 +1002,13 @@ void evict_inodes(struct super_block *sb)
+> >  		if (need_resched()) {
+> >  			spin_unlock(&sb->s_inode_list_lock);
+> >  			cond_resched();
+> > -			dispose_list(&dispose, false);
+> > +			dispose_list(&dispose);
+> >  			goto again;
+> >  		}
+> >  	}
+> >  	spin_unlock(&sb->s_inode_list_lock);
+> >  
+> > -	dispose_list(&dispose, false);
+> > +	dispose_list(&dispose);
+> >  }
+> >  EXPORT_SYMBOL_GPL(evict_inodes);
+> >  
+> > @@ -1031,22 +1046,7 @@ static enum lru_status inode_lru_isolate(struct list_head *item,
+> >  	if (inode_needs_cached(inode)) {
+> >  		list_lru_isolate(lru, &inode->i_lru);
+> >  		inode_add_cached_lru(inode);
+> > -		iobj_put(inode);
+> > -		spin_unlock(&inode->i_lock);
+> > -		this_cpu_dec(nr_unused);
+> > -		return LRU_REMOVED;
+> > -	}
+> > -
+> > -	/*
+> > -	 * Inodes can get referenced, redirtied, or repopulated while
+> > -	 * they're already on the LRU, and this can make them
+> > -	 * unreclaimable for a while. Remove them lazily here; iput,
+> > -	 * sync, or the last page cache deletion will requeue them.
+> > -	 */
+> > -	if (atomic_read(&inode->i_count) ||
+> > -	    (inode->i_state & ~I_REFERENCED)) {
+> > -		list_lru_isolate(lru, &inode->i_lru);
+> > -		inode->i_state &= ~I_LRU;
+> > +		iput(inode);
+> >  		spin_unlock(&inode->i_lock);
+> >  		this_cpu_dec(nr_unused);
+> >  		return LRU_REMOVED;
+> > @@ -1082,7 +1082,6 @@ static enum lru_status inode_lru_isolate(struct list_head *item,
+> >  	}
+> >  
+> >  	WARN_ON(inode->i_state & I_NEW);
+> > -	inode->i_state |= I_FREEING;
+> >  	inode->i_state &= ~I_LRU;
+> >  	list_lru_isolate_move(lru, &inode->i_lru, freeable);
+> >  	spin_unlock(&inode->i_lock);
+> > @@ -1104,7 +1103,7 @@ long prune_icache_sb(struct super_block *sb, struct shrink_control *sc)
+> >  
+> >  	freed = list_lru_shrink_walk(&sb->s_inode_lru, sc,
+> >  				     inode_lru_isolate, &freeable);
+> > -	dispose_list(&freeable, true);
+> > +	dispose_list(&freeable);
+> >  	return freed;
+> >  }
+> >  
+> > @@ -1967,7 +1966,7 @@ EXPORT_SYMBOL(generic_delete_inode);
+> >   * in cache if fs is alive, sync and evict if fs is
+> >   * shutting down.
+> >   */
+> > -static void iput_final(struct inode *inode)
+> > +static void iput_final(struct inode *inode, bool skip_lru)
+> >  {
+> >  	struct super_block *sb = inode->i_sb;
+> >  	const struct super_operations *op = inode->i_sb->s_op;
+> > @@ -1981,7 +1980,7 @@ static void iput_final(struct inode *inode)
+> >  	else
+> >  		drop = generic_drop_inode(inode);
+> >  
+> > -	if (!drop &&
+> > +	if (!drop && !skip_lru &&
+> >  	    !(inode->i_state & I_DONTCACHE) &&
+> >  	    (sb->s_flags & SB_ACTIVE)) {
+> >  		__inode_add_lru(inode, true);
+> > @@ -1989,6 +1988,8 @@ static void iput_final(struct inode *inode)
+> >  		return;
+> >  	}
+> >  
+> > +	WARN_ON(!list_empty(&inode->i_lru));
+> > +
+> >  	state = inode->i_state;
+> >  	if (!drop) {
+> >  		WRITE_ONCE(inode->i_state, state | I_WILL_FREE);
+> > @@ -2003,23 +2004,12 @@ static void iput_final(struct inode *inode)
+> >  	}
+> >  
+> >  	WRITE_ONCE(inode->i_state, state | I_FREEING);
+> > -	if (!list_empty(&inode->i_lru))
+> > -		inode_lru_list_del(inode);
+> >  	spin_unlock(&inode->i_lock);
+> >  
+> >  	evict(inode);
+> >  }
+> >  
+> > -/**
+> > - *	iput	- put an inode
+> > - *	@inode: inode to put
+> > - *
+> > - *	Puts an inode, dropping its usage count. If the inode use count hits
+> > - *	zero, the inode is then freed and may also be destroyed.
+> > - *
+> > - *	Consequently, iput() can sleep.
+> > - */
+> > -void iput(struct inode *inode)
+> > +static void __iput(struct inode *inode, bool skip_lru)
+> >  {
+> >  	if (!inode)
+> >  		return;
+> > @@ -2037,12 +2027,31 @@ void iput(struct inode *inode)
+> >  
+> >  	spin_lock(&inode->i_lock);
+> >  	if (atomic_dec_and_test(&inode->i_count))
+> > -		iput_final(inode);
+> > +		iput_final(inode, skip_lru);
+> >  	else
+> >  		spin_unlock(&inode->i_lock);
+> >  
+> >  	iobj_put(inode);
+> >  }
+> > +
+> > +static void iput_evict(struct inode *inode)
+> > +{
+> > +	__iput(inode, true);
+> > +}
+> > +
+> > +/**
+> > + *	iput	- put an inode
+> > + *	@inode: inode to put
+> > + *
+> > + *	Puts an inode, dropping its usage count. If the inode use count hits
+> > + *	zero, the inode is then freed and may also be destroyed.
+> > + *
+> > + *	Consequently, iput() can sleep.
+> > + */
+> > +void iput(struct inode *inode)
+> > +{
+> > +	__iput(inode, false);
+> > +}
+> >  EXPORT_SYMBOL(iput);
+> >  
+> >  /**
+> > -- 
+> > 2.49.0
+> > 
 
