@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-59016-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59017-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A43CCB33EFF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 14:11:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A3D1B33F04
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 14:12:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3195D486F2C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 12:11:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBC1916D30F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 12:11:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 932942EF659;
-	Mon, 25 Aug 2025 12:09:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C1192F0671;
+	Mon, 25 Aug 2025 12:09:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UourJz26"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k5q/SxwU"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E819126D4EE;
-	Mon, 25 Aug 2025 12:09:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8380826D4EE;
+	Mon, 25 Aug 2025 12:09:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756123756; cv=none; b=rs8vjaLtfg2FwVVACgtdNsRz9MkBzUdJYpCI/7uK2vqldlKWl4nv0eGYLpvtgaViC8TWi42VOX0s6O8QgfFwGg+dTAhbYGJyb8GsRZiDDTufihkhme9slSmh3jUUitpJrIuHG+drOUDx3RBNLuHx2xp2joJox7F95g5FVlJhABs=
+	t=1756123780; cv=none; b=arTnU6yjq+jurUNeH/4hiqRUHYUcfPMSgivj1x6Z0YGXK8EBjhXrxUGuq5S6/EC2loBBAUCacYo+mC2lthZm/P3TC615cocT/HHYa8hCZ/X48/H00twD02fH+pzNeuYjKVdy226jx2owM29R4I/IwJjHiBhCG9OutVtG2rdgOMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756123756; c=relaxed/simple;
-	bh=ukf0T702yUd0YZiGL6Fl439f6DIXC++Ou3GI58MKZik=;
+	s=arc-20240116; t=1756123780; c=relaxed/simple;
+	bh=Xt9GeesO7UKYZ6HvYtSooPom4+T/++Ibq2YDteVCRaQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P0xg9PbACCtOCplo5Y2SURC75Jv4pJYk1uIW4oQZ+xkaqths6pQ2+8D/MHE2iBi58MnLtkgjTKe80b4Wt5Sego18Jj9eGpx6bgDTCJedQ5sel6Wa/bwpF2zKJCdN1XMX/O5TxocgUhBRGdgs4DXlJLz+Fh2+EfjpxdZ8HVzAwYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UourJz26; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 107F2C4CEED;
-	Mon, 25 Aug 2025 12:09:13 +0000 (UTC)
+	 MIME-Version:Content-Type; b=ASPzZDIKJund2zMvBo1N353hrFeQ7nN5WQn4G3UBVOASwA1VcKIq0//o9/qEGM/vOYuNklQLvdmK3Pr77R+f5DT7iuM9pymaQJZ6cJJ6GxDnkxH4wB+LVRucpi6kqZTRnaWnJFzkxgVHci3e2qyJFk8BDLWpRxxe06TprNnAR+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k5q/SxwU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68E07C4CEED;
+	Mon, 25 Aug 2025 12:09:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756123755;
-	bh=ukf0T702yUd0YZiGL6Fl439f6DIXC++Ou3GI58MKZik=;
+	s=k20201202; t=1756123779;
+	bh=Xt9GeesO7UKYZ6HvYtSooPom4+T/++Ibq2YDteVCRaQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=UourJz265cDHrFkqvb2caRIDnyZn8Sv3WCSLYEUpBItvDpU7xvhunZfLfxaplTols
-	 ENDm11TDJ0D9arez/Ov4TWjGaznpNlh57IrhyXQIvYgI2BHsxmfwuLaUYx9OPrj25n
-	 KzccqcwKxL9W46GTToqj+oHfoVXOrOeBsYdtQdaTPIwvJg8mfbUssN9zIq1qkI7w1Z
-	 Dc6UKvzbU0MMwVmI+5YpIgTavNzRksxJ0QpcXhQd339a2ZOwJLjMeTdE47E4aqvxtk
-	 onnV+wQGzCtm69yACFDcE0D6rtLKrZbCfaLlB3j1H0BpI+WlrkeW+cELcFg011jUJM
-	 ZnliBr00NeUVw==
+	b=k5q/SxwURn9NypgRDf8dSIeuvvs3dJZrAL+OMLF0+1XbWrNatXiG3+mxyG1re/kNM
+	 Buj7XYJb++903KcMMUzuSvtIXVKfG95iJek25mD6ajEZNyO6HKpH7j4MGNbKes+27g
+	 nXAX++y+nHmDfJA8H1DFuWSGjrRN5OB2F9NizqIkJFM/oV6W2HkhOBbykgsbRdNhTd
+	 zqbyIT0ph55JROlc4dFXodi5FAkewLg88zOvYSwHoyOhfH5wcjLzpUvYbCUPVjW1f8
+	 BsV0gNnFA+7ilz8hQuldG/hdT+Dh3yrr+mb+f6KImpPUGhNiX5E+eOYShvVPFgKbF4
+	 wJa4WRp4k94sg==
 From: Christian Brauner <brauner@kernel.org>
 To: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
@@ -48,12 +48,12 @@ To: linux-fsdevel@vger.kernel.org,
 Cc: Christian Brauner <brauner@kernel.org>,
 	Alexander Viro <viro@zeniv.linux.org.uk>,
 	Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] fs: Use try_cmpxchg() in start_dir_add()
-Date: Mon, 25 Aug 2025 14:09:10 +0200
-Message-ID: <20250825-lammfell-nagetiere-0a136b1acbe2@brauner>
+Subject: Re: [PATCH] fs: Use try_cmpxchg() in sb_init_done_wq()
+Date: Mon, 25 Aug 2025 14:09:34 +0200
+Message-ID: <20250825-rundgang-drakonische-b339b25c6f90@brauner>
 X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250811125308.616717-1-ubizjak@gmail.com>
-References: <20250811125308.616717-1-ubizjak@gmail.com>
+In-Reply-To: <20250811132326.620521-1-ubizjak@gmail.com>
+References: <20250811132326.620521-1-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,19 +61,17 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1216; i=brauner@kernel.org; h=from:subject:message-id; bh=ukf0T702yUd0YZiGL6Fl439f6DIXC++Ou3GI58MKZik=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSsCUo/7e/wjXXHcQah/3kFVRe1qmMcVrvpLrYsbjA9v s/X+9q+jlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIlsWMbIcGjvgfbJs9peSuwX ymsX9eY/ef3D240TfCQj2/0XsP5ZosPIMMltOUfE0yeVnNv25p3ZLDvxjtXlhcnTgg06Lm/52v2 pjxMA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1057; i=brauner@kernel.org; h=from:subject:message-id; bh=Xt9GeesO7UKYZ6HvYtSooPom4+T/++Ibq2YDteVCRaQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSsCarb/OjfHucWrYWzLF49DTJknBB9d4G/9lQNCbFa4 87HKp5bOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbS7s7I0K6cOs1yVbZ6WIuK xKy8qkgrAYH/vPpHnh2ZzMJXKDhnLcNfwYK6irIziz02WrZ2Nh9WL/6p8n6bTa/uj7s759XqTZz IDgA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Mon, 11 Aug 2025 14:52:38 +0200, Uros Bizjak wrote:
-> Use try_cmpxchg() instead of cmpxchg(*ptr, old, new) == old.
+On Mon, 11 Aug 2025 15:23:03 +0200, Uros Bizjak wrote:
+> Use !try_cmpxchg() instead of cmpxchg(*ptr, old, new) != old.
 > 
 > The x86 CMPXCHG instruction returns success in the ZF flag,
-> so this change saves a compare after CMPXCHG (and related
-> move instruction in front of CMPXCHG).
+> so this change saves a compare after CMPXCHG.
 > 
-> Note that the value from *ptr should be read using READ_ONCE() to
-> prevent the compiler from merging, refetching or reordering the read.
+> No functional change intended.
 > 
 > [...]
 
@@ -92,6 +90,6 @@ trailer updates or similar. If in doubt, please check the listed branch.
 tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
 branch: vfs-6.18.misc
 
-[1/1] fs: Use try_cmpxchg() in start_dir_add()
-      https://git.kernel.org/vfs/vfs/c/14498ca7e0f1
+[1/1] fs: Use try_cmpxchg() in sb_init_done_wq()
+      https://git.kernel.org/vfs/vfs/c/ec6f613ef376
 
