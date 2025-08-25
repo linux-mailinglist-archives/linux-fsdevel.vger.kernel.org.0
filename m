@@ -1,186 +1,180 @@
-Return-Path: <linux-fsdevel+bounces-58957-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58958-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2851BB3369A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 08:42:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F73DB336B7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 08:50:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CB8816370E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 06:41:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E8B018957BB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 06:50:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B80D6283FF5;
-	Mon, 25 Aug 2025 06:41:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6868628688C;
+	Mon, 25 Aug 2025 06:49:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="avXwxJgI"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iJVhe7Ek"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 996BE1991CA;
-	Mon, 25 Aug 2025 06:41:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1557B285C9D;
+	Mon, 25 Aug 2025 06:49:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756104067; cv=none; b=tuD8MK2bkO8Vf+Gwwa7F1/ZDdPHB01YeMvxbgJdgkzYYFQBSJpZQj/IdbHGsxb/V4Y7A+z9hrhpc690Nu6EqX/uSQ4S+pH/0QFdkG6rodIHw6vDewiUhBTi10tYiaqONqKQcIPLkK+Y1SRzoCAzHDNIFYCz8INmsNU7afXNjC2I=
+	t=1756104583; cv=none; b=Yvdfm/w8upzuJ9hQgs9VSDMXuPJbb0ABqFZjEBI5jyl1Ad5W83l2h6vZ0o4CIpKxgfx/RBgsoxENxSglMGe/mgscXvJzxvxuI+2G7kR+M2JAuPlHNBnVS9Hg0YdL1tQYje21kbT9rwayRYoh4Q5L6F2AfvoQujNykCmQ1OB16XU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756104067; c=relaxed/simple;
-	bh=f4+we2HTNhFFijjPWHsHlUjC05tFGguR5UUIbT1FAuU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GTNH9153oA3SJN+GdfU2EjuDtthWwre3UlLT3KHe0SM88neoHQwHcpEmTUYwKs7pb6361R4cfoZfBErC60R7Uii5yw2dVIS59riuvAE/Wsnsc2GixsZpLOVq0R6OJtC96lkA5wAmMBk1WingNJxqZVN+yTNRLJLhJEyGXBkckkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=avXwxJgI; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2445827be70so38070525ad.3;
-        Sun, 24 Aug 2025 23:41:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756104065; x=1756708865; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k4m65ejtCDovPoHidIgWHyNXPlswLso6n72FHLjtbnE=;
-        b=avXwxJgIesp4+HwSFX/eod8Dz1ygPGzwQ5ju0EHfdQpCXqs4IKkS18MdxjGyJRRpqN
-         6S/iykIGJNm3ddyB8utXvInFzcUNyzeos2282fCsWQusUysTrBUpW+2iTJMi5bn15GKM
-         YzVIvuY59pxYCrOBmWjhmrZGGmYZ0GpZVLwy6t6GwdwkIBeMZilxqJJIys0Ixi0hBawE
-         aGVlMwYHbyMMvQr/vTD11Z+HHHPOPuPz0Q7nFY/R1D/A1xIvD4LGlIPsUy4GQ0hELpIS
-         VCxGrn3eC3Jtx83TfMPx0mZOE0h66OQVkKeKHc6VuXfMTNqDy/cTI4Fl36JcfaJ+SOk3
-         jU3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756104065; x=1756708865;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=k4m65ejtCDovPoHidIgWHyNXPlswLso6n72FHLjtbnE=;
-        b=vup7Vg9VOwN/i7aN5ebmS8rv4mZA1M3AA9hRFaHOiR5QFH0N37hOT3RFqT2zJngQBR
-         HAVOFepJXUGODN75AU89qjx3D1FGrMEQ6MMaRby7mR+47M7l3fZtmIt8cCc/wwOrYAYK
-         6FP/4KRfKFHOqatAV6OPQHt6kTOeYdCs6vUbM2kCJgTZFXtEcpKKfwxS9/uBAWD3XyMT
-         OAylZEQtc8ulOnnpTrvLzfelz7UKaFIFqbtOuj/6F7IdluffrBshAL+/JgQdS+yxi+C6
-         bELUnOn9+f3vqlwx/srTf6sZqzMINwLVgQVYKUa2QQBwclGsa0peq1wJiZp2MQ5uF7tU
-         loGA==
-X-Forwarded-Encrypted: i=1; AJvYcCU+FgKhJYajzKA4RCTSFosgJP7XZRywEAxu7vJpXHICn7VKNKa/hEoGV4/4sD5tdTFPjwzHrQpm0V19@vger.kernel.org, AJvYcCUKtAcxyxxz7eNoqH3ekCSXhYzuu5C41BxafTY2w40wQo8zIeb874bce3DDWzt4VgVI4hgOrFdQOo4qPRDG@vger.kernel.org, AJvYcCVK4KFOSLY+IroMtyZgYv1ej/NtkNRgO7T5wxH2csAcjZgGZQlcAC06BkPp2aqoPyRAXGavVub9cHpe2eZq@vger.kernel.org
-X-Gm-Message-State: AOJu0YyH+zraUhKbFp83O56NTbKZpNH72tVohRZba/h4Wokjp0EaNXy+
-	pzA4IoMwM1R7VLMNYMUSy+oO/QL1AVIEEQoj0poJwCmHMkmWkgCW0BfH
-X-Gm-Gg: ASbGnctVp96P/tHNI6sLsPVKbbbOn9qJl8Tym8KjmLWTQUwIAIr2VaX15iGcfF0rgT1
-	9VxALfmcsaBpV1GAxCbNPhUNVa2q+tILPUcTyWKRIy4M8+CTorSV2sR9BQpgq0H08A5QNBc0sUY
-	Z8WpmivP8M7vHjXTWRtlUKDwV3X5dlmfmDvQeMLBQ+Ql78umwcd/aTLk1b9P6GkcFqTvbqF66G2
-	Gdo5N3cZvT6Y3WQMraRNNa9obQD8evFBf9Od4WznpPDRDzZxO1UGMV2BU+QTKLUtC9k1LSVUr3i
-	dUuQRYsvpbOOT+gnKEe4f+3gTT6C3jS8BMPAa4RO6n2OYWjE+Em3wkbhvx0ml0ZdebDOQXOF9CO
-	E54IYwU6+dK/j3gMuemfhWbwFkxEA7d4RcnQ=
-X-Google-Smtp-Source: AGHT+IG1ceuvN7wur9FsFeOfamUuDJB3YryOpBkyURPVy+g5OzKZbgY8S3iwpcr9uOIFgcngcwSvvA==
-X-Received: by 2002:a17:902:c404:b0:246:464d:1194 with SMTP id d9443c01a7336-246464d13f7mr165867755ad.2.1756104064665;
-        Sun, 24 Aug 2025 23:41:04 -0700 (PDT)
-Received: from VM-16-24-fedora.. ([43.153.32.141])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-246688c1440sm58675635ad.167.2025.08.24.23.41.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Aug 2025 23:41:04 -0700 (PDT)
-From: Jinliang Zheng <alexjlzheng@gmail.com>
-X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
-To: alexjlzheng@gmail.com
-Cc: alexjlzheng@tencent.com,
-	brauner@kernel.org,
-	djwong@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org,
-	yi.zhang@huawei.com,
-	hch@infradead.org
-Subject: Re: [PATCH v3 0/4] allow partial folio write with iomap_folio_state
-Date: Mon, 25 Aug 2025 14:41:02 +0800
-Message-ID: <20250825064102.2786548-1-alexjlzheng@tencent.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250812091538.2004295-1-alexjlzheng@tencent.com>
-References: <20250812091538.2004295-1-alexjlzheng@tencent.com>
+	s=arc-20240116; t=1756104583; c=relaxed/simple;
+	bh=M86Jo2PYFFnxiVLjRD3/z4/leNvS3NHdWxrjhnhgyK0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=REHtEqGeO61TGB7Jg3MmwSI3iWcyvFccMu1LAXbCG7yYQrwypNJliXlL9UcDI3DSZMnOx8mG384BLt9MvScWAUU2Q2l9AsGPwgIx8iX6Aabhnn0OJypsmrGjcaYVXUqTeaxvTK2OlFa9IPRq/hQZIHllVVdLU1Z2rNkv8TB8ZV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=iJVhe7Ek; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=7rgbHry8CsED6NN8pj2Gof0Dnk9pZPfECo312uCHp3Q=; b=iJVhe7Ek5d3k+k0koWDYcyBrFW
+	TZvY8ZwXtBVcw1+WMLxdN+IVqw3ksmHaRjbLdjjSxPn5Inlffq7dcLlG2i4nqPL+lhNynqTfqoq2u
+	hNAHEVk7TNxwPMhSPv5mje3+fZkJTUFxA2eE1oeY3I8S9ZvbBaYMkxfltzDaSQpO8I+cVEyH8mD32
+	WL8kPYF1egWzuQxuQuNVLOaOlOI/cwnywN8/92FJh+T74AUKphNUItgwOzo2Afj6FrOKOdWhfj6ou
+	YTBkjDWdwBvN/rAZwFJpat97zV4p1occr5xnoOznIPnJdCSJoksCEzF6UB4kwuk1m5cMVYPih19gR
+	dxn9St+g==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uqR1Q-000000074Hr-1fAe;
+	Mon, 25 Aug 2025 06:49:40 +0000
+Message-ID: <063b6127-57d9-4a5d-a1c9-971a0ae3f7c6@infradead.org>
+Date: Sun, 24 Aug 2025 23:49:39 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] uapi/fcntl: conditionally define AT_RENAME* macros
+To: Amir Goldstein <amir73il@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>
+Cc: Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
+ Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
+ Alexander Aring <alex.aring@gmail.com>, Josef Bacik <josef@toxicpanda.com>,
+ Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>,
+ linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
+References: <20250824221055.86110-1-rdunlap@infradead.org>
+ <aKuedOXEIapocQ8l@casper.infradead.org>
+ <9b2c8fe2-cf17-445b-abd7-a1ed44812a73@infradead.org>
+ <CAOQ4uxiShq5gPCsRh5ZDNXbG4AGH5XpfHx0HXDWTS+5Y95hieQ@mail.gmail.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <CAOQ4uxiShq5gPCsRh5ZDNXbG4AGH5XpfHx0HXDWTS+5Y95hieQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On Tue, 12 Aug 2025 17:15:34 +0800, Jinliang Zheng wrote:
-> From: Jinliang Zheng <alexjlzheng@tencent.com>
-> 
-> With iomap_folio_state, we can identify uptodate states at the block
-> level, and a read_folio reading can correctly handle partially
-> uptodate folios.
-> 
-> Therefore, when a partial write occurs, accept the block-aligned
-> partial write instead of rejecting the entire write.
-> 
-> For example, suppose a folio is 2MB, blocksize is 4kB, and the copied
-> bytes are 2MB-3kB.
-> 
-> Without this patchset, we'd need to recopy from the beginning of the
-> folio in the next iteration, which means 2MB-3kB of bytes is copy
-> duplicately.
-> 
->  |<-------------------- 2MB -------------------->|
->  +-------+-------+-------+-------+-------+-------+
->  | block |  ...  | block | block |  ...  | block | folio
->  +-------+-------+-------+-------+-------+-------+
->  |<-4kB->|
-> 
->  |<--------------- copied 2MB-3kB --------->|       first time copied
->  |<-------- 1MB -------->|                          next time we need copy (chunk /= 2)
->                          |<-------- 1MB -------->|  next next time we need copy.
-> 
->  |<------ 2MB-3kB bytes duplicate copy ---->|
-> 
-> With this patchset, we can accept 2MB-4kB of bytes, which is block-aligned.
-> This means we only need to process the remaining 4kB in the next iteration,
-> which means there's only 1kB we need to copy duplicately.
-> 
->  |<-------------------- 2MB -------------------->|
->  +-------+-------+-------+-------+-------+-------+
->  | block |  ...  | block | block |  ...  | block | folio
->  +-------+-------+-------+-------+-------+-------+
->  |<-4kB->|
-> 
->  |<--------------- copied 2MB-3kB --------->|       first time copied
->                                          |<-4kB->|  next time we need copy
-> 
->                                          |<>|
->                               only 1kB bytes duplicate copy
-> 
-> Although partial writes are inherently a relatively unusual situation and do
-> not account for a large proportion of performance testing, the optimization
-> here still makes sense in large-scale data centers.
-> 
-> This patchset has been tested by xfstests' generic and xfs group, and
-> there's no new failed cases compared to the lastest upstream version kernel.
+Hi Amir,
 
-Sorry forgot to cc Christoph Hellwig :)
 
-thanks,
-Jinliang Zheng
+On 8/24/25 10:58 PM, Amir Goldstein wrote:
+> On Mon, Aug 25, 2025 at 1:54 AM Randy Dunlap <rdunlap@infradead.org> wrote:
+>>
+>>
+>>
+>> On 8/24/25 4:21 PM, Matthew Wilcox wrote:
+>>> On Sun, Aug 24, 2025 at 03:10:55PM -0700, Randy Dunlap wrote:
+>>>> Don't define the AT_RENAME_* macros when __USE_GNU is defined since
+>>>> /usr/include/stdio.h defines them in that case (i.e. when _GNU_SOURCE
+>>>> is defined, which causes __USE_GNU to be defined).
+>>>>
+>>>> Having them defined in 2 places causes build warnings (duplicate
+>>>> definitions) in both samples/watch_queue/watch_test.c and
+>>>> samples/vfs/test-statx.c.
+>>>
+>>> It does?  What flags?
+>>>
+>>
+>> for samples/vfs/test-statx.c:
+>>
+>> In file included from ../samples/vfs/test-statx.c:23:
+>> usr/include/linux/fcntl.h:159:9: warning: ‘AT_RENAME_NOREPLACE’ redefined
+>>   159 | #define AT_RENAME_NOREPLACE     0x0001
+>> In file included from ../samples/vfs/test-statx.c:13:
+>> /usr/include/stdio.h:171:10: note: this is the location of the previous definition
+>>   171 | # define AT_RENAME_NOREPLACE RENAME_NOREPLACE
+>> usr/include/linux/fcntl.h:160:9: warning: ‘AT_RENAME_EXCHANGE’ redefined
+>>   160 | #define AT_RENAME_EXCHANGE      0x0002
+>> /usr/include/stdio.h:173:10: note: this is the location of the previous definition
+>>   173 | # define AT_RENAME_EXCHANGE RENAME_EXCHANGE
+>> usr/include/linux/fcntl.h:161:9: warning: ‘AT_RENAME_WHITEOUT’ redefined
+>>   161 | #define AT_RENAME_WHITEOUT      0x0004
+>> /usr/include/stdio.h:175:10: note: this is the location of the previous definition
+>>   175 | # define AT_RENAME_WHITEOUT RENAME_WHITEOUT
+>>
+>> for samples/watch_queue/watch_test.c:
+>>
+>> In file included from usr/include/linux/watch_queue.h:6,
+>>                  from ../samples/watch_queue/watch_test.c:19:
+>> usr/include/linux/fcntl.h:159:9: warning: ‘AT_RENAME_NOREPLACE’ redefined
+>>   159 | #define AT_RENAME_NOREPLACE     0x0001
+>> In file included from ../samples/watch_queue/watch_test.c:11:
+>> /usr/include/stdio.h:171:10: note: this is the location of the previous definition
+>>   171 | # define AT_RENAME_NOREPLACE RENAME_NOREPLACE
+>> usr/include/linux/fcntl.h:160:9: warning: ‘AT_RENAME_EXCHANGE’ redefined
+>>   160 | #define AT_RENAME_EXCHANGE      0x0002
+>> /usr/include/stdio.h:173:10: note: this is the location of the previous definition
+>>   173 | # define AT_RENAME_EXCHANGE RENAME_EXCHANGE
+>> usr/include/linux/fcntl.h:161:9: warning: ‘AT_RENAME_WHITEOUT’ redefined
+>>   161 | #define AT_RENAME_WHITEOUT      0x0004
+>> /usr/include/stdio.h:175:10: note: this is the location of the previous definition
+>>   175 | # define AT_RENAME_WHITEOUT RENAME_WHITEOUT
+>>
+
+>>>
+>>> I'm pretty sure C says that duplicate definitions are fine as long
+>>> as they're identical.
+>> The vales are identical but the strings are not identical.
+>>
+>> We can't fix stdio.h, but we could just change uapi/linux/fcntl.h
+>> to match stdio.h. I suppose.
+> 
+> I do not specifically object to a patch like this (assuming that is works?):
+> 
+> --- a/include/uapi/linux/fcntl.h
+> +++ b/include/uapi/linux/fcntl.h
+> @@ -156,9 +156,9 @@
+>   */
+> 
+>  /* Flags for renameat2(2) (must match legacy RENAME_* flags). */
+> -#define AT_RENAME_NOREPLACE    0x0001
+> -#define AT_RENAME_EXCHANGE     0x0002
+> -#define AT_RENAME_WHITEOUT     0x0004
+> +#define AT_RENAME_NOREPLACE    RENAME_NOREPLACE
+> +#define AT_RENAME_EXCHANGE     RENAME_EXCHANGE
+> +#define AT_RENAME_WHITEOUT     RENAME_WHITEOUT
+> 
+
+I'll test that.
 
 > 
-> Changelog:
+> But to be clear, this is a regression introduced by glibc that is likely
+> to break many other builds, not only the kernel samples
+> and even if we fix linux uapi to conform to its downstream
+> copy of definitions, it won't help those users whose programs
+> build was broken until they install kernel headers, so feels like you
+> should report this regression to glibc and they'd better not "fix" the
+> regression by copying the current definition string as that may change as per
+> the patch above.
 > 
-> V3: patch[1]: use WARN_ON() instead of BUG_ON()
->     patch[2]: make commit message clear
->     patch[3]: -
->     patch[4]: make commit message clear
-> 
-> V2: https://lore.kernel.org/linux-fsdevel/20250810101554.257060-1-alexjlzheng@tencent.com/ 
->     use & instead of % for 64 bit variable on m68k/xtensa, try to make them happy:
->        m68k-linux-ld: fs/iomap/buffered-io.o: in function `iomap_adjust_read_range':
->     >> buffered-io.c:(.text+0xa8a): undefined reference to `__moddi3'
->     >> m68k-linux-ld: buffered-io.c:(.text+0xaa8): undefined reference to `__moddi3'
-> 
-> V1: https://lore.kernel.org/linux-fsdevel/20250810044806.3433783-1-alexjlzheng@tencent.com/
-> 
-> Jinliang Zheng (4):
->   iomap: make sure iomap_adjust_read_range() are aligned with block_size
->   iomap: move iter revert case out of the unwritten branch
->   iomap: make iomap_write_end() return the number of written length
->     again
->   iomap: don't abandon the whole copy when we have iomap_folio_state
-> 
->  fs/iomap/buffered-io.c | 68 +++++++++++++++++++++++++++++-------------
->  1 file changed, 47 insertions(+), 21 deletions(-)
-> 
-> -- 
-> 2.49.0
+
+I'll look into that also.
+
+> Why would a library copy definitions from kernel uapi without
+> wrapping them with #ifndef or #undef?
+
+To me it looks like they stuck them into the wrong file - stdio.h
+instead of fcntl.h.
+
+thanks.
+-- 
+~Randy
+
 
