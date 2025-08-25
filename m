@@ -1,57 +1,68 @@
-Return-Path: <linux-fsdevel+bounces-58994-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58995-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20AB2B33CE9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 12:40:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2F2FB33D14
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 12:43:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEC3F203FD7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 10:40:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A2B948374D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 10:43:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A4952D7D30;
-	Mon, 25 Aug 2025 10:40:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E3612D7382;
+	Mon, 25 Aug 2025 10:43:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P6bTBvGx"
+	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="Z/ZsG5x4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D496E29AAF3;
-	Mon, 25 Aug 2025 10:40:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C432D73B4;
+	Mon, 25 Aug 2025 10:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756118443; cv=none; b=tSMLQUlAGmbLeix7o3em7hHRhN42qd1HmCN0Y+fTV3vP3vxIMjRJGzlxSIDSNXtQUxvX871dOZCcH4RfEhZOU70eluBu9e7XPENSpVUEV5cgjzepRJc8QO5rs39YnEwi7QWZi1p75Pd59cqT0gfmJZpjgpbb5OHFhBuBz0/Fb1Y=
+	t=1756118586; cv=none; b=Vjyexd7hT+wI11L1SLVet7OmOV3+samOwT9P3XtmF6XEEOzuMCi5GOGwMyO6gmIrMzfav6zOeDjKaWQvcp7iYWNt+s5JwFySmn84vaOPoqQrGwylxraTI+Sxz0h6kCq/IxWuzePmO0q8iojt/RzVlOAbgKiSHQaV1rPnCUQNAfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756118443; c=relaxed/simple;
-	bh=jD8unm5fFokP8vboFdQvT37W8Gl10f+xmS3ubNRFNcQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qDVgEhsI+QDuRF6IccDvnR+F2x9NhmN73vWSELo+KSrz+DjsSl0LRtovzaBVjqeIpWU5gWrP7CUpCM9z9j5mtXPlTbCgqP2Cru8I2mwCXD47ifonmeLtWTpiTPVMfC8SAO4PHDRXgVGwF+435sVHrkk+X8GQrxJwyieqyITxFko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P6bTBvGx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF8BCC4CEED;
-	Mon, 25 Aug 2025 10:40:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756118442;
-	bh=jD8unm5fFokP8vboFdQvT37W8Gl10f+xmS3ubNRFNcQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=P6bTBvGx0abIEUekQ6EITDjfQaHcwIBqw7u2oDl7tnhdbHPjFoJe7KVXjh7OYAh8C
-	 gOnFmMaVgYxVUn6warb9iV4Giv2isXmTtLCGC1HKk2awn7zrnOvGgq30qSZPqe+9fJ
-	 zmdMXuosbw2UdcQfhh8tZ23x44rFFda3BO+T8rZJup9xw1ad8JWwojxtep39C0uA/n
-	 IiWAWQaGV/BdSGbHzRZi74N4t4SA+I942Trvsjmo2zKrhMczsWqndPjWdpxmgOA+8o
-	 1ha7QY9A6Ot3L44qXqXMH/EvZ77nfZibjPfFs2CsirZ0WJgW/XnVnJnhobOI6uqN6d
-	 gMnmymif4vvHg==
-Date: Mon, 25 Aug 2025 12:40:38 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org, 
-	kernel-team@fb.com, linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	viro@zeniv.linux.org.uk
-Subject: Re: [PATCH 17/50] fs: hold a full ref while the inode is on a LRU
-Message-ID: <20250825-bekommen-nashorn-9971054b7d45@brauner>
-References: <cover.1755806649.git.josef@toxicpanda.com>
- <113ec167162bbaccc02fa3c3bf1a2c7d3e5a3e82.1755806649.git.josef@toxicpanda.com>
- <20250825-affekt-ruckartig-e7da04294931@brauner>
+	s=arc-20240116; t=1756118586; c=relaxed/simple;
+	bh=8OH/oFef91VNFir2tRo/hKrDxHlYQnDxTphIBEtUQSg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=tsw+uOlYJqKeuRg7xE93OhtVlyFKTPlk6eX6wBTi9D6t/I3241/9UGq6PwNTzTN69pzTKfLqaEfIgJwlLf+XISK5VeiHZAtCXTRx+R+KM4ZzO5FEv+M1ZCIUYvGfi3pD03/zq4M9cP0YCiSM0eitwleYZ16TMQWx8g+yO3eIvzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be; spf=pass smtp.mailfrom=krisman.be; dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b=Z/ZsG5x4; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=krisman.be
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D46A1431F2;
+	Mon, 25 Aug 2025 10:42:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=gm1;
+	t=1756118576;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hBsTH86xs+DJ2xN6Y98Y0wPML2aErKmzjQBwO4teuOk=;
+	b=Z/ZsG5x4yw2K6JWCXIO2p3AIU/F7xAhkpDttvu5uB0/AHXQnq7YpXYyy59Y5e8ORXahrMo
+	u/c45Pj1DXqbMjzCWPf/MAXY1kWvkUGnrI2VeCJFeCk/1y6CFwzc1p0Qtr2wNQ7qLde443
+	/5ZuHXqFLG0GIhht/pgYyJ9GVEDGg+AnZvewcjyvIRWFX/+poqMIjiysZedcaJoYww5iQY
+	Ix035V2wRfRmDS3/jlTna5IMgqwsGBgCYg9XMdBTazwdca6UXRgMT9EkMee+btyE9OwWKq
+	QtUjFafNx2BGgxfXrliqwk6nN+qfpq029kLZKSs0CVpAR7aAWfJ2DDu3Ruei7A==
+From: Gabriel Krisman Bertazi <gabriel@krisman.be>
+To: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>,  Amir Goldstein
+ <amir73il@gmail.com>,  Theodore Tso <tytso@mit.edu>,
+  linux-unionfs@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-fsdevel@vger.kernel.org,  Alexander Viro <viro@zeniv.linux.org.uk>,
+  Christian Brauner <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,
+  kernel-dev@igalia.com
+Subject: Re: [PATCH v6 3/9] ovl: Prepare for mounting case-insensitive
+ enabled layers
+In-Reply-To: <20250822-tonyk-overlayfs-v6-3-8b6e9e604fa2@igalia.com>
+ (=?utf-8?Q?=22Andr=C3=A9?=
+	Almeida"'s message of "Fri, 22 Aug 2025 11:17:06 -0300")
+References: <20250822-tonyk-overlayfs-v6-0-8b6e9e604fa2@igalia.com>
+	<20250822-tonyk-overlayfs-v6-3-8b6e9e604fa2@igalia.com>
+Date: Mon, 25 Aug 2025 06:42:51 -0400
+Message-ID: <87a53n65sk.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,320 +70,96 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250825-affekt-ruckartig-e7da04294931@brauner>
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddujedvudejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufgjfhffkfgfgggtgfesthhqredttderjeenucfhrhhomhepifgrsghrihgvlhcumfhrihhsmhgrnhcuuegvrhhtrgiiihcuoehgrggsrhhivghlsehkrhhishhmrghnrdgsvgeqnecuggftrfgrthhtvghrnhepfedtvdehffevtddujeffffejudeuuefgvdeujeduhedtgfehkeefheegjefgueeknecukfhppeejtddrkedvrddukedvrdeikeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeejtddrkedvrddukedvrdeikedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepghgrsghrihgvlheskhhrihhsmhgrnhdrsggvpdhnsggprhgtphhtthhopeduuddprhgtphhtthhopegrnhgurhgvrghlmhgvihgusehighgrlhhirgdrtghomhdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtoheprghmihhrjeefihhlsehgmhgrihhlrdgtohhmpdhrtghpthhtohepthihthhsohesmhhithdrvgguuhdprhgtphhtthhopehlihhnuhigqdhunhhiohhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvr
+ hhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhk
+X-GND-Sasl: gabriel@krisman.be
 
-On Mon, Aug 25, 2025 at 11:20:07AM +0200, Christian Brauner wrote:
-> On Thu, Aug 21, 2025 at 04:18:28PM -0400, Josef Bacik wrote:
-> > We want to eliminate 0 refcount inodes that can be used. To that end,
-> > make the LRU's hold a full reference on the inode while it is on an LRU
-> > list. From there we can change the eviction code to always just iput the
-> > inode, and the LRU operations will just add or drop a full reference
-> > where appropriate.
-> > 
-> > We also now must take into account unlink, and drop our LRU reference
-> > when we go to an nlink of 0.  We will also avoid adding inodes with a
-> > nlink of 0 as they can be reclaimed immediately.
-> > 
-> > Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-> > ---
-> >  fs/inode.c | 105 +++++++++++++++++++++++++++++------------------------
-> >  1 file changed, 57 insertions(+), 48 deletions(-)
-> > 
-> > diff --git a/fs/inode.c b/fs/inode.c
-> > index 80ad327746a7..de0ec791f9a3 100644
-> > --- a/fs/inode.c
-> > +++ b/fs/inode.c
-> > @@ -434,8 +434,18 @@ void drop_nlink(struct inode *inode)
-> >  {
-> >  	WARN_ON(inode->i_nlink == 0);
-> >  	inode->__i_nlink--;
-> > -	if (!inode->i_nlink)
-> > +	if (!inode->i_nlink) {
-> > +		/*
-> > +		 * LRU's hold a full ref on the inode, but if we've unlinked it
-> > +		 * then we want the inode to be freed when the last user goes,
-> > +		 * so delete the inode from the LRU list.
-> > +		 */
-> > +		spin_lock(&inode->i_lock);
-> > +		inode_lru_list_del(inode);
-> > +		spin_unlock(&inode->i_lock);
-> > +
-> >  		atomic_long_inc(&inode->i_sb->s_remove_count);
-> > +	}
-> 
-> As written this doesn't work because you can have callers that have
-> already acquired inode->i_lock(). For example, afs:
-> 
->         new_inode = d_inode(new_dentry);
->         if (new_inode) {
->                 spin_lock(&new_inode->i_lock);
->                 if (S_ISDIR(new_inode->i_mode))
->                         clear_nlink(new_inode);
->                 else if (new_inode->i_nlink > 0)
->                         drop_nlink(new_inode);
->                 spin_unlock(&new_inode->i_lock);
->         }
+Andr=C3=A9 Almeida <andrealmeid@igalia.com> writes:
 
-I think it should be possible to do LRU list deletion locklessly so you
-don't need to hold i_lock. The plain lru lists can already be walked
-locklessly and removal is also possible without locks.
+> Prepare for mounting layers with case-insensitive dentries in order to
+> supporting such layers in overlayfs, while enforcing uniform casefold
+> layers.
+>
+> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
 
-So we only seem to take i_lock because of i_state. If we can get rid of
-a bunch i_lock grabs for the sake of i_state by just using atomic bit
-operations on i_state I'm willing to sacrifice my hard-won 32bits and
-make i_state an unsigned long again...
 
-If I'm right then this would allow us to make lru list removal lockless
-and then you can avoid this problem here in clear_nlink()/drop_nlink().
+Reviewed-by: Gabriel Krisman Bertazi <gabriel@krisman.be>
 
-Let me know if that's not working or you have other ideas.
+> ---
+>  fs/overlayfs/ovl_entry.h |  1 +
+>  fs/overlayfs/params.c    | 15 ++++++++++++---
+>  fs/overlayfs/params.h    |  1 +
+>  3 files changed, 14 insertions(+), 3 deletions(-)
+>
+> diff --git a/fs/overlayfs/ovl_entry.h b/fs/overlayfs/ovl_entry.h
+> index 4c1bae935ced274f93a0d23fe10d34455e226ec4..1d4828dbcf7ac4ba9657221e6=
+01bbf79d970d225 100644
+> --- a/fs/overlayfs/ovl_entry.h
+> +++ b/fs/overlayfs/ovl_entry.h
+> @@ -91,6 +91,7 @@ struct ovl_fs {
+>  	struct mutex whiteout_lock;
+>  	/* r/o snapshot of upperdir sb's only taken on volatile mounts */
+>  	errseq_t errseq;
+> +	bool casefold;
+>  };
+>=20=20
+>  /* Number of lower layers, not including data-only layers */
+> diff --git a/fs/overlayfs/params.c b/fs/overlayfs/params.c
+> index f4e7fff909ac49e2f8c58a76273426c1158a7472..63b7346c5ee1c127a9c33b12c=
+3704aa035ff88cf 100644
+> --- a/fs/overlayfs/params.c
+> +++ b/fs/overlayfs/params.c
+> @@ -276,17 +276,26 @@ static int ovl_mount_dir(const char *name, struct p=
+ath *path)
+>  static int ovl_mount_dir_check(struct fs_context *fc, const struct path =
+*path,
+>  			       enum ovl_opt layer, const char *name, bool upper)
+>  {
+> +	bool is_casefolded =3D ovl_dentry_casefolded(path->dentry);
+>  	struct ovl_fs_context *ctx =3D fc->fs_private;
+> +	struct ovl_fs *ofs =3D fc->s_fs_info;
+>=20=20
+>  	if (!d_is_dir(path->dentry))
+>  		return invalfc(fc, "%s is not a directory", name);
+>=20=20
+>  	/*
+>  	 * Allow filesystems that are case-folding capable but deny composing
+> -	 * ovl stack from case-folded directories.
+> +	 * ovl stack from inconsistent case-folded directories.
+>  	 */
+> -	if (ovl_dentry_casefolded(path->dentry))
+> -		return invalfc(fc, "case-insensitive directory on %s not supported", n=
+ame);
+> +	if (!ctx->casefold_set) {
+> +		ofs->casefold =3D is_casefolded;
+> +		ctx->casefold_set =3D true;
+> +	}
+> +
+> +	if (ofs->casefold !=3D is_casefolded) {
+> +		return invalfc(fc, "case-%ssensitive directory on %s is inconsistent",
+> +			       is_casefolded ? "in" : "", name);
+> +	}
+>=20=20
+>  	if (ovl_dentry_weird(path->dentry))
+>  		return invalfc(fc, "filesystem on %s not supported", name);
+> diff --git a/fs/overlayfs/params.h b/fs/overlayfs/params.h
+> index c96d939820211ddc63e265670a2aff60d95eec49..ffd53cdd84827cce827e8852f=
+2de545f966ce60d 100644
+> --- a/fs/overlayfs/params.h
+> +++ b/fs/overlayfs/params.h
+> @@ -33,6 +33,7 @@ struct ovl_fs_context {
+>  	struct ovl_opt_set set;
+>  	struct ovl_fs_context_layer *lower;
+>  	char *lowerdir_all; /* user provided lowerdir string */
+> +	bool casefold_set;
+>  };
+>=20=20
+>  int ovl_init_fs_context(struct fs_context *fc);
 
-> 
-> >  }
-> >  EXPORT_SYMBOL(drop_nlink);
-> >  
-> > @@ -451,6 +461,12 @@ void clear_nlink(struct inode *inode)
-> >  {
-> >  	if (inode->i_nlink) {
-> >  		inode->__i_nlink = 0;
-> > +
-> > +		/* See comment in drop_nlink(). */
-> > +		spin_lock(&inode->i_lock);
-> > +		inode_lru_list_del(inode);
-> > +		spin_unlock(&inode->i_lock);
-> > +
-> >  		atomic_long_inc(&inode->i_sb->s_remove_count);
-> >  	}
-> >  }
-> > @@ -555,6 +571,8 @@ static void inode_add_cached_lru(struct inode *inode)
-> >  
-> >  	if (inode->i_state & I_CACHED_LRU)
-> >  		return;
-> > +	if (inode->__i_nlink == 0)
-> > +		return;
-> >  	if (!list_empty(&inode->i_lru))
-> >  		return;
-> >  
-> > @@ -562,7 +580,7 @@ static void inode_add_cached_lru(struct inode *inode)
-> >  	spin_lock(&inode->i_sb->s_cached_inodes_lock);
-> >  	list_add(&inode->i_lru, &inode->i_sb->s_cached_inodes);
-> >  	spin_unlock(&inode->i_sb->s_cached_inodes_lock);
-> > -	iobj_get(inode);
-> > +	__iget(inode);
-> >  }
-> >  
-> >  static bool __inode_del_cached_lru(struct inode *inode)
-> > @@ -582,7 +600,7 @@ static bool __inode_del_cached_lru(struct inode *inode)
-> >  static bool inode_del_cached_lru(struct inode *inode)
-> >  {
-> >  	if (__inode_del_cached_lru(inode)) {
-> > -		iobj_put(inode);
-> > +		iput(inode);
-> >  		return true;
-> >  	}
-> >  	return false;
-> > @@ -598,6 +616,8 @@ static void __inode_add_lru(struct inode *inode, bool rotate)
-> >  		return;
-> >  	if (atomic_read(&inode->i_count))
-> >  		return;
-> > +	if (inode->__i_nlink == 0)
-> > +		return;
-> >  	if (!(inode->i_sb->s_flags & SB_ACTIVE))
-> >  		return;
-> >  	if (inode_needs_cached(inode)) {
-> > @@ -609,7 +629,7 @@ static void __inode_add_lru(struct inode *inode, bool rotate)
-> >  	if (list_lru_add_obj(&inode->i_sb->s_inode_lru, &inode->i_lru)) {
-> >  		inode->i_state |= I_LRU;
-> >  		if (need_ref)
-> > -			iobj_get(inode);
-> > +			__iget(inode);
-> >  		this_cpu_inc(nr_unused);
-> >  	} else if (rotate) {
-> >  		inode->i_state |= I_REFERENCED;
-> > @@ -655,7 +675,7 @@ void inode_lru_list_del(struct inode *inode)
-> >  
-> >  	if (list_lru_del_obj(&inode->i_sb->s_inode_lru, &inode->i_lru)) {
-> >  		inode->i_state &= ~I_LRU;
-> > -		iobj_put(inode);
-> > +		iput(inode);
-> >  		this_cpu_dec(nr_unused);
-> >  	}
-> >  }
-> > @@ -926,6 +946,7 @@ static void evict(struct inode *inode)
-> >  	BUG_ON(inode->i_state != (I_FREEING | I_CLEAR));
-> >  }
-> >  
-> > +static void iput_evict(struct inode *inode);
-> >  /*
-> >   * dispose_list - dispose of the contents of a local list
-> >   * @head: the head of the list to free
-> > @@ -933,20 +954,14 @@ static void evict(struct inode *inode)
-> >   * Dispose-list gets a local list with local inodes in it, so it doesn't
-> >   * need to worry about list corruption and SMP locks.
-> >   */
-> > -static void dispose_list(struct list_head *head, bool for_lru)
-> > +static void dispose_list(struct list_head *head)
-> >  {
-> >  	while (!list_empty(head)) {
-> >  		struct inode *inode;
-> >  
-> >  		inode = list_first_entry(head, struct inode, i_lru);
-> >  		list_del_init(&inode->i_lru);
-> > -
-> > -		if (for_lru) {
-> > -			evict(inode);
-> > -			iobj_put(inode);
-> > -		} else {
-> > -			iput(inode);
-> > -		}
-> > +		iput_evict(inode);
-> >  		cond_resched();
-> >  	}
-> >  }
-> > @@ -987,13 +1002,13 @@ void evict_inodes(struct super_block *sb)
-> >  		if (need_resched()) {
-> >  			spin_unlock(&sb->s_inode_list_lock);
-> >  			cond_resched();
-> > -			dispose_list(&dispose, false);
-> > +			dispose_list(&dispose);
-> >  			goto again;
-> >  		}
-> >  	}
-> >  	spin_unlock(&sb->s_inode_list_lock);
-> >  
-> > -	dispose_list(&dispose, false);
-> > +	dispose_list(&dispose);
-> >  }
-> >  EXPORT_SYMBOL_GPL(evict_inodes);
-> >  
-> > @@ -1031,22 +1046,7 @@ static enum lru_status inode_lru_isolate(struct list_head *item,
-> >  	if (inode_needs_cached(inode)) {
-> >  		list_lru_isolate(lru, &inode->i_lru);
-> >  		inode_add_cached_lru(inode);
-> > -		iobj_put(inode);
-> > -		spin_unlock(&inode->i_lock);
-> > -		this_cpu_dec(nr_unused);
-> > -		return LRU_REMOVED;
-> > -	}
-> > -
-> > -	/*
-> > -	 * Inodes can get referenced, redirtied, or repopulated while
-> > -	 * they're already on the LRU, and this can make them
-> > -	 * unreclaimable for a while. Remove them lazily here; iput,
-> > -	 * sync, or the last page cache deletion will requeue them.
-> > -	 */
-> > -	if (atomic_read(&inode->i_count) ||
-> > -	    (inode->i_state & ~I_REFERENCED)) {
-> > -		list_lru_isolate(lru, &inode->i_lru);
-> > -		inode->i_state &= ~I_LRU;
-> > +		iput(inode);
-> >  		spin_unlock(&inode->i_lock);
-> >  		this_cpu_dec(nr_unused);
-> >  		return LRU_REMOVED;
-> > @@ -1082,7 +1082,6 @@ static enum lru_status inode_lru_isolate(struct list_head *item,
-> >  	}
-> >  
-> >  	WARN_ON(inode->i_state & I_NEW);
-> > -	inode->i_state |= I_FREEING;
-> >  	inode->i_state &= ~I_LRU;
-> >  	list_lru_isolate_move(lru, &inode->i_lru, freeable);
-> >  	spin_unlock(&inode->i_lock);
-> > @@ -1104,7 +1103,7 @@ long prune_icache_sb(struct super_block *sb, struct shrink_control *sc)
-> >  
-> >  	freed = list_lru_shrink_walk(&sb->s_inode_lru, sc,
-> >  				     inode_lru_isolate, &freeable);
-> > -	dispose_list(&freeable, true);
-> > +	dispose_list(&freeable);
-> >  	return freed;
-> >  }
-> >  
-> > @@ -1967,7 +1966,7 @@ EXPORT_SYMBOL(generic_delete_inode);
-> >   * in cache if fs is alive, sync and evict if fs is
-> >   * shutting down.
-> >   */
-> > -static void iput_final(struct inode *inode)
-> > +static void iput_final(struct inode *inode, bool skip_lru)
-> >  {
-> >  	struct super_block *sb = inode->i_sb;
-> >  	const struct super_operations *op = inode->i_sb->s_op;
-> > @@ -1981,7 +1980,7 @@ static void iput_final(struct inode *inode)
-> >  	else
-> >  		drop = generic_drop_inode(inode);
-> >  
-> > -	if (!drop &&
-> > +	if (!drop && !skip_lru &&
-> >  	    !(inode->i_state & I_DONTCACHE) &&
-> >  	    (sb->s_flags & SB_ACTIVE)) {
-> >  		__inode_add_lru(inode, true);
-> > @@ -1989,6 +1988,8 @@ static void iput_final(struct inode *inode)
-> >  		return;
-> >  	}
-> >  
-> > +	WARN_ON(!list_empty(&inode->i_lru));
-> > +
-> >  	state = inode->i_state;
-> >  	if (!drop) {
-> >  		WRITE_ONCE(inode->i_state, state | I_WILL_FREE);
-> > @@ -2003,23 +2004,12 @@ static void iput_final(struct inode *inode)
-> >  	}
-> >  
-> >  	WRITE_ONCE(inode->i_state, state | I_FREEING);
-> > -	if (!list_empty(&inode->i_lru))
-> > -		inode_lru_list_del(inode);
-> >  	spin_unlock(&inode->i_lock);
-> >  
-> >  	evict(inode);
-> >  }
-> >  
-> > -/**
-> > - *	iput	- put an inode
-> > - *	@inode: inode to put
-> > - *
-> > - *	Puts an inode, dropping its usage count. If the inode use count hits
-> > - *	zero, the inode is then freed and may also be destroyed.
-> > - *
-> > - *	Consequently, iput() can sleep.
-> > - */
-> > -void iput(struct inode *inode)
-> > +static void __iput(struct inode *inode, bool skip_lru)
-> >  {
-> >  	if (!inode)
-> >  		return;
-> > @@ -2037,12 +2027,31 @@ void iput(struct inode *inode)
-> >  
-> >  	spin_lock(&inode->i_lock);
-> >  	if (atomic_dec_and_test(&inode->i_count))
-> > -		iput_final(inode);
-> > +		iput_final(inode, skip_lru);
-> >  	else
-> >  		spin_unlock(&inode->i_lock);
-> >  
-> >  	iobj_put(inode);
-> >  }
-> > +
-> > +static void iput_evict(struct inode *inode)
-> > +{
-> > +	__iput(inode, true);
-> > +}
-> > +
-> > +/**
-> > + *	iput	- put an inode
-> > + *	@inode: inode to put
-> > + *
-> > + *	Puts an inode, dropping its usage count. If the inode use count hits
-> > + *	zero, the inode is then freed and may also be destroyed.
-> > + *
-> > + *	Consequently, iput() can sleep.
-> > + */
-> > +void iput(struct inode *inode)
-> > +{
-> > +	__iput(inode, false);
-> > +}
-> >  EXPORT_SYMBOL(iput);
-> >  
-> >  /**
-> > -- 
-> > 2.49.0
-> > 
+--=20
+Gabriel Krisman Bertazi
 
