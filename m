@@ -1,175 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-58992-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58991-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B35FCB33BB9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 11:53:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 34BCAB33B54
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 11:42:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1662A3A9259
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 09:52:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E17D63A42DD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 09:42:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 700C52D29C4;
-	Mon, 25 Aug 2025 09:50:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 881EB2C3261;
+	Mon, 25 Aug 2025 09:42:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="T7KT1Qha"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29CD22C0F65;
-	Mon, 25 Aug 2025 09:50:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68F4F393DC5
+	for <linux-fsdevel@vger.kernel.org>; Mon, 25 Aug 2025 09:42:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756115437; cv=none; b=CvOtHTSM2Gd+mQbYhII7ghny0Kutmhftf/6KnP3zZOQGbm9kA7TtpOat0tvPINQqPcwFMJWR8BBrMzdzYlz49laCvHxCTxDbD7Tr5/kn0tmwAQGjc7Ae5npYp4152K0fgrkkl2sK1KFjU1gCQZTdBM+5hE6bWVceYVjYMu5NxCk=
+	t=1756114931; cv=none; b=M2IyLqboo4/g6suZ1dYcKElPUPKx1oY3A6YZNgfGRJQbs2kezoZ4z1G3yJW9Xwr58uEk9YLPzmU6CSPY+uFTRg9A4y8pmoOf4BGL19Y8nrK2JC59Sq6ONcF8dtOPwTcUMNQHW07ObAT4ZgIGophYgGrqNb4VbN4Ic/9Kiv5WM7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756115437; c=relaxed/simple;
-	bh=WuNi08YDO7zUInQPrIkdSuqkazQY7ISfvSzQC4AW2Lg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A17O7XflMB7Mpc7DWpVvNRL/SE2ItC44W3Ky6CfhFbrhuEadmTrsZoPI1/4a+mzseYqS9Fq8PC3Xhr5XdLju7VKltFEcQLCJAm5ZPTzhN/rd935vPsdOjtBn6eZyOSqbNxrpKS7G+nCZmelhgshmHtlh171YoJiCrw8AoE9oSMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4c9QlP1HkLz9sSh;
-	Mon, 25 Aug 2025 11:40:49 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id xXbQBsr7Ehxm; Mon, 25 Aug 2025 11:40:49 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4c9QlP04NMz9sSc;
-	Mon, 25 Aug 2025 11:40:49 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id D6B268B765;
-	Mon, 25 Aug 2025 11:40:48 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id gtwn_B0_QRlE; Mon, 25 Aug 2025 11:40:48 +0200 (CEST)
-Received: from [10.25.207.160] (unknown [10.25.207.160])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 763DD8B764;
-	Mon, 25 Aug 2025 11:40:48 +0200 (CEST)
-Message-ID: <16679d56-5ee0-469d-a11c-475a45a1c2b9@csgroup.eu>
-Date: Mon, 25 Aug 2025 11:40:48 +0200
+	s=arc-20240116; t=1756114931; c=relaxed/simple;
+	bh=qSxAdEFkr92eN+3eEeJ9Yx+AdgaO5dXFSmZHlto/gbY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MHLyipijgHrFcZOOuQEb+zWpELiWpgsKqtZP6m2bRfAVqh5UorODiEnZiWJ/Hav26EigWBvSHz41OBeohYfnCUaLrxLzI7x3fIOM99E1Z/F+ajDd9yljPP3oy+8POvsxp8TfPlNEcOYTSsKusJhOFT3Hckyc/vaA7eT81MtnRW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=T7KT1Qha; arc=none smtp.client-ip=209.85.161.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-61da7b78978so1563149eaf.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Aug 2025 02:42:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1756114928; x=1756719728; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+GRu22p3tVeEW2VrGOdoxPvOS1mLmNVegFteBbU78nI=;
+        b=T7KT1QhaStHCSKMvU7GPD2OmBkxi0cCXr3UmxNrRBbY+rXsozpojT9GP0Oo0Avidn2
+         LyZ/A9hDc7l6Ju4MGsoVGzUjGLfSzpnS9JMMdf4bUwNAlSQa3IIjieSIuyQJAkuoNwe+
+         VYlCu6LKO8xYSBeXQKG4PSOVBkILLEyQKwPTaTnz7uJqdNz1IU6R1LM9ZSd8zr+ueqHP
+         Fu2PWhU3GMy8CLg3kjKZ67D+afTpvCJnrFjq4/k5ZGFPSM6JWBB3wH3IeG4lSUPmra9w
+         bGp9GUC+o5Vc8dvF8aDUhXGyzbBlkfZk3Z3PPyd4nrXI7UOhXu6Fs7Qkuz6uJa6AE2M2
+         3UfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756114928; x=1756719728;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+GRu22p3tVeEW2VrGOdoxPvOS1mLmNVegFteBbU78nI=;
+        b=Kk9o/XUuGMtLi4RcXzybVftR/7pUppBFi2p3CWjTuDDrauCyPJO/gwSpgZMsiciQCq
+         /+rh7wEaSiizIAz1iFvAs3Ktb8XvuhM6PKEY6B95p5778Dgv+qKAZV8VwbL5DojHtIiD
+         rsZu9EECZzY+ef3DYqOBsc6og3ypy9IyVzvNbH0gIQoTnxQBxg3QDckVYW5HhlDfpNVB
+         7UaVRFcVnFdmr07p5uZNvvxyj6z6fbn9wCSRwWX4EPPc5JnSOaNuaIBXBYcUFr9pHFmq
+         ydJ1UbJoaD8W0j4dnD4Uy5ENubk7raER4p0wmxeqU9ZjsEhQJ4396O8TSqXOEI/qeLYi
+         JjZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXmQhscXQKJJplcGBIveMqG8IQxylwHSTNVzZbISsPRFMlwgAnLhNyPlB70schhDiiSUVBrFQO8etJLqSpp@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkJcMlucx+7eUCy0VclW2PLlcYszsHy9KGBITzgAESbbyTcfdJ
+	KoNSDxn+pnVyPeZP35PCQEgp/9s2VCXdxd8cX/gNx/jINUX7NiNrYOZ0CIa4/4rk8hW+1e567Ch
+	mZk/rKnCtYY/Pqg9EuO/M6Di90GJ6b5cR7gECBvl6ww==
+X-Gm-Gg: ASbGncuOMzb49BhelaAKwMyXynC6+nQYeX1PkTP4dCjmE27D1WmUXiiB77+KOsXw7KB
+	4whwIMggHVUUhYidR5iXmlWf3FyfGOh4kx5tDhqSHI8fH35c7Y61QDCI8S7Bdus9GIsyrbnUmot
+	GjQ7rxPsG86Re63iKtu2Qi7AVZyKJ1Fv9zoVvgP2+qJz4CNpJ/Xpectzxs0/68xkdhnwa00wTCD
+	IYfiOsUJJnT
+X-Google-Smtp-Source: AGHT+IH9whC+Nt+KP6zMOInVqQwfTRZ9vyaBO1gLszlXrDLuQ8rxx0C4w5IQE2c6Fn1IFfz6+QQxtpnzgbhuqH3KxgU=
+X-Received: by 2002:a05:6808:1883:b0:40b:2566:9569 with SMTP id
+ 5614622812f47-4378525e610mr4960520b6e.24.1756114928355; Mon, 25 Aug 2025
+ 02:42:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 10/10] powerpc/uaccess: Implement masked user access
-To: Gabriel Paubert <paubert@iram.es>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
- <npiggin@gmail.com>, Madhavan Srinivasan <maddy@linux.ibm.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>,
- Davidlohr Bueso <dave@stgolabs.net>, Andre Almeida <andrealmeid@igalia.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Laight <david.laight.linux@gmail.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Daniel Borkmann <daniel@iogearbox.net>, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-block@vger.kernel.org
-References: <cover.1755854833.git.christophe.leroy@csgroup.eu>
- <647f1b1db985aec8ec1163bf97688563ae6f9609.1755854833.git.christophe.leroy@csgroup.eu>
- <aKwnMo7UllLZkOcK@lt-gp.iram.es>
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <aKwnMo7UllLZkOcK@lt-gp.iram.es>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250822082606.66375-1-changfengnan@bytedance.com>
+ <20250822150550.GP7942@frogsfrogsfrogs> <aKiP966iRv5gEBwm@casper.infradead.org>
+ <877byv9w6z.fsf@gmail.com> <aKif_644529sRXhN@casper.infradead.org>
+ <874ityad1d.fsf@gmail.com> <CAPFOzZufTPCT_56-7LCc6oGHYiaPixix30yFNEsiFfN1s9ySMQ@mail.gmail.com>
+ <aKwq_QoiEvtK89vY@infradead.org>
+In-Reply-To: <aKwq_QoiEvtK89vY@infradead.org>
+From: Fengnan Chang <changfengnan@bytedance.com>
+Date: Mon, 25 Aug 2025 17:41:57 +0800
+X-Gm-Features: Ac12FXxB3S3g0sTu8keoah4lgnqnAcyUyXsuVt_e56y_rQP7QRz4QmS_1ZuROw0
+Message-ID: <CAPFOzZvBvHWHUwNLnH+Ss90OMdu91oZsSD0D7_ncjVh0pF29rQ@mail.gmail.com>
+Subject: Re: [PATCH] iomap: allow iomap using the per-cpu bio cache
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Ritesh Harjani <ritesh.list@gmail.com>, Matthew Wilcox <willy@infradead.org>, 
+	"Darrick J. Wong" <djwong@kernel.org>, brauner@kernel.org, linux-xfs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, 
+	linux-block@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Gabriel,
-
-Le 25/08/2025 à 11:04, Gabriel Paubert a écrit :
-> [Vous ne recevez pas souvent de courriers de paubert@iram.es. D?couvrez pourquoi ceci est important ? https://aka.ms/LearnAboutSenderIdentification ]
-> 
-> Hi Christophe,
-> 
-> On Fri, Aug 22, 2025 at 11:58:06AM +0200, Christophe Leroy wrote:
->> Masked user access avoids the address/size verification by access_ok().
->> Allthough its main purpose is to skip the speculation in the
->> verification of user address and size hence avoid the need of spec
->> mitigation, it also has the advantage of reducing the amount of
->> instructions required so it even benefits to platforms that don't
->> need speculation mitigation, especially when the size of the copy is
->> not know at build time.
->>
->> So implement masked user access on powerpc. The only requirement is
->> to have memory gap that faults between the top user space and the
->> real start of kernel area.
->>
->> On 64 bits platforms the address space is divided that way:
->>
->>        0xffffffffffffffff      +------------------+
->>                                |                  |
->>                                |   kernel space   |
->>                                |                  |
->>        0xc000000000000000      +------------------+  <== PAGE_OFFSET
->>                                |//////////////////|
->>                                |//////////////////|
->>        0x8000000000000000      |//////////////////|
->>                                |//////////////////|
->>                                |//////////////////|
->>        0x0010000000000000      +------------------+  <== TASK_SIZE_MAX
->>                                |                  |
->>                                |    user space    |
->>                                |                  |
->>        0x0000000000000000      +------------------+
->>
->> Kernel is always above 0x8000000000000000 and user always
->> below, with a gap in-between. It leads to a 4 instructions sequence:
->>
->>    80: 7c 69 1b 78     mr      r9,r3
->>    84: 7c 63 fe 76     sradi   r3,r3,63
->>    88: 7d 29 18 78     andc    r9,r9,r3
->>    8c: 79 23 00 4c     rldimi  r3,r9,0,1
->>
->> This sequence leaves r3 unmodified when it is below 0x8000000000000000
->> and clamps it to 0x8000000000000000 if it is above.
->>
-> 
-> This comment looks wrong: the second instruction converts r3 to a
-> replicated sign bit of the address ((addr>0)?0:-1) if treating the
-> address as signed. After that the code only modifies the MSB of r3. So I
-> don't see how r3 could be unchanged from the original value...
-
-Unless I'm missing something, the above rldimi leaves the MSB of r3 
-unmodified and replaces all other bits by the same in r9.
-
-This is the code generated by GCC for the following:
-
-	unsigned long mask = (unsigned long)((long)addr >> 63);
-
-	addr = ((addr & ~mask) & (~0UL >> 1)) | (mask & (1UL << 63));
+Christoph Hellwig <hch@infradead.org> =E4=BA=8E2025=E5=B9=B48=E6=9C=8825=E6=
+=97=A5=E5=91=A8=E4=B8=80 17:21=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Mon, Aug 25, 2025 at 04:51:27PM +0800, Fengnan Chang wrote:
+> > No restrictions for now, I think we can enable this by default.
+> > Maybe better solution is modify in bio.c?  Let me do some test first.
+>
+> Any kind of numbers you see where this makes a different, including
+> the workloads would also be very valuable here.
+I'm test random direct read performance on  io_uring+ext4, and try
+compare to io_uring+ raw blkdev,  io_uring+ext4 is quite poor, I'm try to
+improve this, I found ext4 is quite different with blkdev when run
+bio_alloc_bioset. It's beacuse blkdev ext4  use percpu bio cache, but ext4
+path not. So I make this modify.
+My test command is:
+/fio/t/io_uring -p0 -d128 -b4096 -s1 -c1 -F1 -B1 -R1 -X1 -n1 -P1 -t0
+/data01/testfile
+Without this patch:
+BW is 1950MB
+with this patch
+BW is 2001MB.
 
 
-> 
-> OTOH, I believe the following 3 instructions sequence would work,
-> input address (a) in r3, scratch value (tmp) in r9, both intptr_t:
-> 
->          sradi r9,r3,63  ; tmp = (a >= 0) ? 0L : -1L;
->          andc r3,r3,r9   ; a = a & ~tmp; (equivalently a = (a >= 0) ? a : 0)
->          rldimi r3,r9,0,1 ; copy MSB of tmp to MSB of a
-> 
-> But maybe I goofed...
-> 
-
- From my understanding of rldimi, your proposed code would:
-- Keep r3 unmodified when it is above 0x8000000000000000
-- Set r3 to 0x7fffffffffffffff when it is below 0x8000000000000000
-
-Extract of ppc64 ABI:
-
-rldimi RA,RS,SH,MB
-
-The contents of register RS are rotated 64 left SH bits.
-A mask is generated having 1-bits from bit MB
-through bit 63− SH and 0-bits elsewhere. The rotated
-data are inserted into register RA under control of the
-generated mask.
-
-
+>
 
