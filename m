@@ -1,95 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-59017-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59018-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A3D1B33F04
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 14:12:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B312FB33F07
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 14:12:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBC1916D30F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 12:11:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48CD61731C5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 12:12:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C1192F0671;
-	Mon, 25 Aug 2025 12:09:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6540F2D9ED0;
+	Mon, 25 Aug 2025 12:11:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k5q/SxwU"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="EXsnOBUI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8380826D4EE;
-	Mon, 25 Aug 2025 12:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ADD428466D
+	for <linux-fsdevel@vger.kernel.org>; Mon, 25 Aug 2025 12:11:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756123780; cv=none; b=arTnU6yjq+jurUNeH/4hiqRUHYUcfPMSgivj1x6Z0YGXK8EBjhXrxUGuq5S6/EC2loBBAUCacYo+mC2lthZm/P3TC615cocT/HHYa8hCZ/X48/H00twD02fH+pzNeuYjKVdy226jx2owM29R4I/IwJjHiBhCG9OutVtG2rdgOMA=
+	t=1756123862; cv=none; b=okFKUzR769whUqetoRmdVh1zJqlZADQIvL/w1mi41jbQB/9kdTXe1iSRldbMBXXU8Mh1SqZ+vGpo7aFMWHbMLkdZwz7YuiY5qaUvvcA/012aqo796DKPfP/TA3me4PyIL6LTj+GIgO+O8AqURkoLH9ivBJ6B2PSMI37N952+828=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756123780; c=relaxed/simple;
-	bh=Xt9GeesO7UKYZ6HvYtSooPom4+T/++Ibq2YDteVCRaQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ASPzZDIKJund2zMvBo1N353hrFeQ7nN5WQn4G3UBVOASwA1VcKIq0//o9/qEGM/vOYuNklQLvdmK3Pr77R+f5DT7iuM9pymaQJZ6cJJ6GxDnkxH4wB+LVRucpi6kqZTRnaWnJFzkxgVHci3e2qyJFk8BDLWpRxxe06TprNnAR+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k5q/SxwU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68E07C4CEED;
-	Mon, 25 Aug 2025 12:09:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756123779;
-	bh=Xt9GeesO7UKYZ6HvYtSooPom4+T/++Ibq2YDteVCRaQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=k5q/SxwURn9NypgRDf8dSIeuvvs3dJZrAL+OMLF0+1XbWrNatXiG3+mxyG1re/kNM
-	 Buj7XYJb++903KcMMUzuSvtIXVKfG95iJek25mD6ajEZNyO6HKpH7j4MGNbKes+27g
-	 nXAX++y+nHmDfJA8H1DFuWSGjrRN5OB2F9NizqIkJFM/oV6W2HkhOBbykgsbRdNhTd
-	 zqbyIT0ph55JROlc4dFXodi5FAkewLg88zOvYSwHoyOhfH5wcjLzpUvYbCUPVjW1f8
-	 BsV0gNnFA+7ilz8hQuldG/hdT+Dh3yrr+mb+f6KImpPUGhNiX5E+eOYShvVPFgKbF4
-	 wJa4WRp4k94sg==
-From: Christian Brauner <brauner@kernel.org>
-To: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Uros Bizjak <ubizjak@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] fs: Use try_cmpxchg() in sb_init_done_wq()
-Date: Mon, 25 Aug 2025 14:09:34 +0200
-Message-ID: <20250825-rundgang-drakonische-b339b25c6f90@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250811132326.620521-1-ubizjak@gmail.com>
-References: <20250811132326.620521-1-ubizjak@gmail.com>
+	s=arc-20240116; t=1756123862; c=relaxed/simple;
+	bh=ZELCh/D+zvbWXmi/vnLHq3ROheCzOje8RshmDa5E5SE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QwhnEeM7TxfuiIDqfo4A0MzV7ZOI8d6F3KiuclgrVe/VUgI3vQu9IxkNANbwZpYO3Q8PYlK3J0MFVMFvsMeknilrWVeVUt4RwzHz8gTihr8MKSRpPspk5INMJuqMHHQCb1sCWkg65hM+r6hGLygDNWT9HnPNdZ+i+VWMtj9qPpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=EXsnOBUI; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-61c26f3cf0dso4202134a12.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Aug 2025 05:11:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1756123858; x=1756728658; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=c7qE1QXaZwWjH9fqfq6LhKop+aIZ2HU5wia0HyWc8yw=;
+        b=EXsnOBUIQeD/CRdYBg8nh5AqlISP2Hy6ZCKcXI+tpDaYC8V5PCLxwfux7utCI4i160
+         weUPk6Msl1yTuoomW01hTRpTiHjBnN57xCVFJssrXltmSRlRVNYxXrQH2/cw3YVVNiHy
+         kk7txilKoO6YM8M5ns7IX8KhDMnv7J6XYZRJ0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756123858; x=1756728658;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=c7qE1QXaZwWjH9fqfq6LhKop+aIZ2HU5wia0HyWc8yw=;
+        b=PCkF8NVHQuaf0lDyu0Qd3LY/vZD9LmkMjN6nZJF0BdaiUtWz+2oQupE1tMB8yP6+Se
+         xB1sSANJs/M00vZ+AtdYMaM8A4pHyb5u2ro+5o4TxhCJixAi4XQn4x7q/eVoE2RF5rTf
+         QLCjT6phRaOQvccZAIUETRok6HCo9dlBuzHs7dpTXvvxy4p5VUxphG0jRsIlW6iSewNq
+         6kasTjVYfUNruhhshSKiQxuKTGu3gzqwSD55oxXwHzcuWkswClMf7Md7V3W7StiTt8yw
+         YcGYx+WMW4S/Of/7hCpAT9QqBTjdyot9UOCT3/ERm5XtcSr6HsCllUW7D2RsfULB4nsf
+         higw==
+X-Gm-Message-State: AOJu0YyG9y2kc4KhvUfN97fC5jI6r5cYIKCoAmT2Cq8lKK965i1kozlw
+	K/3EPAOxY/TRmeQgZljSuY+OOxHZGxyr3CwR9KbwNdpO1jO5l7Kb0WkKVbEF7Il0sxhTRy2E1qS
+	AnnnI0pw=
+X-Gm-Gg: ASbGnctIl6W40oHiOgU/wxr301cjTl0TtAhgNfR7g1SKEcqpTb56L0FTEFDJgvqmhGq
+	ElGcMxJKYAe5UTah8og7w7XvoJN85WMxcsAzp68bUOznuCi+IqqkGoiRNMgcPDpRakjkdMXgkav
+	yA52FbtgmbDwKIMpnmXvh0AztMsDrAng7/AWXgazZGOzYd8rvkV+HNycxZ/T7KPIdF7JL/PeQPZ
+	QPsVr/UVuX2NomnE+ktKTzXVfTcgdEG+DwnkicU+i/73gU0LknpuFTUlB9HDk1EqnVjbKjBjqJ7
+	xy8mgs/v8oL26PfnpNnGlrOgrifH4youFj4sMlEAbq1cYNz/5SLl5XcarAtf63vCijyNirXbbSO
+	l3mCoV2LaAxzFAG4hpxSLSQE4H7j4S+s84m3fA/f4jmoutLahTwI1o647kLmriWU2s6gbCFQH
+X-Google-Smtp-Source: AGHT+IH3cplpjGExbae8pl+TAF1+dvUodzQ8yqN3qgALafwKbYXmTktAbePCHsPxH/Dxu8aLdE6Y6Q==
+X-Received: by 2002:a05:6402:348f:b0:61c:8742:21dc with SMTP id 4fb4d7f45d1cf-61c8742249dmr263958a12.17.1756123858496;
+        Mon, 25 Aug 2025 05:10:58 -0700 (PDT)
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com. [209.85.208.47])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61c312ad9e4sm4968607a12.17.2025.08.25.05.10.57
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Aug 2025 05:10:57 -0700 (PDT)
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-61c26f3cf0dso4202069a12.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Aug 2025 05:10:57 -0700 (PDT)
+X-Received: by 2002:a05:6402:4316:b0:61c:7743:7fb3 with SMTP id
+ 4fb4d7f45d1cf-61c77438553mr1227430a12.1.1756123857233; Mon, 25 Aug 2025
+ 05:10:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1057; i=brauner@kernel.org; h=from:subject:message-id; bh=Xt9GeesO7UKYZ6HvYtSooPom4+T/++Ibq2YDteVCRaQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSsCarb/OjfHucWrYWzLF49DTJknBB9d4G/9lQNCbFa4 87HKp5bOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbS7s7I0K6cOs1yVbZ6WIuK xKy8qkgrAYH/vPpHnh2ZzMJXKDhnLcNfwYK6irIziz02WrZ2Nh9WL/6p8n6bTa/uj7s759XqTZz IDgA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+References: <20250825044046.GI39973@ZenIV> <20250825044355.1541941-1-viro@zeniv.linux.org.uk>
+ <20250825044355.1541941-20-viro@zeniv.linux.org.uk>
+In-Reply-To: <20250825044355.1541941-20-viro@zeniv.linux.org.uk>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 25 Aug 2025 08:10:40 -0400
+X-Gmail-Original-Message-ID: <CAHk-=witRb_kEiWmwuaF4Fxz7gWuefn8Nxer05SHMOYxePUZSg@mail.gmail.com>
+X-Gm-Features: Ac12FXxl6L4JNGde4jQKUnV41a1IddBJUfMMALyJOYf4NEy6z9IX0E1_MzqV5lk
+Message-ID: <CAHk-=witRb_kEiWmwuaF4Fxz7gWuefn8Nxer05SHMOYxePUZSg@mail.gmail.com>
+Subject: Re: [PATCH 20/52] move_mount(2): take sanity checks in 'beneath' case
+ into do_lock_mount()
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org, jack@suse.cz
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 11 Aug 2025 15:23:03 +0200, Uros Bizjak wrote:
-> Use !try_cmpxchg() instead of cmpxchg(*ptr, old, new) != old.
-> 
-> The x86 CMPXCHG instruction returns success in the ZF flag,
-> so this change saves a compare after CMPXCHG.
-> 
-> No functional change intended.
-> 
-> [...]
+On Mon, 25 Aug 2025 at 00:45, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+>                 if (beneath) {
+>                         path_put(&under);
+>                         read_seqlock_excl(&mount_lock);
+> +                       if (unlikely(!mnt_has_parent(m))) {
+> +                               read_sequnlock_excl(&mount_lock);
+> +                               return -EINVAL;
+> +                       }
+>                         under.mnt = mntget(&m->mnt_parent->mnt);
+>                         under.dentry = dget(m->mnt_mountpoint);
+>                         read_sequnlock_excl(&mount_lock);
 
-Applied to the vfs-6.18.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.18.misc branch should appear in linux-next soon.
+Well, *this* would look a lot cleaner with a
+"scoped_guard(mount_locked_reader)", but you didn't do that for some
+reason. Am I missing something?
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.18.misc
-
-[1/1] fs: Use try_cmpxchg() in sb_init_done_wq()
-      https://git.kernel.org/vfs/vfs/c/ec6f613ef376
+              Linus
 
