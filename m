@@ -1,61 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-58970-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58971-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 615C1B3384F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 09:57:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8496BB338A0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 10:21:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A1B23BF85E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 07:57:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C8CA1B20D2A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 08:21:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB3B7299954;
-	Mon, 25 Aug 2025 07:57:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D988327FD5A;
+	Mon, 25 Aug 2025 08:20:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p8szN6GP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K8sfNm6P"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 507FC2882CC;
-	Mon, 25 Aug 2025 07:57:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F2C129BD82;
+	Mon, 25 Aug 2025 08:20:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756108658; cv=none; b=uBeA4jRItkSBFR9jBOr6k8Dq26gZXLxPTpY82z+E658jdwObaFS97wCyVfjfpukLJgjJYcjL+wtHezN7ngxIzTwt147YWcDkLEHkiSZvf5AZMPrbMXHNoEbpybvUHPwSdy47Lw2eEmH+I9i1yknqJbj7RpYOjn6wq9BRRjsV1Uc=
+	t=1756110054; cv=none; b=lJ7k/x3dXT/t9uYQltyIvHggiQIbbGNv2uZd2dC74ic49BGmwz3GH34knq6SiESfQIRHr1ASSLbpKlfz0lX9ZY6l52aLTGPkk44uJAoVdYrXTXva2taB1b084Uu0F6Sa+dIRvc4fpapWY2OTsYXs7zF36eTzERacsm/KOY+6gtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756108658; c=relaxed/simple;
-	bh=+EyeDx37l7GSWutALi8iTFyX6KSuRWpcLVm/DEInLUY=;
+	s=arc-20240116; t=1756110054; c=relaxed/simple;
+	bh=yJJQ2u/iKmxy+e3RF/GJg2tOmR67e64wxy33L/BxuSE=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z4kVDwTGwNf1Id/Kh95MIZECJmHH1Y59u3HyeLrqePL0CUEBlqv4+WQZAMP1IJROfcVW/Zpv3x3s5KGMI/WNJ2B8303v6CrhII1+FGD0RU/Hn9gKugfqLMeWlFRlKd2CQMDbsJlC0vr0qUwlEZylZYHS/PvFocDgrCbjIMVF9W8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p8szN6GP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91FF0C4CEED;
-	Mon, 25 Aug 2025 07:57:36 +0000 (UTC)
+	 MIME-Version:Content-Type; b=oQfjHUhJoYlofj8llgkh0zso63G3Cxb962/m0PWyMrd9bQtBGI9dL0E4Ct/cUfmNsom2xV7JU0r/oISujcSX6tJlrQrQ3CeaH92wrWfYRV7V/PtCGlBFRLEDt+iHeVaJHVs1K6XwzVW9uAbLPKkJpNBCgkX3DRIUy74KW9J4BWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K8sfNm6P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F3B7C4CEED;
+	Mon, 25 Aug 2025 08:20:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756108657;
-	bh=+EyeDx37l7GSWutALi8iTFyX6KSuRWpcLVm/DEInLUY=;
+	s=k20201202; t=1756110052;
+	bh=yJJQ2u/iKmxy+e3RF/GJg2tOmR67e64wxy33L/BxuSE=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=p8szN6GPttvPOMcOUOPqUQLg4acBVkvFa37LhG5Xioe/blvG9UG5T963Mt3mSu2QD
-	 mITP0ia40Vx9RDSxVUWcVpY6LSKP8HnBIyQTgWq/Pd0LHt/uKAro0s7UyrEHjwfHSQ
-	 CwdBNw3ZLLmqj//6ScsQyxsNPvpB639u6iBXlYYqYbi4r0ofeQBb9lKRSJcVqWg2xr
-	 kAUQfTRCBJkzngm3YaD5gx7jMQjkdlRjbPGMec7re+N1ZLoReuYWDya5fbggNO+YRi
-	 bZr5YeP/YqOidzGJrY+IZbS4fIhttlFhKwpUeyoSbhNWXaCKWk0yR/cXOFLwv7ef6F
-	 fOBdpaSKHgMUw==
-Date: Mon, 25 Aug 2025 09:57:32 +0200
+	b=K8sfNm6PJklGFXEsL0q9K4u/Xycxfzj8GTQKiInKWdvG9CEOrwKFbIO2odJfArrg1
+	 h9RY+mPeLo52u8gfcpLN6fWE1478tfZzkeUBQUMg6ijQm/eRo/pobKvk72SC5uFDyd
+	 YoUTuJfkzkT1uxJbH2njDhnw0oMjXxWupy7TPRjoZ67W6xzfNKu7v4U+0/vKv30kN8
+	 q5Ujo5hxqkYOvoPB5aAay0Lk6pE+j3dtzjCEjg8nrxIQAUnz89rx/YoRXTxi4hHEhw
+	 zVrh79DMsWMk7+DKRQY6LrzsqZn6Rwl0U5+URupGx5SBl0y+NAtNKqyqQersxQtD10
+	 6jTb82sK2Irzg==
+Date: Mon, 25 Aug 2025 10:20:48 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: "Theodore Tso" <tytso@mit.edu>
-Cc: Greg KH <greg@kroah.com>, James Bottomley
- <James.Bottomley@hansenpartnership.com>, ksummit@lists.linux.dev,
- linux-fsdevel@vger.kernel.org
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Theodore Tso <tytso@mit.edu>, Greg KH <greg@kroah.com>,
+ ksummit@lists.linux.dev, linux-fsdevel@vger.kernel.org
 Subject: Re: [MAINTAINER SUMMIT] Adding more formality around feature
  inclusion and ejection
-Message-ID: <20250825095732.4571e6d0@foz.lan>
-In-Reply-To: <20250822122424.GA34412@macsyma.lan>
+Message-ID: <20250825102048.754ee0a2@foz.lan>
+In-Reply-To: <62aea685546cee80b18cfd7e1ea50b1a590d5edd.camel@HansenPartnership.com>
 References: <fc0994de40776609928e8e438355a24a54f1ad10.camel@HansenPartnership.com>
 	<20250821203407.GA1284215@mit.edu>
 	<940ac5ad8a6b1daa239d748e8f77479a140b050d.camel@HansenPartnership.com>
 	<2025082202-lankiness-talisman-3803@gregkh>
 	<20250822122424.GA34412@macsyma.lan>
+	<62aea685546cee80b18cfd7e1ea50b1a590d5edd.camel@HansenPartnership.com>
 X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -66,34 +66,45 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-Em Fri, 22 Aug 2025 08:24:24 -0400
-"Theodore Tso" <tytso@mit.edu> escreveu:
+Em Fri, 22 Aug 2025 16:31:49 +0100
+James Bottomley <James.Bottomley@HansenPartnership.com> escreveu:
 
-> On Fri, Aug 22, 2025 at 02:03:13PM +0200, Greg KH wrote:
+> Well I did ask for two concrete things, but I can certainly repeat:
+> 
+> On Fri, 2025-08-22 at 09:09 +0100, James Bottomley wrote:
+> >  I think I'd be happy if we sort out two things
+> > 
+> >    1. That the decision be taken by more than one person rather than
+> >       abdicating to last man standing
+> >    2. The outcome be documented clearly.
 
-> The current baseline is that the media subsystem, networking, or BPF
-> maintainer's decide what features to accept and who they will accept
-> pull requests from.  
+There are some aspects here:
 
-On media, we typically place things that deserve more discussion under
-staging. We did that for stateful decoders and encoders, for instance.
-The same was done for stateless codecs. It means that any drivers written
-to use such features also go to staging. Not always possible, but
-something like that IMO serves to signalize to users, distro-maintainers
-and the maintainers of such feature that, while we're ok to have it
-being tested, we're yet seeing issues that need more discussions and/or
-fixes.
+- Who will communicate the decision? 
 
+The way I see, the best would be if this would be done by the subsystem 
+maintainers who accepted/acked the feature addition.
 
-> The same us true all the way up the hierarchy
-> maintainer tree up to Linus.  What is the alternative that we could
-> use?  That some democratic voting procedure, or some kind of core team
-> would stick their oar into making this decision?  I'm not sure that
-> would be an improvement; in fact, IMHO, it will very likely be
-> significantly worse.
+- Who will be involved on such discussion?
 
-Agreed. It is really hard to see when problems will arise, specially
-in cases like this.
+I'd say the subsystem core maintainers and developers plus the top 
+maintainer and eventually TAB. Feature removal may cause troubles 
+to distro maintainers, as some may have it enabled as well. So,
+better having more people know in advance.
+
+- How this will be documented?
+
+Depending on the reasons why a feature is dropped, e.g. if it
+involves personal data, I don't think the entire process can be
+transparent, but surely a sanitized summary should be documented.
+
+IMHO, the best way to document it is at the patch dropping such
+feature, which will explain why the feature is removed. IMO, the
+best would be to have such patch containing SOB from multiple
+people:
+
+- core subsystem developers and maintainers;
+- Ack or SOB by the top level maintainers, if pertinent.
 
 Thanks,
 Mauro
