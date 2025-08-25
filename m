@@ -1,225 +1,204 @@
-Return-Path: <linux-fsdevel+bounces-59107-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59108-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F6A3B347D2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 18:44:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0A95B3483F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 19:10:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E32DB1B2540E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 16:44:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46AA82A2E06
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 17:10:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F83C301471;
-	Mon, 25 Aug 2025 16:43:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 737B63019B0;
+	Mon, 25 Aug 2025 17:10:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b="LJBtn8hz"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="nCXrFcyH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2069.outbound.protection.outlook.com [40.107.223.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C03301017
-	for <linux-fsdevel@vger.kernel.org>; Mon, 25 Aug 2025 16:43:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756140227; cv=none; b=KV13lPEkO43sinK2aaUQ/MktTjHFac70azuaeSqHEHBoGvUrhtZIJMV5D89ZmO0ER5zi5tYWgrDHT5aL2m4kJsOpLs8CNRGQCS5HyDJ5oHIUX/dIlzIIN2LZRJmDuQc3E6V5Jt7jmPI+yKHKM+ickobNmCosmP0dYcoYUoewUMA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756140227; c=relaxed/simple;
-	bh=mrvVK8/Xsrljs2OlTw2saC30UIQ8XhkSiEQOYrZEW8Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jy3HBTBUJ3pRuZyxaLCSD0r5gADiKhulOq9madiPHzB6NwyTX9VfTyN2kF7xch3pvVrkGz/R2IQByk1cO7YSt5/5y7ScslLshWz8qkNlHkzj0rvACCy1E7kk2g3oSn9f6tv0MCqLoY7C2R+wWQ5mvncHRi2itN/Xn97hcsNFRCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net; spf=pass smtp.mailfrom=amacapital.net; dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b=LJBtn8hz; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amacapital.net
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-333f918d71eso32651401fa.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Aug 2025 09:43:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20230601.gappssmtp.com; s=20230601; t=1756140224; x=1756745024; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7PLv6y/UhSOB8bdOkGYyaQMgyRuq9HEBdk6Xh5IVulM=;
-        b=LJBtn8hz9+1q0YtwAmqQoOT4NrmZQ2SKq2o/M1bmIOD8I7C0es7ckJbRx/MOsfdmK6
-         MgmVBU9kkITmd8wHsdZGW1WCqOCLFGo44p7hgKXyb53xCpqlhlrbKYk/UfVp4IoiAGQl
-         DcSx6PbRN6eNvl+q38qNWi1twzzm+8oeiKRvoIr3wmC4XN/mQS5IrDEOQ0t2HkCYkbS3
-         IEOjewoT1zuKhaMU75icXZWujI8GwB8CEIOTKJuwXuCYk0WIkvgaMXDOJ5Fo+v5oPQDn
-         VvJcIlFEWgd3h4CAWTuHai2S2TkozFw1Nl/RZ/O+XUS5hxyTTKwxZNHE4ADffnjQg3TN
-         3+Gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756140224; x=1756745024;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7PLv6y/UhSOB8bdOkGYyaQMgyRuq9HEBdk6Xh5IVulM=;
-        b=a3YXvYFrDfMHP9uPhRolJbeYVm3jCFXRV8VSrtgnMpTSe7JYP6nCCrI6wPaE77k80b
-         MtcKKN/J0q5HfATWZ/pItnMISoLst8WbiBHHNtJ/nH8ghgeL5nTdLWtWERbZ1FhTk7QU
-         H0Vpr/kAjFKui53dAz7uWyMjr2y2XUo3ohnVIQM583yCBF+fyi9l6qksi8q24n+1jYsM
-         9HQanRajbGJS1S0qQ0GTmfSSr7VBTe965nP7DBRz3maDEXslIvA6ZY3+xnJGzFDrLsEk
-         O4x7UE5nxi090otQCXYBKIRcE1ix+4nf2PYGyCAWiHAy/dWg8DaTW45JZCxRyDRtUGAu
-         YFjg==
-X-Forwarded-Encrypted: i=1; AJvYcCW3yJsBX2W7rbvs3KN8GSL1d4/nnIKfBUBMJ3D+gqaK+kk8Bl91eVyYyjoatpdHOMczkMdM25hP21xhIdF6@vger.kernel.org
-X-Gm-Message-State: AOJu0YykM3oyHJaIi9EVZno1ERFsUooTZhFsnAx2eQKYbLvl17Po8Cu2
-	ipc79R7POWbb/bFTzTtDnf1V6q0viWfnIlhKXfz+pmeEobrVDsnbyydtyq47yUPjG9HnOxgd2dH
-	lOmZ7X+GSR2kDKp195K45GACaZhGRkhCg9TMxGpIX
-X-Gm-Gg: ASbGnctXpLLli39qqpniVq+E19Ur5CeOXggReWDUjEACEBDWW4Wz2h/9mctjKxbyVUI
-	iFi9/5gxKcCWDSRhZf6K7I7XN5qmlLWyvPRNTAWgMzxQOxobB+QL0qnioqtdEIBD9R08zpJSRbD
-	/Yj3ksL10Q3TLSuDNgTalKZ9JRoPrI/C25zxqZASeXdZz449xgo9FfrRd8f4lgT/zN0KC8yWRMo
-	HU2HQ==
-X-Google-Smtp-Source: AGHT+IEMdqK/C2LpKtNe8HwPygFUadpsqtunEn/HXVLtMBboXyEX1vSk+kxH2wVSUzVD8p+wSlL+I8mi2gjoh9eWb18=
-X-Received: by 2002:a2e:a018:0:b0:330:d981:1755 with SMTP id
- 38308e7fff4ca-33650de81e9mr24090271fa.6.1756140223780; Mon, 25 Aug 2025
- 09:43:43 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43AB816D4EF;
+	Mon, 25 Aug 2025 17:10:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756141803; cv=fail; b=m2muGkXSJ4qhWXCNqlEP76YJzi3P6dmCjYKl7C7ilrZddFgwXCj4v7IGNnqY05k3n2t6+vbD1x2jpFE1drJtMY3pOWWiss7iI/BCnADxux9HO4Gl2W2YvJkoJnQH1MwsOpDNj0K0ieVlySzNLJJig/dObj/sREVF8BuAexSe1lA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756141803; c=relaxed/simple;
+	bh=sxXKhapIaxQDa52oviD1tgih2rWc2qyQ5+eT/5muzvY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=tr+4wjmUTjsBUdce0oe1DUwy7JeCFjjtvrW8uRZen3nznA1WOalokFs9REn/YuhZyyuwfuMF3tYBmsYoicAvDnz21ilPgN0D+6lFpo23FQHUlBETaYrj8XmKAf4DyF7sFEA0GSHqmiekFR4AhzLlK9l0/t9Tcr3HpK0OR3DAO9Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=nCXrFcyH; arc=fail smtp.client-ip=40.107.223.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UHD77SMSqB6tnjbX8MCtTKovrhkuhWaSMH3r/JjTYJGRzMOQR+1wAkNgOT9ul97ORvEaCmWucbF16cNZMZ4cFH0NcXV4wvaMg85nTJibQQx/DZ6oG85jUU+/CQnsmwoQO/wxexkArSKiSAw43d18jd/ONk7YE1lkvRJN1HEYPaC1iqYQ5/Hi4C3D8A9a7XlrskEO4UaAWQVj4dEiheiBojPv3ORxZgT853Xx5JF1r9GxrdSrLuE0vriBWc7dl0aCR7cEhDba9y97bDgt0OYUgCLsKD4KfJQersLlyUc0B8nntuWbxHL/oEoMiYljVZo5IS0FpBdjBo2FMYkG69rdyQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=sxXKhapIaxQDa52oviD1tgih2rWc2qyQ5+eT/5muzvY=;
+ b=ukTgxdj7HUSp07PVWIzyUj7TzvPjPM8d1LVwaOK4/2AE/KbOyMOJVo2bysRJfSfUA7ibTT4mzYNxHkZV0bxVRJ3IoNZ2xgbCOrpk9VM2dr8skBEZYOugGUQmUT9qpgvyV+RTNWL6bR3IhIXfLvimxqg9RSJHI8t+kmefGSv5n4qCsykwJDBE2RJPh8UNkfjTHAQWmOJ9gqfZwxzVXQJlPi5l4VBzcO/yUujlorGAyN2CKC2R8zAEdteNFr/A4lYXPoIVbgUNoFmlEr4uW5a7y/O/KxYlQW6sgDUpO/Mdyie9pC1e/ohbdVT5uawh2DnN1djxhhsBSIANukWb0bqjHA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sxXKhapIaxQDa52oviD1tgih2rWc2qyQ5+eT/5muzvY=;
+ b=nCXrFcyHN6XXPTBk1PfFPY4mFm9dgqMM74FVTzN6ariDaSv60WDDM9IB1yOW5dfC9vnieupepGrqOkDx1eL2hlHJETWBX0XTW2SzFPT8rko0lRLAT5SAYnLNn451Ek5xIJ6RInWUDD+UR/g/mo7gVNBQTGfqAQGo+hcBtnLY7SBIjpF7W/5UKDwVIcORO0hDkSDzcbrf+FeekJQax9WEYm7qameuoVkjWyIDgYbmoWm9TGr0Uoq4pzFblq5jvGss0UquE6wkl9YF23tptc05ZWTM+uraEEP5/aD42thzKQR+y4uWBi0rxRILLFP/pJ9/uVIpVj/4iMGyAJ8LPezArw==
+Received: from LV3PR12MB9404.namprd12.prod.outlook.com (2603:10b6:408:219::9)
+ by IA1PR12MB8309.namprd12.prod.outlook.com (2603:10b6:208:3fe::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.20; Mon, 25 Aug
+ 2025 17:09:57 +0000
+Received: from LV3PR12MB9404.namprd12.prod.outlook.com
+ ([fe80::57ac:82e6:1ec5:f40b]) by LV3PR12MB9404.namprd12.prod.outlook.com
+ ([fe80::57ac:82e6:1ec5:f40b%6]) with mapi id 15.20.9052.014; Mon, 25 Aug 2025
+ 17:09:57 +0000
+From: Chaitanya Kulkarni <chaitanyak@nvidia.com>
+To: Zhang Yi <yi.zhang@huaweicloud.com>, "linux-fsdevel@vger.kernel.org"
+	<linux-fsdevel@vger.kernel.org>, "linux-block@vger.kernel.org"
+	<linux-block@vger.kernel.org>, "dm-devel@lists.linux.dev"
+	<dm-devel@lists.linux.dev>, "linux-nvme@lists.infradead.org"
+	<linux-nvme@lists.infradead.org>, "linux-scsi@vger.kernel.org"
+	<linux-scsi@vger.kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"hch@lst.de" <hch@lst.de>, "tytso@mit.edu" <tytso@mit.edu>,
+	"djwong@kernel.org" <djwong@kernel.org>, "bmarzins@redhat.com"
+	<bmarzins@redhat.com>, "shinichiro.kawasaki@wdc.com"
+	<shinichiro.kawasaki@wdc.com>, "brauner@kernel.org" <brauner@kernel.org>,
+	"martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+	"yi.zhang@huawei.com" <yi.zhang@huawei.com>, "chengzhihao1@huawei.com"
+	<chengzhihao1@huawei.com>, "yukuai3@huawei.com" <yukuai3@huawei.com>,
+	"yangerkun@huawei.com" <yangerkun@huawei.com>
+Subject: Re: [PATCH util-linux v4] fallocate: add FALLOC_FL_WRITE_ZEROES
+ support
+Thread-Topic: [PATCH util-linux v4] fallocate: add FALLOC_FL_WRITE_ZEROES
+ support
+Thread-Index: AQHcEmPY/WKOqtdP+0ShKRLb44JB77RzoWEA
+Date: Mon, 25 Aug 2025 17:09:57 +0000
+Message-ID: <819d6b7c-fa0f-4b87-9285-00963a04175c@nvidia.com>
+References: <20250821061307.1770368-1-yi.zhang@huaweicloud.com>
+In-Reply-To: <20250821061307.1770368-1-yi.zhang@huaweicloud.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Mozilla Thunderbird
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: LV3PR12MB9404:EE_|IA1PR12MB8309:EE_
+x-ms-office365-filtering-correlation-id: b39f5c9b-4f53-4060-d27e-08dde3fa37ad
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|7416014|376014|1800799024|10070799003|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?WEtYKzR1eFdKRmVVTU00YmJuYWdQM0J3VkhOMjBTUTdpQjJidW02OUFwNHBo?=
+ =?utf-8?B?K0poRWU5MW5TZXhhejZBb1AxZm9UNm9jMVhXcXRFeno3d2tTOTZodlJXenVH?=
+ =?utf-8?B?NmJmUEduVlkyQjVxNmdtak1zYkFvMUp0N1c1UktzM0RkazAvQitWNS96amhB?=
+ =?utf-8?B?OHpLZkdUZE9ZYlNVUGRMK2tNR2hWTGZNQnVhWmxsVjlVUmI4bkx4czg4TnBB?=
+ =?utf-8?B?bG8vd1p6azZITVd3R2M5WHpWRk54Qi95SlN1MEVhek9Pai8yMGFxRmx1d0FN?=
+ =?utf-8?B?cFppV1VQTnBZMWhkbTNaalZzWWtWeE9iblFaaDRueldPS1ZLTWtwVW44WkEz?=
+ =?utf-8?B?cDdaSXBUUVBPdm0zWGVUMTh0M1BQZlNleFJZMzVLcXF3OHk4cWNmOElsT1Q2?=
+ =?utf-8?B?UWduWTNCN3pOaTNIYWJZMk9uTWN3bHZSSUNVdGEvU05SQk5obVFlYkdkK0V2?=
+ =?utf-8?B?OUpXd2xWTFpSazFvcnpPcktmalBOTStNRjVXQ2ZVTHhuaXltRmRVSmttdEF6?=
+ =?utf-8?B?SEQ3MHBhVmZ2bTV3Mk8waVROQWpsdzBJUG9GSnNkeTI0OXNQVGFCbjFtZitw?=
+ =?utf-8?B?WDRkdktGWTAvalVJQTUrODgvNi9KS0FjOXRqV3pTQ2REeE9yYkxJTTJBemFC?=
+ =?utf-8?B?T1l3QnhNZGpSMGJIRHROVmlDWFdLcjZxd1RrbTlPTzdIZEdIM2VEcmFjb0FY?=
+ =?utf-8?B?b1U0ajZKODNjSnZBSXc0UmZTZll0SnFVM2NmTjZiU3lqU2E2NlVnNmdYRUZW?=
+ =?utf-8?B?SG1sMis1a3BON0V6RDZ3RllZb09RV2hUVDdiMVg2WU5TR2Z0QXY4NEhzVjdF?=
+ =?utf-8?B?Z3EvSndWYURQWEJIKzBVSlNtbFRwOXFISEk1cThIN1B0d0tmN0IvQW42STBn?=
+ =?utf-8?B?OHdnMDU0UnB6d0plR1JOTGMyTVVWeEVlTlBabDg5RkJ6cEdnck4rQjJEMW5j?=
+ =?utf-8?B?aXo5cGN0ODhqRk5VUjBNT3ZQM3h6M2h0dEZXQUNDdHpSQmplVDIvbDdKcmd1?=
+ =?utf-8?B?M0J1c1F3K1g5N0dSczAzRnZ6QkZncWdJcWsyY0Frck96NHJxbzdZNXFubzVG?=
+ =?utf-8?B?MElObFJlZWRPUlJqZ2tOcjJpT3VyY1R0MnVhQ21YUW0reFIzTTVmWE9JNDZP?=
+ =?utf-8?B?czVtY3VSeEVSby9vaVEzcUo3U2duLzNvSDNqWWJ4Q3pDNTczNzNzSzVpekZD?=
+ =?utf-8?B?RHgzVWVPQ0pPTUk0RU9LdTg3UjFjNzhLem85ZWgrRXNpaWg0N0tjS2FaRVlD?=
+ =?utf-8?B?Tk1qWUZzMjVrSDFSV3hDQmI1QmtLN0V2d0x3a1VQOUlkVXdNdzI4dkZ4ZVdh?=
+ =?utf-8?B?a291cXRZNFJCZlVmVkt4NFNFeWNzRE5ka01NWEVwOTUyd2ZQcjRJRnA1Mzl6?=
+ =?utf-8?B?SFQvWjRTOWhHaVloNmN0Qk9sMU5EQ2IwZS9oVEg5SUZabEkzcTZMVDk3UGFW?=
+ =?utf-8?B?VzJwR3FWTWRhODVCbitjRUgwUHFnZkE1Ykl1VGxFbjRHZ0VLdFNFczJyV1F1?=
+ =?utf-8?B?THp1bENXYi9sSk9tRGppeFpUeE1Pdk1MQm1aZjdIV0N6VytyNWhaVmk4aFNC?=
+ =?utf-8?B?Wm5tTmZqRmRJVmJkYXVFK2F5c0QvTWtSajFCMjc3K0dtZEdyNHRtb0J1T3cv?=
+ =?utf-8?B?UHQ1RnVtbVI4eFBxS0JydmVJaWt1Uzk5L1F2eTliOEpRRmhOV0k5SVJGa2JB?=
+ =?utf-8?B?MkVkV0ZDcEF6d3RDejNJaDNFT3JSS0RFMkFuN0RuODAzOEpCK05DNmdxQXpk?=
+ =?utf-8?B?QzlwRnJCeUF5QmoxcHFWVFFFL3ZFbkpPZEJKSnpkM0Z2VlJKV0dDY1ZtZWdK?=
+ =?utf-8?B?UW43MGRNYmdmdEFHODNUQVVXSGFPZjl5UFVKdDdXSWF2dnBvaGQ1Mnc0NWtm?=
+ =?utf-8?B?b0syWXNtWU93MVRHM2J6d0JTSHlrZ0c0bTlMRzBLTGZwc09YOXZPU2ZPVGwz?=
+ =?utf-8?B?WUdySXdITW5LNFBna2xLSUxSZUxoSHdYbXlCc3Q5WmsvREVJVDREUnJteTRl?=
+ =?utf-8?Q?gDZjx/dKF5V6wVAe0ufe0UeqitDdY8=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR12MB9404.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(10070799003)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?MFVFZUlPWnVnRmNCYi92dFJZK013cDVwN0cvZlNuZFF0YXJJKzd6bFhFOWUw?=
+ =?utf-8?B?eUdZZXFKL0l6VW1xZEpPekxKTEQ5aTJKRnRJNHh4RlJGVGFWUUFSUDE2a0E4?=
+ =?utf-8?B?YUdQbWhiaitSTXZESG45Y0F2NWNZNDFyV0ZvaG5HdktUeC8zb1VXV1pzdHpn?=
+ =?utf-8?B?bjBmdFVTN2lXWm9USmVEdGpwNVlXV0Y0ZDMrK1VEeHB3QWRyRkh5aldlMlJE?=
+ =?utf-8?B?dVNsNUNxQXM4VVNNd3BaRkQwbmpDTmpEMFZjbnZLWnlpSm5ZWHNTUmRXSE1o?=
+ =?utf-8?B?N3FzVzdKUGcrNlN6MCsvaHlkTG5TT1Q3cTE2c1Q0djJQU0NTajlFdXVQNms1?=
+ =?utf-8?B?VkM1KzZnRm1FemNJckpibVZzVStGMmM4TmtOb0x5SmNwVHJhTFhocHBBNFRH?=
+ =?utf-8?B?MEdSMy9NbmIxQjhBL09QRnBNT3RXN0FsSzRmWUtDR1pVL291QjBZYU1sNUVu?=
+ =?utf-8?B?VThJWW5pOUJLU3hFdDVVVE5uOUhhaEZHOC9tckJTM0lWV0RMRUFXdGpUS0xE?=
+ =?utf-8?B?eVU5L0l2QmE3emFzM3pGUUtrTSt1R1R3Kzd4RTdpRHVMTi9BZGFVcEI2QW4x?=
+ =?utf-8?B?VnkxRTg4Tjl2dFpreVJoRjVoajN4Rndva0VGYnRrMXQySkxqdDJtNGFZa0FD?=
+ =?utf-8?B?aEJtdlp3WWVSUUc2emJsM1U0bW5Ub2lKQnRIVURteW1uSWtObDRXUFdIeEZZ?=
+ =?utf-8?B?bzNJMlpENXkzbDNSZmVFbG03SUhZU3lsQ1oydFZlanprY2xTaXdsTWMyVWFM?=
+ =?utf-8?B?ZGtkNEFOOXd4SUFtb2VmRWFkWjlvVjNrT05LbXFYQllJbDJ6YTRTQU1vWlFj?=
+ =?utf-8?B?R1hjcWkzK1FvdFNJaXRtUUUwazArdDBNSDYyM1JrSkxTZDcweHI3S25GWWVP?=
+ =?utf-8?B?MXpUWEFkL3lBMlFYMVRJeVl4M1ZUREVZZFBOVW83SkxQdnJKNjUwL2lwOUFN?=
+ =?utf-8?B?dDdOeEx3Z0VveStlYjh3MUN5bEk3cGE5WmlYSjhJd2RwemQwcysyTzN2Ynpv?=
+ =?utf-8?B?WHVBUEh3djFpS2JQakFIMThFZjB5SjVaN1NITUhVYWM3djhObVVWUTBCazRX?=
+ =?utf-8?B?LzhHOVlFTllWZ292MFVHclFjWTJXYW9sQkE2VmlXME9mM0o3MmN2Ulhsc0kw?=
+ =?utf-8?B?NUNpUUJrZkVmZ2l3ZWU4SWRTK1FvTWNhV211c2VzeG5melJhTFcvWmdaaFpX?=
+ =?utf-8?B?L29ldEtFMWdrdU5vNVlSRHU5c09UVEY4TlN5UkwzZnVSZnlKbmw5TTRCRXhp?=
+ =?utf-8?B?dmZWVVE0d0tZeCsxSjNIUWR6WFhjb0p6T0ZsTkpvSmZRWG5mUElyYWRRQldy?=
+ =?utf-8?B?Vmc4S1I0SXh2L0JPVDFyU1JCaFRDWEp4TzZOQVNCSEttaHNWcjFXRlljd1JV?=
+ =?utf-8?B?NE9tQmdKejdSd1haT1cwTXpLakRHSWdvNTBXNGp5SG9yZzJ2YmNlaEZJY1RN?=
+ =?utf-8?B?WW8rRDZpcUZET29MWVY4WkNwZG1TZlNUelZ4WU5lYzZGM0tQSXRWcUFlOVBQ?=
+ =?utf-8?B?bUFuSHVCK2d6aTh6VEtBOEhJVFppQVBNSTdmMW9neWJuMVVqWkp4aEpYN2FU?=
+ =?utf-8?B?R1laQUpuT3pnWTdxUDRIRGZXVlhxZUh1cHZwTnZscjdIWnNtOEswSFBqVnJR?=
+ =?utf-8?B?Yk05a3Z5TW9rRnoxWHU0L204ejFIdVgvNjlvZmlTNVJRMXdORUsxNEZzZ1Fh?=
+ =?utf-8?B?UFVaQUVzanpNQmh2bkFqeExlYVF1MmNtZXFQUzlSZVFlTVk5a3crelY3Ynkw?=
+ =?utf-8?B?YTdUMGpYRlg5ZmlOOTF3NDlOaVd0dzBMTUtIK1lxQW9TR1dPcDI3cXNMMWNR?=
+ =?utf-8?B?YkFzak01YU8yKzIvdFF1VGFaeHA5ZFpvOVlBUUFBU1JZc2c1RUpONUY3Sm9h?=
+ =?utf-8?B?SnhQMU1HL0NEb05hS25LSkpqQ2Vuek9zeGdlcHF4MW00ZWgyYlNnRHZJQmQ1?=
+ =?utf-8?B?RnNYblZ0WUlMbTZvYVB3MitWRWQ3eFVVdlpndjBDVWZZdFFJaTVyczVBSEI1?=
+ =?utf-8?B?UWVnL2dwcFY2dEo0ZExuNWcza2dUUjVCWHU1eTVIamV3Ri9xY01wV2FONWNN?=
+ =?utf-8?B?NGVmb0NyV2NmWFNiZlhoa0l3OGkvSWtwLzhpOFcwaDJIY0RrOU1uS21ZWU4w?=
+ =?utf-8?B?MWVrMzhFSm1JczJLam5wUnh5OWFxK0cxOXJPNHNWOUE2aW1udEUrNncrWFVI?=
+ =?utf-8?Q?UmMhWpnEgJQExEwgwBj+XWVG1wx82YXTrKnN2BYIh3IL?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <EBAEC0015E5EF44C9C5FFF61DB483B19@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822170800.2116980-1-mic@digikod.net> <20250822170800.2116980-2-mic@digikod.net>
- <CAG48ez1XjUdcFztc_pF2qcoLi7xvfpJ224Ypc=FoGi-Px-qyZw@mail.gmail.com>
- <20250824.Ujoh8unahy5a@digikod.net> <CALCETrWwd90qQ3U2nZg9Fhye6CMQ6ZF20oQ4ME6BoyrFd0t88Q@mail.gmail.com>
- <20250825.mahNeel0dohz@digikod.net>
-In-Reply-To: <20250825.mahNeel0dohz@digikod.net>
-From: Andy Lutomirski <luto@amacapital.net>
-Date: Mon, 25 Aug 2025 09:43:31 -0700
-X-Gm-Features: Ac12FXyB6lzRP1sYgoa00swEucBzjGB4o1VKS2fSTUJC8HJqzdooeCFOZN6Irw4
-Message-ID: <CALCETrX+OpkRSvOZhaWiqOsAPr-hRb+kY5=Hh5LU3H+1xPb3qg@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 1/2] fs: Add O_DENY_WRITE
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Jann Horn <jannh@google.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Paul Moore <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>, 
-	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Christian Heimes <christian@python.org>, 
-	Dmitry Vyukov <dvyukov@google.com>, Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
-	Luca Boccassi <bluca@debian.org>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Robert Waite <rowait@microsoft.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Scott Shell <scottsh@microsoft.com>, 
-	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
-	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	Jeff Xu <jeffxu@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR12MB9404.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b39f5c9b-4f53-4060-d27e-08dde3fa37ad
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Aug 2025 17:09:57.1725
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: wFfMg8FElI5uU6Js6wV0rCz7gEkXl+qW4Wg1ItIsiRoOHKu7YV8H8pkN/okJCpIkF8/5ABQY9olhNW/i6AcpZw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8309
 
-On Mon, Aug 25, 2025 at 2:31=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
-od.net> wrote:
->
-> On Sun, Aug 24, 2025 at 11:04:03AM -0700, Andy Lutomirski wrote:
-> > On Sun, Aug 24, 2025 at 4:03=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@d=
-igikod.net> wrote:
-> > >
-> > > On Fri, Aug 22, 2025 at 09:45:32PM +0200, Jann Horn wrote:
-> > > > On Fri, Aug 22, 2025 at 7:08=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <m=
-ic@digikod.net> wrote:
-> > > > > Add a new O_DENY_WRITE flag usable at open time and on opened fil=
-e (e.g.
-> > > > > passed file descriptors).  This changes the state of the opened f=
-ile by
-> > > > > making it read-only until it is closed.  The main use case is for=
- script
-> > > > > interpreters to get the guarantee that script' content cannot be =
-altered
-> > > > > while being read and interpreted.  This is useful for generic dis=
-tros
-> > > > > that may not have a write-xor-execute policy.  See commit a5874fd=
-e3c08
-> > > > > ("exec: Add a new AT_EXECVE_CHECK flag to execveat(2)")
-> > > > >
-> > > > > Both execve(2) and the IOCTL to enable fsverity can already set t=
-his
-> > > > > property on files with deny_write_access().  This new O_DENY_WRIT=
-E make
-> > > >
-> > > > The kernel actually tried to get rid of this behavior on execve() i=
-n
-> > > > commit 2a010c41285345da60cece35575b4e0af7e7bf44.; but sadly that ha=
-d
-> > > > to be reverted in commit 3b832035387ff508fdcf0fba66701afc78f79e3d
-> > > > because it broke userspace assumptions.
-> > >
-> > > Oh, good to know.
-> > >
-> > > >
-> > > > > it widely available.  This is similar to what other OSs may provi=
-de
-> > > > > e.g., opening a file with only FILE_SHARE_READ on Windows.
-> > > >
-> > > > We used to have the analogous mmap() flag MAP_DENYWRITE, and that w=
-as
-> > > > removed for security reasons; as
-> > > > https://man7.org/linux/man-pages/man2/mmap.2.html says:
-> > > >
-> > > > |        MAP_DENYWRITE
-> > > > |               This flag is ignored.  (Long ago=E2=80=94Linux 2.0 =
-and earlier=E2=80=94it
-> > > > |               signaled that attempts to write to the underlying f=
-ile
-> > > > |               should fail with ETXTBSY.  But this was a source of=
- denial-
-> > > > |               of-service attacks.)"
-> > > >
-> > > > It seems to me that the same issue applies to your patch - it would
-> > > > allow unprivileged processes to essentially lock files such that ot=
-her
-> > > > processes can't write to them anymore. This might allow unprivilege=
-d
-> > > > users to prevent root from updating config files or stuff like that=
- if
-> > > > they're updated in-place.
-> > >
-> > > Yes, I agree, but since it is the case for executed files I though it
-> > > was worth starting a discussion on this topic.  This new flag could b=
-e
-> > > restricted to executable files, but we should avoid system-wide locks
-> > > like this.  I'm not sure how Windows handle these issues though.
-> > >
-> > > Anyway, we should rely on the access control policy to control write =
-and
-> > > execute access in a consistent way (e.g. write-xor-execute).  Thanks =
-for
-> > > the references and the background!
-> >
-> > I'm confused.  I understand that there are many contexts in which one
-> > would want to prevent execution of unapproved content, which might
-> > include preventing a given process from modifying some code and then
-> > executing it.
-> >
-> > I don't understand what these deny-write features have to do with it.
-> > These features merely prevent someone from modifying code *that is
-> > currently in use*, which is not at all the same thing as preventing
-> > modifying code that might get executed -- one can often modify
-> > contents *before* executing those contents.
->
-> The order of checks would be:
-> 1. open script with O_DENY_WRITE
-> 2. check executability with AT_EXECVE_CHECK
-> 3. read the content and interpret it
-
-Hmm.  Common LSM configurations should be able to handle this without
-deny write, I think.  If you don't want a program to be able to make
-their own scripts, then don't allow AT_EXECVE_CHECK to succeed on a
-script that the program can write.
-
-Keep in mind that trying to lock this down too hard is pointless for
-users who are allowed to to ptrace-write to their own processes.  Or
-for users who can do JIT, or for users who can run a REPL, etc.
-
-> > But maybe a less kludgy version could be used for real.  What if there
-> > was a syscall that would take an fd and make a snapshot of the file?
->
-> Yes, that would be a clean solution.  I don't think this is achievable
-> in an efficient way without involving filesystem implementations though.
-
-It wouldn't be so terrible to involve filesystem implementations.
-Most of the filesystems that people who care at all about security run
-their binaries from either support reflinks or are immutable.  Things
-like OCI implementations may already fit meet those criteria, and it
-would be pretty nifty if the kernel was actually aware that OCI layers
-are intended to be immutable.  We could even have an API to
-generically query the hash of an immutable file and to ask the kernel
-if it's validating the hash on reads.
+T24gOC8yMC8yNSAyMzoxMywgWmhhbmcgWWkgd3JvdGU6DQo+IEZyb206IFpoYW5nIFlpPHlpLnpo
+YW5nQGh1YXdlaS5jb20+DQo+DQo+IFRoZSBMaW51eCBrZXJuZWwgKHNpbmNlIHZlcnNpb24gNi4x
+Nykgc3VwcG9ydHMgRkFMTE9DX0ZMX1dSSVRFX1pFUk9FUyBpbg0KPiBmYWxsb2NhdGUoMikuIEFk
+ZCBzdXBwb3J0IGZvciBGQUxMT0NfRkxfV1JJVEVfWkVST0VTIHRvIHRoZSBmYWxsb2NhdGUNCj4g
+dXRpbGl0eSBieSBpbnRyb2R1Y2luZyBhIG5ldyBvcHRpb24gLXd8LS13cml0ZS16ZXJvZXMuDQo+
+DQo+IExpbms6aHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQv
+dG9ydmFsZHMvbGludXguZ2l0L2NvbW1pdC8/aWQ9Mjc4YzdkOWI1ZTBjDQo+IFNpZ25lZC1vZmYt
+Ynk6IFpoYW5nIFlpPHlpLnpoYW5nQGh1YXdlaS5jb20+DQo+IFJldmlld2VkLWJ5OiAiRGFycmlj
+ayBKLiBXb25nIjxkandvbmdAa2VybmVsLm9yZz4NCg0KTG9va3MgZ29vZC4NCg0KUmV2aWV3ZWQt
+Ynk6IENoYWl0YW55YSBLdWxrYXJuaSA8a2NoQG52aWRpYS5jb20+DQoNCi1jaw0KDQoNCg==
 
