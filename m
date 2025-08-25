@@ -1,59 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-59111-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59112-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA60BB348B6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 19:33:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B6582B34918
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 19:43:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C278B1A87AE4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 17:33:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFDD5189922E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 17:43:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA0F7303C91;
-	Mon, 25 Aug 2025 17:33:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3AE9304BBD;
+	Mon, 25 Aug 2025 17:43:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="XRqBBAV/"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="WAib8ZUd"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2D203002A2
-	for <linux-fsdevel@vger.kernel.org>; Mon, 25 Aug 2025 17:33:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2E72FF648
+	for <linux-fsdevel@vger.kernel.org>; Mon, 25 Aug 2025 17:43:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756143202; cv=none; b=XB85nEZOANjdxtCtbaGuk2YF8RHwo5hU4yhuw4bKjKB6mXyMnz7mTBTxFsGLvzzI++2Ph2V8S6yU93xzk9og3T6xxJG6WmmU9n4mrpxdTC+DXJSP5cp2YOnkekcNaz8pJWAejR6vo0Y3Vf7C7WmeHufHEzhNG80hE8ZduZi44Co=
+	t=1756143796; cv=none; b=aTblKhDVxV6LaoPLOjpm6vgPtQF6sQ2Kgrlm1AfPB5l6YHh+nGwqMDE+9D5Bbf12phmMywmQtT5FJ4V9oa/AZbD21mNxMRebrw9MM0XqumHWi/bRx5V0wN15V8HrIDJvmYRDvBaD+EnCVKlMxpvwnlhrh5Bkvgwb0COQji3P36c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756143202; c=relaxed/simple;
-	bh=0vr2oJtMb3G9ltUdxxOJ2kFN7Iff4k8eERb7aw7UCbg=;
+	s=arc-20240116; t=1756143796; c=relaxed/simple;
+	bh=Iq43Mjm3yflG12BNUZFSDcFCHr6B9+AbC0yjeQfAU50=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FHX4uIZQdpHucidXqTA7fDBmGiqEEt2zKujERIbPIRTUwYjytzPMs2OZBplD9SEr1xr6Oy1hGl4fpvYXGU1Ir2O5567OUzD/lb60z4rq2O3PfdZIggRxMHUlmuAwzKe/E7iJF1snRzpEA2DIvBZBg34OW7zrSlBmTMWm8E78+pc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=XRqBBAV/; arc=none smtp.client-ip=62.89.141.173
+	 Content-Type:Content-Disposition:In-Reply-To; b=g6Kn4u4W+sYXym47g1s8egQTshBcbVM92P2cbiD2S8poqx7TvaOjoXG5XpsLmXTKnn8u6Th/RRyuonrce9s4i7tD5gZEDkV0EQ+UgxRo7Y5jDOg7Ch+rTJB0Z+xLM7XNmbRRcj280KFYE1zusi46LEZZPeL4VZemohJYUZeX9/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=WAib8ZUd; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
 	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=5nD2XRhvABOLqAmoFTxvFyXvgoN/ThDNkpLunXijgHg=; b=XRqBBAV/+X/3o5qzuiYym2o7lR
-	qG87AXFL/n7TKC4wHETG//Unh0NHleiRlIaEd0Z2Pmj9JFS2nrP8wbJymD7ZnvewbyzqOhzVt4lc6
-	x/Y7iFb28A8zwwmsKBw4N2LYMm3lOj5b6WF9U3Wq2mOU+w9DAq4+6QaQau0E8vup8u3fl41tpiusF
-	T0vvLIiem5YonMixgA8/h1gD1Jh1NNJ3YmDyzdAK96vaJdEjdgg0Yn9Vyx1GAWUVQ6F9PdHxiOV/H
-	/dQk01bAj4dYWUTy2UWhPhXwb+trXPa0JZViRNxPiIB3Udb4Iq/8Th2HOMLsXnEgja4tbGBeNq26Y
-	cIMgvJeQ==;
+	bh=8Uq8vj6IRBTlX7NexXM5YTsSUuOKWtAmEDsAMmZyW24=; b=WAib8ZUdylwRvaZz7vQrtvnxvx
+	FSKgXA2sVvhHs32+M0hqqxCY7K0cxk8rrT1fTkRMI0ztzZ8WYUTVLoCBZkP1oNWmyY3TtdaFuZWV7
+	4eVFSpjSu9OqaeYmKAE0c0DgNB5e/0hKvl1z+ezr1Cy/SUW1ZCMa4M2JcYwi77i6u+3So/9iRDuDZ
+	BZWnTzGTylP1Y2CF/ayuPKx1L8WQNmHXH6AlDDjbIhbpbN/ljW3eiHF8z1kDKfHNL45ldyjNRSpyS
+	r0yf4cd4HFzVxKXhtF0hvLRNOyLnVUPVIyfYQ2ZkEmTeekEi6AOoUKfHOnNlEWD/ZpCla90ULfx1z
+	1X0GmuhA==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uqb4G-0000000HP3N-3D12;
-	Mon, 25 Aug 2025 17:33:16 +0000
-Date: Mon, 25 Aug 2025 18:33:16 +0100
+	id 1uqbDs-0000000HXeu-0dHv;
+	Mon, 25 Aug 2025 17:43:12 +0000
+Date: Mon, 25 Aug 2025 18:43:12 +0100
 From: Al Viro <viro@zeniv.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org, jack@suse.cz
-Subject: Re: [PATCH 13/52] has_locked_children(): use guards
-Message-ID: <20250825173316.GP39973@ZenIV>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Jan Kara <jack@suse.cz>
+Subject: Re: [PATCHED][RFC][CFT] mount-related stuff
+Message-ID: <20250825174312.GQ39973@ZenIV>
 References: <20250825044046.GI39973@ZenIV>
- <20250825044355.1541941-1-viro@zeniv.linux.org.uk>
- <20250825044355.1541941-13-viro@zeniv.linux.org.uk>
- <CAHk-=wh9H_EQZ+RH6POYvZBuGESa63-cn5yJHUD0CKEH7-=htw@mail.gmail.com>
+ <20250825-glanz-qualm-bcbae4e2c683@brauner>
+ <20250825161114.GM39973@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,39 +63,38 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wh9H_EQZ+RH6POYvZBuGESa63-cn5yJHUD0CKEH7-=htw@mail.gmail.com>
+In-Reply-To: <20250825161114.GM39973@ZenIV>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Mon, Aug 25, 2025 at 07:54:45AM -0400, Linus Torvalds wrote:
-> [ diff edited to be just the end result ]
+On Mon, Aug 25, 2025 at 05:11:14PM +0100, Al Viro wrote:
+> On Mon, Aug 25, 2025 at 02:43:43PM +0200, Christian Brauner wrote:
+> > On Mon, Aug 25, 2025 at 05:40:46AM +0100, Al Viro wrote:
+> > > 	Most of this pile is basically an attempt to see how well do
+> > > cleanup.h-style mechanisms apply in mount handling.  That stuff lives in
+> > > git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #work.mount
+> > > Rebased to -rc3 (used to be a bit past -rc2, branched at mount fixes merge)
+> > > Individual patches in followups.
+> > > 
+> > > 	Please, help with review and testing.  It seems to survive the
+> > > local beating and code generation seems to be OK, but more testing
+> > > would be a good thing and I would really like to see comments on that
+> > > stuff.
+> > 
+> > Btw, I just realized that basically none of your commits have any lore
+> > links in them. That kinda sucks because I very very often just look at a
+> > commit and then use the link to jump to the mailing list discussion for
+> > more context about a change and how it came about.
+> > 
+> > So pretty please can you start adding lore links to your commits when
+> > applying if it's not fucking up your workflow too much?
 > 
-> On Mon, 25 Aug 2025 at 00:44, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> >  bool has_locked_children(struct mount *mnt, struct dentry *dentry)
-> >  {
-> > +       scoped_guard(mount_locked_reader)
-> > +               return __has_locked_children(mnt, dentry);
-> >  }
-> 
-> So the use of scoped_guard() looks a bit odd to me. Why create a new
-> scope for when the existing scope is identical? It would seem to be
-> more straightforward to just do
-> 
->         guard(mount_locked_reader);
->         return __has_locked_children(mnt, dentry);
-> 
-> instead. Was there some code generation issue or other thing that made
-> you go the 'scoped' way?
-> 
-> There was at least one other patch that did the same pattern (but I
-> haven't gone through the whole series, maybe there are explanations
-> later).
+> Links to what, at the first posting?  Confused...
 
-TBH, the main reason is that my mental model for that is
-	with_lock: lock -> m X -> m X
-pardon the pseudo-Haskell.  IOW, "wrap that sequence of operations into
-this lock".
-
-Oh, well - I can live with open-ended scope in a function that small and
-that unlikely to grow more stuff in it...
+I mean, this _is_ what I hope would be a discussion of that stuff -
+that's what request for comments stands for, after all.  How is that
+supposed to work?  Going back through the queue and slapping lore links
+at the same time as the reviewed-by etc. are applied?  I honestly have
+no idea what practice do you have in mind - ~95% of the time I'm sitting
+in nvi - it serves as IDE for me; mutt takes a large part of the rest.
+Browser is something that gets used occasionally when I have to...
 
