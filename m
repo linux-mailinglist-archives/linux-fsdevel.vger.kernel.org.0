@@ -1,93 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-58981-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58982-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C08DB33A9F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 11:21:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 12632B33AA8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 11:22:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EBC0189B2AC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 09:20:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C4FF1B25092
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 09:21:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 849B92C325D;
-	Mon, 25 Aug 2025 09:18:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D29AC2D0C7F;
+	Mon, 25 Aug 2025 09:19:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="wjT/BKRE"
+	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="kvn0mNy8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AF2518A6A7;
-	Mon, 25 Aug 2025 09:18:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA5572BDC09;
+	Mon, 25 Aug 2025 09:19:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756113493; cv=none; b=e0XXV71kK+jeSoeksdfVGk7GWrmA++P7eUj2rViONOk0EYrPqa1x8Sl89YlpKtXTqPyrbiypV8RwJeCPZFGEFWMYtxYbZMCySeF2xVbt64Z4n1GX4cx738OzlqLAD1A/g2cfuhFzfxUL8RiGlLF4m9wWmFjgDjb/i5mvxEZxp5Y=
+	t=1756113574; cv=none; b=AWRozJCCE6e1W6hhuDgISlZbCe34gkMmdVkct6yZg8EbFnVAwx8ilnTV+/V9oGOon2S/Lm/nfPhKc0G1mvZTjU/hIEZJFv+2H6harB0e3uzOwKwlVIVXxPajqL3EAnYUDg9u49IEwmukhpynvyxsxNx6wHwZ9FfCrSgxeClAzSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756113493; c=relaxed/simple;
-	bh=To7rvQS/35zwdvmVsuLT5NfWZqD2i2awmA4Z7+dYjRw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wb9rOXatc4J+od2RZgvCDTaEtaEFbKNtXJVly2VP1yqf6C+yN/MdFVQrB02uzoxZiKEGg1t+8D3ibWKVAI1tJ5sOkeDduwmkaF4WPAJX95f9HQuGU9jSVHlQbi77JXm/+BKf6hT5Qfm7GgvL7yazFY0i94UQhLfIzcKrzuLEDiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=wjT/BKRE; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=lCCdn0p0Ho8wzROROBqLi0hCMHBjqeHYc8dPEbtNq0A=; b=wjT/BKRENwVqwtrN70AommMDDX
-	WCjjIOzXCd/sY743jhuzFcudIdsS/443u52QaqWPmSFcLhirZr/NFhfg7b4gCMRm9+hK+fLT0Wv9X
-	jJK3qTxj9V4Pko3MQd0fm+4ufseyiB4HsBXBUJTcXrZiBGRqPSFChk1KyolzJLmk3vMWhR3TuHMjx
-	sw/iIyoE7wn39iFhA4NWbwqr5mnvzDA59sAzv5elQx/BSY2q2X7H2i8sFYT46aowNzHH04NhjPMun
-	y1a0DFmFk3PnMp4uL5iKjC+AeNul7IaAczwcsRaW0sxYRBnxriKo1qE2zPWh9xzDyWihp/BdDNq+q
-	ZLVQupfw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uqTL7-00000007TGP-3ogv;
-	Mon, 25 Aug 2025 09:18:09 +0000
-Date: Mon, 25 Aug 2025 02:18:09 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, rajeevm@hpe.com,
-	yukuai3@huawei.com, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, yi.zhang@huawei.com,
-	yangerkun@huawei.com, johnny.chenyi@huawei.com,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] loop: fix zero sized loop for block special file
-Message-ID: <aKwqUVmX-yH6_lZy@infradead.org>
-References: <20250825062300.2485281-1-yukuai1@huaweicloud.com>
- <aKwlVypJuBtPH_EL@fedora>
+	s=arc-20240116; t=1756113574; c=relaxed/simple;
+	bh=uE5mnGbZRWRnWNvy0/RvSU78B/PHJkLHIRBN7Zor5uk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=oWDWUmBoAsExT5mW0R9bC7dEwgyj405057X5to8ImJJUjc34c0i5eRdjWlybxFcWt6fEDAilBtXM7CugW+osaN/zlMzcuYgVUdfGuBJv84Gahi8RPrac6+RSNjU00XyowAyHbeBO86NUNuoW8GVw0CEcQlBl6OHeR3kda8F/aJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be; spf=pass smtp.mailfrom=krisman.be; dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b=kvn0mNy8; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=krisman.be
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B731B4336C;
+	Mon, 25 Aug 2025 09:19:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=gm1;
+	t=1756113562;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lcaET94D0CtmDnUPywhTcMXStXKKCVgM0X4nxaZ9MJw=;
+	b=kvn0mNy86keWTKP/Rk8EaZBoeKIKIc1WapBgvwGKBauW8HY1h9d6ZzRgqU/E/XWqDyV7/T
+	oznP4I0cHh0t2ykC3/KUx5r2Vvu4tb8TFJLhoowPCBPAdy1OMN1I/SQTrE207lcyqjajud
+	ovVGKoiwxI8CPg0ASC3InzlzJ0pAo1ZH8ck+V24l+4jbLeCUXICMCAvyNb5Ndb9LTfxDKC
+	K4qhZizUWgaiF9ZdazKB5kPCG5ZyBgRVVR8DpGWSr//H+apo029saQfQuF197+4L04wGqA
+	qh+tlLpyeN3YQ33Wk5il2gMOogeOL+Zl7VfSzswpXhjprh/edHZ3PYFdX0j9YA==
+From: Gabriel Krisman Bertazi <gabriel@krisman.be>
+To: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>,  Amir Goldstein
+ <amir73il@gmail.com>,  Theodore Tso <tytso@mit.edu>,
+  linux-unionfs@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-fsdevel@vger.kernel.org,  Alexander Viro <viro@zeniv.linux.org.uk>,
+  Christian Brauner <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,
+  kernel-dev@igalia.com
+Subject: Re: [PATCH v6 1/9] fs: Create sb_encoding() helper
+In-Reply-To: <20250822-tonyk-overlayfs-v6-1-8b6e9e604fa2@igalia.com>
+ (=?utf-8?Q?=22Andr=C3=A9?=
+	Almeida"'s message of "Fri, 22 Aug 2025 11:17:04 -0300")
+References: <20250822-tonyk-overlayfs-v6-0-8b6e9e604fa2@igalia.com>
+	<20250822-tonyk-overlayfs-v6-1-8b6e9e604fa2@igalia.com>
+Date: Mon, 25 Aug 2025 05:19:19 -0400
+Message-ID: <87ikib69ns.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aKwlVypJuBtPH_EL@fedora>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddujedvtdduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufgjfhffkfgfgggtgfesthhqredttderjeenucfhrhhomhepifgrsghrihgvlhcumfhrihhsmhgrnhcuuegvrhhtrgiiihcuoehgrggsrhhivghlsehkrhhishhmrghnrdgsvgeqnecuggftrfgrthhtvghrnhepfedtvdehffevtddujeffffejudeuuefgvdeujeduhedtgfehkeefheegjefgueeknecukfhppeejtddrkedvrddukedvrdeikeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeejtddrkedvrddukedvrdeikedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepghgrsghrihgvlheskhhrihhsmhgrnhdrsggvpdhnsggprhgtphhtthhopeduuddprhgtphhtthhopegrnhgurhgvrghlmhgvihgusehighgrlhhirgdrtghomhdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtoheprghmihhrjeefihhlsehgmhgrihhlrdgtohhmpdhrtghpthhtohepthihthhsohesmhhithdrvgguuhdprhgtphhtthhopehlihhnuhigqdhunhhiohhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvr
+ hhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhk
+X-GND-Sasl: gabriel@krisman.be
 
-On Mon, Aug 25, 2025 at 04:56:55PM +0800, Ming Lei wrote:
-> `stat $BDEV_PATH` never works for getting bdev size, so it looks wrong
-> to call vfs_getattr_nosec() with bdev path for retrieving bdev's size.
+Andr=C3=A9 Almeida <andrealmeid@igalia.com> writes:
 
-Exactly.
+> Filesystems that need to deal with the super block encoding need to use
+> a if IS_ENABLED(CONFIG_UNICODE) around it because this struct member is
+> not declared otherwise. In order to move this if/endif guards outside of
+> the filesytem code and make it simpler, create a new function that
+> returns the s_encoding member of struct super_block if Unicode is
+> enabled, and return NULL otherwise.
+>
+> Suggested-by: Amir Goldstein <amir73il@gmail.com>
+> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
 
-> So just wondering why not take the following more readable way?
-> 
-> 	/* vfs_getattr() never works for retrieving bdev size */
-> 	if (S_ISBLK(stat.mode)) {
-> 		loopsize = i_size_read(file->f_mapping->host);
-> 	} else {
->           ret = vfs_getattr_nosec(&file->f_path, &stat, STATX_SIZE, 0);
->           if (ret)
->                   return 0;
->           loopsize = stat.size;
-> 	}
-> 
-> Also the above looks like how application reads file size in case of bdev
-> involved.
+Reviewed-by: Gabriel Krisman Bertazi <gabriel@krisman.be>
 
-That's not just more readable, but simply the way to go.  Maybe split
-it into a helper for readability, though.
+> ---
+>  include/linux/fs.h | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
+>
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index e1d4fef5c181d291a7c685e5897b2c018df439ae..a4d353a871b094b562a87ddcf=
+fe8336a26c5a3e2 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -3733,15 +3733,20 @@ static inline bool generic_ci_validate_strict_nam=
+e(struct inode *dir, struct qst
+>  }
+>  #endif
+>=20=20
+> -static inline bool sb_has_encoding(const struct super_block *sb)
+> +static inline struct unicode_map *sb_encoding(const struct super_block *=
+sb)
+>  {
+>  #if IS_ENABLED(CONFIG_UNICODE)
+> -	return !!sb->s_encoding;
+> +	return sb->s_encoding;
+>  #else
+> -	return false;
+> +	return NULL;
+>  #endif
+>  }
+>=20=20
+> +static inline bool sb_has_encoding(const struct super_block *sb)
+> +{
+> +	return !!sb_encoding(sb);
+> +}
+> +
+>  int may_setattr(struct mnt_idmap *idmap, struct inode *inode,
+>  		unsigned int ia_valid);
+>  int setattr_prepare(struct mnt_idmap *, struct dentry *, struct iattr *);
+
+--=20
+Gabriel Krisman Bertazi
 
