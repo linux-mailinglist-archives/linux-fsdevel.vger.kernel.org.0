@@ -1,212 +1,186 @@
-Return-Path: <linux-fsdevel+bounces-58956-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-58957-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CB24B33616
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 07:58:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2851BB3369A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 08:42:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D3B91B211F1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 05:58:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CB8816370E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Aug 2025 06:41:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B16E27A129;
-	Mon, 25 Aug 2025 05:58:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B80D6283FF5;
+	Mon, 25 Aug 2025 06:41:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GC5ISAKY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="avXwxJgI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30BB31F5619;
-	Mon, 25 Aug 2025 05:58:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 996BE1991CA;
+	Mon, 25 Aug 2025 06:41:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756101498; cv=none; b=k7wbomAZucuQT51rTO1qHGuF9FbfWexPfTqdNzVH32OqXf9QSh4oZEwyIN95dGt+Jhcnvvp4Whq3OrIIbXcS49+lDzqG9Mxh8FM4bwXu76QptVVqM9YiLFv0qBGc2vwhytKv20YZ3pCQwFgO37oETeFoB3oap+kzcZs7T4OvpPc=
+	t=1756104067; cv=none; b=tuD8MK2bkO8Vf+Gwwa7F1/ZDdPHB01YeMvxbgJdgkzYYFQBSJpZQj/IdbHGsxb/V4Y7A+z9hrhpc690Nu6EqX/uSQ4S+pH/0QFdkG6rodIHw6vDewiUhBTi10tYiaqONqKQcIPLkK+Y1SRzoCAzHDNIFYCz8INmsNU7afXNjC2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756101498; c=relaxed/simple;
-	bh=BXcUrDaM8Vpm5YcaAJv3oAER9sxm2uCM0g8H5RxShg0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ww3ZqxRn16k1Bi2xJeMpodUnKHA4uV/lVhpzO6irhzfo7ojPZX1BdiuTbJLg7Y0BN/FZPBTNSV/sTE6NlhGAVnFPswLhrVVaJZNlM6KOS+AVcyp4opQ6nDnN3Kp+s/8MYDxrkzycy/DTdlDFxiWHl17eBvvopG1L9Ewh5x/kJL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GC5ISAKY; arc=none smtp.client-ip=209.85.208.54
+	s=arc-20240116; t=1756104067; c=relaxed/simple;
+	bh=f4+we2HTNhFFijjPWHsHlUjC05tFGguR5UUIbT1FAuU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=GTNH9153oA3SJN+GdfU2EjuDtthWwre3UlLT3KHe0SM88neoHQwHcpEmTUYwKs7pb6361R4cfoZfBErC60R7Uii5yw2dVIS59riuvAE/Wsnsc2GixsZpLOVq0R6OJtC96lkA5wAmMBk1WingNJxqZVN+yTNRLJLhJEyGXBkckkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=avXwxJgI; arc=none smtp.client-ip=209.85.214.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-61c30ceacdcso2859289a12.1;
-        Sun, 24 Aug 2025 22:58:15 -0700 (PDT)
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2445827be70so38070525ad.3;
+        Sun, 24 Aug 2025 23:41:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756101494; x=1756706294; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1756104065; x=1756708865; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MA8LV5qkpLnwKPRqJhtAhmyH3VxK3FEWXEtgKtIE5CU=;
-        b=GC5ISAKYI3AeLh8vmC0dmc28qP49oCSXbUgNCKUSZ4lkcrjSD5bCTt7/TE8/sOS1+d
-         BwHXFzqsgCCKHjQuSSqLuvsZJDgjkBou51UMRWJo1aadAmfu3ITe30JJTurFdECppl9g
-         NYQGkg+2Fr5Y9jrGbJKSQJAO8dpswuyk6+JNAHbRocmho/YfgPC+xOixGn/MmMKBaEpD
-         pMn8FB0j91LqcfqWU73nUmIpFgvq223F/amVYh6DY45tdDQJQdE+lzfXeHB8+fAKtOZ5
-         p0qJKqtOSA+OEjUJrwiHNJJ9ei+LRC0tVGk1c6+VxYVr9MT4BsS/vIIIHDUhG0yesjXx
-         0x/w==
+        bh=k4m65ejtCDovPoHidIgWHyNXPlswLso6n72FHLjtbnE=;
+        b=avXwxJgIesp4+HwSFX/eod8Dz1ygPGzwQ5ju0EHfdQpCXqs4IKkS18MdxjGyJRRpqN
+         6S/iykIGJNm3ddyB8utXvInFzcUNyzeos2282fCsWQusUysTrBUpW+2iTJMi5bn15GKM
+         YzVIvuY59pxYCrOBmWjhmrZGGmYZ0GpZVLwy6t6GwdwkIBeMZilxqJJIys0Ixi0hBawE
+         aGVlMwYHbyMMvQr/vTD11Z+HHHPOPuPz0Q7nFY/R1D/A1xIvD4LGlIPsUy4GQ0hELpIS
+         VCxGrn3eC3Jtx83TfMPx0mZOE0h66OQVkKeKHc6VuXfMTNqDy/cTI4Fl36JcfaJ+SOk3
+         jU3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756101494; x=1756706294;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1756104065; x=1756708865;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=MA8LV5qkpLnwKPRqJhtAhmyH3VxK3FEWXEtgKtIE5CU=;
-        b=iJ0PXuZtAGcccC9kyVpWxVJpgd11/QBWeujyq2hkF7m7Aa09EECuEgtKCuBSCJvoN8
-         UZ7YZjWIZJ31X0sUFZ38wRdP3Ftx9bF9qxyHUiDbPSfwVieChvwQEEzz2rU16XNgVA6T
-         7FRuU9WK6E4IYpTlT5YL825NMVuhWipahGzwifhYrDhwKjG6e/yUS4ESVAdbdbaGUyEi
-         psV47KfMWFqm5StINuHv8u+7tjyULPs72ml8ITiO3qpQMezPv0DRF8ICictwQW0ioB5T
-         zD5WIlwInLgBm3R+4bY48GLT3o7p2JfyT7zoD95fQ0U5r6D/L5BDkrdiPh2WGsK4qw2e
-         IcYw==
-X-Forwarded-Encrypted: i=1; AJvYcCU0cvZTWTqlpQ14dsMt/TvJ7bV/i+vTAcrQsaVwXyr7K8j8M272elN1rxnrU1TquP0kDkGfIumWSbM=@vger.kernel.org, AJvYcCVZMn1cSrXo/IBio2GbOQjKAcLomlai+gnnRBlV8SJ9InOMpQHbb3F7HzVe6LoFa0SZtUmp5CLcGbp4isNmEA==@vger.kernel.org, AJvYcCVh0XIcxbGzOG8AVAhermgQWklLoo1h0KFugLMYk/5oXxfAiZD1/5c/m93i0NLU+5NnzxEJ4FkmSQ/4YdJC@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1AVNTVkBryLNZwGzXja6fd9Q2UcP87BYl4vPhNAHbgGBW8iQc
-	UbRXYYRa7sZypKcGmrAynzEylT4L2TeXbbmh8/Cg44LSVwzoEMh/AA77XrXByoUpUPkVzBnWTnD
-	4mn7DfCIGy0HdLq6QTqZrEpsJX6eVzGbFW5+U0Ls=
-X-Gm-Gg: ASbGnctpqz+3uzJ9Z5GZPUXWCRVHRXqSK2X4PfCpQNXwmB8GzDaoa7bN3b4ATwY0f1p
-	zmhA5Tecnml525z3Dy5KPHpTtb8m5Cmf67ReNnqdCn4j+F9ZrxszTLqHkAlWizqfdK84Hk6mzyv
-	K77rUS3C/DSJcKjU617i65kO+2uHe+/c6aTGJxjXBUv4uYlBZuW1DHQu1LFCEyW345TrCwSveML
-	4GbkFw=
-X-Google-Smtp-Source: AGHT+IH1AuDcZ7oKwTGe3soJrH0kmydiJxV4W5SbB3BHcvtWa929sL7oOJDOnzaAvtFeO9t7uGk/hIJYvstkWFoQzg4=
-X-Received: by 2002:a05:6402:3594:b0:613:5257:6cad with SMTP id
- 4fb4d7f45d1cf-61c1afd3368mr9440210a12.11.1756101494297; Sun, 24 Aug 2025
- 22:58:14 -0700 (PDT)
+        bh=k4m65ejtCDovPoHidIgWHyNXPlswLso6n72FHLjtbnE=;
+        b=vup7Vg9VOwN/i7aN5ebmS8rv4mZA1M3AA9hRFaHOiR5QFH0N37hOT3RFqT2zJngQBR
+         HAVOFepJXUGODN75AU89qjx3D1FGrMEQ6MMaRby7mR+47M7l3fZtmIt8cCc/wwOrYAYK
+         6FP/4KRfKFHOqatAV6OPQHt6kTOeYdCs6vUbM2kCJgTZFXtEcpKKfwxS9/uBAWD3XyMT
+         OAylZEQtc8ulOnnpTrvLzfelz7UKaFIFqbtOuj/6F7IdluffrBshAL+/JgQdS+yxi+C6
+         bELUnOn9+f3vqlwx/srTf6sZqzMINwLVgQVYKUa2QQBwclGsa0peq1wJiZp2MQ5uF7tU
+         loGA==
+X-Forwarded-Encrypted: i=1; AJvYcCU+FgKhJYajzKA4RCTSFosgJP7XZRywEAxu7vJpXHICn7VKNKa/hEoGV4/4sD5tdTFPjwzHrQpm0V19@vger.kernel.org, AJvYcCUKtAcxyxxz7eNoqH3ekCSXhYzuu5C41BxafTY2w40wQo8zIeb874bce3DDWzt4VgVI4hgOrFdQOo4qPRDG@vger.kernel.org, AJvYcCVK4KFOSLY+IroMtyZgYv1ej/NtkNRgO7T5wxH2csAcjZgGZQlcAC06BkPp2aqoPyRAXGavVub9cHpe2eZq@vger.kernel.org
+X-Gm-Message-State: AOJu0YyH+zraUhKbFp83O56NTbKZpNH72tVohRZba/h4Wokjp0EaNXy+
+	pzA4IoMwM1R7VLMNYMUSy+oO/QL1AVIEEQoj0poJwCmHMkmWkgCW0BfH
+X-Gm-Gg: ASbGnctVp96P/tHNI6sLsPVKbbbOn9qJl8Tym8KjmLWTQUwIAIr2VaX15iGcfF0rgT1
+	9VxALfmcsaBpV1GAxCbNPhUNVa2q+tILPUcTyWKRIy4M8+CTorSV2sR9BQpgq0H08A5QNBc0sUY
+	Z8WpmivP8M7vHjXTWRtlUKDwV3X5dlmfmDvQeMLBQ+Ql78umwcd/aTLk1b9P6GkcFqTvbqF66G2
+	Gdo5N3cZvT6Y3WQMraRNNa9obQD8evFBf9Od4WznpPDRDzZxO1UGMV2BU+QTKLUtC9k1LSVUr3i
+	dUuQRYsvpbOOT+gnKEe4f+3gTT6C3jS8BMPAa4RO6n2OYWjE+Em3wkbhvx0ml0ZdebDOQXOF9CO
+	E54IYwU6+dK/j3gMuemfhWbwFkxEA7d4RcnQ=
+X-Google-Smtp-Source: AGHT+IG1ceuvN7wur9FsFeOfamUuDJB3YryOpBkyURPVy+g5OzKZbgY8S3iwpcr9uOIFgcngcwSvvA==
+X-Received: by 2002:a17:902:c404:b0:246:464d:1194 with SMTP id d9443c01a7336-246464d13f7mr165867755ad.2.1756104064665;
+        Sun, 24 Aug 2025 23:41:04 -0700 (PDT)
+Received: from VM-16-24-fedora.. ([43.153.32.141])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-246688c1440sm58675635ad.167.2025.08.24.23.41.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 24 Aug 2025 23:41:04 -0700 (PDT)
+From: Jinliang Zheng <alexjlzheng@gmail.com>
+X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
+To: alexjlzheng@gmail.com
+Cc: alexjlzheng@tencent.com,
+	brauner@kernel.org,
+	djwong@kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	yi.zhang@huawei.com,
+	hch@infradead.org
+Subject: Re: [PATCH v3 0/4] allow partial folio write with iomap_folio_state
+Date: Mon, 25 Aug 2025 14:41:02 +0800
+Message-ID: <20250825064102.2786548-1-alexjlzheng@tencent.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250812091538.2004295-1-alexjlzheng@tencent.com>
+References: <20250812091538.2004295-1-alexjlzheng@tencent.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250824221055.86110-1-rdunlap@infradead.org> <aKuedOXEIapocQ8l@casper.infradead.org>
- <9b2c8fe2-cf17-445b-abd7-a1ed44812a73@infradead.org>
-In-Reply-To: <9b2c8fe2-cf17-445b-abd7-a1ed44812a73@infradead.org>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 25 Aug 2025 07:58:02 +0200
-X-Gm-Features: Ac12FXy-XGV5AjtO-eZ_IexXne5nftjy5F_iHheYbB1l8u7dNSeTWbeUT7Wzcac
-Message-ID: <CAOQ4uxiShq5gPCsRh5ZDNXbG4AGH5XpfHx0HXDWTS+5Y95hieQ@mail.gmail.com>
-Subject: Re: [PATCH] uapi/fcntl: conditionally define AT_RENAME* macros
-To: Randy Dunlap <rdunlap@infradead.org>, Aleksa Sarai <cyphar@cyphar.com>
-Cc: Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org, 
-	Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
-	Alexander Aring <alex.aring@gmail.com>, Josef Bacik <josef@toxicpanda.com>, Jan Kara <jack@suse.cz>, 
-	Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-api@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 25, 2025 at 1:54=E2=80=AFAM Randy Dunlap <rdunlap@infradead.org=
-> wrote:
->
->
->
-> On 8/24/25 4:21 PM, Matthew Wilcox wrote:
-> > On Sun, Aug 24, 2025 at 03:10:55PM -0700, Randy Dunlap wrote:
-> >> Don't define the AT_RENAME_* macros when __USE_GNU is defined since
-> >> /usr/include/stdio.h defines them in that case (i.e. when _GNU_SOURCE
-> >> is defined, which causes __USE_GNU to be defined).
-> >>
-> >> Having them defined in 2 places causes build warnings (duplicate
-> >> definitions) in both samples/watch_queue/watch_test.c and
-> >> samples/vfs/test-statx.c.
-> >
-> > It does?  What flags?
-> >
->
-> for samples/vfs/test-statx.c:
->
-> In file included from ../samples/vfs/test-statx.c:23:
-> usr/include/linux/fcntl.h:159:9: warning: =E2=80=98AT_RENAME_NOREPLACE=E2=
-=80=99 redefined
->   159 | #define AT_RENAME_NOREPLACE     0x0001
-> In file included from ../samples/vfs/test-statx.c:13:
-> /usr/include/stdio.h:171:10: note: this is the location of the previous d=
-efinition
->   171 | # define AT_RENAME_NOREPLACE RENAME_NOREPLACE
-> usr/include/linux/fcntl.h:160:9: warning: =E2=80=98AT_RENAME_EXCHANGE=E2=
-=80=99 redefined
->   160 | #define AT_RENAME_EXCHANGE      0x0002
-> /usr/include/stdio.h:173:10: note: this is the location of the previous d=
-efinition
->   173 | # define AT_RENAME_EXCHANGE RENAME_EXCHANGE
-> usr/include/linux/fcntl.h:161:9: warning: =E2=80=98AT_RENAME_WHITEOUT=E2=
-=80=99 redefined
->   161 | #define AT_RENAME_WHITEOUT      0x0004
-> /usr/include/stdio.h:175:10: note: this is the location of the previous d=
-efinition
->   175 | # define AT_RENAME_WHITEOUT RENAME_WHITEOUT
->
-> for samples/watch_queue/watch_test.c:
->
-> In file included from usr/include/linux/watch_queue.h:6,
->                  from ../samples/watch_queue/watch_test.c:19:
-> usr/include/linux/fcntl.h:159:9: warning: =E2=80=98AT_RENAME_NOREPLACE=E2=
-=80=99 redefined
->   159 | #define AT_RENAME_NOREPLACE     0x0001
-> In file included from ../samples/watch_queue/watch_test.c:11:
-> /usr/include/stdio.h:171:10: note: this is the location of the previous d=
-efinition
->   171 | # define AT_RENAME_NOREPLACE RENAME_NOREPLACE
-> usr/include/linux/fcntl.h:160:9: warning: =E2=80=98AT_RENAME_EXCHANGE=E2=
-=80=99 redefined
->   160 | #define AT_RENAME_EXCHANGE      0x0002
-> /usr/include/stdio.h:173:10: note: this is the location of the previous d=
-efinition
->   173 | # define AT_RENAME_EXCHANGE RENAME_EXCHANGE
-> usr/include/linux/fcntl.h:161:9: warning: =E2=80=98AT_RENAME_WHITEOUT=E2=
-=80=99 redefined
->   161 | #define AT_RENAME_WHITEOUT      0x0004
-> /usr/include/stdio.h:175:10: note: this is the location of the previous d=
-efinition
->   175 | # define AT_RENAME_WHITEOUT RENAME_WHITEOUT
->
->
-> > #define AT_RENAME_NOREPLACE     0x0001
-> > #define AT_RENAME_NOREPLACE     0x0001
-> >
-> > int main(void)
-> > {
-> >       return AT_RENAME_NOREPLACE;
-> > }
-> >
-> > gcc -W -Wall testA.c -o testA
-> >
-> > (no warnings)
-> >
-> > I'm pretty sure C says that duplicate definitions are fine as long
-> > as they're identical.
-> The vales are identical but the strings are not identical.
->
-> We can't fix stdio.h, but we could just change uapi/linux/fcntl.h
-> to match stdio.h. I suppose.
+On Tue, 12 Aug 2025 17:15:34 +0800, Jinliang Zheng wrote:
+> From: Jinliang Zheng <alexjlzheng@tencent.com>
+> 
+> With iomap_folio_state, we can identify uptodate states at the block
+> level, and a read_folio reading can correctly handle partially
+> uptodate folios.
+> 
+> Therefore, when a partial write occurs, accept the block-aligned
+> partial write instead of rejecting the entire write.
+> 
+> For example, suppose a folio is 2MB, blocksize is 4kB, and the copied
+> bytes are 2MB-3kB.
+> 
+> Without this patchset, we'd need to recopy from the beginning of the
+> folio in the next iteration, which means 2MB-3kB of bytes is copy
+> duplicately.
+> 
+>  |<-------------------- 2MB -------------------->|
+>  +-------+-------+-------+-------+-------+-------+
+>  | block |  ...  | block | block |  ...  | block | folio
+>  +-------+-------+-------+-------+-------+-------+
+>  |<-4kB->|
+> 
+>  |<--------------- copied 2MB-3kB --------->|       first time copied
+>  |<-------- 1MB -------->|                          next time we need copy (chunk /= 2)
+>                          |<-------- 1MB -------->|  next next time we need copy.
+> 
+>  |<------ 2MB-3kB bytes duplicate copy ---->|
+> 
+> With this patchset, we can accept 2MB-4kB of bytes, which is block-aligned.
+> This means we only need to process the remaining 4kB in the next iteration,
+> which means there's only 1kB we need to copy duplicately.
+> 
+>  |<-------------------- 2MB -------------------->|
+>  +-------+-------+-------+-------+-------+-------+
+>  | block |  ...  | block | block |  ...  | block | folio
+>  +-------+-------+-------+-------+-------+-------+
+>  |<-4kB->|
+> 
+>  |<--------------- copied 2MB-3kB --------->|       first time copied
+>                                          |<-4kB->|  next time we need copy
+> 
+>                                          |<>|
+>                               only 1kB bytes duplicate copy
+> 
+> Although partial writes are inherently a relatively unusual situation and do
+> not account for a large proportion of performance testing, the optimization
+> here still makes sense in large-scale data centers.
+> 
+> This patchset has been tested by xfstests' generic and xfs group, and
+> there's no new failed cases compared to the lastest upstream version kernel.
 
-I do not specifically object to a patch like this (assuming that is works?)=
-:
+Sorry forgot to cc Christoph Hellwig :)
 
---- a/include/uapi/linux/fcntl.h
-+++ b/include/uapi/linux/fcntl.h
-@@ -156,9 +156,9 @@
-  */
+thanks,
+Jinliang Zheng
 
- /* Flags for renameat2(2) (must match legacy RENAME_* flags). */
--#define AT_RENAME_NOREPLACE    0x0001
--#define AT_RENAME_EXCHANGE     0x0002
--#define AT_RENAME_WHITEOUT     0x0004
-+#define AT_RENAME_NOREPLACE    RENAME_NOREPLACE
-+#define AT_RENAME_EXCHANGE     RENAME_EXCHANGE
-+#define AT_RENAME_WHITEOUT     RENAME_WHITEOUT
-
-
-But to be clear, this is a regression introduced by glibc that is likely
-to break many other builds, not only the kernel samples
-and even if we fix linux uapi to conform to its downstream
-copy of definitions, it won't help those users whose programs
-build was broken until they install kernel headers, so feels like you
-should report this regression to glibc and they'd better not "fix" the
-regression by copying the current definition string as that may change as p=
-er
-the patch above.
-
-Why would a library copy definitions from kernel uapi without
-wrapping them with #ifndef or #undef?
-
-Thanks,
-Amir.
+> 
+> Changelog:
+> 
+> V3: patch[1]: use WARN_ON() instead of BUG_ON()
+>     patch[2]: make commit message clear
+>     patch[3]: -
+>     patch[4]: make commit message clear
+> 
+> V2: https://lore.kernel.org/linux-fsdevel/20250810101554.257060-1-alexjlzheng@tencent.com/ 
+>     use & instead of % for 64 bit variable on m68k/xtensa, try to make them happy:
+>        m68k-linux-ld: fs/iomap/buffered-io.o: in function `iomap_adjust_read_range':
+>     >> buffered-io.c:(.text+0xa8a): undefined reference to `__moddi3'
+>     >> m68k-linux-ld: buffered-io.c:(.text+0xaa8): undefined reference to `__moddi3'
+> 
+> V1: https://lore.kernel.org/linux-fsdevel/20250810044806.3433783-1-alexjlzheng@tencent.com/
+> 
+> Jinliang Zheng (4):
+>   iomap: make sure iomap_adjust_read_range() are aligned with block_size
+>   iomap: move iter revert case out of the unwritten branch
+>   iomap: make iomap_write_end() return the number of written length
+>     again
+>   iomap: don't abandon the whole copy when we have iomap_folio_state
+> 
+>  fs/iomap/buffered-io.c | 68 +++++++++++++++++++++++++++++-------------
+>  1 file changed, 47 insertions(+), 21 deletions(-)
+> 
+> -- 
+> 2.49.0
 
