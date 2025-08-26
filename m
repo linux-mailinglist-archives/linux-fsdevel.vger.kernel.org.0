@@ -1,147 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-59302-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59298-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D12D6B37150
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 19:26:07 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD218B370D1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 19:00:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C90B98E3134
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 17:26:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A27344E1150
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 17:00:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B54A2E7F21;
-	Tue, 26 Aug 2025 17:25:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C625B2E1751;
+	Tue, 26 Aug 2025 17:00:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GL3EkfL8"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="dGy2awW1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F08C2E7645;
-	Tue, 26 Aug 2025 17:25:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43ADA2E1C6B
+	for <linux-fsdevel@vger.kernel.org>; Tue, 26 Aug 2025 17:00:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756229155; cv=none; b=VBuVcOMLN0mbUcQdgZOA4Q16QYLNUun+82FBsjsb9wYa7gByACb7fzcBtha/daydyDWJXvxr2GCsPTMcF9nbp+VxZhZtkMNTLw47ztiuTvJJDTuZGdOozimCZ0d4XfBiHxN28taXs43H8ErW8MoW4LfCBLN+Ns1y9bB+HUn/jR4=
+	t=1756227649; cv=none; b=p6dGibi0YPa0eKRKZVhhnt+3I7thq8T2R6G69KvaOGE1xJzBrZFN0NktPJh8NQnvKUiGM7YiisajymuSfYztHhwqcJsqI04A5ybaxf9OCnqX4IiaXPL5TlyaVxJXXmpVIBhXRdX4dpMm5q82Bwnh28+FnW84BzmpKqoSRDiJG5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756229155; c=relaxed/simple;
-	bh=mfizfHDWKSGlozkc4tLuwDndi6x0KhMxNlC41A3u0sU=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
-	 MIME-version:Content-type; b=mJIju3+XS2wPqQtjtDBoHqAKIl1lUK1Lh0FbW32ZwHpa3VXrR7Axx+atzYe3ojeWEIeiOqitTcUyMtP+a/pD8897XlgwzH3jeShYDQNinn/VnO+OL03Pv/i0mMyUMxOt7SjbzNZDidfOKlIzIOqeDZSkuQybr/htMgaqkG/rK1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GL3EkfL8; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2467de5160eso29206395ad.0;
-        Tue, 26 Aug 2025 10:25:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756229153; x=1756833953; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:message-id:date
-         :in-reply-to:subject:cc:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uLw9Uoz6Tbt81Fl6ED1MMbaPVoc6YtscpFiSGvOkBd4=;
-        b=GL3EkfL87O/A7OlKgXmRLmBfz6wD6dtuPg6MbFwmNFycQ2jmHOKThl+4ao3AfsXKhu
-         LrrU29aaDN0y69sxowFP5Q9XUYzo4nQdsqyIMsOexj5YrSIvpNHOP3fxGUyFWsMG+5fm
-         rk/AzzrVUKdVDoAzwYvsFzys0TM2hXlPg5vfMfUTMvMfHmZig57QKzn46O0FwRKeECQH
-         lXlBPGx+1rTXHPKHItQTAn4vlumyL/yzQCYQmw1pQj7KW2UEnJX+WWXZYEvqq0OQTIQe
-         iHzZ0m9ICyn3IDX8PRbTYTF+yh1e+wCXi3p3t+DUw7MJ6m0mvQpNJAJB0Ndeq3pl4yo2
-         rGsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756229154; x=1756833954;
-        h=content-transfer-encoding:mime-version:references:message-id:date
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uLw9Uoz6Tbt81Fl6ED1MMbaPVoc6YtscpFiSGvOkBd4=;
-        b=rsq/8B07CYfQefiws1fhvvWa9A70WIGDaSp0xMyxj7scsCWHhPW3PwTgru6M/7Ulkt
-         lTFSmY+FaIgFGXhiq3D++M0UcSS4UdTTcc7jmHBKFe5A8Q0TP0zGDXAtWfw535/snq/n
-         ZC404nIORaYCwDyFOBxXF0NwmstEaserOIJ6n710QBnxH5rHQFO7Gm0jO5XtYTGE7Y0M
-         hRGDHlhQ9bl7su+j2cg1bKIRR8c29FLU5YIqpiGyyFSh0MbxcnkWi1FFtR2axFODNyJP
-         6GQ9l2Ulwbh+vIV/PoQZfGeYk0l6UfnoWOOdgQuxDYTIm11ytKdCNmmtrS9skKkW9oqY
-         k/8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV+ZM+For/+DPnQ0IUUHp6rtKwist7rptKd7tslXkJNC9MlJpx7MT6r/idxHeFpKjvz+rC28lxWSHy2Iw==@vger.kernel.org, AJvYcCXaUBl3ayjtWPzu5t8VtOppjOsJy/pDZZNFDJw/+O3gjoraOMzwzVhJZYBGGQo5YUmbaFzrWQRxdc8m@vger.kernel.org, AJvYcCXooQwE96Ohbs8klubjhl7b4FvZT6cyoUz0oDONmAWF0cPhsW+w0RL9qGtNZBzTEG/MF9ZJ5F12BSv3cFxUyQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqyxBfcyKNJLy/2aDnZxNqwxaZ511AKuUo7i9LPXwY/SlN9VTi
-	JTZdlkpCDPOUwtikeEah7EqHyzGebORLoYGlFUMERh3Or0SKUQT4bRza
-X-Gm-Gg: ASbGncsKgPJu9kJzOyk1sisklf78GQHY75C6ljPGfBR2vafV/5iOczze1Vn0IkWxlTR
-	0wGoYC96HDVb3gkfXWStDeGJRFXIZz8fdsYhAsBFwP7cFIb1Kt0+Caa7g8r3cve0mnEFfSuOYtL
-	2Qv99Buovj+fNSIO+oUY1h92ZvikRMNB9VkfyIkVxWC6T+Ja9wcfMT+FmCWht6VMrpfzC85pDeF
-	ec0+NIHBnSRR8gk3xY/Pb1AeZdMwUKaakx988EOgw0mjpGNto1Ne5h5aNsP0y8A2Hrgy39sfAv6
-	Le3XrfK/YN90Ewb0VS8CNWzBO7841uCl0M0IjoGX58ZZMU6V+CGTea4WYB4QvDzHeAP5LXpP9sG
-	FDvJZMKPOhdsGnVH+oXPWTQxs
-X-Google-Smtp-Source: AGHT+IEWgBRM0v2G+FcafZmJl/omfs0Uh0JKNPlp/i5SCyYCxuFG2i32PH0SvPbcdPMPohfb3MIzow==
-X-Received: by 2002:a17:902:e788:b0:246:80ef:87fc with SMTP id d9443c01a7336-24680ef8bc7mr154253345ad.45.1756229153495;
-        Tue, 26 Aug 2025 10:25:53 -0700 (PDT)
-Received: from dw-tp ([171.76.82.15])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32745bbff33sm1024685a91.9.2025.08.26.10.25.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Aug 2025 10:25:52 -0700 (PDT)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: Fengnan Chang <changfengnan@bytedance.com>, 
-Cc: Matthew Wilcox <willy@infradead.org>, "Darrick J. Wong" <djwong@kernel.org>, brauner@kernel.org, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH] iomap: allow iomap using the per-cpu bio cache
-In-Reply-To: <CAPFOzZvBvHWHUwNLnH+Ss90OMdu91oZsSD0D7_ncjVh0pF29rQ@mail.gmail.com>
-Date: Tue, 26 Aug 2025 22:23:05 +0530
-Message-ID: <878qj6qb2m.fsf@gmail.com>
-References: <20250822082606.66375-1-changfengnan@bytedance.com> <20250822150550.GP7942@frogsfrogsfrogs> <aKiP966iRv5gEBwm@casper.infradead.org> <877byv9w6z.fsf@gmail.com> <aKif_644529sRXhN@casper.infradead.org> <874ityad1d.fsf@gmail.com> <CAPFOzZufTPCT_56-7LCc6oGHYiaPixix30yFNEsiFfN1s9ySMQ@mail.gmail.com> <aKwq_QoiEvtK89vY@infradead.org> <CAPFOzZvBvHWHUwNLnH+Ss90OMdu91oZsSD0D7_ncjVh0pF29rQ@mail.gmail.com>
+	s=arc-20240116; t=1756227649; c=relaxed/simple;
+	bh=CZoT3WwYG8/WatQvcMIuac5Eho2eM/0lU6Bz3kN1luo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eqq0eetgL0WuH/OJzQDL6On3Pg4iUKJ+BO2yozOeSg8M3C1FxW27jtwUQhfSh0iVKmn/EQ1GeKUr5uhiKI338DxEbiLkslN18VUB137QNRzm9yX8teuIdm8UctgOwaeQfoL89q7la/7oK5UeARksNcpO1731NQrjDEEKGBOIo04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=dGy2awW1; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ryOu/ScWQW2Fh/AKwjl9NL1eGXjISkuFw7vMk0OR+QY=; b=dGy2awW1nd/vKJ1cZbsWhNmdLb
+	PBpNy+C/ma3Rmj/ekbux3uFmnjtqF/bhPmTCeAaUHnB9uBmNXFKQ4j1N+EM2xmRt4/+RG+e0XtHE8
+	gt5sPewXAXYMu/0FY05huwgubFL4OX4O/Gq+sOs0nqh1/0QpkcI5YclRz826qi6TQasATDHQ0NlD3
+	VvDwsBWyaR353Udax+OzLN/zgl4tnSf8vSwLATTt4OaQ6c2VKWC76Feqd3xq+Ue0sWnVMlrUz+pwX
+	nrThbxR7PugsKQb9HrjuFrSOI1yU6Mm08lX6X7M/vLW3ApBZ7ZtnT7QEEm9Yz8CRTowxalJjMtMIF
+	BpDWgBKg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uqx2K-00000002nJ6-1WGS;
+	Tue, 26 Aug 2025 17:00:44 +0000
+Date: Tue, 26 Aug 2025 18:00:44 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, jack@suse.cz,
+	torvalds@linux-foundation.org
+Subject: Re: [PATCH 25/52] do_new_mount_rc(): use __free() to deal with
+ dropping mnt on failure
+Message-ID: <20250826170044.GT39973@ZenIV>
+References: <20250825044046.GI39973@ZenIV>
+ <20250825044355.1541941-1-viro@zeniv.linux.org.uk>
+ <20250825044355.1541941-25-viro@zeniv.linux.org.uk>
+ <20250825-zugute-verkohlen-945073b3851f@brauner>
+ <20250825160939.GL39973@ZenIV>
+ <20250826-kronleuchter-vortag-af3c087ae46a@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-version: 1.0
-Content-type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250826-kronleuchter-vortag-af3c087ae46a@brauner>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Fengnan Chang <changfengnan@bytedance.com> writes:
+On Tue, Aug 26, 2025 at 10:27:56AM +0200, Christian Brauner wrote:
 
-> Christoph Hellwig <hch@infradead.org> 于2025年8月25日周一 17:21写道：
->>
->> On Mon, Aug 25, 2025 at 04:51:27PM +0800, Fengnan Chang wrote:
->> > No restrictions for now, I think we can enable this by default.
->> > Maybe better solution is modify in bio.c?  Let me do some test first.
+> > Declaring it above, initializing with NULL and reassigning here?
+> > That's actually just as wrong, if not more so - any assignment added
+> 
+> I disagree. I do very much prefer having cleanups at the top of the
+> function or e.g.,:
+> 
+> if (foo) {
+> 	struct vfsmount *mnt __free(mntput) = vfs_create_mount(fc);
+> }
+> 
+> Because it is really easy to figure out visually. But just doing it
+> somewhere in the middle is just confusing.
 
-If there are other implications to consider, for using per-cpu bio cache
-by default, then maybe we can first get the optimizations for iomap in
-for at least REQ_ALLOC_CACHE users and later work on to see if this
-can be enabled by default for other users too.
-Unless someone else thinks otherwise.
+So basically you treat __free() simply as a syntax sugar for "call this
+on exits from this block", rather than an approximation for "here's an
+auto object we've created, this should be called to destroy it at the
+end of its scope/lifetime"?
 
-Why I am thinking this is - due to limited per-cpu bio cache if everyone
-uses it for their bio submission, we may not get the best performance
-where needed. So that might require us to come up with a different
-approach.
+IMO it's a bad practice - it makes life much harder when you are tracing
+callchains, etc.
 
->>
->> Any kind of numbers you see where this makes a different, including
->> the workloads would also be very valuable here.
-> I'm test random direct read performance on  io_uring+ext4, and try
-> compare to io_uring+ raw blkdev,  io_uring+ext4 is quite poor, I'm try to
-> improve this, I found ext4 is quite different with blkdev when run
-> bio_alloc_bioset. It's beacuse blkdev ext4  use percpu bio cache, but ext4
-> path not. So I make this modify.
+FWIW, I wonder if the things would be cleaner if we did security_sb_kern_mount()
+and mount_too_revealing() *after* unlocking the superblock and getting a vfsmount.
+The latter definitely doesn't give a damn about superblock being locked and
+AFAICS neither does the only in-tree instance of ->sb_kern_mount().
+That way we have the real initialization reasonably close to __free() and
+control flow is easier to follow...
 
-I am assuming you meant to say - DIO with iouring+raw_blkdev uses
-per-cpu bio cache where as iouring+(ext4/xfs) does not use it.
-Hence you added this patch which will enable the use of it - which
-should also improve the performance of iouring+(ext4/xfs). 
+Folks, how about something like the delta below (on top of the posted queue)?
 
-That make sense to me. 
-
-> My test command is:
-> /fio/t/io_uring -p0 -d128 -b4096 -s1 -c1 -F1 -B1 -R1 -X1 -n1 -P1 -t0
-> /data01/testfile
-> Without this patch:
-> BW is 1950MB
-> with this patch
-> BW is 2001MB.
-
-Ok. That's around 2.6% improvement.. Is that what you were expecting to
-see too? Is that because you were testing with -p0 (non-polled I/O)? 
-
-Looking at the numbers here [1] & [2], I was hoping this could give
-maybe around 5-6% improvement ;) 
-
-[1]: https://lore.kernel.org/io-uring/cover.1666347703.git.asml.silence@gmail.com/
-[2]: https://lore.kernel.org/all/20220806152004.382170-3-axboe@kernel.dk/
-
-
--ritesh
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 63b74d7384fd..191e7f776de5 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -3689,24 +3689,22 @@ static bool mount_too_revealing(const struct super_block *sb, int *new_mnt_flags
+ static int do_new_mount_fc(struct fs_context *fc, const struct path *mountpoint,
+ 			   unsigned int mnt_flags)
+ {
++	struct vfsmount *mnt __free(mntput) = NULL;
+ 	struct super_block *sb = fc->root->d_sb;
+ 	int error;
+ 
+-	error = security_sb_kern_mount(sb);
+-	if (!error && mount_too_revealing(sb, &mnt_flags))
+-		error = -EPERM;
+-
+-	if (unlikely(error)) {
+-		fc_drop_locked(fc);
+-		return error;
+-	}
+-
+ 	up_write(&sb->s_umount);
+-
+-	struct vfsmount *mnt __free(mntput) = vfs_create_mount(fc);
++	mnt = vfs_create_mount(fc);
+ 	if (IS_ERR(mnt))
+ 		return PTR_ERR(mnt);
+ 
++	error = security_sb_kern_mount(sb);
++	if (unlikely(error))
++		return error;
++
++	if (mount_too_revealing(sb, &mnt_flags))
++		return -EPERM;
++
+ 	mnt_warn_timestamp_expiry(mountpoint, mnt);
+ 
+ 	LOCK_MOUNT(mp, mountpoint);
 
