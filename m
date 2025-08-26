@@ -1,142 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-59298-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59299-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD218B370D1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 19:00:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40D2BB370D6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 19:01:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A27344E1150
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 17:00:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E9D27AC2EF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 17:00:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C625B2E1751;
-	Tue, 26 Aug 2025 17:00:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E39852E1723;
+	Tue, 26 Aug 2025 17:01:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="dGy2awW1"
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="GstRLxvS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43ADA2E1C6B
-	for <linux-fsdevel@vger.kernel.org>; Tue, 26 Aug 2025 17:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756227649; cv=none; b=p6dGibi0YPa0eKRKZVhhnt+3I7thq8T2R6G69KvaOGE1xJzBrZFN0NktPJh8NQnvKUiGM7YiisajymuSfYztHhwqcJsqI04A5ybaxf9OCnqX4IiaXPL5TlyaVxJXXmpVIBhXRdX4dpMm5q82Bwnh28+FnW84BzmpKqoSRDiJG5c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756227649; c=relaxed/simple;
-	bh=CZoT3WwYG8/WatQvcMIuac5Eho2eM/0lU6Bz3kN1luo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eqq0eetgL0WuH/OJzQDL6On3Pg4iUKJ+BO2yozOeSg8M3C1FxW27jtwUQhfSh0iVKmn/EQ1GeKUr5uhiKI338DxEbiLkslN18VUB137QNRzm9yX8teuIdm8UctgOwaeQfoL89q7la/7oK5UeARksNcpO1731NQrjDEEKGBOIo04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=dGy2awW1; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ryOu/ScWQW2Fh/AKwjl9NL1eGXjISkuFw7vMk0OR+QY=; b=dGy2awW1nd/vKJ1cZbsWhNmdLb
-	PBpNy+C/ma3Rmj/ekbux3uFmnjtqF/bhPmTCeAaUHnB9uBmNXFKQ4j1N+EM2xmRt4/+RG+e0XtHE8
-	gt5sPewXAXYMu/0FY05huwgubFL4OX4O/Gq+sOs0nqh1/0QpkcI5YclRz826qi6TQasATDHQ0NlD3
-	VvDwsBWyaR353Udax+OzLN/zgl4tnSf8vSwLATTt4OaQ6c2VKWC76Feqd3xq+Ue0sWnVMlrUz+pwX
-	nrThbxR7PugsKQb9HrjuFrSOI1yU6Mm08lX6X7M/vLW3ApBZ7ZtnT7QEEm9Yz8CRTowxalJjMtMIF
-	BpDWgBKg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uqx2K-00000002nJ6-1WGS;
-	Tue, 26 Aug 2025 17:00:44 +0000
-Date: Tue, 26 Aug 2025 18:00:44 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, jack@suse.cz,
-	torvalds@linux-foundation.org
-Subject: Re: [PATCH 25/52] do_new_mount_rc(): use __free() to deal with
- dropping mnt on failure
-Message-ID: <20250826170044.GT39973@ZenIV>
-References: <20250825044046.GI39973@ZenIV>
- <20250825044355.1541941-1-viro@zeniv.linux.org.uk>
- <20250825044355.1541941-25-viro@zeniv.linux.org.uk>
- <20250825-zugute-verkohlen-945073b3851f@brauner>
- <20250825160939.GL39973@ZenIV>
- <20250826-kronleuchter-vortag-af3c087ae46a@brauner>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4127431A571;
+	Tue, 26 Aug 2025 17:01:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756227690; cv=pass; b=rwOOjG5/Nv2DMvyuq/mKPVpfeUBVrH34eXUKij4eiAlWZURRuP4pdX3DKfM8R4RQsi5OH03EMx44s/bdDlXjOH27A/+jmv9RH7l7rBWRdfsfBeFrOJ0EgqVb8opI9XC5WlP+VKxZQh3QBbJ9aU11mrHhe1YCdkyk9YK6zMTM2Es=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756227690; c=relaxed/simple;
+	bh=qH5jOpgeZOJzHJ5EzIlKig8EB3gQxdUMoHTfIV696J4=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=GT/Pt4Aqvc5lPRLGOs4zIeUpVELiwTheqkEXVzxsr2oV0A3vRiWx/2hCm+wkElzY5aE0VFJ0UuvDLb4rfUE7R1pvT9nijL+brVqzQ0IEuzycLupfpwkh5d9NBedO7yyZflL9qQAqW2KJbtz+ZAWcmxvyw1/TQyiucFuINt1Rn8c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=GstRLxvS; arc=pass smtp.client-ip=136.143.188.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1756227657; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=daJchgAZ1QUXGPzDpUdL3YCjgAfa9irW8dfqDDT83Th96HETmTx96K5TNI61Wy1q76b1oI03/v7kCBB44QeQ/GNjgOZ8LDne26DuoqBmDuKK4GY+olKKgrnp5lL+eDbcw9/QFElHtNwFjG3HcEkcAh66Dbi9r3fRC4ceS8t+aeQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1756227657; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=KDeMMywmvB9WAI4x+qiH6MX7k6fDsjpvKR+qsOi22yI=; 
+	b=kfOv0Pl7VS8LnQTC/X7j1RHPY2PNoo43WTbNeyclknn6klZQH+LbxaHbmwkqV4+di1v6J5z89DlhJ5GbbcxF9SYEcvH6OLyAEoH5PwnucZ9M8zzk3rNr4pmU5mFYwXCQh52aV8hTW3LWw36hT9vu8CxPiOBOofA49/vk1WPV8/E=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
+	dmarc=pass header.from=<safinaskar@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756227657;
+	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=KDeMMywmvB9WAI4x+qiH6MX7k6fDsjpvKR+qsOi22yI=;
+	b=GstRLxvSxSRbHzmo1YjZI+tGHJw7RfL/H1G2eJwem6HdlsJRVPTHlNZEhfK4y0Sg
+	yxSLh61SStKb+jf4BGJTuCrpleVhFZq3bqDCOuHSjmfhwg5lQNi0wqZKOio/t93pBa8
+	QMLVbVwV0Kh6OaZcIRMHW0RV8/J4Hur+T+hSVuwE=
+Received: from mail.zoho.com by mx.zohomail.com
+	with SMTP id 1756227655220931.7736108771608; Tue, 26 Aug 2025 10:00:55 -0700 (PDT)
+Received: from  [212.73.77.104] by mail.zoho.com
+	with HTTP;Tue, 26 Aug 2025 10:00:55 -0700 (PDT)
+Date: Tue, 26 Aug 2025 21:00:55 +0400
+From: Askar Safin <safinaskar@zohomail.com>
+To: "Byron Stanoszek" <gandalf@winds.org>
+Cc: "Christoph Hellwig" <hch@lst.de>, "gregkh" <gregkh@linuxfoundation.org>,
+	"julian.stecklina" <julian.stecklina@cyberus-technology.de>,
+	"linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel" <linux-kernel@vger.kernel.org>,
+	"rafael" <rafael@kernel.org>,
+	"torvalds" <torvalds@linux-foundation.org>,
+	"viro" <viro@zeniv.linux.org.uk>,
+	"Gao Xiang" <hsiangkao@linux.alibaba.com>,
+	=?UTF-8?Q?=22Thomas_Wei=C3=9Fschuh=22?= <thomas.weissschuh@linutronix.de>
+Message-ID: <198e7535627.e16dd6a239997.462747272790524454@zohomail.com>
+In-Reply-To: <a54ced51-280e-cc9d-38e4-5b592dd9e77b@winds.org>
+References: <20250321050114.GC1831@lst.de> <20250825182713.2469206-1-safinaskar@zohomail.com> <20250826075910.GA22903@lst.de> <a54ced51-280e-cc9d-38e4-5b592dd9e77b@winds.org>
+Subject: Re: [PATCH] initrd: support erofs as initrd
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250826-kronleuchter-vortag-af3c087ae46a@brauner>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
+Feedback-ID: rr08011227420bae0256fdc2a2a92c7337000045cdf6963ab4ff403b055f75489c212f73dd8555d07c3fb39b:zu08011227bd7a5257bc4c91043db4a6ed00002d21e7e806c2decb5ddaad591e26ef4b9cf508a25cc78c8bb6:rf0801122b7104d5b895dd2615aca0c9660000c7bb3e850ea71c4923fe08f1ffb35d14aa7fbe385563e40f02f37d091a:ZohoMail
 
-On Tue, Aug 26, 2025 at 10:27:56AM +0200, Christian Brauner wrote:
+ ---- On Tue, 26 Aug 2025 18:21:50 +0400  Byron Stanoszek <gandalf@winds.org> wrote --- 
+ > Well, this makes me a little sad. I run several hundred embedded systems out in
+ > the world, and I use a combination of initrd and initramfs for booting. These
+ > systems operate entirely in ramdisk form.
 
-> > Declaring it above, initializing with NULL and reassigning here?
-> > That's actually just as wrong, if not more so - any assignment added
-> 
-> I disagree. I do very much prefer having cleanups at the top of the
-> function or e.g.,:
-> 
-> if (foo) {
-> 	struct vfsmount *mnt __free(mntput) = vfs_create_mount(fc);
-> }
-> 
-> Because it is really easy to figure out visually. But just doing it
-> somewhere in the middle is just confusing.
+Put your squashfs to initramfs. Then do everything as you did before.
+I. e. in your /sbin/init copy that squashfs to ramdisk (or, better, loop-mount it), etc.
 
-So basically you treat __free() simply as a syntax sugar for "call this
-on exits from this block", rather than an approximation for "here's an
-auto object we've created, this should be called to destroy it at the
-end of its scope/lifetime"?
+If I understand you correctly, this will work after removing of initrd.
 
-IMO it's a bad practice - it makes life much harder when you are tracing
-callchains, etc.
+I will not remove ramdisks. I will remove initramdisks, i. e.
+special mounting logic in kernel, which automatically loads and mounts
+ramdisk at boot.
 
-FWIW, I wonder if the things would be cleaner if we did security_sb_kern_mount()
-and mount_too_revealing() *after* unlocking the superblock and getting a vfsmount.
-The latter definitely doesn't give a damn about superblock being locked and
-AFAICS neither does the only in-tree instance of ->sb_kern_mount().
-That way we have the real initialization reasonably close to __free() and
-control flow is easier to follow...
+-- 
+Askar Safin
+https://types.pl/@safinaskar
 
-Folks, how about something like the delta below (on top of the posted queue)?
-
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 63b74d7384fd..191e7f776de5 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -3689,24 +3689,22 @@ static bool mount_too_revealing(const struct super_block *sb, int *new_mnt_flags
- static int do_new_mount_fc(struct fs_context *fc, const struct path *mountpoint,
- 			   unsigned int mnt_flags)
- {
-+	struct vfsmount *mnt __free(mntput) = NULL;
- 	struct super_block *sb = fc->root->d_sb;
- 	int error;
- 
--	error = security_sb_kern_mount(sb);
--	if (!error && mount_too_revealing(sb, &mnt_flags))
--		error = -EPERM;
--
--	if (unlikely(error)) {
--		fc_drop_locked(fc);
--		return error;
--	}
--
- 	up_write(&sb->s_umount);
--
--	struct vfsmount *mnt __free(mntput) = vfs_create_mount(fc);
-+	mnt = vfs_create_mount(fc);
- 	if (IS_ERR(mnt))
- 		return PTR_ERR(mnt);
- 
-+	error = security_sb_kern_mount(sb);
-+	if (unlikely(error))
-+		return error;
-+
-+	if (mount_too_revealing(sb, &mnt_flags))
-+		return -EPERM;
-+
- 	mnt_warn_timestamp_expiry(mountpoint, mnt);
- 
- 	LOCK_MOUNT(mp, mountpoint);
 
