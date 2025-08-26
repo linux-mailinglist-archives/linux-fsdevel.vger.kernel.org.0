@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-59187-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59190-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71420B35D68
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 13:44:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE860B35DE8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 13:49:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0139846143C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 11:35:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7F7F7C6DE8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 11:48:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5218E342CB5;
-	Tue, 26 Aug 2025 11:33:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D6D8635C;
+	Tue, 26 Aug 2025 11:48:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Z2HnDyil"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="mKXP9Nzg"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A229A33439A;
-	Tue, 26 Aug 2025 11:33:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B53A284B5B;
+	Tue, 26 Aug 2025 11:48:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756208032; cv=none; b=orvRHnDGfQpfhBXrwFuKAH8CG2IUfVMZZExy4630sVhS0YBAl5cmxgsJ004HPCNqywoot6+2uWbn67v/OClNb8Xo0MaN6Dgb5nBk5ZBPF08cnSuttDIcdQx0hvsU34J4o+eArEx6FxQtIlTG3lGjZk6A7kmhc1uAfVPoibzwT/Y=
+	t=1756208919; cv=none; b=ouLs+/g8/GR1q25xelaCrYjx6HaX35VezDqkRRXvO0Ln4IGTrg6UM5ialjY72vnOicwsYcwiQmgRFr7ISw79xQ9JEdU+3EM+koMYey2yBQZm/kRGu9qsCcYsXht67hjzztZjIH4/dvUeDjmtXBaDIW+GIZnU8Gp4BVSpYkjJU7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756208032; c=relaxed/simple;
-	bh=FKqOrWnliYqiV8I14JogT9Wes6Hb+XGv+pTySbx8IRQ=;
+	s=arc-20240116; t=1756208919; c=relaxed/simple;
+	bh=mgqUr5FCm8v0m8VuC5jqd29L3rQZyqOXb9+OdcGn2K0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tYFvl+yyJwdBSnBBl2aLV1Mrg6v2/CudoXJJWYQNvsgng/ebra0GA06IE1TEDiyM3sGjcwGcFeMdk9nb1cHVtLD20oKkrZJHNPNtRbdtjWP1U5sQN4Oq0CaFSPluaheI+SXfCOQlJXyOwm8t5Fhg40mhB3ppUmOx1onyTMwp18k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Z2HnDyil; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21829C113CF;
-	Tue, 26 Aug 2025 11:33:51 +0000 (UTC)
+	 MIME-Version; b=QFc8tKH/KfxsFHXqR3f8RXAqhz5Og8DZJUBkSsQg5NcuRlUcsYh67I9UbpUMYN+DzmJ8RXl191HxG8Yz2XpOQbPbQyJfoXWgLg+f/psFMP506Rjo2z/8gMwbR9Y4lloMmDt9I3ISeqwzQIMRPu3DFVLCBzJGpa079QqWcP7LyYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=mKXP9Nzg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D2BDC4CEF1;
+	Tue, 26 Aug 2025 11:48:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1756208032;
-	bh=FKqOrWnliYqiV8I14JogT9Wes6Hb+XGv+pTySbx8IRQ=;
+	s=korg; t=1756208918;
+	bh=mgqUr5FCm8v0m8VuC5jqd29L3rQZyqOXb9+OdcGn2K0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Z2HnDyilHzZ4NXCba41vO/+cGSqOX7xvgJUi0QLTkAk5Z3UwDu2r6PcaAlWClHn7I
-	 /0SZTeLAR+9zBlV+dJEShz14DKiFJdVsGHbBk38W9zqWqhrSUw4xlpivd8qZozDySl
-	 zE0jzO5tFTqp/BE4QLxsQdQv5pk9vv0JfQkmloCM=
+	b=mKXP9NzgaGuS1r/EodzUTtOI9qyZec79gJfUwk273T82I+V7I23VoCaQccB0nRkES
+	 SjPE6qo/1mblaWXDko7EaaxY8dMi7Z1yzZvzWoZEYl/dR2ZNQ0sDsOVF7SiUH9NA5n
+	 d2HyPOR4dw91ud23ADfzaRBoEoCfnrIPz5uQNL6M=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -49,12 +49,12 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-fsdevel@vger.kernel.org,
 	Steve French <stfrench@microsoft.com>,
 	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.16 410/457] cifs: Fix oops due to uninitialised variable
-Date: Tue, 26 Aug 2025 13:11:34 +0200
-Message-ID: <20250826110947.427266640@linuxfoundation.org>
+Subject: [PATCH 6.12 295/322] cifs: Fix oops due to uninitialised variable
+Date: Tue, 26 Aug 2025 13:11:50 +0200
+Message-ID: <20250826110923.186345837@linuxfoundation.org>
 X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250826110937.289866482@linuxfoundation.org>
-References: <20250826110937.289866482@linuxfoundation.org>
+In-Reply-To: <20250826110915.169062587@linuxfoundation.org>
+References: <20250826110915.169062587@linuxfoundation.org>
 User-Agent: quilt/0.68
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -66,7 +66,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-6.16-stable review patch.  If anyone has any objections, please let me know.
+6.12-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
@@ -92,10 +92,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
-index 4bb065a6fbaa..d3e09b10dea4 100644
+index 4bababee965a..ab911a967246 100644
 --- a/fs/smb/client/smb2ops.c
 +++ b/fs/smb/client/smb2ops.c
-@@ -4496,7 +4496,7 @@ smb3_init_transform_rq(struct TCP_Server_Info *server, int num_rqst,
+@@ -4522,7 +4522,7 @@ smb3_init_transform_rq(struct TCP_Server_Info *server, int num_rqst,
  	for (int i = 1; i < num_rqst; i++) {
  		struct smb_rqst *old = &old_rq[i - 1];
  		struct smb_rqst *new = &new_rq[i];
