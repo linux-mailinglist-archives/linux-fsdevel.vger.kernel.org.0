@@ -1,62 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-59185-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59210-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3430B35B6C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 13:24:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB311B362FB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 15:24:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D696361819
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 11:20:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEB1A1BC34BB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 13:20:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCB1C34A30A;
-	Tue, 26 Aug 2025 11:18:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F4573090E1;
+	Tue, 26 Aug 2025 13:18:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="AdFVZWzb"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="FMGOU/k8"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25173346A07;
-	Tue, 26 Aug 2025 11:18:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773972BE032;
+	Tue, 26 Aug 2025 13:18:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756207096; cv=none; b=baABdjtWfanX/8bkVKkIHBaOEWtBJSEtwBF330BCGZP4No0qs4jwfOqAHIesoDh3NhePSV+jxVvG+FFRe/XyFaE8Fnw9mcEKn5wOqpAeZGVcFttTxwhXuzOfdSKVQOhHf58CiD6J2H7376qpU9SET1nnAvtWi1ZZVgPWZLJgrcw=
+	t=1756214289; cv=none; b=lHO81l3VD474hpOKkRDkca+NJWdHHUJiDcWFAqOB+YVNbVfMWIEbBHludSvFqaE1cWsFQW2gbRF5o5+UgM7oEMtgW3RT17JAfmW/K5arkjwlJmtrvU+T8Z9mycoJZFQoOst3NOBsI7DeL/+QgTXIuG1IxoslC8TgLSBIfebxqEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756207096; c=relaxed/simple;
-	bh=Y7AwznA5BMvQAxHYM2NsSWm1PH3p4s+aHTL24ME0qOs=;
+	s=arc-20240116; t=1756214289; c=relaxed/simple;
+	bh=8vUfsncA2Prbj07JZlBfVlLY2BpNT72vfyek/iU6Weo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ui3ERWmM6BKL8j4KfqXFWAW97n2KmsiyJ4Q7GwUwSRkbTWUUYv7teSidLOIDzCQi62r5oTAh95Da6GsaW0978ovCuTF6KTZFz9ZLDeJ/BEHcVTSZuygTNQjHAxIeQ38oGGJw0OoYTtVC6piXZtLTaR6IGYrDsOGg5TIgzELCHjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=AdFVZWzb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B3E3C113CF;
-	Tue, 26 Aug 2025 11:18:15 +0000 (UTC)
+	 MIME-Version; b=gadM+bXj3qHhyB8cgDy0oCerNzmc5wwzOaavKFh4WekzgltGzLUxKwRL764hOWGBNCkDAZxV5S4ONBDc4W18I2OjXDgpAHMOw1WYI13ztKgQrx3mmlzjHvfHs5oJiSOgYpjyiQlVdhSHjpUMUww17FdWeuaPrVN08b463UYa6l0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=FMGOU/k8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04E05C4CEF1;
+	Tue, 26 Aug 2025 13:18:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1756207096;
-	bh=Y7AwznA5BMvQAxHYM2NsSWm1PH3p4s+aHTL24ME0qOs=;
+	s=korg; t=1756214289;
+	bh=8vUfsncA2Prbj07JZlBfVlLY2BpNT72vfyek/iU6Weo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=AdFVZWzbB3UgBrY4i6jz0ESHryU2y3rEnpCBZxXBX9EG8iAEFK4KLm3aHPmCYTQLS
-	 OKZp9MIevUY3d/bBFkHYxHCqE8mBKCwSYrtjFgIpu8TJD73lT4fzCCxNr5Y89c18Y4
-	 o29Np7H/ncqb5uy7PlbkQXcCOovuw4E2AsR3iy1Q=
+	b=FMGOU/k88obJD6RSoRHJvKnYSqy1dk5ClLVQT+4KaGwA9GRq1VTKgXgJLWaH1ssvD
+	 dB36cUX64kBLnxIBNnbiljHsG4f5LnSszd0Id5FQ9jdCpdaV7BQKsvsn5Oo2m6S1Dr
+	 WFA2IGW3k2qNkOuWpNVgR18r2//Qy/g/1cpv1DIA=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	patches@lists.linux.dev,
-	Xiaoli Feng <fengxiaoli0714@gmail.com>,
-	David Howells <dhowells@redhat.com>,
-	Paulo Alcantara <pc@manguebit.org>,
-	Steve French <sfrench@samba.org>,
-	Shyam Prasad N <sprasad@microsoft.com>,
-	netfs@lists.linux.dev,
-	linux-cifs@vger.kernel.org,
+	Wenzhi Wang <wenzhi.wang@uwaterloo.ca>,
+	Liu Shixin <liushixin2@huawei.com>,
+	Viacheslav Dubeyko <slava@dubeyko.com>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Yangtao Li <frank.li@vivo.com>,
 	linux-fsdevel@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>
-Subject: [PATCH 6.16 019/457] netfs: Fix unbuffered write error handling
-Date: Tue, 26 Aug 2025 13:05:03 +0200
-Message-ID: <20250826110937.803379923@linuxfoundation.org>
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 6.1 051/482] hfsplus: fix slab-out-of-bounds read in hfsplus_uni2asc()
+Date: Tue, 26 Aug 2025 13:05:04 +0200
+Message-ID: <20250826110932.082713492@linuxfoundation.org>
 X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250826110937.289866482@linuxfoundation.org>
-References: <20250826110937.289866482@linuxfoundation.org>
+In-Reply-To: <20250826110930.769259449@linuxfoundation.org>
+References: <20250826110930.769259449@linuxfoundation.org>
 User-Agent: quilt/0.68
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -68,168 +66,182 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-6.16-stable review patch.  If anyone has any objections, please let me know.
+6.1-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: David Howells <dhowells@redhat.com>
+From: Viacheslav Dubeyko <slava@dubeyko.com>
 
-commit a3de58b12ce074ec05b8741fa28d62ccb1070468 upstream.
+[ Upstream commit 94458781aee6045bd3d0ad4b80b02886b9e2219b ]
 
-If all the subrequests in an unbuffered write stream fail, the subrequest
-collector doesn't update the stream->transferred value and it retains its
-initial LONG_MAX value.  Unfortunately, if all active streams fail, then we
-take the smallest value of { LONG_MAX, LONG_MAX, ... } as the value to set
-in wreq->transferred - which is then returned from ->write_iter().
+The hfsplus_readdir() method is capable to crash by calling
+hfsplus_uni2asc():
 
-LONG_MAX was chosen as the initial value so that all the streams can be
-quickly assessed by taking the smallest value of all stream->transferred -
-but this only works if we've set any of them.
+[  667.121659][ T9805] ==================================================================
+[  667.122651][ T9805] BUG: KASAN: slab-out-of-bounds in hfsplus_uni2asc+0x902/0xa10
+[  667.123627][ T9805] Read of size 2 at addr ffff88802592f40c by task repro/9805
+[  667.124578][ T9805]
+[  667.124876][ T9805] CPU: 3 UID: 0 PID: 9805 Comm: repro Not tainted 6.16.0-rc3 #1 PREEMPT(full)
+[  667.124886][ T9805] Hardware name: QEMU Ubuntu 24.04 PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[  667.124890][ T9805] Call Trace:
+[  667.124893][ T9805]  <TASK>
+[  667.124896][ T9805]  dump_stack_lvl+0x10e/0x1f0
+[  667.124911][ T9805]  print_report+0xd0/0x660
+[  667.124920][ T9805]  ? __virt_addr_valid+0x81/0x610
+[  667.124928][ T9805]  ? __phys_addr+0xe8/0x180
+[  667.124934][ T9805]  ? hfsplus_uni2asc+0x902/0xa10
+[  667.124942][ T9805]  kasan_report+0xc6/0x100
+[  667.124950][ T9805]  ? hfsplus_uni2asc+0x902/0xa10
+[  667.124959][ T9805]  hfsplus_uni2asc+0x902/0xa10
+[  667.124966][ T9805]  ? hfsplus_bnode_read+0x14b/0x360
+[  667.124974][ T9805]  hfsplus_readdir+0x845/0xfc0
+[  667.124984][ T9805]  ? __pfx_hfsplus_readdir+0x10/0x10
+[  667.124994][ T9805]  ? stack_trace_save+0x8e/0xc0
+[  667.125008][ T9805]  ? iterate_dir+0x18b/0xb20
+[  667.125015][ T9805]  ? trace_lock_acquire+0x85/0xd0
+[  667.125022][ T9805]  ? lock_acquire+0x30/0x80
+[  667.125029][ T9805]  ? iterate_dir+0x18b/0xb20
+[  667.125037][ T9805]  ? down_read_killable+0x1ed/0x4c0
+[  667.125044][ T9805]  ? putname+0x154/0x1a0
+[  667.125051][ T9805]  ? __pfx_down_read_killable+0x10/0x10
+[  667.125058][ T9805]  ? apparmor_file_permission+0x239/0x3e0
+[  667.125069][ T9805]  iterate_dir+0x296/0xb20
+[  667.125076][ T9805]  __x64_sys_getdents64+0x13c/0x2c0
+[  667.125084][ T9805]  ? __pfx___x64_sys_getdents64+0x10/0x10
+[  667.125091][ T9805]  ? __x64_sys_openat+0x141/0x200
+[  667.125126][ T9805]  ? __pfx_filldir64+0x10/0x10
+[  667.125134][ T9805]  ? do_user_addr_fault+0x7fe/0x12f0
+[  667.125143][ T9805]  do_syscall_64+0xc9/0x480
+[  667.125151][ T9805]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  667.125158][ T9805] RIP: 0033:0x7fa8753b2fc9
+[  667.125164][ T9805] Code: 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 48
+[  667.125172][ T9805] RSP: 002b:00007ffe96f8e0f8 EFLAGS: 00000217 ORIG_RAX: 00000000000000d9
+[  667.125181][ T9805] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fa8753b2fc9
+[  667.125185][ T9805] RDX: 0000000000000400 RSI: 00002000000063c0 RDI: 0000000000000004
+[  667.125190][ T9805] RBP: 00007ffe96f8e110 R08: 00007ffe96f8e110 R09: 00007ffe96f8e110
+[  667.125195][ T9805] R10: 0000000000000000 R11: 0000000000000217 R12: 0000556b1e3b4260
+[  667.125199][ T9805] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+[  667.125207][ T9805]  </TASK>
+[  667.125210][ T9805]
+[  667.145632][ T9805] Allocated by task 9805:
+[  667.145991][ T9805]  kasan_save_stack+0x20/0x40
+[  667.146352][ T9805]  kasan_save_track+0x14/0x30
+[  667.146717][ T9805]  __kasan_kmalloc+0xaa/0xb0
+[  667.147065][ T9805]  __kmalloc_noprof+0x205/0x550
+[  667.147448][ T9805]  hfsplus_find_init+0x95/0x1f0
+[  667.147813][ T9805]  hfsplus_readdir+0x220/0xfc0
+[  667.148174][ T9805]  iterate_dir+0x296/0xb20
+[  667.148549][ T9805]  __x64_sys_getdents64+0x13c/0x2c0
+[  667.148937][ T9805]  do_syscall_64+0xc9/0x480
+[  667.149291][ T9805]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  667.149809][ T9805]
+[  667.150030][ T9805] The buggy address belongs to the object at ffff88802592f000
+[  667.150030][ T9805]  which belongs to the cache kmalloc-2k of size 2048
+[  667.151282][ T9805] The buggy address is located 0 bytes to the right of
+[  667.151282][ T9805]  allocated 1036-byte region [ffff88802592f000, ffff88802592f40c)
+[  667.152580][ T9805]
+[  667.152798][ T9805] The buggy address belongs to the physical page:
+[  667.153373][ T9805] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x25928
+[  667.154157][ T9805] head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+[  667.154916][ T9805] anon flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+[  667.155631][ T9805] page_type: f5(slab)
+[  667.155997][ T9805] raw: 00fff00000000040 ffff88801b442f00 0000000000000000 dead000000000001
+[  667.156770][ T9805] raw: 0000000000000000 0000000080080008 00000000f5000000 0000000000000000
+[  667.157536][ T9805] head: 00fff00000000040 ffff88801b442f00 0000000000000000 dead000000000001
+[  667.158317][ T9805] head: 0000000000000000 0000000080080008 00000000f5000000 0000000000000000
+[  667.159088][ T9805] head: 00fff00000000003 ffffea0000964a01 00000000ffffffff 00000000ffffffff
+[  667.159865][ T9805] head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000008
+[  667.160643][ T9805] page dumped because: kasan: bad access detected
+[  667.161216][ T9805] page_owner tracks the page as allocated
+[  667.161732][ T9805] page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN9
+[  667.163566][ T9805]  post_alloc_hook+0x1c0/0x230
+[  667.164003][ T9805]  get_page_from_freelist+0xdeb/0x3b30
+[  667.164503][ T9805]  __alloc_frozen_pages_noprof+0x25c/0x2460
+[  667.165040][ T9805]  alloc_pages_mpol+0x1fb/0x550
+[  667.165489][ T9805]  new_slab+0x23b/0x340
+[  667.165872][ T9805]  ___slab_alloc+0xd81/0x1960
+[  667.166313][ T9805]  __slab_alloc.isra.0+0x56/0xb0
+[  667.166767][ T9805]  __kmalloc_cache_noprof+0x255/0x3e0
+[  667.167255][ T9805]  psi_cgroup_alloc+0x52/0x2d0
+[  667.167693][ T9805]  cgroup_mkdir+0x694/0x1210
+[  667.168118][ T9805]  kernfs_iop_mkdir+0x111/0x190
+[  667.168568][ T9805]  vfs_mkdir+0x59b/0x8d0
+[  667.168956][ T9805]  do_mkdirat+0x2ed/0x3d0
+[  667.169353][ T9805]  __x64_sys_mkdir+0xef/0x140
+[  667.169784][ T9805]  do_syscall_64+0xc9/0x480
+[  667.170195][ T9805]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  667.170730][ T9805] page last free pid 1257 tgid 1257 stack trace:
+[  667.171304][ T9805]  __free_frozen_pages+0x80c/0x1250
+[  667.171770][ T9805]  vfree.part.0+0x12b/0xab0
+[  667.172182][ T9805]  delayed_vfree_work+0x93/0xd0
+[  667.172612][ T9805]  process_one_work+0x9b5/0x1b80
+[  667.173067][ T9805]  worker_thread+0x630/0xe60
+[  667.173486][ T9805]  kthread+0x3a8/0x770
+[  667.173857][ T9805]  ret_from_fork+0x517/0x6e0
+[  667.174278][ T9805]  ret_from_fork_asm+0x1a/0x30
+[  667.174703][ T9805]
+[  667.174917][ T9805] Memory state around the buggy address:
+[  667.175411][ T9805]  ffff88802592f300: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  667.176114][ T9805]  ffff88802592f380: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  667.176830][ T9805] >ffff88802592f400: 00 04 fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+[  667.177547][ T9805]                       ^
+[  667.177933][ T9805]  ffff88802592f480: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+[  667.178640][ T9805]  ffff88802592f500: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+[  667.179350][ T9805] ==================================================================
 
-Fix this by adding a flag to indicate whether the value in
-stream->transferred is valid and checking that when we integrate the
-values.  stream->transferred can then be initialised to zero.
+The hfsplus_uni2asc() method operates by struct hfsplus_unistr:
 
-This was found by running the generic/750 xfstest against cifs with
-cache=none.  It splices data to the target file.  Once (if) it has used up
-all the available scratch space, the writes start failing with ENOSPC.
-This causes ->write_iter() to fail.  However, it was returning
-wreq->transferred, i.e. LONG_MAX, rather than an error (because it thought
-the amount transferred was non-zero) and iter_file_splice_write() would
-then try to clean up that amount of pipe bufferage - leading to an oops
-when it overran.  The kernel log showed:
+struct hfsplus_unistr {
+	__be16 length;
+	hfsplus_unichr unicode[HFSPLUS_MAX_STRLEN];
+} __packed;
 
-    CIFS: VFS: Send error in write = -28
+where HFSPLUS_MAX_STRLEN is 255 bytes. The issue happens if length
+of the structure instance has value bigger than 255 (for example,
+65283). In such case, pointer on unicode buffer is going beyond of
+the allocated memory.
 
-followed by:
+The patch fixes the issue by checking the length value of
+hfsplus_unistr instance and using 255 value in the case if length
+value is bigger than HFSPLUS_MAX_STRLEN. Potential reason of such
+situation could be a corruption of Catalog File b-tree's node.
 
-    BUG: kernel NULL pointer dereference, address: 0000000000000008
-
-with:
-
-    RIP: 0010:iter_file_splice_write+0x3a4/0x520
-    do_splice+0x197/0x4e0
-
-or:
-
-    RIP: 0010:pipe_buf_release (include/linux/pipe_fs_i.h:282)
-    iter_file_splice_write (fs/splice.c:755)
-
-Also put a warning check into splice to announce if ->write_iter() returned
-that it had written more than it was asked to.
-
-Fixes: 288ace2f57c9 ("netfs: New writeback implementation")
-Reported-by: Xiaoli Feng <fengxiaoli0714@gmail.com>
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=220445
-Signed-off-by: David Howells <dhowells@redhat.com>
-Link: https://lore.kernel.org/915443.1755207950@warthog.procyon.org.uk
-cc: Paulo Alcantara <pc@manguebit.org>
-cc: Steve French <sfrench@samba.org>
-cc: Shyam Prasad N <sprasad@microsoft.com>
-cc: netfs@lists.linux.dev
-cc: linux-cifs@vger.kernel.org
+Reported-by: Wenzhi Wang <wenzhi.wang@uwaterloo.ca>
+Signed-off-by: Liu Shixin <liushixin2@huawei.com>
+Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
+cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+cc: Yangtao Li <frank.li@vivo.com>
 cc: linux-fsdevel@vger.kernel.org
-cc: stable@vger.kernel.org
-Signed-off-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Yangtao Li <frank.li@vivo.com>
+Link: https://lore.kernel.org/r/20250710230830.110500-1-slava@dubeyko.com
+Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/netfs/read_collect.c  |    4 +++-
- fs/netfs/write_collect.c |   10 ++++++++--
- fs/netfs/write_issue.c   |    4 ++--
- fs/splice.c              |    3 +++
- include/linux/netfs.h    |    1 +
- 5 files changed, 17 insertions(+), 5 deletions(-)
+ fs/hfsplus/unicode.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/fs/netfs/read_collect.c
-+++ b/fs/netfs/read_collect.c
-@@ -281,8 +281,10 @@ reassess:
- 		} else if (test_bit(NETFS_RREQ_SHORT_TRANSFER, &rreq->flags)) {
- 			notes |= MADE_PROGRESS;
- 		} else {
--			if (!stream->failed)
-+			if (!stream->failed) {
- 				stream->transferred += transferred;
-+				stream->transferred_valid = true;
-+			}
- 			if (front->transferred < front->len)
- 				set_bit(NETFS_RREQ_SHORT_TRANSFER, &rreq->flags);
- 			notes |= MADE_PROGRESS;
---- a/fs/netfs/write_collect.c
-+++ b/fs/netfs/write_collect.c
-@@ -254,6 +254,7 @@ reassess_streams:
- 			if (front->start + front->transferred > stream->collected_to) {
- 				stream->collected_to = front->start + front->transferred;
- 				stream->transferred = stream->collected_to - wreq->start;
-+				stream->transferred_valid = true;
- 				notes |= MADE_PROGRESS;
- 			}
- 			if (test_bit(NETFS_SREQ_FAILED, &front->flags)) {
-@@ -356,6 +357,7 @@ bool netfs_write_collection(struct netfs
- {
- 	struct netfs_inode *ictx = netfs_inode(wreq->inode);
- 	size_t transferred;
-+	bool transferred_valid = false;
- 	int s;
+diff --git a/fs/hfsplus/unicode.c b/fs/hfsplus/unicode.c
+index 73342c925a4b..36b6cf2a3abb 100644
+--- a/fs/hfsplus/unicode.c
++++ b/fs/hfsplus/unicode.c
+@@ -132,7 +132,14 @@ int hfsplus_uni2asc(struct super_block *sb,
  
- 	_enter("R=%x", wreq->debug_id);
-@@ -376,12 +378,16 @@ bool netfs_write_collection(struct netfs
- 			continue;
- 		if (!list_empty(&stream->subrequests))
- 			return false;
--		if (stream->transferred < transferred)
-+		if (stream->transferred_valid &&
-+		    stream->transferred < transferred) {
- 			transferred = stream->transferred;
-+			transferred_valid = true;
-+		}
- 	}
- 
- 	/* Okay, declare that all I/O is complete. */
--	wreq->transferred = transferred;
-+	if (transferred_valid)
-+		wreq->transferred = transferred;
- 	trace_netfs_rreq(wreq, netfs_rreq_trace_write_done);
- 
- 	if (wreq->io_streams[1].active &&
---- a/fs/netfs/write_issue.c
-+++ b/fs/netfs/write_issue.c
-@@ -118,12 +118,12 @@ struct netfs_io_request *netfs_create_wr
- 	wreq->io_streams[0].prepare_write	= ictx->ops->prepare_write;
- 	wreq->io_streams[0].issue_write		= ictx->ops->issue_write;
- 	wreq->io_streams[0].collected_to	= start;
--	wreq->io_streams[0].transferred		= LONG_MAX;
-+	wreq->io_streams[0].transferred		= 0;
- 
- 	wreq->io_streams[1].stream_nr		= 1;
- 	wreq->io_streams[1].source		= NETFS_WRITE_TO_CACHE;
- 	wreq->io_streams[1].collected_to	= start;
--	wreq->io_streams[1].transferred		= LONG_MAX;
-+	wreq->io_streams[1].transferred		= 0;
- 	if (fscache_resources_valid(&wreq->cache_resources)) {
- 		wreq->io_streams[1].avail	= true;
- 		wreq->io_streams[1].active	= true;
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -739,6 +739,9 @@ iter_file_splice_write(struct pipe_inode
- 		sd.pos = kiocb.ki_pos;
- 		if (ret <= 0)
- 			break;
-+		WARN_ONCE(ret > sd.total_len - left,
-+			  "Splice Exceeded! ret=%zd tot=%zu left=%zu\n",
-+			  ret, sd.total_len, left);
- 
- 		sd.num_spliced += ret;
- 		sd.total_len -= ret;
---- a/include/linux/netfs.h
-+++ b/include/linux/netfs.h
-@@ -150,6 +150,7 @@ struct netfs_io_stream {
- 	bool			active;		/* T if stream is active */
- 	bool			need_retry;	/* T if this stream needs retrying */
- 	bool			failed;		/* T if this stream failed */
-+	bool			transferred_valid; /* T is ->transferred is valid */
- };
- 
- /*
+ 	op = astr;
+ 	ip = ustr->unicode;
++
+ 	ustrlen = be16_to_cpu(ustr->length);
++	if (ustrlen > HFSPLUS_MAX_STRLEN) {
++		ustrlen = HFSPLUS_MAX_STRLEN;
++		pr_err("invalid length %u has been corrected to %d\n",
++			be16_to_cpu(ustr->length), ustrlen);
++	}
++
+ 	len = *len_p;
+ 	ce1 = NULL;
+ 	compose = !test_bit(HFSPLUS_SB_NODECOMPOSE, &HFSPLUS_SB(sb)->flags);
+-- 
+2.39.5
+
 
 
 
