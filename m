@@ -1,199 +1,183 @@
-Return-Path: <linux-fsdevel+bounces-59292-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59293-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AF1FB36F7F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 18:08:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D27EB36F97
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 18:11:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B66737C413A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 16:03:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEB0D1B61433
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 16:11:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F78277CA6;
-	Tue, 26 Aug 2025 16:03:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 254D330BB98;
+	Tue, 26 Aug 2025 16:11:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="X0fcF+Oc"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="SpCO/+5h"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2069.outbound.protection.outlook.com [40.107.96.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27130242D9A;
-	Tue, 26 Aug 2025 16:03:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756224194; cv=fail; b=hUIOHaUJisTDvmQ587G3j2q9FY/kJVimmR0c9C/2daAnVTQYS8JOZQqtnS2HqyYXhiflVwxbC9asRCu4/Ktntm3twBUpgWl6DHhBzea1dXGEnqol+Utf/7Kq0V4+75Epbi70JIRk9IxTHaRZF3lHI6MZErrbqA7NISkEFbsB+7g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756224194; c=relaxed/simple;
-	bh=duktDTK/beegoAJMxNkbC1e/pQRXCgK3sKpISky+p8s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=nzBws8jFZLzSIfeIMV6WygtCQBe1iZsU0zA4PgnFfjpwqXlA/N6FRG5/M5ULNPx7XczVwkK/Rju9rgOoaniPxERL8JT4vkNffTfbTh4+W39TPrNDXgcZyTVkafvfutCEcice1+uGc1LAkW8gBa4mVnMxhkU0td7ggLplmYLvBqg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=X0fcF+Oc; arc=fail smtp.client-ip=40.107.96.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QGl7pnfmezEEYfRsU2MibV5lqPZY+C6syEKBCRaXKiRyLgQmAZQzU/k6tyLiegkAHlg0r82iB3mBosjmF63Naolvpi5j0izWMGW5auSJiYXLCLX9ko6iokVpTksVKLg4gb6Eq5zSacEKxDT0nDV6e8iElYOxsV1x4QWXgtwrGuGxi4IbTp/6a7hm4axdZ/1m7uzyjSk9+KoHiOX0SGZSef9kAZvb5VnTw2/77gROEdOSH4oKG4fdsRh97v4bUAF3qVjgyINbYxzt7hI59mGho8+KN/MNCgEG/mqS1WVuXqlyU+818rjF9wQ+tK8c40U8uzxfHJwZpoXuRMrgjZitCg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=duktDTK/beegoAJMxNkbC1e/pQRXCgK3sKpISky+p8s=;
- b=b1k+xv8EwQsR+1YRlgBmfKO7wszxWjfGLDHqJKDNPgXwqU8NNF6KjDe2Y5NZiPTDTCxLa+US9i5EvmMbxXPqeevdUCwt/KEuGXZpCdjtBZXduhMXlxLPt6K22KpOCcjz4d9Wsy0ETxqR45CITYD4rABJjiDjnFGjKVhswNyX5tOO7/6glwNr4oATJ4xWmScEizIwrc5hXBCRSYHTnfBCphNoojnU2rAd7zdKcPJg1pmQYwUt8ZIq2CVesq6XxNnuzf7R3tfFXhC2txzPQ0yKI60eJo1Ho+8Fqz8164t2mWiWWjxqHnM41NpqbQPeUI/ywk9qmWtcWzl3XwRxiOhDDw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=duktDTK/beegoAJMxNkbC1e/pQRXCgK3sKpISky+p8s=;
- b=X0fcF+OcJ9NVM+AZpT8deu4G0WxaC4ZrAcNmrOHwNxlDmEQ4WYfaXCJ+0BGk1EKj16+aYOgo/BB34o02M3xTtwFq17oWx24KvtNvX80AoLYUwGgPw7WpQ4Tu29SSp7U6b1wHXDZsVqg4qoNtloqcGUutFY3g0MheHkxM6o8vWoMY7U8yYzbCLPIUj4arh9RN5I0gjALUcENqgu6p7thn0xvoG+o3W+rDrE3z4emgusivjRqSm+9iuDdgH3BT87MfGO2LNFXRuopbN377ycxY/WQ75uOW2M2PCpoX95djIyXX75WTPH3oHfHJCU7QF4HTXzDIALr8aV8GuHb6PfNHWg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SA1PR12MB8641.namprd12.prod.outlook.com (2603:10b6:806:388::18)
- by SA5PPFCB4F033D6.namprd12.prod.outlook.com (2603:10b6:80f:fc04::8e2) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.30; Tue, 26 Aug
- 2025 16:03:09 +0000
-Received: from SA1PR12MB8641.namprd12.prod.outlook.com
- ([fe80::9a57:92fa:9455:5bc0]) by SA1PR12MB8641.namprd12.prod.outlook.com
- ([fe80::9a57:92fa:9455:5bc0%4]) with mapi id 15.20.9052.019; Tue, 26 Aug 2025
- 16:03:09 +0000
-Date: Tue, 26 Aug 2025 13:03:07 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
-	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com,
-	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org,
-	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com,
-	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org,
-	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr,
-	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com,
-	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com,
-	vincent.guittot@linaro.org, hannes@cmpxchg.org,
-	dan.j.williams@intel.com, david@redhat.com,
-	joel.granados@kernel.org, rostedt@goodmis.org,
-	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
-	linux@weissschuh.net, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-mm@kvack.org,
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com,
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
-	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
-	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
-	aleksander.lobakin@intel.com, ira.weiny@intel.com,
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
-	brauner@kernel.org, linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
-	ajayachandra@nvidia.com, parav@nvidia.com, leonro@nvidia.com,
-	witu@nvidia.com
-Subject: Re: [PATCH v3 19/30] liveupdate: luo_sysfs: add sysfs state
- monitoring
-Message-ID: <20250826160307.GC2130239@nvidia.com>
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
- <20250807014442.3829950-20-pasha.tatashin@soleen.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250807014442.3829950-20-pasha.tatashin@soleen.com>
-X-ClientProxiedBy: BL1PR13CA0168.namprd13.prod.outlook.com
- (2603:10b6:208:2bd::23) To SA1PR12MB8641.namprd12.prod.outlook.com
- (2603:10b6:806:388::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3A251B85F8
+	for <linux-fsdevel@vger.kernel.org>; Tue, 26 Aug 2025 16:11:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756224671; cv=none; b=C13S1bl8fMKS2vXskS/ENm9CRxKi0//aTqeOzqa1gS4+0Gr4S25f+fefZg2qnPXDQMfY63qWa4vDTeZKZfGImvRIJhHqdoh+qgYLB+BOOFtpbc+2ULUK3EHkbEVF80ZZm5bMMq4tBKdt3PpDKEgcHkLXXhRy+NxeJ7MFbp2KV3M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756224671; c=relaxed/simple;
+	bh=U41H8paY3p/UhGGEDthRVDk09Qo/XemI96p1ae/Gb7Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K4od9mx9xhgBkkXm8kHFKTRnJOseP2J3IHrF2Ve3SRGtiKuYsjR0vly/pJBn/ol+bla+pQh3rk5Jtmiusfz7QjydjC1UgT/h5HB5jAEqe+TNkUP7DiKWszXsbynPvbC41mn2w9+gByC3VER/KzxgZrwhCk6u4dLzOdRcHm+e9Ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=SpCO/+5h; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7e87063d4a9so659191885a.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Aug 2025 09:11:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1756224669; x=1756829469; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BOi2/n6Xz+xQb5GUHHEjvZymVvCpQ6XbmnK9/vs2FEY=;
+        b=SpCO/+5h7oHKpHHcdQSLv1ZaJXrc/q856GDwMewoEniVqyrxUO9w6SlepEU1Ea66w5
+         l/gudFh6Wqzr46glOhQ+9EMJxKUNOstktovwRNPXTFWtYhfHGpjkSaolOtsAE9SCOrsV
+         7LsQWy1ozMGfoaFowgUN3qM3anmWEjw1cdx8LvFonc9RNlDhD4Gos4Hbcav71mbKvblZ
+         zhgMkAwBpOCZeDOjnZPUC1HnzO6DSmTDvWVj2Azt7olrUhBjoMVXXH3MtGhwy6L5/x07
+         cqn8nwznH2CU30DGvFiDoHgLmK9cZgOWGMq0UcR6l9hp2fcdtB9j/gOalt7FX68683WF
+         Vj7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756224669; x=1756829469;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BOi2/n6Xz+xQb5GUHHEjvZymVvCpQ6XbmnK9/vs2FEY=;
+        b=AaY3M0OscmJkkI2wdfJf7IyRMWTcbiWmjuPytnMH3YGnty2zlVf51hxxj0R4ZKuzYf
+         dz8QFWz2aj146sDMeT2GIxJIJtGdFKnWaLDo5Af4bkzpZIBtcNC8vl+nB0/RZYUOhl/P
+         0meAl2XoRZLk2zqtLTlxNsWpU1SeCVn++BnYDuT6L3ZWEl0YqkAiW6DldrEVpEXGtx3R
+         T3mYw+eRWePni4Gu7H/2TlDf2zK4imqOBrQBwSevW8mQRHVvPuAWihh4UAwmrilx/ku1
+         UMjDbXavBHNK9eTkWdA38Nqf6Q0sEKPGjnLSn4CAe6A01VIPIqKgrqrbUclc9KcUaasz
+         n7Sw==
+X-Forwarded-Encrypted: i=1; AJvYcCUb6xwn6+BdhgboTclZmM5bVusrAWx5dSAy3iVLtS6kX8D5FWgsc4kN/DeQqkre7hjvyv8o27bEco18Idq1@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0seAnBva2CCKQc0mxjeVgjfvCx7eynVc+RVn7ItFu/0gxEkLK
+	rCb6r01xnkVcBy7ZjOJ3BBSFzE7AlZDcA5rpuhLhZJrGUBhlQpwtSLwMIOaWMTfoTmmaxURYdQw
+	dQoP1/RPT7zmsADOeFCq9Nyb1bTvPocwemmQKvRJNzA==
+X-Gm-Gg: ASbGncszdyDbV9kfjDQ7Ac+fEFriY792ae8EP5THCgyrXIWSquHPNSZLT2VV5uXo10t
+	vocp798vWTGcqyPBBOaRas3PS0oweHpdL1IxM24+YuIrRGS103c9t3+mVTruDPXsnHbzqmxaORu
+	GE8kwguUOqYW9Si54NYtH0+JAR4AfmBvKK/RZ2qJ2AwB/35QiottpZbwV2+x8bgbsB2IyrIoqks
+	LRH
+X-Google-Smtp-Source: AGHT+IHEi3OE7lLiMPp7C5Vv7KNwlvLIH7ud61BnCQRJa7ny6WBbwsORCRR5wSbzLMiP0IHaIOWVGEwTlDbKi+wkxxs=
+X-Received: by 2002:a05:620a:170f:b0:7f6:88d3:1188 with SMTP id
+ af79cd13be357-7f688d31502mr113653485a.86.1756224668510; Tue, 26 Aug 2025
+ 09:11:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA1PR12MB8641:EE_|SA5PPFCB4F033D6:EE_
-X-MS-Office365-Filtering-Correlation-Id: b32548f8-81a4-40db-ccb0-08dde4ba0cf9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?xAt4qi5ZJmF/ZCyP0Wuavgznjv6BaHwoy4w7neUxOW7vReNw/vn4tQtw+gAq?=
- =?us-ascii?Q?+FbONilYjcibmRmw371ErZ/aK49XFIj+lbiRquaYXqZZrkg2GyI/dNBfU96K?=
- =?us-ascii?Q?xeZXsSpYKnFVd5770ymqntgT8npUtyUazxxcX+wphcyL1DRceNOAuis8sl12?=
- =?us-ascii?Q?vF+bcmJFEbk9S5oMi01mLd//1zlqU9NR8uieqRRczknL6nQJ9J/qmH/y6iJs?=
- =?us-ascii?Q?TMVut+SWCHUA4sgyA4orP8W5N/WP5TWgHxbQQSuSmfRYzdx5A5l6D8Su7UMt?=
- =?us-ascii?Q?PeTFj/W7tjGoqsMvjsgrBNJIlsvn0LMylGL5p1wdXgq8jHizdIbNm7y6JE3l?=
- =?us-ascii?Q?obqQwcp/yxV37aSLSUQzJLIbIP4Es7xEprSk9ZWojDctmtCuboPbq0W078zH?=
- =?us-ascii?Q?sk+9C3kOaYS24AODe/o78UVpAyqd0RFvIA+jxYA0Wqr4G73IDnHZcs5z3MfM?=
- =?us-ascii?Q?EihHePtSfwYhg7ppt5n+NfIxS0PZPWVHqJK/OKD7X1p+UQrYIRNQRny+msPI?=
- =?us-ascii?Q?Oywrndf0VBDqpqPUZouHefaat/EJwBBcz2JpHJnmuJCtGSyXJxnNTPhRPx/n?=
- =?us-ascii?Q?H+hJsIheJUaETF/aqzEYNHGuxin+sOlRy3X/XLWc5nw/mWdSUI6y2oc5JlzU?=
- =?us-ascii?Q?1feDKEBEBukOwWJPby6aaRh/POJ6FrZ4dyRU76+TNV54mjJT7h88IAe/x0lH?=
- =?us-ascii?Q?hSajeUTFR/fVAZ+uR6sJfuewR4jIh+WfOxfDBnJ+uRiXqBXHYzNjsmqmkqAI?=
- =?us-ascii?Q?mO1RvGE8wm50Ai4af2000MI/vnbQtq6Et4RkNzwBS4qp+zyLZAKox/n30eUO?=
- =?us-ascii?Q?JL8ZuLDxVKOdMCIFJICYeUoTJ9HDqClRrmC0ARylZgEgXDRdVJkE9XK3XppC?=
- =?us-ascii?Q?FimQYbPMUIMtgmoymCTdEi42Oj3A1j+XHtQfb7cEZH6atk4AhljiaPJ6ZfDn?=
- =?us-ascii?Q?bbdww7jdZ03JlOG1RQWAmeBOg2vzn0gCcl5KwIai9CpZyddXNeXEWCOPN7CG?=
- =?us-ascii?Q?PQo1CexjhLfT6jlNI8CiWZV+E2mZxjUQ0SHOIzFAeqWbhNJX98hQSFRs4PC9?=
- =?us-ascii?Q?nqF7wHLvEtMgxeJr0VpvrihHjTSXEoVilfafA8E4U/slLGnsasjjCu8ouQK+?=
- =?us-ascii?Q?JQqOEHpqjDIUawQHnV6J7PF/A+S11GlCOrPWeRgZaD3sMjRB6NPBK3Gb//Bn?=
- =?us-ascii?Q?sY6zhsbRZLZlVXcOZPFpLRV2VEAz+JoKdYqfN4EDE6azFzo6JmIAOyyiNM/c?=
- =?us-ascii?Q?RYz86E1tYoxB9eeywTILPSZtx0FSyuFgpFi+SzSzYrI+7CC1BnQlpzGeXSmJ?=
- =?us-ascii?Q?iaRpFIv/hz8+kDXvGI6tCnsIZVn3/sGeDjKO7+Oo3X9P6yZvI/My8w33PGDm?=
- =?us-ascii?Q?obZN+GCDsdzYRR96cPkiv4t+JbZ0QsKGy7OS9+OXlhvkL5EpM+uY+aDmbII6?=
- =?us-ascii?Q?ZDTQhxrqTWQ=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR12MB8641.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?mTQaMPy16zG1Sg1P6WHRtpB7ceh+3nn7I4+ZFd0eJoqNRDz+GttoV8qLT9t1?=
- =?us-ascii?Q?R9gfwTIsWSUTCgphM5NB/uCMryHoJOxNyVhWbcG9nf722CfY+CmofA1UcJMb?=
- =?us-ascii?Q?cp8Z8rk1QG+P5lgCXJRPmbrCzIiYfYqEz9tWbwBwIzxQrpalMrlKWdM26tS6?=
- =?us-ascii?Q?rBO2NrTuoRhcjqKdcGBSfVWwNjj5DRVkHuzc4YrM4P3wmeP58sKT5dovjP2K?=
- =?us-ascii?Q?eKSJ7WJRe/O5Eor0VDVAwWCk1h4v5lnQ04fhSv+p7dhAZW4WUmbSvDIDZMQB?=
- =?us-ascii?Q?wQnC9c3FJH/dS92OCSKFSUgX3U6p1dBnU7LvnFVE7kvHqGQtcB/7Cz5o52jF?=
- =?us-ascii?Q?+AMyNPNYJRVv7CSH9Grrx0q0SwjntepPFP3X5L2nMOjWPVc6x6cfj/lpSNUQ?=
- =?us-ascii?Q?b2bgnT3PZyfbiTP84my0u0K7OzAj1+tnEZ92k3sFNeLYdEaettHvMOf1Cso7?=
- =?us-ascii?Q?UMVAtNZNM9zDD1pdc5hK0Qt76juhoXUV51EJ0my7A5D9fyZBp5sm0tJ7qh8Y?=
- =?us-ascii?Q?m5d+Ti5QL79oi2LBPPbc9zFZQDZRDxa6+DBNvqwKnJuywQ9mFf18IBFEPGdo?=
- =?us-ascii?Q?QJlSTpAK8TOsxOK3Zo9AbrrBc4AVpx1dgDzuUI3AqcNDpkp9GSRbqJfwj/ZC?=
- =?us-ascii?Q?knbgGRImbVuQpVPWZe9X/XMet4GayU35QN9dAJ2Jdl3mY4v+QxhpYFB1lVKp?=
- =?us-ascii?Q?M4wVg7ZU1V8H0K/GFUjtYx+jIkPBtfz2v/f1ugI1Uig1baMband2Npn1NJBf?=
- =?us-ascii?Q?rwy6HSW1oWpIlk0stCvcL8xxJ58NXEQL8Hj122fDCP1B+rFUJOlMVWwfsKlK?=
- =?us-ascii?Q?+RXdZbBMuYcmbmy3yzq5LlD3tpnwbX7So6rhV2wIbG49RsvQTC9OOyha5A0K?=
- =?us-ascii?Q?sEb3ROAhkRUf7kARhNeleNeytZ39CVPT0KXyzjva89N3cScDRNwWAi5gjGTi?=
- =?us-ascii?Q?QIhwybHFtH9ysLDRasKg+GSuZnUYoRnnxSMkQXhHTzz54kQH2EOasbEcaPAk?=
- =?us-ascii?Q?gUMjRHEFAAvCQZ5PVOx2wtVsRvQl1+nviH5jcnQufET/BigY4Myf6Xt33G7q?=
- =?us-ascii?Q?IdWQLBMEtFRlWt99/2202WJY6y34Vacv+j2Z25wHi1FvvyOXSPGDAGaKGQZK?=
- =?us-ascii?Q?br0o8VBClSjeItpMaAFGV2fkiaHIuATHZZAVjUmF7HzYSA4vftlqKQDVK+X2?=
- =?us-ascii?Q?yXo9Qo4kiY7E269WWMgpc8VxySOjPIDFeQo3rGLDSrSpO58IDhYsI06vY4eL?=
- =?us-ascii?Q?iFJnzEwjcycvom9kUl7U1doWC9+/r4rnkLG8EaYhmoXkww995C+32hTX8kBr?=
- =?us-ascii?Q?pUVnyWHQVGmj0y1eTxjMcThDHNtgmaAJQXfdvoEVS+NZfb0fGIyXfJQipOie?=
- =?us-ascii?Q?eOMZY4ZG7VZdQDqvc4OHf/48nhLOeWfCikzF/OOGQYt12l2BHzNzkf5RyQr5?=
- =?us-ascii?Q?T7BwiGGXMc/Om9Ys0OY0+n0L9H4+082DuABii5yqk8SYjyuzEbKfXnDJ4GLi?=
- =?us-ascii?Q?pzaNDBjlgK3se2+wJShjhik8p4tcr4dwhIsXmOX1+uTGKds/Mso3Gr9iMjKv?=
- =?us-ascii?Q?aa/HOwwuAKPN94puWXz/MX1AWZJLJo4p+6XGbcCV?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b32548f8-81a4-40db-ccb0-08dde4ba0cf9
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR12MB8641.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2025 16:03:09.1872
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: x42cphmnf5ULCkuMbP3go75nH6O1vf8Vq2sTzbO4Bi0amyAq4C9FqGu63O2nTjBl
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA5PPFCB4F033D6
+References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
+ <mafs0ms7mxly1.fsf@kernel.org> <CA+CK2bBoLi9tYWHSFyDEHWd_cwvS_hR4q2HMmg-C+SJpQDNs=g@mail.gmail.com>
+ <20250826142406.GE1970008@nvidia.com> <CA+CK2bBrCd8t_BUeE-sVPGjsJwmtk3mCSVhTMGbseTi_Wk+4yQ@mail.gmail.com>
+ <20250826151327.GA2130239@nvidia.com>
+In-Reply-To: <20250826151327.GA2130239@nvidia.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Tue, 26 Aug 2025 16:10:31 +0000
+X-Gm-Features: Ac12FXziiQIerbPv84meuIa4-TsBxggHz0dU1bLBX-hwN0ZHUFz86xiQcWhtMqM
+Message-ID: <CA+CK2bAbqMb0ZYvsC9tsf6w5myfUyqo3N4fUP3CwVA_kUDQteg@mail.gmail.com>
+Subject: Re: [PATCH v3 00/30] Live Update Orchestrator
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Pratyush Yadav <pratyush@kernel.org>, jasonmiu@google.com, graf@amazon.com, 
+	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
+	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
+	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
+	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
+	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
+	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
+	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
+	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
+	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
+	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
+	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
+	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, lennart@poettering.net, brauner@kernel.org, 
+	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, saeedm@nvidia.com, 
+	ajayachandra@nvidia.com, parav@nvidia.com, leonro@nvidia.com, witu@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 07, 2025 at 01:44:25AM +0000, Pasha Tatashin wrote:
-> Introduce a sysfs interface for the Live Update Orchestrator
-> under /sys/kernel/liveupdate/. This interface provides a way for
-> userspace tools and scripts to monitor the current state of the LUO
-> state machine.
+On Tue, Aug 26, 2025 at 3:13=E2=80=AFPM Jason Gunthorpe <jgg@nvidia.com> wr=
+ote:
+>
+> On Tue, Aug 26, 2025 at 03:02:13PM +0000, Pasha Tatashin wrote:
+> > I'm trying to understand the drawbacks of the PID-based approach.
+> > Could you elaborate on why passing a PID in the RESTORE_FD ioctl is
+> > not a good idea?
+>
+> It will be a major invasive change all over the place in the kernel
+> to change things that assume current to do something else. We should
+> try to avoid this.
+>
+> > In this flow, the client isn't providing an arbitrary PID; the trusted
+> > luod agent is providing the PID of a process it has an active
+> > connection with.
+>
+> PIDs are wobbly thing, you can never really trust them unless they are
+> in a pidfd.
 
-Now that you have a cdev these files may be more logically placed
-under the cdev's sysfs and not under kernel? This can be done easially
-using the attribute mechanisms in the struct device.
+Makes, sense, using a PID by value is fragile due to reuse. Luod would
+acquire a pidfd for the client process from its socket connection and
+pass that pidfd to the kernel in the RESTORE_FD ioctl. The kernel
+would then be operating on a stable, secure handle to the target
+process.
 
-Again sort of back to my earlier point that everything should be
-logically linked to the cdev as though there could be many cdevs, even
-though there are not. It just keeps the code design more properly
-layered and understanble rather than doing something unique..
+> > The idea was to let luod handle the session/security story, and the
+> > kernel handle the core preservation mechanism. Adding sessions to the
+> > kernel, delegates the management and part of the security model into
+> > the kernel. I am not sure if it is necessary, what can be cleanly
+> > managed in userspace should stay in userspace.
+>
+> session fds were an update imagined to allow the kernel to partition
+> things the session FD it self could be shared with other processes.
 
-Jason
+I understand the model you're proposing: luod acts as a factory,
+issuing session FDs that are then passed to clients, allowing them to
+perform restore operations within their own context. While we can
+certainly extend the design to support that, I am still trying to
+determine if it's strictly necessary, especially if the same outcome
+(correct resource attribution) can be achieved with less kernel
+complexity. My primary concern is that functionality that can be
+cleanly managed in userspace should remain there.
+
+> I think in the calls the idea was it was reasonable to start without
+> sessions fds at all, but in this case we shouldn't be mucking with
+> pids or current.
+
+The existing interface, with the addition of passing a pidfd, provides
+the necessary flexibility without being invasive. The change would be
+localized to the new code that performs the FD retrieval and wouldn't
+involve spoofing current or making widespread changes.
+For example, to handle cgroup charging for a memfd, the flow inside
+memfd_luo_retrieve() would look something like this:
+
+task =3D get_pid_task(target_pid, PIDTYPE_PID);
+mm =3D get_task_mm(task);
+    // ...
+    folio =3D kho_restore_folio(phys);
+    // Charge to the target mm, not 'current->mm'
+    mem_cgroup_charge(folio, mm, ...);
+mmput(mm);
+put_task_struct(task);
+
+This approach seems quite contained, and does not modify the existing
+interfaces. It avoids the need for the kernel to manage the entire
+session state and its associated security model.
+
+Pasha
 
