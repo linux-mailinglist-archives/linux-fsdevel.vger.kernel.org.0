@@ -1,63 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-59189-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59220-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D4BAB35E1E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 13:52:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D763B36B25
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 16:43:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76859463B9D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 11:42:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6B2F1C27666
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 14:26:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AA2A271475;
-	Tue, 26 Aug 2025 11:42:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 534B935A2AC;
+	Tue, 26 Aug 2025 14:23:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0IcShUiI"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="yOiQu691"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71AD8283FDF;
-	Tue, 26 Aug 2025 11:42:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A27A72BEC45;
+	Tue, 26 Aug 2025 14:23:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756208561; cv=none; b=X/gMA8IxL5zWLhONwg9c29sb/pCJR7pFfuk4RbrbcxreY9wHroluUxKS7PyJvDLxQH7A/r7rbvLLh9z9t4nr2VUkA9YvCzuI3CJ+s23qx7OOPW1ml9T2Zgw3GjhxygXMBIiXY4K7mEYZdijAqdC0gPUx0tNopmG1mR+jO69BV9Y=
+	t=1756218229; cv=none; b=rwcQUlsmAkzGy+9bSbohIjzWl+/62gVT3jqtTdik+jB6/EX+ZSVDpCb/gSNb6CD61RXsxJ28x41T2B/rVxG1e93A4AYYiXuypxZd8SNSmplrUzDFcE2G8KPNGS8naRy71CpPq4OAwdvJYlYweCPvBm3CvwLDKmfQjx0sxbb8qnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756208561; c=relaxed/simple;
-	bh=O4ilg1ofWDSjuj/rNuWc7ORpM+wszMRU9S7La3OFnpk=;
+	s=arc-20240116; t=1756218229; c=relaxed/simple;
+	bh=wa+v2l0fKGLq36lzyqyo5nk+MHZnyDcewGmpz9FX1VU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uiHtvUTx6PMp1mF1VdyNErgPrSSEUsz9BH/pSO1dy33aPXTF7FBS7FO9MXlspdp4zZqShuyiq0KVLFOiASAtvfGfWnnbvfWHjFedZW+6+nFwie4cL5b86BSyL7JIMJC2qYFkj6YP+5QEqy2LlNg72FInN7MWhCVQ0xW0n9p9G/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0IcShUiI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C137BC113CF;
-	Tue, 26 Aug 2025 11:42:40 +0000 (UTC)
+	 MIME-Version; b=ljLN9NV7NtVWutlhYTrFj1xFZVUNznSMBhfg+eaGWa7V8/kYYOaIbc/KzE6k1p+PU5JpXXfrsLLCcDEyRmBQMydGXy9E1JN0LsrMh6+bsBSvPdcE6wHizGWFFyIDHPaRaKgMkpHLJh1lGAVjxJP4h0hyue20+3JJ4HBi0Gi4wdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=yOiQu691; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11773C113CF;
+	Tue, 26 Aug 2025 14:23:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1756208561;
-	bh=O4ilg1ofWDSjuj/rNuWc7ORpM+wszMRU9S7La3OFnpk=;
+	s=korg; t=1756218229;
+	bh=wa+v2l0fKGLq36lzyqyo5nk+MHZnyDcewGmpz9FX1VU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=0IcShUiIAk3SHPTiazIopS5Q6E30InM7jNMhlYO8I96FtIvWD522ACrrIJ9IjdaAB
-	 K9ZQ2Lq1TGM1b4902VAJ7/WFCc9NkGnzGdOn2h/qWXjMAVXObtxw8eghabtqnQD+fi
-	 u2zTR/SG/lVGyhnq39B31ZOrRoElmoAvGn3tabws=
+	b=yOiQu6913ScU5v3lwRFQ0Un0w9LnSMn13gJF/ci23P7GsgQYTyeUzPPZCvU0bnZmo
+	 rf4XsJIwmxNbU/8iQYoJ8llehu9NZpAYSUIU/ccKX7wcwZoSTn9R3EysAVvLTdbyye
+	 VM4ow2EZyIDCNwqbYsHrLzAXi3tkSvOZgo23wrgw=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	patches@lists.linux.dev,
-	Xiaoli Feng <fengxiaoli0714@gmail.com>,
-	David Howells <dhowells@redhat.com>,
-	Paulo Alcantara <pc@manguebit.org>,
-	Steve French <sfrench@samba.org>,
-	Shyam Prasad N <sprasad@microsoft.com>,
-	netfs@lists.linux.dev,
-	linux-cifs@vger.kernel.org,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <christian.brauner@ubuntu.com>,
+	Mattias Nissler <mnissler@chromium.org>,
+	Aleksa Sarai <cyphar@cyphar.com>,
+	Andrei Vagin <avagin@gmail.com>,
 	linux-fsdevel@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>,
+	linux-api@vger.kernel.org,
+	lkml <linux-kernel@vger.kernel.org>,
+	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
 	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.12 158/322] netfs: Fix unbuffered write error handling
-Date: Tue, 26 Aug 2025 13:09:33 +0200
-Message-ID: <20250826110919.721484270@linuxfoundation.org>
+Subject: [PATCH 5.10 402/523] move_mount: allow to add a mount into an existing group
+Date: Tue, 26 Aug 2025 13:10:12 +0200
+Message-ID: <20250826110934.374957988@linuxfoundation.org>
 X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250826110915.169062587@linuxfoundation.org>
-References: <20250826110915.169062587@linuxfoundation.org>
+In-Reply-To: <20250826110924.562212281@linuxfoundation.org>
+References: <20250826110924.562212281@linuxfoundation.org>
 User-Agent: quilt/0.68
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -69,155 +70,178 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-6.12-stable review patch.  If anyone has any objections, please let me know.
+5.10-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: David Howells <dhowells@redhat.com>
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 
-[ Upstream commit a3de58b12ce074ec05b8741fa28d62ccb1070468 ]
+[ Upstream commit 9ffb14ef61bab83fa818736bf3e7e6b6e182e8e2 ]
 
-If all the subrequests in an unbuffered write stream fail, the subrequest
-collector doesn't update the stream->transferred value and it retains its
-initial LONG_MAX value.  Unfortunately, if all active streams fail, then we
-take the smallest value of { LONG_MAX, LONG_MAX, ... } as the value to set
-in wreq->transferred - which is then returned from ->write_iter().
+Previously a sharing group (shared and master ids pair) can be only
+inherited when mount is created via bindmount. This patch adds an
+ability to add an existing private mount into an existing sharing group.
 
-LONG_MAX was chosen as the initial value so that all the streams can be
-quickly assessed by taking the smallest value of all stream->transferred -
-but this only works if we've set any of them.
+With this functionality one can first create the desired mount tree from
+only private mounts (without the need to care about undesired mount
+propagation or mount creation order implied by sharing group
+dependencies), and next then setup any desired mount sharing between
+those mounts in tree as needed.
 
-Fix this by adding a flag to indicate whether the value in
-stream->transferred is valid and checking that when we integrate the
-values.  stream->transferred can then be initialised to zero.
+This allows CRIU to restore any set of mount namespaces, mount trees and
+sharing group trees for a container.
 
-This was found by running the generic/750 xfstest against cifs with
-cache=none.  It splices data to the target file.  Once (if) it has used up
-all the available scratch space, the writes start failing with ENOSPC.
-This causes ->write_iter() to fail.  However, it was returning
-wreq->transferred, i.e. LONG_MAX, rather than an error (because it thought
-the amount transferred was non-zero) and iter_file_splice_write() would
-then try to clean up that amount of pipe bufferage - leading to an oops
-when it overran.  The kernel log showed:
+We have many issues with restoring mounts in CRIU related to sharing
+groups and propagation:
+- reverse sharing groups vs mount tree order requires complex mounts
+  reordering which mostly implies also using some temporary mounts
+(please see https://lkml.org/lkml/2021/3/23/569 for more info)
 
-    CIFS: VFS: Send error in write = -28
+- mount() syscall creates tons of mounts due to propagation
+- mount re-parenting due to propagation
+- "Mount Trap" due to propagation
+- "Non Uniform" propagation, meaning that with different tricks with
+  mount order and temporary children-"lock" mounts one can create mount
+  trees which can't be restored without those tricks
+(see https://www.linuxplumbersconf.org/event/7/contributions/640/)
 
-followed by:
+With this new functionality we can resolve all the problems with
+propagation at once.
 
-    BUG: kernel NULL pointer dereference, address: 0000000000000008
-
-with:
-
-    RIP: 0010:iter_file_splice_write+0x3a4/0x520
-    do_splice+0x197/0x4e0
-
-or:
-
-    RIP: 0010:pipe_buf_release (include/linux/pipe_fs_i.h:282)
-    iter_file_splice_write (fs/splice.c:755)
-
-Also put a warning check into splice to announce if ->write_iter() returned
-that it had written more than it was asked to.
-
-Fixes: 288ace2f57c9 ("netfs: New writeback implementation")
-Reported-by: Xiaoli Feng <fengxiaoli0714@gmail.com>
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=220445
-Signed-off-by: David Howells <dhowells@redhat.com>
-Link: https://lore.kernel.org/915443.1755207950@warthog.procyon.org.uk
-cc: Paulo Alcantara <pc@manguebit.org>
-cc: Steve French <sfrench@samba.org>
-cc: Shyam Prasad N <sprasad@microsoft.com>
-cc: netfs@lists.linux.dev
-cc: linux-cifs@vger.kernel.org
-cc: linux-fsdevel@vger.kernel.org
-cc: stable@vger.kernel.org
-Signed-off-by: Christian Brauner <brauner@kernel.org>
-[ Dropped read_collect.c hunk ]
+Link: https://lore.kernel.org/r/20210715100714.120228-1-ptikhomirov@virtuozzo.com
+Cc: Eric W. Biederman <ebiederm@xmission.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <christian.brauner@ubuntu.com>
+Cc: Mattias Nissler <mnissler@chromium.org>
+Cc: Aleksa Sarai <cyphar@cyphar.com>
+Cc: Andrei Vagin <avagin@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-api@vger.kernel.org
+Cc: lkml <linux-kernel@vger.kernel.org>
+Co-developed-by: Andrei Vagin <avagin@gmail.com>
+Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Signed-off-by: Andrei Vagin <avagin@gmail.com>
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+Stable-dep-of: cffd0441872e ("use uniform permission checks for all mount propagation changes")
 Signed-off-by: Sasha Levin <sashal@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/netfs/write_collect.c |   10 ++++++++--
- fs/netfs/write_issue.c   |    4 ++--
- fs/splice.c              |    3 +++
- include/linux/netfs.h    |    1 +
- 4 files changed, 14 insertions(+), 4 deletions(-)
+ fs/namespace.c             | 77 +++++++++++++++++++++++++++++++++++++-
+ include/uapi/linux/mount.h |  3 +-
+ 2 files changed, 78 insertions(+), 2 deletions(-)
 
---- a/fs/netfs/write_collect.c
-+++ b/fs/netfs/write_collect.c
-@@ -433,6 +433,7 @@ reassess_streams:
- 			if (front->start + front->transferred > stream->collected_to) {
- 				stream->collected_to = front->start + front->transferred;
- 				stream->transferred = stream->collected_to - wreq->start;
-+				stream->transferred_valid = true;
- 				notes |= MADE_PROGRESS;
- 			}
- 			if (test_bit(NETFS_SREQ_FAILED, &front->flags)) {
-@@ -538,6 +539,7 @@ void netfs_write_collection_worker(struc
- 	struct netfs_io_request *wreq = container_of(work, struct netfs_io_request, work);
- 	struct netfs_inode *ictx = netfs_inode(wreq->inode);
- 	size_t transferred;
-+	bool transferred_valid = false;
- 	int s;
+diff --git a/fs/namespace.c b/fs/namespace.c
+index ee6d139f7529..7f7ccc9e53b8 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -2692,6 +2692,78 @@ static bool check_for_nsfs_mounts(struct mount *subtree)
+ 	return ret;
+ }
  
- 	_enter("R=%x", wreq->debug_id);
-@@ -568,12 +570,16 @@ void netfs_write_collection_worker(struc
- 			netfs_put_request(wreq, false, netfs_rreq_trace_put_work);
- 			return;
- 		}
--		if (stream->transferred < transferred)
-+		if (stream->transferred_valid &&
-+		    stream->transferred < transferred) {
- 			transferred = stream->transferred;
-+			transferred_valid = true;
-+		}
- 	}
++static int do_set_group(struct path *from_path, struct path *to_path)
++{
++	struct mount *from, *to;
++	int err;
++
++	from = real_mount(from_path->mnt);
++	to = real_mount(to_path->mnt);
++
++	namespace_lock();
++
++	err = -EINVAL;
++	/* To and From must be mounted */
++	if (!is_mounted(&from->mnt))
++		goto out;
++	if (!is_mounted(&to->mnt))
++		goto out;
++
++	err = -EPERM;
++	/* We should be allowed to modify mount namespaces of both mounts */
++	if (!ns_capable(from->mnt_ns->user_ns, CAP_SYS_ADMIN))
++		goto out;
++	if (!ns_capable(to->mnt_ns->user_ns, CAP_SYS_ADMIN))
++		goto out;
++
++	err = -EINVAL;
++	/* To and From paths should be mount roots */
++	if (from_path->dentry != from_path->mnt->mnt_root)
++		goto out;
++	if (to_path->dentry != to_path->mnt->mnt_root)
++		goto out;
++
++	/* Setting sharing groups is only allowed across same superblock */
++	if (from->mnt.mnt_sb != to->mnt.mnt_sb)
++		goto out;
++
++	/* From mount root should be wider than To mount root */
++	if (!is_subdir(to->mnt.mnt_root, from->mnt.mnt_root))
++		goto out;
++
++	/* From mount should not have locked children in place of To's root */
++	if (has_locked_children(from, to->mnt.mnt_root))
++		goto out;
++
++	/* Setting sharing groups is only allowed on private mounts */
++	if (IS_MNT_SHARED(to) || IS_MNT_SLAVE(to))
++		goto out;
++
++	/* From should not be private */
++	if (!IS_MNT_SHARED(from) && !IS_MNT_SLAVE(from))
++		goto out;
++
++	if (IS_MNT_SLAVE(from)) {
++		struct mount *m = from->mnt_master;
++
++		list_add(&to->mnt_slave, &m->mnt_slave_list);
++		to->mnt_master = m;
++	}
++
++	if (IS_MNT_SHARED(from)) {
++		to->mnt_group_id = from->mnt_group_id;
++		list_add(&to->mnt_share, &from->mnt_share);
++		lock_mount_hash();
++		set_mnt_shared(to);
++		unlock_mount_hash();
++	}
++
++	err = 0;
++out:
++	namespace_unlock();
++	return err;
++}
++
+ static int do_move_mount(struct path *old_path, struct path *new_path)
+ {
+ 	struct mnt_namespace *ns;
+@@ -3667,7 +3739,10 @@ SYSCALL_DEFINE5(move_mount,
+ 	if (ret < 0)
+ 		goto out_to;
  
- 	/* Okay, declare that all I/O is complete. */
--	wreq->transferred = transferred;
-+	if (transferred_valid)
-+		wreq->transferred = transferred;
- 	trace_netfs_rreq(wreq, netfs_rreq_trace_write_done);
+-	ret = do_move_mount(&from_path, &to_path);
++	if (flags & MOVE_MOUNT_SET_GROUP)
++		ret = do_set_group(&from_path, &to_path);
++	else
++		ret = do_move_mount(&from_path, &to_path);
  
- 	if (wreq->io_streams[1].active &&
---- a/fs/netfs/write_issue.c
-+++ b/fs/netfs/write_issue.c
-@@ -115,12 +115,12 @@ struct netfs_io_request *netfs_create_wr
- 	wreq->io_streams[0].prepare_write	= ictx->ops->prepare_write;
- 	wreq->io_streams[0].issue_write		= ictx->ops->issue_write;
- 	wreq->io_streams[0].collected_to	= start;
--	wreq->io_streams[0].transferred		= LONG_MAX;
-+	wreq->io_streams[0].transferred		= 0;
- 
- 	wreq->io_streams[1].stream_nr		= 1;
- 	wreq->io_streams[1].source		= NETFS_WRITE_TO_CACHE;
- 	wreq->io_streams[1].collected_to	= start;
--	wreq->io_streams[1].transferred		= LONG_MAX;
-+	wreq->io_streams[1].transferred		= 0;
- 	if (fscache_resources_valid(&wreq->cache_resources)) {
- 		wreq->io_streams[1].avail	= true;
- 		wreq->io_streams[1].active	= true;
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -744,6 +744,9 @@ iter_file_splice_write(struct pipe_inode
- 		sd.pos = kiocb.ki_pos;
- 		if (ret <= 0)
- 			break;
-+		WARN_ONCE(ret > sd.total_len - left,
-+			  "Splice Exceeded! ret=%zd tot=%zu left=%zu\n",
-+			  ret, sd.total_len, left);
- 
- 		sd.num_spliced += ret;
- 		sd.total_len -= ret;
---- a/include/linux/netfs.h
-+++ b/include/linux/netfs.h
-@@ -150,6 +150,7 @@ struct netfs_io_stream {
- 	bool			active;		/* T if stream is active */
- 	bool			need_retry;	/* T if this stream needs retrying */
- 	bool			failed;		/* T if this stream failed */
-+	bool			transferred_valid; /* T is ->transferred is valid */
- };
+ out_to:
+ 	path_put(&to_path);
+diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
+index dd8306ea336c..fc6a2e63130b 100644
+--- a/include/uapi/linux/mount.h
++++ b/include/uapi/linux/mount.h
+@@ -71,7 +71,8 @@
+ #define MOVE_MOUNT_T_SYMLINKS		0x00000010 /* Follow symlinks on to path */
+ #define MOVE_MOUNT_T_AUTOMOUNTS		0x00000020 /* Follow automounts on to path */
+ #define MOVE_MOUNT_T_EMPTY_PATH		0x00000040 /* Empty to path permitted */
+-#define MOVE_MOUNT__MASK		0x00000077
++#define MOVE_MOUNT_SET_GROUP		0x00000100 /* Set sharing group instead */
++#define MOVE_MOUNT__MASK		0x00000177
  
  /*
+  * fsopen() flags.
+-- 
+2.50.1
+
 
 
 
