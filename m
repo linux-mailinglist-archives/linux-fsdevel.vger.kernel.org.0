@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-59220-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59226-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D763B36B25
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 16:43:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BB13B36C2E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 16:53:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6B2F1C27666
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 14:26:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E66DA1C26D76
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 14:44:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 534B935A2AC;
-	Tue, 26 Aug 2025 14:23:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D00835E4F2;
+	Tue, 26 Aug 2025 14:41:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="yOiQu691"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Lt0yAHIk"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A27A72BEC45;
-	Tue, 26 Aug 2025 14:23:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63FDE35CEAC;
+	Tue, 26 Aug 2025 14:41:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756218229; cv=none; b=rwcQUlsmAkzGy+9bSbohIjzWl+/62gVT3jqtTdik+jB6/EX+ZSVDpCb/gSNb6CD61RXsxJ28x41T2B/rVxG1e93A4AYYiXuypxZd8SNSmplrUzDFcE2G8KPNGS8naRy71CpPq4OAwdvJYlYweCPvBm3CvwLDKmfQjx0sxbb8qnU=
+	t=1756219261; cv=none; b=ToeWdVFvLmuIo+nd0xQtiMsP95178yKM1WZW/MYDWnTufWE6jZYk6UX6HVIg0OlA5QqII84xLZd8BVp6XVKK+P/u86wR9AxfVPhlcwpK/MjL9epPZOER8Y/5LuzN/C3Zn/uZhMXz0v7CV5tJTjv5aWxld6LPWOfT1aJ8+9ghQGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756218229; c=relaxed/simple;
-	bh=wa+v2l0fKGLq36lzyqyo5nk+MHZnyDcewGmpz9FX1VU=;
+	s=arc-20240116; t=1756219261; c=relaxed/simple;
+	bh=y12dUb6KC7V9sLod0XI96q4WELtLomp8p21qnxJP86E=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ljLN9NV7NtVWutlhYTrFj1xFZVUNznSMBhfg+eaGWa7V8/kYYOaIbc/KzE6k1p+PU5JpXXfrsLLCcDEyRmBQMydGXy9E1JN0LsrMh6+bsBSvPdcE6wHizGWFFyIDHPaRaKgMkpHLJh1lGAVjxJP4h0hyue20+3JJ4HBi0Gi4wdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=yOiQu691; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11773C113CF;
-	Tue, 26 Aug 2025 14:23:49 +0000 (UTC)
+	 MIME-Version; b=PJKeDeEY6M6hEq3/qYAsqSoudz8Zyxy5HPaCAZ0wsx8saGnvZ+vU+3OKewyZnH42l2fy4+TToKrxNhGxBoivWrSCtE33UFBsr+dHIYBLqqBdxKilTDNlZ3q4cYKAzcgnSjk/iSv0+aAGTTCmG4/igBHyLycMAmCFtTuoNMjxmGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Lt0yAHIk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE88BC4CEF1;
+	Tue, 26 Aug 2025 14:41:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1756218229;
-	bh=wa+v2l0fKGLq36lzyqyo5nk+MHZnyDcewGmpz9FX1VU=;
+	s=korg; t=1756219261;
+	bh=y12dUb6KC7V9sLod0XI96q4WELtLomp8p21qnxJP86E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=yOiQu6913ScU5v3lwRFQ0Un0w9LnSMn13gJF/ci23P7GsgQYTyeUzPPZCvU0bnZmo
-	 rf4XsJIwmxNbU/8iQYoJ8llehu9NZpAYSUIU/ccKX7wcwZoSTn9R3EysAVvLTdbyye
-	 VM4ow2EZyIDCNwqbYsHrLzAXi3tkSvOZgo23wrgw=
+	b=Lt0yAHIk7wR9hAde5AO9XHN/e3BIAzevuFL5e0P6Zjd6gVjKdUh/psoWEYayIDhkS
+	 SsZgH3Fd/OLEJRmTK9GO/UTndsdcRayRAhRIjctI90c1UYHBoKuf9qf6YtSYHXkTgR
+	 SbPHb800aQZDC9IIuNdatteFSXi9runJHuDwqwv4=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -53,12 +53,12 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	lkml <linux-kernel@vger.kernel.org>,
 	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
 	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.10 402/523] move_mount: allow to add a mount into an existing group
-Date: Tue, 26 Aug 2025 13:10:12 +0200
-Message-ID: <20250826110934.374957988@linuxfoundation.org>
+Subject: [PATCH 5.4 313/403] move_mount: allow to add a mount into an existing group
+Date: Tue, 26 Aug 2025 13:10:39 +0200
+Message-ID: <20250826110915.464250749@linuxfoundation.org>
 X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250826110924.562212281@linuxfoundation.org>
-References: <20250826110924.562212281@linuxfoundation.org>
+In-Reply-To: <20250826110905.607690791@linuxfoundation.org>
+References: <20250826110905.607690791@linuxfoundation.org>
 User-Agent: quilt/0.68
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -70,7 +70,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-5.10-stable review patch.  If anyone has any objections, please let me know.
+5.4-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
@@ -131,10 +131,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  2 files changed, 78 insertions(+), 2 deletions(-)
 
 diff --git a/fs/namespace.c b/fs/namespace.c
-index ee6d139f7529..7f7ccc9e53b8 100644
+index ee5a87061f20..3c1afe60d438 100644
 --- a/fs/namespace.c
 +++ b/fs/namespace.c
-@@ -2692,6 +2692,78 @@ static bool check_for_nsfs_mounts(struct mount *subtree)
+@@ -2624,6 +2624,78 @@ static bool check_for_nsfs_mounts(struct mount *subtree)
  	return ret;
  }
  
@@ -213,7 +213,7 @@ index ee6d139f7529..7f7ccc9e53b8 100644
  static int do_move_mount(struct path *old_path, struct path *new_path)
  {
  	struct mnt_namespace *ns;
-@@ -3667,7 +3739,10 @@ SYSCALL_DEFINE5(move_mount,
+@@ -3583,7 +3655,10 @@ SYSCALL_DEFINE5(move_mount,
  	if (ret < 0)
  		goto out_to;
  
@@ -226,10 +226,10 @@ index ee6d139f7529..7f7ccc9e53b8 100644
  out_to:
  	path_put(&to_path);
 diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
-index dd8306ea336c..fc6a2e63130b 100644
+index 96a0240f23fe..535ca707dfd7 100644
 --- a/include/uapi/linux/mount.h
 +++ b/include/uapi/linux/mount.h
-@@ -71,7 +71,8 @@
+@@ -70,7 +70,8 @@
  #define MOVE_MOUNT_T_SYMLINKS		0x00000010 /* Follow symlinks on to path */
  #define MOVE_MOUNT_T_AUTOMOUNTS		0x00000020 /* Follow automounts on to path */
  #define MOVE_MOUNT_T_EMPTY_PATH		0x00000040 /* Empty to path permitted */
