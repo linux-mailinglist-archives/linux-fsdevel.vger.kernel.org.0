@@ -1,57 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-59179-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59180-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 387CBB3583F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 11:11:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5893B358BD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 11:24:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA5F77AC804
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 09:09:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA62A189EF8F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 09:24:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A153302752;
-	Tue, 26 Aug 2025 09:11:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39CC82FF159;
+	Tue, 26 Aug 2025 09:23:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LaQMm1yq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KYUDQbqq"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7451F2F60D8;
-	Tue, 26 Aug 2025 09:11:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95949286D50;
+	Tue, 26 Aug 2025 09:23:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756199464; cv=none; b=dZU7/mue3KA2Mj0jDj2nOaXxqqqx9eRPI/UN79KRrkzYrlkQT4RLHnyyAZZSBAi7OUnWcl4r7LvEzjf8aofF//5fM3szfWCvnJVdG734fkuNKGE51lz0/H5hFrr9RBwGJXQ0UeiKYls/nz0iKMhi6EAscAnbsbEcQykZvHclVLM=
+	t=1756200238; cv=none; b=s20hRcj1t+2Vim1Qrq3ik5c2fjczpCUCsEwoS4frYApoC1hUhyIJc0k5JV6otdo4TFYFOCzBGi05I5l/wpoE0AguIm0HTFLWSrAfvd4HmSys+wiGweyS1ZespR12LzLn5FP8h7H5+K8iuPi9Sfv/RF7V4fK1iwsTLjKgsxeYq9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756199464; c=relaxed/simple;
-	bh=59qoRxfQrxi6Exfr9j1Euyp1ZWsb1qo+I1L3mwtT02Q=;
+	s=arc-20240116; t=1756200238; c=relaxed/simple;
+	bh=qWSXMhkADiFYB6kPfeITxRWtYQrf3ANim0u4qWpuZxw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DS1/aGr3aYTZ83X6fow+0Ffe4CeLKFloiC7DQADbk4ZvEQrgfzJDzet5BUacDU3zVnEY95aLHTZ4aBPzwXLCsygRyNdvqh8wDtAxHuwJeA7koXbTF11i0f1Xydu5wj1El0vOHvvQxk+rz2vstKX7f2Mey6mnSTtXFnPIN54xQgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LaQMm1yq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D025CC4CEF1;
-	Tue, 26 Aug 2025 09:11:01 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=SdEHTiAWmkvwtF/VhWTZCGId1xgky2agP1q1MFdxTjO18MijT9XI92ovWfWkclCTQJDdlwgm1Ll40JHDk3l/yR+4UT8ma2b9fNmyDYABDBuIyjUS+k6OVk9p74ZmeS5Ci3bLooG8KT8ZrZWfNXdk4gYhXpf5ciVU+hKmVndlDns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KYUDQbqq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35F6BC4CEF1;
+	Tue, 26 Aug 2025 09:23:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756199464;
-	bh=59qoRxfQrxi6Exfr9j1Euyp1ZWsb1qo+I1L3mwtT02Q=;
+	s=k20201202; t=1756200238;
+	bh=qWSXMhkADiFYB6kPfeITxRWtYQrf3ANim0u4qWpuZxw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LaQMm1yq25oNg00Tb0ywh3kNm1xatvEOLPlBbK0o1GwHHYqfPEVgmF+URx94vUrqR
-	 QAUuFs4V9ldhlSPQfxTGQ8yAsjN6EndxgKl7c1LoB24sjj7rTEVwsBj2Z7WZ9bDw2y
-	 PKgJF5IgwF1YEcukyj4pDfhWiLCGEVYuEHqHNCjpZ/oeWg2NA5jjkeg+Wi7sETgs4T
-	 ux+wetmBVSWWET+iiiZwofCvFLsBiRVuDBgI80egsO11Ce3i/Cbp6MJb7CAGPhztek
-	 H/8Ac/4yEid0G2mBNZPIF+UwSf/8i9CXk4+TQqsqgO8DqjBvmhtjJLSxJA6kAUeS1Q
-	 E1g8lMgU7cCYA==
-Date: Tue, 26 Aug 2025 11:10:59 +0200
+	b=KYUDQbqq7EJlxNqOgafp40fDOjqyIc9U/PLa2h1o+pBx6KMtOtVdhTNs7e1cPpVFW
+	 t8Mte61Io7s+7aVlyowVnOym6sF42tubXDe/fXtbEKgTvBTQrIzdt7Ud4n+8Ry0OE1
+	 mXmGQWyvH/EWZohts4MB1kgoMwIaBFJpgiYCPXMb3ZL9cp28Rz84UhOy9PLTX7LVqm
+	 /qhGWTfORokg9n3qm+PmrU8zJvJkEHKq2gU7JvuO0hKo0KWM28G0m5NuKS1H+N++GJ
+	 qiO80FnG23D/h/uulDYSFF20xfI9x+vl9AxDImLUIwCi6ixUm+TmcPn/2frGIo9WFj
+	 j/Ke/vL5blIDA==
+Date: Tue, 26 Aug 2025 11:23:54 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, 
-	"idryomov@gmail.com" <idryomov@gmail.com>, Patrick Donnelly <pdonnell@redhat.com>, 
-	Alex Markuze <amarkuze@redhat.com>, Pavan Rallabhandi <Pavan.Rallabhandi@ibm.com>, 
-	Greg Farnum <gfarnum@ibm.com>
-Subject: Re: [RFC] ceph: strange mount/unmount behavior
-Message-ID: <20250826-bekommen-zugezogen-fed6b0e69be2@brauner>
-References: <b803da9f0591b4f894f60906d7804a4181fd7455.camel@ibm.com>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: Infinite loop in get_file_rcu() in face of a saturated ref count
+Message-ID: <20250826-leinen-villa-02f66f98e13e@brauner>
+References: <CAGudoHHBRhU+XidV9U4osc2Ta4w0Lgi2XiFkYukKQoH45zT6vw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,67 +57,33 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <b803da9f0591b4f894f60906d7804a4181fd7455.camel@ibm.com>
+In-Reply-To: <CAGudoHHBRhU+XidV9U4osc2Ta4w0Lgi2XiFkYukKQoH45zT6vw@mail.gmail.com>
 
-On Mon, Aug 25, 2025 at 09:53:48PM +0000, Viacheslav Dubeyko wrote:
-> Hello,
+On Mon, Aug 25, 2025 at 11:43:00PM +0200, Mateusz Guzik wrote:
+> __get_file_rcu() bails early:
 > 
-> I am investigating an issue with generic/604:
+>         if (unlikely(!file_ref_get(&file->f_ref)))
+>                 return ERR_PTR(-EAGAIN);
 > 
-> sudo ./check generic/604
-> FSTYP         -- ceph
-> PLATFORM      -- Linux/x86_64 ceph-0005 6.17.0-rc1+ #29 SMP PREEMPT_DYNAMIC Mon
-> Aug 25 13:06:10 PDT 2025
-> MKFS_OPTIONS  -- 192.168.1.213:6789:/scratch
-> MOUNT_OPTIONS -- -o name=admin 192.168.1.213:6789:/scratch /mnt/cephfs/scratch
+> But get_file_rcu():
+>        for (;;) {
+>                 struct file __rcu *file;
 > 
-> generic/604 10s ... - output mismatch (see
-> XFSTESTS/xfstestsdev/results//generic/604.out.bad)
->     --- tests/generic/604.out	2025-02-25 13:05:32.515668548 -0800
->     +++ XFSTESTS/xfstests-dev/results//generic/604.out.bad	2025-08-25
-> 14:25:49.256780397 -0700
->     @@ -1,2 +1,3 @@
->      QA output created by 604
->     +umount: /mnt/cephfs/scratch: target is busy.
->      Silence is golden
->     ...
->     (Run 'diff -u XFSTESTS/xfstests-dev/tests/generic/604.out XFSTESTS/xfstests-
-> dev/results//generic/604.out.bad'  to see the entire diff)
-> Ran: generic/604
-> Failures: generic/604
-> Failed 1 of 1 tests
+>                 file = __get_file_rcu(f);
+>                 if (!IS_ERR(file))
+>                         return file;
+>         }
 > 
-> As far as I can see, the generic/604 intentionally delays the unmount and mount
-> operation starts before unmount finish:
+> So if this encounters a saturated refcount, the loop with never end.
 > 
-> # For overlayfs, avoid unmounting the base fs after _scratch_mount tries to
-> # mount the base fs.  Delay the mount attempt by a small amount in the hope
-> # that the mount() call will try to lock s_umount /after/ umount has already
-> # taken it.
-> $UMOUNT_PROG $SCRATCH_MNT &
-> sleep 0.01s ; _scratch_mount
-> wait
+> I don't know what makes the most sense to do here and I'm no position
+> to mess with any patches.
 > 
-> As a result, we have this issue because a mnt_count is bigger than expected one
-> in propagate_mount_busy() [1]:
-> 
-> 	} else {
-> 		smp_mb(); // paired with __legitimize_mnt()
-> 		shrink_submounts(mnt);
-> 		retval = -EBUSY;
-> 		if (!propagate_mount_busy(mnt, 2)) {
-> 			umount_tree(mnt, UMOUNT_PROPAGATE|UMOUNT_SYNC);
-> 			retval = 0;
-> 		}
-> 	}
-> 
-> 
-> [   71.347372] pid 3762 do_umount():2022 finished:  mnt_get_count(mnt) 3
-> 
-> But if I am trying to understand what is going on during mount, then I can see
-> that I can mount the same file system instance multiple times even for the same
-> mount point:
+> This is not a serious problem either, so I would put this on the back
+> burner. Just reporting for interested.
 
-The new mount api has always allowed for this whereas the old mount(2)
-api doesn't. There's no reason to not allow this.
+That's like past 2^63 - 1 references. Apart from an odd bug is that
+really something to worry about. I mean, we can add a VFS_WARN_ON_ONCE()
+in there of course but specifically handling that in the code doesn't
+seem sensible to me.
 
