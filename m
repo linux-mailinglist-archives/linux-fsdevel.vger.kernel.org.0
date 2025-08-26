@@ -1,57 +1,67 @@
-Return-Path: <linux-fsdevel+bounces-59177-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59178-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22248B357BA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 10:56:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F1B8CB35842
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 11:11:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED92F16A218
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 08:56:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA66B3604EB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 09:09:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AAF92FCC1F;
-	Tue, 26 Aug 2025 08:56:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AA36306D48;
+	Tue, 26 Aug 2025 09:07:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ptYc2VPy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s6iE5Y5F"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 985D827A919
-	for <linux-fsdevel@vger.kernel.org>; Tue, 26 Aug 2025 08:56:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD23279798;
+	Tue, 26 Aug 2025 09:07:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756198576; cv=none; b=YXkRyAbonrDJrepd1fmPn+ZjtEUTc2E93QhvCHfeg1jWkhZsptqwmsc9fK7Gw/moKB0X8Wm4i7QBpujoXVMaCLnecgIcQ4zI7YIYMcdqS1AF+BotzPdzGR12EMoeE0ExusafrXoBNoBgpeuSUozK5u8ysq8ue1NwASmrQHSxCXo=
+	t=1756199234; cv=none; b=aX5xZVQS0Tbfcq7wItsoxfJLroUuQrd8P8ROMTLInSYg4nRqaY5u4O7fTgF+twxIeIWMYz1VkDkykpyF8ZlsGaQEy4eZxxTiD4O8CiS1xNF19lyQsI+kz3z8YcelBXWSnvmQj82Rson5newDmBbRaZrHWYiosLL8H0Sz/dCKwpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756198576; c=relaxed/simple;
-	bh=vLeRLPB4MTp8eW9tLgAtVfVYbrwht27648XnW9iF7UE=;
+	s=arc-20240116; t=1756199234; c=relaxed/simple;
+	bh=v1CSBcWHPbCnidtHdXODW6dfbip1NV8JwzZFOpqYkck=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MFRIFekPfiloKVBC1JIybWOtS+tlCzCfF95JeuJzca1QuaTlV8jMQ5+PhOJXu/xni0nmZcxHsLUVmSWl7tZPlzDLr2UCquttGMcsTiB9tuJJgzF4k6u14RR+mIoQxl/fguvEiPdh3ZZBSEbdkoSdK+E0BB7d44J2iYFCF6k49kM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ptYc2VPy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27A9EC4CEF1;
-	Tue, 26 Aug 2025 08:56:13 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=cTVnxgcnsdIZal7DaTHMwLgqbPWmM7PAb4Npa08+clNbXGItVAdHskXXIU92zxl9eIZlSi1QFt7xERcr49daad4vAkl1Up2ZraHXgd/TP/oPGDCm1pBhMT2bbkI9gBIrQ1l9sWwdBIiOdoaelh8XkWaUHD5ChJwwTkA8crISVnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s6iE5Y5F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14EB8C4CEF1;
+	Tue, 26 Aug 2025 09:07:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756198575;
-	bh=vLeRLPB4MTp8eW9tLgAtVfVYbrwht27648XnW9iF7UE=;
+	s=k20201202; t=1756199234;
+	bh=v1CSBcWHPbCnidtHdXODW6dfbip1NV8JwzZFOpqYkck=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ptYc2VPySoCgNuXxSK78AP5wbrg1f1BB+fCTUiPE8km+7McSSknuOw0JzUHh1eGum
-	 JY5cLXHWg32z5sWAZ/AGoX53VZKK/q7eVH3QgGXlxuMZjIyjWe8NbsuLCJL6b9+G2k
-	 0ZezCHPd8ia6DHB+Q7XaoGsDc+yjPZDPTYDFo4Hybd/nr5r0I6MGrqF5Gp/eeQRyVY
-	 yg+AwMRVF6jLRgoCC8mbPt4CAETK0ODm/UvC7P11TeTRxW+X/n/0ihZH9bh4cqQFj3
-	 5E19wN+1lFcS8x8AK0HXUSz9zwktMomGsX7njMGtvgL9aveNXQDs9A2Qtk+nL+/UWy
-	 PxE0u2LBf8cfw==
-Date: Tue, 26 Aug 2025 10:56:11 +0200
+	b=s6iE5Y5FkD/yXMMiE/ghxcC3Oi9Yjk1XRIAqRYCNYsanV38XhW0i9eYf/To0VJW2o
+	 WYQ/ZuC/nsgerBNGvoSmbNWxd920UR2TtKpnCWfGJ0ya5JFfJedNtTwBQQPmb8U4h4
+	 BseIkK0ylDIqzI7SCwbyNOd9sNya7tC+6HO9HPjMmmQbOnK+zruIPEca3JrwtTdrNe
+	 oRTWtlPucmsV8c2at+UAsG81IyPSE2bfpHKs4HQe1qvcsLoiG+/mf1P9GeBoVj6YSx
+	 uaWFXu4OYAr72+8s0T/DoofNbBohK7R7cRZZj7Z1UVMUlyI61q+NGofFGEoEaZ13OJ
+	 F3tqSNVCLSKcg==
+Date: Tue, 26 Aug 2025 11:07:03 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCHED][RFC][CFT] mount-related stuff
-Message-ID: <20250826-umbenannt-bersten-c42dd9c4dc6a@brauner>
-References: <20250825044046.GI39973@ZenIV>
- <20250825-glanz-qualm-bcbae4e2c683@brauner>
- <20250825161114.GM39973@ZenIV>
- <20250825174312.GQ39973@ZenIV>
+To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Kees Cook <keescook@chromium.org>, 
+	Paul Moore <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>, 
+	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
+	Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Miklos Szeredi <mszeredi@redhat.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, 
+	Robert Waite <rowait@microsoft.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Scott Shell <scottsh@microsoft.com>, Steve Dower <steve.dower@python.org>, 
+	Steve Grubb <sgrubb@redhat.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v1 0/2] Add O_DENY_WRITE (complement AT_EXECVE_CHECK)
+Message-ID: <20250826-skorpion-magma-141496988fdc@brauner>
+References: <20250822170800.2116980-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,69 +70,45 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250825174312.GQ39973@ZenIV>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250822170800.2116980-1-mic@digikod.net>
 
-On Mon, Aug 25, 2025 at 06:43:12PM +0100, Al Viro wrote:
-> On Mon, Aug 25, 2025 at 05:11:14PM +0100, Al Viro wrote:
-> > On Mon, Aug 25, 2025 at 02:43:43PM +0200, Christian Brauner wrote:
-> > > On Mon, Aug 25, 2025 at 05:40:46AM +0100, Al Viro wrote:
-> > > > 	Most of this pile is basically an attempt to see how well do
-> > > > cleanup.h-style mechanisms apply in mount handling.  That stuff lives in
-> > > > git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #work.mount
-> > > > Rebased to -rc3 (used to be a bit past -rc2, branched at mount fixes merge)
-> > > > Individual patches in followups.
-> > > > 
-> > > > 	Please, help with review and testing.  It seems to survive the
-> > > > local beating and code generation seems to be OK, but more testing
-> > > > would be a good thing and I would really like to see comments on that
-> > > > stuff.
-> > > 
-> > > Btw, I just realized that basically none of your commits have any lore
-> > > links in them. That kinda sucks because I very very often just look at a
-> > > commit and then use the link to jump to the mailing list discussion for
-> > > more context about a change and how it came about.
-> > > 
-> > > So pretty please can you start adding lore links to your commits when
-> > > applying if it's not fucking up your workflow too much?
-> > 
-> > Links to what, at the first posting?  Confused...
+On Fri, Aug 22, 2025 at 07:07:58PM +0200, Mickaël Salaün wrote:
+> Hi,
 > 
-> I mean, this _is_ what I hope would be a discussion of that stuff -
-> that's what request for comments stands for, after all.  How is that
-> supposed to work?  Going back through the queue and slapping lore links
-> at the same time as the reviewed-by etc. are applied?  I honestly have
-> no idea what practice do you have in mind - ~95% of the time I'm sitting
-> in nvi - it serves as IDE for me; mutt takes a large part of the rest.
-> Browser is something that gets used occasionally when I have to...
+> Script interpreters can check if a file would be allowed to be executed
+> by the kernel using the new AT_EXECVE_CHECK flag. This approach works
+> well on systems with write-xor-execute policies, where scripts cannot
+> be modified by malicious processes. However, this protection may not be
+> available on more generic distributions.
+> 
+> The key difference between `./script.sh` and `sh script.sh` (when using
+> AT_EXECVE_CHECK) is that execve(2) prevents the script from being opened
+> for writing while it's being executed. To achieve parity, the kernel
+> should provide a mechanism for script interpreters to deny write access
+> during script interpretation. While interpreters can copy script content
+> into a buffer, a race condition remains possible after AT_EXECVE_CHECK.
+> 
+> This patch series introduces a new O_DENY_WRITE flag for use with
+> open*(2) and fcntl(2). Both interfaces are necessary since script
+> interpreters may receive either a file path or file descriptor. For
+> backward compatibility, open(2) with O_DENY_WRITE will not fail on
+> unsupported systems, while users requiring explicit support guarantees
+> can use openat2(2).
 
-You misunderstand.
-Once you apply your series to the tree that you intend to merge simply
-add the lore links to the patches of the last version. I don't give a
-single damn whether someone _sends_ patches with lore links. That is not
-what this is about. I care that I can git log at mainline and figure out
-where that patch was discussed, pull down the discussion via b4 or other
-tooling, without having to search lore.
+We've said no to abusing the O_* flag space for that AT_EXECVE_* stuff
+before and you've been told by Linus as well that this is a nogo.
 
-IOW, what I asked you about is once the patches end up in mainline they
-please have links to the discussion where they came from. I do it for
-all patches no matter if I pick them up from someone else or if I'm
-applying my own:
+Nothing has changed in that regard and I'm not interested in stuffing
+the VFS APIs full of special-purpose behavior to work around the fact
+that this is work that needs to be done in userspace. Change the apps,
+stop pushing more and more cruft into the VFS that has no business
+there.
 
-commit c237aa9884f238e1480897463ca034877ca7530b
-Author:     Christian Brauner <brauner@kernel.org>
-
-    kernfs: don't fail listing extended attributes
-
-<snip>
-
-    Link: https://lore.kernel.org/20250819-ahndung-abgaben-524a535f8101@brauner
-
-^^^^^^^^^^^^^^^^^
-    Signed-off-by: Christian Brauner <brauner@kernel.org>
-
-I'm not doing that for my own personal wellness cure but for every other
-poor bastard (granted, including me because one year later it's all
-swapped out) who looks at commits in the git tree and wants to either
-jump to a link in the browser or wants to use tooling to just pull the
-whole discussion from the list.
+That's before we get into all the issues that are introduced by this
+mechanism that magically makes arbitrary files unwritable. It's not just
+a DoS it's likely to cause breakage in userspace as well. I removed the
+deny-write from execve because it already breaks various use-cases or
+leads to spurious failures in e.g., go. We're not spreading this disease
+as a first-class VFS API.
 
