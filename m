@@ -1,178 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-59176-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59177-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4546CB357A1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 10:51:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22248B357BA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 10:56:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 39DD54E31B9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 08:51:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED92F16A218
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 08:56:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02AC92FD1C2;
-	Tue, 26 Aug 2025 08:51:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AAF92FCC1F;
+	Tue, 26 Aug 2025 08:56:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rfc/s6Vk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ptYc2VPy"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 465D11FDA89;
-	Tue, 26 Aug 2025 08:51:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 985D827A919
+	for <linux-fsdevel@vger.kernel.org>; Tue, 26 Aug 2025 08:56:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756198281; cv=none; b=oVX3fRht+GTURYb5vFmVfE+rxBPBYxyt0MsmuAORMXauCbhjZPxnsTpCwJpwYcPdMYa/imPamZ+JzjgPSZsT99PR2LP/fsWK+iiILRF5EBcbWhiH7k0t47q9WcTp23aAAXPV51IVt2fQaD+2wig5/Kwv3k9Zk6XRap3jaK7G9no=
+	t=1756198576; cv=none; b=YXkRyAbonrDJrepd1fmPn+ZjtEUTc2E93QhvCHfeg1jWkhZsptqwmsc9fK7Gw/moKB0X8Wm4i7QBpujoXVMaCLnecgIcQ4zI7YIYMcdqS1AF+BotzPdzGR12EMoeE0ExusafrXoBNoBgpeuSUozK5u8ysq8ue1NwASmrQHSxCXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756198281; c=relaxed/simple;
-	bh=gerr9lf4/f5cmAS7cLedSZLzYtkGDyZYKSo7Nca+nTU=;
+	s=arc-20240116; t=1756198576; c=relaxed/simple;
+	bh=vLeRLPB4MTp8eW9tLgAtVfVYbrwht27648XnW9iF7UE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T46azvKE46s7+3Cu9M/lSLglFrdaSnSOP3v1nB8BkEohcnhfdHgcGoGFHSov4P9+uEqZH/PYzYUf0GTqs1RuzMsuk3RBpDjZn8PJtw0HFl5O+/Kka/W72D+4hpUmTbvFMGm4vUVmbD70qipgdq1vt1tTTWpgsLFaaoxBnMeMgSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rfc/s6Vk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A0A3C4CEF1;
-	Tue, 26 Aug 2025 08:51:15 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=MFRIFekPfiloKVBC1JIybWOtS+tlCzCfF95JeuJzca1QuaTlV8jMQ5+PhOJXu/xni0nmZcxHsLUVmSWl7tZPlzDLr2UCquttGMcsTiB9tuJJgzF4k6u14RR+mIoQxl/fguvEiPdh3ZZBSEbdkoSdK+E0BB7d44J2iYFCF6k49kM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ptYc2VPy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27A9EC4CEF1;
+	Tue, 26 Aug 2025 08:56:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756198277;
-	bh=gerr9lf4/f5cmAS7cLedSZLzYtkGDyZYKSo7Nca+nTU=;
+	s=k20201202; t=1756198575;
+	bh=vLeRLPB4MTp8eW9tLgAtVfVYbrwht27648XnW9iF7UE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rfc/s6VkqdRwcIvAyqqUwt5+b29OSkjsenf+M+YO5Aw917S6U/JxRGQbNG+fzpWRK
-	 qltTjSV3fpzNj89lXSUl/3aMmhZ9d17eoOTY4ku1UMD4PPyf9l0wdwrcMfjo0sqHr0
-	 4/OVRIj3L8ivcgH0a5NE8prI3wilis02zaf82ctWAqJYLKS2dLreha1Iqt6mpSnUIF
-	 U4gccSwJN6CIDQ0tyANmpCctWig7F0JwMdsktH4eZmyms1lDricp/n1I1VoKIY4+pH
-	 knmpQTyt51bzMLBfTDD83hQimpGNSgSlydaIP+LNQhHE6zG4RQdi/dG5zreT517pLV
-	 m7tWLGeR2i2nA==
-Date: Tue, 26 Aug 2025 10:51:12 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Askar Safin <safinaskar@zohomail.com>
-Cc: Aleksa Sarai <cyphar@cyphar.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, linux-api <linux-api@vger.kernel.org>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, David Howells <dhowells@redhat.com>, 
-	Christian Brauner <brauner@kernel.org>, linux-man <linux-man@vger.kernel.org>
-Subject: Re: [PATCH v2 1/1] man2/mount.2: expand and clarify docs for
- MS_REMOUNT | MS_BIND
-Message-ID: <ok5dewkwerk46l375ho2b3w7ofedslzqj2jy5e3kllhle5tbd7@avil45wh5yby>
-References: <20250825154839.2422856-1-safinaskar@zohomail.com>
- <20250825154839.2422856-2-safinaskar@zohomail.com>
- <rxl7zzllf374j6osujwvpvbvsnrjwikoo5tj2o3pqntfjdmwps@isiyqms4s776>
- <198e5864132.1283ed42534579.7191562270325331624@zohomail.com>
+	b=ptYc2VPySoCgNuXxSK78AP5wbrg1f1BB+fCTUiPE8km+7McSSknuOw0JzUHh1eGum
+	 JY5cLXHWg32z5sWAZ/AGoX53VZKK/q7eVH3QgGXlxuMZjIyjWe8NbsuLCJL6b9+G2k
+	 0ZezCHPd8ia6DHB+Q7XaoGsDc+yjPZDPTYDFo4Hybd/nr5r0I6MGrqF5Gp/eeQRyVY
+	 yg+AwMRVF6jLRgoCC8mbPt4CAETK0ODm/UvC7P11TeTRxW+X/n/0ihZH9bh4cqQFj3
+	 5E19wN+1lFcS8x8AK0HXUSz9zwktMomGsX7njMGtvgL9aveNXQDs9A2Qtk+nL+/UWy
+	 PxE0u2LBf8cfw==
+Date: Tue, 26 Aug 2025 10:56:11 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCHED][RFC][CFT] mount-related stuff
+Message-ID: <20250826-umbenannt-bersten-c42dd9c4dc6a@brauner>
+References: <20250825044046.GI39973@ZenIV>
+ <20250825-glanz-qualm-bcbae4e2c683@brauner>
+ <20250825161114.GM39973@ZenIV>
+ <20250825174312.GQ39973@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="sty5fdorgytvr577"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <198e5864132.1283ed42534579.7191562270325331624@zohomail.com>
+In-Reply-To: <20250825174312.GQ39973@ZenIV>
 
+On Mon, Aug 25, 2025 at 06:43:12PM +0100, Al Viro wrote:
+> On Mon, Aug 25, 2025 at 05:11:14PM +0100, Al Viro wrote:
+> > On Mon, Aug 25, 2025 at 02:43:43PM +0200, Christian Brauner wrote:
+> > > On Mon, Aug 25, 2025 at 05:40:46AM +0100, Al Viro wrote:
+> > > > 	Most of this pile is basically an attempt to see how well do
+> > > > cleanup.h-style mechanisms apply in mount handling.  That stuff lives in
+> > > > git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #work.mount
+> > > > Rebased to -rc3 (used to be a bit past -rc2, branched at mount fixes merge)
+> > > > Individual patches in followups.
+> > > > 
+> > > > 	Please, help with review and testing.  It seems to survive the
+> > > > local beating and code generation seems to be OK, but more testing
+> > > > would be a good thing and I would really like to see comments on that
+> > > > stuff.
+> > > 
+> > > Btw, I just realized that basically none of your commits have any lore
+> > > links in them. That kinda sucks because I very very often just look at a
+> > > commit and then use the link to jump to the mailing list discussion for
+> > > more context about a change and how it came about.
+> > > 
+> > > So pretty please can you start adding lore links to your commits when
+> > > applying if it's not fucking up your workflow too much?
+> > 
+> > Links to what, at the first posting?  Confused...
+> 
+> I mean, this _is_ what I hope would be a discussion of that stuff -
+> that's what request for comments stands for, after all.  How is that
+> supposed to work?  Going back through the queue and slapping lore links
+> at the same time as the reviewed-by etc. are applied?  I honestly have
+> no idea what practice do you have in mind - ~95% of the time I'm sitting
+> in nvi - it serves as IDE for me; mutt takes a large part of the rest.
+> Browser is something that gets used occasionally when I have to...
 
---sty5fdorgytvr577
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Askar Safin <safinaskar@zohomail.com>
-Cc: Aleksa Sarai <cyphar@cyphar.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, linux-api <linux-api@vger.kernel.org>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, David Howells <dhowells@redhat.com>, 
-	Christian Brauner <brauner@kernel.org>, linux-man <linux-man@vger.kernel.org>
-Subject: Re: [PATCH v2 1/1] man2/mount.2: expand and clarify docs for
- MS_REMOUNT | MS_BIND
-References: <20250825154839.2422856-1-safinaskar@zohomail.com>
- <20250825154839.2422856-2-safinaskar@zohomail.com>
- <rxl7zzllf374j6osujwvpvbvsnrjwikoo5tj2o3pqntfjdmwps@isiyqms4s776>
- <198e5864132.1283ed42534579.7191562270325331624@zohomail.com>
-MIME-Version: 1.0
-In-Reply-To: <198e5864132.1283ed42534579.7191562270325331624@zohomail.com>
+You misunderstand.
+Once you apply your series to the tree that you intend to merge simply
+add the lore links to the patches of the last version. I don't give a
+single damn whether someone _sends_ patches with lore links. That is not
+what this is about. I care that I can git log at mainline and figure out
+where that patch was discussed, pull down the discussion via b4 or other
+tooling, without having to search lore.
 
-Hi Askar,
+IOW, what I asked you about is once the patches end up in mainline they
+please have links to the discussion where they came from. I do it for
+all patches no matter if I pick them up from someone else or if I'm
+applying my own:
 
-On Tue, Aug 26, 2025 at 12:37:17PM +0400, Askar Safin wrote:
->  ---- On Mon, 25 Aug 2025 23:13:05 +0400  Alejandro Colomar <alx@kernel.o=
-rg> wrote ---=20
->  > Should we say "mount point" instead?  Otherwise, it's inconsistent with
->=20
-> d-user@comp:/rbt/man-pages$ grep -E -r -I -i 'mount point' /rbt/man-pages=
-/man | wc -l
-> 101
-> d-user@comp:/rbt/man-pages$ grep -E -r -I -i 'mount-point' /rbt/man-pages=
-/man | wc -l
-> 9
-> d-user@comp:/rbt/man-pages$ grep -E -r -I -i 'mountpoint' /rbt/man-pages/=
-man | wc -l
-> 4
->=20
-> My experiments show that "mount point" is indeed the most popular variant.
->=20
-> I changed all "mountpoint" to "mount point".
->=20
-> I decided to keep all "per-mount-point".
+commit c237aa9884f238e1480897463ca034877ca7530b
+Author:     Christian Brauner <brauner@kernel.org>
 
-Thanks!
+    kernfs: don't fail listing extended attributes
 
->  > > +have its existing per-mount-point flags
->  > > +cleared and replaced with those in
->  > > +.I mountflags
->  > > +when
->  > > +.B MS_REMOUNT
->  > > +and
->  > > +.B MS_BIND
->  > > +are specified.
->  >=20
->  > Maybe reverse the sentence to start with this?
->=20
-> I decided simply to remove that "MS_REMOUNT and MS_BIND" part
-> (because it is already present in previous sentence).
+<snip>
 
-Okay.
+    Link: https://lore.kernel.org/20250819-ahndung-abgaben-524a535f8101@brauner
 
->  > > +This means that if
->  >=20
->  > I would move the 'if' to the next line.
->=20
-> I moved it. But, please, next time do it youself.
-> I don't plan to become regular man-pages contributor.
+^^^^^^^^^^^^^^^^^
+    Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-I do these small things myself if they're the only issue.  If there are
-more important issues, I _also_ point these out, just because it's
-useful.
-
-In general, when writing documentation sentences, write them similarly
-to how you would write them if they were code.  You never put an if at
-the end of a line of code; never put it at the end of a line of
-documentation text.
-
-> I addressed all complains except for listed above and sent v3.
-
-I'll check.
-
-
-Have a lovely day!
-Alex
-
---=20
-<https://www.alejandro-colomar.es/>
-
---sty5fdorgytvr577
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmitdXIACgkQ64mZXMKQ
-wqkVnA/9EiLz8VURlT0plLVhS6ibb8VLy0vgJLHhqmY/cyp8mP359+QQ5TYfbAyy
-IL6LNwJTjVlAa3BU2NRUvWoW+lze5yofvlOJZuYWtjz/LEA/KDMQWRtUCYEPYqWI
-EBpIKGdbKqi40ZHi7C28lUbLTPoAPCpCjcWlZDtOcXcfYnOk9x1WTOGnqSi2sEGw
-DY68FTVAQ0szsiR1BEIH/hHqm5pbVP6/sDtTWfDgSismp9/8XwMQfMBr4HbrphTe
-f7oldgwd7Icw6B7OpGGze+i3DC+Qn39KweK/EpXEXfb20Jlvv3urAXmlG2z75V9q
-RwdNtU5HqCm8wJPEDUjrvMV64wPVxk8VC6miDSX09xdMJYV0BhPcQn66xVql4ITD
-2+B09PaskfAE+1MrRlowziSa1yX847RIq3jCVD/8GyIRUkCl0tIp48w+88BV/Y/T
-QP56CG5qSKO3mhLqcirtKJFk41f2EkPpIU4b4vpKZit2hc3ckH+olK6z+ZGpXbqP
-wtawuoir/f2hjCUIU0e3hFnJYmaM0FtO07QH+Cst8XqCqK+Y1tTG7zXMat4cN6vh
-fDtgGL/jyrvJqixrO6WE7fZTWdxmWS/w1zK4RqycpPaWp4EAmueloGN27G3FQfUD
-hq4HwT4YJDU/wLRSHD2elXUkvPj4rSPVgHVZmYsts8v9hIW3ags=
-=aSuH
------END PGP SIGNATURE-----
-
---sty5fdorgytvr577--
+I'm not doing that for my own personal wellness cure but for every other
+poor bastard (granted, including me because one year later it's all
+swapped out) who looks at commits in the git tree and wants to either
+jump to a link in the browser or wants to use tooling to just pull the
+whole discussion from the list.
 
