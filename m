@@ -1,150 +1,160 @@
-Return-Path: <linux-fsdevel+bounces-59315-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59316-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72469B37356
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 21:43:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13BBCB37386
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 21:58:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EB0F464E39
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 19:43:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DEB67A3D41
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 19:57:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F71930CD9E;
-	Tue, 26 Aug 2025 19:43:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4240636CC76;
+	Tue, 26 Aug 2025 19:58:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FOkQtVw1"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="JL/AEh6c"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D65B30CDA0
-	for <linux-fsdevel@vger.kernel.org>; Tue, 26 Aug 2025 19:43:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7538030CD8E;
+	Tue, 26 Aug 2025 19:58:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756237433; cv=none; b=lZMhA90TWiOoZ/CntIEH30xah1DSKuHSJ1/R8RTmgcgbAvDnH9TuFLSraDfSOGOAWqJTw3/pKPw4Ewoz0Dl7yHH/yfmiJ43A8fIIO4aRad40QGSVIJWluAdLqonCK1XdlVUEDJOG2hF3J5NZBwRExp6cnc7TW0PSllLvvwcLgA0=
+	t=1756238315; cv=none; b=sgeKi2+b+XizC+4isPdIeybqHoEqmiqIdIFTUitDv9IjeCYjN1OjP4urQeeO0CSaBWlNYBZV556891r28+zgEZZ9m9QmbFr1xaBm8RAjnqQJOSudrQcGsjekuZ+bWDpRpkqK2DInRtQRv/SdxpyRG25+nYw3LlkcJp368+Uw44E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756237433; c=relaxed/simple;
-	bh=uOevrRYEXJ8QMLcA6ZuOhFt08uaD7jzqo894mdf79rg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RHlA/X4coVIdfqj4yWO2LkO9b5OC8xwKka/PkTWy6Su/L5ozOPGq7lP3Kiii5ISFE3bkPq41vs/gd4WjiXqPCV/h/5K5ukbE8hI4Lr6+UruMpKieKBxjkmgMC0b+tteJ+CgCF1EWq1KF6MmhTORAJrfj5nTZkiZDlibVIwHkrnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FOkQtVw1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15902C4CEF1;
-	Tue, 26 Aug 2025 19:43:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756237433;
-	bh=uOevrRYEXJ8QMLcA6ZuOhFt08uaD7jzqo894mdf79rg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FOkQtVw10cCjltTOZqQTv2BA2nlS4/em+dQoNBDtQQUEIC6p9j7AWAfY4nyKVymCD
-	 8W8+8XfSIdO8ZcXbcXS4992dfOfLwsY75w/asr9HjWQU8mBxNhuE4NvTHIw78Y9ozU
-	 mmAVmP6TOPXZOK2OL/gmiUVWRnrDN/YiSzm1mYdkHsMzEhyOtsxt3QkI7qNYNoguHn
-	 4r1uAa0Pa7+7iF3s0y2fAxBfz4Wl2Hl09CxswyspIrMdc8u+Ws1XDY9hEeKGej3hJs
-	 7j6/V+Wigx60ynoNHg8pM0zYkxy54BX8OJ1e9wMBsQiBWPfPbFGohgOIbTNcTcWoC1
-	 ypzPEJdGiA0lA==
-Date: Tue, 26 Aug 2025 12:43:52 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Bernd Schubert <bschubert@ddn.com>
-Cc: Joanne Koong <joannelkoong@gmail.com>,
-	"John@groves.net" <John@groves.net>,
-	"bernd@bsbernd.com" <bernd@bsbernd.com>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"miklos@szeredi.hu" <miklos@szeredi.hu>,
-	"neal@gompa.dev" <neal@gompa.dev>
-Subject: Re: [PATCH 1/1] libfuse: don't put HAVE_STATX in a public header
-Message-ID: <20250826194352.GF19809@frogsfrogsfrogs>
-References: <175573710975.19062.7329425679466983566.stgit@frogsfrogsfrogs>
- <175573710994.19062.1523403126247996321.stgit@frogsfrogsfrogs>
- <CAJnrk1Y-eEeJySHL5sYMTphUnApbK2hZpDjDh3qEmsa_f146tw@mail.gmail.com>
- <3722af15-f1e0-4a91-b0ed-9292f80a82a4@ddn.com>
+	s=arc-20240116; t=1756238315; c=relaxed/simple;
+	bh=sQh6Hh7nM2R2AVB+kg0sRGcg38xkWEp8B797I+e4X24=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fb5jW0/SLqAwlIketqdWuNJ3wpivjz0f1DJqtibe0Cm9P9R7pqXo1X0CRObUskocredoA2Gz+BtTpVR4A32iF9fWNJ7DXaX4A8tKwstS801NgAztfz1UU7CdoGLXdUmRer58p2apu/G5z8n20pOQEC7kEjCM4zhcIsuMaWFGXPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=JL/AEh6c; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=b/ZWldiU09DokIkc8tpE0h2CzKr2MQIEwFmULf+sPa8=; b=JL/AEh6cHl1P6P4FLnUCbOjfPi
+	VOBvon4hgz3Gwvzmvhte+M3IIGt0jECS/fM/kUxo2SjGOLzzcsaF4bHf0Qg7yNGcUalwzT0FeZYM9
+	t/TzNAJd+nb10jEEe8B8+8T36F2Jgx3x7yOOjmjD+51/l6hKVkQyytOvsSNp7idbkHcs4c7OOuPHy
+	hC733Rme8cLp2Kvn0JePkCMJFJOw3vZCLPbZHC7ePxRBAGWtIlGtACZhBCXlexr3GZrqNAdkJWpRk
+	g5o4JxOBWi7QIexyRIp1XD9opoSEEIBKr2Z1qfIwaj/9AadLIP+TF5M2plQhCOndrQTv63GVfu5Tq
+	lxTAZikQ==;
+Received: from [187.57.78.222] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1uqzoH-00250Q-Cz; Tue, 26 Aug 2025 21:58:25 +0200
+Message-ID: <564e46ac-a605-4b20-bb48-444bf7141ab5@igalia.com>
+Date: Tue, 26 Aug 2025 16:58:20 -0300
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 4/9] ovl: Create ovl_casefold() to support casefolded
+ strncmp()
+To: Gabriel Krisman Bertazi <krisman@suse.de>,
+ Amir Goldstein <amir73il@gmail.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>,
+ linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ kernel-dev@igalia.com
+References: <20250822-tonyk-overlayfs-v6-0-8b6e9e604fa2@igalia.com>
+ <20250822-tonyk-overlayfs-v6-4-8b6e9e604fa2@igalia.com>
+ <875xeb64ks.fsf@mailhost.krisman.be>
+ <CAOQ4uxiHQx=_d_22RBUvr9FSbtF-+DJMnoRi0QnODXRR=c47gA@mail.gmail.com>
+ <CAOQ4uxgaefXzkjpHgjL0AZrOn_ZMP=b1TKp-KDh53q-4borUZw@mail.gmail.com>
+ <871poz4983.fsf@mailhost.krisman.be> <87plci3lxw.fsf@mailhost.krisman.be>
+ <CAOQ4uxhw26Tf6LMP1fkH=bTD_LXEkUJ1soWwW+BrgoePsuzVww@mail.gmail.com>
+ <87ldn62kjy.fsf@mailhost.krisman.be>
+Content-Language: en-US
+From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+In-Reply-To: <87ldn62kjy.fsf@mailhost.krisman.be>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <3722af15-f1e0-4a91-b0ed-9292f80a82a4@ddn.com>
 
-On Fri, Aug 22, 2025 at 12:54:01PM +0000, Bernd Schubert wrote:
-> On 8/22/25 02:33, Joanne Koong wrote:
-> > On Wed, Aug 20, 2025 at 6:01 PM Darrick J. Wong <djwong@kernel.org> wrote:
-> >>
-> >> From: Darrick J. Wong <djwong@kernel.org>
-> >>
-> >> fuse.h and fuse_lowlevel.h are public headers, don't expose internal
-> >> build system config variables to downstream clients.  This can also lead
-> >> to function pointer ordering issues if (say) libfuse gets built with
-> >> HAVE_STATX but the client program doesn't define a HAVE_STATX.
-> >>
-> >> Get rid of the conditionals in the public header files to fix this.
-> >>
-> >> Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
-> >> ---
-> >>  include/fuse.h           |    2 --
-> >>  include/fuse_lowlevel.h  |    2 --
-> >>  example/memfs_ll.cc      |    2 +-
-> >>  example/passthrough.c    |    2 +-
-> >>  example/passthrough_fh.c |    2 +-
-> >>  example/passthrough_ll.c |    2 +-
-> >>  6 files changed, 4 insertions(+), 8 deletions(-)
-> >>
-> >>
-> >> diff --git a/include/fuse.h b/include/fuse.h
-> >> index 06feacb070fbfb..209102651e9454 100644
-> >> --- a/include/fuse.h
-> >> +++ b/include/fuse.h
-> >> @@ -854,7 +854,6 @@ struct fuse_operations {
-> >>          */
-> >>         off_t (*lseek) (const char *, off_t off, int whence, struct fuse_file_info *);
-> >>
-> >> -#ifdef HAVE_STATX
-> >>         /**
-> >>          * Get extended file attributes.
-> >>          *
-> >> @@ -865,7 +864,6 @@ struct fuse_operations {
-> >>          */
-> >>         int (*statx)(const char *path, int flags, int mask, struct statx *stxbuf,
-> >>                      struct fuse_file_info *fi);
-> >> -#endif
-> >>  };
-> > 
-> > Are we able to just remove this ifdef? Won't this break compilation on
-> > old systems that don't recognize "struct statx"?
+
+
+Em 26/08/2025 12:02, Gabriel Krisman Bertazi escreveu:
+> Amir Goldstein <amir73il@gmail.com> writes:
 > 
-> Yeah, you had added forward declaration actually. Slipped through in
-> my review that we don't need the HAVE_STATX anymore.
+>> On Tue, Aug 26, 2025 at 3:34 AM Gabriel Krisman Bertazi <krisman@suse.de> wrote:
+>>
+>>>
+>>> I was thinking again about this and I suspect I misunderstood your
+>>> question.  let me try to answer it again:
+>>>
+>>> Ext4, f2fs and tmpfs all allow invalid utf8-encoded strings in a
+>>> casefolded directory when running on non-strict-mode.  They are treated
+>>> as non-encoded byte-sequences, as if they were seen on a case-Sensitive
+>>> directory.  They can't collide with other filenames because they
+>>> basically "fold" to themselves.
+>>>
+>>> Now I suspect there is another problem with this series: I don't see how
+>>> it implements the semantics of strict mode.  What happens if upper and
+>>> lower are in strict mode (which is valid, same encoding_flags) but there
+>>> is an invalid name in the lower?  overlayfs should reject the dentry,
+>>> because any attempt to create it to the upper will fail.
+>>
+>> Ok, so IIUC, one issue is that return value from ovl_casefold() should be
+>> conditional to the sb encoding_flags, which was inherited from the
+>> layers.
 > 
-> We can also extend the patch a bit to remove HAVE_STATX from the public
-> config. 
-> Another alternative for this patch would be to replace HAVE_STATX by
-> HAVE_FUSE_STATX.
-> The commit message is also not entirely right, as it says
-
-<shrug> libfuse itself doesn't define a struct statx, so what does it
-have, aside from the incomplete struct declaration?  TBH I wonder what
-will happen when struct statx grows, but everybody gets to deal with
-that problem because we didn't explicitly encode the size in either the
-syscall or the struct definition.
-
-Presumably fuse servers will detect and set their own HAVE_STATX,
-and only supply a ->statx function if they HAVE_STATX.  They don't have
-to know if libfuse itself got built with statx support; if it didn't,
-then nothing will ever call ->statx, afaict.
-
-> > to function pointer ordering issues if (say) libfuse gets built with
-> > HAVE_STATX but the client program doesn't define a HAVE_STATX.
+> yes, unless you reject mounting strict_mode filesystems, which the best
+> course of action, in my opinion.
 > 
-> Actually not, because /usr/include/fuse3/libfuse_config.h defines HAVE_STATX.
-> I'm more worried that there might be a conflict of HAVE_STATX from libfuse
-> with HAVE_STATX from the application.
-
-<nod>
-
---D
-
+>>
+>> Again, *IF* I understand correctly, then strict mode ext4 will not allow
+>> creating an invalid-encoded name, but will strict mode ext4 allow
+>> it as a valid lookup result?
 > 
-> Thanks,
-> Bernd
+> strict mode ext4 will not allow creating an invalid-encoded name. And
+> even lookups will fail.  Because the kernel can't casefold it, it will
+> assume the dirent is broken and ignore it during lookup.
+> 
+> (I just noticed the dirent is ignored and the error is not propagated in
+> ext4_match.  That needs improvement.).
+> 
+>>>
+>>> André, did you consider this scenario?
+>>
+>> In general, as I have told Andre from v1, please stick to the most common
+>> configs that people actually need.
+>>
+>> We do NOT need to support every possible combination of layers configurations.
+>>
+>> This is why we went with supporting all-or-nothing configs for casefolder dirs.
+>> Because it is simpler for overlayfs semantics and good enough for what
+>> users need.
+>>
+>> So my question is to you both: do users actually use strict mode for
+>> wine and such?
+>> Because if they don't I would rather support the default mode only
+>> (enforced on mount)
+>> and add support for strict mode later per actual users demand.
+> 
+> I doubt we care.  strict mode is a restricted version of casefolding
+> support with minor advantages.  Basically, with it, you can trust that
+> if you update the unicode version, there won't be any behavior change in
+> casefolding due to newly assigned code-points.  For Wine, that is
+> irrelevant.
+> 
+> You can very well reject strict mode and be done with it.
+> 
+
+Amir,
+
+I think this can be done at ovl_get_layers(), something like:
+
+if (sb_has_strict_encoding(sb)) {
+	pr_err("strict encoding not supported\n");
+	return -EINVAL;
+}
+
 
