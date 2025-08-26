@@ -1,79 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-59272-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59273-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E97D7B36EB6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 17:51:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70087B36EA0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 17:50:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 634AB981E4C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 15:47:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 439CA1BC073A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 15:48:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E64436CC87;
-	Tue, 26 Aug 2025 15:41:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B562FD1D6;
+	Tue, 26 Aug 2025 15:41:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="uxi7ohXq"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="uGC5UlYj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1548C36CC64
-	for <linux-fsdevel@vger.kernel.org>; Tue, 26 Aug 2025 15:41:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EEE436C07B
+	for <linux-fsdevel@vger.kernel.org>; Tue, 26 Aug 2025 15:41:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756222907; cv=none; b=Hje9r9axjHHy7fYe9teMAV5RcTVkm5elgWSW6t0NmqSVHaNVosaySsTOIQu5DI6uYureAZF3gQ65sfzRzbsX2AyxHQaZeDsQ6+i7E3mt682JepMzNGQNRTbyGngCpTOOqad0nDXysRD3L+MOcVHH6CjbF/dqiuhXmUuFewJu73U=
+	t=1756222908; cv=none; b=ccD/HpMulMMzN5BtX6EqXMf2sAU6+TQrvbk+tvF+NlxIlpNmq4bXtwQUuliTW88o2gbRWXbnjJBAZSBTpsBz8iqyM3pnYrOw23Fh5C5Js3bedp/oA4KmORWsfzEhERWxS13lcyEDQKVcX8Nev/ce4LfAk5DR7fUphM0n4nfdSBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756222907; c=relaxed/simple;
-	bh=1ynNzpiuwPqZZfc4RXGfh4iGaVDz+/1Rc+r/9GR0kTY=;
+	s=arc-20240116; t=1756222908; c=relaxed/simple;
+	bh=GaKmvGab+0a2RrIuxhv8XqHzko9SenWylGMpW6UIOW4=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Nh2h4FziGNprcY3vGUsnDh6CzyUxpY43BdD6j3rOn7LWpr429Gdr5kario7YXlA1a5MCmhCbNCPSnr6TvK5GmM7a9rYHJHariLQ7lpBtWO9xQpF1+yWFa9Xyqqc7LEk4Wy1MzQoUsf3epp8no2sPmB6bLQUBgMC0TpMPRJp7Lwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=uxi7ohXq; arc=none smtp.client-ip=209.85.128.170
+	 MIME-Version; b=Yr/VPuPDCJMKohGDIntppHEvUchwtVx6wqEAI/bPoIVik/EH/sAFAk8TWB2M7RquqoqIcb9aFCl9TO7g7+vOpzLWKd74AdpH5DdQvPRplbFOOXhGbRFbDLhn9RDUPbDK0uX9OYQzlVHXXSFu5P8buuA171QOD8sy0EFPrkCZZAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=uGC5UlYj; arc=none smtp.client-ip=209.85.219.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-71d71bcac45so45864587b3.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Aug 2025 08:41:45 -0700 (PDT)
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e931c858dbbso4584490276.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Aug 2025 08:41:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1756222905; x=1756827705; darn=vger.kernel.org;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1756222906; x=1756827706; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=7o1UME4c5fAFN/Xhsfm0V4nndfddrm872UrCQizuLdI=;
-        b=uxi7ohXqKUcBZO7Ua+hc/ajCXggSTI51qc1be8CHoDfUpzc91NJRWTj/ghdlaZYRf9
-         UZg0KXNhymiGudejku1NoA3cYkQKamjzBVlLEFd6DdClC3w5WTOYjiwjrdo2npfRk5se
-         rccY1P8OI+uIIFRIpkNDPGmZORCr2dsZ5FwzsD7zEg2OYIpROZqzcWcry128AHtFhHlp
-         40XeOJZzb9CJ3Pw9dhXIg7BYAJHGtCSTnyJwArIl0VKn+2nxcrh0YTOXBwxok1KBlNTo
-         i6+JRCs2Ohy6I6h+rp+4maxUIdO91tkyGK/4frTy/5B5MYdwS9dXV8z+ZV8yR/zK0Gls
-         O3iA==
+        bh=WTOjoTpV6m7hLv/F0NHjQx0Ply5AcqoXgmnK8+LDP5A=;
+        b=uGC5UlYjbB6rOseH9rP9MBsmDrcW30L2b2JfgIYz8Eyj3xR/rQwJmfyyU66fGoMvZd
+         YIn1TRYIdFSV0VIFkfvJv0Y5xYinUBAW72kL9idKUi+wb0zTYCBo08c3pOGQrl3SHnH9
+         vxnF5uYsccZbcvX9GNwpv0/djWeDtHVRSa5Rz3Uu5EFHcpmCsexCUXNdQWgH+hTiw2kj
+         VGL2vVIQfEfXhMWUQAVfWEBK1kyEfBiNFS6a4c1WOmK2x/Zw3eXkvzoZrOe8uhHAs5td
+         Hh0qDI46iRuFdj4JGFQTJ4/oAy2+e21u+KIat1IEqO+Z6mbnDl7hhYAeweAmG3iwJoz1
+         Qv/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756222905; x=1756827705;
+        d=1e100.net; s=20230601; t=1756222906; x=1756827706;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7o1UME4c5fAFN/Xhsfm0V4nndfddrm872UrCQizuLdI=;
-        b=LwlIww0At+XXVOntpwiZ6YrSEY0QDXx/Njn1PowSMjVGQN1v1kgtAt7SVO5TEgoUYQ
-         ZzknhwBMqghMemkzEJmZc5e/Thix+7Dc8DavaxFKtVWI0WgIUCo2xL9S5L64ogK++onV
-         S3a/6JKAJ7XUc+hP/5yOSquPcoZmZTAZ6dAjhfRBAj8gCj3LLcsWk8hsl3bFMrh0gQbd
-         Pu3PfVhZX3iNecJPxEfcXOALlBu4L3PY5nHv2PpoKm8bgpyE1Hkb3/gzsAA35UIRS0qM
-         zwUtkdTUrcK1N66OjVvCUrbHW2HAFcXH20FehHX/PFz6Lw+gkaXi2T1PfJ7W4oF6L8iV
-         tbBA==
-X-Gm-Message-State: AOJu0Yyi7S2DOLBfeBp+rzuuXLV2vA6qLffX7MPqdKKa+KkcS2IN622n
-	PfOXgJ8HAjTHjZm09S1gG1SeUt4MEsloNZ9CYiwaPkNjK1vn4K50w6hg43b3BNxqn+iV1A2lPfA
-	JJ8e7
-X-Gm-Gg: ASbGncuEj0+TQTyghln8e66xLjxeH9P7AZbNcJ8sAfB6xyniV0N0cvEJVmvWqs+XTV9
-	1dc/HRpsHDjj9QMsIh8pXmTLZZxlcA4I8RwMbSBaQPArpGolDL+kr809EPDQG0ITqNYdOHKZDLq
-	Xb6rrqsTnoGQPz64GScBjmV7RglcliKZhcqDun2Vpe/crqvNiTucptcS5S9wlIusqhlTgWt1cXx
-	9rSjzqBFAd6/oXfGnpYHwc63B8Shd/yQaItB80L8G/f/nk6fkzG1d2zaQRZOkU9HVBadXLh5GCQ
-	SV4BBcIp803IYL4sKOTCUOb2pyII89qKifSVAw3rv8GtRIJrsWSxaF7SsfUYhptk3yL1sBkDYTJ
-	UP2SsoOoK7ROImag22zuhb7h+BSlt2gzke3Hp/WOlODIoJSbLpWpZslDHt+1k2OTr9DypyNqdeC
-	Kfhqyg
-X-Google-Smtp-Source: AGHT+IGukatO5Mwgl+iFpY8aNAJGoZlPwkGqVoc2HLHPS4uUtL3IivdATW29hDRBnU0HqwHw9U1Bqg==
-X-Received: by 2002:a05:690c:6e93:b0:71c:1de5:5da8 with SMTP id 00721157ae682-71fdc40d339mr188030487b3.36.1756222904483;
-        Tue, 26 Aug 2025 08:41:44 -0700 (PDT)
+        bh=WTOjoTpV6m7hLv/F0NHjQx0Ply5AcqoXgmnK8+LDP5A=;
+        b=Hc25SX+1fJWwNVnx9Ccx+DmTLm6qkMKpWdoZFc/nN3sgU503XIBMFnuJhUF1isK8Ro
+         OhXMltqzr6jJzvrb4qLCmZhYAlaroU8L2gss/o9uIVi7UETFZGn/mXBGNWN0AFEZ203a
+         I/oDHvIg4RVg5hW+BOPm26UKPuzU8tkfPqpDs1G0J6m+zhGhBFnZpxR0dejdw0EyFhR4
+         VwAYzAHk4mbLMV2fO1k74/5PDRUx96HPQsueaOTuNjsKgF0hWjAPN2yNl79/p+wVQgdJ
+         8FuklVTx1LIIGVpVOx+9RPvP818pKQL25VaOJeK5LmddzWtGyz1nZMYYeaI/Na6e+bfk
+         X1JQ==
+X-Gm-Message-State: AOJu0Yy0yDomoEdFp8f6glbN5yVZfThb57kd9uv5c+p2E56PgBuH0khy
+	Y676pqN5eOYIS3hINdNWCWgtqFsB4ciAqxvPuIYM+Cpy3prsgg/VPGwVE7McXHIzNDGTo6HqdA+
+	YiunS
+X-Gm-Gg: ASbGncvWdxHOi6UfOLw2lzOVsG+dJpFZwBXWkv38bjrAkuG7APDSodUFNhN0/7px1Yp
+	5OK4iIw0Gyd7Wvg8iKPdO8fy2Npt2fhbF94mQvRKlFFj06jPmNjfs+k90X/XsWYN/Zk7PJfA9jQ
+	wdEfC0388sQYwOXS1pQQ0NJbAkoLMu3tSEUFdvIzKmlA9dXpgiScf1RfL9ImAk9HYkU5r9ils5s
+	EOCQywNfq2eKNtRuee0dFQTotQgEOcXpFi5nqKk3I9U7GLZiG8scOW3gSsOXHM7ZePcSBiPbNib
+	JtI+A1ooF6nYRdNC+wcmogvrpCWgGB7IYMfQof955cL289ktkUDqPiCbcH8DX5lkEZw0u3zvv4j
+	LQRxMmRpG3mLS7FBmWDmUukf6K249QMD2eelYSWHo/fuTl0sqeS2JfsEMKGkyhelP8iOn+g==
+X-Google-Smtp-Source: AGHT+IFjze0r20/WCdIbB5fda9LnJE1jWaThHGsQzBCPZUwgD9yRzYM9e2CgIgaMhoLiVnPc0UCoRA==
+X-Received: by 2002:a05:6902:150a:b0:e95:3e67:90de with SMTP id 3f1490d57ef6-e953e6797fdmr9650941276.27.1756222905943;
+        Tue, 26 Aug 2025 08:41:45 -0700 (PDT)
 Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-5fbb1a885absm418881d50.4.2025.08.26.08.41.43
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e96eb3c35cdsm121586276.11.2025.08.26.08.41.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Aug 2025 08:41:43 -0700 (PDT)
+        Tue, 26 Aug 2025 08:41:45 -0700 (PDT)
 From: Josef Bacik <josef@toxicpanda.com>
 To: linux-fsdevel@vger.kernel.org,
 	linux-btrfs@vger.kernel.org,
@@ -83,9 +82,9 @@ To: linux-fsdevel@vger.kernel.org,
 	brauner@kernel.org,
 	viro@ZenIV.linux.org.uk,
 	amir73il@gmail.com
-Subject: [PATCH v2 38/54] gfs2: remove I_WILL_FREE|I_FREEING usage
-Date: Tue, 26 Aug 2025 11:39:38 -0400
-Message-ID: <45b3bd8bf31cdb07d0b7db55655f66ab49ecc94f.1756222465.git.josef@toxicpanda.com>
+Subject: [PATCH v2 39/54] fs: remove I_WILL_FREE|I_FREEING check from dquot.c
+Date: Tue, 26 Aug 2025 11:39:39 -0400
+Message-ID: <e2c8fe9fa28fb6e52d0e47e38d2ef93c9527b84f.1756222465.git.josef@toxicpanda.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1756222464.git.josef@toxicpanda.com>
 References: <cover.1756222464.git.josef@toxicpanda.com>
@@ -97,49 +96,36 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Now that we have the reference count to check if the inode is live, use
-that instead of checking I_WILL_FREE|I_FREEING.
+We can use the reference count to see if the inode is live.
 
 Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 ---
- fs/gfs2/ops_fstype.c | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+ fs/quota/dquot.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/fs/gfs2/ops_fstype.c b/fs/gfs2/ops_fstype.c
-index c770006f8889..2b481fdc903d 100644
---- a/fs/gfs2/ops_fstype.c
-+++ b/fs/gfs2/ops_fstype.c
-@@ -1745,17 +1745,26 @@ static void gfs2_evict_inodes(struct super_block *sb)
- 	struct gfs2_sbd *sdp = sb->s_fs_info;
- 
- 	set_bit(SDF_EVICTING, &sdp->sd_flags);
--
-+again:
+diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
+index df4a9b348769..90e69653c261 100644
+--- a/fs/quota/dquot.c
++++ b/fs/quota/dquot.c
+@@ -1030,14 +1030,16 @@ static int add_dquot_ref(struct super_block *sb, int type)
  	spin_lock(&sb->s_inode_list_lock);
  	list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
  		spin_lock(&inode->i_lock);
--		if ((inode->i_state & (I_FREEING|I_WILL_FREE|I_NEW)) &&
--		    !need_resched()) {
-+		if ((inode->i_state & I_NEW) && !need_resched()) {
+-		if ((inode->i_state & (I_FREEING|I_WILL_FREE|I_NEW)) ||
++		if ((inode->i_state & I_NEW) ||
+ 		    !atomic_read(&inode->i_writecount) ||
+ 		    !dqinit_needed(inode, type)) {
  			spin_unlock(&inode->i_lock);
  			continue;
  		}
 -		__iget(inode);
  		spin_unlock(&inode->i_lock);
 +
-+		if (!igrab(inode)) {
-+			if (need_resched()) {
-+				spin_unlock(&sb->s_inode_list_lock);
-+				iput(toput_inode);
-+				toput_inode = NULL;
-+				cond_resched();
-+				goto again;
-+			}
++		if (!igrab(inode))
 +			continue;
-+		}
  		spin_unlock(&sb->s_inode_list_lock);
  
- 		iput(toput_inode);
+ #ifdef CONFIG_QUOTA_DEBUG
 -- 
 2.49.0
 
