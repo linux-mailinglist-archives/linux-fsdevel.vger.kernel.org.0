@@ -1,48 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-59168-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59169-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06A38B3563A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 09:59:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FDBEB35648
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 10:02:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CF3D94E2A35
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 07:59:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 003AC3BFA4E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 08:02:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 156AF2F6571;
-	Tue, 26 Aug 2025 07:59:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1F8A283C90;
+	Tue, 26 Aug 2025 08:02:07 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B442F531C;
-	Tue, 26 Aug 2025 07:59:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD6161D5178;
+	Tue, 26 Aug 2025 08:02:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756195165; cv=none; b=cmwe7Otx16Yv3Vwf0nkZWplcMbbZyfou4/5n8IsgejvHo61PlyJY/BGS+JpVYZOsGHQFhdCnS+5b0W0FZySwgOkMfEIcBdWvICZMy73cwjlPsKMd+hQejDs14P25SmdHJMFj7B+TvAxMXUCM5ipIFM2GbyAeH6oD5UrUS4Wvt18=
+	t=1756195327; cv=none; b=YiWAPr7bLtaGPKob/e8wI9DrSB0F3IOj4KFGMJxkxs0YFqW1S6aR/e+zY46M2pcet02S/+8XBq9H+shihQJ5P3hrrn3kfyXfiZh4SOSts6WM0FeDkK+d8ufT1O8lzs20nUx+Ly5pzH9Y+y5Z87TTqRsg3Wjgp7M8QXUdsZDigeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756195165; c=relaxed/simple;
-	bh=FlR6m5XS3lP2HXxJR0QkkxXgb+y3kUqmopQCHSP0tD8=;
+	s=arc-20240116; t=1756195327; c=relaxed/simple;
+	bh=n/Tqydyh65lEECKEPzhd6XkDIOw2QWBJQ49RNnonqsU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o2E5noAyuZsydhC1Zx10Osi8Q8sYasCXlUXzf5tSZLsNhr9uuKRLOCAr8l/rk+GjIJP7c4WTStjE8TjHXPCk5Nz3NDUFpApRyJhwydXGZ9Jr1KVXPY45ZbBzVXy5xRCcSWE/zivGJmmNWSm7RvH1fqEBgnz3ChiT+T4VZ0JSOiM=
+	 Content-Type:Content-Disposition:In-Reply-To; b=jUeSJLPUYEXaAe71527nEyYNWJ4YsPJsave1rbWEndF49eX92iMdYX+E1cy5pgCqquhaoYJ3MYfKVaQiWZnLvsOdj4dUbnoLFsptDOKUruKGBxXCPiBOoUQ7P4EOV6P2Sqsl9BZ2RX48iNXuVcRKIJF5YAABIpJvxyKohwroPyM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
 Received: by verein.lst.de (Postfix, from userid 2407)
-	id 27D7468AFE; Tue, 26 Aug 2025 09:59:11 +0200 (CEST)
-Date: Tue, 26 Aug 2025 09:59:10 +0200
+	id 13EB367373; Tue, 26 Aug 2025 10:02:01 +0200 (CEST)
+Date: Tue, 26 Aug 2025 10:02:00 +0200
 From: Christoph Hellwig <hch@lst.de>
-To: Askar Safin <safinaskar@zohomail.com>
-Cc: hch@lst.de, gregkh@linuxfoundation.org,
-	julian.stecklina@cyberus-technology.de,
+To: Keith Busch <kbusch@kernel.org>
+Cc: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	rafael@kernel.org, torvalds@linux-foundation.org,
-	viro@zeniv.linux.org.uk, Gao Xiang <hsiangkao@linux.alibaba.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Subject: Re: [PATCH] initrd: support erofs as initrd
-Message-ID: <20250826075910.GA22903@lst.de>
-References: <20250321050114.GC1831@lst.de> <20250825182713.2469206-1-safinaskar@zohomail.com>
+	snitzer@kernel.org, axboe@kernel.dk, dw@davidwei.uk,
+	brauner@kernel.org, martin.petersen@oracle.com, djwong@kernel.org,
+	linux-xfs@vger.kernel.org, viro@zeniv.linux.org.uk
+Subject: Re: [PATCHv3 3/8] block: align the bio after building it
+Message-ID: <20250826080200.GA23095@lst.de>
+References: <20250819164922.640964-1-kbusch@meta.com> <20250819164922.640964-4-kbusch@meta.com> <20250825074744.GF20853@lst.de> <aK0Bsf6AKL8a0wFy@kbusch-mbp>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -51,22 +50,30 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250825182713.2469206-1-safinaskar@zohomail.com>
+In-Reply-To: <aK0Bsf6AKL8a0wFy@kbusch-mbp>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Mon, Aug 25, 2025 at 09:27:13PM +0300, Askar Safin wrote:
-> > We've been trying to kill off initrd in favor of initramfs for about
-> > two decades.  I don't think adding new file system support to it is
-> > helpful.
+On Mon, Aug 25, 2025 at 06:37:05PM -0600, Keith Busch wrote:
+> On Mon, Aug 25, 2025 at 09:47:44AM +0200, Christoph Hellwig wrote:
+> > Also with this we should be able to drop the iov_iter_alignment check
+> > for always COW inodes in xfs_file_dio_write.  If you don't feel like
+> > doing that yourself I can add it to my todo list.
 > 
-> I totally agree.
-> 
-> What prevents us from removing initrd right now?
-> 
-> The only reason is lack of volunteers?
-> 
-> If yes, then may I remove initrd?
+> I'm unsure about the commit that introduced that behavior, so I think
+> you should remove it if you know its okay. :)
 
-Give it a spin and see if anyone shouts.
+Yeah.
 
+> Specifically, we have this in the comments and commit message:
+> 
+>   check the alignment of each individual iovec segment, as they could
+>   end up with different I/Os due to the way bio_iov_iter_get_pages works 
+> 
+> bio_iov_iter_get_pages() might submit the segments as separate IO's
+> anyway for other reasons. I am not sure why the alignment conditions are
+> handled specifically here.
+
+I'll take another look.  Basically what this wants to prevent is
+bio_iov_iter_get_pages creating bios not aligned to file system
+block size.
 
