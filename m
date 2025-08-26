@@ -1,128 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-59174-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59175-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 582A2B35750
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 10:38:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D910B35779
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 10:43:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABC93166AB2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 08:38:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A60F3A85AB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 08:43:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E97EF2FE598;
-	Tue, 26 Aug 2025 08:37:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD8CA2FC891;
+	Tue, 26 Aug 2025 08:43:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="KlkWp9qh"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EvcL5yqR";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="T32aPWHZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E312FDC5A;
-	Tue, 26 Aug 2025 08:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756197476; cv=pass; b=B9HAj2cb37Zec/wjUm23iaW38tmD+GlTbFGs5X0YyMdSesMwfUzff2wz9Pg1bChlTIVCHOVnxDQcivDMuxgzRbq2oSaTLQt4Ebjgv5eSii1tY7KhL10+d5D2DThC6XBGn9qp1Hcab46NMrrM467GzHk1qEvESNlJXUz1Z46ka7k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756197476; c=relaxed/simple;
-	bh=mZQ8sGkjXp4mYnrpUu44u381eroY+sRh5qCfYv9fwC0=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=H3GpuJ0A2ALML904+Pt5VETohhyb5MGm8SHpx1kk6Payd89gYvXDrAwR780qEkOq+0zEuWz8sxGh4odUC0sUYuzGQU7jpXN1H/qxZooAqoliPv/6uqgvPdEZcsTTGx5QsqapcC2zUQxngsUNcXpxHy1+XlMfqSjGHegUoFfvZvc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=KlkWp9qh; arc=pass smtp.client-ip=136.143.188.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1756197439; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=FEbVp9fmw/wycJULPWRyDi+bIuNEXVGRXOJJ15dJBniKMAMkesYjutSAD4RjJQeiEj4p0/pfJtCLrh/1TyDf4WOffumZnkDa1r90liop66DsJNi/CDljasstH6stFoiL8FUtMdrn0Bhy6td/lIL5O/+Zh+IY5J9eKQa4GtXDq74=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1756197439; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=iH/2h7/gVRrEaCAr2vPepO3IuIUAeo1n9ApLNQ92r0w=; 
-	b=dTeE+6ljL0QICfmNMIbMcLwAcMvMBUbKYyVaSxw7nkOzkEDKFwii5YszuBZXfgrgM2Rr26TKbeN8b934+tGlgNTEl3G7v9ZRB/auHalt6yR69jtEXQ/1E1g6EiFuH8mBjBh+/Zm6NJcjvdCe/t6CsiNW7lbMwxiwHA4Xo4qAmK4=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
-	dmarc=pass header.from=<safinaskar@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756197439;
-	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=iH/2h7/gVRrEaCAr2vPepO3IuIUAeo1n9ApLNQ92r0w=;
-	b=KlkWp9qhqKSvcii4dlk8JOybJvoH01AScuhxJiiEH60n6J6Yx+aYZmLndLUk4R59
-	2T/1QORNvAUFPkjWLXsBD+N1/gZq7JkBcNpdqm0FWE+zFDco71SdV05XwFARvGFxHHs
-	IE73Oz30LX7dMjnPj3PKPesO61ZJogrVoh+nchxQ=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 175619743776097.12088263774785; Tue, 26 Aug 2025 01:37:17 -0700 (PDT)
-Received: from  [212.73.77.104] by mail.zoho.com
-	with HTTP;Tue, 26 Aug 2025 01:37:17 -0700 (PDT)
-Date: Tue, 26 Aug 2025 12:37:17 +0400
-From: Askar Safin <safinaskar@zohomail.com>
-To: "Alejandro Colomar" <alx@kernel.org>
-Cc: "Aleksa Sarai" <cyphar@cyphar.com>,
-	"Alexander Viro" <viro@zeniv.linux.org.uk>,
-	"linux-api" <linux-api@vger.kernel.org>,
-	"linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
-	"David Howells" <dhowells@redhat.com>,
-	"Christian Brauner" <brauner@kernel.org>,
-	"linux-man" <linux-man@vger.kernel.org>
-Message-ID: <198e5864132.1283ed42534579.7191562270325331624@zohomail.com>
-In-Reply-To: <rxl7zzllf374j6osujwvpvbvsnrjwikoo5tj2o3pqntfjdmwps@isiyqms4s776>
-References: <20250825154839.2422856-1-safinaskar@zohomail.com>
- <20250825154839.2422856-2-safinaskar@zohomail.com> <rxl7zzllf374j6osujwvpvbvsnrjwikoo5tj2o3pqntfjdmwps@isiyqms4s776>
-Subject: Re: [PATCH v2 1/1] man2/mount.2: expand and clarify docs for
- MS_REMOUNT | MS_BIND
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC19227D77B;
+	Tue, 26 Aug 2025 08:43:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756197808; cv=none; b=Q9LFk/inLzRiHdNWgvf9IKMozM5L9DXUWCXA6t8HOpeVQifx3iuWia6QBmWQk7IjQUK9iiKu0eTgI/LPc16DHDdJcljMuYoZFQW8BYChycE3hKLco60d9TW0QbNqgqHI9lznJo2NX7N1E3nmJ0DsE2kpmcqjiKbg6D1tw959/9E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756197808; c=relaxed/simple;
+	bh=y4dwqQVgtSX6sPHPMwAuaPOfXvlILwfzYILH/VuFM1w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ghkiV2tPuhG2E9Rr90EgWVpQp7UpO1wqngxQKSWBe//6yFoxXsPtw7e+vDttWx6mVaCbVCJTOqyWKTuaOYBepWX3nGQrHaer3BpTsBxYIeL/CpsOke58Mqf6EzlkjepYbGnor9P0hG4vuC2TLQ6uriNokiDTUArDy3hZSjDadAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EvcL5yqR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=T32aPWHZ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 26 Aug 2025 10:43:20 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756197804;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vW0GsgV7Ep6s4XIArheKm/LdDZZmdIK5t24jU+6kggw=;
+	b=EvcL5yqRd2AKS+Y8UMGkM5b9exWowZdlqZLZFId2q0cdJEUZ6rCghtwN2F2RL6mtYmm2BD
+	i+8+vbOBOVH+dQaEBkunBVi3JNeRGkUgQ+KNqcz2chZS1YkSfOzFoUdKhvt5D0OnZQzSxF
+	nTQkh3syh8J7XKjIAuYIpgzGXxanKF5RGamHo3bttlX9HMf2RlUDG1MCwU/eiz/0N6duPz
+	YZPYnd5iUeYHFSy+kSUTLv5EiXIn5oYkR1qXgX3j+hte5JQdtDUSsPqhMSfuyppcG5PCu8
+	iPchwwOW9ixRj+h+8Y7xiRB4BwGYZQeFWF8jDdosveKfYLqhRhluQ0D0gF1xgw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756197804;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vW0GsgV7Ep6s4XIArheKm/LdDZZmdIK5t24jU+6kggw=;
+	b=T32aPWHZdJeTw+a5UJKU3WD36z2iBIV7xYlqQ6KAqP2pHQwPD7bhFhGgVpi2WefMqunUNQ
+	ps8p7jmoDxApSYCg==
+From: Nam Cao <namcao@linutronix.de>
+To: Christian Brauner <brauner@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Xi Ruoyao <xry111@xry111.site>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	John Ogness <john.ogness@linutronix.de>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	linux-rt-users@vger.kernel.org, Joe Damato <jdamato@fastly.com>,
+	Martin Karsten <mkarsten@uwaterloo.ca>,
+	Jens Axboe <axboe@kernel.dk>
+Cc: stable@vger.kernel.org
+Subject: Re: [PATCH v4 1/1] eventpoll: Replace rwlock with spinlock
+Message-ID: <20250826084320.XeTd6XAK@linutronix.de>
+References: <cover.1752581388.git.namcao@linutronix.de>
+ <ec92458ea357ec503c737ead0f10b2c6e4c37d47.1752581388.git.namcao@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
-Feedback-ID: rr08011227c4a3178776148dd706e4aef700003b55986d7f03313633f8477e7c9bd0f59260cbafe4401d81c5:zu080112271c1d695e3c1ace35ad6fc9070000cce79072a7f3ae8edaf416d0d642432f4f406888972e25c1fb:rf0801122c63233b13838b3fd6ae20706600008e31637284141afb849e1e22d5fc63041d14fc538df8edae3ebedaff5370:ZohoMail
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ec92458ea357ec503c737ead0f10b2c6e4c37d47.1752581388.git.namcao@linutronix.de>
 
- ---- On Mon, 25 Aug 2025 23:13:05 +0400  Alejandro Colomar <alx@kernel.org> wrote --- 
- > Should we say "mount point" instead?  Otherwise, it's inconsistent with
+On Tue, Jul 15, 2025 at 02:46:34PM +0200, Nam Cao wrote:
+> The ready event list of an epoll object is protected by read-write
+> semaphore:
+> 
+>   - The consumer (waiter) acquires the write lock and takes items.
+>   - the producer (waker) takes the read lock and adds items.
+> 
+> The point of this design is enabling epoll to scale well with large number
+> of producers, as multiple producers can hold the read lock at the same
+> time.
+> 
+> Unfortunately, this implementation may cause scheduling priority inversion
+> problem. Suppose the consumer has higher scheduling priority than the
+> producer. The consumer needs to acquire the write lock, but may be blocked
+> by the producer holding the read lock. Since read-write semaphore does not
+> support priority-boosting for the readers (even with CONFIG_PREEMPT_RT=y),
+> we have a case of priority inversion: a higher priority consumer is blocked
+> by a lower priority producer. This problem was reported in [1].
+> 
+> Furthermore, this could also cause stall problem, as described in [2].
+> 
+> Fix this problem by replacing rwlock with spinlock.
 
-d-user@comp:/rbt/man-pages$ grep -E -r -I -i 'mount point' /rbt/man-pages/man | wc -l
-101
-d-user@comp:/rbt/man-pages$ grep -E -r -I -i 'mount-point' /rbt/man-pages/man | wc -l
-9
-d-user@comp:/rbt/man-pages$ grep -E -r -I -i 'mountpoint' /rbt/man-pages/man | wc -l
-4
+Hi Christian,
 
-My experiments show that "mount point" is indeed the most popular variant.
+May I know your plan with this patch? Are you still waiting for something?
 
-I changed all "mountpoint" to "mount point".
+You may still understandably be paranoid about epoll due to the last
+regression. But it's been weeks, and this patch is quite simple, so I start
+to wonder if it is forgotten.
 
-I decided to keep all "per-mount-point".
-
- > > +have its existing per-mount-point flags
- > > +cleared and replaced with those in
- > > +.I mountflags
- > > +when
- > > +.B MS_REMOUNT
- > > +and
- > > +.B MS_BIND
- > > +are specified.
- > 
- > Maybe reverse the sentence to start with this?
-
-I decided simply to remove that "MS_REMOUNT and MS_BIND" part
-(because it is already present in previous sentence).
-
- > > +This means that if
- > 
- > I would move the 'if' to the next line.
-
-I moved it. But, please, next time do it youself.
-I don't plan to become regular man-pages contributor.
-
-I addressed all complains except for listed above and sent v3.
-
-====
-Askar Safin
-https://types.pl/@safinaskar
-
+Nam
 
