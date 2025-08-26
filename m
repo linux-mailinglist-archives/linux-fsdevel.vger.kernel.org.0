@@ -1,110 +1,270 @@
-Return-Path: <linux-fsdevel+bounces-59230-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59231-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5001B36D91
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 17:20:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AAB9B36DAC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 17:25:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D228E189E8DF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 15:18:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2B083A70B6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 15:25:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 611A12264C0;
-	Tue, 26 Aug 2025 15:18:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6154622B586;
+	Tue, 26 Aug 2025 15:24:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="K1IufTP8"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BsD9Bioj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 334DA23CE
-	for <linux-fsdevel@vger.kernel.org>; Tue, 26 Aug 2025 15:18:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756221487; cv=pass; b=aOiJGzIFV2VKCuhDnR6lR+Ba9qsLfNyyZ4fGYW0dYeaCiCnCe9/P3BalVxQrBjkPkqg5SXP3RBTRJ6BrYgCEOM0xyT3mbZU0OOmDUTUKRA37KkiQfHwYtM8m9iDQqZdqfrbh7hinM7y+K+jidgbxAitliZsEv0qY8QVP4B/Tgl8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756221487; c=relaxed/simple;
-	bh=M9VfauwBLX7NxcgpVMfgAzXn/h9dr3JE5fxRdBZGBT8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tIb9Hny7M4gvqCMLDuVmsAlVSVnlwW5IEQA+i796wDxnMFHEdRc87wlnOUvssDnb/AvWmbOJmufhI5jRWLPuVFpsXpJGVReBsEdiJY0+pNXlI4Eo6UwJTcd0fMZ77mY6VpmrQeK/vxuabBML3RvJclHBBY1ph4siPqVEJs9FxYs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=K1IufTP8; arc=pass smtp.client-ip=136.143.188.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1756221473; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=RIyFGg5A8QdXL5wkSDIo9TpjQSyLto8YcUuN3dQtBHmdgZTVC5GWbmOTVDeQ5qGoGixj7yhF4CfrYhR6GRzk30K1RbAig2WtTpcpA6pTQ08a+zQfxtKkskGBMQoy/6JgyWyWdw7Bdd5Fmu8rx0QKZ3k/hz9rC5pE1UGHDqTUXjI=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1756221473; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=u8dqDZW00E/yaszJ0h1jQXjMemKg9se6aPNiZW1do3E=; 
-	b=Y/UfmuZo+1cHcvcjHYqxYgYHjnENqnXYPOhpIYsYySJiMuuVxPsyDHaO6r+RahLy3ByDghWAgckeVTx4BmYMywNJ4jryB78HKrGuyOfiMxvd9da64rn4l4Ll9UAfPR2y7jNGDJ0CU+t2G5mCRPRjThG+PtPVeWapZCTjmo6uuKA=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
-	dmarc=pass header.from=<safinaskar@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756221473;
-	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=u8dqDZW00E/yaszJ0h1jQXjMemKg9se6aPNiZW1do3E=;
-	b=K1IufTP8ScPvUIAroGoSilcIQl2Mdici+tc4zTgpoiP4NUGGSwSdvbcIsxz+mrxh
-	rketpzBDV6BjbTq7mjfObW5+OjUOM1h+qdXLVWMQLHvQIbdwkL4GLJ0HHlMZWrPqzmp
-	YsKy4uTnS+kt5rhLLYDT/cl8pHtsJmZCcT4uCWVM=
-Received: by mx.zohomail.com with SMTPS id 175622146999451.851008478100766;
-	Tue, 26 Aug 2025 08:17:49 -0700 (PDT)
-From: Askar Safin <safinaskar@zohomail.com>
-To: viro@zeniv.linux.org.uk
-Cc: brauner@kernel.org,
-	jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	torvalds@linux-foundation.org
-Subject: Re: [PATCH 02/52] introduced guards for mount_lock
-Date: Tue, 26 Aug 2025 18:17:45 +0300
-Message-ID: <20250826151745.2766008-1-safinaskar@zohomail.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250825202141.GA220312@ZenIV>
-References: <20250825202141.GA220312@ZenIV>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD38279324
+	for <linux-fsdevel@vger.kernel.org>; Tue, 26 Aug 2025 15:24:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756221871; cv=none; b=QJ9HydAzSVhBAw2vg7RVKILtH57GEeS+oT4Q6IbWKUyM//AcXuHbi0EaPl0Sc8DkFm5Hcdzu3e9DbxNli3pxDVyfJ0/SK1cDd98GUF9BaKBQc5R9pVmS/d3VkQjgBlV5hhCjhEc2hwqCeA0/N7/IyQda0XHC9vhk5SXZhskPqDw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756221871; c=relaxed/simple;
+	bh=QXG1Ca3UjT56TcPBrliSuURncoshOr9BKOaPMK2hpdE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R9tBDso5RW/54LBqD8mpkcI4BtXEbC/KxcZ/8sMnjHKCUYA5T2zLTYwfyMl1AqHW7J12IuI4RG/49j6H09znWuZRmKjlB+mhx7eTsJnPUhGaKf77w6x8CMBqACo6VlAKshyheaGM4z6NxqLJDN4QjmXp7p2hC3GTsYDsz0QpVf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BsD9Bioj; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756221869;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=8dRYmdfYPQDBHIeqCHeCxbojw8+BOvuY6ncQfuP6l7w=;
+	b=BsD9BiojwOxEFeuZZZo0p9josyMGXEMznxdTFEIkWDzcfGGFmxZOw1VbfZhsgDbhOvKlhB
+	K8LaA6mchO00t+JTLiQXPCorIq+mgsuON874Vm9SVprXaeEPtvfEclkXE8NZuRUp6tEGH/
+	GU5WUVcwdWNt8cDd2EtvS1M6kH5ETJg=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-549-YW7FhCD1NciDozOpD2Xemg-1; Tue, 26 Aug 2025 11:24:27 -0400
+X-MC-Unique: YW7FhCD1NciDozOpD2Xemg-1
+X-Mimecast-MFC-AGG-ID: YW7FhCD1NciDozOpD2Xemg_1756221866
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45a256a20fcso31558255e9.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Aug 2025 08:24:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756221866; x=1756826666;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8dRYmdfYPQDBHIeqCHeCxbojw8+BOvuY6ncQfuP6l7w=;
+        b=l2xqtY8QQ1hgKBk/2u31AkHSwmow8kclwV3V7tQ9l2aInaa6iU6Nr9NuPkqFJRW8cb
+         kw3NQnPmPx8A2KsAoDnKNUDcdJ98AG12sKGJUx8+8QMpgTLlKl5mKbCGzsPbqH0GrRQK
+         Z7yO4XtiJsh6Fg8KKxNhG6fH4mpGMeGTZFzJvFXYxeis9mOPAEd82jSjdwJ/gxw1yFH+
+         NGb06FJlJ+ASuUi7w4iVu/F1qzqarSPvJ2gE/U/sFbG0WJ45nb/errcMiLBSJZpL914v
+         g+jbw2RfGHF0hMF9Q8q//O+gAXOeETROllzQ0Nb/HGjTjTbPZnhtDM40xq7KboJLX3F8
+         saHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWjoD2JIaiDuq/vCsQPNgaT6bwO4NCQyaOw7bCAbtStC8BFnNfF3reGoMJF0xOKHze9xzG/L4yA6ps5ypFa@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7oTUI7UU/uRp1aOEYb+NyyBY/hp3cJhYYPScfuVyoxfLgT22+
+	oIPtlSBPHjWwK6AN0MwJ8sHCVj2j0hv/th0xGFID9Grj4UUYNCoVln+pSWjFhh0cbO3N4zGnmdt
+	VBkZxQOdWG8kq6kckF/Z2HzII5p0sSzqO8Op7coW/aZ1fNe8btdM6dTRQyPrcQoNXI6A=
+X-Gm-Gg: ASbGncsNlcA7IagMw7cU870WAcc2oZ14f36pybtNeV2DOUDKaEIvb30knAX1y/tM/fq
+	fqLLVWcH1cvuBIl1XgtJIgw1ulm/Y66/q3qXQgCLjBQjoEi5WtUCryg8eUjodf7oU/IxIqNV6uA
+	csm6o/C5QZg3fKHjdELkU0wAjLVcoR+9eA5BDu2W1XL5vnAWJBDs0NIPw4YhREOpAeJhHv9Cnsm
+	kKoCLNuMTPCeTFjVSU0mtYb6SgfR6fuJe/jkiqL4yodFiAoK09un5sY7zAysglvF18vb7UstZmc
+	3/5+xm+RJrcstOf3qLqPPH6ewesKO3RUHi9nkeuD0t4ZoQkVLkgtIjtQTa8OGU5ABh37j5Xk2w=
+	=
+X-Received: by 2002:a05:6000:178a:b0:3c8:9438:8b93 with SMTP id ffacd0b85a97d-3c894388fa3mr7039283f8f.60.1756221866155;
+        Tue, 26 Aug 2025 08:24:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH7tUX8+axqOYguUOQKRRwlbVCfKARwI+7junufYEnF30XOVYwqq/xeCLNzXlGq7X6f4v1Ocg==
+X-Received: by 2002:a05:6000:178a:b0:3c8:9438:8b93 with SMTP id ffacd0b85a97d-3c894388fa3mr7039200f8f.60.1756221865437;
+        Tue, 26 Aug 2025 08:24:25 -0700 (PDT)
+Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c70eb7eed5sm16180834f8f.18.2025.08.26.08.24.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Aug 2025 08:24:24 -0700 (PDT)
+Message-ID: <e91f7a38-3b17-4a0c-aedb-8b404d40cf59@redhat.com>
+Date: Tue, 26 Aug 2025 17:24:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Feedback-ID: rr08011227dce8bc9e21a7fefefe59714c0000c4f0ede94a52d428a484e1bcf49a6f3b38b67d6d30a03d2d0a:zu08011227ec7b79c9d382ba0c696ebdc90000a3b550af460c6f954249d25952b792c5561a211680c94f41e6:rf0801122c0328b955a5ede8faf00c5e3600000a4bc600c3d2a719f4df98ba4be88d168cc97ae54672d25ca3ab59099f05:ZohoMail
-X-ZohoMailClient: External
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 08/10] mm: update fork mm->flags initialisation to use
+ bitmap
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Alexander Gordeev <agordeev@linux.ibm.com>,
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, "David S . Miller"
+ <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski
+ <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Kees Cook <kees@kernel.org>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache
+ <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+ Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>,
+ Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ David Rientjes <rientjes@google.com>, Shakeel Butt <shakeel.butt@linux.dev>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Oleg Nesterov <oleg@redhat.com>,
+ Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
+ Peter Xu <peterx@redhat.com>, Jann Horn <jannh@google.com>,
+ Pedro Falcato <pfalcato@suse.de>, Matthew Wilcox <willy@infradead.org>,
+ Mateusz Guzik <mjguzik@gmail.com>, linux-s390@vger.kernel.org,
+ linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+References: <cover.1755012943.git.lorenzo.stoakes@oracle.com>
+ <9fb8954a7a0f0184f012a8e66f8565bcbab014ba.1755012943.git.lorenzo.stoakes@oracle.com>
+ <73a39f45-e10c-42f8-819b-7289733eae03@redhat.com>
+ <d4f8346d-42eb-48db-962d-6bc0fc348510@lucifer.local>
+ <d39e029a-8c12-42fb-8046-8e4a568134dc@redhat.com>
+ <1743164d-c2d2-44a1-a2a9-aeeed8c13bc8@lucifer.local>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <1743164d-c2d2-44a1-a2a9-aeeed8c13bc8@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Al Viro <viro@zeniv.linux.org.uk>:
-> When the last reference to
-> mount past the umount_tree() (i.e. already with NULL ->mnt_ns) goes away, anything
-> subtree stuck to it will be detached from it and have its root unhashed and dropped.
-> In other words, such tree (e.g. result of umount -l) decays from root to leaves -
-> once all references to root are gone, it's cut off and all pieces are left
-> to decay.  That is done with mount_writer (has to be - there are mount hash changes
-> and for those mount_writer is a hard requirement) and only after the final reference
-> to root has been dropped.
+On 26.08.25 16:32, Lorenzo Stoakes wrote:
+> On Tue, Aug 26, 2025 at 04:28:20PM +0200, David Hildenbrand wrote:
+>> On 26.08.25 16:21, Lorenzo Stoakes wrote:
+>>> On Tue, Aug 26, 2025 at 03:12:08PM +0200, David Hildenbrand wrote:
+>>>> On 12.08.25 17:44, Lorenzo Stoakes wrote:
+>>>>> We now need to account for flag initialisation on fork. We retain the
+>>>>> existing logic as much as we can, but dub the existing flag mask legacy.
+>>>>>
+>>>>> These flags are therefore required to fit in the first 32-bits of the flags
+>>>>> field.
+>>>>>
+>>>>> However, further flag propagation upon fork can be implemented in mm_init()
+>>>>> on a per-flag basis.
+>>>>>
+>>>>> We ensure we clear the entire bitmap prior to setting it, and use
+>>>>> __mm_flags_get_word() and __mm_flags_set_word() to manipulate these legacy
+>>>>> fields efficiently.
+>>>>>
+>>>>> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>>>>> ---
+>>>>>     include/linux/mm_types.h | 13 ++++++++++---
+>>>>>     kernel/fork.c            |  7 +++++--
+>>>>>     2 files changed, 15 insertions(+), 5 deletions(-)
+>>>>>
+>>>>> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+>>>>> index 38b3fa927997..25577ab39094 100644
+>>>>> --- a/include/linux/mm_types.h
+>>>>> +++ b/include/linux/mm_types.h
+>>>>> @@ -1820,16 +1820,23 @@ enum {
+>>>>>     #define MMF_TOPDOWN		31	/* mm searches top down by default */
+>>>>>     #define MMF_TOPDOWN_MASK	_BITUL(MMF_TOPDOWN)
+>>>>> -#define MMF_INIT_MASK		(MMF_DUMPABLE_MASK | MMF_DUMP_FILTER_MASK |\
+>>>>> +#define MMF_INIT_LEGACY_MASK	(MMF_DUMPABLE_MASK | MMF_DUMP_FILTER_MASK |\
+>>>>>     				 MMF_DISABLE_THP_MASK | MMF_HAS_MDWE_MASK |\
+>>>>>     				 MMF_VM_MERGE_ANY_MASK | MMF_TOPDOWN_MASK)
+>>>>> -static inline unsigned long mmf_init_flags(unsigned long flags)
+>>>>> +/* Legacy flags must fit within 32 bits. */
+>>>>> +static_assert((u64)MMF_INIT_LEGACY_MASK <= (u64)UINT_MAX);
+>>>>
+>>>> Why not use the magic number 32 you are mentioning in the comment? :)
+>>>
+>>> Meh I mean UINT_MAX works as a good 'any bit' mask and this will work on
+>>> both 32-bit and 64-bit systems.
+>>>
+>>>>
+>>>> static_assert((u32)MMF_INIT_LEGACY_MASK != MMF_INIT_LEGACY_MASK);
+>>>
+>>> On 32-bit that'd not work would it?
+>>
+>> On 32bit, BIT(32) would exceed the shift width of unsigned long -> undefined
+>> behavior.
+>>
+>> The compiler should naturally complain.
+> 
+> Yeah, I don't love that sorry. Firstly it's a warning, so you may well miss it
+> (I just tried), 
 
-I'm unable to understand this.
+Upstream bots usually complain at you for warnings :P
 
-As well as I understand your text, when you unmount some directory /a using "umount -l /a", then /a and
-all its children will stay as long as there are references to /a . This contradicts to reality.
+> and secondly you're making the static assert not have any
+> meaning except that you expect to trigger a compiler warning, it's a bit
+> bizarre.
 
-Consider this:
+On 64 bit where BIT(32) *makes any sense* it triggers as expected, no?
 
-# mount -t tmpfs tmpfs /a
-# mkdir /a/b
-# mount -t tmpfs tmpfs /a/b
-# mkdir /a/b/c
-# cd /a
-# umount -l /a
+> 
+> My solution works (unless you can see a reason it shouldn't) and I don't find
+> this approach any simpler.
 
-According to your text, both /a and /a/b will stay, because we have reference to /a (via our cwd).
-
-But in reality /a/b disappears immidiately (i. e. "ls b" shows nothing, as opposed to "c").
-
-This happens even if I test with your patches applied.
-
-So, your explanation seems to be wrong.
+Please explain to me like I am a 5 yo how your approach works with 
+BIT(32) on 32bit when the behavior on 32bit is undefined. :P
 
 -- 
-Askar Safin
+Cheers
+
+David / dhildenb
+
 
