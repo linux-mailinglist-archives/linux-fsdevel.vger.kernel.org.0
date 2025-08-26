@@ -1,234 +1,215 @@
-Return-Path: <linux-fsdevel+bounces-59227-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59228-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B256FB36D53
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 17:13:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54A80B36D54
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 17:13:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BAE946827C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 15:02:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44E11585B8F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 15:03:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAFBF221FDE;
-	Tue, 26 Aug 2025 15:02:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3D323875D;
+	Tue, 26 Aug 2025 15:02:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JDGEc25v";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fLKa+AzN";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JDGEc25v";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fLKa+AzN"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="K9ZF+v7p"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77BBE21D3C9
-	for <linux-fsdevel@vger.kernel.org>; Tue, 26 Aug 2025 15:02:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A18DE225788
+	for <linux-fsdevel@vger.kernel.org>; Tue, 26 Aug 2025 15:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756220539; cv=none; b=FnEst/YQQdFhEpCmwF/v+UZPpyu7o+kUIGabvg7J62YyW4TxNLYdixIJXH5QQSvwuGan69RVxDzBn5jPEQOPyMfYtSbXoUx8eXHf+6/vnowcXvRpoe/S83VL5peD15Bt7m7zj0GXbxonD52+id7PF8WVMdtsNkclAsAnaCd5dOk=
+	t=1756220577; cv=none; b=AWLMH7M89JlmEG36eLtaDjuaiiPxGvHZFGkkVYBQES7vl3ZaOkenvIT37ExOsdQf6heKs4DNY8KwYjtT73IgAzF4K3CSQhuI1Mm6L5ZKg07rJelq8YvMs8SMbLZYvAdrtP01CINSmH1G9rALRZKQT/dNkEfrrBNnlOOlOHLT+rk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756220539; c=relaxed/simple;
-	bh=k3q4IJGXIg1xsx6KhZ+5Uos14zt34y0pwkTclbo8zZE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=elDDXyViEuhyxjJwLQ02fMdNARn+FbClwPK2kFsPe2PZNLYnRY/jipPKESDezZMCXWdF/por25DJ/zy3kZggByEM5VXs4U1XTZR0bmFxtGCf6IwFI91ctaOdP/92xGuxpZ2sj5FwiDS/GUYOZWNCT7Ara/7GKNjzPFEu3S5lDHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JDGEc25v; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=fLKa+AzN; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JDGEc25v; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=fLKa+AzN; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 5A6751F79E;
-	Tue, 26 Aug 2025 15:02:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756220535; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=p1IlqAHsKccOQM/TV3kup+WmT3u/tu76lg3adcsS0QM=;
-	b=JDGEc25v2MrcNLhbTzgtf8SPL3CEltPVKwH/1W+XgbfuzLbGZeMnvhYfuQscEveg2wm/4X
-	qV58BlCSPIqDM/YvfaMg0B9y7+oU8iHK1xB9XnHZulkHsL6sW0Rxpzw620WXIUJM21MIKA
-	4+rGfKRc3tO4LdA87ByijgRQVB0CctI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756220535;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=p1IlqAHsKccOQM/TV3kup+WmT3u/tu76lg3adcsS0QM=;
-	b=fLKa+AzN8jaJefnoNGeNcy6H3lMdyc543Z3B3eUDELl2acvP/6jypKP4ZvIiAT2dCslDe5
-	lhs4MPGp/5N5pmBg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756220535; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=p1IlqAHsKccOQM/TV3kup+WmT3u/tu76lg3adcsS0QM=;
-	b=JDGEc25v2MrcNLhbTzgtf8SPL3CEltPVKwH/1W+XgbfuzLbGZeMnvhYfuQscEveg2wm/4X
-	qV58BlCSPIqDM/YvfaMg0B9y7+oU8iHK1xB9XnHZulkHsL6sW0Rxpzw620WXIUJM21MIKA
-	4+rGfKRc3tO4LdA87ByijgRQVB0CctI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756220535;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=p1IlqAHsKccOQM/TV3kup+WmT3u/tu76lg3adcsS0QM=;
-	b=fLKa+AzN8jaJefnoNGeNcy6H3lMdyc543Z3B3eUDELl2acvP/6jypKP4ZvIiAT2dCslDe5
-	lhs4MPGp/5N5pmBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 091D313A31;
-	Tue, 26 Aug 2025 15:02:14 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id foFDNXbMrWjWUQAAD6G6ig
-	(envelope-from <krisman@suse.de>); Tue, 26 Aug 2025 15:02:14 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>,  Miklos Szeredi
- <miklos@szeredi.hu>,  Theodore Tso <tytso@mit.edu>,
-  linux-unionfs@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-fsdevel@vger.kernel.org,  Alexander Viro <viro@zeniv.linux.org.uk>,
-  Christian Brauner <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,
-  kernel-dev@igalia.com
-Subject: Re: [PATCH v6 4/9] ovl: Create ovl_casefold() to support casefolded
- strncmp()
-In-Reply-To: <CAOQ4uxhw26Tf6LMP1fkH=bTD_LXEkUJ1soWwW+BrgoePsuzVww@mail.gmail.com>
-	(Amir Goldstein's message of "Tue, 26 Aug 2025 09:19:32 +0200")
-Organization: SUSE
-References: <20250822-tonyk-overlayfs-v6-0-8b6e9e604fa2@igalia.com>
-	<20250822-tonyk-overlayfs-v6-4-8b6e9e604fa2@igalia.com>
-	<875xeb64ks.fsf@mailhost.krisman.be>
-	<CAOQ4uxiHQx=_d_22RBUvr9FSbtF-+DJMnoRi0QnODXRR=c47gA@mail.gmail.com>
-	<CAOQ4uxgaefXzkjpHgjL0AZrOn_ZMP=b1TKp-KDh53q-4borUZw@mail.gmail.com>
-	<871poz4983.fsf@mailhost.krisman.be>
-	<87plci3lxw.fsf@mailhost.krisman.be>
-	<CAOQ4uxhw26Tf6LMP1fkH=bTD_LXEkUJ1soWwW+BrgoePsuzVww@mail.gmail.com>
-Date: Tue, 26 Aug 2025 11:02:09 -0400
-Message-ID: <87ldn62kjy.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1756220577; c=relaxed/simple;
+	bh=vipNTbGB9wFWdA45CBFqlA3kiRpHyWKU7fupy2TzZxE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oeUwzf8V+w3IOV5PIzOT/E/TIBxmUX7zAb/q8APRN9lzZeRkIsic+UUM7wxmyA17xi7mgJwXP8+udwDQvdtOmTZvkWxZTdlgIKacuCJwYFNmv4YllinTEvQnmm1jwFn5Q41xPjlJ8jJsYxqO8uieuNy69iPSZry48H3l3Z2Yfrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=K9ZF+v7p; arc=none smtp.client-ip=209.85.161.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-61bf1542ecbso2616712eaf.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Aug 2025 08:02:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1756220574; x=1756825374; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a+0PR2fJcjZ6JOVTFgH14262z5rkDGxSbAwbjWWLyng=;
+        b=K9ZF+v7p+72pfwTw6pYAp8gUNmgFmG/Qsy2vzJdBuWGFlAz9o5c5jzGsqIBxwCo7Wn
+         mHUPyb1QYyDY2ZDtXxEP6tmMmrpJ1GnctCQuDH9XT9X+i5ly+tT1auWXULWxX2Yqvj5w
+         lI6ejW8xXCEyEwJPNqUhAuZmkRetbVL3XyE9LWUkYTCuS3xErB6UZsgrcqkPI74taDyC
+         s+XFSpbw1R8fxFp6s1JdudHpplysh2dRmoQdSr8JRTTX3QULw1QA+RXFs2dhBWOwN0m+
+         UfbBaPVFPJq9KbbCKeHG4TiHSH6hnmTlpp0pe6bIn5t+QrgUXram6XosO8qB4bqUThiX
+         u2aA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756220574; x=1756825374;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=a+0PR2fJcjZ6JOVTFgH14262z5rkDGxSbAwbjWWLyng=;
+        b=oTOWNr0F9DW+hUD62I13uA7YehW7ylTcm7o8xxQ2Vfm/oeNqTj5n7FATcC4l7DyOBb
+         pcuT5wz3MgW/Uy8iTQcyuVIwNCqgwlyChbI04dnmz7zbIus5ulbgydB5A+of19c6mXUV
+         krKMJD7lM9Px2pOpyUQ41BUlkzdExYjmR6BLIz/t41mo6XUa9NLNRw1geivAaXD1+Ehh
+         BoI1G7d8YycwefM9fnFN4O3iIOWGsJyu+wnjzG1wo3q8RLdOsZb8qTJaaskYlvpuxuVr
+         ihGsExl2+rflJcttyYCc+5gL4WKZ5dKlq7qJxKgax79iFuf+QPNcRQ9+QXYWwBuUyEuY
+         VS5A==
+X-Forwarded-Encrypted: i=1; AJvYcCVJEidFOqI0Pc+lKfvP9zMT/rsecGzOc3AfRU3N4ANeod48pMrAjMz74z05yScC9ObS+IdWnlMQZlwQYz75@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRiXTq6uz5602bEnLqyMfJOohHEGv+IWq4QXw53g0gKEWkTvmv
+	6rNJzR6qouz20IAsKw/mQUt68zWkxFUZrzxm3jLlnFI2SdyQfXlQh8jJ+R1oMEtcYjhSmXA98Li
+	HtexZmZ/Z0m6Cw9ey8Na8jPqUnwGB/YKqxrIHPsutYA==
+X-Gm-Gg: ASbGncvuWnZ4LC1D7vK6jvukJHlkuNoqKy97JURx6damywq44A7/D6ACLSdnLuoy0EP
+	31hhNjndefFHpFZbbeJFGu4vtktJ/knXmmnI4TjzavDzP73KWVhCowB47grKF9NGauxMTr7W9Qo
+	viJ0NLmg5CE9pP+cqPSzxQiPa99DROOxE6KN+D95RyUH+2sZ2hlLzdRfkWlmk8x/moo63KfmH0e
+	/HK
+X-Google-Smtp-Source: AGHT+IGZRoryUW5ksQYVJjIedWGTznIaiVqZiY1Pg/H6rjAtNQNm/14jN2CvpI319rkbtN5Pjbxs+aqTIMSdEzY6AGA=
+X-Received: by 2002:a05:6808:3442:b0:434:b43:d4a3 with SMTP id
+ 5614622812f47-437c543fdd9mr854638b6e.12.1756220572416; Tue, 26 Aug 2025
+ 08:02:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
+ <mafs0ms7mxly1.fsf@kernel.org> <CA+CK2bBoLi9tYWHSFyDEHWd_cwvS_hR4q2HMmg-C+SJpQDNs=g@mail.gmail.com>
+ <20250826142406.GE1970008@nvidia.com>
+In-Reply-To: <20250826142406.GE1970008@nvidia.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Tue, 26 Aug 2025 15:02:13 +0000
+X-Gm-Features: Ac12FXyHXPcCjTtFR9AWQQdvDhbej8DQJ5aeFKL6iCSLSRPcL1vtdZDLkhVgq68
+Message-ID: <CA+CK2bBrCd8t_BUeE-sVPGjsJwmtk3mCSVhTMGbseTi_Wk+4yQ@mail.gmail.com>
+Subject: Re: [PATCH v3 00/30] Live Update Orchestrator
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Pratyush Yadav <pratyush@kernel.org>, jasonmiu@google.com, graf@amazon.com, 
+	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
+	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
+	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
+	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
+	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
+	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
+	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
+	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
+	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
+	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
+	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
+	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, lennart@poettering.net, brauner@kernel.org, 
+	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, saeedm@nvidia.com, 
+	ajayachandra@nvidia.com, parav@nvidia.com, leonro@nvidia.com, witu@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	HAS_ORG_HEADER(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
 
-Amir Goldstein <amir73il@gmail.com> writes:
-
-> On Tue, Aug 26, 2025 at 3:34=E2=80=AFAM Gabriel Krisman Bertazi <krisman@=
-suse.de> wrote:
+On Tue, Aug 26, 2025 at 2:24=E2=80=AFPM Jason Gunthorpe <jgg@nvidia.com> wr=
+ote:
 >
->>
->> I was thinking again about this and I suspect I misunderstood your
->> question.  let me try to answer it again:
->>
->> Ext4, f2fs and tmpfs all allow invalid utf8-encoded strings in a
->> casefolded directory when running on non-strict-mode.  They are treated
->> as non-encoded byte-sequences, as if they were seen on a case-Sensitive
->> directory.  They can't collide with other filenames because they
->> basically "fold" to themselves.
->>
->> Now I suspect there is another problem with this series: I don't see how
->> it implements the semantics of strict mode.  What happens if upper and
->> lower are in strict mode (which is valid, same encoding_flags) but there
->> is an invalid name in the lower?  overlayfs should reject the dentry,
->> because any attempt to create it to the upper will fail.
+> On Tue, Aug 26, 2025 at 01:54:31PM +0000, Pasha Tatashin wrote:
+> > > > https://github.com/googleprodkernel/linux-liveupdate/tree/luo/v3
+> > > >
+> > > > Changelog from v2:
+> > > > - Addressed comments from Mike Rapoport and Jason Gunthorpe
+> > > > - Only one user agent (LiveupdateD) can open /dev/liveupdate
+> > > > - With the above changes, sessions are not needed, and should be
+> > > >   maintained by the user-agent itself, so removed support for
+> > > >   sessions.
+> > >
+> > > If all the FDs are restored in the agent's context, this assigns all =
+the
+> > > resources to the agent. For example, if the agent restores a memfd, a=
+ll
+> > > the memory gets charged to the agent's cgroup, and the client gets no=
+ne
+> > > of it. This makes it impossible to do any kind of resource limits.
+> > >
+> > > This was one of the advantages of being able to pass around sessions
+> > > instead of FDs. The agent can pass on the right session to the right
+> > > client, and then the client does the restore, getting all the resourc=
+es
+> > > charged to it.
+> > >
+> > > If we don't allow this, I think we will make LUO/LiveupdateD unsuitab=
+le
+> > > for many kinds of workloads. Do you have any ideas on how to do prope=
+r
+> > > resource attribution with the current patches? If not, then perhaps w=
+e
+> > > should reconsider this change?
+> >
+> > Hi Pratyush,
+> >
+> > That's an excellent point, and you're right that we must have a
+> > solution for correct resource charging.
+> >
+> > I'd prefer to keep the session logic in the userspace agent (luod
+> > https://tinyurl.com/luoddesign).
+> >
+> > For the charging problem, I believe there's a clear path forward with
+> > the current ioctl-based API. The design of the ioctl commands (with a
+> > size field in each struct) is intentionally extensible. In a follow-up
+> > patch, we can extend the liveupdate_ioctl_fd_restore struct to include
+> > a target pid field. The luod agent, would then be able to restore an
+> > FD on behalf of a client and instruct the kernel to charge the
+> > associated resources to that client's PID.
 >
-> Ok, so IIUC, one issue is that return value from ovl_casefold() should be
-> conditional to the sb encoding_flags, which was inherited from the
-> layers.
+> This wasn't quite the idea though..
+>
+> The sessions sub FD were intended to be passed directly to other
+> processes though unix sockets and fd passing so they could run their
+> own ioctls in their own context for both save and restore. The ioctls
+> available on the sessions should be specifically narrowed to be safe
+> for this.
+>
+> I can understand not implementing session FDs in the first version,
+> but when sessions FD are available they should work like this and
+> solve the namespace/cgroup/etc issues.
+>
+> Passing some PID in an ioctl is not a great idea...
 
-yes, unless you reject mounting strict_mode filesystems, which the best
-course of action, in my opinion.
+Hi Jason,
+
+I'm trying to understand the drawbacks of the PID-based approach.
+Could you elaborate on why passing a PID in the RESTORE_FD ioctl is
+not a good idea?
+
+From my perspective, luod would have a live, open socket to the client
+process requesting the restore. It can use SO_PEERCRED to securely
+identify the client's PID at that moment. The flow would be:
+
+1. Client connects and resumes its session with luod.
+2. Client requests to restore TOKEN_X.
+3. luod verifies the client owns TOKEN_X for its session.
+4. luod calls the RESTORE_FD ioctl, telling the kernel: "Please
+restore TOKEN_X and charge the resources to PID Y (which I just
+verified is on the other end of this socket)."
+5. The kernel performs the action.
+6. luod receives the new FD from the kernel and passes it back to the
+client over the socket.
+
+In this flow, the client isn't providing an arbitrary PID; the trusted
+luod agent is providing the PID of a process it has an active
+connection with.
+
+The idea was to let luod handle the session/security story, and the
+kernel handle the core preservation mechanism. Adding sessions to the
+kernel, delegates the management and part of the security model into
+the kernel. I am not sure if it is necessary, what can be cleanly
+managed in userspace should stay in userspace.
+
+Thanks,
+Pasha
+
 
 >
-> Again, *IF* I understand correctly, then strict mode ext4 will not allow
-> creating an invalid-encoded name, but will strict mode ext4 allow
-> it as a valid lookup result?
-
-strict mode ext4 will not allow creating an invalid-encoded name. And
-even lookups will fail.  Because the kernel can't casefold it, it will
-assume the dirent is broken and ignore it during lookup.
-
-(I just noticed the dirent is ignored and the error is not propagated in
-ext4_match.  That needs improvement.).
-
->>
->> Andr=C3=A9, did you consider this scenario?
->
-> In general, as I have told Andre from v1, please stick to the most common
-> configs that people actually need.
->
-> We do NOT need to support every possible combination of layers configurat=
-ions.
->
-> This is why we went with supporting all-or-nothing configs for casefolder=
- dirs.
-> Because it is simpler for overlayfs semantics and good enough for what
-> users need.
->
-> So my question is to you both: do users actually use strict mode for
-> wine and such?
-> Because if they don't I would rather support the default mode only
-> (enforced on mount)
-> and add support for strict mode later per actual users demand.
-
-I doubt we care.  strict mode is a restricted version of casefolding
-support with minor advantages.  Basically, with it, you can trust that
-if you update the unicode version, there won't be any behavior change in
-casefolding due to newly assigned code-points.  For Wine, that is
-irrelevant.
-
-You can very well reject strict mode and be done with it.
-
->
->> You can test by creating a file
->> with an invalid-encoded name in a casefolded directory of a
->> non-strict-mode filesystem and then flip the strict-mode flag in the
->> superblock.  I can give it a try tomorrow too.
->
-> Can the sb flags be flipped in runtime? while mounted?
-> I suppose you are talking about an offline change that requires
-> re-mount of overlayfs and re-validate the same encoding flags on all laye=
-rs?
-
-No, it is set at mkfs-time.  The scenario I'm describing is a
-filesystem corruption, where a filename has invalid characters but the
-disk is in strict mode.  What I proposed is a way to test this by
-crafting an image.
-
---=20
-Gabriel Krisman Bertazi
+> Jason
 
