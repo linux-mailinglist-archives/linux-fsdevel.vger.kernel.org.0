@@ -1,89 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-59307-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59308-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9F27B372AF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 20:57:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D83AB372C2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 20:59:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEF4D168CB7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 18:57:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 728217A7117
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 18:57:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CA0C371EA1;
-	Tue, 26 Aug 2025 18:56:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3585E374262;
+	Tue, 26 Aug 2025 18:58:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ez1sD5dN"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="KTzuNv4i"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0312A1FECAB
-	for <linux-fsdevel@vger.kernel.org>; Tue, 26 Aug 2025 18:56:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078A93728AD
+	for <linux-fsdevel@vger.kernel.org>; Tue, 26 Aug 2025 18:58:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756234619; cv=none; b=KheJJr26ZQ8UAoKxF9tqSWo7JJhWGMqyHo+Fof8PswI5hmf73v9a9mIrLi3J/j4lJFYslc5On7Wl7iMgrPOHxMSFRROCiCfYrnHcCDNTugtSSc1ZXSaFewQRXKqVdjdmYNumBPF6WolM50jJQhPChKHiNcY9pvc00NOT+EgOuQo=
+	t=1756234726; cv=none; b=CACRpUF2qpSKiDValCnIPN0lj3SKjugMqh390wQq4v+LJYhmOIwj9udf/6ISNf3xTrp4rW8YnjOgKsSDEt8eTd0iDx7gV5SpKZHLPjCc4+8GWnQl1iQ1RJcnPuq1PqsGHva2H2eb0olB7SX7hAebB7a8Zh0gsl6w9yal9qzK/mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756234619; c=relaxed/simple;
-	bh=lf5QZd6ZoCEbt0aTe9X9Hia1eSHRpFwYaz95xMSxIIs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m28XtBBegGOtZFj/5nrLJwjQM6H3zuKcezVYdencaO6LIG/8TkgLN1BmdhuGc1T33mp180lczJ76FGR57+1rTrAGl7lnZ2Mxvhnbt6I4J0yodvdVWs2Md7p20Exe0c2fOT1/jeaWv4+x2QX5fbv4IDrKadGQBO5qc1+J5gLOJ4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ez1sD5dN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 820C1C4CEF1;
-	Tue, 26 Aug 2025 18:56:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756234618;
-	bh=lf5QZd6ZoCEbt0aTe9X9Hia1eSHRpFwYaz95xMSxIIs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ez1sD5dNM3BIcbuUsftSB8isnMKd5Y9LE+ttHJOU+aP1JgUDLzJ/0a/q9K/3SJshJ
-	 2fkPoArehqpMUj164gwbKOcNPZkmn45/DzuXJwm/+SAzcTrjKcotmPHtQBcpmpDdee
-	 ZV1aflRr2EQONBoeGEAXvP3y8rbI0qwvG3IFPg/ujxcpkPgwcp7+kIHYIW80G6G0Sy
-	 xaTTEqRH0YCR/n6uvZsUr2/Tdmk6dG/mq+Fd7Sm5kbnt/Ri5h9poj27HKfZG68fIdA
-	 kxd6BvTTr/5Iv+nwOqrUNLadzUsLRIdGZo7a1addM6n3/6JiaNLKIWZt8VB9PaHQBg
-	 4mq/k9tQcKITA==
-Date: Tue, 26 Aug 2025 11:56:57 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: miklos@szeredi.hu, bernd@bsbernd.com, neal@gompa.dev, John@groves.net,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 4/7] fuse: implement file attributes mask for statx
-Message-ID: <20250826185657.GB19809@frogsfrogsfrogs>
-References: <175573708506.15537.385109193523731230.stgit@frogsfrogsfrogs>
- <175573708630.15537.1057407663556817922.stgit@frogsfrogsfrogs>
- <CAJnrk1bOE3g_wtBtYhGBGPL_sDXPZgAwo6pgVOhadFoPuDeHZQ@mail.gmail.com>
+	s=arc-20240116; t=1756234726; c=relaxed/simple;
+	bh=pJME+1KmU2SzOA/lb1+BnOW4h/J3iSbhKPhNpdWiID4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m6eaoLW1a92Lom5rPT1E1tygxWTaZsBqi3wQWq/aHKtXkal+5DwzUY/TA2GSiNQRFJjUvb9lzi2f927H8tY7nEZR+aKqjnYnvpJOebgqIsnWoFE67Auj8Kfftleqs8+FmIKtKWVU3+bO9vIk+qRS6aYhWaHm7DCkCp+X8OBH5UI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=KTzuNv4i; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4b109c4af9eso49037561cf.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Aug 2025 11:58:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1756234724; x=1756839524; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pJME+1KmU2SzOA/lb1+BnOW4h/J3iSbhKPhNpdWiID4=;
+        b=KTzuNv4iIOvR2/Okp9GCEoXbHGLVDtZof0ZdrJ/5BDGDLHFFf/wu3vhNswj272YLKo
+         ZgDjFd9x77OjznESGRGkCaF1E5T0gbU7AYJDQts96nUx4EpEunvTfX4CTmqTwsZ5FG2R
+         PAcVuVKYiC63dcYpgSHHCsk9xuP+tZLHYvjYzbdYSv3jSWBo3FFvJv3Fw+J884zm0kex
+         dj9F6Rv2StZHhTxdjS44N4/vu5mfGHNCtrw8cwNLS0EP0EsgiQu12aFL61m3l3aVBf8T
+         0yLnFV3TcO+5RqMsi+WyW/NWG34gq5nUZpjmeV1sp7uBdv0AoeQ7T4WAQz1GlFJZ+Hdx
+         yzTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756234724; x=1756839524;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pJME+1KmU2SzOA/lb1+BnOW4h/J3iSbhKPhNpdWiID4=;
+        b=SkN+oNvIXJ3tjh+cbCjSVO0JwCuH9VzJG0NtAxU/1hAgy8qC9Ww9NdzHfgh79GtgUf
+         b5J0n/xcjmSB2sp4A6sEEGzU3sg7tKVXhj5K++E1nWj1RguwCpkDqOulhJ3Z0Hh9dTOO
+         FMXZ2GIduV5Xd7eMwki8Z6F92yxN2W+gUrIWcSPlpx6fYSalbERVxrRV/Ku1g4oEVP3c
+         ZI1ASF4jPFHrAOqQPmsQhUtEuQoCNMfjWEjHAOMe3POGXUTl9SbD9t4AptolnvssZ58N
+         WZHYukakfSLAJ/Dhwalx+WKJSxA89QoJjG5j28wwm0LlWx8tgVm5ByEHuKnQZkT8N57x
+         kAYA==
+X-Forwarded-Encrypted: i=1; AJvYcCUNE6Gbz5DzT0UD2elzSVMAOnxWOFqlIjMa2XflG2Sob8j53PR/CkoHdf3PkvR6h2YAnMQWmsuGajRTzBej@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6B1ZxhPn1qzVAhPkCyZcO817TT4mdk3987zO9RKQGv+/KizFl
+	6jA8zfRixbuQmEp/NI46g9TwDanTLyqt1N4snrJ0N6AmGtyQcFpR6m8Nlq57dhIA2X3gw8xHaP3
+	TgQx3HB1TjH9KOPIRgwe14uRUUCZMEXscL16j1iuGFw==
+X-Gm-Gg: ASbGnctZiwhGiN7fxoGiN5lsaHwhQFVQdgc43J9s1pgI0cRkH9KVU/Ph5Jdfttyn4BG
+	VUAc5voxpCPq8o/s/oOSq5rtA/Vbx3W11TWzICors3LLfcULe2C5kzLiZ1luTXI+kk9+ilEqrvr
+	PTnjewCpFagvKG0EeRux4IAt6q59Za40f9lUJ3CJKh2XVa4EVc/VS3PN7uk97FKsG6pRKCObGrZ
+	w/e
+X-Google-Smtp-Source: AGHT+IH7x6PzB/jpkOPVprK93HcHA2jlE9LSPDmfVuRTuFZ8graOQso5EGuliHqnNQqcqLY5o7Pky9G7peBJC7yYL1M=
+X-Received: by 2002:a05:622a:286:b0:4b2:d5bf:20a1 with SMTP id
+ d75a77b69052e-4b2d5bf2602mr93874511cf.23.1756234723572; Tue, 26 Aug 2025
+ 11:58:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJnrk1bOE3g_wtBtYhGBGPL_sDXPZgAwo6pgVOhadFoPuDeHZQ@mail.gmail.com>
+References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
+ <20250807014442.3829950-20-pasha.tatashin@soleen.com> <20250826160307.GC2130239@nvidia.com>
+In-Reply-To: <20250826160307.GC2130239@nvidia.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Tue, 26 Aug 2025 18:58:05 +0000
+X-Gm-Features: Ac12FXzbC4_094zxu3z9fUDRO3yQVd4QdY6g8DyMrUl3RDt_kmv57pEA7HFGGV8
+Message-ID: <CA+CK2bCR84H90dZP40yFw086JP+YwH4=V0ncFfNoR8Mo5+azkA@mail.gmail.com>
+Subject: Re: [PATCH v3 19/30] liveupdate: luo_sysfs: add sysfs state monitoring
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
+	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
+	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
+	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
+	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
+	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
+	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
+	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
+	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
+	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
+	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
+	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
+	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
+	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	saeedm@nvidia.com, ajayachandra@nvidia.com, parav@nvidia.com, 
+	leonro@nvidia.com, witu@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 21, 2025 at 05:01:01PM -0700, Joanne Koong wrote:
-> On Wed, Aug 20, 2025 at 5:51 PM Darrick J. Wong <djwong@kernel.org> wrote:
-> >
-> > From: Darrick J. Wong <djwong@kernel.org>
-> >
-> > Actually copy the attributes/attributes_mask from userspace.
-> 
-> This makes sense to me.
-> 
-> Reviewed-by: Joanne Koong <joannelkoong@gmail.com>
+On Tue, Aug 26, 2025 at 4:03=E2=80=AFPM Jason Gunthorpe <jgg@nvidia.com> wr=
+ote:
+>
+> On Thu, Aug 07, 2025 at 01:44:25AM +0000, Pasha Tatashin wrote:
+> > Introduce a sysfs interface for the Live Update Orchestrator
+> > under /sys/kernel/liveupdate/. This interface provides a way for
+> > userspace tools and scripts to monitor the current state of the LUO
+> > state machine.
+>
+> Now that you have a cdev these files may be more logically placed
+> under the cdev's sysfs and not under kernel? This can be done easially
+> using the attribute mechanisms in the struct device.
+>
+> Again sort of back to my earlier point that everything should be
+> logically linked to the cdev as though there could be many cdevs, even
+> though there are not. It just keeps the code design more properly
+> layered and understanble rather than doing something unique..
 
-Thanks!
+I am going to drop this patch entirely, and only rely on "luoctl
+state" (see https://tinyurl.com/luoddesign) to query the state from
+"/dev/liveupdate"
 
---d
-
-> >
-> > Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
-> > ---
-> >  fs/fuse/fuse_i.h |    4 ++++
-> >  fs/fuse/dir.c    |    4 ++++
-> >  fs/fuse/inode.c  |    3 +++
-> >  3 files changed, 11 insertions(+)
-> >
-> 
+Pasha
 
