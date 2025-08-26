@@ -1,155 +1,206 @@
-Return-Path: <linux-fsdevel+bounces-59322-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59323-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F2CDB37431
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 23:06:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F696B37479
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 23:37:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55CDF364BBE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 21:06:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFD2B3B779B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 21:37:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 956E7289367;
-	Tue, 26 Aug 2025 21:05:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93CD027F00A;
+	Tue, 26 Aug 2025 21:37:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="Fv2dTmwI"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YPLxDn2/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F8CC1C84A1;
-	Tue, 26 Aug 2025 21:05:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF5E13D521
+	for <linux-fsdevel@vger.kernel.org>; Tue, 26 Aug 2025 21:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756242356; cv=none; b=g7vbJV4epJhmAnvey5bOr8TlqPf5N9lIUmEKWNvO3Z+0fNMrET2C8g18A3LeYrWrTD+wZLpiqlAx1IF2Web7XcJf+BG5c7QtUqEqOhSTv57vnviJsbqU78WJHEyOh6cjVlpicqOW6uApwDKItjnVlDZDHW7XsJY2IGU8I8csw0w=
+	t=1756244229; cv=none; b=Ulyx2QeGre5Dh+Fpo0AA4XlDvUbqLRH4wdbrSiltxZPQaFv1ybHWT+JXFP66ZHpoltz5V4GfwaP+oL+ZVZ+4Mco7GU+rS4pFvWPYBVFLqoTB3EL1t9TFOinq9LsmZIRh31pfWQsrkG11VZD9a83KkYg7lxna0Cab8TNkWcQn6KU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756242356; c=relaxed/simple;
-	bh=UdU4B9T6GkSF1tLLxjHdPM9VUOdYsIGCo1qR567p2II=;
-	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=P8Xo0ujixGJrWSMaLMwO2caz3MUIL4m3FuK46XGp+mred4TAbc5ShkLNvHJF9LtsY5kQmBu5PoLpQZ+SRoMxWkoe+HJvY3PFOobclH1MbFe006vLUozzMNXUDI6rHekBfsjic5Qwi1WpM5B3N2f7nIqOPk+EG3O6FPeKKqzlngM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=Fv2dTmwI; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from monopod.intra.ispras.ru (unknown [10.10.3.121])
-	by mail.ispras.ru (Postfix) with ESMTPSA id AC00140A327B;
-	Tue, 26 Aug 2025 21:05:43 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru AC00140A327B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1756242343;
-	bh=pU4vLspP4lexqAlL5cknaKES8LqMLTR9DroZ0K07Djc=;
-	h=Date:From:To:cc:Subject:From;
-	b=Fv2dTmwIBNCGXNYEH1iNfCTOvdjZDwXl8UJRlqY3Tf14Vo7ECc/V8Hy6Z2Unm3oUG
-	 VbDsJC9kvDgSKc4jYHdeyf1EuHywKVKPPZ7NVlzoMUoo9RZ6jm9dLQS17WnYBC9rN1
-	 ugyLlo4ptPTKgRCBkfbp37kWsY8jbPDZTmBDLg6g=
-Date: Wed, 27 Aug 2025 00:05:38 +0300 (MSK)
-From: Alexander Monakov <amonakov@ispras.ru>
-To: linux-fsdevel@vger.kernel.org
-cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
-    Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-    linux-kernel@vger.kernel.org
-Subject: ETXTBSY window in __fput
-Message-ID: <6e60aa72-94ef-9de2-a54c-ffd91fcc4711@ispras.ru>
+	s=arc-20240116; t=1756244229; c=relaxed/simple;
+	bh=PF1Eg5aYt2fCaOdO1zQEWKVueNvgRe+anizsWiWUd5c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pPMCfq0q6qcOBqopmLoSfQyFt2arNxRAI2Xx12idzh2v39nT+RyoX/aYVAhXbRUDCBicb+PqzpIqM/RHQ6SvKRDsj7A4KYD/uGVRJJsOrUz+rrJ+WOGL8MlNKVXuiOv1CY8FXQD4Ejk4xPAXJYj2ijXmZ79sc4wHDeC3t9OgXwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YPLxDn2/; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4b2cf656e4fso3550241cf.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Aug 2025 14:37:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756244226; x=1756849026; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XajqH6Xs/ioY79V5pXnWKz7XBojvWrKUFEMTaNH4vQo=;
+        b=YPLxDn2/3SLgvQYsOTiNCO0T7QBTjY4w8KfRTYBj+ns0TNUKia/hxOBRCaIiww+N1F
+         iQ/1yLwWh1QxFh+mvqdAWsqdcxO3zXTaCfd6VoJVfNBB9RD6LGs0SgPZS3OjqQSHVRsp
+         PlZt23dnyKmWvBeVt47VoIs1+J75yM0dQinxTndxpyHm65lNCI5Q73EwL4+svA0uDdaP
+         amvd7Gj67DajcyDZHBJJwiwMeVRIf2TnqI/KcZmvH4xRa6SmxFSDBlwxAOCdHlTKjtvA
+         oEsT3KSjoZpkGr4xj9mmwnjhXgW49xv3klxxf4778G9NKeyZ0mCccXlaOd3XB970uP0I
+         Qkww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756244226; x=1756849026;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XajqH6Xs/ioY79V5pXnWKz7XBojvWrKUFEMTaNH4vQo=;
+        b=sZgwt0GJ+oF97rTwbMkx4SXEOMpYZA2Vqk67HP3akZI71wvHU+gHBobFd0ijY9bWoa
+         qdPGwq6OEBRix6JO4GB4qejED8Ws4KsNgag3gptuVdt9hNqNe6FWZhoeBIIG25GmzUe1
+         poP4siMtyAs2cF9bJr3Gfctt9mwAz1ymxH9da5fp79Zz6e4M/NGWdQJQm5MnvFGPif58
+         IIl8SBPfWO5do/QrO1pBwjQKWWPhhLBFnRxc+KSjKK/wDm7G1z5RjBJPIUG0A30yAZa7
+         KB85239I3UbtJbQcb1LGdG1Zi5vM9WH/dQIvHaxWgszSWdeYuXr41tFd2tC/sxu2LQWb
+         2Piw==
+X-Forwarded-Encrypted: i=1; AJvYcCWu7B1QypayRxMm9G9nt99l5z6MIsfoCAF6uGa4frmR5yBt3GLzqcOz9tgH3/ZfYbFapAUwNPA64EEd1gr9@vger.kernel.org
+X-Gm-Message-State: AOJu0YzszOSURL94AzeCkCqdKysdJKHZVAn8D09awoHgjvC7o89orb+Q
+	kugKN4Roi3s/eEu5AzXz4/vbL+1pjn0mZgelqS6WLiJ9fLLRs2L8V7ZgQmZn6ubL80P/TiMnGLj
+	4B2dm//KPXYktV9phcnR7mO4/3CTvcKk=
+X-Gm-Gg: ASbGnct/yaoSnf7og1ndu27G45KSoCNo83wAd7sDJMRoinJCa235NsND/sDY+zTCmS3
+	x8tboeVtNHAXNSnMf71QE8FcNQWobacg0W2yhCwhw7PMVIS+/LybtxV64BorMkv8Lx9wUFH7Bj5
+	mujT78Gfim8uiX28D3358Wuv7SLB4bM7tv/kjPyWUfAb7uEC1qOSgY0WFbX4MoAui/VSXo7rnGx
+	4Xuv2B3qlmYb8PoH1c=
+X-Google-Smtp-Source: AGHT+IFE/V65rkSwAzjc0/d1iVQrEZvQVzti44iWXdtvFg1wz6k6zD47kzW6bewBtkabZ6bxg/L3AGhSLVgRC6UsRU4=
+X-Received: by 2002:ac8:6907:0:b0:4ab:95a7:5f4 with SMTP id
+ d75a77b69052e-4b2e76f8291mr37895991cf.27.1756244226005; Tue, 26 Aug 2025
+ 14:37:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1383465452-1756242343=:31630"
+References: <20250822114436.438844-1-mszeredi@redhat.com> <CAJnrk1ZbkwiWdZN9eaEQ8Acx1wXgy2i2y4-WsK3w+ocYuN6wwA@mail.gmail.com>
+ <CAJnrk1avdErcTcOAMuVTof4J_csc-k1vtq2=9z5Jpqws=VCY+g@mail.gmail.com> <20250826192618.GD19809@frogsfrogsfrogs>
+In-Reply-To: <20250826192618.GD19809@frogsfrogsfrogs>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Tue, 26 Aug 2025 14:36:55 -0700
+X-Gm-Features: Ac12FXxQtXGYUR95T7bhC4aY1OZkjJ2fZlNelYiRqxqhP7GjRAIiI7aT8fk7SBw
+Message-ID: <CAJnrk1ah4rUNz6FbR0fWjJ95i_pNKmK+vWXFwhvwNak6z5bupQ@mail.gmail.com>
+Subject: Re: [PATCH] fuse: allow synchronous FUSE_INIT
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org, 
+	John Groves <John@groves.net>, Bernd Schubert <bernd@bsbernd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Tue, Aug 26, 2025 at 12:26=E2=80=AFPM Darrick J. Wong <djwong@kernel.org=
+> wrote:
+>
+> On Fri, Aug 22, 2025 at 03:52:38PM -0700, Joanne Koong wrote:
+> > On Fri, Aug 22, 2025 at 3:46=E2=80=AFPM Joanne Koong <joannelkoong@gmai=
+l.com> wrote:
+> > >
+> > > On Fri, Aug 22, 2025 at 4:44=E2=80=AFAM Miklos Szeredi <mszeredi@redh=
+at.com> wrote:
+> > > >
+> > > > FUSE_INIT has always been asynchronous with mount.  That means that=
+ the
+> > > > server processed this request after the mount syscall returned.
+> > > >
+> > > > This means that FUSE_INIT can't supply the root inode's ID, hence i=
+t
+> > > > currently has a hardcoded value.  There are other limitations such =
+as not
+> > > > being able to perform getxattr during mount, which is needed by sel=
+inux.
+> > > >
+> > > > To remove these limitations allow server to process FUSE_INIT while
+> > > > initializing the in-core super block for the fuse filesystem.  This=
+ can
+> > > > only be done if the server is prepared to handle this, so add
+> > > > FUSE_DEV_IOC_SYNC_INIT ioctl, which
+> > > >
+> > > >  a) lets the server know whether this feature is supported, returni=
+ng
+> > > >  ENOTTY othewrwise.
+> > > >
+> > > >  b) lets the kernel know to perform a synchronous initialization
+> > > >
+> > > > The implementation is slightly tricky, since fuse_dev/fuse_conn are=
+ set up
+> > > > only during super block creation.  This is solved by setting the pr=
+ivate
+> > > > data of the fuse device file to a special value ((struct fuse_dev *=
+) 1) and
+> > > > waiting for this to be turned into a proper fuse_dev before commeci=
+ng with
+> > > > operations on the device file.
+> > > >
+> > > > Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> > > > ---
+> > > > I tested this with my raw-interface tester, so no libfuse update ye=
+t.  Will
+> > > > work on that next.
+> > > >
+> > > >  fs/fuse/cuse.c            |  3 +-
+> > > >  fs/fuse/dev.c             | 74 +++++++++++++++++++++++++++++------=
+----
+> > > >  fs/fuse/dev_uring.c       |  4 +--
+> > > >  fs/fuse/fuse_dev_i.h      | 13 +++++--
+> > > >  fs/fuse/fuse_i.h          |  3 ++
+> > > >  fs/fuse/inode.c           | 46 +++++++++++++++++++-----
+> > > >  include/uapi/linux/fuse.h |  1 +
+> > > >  7 files changed, 112 insertions(+), 32 deletions(-)
+> > > >
+> > > > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> > > > index 9d26a5bc394d..d5f9f2abc569 100644
+> > > > --- a/fs/fuse/inode.c
+> > > > +++ b/fs/fuse/inode.c
+> > > > @@ -1918,8 +1934,22 @@ static int fuse_fill_super(struct super_bloc=
+k *sb, struct fs_context *fsc)
+> > > >                 return err;
+> > > >         /* file->private_data shall be visible on all CPUs after th=
+is */
+> > > >         smp_mb();
+> > > > -       fuse_send_init(get_fuse_mount_super(sb));
+> > > > -       return 0;
+> > > > +
+> > > > +       fm =3D get_fuse_mount_super(sb);
+> > > > +
+> > > > +       if (fm->fc->sync_init) {
+> > > > +               struct fuse_init_args *ia =3D fuse_new_init(fm);
+> > > > +
+> > > > +               err =3D fuse_simple_request(fm, &ia->args);
+> > > > +               if (err > 0)
+> > > > +                       err =3D 0;
+> > > > +               process_init_reply(fm, &ia->args, err);
+> > >
+> > > Do we need a fuse_dev_free() here if err < 0? If err < 0 then the
+>
+> Er... are you asking if we should drop the newly created fud via
+> fuse_dev_release if err !=3D 0?  (AFAICT there is no fuse_dev_free?)
+>
 
---8323328-1383465452-1756242343=:31630
-Content-Type: text/plain; charset=US-ASCII
+That's weird, I see fuse_dev_free() in fs/fuse/inode.c (eg
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/=
+fuse/inode.c#n1624)
 
-Dear fs hackers,
+> > > mount fails, but fuse_fill_super_common() -> fuse_dev_alloc_install()
+> > > will have already been called which if i'm understanding it correctly
+> > > means otherwise the fc will get leaked in this case. Or I guess
+> > > another option is to retain original behavior with having the mount
+> > > succeed even if the init server reply returns back an error code?
+>
+> <shrug> I was figuring that it was fine to leave the fud attached to the
+> device fd until the caller close()s it, but OTOH maybe the fuse server
+> would like to try to mount again?  Do fuse servers do that?
 
-I suspect there's an unfortunate race window in __fput where file locks are
-dropped (locks_remove_file) prior to decreasing writer refcount
-(put_file_access). If I'm not mistaken, this window is observable and it
-breaks a solution to ETXTBSY problem on exec'ing a just-written file, explained
-in more detail below.
+Won't this still leak the reference? From what I see, the mount will
+create the fc (refcount 1) then when the mount does the dev
+installation (fuse_dev_install()) that'll acquire another reference on
+fc. With the caller close()ing it, that releases 1 refcount but
+there's still 1 refcount that needs to be released by
+fuse_mount_destroy(). As I understand it, if the mount fails, the
+.kill_sb -> fuse_mount_destroy() never gets triggered (since it was
+never mounted) which will leave 1 refcount remaining.
 
-The program demonstrating the problem is attached (a slightly modified version
-of the demo given by Russ Cox on the Go issue tracker, see URL in first line).
-It makes 20 threads, each executing an infinite loop doing the following:
-
-1) open an fd for writing with O_CLOEXEC
-2) write executable code into it
-3) close it
-4) fork
-5) in the child, attempt to execve the just-written file
-
-If you compile it with -DNOWAIT, you'll see that execve often fails with
-ETXTBSY. This happens if another thread forked while we were holding an open fd
-between steps 1 and 3, our fd "leaked" in that child, and then we reached our
-step 5 before that child did execve (at which point the leaked fd would be
-closed thanks to O_CLOEXEC).
-
-I suggested on the Go bugreport that the problem can be solved without any
-inter-thread cooperation by utilizing BSD locks. Replace step 3 by
-
-3a) place an exlusive lock on the file identified by fd (flock(fd, LOCK_EX))
-3b) close the fd
-3c) open an fd on the same path again
-3d) place a lock on it again
-3e) close it again
-
-Since BSD locks are placed via the open file description, the lock placed at
-step 3a is not released until all descriptors duplicated via forks are closed.
-Hence, at step 3d we wait until all forked children proceeded to execve.
-
-Recently another person tried this solution and observed that they still see the
-errors, albeit at a much lower rate, about three per 30 minutes (I've not been
-able to replicate that). I suspect the race window from the first paragraph
-makes that possible.
-
-If so, would it be possible to close that window? Would be nice to have this
-algorithm work reliably.
-
-Thanks.
-Alexander
---8323328-1383465452-1756242343=:31630
-Content-Type: text/plain; name=etxtbusy.c
-Content-Transfer-Encoding: BASE64
-Content-ID: <f20e70db-8099-2aac-1411-2873fe125c60@ispras.ru>
-Content-Description: 
-Content-Disposition: attachment; filename=etxtbusy.c
-
-LyogRVRYVEJTWSByYWNlIGV4YW1wbGUgZnJvbSBodHRwczovL2dpdGh1Yi5j
-b20vZ29sYW5nL2dvL2lzc3Vlcy8yMjMxNSAqLw0KI2luY2x1ZGUgPHN0ZGlu
-dC5oPg0KI2luY2x1ZGUgPHN0ZGlvLmg+DQojaW5jbHVkZSA8c3RyaW5nLmg+
-DQojaW5jbHVkZSA8c3RkbGliLmg+DQojaW5jbHVkZSA8ZXJybm8uaD4NCiNp
-bmNsdWRlIDxwdGhyZWFkLmg+DQojaW5jbHVkZSA8dW5pc3RkLmg+DQojaW5j
-bHVkZSA8ZmNudGwuaD4NCiNpbmNsdWRlIDxzeXMvd2FpdC5oPg0KI2luY2x1
-ZGUgPHN5cy9maWxlLmg+DQoNCnN0YXRpYyB2b2lkICpydW5uZXIodm9pZCAq
-KTsNCg0KaW50DQptYWluKHZvaWQpDQp7DQoJcHRocmVhZF90IHRoclsyMF07
-DQoNCglmb3IgKGludCBpPTE7IGk8MjA7IGkrKykNCgkJcHRocmVhZF9jcmVh
-dGUoJnRocltpXSwgMCwgcnVubmVyLCAodm9pZCopKHVpbnRwdHJfdClpKTsN
-CglydW5uZXIoMCk7DQp9DQoNCnN0YXRpYyBjb25zdCBjaGFyICpzY3JpcHQg
-PSAiIyEvYmluL3NoXG5leGl0IDBcbiI7DQoNCnN0YXRpYyB2b2lkICoNCnJ1
-bm5lcih2b2lkICp2KQ0Kew0KCWludCBpLCBmZCwgcGlkLCBzdGF0dXM7DQoJ
-Y2hhciBidWZbMTAwXSwgKmFyZ3ZbMl07DQoNCglpID0gKGludCkodWludHB0
-cl90KXY7DQoJc25wcmludGYoYnVmLCBzaXplb2YgYnVmLCAidHh0YnVzeS0l
-ZCIsIGkpOw0KCWFyZ3ZbMF0gPSBidWY7DQoJYXJndlsxXSA9IDA7DQoJZm9y
-KDs7KSB7DQoJCWZkID0gb3BlbihidWYsIE9fV1JPTkxZfE9fQ1JFQVR8T19U
-UlVOQ3xPX0NMT0VYRUMsIDA3NzcpOw0KCQlpZihmZCA8IDApIHsNCgkJCXBl
-cnJvcigib3BlbiIpOw0KCQkJZXhpdCgyKTsNCgkJfQ0KCQl3cml0ZShmZCwg
-c2NyaXB0LCBzdHJsZW4oc2NyaXB0KSk7DQojaWZuZGVmIE5PV0FJVA0KCQlm
-bG9jayhmZCwgTE9DS19FWCk7DQoJCWNsb3NlKGZkKTsNCgkJZmQgPSBvcGVu
-KGJ1ZiwgT19SRE9OTFl8T19DTE9FWEVDKTsNCgkJZmxvY2soZmQsIExPQ0tf
-U0gpOw0KI2VuZGlmDQoJCWNsb3NlKGZkKTsNCgkJcGlkID0gZm9yaygpOw0K
-CQlpZihwaWQgPCAwKSB7DQoJCQlwZXJyb3IoImZvcmsiKTsNCgkJCWV4aXQo
-Mik7DQoJCX0NCgkJaWYocGlkID09IDApIHsNCgkJCWV4ZWN2ZShidWYsIGFy
-Z3YsIDApOw0KCQkJZXhpdChlcnJubyk7DQoJCX0NCgkJaWYod2FpdHBpZChw
-aWQsICZzdGF0dXMsIDApIDwgMCkgew0KCQkJcGVycm9yKCJ3YWl0cGlkIik7
-DQoJCQlleGl0KDIpOw0KCQl9DQoJCWlmKCFXSUZFWElURUQoc3RhdHVzKSkg
-ew0KCQkJcGVycm9yKCJ3YWl0cGlkIG5vdCBleGl0ZWQiKTsNCgkJCWV4aXQo
-Mik7DQoJCX0NCgkJc3RhdHVzID0gV0VYSVRTVEFUVVMoc3RhdHVzKTsNCgkJ
-aWYoc3RhdHVzICE9IDApDQoJCQlmcHJpbnRmKHN0ZGVyciwgImV4ZWM6ICVk
-ICVzXG4iLCBzdGF0dXMsIHN0cmVycm9yKHN0YXR1cykpOw0KCX0NCglyZXR1
-cm4gMDsNCn0NCg==
-
---8323328-1383465452-1756242343=:31630--
+>
+> --D
+>
 
