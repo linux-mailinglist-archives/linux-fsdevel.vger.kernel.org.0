@@ -1,54 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-59180-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59181-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5893B358BD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 11:24:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 931B5B358DE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 11:28:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA62A189EF8F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 09:24:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A03FD3AD8DA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 09:28:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39CC82FF159;
-	Tue, 26 Aug 2025 09:23:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481D12F83C1;
+	Tue, 26 Aug 2025 09:28:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KYUDQbqq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ea4ru5og"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95949286D50;
-	Tue, 26 Aug 2025 09:23:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77E9629ACDB;
+	Tue, 26 Aug 2025 09:28:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756200238; cv=none; b=s20hRcj1t+2Vim1Qrq3ik5c2fjczpCUCsEwoS4frYApoC1hUhyIJc0k5JV6otdo4TFYFOCzBGi05I5l/wpoE0AguIm0HTFLWSrAfvd4HmSys+wiGweyS1ZespR12LzLn5FP8h7H5+K8iuPi9Sfv/RF7V4fK1iwsTLjKgsxeYq9E=
+	t=1756200490; cv=none; b=CGnAXMuGSvqkDhAm+crEvXiVhqMqnoC1PyfjgEauSr4ajbX3p7qAhaCAvkjcjUK+PguLDfeyEXTq4RJoCdT2tKTTCYCCdNn5ak0LxETW2i2z4cNJN/ezlVO7pLk+qq5x5UP4WzI/Ts8L76hpmRTzR3TDePvicLHQVLl0TvfDiT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756200238; c=relaxed/simple;
-	bh=qWSXMhkADiFYB6kPfeITxRWtYQrf3ANim0u4qWpuZxw=;
+	s=arc-20240116; t=1756200490; c=relaxed/simple;
+	bh=O3iN0jD6PenlzfLPlOGEZZfLRHixSQ3x5jl4pZxP18E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SdEHTiAWmkvwtF/VhWTZCGId1xgky2agP1q1MFdxTjO18MijT9XI92ovWfWkclCTQJDdlwgm1Ll40JHDk3l/yR+4UT8ma2b9fNmyDYABDBuIyjUS+k6OVk9p74ZmeS5Ci3bLooG8KT8ZrZWfNXdk4gYhXpf5ciVU+hKmVndlDns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KYUDQbqq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35F6BC4CEF1;
-	Tue, 26 Aug 2025 09:23:57 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=g6HoQyjqCo7tUyu52rbOiPvKm6tpwryH2qEq03EkOlYf4i6MY5W3zv5YXmykFoVHxwWEP43R9aWQhyczHn3wlwFwrqrGivP4bmwjFUGm1RXwWDVo7XPREpBsNBuUsmweUdjBn3CcAwY5Be+skKcttnuzV201FY5iKhK48ekOF5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ea4ru5og; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F39CC4CEF1;
+	Tue, 26 Aug 2025 09:28:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756200238;
-	bh=qWSXMhkADiFYB6kPfeITxRWtYQrf3ANim0u4qWpuZxw=;
+	s=k20201202; t=1756200489;
+	bh=O3iN0jD6PenlzfLPlOGEZZfLRHixSQ3x5jl4pZxP18E=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KYUDQbqq7EJlxNqOgafp40fDOjqyIc9U/PLa2h1o+pBx6KMtOtVdhTNs7e1cPpVFW
-	 t8Mte61Io7s+7aVlyowVnOym6sF42tubXDe/fXtbEKgTvBTQrIzdt7Ud4n+8Ry0OE1
-	 mXmGQWyvH/EWZohts4MB1kgoMwIaBFJpgiYCPXMb3ZL9cp28Rz84UhOy9PLTX7LVqm
-	 /qhGWTfORokg9n3qm+PmrU8zJvJkEHKq2gU7JvuO0hKo0KWM28G0m5NuKS1H+N++GJ
-	 qiO80FnG23D/h/uulDYSFF20xfI9x+vl9AxDImLUIwCi6ixUm+TmcPn/2frGIo9WFj
-	 j/Ke/vL5blIDA==
-Date: Tue, 26 Aug 2025 11:23:54 +0200
+	b=Ea4ru5ogSJey9drBsOFOIkw+HwL0/JBeiPxEVKQ1jwG+HvvBhS/erYaM2Apw/mPgL
+	 wh+1mKaQt56/fmi6l90Kq+ZKvc2lldJrxktURZwIpYs7bh3WU7a1zVYFaiya4VBhCY
+	 ii8DoXbArqhxH/bjoEL7BE2SdKoBxTf4TbzilQx9kkGDkWLq+IjeMsbEOUOWOz2mlc
+	 7wmEDBj23AdZKV6jjdDXOTiBfzCkuvVQWaCAyduVNQGFlWsBa/Pwr0AHZ02b29D12T
+	 F6uZ+17nu6AA+Ql9sX0uTd7WjteHNpno9pLVPECeyBaXfwNBe+APx10ZARgm8b5FjD
+	 ukv6+7OqKHpaQ==
+Date: Tue, 26 Aug 2025 11:28:05 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: Infinite loop in get_file_rcu() in face of a saturated ref count
-Message-ID: <20250826-leinen-villa-02f66f98e13e@brauner>
-References: <CAGudoHHBRhU+XidV9U4osc2Ta4w0Lgi2XiFkYukKQoH45zT6vw@mail.gmail.com>
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org, 
+	kernel-team@fb.com, linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	viro@zeniv.linux.org.uk
+Subject: Re: [PATCH 18/50] fs: disallow 0 reference count inodes
+Message-ID: <20250826-benimm-muster-781f3fa24fe8@brauner>
+References: <cover.1755806649.git.josef@toxicpanda.com>
+ <6f4fb1baddecbdab4231c6094bbb05a98bbb7365.1755806649.git.josef@toxicpanda.com>
+ <20250825-person-knapp-e802daccfe5b@brauner>
+ <20250825192610.GA1310133@perftesting>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -57,33 +61,126 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAGudoHHBRhU+XidV9U4osc2Ta4w0Lgi2XiFkYukKQoH45zT6vw@mail.gmail.com>
+In-Reply-To: <20250825192610.GA1310133@perftesting>
 
-On Mon, Aug 25, 2025 at 11:43:00PM +0200, Mateusz Guzik wrote:
-> __get_file_rcu() bails early:
+On Mon, Aug 25, 2025 at 03:26:10PM -0400, Josef Bacik wrote:
+> On Mon, Aug 25, 2025 at 12:54:01PM +0200, Christian Brauner wrote:
+> > On Thu, Aug 21, 2025 at 04:18:29PM -0400, Josef Bacik wrote:
+> > > Now that we take a full reference for inodes on the LRU, move the logic
+> > > to add the inode to the LRU to before we drop our last reference. This
+> > > allows us to ensure that if the inode has a reference count it can be
+> > > used, and we no longer hold onto inodes that have a 0 reference count.
+> > > 
+> > > Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+> > > ---
+> > >  fs/inode.c | 53 +++++++++++++++++++++++++++++++++--------------------
+> > >  1 file changed, 33 insertions(+), 20 deletions(-)
+> > > 
+> > > diff --git a/fs/inode.c b/fs/inode.c
+> > > index de0ec791f9a3..b4145ddbaf8e 100644
+> > > --- a/fs/inode.c
+> > > +++ b/fs/inode.c
+> > > @@ -614,7 +614,7 @@ static void __inode_add_lru(struct inode *inode, bool rotate)
+> > >  
+> > >  	if (inode->i_state & (I_FREEING | I_WILL_FREE))
+> > >  		return;
+> > > -	if (atomic_read(&inode->i_count))
+> > > +	if (atomic_read(&inode->i_count) != 1)
+> > >  		return;
+> > >  	if (inode->__i_nlink == 0)
+> > >  		return;
+> > > @@ -1966,28 +1966,11 @@ EXPORT_SYMBOL(generic_delete_inode);
+> > >   * in cache if fs is alive, sync and evict if fs is
+> > >   * shutting down.
+> > >   */
+> > > -static void iput_final(struct inode *inode, bool skip_lru)
+> > > +static void iput_final(struct inode *inode, bool drop)
+> > >  {
+> > > -	struct super_block *sb = inode->i_sb;
+> > > -	const struct super_operations *op = inode->i_sb->s_op;
+> > >  	unsigned long state;
+> > > -	int drop;
+> > >  
+> > >  	WARN_ON(inode->i_state & I_NEW);
+> > > -
+> > > -	if (op->drop_inode)
+> > > -		drop = op->drop_inode(inode);
+> > > -	else
+> > > -		drop = generic_drop_inode(inode);
+> > > -
+> > > -	if (!drop && !skip_lru &&
+> > > -	    !(inode->i_state & I_DONTCACHE) &&
+> > > -	    (sb->s_flags & SB_ACTIVE)) {
+> > > -		__inode_add_lru(inode, true);
+> > > -		spin_unlock(&inode->i_lock);
+> > > -		return;
+> > > -	}
+> > > -
+> > >  	WARN_ON(!list_empty(&inode->i_lru));
+> > >  
+> > >  	state = inode->i_state;
+> > > @@ -2009,8 +1992,29 @@ static void iput_final(struct inode *inode, bool skip_lru)
+> > >  	evict(inode);
+> > >  }
+> > >  
+> > > +static bool maybe_add_lru(struct inode *inode, bool skip_lru)
+> > > +{
+> > > +	const struct super_operations *op = inode->i_sb->s_op;
+> > > +	struct super_block *sb = inode->i_sb;
+> > > +	bool drop = false;
+> > > +
+> > > +	if (op->drop_inode)
+> > > +		drop = op->drop_inode(inode);
+> > > +	else
+> > > +		drop = generic_drop_inode(inode);
+> > > +
+> > > +	if (!drop && !skip_lru &&
+> > > +	    !(inode->i_state & I_DONTCACHE) &&
+> > > +	    (sb->s_flags & SB_ACTIVE))
+> > > +		__inode_add_lru(inode, true);
+> > > +
+> > > +	return drop;
+> > > +}
+> > 
+> > Can we rewrite this as:
+> > 
+> > static bool maybe_add_lru(struct inode *inode, bool skip_lru)
+> > {
+> > 	const struct super_operations *op = inode->i_sb->s_op;
+> > 	const struct super_block *sb = inode->i_sb;
+> > 	bool drop = false;
+> > 
+> > 	if (op->drop_inode)
+> > 		drop = op->drop_inode(inode);
+> > 	else
+> > 		drop = generic_drop_inode(inode);
+> > 
+> > 	if (drop)
+> > 		return drop;
+> > 
+> > 	if (skip_lru)
+> > 		return drop;
+> > 
+> > 	if (inode->i_state & I_DONTCACHE)
+> > 		return drop;
+> > 
+> > 	if (!(sb->s_flags & SB_ACTIVE))
+> > 		return drop;
+> > 
+> > 	__inode_add_lru(inode, true);
+> > 	return drop;
+> > }
+> > 
+> > so it's a lot easier to follow. I really dislike munging conditions
+> > together with a bunch of ands and negations mixed in.
+> > 
+> > And btw for both I_DONTCACHE and !SB_ACTIVE it seems that returning
+> > anything other than false from op->drop_inode() would be a bug probably
+> > a technicality but I find it pretty odd.
 > 
->         if (unlikely(!file_ref_get(&file->f_ref)))
->                 return ERR_PTR(-EAGAIN);
-> 
-> But get_file_rcu():
->        for (;;) {
->                 struct file __rcu *file;
-> 
->                 file = __get_file_rcu(f);
->                 if (!IS_ERR(file))
->                         return file;
->         }
-> 
-> So if this encounters a saturated refcount, the loop with never end.
-> 
-> I don't know what makes the most sense to do here and I'm no position
-> to mess with any patches.
-> 
-> This is not a serious problem either, so I would put this on the back
-> burner. Just reporting for interested.
+> Not necsessarily, maybe we had some delayed iput (*cough* btrfs *cough*) that
+> didn't run until umount time and now we have true coming from ->drop_inode()
+> with SB_ACTIVE turned off.  That would be completely valid.  Thanks,
 
-That's like past 2^63 - 1 references. Apart from an odd bug is that
-really something to worry about. I mean, we can add a VFS_WARN_ON_ONCE()
-in there of course but specifically handling that in the code doesn't
-seem sensible to me.
+Ah, right, thanks! Yeah, that's seems legit.
 
