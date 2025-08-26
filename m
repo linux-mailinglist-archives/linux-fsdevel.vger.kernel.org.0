@@ -1,88 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-59194-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59195-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F04BEB35F6E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 14:48:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 76805B35F98
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 14:51:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD460685169
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 12:48:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4B233A6A29
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Aug 2025 12:50:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BDD672602;
-	Tue, 26 Aug 2025 12:48:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1439E1A23A4;
+	Tue, 26 Aug 2025 12:50:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Foa67trJ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PFH6VaVs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 664A08462
-	for <linux-fsdevel@vger.kernel.org>; Tue, 26 Aug 2025 12:48:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1417DA93
+	for <linux-fsdevel@vger.kernel.org>; Tue, 26 Aug 2025 12:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756212529; cv=none; b=e26yNlxALBJ4O+BgpSjRHLFZAHcUiA/VFMJLPvR37jZiK+9U5sJL7lwvlLW3UlyH3nkkypBlao+EoqnYuE2s5WfaYRvny98XZF33MLP/1P4VMC5L8C2PkJootAv7SXKgr8kyneV+dRB4xfQuCc/tp9++C45rS+PVXvALjevecrM=
+	t=1756212612; cv=none; b=icz7NXYvWWPTJqD3+pxWF/jRq4VEyqm54fRAAJvmHdL+g0pYqrxpTTttBkXQrPFBcQY8EZOcFSEjh1nAAcSH24KHypDDROKxDQ2ZimR36Nwp9fdeVaECWV9jWrG8nXk/JsySdwTWlquJsOLWycZX/h8o60DHXaTzKl6Z3qvdCd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756212529; c=relaxed/simple;
-	bh=xHu8ylmXaUlWHZnZOyPJsheqcs05Rfzlnkk0oWmYNSk=;
+	s=arc-20240116; t=1756212612; c=relaxed/simple;
+	bh=xQWwa+LafLBoi+DfyFtDYy/LR1jGa2UTYilpjW+N9Oo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j9BL4/YSiN0AyolSMMeM7h6ndq9lHI48/WVdLAyzCSjFvYK7YeGA9+Dqnq29QCS/XOwuJa+8L6Y1R2DjyDZTR002UMBKCshI1r/iv5WIhV9Z0WNA5fuCgUg2OCwm25DHcqsoeL/mqP3c3V1jGkRQW4a4jnepvBFfvyEWMMDqK5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Foa67trJ; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=A5JRq5hGTc8KY+p2iTPigVBIS8nDD5y+DQ23Vt20cpJYvJOcMNd5BbtsnP4Q99vGhZFPXOH0vHFPFW5Ocv/O5ij6WN4TqbJW0pObyRhaQlvW1E3AX3ymVnA/XigssPlGIEcG37Q68cMfFmvKg0uyLsjaFiHPuJ3pYoNsueY4+PM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PFH6VaVs; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756212527;
+	s=mimecast20190719; t=1756212609;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=WzXAZ7DFQn5tEjgSe5zwh5V1BGLVH0hi4yYzCVLl8IM=;
-	b=Foa67trJ/E/XYqqbDi1Y8jWfVGo1llDCOc02War/QySVmcdyM/2yMLxbz/gIYpqzTcJt5Y
-	lSiYMBQ0S8n/kOKS+NJ/oPrPSfewWdBa94yCQv2+A05KwAyHE0zR1sW9D9XmeTR160WdLT
-	yRE5FKGTLn/Zy/GFL8qFI2qglAY67AM=
+	bh=k/ZzIPnEPRb3Z7125pHBltKneF/N110zRMKr3civ4Hc=;
+	b=PFH6VaVs4G8nRcyedD0mYWyEErW3QCcewGIa+TMqe6qlsSAtmemWClpDhqTfZufw5GMvOi
+	+zDxlvwxmSyETxMPPVKKBYeQDIvhTpeDiKglLeoodyDK/+tHEN9dQq5Iu5O0KTtBEKijcV
+	Vh7k6bmfSkE3qce0yb+QA+U1Oy2YmMY=
 Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
  [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-413-KiG_Op1YOOOjmBoZY8vKvw-1; Tue, 26 Aug 2025 08:48:45 -0400
-X-MC-Unique: KiG_Op1YOOOjmBoZY8vKvw-1
-X-Mimecast-MFC-AGG-ID: KiG_Op1YOOOjmBoZY8vKvw_1756212525
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45a1b0bd6a9so30613575e9.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Aug 2025 05:48:45 -0700 (PDT)
+ us-mta-164-OrEw6fPrNEWvjWKlOidiUg-1; Tue, 26 Aug 2025 08:50:08 -0400
+X-MC-Unique: OrEw6fPrNEWvjWKlOidiUg-1
+X-Mimecast-MFC-AGG-ID: OrEw6fPrNEWvjWKlOidiUg_1756212607
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45b467f5173so40556985e9.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Aug 2025 05:50:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756212524; x=1756817324;
+        d=1e100.net; s=20230601; t=1756212607; x=1756817407;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=WzXAZ7DFQn5tEjgSe5zwh5V1BGLVH0hi4yYzCVLl8IM=;
-        b=DmBbGhIZNUsfIFDymR5ob4MWKNpZybM+bcGjIUQqbxIMOeiCVozitUPYPAHc3DcXST
-         6VBT/7tlXfMg3mMhz11+RlFjS7DhyGsS4IhhbJHs/WsG+T9MHFTBLQKCM/pHHYZpI6RK
-         BEb8YxCY60964O2CHU+EF8khiU9dDzzN3MBNbtdhSjyL69jvs0JybLMCThVDvCfpmhUO
-         8YVEDSU7nSYeq5irp24DgHm0zClkGNxGsAGjdXVITr5s0wCMezWHw1tsoF1TqNgqVo47
-         YUzHbgZ5hcWTyALmhkfqCTdXHbu4Js1wMB6f58+eA/Qld7YjEAN7tosDwgoQXuSJJqJX
-         6O9w==
-X-Forwarded-Encrypted: i=1; AJvYcCWtMow/YUjbrHGtssLPhFP3GAzcvrky67iLGC54M3K7MYTU3ZU9TofeJwhUovTl2uHlXFnjR+XvOsvAy5y/@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8KaTj2DnB3yO9gKmkKUxWUpcMwukrWY9QRDP0PfulsPzsmzAa
-	OMnvp28HkV44WzWj4D2TdP6/+iBlulos59wEvuTVr4q6sQW9/4w7dF46UxNPiYw+AqMSBhpM5JK
-	LZxgCkj6UnkDkeeatzqb32oRO6ys9geJErtPSrwllVPfNTJnyoJWH81wz9QNOinM441c=
-X-Gm-Gg: ASbGnct0JpnTnAaFWC7b9kVm8DVrIrKVbzADd5dk1Ma1GBwKDK+3oWUe7oaDmjK9/Ud
-	WpFCj2GVBuUYB2di3+BPFD1oxLjA+hA/bpAvHtuZSfSb5/R0eSREMyKPwk0YsY4Ksjo3TFeQxU8
-	G2ds5LtYj0QHvj4+7+2TdKM27dTohCHvYfHrm0RfJsNYoG7KHFUICZpc+4Gf6KF/rYZn4xOYsaN
-	RcTVFZgE0fDtMrGr8MbAjaHJ2qS3i1BhptM9Jelxrv4tq2PaeLPL7jf5tPJxJt1gT3mn1v5H0Q5
-	6iDEhsjdGrUpfhknRJjg7NXpriyFj56+/ZxuREG1PU7n0hWCd7Od7+5BUymia0rsfBEg/By4eQ=
+        bh=k/ZzIPnEPRb3Z7125pHBltKneF/N110zRMKr3civ4Hc=;
+        b=mgohwUPV/YDIYQC7NucWsy6yem5KWa+rqw/2nBe15Kglf8OGc490JJgiVurm6u2T/7
+         JvpfoMi/theOC6SZSlA+AYMXrNBmJUhGZ4UIl6O50G5OL248QiWmm8UQPcgQNb5jEAFq
+         rpSb9QvV7kKVo++OPaRaKqeEgQ+/Whjmi7fAuhwXyduu116VcRCXqqhxpFhnFQkwI6uh
+         XmDg/INUy7yG5jWd6c6KvfEbjqFWO6+ySIGMjJzMKFqsXGz75/j2ZqVDyayzhNJmg2IN
+         zdswC018qlyBg3yiANpCCzXjHsTD43IuF7LjNDGeKbwqCAMgf/QTa3tce6GNyQua+0Rm
+         LJlw==
+X-Forwarded-Encrypted: i=1; AJvYcCWUoC8xieEDRQPniB5x6WGtHZNJa/8Zsbyxx54M9NzQ7WAVvb9XortR/yTGLYxoVGVIqi6SFyMQtUOZt1CJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoLRKd7s8QRDxO4dzo9dziegmyHWQa/M//WyJcuLlcC5yMp1yc
+	aQz+bWPImguWm9gJ+eO4CNkvHiFiDgK8vzffCJWn9ZSJYNnesVwV2o3t1BqQakedWzRU0kqBepY
+	e8IDUfnT4C9+RTDppc+zAiU8gg3e40uZ+rbv+y3Ey+ySrNobb3gaPp4u5+5OkcfMCX/Q=
+X-Gm-Gg: ASbGncs5pO1ttcIQjC+FAqdm51JjrrigOOppzFsLlQDze9/ez+3oSavsudJI06w+IE2
+	9o/d342tPovOBc0M+yjtww/6e3iqQZPNTewgaaRIJ1QhH71l6cNZyTyfaU76KpBYf6G07Hknob/
+	1tq8y4n2g9YBwT6PqG0QhyvdhgBflISgxRC7u1l2ETgOnwmbo8C2tjmnPF5GWO8EAHY9coawzNA
+	lqMqKoaB8eFPjDmQFK3kJ8FzlG90HQM3k04VzjnLxZw7KIWrisJ8P5p3ToZ71FTEuB4BU0Z6j5j
+	9ZJcQECz1EnuNed1IaAQiX8gyp63rvCt6AFFHxAggLk1mOjJbtOh2cQLo3ikMM5nFFoBz5wIGw=
 	=
-X-Received: by 2002:a05:600c:198f:b0:459:db7b:988e with SMTP id 5b1f17b1804b1-45b517a0878mr130096735e9.13.1756212524206;
-        Tue, 26 Aug 2025 05:48:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE2YoOcVF2P973BH13lOX6E+LS8uY2syMjE17Nq71FWv2KBY3X93wWZAQgPt8EZXrsVzrU55Q==
-X-Received: by 2002:a05:600c:198f:b0:459:db7b:988e with SMTP id 5b1f17b1804b1-45b517a0878mr130095885e9.13.1756212523643;
-        Tue, 26 Aug 2025 05:48:43 -0700 (PDT)
+X-Received: by 2002:a05:600c:3504:b0:45b:6269:d257 with SMTP id 5b1f17b1804b1-45b65ff07f2mr22263575e9.35.1756212607005;
+        Tue, 26 Aug 2025 05:50:07 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH58UKIEYrNILfoSqM+RsqJQ5N2l7kBLNkixd+780kc26vWEcz0IC43yoAUM2EmQeRVxWaZjA==
+X-Received: by 2002:a05:600c:3504:b0:45b:6269:d257 with SMTP id 5b1f17b1804b1-45b65ff07f2mr22262755e9.35.1756212606304;
+        Tue, 26 Aug 2025 05:50:06 -0700 (PDT)
 Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b57492878sm149364615e9.19.2025.08.26.05.48.41
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c712178161sm16010436f8f.67.2025.08.26.05.50.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Aug 2025 05:48:43 -0700 (PDT)
-Message-ID: <84ae113c-3bf0-47cb-913b-45c75241a805@redhat.com>
-Date: Tue, 26 Aug 2025 14:48:40 +0200
+        Tue, 26 Aug 2025 05:50:05 -0700 (PDT)
+Message-ID: <c62fe93f-e4f8-4048-81ff-3f01bd64671b@redhat.com>
+Date: Tue, 26 Aug 2025 14:50:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -90,7 +90,7 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/10] mm: add bitmap mm->flags field
+Subject: Re: [PATCH 02/10] mm: convert core mm to mm_flags_*() accessors
 To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
  Andrew Morton <akpm@linux-foundation.org>
 Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
@@ -134,7 +134,7 @@ Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
  linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
  linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
 References: <cover.1755012943.git.lorenzo.stoakes@oracle.com>
- <9de8dfd9de8c95cd31622d6e52051ba0d1848f5a.1755012943.git.lorenzo.stoakes@oracle.com>
+ <1eb2266f4408798a55bda00cb04545a3203aa572.1755012943.git.lorenzo.stoakes@oracle.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -181,51 +181,37 @@ Autocrypt: addr=david@redhat.com; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <9de8dfd9de8c95cd31622d6e52051ba0d1848f5a.1755012943.git.lorenzo.stoakes@oracle.com>
+In-Reply-To: <1eb2266f4408798a55bda00cb04545a3203aa572.1755012943.git.lorenzo.stoakes@oracle.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 12.08.25 17:44, Lorenzo Stoakes wrote:
-> We are currently in the bizarre situation where we are constrained on the
-> number of flags we can set in an mm_struct based on whether this is a
-> 32-bit or 64-bit kernel.
+> As part of the effort to move to mm->flags becoming a bitmap field, convert
+> existing users to making use of the mm_flags_*() accessors which will, when
+> the conversion is complete, be the only means of accessing mm_struct flags.
 > 
-> This is because mm->flags is an unsigned long field, which is 32-bits on a
-> 32-bit system and 64-bits on a 64-bit system.
+> This will result in the debug output being that of a bitmap output, which
+> will result in a minor change here, but since this is for debug only, this
+> should have no bearing.
 > 
-> In order to keep things functional across both architectures, we do not
-> permit mm flag bits to be set above flag 31 (i.e. the 32nd bit).
-> 
-> This is a silly situation, especially given how profligate we are in
-> storing metadata in mm_struct, so let's convert mm->flags into a bitmap and
-> allow ourselves as many bits as we like.
-> 
-> To keep things manageable, firstly we introduce the bitmap at a system word
-> system as a new field mm->_flags, in union.
-> 
-> This means the new bitmap mm->_flags is bitwise exactly identical to the
-> existing mm->flags field.
-> 
-> We have an opportunity to also introduce some type safety here, so let's
-> wrap the mm flags field as a struct and declare it as an mm_flags_t typedef
-> to keep it consistent with vm_flags_t for VMAs.
-> 
-> We make the internal field privately accessible, in order to force the use
-> of helper functions so we can enforce that accesses are bitwise as
-> required.
-> 
-> We therefore introduce accessors prefixed with mm_flags_*() for callers to
-> use. We place the bit parameter first so as to match the parameter ordering
-> of the *_bit() functions.
-> 
-> Having this temporary union arrangement allows us to incrementally swap
-> over users of mm->flags patch-by-patch rather than having to do everything
-> in one fell swoop.
+> Otherwise, no functional changes intended.
 > 
 > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 > ---
 
-Incl. fixup LGTM
+
+> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+> index 25923cfec9c6..17650f0b516e 100644
+> --- a/mm/oom_kill.c
+> +++ b/mm/oom_kill.c
+> @@ -1,7 +1,7 @@
+>   // SPDX-License-Identifier: GPL-2.0-only
+>   /*
+>    *  linux/mm/oom_kill.c
+> - *
+> + *
+
+^ unrelated change
 
 Acked-by: David Hildenbrand <david@redhat.com>
 
