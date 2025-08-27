@@ -1,160 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-59344-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59345-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F0D6B37CBE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 10:04:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F301EB37D79
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 10:19:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2154B1B27765
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 08:04:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE4D6365D37
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 08:19:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97CAE31CA45;
-	Wed, 27 Aug 2025 08:03:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 124FA335BB5;
+	Wed, 27 Aug 2025 08:19:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="nIwesNdK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [83.166.143.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9008B31A553
-	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Aug 2025 08:03:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64DAE3164CE
+	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Aug 2025 08:19:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756281831; cv=none; b=uiKmOEcVqOkxm56uWlyE7t0g2TaZ31TZbsXtDa3jzQ5m3AEBVpW8Yqa5aQrlE28Fydr+9IAQknVA1gSLLnZToisHPafqH8LhfUIM+gSWChgota1W1EyffOqWsRsWBBeOHBtQH6hU6YrQ0dpGR6lEHT+zyJmBuVc9lsUxOqhDpyw=
+	t=1756282756; cv=none; b=X4ED+nQqscOaEx9oTnU/cgAYPJIqp+0vN6SlbMNhc+Cguewu+5F6ni7ujPWO4XTojEUcGO9SFn8SIoAysiyn27oTj0kvvpxZaIe3Xslt/WYduRwYZs1XmEBwwZrNrwWWF3F2w7cz5K6+K8AqacJLIJUwIGN7CK2ficeCqJEhtmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756281831; c=relaxed/simple;
-	bh=GKFP0cKg8X36DYXTs4AnKInFPQYLUC25oeO1ip+uIVo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=pyFoUIrPfwfbMSpY6NjkKd4Ct6HUjY9cABmK/YQ76Yi3lL6NYvJV/dpuGdxRS+syLY2P9/nMR1ueZdoPVqs1w1D36+4UCVpTMa9Q05LHiKlzuFO5jGzO7SmfQT8umC6WPCSQHHrNkTeCL+ZESLtRLEEX+l+x9YUNRFOMDLzFm5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3e6766c3935so79910365ab.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Aug 2025 01:03:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756281829; x=1756886629;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xXVGAuQnn9XzlKQXqXAG7puergh7qbhhO9p5PMqXgkw=;
-        b=o0PEKkTPOQK08+ZN+f/zZA+7UNgJEzrgyg2A6Av2KwONepE1/Puk0+pvOjOifcyAtl
-         5fHKoXiUacQM35DgX2sqNxHkAwoSjg0a3ocn5uHx4NJRi0ik80JVBHvnWkOW/tqVE09f
-         TlUXvOLlOGpZTlSblfNIGIBEk5h7OUns3yMhHFP0ksadQbD64R8LM5ioSIRfogZ799Tp
-         RKBswg31kKNDcZf2inRQ1C9mXI//akZPxKbyWvFRhAaEdDKh5m66wgCpMkrGt5dHYBDb
-         /4rF+U9BM2nHObsJE7MnMNRashQjIaYEgE3C+xxtmcfcZu0oCsINnvhOOyTdsS+bncEx
-         Cabg==
-X-Forwarded-Encrypted: i=1; AJvYcCWat8IriOiNOH9jj9Jqi4vpohhFmA1bHCaEstqOBKEjlTFP1WtTghYVq6m3i6Vjmllg1aYLBhaSux5YAZ4a@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywlyf5XKy9hseKooaUxm5wov9a1PhrmC56wWb0RnbzkmoifV+5K
-	TsxNWsi+hx7gU8P4EJjllcJcZ13uK2x/ShTvSbO22a/K2zuVyF5/97sJ7RBpqc1247nEWRt/uIB
-	V+rkvO1cR5mISotPUj4tDGw8JDausFQuzp1ewieLBpGFqkUguVQpCPkPlvFc=
-X-Google-Smtp-Source: AGHT+IHgGgCW/4gHUt8t/levoYYyVNCC5/Uo1Faz0rZusbCMW0pjQ6aBYk5jawEFHvtzIMDbLkK5lYOmXgLbgGbFV0yzSJsjx3T1
+	s=arc-20240116; t=1756282756; c=relaxed/simple;
+	bh=nAP7BNBf756Gwyh56tn1SBrfZqWQsDLT5o0gXuy+g2w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eeF4+CpJP0qCzhTh+G7dZ+sgVzU4m3bSgYysyKg6N4TsH+o43W7xLaWgQLqolfEJ+4i8VOTkMl0cU4RK3M3HCxVpIyXQw73Ib59ywny3EfGGF51i4kGl/ZL74gJV/IaGMmHehvGBMGlZ+tm3Y352jiVy5dTr/z0BJgcyKwQXako=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=nIwesNdK; arc=none smtp.client-ip=83.166.143.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4cBcr92zqHzSsR;
+	Wed, 27 Aug 2025 10:19:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1756282745;
+	bh=T4RPei0DtLnnZYB66tK2dsxFQ5Fek+OuCR7/tQ4qCMU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nIwesNdKHJfaQDzsU5qqtQNkWy5jqrsWIlIG7pLsa+xQyzF9Nn3bysidzhtBEq4s5
+	 auix8D4X4Equ4OtaucY/q3K3HRCqT4s5FmKpQqbFkcZA8vYC9APYiHXG6rBWBRj6Lp
+	 NFA+uIf2ecqGASyaInKvnjJQfy33/h63EhiHs8LI=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4cBcr74Cmwzwcw;
+	Wed, 27 Aug 2025 10:19:03 +0200 (CEST)
+Date: Wed, 27 Aug 2025 10:19:02 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Christian Brauner <brauner@kernel.org>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Kees Cook <keescook@chromium.org>, 
+	Paul Moore <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>, 
+	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
+	Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Miklos Szeredi <mszeredi@redhat.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, 
+	Robert Waite <rowait@microsoft.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Scott Shell <scottsh@microsoft.com>, Steve Dower <steve.dower@python.org>, 
+	Steve Grubb <sgrubb@redhat.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v1 0/2] Add O_DENY_WRITE (complement AT_EXECVE_CHECK)
+Message-ID: <20250827.ShuD9thahkoh@digikod.net>
+References: <20250822170800.2116980-1-mic@digikod.net>
+ <20250826-skorpion-magma-141496988fdc@brauner>
+ <20250826.aig5aiShunga@digikod.net>
+ <20250826123041.GB1603531@mit.edu>
+ <20250826.iewie7Et5aiw@digikod.net>
+ <20250826205057.GC1603531@mit.edu>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:4813:b0:3ea:114c:83a6 with SMTP id
- e9e14a558f8ab-3ea114c860fmr227055435ab.1.1756281828839; Wed, 27 Aug 2025
- 01:03:48 -0700 (PDT)
-Date: Wed, 27 Aug 2025 01:03:48 -0700
-In-Reply-To: <cover.1756222464.git.josef@toxicpanda.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68aebbe4.a70a0220.3cafd4.0011.GAE@google.com>
-Subject: [syzbot ci] Re: fs: rework inode reference counting
-From: syzbot ci <syzbot+ci0d448b9d8cb534fd@syzkaller.appspotmail.com>
-To: amir73il@gmail.com, brauner@kernel.org, josef@toxicpanda.com, 
-	kernel-team@fb.com, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	viro@zeniv.linux.org.uk
-Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250826205057.GC1603531@mit.edu>
+X-Infomaniak-Routing: alpha
 
-syzbot ci has tested the following series
+On Tue, Aug 26, 2025 at 04:50:57PM -0400, Theodore Ts'o wrote:
+> On Tue, Aug 26, 2025 at 07:47:30PM +0200, Mickaël Salaün wrote:
+> > 
+> >   Passing the AT_EXECVE_CHECK flag to execveat(2) only performs a check
+> >   on a regular file and returns 0 if execution of this file would be
+> >   allowed, ignoring the file format and then the related interpreter
+> >   dependencies (e.g. ELF libraries, script’s shebang).
+> 
+> But if that's it, why can't the script interpreter (python, bash,
+> etc.) before executing the script, checks for executability via
+> faccessat(2) or fstat(2)?
 
-[v2] fs: rework inode reference counting
-https://lore.kernel.org/all/cover.1756222464.git.josef@toxicpanda.com
-* [PATCH v2 01/54] fs: make the i_state flags an enum
-* [PATCH v2 02/54] fs: add an icount_read helper
-* [PATCH v2 03/54] fs: rework iput logic
-* [PATCH v2 04/54] fs: add an i_obj_count refcount to the inode
-* [PATCH v2 05/54] fs: hold an i_obj_count reference in wait_sb_inodes
-* [PATCH v2 06/54] fs: hold an i_obj_count reference for the i_wb_list
-* [PATCH v2 07/54] fs: hold an i_obj_count reference for the i_io_list
-* [PATCH v2 08/54] fs: hold an i_obj_count reference in writeback_sb_inodes
-* [PATCH v2 09/54] fs: hold an i_obj_count reference while on the hashtable
-* [PATCH v2 10/54] fs: hold an i_obj_count reference while on the LRU list
-* [PATCH v2 11/54] fs: hold an i_obj_count reference while on the sb inode list
-* [PATCH v2 12/54] fs: stop accessing ->i_count directly in f2fs and gfs2
-* [PATCH v2 13/54] fs: hold an i_obj_count when we have an i_count reference
-* [PATCH v2 14/54] fs: add an I_LRU flag to the inode
-* [PATCH v2 15/54] fs: maintain a list of pinned inodes
-* [PATCH v2 16/54] fs: delete the inode from the LRU list on lookup
-* [PATCH v2 17/54] fs: remove the inode from the LRU list on unlink/rmdir
-* [PATCH v2 18/54] fs: change evict_inodes to use iput instead of evict directly
-* [PATCH v2 19/54] fs: hold a full ref while the inode is on a LRU
-* [PATCH v2 20/54] fs: disallow 0 reference count inodes
-* [PATCH v2 21/54] fs: make evict_inodes add to the dispose list under the i_lock
-* [PATCH v2 22/54] fs: convert i_count to refcount_t
-* [PATCH v2 23/54] fs: use refcount_inc_not_zero in igrab
-* [PATCH v2 24/54] fs: use inode_tryget in find_inode*
-* [PATCH v2 25/54] fs: update find_inode_*rcu to check the i_count count
-* [PATCH v2 26/54] fs: use igrab in insert_inode_locked
-* [PATCH v2 27/54] fs: remove I_WILL_FREE|I_FREEING check from __inode_add_lru
-* [PATCH v2 28/54] fs: remove I_WILL_FREE|I_FREEING check in inode_pin_lru_isolating
-* [PATCH v2 29/54] fs: use inode_tryget in evict_inodes
-* [PATCH v2 30/54] fs: change evict_dentries_for_decrypted_inodes to use refcount
-* [PATCH v2 31/54] block: use igrab in sync_bdevs
-* [PATCH v2 32/54] bcachefs: use the refcount instead of I_WILL_FREE|I_FREEING
-* [PATCH v2 33/54] btrfs: don't check I_WILL_FREE|I_FREEING
-* [PATCH v2 34/54] fs: use igrab in drop_pagecache_sb
-* [PATCH v2 35/54] fs: stop checking I_FREEING in d_find_alias_rcu
-* [PATCH v2 36/54] ext4: stop checking I_WILL_FREE|IFREEING in ext4_check_map_extents_env
-* [PATCH v2 37/54] fs: remove I_WILL_FREE|I_FREEING from fs-writeback.c
-* [PATCH v2 38/54] gfs2: remove I_WILL_FREE|I_FREEING usage
-* [PATCH v2 39/54] fs: remove I_WILL_FREE|I_FREEING check from dquot.c
-* [PATCH v2 40/54] notify: remove I_WILL_FREE|I_FREEING checks in fsnotify_unmount_inodes
-* [PATCH v2 41/54] xfs: remove I_FREEING check
-* [PATCH v2 42/54] landlock: remove I_FREEING|I_WILL_FREE check
-* [PATCH v2 43/54] fs: change inode_is_dirtytime_only to use refcount
-* [PATCH v2 44/54] btrfs: remove references to I_FREEING
-* [PATCH v2 45/54] ext4: remove reference to I_FREEING in inode.c
-* [PATCH v2 46/54] ext4: remove reference to I_FREEING in orphan.c
-* [PATCH v2 47/54] pnfs: use i_count refcount to determine if the inode is going away
-* [PATCH v2 48/54] fs: remove some spurious I_FREEING references in inode.c
-* [PATCH v2 49/54] xfs: remove reference to I_FREEING|I_WILL_FREE
-* [PATCH v2 50/54] ocfs2: do not set I_WILL_FREE
-* [PATCH v2 51/54] fs: remove I_FREEING|I_WILL_FREE
-* [PATCH v2 52/54] fs: remove I_REFERENCED
-* [PATCH v2 53/54] fs: remove I_LRU_ISOLATING flag
-* [PATCH v2 54/54] fs: add documentation explaining the reference count rules for inodes
+From commit a5874fde3c08 ("exec: Add a new AT_EXECVE_CHECK flag to
+execveat(2)"):
 
-and found the following issue:
-kernel build error
+    This is different from faccessat(2) + X_OK which only checks a subset of
+    access rights (i.e. inode permission and mount options for regular
+    files), but not the full context (e.g. all LSM access checks).  The main
+    use case for access(2) is for SUID processes to (partially) check access
+    on behalf of their caller.  The main use case for execveat(2) +
+    AT_EXECVE_CHECK is to check if a script execution would be allowed,
+    according to all the different restrictions in place.  Because the use
+    of AT_EXECVE_CHECK follows the exact kernel semantic as for a real
+    execution, user space gets the same error codes.
 
-Full report is available here:
-https://ci.syzbot.org/series/ccd4eafa-7a13-48d6-93b6-f40c03262bea
 
-***
+> 
+> The whole O_DONY_WRITE dicsussion seemed to imply that AT_EXECVE_CHECK
+> was doing more than just the executability check?
 
-kernel build error
+I would say that that AT_EXECVE_CHECK does a full executability check
+(with the full caller's credentials checked against the currently
+enforced security policy).
 
-tree:      torvalds
-URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux
-base:      fab1beda7597fac1cecc01707d55eadb6bbe773c
-arch:      amd64
-compiler:  Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-config:    https://ci.syzbot.org/builds/162c03ae-2d30-4085-ab1e-a2dd1c8403eb/config
+The rationale to add O_DENY_WRITE (which is now abandoned) was to avoid a race
+condition between the check and the full read.  Indeed, with a full
+execveat(2), the kernel write-lock the file to avoid such issue (which can lead
+to other issues).
 
-fs/bcachefs/fs.c:350:20: error: incompatible pointer types passing 'struct bch_inode_info *' to parameter of type 'const struct inode *' [-Werror,-Wincompatible-pointer-types]
+> 
+> > There is no other way for user space to reliably check executability of
+> > files (taking into account all enforced security
+> > policies/configurations).
+> 
+> Why doesn't faccessat(2) or fstat(2) suffice?  This is why having a
+> more substantive requirements and design doc might be helpful.  It
+> appears you have some assumptions that perhaps other kernel developers
+> are not aware.  I certainly seem to be missing something.....
 
-***
-
-If these findings have caused you to resend the series or submit a
-separate fix, please add the following tag to your commit message:
-  Tested-by: syzbot@syzkaller.appspotmail.com
-
----
-This report is generated by a bot. It may contain errors.
-syzbot ci engineers can be reached at syzkaller@googlegroups.com.
+My reasoning was to explain the rationale for a kernel feature in the commit
+message, and the user doc (why and how to use it) in the user-facing
+documentation.  Documentation improvements are welcome!
 
