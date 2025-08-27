@@ -1,541 +1,185 @@
-Return-Path: <linux-fsdevel+bounces-59430-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59431-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33559B38A00
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 21:02:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62DBCB38A0B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 21:08:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EB2044E1E3D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 19:02:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A60E97B78DA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 19:06:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23C222D238C;
-	Wed, 27 Aug 2025 19:02:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E5532E1F04;
+	Wed, 27 Aug 2025 19:07:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GKWH/Gqp"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="pONYcV+y"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-bc0b.mail.infomaniak.ch (smtp-bc0b.mail.infomaniak.ch [45.157.188.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FA4129A9FA
-	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Aug 2025 19:02:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F331FCFEF
+	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Aug 2025 19:07:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756321336; cv=none; b=CRbU+RNaTvTCWHENi+z2BoEjA01FDDW3Bnc4z+9PvnnIrFNuxRCgzm99P9V+rYDs8H6VC46/rNrKD238+lXMuLPAWleDQyK7SvG4VL3DRNFS/QRwIOvqUeULzITmPmd1EP5Klj9o7/P9ms7ddBog4bAcWuRQNIChgDNCuLyLcjk=
+	t=1756321671; cv=none; b=ISJydmpnSdSG7R78JI3BO0n/0pPtHcOPcKSXF8Y+jcFVXHiLNpA2Gw6pyDKxra0pjJ9BnaXivfC+4us93Z8BDxJN70xF/cLsIqk+KS6Tw1RlCYtGeaaZUbB5i2AcStY/H51L+fgweF2SvIoKg25lqE+mTpGt0x6ZtR01ZfB9/N8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756321336; c=relaxed/simple;
-	bh=tn08EtPLtRIeNh/GVNxbdE1NBzpf2SIIWW3QwPeCtMk=;
+	s=arc-20240116; t=1756321671; c=relaxed/simple;
+	bh=yX4JaxYCqw7dNQZwvPW9Tw6mUMQKXHiEjTBjE5noi8s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bWEC5vL/IstZEmu/gTbxEzWTyUDIskFiA6emSaRE5cucGXIjF8ona9ffUQoC8Qo7iDcfmywDsyNoyJSA7XgEyB+bL+++ibv3k7vHHFRyehqn1mQ9wXQ7MeioWzZ0xAgwK584IQESLeLOqhgs6MtdzitbFUXpB09MegPF2beMoIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GKWH/Gqp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AF58C4CEEB;
-	Wed, 27 Aug 2025 19:02:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756321336;
-	bh=tn08EtPLtRIeNh/GVNxbdE1NBzpf2SIIWW3QwPeCtMk=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=EE7jB9mhPjxndqlDS8FtEg+eSAK1x2TXkGzQ4yAGuvtPgxzjVSdgPPXJC8++kll4Uip3sSGkrxamuYnfHYcW5wamMWeJsvV9/RFgYOJHecS6vP0oaBTwmgLrp8gz53Ag+4YyiYIKhveWGD3jEUIw/p9YtBdrXBqBn8AeSWp55C8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=pONYcV+y; arc=none smtp.client-ip=45.157.188.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6c])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4cBvDX2wjWzd0K;
+	Wed, 27 Aug 2025 21:07:40 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1756321660;
+	bh=25MkTZUYf918F1U+hOS4n8oVEnZ1pOr2pnn7VTbbS7M=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GKWH/Gqp8ZORX3QeCXJVH+kB5CTqE8FmvDHtdK+u7MgTk7iA09WRxMPEwCaIiik6Q
-	 x3JbkisahG0ud7bvL6FhrKGhzO1zDazvYFn0jbsiUYlgTBwGlDlNzrHu/mfp23ojbJ
-	 VJsJeWfZG30hmFikxlE23n7oxOC9u5vRTh+GfAlXHthFwjxVGzRzrQOgKXfLoRC9d+
-	 dLduG5FQ6n7Dz2qZ0gwixaKl8pAHFWwX88lr3PUiuOUASGTB2ibAZOiwKt6t1cR8aO
-	 bk/lNZAplsxB936ZRrGjRAg4v/eFWDzR7LcRGvYYRaTQhScQq9x1n9rsZGUiJvp4Oj
-	 RIomnmVGy4+6Q==
-Date: Wed, 27 Aug 2025 12:02:15 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Miklos Szeredi <mszeredi@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, Joanne Koong <joannelkoong@gmail.com>,
-	John Groves <John@groves.net>, Bernd Schubert <bernd@bsbernd.com>
-Subject: Re: [PATCH v2] fuse: allow synchronous FUSE_INIT
-Message-ID: <20250827190215.GB8117@frogsfrogsfrogs>
-References: <20250827110004.584582-1-mszeredi@redhat.com>
+	b=pONYcV+yus1UGCmv8aS92t7WD2FIBajAKgTy8ZCr+p5H6crAPU4gpTYYYwcYmn+FV
+	 HteEXLrnzALkVP+3LLs6eec4R8QTSZxF9pOxXpxUIcjJh6TlRD38kIjMqBOyQx+G87
+	 nKanc1siKvNLTQFi15PK9i3tBDcP0Bmczs216KSk=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4cBvDV2XqRz7Kg;
+	Wed, 27 Aug 2025 21:07:38 +0200 (CEST)
+Date: Wed, 27 Aug 2025 21:07:35 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Andy Lutomirski <luto@kernel.org>
+Cc: Theodore Ts'o <tytso@mit.edu>, Christian Brauner <brauner@kernel.org>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Kees Cook <keescook@chromium.org>, 
+	Paul Moore <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
+	Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Miklos Szeredi <mszeredi@redhat.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, 
+	Robert Waite <rowait@microsoft.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Scott Shell <scottsh@microsoft.com>, Steve Dower <steve.dower@python.org>, 
+	Steve Grubb <sgrubb@redhat.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v1 0/2] Add O_DENY_WRITE (complement AT_EXECVE_CHECK)
+Message-ID: <20250827.Fuo1Iel1pa7i@digikod.net>
+References: <20250822170800.2116980-1-mic@digikod.net>
+ <20250826-skorpion-magma-141496988fdc@brauner>
+ <20250826.aig5aiShunga@digikod.net>
+ <20250826123041.GB1603531@mit.edu>
+ <20250826.iewie7Et5aiw@digikod.net>
+ <CALCETrW=V9vst_ho2Q4sQUJ5uZECY5h7TnF==sG4JWq8PsWb8Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250827110004.584582-1-mszeredi@redhat.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALCETrW=V9vst_ho2Q4sQUJ5uZECY5h7TnF==sG4JWq8PsWb8Q@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-On Wed, Aug 27, 2025 at 12:59:55PM +0200, Miklos Szeredi wrote:
-> FUSE_INIT has always been asynchronous with mount.  That means that the
-> server processed this request after the mount syscall returned.
+On Wed, Aug 27, 2025 at 10:35:28AM -0700, Andy Lutomirski wrote:
+> On Tue, Aug 26, 2025 at 10:47 AM Mickaël Salaün <mic@digikod.net> wrote:
+> >
+> > On Tue, Aug 26, 2025 at 08:30:41AM -0400, Theodore Ts'o wrote:
+> > > Is there a single, unified design and requirements document that
+> > > describes the threat model, and what you are trying to achieve with
+> > > AT_EXECVE_CHECK and O_DENY_WRITE?  I've been looking at the cover
+> > > letters for AT_EXECVE_CHECK and O_DENY_WRITE, and the documentation
+> > > that has landed for AT_EXECVE_CHECK and it really doesn't describe
+> > > what *are* the checks that AT_EXECVE_CHECK is trying to achieve:
+> > >
+> > >    "The AT_EXECVE_CHECK execveat(2) flag, and the
+> > >    SECBIT_EXEC_RESTRICT_FILE and SECBIT_EXEC_DENY_INTERACTIVE
+> > >    securebits are intended for script interpreters and dynamic linkers
+> > >    to enforce a consistent execution security policy handled by the
+> > >    kernel."
+> >
+> > From the documentation:
+> >
+> >   Passing the AT_EXECVE_CHECK flag to execveat(2) only performs a check
+> >   on a regular file and returns 0 if execution of this file would be
+> >   allowed, ignoring the file format and then the related interpreter
+> >   dependencies (e.g. ELF libraries, script’s shebang).
+> >
+> > >
+> > > Um, what security policy?
+> >
+> > Whether the file is allowed to be executed.  This includes file
+> > permission, mount point option, ACL, LSM policies...
 > 
-> This means that FUSE_INIT can't supply the root inode's ID, hence it
-> currently has a hardcoded value.  There are other limitations such as not
-> being able to perform getxattr during mount, which is needed by selinux.
-> 
-> To remove these limitations allow server to process FUSE_INIT while
-> initializing the in-core super block for the fuse filesystem.  This can
-> only be done if the server is prepared to handle this, so add
-> FUSE_DEV_IOC_SYNC_INIT ioctl, which
-> 
->  a) lets the server know whether this feature is supported, returning
->  ENOTTY othewrwise.
-> 
->  b) lets the kernel know to perform a synchronous initialization
-> 
-> The implementation is slightly tricky, since fuse_dev/fuse_conn are set up
-> only during super block creation.  This is solved by setting the private
-> data of the fuse device file to a special value ((struct fuse_dev *) 1) and
-> waiting for this to be turned into a proper fuse_dev before commecing with
-> operations on the device file.
-> 
-> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-> ---
-> v2:
-> 
->  - make fuse_send_init() perform sync/async sequence based on fc->sync_init
->    (Joanne)
-> 
-> fs/fuse/cuse.c            |  3 +-
->  fs/fuse/dev.c             | 74 +++++++++++++++++++++++++++++----------
->  fs/fuse/dev_uring.c       |  4 +--
->  fs/fuse/fuse_dev_i.h      | 13 +++++--
->  fs/fuse/fuse_i.h          |  5 ++-
->  fs/fuse/inode.c           | 50 ++++++++++++++++++++------
->  include/uapi/linux/fuse.h |  1 +
->  7 files changed, 115 insertions(+), 35 deletions(-)
-> 
-> diff --git a/fs/fuse/cuse.c b/fs/fuse/cuse.c
-> index b39844d75a80..28c96961e85d 100644
-> --- a/fs/fuse/cuse.c
-> +++ b/fs/fuse/cuse.c
-> @@ -52,6 +52,7 @@
->  #include <linux/user_namespace.h>
->  
->  #include "fuse_i.h"
-> +#include "fuse_dev_i.h"
->  
->  #define CUSE_CONNTBL_LEN	64
->  
-> @@ -547,7 +548,7 @@ static int cuse_channel_open(struct inode *inode, struct file *file)
->   */
->  static int cuse_channel_release(struct inode *inode, struct file *file)
->  {
-> -	struct fuse_dev *fud = file->private_data;
-> +	struct fuse_dev *fud = __fuse_get_dev(file);
->  	struct cuse_conn *cc = fc_to_cc(fud->fc);
->  
->  	/* remove from the conntbl, no more access from this point on */
-> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> index 8ac074414897..948f45c6e0ef 100644
-> --- a/fs/fuse/dev.c
-> +++ b/fs/fuse/dev.c
-> @@ -1530,14 +1530,34 @@ static int fuse_dev_open(struct inode *inode, struct file *file)
->  	return 0;
->  }
->  
-> +struct fuse_dev *fuse_get_dev(struct file *file)
-> +{
-> +	struct fuse_dev *fud = __fuse_get_dev(file);
-> +	int err;
-> +
-> +	if (likely(fud))
-> +		return fud;
-> +
-> +	err = wait_event_interruptible(fuse_dev_waitq,
-> +				       READ_ONCE(file->private_data) != FUSE_DEV_SYNC_INIT);
-> +	if (err)
-> +		return ERR_PTR(err);
-> +
-> +	fud = __fuse_get_dev(file);
-> +	if (!fud)
-> +		return ERR_PTR(-EPERM);
-> +
-> +	return fud;
-> +}
-> +
->  static ssize_t fuse_dev_read(struct kiocb *iocb, struct iov_iter *to)
->  {
->  	struct fuse_copy_state cs;
->  	struct file *file = iocb->ki_filp;
->  	struct fuse_dev *fud = fuse_get_dev(file);
->  
-> -	if (!fud)
-> -		return -EPERM;
-> +	if (IS_ERR(fud))
-> +		return PTR_ERR(fud);
->  
->  	if (!user_backed_iter(to))
->  		return -EINVAL;
-> @@ -1557,8 +1577,8 @@ static ssize_t fuse_dev_splice_read(struct file *in, loff_t *ppos,
->  	struct fuse_copy_state cs;
->  	struct fuse_dev *fud = fuse_get_dev(in);
->  
-> -	if (!fud)
-> -		return -EPERM;
-> +	if (IS_ERR(fud))
-> +		return PTR_ERR(fud);
->  
->  	bufs = kvmalloc_array(pipe->max_usage, sizeof(struct pipe_buffer),
->  			      GFP_KERNEL);
-> @@ -2233,8 +2253,8 @@ static ssize_t fuse_dev_write(struct kiocb *iocb, struct iov_iter *from)
->  	struct fuse_copy_state cs;
->  	struct fuse_dev *fud = fuse_get_dev(iocb->ki_filp);
->  
-> -	if (!fud)
-> -		return -EPERM;
-> +	if (IS_ERR(fud))
-> +		return PTR_ERR(fud);
->  
->  	if (!user_backed_iter(from))
->  		return -EINVAL;
-> @@ -2258,8 +2278,8 @@ static ssize_t fuse_dev_splice_write(struct pipe_inode_info *pipe,
->  	ssize_t ret;
->  
->  	fud = fuse_get_dev(out);
-> -	if (!fud)
-> -		return -EPERM;
-> +	if (IS_ERR(fud))
-> +		return PTR_ERR(fud);
->  
->  	pipe_lock(pipe);
->  
-> @@ -2343,7 +2363,7 @@ static __poll_t fuse_dev_poll(struct file *file, poll_table *wait)
->  	struct fuse_iqueue *fiq;
->  	struct fuse_dev *fud = fuse_get_dev(file);
->  
-> -	if (!fud)
-> +	if (IS_ERR(fud))
->  		return EPOLLERR;
->  
->  	fiq = &fud->fc->iq;
-> @@ -2490,7 +2510,7 @@ void fuse_wait_aborted(struct fuse_conn *fc)
->  
->  int fuse_dev_release(struct inode *inode, struct file *file)
->  {
-> -	struct fuse_dev *fud = fuse_get_dev(file);
-> +	struct fuse_dev *fud = __fuse_get_dev(file);
->  
->  	if (fud) {
->  		struct fuse_conn *fc = fud->fc;
-> @@ -2521,8 +2541,8 @@ static int fuse_dev_fasync(int fd, struct file *file, int on)
->  {
->  	struct fuse_dev *fud = fuse_get_dev(file);
->  
-> -	if (!fud)
-> -		return -EPERM;
-> +	if (IS_ERR(fud))
-> +		return PTR_ERR(fud);
->  
->  	/* No locking - fasync_helper does its own locking */
->  	return fasync_helper(fd, file, on, &fud->fc->iq.fasync);
-> @@ -2532,7 +2552,7 @@ static int fuse_device_clone(struct fuse_conn *fc, struct file *new)
->  {
->  	struct fuse_dev *fud;
->  
-> -	if (new->private_data)
-> +	if (__fuse_get_dev(new))
->  		return -EINVAL;
->  
->  	fud = fuse_dev_alloc_install(fc);
-> @@ -2563,7 +2583,7 @@ static long fuse_dev_ioctl_clone(struct file *file, __u32 __user *argp)
->  	 * uses the same ioctl handler.
->  	 */
->  	if (fd_file(f)->f_op == file->f_op)
-> -		fud = fuse_get_dev(fd_file(f));
-> +		fud = __fuse_get_dev(fd_file(f));
->  
->  	res = -EINVAL;
->  	if (fud) {
-> @@ -2581,8 +2601,8 @@ static long fuse_dev_ioctl_backing_open(struct file *file,
->  	struct fuse_dev *fud = fuse_get_dev(file);
->  	struct fuse_backing_map map;
->  
-> -	if (!fud)
-> -		return -EPERM;
-> +	if (IS_ERR(fud))
-> +		return PTR_ERR(fud);
->  
->  	if (!IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
->  		return -EOPNOTSUPP;
-> @@ -2598,8 +2618,8 @@ static long fuse_dev_ioctl_backing_close(struct file *file, __u32 __user *argp)
->  	struct fuse_dev *fud = fuse_get_dev(file);
->  	int backing_id;
->  
-> -	if (!fud)
-> -		return -EPERM;
-> +	if (IS_ERR(fud))
-> +		return PTR_ERR(fud);
->  
->  	if (!IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
->  		return -EOPNOTSUPP;
-> @@ -2610,6 +2630,19 @@ static long fuse_dev_ioctl_backing_close(struct file *file, __u32 __user *argp)
->  	return fuse_backing_close(fud->fc, backing_id);
->  }
->  
-> +static long fuse_dev_ioctl_sync_init(struct file *file)
+> This needs *waaaaay* more detail for any sort of useful evaluation.
+> Is an actual credible security policy rolling dice?  Asking ChatGPT?
+> Looking at security labels?  Does it care who can write to the file,
+> or who owns the file, or what the file's hash is, or what filesystem
+> it's on, or where it came from?  Does it dynamically inspect the
+> contents?  Is it controlled by an unprivileged process?
 
-As I noted in a reply to the v1 patch, I /think/ I'm going to want to
-have a privileged mount helper open /dev/fuse and pass that fd to a
-completely unprivileged helper.  For privileged functionality (like
-iomap) I think it would be useful for the mount helper to be able to
-attach that iomap capability to the fusedev so that the fuse server can
-ask if may use iomap before FUSE_INIT time.
+AT_EXECVE_CHECK only does the same checks as done by other execveat(2)
+calls, but without actually executing the file/fd.
 
-IOWs, would you be willing to rename this to FUSE_DEV_IOC_SET_FEATURE
-and take a u32 code?  Then programs with an open /dev/fuse fd can
-incrementally add pieces as required.  The first one would be
-FUSE_DEV_SYNC_INIT, the second one would be FUSE_DEV_ADD_IOMAP, etc.
-
-(I don't mind adding another ioctl number for fuse/iomap, but this would
-be an opportunity to add fewer ioctl numbers.)
-
-> +{
-> +	int err = -EINVAL;
-> +
-> +	mutex_lock(&fuse_mutex);
-> +	if (!__fuse_get_dev(file)) {
-> +		WRITE_ONCE(file->private_data, FUSE_DEV_SYNC_INIT);
-> +		err = 0;
-> +	}
-> +	mutex_unlock(&fuse_mutex);
-> +	return err;
-> +}
-> +
->  static long fuse_dev_ioctl(struct file *file, unsigned int cmd,
->  			   unsigned long arg)
->  {
-> @@ -2625,6 +2658,9 @@ static long fuse_dev_ioctl(struct file *file, unsigned int cmd,
->  	case FUSE_DEV_IOC_BACKING_CLOSE:
->  		return fuse_dev_ioctl_backing_close(file, argp);
->  
-> +	case FUSE_DEV_IOC_SYNC_INIT:
-> +		return fuse_dev_ioctl_sync_init(file);
-> +
->  	default:
->  		return -ENOTTY;
->  	}
-> @@ -2633,7 +2669,7 @@ static long fuse_dev_ioctl(struct file *file, unsigned int cmd,
->  #ifdef CONFIG_PROC_FS
->  static void fuse_dev_show_fdinfo(struct seq_file *seq, struct file *file)
->  {
-> -	struct fuse_dev *fud = fuse_get_dev(file);
-> +	struct fuse_dev *fud = __fuse_get_dev(file);
->  	if (!fud)
->  		return;
->  
-> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-> index 249b210becb1..bef38ed78249 100644
-> --- a/fs/fuse/dev_uring.c
-> +++ b/fs/fuse/dev_uring.c
-> @@ -1139,9 +1139,9 @@ int fuse_uring_cmd(struct io_uring_cmd *cmd, unsigned int issue_flags)
->  		return -EINVAL;
->  
->  	fud = fuse_get_dev(cmd->file);
-> -	if (!fud) {
-> +	if (IS_ERR(fud)) {
->  		pr_info_ratelimited("No fuse device found\n");
-> -		return -ENOTCONN;
-> +		return PTR_ERR(fud);
->  	}
->  	fc = fud->fc;
->  
-> diff --git a/fs/fuse/fuse_dev_i.h b/fs/fuse/fuse_dev_i.h
-> index 5a9bd771a319..6e8373f97040 100644
-> --- a/fs/fuse/fuse_dev_i.h
-> +++ b/fs/fuse/fuse_dev_i.h
-> @@ -12,6 +12,8 @@
->  #define FUSE_INT_REQ_BIT (1ULL << 0)
->  #define FUSE_REQ_ID_STEP (1ULL << 1)
->  
-> +extern struct wait_queue_head fuse_dev_waitq;
-> +
->  struct fuse_arg;
->  struct fuse_args;
->  struct fuse_pqueue;
-> @@ -37,15 +39,22 @@ struct fuse_copy_state {
->  	} ring;
->  };
->  
-> -static inline struct fuse_dev *fuse_get_dev(struct file *file)
-> +#define FUSE_DEV_SYNC_INIT ((struct fuse_dev *) 1)
-> +#define FUSE_DEV_PTR_MASK (~1UL)
-> +
-> +static inline struct fuse_dev *__fuse_get_dev(struct file *file)
->  {
->  	/*
->  	 * Lockless access is OK, because file->private data is set
->  	 * once during mount and is valid until the file is released.
->  	 */
-> -	return READ_ONCE(file->private_data);
-> +	struct fuse_dev *fud = READ_ONCE(file->private_data);
-> +
-> +	return (typeof(fud)) ((unsigned long) fud & FUSE_DEV_PTR_MASK);
-
-s/unsigned long/uintptr_t/ here ?
-
->  }
->  
-> +struct fuse_dev *fuse_get_dev(struct file *file);
-> +
->  unsigned int fuse_req_hash(u64 unique);
->  struct fuse_req *fuse_request_find(struct fuse_pqueue *fpq, u64 unique);
->  
-> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> index 486fa550c951..233c6111f768 100644
-> --- a/fs/fuse/fuse_i.h
-> +++ b/fs/fuse/fuse_i.h
-> @@ -904,6 +904,9 @@ struct fuse_conn {
->  	/* Is link not implemented by fs? */
->  	unsigned int no_link:1;
->  
-> +	/* Is synchronous FUSE_INIT allowed? */
-> +	unsigned int sync_init:1;
-> +
->  	/* Use io_uring for communication */
->  	unsigned int io_uring;
->  
-> @@ -1318,7 +1321,7 @@ struct fuse_dev *fuse_dev_alloc_install(struct fuse_conn *fc);
->  struct fuse_dev *fuse_dev_alloc(void);
->  void fuse_dev_install(struct fuse_dev *fud, struct fuse_conn *fc);
->  void fuse_dev_free(struct fuse_dev *fud);
-> -void fuse_send_init(struct fuse_mount *fm);
-> +int fuse_send_init(struct fuse_mount *fm);
->  
->  /**
->   * Fill in superblock and initialize fuse connection
-> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> index 9d26a5bc394d..7cf47d5bcc87 100644
-> --- a/fs/fuse/inode.c
-> +++ b/fs/fuse/inode.c
-> @@ -7,6 +7,7 @@
->  */
->  
->  #include "fuse_i.h"
-> +#include "fuse_dev_i.h"
->  #include "dev_uring_i.h"
->  
->  #include <linux/dax.h>
-> @@ -34,6 +35,7 @@ MODULE_LICENSE("GPL");
->  static struct kmem_cache *fuse_inode_cachep;
->  struct list_head fuse_conn_list;
->  DEFINE_MUTEX(fuse_mutex);
-> +DECLARE_WAIT_QUEUE_HEAD(fuse_dev_waitq);
->  
->  static int set_global_limit(const char *val, const struct kernel_param *kp);
->  
-> @@ -1466,7 +1468,7 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
->  	wake_up_all(&fc->blocked_waitq);
->  }
->  
-> -void fuse_send_init(struct fuse_mount *fm)
-> +static struct fuse_init_args *fuse_new_init(struct fuse_mount *fm)
->  {
->  	struct fuse_init_args *ia;
->  	u64 flags;
-> @@ -1525,10 +1527,29 @@ void fuse_send_init(struct fuse_mount *fm)
->  	ia->args.out_args[0].value = &ia->out;
->  	ia->args.force = true;
->  	ia->args.nocreds = true;
-> -	ia->args.end = process_init_reply;
->  
-> -	if (fuse_simple_background(fm, &ia->args, GFP_KERNEL) != 0)
-> -		process_init_reply(fm, &ia->args, -ENOTCONN);
-> +	return ia;
-> +}
-> +
-> +int fuse_send_init(struct fuse_mount *fm)
-> +{
-> +	struct fuse_init_args *ia = fuse_new_init(fm);
-> +	int err;
-> +
-> +	if (fm->fc->sync_init) {
-> +		err = fuse_simple_request(fm, &ia->args);
-> +		/* Ignore size of init reply */
-> +		if (err > 0)
-> +			err = 0;
-> +	} else {
-> +		ia->args.end = process_init_reply;
-> +		err = fuse_simple_background(fm, &ia->args, GFP_KERNEL);
-> +		if (!err)
-> +			return 0;
-> +		err = -ENOTCONN;
-> +	}
-> +	process_init_reply(fm, &ia->args, err);
-> +	return err;
->  }
->  EXPORT_SYMBOL_GPL(fuse_send_init);
->  
-> @@ -1867,8 +1888,12 @@ int fuse_fill_super_common(struct super_block *sb, struct fuse_fs_context *ctx)
->  
->  	mutex_lock(&fuse_mutex);
->  	err = -EINVAL;
-> -	if (ctx->fudptr && *ctx->fudptr)
-> -		goto err_unlock;
-> +	if (ctx->fudptr && *ctx->fudptr) {
-> +		if (*ctx->fudptr == FUSE_DEV_SYNC_INIT) {
-> +			fc->sync_init = 1;
-> +		} else
-> +			goto err_unlock;
-> +	}
->  
->  	err = fuse_ctl_add_conn(fc);
->  	if (err)
-> @@ -1876,8 +1901,10 @@ int fuse_fill_super_common(struct super_block *sb, struct fuse_fs_context *ctx)
->  
->  	list_add_tail(&fc->entry, &fuse_conn_list);
->  	sb->s_root = root_dentry;
-> -	if (ctx->fudptr)
-> +	if (ctx->fudptr) {
->  		*ctx->fudptr = fud;
-> +		wake_up_all(&fuse_dev_waitq);
-> +	}
->  	mutex_unlock(&fuse_mutex);
->  	return 0;
->  
-> @@ -1898,6 +1925,7 @@ EXPORT_SYMBOL_GPL(fuse_fill_super_common);
->  static int fuse_fill_super(struct super_block *sb, struct fs_context *fsc)
->  {
->  	struct fuse_fs_context *ctx = fsc->fs_private;
-> +	struct fuse_mount *fm;
->  	int err;
->  
->  	if (!ctx->file || !ctx->rootmode_present ||
-> @@ -1918,8 +1946,10 @@ static int fuse_fill_super(struct super_block *sb, struct fs_context *fsc)
->  		return err;
->  	/* file->private_data shall be visible on all CPUs after this */
->  	smp_mb();
-> -	fuse_send_init(get_fuse_mount_super(sb));
-> -	return 0;
-> +
-> +	fm = get_fuse_mount_super(sb);
-> +
-> +	return fuse_send_init(fm);
-
-If process_init_reply hits the ok==false case and clears fc->conn_init,
-should this return an error here to abort the mount?
-
---D
-
->  }
->  
->  /*
-> @@ -1980,7 +2010,7 @@ static int fuse_get_tree(struct fs_context *fsc)
->  	 * Allow creating a fuse mount with an already initialized fuse
->  	 * connection
->  	 */
-> -	fud = READ_ONCE(ctx->file->private_data);
-> +	fud = __fuse_get_dev(ctx->file);
->  	if (ctx->file->f_op == &fuse_dev_operations && fud) {
->  		fsc->sget_key = fud->fc;
->  		sb = sget_fc(fsc, fuse_test_super, fuse_set_no_super);
-> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-> index 3942d1fda599..30bf0846547f 100644
-> --- a/include/uapi/linux/fuse.h
-> +++ b/include/uapi/linux/fuse.h
-> @@ -1130,6 +1130,7 @@ struct fuse_backing_map {
->  #define FUSE_DEV_IOC_BACKING_OPEN	_IOW(FUSE_DEV_IOC_MAGIC, 1, \
->  					     struct fuse_backing_map)
->  #define FUSE_DEV_IOC_BACKING_CLOSE	_IOW(FUSE_DEV_IOC_MAGIC, 2, uint32_t)
-> +#define FUSE_DEV_IOC_SYNC_INIT		_IO(FUSE_DEV_IOC_MAGIC, 3)
->  
->  struct fuse_lseek_in {
->  	uint64_t	fh;
-> -- 
-> 2.49.0
 > 
+> I can easily come up with security policies for which DENYWRITE is
+> completely useless.  I can come up with convoluted and
+> not-really-credible policies where DENYWRITE is important, but I'm
+> honestly not sure that those policies are actually useful.  I'm
+> honestly a bit concerned that AT_EXECVE_CHECK is fundamentally busted
+> because it should have been parametrized by *what format is expected*
+> -- it might be possible to bypass a policy by executing a perfectly
+> fine Python script using bash, for example.
+
+There have been a lot of bikesheding for the AT_EXECVE_CHECK patch
+series, and a lot of discussions too (you where part of them).  We ended
+up with this design, which is simple and follows the kernel semantic
+(requested by Linus).
+
+> 
+> I genuinely have not come up with a security policy that I believe
+> makes sense that needs AT_EXECVE_CHECK and DENYWRITE.  I'm not saying
+> that such a policy does not exist -- I'm saying that I have not
+> thought of such a thing after a few minutes of thought and reading
+> these threads.
+
+A simple use case is for systems that wants to enforce a
+write-xor-execute policy e.g., thanks to mount point options.
+
+> 
+> 
+> > > And then on top of it, why can't you do these checks by modifying the
+> > > script interpreters?
+> >
+> > The script interpreter requires modification to use AT_EXECVE_CHECK.
+> >
+> > There is no other way for user space to reliably check executability of
+> > files (taking into account all enforced security
+> > policies/configurations).
+> >
+> 
+> As mentioned above, even AT_EXECVE_CHECK does not obviously accomplish
+> this goal.  If it were genuinely useful, I would much, much prefer a
+> totally different API: a *syscall* that takes, as input, a file
+> descriptor of something that an interpreter wants to execute and a
+> whole lot of context as to what that interpreter wants to do with it.
+> And I admit I'm *still* not convinced.
+
+As mentioned above, AT_EXECVE_CHECK follows the kernel semantic. Nothing
+fancy.
+
+> 
+> Seriously, consider all the unending recent attacks on LLMs an
+> inspiration.  The implications of viewing an image, downscaling the
+> image, possibly interpreting the image as something containing text,
+> possibly following instructions in a given language contained in the
+> image, etc are all wildly different.  A mechanism for asking for
+> general permission to "consume this image" is COMPLETELY MISSING THE
+> POINT.  (Never mind that the current crop of LLMs seem entirely
+> incapable of constraining their own use of some piece of input, but
+> that's a different issue and is besides the point here.)
+
+You're asking about what should we consider executable.  This is a good
+question, but AT_EXECVE_CHECK is there to answer another question: would
+the kernel execute it or not?
 
