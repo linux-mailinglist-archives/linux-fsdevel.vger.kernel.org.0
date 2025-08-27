@@ -1,284 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-59381-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59382-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4B18B384C4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 16:19:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 858FCB384D1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 16:20:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 87A364E3067
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 14:19:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08859684E95
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 14:20:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09A9B356918;
-	Wed, 27 Aug 2025 14:19:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23198352095;
+	Wed, 27 Aug 2025 14:20:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GKQbhntY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fJddcTST"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965622820C6;
-	Wed, 27 Aug 2025 14:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2777978F29
+	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Aug 2025 14:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756304346; cv=none; b=cFfvYCpieXgmqZdAO5xHZvOngfuUOKNbsgeTnACFWm7vyDo++z9KJzeW6qteY+WWldUlPFbshUmjrTpHhHZKW/Bs72085opnX+I2sGaf5SGNiSQumxC4mUqWGpYH3n3Le03IKkDGp2f5t28OgsGF5GgPt4U/XlkA06AW3WIlXlg=
+	t=1756304437; cv=none; b=HWcunmbHXyyxdxxnBRhEKPNqGYiz4Q+I+h4/L2nhURNcQD4uidN0f/1aULhfLakFSvSFyvZvO11WWBYaBLWfxkMKNs2kf/K2WAF/B9uq1VOX+ftG0cCQtabTUiASKoglERf/KOxjNp3no69WbjLyEWpLJ8/aZTobHy4Tv9PkTR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756304346; c=relaxed/simple;
-	bh=PW1ZKXH0rYhUpslBdMf+J7nnkIKBzWdKO+KYXBhA7to=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bBvipZ1oXnfJAdANR8znlkzzfJYODSud/iixAg1ym9iWVyr26gsh4bpCqEHORFzS1FXHVDxbVLCxM/2C4dh3eqByNL5ssz6BiO53b9y+NPcgfLUj8HpDNMVDxo3Yoq/0wH/TY8n5UK/DknXld8Vg2QuSbJXo60SnO89FAntbL3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GKQbhntY; arc=none smtp.client-ip=209.85.128.43
+	s=arc-20240116; t=1756304437; c=relaxed/simple;
+	bh=kmTbsYphP0LvvmJfhApN4A5TiThpvSFfhZ8VPYBnTgA=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=FvbxEUf98RYx1EDCuXoO+5LgRZBqprJia8oK4ulwbxHmJj3fH82NvEPQJKBioTdadu20P9dDsp1eePAxSIwo9vrRYqY6fJsPptO23Wbc2+aNN+gc4brsNH9VjZFpPN9aAicHv42c3AO21EVQTqgYZnE+NwMkkz+SPf3yYu6FCC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fJddcTST; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45a1b0bd237so52060035e9.2;
-        Wed, 27 Aug 2025 07:19:04 -0700 (PDT)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2445826fd9dso85855685ad.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Aug 2025 07:20:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756304343; x=1756909143; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Eq9YmfRM9uuzsM4UJKn72gQyBjMQ1eflfSGbvXdA420=;
-        b=GKQbhntYOkzYpEfiNpJYQPv+RBH/YVJEq/ZE07hMstMQL9XBUDblV3Bo+O3+HpqYxz
-         lON0bJHu/3phrqNwsIVgDpOlxEVaQjprgtI1zy4IfGXUWM7xQuwOVVdlwQA/T3DKS6gl
-         UUbAiQMRzFbaL59oeAlutzV9rp0lrApP+3DLeV/7QQSB37wtopMXj7gExRjKRq6TcFYC
-         Y4b3ktJwRpNrK4QbWjiS3JfXGwxr1uqbseiV01roMjwoFAz+JV3yKohh75vJCJBQQbql
-         i13UCPdPlAQTTLzRcDwPsTWttDQYsX2VM6WjvMu9Iw8IXg0uqec9VxXearf/lBjoN/l2
-         9RBg==
+        d=gmail.com; s=20230601; t=1756304435; x=1756909235; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kccorfHkl2Ewn+WZcPXUaSQI3Wtl1vygD8AgUJtBGJI=;
+        b=fJddcTST5dnL05V4tgundTmV5jRouNoV0b+V3OT2Jan2ZUMxvTPm1fHhwV6sUZeGU9
+         3f5iuIB+pZfoDy8KfLNbQ22+KUb3iCWwKtc7wmWi+yeJK9JxjGSWHyT14rXQ3R4sXjhQ
+         OGz3N4xYUhmT9pduNk//aYw1sEJQJKdWnZcOQvw+xjmckWe0kMrOI+D1ZCKC552VwW4y
+         vyQ99iif4rGKApLIJuN5JP8+k2U+CRFMCXgVkiNqPvgPCRnEveVV3qp17TQgVUagfEQj
+         19LGINKC38Zo0mFCKgp1X+KgTWn8X7sHLcBtDxqW2v6GV8abqpAUr939Fn6dVtM0LnIC
+         gp6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756304343; x=1756909143;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Eq9YmfRM9uuzsM4UJKn72gQyBjMQ1eflfSGbvXdA420=;
-        b=ZS4ywF/NtGffkA2BJOGzPle5pK7K9FGN6Vk4lHzc2/V1mUDOZVppkXG4oNTRFsDc+E
-         eUk0FZRT+orlx704/TuUcNLdVrWKO3Lrb+CWPzd0XQ4aoikbCLuJnKB0lL4BBfi61JPN
-         oGFrf8/d8HAQY/eGjenHh+gzlMzx3J57+EHlFaFcN7btkmabdq4kcyQTn+hbOSQHGCRK
-         E6qKCMRSI+qdge1sc3QZkyMIcciIlcoP1/DlzJF8zd+Gby39bslXHD9sJJaAYUdo6Ols
-         IYtEFDL1MJLm/d1L3Ue3r0RVnfSK7rKpcvU//RXOD5CILOMRSYVArWifpcGjDGAPWV9r
-         j9JQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWulQNSWDayweMySfX68mVTgjQ9+MXEfSOrpPqqM+qUer0eNvipvwAqrfCs57GsRc5YggAa5CyhxQS9gA==@vger.kernel.org, AJvYcCXOTZo58XMEQ1+c1C+e6aBzxqAauYnrAUCBfBYQFFD0pTKy8weO3kaxp6Es0fQYGtAL3m2hBt039GI8aw==@vger.kernel.org, AJvYcCXi4waCixC824Xsr2ZhU4PdrulHo9cCyoW1u4uTX805sKZoxZTZl4YM3uU8ZuTXeOrHHTK+CdzGg6U3@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBLWLkci7QjzJylp1LZPN8SeFSswB69HzJ+ohmPUmsO/86pr+8
-	gHkc4ltVgPSlHYKqCJRrly2QPn3UsQ7NfUaJR3ozYx9a/+fSzgpr3DMs
-X-Gm-Gg: ASbGncugNeu8swvxCgMrOLKOS1niBIy+oJ0lfMnfKPU0M1GxZH1PGdw++pNjQaZtkmk
-	nS8lANauHpqjLZOTLsktzwztKpOfcrDgQW1csjHZEQDDUrFz1QBFpQqgOk3uCN/RKKTp13/8s6r
-	gzoj5FevRUB1DbLfg8YpY7wLJrP/hXljWiep2E+hLgcq/ujOqB+4bDeAGheu3p8/aFTUVHblJTu
-	GvKqTem2Dkc2ezyaGACKZU9IG6Q6RkcPnd1PUm8LIFm15PyVnu/HSpls5dV/i0mXVKNa/pMhRzK
-	TjaEAtv3R69lHrtVvDSWNbL8j2+0K8SSc9ICeITU+3KLQjE+j69afwmgh0osK26P4B3eaeePLNK
-	MvS2UqeibNccAl2dHjenVT20M56JtBnmLaLk=
-X-Google-Smtp-Source: AGHT+IE0gR/fkJ/N4kuE1Yrp9oBmyGnJ0IW4DftNNxQs2eJrjJm/YsAo/Vm1wbR+G1zI5NRJoKdH3g==
-X-Received: by 2002:a05:600c:4fcd:b0:45b:47e1:f5fe with SMTP id 5b1f17b1804b1-45b517db94dmr142000005e9.34.1756304342701;
-        Wed, 27 Aug 2025 07:19:02 -0700 (PDT)
-Received: from f (cst-prg-2-200.cust.vodafone.cz. [46.135.2.200])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6f2eb7c5sm34801285e9.23.2025.08.27.07.19.00
+        d=1e100.net; s=20230601; t=1756304435; x=1756909235;
+        h=content-disposition:mime-version:message-id:subject:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kccorfHkl2Ewn+WZcPXUaSQI3Wtl1vygD8AgUJtBGJI=;
+        b=WD50VkbPEHLvtkO/wu5aibE4HSH9ACh7Vk04SL1djuoeKZbGvEkifKtvGnnDah912e
+         33u9WN2VK1Fq1wwE6bi4tJEje56P+ivZqcjWzsMBMJFAXzMRdGqu9PG+CkfBkfjxXvHz
+         NkF0KoiR/VLQGC66iUKRGAjc7JsdTHiobltwiYtz5x6EdmjJACj3pA2DS+5UDj0+26nr
+         6vIPWfteWoKZAVkleujpT0G4t/DtTpHVCrxvg0rxnaNqEZKaVoKazPIp/IQ6Dh8cIlaQ
+         GczxwhN77ynjam7oU8RKNXxWS1ToR9qBBQgUlklBdNCNKwnzeNpeONrU5Wu50CPxlJDI
+         14Og==
+X-Gm-Message-State: AOJu0YwDvLCbpcpj/JiTz/zI8UkJqbyw9VFH/ZUkDpqxmET0bUUEsDMt
+	cic0wCQjrc0C2CKRNnTNzlwKmrR93iFg3BL89HzHbGxpsIC3Ciq+UMmuFGXo2vmy
+X-Gm-Gg: ASbGncvtm7HM6AZHoGlxrNupOJ1fzN2eGX86R0PMVi/k1tjXI+T8NaIBy0ruYHdBP2M
+	CfNZp4qbz9k2110PxQM47S6eymAdWhSJqR51GZ8MkLs3cP5e0SUFSsZGYTKZflscbS6GXVkqaMm
+	bRq/F9A2o846aKRuE1EHXRJzaV5XI1PMMtSW15zdOvpBma/8HYDiYmwy6ZzP1D1LgTARgAH/+RZ
+	b06QDruLRPtxUYgR16SqT+X6o1SuT8D0PuPs1G3oH0VpmE6GrDHwV167OBFBKQbmdw5A6mboiZx
+	JPhr7yJ8HeM6hwXa/X0KnSbFYzeninX0WqHZZu55pO+UWYO935KFro5X4NMtuHoKFnwH1R1EHRo
+	KF8/R/2xXRBZMIeDO0iPOSyO6NWJnvi5kObOuS5UcgMvkHR7zN4LJVUetoKUHmKPpgXctUbbW5V
+	d5Lvhb4zisLZNNzYDjyOireA==
+X-Google-Smtp-Source: AGHT+IHJMfH4SxyJ46GAJCwlrafj3e/xQASe35KfDVPD3aGL4N/6f+IE6WmNHF0u3TkTMrE9E9bzoQ==
+X-Received: by 2002:a17:902:c40c:b0:248:b5c1:dbb7 with SMTP id d9443c01a7336-248b5c1e790mr14079255ad.34.1756304434833;
+        Wed, 27 Aug 2025 07:20:34 -0700 (PDT)
+Received: from laptop (ppp-223-24-162-214.revip6.asianet.co.th. [223.24.162.214])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3276f6a6cb3sm2214219a91.9.2025.08.27.07.20.33
+        for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 07:19:02 -0700 (PDT)
-Date: Wed, 27 Aug 2025 16:18:55 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org, 
-	kernel-team@fb.com, linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	brauner@kernel.org, viro@zeniv.linux.org.uk, amir73il@gmail.com
-Subject: Re: [PATCH v2 03/54] fs: rework iput logic
-Message-ID: <n6z2jkdgmgm2xfxc7y3a2a7psnkeboziffkt6bjoggrff4dlxe@vpsyl3ky6w6v>
-References: <cover.1756222464.git.josef@toxicpanda.com>
- <be208b89bdb650202e712ce2bcfc407ac7044c7a.1756222464.git.josef@toxicpanda.com>
- <rrgn345nemz5xeatbrsggnybqech74ogub47d6au45mrmgch4d@jqzorhulkvre>
+        Wed, 27 Aug 2025 07:20:34 -0700 (PDT)
+Date: Wed, 27 Aug 2025 21:20:26 +0700
+From: Egor Shestakov <vedingrot@gmail.com>
+To: linux-fsdevel@vger.kernel.org
+Subject: [BUG] f2fs-tools: fsck infinite loop in options parsing
+Message-ID: <aK8UKm+kAM+1AZow@laptop>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <rrgn345nemz5xeatbrsggnybqech74ogub47d6au45mrmgch4d@jqzorhulkvre>
 
-On Wed, Aug 27, 2025 at 02:58:51PM +0200, Mateusz Guzik wrote:
-> On Tue, Aug 26, 2025 at 11:39:03AM -0400, Josef Bacik wrote:
-> > Currently, if we are the last iput, and we have the I_DIRTY_TIME bit
-> > set, we will grab a reference on the inode again and then mark it dirty
-> > and then redo the put.  This is to make sure we delay the time update
-> > for as long as possible.
-> > 
-> > We can rework this logic to simply dec i_count if it is not 1, and if it
-> > is do the time update while still holding the i_count reference.
-> > 
-> > Then we can replace the atomic_dec_and_lock with locking the ->i_lock
-> > and doing atomic_dec_and_test, since we did the atomic_add_unless above.
-> > 
-> > Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-> > ---
-> >  fs/inode.c | 23 ++++++++++++++---------
-> >  1 file changed, 14 insertions(+), 9 deletions(-)
-> > 
-> > diff --git a/fs/inode.c b/fs/inode.c
-> > index a3673e1ed157..13e80b434323 100644
-> > --- a/fs/inode.c
-> > +++ b/fs/inode.c
-> > @@ -1911,16 +1911,21 @@ void iput(struct inode *inode)
-> >  	if (!inode)
-> >  		return;
-> >  	BUG_ON(inode->i_state & I_CLEAR);
-> > -retry:
-> > -	if (atomic_dec_and_lock(&inode->i_count, &inode->i_lock)) {
-> > -		if (inode->i_nlink && (inode->i_state & I_DIRTY_TIME)) {
-> > -			atomic_inc(&inode->i_count);
-> > -			spin_unlock(&inode->i_lock);
-> > -			trace_writeback_lazytime_iput(inode);
-> > -			mark_inode_dirty_sync(inode);
-> > -			goto retry;
-> > -		}
-> > +
-> > +	if (atomic_add_unless(&inode->i_count, -1, 1))
-> > +		return;
-> > +
-> > +	if (inode->i_nlink && (inode->i_state & I_DIRTY_TIME)) {
-> > +		trace_writeback_lazytime_iput(inode);
-> > +		mark_inode_dirty_sync(inode);
-> > +	}
-> > +
-> > +	spin_lock(&inode->i_lock);
-> > +	if (atomic_dec_and_test(&inode->i_count)) {
-> > +		/* iput_final() drops i_lock */
-> >  		iput_final(inode);
-> > +	} else {
-> > +		spin_unlock(&inode->i_lock);
-> >  	}
-> >  }
-> >  EXPORT_SYMBOL(iput);
-> > -- 
-> > 2.49.0
-> > 
-> 
-> This changes semantics though.
-> 
-> In the stock kernel the I_DIRTY_TIME business is guaranteed to be sorted
-> out before the call to iput_final().
-> 
-> In principle the flag may reappear after mark_inode_dirty_sync() returns
-> and before the retried atomic_dec_and_lock succeeds, in which case it
-> will get cleared again.
-> 
-> With your change the flag is only handled once and should it reappear
-> before you take the ->i_lock, it will stay there.
-> 
-> I agree the stock handling is pretty crap though.
-> 
-> Your change should test the flag again after taking the spin lock but
-> before messing with the refcount and if need be unlock + retry.
-> 
-> I would not hurt to assert in iput_final that the spin lock held and
-> that this flag is not set.
-> 
-> Here is my diff to your diff to illustrate + a cosmetic change, not even
-> compile-tested:
-> 
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 421e248b690f..a9ae0c790b5d 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -1911,7 +1911,7 @@ void iput(struct inode *inode)
->  	if (!inode)
->  		return;
->  	BUG_ON(inode->i_state & I_CLEAR);
-> -
-> +retry:
->  	if (atomic_add_unless(&inode->i_count, -1, 1))
->  		return;
->  
-> @@ -1921,12 +1921,19 @@ void iput(struct inode *inode)
->  	}
->  
->  	spin_lock(&inode->i_lock);
-> +
-> +	if (inode->i_count == 1 && inode->i_nlink && (inode->i_state & I_DIRTY_TIME)) {
-> +		spin_unlock(&inode->i_lock);
-> +		goto retry;
-> +	}
-> +
->  	if (atomic_dec_and_test(&inode->i_count)) {
-> -		/* iput_final() drops i_lock */
-> -		iput_final(inode);
-> -	} else {
->  		spin_unlock(&inode->i_lock);
-> +		return;
->  	}
-> +
-> +	/* iput_final() drops i_lock */
-> +	iput_final(inode);
->  }
->  EXPORT_SYMBOL(iput);
->  
+Hi!
 
-Sorry for spam, but the more I look at this the more fucky the entire
-ordeal appears to me.
+I found a bug in the fsck.f2fs that cause infinite loop in
+f2fs_parse_options().  To reproduce it you can call program with a
+'-py' united options combination, but when it's separate '-p -y'
+works well. Simply execute `./f2fs.fsck -py` to catch the bug.
 
-Before I get to the crux, as a side note I did a quick check if atomics
-for i_count make any sense to begin with and I think they do, here is a
-sample output from a friend tracing the ref value on iput:
+Buggy part of a fsck/main.c code (unchanged since 2018):
+>		case 'p':
+>			/* preen mode has different levels:
+>			 *  0: default level, the same as -a
+>			 *  1: check meta
+>			 *  2: same as 0, but will skip some
+>			 *     check for old kernel
+>			 */
+>			if (optarg[0] == '-' || !is_digits(optarg) ||
+>						optind == argc) {
+>				MSG(0, "Info: Use default preen mode\n");
+>				c.preen_mode = PREEN_MODE_0;
+>				c.auto_fix = 1;
+>				optind--;
+>				break;
+>			}
 
-bpftrace -e 'kprobe:iput /arg0 != 0/ { @[((struct inode *)arg0)->i_count.counter] = count(); }'
+The bug occurs when a case 'p' match and after it there is not
+suitable argument so a decrement optind-- happened. Since the
+option '-p' united with its argument a getopt increments optind
+only by one, not by two, as expected. Therefore it enters to
+infinite loop.
 
-@[5]: 66
-@[4]: 4625
-@[3]: 11086
-@[2]: 30937
-@[1]: 151785
+I couldn't find good solution. Changing a preen level options
+semantic is impossible because breaks many scripts, for example
+in initrd.  Possible solution is use a two colons in optstring
+that means optinal argument, but this is a GNU extension, so not
+all standard libraries support it, in particular Musl.
 
-... so plenty of non-last refs after all.
-
-I completely agree the mandatory ref trip to handle I_DIRTY_TIME is lame
-and needs to be addressed.
-
-But I'm uneasy about maintaining the invariant that iput_final() does
-not see the flag if i_nlink != 0 and my proposal as pasted is dodgy af
-on this front.
-
-While here some nits:
-1. it makes sense to try mere atomics just in case someone else messed
-with the count between handling of the dirty flag and taking the spin lock
-2. according to my quick test with bpftrace the I_DIRTY_TIME flag is
-seen way less frequently than i_nlink != 0, so it makes sense to swap
-the order in which they are checked. Interested parties can try it out
-with:
-bpftrace -e 'kprobe:iput /arg0 != 0/ { @[((struct inode *)arg0)->i_nlink != 0, ((struct inode *)arg0)->i_state & (1 << 11)] = count(); }'
-3. touch up the iput_final() unlock comment
-
-All that said, how about something like the thing below as the final
-routine building off of your change. I can't submit a proper patch and
-can't even compile-test. I don't need any credit should this get
-grabbed.
-
-void iput(struct inode *inode)
-{
-        if (!inode)
-                return;
-        BUG_ON(inode->i_state & I_CLEAR);
-retry:
-        if (atomic_add_unless(&inode->i_count, -1, 1))
-                return;
-
-        if ((inode->i_state & I_DIRTY_TIME) && inode->i_nlink) {
-                trace_writeback_lazytime_iput(inode);
-                mark_inode_dirty_sync(inode);
-                goto retry;
-        }
-
-        spin_lock(&inode->i_lock);
-        if ((inode->i_state & I_DIRTY_TIME) && inode->i_nlink) {
-                spin_unlock(&inode->i_lock);
-                goto retry;
-        }
-
-        if (!atomic_dec_and_test(&inode->i_count)) {
-                spin_unlock(&inode->i_lock);
-                return;
-        }
-
-        /*
-         * iput_final() drops ->i_lock, we can't assert on it as the inode may
-         * be deallocated by the time it returns
-         */
-        iput_final(inode);
-}
+-- 
+Egor Shestakov
+vedingrot ascii(0x40) gmail ascii(0x2E) com
 
