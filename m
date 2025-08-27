@@ -1,264 +1,304 @@
-Return-Path: <linux-fsdevel+bounces-59386-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59388-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 316B3B38593
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 16:57:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8930B385AB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 17:04:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52FDA1793A2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 14:57:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 878FF3B97D9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 15:04:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B82E624DD17;
-	Wed, 27 Aug 2025 14:57:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7475A26FA5A;
+	Wed, 27 Aug 2025 15:04:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G0CQwJeU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GFB7Oh1e"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10DDC1EB5D6;
-	Wed, 27 Aug 2025 14:57:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F1D30CD8A;
+	Wed, 27 Aug 2025 15:04:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756306653; cv=none; b=lEeXzVWH7BZPCnqcqDomfo2sPIFq4spPlrkyTCrV6L2Lb7iyJWrjV/F4OJPExGyrdhVv1c2pIAGgEYkJEgQ+6V7xW5Z0uyyIbx8EUeSHQk4bZlmlIQooEQKpB/br29tzubRFJiAIHIWpvQr37naEBnb78ZvJKzwSwvO32tZwPts=
+	t=1756307047; cv=none; b=WPnhZI4mzufOfzaFrdZrSLv6Bcb85//TJL3EMKgtLk6jNPx8Dngahy5em2CvzgmJwdobSjT06//VGQ6/qcyy0A93/KpfTldMJeTo8moGpWmPyMZHEOshT3Aajd+9GmHwuf+ls6a7Ph9QN7F9xvupnonlpqpA+CcPpZZIcMN8fbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756306653; c=relaxed/simple;
-	bh=i4SHYDxOiIZN8HFLM9Wh/5X71e+T00Dv3GVNSGrmoY8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Waqbmoc6vfSX6pZEEYWd8RSe07umoTDm2FGyYKqAOAdeqOMWwM6PDi7VQ2V1blYEPTmNoiGI4Xu1kTG4R8TOsHW+gGfDPujVTifbYZ/R1HXFPwb+DbPkDom4jmvnhuPRz0DEPGSKnwagAFpMhv1IP6n7dvzGTK7xWdI5sLO7KYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G0CQwJeU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95E95C4CEEB;
-	Wed, 27 Aug 2025 14:57:29 +0000 (UTC)
+	s=arc-20240116; t=1756307047; c=relaxed/simple;
+	bh=uo4Ob9kTPdoJmgAnEx6L4XzAms4E4Sy8+Nf0B+A98EM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Mg6vFhFo10IO/gB7J3DpGtimFfYnefUgTd5WO5dhsdsoCyQ5XqDECxEmCabRC+PneFWg00HqDJsSxzYor/olwVKCCe5vK50uqvyPwzdV7yeEsCRITy1XuD9ZRYhDIfhd9ZFQMUBdMxIHnNIH+4jYu6RM+qf4UUfEUw4YffGP+pI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GFB7Oh1e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D109C4CEEB;
+	Wed, 27 Aug 2025 15:03:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756306651;
-	bh=i4SHYDxOiIZN8HFLM9Wh/5X71e+T00Dv3GVNSGrmoY8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G0CQwJeUVy+tqfwSAaLIVnazBx2eTebZrKS/u0TjBGQcgS5Z4nEepOWFN9Uvs88Rx
-	 isexd979rm8D+NNVe1fuhcLkL2UArPmnVnNuF9FS0NUB9nmifmamEewjDoUpsMPdzW
-	 J6PAfSi3TpxNi/tnBLpRJfvGzdwTbyNLzPtFNKbxcc0GzBrbakkJ1Q+wTotX15Ca03
-	 YVJvVBQHcghnIYSa6FUaaGcf20uHBCu3JVvs9daGgn/k6N344z/mtIvHZWSi6OvpTv
-	 uub4w70HeRQs7wqEmzC4xdgPPOn90+5xiXSigbrFwG0I3gKHKd5DJc9v3WI+IGhcD5
-	 WJkiBRxkqZJQw==
-Date: Wed, 27 Aug 2025 16:57:26 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
-	linux-btrfs@vger.kernel.org, kernel-team@fb.com, linux-ext4@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, viro@zeniv.linux.org.uk, amir73il@gmail.com
-Subject: Re: [PATCH v2 03/54] fs: rework iput logic
-Message-ID: <20250827-kraut-anekdote-35789fddbb0b@brauner>
-References: <cover.1756222464.git.josef@toxicpanda.com>
- <be208b89bdb650202e712ce2bcfc407ac7044c7a.1756222464.git.josef@toxicpanda.com>
- <rrgn345nemz5xeatbrsggnybqech74ogub47d6au45mrmgch4d@jqzorhulkvre>
- <n6z2jkdgmgm2xfxc7y3a2a7psnkeboziffkt6bjoggrff4dlxe@vpsyl3ky6w6v>
+	s=k20201202; t=1756307047;
+	bh=uo4Ob9kTPdoJmgAnEx6L4XzAms4E4Sy8+Nf0B+A98EM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=GFB7Oh1eo+TReZoN3bwTBKHsq/yKs0Ec6wezEhYD6I52VzGWuajG/VUdqJlHo9GBa
+	 sP5uM0oIsz73s+GR3PHPfQM4FtpF3efam0U/5zWK0ivK0fj6LbZC5fFyPNQgTeW63w
+	 E7NL4+4i6tYIG42apLWejr2ppn7Fn5cZUKPnTLphMA4LKIcV/vG6hX/sMNARHSiFsV
+	 jQkO6X8RnOY4b/EE++uh5xQ5m0rgUa3Pqfc7MVaJ/KmZBiq0S0kt05UaAncWvIBfdx
+	 M34cS7vYly+aHvBfVvWPLH1rZ41QgDItwMsH34hBP87mp3hJpu4GzWzammLxdZZMf/
+	 wwiiTIEjNHQnQ==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Pasha Tatashin <pasha.tatashin@soleen.com>,  pratyush@kernel.org,
+  jasonmiu@google.com,  graf@amazon.com,  changyuanl@google.com,
+  rppt@kernel.org,  dmatlack@google.com,  rientjes@google.com,
+  corbet@lwn.net,  rdunlap@infradead.org,  ilpo.jarvinen@linux.intel.com,
+  kanie@linux.alibaba.com,  ojeda@kernel.org,  aliceryhl@google.com,
+  masahiroy@kernel.org,  akpm@linux-foundation.org,  tj@kernel.org,
+  yoann.congal@smile.fr,  mmaurer@google.com,  roman.gushchin@linux.dev,
+  chenridong@huawei.com,  axboe@kernel.dk,  mark.rutland@arm.com,
+  jannh@google.com,  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
+  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
+  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
+  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
+  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
+  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
+  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
+  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
+  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
+  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
+  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
+  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
+  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
+  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
+  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
+  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+  saeedm@nvidia.com,  ajayachandra@nvidia.com,  parav@nvidia.com,
+  leonro@nvidia.com,  witu@nvidia.com
+Subject: Re: [PATCH v3 29/30] luo: allow preserving memfd
+In-Reply-To: <20250826162019.GD2130239@nvidia.com>
+References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
+	<20250807014442.3829950-30-pasha.tatashin@soleen.com>
+	<20250826162019.GD2130239@nvidia.com>
+Date: Wed, 27 Aug 2025 17:03:55 +0200
+Message-ID: <mafs0bjo0yffo.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <n6z2jkdgmgm2xfxc7y3a2a7psnkeboziffkt6bjoggrff4dlxe@vpsyl3ky6w6v>
+Content-Type: text/plain
 
-On Wed, Aug 27, 2025 at 04:18:55PM +0200, Mateusz Guzik wrote:
-> On Wed, Aug 27, 2025 at 02:58:51PM +0200, Mateusz Guzik wrote:
-> > On Tue, Aug 26, 2025 at 11:39:03AM -0400, Josef Bacik wrote:
-> > > Currently, if we are the last iput, and we have the I_DIRTY_TIME bit
-> > > set, we will grab a reference on the inode again and then mark it dirty
-> > > and then redo the put.  This is to make sure we delay the time update
-> > > for as long as possible.
-> > > 
-> > > We can rework this logic to simply dec i_count if it is not 1, and if it
-> > > is do the time update while still holding the i_count reference.
-> > > 
-> > > Then we can replace the atomic_dec_and_lock with locking the ->i_lock
-> > > and doing atomic_dec_and_test, since we did the atomic_add_unless above.
-> > > 
-> > > Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-> > > ---
-> > >  fs/inode.c | 23 ++++++++++++++---------
-> > >  1 file changed, 14 insertions(+), 9 deletions(-)
-> > > 
-> > > diff --git a/fs/inode.c b/fs/inode.c
-> > > index a3673e1ed157..13e80b434323 100644
-> > > --- a/fs/inode.c
-> > > +++ b/fs/inode.c
-> > > @@ -1911,16 +1911,21 @@ void iput(struct inode *inode)
-> > >  	if (!inode)
-> > >  		return;
-> > >  	BUG_ON(inode->i_state & I_CLEAR);
-> > > -retry:
-> > > -	if (atomic_dec_and_lock(&inode->i_count, &inode->i_lock)) {
-> > > -		if (inode->i_nlink && (inode->i_state & I_DIRTY_TIME)) {
-> > > -			atomic_inc(&inode->i_count);
-> > > -			spin_unlock(&inode->i_lock);
-> > > -			trace_writeback_lazytime_iput(inode);
-> > > -			mark_inode_dirty_sync(inode);
-> > > -			goto retry;
-> > > -		}
-> > > +
-> > > +	if (atomic_add_unless(&inode->i_count, -1, 1))
-> > > +		return;
-> > > +
-> > > +	if (inode->i_nlink && (inode->i_state & I_DIRTY_TIME)) {
-> > > +		trace_writeback_lazytime_iput(inode);
-> > > +		mark_inode_dirty_sync(inode);
-> > > +	}
-> > > +
-> > > +	spin_lock(&inode->i_lock);
-> > > +	if (atomic_dec_and_test(&inode->i_count)) {
-> > > +		/* iput_final() drops i_lock */
-> > >  		iput_final(inode);
-> > > +	} else {
-> > > +		spin_unlock(&inode->i_lock);
-> > >  	}
-> > >  }
-> > >  EXPORT_SYMBOL(iput);
-> > > -- 
-> > > 2.49.0
-> > > 
-> > 
-> > This changes semantics though.
-> > 
-> > In the stock kernel the I_DIRTY_TIME business is guaranteed to be sorted
-> > out before the call to iput_final().
-> > 
-> > In principle the flag may reappear after mark_inode_dirty_sync() returns
-> > and before the retried atomic_dec_and_lock succeeds, in which case it
-> > will get cleared again.
-> > 
-> > With your change the flag is only handled once and should it reappear
-> > before you take the ->i_lock, it will stay there.
+Hi Jason,
 
-Yeah, good spotting.
+Thanks for the review.
 
-> > 
-> > I agree the stock handling is pretty crap though.
-> > 
-> > Your change should test the flag again after taking the spin lock but
-> > before messing with the refcount and if need be unlock + retry.
-> > 
-> > I would not hurt to assert in iput_final that the spin lock held and
-> > that this flag is not set.
-> > 
-> > Here is my diff to your diff to illustrate + a cosmetic change, not even
-> > compile-tested:
-> > 
-> > diff --git a/fs/inode.c b/fs/inode.c
-> > index 421e248b690f..a9ae0c790b5d 100644
-> > --- a/fs/inode.c
-> > +++ b/fs/inode.c
-> > @@ -1911,7 +1911,7 @@ void iput(struct inode *inode)
-> >  	if (!inode)
-> >  		return;
-> >  	BUG_ON(inode->i_state & I_CLEAR);
-> > -
-> > +retry:
-> >  	if (atomic_add_unless(&inode->i_count, -1, 1))
-> >  		return;
-> >  
-> > @@ -1921,12 +1921,19 @@ void iput(struct inode *inode)
-> >  	}
-> >  
-> >  	spin_lock(&inode->i_lock);
-> > +
-> > +	if (inode->i_count == 1 && inode->i_nlink && (inode->i_state & I_DIRTY_TIME)) {
-> > +		spin_unlock(&inode->i_lock);
-> > +		goto retry;
-> > +	}
-> > +
-> >  	if (atomic_dec_and_test(&inode->i_count)) {
-> > -		/* iput_final() drops i_lock */
-> > -		iput_final(inode);
-> > -	} else {
-> >  		spin_unlock(&inode->i_lock);
-> > +		return;
-> >  	}
-> > +
-> > +	/* iput_final() drops i_lock */
-> > +	iput_final(inode);
-> >  }
-> >  EXPORT_SYMBOL(iput);
-> >  
-> 
-> Sorry for spam, but the more I look at this the more fucky the entire
-> ordeal appears to me.
-> 
-> Before I get to the crux, as a side note I did a quick check if atomics
-> for i_count make any sense to begin with and I think they do, here is a
-> sample output from a friend tracing the ref value on iput:
-> 
-> bpftrace -e 'kprobe:iput /arg0 != 0/ { @[((struct inode *)arg0)->i_count.counter] = count(); }'
-> 
-> @[5]: 66
-> @[4]: 4625
-> @[3]: 11086
-> @[2]: 30937
-> @[1]: 151785
-> 
-> ... so plenty of non-last refs after all.
-> 
-> I completely agree the mandatory ref trip to handle I_DIRTY_TIME is lame
-> and needs to be addressed.
-> 
-> But I'm uneasy about maintaining the invariant that iput_final() does
-> not see the flag if i_nlink != 0 and my proposal as pasted is dodgy af
-> on this front.
-> 
-> While here some nits:
-> 1. it makes sense to try mere atomics just in case someone else messed
-> with the count between handling of the dirty flag and taking the spin lock
+On Tue, Aug 26 2025, Jason Gunthorpe wrote:
 
-Which on mainline is a thing for sure.
+> On Thu, Aug 07, 2025 at 01:44:35AM +0000, Pasha Tatashin wrote:
+>
+>> +	/*
+>> +	 * Most of the space should be taken by preserved folios. So take its
+>> +	 * size, plus a page for other properties.
+>> +	 */
+>> +	fdt = memfd_luo_create_fdt(PAGE_ALIGN(preserved_size) + PAGE_SIZE);
+>> +	if (!fdt) {
+>> +		err = -ENOMEM;
+>> +		goto err_unpin;
+>> +	}
+>
+> This doesn't seem to have any versioning scheme, it really should..
 
-> 2. according to my quick test with bpftrace the I_DIRTY_TIME flag is
-> seen way less frequently than i_nlink != 0, so it makes sense to swap
-> the order in which they are checked. Interested parties can try it out
-> with:
-> bpftrace -e 'kprobe:iput /arg0 != 0/ { @[((struct inode *)arg0)->i_nlink != 0, ((struct inode *)arg0)->i_state & (1 << 11)] = count(); }'
-> 3. touch up the iput_final() unlock comment
-> 
-> All that said, how about something like the thing below as the final
-> routine building off of your change. I can't submit a proper patch and
-> can't even compile-test. I don't need any credit should this get
-> grabbed.
-> 
-> void iput(struct inode *inode)
-> {
->         if (!inode)
->                 return;
->         BUG_ON(inode->i_state & I_CLEAR);
-> retry:
->         if (atomic_add_unless(&inode->i_count, -1, 1))
->                 return;
-> 
->         if ((inode->i_state & I_DIRTY_TIME) && inode->i_nlink) {
->                 trace_writeback_lazytime_iput(inode);
->                 mark_inode_dirty_sync(inode);
->                 goto retry;
->         }
-> 
->         spin_lock(&inode->i_lock);
->         if ((inode->i_state & I_DIRTY_TIME) && inode->i_nlink) {
->                 spin_unlock(&inode->i_lock);
->                 goto retry;
->         }
-> 
->         if (!atomic_dec_and_test(&inode->i_count)) {
->                 spin_unlock(&inode->i_lock);
->                 return;
->         }
-> 
->         /*
->          * iput_final() drops ->i_lock, we can't assert on it as the inode may
->          * be deallocated by the time it returns
->          */
->         iput_final(inode);
-> }
+It does. See the "compatible" property.
 
-I've taken this. Though I had Josef convince me that the retry is sane
-and doesn't end up stealing a ref. Thanks.
+    static const char memfd_luo_compatible[] = "memfd-v1";
+
+static struct liveupdate_file_handler memfd_luo_handler = {
+	.ops = &memfd_luo_file_ops,
+	.compatible = memfd_luo_compatible,
+};
+
+This goes into the LUO FDT:
+
+	static int luo_files_to_fdt(struct xarray *files_xa_out)
+	[...]
+	xa_for_each(files_xa_out, token, h) {
+		[...]
+		ret = fdt_property_string(luo_file_fdt_out, "compatible",
+					  h->fh->compatible);
+
+So this function only gets called for the version 1.
+
+>
+>> +	err = fdt_property_placeholder(fdt, "folios", preserved_size,
+>> +				       (void **)&preserved_folios);
+>> +	if (err) {
+>> +		pr_err("Failed to reserve folios property in FDT: %s\n",
+>> +		       fdt_strerror(err));
+>> +		err = -ENOMEM;
+>> +		goto err_free_fdt;
+>> +	}
+>
+> Yuk.
+>
+> This really wants some luo helper
+>
+> 'luo alloc array'
+> 'luo restore array'
+> 'luo free array'
+>
+> Which would get a linearized list of pages in the vmap to hold the
+> array and then allocate some structure to record the page list and
+> return back the u64 of the phys_addr of the top of the structure to
+> store in whatever.
+>
+> Getting fdt to allocate the array inside the fds is just not going to
+> work for anything of size.
+
+Yep, I agree. This version already runs into size limits of around 1 GiB
+due to the FDT being limited to MAX_PAGE_ORDER, since that is the
+largest contiguous piece of memory folio_alloc() can give us. On top,
+FDT is only limited to 32 bits. While very large, it isn't unreasonable
+to expect metadata exceeding that for some use cases (4 GiB is only 0.4%
+of 1 TiB and there are systems a lot larger than that around).
+
+I think we need something a luo_xarray data structure that users like
+memfd (and later hugetlb and guest_memfd and maybe others) can build to
+make serialization easier. It will cover both contiguous arrays and
+arrays with some holes in them.
+
+I did it this way mainly to keep things simple and get things out. But
+Pasha already mentioned he is running into this limit for some tests, so
+I think I will experiment around with a serialized xarray design.
+
+>
+>> +	for (; i < nr_pfolios; i++) {
+>> +		const struct memfd_luo_preserved_folio *pfolio = &pfolios[i];
+>> +		phys_addr_t phys;
+>> +		u64 index;
+>> +		int flags;
+>> +
+>> +		if (!pfolio->foliodesc)
+>> +			continue;
+>> +
+>> +		phys = PFN_PHYS(PRESERVED_FOLIO_PFN(pfolio->foliodesc));
+>> +		folio = kho_restore_folio(phys);
+>> +		if (!folio) {
+>> +			pr_err("Unable to restore folio at physical address: %llx\n",
+>> +			       phys);
+>> +			goto put_file;
+>> +		}
+>> +		index = pfolio->index;
+>> +		flags = PRESERVED_FOLIO_FLAGS(pfolio->foliodesc);
+>> +
+>> +		/* Set up the folio for insertion. */
+>> +		/*
+>> +		 * TODO: Should find a way to unify this and
+>> +		 * shmem_alloc_and_add_folio().
+>> +		 */
+>> +		__folio_set_locked(folio);
+>> +		__folio_set_swapbacked(folio);
+>> 
+>> +		ret = mem_cgroup_charge(folio, NULL, mapping_gfp_mask(mapping));
+>> +		if (ret) {
+>> +			pr_err("shmem: failed to charge folio index %d: %d\n",
+>> +			       i, ret);
+>> +			goto unlock_folio;
+>> +		}
+>
+> [..]
+>
+>> +		folio_add_lru(folio);
+>> +		folio_unlock(folio);
+>> +		folio_put(folio);
+>> +	}
+>
+> Probably some consolidation will be needed to make this less
+> duplicated..
+
+Maybe. I do have that as a TODO item, but I took a quick look today and
+I am not sure if it will make things simple enough. There are a few
+places that add a folio to the shmem page cache, and all of them have
+subtle differences and consolidating them all might be tricky. Let me
+give it a shot...
+
+>
+> But overall I think just using the memfd_luo_preserved_folio as the
+> serialization is entirely file, I don't think this needs anything more
+> complicated.
+>
+> What it does need is an alternative to the FDT with versioning.
+
+As I explained above, the versioning is already there. Beyond that, why
+do you think a raw C struct is better than FDT? It is just another way
+of expressing the same information. FDT is a bit more cumbersome to
+write and read, but comes at the benefit of more introspect-ability.
+
+>
+> Which seems to me to be entirely fine as:
+>
+>  struct memfd_luo_v0 {
+>     __aligned_u64 size;
+>     __aligned_u64 pos;
+>     __aligned_u64 folios;
+>  };
+>
+>  struct memfd_luo_v0 memfd_luo_v0 = {.size = size, pos = file->f_pos, folios = folios};
+>  luo_store_object(&memfd_luo_v0, sizeof(memfd_luo_v0), <.. identifier for this fd..>, /*version=*/0);
+>
+> Which also shows the actual data needing to be serialized comes from
+> more than one struct and has to be marshaled in code, somehow, to a
+> single struct.
+>
+> Then I imagine a fairly simple forwards/backwards story. If something
+> new is needed that is non-optional, lets say you compress the folios
+> list to optimize holes:
+>
+>  struct memfd_luo_v1 {
+>     __aligned_u64 size;
+>     __aligned_u64 pos;
+>     __aligned_u64 folios_list_with_holes;
+>  };
+>
+> Obviously a v0 kernel cannot parse this, but in this case a v1 aware
+> kernel could optionally duplicate and write out the v0 format as well:
+>
+>  luo_store_object(&memfd_luo_v0, sizeof(memfd_luo_v0), <.. identifier for this fd..>, /*version=*/0);
+>  luo_store_object(&memfd_luo_v1, sizeof(memfd_luo_v1), <.. identifier for this fd..>, /*version=*/1);
+
+I think what you describe here is essentially how LUO works currently,
+just that the mechanisms are a bit different.
+
+For example, instead of the subsystem calling luo_store_object(), the
+LUO core calls back into the subsystem at the appropriate time to let it
+populate the object. See memfd_luo_prepare() and the data argument. The
+version is decided by the compatible string with which the handler was
+registered.
+
+Since LUO knows when to start serializing what, I think this flow of
+calling into the subsystem and letting it fill in an object that LUO
+tracks and hands over makes a lot of sense.
+
+>
+> Then the rule is fairly simple, when the sucessor kernel goes to
+> deserialize it asks luo for the versions it supports:
+>
+>  if (luo_restore_object(&memfd_luo_v1, sizeof(memfd_luo_v1), <.. identifier for this fd..>, /*version=*/1))
+>     restore_v1(&memfd_luo_v1)
+>  else if (luo_restore_object(&memfd_luo_v0, sizeof(memfd_luo_v0), <.. identifier for this fd..>, /*version=*/0))
+>     restore_v0(&memfd_luo_v0)
+>  else
+>     luo_failure("Do not understand this");
+
+Similarly, on restore side, the new kernel can register handlers of all
+the versions it can deal with, and LUO core takes care of calling into
+the right callback. See  memfd_luo_retrieve() for example. If we now have
+a v2, the new kernel can simply define a new handler for v2 and add a
+new memfd_luo_retrieve_v2().
+
+>
+> luo core just manages this list of versioned data per serialized
+> object. There is only one version per object.
+
+This also holds true.
+
+-- 
+Regards,
+Pratyush Yadav
 
