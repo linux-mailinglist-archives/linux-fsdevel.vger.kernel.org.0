@@ -1,212 +1,310 @@
-Return-Path: <linux-fsdevel+bounces-59448-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59449-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E32BBB38F51
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 01:41:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA031B38F6C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 01:58:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9619F5E80A6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 23:41:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84FFF366975
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 23:58:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BBC030FF13;
-	Wed, 27 Aug 2025 23:41:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="TZgf53ap"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E89EB30FC01;
+	Wed, 27 Aug 2025 23:58:20 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from neil.brown.name (neil.brown.name [103.29.64.221])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49AAE2E0B5B
-	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Aug 2025 23:41:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B670A7260A;
+	Wed, 27 Aug 2025 23:58:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756338081; cv=none; b=g5Ss2vFvu9qTpuMcmLXYa2N3Pne1E6o+3s8/AX9dG7nPkRi4yqa3HfPtXJS4IcY70gETYMKCFvuW0Ke7h3049ZFiy7qIcxZBS5nKx+lXr1l9DhEI9N2YrYi6ZV2TQ2twQOSOO01yt1mQA9sEphrJckBUSBdF/ArxPQ7jyhKjf74=
+	t=1756339100; cv=none; b=NVf95q7SiPbpiiEtOSlciN1Mlr5/FTRmy+cxGI6LuFR/u6MoD3WaQ4xcnsl6XOl00Z/m5zc9VNCji8KLHMQTrU2XjRF0mukZ4/qD0nNE4ZBIfT39/VO8q5gUWLTz6CjA+rucvOvwq7un0hgcvVAUmvQoj+zhRNPlKduVcJkF2JM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756338081; c=relaxed/simple;
-	bh=WeQLyqaNspxlSMXC13kkAKQD2QX9Qf7U6ktiE6qUPVw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y9q2It7RyZzyzGPOW4TfG50Y2001Z0akgVigb51HKTjH4SifoOOlvL+jSa7a99iXChIamQqI+NaGxIouqRtw1eK4ksJa8LX1yqnkrixwe/seKz2TZTlQ0yP87StwcvCbj9hQWWZ5maZ/oGYiigV21bepGItrHcezYIE5bZzSAPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=TZgf53ap; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-61c26f3cf0dso604403a12.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Aug 2025 16:41:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1756338077; x=1756942877; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=SFTZDmbc5XPAbNSRQYZudLQo/qzYSSPXUmE94EQdlh4=;
-        b=TZgf53apQZIBKH+1qgRvT0dV0BurD379WfMfWMSdI2PNdN7Lt8rs8DrpfTUFiwJOQq
-         SXZ13yAbEJK/XK1qAI7rQDOoMrBDExJeAwHqpfpifTmtAm9U+KV0tMThuyT9OGiVeX1P
-         NonpX5dnpnUdwCeJR69yFpMxNMKH8adqplvNI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756338077; x=1756942877;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SFTZDmbc5XPAbNSRQYZudLQo/qzYSSPXUmE94EQdlh4=;
-        b=awjxTQN0SDGAuDn4gpmrIwsWG7AQxuumetb797F8AUyZdxsuwGYDoyhUG/81Yzk9YH
-         l3edM6lkWh9NBoBZHYprLnvYSx4ztG33gaX4TUSb8nU2kMaahSI3RcqVDmwGbcm3uXNz
-         V/+rtaW32ZWmL2f8iU+4PBxcAbF4owQ86dCoxmhlq57lwT3f+TtNURUxTOjTZp4gmNA3
-         DQWYftxo9xI3xeX2MLMnwNQRQvNopKozAfmNBW7jAClaj/YDe3kGaWX/gA4VBtZ8ccS1
-         9KS+b8UQrE2PF2rcHjlB7H+X14CGlO5GpmqKq8PD36HdIkPHOXvu/KeCi6/h4e1WoW9Z
-         0c0A==
-X-Forwarded-Encrypted: i=1; AJvYcCUBEbz3gTSTjw6yVS9WGZVikvM8OTQWRRdKPcUC1f2eOQCBvDosXj+NGdh4rYlU+78e71NS+5ieXtcGaOIW@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRqhXaPcxz3BagAvg+oQzTMM01xczPmVWPzp+n2sK3as2FQRHe
-	UO3dfJZjahjRanXsz4RlSehRSmvJWe8DYH/eQSEQ8Aj6uFC76SUrZbyH1V7SuINWLrgnNtToaR4
-	+b36N6Cs=
-X-Gm-Gg: ASbGncsIDqjUSQgslxyyRfyFiQdw5UyMS5y0X2oaRWgvbtiQT8qxiaKxptDuatQ+mmQ
-	boGwzmyZrWFU0QPmGb4qVhhyBLyzOeYlLRB81+mkzSlcRSABN8LSHHuXz6EIjBfLmtALkHXK5HE
-	qn2fz+d6AKjZUTDEyfvV4MO04/Ki3kfxQ5X+OjfnczVkp6ZJfzFKBB/tAgAFQfTNcmqfZp3hx+f
-	QiE5Omcx8tO3GLJPcLbRWQUPGQ+fs2mmz01rpB1cV4tMJwmP4EpND48sWDdbnGodrra6IBzXGWG
-	5btv7B7UcTalavjgl0kHHpR+DuIfqcEfSQ5IvH0AnTmAOBjj85zzSVLySDhLckT0dBtN0XgYiJa
-	rW2/mc/fZgT6p3LqabMmqTHcptO+c7/34MBVGnBVR1Ffu74LS4AFuqMfXUZxRRkQy94n5rnJr
-X-Google-Smtp-Source: AGHT+IFQpC85I2Svol4zHAT5DRmT21PokZCE2kIj2RO26fmXMV57/pdRMm9TnYdaY+2lBTPrqGJHdQ==
-X-Received: by 2002:a05:6402:348f:b0:61c:8742:21dc with SMTP id 4fb4d7f45d1cf-61c8742249dmr7811450a12.17.1756338077385;
-        Wed, 27 Aug 2025 16:41:17 -0700 (PDT)
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61c3172e21dsm9624210a12.40.2025.08.27.16.41.16
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Aug 2025 16:41:16 -0700 (PDT)
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-61c26f3cf0dso604378a12.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Aug 2025 16:41:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWfrg9Alr4u753jrwtf5pa39a11SjL/1kjqmq8Tcsh+IVjMK/AoRAWFDSxh3PTXPp8PTbZlxsSA+09njHpv@vger.kernel.org
-X-Received: by 2002:a05:6402:50d3:b0:61c:7a9b:21e4 with SMTP id
- 4fb4d7f45d1cf-61c7a9b24f4mr9475688a12.16.1756338075800; Wed, 27 Aug 2025
- 16:41:15 -0700 (PDT)
+	s=arc-20240116; t=1756339100; c=relaxed/simple;
+	bh=icCSIWUerQO1Zodn51IfYGAubDfiSnEpwxONW6kQCPg=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=HRcol4NYMjeli338DkPTMFiWBU4F2TcqMfEykSrQEBUuV6tR7RjU3t4gXimenl8wLC0Zg1u4aQgZP9DqwmQpBPtFW0EdL0VgD2rowFu0COURfdCSSawbr/l7cnnYvdt7ZW/z4ipykTSO+R5qsR9S3U+3DZ3Qg4twkP7jvVnxKF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
+Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
+	by neil.brown.name with esmtp (Exim 4.95)
+	(envelope-from <mr@neil.brown.name>)
+	id 1urQ1k-007QC6-7P;
+	Wed, 27 Aug 2025 23:58:05 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250825044046.GI39973@ZenIV> <20250825-glanz-qualm-bcbae4e2c683@brauner>
- <20250825161114.GM39973@ZenIV> <20250825174312.GQ39973@ZenIV>
- <20250826-umbenannt-bersten-c42dd9c4dc6a@brauner> <CAHk-=whBm4Y=962=HuYNpbmYBEq-7X8O_aOAPQpqFKv5h5UbSA@mail.gmail.com>
- <CAHk-=wgWD9Kyzyy53iL=r4Qp68jhySp+8pHxfqfcxT3amoj5Bw@mail.gmail.com> <20250827-military-grinning-orca-edb838@lemur>
-In-Reply-To: <20250827-military-grinning-orca-edb838@lemur>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 27 Aug 2025 16:40:58 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiwiuG93ZeGdTt0n79hzE5HGwSU=ZWW61cc_6Sp9qkG=w@mail.gmail.com>
-X-Gm-Features: Ac12FXxu1R_yLUsVEbTfGuNpW3u5RkYIeuhsSvtXXUOMc0TNKS6VFIckDRRKPqI
-Message-ID: <CAHk-=wiwiuG93ZeGdTt0n79hzE5HGwSU=ZWW61cc_6Sp9qkG=w@mail.gmail.com>
-Subject: Re: [PATCHED][RFC][CFT] mount-related stuff
-To: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-Cc: Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
+From: "NeilBrown" <neil@brown.name>
+To: "Amir Goldstein" <amir73il@gmail.com>
+Cc: =?utf-8?q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>,
+ "Miklos Szeredi" <miklos@szeredi.hu>, "Theodore Tso" <tytso@mit.edu>,
+ "Gabriel Krisman Bertazi" <krisman@kernel.org>, linux-unionfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
+ kernel-dev@igalia.com
+Subject:
+ Re: [PATCH v6 9/9] ovl: Support mounting case-insensitive enabled layers
+In-reply-to:
+ <CAOQ4uxj551a7cvjpcYEyTLtsEXw9OxHtTc-VSm170J5pWtwoUQ@mail.gmail.com>
+References:
+ <>, <CAOQ4uxj551a7cvjpcYEyTLtsEXw9OxHtTc-VSm170J5pWtwoUQ@mail.gmail.com>
+Date: Thu, 28 Aug 2025 09:58:05 +1000
+Message-id: <175633908557.2234665.14959580663322237611@noble.neil.brown.name>
 
-On Wed, 27 Aug 2025 at 15:49, Konstantin Ryabitsev
-<konstantin@linuxfoundation.org> wrote:
->
-> I have recommended that Link: trailers indicating the provenance of the series
-> should use a dedicated domain name: patch.msgid.link. This should clearly
-> indicate to you that following this link will take you to the original
-> submission, not to any other discussion.
+On Thu, 28 Aug 2025, Amir Goldstein wrote:
+> On Tue, Aug 26, 2025 at 9:01=E2=80=AFPM Andr=C3=A9 Almeida <andrealmeid@iga=
+lia.com> wrote:
+> >
+> >
+> >
+> > Em 26/08/2025 04:31, Amir Goldstein escreveu:
+> > > On Mon, Aug 25, 2025 at 3:31=E2=80=AFPM Andr=C3=A9 Almeida <andrealmeid=
+@igalia.com> wrote:
+> > >>
+> > >> Hi Amir,
+> > >>
+> > >> Em 22/08/2025 16:17, Amir Goldstein escreveu:
+> > >>
+> > >> [...]
+> > >>
+> > >>     /*
+> > >>>>>> -        * Allow filesystems that are case-folding capable but den=
+y composing
+> > >>>>>> -        * ovl stack from case-folded directories.
+> > >>>>>> +        * Exceptionally for layers with casefold, we accept that =
+they have
+> > >>>>>> +        * their own hash and compare operations
+> > >>>>>>             */
+> > >>>>>> -       if (sb_has_encoding(dentry->d_sb))
+> > >>>>>> -               return IS_CASEFOLDED(d_inode(dentry));
+> > >>>>>> +       if (ofs->casefold)
+> > >>>>>> +               return false;
+> > >>>>>
+> > >>>>> I think this is better as:
+> > >>>>>            if (sb_has_encoding(dentry->d_sb))
+> > >>>>>                    return false;
+> > >>>>>
+> > >>>
+> > >>> And this still fails the test "Casefold enabled" for me.
+> > >>>
+> > >>> Maybe you are confused because this does not look like
+> > >>> a test failure. It looks like this:
+> > >>>
+> > >>> generic/999 5s ...  [19:10:21][  150.667994] overlayfs: failed lookup
+> > >>> in lower (ovl-lower/casefold, name=3D'subdir', err=3D-116): parent wr=
+ong
+> > >>> casefold
+> > >>> [  150.669741] overlayfs: failed lookup in lower (ovl-lower/casefold,
+> > >>> name=3D'subdir', err=3D-116): parent wrong casefold
+> > >>> [  150.760644] overlayfs: failed lookup in lower (/ovl-lower,
+> > >>> name=3D'casefold', err=3D-66): child wrong casefold
+> > >>>    [19:10:24] [not run]
+> > >>> generic/999 -- overlayfs does not support casefold enabled layers
+> > >>> Ran: generic/999
+> > >>> Not run: generic/999
+> > >>> Passed all 1 tests
+> > >>>
+> > >>
+> > >> This is how the test output looks before my changes[1] to the test:
+> > >>
+> > >> $ ./run.sh
+> > >> FSTYP         -- ext4
+> > >> PLATFORM      -- Linux/x86_64 archlinux 6.17.0-rc1+ #1174 SMP
+> > >> PREEMPT_DYNAMIC Mon Aug 25 10:18:09 -03 2025
+> > >> MKFS_OPTIONS  -- -F /dev/vdc
+> > >> MOUNT_OPTIONS -- -o acl,user_xattr /dev/vdc /tmp/dir2
+> > >>
+> > >> generic/999 1s ... [not run] overlayfs does not support casefold enabl=
+ed
+> > >> layers
+> > >> Ran: generic/999
+> > >> Not run: generic/999
+> > >> Passed all 1 tests
+> > >>
+> > >>
+> > >> And this is how it looks after my changes[1] to the test:
+> > >>
+> > >> $ ./run.sh
+> > >> FSTYP         -- ext4
+> > >> PLATFORM      -- Linux/x86_64 archlinux 6.17.0-rc1+ #1174 SMP
+> > >> PREEMPT_DYNAMIC Mon Aug 25 10:18:09 -03 2025
+> > >> MKFS_OPTIONS  -- -F /dev/vdc
+> > >> MOUNT_OPTIONS -- -o acl,user_xattr /dev/vdc /tmp/dir2
+> > >>
+> > >> generic/999        1s
+> > >> Ran: generic/999
+> > >> Passed all 1 tests
+> > >>
+> > >> So, as far as I can tell, the casefold enabled is not being skipped
+> > >> after the fix to the test.
+> > >
+> > > Is this how it looks with your v6 or after fixing the bug:
+> > > https://lore.kernel.org/linux-unionfs/68a8c4d7.050a0220.37038e.005c.GAE=
+@google.com/
+> > >
+> > > Because for me this skipping started after fixing this bug
+> > > Maybe we fixed the bug incorrectly, but I did not see what the problem
+> > > was from a quick look.
+> > >
+> > > Can you test with my branch:
+> > > https://github.com/amir73il/linux/commits/ovl_casefold/
+> > >
+> >
+> > Right, our branches have a different base, mine is older and based on
+> > the tag vfs/vfs-6.18.mount.
+> >
+> > I have now tested with your branch, and indeed the test fails with
+> > "overlayfs does not support casefold enabled". I did some debugging and
+> > the missing commit from my branch that is making this difference here is
+> > e8bd877fb76bb9f3 ("ovl: fix possible double unlink"). After reverting it
+> > on top of your branch, the test works. I'm not sure yet why this
+> > prevents the mount, but this is the call trace when the error happens:
+>=20
+> Wow, that is an interesting development race...
+>=20
+> >
+> > TID/PID 860/860 (mount/mount):
+> >
+> >                      entry_SYSCALL_64_after_hwframe+0x77
+> >                      do_syscall_64+0xa2
+> >                      x64_sys_call+0x1bc3
+> >                      __x64_sys_fsconfig+0x46c
+> >                      vfs_cmd_create+0x60
+> >                      vfs_get_tree+0x2e
+> >                      ovl_get_tree+0x19
+> >                      get_tree_nodev+0x70
+> >                      ovl_fill_super+0x53b
+> > !    0us [-EINVAL]  ovl_parent_lock
+> >
+> > And for the ovl_parent_lock() arguments, *parent=3D"work", *child=3D"#7".=
+ So
+> > right now I'm trying to figure out why the dentry for #7 is not hashed.
+> >
+>=20
+> The reason is this:
+>=20
+> static struct dentry *ext4_lookup(...
+> {
+> ...
+>         if (IS_ENABLED(CONFIG_UNICODE) && !inode && IS_CASEFOLDED(dir)) {
+>                 /* Eventually we want to call d_add_ci(dentry, NULL)
+>                  * for negative dentries in the encoding case as
+>                  * well.  For now, prevent the negative dentry
+>                  * from being cached.
+>                  */
+>                 return NULL;
+>         }
+>=20
+>         return d_splice_alias(inode, dentry);
+> }
+>=20
+> Neil,
+>=20
+> Apparently, the assumption that
+> ovl_lookup_temp() =3D> ovl_lookup_upper() =3D> lookup_one()
+> returns a hashed dentry is not always true.
+>=20
+> It may be always true for all the filesystems that are currently
+> supported as an overlayfs
+> upper layer fs (?), but it does not look like you can count on this
+> for the wider vfs effort
+> and we should try to come up with a solution for ovl_parent_lock()
+> that will allow enabling
+> casefolding on overlayfs layers.
+>=20
+> This patch seems to work. WDYT?
+>=20
+> Thanks,
+> Amir.
+>=20
+> commit 5dfcd10378038637648f3f422e3d5097eb6faa5f
+> Author: Amir Goldstein <amir73il@gmail.com>
+> Date:   Wed Aug 27 19:55:26 2025 +0200
+>=20
+>     ovl: adapt ovl_parent_lock() to casefolded directories
+>=20
+>     e8bd877fb76bb9f3 ("ovl: fix possible double unlink") added a sanity
+>     check of !d_unhashed(child) to try to verify that child dentry was not
+>     unlinked while parent dir was unlocked.
+>=20
+>     This "was not unlink" check has a false positive result in the case of
+>     casefolded parent dir, because in that case, ovl_create_temp() returns
+>     an unhashed dentry.
+>=20
+>     Change the "was not unlinked" check to use cant_mount(child).
+>     cant_mount(child) means that child was unlinked while we have been
+>     holding a reference to child, so it could not have become negative.
+>=20
+>     This fixes the error in ovl_parent_lock() in ovl_check_rename_whiteout()
+>     after ovl_create_temp() and allows mount of overlayfs with casefolding
+>     enabled layers.
+>=20
+>     Reported-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
+>     Link: https://lore.kernel.org/r/18704e8c-c734-43f3-bc7c-b8be345e1bf5@ig=
+alia.com/
+>     Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+>=20
+> diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
+> index bec4a39d1b97c..bffbb59776720 100644
+> --- a/fs/overlayfs/util.c
+> +++ b/fs/overlayfs/util.c
+> @@ -1551,9 +1551,23 @@ void ovl_copyattr(struct inode *inode)
+>=20
+>  int ovl_parent_lock(struct dentry *parent, struct dentry *child)
+>  {
+> +       bool is_unlinked;
+> +
+>         inode_lock_nested(parent->d_inode, I_MUTEX_PARENT);
+> -       if (!child ||
+> -           (!d_unhashed(child) && child->d_parent =3D=3D parent))
+> +       if (!child)
+> +               return 0;
+> +
+> +       /*
+> +        * After re-acquiring parent dir lock, verify that child was not mo=
+ved
+> +        * to another parent and that it was not unlinked. cant_mount() mea=
+ns
+> +        * that child was unlinked while parent was unlocked. Since we are
+> +        * holding a reference to child, it could not have become negative.
+> +        * d_unhashed(child) is not a strong enough indication for unlinked,
+> +        * because with casefolded parent dir, ovl_create_temp() returns an
+> +        * unhashed dentry.
+> +        */
+> +       is_unlinked =3D cant_mount(child) || WARN_ON_ONCE(d_is_negative(chi=
+ld));
+> +       if (!is_unlinked && child->d_parent =3D=3D parent)
+>                 return 0;
+>=20
+>         inode_unlock(parent->d_inode);
+>=20
 
-That doesn't fix anything. It only reinforces the basic stupidity of
-marking the WRONG DIRECTION.
+I don't feel comfortable with that.  Letting ovl_parent_lock() succeed
+on an unhashed dentry doesn't work for my longer term plans for locking.
+I would really rather we got that dentry hashed.
 
-The fact is, YOU CANNOT SANELY MARK THE COMMIT. Dammit, why do people
-ignore this *fundamental* issue? You literally cannot add information
-to the commit that doesn't exist yet, and the threads that refer to
-bugs etc quite fundamentally WILL NOT EXIST YET when the commit is
-posted.
+What is happening is :
+  - lookup on non-existent name -> unhashed dentry
+  - vfs_create on that dentry - still unhashed
+  - rename of that unhashed dentry -> confusion in ovl_parent_lock()
 
-The actual *useful* information about a commit is the discussions it
-resulted in, not the posting of the patch.
+If this were being done from user-space there would be another lookup
+after the create and before the rename, and that would result in a
+hashed dentry.
 
-And those will almost invariably be unrelated to the patch submission,
-since they either talked about the problems that the patch *fixed*, or
-talk about the problems that the patch *caused* (ie the thread starts
-with some random "My machine no longer boots", and then goes on from
-there as people try to figure out what caused it.
+Could ovl_create_real() do a lookup for the name if the dentry isn't
+hashed?  That should result in a dentry that can safely be passed to
+ovl_parent_lock().
 
-So the *relevant* links are pretty much by definition not the link to
-the posting of the patch.
+NeilBrown
 
-Is it really so hard to understand and accept this fundamental issue?
-
-It's the *message* that should be indexed and marked, not the commit.
-
-What you want to find is messages on the mailing list that mention the
-commit, not the other way around. The other way around is completely
-pointless and CANNOT BE AUTOMATED. Any automation by definition will
-only add noise, not "information".
-
-Really. The only valid link is a link to *pre-existing* discussion,
-not to some stupid "this is where I posted this patch", which is
-entirely and utterly immaterial.
-
-And dammit, lore could do this. Here's one suggested model that at
-least gets the direction of indexing right (I'm not claiming it's the
-only model, or the best model, but it sure as hell beats getting the
-fundamentals completely wrong):
-
- (a) messages with patches can be indexed by the patch-id of said patch
-
-This might well be useful in its own right ("search for this patch"),
-and would be good for the series where the same patch ends up being
-re-posted because the whole series was re-posted.
-
-IOW, just that trivial thing would already allow the lore web
-interface to link to "this patch has been posted before", which is
-useful information on its own, totally aside from any future
-archeology.
-
-But it's not the end goal, it's only a small step to *get* to the end goal:
-
- (b) messages that mention a commit ID (or a subject line) could then
-have referrals to the patch-id of said commit.
-
-No, you don't want to do a whole-text search every time you look for a
-commit. That's fine for manual stuff, but it's much too expensive for
-any sane automation. But you *can* (and lore already does) scan
-messages at message posting time, and find when people refer to a
-commit, and then index that message *once* by the patch ID of the
-commit.
-
-Now, this *is* fundamentally useful in a very different way: if you
-have somebody who bisected something and mentions a commit as a
-result, you'd now *find* that kind of message, and the history leading
-up to it.
-
-So when people read threads on lore about bugs being bisected, think
-how useful it would be if that thread would basically auto-populate
-with "this message refers to this patch".
-
-And the final step is
-
- (c) have some 'b4' infrastructure to look up emails pertaining to a
-commit - by doing the patch ID and then looking up the indexing above
-
-Look, now you have a "open web browser with the history of not just
-where the patch was originally posted, but where that commit was
-*mentioned*".
-
-Notice how fundamentally more useful this is from some link to where
-the patch was posted? And absolutely nothing in the above implies
-tagging the commit with useless information.
-
-I look at the "Link:" tags quite regularly, and I can tell you that
-when it's a posting tag, it almost invariably is completely and
-totally useless. We *have* people who add those, and they only add
-noise and very little value.
-
-Do not add more of those useless garbage links in the name of
-"automation". It's not automating anything useful, it's only
-automating garbage.
-
-Because the *commit* already has all the information that is relevant
-- it's not the commit that is missing a link. It's the other side.
-
-Which is why those links to lore patch submission events are so
-STUPID. They add nothing. Doing them in the name of "automation" is
-crazy. It's entirely pointless. It's garbage and it's mis-designed,
-because it's not understanding the problem.
-
-                   Linus
 
