@@ -1,131 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-59364-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59365-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25C9DB3834F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 15:06:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE6E8B38354
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 15:06:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08A6D1BA3809
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 13:06:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61738687E4F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 13:06:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A0B235206B;
-	Wed, 27 Aug 2025 13:05:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B80350D68;
+	Wed, 27 Aug 2025 13:05:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="iMI+q5oa"
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="iesUnEz3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 580FC2820C6
-	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Aug 2025 13:05:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3181331E112;
+	Wed, 27 Aug 2025 13:05:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756299949; cv=none; b=GfjaVb0kx8oCtguhRRHzeuJaIMAjVm54cp/dVnPiN3PK4z9LZg2LMZULJcrS0vx2Xdygo4qnD/2fAU86kFS/PpOzm8htPt8V9rzxeKPBNoaywFVTzfOcvqlsJgM3NWh/pwreCedzgA/yl+j2Ldsb7uGh3mOEyA24f4yTfrq3xtE=
+	t=1756299957; cv=none; b=l982ACA50I9th8TcNFCSbcITWd2RiZnkjaTo/ejsVnAfN2fOWCHpdrL8FQ6Ig0n5ZCiaglcLwgJwAqQsWds/oMSRM1eLA6ey+djVcz8GunAoASMNF4NjU+gaxPyTGxP38z/CLuvJo/XUCp2JTnYP/u5N7Pja2O81Ynzsxk7PXPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756299949; c=relaxed/simple;
-	bh=Lg5YJJaXpBc/s0JfoRj0Jz/sHkqXKEkjrx56oNdh6UA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N/X5BE786JQa8XbfElVIY6AzN8hLoD2ilwhyQBeCZXqMgMuip1AmaHmDVAsDm6LQM8JOoqWvEMDoSK9iqkBMwaCucbeEXpQN3rPCOzfbt9ubbEG3glVQeUpsVgDnSK4nzzUW1HAr4YXnI25ltXAP/WqRcSkV2IaN82TXgdL8ho4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=iMI+q5oa; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4b109912545so88366651cf.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Aug 2025 06:05:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1756299946; x=1756904746; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IS9A1xArxW2DbHOyp5U7gUvufvKTYOF7Z8twNaozFaA=;
-        b=iMI+q5oa4hKi016w+wiT6+ebiebiA6MW71fGyRmaONWPqmnhli1IgPAeJZNMJiq3Ra
-         I5YNXHcaoaYIgNHMZieVcY13r+t9DUZrfH1fnbO+WHOG4ziU1UMidX73oiaDqaPMktDH
-         Qfll2mqaGFkkgYlDOmZmqouUb9j2W/qnQn9ds=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756299946; x=1756904746;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IS9A1xArxW2DbHOyp5U7gUvufvKTYOF7Z8twNaozFaA=;
-        b=k7AxQBeaOW073qOnBOl2rewacWfSo6LKmz2fiQ7jXB+BSFtoRO6PphWimPJfUJbI6s
-         tGDBZttOlF+BkIuSjM1WUozpUyf2w8kOXn2DSbHJ9b+k4b8EH2VuLWYSX55g8ljz+74U
-         /zjKnKYqSaiOcUGC+rjq0TcYoZW+F3tK/K4ZWku6rq63HQYhHJBLhmmLQkwws5Si0aPI
-         sVVL7xlY2Ef91LFugllXauU3CZrkS2UC2QXQxKIHIC6St8iafyM7rrXA3FQj4UuBQcEQ
-         2MaWYUe012zD14kzHoeVs2gNriVhJS3rDqS7mfxFoPBRopSlQfXzh3hr6Y5ndYDP+uiT
-         bjQw==
-X-Gm-Message-State: AOJu0YwzIpR/AqvaijQXoK+vLYd++egBjsPngauU0mH+8Rlq12ZMKAD9
-	vIqZGMC522FlhJeiEG7eDuIyJYlQGnuEPg2X0PjxFUu1dE06VrL8O4SeTjzOKpvc4gX82itix/I
-	ungVmhdniaIJ2GGwitAxmyE3Db+ArbSjS4U+qZL3P/Q==
-X-Gm-Gg: ASbGncs53TLlIosaohTAJ/PRsFJuRhI+1umjYcgB0Ne+lFRdfG/wEvImUdybFhpXW49
-	sn2FO22Ig43xxslCRnE86M1/r7N6cmb3wCUseRde3YfqZtgBRB03/mTgXMnHRlMfIDbWSdcNJ8s
-	ndzeYipovJ8fq7sbb6jUcvcnQwURrhb2dnvshfn5BtLqd0Ofoiy4dirx7KbimNcdpTRqXK3qSBs
-	I22YLfaGXSrWV2bPndb
-X-Google-Smtp-Source: AGHT+IGLeocHq+w8KKF32Jz+bx2Tk/02BB9NqaabL//OB62XP1A63lXRphuALAt/uyjA7/9UrZ1B5iZzrud5rKizpFo=
-X-Received: by 2002:ac8:7d50:0:b0:4b1:1fc6:863a with SMTP id
- d75a77b69052e-4b2aab0cfa2mr202698391cf.63.1756299946002; Wed, 27 Aug 2025
- 06:05:46 -0700 (PDT)
+	s=arc-20240116; t=1756299957; c=relaxed/simple;
+	bh=nw/muDBgITviXdUO9uodqJEWDZfngONbrkxYnFKm1ZQ=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=sRUMXRC6vCzk2U2cIgZrbQkE0W8T7G0/xPf3yQ02GGUcAwk0R3rhZHdHz2pCCWOQYmI9iEHm7cCsE711UxLGGNGOG39ApHxp/Bi/6MJSmptDPjyWqxp7R6bYcVIoo+QGRdbuhPxF1nGtYRi9gPjpnSmmCzumexDFu1V56m4RcmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=iesUnEz3; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from monopod.intra.ispras.ru (unknown [10.10.3.121])
+	by mail.ispras.ru (Postfix) with ESMTPSA id 15DA8406B369;
+	Wed, 27 Aug 2025 13:05:52 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 15DA8406B369
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1756299952;
+	bh=y7EIXJ3gSrV4vOOLTRHHOfAaTcpZnV58etKp51XlHIo=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=iesUnEz32nFZ/2pNUAYUzDhVg5h6C6yDFzz4+20mlbyi3pEa4H8z6d6+gtdjZDaF5
+	 jRWw+kLeuMlFfdHwWXlHVmKJggJTosIPJFH+UFR3zkZed1aWu6fgHyo/G921pVtt4F
+	 um4IR1BqhSW6wtLCOG8lmt1dawhzbDLU3oLpy9Yw=
+Date: Wed, 27 Aug 2025 16:05:51 +0300 (MSK)
+From: Alexander Monakov <amonakov@ispras.ru>
+To: Theodore Ts'o <tytso@mit.edu>
+cc: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, 
+    Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+    linux-kernel@vger.kernel.org
+Subject: Re: ETXTBSY window in __fput
+In-Reply-To: <20250827115247.GD1603531@mit.edu>
+Message-ID: <6d37ce87-e6bf-bd3e-81a9-70fdf08b9c4c@ispras.ru>
+References: <6e60aa72-94ef-9de2-a54c-ffd91fcc4711@ispras.ru> <20250826220033.GW39973@ZenIV> <0a372029-9a31-54c3-4d8a-8a9597361955@ispras.ru> <20250827115247.GD1603531@mit.edu>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <D5420EF2-6BA6-4789-A06A-D1105A3C33D4@nvidia.com>
- <CAJfpegvmhpyab2-kaud3VG47Tbjh0qG_o7G-3o6pV78M8O++tQ@mail.gmail.com> <1E1F125C-8D8C-4F82-B6A9-973CDF64EC3D@nvidia.com>
-In-Reply-To: <1E1F125C-8D8C-4F82-B6A9-973CDF64EC3D@nvidia.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 27 Aug 2025 15:05:34 +0200
-X-Gm-Features: Ac12FXzh4c9-bhOGpJCxyjBS2F9uSLYJUbMNbime6Sd-tJCzwd6Aonr7-j-nBrI
-Message-ID: <CAJfpegtmakX4Ery3o5CwKf8GbCeqxsR9GAAgdmnnor0eDYHgXA@mail.gmail.com>
-Subject: Re: Questions about FUSE_NOTIFY_INVAL_ENTRY
-To: Jim Harris <jiharris@nvidia.com>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"virtualization@lists.linux.dev" <virtualization@lists.linux.dev>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "stefanha@redhat.com" <stefanha@redhat.com>, 
-	Max Gurtovoy <mgurtovoy@nvidia.com>, Idan Zach <izach@nvidia.com>, 
-	Roman Spiegelman <rspiegelman@nvidia.com>, Ben Walker <benwalker@nvidia.com>, 
-	Oren Duer <oren@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 
-On Wed, 20 Aug 2025 at 22:42, Jim Harris <jiharris@nvidia.com> wrote:
->
->
->
-> > On Aug 20, 2025, at 1:55=E2=80=AFAM, Miklos Szeredi <miklos@szeredi.hu>=
- wrote:
+On Wed, 27 Aug 2025, Theodore Ts'o wrote:
 
-> > FUSE_NOTIFY_INVAL_ENTRY with FUSE_EXPIRE_ONLY will do something like
-> > your desired FUSE_NOTIFY_DROP_ENTRY operation, at least on virtiofs
-> > (fc->delete_stale is on).  I notice there's a fuse_dir_changed() call
-> > regardless of FUSE_EXPIRE_ONLY, which is not appropriate for the drop
-> > case, this can probably be moved inside the !FUSE_EXPIRE_ONLY branch.
->
-> Thanks for the clarification.
->
-> For that extra fuse_dir_changed() call - is this a required fix for corre=
-ctness or just an optimization to avoid unnecessarily invalidating the pare=
-nt directory=E2=80=99s attributes?
+> On Wed, Aug 27, 2025 at 10:22:14AM +0300, Alexander Monakov wrote:
+> > 
+> > On Tue, 26 Aug 2025, Al Viro wrote:
+> > 
+> > > Egads...  Let me get it straight - you have a bunch of threads sharing descriptor
+> > > tables and some of them are forking (or cloning without shared descriptor tables)
+> > > while that is going on?
+> > 
+> > I suppose if they could start a new process in a more straightforward manner,
+> > they would. But you cannot start a new process without fork. Anyway, I'm but
+> > a messenger here: the problem has been hit by various people in the Go community
+> > (and by Go team itself, at least twice). Here I'm asking about a potential
+> > shortcoming in __fput that exacerbates the problem.
+> 
+> I'm assuming that the problem is showing up in real life when users
+> run a go problem using "go run" where the golang compiler freshly
+> writes the executable, and then fork/exec's the binary.  And using
+> multiple threads sharing descriptor tables was just to make a reliable
+> reproducer?
 
-You see it correctly, it would be an optimization.
+You need at least two threads: while one thread does open-write-close-fork,
+there needs to be another thread that forks concurrently with the write.
 
-
-
-> > The other question is whether something more efficient should be
-> > added. E.g. FUSE_NOTIFY_SHRINK_LOOKUP_CACHE with a num_drop argument
-> > that tells fuse to try to drop this many unused entries?
->
-> Absolutely something like this would be more efficient. Using FUSE_NOTIFY=
-_INVAL_ENTRY requires saving filenames which isn=E2=80=99t ideal.
-
-Okay, I suspect an interface that supplies an array of nodeid's would
-be best, as it would give control to the filesystem which inodes it
-wants to give up, but would allow batching the operation and would not
-require supplying the name.
-
-Will work on this.
-
-Thanks,
-Miklos
+Alexander
 
