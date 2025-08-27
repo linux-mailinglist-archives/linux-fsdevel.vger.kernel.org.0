@@ -1,189 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-59402-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59403-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D61AB386B8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 17:34:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8844DB386C9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 17:38:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 499AC366796
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 15:34:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F61220773D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 15:38:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08F92D0606;
-	Wed, 27 Aug 2025 15:34:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FEA42D2385;
+	Wed, 27 Aug 2025 15:38:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e6v+GpFx"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="HP8FNLFN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46C7C25392C;
-	Wed, 27 Aug 2025 15:34:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB5A126F28F
+	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Aug 2025 15:38:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756308881; cv=none; b=LBMpPf9flt80NW8hVtOxSYFXOh7ysUeU/hYNU2oFRyt64rd42cIAsden5dMePzwDiiRolz9sZftshZdU+P6AP2ZaqO+IDeaubUZFVhUH+SHUioUFGaSvMuCfapVGB7aDMcnjLqp9Sav3TSbp92/Fc220ZlKx855tK+F/jQafeUk=
+	t=1756309102; cv=none; b=SbD4ZzTJXtLB4UtmoHvcHmLP4VLsbwUtyGp31FmV+iPcqy86XORkkHYgcRCebDQk06qhCThOQTggNVn0VeIXwH3rJRZL34wX/1RAZulypRHrnU130kz2MJY6ZVpzNmTABr7rFCQGGSxJRWGGQkzBTeLC4GC5CIeBb+lPddpHhS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756308881; c=relaxed/simple;
-	bh=/hHoYvlbaeWmt9yGXT8TP2XYUsiA//N6BuAAiOClRwY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=gmECQG7wVfooIqMrqVQ4ZbYSKvoD3QRdk8KhG9ausL6J6OqktzaAbV7jSfbkerNojzkT0lKb9Mv/2Dl7eHG4nhLHcB+wNc/92V1BIBS6aUJG+IWbaKKnmF+MErn3LLTkV9ublBBJcL28FvvbNWIf6tO33NiyuYXUX1wH1a+2Zck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e6v+GpFx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFC4AC4CEF0;
-	Wed, 27 Aug 2025 15:34:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756308880;
-	bh=/hHoYvlbaeWmt9yGXT8TP2XYUsiA//N6BuAAiOClRwY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=e6v+GpFxja9vW9YNrveOO418XZOPc4iSrQvWmcZAoH6Mc4PKvw7UBBQ60MGplx8OJ
-	 aoiC9hnqMNugU0Xj0H2VpaLaqrXLxVMtj8qdu7PogapUHHlTYMMod3aNgdyrNzrJN5
-	 jmtfsaPmnSptrjABNdhm5J1zvmRLRd8pCh/OOhD0fxETxQeHxFSOe/nlKZg2fj+ZoT
-	 KD7gSbtqY7kjdvRsSJUwACMaSJ2HmJZxOU9clnPNVBzB4RssvVAWJHfsVm2f/lcqsn
-	 wrDmCM6GjAFmlZobcWtXrgwFnEWMrVvQ5xDd1fvmkcjujpbQ9twhauEaGtD+wOX4CF
-	 q2OX9DZbgo5fQ==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: pratyush@kernel.org,  jasonmiu@google.com,  graf@amazon.com,
-  changyuanl@google.com,  rppt@kernel.org,  dmatlack@google.com,
-  rientjes@google.com,  corbet@lwn.net,  rdunlap@infradead.org,
-  ilpo.jarvinen@linux.intel.com,  kanie@linux.alibaba.com,
-  ojeda@kernel.org,  aliceryhl@google.com,  masahiroy@kernel.org,
-  akpm@linux-foundation.org,  tj@kernel.org,  yoann.congal@smile.fr,
-  mmaurer@google.com,  roman.gushchin@linux.dev,  chenridong@huawei.com,
-  axboe@kernel.dk,  mark.rutland@arm.com,  jannh@google.com,
-  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
-  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
-  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
-  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
-  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
-  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
-  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
-  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
-  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
-  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
-  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
-  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
-  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
-  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
-  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
-  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  saeedm@nvidia.com,  ajayachandra@nvidia.com,  jgg@nvidia.com,
-  parav@nvidia.com,  leonro@nvidia.com,  witu@nvidia.com
-Subject: Re: [PATCH v3 17/30] liveupdate: luo_files: luo_ioctl: Unregister
- all FDs on device close
-In-Reply-To: <20250807014442.3829950-18-pasha.tatashin@soleen.com>
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
-	<20250807014442.3829950-18-pasha.tatashin@soleen.com>
-Date: Wed, 27 Aug 2025 17:34:29 +0200
-Message-ID: <mafs07byoye0q.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1756309102; c=relaxed/simple;
+	bh=5V5gmHT4ib9khjTGQ2iAE/pbDIJrEyHXN89uDM9KYh4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eAbkHZcNOQunbomjo3hhBaoe+dlvnyIgzl0WuA0P3BN2eW8lLDTXo4o1+fy/Wk4dE+2922fMHqMy4TlqIY4BHOPbas3M91KFNIU1uratKGiGRA2KdIp0OxPETrWWsm+rftSwGaUo7LY33joKde2rOSTKWkeAbiybGR32PUOuTmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=HP8FNLFN; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-324e6daaa39so8079a91.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Aug 2025 08:38:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1756309100; x=1756913900; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XCaj9qU1uTlK3Io/0yLAp0BC9tLpIJ8rHughNbkImAs=;
+        b=HP8FNLFN/oeTa/q2z0v9DvphaeVF51yppEkoHCzBEfBnnOyRhZAvVaas7TIL/8uSOM
+         MOorrs1uRuCA2tTYm2OhjjuTVSR529ohETkWSXSLv7Fpj+ZKy18d/sx9KOsB6FiYiHpb
+         i2FrRaXRF89KcsIhTB18q19jmZ+LdcAqAoDZieHG2eWaZrpuMzR61PCXClVBK6VaR5Hr
+         AMvtbmT04DmdGBVOW8nZBIKrj0zZyzEFJw0EjwfBfbEFxv82w/RQlplRNVQBNJDwf24N
+         aqEmjRgm68lGTG4fWsbdPRrggl7TpuRK7gAgauROmg+eFSiHzgEK+FoFqBxMi08FBgaH
+         h7zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756309100; x=1756913900;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XCaj9qU1uTlK3Io/0yLAp0BC9tLpIJ8rHughNbkImAs=;
+        b=K7/ap778REGfAipfmYDeWREKVXz4SCgG5Eyd2Hb9WgypWi3QS4ti4lrlxL7KvTWbiJ
+         FfEtzE3JDFA8OQySlGt5bdiNiiv4s526M5zDEV9nBFbAak9daXuvhqQU5TvtQ9UDQJAc
+         FtqLEPA0DS9cyiU49pSyfKURAbHL2bsXO0bW/VS43o53LxDYLRHrhn1bYWGV9+Al7Y2T
+         i30fipF387N3KrNmDqecrhISdHB7XJriNIeq5QKahFsrIVLMKPK7RLYakIqMBzkQB41A
+         sxviR+Lmzm9vdbn+B6c7hDKuu93wFrc9uV5nf+jlTryjuRXdpIgzB2JW4mEi6H9kKXgP
+         VajQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUXGczp9mmMNtcWtw6LAEWC/rckRhY35oHqUy2vYNRkr4CpUpXNAvj31WtGNL+TaKjb8SrHaleE63Fxgmfx@vger.kernel.org
+X-Gm-Message-State: AOJu0YySup6rKQF/gpqDvQcmmIkcxQOq/F1M5f9mnGgZqBI37oNzmGdA
+	5RFCZFoNSOY20TlzTNx3nZrWCK0VHtF8rPtw5hKDugKiWunTJG0rhFwyn2MOW+d+qv8c9r9mO1S
+	JxD7QIIxuz3BvAwMocDO0m/luRRNYYxPYerD5Dxf+
+X-Gm-Gg: ASbGncsYIlIU8dMC3RHj21kLX2JO/KY6ZI4WEh0+2Y+TIiCIPub9w75ZM6dxtEqMbY1
+	4bUIDpIFTC9zOcrydS66UL7jgYIofw5IA//G+1+BLKkaLT73Ak1K1m/DFGzNaFHGy4vMzaMsO1I
+	iKMgZTqJ4ZDrE7eBwwNd6s9ompQu6h7WQQMgw2esVBwY5hLNARiKb+5GdKABBtBvV9fcYvK1zEs
+	Q0UPy2+2rj4JbB18g==
+X-Google-Smtp-Source: AGHT+IHtW2dnjAZbisWoax5mDslCTJ0tibAgoeGxJEVde+ImUinBOPTyITNYGZAcvnmQsIs+XXzFMCwatNRnWjAZUS0=
+X-Received: by 2002:a17:90b:3f90:b0:324:ff5a:38c7 with SMTP id
+ 98e67ed59e1d1-32515e4f4e3mr28437601a91.16.1756309100066; Wed, 27 Aug 2025
+ 08:38:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250825044046.GI39973@ZenIV> <20250825044355.1541941-1-viro@zeniv.linux.org.uk>
+ <20250825044355.1541941-25-viro@zeniv.linux.org.uk> <20250825-zugute-verkohlen-945073b3851f@brauner>
+ <20250825160939.GL39973@ZenIV> <20250826-kronleuchter-vortag-af3c087ae46a@brauner>
+ <20250826170044.GT39973@ZenIV> <20250826175501.GU39973@ZenIV> <20250826182124.GV39973@ZenIV>
+In-Reply-To: <20250826182124.GV39973@ZenIV>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 27 Aug 2025 11:38:07 -0400
+X-Gm-Features: Ac12FXwI_c9yQVliIi4jpN4iAYA38ukwD9hnjwkrY0xsL1nLzMdiDBBGXi7UHag
+Message-ID: <CAHC9VhQ9p3W79N5nFJFgoiogNH-zANi+65ydYXhZikMPEvqKkQ@mail.gmail.com>
+Subject: Re: [RFC][PATCH] switch do_new_mount_fc() to using fc_mount()
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-fsdevel@vger.kernel.org, 
+	jack@suse.cz, Christian Brauner <brauner@kernel.org>, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Pasha,
-
-On Thu, Aug 07 2025, Pasha Tatashin wrote:
-
-> Currently, a file descriptor registered for preservation via the remains
-> globally registered with LUO until it is explicitly unregistered. This
-> creates a potential for resource leaks into the next kernel if the
-> userspace agent crashes or exits without proper cleanup before a live
-> update is fully initiated.
+On Tue, Aug 26, 2025 at 2:21=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> w=
+rote:
 >
-> This patch ties the lifetime of FD preservation requests to the lifetime
-> of the open file descriptor for /dev/liveupdate, creating an implicit
-> "session".
+> [
+> This is on top of -rc3; if nobody objects, I'll insert that early in seri=
+es
+> in viro/vfs.git#work.mount.  It has an impact for LSM folks - ->sb_kern_m=
+ount()
+> would be called without ->s_umount; nothing in-tree cares, but if you hav=
+e
+> objections, yell now.
+> ]
+
+Thanks for the heads-up, I'm not aware of anyone currently
+posting/working-on patches that would be dependent on this.
+
+> Prior to the call of do_new_mount_fc() the caller has just done successfu=
+l
+> vfs_get_tree().  Then do_new_mount_fc() does several checks on resulting
+> superblock, and either does fc_drop_locked() and returns an error or
+> proceeds to unlock the superblock and call vfs_create_mount().
 >
-> When the /dev/liveupdate file descriptor is closed (either explicitly
-> via close() or implicitly on process exit/crash), the .release
-> handler, luo_release(), is now called. This handler invokes the new
-> function luo_unregister_all_files(), which iterates through all FDs
-> that were preserved through that session and unregisters them.
-
-Why special case files here? Shouldn't you undo all the serialization
-done for all the subsystems?
-
-Anyway, this is buggy. I found this when testing the memfd patches. If
-you preserve a memfd and close the /dev/liveupdate FD before reboot,
-luo_unregister_all_files() calls the cancel callback, which calls
-kho_unpreserve_folio(). But kho_unpreserve_folio() fails because KHO is
-still in finalized state. This doesn't happen when cancelling explicitly
-because luo_cancel() calls kho_abort().
-
-I think you should just make the release go through the cancel flow,
-since the operation is essentially a cancel anyway. There are subtle
-differences here though, since the release might be called before
-prepare, so we need to be careful of that.
-
-
+> The thing is, there's no reason to delay that unlock + vfs_create_mount()=
+ -
+> the tests do not rely upon the state of ->s_umount and
+>         fc_drop_locked()
+>         put_fs_context()
+> is equivalent to
+>         unlock ->s_umount
+>         put_fs_context()
 >
-> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-> ---
->  kernel/liveupdate/luo_files.c    | 19 +++++++++++++++++++
->  kernel/liveupdate/luo_internal.h |  1 +
->  kernel/liveupdate/luo_ioctl.c    |  1 +
->  3 files changed, 21 insertions(+)
+> Doing vfs_create_mount() before the checks allows us to move vfs_get_tree=
+()
+> from caller to do_new_mount_fc() and collapse it with vfs_create_mount()
+> into an fc_mount() call.
 >
-> diff --git a/kernel/liveupdate/luo_files.c b/kernel/liveupdate/luo_files.c
-> index 33577c9e9a64..63f8b086b785 100644
-> --- a/kernel/liveupdate/luo_files.c
-> +++ b/kernel/liveupdate/luo_files.c
-> @@ -721,6 +721,25 @@ int luo_unregister_file(u64 token)
->  	return ret;
->  }
->  
-> +/**
-> + * luo_unregister_all_files - Unpreserve all currently registered files.
-> + *
-> + * Iterates through all file descriptors currently registered for preservation
-> + * and unregisters them, freeing all associated resources. This is typically
-> + * called when LUO agent exits.
-> + */
-> +void luo_unregister_all_files(void)
-> +{
-> +	struct luo_file *luo_file;
-> +	unsigned long token;
-> +
-> +	luo_state_read_enter();
-> +	xa_for_each(&luo_files_xa_out, token, luo_file)
-> +		__luo_unregister_file(token);
-> +	luo_state_read_exit();
-> +	WARN_ON_ONCE(atomic64_read(&luo_files_count) != 0);
-> +}
-> +
->  /**
->   * luo_retrieve_file - Find a registered file instance by its token.
->   * @token: The unique token of the file instance to retrieve.
-> diff --git a/kernel/liveupdate/luo_internal.h b/kernel/liveupdate/luo_internal.h
-> index 5692196fd425..189e032d7738 100644
-> --- a/kernel/liveupdate/luo_internal.h
-> +++ b/kernel/liveupdate/luo_internal.h
-> @@ -37,5 +37,6 @@ void luo_do_subsystems_cancel_calls(void);
->  int luo_retrieve_file(u64 token, struct file **filep);
->  int luo_register_file(u64 token, int fd);
->  int luo_unregister_file(u64 token);
-> +void luo_unregister_all_files(void);
->  
->  #endif /* _LINUX_LUO_INTERNAL_H */
-> diff --git a/kernel/liveupdate/luo_ioctl.c b/kernel/liveupdate/luo_ioctl.c
-> index 6f61569c94e8..7ca33d1c868f 100644
-> --- a/kernel/liveupdate/luo_ioctl.c
-> +++ b/kernel/liveupdate/luo_ioctl.c
-> @@ -137,6 +137,7 @@ static int luo_open(struct inode *inodep, struct file *filep)
->  
->  static int luo_release(struct inode *inodep, struct file *filep)
->  {
-> +	luo_unregister_all_files();
->  	atomic_set(&luo_device_in_use, 0);
->  
->  	return 0;
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 
--- 
-Regards,
-Pratyush Yadav
+--=20
+paul-moore.com
 
