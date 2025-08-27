@@ -1,237 +1,284 @@
-Return-Path: <linux-fsdevel+bounces-59379-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59381-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF104B384B1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 16:15:27 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4B18B384C4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 16:19:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEE231B613C3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 14:15:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 87A364E3067
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 14:19:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99ACC35FC0C;
-	Wed, 27 Aug 2025 14:13:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09A9B356918;
+	Wed, 27 Aug 2025 14:19:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="Go4c14Gu"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GKQbhntY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D88AD35AAA0
-	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Aug 2025 14:13:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965622820C6;
+	Wed, 27 Aug 2025 14:19:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756304010; cv=none; b=gwIHl8v+wn2I3myhlkdN1azzHUBtlzmJaBdHPfQOOs+GZg7T2ed3SAMzm33bNf+Hsu2IWfeiI8gA6919ZuGipZf5dzhsPwBrrV9W4OFEV8b3DR40JWpgf8Lgae4HWKy2Uqu2GULIUZDrYHbZRAIlcdAsvVKbzrstQ3M0GZF7wAQ=
+	t=1756304346; cv=none; b=cFfvYCpieXgmqZdAO5xHZvOngfuUOKNbsgeTnACFWm7vyDo++z9KJzeW6qteY+WWldUlPFbshUmjrTpHhHZKW/Bs72085opnX+I2sGaf5SGNiSQumxC4mUqWGpYH3n3Le03IKkDGp2f5t28OgsGF5GgPt4U/XlkA06AW3WIlXlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756304010; c=relaxed/simple;
-	bh=bcUEMpPiHt7VvaFkp8lNnO1waUmVMZJHfle1D1FOeE4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TZL9fwqhPNAQ9dNgPsIBqi7xi5pT46kb54ZXcAYvszPEnNRQb6cQEBYhZOISXkdTM8EKAX/PiR9uuC6ksr6ns/gGin6pw/NC2sx598totD9PYUhgf15BGOfl1gUoG4/JuzxIejfzQECDYAy7cW0vlCoulPZRVXqgwuPhe4K0ZPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=Go4c14Gu; arc=none smtp.client-ip=67.231.145.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 57R8gjBU1314737
-	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Aug 2025 07:13:25 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=s2048-2025-q2;
-	 bh=RByCczx/7FpRpdRDsHohLgIVxF5gNPvGUZQEW/OSmVs=; b=Go4c14GuDauN
-	lpkXi9njME3o1Pe4J9B17SBQCtGoJ/06GNmJvbA5Bhe/Lw4jSrIhNYxqekOwMcNa
-	/nR5PMYNeTpCuI4XxQ2XsBigaEGUC374gxcpAfP9ATFX+UDMfjYqcvqiVCjThmZg
-	a3mOfRPUUu6Dl3qX3YJl98Ev4whypz8QtQzh/K8fly6G7UmKqHgQuW10KrL46Am9
-	2cKcmR8ngQvmvNocxK8KQ9hChn1+UOQQQSA6uE6rMFnMhyKLmckLZADCZArh0yx6
-	fsfK51qktDyVzQvKtx7iyt3RVXC/+oottbe4gd/nbL8L2JeXjKMixjXPPa9NC5gr
-	cRjNYkV4/A==
-Received: from mail.thefacebook.com ([163.114.134.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 48sxrdhpky-6
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Aug 2025 07:13:25 -0700 (PDT)
-Received: from twshared7571.34.frc3.facebook.com (2620:10d:c085:108::150d) by
- mail.thefacebook.com (2620:10d:c08b:78::c78f) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.17; Wed, 27 Aug 2025 14:13:15 +0000
-Received: by devbig197.nha3.facebook.com (Postfix, from userid 544533)
-	id F25E210CF62B; Wed, 27 Aug 2025 07:13:03 -0700 (PDT)
-From: Keith Busch <kbusch@meta.com>
-To: <linux-block@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
-CC: <linux-xfs@vger.kernel.org>, <linux-ext4@vger.kernel.org>, <hch@lst.de>,
-        <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>,
-        Hannes Reinecke
-	<hare@suse.de>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCHv4 8/8] iov_iter: remove iov_iter_is_aligned
-Date: Wed, 27 Aug 2025 07:12:58 -0700
-Message-ID: <20250827141258.63501-9-kbusch@meta.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250827141258.63501-1-kbusch@meta.com>
-References: <20250827141258.63501-1-kbusch@meta.com>
+	s=arc-20240116; t=1756304346; c=relaxed/simple;
+	bh=PW1ZKXH0rYhUpslBdMf+J7nnkIKBzWdKO+KYXBhA7to=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bBvipZ1oXnfJAdANR8znlkzzfJYODSud/iixAg1ym9iWVyr26gsh4bpCqEHORFzS1FXHVDxbVLCxM/2C4dh3eqByNL5ssz6BiO53b9y+NPcgfLUj8HpDNMVDxo3Yoq/0wH/TY8n5UK/DknXld8Vg2QuSbJXo60SnO89FAntbL3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GKQbhntY; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45a1b0bd237so52060035e9.2;
+        Wed, 27 Aug 2025 07:19:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756304343; x=1756909143; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Eq9YmfRM9uuzsM4UJKn72gQyBjMQ1eflfSGbvXdA420=;
+        b=GKQbhntYOkzYpEfiNpJYQPv+RBH/YVJEq/ZE07hMstMQL9XBUDblV3Bo+O3+HpqYxz
+         lON0bJHu/3phrqNwsIVgDpOlxEVaQjprgtI1zy4IfGXUWM7xQuwOVVdlwQA/T3DKS6gl
+         UUbAiQMRzFbaL59oeAlutzV9rp0lrApP+3DLeV/7QQSB37wtopMXj7gExRjKRq6TcFYC
+         Y4b3ktJwRpNrK4QbWjiS3JfXGwxr1uqbseiV01roMjwoFAz+JV3yKohh75vJCJBQQbql
+         i13UCPdPlAQTTLzRcDwPsTWttDQYsX2VM6WjvMu9Iw8IXg0uqec9VxXearf/lBjoN/l2
+         9RBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756304343; x=1756909143;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Eq9YmfRM9uuzsM4UJKn72gQyBjMQ1eflfSGbvXdA420=;
+        b=ZS4ywF/NtGffkA2BJOGzPle5pK7K9FGN6Vk4lHzc2/V1mUDOZVppkXG4oNTRFsDc+E
+         eUk0FZRT+orlx704/TuUcNLdVrWKO3Lrb+CWPzd0XQ4aoikbCLuJnKB0lL4BBfi61JPN
+         oGFrf8/d8HAQY/eGjenHh+gzlMzx3J57+EHlFaFcN7btkmabdq4kcyQTn+hbOSQHGCRK
+         E6qKCMRSI+qdge1sc3QZkyMIcciIlcoP1/DlzJF8zd+Gby39bslXHD9sJJaAYUdo6Ols
+         IYtEFDL1MJLm/d1L3Ue3r0RVnfSK7rKpcvU//RXOD5CILOMRSYVArWifpcGjDGAPWV9r
+         j9JQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWulQNSWDayweMySfX68mVTgjQ9+MXEfSOrpPqqM+qUer0eNvipvwAqrfCs57GsRc5YggAa5CyhxQS9gA==@vger.kernel.org, AJvYcCXOTZo58XMEQ1+c1C+e6aBzxqAauYnrAUCBfBYQFFD0pTKy8weO3kaxp6Es0fQYGtAL3m2hBt039GI8aw==@vger.kernel.org, AJvYcCXi4waCixC824Xsr2ZhU4PdrulHo9cCyoW1u4uTX805sKZoxZTZl4YM3uU8ZuTXeOrHHTK+CdzGg6U3@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBLWLkci7QjzJylp1LZPN8SeFSswB69HzJ+ohmPUmsO/86pr+8
+	gHkc4ltVgPSlHYKqCJRrly2QPn3UsQ7NfUaJR3ozYx9a/+fSzgpr3DMs
+X-Gm-Gg: ASbGncugNeu8swvxCgMrOLKOS1niBIy+oJ0lfMnfKPU0M1GxZH1PGdw++pNjQaZtkmk
+	nS8lANauHpqjLZOTLsktzwztKpOfcrDgQW1csjHZEQDDUrFz1QBFpQqgOk3uCN/RKKTp13/8s6r
+	gzoj5FevRUB1DbLfg8YpY7wLJrP/hXljWiep2E+hLgcq/ujOqB+4bDeAGheu3p8/aFTUVHblJTu
+	GvKqTem2Dkc2ezyaGACKZU9IG6Q6RkcPnd1PUm8LIFm15PyVnu/HSpls5dV/i0mXVKNa/pMhRzK
+	TjaEAtv3R69lHrtVvDSWNbL8j2+0K8SSc9ICeITU+3KLQjE+j69afwmgh0osK26P4B3eaeePLNK
+	MvS2UqeibNccAl2dHjenVT20M56JtBnmLaLk=
+X-Google-Smtp-Source: AGHT+IE0gR/fkJ/N4kuE1Yrp9oBmyGnJ0IW4DftNNxQs2eJrjJm/YsAo/Vm1wbR+G1zI5NRJoKdH3g==
+X-Received: by 2002:a05:600c:4fcd:b0:45b:47e1:f5fe with SMTP id 5b1f17b1804b1-45b517db94dmr142000005e9.34.1756304342701;
+        Wed, 27 Aug 2025 07:19:02 -0700 (PDT)
+Received: from f (cst-prg-2-200.cust.vodafone.cz. [46.135.2.200])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6f2eb7c5sm34801285e9.23.2025.08.27.07.19.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Aug 2025 07:19:02 -0700 (PDT)
+Date: Wed, 27 Aug 2025 16:18:55 +0200
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org, 
+	kernel-team@fb.com, linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	brauner@kernel.org, viro@zeniv.linux.org.uk, amir73il@gmail.com
+Subject: Re: [PATCH v2 03/54] fs: rework iput logic
+Message-ID: <n6z2jkdgmgm2xfxc7y3a2a7psnkeboziffkt6bjoggrff4dlxe@vpsyl3ky6w6v>
+References: <cover.1756222464.git.josef@toxicpanda.com>
+ <be208b89bdb650202e712ce2bcfc407ac7044c7a.1756222464.git.josef@toxicpanda.com>
+ <rrgn345nemz5xeatbrsggnybqech74ogub47d6au45mrmgch4d@jqzorhulkvre>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-GUID: jKQzHRzlZCQUtWS6VBAIF833ENtw3tRF
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI3MDEyMSBTYWx0ZWRfX+OhjqodyU5uC
- 63p0OnL5uYeQSJ6ZjEyGJG3cJKzdRSdTtLqWc9iBgeUFzbq09UdeQpMaoMH7evu/6WaFLJWZ0l8
- h8UgCWgCoK+QUTmjfivtbx1YaEvyCenf6012Mt16c4Qzkjy9Wgv/74W20c0okUGnD0Dr41koTKh
- vtM3LcQYo4MqwvRTHX3P5ULf9ykjO41/jLyQidzR25+Nv9jM18EvFuhTsc3QjUGcr/huQUaAOYa
- U36ZbqD6ZMqRB1yweokrVvJhBcZv/hD4BXjlovlhDxy1Iy926fOCE4JQ5ehtlLUUJnNsD9l7XgP
- AkgC8zzDC8pmBMtqo2GXdkke04sXZVfbow2t/1BBdC9OEkfrdaLBFyr6GQOYZM=
-X-Authority-Analysis: v=2.4 cv=XuX6OUF9 c=1 sm=1 tr=0 ts=68af1285 cx=c_pps
- a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17
- a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8 a=S-mNSWGAXQVMvOK0xjcA:9
-X-Proofpoint-ORIG-GUID: jKQzHRzlZCQUtWS6VBAIF833ENtw3tRF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-27_03,2025-08-26_01,2025-03-28_01
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <rrgn345nemz5xeatbrsggnybqech74ogub47d6au45mrmgch4d@jqzorhulkvre>
 
-From: Keith Busch <kbusch@kernel.org>
+On Wed, Aug 27, 2025 at 02:58:51PM +0200, Mateusz Guzik wrote:
+> On Tue, Aug 26, 2025 at 11:39:03AM -0400, Josef Bacik wrote:
+> > Currently, if we are the last iput, and we have the I_DIRTY_TIME bit
+> > set, we will grab a reference on the inode again and then mark it dirty
+> > and then redo the put.  This is to make sure we delay the time update
+> > for as long as possible.
+> > 
+> > We can rework this logic to simply dec i_count if it is not 1, and if it
+> > is do the time update while still holding the i_count reference.
+> > 
+> > Then we can replace the atomic_dec_and_lock with locking the ->i_lock
+> > and doing atomic_dec_and_test, since we did the atomic_add_unless above.
+> > 
+> > Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+> > ---
+> >  fs/inode.c | 23 ++++++++++++++---------
+> >  1 file changed, 14 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/fs/inode.c b/fs/inode.c
+> > index a3673e1ed157..13e80b434323 100644
+> > --- a/fs/inode.c
+> > +++ b/fs/inode.c
+> > @@ -1911,16 +1911,21 @@ void iput(struct inode *inode)
+> >  	if (!inode)
+> >  		return;
+> >  	BUG_ON(inode->i_state & I_CLEAR);
+> > -retry:
+> > -	if (atomic_dec_and_lock(&inode->i_count, &inode->i_lock)) {
+> > -		if (inode->i_nlink && (inode->i_state & I_DIRTY_TIME)) {
+> > -			atomic_inc(&inode->i_count);
+> > -			spin_unlock(&inode->i_lock);
+> > -			trace_writeback_lazytime_iput(inode);
+> > -			mark_inode_dirty_sync(inode);
+> > -			goto retry;
+> > -		}
+> > +
+> > +	if (atomic_add_unless(&inode->i_count, -1, 1))
+> > +		return;
+> > +
+> > +	if (inode->i_nlink && (inode->i_state & I_DIRTY_TIME)) {
+> > +		trace_writeback_lazytime_iput(inode);
+> > +		mark_inode_dirty_sync(inode);
+> > +	}
+> > +
+> > +	spin_lock(&inode->i_lock);
+> > +	if (atomic_dec_and_test(&inode->i_count)) {
+> > +		/* iput_final() drops i_lock */
+> >  		iput_final(inode);
+> > +	} else {
+> > +		spin_unlock(&inode->i_lock);
+> >  	}
+> >  }
+> >  EXPORT_SYMBOL(iput);
+> > -- 
+> > 2.49.0
+> > 
+> 
+> This changes semantics though.
+> 
+> In the stock kernel the I_DIRTY_TIME business is guaranteed to be sorted
+> out before the call to iput_final().
+> 
+> In principle the flag may reappear after mark_inode_dirty_sync() returns
+> and before the retried atomic_dec_and_lock succeeds, in which case it
+> will get cleared again.
+> 
+> With your change the flag is only handled once and should it reappear
+> before you take the ->i_lock, it will stay there.
+> 
+> I agree the stock handling is pretty crap though.
+> 
+> Your change should test the flag again after taking the spin lock but
+> before messing with the refcount and if need be unlock + retry.
+> 
+> I would not hurt to assert in iput_final that the spin lock held and
+> that this flag is not set.
+> 
+> Here is my diff to your diff to illustrate + a cosmetic change, not even
+> compile-tested:
+> 
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 421e248b690f..a9ae0c790b5d 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -1911,7 +1911,7 @@ void iput(struct inode *inode)
+>  	if (!inode)
+>  		return;
+>  	BUG_ON(inode->i_state & I_CLEAR);
+> -
+> +retry:
+>  	if (atomic_add_unless(&inode->i_count, -1, 1))
+>  		return;
+>  
+> @@ -1921,12 +1921,19 @@ void iput(struct inode *inode)
+>  	}
+>  
+>  	spin_lock(&inode->i_lock);
+> +
+> +	if (inode->i_count == 1 && inode->i_nlink && (inode->i_state & I_DIRTY_TIME)) {
+> +		spin_unlock(&inode->i_lock);
+> +		goto retry;
+> +	}
+> +
+>  	if (atomic_dec_and_test(&inode->i_count)) {
+> -		/* iput_final() drops i_lock */
+> -		iput_final(inode);
+> -	} else {
+>  		spin_unlock(&inode->i_lock);
+> +		return;
+>  	}
+> +
+> +	/* iput_final() drops i_lock */
+> +	iput_final(inode);
+>  }
+>  EXPORT_SYMBOL(iput);
+>  
 
-No more callers.
+Sorry for spam, but the more I look at this the more fucky the entire
+ordeal appears to me.
 
-Signed-off-by: Keith Busch <kbusch@kernel.org>
-Reviewed-by: Hannes Reinecke <hare@suse.de>
-Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
----
- include/linux/uio.h |  2 -
- lib/iov_iter.c      | 95 ---------------------------------------------
- 2 files changed, 97 deletions(-)
+Before I get to the crux, as a side note I did a quick check if atomics
+for i_count make any sense to begin with and I think they do, here is a
+sample output from a friend tracing the ref value on iput:
 
-diff --git a/include/linux/uio.h b/include/linux/uio.h
-index 2e86c653186c6..5b127043a1519 100644
---- a/include/linux/uio.h
-+++ b/include/linux/uio.h
-@@ -286,8 +286,6 @@ size_t _copy_mc_to_iter(const void *addr, size_t byte=
-s, struct iov_iter *i);
- #endif
-=20
- size_t iov_iter_zero(size_t bytes, struct iov_iter *);
--bool iov_iter_is_aligned(const struct iov_iter *i, unsigned addr_mask,
--			unsigned len_mask);
- unsigned long iov_iter_alignment(const struct iov_iter *i);
- unsigned long iov_iter_gap_alignment(const struct iov_iter *i);
- void iov_iter_init(struct iov_iter *i, unsigned int direction, const str=
-uct iovec *iov,
-diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index f9193f952f499..2fe66a6b8789e 100644
---- a/lib/iov_iter.c
-+++ b/lib/iov_iter.c
-@@ -784,101 +784,6 @@ void iov_iter_discard(struct iov_iter *i, unsigned =
-int direction, size_t count)
- }
- EXPORT_SYMBOL(iov_iter_discard);
-=20
--static bool iov_iter_aligned_iovec(const struct iov_iter *i, unsigned ad=
-dr_mask,
--				   unsigned len_mask)
--{
--	const struct iovec *iov =3D iter_iov(i);
--	size_t size =3D i->count;
--	size_t skip =3D i->iov_offset;
--
--	do {
--		size_t len =3D iov->iov_len - skip;
--
--		if (len > size)
--			len =3D size;
--		if (len & len_mask)
--			return false;
--		if ((unsigned long)(iov->iov_base + skip) & addr_mask)
--			return false;
--
--		iov++;
--		size -=3D len;
--		skip =3D 0;
--	} while (size);
--
--	return true;
--}
--
--static bool iov_iter_aligned_bvec(const struct iov_iter *i, unsigned add=
-r_mask,
--				  unsigned len_mask)
--{
--	const struct bio_vec *bvec =3D i->bvec;
--	unsigned skip =3D i->iov_offset;
--	size_t size =3D i->count;
--
--	do {
--		size_t len =3D bvec->bv_len - skip;
--
--		if (len > size)
--			len =3D size;
--		if (len & len_mask)
--			return false;
--		if ((unsigned long)(bvec->bv_offset + skip) & addr_mask)
--			return false;
--
--		bvec++;
--		size -=3D len;
--		skip =3D 0;
--	} while (size);
--
--	return true;
--}
--
--/**
-- * iov_iter_is_aligned() - Check if the addresses and lengths of each se=
-gments
-- * 	are aligned to the parameters.
-- *
-- * @i: &struct iov_iter to restore
-- * @addr_mask: bit mask to check against the iov element's addresses
-- * @len_mask: bit mask to check against the iov element's lengths
-- *
-- * Return: false if any addresses or lengths intersect with the provided=
- masks
-- */
--bool iov_iter_is_aligned(const struct iov_iter *i, unsigned addr_mask,
--			 unsigned len_mask)
--{
--	if (likely(iter_is_ubuf(i))) {
--		if (i->count & len_mask)
--			return false;
--		if ((unsigned long)(i->ubuf + i->iov_offset) & addr_mask)
--			return false;
--		return true;
--	}
--
--	if (likely(iter_is_iovec(i) || iov_iter_is_kvec(i)))
--		return iov_iter_aligned_iovec(i, addr_mask, len_mask);
--
--	if (iov_iter_is_bvec(i))
--		return iov_iter_aligned_bvec(i, addr_mask, len_mask);
--
--	/* With both xarray and folioq types, we're dealing with whole folios. =
-*/
--	if (iov_iter_is_xarray(i)) {
--		if (i->count & len_mask)
--			return false;
--		if ((i->xarray_start + i->iov_offset) & addr_mask)
--			return false;
--	}
--	if (iov_iter_is_folioq(i)) {
--		if (i->count & len_mask)
--			return false;
--		if (i->iov_offset & addr_mask)
--			return false;
--	}
--
--	return true;
--}
--EXPORT_SYMBOL_GPL(iov_iter_is_aligned);
--
- static unsigned long iov_iter_alignment_iovec(const struct iov_iter *i)
- {
- 	const struct iovec *iov =3D iter_iov(i);
---=20
-2.47.3
+bpftrace -e 'kprobe:iput /arg0 != 0/ { @[((struct inode *)arg0)->i_count.counter] = count(); }'
 
+@[5]: 66
+@[4]: 4625
+@[3]: 11086
+@[2]: 30937
+@[1]: 151785
+
+... so plenty of non-last refs after all.
+
+I completely agree the mandatory ref trip to handle I_DIRTY_TIME is lame
+and needs to be addressed.
+
+But I'm uneasy about maintaining the invariant that iput_final() does
+not see the flag if i_nlink != 0 and my proposal as pasted is dodgy af
+on this front.
+
+While here some nits:
+1. it makes sense to try mere atomics just in case someone else messed
+with the count between handling of the dirty flag and taking the spin lock
+2. according to my quick test with bpftrace the I_DIRTY_TIME flag is
+seen way less frequently than i_nlink != 0, so it makes sense to swap
+the order in which they are checked. Interested parties can try it out
+with:
+bpftrace -e 'kprobe:iput /arg0 != 0/ { @[((struct inode *)arg0)->i_nlink != 0, ((struct inode *)arg0)->i_state & (1 << 11)] = count(); }'
+3. touch up the iput_final() unlock comment
+
+All that said, how about something like the thing below as the final
+routine building off of your change. I can't submit a proper patch and
+can't even compile-test. I don't need any credit should this get
+grabbed.
+
+void iput(struct inode *inode)
+{
+        if (!inode)
+                return;
+        BUG_ON(inode->i_state & I_CLEAR);
+retry:
+        if (atomic_add_unless(&inode->i_count, -1, 1))
+                return;
+
+        if ((inode->i_state & I_DIRTY_TIME) && inode->i_nlink) {
+                trace_writeback_lazytime_iput(inode);
+                mark_inode_dirty_sync(inode);
+                goto retry;
+        }
+
+        spin_lock(&inode->i_lock);
+        if ((inode->i_state & I_DIRTY_TIME) && inode->i_nlink) {
+                spin_unlock(&inode->i_lock);
+                goto retry;
+        }
+
+        if (!atomic_dec_and_test(&inode->i_count)) {
+                spin_unlock(&inode->i_lock);
+                return;
+        }
+
+        /*
+         * iput_final() drops ->i_lock, we can't assert on it as the inode may
+         * be deallocated by the time it returns
+         */
+        iput_final(inode);
+}
 
