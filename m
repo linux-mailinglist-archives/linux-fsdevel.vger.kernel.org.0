@@ -1,91 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-59404-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59405-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0FA6B38765
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 18:09:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91C1DB38775
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 18:10:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6559B3B1F43
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 16:08:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3366B17F1DF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 16:10:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2800343D7D;
-	Wed, 27 Aug 2025 16:08:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECE77345732;
+	Wed, 27 Aug 2025 16:09:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda.com header.i=@toxicpanda.com header.b="HHL+i8Qb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n5lLe0Ex"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C7BD304BBF
-	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Aug 2025 16:08:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E935335BBB;
+	Wed, 27 Aug 2025 16:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756310928; cv=none; b=dfzvp1sfyMgADRpkMJNNWSywkZhgr3c5PuvI3RZSrtVY5c5h16yFQ0bvWTNQHpr0vkB6QuQavanP0dcQvC3eXa5SQifsjergyisuR44tLvcVevqWm+erFh8/OMHBtByqbtNyw5UcHJAy3Lg+wxnRl64kI22sPClrV65E+JgE3CU=
+	t=1756310971; cv=none; b=Yylw7d6Ma1Bs7ijqOH5Wxw59KYDo35RSOW0+tfrPrs0FRnDawmcENhRQT8wx1bQE4LHxiKstW5wiVGtJ8rVXrRTvrmTUJp0amMve3ZyF3LLBz2JtPjXCMIhf6VZthJSAxYCl5b1SHM5fg1ZvrXlrwglsGe797WO3LsRMQw7CJ60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756310928; c=relaxed/simple;
-	bh=1J49svBdPM1VsPk/B72U0p4aTK9KkUwye6nSh+AaCGs=;
+	s=arc-20240116; t=1756310971; c=relaxed/simple;
+	bh=3nnatlP1fBqIs79HM6dGWG8y2mvb98rMjnvORo80/yw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hN1HtndAMbYnTYvAvsG1zpvJpz7Tt2Ql20XM2lapof+pkoeADG2VW0KVfN0usRqdv8Fn2myYppC+SzzWQHmGYc+CRRBWvcFIw0D/fQSvW++yAKio/g7ZPhlKIyQa9efL5xQ8KRFEueiDNlbzTd9LUT9/bvBp7/X2v6iLSj1jQzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=pass smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda.com header.i=@toxicpanda.com header.b=HHL+i8Qb; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=toxicpanda.com
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e953dca529dso3775994276.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Aug 2025 09:08:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda.com; s=google; t=1756310925; x=1756915725; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=F8MBCOALyLW29tRaKLBmkUdjU0e3m81ua8qM6QlxUc0=;
-        b=HHL+i8Qb7TjRo63pGyUAf/QBI3i8b+LbB5ClIfySonbFJLPphyvz6fbpxfI+4XTmvi
-         x/HeVAhiJhGSd+lkAihoEOLEBMVa8qn6iuywEC7eaeZOxz5EXgHv/rLSvs1RvENrv1Af
-         xUMjIK2b1i02uyJFNniB9wlv63A2IMOG+5RoZ0k66RoUiZj0B9uXRf5sUHOKZ0iLGiuK
-         pRQVc7EIvcW2q2nL+W1eZ6qPvKpYY/iC+zJVEJzSlIO+ogcbgSxtSKO+MO1tGHq/iXUs
-         akyUEI1PxTccrbNO/QQtRqJhGKZCdGb5bf+FGSsD0rITcQV+TPtqkKNBcj/cd0BLEax3
-         FRSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756310925; x=1756915725;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F8MBCOALyLW29tRaKLBmkUdjU0e3m81ua8qM6QlxUc0=;
-        b=Tkxl8iE+aMCRhApdQQzypX93lJmnT5qOAB8XlfbKOvmcDvg/ZdNSd5bQ5vYPqxrH/S
-         BmwJwmoXiQRMoQa/ugqlXM0Mv/ih1MBlxCRLwUvPh3T/QPcDG7SbtXGuxRGEbbKRT5n+
-         5La/+eK5Bp/IEgvxxa0fKSk5j7Av61tqMEqk9XacJ7d7xc6q1pD942rTJLE5jQ8tXbgr
-         Nn37n1g/i5aLt7JJOAXGsnkukoy1ADUsFltT3fauBsYbiJPrg4Aqjq2+CJ+Pk8H4/vI+
-         cfcmvNUwhwu9qbjzyEUZMQtSJAq3IjllFOu78MQ6uEA6dbZFjQI3zcp6TOSvSRu6KSSe
-         m5+g==
-X-Gm-Message-State: AOJu0YwlZv3LhMlDjiB+w8r6zaMNY/SbfOZNv7t/rLEPMW7+Z1JXavpy
-	CTBQRXf8QlTRfPcjEKBWxyxcHJx9+Cq+jVvRE8XVEHHY6bQxar73hTMZuWFcBOXogTH0HfKaNLN
-	lpV30
-X-Gm-Gg: ASbGnctezc8MBRiFsack1tmpR6b6eWAtP/7FVQ4HYCXx7PWUF3Gh/0It+loZpIaHpWN
-	6Ab6PN7dQRif7sg4Cuna+4xG0B2wvKXqBSaA0jjTwRHbp1E48NrJg3bHRqf1ntCBH+J6NqiSBpl
-	EcX9JlqDPy8YDDkmyTKJFyf2vsrUk4i9NNQN0XhHZYX+Vvt6+LzW5cqMmxRx4bBXqvWuQs/a3A8
-	sxlI6N93+exNG9BlJMK3W8sDWQjWvPKz24VErys4JjgQmyJuLUG79UFvUdxpFIhheQSStRjYdpe
-	xzyF6VkeyE4Jw+kuDmhveqxqtsr/bKLiPNPigQrvgKCvjx64DjpT+1mJrbp0K5eN2L5Tr/zXB3p
-	hb4ShFXqwlHuAML0PUZSat1MNXfPvmLcp8TvLDmJUU+InI7NNRKsPHlNavO8k2J/gFGzZSk6O1l
-	1xJQmd
-X-Google-Smtp-Source: AGHT+IE9MI02/EGLcEuj8RLfzQi94HthTqFKcq8Wp5g4r4kb41qy9Cy6X8/9v/mHfADNFNYHinugpA==
-X-Received: by 2002:a05:6902:e0b:b0:e94:f463:884d with SMTP id 3f1490d57ef6-e951c3ff649mr20553107276.45.1756310925213;
-        Wed, 27 Aug 2025 09:08:45 -0700 (PDT)
-Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e952c358cf8sm4133687276.23.2025.08.27.09.08.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 09:08:44 -0700 (PDT)
-Date: Wed, 27 Aug 2025 12:08:43 -0400
-From: Josef Bacik <josef@toxicpanda.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	kernel-team@fb.com, linux-ext4@vger.kernel.org,
-	linux-xfs@vger.kernel.org, viro@zeniv.linux.org.uk,
-	amir73il@gmail.com
-Subject: Re: [PATCH v2 17/54] fs: remove the inode from the LRU list on
- unlink/rmdir
-Message-ID: <20250827160843.GB2272053@perftesting>
-References: <cover.1756222464.git.josef@toxicpanda.com>
- <3552943716349efa4ff107bb590ac6b980183735.1756222465.git.josef@toxicpanda.com>
- <20250827-bratkartoffeln-weltschmerz-fc60227f43e7@brauner>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iAs5GSR9mAUDs7hYZbEJYauwrpfzu1Cp36e3Yr2i5OCJ9UaFvUU6lhWEUPCRRIjnpJFmDJ+QQy3cRY7QHZbiSxNnvbk3EF+0gWqsr+iqqYNoEDC8l97/01ruJ2KqLpyJUCig7DDWG52KupJWoBhzZlyCBEEa22YIZNmbrMn81tU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n5lLe0Ex; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C9A3C4CEEB;
+	Wed, 27 Aug 2025 16:09:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756310970;
+	bh=3nnatlP1fBqIs79HM6dGWG8y2mvb98rMjnvORo80/yw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n5lLe0ExCpNJcx9HD9+tHMs62ZPzPN3LolGxkVKXQbJnWWS+XfzG94xy9mOVxPclM
+	 HQqAMveFN9XExZ9p3AIDq5sozf2Mevy/+VgZCxtSXnT8dyZkUPdQeh3rcfaFPDDHT1
+	 7ibnZyK5damlUHv89OJckYLCakpe9guaEu4LhezAyhUbzAoMKc/LiBX9tKs8FjJvAz
+	 9kuKy4W92TU3RwtW2EdAwMyeGaDaAa3/EC+nzWHggFCfTPlV60caTOuJcKLUE0m2u1
+	 5U1U/9H6NeSG14yeaNvQF81XaoiqOODVhsJLWqSQ6inXoG2eFEw4vSQpgB82wSex/8
+	 tGDmSFT0+OMVw==
+Date: Wed, 27 Aug 2025 12:09:29 -0400
+From: Mike Snitzer <snitzer@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: Ritesh Harjani <ritesh.list@gmail.com>, Keith Busch <kbusch@kernel.org>,
+	Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-ext4@vger.kernel.org, axboe@kernel.dk, dw@davidwei.uk,
+	brauner@kernel.org, hch@lst.de, martin.petersen@oracle.com,
+	djwong@kernel.org, linux-xfs@vger.kernel.org,
+	viro@zeniv.linux.org.uk, Jan Kara <jack@suse.com>,
+	Brian Foster <bfoster@redhat.com>
+Subject: Re: [PATCHv3 0/8] direct-io: even more flexible io vectors
+Message-ID: <aK8tuTnuHbD8VOyo@kernel.org>
+References: <20250819164922.640964-1-kbusch@meta.com>
+ <87a53ra3mb.fsf@gmail.com>
+ <g35u5ugmyldqao7evqfeb3hfcbn3xddvpssawttqzljpigy7u4@k3hehh3grecq>
+ <aKx485EMthHfBWef@kbusch-mbp>
+ <87cy8ir835.fsf@gmail.com>
+ <ua7ib34kk5s6yfthqkgy3m2pnbk33a34g7prezmwl7hfwv6lwq@fljhjaogd6gq>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -94,37 +68,206 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250827-bratkartoffeln-weltschmerz-fc60227f43e7@brauner>
+In-Reply-To: <ua7ib34kk5s6yfthqkgy3m2pnbk33a34g7prezmwl7hfwv6lwq@fljhjaogd6gq>
 
-On Wed, Aug 27, 2025 at 02:32:49PM +0200, Christian Brauner wrote:
-> On Tue, Aug 26, 2025 at 11:39:17AM -0400, Josef Bacik wrote:
-> > We can end up with an inode on the LRU list or the cached list, then at
-> > some point in the future go to unlink that inode and then still have an
-> > elevated i_count reference for that inode because it is on one of these
-> > lists.
+Hi Jan,
+
+On Wed, Aug 27, 2025 at 05:20:53PM +0200, Jan Kara wrote:
+> On Tue 26-08-25 10:29:58, Ritesh Harjani wrote:
+> > Keith Busch <kbusch@kernel.org> writes:
 > > 
-> > The more common case is the cached list. We open a file, write to it,
-> > truncate some of it which triggers the inode_add_lru code in the
-> > pagecache, adding it to the cached LRU.  Then we unlink this inode, and
-> > it exists until writeback or reclaim kicks in and removes the inode.
+> > > On Mon, Aug 25, 2025 at 02:07:15PM +0200, Jan Kara wrote:
+> > >> On Fri 22-08-25 18:57:08, Ritesh Harjani wrote:
+> > >> > Keith Busch <kbusch@meta.com> writes:
+> > >> > >
+> > >> > >   - EXT4 falls back to buffered io for writes but not for reads.
+> > >> > 
+> > >> > ++linux-ext4 to get any historical context behind why the difference of
+> > >> > behaviour in reads v/s writes for EXT4 DIO. 
+> > >> 
+> > >> Hum, how did you test? Because in the basic testing I did (with vanilla
+> > >> kernel) I get EINVAL when doing unaligned DIO write in ext4... We should be
+> > >> falling back to buffered IO only if the underlying file itself does not
+> > >> support any kind of direct IO.
+> > >
+> > > Simple test case (dio-offset-test.c) below.
+> > >
+> > > I also ran this on vanilla kernel and got these results:
+> > >
+> > >   # mkfs.ext4 /dev/vda
+> > >   # mount /dev/vda /mnt/ext4/
+> > >   # make dio-offset-test
+> > >   # ./dio-offset-test /mnt/ext4/foobar
+> > >   write: Success
+> > >   read: Invalid argument
+> > >
+> > > I tracked the "write: Success" down to ext4's handling for the "special"
+> > > -ENOTBLK error after ext4_want_directio_fallback() returns "true".
+> > >
 > > 
-> > To handle this case, delete the inode from the LRU list when it is
-> > unlinked, so we have the best case scenario for immediately freeing the
-> > inode.
+> > Right. Ext4 has fallback only for dio writes but not for DIO reads... 
 > > 
-> > Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-> > ---
+> > buffered
+> > static inline bool ext4_want_directio_fallback(unsigned flags, ssize_t written)
+> > {
+> > 	/* must be a directio to fall back to buffered */
+> > 	if ((flags & (IOMAP_WRITE | IOMAP_DIRECT)) !=
+> > 		    (IOMAP_WRITE | IOMAP_DIRECT))
+> > 		return false;
+> > 
+> >     ...
+> > }
+> > 
+> > So basically the path is ext4_file_[read|write]_iter() -> iomap_dio_rw
+> >     -> iomap_dio_bio_iter() -> return -EINVAL. i.e. from...
+> > 
+> > 
+> > 	if ((pos | length) & (bdev_logical_block_size(iomap->bdev) - 1) ||
+> > 	    !bdev_iter_is_aligned(iomap->bdev, dio->submit.iter))
+> > 		return -EINVAL;
+> > 
+> > EXT4 then fallsback to buffered-io only for writes, but not for reads. 
 > 
-> I'm not too fond of this particular change I think it's really misplaced
-> and the correct place is indeed drop_nlink() and clear_nlink().
+> Right. And the fallback for writes was actually inadvertedly "added" by
+> commit bc264fea0f6f "iomap: support incremental iomap_iter advances". That
+> changed the error handling logic. Previously if iomap_dio_bio_iter()
+> returned EINVAL, it got propagated to userspace regardless of what
+> ->iomap_end() returned. After this commit if ->iomap_end() returns error
+> (which is ENOTBLK in ext4 case), it gets propagated to userspace instead of
+> the error returned by iomap_dio_bio_iter().
 > 
-> I'm pretty sure that the number of callers that hold i_lock around
-> drop_nlink() and clear_nlink() is relatively small. So it might just be
-> preferable to drop_nlink_locked() and clear_nlink_locked() and just
-> switch the few places over to it. I think you have tooling to give you a
-> preliminary glimpse what and how many callers do this...
+> Now both the old and new behavior make some sense so I won't argue that the
+> new iomap_iter() behavior is wrong. But I think we should change ext4 back
+> to the old behavior of failing unaligned dio writes instead of them falling
+> back to buffered IO. I think something like the attached patch should do
+> the trick - it makes unaligned dio writes fail again while writes to holes
+> of indirect-block mapped files still correctly fall back to buffered IO.
+> Once fstests run completes, I'll do a proper submission...
+> 
+> 
+> 								Honza
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
 
-Fair, I'll make the weird french guy figure it out.  Thanks,
+> From ce6da00a09647a03013c3f420c2e7ef7489c3de8 Mon Sep 17 00:00:00 2001
+> From: Jan Kara <jack@suse.cz>
+> Date: Wed, 27 Aug 2025 14:55:19 +0200
+> Subject: [PATCH] ext4: Fail unaligned direct IO write with EINVAL
+> 
+> Commit bc264fea0f6f ("iomap: support incremental iomap_iter advances")
+> changed the error handling logic in iomap_iter(). Previously any error
+> from iomap_dio_bio_iter() got propagated to userspace, after this commit
+> if ->iomap_end returns error, it gets propagated to userspace instead of
+> an error from iomap_dio_bio_iter(). This results in unaligned writes to
+> ext4 to silently fallback to buffered IO instead of erroring out.
+> 
+> Now returning ENOTBLK for DIO writes from ext4_iomap_end() seems
+> unnecessary these days. It is enough to return ENOTBLK from
+> ext4_iomap_begin() when we don't support DIO write for that particular
+> file offset (due to hole).
 
-Josef
+Any particular reason for ext4 still returning -ENOTBLK for unaligned
+DIO?
+
+In my experience XFS returns -EINVAL when failing unaligned DIO (but
+maybe there are edge cases where that isn't always the case?)
+
+Would be nice to have consistency across filesystems for what is
+returned when failing unaligned DIO.
+
+The iomap code returns -ENOTBLK as "the magic error code to fall back
+to buffered I/O".  But that seems only for page cache invalidation
+failure, _not_ for unaligned DIO.
+
+(Anyway, __iomap_dio_rw's WRITE handling can return -ENOTBLK if page
+cache invalidation fails during DIO write. So it seems higher-level
+code, like I've added to NFS/NFSD to check for unaligned DIO failure,
+should check for both -EINVAL and -ENOTBLK).
+
+Thanks,
+Mike
+
+ps. ENOTBLK is actually much less easily confused with other random
+uses of EINVAL (EINVAL use is generally way too overloaded, rendering
+it a pretty unhelpful error).  But switching XFS to use ENOTBLK
+instead of EINVAL seems like disruptive interface breakage (I suppose
+same could be said for ext4 if it were to now return EINVAL for
+unaligned DIO, but ext4 flip-flopping on how it handles unaligned DIO
+prompted me to ask these questions now)
+
+> ---
+>  fs/ext4/file.c  |  2 --
+>  fs/ext4/inode.c | 35 -----------------------------------
+>  2 files changed, 37 deletions(-)
+> 
+> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+> index 93240e35ee36..cf39f57d21e9 100644
+> --- a/fs/ext4/file.c
+> +++ b/fs/ext4/file.c
+> @@ -579,8 +579,6 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>  		iomap_ops = &ext4_iomap_overwrite_ops;
+>  	ret = iomap_dio_rw(iocb, from, iomap_ops, &ext4_dio_write_ops,
+>  			   dio_flags, NULL, 0);
+> -	if (ret == -ENOTBLK)
+> -		ret = 0;
+>  	if (extend) {
+>  		/*
+>  		 * We always perform extending DIO write synchronously so by
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 5b7a15db4953..c3b23c90fd11 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -3872,47 +3872,12 @@ static int ext4_iomap_overwrite_begin(struct inode *inode, loff_t offset,
+>  	return ret;
+>  }
+>  
+> -static inline bool ext4_want_directio_fallback(unsigned flags, ssize_t written)
+> -{
+> -	/* must be a directio to fall back to buffered */
+> -	if ((flags & (IOMAP_WRITE | IOMAP_DIRECT)) !=
+> -		    (IOMAP_WRITE | IOMAP_DIRECT))
+> -		return false;
+> -
+> -	/* atomic writes are all-or-nothing */
+> -	if (flags & IOMAP_ATOMIC)
+> -		return false;
+> -
+> -	/* can only try again if we wrote nothing */
+> -	return written == 0;
+> -}
+> -
+> -static int ext4_iomap_end(struct inode *inode, loff_t offset, loff_t length,
+> -			  ssize_t written, unsigned flags, struct iomap *iomap)
+> -{
+> -	/*
+> -	 * Check to see whether an error occurred while writing out the data to
+> -	 * the allocated blocks. If so, return the magic error code for
+> -	 * non-atomic write so that we fallback to buffered I/O and attempt to
+> -	 * complete the remainder of the I/O.
+> -	 * For non-atomic writes, any blocks that may have been
+> -	 * allocated in preparation for the direct I/O will be reused during
+> -	 * buffered I/O. For atomic write, we never fallback to buffered-io.
+> -	 */
+> -	if (ext4_want_directio_fallback(flags, written))
+> -		return -ENOTBLK;
+> -
+> -	return 0;
+> -}
+> -
+>  const struct iomap_ops ext4_iomap_ops = {
+>  	.iomap_begin		= ext4_iomap_begin,
+> -	.iomap_end		= ext4_iomap_end,
+>  };
+>  
+>  const struct iomap_ops ext4_iomap_overwrite_ops = {
+>  	.iomap_begin		= ext4_iomap_overwrite_begin,
+> -	.iomap_end		= ext4_iomap_end,
+>  };
+>  
+>  static int ext4_iomap_begin_report(struct inode *inode, loff_t offset,
+> -- 
+> 2.43.0
+> 
+
 
