@@ -1,156 +1,141 @@
-Return-Path: <linux-fsdevel+bounces-59371-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59374-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57C46B3844E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 16:02:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80B68B384A1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 16:14:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FFDB367EAF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 14:02:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3805368522C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 14:14:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A726C35A2AE;
-	Wed, 27 Aug 2025 14:02:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24DED35E4DC;
+	Wed, 27 Aug 2025 14:13:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VoKwCtSZ"
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="Na4uw6Gd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF51E35A293;
-	Wed, 27 Aug 2025 14:01:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6491035CEA0
+	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Aug 2025 14:13:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756303320; cv=none; b=uoPQMlSbKxxCryVBKWAA9nff0toCxmN+gcUGRMjYdaBqyNTBqV+vSfO4WOXo5b8aWgdvcRvsaNafVIRKWkQnWfiAtTkJGtSN6jjDZiK7EiW2YGwSJpYh+ky9GceiSaFnd0vh99aT4czsO6bODdHr3TZXbbhWBHnAYMplPiwH2H0=
+	t=1756304003; cv=none; b=phZAyixlNe7W2JvR4KrWmD8GZKdDwwz8rJU4Ig3XtsnvFNvyt+vthL04aPMUNqLie3dIbjCQz3Bss/fy6ADbF0GIjRDpRTXkf4WfOgv6S3bWshdXw4EfaJYShiCnnJ3MnoDIeGvFg4cMo37xlh/bIuEi784nuGYZtCb+0X/YGEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756303320; c=relaxed/simple;
-	bh=rrLE6VNYaV1/todpYtogxf/XlET+/1DTpL2efIVhb2s=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=DEs6pjWKKhCrd1rxPH6azve/hSRSGZuCVi9fEwTadGstYzIqicRaIeKfWCtFGthUalyQjFaFN/gDi0fFqTg7ditfqyS9NfTm/DW+gj7ctxmhWeJS4avmR2/Ulz33cjiuFM4VKOl+0DtDUh19Y5cf6LQQ4vQGvf6CuIcT/Zhr3Dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VoKwCtSZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02845C4CEEB;
-	Wed, 27 Aug 2025 14:01:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756303319;
-	bh=rrLE6VNYaV1/todpYtogxf/XlET+/1DTpL2efIVhb2s=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=VoKwCtSZRI6dLK2wXJrBsq6FBKn+MgCUTrGFhttvBg+W0g+hVhbO7RY19OdOFnU0F
-	 wHT05QXXsO9xXkWaU0ITpHRpolLXz6UTO6AoX9p5znLcFhOqQotcxjqdpqVsX5FOwm
-	 SF1kuJWCWGhc0yH2ORFzT9k5txerhwMYorKV4b+OoVLcSPgIb3+j5pb0P0lAD9+oua
-	 S+qpKa/ThKfCDu8LTnuQrPTO/QTMFwherQZbng0FTmr5Ib73VnIIf9za9302Ya0ZC4
-	 WW+AhyHMTwTOregtvQlZeMDhr2B4nFoR+IgCJ6+GX6WMezBSIG34xzzP3rNcqvcJlA
-	 ouf7ZD2nrKcXA==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: Jason Gunthorpe <jgg@nvidia.com>,  Pratyush Yadav <pratyush@kernel.org>,
-  jasonmiu@google.com,  graf@amazon.com,  changyuanl@google.com,
-  rppt@kernel.org,  dmatlack@google.com,  rientjes@google.com,
-  corbet@lwn.net,  rdunlap@infradead.org,  ilpo.jarvinen@linux.intel.com,
-  kanie@linux.alibaba.com,  ojeda@kernel.org,  aliceryhl@google.com,
-  masahiroy@kernel.org,  akpm@linux-foundation.org,  tj@kernel.org,
-  yoann.congal@smile.fr,  mmaurer@google.com,  roman.gushchin@linux.dev,
-  chenridong@huawei.com,  axboe@kernel.dk,  mark.rutland@arm.com,
-  jannh@google.com,  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
-  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
-  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
-  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
-  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
-  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
-  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
-  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
-  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
-  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
-  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
-  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
-  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
-  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
-  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
-  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  saeedm@nvidia.com,  ajayachandra@nvidia.com,  parav@nvidia.com,
-  leonro@nvidia.com,  witu@nvidia.com
-Subject: Re: [PATCH v3 00/30] Live Update Orchestrator
-In-Reply-To: <CA+CK2bB9r_pMzd0VbLsAGTwh8kvV_o3rFM_W--drutewomr1ZQ@mail.gmail.com>
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
-	<mafs0ms7mxly1.fsf@kernel.org>
-	<CA+CK2bBoLi9tYWHSFyDEHWd_cwvS_hR4q2HMmg-C+SJpQDNs=g@mail.gmail.com>
-	<20250826142406.GE1970008@nvidia.com>
-	<CA+CK2bBrCd8t_BUeE-sVPGjsJwmtk3mCSVhTMGbseTi_Wk+4yQ@mail.gmail.com>
-	<20250826151327.GA2130239@nvidia.com>
-	<CA+CK2bAbqMb0ZYvsC9tsf6w5myfUyqo3N4fUP3CwVA_kUDQteg@mail.gmail.com>
-	<20250826162203.GE2130239@nvidia.com>
-	<CA+CK2bB9r_pMzd0VbLsAGTwh8kvV_o3rFM_W--drutewomr1ZQ@mail.gmail.com>
-Date: Wed, 27 Aug 2025 16:01:47 +0200
-Message-ID: <mafs0frdcyib8.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1756304003; c=relaxed/simple;
+	bh=D+qLXcG8rjQNPu/cyOULZd20WAPqIqz3VONd48zdQik=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Hh296A3Bcjw6J3ofqK7DANkjgUWOej7CgKdGnxL5ukuk+U50z8IPS0BQN80wJtvBskdYaBqVspBwhR7bmQeB3QG2qzWtPNzQhTsKo4gkaylZf/dhJA2HfY6ioifQMMpN7QwKeqimTGOAMv3sFO5fPtWBVnkhiFljduUw8D+pXSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=Na4uw6Gd; arc=none smtp.client-ip=67.231.145.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 57R7SJ0Z1299130
+	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Aug 2025 07:13:17 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=s2048-2025-q2; bh=/Qt6QVTxd6TJstz9g1
+	J001UpoSAm0PdHWdX38furYnw=; b=Na4uw6GdU0LhMwQBAJgKpuJqv4+Uhp5UMz
+	HUpE8Z/ZgSZiDqRM6w21Reo1lSIlX7s8Y5Lk2p1NduHGpH7TtKc3uWpqqEp0sV5S
+	cl/fnHrNQ1WiUQ6eOSAwrisiiOqlmJ9Tps1mFOpgSs9zIoo75hgJW+9O7gwcwk/U
+	+vO5Ti9iia156k57UnrzFYvXfEcIRVkaLCfbKRP/ZDIr+cYJT49T6xK6+1dAEuNh
+	bLZ/L/UazcFVQbmwVOP2fpQUajwT01cueYyUs9pN7YwqjfuAskWaN/3Lqcg1S/jY
+	4Gii457ywyb+iHq42No38CXr+kBptAekGZvL0YpXf4sXroUKXfTQ==
+Received: from mail.thefacebook.com ([163.114.134.16])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 48swmva0at-15
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Aug 2025 07:13:17 -0700 (PDT)
+Received: from twshared0973.10.ash9.facebook.com (2620:10d:c085:208::f) by
+ mail.thefacebook.com (2620:10d:c08b:78::2ac9) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.17; Wed, 27 Aug 2025 14:13:06 +0000
+Received: by devbig197.nha3.facebook.com (Postfix, from userid 544533)
+	id 7F14810CF611; Wed, 27 Aug 2025 07:13:03 -0700 (PDT)
+From: Keith Busch <kbusch@meta.com>
+To: <linux-block@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
+CC: <linux-xfs@vger.kernel.org>, <linux-ext4@vger.kernel.org>, <hch@lst.de>,
+        <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>
+Subject: [PATCHv4 0/8] 
+Date: Wed, 27 Aug 2025 07:12:50 -0700
+Message-ID: <20250827141258.63501-1-kbusch@meta.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
 Content-Type: text/plain
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI3MDEyMSBTYWx0ZWRfX2RyNdn7qliFe
+ anSjcZHaslkW6BI0d/4x8WnaYEyHmgHhUvg/XgMULId1NFmzMjHAbgZA/ry122luI7HG9wv4ZDX
+ AVL7o6PEz1lmjh9h0IeKZ5+TfiWVI5KktbBoSD7fRh7pNbN+fjbv5cEjxdTCVvfQexoKrKDMqdw
+ U3lIfXjRFEa96lwAKEmfsFjZHl3x2pwZJhV8wOhmbhoyaJ3ErdFGGsA8Sl5WHI0WtsZ/mq0j8Pu
+ IBYf38vRaN4ZxWtqieC2AJsJQTRLrzAhFHzb4ooaWSKUc4pOxhmEdQomcSkPUv8Y+UF4GQVG+PF
+ n6jssnNQs8Fpv68/jv1Wdxmo0X53vYE3Vy4Ek5CBVxhz4K8y7p8Rqq97qNeQA0=
+X-Proofpoint-ORIG-GUID: UJ8e6YGA3JKqzlloRR6nR-0RAnaVJ_Xz
+X-Authority-Analysis: v=2.4 cv=NKnV+16g c=1 sm=1 tr=0 ts=68af127d cx=c_pps
+ a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17
+ a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=VabnemYjAAAA:8 a=bZ6uR2C94leCsy_9LK0A:9
+ a=gKebqoRLp9LExxC7YDUY:22
+X-Proofpoint-GUID: UJ8e6YGA3JKqzlloRR6nR-0RAnaVJ_Xz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-27_03,2025-08-26_01,2025-03-28_01
 
-On Tue, Aug 26 2025, Pasha Tatashin wrote:
+From: Keith Busch <kbusch@kernel.org>
 
->> > The existing interface, with the addition of passing a pidfd, provides
->> > the necessary flexibility without being invasive. The change would be
->> > localized to the new code that performs the FD retrieval and wouldn't
->> > involve spoofing current or making widespread changes.
->> > For example, to handle cgroup charging for a memfd, the flow inside
->> > memfd_luo_retrieve() would look something like this:
->> >
->> > task = get_pid_task(target_pid, PIDTYPE_PID);
->> > mm = get_task_mm(task);
->> >     // ...
->> >     folio = kho_restore_folio(phys);
->> >     // Charge to the target mm, not 'current->mm'
->> >     mem_cgroup_charge(folio, mm, ...);
->> > mmput(mm);
->> > put_task_struct(task);
->> >
->> > This approach seems quite contained, and does not modify the existing
->> > interfaces. It avoids the need for the kernel to manage the entire
->> > session state and its associated security model.
+Previous version:
 
-Even with sessions, I don't think the kernel has to deal with the
-security model. /dev/liveupdate can still be single-open only, with only
-luod getting access to it. The the kernel just hands over sessions to
-luod (maybe with a new ioctl LIVEUPDATE_IOCTL_CREATE_SESSION), and luod
-takes care of the security model and lifecycle. If luod crashes and
-loses its handle to /dev/liveupdate, all the sessions associated with it
-go away too.
+  https://lore.kernel.org/linux-block/20250819164922.640964-1-kbusch@meta=
+.com/
 
-Essentially, the sessions from kernel perspective would just be a
-container to group different resources together. I think this adds a
-small bit of complexity on the session management and serialization
-side, but I think will save complexity on participating subsystems.
+This series removes the direct io requirement that io vector lengths
+align to the logical block size. There are two primary benefits from
+doing this:
 
->>
->> Execpt it doesn't work like that in all places, iommufd for example
->> uses GFP_KERNEL_ACCOUNT which relies on current.
->
-> That's a good point. For kernel allocations, I don't see a clean way
-> to account for a different process.
->
-> We should not be doing major allocations during the retrieval process
-> itself. Ideally, the kernel would restore an FD using only the
-> preserved folio data (that we can cleanly charge), and then let the
-> user process perform any subsequent actions that might cause new
-> kernel memory allocations. However, I can see how that might not be
-> practical for all handlers.
->
-> Perhaps, we should add session extensions to the kernel as follow-up
-> after this series lands, we would also need to rewrite luod design
-> accordingly to move some of the sessions logic into the kernel.
+  1. It allows user space more flexibility in what kind of io vectors
+     are accepted, removing the need to bounce their data to specially
+     aligned buffers.
 
-I know the KHO is supposed to not be backwards compatible yet. What is
-the goal for the LUO APIs? Are they also not backwards compatible? If
-not, I think we should also consider how sessions will play into
-backwards compatibility. For example, once we add sessions, what happens
-to the older versions of luod that directly call preserve or unpreserve?
+  2. By moving the alignment checks to later when the segments are
+     already being checked, we remove one more iov walk per IO, reducing
+     CPU utilization and submission latency.
 
--- 
-Regards,
-Pratyush Yadav
+Same as previously, I've tested direct IO on raw block, xfs, ext4, and bt=
+rfs.
+
+Changes from v3:
+
+  - Added reviews
+
+  - Code style and comment updates
+
+Keith Busch (8):
+  block: check for valid bio while splitting
+  block: add size alignment to bio_iov_iter_get_pages
+  block: align the bio after building it
+  block: simplify direct io validity check
+  iomap: simplify direct io validity check
+  block: remove bdev_iter_is_aligned
+  blk-integrity: use simpler alignment check
+  iov_iter: remove iov_iter_is_aligned
+
+ block/bio-integrity.c  |  4 +-
+ block/bio.c            | 64 ++++++++++++++++++----------
+ block/blk-map.c        |  2 +-
+ block/blk-merge.c      | 21 ++++++++--
+ block/fops.c           | 10 ++---
+ fs/iomap/direct-io.c   |  5 +--
+ include/linux/bio.h    | 13 ++++--
+ include/linux/blkdev.h | 21 ++++++----
+ include/linux/uio.h    |  2 -
+ lib/iov_iter.c         | 95 ------------------------------------------
+ 10 files changed, 92 insertions(+), 145 deletions(-)
+
+--=20
+2.47.3
+
 
