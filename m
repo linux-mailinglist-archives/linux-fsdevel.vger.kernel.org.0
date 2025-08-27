@@ -1,288 +1,552 @@
-Return-Path: <linux-fsdevel+bounces-59356-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59357-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92406B37FE8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 12:30:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B47D7B38074
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 13:00:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EB1E206608
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 10:30:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 856DF1BA5E3A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 11:00:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F70434AB17;
-	Wed, 27 Aug 2025 10:30:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 883E734DCE8;
+	Wed, 27 Aug 2025 11:00:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="bL/I88Cm"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jM1E90Rf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4149934AAEF;
-	Wed, 27 Aug 2025 10:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA2D729C321
+	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Aug 2025 11:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756290605; cv=none; b=TP4tHPAULetUbqnuAT4p+Kn5LzZcEtsPX+xEE4H9+RXiPBvfXKk4TNpOxF+VtybquyxEAEFtEHYlQBcAZe+scsuxLF5w6x71DWNMnVmYBbxvTz+wv28H0D4dZyi74K0dBky5djqHqQg6tQJ2RHajG8eSOznfksKG6O+j1vUXOBk=
+	t=1756292416; cv=none; b=uRTFgFhlYf0qt9q8ucOO8oXnTFc5lHPue4cgPfiN9SgPCaFI+JIKlBZLL+oJjwW1CTelvvsMBJW9tti4yNnbEdOBfwVFht547X2s74JqaZdVlqICTRg1rY3qg/HatrwnSWu7lILlRM+04NsdJH4ow+z7TPogxpE92RL3fm8Wc1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756290605; c=relaxed/simple;
-	bh=sZwXV1GGNI/QxWKqPUT9q5nIIlCmGoLyzmwaAEHmM0I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m+T7XmCRY79h7R9JVBM/6dapa1M0aVYWugxSxV0NyeiNFXLw+pe9Ua2XGUfpLUMJC5VJW185vU/1aG/Wnv9/LiwAlVtreCJ7lDg/VpARehig3CyQJquOSSdsY6nYObD4E2vM83ea6EMUeSgSplVGTW/yCmZiTVEuTgvYXfslNWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=bL/I88Cm; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4cBglC02YGz9tjd;
-	Wed, 27 Aug 2025 12:29:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1756290599;
+	s=arc-20240116; t=1756292416; c=relaxed/simple;
+	bh=oYMd0pDFc52u95We+BmYTEN1PCIiIq349oYD+ZxqP5o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q8ekD3lSVTSG8/ScGAl21CnlogTJgsvWwErtdlYrtAiYbsK5vd3smbn9KswdbyKxXcMUxxopXHql4Ji+UYoNoABWg6vhWsMvPNGaxr/ytfTipPc2M4VCv12hnu7yJ9PeNzXzHOxpC+jKCJt+TbB8cFOefwDUV/HEqN9D5GSUnfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jM1E90Rf; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756292410;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=m6kfYmEF60frm5ESfpqkpSIWm2QXtU3dm6hKsbfysq8=;
-	b=bL/I88CmRYJ0Ggq1FHXs6ULLcJ/6/cCF893rzC33wQuoMO7fgAYlRJvmJHgkiJMMA7amV7
-	SyptXzg8agcA2szr8KRoHtPzi6AVHAiushOPKtAFEvlJ4YECDJCPOG9it6zxTM8TmxXOxU
-	9EWrueILRyWBPgBd1/GomMLB5oaJpL4NnsQJrcwwcUhnys3p+nWCw9br7FCw8b2jkD061V
-	JO5DsolO7kNGc3pnuvTcEk34Fn4MagnYML/AQQolng4gmmFRqXo6HRv69O0tFhdtI4cyMe
-	SgOvy8acEtwhXDLNG/4OggYt/N9uUq4IMoxa86NsyvEh++Z+OgBynbsrb7EQkg==
-Date: Wed, 27 Aug 2025 20:29:38 +1000
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Paul Moore <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>, 
-	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
-	Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Miklos Szeredi <mszeredi@redhat.com>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, 
-	Robert Waite <rowait@microsoft.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Scott Shell <scottsh@microsoft.com>, Steve Dower <steve.dower@python.org>, 
-	Steve Grubb <sgrubb@redhat.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, Andy Lutomirski <luto@amacapital.net>, 
-	Jeff Xu <jeffxu@chromium.org>
-Subject: Re: [RFC PATCH v1 1/2] fs: Add O_DENY_WRITE
-Message-ID: <2025-08-27-needy-drab-puritan-rebates-tHEaFw@cyphar.com>
-References: <20250822170800.2116980-1-mic@digikod.net>
- <20250822170800.2116980-2-mic@digikod.net>
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=1g24Lg93QQsHqeKUQ9RfhstvU2XnRZhmQeK48Wc2V2I=;
+	b=jM1E90RfgfuWiiw60VCtp8LsiLW+RoEERNVax4zxNlazCsawhxqn/ZuHulr0oUA8Y4GwZQ
+	v+zhyLkMDBE1wdcFC9ihAmn4FhYm+DSIAWUkeoddyEe2d8dL8DW1UH7bvOi4L3rOcZWGIa
+	y51w2eXCV20A/mF1fmFp9HEwY04naOw=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-624-fXZK_2sOMA61uSLqUogtIQ-1; Wed, 27 Aug 2025 07:00:09 -0400
+X-MC-Unique: fXZK_2sOMA61uSLqUogtIQ-1
+X-Mimecast-MFC-AGG-ID: fXZK_2sOMA61uSLqUogtIQ_1756292408
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3cccba2f06bso163480f8f.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Aug 2025 04:00:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756292408; x=1756897208;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1g24Lg93QQsHqeKUQ9RfhstvU2XnRZhmQeK48Wc2V2I=;
+        b=MOMMkTqYLVDY89QYns9Lk68maQ5zBgH2fU5P7Fh1nED+L/HnlRfENNFKAafzqBpIJn
+         Z7SnjyS70rxcJsxJyRx8FQa9PhZVFzInx9DgmqLv65Vd6mPTVGEEQ79OttnGsJKPWKXY
+         L7+mbEsJM5LUwwILc7BPARCpsHGVel0kbJ5S4cp3IegYHI1NoOjjBiG6nq5zC4cES/m9
+         nvNK7Sli6biWsIoTB0ervDF1NIlExhbee5tFSlCDiEkfJWi9YREGx4x1CMne4ejasCYC
+         c4vvQWR5bTtaJM/gx6IX17TpXI5x8BiE818o/vdihpFKqX0cZ+55ZUdkwgyiYb637OTp
+         mgVw==
+X-Gm-Message-State: AOJu0Yy9Gx8g1xVlwqx7Y/uC3PFFCHZ7rZFIob8kDXgER5t9pU9IT7kz
+	ROdfEInrKm1EX0PdfXMncPeEqVPLRGGqdFuVHfc+eCjY5WcjT/LWlGV7puzTn9DAFEaCeK/rcCG
+	9WNmePx5SMoaA14CmaiWSm/ph8Aix3firIf6XTHY9cOt8FwEUO9lLbvuaFnIY/lD0XrKQBapdJj
+	1tuutYK+rjf5Kc6SBTvHUJDbX7YmPoT2tw/2qztM+lb0WUPgISOlf1Yg==
+X-Gm-Gg: ASbGncsWYG3ZH5Un/VFG4Wno/bJhoYZffeA3qbYpsLadjdUZ7159Wbwh/9EnRCMuILa
+	q86Rc1U0XnkDRKsLVdu8XIYTBDyL5EbGMgoouHhZLCdZxF1p4a+ZpduLrCjj11c/gYw0q5KBYkJ
+	llzmZdRJ9kdgS4ffToju01PfqXXLULCF8fWYyUQClFOe888F0Nbk0HgH06eUgpFmdbKAkvVnQRX
+	Dy8R2ACOGXQWUYJO1iC4DhyR6s5rGQ0Rttsc2428cRj3CzEpxN4XcWeqxy7AQetsDLC0WxjRBNF
+	7fhviWLNIM5vuOiqqFylUTDeiH4LPK1LAq7mOW2ePJqAiA9FE2I4Zxfw8lsvVt9qZGZIP1vx8UL
+	7/07GVkA63yqv7AggJMa+n7o=
+X-Received: by 2002:a05:6000:2289:b0:3c9:4e1f:ef46 with SMTP id ffacd0b85a97d-3c94e1ff656mr8389712f8f.48.1756292407383;
+        Wed, 27 Aug 2025 04:00:07 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEuiQWtcx4OeSUJHAVr1IAL/ykl8tNIWvwkmpPxhdH9fenOna36mmEUEqQw/Cg4ffGh6uPBJQ==
+X-Received: by 2002:a05:6000:2289:b0:3c9:4e1f:ef46 with SMTP id ffacd0b85a97d-3c94e1ff656mr8389666f8f.48.1756292406646;
+        Wed, 27 Aug 2025 04:00:06 -0700 (PDT)
+Received: from maszat.piliscsaba.szeredi.hu (193-226-246-133.pool.digikabel.hu. [193.226.246.133])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c711211cc8sm20016212f8f.36.2025.08.27.04.00.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Aug 2025 04:00:06 -0700 (PDT)
+From: Miklos Szeredi <mszeredi@redhat.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: "Darrick J. Wong" <djwong@kernel.org>,
+	Joanne Koong <joannelkoong@gmail.com>,
+	John Groves <John@groves.net>,
+	Bernd Schubert <bernd@bsbernd.com>
+Subject: [PATCH v2] fuse: allow synchronous FUSE_INIT
+Date: Wed, 27 Aug 2025 12:59:55 +0200
+Message-ID: <20250827110004.584582-1-mszeredi@redhat.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="psrvdihhhcwoejuq"
-Content-Disposition: inline
-In-Reply-To: <20250822170800.2116980-2-mic@digikod.net>
+Content-Transfer-Encoding: 8bit
 
+FUSE_INIT has always been asynchronous with mount.  That means that the
+server processed this request after the mount syscall returned.
 
---psrvdihhhcwoejuq
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [RFC PATCH v1 1/2] fs: Add O_DENY_WRITE
-MIME-Version: 1.0
+This means that FUSE_INIT can't supply the root inode's ID, hence it
+currently has a hardcoded value.  There are other limitations such as not
+being able to perform getxattr during mount, which is needed by selinux.
 
-On 2025-08-22, Micka=EBl Sala=FCn <mic@digikod.net> wrote:
-> Add a new O_DENY_WRITE flag usable at open time and on opened file (e.g.
-> passed file descriptors).  This changes the state of the opened file by
-> making it read-only until it is closed.  The main use case is for script
-> interpreters to get the guarantee that script' content cannot be altered
-> while being read and interpreted.  This is useful for generic distros
-> that may not have a write-xor-execute policy.  See commit a5874fde3c08
-> ("exec: Add a new AT_EXECVE_CHECK flag to execveat(2)")
->=20
-> Both execve(2) and the IOCTL to enable fsverity can already set this
-> property on files with deny_write_access().  This new O_DENY_WRITE make
-> it widely available.  This is similar to what other OSs may provide
-> e.g., opening a file with only FILE_SHARE_READ on Windows.
->=20
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Cc: Andy Lutomirski <luto@amacapital.net>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Jeff Xu <jeffxu@chromium.org>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: Serge Hallyn <serge@hallyn.com>
-> Reported-by: Robert Waite <rowait@microsoft.com>
-> Signed-off-by: Micka=EBl Sala=FCn <mic@digikod.net>
-> Link: https://lore.kernel.org/r/20250822170800.2116980-2-mic@digikod.net
-> ---
->  fs/fcntl.c                       | 26 ++++++++++++++++++++++++--
->  fs/file_table.c                  |  2 ++
->  fs/namei.c                       |  6 ++++++
->  include/linux/fcntl.h            |  2 +-
->  include/uapi/asm-generic/fcntl.h |  4 ++++
->  5 files changed, 37 insertions(+), 3 deletions(-)
->=20
-> diff --git a/fs/fcntl.c b/fs/fcntl.c
-> index 5598e4d57422..0c80c0fbc706 100644
-> --- a/fs/fcntl.c
-> +++ b/fs/fcntl.c
-> @@ -34,7 +34,8 @@
-> =20
->  #include "internal.h"
-> =20
-> -#define SETFL_MASK (O_APPEND | O_NONBLOCK | O_NDELAY | O_DIRECT | O_NOAT=
-IME)
-> +#define SETFL_MASK (O_APPEND | O_NONBLOCK | O_NDELAY | O_DIRECT | O_NOAT=
-IME | \
-> +	O_DENY_WRITE)
-> =20
->  static int setfl(int fd, struct file * filp, unsigned int arg)
->  {
-> @@ -80,8 +81,29 @@ static int setfl(int fd, struct file * filp, unsigned =
-int arg)
->  			error =3D 0;
->  	}
->  	spin_lock(&filp->f_lock);
-> +
-> +	if (arg & O_DENY_WRITE) {
-> +		/* Only regular files. */
-> +		if (!S_ISREG(inode->i_mode)) {
-> +			error =3D -EINVAL;
-> +			goto unlock;
-> +		}
-> +
-> +		/* Only sets once. */
-> +		if (!(filp->f_flags & O_DENY_WRITE)) {
-> +			error =3D exe_file_deny_write_access(filp);
-> +			if (error)
-> +				goto unlock;
-> +		}
-> +	} else {
-> +		if (filp->f_flags & O_DENY_WRITE)
-> +			exe_file_allow_write_access(filp);
-> +	}
+To remove these limitations allow server to process FUSE_INIT while
+initializing the in-core super block for the fuse filesystem.  This can
+only be done if the server is prepared to handle this, so add
+FUSE_DEV_IOC_SYNC_INIT ioctl, which
 
-I appreciate the goal of making this something that can be cleared
-(presumably for interpreters that mmap(MAP_PRIVATE) their scripts), but
-making a security-related flag this easy to clear seems like a footgun
-(any library function could mask O_DENY_WRITE or forget to copy the old
-flag values).
+ a) lets the server know whether this feature is supported, returning
+ ENOTTY othewrwise.
 
-> +
->  	filp->f_flags =3D (arg & SETFL_MASK) | (filp->f_flags & ~SETFL_MASK);
->  	filp->f_iocb_flags =3D iocb_flags(filp);
-> +
-> +unlock:
->  	spin_unlock(&filp->f_lock);
-> =20
->   out:
-> @@ -1158,7 +1180,7 @@ static int __init fcntl_init(void)
->  	 * Exceptions: O_NONBLOCK is a two bit define on parisc; O_NDELAY
->  	 * is defined as O_NONBLOCK on some platforms and not on others.
->  	 */
-> -	BUILD_BUG_ON(20 - 1 /* for O_RDONLY being 0 */ !=3D
-> +	BUILD_BUG_ON(21 - 1 /* for O_RDONLY being 0 */ !=3D
->  		HWEIGHT32(
->  			(VALID_OPEN_FLAGS & ~(O_NONBLOCK | O_NDELAY)) |
->  			__FMODE_EXEC));
-> diff --git a/fs/file_table.c b/fs/file_table.c
-> index 81c72576e548..6ba896b6a53f 100644
-> --- a/fs/file_table.c
-> +++ b/fs/file_table.c
-> @@ -460,6 +460,8 @@ static void __fput(struct file *file)
->  	locks_remove_file(file);
-> =20
->  	security_file_release(file);
-> +	if (unlikely(file->f_flags & O_DENY_WRITE))
-> +		exe_file_allow_write_access(file);
->  	if (unlikely(file->f_flags & FASYNC)) {
->  		if (file->f_op->fasync)
->  			file->f_op->fasync(-1, file, 0);
-> diff --git a/fs/namei.c b/fs/namei.c
-> index cd43ff89fbaa..366530bf937d 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -3885,6 +3885,12 @@ static int do_open(struct nameidata *nd,
->  	error =3D may_open(idmap, &nd->path, acc_mode, open_flag);
->  	if (!error && !(file->f_mode & FMODE_OPENED))
->  		error =3D vfs_open(&nd->path, file);
-> +	if (!error && (open_flag & O_DENY_WRITE)) {
-> +		if (S_ISREG(file_inode(file)->i_mode))
-> +			error =3D exe_file_deny_write_access(file);
-> +		else
-> +			error =3D -EINVAL;
-> +	}
->  	if (!error)
->  		error =3D security_file_post_open(file, op->acc_mode);
->  	if (!error && do_truncate)
-> diff --git a/include/linux/fcntl.h b/include/linux/fcntl.h
-> index a332e79b3207..dad14101686f 100644
-> --- a/include/linux/fcntl.h
-> +++ b/include/linux/fcntl.h
-> @@ -10,7 +10,7 @@
->  	(O_RDONLY | O_WRONLY | O_RDWR | O_CREAT | O_EXCL | O_NOCTTY | O_TRUNC |=
- \
->  	 O_APPEND | O_NDELAY | O_NONBLOCK | __O_SYNC | O_DSYNC | \
->  	 FASYNC	| O_DIRECT | O_LARGEFILE | O_DIRECTORY | O_NOFOLLOW | \
-> -	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE)
-> +	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE | O_DENY_WRITE)
+ b) lets the kernel know to perform a synchronous initialization
 
-I don't like this patch for the same reasons Christian has already said,
-but in addition -- you cannot just add new open(2) flags like this.
+The implementation is slightly tricky, since fuse_dev/fuse_conn are set up
+only during super block creation.  This is solved by setting the private
+data of the fuse device file to a special value ((struct fuse_dev *) 1) and
+waiting for this to be turned into a proper fuse_dev before commecing with
+operations on the device file.
 
-Unlike openat2(2), classic open(2) does not verify invalid flag bits, so
-any new flag must be designed so that old kernels will return an error
-for that flag combination, which ensures that:
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+---
+v2:
 
- * No old programs set those bits inadvertently, which lets us avoid
-   breaking userspace in some really fun and hard-to-debug ways.
- * For security-related bits, that new programs running on old kernels
-   do not think they are getting a security property that they aren't
-   actually getting.
+ - make fuse_send_init() perform sync/async sequence based on fc->sync_init
+   (Joanne)
 
-O_TMPFILE's bitflag soup is an example of how you can resolve this issue
-for open(2), but I would suggest that authors of new O_* flags seriously
-consider making their flags openat2(2)-only unless it's trivial to get
-the above behaviour.
+fs/fuse/cuse.c            |  3 +-
+ fs/fuse/dev.c             | 74 +++++++++++++++++++++++++++++----------
+ fs/fuse/dev_uring.c       |  4 +--
+ fs/fuse/fuse_dev_i.h      | 13 +++++--
+ fs/fuse/fuse_i.h          |  5 ++-
+ fs/fuse/inode.c           | 50 ++++++++++++++++++++------
+ include/uapi/linux/fuse.h |  1 +
+ 7 files changed, 115 insertions(+), 35 deletions(-)
 
->  /* List of all valid flags for the how->resolve argument: */
->  #define VALID_RESOLVE_FLAGS \
-> diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-generic/=
-fcntl.h
-> index 613475285643..facd9136f5af 100644
-> --- a/include/uapi/asm-generic/fcntl.h
-> +++ b/include/uapi/asm-generic/fcntl.h
-> @@ -91,6 +91,10 @@
->  /* a horrid kludge trying to make sure that this will fail on old kernel=
-s */
->  #define O_TMPFILE (__O_TMPFILE | O_DIRECTORY)
-> =20
-> +#ifndef O_DENY_WRITE
-> +#define O_DENY_WRITE	040000000
-> +#endif
-> +
->  #ifndef O_NDELAY
->  #define O_NDELAY	O_NONBLOCK
->  #endif
+diff --git a/fs/fuse/cuse.c b/fs/fuse/cuse.c
+index b39844d75a80..28c96961e85d 100644
+--- a/fs/fuse/cuse.c
++++ b/fs/fuse/cuse.c
+@@ -52,6 +52,7 @@
+ #include <linux/user_namespace.h>
+ 
+ #include "fuse_i.h"
++#include "fuse_dev_i.h"
+ 
+ #define CUSE_CONNTBL_LEN	64
+ 
+@@ -547,7 +548,7 @@ static int cuse_channel_open(struct inode *inode, struct file *file)
+  */
+ static int cuse_channel_release(struct inode *inode, struct file *file)
+ {
+-	struct fuse_dev *fud = file->private_data;
++	struct fuse_dev *fud = __fuse_get_dev(file);
+ 	struct cuse_conn *cc = fc_to_cc(fud->fc);
+ 
+ 	/* remove from the conntbl, no more access from this point on */
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index 8ac074414897..948f45c6e0ef 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -1530,14 +1530,34 @@ static int fuse_dev_open(struct inode *inode, struct file *file)
+ 	return 0;
+ }
+ 
++struct fuse_dev *fuse_get_dev(struct file *file)
++{
++	struct fuse_dev *fud = __fuse_get_dev(file);
++	int err;
++
++	if (likely(fud))
++		return fud;
++
++	err = wait_event_interruptible(fuse_dev_waitq,
++				       READ_ONCE(file->private_data) != FUSE_DEV_SYNC_INIT);
++	if (err)
++		return ERR_PTR(err);
++
++	fud = __fuse_get_dev(file);
++	if (!fud)
++		return ERR_PTR(-EPERM);
++
++	return fud;
++}
++
+ static ssize_t fuse_dev_read(struct kiocb *iocb, struct iov_iter *to)
+ {
+ 	struct fuse_copy_state cs;
+ 	struct file *file = iocb->ki_filp;
+ 	struct fuse_dev *fud = fuse_get_dev(file);
+ 
+-	if (!fud)
+-		return -EPERM;
++	if (IS_ERR(fud))
++		return PTR_ERR(fud);
+ 
+ 	if (!user_backed_iter(to))
+ 		return -EINVAL;
+@@ -1557,8 +1577,8 @@ static ssize_t fuse_dev_splice_read(struct file *in, loff_t *ppos,
+ 	struct fuse_copy_state cs;
+ 	struct fuse_dev *fud = fuse_get_dev(in);
+ 
+-	if (!fud)
+-		return -EPERM;
++	if (IS_ERR(fud))
++		return PTR_ERR(fud);
+ 
+ 	bufs = kvmalloc_array(pipe->max_usage, sizeof(struct pipe_buffer),
+ 			      GFP_KERNEL);
+@@ -2233,8 +2253,8 @@ static ssize_t fuse_dev_write(struct kiocb *iocb, struct iov_iter *from)
+ 	struct fuse_copy_state cs;
+ 	struct fuse_dev *fud = fuse_get_dev(iocb->ki_filp);
+ 
+-	if (!fud)
+-		return -EPERM;
++	if (IS_ERR(fud))
++		return PTR_ERR(fud);
+ 
+ 	if (!user_backed_iter(from))
+ 		return -EINVAL;
+@@ -2258,8 +2278,8 @@ static ssize_t fuse_dev_splice_write(struct pipe_inode_info *pipe,
+ 	ssize_t ret;
+ 
+ 	fud = fuse_get_dev(out);
+-	if (!fud)
+-		return -EPERM;
++	if (IS_ERR(fud))
++		return PTR_ERR(fud);
+ 
+ 	pipe_lock(pipe);
+ 
+@@ -2343,7 +2363,7 @@ static __poll_t fuse_dev_poll(struct file *file, poll_table *wait)
+ 	struct fuse_iqueue *fiq;
+ 	struct fuse_dev *fud = fuse_get_dev(file);
+ 
+-	if (!fud)
++	if (IS_ERR(fud))
+ 		return EPOLLERR;
+ 
+ 	fiq = &fud->fc->iq;
+@@ -2490,7 +2510,7 @@ void fuse_wait_aborted(struct fuse_conn *fc)
+ 
+ int fuse_dev_release(struct inode *inode, struct file *file)
+ {
+-	struct fuse_dev *fud = fuse_get_dev(file);
++	struct fuse_dev *fud = __fuse_get_dev(file);
+ 
+ 	if (fud) {
+ 		struct fuse_conn *fc = fud->fc;
+@@ -2521,8 +2541,8 @@ static int fuse_dev_fasync(int fd, struct file *file, int on)
+ {
+ 	struct fuse_dev *fud = fuse_get_dev(file);
+ 
+-	if (!fud)
+-		return -EPERM;
++	if (IS_ERR(fud))
++		return PTR_ERR(fud);
+ 
+ 	/* No locking - fasync_helper does its own locking */
+ 	return fasync_helper(fd, file, on, &fud->fc->iq.fasync);
+@@ -2532,7 +2552,7 @@ static int fuse_device_clone(struct fuse_conn *fc, struct file *new)
+ {
+ 	struct fuse_dev *fud;
+ 
+-	if (new->private_data)
++	if (__fuse_get_dev(new))
+ 		return -EINVAL;
+ 
+ 	fud = fuse_dev_alloc_install(fc);
+@@ -2563,7 +2583,7 @@ static long fuse_dev_ioctl_clone(struct file *file, __u32 __user *argp)
+ 	 * uses the same ioctl handler.
+ 	 */
+ 	if (fd_file(f)->f_op == file->f_op)
+-		fud = fuse_get_dev(fd_file(f));
++		fud = __fuse_get_dev(fd_file(f));
+ 
+ 	res = -EINVAL;
+ 	if (fud) {
+@@ -2581,8 +2601,8 @@ static long fuse_dev_ioctl_backing_open(struct file *file,
+ 	struct fuse_dev *fud = fuse_get_dev(file);
+ 	struct fuse_backing_map map;
+ 
+-	if (!fud)
+-		return -EPERM;
++	if (IS_ERR(fud))
++		return PTR_ERR(fud);
+ 
+ 	if (!IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
+ 		return -EOPNOTSUPP;
+@@ -2598,8 +2618,8 @@ static long fuse_dev_ioctl_backing_close(struct file *file, __u32 __user *argp)
+ 	struct fuse_dev *fud = fuse_get_dev(file);
+ 	int backing_id;
+ 
+-	if (!fud)
+-		return -EPERM;
++	if (IS_ERR(fud))
++		return PTR_ERR(fud);
+ 
+ 	if (!IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
+ 		return -EOPNOTSUPP;
+@@ -2610,6 +2630,19 @@ static long fuse_dev_ioctl_backing_close(struct file *file, __u32 __user *argp)
+ 	return fuse_backing_close(fud->fc, backing_id);
+ }
+ 
++static long fuse_dev_ioctl_sync_init(struct file *file)
++{
++	int err = -EINVAL;
++
++	mutex_lock(&fuse_mutex);
++	if (!__fuse_get_dev(file)) {
++		WRITE_ONCE(file->private_data, FUSE_DEV_SYNC_INIT);
++		err = 0;
++	}
++	mutex_unlock(&fuse_mutex);
++	return err;
++}
++
+ static long fuse_dev_ioctl(struct file *file, unsigned int cmd,
+ 			   unsigned long arg)
+ {
+@@ -2625,6 +2658,9 @@ static long fuse_dev_ioctl(struct file *file, unsigned int cmd,
+ 	case FUSE_DEV_IOC_BACKING_CLOSE:
+ 		return fuse_dev_ioctl_backing_close(file, argp);
+ 
++	case FUSE_DEV_IOC_SYNC_INIT:
++		return fuse_dev_ioctl_sync_init(file);
++
+ 	default:
+ 		return -ENOTTY;
+ 	}
+@@ -2633,7 +2669,7 @@ static long fuse_dev_ioctl(struct file *file, unsigned int cmd,
+ #ifdef CONFIG_PROC_FS
+ static void fuse_dev_show_fdinfo(struct seq_file *seq, struct file *file)
+ {
+-	struct fuse_dev *fud = fuse_get_dev(file);
++	struct fuse_dev *fud = __fuse_get_dev(file);
+ 	if (!fud)
+ 		return;
+ 
+diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+index 249b210becb1..bef38ed78249 100644
+--- a/fs/fuse/dev_uring.c
++++ b/fs/fuse/dev_uring.c
+@@ -1139,9 +1139,9 @@ int fuse_uring_cmd(struct io_uring_cmd *cmd, unsigned int issue_flags)
+ 		return -EINVAL;
+ 
+ 	fud = fuse_get_dev(cmd->file);
+-	if (!fud) {
++	if (IS_ERR(fud)) {
+ 		pr_info_ratelimited("No fuse device found\n");
+-		return -ENOTCONN;
++		return PTR_ERR(fud);
+ 	}
+ 	fc = fud->fc;
+ 
+diff --git a/fs/fuse/fuse_dev_i.h b/fs/fuse/fuse_dev_i.h
+index 5a9bd771a319..6e8373f97040 100644
+--- a/fs/fuse/fuse_dev_i.h
++++ b/fs/fuse/fuse_dev_i.h
+@@ -12,6 +12,8 @@
+ #define FUSE_INT_REQ_BIT (1ULL << 0)
+ #define FUSE_REQ_ID_STEP (1ULL << 1)
+ 
++extern struct wait_queue_head fuse_dev_waitq;
++
+ struct fuse_arg;
+ struct fuse_args;
+ struct fuse_pqueue;
+@@ -37,15 +39,22 @@ struct fuse_copy_state {
+ 	} ring;
+ };
+ 
+-static inline struct fuse_dev *fuse_get_dev(struct file *file)
++#define FUSE_DEV_SYNC_INIT ((struct fuse_dev *) 1)
++#define FUSE_DEV_PTR_MASK (~1UL)
++
++static inline struct fuse_dev *__fuse_get_dev(struct file *file)
+ {
+ 	/*
+ 	 * Lockless access is OK, because file->private data is set
+ 	 * once during mount and is valid until the file is released.
+ 	 */
+-	return READ_ONCE(file->private_data);
++	struct fuse_dev *fud = READ_ONCE(file->private_data);
++
++	return (typeof(fud)) ((unsigned long) fud & FUSE_DEV_PTR_MASK);
+ }
+ 
++struct fuse_dev *fuse_get_dev(struct file *file);
++
+ unsigned int fuse_req_hash(u64 unique);
+ struct fuse_req *fuse_request_find(struct fuse_pqueue *fpq, u64 unique);
+ 
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index 486fa550c951..233c6111f768 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -904,6 +904,9 @@ struct fuse_conn {
+ 	/* Is link not implemented by fs? */
+ 	unsigned int no_link:1;
+ 
++	/* Is synchronous FUSE_INIT allowed? */
++	unsigned int sync_init:1;
++
+ 	/* Use io_uring for communication */
+ 	unsigned int io_uring;
+ 
+@@ -1318,7 +1321,7 @@ struct fuse_dev *fuse_dev_alloc_install(struct fuse_conn *fc);
+ struct fuse_dev *fuse_dev_alloc(void);
+ void fuse_dev_install(struct fuse_dev *fud, struct fuse_conn *fc);
+ void fuse_dev_free(struct fuse_dev *fud);
+-void fuse_send_init(struct fuse_mount *fm);
++int fuse_send_init(struct fuse_mount *fm);
+ 
+ /**
+  * Fill in superblock and initialize fuse connection
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index 9d26a5bc394d..7cf47d5bcc87 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -7,6 +7,7 @@
+ */
+ 
+ #include "fuse_i.h"
++#include "fuse_dev_i.h"
+ #include "dev_uring_i.h"
+ 
+ #include <linux/dax.h>
+@@ -34,6 +35,7 @@ MODULE_LICENSE("GPL");
+ static struct kmem_cache *fuse_inode_cachep;
+ struct list_head fuse_conn_list;
+ DEFINE_MUTEX(fuse_mutex);
++DECLARE_WAIT_QUEUE_HEAD(fuse_dev_waitq);
+ 
+ static int set_global_limit(const char *val, const struct kernel_param *kp);
+ 
+@@ -1466,7 +1468,7 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
+ 	wake_up_all(&fc->blocked_waitq);
+ }
+ 
+-void fuse_send_init(struct fuse_mount *fm)
++static struct fuse_init_args *fuse_new_init(struct fuse_mount *fm)
+ {
+ 	struct fuse_init_args *ia;
+ 	u64 flags;
+@@ -1525,10 +1527,29 @@ void fuse_send_init(struct fuse_mount *fm)
+ 	ia->args.out_args[0].value = &ia->out;
+ 	ia->args.force = true;
+ 	ia->args.nocreds = true;
+-	ia->args.end = process_init_reply;
+ 
+-	if (fuse_simple_background(fm, &ia->args, GFP_KERNEL) != 0)
+-		process_init_reply(fm, &ia->args, -ENOTCONN);
++	return ia;
++}
++
++int fuse_send_init(struct fuse_mount *fm)
++{
++	struct fuse_init_args *ia = fuse_new_init(fm);
++	int err;
++
++	if (fm->fc->sync_init) {
++		err = fuse_simple_request(fm, &ia->args);
++		/* Ignore size of init reply */
++		if (err > 0)
++			err = 0;
++	} else {
++		ia->args.end = process_init_reply;
++		err = fuse_simple_background(fm, &ia->args, GFP_KERNEL);
++		if (!err)
++			return 0;
++		err = -ENOTCONN;
++	}
++	process_init_reply(fm, &ia->args, err);
++	return err;
+ }
+ EXPORT_SYMBOL_GPL(fuse_send_init);
+ 
+@@ -1867,8 +1888,12 @@ int fuse_fill_super_common(struct super_block *sb, struct fuse_fs_context *ctx)
+ 
+ 	mutex_lock(&fuse_mutex);
+ 	err = -EINVAL;
+-	if (ctx->fudptr && *ctx->fudptr)
+-		goto err_unlock;
++	if (ctx->fudptr && *ctx->fudptr) {
++		if (*ctx->fudptr == FUSE_DEV_SYNC_INIT) {
++			fc->sync_init = 1;
++		} else
++			goto err_unlock;
++	}
+ 
+ 	err = fuse_ctl_add_conn(fc);
+ 	if (err)
+@@ -1876,8 +1901,10 @@ int fuse_fill_super_common(struct super_block *sb, struct fuse_fs_context *ctx)
+ 
+ 	list_add_tail(&fc->entry, &fuse_conn_list);
+ 	sb->s_root = root_dentry;
+-	if (ctx->fudptr)
++	if (ctx->fudptr) {
+ 		*ctx->fudptr = fud;
++		wake_up_all(&fuse_dev_waitq);
++	}
+ 	mutex_unlock(&fuse_mutex);
+ 	return 0;
+ 
+@@ -1898,6 +1925,7 @@ EXPORT_SYMBOL_GPL(fuse_fill_super_common);
+ static int fuse_fill_super(struct super_block *sb, struct fs_context *fsc)
+ {
+ 	struct fuse_fs_context *ctx = fsc->fs_private;
++	struct fuse_mount *fm;
+ 	int err;
+ 
+ 	if (!ctx->file || !ctx->rootmode_present ||
+@@ -1918,8 +1946,10 @@ static int fuse_fill_super(struct super_block *sb, struct fs_context *fsc)
+ 		return err;
+ 	/* file->private_data shall be visible on all CPUs after this */
+ 	smp_mb();
+-	fuse_send_init(get_fuse_mount_super(sb));
+-	return 0;
++
++	fm = get_fuse_mount_super(sb);
++
++	return fuse_send_init(fm);
+ }
+ 
+ /*
+@@ -1980,7 +2010,7 @@ static int fuse_get_tree(struct fs_context *fsc)
+ 	 * Allow creating a fuse mount with an already initialized fuse
+ 	 * connection
+ 	 */
+-	fud = READ_ONCE(ctx->file->private_data);
++	fud = __fuse_get_dev(ctx->file);
+ 	if (ctx->file->f_op == &fuse_dev_operations && fud) {
+ 		fsc->sget_key = fud->fc;
+ 		sb = sget_fc(fsc, fuse_test_super, fuse_set_no_super);
+diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+index 3942d1fda599..30bf0846547f 100644
+--- a/include/uapi/linux/fuse.h
++++ b/include/uapi/linux/fuse.h
+@@ -1130,6 +1130,7 @@ struct fuse_backing_map {
+ #define FUSE_DEV_IOC_BACKING_OPEN	_IOW(FUSE_DEV_IOC_MAGIC, 1, \
+ 					     struct fuse_backing_map)
+ #define FUSE_DEV_IOC_BACKING_CLOSE	_IOW(FUSE_DEV_IOC_MAGIC, 2, uint32_t)
++#define FUSE_DEV_IOC_SYNC_INIT		_IO(FUSE_DEV_IOC_MAGIC, 3)
+ 
+ struct fuse_lseek_in {
+ 	uint64_t	fh;
+-- 
+2.49.0
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-https://www.cyphar.com/
-
---psrvdihhhcwoejuq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaK7eEhsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG9V3AEA5oOWpgL+FjTae5hN5S0u
-NsO3eAJnHacwgGQQEQNbJY0A+wWEmDH7pIvldv0TNbUu37QH46/cRLEB3/OX44QK
-JV8I
-=c4ff
------END PGP SIGNATURE-----
-
---psrvdihhhcwoejuq--
 
