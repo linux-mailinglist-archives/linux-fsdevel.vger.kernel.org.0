@@ -1,122 +1,180 @@
-Return-Path: <linux-fsdevel+bounces-59367-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59368-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 745C0B3838F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 15:16:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30BDCB383D5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 15:40:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32534981064
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 13:16:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 658CD189E988
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 13:40:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6C42F9C39;
-	Wed, 27 Aug 2025 13:16:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13CAC353363;
+	Wed, 27 Aug 2025 13:39:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="YAcxn6Wn"
+	dkim=pass (1024-bit key) header.d=vasama.org header.i=@vasama.org header.b="Iz9XGkdC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 876039478;
-	Wed, 27 Aug 2025 13:16:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D2B28F1
+	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Aug 2025 13:39:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756300589; cv=none; b=jEv/Z16llZx69TcHY1EE8tkBr4wcLMTVXAz1xyPJPfxFmBQpOtE3K/N8JeUP54JpNaqVQG43pbZnTyilzQrwx5bNNrzEpvaEfaUTQuk7LZutHaujrlPH0sA/4cjyuyW9R6SbNKEkNTJ4m6C6/LG8v1QVnIFAhKuyqnyLNib+OIA=
+	t=1756301997; cv=none; b=KVW+fpoLBh2s2A8vmi1l6lStf7GL5XNkvPgZEilOS9ZXGRDOfhGysGuMtoqPtB+ZuR2c/2k9mX4msRG1lM8FENY8ermp1qoV4kCSgUbo4JvurlE4UFq5PIUmJBevh5un/UppDIQuYTg8clWirwR6Scnpq0Gcfnkbuc9Vq75PjC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756300589; c=relaxed/simple;
-	bh=YPiuLA14z0ZSDSFR+J6rNXav5UJ6t5uKuX5kD58OoVg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FKPLTRBL0gDOsLSjZTvado5f4rLizLLYQFv9Ua31CdkIDF9MrfL3xAr+xfZWTUGjaF8SJGXdV9UYAkEeG/oyRbiHYRup7vAWa1kYK08SNl6wTdsGp19gYU8542Yp8n/xCe3uXtKrr86n3Z/xlaOYgL5BghCY75LyB8hoJaPw0TQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=YAcxn6Wn; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4cBlR55sfgz9tPP;
-	Wed, 27 Aug 2025 15:16:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1756300577;
+	s=arc-20240116; t=1756301997; c=relaxed/simple;
+	bh=D+lUVgJMEwIFc1P/nCQWWdEyr5YF/+9aw/YBibb75hg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oOxKjdwRXods9Iwuf1OSicfGSFHiJsLopLbaTA4Fr7QYQ8y8i2H1wfeeHYFsqgLmVmVLanYI+1AnmxhfGJ3BaTQV2ribt8Vb+xQf2+NlKB2+jCkT81qu9p2iIj/u6AffsoyB1+z4GQjeNMzugV6fbJkZCVMPcYgqqEX2ttrbshM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vasama.org; spf=pass smtp.mailfrom=vasama.org; dkim=pass (1024-bit key) header.d=vasama.org header.i=@vasama.org header.b=Iz9XGkdC; arc=none smtp.client-ip=95.215.58.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vasama.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vasama.org
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vasama.org; s=key1;
+	t=1756301992;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YPiuLA14z0ZSDSFR+J6rNXav5UJ6t5uKuX5kD58OoVg=;
-	b=YAcxn6WnfLlwSotgQNvMvzmosiG0s8iOJvnEqKGz8/DkjNmxgtkBVC3Gb/55UHlAZ1t8VC
-	vzh4IOxVc0B8vad4By06gd9ZwgzL6Eqj6rJbxfVIkN+FpHAME0rUbtQaZZACeJ1qqM6gvJ
-	Rjgo8Tp4nV6WmuZXHsUIw037W9huPD1V8Z4FD/2ya1qC/RC6oKsYYkm21W3tzjofHPgJjx
-	WjTxMr3sDLTqRSDuUHP83GuXyJVzHpwUzPYVzDWh+lGHZ4T4rgb2ixbiGXzI6l/sXh36Gc
-	OtJu2QLNjEKnnwkkx4yAjeDa+xLugB5eCDagh3f2Q1mqFIZzRLa/7hzKaVV9mQ==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
-Date: Wed, 27 Aug 2025 23:16:06 +1000
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Alexander Monakov <amonakov@ispras.ru>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org
-Subject: Re: ETXTBSY window in __fput
-Message-ID: <2025-08-27-powered-crazy-arcade-jack-Ajr33h@cyphar.com>
-References: <6e60aa72-94ef-9de2-a54c-ffd91fcc4711@ispras.ru>
- <20250826220033.GW39973@ZenIV>
- <0a372029-9a31-54c3-4d8a-8a9597361955@ispras.ru>
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Bm9rJ8OhJh58CJfDwiENOqiWNHMg/YizQnJOZe32I8E=;
+	b=Iz9XGkdCGEOLeWt+/qF5laScjckCgrRAZhyTV6bKlvlibhVTZRgRY7RryaETSIvjLjnRw/
+	d1D+/D/GJRTMGOjoIPy3LZpUIfmNPXaM3Ze5COMZypXOH5ydAjnGY58rl58/7QpqHD2mAm
+	lD9tc2Az1ZCwayFnMysAC5Zbunqv6sc=
+From: Lauri Vasama <git@vasama.org>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Kuniyuki Iwashima <kuniyu@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Willem de Bruijn <willemb@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>,
+	Lauri Vasama <git@vasama.org>,
+	Jan Kara <jack@suse.cz>,
+	Simon Horman <horms@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH] Add RWF_NOSIGNAL flag for pwritev2
+Date: Wed, 27 Aug 2025 16:39:00 +0300
+Message-ID: <20250827133901.1820771-1-git@vasama.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="adc5k7wdm2kkekxj"
-Content-Disposition: inline
-In-Reply-To: <0a372029-9a31-54c3-4d8a-8a9597361955@ispras.ru>
-X-Rspamd-Queue-Id: 4cBlR55sfgz9tPP
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
+For a user mode library to avoid generating SIGPIPE signals (e.g.
+because this behaviour is not portable across operating systems) is
+cumbersome. It is generally bad form to change the process-wide signal
+mask in a library, so a local solution is needed instead.
 
---adc5k7wdm2kkekxj
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: ETXTBSY window in __fput
-MIME-Version: 1.0
+For I/O performed directly using system calls (synchronous or readiness
+based asynchronous) this currently involves applying a thread-specific
+signal mask before the operation and reverting it afterwards. This can be
+avoided when it is known that the file descriptor refers to neither a
+pipe nor a socket, but a conservative implementation must always apply
+the mask. This incurs the cost of two additional system calls. In the
+case of sockets, the existing MSG_NOSIGNAL flag can be used with send.
 
-On 2025-08-27, Alexander Monakov <amonakov@ispras.ru> wrote:
-> > Frankly, in such situation I would spawn a thread for that, did unshare=
-(CLONE_FILES)
-> > in it, replaced the binary and buggered off, with parent waiting for it=
- to complete.
->=20
-> Good to know, but it doesn't sound very efficient (and like something tha=
-t could be
-> integrated in Go runtime).
+For asynchronous I/O performed using io_uring, currently the only option
+(apart from MSG_NOSIGNAL for sockets), is to mask SIGPIPE entirely in the
+call to io_uring_enter. Thankfully io_uring_enter takes a signal mask, so
+only a single syscall is needed. However, copying the signal mask on
+every call incurs a non-zero performance penalty. Furthermore, this mask
+applies to all completions, meaning that if the non-signaling behaviour
+is desired only for some subset of operations, the desired signals must
+be raised manually from user-mode depending on the completed operation.
 
-Can't you create a goroutine, runtime.LockOSThread,
-unshare(CLONE_FILES), do the work, and then return -- without
-runtime.UnlockOSThread (to kill the thread and stop it from being used
-by other Go code)? Or does that not work in stdlib?
+Add RWF_NOSIGNAL flag for pwritev2. This flag prevents the SIGPIPE signal
+from being raised when writing on disconnected pipes or sockets. The flag
+is handled directly by the pipe filesystem and converted to the existing
+MSG_NOSIGNAL flag for sockets.
 
-We have to do this a lot in runc and other Go programs that mess around
-with unshare() or other per-thread attributes that don't play well with
-Go's process model.
+Signed-off-by: Lauri Vasama <git@vasama.org>
+---
+ fs/pipe.c               | 6 ++++--
+ include/linux/fs.h      | 1 +
+ include/uapi/linux/fs.h | 5 ++++-
+ net/socket.c            | 3 +++
+ 4 files changed, 12 insertions(+), 3 deletions(-)
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-https://www.cyphar.com/
+diff --git a/fs/pipe.c b/fs/pipe.c
+index 731622d0738d..42fead1efe52 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -458,7 +458,8 @@ anon_pipe_write(struct kiocb *iocb, struct iov_iter *from)
+ 	mutex_lock(&pipe->mutex);
+ 
+ 	if (!pipe->readers) {
+-		send_sig(SIGPIPE, current, 0);
++		if ((iocb->ki_flags & IOCB_NOSIGNAL) == 0)
++			send_sig(SIGPIPE, current, 0);
+ 		ret = -EPIPE;
+ 		goto out;
+ 	}
+@@ -498,7 +499,8 @@ anon_pipe_write(struct kiocb *iocb, struct iov_iter *from)
+ 
+ 	for (;;) {
+ 		if (!pipe->readers) {
+-			send_sig(SIGPIPE, current, 0);
++			if ((iocb->ki_flags & IOCB_NOSIGNAL) == 0)
++				send_sig(SIGPIPE, current, 0);
+ 			if (!ret)
+ 				ret = -EPIPE;
+ 			break;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index d7ab4f96d705..e440c5ae5d99 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -356,6 +356,7 @@ struct readahead_control;
+ #define IOCB_APPEND		(__force int) RWF_APPEND
+ #define IOCB_ATOMIC		(__force int) RWF_ATOMIC
+ #define IOCB_DONTCACHE		(__force int) RWF_DONTCACHE
++#define IOCB_NOSIGNAL		(__force int) RWF_NOSIGNAL
+ 
+ /* non-RWF related bits - start at 16 */
+ #define IOCB_EVENTFD		(1 << 16)
+diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+index 0bd678a4a10e..beb4c2d1e41c 100644
+--- a/include/uapi/linux/fs.h
++++ b/include/uapi/linux/fs.h
+@@ -430,10 +430,13 @@ typedef int __bitwise __kernel_rwf_t;
+ /* buffered IO that drops the cache after reading or writing data */
+ #define RWF_DONTCACHE	((__force __kernel_rwf_t)0x00000080)
+ 
++/* prevent pipe and socket writes from raising SIGPIPE */
++#define RWF_NOSIGNAL	((__force __kernel_rwf_t)0x00000100)
++
+ /* mask of flags supported by the kernel */
+ #define RWF_SUPPORTED	(RWF_HIPRI | RWF_DSYNC | RWF_SYNC | RWF_NOWAIT |\
+ 			 RWF_APPEND | RWF_NOAPPEND | RWF_ATOMIC |\
+-			 RWF_DONTCACHE)
++			 RWF_DONTCACHE | RWF_NOSIGNAL)
+ 
+ #define PROCFS_IOCTL_MAGIC 'f'
+ 
+diff --git a/net/socket.c b/net/socket.c
+index 682969deaed3..bac335ecee4c 100644
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -1176,6 +1176,9 @@ static ssize_t sock_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 	if (sock->type == SOCK_SEQPACKET)
+ 		msg.msg_flags |= MSG_EOR;
+ 
++	if (iocb->ki_flags & IOCB_NOSIGNAL)
++		msg.msg_flags |= MSG_NOSIGNAL;
++
+ 	res = __sock_sendmsg(sock, &msg);
+ 	*from = msg.msg_iter;
+ 	return res;
 
---adc5k7wdm2kkekxj
-Content-Type: application/pgp-signature; name="signature.asc"
+base-commit: fab1beda7597fac1cecc01707d55eadb6bbe773c
+-- 
+2.43.0
 
------BEGIN PGP SIGNATURE-----
-
-iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaK8FFhsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG/uMgD+Nw2Bw0J2ry4G4708EGkU
-QlS2QqJQUDfkqcdDW49kSakBAIOVgA9M4tjroGlKNYHsCFlsjENagqUIu7d+tFUD
-TL0C
-=3vVZ
------END PGP SIGNATURE-----
-
---adc5k7wdm2kkekxj--
 
