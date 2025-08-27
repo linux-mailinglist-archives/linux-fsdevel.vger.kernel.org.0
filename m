@@ -1,121 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-59410-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59411-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87A88B3886E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 19:19:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C3149B388B8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 19:35:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89A93189D4FE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 17:20:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C44991BA54C4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 17:36:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27AA42BFC8F;
-	Wed, 27 Aug 2025 17:19:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C306A2BEC20;
+	Wed, 27 Aug 2025 17:35:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Gj4NCmUP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rxcM90Mr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C8AC747F
-	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Aug 2025 17:19:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AF4721FF55
+	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Aug 2025 17:35:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756315174; cv=none; b=lsl6P4DUGMNldISE77OoyLMoIsjd0Ihx8jtimm9Yqw9/mcmCauRl0HwpCt6eaBlvkThZWNjJR3yXRD2yDhcenJkAD1XXlOe1QxEut76/gZP/4AdK4UoO4aZLpHi7GhVkfeVyT6oUOuH8j5IoTZegZu2oEb7uqZVBXdgJQBgo+Xg=
+	t=1756316142; cv=none; b=iv2U9sL/kX9Ud/FSsNR9LhrHSTS0reIb0UY98WWPn1vpUg9IQdInC4jmI5z/gdOefMf+2qR722DSjZ3Atqy5zckcyadmINkr6f1wshfMzLfrto8FoN40XTpP2KMZ94kwvFcMTCJD9/3wuId/XYkPb7ZxjQmjHcWsj5DYW8s6Ops=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756315174; c=relaxed/simple;
-	bh=08+bPUpD3NofbGdesaWjVS4AGDF6/nxtnUq/g1HIZ+0=;
+	s=arc-20240116; t=1756316142; c=relaxed/simple;
+	bh=FIed+i9mU8QVyJwJUuYJhiPLw4w7Z4LZFu4tEeKK2tQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WZb/i4deYn12b3uF4Pm+0AOfX5GqTwXDPU6frXQNbLgtbigMDyAJfcKUbTyMTY06gdvfwu2SeGWhikJM9wb0C/ApmBtT7Lgbbvnpp80do+Fwz5kG5SRfokkSumXgo+99h6U2GjHhWEr5+tzQsV8FprMfpHoCCx4Mn/RvALT4cm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Gj4NCmUP; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-afcb731ca8eso8473466b.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Aug 2025 10:19:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1756315170; x=1756919970; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=iCay8qhy3suZSeXAmIkGdLPibCYtWXMbhYxDwyVYsIY=;
-        b=Gj4NCmUPpA3mvug4hPPUAO2Ylz9G9FlRZ3rSNwRqWD1TOrSj12i/VURsBDL1MH4CqH
-         wLSylBLsYCeJKxi/4lfR70NZ/XSi/Od45Rfv6uqewSUhvgSIKUAWWRfwKO1Gsljn2HNj
-         L58dHRQSUiREvU9LAtS8Kirk7g7Q/jm1NODQA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756315170; x=1756919970;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iCay8qhy3suZSeXAmIkGdLPibCYtWXMbhYxDwyVYsIY=;
-        b=uG5Bp7BL9VgsE4i6ec7o9b2wNU7+AeGPcg7b54/ReyhIE/UV/RAVHAk86RUyeSTToY
-         4ad/tOHRO8P0/7SG5yVKj8w6NXWhVogyJmoNXHYKbLchH3PXyhRGuncTnlMlvevI/HNc
-         rm7Is/69QipLAmYkGSty701Kr9hcgr1FzXyu0k0mDR1L1SOAQMqxu8fFmk9SM3PMrXNw
-         vCHQeq01IxblkL929HoTEFjvttkkpWwrJZJlh4Oj8eko62usSAJ/G8XwBxK88iwgVsa7
-         XxXQIEcBsnzvfH+gcInr8ir7i1BnBQMZWC40W57buoBluNFXJ+zW/JYMrpzwpt3w9g7+
-         Srqg==
-X-Forwarded-Encrypted: i=1; AJvYcCVl2Hdbm3HmM6TJwCqUxqeatoerd1MIAwFAajFdMl2zcd6aomAdIQaCTx/ZtzCHXo5WoGkZ2s5BvrDv6/6N@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxHURx/RXBPbgbtJUHNSthcTMJcM/j4Y1QCJ151bbZi4uo9+w1
-	v6M2i3QhngMsdt9oODIQZbXu/c7umSX5EMvPV2hoLaDGEMPbUb/rIMwmCPuQ5FRYLXfbUHl+nF/
-	jOTR1450=
-X-Gm-Gg: ASbGncux3p8RfoPtdHi4X27TZ5LmnwrvRUcY/LYmQMa74kUHvuWa1M8z3+oLDqTXyyO
-	yBvpPGB2Ps4/6Dd5rF/EykKKrPkhrqVSOjl86pM9XEUyS5NZur1QSEdPoOaqFatixXhFvd8sBBV
-	hswruBJ/3tsvjq9IdT2uJ1FrO3v9eTebawwe0dr0NwL9s8+0D5nxt0+AkJnx+rplgnbAnNYo9h3
-	4Mvk6EMUhGZ7C9l1r4KD9CRx+m5Wl5Nwf2W++hD0EJohF+ZkHp3odRA0OBd0YHB6JwhAcwuY8kQ
-	s/xm82eclWMRb72lVQPPgriV/5jxB7v03MOBHq8UzkGCfI3nP9wlQBpCnzaG5XMXX10i3ZqJrc2
-	ur0AhL93p500oVOfExdB9d6s+p13RBp4lJZRMziv6bU6hTxgLDt/h0fjNuxY6LuXtN454RJZpNM
-	UP/fvvnbldo2OoASJ8pg==
-X-Google-Smtp-Source: AGHT+IFZCjle/Q7DoNRPzIsQcC2P5LX9q6P3qC5YRcMiyHyB4SbwbXVYepWPxGL5UFFSztnj/OIOSw==
-X-Received: by 2002:a17:907:e98b:b0:afe:7bc0:4d0e with SMTP id a640c23a62f3a-afe7bc04e59mr1010118666b.23.1756315170296;
-        Wed, 27 Aug 2025 10:19:30 -0700 (PDT)
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afeadca2988sm393439966b.19.2025.08.27.10.19.28
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Aug 2025 10:19:29 -0700 (PDT)
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-61c24250b38so44306a12.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Aug 2025 10:19:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWV+LPwnuGlJaICZD7D9yOnFXq18D/9Sw9dqcen22boLtTuF50ZPCgwrfqpo35uCuHfhrrF1RjktfmT6EhF@vger.kernel.org
-X-Received: by 2002:a05:6402:4408:b0:61c:87da:4c06 with SMTP id
- 4fb4d7f45d1cf-61c87da5164mr6973273a12.21.1756315168210; Wed, 27 Aug 2025
- 10:19:28 -0700 (PDT)
+	 To:Cc:Content-Type; b=i1JbjopmvAOJtJHMrZ0wjzQPBDiiYcirGDHvlw29f85OinVm9UCprlVOu/YFn7IzFMkD1RDOxOncezz5vOom1o1ex3vFNVc+2g6i7L54tvYexOaXtWOJNZMV5k0dFLD/a2D34ik7EHLHy6JdafraiqKqeMIwJ00K/WFh2MUFz/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rxcM90Mr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEBA4C4CEEB
+	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Aug 2025 17:35:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756316142;
+	bh=FIed+i9mU8QVyJwJUuYJhiPLw4w7Z4LZFu4tEeKK2tQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=rxcM90Mr7RLpuUh7uleG8dKJQyT7RaI0Xnq+WTZK+85Dx6J+7v5UhTymmilOudGvS
+	 ENBzUWXBQnykk4ork6goPhQrsRxhXqB2KsqXdzcG4yroDdvgKUquOIKsCddJcgFMWb
+	 /REcfpuedCSwUMesMYQ7NwIBx5iJocUbOmIc7TKXfVe13ej6qwy+8GoE635+Gqfbjb
+	 u/KG7s55NH8OQP7pfd7isrbxhlS9N9DX51mGcNacb5BE6piKCAhMfeEN0RU0kMkA5o
+	 m+XoPDLBkZocfzA+N2LEXxhOhcKzsaqUVALdAf/aFRL5emh1HAiw3MHPPEip45MW+E
+	 g6Gi4J1spr58w==
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-3367c60ca36so749411fa.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Aug 2025 10:35:41 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUgHXZEKniFJ3aFOb5oiQW6FaGMRdwmvsW9r0ssR49rIt4Tdx9bnFhvBDncDogcXEp033fkISnjm9fkO1Ou@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSkBQ4pIaUvJOhq0cjYV6viC29xFPb7jHiRfJYlwi7K8PeFog6
+	VYHKmA9tZiY1NZvbaCOET3ZpmePusSU2QK0WYlPAi46oeko0quzf2HBVDU/Eh0F0v7SB5aBavBx
+	Nozb7A6AhCEzHSbXpXhjUfCom3tie0gFdJPMScNGE
+X-Google-Smtp-Source: AGHT+IHUn8MO0aESC/OldXVkEKhuKEEb6fGxgOuf4xrzSp6WeZVtALeUAoQkfV5FV3cUoazA0fJyWvYRcGm5SnNCYls=
+X-Received: by 2002:a05:651c:23d2:10b0:333:f086:3092 with SMTP id
+ 38308e7fff4ca-33650e704femr46730461fa.11.1756316140285; Wed, 27 Aug 2025
+ 10:35:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250825044046.GI39973@ZenIV> <20250825-glanz-qualm-bcbae4e2c683@brauner>
- <20250825161114.GM39973@ZenIV> <20250825174312.GQ39973@ZenIV> <20250826-umbenannt-bersten-c42dd9c4dc6a@brauner>
-In-Reply-To: <20250826-umbenannt-bersten-c42dd9c4dc6a@brauner>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 27 Aug 2025 10:19:11 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whBm4Y=962=HuYNpbmYBEq-7X8O_aOAPQpqFKv5h5UbSA@mail.gmail.com>
-X-Gm-Features: Ac12FXwqfqnkmUEn7hEXyjAiow7ocMtB0dGx5uX-cnUp2yMJpSlLhTS8u2Jlf50
-Message-ID: <CAHk-=whBm4Y=962=HuYNpbmYBEq-7X8O_aOAPQpqFKv5h5UbSA@mail.gmail.com>
-Subject: Re: [PATCHED][RFC][CFT] mount-related stuff
-To: Christian Brauner <brauner@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, 
-	Jan Kara <jack@suse.cz>
+References: <20250822170800.2116980-1-mic@digikod.net> <20250826-skorpion-magma-141496988fdc@brauner>
+ <20250826.aig5aiShunga@digikod.net> <20250826123041.GB1603531@mit.edu> <20250826.iewie7Et5aiw@digikod.net>
+In-Reply-To: <20250826.iewie7Et5aiw@digikod.net>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Wed, 27 Aug 2025 10:35:28 -0700
+X-Gmail-Original-Message-ID: <CALCETrW=V9vst_ho2Q4sQUJ5uZECY5h7TnF==sG4JWq8PsWb8Q@mail.gmail.com>
+X-Gm-Features: Ac12FXxYtvycqmWfxuJptxMotttRmHwSaZZf5AQ5i4iJuwxj-1Y4BGUYtJz7etM
+Message-ID: <CALCETrW=V9vst_ho2Q4sQUJ5uZECY5h7TnF==sG4JWq8PsWb8Q@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 0/2] Add O_DENY_WRITE (complement AT_EXECVE_CHECK)
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: "Theodore Ts'o" <tytso@mit.edu>, Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Kees Cook <keescook@chromium.org>, Paul Moore <paul@paul-moore.com>, 
+	Serge Hallyn <serge@hallyn.com>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
+	Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Miklos Szeredi <mszeredi@redhat.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, 
+	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Robert Waite <rowait@microsoft.com>, 
+	Roberto Sassu <roberto.sassu@huawei.com>, Scott Shell <scottsh@microsoft.com>, 
+	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
+	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 26 Aug 2025 at 01:56, Christian Brauner <brauner@kernel.org> wrote:
+On Tue, Aug 26, 2025 at 10:47=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digi=
+kod.net> wrote:
 >
-> I'm not doing that for my own personal wellness cure
+> On Tue, Aug 26, 2025 at 08:30:41AM -0400, Theodore Ts'o wrote:
+> > Is there a single, unified design and requirements document that
+> > describes the threat model, and what you are trying to achieve with
+> > AT_EXECVE_CHECK and O_DENY_WRITE?  I've been looking at the cover
+> > letters for AT_EXECVE_CHECK and O_DENY_WRITE, and the documentation
+> > that has landed for AT_EXECVE_CHECK and it really doesn't describe
+> > what *are* the checks that AT_EXECVE_CHECK is trying to achieve:
+> >
+> >    "The AT_EXECVE_CHECK execveat(2) flag, and the
+> >    SECBIT_EXEC_RESTRICT_FILE and SECBIT_EXEC_DENY_INTERACTIVE
+> >    securebits are intended for script interpreters and dynamic linkers
+> >    to enforce a consistent execution security policy handled by the
+> >    kernel."
+>
+> From the documentation:
+>
+>   Passing the AT_EXECVE_CHECK flag to execveat(2) only performs a check
+>   on a regular file and returns 0 if execution of this file would be
+>   allowed, ignoring the file format and then the related interpreter
+>   dependencies (e.g. ELF libraries, script=E2=80=99s shebang).
+>
+> >
+> > Um, what security policy?
+>
+> Whether the file is allowed to be executed.  This includes file
+> permission, mount point option, ACL, LSM policies...
 
-Please only do this for things that were actually discussed.
+This needs *waaaaay* more detail for any sort of useful evaluation.
+Is an actual credible security policy rolling dice?  Asking ChatGPT?
+Looking at security labels?  Does it care who can write to the file,
+or who owns the file, or what the file's hash is, or what filesystem
+it's on, or where it came from?  Does it dynamically inspect the
+contents?  Is it controlled by an unprivileged process?
 
-Because for *my* wellness cure, I get really damn annoyed when I
-wonder about some context of a commit, and follow a link to look at
-the background, and all I see is that SAME DAMN PATCH that I already
-looked at, and wondered about, then that link damn well wasted my
-time.
+I can easily come up with security policies for which DENYWRITE is
+completely useless.  I can come up with convoluted and
+not-really-credible policies where DENYWRITE is important, but I'm
+honestly not sure that those policies are actually useful.  I'm
+honestly a bit concerned that AT_EXECVE_CHECK is fundamentally busted
+because it should have been parametrized by *what format is expected*
+-- it might be possible to bypass a policy by executing a perfectly
+fine Python script using bash, for example.
 
-It's annoying as hell.
+I genuinely have not come up with a security policy that I believe
+makes sense that needs AT_EXECVE_CHECK and DENYWRITE.  I'm not saying
+that such a policy does not exist -- I'm saying that I have not
+thought of such a thing after a few minutes of thought and reading
+these threads.
 
-And no, some "maybe people add acks or context later" is not a valid
-reason to add a link. If there was no discussion about it at the time
-it was committed, a link to some mailing list posting by definition
-doesn't explain why the commit exists.
 
-                    Linus
+> > And then on top of it, why can't you do these checks by modifying the
+> > script interpreters?
+>
+> The script interpreter requires modification to use AT_EXECVE_CHECK.
+>
+> There is no other way for user space to reliably check executability of
+> files (taking into account all enforced security
+> policies/configurations).
+>
+
+As mentioned above, even AT_EXECVE_CHECK does not obviously accomplish
+this goal.  If it were genuinely useful, I would much, much prefer a
+totally different API: a *syscall* that takes, as input, a file
+descriptor of something that an interpreter wants to execute and a
+whole lot of context as to what that interpreter wants to do with it.
+And I admit I'm *still* not convinced.
+
+Seriously, consider all the unending recent attacks on LLMs an
+inspiration.  The implications of viewing an image, downscaling the
+image, possibly interpreting the image as something containing text,
+possibly following instructions in a given language contained in the
+image, etc are all wildly different.  A mechanism for asking for
+general permission to "consume this image" is COMPLETELY MISSING THE
+POINT.  (Never mind that the current crop of LLMs seem entirely
+incapable of constraining their own use of some piece of input, but
+that's a different issue and is besides the point here.)
 
