@@ -1,229 +1,183 @@
-Return-Path: <linux-fsdevel+bounces-59408-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59409-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C149B387E7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 18:42:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C568B38825
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 18:59:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 593A21C20865
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 16:42:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D14E1C21127
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Aug 2025 16:59:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 621332DFA38;
-	Wed, 27 Aug 2025 16:42:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D5E52ED85E;
+	Wed, 27 Aug 2025 16:59:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bgxWFwCZ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pf7/0Js9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A4414BFA2;
-	Wed, 27 Aug 2025 16:42:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17ED22BE65E;
+	Wed, 27 Aug 2025 16:59:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756312934; cv=none; b=j9VW1VO5mqC5mBubKSWvoU4a1F3Zdv9pZqMx2bl7hhHk70NMhinz+ij+xp3ZBa7nSzbbsMi6xUqWGRMq2hOB/WeUv4M5lyNg7Xq4tYQDaeug9Q3K+uutWUaH4/FdrCVFE9bepHQEI7LC5vphUB2AhDHzqUgdG4oXrLVUjzFQVlo=
+	t=1756313965; cv=none; b=r2oi0gSI9irEGSQeWhPkpAZe9fVnp2ZnXRw0F4u9Ed6LQIjBnrTS0YypAMaFWjSHZiZ2si4qv1On5Gsm5cCaOs0ujI1QYztlJNYXJBMuzET6oCAQTJwNxicPCzjkNzwVs9sCJrmmozr5+k8N8/7N+a0CG0isJPmB6GIWbayVh8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756312934; c=relaxed/simple;
-	bh=Ze7VK/NW52ie7m6ocHgrkyf2cjqSdEf2HW/Tjqcxu1s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HMAfXzrhQHBcCpXjLnFW4V/UB5dRlJf8K65kTePXTmcL17NwQnY0XjnhlINmhHak+3TudRkVgt1ieVzq2u76gpogKaiXDJg+CorFUVw71ORJW67d0RXt8d5Wv+91XKWLZePz34GZltQvrXGh8xafzVa7wXSr8xjOOvwwAEusQa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bgxWFwCZ; arc=none smtp.client-ip=209.85.160.180
+	s=arc-20240116; t=1756313965; c=relaxed/simple;
+	bh=HP+oCFjbaV0ErYQHYOSOr3F3umYVDZHj90JBCgWCcms=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qIvMdXL2aP2v/bzQdVJIKI/Y9ZWXRdyNW560ii21ibwt2KTiGvfC1LcaCeEihbBDEjR120qEgvQ1n0utLobbOU2Kri7llQndnjbIM+WYRztLY+aPg9BlVUAxMeDseA9VAyr9dL5t6BqViJ9qlqWWsvcBHlHp59oUZM7WFmla+78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pf7/0Js9; arc=none smtp.client-ip=209.85.208.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4b109921fe7so504421cf.0;
-        Wed, 27 Aug 2025 09:42:12 -0700 (PDT)
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-3366f66a04cso424171fa.1;
+        Wed, 27 Aug 2025 09:59:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756312932; x=1756917732; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ukNwbFQiSMrKDLfMwG5KZXIBLapa00t8EPrxLnQbq5Q=;
-        b=bgxWFwCZobzj9uecbE33Wlx9ICsRf4cFHuZUmZOcvsjOr3NpOwjfw9sTbG+hahtMDB
-         7Ns3ebxgIB/aF2neLez4VVGcW1BHGmDFl0mNKqIZ6tZoQDFzlgl2wCTHi2/afadvF2Hk
-         yXN1QcZw/JeomrZa0nNSBj4EsBxctuMaLYMulPTeZGr3OZyY8FzZxHuRhWSoUY1QAXOX
-         fezGgEyt3HhS1O2+kMYp54QOM5Ss9sSMeKWK7iaDFkdDOa2U/GOHNlJ7neOhSzjnzBZg
-         lzqCxvFxxl21FqJTl0/Hq+HUEDe8C5HWAgsDjbm3DVUxkUOkLcN1+3WkmpN2KmJHJSXS
-         Oj4Q==
+        d=gmail.com; s=20230601; t=1756313962; x=1756918762; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cSz+0Jdl3rsxgIMqjiE4eLITB/Ptqi8xoIkjq9Q3i9w=;
+        b=Pf7/0Js9wTzUbA2z9j1s0We4psrMER+tLAPobYT1Uzur7QQR2hxzkJL6SIZaCkRpyr
+         w0bEYYDQXU377H4/trsEniu3lKkDLdddYLuMkZrAeA9YNihsGnmSBHkZQr+e0qI/3JIK
+         n2NZUmbXNiwzYYqAFp8DCLW22VfdO7/lh+5TgG1hIpWVlwIL9jCaCGuzk4Og1P1cjWOc
+         yamlOUyOSAxDaF0N9w4lK3tya9CAmHFBFSB1aBS8c3JeZAt0EMbsPpWGgRmT73XDCkbU
+         JKOEPG98pX1Qd89EIVAVIFHuiDZCN8bPc6Oax7u02yUihzLtuTLAstJWLM8lvS9mBbOm
+         fjhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756312932; x=1756917732;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ukNwbFQiSMrKDLfMwG5KZXIBLapa00t8EPrxLnQbq5Q=;
-        b=Fiej0AMebJrX6apF+nzdi1W+12iSs2c4VrJ1TEhB/kwp7TXnEZafNnFwJ79hMZqTO/
-         8f+Gm9XSnWjSZVFmE3Jv0bVYhXrqsdH1eMOfO8R/9K+twFp5dOCHxS4mD+oRoWqn5fsD
-         AdwXKQchRGluHc/GJckpK2cp4jPLbhdheQ/YhKzA76E+IqnOoKyUwk2/5BMiAdi4BvkF
-         jI1TjLGp5IC+LkgdbG/hAsE9szwvClG4GwIDK4u385QclRKh8kS9OCeG+rGcJIl5c7xk
-         rXT+TCibFAUb3GkHitw2WCYzuJ8fLGFGsOxX0/YWTqYV0GZB38JSt9UQno7K3WtT3qGM
-         WGjw==
-X-Forwarded-Encrypted: i=1; AJvYcCU3pJVEYNYU/4pS9nLzqOO4xDFh8A/oy43FZtHNEUDIJCV6iEHWhNVOrN1qzKBA6uQ29gfyzXJtmZiu90S+@vger.kernel.org, AJvYcCVY7nz2wsxEkQm/BZp0pSU9/I2H/L6e/FZURToBnHg8lmuYZVdkQkyXEDrcehwxVRAfS2+2Yl6y9JuWjlI2@vger.kernel.org, AJvYcCXgngcZbawYQ+pkd9htN11IYdFTE8EAXrWLbCWsUwttb/12OzK9Nz3gMjbQKt5KQ8X/2cV9XLqW2SPfeg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAAfqW+5fP9JpIvCqrDIBMAaDe472iYdQzw1Yj/znjox59VVj3
-	YCqKiEblGzrQ2/MSBc+UHwHJw4WxPoNslocuue1HnBxAXCWDYQKQLEWKRVALCqYIyb7H+3vX4LK
-	5ytvNggY6aNgGFRbCxPGQViySS7Etd44=
-X-Gm-Gg: ASbGncvkHpkg7anD+dwDvxIzvK0xV06GDinXzS1iSerNbrxGSBjANrpot0HsVWxiR0z
-	CgnfewfaxNRpMlMnk26FFTYS4jYmp3dwNd9VTU2LiGNUOta+nGbJRs9aeBIzAIZRPpCcKX8Hoid
-	qsrgqfBbYew5/mv/nBQ67+q2Lsk+NKXEXYKzBy+EaL55cuH+IFenWyULZoE3jPnDHxFCCzMdTrU
-	l5C0mjG
-X-Google-Smtp-Source: AGHT+IEdK6rv8rou1a4sOK6DISGx8RbBcTvJq0Xla0Iewbb5/AzkN8ABV37s99VrDH8YODTMQxRHkJAthNi4G6Esue0=
-X-Received: by 2002:a05:622a:4016:b0:4ae:f8bb:7c6a with SMTP id
- d75a77b69052e-4b2aaaf96abmr235680241cf.54.1756312931784; Wed, 27 Aug 2025
- 09:42:11 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756313962; x=1756918762;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cSz+0Jdl3rsxgIMqjiE4eLITB/Ptqi8xoIkjq9Q3i9w=;
+        b=Z2UHbZQQYFhnAjEFn+9q5xU36xXyqiRxvkk85DUNFY+N+mgdf/JU4I0pGM+4p33Rvs
+         jYN4MWYiNJxX5C+VPFfUSnu9YO6yPwruGXmRFSPtCldceTqV/OpMVX+Jkx3eCGqjBAUs
+         NuRUe5LK4/+KqDz8tLK1HKqpTv+ABxVAGvYPDgISsB7bC4sF/8jq3POJpi4PYqWbOn3c
+         qBbe8sIFvPggj4ioOb01nKICgkBSi+MENWiiyAJH/p7QPtMfgysGRJxX1GrmEf+qYJhJ
+         hqR/tGIV8HTjnN8zwXaXrU5FwK7ZE2Hfn9dTKvYjqovd+tlznLw79ANU6kHC7AANWKor
+         rQ6A==
+X-Forwarded-Encrypted: i=1; AJvYcCUdpn0dhMcBQ+tCH0oNc5b76ZJA5+QqZuYFhZwQxrJWtX/HMpVkJsAmt5bkwseehCwj5i2yCCe0NUWr@vger.kernel.org, AJvYcCUwg6yK+H5GckWR4Vx8Sw5pBzLPHhsab2sO3wROGMNnxUcN5o/BK+BwsedAyMr7aDkY1pg=@vger.kernel.org, AJvYcCVZR65+YMzi9fFsW/8VIKYkLYkuJGcBwwRz1zQ4JA0jniHn6TEcKJO1Mx3LTa2YiWci9yGlX0dJOS9bjpNwRgMmmtmT@vger.kernel.org, AJvYcCXTFe14OJKe/TxdFgwXZVfKeTqLo5lD9SMrN4Ivwr3zxF23re/5xuXLNUMgjVlel+BTvqgTcLCLkPYultSZZw==@vger.kernel.org, AJvYcCXUL+gLHCNVWJspvaxv1bEreKzmqGXQGhGRb4u2GtYQLPc0rtj6KKXbiXCT6a/4y+cFL6drwBS3TKpL1Wnw@vger.kernel.org, AJvYcCXfTETBDKEpCzfIDz2I51gCSDpsWLBkOzxTrP+TvAUI5jopTuZPLlBcRToOIiXNNqP/mqt546XNQLzUSQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/lvOZ2PAfasnZtt5sk80EN915m+AF8QkdmUrzGu9jz+3LJ63R
+	Ev+Uk9fRoTSYQb7t7Wrc/Xn+vv+QZz27g0ceezp4H5ppuFZLbWYo/5D/
+X-Gm-Gg: ASbGncu1tgUGWeXBLTJEH0ZV3nJwZLfv2iKFlZsDuU42ZmkRLSZI2ojSWEG1T1AibKq
+	pPj5cmYzaZDKXd+Pu0PMtTKVxIB4lcues6uMBMvwJMUBE7YnSIfzSDxPlVPrgIwHzfhikbEvFZL
+	ZNGOTSzBLewkzWwBH/FhsON7SunEy3joyhNS2iXwruuizfMNK5+qIuOsnlXhODMxDbg1B/rajBl
+	w2MD6uiW7igXDagOws1AX9pxJnNle1+XAIbprKNsFNy35JU99r/wX/Fd7IPj+i6Sj1HxnAs8s/J
+	csEwSWQxAajHYy+mbYl2IRFi6BRNOZdEPE1/hWnjDfGtWrXK9h8erw9o1GcFVutIRfqohp52GQ9
+	xaWAE6hoXrvDl+SJ/wFsa7dhwMQ4+P+Kvfl/xe0hDlmv/cpBJvMiJ
+X-Google-Smtp-Source: AGHT+IG4BeCx/VIPO9rnbCc0YcRdZMlua4eVbdX3PpKt/fKDdzrBfr7yiiTFTWfK/4UfPVTpR7vpyQ==
+X-Received: by 2002:a2e:be03:0:b0:336:7eed:2f8f with SMTP id 38308e7fff4ca-3367eed3c67mr29987221fa.32.1756313961794;
+        Wed, 27 Aug 2025 09:59:21 -0700 (PDT)
+Received: from pc636 (host-90-233-205-219.mobileonline.telia.com. [90.233.205.219])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3365e5da244sm27443611fa.58.2025.08.27.09.59.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Aug 2025 09:59:21 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Wed, 27 Aug 2025 18:59:16 +0200
+To: Kees Cook <kees@kernel.org>
+Cc: Uladzislau Rezki <urezki@gmail.com>, Mike Rapoport <rppt@kernel.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Harry Yoo <harry.yoo@oracle.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"David S . Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>,
+	Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Xu Xin <xu.xin16@zte.com.cn>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Hugh Dickins <hughd@google.com>, Vlastimil Babka <vbabka@suse.cz>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
+	Muchun Song <muchun.song@linux.dev>,
+	Oscar Salvador <osalvador@suse.de>, Jann Horn <jannh@google.com>,
+	Pedro Falcato <pfalcato@suse.de>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Qi Zheng <zhengqi.arch@bytedance.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org,
+	sparclinux@vger.kernel.org, linux-sgx@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	nvdimm@lists.linux.dev, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] mm: update core kernel code to use vm_flags_t
+ consistently
+Message-ID: <aK85ZPVwBIv-sH85@pc636>
+References: <cover.1750274467.git.lorenzo.stoakes@oracle.com>
+ <d1588e7bb96d1ea3fe7b9df2c699d5b4592d901d.1750274467.git.lorenzo.stoakes@oracle.com>
+ <aIgSpAnU8EaIcqd9@hyeyoo>
+ <73764aaa-2186-4c8e-8523-55705018d842@lucifer.local>
+ <aIkVRTouPqhcxOes@pc636>
+ <69860c97-8a76-4ce5-b1d6-9d7c8370d9cd@lucifer.local>
+ <aJCRXVP-ZFEPtl1Y@pc636>
+ <aJHQ9XCLtibFjt93@kernel.org>
+ <aJItxJNfn8B2JBbn@pc636>
+ <202508251436.762035B@keescook>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <68a841d7.050a0220.37038e.0051.GAE@google.com> <CANp29Y5zWmwXDq1uuzxi43_VXieykD2OOLF12YvBELCUS_Hibg@mail.gmail.com>
-In-Reply-To: <CANp29Y5zWmwXDq1uuzxi43_VXieykD2OOLF12YvBELCUS_Hibg@mail.gmail.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Wed, 27 Aug 2025 09:42:01 -0700
-X-Gm-Features: Ac12FXwHpDFGX3qpd9AovfJG44VaG3oJdBDPHtt5VXniGKE2sjOw13BopanbSYA
-Message-ID: <CAJnrk1Ziam4ZqqyzOpbUD8j=RwJOK22Uz3VMqWZsUNiJ5bkBrg@mail.gmail.com>
-Subject: Re: [syzbot] [fs?] [mm?] linux-next test error: WARNING in __folio_start_writeback
-To: Aleksandr Nogikh <nogikh@google.com>
-Cc: syzbot <syzbot+0630e71306742d4b2aea@syzkaller.appspotmail.com>, 
-	David Hildenbrand <david@redhat.com>, mszeredi@redhat.com, akpm@linux-foundation.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, 
-	syzkaller-bugs@googlegroups.com, willy@infradead.org, 
-	Marek Szyprowski <m.szyprowski@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202508251436.762035B@keescook>
 
-On Wed, Aug 27, 2025 at 6:45=E2=80=AFAM Aleksandr Nogikh <nogikh@google.com=
-> wrote:
->
-> I've bisected the problem to the following commit:
->
-> commit 167f21a81a9c4dbd6970a4ee3853aecad405fa7f (HEAD)
-> Author: Joanne Koong <joannelkoong@gmail.com>
-> Date:   Mon Jul 7 16:46:06 2025 -0700
->
->     mm: remove BDI_CAP_WRITEBACK_ACCT
->
->     There are no users of BDI_CAP_WRITEBACK_ACCT now that fuse doesn't do
->     its own writeback accounting. This commit removes
->     BDI_CAP_WRITEBACK_ACCT.
->
-> Joanne Koong, could you please take a look at the syzbot report below?
+On Mon, Aug 25, 2025 at 02:37:11PM -0700, Kees Cook wrote:
+> On Tue, Aug 05, 2025 at 06:13:56PM +0200, Uladzislau Rezki wrote:
+> > I agree. Also it can be even moved under vmalloc.c. There is only one
+> > user which needs it globally, it is usercopy.c. It uses find_vmap_area()
+> > which is wrong. See:
+> > 
+> > <snip>
+> > 	if (is_vmalloc_addr(ptr) && !pagefault_disabled()) {
+> > 		struct vmap_area *area = find_vmap_area(addr);
+> > 
+> > 		if (!area)
+> > 			usercopy_abort("vmalloc", "no area", to_user, 0, n);
+> > 
+> > 		if (n > area->va_end - addr) {
+> > 			offset = addr - area->va_start;
+> > 			usercopy_abort("vmalloc", NULL, to_user, offset, n);
+> > 		}
+> > 		return;
+> > 	}
+> > <snip>
+> > 
+> > we can add a function which just assign va_start, va_end as input
+> > parameters and use them in the usercopy.c. 
+> 
+> Yes please! I'd must rather use some exported validation routine than
+> having it hand-coded in usercopy.c. :)
+> 
+I will do it :)
 
-Hi Aleksandr,
-
-Thanks for bisecting this. This is a duplicate of what Marek reported
-in [1]. His patch in [2] fixes the warning getting triggered.
-
-Marek, could you submit your patch formally to the mm tree so it could
-be picked up?
-
-
-Thanks,
-Joanne
-
-
-[1] https://lore.kernel.org/linux-fsdevel/a91010a8-e715-4f3d-9e22-e4c34efc0=
-408@samsung.com/T/#u
-[2] https://lore.kernel.org/linux-fsdevel/a91010a8-e715-4f3d-9e22-e4c34efc0=
-408@samsung.com/T/#m3aa6506ee7de302242e64861f8e2199f24e4ad46
-
->
-> On Fri, Aug 22, 2025 at 12:09=E2=80=AFPM syzbot
-> <syzbot+0630e71306742d4b2aea@syzkaller.appspotmail.com> wrote:
-> >
-> > Hello,
-> >
-> > syzbot found the following issue on:
-> >
-> > HEAD commit:    0f4c93f7eb86 Add linux-next specific files for 20250822
-> > git tree:       linux-next
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D172c07bc580=
-000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D21eed27c0de=
-adb92
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D0630e71306742=
-d4b2aea
-> > compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6=
-049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-> >
-> > Downloadable assets:
-> > disk image: https://storage.googleapis.com/syzbot-assets/669ede8f5d66/d=
-isk-0f4c93f7.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/50feda89fe89/vmli=
-nux-0f4c93f7.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/317a0d3516fb=
-/bzImage-0f4c93f7.xz
-> >
-> > IMPORTANT: if you fix the issue, please add the following tag to the co=
-mmit:
-> > Reported-by: syzbot+0630e71306742d4b2aea@syzkaller.appspotmail.com
-> >
-> > ------------[ cut here ]------------
-> > WARNING: ./include/linux/backing-dev.h:243 at inode_to_wb include/linux=
-/backing-dev.h:239 [inline], CPU#1: kworker/u8:6/2949
-> > WARNING: ./include/linux/backing-dev.h:243 at __folio_start_writeback+0=
-x9d5/0xb70 mm/page-writeback.c:3027, CPU#1: kworker/u8:6/2949
-> > Modules linked in:
-> > CPU: 1 UID: 0 PID: 2949 Comm: kworker/u8:6 Not tainted syzkaller #0 PRE=
-EMPT(full)
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS=
- Google 07/12/2025
-> > Workqueue: writeback wb_workfn (flush-8:0)
-> > RIP: 0010:inode_to_wb include/linux/backing-dev.h:239 [inline]
-> > RIP: 0010:__folio_start_writeback+0x9d5/0xb70 mm/page-writeback.c:3027
-> > Code: 28 4c 89 f8 48 c1 e8 03 42 80 3c 28 00 74 08 4c 89 ff e8 ce a2 29=
- 00 49 8b 07 25 ff 3f 00 00 e9 1b fa ff ff e8 7c 04 c6 ff 90 <0f> 0b 90 e9 =
-d6 fb ff ff e8 6e 04 c6 ff 48 c7 c7 a0 f8 5f 8e 4c 89
-> > RSP: 0018:ffffc9000bb06ea0 EFLAGS: 00010293
-> > RAX: ffffffff81fad344 RBX: ffffea00050de8c0 RCX: ffff88802ee29e00
-> > RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> > RBP: ffffc9000bb07010 R08: ffffc9000bb06f97 R09: 0000000000000000
-> > R10: ffffc9000bb06f80 R11: fffff52001760df3 R12: ffffea00050de8c8
-> > R13: 0000000000000000 R14: ffff888023060880 R15: ffff888023060660
-> > FS:  0000000000000000(0000) GS:ffff8881258c3000(0000) knlGS:00000000000=
-00000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 00007f7354907000 CR3: 000000000e338000 CR4: 00000000003526f0
-> > Call Trace:
-> >  <TASK>
-> >  __block_write_full_folio+0x75f/0xe10 fs/buffer.c:1928
-> >  blkdev_writepages+0xd1/0x170 block/fops.c:484
-> >  do_writepages+0x32e/0x550 mm/page-writeback.c:2604
-> >  __writeback_single_inode+0x145/0xff0 fs/fs-writeback.c:1680
-> >  writeback_sb_inodes+0x6c7/0x1010 fs/fs-writeback.c:1976
-> >  __writeback_inodes_wb+0x111/0x240 fs/fs-writeback.c:2047
-> >  wb_writeback+0x44f/0xaf0 fs/fs-writeback.c:2158
-> >  wb_check_old_data_flush fs/fs-writeback.c:2262 [inline]
-> >  wb_do_writeback fs/fs-writeback.c:2315 [inline]
-> >  wb_workfn+0xaef/0xef0 fs/fs-writeback.c:2343
-> >  process_one_work kernel/workqueue.c:3236 [inline]
-> >  process_scheduled_works+0xade/0x17b0 kernel/workqueue.c:3319
-> >  worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
-> >  kthread+0x711/0x8a0 kernel/kthread.c:463
-> >  ret_from_fork+0x47c/0x820 arch/x86/kernel/process.c:148
-> >  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-> >  </TASK>
-> >
-> >
-> > ---
-> > This report is generated by a bot. It may contain errors.
-> > See https://goo.gl/tpsmEJ for more information about syzbot.
-> > syzbot engineers can be reached at syzkaller@googlegroups.com.
-> >
-> > syzbot will keep track of this issue. See:
-> > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> >
-> > If the report is already addressed, let syzbot know by replying with:
-> > #syz fix: exact-commit-title
-> >
-> > If you want to overwrite report's subsystems, reply with:
-> > #syz set subsystems: new-subsystem
-> > (See the list of subsystem names on the web dashboard)
-> >
-> > If the report is a duplicate of another one, reply with:
-> > #syz dup: exact-subject-of-another-report
-> >
-> > If you want to undo deduplication, reply with:
-> > #syz undup
-> >
+--
+Uladzislau Rezki
 
