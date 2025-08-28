@@ -1,168 +1,183 @@
-Return-Path: <linux-fsdevel+bounces-59454-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59455-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A54FB38FA5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 02:14:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DBFCB38FC0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 02:27:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE536687003
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 00:14:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A1375E0B18
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 00:27:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0B0B288DA;
-	Thu, 28 Aug 2025 00:14:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0685E18C03F;
+	Thu, 28 Aug 2025 00:26:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="ko6VF2kA"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="UAfrB0jn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A218A23CB;
-	Thu, 28 Aug 2025 00:14:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE6FA2EAE3
+	for <linux-fsdevel@vger.kernel.org>; Thu, 28 Aug 2025 00:26:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756340074; cv=none; b=pMLh8QZeM04j6tK1apKoBvWquaUcLR/bvwR1XfCDhKU6vNz1sNbpSewrV6C5M/NbAETFJnDoQZWHgtxb6aLvWS8os15of97QmO4mQ/sQIKS+Hi147OTww2/yC69o+PezTMjhaKoJR5l+bcXC1gX+wKvP88bmClQj23kemtSQhZ4=
+	t=1756340815; cv=none; b=kgKRUQFYtUr7IWv9Qdp9zN/F8U1BydeULx7mWPrxkkS6VcftuPrgBEK5vcnmSwszfYVwf7lWKsYHGP1dMI+MdxS1EejoqpWOioKGEZZTSRDEwKuKDaQMj+EC1Mn4LNx5XMOAejPv2qfxPyMa5kNB5pVB8q4NM0Dm4EIn50qFHZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756340074; c=relaxed/simple;
-	bh=vR+P7v6+Ct20eU7awFHLXQjrBuYS+LxOz2wJgbna1rE=;
+	s=arc-20240116; t=1756340815; c=relaxed/simple;
+	bh=CiHY/rsMO1JgljnmcpPdzbXavktzcXH6n5jFCBNd7kc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hy14mTVsFcg9fPAqD0Q4da7GP2ZCQMDLtiu0otgCLIUvUd95b/jRXvfqNaHF9wKi94rNDl4nDdDhkjtGLzX+BPB/we7UbL4x+cLs6HUnQCD5ooDeNmfgl1QTxYdRVVTn+te4ofnm6fDZ67+7VZVyJT7Bucof3JFapXXtQTmlwnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=ko6VF2kA; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4cC22W3nCMz9tSp;
-	Thu, 28 Aug 2025 02:14:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1756340067;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7PK3Ez1Rfnej7jNOPYQs5y3Mm6w6Khoe08rct6ODjuA=;
-	b=ko6VF2kAjcFV7/loAFG3DijKDdEZnWAtqyqZx+AM6VAnZjb1ZghYykty/sdRM4Z84qHq7G
-	Vt+lgdCqKZkwdNjUQkGH5Tt3q5zsG5t9TFRidcCvLdRy93pl5L1y1mPIyvpYl7/XsyvEPb
-	4W1bn1ZNCnyPWikIrT9pwa/G8ySTKhRBr0b7NM90oYn2k3dqdpgtl03kgYZ4Gsl9Q5OjYE
-	RXyIhGD8eglc5O/AnEurlOOObC5p660YfCXGnUfjHpYiAhlJL+eqcidEw+p9UgJKIsiw5m
-	rCTYOh5LQf2S3+nhRH2KFDc577NbG8zpFjrFhqYk3dqXKSejYKBBmEYjhSaBFw==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
-Date: Thu, 28 Aug 2025 10:14:00 +1000
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: Christian Brauner <brauner@kernel.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Kees Cook <keescook@chromium.org>, 
-	Paul Moore <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>, 
-	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
-	Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Miklos Szeredi <mszeredi@redhat.com>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, 
-	Robert Waite <rowait@microsoft.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Scott Shell <scottsh@microsoft.com>, Steve Dower <steve.dower@python.org>, 
-	Steve Grubb <sgrubb@redhat.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v1 0/2] Add O_DENY_WRITE (complement AT_EXECVE_CHECK)
-Message-ID: <2025-08-27-obscene-great-toy-diary-X1gVRV@cyphar.com>
-References: <20250822170800.2116980-1-mic@digikod.net>
- <20250826-skorpion-magma-141496988fdc@brauner>
- <20250826.aig5aiShunga@digikod.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Uu6aHmtIo/lBBL++VPMVOaVwlDcPnGJK6fqCTzQAkneWLJNhU9xTgnVG4e4u90ek78uN2ayPV/+vBUKX/vTpzhwOxoml/pojRdDyaIlTNxlrDgo2P036oaCO59q/Q8gOAt/MRlPn269fXqsxZ0UNOK31Ykjld293pacJebrNLqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=UAfrB0jn; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-246fc803b90so3742045ad.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Aug 2025 17:26:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1756340813; x=1756945613; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AIbrank/pOEZcuqN2pISiixQG0KXR6H+Lj8n+OUb0e8=;
+        b=UAfrB0jnykPMfT5vDgDLf+UhS86I0vX7npGjSpoMLC24bKY+GPsuC785SfrJIg3zHn
+         vAAnz2KlnMybJ8OfV3k5uMo3CUG5mhfAOTWpUXN4ZvaVd8MjVn0z1RHN0UyJOazODxtG
+         z0sH1460cEygNXwgqS/k7qRzJiU15tnTybJuhT4drX5AojwMoTPXMFxJj429Jx/LS6Z1
+         o4ualYIadwaYWFjL/pqv00zZLJtROf1KN8vndiPsv4i0sUvnoUUnOTSMRzOcF5sDXzgb
+         2sVFV+r1v98KPquB2H2jiLZY1A8/bpmChBTdQcAJCN5UScVPBkfP8g2TWfAIbhL/uBj6
+         D9Hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756340813; x=1756945613;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AIbrank/pOEZcuqN2pISiixQG0KXR6H+Lj8n+OUb0e8=;
+        b=M5//OSErWaaTT6pwjm61XQ3bHLZuAytI2L9NI2+LXPGcdr0/t0ArN1ycKy93nbg5Vp
+         yCamv/4exu4hvON0BVQl7OpUpLn4LD32wTyXI/7RWm+nRE4L2G+4UyaIX11Hrs0ZmlYu
+         Il5PhpzrXtvZDagph4seD5ZTzfOUI61pcv3j5s6U80TPKuR1yiMiysUOtgxo8TYtStrn
+         GGnqHVlUkNsvI8R3cQ32Xws2RnZTZRoCcM4InK0xoLStcGlklVBe0yP1hQw03Jcuzqyx
+         52oVe51VxF2nisy/Ue6L5jqVMxUiNedBhLU0qA5G+hRlhJ1fhs4oX+TVWHtVfN7zLDgC
+         H2dw==
+X-Gm-Message-State: AOJu0Yw9vDW/sjwuHjcSrJjCc5631G9o6sT2PxeZ1gORYVH7EsnVRAJT
+	tNYPRrB4ci2jEwrqZAYuWYZkoKscB3bL7a8CDpOZiPgnYnoPZWI1AOrfjowLC794MCQ=
+X-Gm-Gg: ASbGncspTui+Lv2fCWBc3lDZXNMokZizZKx/977jE15CPdKxkglNujytC/q3Ds2aBNG
+	3Yx2hHqRR61w1pwes3dMbCXIrj9sYiPo03txKUAgTHHETQqhvH6+KWaI0o5o3NmyjYnac7g+Spo
+	BKx7bvQfONe/IUB0K2ynk5laZXxt5rEwD1QbTRjFJj1FpF1xB7ebgsFRNnmSGvtUyzEZWKudETE
+	Qr6Ds61uoBvOwBWpZcjnGzZXBCP35cO9+CAo/lkr0QpGqF091a5t8IvDWR0oJTlwVgv4QbJE/Gu
+	rdgvREkkjPX4ZLAVckembbFI9nzdiYZEKRr/5nHEoMl0RlzqlA0mTZ57IymXArYD3q+NH/A5GHC
+	pvXI/4ARiJsxzk3jaBM+tmU9mPc3iWnJbVkeNS7+HPs9KLQwvyM6CVOyyLT+pAlCxnWdp5wjiRV
+	ua+mGUZHZt
+X-Google-Smtp-Source: AGHT+IFK5hxc7bYLtaOFxGe9ricq7ACFEmb4qM2KiH4E4yFcbUWB7uOpNMCQ2mvzULlcuE6v1Dn+5Q==
+X-Received: by 2002:a17:903:acc:b0:248:b8e0:5e1d with SMTP id d9443c01a7336-248b8e06116mr39556925ad.49.1756340813131;
+        Wed, 27 Aug 2025 17:26:53 -0700 (PDT)
+Received: from dread.disaster.area (pa49-180-91-142.pa.nsw.optusnet.com.au. [49.180.91.142])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24875471811sm49697605ad.37.2025.08.27.17.26.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Aug 2025 17:26:52 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.98.2)
+	(envelope-from <david@fromorbit.com>)
+	id 1urQTa-0000000ByQW-0gL8;
+	Thu, 28 Aug 2025 10:26:50 +1000
+Date: Thu, 28 Aug 2025 10:26:50 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+	kernel-team@fb.com, linux-ext4@vger.kernel.org,
+	linux-xfs@vger.kernel.org, brauner@kernel.org,
+	viro@zeniv.linux.org.uk, amir73il@gmail.com
+Subject: Re: [PATCH v2 53/54] fs: remove I_LRU_ISOLATING flag
+Message-ID: <aK-iSiXtuaDj_fyW@dread.disaster.area>
+References: <cover.1756222464.git.josef@toxicpanda.com>
+ <3b1965d56a463604b5a0a003d32fe6983bc297ba.1756222465.git.josef@toxicpanda.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4tazkxltbygkcgo4"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250826.aig5aiShunga@digikod.net>
-X-Rspamd-Queue-Id: 4cC22W3nCMz9tSp
+In-Reply-To: <3b1965d56a463604b5a0a003d32fe6983bc297ba.1756222465.git.josef@toxicpanda.com>
 
+On Tue, Aug 26, 2025 at 11:39:53AM -0400, Josef Bacik wrote:
+> If the inode is on the LRU it has a full reference and thus no longer
+> needs to be pinned while it is being isolated.
+> 
+> Remove the I_LRU_ISOLATING flag and associated helper functions
+> (inode_pin_lru_isolating, inode_unpin_lru_isolating, and
+> inode_wait_for_lru_isolating) as they are no longer needed.
+> 
+> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 
---4tazkxltbygkcgo4
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [RFC PATCH v1 0/2] Add O_DENY_WRITE (complement AT_EXECVE_CHECK)
-MIME-Version: 1.0
+....
+> @@ -745,34 +742,32 @@ is_uncached_acl(struct posix_acl *acl)
+>   * I_CACHED_LRU		Inode is cached because it is dirty or isn't shrinkable,
+>   *			and thus is on the s_cached_inode_lru list.
+>   *
+> - * __I_{SYNC,NEW,LRU_ISOLATING} are used to derive unique addresses to wait
+> - * upon. There's one free address left.
+> + * __I_{SYNC,NEW} are used to derive unique addresses to wait upon. There are
+> + * two free address left.
+>   */
+>  
+>  enum inode_state_bits {
+>  	__I_NEW			= 0U,
+> -	__I_SYNC		= 1U,
+> -	__I_LRU_ISOLATING	= 2U
+> +	__I_SYNC		= 1U
+>  };
+>  
+>  enum inode_state_flags_t {
+>  	I_NEW			= (1U << __I_NEW),
+>  	I_SYNC			= (1U << __I_SYNC),
+> -	I_LRU_ISOLATING         = (1U << __I_LRU_ISOLATING),
+> -	I_DIRTY_SYNC		= (1U << 3),
+> -	I_DIRTY_DATASYNC	= (1U << 4),
+> -	I_DIRTY_PAGES		= (1U << 5),
+> -	I_CLEAR			= (1U << 6),
+> -	I_LINKABLE		= (1U << 7),
+> -	I_DIRTY_TIME		= (1U << 8),
+> -	I_WB_SWITCH		= (1U << 9),
+> -	I_OVL_INUSE		= (1U << 10),
+> -	I_CREATING		= (1U << 11),
+> -	I_DONTCACHE		= (1U << 12),
+> -	I_SYNC_QUEUED		= (1U << 13),
+> -	I_PINNING_NETFS_WB	= (1U << 14),
+> -	I_LRU			= (1U << 15),
+> -	I_CACHED_LRU		= (1U << 16)
+> +	I_DIRTY_SYNC		= (1U << 2),
+> +	I_DIRTY_DATASYNC	= (1U << 3),
+> +	I_DIRTY_PAGES		= (1U << 4),
+> +	I_CLEAR			= (1U << 5),
+> +	I_LINKABLE		= (1U << 6),
+> +	I_DIRTY_TIME		= (1U << 7),
+> +	I_WB_SWITCH		= (1U << 8),
+> +	I_OVL_INUSE		= (1U << 9),
+> +	I_CREATING		= (1U << 10),
+> +	I_DONTCACHE		= (1U << 11),
+> +	I_SYNC_QUEUED		= (1U << 12),
+> +	I_PINNING_NETFS_WB	= (1U << 13),
+> +	I_LRU			= (1U << 14),
+> +	I_CACHED_LRU		= (1U << 15)
+>  };
 
-On 2025-08-26, Micka=EBl Sala=FCn <mic@digikod.net> wrote:
-> On Tue, Aug 26, 2025 at 11:07:03AM +0200, Christian Brauner wrote:
-> > Nothing has changed in that regard and I'm not interested in stuffing
-> > the VFS APIs full of special-purpose behavior to work around the fact
-> > that this is work that needs to be done in userspace. Change the apps,
-> > stop pushing more and more cruft into the VFS that has no business
-> > there.
->=20
-> It would be interesting to know how to patch user space to get the same
-> guarantees...  Do you think I would propose a kernel patch otherwise?
+This is a bit of a mess - we should reserve the first 4 bits for the
+waitable inode_state_bits right from the start and not renumber the
+other flag bits into that range. i.e. start the first non-waitable
+bit at bit 4. That way every time we add/remove a waitable bit, we
+don't have to rewrite the entire set of flags. i.e: something like:
 
-You could mmap the script file with MAP_PRIVATE. This is the *actual*
-protection the kernel uses against overwriting binaries (yes, ETXTBSY is
-nice but IIRC there are ways to get around it anyway). Of course, most
-interpreters don't mmap their scripts, but this is a potential solution.
-If the security policy is based on validating the script text in some
-way, this avoids the TOCTOU.
+enum inode_state_flags_t {
+	I_NEW			= (1U << __I_NEW),
+	I_SYNC			= (1U << __I_SYNC),
+	// waitable bit 2 unused
+	// waitable bit 3 unused
+	I_DIRTY_SYNC		= (1U << 4),
+....
 
-Now, in cases where you have IMA or something and you only permit signed
-binaries to execute, you could argue there is a different race here (an
-attacker creates a malicious script, runs it, and then replaces it with
-a valid script's contents and metadata after the fact to get
-AT_EXECVE_CHECK to permit the execution). However, I'm not sure that
-this is even possible with IMA (can an unprivileged user even set
-security.ima?). But even then, I would expect users that really need
-this would also probably use fs-verity or dm-verity that would block
-this kind of attack since it would render the files read-only anyway.
+This will be much more blame friendly if we do it this way from the
+start of this patch set.
 
-This is why a more detailed threat model of what kinds of attacks are
-relevant is useful. I was there for the talk you gave and subsequent
-discussion at last year's LPC, but I felt that your threat model was
-not really fleshed out at all. I am still not sure what capabilities you
-expect the attacker to have nor what is being used to authenticate
-binaries (other than AT_EXECVE_CHECK). Maybe I'm wrong with my above
-assumptions, but I can't know without knowing what threat model you have
-in mind, *in detail*.
-
-For example, if you are dealing with an attacker that has CAP_SYS_ADMIN,
-there are plenty of ways for an attacker to execute their own code
-without using interpreters (create a new tmpfs with fsopen(2) for
-instance). Executable memfds are even easier and don't require
-privileges on most systems (yes, you can block them with vm.memfd_noexec
-but CAP_SYS_ADMIN can disable that -- and there's always fsopen(2) or
-mount(2)).
-
-(As an aside, it's a shame that AT_EXECVE_CHECK burned one of the
-top-level AT_* bits for a per-syscall flag -- the block comment I added
-in b4fef22c2fb9 ("uapi: explain how per-syscall AT_* flags should be
-allocated") was meant to avoid this happening but it seems you and the
-reviewers missed that...)
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-https://www.cyphar.com/
-
---4tazkxltbygkcgo4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaK+fRBsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG+uowD/Sqmo+gatXLeikpI5XmZo
-OTzPamUQKF6Qc1cYyy2INK8BAPK2BcHkJfcGbfBSjW2CshX9cc5oZuhvWEtz4TDD
-XzYA
-=FdMM
------END PGP SIGNATURE-----
-
---4tazkxltbygkcgo4--
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
