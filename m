@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-59537-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59556-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E16FAB3ADFE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 01:08:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D599B3AE11
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 01:09:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4A05583850
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 23:08:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BB6C5838ED
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 23:09:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 394202D0606;
-	Thu, 28 Aug 2025 23:08:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209382F0C7E;
+	Thu, 28 Aug 2025 23:08:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="EGZKhy4c"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Cn8h8Qv9"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7166C2D0C67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD8612D0C7B
 	for <linux-fsdevel@vger.kernel.org>; Thu, 28 Aug 2025 23:08:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756422491; cv=none; b=WOeRF3JQrjVkMMHMACpOguR4t9aMIOefiByTAjl+gy3Y5VxczlbexNiVSdp1mtK5FWR3DZxA3R/SzIFBbqlg2xp5gBaWer7uAC0hcBf2jM7IdzFZl+1yY6cdYO6139ahZubONgZu54KkqxTFfKoxDjc4pVDgccTJFb3tNdBDrNE=
+	t=1756422493; cv=none; b=t0eYMnkVzM/rIz02VIoK02ng8zcoBEc6bmZMyozNZTWnLBKOZIVKcjPo5ODrqwe3PMUN6667tGr+HhoD1vqYuSkJRVkLq7as8jC2ZCkNW3NrstdsH+UZmrEGj4QLkez3CuamH9xxwz5RhhxVnsfwtoOogcSkvSqhyWEY82fd7dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756422491; c=relaxed/simple;
-	bh=0r+mqVfLFQf63EfLxjFqOFyLL9b5NyD0SoCGxhk5efE=;
+	s=arc-20240116; t=1756422493; c=relaxed/simple;
+	bh=NB9TuKdhZkW45GLoScYcrHUUjbqPbB0kYiTyDiyyTIU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UjGf+Ql+DCbJNU5ri4FabEkL9Xvc+WfqbPhcyr329itNfKocfVweFFkcIrL0Th+nB+nnx/Yl5EPvEVFVg6BiRTx2gdUKpOvJgfOIOvkBp5HM003OpSrWxsNDPcrX/FeEhpoMVywnegHCxAZ6Q3N5DZq0RjzNG+QYiqpdOFMG5gs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=EGZKhy4c; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=UYhCszMsC8Q4PDGMpw306//n0qJ913DsYIhi/piMOmA7kz7aEaGMyIzLnXlYEEQ/eFzRl8fC/Pi2yVyqkBGfwQXQVeiVVdHsbIqRzqlKX6DIeCBuInxgO4h0/FtVmUVQr52dBYUjoJYQASOhSavfmSTyuesIuhfazLm3+Wz9Spc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Cn8h8Qv9; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=bfS8MbrTqhkcdjwqN5kbV9L1kEnF+VyoLU4fzit4rGw=; b=EGZKhy4cm15srOhM1j0d7Mb2KS
-	UMUMmHunhE7fZJMuml0hvzfLgDChxWvFPRDEiq5jLDRTDBEuiTYZc9a0Dj8UKvnSqUc4xx43eWAcR
-	ps0YyvZw8si4GhQUM/XxF2AgqstYH4AvUIh7ldMlu+/F+RE/9a8fLCw5oXyZb0n2AMqVfchYOx9oq
-	LNrnS3dDGQ45Uj7MHV7jzmip0IVpT9aV7W4gr4e5tZzxOGous4W6INxPyB1nlmfQEpfzRdGesODLM
-	+eXWzav3NOG04IyCVeBUmTgSluphSWOlcnZ6awAw/yVsrWKDq2TQL3xUYp3WF3zj1V9QU2EpNxDI1
-	Lt2Q7h5A==;
+	bh=T9WU3UY9XMueTbTN4JxpURvbXOw+hVVs9tkva/RfYYQ=; b=Cn8h8Qv9NF1htMFwG6bbD0WSOF
+	zfDc7DBav9ddGPhJg9I+9ulgucHoDYgpnhbSmhwg6k6NDGtZb238TIw6KXvBTnTCqSy4uqdaw6Vpq
+	1tpPZzq9KVDqMeC3V67IzZ1iZo7kS50qzMdVlOSVsBEnwH+ls6HSh8V2QNdJwHf1Hoa3oNxaewwWN
+	iC4v8XNMvGGFoHwiSL/EOhHPqEpSRBRi1rNxVNBXajA8UoG52VkKnbYOu+zVo4pfQnmIlNLNieIRA
+	X6GrCTVMRb0bkwMooNvRhu9fsdZ/r1zRpFNjcpp7CvcB6bYJVrQtJL/IHUZJdJBFmVQ35QxCI5o1Y
+	lTZ800lQ==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1urliy-0000000F226-0H1t;
+	id 1urliy-0000000F22E-0k2C;
 	Thu, 28 Aug 2025 23:08:08 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: brauner@kernel.org,
 	jack@suse.cz,
 	torvalds@linux-foundation.org
-Subject: [PATCH v2 10/63] mnt_already_visible(): use guards
-Date: Fri, 29 Aug 2025 00:07:13 +0100
-Message-ID: <20250828230806.3582485-10-viro@zeniv.linux.org.uk>
+Subject: [PATCH v2 11/63] check_for_nsfs_mounts(): no need to take locks
+Date: Fri, 29 Aug 2025 00:07:14 +0100
+Message-ID: <20250828230806.3582485-11-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250828230806.3582485-1-viro@zeniv.linux.org.uk>
 References: <20250828230706.GA3340273@ZenIV>
@@ -65,45 +65,56 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-clean fit; namespace_shared due to iterating through ns->mounts.
+Currently we are taking mount_writer; what that function needs is
+either mount_locked_reader (we are not changing anything, we just
+want to iterate through the subtree) or namespace_shared and
+a reference held by caller on the root of subtree - that's also
+enough to stabilize the topology.
+
+The thing is, all callers are already holding at least namespace_shared
+as well as a reference to the root of subtree.
+
+Let's make the callers provide locking warranties - don't mess with
+mount_lock in check_for_nsfs_mounts() itself and document the locking
+requirements.
 
 Reviewed-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/namespace.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ fs/namespace.c | 16 +++++-----------
+ 1 file changed, 5 insertions(+), 11 deletions(-)
 
 diff --git a/fs/namespace.c b/fs/namespace.c
-index 86a86be2b0ef..a5d37b97088f 100644
+index a5d37b97088f..59948cbf9c47 100644
 --- a/fs/namespace.c
 +++ b/fs/namespace.c
-@@ -6232,9 +6232,8 @@ static bool mnt_already_visible(struct mnt_namespace *ns,
+@@ -2402,21 +2402,15 @@ bool has_locked_children(struct mount *mnt, struct dentry *dentry)
+  * specified subtree.  Such references can act as pins for mount namespaces
+  * that aren't checked by the mount-cycle checking code, thereby allowing
+  * cycles to be made.
++ *
++ * locks: mount_locked_reader || namespace_shared && pinned(subtree)
+  */
+ static bool check_for_nsfs_mounts(struct mount *subtree)
  {
- 	int new_flags = *new_mnt_flags;
- 	struct mount *mnt, *n;
--	bool visible = false;
- 
--	down_read(&namespace_sem);
-+	guard(namespace_shared)();
- 	rbtree_postorder_for_each_entry_safe(mnt, n, &ns->mounts, mnt_node) {
- 		struct mount *child;
- 		int mnt_flags;
-@@ -6281,13 +6280,10 @@ static bool mnt_already_visible(struct mnt_namespace *ns,
- 		/* Preserve the locked attributes */
- 		*new_mnt_flags |= mnt_flags & (MNT_LOCK_READONLY | \
- 					       MNT_LOCK_ATIME);
--		visible = true;
--		goto found;
-+		return true;
- 	next:	;
- 	}
--found:
--	up_read(&namespace_sem);
--	return visible;
-+	return false;
+-	struct mount *p;
+-	bool ret = false;
+-
+-	lock_mount_hash();
+-	for (p = subtree; p; p = next_mnt(p, subtree))
++	for (struct mount *p = subtree; p; p = next_mnt(p, subtree))
+ 		if (mnt_ns_loop(p->mnt.mnt_root))
+-			goto out;
+-
+-	ret = true;
+-out:
+-	unlock_mount_hash();
+-	return ret;
++			return false;
++	return true;
  }
  
- static bool mount_too_revealing(const struct super_block *sb, int *new_mnt_flags)
+ /**
 -- 
 2.47.2
 
