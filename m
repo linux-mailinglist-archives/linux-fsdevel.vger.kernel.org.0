@@ -1,406 +1,248 @@
-Return-Path: <linux-fsdevel+bounces-59467-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59468-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FD44B39519
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 09:26:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 345D0B395F8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 09:51:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5768B189E6BB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 07:26:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AFE407B2D23
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 07:50:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 540282D6E68;
-	Thu, 28 Aug 2025 07:25:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7913277C95;
+	Thu, 28 Aug 2025 07:51:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dRsJ0VG9"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cuRlPFjk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B962D0274;
-	Thu, 28 Aug 2025 07:25:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8250E13C9C4
+	for <linux-fsdevel@vger.kernel.org>; Thu, 28 Aug 2025 07:51:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756365926; cv=none; b=LZOxtfL0bA46oAzSrVEI9VkNp6Qjpe+OV9CKeeOdy/5XtIEeUJsi/atmaU5vJCC7CdZihhnCE10mnhXcrmjmFhermhy1o12CBKNEXDbRQS0bnKJox/LD3/ADsezOVav0ep2vyQ+s+AXgZsys6eCBmppEYQX4dC6i8RAIgV8+yp8=
+	t=1756367511; cv=none; b=SPG97OJimCNB5YvWC1WFcCVsC4WbvUsZzc8mxYMwl71uTC1EwP5rnzZhX0mE7zY326LXFAVYaTwK9m3VWSrGBGpLoDQGsHxGWIreB/sUHJnDzOhcTPc4ri67Qxi4yWaI1j7FG8BNedoLBRuVjQj8LUseQukjWcKaOelal6qXrWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756365926; c=relaxed/simple;
-	bh=E6hJ7d0BBx/C6PP6yRRZKrLaMDN55y8ro2gcimm4r/4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MjCZr7q191xjb9ryNdw5NfSMHuOiJ3uRJyGGTxfX4Q4mRHHJD9cral/6kUPNyI09zXgGK5fNQ0rCSYK5JVCJ8SUwDBgkWBkJGtWuhxoy27yGvwO0IXCaTDELJYOrHEXP09LrJqVHy9x3DImuT2Pqk3OzzwTdIJcb1hWTg+Un3/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dRsJ0VG9; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-61cb9e039d9so1200993a12.1;
-        Thu, 28 Aug 2025 00:25:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756365919; x=1756970719; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mrF8339N14j0AqIqMbzGbNGOg2JSxLKavWKQA1/3tD8=;
-        b=dRsJ0VG9ZN9QMhlCkjstAWdqovRyIdcIuhoCtd3iF1MuwN/5M1Lcbz+ByfVL/jopj7
-         G2AhnGIiNtuso33kXZm0brr0Kj2vsNK4L3n/2xm6dBfU8XYs7H9v0KLrou0gACbu6C4d
-         S1G9waFza1/NwbWAaxrxIW2VvR/JRcmQalf0YcVaW0x+bG+w8PDLT3hGVFivtVupRtyb
-         rzX/xoQswRBeAT0YsXlHJ1ivAsi831Sc0L+eo65CEw3VgEIBnCBAIPgMzoaXPZyuCu6t
-         JA7XTRKcdcleJPnCKLzzcv9/IDzrY05qd6CsrTnYB7MrHsZJNNmGqz3u0CLMbRx7jwWV
-         0AXg==
+	s=arc-20240116; t=1756367511; c=relaxed/simple;
+	bh=aVIw0TcsxiY87h8D5K60j55G2q8/3/CdmpDHg/kInp0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XOs8ALo8aFyqRflBjQseckrZ5NyxUlDODQZKsBLOk5U9MLmVMurBUDozd2Li2Ii4xr4px5c0JfVMKuJSeQ4y1uValM+RdEr13eoE/4yzohWbwqo5vUrvhD8uXRk8R2u2iUbIXN/BpjkhIXiJiwN2eL3ub/OUj7J4Ru9KmD8dBLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cuRlPFjk; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756367508;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=W9hxzTxTQo/SdIPcCftN1rfm4EWEI2PYLX2i1EjssCk=;
+	b=cuRlPFjk42ml8HAgDhE4c9+UdUtac0HfiKd/vPF4LLMVCp/HP0JRA2uoQXkq0r+c8u/jWT
+	1lbuL3Ym6YY3aew6Bg/VPpKiNDO1wvog2alM63H5K02MV7KqoaYFpIGWbxBt/nmj5cIAFU
+	tNXMfeQd2sHrK1zUSCWjd+m+SfNHI9Q=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-126-OLq110SwP7C1baMPebgoig-1; Thu, 28 Aug 2025 03:51:47 -0400
+X-MC-Unique: OLq110SwP7C1baMPebgoig-1
+X-Mimecast-MFC-AGG-ID: OLq110SwP7C1baMPebgoig_1756367506
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3b9dc5c2ba0so265256f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Aug 2025 00:51:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756365919; x=1756970719;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mrF8339N14j0AqIqMbzGbNGOg2JSxLKavWKQA1/3tD8=;
-        b=v5+Nlqz4ETjPTRrnyoJBX5aeyfm+4luwcvcsS6FzgIasJFe/XsCWJWrlbsnC0QCd8P
-         9ayMHxlM4+g/6hbrvQ2VmLJ5EOm4TQbTX12+096L8jHqhyi+QEw26RwlTu4ijUzboAPw
-         BoWy2LxlEF/CEQbhAjroW++RnmB6EnBAfa+VSMKMEFKwKR03YO+uESml59yKtY8w29pX
-         YDvs6m2VjwD6TfOyKFtxffYt0E2Zijx346dPiwcpP1lGdDG4HvSEiDFRtYe11jEBqcSJ
-         NlbbhHjG1TIQaDnpuk8om+VFyAriw7cGo4YIvU85g1M3anYZ1bstNljtrzXHssdzv0yw
-         WIww==
-X-Forwarded-Encrypted: i=1; AJvYcCVU71s8vqr2fVoIvjUunKO+LSiCrVTPwvkDVzFvJcYiC+VDHl0kEX9iF2JaUboMpFwBgmOLDhq4d+dUvrui@vger.kernel.org, AJvYcCW3aV1Ghb2Rq8/7x7q4A7f+Y34DmcFVt95Bfr3+L/S3tMfTx1QgsrAM/7jCCHD43VObv0BQGPghV+XT1JXR@vger.kernel.org, AJvYcCX+PcUnQLIDwFYW3wjXysuR69jSp6d37ETeLTB7aQyUV4Faa/MHjybXUM3asWRlVD0f13j7mikdhsvL/mD23A==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxwv+3NfdFsbHhtP0J7S+sQzsuCkVtrSwg56WSxlCw2+c2+HFhz
-	00cr4rCvO+opeOA14EB3p6+Ic9/0nE729P7rScfO8WcUcXQYfl9RhcAL5GGkkray0ktuGInNpa0
-	nq2IR/WqjKGub1hu+8OliD1bfSBEuGe0=
-X-Gm-Gg: ASbGncuHzu4CTfXY80kEIwXbt69d0heEAETJtI81jtbJ0KOdFVs3gQZBp2wX/X4d0Tk
-	WR1RKb20t1pyNFF6Lp0Ltp2GW3utS5emc8Qp38uT2fOcVpk4ppBnVjenFO2Pxyy5wOCwwH2PbJ7
-	fvVLBkcPN5kAVehDK0EXyvpNEn8kY0/Ws74yCPlXwo11bi0haiMFwAgbhe5ZMN22i8UyW3qfMTZ
-	MtsUxM=
-X-Google-Smtp-Source: AGHT+IEeFQofFZwVrQoNG5BYQqQsmbTCCuUJzGeDjcG3gve3112+dz4r8P074W/7dEa3MSlB8Vqzx6PU+XtSK+iq/7k=
-X-Received: by 2002:a05:6402:51d1:b0:61c:e1d6:6bf6 with SMTP id
- 4fb4d7f45d1cf-61ce1d672b2mr857482a12.7.1756365918958; Thu, 28 Aug 2025
- 00:25:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756367506; x=1756972306;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=W9hxzTxTQo/SdIPcCftN1rfm4EWEI2PYLX2i1EjssCk=;
+        b=PzmCj97OFBs3QMG9m6TEJs5ic4S5LJMLrzwQtaEPiShMrlu/+UP/RriNGhBcv6qx6B
+         8/96Z+bPPLuREVmkXXgaIrLQdH2YlShSVeEiW6HwwJY+B2cwqt1sorK444CkdXIfFYn/
+         f5mUrsez98ek2zWlaFh6nv76lhKt0+l7tw0VGl9a+ZrrKvYOkJlmy+1KVA92T3allHqr
+         kJNO2gPDew+rQFxSo54s92gePMWI1NUn44M+wI0G8ho1F6u4zxbDV1gJWdLmjqtZcCY5
+         J9ur/JiZ1ozar4Euu49EgcBGciqAozRnR/EC9hyl2ZFxBvNFj6Bpx4LIwKlIqYuE0CdL
+         9hPA==
+X-Forwarded-Encrypted: i=1; AJvYcCUOQ4BTJiawzB4lTC4VDSgzAIcARLY4cr4uQoINFeWoZ2USaoKUYZ7MFT0ZvmEhT4YYwtqdtJm3T2H6NWtG@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzbz8+QtiaDzU07xEygF6Frjm+aWeAFg+BQlQXZuaLqasZkPoVv
+	CK5M3Mm7Zatdz4XWEpnUgJKy/vXoIcYKqwBg2zxdv4iZfckdXaruBS9sSp3Nvc3L697KLtyIadi
+	0ZAimHt3VprvnYOAy7SLcN2oH9LCpjT0+r+8QDXfLwbvy5lRffSw+++8qJaxUAtlijNg=
+X-Gm-Gg: ASbGncuP0H+qjAbajWyxE1eJgF2a85VhRVfw8t1vmaBnbtd3jHtDITwwl31UeTrrWsT
+	ltNbNbUg9Cg919+DD4SZtbKShkraHBtrU6Ef7TjYbcw1U8vUdA6ExU9fSGJmCTZxAbkE3dFgA/x
+	YIidB4P27zxJDDdYGdf7ET3GbIooedGBCDlp244eyht8IxPjeg5PYqlmapsD1Nt7I5cBbU0U2h7
+	XBEW0DTJD/ZXI4vkkMiyP8bUcRZFQcWKjZDzxrrs7jYdqrRV44gCeywRLNfOhO4hfye/Www1hsH
+	+RkKrmYkMjftRKdYKPGA8TtTmQUmIWJQV6LWqgd6DsPF04ZR3rKE273RB89zkNPjfUKF6Vcy7HU
+	vLRAbAok1YSKQEl7tIMBqLJ/L9u0eIKRtHTniw390m7DXFafZdzooX8k5KW2eixWfJlE=
+X-Received: by 2002:a05:6000:40c8:b0:3ca:5f27:46cb with SMTP id ffacd0b85a97d-3ca5f274a40mr9865728f8f.26.1756367505832;
+        Thu, 28 Aug 2025 00:51:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH8zgD/30H+XPzw6VmAOLABSxECVvdZkm8lTkssC7aflGskcW313GKDbwONtO4FwEoVzKVXnA==
+X-Received: by 2002:a05:6000:40c8:b0:3ca:5f27:46cb with SMTP id ffacd0b85a97d-3ca5f274a40mr9865704f8f.26.1756367505361;
+        Thu, 28 Aug 2025 00:51:45 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f28:c100:2225:10aa:f247:7b85? (p200300d82f28c100222510aaf2477b85.dip0.t-ipconnect.de. [2003:d8:2f28:c100:2225:10aa:f247:7b85])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ce24ba1817sm1346778f8f.36.2025.08.28.00.51.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Aug 2025 00:51:44 -0700 (PDT)
+Message-ID: <dfeec4c7-b4de-486e-bcb6-8d27384b83bf@redhat.com>
+Date: Thu, 28 Aug 2025 09:51:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAOQ4uxj551a7cvjpcYEyTLtsEXw9OxHtTc-VSm170J5pWtwoUQ@mail.gmail.com>
- <175633908557.2234665.14959580663322237611@noble.neil.brown.name> <87ldn416il.fsf@mailhost.krisman.be>
-In-Reply-To: <87ldn416il.fsf@mailhost.krisman.be>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 28 Aug 2025 09:25:07 +0200
-X-Gm-Features: Ac12FXywcZ1Qgo7VpU_2XkfsXJKC__bgn-foKxqM0W81pE1gr3L-wf1SD3IuRsQ
-Message-ID: <CAOQ4uxhJfFgpUKHy0c23i0dsvxZoRuGxMVXbasEn3zf3s0ORYg@mail.gmail.com>
-Subject: Re: [PATCH v6 9/9] ovl: Support mounting case-insensitive enabled layers
-To: Gabriel Krisman Bertazi <gabriel@krisman.be>, NeilBrown <neil@brown.name>
-Cc: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>, linux-unionfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	kernel-dev@igalia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] virtio_fs: fix page fault for DAX page address
+To: Haiyue Wang <haiyuewa@163.com>, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, Alistair Popple <apopple@nvidia.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Vivek Goyal <vgoyal@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>,
+ Miklos Szeredi <miklos@szeredi.hu>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
+ <eperezma@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ "open list:VIRTIO FILE SYSTEM" <virtualization@lists.linux.dev>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20250828061023.877-1-haiyuewa@163.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20250828061023.877-1-haiyuewa@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 28, 2025 at 5:15=E2=80=AFAM Gabriel Krisman Bertazi
-<gabriel@krisman.be> wrote:
->
-> "NeilBrown" <neil@brown.name> writes:
->
-> > On Thu, 28 Aug 2025, Amir Goldstein wrote:
-> >> On Tue, Aug 26, 2025 at 9:01=E2=80=AFPM Andr=C3=A9 Almeida <andrealmei=
-d@igalia.com> wrote:
-> >> >
-> >> >
-> >> >
-> >> > Em 26/08/2025 04:31, Amir Goldstein escreveu:
-> >> > > On Mon, Aug 25, 2025 at 3:31=E2=80=AFPM Andr=C3=A9 Almeida <andrea=
-lmeid@igalia.com> wrote:
-> >> > >>
-> >> > >> Hi Amir,
-> >> > >>
-> >> > >> Em 22/08/2025 16:17, Amir Goldstein escreveu:
-> >> > >>
-> >> > >> [...]
-> >> > >>
-> >> > >>     /*
-> >> > >>>>>> -        * Allow filesystems that are case-folding capable bu=
-t deny composing
-> >> > >>>>>> -        * ovl stack from case-folded directories.
-> >> > >>>>>> +        * Exceptionally for layers with casefold, we accept =
-that they have
-> >> > >>>>>> +        * their own hash and compare operations
-> >> > >>>>>>             */
-> >> > >>>>>> -       if (sb_has_encoding(dentry->d_sb))
-> >> > >>>>>> -               return IS_CASEFOLDED(d_inode(dentry));
-> >> > >>>>>> +       if (ofs->casefold)
-> >> > >>>>>> +               return false;
-> >> > >>>>>
-> >> > >>>>> I think this is better as:
-> >> > >>>>>            if (sb_has_encoding(dentry->d_sb))
-> >> > >>>>>                    return false;
-> >> > >>>>>
-> >> > >>>
-> >> > >>> And this still fails the test "Casefold enabled" for me.
-> >> > >>>
-> >> > >>> Maybe you are confused because this does not look like
-> >> > >>> a test failure. It looks like this:
-> >> > >>>
-> >> > >>> generic/999 5s ...  [19:10:21][  150.667994] overlayfs: failed l=
-ookup
-> >> > >>> in lower (ovl-lower/casefold, name=3D'subdir', err=3D-116): pare=
-nt wrong
-> >> > >>> casefold
-> >> > >>> [  150.669741] overlayfs: failed lookup in lower (ovl-lower/case=
-fold,
-> >> > >>> name=3D'subdir', err=3D-116): parent wrong casefold
-> >> > >>> [  150.760644] overlayfs: failed lookup in lower (/ovl-lower,
-> >> > >>> name=3D'casefold', err=3D-66): child wrong casefold
-> >> > >>>    [19:10:24] [not run]
-> >> > >>> generic/999 -- overlayfs does not support casefold enabled layer=
-s
-> >> > >>> Ran: generic/999
-> >> > >>> Not run: generic/999
-> >> > >>> Passed all 1 tests
-> >> > >>>
-> >> > >>
-> >> > >> This is how the test output looks before my changes[1] to the tes=
-t:
-> >> > >>
-> >> > >> $ ./run.sh
-> >> > >> FSTYP         -- ext4
-> >> > >> PLATFORM      -- Linux/x86_64 archlinux 6.17.0-rc1+ #1174 SMP
-> >> > >> PREEMPT_DYNAMIC Mon Aug 25 10:18:09 -03 2025
-> >> > >> MKFS_OPTIONS  -- -F /dev/vdc
-> >> > >> MOUNT_OPTIONS -- -o acl,user_xattr /dev/vdc /tmp/dir2
-> >> > >>
-> >> > >> generic/999 1s ... [not run] overlayfs does not support casefold =
-enabled
-> >> > >> layers
-> >> > >> Ran: generic/999
-> >> > >> Not run: generic/999
-> >> > >> Passed all 1 tests
-> >> > >>
-> >> > >>
-> >> > >> And this is how it looks after my changes[1] to the test:
-> >> > >>
-> >> > >> $ ./run.sh
-> >> > >> FSTYP         -- ext4
-> >> > >> PLATFORM      -- Linux/x86_64 archlinux 6.17.0-rc1+ #1174 SMP
-> >> > >> PREEMPT_DYNAMIC Mon Aug 25 10:18:09 -03 2025
-> >> > >> MKFS_OPTIONS  -- -F /dev/vdc
-> >> > >> MOUNT_OPTIONS -- -o acl,user_xattr /dev/vdc /tmp/dir2
-> >> > >>
-> >> > >> generic/999        1s
-> >> > >> Ran: generic/999
-> >> > >> Passed all 1 tests
-> >> > >>
-> >> > >> So, as far as I can tell, the casefold enabled is not being skipp=
-ed
-> >> > >> after the fix to the test.
-> >> > >
-> >> > > Is this how it looks with your v6 or after fixing the bug:
-> >> > > https://lore.kernel.org/linux-unionfs/68a8c4d7.050a0220.37038e.005=
-c.GAE@google.com/
-> >> > >
-> >> > > Because for me this skipping started after fixing this bug
-> >> > > Maybe we fixed the bug incorrectly, but I did not see what the pro=
-blem
-> >> > > was from a quick look.
-> >> > >
-> >> > > Can you test with my branch:
-> >> > > https://github.com/amir73il/linux/commits/ovl_casefold/
-> >> > >
-> >> >
-> >> > Right, our branches have a different base, mine is older and based o=
-n
-> >> > the tag vfs/vfs-6.18.mount.
-> >> >
-> >> > I have now tested with your branch, and indeed the test fails with
-> >> > "overlayfs does not support casefold enabled". I did some debugging =
-and
-> >> > the missing commit from my branch that is making this difference her=
-e is
-> >> > e8bd877fb76bb9f3 ("ovl: fix possible double unlink"). After revertin=
-g it
-> >> > on top of your branch, the test works. I'm not sure yet why this
-> >> > prevents the mount, but this is the call trace when the error happen=
-s:
-> >>
-> >> Wow, that is an interesting development race...
-> >>
-> >> >
-> >> > TID/PID 860/860 (mount/mount):
-> >> >
-> >> >                      entry_SYSCALL_64_after_hwframe+0x77
-> >> >                      do_syscall_64+0xa2
-> >> >                      x64_sys_call+0x1bc3
-> >> >                      __x64_sys_fsconfig+0x46c
-> >> >                      vfs_cmd_create+0x60
-> >> >                      vfs_get_tree+0x2e
-> >> >                      ovl_get_tree+0x19
-> >> >                      get_tree_nodev+0x70
-> >> >                      ovl_fill_super+0x53b
-> >> > !    0us [-EINVAL]  ovl_parent_lock
-> >> >
-> >> > And for the ovl_parent_lock() arguments, *parent=3D"work", *child=3D=
-"#7". So
-> >> > right now I'm trying to figure out why the dentry for #7 is not hash=
-ed.
-> >> >
-> >>
-> >> The reason is this:
-> >>
-> >> static struct dentry *ext4_lookup(...
-> >> {
-> >> ...
-> >>         if (IS_ENABLED(CONFIG_UNICODE) && !inode && IS_CASEFOLDED(dir)=
-) {
-> >>                 /* Eventually we want to call d_add_ci(dentry, NULL)
-> >>                  * for negative dentries in the encoding case as
-> >>                  * well.  For now, prevent the negative dentry
-> >>                  * from being cached.
-> >>                  */
-> >>                 return NULL;
-> >>         }
-> >>
-> >>         return d_splice_alias(inode, dentry);
-> >> }
-> >>
-> >> Neil,
-> >>
-> >> Apparently, the assumption that
-> >> ovl_lookup_temp() =3D> ovl_lookup_upper() =3D> lookup_one()
-> >> returns a hashed dentry is not always true.
-> >>
-> >> It may be always true for all the filesystems that are currently
-> >> supported as an overlayfs
-> >> upper layer fs (?), but it does not look like you can count on this
-> >> for the wider vfs effort
-> >> and we should try to come up with a solution for ovl_parent_lock()
-> >> that will allow enabling
-> >> casefolding on overlayfs layers.
-> >>
-> >> This patch seems to work. WDYT?
-> >>
-> >> Thanks,
-> >> Amir.
-> >>
-> >> commit 5dfcd10378038637648f3f422e3d5097eb6faa5f
-> >> Author: Amir Goldstein <amir73il@gmail.com>
-> >> Date:   Wed Aug 27 19:55:26 2025 +0200
-> >>
-> >>     ovl: adapt ovl_parent_lock() to casefolded directories
-> >>
-> >>     e8bd877fb76bb9f3 ("ovl: fix possible double unlink") added a sanit=
-y
-> >>     check of !d_unhashed(child) to try to verify that child dentry was=
- not
-> >>     unlinked while parent dir was unlocked.
-> >>
-> >>     This "was not unlink" check has a false positive result in the cas=
-e of
-> >>     casefolded parent dir, because in that case, ovl_create_temp() ret=
-urns
-> >>     an unhashed dentry.
-> >>
-> >>     Change the "was not unlinked" check to use cant_mount(child).
-> >>     cant_mount(child) means that child was unlinked while we have been
-> >>     holding a reference to child, so it could not have become negative=
-.
-> >>
-> >>     This fixes the error in ovl_parent_lock() in ovl_check_rename_whit=
-eout()
-> >>     after ovl_create_temp() and allows mount of overlayfs with casefol=
-ding
-> >>     enabled layers.
-> >>
-> >>     Reported-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
-> >>     Link: https://lore.kernel.org/r/18704e8c-c734-43f3-bc7c-b8be345e1b=
-f5@igalia.com/
-> >>     Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> >>
-> >> diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
-> >> index bec4a39d1b97c..bffbb59776720 100644
-> >> --- a/fs/overlayfs/util.c
-> >> +++ b/fs/overlayfs/util.c
-> >> @@ -1551,9 +1551,23 @@ void ovl_copyattr(struct inode *inode)
-> >>
-> >>  int ovl_parent_lock(struct dentry *parent, struct dentry *child)
-> >>  {
-> >> +       bool is_unlinked;
-> >> +
-> >>         inode_lock_nested(parent->d_inode, I_MUTEX_PARENT);
-> >> -       if (!child ||
-> >> -           (!d_unhashed(child) && child->d_parent =3D=3D parent))
-> >> +       if (!child)
-> >> +               return 0;
-> >> +
-> >> +       /*
-> >> +        * After re-acquiring parent dir lock, verify that child was n=
-ot moved
-> >> +        * to another parent and that it was not unlinked. cant_mount(=
-) means
-> >> +        * that child was unlinked while parent was unlocked. Since we=
- are
-> >> +        * holding a reference to child, it could not have become nega=
-tive.
-> >> +        * d_unhashed(child) is not a strong enough indication for unl=
-inked,
-> >> +        * because with casefolded parent dir, ovl_create_temp() retur=
-ns an
-> >> +        * unhashed dentry.
-> >> +        */
-> >> +       is_unlinked =3D cant_mount(child) || WARN_ON_ONCE(d_is_negativ=
-e(child));
-> >> +       if (!is_unlinked && child->d_parent =3D=3D parent)
-> >>                 return 0;
-> >>
-> >>         inode_unlock(parent->d_inode);
-> >>
-> >
-> > I don't feel comfortable with that.  Letting ovl_parent_lock() succeed
-> > on an unhashed dentry doesn't work for my longer term plans for locking=
-.
-> > I would really rather we got that dentry hashed.
-> >
-> > What is happening is :
-> >   - lookup on non-existent name -> unhashed dentry
-> >   - vfs_create on that dentry - still unhashed
-> >   - rename of that unhashed dentry -> confusion in ovl_parent_lock()
-> >
-> > If this were being done from user-space there would be another lookup
-> > after the create and before the rename, and that would result in a
-> > hashed dentry.
-> >
-> > Could ovl_create_real() do a lookup for the name if the dentry isn't
-> > hashed?  That should result in a dentry that can safely be passed to
-> > ovl_parent_lock().
->
-> Might be a good time to mention I have a branch enabling negative
-> dentries in casefolded directories.  It didn't have any major issues last
-> time I posted, but it didn't get much interest.  It should be enough to
-> resolve the unhashed dentries after a lookup due to casefolding.
->
-> I'd need to revisit and retest, but it is a way out of it.
->
+On 28.08.25 08:10, Haiyue Wang wrote:
+> The commit ced17ee32a99 ("Revert "virtio: reject shm region if length is zero"")
+> exposes the following DAX page fault bug:
+> 
+> The commit 21aa65bf82a7 ("mm: remove callers of pfn_t functionality") handles
+> the DAX physical page address incorrectly: the removed macro 'phys_to_pfn_t()'
+> should be replaced with 'PHYS_PFN()'.
+> 
+> [    1.390321] BUG: unable to handle page fault for address: ffffd3fb40000008
+> [    1.390875] #PF: supervisor read access in kernel mode
+> [    1.391257] #PF: error_code(0x0000) - not-present page
+> [    1.391509] PGD 0 P4D 0
+> [    1.391626] Oops: Oops: 0000 [#1] SMP NOPTI
+> [    1.391806] CPU: 6 UID: 1000 PID: 162 Comm: weston Not tainted 6.17.0-rc3-WSL2-STABLE #2 PREEMPT(none)
+> [    1.392361] RIP: 0010:dax_to_folio+0x14/0x60
+> [    1.392653] Code: 52 c9 c3 00 66 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 0f 1f 44 00 00 48 c1 ef 05 48 c1 e7 06 48 03 3d 34 b5 31 01 <48> 8b 57 08 48 89 f8 f6 c2 01 75 2b 66 90 c3 cc cc cc cc f7 c7 ff
+> [    1.393727] RSP: 0000:ffffaf7d04407aa8 EFLAGS: 00010086
+> [    1.394003] RAX: 000000a000000000 RBX: ffffaf7d04407bb0 RCX: 0000000000000000
+> [    1.394524] RDX: ffffd17b40000008 RSI: 0000000000000083 RDI: ffffd3fb40000000
+> [    1.394967] RBP: 0000000000000011 R08: 000000a000000000 R09: 0000000000000000
+> [    1.395400] R10: 0000000000001000 R11: ffffaf7d04407c10 R12: 0000000000000000
+> [    1.395806] R13: ffffa020557be9c0 R14: 0000014000000001 R15: 0000725970e94000
+> [    1.396268] FS:  000072596d6d2ec0(0000) GS:ffffa0222dc59000(0000) knlGS:0000000000000000
+> [    1.396715] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [    1.397100] CR2: ffffd3fb40000008 CR3: 000000011579c005 CR4: 0000000000372ef0
+> [    1.397518] Call Trace:
+> [    1.397663]  <TASK>
+> [    1.397900]  dax_insert_entry+0x13b/0x390
+> [    1.398179]  dax_fault_iter+0x2a5/0x6c0
+> [    1.398443]  dax_iomap_pte_fault+0x193/0x3c0
+> [    1.398750]  __fuse_dax_fault+0x8b/0x270
+> [    1.398997]  ? vm_mmap_pgoff+0x161/0x210
+> [    1.399175]  __do_fault+0x30/0x180
+> [    1.399360]  do_fault+0xc4/0x550
+> [    1.399547]  __handle_mm_fault+0x8e3/0xf50
+> [    1.399731]  ? do_syscall_64+0x72/0x1e0
+> [    1.399958]  handle_mm_fault+0x192/0x2f0
+> [    1.400204]  do_user_addr_fault+0x20e/0x700
+> [    1.400418]  exc_page_fault+0x66/0x150
+> [    1.400602]  asm_exc_page_fault+0x26/0x30
+> [    1.400831] RIP: 0033:0x72596d1bf703
+> [    1.401076] Code: 31 f6 45 31 e4 48 8d 15 b3 73 00 00 e8 06 03 00 00 8b 83 68 01 00 00 e9 8e fa ff ff 0f 1f 00 48 8b 44 24 08 4c 89 ee 48 89 df <c7> 00 21 43 34 12 e8 72 09 00 00 e9 6a fa ff ff 0f 1f 44 00 00 e8
+> [    1.402172] RSP: 002b:00007ffc350f6dc0 EFLAGS: 00010202
+> [    1.402488] RAX: 0000725970e94000 RBX: 00005b7c642c2560 RCX: 0000725970d359a7
+> [    1.402898] RDX: 0000000000000003 RSI: 00007ffc350f6dc0 RDI: 00005b7c642c2560
+> [    1.403284] RBP: 00007ffc350f6e90 R08: 000000000000000d R09: 0000000000000000
+> [    1.403634] R10: 00007ffc350f6dd8 R11: 0000000000000246 R12: 0000000000000001
+> [    1.404078] R13: 00007ffc350f6dc0 R14: 0000725970e29ce0 R15: 0000000000000003
+> [    1.404450]  </TASK>
+> [    1.404570] Modules linked in:
+> [    1.404821] CR2: ffffd3fb40000008
+> [    1.405029] ---[ end trace 0000000000000000 ]---
+> [    1.405323] RIP: 0010:dax_to_folio+0x14/0x60
+> [    1.405556] Code: 52 c9 c3 00 66 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 0f 1f 44 00 00 48 c1 ef 05 48 c1 e7 06 48 03 3d 34 b5 31 01 <48> 8b 57 08 48 89 f8 f6 c2 01 75 2b 66 90 c3 cc cc cc cc f7 c7 ff
+> [    1.406639] RSP: 0000:ffffaf7d04407aa8 EFLAGS: 00010086
+> [    1.406910] RAX: 000000a000000000 RBX: ffffaf7d04407bb0 RCX: 0000000000000000
+> [    1.407379] RDX: ffffd17b40000008 RSI: 0000000000000083 RDI: ffffd3fb40000000
+> [    1.407800] RBP: 0000000000000011 R08: 000000a000000000 R09: 0000000000000000
+> [    1.408246] R10: 0000000000001000 R11: ffffaf7d04407c10 R12: 0000000000000000
+> [    1.408666] R13: ffffa020557be9c0 R14: 0000014000000001 R15: 0000725970e94000
+> [    1.409170] FS:  000072596d6d2ec0(0000) GS:ffffa0222dc59000(0000) knlGS:0000000000000000
+> [    1.409608] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [    1.409977] CR2: ffffd3fb40000008 CR3: 000000011579c005 CR4: 0000000000372ef0
+> [    1.410437] Kernel panic - not syncing: Fatal exception
+> [    1.410857] Kernel Offset: 0xc000000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+> 
+> Fixes: 21aa65bf82a7 ("mm: remove callers of pfn_t functionality")
+> Signed-off-by: Haiyue Wang <haiyuewa@163.com>
+> ---
+>   fs/fuse/virtio_fs.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+> index c826e7ca49f5..76c8fd0bfc75 100644
+> --- a/fs/fuse/virtio_fs.c
+> +++ b/fs/fuse/virtio_fs.c
+> @@ -1016,7 +1016,7 @@ static long virtio_fs_direct_access(struct dax_device *dax_dev, pgoff_t pgoff,
+>   	if (kaddr)
+>   		*kaddr = fs->window_kaddr + offset;
+>   	if (pfn)
+> -		*pfn = fs->window_phys_addr + offset;
+> +		*pfn = PHYS_PFN(fs->window_phys_addr + offset);
+>   	return nr_pages > max_nr_pages ? max_nr_pages : nr_pages;
+>   }
+>   
 
-That's definitely a way out, but I don't know if it's needed to unblock the
-ovl_casefold work.
+Yeah, looks like that's the only instance we got wrong in that commit.
 
-I will try Neil's suggestion because it makes sense.
+Acked-by: David Hildenbrand <david@redhat.com>
 
-Neil,
+-- 
+Cheers
 
-FYI, if your future work for vfs assumes that fs will alway have the
-dentry hashed after create, you may want to look at:
+David / dhildenb
 
-static int ovl_instantiate(struct dentry *dentry, struct inode *inode,
-...
-        /* Force lookup of new upper hardlink to find its lower */
-        if (hardlink)
-                d_drop(dentry);
-
-        return 0;
-}
-
-If your assumption is not true for overlayfs, it may not be true for other =
-fs
-as well. How could you verify that it is correct?
-
-I really hope that you have some opt-in strategy in mind, so those new
-dirops assumptions would not have to include all possible filesystems.
-
-Thanks,
-Amir.
 
