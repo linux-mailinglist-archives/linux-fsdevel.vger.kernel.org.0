@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-59564-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59563-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 113FDB3AE1F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 01:09:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 047A9B3AE1E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 01:09:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE7CE583E12
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 23:09:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90E073A1D76
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 23:09:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA4B72F4A12;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D07542E3715;
 	Thu, 28 Aug 2025 23:08:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="ixbKGZQ2"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="hEQVfV2N"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2980F2D0C72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D8232E7BDA
 	for <linux-fsdevel@vger.kernel.org>; Thu, 28 Aug 2025 23:08:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756422495; cv=none; b=CO8JD6qdhr8BMQstEn6V/xGT/73IVq0wVI20rmvo77r3amGphuzA6qWeqlE32Odffb08aGHxF5aQfbkOsCuCL9Ixipjn5CedXtJma4FedUQHlgpLDsy4sRygy7gzYB9w/nmIIme3A8WvQyJmf345RTFFRF0nIbldPlarQcW6Gjw=
+	t=1756422495; cv=none; b=eKSJB2xctl56LmJovn07I2dqcX+aRYyu8+qMjNST/i2yD5yNNdFSHgGtlJxKaJzR96Qv6Gc3M1gXTo1IUlL6tgOrOyoTGQXi2fmy5qDB8Kg72Mf0WvlX008ty3Nuw2YlryWy1UBV5i4KddVVgpK+B7SgVi17OuPoYvhbAClSpMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756422495; c=relaxed/simple;
-	bh=h6pBioabdTedoY8fwwLRxyfwIr1ccISK5lML3k7nXaY=;
+	bh=a2GsUePlL3oWRTPp8jkpG5w8Xzaudm0y6pJqVFgpDNg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GP6uvSgpENH4TZSJN0jUfBHklciCCpi/hUZqK/qIfItgrqiH6ftVvm02zmTGJhiXfdK/GU9cbu4C/ugtWyeBnjhVW+PuReBiESHBM0WFOUFTjdMNifICoqADiYE1ScsmZDJxXuI13JljE+UBFJHwlo/0ibdmIK6KSy0MVhTd8bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=ixbKGZQ2; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=NawjiTC2ghgE9kdubb48OmPJqKXcvNt4S7rdPDzhk07RXD4BzBfVkrRRApKcKgp+B+jlIxudgAsmJ9K+x+uuN+FGEZX9UzvJd4QpjF1vTJa1QM3Zk8U4D2qCoyvLzoaY3FoaJycsk/h0M39VJ7rh86/voRc+xfQKL4/xjto0C0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=hEQVfV2N; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=yYpr5v9GVA7cqWsh/igoPblGT6TAcvHCpe1NznheFO4=; b=ixbKGZQ2RhPnKd9bIM7PuNBqpB
-	/xOKzTFS+slJiPkSmZnhNRP7EDUQzPvtFSFFXvTNyo7UtwqPr+vr7kRNqOuF2Cv68PisiLmolhi5S
-	eLl6ilKxjDGaRHZXl/XcPMIFIP+VOwINxv/1AJOTFyIj/f/YtUkMmBKyh05q5YO9FfVNjyp6q9GXc
-	Ht/CgNgOCmLQPUsi4mI7cy1YgcTqtFYS1vgLeSLc3CBBHAovDTuLSr3xekZg2eqNK+51oZK8Kjwku
-	MisEtcjxcHM1KjIkepKrlGBsGl3ISGwGrmVjnJHSwUMGhX/nnjkclxBMUcnUxMuJekw//MrDMOsCO
-	BlyDxN5A==;
+	bh=IHLnjbaU7daMoXUcboThCXT37WLVnT8EBUPJx+xO2EU=; b=hEQVfV2NMl+lOXgbyx+9BvYk+8
+	rbAocSjjGDnBCG38SuN0Gy5RiblHb61basuY7jlZYkk6JOc4smg9Rd0aovwZH82Dh2M959PyjUaw+
+	UIROucbO2RHnQIiZWVnT8n80BpUi0llsbNTGMLM0UZj4YGnJPycL+ydkDIcFxXf7QPk3iCz99xqVA
+	nYhcguBY/Di/hepxcaiHvaC0GRZvz9AVdUjIPz0JgMr9F1NOAt3eAd4KoEChO2Vx4bllz4iThbjek
+	wFSeFZyyw6AU/V+6ARp5fOebhipg3V/1SZVxUR6334tbvZL7b/2QLpCFW7nMFqcVhzoK9+vt1KHfR
+	q7Kr7nEg==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1urlj1-0000000F266-10fz;
+	id 1urlj1-0000000F26D-1Vau;
 	Thu, 28 Aug 2025 23:08:11 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: brauner@kernel.org,
 	jack@suse.cz,
 	torvalds@linux-foundation.org
-Subject: [PATCH v2 33/63] don't bother passing new_path->dentry to can_move_mount_beneath()
-Date: Fri, 29 Aug 2025 00:07:36 +0100
-Message-ID: <20250828230806.3582485-33-viro@zeniv.linux.org.uk>
+Subject: [PATCH v2 34/63] new helper: topmost_overmount()
+Date: Fri, 29 Aug 2025 00:07:37 +0100
+Message-ID: <20250828230806.3582485-34-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250828230806.3582485-1-viro@zeniv.linux.org.uk>
 References: <20250828230706.GA3340273@ZenIV>
@@ -65,49 +65,63 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
+Returns the final (topmost) mount in the chain of overmounts
+starting at given mount.  Same locking rules as for any mount
+tree traversal - either the spinlock side of mount_lock, or
+rcu + sample the seqcount side of mount_lock before the call
+and recheck afterwards.
+
+Reviewed-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/namespace.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ fs/mount.h     | 7 +++++++
+ fs/namespace.c | 9 +++------
+ 2 files changed, 10 insertions(+), 6 deletions(-)
 
+diff --git a/fs/mount.h b/fs/mount.h
+index ed8c83ba836a..04d0eadc4c10 100644
+--- a/fs/mount.h
++++ b/fs/mount.h
+@@ -235,4 +235,11 @@ static inline void mnt_notify_add(struct mount *m)
+ }
+ #endif
+ 
++static inline struct mount *topmost_overmount(struct mount *m)
++{
++	while (m->overmount)
++		m = m->overmount;
++	return m;
++}
++
+ struct mnt_namespace *mnt_ns_from_dentry(struct dentry *dentry);
 diff --git a/fs/namespace.c b/fs/namespace.c
-index 02bc5294071a..085877bfaa5e 100644
+index 085877bfaa5e..ebecb03972c5 100644
 --- a/fs/namespace.c
 +++ b/fs/namespace.c
-@@ -3450,8 +3450,8 @@ static bool mount_is_ancestor(const struct mount *p1, const struct mount *p2)
- /**
-  * can_move_mount_beneath - check that we can mount beneath the top mount
-  * @mnt_from: mount we are trying to move
-- * @to:   mount under which to mount
-- * @mp:   mountpoint of @to
-+ * @mnt_to:   mount under which to mount
-+ * @mp:   mountpoint of @mnt_to
-  *
-  * - Make sure that nothing can be mounted beneath the caller's current
-  *   root or the rootfs of the namespace.
-@@ -3467,11 +3467,10 @@ static bool mount_is_ancestor(const struct mount *p1, const struct mount *p2)
-  * Return: On success 0, and on error a negative error code is returned.
-  */
- static int can_move_mount_beneath(struct mount *mnt_from,
--				  const struct path *to,
-+				  struct mount *mnt_to,
- 				  const struct mountpoint *mp)
- {
--	struct mount *mnt_to = real_mount(to->mnt),
--		     *parent_mnt_to = mnt_to->mnt_parent;
-+	struct mount *parent_mnt_to = mnt_to->mnt_parent;
+@@ -2696,10 +2696,9 @@ static int attach_recursive_mnt(struct mount *source_mnt,
+ 				 child->mnt_mountpoint);
+ 		commit_tree(child);
+ 		if (q) {
++			struct mount *r = topmost_overmount(child);
+ 			struct mountpoint *mp = root.mp;
+-			struct mount *r = child;
+-			while (unlikely(r->overmount))
+-				r = r->overmount;
++
+ 			if (unlikely(shorter) && child != source_mnt)
+ 				mp = shorter;
+ 			mnt_change_mountpoint(r, mp, q);
+@@ -6171,9 +6170,7 @@ bool current_chrooted(void)
  
- 	if (IS_MNT_LOCKED(mnt_to))
- 		return -EINVAL;
-@@ -3618,7 +3617,7 @@ static int do_move_mount(struct path *old_path,
- 	}
+ 	guard(mount_locked_reader)();
  
- 	if (beneath) {
--		err = can_move_mount_beneath(old, new_path, mp.mp);
-+		err = can_move_mount_beneath(old, real_mount(new_path->mnt), mp.mp);
- 		if (err)
- 			return err;
- 	}
+-	root = current->nsproxy->mnt_ns->root;
+-	while (unlikely(root->overmount))
+-		root = root->overmount;
++	root = topmost_overmount(current->nsproxy->mnt_ns->root);
+ 
+ 	return fs_root.mnt != &root->mnt || !path_mounted(&fs_root);
+ }
 -- 
 2.47.2
 
