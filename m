@@ -1,57 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-59505-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59506-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A46BFB3A2A5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 16:50:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6504B3A2B1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 16:51:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA12D7A44AB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 14:48:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 290BE18830B7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 14:52:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31FAB31282B;
-	Thu, 28 Aug 2025 14:50:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35504312828;
+	Thu, 28 Aug 2025 14:51:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iEgNcF2M"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z9lCxvns"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA6730E826;
-	Thu, 28 Aug 2025 14:50:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828F53101C6;
+	Thu, 28 Aug 2025 14:51:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756392610; cv=none; b=pylFWeUOdlzk2cuVk4+IjsTWt/Fezigj4Oe0KEJoSxMnf3/iiOC1kWHdvGvbxszxt6gC6TlLBcWhA2JVMkHASTPB3hC+X356vOjX220ygdt+kIq7AtHmnMEZkp9Oo2Xb0Bd0OEVRvW3v0TcVuEN4X2ssbNMBvsxE6tmvkeYo5aM=
+	t=1756392692; cv=none; b=Wh7aH8LmAlWQMV41GEBUTjihhc/1vADrvDOTjq34pmCUeDBrtrQrxDZru9jeDvigfC6n2UcbNhxQqTXuA6MXFA7NyWyXJkXGcIkv1S7rKtfsHorXXHfC1PfvTpIKwRkYU8KBM2qEuk2eOGsFnR4OBG7zfzahGK+4n8YHF6Z36iA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756392610; c=relaxed/simple;
-	bh=GYJ3KjR6oBptzfjIbDDdGIvKL8Wsfza9rukUbaq+S/o=;
+	s=arc-20240116; t=1756392692; c=relaxed/simple;
+	bh=OvVqtfth6j/jTCd/BPJWhhcrg/xi0V4w72KJLJRWXBE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CbpofWqbMzi83y4RQShKd+QlBCt/SoZE7i26MeIoAbKXfuXQB72EnIaODSIIFZ1G4AMNtkfRH6zaqjuHJ5319YGGHyVsCgEGfJ4SDxjKY7knQJBmNJLptkPLkwjYSjWqPcbkYeu9qXY0CWAnrHqvcNCxxk066r8TRGAKl5dMJOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iEgNcF2M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A4F6C4CEEB;
-	Thu, 28 Aug 2025 14:50:10 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cs8xQcjsNRDfET6Ii1Nbb1Uk/N2Z2sQLqGuHY9wln+GsAMvCKw/Jx5gx1VhAbaVuIaDjKYtDr7hQmiMrLGE2AoPU8ff9Zg1/gbTH4qlDu/MdteIWF74Z8tTMWnj9IvYjhm8656rNt8bd9zGZ9algx2OqLEQTLgzwL4MHzfQd838=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z9lCxvns; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2B4BC4CEED;
+	Thu, 28 Aug 2025 14:51:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756392610;
-	bh=GYJ3KjR6oBptzfjIbDDdGIvKL8Wsfza9rukUbaq+S/o=;
+	s=k20201202; t=1756392692;
+	bh=OvVqtfth6j/jTCd/BPJWhhcrg/xi0V4w72KJLJRWXBE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iEgNcF2Mg9jlnqGrqAa24AQdzyKSyDjr6D6rfU3GcHoo03PACwFJn6lc+ylTY2wcj
-	 dBL7vjy1KGs+8r1Ad1N7XoUbJG5jskpSehEa2+Jj57L9eU57KT8ZCMfApK7LTGFKts
-	 h4rGdwHyseiDNPB9nEBNOIv9t4py2/mgUqL9hnP49zYXlPFXCPH5e8Afy+e2ovikvu
-	 4TXso1EjCivUZP+QVlxlP02H5aTnoKkZ94ODWrttqKlXzMlrwwNVDi12XptDLNIAAl
-	 qvTQI31Iqb6vEm5LontN2XqBzCuF3rIcSDBU6oqLcV/uf5jR2HaPe5zU0UcjLpt61g
-	 s+sosEvSf9LRQ==
-Date: Thu, 28 Aug 2025 07:50:09 -0700
+	b=Z9lCxvns0J6wsynNxwfMG34Xgf5M4z9TBDcNdICD7H5BzNqAClhdjIYH8VplNUrHM
+	 RyFftL3sGh62/fGsifzLAHjMv/X7uTZyJ+KCOppyPu+zqtIKE8LOvP8Tzja+tE9vpB
+	 ZOvYeXb68WNwfBw7I9lMcMLYd+5OI+T4Sd39HB6GfLUzG9BoBwsm0gTq3u6ZphYpib
+	 OUvYigLB3Q7tjRu3D+UipBF6OTJtl/zzxMy10GYcw2NtQ5A6thyIbR6L7R+bN/wvDQ
+	 h38mm2TPyOJ9z0drPI5y9bNrH6FCO6+pSbOP7OqfobQdxQguVij2d2WjVZcqSnE/Ro
+	 Zos0sf61y4Q9Q==
+Date: Thu, 28 Aug 2025 07:51:31 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: Andrey Albershteyn <aalbersh@redhat.com>
 Cc: fstests@vger.kernel.org, zlang@redhat.com,
 	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
 	Andrey Albershteyn <aalbersh@kernel.org>
-Subject: Re: [PATCH v2 2/3] generic: introduce test to test
- file_getattr/file_setattr syscalls
-Message-ID: <20250828145009.GF8096@frogsfrogsfrogs>
+Subject: Re: [PATCH v2 3/3] xfs: test quota's project ID on special files
+Message-ID: <20250828145131.GG8096@frogsfrogsfrogs>
 References: <20250827-xattrat-syscall-v2-0-ba489b5bc17a@kernel.org>
- <20250827-xattrat-syscall-v2-2-ba489b5bc17a@kernel.org>
+ <20250827-xattrat-syscall-v2-3-ba489b5bc17a@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,65 +59,74 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250827-xattrat-syscall-v2-2-ba489b5bc17a@kernel.org>
+In-Reply-To: <20250827-xattrat-syscall-v2-3-ba489b5bc17a@kernel.org>
 
-On Wed, Aug 27, 2025 at 05:16:16PM +0200, Andrey Albershteyn wrote:
-> Add a test to test basic functionality of file_getattr() and
-> file_setattr() syscalls. Most of the work is done in file_attr
-> utility.
+On Wed, Aug 27, 2025 at 05:16:17PM +0200, Andrey Albershteyn wrote:
+> From: Andrey Albershteyn <aalbersh@redhat.com>
+> 
+> With addition of file_getattr() and file_setattr(), xfs_quota now can
+> set project ID on filesystem inodes behind special files. Previously,
+> quota reporting didn't count inodes of special files created before
+> project initialization. Only new inodes had project ID set.
 > 
 > Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
 
-Looks decent,
+I'm glad we can finally set the project ids on irregular files!
+Thanks for the functional test of the new syscalls. :)
+
 Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 
 --D
 
 > ---
->  tests/generic/2000     | 109 +++++++++++++++++++++++++++++++++++++++++++++++++
->  tests/generic/2000.out |  37 +++++++++++++++++
->  2 files changed, 146 insertions(+)
+>  tests/xfs/2000     | 73 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  tests/xfs/2000.out | 15 +++++++++++
+>  2 files changed, 88 insertions(+)
 > 
-> diff --git a/tests/generic/2000 b/tests/generic/2000
+> diff --git a/tests/xfs/2000 b/tests/xfs/2000
 > new file mode 100755
-> index 000000000000..b03e9697bb14
+> index 000000000000..7d45732bdbb7
 > --- /dev/null
-> +++ b/tests/generic/2000
-> @@ -0,0 +1,109 @@
+> +++ b/tests/xfs/2000
+> @@ -0,0 +1,73 @@
 > +#! /bin/bash
 > +# SPDX-License-Identifier: GPL-2.0
-> +# Copyright (c) 2025 Red Hat Inc.  All Rights Reserved.
+> +# Copyright (c) 2024 Red Hat.  All Rights Reserved.
 > +#
 > +# FS QA Test No. 2000
 > +#
-> +# Test file_getattr/file_setattr syscalls
+> +# Test that XFS can set quota project ID on special files
 > +#
 > +. ./common/preamble
-> +_begin_fstest auto
+> +_begin_fstest auto quota
 > +
+> +# Import common functions.
+> +. ./common/quota
 > +. ./common/filter
 > +
 > +# Modify as appropriate.
 > +_require_scratch
+> +_require_xfs_quota
 > +_require_test_program "af_unix"
 > +_require_test_program "file_attr"
 > +_require_symlinks
 > +_require_mknod
 > +
 > +_scratch_mkfs >>$seqres.full 2>&1
+> +_qmount_option "pquota"
 > +_scratch_mount
-> +
-> +file_attr () {
-> +	$here/src/file_attr $*
-> +}
 > +
 > +create_af_unix () {
 > +	$here/src/af_unix $* || echo af_unix failed
 > +}
 > +
-> +projectdir=$SCRATCH_MNT/prj
+> +filter_quota() {
+> +	_filter_quota | sed "s~$tmp.projects~PROJECTS_FILE~"
+> +}
 > +
-> +# Create normal files and special files
+> +projectdir=$SCRATCH_MNT/prj
+> +id=42
+> +
 > +mkdir $projectdir
 > +mkfifo $projectdir/fifo
 > +mknod $projectdir/chardev c 1 1
@@ -130,113 +138,51 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > +ln -s $projectdir/bar $projectdir/broken-symlink
 > +rm -f $projectdir/bar
 > +
-> +echo "Error codes"
-> +# wrong AT_ flags
-> +file_attr --get --invalid-at $projectdir ./foo
-> +file_attr --set --invalid-at $projectdir ./foo
-> +# wrong fsxattr size (too big, too small)
-> +file_attr --get --too-big-arg $projectdir ./foo
-> +file_attr --get --too-small-arg $projectdir ./foo
-> +file_attr --set --too-big-arg $projectdir ./foo
-> +file_attr --set --too-small-arg $projectdir ./foo
-> +# out of fsx_xflags mask
-> +file_attr --set --new-fsx-flag $projectdir ./foo
+> +$XFS_QUOTA_PROG -D $tmp.projects -P $tmp.projid -x \
+> +	-c "project -sp $projectdir $id" $SCRATCH_DEV | filter_quota
+> +$XFS_QUOTA_PROG -D $tmp.projects -P $tmp.projid -x \
+> +	-c "limit -p isoft=20 ihard=20 $id " $SCRATCH_DEV | filter_quota
+> +$XFS_QUOTA_PROG -D $tmp.projects -P $tmp.projid -x \
+> +	-c "project -cp $projectdir $id" $SCRATCH_DEV | filter_quota
+> +$XFS_QUOTA_PROG -D $tmp.projects -P $tmp.projid -x \
+> +	-c "report -inN -p" $SCRATCH_DEV | _filter_project_quota
+> +$XFS_QUOTA_PROG -D $tmp.projects -P $tmp.projid -x \
+> +	-c "project -Cp $projectdir $id" $SCRATCH_DEV | filter_quota
 > +
-> +echo "Initial attributes state"
-> +file_attr --get $projectdir | _filter_scratch
-> +file_attr --get $projectdir ./fifo
-> +file_attr --get $projectdir ./chardev
-> +file_attr --get $projectdir ./blockdev
-> +file_attr --get $projectdir ./socket
-> +file_attr --get $projectdir ./foo
-> +file_attr --get $projectdir ./symlink
-> +
-> +echo "Set FS_XFLAG_NODUMP (d)"
-> +file_attr --set --set-nodump $projectdir
-> +file_attr --set --set-nodump $projectdir ./fifo
-> +file_attr --set --set-nodump $projectdir ./chardev
-> +file_attr --set --set-nodump $projectdir ./blockdev
-> +file_attr --set --set-nodump $projectdir ./socket
-> +file_attr --set --set-nodump $projectdir ./foo
-> +file_attr --set --set-nodump $projectdir ./symlink
-> +
-> +echo "Read attributes"
-> +file_attr --get $projectdir | _filter_scratch
-> +file_attr --get $projectdir ./fifo
-> +file_attr --get $projectdir ./chardev
-> +file_attr --get $projectdir ./blockdev
-> +file_attr --get $projectdir ./socket
-> +file_attr --get $projectdir ./foo
-> +file_attr --get $projectdir ./symlink
-> +
-> +echo "Set attribute on broken link with AT_SYMLINK_NOFOLLOW"
-> +file_attr --set --set-nodump $projectdir ./broken-symlink
-> +file_attr --get $projectdir ./broken-symlink
-> +
-> +file_attr --set --no-follow --set-nodump $projectdir ./broken-symlink
-> +file_attr --get --no-follow $projectdir ./broken-symlink
-> +
-> +cd $SCRATCH_MNT
-> +touch ./foo2
-> +echo "Initial state of foo2"
-> +file_attr --get --at-cwd ./foo2
-> +echo "Set attribute relative to AT_FDCWD"
-> +file_attr --set --at-cwd --set-nodump ./foo2
-> +file_attr --get --at-cwd ./foo2
-> +
-> +echo "Set attribute on AT_FDCWD"
-> +mkdir ./bar
-> +file_attr --get --at-cwd ./bar
-> +cd ./bar
-> +file_attr --set --at-cwd --set-nodump ""
-> +file_attr --get --at-cwd .
+> +# Let's check that we can recreate the project (flags were cleared out)
+> +$XFS_QUOTA_PROG -D $tmp.projects -P $tmp.projid -x \
+> +	-c "project -sp $projectdir $id" $SCRATCH_DEV | filter_quota
+> +$XFS_QUOTA_PROG -D $tmp.projects -P $tmp.projid -x \
+> +	-c "limit -p isoft=20 ihard=20 $id " $SCRATCH_DEV | filter_quota
+> +$XFS_QUOTA_PROG -D $tmp.projects -P $tmp.projid -x \
+> +	-c "report -inN -p" $SCRATCH_DEV | _filter_project_quota
+> +$XFS_QUOTA_PROG -D $tmp.projects -P $tmp.projid -x \
+> +	-c "project -Cp $projectdir $id" $SCRATCH_DEV | filter_quota
 > +
 > +# success, all done
 > +status=0
 > +exit
-> diff --git a/tests/generic/2000.out b/tests/generic/2000.out
+> diff --git a/tests/xfs/2000.out b/tests/xfs/2000.out
 > new file mode 100644
-> index 000000000000..11b1fcbb630b
+> index 000000000000..e53ceb959775
 > --- /dev/null
-> +++ b/tests/generic/2000.out
-> @@ -0,0 +1,37 @@
+> +++ b/tests/xfs/2000.out
+> @@ -0,0 +1,15 @@
 > +QA output created by 2000
-> +Error codes
-> +Can not get fsxattr on ./foo: Invalid argument
-> +Can not get fsxattr on ./foo: Invalid argument
-> +Can not get fsxattr on ./foo: Argument list too long
-> +Can not get fsxattr on ./foo: Invalid argument
-> +Can not get fsxattr on ./foo: Argument list too long
-> +Can not get fsxattr on ./foo: Invalid argument
-> +Can not set fsxattr on ./foo: Invalid argument
-> +Initial attributes state
-> +----------------- SCRATCH_MNT/prj 
-> +----------------- ./fifo 
-> +----------------- ./chardev 
-> +----------------- ./blockdev 
-> +----------------- ./socket 
-> +----------------- ./foo 
-> +----------------- ./symlink 
-> +Set FS_XFLAG_NODUMP (d)
-> +Read attributes
-> +------d---------- SCRATCH_MNT/prj 
-> +------d---------- ./fifo 
-> +------d---------- ./chardev 
-> +------d---------- ./blockdev 
-> +------d---------- ./socket 
-> +------d---------- ./foo 
-> +------d---------- ./symlink 
-> +Set attribute on broken link with AT_SYMLINK_NOFOLLOW
-> +Can not get fsxattr on ./broken-symlink: No such file or directory
-> +Can not get fsxattr on ./broken-symlink: No such file or directory
-> +------d---------- ./broken-symlink 
-> +Initial state of foo2
-> +----------------- ./foo2 
-> +Set attribute relative to AT_FDCWD
-> +------d---------- ./foo2 
-> +Set attribute on AT_FDCWD
-> +----------------- ./bar 
-> +------d---------- . 
+> +Setting up project 42 (path SCRATCH_MNT/prj)...
+> +Processed 1 (PROJECTS_FILE and cmdline) paths for project 42 with recursion depth infinite (-1).
+> +Checking project 42 (path SCRATCH_MNT/prj)...
+> +Processed 1 (PROJECTS_FILE and cmdline) paths for project 42 with recursion depth infinite (-1).
+> +#42 8 20 20 00 [--------]
+> +
+> +Clearing project 42 (path SCRATCH_MNT/prj)...
+> +Processed 1 (PROJECTS_FILE and cmdline) paths for project 42 with recursion depth infinite (-1).
+> +Setting up project 42 (path SCRATCH_MNT/prj)...
+> +Processed 1 (PROJECTS_FILE and cmdline) paths for project 42 with recursion depth infinite (-1).
+> +#42 8 20 20 00 [--------]
+> +
+> +Clearing project 42 (path SCRATCH_MNT/prj)...
+> +Processed 1 (PROJECTS_FILE and cmdline) paths for project 42 with recursion depth infinite (-1).
 > 
 > -- 
 > 2.49.0
