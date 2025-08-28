@@ -1,233 +1,159 @@
-Return-Path: <linux-fsdevel+bounces-59464-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59465-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6782AB3934A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 07:50:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 623E3B393A3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 08:11:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFAB89802C0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 05:50:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D2683B9692
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 06:11:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46FE3279907;
-	Thu, 28 Aug 2025 05:50:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 817A42727F4;
+	Thu, 28 Aug 2025 06:11:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="XiJEwkqk"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="XY5IxvJq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2065.outbound.protection.outlook.com [40.107.223.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F24AE277C84;
-	Thu, 28 Aug 2025 05:50:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756360213; cv=fail; b=NQ4v55b3/F5/e8TEeBRkQSIstRES+E2MuoSmKO2/cSgeUavR9IbOdEw34SpiGjMbHQyb8noFQVICm+YmFHtcOhjitjTO68Jyr0ZiWZqP6c+FexZKnK7TG9SHMkO+Njm/xEM9q0/Q0uga6aDS5umRgyF7UQFM+oCX6tWmVVogTJo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756360213; c=relaxed/simple;
-	bh=DOxAdQ6YoKREcpXXSAt8H9OuDfH4+87kVFnfIKwSaWo=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=POC6RxekAShVZJ+XjngfzS2X6K35nwv6WNgreI4kaf+Fg4e2QA+g6VGnIcS9iXMsCnQ68ZiMGH9duLL19//5FkqvbJE7DaEudLZDadnY4m4vBeCTOR5H2yzcjUQ/fjoFyoHsN3FFv7iMCN/jtwLorVdjtQNc0YJvQUeo98ml8Zs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=XiJEwkqk; arc=fail smtp.client-ip=40.107.223.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=G3M6DTR5z4T++XIVgZCUI4gyOVzHTSTRTTUGSjBmOKoCUXIvNh8gok0YIY1tSpe8l7LjAqshMMqyfLn8parJsdIXBilLqwHlt0/bE1d0WjJsxLTOkpbTckM8lld+hihrpNYh5M27BgxMAbXCsH1ojO5im0j390RWtS2rInBGrT8DKHAfnXaQHiGyBOCtMNEsuET2Sv7LCBWL4Hjs+cKwzHMIFvA0HPe6vK0zPFhmTSenDjvZWNqAHCbLuAyA4Wa4s82CiidWo61rNutCir/d/rkliF4E9J7krjEZDqU/oo0WXP22uWbrMkD3dYsp91QeXdrx4/6O8CTa+AtxzAuBlg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TTJFJKt45U35ereDwr6S16MRTnX5v57OqnbZZtW+/Sg=;
- b=ge3J6QRuRQO4BHBry7E01G6/AVDp+D8DRqL4njmr6UBkPSudLIx8MFsKythYIq8g1xR2N2HbuFHZHYYb1NvVS9LmTtPlGyk5FFo1i0gavbdgTtlNOli3sVNuuaJSMUgCG0dSL53ZYd7Vdlsv+Gx+Xfxh9j+kby3UUZSn0bjcN/XFZANEKr2yuKslqrwJObng/uPTyCV2rH0u5fs7CAKk5hWU0mBcp8e3qGO7Gal2vlhSrTCbGX9Z4kFhvJ9l9JKosFCCUVeSqrqr/9d3Az7rolTE7r4W62gVUUHG5QoTrXFEZXZG++Yb0bgdzq3zaQTZtOnMh5dH/mAeujHznY3r9Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TTJFJKt45U35ereDwr6S16MRTnX5v57OqnbZZtW+/Sg=;
- b=XiJEwkqk89yYcEJFIDOKpE/jd+q2n4mjH9cnySSLG1GC1GvqIoPRKdHjkhQzty+b+ZpturWnp02FDtFNxsj1vtFPIOVWBmNTNhVEvn2vlNlcQs+iT8a8BwDuBtDsChS9SRUM4GT5IVbpU5Fkr2jcmi2/N0XMCiQ/CwYh9x+mQ9E=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
- (2603:10b6:a0f:fc02::9aa) by PH0PR12MB7080.namprd12.prod.outlook.com
- (2603:10b6:510:21d::20) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.20; Thu, 28 Aug
- 2025 05:50:08 +0000
-Received: from SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
- ([fe80::329f:948a:34ef:9848]) by SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
- ([fe80::329f:948a:34ef:9848%7]) with mapi id 15.20.9052.019; Thu, 28 Aug 2025
- 05:50:08 +0000
-Message-ID: <79fae787-7160-4245-886f-671860b5708a@amd.com>
-Date: Thu, 28 Aug 2025 11:19:42 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH kvm-next V11 4/7] KVM: guest_memfd: Use guest mem inodes
- instead of anonymous inodes
-To: Ackerley Tng <ackerleytng@google.com>, willy@infradead.org,
- akpm@linux-foundation.org, david@redhat.com, pbonzini@redhat.com,
- shuah@kernel.org, seanjc@google.com, vbabka@suse.cz
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, dsterba@suse.com,
- xiang@kernel.org, chao@kernel.org, jaegeuk@kernel.org, clm@fb.com,
- josef@toxicpanda.com, kent.overstreet@linux.dev, zbestahu@gmail.com,
- jefflexu@linux.alibaba.com, dhavale@google.com, lihongbo22@huawei.com,
- lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, rppt@kernel.org,
- surenb@google.com, mhocko@suse.com, ziy@nvidia.com, matthew.brost@intel.com,
- joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com,
- gourry@gourry.net, ying.huang@linux.alibaba.com, apopple@nvidia.com,
- tabba@google.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
- pvorel@suse.cz, bfoster@redhat.com, vannapurve@google.com,
- chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, shdhiman@amd.com,
- yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com,
- michael.roth@amd.com, aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com,
- peterx@redhat.com, jack@suse.cz, hch@infradead.org, cgzones@googlemail.com,
- ira.weiny@intel.com, rientjes@google.com, roypat@amazon.co.uk,
- chao.p.peng@intel.com, amit@infradead.org, ddutile@redhat.com,
- dan.j.williams@intel.com, ashish.kalra@amd.com, gshan@redhat.com,
- jgowans@amazon.com, pankaj.gupta@amd.com, papaluri@amd.com,
- yuzhao@google.com, suzuki.poulose@arm.com, linux-bcachefs@vger.kernel.org,
- linux-btrfs@vger.kernel.org, linux-erofs@lists.ozlabs.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- linux-security-module@vger.kernel.org, kvm@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-coco@lists.linux.dev
-References: <20250827175247.83322-2-shivankg@amd.com>
- <20250827175247.83322-7-shivankg@amd.com> <diqztt1sbd2v.fsf@google.com>
-Content-Language: en-US
-From: "Garg, Shivank" <shivankg@amd.com>
-In-Reply-To: <diqztt1sbd2v.fsf@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN2PR01CA0187.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:e8::14) To SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
- (2603:10b6:a0f:fc02::9aa)
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F98B4A02;
+	Thu, 28 Aug 2025 06:10:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756361463; cv=none; b=IcoBafjHNRCbPknn3K2cpvYFxL3rLfPMtAHDbBN2xgtS1ENYvSrvFrmf819bbzdRZy+8NVlewS2MF8kVFakLW0L9ltNpbicLoIm1bFshYxBgf/jFXODyQsXHMW3KdrQ7kEpbTqgeDCwkyEFIcXFjz3o5F/h/F4kyF3J+TNBYtjI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756361463; c=relaxed/simple;
+	bh=GH1MnD9kkTN4c+3cTT8CmEeQjchnw3Uvm2OEhs8UdpU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MiKOW14TiplavwnAA0t1Dmjks+2qI/9cRpgDz7TI1dQezly6IUuKtyeNRFSD51YH63tkcrqQA1BxhRdW1CXQLowc+iWsMD9vTEd5/ctcFEgH3G816skBssvy6CjXzxTzTPmP2iJDSsB4D2VpWoKRj7LMMuCaGZ+E4/i7jC/n31w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=XY5IxvJq; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=A4
+	M/POHWuLvUOmb8o4PVnu3p+ruDnZJl5Jdp4rRP8EA=; b=XY5IxvJqiXf4+4BKz0
+	DPF9whEe6YZsu7u8wp7bsG2+kBaxq+kv3A9mQNzfKGdpM9P/bU61AUpyAl7YBDeh
+	GvfGkyef9wgkvCaL2s7t7UG4DvX5URxKfdv5F13nkB1FEY3u6QKRyzgNKDW7MCVM
+	fqBwC0BLZPoN26clTe4TFnwCg=
+Received: from haiyue-pc.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wCnAafU8q9o4zdvEw--.31954S2;
+	Thu, 28 Aug 2025 14:10:29 +0800 (CST)
+From: Haiyue Wang <haiyuewa@163.com>
+To: linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Alistair Popple <apopple@nvidia.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Haiyue Wang <haiyuewa@163.com>,
+	Vivek Goyal <vgoyal@redhat.com>,
+	Stefan Hajnoczi <stefanha@redhat.com>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
+	David Hildenbrand <david@redhat.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	virtualization@lists.linux.dev (open list:VIRTIO FILE SYSTEM),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v1] virtio_fs: fix page fault for DAX page address
+Date: Thu, 28 Aug 2025 14:10:13 +0800
+Message-ID: <20250828061023.877-1-haiyuewa@163.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PPFF6E64BC2C:EE_|PH0PR12MB7080:EE_
-X-MS-Office365-Filtering-Correlation-Id: c4ed136c-ec85-44bb-e470-08dde5f6be67
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bURpMnFyclQyK3hTZ0RMMXJIOGgzN1VlS2lKUXN4cjcrYU11K2I1RjFCVllh?=
- =?utf-8?B?LzJQUTFBUUVINU8rSTBOYnZLTnhZNGNSbHpidS9wbTFOWllkTFpFQUlpRmtQ?=
- =?utf-8?B?RVpKSTQ3WllCdFc5M2pIMFUwVXlOV05pR1FhSXd0cXpTZFIzU2h6Q3RVemxD?=
- =?utf-8?B?eE1qMzRaU250ak1NR0hzWW9aQTlKV2djenM0VnJjdllRNis0VkYwRkdnVU9K?=
- =?utf-8?B?cHhaNFR3SmJEUUVmZ21ZUHpQUGpUeWhZSFhWMUlxNFZXSzVCbHdMS1EzNXpW?=
- =?utf-8?B?S05yb3VDMXdpVDNFYThTYkxaa3RiWkIyTzVjcVpRMHY2Y1FDL0IyV1QzU2ky?=
- =?utf-8?B?NGx2RUpiUTMwTWZGMkZ4NENIUDU4TTFnd212bEw2YjFVQXVTaDU3UFo1VW1D?=
- =?utf-8?B?bEljMmk0MkhVWE9uS1V1eXczQmt5L2QvY0RSOE9mekxiWG9zeHQ5TFlZZ2lp?=
- =?utf-8?B?c0JaUkpJODIwK3kzMWtHakRlbFhrVEJJa0xndXlsWElNd2thazBvaThMMzNO?=
- =?utf-8?B?bXZCM0U4UVcxRnZQV2tIMDZIZktxT2FMNFNJUGgyMU51ZkJrTXYxRE5QSFF5?=
- =?utf-8?B?VWx5Yjh0R1NSZjdRVW5VY2tmSHpkaUczckhjcWRqT0lQc2dySWRsRmRlMUV5?=
- =?utf-8?B?b3dSWGZRMlRNQkZmQXFWT1hFVEhoVm1ZdmREcFFPemdJODU4aFQxYlRLc3Jk?=
- =?utf-8?B?cUcvUy9xSTg1aU1LNWM1YzJob1JrT2NEL1J0U1djL2RxM0dQR0c1S1Q2TkhB?=
- =?utf-8?B?clVja1h2dWFoRlFWM2szbjhPckgydjBhYVN2M0NjY1J4NGFjeDlaNlZrMUVr?=
- =?utf-8?B?bXo2U2s0b1ZIYnA4MnZCME1scExUOUhRc1A1OG0wa2RxUnN4K1UvQWV2YW5Z?=
- =?utf-8?B?ZEhaS3k3cjNseVNLV2hFN1ZEUkJ1RzFsNUhrT2NacjFhb0ZxeWhkRDdIclpJ?=
- =?utf-8?B?MzdUcVlub3czcXdiNm5ONkVUOTFiMTdMYkJJUDdSRFFOSjQvYmhnaUlSbmty?=
- =?utf-8?B?L3Bhd01EanZuQlFsa3FHL0V2Q1lXVHhyZWpIV3B1bks1YUYwQ2NtN2EvK1dJ?=
- =?utf-8?B?MmwrM0ZpTGtYdUNRNHRVaUYzQzZrbXNwYnB6NFhlMXZLOEtGdGg4ejN3WExF?=
- =?utf-8?B?WS85VmhZTCtONDAwU204L0xXbEw2Y0d5Y245SnBHdmUrUSs4ekxFeEFsWkV3?=
- =?utf-8?B?Qmt6SlB0cnJHeUVIUVVsOG9yVW1IblNjbStodFRFdjhVbFpsNmVoMTFoSEZV?=
- =?utf-8?B?bWErZEFmQnVzcEw0Q2l2dTVIbndqNTVhZ0tCeVAvVkhMdTVxVmZTZy9rT3pk?=
- =?utf-8?B?bUZnM1ErTUx3dGpQaS9ZdmgyN25hMFRDZFV6MFJiK2RHMUZTYzdXYzN4eEpF?=
- =?utf-8?B?M0czanVpK3lqbVlLZmw2SUxJVDVPWEJEcVh0QUVtT1FjZjZrYlFpU2N5OVZr?=
- =?utf-8?B?U3JoQmZJb1FJanVRYUxEczZjOTh5VkRaUXVFZzFPSVNuZXBsV0dDNFpCU3g0?=
- =?utf-8?B?aFJuTVM5QWtBOEw3TXdXTDQrVGs4cW5xUVZRay9pS3MzekNiZVRiSGxYSHRR?=
- =?utf-8?B?ZDZybzRsY0x2UTJEUml2dms1TzNZc0Z5RVVsWXIreFVuTExhRnMwanhoemRJ?=
- =?utf-8?B?VmI1YzVPWXZPQ2tIK2RBMXdvaWhIbUI1bzcxbVJQVlp0NnYxS0FMb1BCdFRt?=
- =?utf-8?B?NGRTdGJkMmZPeklnem8zdVhRWWtnL001OC9VNm01Y3dNNEFQRmcxZzkrT0JB?=
- =?utf-8?B?Sm5EWEZreHQrY0pwdlQxQkZ3S29VVnB6U3Z5T28vNy9POGxCWFVEN1d3TW9C?=
- =?utf-8?B?bndVVFBJOTlscUREa1gxZGl0LzRUeHNCbzN5MkxqNzdxY1J6SVNOa0JHQTgz?=
- =?utf-8?B?aDRFYzF4Uk81VnMvM2VqS0N0Mm9DdWZITDVpUVc4dEJoUHBKRFhnUFhoSXgz?=
- =?utf-8?Q?faLzxGAC1aw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ5PPFF6E64BC2C.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?K1g4SWlVN1dBd3l0YnlPVitwb0JOUXJJZmlHZFN3S1gwK0wyTjdpM1RFVDZl?=
- =?utf-8?B?eFI1c3poRFZtdGZaMTd1RC81YzNGRUpGQ3FSaytvSG1rcTFhcGE2aHZFdVh0?=
- =?utf-8?B?RTBYMWRnUEl5Y3U5QkY5c0hkbHpwRkhxazRkMXRLVXN4c3dIcVVkVThrOWVZ?=
- =?utf-8?B?ZVRqbXFxUUxpM3dlNi9ZdGdGRDJQWEI1a2xpTHVhQkZVYTdRNFp2ZWpuVEV5?=
- =?utf-8?B?ZmxKN2VYclo4L0ZqdDhvUmJhMmJKNURUTStiRGR3dWd5NS9rNjVXNFQ2UjNE?=
- =?utf-8?B?U2VobGZ0TEswU1BZU3ZDODNPTm4yYTIrTGJiRDhSc1FhVDllRVJlZ0wxR21x?=
- =?utf-8?B?R2ZQTEYrRWhCa0J0a2hBa3VjKzV1TDlmMTV6OEpCUXBva2dSVGpydllOQUlR?=
- =?utf-8?B?UXQ3RTJqK01xY2NGMXY4ZCtQRlBSR1NKQ3NoWHR0Um5VZHROUkRYaXd4bmZV?=
- =?utf-8?B?cEhyS2tDTm9JdUlEUXdmNDJpbUZ6eTY1akpoQTFVYXFxTXgycy90dU0xanRj?=
- =?utf-8?B?SFRjTGlQNXRqamJOaGhRMjg5Q3R0Kzg0ck14YjNGN3RucEJXZ1g3Q1hZVklS?=
- =?utf-8?B?Ry83dTlaV0NVQ1EyK3Q4em5LTldpNlczaG9zb0Fxa2MrcDBPS0VSSFpCUzB4?=
- =?utf-8?B?ZFdYUTlTVTZYN05INzZUTVNic2xUQWVmUUU1bEVWZXdBaHpNaFB0WG1CODNE?=
- =?utf-8?B?ZVcvZzhuNmM2MXRpdklVSFpzMlFZWmJHS2VDRStwY2cwR2FqZmRwS2FndVRY?=
- =?utf-8?B?dWdYZG1nY3VIRUc5akowWWwzbTVrM2ZNanRxb1V0dTVuK0tDUE5RTlRYTWVM?=
- =?utf-8?B?cnY5K1RXeTNRYlZTUEZnQVYvOENUWFRueDcrRk5LRjZZeGtoQlVYSTc2MjRE?=
- =?utf-8?B?eHk3c2FWYVQ0RnFzNCsrNmdFa3RPSFhsb0dxdEppSVlLRStQNnZoWlRXQnVH?=
- =?utf-8?B?STEraDc5U0V4cktiR0VXelM1NjkrYmtlSmhJVzZrbkcvQWdTWUduRHJiakNL?=
- =?utf-8?B?djhSd2RaSFduVXVwb3BOcVRjbXcraENNNmRDUUsxeUJyS2JXZEtrRXBTWGtO?=
- =?utf-8?B?eW5zZlhkSktUUFdyZDFKR1JwY3g4Zk1pTHQrNGNLbUdsekZBNVJqNGV6RmtN?=
- =?utf-8?B?UTRJc1pzSkFRSmgyNUhOaU5CTGVTdktNSFRHMWIxNHFkZy94cFhiVmE0TVdJ?=
- =?utf-8?B?R251cVcwcjFMUkxoWlpkakQyWWJKQ2t1RTV2OURKdnFoNGM4YzNiOEtzZ2Q2?=
- =?utf-8?B?d1dVZmxMU21qcFowRWtsVzZaL1B2bWdkWWZURTBOTUV3YjYvSWw2TWF2NGVM?=
- =?utf-8?B?QkNvNGVXeERuMkdEbWZMcG5HSUM0aURNT3JEZGgzLzA0aFBpUlArMkdYSDdP?=
- =?utf-8?B?SG9jeityU3IxdGVxZFVGQUxwUmRNWmlDNmw5d3p2WUpxbzBoR0JBWHFRSElW?=
- =?utf-8?B?S1NLd0w2TGl3NWtOanZjRUJiYU9HSzBTaWlaU0NrOGNsNm9aanR2d3FKdEt3?=
- =?utf-8?B?SFgzakhYQWR5OFdtZk1hcUd5S1NVQkZod0paWDVYR0RlSTd6QlNUSExrSEFD?=
- =?utf-8?B?NDIwZUdCeUIyTVo5MEd3ZU9ydjJ2MWZjTVVrTkw2TjQ3VjZ4STZ0VDdKeTZ2?=
- =?utf-8?B?OXhJbXRmalI2T3hPUWw2TDF4MDBqSnBQUlo1T3Q1eEgxKzlLdnBFTzU3YlZw?=
- =?utf-8?B?dFlMZUFDQ1ZxTy9VbVRjUTl4Qkt5bjRTa0c5MzRLTkNhUkE1ditBSy84SWFX?=
- =?utf-8?B?MWNQRXg5N1o3WHhlOXNGMDJvSk1xOFQrMTNEVis0QmFwY0h3QStQNmNLdCtZ?=
- =?utf-8?B?dFVLUEcreHo2WXJzR2pHM2Fnc3ExYlM2YTYxMHNSU1JLR2NFMmRFTjZveklw?=
- =?utf-8?B?bDBUMSt3SXlGRm5zQm1wb3NTNVV3Wjk2d3BZaUp2ZjFtQW9IN2VFeE42WVkv?=
- =?utf-8?B?UUc4UHZuTXZwRVFQZFZycXNTNW1TaGRUSnNJaDhFTUo1SzRYQi9xZGUrS1Bl?=
- =?utf-8?B?Vk9MeThQTmRsMVcrS3psWmZzdGhsaHEySTBQZisxclQvK25EZ0tyMkw3aTh0?=
- =?utf-8?B?TjRKK3o2MW5RWVNNVkJ5RUpMRGhrbzdPQ20zamRUZEhGWHZkZ3lBQU1mdUFt?=
- =?utf-8?Q?ss8uKsoA5RDePAGgncrO9j2YN?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c4ed136c-ec85-44bb-e470-08dde5f6be67
-X-MS-Exchange-CrossTenant-AuthSource: SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 05:50:08.0701
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9fP3mXn4Yi3dhBdxvsXdKgKW3f8Z/3mLTEtLNquCwv60WYfYjnPSxKH6aJg66UjSH5R0xOMhxTB5D6lQL95ufQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7080
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wCnAafU8q9o4zdvEw--.31954S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxArWUtw1Utw1kZF1kAFykAFb_yoW7Jw17pF
+	1Utr18Gr4kXr1UJF10vr1UXr13twsrAF18XrWxAr1kZF1UW3WDJr1kJrWUtr4UXryjqry7
+	trs8Gw1xtryDKaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zEiiSDUUUUU=
+X-CM-SenderInfo: 5kdl53xhzdqiywtou0bp/1tbiYAO2a2ivSTleAQABsX
 
+The commit ced17ee32a99 ("Revert "virtio: reject shm region if length is zero"")
+exposes the following DAX page fault bug:
 
+The commit 21aa65bf82a7 ("mm: remove callers of pfn_t functionality") handles
+the DAX physical page address incorrectly: the removed macro 'phys_to_pfn_t()'
+should be replaced with 'PHYS_PFN()'.
 
-On 8/28/2025 4:13 AM, Ackerley Tng wrote:
-> Shivank Garg <shivankg@amd.com> writes:
-> 
->>
->> [...snip...]
->>
-> 
-> I meant to send this to you before this version went out but you were
-> too quick!
+[    1.390321] BUG: unable to handle page fault for address: ffffd3fb40000008
+[    1.390875] #PF: supervisor read access in kernel mode
+[    1.391257] #PF: error_code(0x0000) - not-present page
+[    1.391509] PGD 0 P4D 0
+[    1.391626] Oops: Oops: 0000 [#1] SMP NOPTI
+[    1.391806] CPU: 6 UID: 1000 PID: 162 Comm: weston Not tainted 6.17.0-rc3-WSL2-STABLE #2 PREEMPT(none)
+[    1.392361] RIP: 0010:dax_to_folio+0x14/0x60
+[    1.392653] Code: 52 c9 c3 00 66 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 0f 1f 44 00 00 48 c1 ef 05 48 c1 e7 06 48 03 3d 34 b5 31 01 <48> 8b 57 08 48 89 f8 f6 c2 01 75 2b 66 90 c3 cc cc cc cc f7 c7 ff
+[    1.393727] RSP: 0000:ffffaf7d04407aa8 EFLAGS: 00010086
+[    1.394003] RAX: 000000a000000000 RBX: ffffaf7d04407bb0 RCX: 0000000000000000
+[    1.394524] RDX: ffffd17b40000008 RSI: 0000000000000083 RDI: ffffd3fb40000000
+[    1.394967] RBP: 0000000000000011 R08: 000000a000000000 R09: 0000000000000000
+[    1.395400] R10: 0000000000001000 R11: ffffaf7d04407c10 R12: 0000000000000000
+[    1.395806] R13: ffffa020557be9c0 R14: 0000014000000001 R15: 0000725970e94000
+[    1.396268] FS:  000072596d6d2ec0(0000) GS:ffffa0222dc59000(0000) knlGS:0000000000000000
+[    1.396715] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    1.397100] CR2: ffffd3fb40000008 CR3: 000000011579c005 CR4: 0000000000372ef0
+[    1.397518] Call Trace:
+[    1.397663]  <TASK>
+[    1.397900]  dax_insert_entry+0x13b/0x390
+[    1.398179]  dax_fault_iter+0x2a5/0x6c0
+[    1.398443]  dax_iomap_pte_fault+0x193/0x3c0
+[    1.398750]  __fuse_dax_fault+0x8b/0x270
+[    1.398997]  ? vm_mmap_pgoff+0x161/0x210
+[    1.399175]  __do_fault+0x30/0x180
+[    1.399360]  do_fault+0xc4/0x550
+[    1.399547]  __handle_mm_fault+0x8e3/0xf50
+[    1.399731]  ? do_syscall_64+0x72/0x1e0
+[    1.399958]  handle_mm_fault+0x192/0x2f0
+[    1.400204]  do_user_addr_fault+0x20e/0x700
+[    1.400418]  exc_page_fault+0x66/0x150
+[    1.400602]  asm_exc_page_fault+0x26/0x30
+[    1.400831] RIP: 0033:0x72596d1bf703
+[    1.401076] Code: 31 f6 45 31 e4 48 8d 15 b3 73 00 00 e8 06 03 00 00 8b 83 68 01 00 00 e9 8e fa ff ff 0f 1f 00 48 8b 44 24 08 4c 89 ee 48 89 df <c7> 00 21 43 34 12 e8 72 09 00 00 e9 6a fa ff ff 0f 1f 44 00 00 e8
+[    1.402172] RSP: 002b:00007ffc350f6dc0 EFLAGS: 00010202
+[    1.402488] RAX: 0000725970e94000 RBX: 00005b7c642c2560 RCX: 0000725970d359a7
+[    1.402898] RDX: 0000000000000003 RSI: 00007ffc350f6dc0 RDI: 00005b7c642c2560
+[    1.403284] RBP: 00007ffc350f6e90 R08: 000000000000000d R09: 0000000000000000
+[    1.403634] R10: 00007ffc350f6dd8 R11: 0000000000000246 R12: 0000000000000001
+[    1.404078] R13: 00007ffc350f6dc0 R14: 0000725970e29ce0 R15: 0000000000000003
+[    1.404450]  </TASK>
+[    1.404570] Modules linked in:
+[    1.404821] CR2: ffffd3fb40000008
+[    1.405029] ---[ end trace 0000000000000000 ]---
+[    1.405323] RIP: 0010:dax_to_folio+0x14/0x60
+[    1.405556] Code: 52 c9 c3 00 66 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 0f 1f 44 00 00 48 c1 ef 05 48 c1 e7 06 48 03 3d 34 b5 31 01 <48> 8b 57 08 48 89 f8 f6 c2 01 75 2b 66 90 c3 cc cc cc cc f7 c7 ff
+[    1.406639] RSP: 0000:ffffaf7d04407aa8 EFLAGS: 00010086
+[    1.406910] RAX: 000000a000000000 RBX: ffffaf7d04407bb0 RCX: 0000000000000000
+[    1.407379] RDX: ffffd17b40000008 RSI: 0000000000000083 RDI: ffffd3fb40000000
+[    1.407800] RBP: 0000000000000011 R08: 000000a000000000 R09: 0000000000000000
+[    1.408246] R10: 0000000000001000 R11: ffffaf7d04407c10 R12: 0000000000000000
+[    1.408666] R13: ffffa020557be9c0 R14: 0000014000000001 R15: 0000725970e94000
+[    1.409170] FS:  000072596d6d2ec0(0000) GS:ffffa0222dc59000(0000) knlGS:0000000000000000
+[    1.409608] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    1.409977] CR2: ffffd3fb40000008 CR3: 000000011579c005 CR4: 0000000000372ef0
+[    1.410437] Kernel panic - not syncing: Fatal exception
+[    1.410857] Kernel Offset: 0xc000000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
 
-I wanted to get it merged quickly ;)
+Fixes: 21aa65bf82a7 ("mm: remove callers of pfn_t functionality")
+Signed-off-by: Haiyue Wang <haiyuewa@163.com>
+---
+ fs/fuse/virtio_fs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> Here's a new version, Fuad and I reviewed this again internally. The
-> changes are:
-> 
-> + Sort linux/pseudo_fs.h after linux/pagemap.h (alphabetical)
-> + Don't set MNT_NOEXEC on the mount, since SB_I_NOEXEC was already set
->   on the superblock
-> + Rename kvm_gmem_inode_make_secure_inode() to kvm_gmem_inode_create()
->     + Emphasizes that there is a creation in this function
->     + Remove "secure" from the function name to remove confusion that
->       there may be a "non-secure" version
-> + In kvm_gmem_inode_create_getfile()'s error path, return ERR_PTR(err)
->   directly instead of having a goto
->
+diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+index c826e7ca49f5..76c8fd0bfc75 100644
+--- a/fs/fuse/virtio_fs.c
++++ b/fs/fuse/virtio_fs.c
+@@ -1016,7 +1016,7 @@ static long virtio_fs_direct_access(struct dax_device *dax_dev, pgoff_t pgoff,
+ 	if (kaddr)
+ 		*kaddr = fs->window_kaddr + offset;
+ 	if (pfn)
+-		*pfn = fs->window_phys_addr + offset;
++		*pfn = PHYS_PFN(fs->window_phys_addr + offset);
+ 	return nr_pages > max_nr_pages ? max_nr_pages : nr_pages;
+ }
+ 
+-- 
+2.51.0
 
-Thanks for the quick update! The changes look good. I'll incorporate them
-in the next version.
-
-Best Regards,
-Shivank
 
