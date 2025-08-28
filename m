@@ -1,58 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-59490-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59491-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3FF2B39D77
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 14:39:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A616DB39D81
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 14:41:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B270D1C28223
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 12:39:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F9F3985713
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 12:40:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D2230F818;
-	Thu, 28 Aug 2025 12:38:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0A5E3101AA;
+	Thu, 28 Aug 2025 12:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TTmj5NMy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dk3jPTY/"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7671A30DED4;
-	Thu, 28 Aug 2025 12:38:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F14AA30F944;
+	Thu, 28 Aug 2025 12:40:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756384729; cv=none; b=Hzb9fE929Jtpxsx3uyd2v2wnRrN7XLiudfejS4u+SnkOEMC8CXl0BhhsWDpt1Jd1c5DE2IwE7PVs5/o2tACs08R+3gJHXhGod5B689QLoiPJjCsfxKqaeSmWTdpEq8eHpZCER+q7J6qiame0XaHqv5A7DoTtcE8d2bB/gF8H/tU=
+	t=1756384830; cv=none; b=qbyhlAQecfZNiuL3beeBuDhBKBj2OnxnlO6MPpzTAi1Pa9MtNDDGyrdwmRLVoT8BABI8/TEyab0tDRhbhMZpKDHDFJWt2x5NcHcIU33xLHXIHPDrDtvjfYDDeuXhnuTakhSweM4cL2JUlRM+GQF0XRg8CMYgtmsPNOC8D6fDQhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756384729; c=relaxed/simple;
-	bh=LBfI+oUrZrcz6c7Hz14GFFzsTOks55XNb3aG4xxk+Lg=;
+	s=arc-20240116; t=1756384830; c=relaxed/simple;
+	bh=aLlKvcNrJdKssApUKqZnCs6aOM0GJeWFycjakJliqCI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H98BnaZAg/C9Hy9y7pr5+rsfUjjI0VIgi+sTo0yJHUw1nVWfRfZT2Ezgy0032jz3WjzxCe2BqA9xKFua0WaJ+xXYpIWVtZC95Z5BIUrWDbrROts4ir3OZb3CmHLRan5ms3BvMr4NKUAPwU/qCPRvYxnsvGiOqidLIFpR+5yc4PQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TTmj5NMy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 165CBC4CEF5;
-	Thu, 28 Aug 2025 12:38:46 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=VqI4Z2qKZLs1iEi+YCx4E/YQTuP9L2+Dq/uXQDDmjYdJ5jF2V/hT/Hb8q5FLEfra8Nf1JyMcRioFp95Qo0o/9HcBfho6kWQN++4YO6VDEkOPqAxxhgxzXWtBCnCzJ7sqQFyNcfamYLfA2LM5sGg71GMgMRSh1N3XZs1oLN29UCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dk3jPTY/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B2B7C4CEEB;
+	Thu, 28 Aug 2025 12:40:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756384729;
-	bh=LBfI+oUrZrcz6c7Hz14GFFzsTOks55XNb3aG4xxk+Lg=;
+	s=k20201202; t=1756384829;
+	bh=aLlKvcNrJdKssApUKqZnCs6aOM0GJeWFycjakJliqCI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TTmj5NMyCBCma0X+i9vZneDWtnz+Wi2bAPnFvaPklZ2fTeNSGOxkx5N70GbokYhrN
-	 j3SWk11s8P8eCsRgdKedmvTdb1ZKd6Elbv8WqhAS2hXWceKmC5sWoJSonjHKmL38rC
-	 q2XcxZrzrSGlMtI5Ns0qYJ3zegWHQj8F7Cele/ZMPRO6+g9WGzpEUCOS48+qhcd0eB
-	 vw8uHRdLox3R3YfX7Vpj1SlEZfPTLdZ8orgbUgpvCeq2wO+tHdchsf7BQj9aJkB1lO
-	 pbgWK2mJQEUlxWJmgI7meB4p0dYeVQ3FG4PvLpfGGhRVLykhoWPIgPXdqoZbJlWfWZ
-	 /7Tuk3sSbDimg==
-Date: Thu, 28 Aug 2025 14:38:44 +0200
+	b=Dk3jPTY/ma5WbIaYrID7YZGw0Ya0pI5/evmB+I4DWKuJ5+aQjLA5+FYUNBU+wfD89
+	 NoXIa3aRkxe46AkZj0MjX3Rcut1iMul0gLD39NbkRscUUbpTZfSKhoHWWTx/AqVc88
+	 bnxSyvpvq/WeFsZ5FdazuaymtnC4MMl1XedbDrqIGo1QXbOmSqJHAST4pl6BOh64Jn
+	 +rGsC5SIfD6WyY/ivv6fefk9Y7U1ndzDmqJwNj3xjxnW0lHi4MX1srQFluBGCZ3HOk
+	 5tvaU6mUyqbqf7GFIREFAla7FYyu1uIVFPfiHsYHaqbQX/dgFB07vZ0ckXfsgZ+C/D
+	 im7jwcawuXk4w==
+Date: Thu, 28 Aug 2025 14:40:25 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
-	linux-btrfs@vger.kernel.org, kernel-team@fb.com, linux-ext4@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, viro@zeniv.linux.org.uk, amir73il@gmail.com
-Subject: Re: [PATCH v2 43/54] fs: change inode_is_dirtytime_only to use
- refcount
-Message-ID: <20250828-knicken-erpicht-daacec0648f3@brauner>
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org, 
+	kernel-team@fb.com, linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	viro@zeniv.linux.org.uk, amir73il@gmail.com
+Subject: Re: [PATCH v2 48/54] fs: remove some spurious I_FREEING references
+ in inode.c
+Message-ID: <20250828-redeverbot-material-2e2f9f71d9b7@brauner>
 References: <cover.1756222464.git.josef@toxicpanda.com>
- <caa80372b21562257d938b200bb720dcb53336cd.1756222465.git.josef@toxicpanda.com>
- <3aoxujvj27dpehe2xjswtf73wqffahusomomjqaqcmhufz2pzp@kndlcuu7anam>
+ <da562975b6a07b1cc8341a6374ca82cd453d986c.1756222465.git.josef@toxicpanda.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,65 +60,70 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <3aoxujvj27dpehe2xjswtf73wqffahusomomjqaqcmhufz2pzp@kndlcuu7anam>
+In-Reply-To: <da562975b6a07b1cc8341a6374ca82cd453d986c.1756222465.git.josef@toxicpanda.com>
 
-On Wed, Aug 27, 2025 at 12:06:12AM +0200, Mateusz Guzik wrote:
-> On Tue, Aug 26, 2025 at 11:39:43AM -0400, Josef Bacik wrote:
-> > We don't need the I_WILL_FREE|I_FREEING check, we can use the refcount
-> > to see if the inode is valid.
-> > 
-> > Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-> > ---
-> >  include/linux/fs.h | 14 +++++++-------
-> >  1 file changed, 7 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index b13d057ad0d7..531a6d0afa75 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -2628,6 +2628,11 @@ static inline void mark_inode_dirty_sync(struct inode *inode)
-> >  	__mark_inode_dirty(inode, I_DIRTY_SYNC);
-> >  }
-> >  
-> > +static inline int icount_read(const struct inode *inode)
-> > +{
-> > +	return refcount_read(&inode->i_count);
-> > +}
-> > +
-> >  /*
-> >   * Returns true if the given inode itself only has dirty timestamps (its pages
-> >   * may still be dirty) and isn't currently being allocated or freed.
-> > @@ -2639,8 +2644,8 @@ static inline void mark_inode_dirty_sync(struct inode *inode)
-> >   */
-> >  static inline bool inode_is_dirtytime_only(struct inode *inode)
-> >  {
-> > -	return (inode->i_state & (I_DIRTY_TIME | I_NEW |
-> > -				  I_FREEING | I_WILL_FREE)) == I_DIRTY_TIME;
-> > +	return (inode->i_state & (I_DIRTY_TIME | I_NEW)) == I_DIRTY_TIME &&
-> > +	       icount_read(inode);
-> >  }
-> >  
-> >  extern void inc_nlink(struct inode *inode);
-> > @@ -3432,11 +3437,6 @@ static inline void __iget(struct inode *inode)
-> >  	refcount_inc(&inode->i_count);
-> >  }
-> >  
-> > -static inline int icount_read(const struct inode *inode)
-> > -{
-> > -	return refcount_read(&inode->i_count);
-> > -}
-> > -
-> >  extern void iget_failed(struct inode *);
-> >  extern void clear_inode(struct inode *);
-> >  extern void __destroy_inode(struct inode *);
-> > -- 
-> > 2.49.0
-> > 
+On Tue, Aug 26, 2025 at 11:39:48AM -0400, Josef Bacik wrote:
+> Now that we have the i_count reference count rules set so that we only
+> go into these evict paths with a 0 count, update the sanity checks to
+> check that instead of I_FREEING.
 > 
-> nit: I would change the diff introducing icount_read() to already place
-> it in the right spot. As is this is going to mess with blame for no good
-> reason.
+> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+> ---
+>  fs/inode.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/fs/inode.c b/fs/inode.c
+> index eb74f7b5e967..da38c9fbb9a7 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -858,7 +858,7 @@ void clear_inode(struct inode *inode)
+>  	 */
+>  	xa_unlock_irq(&inode->i_data.i_pages);
+>  	BUG_ON(!list_empty(&inode->i_data.i_private_list));
+> -	BUG_ON(!(inode->i_state & I_FREEING));
+> +	BUG_ON(icount_read(inode) != 0);
+>  	BUG_ON(inode->i_state & I_CLEAR);
+>  	BUG_ON(!list_empty(&inode->i_wb_list));
 
-Fwiw, I did that in the preliminaries patch. Just looked at your comment
-here.
+These should probably all be WARN_ON()s.
+
+>  	/* don't need i_lock here, no concurrent mods to i_state */
+> @@ -871,19 +871,19 @@ EXPORT_SYMBOL(clear_inode);
+>   * to. We remove any pages still attached to the inode and wait for any IO that
+>   * is still in progress before finally destroying the inode.
+>   *
+> - * An inode must already be marked I_FREEING so that we avoid the inode being
+> + * An inode must already have an i_count of 0 so that we avoid the inode being
+>   * moved back onto lists if we race with other code that manipulates the lists
+>   * (e.g. writeback_single_inode). The caller is responsible for setting this.
+>   *
+>   * An inode must already be removed from the LRU list before being evicted from
+> - * the cache. This should occur atomically with setting the I_FREEING state
+> - * flag, so no inodes here should ever be on the LRU when being evicted.
+> + * the cache. This should always be the case as the LRU list holds an i_count
+> + * reference on the inode, and we only evict inodes with an i_count of 0.
+>   */
+>  static void evict(struct inode *inode)
+>  {
+>  	const struct super_operations *op = inode->i_sb->s_op;
+>  
+> -	BUG_ON(!(inode->i_state & I_FREEING));
+> +	BUG_ON(icount_read(inode) != 0);
+>  	BUG_ON(!list_empty(&inode->i_lru));
+>  
+>  	if (!list_empty(&inode->i_io_list))
+> @@ -897,8 +897,8 @@ static void evict(struct inode *inode)
+>  	/*
+>  	 * Wait for flusher thread to be done with the inode so that filesystem
+>  	 * does not start destroying it while writeback is still running. Since
+> -	 * the inode has I_FREEING set, flusher thread won't start new work on
+> -	 * the inode.  We just have to wait for running writeback to finish.
+> +	 * the inode has a 0 i_count, flusher thread won't start new work on the
+> +	 * inode.  We just have to wait for running writeback to finish.
+>  	 */
+>  	inode_wait_for_writeback(inode);
+>  	spin_unlock(&inode->i_lock);
+> -- 
+> 2.49.0
+> 
 
