@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-59471-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59472-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDF69B397C5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 11:02:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02076B397CF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 11:06:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D28D1C80309
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 09:02:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF8267B135F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 09:05:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D4D2DEA7B;
-	Thu, 28 Aug 2025 09:00:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA0EE28BABB;
+	Thu, 28 Aug 2025 09:06:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dgwBDpgN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R8qbavQx"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02B3D1F4CAF;
-	Thu, 28 Aug 2025 09:00:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064CC1373;
+	Thu, 28 Aug 2025 09:06:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756371636; cv=none; b=tmKX3w8l8IbI8tfTqcHsqWuJLFG7/s/ntLHUxMPQl2v+H9eFcOt+gUyYc/4TCU+5Q9R3836oV5Ow5Zne0QG544XF4YwFYXvV2+ll1GAYQJkROXK4efbabXVj/bSePp6Q5YB9jtVj+oJjdFHMm3otesAewtNvgSdawo0XPCM4hWw=
+	t=1756372002; cv=none; b=fpaDJoZvWq5AIu+ZMaQzYzINUsdfufPBpF8JUjlye+rOf+e7hU9P+b1JaLj/2K1ZNoszSfFB3Pr30dI4sEMzdRbf5TiAC8VXAPZNZVwdoubTXErTFo53c426XlWkeKDm+XBwCi5Z0RyrJJz7U3nouFQiImCnKZ6nWcWAIjDmxlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756371636; c=relaxed/simple;
-	bh=aZU+O1QhNhNZNy5evwzSIDXT12+t3PtexQ5lHoMyOBs=;
+	s=arc-20240116; t=1756372002; c=relaxed/simple;
+	bh=xoFXf4tek4F79Myol8+sLgN5auxVB9US628LUrqjCD8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Iv0MyAMIc1K0WdSwtuFBQ16v6WIdD6KOCpIkHfJTh2FDCctfaKui6EPpP30umnQeB47v34p1xfrd4CfvDidhcjqRg4zbEIoA3qBgSZhO24v12Av4vo+TgpJazArq1W71C+u2D50gPdwZ+tiL2I4c3jpKsEsWvJ8JGrdbvmJ9yiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dgwBDpgN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C42FDC4CEEB;
-	Thu, 28 Aug 2025 09:00:33 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=iygS4gWfoOfjSute1cXQ4V/LE3oIqaBc7aYeaJxNXTXOxAjBxJeUW0KdFdmI28XLHHtESP+3867haGif56YI76YlU5ehCakeixK/jS2Kic1EIVnvIAnrQpIVCKCV6QZDbG3285UoSTtEKUtu14vOcqejA/vbQy0iiUL6DL/yzt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R8qbavQx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFCBCC4CEEB;
+	Thu, 28 Aug 2025 09:06:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756371635;
-	bh=aZU+O1QhNhNZNy5evwzSIDXT12+t3PtexQ5lHoMyOBs=;
+	s=k20201202; t=1756372001;
+	bh=xoFXf4tek4F79Myol8+sLgN5auxVB9US628LUrqjCD8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dgwBDpgN6xYqCx+/drcirAnhaQSj0q0MFROKBjy2C7xglkkL+CwxDTKl+VbKPX9p8
-	 na0GzKaR+zARaNUjprGTILPJIvztsQ66ESeHWG63JjRBVT8HRthjoVQfsmouEbMwLm
-	 EPeHdCpb3MozjNfvzfheb2Hsd0jlX+YFgo1+5ohUTpGp+Uq8g7GFzcq63FZljcmgnh
-	 RUXhlLH+Uw7DPwLhas3rVZjq57OhfeoQj7ZDrZSvlJdUQwwA4uBZX2rmwqnxWwGrSV
-	 x+TtUCxtKJpFOLbE5e9pJTLElxDiSfe4AazNqVYe/UtKvwLMYe0FrP/OvygsktYtbE
-	 NKKVj7JzPX6rg==
-Date: Thu, 28 Aug 2025 11:00:31 +0200
+	b=R8qbavQxhqSOB3/VphrPYPTDmOC/lYN7t4Qvu2qUfmSb+/plfN8NzgZXG36DaD3zr
+	 ETjl4SddpLQxiAyCzgmMKewusfjRzP23D0VAPeOdkdIEa7n/G0Wf/jLZjthi3XAABO
+	 CKayhBAtBHt8MIIpvpg4aGMt+OB99MExAF18l875nzpRIWsfq9XRwFiUWLa+FnSI9Y
+	 R43lbaxzJXVaxqkC1inLM4cWWG6J+fsEp8S949HlotQbrP0d5/EJIt9XulQaj4MDh4
+	 2uvugmEIXA8sJBbiK+fceSIEVVd3dxkeTPzTevO3AmxcH5bAlFu78pdP1SOXku3fzl
+	 dlVT3HhxZ5tDg==
+Date: Thu, 28 Aug 2025 11:06:37 +0200
 From: Christian Brauner <brauner@kernel.org>
 To: Josef Bacik <josef@toxicpanda.com>
 Cc: linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org, 
@@ -49,7 +49,7 @@ Cc: linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
 	viro@zeniv.linux.org.uk, amir73il@gmail.com
 Subject: Re: [PATCH v2 17/54] fs: remove the inode from the LRU list on
  unlink/rmdir
-Message-ID: <20250828-perfekt-juckreiz-1f018973edf1@brauner>
+Message-ID: <20250828-leiden-getan-25237f019cf1@brauner>
 References: <cover.1756222464.git.josef@toxicpanda.com>
  <3552943716349efa4ff107bb590ac6b980183735.1756222465.git.josef@toxicpanda.com>
 Precedence: bulk
@@ -127,22 +127,43 @@ On Tue, Aug 26, 2025 at 11:39:17AM -0400, Josef Bacik wrote:
 > +	spin_lock(&inode->i_lock);
 > +	inode_lru_list_del(inode);
 > +	spin_unlock(&inode->i_lock);
+> +
+> +	inode_unlock(inode);
+>  	dput(dentry);
+>  	if (!error)
+>  		d_delete_notify(dir, dentry);
+> @@ -4653,8 +4663,18 @@ int do_unlinkat(int dfd, struct filename *name)
+>  		dput(dentry);
 
-I think it should be possible to optimize this with an appropriate
-helper doing:
+Why are you doing that in do_unlinkat() instead of vfs_unlink() (as
+you're doing it in vfs_rmdir() and not do_rmdir())?
 
-static inline bool inode_on_lru(const struct inode *inode)
-{
-	return !!(READ_ONCE(inode->i_state) & (I_LRU | I_CACHED_LRU));
-}
+Doing it in do_unlinkat() means any stacking filesystem such as
+overlayfs will end up skipping the LRU list removal as they use
+vfs_unlink() directly.
 
-then
+And does btrfs subvolume/snapshot deletion special treatment as well for
+this as it's semantically equivalent to an rmdir?
 
-if (inode_on_lru(inode)) {
-	spin_lock(&inode->i_lock);
-	inode_lru_list_del(inode);
-	spin_unlock(&inode->i_lock);
-}
-
-so you don't needlessly acquire i_lock.
+>  	}
+>  	inode_unlock(path.dentry->d_inode);
+> -	if (inode)
+> +	if (inode) {
+> +		/*
+> +		 * The LRU may be holding a reference, remove the inode from the
+> +		 * LRU here before dropping our hopefully final reference on the
+> +		 * inode.
+> +		 */
+> +		spin_lock(&inode->i_lock);
+> +		inode_lru_list_del(inode);
+> +		spin_unlock(&inode->i_lock);
+> +
+>  		iput(inode);	/* truncate the inode here */
+> +	}
+>  	inode = NULL;
+>  	if (delegated_inode) {
+>  		error = break_deleg_wait(&delegated_inode);
+> -- 
+> 2.49.0
+> 
 
