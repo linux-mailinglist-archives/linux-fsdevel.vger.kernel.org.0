@@ -1,143 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-59524-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59525-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A27C9B3ABC4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 22:38:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C5944B3AC6B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 23:05:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7007656714D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 20:38:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93C78172CEE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 21:05:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 204852D6406;
-	Thu, 28 Aug 2025 20:37:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b="JZ1tV+y7"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A30030EF7E;
+	Thu, 28 Aug 2025 21:01:18 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 098042D1F6B
-	for <linux-fsdevel@vger.kernel.org>; Thu, 28 Aug 2025 20:37:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 901DB29ACC0;
+	Thu, 28 Aug 2025 21:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756413454; cv=none; b=RigonkW4BQG8I9oIGK2RsFU4urGf+QembHwdmfa6UIku3hy1k71p2LwozVH9Jboep/M6zFjx2jFvN46zV9ZQHnNnzLh5lo9QNKqS6IT1VeqvBlwh29MkN2O3q3UDIlpVX20TXzLHBIyK2qPkmiM0OqQEKyGRoJPdA9fNR6UhIy4=
+	t=1756414878; cv=none; b=QTqNnjJSUjoU3Qb6rYsgkiiIzXnbiEUFU5zxWrGCnyfcSWWElUxN+oQ0x9VeH+gjjPxcaAhFRuYovLku2IR0iyI3ebBxnsXftzBbgHKuTIdFHbyTQ/agsSkjhEJrVhtsM6KUoc+Qi0mol9sHTEeQhh6d/IlrHaZiKu9X9QRJn5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756413454; c=relaxed/simple;
-	bh=oRP2p2pJOga67cG+m/f+zcP4uYDeO+yZ3lN6tYQQkXA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qiW/MP2FOjr3AF7ff22V5wTlqljxMKmoS0HAz5jOeWjlT66sJMJ/NRVym+L0GWNl+JNUmJycVY1nn+q+X6GY0mGacBIGAJmloZBRm4MzPUy5v8wL3OYhDdzyY5oGI/8/DFCjeQhN1l4WC1iWY+KytL1vEqgcTxrk0mKBf67/JD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zetier.com; spf=pass smtp.mailfrom=zetier.com; dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b=JZ1tV+y7; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zetier.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zetier.com
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7e8704da966so97942885a.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Aug 2025 13:37:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=zetier.com; s=gm; t=1756413452; x=1757018252; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZOMMLFiaOAz+64Gs7xjJhrQIlkJjOe3bWicWl5TD5n4=;
-        b=JZ1tV+y70Qm3p4WBFlmpPtH+KuU8qOrr177+Ya29pk+cows2N2wy5S5/QQ4H07hekn
-         LykD5oTy8gj9lmX2eDXsS+1QjodO7Yisdpxb8emuJ8I4pklpj6EiPWopE4bS9euYP3Bf
-         TxUYXcpTUWN+tF9fs2ebo0BdlQ5+my7mIPU/Jr+/C3hhwH3DPlAzN42anhkRTDb5Xo8b
-         C75hAsSSbVF8qYteBr7XbQ2ypV3NcE48QJzpxiKJLOJIevq2fLPd2mjTUyHjxbjSOCrG
-         FzrWX2vXXG3no9tOTfTHqN+1RCFTv0BHEXLt1ufDlF7rPa93dSnTqFoucEn4DUbTAjBu
-         8Jtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756413452; x=1757018252;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZOMMLFiaOAz+64Gs7xjJhrQIlkJjOe3bWicWl5TD5n4=;
-        b=KbdIFHaJ2dMEfSzOuIKHBsGTlWLQMUFhHRFOuzf/9Zqb7SAx2bGA0rc4V7irHoTFMA
-         w9RCiFB+RKAUmEQYloOnFgpJ8bpc/EBgbaj4k5oZJobBBxRqgNom4heWUjxq8gc7aYEY
-         s5tzBLCKDoTTVWaamNnVwOG6whM1PvvWoPaXhRZbfLHS6XriELssikiCi40EyTkuoukD
-         TpGcYFP5bCFm7WUW9V4WhqzzoQUdZI2ss+tj91AaXfOTb80UDl4kC+dN7yZ4lE2GSMYQ
-         luq0IB6aR3yZALJvqCX0cFGb06Fcljkf4OkCz5oznPNpRBBgQLqKd3p3maSbpHQpd//T
-         sZQg==
-X-Forwarded-Encrypted: i=1; AJvYcCXAiCclfIyp49Ova+P3dnkZtebYlpdSFdpCGuxvWaaZ44N3/yY6DiMqpAM7I+mWprwgODtY6EBJOWYQiad+@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIbdicaCXHdYgYv5TXPKXX1f8LjsEMSDGrZaYVoFdlXOENII5X
-	CVhHS+ZDnvUm/t6StxlnJY997uVqdu+WZXo/YOiwzOD9oIu4sYT/Ym9Vbr6ioe23+QA=
-X-Gm-Gg: ASbGncsISeVUDMg4dJWM1wXitvTvEyi4E3B1C40hlXH/nld6xFSTzoQ8iDEhbtJWarj
-	FFlrpdUGLFpuCNkLhxafOfYaSx5gs27iASesXMEH1/I2Q9zFIaOcgBuCgh3xxc6s1CsD6F+27s0
-	8R3TNmwGjLUlF5RNNcjIFCjc7t6L5dmbDvCyhPTOkvMndyLvLwZzpACtIFVXXQYxjLV6Znq043U
-	2yOOxqJvoXnuJXAa/ZpyUt4y3aawaS6TBaNKKD3CcxXq0mWkEiQljDcWkk0Wmq6YBcdlz0xPofl
-	mc4Umfqmrri6WTYbR/8Fff8T+5GdEzY+419i3NeL3etx9U3t1OrtSvWraAmjWBQtzEkqoMzKXj8
-	jCowcPTddn5jsmL6OAyratfgasaI3eRztw7QysA==
-X-Google-Smtp-Source: AGHT+IEuSR941eoZ1jOjsoOEgYz1hR0QFvD7yeN/R81eIk6+aXmjbxztfihWFemM+y/f9Vu5CUyggw==
-X-Received: by 2002:a05:620a:1a98:b0:7e9:fdca:1296 with SMTP id af79cd13be357-7ea10f74696mr2973451385a.13.1756413451848;
-        Thu, 28 Aug 2025 13:37:31 -0700 (PDT)
-Received: from ethanf.zetier.com ([65.222.209.234])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7fc153de18asm45879585a.54.2025.08.28.13.37.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 13:37:31 -0700 (PDT)
-From: Ethan Ferguson <ethan.ferguson@zetier.com>
-To: almaz.alexandrovich@paragon-software.com
-Cc: ntfs3@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ethan Ferguson <ethan.ferguson@zetier.com>
-Subject: [PATCH 3/3] ntfs3: add FS_IOC_SETFSLABEL ioctl
-Date: Thu, 28 Aug 2025 16:37:16 -0400
-Message-Id: <20250828203716.468564-4-ethan.ferguson@zetier.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250828203716.468564-1-ethan.ferguson@zetier.com>
-References: <20250828203716.468564-1-ethan.ferguson@zetier.com>
+	s=arc-20240116; t=1756414878; c=relaxed/simple;
+	bh=6fkQFSGQvqVzVgsB612AOtefqBcF6RpXwcdHFKAEcMM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=prATWFMGa4AvuUVoyRyklW74gRF4niHRLRmQOzVpZSwFTvPl0+jZR2y3FXCj8flr+u8rhgBD2vIBgjNssUJoWXLZUpi46ZSNpxoEPP98fNl2LYT3i/YrbBA3hlciiggqUwWBMajIvR6CdlmvomDS+damYOKNm1fUTupa7VXssWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id A988F201; Thu, 28 Aug 2025 16:01:07 -0500 (CDT)
+Date: Thu, 28 Aug 2025 16:01:07 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Andy Lutomirski <luto@kernel.org>
+Cc: Aleksa Sarai <cyphar@cyphar.com>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	Christian Brauner <brauner@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Kees Cook <keescook@chromium.org>, Paul Moore <paul@paul-moore.com>,
+	Serge Hallyn <serge@hallyn.com>, Arnd Bergmann <arnd@arndb.de>,
+	Christian Heimes <christian@python.org>,
+	Dmitry Vyukov <dvyukov@google.com>, Elliott Hughes <enh@google.com>,
+	Fan Wu <wufan@linux.microsoft.com>,
+	Florian Weimer <fweimer@redhat.com>, Jann Horn <jannh@google.com>,
+	Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>,
+	Jordan R Abrahams <ajordanr@google.com>,
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+	Luca Boccassi <bluca@debian.org>,
+	Matt Bobrowski <mattbobrowski@google.com>,
+	Miklos Szeredi <mszeredi@redhat.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,
+	Robert Waite <rowait@microsoft.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Scott Shell <scottsh@microsoft.com>,
+	Steve Dower <steve.dower@python.org>,
+	Steve Grubb <sgrubb@redhat.com>,
+	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v1 0/2] Add O_DENY_WRITE (complement AT_EXECVE_CHECK)
+Message-ID: <aLDDk4x7QBKxLmoi@mail.hallyn.com>
+References: <20250822170800.2116980-1-mic@digikod.net>
+ <20250826-skorpion-magma-141496988fdc@brauner>
+ <20250826.aig5aiShunga@digikod.net>
+ <2025-08-27-obscene-great-toy-diary-X1gVRV@cyphar.com>
+ <CALCETrWHKga33bvzUHnd-mRQUeNXTtXSS8Y8+40d5bxv-CqBhw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALCETrWHKga33bvzUHnd-mRQUeNXTtXSS8Y8+40d5bxv-CqBhw@mail.gmail.com>
 
-Add support for the FS_IOC_SETFSLABEL ioctl.
+On Wed, Aug 27, 2025 at 05:32:02PM -0700, Andy Lutomirski wrote:
+> On Wed, Aug 27, 2025 at 5:14 PM Aleksa Sarai <cyphar@cyphar.com> wrote:
+> >
+> > On 2025-08-26, Mickaël Salaün <mic@digikod.net> wrote:
+> > > On Tue, Aug 26, 2025 at 11:07:03AM +0200, Christian Brauner wrote:
+> > > > Nothing has changed in that regard and I'm not interested in stuffing
+> > > > the VFS APIs full of special-purpose behavior to work around the fact
+> > > > that this is work that needs to be done in userspace. Change the apps,
+> > > > stop pushing more and more cruft into the VFS that has no business
+> > > > there.
+> > >
+> > > It would be interesting to know how to patch user space to get the same
+> > > guarantees...  Do you think I would propose a kernel patch otherwise?
+> >
+> > You could mmap the script file with MAP_PRIVATE. This is the *actual*
+> > protection the kernel uses against overwriting binaries (yes, ETXTBSY is
+> > nice but IIRC there are ways to get around it anyway).
+> 
+> Wait, really?  MAP_PRIVATE prevents writes to the mapping from
+> affecting the file, but I don't think that writes to the file will
+> break the MAP_PRIVATE CoW if it's not already broken.
+> 
+> IPython says:
+> 
+> In [1]: import mmap, tempfile
+> 
+> In [2]: f = tempfile.TemporaryFile()
+> 
+> In [3]: f.write(b'initial contents')
+> Out[3]: 16
+> 
+> In [4]: f.flush()
+> 
+> In [5]: map = mmap.mmap(f.fileno(), f.tell(), flags=mmap.MAP_PRIVATE,
+> prot=mmap.PROT_READ)
+> 
+> In [6]: map[:]
+> Out[6]: b'initial contents'
+> 
+> In [7]: f.seek(0)
+> Out[7]: 0
+> 
+> In [8]: f.write(b'changed')
+> Out[8]: 7
+> 
+> In [9]: f.flush()
+> 
+> In [10]: map[:]
+> Out[10]: b'changed contents'
 
-Signed-off-by: Ethan Ferguson <ethan.ferguson@zetier.com>
+That was surprising to me, however, if I split the reader
+and writer into different processes, so
 
----
- fs/ntfs3/file.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+P1:
+f = open("/tmp/3", "w")
+f.write('initial contents')
+f.flush()
 
-diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
-index 0a1e9f16ffaf..4c90ec2fa2ea 100644
---- a/fs/ntfs3/file.c
-+++ b/fs/ntfs3/file.c
-@@ -57,6 +57,22 @@ static int ntfs_ioctl_get_volume_label(struct ntfs_sb_info *sbi, u8 __user *buf)
- 	return 0;
- }
- 
-+static int ntfs_ioctl_set_volume_label(struct ntfs_sb_info *sbi, u8 __user *buf)
-+{
-+	u8 user[FSLABEL_MAX] = {0};
-+	int len;
-+
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	if (copy_from_user(user, buf, FSLABEL_MAX))
-+		return -EFAULT;
-+
-+	len = strnlen(user, FSLABEL_MAX);
-+
-+	return ntfs_set_label(sbi, user, len);
-+}
-+
- /*
-  * ntfs_ioctl - file_operations::unlocked_ioctl
-  */
-@@ -74,6 +90,8 @@ long ntfs_ioctl(struct file *filp, u32 cmd, unsigned long arg)
- 		return ntfs_ioctl_fitrim(sbi, arg);
- 	case FS_IOC_GETFSLABEL:
- 		return ntfs_ioctl_get_volume_label(sbi, (u8 __user *)arg);
-+	case FS_IOC_SETFSLABEL:
-+		return ntfs_ioctl_set_volume_label(sbi, (u8 __user *)arg);
- 	}
- 	return -ENOTTY; /* Inappropriate ioctl for device. */
- }
--- 
-2.34.1
+P2:
+import mmap
+f = open("/tmp/3", "r")
+map = mmap.mmap(f.fileno(), f.tell(), flags=mmap.MAP_PRIVATE, prot=mmap.PROT_READ)
 
+Back to P1:
+f.seek(0)
+f.write('changed')
+
+Back to P2:
+map[:]
+
+Then P2 gives me:
+
+b'initial contents'
+
+-serge
 
