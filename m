@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-59569-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59570-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 288F2B3AE2B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 01:10:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D01FB3AE27
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 01:10:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 350EC3B171A
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35AB65838C1
 	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 23:10:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA2562C2368;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA8A2D5C92;
 	Thu, 28 Aug 2025 23:08:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="OakzR+m3"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="h6IxN3x6"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39872F0C5F
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C82022D1920
 	for <linux-fsdevel@vger.kernel.org>; Thu, 28 Aug 2025 23:08:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756422496; cv=none; b=jWp7LZopa+11VGe4CJ+pTVHGQjNwNi/ZLofLz4wSv8D1844zJzN0b8QiilDxOIXhiULOfzEWgOINMuX5MBTrZIBtAI+xSqdpY/k2xkaLyjixOuXyLsYhvFqS3017P1gQxNCQhBpwZQFmDPcvARYiuBpou/2in1ACfYk7ooBgTw0=
+	t=1756422496; cv=none; b=ijbsBISZHE5U6j3lk/JoYf+icBNJy/fLDNgDUBzXf0KFlw97iwE4cZp8mqwbgxRf//r6RsH5cLv1tfRS2xfOmi5Pb/ZyIu0zZwhSLLJdloG8HsnI0oCoYahC2zZInd/Dqp+159VfDtRHObilrixe0fgJQPkSosTPpW7ECoUKyZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756422496; c=relaxed/simple;
-	bh=yI35ysIIGa+Cxrwx0TJXKG2znJQksHq7MQm4e4T5GFc=;
+	bh=7aeR/Tu7Z3LjFMHDsnSkdgikaoEJ1/xIUKUBo/yPSLg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=d73MbsTe6SgeZukOIo2el6RlT1DO02DOcn9OiyUciKdo+Vp3lrSY4R1A8Au0JzDA2PpsfE11iV78t/xQkoq2C4515LK8aOzwLpgyCgILbhcF7ptfRyZzewSZxUOMQDyTtw6ZooRn1cRKIgSiwscLnYMfU2Q4NSv4ufYqVGjJm4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=OakzR+m3; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=cRpMza+o+8Ap6+bQX5w+7eiG0ttR2faISNM8Xd/Ac/Y67n+qWOr0fCDi65dYIHCYxm2XOREHo+IxA0xepARjpPUx+pe5m+CIjVwjREk68+FdetrcklPNTuNTUD7chaMrQZQWN5bFQyZ86j6DERjEpOl8n3wxRGRaGGR0IMm7lWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=h6IxN3x6; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=tlyJM1r8YwEE4PJiTyNjhetAKskZvQ5k6/jCoJWzHu8=; b=OakzR+m3vb5/pC5KYHd+fH5cnY
-	zp0ZF9LMDf9oJUY0C8B8Zmp3Y60ZGXOdsq1RkFjENU3Y01Mk12FADmp2jNCIpIutuBsCjlPtSWfj6
-	8I8qSCOqHYtV45hbSnPYDp2togMTneUAxWcG6rQltzpmtWidmE+DOjoj6ELbKDaqIWC+T1+3Bk+MM
-	JKV3L1Q/HXhFCZtFIfTPbK42xNf7S+DTDIzVLzBVg8Xq+Q570P9TBo3Jq7gW5ajqI9mAX001PoZhq
-	9Zh+EyXcWwaXdWecLSIyQwYj7gxrpOaTzQKhEJGWloeu8dMchyFpUeNbqgzslFVoIQzNGGlteduoS
-	Mn0enqpQ==;
+	bh=rPs2/1ATL5WDkM7MBT31PFlq4+kF6bnJ7nSBuYiFOIQ=; b=h6IxN3x67NRFwE3re7jMnEQQju
+	34kl9lQu3r/vJnvdcSgzCOBbH/jXtEiemhpi2fu0+ynC5aR/mE0P+5BLGBsAN/FQgj2b8Sp/84emX
+	ArFr6Ftvm+JJ6ED7v0kuMrhDVC/2G5ahUgUMWDHYemzabm5ctxhvTHst9rH6YwdcPju1UUNRn8q5X
+	lZ3LpvhDGl6XLvDnzlErlUqwdbKlCMm7Jb86JX2EEGwKGXligYcQ2LRmezgLSNEIdadJ2gnV1ZNLg
+	VNX8153LHErRXWmyZyaCAQnYsca5+n0lRkdh8GbDkZ8rJF1md2g+bJxPe7GtixymbyHLH6Nj6sBV+
+	iNrMxrHA==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1urlj3-0000000F283-08Qe;
+	id 1urlj3-0000000F28G-1IcR;
 	Thu, 28 Aug 2025 23:08:13 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: brauner@kernel.org,
 	jack@suse.cz,
 	torvalds@linux-foundation.org
-Subject: [PATCH v2 43/63] do_new_mount{,_fc}(): constify struct path argument
-Date: Fri, 29 Aug 2025 00:07:46 +0100
-Message-ID: <20250828230806.3582485-43-viro@zeniv.linux.org.uk>
+Subject: [PATCH v2 44/63] do_{loopback,change_type,remount,reconfigure_mnt}(): constify struct path argument
+Date: Fri, 29 Aug 2025 00:07:47 +0100
+Message-ID: <20250828230806.3582485-44-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250828230806.3582485-1-viro@zeniv.linux.org.uk>
 References: <20250828230706.GA3340273@ZenIV>
@@ -68,34 +68,51 @@ Sender: Al Viro <viro@ftp.linux.org.uk>
 Reviewed-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/namespace.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ fs/namespace.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/fs/namespace.c b/fs/namespace.c
-index a7c840371a7f..8ff54e0da446 100644
+index 8ff54e0da446..6ae42f3a9f10 100644
 --- a/fs/namespace.c
 +++ b/fs/namespace.c
-@@ -3704,7 +3704,7 @@ static bool mount_too_revealing(const struct super_block *sb, int *new_mnt_flags
-  * Create a new mount using a superblock configuration and request it
-  * be added to the namespace tree.
+@@ -2914,7 +2914,7 @@ static int flags_to_propagation_type(int ms_flags)
+ /*
+  * recursively change the type of the mountpoint.
   */
--static int do_new_mount_fc(struct fs_context *fc, struct path *mountpoint,
-+static int do_new_mount_fc(struct fs_context *fc, const struct path *mountpoint,
- 			   unsigned int mnt_flags)
+-static int do_change_type(struct path *path, int ms_flags)
++static int do_change_type(const struct path *path, int ms_flags)
  {
- 	struct super_block *sb;
-@@ -3735,8 +3735,9 @@ static int do_new_mount_fc(struct fs_context *fc, struct path *mountpoint,
-  * create a new mount for userspace and request it to be added into the
-  * namespace's tree
+ 	struct mount *m;
+ 	struct mount *mnt = real_mount(path->mnt);
+@@ -3034,8 +3034,8 @@ static struct mount *__do_loopback(struct path *old_path, int recurse)
+ /*
+  * do loopback mount.
   */
--static int do_new_mount(struct path *path, const char *fstype, int sb_flags,
--			int mnt_flags, const char *name, void *data)
-+static int do_new_mount(const struct path *path, const char *fstype,
-+			int sb_flags, int mnt_flags,
-+			const char *name, void *data)
+-static int do_loopback(struct path *path, const char *old_name,
+-				int recurse)
++static int do_loopback(const struct path *path, const char *old_name,
++		       int recurse)
  {
- 	struct file_system_type *type;
- 	struct fs_context *fc;
+ 	struct path old_path __free(path_put) = {};
+ 	struct mount *mnt = NULL;
+@@ -3265,7 +3265,7 @@ static void mnt_warn_timestamp_expiry(const struct path *mountpoint,
+  * superblock it refers to.  This is triggered by specifying MS_REMOUNT|MS_BIND
+  * to mount(2).
+  */
+-static int do_reconfigure_mnt(struct path *path, unsigned int mnt_flags)
++static int do_reconfigure_mnt(const struct path *path, unsigned int mnt_flags)
+ {
+ 	struct super_block *sb = path->mnt->mnt_sb;
+ 	struct mount *mnt = real_mount(path->mnt);
+@@ -3302,7 +3302,7 @@ static int do_reconfigure_mnt(struct path *path, unsigned int mnt_flags)
+  * If you've mounted a non-root directory somewhere and want to do remount
+  * on it - tough luck.
+  */
+-static int do_remount(struct path *path, int ms_flags, int sb_flags,
++static int do_remount(const struct path *path, int ms_flags, int sb_flags,
+ 		      int mnt_flags, void *data)
+ {
+ 	int err;
 -- 
 2.47.2
 
