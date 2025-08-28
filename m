@@ -1,242 +1,235 @@
-Return-Path: <linux-fsdevel+bounces-59474-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59475-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12E8AB398A1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 11:44:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6008B39913
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 12:06:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C24F95606FF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 09:44:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E9AB7A4FCF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 10:05:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1EE730146E;
-	Thu, 28 Aug 2025 09:40:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B7F9308F32;
+	Thu, 28 Aug 2025 10:06:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bdu/+Evn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8733E301471
-	for <linux-fsdevel@vger.kernel.org>; Thu, 28 Aug 2025 09:40:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05B0F3081B7
+	for <linux-fsdevel@vger.kernel.org>; Thu, 28 Aug 2025 10:06:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756374034; cv=none; b=esI9Fa/h8+eU0fq55hscFLdTjYi9XG1jx3lTi/7wbE1laM8Hl7Op2w+vAOrESgYZGyoCBSqD4y3jMk9/DsQFzKkWKbfgCvoYk3VQrVYlKGSLqTfcED7488COusL2U34rNFHx0PQndvylrRbScwAeZNR7pHXxfC88vPmVXEuBVE4=
+	t=1756375584; cv=none; b=lGP6TvVq4uphHSUuMTc93szIhE6Znez7kFPa0dpGG+EyQ2w8JIN3IP3L53kRrcIjSlihSdO08mGvGuYuBKijvm0tLQ+2unk3utYVSnmhHULSIsVykhUYZ+V0KtDw8OF0f7puRcX3UfU3ud/MDgQ8xDnXTSyTtLLav4BBb5NMd+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756374034; c=relaxed/simple;
-	bh=4CDNVwqfZGsuYZcMWmCNK5lSE73YjWmj64ZshH2lYSw=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=SVFbrA3Rt36qfTZojgGzWL10b1qMr9oSwBSL6WDvq06U9TS0Hem+RZdu2yB3rbV4StER3ZYgnN0qVWKQmtuV1J4faRYZFgjDdEa1Wsc1dAp4v7LAyxxy3sz1Ls0sJv0yIaWNXGClADmnqgjusiq0El7Pq+8XD611LQJIWR4QtLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3ed39b8563cso18941635ab.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Aug 2025 02:40:32 -0700 (PDT)
+	s=arc-20240116; t=1756375584; c=relaxed/simple;
+	bh=ibgMcx0t2DMAR/JWdWYa3j0j+waNK81T6Ne/9aFD2pI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hwEnui91Jw2M/DCdHal9Jjuc3MJ7KnrHPxV68SNIuKVSVOxB9/M7gwk33VsDBGBdwWmeEzsxhod/Bl52XWxWTWaP6NFMTfEIIcer40tjIne+1+r5Cv00XbEsuPBLE1VcZISwJSN7GO/i1XBRYodvVjB7++vDWiLgKPLUtsUAc9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bdu/+Evn; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756375580;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=AIuF++MW+9cppH2LcogxBtVCMHjKY7lH5B9a+qhZ5nk=;
+	b=bdu/+EvndH9UhyH0ZtPZs5gvfrDagRlK7thkh+a8MgwcZppz6adUqXtsr+qFWlkLn4jvMU
+	EgIidaV4acS53iwtM/B3xPFcDBkU5MLOwg+h7+ghla/2hiMNZlD36tgYRMbIbryjMvFOUQ
+	6e8LfP+6H+j7rqCWUMxQ7bYxZc8Fvp4=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-467-SuqknrA9MXKlCbr7ZBS_Yw-1; Thu, 28 Aug 2025 06:06:18 -0400
+X-MC-Unique: SuqknrA9MXKlCbr7ZBS_Yw-1
+X-Mimecast-MFC-AGG-ID: SuqknrA9MXKlCbr7ZBS_Yw_1756375578
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3cceb92ea73so463312f8f.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Aug 2025 03:06:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756374031; x=1756978831;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+JQa2Q3RMgKoz8KLEXgRA8PGx4jpTO7vqVWF1zeuITc=;
-        b=qgY6KepjDpzpMJD28AyWHU4ppuWXcK8YTiXFD8hhdaerfKMyMV8tPvxKyBRSfedX8F
-         Xz3+s2YNR87GJo/vPlwGbRaCgFoZWIFoyo/v5OKOINPGYs0CbDjiT/FS80UlRJRVcKBq
-         7rBKf++AcoqbfIVnBGWNqBQi6jK3PO945KtbNlD55qSHvuE0Qw4iabKOQCTcCbh6EFvz
-         zUmIkaD4s2yGa+Ozkv+1ho1TsO8pMPWGJlHjEoP8e8gpae2qfnIpzyi8i9UMD6ehTw8f
-         hvWkqp1epZ1WuUiOHSY3Lo0YBuS/Odp62RbUR1r+4xtn7WLnq8SdMvKIw8fe7KqtGcIn
-         WV6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXmFRWIedA0j2zMAV6I5/7FQIrgQ7ftU3T0sUyr/zI9pBD0PvrFxrEobkblyagNh2VSvtG3wQiRyjO2E34X@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVZDK3hiVb47GI3Ll1bdcnDBHM4pA/goLnFZIRm3f9rEJNiLAh
-	94ZE1hwMv3aphFJUbqkqu0so3A8HMtP9FdG9it+TrrLTxNezZAp95CQE0pMHlno6y1SZ2m3K8DY
-	kVx7F/isUetyNEo8to1cH3wGGF5GP+KCvzzNV70833hDBfwglhkvjUrFbjek=
-X-Google-Smtp-Source: AGHT+IHFj13AhOz4c8+6RJ6E2HfOioGeTrqhki0cj2hLOJ/oEBldJxeb9JYvHPhzr3RDbZOf0t8BwSfgZU5cWX6MZAChLNbGRnkn
+        d=1e100.net; s=20230601; t=1756375577; x=1756980377;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AIuF++MW+9cppH2LcogxBtVCMHjKY7lH5B9a+qhZ5nk=;
+        b=Vru7CKDsdTfUpZB3Dj7gHXNqhFXEO6yOVM61z0TplW+LLPXrFYj4YVSY3s3wOzodkG
+         64werAHODXqbc4J2CW0rKGlW/3QQALYr2W5x2hNL0GY4quS/gwZmMkkUlexFnXSPTLPj
+         oVqD3fbLD8WCn9V4gcLMEWgxvZ+lgRHHuU92HXxYBi3X51JRlnn51IGieMxK3TRy38EL
+         TOfEc4Q9+0tGjqb0k3JkTQz+D2UldrhNsQbiOk+LH8U0A8M/xTPK3yyaVmV8u8M+HZFe
+         AbrawDYT4ko88wbvNiCsJGNnZpLtmdqgbXeQhmUvOAWQtePT3Ez2RuWf3sCF5WbOpG1t
+         oslA==
+X-Forwarded-Encrypted: i=1; AJvYcCURI67yIawfsHT3XpYqRckLK7fTYVBGf8dpv74ppi7PpFe7ILD4xkQsuJKdIjlnI5gk56gjQTf50Esl4/OH@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzno7TKzWcun7YN87rdtNMCFWkdYSjQ838cEhIjxgblWGjl8JqK
+	3QU0cnL6HPnu2so7s1xNt7otOcjcWlg8iLXdt/f9PWM191w3p/Ecyk26NOF968Tjb6oGcPKByFO
+	xO+HDBkg2AFlSmHEASk/DXN7zyf1jcBdAhpFiVukw9FKeqFZtVHL2HKVQAzPM7DVgSSQ=
+X-Gm-Gg: ASbGncvzneNXjOUtRNjad9osRXJez431f9FZciZjLabeDVfPVsVkxWclbde19jV+83C
+	urBY+Y7M0eMwEft+vq2u5J62euAoPGhKoZeH0YyM+0O9lre4papdatBDp8mAmXpSIhZ1bOn9pjU
+	paPrjMCbwCCkbVQ9M45JKwzzx/J9Roi3ZNAaje6ax8BR99xxxHr/6E0lwS6fDLWwa1CEotMGZNA
+	p/0ua0qKMcc3pRsjYvDz4Kztw0wRaQEaQGm9GjGLOq/BL1cajcxHl+ydixJH0Ltwu6apOjIjCAa
+	g8o+58oM4uuEn/kcrEmel5BXORikghUwf87WDVOyWxRe8nr7OOyXiscbd0L+dIV9SUFpwqtyCqP
+	MNFw0Je9tJ0RuCkkghi5c2Su8WTmdd1sejxEVNNTNO0xOXkfEE3juZIBJyp/Owwutm24=
+X-Received: by 2002:a5d:64e1:0:b0:3b6:436:b8ea with SMTP id ffacd0b85a97d-3c5da83c601mr15705072f8f.6.1756375577328;
+        Thu, 28 Aug 2025 03:06:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHv6FDhe/e4+uPIRUaF8D2ckX5J+70BvRLKIj3J1sQm8lva6qxwVAKdzmfSmO9HiwptWSyrXw==
+X-Received: by 2002:a5d:64e1:0:b0:3b6:436:b8ea with SMTP id ffacd0b85a97d-3c5da83c601mr15705026f8f.6.1756375576743;
+        Thu, 28 Aug 2025 03:06:16 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f28:c100:2225:10aa:f247:7b85? (p200300d82f28c100222510aaf2477b85.dip0.t-ipconnect.de. [2003:d8:2f28:c100:2225:10aa:f247:7b85])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c70e4b9f8dsm26199961f8f.9.2025.08.28.03.06.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Aug 2025 03:06:15 -0700 (PDT)
+Message-ID: <4db9239a-efe3-43b2-b7b4-af497eb9ee28@redhat.com>
+Date: Thu, 28 Aug 2025 12:06:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:170d:b0:3f1:ed24:cfa1 with SMTP id
- e9e14a558f8ab-3f1ed24d055mr4176705ab.27.1756374031605; Thu, 28 Aug 2025
- 02:40:31 -0700 (PDT)
-Date: Thu, 28 Aug 2025 02:40:31 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68b0240f.a00a0220.1337b0.0006.GAE@google.com>
-Subject: [syzbot] [gfs2?] INFO: task hung in writeback_iter (3)
-From: syzbot <syzbot+1e3ff4b07c16ca0f6fe2@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, gfs2@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com, willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH kvm-next V11 4/7] KVM: guest_memfd: Use guest mem inodes
+ instead of anonymous inodes
+To: Ackerley Tng <ackerleytng@google.com>, Shivank Garg <shivankg@amd.com>,
+ willy@infradead.org, akpm@linux-foundation.org, pbonzini@redhat.com,
+ shuah@kernel.org, seanjc@google.com, vbabka@suse.cz
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, dsterba@suse.com,
+ xiang@kernel.org, chao@kernel.org, jaegeuk@kernel.org, clm@fb.com,
+ josef@toxicpanda.com, kent.overstreet@linux.dev, zbestahu@gmail.com,
+ jefflexu@linux.alibaba.com, dhavale@google.com, lihongbo22@huawei.com,
+ lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, rppt@kernel.org,
+ surenb@google.com, mhocko@suse.com, ziy@nvidia.com, matthew.brost@intel.com,
+ joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com,
+ gourry@gourry.net, ying.huang@linux.alibaba.com, apopple@nvidia.com,
+ tabba@google.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+ pvorel@suse.cz, bfoster@redhat.com, vannapurve@google.com,
+ chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, michael.day@amd.com,
+ shdhiman@amd.com, yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com,
+ thomas.lendacky@amd.com, michael.roth@amd.com, aik@amd.com, jgg@nvidia.com,
+ kalyazin@amazon.com, peterx@redhat.com, jack@suse.cz, hch@infradead.org,
+ cgzones@googlemail.com, ira.weiny@intel.com, rientjes@google.com,
+ roypat@amazon.co.uk, chao.p.peng@intel.com, amit@infradead.org,
+ ddutile@redhat.com, dan.j.williams@intel.com, ashish.kalra@amd.com,
+ gshan@redhat.com, jgowans@amazon.com, pankaj.gupta@amd.com,
+ papaluri@amd.com, yuzhao@google.com, suzuki.poulose@arm.com,
+ quic_eberman@quicinc.com, linux-bcachefs@vger.kernel.org,
+ linux-btrfs@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ linux-security-module@vger.kernel.org, kvm@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-coco@lists.linux.dev
+References: <20250827175247.83322-2-shivankg@amd.com>
+ <20250827175247.83322-7-shivankg@amd.com> <diqztt1sbd2v.fsf@google.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <diqztt1sbd2v.fsf@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 28.08.25 00:43, Ackerley Tng wrote:
+> Shivank Garg <shivankg@amd.com> writes:
+> 
+>>
+>> [...snip...]
+>>
+> 
+> I meant to send this to you before this version went out but you were
+> too quick!
+> 
+> Here's a new version, Fuad and I reviewed this again internally. The
+> changes are:
+> 
+> + Sort linux/pseudo_fs.h after linux/pagemap.h (alphabetical)
+> + Don't set MNT_NOEXEC on the mount, since SB_I_NOEXEC was already set
+>    on the superblock
+> + Rename kvm_gmem_inode_make_secure_inode() to kvm_gmem_inode_create()
+>      + Emphasizes that there is a creation in this function
+>      + Remove "secure" from the function name to remove confusion that
+>        there may be a "non-secure" version
+> + In kvm_gmem_inode_create_getfile()'s error path, return ERR_PTR(err)
+>    directly instead of having a goto
+> 
+> 
+>  From ada9814b216eac129ed44dffd3acf76fce2cc08a Mon Sep 17 00:00:00 2001
+> From: Ackerley Tng <ackerleytng@google.com>
+> Date: Sun, 13 Jul 2025 17:43:35 +0000
+> Subject: [PATCH] KVM: guest_memfd: Use guest mem inodes instead of anonymous
+>   inodes
+> 
+> guest_memfd's inode represents memory the guest_memfd is
+> providing. guest_memfd's file represents a struct kvm's view of that
+> memory.
+> 
+> Using a custom inode allows customization of the inode teardown
+> process via callbacks. For example, ->evict_inode() allows
+> customization of the truncation process on file close, and
+> ->destroy_inode() and ->free_inode() allow customization of the inode
+> freeing process.
+> 
+> Customizing the truncation process allows flexibility in management of
+> guest_memfd memory and customization of the inode freeing process
+> allows proper cleanup of memory metadata stored on the inode.
+> 
+> Memory metadata is more appropriately stored on the inode (as opposed
+> to the file), since the metadata is for the memory and is not unique
+> to a specific binding and struct kvm.
+> 
+> Co-developed-by: Fuad Tabba <tabba@google.com>
+> Signed-off-by: Fuad Tabba <tabba@google.com>
+> Signed-off-by: Shivank Garg <shivankg@amd.com>
+> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
 
-syzbot found the following issue on:
+Acked-by: David Hildenbrand <david@redhat.com>
 
-HEAD commit:    7fa4d8dc380f Add linux-next specific files for 20250821
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=130beef0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5d054fcd55656377
-dashboard link: https://syzkaller.appspot.com/bug?extid=1e3ff4b07c16ca0f6fe2
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10339c42580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1668e462580000
+-- 
+Cheers
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/a843be98ab42/disk-7fa4d8dc.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/17b718892b67/vmlinux-7fa4d8dc.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/8939424b4b54/bzImage-7fa4d8dc.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/6c5d1c428942/mount_0.gz
-  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=150beef0580000)
+David / dhildenb
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1e3ff4b07c16ca0f6fe2@syzkaller.appspotmail.com
-
-INFO: task syz.0.17:6037 blocked for more than 143 seconds.
-      Not tainted syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.0.17        state:D stack:25096 pid:6037  tgid:6037  ppid:5973   task_flags:0x400140 flags:0x00004004
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5357 [inline]
- __schedule+0x1798/0x4cc0 kernel/sched/core.c:6961
- __schedule_loop kernel/sched/core.c:7043 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:7058
- io_schedule+0x80/0xd0 kernel/sched/core.c:7903
- folio_wait_bit_common+0x6b0/0xb90 mm/filemap.c:1317
- folio_lock include/linux/pagemap.h:1139 [inline]
- writeback_get_folio mm/page-writeback.c:2468 [inline]
- writeback_iter+0x8d8/0x12a0 mm/page-writeback.c:2562
- iomap_writepages+0x14d/0x2d0 fs/iomap/buffered-io.c:1761
- gfs2_writepages+0x177/0x250 fs/gfs2/aops.c:175
- do_writepages+0x32e/0x550 mm/page-writeback.c:2634
- filemap_fdatawrite_wbc mm/filemap.c:386 [inline]
- __filemap_fdatawrite_range mm/filemap.c:419 [inline]
- __filemap_fdatawrite mm/filemap.c:425 [inline]
- filemap_fdatawrite+0x199/0x240 mm/filemap.c:430
- gfs2_ordered_write fs/gfs2/log.c:733 [inline]
- gfs2_log_flush+0x966/0x24c0 fs/gfs2/log.c:1102
- gfs2_trans_end+0x37c/0x570 fs/gfs2/trans.c:158
- gfs2_page_mkwrite+0x14a8/0x1910 fs/gfs2/file.c:535
- do_page_mkwrite+0x14d/0x310 mm/memory.c:3489
- do_shared_fault mm/memory.c:5779 [inline]
- do_fault mm/memory.c:5841 [inline]
- do_pte_missing mm/memory.c:4362 [inline]
- handle_pte_fault mm/memory.c:6182 [inline]
- __handle_mm_fault+0x1916/0x5400 mm/memory.c:6323
- handle_mm_fault+0x40a/0x8e0 mm/memory.c:6492
- do_user_addr_fault+0xa81/0x1390 arch/x86/mm/fault.c:1336
- handle_page_fault arch/x86/mm/fault.c:1476 [inline]
- exc_page_fault+0x82/0x100 arch/x86/mm/fault.c:1532
- asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:618
-RIP: 0033:0x7f97632550b3
-RSP: 002b:00007ffef0bb04e0 EFLAGS: 00010246
-RAX: 0000200000000180 RBX: 0000000000000008 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00005555685083c8
-RBP: 00007ffef0bb05e8 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 00007f97635b5fac
-R13: 00007f97635b5fa0 R14: fffffffffffffffe R15: 0000000000000006
- </TASK>
-INFO: lockdep is turned off.
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 31 Comm: khungtaskd Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x39e/0x3d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x17a/0x300 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:332 [inline]
- watchdog+0xf60/0xfa0 kernel/hung_task.c:495
- kthread+0x711/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x47c/0x820 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 6836 Comm: syz.1.269 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-RIP: 0010:dsp_cmx_send+0x0/0x1b40 drivers/isdn/mISDN/dsp_cmx.c:1618
-Code: 3b aa f9 48 ba 00 00 00 00 00 fc ff df e9 09 f2 ff ff 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 <f3> 0f 1e fa 55 41 57 41 56 41 55 41 54 53 48 81 ec e0 00 00 00 e8
-RSP: 0018:ffffc90000a08b98 EFLAGS: 00000246
-RAX: ffffffff81ae4d15 RBX: 0000000000000101 RCX: ffff88801d78da00
-RDX: 0000000000000100 RSI: ffffffff8c035860 RDI: ffffffff9a057420
-RBP: ffffc90000a08c90 R08: ffffffff8fc40337 R09: 1ffffffff1f88066
-R10: dffffc0000000000 R11: ffffffff8879fcb0 R12: 1ffff92000141178
-R13: ffffffff9a057420 R14: 0000000000000001 R15: 0000000000000001
-FS:  0000555565d25500(0000) GS:ffff888125aff000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f4ea15ff000 CR3: 0000000027184000 CR4: 00000000003526f0
-Call Trace:
- <IRQ>
- call_timer_fn+0x17b/0x5f0 kernel/time/timer.c:1747
- expire_timers kernel/time/timer.c:1798 [inline]
- __run_timers kernel/time/timer.c:2372 [inline]
- __run_timer_base+0x61a/0x860 kernel/time/timer.c:2384
- run_timer_base kernel/time/timer.c:2393 [inline]
- run_timer_softirq+0xb7/0x180 kernel/time/timer.c:2403
- handle_softirqs+0x283/0x870 kernel/softirq.c:579
- __do_softirq kernel/softirq.c:613 [inline]
- invoke_softirq kernel/softirq.c:453 [inline]
- __irq_exit_rcu+0xca/0x1f0 kernel/softirq.c:680
- irq_exit_rcu+0x9/0x30 kernel/softirq.c:696
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1050 [inline]
- sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1050
- </IRQ>
- <TASK>
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:697
-RIP: 0010:console_trylock_spinning kernel/printk/printk.c:2061 [inline]
-RIP: 0010:vprintk_emit+0x58f/0x7a0 kernel/printk/printk.c:2449
-Code: 85 32 01 00 00 e8 a1 81 1f 00 41 89 df 4d 85 f6 48 8b 1c 24 75 07 e8 90 81 1f 00 eb 06 e8 89 81 1f 00 fb 48 c7 c7 80 02 33 8e <31> f6 ba 01 00 00 00 31 c9 41 b8 01 00 00 00 45 31 c9 53 e8 b9 35
-RSP: 0018:ffffc90004a8ed80 EFLAGS: 00000293
-RAX: ffffffff81a10d47 RBX: ffffffff81a10c04 RCX: ffff88801d78da00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffffff8e330280
-RBP: ffffc90004a8ee90 R08: ffffffff8fc40337 R09: 1ffffffff1f88066
-R10: dffffc0000000000 R11: fffffbfff1f88067 R12: dffffc0000000000
-R13: 1ffff92000951db4 R14: 0000000000000200 R15: 000000000000002f
- _printk+0xcf/0x120 kernel/printk/printk.c:2475
- set_capacity_and_notify+0x208/0x2d0 block/genhd.c:93
- loop_set_size+0x44/0xb0 drivers/block/loop.c:214
- loop_configure+0x9f4/0xe50 drivers/block/loop.c:1071
- lo_ioctl+0x810/0x1b30 drivers/block/loop.c:-1
- blkdev_ioctl+0x5a8/0x6d0 block/ioctl.c:705
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:598 [inline]
- __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:584
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f4ea958e7eb
-Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
-RSP: 002b:00007ffc529a9be0 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 00007f4ea958e7eb
-RDX: 0000000000000003 RSI: 0000000000004c00 RDI: 0000000000000004
-RBP: 0000000000000000 R08: 0000000000000000 R09: 000000000001f78a
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000003
-R13: 00007ffc529a9d10 R14: 00007ffc529a9cd0 R15: 00007f4ea0600000
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
