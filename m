@@ -1,56 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-59500-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59501-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E839B3A203
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 16:35:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0C28B3A23F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 16:40:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D91A1891C51
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 14:35:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 588D57AC2CA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 14:39:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A573230FC20;
-	Thu, 28 Aug 2025 14:34:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 069813148C9;
+	Thu, 28 Aug 2025 14:39:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E6S+U4vz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rHBgVMk5"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE0C30E0F3;
-	Thu, 28 Aug 2025 14:34:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B4293148B7;
+	Thu, 28 Aug 2025 14:39:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756391698; cv=none; b=FqOL/34a8KuPU/YcjI6PMZhnwTiTx9u5/MoOrWD73TGzeilIwQx/EorEkMo4iACWsU/y1EJmH2pZMbz3Quiam1vewFA+1rjltoc0xHO4WT/792tI6RWM/Bp7qrrQIdJ1nFrYU/OCYJmYGVH4hJ0PUTcJxJqc8336l2NDRHhyQv4=
+	t=1756391957; cv=none; b=e2xMI16N1Up8sxGRWArJPMm827+xVlkfGPc0E5lyDwu9AE/b3lcfaCSeoDywFmF7zk0FCTtk+LCi2vcCW60nj8XFQQTpqjcndOUmRqP7ZpluoUnU73zWrZBBks+rT2Dkwbaq9qQaPs2PTcu252vWcT8qtuJN6kXSlSsQ9aVm2z8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756391698; c=relaxed/simple;
-	bh=5ENyPjY5zuJDNKTs40ybxhLSsHhregkMdlqbtAB01kA=;
+	s=arc-20240116; t=1756391957; c=relaxed/simple;
+	bh=JSOAVVfSEizIEKjgb4EaQanM5xdSUrRhedbTGCvoamc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RSLk65kz4gSMSymYLymtiG4NdWLcSwFLcI0CTEdYcXTUn15AzcjXp+4V+CvwLGmPxUyElLOWgcqjqvdT9qRmgaN4lPL3+WU6M1bO8pskapHVAayb7Ngx/EBq3pKAJIJSlM6uuqzQd6HH3Bl9n3+zcv+MOZ8QtDC3O6zbUkAagHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E6S+U4vz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D31EAC4CEED;
-	Thu, 28 Aug 2025 14:34:57 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=taMdLiNa2p47vNofmNh0Gl7userFmFmwEMRaIu51fZ5Hozg+PyDpvi92q5g2KosBN/TDJ7USwAKxpcABwd0SafqekltTgfv+10KmR18GljFMqnomWLmqLi9nIW8rxTugBfVHrJZb4SmZzR7HbUVAPZX1WWh2i7SdqWAwinAQhE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rHBgVMk5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12FA8C4CEEB;
+	Thu, 28 Aug 2025 14:39:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756391697;
-	bh=5ENyPjY5zuJDNKTs40ybxhLSsHhregkMdlqbtAB01kA=;
+	s=k20201202; t=1756391957;
+	bh=JSOAVVfSEizIEKjgb4EaQanM5xdSUrRhedbTGCvoamc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E6S+U4vz68ZYzIQp9q1++Ykh3BvBzxLFW0Xwj1n06CEbL5jVW3PBRAZ/tFhAdvvrQ
-	 BF2kNyC9ufgJq3BJkkVhkLalbhlBjceqSqlSUMfBVRGBbeYwIyIYSk6ZbD6jI6vilV
-	 KTFIJhLuR/d//pVsmHOTlWowNEe2NSmQ3gDeh02CD9dzAIvU8e7lch7g99T3zg7+zc
-	 gCvROK0o2WGELmFMCrNsiOxld8BCIY4mZMtWu0UqEE2+1pL7qJNVBHNd4S/G+0d0Cy
-	 NtSY9j/e/xIQhr7aPQqhxX9znr4gLnS/qzyyPZSn/D3fo1yyYU9vU0fJmgZGxrSA8t
-	 JjWxGJi/5OjzA==
-Date: Thu, 28 Aug 2025 07:34:57 -0700
+	b=rHBgVMk5AVsfCtCNkqtqaOYki+hWPePciKZb1AqSdsBMmlBsWJL7GYCCrBVd6b4RD
+	 xgQbsDa6aKILBDfZMyAbruE4LI8Sig3JaHiRIzJJECKESCEywdz0f206fB3b09mzuY
+	 GExbinmU5K0cOsDOYMzeni8XVHLzJQZkcfXpArCVcTziSPIc10fXIhfGIDoPd61pbJ
+	 4Q5IQE5CUyNpY6FZu3F4NWqWmsYmNX+tl9wDDdhZXZ+R5uLNP+jelS0Afm2K4BtbyT
+	 THzI/70GYOuVmIl4Vl4UxgOcifmpj1ikudfQfeXDJ9zRk6BuB56yOBT1A86GogAzyv
+	 aayrCp8IbZ1zg==
+Date: Thu, 28 Aug 2025 07:39:16 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: Andrey Albershteyn <aalbersh@redhat.com>
 Cc: aalbersh@kernel.org, linux-fsdevel@vger.kernel.org,
 	linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] libfrog: add wrappers for
- file_getattr/file_setattr syscalls
-Message-ID: <20250828143457.GA8096@frogsfrogsfrogs>
+Subject: Re: [PATCH v2 2/4] xfs_quota: utilize file_setattr to set prjid on
+ special files
+Message-ID: <20250828143916.GB8096@frogsfrogsfrogs>
 References: <20250827-xattrat-syscall-v2-0-82a2d2d5865b@kernel.org>
- <20250827-xattrat-syscall-v2-1-82a2d2d5865b@kernel.org>
+ <20250827-xattrat-syscall-v2-2-82a2d2d5865b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,326 +59,277 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250827-xattrat-syscall-v2-1-82a2d2d5865b@kernel.org>
+In-Reply-To: <20250827-xattrat-syscall-v2-2-82a2d2d5865b@kernel.org>
 
-On Wed, Aug 27, 2025 at 05:15:53PM +0200, Andrey Albershteyn wrote:
-> Add wrappers for new file_getattr/file_setattr inode syscalls which will
-> be used by xfs_quota and xfs_io.
+On Wed, Aug 27, 2025 at 05:15:54PM +0200, Andrey Albershteyn wrote:
+> From: Andrey Albershteyn <aalbersh@redhat.com>
 > 
-> Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+> Utilize new file_getattr/file_setattr syscalls to set project ID on
+> special files. Previously, special files were skipped due to lack of the
+> way to call FS_IOC_SETFSXATTR ioctl on them. The quota accounting was
+> therefore missing these inodes (special files created before project
+> setup). The ones created after project initialization did inherit the
+> projid flag from the parent.
+> 
+> Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
 > ---
->  configure.ac          |   1 +
->  include/builddefs.in  |   5 +++
->  include/linux.h       |  20 +++++++++
->  libfrog/Makefile      |   2 +
->  libfrog/file_attr.c   | 122 ++++++++++++++++++++++++++++++++++++++++++++++++++
->  libfrog/file_attr.h   |  35 +++++++++++++++
->  m4/package_libcdev.m4 |  19 ++++++++
->  7 files changed, 204 insertions(+)
+>  quota/project.c | 142 +++++++++++++++++++++++++++++---------------------------
+>  1 file changed, 74 insertions(+), 68 deletions(-)
 > 
-> diff --git a/configure.ac b/configure.ac
-> index 195ee6dddf61..a3206d53e7e0 100644
-> --- a/configure.ac
-> +++ b/configure.ac
-> @@ -156,6 +156,7 @@ AC_PACKAGE_NEED_RCU_INIT
->  AC_HAVE_PWRITEV2
->  AC_HAVE_COPY_FILE_RANGE
->  AC_HAVE_CACHESTAT
-> +AC_HAVE_FILE_ATTR
->  AC_NEED_INTERNAL_FSXATTR
->  AC_NEED_INTERNAL_FSCRYPT_ADD_KEY_ARG
->  AC_NEED_INTERNAL_FSCRYPT_POLICY_V2
-> diff --git a/include/builddefs.in b/include/builddefs.in
-> index 04b4e0880a84..d727b55b854f 100644
-> --- a/include/builddefs.in
-> +++ b/include/builddefs.in
-> @@ -97,6 +97,7 @@ HAVE_ZIPPED_MANPAGES = @have_zipped_manpages@
->  HAVE_PWRITEV2 = @have_pwritev2@
->  HAVE_COPY_FILE_RANGE = @have_copy_file_range@
->  HAVE_CACHESTAT = @have_cachestat@
-> +HAVE_FILE_ATTR = @have_file_attr@
->  NEED_INTERNAL_FSXATTR = @need_internal_fsxattr@
->  NEED_INTERNAL_FSCRYPT_ADD_KEY_ARG = @need_internal_fscrypt_add_key_arg@
->  NEED_INTERNAL_FSCRYPT_POLICY_V2 = @need_internal_fscrypt_policy_v2@
-> @@ -169,6 +170,10 @@ ifeq ($(ENABLE_GETTEXT),yes)
->  GCFLAGS += -DENABLE_GETTEXT
->  endif
+> diff --git a/quota/project.c b/quota/project.c
+> index adb26945fa57..857b1abe71c7 100644
+> --- a/quota/project.c
+> +++ b/quota/project.c
+> @@ -4,14 +4,17 @@
+>   * All Rights Reserved.
+>   */
 >  
-> +ifeq ($(HAVE_FILE_ATTR),yes)
-> +LCFLAGS += -DHAVE_FILE_ATTR
-> +endif
-> +
->  # Override these if C++ needs other options
->  SANITIZER_CXXFLAGS = $(SANITIZER_CFLAGS)
->  GCXXFLAGS = $(GCFLAGS)
-> diff --git a/include/linux.h b/include/linux.h
-> index 6e83e073aa2e..993789f01b3a 100644
-> --- a/include/linux.h
-> +++ b/include/linux.h
-> @@ -16,6 +16,7 @@
->  #include <sys/param.h>
->  #include <sys/sysmacros.h>
->  #include <sys/stat.h>
-> +#include <sys/syscall.h>
->  #include <inttypes.h>
->  #include <malloc.h>
->  #include <getopt.h>
-> @@ -202,6 +203,25 @@ struct fsxattr {
+> +#include <unistd.h>
+>  #include "command.h"
+>  #include "input.h"
+>  #include "init.h"
+> +#include "libfrog/file_attr.h"
+>  #include "quota.h"
+>  
+>  static cmdinfo_t project_cmd;
+>  static prid_t prid;
+>  static int recurse_depth = -1;
+> +static int dfd;
+>  
+>  enum {
+>  	CHECK_PROJECT	= 0x1,
+> @@ -19,13 +22,6 @@ enum {
+>  	CLEAR_PROJECT	= 0x4,
 >  };
->  #endif
 >  
-> +/*
-> + * Use FILE_ATTR_SIZE_VER0 (linux/fs.h) instead of build system HAVE_FILE_ATTR
-> + * as this header could be included in other places where HAVE_FILE_ATTR is not
-> + * defined (e.g. xfstests's conftest.c in ./configure)
-> + */
-> +#ifndef FILE_ATTR_SIZE_VER0
-> +/*
-> + * We need to define file_attr if it's missing to know how to convert it to
-> + * fsxattr
-> + */
-> +struct file_attr {
-> +	__u32		fa_xflags;
-> +	__u32		fa_extsize;
-> +	__u32		fa_nextents;
-> +	__u32		fa_projid;
-> +	__u32		fa_cowextsize;
-> +};
-> +#endif
-> +
->  #ifndef FS_IOC_FSGETXATTR
->  /*
->   * Flags for the fsx_xflags field
-> diff --git a/libfrog/Makefile b/libfrog/Makefile
-> index 560bad417ee4..268fa26638d7 100644
-> --- a/libfrog/Makefile
-> +++ b/libfrog/Makefile
-> @@ -24,6 +24,7 @@ fsproperties.c \
->  fsprops.c \
->  getparents.c \
->  histogram.c \
-> +file_attr.c \
->  list_sort.c \
->  linux.c \
->  logging.c \
-> @@ -55,6 +56,7 @@ fsprops.h \
->  getparents.h \
->  handle_priv.h \
->  histogram.h \
-> +file_attr.h \
->  logging.h \
->  paths.h \
->  projects.h \
-> diff --git a/libfrog/file_attr.c b/libfrog/file_attr.c
-> new file mode 100644
-> index 000000000000..1d42895477ae
-> --- /dev/null
-> +++ b/libfrog/file_attr.c
-> @@ -0,0 +1,122 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2024 Red Hat, Inc.
-
-Nit: You might as well make that 2025
-
-> + * All Rights Reserved.
-> + */
-> +
-> +#include "file_attr.h"
-> +#include <stdio.h>
-> +#include <errno.h>
-> +#include <string.h>
-> +#include <sys/syscall.h>
-> +#include <asm/types.h>
-> +#include <fcntl.h>
-> +
-> +static void
-> +file_attr_to_fsxattr(
-> +	const struct file_attr	*fa,
-> +	struct fsxattr		*fsxa)
-> +{
-> +     memset(fsxa, 0, sizeof(struct fsxattr));
-> +
-> +     fsxa->fsx_xflags = fa->fa_xflags;
-> +     fsxa->fsx_extsize = fa->fa_extsize;
-> +     fsxa->fsx_nextents = fa->fa_nextents;
-> +     fsxa->fsx_projid = fa->fa_projid;
-> +     fsxa->fsx_cowextsize = fa->fa_cowextsize;
-> +
-> +}
-> +
-> +static void
-> +fsxattr_to_file_attr(
-> +	const struct fsxattr	*fsxa,
-> +	struct file_attr	*fa)
-> +{
-> +     memset(fa, 0, sizeof(struct file_attr));
-> +
-> +     fa->fa_xflags = fsxa->fsx_xflags;
-> +     fa->fa_extsize = fsxa->fsx_extsize;
-> +     fa->fa_nextents = fsxa->fsx_nextents;
-> +     fa->fa_projid = fsxa->fsx_projid;
-> +     fa->fa_cowextsize = fsxa->fsx_cowextsize;
-> +}
-> +
-> +int
-> +xfrog_file_getattr(
-> +	const int		dfd,
-> +	const char		*path,
-> +	const struct stat	*stat,
-> +	struct file_attr	*fa,
-> +	const unsigned int	at_flags)
-> +{
+> -#define EXCLUDED_FILE_TYPES(x) \
+> -	   (S_ISCHR((x)) \
+> -	|| S_ISBLK((x)) \
+> -	|| S_ISFIFO((x)) \
+> -	|| S_ISLNK((x)) \
+> -	|| S_ISSOCK((x)))
+> -
+>  static void
+>  project_help(void)
+>  {
+> @@ -85,8 +81,8 @@ check_project(
+>  	int			flag,
+>  	struct FTW		*data)
+>  {
+> -	struct fsxattr		fsx;
+> -	int			fd;
 > +	int			error;
-> +	int			fd;
-> +	struct fsxattr		fsxa;
-> +
-> +#ifdef HAVE_FILE_ATTR
-> +        error = syscall(__NR_file_getattr, dfd, path, fa,
-> +                        sizeof(struct file_attr), at_flags);
-
-Nit: ^^^^^^^^^^ tabs, not spaces, for indenting please.
-
-> +	if (error && errno != ENOSYS)
-> +		return error;
-> +
-> +	if (!error)
-> +		return error;
-> +#endif
-> +
-> +	if (SPECIAL_FILE(stat->st_mode)) {
-> +		errno = EOPNOTSUPP;
-> +		return -1;
+> +	struct file_attr	fa;
+>  
+>  	if (recurse_depth >= 0 && data->level > recurse_depth)
+>  		return 0;
+> @@ -96,30 +92,30 @@ check_project(
+>  		fprintf(stderr, _("%s: cannot stat file %s\n"), progname, path);
+>  		return 0;
+>  	}
+> -	if (EXCLUDED_FILE_TYPES(stat->st_mode)) {
+> -		fprintf(stderr, _("%s: skipping special file %s\n"), progname, path);
+> -		return 0;
+> -	}
+>  
+> -	if ((fd = open(path, O_RDONLY|O_NOCTTY)) == -1) {
+> -		exitcode = 1;
+> -		fprintf(stderr, _("%s: cannot open %s: %s\n"),
+> -			progname, path, strerror(errno));
+> -	} else if ((xfsctl(path, fd, FS_IOC_FSGETXATTR, &fsx)) < 0) {
+> -		exitcode = 1;
+> +	error = xfrog_file_getattr(dfd, path, stat, &fa, AT_SYMLINK_NOFOLLOW);
+> +	if (error && errno == EOPNOTSUPP) {
+> +		if (SPECIAL_FILE(stat->st_mode)) {
+> +			fprintf(stderr, _("%s: skipping special file %s: %s\n"),
+> +					progname, path, strerror(errno));
+> +			return 0;
+> +		}
 > +	}
+> +	if (error) {
+>  		fprintf(stderr, _("%s: cannot get flags on %s: %s\n"),
+> -			progname, path, strerror(errno));
+> -	} else {
+> -		if (fsx.fsx_projid != prid)
+> -			printf(_("%s - project identifier is not set"
+> -				 " (inode=%u, tree=%u)\n"),
+> -				path, fsx.fsx_projid, (unsigned int)prid);
+> -		if (!(fsx.fsx_xflags & FS_XFLAG_PROJINHERIT) && S_ISDIR(stat->st_mode))
+> -			printf(_("%s - project inheritance flag is not set\n"),
+> -				path);
+> +				progname, path, strerror(errno));
+> +		exitcode = 1;
+> +		return 0;
+>  	}
+> -	if (fd != -1)
+> -		close(fd);
 > +
-> +	fd = open(path, O_RDONLY|O_NOCTTY);
-> +	if (fd == -1)
-> +		return fd;
+> +	if (fa.fa_projid != prid)
+> +		printf(_("%s - project identifier is not set"
+> +				" (inode=%u, tree=%u)\n"),
+> +			path, fa.fa_projid, (unsigned int)prid);
+> +	if (!(fa.fa_xflags & FS_XFLAG_PROJINHERIT) && S_ISDIR(stat->st_mode))
+> +		printf(_("%s - project inheritance flag is not set\n"),
+> +			path);
 > +
-> +	error = ioctl(fd, FS_IOC_FSGETXATTR, &fsxa);
-> +	close(fd);
-> +	if (error)
-> +		return error;
-> +
-> +	fsxattr_to_file_attr(&fsxa, fa);
-> +
-> +	return error;
-> +}
-> +
-> +int
-> +xfrog_file_setattr(
-> +	const int		dfd,
-> +	const char		*path,
-> +	const struct stat	*stat,
-> +	struct file_attr	*fa,
-> +	const unsigned int	at_flags)
-> +{
+>  	return 0;
+>  }
+>  
+> @@ -130,8 +126,8 @@ clear_project(
+>  	int			flag,
+>  	struct FTW		*data)
+>  {
+> -	struct fsxattr		fsx;
+> -	int			fd;
 > +	int			error;
-> +	int			fd;
-> +	struct fsxattr		fsxa;
+> +	struct file_attr	fa;
+>  
+>  	if (recurse_depth >= 0 && data->level > recurse_depth)
+>  		return 0;
+> @@ -141,32 +137,32 @@ clear_project(
+>  		fprintf(stderr, _("%s: cannot stat file %s\n"), progname, path);
+>  		return 0;
+>  	}
+> -	if (EXCLUDED_FILE_TYPES(stat->st_mode)) {
+> -		fprintf(stderr, _("%s: skipping special file %s\n"), progname, path);
+> -		return 0;
 > +
-> +#ifdef HAVE_FILE_ATTR
-> +	error = syscall(__NR_file_setattr, dfd, path, fa,
-> +			sizeof(struct file_attr), at_flags);
-> +	if (error && errno != ENOSYS)
-> +		return error;
+> +	error = xfrog_file_getattr(dfd, path, stat, &fa, AT_SYMLINK_NOFOLLOW);
+> +	if (error && errno == EOPNOTSUPP) {
+> +		if (SPECIAL_FILE(stat->st_mode)) {
+> +			fprintf(stderr, _("%s: skipping special file %s: %s\n"),
+> +					progname, path, strerror(errno));
+> +			return 0;
+> +		}
+>  	}
+>  
+> -	if ((fd = open(path, O_RDONLY|O_NOCTTY)) == -1) {
+> -		exitcode = 1;
+> -		fprintf(stderr, _("%s: cannot open %s: %s\n"),
+> -			progname, path, strerror(errno));
+> -		return 0;
+> -	} else if (xfsctl(path, fd, FS_IOC_FSGETXATTR, &fsx) < 0) {
+> -		exitcode = 1;
+> +	if (error) {
+>  		fprintf(stderr, _("%s: cannot get flags on %s: %s\n"),
+> -			progname, path, strerror(errno));
+> -		close(fd);
+> +				progname, path, strerror(errno));
+> +		exitcode = 1;
+>  		return 0;
+>  	}
+>  
+> -	fsx.fsx_projid = 0;
+> -	fsx.fsx_xflags &= ~FS_XFLAG_PROJINHERIT;
+> -	if (xfsctl(path, fd, FS_IOC_FSSETXATTR, &fsx) < 0) {
+> -		exitcode = 1;
+> +	fa.fa_projid = 0;
+> +	fa.fa_xflags &= ~FS_XFLAG_PROJINHERIT;
 > +
-> +	if (!error)
-> +		return error;
-> +#endif
+> +	error = xfrog_file_setattr(dfd, path, stat, &fa, AT_SYMLINK_NOFOLLOW);
+> +	if (error) {
+>  		fprintf(stderr, _("%s: cannot clear project on %s: %s\n"),
+>  			progname, path, strerror(errno));
+> +		exitcode = 1;
+>  	}
+> -	close(fd);
+>  	return 0;
+>  }
+>  
+> @@ -177,8 +173,8 @@ setup_project(
+>  	int			flag,
+>  	struct FTW		*data)
+>  {
+> -	struct fsxattr		fsx;
+> -	int			fd;
+> +	struct file_attr	fa;
+> +	int			error;
+>  
+>  	if (recurse_depth >= 0 && data->level > recurse_depth)
+>  		return 0;
+> @@ -188,32 +184,33 @@ setup_project(
+>  		fprintf(stderr, _("%s: cannot stat file %s\n"), progname, path);
+>  		return 0;
+>  	}
+> -	if (EXCLUDED_FILE_TYPES(stat->st_mode)) {
+> -		fprintf(stderr, _("%s: skipping special file %s\n"), progname, path);
+> -		return 0;
 > +
-> +	if (SPECIAL_FILE(stat->st_mode)) {
-> +		errno = EOPNOTSUPP;
-> +		return -1;
-> +	}
-> +
-> +	fd = open(path, O_RDONLY|O_NOCTTY);
-> +	if (fd == -1)
-> +		return fd;
-> +
-> +	file_attr_to_fsxattr(fa, &fsxa);
-> +
-> +	error = ioctl(fd, FS_IOC_FSSETXATTR, fa);
-> +	close(fd);
-> +
-> +	return error;
-> +}
-> diff --git a/libfrog/file_attr.h b/libfrog/file_attr.h
-> new file mode 100644
-> index 000000000000..ad33241bbffa
-> --- /dev/null
-> +++ b/libfrog/file_attr.h
-> @@ -0,0 +1,35 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2024 Red Hat, Inc.
-> + * All Rights Reserved.
-> + */
-> +#ifndef __LIBFROG_FILE_ATTR_H__
-> +#define __LIBFROG_FILE_ATTR_H__
-> +
-> +#include "linux.h"
-> +#include <sys/stat.h>
-> +
-> +#define SPECIAL_FILE(x) \
-> +	   (S_ISCHR((x)) \
-> +	|| S_ISBLK((x)) \
-> +	|| S_ISFIFO((x)) \
-> +	|| S_ISLNK((x)) \
-> +	|| S_ISSOCK((x)))
-> +
-> +int
-> +xfrog_file_getattr(
-> +	const int		dfd,
-> +	const char		*path,
-> +	const struct stat	*stat,
-> +	struct file_attr	*fa,
-> +	const unsigned int	at_flags);
-> +
-> +int
-> +xfrog_file_setattr(
-> +	const int		dfd,
-> +	const char		*path,
-> +	const struct stat	*stat,
-> +	struct file_attr	*fa,
-> +	const unsigned int	at_flags);
-> +
-> +#endif /* __LIBFROG_FILE_ATTR_H__ */
-> diff --git a/m4/package_libcdev.m4 b/m4/package_libcdev.m4
-> index b77ac1a7580a..6a267dab7ab7 100644
-> --- a/m4/package_libcdev.m4
-> +++ b/m4/package_libcdev.m4
-> @@ -274,3 +274,22 @@ AC_DEFUN([AC_PACKAGE_CHECK_LTO],
->      AC_SUBST(lto_cflags)
->      AC_SUBST(lto_ldflags)
->    ])
-> +
-> +#
-> +# Check if we have a file_getattr/file_setattr system call (Linux)
-> +#
-> +AC_DEFUN([AC_HAVE_FILE_ATTR],
+> +	error = xfrog_file_getattr(dfd, path, stat, &fa, AT_SYMLINK_NOFOLLOW);
+> +	if (error && errno == EOPNOTSUPP) {
+> +		if (SPECIAL_FILE(stat->st_mode)) {
+> +			fprintf(stderr, _("%s: skipping special file %s\n"),
+> +					progname, path);
+> +			return 0;
+> +		}
+>  	}
+>  
+> -	if ((fd = open(path, O_RDONLY|O_NOCTTY)) == -1) {
+> -		exitcode = 1;
+> -		fprintf(stderr, _("%s: cannot open %s: %s\n"),
+> -			progname, path, strerror(errno));
+> -		return 0;
+> -	} else if (xfsctl(path, fd, FS_IOC_FSGETXATTR, &fsx) < 0) {
+> -		exitcode = 1;
+> +	if (error) {
+>  		fprintf(stderr, _("%s: cannot get flags on %s: %s\n"),
+> -			progname, path, strerror(errno));
+> -		close(fd);
+> +				progname, path, strerror(errno));
+> +		exitcode = 1;
+>  		return 0;
+>  	}
+>  
+> -	fsx.fsx_projid = prid;
+> -	fsx.fsx_xflags |= FS_XFLAG_PROJINHERIT;
+> -	if (xfsctl(path, fd, FS_IOC_FSSETXATTR, &fsx) < 0) {
+> -		exitcode = 1;
+> +	fa.fa_projid = prid;
+> +	if (S_ISDIR(stat->st_mode))
+> +		fa.fa_xflags |= FS_XFLAG_PROJINHERIT;
 
-I would call the symbol AC_HAVE_FILE_GETATTR because you're not checking
-the struct file_attr itself, just the syscall number.
+Hrm, interesting change in projinherit logic -- is this because the new
+setattr code rejects projinherit on non-directories?
 
-Other than those nits, everything looks good here.
+> +
+> +	error = xfrog_file_setattr(dfd, path, stat, &fa, AT_SYMLINK_NOFOLLOW);
+> +	if (error) {
+>  		fprintf(stderr, _("%s: cannot set project on %s: %s\n"),
+>  			progname, path, strerror(errno));
+> +		exitcode = 1;
+>  	}
+> -	close(fd);
+>  	return 0;
+>  }
+>  
+> @@ -223,6 +220,13 @@ project_operations(
+>  	char		*dir,
+>  	int		type)
+>  {
+> +	dfd = open(dir, O_RDONLY|O_NOCTTY);
+
+Nit: spaces around the pipe char^acter, please.
 
 --D
 
-> +  [ AC_MSG_CHECKING([for file_getattr/file_setattr syscalls])
-> +    AC_LINK_IFELSE(
-> +    [	AC_LANG_PROGRAM([[
-> +#define _GNU_SOURCE
-> +#include <sys/syscall.h>
-> +#include <unistd.h>
-> +	]], [[
-> +syscall(__NR_file_getattr, 0, 0, 0, 0, 0);
-> +	]])
-> +    ], have_file_attr=yes
-> +       AC_MSG_RESULT(yes),
-> +       AC_MSG_RESULT(no))
-> +    AC_SUBST(have_file_attr)
-> +  ])
+> +	if (dfd < -1) {
+> +		printf(_("Error opening dir %s for project %s...\n"), dir,
+> +				project);
+> +		return;
+> +	}
+> +
+>  	switch (type) {
+>  	case CHECK_PROJECT:
+>  		printf(_("Checking project %s (path %s)...\n"), project, dir);
+> @@ -237,6 +241,8 @@ project_operations(
+>  		nftw(dir, clear_project, 100, FTW_PHYS|FTW_MOUNT);
+>  		break;
+>  	}
+> +
+> +	close(dfd);
+>  }
+>  
+>  static void
 > 
 > -- 
 > 2.49.0
