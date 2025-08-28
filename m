@@ -1,60 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-59536-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59531-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BCEDB3ADFD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 01:08:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D842B3ADF8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 01:08:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5980D5836EA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 23:08:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF8075801EE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Aug 2025 23:08:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3914B2C2341;
-	Thu, 28 Aug 2025 23:08:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0B0F2D249A;
+	Thu, 28 Aug 2025 23:08:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="B/wWCSRl"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="ZbOC51F+"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 822BC2C11E9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743962BE653
 	for <linux-fsdevel@vger.kernel.org>; Thu, 28 Aug 2025 23:08:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756422491; cv=none; b=JqzM2NkXYCScAEWxh1Tt9B2snfBD48y/NxOEc2O0HEDTl1pHZ6avHrpoSudImo13OgVbOaElccSV6MI2dTX1h4w8U0in+4S6mBX9WzqeB3eA3F7WC+2Y+PlpOE7/0nG2WLp6e2n/sGutSebKR/0nuRb52TCBVNpjfkSKYjqBqEA=
+	t=1756422490; cv=none; b=QfB9Fz+5MebBtGKoB7bW+1frDp23gPv48m2ZL7HEi5rV5SNS1LLJcGKOH0nMCSAq9aR7wAPD8QYV20geW+W0AKOBtuYAdhI5JcrKUifXK1T5E/URQzXnd2OdA562GqlnpIUOuP8/4tZcwyK6SC0ZzThMcbq7LO43FWsyXhyWXaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756422491; c=relaxed/simple;
-	bh=YN+sKSTJwhy8QI9tiegPGF2G8T5ZC+EVzrCMpMm/IJQ=;
+	s=arc-20240116; t=1756422490; c=relaxed/simple;
+	bh=CzQrmpEbELJgaSqw2DsqlBJbXpOsr0TrnJEUbT4u66U=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RXOWQgkDq8YBaPWR1uBA/kJQ//XOG/ZPrYncyZH2Ifmo3Zati5rpldrtak12xvM/p5UkKYj3d3Lvdz3kGbR1XWDRAjHu4LUZgL/5tGgnqJaLoxxYMvwYcSfeGOdAX2BoTEQlpulg2pETBZODwJtI9IA7vSjjVA9Grj8VQT7Y/1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=B/wWCSRl; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=CZVvW9dMEKUXCSMgDFtrfqw/rlbwm9nB2JOZXiBLDuW2rdiXN86GN0iIS6lIJLx0d5Y4x6YcvV3QJyDrCGW/30jNaOtWyssTAK733iu/FTzjHLe/orzud0rXsEjOydWM3QHosF60TZo4G6FbekSNFoTOBoOGzLoBmlCSmDlt5Vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=ZbOC51F+; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=H2xml+0S5NMK4Cobv1ItTBbEZTlEzN1SBUZ6HJxgRzs=; b=B/wWCSRlEdLrT+vD8lqyCLtoJk
-	VwnDHTxf1uZTogziPyj0k+a0MAOcM7j+nh+fraOMqBZQxb/Ns1iWak1c9FgPDyZNZKSReDYnuvQLi
-	5ufQhYh+RYM8Vjl2u/c2F9XoDUHb0xDvaAn9UjNgLbjB9n4E/2M/wyJomwpn7vtcGk1cK2EfWKuiy
-	afRumE7VbyJKxePV0KmduZscuLQ6t9b7K7oHZO2sXie1oA1UBywLzytixDjV2stAnH1q8p/iPFDY8
-	sxWXMewylvtvvem1FLb32RUT5Ke0Zpdr1iGy5BoQZCBnOZ8GtKWObrb34DjOlAmN3EeCIgyunAZtP
-	abzbywxA==;
+	bh=N4gJ4l8FdaRiUW/HlyTUwYAWphPSBZ/HZ8suRgfc8YQ=; b=ZbOC51F+k4jZubN0aXl1sADjQg
+	EFKDwCckdv5GY3uq9cajS6C8PGI01x2IVLfsJbpEzTz56L3X4ptBdpXX8xEpBRf4ZZFz+8jy+wDmX
+	bYGLUs56U7gSMuM/m6LhcDK2EzY+qx8pmgJjt3SUx96gzKH4cHrwa9apU7GuTeHFBt7FlIj6qFvtu
+	ISlqrNTHyTsyBjyild8USQz4Cni0CYkp5VnCKrtW8DY5ebIsUve6USEQEXqV+RiLY6Ta8Cc8bOU6A
+	A2l8a+TFLyGtMrYIZtnx2SB12VMxz0OrJY0bJZldSsXOvWkSaAi6lHEb5tb7zfSoc0LxOmkM4sf3y
+	jQoMXAbA==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1urliw-0000000F1zF-2oQV;
+	id 1urliw-0000000F209-3Zx8;
 	Thu, 28 Aug 2025 23:08:06 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: brauner@kernel.org,
 	jack@suse.cz,
 	torvalds@linux-foundation.org
-Subject: [PATCH v2 01/63] fs/namespace.c: fix the namespace_sem guard mess
-Date: Fri, 29 Aug 2025 00:07:04 +0100
-Message-ID: <20250828230806.3582485-1-viro@zeniv.linux.org.uk>
+Subject: [PATCH v2 02/63] introduced guards for mount_lock
+Date: Fri, 29 Aug 2025 00:07:05 +0100
+Message-ID: <20250828230806.3582485-2-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250828230706.GA3340273@ZenIV>
+In-Reply-To: <20250828230806.3582485-1-viro@zeniv.linux.org.uk>
 References: <20250828230706.GA3340273@ZenIV>
+ <20250828230806.3582485-1-viro@zeniv.linux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -64,99 +65,34 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-If anything, namespace_lock should be DEFINE_LOCK_GUARD_0, not DEFINE_GUARD.
-That way we
-	* do not need to feed it a bogus argument
-	* do not get gcc trying to compare an address of static in
-file variable with -4097 - and, if we are unlucky, trying to keep
-it in a register, with spills and all such.
+mount_writer: write_seqlock; that's an equivalent of {un,}lock_mount_hash()
+mount_locked_reader: read_seqlock_excl; these tend to be open-coded.
 
-The same problems apply to grabbing namespace_sem shared.
+No bulk conversions, please - if nothing else, quite a few places take
+use mount_writer form when mount_locked_reader is sufficent.  It needs
+to be dealt with carefully.
 
-Rename it to namespace_excl, add namespace_shared, convert the existing users:
-
-    guard(namespace_lock, &namespace_sem) => guard(namespace_excl)()
-    guard(rwsem_read, &namespace_sem) => guard(namespace_shared)()
-    scoped_guard(namespace_lock, &namespace_sem) => scoped_guard(namespace_excl)
-    scoped_guard(rwsem_read, &namespace_sem) => scoped_guard(namespace_shared)
-
-Reviewed-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/namespace.c | 18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
+ fs/mount.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index ae6d1312b184..fcea65587ff9 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -82,6 +82,12 @@ static LIST_HEAD(ex_mountpoints); /* protected by namespace_sem */
- static struct mnt_namespace *emptied_ns; /* protected by namespace_sem */
- static DEFINE_SEQLOCK(mnt_ns_tree_lock);
+diff --git a/fs/mount.h b/fs/mount.h
+index 97737051a8b9..ed8c83ba836a 100644
+--- a/fs/mount.h
++++ b/fs/mount.h
+@@ -154,6 +154,11 @@ static inline void get_mnt_ns(struct mnt_namespace *ns)
  
-+static inline void namespace_lock(void);
-+static void namespace_unlock(void);
-+DEFINE_LOCK_GUARD_0(namespace_excl, namespace_lock(), namespace_unlock())
-+DEFINE_LOCK_GUARD_0(namespace_shared, down_read(&namespace_sem),
-+				      up_read(&namespace_sem))
+ extern seqlock_t mount_lock;
+ 
++DEFINE_LOCK_GUARD_0(mount_writer, write_seqlock(&mount_lock),
++		    write_sequnlock(&mount_lock))
++DEFINE_LOCK_GUARD_0(mount_locked_reader, read_seqlock_excl(&mount_lock),
++		    read_sequnlock_excl(&mount_lock))
 +
- #ifdef CONFIG_FSNOTIFY
- LIST_HEAD(notify_list); /* protected by namespace_sem */
- #endif
-@@ -1776,8 +1782,6 @@ static inline void namespace_lock(void)
- 	down_write(&namespace_sem);
- }
- 
--DEFINE_GUARD(namespace_lock, struct rw_semaphore *, namespace_lock(), namespace_unlock())
--
- enum umount_tree_flags {
- 	UMOUNT_SYNC = 1,
- 	UMOUNT_PROPAGATE = 2,
-@@ -2306,7 +2310,7 @@ struct path *collect_paths(const struct path *path,
- 	struct path *res = prealloc, *to_free = NULL;
- 	unsigned n = 0;
- 
--	guard(rwsem_read)(&namespace_sem);
-+	guard(namespace_shared)();
- 
- 	if (!check_mnt(root))
- 		return ERR_PTR(-EINVAL);
-@@ -2361,7 +2365,7 @@ void dissolve_on_fput(struct vfsmount *mnt)
- 			return;
- 	}
- 
--	scoped_guard(namespace_lock, &namespace_sem) {
-+	scoped_guard(namespace_excl) {
- 		if (!anon_ns_root(m))
- 			return;
- 
-@@ -2435,7 +2439,7 @@ struct vfsmount *clone_private_mount(const struct path *path)
- 	struct mount *old_mnt = real_mount(path->mnt);
- 	struct mount *new_mnt;
- 
--	guard(rwsem_read)(&namespace_sem);
-+	guard(namespace_shared)();
- 
- 	if (IS_MNT_UNBINDABLE(old_mnt))
- 		return ERR_PTR(-EINVAL);
-@@ -5957,7 +5961,7 @@ SYSCALL_DEFINE4(statmount, const struct mnt_id_req __user *, req,
- 	if (ret)
- 		return ret;
- 
--	scoped_guard(rwsem_read, &namespace_sem)
-+	scoped_guard(namespace_shared)
- 		ret = do_statmount(ks, kreq.mnt_id, kreq.mnt_ns_id, ns);
- 
- 	if (!ret)
-@@ -6079,7 +6083,7 @@ SYSCALL_DEFINE4(listmount, const struct mnt_id_req __user *, req,
- 	 * We only need to guard against mount topology changes as
- 	 * listmount() doesn't care about any mount properties.
- 	 */
--	scoped_guard(rwsem_read, &namespace_sem)
-+	scoped_guard(namespace_shared)
- 		ret = do_listmount(ns, kreq.mnt_id, last_mnt_id, kmnt_ids,
- 				   nr_mnt_ids, (flags & LISTMOUNT_REVERSE));
- 	if (ret <= 0)
+ struct proc_mounts {
+ 	struct mnt_namespace *ns;
+ 	struct path root;
 -- 
 2.47.2
 
