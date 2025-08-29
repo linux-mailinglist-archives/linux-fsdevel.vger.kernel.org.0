@@ -1,55 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-59611-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59612-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9473FB3B2EE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 08:05:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00E74B3B2EF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 08:06:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C21F568167
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 06:05:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99B783AAAF5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 06:06:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53637216E32;
-	Fri, 29 Aug 2025 06:05:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91016216E32;
+	Fri, 29 Aug 2025 06:06:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Q2PzK/DR"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="je0Ggzsm"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F78D7404E
-	for <linux-fsdevel@vger.kernel.org>; Fri, 29 Aug 2025 06:05:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE9F08BEC
+	for <linux-fsdevel@vger.kernel.org>; Fri, 29 Aug 2025 06:06:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756447525; cv=none; b=QKou2K4dMIOkY5iHKZtEq/HmnC0dBuAAxtHaICtbGqkVy+5HHW8ZOmR8iNm3qfWFvamLwHE/N4GEa6cqp/vt0Z9wvPwmu+7MG3d3/OkpKGHa30Vi+Omg1HRH6djQ7/nR0yGdKqyXmPRL+oYaLuHGnnI9cFfhxf1kbKtQVaKKZmQ=
+	t=1756447579; cv=none; b=hAK+tpdH43W9SaPKQgqXzM0IR5AX4pzXegfcXL/4DNc7GNSExGa/3PNRg5ZfLV/mZ5Ruj9k3Ej9TSKCB06EWVztjqJpodIyRf+Enpsf9EVG4lj7f2E+LEH7SuAoILMKu4Oeg9q+ZHLXTfa6MXW84ExfuVndkS1DOyCS1+1T5QNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756447525; c=relaxed/simple;
-	bh=QrwkdN+yTq59hjNL8Eq+LMnOQOaHOAWHiMLrHdlg4Uw=;
+	s=arc-20240116; t=1756447579; c=relaxed/simple;
+	bh=1/7FofZOBzoQ31S/vgADN2CF5/U/Hz/ZYpfO66/1u9k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ahFvGApyBhJCiv/dLoctgfva/zY70hsoRFO7ShVUhuN/cXpY2LrODdZpvxpGyfMPiYbdzzx5pDjdRcsGA6I/YHjon0ogpEm5xTEK2lIV0hg5zWJegHhkHFJITdCVAMEu7Gz+gHBPFyKPZzSQTQjXolugl+rKbf5EHwf9CVWkBmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Q2PzK/DR; arc=none smtp.client-ip=62.89.141.173
+	 Content-Type:Content-Disposition:In-Reply-To; b=ok7vphsrJaBzUXRpqAUx6NO+kdbBobTx8gGV4IZslGgb573ayMfaAbE6dfhb9o4oUZ50E+V9yIswM6T9M5KcKZER9+1Uy+1IJLAOLfifGsL54g/GZiL9CZlMh/PZ+Z2r8cxDjadESaroN5UYPE+ebKNEQ6BLANkxaER+ehYLpaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=je0Ggzsm; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
 	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ZK/voTyIPwq6ntFRzRp08u4HaUCGaNAKZG3KGb5A8TY=; b=Q2PzK/DRfRogcHjcoDF3e8l6H2
-	l2YXPpPclQ+WAONzMRKB54ZqVGmDN3SCwtHfGog/41uKLgWKhBjsiVmlBfPOetjlCBC+Qd/YX6cUC
-	zzsAFjR+1CfTVBz7m/brN5zEEMp0UY5gp/shkAn/tb8H8zb6jM54NkAMjTFgI+jKK11lit9Oh0fuf
-	TD4Np93Xt9gi0PF1I5B7TxssQparaBaaRKq2fYiBs5X402RrmUu1YswhqXfusAFxPsQvbtUB3bQ/O
-	7jngVHz53rk5eBUGMS5YLdpXLGRLXWGrueetomASLCUX10XonS6KSiVOqmiHJcpjczk/clm7f7Qzi
-	68uA3d0Q==;
+	bh=tBAQV0lu5IG99Au84R8K320w5bvgqcr9gT+u76DXrlg=; b=je0GgzsmJwxjALKwBut1JWeSCS
+	UUwF56actj48b16tCG1ywejCg0gxSjb9OHlHbEup+VdwUw1ho1XKSX+LTcfXAL4/uHTdz4mA12eA1
+	whO7wCYahyFT9FD9s7mpaslzqyAGOxbGb1OlyrNv1xgms46jNaAYeKsTDJKmJ2Xi4b+TTSjXaUwOj
+	c9p5kxpSRorgICO6OMVZeRpxiQGqDrvpTCAvhGeD+DEZjyoEhae4Ja6R8s9aEvCPEys17lXNU1VSO
+	fvajHBJB1jj+nVeoU3EVOzBpkFXtoX0O2lUpJQt2vFsVJJ8O8CdVB221o9YZsLRlELLsWZMUFoNAA
+	SAWqOxew==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ursEk-00000002nlD-1EM9;
-	Fri, 29 Aug 2025 06:05:22 +0000
-Date: Fri, 29 Aug 2025 07:05:22 +0100
+	id 1ursFb-00000002oVO-1Sy1;
+	Fri, 29 Aug 2025 06:06:15 +0000
+Date: Fri, 29 Aug 2025 07:06:15 +0100
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org, jack@suse.cz
-Subject: [60/63] setup_mnt(): primitive for connecting a mount to filesystem
-Message-ID: <20250829060522.GB659926@ZenIV>
+Subject: [61/63] preparations to taking MNT_WRITE_HOLD out of ->mnt_flags
+Message-ID: <20250829060615.GC659926@ZenIV>
 References: <20250828230706.GA3340273@ZenIV>
  <20250828230806.3582485-1-viro@zeniv.linux.org.uk>
  <20250828230806.3582485-61-viro@zeniv.linux.org.uk>
@@ -68,95 +68,189 @@ Content-Disposition: inline
 In-Reply-To: <20250829060306.GC39973@ZenIV>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Take the identical logics in vfs_create_mount() and clone_mnt() into
-a new helper that takes an empty struct mount and attaches it to
-given dentry (sub)tree.
+We have an unpleasant wart in accessibility rules for struct mount.  There
+are per-superblock lists of mounts, used by sb_prepare_remount_readonly()
+to check if any of those is currently claimed for write access and to
+block further attempts to get write access on those until we are done.
 
-Should be called once in the lifetime of every mount, prior to making
-it visible in any data structures.
+As soon as it is attached to a filesystem, mount becomes reachable
+via that list.  Only sb_prepare_remount_readonly() traverses it and
+it only accesses a few members of struct mount.  Unfortunately,
+->mnt_flags is one of those and it is modified - MNT_WRITE_HOLD set
+and then cleared.  It is done under mount_lock, so from the locking
+rules POV everything's fine.
 
-After that point ->mnt_root and ->mnt_sb never change; ->mnt_root
-is a counting reference to dentry and ->mnt_sb - an active reference
-to superblock.
+However, it has easily overlooked implications - once mount has been
+attached to a filesystem, it has to be treated as globally visible.
+In particular, initializing ->mnt_flags *must* be done either prior
+to that point or under mount_lock.  All other members are still
+private at that point.
 
-Mount remains associated with that dentry tree all the way until
-the call of cleanup_mnt(), when the refcount eventually drops
-to zero.
+Life gets simpler if we move that bit (and that's *all* that can get
+touched by access via this list) out of ->mnt_flags.  It's not even
+hard to do - currently the list is implemented as list_head one,
+anchored in super_block->s_mounts and linked via mount->mnt_instance.
+
+As the first step, switch it to hlist-like open-coded structure -
+address of the first mount in the set is stored in ->s_mounts
+and ->mnt_instance replaced with ->mnt_next_for_sb and ->mnt_pprev_for_sb -
+the former either NULL or pointing to the next mount in set, the
+latter - address of either ->s_mounts or ->mnt_next_for_sb in the
+previous element of the set.
+
+In the next commit we'll steal the LSB of ->mnt_pprev_for_sb as
+replacement for MNT_WRITE_HOLD.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/namespace.c | 34 +++++++++++++++++-----------------
- 1 file changed, 17 insertions(+), 17 deletions(-)
+ fs/mount.h         |  4 +++-
+ fs/namespace.c     | 38 +++++++++++++++++++++++++++++---------
+ fs/super.c         |  3 +--
+ include/linux/fs.h |  4 +++-
+ 4 files changed, 36 insertions(+), 13 deletions(-)
 
+diff --git a/fs/mount.h b/fs/mount.h
+index 04d0eadc4c10..b208f69f69d7 100644
+--- a/fs/mount.h
++++ b/fs/mount.h
+@@ -64,7 +64,9 @@ struct mount {
+ #endif
+ 	struct list_head mnt_mounts;	/* list of children, anchored here */
+ 	struct list_head mnt_child;	/* and going through their mnt_child */
+-	struct list_head mnt_instance;	/* mount instance on sb->s_mounts */
++	struct mount *mnt_next_for_sb;	/* the next two fields are hlist_node, */
++	struct mount * __aligned(1) *mnt_pprev_for_sb;
++					/* except that LSB of pprev will be stolen */
+ 	const char *mnt_devname;	/* Name of device e.g. /dev/dsk/hda1 */
+ 	struct list_head mnt_list;
+ 	struct list_head mnt_expire;	/* link in fs-specific expiry list */
 diff --git a/fs/namespace.c b/fs/namespace.c
-index d8df1046e2f9..c769fc4051e0 100644
+index c769fc4051e0..06be5b65b559 100644
 --- a/fs/namespace.c
 +++ b/fs/namespace.c
-@@ -1196,6 +1196,21 @@ static void commit_tree(struct mount *mnt)
- 	touch_mnt_namespace(n);
+@@ -730,6 +730,27 @@ static inline void mnt_unhold_writers(struct mount *mnt)
+ 	mnt->mnt.mnt_flags &= ~MNT_WRITE_HOLD;
  }
  
-+static void setup_mnt(struct mount *m, struct dentry *root)
++static inline void mnt_del_instance(struct mount *m)
 +{
-+	struct super_block *s = root->d_sb;
++	struct mount **p = m->mnt_pprev_for_sb;
++	struct mount *next = m->mnt_next_for_sb;
 +
-+	atomic_inc(&s->s_active);
-+	m->mnt.mnt_sb = s;
-+	m->mnt.mnt_root = dget(root);
-+	m->mnt_mountpoint = m->mnt.mnt_root;
-+	m->mnt_parent = m;
-+
-+	lock_mount_hash();
-+	list_add_tail(&m->mnt_instance, &s->s_mounts);
-+	unlock_mount_hash();
++	if (next)
++		next->mnt_pprev_for_sb = p;
++	*p = next;
 +}
 +
- /**
-  * vfs_create_mount - Create a mount for a configured superblock
-  * @fc: The configuration context with the superblock attached
-@@ -1219,15 +1234,8 @@ struct vfsmount *vfs_create_mount(struct fs_context *fc)
- 	if (fc->sb_flags & SB_KERNMOUNT)
- 		mnt->mnt.mnt_flags = MNT_INTERNAL;
- 
--	atomic_inc(&fc->root->d_sb->s_active);
--	mnt->mnt.mnt_sb		= fc->root->d_sb;
--	mnt->mnt.mnt_root	= dget(fc->root);
--	mnt->mnt_mountpoint	= mnt->mnt.mnt_root;
--	mnt->mnt_parent		= mnt;
-+	setup_mnt(mnt, fc->root);
- 
--	lock_mount_hash();
--	list_add_tail(&mnt->mnt_instance, &mnt->mnt.mnt_sb->s_mounts);
--	unlock_mount_hash();
- 	return &mnt->mnt;
- }
- EXPORT_SYMBOL(vfs_create_mount);
-@@ -1285,7 +1293,6 @@ EXPORT_SYMBOL_GPL(vfs_kern_mount);
- static struct mount *clone_mnt(struct mount *old, struct dentry *root,
- 					int flag)
++static inline void mnt_add_instance(struct mount *m, struct super_block *s)
++{
++	struct mount *first = s->s_mounts;
++
++	if (first)
++		first->mnt_pprev_for_sb = &m->mnt_next_for_sb;
++	m->mnt_next_for_sb = first;
++	m->mnt_pprev_for_sb = &s->s_mounts;
++	s->s_mounts = m;
++}
++
+ static int mnt_make_readonly(struct mount *mnt)
  {
--	struct super_block *sb = old->mnt.mnt_sb;
- 	struct mount *mnt;
- 	int err;
+ 	int ret;
+@@ -743,7 +764,6 @@ static int mnt_make_readonly(struct mount *mnt)
  
-@@ -1310,16 +1317,9 @@ static struct mount *clone_mnt(struct mount *old, struct dentry *root,
- 	if (mnt->mnt_group_id)
- 		set_mnt_shared(mnt);
+ int sb_prepare_remount_readonly(struct super_block *sb)
+ {
+-	struct mount *mnt;
+ 	int err = 0;
  
--	atomic_inc(&sb->s_active);
- 	mnt->mnt.mnt_idmap = mnt_idmap_get(mnt_idmap(&old->mnt));
+ 	/* Racy optimization.  Recheck the counter under MNT_WRITE_HOLD */
+@@ -751,9 +771,9 @@ int sb_prepare_remount_readonly(struct super_block *sb)
+ 		return -EBUSY;
  
--	mnt->mnt.mnt_sb = sb;
--	mnt->mnt.mnt_root = dget(root);
--	mnt->mnt_mountpoint = mnt->mnt.mnt_root;
--	mnt->mnt_parent = mnt;
--	lock_mount_hash();
--	list_add_tail(&mnt->mnt_instance, &sb->s_mounts);
--	unlock_mount_hash();
-+	setup_mnt(mnt, root);
+ 	lock_mount_hash();
+-	list_for_each_entry(mnt, &sb->s_mounts, mnt_instance) {
+-		if (!(mnt->mnt.mnt_flags & MNT_READONLY)) {
+-			err = mnt_hold_writers(mnt);
++	for (struct mount *m = sb->s_mounts; m; m = m->mnt_next_for_sb) {
++		if (!(m->mnt.mnt_flags & MNT_READONLY)) {
++			err = mnt_hold_writers(m);
+ 			if (err)
+ 				break;
+ 		}
+@@ -763,9 +783,9 @@ int sb_prepare_remount_readonly(struct super_block *sb)
  
- 	if (flag & CL_PRIVATE)	// we are done with it
- 		return mnt;
+ 	if (!err)
+ 		sb_start_ro_state_change(sb);
+-	list_for_each_entry(mnt, &sb->s_mounts, mnt_instance) {
+-		if (mnt->mnt.mnt_flags & MNT_WRITE_HOLD)
+-			mnt->mnt.mnt_flags &= ~MNT_WRITE_HOLD;
++	for (struct mount *m = sb->s_mounts; m; m = m->mnt_next_for_sb) {
++		if (m->mnt.mnt_flags & MNT_WRITE_HOLD)
++			m->mnt.mnt_flags &= ~MNT_WRITE_HOLD;
+ 	}
+ 	unlock_mount_hash();
+ 
+@@ -1207,7 +1227,7 @@ static void setup_mnt(struct mount *m, struct dentry *root)
+ 	m->mnt_parent = m;
+ 
+ 	lock_mount_hash();
+-	list_add_tail(&m->mnt_instance, &s->s_mounts);
++	mnt_add_instance(m, s);
+ 	unlock_mount_hash();
+ }
+ 
+@@ -1425,7 +1445,7 @@ static void mntput_no_expire(struct mount *mnt)
+ 	mnt->mnt.mnt_flags |= MNT_DOOMED;
+ 	rcu_read_unlock();
+ 
+-	list_del(&mnt->mnt_instance);
++	mnt_del_instance(mnt);
+ 	if (unlikely(!list_empty(&mnt->mnt_expire)))
+ 		list_del(&mnt->mnt_expire);
+ 
+diff --git a/fs/super.c b/fs/super.c
+index 7f876f32343a..3b0f49e1b817 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -323,7 +323,6 @@ static struct super_block *alloc_super(struct file_system_type *type, int flags,
+ 	if (!s)
+ 		return NULL;
+ 
+-	INIT_LIST_HEAD(&s->s_mounts);
+ 	s->s_user_ns = get_user_ns(user_ns);
+ 	init_rwsem(&s->s_umount);
+ 	lockdep_set_class(&s->s_umount, &type->s_umount_key);
+@@ -408,7 +407,7 @@ static void __put_super(struct super_block *s)
+ 		list_del_init(&s->s_list);
+ 		WARN_ON(s->s_dentry_lru.node);
+ 		WARN_ON(s->s_inode_lru.node);
+-		WARN_ON(!list_empty(&s->s_mounts));
++		WARN_ON(s->s_mounts);
+ 		call_rcu(&s->rcu, destroy_super_rcu);
+ 	}
+ }
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index d7ab4f96d705..0e9c7f1460dc 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1324,6 +1324,8 @@ struct sb_writers {
+ 	struct percpu_rw_semaphore	rw_sem[SB_FREEZE_LEVELS];
+ };
+ 
++struct mount;
++
+ struct super_block {
+ 	struct list_head	s_list;		/* Keep this first */
+ 	dev_t			s_dev;		/* search index; _not_ kdev_t */
+@@ -1358,7 +1360,7 @@ struct super_block {
+ 	__u16 s_encoding_flags;
+ #endif
+ 	struct hlist_bl_head	s_roots;	/* alternate root dentries for NFS */
+-	struct list_head	s_mounts;	/* list of mounts; _not_ for fs use */
++	struct mount		*s_mounts;	/* list of mounts; _not_ for fs use */
+ 	struct block_device	*s_bdev;	/* can go away once we use an accessor for @s_bdev_file */
+ 	struct file		*s_bdev_file;
+ 	struct backing_dev_info *s_bdi;
 -- 
 2.47.2
 
