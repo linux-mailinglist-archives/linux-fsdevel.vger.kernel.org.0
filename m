@@ -1,178 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-59625-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59626-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5040B3B775
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 11:29:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 12866B3B789
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 11:31:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A4201887392
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 09:29:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30B7918908A2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 09:32:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA492F0C5E;
-	Fri, 29 Aug 2025 09:27:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1AE2FDC21;
+	Fri, 29 Aug 2025 09:31:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xHCy7lk3";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="G84P3RpO";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xHCy7lk3";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="G84P3RpO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IzP1EoUB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FABA2EFDAE
-	for <linux-fsdevel@vger.kernel.org>; Fri, 29 Aug 2025 09:27:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B2352264CA;
+	Fri, 29 Aug 2025 09:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756459636; cv=none; b=m7vrqb2REEbZkEBrDUA3TFFTfDxipLKgd/n6UmtZdrE7SF3/MGa88vJ+Z50xB/NjhIXOC+UF4+jYhnAPo5/KnEvmzbr+n4LRWHhnhGWaPBgWBGlQ+KM0VTXVOS4Oa0B+cHqHKipWqqBnpFFGxMvP+5ekYhFrpjCgnt5W/4jpDrM=
+	t=1756459905; cv=none; b=a2OCOXD3jro286gz1Mz0HW6D1dc3uKAV1lqY1H3Q1z0ZFDjRwjguhsUhct3PtTIBCnBBP3VrZuiRayn2QqnqECuG43nsXH8qhvFtSXrB6KSEy2MGwS3qV68CpU2KAnQfQTdZUeTJfiL5xeJQSV+K+/yMntlmVnV7RrUWWmy9zJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756459636; c=relaxed/simple;
-	bh=kxhXbEWEmhBcd+QpJMTnmcE1P7rphBjRmfsCZBjC5n8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GlYqs1dIDqd4selqQPHxknXBsIccAO6SikxNkjK9H7IPs6nSgUF96MfYRGlidA7agW56WT97hi4ynk0GzqzIj/MKZDSj6Sb8SCFtOOAPvuC7h3ALJ4xabtQxR8ctxFIXft1sP+veyeqY0R67RqsudrpxVEGqpXNWg0vEvbGk03I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xHCy7lk3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=G84P3RpO; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xHCy7lk3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=G84P3RpO; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 17EFB207CD;
-	Fri, 29 Aug 2025 09:27:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756459628; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YMNvp6aJZPRO/eumDR8IUAtr0y7CCMCS5RSfKCzLGko=;
-	b=xHCy7lk3SW0Fk7PWWPZv+/NHhfB1bbGCNVc746sg/Ise8q+ULwN8trwuLr5DI7nW5XiMt6
-	Im70+H2cMUQx3B0YzqeCoMEKXMAKVdtxWySV0o0izoEJqOMnKea85nv8tj6E9SMtZ77lbp
-	T9WAnRdW6znNoTeGD7YLtA8Zdm/dqXI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756459628;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YMNvp6aJZPRO/eumDR8IUAtr0y7CCMCS5RSfKCzLGko=;
-	b=G84P3RpO/VmKz82Vve+fYtkgJePq86E7JHYq0+4ARLzCFbCQVS2X8xXXGz6+sxHb+nmhuY
-	sJG7+evDjuoF3KBg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=xHCy7lk3;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=G84P3RpO
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756459628; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YMNvp6aJZPRO/eumDR8IUAtr0y7CCMCS5RSfKCzLGko=;
-	b=xHCy7lk3SW0Fk7PWWPZv+/NHhfB1bbGCNVc746sg/Ise8q+ULwN8trwuLr5DI7nW5XiMt6
-	Im70+H2cMUQx3B0YzqeCoMEKXMAKVdtxWySV0o0izoEJqOMnKea85nv8tj6E9SMtZ77lbp
-	T9WAnRdW6znNoTeGD7YLtA8Zdm/dqXI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756459628;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YMNvp6aJZPRO/eumDR8IUAtr0y7CCMCS5RSfKCzLGko=;
-	b=G84P3RpO/VmKz82Vve+fYtkgJePq86E7JHYq0+4ARLzCFbCQVS2X8xXXGz6+sxHb+nmhuY
-	sJG7+evDjuoF3KBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 076CD13326;
-	Fri, 29 Aug 2025 09:27:08 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id w43IAWxysWgINAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 29 Aug 2025 09:27:08 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 25564A099C; Fri, 29 Aug 2025 11:27:03 +0200 (CEST)
-Date: Fri, 29 Aug 2025 11:27:03 +0200
-From: Jan Kara <jack@suse.cz>
-To: Xichao Zhao <zhao.xichao@vivo.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, mic@digikod.net, 
-	jack@suse.cz, gnoack@google.com, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs: Replace offsetof() with struct_size() in
- ioctl_file_dedupe_range()
-Message-ID: <65m5gqzejxjjeso2kxsu2pojdaylvv3z6nbl5lqimbxkz464ic@kc2nasscngeo>
-References: <20250829091510.597858-1-zhao.xichao@vivo.com>
+	s=arc-20240116; t=1756459905; c=relaxed/simple;
+	bh=TFmpqrDuZzk1PfENqc6BHFvUgs39QSPGfIFjT0wJQyo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aByyEfErEVP9uAaqrW3ycG2Tvcy/vvsrew6+4LYsK5AuZ1mlVB2cgYgo+ySfZR0KELPGnCQazsi/1hlq17WRvBS2atCTnSS9Y3KT/6OSZ2X65lWbWyTCXoiuVN+TPXN6jhagrxbaq306iiXNfYFlwtDO7lgjoH/2D3y/YKAoRDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IzP1EoUB; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-61cf0901a72so1851265a12.1;
+        Fri, 29 Aug 2025 02:31:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756459902; x=1757064702; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tXubTchbwvZaUajIutsCKJWz5ri+uL4LtwyyfrFR0Fc=;
+        b=IzP1EoUBDgpXkfJugwlRF8TMTSqQFkdEuidmPLmDY58E53wE2eWWAQgHyPNO8wW3N7
+         L4L2lSUEsDuvjZCrctOSJeUo8XCn3fO0TbM/XZmIcdoZgMbQuA0dW/2W37PecLp8KNPG
+         DzySQaer6+dIZ0zyhS2mBS7foqNh0mRxSuqR/3HW+InJjsEFKWVlmdwWz9N5w1ykgU8r
+         vd/a09uVwdC4F8+XQA5OeTcrAt8p0MuXCB3iiPHGo3Z01EFvmi52hFS0Gne7/eBMp3OE
+         FdTCGA3R1kB532JsGNqJqbOH7ZDjm3swTOyldVtDZnv++irdzCmeDQJtN0qX1LMY+ive
+         5lOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756459902; x=1757064702;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tXubTchbwvZaUajIutsCKJWz5ri+uL4LtwyyfrFR0Fc=;
+        b=khSBj7ncqqp0UBG0qEpqsFn0UowncB/A5R9JNGD0HYttCE8fknUvaLHpqcWx/Z5EEG
+         P8f5/hmnn1t1jpkCewZIxNv72aeI73JUj0FW+GpjQmNZkkTfkrZwy5fp1U66lbtBVaQH
+         lgnZKDTE/b2igJGz1rTKGF6CVNMSPOA8gU2CwVlKXic8EZfNCixheLgT21V1PdJ6/tCo
+         fwicz9LBdheyoY7icz87fGNrt/LFxCTpb5rCtwsUEwys3HkKiaF4PNl7RBPB5XT5KUkQ
+         nl+0a47BBKvJPBLO+5fCTYa7ELiGQqXK57+mLvWe5n3Vy36vRXIjACdUrWE9nt/opMQM
+         4arQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWOumb2nu0P9CYESBtrBKI7Onu0HQORgzFMi6YDu03qAO/jqxbsl/GlmMnsHPABsqhN6XoDKcH3AhxNDtDyAA==@vger.kernel.org, AJvYcCWpgNCahyVJEt1R/DvmA4z/FgSOJio+zuhX7VvCHanecIGRAnhfbRJ9WQwsRcAkQymSYw8KEmFEj30R8XsP@vger.kernel.org, AJvYcCXvnNjMz5yN7DTuNcfiu9hfJ5sZ7zfaWp9/2G4NJsR7gSVYg3CvdMJYNYR0M0WgPNC4q9lccqmaOQc6MqnE@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxk4gvkRRJ8SdcfMnF/zd2Zj5g6Yenl5HySxkBE80V5Vm1cvrh8
+	UhceD20H+GLr3SrvEIk6XdGOqtkH+30QTCDi5Wxsu/Ts73khy+6C6AV2SGona2GG3foSsol8N9/
+	EDF1Vkk2ex4Z1y3G++egdMiQw71U6d8g=
+X-Gm-Gg: ASbGncsyrqSzkQnirsONmxl0zKeChvfo9wn2orW5gxknK62KvaeKZJyh2QgvXVZv9m+
+	0myYvYXv3wXu+Aj+YRWnhF/KObFXkRWTCtLS2onaH/mcEYmA7KTcYv96yMd0S+uUKBLLSh3Gffa
+	3Jbt+c7gZ7Sv/Y9e2+D/xI5A4t1AqwO57DYxChNqwSIbvQYwVBd9S/5EAvA/Ec0j7L+Lu6Fb77G
+	AlBNl204G7MS+cpOw==
+X-Google-Smtp-Source: AGHT+IEW56i3uuLsjGQiYtEQTu3jJWGM5XY6MhFx8dSCG2ClW4Hg6swCYE/xgcVP5dLk5jPgz3dG8IAKo4D+VljZbFs=
+X-Received: by 2002:a05:6402:278d:b0:61c:e86b:8e3b with SMTP id
+ 4fb4d7f45d1cf-61ce86b91e7mr4358538a12.23.1756459902081; Fri, 29 Aug 2025
+ 02:31:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250829091510.597858-1-zhao.xichao@vivo.com>
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 17EFB207CD
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
+References: <CAOQ4uxhJfFgpUKHy0c23i0dsvxZoRuGxMVXbasEn3zf3s0ORYg@mail.gmail.com>
+ <175643072654.2234665.6159276626818244997@noble.neil.brown.name>
+In-Reply-To: <175643072654.2234665.6159276626818244997@noble.neil.brown.name>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 29 Aug 2025 11:31:30 +0200
+X-Gm-Features: Ac12FXyFDId4PisLZWHYgIvi5BD8hYRBeEN948zp6qMmMuRPOygZuJneTqW6DiA
+Message-ID: <CAOQ4uxj8mncxy_LOYejGWtokh=C2WpDcGFqj+-k+imVtEk-84A@mail.gmail.com>
+Subject: Re: [PATCH v6 9/9] ovl: Support mounting case-insensitive enabled layers
+To: NeilBrown <neil@brown.name>
+Cc: Gabriel Krisman Bertazi <gabriel@krisman.be>, =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, 
+	Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>, linux-unionfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	kernel-dev@igalia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri 29-08-25 17:15:10, Xichao Zhao wrote:
-> When dealing with structures containing flexible arrays, struct_size()
-> provides additional compile-time checks compared to offsetof(). This
-> enhances code robustness and reduces the risk of potential errors.
-> 
-> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
+On Fri, Aug 29, 2025 at 3:25=E2=80=AFAM NeilBrown <neil@brown.name> wrote:
+>
+> On Thu, 28 Aug 2025, Amir Goldstein wrote:
+> >
+> > Neil,
+> >
+> > FYI, if your future work for vfs assumes that fs will alway have the
+> > dentry hashed after create, you may want to look at:
+> >
+> > static int ovl_instantiate(struct dentry *dentry, struct inode *inode,
+> > ...
+> >         /* Force lookup of new upper hardlink to find its lower */
+> >         if (hardlink)
+> >                 d_drop(dentry);
+> >
+> >         return 0;
+> > }
+> >
+> > If your assumption is not true for overlayfs, it may not be true for ot=
+her fs
+> > as well. How could you verify that it is correct?
+>
+> I don't need the dentry to be hashed after the create has completed (or
+> failed).
+> I only need it to be hashed when the create starts, and ideally for the
+> duration of the creation process.
+> Several filesystems d_drop() a newly created dentry so as to trigger a
+> lookup - overlayfs is not unique.
+>
+> >
+> > I really hope that you have some opt-in strategy in mind, so those new
+> > dirops assumptions would not have to include all possible filesystems.
+>
+> Filesystems will need to opt-in to not having the parent locked.  If
+> a fs still has the parent locked across operations it doesn't really
+> matter when the d_drop() happens.  However I want to move all the
+> d_drop()s to the end (which is where ovl has it) to ensure there are no
+> structural issues that mean an early d_drop() is needed.  e.g. Some
+> filesystems d_drop() and then d_splice_alias() and I want to add a new
+> d_splice_alias() variant that doesn't require the d_drop().
+>
 
-Indeed. Also with struct_size() it is more obvious what was the intention.
-Feel free to add:
+Do you mean revert c971e6a006175 kill d_instantiate_no_diralias()?
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+In any case, I hope that in the end the semantics of state of dentry after
+lookup/create will be more clear than they are now...
 
-								Honza
-
-> ---
->  fs/ioctl.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/ioctl.c b/fs/ioctl.c
-> index 0248cb8db2d3..83d07218b6cd 100644
-> --- a/fs/ioctl.c
-> +++ b/fs/ioctl.c
-> @@ -426,7 +426,7 @@ static int ioctl_file_dedupe_range(struct file *file,
->  		goto out;
->  	}
->  
-> -	size = offsetof(struct file_dedupe_range, info[count]);
-> +	size = struct_size(same, info, count);
->  	if (size > PAGE_SIZE) {
->  		ret = -ENOMEM;
->  		goto out;
-> -- 
-> 2.34.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks,
+Amir.
 
