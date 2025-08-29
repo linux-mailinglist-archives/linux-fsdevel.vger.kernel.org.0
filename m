@@ -1,144 +1,197 @@
-Return-Path: <linux-fsdevel+bounces-59626-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59627-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12866B3B789
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 11:31:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 483CFB3B792
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 11:36:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30B7918908A2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 09:32:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03972200E59
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 09:36:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1AE2FDC21;
-	Fri, 29 Aug 2025 09:31:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB8452F4A12;
+	Fri, 29 Aug 2025 09:36:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IzP1EoUB"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Futjb47b"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B2352264CA;
-	Fri, 29 Aug 2025 09:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB4427587E
+	for <linux-fsdevel@vger.kernel.org>; Fri, 29 Aug 2025 09:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756459905; cv=none; b=a2OCOXD3jro286gz1Mz0HW6D1dc3uKAV1lqY1H3Q1z0ZFDjRwjguhsUhct3PtTIBCnBBP3VrZuiRayn2QqnqECuG43nsXH8qhvFtSXrB6KSEy2MGwS3qV68CpU2KAnQfQTdZUeTJfiL5xeJQSV+K+/yMntlmVnV7RrUWWmy9zJ0=
+	t=1756460180; cv=none; b=TnD2InKqqIGpjLQSdXhtNIHBSQ+Y82YPWi6ROTb6q8/d8OGOrGCl9yiZeARhc27qioHnPRDWVaJOqNv+/SoOyd5Z7CK5PftEx36ZkaBkTXppDy11ZjeV6Oi19RQ9DyG35pd3PdD5T82X9l7oFmm7+gYEgxC/IIXEelyxN3pcA9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756459905; c=relaxed/simple;
-	bh=TFmpqrDuZzk1PfENqc6BHFvUgs39QSPGfIFjT0wJQyo=;
+	s=arc-20240116; t=1756460180; c=relaxed/simple;
+	bh=fQkfpmLakVR8TBAul9808wWECjr1KhWDC5ssSn54a40=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aByyEfErEVP9uAaqrW3ycG2Tvcy/vvsrew6+4LYsK5AuZ1mlVB2cgYgo+ySfZR0KELPGnCQazsi/1hlq17WRvBS2atCTnSS9Y3KT/6OSZ2X65lWbWyTCXoiuVN+TPXN6jhagrxbaq306iiXNfYFlwtDO7lgjoH/2D3y/YKAoRDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IzP1EoUB; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-61cf0901a72so1851265a12.1;
-        Fri, 29 Aug 2025 02:31:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756459902; x=1757064702; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tXubTchbwvZaUajIutsCKJWz5ri+uL4LtwyyfrFR0Fc=;
-        b=IzP1EoUBDgpXkfJugwlRF8TMTSqQFkdEuidmPLmDY58E53wE2eWWAQgHyPNO8wW3N7
-         L4L2lSUEsDuvjZCrctOSJeUo8XCn3fO0TbM/XZmIcdoZgMbQuA0dW/2W37PecLp8KNPG
-         DzySQaer6+dIZ0zyhS2mBS7foqNh0mRxSuqR/3HW+InJjsEFKWVlmdwWz9N5w1ykgU8r
-         vd/a09uVwdC4F8+XQA5OeTcrAt8p0MuXCB3iiPHGo3Z01EFvmi52hFS0Gne7/eBMp3OE
-         FdTCGA3R1kB532JsGNqJqbOH7ZDjm3swTOyldVtDZnv++irdzCmeDQJtN0qX1LMY+ive
-         5lOw==
+	 To:Cc:Content-Type; b=cgYsvjoOaPQ8z2nkW7dll/uATF0MSlbtpqC9n8TnwF+ad1vIW1jZKMNZSJy2S6EXmG91suWcdG9grmB5oTG0DQWvuuKB9hntwTOl7nYwDlbHs97tL4RPcw7c8AxxKiPTzjNVv30K+bynwnJ4DPp88+aesTwiit9+/Wb2aybuP0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Futjb47b; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756460177;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZqS4Bkc3I0NVeANvpIab5dENRqxqrs5p3VIvl6dIMa8=;
+	b=Futjb47bvfN1NaRx2DU4rEPHdS6Y3sdfaMaRIQzRuffBDPfbcvMGg5aH5fBDMRZ9CmKX4P
+	T+kcXZjVqRrXvfTSeIFTB63wj+vg0l9XAa5voS0Y5li2Tt4XPF50QW3OyQn4X6h5RtpN8s
+	P4oEZ2MDRoQH/Ovh/5MXX+ZW+XyuvB8=
+Received: from mail-vk1-f200.google.com (mail-vk1-f200.google.com
+ [209.85.221.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-673-uRe8JI6AMSq4UiDXEY1_kw-1; Fri, 29 Aug 2025 05:36:15 -0400
+X-MC-Unique: uRe8JI6AMSq4UiDXEY1_kw-1
+X-Mimecast-MFC-AGG-ID: uRe8JI6AMSq4UiDXEY1_kw_1756460174
+Received: by mail-vk1-f200.google.com with SMTP id 71dfb90a1353d-54494477f93so305688e0c.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Aug 2025 02:36:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756459902; x=1757064702;
+        d=1e100.net; s=20230601; t=1756460174; x=1757064974;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tXubTchbwvZaUajIutsCKJWz5ri+uL4LtwyyfrFR0Fc=;
-        b=khSBj7ncqqp0UBG0qEpqsFn0UowncB/A5R9JNGD0HYttCE8fknUvaLHpqcWx/Z5EEG
-         P8f5/hmnn1t1jpkCewZIxNv72aeI73JUj0FW+GpjQmNZkkTfkrZwy5fp1U66lbtBVaQH
-         lgnZKDTE/b2igJGz1rTKGF6CVNMSPOA8gU2CwVlKXic8EZfNCixheLgT21V1PdJ6/tCo
-         fwicz9LBdheyoY7icz87fGNrt/LFxCTpb5rCtwsUEwys3HkKiaF4PNl7RBPB5XT5KUkQ
-         nl+0a47BBKvJPBLO+5fCTYa7ELiGQqXK57+mLvWe5n3Vy36vRXIjACdUrWE9nt/opMQM
-         4arQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWOumb2nu0P9CYESBtrBKI7Onu0HQORgzFMi6YDu03qAO/jqxbsl/GlmMnsHPABsqhN6XoDKcH3AhxNDtDyAA==@vger.kernel.org, AJvYcCWpgNCahyVJEt1R/DvmA4z/FgSOJio+zuhX7VvCHanecIGRAnhfbRJ9WQwsRcAkQymSYw8KEmFEj30R8XsP@vger.kernel.org, AJvYcCXvnNjMz5yN7DTuNcfiu9hfJ5sZ7zfaWp9/2G4NJsR7gSVYg3CvdMJYNYR0M0WgPNC4q9lccqmaOQc6MqnE@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxk4gvkRRJ8SdcfMnF/zd2Zj5g6Yenl5HySxkBE80V5Vm1cvrh8
-	UhceD20H+GLr3SrvEIk6XdGOqtkH+30QTCDi5Wxsu/Ts73khy+6C6AV2SGona2GG3foSsol8N9/
-	EDF1Vkk2ex4Z1y3G++egdMiQw71U6d8g=
-X-Gm-Gg: ASbGncsyrqSzkQnirsONmxl0zKeChvfo9wn2orW5gxknK62KvaeKZJyh2QgvXVZv9m+
-	0myYvYXv3wXu+Aj+YRWnhF/KObFXkRWTCtLS2onaH/mcEYmA7KTcYv96yMd0S+uUKBLLSh3Gffa
-	3Jbt+c7gZ7Sv/Y9e2+D/xI5A4t1AqwO57DYxChNqwSIbvQYwVBd9S/5EAvA/Ec0j7L+Lu6Fb77G
-	AlBNl204G7MS+cpOw==
-X-Google-Smtp-Source: AGHT+IEW56i3uuLsjGQiYtEQTu3jJWGM5XY6MhFx8dSCG2ClW4Hg6swCYE/xgcVP5dLk5jPgz3dG8IAKo4D+VljZbFs=
-X-Received: by 2002:a05:6402:278d:b0:61c:e86b:8e3b with SMTP id
- 4fb4d7f45d1cf-61ce86b91e7mr4358538a12.23.1756459902081; Fri, 29 Aug 2025
- 02:31:42 -0700 (PDT)
+        bh=ZqS4Bkc3I0NVeANvpIab5dENRqxqrs5p3VIvl6dIMa8=;
+        b=X9V8c16buKxL5gRSzsU1tMXb2CxTdDf5o/XnULF4iFz33mrSusIoZMmlid0ONtjsb6
+         jIvH+cSH78B9aoq0/wWGavOkJ5ewhIzRLBWa1xxr37sdq3tPBKhvqAi/f+lr0aP9HqFt
+         UJHnr1A7Poj0VC9uoZtarQug00pAHDmyRGKg0NACZyPAX3o1k3wdBBlAiyt5ohcFEzfr
+         54UJKRjAN94SukHvVz3yAwXL7baKA1Bcc4LC3YBM1FRW0ruc5Yut1N/S3Wa6Tydi6a6M
+         ZT/S2zJqoAAeh+kdDGwHu/JNnQW1gQTHpWGn/Hv6fhUYd1r7LfDUxy+9XVAWz6umSRP5
+         IqJA==
+X-Forwarded-Encrypted: i=1; AJvYcCXelpcGiW0AnGzjxsH3rl/nBppOo5dphJOGO53EHBv0avD2SpibL4uagQRpoSwCeFd8mVWHVffYapyA71T0@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFQ+nYxYJ4URCACZJ33JG8d2cUNbjnpsccRk5sGPC9OF/hqDiR
+	RwoEJS0cA3AFQAcQTa2Ahl6WLJBN979H6mY6JRw9Ib/kc98eblCzLnJ90RNarJnQeVP6sEqJOzx
+	wfJJNH+p2inLcwByFq9AQoBqv71j/0dqD8PsxGk3H5izYYU+ZeW32tSIQZp3ROnX1+GavHyKAKo
+	uJ18oTu1eE+OBsCkLGF27WpfFI56RLXlf7jripCDNl6Q==
+X-Gm-Gg: ASbGnctIEtRDlQFMGRiQ/QuQVIeLu1FWrmWMqtDeZ2nj9ofR16mpbs/sRDEd9j6+j9V
+	lmj7L8gf9/JwqH0IzQbiwZaIGT4EIWo9Tr9aX1eMmVe8d27BEKb8b2cevvYoO8vfGXlDiNrBq4C
+	/RQAH1ELFo7CDGrUWH5miIqUULQkgINq/EH0bf92U=
+X-Received: by 2002:a05:6122:801a:20b0:544:9147:52 with SMTP id 71dfb90a1353d-54491470524mr301440e0c.5.1756460174377;
+        Fri, 29 Aug 2025 02:36:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE1iToO96wAeCdOEEwKrA8/gDyY87Iy/xg2/A0fn48S5IH+AgPRuSVKQE9N7BA4e2+T0JB5rtS1xZVbrS33GkA=
+X-Received: by 2002:a05:6122:801a:20b0:544:9147:52 with SMTP id
+ 71dfb90a1353d-54491470524mr301435e0c.5.1756460174080; Fri, 29 Aug 2025
+ 02:36:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAOQ4uxhJfFgpUKHy0c23i0dsvxZoRuGxMVXbasEn3zf3s0ORYg@mail.gmail.com>
- <175643072654.2234665.6159276626818244997@noble.neil.brown.name>
-In-Reply-To: <175643072654.2234665.6159276626818244997@noble.neil.brown.name>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 29 Aug 2025 11:31:30 +0200
-X-Gm-Features: Ac12FXyFDId4PisLZWHYgIvi5BD8hYRBeEN948zp6qMmMuRPOygZuJneTqW6DiA
-Message-ID: <CAOQ4uxj8mncxy_LOYejGWtokh=C2WpDcGFqj+-k+imVtEk-84A@mail.gmail.com>
-Subject: Re: [PATCH v6 9/9] ovl: Support mounting case-insensitive enabled layers
-To: NeilBrown <neil@brown.name>
-Cc: Gabriel Krisman Bertazi <gabriel@krisman.be>, =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>, linux-unionfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	kernel-dev@igalia.com
+References: <20250828184441.83336-2-slava@dubeyko.com>
+In-Reply-To: <20250828184441.83336-2-slava@dubeyko.com>
+From: Alex Markuze <amarkuze@redhat.com>
+Date: Fri, 29 Aug 2025 12:36:01 +0300
+X-Gm-Features: Ac12FXxfvqq3UfxdkD_792piihHsjv5TRejTfdpLuR5jpE7R_lciWBSBxLK59NY
+Message-ID: <CAO8a2SgP6gK_jBkOFcMNbc4T5oWvnHi_OfM3QQ0JeUeLa8CGjQ@mail.gmail.com>
+Subject: Re: [PATCH v2] ceph: fix potential NULL dereferenced issue in ceph_fill_trace()
+To: Viacheslav Dubeyko <slava@dubeyko.com>
+Cc: ceph-devel@vger.kernel.org, idryomov@gmail.com, 
+	linux-fsdevel@vger.kernel.org, pdonnell@redhat.com, Slava.Dubeyko@ibm.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 29, 2025 at 3:25=E2=80=AFAM NeilBrown <neil@brown.name> wrote:
+Reviewed-by: Alex Markuze amarkuze@redhat.com
+
+On Thu, Aug 28, 2025 at 9:45=E2=80=AFPM Viacheslav Dubeyko <slava@dubeyko.c=
+om> wrote:
 >
-> On Thu, 28 Aug 2025, Amir Goldstein wrote:
-> >
-> > Neil,
-> >
-> > FYI, if your future work for vfs assumes that fs will alway have the
-> > dentry hashed after create, you may want to look at:
-> >
-> > static int ovl_instantiate(struct dentry *dentry, struct inode *inode,
-> > ...
-> >         /* Force lookup of new upper hardlink to find its lower */
-> >         if (hardlink)
-> >                 d_drop(dentry);
-> >
-> >         return 0;
-> > }
-> >
-> > If your assumption is not true for overlayfs, it may not be true for ot=
-her fs
-> > as well. How could you verify that it is correct?
+> From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 >
-> I don't need the dentry to be hashed after the create has completed (or
-> failed).
-> I only need it to be hashed when the create starts, and ideally for the
-> duration of the creation process.
-> Several filesystems d_drop() a newly created dentry so as to trigger a
-> lookup - overlayfs is not unique.
+> The Coverity Scan service has detected a potential dereference of
+> an explicit NULL value in ceph_fill_trace() [1].
 >
-> >
-> > I really hope that you have some opt-in strategy in mind, so those new
-> > dirops assumptions would not have to include all possible filesystems.
+> The variable in is declared in the beggining of
+> ceph_fill_trace() [2]:
 >
-> Filesystems will need to opt-in to not having the parent locked.  If
-> a fs still has the parent locked across operations it doesn't really
-> matter when the d_drop() happens.  However I want to move all the
-> d_drop()s to the end (which is where ovl has it) to ensure there are no
-> structural issues that mean an early d_drop() is needed.  e.g. Some
-> filesystems d_drop() and then d_splice_alias() and I want to add a new
-> d_splice_alias() variant that doesn't require the d_drop().
+> struct inode *in =3D NULL;
+>
+> However, the initialization of the variable is happening under
+> condition [3]:
+>
+> if (rinfo->head->is_target) {
+>     <skipped>
+>     in =3D req->r_target_inode;
+>     <skipped>
+> }
+>
+> Potentially, if rinfo->head->is_target =3D=3D FALSE, then
+> in variable continues to be NULL and later the dereference of
+> NULL value could happen in ceph_fill_trace() logic [4,5]:
+>
+> else if ((req->r_op =3D=3D CEPH_MDS_OP_LOOKUPSNAP ||
+>             req->r_op =3D=3D CEPH_MDS_OP_MKSNAP) &&
+>             test_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags) &&
+>              !test_bit(CEPH_MDS_R_ABORTED, &req->r_req_flags)) {
+> <skipped>
+>      ihold(in);
+>      err =3D splice_dentry(&req->r_dentry, in);
+>      if (err < 0)
+>          goto done;
+> }
+>
+> This patch adds the checking of in variable for NULL value
+> and it returns -EINVAL error code if it has NULL value.
+>
+> v2
+> Alex Markuze suggested to add unlikely macro
+> in the checking condition.
+>
+> [1] https://scan5.scan.coverity.com/#/project-view/64304/10063?selectedIs=
+sue=3D1141197
+> [2] https://elixir.bootlin.com/linux/v6.17-rc3/source/fs/ceph/inode.c#L15=
+22
+> [3] https://elixir.bootlin.com/linux/v6.17-rc3/source/fs/ceph/inode.c#L16=
+29
+> [4] https://elixir.bootlin.com/linux/v6.17-rc3/source/fs/ceph/inode.c#L17=
+45
+> [5] https://elixir.bootlin.com/linux/v6.17-rc3/source/fs/ceph/inode.c#L17=
+77
+>
+> Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+> cc: Alex Markuze <amarkuze@redhat.com>
+> cc: Ilya Dryomov <idryomov@gmail.com>
+> cc: Ceph Development <ceph-devel@vger.kernel.org>
+> ---
+>  fs/ceph/inode.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+>
+> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> index fc543075b827..8ef6b3e561cf 100644
+> --- a/fs/ceph/inode.c
+> +++ b/fs/ceph/inode.c
+> @@ -1739,6 +1739,11 @@ int ceph_fill_trace(struct super_block *sb, struct=
+ ceph_mds_request *req)
+>                         goto done;
+>                 }
+>
+> +               if (unlikely(!in)) {
+> +                       err =3D -EINVAL;
+> +                       goto done;
+> +               }
+> +
+>                 /* attach proper inode */
+>                 if (d_really_is_negative(dn)) {
+>                         ceph_dir_clear_ordered(dir);
+> @@ -1774,6 +1779,12 @@ int ceph_fill_trace(struct super_block *sb, struct=
+ ceph_mds_request *req)
+>                 doutc(cl, " linking snapped dir %p to dn %p\n", in,
+>                       req->r_dentry);
+>                 ceph_dir_clear_ordered(dir);
+> +
+> +               if (unlikely(!in)) {
+> +                       err =3D -EINVAL;
+> +                       goto done;
+> +               }
+> +
+>                 ihold(in);
+>                 err =3D splice_dentry(&req->r_dentry, in);
+>                 if (err < 0)
+> --
+> 2.51.0
 >
 
-Do you mean revert c971e6a006175 kill d_instantiate_no_diralias()?
-
-In any case, I hope that in the end the semantics of state of dentry after
-lookup/create will be more clear than they are now...
-
-Thanks,
-Amir.
 
