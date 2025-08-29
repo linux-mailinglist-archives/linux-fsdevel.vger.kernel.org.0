@@ -1,237 +1,188 @@
-Return-Path: <linux-fsdevel+bounces-59628-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59629-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18002B3B797
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 11:39:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0E92B3B7A7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 11:48:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37E521C85DF4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 09:40:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1BAF1C807DE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 09:48:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC79630496C;
-	Fri, 29 Aug 2025 09:39:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84F533054DB;
+	Fri, 29 Aug 2025 09:48:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="Ktl4tAVY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jhvqwzBl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013060.outbound.protection.outlook.com [40.107.44.60])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5715C29992E;
-	Fri, 29 Aug 2025 09:39:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756460372; cv=fail; b=JQ5dmvlYdwP5hWXZjiDKkXaDl3QscNZ39xTN6pfVq4GMGK+sK2oGhwIMrC0mcNadVQgWKP0oW0oET1lTa1QfVMFJOtxQkSJrp8qtuQEG1TIYqEy6wHaOpKg2el0ZWtMfrJVbI5rrtb+VGlKn5m2Pf/swfVu1GaTutuWAPTik6V0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756460372; c=relaxed/simple;
-	bh=4GgsVmwfN+cVjIm5NAPKgQm1/FI08hlbbyv1XkTWelY=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=syFTIjq3OyMLSARIe6HsyK87PFq26NG6QZ3alzEd6yNiGs/m0FmkcG4bC1Eyh5Muz+KJxNsvYTw+iDhJv4Fpgqwcy5guIFo3aUBEiso3mKN89tn3UELOn8uISFvM9bmaNcazAqmoHH4LLZxI4enArdAtEI/tIYekfZRlDa6zYnA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=Ktl4tAVY; arc=fail smtp.client-ip=40.107.44.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sUgx3qmhiEbm2coY84YUitF7kf/prYQnkJ1Wh+AUnQTOh2mLQ/MhgcNp0aTiLfoIS6aUnTcrHn+448H5FQ/qLYp4YC9BZLvjwLfZJwMKV0y/GwfY6TQQt19OasjLjuM/zI3o7mUubPzUONQmkrx+XlYOm/iqN1dzJvfW2rOdEqGnd3a9ddYq925A6l//hmK99IWwPsv2gf3r0CbpcfnkI/iHj2FVJnRI3NaUaqGUQIUsE5E1QPR6GsFZqDoZa8X1W+y7BZAmSA9ao0IzsFXa7yBj5SeHVak4ZHeJJXp1YbaXUOBwZlUX6Xjc3Brb0+tJ+X7lzgsAiua+Nn3zH6mvew==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aXhwmRL2qgJ7VzmUYEHZ8RwucFfFF18U1F4XtTO1yYM=;
- b=iIS3y0BM2qBqPQkWI7PQtxvXcGBLXVrXWE0yV5sVtUfDqi7gQcS/XciH1yBqu0I4mpmtePkq0ch37ewoFkPngK6qU5wBH5jaQG1BqLAjLQC3r7TXHFZzN3CKyZIiwVW2SLBSHP0MGOsglqn0FMo27fsvkmYj+ER2PwEymq+zgtK6LQ6RLRlK/ucWT29gvysVkDLvDTl/dYWYZRG5NxJUjKeTDW1r/ddYCC5CuUsKuWr0n/39ZHT3L1z2QXYFZ4HEe63r/9IUF89fkEVTF4vMBFivs5+7NvnRigosqlw115kxcA8emjh8WmCHXmGC0dkxVb4ZQjF4mRNDOhRcBxOdyQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aXhwmRL2qgJ7VzmUYEHZ8RwucFfFF18U1F4XtTO1yYM=;
- b=Ktl4tAVY/H+F6Ee+PsSpo1SLDb0q2SSQ97vYz6kNRLxzP3zLvGgvEOJu1FZNmCef/FCPl4UyxUCUaZ+YuOHNCFFw/zyIwy8naC0ZAFX0YGpbc8gUJp6Sr+ztZhN5YesMSyBjYnPJS6yL8Y1QFt5mete/iAHk0ItW0zaENcd0RQzvYv5Ns3lGYzYB/Jh0Tp4xILUGqKzSYZ+cTk50zxgPnGYFognmUomooc/JILaapT+PZA9txPW6CmT6VU+8s7OmgDI+U3G65MGsKQGg4HGW+NCQazZv0gw5zO2IQ92ehsFhKjPVcmMzqsshdlQMRyShRmKVaY1Bkhjj9eX8je0UuA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from PS1PPF56C578557.apcprd06.prod.outlook.com (2603:1096:308::24f)
- by KL1PR06MB6905.apcprd06.prod.outlook.com (2603:1096:820:12a::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.15; Fri, 29 Aug
- 2025 09:39:26 +0000
-Received: from PS1PPF56C578557.apcprd06.prod.outlook.com
- ([fe80::3f4b:934a:19d4:9d23]) by PS1PPF56C578557.apcprd06.prod.outlook.com
- ([fe80::3f4b:934a:19d4:9d23%4]) with mapi id 15.20.9052.019; Fri, 29 Aug 2025
- 09:39:25 +0000
-From: Chenzhi Yang <yang.chenzhi@vivo.com>
-To: slava@dubeyko.com,
-	glaubitz@physik.fu-berlin.de,
-	frank.li@vivo.com
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+005d2a9ecd9fbf525f6a@syzkaller.appspotmail.com,
-	Yang Chenzhi <yang.chenzhi@vivo.com>
-Subject: [PATCH] hfsplus: fix missing hfs_bnode_get() in __hfs_bnode_create
-Date: Fri, 29 Aug 2025 17:39:12 +0800
-Message-Id: <20250829093912.611853-1-yang.chenzhi@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI1PR02CA0012.apcprd02.prod.outlook.com
- (2603:1096:4:1f7::8) To PS1PPF56C578557.apcprd06.prod.outlook.com
- (2603:1096:308::24f)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC3A533985;
+	Fri, 29 Aug 2025 09:48:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756460883; cv=none; b=WQDEdeVjS0bLsirFq+iekU0/twka6S5/Wba6kgkb2KaA8FwjfoPMTsGCQAWmiIjLxPPDQkWjLFD4BvQTLwvqoU870eiXAR5zGX1AZKvVYtqgs9dfKREkYorEsk5BOdJx76ajqyUMr3wd65R7/VMNrN6vEOv8tF96DoK6nrCtXwk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756460883; c=relaxed/simple;
+	bh=c/nLtzvIjWghajbObEXEYoMuDbVvHsLyXpDONNIuyys=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pbzL6Y4ywNOOtP8WdHoYauYdb5CIWGtW6X3GbG6SOi7id1waEXrjrKhmvOkN9hPNNDvXpFDzbC93LSbJQW6KVsuYGk0E5gqjB2EaT6xpfH7WSF6It8xCjmwDae8tT9MjEz91uUsfOeFOEjELAvC5/kchr65eiRGT+q4RJOgnKDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jhvqwzBl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FC19C4CEF6;
+	Fri, 29 Aug 2025 09:48:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756460882;
+	bh=c/nLtzvIjWghajbObEXEYoMuDbVvHsLyXpDONNIuyys=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jhvqwzBlD0vhRISffYFW/jHR6T+9q4xzM0ncFhAeZSgivmCzIWl8eS0asllwkDcp8
+	 nXg7SEzPFXijk0YQ47hMH+8YVQcK0t8VpJFp3/c4vKjxb5hc2dXs2PPEVUdmg35XBi
+	 Dg1PoySLqIlm9yJNb+M5nf/5EYj4RK6aS0hCQNUm8f6z9Ht4usjMbRkAEfylu0AG8d
+	 Ftf4oN5S8QxZyNdsoxUcVB1xF9LLciOznTYbIvRQFoasDVLqrQtHRmMgiXBSmVhVo2
+	 uqNr8/YC1FN2SIrWCqeLd3HVqeYo6/nst0ufX1Bec7iuJQ1OSbg0WNMoC5f+WtgJ/P
+	 3QGeE08GKsu+g==
+Date: Fri, 29 Aug 2025 11:47:58 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Alexander Monakov <amonakov@ispras.ru>
+Cc: linux-fsdevel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org
+Subject: Re: ETXTBSY window in __fput
+Message-ID: <20250829-diskette-landbrot-aa01bc844435@brauner>
+References: <6e60aa72-94ef-9de2-a54c-ffd91fcc4711@ispras.ru>
+ <5a4513fe-6eae-9269-c235-c8b0bc1ae05b@ispras.ru>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PS1PPF56C578557:EE_|KL1PR06MB6905:EE_
-X-MS-Office365-Filtering-Correlation-Id: b8c62861-8160-481f-de79-08dde6dff10b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|52116014|366016|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?l7UPgNNugsF36z/5oAqkmWoEPIbR878mVK1uFbvd1h0YEykx0/vJE+EDnl56?=
- =?us-ascii?Q?3cUOqvl+HD+6C0NTA+fzXsT2OiWFKkKAnwIvAfBKKiH2bUj8UECTCcO957ic?=
- =?us-ascii?Q?DLds8jTmyWG97xC3oAoLwlp2FKpHvPp6E8mh/KaP/E7uv8eaBMA+wzBdpki0?=
- =?us-ascii?Q?Mg5IXCJY2TXN2CktSFMoYEXgieEVV5wQKq5WlVeLU8MMF/bugGrdEHl4Uuvu?=
- =?us-ascii?Q?uo9O4oNwXxJHu/TRpPrzYpNAR7PEAeFodons62qzbHbArBCHc4tmKcFT2h4f?=
- =?us-ascii?Q?y1ftTA49qDc8Uhk23EzDKHP2u4quJcCBIURwSsPdQqoTAoSN+ERcDi/o1Kyd?=
- =?us-ascii?Q?WS1yU/1/BVSAlqTmzH1tA8yz76dTxI/vIeUnK0SZ7oQtrtMai9TVtFC8f5Nn?=
- =?us-ascii?Q?Qa3W7unN9rC5yrDVMkqWlvdVA4akkYzJC3uU0TXM71ps7IxEqVpjVkQtuT5R?=
- =?us-ascii?Q?HzzeZzxqyaAdI21mTvPihZ96PPnTdshdhMTLkvHodXOVF7PdVf70PAh8OghU?=
- =?us-ascii?Q?bc6kmgFx5DnJ6dEX8F02d3orfDWRJJ/b2TGuEgu7Ct7dEjTSWDifxamUX+Jz?=
- =?us-ascii?Q?rJDeYrrjagYOn2lYi1KWH0+YOmScm9w+260hlWl5vW/oD6tGak97R3IPXO9k?=
- =?us-ascii?Q?+farYzWMVXYY4O/slJSJOnhdDs/zAp4cDgMFGqIOS2XcxoT2EoZ+vLOBtM4G?=
- =?us-ascii?Q?pp8ztgQ1b1bUW0rNG0f0S/TSNtSzTIifFBASUb0/WjQFXr3Yj6DAMMofuvBU?=
- =?us-ascii?Q?WsHtshr4XyCXg3UMb0+Zzxg366pivAcd0uAV1qfjKYrEZPOY//A36VIqwzrl?=
- =?us-ascii?Q?riU7jtuaHFFvFevXyKeV3vGr4sRvY6gPokYVP9PCtvx4n0ojhm7jR2NSgIPD?=
- =?us-ascii?Q?gcUYUiEkX5U1YleMT2/bSTEVYM1NE+Lx8LDdjIBi9g/kSxsSJLf3LqdEBS4x?=
- =?us-ascii?Q?j+JQSpN5Dsz7KwhoxkHRDvA+8Fz5qJKgTWo9O5PEq3Z7M+u+0sjOlRDJoAA8?=
- =?us-ascii?Q?wlIP1FATsiL6yezgVWvwrdixNI/ZHVjeUIDdtLypbNKLxGh6sk05V7IBxVhP?=
- =?us-ascii?Q?IcCvM3bPoE0RdRhnJXbS1jLIKt/nxWQgk1BMPxm/Qemt+lEvJm3dNgw3+hP6?=
- =?us-ascii?Q?kXgU4uX54TKv2SYoUblJvL5xTP5i6SfwwucwEGlEN6hftSk+Lm0eifnY3u0E?=
- =?us-ascii?Q?Xvz52YdJrOFCR3pIOdfmp17sSKyUMciIxfZNM51JqLokPekfhdIeyI3AK+X2?=
- =?us-ascii?Q?/A3TswvsId+SxKH/qrgxKuPtBpb/XAGINNvZU+0xPuZQo0PnkpolRCTGIPVQ?=
- =?us-ascii?Q?tAAgHDmVcK9uz23mDkjlEYawwWJ2UlXSTqkYstRSYwtrNGMfn3WKEnOKDZr1?=
- =?us-ascii?Q?cwnadyBjYTJ9eyDj0nZkpX8yFi4xMv9Ti0nqSWXkakPvYl69aWy5LoftU+C2?=
- =?us-ascii?Q?PhLICwProH49iMERtMh8giV0Tpr2Xw4qv4/cF3GRYKqGHCzy6GxwnA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PS1PPF56C578557.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(366016)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?j8uCz1ovSdgF5cn5XevXmwpaZr9Vz20MPCWWqvbGg5uHid3FRfvwvm0idvIP?=
- =?us-ascii?Q?IsELuP0bSuG7jsS3GI4CajuQAkdxXp8UxYqoT8OCJRMLcE4jR1IJnHFrF82Z?=
- =?us-ascii?Q?fFjL4Pg12XpcwV+VedmiVAIfM+fXOD9iqiLYLlz6XR3qg37GOGxmlJdoF+E5?=
- =?us-ascii?Q?GcfHcOjMtjVF47Ok0acJrI+32QFk9xrah6Fjt/yNFqKV+hncs2m0tpJGrmhk?=
- =?us-ascii?Q?le0y2yOyVTLK+w4ZuTETNmgNQlUmLFLM2wV97eL9pzFZIVZKc1/5+FwMMD9K?=
- =?us-ascii?Q?yLlAPf47M6qJHqCX4Ck6605i/Fb5VFC2glMq3MWoO0YoYt1lL0Onk7xp4V5e?=
- =?us-ascii?Q?gt5sQgZ8PPO8MKV+uxqG9XW0ZRJ9lJ16pbVuDFlmlKhSnfGr192v7JGh7Bvc?=
- =?us-ascii?Q?8oTjjtrUsM3fvErqnj6q7q/0KB+zQFQL9uuADB0M5WOsLX0O6giH9QBU4ze3?=
- =?us-ascii?Q?B6KT6qlFdDdI5CVvl4hGm/VoqPo/HRdA+pWO2clVbqaX7QVdZ+EvJTKYmc9M?=
- =?us-ascii?Q?gQm7FChAzzj8wsCL/iq4V5AbGwdk+oUpzdLATgyFptSuknNatdm5O/jupczM?=
- =?us-ascii?Q?7cp8DBVr0yohJQrf3YxYRGb5LkFNqrsJbHHoGSVjDIj3Oqvpm7zD4S/jY7cb?=
- =?us-ascii?Q?7kscUUoRqiqMHr94y8evLyoQ1Xm7VTAhY5UU3OHUbkgXp2OMxJYXB18dz8bI?=
- =?us-ascii?Q?3WJjcvKOQFjTw6tlD0F20jV5UrpMKQCaRqFN1/TlHmraGoHSDINhbsh0970c?=
- =?us-ascii?Q?jJpPYaOG89x1v9HPAmMMyupa/KsBdMoYeOYph8KCBSgac4GKGU8TBWy7GtOt?=
- =?us-ascii?Q?zdDX4s6Fdmilk8x2GUVe9PQ6uFQAt5YOo8pTH1Nx8ejnx6Rsu4VLBlH1Imjh?=
- =?us-ascii?Q?JINn1j+uhHh/90pEAhh2euXVurvtZkO7tOEVMg52tFWmDLRLHAmuRQv/9HW/?=
- =?us-ascii?Q?pz7m809LqdcUVphQ2k0UarFF8NzwaN8VvfgiAEmReq3ffk0TwBSlUPscIMG8?=
- =?us-ascii?Q?yT5TcVwD/whTOGeubs41SBsRCyGz+hHcag7sQAlfjthpl3rBUXvWX2JpgzRt?=
- =?us-ascii?Q?qyxfNSjuUMzM5b21XevZCjA8Kgf35CGig4k6jgkIOE0AXUeecwwovcrtRoxV?=
- =?us-ascii?Q?rTLi33gxhJ9S+E0/oQDciWkVc+c6XHCfb0srZbmm8hT7/doUECtd2CDSaD4L?=
- =?us-ascii?Q?5WuAn1D0EINbFVUT+WEsRYJYV8wFz658kXZydkDKquILEnnJ/4rHReTbut2B?=
- =?us-ascii?Q?gVMsqYE03w6WkRivVu+FqyGmBzk6Hq97VtRMYLm3Guq0AgRH7rRkK+VFB8YK?=
- =?us-ascii?Q?22XTVazo1sxZ+zSHwgUg7Z6rcbjkQJR0dLkXwzJzwloVyPhNeluVq09f2hxz?=
- =?us-ascii?Q?IcrNqgYPDhXL436XBH4k6RRRaiPkwK5l3zT/1lzBNZJ7DmoTyEb67m6F1PQr?=
- =?us-ascii?Q?BxYekgd2BuNL2nvDybpL6IOT1VjWk/WC/2LtzXXyQdxU6MqRZKDiuJySClII?=
- =?us-ascii?Q?y7nIuC7nrAFL483lgTTEth1RncUobIAn03idLA9vr4k7SpgSQhLeFboDkLqz?=
- =?us-ascii?Q?L1OKxGj+UFSer7T7T95bNQGAh5pYqoG1dItyx7/L?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b8c62861-8160-481f-de79-08dde6dff10b
-X-MS-Exchange-CrossTenant-AuthSource: PS1PPF56C578557.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2025 09:39:25.6771
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Tis4UbgJ49WxsiIFA311/ccbnfj6EvF+u6JcZt2+JG85CRXxvgQXVGiwKFApvVnndbpzcVvBnx9KJfZAeO5v+A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB6905
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <5a4513fe-6eae-9269-c235-c8b0bc1ae05b@ispras.ru>
 
-From: Yang Chenzhi <yang.chenzhi@vivo.com>
+On Fri, Aug 29, 2025 at 10:21:35AM +0300, Alexander Monakov wrote:
+> 
+> On Wed, 27 Aug 2025, Alexander Monakov wrote:
+> 
+> > Dear fs hackers,
+> > 
+> > I suspect there's an unfortunate race window in __fput where file locks are
+> > dropped (locks_remove_file) prior to decreasing writer refcount
+> > (put_file_access). If I'm not mistaken, this window is observable and it
+> > breaks a solution to ETXTBSY problem on exec'ing a just-written file, explained
+> > in more detail below.
+> 
+> The race in __fput is a problem irrespective of how the testcase triggers it,
+> right? It's just showing a real-world scenario. But the issue can be
+> demonstrated without a multithreaded fork: imagine one process placing an
+> exclusive lock on a file and writing to it, another process waiting on that
+> lock and immediately execve'ing when the lock is released.
+> 
+> Can put_file_access be moved prior to locks_remove_file in __fput?
 
-When sync() and link() are called concurrently, both threads may
-enter hfs_bnode_find() without finding the node in the hash table
-and proceed to create it.
+Even if we fix this there's no guarantee that the kernel will give that
+letting the close() of a writably opened file race against a concurrent
+exec of the same file will not result in EBUSY in some arcane way
+currently or in the future.
 
-Thread A:
-  hfsplus_write_inode()
-    -> hfsplus_write_system_inode()
-      -> hfs_btree_write()
-        -> hfs_bnode_find(tree, 0)
-          -> __hfs_bnode_create(tree, 0)
+The fundamental problem is the idiotic exe_file_deny_write_access()
+mechanism for execve. This is the crux of the whole go issue. I've tried
+to removethis nonsense (twice?). Everytime because of some odd userspace
+regression we had to revert (And now we're apparently at the stage where
+in another patchset people think that this stuff needs to become a uapi
+O_* flag which will absolutely not happen.).
 
-Thread B:
-  hfsplus_create_cat()
-    -> hfs_brec_insert()
-      -> hfs_bnode_split()
-        -> hfs_bmap_alloc()
-          -> hfs_bnode_find(tree, 0)
-            -> __hfs_bnode_create(tree, 0)
+My point is: currently you need synchronization for this to work cleanly
+in some form.
 
-In this case, thread A creates the bnode, sets refcnt=1, and hashes it.
-Thread B also tries to create the same bnode, notices it has already
-been inserted, drops its own instance, and uses the hashed one without
-getting the node.
+But what I would do is the following. So far we've always failed to
+remove the deny on write mechanism because doing it unconditionally
+broke very weird use-cases with very strange justificatons.
 
-```
+I think we should turn this on its head and give execveat() a flag
+AT_EXECVE_NODENYWRITE that allows applications to ignore the write
+restrictions.
 
-	node2 = hfs_bnode_findhash(tree, cnid);
-	if (!node2) {                                 <- Thread A
-		hash = hfs_bnode_hash(cnid);
-		node->next_hash = tree->node_hash[hash];
-		tree->node_hash[hash] = node;
-		tree->node_hash_cnt++;
-	} else {                                      <- Thread B
-		spin_unlock(&tree->hash_lock);
-		kfree(node);
-		wait_event(node2->lock_wq,
-			!test_bit(HFS_BNODE_NEW, &node2->flags));
-		return node2;
-	}
-```
+Applications like go can just start using this flag when exec'ing.
+Applications that need the annoying deny-write mechanism can just
+continue exec'ing as before without AT_EXECVE_NODENYWRITE.
 
-However, hfs_bnode_find() requires each call to take a reference.
-Here both threads end up setting refcnt=1. When they later put the node,
-this triggers:
+__Completely untested and uncompiled__ draft below:
 
-BUG_ON(!atomic_read(&node->refcnt))
+diff --git a/fs/exec.c b/fs/exec.c
+index 2a1e5e4042a1..59e8fcd3fc19 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -766,7 +766,7 @@ static struct file *do_open_execat(int fd, struct filename *name, int flags)
+        int err;
+        struct file *file __free(fput) = NULL;
+        struct open_flags open_exec_flags = {
+-               .open_flag = O_LARGEFILE | O_RDONLY | __FMODE_EXEC,
++               .open_flag = O_LARGEFILE | O_RDONLY | __FMODE_EXEC | __F_EXEC_NODENYWRITE,
+                .acc_mode = MAY_EXEC,
+                .intent = LOOKUP_OPEN,
+                .lookup_flags = LOOKUP_FOLLOW,
+diff --git a/fs/fcntl.c b/fs/fcntl.c
+index 5598e4d57422..b0c01cba1560 100644
+--- a/fs/fcntl.c
++++ b/fs/fcntl.c
+@@ -1158,10 +1158,10 @@ static int __init fcntl_init(void)
+         * Exceptions: O_NONBLOCK is a two bit define on parisc; O_NDELAY
+         * is defined as O_NONBLOCK on some platforms and not on others.
+         */
+-       BUILD_BUG_ON(20 - 1 /* for O_RDONLY being 0 */ !=
++       BUILD_BUG_ON(21 - 1 /* for O_RDONLY being 0 */ !=
+                HWEIGHT32(
+                        (VALID_OPEN_FLAGS & ~(O_NONBLOCK | O_NDELAY)) |
+-                       __FMODE_EXEC));
++                       __FMODE_EXEC | __F_EXEC_NODENYWRITE));
 
-In this scenario, Thread B in fact finds the node in the hash table
-rather than creating a new one, and thus must take a reference.
+        fasync_cache = kmem_cache_create("fasync_cache",
+                                         sizeof(struct fasync_struct), 0,
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index d7ab4f96d705..123f74cbe7a4 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3215,12 +3215,16 @@ static inline int exe_file_deny_write_access(struct file *exe_file)
+ {
+        if (unlikely(FMODE_FSNOTIFY_HSM(exe_file->f_mode)))
+                return 0;
++       if (unlikely(exe_file->f_flags & __F_EXEC_NODENYWRITE))
++               return 0;
+        return deny_write_access(exe_file);
+ }
+ static inline void exe_file_allow_write_access(struct file *exe_file)
+ {
+        if (unlikely(!exe_file || FMODE_FSNOTIFY_HSM(exe_file->f_mode)))
+                return;
++       if (unlikely(exe_file->f_flags & __F_EXEC_NODENYWRITE))
++               return;
+        allow_write_access(exe_file);
+ }
 
-Fix this by calling hfs_bnode_get() when reusing a bnode newly created by
-another thread to ensure the refcount is updated correctly.
+diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-generic/fcntl.h
+index 613475285643..f3c8a457bc7d 100644
+--- a/include/uapi/asm-generic/fcntl.h
++++ b/include/uapi/asm-generic/fcntl.h
+@@ -61,6 +61,9 @@
+ #ifndef O_CLOEXEC
+ #define O_CLOEXEC      02000000        /* set close_on_exec */
+ #endif
++#ifdef __KERNEL__
++#define __F_EXEC_NODENYWRITE 020000000000 /* bit 31 */
++#endif
 
-A similar bug was fixed in HFS long ago in commit
-a9dc087fd3c4 ("fix missing hfs_bnode_get() in __hfs_bnode_create")
-but the same issue remained in HFS+ until now.
+ /*
+  * Before Linux 2.6.33 only O_DSYNC semantics were implemented, but using
+diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
+index f291ab4f94eb..123fb158dc5b 100644
+--- a/include/uapi/linux/fcntl.h
++++ b/include/uapi/linux/fcntl.h
+@@ -174,6 +174,7 @@
+ #define AT_HANDLE_CONNECTABLE  0x002   /* Request a connectable file handle */
 
-Reported-by: syzbot+005d2a9ecd9fbf525f6a@syzkaller.appspotmail.com
-Signed-off-by: Yang Chenzhi <yang.chenzhi@vivo.com>
----
- fs/hfsplus/bnode.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/fs/hfsplus/bnode.c b/fs/hfsplus/bnode.c
-index 14f4995588ff..e774bd4f40c3 100644
---- a/fs/hfsplus/bnode.c
-+++ b/fs/hfsplus/bnode.c
-@@ -522,6 +522,7 @@ static struct hfs_bnode *__hfs_bnode_create(struct hfs_btree *tree, u32 cnid)
- 		tree->node_hash[hash] = node;
- 		tree->node_hash_cnt++;
- 	} else {
-+		hfs_bnode_get(node2);
- 		spin_unlock(&tree->hash_lock);
- 		kfree(node);
- 		wait_event(node2->lock_wq,
--- 
-2.43.0
-
+ /* Flags for execveat2(2). */
++#define AT_EXECVE_NODENYWRITE  0x001   /* Allow writable file descriptors to the executable file. */
+ #define AT_EXECVE_CHECK                0x10000 /* Only perform a check if execution
+                                           would be allowed. */
 
