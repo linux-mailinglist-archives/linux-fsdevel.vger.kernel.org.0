@@ -1,135 +1,138 @@
-Return-Path: <linux-fsdevel+bounces-59644-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59645-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0F5EB3B99C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 13:04:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2708EB3B9AC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 13:07:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E38FB7A642C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 11:02:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53D9818879D7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 11:08:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55CA131280B;
-	Fri, 29 Aug 2025 11:04:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51BF53128BA;
+	Fri, 29 Aug 2025 11:07:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Fo8KVRxS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GzQqbAeE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C77033081DA
-	for <linux-fsdevel@vger.kernel.org>; Fri, 29 Aug 2025 11:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB53E28369A;
+	Fri, 29 Aug 2025 11:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756465441; cv=none; b=kiKd9vzcVMqFvKd5WreAVW5fmYSL/sy6T+P7DmxCUp9vy3tbK/f5LHipTr1Yc8NRW/5JSqQQm+Qd24yM/IC66PG6FJbV+ZSlk9POVWiFo+S/YwzIrK3VUN0RgndcsOoCK89RIGbMSWYsSMVBPReTuSk/Y+jXJZmQJiiUVnRoio4=
+	t=1756465654; cv=none; b=feYjCRCV87pGqLjbHSXn1broc7+pFzxK7cu/NynbQKPy50W/mY7vkuhTTtJNwU1w9QHaTeeFnnaDbcD9lzIG443Wb54A/n6ZrzXstmPR9mYQJqqSFeOKDfloQg4+hY3zdkTs/x/b2TsrJM+ImndCurjOxML5EahkaZMrhdla2HY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756465441; c=relaxed/simple;
-	bh=YuYDNgvmByukeEjHw0NdzkrN0QNksChG2e5fXtNTVOM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WFn5DkGkFL3NIcfImasCGr8QVmUYM7Qo/OPhCI/nE3FxS/iRqgL3vP+umlmNy+RC3LCOuP59xdCh3BNUCUKgSkn/f0SheVcIX/6c8ikonZsdjKmex6F+LUYkgmJND+NS4vlOhBFngoIrDCAaB+NpW9EWO3C1NmIk+7/I5mAhk+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Fo8KVRxS; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-248c7f955a2so17896415ad.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Aug 2025 04:03:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1756465438; x=1757070238; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IIaSrq6Dx+kKyeLRsgFivteR1euTnImW9J7nYHhbSJY=;
-        b=Fo8KVRxScIwX+4IqOcKVSQHK1GhgE8u2mNSZg4G9BHU7ACOZqWvF8NBWtYa15l4mW5
-         GH17rSSfyQ4f5ng1MU8iTh8sFBPWNC5errVy18VTnFoL7V283SRbuHEizeSji9nXXu5N
-         mF45k8F4KgGYl5AaBugVTZv0C+/X9WkUCy8NR1aiDEGDAUZr8iEo5++XWT7dQoBKOGtq
-         fjVKeKI9Z0SV3NmtU6bsDC0yal2pv3n71guX7emGh11zbIJCHM6RkPcIpBzQ226OHCiy
-         lDs/SDCxlDviy3P892hOlrolmZg7J/lCmDWdZDEDgD//CEIJsOwlMqLyUDdvB4saV2Jh
-         imfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756465438; x=1757070238;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IIaSrq6Dx+kKyeLRsgFivteR1euTnImW9J7nYHhbSJY=;
-        b=XxmnhweB8tf75FtFZnk3NrC6ZYv4WyldiDLKOG8Qpw+rlMFw/ioUB0My447wNjtiz1
-         I8kuYfuBkfsArDuTgXBNA6vVizgOmWlgMkYOeQalSS1u6fs2SmnOZeqdumyHVGyD6HLZ
-         iptbyP2YKl9xLV5XpQ4dc2BeFC/DPi5tnvVHVMJ78YAKjKymF5UDWmVYMkkX+/TlzQ3w
-         ElZHo57dMhJq4tqguCXJm6nr/CYweDNJW9bba3mVfMV2z/QoLsEsDM+8uVbnDqefDqsZ
-         qv//Lio9FYzA08kzLtyzL+A9ahhnwI49rXUjHlm2zcWk9AvRoOx6t4BwAl2gF+8KH+x5
-         2/Sg==
-X-Forwarded-Encrypted: i=1; AJvYcCWZ0fzgp6/FvN2kw2VbxXVRQwJy/3r73H1t6iAVneupA9GmfASR8lJFmVLszRoiwOcm1vqH0J1CscDymKex@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyc8pwvGio/Mnls1ILiix6e7Yhp69pACaBDQdzOjMXdW3AAffr9
-	f+mtvzeMxyytrkoQ+8Pe69D/zwDpA+Xm67f0cCoBzyHyKi0KOmUdUKn51XmcZ1mR828=
-X-Gm-Gg: ASbGncsWT9u1FwNhppLXUZ8kD+3XipBabEEmUZQBKGPD45Fj/HwckW2DqZkHIKW65mK
-	VEcy+Zy0iUrjSS2Ltjj1Md4MFCtdYtlUvAbjPos38RTYgGeWSSuo9DaJ/fc35FlVGlEmv0c8v8r
-	eUQRyN+dqQSDjsD5wKmrxGnQgSmKG3ZFF5RuWc3Kn0ybii57Uom8luY9efmxNosYnyeNgcVwkfP
-	K57w1i5ri+rnvdLKg99W1DxgnN07Dk9jxjW9VjxSYYfkV28kAknJYclnyWxkWPZZfLDvCIRZyv/
-	RcZ1yE41j+klgkwdgOWeEz9z38cfg0KXtsJsyAmpc/cqnUTPJU5tldJ6EIAJn0n7FG/gqlnhbFm
-	EBKUD8aD0Yz6Gv6lnvDB7
-X-Google-Smtp-Source: AGHT+IEzZ/p9as3nrF9ljeFhdkvVqD0Z2ro3p43Bl/n630t9nzydCZuiImxupdC2b+91pZmC3AWS0g==
-X-Received: by 2002:a17:903:38cf:b0:248:aa0d:bb25 with SMTP id d9443c01a7336-248aa0dc43amr125044695ad.14.1756465437860;
-        Fri, 29 Aug 2025 04:03:57 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3276f5925adsm7949756a91.10.2025.08.29.04.03.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Aug 2025 04:03:57 -0700 (PDT)
-Message-ID: <6c85f96a-f012-48e9-a2fa-f1c7650d8533@kernel.dk>
-Date: Fri, 29 Aug 2025 05:03:55 -0600
+	s=arc-20240116; t=1756465654; c=relaxed/simple;
+	bh=tdiHDNhAuabJGWlbSj7OkMRwE5xqpQHriiYisVKS9UM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=spfiGLbL7vlz062/Blljyv8quEe94N0XaZWn/i5KUSjP4G3Vr8UJ5/hQF/lJgG+lt0dgxukAebda6GJ/nYzkVucjGt+JxM9L/hM/z9FPfrC6iGyTv/BPSBuZ1dqmS3YOdxxnhdyOws+/TV8qVdlQzZmbZssyap/5OPN8IHXU0u8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GzQqbAeE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 004EBC4CEF4;
+	Fri, 29 Aug 2025 11:07:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756465654;
+	bh=tdiHDNhAuabJGWlbSj7OkMRwE5xqpQHriiYisVKS9UM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GzQqbAeE4CcR/8lZGwBIYHuqOwfgPiUQ+XOvT4313uPRvHL1adlwBXbxe6FGSSp3d
+	 um75FS6MbON1SsZAjR5Bn+USa9sD9r22rhVW1tHO3zby0qCz34Shc15uOsQ+bYJgqP
+	 dxh/oss/y0lopV/gN/CGiQjAvYe0G1iEvLGRYUl+iLk/T0/CEYxOHhVZZOrtzf9+KT
+	 N54flhMrCzgllaf6ZruJEXfSL6d8/jT27FvNxDvm8zHzEPcIVYRbx0CtXEXyLSJVPM
+	 pLfwOlO3/9V8nczDNjvph+MPyZVbtqhBVpZ8DLrBVWhn5fcbgmGejFauLbNLoIh3FB
+	 2At9wWUDpw6xw==
+Date: Fri, 29 Aug 2025 13:07:30 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Alexander Monakov <amonakov@ispras.ru>
+Cc: linux-fsdevel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org
+Subject: Re: ETXTBSY window in __fput
+Message-ID: <20250829-therapieren-datteln-13c31741c856@brauner>
+References: <6e60aa72-94ef-9de2-a54c-ffd91fcc4711@ispras.ru>
+ <5a4513fe-6eae-9269-c235-c8b0bc1ae05b@ispras.ru>
+ <20250829-diskette-landbrot-aa01bc844435@brauner>
+ <e7110cd2-289a-127e-a8c1-f191e346d38d@ispras.ru>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Add RWF_NOSIGNAL flag for pwritev2
-To: Lauri Vasama <git@vasama.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Eric Dumazet <edumazet@google.com>,
- Kuniyuki Iwashima <kuniyu@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Willem de Bruijn <willemb@google.com>, "David S. Miller"
- <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Simon Horman <horms@kernel.org>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org
-References: <20250827133901.1820771-1-git@vasama.org>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20250827133901.1820771-1-git@vasama.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <e7110cd2-289a-127e-a8c1-f191e346d38d@ispras.ru>
 
-On 8/27/25 7:39 AM, Lauri Vasama wrote:
-> For a user mode library to avoid generating SIGPIPE signals (e.g.
-> because this behaviour is not portable across operating systems) is
-> cumbersome. It is generally bad form to change the process-wide signal
-> mask in a library, so a local solution is needed instead.
+On Fri, Aug 29, 2025 at 01:17:16PM +0300, Alexander Monakov wrote:
 > 
-> For I/O performed directly using system calls (synchronous or readiness
-> based asynchronous) this currently involves applying a thread-specific
-> signal mask before the operation and reverting it afterwards. This can be
-> avoided when it is known that the file descriptor refers to neither a
-> pipe nor a socket, but a conservative implementation must always apply
-> the mask. This incurs the cost of two additional system calls. In the
-> case of sockets, the existing MSG_NOSIGNAL flag can be used with send.
+> On Fri, 29 Aug 2025, Christian Brauner wrote:
 > 
-> For asynchronous I/O performed using io_uring, currently the only option
-> (apart from MSG_NOSIGNAL for sockets), is to mask SIGPIPE entirely in the
-> call to io_uring_enter. Thankfully io_uring_enter takes a signal mask, so
-> only a single syscall is needed. However, copying the signal mask on
-> every call incurs a non-zero performance penalty. Furthermore, this mask
-> applies to all completions, meaning that if the non-signaling behaviour
-> is desired only for some subset of operations, the desired signals must
-> be raised manually from user-mode depending on the completed operation.
+> > On Fri, Aug 29, 2025 at 10:21:35AM +0300, Alexander Monakov wrote:
+> > > 
+> > > On Wed, 27 Aug 2025, Alexander Monakov wrote:
+> > > 
+> > > > Dear fs hackers,
+> > > > 
+> > > > I suspect there's an unfortunate race window in __fput where file locks are
+> > > > dropped (locks_remove_file) prior to decreasing writer refcount
+> > > > (put_file_access). If I'm not mistaken, this window is observable and it
+> > > > breaks a solution to ETXTBSY problem on exec'ing a just-written file, explained
+> > > > in more detail below.
+> > > 
+> > > The race in __fput is a problem irrespective of how the testcase triggers it,
+> > > right? It's just showing a real-world scenario. But the issue can be
+> > > demonstrated without a multithreaded fork: imagine one process placing an
+> > > exclusive lock on a file and writing to it, another process waiting on that
+> > > lock and immediately execve'ing when the lock is released.
+> > > 
+> > > Can put_file_access be moved prior to locks_remove_file in __fput?
+> > 
+> > Even if we fix this there's no guarantee that the kernel will give that
+> > letting the close() of a writably opened file race against a concurrent
+> > exec of the same file will not result in EBUSY in some arcane way
+> > currently or in the future.
 > 
-> Add RWF_NOSIGNAL flag for pwritev2. This flag prevents the SIGPIPE signal
-> from being raised when writing on disconnected pipes or sockets. The flag
-> is handled directly by the pipe filesystem and converted to the existing
-> MSG_NOSIGNAL flag for sockets.
+> Forget Go and execve. Take the two-process scenario from my last email.
+> The program waiting on flock shouldn't be able to observe elevated
+> refcounts on the file after the lock is released. It matters not only
+> for execve, but also for unmounting the underlying filesystem, right?
 
-LGTM, only curiosity is why this hasn't been added before.
+What? No. How?: with details, please.
 
-Reviewed-by: Jens Axboe <axboe@kernel.dk>
+> And maybe other things too. So why not fix the ordering issue in __fput
+> and if there are other bugs breaking valid uses of flock, fix them too?
 
--- 
-Jens Axboe
+For locks_remove_file() to be movable after put_file_access() we'd have
+to prove that no filesystem implementing f_op->lock() doesn't rely on
+f_op->release() to not have run. It is fundamentally backwards to have
+run f_ops after f_op->release() ran.
+
+Random quick look into 9pfs:
+
+static int v9fs_file_do_lock(struct file *filp, int cmd, struct file_lock *fl)
+{
+	struct p9_flock flock;
+	struct p9_fid *fid;
+	uint8_t status = P9_LOCK_ERROR;
+	int res = 0;
+	struct v9fs_session_info *v9ses;
+
+	fid = filp->private_data;
+	BUG_ON(fid == NULL);
+
+This relies on filp->private_data to be valid which it wouldn't be
+anymore after f_op->release().
+
+Moving put_file_access() before f_op->release() is also wrong and would
+require to prove that no filesystem depends on file access not having
+changed before f_op->release() has run. So no, not a trivial thing to
+move around.
+
+And you are explicitly advertising this as a fix to the go execve
+problem; both in the bugtracker and here. And it's simply not a good
+solution. The problem remains exec's deny-write mechanism. But hooking
+into file locks to serialize exec against writable openers isn't a good
+solution. It surely is creative though.
+
+We can give userspace a simple way to sidestep this problem though as I
+tried to show.
 
