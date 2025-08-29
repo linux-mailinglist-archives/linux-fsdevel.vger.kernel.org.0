@@ -1,144 +1,138 @@
-Return-Path: <linux-fsdevel+bounces-59661-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59662-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E13FBB3C284
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 20:35:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 329DBB3C2AA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 20:47:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A837D3B5DDD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 18:35:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93FF05A1921
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 18:47:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC03C345729;
-	Fri, 29 Aug 2025 18:32:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8AAB231829;
+	Fri, 29 Aug 2025 18:47:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=verbum.org header.i=@verbum.org header.b="mZ7ljtgk";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="J3hDbREu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QDPvnxOH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-b8-smtp.messagingengine.com (fout-b8-smtp.messagingengine.com [202.12.124.151])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D75F3451CB;
-	Fri, 29 Aug 2025 18:32:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 156001FF7B3
+	for <linux-fsdevel@vger.kernel.org>; Fri, 29 Aug 2025 18:47:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756492365; cv=none; b=FcSpViNmTU2PGO2FFwJR9qTKV/3zzSOPUqxRfEck5jIdsaBciPlZHgmrBRTgNr65//elrTrsklfP6n3QxRLl2yETJDWQKCH4ub6U8pQg06xezrK0MKQOXq0I9pjooGCWHhRktAan8nmhBy05loLjCU6vTpPz1JhfDsSUFj4kWw8=
+	t=1756493251; cv=none; b=KIlj1QNHe6Hq0fkrdh7qlDjJPU79m4C+Db0+dkLmfNRKLMm0lT2T2oHmuoDmCHOb0fQZjY8gsuwDE033k68KFVaOnP/alf3x+WW8h1X5YG3RBOybIRKmM3cxDfBRMDBSobPUIiNi2WvmhpkMYZzzcUHsFPrKZrcghDZETxMnYgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756492365; c=relaxed/simple;
-	bh=SkyzdbblTiqqUWXXVLGliB571OUrcEIqc4SgoQE8/1o=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=BXSOgo/MwqPFtcOHbeYSslnPZBjPUhhvM4u0O8D1getNYMti/iMLtp5olLcVsL6//aiSq2Va3Gtyxc5B2DI2hmBOPPtjIi2v6VroxAyiLFsD8LFz/KBQxh3zmiqr2ZoMcNuK2evrtpZE29ChbImSvgQKW252V8iOIvg40CHQmcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=verbum.org; spf=pass smtp.mailfrom=verbum.org; dkim=pass (2048-bit key) header.d=verbum.org header.i=@verbum.org header.b=mZ7ljtgk; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=J3hDbREu; arc=none smtp.client-ip=202.12.124.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=verbum.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=verbum.org
-Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
-	by mailfout.stl.internal (Postfix) with ESMTP id 5A0351D00093;
-	Fri, 29 Aug 2025 14:32:39 -0400 (EDT)
-Received: from phl-imap-15 ([10.202.2.104])
-  by phl-compute-12.internal (MEProxy); Fri, 29 Aug 2025 14:32:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=verbum.org; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1756492359;
-	 x=1756578759; bh=SkyzdbblTiqqUWXXVLGliB571OUrcEIqc4SgoQE8/1o=; b=
-	mZ7ljtgkzOdEPCGVRkj/73d9guD1073tj/MZrme+j/0aH5Mwo9WoN7tJywaQi0mM
-	RcnWFaDURd34seewrBct+NfBgTZ5HHPWTBH7S6fd173UgNHr/+hU3h16dyzRY6Xy
-	+pzsD8GIh0BROrK+5h0GU2TF7ge6wmgDA2hHa8gw0UfPH3ab2SuXt1TvuPMjnGbJ
-	mrcq84oRSSciruHLxfbNeNVlMf/des10Wce1CAWMErVGrPY7mWhUoxxrbB4eFHyP
-	085fCE1Cdn3KGEUrFRVMzg7JxUchPFzIleZDx7t1R6pXvKhLxZexTKk21GH4g2YG
-	XDMvw0vrWioAhk1jMSNNwg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1756492359; x=
-	1756578759; bh=SkyzdbblTiqqUWXXVLGliB571OUrcEIqc4SgoQE8/1o=; b=J
-	3hDbREuis4XNmDWa+8f3MSI+nejPq6rN4ovlNiwZefIIRPOVUCHlNkLIqacPz/nf
-	keNpsCm5h1oRIKCSaaG9K2pPdJFbOFQmh2XG+4GaQ9TVobJyQHPNzlsoqXQmHZ+3
-	vUNfsVx94T3gm/Jz/IKdmJigJ1vmoHa0YHzenSIfJFB7P9X5j+eF07l704MSXQJa
-	CWrB3uQ8qArBqJhMxFxqoS7jup1875zlquEg9rce9jKrA914NBCQIKNKBs34hth1
-	DOSig56ZiNOI6JnZRITNLU3t8XOsDOzUbi5aWFD2OS6c4QE6irlLwNXTTf7Dj2OR
-	yNJwvgOu82FRznYgu9nzQ==
-X-ME-Sender: <xms:RvKxaPlx9Uq3cijYR4JQIabpe6TxPNDAYUOFmwDCsf0NFogtnIVssA>
-    <xme:RvKxaC1Zaba98gu2yHurGIDuTkYNgTRcKDPm7NNuCQ9GMaPxKif3AzYiivfK6bvlz
-    24LY5-lb55hOJBU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddukeegfedvucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedfveholhhi
-    nhcuhggrlhhtvghrshdfuceofigrlhhtvghrshesvhgvrhgsuhhmrdhorhhgqeenucggtf
-    frrghtthgvrhhnpeevudevvefhffefgefgudeffeelheevueehuefftdfgffekjefhkeej
-    hfelieekkeenucffohhmrghinhepghhithhhuhgsrdgtohhmpdgruhhsthhinhhgrhhouh
-    hpsghughhsrdhnvghtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghi
-    lhhfrhhomhepfigrlhhtvghrshesvhgvrhgsuhhmrdhorhhgpdhnsggprhgtphhtthhope
-    eipdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrmhhonhgrkhhovhesihhsphhr
-    rghsrdhruhdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtph
-    htthhopehjrggtkhesshhushgvrdgtiidprhgtphhtthhopehlihhnuhigqdhfshguvghv
-    vghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrh
-    hnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvhhirhhoseiivghn
-    ihhvrdhlihhnuhigrdhorhhgrdhukh
-X-ME-Proxy: <xmx:RvKxaC2Mi26EWxdtKSsGZhoAQzUx2XFjTWn-2ORhFtmPtMERgtG1sQ>
-    <xmx:RvKxaI7xi_jSXTcUtiqbipMN43JfUZC754hXJaaQYnaG4ZLPTSJiSw>
-    <xmx:RvKxaD_N0LPFWAQSd-Wq_5JRfwGY1nQfAmeppx_yEmRY5Zho5hmWmA>
-    <xmx:RvKxaHVZPHRsCQWEseqZam9j8uReVhUAfxgUsyWPxTpEYWdjPzcMyw>
-    <xmx:R_KxaAncT0xO0eH1DzCs7TPH4-PPP_LLPQiQ7zpbBvhRsllq2MiZbXTj>
-Feedback-ID: ibe7c40e9:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id EE9107840CC; Fri, 29 Aug 2025 14:32:37 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1756493251; c=relaxed/simple;
+	bh=EGsrl7rz3n15ufVe4i49SD1EQ18PX9TeDC0B390PTkM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iIIOsWmSoP/SnJHsGiqkFMjgQ5t0gmZ0OHhLNvDdQ54xmg8cNJbAhYqZVLThSkrJROQEULF72y9Zock8xTE89Thbhs4yJgvq7m53cpoD2jj5tNnd/gL0AiP+eM3giEVq41t17xU0zt9bMtuwM9QrSUOLmvuzU9XItSYW85cA1gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QDPvnxOH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4BF6C4CEF4
+	for <linux-fsdevel@vger.kernel.org>; Fri, 29 Aug 2025 18:47:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756493250;
+	bh=EGsrl7rz3n15ufVe4i49SD1EQ18PX9TeDC0B390PTkM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=QDPvnxOHQiaw+V/AJpBaKUWuUvF9UjbrFHSJHT0znUaYPxTkiRUk9F6oBoo9v+sK7
+	 3ll/lYPhb1TAxlpZVrfrWoGILcQ3boZDh+mSRKEb/Jfj8F2lMX2xFd2tHaX0OjamrV
+	 ijMlZYzFk5IZBuQkS+cKcjhMRtwjiXQiemN+iPGwuzeAxe9wo3byWcIzXNYvbackEM
+	 Ifg0XrMLqzVsDhD8wXRwQivSOLhMmxGuHRmcP3HqYQqo53pYTfidmbtRqDEtlJx7Wk
+	 b04sfCVlU38IhAZht/21vwPfoTmqDpdVPI2FG+3AkVnx3tShvYVkmYmH/vfoYLo48/
+	 6jTbkXFLFKINg==
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45b7ed944d2so11105e9.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Aug 2025 11:47:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCURnWBIOHislpPWOmCoc/FhY6bFhzltxEe4RvMNmDq4nrRTTeyhQGFO+Oe2VFgwtxZPI9i2X+uSAeK9ko6Q@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNxFeiN/a8KTrINv682qjYtFVuJLlUzjuVfBrhJFhr+uhu5QIG
+	tYjrsQOareKgfzKs8ww1UW00QrZoy4e/4PW03xla0SnAl+tCkHEi/BP+ggA/I8uW5BlbsxCM00I
+	B4caR9WoD65ipIRNPFUQBk31R24VeCOU+fhgukKbM
+X-Google-Smtp-Source: AGHT+IG5VqIPsa1pNgB3YpFXWfQW+7in5f1Vpw/ePfgPKB7etQPfYgqx6A7wIUSMvQ3seox/XRRqlLcg0U88oq9rT90=
+X-Received: by 2002:a05:600c:4ba3:b0:45a:207a:eb7c with SMTP id
+ 5b1f17b1804b1-45b84a46376mr105495e9.0.1756493248442; Fri, 29 Aug 2025
+ 11:47:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AkTvZmR_UAfN
-Date: Fri, 29 Aug 2025 14:32:17 -0400
-From: "Colin Walters" <walters@verbum.org>
-To: "Alexander Monakov" <amonakov@ispras.ru>, linux-fsdevel@vger.kernel.org
-Cc: "Al Viro" <viro@zeniv.linux.org.uk>,
- "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
- linux-kernel@vger.kernel.org
-Message-Id: <adf9aee7-1621-4da9-b04d-754084fa8adf@app.fastmail.com>
-In-Reply-To: <6e60aa72-94ef-9de2-a54c-ffd91fcc4711@ispras.ru>
-References: <6e60aa72-94ef-9de2-a54c-ffd91fcc4711@ispras.ru>
-Subject: Re: ETXTBSY window in __fput
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
+ <20250807014442.3829950-30-pasha.tatashin@soleen.com> <20250826162019.GD2130239@nvidia.com>
+ <aLABxkpPcbxyv6m_@kernel.org>
+In-Reply-To: <aLABxkpPcbxyv6m_@kernel.org>
+From: Chris Li <chrisl@kernel.org>
+Date: Fri, 29 Aug 2025 11:47:17 -0700
+X-Gmail-Original-Message-ID: <CAF8kJuN+CsXo2QwrMvcSkn=_WB+zqikgLK9=ydqUDj+8Osmf6Q@mail.gmail.com>
+X-Gm-Features: Ac12FXylXHzcyalG6rdr2bLhlKKgB6oI5FD3MKZgay4nA6t-yrJgNr96GL2gOCI
+Message-ID: <CAF8kJuN+CsXo2QwrMvcSkn=_WB+zqikgLK9=ydqUDj+8Osmf6Q@mail.gmail.com>
+Subject: Re: [PATCH v3 29/30] luo: allow preserving memfd
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Jason Gunthorpe <jgg@nvidia.com>, Pasha Tatashin <pasha.tatashin@soleen.com>, pratyush@kernel.org, 
+	jasonmiu@google.com, graf@amazon.com, changyuanl@google.com, 
+	dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
+	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
+	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
+	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
+	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
+	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
+	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
+	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
+	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn, 
+	linux@weissschuh.net, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-mm@kvack.org, gregkh@linuxfoundation.org, tglx@linutronix.de, 
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
+	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org, 
+	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com, 
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, 
+	quic_zijuhu@quicinc.com, aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
+	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	saeedm@nvidia.com, ajayachandra@nvidia.com, parav@nvidia.com, 
+	leonro@nvidia.com, witu@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On Tue, Aug 26, 2025, at 5:05 PM, Alexander Monakov wrote:
-> Dear fs hackers,
+On Thu, Aug 28, 2025 at 12:14=E2=80=AFAM Mike Rapoport <rppt@kernel.org> wr=
+ote:
 >
-> I suspect there's an unfortunate race window in __fput where file locks are
-> dropped (locks_remove_file) prior to decreasing writer refcount
-> (put_file_access). If I'm not mistaken, this window is observable and it
-> breaks a solution to ETXTBSY problem on exec'ing a just-written file, explained
-> in more detail below.
+> On Tue, Aug 26, 2025 at 01:20:19PM -0300, Jason Gunthorpe wrote:
+> > On Thu, Aug 07, 2025 at 01:44:35AM +0000, Pasha Tatashin wrote:
+> >
+> > > +   err =3D fdt_property_placeholder(fdt, "folios", preserved_size,
+> > > +                                  (void **)&preserved_folios);
+> > > +   if (err) {
+> > > +           pr_err("Failed to reserve folios property in FDT: %s\n",
+> > > +                  fdt_strerror(err));
+> > > +           err =3D -ENOMEM;
+> > > +           goto err_free_fdt;
+> > > +   }
+> >
+> > Yuk.
+> >
+> > This really wants some luo helper
+> >
+> > 'luo alloc array'
+> > 'luo restore array'
+> > 'luo free array'
+> >
+> > Which would get a linearized list of pages in the vmap to hold the
+> > array and then allocate some structure to record the page list and
+> > return back the u64 of the phys_addr of the top of the structure to
+> > store in whatever.
+> >
+> > Getting fdt to allocate the array inside the fds is just not going to
+> > work for anything of size.
 >
-> The program demonstrating the problem is attached (a slightly modified version
-> of the demo given by Russ Cox on the Go issue tracker, see URL in first line).
-> It makes 20 threads, each executing an infinite loop doing the following:
->
-> 1) open an fd for writing with O_CLOEXEC
-> 2) write executable code into it
-> 3) close it
-> 4) fork
-> 5) in the child, attempt to execve the just-written file
->
-> If you compile it with -DNOWAIT, you'll see that execve often fails with
-> ETXTBSY. This happens if another thread forked while we were holding an open fd
-> between steps 1 and 3, our fd "leaked" in that child, and then we reached our
-> step 5 before that child did execve (at which point the leaked fd would be
-> closed thanks to O_CLOEXEC).
+> I agree that we need a side-car structure for preserving large (potential=
+ly
+> sparse) arrays, but I think it should be a part of KHO rather than LUO.
 
-This one looks to be the same as what we hit in https://github.com/containers/composefs-rs/issues/106 but with fsverity.
+I agree this can be used by components outside of LUO as well. Ideally
+as some helper library so every component can use it. I don't have a
+strong opinion on KHO or the stand alone library. I am fine with both.
 
-I came to the conclusion that we want O_CLOFORK (ref https://www.austingroupbugs.net/view.php?id=1318 ).
-
-
-
+Chris
 
