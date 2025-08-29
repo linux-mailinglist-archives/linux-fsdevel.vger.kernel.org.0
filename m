@@ -1,154 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-59649-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59650-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E63E7B3BBC5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 14:55:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10CB6B3BBEF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 15:09:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 117571C88135
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 12:55:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCBB916E015
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 13:09:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B637C31A041;
-	Fri, 29 Aug 2025 12:55:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E07F231A070;
+	Fri, 29 Aug 2025 13:08:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lI3+Fesz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LPlN497K"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 730901EB36
-	for <linux-fsdevel@vger.kernel.org>; Fri, 29 Aug 2025 12:55:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FFBF201269;
+	Fri, 29 Aug 2025 13:08:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756472129; cv=none; b=V+ttchN9t8MZQgagbBkwFV6U3M6ErYlHWrZTxh86brxR8MDW8mQU6q75s2Co9zhmdSfLdBYtSReHU/Rl6Wdnh/oixMmdvrDTFE0wSa9eUrV7+ehFEEOJs5GwASRM+xpKUWEWbeT6caC1/kSkltkLVw+lqjti/ihyyN1NjULow4A=
+	t=1756472933; cv=none; b=tWFFnj7Qk6oalRlElyw64qlLahegEJvEfJNlneI6r1+Kx2MFuzPdoYZJKEg2LUFG2VQC67YiFo981X7fpl706Lw1TNfX6z/y/jTcX5jdSEr2TgYRo7kfwmwDSz+1xh/0Ja6avjWFL4a4wqhdcdREFablsTaJWT+wIRq6wiCrFgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756472129; c=relaxed/simple;
-	bh=CkGRfZV8A2kcCGcrnjDrxhX6WjenLBqLY4LDfTbIMo8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=du+WG2mCazU+vjuAlHuxOQfPFHQHltuY5WBJ23UyCe4pa2uwNihpStwsqze8F4nx/8esTLRMH7rH01gbaSFda8gFFLCHpyxkwkN+RWMM+dl+DxTnfIrrocKqsob8LK5CeqWbQ8g4WK2OqT7GmqTfx1XRQ8gCNRXhxH7vj/brfLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lI3+Fesz; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-afe84202bc2so300353066b.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Aug 2025 05:55:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756472126; x=1757076926; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vRj806YN3BtAJzRKPlmJidrrZNEO7NBFfj6pRUHMu9U=;
-        b=lI3+FeszrQo8s0jlpdy8YYIN58wbhVL4SS1HtRuR8s9luLOCt6tthrFpprkSX8HHdp
-         3B7llebSe/XKvJF/egOskC2tpdgC4/HK/4sPlnUht3c/H3kgPaCMbjCfB4NfH/BSm1Qr
-         qcAXnwBDNJSn7fdT55K0lnXpE20GDJ+N74QVPMpiHmx5DiNR9YJV19/V4X477FvVWutA
-         PcLXiLcTD4X8+bv7ocFtkDWogtsRaMrwEi9+217orFlMUh9M4LpfZqESKnFMydBK4ZkV
-         5clH384AsCfVhffbB7t3NVZeuHhJp4QXjLitQf/6440r6rl0n1kRfTu4WOGA2Eqc50XT
-         n8EQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756472126; x=1757076926;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vRj806YN3BtAJzRKPlmJidrrZNEO7NBFfj6pRUHMu9U=;
-        b=nDqk5AbMzez6KR/U3puKIwmEt50i8429jFIqNhqSyOTfnWVGJN9mJLGSui6UT3qbXA
-         2nJprJm/jP2CObQ+bWxHVjpqIXF6/+m0N5AqHJtHdN8FlLzlYxx5G9cenwP8zcl4hWRZ
-         Gm2N6QmUeqr+gMDHJL1CofHL1P4NuyVAL9JEIj6ilj0j9VYASGUBqdwtw0ffFvVcRmJe
-         R4QNy6HIhGa/bUnB4w/WialreBBFjwaqQIwX6qYP8sqGYPVJpjwfh16lxnGq8DthBxFr
-         s+os8petYdODNaRcF5BRYFQ2IJanx+Lh5M/5h7TErJvnl7JMuyJNKMQz7Km6EWvTbttF
-         C5yA==
-X-Forwarded-Encrypted: i=1; AJvYcCXdJAuJkZ/bx5x40lg1++Z5SKVOkrAklol3QDhnQl+07IzefKYXDWeOjwiiwdM0hX2QunI6wbxKNY08RGDi@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyqd0iW8u6LqlBmyiiUufujl8n2uCkhJmiR3sDQzMdbrQg82+UQ
-	BeRVZNbEOlWloyWCo+wNZn9zQUkd/Mom+83jL/Qt8+lXTug6IPMRiN2pY96rm32YNMalOtS2y/4
-	ueTXlOL7n9hmiVJELH5ODcIpurQCSsWxiPU0CRUQ=
-X-Gm-Gg: ASbGncu3U4Vs3tYcq6q3V83foZSNZgG4FAkw0vQFVgoa+ri+lUW31x42j7RSNedjXyb
-	QZggd59ABUmwuLfjRjPAyNd409z3OCxvUIIIIJ7Wdd1/EK2hDnJCsajHTEpz2LHCxFrVJi3QUwr
-	mYFutqV9dqo1UVHMA8oZf/CKfUOdkfJQ3leK5fx9nPv7w3mraX45ReWX4vsBCL+ADMf277liBAG
-	Jnbutt9gwg/fBqXVxXIWyLzimhJ
-X-Google-Smtp-Source: AGHT+IGKJ7OfCntx9OHzSo+H5GxkLVsO2mNiz6FVsIWjiSJor9SuS0v0fg/VSDeAGIXOQWAwolCze0sOyyfldOqONk4=
-X-Received: by 2002:a17:907:6d0a:b0:afe:cb06:ee16 with SMTP id
- a640c23a62f3a-afecb06f22dmr785192766b.5.1756472125505; Fri, 29 Aug 2025
- 05:55:25 -0700 (PDT)
+	s=arc-20240116; t=1756472933; c=relaxed/simple;
+	bh=HNhElk6O6yr8fnJ6k+gUmmX+WPm8sA7imTwzzWeNjrw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=APHr23+SQjhaQA959BI/iPtgEvJijM6XwanwVm2TdRf3Q2hXi/WNhnv1TlaGwEK1CAEm3iMkzWPH1WzJMWYdNpYTg7JdJfb4eeVF73TrESArRlU4UMAcYsGbj0vIWQUyaH5DHE3AEhNDEdWWwPiJfVt5VoaUrXrqioDJelf64Mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LPlN497K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 987A8C4CEF0;
+	Fri, 29 Aug 2025 13:08:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756472932;
+	bh=HNhElk6O6yr8fnJ6k+gUmmX+WPm8sA7imTwzzWeNjrw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=LPlN497Koi+SRT1XI93/Zw5F/2EInzp+QOzoLsNZgf+6/vUpdI0YXkL9MzKJaBAsM
+	 IANaKDIiUX+kdCAtSr9mfM/LyyQK3+7V6uIWRk5bhPKpahT02Vo7n4tf1dLJDhwAwS
+	 W7Oz0rMNWK7HL4qGdCrgYjCP8KkGccXpxUhhaY6WcGJ4hoAloTgrtp6OtmXPTpW3J8
+	 xwDXJyMMsC4gPIu7xP0V/0bBzSq2W8bUwU4iH0H45h6VPWrR+mZDvxEa/gvMmT0ALa
+	 FqLfiLehpRvDCbp38J3uOCVkOfck4nqXTVtOJxYcU8lTI+8jNXgrrWOS4jpvrLP+NM
+	 6absynvy86www==
+From: Christian Brauner <brauner@kernel.org>
+To: Lauri Vasama <git@vasama.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	Jan Kara <jack@suse.cz>,
+	Simon Horman <horms@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Eric Dumazet <edumazet@google.com>,
+	Kuniyuki Iwashima <kuniyu@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Willem de Bruijn <willemb@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>
+Subject: Re: [PATCH] Add RWF_NOSIGNAL flag for pwritev2
+Date: Fri, 29 Aug 2025 15:08:38 +0200
+Message-ID: <20250829-laufpass-zahmen-3dd1924da2ad@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250827133901.1820771-1-git@vasama.org>
+References: <20250827133901.1820771-1-git@vasama.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250827194309.1259650-1-amir73il@gmail.com> <xdvs4ljulkgkpdyuum2hwzhpy2jxb7g55lcup7jvlf6rfwjsjt@s63vk6mpyp5e>
-In-Reply-To: <xdvs4ljulkgkpdyuum2hwzhpy2jxb7g55lcup7jvlf6rfwjsjt@s63vk6mpyp5e>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 29 Aug 2025 14:55:13 +0200
-X-Gm-Features: Ac12FXwdQ8Yx-zHPMpxVb6elSnvtU-Yap7u1ykOhAvjahQL-VqTdACjRj3YZvTQ
-Message-ID: <CAOQ4uxi_3nzGf74vi1E3P9imatLv+t1d5FE=jm4YzyAUVEkNyA@mail.gmail.com>
-Subject: Re: [PATCH] fhandle: use more consistent rules for decoding file
- handle from userns
-To: Jan Kara <jack@suse.cz>
-Cc: Christian Brauner <brauner@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
-	Jeff Layton <jlayton@kernel.org>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1630; i=brauner@kernel.org; h=from:subject:message-id; bh=HNhElk6O6yr8fnJ6k+gUmmX+WPm8sA7imTwzzWeNjrw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRsXBa3LVp0ZrhXQOKSe8f3KO1O898fk7P1kfDpmOfKb Wf+F0bHdZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzk6EtGhpM6tv4rbspoWewI Xrv+j3rD/KXzDr1KYZXP3tft7Rc9h4nhD8+K1+IvPc5r8MVtPBQlzre4munRrbpljMucHHl2M/y 7wgoA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 29, 2025 at 12:50=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Wed 27-08-25 21:43:09, Amir Goldstein wrote:
-> > Commit 620c266f39493 ("fhandle: relax open_by_handle_at() permission
-> > checks") relaxed the coditions for decoding a file handle from non init
-> > userns.
-> >
-> > The conditions are that that decoded dentry is accessible from the user
-> > provided mountfd (or to fs root) and that all the ancestors along the
-> > path have a valid id mapping in the userns.
-> >
-> > These conditions are intentionally more strict than the condition that
-> > the decoded dentry should be "lookable" by path from the mountfd.
-> >
-> > For example, the path /home/amir/dir/subdir is lookable by path from
-> > unpriv userns of user amir, because /home perms is 755, but the owner o=
-f
-> > /home does not have a valid id mapping in unpriv userns of user amir.
-> >
-> > The current code did not check that the decoded dentry itself has a
-> > valid id mapping in the userns.  There is no security risk in that,
-> > because that final open still performs the needed permission checks,
-> > but this is inconsistent with the checks performed on the ancestors,
-> > so the behavior can be a bit confusing.
-> >
-> > Add the check for the decoded dentry itself, so that the entire path,
-> > including the last component has a valid id mapping in the userns.
-> >
-> > Fixes: 620c266f39493 ("fhandle: relax open_by_handle_at() permission ch=
-ecks")
-> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
->
-> Yeah, probably it's less surprising this way. Feel free to add:
->
+On Wed, 27 Aug 2025 16:39:00 +0300, Lauri Vasama wrote:
+> For a user mode library to avoid generating SIGPIPE signals (e.g.
+> because this behaviour is not portable across operating systems) is
+> cumbersome. It is generally bad form to change the process-wide signal
+> mask in a library, so a local solution is needed instead.
+> 
+> For I/O performed directly using system calls (synchronous or readiness
+> based asynchronous) this currently involves applying a thread-specific
+> signal mask before the operation and reverting it afterwards. This can be
+> avoided when it is known that the file descriptor refers to neither a
+> pipe nor a socket, but a conservative implementation must always apply
+> the mask. This incurs the cost of two additional system calls. In the
+> case of sockets, the existing MSG_NOSIGNAL flag can be used with send.
+> 
+> [...]
 
-BTW, Jan, I was trying to think about whether we could do
-something useful with privileged_wrt_inode_uidgid() for filtering
-events that we queue by group->user_ns.
+Applied to the vfs-6.18.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.18.misc branch should appear in linux-next soon.
 
-Then users could allow something like:
-1. Admin sets up privileged fanotify fd and filesystem watch on
-    /home filesystem
-2. Enters userns of amir and does ioctl to change group->user_ns
-    to user ns of amir
-3. Hands over fanotify fd to monitor process running in amir's userns
-4. amir's monitor process gets all events on filesystem /home
-    whose directory and object uid/gid are mappable to amir's userns
-5. With properly configured systems, that we be all the files/dirs under
-    /home/amir
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-I have posted several POCs in the past trying different approaches
-for filtering by userns, but I have never tried to take this approach.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-Compared to subtree filtering, this could be quite pragmatic? Hmm?
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-The difference from subtree filtering is that it shifts the responsibility
-of making sure that /home/amir and /home/jack have files with uid,gid
-in different ranges to the OS/runtime, which is a responsibility that
-some systems are already taking care of anyway.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.18.misc
 
-Thanks,
-Amir.
+[1/1] Add RWF_NOSIGNAL flag for pwritev2
+      https://git.kernel.org/vfs/vfs/c/db2ab24a341c
 
