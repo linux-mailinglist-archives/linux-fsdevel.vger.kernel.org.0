@@ -1,178 +1,280 @@
-Return-Path: <linux-fsdevel+bounces-59603-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59606-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C45EEB3B0A4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 03:53:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4012B3B11E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 04:48:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F32D7B980A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 01:51:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 489935822A8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 02:48:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30163282F1;
-	Fri, 29 Aug 2025 01:52:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BAEB21FF36;
+	Fri, 29 Aug 2025 02:47:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yvM2fhup";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="BCXIM4gw";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yvM2fhup";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="BCXIM4gw"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hnhfmUlZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E36451ACED7
-	for <linux-fsdevel@vger.kernel.org>; Fri, 29 Aug 2025 01:52:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CBE71A58D;
+	Fri, 29 Aug 2025 02:47:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756432372; cv=none; b=JDBVF/iGE2mQhqobg37jfhD14FpEqxhBoGrQiHH9QqFca68bCS/6u+l43YiSmOfo8tiorGithhB8qR32HXukkEAHmrvhuf7GDzrkaVD0PtKWfvyaTLdn4jPH8opzbFxUA6BSSC6i8n1X2V1H7XXNTvUT5xlnh07RyrOKN1pFmGA=
+	t=1756435674; cv=none; b=FgIVXmVLwcdNYuREeHj1EKGlutksHPVuUbqT4nN0r5Z5FutVOX9tYfyOcrskKK4kHm8p/LFNw1qpHGmANLJfBYVaWM9YfWDY4fM6x1fcsaiULfM4zrMKQ/5N3rq5JAcUfHM3WqCNv7o1LZHQsOiAw0pjtx54jW7HhjW83Xodc7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756432372; c=relaxed/simple;
-	bh=pMia6vI4WbSIqbW0nAYVCHR+yaY2mf5GDQGSNt/EEmA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CqYHaAwgcghPtIQQILMHZcnaS7cz9NrDigzDCaM6F7l3hby6dwXIKTX5N4i2gPouoQWkItyWn7WnC1BZKQqhUVLOpJUKACCcxXD8Or3bZ67riyj7oY8S2CW2IJIqMTnHEAsc3iuhcV2LOAJbusodGrqtW3W9hiDJjNZq1KsauNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yvM2fhup; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=BCXIM4gw; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yvM2fhup; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=BCXIM4gw; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 15DC933A80;
-	Fri, 29 Aug 2025 01:52:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756432369;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=m5PjV1QuRgaFx0hIiX2Widzl5+PIyq+xRHTpwMuiIVg=;
-	b=yvM2fhup4rBkZcITx5B+l6Aj3FXyJw4oxIsu3au2HfR1WSnCAswugdHO1SoviztjZYfx/6
-	HbclGBBd25M/K80U0f3GAMZ2fh3U6iwCKVjosqLjQMoiPT9GUJgIqJNvXOmdjnAjLCPgoV
-	YpVCaEq93eb+H+UhOGw0sPFelO1SuRE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756432369;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=m5PjV1QuRgaFx0hIiX2Widzl5+PIyq+xRHTpwMuiIVg=;
-	b=BCXIM4gwGM9NlgtoMDV+uaSe5/qq1Ysi47ADNXsSJHjYTRQUdzN2FTx10XPimgLzEbFKRq
-	oFQccs21R/F7QvAw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756432369;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=m5PjV1QuRgaFx0hIiX2Widzl5+PIyq+xRHTpwMuiIVg=;
-	b=yvM2fhup4rBkZcITx5B+l6Aj3FXyJw4oxIsu3au2HfR1WSnCAswugdHO1SoviztjZYfx/6
-	HbclGBBd25M/K80U0f3GAMZ2fh3U6iwCKVjosqLjQMoiPT9GUJgIqJNvXOmdjnAjLCPgoV
-	YpVCaEq93eb+H+UhOGw0sPFelO1SuRE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756432369;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=m5PjV1QuRgaFx0hIiX2Widzl5+PIyq+xRHTpwMuiIVg=;
-	b=BCXIM4gwGM9NlgtoMDV+uaSe5/qq1Ysi47ADNXsSJHjYTRQUdzN2FTx10XPimgLzEbFKRq
-	oFQccs21R/F7QvAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E9B9613310;
-	Fri, 29 Aug 2025 01:52:48 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id hpziOPAHsWg0EQAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Fri, 29 Aug 2025 01:52:48 +0000
-Date: Fri, 29 Aug 2025 03:52:47 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Boris Burkov <boris@bur.io>
-Cc: akpm@linux-foundation.org, linux-btrfs@vger.kernel.org,
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-	kernel-team@fb.com, shakeel.butt@linux.dev, wqu@suse.com,
-	willy@infradead.org, mhocko@kernel.org, muchun.song@linux.dev,
-	roman.gushchin@linux.dev, hannes@cmpxchg.org
-Subject: Re: [PATCH v4 0/3] introduce kernel file mapped folios
-Message-ID: <20250829015247.GJ29826@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <cover.1755812945.git.boris@bur.io>
+	s=arc-20240116; t=1756435674; c=relaxed/simple;
+	bh=0NaqKPi0nbkduXdLlQqcuDuAki5cwbyz75CUvTa8yvs=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=s/+FGJu1cBsx+JR7E0TqQQHwHfybqfDAF6eyzo9BaLfIcK7WfbJ8VWF9npyMirOb82HuvVsBWxpspN8cMgqyzBc/MPM5j7uq2pcoJtw7J16MYGSi5FzRqusa4aytO6Erri/IVPhWNGioZ1oMtOWDMXXzAAoY1H4z4X0Pvri2kvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hnhfmUlZ; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b4cf40cd0d1so231788a12.0;
+        Thu, 28 Aug 2025 19:47:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756435672; x=1757040472; darn=vger.kernel.org;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=JZ9wmr99Yf2OiqbFk7ybwlinPpULK3DDjyydQHoTCNU=;
+        b=hnhfmUlZuLoS10Do1TG7UAuYIUV4Moh0Yv6Q4/hCivr6M0dD2bATPrJ0CYve4xPrzI
+         OcfC1HdhAt3Oy5AaCMYOcogPKQZhqIxS12uBURuN4yxZcTKwdGfeiuTOmA/B6uSjyRkE
+         xDmZevZg4la3133dIqc04DE6taak62G1kyUiLEby0ZZNPw8pP0vIfq89y5d4UBVf81so
+         PYyN2IazaDL2v2SZGKrFsYs+6dop5JrK+NeDap+XmCk/sQv7cvT/EBsg7/VwaECbD4Nx
+         02XZGhT0OTqCvEOkTw9aVUlefPOvh523+xPPq5ODXfK6komRKDfMp2oGZp2Uj0zkmGt/
+         2v5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756435672; x=1757040472;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JZ9wmr99Yf2OiqbFk7ybwlinPpULK3DDjyydQHoTCNU=;
+        b=f7GDeHrX04lcwpEWZv3PWkiI7NQ/4ha6G9ih4aJZo6GxABrnUYpCbzm7cKCbceMXER
+         3Lohbuk/6bmgZCE9Jn7z5PWc7EVD3VJPdMwYsJXFTfLlKPEtVWBP5A0FydgIdQg109Jp
+         1WREW6oKYXehz1vsPBpLRw92RaeZd868v3iz12BlvXaBEJ+/3O95YXeF4JDa2xwuKqcw
+         qWp6ybCvkOJECtYZHxJPXwi+twbOtULPgIpynJzdo4kQJMpDa2IzEhko2nWlUwMMOPW+
+         ktqIjO/beUr4ITuVAijdKM9Hjo+q8+ciQ6NGob8QMLrd/22AdqNG5Li8R4ppaTr2sMlm
+         JQWg==
+X-Forwarded-Encrypted: i=1; AJvYcCULNBoQ4T1/N11+Hq+6ZoREkQ8UMY1vEec0voSMvPUhXAWEN0MY+A5mo+wNMVCn+T9f+awT1JtBsej8Iv3PcA==@vger.kernel.org, AJvYcCUoa5az0NRa6AEqdqxRK/YlmZlzbDNz1Lu3gYtGTTJjJFZL7UNEewFYJ2XWiv1vfFnGkFaTDWw6awvoWA==@vger.kernel.org, AJvYcCVg8P2pyO//1kI1b2ChfoaFYuoK3GtGcwcVAmLwDqkzJ1vkCJFj31Kr4lR6aRVAGt5hfHiQzhRlfOb+@vger.kernel.org, AJvYcCW4xBpiAaHg0wmMgDszCzuJW8NTUthU2sK9vwThXHz0PjxAPvMeHjhZJ3w8S/2rIE71yq4bUTKewSfASwbT@vger.kernel.org, AJvYcCX/1rPcuNa9C1NfAkMrWIxu4sh8zjKyHKz0uZOmGiaFrAg5KX32b9x3v+PxPG7YdYGxtaLXHtmMZAV4cQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeNwf/OdCVL28zjeCSmyyiCK+4SDZ+TWQMPTj3jYo5BbrAl3sv
+	IG3mTRoVSIqFJ4fxGFVd11ExnHlrYv7OZGhsvwC/6QaJJV/0ALwnVLln
+X-Gm-Gg: ASbGncsnEyEDsGr3bzQIJ80/u+giUSQ+6WN3EK8JPYtaRs/4/+8q5xPTTHhrnwPV6Kk
+	kh4/KZk1UIVHHKpUifblIkblACEY/BDJw4xUzZEbQWpxwkmodeGNKtvOCAWDWm7uZycr+UE1kDf
+	E6sTG7niQn7AJXKtCgvfRSFvD59lMIkazFr/kYp+jPFrtihvis2J1ztB0CJbfZvB9qndAawrtDs
+	etD4ivxWtK1U7BabnLhbI8MeS1OqwQx2hoGC+BZXOJVzEdCZSaIkr8rT5ARm0iD9+W5b2Lt1jKy
+	2cFgB0TnNoxr/r+gKHTGIuODuvDFXgVQNRQr8ChBWwPlSDrzeTqV7VQXYGsiCXv1vsF0ZaoDmHp
+	AWDZnB8ZPPd7IxfwVaE5nnt6U3Q==
+X-Google-Smtp-Source: AGHT+IEVbsRZ4L7P12wxeChIuvyRzeF7VdizyYTaB4AKMbmobBgFbKFhASHYn55ebbptuM5XyJhT7Q==
+X-Received: by 2002:a17:903:198e:b0:242:e29e:d6a6 with SMTP id d9443c01a7336-2462ef66f01mr341960885ad.40.1756435672223;
+        Thu, 28 Aug 2025 19:47:52 -0700 (PDT)
+Received: from dw-tp ([171.76.86.139])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24906598808sm8925935ad.116.2025.08.28.19.47.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Aug 2025 19:47:51 -0700 (PDT)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Keith Busch <kbusch@kernel.org>, Jan Kara <jack@suse.cz>, Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org, snitzer@kernel.org, axboe@kernel.dk, dw@davidwei.uk, brauner@kernel.org, hch@lst.de, martin.petersen@oracle.com, djwong@kernel.org, linux-xfs@vger.kernel.org, viro@zeniv.linux.org.uk, Jan Kara <jack@suse.com>, Brian Foster <bfoster@redhat.com>
+Subject: Re: [PATCHv3 0/8] direct-io: even more flexible io vectors
+In-Reply-To: <ua7ib34kk5s6yfthqkgy3m2pnbk33a34g7prezmwl7hfwv6lwq@fljhjaogd6gq>
+Date: Fri, 29 Aug 2025 07:41:21 +0530
+Message-ID: <87bjnyg9me.fsf@gmail.com>
+References: <20250819164922.640964-1-kbusch@meta.com> <87a53ra3mb.fsf@gmail.com> <g35u5ugmyldqao7evqfeb3hfcbn3xddvpssawttqzljpigy7u4@k3hehh3grecq> <aKx485EMthHfBWef@kbusch-mbp> <87cy8ir835.fsf@gmail.com> <ua7ib34kk5s6yfthqkgy3m2pnbk33a34g7prezmwl7hfwv6lwq@fljhjaogd6gq>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1755812945.git.boris@bur.io>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_ALL(0.00)[];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:replyto,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -4.00
 
-On Thu, Aug 21, 2025 at 02:55:34PM -0700, Boris Burkov wrote:
-> I would like to revisit Qu's proposal to not charge btrfs extent_buffer
-> allocations to the user's cgroup.
-> 
-> https://lore.kernel.org/linux-mm/b5fef5372ae454a7b6da4f2f75c427aeab6a07d6.1727498749.git.wqu@suse.com/
-> 
-> I believe it is detrimental to account these global pages to the cgroup
-> using them, basically at random. A bit more justification and explanation
-> in the patches themselves.
-> 
+Jan Kara <jack@suse.cz> writes:
+
+> On Tue 26-08-25 10:29:58, Ritesh Harjani wrote:
+>> Keith Busch <kbusch@kernel.org> writes:
+>> 
+>> > On Mon, Aug 25, 2025 at 02:07:15PM +0200, Jan Kara wrote:
+>> >> On Fri 22-08-25 18:57:08, Ritesh Harjani wrote:
+>> >> > Keith Busch <kbusch@meta.com> writes:
+>> >> > >
+>> >> > >   - EXT4 falls back to buffered io for writes but not for reads.
+>> >> > 
+>> >> > ++linux-ext4 to get any historical context behind why the difference of
+>> >> > behaviour in reads v/s writes for EXT4 DIO. 
+>> >> 
+>> >> Hum, how did you test? Because in the basic testing I did (with vanilla
+>> >> kernel) I get EINVAL when doing unaligned DIO write in ext4... We should be
+>> >> falling back to buffered IO only if the underlying file itself does not
+>> >> support any kind of direct IO.
+>> >
+>> > Simple test case (dio-offset-test.c) below.
+>> >
+>> > I also ran this on vanilla kernel and got these results:
+>> >
+>> >   # mkfs.ext4 /dev/vda
+>> >   # mount /dev/vda /mnt/ext4/
+>> >   # make dio-offset-test
+>> >   # ./dio-offset-test /mnt/ext4/foobar
+>> >   write: Success
+>> >   read: Invalid argument
+>> >
+>> > I tracked the "write: Success" down to ext4's handling for the "special"
+>> > -ENOTBLK error after ext4_want_directio_fallback() returns "true".
+>> >
+>> 
+>> Right. Ext4 has fallback only for dio writes but not for DIO reads... 
+>> 
+>> buffered
+>> static inline bool ext4_want_directio_fallback(unsigned flags, ssize_t written)
+>> {
+>> 	/* must be a directio to fall back to buffered */
+>> 	if ((flags & (IOMAP_WRITE | IOMAP_DIRECT)) !=
+>> 		    (IOMAP_WRITE | IOMAP_DIRECT))
+>> 		return false;
+>> 
+>>     ...
+>> }
+>> 
+>> So basically the path is ext4_file_[read|write]_iter() -> iomap_dio_rw
+>>     -> iomap_dio_bio_iter() -> return -EINVAL. i.e. from...
+>> 
+>> 
+>> 	if ((pos | length) & (bdev_logical_block_size(iomap->bdev) - 1) ||
+>> 	    !bdev_iter_is_aligned(iomap->bdev, dio->submit.iter))
+>> 		return -EINVAL;
+>> 
+>> EXT4 then fallsback to buffered-io only for writes, but not for reads. 
+>
+> Right. And the fallback for writes was actually inadvertedly "added" by
+> commit bc264fea0f6f "iomap: support incremental iomap_iter advances". That
+> changed the error handling logic. Previously if iomap_dio_bio_iter()
+> returned EINVAL, it got propagated to userspace regardless of what
+> ->iomap_end() returned. After this commit if ->iomap_end() returns error
+> (which is ENOTBLK in ext4 case), it gets propagated to userspace instead of
+> the error returned by iomap_dio_bio_iter().
+>
+> Now both the old and new behavior make some sense so I won't argue that the
+> new iomap_iter() behavior is wrong. But I think we should change ext4 back
+> to the old behavior of failing unaligned dio writes instead of them falling
+> back to buffered IO. I think something like the attached patch should do
+> the trick - it makes unaligned dio writes fail again while writes to holes
+> of indirect-block mapped files still correctly fall back to buffered IO.
+> Once fstests run completes, I'll do a proper submission...
+>
+
+Aah, right. So it wasn't EXT4 which had this behaviour of falling back
+to buffered I/O for unaligned writes. Earlier EXT4 was assuming an error
+code will be detected by iomap and will be passed to it as "written" in
+ext4_iomap_end() for such unaligned writes. But I guess that logic
+silently got changed with that commit. Thanks for analyzing that. 
+I missed looking underneath iomap behaviour change :). 
+
+
+>
+> 								Honza
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
+> From ce6da00a09647a03013c3f420c2e7ef7489c3de8 Mon Sep 17 00:00:00 2001
+> From: Jan Kara <jack@suse.cz>
+> Date: Wed, 27 Aug 2025 14:55:19 +0200
+> Subject: [PATCH] ext4: Fail unaligned direct IO write with EINVAL
+>
+> Commit bc264fea0f6f ("iomap: support incremental iomap_iter advances")
+> changed the error handling logic in iomap_iter(). Previously any error
+> from iomap_dio_bio_iter() got propagated to userspace, after this commit
+> if ->iomap_end returns error, it gets propagated to userspace instead of
+> an error from iomap_dio_bio_iter(). This results in unaligned writes to
+> ext4 to silently fallback to buffered IO instead of erroring out.
+>
+> Now returning ENOTBLK for DIO writes from ext4_iomap_end() seems
+> unnecessary these days. It is enough to return ENOTBLK from
+> ext4_iomap_begin() when we don't support DIO write for that particular
+> file offset (due to hole).
+
+Right. This mainly only happens if we have holes in non-extent (indirect
+blocks) case.
+
+Also, as I see ext4 always just fallsback to buffered-io for no or
+partial writes (unless iomap returned any error code). So, I was just
+wondering if that could ever happen for DIO atomic write case. It's good
+that we have a WARN_ON_ONCE() check in there to catch it. But I was
+wondering if this needs an explicit handling in ext4_dio_write_iter() to
+not fallback to buffered-writes for atomic DIO requests?
+
+-ritesh
+
+
+
+>
+> Fixes: bc264fea0f6f ("iomap: support incremental iomap_iter advances")
+> Signed-off-by: Jan Kara <jack@suse.cz>
 > ---
-> Changelog:
-> v4:
-> - change the concept from "uncharged" to "kernel_file"
-> - no longer violates the invariant that each mapped folio has a memcg
->   when CONFIG_MEMCG=y
-> - no longer really tied to memcg conceptually, so simplify build/helpers
-> v3:
-> - use mod_node_page_state since we will never count cgroup stats
-> - include Shakeel's patch that removes a WARNING triggered by this series
-> v2:
-> - switch from filemap_add_folio_nocharge() to AS_UNCHARGED on the
->   address_space.
-> - fix an interrupt safety bug in the vmstat patch.
-> - fix some foolish build errors for CONFIG_MEMCG=n
-> 
-> 
-> 
-> Boris Burkov (3):
->   mm/filemap: add AS_KERNEL_FILE
->   mm: add vmstat for kernel_file pages
->   btrfs: set AS_KERNEL_FILE on the btree_inode
-> 
->  fs/btrfs/disk-io.c      |  1 +
->  include/linux/mmzone.h  |  1 +
->  include/linux/pagemap.h |  2 ++
->  mm/filemap.c            | 13 +++++++++++++
->  mm/vmstat.c             |  1 +
-
-For the btrfs parts,
-
-Acked-by: David Sterba <dsterba@suse.com>
+>  fs/ext4/file.c  |  2 --
+>  fs/ext4/inode.c | 35 -----------------------------------
+>  2 files changed, 37 deletions(-)
+>
+> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+> index 93240e35ee36..cf39f57d21e9 100644
+> --- a/fs/ext4/file.c
+> +++ b/fs/ext4/file.c
+> @@ -579,8 +579,6 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>  		iomap_ops = &ext4_iomap_overwrite_ops;
+>  	ret = iomap_dio_rw(iocb, from, iomap_ops, &ext4_dio_write_ops,
+>  			   dio_flags, NULL, 0);
+> -	if (ret == -ENOTBLK)
+> -		ret = 0;
+>  	if (extend) {
+>  		/*
+>  		 * We always perform extending DIO write synchronously so by
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 5b7a15db4953..c3b23c90fd11 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -3872,47 +3872,12 @@ static int ext4_iomap_overwrite_begin(struct inode *inode, loff_t offset,
+>  	return ret;
+>  }
+>  
+> -static inline bool ext4_want_directio_fallback(unsigned flags, ssize_t written)
+> -{
+> -	/* must be a directio to fall back to buffered */
+> -	if ((flags & (IOMAP_WRITE | IOMAP_DIRECT)) !=
+> -		    (IOMAP_WRITE | IOMAP_DIRECT))
+> -		return false;
+> -
+> -	/* atomic writes are all-or-nothing */
+> -	if (flags & IOMAP_ATOMIC)
+> -		return false;
+> -
+> -	/* can only try again if we wrote nothing */
+> -	return written == 0;
+> -}
+> -
+> -static int ext4_iomap_end(struct inode *inode, loff_t offset, loff_t length,
+> -			  ssize_t written, unsigned flags, struct iomap *iomap)
+> -{
+> -	/*
+> -	 * Check to see whether an error occurred while writing out the data to
+> -	 * the allocated blocks. If so, return the magic error code for
+> -	 * non-atomic write so that we fallback to buffered I/O and attempt to
+> -	 * complete the remainder of the I/O.
+> -	 * For non-atomic writes, any blocks that may have been
+> -	 * allocated in preparation for the direct I/O will be reused during
+> -	 * buffered I/O. For atomic write, we never fallback to buffered-io.
+> -	 */
+> -	if (ext4_want_directio_fallback(flags, written))
+> -		return -ENOTBLK;
+> -
+> -	return 0;
+> -}
+> -
+>  const struct iomap_ops ext4_iomap_ops = {
+>  	.iomap_begin		= ext4_iomap_begin,
+> -	.iomap_end		= ext4_iomap_end,
+>  };
+>  
+>  const struct iomap_ops ext4_iomap_overwrite_ops = {
+>  	.iomap_begin		= ext4_iomap_overwrite_begin,
+> -	.iomap_end		= ext4_iomap_end,
+>  };
+>  
+>  static int ext4_iomap_begin_report(struct inode *inode, loff_t offset,
+> -- 
+> 2.43.0
 
