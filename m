@@ -1,94 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-59655-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59656-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEC33B3BFAF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 17:45:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7CB3B3BFAD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 17:45:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DA281C21383
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 15:43:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DD52588060
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 15:43:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01C0D32C315;
-	Fri, 29 Aug 2025 15:42:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E9683277BE;
+	Fri, 29 Aug 2025 15:43:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YwwjIpdh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uFbR+dvb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8479232C30A
-	for <linux-fsdevel@vger.kernel.org>; Fri, 29 Aug 2025 15:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BD8C326D4F
+	for <linux-fsdevel@vger.kernel.org>; Fri, 29 Aug 2025 15:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756482129; cv=none; b=I5Opi0uKZdbGwh6xqTLeYpUBWxJw2oTIq5v5UGZ5RqDoxzGi0eE8Mw598bjxdGfIjpEa9KppZFzOtFCOCyQ4yE3v/wbXcuUAZuLbGSiH+434rcJp1O/SpLTSzS4CYhRCNnPDjp9M0YzpRpyjpBlOJsEtqTg7JebjJ85PzAxbzpE=
+	t=1756482198; cv=none; b=cKW3YxxaHXCIy4tXbJdNpiAIPnOWi/9TWSBlLfh5NemayTgiObECE1tQGS9udtAduvYhDx4ZwduzPXy/kVRS/Ca10UwclYyN6B5vSxWiBdHRdI8dj7beoBYBi0UhwUwzKQB1uhcnd+lNBVuV97tC1FYDTdZnaiEccGv6vfu3Zws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756482129; c=relaxed/simple;
-	bh=dWU0tQnl/a7jB6nh8zbQfROWvt9TJT4pB283jKPUmuw=;
+	s=arc-20240116; t=1756482198; c=relaxed/simple;
+	bh=XuGQF67bXZpJ7TdP7iBcnO6E25R1RPARixrBGoGEo5c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LDJmjC2C7YFK7qzvlKsh74fjNpp3dv4xFg68ujZqKV+3O30379h90yGczCAE01AxSjxYYNPJ76wKF9QYAU1MOrHsAkDbf+3jyRlARweP1Z8tB4B2fbs3wAZQ+kjap0MOY6haUcC+RO8me+T1P8RHSoHGsCkybJGDvu+zaQKt3i0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YwwjIpdh; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756482126;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L3dkqzGDG292nybq+xc2L7EMzaG/HONK5U6tSiASXoY=;
-	b=YwwjIpdhn7ZGenIIUu37WoS+g5rXgsaipwT4CiZk64VNvlpfyMXPU93SZHAhRvteNu1KuK
-	avGfBJ50MJ0rES9EfWnXcodVu+Paw0nL8t8BJP8tCh/aItvpWkTLxF1lHe30WF8piek1fe
-	BbzwlYcNmnjFBK5bM0sWTwfDFSHyqqY=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-34-zaRIxyDyM1iPpvINMCRdWA-1; Fri, 29 Aug 2025 11:42:05 -0400
-X-MC-Unique: zaRIxyDyM1iPpvINMCRdWA-1
-X-Mimecast-MFC-AGG-ID: zaRIxyDyM1iPpvINMCRdWA_1756482124
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3ce65accfc7so1409295f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Aug 2025 08:42:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756482124; x=1757086924;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=L3dkqzGDG292nybq+xc2L7EMzaG/HONK5U6tSiASXoY=;
-        b=JBzikgx7mj1WvjtYiZLt4LboEntEEZAVXd5EFl//h05x1GzNtG38Wd1w27vgIHM58z
-         ODwQ3rO3TuA/PfHlT6C/ORH6CanF33fAcVJaB3a9q66JWuEWHw6p2XdiPUXM800XFx2C
-         OCha+q4ZZ6ez4UA8NMFgX/Z82y49Mxz2hwkDmQB8YUzghAJN7yopWqWYBom0trhiLTPJ
-         +8eNJ0WoSvSd38cRGv2tJBVakbLBMHQCboKtI8x6dH218wY47j823HbIWKlD4FVY7Vj7
-         qwls/cjGQfOIhGdLY121/3M2AVW25f2rMemAQXhW0+FxI92d4/aT9mUw5ytT5TQxWeim
-         Q0dQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXq+EiAciTEqhea/v2nhfPJCQl15b+Ho+NZdyB01xd28JvrASKYLcd4No1SjHrOgJILcxogguOeR+QZ/l5K@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywew0cB7++Ql3ogOb6js5JYNU69JWI8CyE8FTbB5XMxrqivZ+1u
-	2zqkWKR81I0xYfumaQBu005drCKfgZ539cLslvHqFZM9iXZRmX0BdpXd1Udmy3ZH7XieMPXlK3T
-	LtBiKoug5nxD4WrtDIALzJSIaIxddQlR5GtUpZ0LFaMsW525I6ZPtu9y39HOjUpK8vA==
-X-Gm-Gg: ASbGncvIEdhYCQBhBGTs+9WoNc3GtvjAy9uo9fjZDUC1s2WXy0mc8iAuZnPnUHS2S4j
-	dGRV1eo1sEvlXVXgd85NR2ztT+xZ7wotGz4EWg15XvmfLYw1Gm0IMUhqQm1rr9G88xm86ULGXdw
-	nXM1++/G1ydxxOMSnOACXeHFiIzDHdalQg+QOfud9AuvB4503J1k8LIlb7tJySO4edVoiXdcgTK
-	1FD7ZoK5wpoNpbCNozUOSasc7nQj04dlb/si/a9mrCP4j/EYKdfHSEKvK5M0+6N0YhVHpGehT3S
-	S0SyJbeyPY+gh8+K8r4HUfeTH/2Dm3A=
-X-Received: by 2002:a05:6000:2c0c:b0:3ce:f09:afac with SMTP id ffacd0b85a97d-3ce0f09b49cmr5734021f8f.27.1756482123539;
-        Fri, 29 Aug 2025 08:42:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEo+ERCJFbSB+0Kzj5T+Zw7lTOL8oDAEEwJKh5DZaZt9+HK8IL4RGpBPufkBeZged9GV2vFGg==
-X-Received: by 2002:a05:6000:2c0c:b0:3ce:f09:afac with SMTP id ffacd0b85a97d-3ce0f09b49cmr5733993f8f.27.1756482123041;
-        Fri, 29 Aug 2025 08:42:03 -0700 (PDT)
-Received: from thinky ([91.245.205.131])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf33fb9237sm3695476f8f.42.2025.08.29.08.42.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Aug 2025 08:42:02 -0700 (PDT)
-Date: Fri, 29 Aug 2025 17:42:01 +0200
-From: Andrey Albershteyn <aalbersh@redhat.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: aalbersh@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] xfs_quota: utilize file_setattr to set prjid on
- special files
-Message-ID: <gzvj4imrixnjbolyi6uwzhpwuybuaiqd5pnkeg2cn7lh6jn5nk@go3wmefvgy7d>
-References: <20250827-xattrat-syscall-v2-0-82a2d2d5865b@kernel.org>
- <20250827-xattrat-syscall-v2-2-82a2d2d5865b@kernel.org>
- <20250828143916.GB8096@frogsfrogsfrogs>
+	 Content-Type:Content-Disposition:In-Reply-To; b=A5OJoA3EUo8PRQA5ZlxrPRXaJS3eIEE7KUdmz3i76LZkFQkpPLNXKLzqBqmtaWl4dZhH7st34GJYnsuIv5McYFEzIjfkwHVwjEBeTGg+hpwvqcySYfqaoBVOseJ9r71chg4zn+s0jJnUO2tCvmD+XBq9THXZJAv33RKPvaFWPoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uFbR+dvb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3E41C4CEF0;
+	Fri, 29 Aug 2025 15:43:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756482197;
+	bh=XuGQF67bXZpJ7TdP7iBcnO6E25R1RPARixrBGoGEo5c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uFbR+dvb523i22Y/ZPrWEG+Q6Fyp63e9s9IYEptlOHaYRSwB2OxQjcGTGmBxgSlzf
+	 A9VWNVqVoj4riOimwY/dDj65CInb+V17x1WecDcA0Y31vEFLc6+NGgxdoxsYUZiT+7
+	 AzNSCR1APnNVEvdShHuex0jWT5UaEqYEy96s2s1mHpdRGiMXj/qlJDQCxHP0ZHud1y
+	 yTXuaQ4sa9LoYzSL3h1AGZKQwF7C/0vv5Ql5VxC2LjAtP7tJXDXl/fIKJAaBr2bGua
+	 aAhkXRDpT/dIuxE2k6V0HyCx5hbmiB1y6GZWnhVBtEOli2QkVqbMdwUXq0hQm0tAqu
+	 5NErG+jx1Psow==
+Date: Fri, 29 Aug 2025 08:43:17 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Miklos Szeredi <mszeredi@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, Joanne Koong <joannelkoong@gmail.com>,
+	John Groves <John@groves.net>, Bernd Schubert <bernd@bsbernd.com>
+Subject: Re: [PATCH v2] fuse: allow synchronous FUSE_INIT
+Message-ID: <20250829154317.GA1587915@frogsfrogsfrogs>
+References: <20250827110004.584582-1-mszeredi@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -97,290 +57,467 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250828143916.GB8096@frogsfrogsfrogs>
+In-Reply-To: <20250827110004.584582-1-mszeredi@redhat.com>
 
-On 2025-08-28 07:39:16, Darrick J. Wong wrote:
-> On Wed, Aug 27, 2025 at 05:15:54PM +0200, Andrey Albershteyn wrote:
-> > From: Andrey Albershteyn <aalbersh@redhat.com>
-> > 
-> > Utilize new file_getattr/file_setattr syscalls to set project ID on
-> > special files. Previously, special files were skipped due to lack of the
-> > way to call FS_IOC_SETFSXATTR ioctl on them. The quota accounting was
-> > therefore missing these inodes (special files created before project
-> > setup). The ones created after project initialization did inherit the
-> > projid flag from the parent.
-> > 
-> > Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
-> > ---
-> >  quota/project.c | 142 +++++++++++++++++++++++++++++---------------------------
-> >  1 file changed, 74 insertions(+), 68 deletions(-)
-> > 
-> > diff --git a/quota/project.c b/quota/project.c
-> > index adb26945fa57..857b1abe71c7 100644
-> > --- a/quota/project.c
-> > +++ b/quota/project.c
-> > @@ -4,14 +4,17 @@
-> >   * All Rights Reserved.
-> >   */
-> >  
-> > +#include <unistd.h>
-> >  #include "command.h"
-> >  #include "input.h"
-> >  #include "init.h"
-> > +#include "libfrog/file_attr.h"
-> >  #include "quota.h"
-> >  
-> >  static cmdinfo_t project_cmd;
-> >  static prid_t prid;
-> >  static int recurse_depth = -1;
-> > +static int dfd;
-> >  
-> >  enum {
-> >  	CHECK_PROJECT	= 0x1,
-> > @@ -19,13 +22,6 @@ enum {
-> >  	CLEAR_PROJECT	= 0x4,
-> >  };
-> >  
-> > -#define EXCLUDED_FILE_TYPES(x) \
-> > -	   (S_ISCHR((x)) \
-> > -	|| S_ISBLK((x)) \
-> > -	|| S_ISFIFO((x)) \
-> > -	|| S_ISLNK((x)) \
-> > -	|| S_ISSOCK((x)))
-> > -
-> >  static void
-> >  project_help(void)
-> >  {
-> > @@ -85,8 +81,8 @@ check_project(
-> >  	int			flag,
-> >  	struct FTW		*data)
-> >  {
-> > -	struct fsxattr		fsx;
-> > -	int			fd;
-> > +	int			error;
-> > +	struct file_attr	fa;
-> >  
-> >  	if (recurse_depth >= 0 && data->level > recurse_depth)
-> >  		return 0;
-> > @@ -96,30 +92,30 @@ check_project(
-> >  		fprintf(stderr, _("%s: cannot stat file %s\n"), progname, path);
-> >  		return 0;
-> >  	}
-> > -	if (EXCLUDED_FILE_TYPES(stat->st_mode)) {
-> > -		fprintf(stderr, _("%s: skipping special file %s\n"), progname, path);
-> > -		return 0;
-> > -	}
-> >  
-> > -	if ((fd = open(path, O_RDONLY|O_NOCTTY)) == -1) {
-> > -		exitcode = 1;
-> > -		fprintf(stderr, _("%s: cannot open %s: %s\n"),
-> > -			progname, path, strerror(errno));
-> > -	} else if ((xfsctl(path, fd, FS_IOC_FSGETXATTR, &fsx)) < 0) {
-> > -		exitcode = 1;
-> > +	error = xfrog_file_getattr(dfd, path, stat, &fa, AT_SYMLINK_NOFOLLOW);
-> > +	if (error && errno == EOPNOTSUPP) {
-> > +		if (SPECIAL_FILE(stat->st_mode)) {
-> > +			fprintf(stderr, _("%s: skipping special file %s: %s\n"),
-> > +					progname, path, strerror(errno));
-> > +			return 0;
-> > +		}
-> > +	}
-> > +	if (error) {
-> >  		fprintf(stderr, _("%s: cannot get flags on %s: %s\n"),
-> > -			progname, path, strerror(errno));
-> > -	} else {
-> > -		if (fsx.fsx_projid != prid)
-> > -			printf(_("%s - project identifier is not set"
-> > -				 " (inode=%u, tree=%u)\n"),
-> > -				path, fsx.fsx_projid, (unsigned int)prid);
-> > -		if (!(fsx.fsx_xflags & FS_XFLAG_PROJINHERIT) && S_ISDIR(stat->st_mode))
-> > -			printf(_("%s - project inheritance flag is not set\n"),
-> > -				path);
-> > +				progname, path, strerror(errno));
-> > +		exitcode = 1;
-> > +		return 0;
-> >  	}
-> > -	if (fd != -1)
-> > -		close(fd);
-> > +
-> > +	if (fa.fa_projid != prid)
-> > +		printf(_("%s - project identifier is not set"
-> > +				" (inode=%u, tree=%u)\n"),
-> > +			path, fa.fa_projid, (unsigned int)prid);
-> > +	if (!(fa.fa_xflags & FS_XFLAG_PROJINHERIT) && S_ISDIR(stat->st_mode))
-> > +		printf(_("%s - project inheritance flag is not set\n"),
-> > +			path);
-> > +
-> >  	return 0;
-> >  }
-> >  
-> > @@ -130,8 +126,8 @@ clear_project(
-> >  	int			flag,
-> >  	struct FTW		*data)
-> >  {
-> > -	struct fsxattr		fsx;
-> > -	int			fd;
-> > +	int			error;
-> > +	struct file_attr	fa;
-> >  
-> >  	if (recurse_depth >= 0 && data->level > recurse_depth)
-> >  		return 0;
-> > @@ -141,32 +137,32 @@ clear_project(
-> >  		fprintf(stderr, _("%s: cannot stat file %s\n"), progname, path);
-> >  		return 0;
-> >  	}
-> > -	if (EXCLUDED_FILE_TYPES(stat->st_mode)) {
-> > -		fprintf(stderr, _("%s: skipping special file %s\n"), progname, path);
-> > -		return 0;
-> > +
-> > +	error = xfrog_file_getattr(dfd, path, stat, &fa, AT_SYMLINK_NOFOLLOW);
-> > +	if (error && errno == EOPNOTSUPP) {
-> > +		if (SPECIAL_FILE(stat->st_mode)) {
-> > +			fprintf(stderr, _("%s: skipping special file %s: %s\n"),
-> > +					progname, path, strerror(errno));
-> > +			return 0;
-> > +		}
-> >  	}
-> >  
-> > -	if ((fd = open(path, O_RDONLY|O_NOCTTY)) == -1) {
-> > -		exitcode = 1;
-> > -		fprintf(stderr, _("%s: cannot open %s: %s\n"),
-> > -			progname, path, strerror(errno));
-> > -		return 0;
-> > -	} else if (xfsctl(path, fd, FS_IOC_FSGETXATTR, &fsx) < 0) {
-> > -		exitcode = 1;
-> > +	if (error) {
-> >  		fprintf(stderr, _("%s: cannot get flags on %s: %s\n"),
-> > -			progname, path, strerror(errno));
-> > -		close(fd);
-> > +				progname, path, strerror(errno));
-> > +		exitcode = 1;
-> >  		return 0;
-> >  	}
-> >  
-> > -	fsx.fsx_projid = 0;
-> > -	fsx.fsx_xflags &= ~FS_XFLAG_PROJINHERIT;
-> > -	if (xfsctl(path, fd, FS_IOC_FSSETXATTR, &fsx) < 0) {
-> > -		exitcode = 1;
-> > +	fa.fa_projid = 0;
-> > +	fa.fa_xflags &= ~FS_XFLAG_PROJINHERIT;
-> > +
-> > +	error = xfrog_file_setattr(dfd, path, stat, &fa, AT_SYMLINK_NOFOLLOW);
-> > +	if (error) {
-> >  		fprintf(stderr, _("%s: cannot clear project on %s: %s\n"),
-> >  			progname, path, strerror(errno));
-> > +		exitcode = 1;
-> >  	}
-> > -	close(fd);
-> >  	return 0;
-> >  }
-> >  
-> > @@ -177,8 +173,8 @@ setup_project(
-> >  	int			flag,
-> >  	struct FTW		*data)
-> >  {
-> > -	struct fsxattr		fsx;
-> > -	int			fd;
-> > +	struct file_attr	fa;
-> > +	int			error;
-> >  
-> >  	if (recurse_depth >= 0 && data->level > recurse_depth)
-> >  		return 0;
-> > @@ -188,32 +184,33 @@ setup_project(
-> >  		fprintf(stderr, _("%s: cannot stat file %s\n"), progname, path);
-> >  		return 0;
-> >  	}
-> > -	if (EXCLUDED_FILE_TYPES(stat->st_mode)) {
-> > -		fprintf(stderr, _("%s: skipping special file %s\n"), progname, path);
-> > -		return 0;
-> > +
-> > +	error = xfrog_file_getattr(dfd, path, stat, &fa, AT_SYMLINK_NOFOLLOW);
-> > +	if (error && errno == EOPNOTSUPP) {
-> > +		if (SPECIAL_FILE(stat->st_mode)) {
-> > +			fprintf(stderr, _("%s: skipping special file %s\n"),
-> > +					progname, path);
-> > +			return 0;
-> > +		}
-> >  	}
-> >  
-> > -	if ((fd = open(path, O_RDONLY|O_NOCTTY)) == -1) {
-> > -		exitcode = 1;
-> > -		fprintf(stderr, _("%s: cannot open %s: %s\n"),
-> > -			progname, path, strerror(errno));
-> > -		return 0;
-> > -	} else if (xfsctl(path, fd, FS_IOC_FSGETXATTR, &fsx) < 0) {
-> > -		exitcode = 1;
-> > +	if (error) {
-> >  		fprintf(stderr, _("%s: cannot get flags on %s: %s\n"),
-> > -			progname, path, strerror(errno));
-> > -		close(fd);
-> > +				progname, path, strerror(errno));
-> > +		exitcode = 1;
-> >  		return 0;
-> >  	}
-> >  
-> > -	fsx.fsx_projid = prid;
-> > -	fsx.fsx_xflags |= FS_XFLAG_PROJINHERIT;
-> > -	if (xfsctl(path, fd, FS_IOC_FSSETXATTR, &fsx) < 0) {
-> > -		exitcode = 1;
-> > +	fa.fa_projid = prid;
-> > +	if (S_ISDIR(stat->st_mode))
-> > +		fa.fa_xflags |= FS_XFLAG_PROJINHERIT;
+On Wed, Aug 27, 2025 at 12:59:55PM +0200, Miklos Szeredi wrote:
+> FUSE_INIT has always been asynchronous with mount.  That means that the
+> server processed this request after the mount syscall returned.
 > 
-> Hrm, interesting change in projinherit logic -- is this because the new
-> setattr code rejects projinherit on non-directories?
+> This means that FUSE_INIT can't supply the root inode's ID, hence it
+> currently has a hardcoded value.  There are other limitations such as not
+> being able to perform getxattr during mount, which is needed by selinux.
+> 
+> To remove these limitations allow server to process FUSE_INIT while
+> initializing the in-core super block for the fuse filesystem.  This can
+> only be done if the server is prepared to handle this, so add
+> FUSE_DEV_IOC_SYNC_INIT ioctl, which
+> 
+>  a) lets the server know whether this feature is supported, returning
+>  ENOTTY othewrwise.
+> 
+>  b) lets the kernel know to perform a synchronous initialization
+> 
+> The implementation is slightly tricky, since fuse_dev/fuse_conn are set up
+> only during super block creation.  This is solved by setting the private
+> data of the fuse device file to a special value ((struct fuse_dev *) 1) and
+> waiting for this to be turned into a proper fuse_dev before commecing with
+> operations on the device file.
 
-They don't reject it so far, but I think PROJINHERIT was never set
-on files (according to xfs_flags2diflags()).
+By the way, how is libfuse supposed to use SYNC_INIT?  I gather libfuse
+will have to start up the background fuse workers threads to listen for
+events /before/ the actual mount() call?
 
-> 
-> > +
-> > +	error = xfrog_file_setattr(dfd, path, stat, &fa, AT_SYMLINK_NOFOLLOW);
-> > +	if (error) {
-> >  		fprintf(stderr, _("%s: cannot set project on %s: %s\n"),
-> >  			progname, path, strerror(errno));
-> > +		exitcode = 1;
-> >  	}
-> > -	close(fd);
-> >  	return 0;
-> >  }
-> >  
-> > @@ -223,6 +220,13 @@ project_operations(
-> >  	char		*dir,
-> >  	int		type)
-> >  {
-> > +	dfd = open(dir, O_RDONLY|O_NOCTTY);
-> 
-> Nit: spaces around the pipe char^acter, please.
-> 
-> --D
-> 
-> > +	if (dfd < -1) {
-> > +		printf(_("Error opening dir %s for project %s...\n"), dir,
-> > +				project);
-> > +		return;
-> > +	}
-> > +
-> >  	switch (type) {
-> >  	case CHECK_PROJECT:
-> >  		printf(_("Checking project %s (path %s)...\n"), project, dir);
-> > @@ -237,6 +241,8 @@ project_operations(
-> >  		nftw(dir, clear_project, 100, FTW_PHYS|FTW_MOUNT);
-> >  		break;
-> >  	}
-> > +
-> > +	close(dfd);
-> >  }
-> >  
-> >  static void
-> > 
-> > -- 
-> > 2.49.0
-> > 
-> > 
-> 
+--D
 
--- 
-- Andrey
-
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> ---
+> v2:
+> 
+>  - make fuse_send_init() perform sync/async sequence based on fc->sync_init
+>    (Joanne)
+> 
+> fs/fuse/cuse.c            |  3 +-
+>  fs/fuse/dev.c             | 74 +++++++++++++++++++++++++++++----------
+>  fs/fuse/dev_uring.c       |  4 +--
+>  fs/fuse/fuse_dev_i.h      | 13 +++++--
+>  fs/fuse/fuse_i.h          |  5 ++-
+>  fs/fuse/inode.c           | 50 ++++++++++++++++++++------
+>  include/uapi/linux/fuse.h |  1 +
+>  7 files changed, 115 insertions(+), 35 deletions(-)
+> 
+> diff --git a/fs/fuse/cuse.c b/fs/fuse/cuse.c
+> index b39844d75a80..28c96961e85d 100644
+> --- a/fs/fuse/cuse.c
+> +++ b/fs/fuse/cuse.c
+> @@ -52,6 +52,7 @@
+>  #include <linux/user_namespace.h>
+>  
+>  #include "fuse_i.h"
+> +#include "fuse_dev_i.h"
+>  
+>  #define CUSE_CONNTBL_LEN	64
+>  
+> @@ -547,7 +548,7 @@ static int cuse_channel_open(struct inode *inode, struct file *file)
+>   */
+>  static int cuse_channel_release(struct inode *inode, struct file *file)
+>  {
+> -	struct fuse_dev *fud = file->private_data;
+> +	struct fuse_dev *fud = __fuse_get_dev(file);
+>  	struct cuse_conn *cc = fc_to_cc(fud->fc);
+>  
+>  	/* remove from the conntbl, no more access from this point on */
+> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> index 8ac074414897..948f45c6e0ef 100644
+> --- a/fs/fuse/dev.c
+> +++ b/fs/fuse/dev.c
+> @@ -1530,14 +1530,34 @@ static int fuse_dev_open(struct inode *inode, struct file *file)
+>  	return 0;
+>  }
+>  
+> +struct fuse_dev *fuse_get_dev(struct file *file)
+> +{
+> +	struct fuse_dev *fud = __fuse_get_dev(file);
+> +	int err;
+> +
+> +	if (likely(fud))
+> +		return fud;
+> +
+> +	err = wait_event_interruptible(fuse_dev_waitq,
+> +				       READ_ONCE(file->private_data) != FUSE_DEV_SYNC_INIT);
+> +	if (err)
+> +		return ERR_PTR(err);
+> +
+> +	fud = __fuse_get_dev(file);
+> +	if (!fud)
+> +		return ERR_PTR(-EPERM);
+> +
+> +	return fud;
+> +}
+> +
+>  static ssize_t fuse_dev_read(struct kiocb *iocb, struct iov_iter *to)
+>  {
+>  	struct fuse_copy_state cs;
+>  	struct file *file = iocb->ki_filp;
+>  	struct fuse_dev *fud = fuse_get_dev(file);
+>  
+> -	if (!fud)
+> -		return -EPERM;
+> +	if (IS_ERR(fud))
+> +		return PTR_ERR(fud);
+>  
+>  	if (!user_backed_iter(to))
+>  		return -EINVAL;
+> @@ -1557,8 +1577,8 @@ static ssize_t fuse_dev_splice_read(struct file *in, loff_t *ppos,
+>  	struct fuse_copy_state cs;
+>  	struct fuse_dev *fud = fuse_get_dev(in);
+>  
+> -	if (!fud)
+> -		return -EPERM;
+> +	if (IS_ERR(fud))
+> +		return PTR_ERR(fud);
+>  
+>  	bufs = kvmalloc_array(pipe->max_usage, sizeof(struct pipe_buffer),
+>  			      GFP_KERNEL);
+> @@ -2233,8 +2253,8 @@ static ssize_t fuse_dev_write(struct kiocb *iocb, struct iov_iter *from)
+>  	struct fuse_copy_state cs;
+>  	struct fuse_dev *fud = fuse_get_dev(iocb->ki_filp);
+>  
+> -	if (!fud)
+> -		return -EPERM;
+> +	if (IS_ERR(fud))
+> +		return PTR_ERR(fud);
+>  
+>  	if (!user_backed_iter(from))
+>  		return -EINVAL;
+> @@ -2258,8 +2278,8 @@ static ssize_t fuse_dev_splice_write(struct pipe_inode_info *pipe,
+>  	ssize_t ret;
+>  
+>  	fud = fuse_get_dev(out);
+> -	if (!fud)
+> -		return -EPERM;
+> +	if (IS_ERR(fud))
+> +		return PTR_ERR(fud);
+>  
+>  	pipe_lock(pipe);
+>  
+> @@ -2343,7 +2363,7 @@ static __poll_t fuse_dev_poll(struct file *file, poll_table *wait)
+>  	struct fuse_iqueue *fiq;
+>  	struct fuse_dev *fud = fuse_get_dev(file);
+>  
+> -	if (!fud)
+> +	if (IS_ERR(fud))
+>  		return EPOLLERR;
+>  
+>  	fiq = &fud->fc->iq;
+> @@ -2490,7 +2510,7 @@ void fuse_wait_aborted(struct fuse_conn *fc)
+>  
+>  int fuse_dev_release(struct inode *inode, struct file *file)
+>  {
+> -	struct fuse_dev *fud = fuse_get_dev(file);
+> +	struct fuse_dev *fud = __fuse_get_dev(file);
+>  
+>  	if (fud) {
+>  		struct fuse_conn *fc = fud->fc;
+> @@ -2521,8 +2541,8 @@ static int fuse_dev_fasync(int fd, struct file *file, int on)
+>  {
+>  	struct fuse_dev *fud = fuse_get_dev(file);
+>  
+> -	if (!fud)
+> -		return -EPERM;
+> +	if (IS_ERR(fud))
+> +		return PTR_ERR(fud);
+>  
+>  	/* No locking - fasync_helper does its own locking */
+>  	return fasync_helper(fd, file, on, &fud->fc->iq.fasync);
+> @@ -2532,7 +2552,7 @@ static int fuse_device_clone(struct fuse_conn *fc, struct file *new)
+>  {
+>  	struct fuse_dev *fud;
+>  
+> -	if (new->private_data)
+> +	if (__fuse_get_dev(new))
+>  		return -EINVAL;
+>  
+>  	fud = fuse_dev_alloc_install(fc);
+> @@ -2563,7 +2583,7 @@ static long fuse_dev_ioctl_clone(struct file *file, __u32 __user *argp)
+>  	 * uses the same ioctl handler.
+>  	 */
+>  	if (fd_file(f)->f_op == file->f_op)
+> -		fud = fuse_get_dev(fd_file(f));
+> +		fud = __fuse_get_dev(fd_file(f));
+>  
+>  	res = -EINVAL;
+>  	if (fud) {
+> @@ -2581,8 +2601,8 @@ static long fuse_dev_ioctl_backing_open(struct file *file,
+>  	struct fuse_dev *fud = fuse_get_dev(file);
+>  	struct fuse_backing_map map;
+>  
+> -	if (!fud)
+> -		return -EPERM;
+> +	if (IS_ERR(fud))
+> +		return PTR_ERR(fud);
+>  
+>  	if (!IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
+>  		return -EOPNOTSUPP;
+> @@ -2598,8 +2618,8 @@ static long fuse_dev_ioctl_backing_close(struct file *file, __u32 __user *argp)
+>  	struct fuse_dev *fud = fuse_get_dev(file);
+>  	int backing_id;
+>  
+> -	if (!fud)
+> -		return -EPERM;
+> +	if (IS_ERR(fud))
+> +		return PTR_ERR(fud);
+>  
+>  	if (!IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
+>  		return -EOPNOTSUPP;
+> @@ -2610,6 +2630,19 @@ static long fuse_dev_ioctl_backing_close(struct file *file, __u32 __user *argp)
+>  	return fuse_backing_close(fud->fc, backing_id);
+>  }
+>  
+> +static long fuse_dev_ioctl_sync_init(struct file *file)
+> +{
+> +	int err = -EINVAL;
+> +
+> +	mutex_lock(&fuse_mutex);
+> +	if (!__fuse_get_dev(file)) {
+> +		WRITE_ONCE(file->private_data, FUSE_DEV_SYNC_INIT);
+> +		err = 0;
+> +	}
+> +	mutex_unlock(&fuse_mutex);
+> +	return err;
+> +}
+> +
+>  static long fuse_dev_ioctl(struct file *file, unsigned int cmd,
+>  			   unsigned long arg)
+>  {
+> @@ -2625,6 +2658,9 @@ static long fuse_dev_ioctl(struct file *file, unsigned int cmd,
+>  	case FUSE_DEV_IOC_BACKING_CLOSE:
+>  		return fuse_dev_ioctl_backing_close(file, argp);
+>  
+> +	case FUSE_DEV_IOC_SYNC_INIT:
+> +		return fuse_dev_ioctl_sync_init(file);
+> +
+>  	default:
+>  		return -ENOTTY;
+>  	}
+> @@ -2633,7 +2669,7 @@ static long fuse_dev_ioctl(struct file *file, unsigned int cmd,
+>  #ifdef CONFIG_PROC_FS
+>  static void fuse_dev_show_fdinfo(struct seq_file *seq, struct file *file)
+>  {
+> -	struct fuse_dev *fud = fuse_get_dev(file);
+> +	struct fuse_dev *fud = __fuse_get_dev(file);
+>  	if (!fud)
+>  		return;
+>  
+> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+> index 249b210becb1..bef38ed78249 100644
+> --- a/fs/fuse/dev_uring.c
+> +++ b/fs/fuse/dev_uring.c
+> @@ -1139,9 +1139,9 @@ int fuse_uring_cmd(struct io_uring_cmd *cmd, unsigned int issue_flags)
+>  		return -EINVAL;
+>  
+>  	fud = fuse_get_dev(cmd->file);
+> -	if (!fud) {
+> +	if (IS_ERR(fud)) {
+>  		pr_info_ratelimited("No fuse device found\n");
+> -		return -ENOTCONN;
+> +		return PTR_ERR(fud);
+>  	}
+>  	fc = fud->fc;
+>  
+> diff --git a/fs/fuse/fuse_dev_i.h b/fs/fuse/fuse_dev_i.h
+> index 5a9bd771a319..6e8373f97040 100644
+> --- a/fs/fuse/fuse_dev_i.h
+> +++ b/fs/fuse/fuse_dev_i.h
+> @@ -12,6 +12,8 @@
+>  #define FUSE_INT_REQ_BIT (1ULL << 0)
+>  #define FUSE_REQ_ID_STEP (1ULL << 1)
+>  
+> +extern struct wait_queue_head fuse_dev_waitq;
+> +
+>  struct fuse_arg;
+>  struct fuse_args;
+>  struct fuse_pqueue;
+> @@ -37,15 +39,22 @@ struct fuse_copy_state {
+>  	} ring;
+>  };
+>  
+> -static inline struct fuse_dev *fuse_get_dev(struct file *file)
+> +#define FUSE_DEV_SYNC_INIT ((struct fuse_dev *) 1)
+> +#define FUSE_DEV_PTR_MASK (~1UL)
+> +
+> +static inline struct fuse_dev *__fuse_get_dev(struct file *file)
+>  {
+>  	/*
+>  	 * Lockless access is OK, because file->private data is set
+>  	 * once during mount and is valid until the file is released.
+>  	 */
+> -	return READ_ONCE(file->private_data);
+> +	struct fuse_dev *fud = READ_ONCE(file->private_data);
+> +
+> +	return (typeof(fud)) ((unsigned long) fud & FUSE_DEV_PTR_MASK);
+>  }
+>  
+> +struct fuse_dev *fuse_get_dev(struct file *file);
+> +
+>  unsigned int fuse_req_hash(u64 unique);
+>  struct fuse_req *fuse_request_find(struct fuse_pqueue *fpq, u64 unique);
+>  
+> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> index 486fa550c951..233c6111f768 100644
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -904,6 +904,9 @@ struct fuse_conn {
+>  	/* Is link not implemented by fs? */
+>  	unsigned int no_link:1;
+>  
+> +	/* Is synchronous FUSE_INIT allowed? */
+> +	unsigned int sync_init:1;
+> +
+>  	/* Use io_uring for communication */
+>  	unsigned int io_uring;
+>  
+> @@ -1318,7 +1321,7 @@ struct fuse_dev *fuse_dev_alloc_install(struct fuse_conn *fc);
+>  struct fuse_dev *fuse_dev_alloc(void);
+>  void fuse_dev_install(struct fuse_dev *fud, struct fuse_conn *fc);
+>  void fuse_dev_free(struct fuse_dev *fud);
+> -void fuse_send_init(struct fuse_mount *fm);
+> +int fuse_send_init(struct fuse_mount *fm);
+>  
+>  /**
+>   * Fill in superblock and initialize fuse connection
+> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> index 9d26a5bc394d..7cf47d5bcc87 100644
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -7,6 +7,7 @@
+>  */
+>  
+>  #include "fuse_i.h"
+> +#include "fuse_dev_i.h"
+>  #include "dev_uring_i.h"
+>  
+>  #include <linux/dax.h>
+> @@ -34,6 +35,7 @@ MODULE_LICENSE("GPL");
+>  static struct kmem_cache *fuse_inode_cachep;
+>  struct list_head fuse_conn_list;
+>  DEFINE_MUTEX(fuse_mutex);
+> +DECLARE_WAIT_QUEUE_HEAD(fuse_dev_waitq);
+>  
+>  static int set_global_limit(const char *val, const struct kernel_param *kp);
+>  
+> @@ -1466,7 +1468,7 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
+>  	wake_up_all(&fc->blocked_waitq);
+>  }
+>  
+> -void fuse_send_init(struct fuse_mount *fm)
+> +static struct fuse_init_args *fuse_new_init(struct fuse_mount *fm)
+>  {
+>  	struct fuse_init_args *ia;
+>  	u64 flags;
+> @@ -1525,10 +1527,29 @@ void fuse_send_init(struct fuse_mount *fm)
+>  	ia->args.out_args[0].value = &ia->out;
+>  	ia->args.force = true;
+>  	ia->args.nocreds = true;
+> -	ia->args.end = process_init_reply;
+>  
+> -	if (fuse_simple_background(fm, &ia->args, GFP_KERNEL) != 0)
+> -		process_init_reply(fm, &ia->args, -ENOTCONN);
+> +	return ia;
+> +}
+> +
+> +int fuse_send_init(struct fuse_mount *fm)
+> +{
+> +	struct fuse_init_args *ia = fuse_new_init(fm);
+> +	int err;
+> +
+> +	if (fm->fc->sync_init) {
+> +		err = fuse_simple_request(fm, &ia->args);
+> +		/* Ignore size of init reply */
+> +		if (err > 0)
+> +			err = 0;
+> +	} else {
+> +		ia->args.end = process_init_reply;
+> +		err = fuse_simple_background(fm, &ia->args, GFP_KERNEL);
+> +		if (!err)
+> +			return 0;
+> +		err = -ENOTCONN;
+> +	}
+> +	process_init_reply(fm, &ia->args, err);
+> +	return err;
+>  }
+>  EXPORT_SYMBOL_GPL(fuse_send_init);
+>  
+> @@ -1867,8 +1888,12 @@ int fuse_fill_super_common(struct super_block *sb, struct fuse_fs_context *ctx)
+>  
+>  	mutex_lock(&fuse_mutex);
+>  	err = -EINVAL;
+> -	if (ctx->fudptr && *ctx->fudptr)
+> -		goto err_unlock;
+> +	if (ctx->fudptr && *ctx->fudptr) {
+> +		if (*ctx->fudptr == FUSE_DEV_SYNC_INIT) {
+> +			fc->sync_init = 1;
+> +		} else
+> +			goto err_unlock;
+> +	}
+>  
+>  	err = fuse_ctl_add_conn(fc);
+>  	if (err)
+> @@ -1876,8 +1901,10 @@ int fuse_fill_super_common(struct super_block *sb, struct fuse_fs_context *ctx)
+>  
+>  	list_add_tail(&fc->entry, &fuse_conn_list);
+>  	sb->s_root = root_dentry;
+> -	if (ctx->fudptr)
+> +	if (ctx->fudptr) {
+>  		*ctx->fudptr = fud;
+> +		wake_up_all(&fuse_dev_waitq);
+> +	}
+>  	mutex_unlock(&fuse_mutex);
+>  	return 0;
+>  
+> @@ -1898,6 +1925,7 @@ EXPORT_SYMBOL_GPL(fuse_fill_super_common);
+>  static int fuse_fill_super(struct super_block *sb, struct fs_context *fsc)
+>  {
+>  	struct fuse_fs_context *ctx = fsc->fs_private;
+> +	struct fuse_mount *fm;
+>  	int err;
+>  
+>  	if (!ctx->file || !ctx->rootmode_present ||
+> @@ -1918,8 +1946,10 @@ static int fuse_fill_super(struct super_block *sb, struct fs_context *fsc)
+>  		return err;
+>  	/* file->private_data shall be visible on all CPUs after this */
+>  	smp_mb();
+> -	fuse_send_init(get_fuse_mount_super(sb));
+> -	return 0;
+> +
+> +	fm = get_fuse_mount_super(sb);
+> +
+> +	return fuse_send_init(fm);
+>  }
+>  
+>  /*
+> @@ -1980,7 +2010,7 @@ static int fuse_get_tree(struct fs_context *fsc)
+>  	 * Allow creating a fuse mount with an already initialized fuse
+>  	 * connection
+>  	 */
+> -	fud = READ_ONCE(ctx->file->private_data);
+> +	fud = __fuse_get_dev(ctx->file);
+>  	if (ctx->file->f_op == &fuse_dev_operations && fud) {
+>  		fsc->sget_key = fud->fc;
+>  		sb = sget_fc(fsc, fuse_test_super, fuse_set_no_super);
+> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+> index 3942d1fda599..30bf0846547f 100644
+> --- a/include/uapi/linux/fuse.h
+> +++ b/include/uapi/linux/fuse.h
+> @@ -1130,6 +1130,7 @@ struct fuse_backing_map {
+>  #define FUSE_DEV_IOC_BACKING_OPEN	_IOW(FUSE_DEV_IOC_MAGIC, 1, \
+>  					     struct fuse_backing_map)
+>  #define FUSE_DEV_IOC_BACKING_CLOSE	_IOW(FUSE_DEV_IOC_MAGIC, 2, uint32_t)
+> +#define FUSE_DEV_IOC_SYNC_INIT		_IO(FUSE_DEV_IOC_MAGIC, 3)
+>  
+>  struct fuse_lseek_in {
+>  	uint64_t	fh;
+> -- 
+> 2.49.0
+> 
+> 
 
