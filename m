@@ -1,94 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-59680-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59681-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B857B3C5B2
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Aug 2025 01:40:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9FD7B3C5C4
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Aug 2025 01:58:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AB747C48CE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 23:40:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A471B176E57
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 23:58:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5A803148B2;
-	Fri, 29 Aug 2025 23:40:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7806C2D6E6D;
+	Fri, 29 Aug 2025 23:58:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gp5Wcq7k"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J72c18n8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98F672609D9
-	for <linux-fsdevel@vger.kernel.org>; Fri, 29 Aug 2025 23:40:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70869481B1;
+	Fri, 29 Aug 2025 23:58:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756510810; cv=none; b=D+SJF0pcGeua4bxEq2OSUMd4tn1iVQWtfU4znxmdn71mddUJ89K3uvJs5m/90/AI4R8igFFxM5YSoqVRhTczEJbzEJfuRt+VQMKcTzwt8YTP9frg+Ln14KeVDgJ8/Oq8PGdEPEgxz0Pc4b/Yx+/kcESU/+E2i4XF2YZe9STcmmI=
+	t=1756511898; cv=none; b=FvGsIsFog8V6icf2EAytA9usIaXSLFUTIL57+0UhgXx8BpPbrmiKx9vlfugyWAICplOubkLlavEzr9rVjeg9arelew7uE51RslUk0qpQdZvEtZcAp3z/U++UTtINrEYpFFIZIXroqr3Lljme1uN8Kv9eJBk+IWwYdz9TogTEp7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756510810; c=relaxed/simple;
-	bh=uGMqfelnw/tgOC/cTB4VY/uUEDM6rvYyDiolxqavDD0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=S6vD8dEfbPF1ftAuAd14q5/JGHym0WarrBFFHTwa/yBN0T+x+sS3d9Gk/rZW+GjL3hE7sLZS9tMpzvDPFvClx6YsWebCi7IiCNxywXyCYc0+iRfzP6jqd+wQn5rD/bgwx/p1X0gxyFbrNjFe6JOUHpFMY/+5J+4pmgNOAI0xx9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gp5Wcq7k; arc=none smtp.client-ip=209.85.214.181
+	s=arc-20240116; t=1756511898; c=relaxed/simple;
+	bh=vl9c4kTqz3SLLw+rED+J2iTTKawi9sEI6T5kGcU+gcQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZVz6Pgw3HxBP+umqEUKIB+/vw88n8tZZGLrkRGEQejS3DWaBL+1/VBdQXCBTICGnU7A55qS3H28qCG6V1rhABBv5pobuOO11bZy4+syAiXUqlv7oUNNrWKzj32Ua7KSPoA34Ybzdzvbzi4BgUP7twvSZ1v/xYbNxdzX6CBRIDKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J72c18n8; arc=none smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2445827be70so29199175ad.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Aug 2025 16:40:08 -0700 (PDT)
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-244582738b5so24087055ad.3;
+        Fri, 29 Aug 2025 16:58:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756510808; x=1757115608; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yGpw0mdO7CMkEmFTqe/yJx/RGR5vQk5tTnmLJYozAKc=;
-        b=Gp5Wcq7kSMkBcFJuaNOrxL/KbBFdl7JqWtIVhITld/Vs1hgoS4/U9PJEBTCbAKfFvU
-         NuOqdtbXGLMJMaaLZK977GwHDqaM6ETRubWRXHeUD2qIPrwtf1DCNoYPFXuGF9VxAV6n
-         k40aDKf26CRYDem6uBm2Sslx/gD4kdQn/O5W5VX03GgU3J4NVne9DEfZkWY+kkPQGN2x
-         BJgam/JOJxRTQ8Alb2J6L+7wurxGBGIssgDU5lpFceNKhHsk8oayHtwGZYJIoprXL+NB
-         6Qk+AEvDdEduG7cTWYevna0t7+g2d/SU1uaPVK24hWwlr8aOJ9NOE4uM3gtRbAs0OQSg
-         A64w==
+        d=gmail.com; s=20230601; t=1756511897; x=1757116697; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bLmwB6KBsGlj2aG6bie9QMntRArOGpl+oVFWR1t8ZFs=;
+        b=J72c18n8G6ZYvzGzMhChtayIEEidviafKWE0bjIvAUouKe8SpmTjUfNFPofHPzVnHq
+         AnWN8b7EGAtoRv5PmLJlhDb4Nilrg/ZUJYTEMugiX7RXxxmkWq5OlAG2eL5+0+YPTdLo
+         5e2/bKndq6csHa3P89/FJa+mdoE9Poa6WyDHBrHRGa18mpoILaQmWJVjB+CoZQLsV/+Y
+         9wTdOM6FC0VdHRP6fO8O52XoRLPObmppul0qua/Vdc8EC5mYNyfHhSYRiXuHCJg9Dhdn
+         Bd3ahtz/jFqO0PxrOric4mksl0NTtGcTV86Rm4xIrymeEnuyaMazsblioWtfwzikwtln
+         HIvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756510808; x=1757115608;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yGpw0mdO7CMkEmFTqe/yJx/RGR5vQk5tTnmLJYozAKc=;
-        b=B50MYQv9vIMiKdzrNS+pt1m7/CmSL7+ufEGaOR6kDv14YMBhw9kqoknlddze3mmq1V
-         pvQIIumQ5m0FzLUMlhC89IYuJwTk+76DpGlFZgIrSYG44+p6C9w4+yhv/yjrYGqaLIro
-         0of49GmD1Trycfsbcf6eH6fC52rOpoVH0FWvUNHxPf5oR0lupNmfA89ClgLdIN0xKRXs
-         FGlQ6Zeu4J0oOVw3mp3lN+x/cxcX+9AA7fBQ7+Ib1m3smbq5TcKLSEdh2y4SpBjXvVdV
-         92gOLScGy01afdwXNuLc3riBuft9xV3/Da+Pu0dKMdtNn49W+8TRlICTDnfsI4UX0598
-         P9wA==
-X-Forwarded-Encrypted: i=1; AJvYcCVgwri+BAd2JmBLzlQQ+RVZD1p45WhkO4CClWehDLK0RxlAqIeyXo7ROXKwdmPN0b3qFci/W+FnuaHYLUDb@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9oj8Y2cMsMfWKDCvpvtomRanT8nKw1lGpkvpI4wJSUvU6bvyf
-	DrBGkgfhOIklhw/bmKALXXwgyRpUgQzIiee6510GupLdy9gqC4tQphAt
-X-Gm-Gg: ASbGncue9xXVi1cJ4QgOKVuyx3GQpVV/Q5LV0iGt6dNZTFsATXfBaG1ik/twPlNTTw0
-	s4f06PKd7/X+evuDTJHb+1fEkFoPdZ3YNign0PVFXAIbaDnapL2hKg9L9cgKcy+vuGzKYMNgtfz
-	dHWrtiW9wUZTM/27EJ/sobSqO9QcEODIGA/MGF1CF7ajj2dZaM3LycD+OHNloN9vQuJU+ZuhsI5
-	UW0uf3V4s/BP/tAc22a0JlYmXK4BYVIICTuPMI+cZw2K0HLM30oiKvrW0/g225tuMTTJFAIOQbJ
-	PGlUZWyZwF5xZdMiZRdWyuv9UM49j8/uqO0SLKMHFiIMBuci25UNv2kEIY5kmUgodlhl8y6jyR0
-	/ft0xcLpEjdcA2MZcrzNyD6J0x8g=
-X-Google-Smtp-Source: AGHT+IErcgarYy/T/LbpOd01mEs/a9St9zKIi7FuGSacJVKNtjl6t5fcTCh4n3hQ+dLs6MtazbkK0w==
-X-Received: by 2002:a17:903:2b0d:b0:248:cb07:6df0 with SMTP id d9443c01a7336-24944a11330mr6113675ad.5.1756510807822;
-        Fri, 29 Aug 2025 16:40:07 -0700 (PDT)
-Received: from localhost ([2a03:2880:ff:7::])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24903758b89sm36026645ad.59.2025.08.29.16.40.07
+        d=1e100.net; s=20230601; t=1756511897; x=1757116697;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bLmwB6KBsGlj2aG6bie9QMntRArOGpl+oVFWR1t8ZFs=;
+        b=QWG3wtMVMVduPo2mo3J7dkPnhlapsTVlXtAXK2U5v8q1Jnz/36T59kmQCmO9cIf4zS
+         2tmGzy2dYu9UiGMtlOtH2pnxwRmoj83SaYpDb6NhH9o+uWPJq8AQq4Ga7N5FoDVHIy22
+         HvI8xi/VYPVpE2+Rs7ck3pKiTnxwi9vvFhSELWRU7AqarCnUW105dioK8sCELDryNcZ3
+         56NFMtpx4M8Iv+dFNFnvLNy+iou/BppI/hiM5h1dO+GJOh0yXqOWVUjZqTeZFufsHZNh
+         Kjm8fFwmXSRQwdDyNW1zHp9eyp2rNZ2kArD8TtFXyRTx7quyTJhQdgLNSUX/SvFXnriV
+         K+lQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUu175uhWDYSoAFW+sLdxCNZjKvkwA/2U6rZU3XOxo9AkNr4JKs8TojPYQ1JnxDP0xN7Bj4y4/QGx+Ng9w2Tw==@vger.kernel.org, AJvYcCX4x2wW3sNeMVkLfg/PeKLCOjqg4EA9JZ/S6vw3QmB1yxJvtz1exY3xs4wLSlaVA3nOxaRzPGClwZ8=@vger.kernel.org, AJvYcCX7sGYG2dFw5Wd4vqbOVZ307AwlBk5aoNx64hAyw+jGFfMUtEeHa9JnD0POiT3xEC3pbc2SUEsFtG4J@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEzFnwKHxlZumW0OFUakrkbJTNzZ+jU7NR643mrfmMHguB5obG
+	yeGm0giDrdUQgxoNUNN46w5pZmoxzLDNTjxevboL9c+EgbDRiJsO9Uk3
+X-Gm-Gg: ASbGnctQ72EZDXq+LSH+/WH8hiaq5Lz8cxBSNqA9qB/fLYN1LkfutaoettMCM1HyIbZ
+	8ZEjDYqjRxS5zNQxriuS5FDbKG4uIUTEVSTeoOPt6wQgrR/tX15jr3hIQv9A3jikaJfc66JAO3K
+	IAR4Y341SKRnfW1qTE0qOXeqWTJErPPqE/sXxfMZIp8CHJxr8Wk1f2KgI8KsOTIGJQLlmyNJ3wx
+	0FlO+AkCx0rCxcuIv0CVqPCEsFP+c8iui9h+XWzilgLVoS7NagKbdW1KvQ89GGYY7WFaa/lctDG
+	mkHhVeK5KD2u0wbvf0nrI9LzXluhhbEcbVDRm/30ugHHN1QRpapSbbTShuetZiwydmKl1Qs13NA
+	GLTHdAgZ67sRxrailYA==
+X-Google-Smtp-Source: AGHT+IGnmMqqlzwM9mrNGPUNp9GAQTzB7+anrvFRmDh84yoGPBWyLuckp9pOut3whPAzUyXjbtDHdg==
+X-Received: by 2002:a17:903:1a2e:b0:240:52c8:2564 with SMTP id d9443c01a7336-24944a0f8fcmr4978255ad.26.1756511896630;
+        Fri, 29 Aug 2025 16:58:16 -0700 (PDT)
+Received: from localhost ([2a03:2880:ff:1a::])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-249066e1158sm36172585ad.144.2025.08.29.16.58.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Aug 2025 16:40:07 -0700 (PDT)
+        Fri, 29 Aug 2025 16:58:16 -0700 (PDT)
 From: Joanne Koong <joannelkoong@gmail.com>
-To: linux-mm@kvack.org,
-	brauner@kernel.org
-Cc: willy@infradead.org,
-	jack@suse.cz,
-	hch@infradead.org,
+To: brauner@kernel.org,
+	miklos@szeredi.hu
+Cc: hch@infradead.org,
 	djwong@kernel.org,
-	jlayton@kernel.org,
 	linux-fsdevel@vger.kernel.org,
-	kernel-team@meta.com
-Subject: [PATCH v2 12/12] iomap: add granular dirty and writeback accounting
-Date: Fri, 29 Aug 2025 16:39:42 -0700
-Message-ID: <20250829233942.3607248-13-joannelkoong@gmail.com>
+	kernel-team@meta.com,
+	linux-xfs@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: [PATCH v1 00/16] fuse: use iomap for buffered reads + readahead
+Date: Fri, 29 Aug 2025 16:56:11 -0700
+Message-ID: <20250829235627.4053234-1-joannelkoong@gmail.com>
 X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250829233942.3607248-1-joannelkoong@gmail.com>
-References: <20250829233942.3607248-1-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -97,264 +92,62 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add granular dirty and writeback accounting for large folios. These
-stats are used by the mm layer for dirty balancing and throttling.
-Having granular dirty and writeback accounting helps prevent
-over-aggressive balancing and throttling.
+This series adds fuse iomap support for buffered reads and readahead.
+This is needed so that granular uptodate tracking can be used in fuse when
+large folios are enabled so that only the needed portions of the folio need to
+be read in instead of having to read in the entire folio. It also is needed in
+order to turn on large folios for servers that use the writeback cache since
+otherwise there is a race condition that may lead to data corruption if there
+is a partial write, then a read and the read happens before the write has
+undergone writeback, since otherwise the folio will not be marked uptodate
+from the partial write so the read will read in the entire folio from disk,
+which will overwrite the partial write.
 
-There are 4 places in iomap this commit affects:
-a) filemap dirtying, which now calls filemap_dirty_folio_pages()
-b) writeback_iter with setting the wbc->no_stats_accounting bit and
-calling clear_dirty_for_io_stats()
-c) starting writeback, which now calls __folio_start_writeback()
-d) ending writeback, which now calls folio_end_writeback_pages()
+Part of this work is modifying the iomap interface to support non-bio
+reads and to work on environments that do not have CONFIG_BLOCK enabled,
+which is what patchsets 1 to 6 do.
 
-This relies on using the ifs->state dirty bitmap to track dirty pages in
-the folio. As such, this can only be utilized on filesystems where the
-block size >= PAGE_SIZE.
+This is on top of commit 4f702205 ("Merge branch 'vfs-6.18.rust' into
+vfs.all") in Christian's vfs tree.
 
-Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
----
- fs/iomap/buffered-io.c | 140 ++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 132 insertions(+), 8 deletions(-)
+This series was run through fstests on fuse passthrough_hp with an
+out-of kernel patch enabling fuse large folios.
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 4f021dcaaffe..bf33a5361a39 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -20,6 +20,8 @@ struct iomap_folio_state {
- 	spinlock_t		state_lock;
- 	unsigned int		read_bytes_pending;
- 	atomic_t		write_bytes_pending;
-+	/* number of pages being currently written back */
-+	unsigned		nr_pages_writeback;
- 
- 	/*
- 	 * Each block has two bits in this bitmap:
-@@ -139,6 +141,29 @@ static unsigned ifs_next_clean_block(struct folio *folio,
- 		blks + start_blk) - blks;
- }
- 
-+static unsigned ifs_count_dirty_pages(struct folio *folio)
-+{
-+	struct inode *inode = folio->mapping->host;
-+	unsigned block_size = i_blocksize(inode);
-+	unsigned start_blk, end_blk;
-+	unsigned blks, nblks = 0;
-+
-+	start_blk = 0;
-+	blks = i_blocks_per_folio(inode, folio);
-+	end_blk = (i_size_read(inode) - 1) >> inode->i_blkbits;
-+	end_blk = min(end_blk, i_blocks_per_folio(inode, folio) - 1);
-+
-+	while (start_blk <= end_blk) {
-+		start_blk = ifs_next_dirty_block(folio, start_blk, end_blk);
-+		if (start_blk > end_blk)
-+			break;
-+		nblks++;
-+		start_blk++;
-+	}
-+
-+	return nblks * (block_size >> PAGE_SHIFT);
-+}
-+
- static unsigned ifs_find_dirty_range(struct folio *folio,
- 		struct iomap_folio_state *ifs, u64 *range_start, u64 range_end)
- {
-@@ -220,6 +245,58 @@ static void iomap_set_range_dirty(struct folio *folio, size_t off, size_t len)
- 		ifs_set_range_dirty(folio, ifs, off, len);
- }
- 
-+static long iomap_get_range_newly_dirtied(struct folio *folio, loff_t pos,
-+		unsigned len)
-+{
-+	struct inode *inode = folio->mapping->host;
-+	unsigned block_size = i_blocksize(inode);
-+	unsigned start_blk, end_blk;
-+	unsigned nblks = 0;
-+
-+	start_blk = pos >> inode->i_blkbits;
-+	end_blk = (pos + len - 1) >> inode->i_blkbits;
-+	end_blk = min(end_blk, i_blocks_per_folio(inode, folio) - 1);
-+
-+	while (start_blk <= end_blk) {
-+		/* count how many clean blocks there are */
-+		start_blk = ifs_next_clean_block(folio, start_blk, end_blk);
-+		if (start_blk > end_blk)
-+			break;
-+		nblks++;
-+		start_blk++;
-+	}
-+
-+	return nblks * (block_size >> PAGE_SHIFT);
-+}
-+
-+static bool iomap_granular_dirty_pages(struct folio *folio)
-+{
-+	struct iomap_folio_state *ifs = folio->private;
-+
-+	if (!ifs)
-+		return false;
-+
-+	return i_blocksize(folio->mapping->host) >= PAGE_SIZE;
-+}
-+
-+static bool iomap_dirty_folio_range(struct address_space *mapping,
-+			struct folio *folio, loff_t pos, unsigned len)
-+{
-+	long nr_new_dirty_pages;
-+
-+	if (!iomap_granular_dirty_pages(folio)) {
-+		iomap_set_range_dirty(folio, pos, len);
-+		return filemap_dirty_folio(mapping, folio);
-+	}
-+
-+	nr_new_dirty_pages = iomap_get_range_newly_dirtied(folio, pos, len);
-+	if (!nr_new_dirty_pages)
-+		return false;
-+
-+	iomap_set_range_dirty(folio, pos, len);
-+	return filemap_dirty_folio_pages(mapping, folio, nr_new_dirty_pages);
-+}
-+
- static struct iomap_folio_state *ifs_alloc(struct inode *inode,
- 		struct folio *folio, unsigned int flags)
- {
-@@ -712,8 +789,7 @@ bool iomap_dirty_folio(struct address_space *mapping, struct folio *folio)
- 	size_t len = folio_size(folio);
- 
- 	ifs_alloc(inode, folio, 0);
--	iomap_set_range_dirty(folio, 0, len);
--	return filemap_dirty_folio(mapping, folio);
-+	return iomap_dirty_folio_range(mapping, folio, 0, len);
- }
- EXPORT_SYMBOL_GPL(iomap_dirty_folio);
- 
-@@ -937,8 +1013,8 @@ static bool __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
- 	if (unlikely(copied < len && !folio_test_uptodate(folio)))
- 		return false;
- 	iomap_set_range_uptodate(folio, offset_in_folio(folio, pos), len);
--	iomap_set_range_dirty(folio, offset_in_folio(folio, pos), copied);
--	filemap_dirty_folio(inode->i_mapping, folio);
-+	iomap_dirty_folio_range(inode->i_mapping, folio,
-+			offset_in_folio(folio, pos), copied);
- 	return true;
- }
- 
-@@ -1613,6 +1689,29 @@ void iomap_start_folio_write(struct inode *inode, struct folio *folio,
- }
- EXPORT_SYMBOL_GPL(iomap_start_folio_write);
- 
-+static void iomap_folio_start_writeback(struct folio *folio)
-+{
-+	struct iomap_folio_state *ifs = folio->private;
-+
-+	if (!iomap_granular_dirty_pages(folio))
-+		return folio_start_writeback(folio);
-+
-+	__folio_start_writeback(folio, false, ifs->nr_pages_writeback);
-+}
-+
-+static void iomap_folio_end_writeback(struct folio *folio)
-+{
-+	struct iomap_folio_state *ifs = folio->private;
-+	long nr_pages_writeback;
-+
-+	if (!iomap_granular_dirty_pages(folio))
-+		return folio_end_writeback(folio);
-+
-+	nr_pages_writeback = ifs->nr_pages_writeback;
-+	ifs->nr_pages_writeback = 0;
-+	folio_end_writeback_pages(folio, nr_pages_writeback);
-+}
-+
- void iomap_finish_folio_write(struct inode *inode, struct folio *folio,
- 		size_t len)
- {
-@@ -1622,7 +1721,7 @@ void iomap_finish_folio_write(struct inode *inode, struct folio *folio,
- 	WARN_ON_ONCE(ifs && atomic_read(&ifs->write_bytes_pending) <= 0);
- 
- 	if (!ifs || atomic_sub_and_test(len, &ifs->write_bytes_pending))
--		folio_end_writeback(folio);
-+		iomap_folio_end_writeback(folio);
- }
- EXPORT_SYMBOL_GPL(iomap_finish_folio_write);
- 
-@@ -1710,6 +1809,21 @@ static bool iomap_writeback_handle_eof(struct folio *folio, struct inode *inode,
- 	return true;
- }
- 
-+static void iomap_update_dirty_stats(struct folio *folio)
-+{
-+	struct iomap_folio_state *ifs = folio->private;
-+	long nr_dirty_pages;
-+
-+	if (iomap_granular_dirty_pages(folio)) {
-+		nr_dirty_pages = ifs_count_dirty_pages(folio);
-+		ifs->nr_pages_writeback = nr_dirty_pages;
-+	} else {
-+		nr_dirty_pages = folio_nr_pages(folio);
-+	}
-+
-+	clear_dirty_for_io_stats(folio, nr_dirty_pages);
-+}
-+
- int iomap_writeback_folio(struct iomap_writepage_ctx *wpc, struct folio *folio)
- {
- 	struct iomap_folio_state *ifs = folio->private;
-@@ -1727,6 +1841,8 @@ int iomap_writeback_folio(struct iomap_writepage_ctx *wpc, struct folio *folio)
- 
- 	trace_iomap_writeback_folio(inode, pos, folio_size(folio));
- 
-+	iomap_update_dirty_stats(folio);
-+
- 	if (!iomap_writeback_handle_eof(folio, inode, &end_pos))
- 		return 0;
- 	WARN_ON_ONCE(end_pos <= pos);
-@@ -1734,6 +1850,7 @@ int iomap_writeback_folio(struct iomap_writepage_ctx *wpc, struct folio *folio)
- 	if (i_blocks_per_folio(inode, folio) > 1) {
- 		if (!ifs) {
- 			ifs = ifs_alloc(inode, folio, 0);
-+			ifs->nr_pages_writeback = folio_nr_pages(folio);
- 			iomap_set_range_dirty(folio, 0, end_pos - pos);
- 		}
- 
-@@ -1751,7 +1868,7 @@ int iomap_writeback_folio(struct iomap_writepage_ctx *wpc, struct folio *folio)
- 	 * Set the writeback bit ASAP, as the I/O completion for the single
- 	 * block per folio case happen hit as soon as we're submitting the bio.
- 	 */
--	folio_start_writeback(folio);
-+	iomap_folio_start_writeback(folio);
- 
- 	/*
- 	 * Walk through the folio to find dirty areas to write back.
-@@ -1784,10 +1901,10 @@ int iomap_writeback_folio(struct iomap_writepage_ctx *wpc, struct folio *folio)
- 	 */
- 	if (ifs) {
- 		if (atomic_dec_and_test(&ifs->write_bytes_pending))
--			folio_end_writeback(folio);
-+			iomap_folio_end_writeback(folio);
- 	} else {
- 		if (!wb_pending)
--			folio_end_writeback(folio);
-+			iomap_folio_end_writeback(folio);
- 	}
- 	mapping_set_error(inode->i_mapping, error);
- 	return error;
-@@ -1809,6 +1926,13 @@ iomap_writepages(struct iomap_writepage_ctx *wpc)
- 			PF_MEMALLOC))
- 		return -EIO;
- 
-+	/*
-+	 * iomap opts out of the default wbc stats accounting because it does
-+	 * its own granular dirty/writeback accounting (see
-+	 * iomap_update_dirty_stats()).
-+	 */
-+	wpc->wbc->no_stats_accounting = true;
-+
- 	while ((folio = writeback_iter(mapping, wpc->wbc, folio, &error))) {
- 		error = iomap_writeback_folio(wpc, folio);
- 		folio_unlock(folio);
+This patchset does not enable large folios on fuse yet. That will be part
+of a different patchset.
+
+Thanks,
+Joanne
+
+Joanne Koong (16):
+  iomap: move async bio read logic into helper function
+  iomap: rename cur_folio_in_bio to folio_unlocked
+  iomap: refactor read/readahead completion
+  iomap: use iomap_iter->private for stashing read/readahead bio
+  iomap: propagate iomap_read_folio() error to caller
+  iomap: move read/readahead logic out of CONFIG_BLOCK guard
+  iomap: iterate through entire folio in iomap_readpage_iter()
+  iomap: rename iomap_readpage_iter() to iomap_readfolio_iter()
+  iomap: rename iomap_readpage_ctx struct to iomap_readfolio_ctx
+  iomap: add iomap_start_folio_read() helper
+  iomap: make start folio read and finish folio read public APIs
+  iomap: add iomap_read_ops for read and readahead
+  iomap: add a private arg for read and readahead
+  fuse: use iomap for read_folio
+  fuse: use iomap for readahead
+  fuse: remove fuse_readpages_end() null mapping check
+
+ .../filesystems/iomap/operations.rst          |  19 ++
+ block/fops.c                                  |   4 +-
+ fs/erofs/data.c                               |   4 +-
+ fs/fuse/file.c                                | 298 +++++++++-------
+ fs/gfs2/aops.c                                |   4 +-
+ fs/iomap/buffered-io.c                        | 321 +++++++++++-------
+ fs/xfs/xfs_aops.c                             |   4 +-
+ fs/zonefs/file.c                              |   4 +-
+ include/linux/iomap.h                         |  24 +-
+ 9 files changed, 412 insertions(+), 270 deletions(-)
+
 -- 
 2.47.3
 
