@@ -1,91 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-59638-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59639-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76BD7B3B7FB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 12:00:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85B81B3B803
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 12:01:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DF747A58A9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 09:58:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C49817C7B73
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Aug 2025 10:01:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0CD2877DA;
-	Fri, 29 Aug 2025 09:59:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06C623081B8;
+	Fri, 29 Aug 2025 10:01:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NcPTPWCS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MegpgKDB"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E493F2638AF
-	for <linux-fsdevel@vger.kernel.org>; Fri, 29 Aug 2025 09:59:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D6DA3081A3;
+	Fri, 29 Aug 2025 10:01:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756461599; cv=none; b=DRpC60n4phcqwTS8WgTrR5tRm2w1wHlZDkfwz9kxoD0T+nN2MN8OI9oCyJJcY/Yzla6krWddxNHUJTeZI+JxXA6Xp1dgakba2nyWEmfIegSWaX0Ivf+tBccPgqeBPyanzxg3MCmcqR0oibec4F+GMGvd/vN5PWeVXRp6hhC0ROE=
+	t=1756461686; cv=none; b=T3kmtxTuNg4uUG/I21eG+FhyTts6sGs0hWPIhcDaYavzeBhfveUQ9ZkJs65o6bwFW/bIEbR98I17C/mp9wWOhuovnIauYmCFys6X3yg0+oj55508rmYvHl8NtGKVLnCFVZDzZbvjTUPFJ8CVlB/BRrsrn6HMadk9U8qMZgNHhDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756461599; c=relaxed/simple;
-	bh=DhzWxB4ykgCI/W4uDnfZR9AmExODLn32TdImdTtHBd4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HJkh1xJ21gw23ezPaKmc1ffplqdusRLzDVoJgXutP0x8K9100M+9YFWWCEP4zpKR0/1DaQMRhg7/mJQEhpuSWXO7YRV+sE6FaLSNt7WR9Ld4ire84G3ST3AVEmv37HpZIMKmmdYt4sXQVGYLW57S2bPa8tji+WHNiMvv6aFMgZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NcPTPWCS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49B3EC4CEF0;
-	Fri, 29 Aug 2025 09:59:57 +0000 (UTC)
+	s=arc-20240116; t=1756461686; c=relaxed/simple;
+	bh=92fN0UR0hrt8PjaauCManqwbTnRkMOX7oJ/IaHyEcJc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fPX+uzrlqqqeFf/u7vXMR/R89tEBIW/d9YfXqhYzUlvQV6/Piu72xZ0Uf6ucPN8LEA5DoG5kWjgxq1B/FlpY9GAQz18tI470J2kZARsE/baML9UG4aC5oJhpNomkq3Q6J9EBuKH1y4FRII101o5KrhSZii2TrJUM2u0YaCwR1p4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MegpgKDB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6E04C4CEF0;
+	Fri, 29 Aug 2025 10:01:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756461598;
-	bh=DhzWxB4ykgCI/W4uDnfZR9AmExODLn32TdImdTtHBd4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NcPTPWCSE6GkPFzFxN0a36xIlWG1Tx0cwUW5Ka3hZIApdcwdVq2HeBhta85IwRJ5D
-	 7GuoZtjrRJrTVL2VyN8fH+B7Hx81bn9ly0QRpUQABHHDRcT61k8du9IlKJPMLMmQ2r
-	 QO3WUW5rx+sDJGlxk1ITcCHjvo5h3zqOWHSpBN+cNI4TvK5ewmvY811EuON4HKso7k
-	 X8WEJ6E6RmEGkXIqYhjDuQt8KkhP/CJD8X0zV/Bt5ki4PYGGkHAKMu3z+gzZ3PVGkn
-	 2agu4oAKn5+K8JRVwoO1FQpmLtG+Ob9qh0jy4oi/xk3KAvqUfQnxbVpe4yvvhtymY4
-	 ESqEVJWUL7gaQ==
-Date: Fri, 29 Aug 2025 11:59:55 +0200
+	s=k20201202; t=1756461685;
+	bh=92fN0UR0hrt8PjaauCManqwbTnRkMOX7oJ/IaHyEcJc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=MegpgKDBL6rvhcZYq1rVot1SopMcYG4xeBVWoAFOWPYTtAYIoB5Z78bPJBzQv/X1k
+	 BJs+xv++sPeVKCdxxhdVMVcHfBAaHCfKnfiFeQKeecfas4mQpvXie0337o0mUuOz0R
+	 P+31cezhZ8piF0AXt2/u/J51Sa2tITAsFCoOD8/ar7BL+4UWtMBjaoapZDXBJdCE7C
+	 bQzK1dckl7yEf2B5XEoow3SNAypJY3MiXwwu2dMs944K34eT7Eor1B4CbAeC21pDbG
+	 y/xfprJvO9EKye9SlPld4IhSTK/h3HqfxRCbICtzcqN3lzBkjz1//joduyAAaNIb/U
+	 h1Lr6gfhFoJ2Q==
 From: Christian Brauner <brauner@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	linux-fsdevel@vger.kernel.org, jack@suse.cz
-Subject: Re: [60/63] setup_mnt(): primitive for connecting a mount to
- filesystem
-Message-ID: <20250829-achthundert-kollabieren-ee721905a753@brauner>
-References: <20250828230706.GA3340273@ZenIV>
- <20250828230806.3582485-1-viro@zeniv.linux.org.uk>
- <20250828230806.3582485-61-viro@zeniv.linux.org.uk>
- <CAHk-=wgZEkSNKFe_=W=OcoMTQiwq8j017mh+TUR4AV9GiMPQLA@mail.gmail.com>
- <20250829001109.GB39973@ZenIV>
- <CAHk-=wg+wHJ6G0hF75tqM4e951rm7v3-B5E4G=ctK0auib-Auw@mail.gmail.com>
- <20250829060306.GC39973@ZenIV>
- <20250829060522.GB659926@ZenIV>
+To: Xichao Zhao <zhao.xichao@vivo.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	jack@suse.cz,
+	gnoack@google.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	viro@zeniv.linux.org.uk,
+	mic@digikod.net
+Subject: Re: [PATCH] fs: Replace offsetof() with struct_size() in ioctl_file_dedupe_range()
+Date: Fri, 29 Aug 2025 12:01:20 +0200
+Message-ID: <20250829-passierbar-losen-cd47a4b68c3d@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250829091510.597858-1-zhao.xichao@vivo.com>
+References: <20250829091510.597858-1-zhao.xichao@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250829060522.GB659926@ZenIV>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1077; i=brauner@kernel.org; h=from:subject:message-id; bh=92fN0UR0hrt8PjaauCManqwbTnRkMOX7oJ/IaHyEcJc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRsrCq8feC67/xd6Yc7QzrsijYd/8syadc9mfirXNHcf gXOcy5f7ihlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjIEmVGhlmR0zJPBix0qJnb 8nOFkaBSx517n5h+LNdr3BB6xzf1VDUjw7K1y9XvZah9tuL6kmHLXcfBoWWWHRzFOFfjq0JiUmQ hMwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 29, 2025 at 07:05:22AM +0100, Al Viro wrote:
-> Take the identical logics in vfs_create_mount() and clone_mnt() into
-> a new helper that takes an empty struct mount and attaches it to
-> given dentry (sub)tree.
+On Fri, 29 Aug 2025 17:15:10 +0800, Xichao Zhao wrote:
+> When dealing with structures containing flexible arrays, struct_size()
+> provides additional compile-time checks compared to offsetof(). This
+> enhances code robustness and reduces the risk of potential errors.
 > 
-> Should be called once in the lifetime of every mount, prior to making
-> it visible in any data structures.
 > 
-> After that point ->mnt_root and ->mnt_sb never change; ->mnt_root
-> is a counting reference to dentry and ->mnt_sb - an active reference
-> to superblock.
-> 
-> Mount remains associated with that dentry tree all the way until
-> the call of cleanup_mnt(), when the refcount eventually drops
-> to zero.
-> 
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> ---
 
-Is this supposed to be the v3? I'm confused what I need to be looking
-at since it's a reply to v2 and some earlier review comments...
+Applied to the vfs-6.18.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.18.misc branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.18.misc
+
+[1/1] fs: Replace offsetof() with struct_size() in ioctl_file_dedupe_range()
+      https://git.kernel.org/vfs/vfs/c/38d1227fa71d
 
