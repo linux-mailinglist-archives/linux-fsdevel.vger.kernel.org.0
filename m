@@ -1,104 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-59706-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59707-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6389CB3C9F2
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Aug 2025 12:01:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B3C3B3CA50
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Aug 2025 12:55:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2F877C7C6C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Aug 2025 10:01:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA7451BA6DE9
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Aug 2025 10:56:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBAA1225402;
-	Sat, 30 Aug 2025 10:01:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 040F5279329;
+	Sat, 30 Aug 2025 10:55:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="UO0h2o2w"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F34114A23
-	for <linux-fsdevel@vger.kernel.org>; Sat, 30 Aug 2025 10:01:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B494274FCE;
+	Sat, 30 Aug 2025 10:55:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756548071; cv=none; b=FDThij6PiHMIVfE0vkBaSfHSGX1rMlgaMFIpT1fmqtTFcqYDMgYlVzVikv96Pn3KkE4UAAhZqRiJyNr6LERgpOSR3tneW1BMICh2iLDK4iSM/NaBNz+RXKoRizzgor+sNqlBGEU8kp8t9pDqyxudXUq0boPWbRGevLezMxolxn0=
+	t=1756551345; cv=none; b=D0gdqSwkcEdCLnG/qFR3nI7czvSoPxA6uRge691Kzz6Mb17+PtsMSdKjF0ofLuHF5ax6FFZjFMeTNmyfkzbscch1+MGYj80d/Wu9w2sYW5c6M4gU870Irz5bawsOMoVtIFtQ7v5Q1GZ3WjoYU42rPMVQL8Den5/e2VuFENlNbP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756548071; c=relaxed/simple;
-	bh=LiB7PMJno7f8m/Nwj9CaDPImcpwIedeU12ScAAABeFo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=EiDKP+vfCqJ5vFYcedcShFSSBKp1DR924n4WYamjM8I7/rALu1NMe4LYQOnGeb3W8W9DC9vHsbfSJXvGyuN3oX9lNcmmAorF/8xmPzhV6gvmUaFoaEYfPN1T2pNkY9RqObkNs3WBSNpya5oZu8ux9k/s72pkQ103RKqWqUw7shc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 57UA13RH089113;
-	Sat, 30 Aug 2025 19:01:03 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 57UA13MX089110
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Sat, 30 Aug 2025 19:01:03 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <429b3ef1-13de-4310-9a8e-c2dc9a36234a@I-love.SAKURA.ne.jp>
-Date: Sat, 30 Aug 2025 19:01:01 +0900
+	s=arc-20240116; t=1756551345; c=relaxed/simple;
+	bh=i5zY8f2VKVpzPlPoYIug3F1ZCRs+538GRcdBf4WSpxg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FXx+eJhZpKZX82VULeLdW0yq2+poe7AmoR5Yx9e2+bd2FTkIekucYFwV+NSm1CIL1VWmiyUyLLadz/U4E7Pi4RIzhPSAZs/mYMVXP7GjBtKaaBbEYkR8f6T81B4/SPpDkydIzbj+pdOrF30ZgpNXRfwP9l/WRe2Y2s3ZIgBNt7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=UO0h2o2w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45A6FC4CEEB;
+	Sat, 30 Aug 2025 10:55:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1756551344;
+	bh=i5zY8f2VKVpzPlPoYIug3F1ZCRs+538GRcdBf4WSpxg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=UO0h2o2wRX7kdL8iB42EKfZMEzk3R37jTXBerrIdbomtOPUpj8a1bC6ZeY/2PuofI
+	 UqoaqvT+6jq1Odda8jvKnnEiaFva/5VoUU6WkTTplVWc/4AyyGeru/1gaH0Ckz2zPl
+	 fI9Ao0fK9mTBc1Vq53B/PC9/fhdtQv88a0vBqYH4=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>
+Subject: [PATCH] fs: remove vfs_ioctl export
+Date: Sat, 30 Aug 2025 12:55:39 +0200
+Message-ID: <2025083038-carving-amuck-a4ae@gregkh>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH] cramfs: Verify inode mode when loading from disk
-To: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Christian Brauner <brauner@kernel.org>
-References: <ff7dc567-1db3-4939-9b0e-77e91a8d898b@I-love.SAKURA.ne.jp>
- <dca0c449-547e-42fa-a8b7-53787e64e2ec@I-love.SAKURA.ne.jp>
- <5n9rqorq-5o43-q195-s28p-p8r5s1o23s92@syhkavp.arg>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <5n9rqorq-5o43-q195-s28p-p8r5s1o23s92@syhkavp.arg>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Anti-Virus-Server: fsav201.rs.sakura.ne.jp
-X-Virus-Status: clean
+Lines: 48
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1572; i=gregkh@linuxfoundation.org; h=from:subject:message-id; bh=i5zY8f2VKVpzPlPoYIug3F1ZCRs+538GRcdBf4WSpxg=; b=owGbwMvMwCRo6H6F97bub03G02pJDBmbbqwK8Jm8JeXzIRNFVtfNR20a5q50cdV8+vbi/+Vz3 waEr9lf3RHLwiDIxCArpsjyZRvP0f0VhxS9DG1Pw8xhZQIZwsDFKQAT+b+QYcFCgWWvDiwMEmBm ZD1qm11otfDSBEGGeea/FfcU+8Smz86eeUhomcuayzNzygA=
+X-Developer-Key: i=gregkh@linuxfoundation.org; a=openpgp; fpr=F4B60CC5BF78C2214A313DCB3147D40DDB2DFB29
+Content-Transfer-Encoding: 8bit
 
-The inode mode loaded from corrupted disk can be invalid. Do like what
-commit 0a9e74051313 ("isofs: Verify inode mode when loading from disk")
-does.
+vfs_ioctl() is no longer called by anything outside of fs/ioctl.c, so
+remove the global symbol and export as it is not needed.
 
-Reported-by: syzbot <syzbot+895c23f6917da440ed0d@syzkaller.appspotmail.com>
-Closes: https://syzkaller.appspot.com/bug?extid=895c23f6917da440ed0d
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Acked-by: Nicolas Pitre <nico@fluxnic.net>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/cramfs/inode.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ fs/ioctl.c         | 3 +--
+ include/linux/fs.h | 2 --
+ 2 files changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/fs/cramfs/inode.c b/fs/cramfs/inode.c
-index b002e9b734f9..12daa85ed941 100644
---- a/fs/cramfs/inode.c
-+++ b/fs/cramfs/inode.c
-@@ -116,9 +116,18 @@ static struct inode *get_cramfs_inode(struct super_block *sb,
- 		inode_nohighmem(inode);
- 		inode->i_data.a_ops = &cramfs_aops;
- 		break;
--	default:
-+	case S_IFCHR:
-+	case S_IFBLK:
-+	case S_IFIFO:
-+	case S_IFSOCK:
- 		init_special_inode(inode, cramfs_inode->mode,
- 				old_decode_dev(cramfs_inode->size));
-+		break;
-+	default:
-+		printk(KERN_DEBUG "CRAMFS: Invalid file type 0%04o for inode %lu.\n",
-+		       inode->i_mode, inode->i_ino);
-+		iget_failed(inode);
-+		return ERR_PTR(-EIO);
- 	}
+diff --git a/fs/ioctl.c b/fs/ioctl.c
+index 0248cb8db2d3..3ee1aaa46947 100644
+--- a/fs/ioctl.c
++++ b/fs/ioctl.c
+@@ -41,7 +41,7 @@
+  *
+  * Returns 0 on success, -errno on error.
+  */
+-int vfs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
++static int vfs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ {
+ 	int error = -ENOTTY;
  
- 	inode->i_mode = cramfs_inode->mode;
+@@ -54,7 +54,6 @@ int vfs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+  out:
+ 	return error;
+ }
+-EXPORT_SYMBOL(vfs_ioctl);
+ 
+ static int ioctl_fibmap(struct file *filp, int __user *p)
+ {
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index d7ab4f96d705..ccf482803525 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2052,8 +2052,6 @@ int vfs_fchown(struct file *file, uid_t user, gid_t group);
+ int vfs_fchmod(struct file *file, umode_t mode);
+ int vfs_utimes(const struct path *path, struct timespec64 *times);
+ 
+-int vfs_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
+-
+ #ifdef CONFIG_COMPAT
+ extern long compat_ptr_ioctl(struct file *file, unsigned int cmd,
+ 					unsigned long arg);
 -- 
-2.50.1
+2.51.0
 
 
