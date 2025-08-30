@@ -1,113 +1,108 @@
-Return-Path: <linux-fsdevel+bounces-59698-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59699-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B95CCB3C736
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Aug 2025 03:54:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E976FB3C7C5
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Aug 2025 06:09:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55D4A568657
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Aug 2025 01:54:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D14C5E744F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Aug 2025 04:09:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6F7244687;
-	Sat, 30 Aug 2025 01:54:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFE06277C9B;
+	Sat, 30 Aug 2025 04:09:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uriF07YL"
+	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="m3XAC7J8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from forward203a.mail.yandex.net (forward203a.mail.yandex.net [178.154.239.90])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C33802AE89;
-	Sat, 30 Aug 2025 01:54:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0017D128395;
+	Sat, 30 Aug 2025 04:09:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756518868; cv=none; b=m2aJPxNhYUFOmKgyWcXvnCE+d9cBQmMl1yv5LiI2dtNSf/rqPtD224j1EuINCvzkyVHSHBh+oBWO0Xx9F6DaCVadSEtoeknXXjmV7WSP3QT9IR+UnbhnBGkn5pEn6DKbXxW6OYvxYvtcMN6BFemDvrFz+SkMNjzqqUCcU1dJ+2A=
+	t=1756526951; cv=none; b=Jrz/hzl5pDKWkZDzwrCLSYmu5kPVa7QhHzXWxRI8DncZClhiaE5KKrzMlG7nGzFydO+tSYKcZ6IzH+eObvCmguQEP4Pvi1nbf5sqECmnX/+Qdrv9qcWwMtpfoXHP7qCM/7r10M5M7EapzcPHgt291mrl3BJuEO6J0XVkOwY0Khc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756518868; c=relaxed/simple;
-	bh=4bT8b30BNHVy7B1e3+UjgAydd+tzAM6C7InIzM7W1TM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FS+q5NsnjMRS2Defoc3V/l4/ZKhKL3PlCdFLT2yUJItCDaKwvoDYHUJHWnhTDRBHnEkSmLJ3gbcdZaEyiyOvaWzxAvrOPxDZafUs/Tldc1FwreumQEboul+kKJQ91Sw49Z0t8joWhTuvAs4yhznUxXAVGIFVx3iUQj6OA3tkyaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uriF07YL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00CD6C4CEF7;
-	Sat, 30 Aug 2025 01:54:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756518868;
-	bh=4bT8b30BNHVy7B1e3+UjgAydd+tzAM6C7InIzM7W1TM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uriF07YLsKoEGiQsmdne7MizqXD3nzanrdYQDjIoEoQDewVrld4TCm+aMhX2BvWmp
-	 rQS7WY+Eo5vWo1me3zhH+mlkgX6wifofEsuWMMQrOi/dDkLVckfssmT+BGFTRPf2Al
-	 /QoLW6nYBj7REoLQHOQydDjGCDtCnMb6RalCozrCL25ypGkX2vOaWaNLz1Km1UFxA5
-	 YZsQSJlFuvfnxlIri84xs5F4h0oEfJGT7CObJVLhgGBCMbvrlx0xhf1ZCCVAEEPDJ1
-	 GR21JJhxLHrRBjm5utNOwwJKMc570+ynN2Tu5w/KoADBQQ1n+lPEpYg1K0gJWcrvJS
-	 Jp6TTGrEqlpyg==
-Date: Sat, 30 Aug 2025 09:54:07 +0800
-From: Gao Xiang <xiang@kernel.org>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: brauner@kernel.org, miklos@szeredi.hu, hch@infradead.org,
-	djwong@kernel.org, linux-fsdevel@vger.kernel.org,
-	kernel-team@meta.com, linux-xfs@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v1 13/16] iomap: add a private arg for read and readahead
-Message-ID: <aLJZv5L6q0FH5F8a@debian>
-Mail-Followup-To: Joanne Koong <joannelkoong@gmail.com>, brauner@kernel.org,
-	miklos@szeredi.hu, hch@infradead.org, djwong@kernel.org,
-	linux-fsdevel@vger.kernel.org, kernel-team@meta.com,
-	linux-xfs@vger.kernel.org, linux-doc@vger.kernel.org
-References: <20250829235627.4053234-1-joannelkoong@gmail.com>
- <20250829235627.4053234-14-joannelkoong@gmail.com>
+	s=arc-20240116; t=1756526951; c=relaxed/simple;
+	bh=tXVBuMBRsn31FgFFbnfzGu6YLCNh6ILOFZfEm70i4LQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=g6L3C7XGKrbtqEmXj4sGtp5rs4nkMlEMJiYYOZ/0nvWBQd2PoH++39FS2n0Tt6wiMZ3Ch2JxKechAIbG6W4ElPScWws6io/EJJ0SrfxQbHeiTgm6fG3HJoSosPH+QNdjdfQ+PlLWIEmTx1jo3aQXxptzmEqt29bi7o99HF/VurU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=m3XAC7J8; arc=none smtp.client-ip=178.154.239.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
+Received: from forward103a.mail.yandex.net (forward103a.mail.yandex.net [IPv6:2a02:6b8:c0e:500:1:45:d181:d103])
+	by forward203a.mail.yandex.net (Yandex) with ESMTPS id 3634784EC4;
+	Sat, 30 Aug 2025 07:02:28 +0300 (MSK)
+Received: from mail-nwsmtp-smtp-production-main-68.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-68.vla.yp-c.yandex.net [IPv6:2a02:6b8:c1f:1301:0:640:3ccf:0])
+	by forward103a.mail.yandex.net (Yandex) with ESMTPS id B0D9B8061B;
+	Sat, 30 Aug 2025 07:02:19 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-68.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 02T5I54MOqM0-accypsTC;
+	Sat, 30 Aug 2025 07:02:18 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
+	s=mail; t=1756526538;
+	bh=vXdsUvHvBuZ7rwjKMn5ZXTnSa05JJTbcKQsxVBjhv08=;
+	h=Message-ID:Date:Cc:Subject:To:From;
+	b=m3XAC7J8K2+BV3ogVhSaY7rfQKe2mzcGY1GHEP40ThgoZGD/S9baFoQSjresWI3HI
+	 FPDV5mlOUxg//G7yqPNs20J5Ht/SFbL9XM7CujCv3v80a1dXxiPqJn9SmHg3e8+LyM
+	 O5ymk+Pt5wM5RIGYY/J+Rs2sj6ebLpV7rJYLjvGI=
+Authentication-Results: mail-nwsmtp-smtp-production-main-68.vla.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
+From: =?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
+To: rust-for-linux@vger.kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	lossin@kernel.org,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu,
+	dakr@kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH] rust: file: fix build error
+Date: Sat, 30 Aug 2025 07:01:59 +0300
+Message-ID: <20250830040159.25214-1-work@onurozkan.dev>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250829235627.4053234-14-joannelkoong@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Joanne,
+Fixes an obvious error most likely caused while
+resolving a merge conflict from other patches.
 
-On Fri, Aug 29, 2025 at 04:56:24PM -0700, Joanne Koong wrote:
-> Add a void *private arg for read and readahead which filesystems that
-> pass in custom read callbacks can use. Stash this in the existing
-> private field in the iomap_iter.
-> 
-> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> ---
->  block/fops.c           | 4 ++--
->  fs/erofs/data.c        | 4 ++--
->  fs/gfs2/aops.c         | 4 ++--
->  fs/iomap/buffered-io.c | 8 ++++++--
->  fs/xfs/xfs_aops.c      | 4 ++--
->  fs/zonefs/file.c       | 4 ++--
->  include/linux/iomap.h  | 4 ++--
->  7 files changed, 18 insertions(+), 14 deletions(-)
-> 
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202508291740.MyzqNwyg-lkp@intel.com/
+Signed-off-by: Onur Özkan <work@onurozkan.dev>
+---
+ rust/kernel/fs/file.rs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-...
+diff --git a/rust/kernel/fs/file.rs b/rust/kernel/fs/file.rs
+index f9cf6239916a..f1a3fa698745 100644
+--- a/rust/kernel/fs/file.rs
++++ b/rust/kernel/fs/file.rs
+@@ -10,7 +10,7 @@
+ use crate::{
+     bindings,
+     cred::Credential,
+-    error::{code::*, Error, Result},
++    error::{code::*, to_result, Error, Result},
+     sync::aref::{ARef, AlwaysRefCounted},
+     types::{NotThreadSafe, Opaque},
+ };
+--
+2.50.0
 
->  int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops,
-> -		const struct iomap_read_ops *read_ops)
-> +		const struct iomap_read_ops *read_ops, void *private)
->  {
->  	struct iomap_iter iter = {
->  		.inode		= folio->mapping->host,
->  		.pos		= folio_pos(folio),
->  		.len		= folio_size(folio),
-> +		.private	= private,
->  	};
-
-Will this whole work be landed for v6.18?
-
-If not, may I ask if this patch can be shifted advance in this
-patchset for applying separately (I tried but no luck).
-
-Because I also need some similar approach for EROFS iomap page
-cache sharing feature since EROFS uncompressed I/Os go through
-iomap and extra information needs a proper way to pass down to 
-iomap_{begin,end} with extra pointer `.private` too.
-
-Thanks,
-Gao Xiang
 
