@@ -1,69 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-59704-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59705-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D265B3C8C3
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Aug 2025 09:33:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB34FB3C94E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Aug 2025 10:35:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D74A5E0749
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Aug 2025 07:33:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A1EF1BA0301
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Aug 2025 08:36:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB98422D793;
-	Sat, 30 Aug 2025 07:33:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D618B243946;
+	Sat, 30 Aug 2025 08:35:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="pukcia20"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QJ2Gq9Q4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C472AD0D
-	for <linux-fsdevel@vger.kernel.org>; Sat, 30 Aug 2025 07:33:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ECD2223DF1;
+	Sat, 30 Aug 2025 08:35:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756539210; cv=none; b=otBuShrC2owVBoaf2gFNkfeBs2TtakrirUEZt9tID81ukzh3KXW+PMWLpJGRUO5e83ioxU9XwwuysARwcRRckwijr9hiBMDMvkpiLNgpgKfimLD7LyHAs53rJGg7oQ8HsI0Q1pYmkJNBB1yQTklIz2rBOwXvzHVfazYD90/mVzM=
+	t=1756542927; cv=none; b=cDRLF+QjNIwDLYAosoxE8fb0neYHRBXWryaCpDCwtEZOSVr/Yb8BqhAD9Jh8OhhFUMn2ZbqVvtqVHBMX/ABBLa5npLM2drgJidkF0aBb3VaawOvQ69rU6e/ZQG+qDOnDZl97uCB9Yq5Lg6SBTvyvaHcZyBko4xJ+yjyHghDpJAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756539210; c=relaxed/simple;
-	bh=3U7GJod3gN5lvU3DYFAv476WbJ+0ToZ4n7V6YGuu5/M=;
+	s=arc-20240116; t=1756542927; c=relaxed/simple;
+	bh=oKvjDljPLSRg2x/aOWCyZgodbMjJIdmSCcxy/Ed/RYQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MK8yYoojHwIH8V14A8tlqUYg8zhB1N4OvZALhk9AGZrAQ2rbkc6ZwiNwuzMTOSUHDpen1MKbMbyncMCxY1SWzAOW8NcdszADnJGkksbIQr1m5YiTvIZgJSDlAOsUDvUU/rpILI79AzFV2qsTbOioxdnacP1p7n+tAIo0bLmti38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=pukcia20; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=rMBTSQa13YM7NT7eUiYiyY2jXA+gM+JYSlasvo/LYvs=; b=pukcia20oN4z0vw9ymio/s3Sfq
-	L4xHKbv/poRzIw7UDiKAlCsFrM3miFlADkvlChDoH4NuGc8NaQ6d97h6d6ZEHENN1lVRIXZIcRmow
-	J6qPpivNRrQOwVkUXiLZadD6xNcIFTX/KpECXxwupP/WP7Eodv6QTF60oFK3HBr6FSErjsq7qWJZv
-	t67emleOzfx5nphjwx41+ZfxsEaYzivm2MnqS54K6u6v18DWGb3ohfK6fbcTEPNZvJe8eqVCAFT3H
-	tmkHEMoOnhgUIJb2jk/gI2kDurl7jUZTzjsYf4xB/3amugLI2CNf0flkaNQrZuJfk32/9Ml514c7q
-	lpTzSCBg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1usG5V-00000006GsH-0G6T;
-	Sat, 30 Aug 2025 07:33:25 +0000
-Date: Sat, 30 Aug 2025 08:33:25 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: linux-fsdevel@vger.kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org, jack@suse.cz,
-	Siddhesh Poyarekar <siddhesh@gotplt.org>,
-	Ian Kent <raven@themaw.net>, David Howells <dhowells@redhat.com>,
-	Christian Brauner <brauner@kernel.org>
-Subject: [RFC] does # really need to be escaped in devnames?
-Message-ID: <20250830073325.GF39973@ZenIV>
-References: <20250828230806.3582485-1-viro@zeniv.linux.org.uk>
- <20250828230806.3582485-61-viro@zeniv.linux.org.uk>
- <CAHk-=wgZEkSNKFe_=W=OcoMTQiwq8j017mh+TUR4AV9GiMPQLA@mail.gmail.com>
- <20250829001109.GB39973@ZenIV>
- <CAHk-=wg+wHJ6G0hF75tqM4e951rm7v3-B5E4G=ctK0auib-Auw@mail.gmail.com>
- <20250829060306.GC39973@ZenIV>
- <20250829060522.GB659926@ZenIV>
- <20250829-achthundert-kollabieren-ee721905a753@brauner>
- <20250829163717.GD39973@ZenIV>
- <20250830043624.GE39973@ZenIV>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ga5hWbldyPcaJ3NIjcFMff8Xs2SoQLNY/5jVYP6teqaa6IH1u8GW02q90x0Tv5lFnL/CM2ANm4DpzXo/zZVYsSXwPrHkcBr4fDaU/mR0jKi8C2RUTKKoXK7PBzwqKlwNwJeUFUuYLD70XsVxSqnOYm46ioJaSH0DWnhZqz6I+2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QJ2Gq9Q4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81DCBC4CEEB;
+	Sat, 30 Aug 2025 08:35:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756542926;
+	bh=oKvjDljPLSRg2x/aOWCyZgodbMjJIdmSCcxy/Ed/RYQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QJ2Gq9Q41CFdV6Q+M16uVYmCXPBnCX6Mtf7wOUYVVkWOIgfiBBx0jlaPa180Cf10s
+	 WYotg2neDOLYCEklciQmDeMW3qUzX0UkTa6QROBFiA93CP1SFlmZBKYFWkLmubtmF8
+	 6IjAbqmqeDZeZGMSSgPx6Y/SnyNOHjZmt+g7kXUXwVENrl/uCuBffvAtsL/jMM2lEc
+	 0lQ2G1Jorwlhp+I8wSJzRGlMX7OxHmQgPe3ubKgbY3jw3rfN6RBNzm/jw+2U86JKgV
+	 hRdhGKSEIEL5Sdf+8dpRe+3XW9gqx3VoLY6G1z5UzYe5mU1jAx5nzCn+phxkVTEV28
+	 TMP4NOKcmoVjw==
+Date: Sat, 30 Aug 2025 11:35:02 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
+	changyuanl@google.com, dmatlack@google.com, rientjes@google.com,
+	corbet@lwn.net, rdunlap@infradead.org,
+	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com,
+	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org,
+	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr,
+	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com,
+	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com,
+	vincent.guittot@linaro.org, hannes@cmpxchg.org,
+	dan.j.williams@intel.com, david@redhat.com,
+	joel.granados@kernel.org, rostedt@goodmis.org,
+	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
+	linux@weissschuh.net, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org,
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
+	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
+	aleksander.lobakin@intel.com, ira.weiny@intel.com,
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
+	brauner@kernel.org, linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
+	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com,
+	leonro@nvidia.com, witu@nvidia.com
+Subject: Re: [PATCH v3 09/30] liveupdate: kho: move to kernel/liveupdate
+Message-ID: <aLK3trXYYYIUaV4Q@kernel.org>
+References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
+ <20250807014442.3829950-10-pasha.tatashin@soleen.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -72,39 +84,71 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250830043624.GE39973@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20250807014442.3829950-10-pasha.tatashin@soleen.com>
 
-	On one hand, we have commit ed5fce76b5ea "vfs: escape hash as
-well" which added # to the escape set for devname in /prov/*/mount*;
-on another there's nfs_show_devname() doing
-                seq_escape(m, devname, " \t\n\\");
-and similar for btrfs.  And then there is afs_show_devname() that outright
-includes # in that thing on regular basis:
-	char pref = '%';
-	...
-        switch (volume->type) {
-	case AFSVL_RWVOL:
-		break;
-	case AFSVL_ROVOL:
-		pref = '#';
-		if (volume->type_force)
-			suf = ".readonly";
-		break;
-	case AFSVL_BACKVOL:
-		pref = '#';
-		suf = ".backup";
-		break;
-	}
+On Thu, Aug 07, 2025 at 01:44:15AM +0000, Pasha Tatashin wrote:
+> Move KHO to kernel/liveupdate/ in preparation of placing all Live Update
+> core kernel related files to the same place.
+> 
+> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+>
+> ---
+> diff --git a/kernel/liveupdate/Makefile b/kernel/liveupdate/Makefile
+> new file mode 100644
+> index 000000000000..72cf7a8e6739
+> --- /dev/null
+> +++ b/kernel/liveupdate/Makefile
+> @@ -0,0 +1,7 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +#
+> +# Makefile for the linux kernel.
 
-	seq_printf(m, "%c%s:%s%s", pref, cell->name, volume->name, suf);
+Nit: this line does not provide much, let's drop it
 
-For NFS and btrfs ones I might be convinced to add # to escape set; for
-AFS, though, I strongly suspect that userland would be very unhappy,
-and that's userland predating whatever code that "aims to parse fstab as
-well as /proc/mounts with the same logic" ed5fce76b5ea is refering to.
+> +
+> +obj-$(CONFIG_KEXEC_HANDOVER)		+= kexec_handover.o
+> +obj-$(CONFIG_KEXEC_HANDOVER_DEBUG)	+= kexec_handover_debug.o
+> diff --git a/kernel/kexec_handover.c b/kernel/liveupdate/kexec_handover.c
+> similarity index 99%
+> rename from kernel/kexec_handover.c
+> rename to kernel/liveupdate/kexec_handover.c
+> index 07755184f44b..05f5694ea057 100644
+> --- a/kernel/kexec_handover.c
+> +++ b/kernel/liveupdate/kexec_handover.c
+> @@ -23,8 +23,8 @@
+>   * KHO is tightly coupled with mm init and needs access to some of mm
+>   * internal APIs.
+>   */
+> -#include "../mm/internal.h"
+> -#include "kexec_internal.h"
+> +#include "../../mm/internal.h"
+> +#include "../kexec_internal.h"
+>  #include "kexec_handover_internal.h"
+>  
+>  #define KHO_FDT_COMPATIBLE "kho-v1"
+> @@ -824,7 +824,7 @@ static int __kho_finalize(void)
+>  	err |= fdt_finish_reservemap(root);
+>  	err |= fdt_begin_node(root, "");
+>  	err |= fdt_property_string(root, "compatible", KHO_FDT_COMPATIBLE);
+> -	/**
+> +	/*
+>  	 * Reserve the preserved-memory-map property in the root FDT, so
+>  	 * that all property definitions will precede subnodes created by
+>  	 * KHO callers.
+> diff --git a/kernel/kexec_handover_debug.c b/kernel/liveupdate/kexec_handover_debug.c
+> similarity index 100%
+> rename from kernel/kexec_handover_debug.c
+> rename to kernel/liveupdate/kexec_handover_debug.c
+> diff --git a/kernel/kexec_handover_internal.h b/kernel/liveupdate/kexec_handover_internal.h
+> similarity index 100%
+> rename from kernel/kexec_handover_internal.h
+> rename to kernel/liveupdate/kexec_handover_internal.h
+> -- 
+> 2.50.1.565.gc32cd1483b-goog
+> 
 
-So...  Siddhesh, could you clarify the claim about breaking getmntent(3)?
-Does it or does it not happen on every system that has readonly AFS
-volumes mounted?
+-- 
+Sincerely yours,
+Mike.
 
