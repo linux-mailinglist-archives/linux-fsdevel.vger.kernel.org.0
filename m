@@ -1,152 +1,274 @@
-Return-Path: <linux-fsdevel+bounces-59748-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59749-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3280FB3DDC8
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 11:14:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7785CB3DDDE
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 11:19:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8ADB91884713
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 09:14:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 405B2176FD0
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 09:19:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B709A305068;
-	Mon,  1 Sep 2025 09:14:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F79630BB97;
+	Mon,  1 Sep 2025 09:19:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="L1Bow/+m"
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="f2+0jrbv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E0A230504A
-	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Sep 2025 09:14:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB485304BA9
+	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Sep 2025 09:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756718066; cv=none; b=rtiVGSAYPygJSh+LHVd0r15iKaM4WnKtTw+pfRgYwR26Y5+Zzep31VqRTYn6FKtM1/AcESFXgko52T5AK4ZL21waCspTy/o4Ft7xJ7amZp3xHS+iIq6XC45pe+m/l0fe26eu7ofgNH1ssWqeCi3o31r49u84ST0VVAXotONPwyg=
+	t=1756718367; cv=none; b=I4uIBP+ZJJ851aeCa17Py9RyTNOaFoRHroRaHklGKfkMb1HjK6LsDjkD7s8EVyQTCdnsYZ0ME8Qj5Aw4zKVabS4mgToUoYfrLmZwpRsdxMaz6JxBZdWr0zE2Hiu5iBsc/T+HdmKhYwp1tYc8kwH1Ntn8d2oJsZknJMR4eaWkUbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756718066; c=relaxed/simple;
-	bh=uQ85KgfjiIZLekYRGT24c+SqyVX6seLzotf4gZBu12E=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=e65bh7PgRTKbG7pZprxcM12XVa60o/TMheEuHE/iOidnH6NjRexxa4IPZlsb4qTO/0vZmygXcSQ7aLiqQlIvFnpAHjRh+CqFGU8zYLpxy3ZV4kLvsjmvqrcWBXbSpFHI5qlWi42B+1q2WoIiOdGG984IHpQodKF2Y37pPByZTv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=L1Bow/+m; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3cef6debedcso1731162f8f.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Sep 2025 02:14:24 -0700 (PDT)
+	s=arc-20240116; t=1756718367; c=relaxed/simple;
+	bh=mKqCh67Y8GjWCP9TMAeIQOxT8NZFxglB07weMmMn2YY=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=VNBgjyqOJFtIO3kJOeD55IBv1VSMj+yW4bNnqlZ7OK8KGRDraCHjtDNrtO7XSlRYbq83p52TuoiDb1rfpETLH1al551U0jnCnYF8yJHoKjDAY0pv0y9OIp6kX5cpaHVlvgfJi2gpwFosUIGBckY6kmvl55HmRcVAVz5E2GVYDL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=f2+0jrbv; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-afefc7be9d4so440008466b.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Sep 2025 02:19:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1756718063; x=1757322863; darn=vger.kernel.org;
-        h=content-transfer-encoding:autocrypt:subject:from:to
-         :content-language:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jNZG/wPRsZEEsO2B+mQ26lIrxqZ6nOyCSqN70b8c0Eo=;
-        b=L1Bow/+mKJqX+7nfCYwR/6Qm6rF7GHhGiuCaq9Hfi488hc8KBJgHMWjHv1bvI6vOnC
-         Kq1qNjqRwHgfTumU3kCQSfJkQOG/6UusFYmO0hmpfye4Xb8Q4HA/mzy342nmSRqgwOal
-         YOXZfY2K9lSEt/YwMXDYkpQbuHT4mKtuw5ErWBfsgNwysk7MhsKYDIOzctLqDhs5DZCC
-         +ftfSZ3+tkRyU7CpPhyPy+gHyI536M7Hn9ZT60K76ao2xMPImaqjVmKprTM0qcwK0sXB
-         YJPuXlqol46I9kDa6RsHZbNGsDluvFMnLC708PsY0wTNBafs9+qLbdw+hfX4fMKgwyOH
-         SnsQ==
+        d=ionos.com; s=google; t=1756718364; x=1757323164; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IjlvOc7eDmq89ai1ZTLunEbTu4eGMpRVy5UBgVL+2qk=;
+        b=f2+0jrbvllazQq6qkTQULI32d4ElFex75hfRYAJRO/ydb/LPYGnbhM/80J/Qvf4M2N
+         MxPcbTuhccEM/Gv08YKcl75bUamgDiviFf6gAJiyrferkSLP/2cW7OIfX3LPxgaLoc1I
+         MJ220OqhlZCjvzrfLwisawF3CyTFYTYV7vrvlYHxcGRviYdDQ1l6hX79Ytiz5Fj5HJZv
+         ao+/Xo+mwRAV6LurzqzF3jdn4WxtbhTV2MNBnpKL4NYATqRI/XTTeXwHhhHrkcsb0UY2
+         dEPz7P8ehtUc0CdTqjZ8xoZjNc8tuCBQPabp9qAbr7jCRt1zRakJJc5zZeSFzYDWlePU
+         GSSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756718063; x=1757322863;
-        h=content-transfer-encoding:autocrypt:subject:from:to
-         :content-language:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jNZG/wPRsZEEsO2B+mQ26lIrxqZ6nOyCSqN70b8c0Eo=;
-        b=FaGq1bYS4ScxSaRVdgZMNDac613e4SrPcTK2ow3ROdaZXyENlfI4tn7gb2LqIBbSvP
-         a0Qzn8YiwuzInZg3H/y16o9jDRNIy0+ae8SrO+qYu4VaSOV+Qf3Vwzk5/eElA/J2acCo
-         /qnmLwoUTLgRVPSIasonevhH79xtbJ8pXVCfFSl+1s7xeOaQfdiS5B2GYparHm3wQiWj
-         a8UFVhi6dBn/5TxtqAg96hHGosQd2gdm2DM7JmzcqsqU9UNqL7N7Gi72CsToAgQ+zpi0
-         4YVTYF0GOTkDSU014sPKcGWE/S/smLs2TCtL+J1Aoje/gBHED6ZSOeKCVJgPaCzCsH6E
-         oOcA==
-X-Gm-Message-State: AOJu0YzfIeWM++CEjEJnLzEs5yI8Kvx2am4C/3nG2hhYIytTfbdezSJU
-	63qnYZ/cnu8UutIMYcekgLAangQfoKnCg7oun+aIQ8RExiAphwwN18cCxeFJ9AFyVmZb0XQWCuW
-	Lm37G
-X-Gm-Gg: ASbGncuA8F04NfOVr+uNG/g+AX6Bp74Z8y4r6G3P/A3INPIZdjQquNFTN4PdsLeqNbw
-	xKZn3Yavtnuti+8gs3OYtmpBNBhx/asbENXjAeNivrFWCGaPqGzuZ0V32whPA6+BPBp7GJaTgya
-	yVzxzwP+1cdBAiYV50DObiF4GIVuRyXX0CA7NVjVNqslKOGJjH/Ia9AmMwsclXYEhkBl2JdBwON
-	ooXaiflZXPiDl3eIn36clSjiqBumNmgHYGRfpe7ogGDfN925exdyBJjANKpzgO+DviRSZBY5ByW
-	UBz9IXRYp9M2+H208QB10DSvdQ8Ub+SHa2U0IqyDeM5AoClXbNdTxudTK9Mgjl4+pYFnxpSV8IV
-	r4TenQHJODnAMkj1iwvTo2Y80lVHrdjPeFowlGukXuO8YgHWQTk/BKVSDQhVhrDG6fWL/D/Vt
-X-Google-Smtp-Source: AGHT+IHoZDuDbi7ROhf/p2Mirpmp7nlPzCdEgOrF1D+ixoJO+T4bFMreda40Wkr5nl4Q1bOelRz6PQ==
-X-Received: by 2002:a5d:5846:0:b0:3cb:62c0:1eea with SMTP id ffacd0b85a97d-3d1dcf57a13mr5727958f8f.25.1756718062553;
-        Mon, 01 Sep 2025 02:14:22 -0700 (PDT)
-Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24903704379sm99020515ad.29.2025.09.01.02.14.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Sep 2025 02:14:22 -0700 (PDT)
-Message-ID: <8764ecf7-357a-4109-a957-64c3c3dd7842@suse.com>
-Date: Mon, 1 Sep 2025 18:44:17 +0930
+        d=1e100.net; s=20230601; t=1756718364; x=1757323164;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IjlvOc7eDmq89ai1ZTLunEbTu4eGMpRVy5UBgVL+2qk=;
+        b=c6VnKykQo+e9SFPieOW6fsOFltMW8QJwMAl14OfDSnhVIdpqCfT2uYOo7IdZ3IPfXt
+         WFt18Z/GB+Sku0xykIQQWEOxgimJjiWH4hHsrVnNZZjGFmMbvo4iOvjU9neBnZxg8ysZ
+         Qa/br7iHfEkZ+Vx0x7onzSMP/OKVtqhapXcJ53f/sPMcsEXYKrAbnR5rhsdN2rVZ5yGy
+         vJz4QoTzvSKVeXbQ7UcH8ZMKgmmhEp+yhgNjv7orD74K24NugsUFyVMihdsfVGF8nlyg
+         wSQ8fCYYvfbtUILVZBFVv4uGW3LNX0ptOakGGyhbaMECyHymBOC/dU3gfEVTk1QDLbO6
+         swLg==
+X-Forwarded-Encrypted: i=1; AJvYcCUIUkB2B6kd9NZyLPQs4Jmy7nlPuyGdETT2gtLOyt0SMX7xn5dlXrEgEwTOUdo7g2cCi5u78bH2YkqfmJoR@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzAOI5bwJVFSj7T2Dg3af4wz32s1KfXRoT4+A/kdcTbAjJaQFp
+	yJFSrQvvN6Lfont81i9SvRhX3oh4Utr52oQiQRDR1wLeYBy/aD07hJfXloFaqdwCfXU=
+X-Gm-Gg: ASbGncuPw9zB9CD7zY8d8Y8pPtHglOSDpWsvwhY7tRpEfFz1L7dYKP8rrD2IG0m7XV3
+	4gpv+qG/sQCwJsdSdygujHS6ZmCvMFapz9bVl1tHeeS5kMrNRpxdvHu+4npV8wgq0CC7Awcse3R
+	fGydRgX375mszM9GOxmb/PIiKZoC3BMooWPX6z7DgkZf7ME5pq62DIqAAwdH4HzAjtC8VTO6PTl
+	7tQCaLNfBroQTJntEEW1sVl2xLW0z57fRiGtJAKHPfrEfeFfFSsJzdqUu+LM+sSYPwYQdvf0nCJ
+	L7Qe3C8peB0vCxRl6DxJDdz7NAOTZoqDZCk8HjSxQhUUuBWRsWjBcbbriLh6OlsNso5mn8qQlZJ
+	Qf18NP4E5IeMt2UbFd0zgWk0MSspe4YEhlvePbk9sp4soCjztjkX25TjZo0BbDoSDZpJS/ps3lW
+	ayHMq51+scOpJD2uaYYEScJTjSShsy6ZTy
+X-Google-Smtp-Source: AGHT+IFTes99iR4h1SIirBohNckEBvGOnxGmn6ipBhPiK9MotguUOISNLv8vVelWffxZXwdx4Lg8FA==
+X-Received: by 2002:a17:907:94cd:b0:b04:2cc2:e49c with SMTP id a640c23a62f3a-b042cc31acemr254882266b.19.1756718364079;
+        Mon, 01 Sep 2025 02:19:24 -0700 (PDT)
+Received: from raven.intern.cm-ag (p200300dc6f1d0f00023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f1d:f00:230:64ff:fe74:809])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b01902d0e99sm541005766b.12.2025.09.01.02.19.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 02:19:23 -0700 (PDT)
+From: Max Kellermann <max.kellermann@ionos.com>
+To: akpm@linux-foundation.org,
+	david@redhat.com,
+	axelrasmussen@google.com,
+	yuanchu@google.com,
+	willy@infradead.org,
+	hughd@google.com,
+	mhocko@suse.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	vbabka@suse.cz,
+	rppt@kernel.org,
+	surenb@google.com,
+	vishal.moola@gmail.com,
+	linux@armlinux.org.uk,
+	James.Bottomley@HansenPartnership.com,
+	deller@gmx.de,
+	agordeev@linux.ibm.com,
+	gerald.schaefer@linux.ibm.com,
+	hca@linux.ibm.com,
+	gor@linux.ibm.com,
+	borntraeger@linux.ibm.com,
+	svens@linux.ibm.com,
+	davem@davemloft.net,
+	andreas@gaisler.com,
+	dave.hansen@linux.intel.com,
+	luto@kernel.org,
+	peterz@infradead.org,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	x86@kernel.org,
+	hpa@zytor.com,
+	chris@zankel.net,
+	jcmvbkbc@gmail.com,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	weixugc@google.com,
+	baolin.wang@linux.alibaba.com,
+	rientjes@google.com,
+	shakeel.butt@linux.dev,
+	max.kellermann@ionos.com,
+	thuth@redhat.com,
+	broonie@kernel.org,
+	osalvador@suse.de,
+	jfalempe@redhat.com,
+	mpe@ellerman.id.au,
+	nysal@linux.ibm.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-parisc@vger.kernel.org,
+	linux-s390@vger.kernel.org,
+	sparclinux@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH v4 00/12] mm: establish const-correctness for pointer parameters
+Date: Mon,  1 Sep 2025 11:19:03 +0200
+Message-ID: <20250901091916.3002082-1-max.kellermann@ionos.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- linux-btrfs <linux-btrfs@vger.kernel.org>
-From: Qu Wenruo <wqu@suse.com>
-Subject: Highmem, large folio, and bvec. What is the proper interface to
- iterate mp bvecs?
-Autocrypt: addr=wqu@suse.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
- FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
- Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
- fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
- 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
- V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
- rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
- rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
- Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
- E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
- vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
- g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
- AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
- cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
- qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
- /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
- o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
- JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi,
+For improved const-correctness.
 
-Recently I'm trying to add bs > ps support for btrfs.
+This patch series systematically adds const qualifiers to pointer
+parameters throughout the memory management (mm) subsystem,
+establishing a foundation for improved const-correctness across the
+entire Linux kernel.
 
-One thing I noticed is the bvec_* helpers, like 
-bvec_kmap_local()/memzero_bvec()/... are all for single page bio_vecs, 
-meaning bv_len and bv_offset must be inside a page.
+Const-correctness provides multiple benefits:
 
-This means those helpers will not be able to handle a large folio in one go.
+1. Type Safety: The compiler enforces that functions marked as taking
+   const parameters cannot accidentally modify the data, catching
+   potential bugs at compile time rather than runtime.
 
-On the other hand we also need to support HIGHMEM, which means we must 
-call kmap/kunmap helpers for each page.
+2. Compiler Optimizations: When the compiler knows data won't be
+   modified, it can generate more efficient code through better
+   register allocation, code motion, and aliasing analysis.
 
+3. API Documentation: Const qualifiers serve as self-documenting code,
+   making it immediately clear to developers which functions are
+   read-only operations versus those that modify state.
 
-I'm wondering will it be possible to handle multi-page bvecs in fs block 
-size incremental, without falling back to handle sub-blocks using sp bvecs.
-(Of course, all the folios queued into bios will have proper minimal 
-order to cover at least one fs block)
+4. Maintenance Safety: Future modifications to const-correct code are
+   less likely to introduce subtle bugs, as the compiler will reject
+   attempts to modify data that should remain unchanged.
 
+The memory management subsystem is a fundamental building block of the kernel.
+Most higher-level kernel subsystems (filesystems, drivers, networking) depend
+on mm interfaces. By establishing const-correctness at this foundational level:
 
-Bcachefs is doing the separate handling for HIGHMEM (kmap + kunmap, sp 
-bvecs) and regular mp bves in one go for its checksum handling.
+1. Enables Propagation: Higher-level subsystems can adopt const-correctness
+   in their own interfaces. Without const-correct mm functions, filesystems
+   cannot mark their own parameters const when they need to call mm functions.
 
-Btrfs for now is mixing sp bvecs (checksum verification in block size 
-unit), mp bvec (mostly to calculate bio size, so harmless) and folio 
-iter for filemap.
+2. Maximum Impact: Changes to core mm APIs benefit the entire kernel, as
+   these functions are called from virtually every subsystem.
 
-Can we have a proper mp bvec handlers? Or is there a way to exclude 
-HIGHMEM folios from filemaps completely so that we can just forget 
-HIGHMEM for fses?
+3. Prevents Impedance Mismatch: Without const-correctness in mm, other
+   subsystems must either cast away const (dangerous) or avoid using const
+   altogether (missing optimization opportunities).
 
-Thanks,
-Qu
+This series adds const qualifiers to pointer parameters in functions that
+perform read-only operations on:
+- struct page, folio, and ptdesc
+- struct vm_area_struct and vm_fault
+- struct mm_struct and address_space
+- struct zone, lruvec, and mem_section
+- Various architecture-specific mm structures
 
+Each patch focuses on a specific header or subsystem component to ease review
+and bisection.
+
+This work was initially posted as a single large patch:
+ https://lore.kernel.org/lkml/20250827192233.447920-1-max.kellermann@ionos.com/
+
+Following feedback from Lorenzo Stoakes and David Hildenbrand, it has been
+split into focused, reviewable chunks. The approach was validated with a
+smaller patch that received agreement:
+ https://lore.kernel.org/lkml/20250828130311.772993-1-max.kellermann@ionos.com/
+
+Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+---
+v1 -> v2:
+- made several parameter values const (i.e. the pointer address, not
+  just the pointed-to memory), as suggested by Andrew Morton and
+  Yuanchu Xie
+- drop existing+obsolete "extern" keywords on lines modified by these
+  patches (suggested by Vishal Moola)
+- add missing parameter names on lines modified by these patches
+  (suggested by Vishal Moola)
+- more "const" pointers (e.g. the task_struct passed to
+  process_shares_mm())
+- add missing "const" to s390, fixing s390 build failure
+- moved the mmap_is_legacy() change in arch/s390/mm/mmap.c from 08/12
+  to 06/12 (suggested by Vishal Moola)
+
+v2 -> v3:
+- remove garbage from 06/12
+- changed tags on subject line (suggested by Matthew Wilcox)
+
+v3 -> v4:
+- more verbose commit messages including a listing of function names
+  (suggested by David Hildenbrand and Lorenzo Stoakes)
+
+Max Kellermann (12):
+  mm/shmem: add `const` to pointer parameters for improved
+    const-correctness
+  mm/pagemap: add `const` to pointer parameters for improved
+    const-correctness
+  mm/mmzone: add const to pointer parameters for improved
+    const-correctness
+  fs: add const to pointer parameters for improved const-correctness
+  mm/oom_kill: add const to pointer parameter for improved
+    const-correctness
+  mm/util, s390: add const to pointer parameters for improved
+    const-correctness
+  parisc: add `const` to mmap_upper_limit() parameter
+  mm/util, s390, sparc, x86: add const to arch_pick_mmap_layout()
+    parameter
+  mm/mm_types: add const to pointer parameters for improved
+    const-correctness
+  mm/mm_inline: add const to pointer parameters for improved
+    const-correctness
+  mm: add const to pointer parameters for improved const-correctness
+  mm/highmem: add const to pointer parameters for improved
+    const-correctness
+
+ arch/arm/include/asm/highmem.h      |  6 +--
+ arch/parisc/include/asm/processor.h |  2 +-
+ arch/parisc/kernel/sys_parisc.c     |  2 +-
+ arch/s390/mm/mmap.c                 |  7 ++--
+ arch/sparc/kernel/sys_sparc_64.c    |  3 +-
+ arch/x86/mm/mmap.c                  |  7 ++--
+ arch/xtensa/include/asm/highmem.h   |  2 +-
+ include/linux/fs.h                  |  7 ++--
+ include/linux/highmem-internal.h    | 38 ++++++++++---------
+ include/linux/highmem.h             |  8 ++--
+ include/linux/mm.h                  | 48 +++++++++++------------
+ include/linux/mm_inline.h           | 26 +++++++------
+ include/linux/mm_types.h            |  4 +-
+ include/linux/mmzone.h              | 42 ++++++++++----------
+ include/linux/pagemap.h             | 59 +++++++++++++++--------------
+ include/linux/sched/mm.h            |  4 +-
+ include/linux/shmem_fs.h            |  4 +-
+ mm/highmem.c                        | 10 ++---
+ mm/oom_kill.c                       |  3 +-
+ mm/shmem.c                          |  6 +--
+ mm/util.c                           | 20 ++++++----
+ 21 files changed, 162 insertions(+), 146 deletions(-)
+
+-- 
+2.47.2
 
 
