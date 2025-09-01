@@ -1,168 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-59905-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59906-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40207B3EE41
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 21:03:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39560B3EF0D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 21:57:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32C617A1AD3
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 19:01:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 069732C1F10
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 19:57:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4B4926B0A9;
-	Mon,  1 Sep 2025 19:03:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 014FF25B2F4;
+	Mon,  1 Sep 2025 19:57:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="dXEZCX+4"
+	dkim=pass (2048-bit key) header.d=verbum.org header.i=@verbum.org header.b="AR7943HS";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="oFkWaCeb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B758F23D283
-	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Sep 2025 19:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A6DF2580CA;
+	Mon,  1 Sep 2025 19:57:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756753406; cv=none; b=FcZNcbuXW3/Piz+e/FzuuqhYLMlNjijmlw8+ZAyKOFAZmXT3vBv4k0LoMVq+vNYRWUUaZbRQQlJ3A8KeJsa/YbOSD+d7pcG/Juh9y/Z9PT55Z/9CDBZVaJCPcdpoYnGJ5rMSd150gIi0jJr4gI63Wj7LYBEq/kLEoyBsO+pa5fo=
+	t=1756756667; cv=none; b=NR6BpqXp2biprm2Kw7y5iTj3t2dRyjczEijk8pbWtTgsLMpd9N+Av8Ry68XwpsgSUBEcD1muiOYd4cvM4Y2zxz7/dlrzIrw5toxDvjr19MO/9n4t0k8fBJ9sbq1c4KDNA2HUipAl3A1fvcpqaJPZhxt+ZtJB022f5UvL4vrIDKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756753406; c=relaxed/simple;
-	bh=S3hCdUT2ICLXa1GjNdU28dZZnKCVYtibeydsEJ9rZEA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YIyvFGmcBSXUkYj1k5a34ABTOsrRsJDR4mKvvabXLuuU+QHK0g2jIzbmGixsRi024g5FoEe7AFISHT1AKtoZVkjXMsSoR/VNZkQjq+Xul92laIQBg5LExk2LIIrZRqAQjzEVU+b1G5nLpfFzGxCJySoyzwjGLCMKVdi2lAUmWcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=dXEZCX+4; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4b109c4af9eso40063271cf.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Sep 2025 12:03:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1756753403; x=1757358203; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=S3hCdUT2ICLXa1GjNdU28dZZnKCVYtibeydsEJ9rZEA=;
-        b=dXEZCX+4rQJGhIL63KLKRHxqwjXdP2O6g2tY4k3x5FDsPLedpIApTg2PFgMjSph2sb
-         W7+k6ybjgpB8T2XdOJZv3OdlsVYLiahsYawM8Q/8AwB05NAqBv9sxeToI8M2Rgph25dc
-         wdyEOL16F1ynXsEJfcW7o23ZmJ0uhXGiOzLzsMdk2sqK25PahNNtJphys4q/8Gb/VEPY
-         522sx3i2EhJeH97+0xb/adJ1cvG4HxYlAVzdBidmkMqWCLgZxDntJUw/NS4DKICJ+Jrm
-         pAj12VClPYdAOehZgVfoDxJYk/OuCxxSO2v12TUzjm3O8ADkwkleByFpStlo+5BoK3Dg
-         NDDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756753403; x=1757358203;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=S3hCdUT2ICLXa1GjNdU28dZZnKCVYtibeydsEJ9rZEA=;
-        b=Qoq+1aYZ2R8BwS2jhOAd7YjvmvwVFpDAqVQ3vErIiiHMY3dhJ6BYDwo/mpld+29lbI
-         SBIbCOtUR1o1kEWhuevRYIqX6Fzt/JviIpPEL2L02Qq0OfPZhhD4B8r7SHLh96LNA1BA
-         GcdYtoDwgbqt+hRPPYGD8fzdaSRfuxgd14XexZuNA9YaXeAfWDa0a/5vmZRwDh1HAQR9
-         rNaM3F1qVkkvygKwZE0yDcer+bJ4uWifLxE7uEV/vlyVHzBjxG3gHIDr3dbGMwmMmtlI
-         BZMxboKVvylw/RWI/FgpxBkhPi9C+BsIHnRygAxBO9TV1/PrQNNxpltHx6/pzTW1d4JP
-         PHDg==
-X-Forwarded-Encrypted: i=1; AJvYcCVn5Xtfq0dHdDXaXeTSUyVvH5CWolAl1yN+jUUri1igcdUTtvOj8EVtfRd5Cm/oW6X1rUl7TfYjOLowFQzt@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzsdwyl4DfhQGa5IGGOZdZetTWJlt3TCMRT19/iqN8yHJlL54Au
-	G5bEPtVZgQz7gCZIT53hnDJmgTv2jNu4d5SUpbO1R6SSF7SIogJ9Q/ZqLNVq9fCDeWaY9oi9mMl
-	M110VsaR2ZqHN+YN/aP3fauy2k9T+2BlaAC8qe+SCFA==
-X-Gm-Gg: ASbGncuqSSRmqH6g58MC2UWX/dOF8C0e3XszoRBmrFls7PQ/8qzXcEcoAdsRkYkbivU
-	A53QkfaR043iHMNyiYtRdiSYlDGUoDDyTPkwtC7suKJq0A6twC1rbN+5+bxyDMsmPXfqzUHNXlc
-	JrG+avVAQ9/rtkx2vJCDFxeJT2cxHIP3L/9zWgSofRr6lwmxkiO9sJBcXqhgvrnHudcjn04IUha
-	yqym1syLxLIaiA=
-X-Google-Smtp-Source: AGHT+IGC4IxxW7gTteEuAiFDY4ARihDdjTh7r8Mht+Ln0Ng2xWrhyAI5gEJNZ2B2JAdSBb2GjROz0/at0WjW2Aw4LfQ=
-X-Received: by 2002:a05:622a:1a0a:b0:4ab:902c:5553 with SMTP id
- d75a77b69052e-4b31da17d84mr113554401cf.52.1756753403110; Mon, 01 Sep 2025
- 12:03:23 -0700 (PDT)
+	s=arc-20240116; t=1756756667; c=relaxed/simple;
+	bh=Bsw8CaxEROMumMzgU1S4U1vyDdXzlPluKDsgkqNVJpc=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=GFpSn05+ys+wa6/lh37eTTotd/eJHFREi/tgnFC6qZJQNQxWyUFz47/Bd5PTvabH4zoK2MOfJlAVi3rs3BZUg6+WvQFDqaXzqVSNIUxkRptgLqdo3yr1iJZMIGxBsd/4dtwOnE0x4ZWhQJkpFabz1nkMTch+0c3DmbqZRLCm4HQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=verbum.org; spf=pass smtp.mailfrom=verbum.org; dkim=pass (2048-bit key) header.d=verbum.org header.i=@verbum.org header.b=AR7943HS; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=oFkWaCeb; arc=none smtp.client-ip=202.12.124.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=verbum.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=verbum.org
+Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
+	by mailfout.stl.internal (Postfix) with ESMTP id 00BAC1D002C8;
+	Mon,  1 Sep 2025 15:57:42 -0400 (EDT)
+Received: from phl-imap-15 ([10.202.2.104])
+  by phl-compute-12.internal (MEProxy); Mon, 01 Sep 2025 15:57:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=verbum.org; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1756756662;
+	 x=1756843062; bh=+wEl+0r45x6y1/M2f4wYxqvisWrDMs5TnlDtxIfnbLY=; b=
+	AR7943HSG1uW1nPvp9Cmm9Pu71nsn8uHaqB221/hWbjvVD+kFUOKwKmeuTlecl0R
+	hbpL+orWIdMeBHHAo1LZYx2+dwTTtYYWXpebXXw/3Ay4REWzwyXvNifDKyk5qNY+
+	NtEJKuGogiV5nQ3033tcl2yigEA54b+h4dbhHjDV8QJnPpeutV2/zV0u8az8u18B
+	jnA89BghL3tw9N3RY9FSqjTbJztnLbQyoHsyh6AWlTeJgFPUJMnMFo+HpjzZIWJd
+	JFcGX8xkWEc6EldW/Y+BFdJ26r/Y/hepOYAqqxlN6rtJ9sqlk//L4g7HmO+35HuD
+	XzhvehiTJmHGFZQBWuGE/g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1756756662; x=
+	1756843062; bh=+wEl+0r45x6y1/M2f4wYxqvisWrDMs5TnlDtxIfnbLY=; b=o
+	FkWaCebXTTmYy2kMxR3nV3f03y7FqJix7KqZ6hidwX3SOHy2fnvAE6B9QEHl79A9
+	ugXqjxdh+h10THx5FIwhY4mTDpIYFm9EEFKoYIWkY7xahKsJG5yO/Ftm8emo3AD4
+	juVyRQoAYV+gIXyDjDKRF2VVFpbUGXQXyG4x+GnrmuP7xWvDD6dB0I/D80tkZQ51
+	dWSyE7HdMhSTEjNNI7zlgzH4ZCRafwaIDTvaZPIjLiGnuqKC1jUfRnyFOzK2ct2m
+	Xon11BPM0oycLBMh4QLZJwqluP2Vm4QGIjh9hQHXvJrEMVOn4F3Za/hVfr2xwUwh
+	37OGemFRVwg3trZSJlGAg==
+X-ME-Sender: <xms:tvq1aLuzyb250eW4P11sRIikWpi6uozVIhvE5d3ueioRVL7n18xopQ>
+    <xme:tvq1aMektShrbgsprPeBruANgVfZNj6J9OFea1RIRfMtN4v1SpJU2bgvPi6EW9-Rl
+    RCj3wiVsqm56Muo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduleeftdehucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedfveholhhi
+    nhcuhggrlhhtvghrshdfuceofigrlhhtvghrshesvhgvrhgsuhhmrdhorhhgqeenucggtf
+    frrghtthgvrhhnpeehgeeutdefleeutdfhieejfffhteetuddvhfegudekhfejiedulefh
+    ffehheffueenucffohhmrghinheplhifnhdrnhgvthenucevlhhushhtvghrufhiiigvpe
+    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpeifrghlthgvrhhssehvvghrsghumhdrohhr
+    ghdpnhgspghrtghpthhtohepjedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmh
+    hjghhuiihikhesghhmrghilhdrtghomhdprhgtphhtthhopegrmhhonhgrkhhovhesihhs
+    phhrrghsrdhruhdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprh
+    gtphhtthhopehjrggtkhesshhushgvrdgtiidprhgtphhtthhopehlihhnuhigqdhfshgu
+    vghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkh
+    gvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvhhirhhoseii
+    vghnihhvrdhlihhnuhigrdhorhhgrdhukh
+X-ME-Proxy: <xmx:tvq1aE-mqt1aWNlpRaoEyHHPCjyezWnwhSKVam0zBV3s2Sz98wfHdQ>
+    <xmx:tvq1aB5YJq75yeQftJY68V8d5F7fBKRQPFtX_wLYCSyCI4PhOWFqWQ>
+    <xmx:tvq1aK523rkvBvwNgB1kEKhdeVgmSBspTqrxoZjU4KNZrvzKddLq_A>
+    <xmx:tvq1aKoshNFNbp8QR_bGu_Y_9_bHmU9jv8AvYULh9SFRym6dBRr6Ew>
+    <xmx:tvq1aAMmIPqRng-1uhpesVa0XjR6ouzO0fh3pn6LZrQEtQiNdYM_KUnj>
+Feedback-ID: ibe7c40e9:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id EAB737840CC; Mon,  1 Sep 2025 15:57:41 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
- <20250807014442.3829950-30-pasha.tatashin@soleen.com> <20250826162019.GD2130239@nvidia.com>
- <aLXIcUwt0HVzRpYW@kernel.org> <CA+CK2bC96fxHBb78DvNhyfdjsDfPCLY5J5cN8W0hUDt9KAPBJQ@mail.gmail.com>
- <mafs03496w0kk.fsf@kernel.org>
-In-Reply-To: <mafs03496w0kk.fsf@kernel.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Mon, 1 Sep 2025 19:02:46 +0000
-X-Gm-Features: Ac12FXxIFoyzz5jiOJ4O5RxQRUabkrNBq-ldI0H08I8mR4jOJnwP6yzvNT_MXGI
-Message-ID: <CA+CK2bAb6s=gUTCNjMrOqptZ3a_nj3teuVSZs86AvVymvaURQA@mail.gmail.com>
-Subject: Re: [PATCH v3 29/30] luo: allow preserving memfd
-To: Pratyush Yadav <pratyush@kernel.org>
-Cc: Mike Rapoport <rppt@kernel.org>, Jason Gunthorpe <jgg@nvidia.com>, jasonmiu@google.com, 
-	graf@amazon.com, changyuanl@google.com, dmatlack@google.com, 
-	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
-	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
-	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
-	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
-	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
-	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
-	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
-	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
-	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
-	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
-	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, lennart@poettering.net, brauner@kernel.org, 
-	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, saeedm@nvidia.com, 
-	ajayachandra@nvidia.com, parav@nvidia.com, leonro@nvidia.com, witu@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
+X-ThreadId: AkTvZmR_UAfN
+Date: Mon, 01 Sep 2025 15:57:21 -0400
+From: "Colin Walters" <walters@verbum.org>
+To: "Mateusz Guzik" <mjguzik@gmail.com>,
+ "Alexander Monakov" <amonakov@ispras.ru>
+Cc: linux-fsdevel@vger.kernel.org, "Al Viro" <viro@zeniv.linux.org.uk>,
+ "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
+ linux-kernel@vger.kernel.org
+Message-Id: <7a2513ea-a144-4981-906a-7036d92d4dcb@app.fastmail.com>
+In-Reply-To: 
+ <u4vg6vh4myt5wuytwiif72hlgdnp2xmwu6mdmgarbx677sv6uf@dnr6x7epvddl>
+References: <6e60aa72-94ef-9de2-a54c-ffd91fcc4711@ispras.ru>
+ <u4vg6vh4myt5wuytwiif72hlgdnp2xmwu6mdmgarbx677sv6uf@dnr6x7epvddl>
+Subject: Re: ETXTBSY window in __fput
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-> >> > This really wants some luo helper
-> >> >
-> >> > 'luo alloc array'
-> >> > 'luo restore array'
-> >> > 'luo free array'
-> >>
-> >> We can just add kho_{preserve,restore}_vmalloc(). I've drafted it here:
-> >> https://git.kernel.org/pub/scm/linux/kernel/git/rppt/linux.git/log/?h=kho/vmalloc/v1
-> >
-> > The patch looks okay to me, but it doesn't support holes in vmap
-> > areas. While that is likely acceptable for vmalloc, it could be a
-> > problem if we want to preserve memfd with holes and using vmap
-> > preservation as a method, which would require a different approach.
-> > Still, this would help with preserving memfd.
->
-> I agree. I think we should do it the other way round. Build a sparse
-> array first, and then use that to build vmap preservation. Our emails
 
-Yes, sparse array support would help both: vmalloc and memfd preservation.
 
-> seem to have crossed, but see my reply to Mike [0] that describes my
-> idea a bit more, along with WIP code.
->
-> [0] https://lore.kernel.org/lkml/mafs0ldmyw1hp.fsf@kernel.org/
->
-> >
-> > However, I wonder if we should add a separate preservation library on
-> > top of the kho and not as part of kho (or at least keep them in a
-> > separate file from core logic). This would allow us to preserve more
-> > advanced data structures such as this and define preservation version
-> > control, similar to Jason's store_object/restore_object proposal.
->
-> This is how I have done it in my code: created a separate file called
-> kho_array.c. If we have enough such data structures, we can probably
-> move it under kernel/liveupdate/lib/.
+On Mon, Sep 1, 2025, at 2:39 PM, Mateusz Guzik wrote:
+> 
+> The O_CLOFORM idea was accepted into POSIX and recent-ish implemented in
+> all the BSDs (no, really) and illumos, but got NAKed in Linux. It's also
+> a part of pig's attire so I think that's the right call.
 
-Yes, let's place it under kernel/liveupdate/lib/. We will add more
-preservation types over time.
+Do you have a reference handy for that NAK?
 
-> As for the store_object/restore_object proposal: see an alternate idea
-> at [1].
->
-> [1] https://lore.kernel.org/lkml/mafs0h5xmw12a.fsf@kernel.org/
+> To that end, my sketch of a suggestion boils down to a new API which
+> allows you to construct a new process one step at a time 
 
-What you are proposing makes sense. We can update the LUO API to be
-responsible for passing the compatible string outside of the data
-payload. However, I think we first need to settle on the actual API
-for storing and restoring a versioned blob of data and place that code
-into kernel/liveupdate/lib/. Depending on which API we choose, we can
-then modify the LUO to work accordingly.
+In this vein I think io_uring_spawn work sounds like the best: https://lwn.net/Articles/908268/
 
->
-> --
-> Regards,
-> Pratyush Yadav
+However...if we predicate any solution to this problem on changing every single codebase which is spawning processes, it's going to take a long time. I think changing the few special cases around "sealing" (fsverity and write + fexecve()) is more tractable.
 
