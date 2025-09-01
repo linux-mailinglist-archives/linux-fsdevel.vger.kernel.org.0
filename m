@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-59808-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59809-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB451B3E1A8
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 13:34:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B877B3E1C5
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 13:38:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D21647A946E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 11:32:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88E941A8197F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 11:38:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F25CB3148D2;
-	Mon,  1 Sep 2025 11:34:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 074BF31A063;
+	Mon,  1 Sep 2025 11:37:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ONedFjEo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dWmJe+9W"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E70D3101CD
-	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Sep 2025 11:34:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B40F3148A8
+	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Sep 2025 11:37:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756726457; cv=none; b=HECqbyhJJ3YdAkjDFfyGPo8JNx6BVHMaJMo+gXOAkzY8WvzMku3oOq23+ieSqD0zm5/+94T7V4PzYmhISrgtiR8EiYMyUxtIajprUyekESd+zaZL8feyvqSs8V3R1eaZgByIXUYjKuDJX2sdf6HZA48lVC7TgxhRsaNjXz/O7p8=
+	t=1756726676; cv=none; b=CrGW/CSlKJQREVAffHK2eWfi1+42rl4Pb8ZHuPCXG+PsRpj4JwZ5xtUPq+bT7RteOkcyABkpBzUuITCozPXq7sKBgaYwmVE7VjC/c7OtokEGLXCiGVrRu5//2+bJCFNkRTYfWnYsximvWTil9cTiB9L72OSo7wPM1ndpRhB3aWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756726457; c=relaxed/simple;
-	bh=lxZYtRm1xVPBSNypQYEq+T74M+eh2kYTCZgae+STRMA=;
+	s=arc-20240116; t=1756726676; c=relaxed/simple;
+	bh=WGBqhaMirsAr7f3Df+58k27oKnLEA1BXnBv66sYeOaA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pn/zqcpxXNn9evowVxajHLx4vjT2BmwqSIHk/ul/istXQNtdeypuKSuYvhO7IVDUMiIkrxTKf8+3VR7HJsPPmCP6bYXOV4n76SKTmoS4aAfGb6vupVAzkTIsfBoEICt4D2IsvdZSVM8TBSEOy0tdcQ+JM3Nzxne8YWp/JVHe1ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ONedFjEo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5448C4CEF0;
-	Mon,  1 Sep 2025 11:34:14 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=S3j5m7+PszUkS5shMobEeA1fSUwalCEdRNTYU2/bbshTYLsqdw6Iy4lAqz8qWzzzj6JijT8HZYNtt82t6FbxyZX/f2A9Pz1uxDI0Ls/7peBQPINHLgehxXoP01yQaGagr55L4FxlI2/Getw7rrylt+G447F3BqgPnU70GcPbJuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dWmJe+9W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEB4EC4CEF0;
+	Mon,  1 Sep 2025 11:37:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756726455;
-	bh=lxZYtRm1xVPBSNypQYEq+T74M+eh2kYTCZgae+STRMA=;
+	s=k20201202; t=1756726675;
+	bh=WGBqhaMirsAr7f3Df+58k27oKnLEA1BXnBv66sYeOaA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ONedFjEoBp+h3BKwkxQ6apRYL8AZD3R3fb49C6QIu8vG/Tv2JnONgVT/7/9OpzZ4U
-	 ZXVn96CXIO3PJg5Nn2OdhzSE/SK4DvXUeJx84RJajjH4At6K0lnmk+5YPCRB1DsPVv
-	 yR8P2T4QFI5W+CNkA7otSVig4kxgmCy/cXg+tg3tplebR1BynbSWardr8pIIwNrOkj
-	 lqWcAXH/IJPQCnlTtxMlOsRQ0MfD1FkmzqDQwynZnHUHCUcSKZpm7Bx/TLVhAmuYbg
-	 AlSuZqzUc2R/ivl0md/LaVHVupagQ94aRZUY1jCMamBtnPjO1OiyR+CLdrxvvlTHTX
-	 KPjBOzEuw7DAw==
-Date: Mon, 1 Sep 2025 13:34:12 +0200
+	b=dWmJe+9W4bkyQLZxANzx9KBOYIbaQJXRHK8zl/qFJ70AQRqDRQzUN0MNVt+by2swq
+	 UixSaer3dW+jUYEJq4duWgdJtcRb3ZzUQTHq5oJzjpyZli1XIpgRRIYlaWCsPxIO4m
+	 YpPwsKwyGMuTa8edTNp86p8RxUtsi9FTf2VnwISaSLJJaUF31YRzFdot7sRKsSqghL
+	 0K2/tHIY3t4bBYxX791/GXx1LdQcPVDWyz0p124frnPh2t3NTyNsGJI3fSTp7xiO9g
+	 gDeM8unkXry1uywGJl4PD34jYs2iOhbtljoW771uCU3ujMYTXLwIR0PP/EwRrtGBi2
+	 Yq2Q2PNFfZeIw==
+Date: Mon, 1 Sep 2025 13:37:52 +0200
 From: Christian Brauner <brauner@kernel.org>
 To: Al Viro <viro@zeniv.linux.org.uk>
 Cc: linux-fsdevel@vger.kernel.org, jack@suse.cz, 
 	torvalds@linux-foundation.org
-Subject: Re: [PATCH v2 26/63] do_new_mount_rc(): use __free() to deal with
- dropping mnt on failure
-Message-ID: <20250901-kopftuch-gechartert-32285d69d946@brauner>
+Subject: Re: [PATCH v2 28/63] change calling conventions for lock_mount()
+ et.al.
+Message-ID: <20250901-vulkan-sputen-6b99c8f279a0@brauner>
 References: <20250828230706.GA3340273@ZenIV>
  <20250828230806.3582485-1-viro@zeniv.linux.org.uk>
- <20250828230806.3582485-26-viro@zeniv.linux.org.uk>
+ <20250828230806.3582485-28-viro@zeniv.linux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,16 +60,32 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250828230806.3582485-26-viro@zeniv.linux.org.uk>
+In-Reply-To: <20250828230806.3582485-28-viro@zeniv.linux.org.uk>
 
-On Fri, Aug 29, 2025 at 12:07:29AM +0100, Al Viro wrote:
-> do_add_mount() consumes vfsmount on success; just follow it with
-> conditional retain_and_null_ptr() on success and we can switch
-> to __free() for mnt and be done with that - unlock_mount() is
-> in the very end.
+On Fri, Aug 29, 2025 at 12:07:31AM +0100, Al Viro wrote:
+> 1) pinned_mountpoint gets a new member - struct mount *parent.
+> Set only if we locked the sucker; ERR_PTR() - on failed attempt.
+> 
+> 2) do_lock_mount() et.al. return void and set ->parent to
+> 	* on success with !beneath - mount corresponding to path->mnt
+> 	* on success with beneath - the parent of mount corresponding
+> to path->mnt
+> 	* in case of error - ERR_PTR(-E...).
+> IOW, we get the mount we will be actually mounting upon or ERR_PTR().
+> 
+> 3) we can't use CLASS, since the pinned_mountpoint is placed on
+> hlist during initialization, so we define local macros:
+> 	LOCK_MOUNT(mp, path)
+> 	LOCK_MOUNT_MAYBE_BENEATH(mp, path, beneath)
+> 	LOCK_MOUNT_EXACT(mp, path)
+> All of them declare and initialize struct pinned_mountpoint mp,
+> with unlock_mount done via __cleanup().
+> 
+> Users converted.
 > 
 > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 > ---
 
+This is nice! Thanks!
 Reviewed-by: Christian Brauner <brauner@kernel.org>
 
