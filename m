@@ -1,79 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-59753-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59754-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED317B3DDF4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 11:20:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E983FB3DDFF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 11:21:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B29334E2021
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 09:20:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6D0F17919D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 09:21:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD99730E0F9;
-	Mon,  1 Sep 2025 09:19:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3569830F523;
+	Mon,  1 Sep 2025 09:19:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="Dl7V1wER"
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="eeV44nzn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 339C230DD10
-	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Sep 2025 09:19:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 435F930DEAF
+	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Sep 2025 09:19:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756718376; cv=none; b=r7cvHZiB+5DQ9lH9afonImx0algr4WD7xkqhWYRdvhvWECehF3IqIi+j+EKJHNfJDazmAq4NSjwL2ZItrsYgLy21wLvGIXoEYOYWu9eoOdxjxz+okAMQaphyBqa1zwtn+fKlMwt0niZz4QIw3920Ch5mrhKrylOuTMHMK1XnNw4=
+	t=1756718377; cv=none; b=ahq7bWJTBuWgoZIFgiMZUv3ERlggsvDzw7Asxnw+NW3mkFLIGQHW5ldhXM85JIVVbQVjR2B4RIfijBX3q1v3CMylWKmWbRucv3hOrlQM7srsqgidw17NlsYn0QAUvyx7YF/ZxVBwghH2u9MbhT0WTdVTUBJK6k6SDJzlFndPeVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756718376; c=relaxed/simple;
-	bh=fqMfYftVrFkOy3wbJRO7r0XLlbG/lU+7XLovauzZWxo=;
+	s=arc-20240116; t=1756718377; c=relaxed/simple;
+	bh=bekKkiG6OK0h/uU3LqpFmD7Nmq5naPE4b3ceLP62f4g=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Qwb2fxtwH8bX4uzlYivV0kTEWrdu2jSRq5OIcz0WFPMqhkCR9ULvUm0X1ZBkgNdVYOslzglILkqgyurO56CkrrrV/utdPLm9DoelYwdAbTCqH2AnVtvmz097ssGPKOloq00K4Pg99zkRTzH/jhi24I+srMXm79zUiTao5fAAKcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=Dl7V1wER; arc=none smtp.client-ip=209.85.218.43
+	 MIME-Version; b=MisHyd6AjqDccBN1S4SBB2afvHssDFXosJc6efj0QKMLXnifOos+l3RF+uII+TAU/fna8cQyttExGXmv4qW7sNNNWmNnd7pliZ8Qnc3q0g1UEN1YUwlYqXQiYVCzjKSfPHnccWY+0Hxq3FSdVKeRLbD/C05xSyXRBaHfEnlusug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=eeV44nzn; arc=none smtp.client-ip=209.85.208.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-afeec747e60so610815766b.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Sep 2025 02:19:32 -0700 (PDT)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-61cc281171cso7047366a12.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Sep 2025 02:19:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1756718371; x=1757323171; darn=vger.kernel.org;
+        d=ionos.com; s=google; t=1756718373; x=1757323173; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=8H3eprdm8oiBq+0anIaTODIO0eIcUyIWc/5jJ7tDkes=;
-        b=Dl7V1wERFzMleKB/mcdbkOLSfivKh/0qTbbLHtW40hL12fF/PHC6FBC8qSvS+8F/AH
-         5823j13P3EjHQyBXddCElPlgiJAomY75h48tIKrF7Aiqehm9JKkfycrMNH8tpoI8wWhE
-         1kV99t9hXTKOXn52zT9HzwBCAp5xD3jTg0cA4HwqoPkGOq+MUNBgc4RNYD67veOaFXv5
-         yMZaKCwx/18ovZe7OG6CWpIBvjMi9DTLZhuoxCYTOkVPoG3Z2oVQNvrAnl7JC2RXUv/e
-         CqNkBD/dICQCC+BKKzxrAq0FOGHnwGkJC+NZt0j7I/UEBoL31gvVNsHRUc9JZHTuF0S0
-         ksig==
+        bh=NQi1DlLk53At+sb7Dxdlwb1wfYNq5fMfR6Ecet/hRlk=;
+        b=eeV44nznuHFtUeH4qROWiS9PpVPkUe3tBP74MkqyuCxBcAL01l0Dx804DyyXlukHiQ
+         /W/Gex0HDmir4I1Tb1EOLf9HC+CGo8yCXh+aYhx2VMaiH852A4MlMgHrtE9VpWtmDz7A
+         U64+syKDI1K7Qb8NTyx4SDNw+BqMAJcmB5SEZ47ifiwwu37XwAIFvASfmh56p5Fy2ph0
+         ylqYzIfvynaVsqG4foLqfn+YHma+oMJCzmBgugyP/gD0ZNnnrmz1dl1cFr1rLXehjIjR
+         aMojLABbJ28ViI/tVEpMLrt/kao3inha3cM867DWl0LxHVFZqYRCKWu/tOPjDosl291r
+         0lGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756718371; x=1757323171;
+        d=1e100.net; s=20230601; t=1756718373; x=1757323173;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8H3eprdm8oiBq+0anIaTODIO0eIcUyIWc/5jJ7tDkes=;
-        b=Cm0l/RbK5wxyhXM7uX9yoDWSRKiL8ywDQLUGAZhbXS/w9NhcOVi3UhqXMB1HxbD8BT
-         25fSW3lpnmXlw7qiK34nN9tLu5gjr4n3k/ZN7SBwIz0fZXLAyuTx0ggLNkjyj/mxjsPp
-         NCdjz2UvQFaSL6i2LNLRAnwLCwlbVGXsPMykqknCkxUWTE6G2If0L4pLTElNZ2xDKfnu
-         w2I/XKM9DtvCxYAP+etIZijH8QurP40Ta0y+wLFzEQo44kxkDy1c8e/jUQT9RcHQbXPj
-         4YOdqR8XPq2gPD6o5l9kyMCefFgnv0snnx80ajeZdMTvnRyhPT7iVKLgOs2uhXdLzknL
-         jUXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXC2GOqYJM5abpYWgoNaqi8dO+P8UHAo5Umc5amVCDt0wf4O0pZTc31xxsTeOH+ZrSbBgmRkbdfU4AYP8xp@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6uvo8Uy/Le2lOLpR30sUl3dy9Vvg6lOccah6h+p5LQ+2aP1cw
-	edtLM0MrbySKjNrc7EBPYp7oxFXuQQ0PPALGPCpkhuiFb+2yC51pCZhXGDBWTqySO98=
-X-Gm-Gg: ASbGncuygNS7y5Q13JCe5CxrVYP/yEbyClqiDaS9p5QIXpZ0I5KSoo7mzpM6eegqN/B
-	bc3Dkx7ip9uvxRHVYB9XXHMx0CTAoFpzL6uovG5JCaW6EHqQpKSSmee4izSqKZgYkyIUGcbHG4b
-	Q9FU8bwtZEhKwVAukehYJoiCG6yqzS1ZmkhjqEQUZBTT9UCF07/xJZDfqtmv5EX1XUUjygf054Y
-	X538O8n22EF5JIRi4q0LwesbjQII9dFXlcqrN644OeRqbBK9HDGwpCD9ZD/CusXzaiiF77srxJO
-	JYdW8jxW5r9efDucbV2joijFfgdkIeuJz0mIskoXxAAaUWlYrrVaEt8tGreZ3M36MwjcWY3W4vm
-	syXcwHPxqDrIla+bWfJABC8A6LMKbUYZPRbmxGgKAE9K/7dSZTmaE3SOpYYcA2wXYtwDWl65a+7
-	UgC9jLDo07wsRZdFYO7Sml8276wh4UWLL3
-X-Google-Smtp-Source: AGHT+IF3CGqBNxa77EXUE/Gi7n0PBGLpiMmjL4vqume2Hy8S1ALFuVUh9cDg4qepPIlJtHhtd6svhA==
-X-Received: by 2002:a17:907:7ea7:b0:b00:5399:f5c0 with SMTP id a640c23a62f3a-b01f20bfff5mr728590366b.62.1756718371341;
-        Mon, 01 Sep 2025 02:19:31 -0700 (PDT)
+        bh=NQi1DlLk53At+sb7Dxdlwb1wfYNq5fMfR6Ecet/hRlk=;
+        b=Yhc6yhcFvFhqnCuY21xPttQEk04k47eB9EQio8yBUPNu3Myrcpi7/9H/8hi2eag+6B
+         SU89cYwBRNHoWhzYUj480T26iIKJra7g/Ip+sG/4MG5LqRNKazpxVF0HDItQ2lzpHXvN
+         cQlyUOduI4SzPaGs7LgnZ88SIVWRWpy4TzyYKcp8jsMZwyGGuAPG//YSgwWKSBM6MR93
+         UqoFAP0Fdq10+Uv/0spBjXrDt7QadU9NQMyxysLqfZD3mwwK+vCy0pWuHekfnmaLrJy4
+         wDDX14gdr5xvbHHrxprpuT/zsqoRRaIWBOniUMbXtTe++NyOB/09TT+bqEetZUZUBOMx
+         iZ7w==
+X-Forwarded-Encrypted: i=1; AJvYcCV3G9tVppluD+wtsMXb80/iBLjo8eW9eCAp037jjvswW2nx2AKkDtX4zzVNwcheOAFDNe/QmuJ0MJuOwcBs@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEqan/25fvngAUcVgWIE7/SrMlNvVphxHyqE5tGd7hjec+9LBu
+	pBtMgacL4U8ymowE2EDzx2DQwjUOzyCGrbaQGNWzUyGhuAKcSflNNW3AnhMGaY2Ljrs=
+X-Gm-Gg: ASbGncuJYHH9nJO3qUbB0fIGgnUPXhCbMVTDJgU4NphvdVEQZkCfys5RyFKPxwSQvzG
+	BKIXf+uhgZLVIPWr4on7qV00Pz/hrvLSeFnNN7hcRvurRnGAr7E0T71tybb767u7MYJrXZWU+kY
+	dP6wMeCyoJz3Dc4EFEhdK1OAqa106h5Rlfb35nMSHlAe0smUyA05yVfVlqIxUxN+ird3PDtTO6b
+	xeIyaxBKvvwR3aHE3mZsx73qnm4+5ka9Svak4HzwjjpEfRa+G+lwEdH0n5tRa5pvf5dHPv1koND
+	infXT79df4xw7ZDFgbUkhk6jt8LhRg6+480KeD1Fg1r8srQ4WhJaHDV097yWaUvCXxRJBjo23LQ
+	nWxA7To3KMc3XXVgLI+39+0/5Spbq67VTEpOjWTX8lmZyJWntH2NbUNvb3JUdAgWskvFHYr1wmL
+	Tm1Ahm8JaTgoaS3BTV8gBFEIXk+2sp1HzQ
+X-Google-Smtp-Source: AGHT+IH5BJhRk96TYnQheCz4kMoEb798UIqHjGpro1uj3IPOuzj2UHqou7p2evmbnRgTw9WnBmZqkw==
+X-Received: by 2002:a17:907:72c8:b0:b04:39af:bee7 with SMTP id a640c23a62f3a-b0439afd503mr119373166b.26.1756718373122;
+        Mon, 01 Sep 2025 02:19:33 -0700 (PDT)
 Received: from raven.intern.cm-ag (p200300dc6f1d0f00023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f1d:f00:230:64ff:fe74:809])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b01902d0e99sm541005766b.12.2025.09.01.02.19.29
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b01902d0e99sm541005766b.12.2025.09.01.02.19.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 02:19:31 -0700 (PDT)
+        Mon, 01 Sep 2025 02:19:32 -0700 (PDT)
 From: Max Kellermann <max.kellermann@ionos.com>
 To: akpm@linux-foundation.org,
 	david@redhat.com,
@@ -130,9 +130,9 @@ To: akpm@linux-foundation.org,
 	linux-s390@vger.kernel.org,
 	sparclinux@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v4 04/12] fs: add const to pointer parameters for improved const-correctness
-Date: Mon,  1 Sep 2025 11:19:07 +0200
-Message-ID: <20250901091916.3002082-5-max.kellermann@ionos.com>
+Subject: [PATCH v4 05/12] mm/oom_kill: add const to pointer parameter for improved const-correctness
+Date: Mon,  1 Sep 2025 11:19:08 +0200
+Message-ID: <20250901091916.3002082-6-max.kellermann@ionos.com>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250901091916.3002082-1-max.kellermann@ionos.com>
 References: <20250901091916.3002082-1-max.kellermann@ionos.com>
@@ -151,53 +151,46 @@ to also adopt const-correctness in their interfaces. This patch lays
 the groundwork for broader const-correctness throughout the kernel
 by starting with the core mm subsystem.
 
-This patch adds const qualifiers to address_space pointer parameters
-in filesystem-related functions that do not modify the referenced memory,
-improving type safety and enabling compiler optimizations.
+This patch adds const qualifiers to task_struct and mm_struct pointer
+parameters in the OOM killer code that do not modify the referenced
+memory, improving type safety and enabling compiler optimizations.
 
 Functions improved:
-- mapping_tagged()
-- mapping_mapped()
-- mapping_writably_mapped()
+- process_shares_mm()
 
 Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
-Reviewed-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
 ---
- include/linux/fs.h | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ include/linux/mm.h | 2 +-
+ mm/oom_kill.c      | 3 ++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 3b9f54446db0..8dc46337467d 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -537,7 +537,8 @@ struct address_space {
- /*
-  * Returns true if any of the pages in the mapping are marked with the tag.
-  */
--static inline bool mapping_tagged(struct address_space *mapping, xa_mark_t tag)
-+static inline bool mapping_tagged(const struct address_space *const mapping,
-+				  const xa_mark_t tag)
- {
- 	return xa_marked(&mapping->i_pages, tag);
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 18deb14cb1f5..f70c6b4d5f80 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -3840,7 +3840,7 @@ static inline int in_gate_area(struct mm_struct *mm, unsigned long addr)
  }
-@@ -585,7 +586,7 @@ static inline void i_mmap_assert_write_locked(struct address_space *mapping)
- /*
-  * Might pages of this file be mapped into userspace?
+ #endif	/* __HAVE_ARCH_GATE_AREA */
+ 
+-extern bool process_shares_mm(struct task_struct *p, struct mm_struct *mm);
++bool process_shares_mm(const struct task_struct *p, const struct mm_struct *mm);
+ 
+ void drop_slab(void);
+ 
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+index 17650f0b516e..2620b32a8eba 100644
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -490,7 +490,8 @@ static bool oom_killer_disabled __read_mostly;
+  * task's threads: if one of those is using this mm then this task was also
+  * using it.
   */
--static inline int mapping_mapped(struct address_space *mapping)
-+static inline int mapping_mapped(const struct address_space *const mapping)
+-bool process_shares_mm(struct task_struct *p, struct mm_struct *mm)
++bool process_shares_mm(const struct task_struct *const p,
++		       const struct mm_struct *const mm)
  {
- 	return	!RB_EMPTY_ROOT(&mapping->i_mmap.rb_root);
- }
-@@ -599,7 +600,7 @@ static inline int mapping_mapped(struct address_space *mapping)
-  * If i_mmap_writable is negative, no new writable mappings are allowed. You
-  * can only deny writable mappings, if none exists right now.
-  */
--static inline int mapping_writably_mapped(struct address_space *mapping)
-+static inline int mapping_writably_mapped(const struct address_space *const mapping)
- {
- 	return atomic_read(&mapping->i_mmap_writable) > 0;
- }
+ 	struct task_struct *t;
+ 
 -- 
 2.47.2
 
