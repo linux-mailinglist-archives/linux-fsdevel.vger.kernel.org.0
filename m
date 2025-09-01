@@ -1,76 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-59908-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59909-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30C99B3EFD4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 22:50:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32126B3EFDD
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 22:51:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E388E17E8FB
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 20:50:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFFC51A85080
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 20:51:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B4F4274666;
-	Mon,  1 Sep 2025 20:50:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA9EC274FD9;
+	Mon,  1 Sep 2025 20:50:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="SuoDHvXQ"
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="gLK6PNaB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D3626F2A8
-	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Sep 2025 20:50:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CCBF272E71
+	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Sep 2025 20:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756759831; cv=none; b=XtGdC9SVVxqxVWPqi7bAT0SN2GIOMJgIJA1HIkfyq5XdpiFHthEZhSSbzQUBMV2Qt6pYZVZQIcWhu3BZrSMA/vqNqagUSPzTMOsMx7JJV15Z/Swt397QSpE7mcxzJ1AwXmGvP0r+TVjR6/iEUvx3DcgMwjQRiLAEYL0VqqHubcY=
+	t=1756759834; cv=none; b=HTUsE38MqZbdpU6+FhOU5zjImeKJ7fNTmRd2+zAJCMPCwm+B7/ZdOHGtcUQ1jmqugGKT6E5orNxztMTeXE3AyFD/1JQ9BD34mesSutmuVBYIL1famE7M7VIO01dk4p+67zLenjRaVCi5DTqRkmU4gLMi2Mo0rlvubfOOC7u5tFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756759831; c=relaxed/simple;
-	bh=r3gId/u5LD1LKIELYHoNIdIwUxYyWCHrBFDvgyaA1xM=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=i2cc1iFJgE7LJ5nF73z1I2sdSvjfTij9g3gKH8/gksPypdjG6uN46ckUJ/Yl2Uy0FhFOJsDD1GQ1gGeEblOdjdvo4U/4Dm/K8rr/3a8yCLQskGVO2DnGk7jpz5ROCSt9n6II8dqVI9x24it1Aa11vQ1YxO/lcj44aBo3NVBeQA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=SuoDHvXQ; arc=none smtp.client-ip=209.85.218.42
+	s=arc-20240116; t=1756759834; c=relaxed/simple;
+	bh=t7XT6CEbh7zjmSeSWCr8ZD1olx5I3kyEJDSmUA/OyVg=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=noVGIL/w0Xqti7xG9LqzYjVwG84WOQIWAjfQluAgLJA2zcym2PQoq1Q/Lu0OCIZyNHsbdaeP6oFGuAsVLcp6wh3BgMmHCoV9ONjwFvV0xjD6xm9orJ2wwUYw+oJP18m3fWERUgjADWUedr5I6w/M/v6o8NSK+6XImIQit5yQt90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=gLK6PNaB; arc=none smtp.client-ip=209.85.218.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b04271cfc3eso186740766b.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Sep 2025 13:50:29 -0700 (PDT)
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b040df389easo360505366b.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Sep 2025 13:50:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1756759827; x=1757364627; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=h+HtzMm8aCoEYebuXFm6wKGd65XfE1qqAFatqE2tqt0=;
-        b=SuoDHvXQuuOwIyBl5RNvbKGcaWwA73psQR7EXfOGEPyVGn3IujNkAi9Azcu8IdGDEE
-         6sUn6DtNskwmB+3UlUVYmwuv/Et0atj65nTbVVlS1TcUGfOrEGuv37r9EdLNYwDE0cfM
-         QKU5O/pL8VCqG0D/KU9T0+aSctYkLtMhYfR8Pqvk3ru8pWzNbjS0VpKHfRjMtc5ss9p6
-         mD88P2026OOvHKRX8xNtuPQlzw2X3l3dJkert1jQMpkKAkbZJYYVz+pklvexBuziXHgO
-         VggIX36FAFYj+G/nBX6075A0n1JBGmeFiHrIVf/X4K4/MgWlNyqmtB2GafXHsr2jCGBN
-         9+8Q==
+        d=ionos.com; s=google; t=1756759829; x=1757364629; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1tn78QatM6psXy56nBwVEP8sZrX8rAS66Lkst08QtRU=;
+        b=gLK6PNaBOzEjiJLFIBBwG8cqcduLvvio1BVX1TRz97HZpLz9lDaGp6o0CD3qN/XB0q
+         o/4OqHjiotjvrZYa+wf1FTUJ8T65cXLA2ScYnw1k6ZfioDI0BVxJMkB4l2BCYUDrINot
+         rmGggpiREPYta3Rs+GBXRkuEORhN0RuXWt76fjtcuZwGzdUSA40Ub2CnGPEY1pgVwIwy
+         g3WN3zz1o1T4EQhtfHqnjvl4hZSvCvSp9sAY7YPaEFPIITppvKBoXQTFmhX4Sm0Diq1/
+         Kue/GBW55svAnQzp1ap83FKsFfc/YTmbN03CxMqbS5Bk4md+DNIOT2bJHkpTTYkEtN8w
+         9Eew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756759827; x=1757364627;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=h+HtzMm8aCoEYebuXFm6wKGd65XfE1qqAFatqE2tqt0=;
-        b=iN7dFtQ+oQ4izX214DF38UI4nb95n1ZVg6elSDnH3wwYFNtsY1ZUq2eE0sKgmlqapW
-         +8k6pXoTTB++kadJZdBApb7YSATR5CK8eUd4HENhKlaYh3TZP5q+SfhbIr8GqYPLXZra
-         0fvdH9Aqszgyj4CpAEiTPwbjdFADOlGL02ZNkOhWtMQphdlVGveBMxRGIuRCo9WD9IzX
-         Ne/fLYcXNdtxSST/GPGgExyd2sXU6x1bOEHZnsQ93LpLa2ZLutI1wpFC/UEHirAMJTZf
-         bH7mPadJHEAkKb/cvGdVA+KDnh3iWddWtCZXln/tXlbKCdpwzgGg+pTDdbrMA+Ukejpo
-         hiRA==
-X-Forwarded-Encrypted: i=1; AJvYcCVYfl04RmoUyBMXDfBIX3FOYlwl7jn2gZ43qQl1ZE/AVU8YXkDlH9tKy7QD/TNczJhYiUch7H/jGO2fuAG6@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/mTV2an3AIhGoEO1qeEV7uiFPpelrD3K4mXjZBwrSDF4ck6sY
-	783lqJn+ZV2DHtOLSIAPbn4IuGpKu+a+N56de2Mm2z6RMHuRQ7zNEdj1qcALRbQbDGs=
-X-Gm-Gg: ASbGnctfquiWI+x3lVCSbiQwLK7vUQ1DmfL3IqJ3oSmmdeQy9uu/wVqvLutHhZjgHjk
-	NFGI9DFYF/X/8VctTnLrU1q1tNc4FVbO0zXjeHZUTfidyc7xCjL9MaeS8vgq5Cc8wmoMk6Q/qAJ
-	Y8REgJ4Udl9AshPSGoHVsFhC4JM7652+5HqPPs5ZjVtgZ+02uCboTnT+lmhmbIgqaWZSGXrAG4Q
-	l5TZnMF18V1HV/cRba4qNrGFV7IFBKuxhhD8zbGnpXhRMr0ziGiHM3MtLsZrR5289aCX5ACEGtm
-	fPpKaKfdS6M445KVgWmYvhOZeUWunY0G3R8KlRdHzzus+d1q4oRRSdnINs9n8ep1W4QT5MknlmM
-	1KVokIzpJKchnUrbzjkENIPZNWcfs3eqdyBTRs95zzk/+gTF8CHHwn2c0wHO2yKtQzNmzan4113
-	+4KWFF4NJteeycCkwZfQoe7g==
-X-Google-Smtp-Source: AGHT+IFm8ymM2lVjoF6wSC8TwGE2I+pinvEWrAbXATzLNjz68TsRuYVhbwX52a8lzV2r8vSv8pkRWA==
-X-Received: by 2002:a17:907:cd07:b0:b04:37b2:c1a5 with SMTP id a640c23a62f3a-b0437b2eb32mr399274666b.34.1756759827409;
-        Mon, 01 Sep 2025 13:50:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756759829; x=1757364629;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1tn78QatM6psXy56nBwVEP8sZrX8rAS66Lkst08QtRU=;
+        b=CupsWVLpKGeyBI+rGvT1AWEmX8Qeo0Qqw7G7K6V2Vzv9om1K6z6/2aqWdEOO2bXZLn
+         cnfD/+ScWo8/QUyY4O/NfVtGrO7cRu3MARai2ZOiGhlYSjpKhtJoDqwP4YN/EkhQQY7V
+         zmSzB0vWSLN5UAl29qIPmglj812Tb4bLeAiog3BD5e2taOfVn49u+8x7Knmo2gQx9K5T
+         KJT6IFy9h6hBcyor3LhQMM++2vjeS/4lBEkYq6wjMeVv6qvp/PehuYsoZoiMLy31drVi
+         zKOhViNVCuaRLT24pah5kCoh2nskdbfc7U6/T510DOCwN16eSJvSjYnnZiOF8SScJ5/N
+         BIog==
+X-Forwarded-Encrypted: i=1; AJvYcCXGWi3jaGJJUFVKAoaXG6ytyroHx6guoOx3FXRAdq+uL02UEHNW/7AzknYiRbQhM06gc288/Pop1f9V4vaD@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyti6q4jzgryIc+Cv2Im3ZuPDJ9GDEifU/RJAYvbee8v+WnBUSJ
+	KEoki4r+adeJvRG9cGD+hxsHyDb8HofiBxlUhnqL1IPlbNstLGTMJ6oGS/fJ+4+8KrI=
+X-Gm-Gg: ASbGncvZDqk7gE1vBRc0zLBIuHuCGwR39Jpn0PZEnqC+mV/wXxTAbxLV9SUMrKij/9a
+	8BDsdThv8iEqtzA00WSAHDZc4wWEEEar0Xt/6OhIqBUJKmBpqkjp//kRT0jqNP5uqht10KWJuFo
+	CzwnE1052ziCIg/Glxb/a3Ky275vGuLXmLFCBcLptsNltdggJNJIrD0rBOSUrAVZOegn9gTcxOv
+	8tmjYfz4Qmz8DADVrWgMJuDkjGAgOr8Zk0VkOMn2GNxWkzcKreHYuDKQANxdgi1eSXtYXWU6Afa
+	SwKp7327iXJv/HBl+PA/mT2ji/W0HTcLYg0jsWoKUUMr7KxITCBpV2wRMt44O6PT0OADfVb8Fym
+	e1W3BYcAAko1GrCznKjTrFwpZBGzF22F/zsWNTuETLZUsfggLzzxRO23H/C6Nr1U+lGWTOcTgUp
+	/FKJuDJav397iVOOZ0dK8ZjtAIeVXK9+JK
+X-Google-Smtp-Source: AGHT+IF8f2IkqJ53snw7rUXbJM+rbFqtblA8YnCowS1e50uvKMXTh+/K+YqxtlkXHOf7uiwvUXJSGA==
+X-Received: by 2002:a17:907:1c81:b0:aff:a36:e6e with SMTP id a640c23a62f3a-b01f20c705cmr970127566b.57.1756759829377;
+        Mon, 01 Sep 2025 13:50:29 -0700 (PDT)
 Received: from raven.intern.cm-ag (p200300dc6f1d0f00023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f1d:f00:230:64ff:fe74:809])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afefcbd9090sm937339066b.69.2025.09.01.13.50.25
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afefcbd9090sm937339066b.69.2025.09.01.13.50.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 13:50:27 -0700 (PDT)
+        Mon, 01 Sep 2025 13:50:29 -0700 (PDT)
 From: Max Kellermann <max.kellermann@ionos.com>
 To: akpm@linux-foundation.org,
 	david@redhat.com,
@@ -127,10 +130,12 @@ To: akpm@linux-foundation.org,
 	linux-s390@vger.kernel.org,
 	sparclinux@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v6 00/12] mm: establish const-correctness for pointer parameters
-Date: Mon,  1 Sep 2025 22:50:09 +0200
-Message-ID: <20250901205021.3573313-1-max.kellermann@ionos.com>
+Subject: [PATCH v6 01/12] mm: constify shmem related test functions for improved const-correctness
+Date: Mon,  1 Sep 2025 22:50:10 +0200
+Message-ID: <20250901205021.3573313-2-max.kellermann@ionos.com>
 X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250901205021.3573313-1-max.kellermann@ionos.com>
+References: <20250901205021.3573313-1-max.kellermann@ionos.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -139,93 +144,85 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-For improved const-correctness in the low-level memory-management
-subsystem, which provides a basis for further const-ification further
-up the call stack (e.g. filesystems).
+We select certain test functions which either invoke each other,
+functions that are already const-ified, or no further functions.
 
-This patch series splitted into smaller patches was initially posted
-as a single large patch:
-
- https://lore.kernel.org/lkml/20250827192233.447920-1-max.kellermann@ionos.com/
-
-I started this work when I tried to constify the Ceph filesystem code,
-but found that to be impossible because many "mm" functions accept
-non-const pointer, even though they modify nothing.
+It is therefore relatively trivial to const-ify them, which
+provides a basis for further const-ification further up the call
+stack.
 
 Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+Reviewed-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
+Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Acked-by: David Hildenbrand <david@redhat.com>
 ---
-v1 -> v2:
-- made several parameter values const (i.e. the pointer address, not
-  just the pointed-to memory), as suggested by Andrew Morton and
-  Yuanchu Xie
-- drop existing+obsolete "extern" keywords on lines modified by these
-  patches (suggested by Vishal Moola)
-- add missing parameter names on lines modified by these patches
-  (suggested by Vishal Moola)
-- more "const" pointers (e.g. the task_struct passed to
-  process_shares_mm())
-- add missing "const" to s390, fixing s390 build failure
-- moved the mmap_is_legacy() change in arch/s390/mm/mmap.c from 08/12
-  to 06/12 (suggested by Vishal Moola)
+ include/linux/mm.h       | 8 ++++----
+ include/linux/shmem_fs.h | 4 ++--
+ mm/shmem.c               | 6 +++---
+ 3 files changed, 9 insertions(+), 9 deletions(-)
 
-v2 -> v3:
-- remove garbage from 06/12
-- changed tags on subject line (suggested by Matthew Wilcox)
-
-v3 -> v4:
-- more verbose commit messages including a listing of function names
-  (suggested by David Hildenbrand and Lorenzo Stoakes)
-
-v4 -> v5:
-- back to shorter commit messages after an agreement between David
-  Hildenbrand and Lorenzo Stoakes was found
-
-v5 -> v6:
-- fix inconsistent constness of assert_fault_locked()
-- revert the const parameter value change from v2 (requested by
-  Lorenzo Stoakes)
-- revert the long cover letter, removing long explanations again
-  (requested by Lorenzo Stoakes)
-
-Max Kellermann (12):
-  mm: constify shmem related test functions for improved
-    const-correctness
-  mm: constify pagemap related test/getter functions
-  mm: constify zone related test/getter functions
-  fs: constify mapping related test functions for improved
-    const-correctness
-  mm: constify process_shares_mm() for improved const-correctness
-  mm, s390: constify mapping related test/getter functions
-  parisc: constify mmap_upper_limit() parameter
-  mm: constify arch_pick_mmap_layout() for improved const-correctness
-  mm: constify ptdesc_pmd_pts_count() and folio_get_private()
-  mm: constify various inline functions for improved const-correctness
-  mm: constify assert/test functions in mm.h
-  mm: constify highmem related functions for improved const-correctness
-
- arch/arm/include/asm/highmem.h      |  6 +--
- arch/parisc/include/asm/processor.h |  2 +-
- arch/parisc/kernel/sys_parisc.c     |  2 +-
- arch/s390/mm/mmap.c                 |  6 +--
- arch/sparc/kernel/sys_sparc_64.c    |  2 +-
- arch/x86/mm/mmap.c                  |  6 +--
- arch/xtensa/include/asm/highmem.h   |  2 +-
- include/linux/fs.h                  |  6 +--
- include/linux/highmem-internal.h    | 36 +++++++++---------
- include/linux/highmem.h             |  8 ++--
- include/linux/mm.h                  | 56 +++++++++++++--------------
- include/linux/mm_inline.h           | 25 ++++++------
- include/linux/mm_types.h            |  4 +-
- include/linux/mmzone.h              | 42 ++++++++++----------
- include/linux/pagemap.h             | 59 +++++++++++++++--------------
- include/linux/sched/mm.h            |  4 +-
- include/linux/shmem_fs.h            |  4 +-
- mm/highmem.c                        | 10 ++---
- mm/oom_kill.c                       |  6 +--
- mm/shmem.c                          |  6 +--
- mm/util.c                           | 16 ++++----
- 21 files changed, 155 insertions(+), 153 deletions(-)
-
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index cd14298bb958..18deb14cb1f5 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -979,11 +979,11 @@ static inline void vma_iter_set(struct vma_iterator *vmi, unsigned long addr)
+  * The vma_is_shmem is not inline because it is used only by slow
+  * paths in userfault.
+  */
+-bool vma_is_shmem(struct vm_area_struct *vma);
+-bool vma_is_anon_shmem(struct vm_area_struct *vma);
++bool vma_is_shmem(const struct vm_area_struct *vma);
++bool vma_is_anon_shmem(const struct vm_area_struct *vma);
+ #else
+-static inline bool vma_is_shmem(struct vm_area_struct *vma) { return false; }
+-static inline bool vma_is_anon_shmem(struct vm_area_struct *vma) { return false; }
++static inline bool vma_is_shmem(const struct vm_area_struct *vma) { return false; }
++static inline bool vma_is_anon_shmem(const struct vm_area_struct *vma) { return false; }
+ #endif
+ 
+ int vma_is_stack_for_current(struct vm_area_struct *vma);
+diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
+index 6d0f9c599ff7..0e47465ef0fd 100644
+--- a/include/linux/shmem_fs.h
++++ b/include/linux/shmem_fs.h
+@@ -99,9 +99,9 @@ extern unsigned long shmem_get_unmapped_area(struct file *, unsigned long addr,
+ 		unsigned long len, unsigned long pgoff, unsigned long flags);
+ extern int shmem_lock(struct file *file, int lock, struct ucounts *ucounts);
+ #ifdef CONFIG_SHMEM
+-bool shmem_mapping(struct address_space *mapping);
++bool shmem_mapping(const struct address_space *mapping);
+ #else
+-static inline bool shmem_mapping(struct address_space *mapping)
++static inline bool shmem_mapping(const struct address_space *mapping)
+ {
+ 	return false;
+ }
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 640fecc42f60..2df26f4d6e60 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -275,18 +275,18 @@ static const struct vm_operations_struct shmem_vm_ops;
+ static const struct vm_operations_struct shmem_anon_vm_ops;
+ static struct file_system_type shmem_fs_type;
+ 
+-bool shmem_mapping(struct address_space *mapping)
++bool shmem_mapping(const struct address_space *mapping)
+ {
+ 	return mapping->a_ops == &shmem_aops;
+ }
+ EXPORT_SYMBOL_GPL(shmem_mapping);
+ 
+-bool vma_is_anon_shmem(struct vm_area_struct *vma)
++bool vma_is_anon_shmem(const struct vm_area_struct *vma)
+ {
+ 	return vma->vm_ops == &shmem_anon_vm_ops;
+ }
+ 
+-bool vma_is_shmem(struct vm_area_struct *vma)
++bool vma_is_shmem(const struct vm_area_struct *vma)
+ {
+ 	return vma_is_anon_shmem(vma) || vma->vm_ops == &shmem_vm_ops;
+ }
 -- 
 2.47.2
 
