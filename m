@@ -1,79 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-59918-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59919-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB153B3F00E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 22:53:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81179B3F011
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 22:53:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98ABE483C61
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 20:53:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23116162E80
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 20:53:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B70AD27F195;
-	Mon,  1 Sep 2025 20:50:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B61D274B53;
+	Mon,  1 Sep 2025 20:50:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="CjQiT/Ae"
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="Ry0w2JgS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5AF427E1AC
-	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Sep 2025 20:50:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF62427EFFB
+	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Sep 2025 20:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756759850; cv=none; b=nC+LjDyA0sq0y16SANxZ8QSt8OqGvrXKwAywTjSN21diBfatfxnCjrBH9y4HDmh3Un1NHDkk0sxl11+FDuSLHs2cafKw7fBzjkcjbIg2QZcCr2sxTgNvqZgSB0NLZj3yeMb/cu86kvA9Ce5gFMuvycNwgE6nqG7q+8fMr/zfeAE=
+	t=1756759852; cv=none; b=BXvLF4B3rIVL9X1GXRudqfkzL3xgR/N8bH54SVBWz5UbbUfZzckd3hAg8jzAENNFs4fhoBKNTy3UL2zL2vnZZRbByL5NQHYXIEaibNbuLZkBOiax5vPONl/ljmaBEgqS6q6hAtnOAyv5m8dWxX38uuU30xeYPDJR6LWWEU8CbI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756759850; c=relaxed/simple;
-	bh=KwxE9HKC3R6D7OzhhihjlkWCGsr1cIfp5nBhsVf+4Dw=;
+	s=arc-20240116; t=1756759852; c=relaxed/simple;
+	bh=LVaqk7JPmnXrVJsNutgrz28SAVbYUhoJQ0pBQKyF5xE=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VJjYBz/9mjb7PcJdBHXI79UPR6/s2DFfUj+yUaX8P1itibycCaheM10chcIVRlxhE2nnf5G1neUFzw6Jkzn/kqSmfD7TnQCAAQDCbmFiEkByJSCxHnBvK+7uk2l+FHQ4ctC0K56yRwzz7RtVEOT1n1u5u/1cALJ7ZG+G409wCcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=CjQiT/Ae; arc=none smtp.client-ip=209.85.218.50
+	 MIME-Version; b=lscE5X4nUIRltlk8A4hKrrufhCdVpWoYVMO9VBOfqrUJegaYP0f7nPhQ9amXBcd9cUJFItRh8rPc4Hwz9PNISwICtQDCLMM5VBjG3pskNgvukMOfj5+J10NWAvID7BVuM+eBok4RT1oUcb+9CzyPNdKIOS8+JMVLt4Xz2EjwkuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=Ry0w2JgS; arc=none smtp.client-ip=209.85.218.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b04271cfc3eso186758266b.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Sep 2025 13:50:48 -0700 (PDT)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b042cc3962aso160518366b.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Sep 2025 13:50:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1756759847; x=1757364647; darn=vger.kernel.org;
+        d=ionos.com; s=google; t=1756759849; x=1757364649; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=zKRurRT2BneWHgryFTDswdmsEJpe2aYTsThQQXosiss=;
-        b=CjQiT/Aey60m6cHqynB2oCIS05TMVglRXUPa+tofOoe+FfRkS71VkhEyNatsJ3CQdV
-         ogDej4p+JSz+LVrHUfDrlfULe2qLWS0JG4CkpGjvkYMLbt2WjyorHoY7pyMnUJTORKn+
-         nXTbAi3POobkEfpl1WfZ2vCEYt3TNKuOb49Ar0v4M7zA9VWO88mpEn/tqUcJ5UQtM6Ag
-         AxRoS5S+KdrZ2YuMOOdXl9Lgw0ylWNnb5KhYGZ0Jxz8ZJdctJQ9cl6RxzTQvC34VnF0A
-         XstymQnTpT3hod6E9Qq6wmFrgyZpygqy4Kz1sE22Aljyo+NJwN4TvYuRFfDbgBVuqoxb
-         wwcA==
+        bh=ZWhGTSQHhd/eK/QU6yjkGMEyVAFgOEBOrFZYGj9rmco=;
+        b=Ry0w2JgSZYo6mbYkimgAJ+2ogA+nhsCFxZ3NG8yr+a8tsvJoKiAO4wTvJKIziE7fA/
+         DWS8USkUWppnpFJv6Kgthu3XTHc+KsTiNcnQgyvj1Bh7tWU4pYlemrqxINkS2KfFK9a8
+         edyhufEvAWPjK3GN66Qb9eBgMO++uFm5FWO+9T0rJXUHEAhVRsE3fL0cOs6O1hVbwxYK
+         zMEegfRCy9hsLQml7fhuAVBbpBeYmwfaz0519GR4lVmDvI3FznJVRvDiEDicVODgAz08
+         J8121RnURncTws35A9irCE/bNsFeOkFTc+NoBhkmUwlcHQ0kIZ1wy3n/5PTAaRfnr7fh
+         izmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756759847; x=1757364647;
+        d=1e100.net; s=20230601; t=1756759849; x=1757364649;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zKRurRT2BneWHgryFTDswdmsEJpe2aYTsThQQXosiss=;
-        b=r+FaMmMbJPT8S9xsuEreTmT/7Jo70ImAi+XECMYToqhTQP0Jks9FGAJT7CKWDFL4KX
-         uNAOmc6VvGS9aaJpAai483yOcDnJFfkitpgDB+lz8eFMwTzZh+Bc2WVN86ILII85I4O+
-         jbVxJvl+/BCVps7zjlC+Y6QUGKhKmHIPjHh9W9WQ/loN7H+D9ZzcU1vyL4o+pTYn5rJX
-         s6b1N5YdYDXMzLxhoadL9VYxUtOdL4jCHobfZh5PAfYJprQp30AgxBJb2TBNEqlHVO8z
-         V+T6N3bNfy81cWkXe4yxyuqbn/PhCthlFy2zy/z/Rwmui5dsTIhc6xGRH9VQNWvlVxPW
-         vBIg==
-X-Forwarded-Encrypted: i=1; AJvYcCUhZC8yq0OZVCIM02LzFirL+kupZsqFEgUdDXPVMuzFATpxQValLMIdzzXyxxgYIjgaCgdRnFUz5rthVP4r@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCl/9IoasFaCEC4dlTVyYvajzmsdo/eSz9HH+o1kDXQks2TG9A
-	wZNEQYLuvH4d2Mu68HJ66kIvOfXNS7p/XO7L//fv1qIrzbOr4ImwRj8APT8lz1rSWKA=
-X-Gm-Gg: ASbGncsnUZab/Pp4D9wZUwVUiqfm8hYltISY7faqTunRIn4qLLwFGi9kr307Hqx/q8k
-	bBU4UaUzs8dKbp108mRxlFN4c7k/IlulaiheeZCIO32gza00Q+/TOZtuu8lWnQayB83JHWpeVcX
-	CedOa/8JIH/s2FNflEbRXDkcmHrWm3ZBq6ph2ArNOLaaoUaiu5ouWY5JboxKOmOg7h9P1KKAvYk
-	U6FQLCbRm0Q+9LlLLHKnsLlNP9ljlDLUxH64Jlj5kX/Q2LK9jV+7HmlOWH8jXGTsIOgMH4PmnRU
-	2edqCr94A/N20zVgkyxthhnf1uZJJ/r8wXb8tC6HC/WJBc6Nt7nhHOs3yWww0zWxwbBlETmTcpD
-	X0wd2EFocJUIoyaBtKC6KTTmfcnPe6mhcKeQqKje9sLtLlNAbS/Bc6y0SAdI+Cot2fM1O5FcubK
-	ZgdxXYaDFj9jVrL37f48+E6Q==
-X-Google-Smtp-Source: AGHT+IHCmCpvv2lfwK+DFxb+meLDHCpwG00GZqDzUwq/QLfpGxtMz0YN/b/xauU+UDddCcikhmU4Cw==
-X-Received: by 2002:a17:907:c04:b0:adf:f8f4:2001 with SMTP id a640c23a62f3a-b01d9772281mr939362966b.49.1756759847019;
-        Mon, 01 Sep 2025 13:50:47 -0700 (PDT)
+        bh=ZWhGTSQHhd/eK/QU6yjkGMEyVAFgOEBOrFZYGj9rmco=;
+        b=LLbfybFvj3cqB4IvsbNjbCU2PjXcnK6c806qOpJodppI0JhsSY6I8sUy7bSYqVbl/3
+         28c+nhZQjHZXrb7sOpKNTNx1I+0tLTYgpxT2eks68Vi7Tj+LZMPuKeu1JX7ZcyQysXJ+
+         k5W5+9YSlHkgggz40U4R/+Qj75pxhcNZHUI0dqulR0SnSsF5FDpRgQstg7QOyj0auShD
+         ziyDRyyeBA1dRUp0PQ76hX2YF+Vp2YgAZ7ip/i35GLR65ex+8O0nDj6BCpv2/hBAte62
+         dLcQ4f2m3yQKtmKuN9Y6ngBvk72O7qUcIocXimN+KnycCHrUD342wZ2d7BdPa1b7w1bm
+         cxGw==
+X-Forwarded-Encrypted: i=1; AJvYcCWJKEynkLIyYG3aZxbLQUPL9VfOe01jjDTANwOAWvGYbyQbmCQ7n/8iDPK7G3BU27l9RpnjfuRN8+UV2BLB@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfP4YHQbicSHB3k5butX/RM8LWiaobxpmDnaGAMZirIGO9cLLB
+	ztp3mj8AXaTlwd8XlPabgeGwzA0NOgrSyj22/DlRcRFck71krol9nUoTLCD79aSVxW0=
+X-Gm-Gg: ASbGncuoCnD8Dh6Fv42rk1S98YGEC2ykOCglhTCJI0nQUYnZ7d9UbytU2qdvl0hURUZ
+	wggn6kKtBWNqk+j05z8cWzMIZWUGmowdwigtRCjwrCOA+CfK6Kq+Lk+Thw7mHjwRA/bKOFQyRdc
+	rz8Qcv0grTBMT/8RVNaI4dPP5pgulDm8U+BappSqQK62mEwbdf8P49F+Q0JUBEfxPSilMhIQOOM
+	QD0GojxGnrM9EbIzoaE0Zi6oJtV/KtnGX4IvUW7A4WJ/EtV1cK6yi5LgEwxV3R1oiqryEszHfk/
+	pIt6TDAJZZmYc1gnaFt+VP40jBvzyf7e6bzqt8T/uvuiSKPP9cwahTlxcORakyrlkuuYXwjobgE
+	B4gQ6IpCSpDRm3wX886kTNlwTKx6sJp10TdyaFF9ykYs1+7pLsCrfc+YZhOfePRjX5SCAlKdT2n
+	l8ujGhJHTdSTV4Ne7Q4IunYg==
+X-Google-Smtp-Source: AGHT+IEMQa/HknSd4gH88/51zayuXYOJi/tyPDkVuWYFrGs29hqpFzGFB6MpSNARYjZr5mEqvUnwhQ==
+X-Received: by 2002:a17:907:1c23:b0:ae6:efe1:5baf with SMTP id a640c23a62f3a-b01d8a75cf5mr969826966b.19.1756759849048;
+        Mon, 01 Sep 2025 13:50:49 -0700 (PDT)
 Received: from raven.intern.cm-ag (p200300dc6f1d0f00023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f1d:f00:230:64ff:fe74:809])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afefcbd9090sm937339066b.69.2025.09.01.13.50.45
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afefcbd9090sm937339066b.69.2025.09.01.13.50.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 13:50:46 -0700 (PDT)
+        Mon, 01 Sep 2025 13:50:48 -0700 (PDT)
 From: Max Kellermann <max.kellermann@ionos.com>
 To: akpm@linux-foundation.org,
 	david@redhat.com,
@@ -130,9 +130,9 @@ To: akpm@linux-foundation.org,
 	linux-s390@vger.kernel.org,
 	sparclinux@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v6 10/12] mm: constify various inline functions for improved const-correctness
-Date: Mon,  1 Sep 2025 22:50:19 +0200
-Message-ID: <20250901205021.3573313-11-max.kellermann@ionos.com>
+Subject: [PATCH v6 11/12] mm: constify assert/test functions in mm.h
+Date: Mon,  1 Sep 2025 22:50:20 +0200
+Message-ID: <20250901205021.3573313-12-max.kellermann@ionos.com>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250901205021.3573313-1-max.kellermann@ionos.com>
 References: <20250901205021.3573313-1-max.kellermann@ionos.com>
@@ -144,133 +144,205 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-We select certain test functions plus folio_migrate_refs() from
-mm_inline.h which either invoke each other, functions that are already
-const-ified, or no further functions.
+For improved const-correctness.
+
+We select certain assert and test functions which either invoke each
+other, functions that are already const-ified, or no further
+functions.
 
 It is therefore relatively trivial to const-ify them, which
 provides a basis for further const-ification further up the call
 stack.
 
-One exception is the function folio_migrate_refs() which does write to
-the "new" folio pointer; there, only the "old" folio pointer is being
-constified; only its "flags" field is read, but nothing written.
-
 Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
-Reviewed-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
 ---
- include/linux/mm_inline.h | 25 +++++++++++++------------
- 1 file changed, 13 insertions(+), 12 deletions(-)
+ include/linux/mm.h | 40 ++++++++++++++++++++--------------------
+ 1 file changed, 20 insertions(+), 20 deletions(-)
 
-diff --git a/include/linux/mm_inline.h b/include/linux/mm_inline.h
-index 150302b4a905..d6c1011b38f2 100644
---- a/include/linux/mm_inline.h
-+++ b/include/linux/mm_inline.h
-@@ -25,7 +25,7 @@
-  * 0 if @folio is a normal anonymous folio, a tmpfs folio or otherwise
-  * ram or swap backed folio.
-  */
--static inline int folio_is_file_lru(struct folio *folio)
-+static inline int folio_is_file_lru(const struct folio *folio)
- {
- 	return !folio_test_swapbacked(folio);
- }
-@@ -84,7 +84,7 @@ static __always_inline void __folio_clear_lru_flags(struct folio *folio)
-  * Return: The LRU list a folio should be on, as an index
-  * into the array of LRU lists.
-  */
--static __always_inline enum lru_list folio_lru_list(struct folio *folio)
-+static __always_inline enum lru_list folio_lru_list(const struct folio *folio)
- {
- 	enum lru_list lru;
- 
-@@ -141,7 +141,7 @@ static inline int lru_tier_from_refs(int refs, bool workingset)
- 	return workingset ? MAX_NR_TIERS - 1 : order_base_2(refs);
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 23864c3519d6..c3767688771c 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -703,7 +703,7 @@ static inline void release_fault_lock(struct vm_fault *vmf)
+ 		mmap_read_unlock(vmf->vma->vm_mm);
  }
  
--static inline int folio_lru_refs(struct folio *folio)
-+static inline int folio_lru_refs(const struct folio *folio)
+-static inline void assert_fault_locked(struct vm_fault *vmf)
++static inline void assert_fault_locked(const struct vm_fault *vmf)
  {
- 	unsigned long flags = READ_ONCE(folio->flags.f);
- 
-@@ -154,14 +154,14 @@ static inline int folio_lru_refs(struct folio *folio)
- 	return ((flags & LRU_REFS_MASK) >> LRU_REFS_PGOFF) + 1;
+ 	if (vmf->flags & FAULT_FLAG_VMA_LOCK)
+ 		vma_assert_locked(vmf->vma);
+@@ -716,7 +716,7 @@ static inline void release_fault_lock(struct vm_fault *vmf)
+ 	mmap_read_unlock(vmf->vma->vm_mm);
  }
  
--static inline int folio_lru_gen(struct folio *folio)
-+static inline int folio_lru_gen(const struct folio *folio)
+-static inline void assert_fault_locked(struct vm_fault *vmf)
++static inline void assert_fault_locked(const struct vm_fault *vmf)
  {
- 	unsigned long flags = READ_ONCE(folio->flags.f);
- 
- 	return ((flags & LRU_GEN_MASK) >> LRU_GEN_PGOFF) - 1;
+ 	mmap_assert_locked(vmf->vma->vm_mm);
+ }
+@@ -859,7 +859,7 @@ static inline bool vma_is_initial_stack(const struct vm_area_struct *vma)
+ 		vma->vm_end >= vma->vm_mm->start_stack;
  }
  
--static inline bool lru_gen_is_active(struct lruvec *lruvec, int gen)
-+static inline bool lru_gen_is_active(const struct lruvec *lruvec, int gen)
+-static inline bool vma_is_temporary_stack(struct vm_area_struct *vma)
++static inline bool vma_is_temporary_stack(const struct vm_area_struct *vma)
  {
- 	unsigned long max_seq = lruvec->lrugen.max_seq;
+ 	int maybe_stack = vma->vm_flags & (VM_GROWSDOWN | VM_GROWSUP);
  
-@@ -217,12 +217,13 @@ static inline void lru_gen_update_size(struct lruvec *lruvec, struct folio *foli
- 	VM_WARN_ON_ONCE(lru_gen_is_active(lruvec, old_gen) && !lru_gen_is_active(lruvec, new_gen));
- }
- 
--static inline unsigned long lru_gen_folio_seq(struct lruvec *lruvec, struct folio *folio,
-+static inline unsigned long lru_gen_folio_seq(const struct lruvec *lruvec,
-+					      const struct folio *folio,
- 					      bool reclaiming)
- {
- 	int gen;
- 	int type = folio_is_file_lru(folio);
--	struct lru_gen_folio *lrugen = &lruvec->lrugen;
-+	const struct lru_gen_folio *lrugen = &lruvec->lrugen;
- 
- 	/*
- 	 * +-----------------------------------+-----------------------------------+
-@@ -302,7 +303,7 @@ static inline bool lru_gen_del_folio(struct lruvec *lruvec, struct folio *folio,
- 	return true;
- }
- 
--static inline void folio_migrate_refs(struct folio *new, struct folio *old)
-+static inline void folio_migrate_refs(struct folio *new, const struct folio *old)
- {
- 	unsigned long refs = READ_ONCE(old->flags.f) & LRU_REFS_MASK;
- 
-@@ -330,7 +331,7 @@ static inline bool lru_gen_del_folio(struct lruvec *lruvec, struct folio *folio,
+@@ -873,7 +873,7 @@ static inline bool vma_is_temporary_stack(struct vm_area_struct *vma)
  	return false;
  }
  
--static inline void folio_migrate_refs(struct folio *new, struct folio *old)
-+static inline void folio_migrate_refs(struct folio *new, const struct folio *old)
+-static inline bool vma_is_foreign(struct vm_area_struct *vma)
++static inline bool vma_is_foreign(const struct vm_area_struct *vma)
  {
- 
- }
-@@ -508,7 +509,7 @@ static inline void dec_tlb_flush_pending(struct mm_struct *mm)
- 	atomic_dec(&mm->tlb_flush_pending);
- }
- 
--static inline bool mm_tlb_flush_pending(struct mm_struct *mm)
-+static inline bool mm_tlb_flush_pending(const struct mm_struct *mm)
- {
- 	/*
- 	 * Must be called after having acquired the PTL; orders against that
-@@ -521,7 +522,7 @@ static inline bool mm_tlb_flush_pending(struct mm_struct *mm)
- 	return atomic_read(&mm->tlb_flush_pending);
- }
- 
--static inline bool mm_tlb_flush_nested(struct mm_struct *mm)
-+static inline bool mm_tlb_flush_nested(const struct mm_struct *mm)
- {
- 	/*
- 	 * Similar to mm_tlb_flush_pending(), we must have acquired the PTL
-@@ -605,7 +606,7 @@ pte_install_uffd_wp_if_needed(struct vm_area_struct *vma, unsigned long addr,
+ 	if (!current->mm)
+ 		return true;
+@@ -884,7 +884,7 @@ static inline bool vma_is_foreign(struct vm_area_struct *vma)
  	return false;
  }
  
--static inline bool vma_has_recency(struct vm_area_struct *vma)
-+static inline bool vma_has_recency(const struct vm_area_struct *vma)
+-static inline bool vma_is_accessible(struct vm_area_struct *vma)
++static inline bool vma_is_accessible(const struct vm_area_struct *vma)
  {
- 	if (vma->vm_flags & (VM_SEQ_READ | VM_RAND_READ))
+ 	return vma->vm_flags & VM_ACCESS_FLAGS;
+ }
+@@ -895,7 +895,7 @@ static inline bool is_shared_maywrite(vm_flags_t vm_flags)
+ 		(VM_SHARED | VM_MAYWRITE);
+ }
+ 
+-static inline bool vma_is_shared_maywrite(struct vm_area_struct *vma)
++static inline bool vma_is_shared_maywrite(const struct vm_area_struct *vma)
+ {
+ 	return is_shared_maywrite(vma->vm_flags);
+ }
+@@ -1839,7 +1839,7 @@ static inline struct folio *pfn_folio(unsigned long pfn)
+ }
+ 
+ #ifdef CONFIG_MMU
+-static inline pte_t mk_pte(struct page *page, pgprot_t pgprot)
++static inline pte_t mk_pte(const struct page *page, pgprot_t pgprot)
+ {
+ 	return pfn_pte(page_to_pfn(page), pgprot);
+ }
+@@ -1854,7 +1854,7 @@ static inline pte_t mk_pte(struct page *page, pgprot_t pgprot)
+  *
+  * Return: A page table entry suitable for mapping this folio.
+  */
+-static inline pte_t folio_mk_pte(struct folio *folio, pgprot_t pgprot)
++static inline pte_t folio_mk_pte(const struct folio *folio, pgprot_t pgprot)
+ {
+ 	return pfn_pte(folio_pfn(folio), pgprot);
+ }
+@@ -1870,7 +1870,7 @@ static inline pte_t folio_mk_pte(struct folio *folio, pgprot_t pgprot)
+  *
+  * Return: A page table entry suitable for mapping this folio.
+  */
+-static inline pmd_t folio_mk_pmd(struct folio *folio, pgprot_t pgprot)
++static inline pmd_t folio_mk_pmd(const struct folio *folio, pgprot_t pgprot)
+ {
+ 	return pmd_mkhuge(pfn_pmd(folio_pfn(folio), pgprot));
+ }
+@@ -1886,7 +1886,7 @@ static inline pmd_t folio_mk_pmd(struct folio *folio, pgprot_t pgprot)
+  *
+  * Return: A page table entry suitable for mapping this folio.
+  */
+-static inline pud_t folio_mk_pud(struct folio *folio, pgprot_t pgprot)
++static inline pud_t folio_mk_pud(const struct folio *folio, pgprot_t pgprot)
+ {
+ 	return pud_mkhuge(pfn_pud(folio_pfn(folio), pgprot));
+ }
+@@ -3488,7 +3488,7 @@ struct vm_area_struct *vma_lookup(struct mm_struct *mm, unsigned long addr)
+ 	return mtree_load(&mm->mm_mt, addr);
+ }
+ 
+-static inline unsigned long stack_guard_start_gap(struct vm_area_struct *vma)
++static inline unsigned long stack_guard_start_gap(const struct vm_area_struct *vma)
+ {
+ 	if (vma->vm_flags & VM_GROWSDOWN)
+ 		return stack_guard_gap;
+@@ -3500,7 +3500,7 @@ static inline unsigned long stack_guard_start_gap(struct vm_area_struct *vma)
+ 	return 0;
+ }
+ 
+-static inline unsigned long vm_start_gap(struct vm_area_struct *vma)
++static inline unsigned long vm_start_gap(const struct vm_area_struct *vma)
+ {
+ 	unsigned long gap = stack_guard_start_gap(vma);
+ 	unsigned long vm_start = vma->vm_start;
+@@ -3511,7 +3511,7 @@ static inline unsigned long vm_start_gap(struct vm_area_struct *vma)
+ 	return vm_start;
+ }
+ 
+-static inline unsigned long vm_end_gap(struct vm_area_struct *vma)
++static inline unsigned long vm_end_gap(const struct vm_area_struct *vma)
+ {
+ 	unsigned long vm_end = vma->vm_end;
+ 
+@@ -3523,7 +3523,7 @@ static inline unsigned long vm_end_gap(struct vm_area_struct *vma)
+ 	return vm_end;
+ }
+ 
+-static inline unsigned long vma_pages(struct vm_area_struct *vma)
++static inline unsigned long vma_pages(const struct vm_area_struct *vma)
+ {
+ 	return (vma->vm_end - vma->vm_start) >> PAGE_SHIFT;
+ }
+@@ -3540,7 +3540,7 @@ static inline struct vm_area_struct *find_exact_vma(struct mm_struct *mm,
+ 	return vma;
+ }
+ 
+-static inline bool range_in_vma(struct vm_area_struct *vma,
++static inline bool range_in_vma(const struct vm_area_struct *vma,
+ 				unsigned long start, unsigned long end)
+ {
+ 	return (vma && vma->vm_start <= start && end <= vma->vm_end);
+@@ -3656,7 +3656,7 @@ static inline int vm_fault_to_errno(vm_fault_t vm_fault, int foll_flags)
+  * Indicates whether GUP can follow a PROT_NONE mapped page, or whether
+  * a (NUMA hinting) fault is required.
+  */
+-static inline bool gup_can_follow_protnone(struct vm_area_struct *vma,
++static inline bool gup_can_follow_protnone(const struct vm_area_struct *vma,
+ 					   unsigned int flags)
+ {
+ 	/*
+@@ -3786,7 +3786,7 @@ static inline bool debug_guardpage_enabled(void)
+ 	return static_branch_unlikely(&_debug_guardpage_enabled);
+ }
+ 
+-static inline bool page_is_guard(struct page *page)
++static inline bool page_is_guard(const struct page *page)
+ {
+ 	if (!debug_guardpage_enabled())
  		return false;
+@@ -3817,7 +3817,7 @@ static inline void debug_pagealloc_map_pages(struct page *page, int numpages) {}
+ static inline void debug_pagealloc_unmap_pages(struct page *page, int numpages) {}
+ static inline unsigned int debug_guardpage_minorder(void) { return 0; }
+ static inline bool debug_guardpage_enabled(void) { return false; }
+-static inline bool page_is_guard(struct page *page) { return false; }
++static inline bool page_is_guard(const struct page *page) { return false; }
+ static inline bool set_page_guard(struct zone *zone, struct page *page,
+ 			unsigned int order) { return false; }
+ static inline void clear_page_guard(struct zone *zone, struct page *page,
+@@ -3899,7 +3899,7 @@ void vmemmap_free(unsigned long start, unsigned long end,
+ #endif
+ 
+ #ifdef CONFIG_SPARSEMEM_VMEMMAP
+-static inline unsigned long vmem_altmap_offset(struct vmem_altmap *altmap)
++static inline unsigned long vmem_altmap_offset(const struct vmem_altmap *altmap)
+ {
+ 	/* number of pfns from base where pfn_to_page() is valid */
+ 	if (altmap)
+@@ -3913,7 +3913,7 @@ static inline void vmem_altmap_free(struct vmem_altmap *altmap,
+ 	altmap->alloc -= nr_pfns;
+ }
+ #else
+-static inline unsigned long vmem_altmap_offset(struct vmem_altmap *altmap)
++static inline unsigned long vmem_altmap_offset(const struct vmem_altmap *altmap)
+ {
+ 	return 0;
+ }
 -- 
 2.47.2
 
