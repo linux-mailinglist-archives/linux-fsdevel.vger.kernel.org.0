@@ -1,197 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-59765-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59766-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A620CB3DF00
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 11:50:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9425FB3DF0F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 11:54:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F03DD189D89C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 09:50:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29860189F222
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 09:55:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B40B30C602;
-	Mon,  1 Sep 2025 09:50:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63C7930DD0B;
+	Mon,  1 Sep 2025 09:54:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cfSDfpQ7";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vUoxLK2L";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cfSDfpQ7";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vUoxLK2L"
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="dXnHmj2r"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 557E723E23C
-	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Sep 2025 09:50:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5328B78F5D
+	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Sep 2025 09:54:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756720206; cv=none; b=Kt4rcauWPouWPYmfKQi1/cBUzwuGMvyu++GDd+i3j8jg0GBvYlLhsYwi476eiTngDZwOIoXzAomCf6K2mX4aGil+k/d72z4oL41AlQVM3DERRry2cU43Bb2/ZhyDZhQwkVYxDtijpydsvnIKWaRl+8Rhbp1YYKpa5dRBuNe1Esw=
+	t=1756720472; cv=none; b=HmTEyyaWRmZxUbavAtHeGh9b7ChlbWcjOZlSaFn3POe0Yt9mZ0P4pKNApFU8R3wBjqq937ykFdYIUIyHssdv+nElHPlkjQO+QM1OKlcnzKw7xzmdxd1jLZmcqdMXmu8i1CrK/2TiLnmcixh/K+41B76GrTI8ZSnYy9o26cZXdKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756720206; c=relaxed/simple;
-	bh=dHDbZP2sj7jCTQ5hinMjTOyAGhAfa6rnpImzdZhe0vU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eh5pIEa5rlEIpp9c98pJd0l4OhI1z3W4aEtGMn5rkB0QKYyVQbtL9b8SHc/NZn4ybZUWmg/TGAPInNb53Y11sdiMMMhhfhSE5ube7xKuQN1hW2xlsfXu+obwcoADQ+oiLSUmVK8SPnVkAOpjozDuSWsq+O1wEcXzu0QK8qJA7+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cfSDfpQ7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vUoxLK2L; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cfSDfpQ7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vUoxLK2L; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 6CAEA1F387;
-	Mon,  1 Sep 2025 09:50:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756720203; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4BhaViFTj1EfSgmyJ/x96zZidf5Hn91zet8lsrdFyjw=;
-	b=cfSDfpQ7TLUiY8tDXwJBXvERQa0VEFnDoEofkWiyMxjFrPlOsdrOjtmaELo9CgtIvU+jyV
-	XKEXF4FodgER/szlrn1etZiIXeaiaCIdNHwPilyQ0Kb1zOKO2UW4yGetWrk416P/1QMU9K
-	owlq5Sbxhow+/ZnEA62XaUsx4aGqqwk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756720203;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4BhaViFTj1EfSgmyJ/x96zZidf5Hn91zet8lsrdFyjw=;
-	b=vUoxLK2Labk2pqA1Dmr4gfh9TPcUuuWZ0mJeLLdzOAhCcS7cVBcmBEmZVR7p3G935JaQd3
-	/yr/8llbeqdBtWAQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=cfSDfpQ7;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=vUoxLK2L
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756720203; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4BhaViFTj1EfSgmyJ/x96zZidf5Hn91zet8lsrdFyjw=;
-	b=cfSDfpQ7TLUiY8tDXwJBXvERQa0VEFnDoEofkWiyMxjFrPlOsdrOjtmaELo9CgtIvU+jyV
-	XKEXF4FodgER/szlrn1etZiIXeaiaCIdNHwPilyQ0Kb1zOKO2UW4yGetWrk416P/1QMU9K
-	owlq5Sbxhow+/ZnEA62XaUsx4aGqqwk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756720203;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4BhaViFTj1EfSgmyJ/x96zZidf5Hn91zet8lsrdFyjw=;
-	b=vUoxLK2Labk2pqA1Dmr4gfh9TPcUuuWZ0mJeLLdzOAhCcS7cVBcmBEmZVR7p3G935JaQd3
-	/yr/8llbeqdBtWAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 51AE9136ED;
-	Mon,  1 Sep 2025 09:50:03 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id vTRrE0tstWhPdQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 01 Sep 2025 09:50:03 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id E5F81A099B; Mon,  1 Sep 2025 11:50:02 +0200 (CEST)
-Date: Mon, 1 Sep 2025 11:50:02 +0200
-From: Jan Kara <jack@suse.cz>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] fs: remove vfs_ioctl export
-Message-ID: <rqvb73ltssgkchzyhzblffovfsfbildkkgbo7nhtvgt5np5eo6@f27eomyazdup>
-References: <2025083038-carving-amuck-a4ae@gregkh>
+	s=arc-20240116; t=1756720472; c=relaxed/simple;
+	bh=AtiBYuO38BwZPKf5+lGKWitSMYCT01XKTDpZYzEyuXg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FPpoq0h873KCuNosYyh3xhJhtB+GGPkTIe9TOSBZzlKH2zOQL8kdg4pe+zmR5YdakYFQjoFlRhKl31TLc1LAjbzg07Ib65YW4L+Bw5p1Uoa80r1gTirMRgmFqIYfhNv8pvOMkjOkkS1fvUEp7DTHjXtzP1Azu1O3Pnp+0kgL/60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=dXnHmj2r; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-afcb7ae6ed0so606656666b.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Sep 2025 02:54:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1756720470; x=1757325270; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AtiBYuO38BwZPKf5+lGKWitSMYCT01XKTDpZYzEyuXg=;
+        b=dXnHmj2ruQ/xkdIt6xvN8ZOFV5vn3KttOEy0Zai/O9gwODsr9qAFzB8bJoTIraTcka
+         gNmKu6bPouzRNelDM8eHQ4oT/ud4RXXND05tImUIW+1JIFKM36WZooAYG9JA0LqNix99
+         5v7R5bgOeQQmOnN+5jWxYqdPbY3rj4H4JfhHxpMMA+GPdrj8DMmoUGEaKVq36VQP7STE
+         9727yO6DUgz/oxpQuzSPa0soOYfjFbBf6LzZ2MIu3x6W7cFujKtoW/4YV20pYabI6h4K
+         u8f2P9sLbX02tkQDV2WUMay9z4Va6M8FFsQvRnQ/07hjQaHlDIY7OBxYlnsxFLEYAFzp
+         GsoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756720470; x=1757325270;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AtiBYuO38BwZPKf5+lGKWitSMYCT01XKTDpZYzEyuXg=;
+        b=j+2R7LJGTN/zZvMthHryyiFcF0e+wx1CHqYL49jLGqU9u60dFdnsSVaxUVI/1Wf0zx
+         Wg9S3y27uovEQ0YAewb1H9PJ85Vr1QHwRrasZnpTits+Ioli/WLGr5jT6KIPaNCa30YH
+         hEa/+yVPKmZqwcKYoEuRlw2J37vB/HPsBdAsTqFRp+OgcNedwV5h8d8co73kzWqi83x4
+         UImpHUK9hwbR7R5h/bj6dhQfl5+pZHGc7p2NGEXqWcboHtp5WNu5rrux3GLtPVmFEcNb
+         ttjU4E37/2R0s8oKoQjgoxycY+sgfpC0erJGIPDihiTuckqk+ls/8oEinllQ0pi248Lh
+         ZzjA==
+X-Forwarded-Encrypted: i=1; AJvYcCUelW3ewdtc9epTiybwWUgvQkoMZgKnsX2s7hYo0tPwOjby9mMKqwKhvgdLBUdWfzG+sACrSQIa2AaiJ5Zw@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5VulSJNohAiuG7TLJmMex2TTv9UeKvcZgDANTIILFCxNeczhn
+	VEJnfOjqpU0DYxsFXrWEpq6J6JEUYKvhLhHW1g+FU3e3Gj4aH69FisLy6XNxksmI3Aoe39Jy0JL
+	/j+abx6dWfX6hAvzIflEFGEFq9eAmEgJE9SMQYwQFJA==
+X-Gm-Gg: ASbGnct256+2eCQGrepNhyDz+20M6hm84NmANsT8Q4Q5tICd4ZyVzaiBGyA8410GzxY
+	qURWRfyDyTIFmUqyLVcRlmK9cqrvbTzoaM/CM/aPPsJhJ2JX7kpqosXHWdlOTdxowDOkBF63v15
+	tgYJx7KNkyTv9papimXUDaMruLyAtmTCpy1n73Qe9X+/BCTsCOILGsYDBN5LoFOfL+8nkg2Otx+
+	qc+cFTFMBnjWE2ZJX8+P4dfE0fVydaEy2E=
+X-Google-Smtp-Source: AGHT+IG926akpOzWZcf5N3mV7elDZw28XggHb1wmpA4WdWitXiObkp2qNMaOn7Rtqs/aofUinFciyRkhDtIhzXPOX5o=
+X-Received: by 2002:a17:906:c11:b0:b04:f8d:bd7f with SMTP id
+ a640c23a62f3a-b040f8dbf99mr446115966b.65.1756720469662; Mon, 01 Sep 2025
+ 02:54:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2025083038-carving-amuck-a4ae@gregkh>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 6CAEA1F387
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,suse.com:email];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Score: -4.01
+References: <20250901091916.3002082-1-max.kellermann@ionos.com> <f065d6ae-c7a7-4b43-9a7d-47b35adf944e@lucifer.local>
+In-Reply-To: <f065d6ae-c7a7-4b43-9a7d-47b35adf944e@lucifer.local>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Mon, 1 Sep 2025 11:54:18 +0200
+X-Gm-Features: Ac12FXw_rNjhcoFzQKi2bXoe_2WtlXZb2wNk3G9XO3JBfL8ul9lEEea3cb4eO1Y
+Message-ID: <CAKPOu+9smVnEyiRo=gibtpq7opF80s5XiX=B8+fxEBV7v3-Gyw@mail.gmail.com>
+Subject: Re: [PATCH v4 00/12] mm: establish const-correctness for pointer parameters
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: akpm@linux-foundation.org, david@redhat.com, axelrasmussen@google.com, 
+	yuanchu@google.com, willy@infradead.org, hughd@google.com, mhocko@suse.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, Liam.Howlett@oracle.com, 
+	vbabka@suse.cz, rppt@kernel.org, surenb@google.com, vishal.moola@gmail.com, 
+	linux@armlinux.org.uk, James.Bottomley@hansenpartnership.com, deller@gmx.de, 
+	agordeev@linux.ibm.com, gerald.schaefer@linux.ibm.com, hca@linux.ibm.com, 
+	gor@linux.ibm.com, borntraeger@linux.ibm.com, svens@linux.ibm.com, 
+	davem@davemloft.net, andreas@gaisler.com, dave.hansen@linux.intel.com, 
+	luto@kernel.org, peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, x86@kernel.org, hpa@zytor.com, chris@zankel.net, 
+	jcmvbkbc@gmail.com, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
+	weixugc@google.com, baolin.wang@linux.alibaba.com, rientjes@google.com, 
+	shakeel.butt@linux.dev, thuth@redhat.com, broonie@kernel.org, 
+	osalvador@suse.de, jfalempe@redhat.com, mpe@ellerman.id.au, 
+	nysal@linux.ibm.com, linux-arm-kernel@lists.infradead.org, 
+	linux-parisc@vger.kernel.org, linux-s390@vger.kernel.org, 
+	sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat 30-08-25 12:55:39, Greg Kroah-Hartman wrote:
-> vfs_ioctl() is no longer called by anything outside of fs/ioctl.c, so
-> remove the global symbol and export as it is not needed.
-> 
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Jan Kara <jack@suse.cz>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+On Mon, Sep 1, 2025 at 11:44=E2=80=AFAM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+> You are purposefully engaging in malicious compliance here, this isn't ho=
+w
+> things work.
 
-Indeed. Thanks for the cleanup. Feel free to add:
+This accusation of yours is NOT:
+- Using welcoming and inclusive language
+- Being respectful of differing viewpoints and experiences
+- Showing empathy towards other community members
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+This is also not constructive criticism. It's just a personal attack.
 
-									Honza
-
-> ---
->  fs/ioctl.c         | 3 +--
->  include/linux/fs.h | 2 --
->  2 files changed, 1 insertion(+), 4 deletions(-)
-> 
-> diff --git a/fs/ioctl.c b/fs/ioctl.c
-> index 0248cb8db2d3..3ee1aaa46947 100644
-> --- a/fs/ioctl.c
-> +++ b/fs/ioctl.c
-> @@ -41,7 +41,7 @@
->   *
->   * Returns 0 on success, -errno on error.
->   */
-> -int vfs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
-> +static int vfs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
->  {
->  	int error = -ENOTTY;
->  
-> @@ -54,7 +54,6 @@ int vfs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
->   out:
->  	return error;
->  }
-> -EXPORT_SYMBOL(vfs_ioctl);
->  
->  static int ioctl_fibmap(struct file *filp, int __user *p)
->  {
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index d7ab4f96d705..ccf482803525 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -2052,8 +2052,6 @@ int vfs_fchown(struct file *file, uid_t user, gid_t group);
->  int vfs_fchmod(struct file *file, umode_t mode);
->  int vfs_utimes(const struct path *path, struct timespec64 *times);
->  
-> -int vfs_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
-> -
->  #ifdef CONFIG_COMPAT
->  extern long compat_ptr_ioctl(struct file *file, unsigned int cmd,
->  					unsigned long arg);
-> -- 
-> 2.51.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+(I'm also still waiting for your reply to
+https://lore.kernel.org/lkml/CAKPOu+8esz_C=3D-m1+-Uip3ynbLm1geutJc7ip56mNJT=
+Opm0BPA@mail.gmail.com/
+)
 
