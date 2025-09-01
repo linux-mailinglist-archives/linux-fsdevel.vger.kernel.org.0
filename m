@@ -1,199 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-59904-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59905-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A89DB3EDF6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 20:39:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40207B3EE41
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 21:03:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EE8A484353
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 18:39:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32C617A1AD3
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 19:01:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63913324B26;
-	Mon,  1 Sep 2025 18:39:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4B4926B0A9;
+	Mon,  1 Sep 2025 19:03:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IEVtlqqN"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="dXEZCX+4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13E8034CDD;
-	Mon,  1 Sep 2025 18:39:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B758F23D283
+	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Sep 2025 19:03:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756751977; cv=none; b=KHC0J6SgkSB+bEQMeSBHkdpvWFotjEg6abAMok8jri3X9a7XlgPJUhkihHULrE7XYq3U7lZ+iKq11Y0J8uS45+Sv5+AJQsRRoZJLjIMB9spihydPsbUedpw4NyapHLn34qi4vPWCO6ylLvXXRLJ87dJLf16b/TxQIWbf66nhlhc=
+	t=1756753406; cv=none; b=FcZNcbuXW3/Piz+e/FzuuqhYLMlNjijmlw8+ZAyKOFAZmXT3vBv4k0LoMVq+vNYRWUUaZbRQQlJ3A8KeJsa/YbOSD+d7pcG/Juh9y/Z9PT55Z/9CDBZVaJCPcdpoYnGJ5rMSd150gIi0jJr4gI63Wj7LYBEq/kLEoyBsO+pa5fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756751977; c=relaxed/simple;
-	bh=B1efNRQOm174YJ981GJzfBCcp9P5sNFLGxsCgQbCU/I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WIcmKPV6y3oYDvDRTdYZtO9LGnhvfG+gnLY7/AaLcj4dpl4QlKxiD6YiRc6Z12griQJbNhrtIDQ9PYr+77If9lX0jgdmiX9PNS8ACp+TgzQP9xSPaKQrAIKEUEdbqiQ984sAQ0U7WyBvLuBcffzWmMQrqaSARCPiYLCVBKCx4PY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IEVtlqqN; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-619487c8865so9919914a12.1;
-        Mon, 01 Sep 2025 11:39:35 -0700 (PDT)
+	s=arc-20240116; t=1756753406; c=relaxed/simple;
+	bh=S3hCdUT2ICLXa1GjNdU28dZZnKCVYtibeydsEJ9rZEA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YIyvFGmcBSXUkYj1k5a34ABTOsrRsJDR4mKvvabXLuuU+QHK0g2jIzbmGixsRi024g5FoEe7AFISHT1AKtoZVkjXMsSoR/VNZkQjq+Xul92laIQBg5LExk2LIIrZRqAQjzEVU+b1G5nLpfFzGxCJySoyzwjGLCMKVdi2lAUmWcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=dXEZCX+4; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4b109c4af9eso40063271cf.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Sep 2025 12:03:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756751974; x=1757356774; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bzIgq2g3RlycrS6fYzK9k6VbjF9ba3Cw79xulaFQz9I=;
-        b=IEVtlqqNQl1B+WwuW3bLmVqssb/IgSQrpTmO+Z8lXcEBdgrf/xB5lXCEeAc5l8/HHO
-         rgHXziCwC/qIhFLzt/ecHRRGU5ynuTaeS7zVSZ2hEQvsCKqeUjdLzEFTzP4DEoFQqQek
-         6O3cNHcQzaoLnIoG84wIEQMo9E/dNWoNrfkQXR1rx2aDPWypTc1v4PltAitRszGgAK+7
-         TP+VXDY55Iz06hYnm5Ey0QtauzC9TIHzMO1uFnOc69I7VvkvOZoKK9PBOkHHUsCGOxCY
-         ZgwRDnoeXJ+Hub8HAP2TNyvyiOMnyChPxC4QX0C2NdsL/0H2v3clnYRjWia2jIxt4LPo
-         Ev9Q==
+        d=soleen.com; s=google; t=1756753403; x=1757358203; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=S3hCdUT2ICLXa1GjNdU28dZZnKCVYtibeydsEJ9rZEA=;
+        b=dXEZCX+4rQJGhIL63KLKRHxqwjXdP2O6g2tY4k3x5FDsPLedpIApTg2PFgMjSph2sb
+         W7+k6ybjgpB8T2XdOJZv3OdlsVYLiahsYawM8Q/8AwB05NAqBv9sxeToI8M2Rgph25dc
+         wdyEOL16F1ynXsEJfcW7o23ZmJ0uhXGiOzLzsMdk2sqK25PahNNtJphys4q/8Gb/VEPY
+         522sx3i2EhJeH97+0xb/adJ1cvG4HxYlAVzdBidmkMqWCLgZxDntJUw/NS4DKICJ+Jrm
+         pAj12VClPYdAOehZgVfoDxJYk/OuCxxSO2v12TUzjm3O8ADkwkleByFpStlo+5BoK3Dg
+         NDDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756751974; x=1757356774;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bzIgq2g3RlycrS6fYzK9k6VbjF9ba3Cw79xulaFQz9I=;
-        b=PBE8bNoQT/2fsm4eYDNWjBGyjZVSXs4QG7ZsDhs9Zz2HXF7Bn86cvkQJN/YZa6B9kZ
-         DoPBIE1PUt6lOnqj8CBbmUhm6Ukj6eiXrBZcjYoMXJNTAxvtPRR4cNqb7wvqtIIcKRsc
-         6aFs5Jp6JR5Nn8H29mo5xU/2PLQGd/MlRNAG5UGVwdWP+p2796o+hNiPworCWM9tOWFC
-         Fse+0zZwqEYSDeVO0p2SSxj5ee7jnDx5C5OASOCcJ05tcfW/A4ksT3O59ftkwmiWP2f6
-         OtiLoKwjKO1kn2ECCY4QQTWKV/5RKRYg0lKKJ70tid3aG5CJ6jCjqE+RE5aimebgi66X
-         lg9g==
-X-Forwarded-Encrypted: i=1; AJvYcCVu/+aLbYihnBZTcYzBPp/EalPWCkCj7iTcouPxk5V0GtAMQEJjOApPjN5iTqWQnndUCkR5tYmxc9rtKtM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwF8iKZT13x0GY0mtU7ARVsy57KwZDIi/usK31Ry+KvzKkmfpwK
-	tVijRDkx41AjJdc1bMmNprUbrzMrfU3vLkfs1XcA6DXCMN4P0xmqnuPo
-X-Gm-Gg: ASbGncsBKmSL+IGlCTGyodPlOojfsBEfXMob8lJBAuJu1io/6h62B4GZy+FCcO+W7P6
-	f63QXhW2Gh7jkjdosZ0Jjk1BsBpZVvuBntrZTfCTtJSpH/xDwEt//c8m2Lb5ba1XoZqoqGI1Mdx
-	EMrFRamQOOReeg6zmQM2ghm2T0d5k1UiiIOdk9rps2z5gzcQSZwCaKNgzYFA5Dzz2yzUCQXR/MC
-	DUfLZfygP1dadERsIGDzOvNnSZy96odVu0FXpmpk1sUT/1ctSokDO4YJyI7H7tgwUyCgxMstWY3
-	w+5UX3vB6jAdX/PjSGhzaWP/+70+xn91TTnxz+HRKGCcJmq2Nkv4+IG0bu7X0XJFv4BU7kh+5Lr
-	4ev+tZ8C4jlFLMxdJBMlwiVsc/Vu4gelpdli6FDSnxFqq9Dvl
-X-Google-Smtp-Source: AGHT+IFjORG3X7mKcc5B0ao2+rVjEGGIT//XcJU8/kl1ixbbYaTPXIYVn5+mTt3ZMfNJfgt74DrDvg==
-X-Received: by 2002:a17:907:7e82:b0:afe:6648:a243 with SMTP id a640c23a62f3a-b00f67e0eb3mr1042209366b.3.1756751974145;
-        Mon, 01 Sep 2025 11:39:34 -0700 (PDT)
-Received: from f (cst-prg-84-152.cust.vodafone.cz. [46.135.84.152])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61d3174074bsm4628249a12.35.2025.09.01.11.39.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 11:39:33 -0700 (PDT)
-Date: Mon, 1 Sep 2025 20:39:27 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Alexander Monakov <amonakov@ispras.ru>
-Cc: linux-fsdevel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	linux-kernel@vger.kernel.org
-Subject: Re: ETXTBSY window in __fput
-Message-ID: <u4vg6vh4myt5wuytwiif72hlgdnp2xmwu6mdmgarbx677sv6uf@dnr6x7epvddl>
-References: <6e60aa72-94ef-9de2-a54c-ffd91fcc4711@ispras.ru>
+        d=1e100.net; s=20230601; t=1756753403; x=1757358203;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=S3hCdUT2ICLXa1GjNdU28dZZnKCVYtibeydsEJ9rZEA=;
+        b=Qoq+1aYZ2R8BwS2jhOAd7YjvmvwVFpDAqVQ3vErIiiHMY3dhJ6BYDwo/mpld+29lbI
+         SBIbCOtUR1o1kEWhuevRYIqX6Fzt/JviIpPEL2L02Qq0OfPZhhD4B8r7SHLh96LNA1BA
+         GcdYtoDwgbqt+hRPPYGD8fzdaSRfuxgd14XexZuNA9YaXeAfWDa0a/5vmZRwDh1HAQR9
+         rNaM3F1qVkkvygKwZE0yDcer+bJ4uWifLxE7uEV/vlyVHzBjxG3gHIDr3dbGMwmMmtlI
+         BZMxboKVvylw/RWI/FgpxBkhPi9C+BsIHnRygAxBO9TV1/PrQNNxpltHx6/pzTW1d4JP
+         PHDg==
+X-Forwarded-Encrypted: i=1; AJvYcCVn5Xtfq0dHdDXaXeTSUyVvH5CWolAl1yN+jUUri1igcdUTtvOj8EVtfRd5Cm/oW6X1rUl7TfYjOLowFQzt@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzsdwyl4DfhQGa5IGGOZdZetTWJlt3TCMRT19/iqN8yHJlL54Au
+	G5bEPtVZgQz7gCZIT53hnDJmgTv2jNu4d5SUpbO1R6SSF7SIogJ9Q/ZqLNVq9fCDeWaY9oi9mMl
+	M110VsaR2ZqHN+YN/aP3fauy2k9T+2BlaAC8qe+SCFA==
+X-Gm-Gg: ASbGncuqSSRmqH6g58MC2UWX/dOF8C0e3XszoRBmrFls7PQ/8qzXcEcoAdsRkYkbivU
+	A53QkfaR043iHMNyiYtRdiSYlDGUoDDyTPkwtC7suKJq0A6twC1rbN+5+bxyDMsmPXfqzUHNXlc
+	JrG+avVAQ9/rtkx2vJCDFxeJT2cxHIP3L/9zWgSofRr6lwmxkiO9sJBcXqhgvrnHudcjn04IUha
+	yqym1syLxLIaiA=
+X-Google-Smtp-Source: AGHT+IGC4IxxW7gTteEuAiFDY4ARihDdjTh7r8Mht+Ln0Ng2xWrhyAI5gEJNZ2B2JAdSBb2GjROz0/at0WjW2Aw4LfQ=
+X-Received: by 2002:a05:622a:1a0a:b0:4ab:902c:5553 with SMTP id
+ d75a77b69052e-4b31da17d84mr113554401cf.52.1756753403110; Mon, 01 Sep 2025
+ 12:03:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <6e60aa72-94ef-9de2-a54c-ffd91fcc4711@ispras.ru>
+References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
+ <20250807014442.3829950-30-pasha.tatashin@soleen.com> <20250826162019.GD2130239@nvidia.com>
+ <aLXIcUwt0HVzRpYW@kernel.org> <CA+CK2bC96fxHBb78DvNhyfdjsDfPCLY5J5cN8W0hUDt9KAPBJQ@mail.gmail.com>
+ <mafs03496w0kk.fsf@kernel.org>
+In-Reply-To: <mafs03496w0kk.fsf@kernel.org>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Mon, 1 Sep 2025 19:02:46 +0000
+X-Gm-Features: Ac12FXxIFoyzz5jiOJ4O5RxQRUabkrNBq-ldI0H08I8mR4jOJnwP6yzvNT_MXGI
+Message-ID: <CA+CK2bAb6s=gUTCNjMrOqptZ3a_nj3teuVSZs86AvVymvaURQA@mail.gmail.com>
+Subject: Re: [PATCH v3 29/30] luo: allow preserving memfd
+To: Pratyush Yadav <pratyush@kernel.org>
+Cc: Mike Rapoport <rppt@kernel.org>, Jason Gunthorpe <jgg@nvidia.com>, jasonmiu@google.com, 
+	graf@amazon.com, changyuanl@google.com, dmatlack@google.com, 
+	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
+	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
+	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
+	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
+	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
+	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
+	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
+	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
+	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
+	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
+	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, lennart@poettering.net, brauner@kernel.org, 
+	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, saeedm@nvidia.com, 
+	ajayachandra@nvidia.com, parav@nvidia.com, leonro@nvidia.com, witu@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Aug 27, 2025 at 12:05:38AM +0300, Alexander Monakov wrote:
-> Dear fs hackers,
-> 
-> I suspect there's an unfortunate race window in __fput where file locks are
-> dropped (locks_remove_file) prior to decreasing writer refcount
-> (put_file_access). If I'm not mistaken, this window is observable and it
-> breaks a solution to ETXTBSY problem on exec'ing a just-written file, explained
-> in more detail below.
-> 
-> The program demonstrating the problem is attached (a slightly modified version
-> of the demo given by Russ Cox on the Go issue tracker, see URL in first line).
-> It makes 20 threads, each executing an infinite loop doing the following:
-> 
-> 1) open an fd for writing with O_CLOEXEC
-> 2) write executable code into it
-> 3) close it
-> 4) fork
-> 5) in the child, attempt to execve the just-written file
-> 
-> If you compile it with -DNOWAIT, you'll see that execve often fails with
-> ETXTBSY.
+> >> > This really wants some luo helper
+> >> >
+> >> > 'luo alloc array'
+> >> > 'luo restore array'
+> >> > 'luo free array'
+> >>
+> >> We can just add kho_{preserve,restore}_vmalloc(). I've drafted it here:
+> >> https://git.kernel.org/pub/scm/linux/kernel/git/rppt/linux.git/log/?h=kho/vmalloc/v1
+> >
+> > The patch looks okay to me, but it doesn't support holes in vmap
+> > areas. While that is likely acceptable for vmalloc, it could be a
+> > problem if we want to preserve memfd with holes and using vmap
+> > preservation as a method, which would require a different approach.
+> > Still, this would help with preserving memfd.
+>
+> I agree. I think we should do it the other way round. Build a sparse
+> array first, and then use that to build vmap preservation. Our emails
 
-This problem was reported a few times and is quite ancient by now.
+Yes, sparse array support would help both: vmalloc and memfd preservation.
 
-While acknowleding the resulting behavior needs to be fixed, I find the
-proposed solutions are merely trying to put more lipstick or a wig on a
-pig.
+> seem to have crossed, but see my reply to Mike [0] that describes my
+> idea a bit more, along with WIP code.
+>
+> [0] https://lore.kernel.org/lkml/mafs0ldmyw1hp.fsf@kernel.org/
+>
+> >
+> > However, I wonder if we should add a separate preservation library on
+> > top of the kho and not as part of kho (or at least keep them in a
+> > separate file from core logic). This would allow us to preserve more
+> > advanced data structures such as this and define preservation version
+> > control, similar to Jason's store_object/restore_object proposal.
+>
+> This is how I have done it in my code: created a separate file called
+> kho_array.c. If we have enough such data structures, we can probably
+> move it under kernel/liveupdate/lib/.
 
-The age of the problem suggests it is not *urgent* to fix it.
+Yes, let's place it under kernel/liveupdate/lib/. We will add more
+preservation types over time.
 
-The O_CLOFORM idea was accepted into POSIX and recent-ish implemented in
-all the BSDs (no, really) and illumos, but got NAKed in Linux. It's also
-a part of pig's attire so I think that's the right call.
+> As for the store_object/restore_object proposal: see an alternate idea
+> at [1].
+>
+> [1] https://lore.kernel.org/lkml/mafs0h5xmw12a.fsf@kernel.org/
 
-Not denying execs of files open for writing had to get reverted as
-apparently some software depends on it, so that's a no-go either.
+What you are proposing makes sense. We can update the LUO API to be
+responsible for passing the compatible string outside of the data
+payload. However, I think we first need to settle on the actual API
+for storing and restoring a versioned blob of data and place that code
+into kernel/liveupdate/lib/. Depending on which API we choose, we can
+then modify the LUO to work accordingly.
 
-The flag proposed by Christian elsewhere in the thread would sort this
-out, but it's just another hack which would serve no purpose if the
-issue stopped showing up.
-
-The real problem is fork()+execve() combo being crap syscalls with crap
-semantics, perpetuating the unix tradition of screwing you over unless
-you explicitly ask it not to (e.g., with O_CLOEXEC so that the new proc
-does not hang out with surprise fds).
-
-While I don't have anything fleshed out nor have any interest in putting
-any work in the area, I would suggest anyone looking to solve the ETXTBSY
-went after the real culprit instead of damage-controlling the current
-API.
-
-To that end, my sketch of a suggestion boils down to a new API which
-allows you to construct a new process one step at a time explicitly
-spelling out resources which are going to get passed on, finally doing
-an actual exec. You would start with getting a file descriptor to a new
-task_struct which you gradually populate and eventually exec something
-on. There would be no forking.
-
-It could look like this (ignore specific naming):
-
-/* get a file descriptor for the new process. there is no *fork* here,
- * but task_struct & related get allocated
- * clean slate, no sigmask bullshit and similar
- */
-pfd = proc_new();
-
-nullfd = open("/dev/null", O_RDONLY);
-
-/* map /dev/null as 0/1/2 in the new proc */
-proc_install_fd(pfd, nullfd, 0); 
-proc_install_fd(pfd, nullfd, 2); 
-proc_install_fd(pfd, nullfd, 2); 
-
-/* if we can run the proc as someone else, set it up here */
-proc_install_cred(pfd, uid, gid, groups, ...);
-
-proc_set_umask(pfd, ...);
-
-/* finally exec */
-proc_exec_by_path("/bin/sh", argp, envp);
-
-Notice how not once at any point random-ass file descriptors popped into
-the new task, which has a side effect of completely avoiding the
-problem.
-
-you may also notice this should be faster to execute as it does not have
-to pay the mm overhead.
-
-While proc_install_fd is spelled out as singular syscalls, this can be
-batched to accept an array of <from, to> pairs etc.
-
-Also notice the thread executing it is not shackled by any of vfork
-limitations.
-
-So... if someone is serious about the transient ETXTBSY, I would really
-hope you will consider solving the source of the problem, even if you
-come up with someting other than I did (hopefully better). It would be a
-damn shame to add even more hacks to pacify this problem (like the O_
-stuff).
-
-What to do in the meantime? There is a lol hack you can do in userspace
-which so ugly I'm not even going to spell it out, but given the
-temporary nature of ETXTBSY I'm sure you can guess what it is.
-
-Something to ponder, cheers.
+>
+> --
+> Regards,
+> Pratyush Yadav
 
