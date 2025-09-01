@@ -1,74 +1,74 @@
-Return-Path: <linux-fsdevel+bounces-59878-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59879-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 092D3B3E824
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 17:03:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F67BB3E90F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 17:13:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9614C1781AF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 15:03:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 594323B4A59
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 15:10:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95906341AB7;
-	Mon,  1 Sep 2025 15:02:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E0D6343D98;
+	Mon,  1 Sep 2025 15:06:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="Stosj4/A"
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="IyVq172b"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6560A338F5F
-	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Sep 2025 15:02:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3538F345733
+	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Sep 2025 15:06:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756738976; cv=none; b=nfV3l0ULcecMpzDVdsYktj38Ai6RYlb9+jR9p0pQzohTDTUqMM/jB0+Os98lHufksVrjyWzkH/Hwd63zdT1XU72oqPdi2m1LzzW8HVIjgJBo2dXggVyzjfpyN7kXdstKR1BqGvPxSCBKj/BVh0VknPC/tVV1GEfJbSMoeA/kTMk=
+	t=1756739193; cv=none; b=JLoA/JvfTashRrmF96JSWVekXgPO2N3mihorJP6M6MDR3RvSmj56s7fsBXsnAT57PB9S65ZQTV8hb8yyPOlCfRhKIw+7bSXh/7tSCtpOzHIwI74O+90CkIQl5k7RaJqst/d0JgP1r8nBLitX8r4RGAQrt6IslfTVqNCDvOWCmKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756738976; c=relaxed/simple;
-	bh=VGz5s3CgG5oZbwfB15yu/ysF7dSGyM9kka20nq6+kjg=;
+	s=arc-20240116; t=1756739193; c=relaxed/simple;
+	bh=RTksJ8/0/nMOSHK1v6hFgH7Xl8rur3P7qYdlo1+hL9M=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=epMN+Rb4JrBnBLv0Dgealv4oKWiMfsq/JqN0rlaCHOFLlitk7pkx2qby4BGcODSLNBjh5qlxHsMg2f3OdZm25hvKqfGbvWaLksvj0p1MJqRQDsuUqR8xyRqfanEVdHlJiNfCoTQIjE0s6e7LNhCEjFqEl5tpAvX4b1UeyjFW9JM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=Stosj4/A; arc=none smtp.client-ip=209.85.218.52
+	 To:Cc:Content-Type; b=D1+arlffir18A5JxRJTdLqFJZkmmlgmcCBGJLlR5l8KS31jkeQjYLR5h1ZOSZ+iaIxtD0sfid+KXPtDeRhmxIDIpZd3igVlO/RqPSJOSYFhBPtIVgxf9LokEGpgofxk5e/1vZBsZFR0ru000mYY0SuSk1/xcdwzgYueHAmCYKfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=IyVq172b; arc=none smtp.client-ip=209.85.218.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b042cc3953cso128419666b.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Sep 2025 08:02:54 -0700 (PDT)
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-afcb78ead12so724123566b.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Sep 2025 08:06:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1756738973; x=1757343773; darn=vger.kernel.org;
+        d=ionos.com; s=google; t=1756739189; x=1757343989; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VGz5s3CgG5oZbwfB15yu/ysF7dSGyM9kka20nq6+kjg=;
-        b=Stosj4/Aq8oxFTo/ihuTjbA+4h14ygVQT2Vf3seTTjcfK1EGSTxLiJycvkGy4ZyMoU
-         UuJxeAYE9u8W27b33iGd/Bdg8cFCGz/B5skbr9E/lH5WCRebN+rF243H9EE7OUDgc56j
-         0o0z/j9f/kqJVKgLaDDaDw9jlvsUczS6Ncjk9alHAju3nvtIU8LVmgCDxE8jjs6jD/2x
-         zXolOkwsMN1k5Mb3l0poWo2hHZxLaVzVU8biozCFy9xcOIfHMwbbep6S5ZTEdxSlUELX
-         xpE9+65K/5q3c/ZK8xnWhTROPQoG39E189LT9qFoCkqjF0INIDFTs2Ec/R4UEa0NXk15
-         C/Iw==
+        bh=/bwNSdY68Wls82Q0k25WMNjJlHUk0r0pQNA4NzN+C5M=;
+        b=IyVq172bBaLcYBrl9lLB+7k/X6SfaztrXkqA6O0iqHoUsJ4lzBzbgcL9gvPUNB90wF
+         V98plQRUO8aCDpp1TxjvHB4sNQbfgVaU1r6A/qMFGeOAwt3007eIRCKb6cX8QhW3JTl3
+         /FMlQvPXhq074a/+q2pHf4fx0DL++gG4yrr5GeNqQvOsdLHbO21enQjAtsjibvnznilV
+         r3fSbXiowoecUTw+tHR9UJ8TSH88rZurYZBrNKjX5xezi1TPDwQbmPIWhgi3iYkqLkHz
+         iS/KNmAY4cfbOl7YDy7grDQCm8X9R8g9PgMFiSlE285UcKhVXiLstSkvjyjuTitCT+7f
+         7b2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756738973; x=1757343773;
+        d=1e100.net; s=20230601; t=1756739189; x=1757343989;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=VGz5s3CgG5oZbwfB15yu/ysF7dSGyM9kka20nq6+kjg=;
-        b=sv9O+ToQWirr20pdnpxbbsXqF51G+G5WJxLpbXJF2S+aoyIs18Ypl612rXeWxb9daI
-         tfVSmwUQdyLVOUy0EUDFnuninlsmg3TgLdIFY5yr9OUD2XT5coNt88BR7ZfIOTIqueEQ
-         XBv1YRjVF4/38iXbFknZs4BBLvQBlcRpnhkdOoEUm54SuxPedUt0sM/mjxqbaD6/qrMg
-         SMqOK5KACFB+XZHIEJnXF2zNklJSuTO9xESk3y9mRpnS90J+aOTafHsSOKMm8oBge8qd
-         dXeMBhsxVffNE/+OfRIYAaSbSWtbmQxc3zx6xUv5mYDtheBjSd9A9xZiEdjmH+Z1Jw0y
-         cFrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWM/Z7fWOGVPvmPRXMLxgdKfRmLATP0zfPkmXQDdx3ZsnJ96yjHRPHj434z7fKGNJYVcMz9im/QDM1EGtiA@vger.kernel.org
-X-Gm-Message-State: AOJu0YwopnheANNacpzw+pfY8j9Vxo8eUAaOn/Y792CppcEXFo6XzUjG
-	zMasGvjUasj7wlUtOJCkjRNhE5A8Auw9CxjwNc51SRcCz3UIG4asPVLpan5v9ylAMWqajEtGX/S
-	1jdrP9JoqZM9tnAp/JyreENeF2H0s7xww3EVoggJn0Q==
-X-Gm-Gg: ASbGnct4LlOSZyCNsRMkLN7VxNhFlGoowwhq/hbP2ROKixr3gDGBXHDOCtD1FaTtHVV
-	Z/SmJ45BZ1XnFb2kgnDt4BC9u0Tzik5k4w6AutBO30nEoFuMZtMN+iGR1qw30ZVEKi3AFg/MBML
-	PPann+Ogaiq9DT8t7m8fve0LIdb8Y2r5OWndTy7KuhjKzLciIISsw+G2rbFJQ3wMRVTvV5ShDTA
-	rOdSgzJe92LtCXXz5vfdh22fQ5V+eBAalw=
-X-Google-Smtp-Source: AGHT+IFezK1h8zD4ulbO+LoYFx9UJvceg5e5MjfORD1cX6aK9EX6zhmOpTUVOQiq+Ui4qjbP7WefWWIq7O/4+eTMSZU=
-X-Received: by 2002:a17:907:3d42:b0:aff:d39:e350 with SMTP id
- a640c23a62f3a-b01d8a25c91mr803197066b.3.1756738972529; Mon, 01 Sep 2025
- 08:02:52 -0700 (PDT)
+        bh=/bwNSdY68Wls82Q0k25WMNjJlHUk0r0pQNA4NzN+C5M=;
+        b=ILrjssSGL7sP5ToYNJBWNXkjf0Z/+da6TreN0BBq5QqEBw7+xAAr5NOVXAYdDcR4II
+         uyyB+lnQgmSNJHJxcQ8K8Hq/I/3Koav3RtiMM59bwjCqUuMsMDNA51Dc/2LinZylRO42
+         N8jhVOPgxlVNKpP3z8+WMJhs08b9IMGZWeCPJqFLwhHYZwxMc5NVO7hg/fj3T0HY65bZ
+         68bq1+dPQW45+aGUboY4kL67OdTXMhWxmBjsaYG3de73oo0lRbuR+a8pfk1WgD9Mw8UY
+         9w/JTc4G9gL+TTgNNAUSJqfs9EEmhqBdOPy0HgFzALk10TbfOAYbOqiCb4HGkkNC0C3E
+         oe1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU9yFGt5SPpttl4vrKhAxEDHt/7SqPvUfpM6I03aXfyO7PJ50AHMIBj3lJiIHcR8ZPuWJ+uvMmxpCi5OrbJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTCXSpgBs3P73IKenZg6591tD2RcvZfRuHrrNyKEMWbMqQChDb
+	hMbqMe8fP6iod5RTkPhc8zxne6hxaoCfVGM1GCi8aJdaH2pwit5D5g57UZNLkarsGDAX4HzuN+y
+	0ItuyhHu6VRU4isYb7O7aJ6W2FRosExWnJ6xWBb4U4tAD1tMAFsGXjR0=
+X-Gm-Gg: ASbGncuFsOVAnXyR0UqEqO4J6QR1XrQ+1SKVPGT7i8/zFIJWqex76/4I7Z4M0x+7I3J
+	4XSXGXfGgD/iFvzhuI1y7evOQefX0PQXiayyXPoA79/+Ap2OKUfFyvrEJgx8enr49G30pGTCQtM
+	0QuqL7KYq+joYI4PAZxFnGd86dB8nZgEz7Y47J7yEaQI3SM/CD5djI3TC3l9kr7a7CLqwkaIS9X
+	FzAJ+/dnthSj2/heEGLLQFocDfBRB2v1l+4H3a1C0X7WQ==
+X-Google-Smtp-Source: AGHT+IG0FxeUic5SFzE3UNYIN3B9+gaajPRoU8Y0dXCHXgh8kVRRqajKZHy7y0TqbZFDzgzomSvfHMhYlurHNOihACs=
+X-Received: by 2002:a17:907:1b10:b0:afe:85d5:a318 with SMTP id
+ a640c23a62f3a-b01d9755f83mr810176666b.36.1756739188996; Mon, 01 Sep 2025
+ 08:06:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -76,14 +76,14 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20250901123028.3383461-1-max.kellermann@ionos.com>
- <20250901123028.3383461-7-max.kellermann@ionos.com> <ce720df8-cdf2-492a-9eeb-e7b643bffa91@redhat.com>
-In-Reply-To: <ce720df8-cdf2-492a-9eeb-e7b643bffa91@redhat.com>
+ <20250901123028.3383461-9-max.kellermann@ionos.com> <2ad655ca-7003-4030-bb2d-1c4bcfda30cc@redhat.com>
+In-Reply-To: <2ad655ca-7003-4030-bb2d-1c4bcfda30cc@redhat.com>
 From: Max Kellermann <max.kellermann@ionos.com>
-Date: Mon, 1 Sep 2025 17:02:41 +0200
-X-Gm-Features: Ac12FXwscizWLWhMN1KX5yHTr-lGd0ZaL5gCF07LzPcgk8nWDqkiCbWTaVe_QQY
-Message-ID: <CAKPOu+-_E6qKmRo8UXg+5wy9fACX5JHwqjV6uou6aueA_Y7iRA@mail.gmail.com>
-Subject: Re: [PATCH v5 06/12] mm, s390: constify mapping related test
- functions for improved const-correctness
+Date: Mon, 1 Sep 2025 17:06:18 +0200
+X-Gm-Features: Ac12FXwds-_H2NdWifPwev4VbqOwXfa3OcMVFnDeIo9bGQG09tjqsarnzZrb6S4
+Message-ID: <CAKPOu+-_bPwE4sCcb6n-nfi3nWy6L0gBAoHgRz3qwdUHByE_Lg@mail.gmail.com>
+Subject: Re: [PATCH v5 08/12] mm: constify arch_pick_mmap_layout() for
+ improved const-correctness
 To: David Hildenbrand <david@redhat.com>
 Cc: akpm@linux-foundation.org, axelrasmussen@google.com, yuanchu@google.com, 
 	willy@infradead.org, hughd@google.com, mhocko@suse.com, 
@@ -105,14 +105,37 @@ Cc: akpm@linux-foundation.org, axelrasmussen@google.com, yuanchu@google.com,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 1, 2025 at 3:54=E2=80=AFPM David Hildenbrand <david@redhat.com>=
+On Mon, Sep 1, 2025 at 3:58=E2=80=AFPM David Hildenbrand <david@redhat.com>=
  wrote:
-> > -int vma_is_stack_for_current(struct vm_area_struct *vma);
-> > +int vma_is_stack_for_current(const struct vm_area_struct *vma);
+> > index 2201da0afecc..0232d983b715 100644
+> > --- a/include/linux/sched/mm.h
+> > +++ b/include/linux/sched/mm.h
+> > @@ -178,7 +178,7 @@ static inline void mm_update_next_owner(struct mm_s=
+truct *mm)
+> >   #endif
+> >
+> >   extern void arch_pick_mmap_layout(struct mm_struct *mm,
+> > -                               struct rlimit *rlim_stack);
+> > +                               const struct rlimit *rlim_stack);
+> >
+> >   unsigned long
+> >   arch_get_unmapped_area(struct file *filp, unsigned long addr,
+> > @@ -211,7 +211,7 @@ generic_get_unmapped_area_topdown(struct file *filp=
+, unsigned long addr,
+> >                                 unsigned long flags, vm_flags_t vm_flag=
+s);
+> >   #else
+> >   static inline void arch_pick_mmap_layout(struct mm_struct *mm,
+> > -                                      struct rlimit *rlim_stack) {}
+> > +                                      const struct rlimit *rlim_stack)=
+ {}
+> >   #endif
 >
-> Should this also be *const ?
+> Should both these cases also use *const?
+>
+> (for the latter we probably don't care either, but maybe just to be
+> consistent)
 
-No. These are function protoypes. A "const" on a parameter value
-(pointer address, not pointed-to memory) makes no sense on a
-prototype.
+Actually, it would *only* make sense on the latter, because the former
+is a prototype...
 
