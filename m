@@ -1,70 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-59837-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59838-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 627E3B3E517
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 15:32:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F38EB3E530
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 15:35:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 621CC1684E8
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 13:32:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A4691A82BF8
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 13:36:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0CAA33472B;
-	Mon,  1 Sep 2025 13:31:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D633C335BC6;
+	Mon,  1 Sep 2025 13:35:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="HJOFeLbK";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="SgrxJdEp"
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="qOIcHpD4";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Z6UfiGM2"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from flow-b2-smtp.messagingengine.com (flow-b2-smtp.messagingengine.com [202.12.124.137])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7FE1C84CB;
-	Mon,  1 Sep 2025 13:31:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07074304BCE;
+	Mon,  1 Sep 2025 13:35:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756733510; cv=none; b=nJM4MKp75pV8uUafCX9/20BLbph7GXFZWzwx0Xky7V7H4mjUFkBLGOe9+HZ6MXmSi3xb6tFQrAjSw1xwNk/EN0Ob8OvTfNdaikQ5CuzH81eQigaoqNKwiVVKCVtuJ9/yGtWwq9jNVkA0SECuf1Ik4/9jaqBmHkablw9w+ma2re4=
+	t=1756733734; cv=none; b=IwkqC4Oh0ED9p4+SG5b+g+kYjTA0PCVHMzkXmUxOCyb8HlVWpIslyaHb6VB3jRyObhGOQ+j6034SvnI6bMtQLD6oVJ4RtRofrDyQxZtUcCqaO1mIsqSw94MrmpRdu9/UU85pKViXhReSMaiLevZf/xGdOZ770xpUbCdX0VlYa3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756733510; c=relaxed/simple;
-	bh=Eznu89d4Wi9DxarExeHtKpzVjwvcq68i7OTy3S868gA=;
+	s=arc-20240116; t=1756733734; c=relaxed/simple;
+	bh=AnVy+GFpTqM3XIwnfxspH9w/hhNpLd3QoIWawv7MRX0=;
 	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=t3k4lSHyllXzWf462pGHVJIwMlt0LFQRFeONbsEASjZ/RAescQsV3kanuYd7A4wsIg7w3dz66mc9v3gQnIbbNrB6FiGjgSy20p4KbYZdlnBBH4HwJPceNe3cQOFyg5RhzgB1mGQ2Ay2f1DsIof4slTi3a9zLMk0G2UVH1rivHyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=HJOFeLbK; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=SgrxJdEp; arc=none smtp.client-ip=202.12.124.137
+	 Subject:Content-Type; b=ZXDfIqWnseQ8zi9vkMuFr6dB1ri7hqSh8ioR7brLIswWAePNAg9ONGXUb9SZTeOnKpn/J9AKtDA6RLU+gmmpNtGi8FGxnx6kZ4h2W+8vSm3CLHp9sgjPhaTp7EdlxfaxfNn7ExvVY4Zdl1O5xEN1SQnY2pwZTqavHL9aSlMhQMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=qOIcHpD4; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Z6UfiGM2; arc=none smtp.client-ip=202.12.124.137
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailflow.stl.internal (Postfix) with ESMTP id DB5981300C62;
-	Mon,  1 Sep 2025 09:31:46 -0400 (EDT)
+	by mailflow.stl.internal (Postfix) with ESMTP id 7AFA51300C7E;
+	Mon,  1 Sep 2025 09:35:30 -0400 (EDT)
 Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Mon, 01 Sep 2025 09:31:47 -0400
+  by phl-compute-05.internal (MEProxy); Mon, 01 Sep 2025 09:35:31 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
 	:cc:content-transfer-encoding:content-type:content-type:date
 	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1756733506;
-	 x=1756740706; bh=Eznu89d4Wi9DxarExeHtKpzVjwvcq68i7OTy3S868gA=; b=
-	HJOFeLbKHaYEFcpujtYi0UQgoIXOL1xP4OwwynCD84swzMtLipUsunnbT4hVqPEN
-	wVE41qx2dhs0FBl9u7JPuVJhHifoAxjGT0sJrob25NGhOnKXoveJaBFJqW4nvgog
-	halZU6spZuFP4kbS8kc26sPVBVsv74LttHLcedp085AaoTT4gBVLCmbtd+KXgDRJ
-	eq/kSjKLy3gTJzFeYJ4ziz+zY2pF0DOCuVPDCxmJHTv0zZaXMuetiQ92eXeOcc2F
-	7k+jMiBLq8BEp997KeUtRmTuyEAQWlQImm59MK8krOpJLrkQ/PRATyIs4ZDTjD9d
-	UOMihPRQfY4LUHkKBvJ4fg==
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1756733730;
+	 x=1756740930; bh=AnVy+GFpTqM3XIwnfxspH9w/hhNpLd3QoIWawv7MRX0=; b=
+	qOIcHpD4d/ZwPxo1YAsCo06kvto8t7fcl/eyXQIg6cyMQZbfFLNJfqA2efdp4Xsl
+	SIxwT8NGSQEC1RYPKlI0w/9nHoTAjYhQnSNteytsGnnBue+kcc/ExwpMSrzbmjfu
+	+oboS1XJQ4PeLkgo/1t43q1StwLR6V2MDXQTVGUDUXS1g42rUqUbMAM5+WH8VnSH
+	kaWZ18CwqCxP7TO5BT4ZAGk7Pn1Z/8/XDfGh4tAITg3Z8HdEgvBouVWrHd0xoAiO
+	qv4oRiSq3Mhf0KE3i7RjlwcZNN7oiL5/3iv0waT1HbgOZ3HCFVNC+vRq22I7Wz7v
+	QiBDfGjrNaidFxuWoPXK+g==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1756733506; x=
-	1756740706; bh=Eznu89d4Wi9DxarExeHtKpzVjwvcq68i7OTy3S868gA=; b=S
-	grxJdEpeZNejb8yQpBRVyN+Ths0LzXhKDaDBWou1JQCaPeSjVvWd9/YmPtm77slz
-	0cz2VUn0flJuQpLgACGwCjuYr16Jj88RIj++Q7EJ5BZSfqGZKgr0kLHoehog9vlO
-	L1PVI0bfQGloEyCj/gXxGtq1tskacB4mM9Qdq6CYs7C5l1Owjnxvia7IhF2yYeVD
-	tFHw9NizDJH9T7aNo7YjjudTZwCuL4FTybBDwWInmhz/kF/lFSj0Iuz0s1u5BHRl
-	2/eSCTaJEfU02XDVO5TgHwhPkp6DB8xio2jzb/t45jROB5g0jH8NPrWXN00PJms4
-	BnrmLNG3JYC8werAD4U+Q==
-X-ME-Sender: <xms:PKC1aDMBxgovMWLfWBd4cRlSrb-ybuzfQI0GT1e7b8ntvE5aeaLv1g>
-    <xme:PKC1aN9wXBjEJopf-cXpj02M3MqL0le4fWXfa1yZ3rC1GwCwcVEcUYv4-_AatOfTw
-    x2hty0_mKEbKARcuGs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduledvvdekucetufdoteggodetrf
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1756733730; x=
+	1756740930; bh=AnVy+GFpTqM3XIwnfxspH9w/hhNpLd3QoIWawv7MRX0=; b=Z
+	6UfiGM2GYlX65O5Ey7QGyjFCizAqA3njGjv2QOyClu/45tAEoEx/z9QgRMVG5HeV
+	ODEa9zq+SkxT4HK/sT2Z2p+3y0/09IByh/EYZXx8iPkwddba1QJoCw3toAY9Cqmh
+	uEvx6MVBMliUWsip9krIKZFatfc1eTwMW0/JqanjpnOwaBCZcbmS08h0DzSY5/AP
+	VCVuvnUWpfFVEx00ajamxslNcioSo4mBsj2pJRwrsrngDwvDm+oUvc585SdqW/5z
+	CdkLxvHzYdE246uNJrgMC6ReejbZyVPXl+8+TxNnGum8VRQnEWBh0r2We7tP9qb9
+	sDNDlmF6bCjMpL33KdmCw==
+X-ME-Sender: <xms:IKG1aMQwxq2uf88nuV79bYK09ttAF_R0DpR7oz4WMku9FMIAIPdCLw>
+    <xme:IKG1aJz32EGVu-5yyvyXkWuHjTe7X7Qt_imSxyYVjRjU14SyYvQK6xEt2FZsTIHs-
+    QaUd1pUS9EIVX5_0Dc>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduledvvdelucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
     rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
     gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
@@ -81,14 +81,14 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduledvvdekucetufdote
     lhdrohhrghdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrh
     hnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqhhgvgigrghhonhesvhhgvghrrdhk
     vghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:PKC1aHc_SneP4oZaIlm2I0mCWaMkxtDlvTv0V8gC3D_V0OMUyVTyCg>
-    <xmx:PKC1aE8yKA6wsd2k0UEDrRf8yTwVmtAyR9ODXYDtKEh0GQKBOKOvXg>
-    <xmx:PKC1aFjVN15GFN05gLCMPuoMX46HJi2CESG5C-2YIhXrmWCJSxO38A>
-    <xmx:PKC1aA-hZ0ZP3kMXoEQDgMK-syJF8YOFOM8ORPdWBYA4Xa6z8T3pxQ>
-    <xmx:QqC1aMZPlus7-M4xtUxEkoNCXlTlemB034wmHs0FUL7IvjuAIAxHGZ59>
+X-ME-Proxy: <xmx:IKG1aPBOF7MlhkeXxxwHUspwfq5z0bqgVLjs4_YsC5x1Qxqo58MDyg>
+    <xmx:IKG1aNR-6vGVYk9S1f7DHAG4j6tevQ2cucQurzFccUuogc2meVCYnw>
+    <xmx:IKG1aPnnTcnPRyFHNopcc5_EWtgusqmBQdNIFJ0E4Zv79ww02dobGg>
+    <xmx:IKG1aJw19n0_wzF-q0QyrKWE0FfNyQrm2u0uSJXLQHPqE0m-hNUCMw>
+    <xmx:IqG1aB8N59dv7ZPMLV-fMUZ7orQprZCTCGz8favquGy8quF5yiHXUgyT>
 Feedback-ID: i56a14606:Fastmail
 Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 68A5D700068; Mon,  1 Sep 2025 09:31:40 -0400 (EDT)
+	id 33FF5700065; Mon,  1 Sep 2025 09:35:28 -0400 (EDT)
 X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -96,8 +96,8 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: A1XJ5FccVF4B
-Date: Mon, 01 Sep 2025 15:30:20 +0200
+X-ThreadId: AWRA786TDMiJ
+Date: Mon, 01 Sep 2025 15:35:06 +0200
 From: "Arnd Bergmann" <arnd@arndb.de>
 To: "schuster.simon@siemens-energy.com" <schuster.simon@siemens-energy.com>,
  "Dinh Nguyen" <dinguyen@kernel.org>,
@@ -195,13 +195,13 @@ Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
  linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
  linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
  sparclinux@vger.kernel.org, linux-um@lists.infradead.org
-Message-Id: <78ca3a1f-2ed9-4450-95ef-d690cf4aace1@app.fastmail.com>
+Message-Id: <ebe9be04-274b-4791-b883-198320cab886@app.fastmail.com>
 In-Reply-To: 
- <20250901-nios2-implement-clone3-v2-3-53fcf5577d57@siemens-energy.com>
+ <20250901-nios2-implement-clone3-v2-2-53fcf5577d57@siemens-energy.com>
 References: 
  <20250901-nios2-implement-clone3-v2-0-53fcf5577d57@siemens-energy.com>
- <20250901-nios2-implement-clone3-v2-3-53fcf5577d57@siemens-energy.com>
-Subject: Re: [PATCH v2 3/4] arch: copy_thread: pass clone_flags as u64
+ <20250901-nios2-implement-clone3-v2-2-53fcf5577d57@siemens-energy.com>
+Subject: Re: [PATCH v2 2/4] copy_process: pass clone_flags as u64 across calltree
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
@@ -218,12 +218,13 @@ On Mon, Sep 1, 2025, at 15:09, Simon Schuster via B4 Relay wrote:
 > (CLONE_CLEAR_SIGHAND and CLONE_INTO_CGROUP) are evaluated, this is still
 > undesirable in terms of the principle of least surprise.
 >
-> Thus, this commit fixes all relevant interfaces of the copy_thread
-> function that is called from copy_process to consistently pass
-> clone_flags as u64, so that no truncation to 32-bit integers occurs on
-> 32-bit architectures.
+> Thus, this commit fixes all relevant interfaces of callees to
+> sys_clone3/copy_process (excluding the architecture-specific
+> copy_thread) to consistently pass clone_flags as u64, so that
+> no truncation to 32-bit integers occurs on 32-bit architectures.
 >
 > Signed-off-by: Simon Schuster <schuster.simon@siemens-energy.com>
+> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
 Reviewed-by: Arnd Bergmann <arnd@arndb.de>
 
