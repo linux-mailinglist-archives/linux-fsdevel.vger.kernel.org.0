@@ -1,168 +1,242 @@
-Return-Path: <linux-fsdevel+bounces-59896-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59897-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AF30B3ED33
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 19:12:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 031EEB3ED3D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 19:17:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EC7817B414
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 17:11:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50807189D381
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 17:17:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4215320A37;
-	Mon,  1 Sep 2025 17:11:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93CA430F558;
+	Mon,  1 Sep 2025 17:17:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TUUI4mWI"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jyThNmLZ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ejxyh8TL";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jyThNmLZ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ejxyh8TL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C59A306492;
-	Mon,  1 Sep 2025 17:11:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FEC32D5959
+	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Sep 2025 17:17:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756746666; cv=none; b=gES8A/shU2vYcdYfO/Rf9Pz9ZNnDkwLZ5ad1gqqQbxGy5MYts+QIxvONSv+8Jf9HvrigzMnq28p6Qx0LZCL5HcaNykhOPxxtZaBdZReKDVkYkV4uD7flDadUFc6Esitbu1udCH7SkP7z1Hg9GNjTEF/aqSUd4ZR1RhAuOhMnHOQ=
+	t=1756747032; cv=none; b=B83ziORlfipUgAEN6Ikrbw6u9qa/6pWt0PzP0YxkqpQ7po3m+J1WduwLQa6hXdn78MOqo2ww8uMu6JXxcqbu3vG2sZkAIiKb2SMa3pj91gPPgezRHvdCVHNPvKDlmp1so/qdbwnsZYOMc+s0FHT8lWAQ1pjExmJmCED7bhxC1Aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756746666; c=relaxed/simple;
-	bh=4H0TvV5SATbPpUhZV/kpTrbxsbMRGPlfcGGMf566Pzg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=P5rMcy/J9vUgWL5tMKlq0/cHEbOU+JzIz23JsnhjLkcBPIgTRsnIJuqPDSA2KKh5JSxof9N6zpaPlnCExVBWw8fZTGnW9naloHZpUaEzua650R+vaE5LcbGqRROnr9ZO3uQLd4zY7eAPypjPH9sNYd2yemVIi18TA6zfyjRKGiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TUUI4mWI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20273C4CEF0;
-	Mon,  1 Sep 2025 17:10:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756746665;
-	bh=4H0TvV5SATbPpUhZV/kpTrbxsbMRGPlfcGGMf566Pzg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=TUUI4mWIbQYkLpKOkdoxxSUBAWTkDGIYzdhS0o8slwr8l2r1Piu0dUL/l4nBep+rG
-	 0yJmQw4jAg/OFnBDLBuTCbytHtcsfNnnUgNkZT3gLgEb3ShbgGVAKwQxkOyPSP18C8
-	 7llU/i7XIFhO9U0XbVOYJRMrxGrbX605fmK7MccA+FrMFzq540oBoLsId10kVkUbl0
-	 lAs6X6RqdrVdsl02+4MM4ddwO3muSKKRwdLGGmbbS8cho5TRe0jnQdsfS22uYIMObg
-	 eUQz4JMDeISgSUyU3IB3lnscaMdUMFfjTXMsM05sKQlT4UprJfC0pJ8VwXpakPhqL8
-	 FF3vY5xHeeBDA==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Pratyush Yadav <pratyush@kernel.org>,  Pasha Tatashin
- <pasha.tatashin@soleen.com>,  jasonmiu@google.com,  graf@amazon.com,
-  changyuanl@google.com,  rppt@kernel.org,  dmatlack@google.com,
-  rientjes@google.com,  corbet@lwn.net,  rdunlap@infradead.org,
-  ilpo.jarvinen@linux.intel.com,  kanie@linux.alibaba.com,
-  ojeda@kernel.org,  aliceryhl@google.com,  masahiroy@kernel.org,
-  akpm@linux-foundation.org,  tj@kernel.org,  yoann.congal@smile.fr,
-  mmaurer@google.com,  roman.gushchin@linux.dev,  chenridong@huawei.com,
-  axboe@kernel.dk,  mark.rutland@arm.com,  jannh@google.com,
-  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
-  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
-  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
-  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
-  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
-  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
-  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
-  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
-  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
-  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
-  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
-  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
-  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
-  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
-  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
-  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  saeedm@nvidia.com,  ajayachandra@nvidia.com,  parav@nvidia.com,
-  leonro@nvidia.com,  witu@nvidia.com
-Subject: Re: [PATCH v3 29/30] luo: allow preserving memfd
-In-Reply-To: <20250828124320.GB7333@nvidia.com>
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
-	<20250807014442.3829950-30-pasha.tatashin@soleen.com>
-	<20250826162019.GD2130239@nvidia.com> <mafs0bjo0yffo.fsf@kernel.org>
-	<20250828124320.GB7333@nvidia.com>
-Date: Mon, 01 Sep 2025 19:10:53 +0200
-Message-ID: <mafs0h5xmw12a.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1756747032; c=relaxed/simple;
+	bh=ClflZ8qOwHB0WqbY7rMQ5dsb6W480a75STYmB+fYEKs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LzQ4WnG90k5dcpLupKCaW4W4UawezhmI6iucdwgP7I8lYp8G3eGo+RP4cPaLBLsxzgBIK3uOYyvFB2x/eESS9PK89W9C6hlD4hAhtjVabRbIEWqEidyRC5k5mphEFzMY7sJScvQPASv0w59I9Vmh0jPkmjK7twdgLdER0rJRmTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jyThNmLZ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ejxyh8TL; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jyThNmLZ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ejxyh8TL; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 8A4561F38C;
+	Mon,  1 Sep 2025 17:17:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756747028; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ib5oxFWlTgIvX9BDarLdlOP68gVpRDd8UpFo0VxcSfQ=;
+	b=jyThNmLZvne2S8chS/u9vlz7WkJ6+qVGUwN3Sls3HMs2zicDx8rK0nj5qbmglDIyW6vTe7
+	dbLRBxDw47vmdcwKysmMHl/Q1n0MPDWrOjSdaVYCIznlFUxI1vB/QAY1xnREg4WxvkgJjA
+	0E6i1OLH9xp3Bv4QEswM7fZa3Hc0zQA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756747028;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ib5oxFWlTgIvX9BDarLdlOP68gVpRDd8UpFo0VxcSfQ=;
+	b=Ejxyh8TLpQuWtfaAK6UvAo1nBl7HkTcfAkt3hmBHJZWkU3/bSR8fJfUWK0mu4csRY9hFr/
+	Wv3bHCLCG2a1NqCg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756747028; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ib5oxFWlTgIvX9BDarLdlOP68gVpRDd8UpFo0VxcSfQ=;
+	b=jyThNmLZvne2S8chS/u9vlz7WkJ6+qVGUwN3Sls3HMs2zicDx8rK0nj5qbmglDIyW6vTe7
+	dbLRBxDw47vmdcwKysmMHl/Q1n0MPDWrOjSdaVYCIznlFUxI1vB/QAY1xnREg4WxvkgJjA
+	0E6i1OLH9xp3Bv4QEswM7fZa3Hc0zQA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756747028;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ib5oxFWlTgIvX9BDarLdlOP68gVpRDd8UpFo0VxcSfQ=;
+	b=Ejxyh8TLpQuWtfaAK6UvAo1nBl7HkTcfAkt3hmBHJZWkU3/bSR8fJfUWK0mu4csRY9hFr/
+	Wv3bHCLCG2a1NqCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7A6231378C;
+	Mon,  1 Sep 2025 17:17:08 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id hzLaHRTVtWhKBQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 01 Sep 2025 17:17:08 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id B9B4AA099B; Mon,  1 Sep 2025 19:17:07 +0200 (CEST)
+Date: Mon, 1 Sep 2025 19:17:07 +0200
+From: Jan Kara <jack@suse.cz>
+To: brauner@kernel.org
+Cc: Xing Guo <higuoxing@gmail.com>, amir73il@gmail.com, jack@suse.cz, 
+	jhubbard@nvidia.com, linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	miklos@szeredi.hu, shuah@kernel.org, kernel test robot <oliver.sang@intel.com>
+Subject: Re: [PATCH] selftests/fs/mount-notify: Fix compilation failure.
+Message-ID: <e4aftint6uauii7p5dvnfd2byllwvzu5hjfxwpa3la3pigmae7@ahw76agoljhh>
+References: <CAOQ4uxjJHscMEcAahVpbUDcDet7D8xa=X2rLr33femZsCy6t0A@mail.gmail.com>
+ <20250813075523.102069-1-higuoxing@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250813075523.102069-1-higuoxing@gmail.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,suse.cz,nvidia.com,vger.kernel.org,szeredi.hu,kernel.org,intel.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-Hi Jason,
+On Wed 13-08-25 15:55:23, Xing Guo wrote:
+> Commit c6d9775c2066 ("selftests/fs/mount-notify: build with tools include
+> dir") introduces the struct __kernel_fsid_t to decouple dependency with
+> headers_install.  The commit forgets to define a macro for __kernel_fsid_t
+> and it will cause type re-definition issue.
+> 
+> Reported-by: kernel test robot <oliver.sang@intel.com>
+> Closes: https://lore.kernel.org/oe-lkp/202508110628.65069d92-lkp@intel.com
+> Signed-off-by: Xing Guo <higuoxing@gmail.com>
+> Acked-by: Amir Goldstein <amir73il@gmail.com>
 
-On Thu, Aug 28 2025, Jason Gunthorpe wrote:
+Christian, quick search didn't find this patch in your tree. Any reason you
+didn't pick it up?
 
-> On Wed, Aug 27, 2025 at 05:03:55PM +0200, Pratyush Yadav wrote:
->
->> I think we need something a luo_xarray data structure that users like
->> memfd (and later hugetlb and guest_memfd and maybe others) can build to
->> make serialization easier. It will cover both contiguous arrays and
->> arrays with some holes in them.
->
-> I'm not sure xarray is the right way to go, it is very complex data
-> structure and building a kho variation of it seems like it is a huge
-> amount of work.
->
-> I'd stick with simple kvalloc type approaches until we really run into
-> trouble.
->
-> You can always map a sparse xarray into a kvalloc linear list by
-> including the xarray index in each entry.
->
-> Especially for memfd where we don't actually expect any sparsity in
-> real uses cases there is no reason to invest a huge effort to optimize
-> for it..
+								Honza
 
-Full xarray is too complex, sure. But I think a simple sparse array with
-xarray-like properties (4-byte pointers, values using xa_mk_value()) is
-fairly simple to implement. More advanced features of xarray like
-multi-index entries can be added later if needed.
-
-In fact, I have a WIP version of such an array and have used it for
-memfd preservation, and it looks quite alright to me. You can find the
-code at [0]. It is roughly 300 lines of code. I still need to clean it
-up to make it post-able, but it does work.
-
-Building kvalloc on top of this becomes trivial.
-
-[0] https://git.kernel.org/pub/scm/linux/kernel/git/pratyush/linux.git/commit/?h=kho-array&id=cf4c04c1e9ac854e3297018ad6dada17c54a59af
-
->
->> As I explained above, the versioning is already there. Beyond that, why
->> do you think a raw C struct is better than FDT? It is just another way
->> of expressing the same information. FDT is a bit more cumbersome to
->> write and read, but comes at the benefit of more introspect-ability.
->
-> Doesn't have the size limitations, is easier to work list, runs
-> faster.
->
->> >  luo_store_object(&memfd_luo_v0, sizeof(memfd_luo_v0), <.. identifier for this fd..>, /*version=*/0);
->> >  luo_store_object(&memfd_luo_v1, sizeof(memfd_luo_v1), <.. identifier for this fd..>, /*version=*/1);
->> 
->> I think what you describe here is essentially how LUO works currently,
->> just that the mechanisms are a bit different.
->
-> The bit different is a very important bit though :)
->
-> The versioning should be first class, not hidden away as some emergent
-> property of registering multiple serializers or something like that.
-
-That makes sense. How about some simple changes to the LUO interfaces to
-make the version more prominent:
-
-	int (*prepare)(struct liveupdate_file_handler *handler,
-		       struct file *file, u64 *data, char **compatible);
-
-This lets the subsystem fill in the compatible (AKA version) (string
-here, but you can make it an integer if you want) when it serialized its
-data.
-
-And on restore side, LUO can pass in the compatible:
-
-	int (*retrieve)(struct liveupdate_file_handler *handler,
-			u64 data, char *compatible, struct file **file);
-
-
+> ---
+>  .../mount-notify/mount-notify_test.c           | 17 ++++++++---------
+>  .../mount-notify/mount-notify_test_ns.c        | 18 ++++++++----------
+>  2 files changed, 16 insertions(+), 19 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/filesystems/mount-notify/mount-notify_test.c b/tools/testing/selftests/filesystems/mount-notify/mount-notify_test.c
+> index 63ce708d93ed..e4b7c2b457ee 100644
+> --- a/tools/testing/selftests/filesystems/mount-notify/mount-notify_test.c
+> +++ b/tools/testing/selftests/filesystems/mount-notify/mount-notify_test.c
+> @@ -2,6 +2,13 @@
+>  // Copyright (c) 2025 Miklos Szeredi <miklos@szeredi.hu>
+>  
+>  #define _GNU_SOURCE
+> +
+> +// Needed for linux/fanotify.h
+> +typedef struct {
+> +	int	val[2];
+> +} __kernel_fsid_t;
+> +#define __kernel_fsid_t __kernel_fsid_t
+> +
+>  #include <fcntl.h>
+>  #include <sched.h>
+>  #include <stdio.h>
+> @@ -10,20 +17,12 @@
+>  #include <sys/mount.h>
+>  #include <unistd.h>
+>  #include <sys/syscall.h>
+> +#include <sys/fanotify.h>
+>  
+>  #include "../../kselftest_harness.h"
+>  #include "../statmount/statmount.h"
+>  #include "../utils.h"
+>  
+> -// Needed for linux/fanotify.h
+> -#ifndef __kernel_fsid_t
+> -typedef struct {
+> -	int	val[2];
+> -} __kernel_fsid_t;
+> -#endif
+> -
+> -#include <sys/fanotify.h>
+> -
+>  static const char root_mntpoint_templ[] = "/tmp/mount-notify_test_root.XXXXXX";
+>  
+>  static const int mark_cmds[] = {
+> diff --git a/tools/testing/selftests/filesystems/mount-notify/mount-notify_test_ns.c b/tools/testing/selftests/filesystems/mount-notify/mount-notify_test_ns.c
+> index 090a5ca65004..9f57ca46e3af 100644
+> --- a/tools/testing/selftests/filesystems/mount-notify/mount-notify_test_ns.c
+> +++ b/tools/testing/selftests/filesystems/mount-notify/mount-notify_test_ns.c
+> @@ -2,6 +2,13 @@
+>  // Copyright (c) 2025 Miklos Szeredi <miklos@szeredi.hu>
+>  
+>  #define _GNU_SOURCE
+> +
+> +// Needed for linux/fanotify.h
+> +typedef struct {
+> +	int	val[2];
+> +} __kernel_fsid_t;
+> +#define __kernel_fsid_t __kernel_fsid_t
+> +
+>  #include <fcntl.h>
+>  #include <sched.h>
+>  #include <stdio.h>
+> @@ -10,21 +17,12 @@
+>  #include <sys/mount.h>
+>  #include <unistd.h>
+>  #include <sys/syscall.h>
+> +#include <sys/fanotify.h>
+>  
+>  #include "../../kselftest_harness.h"
+> -#include "../../pidfd/pidfd.h"
+>  #include "../statmount/statmount.h"
+>  #include "../utils.h"
+>  
+> -// Needed for linux/fanotify.h
+> -#ifndef __kernel_fsid_t
+> -typedef struct {
+> -	int	val[2];
+> -} __kernel_fsid_t;
+> -#endif
+> -
+> -#include <sys/fanotify.h>
+> -
+>  static const char root_mntpoint_templ[] = "/tmp/mount-notify_test_root.XXXXXX";
+>  
+>  static const int mark_types[] = {
+> -- 
+> 2.50.1
+> 
 -- 
-Regards,
-Pratyush Yadav
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
