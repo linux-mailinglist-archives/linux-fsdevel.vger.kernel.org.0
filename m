@@ -1,87 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-59851-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59852-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B421CB3E62E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 15:55:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76D4AB3E63D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 15:56:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 125473A6851
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 13:54:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E605188DF39
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 13:56:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 581E133A006;
-	Mon,  1 Sep 2025 13:54:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9C2033A019;
+	Mon,  1 Sep 2025 13:55:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bk+Uu3uF"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KFsC/WoP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 137D12F0690
-	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Sep 2025 13:54:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A1A3375C0
+	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Sep 2025 13:55:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756734873; cv=none; b=XHUtG8xPTXybkStYlrEctekV3rQXaym6bP6M/JmgWtWPTxDNntq3F1xbPwRq+cqrAXSX5HAAv9i+RIqF/8lV23xyqfIWwIJ76qi5AMw0lB+lV/2GjbExTeqCj1+6ujv/Neh+ah067tbtPbTGZrQXWc/GcAdt0aBsPgiI7FpeRYA=
+	t=1756734911; cv=none; b=EGmUb5q1SsrXY18m/ZuTMGBfRenfDWLZaPtLz+MdXzNRiaSrN3n4QtvRPI+IDSTrsygsdR/T4nbWkKacav2SjVs5j6TXk7pAVba5DOvyIpkqrad1Xq8wA/qe4F3q4rLylRRxOssWqEPN8ohOr5RVOY4kr20DmOjZdDKsWLARONo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756734873; c=relaxed/simple;
-	bh=7sJXU+F5zTloTS0kBJT1dReHDHNTsNheaixrdfLA7eo=;
+	s=arc-20240116; t=1756734911; c=relaxed/simple;
+	bh=TRzVpQ25hrXY2A1SfUneI5clxPubexwphI4QhSKQSKU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=cvszU+YIpnwS5TlSW1bR7gZCL2+L6J2TSKZebEwiWRsjE2RQyEqU5GAY71TvxSuVubxZU0Nbg0HunkVw5GZITNvnK8ZG+JJKRdFFacjQNSJ4e/aRi8DWjWjjMzXOz0u/tHUi7wtdk1JkbDx++7rLudKRCuTQ7WvxWqdf71mAPos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bk+Uu3uF; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=b4pw3rqFGB5kjVSVXEWlQTdvqWFnn1hvYTYTxDppkpJ1ax5NDKgyuv9HH6bFp9GVdSoVBRd7Gsq2x/IC7o0kjdLosHlznoah4lsK4DV7vU2VsIfk/hVJs9k/qUhJGixnpoIBPUsR0SQug/XEbImQZYlC364rgt+oQkge8NLlAcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KFsC/WoP; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756734871;
+	s=mimecast20190719; t=1756734909;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=rkOxHsJ9lyozFAluE91xfQ0cGnpBD4cOEv8yb086+4A=;
-	b=bk+Uu3uF3+SMahdA8lqQj/bUH6EI8N6F1LjeJzaM+nKKqt25J+fzluzf2Pa5M/gFAxh7tB
-	T53NId8AO3eVxXFCmdinDfIARH+sVdjAaudLQ3eKsZ9ECGEzs87IShRsYqtWV0DNKKv2nK
-	Bir7vckDYLZl5NWnz4JZLchKyh8sZr0=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=NriXVnZPHaqiO5Dj5qEVt/Cua6PNSalsoubuoEiq6aw=;
+	b=KFsC/WoPiX1BVfhc/NhwtJHphFXsGZLrn2F+gsgIIKScG1zYnBfpEtwxcMkg7sfLSavRhb
+	ByTz4b4eEaeqOZpccCyhYnKQQjtXPDHBYKEF44HtbPAQLfsFjCX8AtmVZHc2Hg8grOSWZ2
+	kxoQj7NazfDxo2Ak+s4FoT639BzaAPg=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-679-7As7UV93MxaB_-hbQ4aa4g-1; Mon, 01 Sep 2025 09:54:30 -0400
-X-MC-Unique: 7As7UV93MxaB_-hbQ4aa4g-1
-X-Mimecast-MFC-AGG-ID: 7As7UV93MxaB_-hbQ4aa4g_1756734869
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45b74ec7cd0so26745945e9.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Sep 2025 06:54:30 -0700 (PDT)
+ us-mta-662-7MfjrOy0PaiWA1-0tIkdAQ-1; Mon, 01 Sep 2025 09:55:06 -0400
+X-MC-Unique: 7MfjrOy0PaiWA1-0tIkdAQ-1
+X-Mimecast-MFC-AGG-ID: 7MfjrOy0PaiWA1-0tIkdAQ_1756734905
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45b83ae1717so21649625e9.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Sep 2025 06:55:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756734869; x=1757339669;
+        d=1e100.net; s=20230601; t=1756734905; x=1757339705;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rkOxHsJ9lyozFAluE91xfQ0cGnpBD4cOEv8yb086+4A=;
-        b=rXq8vg41uss+Zqj0fP/Rn4y26JS3esTffgdI86BRBsVsav0xtVyaFqUaNZWzc2AOee
-         hhxbC6M/RF05hRCK8JUUtsMa4XdIjaw3n+YkqQXtj98q+kzwpiXMz7T3iiYPHugIRWiO
-         Fqn7uqnPvAqkGA9D0+NS2DV0mzDPVTsTDKgWjVNn22Mf7GPEX3awPED/ahefghmPXzUk
-         fDLNOda2NRQ5PPawSFQc0Szv3R9kfY37MnjYmwpT3/gizWF3b0CS87DFT4liz7UqJq3j
-         6bGkZgmOV9iGK6UtICWTpleCcpDtg7e8nbksf8T1IlmhW73Uy4pg1YRCmlNkrzTczlTk
-         qklQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVSFeo0kD1fh2HB8Z7d36mK5DCnPcvh0kl6uHtXv3x/WIWhEUiXuOLDLoRDFR1SoOUwF5Pa0XksG8OlCYme@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHY8HnPubQ5P3kRTdjapaOVlKtL/1BLcCWZZsG8HPtj5s1tTv6
-	pu/6VMCqzmSt8il+HX6RTLF1MmeZjiRyuo8dX+YgemSWpbnAe4YsFALgQAWcl+VxV54bjtD8+of
-	tQUjRMoiDqaDqfq2+GIeUBWYgXiOyBBYyyaFHzgOLPm5dQDlmYtO6riXRkJ8X1v7t4cQ=
-X-Gm-Gg: ASbGncvHC8LEgSbr6IQk/QY2JHLHkyn6358P18ccHaThyEcViqWb3lEbuwqwl3LFyaL
-	ItVpUF4EF23kKgrvgeL/ALM5FPphZzyF0N4OkszLARkBaMvt9bnazehkmv7lc1UORjpunFDi5Mf
-	McUtOuzS9naPli04sO6K6xkjfbYThWiNmK/N+tm8FEfeMmi7EQeIS7rElWWe2jHvedg/TDNxcjX
-	CKA/U9eMxajlKOSHRPhjqjzBe6R2O8b6uXxDh+KPrye/wKrCgCosrOc64N7jCBlTixt8kM9I7ai
-	JlQ4CxpDEGAXwPuETDH/fuojle2oYlLYa+xM+lGSiVYNo/odK5yhV+NOzJ7A0OwQ5LLR1Qk/jDG
-	2MSqUlvNJaxPYCAvqZxH6/56qILhuBl/EQfEGQXF0jy2hxQGZ39b3OWufRfK9y3/SGhE=
-X-Received: by 2002:a05:600c:8b23:b0:459:d5d1:d602 with SMTP id 5b1f17b1804b1-45b8553f3ffmr57688735e9.3.1756734868755;
-        Mon, 01 Sep 2025 06:54:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHApjNVFtZLYlxrGhbhPyzStDf2OCbwaNXEbdwjI5RqViWE8PiPULdnUBK5NJLWAEltUwK4fQ==
-X-Received: by 2002:a05:600c:8b23:b0:459:d5d1:d602 with SMTP id 5b1f17b1804b1-45b8553f3ffmr57688155e9.3.1756734868174;
-        Mon, 01 Sep 2025 06:54:28 -0700 (PDT)
+        bh=NriXVnZPHaqiO5Dj5qEVt/Cua6PNSalsoubuoEiq6aw=;
+        b=CXC1ARqPWpI2iYiXiIbTMrVXk4OQYdi0F4jM1IiIRBFfKo0GyTdmPh31T+6eRp80aJ
+         ihtfseYKs5wuzKOIGWUi8oTUtBspozRoP8IhKggAET/jKckyyEVP4csXUAivFZeD+Cau
+         /zC9bsvtBnmZTS3iHel8rzvSBhppREufecQTv0PUcETSOWTIxSgXwvPprjTR9ZQKSVVN
+         c7GDMljvQwKBLAeycAilPwhkvPKYIG9hRfbbIgk/PZZdAXwVkpUyP/U14lIp79eyuHHq
+         QnHZrlGeC4rHcHl17sA96rDRBFJH2zylMwKTjcBOOezGElWd2XMl9zTmRpm8Qp0JEf/P
+         jojg==
+X-Forwarded-Encrypted: i=1; AJvYcCV8gA9k73x7IsvDJYO27fmV7ECcomnNuMyOawBfAygN8zx+6GQ6zmUJeXdo5IilTLOPAYOuG6zRRabwf0+i@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUM8N0DpWlPRLvg02gBUQEgoZ/VV7Ud0RwKD/BQosyfa65/PXz
+	Us97OQbg4Fb+Z1mVsP45NTVex6Nd5HJ619B9i6SH6rAyJ/ZwHwRDJKdaSnpAMaeQVYZ1mM6zzx/
+	iLuBTEb07yf9nAi+wVEhdIkIKjgNuHbmdwyIjkRIjOB3adeuEXkNI2L0U8GvsUYO78CM=
+X-Gm-Gg: ASbGncvMslPg+a+WpZvV81xzyDqdrLaU89emcGTbE7BXT1gUjMNynV1HCgZzF46RJQn
+	x66fhv1dTs41aw9kJyFHFZn9W0LxS8I0R0lDtdVp90CtBfQuYmptKzvqR6Q86KTugM4eyJnWrgA
+	8D5ZJSrpXCDhhs18zNq/dBU3ma0bKyUUL8/0Ic+isYGy6o07XH3RWAWgzBWhzc3jPk3+L8qxZVV
+	QMqek+nKV8WZjjI+VymGkp632u/A9Hq/G52lgpDER3JFQ9oL9TQVG+CKeAgld4VO1aDf7f3ZfG4
+	njA5OOKuX29S2VlUdJI57sXvrYRT6KbWEnt7X7vfFMVHgFDDKYBJ14gVfeSEWMMoExU5Zs5rchv
+	xFIgO+mrCuJENR8FEsd7jxDLnSrpAheifaNbtn7HMt2yHpxY6fytb9xDzHqvy4SEASYI=
+X-Received: by 2002:a05:600c:a41:b0:45b:627a:60cf with SMTP id 5b1f17b1804b1-45b8559b8edmr80725795e9.24.1756734904652;
+        Mon, 01 Sep 2025 06:55:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEw9ob70sxuIZ5gwuScW1PzmZuqCETLGf0c2CRTvVo9pjc0fxaGT3edOb/FMXm7G3pI6UFHbw==
+X-Received: by 2002:a05:600c:a41:b0:45b:627a:60cf with SMTP id 5b1f17b1804b1-45b8559b8edmr80725195e9.24.1756734904134;
+        Mon, 01 Sep 2025 06:55:04 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f37:2b00:948c:dd9f:29c8:73f4? (p200300d82f372b00948cdd9f29c873f4.dip0.t-ipconnect.de. [2003:d8:2f37:2b00:948c:dd9f:29c8:73f4])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf275d2717sm15536277f8f.15.2025.09.01.06.54.25
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e9c41cfsm157982965e9.21.2025.09.01.06.55.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Sep 2025 06:54:27 -0700 (PDT)
-Message-ID: <ce720df8-cdf2-492a-9eeb-e7b643bffa91@redhat.com>
-Date: Mon, 1 Sep 2025 15:54:25 +0200
+        Mon, 01 Sep 2025 06:55:03 -0700 (PDT)
+Message-ID: <e695b279-0540-494c-99a8-987179979d58@redhat.com>
+Date: Mon, 1 Sep 2025 15:55:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -89,8 +89,8 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 06/12] mm, s390: constify mapping related test
- functions for improved const-correctness
+Subject: Re: [PATCH v5 07/12] parisc: constify mmap_upper_limit() parameter
+ for improved const-correctness
 To: Max Kellermann <max.kellermann@ionos.com>, akpm@linux-foundation.org,
  axelrasmussen@google.com, yuanchu@google.com, willy@infradead.org,
  hughd@google.com, mhocko@suse.com, linux-kernel@vger.kernel.org,
@@ -111,7 +111,7 @@ To: Max Kellermann <max.kellermann@ionos.com>, akpm@linux-foundation.org,
  linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
  linux-fsdevel@vger.kernel.org
 References: <20250901123028.3383461-1-max.kellermann@ionos.com>
- <20250901123028.3383461-7-max.kellermann@ionos.com>
+ <20250901123028.3383461-8-max.kellermann@ionos.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -158,97 +158,34 @@ Autocrypt: addr=david@redhat.com; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <20250901123028.3383461-7-max.kellermann@ionos.com>
+In-Reply-To: <20250901123028.3383461-8-max.kellermann@ionos.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 01.09.25 14:30, Max Kellermann wrote:
-> We select certain test functions which either invoke each other,
-> functions that are already const-ified, or no further functions.
-> 
-> It is therefore relatively trivial to const-ify them, which
-> provides a basis for further const-ification further up the call
-> stack.
-> 
-> (Even though seemingly unrelated, this also constifies the pointer
-> parameter of mmap_is_legacy() in arch/s390/mm/mmap.c because a copy of
-> the function exists in mm/util.c.)
+> This piece is necessary to make the `rlim_stack` parameter to
+> mmap_base() const.
 > 
 > Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
 > Reviewed-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
-
-Also here, some getters hiding.
-
 > ---
->   arch/s390/mm/mmap.c     |  2 +-
->   include/linux/mm.h      |  6 +++---
->   include/linux/pagemap.h |  2 +-
->   mm/util.c               | 11 ++++++-----
->   4 files changed, 11 insertions(+), 10 deletions(-)
+>   arch/parisc/include/asm/processor.h | 2 +-
+>   arch/parisc/kernel/sys_parisc.c     | 2 +-
+>   2 files changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/arch/s390/mm/mmap.c b/arch/s390/mm/mmap.c
-> index 547104ccc22a..c0f619fb9ab3 100644
-> --- a/arch/s390/mm/mmap.c
-> +++ b/arch/s390/mm/mmap.c
-> @@ -27,7 +27,7 @@ static unsigned long stack_maxrandom_size(void)
->   	return STACK_RND_MASK << PAGE_SHIFT;
->   }
+> diff --git a/arch/parisc/include/asm/processor.h b/arch/parisc/include/asm/processor.h
+> index 4c14bde39aac..dd0b5e199559 100644
+> --- a/arch/parisc/include/asm/processor.h
+> +++ b/arch/parisc/include/asm/processor.h
+> @@ -48,7 +48,7 @@
+>   #ifndef __ASSEMBLER__
 >   
-> -static inline int mmap_is_legacy(struct rlimit *rlim_stack)
-> +static inline int mmap_is_legacy(const struct rlimit *const rlim_stack)
->   {
->   	if (current->personality & ADDR_COMPAT_LAYOUT)
->   		return 1;
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index f70c6b4d5f80..23864c3519d6 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -986,7 +986,7 @@ static inline bool vma_is_shmem(const struct vm_area_struct *vma) { return false
->   static inline bool vma_is_anon_shmem(const struct vm_area_struct *vma) { return false; }
->   #endif
->   
-> -int vma_is_stack_for_current(struct vm_area_struct *vma);
-> +int vma_is_stack_for_current(const struct vm_area_struct *vma);
+>   struct rlimit;
+> -unsigned long mmap_upper_limit(struct rlimit *rlim_stack);
+> +unsigned long mmap_upper_limit(const struct rlimit *rlim_stack);
+>   unsigned long calc_max_stack_size(unsigned long stack_max);
 
-Should this also be *const ?
-
->   
->   /* flush_tlb_range() takes a vma, not a mm, and can care about flags */
->   #define TLB_FLUSH_VMA(mm,flags) { .vm_mm = (mm), .vm_flags = (flags) }
-> @@ -2585,7 +2585,7 @@ void folio_add_pin(struct folio *folio);
->   
->   int account_locked_vm(struct mm_struct *mm, unsigned long pages, bool inc);
->   int __account_locked_vm(struct mm_struct *mm, unsigned long pages, bool inc,
-> -			struct task_struct *task, bool bypass_rlim);
-> +			const struct task_struct *task, bool bypass_rlim);
->   
-
-
-Dito.
-
->   struct kvec;
->   struct page *get_dump_page(unsigned long addr, int *locked);
-> @@ -3348,7 +3348,7 @@ void anon_vma_interval_tree_verify(struct anon_vma_chain *node);
->   	     avc; avc = anon_vma_interval_tree_iter_next(avc, start, last))
->   
->   /* mmap.c */
-> -extern int __vm_enough_memory(struct mm_struct *mm, long pages, int cap_sys_admin);
-> +extern int __vm_enough_memory(const struct mm_struct *mm, long pages, int cap_sys_admin);
->   extern int insert_vm_struct(struct mm_struct *, struct vm_area_struct *);
->   extern void exit_mmap(struct mm_struct *);
->   bool mmap_read_lock_maybe_expand(struct mm_struct *mm, struct vm_area_struct *vma,
-> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-> index 1d35f9e1416e..968b58a97236 100644
-> --- a/include/linux/pagemap.h
-> +++ b/include/linux/pagemap.h
-> @@ -551,7 +551,7 @@ static inline void filemap_nr_thps_dec(struct address_space *mapping)
->   #endif
->   }
->   
-> -struct address_space *folio_mapping(struct folio *);
-> +struct address_space *folio_mapping(const struct folio *folio);
-
-And this one?
+*const like in the other case?
 
 -- 
 Cheers
