@@ -1,96 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-59888-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59889-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42B37B3EB88
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 17:53:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01387B3EB95
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 17:55:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 171BB483177
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 15:48:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58358188527A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 15:53:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 474972D592E;
-	Mon,  1 Sep 2025 15:48:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15304258EE2;
+	Mon,  1 Sep 2025 15:52:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ct3jnp5i";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hOTXJGVS";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ct3jnp5i";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hOTXJGVS"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fGrKAEWB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B03501DEFE8
-	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Sep 2025 15:47:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E442DAD5A
+	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Sep 2025 15:52:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756741679; cv=none; b=DMTwtVW9Os32TS3pSX4SIQrYwUOGYRxPC+qBbFbH2C1qmyeNplVZ1JlKXEYuXj7LvnFSBmmZV4IZUQ161mdtZnmmIEiEP0d9USAl6vrg2LwauUzURmHYKSY/XBmjT235SJgPdnnbZasGl7rcprDb8pEnROFcy0byP+1rV4y4HYI=
+	t=1756741978; cv=none; b=H0gxif3LQlds8cdDL/Ss6VZJtZyyKqNONBGcO4h9Vkr3y6Le2VJjBjzb9cWMj7QLzMshSQPW/QlrKikP3ngmN7sW77Uta4Zro2XJhsRhiEVYuXBKs2rS/7xx4WrbEekMq3ho2jZwrGpvzrgkCtVTNwU9+OTYDDh4kJ8cPO7H3KI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756741679; c=relaxed/simple;
-	bh=MgpMriPGLKRq7FH8ge+nRK+bU6+vk12eDy9J6O/mCV0=;
+	s=arc-20240116; t=1756741978; c=relaxed/simple;
+	bh=Gk5xf+LWqL8BAqZMRhulhezXCkqVROdiR0R2gZqxkY4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ERyWoLnWncsG/CZlrN2fJw9Ofpl9s407dWtKqfAmywhf7llCClRSpNeZFWwtr7QzQ6HIqOwPCGz4ToBYhF1dR7icNJemJ+3oWZt9yhPTpWXE1BP+zh0UxokLeyJ5tmW3AuerHb1XMpV5BzEDcj0SAZOdIr2L1eMXfoOsZEL1Ekc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ct3jnp5i; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hOTXJGVS; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ct3jnp5i; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hOTXJGVS; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 96D91211AA;
-	Mon,  1 Sep 2025 15:47:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756741675; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	 In-Reply-To:Content-Type; b=EnALb5aY/JWtIXtWPHTntAtat3rGejYe5lB4ukC+Xw5yqn2PIHuRB5FAWjAsFTK9XTPUoOHdWmqPdLVzh4b+AFITBNXMXCzmj0E6TVAb7rFz+qOignMlFETyPMT052udJsmFvnxJHFbl/RW3WIdXwVMu6C9Fv/WzZqSnJX0LMOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fGrKAEWB; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756741976;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=D0mY4NbG0lYEzgi4I8LI170lz3CbiR5kVlg7w+BAs38=;
-	b=ct3jnp5iC5jR7VURvO9+/fKNgHql1nMXp2EFgB6pn0tUQ7o3V28QFeQFkXx8D2zc6P0FmE
-	ZlYDPQJmmNOsNKpSVxscKrPpN4URTfuYsBtDv4h+jXxiaE59Mcr5PgMrDv78VarNVfNTUQ
-	YMJ/S7aeiOlNdb8QJn9PxooiCPOcPJI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756741675;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=D0mY4NbG0lYEzgi4I8LI170lz3CbiR5kVlg7w+BAs38=;
-	b=hOTXJGVS57QEL4j5a+FXQFjzd0Yq5Yq+JePlCge3E+E5PUAx76qd2vzd8n+rkbGB5TO+0Y
-	3AVewyyTRBNOHhAQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=ct3jnp5i;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=hOTXJGVS
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756741675; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=D0mY4NbG0lYEzgi4I8LI170lz3CbiR5kVlg7w+BAs38=;
-	b=ct3jnp5iC5jR7VURvO9+/fKNgHql1nMXp2EFgB6pn0tUQ7o3V28QFeQFkXx8D2zc6P0FmE
-	ZlYDPQJmmNOsNKpSVxscKrPpN4URTfuYsBtDv4h+jXxiaE59Mcr5PgMrDv78VarNVfNTUQ
-	YMJ/S7aeiOlNdb8QJn9PxooiCPOcPJI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756741675;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=D0mY4NbG0lYEzgi4I8LI170lz3CbiR5kVlg7w+BAs38=;
-	b=hOTXJGVS57QEL4j5a+FXQFjzd0Yq5Yq+JePlCge3E+E5PUAx76qd2vzd8n+rkbGB5TO+0Y
-	3AVewyyTRBNOHhAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9953F1378C;
-	Mon,  1 Sep 2025 15:47:54 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id RUrnIirAtWjwaQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 01 Sep 2025 15:47:54 +0000
-Message-ID: <925480c3-d0ff-4f24-ada0-966ad9a83080@suse.cz>
-Date: Mon, 1 Sep 2025 17:47:54 +0200
+	bh=mbEdJL0isBBnB3JXZr3cyBmB7UVFLdKlgzj7B1K9tQk=;
+	b=fGrKAEWB4ljc5x+7TuxH4RZIiOuD7ul8CFrWQ7pbPKmiHZTCAQ22hbAwLGuFP1doJ6dR0O
+	+Kl3O0gNMc0Kl8zInrvDfg4fQDZTdsqHsQbMttZK/8Vjv+RkPjo0UZsoGiK9GcdMu5wXwy
+	YZkp5bVWt3NedshltadqTnBBnvUiuP8=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-369-sLo3aX_QMVGevtnP6B6dkQ-1; Mon, 01 Sep 2025 11:52:54 -0400
+X-MC-Unique: sLo3aX_QMVGevtnP6B6dkQ-1
+X-Mimecast-MFC-AGG-ID: sLo3aX_QMVGevtnP6B6dkQ_1756741974
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45a15f10f31so41989745e9.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Sep 2025 08:52:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756741973; x=1757346773;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mbEdJL0isBBnB3JXZr3cyBmB7UVFLdKlgzj7B1K9tQk=;
+        b=jdbODBHM/bILhUKI7pbrUeOJ9wUWwZ2Ryi+4Fhk0P8cxCU3bgvJBV+VBYK9BoBdwJ+
+         x5WBqpeTAwzDIWc5wA0PtHGTxa45WCSOzY9AmGehFGBPi1KxMGAjrDnri+KUAocDnd+X
+         4NSbkUqCJ1XByZ4K1wNYyc3sC3HjB34RJu2sgGWyqvSAB9ERY0Xnd0+VzSYiUarIdxhg
+         P1aPdXf724IYLbGYBpivXTl1kn8aD4MDs5kR+Rd2FHRoABQvfecssmZlbvbAkWwCaZV6
+         R+y9itd/kIWaIyHHHjTc7//9Kv+0sR0RusOV0Vdcptgc1MZzaYua/jSYykXpnvVAgaTd
+         baNw==
+X-Forwarded-Encrypted: i=1; AJvYcCXZ9IKMrFXtIxZJKKGgtz8tbZoZz3/R4tXX8ksG65WLennJS4/JGKS5VSczws7QpcvSkmMwilMQInuPsZQU@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxoe4SG3qAS3jigXbeyTJzbXAt5JRqRrhIKPgkvOyB5PCZeDW+e
+	C6id3JYeTSHLUFXKHTy1Xo9ZSJcIrcTHDumgcQx8dsC308++48zDoJAzNfyJOphqSQFWrWCXisP
+	nqzV8QhBsvEUeqIOCQtZVA69zNdXU1h0i0P+tulCOKI5G1ilChNcK6n7Qf/sWpVpOAlA=
+X-Gm-Gg: ASbGncsIRAcaVhm+LQRgNagkI1SHoqqQ+PvfBwjTiqOPqHD+JYzbJ1bigQMKcO9nipe
+	puEHmEg+gcOu4+7EvsN/oUw2C/btqjBDEgdP4BoaMghN9a1gGEfsqe63N98iAsno6sr24FvDLnM
+	AByye3pCamy/iVhg6UuB4np/jqGkKtBSEKiU7d2hBUun1t+OkqmWE16kDEyyOhaRu8wzHkgAQ2o
+	eDRuWo+Mt3100eVHTuO+c1Jr65az9PDQbFehRX0vZHGCBx8lo//L5CkhFR088kvgkfZosq7u/yH
+	JXN5vfvvUOQHx8GzLga5cT13SvQ7WjCxm74Pv+ffLsLzjB87kvCFdMKaEOm1SK9/PgOdlNyjHTj
+	rvj6xApMT37onC5RJ62i6O7kjjLFtA2E4vC/9ONhm52yaLa+ocd4JtKmn/6CamkVGsrg=
+X-Received: by 2002:adf:a3d5:0:b0:3d3:b30:4cf2 with SMTP id ffacd0b85a97d-3d30b30546dmr3216774f8f.19.1756741973371;
+        Mon, 01 Sep 2025 08:52:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFWAtKuDlQ702dYFHQ1RXyln2bmyih7xTaCXC/Ysq58gGE3o708RIRxMtCSozokpICZYopN0g==
+X-Received: by 2002:adf:a3d5:0:b0:3d3:b30:4cf2 with SMTP id ffacd0b85a97d-3d30b30546dmr3216732f8f.19.1756741972788;
+        Mon, 01 Sep 2025 08:52:52 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f37:2b00:948c:dd9f:29c8:73f4? (p200300d82f372b00948cdd9f29c873f4.dip0.t-ipconnect.de. [2003:d8:2f37:2b00:948c:dd9f:29c8:73f4])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf33fb9dbfsm15756340f8f.43.2025.09.01.08.52.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Sep 2025 08:52:52 -0700 (PDT)
+Message-ID: <001833dc-ee02-4bd3-8a37-820d0cd56be0@redhat.com>
+Date: Mon, 1 Sep 2025 17:52:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -100,11 +92,11 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v5 02/12] mm: constify pagemap related test functions for
  improved const-correctness
-Content-Language: en-US
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+To: Vlastimil Babka <vbabka@suse.cz>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
  Max Kellermann <max.kellermann@ionos.com>
-Cc: akpm@linux-foundation.org, david@redhat.com, axelrasmussen@google.com,
- yuanchu@google.com, willy@infradead.org, hughd@google.com, mhocko@suse.com,
+Cc: akpm@linux-foundation.org, axelrasmussen@google.com, yuanchu@google.com,
+ willy@infradead.org, hughd@google.com, mhocko@suse.com,
  linux-kernel@vger.kernel.org, linux-mm@kvack.org, Liam.Howlett@oracle.com,
  rppt@kernel.org, surenb@google.com, vishal.moola@gmail.com,
  linux@armlinux.org.uk, James.Bottomley@hansenpartnership.com, deller@gmx.de,
@@ -126,125 +118,110 @@ References: <20250901123028.3383461-1-max.kellermann@ionos.com>
  <26cb47bb-df98-4bda-a101-3c27298e4452@lucifer.local>
  <CAKPOu+_aj3wA14VaZo8_k+ukw0OafsSz_Bxa120SQbYi4SqR7g@mail.gmail.com>
  <8e3f20bf-eda7-496c-9fb2-60f5f940af22@lucifer.local>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <8e3f20bf-eda7-496c-9fb2-60f5f940af22@lucifer.local>
-Content-Type: text/plain; charset=UTF-8
+ <925480c3-d0ff-4f24-ada0-966ad9a83080@suse.cz>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <925480c3-d0ff-4f24-ada0-966ad9a83080@suse.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.de];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[linux-foundation.org,redhat.com,google.com,infradead.org,suse.com,vger.kernel.org,kvack.org,oracle.com,kernel.org,gmail.com,armlinux.org.uk,hansenpartnership.com,gmx.de,linux.ibm.com,davemloft.net,gaisler.com,linux.intel.com,linutronix.de,alien8.de,zytor.com,zankel.net,zeniv.linux.org.uk,suse.cz,linux.alibaba.com,linux.dev,suse.de,ellerman.id.au,lists.infradead.org];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RLisu716frudqkg98kczdd9eac)];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCPT_COUNT_GT_50(0.00)[54];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 96D91211AA
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.01
 
-On 9/1/25 17:14, Lorenzo Stoakes wrote:
-> On Mon, Sep 01, 2025 at 04:50:50PM +0200, Max Kellermann wrote:
->> On Mon, Sep 1, 2025 at 4:25 PM Lorenzo Stoakes
->> <lorenzo.stoakes@oracle.com> wrote:
->> > 1. (most useful) Const pointer (const <type> *<param>) means that the dereffed
->> >    value is const, so *<param> = <val> or <param>-><field> = <val> are prohibited.
+On 01.09.25 17:47, Vlastimil Babka wrote:
+> On 9/1/25 17:14, Lorenzo Stoakes wrote:
+>> On Mon, Sep 01, 2025 at 04:50:50PM +0200, Max Kellermann wrote:
+>>> On Mon, Sep 1, 2025 at 4:25 PM Lorenzo Stoakes
+>>> <lorenzo.stoakes@oracle.com> wrote:
+>>>> 1. (most useful) Const pointer (const <type> *<param>) means that the dereffed
+>>>>     value is const, so *<param> = <val> or <param>-><field> = <val> are prohibited.
+>>>
+>>> Only this was what my initial patch was about.
 >>
->> Only this was what my initial patch was about.
-> 
-> Right agreed then.
-> 
+>> Right agreed then.
 >>
->> > 2. (less useful) We can't modify the actual pointer value either, so
->> >    e.g. <param> = <new param> is prohibited.
+>>>
+>>>> 2. (less useful) We can't modify the actual pointer value either, so
+>>>>     e.g. <param> = <new param> is prohibited.
+>>>
+>>> This wasn't my idea, it was Andrew Morton's idea, supported by Yuanchu Xie:
+>>>   https://lore.kernel.org/lkml/CAJj2-QHVC0QW_4X95LLAnM=1g6apH==-OXZu65SVeBj0tSUcBg@mail.gmail.com/
 >>
->> This wasn't my idea, it was Andrew Morton's idea, supported by Yuanchu Xie:
->>  https://lore.kernel.org/lkml/CAJj2-QHVC0QW_4X95LLAnM=1g6apH==-OXZu65SVeBj0tSUcBg@mail.gmail.com/
+>> Andrew said:
+>>
+>> "Not that I'm suggesting that someone go in and make this change."
+>>
+>> And Yuanchu said:
+>>
+>> "Longer function readability would benefit from that, but it's IMO infeasible to
+>> do so everywhere."
+>>
+>> (he also mentions it'd be good if gcc could wran on it).
+>>
+>> So this isn't quite true actually.
 > 
-> Andrew said:
+> I understood it the same, that it would be nice if gcc treated incoming
+> params (i.e. pointers, not pointed-to values) as const and warn otherwise,
+> but not suggesting we should start doing that manually.
 > 
-> "Not that I'm suggesting that someone go in and make this change."
+> I personally agree that adding those extra "const" is of little value and
+> makes the function definition lines longer and harder to read and so would
+> rather not add those.
 > 
-> And Yuanchu said:
-> 
-> "Longer function readability would benefit from that, but it's IMO infeasible to
-> do so everywhere."
-> 
-> (he also mentions it'd be good if gcc could wran on it).
->
-> So this isn't quite true actually.
+> I mean we could first collectively decide (and that's not a review
+> half-suggesting we do them) that we want them, and document that, but AFAIK
+> that's not the case yet. While there's already an agreement that const
+> pointed-to values is a good thing and nobody objects that.
 
-I understood it the same, that it would be nice if gcc treated incoming
-params (i.e. pointers, not pointed-to values) as const and warn otherwise,
-but not suggesting we should start doing that manually.
+Yeah, and discussed elsewhere in this series, it would also have to be 
+clarified how to deal with the *const" (or const values in general) with 
+function declaration vs. definition. I don't think we really have 
+written-down rule for that yet.
 
-I personally agree that adding those extra "const" is of little value and
-makes the function definition lines longer and harder to read and so would
-rather not add those.
+-- 
+Cheers
 
-I mean we could first collectively decide (and that's not a review
-half-suggesting we do them) that we want them, and document that, but AFAIK
-that's not the case yet. While there's already an agreement that const
-pointed-to values is a good thing and nobody objects that.
+David / dhildenb
 
 
