@@ -1,145 +1,175 @@
-Return-Path: <linux-fsdevel+bounces-59893-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59894-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6709B3EC2B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 18:25:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3580B3ECC1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 18:55:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D17F71A86117
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 16:25:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97A4E481768
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 16:55:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7FFD30649F;
-	Mon,  1 Sep 2025 16:25:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 231FD30F800;
+	Mon,  1 Sep 2025 16:54:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CXd/Elnu"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="PjBpvKIt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 417F02EFD82
-	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Sep 2025 16:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2A9306489
+	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Sep 2025 16:54:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756743923; cv=none; b=WgJD4cdANZ142NrzRFRa4yCdvffodf8kNZc5smccYagQTOHB3SYTDPuehAL6UaI53NVBm4ts2FlfDx3L9YOQXK9SHtcWL008GyLCCfKmArZG2CBC/QRwPw9wvxysYKrLS8OHY4l7WJ3/o/N2ek5Si8U0lipolq2HfI/2lcl4YLw=
+	t=1756745695; cv=none; b=qF6eDI+Vi9uSdOYPrJxBJ20cvxndhMeUJCHawQYXp77OlAbffNLyZbhnFstGMQCQGpzqVIFTotdvD5UtKGf3GcWIlfsRmvVngRnHQBXkz+v39AV9Ks3kkiCVWU4W07BEBnNbIIdfNODNk+0g7y0Iy+WWmY3GCVph6vE2IepParg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756743923; c=relaxed/simple;
-	bh=Xy9c0RnED3HT39yD+fhi1E7AHRKldhfJxdRE7gKyi/E=;
+	s=arc-20240116; t=1756745695; c=relaxed/simple;
+	bh=HijY4XYukusWiwshNGfbl7p3/o1oGR3hpG6hQS1YUNU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CfK7jk5tLE3wJ6CHwf5IJLvSjaixKrNHWAyepV+SAx2h+p9veL3kAH09iosy3XS/z7MgW90afOpXUmy8Nw5zvROGmhok5M2BJJ9WanfNCPGiUhvWBzKgIWOUJm7KAbyJZRt0wvDI6K69xWgC7TC2/urXdTOKpD1QPma2Ikciquo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CXd/Elnu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C724BC4CEFB
-	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Sep 2025 16:25:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756743922;
-	bh=Xy9c0RnED3HT39yD+fhi1E7AHRKldhfJxdRE7gKyi/E=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=CXd/ElnufQqUWN+52vrwfcCFCPxm1Y7RYAy43CzWIcGE10p4UpjeyEu+3ZA4j47D8
-	 HAfOtA5+6AegBT//Axhd9MM0csftWMWkKWehgjmBq67+ADUMojTIpiwrbnJYJqBeik
-	 eTxx7PF+MsvQdRLGpcxm8UNGPh/kjhIAP1xu2+juDOmVYV3OgHKGWcIdjEluKGL1XG
-	 nB8mnQsiJX4y1kmyNH4SEpC/g6p5N5M1PJ+aIrqlo7pkhBrjClYKP1M/uHD9GoR6FB
-	 5LUHUCJn8u2K4Al6kROEE+MZqkBpatai9i54iOzNmlFjiY2PaVO/GYZtE08pciiiSF
-	 RbaCNVoWw55Ww==
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-333f918d71eso34478741fa.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Sep 2025 09:25:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUPut7gOEV9LA7r9FGfqf90VCcnM2fEntFmIxiVykWmfT9ZN1ec+Wu1c808pQ4rLBOHnH+bqEwhjB7GOYiL@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz21egkeMuKapQ5ROfDWUU2yuJTbfhajhR57lZIuZinhz75032A
-	kfHXTlg4Yro3FsMgrKRg/RDfRSHQWU/RLxUYG66pNBoDVv3k9wiQS39TCYprcnkXvNNvplPR3C/
-	Hpt+80/vtM2Rw7Wz3kXwmcJV99GPL2x7+aQCRLGuy
-X-Google-Smtp-Source: AGHT+IHQaKnUNWLNFQYNtSQSa47g2pu7CpYY6T/b9pUgP8BH0aybd+qYJdHgPCMppjygHDMCLF/KHVs2OD16WVL33oA=
-X-Received: by 2002:a05:651c:1543:b0:336:e1c4:6c6f with SMTP id
- 38308e7fff4ca-336e1c47336mr14179671fa.19.1756743920925; Mon, 01 Sep 2025
- 09:25:20 -0700 (PDT)
+	 To:Cc:Content-Type; b=qkuRaSnFgYllk3gulYxo1ZbyAyPgHgnSQLvweaASoi7LsYrXNWf6RulvsN1rfuSfjB56yYGgIvGIHk18MPATlmaHOjDxlP2NYIvTVB9FEtd20a7WwE3COmRnZQt+RPm4GWkmENzj6WefsautpHApSIpdRwp555hYtt9B9pXcwWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=PjBpvKIt; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4b30f73ca2cso34983341cf.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Sep 2025 09:54:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1756745693; x=1757350493; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o279Shh53JnSEmHzGwRb/h+6P8VUc/oKT/oRF8TU58I=;
+        b=PjBpvKItShNTKB927NfUKJGdz8/+g2qO/c9GIqkW5IgOCfgBL9HIR1ehJtyYdefu5l
+         ld6j7QR6clFfMQ1tPnCMl8keylvmdaZ6E+N4pmDqP7YNI/TfM6D1+nbrJuPqyjSdMV4y
+         90uk6MBrs85u/hQ7XX+oflxvpHyYgZy5wcIOXX3ZiQCPY4sLSTP2DTPsgnFkhVypnz+p
+         e6d8KfYBZVvgGgfzzdv08YseeLWWJ5PZQQ5vskJcmGoWphg5qI5Bz4rVBMKWk+kFC0e1
+         HxfCAERVb/q58eeXoc23nuH8sdiBwGD8aFUnDB+h/rE9tIEwLYqAld65Is7x2DL6fw2s
+         Fy9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756745693; x=1757350493;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=o279Shh53JnSEmHzGwRb/h+6P8VUc/oKT/oRF8TU58I=;
+        b=LxVhKE6NJigk0LAk0hSFKophqAZ5aCiGb4dhyRtjOx4q5qD8HNs23s1GKy9xkbhelK
+         SrQS8XS3Md0XA2UlevMlR1xYKiaAEfja0Xed0Vg4r+gUDckwohKdnmgBYqtUdLlFnBxo
+         e+j7jh50BiyqXwezibkjPqBH7lGAABMZfWv8iUQxK5TVZUjj08NH3Erlg8/CBKNItr4X
+         IOtyzYwhThB+ptF8TJzaYa82+tn71Xfa61IhFTAhanI6RDY/4pkWUZ3ytB5LVSnwgi6A
+         bdmCobwjynT6h2OwWIRdtGuQnpUWtSj4JtYLwD5hiZnZqOZkjr6K3/eL7tTsOPYk7jjO
+         d6YA==
+X-Forwarded-Encrypted: i=1; AJvYcCU1nRC0qMBcBAeRf32yLP/jK5srZDvlibDH/MlqHed8NUw0KkydAeutrtHxPz9F6jllcvralafyqUPndips@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywg5uBB2Sz2HCciZnxUpqWmGgsn54IPzWvYFH97HvgTaEVkrgoG
+	XNMraC0atWw86VDz3C5PtI98tguChurdq1Oj1aLh69il5y4KFbyE5HlB+QgHRuZpegsXswrX2KM
+	VIkusQo+Vmw8BTPvaL5jzwDnOq/CMi/5ACZ7IYLjtrQ==
+X-Gm-Gg: ASbGnct237K8QGtY+ZtX1YstdDnu8OlxXpU5jRWgHfOKt4r1rPH4y0W5qRIIP+J55no
+	o4EpdDXnVuZfND/Sz+vJ5Y0Bd5DmtpFz1Q6g9UZAgcMfihCPHPX1XVKfBSPmqVtqyHOrvkr4DPE
+	2LSjg9titIan8PeRrZRUqesTH+PQeMohfBGfBN27Go96C3nqqlSlx+wW84uwnMGXwMQTXBOPb/x
+	xIr
+X-Google-Smtp-Source: AGHT+IHY/eg6lEzMqM6Ga55zC7XFq05s8YP913RvP8Vq9OFKOx955V1owXgBZfCIMqTYLUmetiFwFefB0L5EXnJijhY=
+X-Received: by 2002:a05:622a:99a:b0:4b2:9620:33b3 with SMTP id
+ d75a77b69052e-4b31da1d546mr115573791cf.34.1756745692646; Mon, 01 Sep 2025
+ 09:54:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822170800.2116980-1-mic@digikod.net> <20250826-skorpion-magma-141496988fdc@brauner>
- <20250826.aig5aiShunga@digikod.net> <2025-08-27-obscene-great-toy-diary-X1gVRV@cyphar.com>
- <54e27d05bae55749a975bc7cbe109b237b2b1323.camel@huaweicloud.com>
-In-Reply-To: <54e27d05bae55749a975bc7cbe109b237b2b1323.camel@huaweicloud.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Mon, 1 Sep 2025 09:25:09 -0700
-X-Gmail-Original-Message-ID: <CALCETrUtJmWxKYSi6QQAGpQR_ETNfoBidCu_VEq8Lx9iJAOyEw@mail.gmail.com>
-X-Gm-Features: Ac12FXxyw6xiBo675X_GNr-mU7ryRcDYbQiEmCEhhXrRzSi1-YYVHnkbnMyWAA0
-Message-ID: <CALCETrUtJmWxKYSi6QQAGpQR_ETNfoBidCu_VEq8Lx9iJAOyEw@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 0/2] Add O_DENY_WRITE (complement AT_EXECVE_CHECK)
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: Aleksa Sarai <cyphar@cyphar.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Kees Cook <keescook@chromium.org>, Paul Moore <paul@paul-moore.com>, 
-	Serge Hallyn <serge@hallyn.com>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
-	Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Miklos Szeredi <mszeredi@redhat.com>, 
-	Mimi Zohar <zohar@linux.ibm.com>, 
-	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Robert Waite <rowait@microsoft.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Scott Shell <scottsh@microsoft.com>, 
-	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
-	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
+ <20250807014442.3829950-30-pasha.tatashin@soleen.com> <20250826162019.GD2130239@nvidia.com>
+ <aLXIcUwt0HVzRpYW@kernel.org>
+In-Reply-To: <aLXIcUwt0HVzRpYW@kernel.org>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Mon, 1 Sep 2025 16:54:15 +0000
+X-Gm-Features: Ac12FXwjvuuXLl4TYrvSYicUEdLVOyp0TZPBIDlFXyKegWX4ZiFbjlDKbUPVZr0
+Message-ID: <CA+CK2bC96fxHBb78DvNhyfdjsDfPCLY5J5cN8W0hUDt9KAPBJQ@mail.gmail.com>
+Subject: Re: [PATCH v3 29/30] luo: allow preserving memfd
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Jason Gunthorpe <jgg@nvidia.com>, pratyush@kernel.org, jasonmiu@google.com, 
+	graf@amazon.com, changyuanl@google.com, dmatlack@google.com, 
+	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
+	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
+	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
+	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
+	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
+	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
+	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
+	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
+	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
+	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
+	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
+	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	saeedm@nvidia.com, ajayachandra@nvidia.com, parav@nvidia.com, 
+	leonro@nvidia.com, witu@nvidia.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Can you clarify this a bit for those of us who are not well-versed in
-exactly what "measurement" does?
-
-On Mon, Sep 1, 2025 at 2:42=E2=80=AFAM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
-> > Now, in cases where you have IMA or something and you only permit signe=
-d
-> > binaries to execute, you could argue there is a different race here (an
-> > attacker creates a malicious script, runs it, and then replaces it with
-> > a valid script's contents and metadata after the fact to get
-> > AT_EXECVE_CHECK to permit the execution). However, I'm not sure that
+On Mon, Sep 1, 2025 at 4:23=E2=80=AFPM Mike Rapoport <rppt@kernel.org> wrot=
+e:
 >
-> Uhm, let's consider measurement, I'm more familiar with.
+> On Tue, Aug 26, 2025 at 01:20:19PM -0300, Jason Gunthorpe wrote:
+> > On Thu, Aug 07, 2025 at 01:44:35AM +0000, Pasha Tatashin wrote:
+> >
+> > > +   /*
+> > > +    * Most of the space should be taken by preserved folios. So take=
+ its
+> > > +    * size, plus a page for other properties.
+> > > +    */
+> > > +   fdt =3D memfd_luo_create_fdt(PAGE_ALIGN(preserved_size) + PAGE_SI=
+ZE);
+> > > +   if (!fdt) {
+> > > +           err =3D -ENOMEM;
+> > > +           goto err_unpin;
+> > > +   }
+> >
+> > This doesn't seem to have any versioning scheme, it really should..
+> >
+> > > +   err =3D fdt_property_placeholder(fdt, "folios", preserved_size,
+> > > +                                  (void **)&preserved_folios);
+> > > +   if (err) {
+> > > +           pr_err("Failed to reserve folios property in FDT: %s\n",
+> > > +                  fdt_strerror(err));
+> > > +           err =3D -ENOMEM;
+> > > +           goto err_free_fdt;
+> > > +   }
+> >
+> > Yuk.
+> >
+> > This really wants some luo helper
+> >
+> > 'luo alloc array'
+> > 'luo restore array'
+> > 'luo free array'
 >
-> I think the race you wanted to express was that the attacker replaces
-> the good script, verified with AT_EXECVE_CHECK, with the bad script
-> after the IMA verification but before the interpreter reads it.
->
-> Fortunately, IMA is able to cope with this situation, since this race
-> can happen for any file open, where of course a file can be not read-
-> locked.
+> We can just add kho_{preserve,restore}_vmalloc(). I've drafted it here:
+> https://git.kernel.org/pub/scm/linux/kernel/git/rppt/linux.git/log/?h=3Dk=
+ho/vmalloc/v1
 
-I assume you mean that this has nothing specifically to do with
-scripts, as IMA tries to protect ordinary (non-"execute" file access)
-as well.  Am I right?
+The patch looks okay to me, but it doesn't support holes in vmap
+areas. While that is likely acceptable for vmalloc, it could be a
+problem if we want to preserve memfd with holes and using vmap
+preservation as a method, which would require a different approach.
+Still, this would help with preserving memfd.
 
->
-> If the attacker tries to concurrently open the script for write in this
-> race window, IMA will report this event (called violation) in the
-> measurement list, and during remote attestation it will be clear that
-> the interpreter did not read what was measured.
->
-> We just need to run the violation check for the BPRM_CHECK hook too
-> (then, probably for us the O_DENY_WRITE flag or alternative solution
-> would not be needed, for measurement).
-
-This seems consistent with my interpretation above, but ...
+However, I wonder if we should add a separate preservation library on
+top of the kho and not as part of kho (or at least keep them in a
+separate file from core logic). This would allow us to preserve more
+advanced data structures such as this and define preservation version
+control, similar to Jason's store_object/restore_object proposal.
 
 >
-> Please, let us know when you apply patches like 2a010c412853 ("fs:
-> don't block i_writecount during exec"). We had a discussion [1], but
-> probably I missed when it was decided to be applied (I saw now it was
-> in the same thread, but didn't get that at the time). We would have
-> needed to update our code accordingly. In the future, we will try to
-> clarify better our expectations from the VFS.
-
-... I didn't follow this.
-
-Suppose there's some valid contents of /bin/sleep.  I execute
-/bin/sleep 1m.  While it's running, I modify /bin/sleep (by opening it
-for write, not by replacing it), and the kernel in question doesn't do
-ETXTBSY.  Then the sleep process reads (and executes) the modified
-contents.  Wouldn't a subsequent attestation fail?  Why is ETXTBSY
-needed?
+> Will wait for kbuild and then send proper patches.
+>
+>
+> --
+> Sincerely yours,
+> Mike.
 
