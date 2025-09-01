@@ -1,52 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-59829-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59830-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2217EB3E423
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 15:11:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB445B3E440
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 15:12:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A0F8189F89D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 13:11:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 963CA16829C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 13:11:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92EA33470D;
-	Mon,  1 Sep 2025 13:10:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BC8C337693;
+	Mon,  1 Sep 2025 13:10:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KQpP1hz3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iaoRKEYs"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A7514AD20;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCCE119C566;
 	Mon,  1 Sep 2025 13:10:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756732249; cv=none; b=Yuy93KLU6m1bKKs+uUBXgQHjWGJzHWXsY76s2KIZ/Cixbl5fyZsYiHPX+X9ZaAxeMJBZKcVcIwd46EHhaIn/djH3b8S9vHZDyGWkXyXVIEZIy/E1O0FEWhsMBwrkXyJCVt0ElTkelC1M9EgfyGXaDrV+7CflwP5Ni5rOS446ZYQ=
+	t=1756732250; cv=none; b=QuBvhgbKoMuWZYSn0g/LZZYyv/pLdu4Kk8paGgDkZe/wz5ix6JmNKDpMaadjvB6bpdH08hWLXVqtZPJvcdNFimTY/xDw1jS1c4b+Dv+PDNSSSZZTKmWPAtIw+x9RzYtAyzLdbigkL3Vwd/Hez7gE7HXqA95L6MqQ036JTJ9n1VY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756732249; c=relaxed/simple;
-	bh=l+zEh4GN06CwujvuIj3y3Fd32BGM/P2y+zLD4+u7l7M=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=gVhAQq/Iba4I5xoh+vMPvbkydDCxDX/hwivFMODG8j6Cpp8hqTpKTQA00Nb805uM2JVtkUvE8QaBO4xfnNP+AlfxzN1qkMq/Ib2iqCQwnS8ct+sx7yxtjcl+rJ6PzQzPE3/CjWWcZDPSzJcoSJdsBoebuMvORdiH/hJ1SiLqLg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KQpP1hz3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2C4A7C4CEF7;
+	s=arc-20240116; t=1756732250; c=relaxed/simple;
+	bh=GpW3AHZfYEj2qBnLMRG4myPQbSyXtECqk6ttoxpv2os=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=BIvtJmLu7rSnoj3YXOh6rm9u/oQMBHyaJNhoyqsa6sODOKUf6rXZM/21wXajmbSyUlwothAqzA3R2Jp+X53clvyvTdiuwUhvZ7EiS1CEXOux4QI4LaNbu7qwWI6qD0ND3JhFcJ48hMPH8duiCHJQddxfim2O9TO1s6ZdhXckgB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iaoRKEYs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 49705C4CEFB;
 	Mon,  1 Sep 2025 13:10:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1756732249;
-	bh=l+zEh4GN06CwujvuIj3y3Fd32BGM/P2y+zLD4+u7l7M=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=KQpP1hz3p7pySlQA+S80YSRFmx1/RZzMbVqgwb6DJ7FII9WAZ2aC0Vkb2bY2IPIgo
-	 5RCwWfOsqj6oH3/pX4lIDCuOOnNj9pXtQBn1tnrmIQEH+XVh9Y1PJP+hS509fIk0oM
-	 7NnEVi31nSQ/8MpxGe34E6NqS5meKjX8tV7J4kEDUQj4qbBrjxI9QxaHniIUyy3yEY
-	 gtjmo/KHVVgmCi45l9Q6BNFzV43IAWtjbRH902bx28dItj0RpqcveeXYME8ipfRIBt
-	 uCZQnUdWBrjyoriL6ICoig8e7WsKXoloqJHchCd36LnqZQtWt5aeK+UBbdVHOc8NTG
-	 YbdnooPnpDcUg==
+	bh=GpW3AHZfYEj2qBnLMRG4myPQbSyXtECqk6ttoxpv2os=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=iaoRKEYseCqQuDc8g1DT9Ylgds2yXTGrRDMFrMWem9akxSs2kSuDZh8RQy7GyhVc0
+	 DgRW0DslNS/vaFDraU32r0MjYx+fOSj7uoPNFHlkuuXYvgF1l43svB/w5612yBF+xJ
+	 25fgVdHp0mlGc/VdDsfBP4qIyALFA7BKLsJbQ73ickI5yAaCdxOpDZAB0XQL8T8L5F
+	 dx5EwoZS2e25GQhGK0HQZUzgv2mCfV/qUx5aQ/SatgfyRijgLuYK357zFCmZazIp6+
+	 A+uvFfZ+PHpkq8v4BfU9r2WTm7F1rYTj29lF0zZTwKApQf/GIGwsNmiQOBYAXmaqwU
+	 H9oLgllzFmmaQ==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0481CCA1002;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2517ACA1005;
 	Mon,  1 Sep 2025 13:10:49 +0000 (UTC)
 From: Simon Schuster via B4 Relay <devnull+schuster.simon.siemens-energy.com@kernel.org>
-Subject: [PATCH v2 0/4] nios2: Add architecture support for clone3
-Date: Mon, 01 Sep 2025 15:09:49 +0200
-Message-Id: <20250901-nios2-implement-clone3-v2-0-53fcf5577d57@siemens-energy.com>
+Date: Mon, 01 Sep 2025 15:09:50 +0200
+Subject: [PATCH v2 1/4] copy_sighand: Handle architectures where
+ sizeof(unsigned long) < sizeof(u64)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,11 +56,9 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAB2btWgC/3WNzQqDMBCEX0Vy7pZkrT/05HsUD5quuqCJZEUq4
- rs3Sq89fsPMN7sSCkyinsmuAq0s7F0EvCXKDo3rCfgdWaHGTJemBMdeEHiaR5rILWBH7yiFosM
- MLeoy162K4zlQx59L/KojDyyLD9v1s5oz/SnR/FOuBjSYtsWHNkVa5E0lfBYEyFHot7v1k6qP4
- /gCMZ8FFcUAAAA=
-X-Change-ID: 20250818-nios2-implement-clone3-7f252c20860b
+Message-Id: <20250901-nios2-implement-clone3-v2-1-53fcf5577d57@siemens-energy.com>
+References: <20250901-nios2-implement-clone3-v2-0-53fcf5577d57@siemens-energy.com>
+In-Reply-To: <20250901-nios2-implement-clone3-v2-0-53fcf5577d57@siemens-energy.com>
 To: Dinh Nguyen <dinguyen@kernel.org>, 
  Christian Brauner <brauner@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
  Andrew Morton <akpm@linux-foundation.org>, 
@@ -144,12 +143,12 @@ Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
  linux-um@lists.infradead.org, 
  Simon Schuster <schuster.simon@siemens-energy.com>, stable@vger.kernel.org
 X-Mailer: b4 0.14.3-dev-2ce6c
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756732247; l=6552;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756732247; l=1758;
  i=schuster.simon@siemens-energy.com; s=20250818;
  h=from:subject:message-id;
- bh=l+zEh4GN06CwujvuIj3y3Fd32BGM/P2y+zLD4+u7l7M=;
- b=GDpCexNrElu2yO/MxuDkpG+xctyQVH7o61ewBoPT3J8lEgMWXNxMsXtjVUaPsmeHSieQm4/hP
- 49FpVyBe5rsBihPxAhRaNZH/1KUoHHYEsSlrwUEFI8iutPmfJs+jkNi
+ bh=jiicr5q6EjOw72QZuuzAVeCE1iVdBx6rJ537Y02m/X4=;
+ b=n8Guw0NV6Suno8Y591Jo1ssUzIYYJXAn95WjDsM26gTG4Diqo4wBaGcjduFDj4CyxOi+UP+1Q
+ bc9vUqGSvG9BfaNZEbUUprgB/BwuM16c7iW1ZlIRYBMLPMmyTCfDYFP
 X-Developer-Key: i=schuster.simon@siemens-energy.com; a=ed25519;
  pk=PUhOMiSp43aSeRE1H41KApxYOluamBFFiMfKlBjocvo=
 X-Endpoint-Received: by B4 Relay for
@@ -157,153 +156,57 @@ X-Endpoint-Received: by B4 Relay for
 X-Original-From: Simon Schuster <schuster.simon@siemens-energy.com>
 Reply-To: schuster.simon@siemens-energy.com
 
-This series adds support for the clone3 system call to the nios2
-architecture. This addresses the build-time warning "warning: clone3()
-entry point is missing, please fix" introduced in 505d66d1abfb9
-("clone3: drop __ARCH_WANT_SYS_CLONE3 macro"). The implementation passes
-the relevant clone3 tests of kselftest when applied on top of
-next-20250815:
+From: Simon Schuster <schuster.simon@siemens-energy.com>
 
-	./run_kselftest.sh
-	TAP version 13
-	1..4
-	# selftests: clone3: clone3
-	ok 1 selftests: clone3: clone3
-	# selftests: clone3: clone3_clear_sighand
-	ok 2 selftests: clone3: clone3_clear_sighand
-	# selftests: clone3: clone3_set_tid
-	ok 3 selftests: clone3: clone3_set_tid
-	# selftests: clone3: clone3_cap_checkpoint_restore
-	ok 4 selftests: clone3: clone3_cap_checkpoint_restore
+With the introduction of clone3 in commit 7f192e3cd316 ("fork: add
+clone3") the effective bit width of clone_flags on all architectures was
+increased from 32-bit to 64-bit. However, the signature of the copy_*
+helper functions (e.g., copy_sighand) used by copy_process was not
+adapted.
 
-The series also includes a small patch to kernel/fork.c that ensures
-that clone_flags are passed correctly on architectures where unsigned
-long is insufficient to store the u64 clone_flags. It is marked as a fix
-for stable backporting.
+As such, they truncate the flags on any 32-bit architectures that
+supports clone3 (arc, arm, csky, m68k, microblaze, mips32, openrisc,
+parisc32, powerpc32, riscv32, x86-32 and xtensa).
 
-As requested, in v2, this series now further tries to correct this type
-error throughout the whole code base. Thus, it now touches a larger
-number of subsystems and all architectures.
+For copy_sighand with CLONE_CLEAR_SIGHAND being an actual u64
+constant, this triggers an observable bug in kernel selftest
+clone3_clear_sighand:
 
-Therefore, another test was performed for ARCH=x86_64 (as a
-representative for 64-bit architectures). Here, the series builds cleanly
-without warnings on defconfig with CONFIG_SECURITY_APPARMOR=y and
-CONFIG_SECURITY_TOMOYO=y (to compile-check the LSM-related changes).
-The build further successfully passes testing/selftests/clone3 (with the
-patch from 20241105062948.1037011-1-zhouyuhang1010@163.com to prepare
-clone3_cap_checkpoint_restore for compatibility with the newer libcap
-version on my system).
+        if (clone_flags & CLONE_CLEAR_SIGHAND)
 
-Is there any option to further preflight check this patch series via
-lkp/KernelCI/etc. for a broader test across architectures, or is this
-degree of testing sufficient to eventually get the series merged?
+in function copy_sighand within fork.c will always fail given:
 
-N.B.: The series is not checkpatch clean right now:
- - include/linux/cred.h, include/linux/mnt_namespace.h:
-   function definition arguments without identifier name
- - include/trace/events/task.h:
-   space prohibited after that open parenthesis
+        unsigned long /* == uint32_t */ clone_flags
+        #define CLONE_CLEAR_SIGHAND 0x100000000ULL
 
-I did not fix these warnings to keep my changes minimal and reviewable,
-as the issues persist throughout the files and they were not introduced
-by me; I only followed the existing code style and just replaced the
-types. If desired, I'd be happy to make the changes in a potential v3,
-though.
+This commit fixes the bug by always passing clone_flags to copy_sighand
+via their declared u64 type, invariant of architecture-dependent integer
+sizes.
 
+Fixes: b612e5df4587 ("clone3: add CLONE_CLEAR_SIGHAND")
+Cc: stable@vger.kernel.org # linux-5.5+
 Signed-off-by: Simon Schuster <schuster.simon@siemens-energy.com>
+Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 ---
-Changes in v2:
-- Introduce "Fixes:" and "Cc: stable@vger.kernel.org" where necessary
-- Factor out "Fixes:" when adapting the datatype of clone_flags for
-  easier backports
-- Fix additional instances where `unsigned long` clone_flags is used
-- Reword commit message to make it clearer that any 32-bit arch is
-  affected by this bug
-- Link to v1: https://lore.kernel.org/r/20250821-nios2-implement-clone3-v1-0-1bb24017376a@siemens-energy.com
+ kernel/fork.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
----
-Simon Schuster (4):
-      copy_sighand: Handle architectures where sizeof(unsigned long) < sizeof(u64)
-      copy_process: pass clone_flags as u64 across calltree
-      arch: copy_thread: pass clone_flags as u64
-      nios2: implement architecture-specific portion of sys_clone3
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 5115be549234..82f5d52fecf1 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -1599,7 +1599,7 @@ static int copy_files(unsigned long clone_flags, struct task_struct *tsk,
+ 	return 0;
+ }
+ 
+-static int copy_sighand(unsigned long clone_flags, struct task_struct *tsk)
++static int copy_sighand(u64 clone_flags, struct task_struct *tsk)
+ {
+ 	struct sighand_struct *sig;
+ 
 
- arch/alpha/kernel/process.c       |  2 +-
- arch/arc/kernel/process.c         |  2 +-
- arch/arm/kernel/process.c         |  2 +-
- arch/arm64/kernel/process.c       |  2 +-
- arch/csky/kernel/process.c        |  2 +-
- arch/hexagon/kernel/process.c     |  2 +-
- arch/loongarch/kernel/process.c   |  2 +-
- arch/m68k/kernel/process.c        |  2 +-
- arch/microblaze/kernel/process.c  |  2 +-
- arch/mips/kernel/process.c        |  2 +-
- arch/nios2/include/asm/syscalls.h |  1 +
- arch/nios2/include/asm/unistd.h   |  2 --
- arch/nios2/kernel/entry.S         |  6 ++++++
- arch/nios2/kernel/process.c       |  2 +-
- arch/nios2/kernel/syscall_table.c |  1 +
- arch/openrisc/kernel/process.c    |  2 +-
- arch/parisc/kernel/process.c      |  2 +-
- arch/powerpc/kernel/process.c     |  2 +-
- arch/riscv/kernel/process.c       |  2 +-
- arch/s390/kernel/process.c        |  2 +-
- arch/sh/kernel/process_32.c       |  2 +-
- arch/sparc/kernel/process_32.c    |  2 +-
- arch/sparc/kernel/process_64.c    |  2 +-
- arch/um/kernel/process.c          |  2 +-
- arch/x86/include/asm/fpu/sched.h  |  2 +-
- arch/x86/include/asm/shstk.h      |  4 ++--
- arch/x86/kernel/fpu/core.c        |  2 +-
- arch/x86/kernel/process.c         |  2 +-
- arch/x86/kernel/shstk.c           |  2 +-
- arch/xtensa/kernel/process.c      |  2 +-
- block/blk-ioc.c                   |  2 +-
- fs/namespace.c                    |  2 +-
- include/linux/cgroup.h            |  4 ++--
- include/linux/cred.h              |  2 +-
- include/linux/iocontext.h         |  6 +++---
- include/linux/ipc_namespace.h     |  4 ++--
- include/linux/lsm_hook_defs.h     |  2 +-
- include/linux/mnt_namespace.h     |  2 +-
- include/linux/nsproxy.h           |  2 +-
- include/linux/pid_namespace.h     |  4 ++--
- include/linux/rseq.h              |  4 ++--
- include/linux/sched/task.h        |  2 +-
- include/linux/security.h          |  4 ++--
- include/linux/sem.h               |  4 ++--
- include/linux/time_namespace.h    |  4 ++--
- include/linux/uprobes.h           |  4 ++--
- include/linux/user_events.h       |  4 ++--
- include/linux/utsname.h           |  4 ++--
- include/net/net_namespace.h       |  4 ++--
- include/trace/events/task.h       |  6 +++---
- ipc/namespace.c                   |  2 +-
- ipc/sem.c                         |  2 +-
- kernel/cgroup/namespace.c         |  2 +-
- kernel/cred.c                     |  2 +-
- kernel/events/uprobes.c           |  2 +-
- kernel/fork.c                     | 10 +++++-----
- kernel/nsproxy.c                  |  4 ++--
- kernel/pid_namespace.c            |  2 +-
- kernel/sched/core.c               |  4 ++--
- kernel/sched/fair.c               |  2 +-
- kernel/sched/sched.h              |  4 ++--
- kernel/time/namespace.c           |  2 +-
- kernel/utsname.c                  |  2 +-
- net/core/net_namespace.c          |  2 +-
- security/apparmor/lsm.c           |  2 +-
- security/security.c               |  2 +-
- security/selinux/hooks.c          |  2 +-
- security/tomoyo/tomoyo.c          |  2 +-
- 68 files changed, 95 insertions(+), 89 deletions(-)
----
-base-commit: 1357b2649c026b51353c84ddd32bc963e8999603
-change-id: 20250818-nios2-implement-clone3-7f252c20860b
-
-Best regards,
 -- 
-Simon Schuster <schuster.simon@siemens-energy.com>
+2.39.5
 
 
 
