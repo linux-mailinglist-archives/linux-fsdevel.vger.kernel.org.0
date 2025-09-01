@@ -1,121 +1,86 @@
-Return-Path: <linux-fsdevel+bounces-59770-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59771-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 698DAB3E024
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 12:30:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B28C8B3E072
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 12:40:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E668D189DFD6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 10:30:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CF7718900C7
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 10:40:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E89892494F8;
-	Mon,  1 Sep 2025 10:30:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2A9831159A;
+	Mon,  1 Sep 2025 10:39:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="U0YT2dDU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E2Vi8DkR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0693B24291B
-	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Sep 2025 10:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1643244660;
+	Mon,  1 Sep 2025 10:39:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756722625; cv=none; b=MykZTy7YnnReoRONqB96eqDHJFGZVbQxA1n3dw4SJH/iaj3ufOXs4rcWhfr4pT5+zSdPif74+CuExkk95XjS8kD0PQL82DAbje6mRyl3NtR6/TQ8NupsM8797rnE8pN0Yfc2bPB6CBxfTGZa+pLUVN6HbyJ6qWG7yIhI4J/uy3Y=
+	t=1756723173; cv=none; b=X8kIkntNHCm5ygs7+YNI/SCwAbRayOV0xjZ+11/+4TaD7Oi/rheGX9t4Hvuciysn5ARmyBZVntVB7WeBfedqrYsfODRD3Y4I/JTEwtbnoXumUpP0n+dIWYcyr+OT2/JwhVUfZtCI15ElTkxf2gcCh8vnhIKEi61PCB7joyDmQPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756722625; c=relaxed/simple;
-	bh=KW13pbNW6Vv8Ihl8O3Oqsu5K5Wxu6cMp16+gzOLrQb4=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=gJR3+waS83wxLKNzjKEhxaZAVNvN90pNAxq0caNBxyON3l/73GHUKJR4XMD9JMQ0mK61sMpqkAeTo4m4IAWVvaVVUNsg3063qpkuKHbOT7EP2Tr7tVZLKYA5DPpWCWD1ngN9fJu72YBq6vc4AWlRqPxTGT/Qrnp45JcShVMLOp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=U0YT2dDU; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7f8ea864d54so386208685a.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Sep 2025 03:30:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1756722621; x=1757327421; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=tSMZxrvlVebn4Lgdc99RUi1DutqM985mnloKk4c7Guk=;
-        b=U0YT2dDUnMD3yvfy9RlM60S7CFqas6i/PNPUR6JZH/6TLAkKe7uPgmOuZR1pcWd9Pc
-         IetpEPHo6HmEU/bDO2oMZl4dpSLrOQpMJ55xS6xjvEKrKNka9fcGW6fiTiJySzeFZCX7
-         /AU/mY4YLSvqkLtTYgGXYg2qHd6Nr8e/nEe2M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756722621; x=1757327421;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tSMZxrvlVebn4Lgdc99RUi1DutqM985mnloKk4c7Guk=;
-        b=vphVQapRdEyotTg8Hj0KX6HNDdyyo4RRzAOgJ4DQAbRP5aOcbvkLY/TsmePBqDvSEI
-         MnpY5CmEB/yk//6s/8yS+74R59bLiirA+kxXtt9AbeduZgWP9W+3jkS8wSjPnQLeaz1l
-         IjTG9DuGG3jTsnChZx2O/eolQsmp+PFCU521ct+W0zskN/49guSlaV+EerCohPPLWenp
-         uYMKu8N+lxHT1tIjQWx9U2g3gSQxaSoemexTIXh8zatYyAWukqRqk88a7nRJ3SINMsCy
-         o2MWBKi+G2Iny0W+VfAsOGQjMQEQKBNpbKY7WekjKvOtrSdSZNbgkLXtHptpN5qYFpSZ
-         CLBQ==
-X-Gm-Message-State: AOJu0YyaC+QKnMkseby7J85h2sD1EVyxiYNAk+Pu4XjIKZxNpnk6kScJ
-	hkrdxvjWJ6CNMAAZ59FoAbZm0fjQ23Nnlw89FI5Q/ekus1szLYxLk1sCSN4X4/IlWXZsOi+6n26
-	DpA+XP+ljCsmjsvivR+5t01IdeaNc4g/t0bIfM9uaMg==
-X-Gm-Gg: ASbGnct7G8Lj0N0LGzX+1kumU+qvzHlK9XtkHnAf7j7RXGbSlhLj0VGDhqu7lFkGIM+
-	tFFgazuHGNuy7DdPAtJWmautRdc2A9Ff7tk5Pmd+fX05B4xBaTaPhgNDBcEOdW8o7h4e/RWL1eT
-	0ihH3QX6K8KDHh0+MENBF2Mr+Y8/7oFOF8uYTrrSgtwFdJKcp8sSzo90jo99e/mnAMHpOujx/1c
-	96yA+XseQsGWpPceAz4Jm6lJW+4GIk=
-X-Google-Smtp-Source: AGHT+IFF5HpqDOXuHs//h5pcaM3Cb+V9eRPHgoWdVF2iaUZDEj+EbwyblF0yVsQ6RbLmNYRe0jRRgyxQHTHuBgP/8Kw=
-X-Received: by 2002:a05:620a:4105:b0:7e6:9644:c977 with SMTP id
- af79cd13be357-7ff27b1f7d9mr820358885a.27.1756722620686; Mon, 01 Sep 2025
- 03:30:20 -0700 (PDT)
+	s=arc-20240116; t=1756723173; c=relaxed/simple;
+	bh=FHiYltysbexEFmxSGQPexk15gLPmJfD4YRRxaRNMbrQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qjQiywseRLan6H83peZ6v01h6cGM+yj17wF/fEGGHJbv3DRXdTWXevLORUiR+jwag/93z33stOWIzpAIBUqGS2OFQN47gjMxXQpfv+jpWwl0ZRoW2Xd3sivo6eKCmUa6oQUvl9So5D2O5paayCnG2z280+p3k/j+1oEn728ce6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E2Vi8DkR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D4ABC4CEF0;
+	Mon,  1 Sep 2025 10:39:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756723172;
+	bh=FHiYltysbexEFmxSGQPexk15gLPmJfD4YRRxaRNMbrQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E2Vi8DkRQCD4WkF9OcobZEqg1ixq6iljXWxHSi9BzLwcRBXgg+nxSRquse+KWndJI
+	 E2qWk80P0OHW54W7XSgo02jrsSRXKobShr8lGk18EBJks7NIfY4A1Hhi0NLT2oq6u4
+	 /NpeOjj33T4tL3H8wmbFAnyxhfXUOw+MkNLyKbtCB/wCLrPZC8aZkq51fafU+SYADa
+	 +e0kU/IIqlatQ1ga4YPqDLUivT/pjtd3AprV1cxIh37/xAU3vZn7PuOMET3z4nxnJF
+	 Cq0q7QzhW0n63pLc2HUzdU1KmTTLl1kEjQFZCPVjdpQ2jtA2YxjTOtPA1JJFzsBO99
+	 3FpFwPlUSXv1g==
+Date: Mon, 1 Sep 2025 12:39:27 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: Mateusz Guzik <mjguzik@gmail.com>, viro@zeniv.linux.org.uk, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
+	kernel-team@fb.com, amir73il@gmail.com, linux-btrfs@vger.kernel.org, 
+	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH] fs: revamp iput()
+Message-ID: <20250901-obstsorten-winzig-50261a2c60fa@brauner>
+References: <20250827-kraut-anekdote-35789fddbb0b@brauner>
+ <20250827162410.4110657-1-mjguzik@gmail.com>
+ <CAGudoHE5UmqcbZD1apLsc7G=YmUsDQ=-i=ZQHSD=4qAtsYa3yA@mail.gmail.com>
+ <ox654jni32s6hlqqdney7trtmlp3c7i6vorebi4gizecou4wb6@o5tq3eax3xsz>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Mon, 1 Sep 2025 12:30:09 +0200
-X-Gm-Features: Ac12FXwwXOscVfEh_b00oFPmh-dX0LZ7NPAbCZS8FhxDyb_r1n0NUdk7uWPXEIY
-Message-ID: <CAJfpeguEVMMyw_zCb+hbOuSxdE2Z3Raw=SJsq=Y56Ae6dn2W3g@mail.gmail.com>
-Subject: [GIT PULL] fuse fixes for 6.17-rc5
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ox654jni32s6hlqqdney7trtmlp3c7i6vorebi4gizecou4wb6@o5tq3eax3xsz>
 
-Hi Christian,
+On Mon, Sep 01, 2025 at 10:50:59AM +0200, Jan Kara wrote:
+> On Sat 30-08-25 17:54:35, Mateusz Guzik wrote:
+> > I'm writing a long response to this series, in the meantime I noticed
+> > this bit landed in
+> > https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?h=vfs-6.18.inode.refcount.preliminaries&id=3cba19f6a00675fbc2af0987dfc90e216e6cfb74
+> > but with some whitespace issues in comments -- they are indented with
+> > spaces instead of tabs after the opening line.
+> 
+> Interesting. I didn't see an email about inclusion. Anyway, the change
 
-Please pull from:
+Sorry, that waas my bad. I talked with Josef off-list and told him that
+I would apply Mateusz suggestions with his CdB and SoB added. I forgot
+to repeat that on the list.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git
-tags/fuse-fixes-6.17-rc5
+> looks good to me so Christian, feel free to add:
+> 
+> Reviewed-by: Jan Kara <jack@suse.cz>
 
-- fix iomap partial writes (Joanne)
-
-- fix possible overflow in FUSE_RETRIEVE (Edward Adam Davis)
-
-- only allow passthrough for regular files (Amir)
-
-- fix copy_file_range overflow issues (Miklos)
-
-Thanks,
-Miklos
----
-
-Amir Goldstein (1):
-      fuse: do not allow mapping a non-regular backing file
-
-Edward Adam Davis (1):
-      fuse: Block access to folio overlimit
-
-Joanne Koong (2):
-      fuse: reflect cached blocksize if blocksize was changed
-      fuse: fix fuseblk i_blkbits for iomap partial writes
-
-Miklos Szeredi (2):
-      fuse: check if copy_file_range() returns larger than requested size
-      fuse: prevent overflow in copy_file_range return value
-
----
- fs/fuse/dev.c         |  2 +-
- fs/fuse/dir.c         |  3 ++-
- fs/fuse/file.c        |  5 ++++-
- fs/fuse/fuse_i.h      | 14 ++++++++++++++
- fs/fuse/inode.c       | 16 ++++++++++++++++
- fs/fuse/passthrough.c |  5 +++++
- 6 files changed, 42 insertions(+), 3 deletions(-)
+Thanks!
 
