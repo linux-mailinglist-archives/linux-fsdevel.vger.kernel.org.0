@@ -1,263 +1,193 @@
-Return-Path: <linux-fsdevel+bounces-59798-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59799-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6E3FB3E12D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 13:12:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 211D3B3E134
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 13:12:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BD31189FD51
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 11:12:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF69B3A676A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 11:12:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5473E3112DB;
-	Mon,  1 Sep 2025 11:09:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E0EB313E2D;
+	Mon,  1 Sep 2025 11:10:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="nlPUE/e7";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="wxl/KWzB";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="nlPUE/e7";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="wxl/KWzB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XbHB0cI+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 028CA31CA61
-	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Sep 2025 11:09:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF6E313547
+	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Sep 2025 11:10:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756724988; cv=none; b=eFBOakN76Q1/EVx6C8y+nDF+nMJx28zv1HK9Vf6gQ4u+kaWMwu5EciIsZsBrQBRi85Jt802re38GJev/3aHdHAw/TDdbGcG3iYdDJu6LExATwvmPUEpDm8QjgG9RW40IwRB+aaKncJD13lSNdthZH9DbaI1XgICSkkZvb+Gb20M=
+	t=1756725026; cv=none; b=UfSDAqttOu9HZtNfMCwtmrUHiKM/M2v5aKQ+/LmIIbumqTo6B4qhEZaXvoevQ7mRiFF+cTWD0/lK1axadeN8NyWUzVgWsMZfP20dzy0R+Vqbr0G+0BpnltGteGXkv70dA1IWgFHXYJNGy/9Z0UwiXrP4To8vYY5onhjTwczz4us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756724988; c=relaxed/simple;
-	bh=dkkOcEsD7xn5yD67IHEifvMlDweLyNkUukV+EgT6MdE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OHGHI7x3lSOk5Fccv5k8cmlPyxqrUTvucDtF24W1NSfmcpaotaeSE8DHFeJod8P5YhfBU5W6YIqNnduW4OD2qkG5EBaGt7L1YsK8EXwpdsaC6LZaXdjX3rJ/GsLSFPndoJxSoF+uaxFV5kWlMzoLQ4kzeRyeysKdH7/4MQubOmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=nlPUE/e7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=wxl/KWzB; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=nlPUE/e7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=wxl/KWzB; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 2495F2117F;
-	Mon,  1 Sep 2025 11:08:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756724934; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1gsZxO7UwDiPyyfTVlyF4n/52yTA0EMnZqzW234FbC8=;
-	b=nlPUE/e7F+X8WrUw6J4qfcaLHa1uKKS4XsuggwRVtF7gTcz6nFif/WwVknP27fkOgF8s+Y
-	c+EmrfkGo3vXsFVUVjzCG1vpuxoslzDrD/1Puf/BAybyr8hg2XeZZ68zHLelYE+w82cAC9
-	XaT0ZxkP1W+ocEUdOALgCcVJZY1mdRc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756724934;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1gsZxO7UwDiPyyfTVlyF4n/52yTA0EMnZqzW234FbC8=;
-	b=wxl/KWzB0/GJpacisYIzHBgqZs9iqq7+mJn12vMwX9zQiiIWqooa/mHXaGDOtTjlqsCTbv
-	FZdwNt8oIPrStaCQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="nlPUE/e7";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="wxl/KWzB"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756724934; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1gsZxO7UwDiPyyfTVlyF4n/52yTA0EMnZqzW234FbC8=;
-	b=nlPUE/e7F+X8WrUw6J4qfcaLHa1uKKS4XsuggwRVtF7gTcz6nFif/WwVknP27fkOgF8s+Y
-	c+EmrfkGo3vXsFVUVjzCG1vpuxoslzDrD/1Puf/BAybyr8hg2XeZZ68zHLelYE+w82cAC9
-	XaT0ZxkP1W+ocEUdOALgCcVJZY1mdRc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756724934;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1gsZxO7UwDiPyyfTVlyF4n/52yTA0EMnZqzW234FbC8=;
-	b=wxl/KWzB0/GJpacisYIzHBgqZs9iqq7+mJn12vMwX9zQiiIWqooa/mHXaGDOtTjlqsCTbv
-	FZdwNt8oIPrStaCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0E11A1378C;
-	Mon,  1 Sep 2025 11:08:54 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id oAwtA8Z+tWjtDgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 01 Sep 2025 11:08:54 +0000
-From: Vlastimil Babka <vbabka@suse.cz>
-Date: Mon, 01 Sep 2025 13:09:02 +0200
-Subject: [PATCH 12/12] maple_tree: Convert forking to use the sheaf
- interface
+	s=arc-20240116; t=1756725026; c=relaxed/simple;
+	bh=uYkr3OZP9Q1mYwEjaY521TYkA6/Tml283zWToFJzod4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=P/uymVqicbq/rsJrfHyn35mMYW8fUiVFc5FI3tmS2O5IKiN0eB5R1SVUebVpE6c25+EOIu7Kg5ACul2jm3xdg7dE/EQ3IVYYiuEVXiN1akyaVDAWmKjtJqRNbfQd1b2RppMLbtx3OhZxc+eC5lnV80XZ4r9SjRu8l5D4nwKAIJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XbHB0cI+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB9FAC4CEF0;
+	Mon,  1 Sep 2025 11:10:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756725026;
+	bh=uYkr3OZP9Q1mYwEjaY521TYkA6/Tml283zWToFJzod4=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=XbHB0cI+gMUi9MhzXOJ7dSmrqymz9GCS0DF+tUCj0pMNU4Rzh/FqVz6p5riBhU07Q
+	 v6EooI53ioNToxgu8Y5o5mM/kYDMIk9TeWH09YOGRkjgwZshAjLilqe3YHHUCO+lFG
+	 KirhiMOffXKZluIzyVEdGa8LolKmx91ih3MG1mlCXe3Espmo7kWHkE57ubnYxYlGwl
+	 Q2f3OhcruL6w1aUhewq539N15/iPBRLAbs5wOJLNpaNGePyEejxU7iNv66SEREcYAn
+	 YGHO4PbvkgB0q5rUQsPiJ/K/lzlEG3S2ypDmiHHtSInInCLIPYjUm8hdufzYIpNv6Z
+	 of2ZrnIoy7w6g==
+Message-ID: <9170c58bfda7242ebe8e325c702828f8a7617fb4.camel@kernel.org>
+Subject: Re: [PATCH] fhandle: use more consistent rules for decoding file
+ handle from userns
+From: Jeff Layton <jlayton@kernel.org>
+To: Amir Goldstein <amir73il@gmail.com>, Christian Brauner
+ <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>, 
+	linux-fsdevel@vger.kernel.org
+Date: Mon, 01 Sep 2025 07:10:24 -0400
+In-Reply-To: <20250827194309.1259650-1-amir73il@gmail.com>
+References: <20250827194309.1259650-1-amir73il@gmail.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250901-maple-sheaves-v1-12-d6a1166b53f2@suse.cz>
-References: <20250901-maple-sheaves-v1-0-d6a1166b53f2@suse.cz>
-In-Reply-To: <20250901-maple-sheaves-v1-0-d6a1166b53f2@suse.cz>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
- Matthew Wilcox <willy@infradead.org>, 
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Jann Horn <jannh@google.com>, 
- Pedro Falcato <pfalcato@suse.de>, Suren Baghdasaryan <surenb@google.com>
-Cc: Harry Yoo <harry.yoo@oracle.com>, 
- Andrew Morton <akpm@linux-foundation.org>, maple-tree@lists.infradead.org, 
- linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>, 
- "Liam R. Howlett" <Liam.Howlett@Oracle.com>
-X-Mailer: b4 0.14.2
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RL5jz3zk9nm44ai14dcppf93zb)];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:dkim,suse.cz:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,oracle.com:email];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 2495F2117F
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
 
-From: "Liam R. Howlett" <Liam.Howlett@Oracle.com>
+On Wed, 2025-08-27 at 21:43 +0200, Amir Goldstein wrote:
+> Commit 620c266f39493 ("fhandle: relax open_by_handle_at() permission
+> checks") relaxed the coditions for decoding a file handle from non init
+> userns.
+>=20
+> The conditions are that that decoded dentry is accessible from the user
+> provided mountfd (or to fs root) and that all the ancestors along the
+> path have a valid id mapping in the userns.
+>=20
+> These conditions are intentionally more strict than the condition that
+> the decoded dentry should be "lookable" by path from the mountfd.
+>=20
+> For example, the path /home/amir/dir/subdir is lookable by path from
+> unpriv userns of user amir, because /home perms is 755, but the owner of
+> /home does not have a valid id mapping in unpriv userns of user amir.
+>=20
+> The current code did not check that the decoded dentry itself has a
+> valid id mapping in the userns.  There is no security risk in that,
+> because that final open still performs the needed permission checks,
+> but this is inconsistent with the checks performed on the ancestors,
+> so the behavior can be a bit confusing.
+>=20
+> Add the check for the decoded dentry itself, so that the entire path,
+> including the last component has a valid id mapping in the userns.
+>=20
+> Fixes: 620c266f39493 ("fhandle: relax open_by_handle_at() permission chec=
+ks")
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> ---
+>  fs/fhandle.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>=20
+> diff --git a/fs/fhandle.c b/fs/fhandle.c
+> index 68a7d2861c58f..a907ddfac4d51 100644
+> --- a/fs/fhandle.c
+> +++ b/fs/fhandle.c
+> @@ -207,6 +207,14 @@ static int vfs_dentry_acceptable(void *context, stru=
+ct dentry *dentry)
+>  	if (!ctx->flags)
+>  		return 1;
+> =20
+> +	/*
+> +	 * Verify that the decoded dentry itself has a valid id mapping.
+> +	 * In case the decoded dentry is the mountfd root itself, this
+> +	 * verifies that the mountfd inode itself has a valid id mapping.
+> +	 */
+> +	if (!privileged_wrt_inode_uidgid(user_ns, idmap, d_inode(dentry)))
+> +		return 0;
+> +
+>  	/*
+>  	 * It's racy as we're not taking rename_lock but we're able to ignore
+>  	 * permissions and we just need an approximation whether we were able
 
-Use the generic interface which should result in less bulk allocations
-during a forking.
-
-A part of this is to abstract the freeing of the sheaf or maple state
-allocations into its own function so mas_destroy() and the tree
-duplication code can use the same functionality to return any unused
-resources.
-
-Signed-off-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
-Reviewed-by: Suren Baghdasaryan <surenb@google.com>
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
----
- lib/maple_tree.c | 42 +++++++++++++++++++++++-------------------
- 1 file changed, 23 insertions(+), 19 deletions(-)
-
-diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-index 61a322f945c28f5c3297c506923f00bcce5c7bca..5ef15e39fda8c7c65035fb7ed125b82dfa52ca69 100644
---- a/lib/maple_tree.c
-+++ b/lib/maple_tree.c
-@@ -1172,6 +1172,19 @@ static inline void mas_alloc_nodes(struct ma_state *mas, gfp_t gfp)
- 	mas_set_err(mas, -ENOMEM);
- }
- 
-+static inline void mas_empty_nodes(struct ma_state *mas)
-+{
-+	mas->node_request = 0;
-+	if (mas->sheaf) {
-+		mt_return_sheaf(mas->sheaf);
-+		mas->sheaf = NULL;
-+	}
-+
-+	if (mas->alloc) {
-+		kfree(mas->alloc);
-+		mas->alloc = NULL;
-+	}
-+}
- 
- /*
-  * mas_free() - Free an encoded maple node
-@@ -5408,15 +5421,7 @@ void mas_destroy(struct ma_state *mas)
- 		mas->mas_flags &= ~MA_STATE_REBALANCE;
- 	}
- 	mas->mas_flags &= ~(MA_STATE_BULK|MA_STATE_PREALLOC);
--
--	mas->node_request = 0;
--	if (mas->sheaf)
--		mt_return_sheaf(mas->sheaf);
--	mas->sheaf = NULL;
--
--	if (mas->alloc)
--		kfree(mas->alloc);
--	mas->alloc = NULL;
-+	mas_empty_nodes(mas);
- }
- EXPORT_SYMBOL_GPL(mas_destroy);
- 
-@@ -6504,7 +6509,7 @@ static inline void mas_dup_alloc(struct ma_state *mas, struct ma_state *new_mas,
- 	struct maple_node *node = mte_to_node(mas->node);
- 	struct maple_node *new_node = mte_to_node(new_mas->node);
- 	enum maple_type type;
--	unsigned char request, count, i;
-+	unsigned char count, i;
- 	void __rcu **slots;
- 	void __rcu **new_slots;
- 	unsigned long val;
-@@ -6512,20 +6517,17 @@ static inline void mas_dup_alloc(struct ma_state *mas, struct ma_state *new_mas,
- 	/* Allocate memory for child nodes. */
- 	type = mte_node_type(mas->node);
- 	new_slots = ma_slots(new_node, type);
--	request = mas_data_end(mas) + 1;
--	count = mt_alloc_bulk(gfp, request, (void **)new_slots);
--	if (unlikely(count < request)) {
--		memset(new_slots, 0, request * sizeof(void *));
--		mas_set_err(mas, -ENOMEM);
-+	count = mas->node_request = mas_data_end(mas) + 1;
-+	mas_alloc_nodes(mas, gfp);
-+	if (unlikely(mas_is_err(mas)))
- 		return;
--	}
- 
--	/* Restore node type information in slots. */
- 	slots = ma_slots(node, type);
- 	for (i = 0; i < count; i++) {
- 		val = (unsigned long)mt_slot_locked(mas->tree, slots, i);
- 		val &= MAPLE_NODE_MASK;
--		((unsigned long *)new_slots)[i] |= val;
-+		new_slots[i] = ma_mnode_ptr((unsigned long)mas_pop_node(mas) |
-+					    val);
- 	}
- }
- 
-@@ -6579,7 +6581,7 @@ static inline void mas_dup_build(struct ma_state *mas, struct ma_state *new_mas,
- 			/* Only allocate child nodes for non-leaf nodes. */
- 			mas_dup_alloc(mas, new_mas, gfp);
- 			if (unlikely(mas_is_err(mas)))
--				return;
-+				goto empty_mas;
- 		} else {
- 			/*
- 			 * This is the last leaf node and duplication is
-@@ -6612,6 +6614,8 @@ static inline void mas_dup_build(struct ma_state *mas, struct ma_state *new_mas,
- 	/* Make them the same height */
- 	new_mas->tree->ma_flags = mas->tree->ma_flags;
- 	rcu_assign_pointer(new_mas->tree->ma_root, root);
-+empty_mas:
-+	mas_empty_nodes(mas);
- }
- 
- /**
-
--- 
-2.51.0
-
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
