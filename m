@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-59807-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59808-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E5EBB3E18D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 13:29:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB451B3E1A8
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 13:34:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D47616C5F1
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 11:29:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D21647A946E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 11:32:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E13FB31A56D;
-	Mon,  1 Sep 2025 11:29:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F25CB3148D2;
+	Mon,  1 Sep 2025 11:34:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hyeNIdxo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ONedFjEo"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E61931A569
-	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Sep 2025 11:29:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E70D3101CD
+	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Sep 2025 11:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756726189; cv=none; b=qFXKHGWp2BwtGe6ejdjZtaRWWKTCNjFYRgiMMuqexVVk3XbHnxdU1YFwTQK7n/VYz80uU2DksJjrMKUCFvg65z+5rHyECPrSwREBWwSO8GgYLQoVEp1uf6O4v9J/ju4i1XjUc10mVDVzbt9XXKZFy6ZjCPN5zkL1gU6ZC6Kr9z4=
+	t=1756726457; cv=none; b=HECqbyhJJ3YdAkjDFfyGPo8JNx6BVHMaJMo+gXOAkzY8WvzMku3oOq23+ieSqD0zm5/+94T7V4PzYmhISrgtiR8EiYMyUxtIajprUyekESd+zaZL8feyvqSs8V3R1eaZgByIXUYjKuDJX2sdf6HZA48lVC7TgxhRsaNjXz/O7p8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756726189; c=relaxed/simple;
-	bh=2e5m9mB3RKoHm8U7zhV6OHGopDBNa+8D4G1GHcI9Xo0=;
+	s=arc-20240116; t=1756726457; c=relaxed/simple;
+	bh=lxZYtRm1xVPBSNypQYEq+T74M+eh2kYTCZgae+STRMA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KiMlPa8zqMGz/h/yT6dpNOxKYNCSLEz4FwoMXmoJtmkjzPAdifdkvNUZE6exeJ3bQaR46uAtmtR3edmSOThnITxQ12Z/qFU+f0O/ZOK0EA3nj0Z0FilcVByAwx95p6lP64l6crBJwYFNckJgGRTv7c0rB3IH2jdZX5l8KxDcOlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hyeNIdxo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACD8DC4CEF0;
-	Mon,  1 Sep 2025 11:29:47 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=pn/zqcpxXNn9evowVxajHLx4vjT2BmwqSIHk/ul/istXQNtdeypuKSuYvhO7IVDUMiIkrxTKf8+3VR7HJsPPmCP6bYXOV4n76SKTmoS4aAfGb6vupVAzkTIsfBoEICt4D2IsvdZSVM8TBSEOy0tdcQ+JM3Nzxne8YWp/JVHe1ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ONedFjEo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5448C4CEF0;
+	Mon,  1 Sep 2025 11:34:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756726188;
-	bh=2e5m9mB3RKoHm8U7zhV6OHGopDBNa+8D4G1GHcI9Xo0=;
+	s=k20201202; t=1756726455;
+	bh=lxZYtRm1xVPBSNypQYEq+T74M+eh2kYTCZgae+STRMA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hyeNIdxohasY5xjks05yeXD7lh2xccYSnyzVx2h/Wf5pLLLLuFvICNVI2MppqP9mD
-	 vCMWR4Hg9Xuqb2LtmaDk9Dt8/22zuJHtLs7Qeku40feaFkZX6ZkL841XYWc6z4wdZq
-	 8nGFRMug3fHIzSV4CZyG0hXM74dWFAy2rR7FSRBlgwNyevbaN67/gJ+ce026E6owWv
-	 Unv3dKn3NruAWFijH2MQTqVdRm6S8i/YzcDh5QFWTeT4DBXyTt/9/OF0kbN8Jd1ZJr
-	 7ajBJBNhZg4Tk/JM+eyEqTok8yVFhyczMflD1+I3+BmFTw56P4Oo3jlmkb1jPUBgj+
-	 XqWDIlXCY5m2w==
-Date: Mon, 1 Sep 2025 13:29:45 +0200
+	b=ONedFjEoBp+h3BKwkxQ6apRYL8AZD3R3fb49C6QIu8vG/Tv2JnONgVT/7/9OpzZ4U
+	 ZXVn96CXIO3PJg5Nn2OdhzSE/SK4DvXUeJx84RJajjH4At6K0lnmk+5YPCRB1DsPVv
+	 yR8P2T4QFI5W+CNkA7otSVig4kxgmCy/cXg+tg3tplebR1BynbSWardr8pIIwNrOkj
+	 lqWcAXH/IJPQCnlTtxMlOsRQ0MfD1FkmzqDQwynZnHUHCUcSKZpm7Bx/TLVhAmuYbg
+	 AlSuZqzUc2R/ivl0md/LaVHVupagQ94aRZUY1jCMamBtnPjO1OiyR+CLdrxvvlTHTX
+	 KPjBOzEuw7DAw==
+Date: Mon, 1 Sep 2025 13:34:12 +0200
 From: Christian Brauner <brauner@kernel.org>
 To: Al Viro <viro@zeniv.linux.org.uk>
 Cc: linux-fsdevel@vger.kernel.org, jack@suse.cz, 
 	torvalds@linux-foundation.org
-Subject: Re: [PATCH v2 54/63] open_detached_copy(): don't bother with
- mount_lock_hash()
-Message-ID: <20250901-firma-zurief-aa892083d30d@brauner>
+Subject: Re: [PATCH v2 26/63] do_new_mount_rc(): use __free() to deal with
+ dropping mnt on failure
+Message-ID: <20250901-kopftuch-gechartert-32285d69d946@brauner>
 References: <20250828230706.GA3340273@ZenIV>
  <20250828230806.3582485-1-viro@zeniv.linux.org.uk>
- <20250828230806.3582485-54-viro@zeniv.linux.org.uk>
+ <20250828230806.3582485-26-viro@zeniv.linux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,13 +60,13 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250828230806.3582485-54-viro@zeniv.linux.org.uk>
+In-Reply-To: <20250828230806.3582485-26-viro@zeniv.linux.org.uk>
 
-On Fri, Aug 29, 2025 at 12:07:57AM +0100, Al Viro wrote:
-> we are holding namespace_sem and a reference to root of tree;
-> iterating through that tree does not need mount_lock.  Neither
-> does the insertion into the rbtree of new namespace or incrementing
-> the mount count of that namespace.
+On Fri, Aug 29, 2025 at 12:07:29AM +0100, Al Viro wrote:
+> do_add_mount() consumes vfsmount on success; just follow it with
+> conditional retain_and_null_ptr() on success and we can switch
+> to __free() for mnt and be done with that - unlock_mount() is
+> in the very end.
 > 
 > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 > ---
