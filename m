@@ -1,450 +1,187 @@
-Return-Path: <linux-fsdevel+bounces-59761-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59762-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC993B3DE2E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 11:23:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8393EB3DEDE
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 11:42:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80BBA7A0812
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 09:22:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52D051782C5
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Sep 2025 09:42:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 019663148C6;
-	Mon,  1 Sep 2025 09:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="JW2okNwf"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F47130DEB5;
+	Mon,  1 Sep 2025 09:41:13 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1279313523
-	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Sep 2025 09:19:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 286C623E23C;
+	Mon,  1 Sep 2025 09:41:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756718391; cv=none; b=W1TZNE+NEfYMnsNmJfRcVuTuscMaLAFCt6+vV0wSAFjtE9dj1XKKIA2PVQXC2ZCXCuEZy6mI+xWX6BmDNa8l1OX2kze00PfGjUq9KlTKt4rK0k4PiEgvtfTHlHbdIZuyq7gs1D1xJDiUeggIiNC5goXpJdSzoKjvlMwsNWsT6Wo=
+	t=1756719673; cv=none; b=clhaBZraJXjorHnOgUbwtz+f6dvnS+EUi8c+2I/1WaBeWmpHo82BsDGKrKssN+2e8bETpnmxZwPrbhe7Q9IN+lR/61GZYawMKSgpHBL9KtMkR/lg3tJaa4LERGA2JtwssEWqh9ow/2o/84tW6BnuLM6+mxA/YefOET9mWBzQe5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756718391; c=relaxed/simple;
-	bh=keel1yn3FhEJPPOWeNQJAj3xmh/1LD+X02xJSdZzUVI=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=u0vOtadw90lfdgThg2ujQo9/Ad1LaDJJy0/8jn8nMjLlNvKWdF5/2LT7f+n89OnqR1v9EBjBv1RWfT71trJfubjmIAjfzbn2cCnYfRN/J7rLMDKnXVk4/2L7QLMeCJGcOa9pbFguLxkR7QvrmTHoKoOqOzxeFdOIX3z9BQmZC00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=JW2okNwf; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b04163fe08dso202610066b.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Sep 2025 02:19:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1756718386; x=1757323186; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=u6Ls6t35aYYluwAFtTSG43pL4pzA4jbKsfNN9ofH+0I=;
-        b=JW2okNwfJNFjfv/5BhnLFDP+XBM6PVBGnVlU9aSyVg6SWsa7L02fGvbyxKqX22qrQV
-         VvD9s7YCXuwAlUbm4uTahpvYEL3ORrgtGnzge5703tr80mSti3fy+tMqW9FdPzdDJR1q
-         e6jPcl+JnBu9OqRxioVDLtwfo6aKPwO6ypHN+SmheNP/COv4nOYZ//WOviKWfTs93hya
-         utTcRGtFrHPyuxK0rypF/085815uUEjyeIMbMcTaztoTgp7LKVqyi6spNUSVk/8/crIS
-         EIH8PWuvNGd+WShPqoY6iOCzhXvYpbZ998WgIF++IBic+PKq5DxOoJEQlmhyBfGUuJH4
-         6TTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756718386; x=1757323186;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=u6Ls6t35aYYluwAFtTSG43pL4pzA4jbKsfNN9ofH+0I=;
-        b=taTSM6G3VGmJ9BcV1j3kuxs275grBHq9dj+lC3vKEFP2uPGyLSM1s4gybABFeCU7Zl
-         HCaBHeUAqLPgn2qjoozUEvMBlle7Yt+YjspZet2b9vBHJIkJlycQPF4SBU1YhePCgKAa
-         jfJjcaTRMQCtOzWNM+8FCcDN+lq+rKbwGP1djl2SepEcEKWibjRCkl0iO6G7yvc5PsGu
-         miBH2UbPpZ2kzXxv9gzmek9i5E2n8mWDOoi5NYiy+cqwvJ5/t7glRNy8tWr9agNqsoab
-         xANWy4nDWlmmsRdpdZXBxcykYWxCuNVkcF5u2zwnMJmhj45qmCgFAcFERS67tE62hGws
-         1s/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUbR3aDB0GpFKiFXBom8QCI5f91ZscA8EhLB7gIhEzrYOzn++paUn6/IqNz081/fYDkV3XkvK0HJDZxWNCI@vger.kernel.org
-X-Gm-Message-State: AOJu0YyE7VgqMjufkAx9K0dz04qX5KSReRWJmPtZdxX5ziLwylnNGUGa
-	IVpavYPc8SEkdl7ihe4sP+IqjLwEFOu4zNyJjP9eQikooVc5tBC9dGrgIQ7cF0wEHJc=
-X-Gm-Gg: ASbGncsbJVesJ0H6I6ObuaKk14UbVjSIf2C6YGzFmQkDiRP9fU8YRLzaYbrV3QdiivX
-	NDd7XUe4Y/4RhJbSjxGiBeMMm775raCA/1fMfG/qhfcGjSFFShqFtBYlEmo64iVxNldYjA+2Np8
-	mv8DCcr0ez5mEWKA/qjwOB+kOInBoOKXnNcWe05v20qrBDGqKDelMr8pVjnmtpxi0vJTHKn8hUJ
-	RdgrR+MFY5EhXSLpwVk3iA9XCNgfDSmDJVu8EE57IXjWQAC+x1A/3QpBhcmPbzRrUbi5LHhFQaN
-	2Y+powHEjf+xuwnqp5uoBwwQ2ywnPIulr/8qr7KhsQmr2y4sez0OUCI9/oNcf9LNPTiKaIRUPvq
-	NkJhWNLOwCX9J2fn031YzwUlh75sAbyVHmD+gT70ti/mTzr++RYDOHF5YmArpzNdlgcDO/O4TOr
-	SUWK128gsCnot008iiwFvOaw==
-X-Google-Smtp-Source: AGHT+IEW+p/yFRXmmN9eW8x4AeaBg7N2/sFlQYebSPLD3vubNbtOgyDoyxrNrPhIPQlzogfakGVp6g==
-X-Received: by 2002:a17:907:94c9:b0:b04:2f81:5c35 with SMTP id a640c23a62f3a-b042f817f8cmr232585266b.34.1756718385988;
-        Mon, 01 Sep 2025 02:19:45 -0700 (PDT)
-Received: from raven.intern.cm-ag (p200300dc6f1d0f00023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f1d:f00:230:64ff:fe74:809])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b01902d0e99sm541005766b.12.2025.09.01.02.19.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 02:19:45 -0700 (PDT)
-From: Max Kellermann <max.kellermann@ionos.com>
-To: akpm@linux-foundation.org,
-	david@redhat.com,
-	axelrasmussen@google.com,
-	yuanchu@google.com,
-	willy@infradead.org,
-	hughd@google.com,
-	mhocko@suse.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com,
-	vbabka@suse.cz,
-	rppt@kernel.org,
-	surenb@google.com,
-	vishal.moola@gmail.com,
-	linux@armlinux.org.uk,
-	James.Bottomley@HansenPartnership.com,
-	deller@gmx.de,
-	agordeev@linux.ibm.com,
-	gerald.schaefer@linux.ibm.com,
-	hca@linux.ibm.com,
-	gor@linux.ibm.com,
-	borntraeger@linux.ibm.com,
-	svens@linux.ibm.com,
-	davem@davemloft.net,
-	andreas@gaisler.com,
-	dave.hansen@linux.intel.com,
-	luto@kernel.org,
-	peterz@infradead.org,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	x86@kernel.org,
-	hpa@zytor.com,
-	chris@zankel.net,
-	jcmvbkbc@gmail.com,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	weixugc@google.com,
-	baolin.wang@linux.alibaba.com,
-	rientjes@google.com,
-	shakeel.butt@linux.dev,
-	max.kellermann@ionos.com,
-	thuth@redhat.com,
-	broonie@kernel.org,
-	osalvador@suse.de,
-	jfalempe@redhat.com,
-	mpe@ellerman.id.au,
-	nysal@linux.ibm.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-parisc@vger.kernel.org,
-	linux-s390@vger.kernel.org,
-	sparclinux@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v4 12/12] mm/highmem: add const to pointer parameters for improved const-correctness
-Date: Mon,  1 Sep 2025 11:19:15 +0200
-Message-ID: <20250901091916.3002082-13-max.kellermann@ionos.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250901091916.3002082-1-max.kellermann@ionos.com>
-References: <20250901091916.3002082-1-max.kellermann@ionos.com>
+	s=arc-20240116; t=1756719673; c=relaxed/simple;
+	bh=tTYf9LKW6XZAWe8Mq9GSfJKgl+eQpwHG4OYySo6GQLc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=n39j9hn00eH6jAd6oN8WiFXQb8vt/ukkXAuNxAipTKMEPWhnCNjZlHyqTXZwFqqES9rJsqCh2wDf7Vt9djh4/HLUIdE+/6uK3Ikm/Z7D/SDA+lQF2U0bn1XAKkJYY1WIjwd9owpQ13a9y/TY2BicJ7cyEr1+NPOMz72jz9tf84M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cFk1X1B79z1HBR7;
+	Mon,  1 Sep 2025 17:22:56 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id CBB331402C4;
+	Mon,  1 Sep 2025 17:24:39 +0800 (CST)
+Received: from [10.204.63.22] (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwAXbEFDZrVod9SLAA--.60560S2;
+	Mon, 01 Sep 2025 10:24:38 +0100 (CET)
+Message-ID: <54e27d05bae55749a975bc7cbe109b237b2b1323.camel@huaweicloud.com>
+Subject: Re: [RFC PATCH v1 0/2] Add O_DENY_WRITE (complement AT_EXECVE_CHECK)
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Aleksa Sarai <cyphar@cyphar.com>, =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?=
+	 <mic@digikod.net>
+Cc: Christian Brauner <brauner@kernel.org>, Al Viro
+ <viro@zeniv.linux.org.uk>,  Kees Cook <keescook@chromium.org>, Paul Moore
+ <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>,  Andy Lutomirski
+ <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Christian Heimes
+ <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, Elliott Hughes
+ <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, Florian Weimer
+ <fweimer@redhat.com>, Jann Horn <jannh@google.com>, Jeff Xu
+ <jeffxu@google.com>,  Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams
+ <ajordanr@google.com>, Lakshmi Ramasubramanian
+ <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, Matt
+ Bobrowski <mattbobrowski@google.com>, Miklos Szeredi <mszeredi@redhat.com>,
+ Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet
+ <nicolas.bouchinet@oss.cyber.gouv.fr>,  Robert Waite
+ <rowait@microsoft.com>, Roberto Sassu <roberto.sassu@huawei.com>, Scott
+ Shell <scottsh@microsoft.com>, Steve Dower <steve.dower@python.org>, Steve
+ Grubb <sgrubb@redhat.com>, kernel-hardening@lists.openwall.com, 
+ linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-security-module@vger.kernel.org
+Date: Mon, 01 Sep 2025 11:24:17 +0200
+In-Reply-To: <2025-08-27-obscene-great-toy-diary-X1gVRV@cyphar.com>
+References: <20250822170800.2116980-1-mic@digikod.net>
+	 <20250826-skorpion-magma-141496988fdc@brauner>
+	 <20250826.aig5aiShunga@digikod.net>
+	 <2025-08-27-obscene-great-toy-diary-X1gVRV@cyphar.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:GxC2BwAXbEFDZrVod9SLAA--.60560S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWF15Gr15Jr4xtrW8Zw4fKrg_yoWrCFyfpF
+	WFqwnIkF1DJr1Iyw1xC3WxZ3yFywsxJay3Jr95JrykA3W5uF1Igr1fKr4YvFZrCF4fKw1j
+	vrWIv3s8urWDAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Wrv_ZF1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26rWY6r4U
+	JwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
+	EksDUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQASBGi1Q8AC1wAAsc
 
-The memory management (mm) subsystem is a fundamental low-level component
-of the Linux kernel. Establishing const-correctness at this foundational
-level enables higher-level subsystems, such as filesystems and drivers,
-to also adopt const-correctness in their interfaces. This patch lays
-the groundwork for broader const-correctness throughout the kernel
-by starting with the core mm subsystem.
+On Thu, 2025-08-28 at 10:14 +1000, Aleksa Sarai wrote:
+> On 2025-08-26, Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> wrote:
+> > On Tue, Aug 26, 2025 at 11:07:03AM +0200, Christian Brauner wrote:
+> > > Nothing has changed in that regard and I'm not interested in stuffing
+> > > the VFS APIs full of special-purpose behavior to work around the fact
+> > > that this is work that needs to be done in userspace. Change the apps=
+,
+> > > stop pushing more and more cruft into the VFS that has no business
+> > > there.
+> >=20
+> > It would be interesting to know how to patch user space to get the same
+> > guarantees...  Do you think I would propose a kernel patch otherwise?
+>=20
+> You could mmap the script file with MAP_PRIVATE. This is the *actual*
+> protection the kernel uses against overwriting binaries (yes, ETXTBSY is
+> nice but IIRC there are ways to get around it anyway). Of course, most
+> interpreters don't mmap their scripts, but this is a potential solution.
+> If the security policy is based on validating the script text in some
+> way, this avoids the TOCTOU.
+>=20
+> Now, in cases where you have IMA or something and you only permit signed
+> binaries to execute, you could argue there is a different race here (an
+> attacker creates a malicious script, runs it, and then replaces it with
+> a valid script's contents and metadata after the fact to get
+> AT_EXECVE_CHECK to permit the execution). However, I'm not sure that
 
-This patch adds const qualifiers to folio and page pointer parameters
-in highmem functions that do not modify the referenced memory, improving
-type safety and enabling compiler optimizations.
+Uhm, let's consider measurement, I'm more familiar with.
 
-Functions improved:
-- kmap_high_get()
-- arch_kmap_local_high_get()
-- get_pkmap_color()
-- __kmap_local_page_prot()
-- kunmap_high()
-- kunmap()
-- kmap_local_page()
-- kmap_local_page_try_from_panic()
-- kmap_local_folio()
-- kmap_local_page_prot()
-- kmap_atomic_prot()
-- kmap_atomic()
+I think the race you wanted to express was that the attacker replaces
+the good script, verified with AT_EXECVE_CHECK, with the bad script
+after the IMA verification but before the interpreter reads it.
 
-Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
----
- arch/arm/include/asm/highmem.h    |  6 ++---
- arch/xtensa/include/asm/highmem.h |  2 +-
- include/linux/highmem-internal.h  | 38 +++++++++++++++++--------------
- include/linux/highmem.h           |  8 +++----
- mm/highmem.c                      | 10 ++++----
- 5 files changed, 34 insertions(+), 30 deletions(-)
+Fortunately, IMA is able to cope with this situation, since this race
+can happen for any file open, where of course a file can be not read-
+locked.
 
-diff --git a/arch/arm/include/asm/highmem.h b/arch/arm/include/asm/highmem.h
-index b4b66220952d..023be74298f3 100644
---- a/arch/arm/include/asm/highmem.h
-+++ b/arch/arm/include/asm/highmem.h
-@@ -46,9 +46,9 @@ extern pte_t *pkmap_page_table;
- #endif
- 
- #ifdef ARCH_NEEDS_KMAP_HIGH_GET
--extern void *kmap_high_get(struct page *page);
-+extern void *kmap_high_get(const struct page *page);
- 
--static inline void *arch_kmap_local_high_get(struct page *page)
-+static inline void *arch_kmap_local_high_get(const struct page *page)
- {
- 	if (IS_ENABLED(CONFIG_DEBUG_HIGHMEM) && !cache_is_vivt())
- 		return NULL;
-@@ -57,7 +57,7 @@ static inline void *arch_kmap_local_high_get(struct page *page)
- #define arch_kmap_local_high_get arch_kmap_local_high_get
- 
- #else /* ARCH_NEEDS_KMAP_HIGH_GET */
--static inline void *kmap_high_get(struct page *page)
-+static inline void *kmap_high_get(const struct page *const page)
- {
- 	return NULL;
- }
-diff --git a/arch/xtensa/include/asm/highmem.h b/arch/xtensa/include/asm/highmem.h
-index 34b8b620e7f1..473b622b863b 100644
---- a/arch/xtensa/include/asm/highmem.h
-+++ b/arch/xtensa/include/asm/highmem.h
-@@ -29,7 +29,7 @@
- 
- #if DCACHE_WAY_SIZE > PAGE_SIZE
- #define get_pkmap_color get_pkmap_color
--static inline int get_pkmap_color(struct page *page)
-+static inline int get_pkmap_color(const struct page *const page)
- {
- 	return DCACHE_ALIAS(page_to_phys(page));
- }
-diff --git a/include/linux/highmem-internal.h b/include/linux/highmem-internal.h
-index 36053c3d6d64..ca2ba47c14e0 100644
---- a/include/linux/highmem-internal.h
-+++ b/include/linux/highmem-internal.h
-@@ -7,7 +7,7 @@
-  */
- #ifdef CONFIG_KMAP_LOCAL
- void *__kmap_local_pfn_prot(unsigned long pfn, pgprot_t prot);
--void *__kmap_local_page_prot(struct page *page, pgprot_t prot);
-+void *__kmap_local_page_prot(const struct page *page, pgprot_t prot);
- void kunmap_local_indexed(const void *vaddr);
- void kmap_local_fork(struct task_struct *tsk);
- void __kmap_local_sched_out(void);
-@@ -33,7 +33,7 @@ static inline void kmap_flush_tlb(unsigned long addr) { }
- #endif
- 
- void *kmap_high(struct page *page);
--void kunmap_high(struct page *page);
-+void kunmap_high(const struct page *page);
- void __kmap_flush_unused(void);
- struct page *__kmap_to_page(void *addr);
- 
-@@ -50,7 +50,7 @@ static inline void *kmap(struct page *page)
- 	return addr;
- }
- 
--static inline void kunmap(struct page *page)
-+static inline void kunmap(const struct page *const page)
- {
- 	might_sleep();
- 	if (!PageHighMem(page))
-@@ -68,12 +68,12 @@ static inline void kmap_flush_unused(void)
- 	__kmap_flush_unused();
- }
- 
--static inline void *kmap_local_page(struct page *page)
-+static inline void *kmap_local_page(const struct page *const page)
- {
- 	return __kmap_local_page_prot(page, kmap_prot);
- }
- 
--static inline void *kmap_local_page_try_from_panic(struct page *page)
-+static inline void *kmap_local_page_try_from_panic(const struct page *const page)
- {
- 	if (!PageHighMem(page))
- 		return page_address(page);
-@@ -81,13 +81,15 @@ static inline void *kmap_local_page_try_from_panic(struct page *page)
- 	return NULL;
- }
- 
--static inline void *kmap_local_folio(struct folio *folio, size_t offset)
-+static inline void *kmap_local_folio(const struct folio *const folio,
-+				     const size_t offset)
- {
--	struct page *page = folio_page(folio, offset / PAGE_SIZE);
-+	const struct page *page = folio_page(folio, offset / PAGE_SIZE);
- 	return __kmap_local_page_prot(page, kmap_prot) + offset % PAGE_SIZE;
- }
- 
--static inline void *kmap_local_page_prot(struct page *page, pgprot_t prot)
-+static inline void *kmap_local_page_prot(const struct page *const page,
-+					 const pgprot_t prot)
- {
- 	return __kmap_local_page_prot(page, prot);
- }
-@@ -102,7 +104,7 @@ static inline void __kunmap_local(const void *vaddr)
- 	kunmap_local_indexed(vaddr);
- }
- 
--static inline void *kmap_atomic_prot(struct page *page, pgprot_t prot)
-+static inline void *kmap_atomic_prot(const struct page *const page, const pgprot_t prot)
- {
- 	if (IS_ENABLED(CONFIG_PREEMPT_RT))
- 		migrate_disable();
-@@ -113,7 +115,7 @@ static inline void *kmap_atomic_prot(struct page *page, pgprot_t prot)
- 	return __kmap_local_page_prot(page, prot);
- }
- 
--static inline void *kmap_atomic(struct page *page)
-+static inline void *kmap_atomic(const struct page *const page)
- {
- 	return kmap_atomic_prot(page, kmap_prot);
- }
-@@ -173,17 +175,17 @@ static inline void *kmap(struct page *page)
- 	return page_address(page);
- }
- 
--static inline void kunmap_high(struct page *page) { }
-+static inline void kunmap_high(const struct page *const page) { }
- static inline void kmap_flush_unused(void) { }
- 
--static inline void kunmap(struct page *page)
-+static inline void kunmap(const struct page *const page)
- {
- #ifdef ARCH_HAS_FLUSH_ON_KUNMAP
- 	kunmap_flush_on_unmap(page_address(page));
- #endif
- }
- 
--static inline void *kmap_local_page(struct page *page)
-+static inline void *kmap_local_page(const struct page *const page)
- {
- 	return page_address(page);
- }
-@@ -193,12 +195,14 @@ static inline void *kmap_local_page_try_from_panic(struct page *page)
- 	return page_address(page);
- }
- 
--static inline void *kmap_local_folio(struct folio *folio, size_t offset)
-+static inline void *kmap_local_folio(const struct folio *const folio,
-+				     const size_t offset)
- {
- 	return folio_address(folio) + offset;
- }
- 
--static inline void *kmap_local_page_prot(struct page *page, pgprot_t prot)
-+static inline void *kmap_local_page_prot(const struct page *const page,
-+					 const pgprot_t prot)
- {
- 	return kmap_local_page(page);
- }
-@@ -215,7 +219,7 @@ static inline void __kunmap_local(const void *addr)
- #endif
- }
- 
--static inline void *kmap_atomic(struct page *page)
-+static inline void *kmap_atomic(const struct page *const page)
- {
- 	if (IS_ENABLED(CONFIG_PREEMPT_RT))
- 		migrate_disable();
-@@ -225,7 +229,7 @@ static inline void *kmap_atomic(struct page *page)
- 	return page_address(page);
- }
- 
--static inline void *kmap_atomic_prot(struct page *page, pgprot_t prot)
-+static inline void *kmap_atomic_prot(const struct page *const page, const pgprot_t prot)
- {
- 	return kmap_atomic(page);
- }
-diff --git a/include/linux/highmem.h b/include/linux/highmem.h
-index 6234f316468c..105cc4c00cc3 100644
---- a/include/linux/highmem.h
-+++ b/include/linux/highmem.h
-@@ -43,7 +43,7 @@ static inline void *kmap(struct page *page);
-  * Counterpart to kmap(). A NOOP for CONFIG_HIGHMEM=n and for mappings of
-  * pages in the low memory area.
-  */
--static inline void kunmap(struct page *page);
-+static inline void kunmap(const struct page *page);
- 
- /**
-  * kmap_to_page - Get the page for a kmap'ed address
-@@ -93,7 +93,7 @@ static inline void kmap_flush_unused(void);
-  * disabling migration in order to keep the virtual address stable across
-  * preemption. No caller of kmap_local_page() can rely on this side effect.
-  */
--static inline void *kmap_local_page(struct page *page);
-+static inline void *kmap_local_page(const struct page *page);
- 
- /**
-  * kmap_local_folio - Map a page in this folio for temporary usage
-@@ -129,7 +129,7 @@ static inline void *kmap_local_page(struct page *page);
-  * Context: Can be invoked from any context.
-  * Return: The virtual address of @offset.
-  */
--static inline void *kmap_local_folio(struct folio *folio, size_t offset);
-+static inline void *kmap_local_folio(const struct folio *folio, size_t offset);
- 
- /**
-  * kmap_atomic - Atomically map a page for temporary usage - Deprecated!
-@@ -176,7 +176,7 @@ static inline void *kmap_local_folio(struct folio *folio, size_t offset);
-  * kunmap_atomic(vaddr2);
-  * kunmap_atomic(vaddr1);
-  */
--static inline void *kmap_atomic(struct page *page);
-+static inline void *kmap_atomic(const struct page *page);
- 
- /* Highmem related interfaces for management code */
- static inline unsigned long nr_free_highpages(void);
-diff --git a/mm/highmem.c b/mm/highmem.c
-index ef3189b36cad..93fa505fcb98 100644
---- a/mm/highmem.c
-+++ b/mm/highmem.c
-@@ -61,7 +61,7 @@ static inline int kmap_local_calc_idx(int idx)
- /*
-  * Determine color of virtual address where the page should be mapped.
-  */
--static inline unsigned int get_pkmap_color(struct page *page)
-+static inline unsigned int get_pkmap_color(const struct page *const page)
- {
- 	return 0;
- }
-@@ -334,7 +334,7 @@ EXPORT_SYMBOL(kmap_high);
-  *
-  * This can be called from any context.
-  */
--void *kmap_high_get(struct page *page)
-+void *kmap_high_get(const struct page *const page)
- {
- 	unsigned long vaddr, flags;
- 
-@@ -356,7 +356,7 @@ void *kmap_high_get(struct page *page)
-  * If ARCH_NEEDS_KMAP_HIGH_GET is not defined then this may be called
-  * only from user context.
-  */
--void kunmap_high(struct page *page)
-+void kunmap_high(const struct page *const page)
- {
- 	unsigned long vaddr;
- 	unsigned long nr;
-@@ -508,7 +508,7 @@ static inline void kmap_local_idx_pop(void)
- #endif
- 
- #ifndef arch_kmap_local_high_get
--static inline void *arch_kmap_local_high_get(struct page *page)
-+static inline void *arch_kmap_local_high_get(const struct page *const page)
- {
- 	return NULL;
- }
-@@ -572,7 +572,7 @@ void *__kmap_local_pfn_prot(unsigned long pfn, pgprot_t prot)
- }
- EXPORT_SYMBOL_GPL(__kmap_local_pfn_prot);
- 
--void *__kmap_local_page_prot(struct page *page, pgprot_t prot)
-+void *__kmap_local_page_prot(const struct page *const page, const pgprot_t prot)
- {
- 	void *kmap;
- 
--- 
-2.47.2
+If the attacker tries to concurrently open the script for write in this
+race window, IMA will report this event (called violation) in the
+measurement list, and during remote attestation it will be clear that
+the interpreter did not read what was measured.
+
+We just need to run the violation check for the BPRM_CHECK hook too
+(then, probably for us the O_DENY_WRITE flag or alternative solution
+would not be needed, for measurement).
+
+Please, let us know when you apply patches like 2a010c412853 ("fs:
+don't block i_writecount during exec"). We had a discussion [1], but
+probably I missed when it was decided to be applied (I saw now it was
+in the same thread, but didn't get that at the time). We would have
+needed to update our code accordingly. In the future, we will try to
+clarify better our expectations from the VFS.
+
+Thanks
+
+Roberto
+
+[1]: https://lore.kernel.org/linux-fsdevel/88d5a92379755413e1ec3c981d9a04e6=
+796da110.camel@huaweicloud.com/#t
+
+> this is even possible with IMA (can an unprivileged user even set
+> security.ima?). But even then, I would expect users that really need
+> this would also probably use fs-verity or dm-verity that would block
+> this kind of attack since it would render the files read-only anyway.
+>=20
+> This is why a more detailed threat model of what kinds of attacks are
+> relevant is useful. I was there for the talk you gave and subsequent
+> discussion at last year's LPC, but I felt that your threat model was
+> not really fleshed out at all. I am still not sure what capabilities you
+> expect the attacker to have nor what is being used to authenticate
+> binaries (other than AT_EXECVE_CHECK). Maybe I'm wrong with my above
+> assumptions, but I can't know without knowing what threat model you have
+> in mind, *in detail*.
+>=20
+> For example, if you are dealing with an attacker that has CAP_SYS_ADMIN,
+> there are plenty of ways for an attacker to execute their own code
+> without using interpreters (create a new tmpfs with fsopen(2) for
+> instance). Executable memfds are even easier and don't require
+> privileges on most systems (yes, you can block them with vm.memfd_noexec
+> but CAP_SYS_ADMIN can disable that -- and there's always fsopen(2) or
+> mount(2)).
+>=20
+> (As an aside, it's a shame that AT_EXECVE_CHECK burned one of the
+> top-level AT_* bits for a per-syscall flag -- the block comment I added
+> in b4fef22c2fb9 ("uapi: explain how per-syscall AT_* flags should be
+> allocated") was meant to avoid this happening but it seems you and the
+> reviewers missed that...)
+>=20
 
 
