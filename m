@@ -1,139 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-60033-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60034-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 328E1B41019
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 00:40:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3192B41099
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 01:09:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0298E54557A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 22:40:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DD175E7770
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 23:09:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73B1B27780E;
-	Tue,  2 Sep 2025 22:40:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFE8627875C;
+	Tue,  2 Sep 2025 23:09:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="F4WV3TXS"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="PLcdi6Xf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFB5D20E00B;
-	Tue,  2 Sep 2025 22:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D623732F743;
+	Tue,  2 Sep 2025 23:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756852844; cv=none; b=sfwqvv9gVhevXj4OcgRP88I5ACbdKDkAr1BGS0LEWD0dSCxh3TRdZmCP5xXc74mUW11X0IAUt79PCPEu7/ArJwKuLawGyXgUlGSLQTOBalQbVmARDH2kSFwasSQwgOGewLJ9w6sLNIsxBlRBWli5thW6XcmVLBiaRDHAhbgelgU=
+	t=1756854584; cv=none; b=poedzsl1w5Jffxqr0xCPyli5bRM10Si8dKSPnA/qyB7jtehUIvpX+Rr9QlD1KTNsgceFTHTv/LB/IW7haEBzDuRiPa3DChBBHDuTxI0DfBemxaP2BtjeimBVwU0D6Q848hS0dLWVyXiuCwa57g8AavOC+VymZon1RVKXfKpUFmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756852844; c=relaxed/simple;
-	bh=aGIRsV9W7yRHkxZ5RFmGNXNNlqvBFtD/ngQ0qVv3OSg=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Fs2rhDeeG16TWAZXpdkrycGI95wb1Qc6INFBY/ASCBkLjK3bnzqXaAJMcO9v68b9HGxioG27favA1Fvywwnln3hBmr+6CHVIyoTgtZS5Vz0XWleYxukvCuvm8JHAk6e6CSs1Rv9/BwofXuULITvtX6AOyPDh6s4YZKPBAffDd5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=F4WV3TXS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCF14C4CEED;
-	Tue,  2 Sep 2025 22:40:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1756852844;
-	bh=aGIRsV9W7yRHkxZ5RFmGNXNNlqvBFtD/ngQ0qVv3OSg=;
+	s=arc-20240116; t=1756854584; c=relaxed/simple;
+	bh=C3axpAdbhhgLqxaGF5ASkzZmnrWZlH5BBeSgMj2uuB8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=g1QagyQHxMun7V2DUHn5t0Z+C90xaOLc5nGfCvwr1ypOsixu4ValR0NLkNYQTru67HUpXGVTCcHuneEvQEV+HOVtE0Id5igJ9Akpp27QXJX+FkXzmQkgiAxyw15H3iWRhe16+oYffyrX1wqFS/tCf03Z0/tFDa67Dp1JSKbpaYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=PLcdi6Xf; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1756854576;
+	bh=lmd19YEM6DwJTRO3boTZW63QHXm1N7rR6wiqw+ejDUQ=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=F4WV3TXSoWes6xFTKpw/mxjIT3/thiuBh6crUHxk7GOnw8fsvmxLTgHhU2tQKe8Fg
-	 hd7vZJvdW6CFunsHRzmbsuA/CzqDeB2VdZECvfRlMKwfHOg55oLsXXT4Y/Hm3m0NqL
-	 F5M69AfoRzwvYPpub50mQ0gWSm53We47+qwdvREA=
-Date: Tue, 2 Sep 2025 15:40:43 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Aleksandr Nogikh <nogikh@google.com>
-Cc: david@redhat.com, joannelkoong@gmail.com, linux-fsdevel@vger.kernel.org,
+	b=PLcdi6XfnW7YUKeGYPwl38hmYQAlCEWbwD3AW+D2Ojsfajd84Mu7yu3styXm/xE3e
+	 o+9OWx1HbhCnFuCd7GA+SqCJSPTNRd9ISdgrl7mfa9T4jpPDilAmsGl3JlIZKKBfJm
+	 Wnkr4ElhuP4cxcKrcCwoT+L61dJJw7UryTZXyfib6mc4NraQMXmHN6VJkYIDebHNZU
+	 0AHgChNxAilkoUWMElFJPBY8kuLqxghLLT4ujw4k/dQd7pzBt18ooezsdiBc7m/58Z
+	 KE2aahQIM/JbInVC2FRcaF2tPSeqWetl3m0vaJybwvhrnnWFhijoj2Kg+pqJetJMb1
+	 /zczHoHTqJ3PA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cGhJv4fYdz4w9S;
+	Wed,  3 Sep 2025 09:09:35 +1000 (AEST)
+Date: Wed, 3 Sep 2025 09:09:34 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Aleksandr Nogikh <nogikh@google.com>, david@redhat.com,
+ joannelkoong@gmail.com, linux-fsdevel@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-mm@kvack.org, m.szyprowski@samsung.com,
- mszeredi@redhat.com, willy@infradead.org, syzkaller-bugs@googlegroups.com,
- Stephen Rothwell <sfr@canb.auug.org.au>
+ mszeredi@redhat.com, willy@infradead.org, syzkaller-bugs@googlegroups.com
 Subject: Re: [PATCH] mm: fix lockdep issues in writeback handling
-Message-Id: <20250902154043.7214448ff3a9cb68c8d231d5@linux-foundation.org>
-In-Reply-To: <20250902095250.1319807-1-nogikh@google.com>
+Message-ID: <20250903090934.4b5479d8@canb.auug.org.au>
+In-Reply-To: <20250902154043.7214448ff3a9cb68c8d231d5@linux-foundation.org>
 References: <345d49d2-5b6b-4307-824b-5167db737ad2@redhat.com>
 	<20250902095250.1319807-1-nogikh@google.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	<20250902154043.7214448ff3a9cb68c8d231d5@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/51YENCBeuS5sHhgM6ma6l5W";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/51YENCBeuS5sHhgM6ma6l5W
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On Tue,  2 Sep 2025 11:52:50 +0200 Aleksandr Nogikh <nogikh@google.com> wrote:
+Hi Andrew,
 
-> Hi,
-> 
-> When can the patch be expected to reach linux-next?
-> Syzbot can't build/boot the tree for more than 12 days already :(
+On Tue, 2 Sep 2025 15:40:43 -0700 Andrew Morton <akpm@linux-foundation.org>=
+ wrote:
+>
+> Perhaps Stephen can directly add it to linux-next for a while?
 
-Please don't top-post - it messes things up so much.
+I will add it to linux-next from today (until Miklos sorts it out).
+Note that the fuse tree was updated since yesterday's linux-next, but
+this patch is still not included.
 
-There's nothing I can reasonably do about this - it's fixing an issue
-that's coming in from Miklos's tree and perhaps he's offline.
+> From: Marek Szyprowski <m.szyprowski@samsung.com>
+> To: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.=
+kernel.org
+> Cc: Marek Szyprowski <m.szyprowski@samsung.com>, "Matthew Wilcox (Oracle)=
+" <willy@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, David H=
+ildenbrand <david@redhat.com>, Miklos Szeredi <mszeredi@redhat.com>, Joanne=
+ Koong <joannelkoong@gmail.com>
+> Subject: [PATCH] mm: fix lockdep issues in writeback handling
+> Date: Tue, 26 Aug 2025 15:09:48 +0200
+> Sender: owner-linux-mm@kvack.org
+> X-Mailer: git-send-email 2.34.1
+>=20
+> Commit 167f21a81a9c ("mm: remove BDI_CAP_WRITEBACK_ACCT") removed
+> BDI_CAP_WRITEBACK_ACCT flag and refactored code that depend on it.
+> Unfortunately it also moved some variable intialization out of guarded
+> scope in writeback handling, what triggers a true lockdep warning. Fix
+> this by moving initialization to the proper place.
+>=20
+> Fixes: 167f21a81a9c ("mm: remove BDI_CAP_WRITEBACK_ACCT")
 
-Perhaps Stephen can directly add it to linux-next for a while?
+This is now commit
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, Miklos Szeredi <mszeredi@redhat.com>, Joanne Koong <joannelkoong@gmail.com>
-Subject: [PATCH] mm: fix lockdep issues in writeback handling
-Date: Tue, 26 Aug 2025 15:09:48 +0200
-Sender: owner-linux-mm@kvack.org
-X-Mailer: git-send-email 2.34.1
+  2841808f35ee ("mm: remove BDI_CAP_WRITEBACK_ACCT")
 
-Commit 167f21a81a9c ("mm: remove BDI_CAP_WRITEBACK_ACCT") removed
-BDI_CAP_WRITEBACK_ACCT flag and refactored code that depend on it.
-Unfortunately it also moved some variable intialization out of guarded
-scope in writeback handling, what triggers a true lockdep warning. Fix
-this by moving initialization to the proper place.
+in the fuse tree.
 
-Fixes: 167f21a81a9c ("mm: remove BDI_CAP_WRITEBACK_ACCT")
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- mm/page-writeback.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index 99e80bdb3084..3887ac2e6475 100644
---- a/mm/page-writeback.c
-+++ b/mm/page-writeback.c
-@@ -2984,7 +2984,7 @@ bool __folio_end_writeback(struct folio *folio)
- 
- 	if (mapping && mapping_use_writeback_tags(mapping)) {
- 		struct inode *inode = mapping->host;
--		struct bdi_writeback *wb = inode_to_wb(inode);
-+		struct bdi_writeback *wb;
- 		unsigned long flags;
- 
- 		xa_lock_irqsave(&mapping->i_pages, flags);
-@@ -2992,6 +2992,7 @@ bool __folio_end_writeback(struct folio *folio)
- 		__xa_clear_mark(&mapping->i_pages, folio_index(folio),
- 					PAGECACHE_TAG_WRITEBACK);
- 
-+		wb = inode_to_wb(inode);
- 		wb_stat_mod(wb, WB_WRITEBACK, -nr);
- 		__wb_writeout_add(wb, nr);
- 		if (!mapping_tagged(mapping, PAGECACHE_TAG_WRITEBACK)) {
-@@ -3024,7 +3025,7 @@ void __folio_start_writeback(struct folio *folio, bool keep_write)
- 	if (mapping && mapping_use_writeback_tags(mapping)) {
- 		XA_STATE(xas, &mapping->i_pages, folio_index(folio));
- 		struct inode *inode = mapping->host;
--		struct bdi_writeback *wb = inode_to_wb(inode);
-+		struct bdi_writeback *wb;
- 		unsigned long flags;
- 		bool on_wblist;
- 
-@@ -3035,6 +3036,7 @@ void __folio_start_writeback(struct folio *folio, bool keep_write)
- 		on_wblist = mapping_tagged(mapping, PAGECACHE_TAG_WRITEBACK);
- 
- 		xas_set_mark(&xas, PAGECACHE_TAG_WRITEBACK);
-+		wb = inode_to_wb(inode);
- 		wb_stat_mod(wb, WB_WRITEBACK, nr);
- 		if (!on_wblist) {
- 			wb_inode_writeback_start(wb);
--- 
-2.34.1
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/51YENCBeuS5sHhgM6ma6l5W
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmi3eS4ACgkQAVBC80lX
+0Gybxwf/Uv3fpc9804shY5OAElYnQfg2+iEGw0IZHoAf6i8/EloaC7OQL/sm06/o
+eSck0xYXKM5k6aPUaKC7v6Y990fW/b9GKyQVO3+KVWPEH393Q5PoU01Lazp6LgvE
+4eaLnLYlFhlZwLgHtFcVWHEq8BeYjXl/wE/g9UDxOuyZ6M0UXF75o1Rnofib25tF
+38AwQf1Vxzptzts2zFyVoFbqL+/PioS0C1OBlcM77DUOKvFCOKD9dFuqNkCm5tF4
+Cf5RaO2UcQVFo1KHClvNNzw2dHP2fy81TsDuhG0vHnoEDO+S4bH+oaGjwIyKQsj5
+uP8Ajs97yivTnWBOKh5JeZx3JerJ2Q==
+=i4KV
+-----END PGP SIGNATURE-----
+
+--Sig_/51YENCBeuS5sHhgM6ma6l5W--
 
