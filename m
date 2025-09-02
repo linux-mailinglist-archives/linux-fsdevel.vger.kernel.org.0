@@ -1,133 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-60029-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60030-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 496A6B40F99
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 23:48:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EC4D8B40FA6
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 23:54:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB4921B61E67
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 21:48:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F46B1B62ACD
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 21:54:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9047435AAC5;
-	Tue,  2 Sep 2025 21:48:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 925C635AAC5;
+	Tue,  2 Sep 2025 21:53:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EjsDNG46"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FfEIxkHY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FE531E51D;
-	Tue,  2 Sep 2025 21:48:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F4CC32F77A
+	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Sep 2025 21:53:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756849709; cv=none; b=k0bjkEPPidtFkz7rn/HiJ2JRGv7fSLviAlIFOLjwzpPXBn41Wi8BAIzbUGSqrVphK/6jP6QxsvOHGtlUf2k1ZJvuzgcyZPbMtF23mHx2nfO56mtHMEwmAPwB9my0LwpbN8UurliZm88dZ0eiD9goIrH9zjACDJwug5KN2oI7Wu0=
+	t=1756850039; cv=none; b=eUEP9behGkFpQotZJH+QaOWhz3hATDdqzzgYey3N9nbcFHrDxWCJFL8xXuHyW7y+rnIFU6AxzYWnrIU4oM/iWPO8VJKRzs7R9PUvQNmtJfMVAe448kSmS0vRERdKX5Oqd8VMigINzf+uKUQj+Qa8H2L2UGwmk4FQOo/s9ciH3Ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756849709; c=relaxed/simple;
-	bh=JDMaeQIZXgcvGxNJoe0QMs3oBaj5uOPO2pvFJL619ps=;
+	s=arc-20240116; t=1756850039; c=relaxed/simple;
+	bh=kCVhrmjVw4jOp1yCWAxEPt4ZH0DFm9YuoqI/DEg/GSc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RtOmpqa7WZmXxlQf4a9yCBocjECRLJvkomUyU3i4ywm2oBqTndDPbZTl/eB/Hik79nblrlo3IzT8izAHGgGjNr6ox8Qy/1KmPGW8caTo7hEI85bs2Gx4C5mbpgDruzVNbACFqmmN4qs0j6m8W07YvYvHkXOMC7MQD1am1eNrCgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EjsDNG46; arc=none smtp.client-ip=209.85.160.178
+	 To:Cc:Content-Type; b=ZW6G/E4OfA9B3fEiFg68NQoEPHZ2ORoW46i8cQZAjaDa98M8YMtYFNISSEzjsNCz5zY5BN5JzwhtSoRpyrv5VfMMdoYf6xpoFLAhLiX7/cBQeiiS4Tmii7MoF7nMuueuax0Ax74minB0c+ChXkjm7pjxG4WfrP87fkbdOKclHz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FfEIxkHY; arc=none smtp.client-ip=209.85.160.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4b3289ed834so32532661cf.1;
-        Tue, 02 Sep 2025 14:48:27 -0700 (PDT)
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4b338d7a540so26397041cf.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Sep 2025 14:53:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756849706; x=1757454506; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1756850036; x=1757454836; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=H1xujNdyGho9qZzVEzUCmbnFV/ShXcIfwfowfy/WsMA=;
-        b=EjsDNG46d2bW5Pw4b6kAaYUjjTznNjVole3mLoTCsRgkKKDbvXRCZXG8zHJA0nOldM
-         THxS8UmCdgERsLtQ+oPjtDc2LwtEjfvwexA/G/+VHLnqgxRfvolCiDFBcmlk4hJgowyd
-         ALWW4PsH8plFLdTvJAikgKM2UUJphEbcDujjxSyUrJzr0P9XHfT5aczVCZg2LX1UgnRt
-         kJBlEzOFjPl4BT3T9+Q6vE0dov96+JVrW0wNR8crBEUyp/T44LKgaUHBbDIAW3w7yU4k
-         Ywdh105NtVzkd4P9lHk4GoowLyyxWfiLlzo4Gih5t/nwQ8Qgb4UJmaRZ4Xb0GoDnh31A
-         SGQA==
+        bh=G3cKNQOtPNM7hz0KXA6jse6dn9CSdJc/tTa7BYP2bho=;
+        b=FfEIxkHYHTnDON92KnooBGKulIzHhxPtPn7RWD0F/xSLBdQH5j9n5sJzlKwyInEAqH
+         HUDSRV6dTzkNYlq+VqJCdHEPL4LGWr9h4nf0loFEkkNDfB9EL0ed9XIaVcAHDZ1nXpNt
+         /nehMcGOSmaL08+yMm2o0wkB3S+aco66DAnz5uo6HlpW0gdkqLDHdjXtC+OWHYLaTfWy
+         3hJWjakK0g4rTkCt/I2JdE3KCtqyBm5opj/w7fkCmRdVqhSUvDZIZ5tFYXtgv0KWo2qG
+         Btemm9XgCBXmwmbaji4zDL+agpwFfxD67wS20d/Rn2Dd/Dv6LtXHi8QYhIYNawDelH7b
+         5qOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756849706; x=1757454506;
+        d=1e100.net; s=20230601; t=1756850036; x=1757454836;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=H1xujNdyGho9qZzVEzUCmbnFV/ShXcIfwfowfy/WsMA=;
-        b=wO13or4viBJzFEXl09yfz4kHHlqu6zejMXzfydXJ32yTIAHct9CJDZQy01iGGIFo1f
-         q6tCLSGa98RO214tvc+j6X31rxqcVPXs8PeeWF+bBW1mDUWSCUvZz9lG82Mbh0sWz+nH
-         CXhMESGBxZRX8nOFmzVVEOd3fCA4cOcSbFOdKUE02/1mN6ryVjxe0q83W3i55xoaW/+Z
-         naT3A/seiJCA3s50lIiejPRx/FH0GUovL5Y1CDN/Gil+WEf2FzHwxm4W7U6zO0yyyo0X
-         4ivTHqnw/ys+n7yNJBlL0lx/6yfyJn8ll1ikbfxCAARTLx+dAIFaUcp9SnB2Zwvokg3v
-         f5SQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWeHHPAPcfMGDVcVjdtmGRsngF1vyz395e6/lIRL1olJXX8EJxwofimxAUQHseehERfrHjpXPI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtT9HLzeqHhAcR9hoRhHB6dl9Yd2phPlVA+ZMT9iQygVkjshnK
-	u7hJANfvgzEn1uOkAnyh31OswEpyfv4YkoihvAchndMucOYvjbjGDBNZb5CF7WVSUO5UX3B7xXV
-	61S50JzJV5y5MICdjqtiBCRI4Iikl7TA=
-X-Gm-Gg: ASbGncs0oKH9WWw5mEYgN+roWREX1exs1AcmXTVxs8HCIVMuDsnBLfubp0vudbYD71V
-	3O1K4fkKQCBHgLyYMD57Jza7Ff1qoUf5ye2ahJnRGUYs8Z6+vhxMT7QDqzISgBpTHITx3w+twfT
-	2doOjnB24Fi7NFEYoYmanYF0sWSn8lfM5gXmZWHGkTkzyaXNX1rD/jwa1mpf8E9slv2yux6pg4o
-	FV1xmwUyKDMpA5k+6Q=
-X-Google-Smtp-Source: AGHT+IGetVkoNVJ59eQDmcgeZPkeu+KWFX6Me8sdMtyOFnWpXJkWdZbBrFeGMRsaeiTyPcX8fi/b23ko4mSNl3jrweo=
-X-Received: by 2002:ac8:7f4c:0:b0:4b3:2dc:8b84 with SMTP id
- d75a77b69052e-4b31da2384cmr198559611cf.47.1756849706180; Tue, 02 Sep 2025
- 14:48:26 -0700 (PDT)
+        bh=G3cKNQOtPNM7hz0KXA6jse6dn9CSdJc/tTa7BYP2bho=;
+        b=oPz7uik2JiAS6Ob1DP68K2e6Zg6stah/jx2KN6uwwwDdy2ICVS5+5ymFqgECoihohK
+         srE1y0yu1tbJi71K9rRPztGQHfCsjYnLZ9fI7S6/fqnT5CKdYHNMnCS74Ns41UurAFCH
+         2bky7uRrZ1F5xZ+ccL7atTbGbzPjw5sZ0XBdBuVzNwBwKBPxaPEVjLkM2gT+ADF1uq/k
+         M9RecNe99qHMTio2Ar5ypXhg5U/WI37DMaWjD3yQfGqQVF7z7i4oKS9W/UcSnDpQ9JBV
+         PjL/7ZE01KZqnR5tAkDxcn+NqEvZbsyIoCsjHIe1pmEy9+otZ75j2r66HBmnhy0itxdi
+         iIow==
+X-Gm-Message-State: AOJu0Yzh9uG8ZKX1+rfja1EmqOfj3gutNfiPqpcgcfJEbqrPZav1/k76
+	G7DfHMrz96Tgm9H6xToM7pO9ji4Fxr7lC9GpOYKPr7n+jpGtj5yXTZ1OhPm1gH/ge1IWmTjmsrc
+	7qdVxpSsosaAtLTc0Zhc5ZFs/xDUiUi8=
+X-Gm-Gg: ASbGncuv2l+8mNpJYqcDVBTUKFvMO7uCn4WnSyWGD0XIITiFjFrzvpwTW47of6zqjqK
+	MyHlmLrgqvE2965Gfxdf5osJAZYfnBrjrDuPUykkP4YydBPYFq2SyyeoNwLByKHkGodFShz1Bl2
+	5qnsOczR3NI+ExIzWmbswIXiSdUasOQ/FKJOhSJEqLENCtjD2XAcAKcQP6+sNocjyuQKl0H9lJo
+	gJNhwo+
+X-Google-Smtp-Source: AGHT+IHIkrPbcDIAccC0GCmbcHgspseSAzsQFa2Rcwj8OUfCyo14loBBw0BUAGIbL+EahaY+w5xXBt5PcBbbI4/XDvo=
+X-Received: by 2002:a05:622a:2d5:b0:4b0:da5c:de57 with SMTP id
+ d75a77b69052e-4b31db6a651mr148142651cf.54.1756850036439; Tue, 02 Sep 2025
+ 14:53:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250902144148.716383-1-mszeredi@redhat.com> <20250902144148.716383-2-mszeredi@redhat.com>
-In-Reply-To: <20250902144148.716383-2-mszeredi@redhat.com>
+References: <20250902144148.716383-1-mszeredi@redhat.com> <20250902144148.716383-3-mszeredi@redhat.com>
+In-Reply-To: <20250902144148.716383-3-mszeredi@redhat.com>
 From: Joanne Koong <joannelkoong@gmail.com>
-Date: Tue, 2 Sep 2025 14:48:15 -0700
-X-Gm-Features: Ac12FXyfIDwZFyd6e2Kak-EdAF3eiqGjq04wirdxi6vLh3R7AHkhN5IsKswHPXA
-Message-ID: <CAJnrk1YHvViDGis_BY5UGi+jU-Y2fSuDaXXKh41NSQXiCBtngw@mail.gmail.com>
-Subject: Re: [PATCH 2/4] fuse: fix possibly missing fuse_copy_finish() call in fuse_notify()
+Date: Tue, 2 Sep 2025 14:53:45 -0700
+X-Gm-Features: Ac12FXyMQdDFMlFxQqeGUQECsYSvKVFMgoK0QCbfmw3y4lQOE7aDzeZww-La8rY
+Message-ID: <CAJnrk1bk9jDzTzGn38S4Aq8UeDHyA11GBovpkzOD+S2o63++Bg@mail.gmail.com>
+Subject: Re: [PATCH 3/4] fuse: remove redundant calls to fuse_copy_finish() in fuse_notify()
 To: Miklos Szeredi <mszeredi@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, Jim Harris <jiharris@nvidia.com>, 
-	stable@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, Jim Harris <jiharris@nvidia.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 On Tue, Sep 2, 2025 at 7:44=E2=80=AFAM Miklos Szeredi <mszeredi@redhat.com>=
  wrote:
 >
-> In case of FUSE_NOTIFY_RESEND and FUSE_NOTIFY_INC_EPOCH fuse_copy_finish(=
-)
-> isn't called.
+> Remove tail calls of fuse_copy_finish(), since it's now done from
+> fuse_dev_do_write().
 >
-> Fix by always calling fuse_copy_finish() after fuse_notify().  It's a no-=
-op
-> if called a second time.
+> No functional change.
 >
-> Fixes: 760eac73f9f6 ("fuse: Introduce a new notification type for resend =
-pending requests")
-> Fixes: 2396356a945b ("fuse: add more control over cache invalidation beha=
-viour")
-> Cc: <stable@vger.kernel.org> # v6.9
 > Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 
 Reviewed-by: Joanne Koong <joannelkoong@gmail.com>
+
 > ---
->  fs/fuse/dev.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  fs/fuse/dev.c | 79 +++++++++++++++------------------------------------
+>  1 file changed, 23 insertions(+), 56 deletions(-)
 >
 > diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> index df793003eb0c..85d05a5e40e9 100644
+> index 85d05a5e40e9..1258acee9704 100644
 > --- a/fs/fuse/dev.c
 > +++ b/fs/fuse/dev.c
-> @@ -2178,7 +2178,7 @@ static ssize_t fuse_dev_do_write(struct fuse_dev *f=
-ud,
->          */
->         if (!oh.unique) {
->                 err =3D fuse_notify(fc, oh.error, nbytes - sizeof(oh), cs=
-);
-> -               goto out;
-> +               goto copy_finish;
->         }
+> @@ -1622,35 +1622,31 @@ static int fuse_notify_poll(struct fuse_conn *fc,=
+ unsigned int size,
+>                             struct fuse_copy_state *cs)
+>  {
+>         struct fuse_notify_poll_wakeup_out outarg;
+> -       int err =3D -EINVAL;
+> +       int err;
 >
->         err =3D -EINVAL;
-> --
-> 2.49.0
+>         if (size !=3D sizeof(outarg))
+> -               goto err;
+> +               return -EINVAL;
 >
+>         err =3D fuse_copy_one(cs, &outarg, sizeof(outarg));
+>         if (err)
+> -               goto err;
+> +               return err;
 >
+>         fuse_copy_finish(cs);
+
+Maybe worth also removing fuse_copy_finish() here (and for the other
+notify handlers) since it's going to get called anyways?
+
+Thanks,
+Joanne
+
+>         return fuse_notify_poll_wakeup(fc, &outarg);
+> -
 
