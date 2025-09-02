@@ -1,153 +1,161 @@
-Return-Path: <linux-fsdevel+bounces-60004-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60006-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFA45B40ACE
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 18:39:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6637FB40C28
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 19:35:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7DCD207599
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 16:39:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 284C0564501
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 17:35:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4AE5320A1C;
-	Tue,  2 Sep 2025 16:39:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FA783451DC;
+	Tue,  2 Sep 2025 17:35:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gotplt.org header.i=@gotplt.org header.b="YAen422m"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JLq91yAf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from siberian.tulip.relay.mailchannels.net (siberian.tulip.relay.mailchannels.net [23.83.218.246])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1463331CA5F
-	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Sep 2025 16:39:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.218.246
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756831171; cv=pass; b=LAvhFmZpuDZh6ska5sZkPgiHBCtbaNE/JgkH0kSAU2PaTJQ1Kx3ZIwAQraoNAEtoB3S/xiexWIL8QRUfJlYvQszUPulOT5Pgq/21lyt5vi9IJBGm0FZSdJvwpFdwRWGwuja/dfBA+s+v3vgf9ZMKBZlNh7dwRgBtoG+3N4o0CQM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756831171; c=relaxed/simple;
-	bh=1DqA0w/5+D00ICXK11993TmMzqKx66Pq191XTGAbTYg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nroXJ+fOOjXiCvZfNr83q9S1iLOa2dgTAUtEm9+s5J4almBTsYIkmA/DVG6sXIyQKbtiOZIEDx4PjPBMjloltzP2IXdrV/qMBqy4AwQzEUW8On++JawSxGkZDUhqCa/XmRt/JsYiTrhD+hJBYFJjbGbwFXVgwoMBC1tUMp/W+68=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gotplt.org; spf=pass smtp.mailfrom=gotplt.org; dkim=pass (2048-bit key) header.d=gotplt.org header.i=@gotplt.org header.b=YAen422m; arc=pass smtp.client-ip=23.83.218.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gotplt.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gotplt.org
-X-Sender-Id: dreamhost|x-authsender|siddhesh@gotplt.org
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id 7E3208A2F25;
-	Tue,  2 Sep 2025 16:39:22 +0000 (UTC)
-Received: from pdx1-sub0-mail-a251.dreamhost.com (100-101-146-44.trex-nlb.outbound.svc.cluster.local [100.101.146.44])
-	(Authenticated sender: dreamhost)
-	by relay.mailchannels.net (Postfix) with ESMTPA id 203848A5941;
-	Tue,  2 Sep 2025 16:39:22 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1756831162; a=rsa-sha256;
-	cv=none;
-	b=Gvqs4P/kow2s1GsGATqMaDFCnI/wLM4b+N4fX8ZKN2sgm/ib0Q6PBE9GYgBuT1jlGVxcjX
-	pkqTUoizkiD+yp8cNRZS2qUNp7nI1auO5wGZQQ348sgboTWdS6j3tfMHLSrAqgf+/aQKAg
-	58qZ1F4rdJh2OJkcSl/q+jzQAzhT9x3ljTWwh6Kgk4Oyw8tADuSBQWYuESVz0HzTU2T5jS
-	ezPnj5isQihJNxseKxI4NM/xUf35rTTXN/zAtiSznc6TrI3U+41oHootZ5R90a3MseIdDM
-	ocV8+zSh8WaevXQSuFf3GJnZ3+n8eX2GYMILK5Yg+0nI/GSqGd6hiF1ht8VlZw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1756831162;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=N8FdcJfj23kTOh+ESM/CmROX6cIACvGQj908hUKEmW4=;
-	b=iOtZN7Nj052hc7fZyqLJXlwKp4/pFJ3WFyZMWHt8PO5xWLygsF92TF9+ZbX9+tF1iTfKxe
-	y7GQRaJaMcUuxHl1uClePwdDonArl0YTYlhxBm3qidRkkOY6B7SaDFe7OHHRWk3EesW9/H
-	ozRtjPqwV1V6qKvhVvlXekS7LTXNMwfJd1DcV0/uUdz4pR7Pr039alUOgN+XmX4FbmeFhV
-	75A70PoFEIw/fcPTCBCppzuvWl1sJHDQ8Q9ipzdAwR/GtkQiGFVkK/XZS85evR0Ts8D4or
-	+mIBit/Vw49emutM186EQEzekJtRlw1tvLTog4mx+TTVYUc2ix8c2e77gxugFQ==
-ARC-Authentication-Results: i=1;
-	rspamd-77486b5f64-54lng;
-	auth=pass smtp.auth=dreamhost smtp.mailfrom=siddhesh@gotplt.org
-X-Sender-Id: dreamhost|x-authsender|siddhesh@gotplt.org
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|siddhesh@gotplt.org
-X-MailChannels-Auth-Id: dreamhost
-X-Left-Drop: 5ea7d9132bf8c3e8_1756831162392_3024158319
-X-MC-Loop-Signature: 1756831162392:2510259285
-X-MC-Ingress-Time: 1756831162392
-Received: from pdx1-sub0-mail-a251.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.101.146.44 (trex/7.1.3);
-	Tue, 02 Sep 2025 16:39:22 +0000
-Received: from [192.168.0.135] (unknown [38.23.181.90])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: siddhesh@gotplt.org)
-	by pdx1-sub0-mail-a251.dreamhost.com (Postfix) with ESMTPSA id 4cGWfd2VmfzDF;
-	Tue,  2 Sep 2025 09:39:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gotplt.org;
-	s=dreamhost; t=1756831162;
-	bh=N8FdcJfj23kTOh+ESM/CmROX6cIACvGQj908hUKEmW4=;
-	h=Date:Subject:To:Cc:From:Content-Type:Content-Transfer-Encoding;
-	b=YAen422meEfoHkBXgWgdZEyhxCqDXFPHCIDcKFLa5YM+iLWbq9x0ykQJ8pDeEUgOp
-	 OxOIot9G4XFv9GI1i0UEgTGhTVWzrQlUWf1TA1mUwb7cAmwhIHnbcR4vnxSzdIq6RJ
-	 17Kmawj0TFHkty7L4HDblLzjG4bkh/b+af60Dy9fBD/MmLWP8jvIRSJTmMk5J4v1Qc
-	 sHq2Wz5QO/sAP3ZdnKuQQMg/GrrGnEiXROg9aVttmedVN7zjW98ZXrEIziV1GDVKl5
-	 I66TPy7IGF870+Qw3CSh12TK9P35v+cP/N1Ik0QECkB6TR0QctEAwTghXA2OxgS4ep
-	 Zp4t9Q22FBbiQ==
-Message-ID: <28c931f8-27fb-4ee3-bae9-60a85be10501@gotplt.org>
-Date: Tue, 2 Sep 2025 12:39:20 -0400
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FEF32D5C91;
+	Tue,  2 Sep 2025 17:35:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756834542; cv=none; b=XBKODpf/umJDWwE39fjzn3BwikF07mIOv/02zYVAU6ixD+wb4gqUfHJTjFbOZhxDpZoimvceYNC2gdZQAJmdK8VOshxSlTnSECkUUN3GBsBvFxMHeBKA/G7F41mWyrKq/cz4o3DE/daloG8xm/4wxt65o7qCaiflLGV7QhauIUM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756834542; c=relaxed/simple;
+	bh=1uLg6SM9wHlwTxLAk9Pnfh6IsjgG4vNt80irmefYE98=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MV8lyR6XaI2kHOxPajrsrerbPeQAo56tTIdTdTytTNs8yuUM5HmcqrT87rtuvxDbbD0imzf74oCeTL8Ww4Hhy2h020npf5LpNjJh4s1gwIgxDgqkqmeEenIZxMYPNx0mv9Z5fJBGRoeyfJvWKhV5fh12d5Zf6PtE21IsVoLbrfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JLq91yAf; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4b38d4de61aso6079301cf.0;
+        Tue, 02 Sep 2025 10:35:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756834540; x=1757439340; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oG0pcCMckkzUES3yrYvToWpEQ8sbV1Ta4J6lC1FGxwI=;
+        b=JLq91yAfLI8hEQy5Fw8JXBqj3Z3mjZDpa7TKnHVc+AIVDiGnNxx9gRpWCoF3Rw9+Bh
+         wtwCnZvJ4VzAWWlIeggIMTnYjOT7ZG8+bG3ZMangsDay3sS2LJFhH5k4v1YgtV8YZABm
+         fTdmq4MzrAvYN0WongUdCEd1g0v87Tov1H5zhpFNZ1EkgokQlvxHC5p1YlFkO1XyeN03
+         LNVkttC/WVIIyqm6QoqaQChkbMKBcMhQexAAHgfTnxM8NsTxKUYal1ysdSYRHpdXDcY2
+         3N0viAFdnku8S1s+7bgNJaBYivhgq/L0OE98+c4d9hSYToMjoCMz5G6JrvmzrZ9wij8O
+         xYgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756834540; x=1757439340;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oG0pcCMckkzUES3yrYvToWpEQ8sbV1Ta4J6lC1FGxwI=;
+        b=SsK8HGTSufh7XcRWd8JpnGgtHwDa4iNp2U/b0f40r8+qNZcmXhFTcP9rNGdAQglImK
+         toAJ0NWFi3u1d83sG1vIZxeRty1BTEUKjMl9Q1ENLjZj4td3yjHii6aoizccBloHMbxg
+         vxBj24RfQECgXPjAzhenXu9B3AkmG6w+LEx5SrmCQWUmGV2D81PVbhpDWio9x3ENC6II
+         DrXxoJTu/DvE3u7rlCOmcHW+NfxZ/q4bkurudSlk5hgrOcZ4O4aQcJo7nDxi3tLZ4+b8
+         Qp0knQmgem+HiPsbHsaUEkNC9FQrZ9HqHfblNfscsDf9o1RshPrtxaaTC8EsM4CRXZbn
+         +a8g==
+X-Forwarded-Encrypted: i=1; AJvYcCVSHigRQttVkOdIJaYtu3TxpWJkmFJO32H5sMefDqEJ8pYIWdL6r/IKBRY81EYHrRa2dMiPR4orHpyI9FAM@vger.kernel.org, AJvYcCW1AQYSfUBCHRWb2PnFjqE+e76W39S3btELZg/65nxpoPJZ002nvOBaErwlBjKau1c4p3JsS9CSY5bEEt0k@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5/842Fdb6wVcCdOkYkZK5rZ5mgBj/3LOkRZk5QM5A0BCcxVx/
+	Y+ssekn4EKMlNoPXblU3DPn/FU00sjjYhp5mNHXgVWmKfmwGkZsh6KSLDb1nLy4CpuMCnWy5/u1
+	7ym9kOfGdJW2vPVCErM8Nn/JeVgMbN1MS3uRbIww=
+X-Gm-Gg: ASbGncsVfsnXX8SGdubvZFIPJJWJeVMZd0n6MwwP0IKJ9rkmHzDcVqPNFpEMOdJKbcw
+	j9XIaR0SgLn6XwhwjrfquASW8BebKvVahMyeAK+Fq/5wiWbucP2C4/LQ+qzGdcjTOjkucD9bkfP
+	OSr1eNSnLMyHCJFksRP8UsH7dkAYG7ZlOBn+J04R1sFwjWh7/3QHDsl3iQRZ8n7A3wyZEXMwt/G
+	QcwUkcHknpIEze/Keo=
+X-Google-Smtp-Source: AGHT+IG83V/zpXA2LNw6WlNDJn5VcyW5hi8V6Q+G9WrYOi37x53Lapvip0WRRyvLqA7+oV/XtTfQq6ZAFsgQk6qimNU=
+X-Received: by 2002:a05:620a:4115:b0:7e3:28f3:899 with SMTP id
+ af79cd13be357-7ff2a83664emr1174226385a.39.1756834539886; Tue, 02 Sep 2025
+ 10:35:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] does # really need to be escaped in devnames?
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
- jack@suse.cz, Ian Kent <raven@themaw.net>,
- David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-References: <20250828230806.3582485-1-viro@zeniv.linux.org.uk>
- <20250828230806.3582485-61-viro@zeniv.linux.org.uk>
- <CAHk-=wgZEkSNKFe_=W=OcoMTQiwq8j017mh+TUR4AV9GiMPQLA@mail.gmail.com>
- <20250829001109.GB39973@ZenIV>
- <CAHk-=wg+wHJ6G0hF75tqM4e951rm7v3-B5E4G=ctK0auib-Auw@mail.gmail.com>
- <20250829060306.GC39973@ZenIV> <20250829060522.GB659926@ZenIV>
- <20250829-achthundert-kollabieren-ee721905a753@brauner>
- <20250829163717.GD39973@ZenIV> <20250830043624.GE39973@ZenIV>
- <20250830073325.GF39973@ZenIV>
- <CAHk-=wiSNJ4yBYoLoMgF1M2VRrGfjqJZzem=RAjKhK8W=KohzQ@mail.gmail.com>
- <ed70bad5-c1a8-409f-981e-5ca7678a3f08@gotplt.org>
- <CAHk-=whb6Jpj-w4GKkY2XccG2DQ4a2thSH=bVNXhbTG8-V+FSQ@mail.gmail.com>
-Content-Language: en-US
-From: Siddhesh Poyarekar <siddhesh@gotplt.org>
-In-Reply-To: <CAHk-=whb6Jpj-w4GKkY2XccG2DQ4a2thSH=bVNXhbTG8-V+FSQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250902152234.35173-1-luis@igalia.com>
+In-Reply-To: <20250902152234.35173-1-luis@igalia.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Tue, 2 Sep 2025 10:35:28 -0700
+X-Gm-Features: Ac12FXyISaaJnIQM-rrlp7Ll8kx0SjB1vsLRPo2Pbt_WB46evREAEd8XUxTC3Tw
+Message-ID: <CAJnrk1awtqnSQS0F+TNTuQdLDsAAkArjbu1L=5L1Eoe0fGf31A@mail.gmail.com>
+Subject: Re: [PATCH] fuse: remove WARN_ON_ONCE() from fuse_iomap_writeback_{range,submit}()
+To: Luis Henriques <luis@igalia.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025-09-02 12:30, Linus Torvalds wrote:
-> On Tue, 2 Sept 2025 at 08:03, Siddhesh Poyarekar <siddhesh@gotplt.org> wrote:
->>
->> This was actually the original issue I had tried to address, escaping
->> '#' in the beginning of the devname because it ends up in the beginning
->> of the line, thus masking out the entire line in mounts.  I don't
->> remember at what point I concluded that escaping '#' always was the
->> answer (maybe to protect against any future instances where userspace
->> ends up ignoring the rest of the line following the '#'), but it appears
->> to be wrong.
-> 
-> I wonder if instead of escaping hash-marks we could just disallow them
-> as the first character in devname.
-> 
-> How did this issue with hash-marks get found? Is there some real use -
-> in which case we obviously can't disallow them - or was this from some
-> fuzzing test that happened to hit it?
+On Tue, Sep 2, 2025 at 8:22=E2=80=AFAM Luis Henriques <luis@igalia.com> wro=
+te:
+>
+> The usage of WARN_ON_ONCE doesn't seem to be necessary in these functions=
+.
+> All fuse_iomap_writeback_submit() call sites already ensure that wpc->wb_=
+ctx
+> contains a valid fuse_fill_wb_data.
 
-The original issue was that devname being blank broke parsing of mounts, 
-which was fixed with Ian's patch[1].  While debugging that issue I 
-stumbled onto the fact that if the devname started with #, it would make 
-the mount invisible to getmntent in glibc, since it ignores lines 
-starting with #.
+Hi Luis,
 
-Sid
+Maybe I'm misunderstanding the purpose of WARN()s and when they should
+be added, but I thought its main purpose is to guarantee that the
+assumptions you're relying on are correct, even if that can be
+logically deduced in the code. That's how I see it being used in other
+parts of the fuse and non-fuse codebase. For instance, to take one
+example, in the main fuse dev.c code, there's a WARN_ON in
+fuse_request_queue_background() that the request has the FR_BACKGROUND
+bit set. All call sites already ensure that the FR_BACKGROUND bit is
+set when they send it as a background request. I don't feel strongly
+about whether we decide to remove the WARN or not, but it would be
+useful to know as a guiding principle when WARNs should be added vs
+when they should not.
 
-[1] https://lkml.org/lkml/2022/6/17/27
+Thanks,
+Joanne
+
+>
+> Function fuse_iomap_writeback_range() also seems to always be called with=
+ a
+> valid value.  But even if this wasn't the case, there would be a crash
+> before this WARN_ON_ONCE() because ->wpa is being accessed before it.
+>
+
+I agree, for the fuse_iomap_writeback_range() case, it would be more
+useful if "wpa =3D data->wpa" was moved below that warn.
+
+> Signed-off-by: Luis Henriques <luis@igalia.com>
+> ---
+> As I'm saying above, I _think_ there's no need for these WARN_ON_ONCE().
+> However, if I'm wrong and they are required, I believe there's a need for
+> a different patch (I can send one) to actually prevent a kernel crash.
+>
+>  fs/fuse/file.c | 4 ----
+>  1 file changed, 4 deletions(-)
+>
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index 5525a4520b0f..fac52f9fb333 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -2142,8 +2142,6 @@ static ssize_t fuse_iomap_writeback_range(struct io=
+map_writepage_ctx *wpc,
+>         struct fuse_conn *fc =3D get_fuse_conn(inode);
+>         loff_t offset =3D offset_in_folio(folio, pos);
+>
+> -       WARN_ON_ONCE(!data);
+> -
+>         if (!data->ff) {
+>                 data->ff =3D fuse_write_file_get(fi);
+>                 if (!data->ff)
+> @@ -2182,8 +2180,6 @@ static int fuse_iomap_writeback_submit(struct iomap=
+_writepage_ctx *wpc,
+>  {
+>         struct fuse_fill_wb_data *data =3D wpc->wb_ctx;
+>
+> -       WARN_ON_ONCE(!data);
+> -
+>         if (data->wpa) {
+>                 WARN_ON(!data->wpa->ia.ap.num_folios);
+>                 fuse_writepages_send(wpc->inode, data);
 
