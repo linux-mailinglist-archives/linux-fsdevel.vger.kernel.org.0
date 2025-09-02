@@ -1,87 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-59949-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59950-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EDDCB3F7A3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 10:06:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B53ABB3F7A8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 10:07:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0CFD3BF19B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 08:06:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A9CB487262
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 08:06:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F3092E7165;
-	Tue,  2 Sep 2025 08:06:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2ED52E62A4;
+	Tue,  2 Sep 2025 08:06:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cysvr0t0"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WgqlGXeu"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D0021D3F8
-	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Sep 2025 08:06:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5FE72E88B2
+	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Sep 2025 08:06:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756800369; cv=none; b=GlVshpuahf6y6qzqgSDXaeeTyrc+pClkEEyLLuZyu8Q/qCQ9RG8AE6sia+Inxtmh2p5/f6JXeEiWTiWSQgZFr8NtLZDbNqKVhsc74uNl5p7zB9Cb2csPm6bIU0L+CZrDCkU/RaSofClv6Sk3u4sGWkRcNX6Sf4LRdLcmdqgcra8=
+	t=1756800393; cv=none; b=pCtZh5scHEWfpoAN1GpDANVav3IXS5/+4FmIlXsNc32+2DqL2iLFRX8+YhebSHCEuOIs2JZQyafeQvjztfNv7YyRplRVMkEjHIi+BCtFGb9XxKs/Gm0l4PY/fj063W5Fa2tFHV0n6Hw81zcoJUMWFEWLpXooLMFtEkG/08dFzgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756800369; c=relaxed/simple;
-	bh=gFJVzZA82hsIb0kwii2LFAzy3+a4LDy4hiANVOeMNg4=;
+	s=arc-20240116; t=1756800393; c=relaxed/simple;
+	bh=4scRMf+tgOHgOIs5Lo1D7TauGpjXrxuh4vo6a6YZUyk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=s3FwLhh23/aU3XQBc0dC8qO5oIOQMo8Y7Et2IZRdWf0pAAa5POC5GYqFCzEqxM4MzmMvUr1XFZuUvVvcwHgOI+8xhRYB4cJp0Nc3P84zEaoO6UkexSUPcqblMp1RWwZFKUqWarMEdge8FT0F7+NJXLEHCXT480ZtResje4w+I9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cysvr0t0; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=agXyeHPIQRdyjKmFf3VN+i+9tCMh3Ei4UR9iO/oqAgvNuWnpT9VusDw2UZJiX4iCikfUpkl7RPTP1n/ybmOsU+cgcUwqsDouPHAkRUumlGyCe7qQbeoZIcL9RaoEy1oeazjgyZ00BiuWfIk+nnpsmKLOiIO2AvRMAKpkvSolodU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WgqlGXeu; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756800366;
+	s=mimecast20190719; t=1756800390;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ljgQE6xPMjgEsLMyx80S8frJUxwb6xjySanoEF8fZEk=;
-	b=cysvr0t0ntukPbnFpT8GZg6mQzzws3cEKvz3bAnmEqYj3trpab9oHeaTJL2Dvkd9+BVeUA
-	ipnF7vfBQ5ZaR29g618dbHumbw9mnNcKqNChEK/eDjr98cY8up1rRZbbncGFw4zO7XMjas
-	Cn8CPGBatfApygb5W6iUv+ooIBQ3UpU=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=IpJ7H8N7FFsIL+sZVKXca+TmDGWYx1b6cFxz+BZpneM=;
+	b=WgqlGXeufss5kfY8JZt5W8e7m37olp3v4zWRzj5n1W7qjbACuALhZFjlsQZDywXmxgE7F+
+	Y34Yax16TzI9C4yvFkKl0JIvYN9yRLrB1Hg1Luo24VVkAjhPk/w08ZCsX4lp5KvRW49sh6
+	BMoXIfo/WrwC7r6u1P5nfwoRorkaN34=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-172-HvW6LsUWNQmgIvKROM0SVg-1; Tue, 02 Sep 2025 04:06:04 -0400
-X-MC-Unique: HvW6LsUWNQmgIvKROM0SVg-1
-X-Mimecast-MFC-AGG-ID: HvW6LsUWNQmgIvKROM0SVg_1756800362
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45b828bed3fso13611705e9.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Sep 2025 01:06:03 -0700 (PDT)
+ us-mta-98-S2ZKfImzPuyWlbeLzeLDCg-1; Tue, 02 Sep 2025 04:06:29 -0400
+X-MC-Unique: S2ZKfImzPuyWlbeLzeLDCg-1
+X-Mimecast-MFC-AGG-ID: S2ZKfImzPuyWlbeLzeLDCg_1756800388
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3d79c7fa313so906555f8f.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Sep 2025 01:06:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756800362; x=1757405162;
+        d=1e100.net; s=20230601; t=1756800388; x=1757405188;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ljgQE6xPMjgEsLMyx80S8frJUxwb6xjySanoEF8fZEk=;
-        b=j4F1raYrMfM5/itTdLHGzS048/Rdx1VXSw1Jgh+EWSLi1wyEsBYnpMB4WHnz3o04EZ
-         I+HnuK/OzY29YPVkHbRWmSNwWALigHCwOA9CvbJjQuXJRKcVKN/rDHgDEAdwqq5auwz6
-         hO97yEpm0WaMzYY/v+rzLVYF4wZc+p+pbCIAkF+a23aYjdr1TjxSXwpLEaLc8jZra8qo
-         8gtm3Mk7nQFrRdDDRBJLsLR6DjwPasDT046ntx+LRRrP26VBnw7B1uGpeZ2wbwSLtDvl
-         T5tHGL0J6EDLpIq93YMnP1tBXGQs3l825lubJ0TVbeOGF+H76cnJifCTalqiXd3U6y+V
-         y6SA==
-X-Forwarded-Encrypted: i=1; AJvYcCWgMq6DzWSDhVxtTp1fU3IVSHiUlU6jIHCvCBXkICEO8J97c1NxZswT3jUCgiHWBBQ6+nK8Qe+iuZ1DkkF0@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxqz+vdfA8ANOaabTozSuRIMkC7ArnTlbuNwo9uf0zKEzA7+EU9
-	HEnYUXIY9LwyXqa1tQc+2acqp/5kTOntLVdeGd6rW7VKc4De/brsnQiu9DSEOqyGNt6xSwGFsw/
-	Ub+v9EhALEZp3NX7VW0xZrdCaAnwdLj8xLcPwkz0GeT1rg/DhhfSBO8/ADWg0f1FgdrU=
-X-Gm-Gg: ASbGnct+SMsREGchu1DQpMGT4eCuttG2rVcOB1XkGKwGHTqGpsRzLH+EpAZeYw2Bl2k
-	uCpU4pGKh/KCtMKQV7IBOst0ZCPjCtMpl/L54r8CUc8w7n3jYXnZKhNfTz0Z33insVdLli0wx5s
-	+hAKe8W8zXG0xDaPXcTkepMoabmwwp7gP8lB9FiTuGXAuaI10jnCJwaNdSktTqt6HQorKFpjxVg
-	d/yrBw3kATUeAzZbENsmnUJS9GSJ9kCkMkSeMo2k3vF4tHjvCxnPEVZP3sl8TuNYeFDOLpooaKQ
-	PVAPmepnnsoEX9I4HfiXZRzv7NdNW+8F29PYYQBWHWxODhzBV/1oUyvmUwW2SPigB+mK3gha9dJ
-	8mEY5QThMUbufUnKV1IG5Z9LKqZtGa1UG2uG5yBACr73vFKrRVIGPiALPUS1eePhgKns=
-X-Received: by 2002:a05:6000:2301:b0:3ca:ad45:6362 with SMTP id ffacd0b85a97d-3d1dfcfb6e9mr7271291f8f.41.1756800362328;
-        Tue, 02 Sep 2025 01:06:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE89e2rQnCWFQJx3mBpIBce4Sf0ynyHLTGKH2yytotONMMUzyt2emLxtRzyXBmVv6z/AWM1KQ==
-X-Received: by 2002:a05:6000:2301:b0:3ca:ad45:6362 with SMTP id ffacd0b85a97d-3d1dfcfb6e9mr7271226f8f.41.1756800361810;
-        Tue, 02 Sep 2025 01:06:01 -0700 (PDT)
+        bh=IpJ7H8N7FFsIL+sZVKXca+TmDGWYx1b6cFxz+BZpneM=;
+        b=P7VAqPBjovSL8IHfJJKsbG+AGunI/3V+4VFSKMvSyYE2CTi+HPx+4A4Hm0HUN9ajkk
+         Zf1X3SC9Y/lGlZ/spMizmmd/keT4yI4G1lmtZmiQNP1uqYIHKQWeD3hPiBFTVef5tQLv
+         UNOpfsYIE6RD2/re0+j7IHkrq8ZSXi3YkdMaln2tfZtxiXYlsoSIUe+4tfLW8m/Oh2+l
+         lJ9wkFFusywdq7aTjU2m0NfsyR1H79x1+xazNGDRSo+jdpOPsZ4JTTYD7oZliEUmW5SC
+         xZze6yy8fZDg/kCnj1Nzb56lXAmxWVA60LJkyc4Ssx3oE7hvDGQkSELbsK8hMKzkaOej
+         MVow==
+X-Forwarded-Encrypted: i=1; AJvYcCXmybVuHO4/jwKkJ/sJYHy0+pkZ7W5B4npC/iHexQagEds99v1uick/mIRudfZxlIdW/OrVcHj54LWOLDCm@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3q5N2SEyLxw2QpRFUb+5ZCLXq7ssddn6VdAvjHOCM4FxqVcAu
+	Q53A5JYtIHG4zUDWfk09KWozo4zzy0U0VISglG70OrPPtyf/nV9rg8T4L4XWwObd2XhLHpdfeDB
+	cim+zVvWn8L+XBmv2OpXiR4RMn1Q81yY2gzze4loJSjGSl0oAFSStjsAgLOcQgS1mF6I=
+X-Gm-Gg: ASbGnculLlT6xFQUTF1un6UvllPvdk5D0Wex1IrojcZU1VEwAYfX+swCYYkbmP8VkrG
+	QHXbxbVVJZXgTnHrJUHrSBHSLHGF54wC5B1UbXqn4W48rZRcgU0acc/1BhDn2vPT9pD4ktBv7/4
+	nGzBHRZaSGUWziCfXOZsfHUZ3jSxQS2X1hrCflJnbNP11HeRlk9BPg0KoXQriy8VVzWhp6E/oC9
+	ULHjyryKhHNpjL3LvaeBTK/wFEoiPsInUk0DTrJ0P+bTzQaWWAHNE57VNrokFkwb0Fx3ETC3mr4
+	4gIqutF7xBYMx23IMGKHYRk3YLBo5a2MbdQUCujfoc4pO4Z+9w/LnNZTYrOnC3h1dIwBdQ67Tj+
+	BZ4QkYIWs4Lc8tAITvS3/74KGZOAiggF1nc2yS4APV4IJwhp9HlvZguxyrraM4DQlbmI=
+X-Received: by 2002:adf:b303:0:b0:3d2:82d:7da0 with SMTP id ffacd0b85a97d-3d2082d8289mr5428448f8f.43.1756800388490;
+        Tue, 02 Sep 2025 01:06:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGTerYgExLKpnch27eawnPrT4O2stkgHXpcDmb8FTUCEqRSxftMR8giHgH9SA0676g8Q5jadw==
+X-Received: by 2002:adf:b303:0:b0:3d2:82d:7da0 with SMTP id ffacd0b85a97d-3d2082d8289mr5428419f8f.43.1756800388024;
+        Tue, 02 Sep 2025 01:06:28 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f1f:3f00:731a:f5e5:774e:d40c? (p200300d82f1f3f00731af5e5774ed40c.dip0.t-ipconnect.de. [2003:d8:2f1f:3f00:731a:f5e5:774e:d40c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d2250115fdsm13170209f8f.40.2025.09.02.01.05.58
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d690f2edf1sm7891634f8f.16.2025.09.02.01.06.25
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 01:06:01 -0700 (PDT)
-Message-ID: <ff2875c5-93f7-4fbc-92e6-ce4c607ce240@redhat.com>
-Date: Tue, 2 Sep 2025 10:05:58 +0200
+        Tue, 02 Sep 2025 01:06:27 -0700 (PDT)
+Message-ID: <ea4adc86-abf9-4ab8-999a-eb4c7bad4cd3@redhat.com>
+Date: Tue, 2 Sep 2025 10:06:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -89,8 +89,7 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 10/12] mm: constify various inline functions for
- improved const-correctness
+Subject: Re: [PATCH v6 11/12] mm: constify assert/test functions in mm.h
 To: Max Kellermann <max.kellermann@ionos.com>, akpm@linux-foundation.org,
  axelrasmussen@google.com, yuanchu@google.com, willy@infradead.org,
  hughd@google.com, mhocko@suse.com, linux-kernel@vger.kernel.org,
@@ -111,7 +110,7 @@ To: Max Kellermann <max.kellermann@ionos.com>, akpm@linux-foundation.org,
  linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
  linux-fsdevel@vger.kernel.org
 References: <20250901205021.3573313-1-max.kellermann@ionos.com>
- <20250901205021.3573313-11-max.kellermann@ionos.com>
+ <20250901205021.3573313-12-max.kellermann@ionos.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -158,25 +157,22 @@ Autocrypt: addr=david@redhat.com; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <20250901205021.3573313-11-max.kellermann@ionos.com>
+In-Reply-To: <20250901205021.3573313-12-max.kellermann@ionos.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 01.09.25 22:50, Max Kellermann wrote:
-> We select certain test functions plus folio_migrate_refs() from
-> mm_inline.h which either invoke each other, functions that are already
-> const-ified, or no further functions.
+> For improved const-correctness.
+> 
+> We select certain assert and test functions which either invoke each
+> other, functions that are already const-ified, or no further
+> functions.
 > 
 > It is therefore relatively trivial to const-ify them, which
 > provides a basis for further const-ification further up the call
 > stack.
 > 
-> One exception is the function folio_migrate_refs() which does write to
-> the "new" folio pointer; there, only the "old" folio pointer is being
-> constified; only its "flags" field is read, but nothing written.
-> 
 > Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
-> Reviewed-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
 > ---
 
 Acked-by: David Hildenbrand <david@redhat.com>
