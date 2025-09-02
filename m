@@ -1,135 +1,176 @@
-Return-Path: <linux-fsdevel+bounces-60016-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60017-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43211B40E3C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 21:59:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A5CFB40E50
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 22:05:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1C631B65AE1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 19:59:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37B187A514D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 20:03:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE32135207F;
-	Tue,  2 Sep 2025 19:59:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF071343D8C;
+	Tue,  2 Sep 2025 20:05:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WCuCSbS8"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="cUBDM08O"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18325350835;
-	Tue,  2 Sep 2025 19:59:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E364B30C629
+	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Sep 2025 20:05:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756843151; cv=none; b=SpaLJCuOX1IcQzxBIfttpogpYqupqaHSc2PYq6xa4UbKHzoZX2Wmk+JWpXwfPdO3TJPO/b5jDZe8/lJmGSHrHZg6x2X00j8qCb3VyopHl7TVswtxKdr9TBbJY+9WOtfwuQb11dthTCFbKa2Zp3ITOA3q18Td1Wwbyobl1+/kp98=
+	t=1756843512; cv=none; b=BEOYQjClo4aFM3AIIS8Z7sLK9Dxzt1vx36o9zSE72z9FDN5+McL4lIKEWwstQ2etBloYP6meTsFPidzwETGQR0XqbLgprmoZBELQbb43qZWekVacBp7rRlYY34bSlmWzR9LZ7UFlSlQf2FYLPnGyS2q8GWyCbzAuA3T65cwZrxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756843151; c=relaxed/simple;
-	bh=AAyjqy2t4b7D45R3hwz6v/QuZbHXjEAtZGhmjlFlAoQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=puBXEKTrwzCyOEYNaBsy1UeVnqG+BdSKtQh7g4588X0fPeGX+3R76oPCpST9lN17OthpD2UPZOL5/n0yLyKFWI13UHaKTU5ldRmYL6F2CwBFSXsQeSiBP3vmMpnJw5YzuqgMF25MRl6ZzzRht6Q2ManXKZsjdWljHIsaYT84cok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WCuCSbS8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0F24C4CEED;
-	Tue,  2 Sep 2025 19:59:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756843150;
-	bh=AAyjqy2t4b7D45R3hwz6v/QuZbHXjEAtZGhmjlFlAoQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WCuCSbS8Vrg67V4iAqNg7mqxvdHZZV4FKmIyd8LieVqANKbFcFqhBljmLXWjmHxBu
-	 Z1EZ/YfnDVmroqTYHOjuiDbaMRbxEBry8h3ngNNiYTIXvipsiVD6qmvmZmA3CzP93P
-	 e82YhW/zRLX2ChjycfTcgjqni8b31Zh7qzaw8o/944QEhzV0VBNl1xebU8Ju9xHAU9
-	 NtQKdBDf/I3NUfAIE4iWpZDve8QLvMWplyNCx2ZulDCAWTS61i6e0WmjJXlkkKBnEU
-	 lQUrqwg+g4CL2O66+dBLuJfue7nYFFQBDjsF85K5nRZ3Hmezz6T+A2c8J6TvDdQ0Jz
-	 DO9KH6g86w9EQ==
-Message-ID: <2a1344d7-cbf4-4963-a774-6332aa440cd7@kernel.org>
-Date: Tue, 2 Sep 2025 21:59:05 +0200
+	s=arc-20240116; t=1756843512; c=relaxed/simple;
+	bh=KTjA3fKWIFWRVRBiXglZvWBxA/z++UC8H4eVQyQYv+w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X6gNPr+OqJjxUUA6BAaM6tDHLlh2x6XU9lHlQS9OliQKXiaUqaq87cwEl3IQGo7C5YRDq0zgkWIXWezX9LCSeUniKPfJwnUQt3/LUPLhZ0UcQrtF3//XwvBG0GP9cJy2ZOOIr2pCNsqBmtPmz7uXQ7hWegVZjp58YGqUtfPqxeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=cUBDM08O; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b0439098469so346668566b.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Sep 2025 13:05:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1756843508; x=1757448308; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=p78aXGUzBIUJNpn+xNLwzOKLx5M8rja/5vuublf4r3A=;
+        b=cUBDM08OHpTSw7C2JnPum8KHCsvhRvNxDnKo5SIodeY0o0A4OuiLcWNI/u4ztF9YZf
+         xwtsq14KeRDm/aWi7fVNn78sVXx3s7EGB5i/Jgd4JsqOvveDsrDedYTbeNge7im6nARC
+         +w4JPEt6hgTcveg/bCT2t9U7a13FgzHOc2ArA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756843508; x=1757448308;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=p78aXGUzBIUJNpn+xNLwzOKLx5M8rja/5vuublf4r3A=;
+        b=klLiBa6hgYhqI27MgS9IXjptBOIzWZfUQlU0F0EtpsI6O2ntBcctdbGTPw1d1eQo6E
+         YZmF/F1icDhINxB0jAwvYpRT2p6KEfaowLSktlpk/ytw/A3rXN+z3SQw0acr4MTg5KS1
+         zxJvG/GojWp1US16DyT1TU9S5KtOJEJeHWkbMZjshuQJMSZ/2gvvTq8sTDavl3FSf4Zw
+         C5ReFU6/1/4hUFl/sqNpx0FM6PRSoX3DfLyQdiBe8egEB3phbJkJKDGFMJ3QOVN2iDvN
+         4vDA5syqCS9p1Gr/G3pQfGv1Yv4eGKEljKTP8iz5JkhIvj3zDlIW4jNha98M7BLlQAbM
+         d/Qg==
+X-Forwarded-Encrypted: i=1; AJvYcCVkz+V4OouGHronuQ2/DcmnTCiQbNzqmrk7KNhQu0J0rXLbrBKGEk578gXxqaGrb8FtnmeItyBIyp5D8GAg@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDQeX7kb6sti54PKpweNnyIcdBRZpZp4c0MjpJJZSrh5i47Ook
+	BcOm+a7Uj/TNFJDqs6A2RTdnYJ65ky4trOGuRxWjWZ6sMvZU308GLSEb6knYSLZqtumK4EF1Bfr
+	vnvQHqGs=
+X-Gm-Gg: ASbGncvOxEqyPPjdTApSdNBugNQhauH6ACZvLjHDzTc2bachGCrP/Sp5QRJZeVuvhGP
+	8L2vZNXPCfuux+9dSHYPwb2hvzyMWHX+TKNts6/oU46iaKAl+WWs5YooCTA9weC8UAeb3jdn86x
+	ecEMwPr5G70Sp9BQPxs7bWVoVIdSNg2kVqOazwn2/d4V5ecMZNF4mydTsnumsszKn9iaCTvwfVx
+	lNSBd/2KYNWMDevwzO291wb5smJphFUiPJnwnVXbPbClpmXqVZD3aJBRPsv+6ZKXz7GNbki67oT
+	AS14FNFIXZ8M8ct6MSA8FfCYXLSztdzy1mZshfVCwpNB5pj4J7+ZODCplGiZHDWiXp34hiMzTyx
+	nS0xV9FCzKxU+b8HHVXIraOX4nvp3m1MrNvy0C1UnaIu6qsffcIU4h4Ob0z9JU/rsatI44sBxMX
+	1hWlaHV+I=
+X-Google-Smtp-Source: AGHT+IFlwaseMMQHb3ElOYLh4pGTMn6hnAS0mXvYkZcCFEeXPsxyjSAwaCj0ZsKZKdugNJc9svc/mQ==
+X-Received: by 2002:a17:906:aad6:b0:b04:2160:f61f with SMTP id a640c23a62f3a-b04216100ecmr755359066b.37.1756843507891;
+        Tue, 02 Sep 2025 13:05:07 -0700 (PDT)
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com. [209.85.218.44])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b045e576edbsm109707966b.75.2025.09.02.13.05.05
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Sep 2025 13:05:05 -0700 (PDT)
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b0428b537e5so431876566b.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Sep 2025 13:05:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXRyFtiuPZ9No4X3KbvgGqNGXmG9kWh+p9XyjWgd/fAkITF4ZXWgc7iKFnObImJjwmLYbDpx2wGi0gOqDdm@vger.kernel.org
+X-Received: by 2002:a17:907:80c:b0:af9:a5f8:2f0c with SMTP id
+ a640c23a62f3a-b01d8c9275bmr1227617066b.28.1756843505375; Tue, 02 Sep 2025
+ 13:05:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Documentation: Fix spelling mistakes
-To: Ranganath V N <vnranganath.20@gmail.com>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- brauner@kernel.org, djwong@kernel.org, corbet@lwn.net, pbonzini@redhat.com,
- laurent.pinchart@ideasonboard.com, devicetree@vger.kernel.org,
- linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, kvm@vger.kernel.org
-References: <20250902193822.6349-1-vnranganath.20@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250902193822.6349-1-vnranganath.20@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250828230806.3582485-1-viro@zeniv.linux.org.uk>
+ <20250828230806.3582485-61-viro@zeniv.linux.org.uk> <CAHk-=wgZEkSNKFe_=W=OcoMTQiwq8j017mh+TUR4AV9GiMPQLA@mail.gmail.com>
+ <20250829001109.GB39973@ZenIV> <CAHk-=wg+wHJ6G0hF75tqM4e951rm7v3-B5E4G=ctK0auib-Auw@mail.gmail.com>
+ <20250829060306.GC39973@ZenIV> <20250829060522.GB659926@ZenIV>
+ <20250829-achthundert-kollabieren-ee721905a753@brauner> <20250829163717.GD39973@ZenIV>
+ <20250830043624.GE39973@ZenIV> <20250830073325.GF39973@ZenIV>
+ <CAHk-=wiSNJ4yBYoLoMgF1M2VRrGfjqJZzem=RAjKhK8W=KohzQ@mail.gmail.com>
+ <ed70bad5-c1a8-409f-981e-5ca7678a3f08@gotplt.org> <CAHk-=whb6Jpj-w4GKkY2XccG2DQ4a2thSH=bVNXhbTG8-V+FSQ@mail.gmail.com>
+ <663880.1756835288@warthog.procyon.org.uk>
+In-Reply-To: <663880.1756835288@warthog.procyon.org.uk>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 2 Sep 2025 13:04:48 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wju8XTW6MntZQ7HX2dCTtyrTb9oVCP3p60vtBhZebMA4g@mail.gmail.com>
+X-Gm-Features: Ac12FXyJyQJKsFsjP0XKW9i6TlOoQpDlMhextpNZFtutXFYRniH57P4BLOhg93Q
+Message-ID: <CAHk-=wju8XTW6MntZQ7HX2dCTtyrTb9oVCP3p60vtBhZebMA4g@mail.gmail.com>
+Subject: Re: [RFC] does # really need to be escaped in devnames?
+To: David Howells <dhowells@redhat.com>
+Cc: Siddhesh Poyarekar <siddhesh@gotplt.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+	linux-fsdevel@vger.kernel.org, jack@suse.cz, Ian Kent <raven@themaw.net>, 
+	Christian Brauner <brauner@kernel.org>, Jeffrey Altman <jaltman@auristor.com>, linux-afs@lists.infradead.org
+Content-Type: multipart/mixed; boundary="000000000000117490063dd7017f"
 
-On 02/09/2025 21:38, Ranganath V N wrote:
-> Corrected a few spelling mistakes to improve the readability.
-> 
-> Signed-off-by: Ranganath V N <vnranganath.20@gmail.com>
-> ---
->  Documentation/devicetree/bindings/submitting-patches.rst | 2 +-
->  Documentation/filesystems/iomap/operations.rst           | 2 +-
->  Documentation/virt/kvm/review-checklist.rst              | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/submitting-patches.rst b/Documentation/devicetree/bindings/submitting-patches.rst
-> index 46d0b036c97e..191085b0d5e8 100644
-> --- a/Documentation/devicetree/bindings/submitting-patches.rst
-> +++ b/Documentation/devicetree/bindings/submitting-patches.rst
-> @@ -66,7 +66,7 @@ I. For patch submitters
->       any DTS patches, regardless whether using existing or new bindings, should
->       be placed at the end of patchset to indicate no dependency of drivers on
->       the DTS.  DTS will be anyway applied through separate tree or branch, so
-> -     different order would indicate the serie is non-bisectable.
-> +     different order would indicate the series is non-bisectable.
-That's not entirely a spelling mistake
-https://en.wiktionary.org/wiki/serie#English
+--000000000000117490063dd7017f
+Content-Type: text/plain; charset="UTF-8"
 
-Best regards,
-Krzysztof
+On Tue, 2 Sept 2025 at 10:48, David Howells <dhowells@redhat.com> wrote:
+>
+> The problem with that is that it appears that people are making use of this.
+
+Ok. So disallowing it isn't in the cards, but let's try to minimize the impact.
+
+> The standard format of AFS volume names is [%#][<cell>:]<volume-name-or-id>
+> but I could make it an option to stick something on the front and use that
+> internally and display that in /proc/mounts, e.g.:
+>
+>         mount afs:#openafs.org:afs.root /mnt
+
+Yeah, let's aim for trying to avoid the '#' at the beginning when all
+possible, by trying to make at least the default formats not start
+with a hash.
+
+And then make the escaping logic only escape the hashmark if it's the
+first character.
+
+> I don't think there should be a problem with still accepting lines beginning
+> with '#' in mount() if I display them with an appropriate prefix.  That would
+> at least permit backward compatibility.
+
+Well, right now we obviously escape it everywhere, but how about we
+make it the rule that 'show_devname()' at least doesn't use it as the
+first character, and then if somebody uses '#' for the mount name from
+user space, we would just do the octal-escape then.
+
+Something ENTIRELY UNTESTED like this, in other words?
+
+                Linus
+
+--000000000000117490063dd7017f
+Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
+Content-Disposition: attachment; filename="patch.diff"
+Content-Transfer-Encoding: base64
+Content-ID: <f_mf2z8m840>
+X-Attachment-Id: f_mf2z8m840
+
+IGZzL2Fmcy9zdXBlci5jICAgICAgfCAyICstCiBmcy9wcm9jX25hbWVzcGFjZS5jIHwgOSArKysr
+KysrLS0KIDIgZmlsZXMgY2hhbmdlZCwgOCBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQoK
+ZGlmZiAtLWdpdCBhL2ZzL2Fmcy9zdXBlci5jIGIvZnMvYWZzL3N1cGVyLmMKaW5kZXggZGE0MDdm
+MmQ2ZjBkLi4zMWY5Y2MzMGFlMjMgMTAwNjQ0Ci0tLSBhL2ZzL2Fmcy9zdXBlci5jCisrKyBiL2Zz
+L2Fmcy9zdXBlci5jCkBAIC0xODAsNyArMTgwLDcgQEAgc3RhdGljIGludCBhZnNfc2hvd19kZXZu
+YW1lKHN0cnVjdCBzZXFfZmlsZSAqbSwgc3RydWN0IGRlbnRyeSAqcm9vdCkKIAkJYnJlYWs7CiAJ
+fQogCi0Jc2VxX3ByaW50ZihtLCAiJWMlczolcyVzIiwgcHJlZiwgY2VsbC0+bmFtZSwgdm9sdW1l
+LT5uYW1lLCBzdWYpOworCXNlcV9wcmludGYobSwgImFmcy0lYyVzOiVzJXMiLCBwcmVmLCBjZWxs
+LT5uYW1lLCB2b2x1bWUtPm5hbWUsIHN1Zik7CiAJcmV0dXJuIDA7CiB9CiAKZGlmZiAtLWdpdCBh
+L2ZzL3Byb2NfbmFtZXNwYWNlLmMgYi9mcy9wcm9jX25hbWVzcGFjZS5jCmluZGV4IDVjNTU1ZGI2
+OGFhMi4uY2E1NzczYmZiOThlIDEwMDY0NAotLS0gYS9mcy9wcm9jX25hbWVzcGFjZS5jCisrKyBi
+L2ZzL3Byb2NfbmFtZXNwYWNlLmMKQEAgLTg2LDcgKzg2LDcgQEAgc3RhdGljIHZvaWQgc2hvd192
+ZnNtbnRfb3B0cyhzdHJ1Y3Qgc2VxX2ZpbGUgKm0sIHN0cnVjdCB2ZnNtb3VudCAqbW50KQogCiBz
+dGF0aWMgaW5saW5lIHZvaWQgbWFuZ2xlKHN0cnVjdCBzZXFfZmlsZSAqbSwgY29uc3QgY2hhciAq
+cykKIHsKLQlzZXFfZXNjYXBlKG0sIHMsICIgXHRcblxcIyIpOworCXNlcV9lc2NhcGUobSwgcywg
+IiBcdFxuXFwiKTsKIH0KIAogc3RhdGljIHZvaWQgc2hvd190eXBlKHN0cnVjdCBzZXFfZmlsZSAq
+bSwgc3RydWN0IHN1cGVyX2Jsb2NrICpzYikKQEAgLTExMSw3ICsxMTEsMTIgQEAgc3RhdGljIGlu
+dCBzaG93X3Zmc21udChzdHJ1Y3Qgc2VxX2ZpbGUgKm0sIHN0cnVjdCB2ZnNtb3VudCAqbW50KQog
+CQlpZiAoZXJyKQogCQkJZ290byBvdXQ7CiAJfSBlbHNlIHsKLQkJbWFuZ2xlKG0sIHItPm1udF9k
+ZXZuYW1lKTsKKwkJY29uc3QgY2hhciAqbW50X2Rldm5hbWUgPSByLT5tbnRfZGV2bmFtZTsKKwkJ
+aWYgKCptbnRfZGV2bmFtZSA9PSAnIycpIHsKKwkJCXNlcV9wcmludGYobSwgIlxcJW8iLCAnIycp
+OworCQkJbW50X2Rldm5hbWUrKzsKKwkJfQorCQltYW5nbGUobSwgbW50X2Rldm5hbWUpOwogCX0K
+IAlzZXFfcHV0YyhtLCAnICcpOwogCS8qIG1vdW50cG9pbnRzIG91dHNpZGUgb2YgY2hyb290IGph
+aWwgd2lsbCBnaXZlIFNFUV9TS0lQIG9uIHRoaXMgKi8K
+--000000000000117490063dd7017f--
 
