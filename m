@@ -1,123 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-60002-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60003-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0269B40A49
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 18:13:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E183B40AAA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 18:32:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99C013ADF88
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 16:13:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D98C5486D61
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 16:31:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 303DB33CEB9;
-	Tue,  2 Sep 2025 16:12:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA21340DA8;
+	Tue,  2 Sep 2025 16:31:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="lQARut9W"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="O614apoQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8802335BC6;
-	Tue,  2 Sep 2025 16:12:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D8593375DA
+	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Sep 2025 16:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756829566; cv=none; b=TOdA3dvE7t88f2BIYgTfSa1g9jGpB4ifNmchc1JNnzVfIdKBYeRuRq8zR6Nk2+6fScYh+xD1AOz8dj8IS4uooJuB4ZUQbnz7zIqvGiN9tJuDI7teMZQih/22a9E2NnV3yv3H6a01p/79Qt2TiwhxYNTiMZ1hJgWK+OM5Vxo79d4=
+	t=1756830671; cv=none; b=qUpHI0QYh+o7iA7/nxmNNfEthsEOyPLpIB43R02UlWraxinKKqRD4Uv7WAXoy+BBp3zchYzFIAvoaDiDUoOxkIwH0oncZqf+8J7kvCaBpZo3IIP+jd3C1Xd3iwaHN1IXRrmr6wdmfly+8Du9D4XfOeZOxsbuZSrH2Nga/76VKYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756829566; c=relaxed/simple;
-	bh=5avgvEP3XxLW1FEb1wh9OlMrNkakvRKUU3W73a6ZmMY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j4alweKLKwvIVhPUYCxw/72hWLQVFethWwx8hgFNui9p+4B8Whl+T2CGQi67XePk0wcZjlP2jf0+SnGAfkWGAlrmPM3TBRBL6QkSkuEF8U2p2omHyPK5TlhVhX20nzB/DdvSDC4e9vEbkD2Wg0pdHui00qcMBg44EvVzS3F7XZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=lQARut9W; arc=none smtp.client-ip=199.89.3.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 003.mia.mailroute.net (Postfix) with ESMTP id 4cGW3p20KkzlfnCV;
-	Tue,  2 Sep 2025 16:12:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1756829553; x=1759421554; bh=zLHsMuSoN87Y/kpFANGBnIy5
-	780AiDprbMGpVpen4tY=; b=lQARut9W9c51D4XL1oAzxysF19Y+3QHFc2F9OEsR
-	h39y+s3ur/7jYldadPxTguxvg3Ycn4O+XY4uYMd/f+kwVcAUZs1ZzkcqRoGARq9R
-	NbtFh6U+SPyJPHERkPA0uPX320V9WBts1iezGyFVV2OhHlXgrDQGIVVQv/Fn8UuA
-	CaC3TsjTBNF94zl0UjVE0FsDOO32SUj7DyIhLu01o4HTpY2Wt+EFmShrs+CEsp72
-	V2OT8gYsBrPQKf8DcUV73C0Bjmq37uZRwJC7xbHn8Nq8SU1PjQ6wrF5EK41HjzJf
-	e46v73JhJWXdm7z+PEdpDYzaBHZtvDeloofoWLyPdqVFfg==
-X-Virus-Scanned: by MailRoute
-Received: from 003.mia.mailroute.net ([127.0.0.1])
- by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id 4d38XxLOeDyA; Tue,  2 Sep 2025 16:12:33 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4cGW3Z3Rqyzlh3sc;
-	Tue,  2 Sep 2025 16:12:25 +0000 (UTC)
-Message-ID: <e844fe01-7cfa-4aff-b21e-d0ad04399829@acm.org>
-Date: Tue, 2 Sep 2025 09:12:24 -0700
+	s=arc-20240116; t=1756830671; c=relaxed/simple;
+	bh=0P2I2T1LAyCqTnkJ9VfJYe/SnE2+VU+9FNl1USJbPi8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gbqAbxBYJGNtuLoalJUFSnFsGPIcatq5picbqyg2N4anWk26n+vF68YuPJx4jzRF52g6rxx6m+x++vNdSme/csGh1HJqz2fEJH6CGpK3uyg9KByUYXRb7/VoExB+0u9ejtFBxvzqMdhs0YZzbTlHNcMqMuO02e+/77bOBVHGNwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=O614apoQ; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-61ebe2ce888so1432178a12.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Sep 2025 09:31:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1756830666; x=1757435466; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=yPoyBpjue8NhIvnYr5J45YlODoceAn4KEOxCnAQM4D8=;
+        b=O614apoQNdNaScF41pfT8ubD2vvtrv+ZFDmhjUNCK1kbkMg3d0sP/UiEZFGktyWD8d
+         fD0BNEXLjnGvwbu6KgAH8dPgfD+uVygSlTUZ3snfFczUcTtL9e8/nGMAQmI7WufKi4Ea
+         yAX2B/ISHPgJQLFmcjvh7o6gi2iaK+fkKDWNg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756830666; x=1757435466;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yPoyBpjue8NhIvnYr5J45YlODoceAn4KEOxCnAQM4D8=;
+        b=sAcs8eRTADaROKmFwRmwA/Lh7guDdeSQms6xZPzzmkblLyoYT6pm3ttxt2Gn9KYSyO
+         kL3R4U005KUWfiIr5V7OYgLfh3zESw3H+0lRc2iLU3BVYKoEt49cwIdjfhnM2yHp3hnE
+         RfxblI/fEGdXX5K5nWP/w1f9czJgxxt61KbV6ynepN5PM8Br3y99HX9b0EVM0+iNElqr
+         YIN0HRzlubZQ0hDlQd5RZ6pRMPQyXY1CN6IXH1C7JrZT2GNnr5suWNykkW9G7scJYItN
+         s+7HqTCEgXrgM4fqOLw8VJ6itLgJKbVJVDVkVjpcTyBsLqEbo4s9s36ru307CWKeEJrY
+         rMLA==
+X-Forwarded-Encrypted: i=1; AJvYcCUVh3Vudsthxq2Vh0GX3cMPRcUPgL1VjzA8i+ahVjN8HvGO0xW8K2RUWJLkOwrDpM3UtITxtvpx29JgmkIB@vger.kernel.org
+X-Gm-Message-State: AOJu0YykUz9IvQVbdiQjGcnw3/gEd8HfCNHjgqoEHoedUGm5xjqvcSnz
+	AWa9oRRW/QTy7LwkyBelGNXiloLspeNOOF/Y5EQKqVLjHL3XcgcS0aasWwFFK0fbl6iBVeC/uXA
+	agLXRtG4=
+X-Gm-Gg: ASbGncv/H3KBZLxP+dPSDn585fcbUy/PNv3aV5dITlpmKaBQZX9O/9J7+CB8uNtZANB
+	yKgpdriKyUbeTEnOHPiBMDS+lzIty0TXqmXCpJOAF6DMvL9CDbR90pOnIoNWyseNYBmBTdf0fI3
+	5bT7KSTS9r/3OPVRZOPL/zHy+JMkt8cE6xtcG2ZInMLlJNi6d3ApDd+zGvoRDFN7ZtRe2IlqerE
+	zEbXmm/KwiTmjsxLsZibPMRXhkdMELLd/HUCGUjwShss2GYB0sV4iY74sY1IGAKhS69SpQqD4zj
+	mnJEmdbnC0WVJf/pimn+XqI1xozwHQS5XqkeYRY0eHTpoB0lcWofRzNRX/qWDrhdyHb45TpFXY2
+	S9evt/MVcDCA3bCHdmJgrpsXmf+fh4GddKMFIkVJaNlexgsio7wOaZaargsa3NUjrPA0AAGMX
+X-Google-Smtp-Source: AGHT+IFi/zW9YkfHwssMGhy6/fTtztXrwCOIeouebBFa752aIxs6guGsflpg7b0LF4BkVEaEq/zM2w==
+X-Received: by 2002:a17:907:3e84:b0:afe:b818:a6bc with SMTP id a640c23a62f3a-b01f20ca2a4mr1165942966b.56.1756830666326;
+        Tue, 02 Sep 2025 09:31:06 -0700 (PDT)
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com. [209.85.218.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aff0681aefdsm1091741566b.8.2025.09.02.09.31.05
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Sep 2025 09:31:05 -0700 (PDT)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b042ec947e4so359629966b.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Sep 2025 09:31:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWxECCJzVrpQhfJNp3BC4gn+fk7dxLTDd4rgm0M+OFaxZQP6ryPhHpR2h0hsvUVysj2KWILSHd2LcHJu5Cw@vger.kernel.org
+X-Received: by 2002:a17:907:608e:b0:b04:2a50:3c1b with SMTP id
+ a640c23a62f3a-b042a505d56mr838465866b.53.1756830665041; Tue, 02 Sep 2025
+ 09:31:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] fs: add an enum for number of life time hints
-To: hch <hch@lst.de>, Hans Holmberg <Hans.Holmberg@wdc.com>
-Cc: "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
- Carlos Maiolino <cem@kernel.org>, Dave Chinner <david@fromorbit.com>,
- "Darrick J . Wong" <djwong@kernel.org>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- axboe@kernel.dk
-References: <20250901105128.14987-1-hans.holmberg@wdc.com>
- <20250901105128.14987-2-hans.holmberg@wdc.com>
- <20250902054108.GA11431@lst.de>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250902054108.GA11431@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250828230806.3582485-1-viro@zeniv.linux.org.uk>
+ <20250828230806.3582485-61-viro@zeniv.linux.org.uk> <CAHk-=wgZEkSNKFe_=W=OcoMTQiwq8j017mh+TUR4AV9GiMPQLA@mail.gmail.com>
+ <20250829001109.GB39973@ZenIV> <CAHk-=wg+wHJ6G0hF75tqM4e951rm7v3-B5E4G=ctK0auib-Auw@mail.gmail.com>
+ <20250829060306.GC39973@ZenIV> <20250829060522.GB659926@ZenIV>
+ <20250829-achthundert-kollabieren-ee721905a753@brauner> <20250829163717.GD39973@ZenIV>
+ <20250830043624.GE39973@ZenIV> <20250830073325.GF39973@ZenIV>
+ <CAHk-=wiSNJ4yBYoLoMgF1M2VRrGfjqJZzem=RAjKhK8W=KohzQ@mail.gmail.com> <ed70bad5-c1a8-409f-981e-5ca7678a3f08@gotplt.org>
+In-Reply-To: <ed70bad5-c1a8-409f-981e-5ca7678a3f08@gotplt.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 2 Sep 2025 09:30:48 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whb6Jpj-w4GKkY2XccG2DQ4a2thSH=bVNXhbTG8-V+FSQ@mail.gmail.com>
+X-Gm-Features: Ac12FXx59WVqLkC5mMlxQCBif3cCELBMwns93Jgla1NAtR1lqklG1oTPSCtnOW0
+Message-ID: <CAHk-=whb6Jpj-w4GKkY2XccG2DQ4a2thSH=bVNXhbTG8-V+FSQ@mail.gmail.com>
+Subject: Re: [RFC] does # really need to be escaped in devnames?
+To: Siddhesh Poyarekar <siddhesh@gotplt.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, jack@suse.cz, 
+	Ian Kent <raven@themaw.net>, David Howells <dhowells@redhat.com>, 
+	Christian Brauner <brauner@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 9/1/25 10:41 PM, hch wrote:
-> Looks good, but you probably want to add a few more folks that
-> created this constant and the header to the Cc list.
-> 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> 
-> On Mon, Sep 01, 2025 at 10:52:04AM +0000, Hans Holmberg wrote:
->> Add WRITE_LIFE_HINT_NR into the rw_hint enum to define the number of
->> values write life time hints can be set to. This is useful for e.g.
->> file systems which may want to map these values to allocation groups.
->>
->> Signed-off-by: Hans Holmberg <hans.holmberg@wdc.com>
->> ---
->>   include/linux/rw_hint.h | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/include/linux/rw_hint.h b/include/linux/rw_hint.h
->> index 309ca72f2dfb..adcc43042c90 100644
->> --- a/include/linux/rw_hint.h
->> +++ b/include/linux/rw_hint.h
->> @@ -14,6 +14,7 @@ enum rw_hint {
->>   	WRITE_LIFE_MEDIUM	= RWH_WRITE_LIFE_MEDIUM,
->>   	WRITE_LIFE_LONG		= RWH_WRITE_LIFE_LONG,
->>   	WRITE_LIFE_EXTREME	= RWH_WRITE_LIFE_EXTREME,
->> +	WRITE_LIFE_HINT_NR,
->>   } __packed;
->>   
->>   /* Sparse ignores __packed annotations on enums, hence the #ifndef below. */
->> -- 
->> 2.34.1
-> ---end quoted text---
+On Tue, 2 Sept 2025 at 08:03, Siddhesh Poyarekar <siddhesh@gotplt.org> wrote:
+>
+> This was actually the original issue I had tried to address, escaping
+> '#' in the beginning of the devname because it ends up in the beginning
+> of the line, thus masking out the entire line in mounts.  I don't
+> remember at what point I concluded that escaping '#' always was the
+> answer (maybe to protect against any future instances where userspace
+> ends up ignoring the rest of the line following the '#'), but it appears
+> to be wrong.
 
-Thanks Christoph for having Cc-ed me. I'm not a big fan of this type of
-change because it makes it harder to write switch-statements without
-'default:' clause. From a quick look I haven't found any such
-switch-statements on 'enum rw_hint' so I'm fine with this change.
+I wonder if instead of escaping hash-marks we could just disallow them
+as the first character in devname.
 
-Bart.
+How did this issue with hash-marks get found? Is there some real use -
+in which case we obviously can't disallow them - or was this from some
+fuzzing test that happened to hit it?
+
+            Linus
 
