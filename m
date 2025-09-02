@@ -1,151 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-60007-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60008-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D40EB40C66
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 19:48:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF6E3B40CCA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 20:07:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2114D7B43AB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 17:46:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69A313ACCB0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 18:07:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF258310654;
-	Tue,  2 Sep 2025 17:48:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B97A3343D74;
+	Tue,  2 Sep 2025 18:07:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LD9/t4by"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="JWb6TM65"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A03332F761
-	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Sep 2025 17:48:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 859182FD1DC;
+	Tue,  2 Sep 2025 18:07:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756835301; cv=none; b=BI0FrsGQjzX4FwpI2kkJ/VJq+p8zje8oZA/EZJpyKx08GeqXSwtk8O3H8kVQj3sGqz5ZpF6f+cV5Hn/moLVr6ObUmNUbT6X9bH1zS8bJ8Cli03Fuj7NDvPyir0PwtFs5M6fhvdr+vXlXUel+6i0/jWPXAaETTYVQwS+cTCBcYVI=
+	t=1756836462; cv=none; b=Cg2mylnID6+76Cu4+LoMscsF2BccQknFqTARcrg20A6rTAxZQcayHcH0QaxbCe4MdVhXJK2x1mnjJznQNiVstsQtQfPBH83xyxXcBM80nxIi2VoLEwY6GThpYx0wUZzBvllyc0VfquwcnlHxqYqrcmbilBxBZI9F39HMeEDAWow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756835301; c=relaxed/simple;
-	bh=+ZOl+ulpgIj6k5dtR9VW93PRihwtRTM5xi0pDg5SIHY=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=NjfY/yJYucI0ZJB2MQf3HIeFH7Okrkrgpcel0hrTHkpAR2dJ/LrczgMfaTzowzBp672SywSjRyewyZuDZrMkqe1x1yFoLxIMjV4tA5j5cxFIG/7afgQiSHXYVW/GLj9/6KAQj5wLPqESusCsmOEAqIGeqiXOnj/4m3Wzr5qz6ic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LD9/t4by; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756835298;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qq6st+qbX7M8TtuYrDJJKK62DN+QLpUTuVf4eLxsP1E=;
-	b=LD9/t4by6I/xikIE9WHnaaHaMPNbAEBPRSv7O2w15XdsYGK5TEOKYRAyAUiE32qZIBUtm2
-	nhqwreCbF7MvnyThpsbKGPgMZmW3OEDfFhE1HjgEuygkr3idounHGLIzhK3+NgEUn7o8Y/
-	dzVl809jQETT02uTRuMuBRS39n1hJBs=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-205-5LO__cpjNjybfmxR8jB2Jw-1; Tue,
- 02 Sep 2025 13:48:15 -0400
-X-MC-Unique: 5LO__cpjNjybfmxR8jB2Jw-1
-X-Mimecast-MFC-AGG-ID: 5LO__cpjNjybfmxR8jB2Jw_1756835293
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E3076180035F;
-	Tue,  2 Sep 2025 17:48:12 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.6])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id BBFD918004D4;
-	Tue,  2 Sep 2025 17:48:09 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <CAHk-=whb6Jpj-w4GKkY2XccG2DQ4a2thSH=bVNXhbTG8-V+FSQ@mail.gmail.com>
-References: <CAHk-=whb6Jpj-w4GKkY2XccG2DQ4a2thSH=bVNXhbTG8-V+FSQ@mail.gmail.com> <20250828230806.3582485-1-viro@zeniv.linux.org.uk> <20250828230806.3582485-61-viro@zeniv.linux.org.uk> <CAHk-=wgZEkSNKFe_=W=OcoMTQiwq8j017mh+TUR4AV9GiMPQLA@mail.gmail.com> <20250829001109.GB39973@ZenIV> <CAHk-=wg+wHJ6G0hF75tqM4e951rm7v3-B5E4G=ctK0auib-Auw@mail.gmail.com> <20250829060306.GC39973@ZenIV> <20250829060522.GB659926@ZenIV> <20250829-achthundert-kollabieren-ee721905a753@brauner> <20250829163717.GD39973@ZenIV> <20250830043624.GE39973@ZenIV> <20250830073325.GF39973@ZenIV> <CAHk-=wiSNJ4yBYoLoMgF1M2VRrGfjqJZzem=RAjKhK8W=KohzQ@mail.gmail.com> <ed70bad5-c1a8-409f-981e-5ca7678a3f08@gotplt.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: dhowells@redhat.com, Siddhesh Poyarekar <siddhesh@gotplt.org>,
-    Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
-    jack@suse.cz, Ian Kent <raven@themaw.net>,
-    Christian Brauner <brauner@kernel.org>,
-    Jeffrey Altman <jaltman@auristor.com>, linux-afs@lists.infradead.org
-Subject: Re: [RFC] does # really need to be escaped in devnames?
+	s=arc-20240116; t=1756836462; c=relaxed/simple;
+	bh=hDQkjgpchSfHdmIKlzZy1e2r5Zb4UPQsU9QDvkepNzs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=K0Wph0QxT6ovTOQ5VvsyC3T+dCzmGCSvnLYtLed99psQF6XUKiELlrZjxyGz3iVyvimM8roUY0dR8sA4m2gI8r/ylefrBITCkZXm7X5Sojj728/RULTH+QeAuiNoERnwhgnPvLDkwvHiROvj/Qi//7JAsYZu9M1MLvWw1D6Wkzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=JWb6TM65; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=oNdlysJjdtKeCzz+IbJEvciXiA4nco2aQvV39BALyhM=; b=JWb6TM65a/UPvsSXA+pyfx2u2O
+	b5dm0iZbFXQ9nSHsSTIN8KRaRSiQzrTkWRsj7/OVxsYaiYS9PAuZID2HLca9F+mclJ0soZmf4eSmZ
+	72XHDh5NZrvPUKFuIWLEc49vAYP9FJEF+R6o2kOIWri3uoSGobPc41dxUKdULSNaUsc2ilGSOQlmX
+	QncHO+omRc+ch8P3Sa0yWddSWubSqrOLqD6uVNdxVrtV2EjOHZN40D4mxEm1KKTr4qxoTgFH05QD5
+	MnFP//3WIOGlvMrTSTQev8Zesu7H6LmPiR05BkVAq8meLDzEP3+BzDIx6+Z+TCLYYSNTPGtqHg9Sy
+	Sxl1BaTA==;
+Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1utVPq-005p1w-BU; Tue, 02 Sep 2025 20:07:34 +0200
+From: Luis Henriques <luis@igalia.com>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>,  linux-fsdevel@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fuse: remove WARN_ON_ONCE() from
+ fuse_iomap_writeback_{range,submit}()
+In-Reply-To: <CAJnrk1awtqnSQS0F+TNTuQdLDsAAkArjbu1L=5L1Eoe0fGf31A@mail.gmail.com>
+	(Joanne Koong's message of "Tue, 2 Sep 2025 10:35:28 -0700")
+References: <20250902152234.35173-1-luis@igalia.com>
+	<CAJnrk1awtqnSQS0F+TNTuQdLDsAAkArjbu1L=5L1Eoe0fGf31A@mail.gmail.com>
+Date: Tue, 02 Sep 2025 19:07:33 +0100
+Message-ID: <87bjnssp7e.fsf@wotan.olymp>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <663879.1756835288.1@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 02 Sep 2025 18:48:08 +0100
-Message-ID: <663880.1756835288@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+Hi Joanne,
 
-> On Tue, 2 Sept 2025 at 08:03, Siddhesh Poyarekar <siddhesh@gotplt.org> w=
+On Tue, Sep 02 2025, Joanne Koong wrote:
+
+> On Tue, Sep 2, 2025 at 8:22=E2=80=AFAM Luis Henriques <luis@igalia.com> w=
 rote:
-> >
-> > This was actually the original issue I had tried to address, escaping
-> > '#' in the beginning of the devname because it ends up in the beginnin=
-g
-> > of the line, thus masking out the entire line in mounts.  I don't
-> > remember at what point I concluded that escaping '#' always was the
-> > answer (maybe to protect against any future instances where userspace
-> > ends up ignoring the rest of the line following the '#'), but it appea=
-rs
-> > to be wrong.
-> =
-
-> I wonder if instead of escaping hash-marks we could just disallow them
-> as the first character in devname.
-
-The problem with that is that it appears that people are making use of thi=
+>>
+>> The usage of WARN_ON_ONCE doesn't seem to be necessary in these function=
 s.
-
-Mount /afs with "-o dynroot" isn't a problem as that shouldn't be given a
-device name - and that's the main way people access AFS.  With OpenAFS I d=
-on't
-think you can do this at all since it has a single superblock that it cram=
-s
-everything under.  For AuriStor, I think you can mount individual volumes,=
- but
-I'm not sure how it works.  For Linux's AFS, I made every volume have its =
-own
-superblock.
-
-The standard format of AFS volume names is [%#][<cell>:]<volume-name-or-id=
+>> All fuse_iomap_writeback_submit() call sites already ensure that wpc->wb=
+_ctx
+>> contains a valid fuse_fill_wb_data.
 >
-but I could make it an option to stick something on the front and use that
-internally and display that in /proc/mounts, e.g.:
+> Hi Luis,
+>
+> Maybe I'm misunderstanding the purpose of WARN()s and when they should
+> be added, but I thought its main purpose is to guarantee that the
+> assumptions you're relying on are correct, even if that can be
+> logically deduced in the code. That's how I see it being used in other
+> parts of the fuse and non-fuse codebase. For instance, to take one
+> example, in the main fuse dev.c code, there's a WARN_ON in
+> fuse_request_queue_background() that the request has the FR_BACKGROUND
+> bit set. All call sites already ensure that the FR_BACKGROUND bit is
+> set when they send it as a background request. I don't feel strongly
+> about whether we decide to remove the WARN or not, but it would be
+> useful to know as a guiding principle when WARNs should be added vs
+> when they should not.
 
-	mount afs:#openafs.org:afs.root /mnt
+I'm obviously not an authority on the subject, but those two WARN_ON
+caught my attention because if they were ever triggered, the kernel would
+crash anyway and the WARNs would be useless.
 
-which would at least mean that sh and bash wouldn't need the "#" escaping.
+For example, in fuse_iomap_writeback_range() you have:
 
-The problem is that the # and the % have specific documented meanings, so =
-if I
-was to get rid of the '#' entirely, I would need some other marker.  Maybe=
- it
-would be sufficient to just go on the presence or not of a '%'.
+	struct fuse_fill_wb_data *data =3D wpc->wb_ctx;
+	struct fuse_writepage_args *wpa =3D data->wpa;
 
-Maybe I could go with something like:
+	[...]
 
-	openafs.org:root.cell:ro
-	openafs.org:root.cell:rw
-	openafs.org:root.cell:bak
+	WARN_ON_ONCE(!data);
 
-rather than use #/%.
+In this case, if 'data' was NULL, you would see a BUG while initialising
+'wpa' and the WARN wouldn't help.
 
-I don't think there should be a problem with still accepting lines beginni=
-ng
-with '#' in mount() if I display them with an appropriate prefix.  That wo=
-uld
-at least permit backward compatibility.
+I'm not 100% sure these WARN_ON_ONCE() should be dropped.  But if there is
+a small chance of that assertion to ever be true, then there's a need to
+fix the code and make it safer.  I.e. the 'wpa' initialisation should be
+done after the WARN_ON_ONCE() and that WARN_ON_ONCE() should be changed to
+something like:
 
-David
+	if (WARN_ON_ONCE(!data))
+		return -EIO; /* or other errno */
+
+Does it make sense?
+
+As I said, I can send another patch to keep those WARNs and fix these
+error paths.  But again, after going through the call sites I believe it's
+safe to assume that WARN_ON_ONCE() will never trigger.
+
+Cheers,
+--=20
+Lu=C3=ADs
+
+
+> Thanks,
+> Joanne
+>
+>>
+>> Function fuse_iomap_writeback_range() also seems to always be called wit=
+h a
+>> valid value.  But even if this wasn't the case, there would be a crash
+>> before this WARN_ON_ONCE() because ->wpa is being accessed before it.
+>>
+>
+> I agree, for the fuse_iomap_writeback_range() case, it would be more
+> useful if "wpa =3D data->wpa" was moved below that warn.
+>
+>> Signed-off-by: Luis Henriques <luis@igalia.com>
+>> ---
+>> As I'm saying above, I _think_ there's no need for these WARN_ON_ONCE().
+>> However, if I'm wrong and they are required, I believe there's a need for
+>> a different patch (I can send one) to actually prevent a kernel crash.
+>>
+>>  fs/fuse/file.c | 4 ----
+>>  1 file changed, 4 deletions(-)
+>>
+>> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+>> index 5525a4520b0f..fac52f9fb333 100644
+>> --- a/fs/fuse/file.c
+>> +++ b/fs/fuse/file.c
+>> @@ -2142,8 +2142,6 @@ static ssize_t fuse_iomap_writeback_range(struct i=
+omap_writepage_ctx *wpc,
+>>         struct fuse_conn *fc =3D get_fuse_conn(inode);
+>>         loff_t offset =3D offset_in_folio(folio, pos);
+>>
+>> -       WARN_ON_ONCE(!data);
+>> -
+>>         if (!data->ff) {
+>>                 data->ff =3D fuse_write_file_get(fi);
+>>                 if (!data->ff)
+>> @@ -2182,8 +2180,6 @@ static int fuse_iomap_writeback_submit(struct ioma=
+p_writepage_ctx *wpc,
+>>  {
+>>         struct fuse_fill_wb_data *data =3D wpc->wb_ctx;
+>>
+>> -       WARN_ON_ONCE(!data);
+>> -
+>>         if (data->wpa) {
+>>                 WARN_ON(!data->wpa->ia.ap.num_folios);
+>>                 fuse_writepages_send(wpc->inode, data);
 
 
