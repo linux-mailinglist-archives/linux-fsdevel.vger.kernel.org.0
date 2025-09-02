@@ -1,105 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-60001-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60002-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A3E2B408D5
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 17:22:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0269B40A49
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 18:13:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D00F188F2A3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 15:23:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99C013ADF88
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 16:13:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CC3431E0EE;
-	Tue,  2 Sep 2025 15:22:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 303DB33CEB9;
+	Tue,  2 Sep 2025 16:12:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="AnLLyO9V"
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="lQARut9W"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FFB128489B;
-	Tue,  2 Sep 2025 15:22:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8802335BC6;
+	Tue,  2 Sep 2025 16:12:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756826570; cv=none; b=plUpk+3nXYDZUWmPiUuJgmOPXdTvAQ174lTV7TnOVV5u4mT4z5BcqOLiRAIbEgH+HJHWmTrDwDDyR1WyxPOqYj4rBIfveAF636a0aTAvQw5pBNuw7ZzEysvQ8Y2o6ECxmW3HR4liYxDmXr9pH2A277cjrjLmgtgXGl71O+uzfRA=
+	t=1756829566; cv=none; b=TOdA3dvE7t88f2BIYgTfSa1g9jGpB4ifNmchc1JNnzVfIdKBYeRuRq8zR6Nk2+6fScYh+xD1AOz8dj8IS4uooJuB4ZUQbnz7zIqvGiN9tJuDI7teMZQih/22a9E2NnV3yv3H6a01p/79Qt2TiwhxYNTiMZ1hJgWK+OM5Vxo79d4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756826570; c=relaxed/simple;
-	bh=HaUYGzzb/C0ZDIqppBt972XneJxjm2FpucYUwJY3Mq0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kOoLk7b3XPvOfrmMg5w0/a/krP3tfW0Ciwv5ufYEvCOFnKVE6fZdy5uzl35VGK9PbOVnV4PYh1bq1T3L4Q81DuGTcrNXvWOIy5seYZO0dCPJ1N+PZgGwVxGWBCLVkemOfBh9YOJXOlkz6XUoobc3MJPq6068dLaJZbAcdjpL/4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=AnLLyO9V; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
-	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=U0gQV6ybTFZGuryr56vx/u+MpC/277rOqkaUQrD8Who=; b=AnLLyO9VMFwCr2es3/frbxHCBC
-	JjlPP7n5z9ULDCVWr5AQzJ2l+5q8UR66ExwbJHr6BkB1jeIzNQMrNOxqEIPvli742kjWtQgd2zzCY
-	vMFTibF3LJcdJwQVNj22JNPUIL6brEeMOevh2LnJ3Fla/R2w5OyaEhlk8ekLJHdo9l4t0Gx5d9Qpt
-	wNMbh5xJ2zU7tA0gctkcN5r3o3ZtkeDmFSF1c196PEPJ1+SPEOHBPfKAB6q5WmO0HRoA5UMPeoaM2
-	cdJeEn7Q/ObGevUCQaRo+XaSlU61ZAy2B3RQbAmsUz/YQSV3qHJ55gQdj4H3qjFyKYnNPxsY187/W
-	SMJSM2hg==;
-Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1utSqH-005lLV-MA; Tue, 02 Sep 2025 17:22:41 +0200
-From: Luis Henriques <luis@igalia.com>
-To: Miklos Szeredi <miklos@szeredi.hu>,
-	Joanne Koong <joannelkoong@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Luis Henriques <luis@igalia.com>
-Subject: [PATCH] fuse: remove WARN_ON_ONCE() from fuse_iomap_writeback_{range,submit}()
-Date: Tue,  2 Sep 2025 16:22:34 +0100
-Message-ID: <20250902152234.35173-1-luis@igalia.com>
+	s=arc-20240116; t=1756829566; c=relaxed/simple;
+	bh=5avgvEP3XxLW1FEb1wh9OlMrNkakvRKUU3W73a6ZmMY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j4alweKLKwvIVhPUYCxw/72hWLQVFethWwx8hgFNui9p+4B8Whl+T2CGQi67XePk0wcZjlP2jf0+SnGAfkWGAlrmPM3TBRBL6QkSkuEF8U2p2omHyPK5TlhVhX20nzB/DdvSDC4e9vEbkD2Wg0pdHui00qcMBg44EvVzS3F7XZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=lQARut9W; arc=none smtp.client-ip=199.89.3.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4cGW3p20KkzlfnCV;
+	Tue,  2 Sep 2025 16:12:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1756829553; x=1759421554; bh=zLHsMuSoN87Y/kpFANGBnIy5
+	780AiDprbMGpVpen4tY=; b=lQARut9W9c51D4XL1oAzxysF19Y+3QHFc2F9OEsR
+	h39y+s3ur/7jYldadPxTguxvg3Ycn4O+XY4uYMd/f+kwVcAUZs1ZzkcqRoGARq9R
+	NbtFh6U+SPyJPHERkPA0uPX320V9WBts1iezGyFVV2OhHlXgrDQGIVVQv/Fn8UuA
+	CaC3TsjTBNF94zl0UjVE0FsDOO32SUj7DyIhLu01o4HTpY2Wt+EFmShrs+CEsp72
+	V2OT8gYsBrPQKf8DcUV73C0Bjmq37uZRwJC7xbHn8Nq8SU1PjQ6wrF5EK41HjzJf
+	e46v73JhJWXdm7z+PEdpDYzaBHZtvDeloofoWLyPdqVFfg==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id 4d38XxLOeDyA; Tue,  2 Sep 2025 16:12:33 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4cGW3Z3Rqyzlh3sc;
+	Tue,  2 Sep 2025 16:12:25 +0000 (UTC)
+Message-ID: <e844fe01-7cfa-4aff-b21e-d0ad04399829@acm.org>
+Date: Tue, 2 Sep 2025 09:12:24 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] fs: add an enum for number of life time hints
+To: hch <hch@lst.de>, Hans Holmberg <Hans.Holmberg@wdc.com>
+Cc: "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+ Carlos Maiolino <cem@kernel.org>, Dave Chinner <david@fromorbit.com>,
+ "Darrick J . Wong" <djwong@kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ axboe@kernel.dk
+References: <20250901105128.14987-1-hans.holmberg@wdc.com>
+ <20250901105128.14987-2-hans.holmberg@wdc.com>
+ <20250902054108.GA11431@lst.de>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250902054108.GA11431@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The usage of WARN_ON_ONCE doesn't seem to be necessary in these functions.
-All fuse_iomap_writeback_submit() call sites already ensure that wpc->wb_ctx
-contains a valid fuse_fill_wb_data.
+On 9/1/25 10:41 PM, hch wrote:
+> Looks good, but you probably want to add a few more folks that
+> created this constant and the header to the Cc list.
+> 
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> 
+> On Mon, Sep 01, 2025 at 10:52:04AM +0000, Hans Holmberg wrote:
+>> Add WRITE_LIFE_HINT_NR into the rw_hint enum to define the number of
+>> values write life time hints can be set to. This is useful for e.g.
+>> file systems which may want to map these values to allocation groups.
+>>
+>> Signed-off-by: Hans Holmberg <hans.holmberg@wdc.com>
+>> ---
+>>   include/linux/rw_hint.h | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/include/linux/rw_hint.h b/include/linux/rw_hint.h
+>> index 309ca72f2dfb..adcc43042c90 100644
+>> --- a/include/linux/rw_hint.h
+>> +++ b/include/linux/rw_hint.h
+>> @@ -14,6 +14,7 @@ enum rw_hint {
+>>   	WRITE_LIFE_MEDIUM	= RWH_WRITE_LIFE_MEDIUM,
+>>   	WRITE_LIFE_LONG		= RWH_WRITE_LIFE_LONG,
+>>   	WRITE_LIFE_EXTREME	= RWH_WRITE_LIFE_EXTREME,
+>> +	WRITE_LIFE_HINT_NR,
+>>   } __packed;
+>>   
+>>   /* Sparse ignores __packed annotations on enums, hence the #ifndef below. */
+>> -- 
+>> 2.34.1
+> ---end quoted text---
 
-Function fuse_iomap_writeback_range() also seems to always be called with a
-valid value.  But even if this wasn't the case, there would be a crash
-before this WARN_ON_ONCE() because ->wpa is being accessed before it.
+Thanks Christoph for having Cc-ed me. I'm not a big fan of this type of
+change because it makes it harder to write switch-statements without
+'default:' clause. From a quick look I haven't found any such
+switch-statements on 'enum rw_hint' so I'm fine with this change.
 
-Signed-off-by: Luis Henriques <luis@igalia.com>
----
-As I'm saying above, I _think_ there's no need for these WARN_ON_ONCE().
-However, if I'm wrong and they are required, I believe there's a need for
-a different patch (I can send one) to actually prevent a kernel crash.
-
- fs/fuse/file.c | 4 ----
- 1 file changed, 4 deletions(-)
-
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 5525a4520b0f..fac52f9fb333 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -2142,8 +2142,6 @@ static ssize_t fuse_iomap_writeback_range(struct iomap_writepage_ctx *wpc,
- 	struct fuse_conn *fc = get_fuse_conn(inode);
- 	loff_t offset = offset_in_folio(folio, pos);
- 
--	WARN_ON_ONCE(!data);
--
- 	if (!data->ff) {
- 		data->ff = fuse_write_file_get(fi);
- 		if (!data->ff)
-@@ -2182,8 +2180,6 @@ static int fuse_iomap_writeback_submit(struct iomap_writepage_ctx *wpc,
- {
- 	struct fuse_fill_wb_data *data = wpc->wb_ctx;
- 
--	WARN_ON_ONCE(!data);
--
- 	if (data->wpa) {
- 		WARN_ON(!data->wpa->ia.ap.num_folios);
- 		fuse_writepages_send(wpc->inode, data);
+Bart.
 
