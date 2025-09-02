@@ -1,81 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-59955-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59956-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BB2FB3F8CE
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 10:42:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD2DFB3F8E9
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 10:44:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5948E7B08C9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 08:40:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 721202013EB
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 08:44:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 717E52E8DFD;
-	Tue,  2 Sep 2025 08:36:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05FB52E9EBE;
+	Tue,  2 Sep 2025 08:41:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mg2gcPLF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fa8Kgybk"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C793826E6E4;
-	Tue,  2 Sep 2025 08:36:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EDF120311;
+	Tue,  2 Sep 2025 08:41:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756802175; cv=none; b=M/nPnsPCEE6apBGsEchzso7cxOEL3RUHo9fT60WhXz1+It7HrpwqunLRvfAoiTsXwQo1SXTdo1PlpsIVFOo1ZqjSky65dWKo9lDu2NywGh9oLS3vU76h7dq6a2y/pQfVQ0cHXeX41RqbVLcZJtVoWjsdNWlTuo0O0RAeoPfRoAE=
+	t=1756802515; cv=none; b=VC5L5vVJur6I6C4ErbZz8YTvagIKeb1YqaKUPygYR2FHpXhpg4ao473HCM1JYO46c4GWV91KZxc9HSAntCfMxh/uDKa+pgXwlvnKACHsDqoS4iWEcqCdhbzE2PTRR6kaIM2izog4Xy6SEPp83uW1TCdd77YMjcmNLmiZVeRpmpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756802175; c=relaxed/simple;
-	bh=AiJwx+ovZSz55eeB+XnEvYBdwHpVIKh702G79SMjs1o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CR9uZ8aS7BwOCfWXSGDpiM3U5p59vYXhzuwTrn4UJ8H08TGDvJunt35thRPNwe5lEwPLSdgvCFc1EtSQkLI8+vvG+DX/NL6PcAmZFyzGHYPvhcCJUPTae/lArTHTFL2JvRwSdI/gGAptRwtX1zeqQZRlGOSlS2G0iCQRezTK0xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mg2gcPLF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C165C4CEED;
-	Tue,  2 Sep 2025 08:36:11 +0000 (UTC)
+	s=arc-20240116; t=1756802515; c=relaxed/simple;
+	bh=nTVFxlclw7LzSbfNNJ2PFsMG6pslgAy3nBhdtLRyuMI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NapCZLnq9i/FqouEy0xYieiz7p9F2fS1irah9WqrSTwBC82E9ewh/rZvLFdKYYJFxJl1qFFEnCC5+Z3Tj8piMP4FVQoIuy8dRc+g87JHH+GhweU3RJSq8wHVOJckxDcvEDYjBiPzUiy6AG1TtkFXm8PfYtQc3U7Il/BVlqFi0j4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fa8Kgybk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FE58C4CEF5;
+	Tue,  2 Sep 2025 08:41:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756802174;
-	bh=AiJwx+ovZSz55eeB+XnEvYBdwHpVIKh702G79SMjs1o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mg2gcPLFkb+/wwozAzY77vsD4+hFtwC3OMBVSbhol0RfmzlQJaeAJX0cOYcdDICo9
-	 XtTvk+8u5hMB+WB1BEz5ANBvx4aJcVZ61vuOecOYiXP239fUZp+BewMEyCmp68VMqX
-	 VGOkvLYjPZSnSufMaYrRjEfB2dIRmatOBTKXGCaqErjZuknzHLLBuPZZ2ZmdVnOe60
-	 zN251sC1R7pI2HxTNYy1155jq3DYyeQkH0R2CxXIZWjD9tbaBr6IOnFXbGnRxAplfc
-	 NPYXzsJ0f78+nkvxkm8R23x34Lki3UKvE1Hp5ukk1SAqIOHvnOmq8vUfVfiJktqm0/
-	 f5P1bfkduMl3A==
-Date: Tue, 2 Sep 2025 10:36:09 +0200
+	s=k20201202; t=1756802514;
+	bh=nTVFxlclw7LzSbfNNJ2PFsMG6pslgAy3nBhdtLRyuMI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Fa8KgybkloK9zH2folFrqDD83Vf8o+wVxFdBgfExirxGdm/XX9K0HW1y2c//FvtsE
+	 bq+69491gGnM7IyA9GiglDg2bTVBesj1mBKTK49I6b+fBqUUq6PH7OUho6wquxqsPE
+	 gmihHI7+lznB5ew1m4+r3dgN854dYwGGmim+03aa9S5OjM7Iae2YfYuiTqZyiRwXIU
+	 ztms7W7iWkq8XkvEXPwTV7KuzHK2AHvJlJpBZfbwi/9ttSxP1VgCMnb9chtYl6+aAQ
+	 E4hceOgwigEBXsx+0nBVlnhBuwNi5u7QZiKz62l3KYUVB7Q5B05DnKKd/R8AgqqcH2
+	 iMu8vJxq448Cg==
 From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Xing Guo <higuoxing@gmail.com>, amir73il@gmail.com, 
-	jhubbard@nvidia.com, linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	miklos@szeredi.hu, shuah@kernel.org, kernel test robot <oliver.sang@intel.com>
-Subject: Re: [PATCH] selftests/fs/mount-notify: Fix compilation failure.
-Message-ID: <20250902-abhalten-besehen-ab6959fc4ebb@brauner>
-References: <CAOQ4uxjJHscMEcAahVpbUDcDet7D8xa=X2rLr33femZsCy6t0A@mail.gmail.com>
- <20250813075523.102069-1-higuoxing@gmail.com>
- <e4aftint6uauii7p5dvnfd2byllwvzu5hjfxwpa3la3pigmae7@ahw76agoljhh>
+To: Askar Safin <safinaskar@zohomail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	David Howells <dhowells@redhat.com>,
+	cyphar@cyphar.com,
+	Ian Kent <raven@themaw.net>,
+	autofs mailing list <autofs@vger.kernel.org>,
+	patches@lists.linux.dev,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v2 0/4] vfs: if RESOLVE_NO_XDEV passed to openat2, don't *trigger* automounts
+Date: Tue,  2 Sep 2025 10:41:42 +0200
+Message-ID: <20250902-bankwesen-knirps-184b6ed28587@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250825181233.2464822-1-safinaskar@zohomail.com>
+References: <20250825181233.2464822-1-safinaskar@zohomail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <e4aftint6uauii7p5dvnfd2byllwvzu5hjfxwpa3la3pigmae7@ahw76agoljhh>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1498; i=brauner@kernel.org; h=from:subject:message-id; bh=nTVFxlclw7LzSbfNNJ2PFsMG6pslgAy3nBhdtLRyuMI=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRsW3t27pNvM94pTq1lbZDaXpv1xuLSwwXCZz/Msq2Ue tHn/TdqakcJC4MYF4OsmCKLQ7tJuNxynorNRpkaMHNYmUCGMHBxCsBEci8zfK/pW+0ZsJFtxfW6 wFrupnciO5JcEx5MNAjld8/z/qe9mZFhxunPl6a+M05KnCX8PbJaplxGcFohd2u+f2faimBV972 MAA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 01, 2025 at 07:17:07PM +0200, Jan Kara wrote:
-> On Wed 13-08-25 15:55:23, Xing Guo wrote:
-> > Commit c6d9775c2066 ("selftests/fs/mount-notify: build with tools include
-> > dir") introduces the struct __kernel_fsid_t to decouple dependency with
-> > headers_install.  The commit forgets to define a macro for __kernel_fsid_t
-> > and it will cause type re-definition issue.
-> > 
-> > Reported-by: kernel test robot <oliver.sang@intel.com>
-> > Closes: https://lore.kernel.org/oe-lkp/202508110628.65069d92-lkp@intel.com
-> > Signed-off-by: Xing Guo <higuoxing@gmail.com>
-> > Acked-by: Amir Goldstein <amir73il@gmail.com>
+On Mon, 25 Aug 2025 18:12:29 +0000, Askar Safin wrote:
+> openat2 had a bug: if we pass RESOLVE_NO_XDEV, then openat2
+> doesn't traverse through automounts, but may still trigger them.
+> See this link for full bug report with reproducer:
+> https://lore.kernel.org/linux-fsdevel/20250817075252.4137628-1-safinaskar@zohomail.com/
 > 
-> Christian, quick search didn't find this patch in your tree. Any reason you
-> didn't pick it up?
+> This patchset fixes the bug.
+> 
+> [...]
 
-Weird. Thanks for the reminder, Jan! Picked into vfs.fixes now!
+Applied to the vfs-6.18.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.18.misc branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.18.misc
+
+[1/4] namei: move cross-device check to traverse_mounts
+      https://git.kernel.org/vfs/vfs/c/11c2b7ec2e18
+[2/4] namei: remove LOOKUP_NO_XDEV check from handle_mounts
+      https://git.kernel.org/vfs/vfs/c/8b966d00b3ec
+[3/4] namei: move cross-device check to __traverse_mounts
+      https://git.kernel.org/vfs/vfs/c/8ded1fde0827
+[4/4] openat2: don't trigger automounts with RESOLVE_NO_XDEV
+      https://git.kernel.org/vfs/vfs/c/042a60680de4
 
