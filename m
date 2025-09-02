@@ -1,88 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-59952-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59953-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2621B3F7F4
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 10:15:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 810E2B3F81C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 10:19:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8506016FCA9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 08:14:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6D5D7A7021
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 08:14:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D902E8B65;
-	Tue,  2 Sep 2025 08:12:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDC682E8B76;
+	Tue,  2 Sep 2025 08:15:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bPNkV5Rq"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TYA6Y8D3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE3692E62A4
-	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Sep 2025 08:12:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8900C2E8B72
+	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Sep 2025 08:15:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756800735; cv=none; b=pg0PhNgVVUHaL6QGiBh64MFehJp98cByZSR9XZUWWehlbU7YOzhgUSgJeiNYziYDmrdfWJCwqkhDH176mKA9r+GinvItCBgam6ZY7MXWBUCRETKLp3n50JbLl+BIRLMlbSEgytCPPIwuWhJX5D75X20k7fo3ghMiPU69fMwX/kw=
+	t=1756800917; cv=none; b=oJgcyrSgIRNaTIX+c2Cnw2Nu5sgW9bYw1geVevElpcRQ9G8uwOxmUlnMWGGwymHGU/b4XqoflN5xPUBSXGhcr/btVAYoXE1jMlVkKMH93vkiQDMfuDH5xBG0Uwhe5MjJQPTsZvES6YYXLc/q9AghYZtnadEAo4k+Oyvzz8VJUhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756800735; c=relaxed/simple;
-	bh=UdYo5EhZ3PMDCVcRYhDMGGjzEDk9Z7rvDGoYq+BHWe0=;
+	s=arc-20240116; t=1756800917; c=relaxed/simple;
+	bh=nlvpDZpVsMSgg6ylECp9wiLPXOziu9eL4qa/tmhy99E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LismCT6Ejz8GVlo4xqrNHzgDVAOHis+nknU3EBQrAM7SV+mW4S2pZse9mlphCb96R9AC13854bo3CktdjtU7cuXkqeg1+FHJtHuDsEnVfjLmbfBGNd2Rl29sIMrhliSnt7IUcUWrfjUPY59YDPTi65u6Dj4mxaM7D30Nkw17Xv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bPNkV5Rq; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=XB73MlZE48tJvFKR5uPIVjq7vh37p7VQb2sxZlLMKIeFv6hYJYqZS+uvJKOV5EcxLexkFWRn3xwJkjDm/JQrZlPLcm9c5RSK1ZQiZDH+fmw0dWnLiYE2dZ4DFyeP4QdjQdnL8CJ+bmDWsNmW5Ix2WhzfMGhEo11GlIILgMfh7Zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TYA6Y8D3; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756800732;
+	s=mimecast20190719; t=1756800914;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=2zb5t8Q6aRCCvAvoxx2JGukWZxS6Bp6/fazEsZZ+kHs=;
-	b=bPNkV5RqkaIirt/UgVMhbOYM+YFP+hqkk7FEVD4rS1CBWBdyhrjDFqc4V/hh/2aS+R1Om9
-	WHNa1nxDUs2GyJg1bE0Am+018XoL3rFHXHBiy/ModG1xGvKO8W3Xucu/1kL91FJvmwZ35p
-	Mdy5VnooQrx8KSBuX5KRiUD/bGmPviI=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=RogoUtOEfOYQJN4afGzglkQECVqWaZjyfEy0cHwYDVI=;
+	b=TYA6Y8D3bQ/rp9EoDn6MjeozpMj9qmC1y2cmP1tgauJPXoy14QMPzE/vHNe00tbnJIOJgr
+	ecseAqZOabjxSLgIiilpgXb4fe9y1S7dGchMMq4DHaPsG0M1GN72l4aibOrFtWHT1aXwa4
+	PF+mv5nYOFXEp7XLtohab6UyZl3l8l0=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-679-aBa_O4tqPTic11wVznNovA-1; Tue, 02 Sep 2025 04:12:10 -0400
-X-MC-Unique: aBa_O4tqPTic11wVznNovA-1
-X-Mimecast-MFC-AGG-ID: aBa_O4tqPTic11wVznNovA_1756800729
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45b467f5173so48387815e9.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Sep 2025 01:12:09 -0700 (PDT)
+ us-mta-634-B0zVAUaFNJiuAvNFUCda4g-1; Tue, 02 Sep 2025 04:15:13 -0400
+X-MC-Unique: B0zVAUaFNJiuAvNFUCda4g-1
+X-Mimecast-MFC-AGG-ID: B0zVAUaFNJiuAvNFUCda4g_1756800912
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3da4c617a95so374307f8f.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Sep 2025 01:15:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756800729; x=1757405529;
+        d=1e100.net; s=20230601; t=1756800912; x=1757405712;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=2zb5t8Q6aRCCvAvoxx2JGukWZxS6Bp6/fazEsZZ+kHs=;
-        b=TYnCo+36RTFA2rBZCQJhZv/TYRDWcfkzYrKsUYkzMaYyYOv8sYko71+4hgmt2keEV5
-         fdq85h7lp0yFrry5Qts9Zn8dEW5Qhfd6mJZfn/33FbdbKnT0sfew6Fs6566Y6GYNy/Cx
-         y+86gHPuMMSwW2RlKKvKH950OFDYK9a/93VxWuAsyilxB8w1htBqVwJbALafqXwNrNNj
-         Cod+AisNmiX18H4sSdyI9i/oBYuRTyMUjR9L10t0Rd48qJx6CGKrwbDFrJRmxSQM6o4c
-         rGY/QlbAC/RL6je4Sx9AZR4UnK4Lk7nQ7nvWQPg7fDSo72bQbhlIojF6aWyOnO0FvPNY
-         abDg==
-X-Forwarded-Encrypted: i=1; AJvYcCUu/qc03i66XONND2kjuMJtzf5jQwypojOEhDCRzsNSlHGMl8RJWFEUszF5Gg+0xyHywLfC51mzv76X2a8O@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYMJ01USg5EPLOYrqB6cDHC0MdYzC1Ibv1XvxbBKKeYq3+yars
-	Ubpw+lxS3NKbS0tuo5WZU3OnJyfAngx6GfLKAhPI9Lo0aeqECdbtAX3speJoIe6nIBKZRNI+ul9
-	FTsbqP02Co+4KaK5mTj3N3e7Bi2B4TLGttXOLXnWTG2l109/fFz14qUhZjbQBTwXlWgY=
-X-Gm-Gg: ASbGncsZ3Txu+zF1IIAop4wbKfpycHgLI99PCRivVZON5zhhi8QYdKuP4QfrIRicgR0
-	8/UEZ2aYVBvFdDL1ev3A3bijanI9238Ocw2unkMCorOPu1QsISND3CQk0Z3Xt6IF+Y8n0Y1anFi
-	wa1WffbkyboRF08UP1BBB9PMPgZ1os4Z1AASHAaZNsJ3F1Hal30VOYi+uSNV4QB2ydzsrF8pQS6
-	QxZgYloa16OOtlWugNTmUQEwndoJBbMfaSekNWZEwlJDd71E/N/JR3fnQdiv6nDQHWyUIfTB2BZ
-	sjgZt7p97p6/R8J8gELrnlN//HqypshBtPVndGMRWqkoJxV5kjIISVdcTd1NltvLEECowt/NI9m
-	ZQUZmcHEheDwhrTv5JfYI/LCxqzmt0zQFmCSUrdpGBh629LFFt9C57AsQ5OTTiIE672Y=
-X-Received: by 2002:a05:600c:3507:b0:45b:8f5e:529a with SMTP id 5b1f17b1804b1-45b925314admr23500945e9.14.1756800728618;
-        Tue, 02 Sep 2025 01:12:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHMQKde6tuKuB2m2hPFengMNai3NoA7mhyO6qLDI4gze+ZpXVnDBYgp0JqNm1wzjYGnsylb7A==
-X-Received: by 2002:a05:600c:3507:b0:45b:8f5e:529a with SMTP id 5b1f17b1804b1-45b925314admr23500275e9.14.1756800727994;
-        Tue, 02 Sep 2025 01:12:07 -0700 (PDT)
+        bh=RogoUtOEfOYQJN4afGzglkQECVqWaZjyfEy0cHwYDVI=;
+        b=jrC/A27FgyrsWuueSFF35mK41tqdjVm6lHEY/UPLF6XutDhDR4BP7q5Nijbw3x7QIw
+         cqnkwJV4zv40XJK9vm60VspCSGfK1Hy5VBg4AC1XzCyOO0elmhdPBFUGHVCNY/5dzhSb
+         GrD5HH0rjoEgfeeOkk+aQrnXqdrhlAFu5YfNil8P9XLgfOWn2mHYUTNeLvnC8B0G1GZG
+         vKLvSAzBhjC9hyy7WNm+kmS3DTfuLDV0enhvlKWSlOjduszBd5U5PeMQbfE0JWp3Ndjh
+         7X5gouVCJi5XCM6O/IIYw7irigseNjXUSTdm8N6rWrOE7C86I+eZZ2Q7K/qd/MI5D+UQ
+         ffEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXNF8/xvdYp8yfUbr4im1esvI7dqwwSjzZpBbs3nsOj9jTvdRPEvW78zUl/jGh4iMUTp+9+XK8DEuJt+RPp@vger.kernel.org
+X-Gm-Message-State: AOJu0YydFsWNaZ/q2WzCJnPnQgI6d4Aya3xPsbxUnDWgchUfnYGjjGJL
+	G3tQHVHPhUYbK+T4xdQbDj9jVT+20FqEXA+Hn6pdOfdDXolonpOO26iDE9L60OqzdNbBGJo+cvb
+	p+o4JX2eQAXoH5FqbRC2Ym2wYWM5jH4FkbRzzgLJWTo88pOeDfyuCVEvM6XPlAVAvJok=
+X-Gm-Gg: ASbGnctfYSTGbPhfz3D5G3JU0bOP+5/LujFYmWKP3ifpb0BkFVG2oFKBjp+cyfrK5bA
+	f9dau4+wo5oe369d3HOhvDh4nvAbIa3dLpljpWdz7E/6oQ+bGGpAXCERYIC1hIUnGYDgXrJKx2W
+	mGHMF73SqcC74m+XT80cEi3taAdKYR75i7Xarp8FzqCPNcy2iFg/FqPWL1HerzWTMyswjkncAUo
+	yq8FSgjOTiL0muKCyvlYw8m/UQo1zVcBgIK3jjwdYcgO4uLrB5n8c7VK4EPSKsmtgIkSpzA+n9/
+	8XYOn7x3E28EZcXQhRzGLnzx3uRoG4Q6Ng0rC6JiCL9UXfhkkD8d9BtcZpnGSviuLi7Cbjsis9k
+	Si6MEyzlYXkHqt5itiuB5z/c8zNsmrm8+hkOoctb3CttDwL3ku1irMMNZTtHpyAhgif0=
+X-Received: by 2002:a05:6000:2889:b0:3d1:61f0:d256 with SMTP id ffacd0b85a97d-3d1e01d549cmr9068704f8f.42.1756800912137;
+        Tue, 02 Sep 2025 01:15:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHZfeVU3LdB4bHgw3FzcrRO99gHX9zuEWOnoc0/0BZioqs0USiyiN4hqenDT8lLo0/e6yv0pQ==
+X-Received: by 2002:a05:6000:2889:b0:3d1:61f0:d256 with SMTP id ffacd0b85a97d-3d1e01d549cmr9068645f8f.42.1756800911636;
+        Tue, 02 Sep 2025 01:15:11 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f1f:3f00:731a:f5e5:774e:d40c? (p200300d82f1f3f00731af5e5774ed40c.dip0.t-ipconnect.de. [2003:d8:2f1f:3f00:731a:f5e5:774e:d40c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6f0d32a2sm290899325e9.9.2025.09.02.01.12.05
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf33fba9fbsm18677434f8f.50.2025.09.02.01.15.09
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 01:12:07 -0700 (PDT)
-Message-ID: <d418e2ba-a3e7-48bf-9576-90fddde706f3@redhat.com>
-Date: Tue, 2 Sep 2025 10:12:05 +0200
+        Tue, 02 Sep 2025 01:15:11 -0700 (PDT)
+Message-ID: <59c1ef6e-fd26-4d95-ae96-1e1f23c789fa@redhat.com>
+Date: Tue, 2 Sep 2025 10:15:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -90,13 +90,13 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 00/12] mm: establish const-correctness for pointer
+Subject: Re: [PATCH v5 00/12] mm: establish const-correctness for pointer
  parameters
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+To: Matthew Wilcox <willy@infradead.org>,
  Max Kellermann <max.kellermann@ionos.com>
 Cc: akpm@linux-foundation.org, axelrasmussen@google.com, yuanchu@google.com,
- willy@infradead.org, hughd@google.com, mhocko@suse.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, Liam.Howlett@oracle.com,
+ hughd@google.com, mhocko@suse.com, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
  vbabka@suse.cz, rppt@kernel.org, surenb@google.com, vishal.moola@gmail.com,
  linux@armlinux.org.uk, James.Bottomley@hansenpartnership.com, deller@gmx.de,
  agordeev@linux.ibm.com, gerald.schaefer@linux.ibm.com, hca@linux.ibm.com,
@@ -112,8 +112,8 @@ Cc: akpm@linux-foundation.org, axelrasmussen@google.com, yuanchu@google.com,
  linux-arm-kernel@lists.infradead.org, linux-parisc@vger.kernel.org,
  linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
  linux-fsdevel@vger.kernel.org
-References: <20250901205021.3573313-1-max.kellermann@ionos.com>
- <76ec40af-d234-400a-af0f-faeb001c9182@lucifer.local>
+References: <20250901123028.3383461-1-max.kellermann@ionos.com>
+ <aLZbaHf-euLQ0isT@casper.infradead.org>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -160,31 +160,26 @@ Autocrypt: addr=david@redhat.com; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <76ec40af-d234-400a-af0f-faeb001c9182@lucifer.local>
+In-Reply-To: <aLZbaHf-euLQ0isT@casper.infradead.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 02.09.25 08:19, Lorenzo Stoakes wrote:
-> On Mon, Sep 01, 2025 at 10:50:09PM +0200, Max Kellermann wrote:
->> For improved const-correctness in the low-level memory-management
->> subsystem, which provides a basis for further const-ification further
->> up the call stack (e.g. filesystems).
+On 02.09.25 04:50, Matthew Wilcox wrote:
+> On Mon, Sep 01, 2025 at 02:30:16PM +0200, Max Kellermann wrote:
+>> For improved const-correctness.
 > 
-> Great, this succinctly expresses what you want!
+> SLOW DOWN.
 > 
->>
->> This patch series splitted into smaller patches was initially posted
->> as a single large patch:
->>
->>   https://lore.kernel.org/lkml/20250827192233.447920-1-max.kellermann@ionos.com/
->>
->> I started this work when I tried to constify the Ceph filesystem code,
->> but found that to be impossible because many "mm" functions accept
->> non-const pointer, even though they modify nothing.
-> 
-> And as Vlasta said, this is great context.
+> This series is unimportant churn.  There's no way it should be up to v5
+> already.  Wait a freaking week before you send another version.
 
-Yes, that's valuable information, and the series is looking lovely now.
+... while we have v6 already on the list :D
+
+In this case, it was reasonable to follow up rather sooner than later 
+(too much drama and v6 now seems to make people happy, I wouldn't want 
+that spanning over multiple weeks).
+
+But yeah, too many revisions on a single day.
 
 -- 
 Cheers
