@@ -1,161 +1,151 @@
-Return-Path: <linux-fsdevel+bounces-60006-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60007-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6637FB40C28
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 19:35:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D40EB40C66
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 19:48:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 284C0564501
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 17:35:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2114D7B43AB
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 17:46:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FA783451DC;
-	Tue,  2 Sep 2025 17:35:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF258310654;
+	Tue,  2 Sep 2025 17:48:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JLq91yAf"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LD9/t4by"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FEF32D5C91;
-	Tue,  2 Sep 2025 17:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A03332F761
+	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Sep 2025 17:48:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756834542; cv=none; b=XBKODpf/umJDWwE39fjzn3BwikF07mIOv/02zYVAU6ixD+wb4gqUfHJTjFbOZhxDpZoimvceYNC2gdZQAJmdK8VOshxSlTnSECkUUN3GBsBvFxMHeBKA/G7F41mWyrKq/cz4o3DE/daloG8xm/4wxt65o7qCaiflLGV7QhauIUM=
+	t=1756835301; cv=none; b=BI0FrsGQjzX4FwpI2kkJ/VJq+p8zje8oZA/EZJpyKx08GeqXSwtk8O3H8kVQj3sGqz5ZpF6f+cV5Hn/moLVr6ObUmNUbT6X9bH1zS8bJ8Cli03Fuj7NDvPyir0PwtFs5M6fhvdr+vXlXUel+6i0/jWPXAaETTYVQwS+cTCBcYVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756834542; c=relaxed/simple;
-	bh=1uLg6SM9wHlwTxLAk9Pnfh6IsjgG4vNt80irmefYE98=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MV8lyR6XaI2kHOxPajrsrerbPeQAo56tTIdTdTytTNs8yuUM5HmcqrT87rtuvxDbbD0imzf74oCeTL8Ww4Hhy2h020npf5LpNjJh4s1gwIgxDgqkqmeEenIZxMYPNx0mv9Z5fJBGRoeyfJvWKhV5fh12d5Zf6PtE21IsVoLbrfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JLq91yAf; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4b38d4de61aso6079301cf.0;
-        Tue, 02 Sep 2025 10:35:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756834540; x=1757439340; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oG0pcCMckkzUES3yrYvToWpEQ8sbV1Ta4J6lC1FGxwI=;
-        b=JLq91yAfLI8hEQy5Fw8JXBqj3Z3mjZDpa7TKnHVc+AIVDiGnNxx9gRpWCoF3Rw9+Bh
-         wtwCnZvJ4VzAWWlIeggIMTnYjOT7ZG8+bG3ZMangsDay3sS2LJFhH5k4v1YgtV8YZABm
-         fTdmq4MzrAvYN0WongUdCEd1g0v87Tov1H5zhpFNZ1EkgokQlvxHC5p1YlFkO1XyeN03
-         LNVkttC/WVIIyqm6QoqaQChkbMKBcMhQexAAHgfTnxM8NsTxKUYal1ysdSYRHpdXDcY2
-         3N0viAFdnku8S1s+7bgNJaBYivhgq/L0OE98+c4d9hSYToMjoCMz5G6JrvmzrZ9wij8O
-         xYgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756834540; x=1757439340;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oG0pcCMckkzUES3yrYvToWpEQ8sbV1Ta4J6lC1FGxwI=;
-        b=SsK8HGTSufh7XcRWd8JpnGgtHwDa4iNp2U/b0f40r8+qNZcmXhFTcP9rNGdAQglImK
-         toAJ0NWFi3u1d83sG1vIZxeRty1BTEUKjMl9Q1ENLjZj4td3yjHii6aoizccBloHMbxg
-         vxBj24RfQECgXPjAzhenXu9B3AkmG6w+LEx5SrmCQWUmGV2D81PVbhpDWio9x3ENC6II
-         DrXxoJTu/DvE3u7rlCOmcHW+NfxZ/q4bkurudSlk5hgrOcZ4O4aQcJo7nDxi3tLZ4+b8
-         Qp0knQmgem+HiPsbHsaUEkNC9FQrZ9HqHfblNfscsDf9o1RshPrtxaaTC8EsM4CRXZbn
-         +a8g==
-X-Forwarded-Encrypted: i=1; AJvYcCVSHigRQttVkOdIJaYtu3TxpWJkmFJO32H5sMefDqEJ8pYIWdL6r/IKBRY81EYHrRa2dMiPR4orHpyI9FAM@vger.kernel.org, AJvYcCW1AQYSfUBCHRWb2PnFjqE+e76W39S3btELZg/65nxpoPJZ002nvOBaErwlBjKau1c4p3JsS9CSY5bEEt0k@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5/842Fdb6wVcCdOkYkZK5rZ5mgBj/3LOkRZk5QM5A0BCcxVx/
-	Y+ssekn4EKMlNoPXblU3DPn/FU00sjjYhp5mNHXgVWmKfmwGkZsh6KSLDb1nLy4CpuMCnWy5/u1
-	7ym9kOfGdJW2vPVCErM8Nn/JeVgMbN1MS3uRbIww=
-X-Gm-Gg: ASbGncsVfsnXX8SGdubvZFIPJJWJeVMZd0n6MwwP0IKJ9rkmHzDcVqPNFpEMOdJKbcw
-	j9XIaR0SgLn6XwhwjrfquASW8BebKvVahMyeAK+Fq/5wiWbucP2C4/LQ+qzGdcjTOjkucD9bkfP
-	OSr1eNSnLMyHCJFksRP8UsH7dkAYG7ZlOBn+J04R1sFwjWh7/3QHDsl3iQRZ8n7A3wyZEXMwt/G
-	QcwUkcHknpIEze/Keo=
-X-Google-Smtp-Source: AGHT+IG83V/zpXA2LNw6WlNDJn5VcyW5hi8V6Q+G9WrYOi37x53Lapvip0WRRyvLqA7+oV/XtTfQq6ZAFsgQk6qimNU=
-X-Received: by 2002:a05:620a:4115:b0:7e3:28f3:899 with SMTP id
- af79cd13be357-7ff2a83664emr1174226385a.39.1756834539886; Tue, 02 Sep 2025
- 10:35:39 -0700 (PDT)
+	s=arc-20240116; t=1756835301; c=relaxed/simple;
+	bh=+ZOl+ulpgIj6k5dtR9VW93PRihwtRTM5xi0pDg5SIHY=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=NjfY/yJYucI0ZJB2MQf3HIeFH7Okrkrgpcel0hrTHkpAR2dJ/LrczgMfaTzowzBp672SywSjRyewyZuDZrMkqe1x1yFoLxIMjV4tA5j5cxFIG/7afgQiSHXYVW/GLj9/6KAQj5wLPqESusCsmOEAqIGeqiXOnj/4m3Wzr5qz6ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LD9/t4by; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756835298;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qq6st+qbX7M8TtuYrDJJKK62DN+QLpUTuVf4eLxsP1E=;
+	b=LD9/t4by6I/xikIE9WHnaaHaMPNbAEBPRSv7O2w15XdsYGK5TEOKYRAyAUiE32qZIBUtm2
+	nhqwreCbF7MvnyThpsbKGPgMZmW3OEDfFhE1HjgEuygkr3idounHGLIzhK3+NgEUn7o8Y/
+	dzVl809jQETT02uTRuMuBRS39n1hJBs=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-205-5LO__cpjNjybfmxR8jB2Jw-1; Tue,
+ 02 Sep 2025 13:48:15 -0400
+X-MC-Unique: 5LO__cpjNjybfmxR8jB2Jw-1
+X-Mimecast-MFC-AGG-ID: 5LO__cpjNjybfmxR8jB2Jw_1756835293
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E3076180035F;
+	Tue,  2 Sep 2025 17:48:12 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.6])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id BBFD918004D4;
+	Tue,  2 Sep 2025 17:48:09 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <CAHk-=whb6Jpj-w4GKkY2XccG2DQ4a2thSH=bVNXhbTG8-V+FSQ@mail.gmail.com>
+References: <CAHk-=whb6Jpj-w4GKkY2XccG2DQ4a2thSH=bVNXhbTG8-V+FSQ@mail.gmail.com> <20250828230806.3582485-1-viro@zeniv.linux.org.uk> <20250828230806.3582485-61-viro@zeniv.linux.org.uk> <CAHk-=wgZEkSNKFe_=W=OcoMTQiwq8j017mh+TUR4AV9GiMPQLA@mail.gmail.com> <20250829001109.GB39973@ZenIV> <CAHk-=wg+wHJ6G0hF75tqM4e951rm7v3-B5E4G=ctK0auib-Auw@mail.gmail.com> <20250829060306.GC39973@ZenIV> <20250829060522.GB659926@ZenIV> <20250829-achthundert-kollabieren-ee721905a753@brauner> <20250829163717.GD39973@ZenIV> <20250830043624.GE39973@ZenIV> <20250830073325.GF39973@ZenIV> <CAHk-=wiSNJ4yBYoLoMgF1M2VRrGfjqJZzem=RAjKhK8W=KohzQ@mail.gmail.com> <ed70bad5-c1a8-409f-981e-5ca7678a3f08@gotplt.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: dhowells@redhat.com, Siddhesh Poyarekar <siddhesh@gotplt.org>,
+    Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
+    jack@suse.cz, Ian Kent <raven@themaw.net>,
+    Christian Brauner <brauner@kernel.org>,
+    Jeffrey Altman <jaltman@auristor.com>, linux-afs@lists.infradead.org
+Subject: Re: [RFC] does # really need to be escaped in devnames?
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250902152234.35173-1-luis@igalia.com>
-In-Reply-To: <20250902152234.35173-1-luis@igalia.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Tue, 2 Sep 2025 10:35:28 -0700
-X-Gm-Features: Ac12FXyISaaJnIQM-rrlp7Ll8kx0SjB1vsLRPo2Pbt_WB46evREAEd8XUxTC3Tw
-Message-ID: <CAJnrk1awtqnSQS0F+TNTuQdLDsAAkArjbu1L=5L1Eoe0fGf31A@mail.gmail.com>
-Subject: Re: [PATCH] fuse: remove WARN_ON_ONCE() from fuse_iomap_writeback_{range,submit}()
-To: Luis Henriques <luis@igalia.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <663879.1756835288.1@warthog.procyon.org.uk>
 Content-Transfer-Encoding: quoted-printable
+Date: Tue, 02 Sep 2025 18:48:08 +0100
+Message-ID: <663880.1756835288@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Tue, Sep 2, 2025 at 8:22=E2=80=AFAM Luis Henriques <luis@igalia.com> wro=
-te:
->
-> The usage of WARN_ON_ONCE doesn't seem to be necessary in these functions=
-.
-> All fuse_iomap_writeback_submit() call sites already ensure that wpc->wb_=
-ctx
-> contains a valid fuse_fill_wb_data.
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-Hi Luis,
+> On Tue, 2 Sept 2025 at 08:03, Siddhesh Poyarekar <siddhesh@gotplt.org> w=
+rote:
+> >
+> > This was actually the original issue I had tried to address, escaping
+> > '#' in the beginning of the devname because it ends up in the beginnin=
+g
+> > of the line, thus masking out the entire line in mounts.  I don't
+> > remember at what point I concluded that escaping '#' always was the
+> > answer (maybe to protect against any future instances where userspace
+> > ends up ignoring the rest of the line following the '#'), but it appea=
+rs
+> > to be wrong.
+> =
 
-Maybe I'm misunderstanding the purpose of WARN()s and when they should
-be added, but I thought its main purpose is to guarantee that the
-assumptions you're relying on are correct, even if that can be
-logically deduced in the code. That's how I see it being used in other
-parts of the fuse and non-fuse codebase. For instance, to take one
-example, in the main fuse dev.c code, there's a WARN_ON in
-fuse_request_queue_background() that the request has the FR_BACKGROUND
-bit set. All call sites already ensure that the FR_BACKGROUND bit is
-set when they send it as a background request. I don't feel strongly
-about whether we decide to remove the WARN or not, but it would be
-useful to know as a guiding principle when WARNs should be added vs
-when they should not.
+> I wonder if instead of escaping hash-marks we could just disallow them
+> as the first character in devname.
 
-Thanks,
-Joanne
+The problem with that is that it appears that people are making use of thi=
+s.
 
->
-> Function fuse_iomap_writeback_range() also seems to always be called with=
- a
-> valid value.  But even if this wasn't the case, there would be a crash
-> before this WARN_ON_ONCE() because ->wpa is being accessed before it.
->
+Mount /afs with "-o dynroot" isn't a problem as that shouldn't be given a
+device name - and that's the main way people access AFS.  With OpenAFS I d=
+on't
+think you can do this at all since it has a single superblock that it cram=
+s
+everything under.  For AuriStor, I think you can mount individual volumes,=
+ but
+I'm not sure how it works.  For Linux's AFS, I made every volume have its =
+own
+superblock.
 
-I agree, for the fuse_iomap_writeback_range() case, it would be more
-useful if "wpa =3D data->wpa" was moved below that warn.
+The standard format of AFS volume names is [%#][<cell>:]<volume-name-or-id=
+>
+but I could make it an option to stick something on the front and use that
+internally and display that in /proc/mounts, e.g.:
 
-> Signed-off-by: Luis Henriques <luis@igalia.com>
-> ---
-> As I'm saying above, I _think_ there's no need for these WARN_ON_ONCE().
-> However, if I'm wrong and they are required, I believe there's a need for
-> a different patch (I can send one) to actually prevent a kernel crash.
->
->  fs/fuse/file.c | 4 ----
->  1 file changed, 4 deletions(-)
->
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index 5525a4520b0f..fac52f9fb333 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -2142,8 +2142,6 @@ static ssize_t fuse_iomap_writeback_range(struct io=
-map_writepage_ctx *wpc,
->         struct fuse_conn *fc =3D get_fuse_conn(inode);
->         loff_t offset =3D offset_in_folio(folio, pos);
->
-> -       WARN_ON_ONCE(!data);
-> -
->         if (!data->ff) {
->                 data->ff =3D fuse_write_file_get(fi);
->                 if (!data->ff)
-> @@ -2182,8 +2180,6 @@ static int fuse_iomap_writeback_submit(struct iomap=
-_writepage_ctx *wpc,
->  {
->         struct fuse_fill_wb_data *data =3D wpc->wb_ctx;
->
-> -       WARN_ON_ONCE(!data);
-> -
->         if (data->wpa) {
->                 WARN_ON(!data->wpa->ia.ap.num_folios);
->                 fuse_writepages_send(wpc->inode, data);
+	mount afs:#openafs.org:afs.root /mnt
+
+which would at least mean that sh and bash wouldn't need the "#" escaping.
+
+The problem is that the # and the % have specific documented meanings, so =
+if I
+was to get rid of the '#' entirely, I would need some other marker.  Maybe=
+ it
+would be sufficient to just go on the presence or not of a '%'.
+
+Maybe I could go with something like:
+
+	openafs.org:root.cell:ro
+	openafs.org:root.cell:rw
+	openafs.org:root.cell:bak
+
+rather than use #/%.
+
+I don't think there should be a problem with still accepting lines beginni=
+ng
+with '#' in mount() if I display them with an appropriate prefix.  That wo=
+uld
+at least permit backward compatibility.
+
+David
+
 
