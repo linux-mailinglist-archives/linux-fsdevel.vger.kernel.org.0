@@ -1,267 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-59994-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59995-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A740FB4076A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 16:46:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60A84B40786
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 16:48:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A73625666A2
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 14:42:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 601A81885D41
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 14:47:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2544A3128D6;
-	Tue,  2 Sep 2025 14:42:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65EB531158C;
+	Tue,  2 Sep 2025 14:47:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aS955bW1"
+	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="ahFuXh6T"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from cyan.elm.relay.mailchannels.net (cyan.elm.relay.mailchannels.net [23.83.212.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2867286409
-	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Sep 2025 14:42:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756824123; cv=none; b=Zo4CoxaLaBf8SoPsugdxRh22XwVajPAKufs1WCDaD+ZB8PzTHXQqTOTCoDb/YAOHN3qMyaFTKJiPYfR6wXUii3fiRd6PQCZ7n0g3dfosX0ie93sv6nZ058SN7N/U3GttcjNeWT2kZsEdAcgdYOGGFNU7MRoty65NK0iGIFdWwW4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756824123; c=relaxed/simple;
-	bh=zX91HXmyOgzUJXSIs4tbYCtG/EJfFp0nngH232fUkDU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qVgGtfNiP02N/GnTgczSg4fuyiR4LyxRwwGgAnAoWKAfFfMn9TXqhUpd8bifEIYTGieYo9YiBewXegx3rhOVeSBszr2kmRXBiRyZtIElrvvpt7aQG4FMzPn0KTo6f+Z+wW4RkTaQ8+CBDnde7aS/3gzTh4P1q7n/JoYAbUCUsyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aS955bW1; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756824116;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3B4D2E0407;
+	Tue,  2 Sep 2025 14:47:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.212.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756824428; cv=pass; b=COyVBZo2qLgXnoNhzVAoX1rYRMhjqBtfAQ6eXRYrze68Ip1MC8Eul5zR8HZO6xuLzBg7mo1oBOncttgUEQDPnGDxLm5yfBkEFufLQBj8NIYnEhdQuNW9MRvNcBgiBSxk6uDl2gS/se0TjG1orEmwDWC9YgRWVghuzndEQv8uWIM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756824428; c=relaxed/simple;
+	bh=QRs8WG6/3owti9znRWrf2vUZdyG+kmIZ/4sPivrKG/0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O9FWMJjCPGi8/ugJiQyL4Kmt1OasUxOhotJ1eh5IdNgW0ULYYK2kcn/PebY3gxwYh1rc3xrU1bkHpTxs9opw5XcbLrcbugknlmz0CILzkH4Bx1JgDGhhn9ysaG0lMvRMr4L7IHltFmddOGeHGlqypTyBvDMmYBO2bVxb++T24hY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=ahFuXh6T; arc=pass smtp.client-ip=23.83.212.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id CB6D48533F;
+	Tue,  2 Sep 2025 14:46:59 +0000 (UTC)
+Received: from pdx1-sub0-mail-a218.dreamhost.com (100-102-100-57.trex-nlb.outbound.svc.cluster.local [100.102.100.57])
+	(Authenticated sender: dreamhost)
+	by relay.mailchannels.net (Postfix) with ESMTPA id 26FB484F45;
+	Tue,  2 Sep 2025 14:46:59 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1756824419; a=rsa-sha256;
+	cv=none;
+	b=d4SI0fkmOUSX2SGsH3tGmzA5T7O38Rb2zp3OVz0EZyQd+gAfR0U6gz/TCQIvNw0eilrIYR
+	j7fSHsvtLaaG7qTJOzWy+AN7n0Jw6VTr+vT7pwwhmdV5nN3Yi1fNgUHDkw8+MnyqYROENf
+	TJwiaFLP5hqiwdMDUubbK4NelDCbWRQTkabhZH4zgcPiz3s4cNx8LP2O+DOQTNF3ozgfqf
+	vCh6LTaH3zgwqM+rj6h5YOGNEXHMDn2Y+kE77q1f7Mfu3GQUQnPlmnGN+PN+KyACX8z38m
+	K6bT1bLpB7G1Sjc80nSsLE6hc41Fo6hAbnkakKgGmyZOVc17FTaQme+NZM+a+g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1756824419;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DFSqJluOv6H8sdtqhLht5Do87S1VArlDtrsS2zlKOsk=;
-	b=aS955bW1UgrXqteSyhMIBJFjcWNr8Mxs16VCCDt3mexJk2WNq/X7XspqMRCaVnd0DyWk2u
-	UvZR9AOZGLiggLuFFOfDFktfoTQvrCkyYyy5rjnzELQliidtOrmDfCLN8BBBsdfkAb4XbK
-	6JNjwcAP7EfHECByTPrHwyt7InzWpxg=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-222-SY-vWmNSNVCK-6Fc6DtMJg-1; Tue, 02 Sep 2025 10:41:54 -0400
-X-MC-Unique: SY-vWmNSNVCK-6Fc6DtMJg-1
-X-Mimecast-MFC-AGG-ID: SY-vWmNSNVCK-6Fc6DtMJg_1756824113
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-b0419770d19so227630966b.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Sep 2025 07:41:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756824113; x=1757428913;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DFSqJluOv6H8sdtqhLht5Do87S1VArlDtrsS2zlKOsk=;
-        b=v0/SfINYx9RJaLU8k0eyCYiHeIiavMWaAQqZ2W8ZZiKL3oIRHRScfPY6XDjz38TcJE
-         bmQ1HWuNWiyiY88Uabq1y6/0FrKKa4f1IvdHT/9TEMKTFsL2npYITPMeKOl1rBXoP+2H
-         +y7mzEWtb5nXbvWmsjigK32vUwpiU45SpaYjMkaHInz0nj2r2CL7nJM/mBs1R18T0qNa
-         gnvLjQejX6+L1kkGJ6VVaweRVO+stspJQZ2Haw2T4pvwZDNQiXG2lKLgPylvNSE0Evdr
-         uAW3ZQ2/fuvWgVMrm3dPWl2GMZms2NmPveRog8qSHMmMwQNNQn1d8D7IOs6z/F3hYGkh
-         O0GA==
-X-Gm-Message-State: AOJu0YzZCm1nZAxh59XAQLrKsKGnyQFZ9xy5Qp3/yCMc7+mhqaSx6s/b
-	BJaRLUO8pMxopVoxe8SEz6GzQuHHvaeguo/BmHuwCY6FMFmAfCm74mGSarSpc6vvRaPu9sEG4xZ
-	WWO0x/2YA+dXHtzDhJaCJDyjbX0yCk/qJ/Z56Xl6BNfuS4N9D0JBM+ZA4JshwpRumxCR5+0QAFn
-	jnb/fPqqPw8rGDF/W4h1OwI9tMiLLr9VZhK2A2wrUcvbuX3UQq4yrEsQ==
-X-Gm-Gg: ASbGncvmZGjnvUhPd6vi/9VuBxMtCpbHyct6AUIZEHKK4ZZaZoz7UJVyQz6VH0PA8n0
-	805d8/ioZRXmN6PRdNlB1WwPjoBRTLv4yg7AHQ4lY89c1o/cgja7vQvdrRt3Hc7ICh+157iaKA4
-	OsDGeph04/EKTYq0xeCs/k8WrgE7/M6pL7VKlGCq0fyyDiUJ/RuUhk1UO2SSZpkh9StQunBIkUA
-	pflu4As+bt6Hcg3zyB2rO8Bl5t4ouFos9oFsvmKvu7dcWwenfDGhzcnhAwi0DbUCmDN0lfemSbP
-	+Wuc3gDDo/nbxQJyvNpJht/Oou5cwjC3H5YxIXLhgfb1pD2AnRHGjkNexmd7nd9MJnebvl13JgW
-	Lf1wHQDSRnKflw/fiURI2M34=
-X-Received: by 2002:a17:907:6d08:b0:afe:8c69:4c3a with SMTP id a640c23a62f3a-b01d9743c4dmr1086362866b.37.1756824112722;
-        Tue, 02 Sep 2025 07:41:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFQiAbme8EJYAoCntbB1M0/m/x5Lr7fhFiIidEeLFciVhcRnqBmf+Z6mTL3WLEMBBsDYQ0xTQ==
-X-Received: by 2002:a17:907:6d08:b0:afe:8c69:4c3a with SMTP id a640c23a62f3a-b01d9743c4dmr1086359566b.37.1756824112160;
-        Tue, 02 Sep 2025 07:41:52 -0700 (PDT)
-Received: from maszat.piliscsaba.szeredi.hu (188-142-155-210.pool.digikabel.hu. [188.142.155.210])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cfc1c77f9sm9704514a12.8.2025.09.02.07.41.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 07:41:51 -0700 (PDT)
-From: Miklos Szeredi <mszeredi@redhat.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: Jim Harris <jiharris@nvidia.com>
-Subject: [PATCH 4/4] fuse: add prune notification
-Date: Tue,  2 Sep 2025 16:41:46 +0200
-Message-ID: <20250902144148.716383-4-mszeredi@redhat.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250902144148.716383-1-mszeredi@redhat.com>
-References: <20250902144148.716383-1-mszeredi@redhat.com>
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=DRZMJhVX4LzPqmwkjT3d+FOTiKORmaj3h8jd47mnvis=;
+	b=blLyN6tNLXUZo4Qn8DwbQL+wqTwSMr2D8fftXutauH3fR0J9UeDxnlzJ9Gozn2t8Yh+MnI
+	WoYkDYLHDyeY5oH4D8Uo2yPE6/S8H9n5wyW7Ran/gboLRHdAkTFeId3jJ/8z7CQuB101r1
+	c5sngHBottpeXNUq7RlAhTf38guMBoIQ6A5g8OFpkGDi+5HSVvYBBK1AU/TpkykGLcd7HM
+	Ht5JM1EWmp1GW+kj7NQ2UkNyVEJ4uutBY5gBcRsuyYE6DXNuNUcdzk+PWLlPoHAdjyU5NM
+	On7H2AYc0rLCFzXBgAtyoRfKNylmEAoh3Oi00Vg3D9Ck5lM47CRn5ftS8qhWAA==
+ARC-Authentication-Results: i=1;
+	rspamd-7b4c58cfff-wm9q6;
+	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
+X-MailChannels-Auth-Id: dreamhost
+X-White-Thoughtful: 6dfc35c35855886b_1756824419657_1353450583
+X-MC-Loop-Signature: 1756824419657:4042092830
+X-MC-Ingress-Time: 1756824419657
+Received: from pdx1-sub0-mail-a218.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.102.100.57 (trex/7.1.3);
+	Tue, 02 Sep 2025 14:46:59 +0000
+Received: from offworld (syn-076-167-199-067.res.spectrum.com [76.167.199.67])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dave@stgolabs.net)
+	by pdx1-sub0-mail-a218.dreamhost.com (Postfix) with ESMTPSA id 4cGT8y0brxz5x;
+	Tue,  2 Sep 2025 07:46:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
+	s=dreamhost; t=1756824419;
+	bh=DRZMJhVX4LzPqmwkjT3d+FOTiKORmaj3h8jd47mnvis=;
+	h=Date:From:To:Cc:Subject:Content-Type;
+	b=ahFuXh6TLfV1SNfdspKZSAUyRRCEMTayPVRx7ctfIpGBahfb0Dp/YnYNoWAl/2nci
+	 ED7kWBbA884J1CmHlDqoolEsxeLcGz1xNnbHoDXyjfMEOOjAQ5fWQbK0eiRExb1jwZ
+	 r3njvCgIJuU/KHBqHKbD26Ra3FupmSiZ2oBtXnvd+PbF50gWUH4xvCOfiWkgO20Xv0
+	 Pn7cu4FaKJUDP53K20BbVlOyA8K9AKlEuadnFFmy4/I/dbtzrYCrbH0Mc3IQRITR8I
+	 oJvxhxZV2ueEMqbkRYKQR5Kyuo0N1S5o9VIF0erx5qJi+L7aDHi6pehxfM3fZ94MAz
+	 nLjRGrHw1V41Q==
+Date: Tue, 2 Sep 2025 07:46:55 -0700
+From: Davidlohr Bueso <dave@stgolabs.net>
+To: syzbot <syzbot+cba6270878c89ed64a2d@syzkaller.appspotmail.com>
+Cc: akpm@linux-foundation.org, brauner@kernel.org, frank.li@vivo.com,
+	glaubitz@physik.fu-berlin.de, jack@suse.cz,
+	jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, mcgrof@kernel.org,
+	shaggy@kernel.org, slava@dubeyko.com,
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+	willy@infradead.org
+Subject: Re: [syzbot] [hfs?] INFO: task hung in deactivate_super (3)
+Message-ID: <20250902144655.5em4trxkeks7nwgx@offworld>
+Mail-Followup-To: syzbot <syzbot+cba6270878c89ed64a2d@syzkaller.appspotmail.com>,
+	akpm@linux-foundation.org, brauner@kernel.org, frank.li@vivo.com,
+	glaubitz@physik.fu-berlin.de, jack@suse.cz,
+	jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, mcgrof@kernel.org,
+	shaggy@kernel.org, slava@dubeyko.com,
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+	willy@infradead.org
+References: <00000000000091e466061cee5be7@google.com>
+ <68b55245.050a0220.3db4df.01bc.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <68b55245.050a0220.3db4df.01bc.GAE@google.com>
+User-Agent: NeoMutt/20220429
 
-Some fuse servers need to prune their caches, which can only be done if the
-kernel's own dentry/inode caches are pruned first to avoid dangling
-references.
+On Mon, 01 Sep 2025, syzbot wrote:
 
-Add FUSE_NOTIFY_PRUNE, which takes an array of node ID's to try and get rid
-of.  Inodes with active references are skipped.
+>syzbot has bisected this issue to:
+>
+>commit 5b67d43976828dea2394eae2556b369bb7a61f64
+>Author: Davidlohr Bueso <dave@stgolabs.net>
+>Date:   Fri Apr 18 01:59:17 2025 +0000
+>
+>    fs/buffer: use sleeping version of __find_get_block()
 
-A similar functionality is already provided by FUSE_NOTIFY_INVAL_ENTRY with
-the FUSE_EXPIRE_ONLY flag.  Differences in the interface are
+I don't think this bisection is right, considering this issue was first
+triggered last year (per the dashboard).
 
-FUSE_NOTIFY_INVAL_ENTRY:
+Thanks,
+Davidlohr
 
-  - can only prune one dentry
-
-  - dentry is determined by parent ID and name
-
-  - if inode has multiple aliases (cached hard links), then they would have
-    to be invalidated individually to be able to get rid of the inode
-
-FUSE_NOTIFY_PRUNE:
-
-  - can prune multiple inodes
-
-  - inodes determined by their node ID
-
-  - aliases are taken care of automatically
-
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
----
- fs/fuse/dev.c             | 39 +++++++++++++++++++++++++++++++++++++++
- fs/fuse/fuse_i.h          |  6 ++++++
- fs/fuse/inode.c           | 11 +++++++++++
- include/uapi/linux/fuse.h |  8 ++++++++
- 4 files changed, 64 insertions(+)
-
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 1258acee9704..4229b38546bb 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -2034,6 +2034,42 @@ static int fuse_notify_inc_epoch(struct fuse_conn *fc)
- 	return 0;
- }
- 
-+static int fuse_notify_prune(struct fuse_conn *fc, unsigned int size,
-+			     struct fuse_copy_state *cs)
-+{
-+	struct fuse_notify_prune_out outarg;
-+	const unsigned int batch = 512;
-+	u64 *nodeids __free(kfree) = kmalloc(sizeof(u64) * batch, GFP_KERNEL);
-+	unsigned int num, i;
-+	int err;
-+
-+	if (!nodeids)
-+		return -ENOMEM;
-+
-+	if (size < sizeof(outarg))
-+		return -EINVAL;
-+
-+	err = fuse_copy_one(cs, &outarg, sizeof(outarg));
-+	if (err)
-+		return err;
-+
-+	if (size - sizeof(outarg) != outarg.count * sizeof(u64))
-+		return -EINVAL;
-+
-+	for (; outarg.count; outarg.count -= num) {
-+		num = min(batch, outarg.count);
-+		err = fuse_copy_one(cs, nodeids, num * sizeof(u64));
-+		if (err)
-+			return err;
-+
-+		scoped_guard(rwsem_read, &fc->killsb) {
-+			for (i = 0; i < num; i++)
-+				fuse_try_prune_one_inode(fc, nodeids[i]);
-+		}
-+	}
-+	return 0;
-+}
-+
- static int fuse_notify(struct fuse_conn *fc, enum fuse_notify_code code,
- 		       unsigned int size, struct fuse_copy_state *cs)
- {
-@@ -2065,6 +2101,9 @@ static int fuse_notify(struct fuse_conn *fc, enum fuse_notify_code code,
- 	case FUSE_NOTIFY_INC_EPOCH:
- 		return fuse_notify_inc_epoch(fc);
- 
-+	case FUSE_NOTIFY_PRUNE:
-+		return fuse_notify_prune(fc, size, cs);
-+
- 	default:
- 		return -EINVAL;
- 	}
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index 233c6111f768..fb6604120b53 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -1413,6 +1413,12 @@ int fuse_reverse_inval_inode(struct fuse_conn *fc, u64 nodeid,
- int fuse_reverse_inval_entry(struct fuse_conn *fc, u64 parent_nodeid,
- 			     u64 child_nodeid, struct qstr *name, u32 flags);
- 
-+/*
-+ * Try to prune this inode.  If neither the inode itself nor dentries associated
-+ * with this inode have any external reference, then the inode can be freed.
-+ */
-+void fuse_try_prune_one_inode(struct fuse_conn *fc, u64 nodeid);
-+
- int fuse_do_open(struct fuse_mount *fm, u64 nodeid, struct file *file,
- 		 bool isdir);
- 
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 5b7897bf7e45..a4d361b34d06 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -585,6 +585,17 @@ int fuse_reverse_inval_inode(struct fuse_conn *fc, u64 nodeid,
- 	return 0;
- }
- 
-+void fuse_try_prune_one_inode(struct fuse_conn *fc, u64 nodeid)
-+{
-+	struct inode *inode;
-+
-+	inode = fuse_ilookup(fc, nodeid,  NULL);
-+	if (!inode)
-+		return;
-+	d_prune_aliases(inode);
-+	iput(inode);
-+}
-+
- bool fuse_lock_inode(struct inode *inode)
- {
- 	bool locked = false;
-diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index 30bf0846547f..c13e1f9a2f12 100644
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@ -239,6 +239,7 @@
-  *  7.45
-  *  - add FUSE_COPY_FILE_RANGE_64
-  *  - add struct fuse_copy_file_range_out
-+ *  - add FUSE_NOTIFY_PRUNE
-  */
- 
- #ifndef _LINUX_FUSE_H
-@@ -680,6 +681,7 @@ enum fuse_notify_code {
- 	FUSE_NOTIFY_DELETE = 6,
- 	FUSE_NOTIFY_RESEND = 7,
- 	FUSE_NOTIFY_INC_EPOCH = 8,
-+	FUSE_NOTIFY_PRUNE = 9,
- };
- 
- /* The read buffer is required to be at least 8k, but may be much larger */
-@@ -1118,6 +1120,12 @@ struct fuse_notify_retrieve_in {
- 	uint64_t	dummy4;
- };
- 
-+struct fuse_notify_prune_out {
-+	uint32_t	count;
-+	uint32_t	padding;
-+	uint64_t	spare;
-+};
-+
- struct fuse_backing_map {
- 	int32_t		fd;
- 	uint32_t	flags;
--- 
-2.49.0
-
+>
+>bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=101ba1f0580000
+>start commit:   c8bc81a52d5a Merge tag 'arm64-fixes' of git://git.kernel.o..
+>git tree:       upstream
+>final oops:     https://syzkaller.appspot.com/x/report.txt?x=121ba1f0580000
+>console output: https://syzkaller.appspot.com/x/log.txt?x=141ba1f0580000
+>kernel config:  https://syzkaller.appspot.com/x/.config?x=bd9738e00c1bbfb4
+>dashboard link: https://syzkaller.appspot.com/bug?extid=cba6270878c89ed64a2d
+>syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10857a62580000
+>C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14f5ce34580000
+>
+>Reported-by: syzbot+cba6270878c89ed64a2d@syzkaller.appspotmail.com
+>Fixes: 5b67d4397682 ("fs/buffer: use sleeping version of __find_get_block()")
+>
+>For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+>
 
