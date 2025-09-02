@@ -1,76 +1,74 @@
-Return-Path: <linux-fsdevel+bounces-59925-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-59926-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BA5FB3F284
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 04:50:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BB11B3F2DA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 05:46:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A5304822BB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 02:50:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 552A33BAF11
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 03:46:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D95C2E03FE;
-	Tue,  2 Sep 2025 02:50:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33DE335962;
+	Tue,  2 Sep 2025 03:46:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YWKGCc76"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dMdYpNYQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D7D678F2B;
-	Tue,  2 Sep 2025 02:50:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E09E7258CF9;
+	Tue,  2 Sep 2025 03:46:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756781434; cv=none; b=JVTldOx/4Z0Yo1zPm7uE1Fsnn6TjRyK1++we8Lx7gNtbCdlKX6/ukX46rNVTuVKGIUFyIheRB887Tc0RznipQ7RgKUFZe53YLgth0fPDT81DH2dShyXHkNh3kyOCLfCmqJTjeH2SSczf84N/sZfbdYTmykdm+rMa6Lbz7lsdBX0=
+	t=1756784795; cv=none; b=Cqcmn2CehpAbhgwS70QzKTFtJr3BbmrSGyVaiS9o9gwAgJ5rKupVSB6GryrEOP7iVltLjR/vHbm8IdCEviUwjWDgdmD8fmi0M+vXeMlbBYedTFxSdqq+Lm2rdPz62TyHQ13DgQIpIyFX0raRVrpoD08tD5bZypj+1g1xp6JHWBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756781434; c=relaxed/simple;
-	bh=3yRKUPS5SkIJBkquRCWSfardWr0wvLtWolRjXUGBsoE=;
+	s=arc-20240116; t=1756784795; c=relaxed/simple;
+	bh=MbdFjBKNCYlEpTeflOH1Ld6ATVHUTpagje8J5OIEUcA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s6Gzn5KStySuVaiimyRRq7TToK98DhoTSGddZzzf4PyFhrz8yZJpyPD3TVeDBeJrFgi7gYr/0njUs9dO/OVHsSH8Apn0j8G9IZTjgr1RUU0/2hbqI6XjlCFaPhMvWK7FhohVMm3EoTobdM6gBnpVh0wg5XoQUHynNH7eQbhWd1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YWKGCc76; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Hf6Da6Iq95ZbXZKuGgj/YV9gGgv/dEeEFT9XrC4vfVs=; b=YWKGCc76MDqwdQGQ+YNvxvBkE7
-	LOtsZ/0qAhffBjWu2LlUUNNOwjLMqqeegxqzD84CwosaGVQPg3tYgm2N7OBQVwIKzyUITZLtL/Yce
-	RTiKplKHrXU88mi+OFSDvF6nVFL17jqSkRmJ+SaxTvUL16Kpb7ukadvFSbeQC3zGTfvoj8cVCf49F
-	O4ns7Vm5RaRFlO4WDOwnTREHtTe6+GdlFzFfU8lWr03F1EBbv6ITczdHk5xcuqUrCwivrKjxXNfyE
-	buBpYx7MRb5+QPg3NMDAnd0muprWfiSDnR67Hw1+LsSBpzsd21TiroQj+2Xhy9iw2N9BUGc7mpDFh
-	bb0u+gbA==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1utH68-0000000H6f5-3MNh;
-	Tue, 02 Sep 2025 02:50:16 +0000
-Date: Tue, 2 Sep 2025 03:50:16 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: akpm@linux-foundation.org, david@redhat.com, axelrasmussen@google.com,
-	yuanchu@google.com, hughd@google.com, mhocko@suse.com,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
-	rppt@kernel.org, surenb@google.com, vishal.moola@gmail.com,
-	linux@armlinux.org.uk, James.Bottomley@hansenpartnership.com,
-	deller@gmx.de, agordeev@linux.ibm.com,
-	gerald.schaefer@linux.ibm.com, hca@linux.ibm.com, gor@linux.ibm.com,
-	borntraeger@linux.ibm.com, svens@linux.ibm.com, davem@davemloft.net,
-	andreas@gaisler.com, dave.hansen@linux.intel.com, luto@kernel.org,
-	peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com,
-	bp@alien8.de, x86@kernel.org, hpa@zytor.com, chris@zankel.net,
-	jcmvbkbc@gmail.com, viro@zeniv.linux.org.uk, brauner@kernel.org,
-	jack@suse.cz, weixugc@google.com, baolin.wang@linux.alibaba.com,
-	rientjes@google.com, shakeel.butt@linux.dev, thuth@redhat.com,
-	broonie@kernel.org, osalvador@suse.de, jfalempe@redhat.com,
-	mpe@ellerman.id.au, nysal@linux.ibm.com,
-	linux-arm-kernel@lists.infradead.org, linux-parisc@vger.kernel.org,
-	linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v5 00/12] mm: establish const-correctness for pointer
- parameters
-Message-ID: <aLZbaHf-euLQ0isT@casper.infradead.org>
-References: <20250901123028.3383461-1-max.kellermann@ionos.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yzkc0ljJ0XQacAsOCeMe5lM0776SyfYkOsnFwIpLRlDRzmTT7Ke/06UHKifwgh4X81+EwToyFmrxg9A+ABQyMJ7qEz5PFYFuI3HEzVu193xyeK+A9A7dnMnWry/RiNYph2N+aXj5wqHfNWrb6qG4qlG+7dvGGog29Nb1EMJ9uUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dMdYpNYQ; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756784794; x=1788320794;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=MbdFjBKNCYlEpTeflOH1Ld6ATVHUTpagje8J5OIEUcA=;
+  b=dMdYpNYQ6lNI281u0LDwhhlxfa22ZA5GF+A9widKB1dMSIHoNdJV/YFC
+   Khh6nVIBipVpJHCbBbTsH5kWGmVzMRzU3Fi/KHEf6ZBdWgxxbJ74bbqhE
+   mgDTDyinA0qWEyhe1S9gIfpx4t0eSusCZyrzMM7wxVgT/r97lhIUqp89h
+   5EhoqNkoOhefe8UN2jejrJfZY07yZApg6ntrFAMJr43xzTMSvvJ64NG2c
+   cHzUM10OFPMWKmYCbcJ/IoDkf8axERR8Du8m9qjpG+9OnmnTTGFk7WYI5
+   l7D7oAQyLjmw1+uevrlcPhzXrQwbdug8A7aigYst9jV9K5/Oj+EgBHo7Q
+   Q==;
+X-CSE-ConnectionGUID: rjWqmlu7Rxix4+PoAAuOSQ==
+X-CSE-MsgGUID: TGhdtlSES0+OwFGa+ysrfg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11540"; a="69649219"
+X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
+   d="scan'208";a="69649219"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 20:46:33 -0700
+X-CSE-ConnectionGUID: ZIOzoUkBTOqJsKDuNg8Z6g==
+X-CSE-MsgGUID: p0xqsWG7SQSDyDlFPerGdQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
+   d="scan'208";a="172008043"
+Received: from lkp-server02.sh.intel.com (HELO 06ba48ef64e9) ([10.239.97.151])
+  by fmviesa010.fm.intel.com with ESMTP; 01 Sep 2025 20:46:32 -0700
+Received: from kbuild by 06ba48ef64e9 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1utHyX-0001P5-3D;
+	Tue, 02 Sep 2025 03:46:30 +0000
+Date: Tue, 2 Sep 2025 11:46:03 +0800
+From: kernel test robot <lkp@intel.com>
+To: Qu Wenruo <wqu@suse.com>, linux-btrfs@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/4] btrfs: cache max and min order inside btrfs_fs_info
+Message-ID: <202509021022.B3V4xUho-lkp@intel.com>
+References: <d1a3793b551f0a6ccaf8907cc5aa06d8f5b3d5c2.1756703958.git.wqu@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -79,13 +77,66 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250901123028.3383461-1-max.kellermann@ionos.com>
+In-Reply-To: <d1a3793b551f0a6ccaf8907cc5aa06d8f5b3d5c2.1756703958.git.wqu@suse.com>
 
-On Mon, Sep 01, 2025 at 02:30:16PM +0200, Max Kellermann wrote:
-> For improved const-correctness.
+Hi Qu,
 
-SLOW DOWN.
+kernel test robot noticed the following build warnings:
 
-This series is unimportant churn.  There's no way it should be up to v5
-already.  Wait a freaking week before you send another version.
+[auto build test WARNING on kdave/for-next]
+[also build test WARNING on next-20250901]
+[cannot apply to linus/master v6.17-rc4]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Qu-Wenruo/btrfs-support-all-block-sizes-which-is-no-larger-than-page-size/20250901-132648
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-next
+patch link:    https://lore.kernel.org/r/d1a3793b551f0a6ccaf8907cc5aa06d8f5b3d5c2.1756703958.git.wqu%40suse.com
+patch subject: [PATCH 2/4] btrfs: cache max and min order inside btrfs_fs_info
+config: x86_64-buildonly-randconfig-004-20250902 (https://download.01.org/0day-ci/archive/20250902/202509021022.B3V4xUho-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250902/202509021022.B3V4xUho-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509021022.B3V4xUho-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from fs/btrfs/extent_map.c:10:
+   fs/btrfs/btrfs_inode.h: In function 'btrfs_set_inode_mapping_order':
+>> fs/btrfs/btrfs_inode.h:530:31: warning: unused variable 'fs_info' [-Wunused-variable]
+     530 |         struct btrfs_fs_info *fs_info = inode->root->fs_info;
+         |                               ^~~~~~~
+--
+   In file included from fs/btrfs/tests/../transaction.h:15,
+                    from fs/btrfs/tests/delayed-refs-tests.c:4:
+   fs/btrfs/tests/../btrfs_inode.h: In function 'btrfs_set_inode_mapping_order':
+>> fs/btrfs/tests/../btrfs_inode.h:530:31: warning: unused variable 'fs_info' [-Wunused-variable]
+     530 |         struct btrfs_fs_info *fs_info = inode->root->fs_info;
+         |                               ^~~~~~~
+
+
+vim +/fs_info +530 fs/btrfs/btrfs_inode.h
+
+   527	
+   528	static inline void btrfs_set_inode_mapping_order(struct btrfs_inode *inode)
+   529	{
+ > 530		struct btrfs_fs_info *fs_info = inode->root->fs_info;
+   531		/* Metadata inode should not reach here. */
+   532		ASSERT(is_data_inode(inode));
+   533	
+   534		/* We only allow BITS_PER_LONGS blocks for each bitmap. */
+   535	#ifdef CONFIG_BTRFS_EXPERIMENTAL
+   536		mapping_set_folio_order_range(inode->vfs_inode.i_mapping, fs_info->block_min_order,
+   537					      fs_info->block_max_order);
+   538	#endif
+   539	}
+   540	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
