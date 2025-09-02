@@ -1,126 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-60032-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60033-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24D9EB41018
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 00:40:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 328E1B41019
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 00:40:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBA42544DBA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 22:40:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0298E54557A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 22:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25C462773F3;
-	Tue,  2 Sep 2025 22:40:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73B1B27780E;
+	Tue,  2 Sep 2025 22:40:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AQxcsotU"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="F4WV3TXS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2164D20E00B
-	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Sep 2025 22:40:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFB5D20E00B;
+	Tue,  2 Sep 2025 22:40:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756852834; cv=none; b=sPzHPfRB46oybudXflKNOGNiPO2OyIz/GzcOXGyiEomaJUUPZcxD5h5aNna6lyK7qnMuVyN8ZeOeWPTQYC32iqK94rHw/mF5MWBQnCJMxrdB6FJJ6BcMWIXy2gYE/MddNPeMBYmfqPHV11mtomN6GQmlI6vmV8Oy5vpcAd3aR9c=
+	t=1756852844; cv=none; b=sfwqvv9gVhevXj4OcgRP88I5ACbdKDkAr1BGS0LEWD0dSCxh3TRdZmCP5xXc74mUW11X0IAUt79PCPEu7/ArJwKuLawGyXgUlGSLQTOBalQbVmARDH2kSFwasSQwgOGewLJ9w6sLNIsxBlRBWli5thW6XcmVLBiaRDHAhbgelgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756852834; c=relaxed/simple;
-	bh=kFTDP3EMFoOB4KZJmFMStdwGCzmgiGLh4hkXXKQNXMk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QSJi5r5K1XtJz7p1oOwN7aD5VHs+4shuViOR/Ew0ftnZV3sUlWgQeZ8hO2g/MlaufpDOi76itb/DAFyIX2/WDOYEr2i0zH+Pco7foA3zqhjMZd0BZgu1YcIMrc7ogrTFznmpEvycagibE+2JrynTYPxvKFIb20YGQkjWEorZjEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AQxcsotU; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4b3319c3a27so2968111cf.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Sep 2025 15:40:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756852832; x=1757457632; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eRVe9bAcKVFnkz+iX/ZIpZHxD0vklNb23sPGac04Cbo=;
-        b=AQxcsotUB6SvUXTfVkQJbWQ95llTvnKuQqnOrLSnrNEkfa0CcabcRPAQ9CrCNMTaqs
-         2CBmgMyUl94DG68yidcXOVRxOmMbuIx7cwac2Qv9D/f/4n7JKlWwCWXTM09szVOx2aOk
-         aTwIRhNKvoZ2hgkx+DrRy6+oyCx1pO0wJn0jZaRXe85e5wiSPIodA9m52EpgCJpVL+H3
-         M3pFl2qPhr5VdsXpKQBxs8I9fqN8fVrjQU2uT9wl6yKuAERl9R/mE4IRZKojDtfgmjfi
-         mUZkdRaNQsJsB2qk73Ejpq/GGY69EQ1w5Md40uCf1qeDpJJSda5c1WS5hbGXJBJg2K8p
-         UNTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756852832; x=1757457632;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eRVe9bAcKVFnkz+iX/ZIpZHxD0vklNb23sPGac04Cbo=;
-        b=dB/jcusBtqSVdtZFlU/iS5uMxL2nteP3Qk7vdIQ05b0QuedXFfi3nxtpvQewKyxDyv
-         N+QNquqY5C9RPJflFIPzrpxfW05se6CLGDQ3IGQcp+KMoQjPAF6hNcQ8fWS2I8+/fdur
-         J6JAxHruvqceZSOmTftFf5ws9iJOLSOAcNfQaRV2MnEq6xAjbFQZ3nZi/Dpy3RhXz0hi
-         es1ygE1zlf3FsoTCtWLvIT6QY0av5gIqCxbLf8uBd8rv4FbvEkOR05qfuJAYmFwMEKWl
-         2hvKdeRvtQAqF5mwMLM+XJOTnjHdRRAryAIWIRfxUFAZbqbmO7Z8KY583YBwYCd8Up3s
-         Edcg==
-X-Gm-Message-State: AOJu0Yyig/enkV1LXFQ1nOKEqa9Ihag6w+r6kYn8idj324driqXUPndO
-	gHOb5XtXKb/RljmY7D1Kgo930m7u43pnTs00i6tviK8aYBFf+GAmAhiOpgMrio1oJALF0EtCtEO
-	cebNnVi1YJgqbukh0UGk2KEtnko3WRn4=
-X-Gm-Gg: ASbGncvJsQ4WtEfg02Yr1D1mixe57oiEeGdSYWrcgtgiShahG0sW/f9cC+TJAQy+Jb0
-	Sl3eVEr7t8z7uUkVRrn9ZR4DDDJ+LQw0B5f1rZfhccMzyxopiazFqZ9kZviU1YPg3JOCTd1lqB1
-	9zoD8eZ0Qo+49E11YF5DJGbfemwd/P+ZxDtejCt1Ur1vXMH7tMcYZGe8LZQikojOqpRtn0RHAi2
-	OdrGMlh
-X-Google-Smtp-Source: AGHT+IGFR7mdx+WkhCi/xPYFUzaH9Qu/eayM/gqlLUqSWz2SpThvXT9x3if4xaKGi7ciyIdJcLOunLU3WOi1ZJEHKVc=
-X-Received: by 2002:a05:622a:54f:b0:4b2:e41c:8f5f with SMTP id
- d75a77b69052e-4b31d86fc2cmr145141361cf.17.1756852832009; Tue, 02 Sep 2025
- 15:40:32 -0700 (PDT)
+	s=arc-20240116; t=1756852844; c=relaxed/simple;
+	bh=aGIRsV9W7yRHkxZ5RFmGNXNNlqvBFtD/ngQ0qVv3OSg=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=Fs2rhDeeG16TWAZXpdkrycGI95wb1Qc6INFBY/ASCBkLjK3bnzqXaAJMcO9v68b9HGxioG27favA1Fvywwnln3hBmr+6CHVIyoTgtZS5Vz0XWleYxukvCuvm8JHAk6e6CSs1Rv9/BwofXuULITvtX6AOyPDh6s4YZKPBAffDd5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=F4WV3TXS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCF14C4CEED;
+	Tue,  2 Sep 2025 22:40:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1756852844;
+	bh=aGIRsV9W7yRHkxZ5RFmGNXNNlqvBFtD/ngQ0qVv3OSg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=F4WV3TXSoWes6xFTKpw/mxjIT3/thiuBh6crUHxk7GOnw8fsvmxLTgHhU2tQKe8Fg
+	 hd7vZJvdW6CFunsHRzmbsuA/CzqDeB2VdZECvfRlMKwfHOg55oLsXXT4Y/Hm3m0NqL
+	 F5M69AfoRzwvYPpub50mQ0gWSm53We47+qwdvREA=
+Date: Tue, 2 Sep 2025 15:40:43 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Aleksandr Nogikh <nogikh@google.com>
+Cc: david@redhat.com, joannelkoong@gmail.com, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, m.szyprowski@samsung.com,
+ mszeredi@redhat.com, willy@infradead.org, syzkaller-bugs@googlegroups.com,
+ Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH] mm: fix lockdep issues in writeback handling
+Message-Id: <20250902154043.7214448ff3a9cb68c8d231d5@linux-foundation.org>
+In-Reply-To: <20250902095250.1319807-1-nogikh@google.com>
+References: <345d49d2-5b6b-4307-824b-5167db737ad2@redhat.com>
+	<20250902095250.1319807-1-nogikh@google.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250902144148.716383-1-mszeredi@redhat.com> <20250902144148.716383-4-mszeredi@redhat.com>
-In-Reply-To: <20250902144148.716383-4-mszeredi@redhat.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Tue, 2 Sep 2025 15:40:21 -0700
-X-Gm-Features: Ac12FXxbjN2t6E6A5xPdk7dlInnbE76D5o1z94yaR7V8YZ4WQOB_vPjufUZH_Aw
-Message-ID: <CAJnrk1btHZdaZ_sypFFwx8QwMGYcTA7my8H-znY+P5tuDJtw=w@mail.gmail.com>
-Subject: Re: [PATCH 4/4] fuse: add prune notification
-To: Miklos Szeredi <mszeredi@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, Jim Harris <jiharris@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 2, 2025 at 7:44=E2=80=AFAM Miklos Szeredi <mszeredi@redhat.com>=
- wrote:
->
-> Some fuse servers need to prune their caches, which can only be done if t=
-he
-> kernel's own dentry/inode caches are pruned first to avoid dangling
-> references.
->
-> Add FUSE_NOTIFY_PRUNE, which takes an array of node ID's to try and get r=
-id
-> of.  Inodes with active references are skipped.
->
-> A similar functionality is already provided by FUSE_NOTIFY_INVAL_ENTRY wi=
-th
-> the FUSE_EXPIRE_ONLY flag.  Differences in the interface are
->
-> FUSE_NOTIFY_INVAL_ENTRY:
->
->   - can only prune one dentry
->
->   - dentry is determined by parent ID and name
->
->   - if inode has multiple aliases (cached hard links), then they would ha=
-ve
->     to be invalidated individually to be able to get rid of the inode
->
-> FUSE_NOTIFY_PRUNE:
->
->   - can prune multiple inodes
->
->   - inodes determined by their node ID
->
->   - aliases are taken care of automatically
->
-> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+On Tue,  2 Sep 2025 11:52:50 +0200 Aleksandr Nogikh <nogikh@google.com> wrote:
 
-Reviewed-by: Joanne Koong <joannelkoong@gmail.com>
+> Hi,
+> 
+> When can the patch be expected to reach linux-next?
+> Syzbot can't build/boot the tree for more than 12 days already :(
+
+Please don't top-post - it messes things up so much.
+
+There's nothing I can reasonably do about this - it's fixing an issue
+that's coming in from Miklos's tree and perhaps he's offline.
+
+Perhaps Stephen can directly add it to linux-next for a while?
+
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, Miklos Szeredi <mszeredi@redhat.com>, Joanne Koong <joannelkoong@gmail.com>
+Subject: [PATCH] mm: fix lockdep issues in writeback handling
+Date: Tue, 26 Aug 2025 15:09:48 +0200
+Sender: owner-linux-mm@kvack.org
+X-Mailer: git-send-email 2.34.1
+
+Commit 167f21a81a9c ("mm: remove BDI_CAP_WRITEBACK_ACCT") removed
+BDI_CAP_WRITEBACK_ACCT flag and refactored code that depend on it.
+Unfortunately it also moved some variable intialization out of guarded
+scope in writeback handling, what triggers a true lockdep warning. Fix
+this by moving initialization to the proper place.
+
+Fixes: 167f21a81a9c ("mm: remove BDI_CAP_WRITEBACK_ACCT")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ mm/page-writeback.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+index 99e80bdb3084..3887ac2e6475 100644
+--- a/mm/page-writeback.c
++++ b/mm/page-writeback.c
+@@ -2984,7 +2984,7 @@ bool __folio_end_writeback(struct folio *folio)
+ 
+ 	if (mapping && mapping_use_writeback_tags(mapping)) {
+ 		struct inode *inode = mapping->host;
+-		struct bdi_writeback *wb = inode_to_wb(inode);
++		struct bdi_writeback *wb;
+ 		unsigned long flags;
+ 
+ 		xa_lock_irqsave(&mapping->i_pages, flags);
+@@ -2992,6 +2992,7 @@ bool __folio_end_writeback(struct folio *folio)
+ 		__xa_clear_mark(&mapping->i_pages, folio_index(folio),
+ 					PAGECACHE_TAG_WRITEBACK);
+ 
++		wb = inode_to_wb(inode);
+ 		wb_stat_mod(wb, WB_WRITEBACK, -nr);
+ 		__wb_writeout_add(wb, nr);
+ 		if (!mapping_tagged(mapping, PAGECACHE_TAG_WRITEBACK)) {
+@@ -3024,7 +3025,7 @@ void __folio_start_writeback(struct folio *folio, bool keep_write)
+ 	if (mapping && mapping_use_writeback_tags(mapping)) {
+ 		XA_STATE(xas, &mapping->i_pages, folio_index(folio));
+ 		struct inode *inode = mapping->host;
+-		struct bdi_writeback *wb = inode_to_wb(inode);
++		struct bdi_writeback *wb;
+ 		unsigned long flags;
+ 		bool on_wblist;
+ 
+@@ -3035,6 +3036,7 @@ void __folio_start_writeback(struct folio *folio, bool keep_write)
+ 		on_wblist = mapping_tagged(mapping, PAGECACHE_TAG_WRITEBACK);
+ 
+ 		xas_set_mark(&xas, PAGECACHE_TAG_WRITEBACK);
++		wb = inode_to_wb(inode);
+ 		wb_stat_mod(wb, WB_WRITEBACK, nr);
+ 		if (!on_wblist) {
+ 			wb_inode_writeback_start(wb);
+-- 
+2.34.1
+
+
 
