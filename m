@@ -1,147 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-60026-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60027-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 460CAB40F55
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 23:24:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22FC0B40F6B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 23:32:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CD4F7A94AF
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 21:22:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D769C3AF21F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Sep 2025 21:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 804F334A316;
-	Tue,  2 Sep 2025 21:24:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 906DA35AAB6;
+	Tue,  2 Sep 2025 21:31:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BSkqr0MP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gdNOL9fp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F95E20311;
-	Tue,  2 Sep 2025 21:24:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E34035AAB5
+	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Sep 2025 21:31:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756848264; cv=none; b=c4t/MG+Pmg67R544oIYNbJBi5U6kp4KsRGc2ALoFY4bDEXUZPfrZn0KoqhPtodAFR0km4Vvk+YMnnXPWOZD2Iz/kbHAx696B62DSCWELYAvNUGlnje5Hvl3hmvFYY2fms4/y42GFeLCTji37ZVU+pT9ns9n27fcNjMNHRuPPoRg=
+	t=1756848706; cv=none; b=A/06LIQD/zTYO8qMVMXPl2C7oQ8Qe52+LiWLNSo4+P8sqU4ILgmB5GGBH8BbP9W62qRXG8flw1dd3vra0rjXIWpCQAxOZizv/9CCYTH5ThSa8V5PWxsWPyss2wqDqjgc/tmJBLNOsbcbTbh0p86bzfq+sTKfv2RypWCR7VdRT/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756848264; c=relaxed/simple;
-	bh=Ptw6KvMj+N1tLqVtHclYDwcBvmH/pB3WHd5b4j8iO0g=;
+	s=arc-20240116; t=1756848706; c=relaxed/simple;
+	bh=a1yJHrCFSWD1T/fQ1Rj0lKOZkeEUa0TQEUS9muhHM4g=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=pE0tMtrSi1hHGV/ZX+WvZKw5vt6Q9oM2pBwJKRs8NZGUN60EF3J1kkbRY92BdURJ9WjDHMflYQv36ZctcCbcHaPZCexaYqE25W9+UlcyHLhDu3/ykf1Ec8W7cWIqtBfN/vmFUqQV6A5aaTmVaHUyK144DsjavBkjoEJjDDQnOM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BSkqr0MP; arc=none smtp.client-ip=209.85.160.170
+	 To:Cc:Content-Type; b=lLApu6CUifQAFs2bX/8mpNbSmZ7nWZKJTfd+cgq7fAZwPdQhov9ZFr2VRCbdZMyNBZsKFGijeuEpg/d2XyZIKCp9i5Z2VFkFG2BVSpKcm3BCvpnuI3R6C0y3bBr3ofQaObP/9TLqx6sYa16jpppRtEuHUpfMLH83HpU/CATP/c4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gdNOL9fp; arc=none smtp.client-ip=209.85.160.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4b38d47fa9dso6471161cf.0;
-        Tue, 02 Sep 2025 14:24:23 -0700 (PDT)
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4b338d7a540so26193231cf.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Sep 2025 14:31:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756848262; x=1757453062; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
+        d=gmail.com; s=20230601; t=1756848703; x=1757453503; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ctCQQe8xMPTdhD2y8+e8frNhv5BnY1zrZjKG8v0F/6s=;
-        b=BSkqr0MP9kiQOAymV4DRDYdvoX0Ohl5j8RyM9T8nswLydQuRX/1vrOJEVJvZmRNq+J
-         bCRewpRaI0zlMsYfNmbfz0sNTLZzY0a4xCYxc8gQ+jyb7Ln5adDnw9ai2DcDwnluirki
-         pHsZnQNi97E7Fr4An6n/GqsF3+Xsth9DluPasIUms84SQ5oLGaddL/cdoSA+znplaAPO
-         mIxvA47avxemFH1a52DaLkBqopQvGMhJQc2kr9JVg64/SUtOKzGYCPaCzqEYsG1O+UaB
-         tdONA8OQxRNKOh8IepRhRCk4ww6m8bk/JzsAidg+Dcx5hdat9Fer0CYH9UJs6R40/R3L
-         /s1Q==
+        bh=Id5PqTJUIq2s1nZBVwN1iuIVkwIbT5Abrm1YBS4Y/JI=;
+        b=gdNOL9fpR3+zPQJR/duRDIzKMGQHI6yoEdqeYg3aQN3PriQp2ojx8+ivV7LOdFClNj
+         oHgBosf04w9CnRX0giMhuazXEXPVSPhUxS15vb2RlHM4MJOUcqv4ky4yi8WC2se2XfXv
+         1PKMI5AcF6OAfI3rq44gwc7TuC4PfrGEMBZtHYwQrC7DQO9ASxgupIHSSop1gPAc093I
+         EJgm9aRYkPRD9uxitQvxSsVSV2ZxXjjVT/wOEwCCGkbNhK1bhi/R0Lc+P7qsm9zbHu8b
+         i+SqtsJMrknDf0zc2i2YjbFx+Iz8QHQF7zttdPkylRVEUcfPrBBYAtq77Ei6SnMz1v2N
+         M9VA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756848262; x=1757453062;
-        h=content-transfer-encoding:to:subject:message-id:date:from
+        d=1e100.net; s=20230601; t=1756848703; x=1757453503;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ctCQQe8xMPTdhD2y8+e8frNhv5BnY1zrZjKG8v0F/6s=;
-        b=vX99LvGI4TTFfHvO1OMOm0L3FqKc9h9pnNAJ6KtO6rErXKUxrIBx00o0LLRsPrRsPl
-         mEz+OTYorrHevMM9fWFoIm/5dY9eWsBbbFDgemvTWP/8HfugvuvJRdJ40Gm0Y0gBvLIj
-         ysw2jWFOnKTyJPlTip/LctBpbdy4MVPmtTCjC5cbki9t0zplQ+I7G97KDWhiupE69MZc
-         cg99tJDLNp1ZiED4CJkqoew2THUnfksUNPZ46QoaWQLM//IzcTyUkWUL6tg0iRtY9bcq
-         26/aKlRYvCJEwe1OEJRsJnPP4Y63izeX6b3RI97ywAZC/35tazBoBlLAg7P/4oSHO0AQ
-         gCcg==
-X-Forwarded-Encrypted: i=1; AJvYcCWVioax83OpDcXL+FAYErpOAgfqFJ/vO8UD/ihbZPMg0oY+01xbO+kYLFMQF2qn4ttwIa1PH44rVGw=@vger.kernel.org, AJvYcCXARYCi2wO8JWoTBIuFUrbAjFz/pacPv6eOLYLbiv8IW9lTzLEB8uD3uK6ucBn/nynlmWlfiBknLSuQ4xQmtw==@vger.kernel.org, AJvYcCXB2HbUqnOdmI2YtXqjHw0VK3JLiUjKuuKttmZUk6LM7kWtwTWufVyQ0Py5IPsWvNAUPYNZh4vLMeDx@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlDwhud/GwFq6yY31wY83QFO3uXlRXEmTZVfhSkJWcKcSlrdHr
-	IHpbmwzYCYPVAfLsxk36b0v4NGCBkDiPm56xxeoEYtFXlDQ9uqBZWtffVvUiwcLnh3kpVNeBELM
-	totJ2TSAeHINo8Q2GBPExIK994Y6LsXaRsjUw
-X-Gm-Gg: ASbGncs9AbzKEm0occZpEco9NWrv9lmU51tqxaKphgI6BiW4VPIdx6hRpoNl52IB1Yo
-	mxydxz4nvMx3dKoePBbOdbxBa6R7k0uBzExOMWCTUFf2zc6E7iT2tGb9XkS/2VwvEhj71BpZHJp
-	Bxm66Yn0QuFnpZ+4UhQJ3j9cmN6MdEIZcEyQiYxMhXC1kNJcsPhm7UHHqEVEaXDjVymUsmqWWp8
-	EhvhY1/
-X-Google-Smtp-Source: AGHT+IHO4yZd+l6QbE05WzNI8lFc/7IgGSFcyraONIe9p4gsK6xt1x12pEjpIcJ81c2/R4594+5RwwtORgDgg9oowdQ=
-X-Received: by 2002:a05:622a:594:b0:4ab:63f7:9a80 with SMTP id
- d75a77b69052e-4b31d844926mr169420101cf.13.1756848262114; Tue, 02 Sep 2025
- 14:24:22 -0700 (PDT)
+        bh=Id5PqTJUIq2s1nZBVwN1iuIVkwIbT5Abrm1YBS4Y/JI=;
+        b=Hfwcj+H+blZ9nwht0aICJT+tlrFefj0E2Ac9IjNcAUUpQDTrdGM5uZqddI+O7k+J0f
+         dzuqlYOM6iJRaW+Y/WbyPTjmjW0ualMSJ6Z6nMHq1xWbyHVJPdmj92Kwq+1R7QX9G12m
+         oJ+ClzBNEbGhCpHRb2hKvbE1hLaELVBRiphydnzdn4fbQCpYcUVENqO2AhbYUecqvXWG
+         i90GvEQYywOfD5GrGST6NIWt+/wAyQSYx6anjS2cqRJ4C3Ib7yzt3moyudFKFsSCO5em
+         q9PuFpZHCSbBMOjfvg51BqGVJIjiSC9apUpTIw4bxfIcJeto7XvBW5Q6fwKWqYqBUmN8
+         xFQw==
+X-Gm-Message-State: AOJu0YxWBnAsjIl1itwRUitnAqML013Toe9i46hDlh2Tl3z4xVO/rbOi
+	9Mq5ilj12PdbsMNXg3OsobqNfDnmvsqrZ4TknO80mXKaiyw5MjPndf7FCo2s2s5uaa1HUUpLP1z
+	toaa95J1k5z9zZYYG9tLyUd6zSG06hts=
+X-Gm-Gg: ASbGncsgUBbB6yIWAk+lLOuTxGwyZugcZgDww972CLwQg6SHzRI4NchPq36oZcoqeDX
+	ge5vr656a1tbbPJVEA7tGSzzH5z6Mdb/+/XNjb/WMujs/HPj5FhVpMwy68w3fpQUO0dg+GHk2DJ
+	cFTULCaWRbuGZpjsmuSUAliTZgmh+yJ3Oxac8joheFE4t83KLCUnMocpL1FcZUmc46a3CaWJEU/
+	CFld4JI
+X-Google-Smtp-Source: AGHT+IGbu+xA+cjbqf4Rla3WzH7yOwfBUq6UshDpr1rKailie/p8avNLJI2ORaQbZ+oi3R7X1/FccIwb+gxU/NoXiEc=
+X-Received: by 2002:a05:622a:15cd:b0:4b3:d85:de90 with SMTP id
+ d75a77b69052e-4b31db6a3f0mr143985151cf.39.1756848702310; Tue, 02 Sep 2025
+ 14:31:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250829235627.4053234-1-joannelkoong@gmail.com>
- <20250829235627.4053234-14-joannelkoong@gmail.com> <aLJZv5L6q0FH5F8a@debian>
-In-Reply-To: <aLJZv5L6q0FH5F8a@debian>
+References: <20250902144148.716383-1-mszeredi@redhat.com>
+In-Reply-To: <20250902144148.716383-1-mszeredi@redhat.com>
 From: Joanne Koong <joannelkoong@gmail.com>
-Date: Tue, 2 Sep 2025 14:24:11 -0700
-X-Gm-Features: Ac12FXwMlAwgMq0GxN84xQr2p6Ion3rYFLU52dRfL8taTTCzOhZc0nIr_9YrJL4
-Message-ID: <CAJnrk1af4-FG==X=4LzoBRaxL9N-hnh1i-zx89immQZMLKSzyQ@mail.gmail.com>
-Subject: Re: [PATCH v1 13/16] iomap: add a private arg for read and readahead
-To: Joanne Koong <joannelkoong@gmail.com>, brauner@kernel.org, miklos@szeredi.hu, 
-	hch@infradead.org, djwong@kernel.org, linux-fsdevel@vger.kernel.org, 
-	kernel-team@meta.com, linux-xfs@vger.kernel.org, linux-doc@vger.kernel.org
+Date: Tue, 2 Sep 2025 14:31:30 -0700
+X-Gm-Features: Ac12FXzzCi9rR-p1hKLROKf6Ru62_vQmPZanE2-8uyN_SpVsDm_HOR0y3DlDBVQ
+Message-ID: <CAJnrk1bjwbXZo2ByN8=f0ETwDqYBKq68t3Qvmh8EoSftetuYxw@mail.gmail.com>
+Subject: Re: [PATCH 1/4] fuse: remove FUSE_NOTIFY_CODE_MAX from <uapi/linux/fuse.h>
+To: Miklos Szeredi <mszeredi@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, Jim Harris <jiharris@nvidia.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 29, 2025 at 6:54=E2=80=AFPM Gao Xiang <xiang@kernel.org> wrote:
+On Tue, Sep 2, 2025 at 7:46=E2=80=AFAM Miklos Szeredi <mszeredi@redhat.com>=
+ wrote:
 >
-> Hi Joanne,
+> Constants that change value from version to version have no place in an
+> interface definition.
 >
-> On Fri, Aug 29, 2025 at 04:56:24PM -0700, Joanne Koong wrote:
-> > Add a void *private arg for read and readahead which filesystems that
-> > pass in custom read callbacks can use. Stash this in the existing
-> > private field in the iomap_iter.
-> >
-> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> > ---
-> >  block/fops.c           | 4 ++--
-> >  fs/erofs/data.c        | 4 ++--
-> >  fs/gfs2/aops.c         | 4 ++--
-> >  fs/iomap/buffered-io.c | 8 ++++++--
-> >  fs/xfs/xfs_aops.c      | 4 ++--
-> >  fs/zonefs/file.c       | 4 ++--
-> >  include/linux/iomap.h  | 4 ++--
-> >  7 files changed, 18 insertions(+), 14 deletions(-)
-> >
+> Hopefully this won't break anything.
 >
-> ...
->
-> >  int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops,
-> > -             const struct iomap_read_ops *read_ops)
-> > +             const struct iomap_read_ops *read_ops, void *private)
-> >  {
-> >       struct iomap_iter iter =3D {
-> >               .inode          =3D folio->mapping->host,
-> >               .pos            =3D folio_pos(folio),
-> >               .len            =3D folio_size(folio),
-> > +             .private        =3D private,
-> >       };
->
-> Will this whole work be landed for v6.18?
->
-> If not, may I ask if this patch can be shifted advance in this
-> patchset for applying separately (I tried but no luck).
->
-> Because I also need some similar approach for EROFS iomap page
-> cache sharing feature since EROFS uncompressed I/Os go through
-> iomap and extra information needs a proper way to pass down to
-> iomap_{begin,end} with extra pointer `.private` too.
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 
-Hi Gao,
-
-I'm not sure whether this will be landed for v6.18 but I'm happy to
-shift this patch to the beginning of the patchset for applying
-separately.
-
-Thanks,
-Joanne
+Reviewed-by: Joanne Koong <joannelkoong@gmail.com>
+> ---
+>  include/uapi/linux/fuse.h | 1 -
+>  1 file changed, 1 deletion(-)
 >
-> Thanks,
-> Gao Xiang
+> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+> index 6b9fb8b08768..30bf0846547f 100644
+> --- a/include/uapi/linux/fuse.h
+> +++ b/include/uapi/linux/fuse.h
+> @@ -680,7 +680,6 @@ enum fuse_notify_code {
+>         FUSE_NOTIFY_DELETE =3D 6,
+>         FUSE_NOTIFY_RESEND =3D 7,
+>         FUSE_NOTIFY_INC_EPOCH =3D 8,
+> -       FUSE_NOTIFY_CODE_MAX,
+>  };
+>
+>  /* The read buffer is required to be at least 8k, but may be much larger=
+ */
+> --
+> 2.49.0
+>
+>
 
