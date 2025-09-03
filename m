@@ -1,138 +1,332 @@
-Return-Path: <linux-fsdevel+bounces-60139-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60140-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1552CB41AD6
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 11:58:09 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37223B41BCA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 12:26:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7AAA1BA58A4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 09:58:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EF98A4E3E77
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 10:26:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36FED1DE3DC;
-	Wed,  3 Sep 2025 09:55:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E3212E9EB8;
+	Wed,  3 Sep 2025 10:26:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="a2SYyK/p"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="Jv8Wg+LY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D1C267B00
-	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Sep 2025 09:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A5281DA60F
+	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Sep 2025 10:26:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756893340; cv=none; b=KEVupUOACztk9XSlod6xBCYdKmN472LNS4cm9Yb6lG6QBssfNxLC/K7dZtjhXEmVeHl1BFYpFSfQ167vGDb6XGpcZCE01hsM9MD4QOU67bE3arQxLKaEqgSSjBtw/MxXp1sqj5iubPNjOv0xz77Q4fEk4x5oYypGH6XkcnyTDSk=
+	t=1756895164; cv=none; b=D3cD1ffKEad9DIbV8pF4IDCsKWwRcbRYSVzrtuE0bs1cR3yxOqaQmP4wSkM+lXv2Ehf1sxMRnIi84u86lS4VI3Ip3EQy3kymygp5s0o5y985iSg9+fJfDmNj5PH12raxPMubqXRJ1wvu2R8QYSH1eBytDw5O/HlY2vjvnryQBLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756893340; c=relaxed/simple;
-	bh=i0hN3JTxGBQkH3VjckTsldIljnBC1Fl7UOBLKwhSOYE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hLZL9nxw4iQ0heGtJpsgS2+aY+8vGJ+TCevgInfFzjXHbQfn2t1WfSv8KFollglgnrRxvGn2nPltnkfiHxsAfl+ddy0ZGAv2jivPkBM0QmvpUimpwXKdBiWQTR6uTpjp07QEz4tRimvCC6UGp9A6kG1zVRA7G+7GaCtsOUJh3GQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=a2SYyK/p; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4b34a3a6f64so13425991cf.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Sep 2025 02:55:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1756893336; x=1757498136; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=i0hN3JTxGBQkH3VjckTsldIljnBC1Fl7UOBLKwhSOYE=;
-        b=a2SYyK/pSf46i0VAsCzd0/1vf32Gtp0XyI66e27nvTvYax8R+JELHxo3ZNMQjRYLm3
-         2lUGw7/sLS+OrookgH0uKFCgH4HPsbYX+mBcyRYvxXAWbOt0oxa6ltY14bvIIZmDMFl0
-         oLzRJg2JkmfAK5519f4EKXM1XVCkIhLt3SNNs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756893336; x=1757498136;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=i0hN3JTxGBQkH3VjckTsldIljnBC1Fl7UOBLKwhSOYE=;
-        b=e8o2ZVK/LvLse5D6hqtgnZirs7wXfxYepAhETLVV+hAkonN8DddpAvhQQN3mDSJId7
-         BJHBGY9LtzijfRtjd3o5gZtdNJSOz2tQ8u+FP05CjN0bvrfdFz5YR6RLfAgKJELlbcsp
-         4Kx8eHQfiPoaPqjcd7jZI3y//fUZRfSvWu6L+JwZwqfxFYjMSLpJ4VGKIejZObPc58OM
-         47XIEzXVZuGKq15qqDxMNubHjKTBRlsOfP/60yezWhmxQBoS7UGaMMbLghjkpBO/JfrL
-         P4OVku4g3iMXLkjb64CWslWMZpLW9FpDm1/1KNBbyFyiHgD5BQujpUTWtriAUimpdaLG
-         dJdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUCbek9D+GITCPdCuWbJYkRP/sXEGAsPmpvprpZgY7nQ8p3F1TEOMQpoHT1UvNQjLsUlD+BQl3ofAeyJEbX@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwFIOtcWZS1z9ER7pnl8RrJiu3zRqCEjw7W+LfTxLcfWiw9mo3
-	bkEQwXM8cmZUehe7eOW9x4Hm7OD74hAW0wvKQTyhX2IxIWWBlT+3Sj2qQZh0feg8mqOedBgEwh+
-	1Y4g9fY56ZHoTSpJgQixOMeAz3V4FhvAaDxO2wAfN9w==
-X-Gm-Gg: ASbGnctu1/HoKK0kc+8QNNjDaxMlU0UiPxoU3X5rQAewjLXMiCnWqAHA7z9igwZ2cSc
-	YipqOWlRtF40fTb3Vk6wq35K5i1LSXkwH2AXvxcHMNleN44gh2opBVCV60z+tpLYiKHwFb49izm
-	7OK+r5L0D/1i//M25Vz1/2wxK4kp10v0YVFhgw2lGxZNvqLxGrP8149mm5WhTi4kP3NkphKoXgd
-	lkzSrHn/cdX9Nc9Gkuy
-X-Google-Smtp-Source: AGHT+IFY0o814c/UFxGrM4ghR8U+5ROI2FYDVGN2QyD1xaQ+SRqGO18IVPX6GwijmfJp+9E1evSRUVC3zpIk3+5Fnjc=
-X-Received: by 2002:a05:622a:5e0d:b0:4b4:8f03:9c43 with SMTP id
- d75a77b69052e-4b48f039e59mr13308791cf.29.1756893336548; Wed, 03 Sep 2025
- 02:55:36 -0700 (PDT)
+	s=arc-20240116; t=1756895164; c=relaxed/simple;
+	bh=why+2o/qZ+qV8wK40Vlp/9a9rF14vFQwGL2Cdiilp9I=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=MvHhExbilBdztHhmPvKe58GQGvesOwzAPPyiRt+M1Y+sIecCP+RD8f8HyMpdLEaKqm8FE97gsVNywmkhPvH+OBj8HDWc+8PEHxRkFq1SVccqeq2Jn5BXyff8bcQ3CknCUUEr6O6/duE6ySnIU0J/5FoHmgJLaPoEcrfhnBowFR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=Jv8Wg+LY; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=5DLIqhrEqw+Ij5qDt19eiYQRBFAkC3sA0QbfTB0VuZg=; b=Jv8Wg+LYuJTAvS5RDsicJ0c5aI
+	ZmwV++tsHDUkEsPR7ES/NOUir8ywXsPIlkA49PLdKropw/Cz7lZEzjfAE9qg9S+K6hi1E8RcKDhKg
+	Q9liSCHphsrg1Ea55M5Zea1eWRk3r7nYHlO+EP0sOBhm1lMoGFO2US4J4pQY3oFHszGpwMuXqxTAw
+	B8ikGquzI2zOoqx1mHA+B0H3uUdhxsrqBfqYBk65yHIFAO6bxsX2pDQQLjz4QLi9Fi0croywwUoiy
+	4oqMOxK77NIN+YMrEiZDO/axBLgP/PBngBcYUg/wBVZmch6kkdJeOHoozyWn1ZJkcBafOGYxqipE3
+	mkoH6iEw==;
+Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1utkgh-0068re-S1; Wed, 03 Sep 2025 12:25:59 +0200
+From: Luis Henriques <luis@igalia.com>
+To: Miklos Szeredi <mszeredi@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org,  Jim Harris <jiharris@nvidia.com>
+Subject: Re: [PATCH 3/4] fuse: remove redundant calls to fuse_copy_finish()
+ in fuse_notify()
+In-Reply-To: <20250902144148.716383-3-mszeredi@redhat.com> (Miklos Szeredi's
+	message of "Tue, 2 Sep 2025 16:41:45 +0200")
+References: <20250902144148.716383-1-mszeredi@redhat.com>
+	<20250902144148.716383-3-mszeredi@redhat.com>
+Date: Wed, 03 Sep 2025 11:25:53 +0100
+Message-ID: <87ms7bessu.fsf@wotan.olymp>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <175573708506.15537.385109193523731230.stgit@frogsfrogsfrogs>
- <175573708630.15537.1057407663556817922.stgit@frogsfrogsfrogs>
- <CAJfpegsp=6A7jMxSpQce6Xx72POGddWqtJFTWauM53u7_125vQ@mail.gmail.com>
- <20250829153938.GA8088@frogsfrogsfrogs> <CAJfpegs=2==Tx3kcFHoD-0Y98tm6USdX_NTNpmoCpAJSMZvDtw@mail.gmail.com>
- <20250902205736.GB1587915@frogsfrogsfrogs>
-In-Reply-To: <20250902205736.GB1587915@frogsfrogsfrogs>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 3 Sep 2025 11:55:25 +0200
-X-Gm-Features: Ac12FXy9ovoKtZPx52Va9FwtNBEEn8twm-ePM4GprUxOSwPyJ_1p2NS6zUuG9IQ
-Message-ID: <CAJfpegskHg7ewo6p0Bn=3Otsm7zXcyRu=0drBdqWzMG+hegbSQ@mail.gmail.com>
-Subject: Re: [PATCH 4/7] fuse: implement file attributes mask for statx
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: bernd@bsbernd.com, neal@gompa.dev, John@groves.net, 
-	linux-fsdevel@vger.kernel.org, joannelkoong@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2 Sept 2025 at 22:57, Darrick J. Wong <djwong@kernel.org> wrote:
+On Tue, Sep 02 2025, Miklos Szeredi wrote:
 
-> You can, kind of -- either send the server FS_IOC_FSGETXATTR or
-> FS_IOC_GETFLAGS right after igetting an inode and set the VFS
-> immutable/append flags from that; or we could add a couple of flag bits
-> to fuse_attr::flags to avoid the extra upcall.
-
-How about a new FUSE_LOOKUPX that uses fuse_statx instead of fuse_attr
-to initialize the inode?
-
-> The flag is very much needed for virtiofs/famfs (and any future
-> fuse+iomap+fsdax combination), because that's how application programs
-> are supposed to detect that they can use load/store to mmap file regions
-> without needing fsync/msync.
-
-Makes sense.
-
-> > I also fell that all unknown flags should also be masked off, but
-> > maybe that's too paranoid.
+> Remove tail calls of fuse_copy_finish(), since it's now done from
+> fuse_dev_do_write().
 >
-> That isn't a terrible idea.
+> No functional change.
+>
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> ---
+>  fs/fuse/dev.c | 79 +++++++++++++++------------------------------------
+>  1 file changed, 23 insertions(+), 56 deletions(-)
+>
+> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> index 85d05a5e40e9..1258acee9704 100644
+> --- a/fs/fuse/dev.c
+> +++ b/fs/fuse/dev.c
+> @@ -1622,35 +1622,31 @@ static int fuse_notify_poll(struct fuse_conn *fc,=
+ unsigned int size,
+>  			    struct fuse_copy_state *cs)
+>  {
+>  	struct fuse_notify_poll_wakeup_out outarg;
+> -	int err =3D -EINVAL;
+> +	int err;
+>=20=20
+>  	if (size !=3D sizeof(outarg))
+> -		goto err;
+> +		return -EINVAL;
+>=20=20
+>  	err =3D fuse_copy_one(cs, &outarg, sizeof(outarg));
+>  	if (err)
+> -		goto err;
+> +		return err;
+>=20=20
+>  	fuse_copy_finish(cs);
+>  	return fuse_notify_poll_wakeup(fc, &outarg);
+> -
+> -err:
+> -	fuse_copy_finish(cs);
+> -	return err;
+>  }
+>=20=20
+>  static int fuse_notify_inval_inode(struct fuse_conn *fc, unsigned int si=
+ze,
+>  				   struct fuse_copy_state *cs)
+>  {
+>  	struct fuse_notify_inval_inode_out outarg;
+> -	int err =3D -EINVAL;
+> +	int err;
+>=20=20
+>  	if (size !=3D sizeof(outarg))
+> -		goto err;
+> +		return -EINVAL;
+>=20=20
+>  	err =3D fuse_copy_one(cs, &outarg, sizeof(outarg));
+>  	if (err)
+> -		goto err;
+> +		return err;
+>  	fuse_copy_finish(cs);
+=20
+I wonder if these extra fuse_copy_finish() calls should also be removed.
+It doesn't seem to be a problem to call it twice, but maybe it's not
+needed, or am I missing something?  This happens in a few places.
 
-So in conclusion, the following can be passed through from the fuse
-server to the statx syscall (directly or cached):
+Other than that, and FWIW, the series look good to me.
 
-COMPRESSED
-NODUMP
-ENCRYPTED
-VERITY
-WRITE_ATOMIC
+Cheers,
+--=20
+Lu=C3=ADs
 
-The following should be set (cached) in the relevant inode flag:
+>=20
+>  	down_read(&fc->killsb);
+> @@ -1658,10 +1654,6 @@ static int fuse_notify_inval_inode(struct fuse_con=
+n *fc, unsigned int size,
+>  				       outarg.off, outarg.len);
+>  	up_read(&fc->killsb);
+>  	return err;
+> -
+> -err:
+> -	fuse_copy_finish(cs);
+> -	return err;
+>  }
+>=20=20
+>  static int fuse_notify_inval_entry(struct fuse_conn *fc, unsigned int si=
+ze,
+> @@ -1669,29 +1661,26 @@ static int fuse_notify_inval_entry(struct fuse_co=
+nn *fc, unsigned int size,
+>  {
+>  	struct fuse_notify_inval_entry_out outarg;
+>  	int err;
+> -	char *buf =3D NULL;
+> +	char *buf;
+>  	struct qstr name;
+>=20=20
+> -	err =3D -EINVAL;
+>  	if (size < sizeof(outarg))
+> -		goto err;
+> +		return -EINVAL;
+>=20=20
+>  	err =3D fuse_copy_one(cs, &outarg, sizeof(outarg));
+>  	if (err)
+> -		goto err;
+> +		return err;
+>=20=20
+> -	err =3D -ENAMETOOLONG;
+>  	if (outarg.namelen > fc->name_max)
+> -		goto err;
+> +		return -ENAMETOOLONG;
+>=20=20
+>  	err =3D -EINVAL;
+>  	if (size !=3D sizeof(outarg) + outarg.namelen + 1)
+> -		goto err;
+> +		return -EINVAL;
+>=20=20
+> -	err =3D -ENOMEM;
+>  	buf =3D kzalloc(outarg.namelen + 1, GFP_KERNEL);
+>  	if (!buf)
+> -		goto err;
+> +		return -ENOMEM;
+>=20=20
+>  	name.name =3D buf;
+>  	name.len =3D outarg.namelen;
+> @@ -1704,12 +1693,8 @@ static int fuse_notify_inval_entry(struct fuse_con=
+n *fc, unsigned int size,
+>  	down_read(&fc->killsb);
+>  	err =3D fuse_reverse_inval_entry(fc, outarg.parent, 0, &name, outarg.fl=
+ags);
+>  	up_read(&fc->killsb);
+> -	kfree(buf);
+> -	return err;
+> -
+>  err:
+>  	kfree(buf);
+> -	fuse_copy_finish(cs);
+>  	return err;
+>  }
+>=20=20
+> @@ -1718,29 +1703,25 @@ static int fuse_notify_delete(struct fuse_conn *f=
+c, unsigned int size,
+>  {
+>  	struct fuse_notify_delete_out outarg;
+>  	int err;
+> -	char *buf =3D NULL;
+> +	char *buf;
+>  	struct qstr name;
+>=20=20
+> -	err =3D -EINVAL;
+>  	if (size < sizeof(outarg))
+> -		goto err;
+> +		return -EINVAL;
+>=20=20
+>  	err =3D fuse_copy_one(cs, &outarg, sizeof(outarg));
+>  	if (err)
+> -		goto err;
+> +		return err;
+>=20=20
+> -	err =3D -ENAMETOOLONG;
+>  	if (outarg.namelen > fc->name_max)
+> -		goto err;
+> +		return -ENAMETOOLONG;
+>=20=20
+> -	err =3D -EINVAL;
+>  	if (size !=3D sizeof(outarg) + outarg.namelen + 1)
+> -		goto err;
+> +		return -EINVAL;
+>=20=20
+> -	err =3D -ENOMEM;
+>  	buf =3D kzalloc(outarg.namelen + 1, GFP_KERNEL);
+>  	if (!buf)
+> -		goto err;
+> +		return -ENOMEM;
+>=20=20
+>  	name.name =3D buf;
+>  	name.len =3D outarg.namelen;
+> @@ -1753,12 +1734,8 @@ static int fuse_notify_delete(struct fuse_conn *fc=
+, unsigned int size,
+>  	down_read(&fc->killsb);
+>  	err =3D fuse_reverse_inval_entry(fc, outarg.parent, outarg.child, &name=
+, 0);
+>  	up_read(&fc->killsb);
+> -	kfree(buf);
+> -	return err;
+> -
+>  err:
+>  	kfree(buf);
+> -	fuse_copy_finish(cs);
+>  	return err;
+>  }
+>=20=20
+> @@ -1776,17 +1753,15 @@ static int fuse_notify_store(struct fuse_conn *fc=
+, unsigned int size,
+>  	loff_t file_size;
+>  	loff_t end;
+>=20=20
+> -	err =3D -EINVAL;
+>  	if (size < sizeof(outarg))
+> -		goto out_finish;
+> +		return -EINVAL;
+>=20=20
+>  	err =3D fuse_copy_one(cs, &outarg, sizeof(outarg));
+>  	if (err)
+> -		goto out_finish;
+> +		return err;
+>=20=20
+> -	err =3D -EINVAL;
+>  	if (size - sizeof(outarg) !=3D outarg.size)
+> -		goto out_finish;
+> +		return -EINVAL;
+>=20=20
+>  	nodeid =3D outarg.nodeid;
+>=20=20
+> @@ -1846,8 +1821,6 @@ static int fuse_notify_store(struct fuse_conn *fc, =
+unsigned int size,
+>  	iput(inode);
+>  out_up_killsb:
+>  	up_read(&fc->killsb);
+> -out_finish:
+> -	fuse_copy_finish(cs);
+>  	return err;
+>  }
+>=20=20
+> @@ -1962,13 +1935,12 @@ static int fuse_notify_retrieve(struct fuse_conn =
+*fc, unsigned int size,
+>  	u64 nodeid;
+>  	int err;
+>=20=20
+> -	err =3D -EINVAL;
+>  	if (size !=3D sizeof(outarg))
+> -		goto copy_finish;
+> +		return -EINVAL;
+>=20=20
+>  	err =3D fuse_copy_one(cs, &outarg, sizeof(outarg));
+>  	if (err)
+> -		goto copy_finish;
+> +		return err;
+>=20=20
+>  	fuse_copy_finish(cs);
+>=20=20
+> @@ -1984,10 +1956,6 @@ static int fuse_notify_retrieve(struct fuse_conn *=
+fc, unsigned int size,
+>  	up_read(&fc->killsb);
+>=20=20
+>  	return err;
+> -
+> -copy_finish:
+> -	fuse_copy_finish(cs);
+> -	return err;
+>  }
+>=20=20
+>  /*
+> @@ -2098,7 +2066,6 @@ static int fuse_notify(struct fuse_conn *fc, enum f=
+use_notify_code code,
+>  		return fuse_notify_inc_epoch(fc);
+>=20=20
+>  	default:
+> -		fuse_copy_finish(cs);
+>  		return -EINVAL;
+>  	}
+>  }
+> --=20
+> 2.49.0
+>
 
-IMMUTABLE
-APPEND
-
-The following should be ignored and the VFS flag be used instead:
-
-AUTOMOUNT
-MOUNT_ROOT
-DAX
-
-And other attributes should just be ignored.
-
-Agree?
-
-Thanks,
-Miklos
 
