@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-60082-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60084-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A432EB4141D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 07:06:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8BBFB413EF
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 06:57:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 623D03B31AC
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 05:06:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81CD76814E4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 04:57:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 883632D7DE2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADFC22D9782;
 	Wed,  3 Sep 2025 04:55:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="MCrDhrnM"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="d26A+aEc"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD14D2D7DF6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15CA92D4B7C
 	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Sep 2025 04:55:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756875348; cv=none; b=CjPPS0ZIQcXt3KigSN0ZIEx1Qmruhxm+j9kNBl5kuRPfkL66D0QDS7G4G9vOCHFVjKuMxDwRNtvf1y9KHcT62j7c441FWhuEL9txkYhFQGTdqsevgmOlfO8CnEQ/5FkUFszJs0Pv/5MaVcHkNULa+z7LHj+VnPbsnjV5eznZTkU=
+	t=1756875348; cv=none; b=svouclTRSu3BufrmK6lxj0Au86fuuUMqxs16b4lFrHUFJ0yEVoGXl26sKj+/6mb1JCvwMfdWLGGJb7UkClHnTCABkhqUssuQVtSDAfzRcUXZCSLKK7CZtMGbOv8etdUpL3lkat6Ex6fWZ4BT8jOl/va+QGHjie2guDjt+MtTRNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756875348; c=relaxed/simple;
-	bh=PE0Dbpjxru8hciFSdjQI4IFUqr+Zs43zxn9IU8153Lw=;
+	bh=RQVLkimqqL/aTKR5HZPMHcpgwLLQBcTVo7KVc2W5Yc4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=J6zM6cynO+b9HaTCfOY1aSjdEtZ8sRu7U5yKN+uTsGXWnizGmnHvMsp2Z47jzhuzF9dwMUB+GHQ3cj3WwzWKwoWIlcbau9Xujm2g3mS76cFp1/jBnyN1xp+1hIf42ijxsXNLRdZZTH3YleYci0A82TqNCLNXEiOYXc2W6Ugcos0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=MCrDhrnM; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=Sah0vdfp3G6nOo6/HJdcMJUKmYTwHjM/PC63E4rckJ4n2N/fAEY5yMDEL5DNiTBDUIIwWdTv0TiiDaRaXP86ycvvugYDEvRLqw9AEHB9NTvwvFRy394x+rQl3/cFPvo6cuuimgbbCch84/PTKXS1kzO7kdhPObExfnXIo+nMJ/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=d26A+aEc; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=BV1eJYJ7ThjNWy+N2bbQ7lwyzHRAuIwkIwGq+IlhM6c=; b=MCrDhrnMNBmBgITvuoYAvhahF1
-	50NsdS83UYHZ5OwD1OXhpjhmjwQlTT1Gc/+NpX0aU/Jq/oS08G8F79Q70QZSas3mOQeV5Ppxf7ISd
-	MEuKgLIM3A267S25j1XvevGnPJNEQGCWbn0FTGcy/lUxsg9vs40uJHf2EBt7rfFATX6y/vUsOkxg/
-	g73AjFiTvn3Id2KQIbx+LyPztINtVxZnr0dXxhn9KVCal7bUJhldwCHqKG8AG9Ae+JvvRts7AXQ3A
-	Zv7/GK38vKgOHqkT4VjH/d5veHDYb5FHO4J1dWFFaxp+svAp21hW4QZ2nTg3G/d/++n/FkEiTQkfs
-	q4226kww==;
+	bh=qAC+mRleCqfh6GP7zB/CSixuSNqVGCyT4Dntsl3mF1w=; b=d26A+aEcvoOXaOWh8rGWWmQibt
+	+vitm8LUDwQuMM0H0kcN5ysp51Ol3M+vWO9PlXvpU9mB8jhoT2X6SbMY1SPZoX1ZoAxq8J6VuZLTd
+	l41GD3nf2sM9Zgyo2msmopyO0pzA9Ke9e4TBpkmt9PjAO/fRUgYLcBIjKQ9bv+Hzdzx3Xfu81pJiF
+	5XnNhOLMWCJDxR5btPGAOEUD7m6EiYcF6bQLvs4KMxhy3UmPIbh9ND0oKNPW8p10FRzr7IVWlnwkc
+	3YygB8BdAjhnXL21klVzq58OUoUehbWOhsvGIYSfxdrSaOTZScRRDbLFOtH+Piq/tMLB8mWIJgzXj
+	1+DFMT7w==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1utfX7-0000000ApCf-1TX0;
+	id 1utfX7-0000000ApCv-2FN5;
 	Wed, 03 Sep 2025 04:55:45 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: brauner@kernel.org,
 	jack@suse.cz,
 	torvalds@linux-foundation.org
-Subject: [PATCH v3 40/65] collect_paths(): constify the return value
-Date: Wed,  3 Sep 2025 05:55:02 +0100
-Message-ID: <20250903045537.2579614-41-viro@zeniv.linux.org.uk>
+Subject: [PATCH v3 41/65] do_move_mount(), vfs_move_mount(), do_move_mount_old(): constify struct path argument(s)
+Date: Wed,  3 Sep 2025 05:55:03 +0100
+Message-ID: <20250903045537.2579614-42-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250903045537.2579614-1-viro@zeniv.linux.org.uk>
 References: <20250903045432.GH39973@ZenIV>
@@ -65,52 +65,47 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-callers have no business modifying the paths they get
-
 Reviewed-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/namespace.c        | 4 ++--
- include/linux/mount.h | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ fs/namespace.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
 diff --git a/fs/namespace.c b/fs/namespace.c
-index 704eff14735d..759bfd24d1a0 100644
+index 759bfd24d1a0..dcaf50e920af 100644
 --- a/fs/namespace.c
 +++ b/fs/namespace.c
-@@ -2300,7 +2300,7 @@ static inline bool extend_array(struct path **res, struct path **to_free,
- 	return p;
+@@ -3572,8 +3572,9 @@ static inline bool may_use_mount(struct mount *mnt)
+ 	return check_anonymous_mnt(mnt);
  }
  
--struct path *collect_paths(const struct path *path,
-+const struct path *collect_paths(const struct path *path,
- 			      struct path *prealloc, unsigned count)
+-static int do_move_mount(struct path *old_path,
+-			 struct path *new_path, enum mnt_tree_flags_t flags)
++static int do_move_mount(const struct path *old_path,
++			 const struct path *new_path,
++			 enum mnt_tree_flags_t flags)
  {
- 	struct mount *root = real_mount(path->mnt);
-@@ -2334,7 +2334,7 @@ struct path *collect_paths(const struct path *path,
- 	return res;
+ 	struct mount *old = real_mount(old_path->mnt);
+ 	int err;
+@@ -3645,7 +3646,7 @@ static int do_move_mount(struct path *old_path,
+ 	return attach_recursive_mnt(old, &mp);
  }
  
--void drop_collected_paths(const struct path *paths, struct path *prealloc)
-+void drop_collected_paths(const struct path *paths, const struct path *prealloc)
+-static int do_move_mount_old(struct path *path, const char *old_name)
++static int do_move_mount_old(const struct path *path, const char *old_name)
  {
- 	for (const struct path *p = paths; p->mnt; p++)
- 		path_put(p);
-diff --git a/include/linux/mount.h b/include/linux/mount.h
-index c09032463b36..18e4b97f8a98 100644
---- a/include/linux/mount.h
-+++ b/include/linux/mount.h
-@@ -104,8 +104,8 @@ extern int may_umount_tree(struct vfsmount *);
- extern int may_umount(struct vfsmount *);
- int do_mount(const char *, const char __user *,
- 		     const char *, unsigned long, void *);
--extern struct path *collect_paths(const struct path *, struct path *, unsigned);
--extern void drop_collected_paths(const struct path *, struct path *);
-+extern const struct path *collect_paths(const struct path *, struct path *, unsigned);
-+extern void drop_collected_paths(const struct path *, const struct path *);
- extern void kern_unmount_array(struct vfsmount *mnt[], unsigned int num);
+ 	struct path old_path;
+ 	int err;
+@@ -4475,7 +4476,8 @@ SYSCALL_DEFINE3(fsmount, int, fs_fd, unsigned int, flags,
+ 	return ret;
+ }
  
- extern int cifs_root_data(char **dev, char **opts);
+-static inline int vfs_move_mount(struct path *from_path, struct path *to_path,
++static inline int vfs_move_mount(const struct path *from_path,
++				 const struct path *to_path,
+ 				 enum mnt_tree_flags_t mflags)
+ {
+ 	int ret;
 -- 
 2.47.2
 
