@@ -1,161 +1,199 @@
-Return-Path: <linux-fsdevel+bounces-60154-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60155-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36F91B42356
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 16:16:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F5DCB42334
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 16:11:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A1637BF69B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 14:05:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DFE2170F96
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 14:10:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C65663101D5;
-	Wed,  3 Sep 2025 14:06:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58BE030EF71;
+	Wed,  3 Sep 2025 14:10:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Aj0UB0W1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R+S1d8QQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746761C84DF;
-	Wed,  3 Sep 2025 14:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2D232F0C7A;
+	Wed,  3 Sep 2025 14:10:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756908395; cv=none; b=CmyxSeXmCKGUBl0AWNk9SrA/PowNrruxprgQ52KiXYqVIFAHbI37nIOdJcFre6L9aQzayUqIg9oBzicGQkXs0fR3Kshoswz+85S6/LiRIyUOVhmY8LyKRDz7qVnUjyqlsdLYU976wUYJMP/+Ou89kZTpGnYybRbug79T5s1Nmas=
+	t=1756908647; cv=none; b=s8LsmpXKZMrtqOTh35Q7D1Vp729xYLP7BWinLNTn8sc5B0BQ2I7LlMEdxTSU80KQYXk+kFgA0s79g8AxTL8JhO45S0t9ddf89a0UDUqJndnOTkABAMiihbF+ym0LKPZzZ5ykqUyjHFER9zqKGnUpmgRkoCvUYCYrO3SSYelhOes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756908395; c=relaxed/simple;
-	bh=mcSj6sBducJtq3QFx+SZal1G+3uS/KNlrKO5HrQqiUo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hWfARj3cumrsns9ySjt0Gg9ZtyE8tWF1Z6pChOxD1yUtsdKrP7NfQiflhlzuMBoHUSpN6vRxKArUqNAYX0yUOHgxoo1RZxY8ehAkqxFTvV7j9OyWHYuKE7B7C3g9nAJfAVWCwVQ/p5aBXdNpoG7x0lObDza+IYm83N0qYjTPPwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Aj0UB0W1; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-61e8fdfd9b4so2120495a12.1;
-        Wed, 03 Sep 2025 07:06:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756908392; x=1757513192; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mcSj6sBducJtq3QFx+SZal1G+3uS/KNlrKO5HrQqiUo=;
-        b=Aj0UB0W13COwkbj3JuklLGkEjYqu9fX1vGUHcQr9x1EMR7ITyBBZ7JIzFlXz14lVsV
-         06OKzClGjwy8tuXtCOUo98EMTLdlobotcNuVo/2/peP1748hTZaCtFYyNHN1iZ151hfF
-         EmQz8oW/8aSd8s00Y2QVmbBRuBldHfwWuBtnlohRbeQeehIRHv878zeFzyWHogFZPGKa
-         x5JYAetnkmWXDyHIAAXmHJ6nBsJZ1YTrAmddJzR6C75AK3KGdOc6IM0CDDlBxKd/kqb3
-         ooDH18YtbHF9N9C+SeNerZwL0Vv2CKjl+dB1rbg6rSg9faEmjruXc4y3AfzQd2LfzOGz
-         0PQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756908392; x=1757513192;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mcSj6sBducJtq3QFx+SZal1G+3uS/KNlrKO5HrQqiUo=;
-        b=nqGdGoQ8vIdZoRFRv08K2moUf8p+RONyJEkUdLPfsvLFLSM/YN9vDhkX697KRl2XLs
-         W7KkIGIABViFlB/7s6WyW723mXaaze/tF3agUkxSeyWKWCFVWZWQ9MtM88NIuyDmXZpW
-         Zu02BOOz9cSeFNZ7R9KJnNJn5NnG7KyzFbFZvi2kMz6kDyEjQaMPm9/RuG5JQYXV/dFL
-         X8V6C+4VNJliIF/syJ58341S1cjf2vMXWIk1pyLidorkLOc2moCO+/x1lGLo0E6u7lsU
-         lLitKJF70etiu6wi7m36F5ddLiyIENCUBjdi9sJBA9vxC91iaUpCujMf1wSgq5U62bpc
-         RvlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWq3OaPLBAnnjsNtksrBwi8xs+hCvlifgD9Bf5VoiRC3qZno3gzsHrVEPv4gsqW4Co60IRsoocFzo7o4/Pm@vger.kernel.org, AJvYcCWrS/oZKHhDZZGc2X7nfaWI9vgk9xZ/soEvYtyINjmuCRHwuvKo8z5gGFYJmf7RZq2HDCbHL4BsVgqorSrB@vger.kernel.org
-X-Gm-Message-State: AOJu0YziCtxBLp9atbiQ16iO3wRsm6f1CZk7d2QUGB6vWQ2ItSV/QZ11
-	LTNEo5OqPgmMOcWw7o5MHrrsDGMLcWjeejKgr3A0xv301wmXZSv+N0IUnF3MdNBzvhkPL+XQ4kI
-	RDG+u0m6H7p0SbKNLmCshTWcwf/9Z4Jc=
-X-Gm-Gg: ASbGnctVcUqFFHNsuFixf/fiffGHlBI54GJ3bu89hinRUm8+MpxeMrEfxgAN4rvkXma
-	uu9/MllS0wwKlMbsqAPjaJvCyXwnSX9Y7IpzLOcOZDUFvOE7NoaqEibFt98T76X1oC0NiHA+VcD
-	0Shkr+/hGx1LiQw3QQhujq4401Ep8+/W128wmc9Ez77A7VK70ODoV4+vydPaQcPM5XYjv1tyukp
-	4YqDjM=
-X-Google-Smtp-Source: AGHT+IGpjEpj1IJ6T8EHew5Nfz0x5tQL07YxgbZKRCSEna9fAUs8WjkIQrE9rKKag+kpN6af4bvomm64Arr/UlpvDKU=
-X-Received: by 2002:a05:6402:354e:b0:61c:90c:ee97 with SMTP id
- 4fb4d7f45d1cf-61d26882f04mr15587215a12.4.1756908391436; Wed, 03 Sep 2025
- 07:06:31 -0700 (PDT)
+	s=arc-20240116; t=1756908647; c=relaxed/simple;
+	bh=IJP0VbHKnRlpLO/dj+/Ia2ILTC5O+iulYtBS4Wmtc7Y=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=eff2LAuaroLEU7fUi2chULqXChKhHvhX2IU2oRihsfHCyc2qy+RBcAPLF5trfxxnAPAnWC/MNpu4SvRU8lGnoVwGyelkmqfnu4gjYx03AOah7/vmPcEIBuAWbqqkTv0XY/3c5J/h00sg4JTchEvEzhDS3Ly3LbdPI34eKr9ywbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R+S1d8QQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4255EC4CEE7;
+	Wed,  3 Sep 2025 14:10:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756908647;
+	bh=IJP0VbHKnRlpLO/dj+/Ia2ILTC5O+iulYtBS4Wmtc7Y=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=R+S1d8QQ8JTOfieL00HXOZ34YoFUz7OL6PI6NmTox55mOQ5P2beuQkiHTw89xKvw3
+	 insOk7uKvWRNaeS2vTdE9Ht/CnQJzkKF7GSUV/9EH30J6MBbhwocfVgD71iA7LqCnt
+	 zqGDip6cF961mvzPUx6VluNXvCkxwekBrmumpiQS1Wblng3j0PvIFUjnebzWKb0g7R
+	 V4bkzKiUCPcrAIysTs2EMlCHah6rOsjnKvu10SpEX2QyWrKKe+3tUV7u4ej/phtqKG
+	 dYcayDouOvM9hUHm/g775ZgYpyBRWvfvMV7HVpKIckFauorE4h/2sjZVbRh4vbTHER
+	 6qYwmLFOmThTw==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Pratyush Yadav <pratyush@kernel.org>,  Pasha Tatashin
+ <pasha.tatashin@soleen.com>,  jasonmiu@google.com,  graf@amazon.com,
+  changyuanl@google.com,  rppt@kernel.org,  dmatlack@google.com,
+  rientjes@google.com,  corbet@lwn.net,  rdunlap@infradead.org,
+  ilpo.jarvinen@linux.intel.com,  kanie@linux.alibaba.com,
+  ojeda@kernel.org,  aliceryhl@google.com,  masahiroy@kernel.org,
+  akpm@linux-foundation.org,  tj@kernel.org,  yoann.congal@smile.fr,
+  mmaurer@google.com,  roman.gushchin@linux.dev,  chenridong@huawei.com,
+  axboe@kernel.dk,  mark.rutland@arm.com,  jannh@google.com,
+  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
+  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
+  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
+  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
+  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
+  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
+  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
+  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
+  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
+  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
+  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
+  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
+  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
+  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
+  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
+  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+  saeedm@nvidia.com,  ajayachandra@nvidia.com,  parav@nvidia.com,
+  leonro@nvidia.com,  witu@nvidia.com
+Subject: Re: [PATCH v3 29/30] luo: allow preserving memfd
+In-Reply-To: <20250902134846.GN186519@nvidia.com>
+References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
+	<20250807014442.3829950-30-pasha.tatashin@soleen.com>
+	<20250826162019.GD2130239@nvidia.com> <mafs0bjo0yffo.fsf@kernel.org>
+	<20250828124320.GB7333@nvidia.com> <mafs0h5xmw12a.fsf@kernel.org>
+	<20250902134846.GN186519@nvidia.com>
+Date: Wed, 03 Sep 2025 16:10:37 +0200
+Message-ID: <mafs0v7lzvd7m.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250903093413.3434-1-lidiangang@bytedance.com> <ownanwiqdhijstazux3j5jsawdyw6tcgjufk6zrejppnqyoy7d@hdqmfb4q7wpz>
-In-Reply-To: <ownanwiqdhijstazux3j5jsawdyw6tcgjufk6zrejppnqyoy7d@hdqmfb4q7wpz>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 3 Sep 2025 16:06:19 +0200
-X-Gm-Features: Ac12FXy_mNxEqcs6hMH0BU3mgcsLIjZNGOEJy8Qu4kjnWkk_XD_OjSFyEg0aVCQ
-Message-ID: <CAOQ4uxiDEwrNVLkwuuA84RWoUPovi--Xj4BRuL-5OEwiQyAFXQ@mail.gmail.com>
-Subject: Re: [RFC 0/1] fsnotify: clear PARENT_WATCHED flags lazily for v5.4
-To: Diangang Li <lidiangang@bytedance.com>
-Cc: stephen.s.brennan@oracle.com, changfengnan@bytedance.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jan Kara <jack@suse.cz>, Greg KH <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Wed, Sep 3, 2025 at 3:31=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+Hi Jason,
+
+On Tue, Sep 02 2025, Jason Gunthorpe wrote:
+
+> On Mon, Sep 01, 2025 at 07:10:53PM +0200, Pratyush Yadav wrote:
+>> Building kvalloc on top of this becomes trivial.
+>> 
+>> [0] https://git.kernel.org/pub/scm/linux/kernel/git/pratyush/linux.git/commit/?h=kho-array&id=cf4c04c1e9ac854e3297018ad6dada17c54a59af
 >
-> On Wed 03-09-25 17:34:12, Diangang Li wrote:
-> > Hi Amir, Jan, et al,
-> >
-> > Commit `41f49be2e51a71` ("fsnotify: clear PARENT_WATCHED flags lazily")
-> > has resolved the softlockup in `__fsnotify_parent` when there are milli=
-ons
-> > of negative dentries. The Linux kernel CVE team has assigned CVE-2024-4=
-7660
-> > to this issue[1]. I noticed that the CVE patch was only backported to t=
-he
-> > 5.10 stable tree, and not to 5.4. Is there any specific reason or analy=
-sis
-> > regarding the 5.4 branch? We have encountered this issue in our product=
-ion
-> > environments running kernel 5.4. After manually applying and deconflict=
-ing
-> > this patch, the problem was resolved.
+> This isn't really an array, it is a non-seekable serialization of
+> key/values with some optimization for consecutive keys. IMHO it is
 
-All this above would be nice to send Greg for context
-so he can distinguish your posting from AI bots posting backports without
-having tested them or without having encountered the issue ;)
+Sure, an array is not the best name for the thing. Call it whatever,
+maybe a "sparse collection of pointers". But I hope you get the idea.
 
-But IMO, it is more helpful to send these notes after the ---
-line in the patch notes rather than having a single path with a cover lette=
-r
-as a backport patch.
-
-> >
-> > Any comments or suggestions regarding this backport would be appreciate=
-d.
+> most useful if you don't know the size of the thing you want to
+> serialize in advance since it has a nice dynamic append.
 >
-> I don't have any objections against including this in 5.4-stable branch.
-> Probably it was not applied because of some patch conflict. Feel free to
-> send the backport to stable@vger.kernel.org, I believe Greg will gladly
-> pickup the patch.
+> But if you do know the size, I think it makes more sense just to do a
+> preserving vmalloc and write out a linear array..
 
-Also you need to fix some technical issues with your patch submission.
+I think there are two separate parts here. One is the data format and
+the other is the data builder.
 
-1. Subject:
-[RFC 1/1] fsnotify: clear PARENT_WATCHED flags lazily
-change to
-[PATCH 5.4] fsnotify: clear PARENT_WATCHED flags lazily
+The format itself is quite simple. It is a linked list of discontiguous
+pages that holds a set of pointers. We use that idea already for the
+preserved pages bitmap. Mike's vmalloc preservation patches also use the
+same idea, just with a small variation.
 
-to explain that this is a backport and the target stable branch.
+The builder part (ka_iter in my patches) is an abstraction on top to
+build the data structure. I designed it with the nice dynamic append
+property since it seemed like a nice and convenient design, but we can
+have it define the size statically as well. The underlying data format
+won't change.
 
-2. mainline reference:
-commit 172e422ffea2 ("fsnotify: clear PARENT_WATCHED flags lazily")
+>
+> So, it could be useful, but I wouldn't use it for memfd, the vmalloc
+> approach is better and we shouldn't optimize for sparsness which
+> should never happen.
 
-The common pattern used in stable tree is:
-commit 172e422ffea20a89bfdc672741c1aad6fbb5044e upstream.
+I disagree. I think we are re-inventing the same data format with minor
+variations. I think we should define extensible fundamental data formats
+first, and then use those as the building blocks for the rest of our
+serialization logic.
 
-3. Signed-offs:
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
-Signed-off-by: Diangang Li <lidiangang@bytedance.com>
+I think KHO array does exactly that. It provides the fundamental
+serialization for a collection of pointers, and other serialization use
+cases can then build on top of it. For example, the preservation bitmaps
+can get rid of their linked list logic and just use KHO array to hold
+and retrieve its bitmaps. It will make the serialization simpler.
+Similar argument for vmalloc preservation.
 
-Unless you are backporting a patch different that upstream version
-it is probably better to cherry-pick the commit from upstream without
-Sasha's signed-off.
-Not a big deal, but at least that's how Greg expects it:
-https://lore.kernel.org/stable/2025090200-uniquely-pumice-1afa@gregkh/
+I also don't get why you think sparseness "should never happen". For
+memfd for example, you say in one of your other emails that "And again
+in real systems we expect memfd to be fully populated too." Which
+systems and use cases do you have in mind? Why do you think people won't
+want a sparse memfd?
 
-and you may add:
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+And finally, from a data format perspective, the sparseness only adds a
+small bit of complexity (the startpos for each kho_array_page).
+Everything else is practically the same as a continuous array.
 
-Thanks,
-Amir.
+All in all, I think KHO array is going to prove useful and will make
+serialization for subsystems easier. I think sparseness will also prove
+useful but it is not a hill I want to die on. I am fine with starting
+with a non-sparse array if people really insist. But I do think we
+should go with KHO array as a base instead of re-inventing the linked
+list of pages again and again.
+
+>
+>> > The versioning should be first class, not hidden away as some emergent
+>> > property of registering multiple serializers or something like that.
+>> 
+>> That makes sense. How about some simple changes to the LUO interfaces to
+>> make the version more prominent:
+>> 
+>> 	int (*prepare)(struct liveupdate_file_handler *handler,
+>> 		       struct file *file, u64 *data, char **compatible);
+>
+> Yeah, something more integrated with the ops is better.
+>
+> You could list the supported versions in the ops itself
+>
+>   const char **supported_deserialize_versions;
+>
+> And let the luo framework find the right versions.
+>
+> But for prepare I would expect an inbetween object:
+>
+> 	int (*prepare)(struct liveupdate_file_handler *handler,
+> 	    	       struct luo_object *obj, struct file *file);
+>
+> And then you'd do function calls on 'obj' to store 'data' per version.
+
+What do you mean by "data per version"? I think there should be only one
+version of the serialized object. Multiple versions of the same thing
+will get ugly real quick.
+
+Other than that, I think this could work well. I am guessing luo_object
+stores the version and gives us a way to query it on the other side. I
+think if we are letting LUO manage supported versions, it should be
+richer than just a list of strings. I think it should include a ops
+structure for deserializing each version. That would encapsulate the
+versioning more cleanly.
+
+-- 
+Regards,
+Pratyush Yadav
 
