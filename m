@@ -1,107 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-60174-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60175-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D384AB4266E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 18:16:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3668B426DE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 18:27:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E09A3B15BC
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 16:15:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 967851897C0A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 16:28:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F36C6285C8D;
-	Wed,  3 Sep 2025 16:15:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CA032E5429;
+	Wed,  3 Sep 2025 16:27:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="EB+IDjSA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IS883tnO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F8412C0282
-	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Sep 2025 16:15:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CEAC2D63E4
+	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Sep 2025 16:27:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756916145; cv=none; b=PhBjEkpKeLO3VOomX8SmdW44C0Ax9v1OV7S/1kf7ChTRmNlAqnv8XWA6UYsPJLO90Of/OqvkVldxkUkWHGQu/ou/s21g5IJbvOhJrJYvHIt/CPUJjH9sBi4nxi80r9/FxzW0VzG3JmXmSODI3YWPGYcbqioizfEpHeQR5Wvo890=
+	t=1756916860; cv=none; b=t6TAD0ELj8hwbw2Wx/cep2tn7AdvG/7Jl+x2YYfRdj3kfvlx/PPBw4kTalJCAaJZiDRig9Wuh1C/ah3O1KKlW6x2jBXKCX5sqjHv/OfSRByE4TGTTJDtuFtZWIo+hlTrYpIQDdX98M05UkyZ7rX7kTN5B+Z7y9Tv+42zdV0NtQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756916145; c=relaxed/simple;
-	bh=J83SPmA9b5ebB/mNlmCdHUootQ8W9ndiIYGLByEfeHs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LWCbq7+KAGHVXz15WPnI02q+i5aIg/jbtm4vGZOorSkuehOJ962+ExZy6LKo+Iws82taEjGjE4WYcpGMdAidbPnNO8Gihc4k7ey4/aKKa6a+2qxTalVuEEi/RzzmRipcHEnqrjz2HsyM8OcWKoBrPZZXeltqfEHYkn0K4GwouAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=EB+IDjSA; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4b2fa418ef3so1164311cf.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Sep 2025 09:15:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1756916142; x=1757520942; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wt6NdcxQOeA3NBRvQhHqX8Eqt7Kxq4sTeDFU38FbkqM=;
-        b=EB+IDjSAj9GQ/BbGrm9/B0TFjOO8cD+Ik+Xfq9fhe4qWpFoUEP7ChsGjjHWkEd2CD0
-         ErBlH8OUEaLxOWbKnyvGryZTr/ps2SnZxbtF9W1y7tVG/eWxPYdkODPs4RXrNi+BTHHT
-         OEBLaHyvM1ulJ45VUtyY6C/1RrIPzdEK+NOZE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756916142; x=1757520942;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Wt6NdcxQOeA3NBRvQhHqX8Eqt7Kxq4sTeDFU38FbkqM=;
-        b=dGBqV/VUlJZ8BzqJ6iafZ4dr1RXa0ell/cBjTdxt/1CEDIbv92s5ChTrxZ6ijxxuVj
-         /Dn9NCiofG+ybqdiXSMZYNkVXML/bGy+5lOIKbqgnxFct6OylRprYHyQFMmAD82I/ekT
-         cInG5M+tR7CU7kcPtuPjpF+ybRxETR3DxuvEW0Ltj817Mqa1VSBolCQobd0yEofcoc4R
-         3BEAZjvvq2o20Z6973TlKFM2Pd+uQV2zSH8huE08Vy6uxsRnt/UW/7gYIBzGSeGChZ41
-         DinfB21P2c3CSHdCo3AlNA9Ex1JyjtajJuQeaNyG0x+MZm9wtv5fqfQ0oUiHSWN+CtA0
-         XsDg==
-X-Forwarded-Encrypted: i=1; AJvYcCXgmxMCUuiZt8S9w2MaUK8f2zVCh6o1JZ2KgwcVeHiqoqdUEww+rx9nkaIHMjqw9nOmHtRigvN1lbASFEha@vger.kernel.org
-X-Gm-Message-State: AOJu0YzORAFvpoQqe1VgnBQAdNXtoT8nYBEzPxmktM5KlZdwr/aAGlpN
-	H+Y3VEn7oczb0vgQYwCIpQ0PWmE/7FZzF8z49hPjdzt7nvUmFjyAYkiV0LDtcCwkrYwnw2ZjIt1
-	YqaWRUqf4DTKn51z9BE592U7p8uXYmL58u+1g8etBVg==
-X-Gm-Gg: ASbGncsre2rqJuOahQDmeiSGbVrik9xkqr8yvOlu5OVC1rVOv/uZUm7tHNf4jvn01q3
-	5uFxKb4UCSDH095/0/Gip2m0qV6xX1pVZZ9wYraHedIiJn5xJRCxQpj5pAEGEQ3bMBzptzq2nPq
-	aOtYMfibt+cysWnVr9jJ6pUXCZtbzRkOeG/4W+XUujnurLrBFmFqG5BunA4kh5J0pvnxFWU5xh3
-	vG3zMGY1g==
-X-Google-Smtp-Source: AGHT+IGcR2cazB9ptNommZkAmyAPJbmMXyf6ic96bB2dFeQ/pblUr5rk6uuI8s6L8/lHyqPpps5d57ZWuec7JWACrp0=
-X-Received: by 2002:ac8:6f15:0:b0:4b3:ca6b:fbaa with SMTP id
- d75a77b69052e-4b3ca6c1957mr62157031cf.4.1756916142023; Wed, 03 Sep 2025
- 09:15:42 -0700 (PDT)
+	s=arc-20240116; t=1756916860; c=relaxed/simple;
+	bh=OH3nW+PjC3lZosIYqWoSXG6PUKEEzgo0VxFFrTfyR7A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s64kSQTjCbatRT420I9v1k/BoWjVkzHvc659oUEfM3WeHjAKaJJNZr3qJwDD9lhvkjkebN8D0QejD0vtpiBs91dZe9AmfDL9psjLzDV62ASnv6d/38m5tnob8Hva3qLa9UwK93jqVQN5l+y+nj9IyKxvelfnwvBOdSWpzrek6GA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IS883tnO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB6B3C4CEE7;
+	Wed,  3 Sep 2025 16:27:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756916859;
+	bh=OH3nW+PjC3lZosIYqWoSXG6PUKEEzgo0VxFFrTfyR7A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IS883tnOAI7hGXa6MbCmKHVGel7MsUG86Syi5yLZ4s7cEG6PV2AR2s953hELSf1Fn
+	 nqh+ZYlxD13xfzzgAs45vG73AUHCrSfyIgugbuUPU1E+1KITbaxpUnwfX0zuyiyCc/
+	 370g1mfhqdGHfsyed7M25iBCubjtn4iO3N2O1KnFfD2uMkiHDp3KWTF0HWUSM2hDMa
+	 2aoZbKb1B20eTVFnT8Ke2Yz3xPriI/P2KdJg/H2MXWoUgwqaLcteCqILnFdkjddDqD
+	 7v3CFTpEo/BR713ZNnx1fX6ZHoEmPOjNTUJ/Dxis6mHsZw1TTncOQauMBFVF/Pqdh+
+	 dt9ltlrLmiO6A==
+Date: Wed, 3 Sep 2025 09:27:39 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: bernd@bsbernd.com, neal@gompa.dev, John@groves.net,
+	linux-fsdevel@vger.kernel.org, joannelkoong@gmail.com
+Subject: Re: [PATCH 6/7] fuse: propagate default and file acls on creation
+Message-ID: <20250903162739.GM8117@frogsfrogsfrogs>
+References: <175573708506.15537.385109193523731230.stgit@frogsfrogsfrogs>
+ <175573708671.15537.10523102978043581580.stgit@frogsfrogsfrogs>
+ <CAJfpegvmXnZc=nC4UGw5Gya2cAr-kR0s=WNecnMhdTM_mGyuUg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <175573708506.15537.385109193523731230.stgit@frogsfrogsfrogs> <175573708671.15537.10523102978043581580.stgit@frogsfrogsfrogs>
-In-Reply-To: <175573708671.15537.10523102978043581580.stgit@frogsfrogsfrogs>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 3 Sep 2025 18:15:30 +0200
-X-Gm-Features: Ac12FXzZblCqJX4j-odxo2SSbZsVTgZ_t_Of9YfvzaofmKdUONNasDiZb8UBV7w
-Message-ID: <CAJfpegvmXnZc=nC4UGw5Gya2cAr-kR0s=WNecnMhdTM_mGyuUg@mail.gmail.com>
-Subject: Re: [PATCH 6/7] fuse: propagate default and file acls on creation
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: bernd@bsbernd.com, neal@gompa.dev, John@groves.net, 
-	linux-fsdevel@vger.kernel.org, joannelkoong@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegvmXnZc=nC4UGw5Gya2cAr-kR0s=WNecnMhdTM_mGyuUg@mail.gmail.com>
 
-On Thu, 21 Aug 2025 at 02:52, Darrick J. Wong <djwong@kernel.org> wrote:
->
-> From: Darrick J. Wong <djwong@kernel.org>
->
-> Propagate the default and file access ACLs to new children when creating
-> them, just like the other kernel filesystems.
+On Wed, Sep 03, 2025 at 06:15:30PM +0200, Miklos Szeredi wrote:
+> On Thu, 21 Aug 2025 at 02:52, Darrick J. Wong <djwong@kernel.org> wrote:
+> >
+> > From: Darrick J. Wong <djwong@kernel.org>
+> >
+> > Propagate the default and file access ACLs to new children when creating
+> > them, just like the other kernel filesystems.
+> 
+> Another problem of this and the previous patch is being racy.  Not
+> "real" filesystems like fuse2fs, but this is going to trip network fs
+> up badly, where such races would be really difficult to test.
 
-Another problem of this and the previous patch is being racy.  Not
-"real" filesystems like fuse2fs, but this is going to trip network fs
-up badly, where such races would be really difficult to test.
+Ahh, right -- I neglected that the fuse interface is more or less what
+you'd need for a client node of a network/cluster filesystem.
 
-We could add a new feature flag, but we seem to have proliferation of
-this sort.  We have default_permissions, then handle_killpriv, then
-handle_killpriv_v2.  Seems like we need a flag to tell the kernel to
-treat this as a local fs, where it can do all the local fs'y things
-without fear of breaking remote fs.
+> We could add a new feature flag, but we seem to have proliferation of
+> this sort.  We have default_permissions, then handle_killpriv, then
+> handle_killpriv_v2.  Seems like we need a flag to tell the kernel to
+> treat this as a local fs, where it can do all the local fs'y things
+> without fear of breaking remote fs.
+> 
+> Does that make sense?
 
-Does that make sense?
+Yeah.
 
-Thanks,
-Miklos
+How about I hide the functionality of this ACL patch and the previous
+one behind (fc->iomap || sb->s_bdev != NULL)?  The iomap functionality
+that I'm working on is only useful for filesystems that want to behave
+like a local fs, including all the "I went out to lunch DoS" warts.
+AFAICT the other fuse developers seem to accept that fuseblk servers can
+do that too.  Does that sound ok?
+
+If anyone ever wanted to use fuse+iomap for a cluster fs, I guess I'd
+have to go back to issuing FUSE_READ/WRITE requests to userspace for
+permission checking and resource acquisition.  But so far no cluster
+filesystems use fs/iomap/ so it's just unsupported.
+
+(And to make this explicit to anyone watching on the list -- all of my
+work is completely separate from Joanne's efforts to adapt fuse to use
+iomap for tracking pagecache dirty state.)
+
+--D
+
+> Thanks,
+> Miklos
 
