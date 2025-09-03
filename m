@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-60068-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60062-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DD15B413DC
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 06:57:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A365B413D6
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 06:56:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38E216818C9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 04:56:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 254D05456F5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 04:56:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16BC32D8363;
-	Wed,  3 Sep 2025 04:55:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA7732D7814;
+	Wed,  3 Sep 2025 04:55:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="RMmFUlNG"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="j0b7PU2Z"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B682D5425
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F952D542A
 	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Sep 2025 04:55:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756875345; cv=none; b=IeUs4oDLgyqcbV2N5Cd/kCQi7Z/bo0Z4iGE8fNbqEo+rMixeQO7fWWaaAtO14QkrL6QYmAysWwMXdZOYqRK51PduGigRKYtAqwjsnsfKvYwR5Y/mvc3JvIL4pUTi2pvhoR9SJXsC8cqCOwGYH8d/ir4Vhq2a5BoyPrcJmm/+lGU=
+	t=1756875344; cv=none; b=kGQ5kOx/lyFo7xqFAPE3j3I+3Tx1jbPDAj1eZztLsZC1F3bsvmNY9wR9Mblr1VHAys1VPS8hkMpJiX2JVPUvgGrIjDLlIuvtQGuiiV8U3Dtz2eVE9j+eFbc45H/5GT+yuRL0l8Kv7lAbSdH/Lmj4dJdiAPeKwXExPiLYkzOxNx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756875345; c=relaxed/simple;
-	bh=Q7p4SD142cFbXzyNxdrTt5RZGRMFM9SysR498AfP8Ok=;
+	s=arc-20240116; t=1756875344; c=relaxed/simple;
+	bh=ehJe1yP5mWXsWoekjJTQux8UmIhLQAfj83I4VFR4X+A=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ui7++lZNS3SINsSTkFqavsu2eNOzd6AuO7zw7SxlBDgvNtO7TJHJ3dIbbG2lyYVtYoRFQQjjBax/z2Le7ogYU82dPMZIWc2JkipjuqCf5M2ESkzTsxDlbW0g91j9XqdFJhwmasrdP8t8/tAcHrdihO8YU9INRuR30xMWcrV/Yoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=RMmFUlNG; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=MzaO28vCy95A6PmAoMRKPJzd5B2YdUImZWFd7ghvRuMQW51CXFDvPwe1oxjIrX/h44mDA13+ZUBJEny2ZLZFRLJRulvJMzT+BsvFpQ8uxSzwjJ3YMWLpSn0kskXDv8+DKCjyhKt5MMFQ+TErYvxWhZXkO6vqKHBZuVls/rwmRT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=j0b7PU2Z; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=njWj+GcfEyRq+frFnQ6t2M9QiISsKg7YGVKp2sWhKSI=; b=RMmFUlNGZAykYJJt/L9VCczf3T
-	Qn66Yo0gxtP62euQlO/E4J/UFKzwteafSANKJdBzCuiFKclkJkMFjZ+Uk2Vwu5sYNsFlZw1dgcnZD
-	WbX+znUqqMhkdNvOM/I6zs7cKRNl1vMcgPRSF7wtpYRwe8Zd8kXo5LHNVjqJI+nACy075IYo03oMm
-	thQmpxb3R9j1rujACWJrarkkvB50brq4+mMtb9rS4JykXn55FnNQlbu9+oUdAKGPNc2rdFUcKULjC
-	Xpnjxs9I9rnqqW4kIhHm9lbA5jo1jell4+1BobbAnlhx1MTUGSMC/USaT45Xg8/svsGzcAaD6+4r0
-	WJ+X4Grg==;
+	bh=+Boazuucs05bS539r/q+eKSDykQQi0QIqxSir9gnhqA=; b=j0b7PU2Ze2Q/DWomornHHBGYRh
+	b1P7FTKaG3cUwbmjwc6m2aTiV31Nff04jK2V91r3cRTUWRlobgDKyQAoZVjD9tCuc9TW/Ip7zfpBU
+	VqNoOJtMjXIrdXeD1MWrvSVxhY8AK7RD+oSI8zRuipojF3gbBJYEh50qmkKX4bqAiJavjnkUh7SO3
+	BVXMbYGeKAQiYgiOMxw931CWZbWhgD42kQd9vxTTw78aPES1GYAw6qQg4mWNbIGB7Z1TlOgd5IQON
+	p77MqH27Sx+GbVtx0Xw3D7B9b8TB3Phj959sMjNcY2FP0z8lq6sKXWJKGhNsz+LgrdmJx2vpZoAEn
+	8I0IEIjQ==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1utfX2-0000000Ap86-3mAn;
-	Wed, 03 Sep 2025 04:55:40 +0000
+	id 1utfX3-0000000Ap8K-00ax;
+	Wed, 03 Sep 2025 04:55:41 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: brauner@kernel.org,
 	jack@suse.cz,
 	torvalds@linux-foundation.org
-Subject: [PATCH v3 18/65] switch do_new_mount_fc() to fc_mount()
-Date: Wed,  3 Sep 2025 05:54:39 +0100
-Message-ID: <20250903045537.2579614-18-viro@zeniv.linux.org.uk>
+Subject: [PATCH v3 19/65] do_move_mount(): trim local variables
+Date: Wed,  3 Sep 2025 05:54:40 +0100
+Message-ID: <20250903045537.2579614-19-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250903045537.2579614-1-viro@zeniv.linux.org.uk>
 References: <20250903045432.GH39973@ZenIV>
@@ -65,91 +65,63 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Prior to the call of do_new_mount_fc() the caller has just done successful
-vfs_get_tree().  Then do_new_mount_fc() does several checks on resulting
-superblock, and either does fc_drop_locked() and returns an error or
-proceeds to unlock the superblock and call vfs_create_mount().
-
-The thing is, there's no reason to delay that unlock + vfs_create_mount() -
-the tests do not rely upon the state of ->s_umount and
-	fc_drop_locked()
-	put_fs_context()
-is equivalent to
-	unlock ->s_umount
-	put_fs_context()
-
-Doing vfs_create_mount() before the checks allows us to move vfs_get_tree()
-from caller to do_new_mount_fc() and collapse it with vfs_create_mount()
-into an fc_mount() call.
+Both 'parent' and 'ns' are used at most once, no point precalculating those...
 
 Reviewed-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/namespace.c | 29 ++++++++++++-----------------
- 1 file changed, 12 insertions(+), 17 deletions(-)
+ fs/namespace.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
 diff --git a/fs/namespace.c b/fs/namespace.c
-index 0474b3a93dbf..9b575c9eee0b 100644
+index 9b575c9eee0b..ad9b5687ff15 100644
 --- a/fs/namespace.c
 +++ b/fs/namespace.c
-@@ -3705,25 +3705,20 @@ static bool mount_too_revealing(const struct super_block *sb, int *new_mnt_flags
- static int do_new_mount_fc(struct fs_context *fc, struct path *mountpoint,
- 			   unsigned int mnt_flags)
+@@ -3564,10 +3564,8 @@ static inline bool may_use_mount(struct mount *mnt)
+ static int do_move_mount(struct path *old_path,
+ 			 struct path *new_path, enum mnt_tree_flags_t flags)
  {
--	struct vfsmount *mnt;
- 	struct pinned_mountpoint mp = {};
--	struct super_block *sb = fc->root->d_sb;
-+	struct super_block *sb;
-+	struct vfsmount *mnt = fc_mount(fc);
- 	int error;
+-	struct mnt_namespace *ns;
+ 	struct mount *p;
+ 	struct mount *old;
+-	struct mount *parent;
+ 	struct pinned_mountpoint mp;
+ 	int err;
+ 	bool beneath = flags & MNT_TREE_BENEATH;
+@@ -3578,8 +3576,6 @@ static int do_move_mount(struct path *old_path,
  
-+	if (IS_ERR(mnt))
-+		return PTR_ERR(mnt);
-+
-+	sb = fc->root->d_sb;
- 	error = security_sb_kern_mount(sb);
- 	if (!error && mount_too_revealing(sb, &mnt_flags))
- 		error = -EPERM;
--
--	if (unlikely(error)) {
--		fc_drop_locked(fc);
--		return error;
--	}
--
--	up_write(&sb->s_umount);
--
--	mnt = vfs_create_mount(fc);
--	if (IS_ERR(mnt))
--		return PTR_ERR(mnt);
-+	if (unlikely(error))
-+		goto out;
+ 	old = real_mount(old_path->mnt);
+ 	p = real_mount(new_path->mnt);
+-	parent = old->mnt_parent;
+-	ns = old->mnt_ns;
  
- 	mnt_warn_timestamp_expiry(mountpoint, mnt);
+ 	err = -EINVAL;
  
-@@ -3731,10 +3726,12 @@ static int do_new_mount_fc(struct fs_context *fc, struct path *mountpoint,
- 	if (!error) {
- 		error = do_add_mount(real_mount(mnt), mp.mp,
- 				     mountpoint, mnt_flags);
-+		if (!error)
-+			mnt = NULL;	// consumed on success
- 		unlock_mount(&mp);
- 	}
--	if (error < 0)
--		mntput(mnt);
-+out:
-+	mntput(mnt);
- 	return error;
- }
- 
-@@ -3788,8 +3785,6 @@ static int do_new_mount(struct path *path, const char *fstype, int sb_flags,
- 		err = parse_monolithic_mount_data(fc, data);
- 	if (!err && !mount_capable(fc))
- 		err = -EPERM;
--	if (!err)
--		err = vfs_get_tree(fc);
- 	if (!err)
- 		err = do_new_mount_fc(fc, path, mnt_flags);
- 
+@@ -3588,12 +3584,12 @@ static int do_move_mount(struct path *old_path,
+ 		/* ... it should be detachable from parent */
+ 		if (!mnt_has_parent(old) || IS_MNT_LOCKED(old))
+ 			goto out;
++		/* ... which should not be shared */
++		if (IS_MNT_SHARED(old->mnt_parent))
++			goto out;
+ 		/* ... and the target should be in our namespace */
+ 		if (!check_mnt(p))
+ 			goto out;
+-		/* parent of the source should not be shared */
+-		if (IS_MNT_SHARED(parent))
+-			goto out;
+ 	} else {
+ 		/*
+ 		 * otherwise the source must be the root of some anon namespace.
+@@ -3605,7 +3601,7 @@ static int do_move_mount(struct path *old_path,
+ 		 * subsequent checks would've rejected that, but they lose
+ 		 * some corner cases if we check it early.
+ 		 */
+-		if (ns == p->mnt_ns)
++		if (old->mnt_ns == p->mnt_ns)
+ 			goto out;
+ 		/*
+ 		 * Target should be either in our namespace or in an acceptable
 -- 
 2.47.2
 
