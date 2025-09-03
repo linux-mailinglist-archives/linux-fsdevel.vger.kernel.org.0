@@ -1,105 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-60167-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60168-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDE07B425C7
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 17:45:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E0ACB425DD
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 17:49:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 911BE568639
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 15:45:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B62B5481B5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 15:49:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34E0E284893;
-	Wed,  3 Sep 2025 15:45:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1236286417;
+	Wed,  3 Sep 2025 15:49:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="laYqEHqt"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="iCuIIelW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40F7C285043
-	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Sep 2025 15:45:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BC1728469D
+	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Sep 2025 15:48:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756914342; cv=none; b=rK1PQ51f6Lz9jr81pV5xw4PWrWJJLl03FPXxz7Y4g0oHl9fiLVNsVwxEJLyCBpxRn5SzY0cy3zbbFq7l98YE9pI7bBf3ZyOl7nJIdjaxYAMrxBWPBPudPdzTpVUlpLRcDj4Oyu+ImpTF3HS1vz6HsASKBI8Lv1+j7Gw/y2iPFZc=
+	t=1756914541; cv=none; b=mg6p7mrXc6ILOrlrzedDTVXzHF0nmqdE0NfpFQ5OhyDRgsBcGUkj/pEWnGMpyJ6NRd/rExYjA8ucBKr0A5BcZvt5txc5RW70Sb4YuZTsGoVAlJlAuAiQ0IgFGtHX0up4D+PjJIJnLJp0sVYNwUo5Fu/Msn4Fr1LvpZ0MUUOS32Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756914342; c=relaxed/simple;
-	bh=z++8Hj6Jl9UrAEq7qR6T6epgO8msJDYIh8avUTWtDe0=;
+	s=arc-20240116; t=1756914541; c=relaxed/simple;
+	bh=ieAo5Qk1lv7OZfmuLAF8/leyFnhuwbg6+KIrHUJF/ag=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FfHhFwzUGbQhL/PVCJ8fESyc85VaRAST2IfQk0dFBf0zN+kRLJRc4usTxYM47ot92bLaHtS3UHF/OdmvxSBHpjZIRUsuFNe4Sh9Il1gmIYopzWyOwQ54R2s9sKXi9QQaqvtmV4MwG5o0PHJdxJ2YeJ2dzhrVc11KRm8J11AFOaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=laYqEHqt; arc=none smtp.client-ip=209.85.160.176
+	 To:Cc:Content-Type; b=n6TuJu+wR0lktIhOyOzwrMsUCoQ9jUhJ68VeZ3wgovR9asy6c1y27Ev1rkqJqc3Phx296I1hLKXneOaNrjnkKa8WV4RHxLtZpcmEypbipJtp+1yXIb8RrKhPCAv4v78I98XMVNgcIFzVynaInONrUO9BQ5PXYBxLHCqcedi40V4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=iCuIIelW; arc=none smtp.client-ip=209.85.160.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4b3289ed834so646871cf.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Sep 2025 08:45:39 -0700 (PDT)
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4b33032b899so432691cf.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Sep 2025 08:48:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1756914339; x=1757519139; darn=vger.kernel.org;
+        d=szeredi.hu; s=google; t=1756914538; x=1757519338; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=FNtIClZm2rPcNW/M1aZEaGfZVMH7KL7FIY6JjS/oB1o=;
-        b=laYqEHqtNIS8ec7pnJ2DZRg0bnn62MZ8cicrkf7gfcvcAqkGjms8AqkVe4Rnd5d5RU
-         Azsa5pG0mw7DZVdKf6tiTMuQhFaEeDUFzumPNOcgBf8gpv2kuu4TiGK1q/Nuibn9XreS
-         891iBGkO55U2kiIUSA+ZflWKT+AkPcSxVm26g=
+        bh=HQIiNN02DsbldEOzOjoBCgseAA3l3sPAQynhF20rTLY=;
+        b=iCuIIelWzTd44R+pbtH41A7ujl10b0RY3D7ykBGn+01yxF9U259wqx88Ym3u6jKLnR
+         7NPbCD8N3IgaBbZGNxzrZaEcjAur2HRiMeayWaegXpUhIoYIcKy7W8jZ0vPJlxQV3O5p
+         L2zIcmzkpYDWeYdwcr2j/VBvkVD2tzBVpROKs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756914339; x=1757519139;
+        d=1e100.net; s=20230601; t=1756914538; x=1757519338;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=FNtIClZm2rPcNW/M1aZEaGfZVMH7KL7FIY6JjS/oB1o=;
-        b=sES1lSLlYsUleNPsIkxP6eaDOaME+xsUiST8AoBIEjSrxuG0RDObIs1xbEgefE8AM0
-         AHT8birlK/9mEJcop/kEUaIWlL6ZTmulTJFWB30f0r7lJoXsuUFt9phyaPnEqWHfgf0X
-         xm5x6W47YwsKKD+5Bv39yAJhQtrNPOAPCS4q6TW31BEhlJiA/VK9subzq0+Mgp0YAiIB
-         iHn3sEYGOvQlkJTPD+H32qvLV4+irCC3ikupJCSIDASrnecXY9X0PghM2fGIgwqpXThn
-         sjyMt5vkXZJojvP428DQ4xnIhpwKU1YJiU52tyrdn1wL2NHsw8zPPCrgx+jid/4OiW2i
-         k5yw==
-X-Forwarded-Encrypted: i=1; AJvYcCX/q8HruZ5VZsv34BFp8YkqFmHHtsPnH2Tac0uT0mr919DhQfZgtLKGEoXdVT6HQvPnbzfjK7iZsjOdZes2@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuN+maCZcEwQbMrpiLNR06k2Tecnq+LboU8HB5ryh1RkSzNShY
-	Y0pPkj4b8rsTge+f3960f7VMi0LO23PGRg+S6BLZNlgRP/DgJ5ymMAxRiBeUtLfrOyL2dfPjioj
-	Pky6LXJYL2Gpq6I2bhYKPvFHN+EC/nzefC65aM9MkwJ8RwVc669N+
-X-Gm-Gg: ASbGnctHUVmVH9L9UBU93k2Rc0WFSo10sNy/VghTa+xFhUFptvokKXSRubI8Db/yQRZ
-	1QeeWRhN+VyfFFi42IGmgv2qWM1dp2YzDHnU0noh9aPsUkPc04eL712ilmtem/1B9o4BdqOLg1C
-	5ouTH700gv+noOMORcL1RBesxZgB17AQyMukDJE3WnTzzJzEob7yzM/3EygHTJzE8sDZEKa8zfx
-	cOfZT5paw==
-X-Google-Smtp-Source: AGHT+IGtp/UqVx676wQKfSsn1clGPgLlQQvcL13XT9QmEAE2nTqp1KO60Bs9nCEWBNonC8hKnHWd5edJ8/43JowtpFw=
-X-Received: by 2002:ac8:5f14:0:b0:4b3:1d29:6a68 with SMTP id
- d75a77b69052e-4b31dc8e3f8mr220010531cf.71.1756914338570; Wed, 03 Sep 2025
- 08:45:38 -0700 (PDT)
+        bh=HQIiNN02DsbldEOzOjoBCgseAA3l3sPAQynhF20rTLY=;
+        b=qZBjq1SwhhI5Z7F+9jADHlBQXWnPASggFq7dxJdzS556/DhqpHA28hbAkOgMvSgsFl
+         yQX4LUKvQk6TlKqlRsg8sN+OeZs2k3bVeNksNAF+F+hPXPVBRlpS+cQiMH1uwTjF8GT8
+         BdHkM/A9SpPEprjN1jM3TiZctdZ1fuarAsh2TzhC9252O6jmSHTm+3abQvhdv2SJYQqd
+         AcyKTPT6c+/omQDoy0oUCHqvkdhAfyup3+rGnHVb5Wi4ceLU6hjEDUsv6zV/YY0ZXtFY
+         SORGVL6wVIV9rxow5nUiAYOAweTL7+X9HMhDYMlzUMz++6Bj4utgFlSRB5R5/8Ze2PIn
+         nSJw==
+X-Forwarded-Encrypted: i=1; AJvYcCVfO4/6wMrTUv3jeaXoh1ZDPpL/9KvbD5LqEHQOadv/n/H4oTR4NuhFPyU41LDCEy00WZdVG7il+2SzpumF@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdrFrPeGpKYWmyrbSJluaeLanc7XawiIiGoch//CCAJ8X3YJ39
+	QSout7TdHVUOMWbplMnbSEYfs8OYy9Al/KtIfFXdqa/M5xch0tIl9NJdEXeOZszGBJhTvbZcfa2
+	ppeURbWeTLWv4p0KPRcpbbIgmgCKfXhDZxq4V/pG4Pg==
+X-Gm-Gg: ASbGncuB7zAQU0TgmQ0urgM394OY4EREM5gpRW0NEkFa0W8ACgjJ/obs4bebpIrGpbU
+	FwDiQCMsRLxe0/LibaLOASghC3MF0FTgSqYFH8sCS1OiX0vqXzCA/Wz56gTOlfyjozowBXi31nq
+	c3npeN4Szi93iBPizYfDdHEFjnHm23d2afFozSUS562N6WSWdYKrFVgJAr9SIEOm5B2qTxWE+Dj
+	/87JMho+t9DJRZExh7grewoVNT5w5o=
+X-Google-Smtp-Source: AGHT+IEWQeyPb/coyR8msUs8+RQmeRVFk+kiHneGR5aYb2cgUYfzEnFwX1+4PQDSgqXz/kVt3dd8JCIrNsxl/2c5PTA=
+X-Received: by 2002:a05:622a:5443:b0:4b0:701c:9435 with SMTP id
+ d75a77b69052e-4b3291f41d1mr91052181cf.60.1756914538549; Wed, 03 Sep 2025
+ 08:48:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <175573708506.15537.385109193523731230.stgit@frogsfrogsfrogs> <175573708588.15537.652020578795040843.stgit@frogsfrogsfrogs>
-In-Reply-To: <175573708588.15537.652020578795040843.stgit@frogsfrogsfrogs>
+References: <175573708506.15537.385109193523731230.stgit@frogsfrogsfrogs>
+ <175573708609.15537.12935438672031544498.stgit@frogsfrogsfrogs>
+ <CAJnrk1Z_xLxDSJDcsdes+e=25ZGyKL4_No0b1fF_kUbDfB6u2w@mail.gmail.com> <20250826185201.GA19809@frogsfrogsfrogs>
+In-Reply-To: <20250826185201.GA19809@frogsfrogsfrogs>
 From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 3 Sep 2025 17:45:27 +0200
-X-Gm-Features: Ac12FXxJDPgvM1OrKoWLhKD-TqDBHK477b4OO95o1LEhbpja4Dr9wgV4p-r39mk
-Message-ID: <CAJfpegu3YUCfC=PBgiapcRnzjBXo8A_ky6YiGTYaUuxJ=e1jmg@mail.gmail.com>
-Subject: Re: [PATCH 2/7] fuse: flush pending fuse events before aborting the connection
+Date: Wed, 3 Sep 2025 17:48:46 +0200
+X-Gm-Features: Ac12FXx3DFoxLZIiuUZIKwB8BXGdWppf3xDn0KACaY_D2rtfPAVEWc7VYYduezQ
+Message-ID: <CAJfpegs-89B2_Y-=+i=E7iSJ38AgGUM2-9mCfeQ9UKA2gYEzxQ@mail.gmail.com>
+Subject: Re: [PATCH 3/7] fuse: capture the unique id of fuse commands being sent
 To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: bernd@bsbernd.com, neal@gompa.dev, John@groves.net, 
-	linux-fsdevel@vger.kernel.org, joannelkoong@gmail.com
+Cc: Joanne Koong <joannelkoong@gmail.com>, bernd@bsbernd.com, neal@gompa.dev, 
+	John@groves.net, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 21 Aug 2025 at 02:51, Darrick J. Wong <djwong@kernel.org> wrote:
+On Tue, 26 Aug 2025 at 20:52, Darrick J. Wong <djwong@kernel.org> wrote:
 
-> Create a function to push all the background requests to the queue and
-> then wait for the number of pending events to hit zero, and call this
-> before fuse_abort_conn.  That way, all the pending events are processed
-> by the fuse server and we don't end up with a corrupt filesystem.
+> Hrmm.  I was thinking that it would be very nice to have
+> fuse_request_{send,end} bracket the start and end of a fuse request,
+> even if we kill it immediately.
 
-The flushing should be dependent on fc->destroy. Without that we
-really don't want server to block umount, not even for 30s.
-
-I hate timeout based solutions, so my preference would be to remove
-the timeout completely.  It wouldn't really make a difference anyway,
-since FUSE_DESTROY is sent synchronously without a timeout.
-
-Thinking about blocking umount: if we did this in a private user/mount
-ns, then it wouldn't be a problem.  But how can we be sure?   Is
-checking sb->s_user_ns != &init_user_ns sufficient?
+I'm fine with that, and would possibly simplify some code that checks
+for an error and calls ->end manually.  But that makes it a
+non-trivial change unfortunately.
 
 Thanks,
 Miklos
