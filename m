@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-60096-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60097-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9FC1B413F9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 06:58:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80859B413F8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 06:58:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BDA556020B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 04:58:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 012321BA14FE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 04:58:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA6122D8DCF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD5E02DAFCB;
 	Wed,  3 Sep 2025 04:55:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="hsyplfbo"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Qb9TrAP4"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 510752D7DEC
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B790C2D94BE
 	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Sep 2025 04:55:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756875351; cv=none; b=EgxHaOx4cximy4SZs89j8OPbIB1zF0TMcyCvt09YU9Dsq+MMb/OHOsV3SkVesZu+pxImSmaLQqE90GTytmsUBFvhfmJDQ/6bK88zJihBoDDVJtW48qXqGFk/qpo+wge7217puOHseFdji/ajRuvcnVSr+HUPN/gZZOgvBQTnlAU=
+	t=1756875351; cv=none; b=TJ1D+wkY6hu97+bJb//MvE+OgY3EyLba4/eqkxICL37/1/0DgidiPyML/2LJJ4XSqLGhdRLUnrpV9EYCAPyaxQ5mBzLeW9jnpRPctfMtuyUfrAJIrnZIDCxF36h0hvw1+dgdluPotkob+plzeHqsX5hZ55SCRTkrsw+hiWTcv2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756875351; c=relaxed/simple;
-	bh=KINVBemYKlz5GNBGKoBs4WMl/aM01bCLodjteAudEGA=;
+	bh=15oAtulvsFJCo/+IicyGqOD6AG/uB3/D4IlAy2oYUTg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VJ9rQs/91MwvME7SVbEi8kCKjfEF1HRhLczKo8gwQ50NIXgvwbxGZW4x9GOXWLjArE5xofmTHyED1yEbhPQtpa8arp/EIaAmhtynzB7iRUGKdhZE5sVJ5X6JCGnh2UX5E6nsp0aW3Wx1LrTYCzGkHHGfh2Pzemv2MtcII1ZE7y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=hsyplfbo; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=lwSAEWavzSy7MW7uA1NDXvS1Tfg8sW0/XJq6bm4xPw5HF8Yg/WGl4kOJFKKcbYHsGe4QGLBHzKZ0PcpUS5W9M+eA+CLew0FTqooOL2E89f7eE0ZzL4owjWZNm8EYrcsz1cBdUwRcdxYcNZaHrDegvjLTT6Rg5T9o7ZIA3J7AnI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Qb9TrAP4; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=n2zCqkVhN6Bq+qc1BARoNlH9AIfwtqAURBoz/ZOgIxY=; b=hsyplfbooekRQ3LL0e9zcRI/Bt
-	w1A+Wm3FHe+1pJkLIHiHo48AnfvCnhOSM1xV5AeiApQvjycSldFt8dc6oNIq4mEx0vtO9khJcDK4l
-	h5zqTtx7VKQoUGHYHCAEAN91ZmO/RSPJlHg5jVNvUKbTpXVJb6g4kayuHyBtCPSObPeeryhDKGpon
-	8z/06/VwHnDPLhkvy2aa9iYXvYsvW3Lv1AiVBxqgi7ZJ3PhdRWIPzTy6Mni94eTFwua0mGCdt5Kcj
-	SwOmkTlL4Wom2RQTKgbDfk8SVGBKxSilYUar45wwXH7tbEpqDduqScyxNABs7hQWDsvfgK+8DPDm0
-	EzLPlZBw==;
+	bh=W2lYo70hlURjDYQIzlNkIrWt/LG5M68Hh67/j5mMQkQ=; b=Qb9TrAP4OX+mj9fmWXELXYBm3J
+	HrG9XATw0xUVZGp3Pa0xSm+LJJYH+MJ4FcIcitUl6zY2ZJdob1cnzV5BAPPD95FfPjijlqDZe1unZ
+	KwJ1dgXQCnzw86l3VFDt3JI28/QzacFkwKSTIdui6tDxr3flj50jJrOuCRd0zI3hNv5YHZPiHp81V
+	gvdZixaLvnqNoHXPN0LH5mS1Uu1obnc/8WWrxVWQY8XYHtS/joQSF7e2ScbtX4d37jOAGwQAJa+wt
+	oiK/mNLEz1vN0I+UVH5Xs1ueM8zohloy7KCEEXy/l8kM7JBfgfqEgDrwPSEQf81rz2kOI+jOgwhX5
+	aNjshIWA==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1utfX9-0000000ApFB-2pJe;
+	id 1utfX9-0000000ApFT-3i3F;
 	Wed, 03 Sep 2025 04:55:47 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: brauner@kernel.org,
 	jack@suse.cz,
 	torvalds@linux-foundation.org
-Subject: [PATCH v3 52/65] ecryptfs: get rid of pointless mount references in ecryptfs dentries
-Date: Wed,  3 Sep 2025 05:55:14 +0100
-Message-ID: <20250903045537.2579614-53-viro@zeniv.linux.org.uk>
+Subject: [PATCH v3 53/65] fs/namespace.c: sanitize descriptions for {__,}lookup_mnt()
+Date: Wed,  3 Sep 2025 05:55:15 +0100
+Message-ID: <20250903045537.2579614-54-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250903045537.2579614-1-viro@zeniv.linux.org.uk>
 References: <20250903045432.GH39973@ZenIV>
@@ -65,302 +65,78 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-->lower_path.mnt has the same value for all dentries on given ecryptfs
-instance and if somebody goes for mountpoint-crossing variant where that
-would not be true, we can deal with that when it happens (and _not_
-with duplicating these reference into each dentry).
-
-As it is, we are better off just sticking a reference into ecryptfs-private
-part of superblock and keeping it pinned until ->kill_sb().
-
-That way we can stick a reference to underlying dentry right into ->d_fsdata
-of ecryptfs one, getting rid of indirection through struct ecryptfs_dentry_info,
-along with the entire struct ecryptfs_dentry_info machinery.
+Comments regarding "shadow mounts" were stale - no such thing anymore.
+Document the locking requirements for __lookup_mnt().
 
 Reviewed-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/ecryptfs/dentry.c          | 14 +-------------
- fs/ecryptfs/ecryptfs_kernel.h | 27 +++++++++++----------------
- fs/ecryptfs/file.c            | 15 +++++++--------
- fs/ecryptfs/inode.c           | 19 +++++--------------
- fs/ecryptfs/main.c            | 24 ++++++------------------
- 5 files changed, 30 insertions(+), 69 deletions(-)
+ fs/namespace.c | 41 ++++++++++++-----------------------------
+ 1 file changed, 12 insertions(+), 29 deletions(-)
 
-diff --git a/fs/ecryptfs/dentry.c b/fs/ecryptfs/dentry.c
-index 1dfd5b81d831..6648a924e31a 100644
---- a/fs/ecryptfs/dentry.c
-+++ b/fs/ecryptfs/dentry.c
-@@ -59,14 +59,6 @@ static int ecryptfs_d_revalidate(struct inode *dir, const struct qstr *name,
- 	return rc;
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 0900fd7456a9..a195e25a5d61 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -825,24 +825,16 @@ static bool legitimize_mnt(struct vfsmount *bastard, unsigned seq)
  }
  
--struct kmem_cache *ecryptfs_dentry_info_cache;
--
--static void ecryptfs_dentry_free_rcu(struct rcu_head *head)
--{
--	kmem_cache_free(ecryptfs_dentry_info_cache,
--		container_of(head, struct ecryptfs_dentry_info, rcu));
--}
--
  /**
-  * ecryptfs_d_release
-  * @dentry: The ecryptfs dentry
-@@ -75,11 +67,7 @@ static void ecryptfs_dentry_free_rcu(struct rcu_head *head)
+- * __lookup_mnt - find first child mount
++ * __lookup_mnt - mount hash lookup
+  * @mnt:	parent mount
+- * @dentry:	mountpoint
++ * @dentry:	dentry of mountpoint
+  *
+- * If @mnt has a child mount @c mounted @dentry find and return it.
++ * If @mnt has a child mount @c mounted on @dentry find and return it.
++ * Caller must either hold the spinlock component of @mount_lock or
++ * hold rcu_read_lock(), sample the seqcount component before the call
++ * and recheck it afterwards.
+  *
+- * Note that the child mount @c need not be unique. There are cases
+- * where shadow mounts are created. For example, during mount
+- * propagation when a source mount @mnt whose root got overmounted by a
+- * mount @o after path lookup but before @namespace_sem could be
+- * acquired gets copied and propagated. So @mnt gets copied including
+- * @o. When @mnt is propagated to a destination mount @d that already
+- * has another mount @n mounted at the same mountpoint then the source
+- * mount @mnt will be tucked beneath @n, i.e., @n will be mounted on
+- * @mnt and @mnt mounted on @d. Now both @n and @o are mounted at @mnt
+- * on @dentry.
+- *
+- * Return: The first child of @mnt mounted @dentry or NULL.
++ * Return: The child of @mnt mounted on @dentry or %NULL.
   */
- static void ecryptfs_d_release(struct dentry *dentry)
+ struct mount *__lookup_mnt(struct vfsmount *mnt, struct dentry *dentry)
  {
--	struct ecryptfs_dentry_info *p = dentry->d_fsdata;
--	if (p) {
--		path_put(&p->lower_path);
--		call_rcu(&p->rcu, ecryptfs_dentry_free_rcu);
--	}
-+	dput(dentry->d_fsdata);
+@@ -855,21 +847,12 @@ struct mount *__lookup_mnt(struct vfsmount *mnt, struct dentry *dentry)
+ 	return NULL;
  }
  
- const struct dentry_operations ecryptfs_dops = {
-diff --git a/fs/ecryptfs/ecryptfs_kernel.h b/fs/ecryptfs/ecryptfs_kernel.h
-index 1f562e75d0e4..9e6ab0b41337 100644
---- a/fs/ecryptfs/ecryptfs_kernel.h
-+++ b/fs/ecryptfs/ecryptfs_kernel.h
-@@ -258,13 +258,6 @@ struct ecryptfs_inode_info {
- 	struct ecryptfs_crypt_stat crypt_stat;
- };
- 
--/* dentry private data. Each dentry must keep track of a lower
-- * vfsmount too. */
--struct ecryptfs_dentry_info {
--	struct path lower_path;
--	struct rcu_head rcu;
--};
--
- /**
-  * ecryptfs_global_auth_tok - A key used to encrypt all new files under the mountpoint
-  * @flags: Status flags
-@@ -348,6 +341,7 @@ struct ecryptfs_mount_crypt_stat {
- /* superblock private data. */
- struct ecryptfs_sb_info {
- 	struct super_block *wsi_sb;
-+	struct vfsmount *lower_mnt;
- 	struct ecryptfs_mount_crypt_stat mount_crypt_stat;
- };
- 
-@@ -494,22 +488,25 @@ ecryptfs_set_superblock_lower(struct super_block *sb,
- }
- 
- static inline void
--ecryptfs_set_dentry_private(struct dentry *dentry,
--			    struct ecryptfs_dentry_info *dentry_info)
-+ecryptfs_set_dentry_lower(struct dentry *dentry,
-+			  struct dentry *lower_dentry)
+-/*
+- * lookup_mnt - Return the first child mount mounted at path
+- *
+- * "First" means first mounted chronologically.  If you create the
+- * following mounts:
+- *
+- * mount /dev/sda1 /mnt
+- * mount /dev/sda2 /mnt
+- * mount /dev/sda3 /mnt
+- *
+- * Then lookup_mnt() on the base /mnt dentry in the root mount will
+- * return successively the root dentry and vfsmount of /dev/sda1, then
+- * /dev/sda2, then /dev/sda3, then NULL.
++/**
++ * lookup_mnt - Return the child mount mounted at given location
++ * @path:	location in the namespace
+  *
+- * lookup_mnt takes a reference to the found vfsmount.
++ * Acquires and returns a new reference to mount at given location
++ * or %NULL if nothing is mounted there.
+  */
+ struct vfsmount *lookup_mnt(const struct path *path)
  {
--	dentry->d_fsdata = dentry_info;
-+	dentry->d_fsdata = lower_dentry;
- }
- 
- static inline struct dentry *
- ecryptfs_dentry_to_lower(struct dentry *dentry)
- {
--	return ((struct ecryptfs_dentry_info *)dentry->d_fsdata)->lower_path.dentry;
-+	return dentry->d_fsdata;
- }
- 
--static inline const struct path *
--ecryptfs_dentry_to_lower_path(struct dentry *dentry)
-+static inline struct path
-+ecryptfs_lower_path(struct dentry *dentry)
- {
--	return &((struct ecryptfs_dentry_info *)dentry->d_fsdata)->lower_path;
-+	return (struct path){
-+		.mnt = ecryptfs_superblock_to_private(dentry->d_sb)->lower_mnt,
-+		.dentry = ecryptfs_dentry_to_lower(dentry)
-+	};
- }
- 
- #define ecryptfs_printk(type, fmt, arg...) \
-@@ -532,7 +529,6 @@ extern unsigned int ecryptfs_number_of_users;
- 
- extern struct kmem_cache *ecryptfs_auth_tok_list_item_cache;
- extern struct kmem_cache *ecryptfs_file_info_cache;
--extern struct kmem_cache *ecryptfs_dentry_info_cache;
- extern struct kmem_cache *ecryptfs_inode_info_cache;
- extern struct kmem_cache *ecryptfs_sb_info_cache;
- extern struct kmem_cache *ecryptfs_header_cache;
-@@ -557,7 +553,6 @@ int ecryptfs_encrypt_and_encode_filename(
- 	size_t *encoded_name_size,
- 	struct ecryptfs_mount_crypt_stat *mount_crypt_stat,
- 	const char *name, size_t name_size);
--struct dentry *ecryptfs_lower_dentry(struct dentry *this_dentry);
- void ecryptfs_dump_hex(char *data, int bytes);
- int virt_to_scatterlist(const void *addr, int size, struct scatterlist *sg,
- 			int sg_size);
-diff --git a/fs/ecryptfs/file.c b/fs/ecryptfs/file.c
-index 5f8f96da09fe..7929411837cf 100644
---- a/fs/ecryptfs/file.c
-+++ b/fs/ecryptfs/file.c
-@@ -33,13 +33,12 @@ static ssize_t ecryptfs_read_update_atime(struct kiocb *iocb,
- 				struct iov_iter *to)
- {
- 	ssize_t rc;
--	const struct path *path;
- 	struct file *file = iocb->ki_filp;
- 
- 	rc = generic_file_read_iter(iocb, to);
- 	if (rc >= 0) {
--		path = ecryptfs_dentry_to_lower_path(file->f_path.dentry);
--		touch_atime(path);
-+		struct path path = ecryptfs_lower_path(file->f_path.dentry);
-+		touch_atime(&path);
- 	}
- 	return rc;
- }
-@@ -59,12 +58,11 @@ static ssize_t ecryptfs_splice_read_update_atime(struct file *in, loff_t *ppos,
- 						 size_t len, unsigned int flags)
- {
- 	ssize_t rc;
--	const struct path *path;
- 
- 	rc = filemap_splice_read(in, ppos, pipe, len, flags);
- 	if (rc >= 0) {
--		path = ecryptfs_dentry_to_lower_path(in->f_path.dentry);
--		touch_atime(path);
-+		struct path path = ecryptfs_lower_path(in->f_path.dentry);
-+		touch_atime(&path);
- 	}
- 	return rc;
- }
-@@ -283,6 +281,7 @@ static int ecryptfs_dir_open(struct inode *inode, struct file *file)
- 	 * ecryptfs_lookup() */
- 	struct ecryptfs_file_info *file_info;
- 	struct file *lower_file;
-+	struct path path;
- 
- 	/* Released in ecryptfs_release or end of function if failure */
- 	file_info = kmem_cache_zalloc(ecryptfs_file_info_cache, GFP_KERNEL);
-@@ -292,8 +291,8 @@ static int ecryptfs_dir_open(struct inode *inode, struct file *file)
- 				"Error attempting to allocate memory\n");
- 		return -ENOMEM;
- 	}
--	lower_file = dentry_open(ecryptfs_dentry_to_lower_path(ecryptfs_dentry),
--				 file->f_flags, current_cred());
-+	path = ecryptfs_lower_path(ecryptfs_dentry);
-+	lower_file = dentry_open(&path, file->f_flags, current_cred());
- 	if (IS_ERR(lower_file)) {
- 		printk(KERN_ERR "%s: Error attempting to initialize "
- 			"the lower file for the dentry with name "
-diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
-index 72fbe1316ab8..d2b262dc485d 100644
---- a/fs/ecryptfs/inode.c
-+++ b/fs/ecryptfs/inode.c
-@@ -327,24 +327,15 @@ static int ecryptfs_i_size_read(struct dentry *dentry, struct inode *inode)
- static struct dentry *ecryptfs_lookup_interpose(struct dentry *dentry,
- 				     struct dentry *lower_dentry)
- {
--	const struct path *path = ecryptfs_dentry_to_lower_path(dentry->d_parent);
-+	struct dentry *lower_parent = ecryptfs_dentry_to_lower(dentry->d_parent);
- 	struct inode *inode, *lower_inode;
--	struct ecryptfs_dentry_info *dentry_info;
- 	int rc = 0;
- 
--	dentry_info = kmem_cache_alloc(ecryptfs_dentry_info_cache, GFP_KERNEL);
--	if (!dentry_info) {
--		dput(lower_dentry);
--		return ERR_PTR(-ENOMEM);
--	}
--
- 	fsstack_copy_attr_atime(d_inode(dentry->d_parent),
--				d_inode(path->dentry));
-+				d_inode(lower_parent));
- 	BUG_ON(!d_count(lower_dentry));
- 
--	ecryptfs_set_dentry_private(dentry, dentry_info);
--	dentry_info->lower_path.mnt = mntget(path->mnt);
--	dentry_info->lower_path.dentry = lower_dentry;
-+	ecryptfs_set_dentry_lower(dentry, lower_dentry);
- 
- 	/*
- 	 * negative dentry can go positive under us here - its parent is not
-@@ -1022,10 +1013,10 @@ static int ecryptfs_getattr(struct mnt_idmap *idmap,
- {
- 	struct dentry *dentry = path->dentry;
- 	struct kstat lower_stat;
-+	struct path lower_path = ecryptfs_lower_path(dentry);
- 	int rc;
- 
--	rc = vfs_getattr_nosec(ecryptfs_dentry_to_lower_path(dentry),
--			       &lower_stat, request_mask, flags);
-+	rc = vfs_getattr_nosec(&lower_path, &lower_stat, request_mask, flags);
- 	if (!rc) {
- 		fsstack_copy_attr_all(d_inode(dentry),
- 				      ecryptfs_inode_to_lower(d_inode(dentry)));
-diff --git a/fs/ecryptfs/main.c b/fs/ecryptfs/main.c
-index eab1beb846d3..2afbcbbd9546 100644
---- a/fs/ecryptfs/main.c
-+++ b/fs/ecryptfs/main.c
-@@ -106,15 +106,14 @@ static int ecryptfs_init_lower_file(struct dentry *dentry,
- 				    struct file **lower_file)
- {
- 	const struct cred *cred = current_cred();
--	const struct path *path = ecryptfs_dentry_to_lower_path(dentry);
-+	struct path path = ecryptfs_lower_path(dentry);
- 	int rc;
- 
--	rc = ecryptfs_privileged_open(lower_file, path->dentry, path->mnt,
--				      cred);
-+	rc = ecryptfs_privileged_open(lower_file, path.dentry, path.mnt, cred);
- 	if (rc) {
- 		printk(KERN_ERR "Error opening lower file "
- 		       "for lower_dentry [0x%p] and lower_mnt [0x%p]; "
--		       "rc = [%d]\n", path->dentry, path->mnt, rc);
-+		       "rc = [%d]\n", path.dentry, path.mnt, rc);
- 		(*lower_file) = NULL;
- 	}
- 	return rc;
-@@ -437,7 +436,6 @@ static int ecryptfs_get_tree(struct fs_context *fc)
- 	struct ecryptfs_fs_context *ctx = fc->fs_private;
- 	struct ecryptfs_sb_info *sbi = fc->s_fs_info;
- 	struct ecryptfs_mount_crypt_stat *mount_crypt_stat;
--	struct ecryptfs_dentry_info *root_info;
- 	const char *err = "Getting sb failed";
- 	struct inode *inode;
- 	struct path path;
-@@ -543,14 +541,8 @@ static int ecryptfs_get_tree(struct fs_context *fc)
- 		goto out_free;
- 	}
- 
--	rc = -ENOMEM;
--	root_info = kmem_cache_zalloc(ecryptfs_dentry_info_cache, GFP_KERNEL);
--	if (!root_info)
--		goto out_free;
--
--	/* ->kill_sb() will take care of root_info */
--	ecryptfs_set_dentry_private(s->s_root, root_info);
--	root_info->lower_path = path;
-+	ecryptfs_set_dentry_lower(s->s_root, path.dentry);
-+	sbi->lower_mnt = path.mnt;
- 
- 	s->s_flags |= SB_ACTIVE;
- 	fc->root = dget(s->s_root);
-@@ -580,6 +572,7 @@ static void ecryptfs_kill_block_super(struct super_block *sb)
- 	kill_anon_super(sb);
- 	if (!sb_info)
- 		return;
-+	mntput(sb_info->lower_mnt);
- 	ecryptfs_destroy_mount_crypt_stat(&sb_info->mount_crypt_stat);
- 	kmem_cache_free(ecryptfs_sb_info_cache, sb_info);
- }
-@@ -667,11 +660,6 @@ static struct ecryptfs_cache_info {
- 		.name = "ecryptfs_file_cache",
- 		.size = sizeof(struct ecryptfs_file_info),
- 	},
--	{
--		.cache = &ecryptfs_dentry_info_cache,
--		.name = "ecryptfs_dentry_info_cache",
--		.size = sizeof(struct ecryptfs_dentry_info),
--	},
- 	{
- 		.cache = &ecryptfs_inode_info_cache,
- 		.name = "ecryptfs_inode_cache",
 -- 
 2.47.2
 
