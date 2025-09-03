@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-60119-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60116-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07895B4140E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 06:59:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1075BB4140A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 06:59:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C70B1BA1487
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 04:59:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FCA61BA15F2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 04:59:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 874CE2DA76A;
-	Wed,  3 Sep 2025 04:56:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D65FC2DEA75;
+	Wed,  3 Sep 2025 04:55:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="BoJHkGZ2"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="glRjSFIF"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 945702DAFC7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D722DC33F
 	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Sep 2025 04:55:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756875360; cv=none; b=JvIHOe5AXbxOTAI1EbPeUIebmRuem6HKLjPLb/bt69KrR0wRlabojcvYOs24sYxknk3VrMGi7p7LfxqhO86uG84WUMuX7c8ilv3mZ3QJt319FNi2UKHenqGwvBpTb8uIwSUtKMAtgCVdNEg0wgGb2E/oO+/NJ0KkCkSl422ibeE=
+	t=1756875359; cv=none; b=Vy6kdo7yxqU5KxTWXLhIcCqBwg08GzH5+NHJajfbgs4ZMYS/9FInk0X0/lrdHnTUJGNQRZ6XKz0HSjWcognlNAE6btNNG+OgJX9CEB28gQCgKR2UKpuwNPw2KDAyEvIZI/osXYBNHjoT6Yqpp6Xir2su5bTU+sMefMPaS4UwZec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756875360; c=relaxed/simple;
-	bh=JCHKL1hSn4VKhDjSRbg6DdLKvAiic2vd9oaOmcyb6p0=;
+	s=arc-20240116; t=1756875359; c=relaxed/simple;
+	bh=G2bIVk7ExwG+sNoQyDWv6HChzxDw28yKnyTXUQ3KXig=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eztFNL5DOT4r+TV6OqktP24AhR+zbEKEahXI/SR1j9RxAqYSBtATW1f2tFcqI8kB0UG/XDoN/7tmdaL3WowLd1DzoKs885Mw8seS30NXwxvPO8nZZVKb8z4bz3RyNbEfQWyteZy7btsnN6VMwPbnOufxgqxJ8X0HttLb1PdNThM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=BoJHkGZ2; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=M86q3LbJkwmOxUBtg8gDknVFEHVUY/n7XioLwOdMKgxEZE5aohNo+8tyGGkxZh5NLgqzEotAjTx7YOTL7Vqjwfc1yggGObMlWLVxWZP/g3wx2eXP0bOKMXE2MApxAi/yG9XTfoe6rdtiOGjbgAf0QCoIb5efv6x43a/TnRrHacM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=glRjSFIF; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=HO6brYjHKQ91jbXLVnYgA+FrWQnyT78eyX/mdoGQ4Ck=; b=BoJHkGZ2OUN8H5HGTG0sVBEBp0
-	2sQQCZZhORitX5fl3nybc7q2aNAfowv+n7LkQ/ksjbZ0UYlYg75GSD9wfdB02SV83Cm6jZl7FA1aj
-	30djFs+ahoh7x6/j+mBUxTlTWvZLZCoSRf0KgEVX/S1HGFPO3+MOO3VoxHiu6hqmpNv3WR6al7Gzn
-	qrDTrijHBoaE9ZCm4ng/C1oDuTIgXERk02eYinWwCrNi7XXA2mWwB0vzIGxiP300eR0RP0m8VvLB2
-	OmZkGvxEpdhk9G33l7tNUdDcp4tQYq6egJ70w87fsOfuznP6b3d+i2kDeTRJ/KPdrDz6YMx0wWZKH
-	AegbnL6w==;
+	bh=JkKtLaZEjFwFQ58LkxEfVWC13DGh6qMliHOtV5eqmVI=; b=glRjSFIFTNXnl1mq5pXKYIM1de
+	EdorJlk/XyzVkPHefdVQ4mqEzn+RQRu6WEyK3eQILD/aG/5JzRBKRZMqaY3E06JlXWhKEOBvN6I6l
+	/IAJSNaYUqNysdZXhGcfOyV6iScrRjUlK9qnJzG6+qaBlOMEoklBAhpOrTsmAzq/H7A5KVxmQ3Gsi
+	7mfLps1IjFyb+aVYOc3FQvm/OzG6mjM76kl41NXsmoD55nLMOuug2UzZrl+ysxYIeRj1G9fJLd+vM
+	fZIAkm9j7Fsc/FTDBdxbY/hF0n3l0k4kRFxNZA2QoABKGrxEOjyg+JveGqaBORcqa9CT8I+kQYAPs
+	XZTRxdIA==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1utfXI-0000000ApMo-0Gnn;
+	id 1utfXI-0000000ApN6-1Qta;
 	Wed, 03 Sep 2025 04:55:56 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: brauner@kernel.org,
 	jack@suse.cz,
 	torvalds@linux-foundation.org
-Subject: [PATCH v3 63/65] struct mount: relocate MNT_WRITE_HOLD bit
-Date: Wed,  3 Sep 2025 05:55:34 +0100
-Message-ID: <20250903045537.2579614-73-viro@zeniv.linux.org.uk>
+Subject: [PATCH v3 63/63] WRITE_HOLD machinery: no need for to bump mount_lock seqcount
+Date: Wed,  3 Sep 2025 05:55:35 +0100
+Message-ID: <20250903045537.2579614-74-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250903045537.2579614-1-viro@zeniv.linux.org.uk>
 References: <20250903045432.GH39973@ZenIV>
@@ -65,192 +65,85 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-... from ->mnt_flags to LSB of ->mnt_pprev_for_sb.
+... neither for insertion into the list of instances, nor for
+mnt_{un,}hold_writers(), nor for mnt_get_write_access() deciding
+to be nice to RT during a busy-wait loop - all of that only needs
+the spinlock side of mount_lock.
 
-This is safe - we always set and clear it within the same mount_lock
-scope, so we won't interfere with list operations - traversals are
-always forward, so they don't even look at ->mnt_prev_for_sb and
-both insertions and removals are in mount_lock scopes of their own,
-so that bit will be clear in *all* mount instances during those.
+IOW, it's mount_locked_reader, not mount_writer.
 
-Reviewed-by: Christian Brauner <brauner@kernel.org>
+Clarify the comment re locking rules for mnt_unhold_writers() - it's
+not just that mount_lock needs to be held when calling that, it must
+have been held all along since the matching mnt_hold_writers().
+
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/mount.h            | 25 ++++++++++++++++++++++++-
- fs/namespace.c        | 34 +++++++++++++++++-----------------
- include/linux/mount.h |  3 +--
- 3 files changed, 42 insertions(+), 20 deletions(-)
+ fs/namespace.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/fs/mount.h b/fs/mount.h
-index b208f69f69d7..40cf16544317 100644
---- a/fs/mount.h
-+++ b/fs/mount.h
-@@ -66,7 +66,8 @@ struct mount {
- 	struct list_head mnt_child;	/* and going through their mnt_child */
- 	struct mount *mnt_next_for_sb;	/* the next two fields are hlist_node, */
- 	struct mount * __aligned(1) *mnt_pprev_for_sb;
--					/* except that LSB of pprev will be stolen */
-+					/* except that LSB of pprev is stolen */
-+#define WRITE_HOLD 1			/* ... for use by mnt_hold_writers() */
- 	const char *mnt_devname;	/* Name of device e.g. /dev/dsk/hda1 */
- 	struct list_head mnt_list;
- 	struct list_head mnt_expire;	/* link in fs-specific expiry list */
-@@ -244,4 +245,26 @@ static inline struct mount *topmost_overmount(struct mount *m)
- 	return m;
- }
- 
-+static inline bool __test_write_hold(struct mount * __aligned(1) *val)
-+{
-+	return (unsigned long)val & WRITE_HOLD;
-+}
-+
-+static inline bool test_write_hold(const struct mount *m)
-+{
-+	return __test_write_hold(m->mnt_pprev_for_sb);
-+}
-+
-+static inline void set_write_hold(struct mount *m)
-+{
-+	m->mnt_pprev_for_sb = (void *)((unsigned long)m->mnt_pprev_for_sb
-+				       | WRITE_HOLD);
-+}
-+
-+static inline void clear_write_hold(struct mount *m)
-+{
-+	m->mnt_pprev_for_sb = (void *)((unsigned long)m->mnt_pprev_for_sb
-+				       & ~WRITE_HOLD);
-+}
-+
- struct mnt_namespace *mnt_ns_from_dentry(struct dentry *dentry);
 diff --git a/fs/namespace.c b/fs/namespace.c
-index eb1b557e9f6d..64cbd8e8a1d3 100644
+index 8e6b6523d3e8..8f0900857822 100644
 --- a/fs/namespace.c
 +++ b/fs/namespace.c
-@@ -509,20 +509,20 @@ int mnt_get_write_access(struct vfsmount *m)
- 	mnt_inc_writers(mnt);
- 	/*
- 	 * The store to mnt_inc_writers must be visible before we pass
--	 * MNT_WRITE_HOLD loop below, so that the slowpath can see our
--	 * incremented count after it has set MNT_WRITE_HOLD.
-+	 * WRITE_HOLD loop below, so that the slowpath can see our
-+	 * incremented count after it has set WRITE_HOLD.
- 	 */
- 	smp_mb();
- 	might_lock(&mount_lock.lock);
--	while (READ_ONCE(mnt->mnt.mnt_flags) & MNT_WRITE_HOLD) {
-+	while (__test_write_hold(READ_ONCE(mnt->mnt_pprev_for_sb))) {
- 		if (!IS_ENABLED(CONFIG_PREEMPT_RT)) {
- 			cpu_relax();
- 		} else {
- 			/*
- 			 * This prevents priority inversion, if the task
--			 * setting MNT_WRITE_HOLD got preempted on a remote
-+			 * setting WRITE_HOLD got preempted on a remote
- 			 * CPU, and it prevents life lock if the task setting
--			 * MNT_WRITE_HOLD has a lower priority and is bound to
-+			 * WRITE_HOLD has a lower priority and is bound to
+@@ -526,8 +526,8 @@ int mnt_get_write_access(struct vfsmount *m)
  			 * the same CPU as the task that is spinning here.
  			 */
  			preempt_enable();
-@@ -533,7 +533,7 @@ int mnt_get_write_access(struct vfsmount *m)
+-			lock_mount_hash();
+-			unlock_mount_hash();
++			read_seqlock_excl(&mount_lock);
++			read_sequnlock_excl(&mount_lock);
+ 			preempt_disable();
+ 		}
  	}
- 	/*
- 	 * The barrier pairs with the barrier sb_start_ro_state_change() making
--	 * sure that if we see MNT_WRITE_HOLD cleared, we will also see
-+	 * sure that if we see WRITE_HOLD cleared, we will also see
- 	 * s_readonly_remount set (or even SB_RDONLY / MNT_READONLY flags) in
- 	 * mnt_is_readonly() and bail in case we are racing with remount
- 	 * read-only.
-@@ -672,15 +672,15 @@ EXPORT_SYMBOL(mnt_drop_write_file);
+@@ -671,7 +671,7 @@ EXPORT_SYMBOL(mnt_drop_write_file);
+  * a call to mnt_unhold_writers() in order to stop preventing write access to
   * @mnt.
   *
-  * Context: This function expects lock_mount_hash() to be held serializing
-- *          setting MNT_WRITE_HOLD.
-+ *          setting WRITE_HOLD.
+- * Context: This function expects lock_mount_hash() to be held serializing
++ * Context: This function expects to be in mount_locked_reader scope serializing
+  *          setting WRITE_HOLD.
   * Return: On success 0 is returned.
   *	   On error, -EBUSY is returned.
-  */
- static inline int mnt_hold_writers(struct mount *mnt)
- {
--	mnt->mnt.mnt_flags |= MNT_WRITE_HOLD;
-+	set_write_hold(mnt);
- 	/*
--	 * After storing MNT_WRITE_HOLD, we'll read the counters. This store
-+	 * After storing WRITE_HOLD, we'll read the counters. This store
- 	 * should be visible before we do.
- 	 */
- 	smp_mb();
-@@ -696,9 +696,9 @@ static inline int mnt_hold_writers(struct mount *mnt)
- 	 * sum up each counter, if we read a counter before it is incremented,
- 	 * but then read another CPU's count which it has been subsequently
- 	 * decremented from -- we would see more decrements than we should.
--	 * MNT_WRITE_HOLD protects against this scenario, because
-+	 * WRITE_HOLD protects against this scenario, because
- 	 * mnt_want_write first increments count, then smp_mb, then spins on
--	 * MNT_WRITE_HOLD, so it can't be decremented by another CPU while
-+	 * WRITE_HOLD, so it can't be decremented by another CPU while
- 	 * we're counting up here.
- 	 */
- 	if (mnt_get_writers(mnt) > 0)
-@@ -720,14 +720,14 @@ static inline int mnt_hold_writers(struct mount *mnt)
+@@ -716,7 +716,8 @@ static inline int mnt_hold_writers(struct mount *mnt)
+  *
+  * This function can only be called after a call to mnt_hold_writers().
+  *
+- * Context: This function expects lock_mount_hash() to be held.
++ * Context: This function expects to be in the same mount_locked_reader scope
++ * as the matching mnt_hold_writers().
   */
  static inline void mnt_unhold_writers(struct mount *mnt)
  {
--	if (!(mnt->mnt_flags & MNT_WRITE_HOLD))
-+	if (!test_write_hold(mnt))
- 		return;
- 	/*
--	 * MNT_READONLY must become visible before ~MNT_WRITE_HOLD, so writers
-+	 * MNT_READONLY must become visible before ~WRITE_HOLD, so writers
- 	 * that become unheld will see MNT_READONLY.
- 	 */
- 	smp_wmb();
--	mnt->mnt.mnt_flags &= ~MNT_WRITE_HOLD;
-+	clear_write_hold(mnt);
- }
- 
- static inline void mnt_del_instance(struct mount *m)
-@@ -766,7 +766,7 @@ int sb_prepare_remount_readonly(struct super_block *sb)
- {
- 	int err = 0;
- 
--	/* Racy optimization.  Recheck the counter under MNT_WRITE_HOLD */
-+	/* Racy optimization.  Recheck the counter under WRITE_HOLD */
+@@ -770,7 +771,8 @@ int sb_prepare_remount_readonly(struct super_block *sb)
  	if (atomic_long_read(&sb->s_remove_count))
  		return -EBUSY;
  
-@@ -784,8 +784,8 @@ int sb_prepare_remount_readonly(struct super_block *sb)
- 	if (!err)
- 		sb_start_ro_state_change(sb);
+-	lock_mount_hash();
++	guard(mount_locked_reader)();
++
  	for (struct mount *m = sb->s_mounts; m; m = m->mnt_next_for_sb) {
--		if (m->mnt.mnt_flags & MNT_WRITE_HOLD)
--			m->mnt.mnt_flags &= ~MNT_WRITE_HOLD;
-+		if (test_write_hold(m))
-+			clear_write_hold(m);
+ 		if (!(m->mnt.mnt_flags & MNT_READONLY)) {
+ 			err = mnt_hold_writers(m);
+@@ -787,7 +789,6 @@ int sb_prepare_remount_readonly(struct super_block *sb)
+ 		if (test_write_hold(m))
+ 			clear_write_hold(m);
  	}
- 	unlock_mount_hash();
+-	unlock_mount_hash();
  
-diff --git a/include/linux/mount.h b/include/linux/mount.h
-index 18e4b97f8a98..85e97b9340ff 100644
---- a/include/linux/mount.h
-+++ b/include/linux/mount.h
-@@ -33,7 +33,6 @@ enum mount_flags {
- 	MNT_NOSYMFOLLOW	= 0x80,
+ 	return err;
+ }
+@@ -1226,9 +1227,8 @@ static void setup_mnt(struct mount *m, struct dentry *root)
+ 	m->mnt_mountpoint = m->mnt.mnt_root;
+ 	m->mnt_parent = m;
  
- 	MNT_SHRINKABLE	= 0x100,
--	MNT_WRITE_HOLD	= 0x200,
+-	lock_mount_hash();
++	guard(mount_locked_reader)();
+ 	mnt_add_instance(m, s);
+-	unlock_mount_hash();
+ }
  
- 	MNT_INTERNAL	= 0x4000,
- 
-@@ -52,7 +51,7 @@ enum mount_flags {
- 				  | MNT_READONLY | MNT_NOSYMFOLLOW,
- 	MNT_ATIME_MASK = MNT_NOATIME | MNT_NODIRATIME | MNT_RELATIME,
- 
--	MNT_INTERNAL_FLAGS = MNT_WRITE_HOLD | MNT_INTERNAL | MNT_DOOMED |
-+	MNT_INTERNAL_FLAGS = MNT_INTERNAL | MNT_DOOMED |
- 			     MNT_SYNC_UMOUNT | MNT_LOCKED
- };
- 
+ /**
 -- 
 2.47.2
 
