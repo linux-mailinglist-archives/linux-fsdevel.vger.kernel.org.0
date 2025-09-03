@@ -1,199 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-60157-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60158-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EDDBB4235E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 16:17:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD980B423FA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 16:47:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02A0E16567B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 14:17:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64F1E1BA3E68
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 14:48:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32E7930DD3A;
-	Wed,  3 Sep 2025 14:17:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BE9B285CB6;
+	Wed,  3 Sep 2025 14:47:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g2qkEx0s"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="F9zpkQlF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E6D22FCC0D;
-	Wed,  3 Sep 2025 14:17:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A031F4E57
+	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Sep 2025 14:47:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756909046; cv=none; b=EyKGFxefhnXGMmha2K7m6HS/qNH0MWF0NdaO2/ZM3ciJXUZuH4fMvt83Wk19pkB8IP0zYMA4Ofe9nO1744UROrzIiQM3TVNYH9MRcTX4iWPp1oKwZO2fuYq60FaDS7b5EMpKtrrU2Oyv54flXH0nTIXtZ/YMayWGCQjcuNt0Ssc=
+	t=1756910860; cv=none; b=cBVtD9lnHE1N6xb79yFfgr9Lyrabl29A/zACmg/nUj4KxrSh1qRZtwdsgQRRszLd2zP1nGc5CgbU1Y6KTcxDzeDtaye2ja97vo/IpOtFxVCqReqsMNQvy3XP45GYOzT0xa2H3wzIRcqjTcgMXH//S3pEf1xOoP3yjkDDynbrVuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756909046; c=relaxed/simple;
-	bh=rkSg1vCoekuc9whKWjo4hgqm1Elyfx6nN2+yYBdxBhc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=lFgo4809J7RzDkntROlbTQKFaIcsJ52FDWFV2fM0vlrB6QMPUrRBVn1ro3+DxUa3/q3AVmKMqnTGvoYxHWeVbO2VtFf1tLRcEpnugLofrspQzyWrHwxN8QlU1Pu9TZEKq6cZUYXABwc0GbzaMl/D42Sm/lcld95Frz/j1nGPa/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g2qkEx0s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 075E6C4CEE7;
-	Wed,  3 Sep 2025 14:17:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756909046;
-	bh=rkSg1vCoekuc9whKWjo4hgqm1Elyfx6nN2+yYBdxBhc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=g2qkEx0srlnMZm9jvTuQkoAfUMqfZLmOGvMvWAXSFNRLeSDA5jxOcfWXXmUvxxNM8
-	 yvdadUNZgnBX3z/+e4yDpoxMbRzcPuAnr38KTH3Vu7n/1F7mqMnQLDtY97FOFmU2qb
-	 f3BqGPAIhHQlFrXQgm64XqEAf2KGNfJM92WGL8OAKBaRXkA/f3UgK0fIr7zt5swxiJ
-	 hgOUO2rzO4bNzczWxkpktx7lTBG9e6nmau7vZmkjiEckwkS4MGMoDE1PbRdr39Xoxn
-	 kj4QeQgwRxQT2rdLQor3kdwOYj76BPFKEkjV4l2X1fOg6RdjMK6qKg5Z6N5j4zrE8l
-	 ZL568mTWs7NNw==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Pratyush Yadav <pratyush@kernel.org>,  Jason Gunthorpe <jgg@nvidia.com>,
-  Pasha Tatashin <pasha.tatashin@soleen.com>,  jasonmiu@google.com,
-  graf@amazon.com,  changyuanl@google.com,  dmatlack@google.com,
-  rientjes@google.com,  corbet@lwn.net,  rdunlap@infradead.org,
-  ilpo.jarvinen@linux.intel.com,  kanie@linux.alibaba.com,
-  ojeda@kernel.org,  aliceryhl@google.com,  masahiroy@kernel.org,
-  akpm@linux-foundation.org,  tj@kernel.org,  yoann.congal@smile.fr,
-  mmaurer@google.com,  roman.gushchin@linux.dev,  chenridong@huawei.com,
-  axboe@kernel.dk,  mark.rutland@arm.com,  jannh@google.com,
-  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
-  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
-  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
-  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
-  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
-  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
-  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
-  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
-  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
-  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
-  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
-  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
-  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
-  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
-  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
-  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  saeedm@nvidia.com,  ajayachandra@nvidia.com,  parav@nvidia.com,
-  leonro@nvidia.com,  witu@nvidia.com
-Subject: Re: [PATCH v3 29/30] luo: allow preserving memfd
-In-Reply-To: <aLbYk30V2EEJJtAf@kernel.org>
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
-	<20250807014442.3829950-30-pasha.tatashin@soleen.com>
-	<20250826162019.GD2130239@nvidia.com> <aLXIcUwt0HVzRpYW@kernel.org>
-	<mafs0ldmyw1hp.fsf@kernel.org> <aLbYk30V2EEJJtAf@kernel.org>
-Date: Wed, 03 Sep 2025 16:17:15 +0200
-Message-ID: <mafs0qzwnvcwk.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1756910860; c=relaxed/simple;
+	bh=AlDQMoS/Juj614dJaVFAJzPFY1AaItZCmNckL1rHJrQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bxckM/dgD0P7kfemTnUfgjd61pPi5MF2Qlgb+/k5SRy9XygkT802WxADbBD8oRCz872IFPAaHdlDxLmC54UjNiXyw2LNZMPDUBY1uNg6/VDnzXnunL7ImYPkhhmgebl0rMfDcgHkihfKWZCARcITNL78ACngdeYTs02sKUsfUJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=F9zpkQlF; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-61e425434bbso5808957a12.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Sep 2025 07:47:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1756910856; x=1757515656; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=1ycIN+3dgOO3X2VNZGNKIoUIYTQ5uvMWC0TtHNOt+E8=;
+        b=F9zpkQlF5MYYNNaxn6ogfQdsTpFJaydN1Vok4om7LSGQJvT3ikOzB7MQyQDk9gpxk/
+         3p/fr9hMp9+YtvZbdXLT02zomJjucCCl2ilvFv9tQnK8dzugjM22eutrg+eCyFZZUIyL
+         pAbNKI8rwe2ifPffBbxlrGgHgKFOz75dYDY+g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756910856; x=1757515656;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1ycIN+3dgOO3X2VNZGNKIoUIYTQ5uvMWC0TtHNOt+E8=;
+        b=PRRWBQNeQwfQnBSoepxm9nAaFMaNSC665KxBbnFnnAHr49yqfiFHeCrU9odpUaqrvz
+         c8Lh/AHCW/pyCIiii1mBTuk/py6y6Vb+PwGwSlDCk40fUBFfGUkYc7R/Jz9iFHvwpzEY
+         2jqf0pH9vJa4HvYI/h6jRNGV67b7XbrzwdqIL5sqCUn8L+4dxPuhkcYf6RT1iWqowHd+
+         S8ulqjkZNtBTmiJyy+TynvrvoqOQTCimVC1LhHHTakT/Mcr5WNOwZYyoJaDD0fzRp4Zy
+         DxhJrdtmsMBZIgWCy23obgRzxRQSuMruBoUcjkGdaOlwXkq8YCc/GLPamTXUyUYb6Zu+
+         dLtQ==
+X-Gm-Message-State: AOJu0YxamtcL0ps6e6CoSB89iPksT9l7oNnDsGPbEZd0OH7D4vjXX9B5
+	MlYrG6dH7+QLDI20dw3gX18RW+aUR6YqPqxLfK5P2labbzaQXtNlrvV2iwLVt4CppCXHxhJOmf+
+	ofJEr51Y=
+X-Gm-Gg: ASbGnctR1YJ+xh3ybVd2PU7RWi6k4hFbF0dt/MfI7p5QAI9D2qv1IyA/ctkqVyCfcjE
+	uFJJn0VQsTL3n8eJ44zHlfNGVLyujve86u5CECwrslMMVH4+6x+pUMKcZGnYXVMaAZGR4OliCyR
+	Eq7D+XcRFUBj3x5/YCeT8YHstRZLyPzbbBdcvnIMmRNK2Cawkw61WLv/PFzqONkS6yydxcUdIGZ
+	DrNAvP/PXeOv1pHUqAyhynYH/wJ2l20fbX6LgchijXAuTvqOuf/z/Bzxfmesi9uXmiJj+xate/Y
+	JeCPzEAY0qqgLGuuQWXEoSwuz/aB8V1Z57twiU4IGIITsJti+cgBonymnQ/ZsZyaqD2XnXMWMvl
+	KE25Lh1TC7//ivdrO0gBPj5SfHszEpcVbVCxdAElr9BU+ROMCEXKr/Y3+8iMsnd2Qk8bAN92P
+X-Google-Smtp-Source: AGHT+IFcVcE8qh4n9WuqElarAHTQzvf/f/43GkxKl8bG3AIy54bMlf6UL7jDsBvuOXx9y9nG9lNtjA==
+X-Received: by 2002:a05:6402:34c1:b0:61c:d457:e559 with SMTP id 4fb4d7f45d1cf-61d26c3fb81mr15211109a12.23.1756910856560;
+        Wed, 03 Sep 2025 07:47:36 -0700 (PDT)
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cfc1c7ed1sm12358119a12.1.2025.09.03.07.47.35
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Sep 2025 07:47:35 -0700 (PDT)
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b0418f6fc27so523062966b.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Sep 2025 07:47:35 -0700 (PDT)
+X-Received: by 2002:a17:906:eec3:b0:afd:c31c:2488 with SMTP id
+ a640c23a62f3a-b01d97307b1mr1696648766b.39.1756910855022; Wed, 03 Sep 2025
+ 07:47:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250825044046.GI39973@ZenIV> <20250828230706.GA3340273@ZenIV> <20250903045432.GH39973@ZenIV>
+In-Reply-To: <20250903045432.GH39973@ZenIV>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 3 Sep 2025 07:47:18 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgXnEyXQ4ENAbMNyFxTfJ=bo4wawdx8s0dBBHVxhfZDCQ@mail.gmail.com>
+X-Gm-Features: Ac12FXysWEq4oT8b14Pt2wesWEi9edJP9ViNuy12B08xGg9ep5NG9irddi_ka_0
+Message-ID: <CAHk-=wgXnEyXQ4ENAbMNyFxTfJ=bo4wawdx8s0dBBHVxhfZDCQ@mail.gmail.com>
+Subject: Re: [PATCHES v3][RFC][CFT] mount-related stuff
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
+	Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Mike,
-
-On Tue, Sep 02 2025, Mike Rapoport wrote:
-
-> Hi Pratyush,
+On Tue, 2 Sept 2025 at 21:54, Al Viro <viro@zeniv.linux.org.uk> wrote:
 >
-> On Mon, Sep 01, 2025 at 07:01:38PM +0200, Pratyush Yadav wrote:
->> Hi Mike,
->> 
->> On Mon, Sep 01 2025, Mike Rapoport wrote:
->> 
->> > On Tue, Aug 26, 2025 at 01:20:19PM -0300, Jason Gunthorpe wrote:
->> >> On Thu, Aug 07, 2025 at 01:44:35AM +0000, Pasha Tatashin wrote:
->> >> 
->> >> > +	/*
->> >> > +	 * Most of the space should be taken by preserved folios. So take its
->> >> > +	 * size, plus a page for other properties.
->> >> > +	 */
->> >> > +	fdt = memfd_luo_create_fdt(PAGE_ALIGN(preserved_size) + PAGE_SIZE);
->> >> > +	if (!fdt) {
->> >> > +		err = -ENOMEM;
->> >> > +		goto err_unpin;
->> >> > +	}
->> >> 
->> >> This doesn't seem to have any versioning scheme, it really should..
->> >> 
->> >> > +	err = fdt_property_placeholder(fdt, "folios", preserved_size,
->> >> > +				       (void **)&preserved_folios);
->> >> > +	if (err) {
->> >> > +		pr_err("Failed to reserve folios property in FDT: %s\n",
->> >> > +		       fdt_strerror(err));
->> >> > +		err = -ENOMEM;
->> >> > +		goto err_free_fdt;
->> >> > +	}
->> >> 
->> >> Yuk.
->> >> 
->> >> This really wants some luo helper
->> >> 
->> >> 'luo alloc array'
->> >> 'luo restore array'
->> >> 'luo free array'
->> >
->> > We can just add kho_{preserve,restore}_vmalloc(). I've drafted it here:
->> > https://git.kernel.org/pub/scm/linux/kernel/git/rppt/linux.git/log/?h=kho/vmalloc/v1
->> >
->> > Will wait for kbuild and then send proper patches.
->> 
->> I have been working on something similar, but in a more generic way.
->> 
->> I have implemented a sparse KHO-preservable array (called kho_array)
->> with xarray like properties. It can take in 4-byte aligned pointers and
->> supports saving non-pointer values similar to xa_mk_value(). For now it
->> doesn't support multi-index entries, but if needed the data format can
->> be extended to support it as well.
->> 
->> The structure is very similar to what you have implemented. It uses a
->> linked list of pages with some metadata at the head of each page.
->> 
->> I have used it for memfd preservation, and I think it is quite
->> versatile. For example, your kho_preserve_vmalloc() can be very easily
->> built on top of this kho_array by simply saving each physical page
->> address at consecutive indices in the array.
->
-> I've started to work on something similar to your kho_array for memfd case
-> and then I thought that since we know the size of the array we can simply
-> vmalloc it and preserve vmalloc, and that lead me to implementing
-> preservation of vmalloc :)
->
-> I like the idea to have kho_array for cases when we don't know the amount
-> of data to preserve in advance, but for memfd as it's currently
-> implemented I think that allocating and preserving vmalloc is simpler.
->
-> As for porting kho_preserve_vmalloc() to kho_array, I also feel that it
-> would just make kho_preserve_vmalloc() more complex and I'd rather simplify
-> it even more, e.g. with preallocating all the pages that preserve indices
-> in advance.
+> If nobody objects, this goes into #for-next.
 
-I think there are two parts here. One is the data format of the KHO
-array and the other is the way to build it. I think the format is quite
-simple and versatile, and we can have many strategies of building it.
+Looks all sane to me.
 
-For example, if you are only concerned with pre-allocating data, I can
-very well add a way to initialize the KHO array with with a fixed size
-up front.
+What was the issue with generic/475? I have missed that context..
 
-Beyond that, I think KHO array will actually make kho_preserve_vmalloc()
-simpler since it won't have to deal with the linked list traversal
-logic. It can just do ka_for_each() and just get all the pages. We can
-also convert the preservation bitmaps to use it so the linked list logic
-is in one place, and others just build on top of it.
-
->  
->> The code is still WIP and currently a bit hacky, but I will clean it up
->> in a couple days and I think it should be ready for posting. You can
->> find the current version at [0][1]. Would be good to hear your thoughts,
->> and if you agree with the approach, I can also port
->> kho_preserve_vmalloc() to work on top of kho_array as well.
->> 
->> [0] https://git.kernel.org/pub/scm/linux/kernel/git/pratyush/linux.git/commit/?h=kho-array&id=cf4c04c1e9ac854e3297018ad6dada17c54a59af
->> [1] https://git.kernel.org/pub/scm/linux/kernel/git/pratyush/linux.git/commit/?h=kho-array&id=5eb0d7316274a9c87acaeedd86941979fc4baf96
->> 
->> -- 
->> Regards,
->> Pratyush Yadav
-
--- 
-Regards,
-Pratyush Yadav
+           Linus
 
