@@ -1,223 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-60190-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60191-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7302CB428B1
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 20:31:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C5A5B428B7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 20:33:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFE7E1BA12E6
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 18:31:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DCEE1BA13D0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 18:33:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09B853629A7;
-	Wed,  3 Sep 2025 18:31:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A82F1624C0;
+	Wed,  3 Sep 2025 18:33:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lHPkXy9f"
+	dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b="RNG3T+bw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBDFE1624C0;
-	Wed,  3 Sep 2025 18:31:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFEB72C21F6
+	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Sep 2025 18:33:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756924280; cv=none; b=YdjaA5BYLJ5jj6NJ10JMmZw6/h8MBKHR2enq6G1NF6uJK5WeCrEYnom69TqZO4FVlAb71C4BBPQnrloVgAyI57XAFKzbsfiI61O9mzd8lYRaB+O5ORuvrl/mZq1iLEsqcavRGXxveA8aF79RfheaW4pncyMkrXHX9dTEAJieu7o=
+	t=1756924412; cv=none; b=s1knCGhGEdm71R8NjoZ02r/I3685Dty6IQMMUu1cKjisyHbZQY3TROzAe6NX28G9g1Ew9HTJGMUXDrQlI9HyWYKYfHB3RqjBUUIq4qLrm04sEkGtdE2Z8ik8WMRqLMu749rdPfMOKhAIDIJc7H/DqphZHJFBWvaeahveuoO+j2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756924280; c=relaxed/simple;
-	bh=Oebq/suGCC5fmC4qcEo+dhhN9f9dKTJa8nVy/6KezsM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Sc4rH86mlE8Aqg2eJSF3nHLkajE5Kiuum0JEhpbsl6t8IWBYpNjRT99t2IHaEPUkQ8mqNsfYgnMWEpnmLnErezNnBB+kdynSNVgUnc6u0NU8J7SDI14vU8TYk89cNRMruWnrN4+JT+mEAGx7Xq+DN6I0KNTAG++hu1f3KUPGA9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lHPkXy9f; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-805a1931a15so25683585a.1;
-        Wed, 03 Sep 2025 11:31:18 -0700 (PDT)
+	s=arc-20240116; t=1756924412; c=relaxed/simple;
+	bh=0qgglxasLkzPr6XRpOEKv7fQ2J/IzxLLXQTec8udKmU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ph+ds/OqjugxFmnvF0q8bF5OA0lee8TuZ1IJZ4XsuQg/wLsUYy0gkKDjlGsbE/1DxXCW7L5aWbXUg8J25VKe05D2jipU8LyvCGAXXB4vjKEBcebpsg01+GyvjZRrZgUGbxH00glSo/W2yuyavDCs9C8sLg4gkyzgtUJXpiutLBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zetier.com; spf=pass smtp.mailfrom=zetier.com; dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b=RNG3T+bw; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zetier.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zetier.com
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-7221ce7e814so1170596d6.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Sep 2025 11:33:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756924278; x=1757529078; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5qSvo2uZgovlgx0FfJJeK9qSwaaMzcgiCqTuZCwC6B4=;
-        b=lHPkXy9f09j30m4+RuGsYhZzPUR3o+0o6I1E6/gXFvkO7cUqyLXY+kHMPke0U/uHaa
-         WbiQznWEaDEuDswWZc+JjTDiykBDsUP3cPH0T+LUIHY+TCgl4plf5B+qcO7IyclsNjUY
-         hOciFJLg3tMuio1USX2GC5jZN8TLXHbUKHpMwYsLXl2wvbMMljx9DOGueowMUb+ObRL6
-         X8QKxOl1gs4tuC+AWfFp1Ru+E5JatnTxCA9cAnDAgZJ3X86FSKB9FLTpzrQTF17bo7V5
-         Rsj9DKG3nMLdypUUg5NfvIu99QjOS+Y5sruCMXyQgZIAESOi7NcsKz4ZwNC4Au6netxN
-         tUzA==
+        d=zetier.com; s=gm; t=1756924410; x=1757529210; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=S879IOAS7I2KrrMY7ilhyLTemY3z54jAwRhHsZnwFTo=;
+        b=RNG3T+bwgjM6CDFIZsb93nDEtjxJmAeY6MhmKlu9mgsgW3g/qGOEQ04FPZ+SYV7/9C
+         HZFZITicOu9KRSNVpEoNGj59GMOVpxwYItKnD9V1UYVbT2sxL2XfzHOLGMxq4v+8njlA
+         NAEDIxaLbqFjbHg914/euxGuS+OYOZ3HEKYI4M8vAtZ1h+48oSO46V5L6Mee2VVx5MVM
+         WVJmYtrxR0n9KhC1cLlvT05Em/BNYBylcmPRbPaBBIYZzPa3XkaebvkU43z/EYCOLRWc
+         Aw+gtQ4njMljl5Wp9PDLOYnnBnz8TL+UxpAMantc401e7iJxQXQAhQKbFaAUNdWs6hvM
+         LJpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756924278; x=1757529078;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5qSvo2uZgovlgx0FfJJeK9qSwaaMzcgiCqTuZCwC6B4=;
-        b=BNeVwvUbAB3fcQQklUMaEVYSemzTZK6Os9/RibfbZDcFmRj2udPbZIQkSQ+f15Gl6f
-         eftDHaWrpitRP82vdpAnL6uUA2Ku5uvBiaUhJkvr9jtpBw3lm28EzdywhUGCvwLSEPeH
-         94ckRBkF139SUd5ZHdJ2+eehlj7M7NutlJwhv8STHxXRu6+QPmIT7DJ9jRoudiITbuiw
-         Svfd3gxP/4YFEedwKVxZxVrsCtH27oHTxlRIRA20FO4xz7s1x9t3vajOAZYhP4cWm8G9
-         Y6UYjq8YJSQB8FS9rjKbz98OZUKKRJPwUMxA0pjUvRbQMa9VlpUjAvrqhOm74ZIDsoey
-         mwFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUWzGoCBvxJ+D2uLT6jD159SMJFMn6zPtfVYX3a/NpP7oT89jejj4XixzstAtWCGW6Nc53uo65RanMy@vger.kernel.org, AJvYcCXE9DgjnbyFOQj3MFXeAQ5jLpOMP2tTPvGXQ08UpOA42z95g5eI2sq0t7HFToOR4O6c72BTjV13kkaj@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy83Ps/HhNG4GSYxpJN9FeXE8ROKdbTdlHseVEhfwkqw5dluYvQ
-	1WZEkE+/0vSBWAypmM5jym9Ben+MRCyKCQpLFx8UJyRr6HTljQecpYGKTFlrCg4x5E6/gcj8Bb1
-	BJleoIJ6ESqie/UgCHkwQJv9yAB3FKs0=
-X-Gm-Gg: ASbGnctawBngBpM9EmoRpV0dBO/m3Jcq49lzn2O+qoVfGQIBiToTbNOUs08YFtnr5eI
-	LVgwniI2XLauNEW3ViKLpxhxQxFJSWlEMbCPjf1+7OLmyvVKQYmv4WLsclT6aqRCjQYJJxMGgHL
-	lfgQjLn/5OanLjvfDbBPFTdqv3wuQFGA0fT5sycVJbBcHRAWq2gycFNus3pWzPpqI3kfXnsk6aE
-	shC2FjVK3h7zpPkbCc=
-X-Google-Smtp-Source: AGHT+IE3XOodSa4+Yym/aMpYxbb8gIvknV1OOwtdLdTWe73FoscR9Bhnt7It4WMH/rYILUqX6BpVE5Zi5HZv3XGlSPc=
-X-Received: by 2002:a05:620a:178b:b0:7de:fa4b:773f with SMTP id
- af79cd13be357-7ff26eaad4dmr1984699485a.17.1756924277350; Wed, 03 Sep 2025
- 11:31:17 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756924410; x=1757529210;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=S879IOAS7I2KrrMY7ilhyLTemY3z54jAwRhHsZnwFTo=;
+        b=E4ufy8lrotEKegw/t78zXQE7CBUCyhit1w7voqt3QEZ4YfGPYZVBKFu3b2uDB/MUyf
+         Jf4e4NrJ7TpeLs0wvZ/fCs7nlbUkT1XbvnC10/5mvOZ0Oj3hEN0R5hcFQLL+FuEU3rra
+         Y1m+Yf4CE2cSMC0s6olmuzxO8XcNm1o2s+HHQsbrtvt2NMJXuWN5O8rJSbv32LZ41Cc2
+         nNz1LA4tgaT6jGptGTAeZQWVfuNCXar0fKbiByq6UbFh/kpaC1ycjB2uDvTxfUKQz7YC
+         oTxyf3C82bR0iNmxaBB0dLRKsw/9W/+FqDs63JcKc43zNP56nb2DSQ8p18pjB8mI0vu4
+         RAZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV9UhUzHW3dk45dXrcpe4z+7HkQTnuxwB1FhJsu2LgTxEzMAz+wWPcP4Sphd7/0f1IprIBNHpgw0dnm+5z5@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz64aH+1KZWG0tkfljFpmeMjsig6HmDseKolPzfsHb+qm1cFfAC
+	Z5OTGL8OW4/xwE1Dc5L9Kkl3ETJlD1L5s8s/8zrjlhuNd1mIk48nybol2rqoIMf3WEU=
+X-Gm-Gg: ASbGnctnbQC5gwSuvr4TOSuZipthely4bczB6MC+zSMe3QhOzPv5ixBKOr2GpSW0xwE
+	ppmZCs/b6yy8+uAJ9tGGl/hXi04OSqHr6geMNTEm6ZWBh4gjj2s/qZoLes+bmQYzA1bpmrneWsw
+	macjXxz5CzbgG46ttM3LwjSSkLc5eAwKaf9cJQo/MPX3iIbxiGsmwgBy5nk46xPzJknBhVj8GGr
+	PiWQwbRQBMHal0mr2VUoFavYE8V5f3W6vnmImwEWpI/tsolME4k8SoMRsk85qOKXSHkmYv+kL0j
+	5AzDDoEzERbLdZVEL+BkVyhncYq8VmoAy1RZwVrA3yyZE543F7+8qaDBb5hJCDnpAlf+HmkykEp
+	vqxtJDWp7RpquYSuHXWpRrAfAeHYr7EB7O1F7lQ==
+X-Google-Smtp-Source: AGHT+IHf52BqKSn+x2MgFKInih4yT+Gwmue5zsea2Bfw0PtVlqwJUW1IjdXrNUhs6WCY1OjVT8eXUg==
+X-Received: by 2002:a05:6214:2e85:b0:722:25e8:b488 with SMTP id 6a1803df08f44-72225e8c257mr45633516d6.27.1756924409618;
+        Wed, 03 Sep 2025 11:33:29 -0700 (PDT)
+Received: from ethanf.zetier.com ([65.222.209.234])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-72160017b64sm28699916d6.55.2025.09.03.11.33.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 11:33:28 -0700 (PDT)
+From: Ethan Ferguson <ethan.ferguson@zetier.com>
+To: linkinjeon@kernel.org,
+	sj1557.seo@samsung.com,
+	yuezhang.mo@sony.com
+Cc: cpgs@samsung.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ethan Ferguson <ethan.ferguson@zetier.com>
+Subject: [PATCH v5 0/1] exfat: Add support for FS_IOC_{GET,SET}FSLABEL
+Date: Wed,  3 Sep 2025 14:33:21 -0400
+Message-Id: <20250903183322.191136-1-ethan.ferguson@zetier.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250902150755.289469-1-bfoster@redhat.com> <20250902150755.289469-3-bfoster@redhat.com>
- <CAJnrk1bmjCB=8o-YOkPScftoXMrgpBKU3vtkMOViEfFQ9LXLfg@mail.gmail.com> <aLgyELz3TH_TCZRw@bfoster>
-In-Reply-To: <aLgyELz3TH_TCZRw@bfoster>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Wed, 3 Sep 2025 11:31:05 -0700
-X-Gm-Features: Ac12FXzXhB4BODApWtar5e62UMm9uHMNorJoBb-ra_x0jxdFtiu9ViWdjWqt9nU
-Message-ID: <CAJnrk1bwDun7EtQJsvMYi_0ODcduRLGaT+sJdXhzjNP3+Ynbeg@mail.gmail.com>
-Subject: Re: [PATCH RFC 2/2] iomap: revert the iomap_iter pos on ->iomap_end() error
-To: Brian Foster <bfoster@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, jack@suse.cz, djwong@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 3, 2025 at 5:14=E2=80=AFAM Brian Foster <bfoster@redhat.com> wr=
-ote:
->
-> On Tue, Sep 02, 2025 at 02:11:35PM -0700, Joanne Koong wrote:
-> > On Tue, Sep 2, 2025 at 8:04=E2=80=AFAM Brian Foster <bfoster@redhat.com=
-> wrote:
-> > >
-> > > An iomap op iteration should not be considered successful if
-> > > ->iomap_end() fails. Most ->iomap_end() callbacks do not return
-> > > errors, and for those that do we return the error to the caller, but
-> > > this is still not sufficient in some corner cases.
-> > >
-> > > For example, if a DAX write to a shared iomap fails at ->iomap_end()
-> > > on XFS, this means the remap of shared blocks from the COW fork to
-> > > the data fork has possibly failed. In turn this means that just
-> > > written data may not be accessible in the file. dax_iomap_rw()
-> > > returns partial success over a returned error code and the operation
-> > > has already advanced iter.pos by the time ->iomap_end() is called.
-> > > This means that dax_iomap_rw() can return more bytes processed than
-> > > have been completed successfully, including partial success instead
-> > > of an error code if the first iteration happens to fail.
-> > >
-> > > To address this problem, first tweak the ->iomap_end() error
-> > > handling logic to run regardless of whether the current iteration
-> > > advanced the iter. Next, revert pos in the error handling path. Add
-> > > a new helper to undo the changes from iomap_iter_advance(). It is
-> > > static to start since the only initial user is in iomap_iter.c.
-> > >
-> > > Signed-off-by: Brian Foster <bfoster@redhat.com>
-> > > ---
-> > >  fs/iomap/iter.c | 20 +++++++++++++++++++-
-> > >  1 file changed, 19 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/fs/iomap/iter.c b/fs/iomap/iter.c
-> > > index 7cc4599b9c9b..69c993fe51fa 100644
-> > > --- a/fs/iomap/iter.c
-> > > +++ b/fs/iomap/iter.c
-> > > @@ -27,6 +27,22 @@ int iomap_iter_advance(struct iomap_iter *iter, u6=
-4 *count)
-> > >         return 0;
-> > >  }
-> > >
-> > > +/**
-> > > + * iomap_iter_revert - revert the iterator position
-> > > + * @iter: iteration structure
-> > > + * @count: number of bytes to revert
-> > > + *
-> > > + * Revert the iterator position by the specified number of bytes, un=
-doing
-> > > + * the effect of a previous iomap_iter_advance() call. The count mus=
-t not
-> > > + * exceed the amount previously advanced in the current iter.
-> > > + */
-> > > +static void iomap_iter_revert(struct iomap_iter *iter, u64 count)
-> > > +{
-> > > +       count =3D min_t(u64, iter->pos - iter->iter_start_pos, count)=
-;
-> > > +       iter->pos -=3D count;
-> > > +       iter->len +=3D count;
-> > > +}
-> > > +
-> > >  static inline void iomap_iter_done(struct iomap_iter *iter)
-> > >  {
-> > >         WARN_ON_ONCE(iter->iomap.offset > iter->pos);
-> > > @@ -80,8 +96,10 @@ int iomap_iter(struct iomap_iter *iter, const stru=
-ct iomap_ops *ops)
-> > >                                 iomap_length_trim(iter, iter->iter_st=
-art_pos,
-> > >                                                   olen),
-> > >                                 advanced, iter->flags, &iter->iomap);
-> > > -               if (ret < 0 && !advanced && !iter->status)
-> > > +               if (ret < 0 && !iter->status) {
-> > > +                       iomap_iter_revert(iter, advanced);
-> > >                         return ret;
-> > > +               }
-> >
-> > Should iomap_iter_revert() also be called in the "if (iter->status <
-> > 0)" case a few lines below? I think otherwise, that leads to the same
-> > problem in dax_iomap_rw() you pointed out in the commit message.
-> >
->
-> My thinking was that I wanted to try for the invariant that the
-> operation/iteration is responsible to set the iter appropriately in the
-> event that it returns an error in iter.status. I.e., either not advance
-> or revert if appropriate.
->
-> This is more consistent with how the iter is advanced and I suspect will
-> help prevent potential whack a mole issues with inconsistent
-> expectations for error handling at the iomap_iter() level. I actually
-> had iomap_iter_revert() non-static originally, but changed it since I
-> didn't spot anywhere it needed to be called as of yet. I could have
-> certainly missed something though. Did you have a particular sequence in
-> mind, or were just thinking in general?
+Add support for reading / writing to the exfat volume label from the
+FS_IOC_GETFSLABEL and FS_IOC_SETFSLABEL ioctls.
 
-Thanks for explaining your thought process. That reasoning makes sense to m=
-e.
+Implemented in similar ways to other fs drivers, namely btrfs and ext4,
+where the ioctls are performed on file inodes.
 
-Originally I thought the dax_iomap_rw() sequence needed a
-iomap_iter_revert() but looking at it again, I'm realizing now that
-that function is intended to return successfully even if the writes in
-further iterations fail.
+v5:
+Change behavior to only allocate new cluster when no useable dentries
+exist.
+Leverage exfat_find_empty_entry to handle this behavior, and to set
+inode size.
+Update inode hint_femp to speed up later search efforts.
+v4:
+Implement allocating a new cluster when the current dentry cluster would
+be full as a result of inserting a volume label dentry.
+Link: https://lore.kernel.org/all/20250822202010.232922-1-ethan.ferguson@zetier.com/
+v3:
+Add lazy-loading of volume label into superblock.
+Use better UTF-16 conversions to detect invalid characters.
+If no volume label entry exists, overwrite a deleted dentry,
+or create a new dentry if the cluster has space.
+Link: https://lore.kernel.org/all/20250821150926.1025302-1-ethan.ferguson@zetier.com/
+v2:
+Fix endianness conversion as reported by kernel test robot
+Link: https://lore.kernel.org/all/20250817003046.313497-1-ethan.ferguson@zetier.com/
+v1:
+Link: https://lore.kernel.org/all/20250815171056.103751-1-ethan.ferguson@zetier.com/
 
-Thanks,
-Joanne
+Ethan Ferguson (1):
+  exfat: Add support for FS_IOC_{GET,SET}FSLABEL
 
->
-> FWIW, I suspect there's a reasonable argument for doing the same for
-> ->iomap_end() and make the callback responsible for reverting if
-> necessary. I went the way in this patch just because it seemed more
-> simple given the limited scope, but that may not always be the case
-> and/or may just be cleaner. I can take a closer look at that if there
-> are stronger opinions..? Thanks for the feedback.
-> > > returns partial success over a returned error code and the operation
-> > > has already advanced iter.pos by the time ->iomap_end() is called.
-> > > This means that dax_iomap_rw() can return more bytes processed than
-> > > have been completed successfully, including partial success instead
-> > > of an error code if the first iteration happens to fail.
->
-> Brian
->
-> > Thanks,
-> > Joanne
-> > >         }
-> > >
-> > >         /* detect old return semantics where this would advance */
-> > > --
-> > > 2.51.0
-> > >
-> > >
-> >
->
+ fs/exfat/exfat_fs.h  |   7 ++
+ fs/exfat/exfat_raw.h |   6 ++
+ fs/exfat/file.c      |  80 +++++++++++++++++++++
+ fs/exfat/namei.c     |   2 +-
+ fs/exfat/super.c     | 165 +++++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 259 insertions(+), 1 deletion(-)
+
+-- 
+2.34.1
+
 
