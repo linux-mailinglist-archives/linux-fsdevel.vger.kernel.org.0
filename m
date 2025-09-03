@@ -1,96 +1,184 @@
-Return-Path: <linux-fsdevel+bounces-60150-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60151-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45306B42006
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 14:53:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A9C2B421B2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 15:32:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A6D41BA78DD
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 12:53:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94ED91A83FC5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 13:32:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 427FB3019D3;
-	Wed,  3 Sep 2025 12:50:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B46F3090DB;
+	Wed,  3 Sep 2025 13:32:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="t6CQIDOw";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WPLF8Jl+";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="t6CQIDOw";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WPLF8Jl+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6443009F0
-	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Sep 2025 12:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8952D308F3D
+	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Sep 2025 13:31:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756903806; cv=none; b=DCC8PwIG+gv3lcbBVcQ0R0Xf7Tg7svvJDW0+UO9ihI8yVP8RV1FYGp03Ee0v77DJlbPo7F1RPAvqwJAd+9vuB7DbvS+zK80TX8yTjEOwz8qCwsAv5SgEDtJ3i3QflPPoGinv4EFTdr0w4EaR+CQgLIDrV50Zq1mVDzAmLENZK7E=
+	t=1756906320; cv=none; b=ezccgcvnK5vzSKKO7CqEblexuUxkeJYwxOXmI4UZS8e5uVQ3NsolA95zu2Ne1YIXK6XMgbVLtoOjS39NENRfcEOcNyfHs2rEHmILfdJ/koaDf2rDmg+e/WaEZi+47q+8XA+nJWEZSsZQUgLANSEppQXjas/GZDMvt03x4jPWZFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756903806; c=relaxed/simple;
-	bh=NfVY0uOJ6FEvq7e+k5wZc9jqlPu1CfthQXKZe6VNgpo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=i7WwAVVGF12duUb6NroODsSZ44j/GMtm28kjSezGP6/MRylBgkXOgw9gYnUyOW3tSq7lTGNNgRnNBSVNETw9bhfjLh6tjV792wKRUgBmxF+tobmn0T4Hvw8Bo+YNPCY+9PKjSi6zcAe0yjpXM7dtZdcUt8EjpyfgGWAajGU2e/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3eefbb2da62so166092795ab.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Sep 2025 05:50:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756903804; x=1757508604;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3OMejl/iQ+Tg2KDNjGuB3kqcQAoPPMTyVmkgNVu9W0w=;
-        b=CCWFGQW1i6BulWnEZA6LbMVEtXgmjsEnmOacTEF+DIft0fstwJicEc80KvkVJVw5ns
-         Uv/KLuHOJANMcvJcoR9giybFyr2BzWh0OdAgMHgmzkE3mn0NoGI2hNEKaucmvqUDxH+n
-         n4cU4KzpgGckkT3W7UeTaNz17E5+FgcDBvXUWWi4Uvtn62M1A7PEziivfmBjOmuT2viW
-         oBFX0hULWct/Z+ENzLrsAcUIcO0UiFLd834MIN6lrD4TvxIL53KUPwQOqbnQ2SF13c0O
-         z+ja6e2Xxrr0qxu2t7aPTRscN1DvUWozbaHp9fEiY2jF2XKTUVDPS/q1EkOQJTSOvyDF
-         qmTA==
-X-Forwarded-Encrypted: i=1; AJvYcCVEhtH28SouaXGMfwBTi5qWHY2eJwl8YdDwBYQzKoWTDRRYKhKVS22qmB0IwCxupzz0jTdQaOssr1DgCte0@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmO8xe65sXEdVxLpXnK5gUyuhXOg+ecWp024uhJf5QYvyu4QLF
-	5uTXStXpK3ehP+Bex0IUpSZtLP1ck3+5aJS/QgUAxhZnsHbWR+R/Sg1J7+viMxvOJgD3j9fdvQK
-	Q61MuirkDPdsHSRnVC51GAoLLd/a1EsCAwtiikyj7WPzUs0x2QKDXUS2MJiU=
-X-Google-Smtp-Source: AGHT+IHW+MQ+QmO3Wx+01fYvf/inCr+6x1CkylQIhXButK9at9rxl8FYGObhhj+RRZG4JC9Ep7A4/v7XHZK7WNVrCTnGaekBZmv1
+	s=arc-20240116; t=1756906320; c=relaxed/simple;
+	bh=aSnS4pvSDH/7u/cUFs0wyGPAIN8XB1S6cH0Hhkf7X2w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qs6f1LbmpwmEchDXapCl4/sCkBEmIS6QaVpKb6WEWwDnSMfQnanvqTzhUgMb/xRtk5D+J80ecqRfGUS+iIeigBZEhev11rgNwisZ6dMxyJrwVQaANmbh6d1ldPrFtAzZl6kD0pk6HYMLgvRn7FwNOGr0IOMRmWWn9TIf+owPn2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=t6CQIDOw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=WPLF8Jl+; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=t6CQIDOw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=WPLF8Jl+; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B6A25211A5;
+	Wed,  3 Sep 2025 13:31:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756906316; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6EB2W1pLl4m1e5pdwO9j0i4xflpTmsKnJvOETtyCf/4=;
+	b=t6CQIDOw5YkTvwNeljQgxRsfAnsJy41Amk6T/BubjysfOI0nJUu3swT6iEs6ShFZmjaHwF
+	zA/Q0pH00EHbVTYnRCJCQPGlitC9sQtwTh0SSeIZXSDmwqH4YEU391xAk6xh/8cR+TRLUp
+	G0CRo0UysuI7NEfep2dJjVsJjaGXfRM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756906316;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6EB2W1pLl4m1e5pdwO9j0i4xflpTmsKnJvOETtyCf/4=;
+	b=WPLF8Jl+q2lN645zRfrKozTTpWDVYYKr5uFivyynhlk1ELWtzHxEfaAt6+WAq5NRRGZ2K6
+	CbDnPE2wPtou4yCg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=t6CQIDOw;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=WPLF8Jl+
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756906316; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6EB2W1pLl4m1e5pdwO9j0i4xflpTmsKnJvOETtyCf/4=;
+	b=t6CQIDOw5YkTvwNeljQgxRsfAnsJy41Amk6T/BubjysfOI0nJUu3swT6iEs6ShFZmjaHwF
+	zA/Q0pH00EHbVTYnRCJCQPGlitC9sQtwTh0SSeIZXSDmwqH4YEU391xAk6xh/8cR+TRLUp
+	G0CRo0UysuI7NEfep2dJjVsJjaGXfRM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756906316;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6EB2W1pLl4m1e5pdwO9j0i4xflpTmsKnJvOETtyCf/4=;
+	b=WPLF8Jl+q2lN645zRfrKozTTpWDVYYKr5uFivyynhlk1ELWtzHxEfaAt6+WAq5NRRGZ2K6
+	CbDnPE2wPtou4yCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A04D313888;
+	Wed,  3 Sep 2025 13:31:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Xx0iJ0xDuGhKQwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 03 Sep 2025 13:31:56 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 1DA19A0809; Wed,  3 Sep 2025 15:31:56 +0200 (CEST)
+Date: Wed, 3 Sep 2025 15:31:56 +0200
+From: Jan Kara <jack@suse.cz>
+To: Diangang Li <lidiangang@bytedance.com>
+Cc: jack@suse.cz, amir73il@gmail.com, stephen.s.brennan@oracle.com, 
+	changfengnan@bytedance.com, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC 0/1] fsnotify: clear PARENT_WATCHED flags lazily for v5.4
+Message-ID: <ownanwiqdhijstazux3j5jsawdyw6tcgjufk6zrejppnqyoy7d@hdqmfb4q7wpz>
+References: <20250903093413.3434-1-lidiangang@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2194:b0:3ee:a3ff:96c7 with SMTP id
- e9e14a558f8ab-3f401beb3a4mr256042315ab.17.1756903804188; Wed, 03 Sep 2025
- 05:50:04 -0700 (PDT)
-Date: Wed, 03 Sep 2025 05:50:04 -0700
-In-Reply-To: <682ff0bf.a70a0220.1765ec.0148.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68b8397c.050a0220.3db4df.01f1.GAE@google.com>
-Subject: Re: [syzbot] [exfat?] INFO: task hung in lock_two_directories (4)
-From: syzbot <syzbot+1bfacdf603474cfa86bd@syzkaller.appspotmail.com>
-To: Yuezhang.Mo@sony.com, adilger.kernel@dilger.ca, bp@alien8.de, 
-	brauner@kernel.org, casey@schaufler-ca.com, dave.hansen@linux.intel.com, 
-	hpa@zytor.com, jack@suse.cz, linkinjeon@kernel.org, 
-	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, mingo@redhat.com, roberto.sassu@huawei.com, 
-	sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com, tglx@linutronix.de, 
-	tytso@mit.edu, viro@zeniv.linux.org.uk, x86@kernel.org, yuezhang.mo@sony.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250903093413.3434-1-lidiangang@bytedance.com>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: B6A25211A5
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_CC(0.00)[suse.cz,gmail.com,oracle.com,bytedance.com,vger.kernel.org];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -4.01
 
-syzbot suspects this issue was fixed by commit:
+On Wed 03-09-25 17:34:12, Diangang Li wrote:
+> Hi Amir, Jan, et al,
+> 
+> Commit `41f49be2e51a71` ("fsnotify: clear PARENT_WATCHED flags lazily")
+> has resolved the softlockup in `__fsnotify_parent` when there are millions
+> of negative dentries. The Linux kernel CVE team has assigned CVE-2024-47660
+> to this issue[1]. I noticed that the CVE patch was only backported to the
+> 5.10 stable tree, and not to 5.4. Is there any specific reason or analysis
+> regarding the 5.4 branch? We have encountered this issue in our production
+> environments running kernel 5.4. After manually applying and deconflicting
+> this patch, the problem was resolved.
+> 
+> Any comments or suggestions regarding this backport would be appreciated.
 
-commit 99f9a97dce39ad413c39b92c90393bbd6778f3fd
-Author: Yuezhang Mo <Yuezhang.Mo@sony.com>
-Date:   Tue Mar 18 09:00:49 2025 +0000
+I don't have any objections against including this in 5.4-stable branch.
+Probably it was not applied because of some patch conflict. Feel free to
+send the backport to stable@vger.kernel.org, I believe Greg will gladly
+pickup the patch.
 
-    exfat: add cluster chain loop check for dir
+								Honza
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13445e62580000
-start commit:   3f31a806a62e Merge tag 'mm-hotfixes-stable-2025-07-11-16-1..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bd2783a0a99d4ed0
-dashboard link: https://syzkaller.appspot.com/bug?extid=1bfacdf603474cfa86bd
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=134b50f0580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16d7018c580000
-
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: exfat: add cluster chain loop check for dir
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> 
+> Thanks,
+> Diangang
+> 
+> [1]: https://lore.kernel.org/all/2024100959-CVE-2024-47660-2d61@gregkh/
+> 
+> Amir Goldstein (1):
+>   fsnotify: clear PARENT_WATCHED flags lazily
+> 
+>  fs/notify/fsnotify.c             | 31 +++++++++++++++++++++----------
+>  fs/notify/fsnotify.h             |  2 +-
+>  fs/notify/mark.c                 | 32 +++++++++++++++++++++++++++++---
+>  include/linux/fsnotify_backend.h |  8 +++++---
+>  4 files changed, 56 insertions(+), 17 deletions(-)
+> 
+> -- 
+> 2.39.5
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
