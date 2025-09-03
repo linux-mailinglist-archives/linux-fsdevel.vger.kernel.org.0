@@ -1,221 +1,161 @@
-Return-Path: <linux-fsdevel+bounces-60153-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60154-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80C1AB421FF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 15:38:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36F91B42356
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 16:16:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17F0E18962F2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 13:39:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A1637BF69B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 14:05:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBA5230AAC4;
-	Wed,  3 Sep 2025 13:38:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C65663101D5;
+	Wed,  3 Sep 2025 14:06:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zxxNdZMa";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IZR76TAP";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zxxNdZMa";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IZR76TAP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Aj0UB0W1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F37B3043CD
-	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Sep 2025 13:38:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746761C84DF;
+	Wed,  3 Sep 2025 14:06:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756906721; cv=none; b=rRLIgPbNL13pre8xvMyNfcSfwXWCqvm0QzMvVLsUlpy5veaxWKwzYJJbr6cNKI5r+ruABOQoMy8MjSx42SL0bo7AreNU++iZN97xcCYmAPibUbDoiNdoLDzWOZJtA6sxHBgtITGHVFNuULAQ6HLgsw4UCLxfHKsauIgzRI7MRpA=
+	t=1756908395; cv=none; b=CmyxSeXmCKGUBl0AWNk9SrA/PowNrruxprgQ52KiXYqVIFAHbI37nIOdJcFre6L9aQzayUqIg9oBzicGQkXs0fR3Kshoswz+85S6/LiRIyUOVhmY8LyKRDz7qVnUjyqlsdLYU976wUYJMP/+Ou89kZTpGnYybRbug79T5s1Nmas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756906721; c=relaxed/simple;
-	bh=4JIySaL3Mh/8qjNkkDqTu6Mk38+NocPiJ2wIb1wJiYM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hvww2Vs6e1m3usgIpcwGnKtT1Nf54eBE+v8cRNuxUiXmS5mSjzRU5Y5k4787Hlza06C4BBJ2uqtKSuJe1Uut7mGaeADBCcTfEhzp2X3mcQG9puGffynQ8CJz0pIF5k5wmwlv75FFxeeH5yfhpg9tPecqFhd0sFmbkM9BwFyvWTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zxxNdZMa; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=IZR76TAP; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zxxNdZMa; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=IZR76TAP; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A32A721201;
-	Wed,  3 Sep 2025 13:38:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756906717; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mqi0RseEPwrCMkpiKuYXBC3Ujuc7IzFljPiRR8JZxmU=;
-	b=zxxNdZMaKA49YmqqaU9z5EVovnG8sKc1rgjFoFgE/dKkMjuuyV60Z2CAVaq+LrfF/2k4hi
-	wJ3MM6ci3za+vmrSgjUxnWEBoHXCxvoMmWf7xtsYjtqQHOejOdJAb5kkBwUqcpavfY36VA
-	VuUPv9Ds0A3czqMNvR/kuM4RExSIoaY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756906717;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mqi0RseEPwrCMkpiKuYXBC3Ujuc7IzFljPiRR8JZxmU=;
-	b=IZR76TAP4YljLZy6Qv+ffriIueGWUiDU+IcFqEhuQfUBarTh6ixMM2/K/VTQlnLIizDE52
-	4NSxZvb2O8WZgVBA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=zxxNdZMa;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=IZR76TAP
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756906717; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mqi0RseEPwrCMkpiKuYXBC3Ujuc7IzFljPiRR8JZxmU=;
-	b=zxxNdZMaKA49YmqqaU9z5EVovnG8sKc1rgjFoFgE/dKkMjuuyV60Z2CAVaq+LrfF/2k4hi
-	wJ3MM6ci3za+vmrSgjUxnWEBoHXCxvoMmWf7xtsYjtqQHOejOdJAb5kkBwUqcpavfY36VA
-	VuUPv9Ds0A3czqMNvR/kuM4RExSIoaY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756906717;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mqi0RseEPwrCMkpiKuYXBC3Ujuc7IzFljPiRR8JZxmU=;
-	b=IZR76TAP4YljLZy6Qv+ffriIueGWUiDU+IcFqEhuQfUBarTh6ixMM2/K/VTQlnLIizDE52
-	4NSxZvb2O8WZgVBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3180013888;
-	Wed,  3 Sep 2025 13:38:37 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id MI+aCt1EuGjtRQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 03 Sep 2025 13:38:37 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 07357A0809; Wed,  3 Sep 2025 15:38:33 +0200 (CEST)
-Date: Wed, 3 Sep 2025 15:38:33 +0200
-From: Jan Kara <jack@suse.cz>
-To: Brian Foster <bfoster@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, jack@suse.cz, djwong@kernel.org
-Subject: Re: [PATCH RFC 2/2] iomap: revert the iomap_iter pos on
- ->iomap_end() error
-Message-ID: <ggcriup7z23ol3lpyz545hjguv33dxh6vznwpwflsycvxb3ni2@oyydc6xrjtnc>
-References: <20250902150755.289469-1-bfoster@redhat.com>
- <20250902150755.289469-3-bfoster@redhat.com>
+	s=arc-20240116; t=1756908395; c=relaxed/simple;
+	bh=mcSj6sBducJtq3QFx+SZal1G+3uS/KNlrKO5HrQqiUo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hWfARj3cumrsns9ySjt0Gg9ZtyE8tWF1Z6pChOxD1yUtsdKrP7NfQiflhlzuMBoHUSpN6vRxKArUqNAYX0yUOHgxoo1RZxY8ehAkqxFTvV7j9OyWHYuKE7B7C3g9nAJfAVWCwVQ/p5aBXdNpoG7x0lObDza+IYm83N0qYjTPPwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Aj0UB0W1; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-61e8fdfd9b4so2120495a12.1;
+        Wed, 03 Sep 2025 07:06:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756908392; x=1757513192; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mcSj6sBducJtq3QFx+SZal1G+3uS/KNlrKO5HrQqiUo=;
+        b=Aj0UB0W13COwkbj3JuklLGkEjYqu9fX1vGUHcQr9x1EMR7ITyBBZ7JIzFlXz14lVsV
+         06OKzClGjwy8tuXtCOUo98EMTLdlobotcNuVo/2/peP1748hTZaCtFYyNHN1iZ151hfF
+         EmQz8oW/8aSd8s00Y2QVmbBRuBldHfwWuBtnlohRbeQeehIRHv878zeFzyWHogFZPGKa
+         x5JYAetnkmWXDyHIAAXmHJ6nBsJZ1YTrAmddJzR6C75AK3KGdOc6IM0CDDlBxKd/kqb3
+         ooDH18YtbHF9N9C+SeNerZwL0Vv2CKjl+dB1rbg6rSg9faEmjruXc4y3AfzQd2LfzOGz
+         0PQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756908392; x=1757513192;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mcSj6sBducJtq3QFx+SZal1G+3uS/KNlrKO5HrQqiUo=;
+        b=nqGdGoQ8vIdZoRFRv08K2moUf8p+RONyJEkUdLPfsvLFLSM/YN9vDhkX697KRl2XLs
+         W7KkIGIABViFlB/7s6WyW723mXaaze/tF3agUkxSeyWKWCFVWZWQ9MtM88NIuyDmXZpW
+         Zu02BOOz9cSeFNZ7R9KJnNJn5NnG7KyzFbFZvi2kMz6kDyEjQaMPm9/RuG5JQYXV/dFL
+         X8V6C+4VNJliIF/syJ58341S1cjf2vMXWIk1pyLidorkLOc2moCO+/x1lGLo0E6u7lsU
+         lLitKJF70etiu6wi7m36F5ddLiyIENCUBjdi9sJBA9vxC91iaUpCujMf1wSgq5U62bpc
+         RvlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWq3OaPLBAnnjsNtksrBwi8xs+hCvlifgD9Bf5VoiRC3qZno3gzsHrVEPv4gsqW4Co60IRsoocFzo7o4/Pm@vger.kernel.org, AJvYcCWrS/oZKHhDZZGc2X7nfaWI9vgk9xZ/soEvYtyINjmuCRHwuvKo8z5gGFYJmf7RZq2HDCbHL4BsVgqorSrB@vger.kernel.org
+X-Gm-Message-State: AOJu0YziCtxBLp9atbiQ16iO3wRsm6f1CZk7d2QUGB6vWQ2ItSV/QZ11
+	LTNEo5OqPgmMOcWw7o5MHrrsDGMLcWjeejKgr3A0xv301wmXZSv+N0IUnF3MdNBzvhkPL+XQ4kI
+	RDG+u0m6H7p0SbKNLmCshTWcwf/9Z4Jc=
+X-Gm-Gg: ASbGnctVcUqFFHNsuFixf/fiffGHlBI54GJ3bu89hinRUm8+MpxeMrEfxgAN4rvkXma
+	uu9/MllS0wwKlMbsqAPjaJvCyXwnSX9Y7IpzLOcOZDUFvOE7NoaqEibFt98T76X1oC0NiHA+VcD
+	0Shkr+/hGx1LiQw3QQhujq4401Ep8+/W128wmc9Ez77A7VK70ODoV4+vydPaQcPM5XYjv1tyukp
+	4YqDjM=
+X-Google-Smtp-Source: AGHT+IGpjEpj1IJ6T8EHew5Nfz0x5tQL07YxgbZKRCSEna9fAUs8WjkIQrE9rKKag+kpN6af4bvomm64Arr/UlpvDKU=
+X-Received: by 2002:a05:6402:354e:b0:61c:90c:ee97 with SMTP id
+ 4fb4d7f45d1cf-61d26882f04mr15587215a12.4.1756908391436; Wed, 03 Sep 2025
+ 07:06:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250902150755.289469-3-bfoster@redhat.com>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: A32A721201
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	RCVD_COUNT_THREE(0.00)[3];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Score: -4.01
+References: <20250903093413.3434-1-lidiangang@bytedance.com> <ownanwiqdhijstazux3j5jsawdyw6tcgjufk6zrejppnqyoy7d@hdqmfb4q7wpz>
+In-Reply-To: <ownanwiqdhijstazux3j5jsawdyw6tcgjufk6zrejppnqyoy7d@hdqmfb4q7wpz>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 3 Sep 2025 16:06:19 +0200
+X-Gm-Features: Ac12FXy_mNxEqcs6hMH0BU3mgcsLIjZNGOEJy8Qu4kjnWkk_XD_OjSFyEg0aVCQ
+Message-ID: <CAOQ4uxiDEwrNVLkwuuA84RWoUPovi--Xj4BRuL-5OEwiQyAFXQ@mail.gmail.com>
+Subject: Re: [RFC 0/1] fsnotify: clear PARENT_WATCHED flags lazily for v5.4
+To: Diangang Li <lidiangang@bytedance.com>
+Cc: stephen.s.brennan@oracle.com, changfengnan@bytedance.com, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jan Kara <jack@suse.cz>, Greg KH <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue 02-09-25 11:07:55, Brian Foster wrote:
-> An iomap op iteration should not be considered successful if
-> ->iomap_end() fails. Most ->iomap_end() callbacks do not return
-> errors, and for those that do we return the error to the caller, but
-> this is still not sufficient in some corner cases.
-> 
-> For example, if a DAX write to a shared iomap fails at ->iomap_end()
-> on XFS, this means the remap of shared blocks from the COW fork to
-> the data fork has possibly failed. In turn this means that just
-> written data may not be accessible in the file. dax_iomap_rw()
-> returns partial success over a returned error code and the operation
-> has already advanced iter.pos by the time ->iomap_end() is called.
-> This means that dax_iomap_rw() can return more bytes processed than
-> have been completed successfully, including partial success instead
-> of an error code if the first iteration happens to fail.
-> 
-> To address this problem, first tweak the ->iomap_end() error
-> handling logic to run regardless of whether the current iteration
-> advanced the iter. Next, revert pos in the error handling path. Add
-> a new helper to undo the changes from iomap_iter_advance(). It is
-> static to start since the only initial user is in iomap_iter.c.
-> 
-> Signed-off-by: Brian Foster <bfoster@redhat.com>
+On Wed, Sep 3, 2025 at 3:31=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+>
+> On Wed 03-09-25 17:34:12, Diangang Li wrote:
+> > Hi Amir, Jan, et al,
+> >
+> > Commit `41f49be2e51a71` ("fsnotify: clear PARENT_WATCHED flags lazily")
+> > has resolved the softlockup in `__fsnotify_parent` when there are milli=
+ons
+> > of negative dentries. The Linux kernel CVE team has assigned CVE-2024-4=
+7660
+> > to this issue[1]. I noticed that the CVE patch was only backported to t=
+he
+> > 5.10 stable tree, and not to 5.4. Is there any specific reason or analy=
+sis
+> > regarding the 5.4 branch? We have encountered this issue in our product=
+ion
+> > environments running kernel 5.4. After manually applying and deconflict=
+ing
+> > this patch, the problem was resolved.
 
-Looks sensible to me. Feel free to add:
+All this above would be nice to send Greg for context
+so he can distinguish your posting from AI bots posting backports without
+having tested them or without having encountered the issue ;)
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+But IMO, it is more helpful to send these notes after the ---
+line in the patch notes rather than having a single path with a cover lette=
+r
+as a backport patch.
 
-								Honza
+> >
+> > Any comments or suggestions regarding this backport would be appreciate=
+d.
+>
+> I don't have any objections against including this in 5.4-stable branch.
+> Probably it was not applied because of some patch conflict. Feel free to
+> send the backport to stable@vger.kernel.org, I believe Greg will gladly
+> pickup the patch.
 
-> ---
->  fs/iomap/iter.c | 20 +++++++++++++++++++-
->  1 file changed, 19 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/iomap/iter.c b/fs/iomap/iter.c
-> index 7cc4599b9c9b..69c993fe51fa 100644
-> --- a/fs/iomap/iter.c
-> +++ b/fs/iomap/iter.c
-> @@ -27,6 +27,22 @@ int iomap_iter_advance(struct iomap_iter *iter, u64 *count)
->  	return 0;
->  }
->  
-> +/**
-> + * iomap_iter_revert - revert the iterator position
-> + * @iter: iteration structure
-> + * @count: number of bytes to revert
-> + *
-> + * Revert the iterator position by the specified number of bytes, undoing
-> + * the effect of a previous iomap_iter_advance() call. The count must not
-> + * exceed the amount previously advanced in the current iter.
-> + */
-> +static void iomap_iter_revert(struct iomap_iter *iter, u64 count)
-> +{
-> +	count = min_t(u64, iter->pos - iter->iter_start_pos, count);
-> +	iter->pos -= count;
-> +	iter->len += count;
-> +}
-> +
->  static inline void iomap_iter_done(struct iomap_iter *iter)
->  {
->  	WARN_ON_ONCE(iter->iomap.offset > iter->pos);
-> @@ -80,8 +96,10 @@ int iomap_iter(struct iomap_iter *iter, const struct iomap_ops *ops)
->  				iomap_length_trim(iter, iter->iter_start_pos,
->  						  olen),
->  				advanced, iter->flags, &iter->iomap);
-> -		if (ret < 0 && !advanced && !iter->status)
-> +		if (ret < 0 && !iter->status) {
-> +			iomap_iter_revert(iter, advanced);
->  			return ret;
-> +		}
->  	}
->  
->  	/* detect old return semantics where this would advance */
-> -- 
-> 2.51.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Also you need to fix some technical issues with your patch submission.
+
+1. Subject:
+[RFC 1/1] fsnotify: clear PARENT_WATCHED flags lazily
+change to
+[PATCH 5.4] fsnotify: clear PARENT_WATCHED flags lazily
+
+to explain that this is a backport and the target stable branch.
+
+2. mainline reference:
+commit 172e422ffea2 ("fsnotify: clear PARENT_WATCHED flags lazily")
+
+The common pattern used in stable tree is:
+commit 172e422ffea20a89bfdc672741c1aad6fbb5044e upstream.
+
+3. Signed-offs:
+Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Diangang Li <lidiangang@bytedance.com>
+
+Unless you are backporting a patch different that upstream version
+it is probably better to cherry-pick the commit from upstream without
+Sasha's signed-off.
+Not a big deal, but at least that's how Greg expects it:
+https://lore.kernel.org/stable/2025090200-uniquely-pumice-1afa@gregkh/
+
+and you may add:
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+
+Thanks,
+Amir.
 
