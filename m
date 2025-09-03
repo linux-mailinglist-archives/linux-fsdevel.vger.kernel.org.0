@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-60208-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60209-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84320B42B38
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 22:43:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 978C4B42B3C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 22:44:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BDE816C3CE
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 20:43:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 572D17C491B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 20:44:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4566531AF1C;
-	Wed,  3 Sep 2025 20:43:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A336B3112C4;
+	Wed,  3 Sep 2025 20:44:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dOMvet+k"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DWdEW7bK"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F2202DE6FB;
-	Wed,  3 Sep 2025 20:43:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0953B2D46CB;
+	Wed,  3 Sep 2025 20:44:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756932229; cv=none; b=jIFPHrghQCaGLIfC8Gp4uSthAS5JBrbNU11l+vCU2/BVXT6QHhjJ+xjrDMlTRECyHxA2xDPUzLrHcYfDZ6/yDJpbgiEfV+DWBCfVz7+eNDMA7JfSi+U2v1pJ7arGBfwxB5R/TuM0zn42JYDYZ+1TpvY01KBccrqsx0IsHgXtB6I=
+	t=1756932265; cv=none; b=ZDRInsMbj3RcH96uGl8bBt9XtdGUa+wLXrVgvbMQC8Ou1fC17uBR7CSppD95NMy7Re724/0ThInoxsXnfldORzTS/Ht/HlNSZU56cIj84zuPXx8nMo/wxN03ILUE7oBPRz7rVfhJXlkLSzeph0i8d+5Q3IQAu5cZAvVQ586xU1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756932229; c=relaxed/simple;
-	bh=2HvflQBDjFss4z/3YIhlC2S1Il45Fr0+/joDtsa4EDY=;
+	s=arc-20240116; t=1756932265; c=relaxed/simple;
+	bh=IxxiMTaQgwOHVsT2m5W7178Bx/SUs3qe0M0lyVcgi04=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EuNcTtBb5ipCIUUzR5Q0RzVFsbVAIptxKImKmC+II4DDrZOhcc10WhV78IaLbz526K3QZqUEom5pNmfpiiLBQD8H7A5VG4KiKzKGaqvzkCbqDgDgTgsdqqlfcppz3i6giRPjuT4oMSP09LklIS2VIpt+XWt05oje9UsfNd7Gtj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dOMvet+k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11A8CC4CEE7;
-	Wed,  3 Sep 2025 20:43:49 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=aNXmw6O4sjA+FIC7fSmzOTYN1QDZOTt9d1bp1HDHeR2iIVJa6ukHhzgMKREp7Tgb+MiUyuoDFAtxsvANe5Yl7sqzcUiPlIIoYadxqZkPwfZCmXUjNZ+WlDHxo0LiO+NgtsHkQxpEHui+aZbtb4UnMknsnTXRcQi6KYE9Erf46+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DWdEW7bK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6A11C4CEE7;
+	Wed,  3 Sep 2025 20:44:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756932229;
-	bh=2HvflQBDjFss4z/3YIhlC2S1Il45Fr0+/joDtsa4EDY=;
+	s=k20201202; t=1756932264;
+	bh=IxxiMTaQgwOHVsT2m5W7178Bx/SUs3qe0M0lyVcgi04=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dOMvet+k1vgS0/PUJGJUawiF62vs2C4DiEormBVKGJSCY/zS9023yshhwtp5PBfUQ
-	 4s24DvT+z6ytd+Xlmb/byXucMSxT48U5rBo8DN51P9xkEnSpEnEEoMJmOrZKAiSGN0
-	 iabGQTAlTsma1yMvQaRS9wRdDoPNX9FQRX1fT6qxl5hCniqG0ZRx9W/BVV6ErMCBwi
-	 QmQLzJ38WhbTOeebT7AxflQoqGpel4bGlXMQ61G4POF9OE9W+ZWqK5oozt6wBt9MLs
-	 tHNisyz2/FWW/xR6UJ8PRTR+RpWIl7GTUEc3Li1Tx9+vFH1hpxRuIW/PIY8AkTfZ8t
-	 glShtCOaKa9Pw==
-Date: Wed, 3 Sep 2025 13:43:48 -0700
+	b=DWdEW7bKz8AQIhXRG8AFGbpSnSyczDs5crI9iw+Ynnq0pH5+HdawtKm3fAIpjgTTx
+	 a8DYK8gNWiEPVjbRVccQUZI5fSj+mxv2AXxLFnzbLMuchylSG3BQ2CITE6Olsn0eim
+	 QqeVLQlNFzHz1JXw1WI8iLCjhdn7SoQWFtyNpdWQb+4V5YrHMOGXkbgGRCLz30X3Fh
+	 6uLYq/PYn5i2pYwwXS+FKosJIr/vEqO3VYqLwQLpWM0+qcpyqB/1NMarSndHdZf7/I
+	 s5+Una/rXROLGa44jye5C2I5xnB8f+iyFoEghe3XnPePiyw2m/zSlYPEJi6ihb+sVb
+	 ArxBkhYVG45Cw==
+Date: Wed, 3 Sep 2025 13:44:24 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: Joanne Koong <joannelkoong@gmail.com>
 Cc: brauner@kernel.org, miklos@szeredi.hu, hch@infradead.org,
 	linux-fsdevel@vger.kernel.org, kernel-team@meta.com,
 	linux-xfs@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v1 07/16] iomap: iterate through entire folio in
- iomap_readpage_iter()
-Message-ID: <20250903204348.GO1587915@frogsfrogsfrogs>
+Subject: Re: [PATCH v1 09/16] iomap: rename iomap_readpage_ctx struct to
+ iomap_readfolio_ctx
+Message-ID: <20250903204424.GP1587915@frogsfrogsfrogs>
 References: <20250829235627.4053234-1-joannelkoong@gmail.com>
- <20250829235627.4053234-8-joannelkoong@gmail.com>
+ <20250829235627.4053234-10-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,144 +60,98 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250829235627.4053234-8-joannelkoong@gmail.com>
+In-Reply-To: <20250829235627.4053234-10-joannelkoong@gmail.com>
 
-On Fri, Aug 29, 2025 at 04:56:18PM -0700, Joanne Koong wrote:
-> Iterate through the entire folio in iomap_readpage_iter() in one go
-> instead of in pieces. This will be needed for supporting user-provided
-> async read folio callbacks (not yet added). This additionally makes the
-> iomap_readahead_iter() logic simpler to follow.
+On Fri, Aug 29, 2025 at 04:56:20PM -0700, Joanne Koong wrote:
+> ->readpage was deprecated and reads are now on folios.
+> 
+> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
 
-This might be a good time to change the name since you're not otherwise
-changing the function declaration, and there ought to be /some/
-indication that the behavior isn't the same anymore.
-
-Otherwise, this looks correct to me.
+For this and the previous rename patches,
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 
 --D
 
-> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
 > ---
->  fs/iomap/buffered-io.c | 76 ++++++++++++++++++------------------------
->  1 file changed, 33 insertions(+), 43 deletions(-)
+>  fs/iomap/buffered-io.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
 > 
 > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index f26544fbcb36..75bbef386b62 100644
+> index 743112c7f8e6..a3a9b6146c2f 100644
 > --- a/fs/iomap/buffered-io.c
 > +++ b/fs/iomap/buffered-io.c
-> @@ -452,6 +452,7 @@ static int iomap_readpage_iter(struct iomap_iter *iter,
->  	loff_t length = iomap_length(iter);
+> @@ -317,7 +317,7 @@ static int iomap_read_inline_data(const struct iomap_iter *iter,
+>  	return 0;
+>  }
+>  
+> -struct iomap_readpage_ctx {
+> +struct iomap_readfolio_ctx {
+>  	struct folio		*cur_folio;
+>  	bool			folio_unlocked;
+>  	struct readahead_control *rac;
+> @@ -357,7 +357,7 @@ static void iomap_read_end_io(struct bio *bio)
+>  }
+>  
+>  static void iomap_read_folio_range_async(struct iomap_iter *iter,
+> -		struct iomap_readpage_ctx *ctx, loff_t pos, size_t plen)
+> +		struct iomap_readfolio_ctx *ctx, loff_t pos, size_t plen)
+>  {
 >  	struct folio *folio = ctx->cur_folio;
->  	size_t poff, plen;
-> +	loff_t count;
->  	int ret;
+>  	const struct iomap *iomap = &iter->iomap;
+> @@ -426,7 +426,7 @@ static void iomap_readfolio_submit(const struct iomap_iter *iter)
+>  }
+>  #else
+>  static void iomap_read_folio_range_async(struct iomap_iter *iter,
+> -		struct iomap_readpage_ctx *ctx, loff_t pos, size_t len)
+> +		struct iomap_readfolio_ctx *ctx, loff_t pos, size_t len)
+>  {
+>  	WARN_ON_ONCE(1);
+>  }
+> @@ -445,7 +445,7 @@ static void iomap_readfolio_submit(const struct iomap_iter *iter)
+>  #endif /* CONFIG_BLOCK */
 >  
->  	if (iomap->type == IOMAP_INLINE) {
-> @@ -463,26 +464,30 @@ static int iomap_readpage_iter(struct iomap_iter *iter,
->  
->  	/* zero post-eof blocks as the page may be mapped */
->  	ifs_alloc(iter->inode, folio, iter->flags);
-> -	iomap_adjust_read_range(iter->inode, folio, &pos, length, &poff, &plen);
-> -	if (plen == 0)
-> -		goto done;
->  
-> -	if (iomap_block_needs_zeroing(iter, pos)) {
-> -		folio_zero_range(folio, poff, plen);
-> -		iomap_set_range_uptodate(folio, poff, plen);
-> -	} else {
-> -		iomap_read_folio_range_async(iter, ctx, pos, plen);
-> -	}
-> +	length = min_t(loff_t, length,
-> +			folio_size(folio) - offset_in_folio(folio, pos));
-> +	while (length) {
-> +		iomap_adjust_read_range(iter->inode, folio, &pos,
-> +				length, &poff, &plen);
-> +		count = pos - iter->pos + plen;
-> +		if (plen == 0)
-> +			return iomap_iter_advance(iter, &count);
->  
-> -done:
-> -	/*
-> -	 * Move the caller beyond our range so that it keeps making progress.
-> -	 * For that, we have to include any leading non-uptodate ranges, but
-> -	 * we can skip trailing ones as they will be handled in the next
-> -	 * iteration.
-> -	 */
-> -	length = pos - iter->pos + plen;
-> -	return iomap_iter_advance(iter, &length);
-> +		if (iomap_block_needs_zeroing(iter, pos)) {
-> +			folio_zero_range(folio, poff, plen);
-> +			iomap_set_range_uptodate(folio, poff, plen);
-> +		} else {
-> +			iomap_read_folio_range_async(iter, ctx, pos, plen);
-> +		}
-> +
-> +		length -= count;
-> +		ret = iomap_iter_advance(iter, &count);
-> +		if (ret)
-> +			return ret;
-> +		pos = iter->pos;
-> +	}
-> +	return 0;
+>  static int iomap_readfolio_iter(struct iomap_iter *iter,
+> -		struct iomap_readpage_ctx *ctx)
+> +		struct iomap_readfolio_ctx *ctx)
+>  {
+>  	const struct iomap *iomap = &iter->iomap;
+>  	loff_t pos = iter->pos;
+> @@ -491,7 +491,7 @@ static int iomap_readfolio_iter(struct iomap_iter *iter,
 >  }
 >  
 >  static void iomap_readfolio_complete(const struct iomap_iter *iter,
-> @@ -494,20 +499,6 @@ static void iomap_readfolio_complete(const struct iomap_iter *iter,
->  		folio_unlock(ctx->cur_folio);
->  }
->  
-> -static int iomap_read_folio_iter(struct iomap_iter *iter,
-> -		struct iomap_readpage_ctx *ctx)
-> -{
-> -	int ret;
-> -
-> -	while (iomap_length(iter)) {
-> -		ret = iomap_readpage_iter(iter, ctx);
-> -		if (ret)
-> -			return ret;
-> -	}
-> -
-> -	return 0;
-> -}
-> -
->  int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops)
+> -		const struct iomap_readpage_ctx *ctx)
+> +		const struct iomap_readfolio_ctx *ctx)
 >  {
->  	struct iomap_iter iter = {
-> @@ -523,7 +514,7 @@ int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops)
->  	trace_iomap_readpage(iter.inode, 1);
+>  	iomap_readfolio_submit(iter);
 >  
->  	while ((ret = iomap_iter(&iter, ops)) > 0)
-> -		iter.status = iomap_read_folio_iter(&iter, &ctx);
-> +		iter.status = iomap_readpage_iter(&iter, &ctx);
+> @@ -506,7 +506,7 @@ int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops)
+>  		.pos		= folio_pos(folio),
+>  		.len		= folio_size(folio),
+>  	};
+> -	struct iomap_readpage_ctx ctx = {
+> +	struct iomap_readfolio_ctx ctx = {
+>  		.cur_folio	= folio,
+>  	};
+>  	int ret;
+> @@ -523,7 +523,7 @@ int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops)
+>  EXPORT_SYMBOL_GPL(iomap_read_folio);
 >  
->  	iomap_readfolio_complete(&iter, &ctx);
->  
-> @@ -537,16 +528,15 @@ static int iomap_readahead_iter(struct iomap_iter *iter,
+>  static int iomap_readahead_iter(struct iomap_iter *iter,
+> -		struct iomap_readpage_ctx *ctx)
+> +		struct iomap_readfolio_ctx *ctx)
+>  {
 >  	int ret;
 >  
->  	while (iomap_length(iter)) {
-> -		if (ctx->cur_folio &&
-> -		    offset_in_folio(ctx->cur_folio, iter->pos) == 0) {
-> -			if (!ctx->folio_unlocked)
-> -				folio_unlock(ctx->cur_folio);
-> -			ctx->cur_folio = NULL;
-> -		}
-> -		if (!ctx->cur_folio) {
-> -			ctx->cur_folio = readahead_folio(ctx->rac);
-> -			ctx->folio_unlocked = false;
-> -		}
-> +		if (ctx->cur_folio && !ctx->folio_unlocked)
-> +			folio_unlock(ctx->cur_folio);
-> +		ctx->cur_folio = readahead_folio(ctx->rac);
-> +		/*
-> +		 * We should never in practice hit this case since
-> +		 * the iter length matches the readahead length.
-> +		 */
-> +		WARN_ON(!ctx->cur_folio);
-> +		ctx->folio_unlocked = false;
->  		ret = iomap_readpage_iter(iter, ctx);
->  		if (ret)
->  			return ret;
+> @@ -567,7 +567,7 @@ void iomap_readahead(struct readahead_control *rac, const struct iomap_ops *ops)
+>  		.pos	= readahead_pos(rac),
+>  		.len	= readahead_length(rac),
+>  	};
+> -	struct iomap_readpage_ctx ctx = {
+> +	struct iomap_readfolio_ctx ctx = {
+>  		.rac	= rac,
+>  	};
+>  
 > -- 
 > 2.47.3
 > 
