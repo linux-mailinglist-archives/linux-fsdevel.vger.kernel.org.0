@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-60115-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60119-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6CA3B41408
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 06:59:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07895B4140E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 06:59:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1871D541BBA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 04:59:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C70B1BA1487
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 04:59:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936932DE718;
-	Wed,  3 Sep 2025 04:55:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 874CE2DA76A;
+	Wed,  3 Sep 2025 04:56:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="ncfsFmzm"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="BoJHkGZ2"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FF3A2D8764
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 945702DAFC7
 	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Sep 2025 04:55:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756875359; cv=none; b=eTmvQr5A0ZZvHk8DDNBnsJhsAMxQuQ+PAkmKGeal7i7mmCA6LxPgrRyWSj+tTdyS6q2CkIjPJFbfOE09HuFqJX8oC4x9GLLBBf8YNB4gkDEBsOQ+XtrivboesfjAukdvzQ7D95AP5k6OUofPqhSzOLQGSDuj8OWeah/ujV1nWf0=
+	t=1756875360; cv=none; b=JvIHOe5AXbxOTAI1EbPeUIebmRuem6HKLjPLb/bt69KrR0wRlabojcvYOs24sYxknk3VrMGi7p7LfxqhO86uG84WUMuX7c8ilv3mZ3QJt319FNi2UKHenqGwvBpTb8uIwSUtKMAtgCVdNEg0wgGb2E/oO+/NJ0KkCkSl422ibeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756875359; c=relaxed/simple;
-	bh=z5Xf9Ide3dDY9cJ+0Ioo+BH3/9KpxOzcHUPHrWhuzjQ=;
+	s=arc-20240116; t=1756875360; c=relaxed/simple;
+	bh=JCHKL1hSn4VKhDjSRbg6DdLKvAiic2vd9oaOmcyb6p0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ROPS0N+bJxVEaul0CDk2k0Oj4A/0WfAJCeZiC/iahsj/Z4YBsq5Qk2NOqrNiVJDXtNHNnJt6iM9a2muqSKtCVtAEEp0VvAjnFG7Uo66moqzmm++yzM64pWEmrmR6idNxnQlVe2uEOctRtrniznIGS01PGi1UZjVJqYMCDh8gaDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=ncfsFmzm; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=eztFNL5DOT4r+TV6OqktP24AhR+zbEKEahXI/SR1j9RxAqYSBtATW1f2tFcqI8kB0UG/XDoN/7tmdaL3WowLd1DzoKs885Mw8seS30NXwxvPO8nZZVKb8z4bz3RyNbEfQWyteZy7btsnN6VMwPbnOufxgqxJ8X0HttLb1PdNThM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=BoJHkGZ2; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=tm4vlK1FyfR97ym1H3KOSwQYYe6YAui0szvnrs5GcLk=; b=ncfsFmzmnA2X+/vYAJnQOipjQw
-	Q2Wlx1bmdVu77M7rpxU01XLycGvQQPqNv+IiCDJ5xKVSN67p2D8uIKSucyMPrf0RKGlyVAsxsgk+H
-	9O+8dr+hoxRxoPtz9yUXHbxZponeSNxw/G3dkdw9McqFbdfaRiXdcsNjiH70r09oU+MxqUp5muZD0
-	Fcq8IyG6RAS8nLyo52HEiTtCiDv3hr2/M0EpxLw3I2yQVVAVoWPFfeOqT+gPoSzbLF6s/47XBt5uZ
-	GeEVBzM0ZLf+ltKLoyDXt8yfcYBulj6W/gRHf3aKmdOILmheSKjHpHuDPXIJ1nSCmZMGncL9GZsAb
-	zgvY3qQA==;
+	bh=HO6brYjHKQ91jbXLVnYgA+FrWQnyT78eyX/mdoGQ4Ck=; b=BoJHkGZ2OUN8H5HGTG0sVBEBp0
+	2sQQCZZhORitX5fl3nybc7q2aNAfowv+n7LkQ/ksjbZ0UYlYg75GSD9wfdB02SV83Cm6jZl7FA1aj
+	30djFs+ahoh7x6/j+mBUxTlTWvZLZCoSRf0KgEVX/S1HGFPO3+MOO3VoxHiu6hqmpNv3WR6al7Gzn
+	qrDTrijHBoaE9ZCm4ng/C1oDuTIgXERk02eYinWwCrNi7XXA2mWwB0vzIGxiP300eR0RP0m8VvLB2
+	OmZkGvxEpdhk9G33l7tNUdDcp4tQYq6egJ70w87fsOfuznP6b3d+i2kDeTRJ/KPdrDz6YMx0wWZKH
+	AegbnL6w==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1utfXH-0000000ApMc-3tvE;
-	Wed, 03 Sep 2025 04:55:55 +0000
+	id 1utfXI-0000000ApMo-0Gnn;
+	Wed, 03 Sep 2025 04:55:56 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: brauner@kernel.org,
 	jack@suse.cz,
 	torvalds@linux-foundation.org
-Subject: [PATCH v3 62/63] struct mount: relocate MNT_WRITE_HOLD bit
-Date: Wed,  3 Sep 2025 05:55:33 +0100
-Message-ID: <20250903045537.2579614-72-viro@zeniv.linux.org.uk>
+Subject: [PATCH v3 63/65] struct mount: relocate MNT_WRITE_HOLD bit
+Date: Wed,  3 Sep 2025 05:55:34 +0100
+Message-ID: <20250903045537.2579614-73-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250903045537.2579614-1-viro@zeniv.linux.org.uk>
 References: <20250903045432.GH39973@ZenIV>
@@ -73,6 +73,7 @@ always forward, so they don't even look at ->mnt_prev_for_sb and
 both insertions and removals are in mount_lock scopes of their own,
 so that bit will be clear in *all* mount instances during those.
 
+Reviewed-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
  fs/mount.h            | 25 ++++++++++++++++++++++++-
@@ -122,7 +123,7 @@ index b208f69f69d7..40cf16544317 100644
 +
  struct mnt_namespace *mnt_ns_from_dentry(struct dentry *dentry);
 diff --git a/fs/namespace.c b/fs/namespace.c
-index 06be5b65b559..8e6b6523d3e8 100644
+index eb1b557e9f6d..64cbd8e8a1d3 100644
 --- a/fs/namespace.c
 +++ b/fs/namespace.c
 @@ -509,20 +509,20 @@ int mnt_get_write_access(struct vfsmount *m)
