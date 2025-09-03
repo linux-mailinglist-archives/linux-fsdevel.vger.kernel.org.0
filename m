@@ -1,61 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-60132-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60134-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82964B418A7
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 10:35:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10FD3B418ED
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 10:43:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E34923BD127
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 08:35:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA9341751D0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 08:43:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770042E719C;
-	Wed,  3 Sep 2025 08:35:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="O1d1dxvD"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61D082EC081;
+	Wed,  3 Sep 2025 08:43:24 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5047E2D77E8;
-	Wed,  3 Sep 2025 08:35:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+Received: from cmccmta2.chinamobile.com (cmccmta4.chinamobile.com [111.22.67.137])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E0DF26CE03;
+	Wed,  3 Sep 2025 08:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756888514; cv=none; b=BGpjwO5PxRAC0YC5fQ472UWVqYnE37vYHHZCQDk39OEfwb24LCCl6EA75+azQbp7y9ZkVjn8Rg5N79rByMgWMVGvjIlEuQj/mqeF4sJAKLP/aajUEW+NwqhBBEeWnVHMqLA6XKNoNCHyxcTgwrdYV+2KWB1hySqQAP/Jg7QePzg=
+	t=1756889004; cv=none; b=WsDz0CVsCkUQpT6xdCI+yQzNiUT2pxawRbyJni1qO8F4fTNxLnpNSv5XVkQ1B9DmeGjwwtWUYnXnjnpQb0lDiQA+wZHrI7OKQWp67ADv7fi4ew9VNXmVBLhufM/mIdewjMsyzSoSCGVxGi1kCJSn8N+trVVSEflo1jHI8pa1a3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756888514; c=relaxed/simple;
-	bh=HOK2OBFehwf+Ojm351ekqU9NNngwOena2BOEdeRC/JA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZQyfeeys/pC11EdC+RAw7kTOUhve6fzk/2AbkRZMdbpS0e7fgCCqYyx2LYYZqQth/QtICw6+6JMkGPWopOEiZBXKTSj/RDlrgXVCuyYhuJc/J6ZPab/emqnyPZ0aJTV46mlvCtVZaxtusmvzKDYe0i+Ca18auE4r/P0iEisQBp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=O1d1dxvD; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
-	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=xT0ARSrlOs0s7qJir2qDh4AiSKuyaQLSzIrVIFAShXI=; b=O1d1dxvD4ujW5HuVrtDdeLx8sr
-	t85Hzzf5zrPSukGnOQD6ro/kzm7Tin/X0gD+9VffRz5pkBJt++04fvuC0CqlkIGJo+ExpIt6oK+UV
-	lMFQuJ87DS8FQuiQ8eCLvNpJ2SZ+c2ofrckTLTCuaZRzbHDrPTAFyqNjvi+LdzpZHUbcgTgRCs1UK
-	7Vk0DWGQHYGJJhTvsJuxKCdEJlCn9+zuZlSi3U2eT92pjbMPAU5hgTfOdX0kYTwuUpZLM/hoHVP0B
-	85V/zlAtWoClOqapoN+3L580rB6rjAduNYqwVsFHgDado2jo7d/ltu0pY2IDL1oCpvo9/TmHfHFJ2
-	XGBdPNgg==;
-Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1utixJ-00663d-6L; Wed, 03 Sep 2025 10:35:01 +0200
-From: Luis Henriques <luis@igalia.com>
-To: Miklos Szeredi <miklos@szeredi.hu>,
-	Joanne Koong <joannelkoong@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org,
+	s=arc-20240116; t=1756889004; c=relaxed/simple;
+	bh=FeOtINI7CWDP8yDbnH17RcPFAGkecwnxp++CzSaWZko=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X/on4nesFnXW7bNH6dIg5S1I9GjHTq3g0TRA6GnXZu1Hera8Fu/h9kwLVES+qp2vWqL/64AK897fIdBk17TkpODUzai8WoHWznZcpBNkA9Uuxc8K//yu1ap8CwBg0/azer5Q/ukZhAL+RofeCCscCch0j5wKTVs3fDreieiqG0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app08-12008 (RichMail) with SMTP id 2ee868b7fedb165-1b1f7;
+	Wed, 03 Sep 2025 16:39:55 +0800 (CST)
+X-RM-TRANSID:2ee868b7fedb165-1b1f7
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from Z04181454368174 (unknown[10.55.1.71])
+	by rmsmtp-syy-appsvr02-12002 (RichMail) with SMTP id 2ee268b7fed832e-67324;
+	Wed, 03 Sep 2025 16:39:55 +0800 (CST)
+X-RM-TRANSID:2ee268b7fed832e-67324
+From: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
+To: akpm@linux-foundation.org
+Cc: brauner@kernel.org,
+	viro@zeniv.linux.org.uk,
+	lorenzo.stoakes@oracle.com,
+	frederic@kernel.org,
+	tglx@linutronix.de,
+	xu.xin16@zte.com.cn,
+	mingo@kernel.org,
+	superman.xpt@gmail.com,
 	linux-kernel@vger.kernel.org,
-	kernel-dev@igalia.com,
-	Luis Henriques <luis@igalia.com>
-Subject: [PATCH v2] fuse: prevent possible NULL pointer dereference in fuse_iomap_writeback_{range,submit}()
-Date: Wed,  3 Sep 2025 09:34:53 +0100
-Message-ID: <20250903083453.26618-1-luis@igalia.com>
+	linux-fsdevel@vger.kernel.org,
+	zhang jiao <zhangjiao2@cmss.chinamobile.com>
+Subject: [PATCH] fs/proc/base.c: Fix the wrong format specifier
+Date: Wed,  3 Sep 2025 16:39:47 +0800
+Message-ID: <20250903083948.2536-1-zhangjiao2@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.50.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -64,59 +63,31 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-These two functions make use of the WARN_ON_ONCE() macro to help debugging
-a NULL wpc->wb_ctx.  However, this doesn't prevent the possibility of NULL
-pointer dereferences in the code.  This patch adds some extra defensive
-checks to avoid these NULL pointer accesses.
+From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
 
-Fixes: ef7e7cbb323f ("fuse: use iomap for writeback")
-Signed-off-by: Luis Henriques <luis@igalia.com>
+Use '%d' instead of '%u' for int.
+
+Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
 ---
-Hi!
+ fs/proc/base.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This v2 results from Joanne's inputs -- I now believe that it is better to
-keep the WARN_ON_ONCE() macros, but it's still good to try to minimise
-the undesirable effects of a NULL wpc->wb_ctx.
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index b997ceef9135..6299878e3d97 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -3947,7 +3947,7 @@ static int proc_task_readdir(struct file *file, struct dir_context *ctx)
+ 		tid = task_pid_nr_ns(task, ns);
+ 		if (!tid)
+ 			continue;	/* The task has just exited. */
+-		len = snprintf(name, sizeof(name), "%u", tid);
++		len = snprintf(name, sizeof(name), "%d", tid);
+ 		if (!proc_fill_cache(file, ctx, name, len,
+ 				proc_task_instantiate, task, NULL)) {
+ 			/* returning this tgid failed, save it as the first
+-- 
+2.33.0
 
-I've also added the 'Fixes:' tag to the commit message.
 
- fs/fuse/file.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 5525a4520b0f..990c287bc3e3 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -2135,14 +2135,18 @@ static ssize_t fuse_iomap_writeback_range(struct iomap_writepage_ctx *wpc,
- 					  unsigned len, u64 end_pos)
- {
- 	struct fuse_fill_wb_data *data = wpc->wb_ctx;
--	struct fuse_writepage_args *wpa = data->wpa;
--	struct fuse_args_pages *ap = &wpa->ia.ap;
-+	struct fuse_writepage_args *wpa;
-+	struct fuse_args_pages *ap;
- 	struct inode *inode = wpc->inode;
- 	struct fuse_inode *fi = get_fuse_inode(inode);
- 	struct fuse_conn *fc = get_fuse_conn(inode);
- 	loff_t offset = offset_in_folio(folio, pos);
- 
--	WARN_ON_ONCE(!data);
-+	if (WARN_ON_ONCE(!data))
-+		return -EIO;
-+
-+	wpa = data->wpa;
-+	ap = &wpa->ia.ap;
- 
- 	if (!data->ff) {
- 		data->ff = fuse_write_file_get(fi);
-@@ -2182,7 +2186,8 @@ static int fuse_iomap_writeback_submit(struct iomap_writepage_ctx *wpc,
- {
- 	struct fuse_fill_wb_data *data = wpc->wb_ctx;
- 
--	WARN_ON_ONCE(!data);
-+	if (WARN_ON_ONCE(!data))
-+		return error ? error : -EIO;
- 
- 	if (data->wpa) {
- 		WARN_ON(!data->wpa->ia.ap.num_folios);
 
