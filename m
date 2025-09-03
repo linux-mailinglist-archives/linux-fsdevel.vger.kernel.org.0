@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-60055-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60053-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C0ABB413C6
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 06:56:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 698CBB413D0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 06:56:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E94EB1640AC
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 04:56:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AADA68130E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 04:56:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223FF2D6E70;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 230872D7385;
 	Wed,  3 Sep 2025 04:55:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="lD6DLqjc"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="kOf3DZlR"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D684E2D4B6D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8F5A2D4B73
 	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Sep 2025 04:55:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756875343; cv=none; b=Vy9TsSA6l1/6ubweBaI5M+VDZ2+1He8taR1agOItwfJYrIq7WIhrbdutFWpJr6yrm+JVVCJdapAAxdNiQ4tF40dhnnjzmUHgFnwgbJXl4Sr/kRFpSTyFa9k8rC1P63DHHfAxplErJ5mNVxWzYLo5U/Dthv1UgWJgOr3/M3Ddglk=
+	t=1756875343; cv=none; b=o3vX8ZYjag8UjnYPZb7RF30Siwb+HXJ35KoUQEXN1y3xAARggLs3zNImUTko0Zp1NIVk2euYR+Ga1A0Rw5jnY1gMc6n9J5IjSN1wPh18yPaTvbhnBpL6D7AD5FicX+jeEl4ePH2CzwAwWJLlbIFM9sw96OBrO8/gGAoGpiTftR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756875343; c=relaxed/simple;
-	bh=yfJSbHWfy5kIEWgbaNqZUiCVeuubH/AYDBvwPtChjuk=;
+	bh=2loXYegU2u96gTRiIsgrQA+nW17AII9VuUJ7dp9aAJs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ohIymfcv8gNL0znwLqCb1tT8WN69ouSAITk4utoGTj7RlHg9UxR4ddYRsCcNfP71NrvTPtkkcOuTXwxnWe5AIy0lRYGeHvRjdYT/rMZUOrMaCTDTR2X5XaK7AQs+IbHIz4a/LkdIkObsilIbGpUA4HM2EmWHaMZrAYnPxo9quwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=lD6DLqjc; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=bjhPFnt677O+dtsC5ItlDcRTSh3pC4naPqeHLH0JJIbYC57pHweLaQ1hpsKkyAjxnOoKZFpZzGZAShP5qVnVS5DJGinx6xQ6Oz7Dz80OLq4XPLdxrn+yguLYW761mfk24mM55gc468jbdOlEgczkd8oJrB8HTi4csim4erTnHMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=kOf3DZlR; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=KEr+v7id3BjFs8cnQzjxngLZ6fe9XJ0LatFW/PEis+Q=; b=lD6DLqjcPNv1fCvDFqgT6wBU1k
-	rxkIkIz0lFzGjy14bzP3fr+WlYZwW/gpqbP/ReTVtTsr92xfIXKUn65ZhZej//cliAY4wFfCm0JTD
-	CAHSHLzD/N8Yr9/1zjhjB/KBDhbkVh0khcR3fDmIrX90HqSFJNS7AaTZcBTU1s8uLJwAF25xcwaVM
-	v1IlEzFb/cuaWvYjwt9P0rlo3MprqBG/egEoZAqAhbqVn2NMFZSZEIjSvbxmKMCocwuW6p18kWFdS
-	ebWeEtoeaCMbN05NoUaa98mFQLU9RrNfmcfeOpVU85yxtKKQfpDFcxugXz2T5lHBGCcBd6Zh0Ax2M
-	FOPHebfA==;
+	bh=ezq+XaAJGAmhgSNAz20IZtNNgA0qqI4IoUCbSaIoPAk=; b=kOf3DZlRahAZqFyy4HdWCS19aL
+	xw2Pcby4heQy95AGykGsb1d4lmuDRl6W35ro/QheoEuYk0mlRTWL8D9UiDcGaUg0fZEB11u9xIkrl
+	lUZie1tdaJZYvrPXZSt9NERWULsu7Ayg7S4cUSY3Y5oJet7bJBlbs3a0VLzrrPTXpdit47HJfKpHk
+	65fM6+/5uwM0LPcgdg46SrXBvoyjgONxJ7BYY/hfBJ6GC8CAGzFU7B0Z6FmvgUKquHx3zBL7vMX3z
+	YA3I9aianKAe85TD0G5/GddrIwXJqcy53SHE/yxGOHvbQb1EP0uRPA4I++25foaUItcP5ZjINtW9P
+	87d6sRsA==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1utfX2-0000000Ap7O-1uSa;
+	id 1utfX2-0000000Ap7V-2DFO;
 	Wed, 03 Sep 2025 04:55:40 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: brauner@kernel.org,
 	jack@suse.cz,
 	torvalds@linux-foundation.org
-Subject: [PATCH v3 13/65] has_locked_children(): use guards
-Date: Wed,  3 Sep 2025 05:54:34 +0100
-Message-ID: <20250903045537.2579614-13-viro@zeniv.linux.org.uk>
+Subject: [PATCH v3 14/65] mnt_set_expiry(): use guards
+Date: Wed,  3 Sep 2025 05:54:35 +0100
+Message-ID: <20250903045537.2579614-14-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250903045537.2579614-1-viro@zeniv.linux.org.uk>
 References: <20250903045432.GH39973@ZenIV>
@@ -65,41 +65,30 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-... and document the locking requirements of __has_locked_children()
+The reason why it needs only mount_locked_reader is that there's no lockless
+accesses of expiry lists.
 
 Reviewed-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/namespace.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ fs/namespace.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/fs/namespace.c b/fs/namespace.c
-index 59948cbf9c47..2cb3cb8307ca 100644
+index 2cb3cb8307ca..db25c81d7f68 100644
 --- a/fs/namespace.c
 +++ b/fs/namespace.c
-@@ -2373,6 +2373,7 @@ void dissolve_on_fput(struct vfsmount *mnt)
- 	}
- }
- 
-+/* locks: namespace_shared && pinned(mnt) || mount_locked_reader */
- static bool __has_locked_children(struct mount *mnt, struct dentry *dentry)
+@@ -3858,9 +3858,8 @@ int finish_automount(struct vfsmount *m, const struct path *path)
+  */
+ void mnt_set_expiry(struct vfsmount *mnt, struct list_head *expiry_list)
  {
- 	struct mount *child;
-@@ -2389,12 +2390,8 @@ static bool __has_locked_children(struct mount *mnt, struct dentry *dentry)
- 
- bool has_locked_children(struct mount *mnt, struct dentry *dentry)
- {
--	bool res;
--
 -	read_seqlock_excl(&mount_lock);
--	res = __has_locked_children(mnt, dentry);
--	read_sequnlock_excl(&mount_lock);
--	return res;
 +	guard(mount_locked_reader)();
-+	return __has_locked_children(mnt, dentry);
+ 	list_add_tail(&real_mount(mnt)->mnt_expire, expiry_list);
+-	read_sequnlock_excl(&mount_lock);
  }
+ EXPORT_SYMBOL(mnt_set_expiry);
  
- /*
 -- 
 2.47.2
 
