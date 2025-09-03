@@ -1,165 +1,138 @@
-Return-Path: <linux-fsdevel+bounces-60138-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60139-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D559B41AB5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 11:54:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1552CB41AD6
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 11:58:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37153188F7D0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 09:55:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7AAA1BA58A4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Sep 2025 09:58:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B75FD2D6E58;
-	Wed,  3 Sep 2025 09:52:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36FED1DE3DC;
+	Wed,  3 Sep 2025 09:55:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kcF926pt"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="a2SYyK/p"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E192D595D;
-	Wed,  3 Sep 2025 09:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D1C267B00
+	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Sep 2025 09:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756893162; cv=none; b=rqf0f8xI3zW61pk84toJqd0tF6E8G4VhghgQCD1yB3+fqvI2lEvK5Cah/PDS2w/mCJke7pmvrrJ5xCbdrgC/JFtk7VQpI+cgyvDbpcdhdI++bm3dt6KHr2q4OXUbtCH8Wrdt54ObZ31zNJKnh0i3G6dvO47SAttuUeqh8l+Yz14=
+	t=1756893340; cv=none; b=KEVupUOACztk9XSlod6xBCYdKmN472LNS4cm9Yb6lG6QBssfNxLC/K7dZtjhXEmVeHl1BFYpFSfQ167vGDb6XGpcZCE01hsM9MD4QOU67bE3arQxLKaEqgSSjBtw/MxXp1sqj5iubPNjOv0xz77Q4fEk4x5oYypGH6XkcnyTDSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756893162; c=relaxed/simple;
-	bh=DRHRhDYbpmHzpfFsIrEuhLJe2BcDsU7tEMe0VoXil2I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dDecmhM3/fJ8fnktqOYNImC0URfVYGrGUlNBtaNEMq6VnXQHme/fGcORoByfIxj8Bd6XjhlXo1FzYIqHwDWPmtyy1pvQMwdMYLq5ykN5epyXKu2596LRfNxmYqv5GmoR+jAvoB8an9wlNK8nJ6LjBZixpBjum0SiGGgn2RGZhEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kcF926pt; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45b8b8d45b3so29414055e9.1;
-        Wed, 03 Sep 2025 02:52:40 -0700 (PDT)
+	s=arc-20240116; t=1756893340; c=relaxed/simple;
+	bh=i0hN3JTxGBQkH3VjckTsldIljnBC1Fl7UOBLKwhSOYE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hLZL9nxw4iQ0heGtJpsgS2+aY+8vGJ+TCevgInfFzjXHbQfn2t1WfSv8KFollglgnrRxvGn2nPltnkfiHxsAfl+ddy0ZGAv2jivPkBM0QmvpUimpwXKdBiWQTR6uTpjp07QEz4tRimvCC6UGp9A6kG1zVRA7G+7GaCtsOUJh3GQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=a2SYyK/p; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4b34a3a6f64so13425991cf.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Sep 2025 02:55:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756893159; x=1757497959; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=m51P/mqA6vihj9WJ5mZRAm+FhXTOdtX2l73PkgmXgs8=;
-        b=kcF926ptivm32cuoXcVj8WKO0wo0TyA4N64qxhIVuHngWWIPTodbiOjehVw2yQS+WA
-         z6QwtO30GSCX73wdHI6LvOr9yvhp44yemBlLuangCG8ETrgjsvOO0LSyemIaeIRkxIPf
-         DbWwKRA8g3B8oIrDfcDxOA5WBzSc0J6iXIOkgTHSJnH2URt6Iz7tyVUiRL+F4TrtLwNu
-         tsQ0QgsWdqbM1auCIoYO1pg1kgz94eIzQMk3aOgUabK3svCPujUGeCGv14C4qDITtF7Q
-         b342Q77FZF5DNIL6Xg9zID6o3VzZlAr7LgviTTd26vIzHzHjKKJHyYgSKgxxaAzZKD3w
-         LBvA==
+        d=szeredi.hu; s=google; t=1756893336; x=1757498136; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=i0hN3JTxGBQkH3VjckTsldIljnBC1Fl7UOBLKwhSOYE=;
+        b=a2SYyK/pSf46i0VAsCzd0/1vf32Gtp0XyI66e27nvTvYax8R+JELHxo3ZNMQjRYLm3
+         2lUGw7/sLS+OrookgH0uKFCgH4HPsbYX+mBcyRYvxXAWbOt0oxa6ltY14bvIIZmDMFl0
+         oLzRJg2JkmfAK5519f4EKXM1XVCkIhLt3SNNs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756893159; x=1757497959;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=m51P/mqA6vihj9WJ5mZRAm+FhXTOdtX2l73PkgmXgs8=;
-        b=CkO7Rof6jcL0AUmn07Oz36mh07iMm6F9NCOpjyRw/KEM1C4XodWPJd6+nZvYqohh6r
-         5+h4vvWgchRj8fKBySICmRca36SuHcqNjF+szE5qXGLm9s+mAZZ4Z9nFfThk8i6fdUE5
-         Ic4df72Xo6FKI5ryBPud8adVnKJGuNC7WTNRMegqAAHVMN6MhW9MIa5zoB/5IUyUsWKG
-         yfn81j7WEiiAYQcEGgW74ZPqZi/vrsHqWcMeLGl9qb3ZHyw6WC90RGD9sWzGvFBa87+6
-         TGPE1J5Q9qAxFpPgC6BXnOBGmuzLkececdWyxlD3WNg6QVea7hHCCvH5K6fUXjY0hYae
-         MHqA==
-X-Forwarded-Encrypted: i=1; AJvYcCUJKVRIuegyiJabkIuZ03bOoh6ZwvxufgIEOBqHq/m3QEXPILrX7732vRRTRUJwpxhvjhcR2nrc5dIj3a1lgg==@vger.kernel.org, AJvYcCW/PZtghYteSVcb95Gx/eaZw5jfDNbT+mU0xdqzpt/PZhTOjZykR9qIfkCVMQKV4v2wgu27pSpn1YgiwA==@vger.kernel.org, AJvYcCXGDYwaJHTM5j2RY5mDiG4X5o9Ofb6CMrGkaUzWniB2iJ/6aj7S+2l4yTvyUHTeqIjCCKFQ/HUIzMDQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHnsJOQOpUtmNt7w9QZctRmimousHmTpVmqRGmECPMEzcFszvO
-	MqB042287m09u7qVCgLL9BLGinRu183rYNfHL/XbDHx4qdLVv9KLcH3S
-X-Gm-Gg: ASbGncvnx25caK81ZE9Itxv0N7SiFJLod60JhxVu6+MLdDaoosK7y3b6B7+NryHET0j
-	aFR+EmTHT7bp1+z7rRasK6hMKkP869uBH3i36sqJPGmduyfy3WuxpqeToom8pSB9o486wXbmweC
-	CBAdQI4idUefuLePdKtZFYDcjndd81tFqOlbW5jnevJUL4yWFNHJgKoR8AdM2i23J9Ua7Yy7oDV
-	IG1QjTPLxuyDx8rZMz51MGwQmzWrCjJEL4shrIdibqqBION6WlFbzgUSwokUtMuvbtXvUI00Gof
-	naKN2/3qJM515ngyadOKyhBP6I6APyJumFTHQAV4bhjiXd5aPFocMJOUc9h0Iww+VNElyrFSs+a
-	CtfQRC/LmZzWNfFsNZIeVJ2qxS8fgQBIxPPZKdkxMHikpNT2BkqAaMPLXNEjIhVysVQ==
-X-Google-Smtp-Source: AGHT+IGibCHhw4opsq0msOZTNUGtFpdoyj60pXb9z9tNXwCehNkks3wS9+oy1yII1iFWVzY0Fyj8Fg==
-X-Received: by 2002:a05:600c:a45:b0:458:bf0a:6061 with SMTP id 5b1f17b1804b1-45b85598614mr140589115e9.24.1756893158409;
-        Wed, 03 Sep 2025 02:52:38 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:92eb])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf33fb9dbfsm22934776f8f.43.2025.09.03.02.52.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Sep 2025 02:52:37 -0700 (PDT)
-Message-ID: <c4bc7c33-b1e1-47d1-9d22-b189c86c6c7d@gmail.com>
-Date: Wed, 3 Sep 2025 10:53:49 +0100
+        d=1e100.net; s=20230601; t=1756893336; x=1757498136;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=i0hN3JTxGBQkH3VjckTsldIljnBC1Fl7UOBLKwhSOYE=;
+        b=e8o2ZVK/LvLse5D6hqtgnZirs7wXfxYepAhETLVV+hAkonN8DddpAvhQQN3mDSJId7
+         BJHBGY9LtzijfRtjd3o5gZtdNJSOz2tQ8u+FP05CjN0bvrfdFz5YR6RLfAgKJELlbcsp
+         4Kx8eHQfiPoaPqjcd7jZI3y//fUZRfSvWu6L+JwZwqfxFYjMSLpJ4VGKIejZObPc58OM
+         47XIEzXVZuGKq15qqDxMNubHjKTBRlsOfP/60yezWhmxQBoS7UGaMMbLghjkpBO/JfrL
+         P4OVku4g3iMXLkjb64CWslWMZpLW9FpDm1/1KNBbyFyiHgD5BQujpUTWtriAUimpdaLG
+         dJdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUCbek9D+GITCPdCuWbJYkRP/sXEGAsPmpvprpZgY7nQ8p3F1TEOMQpoHT1UvNQjLsUlD+BQl3ofAeyJEbX@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwFIOtcWZS1z9ER7pnl8RrJiu3zRqCEjw7W+LfTxLcfWiw9mo3
+	bkEQwXM8cmZUehe7eOW9x4Hm7OD74hAW0wvKQTyhX2IxIWWBlT+3Sj2qQZh0feg8mqOedBgEwh+
+	1Y4g9fY56ZHoTSpJgQixOMeAz3V4FhvAaDxO2wAfN9w==
+X-Gm-Gg: ASbGnctu1/HoKK0kc+8QNNjDaxMlU0UiPxoU3X5rQAewjLXMiCnWqAHA7z9igwZ2cSc
+	YipqOWlRtF40fTb3Vk6wq35K5i1LSXkwH2AXvxcHMNleN44gh2opBVCV60z+tpLYiKHwFb49izm
+	7OK+r5L0D/1i//M25Vz1/2wxK4kp10v0YVFhgw2lGxZNvqLxGrP8149mm5WhTi4kP3NkphKoXgd
+	lkzSrHn/cdX9Nc9Gkuy
+X-Google-Smtp-Source: AGHT+IFY0o814c/UFxGrM4ghR8U+5ROI2FYDVGN2QyD1xaQ+SRqGO18IVPX6GwijmfJp+9E1evSRUVC3zpIk3+5Fnjc=
+X-Received: by 2002:a05:622a:5e0d:b0:4b4:8f03:9c43 with SMTP id
+ d75a77b69052e-4b48f039e59mr13308791cf.29.1756893336548; Wed, 03 Sep 2025
+ 02:55:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iomap: allow iomap using the per-cpu bio cache
-To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
- Matthew Wilcox <willy@infradead.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,
- Fengnan Chang <changfengnan@bytedance.com>, brauner@kernel.org,
- linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
-References: <20250822082606.66375-1-changfengnan@bytedance.com>
- <20250822150550.GP7942@frogsfrogsfrogs>
- <aKiP966iRv5gEBwm@casper.infradead.org> <877byv9w6z.fsf@gmail.com>
- <aKif_644529sRXhN@casper.infradead.org> <874ityad1d.fsf@gmail.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <874ityad1d.fsf@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <175573708506.15537.385109193523731230.stgit@frogsfrogsfrogs>
+ <175573708630.15537.1057407663556817922.stgit@frogsfrogsfrogs>
+ <CAJfpegsp=6A7jMxSpQce6Xx72POGddWqtJFTWauM53u7_125vQ@mail.gmail.com>
+ <20250829153938.GA8088@frogsfrogsfrogs> <CAJfpegs=2==Tx3kcFHoD-0Y98tm6USdX_NTNpmoCpAJSMZvDtw@mail.gmail.com>
+ <20250902205736.GB1587915@frogsfrogsfrogs>
+In-Reply-To: <20250902205736.GB1587915@frogsfrogsfrogs>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Wed, 3 Sep 2025 11:55:25 +0200
+X-Gm-Features: Ac12FXy9ovoKtZPx52Va9FwtNBEEn8twm-ePM4GprUxOSwPyJ_1p2NS6zUuG9IQ
+Message-ID: <CAJfpegskHg7ewo6p0Bn=3Otsm7zXcyRu=0drBdqWzMG+hegbSQ@mail.gmail.com>
+Subject: Re: [PATCH 4/7] fuse: implement file attributes mask for statx
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: bernd@bsbernd.com, neal@gompa.dev, John@groves.net, 
+	linux-fsdevel@vger.kernel.org, joannelkoong@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 8/23/25 05:15, Ritesh Harjani (IBM) wrote:
-> Matthew Wilcox <willy@infradead.org> writes:
-> 
->> On Fri, Aug 22, 2025 at 09:37:32PM +0530, Ritesh Harjani wrote:
->>> Matthew Wilcox <willy@infradead.org> writes:
->>>> On Fri, Aug 22, 2025 at 08:05:50AM -0700, Darrick J. Wong wrote:
->>>>> Is there a reason /not/ to use the per-cpu bio cache unconditionally?
->>>>
->>>> AIUI it's not safe because completions might happen on a different CPU
->>>> from the submission.
->>>
->>> At max the bio de-queued from cpu X can be returned to cpu Y cache, this
->>> shouldn't be unsafe right? e.g. bio_put_percpu_cache().
->>> Not optimal for performance though.
->>>
->>> Also even for io-uring the IRQ completions (non-polling requests) can
->>> get routed to a different cpu then the submitting cpu, correct?
->>> Then the completions (bio completion processing) are handled via IPIs on
->>> the submtting cpu or based on the cache topology, right?
->>>
->>>> At least, there's nowhere that sets REQ_ALLOC_CACHE unconditionally.
->>>>
->>>> This could do with some better documentation ..
->>>
->>> Agreed. Looking at the history this got added for polling mode first but
->>> later got enabled for even irq driven io-uring rw requests [1]. So it
->>> make sense to understand if this can be added unconditionally for DIO
->>> requests or not.
->>
->> So why does the flag now exist at all?  Why not use the cache
->> unconditionally?
-> 
-> I am hoping the author of this patch or folks with io-uring expertise
-> (which added the per-cpu bio cache in the first place) could answer
-> this better. i.e.
+On Tue, 2 Sept 2025 at 22:57, Darrick J. Wong <djwong@kernel.org> wrote:
 
-CC'ing would help :)
+> You can, kind of -- either send the server FS_IOC_FSGETXATTR or
+> FS_IOC_GETFLAGS right after igetting an inode and set the VFS
+> immutable/append flags from that; or we could add a couple of flag bits
+> to fuse_attr::flags to avoid the extra upcall.
 
-> Now that per-cpu bio cache is being used by io-uring rw requests for
-> both polled and non-polled I/O. Does that mean, we can kill
-> IOCB_ALLOC_CACHE check from iomap dio path completely and use per-cpu
-> bio cache unconditionally by passing REQ_ALLOC_CACHE flag?  That means
-> all DIO requests via iomap can now use this per-cpu bio cache and not
-> just the one initiated via io-uring path.
-> 
-> Or are there still restrictions in using this per-cpu bio cache, which
-> limits it to be only used via io-uring path? If yes, what are they? And
-> can this be documented somewhere?
+How about a new FUSE_LOOKUPX that uses fuse_statx instead of fuse_attr
+to initialize the inode?
 
-It should be safe to use for task context allocations (struct
-bio_alloc_cache::free_list is [soft]irq unsafe)
+> The flag is very much needed for virtiofs/famfs (and any future
+> fuse+iomap+fsdax combination), because that's how application programs
+> are supposed to detect that they can use load/store to mmap file regions
+> without needing fsync/msync.
 
-IOCB_ALLOC_CACHE shouldn't be needed, but IIRC I played it
-conservatively to not impact paths I didn't specifically benchmark.
-FWIW, I couldn't measure any negative impact with io_uring at the
-time for requests completed on a different CPU (same NUMA), but if
-it's a problem, to offset the effect we can probably add a CPU
-check => bio_free and/or try batch de-allocate when the cache is
-full.
+Makes sense.
 
--- 
-Pavel Begunkov
+> > I also fell that all unknown flags should also be masked off, but
+> > maybe that's too paranoid.
+>
+> That isn't a terrible idea.
 
+So in conclusion, the following can be passed through from the fuse
+server to the statx syscall (directly or cached):
+
+COMPRESSED
+NODUMP
+ENCRYPTED
+VERITY
+WRITE_ATOMIC
+
+The following should be set (cached) in the relevant inode flag:
+
+IMMUTABLE
+APPEND
+
+The following should be ignored and the VFS flag be used instead:
+
+AUTOMOUNT
+MOUNT_ROOT
+DAX
+
+And other attributes should just be ignored.
+
+Agree?
+
+Thanks,
+Miklos
 
