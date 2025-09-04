@@ -1,82 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-60307-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60308-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCD4BB44945
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 00:12:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0B10B4494D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 00:13:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B61A17A85D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 22:11:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0232C189B645
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 22:12:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 462562E1C7A;
-	Thu,  4 Sep 2025 22:06:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 710492E7BB6;
+	Thu,  4 Sep 2025 22:07:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="IA/GY3OG"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hp5TB0PR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A53722DFF19;
-	Thu,  4 Sep 2025 22:06:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B2E2E6CA1;
+	Thu,  4 Sep 2025 22:07:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757023615; cv=none; b=YvTZkxd6/Iyc7VMNHmFCYi3Vokd7c4tmH2A0rh7mZ5x/64BrnjiVyyva6JP4F5u593Qb6XZUWETRxn5GRyiRLszFZbvBzZXz5s+O7Fs6HYE59vmyUlz/v7X97K9eLOz5aScByJzImSykyuaYhCLB2pPUjPhZeFDiBicG31/B9WI=
+	t=1757023626; cv=none; b=X1lKll+rx5h+yntXOJXx5QPFoAdpeXSNvXaJO1rXp6XTBi2y3hcAPAXDoBXF5IRYGqTT07TV7xydzWKIHVGPIwmbeqsUGDNcq6Btpb41BGkmxXJ/RYUJdl50GYdtjLVh6lo+kZsgBBwWCDLa2IoM5rTuqLN3LLQljctrH5IVv+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757023615; c=relaxed/simple;
-	bh=goG337sZ/iRHs3pRg9IZxmLubB1x5C9U5Sw7O7bN8x4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oXJnbzThExEQ9Iqz3knIMJSp7rG0WtgZ8ELKUTtWZhTJ/lOpPwVIVFwV0bAF95T3LT9Z69Z6MAUYFOkq34MmUXif2YtEnMqC01bBt9UjenosATu/n6C7MHKBCVoZIQ4uzdIP3MfCaECsm1dbelVn2jqfblW81GT3Jh5sxOAAv2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=IA/GY3OG; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=sUoP8dczSKqO6gmkDe5U7V6bW3hFctcl6QkG72jE5VE=; b=IA/GY3OGXbne4WiPiqvcWh0/sI
-	BT5ootVDmUd+BOddTVFnEZMmdKkW2F64/+0ngNoLDXs7r5GLn4kI/pfVDyiUxLQd9fRTJwsIFrHmC
-	9kGxOfpl3JS2FNaV3SGzygGx9F1rSCelnyAItDUJIbaIFbIt1i4v4rd7ll5XlNCzvG08fZ/qbZzu3
-	tciJjkDe9HwU0dJ+Od4MWT1seLZsBN/3txptlomAGl7W8D6T9dxwPgcNbSIyghKlKzgvR0U/qAmB3
-	H8YmcU3Dvtw3G6POd40lTIvq4Ro1x1JokwqfuAnuCrOf1/pSvawfaICir81SnmmVA0kQyXVIf2ZgB
-	1bbHjdrw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uuI6U-00000008x1R-0Yb4;
-	Thu, 04 Sep 2025 22:06:50 +0000
-Date: Thu, 4 Sep 2025 23:06:50 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Blake McBride <blake@mcbridemail.com>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"brauner@kernel.org" <brauner@kernel.org>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	Colby Wes McBride <colbym84@gmail.com>
-Subject: Re: [RFC] View-Based File System Model with Program-Scoped Isolation
-Message-ID: <20250904220650.GQ39973@ZenIV>
-References: <Oa1N9bTNjTvfRX39yqCcQGpl9FJVwfDT2fTq-9NXTT8HqTIqG2Y-Gy0f7QHKcp2-TIv7NZ3bu_YexmKiGuo9FBTeCtRnVzABBVnhx5EiShk=@mcbridemail.com>
+	s=arc-20240116; t=1757023626; c=relaxed/simple;
+	bh=cmUIM7pCpqeBWtzvFhDZqMBwneE4TTCqud36a3HePd4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iW2lMzxhIRHt1uUUEMDpHwYEMO1ptAgceMY/eZdW+qIItnQiNWkW4zkmgVX/pPRmldICbNC+gf0CDOQnvUKm3cs95FsMXlsNXYEkVq7i7DU16clKPLSpguxTByVbI6jU/hUfcQwG0Uu+OX1zpTZ9R9vdfJ2IfWQChZYbr0d1ito=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hp5TB0PR; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4b30d09da3aso17360141cf.3;
+        Thu, 04 Sep 2025 15:07:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757023624; x=1757628424; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qr2i0EDeenwl7qwpZXz/40ibeng6dEMSFVDO7LDo1Zs=;
+        b=Hp5TB0PRQwojnu56DBgdwj7MTz78YTj1McaiaNd88mNaHzWjZ33mdlYC6Y3RL3UJ0F
+         SdBe/Npj7Zt2ONmFe7uMYF8+pFOPyzG4O/9j6ZhUdv93qpQAPxcLj/uqicIbvIUPc9sy
+         qWtMlMJS1XaYffKnNQTcc4P+UJyYIey6QztZ1XbKNMhB6gER7kjWidSkcHcrnw6NaS5j
+         SN/uu5+UtX0tYJIosqGMZXs1zSIlwA20lVoJ0DraGHKZF5EXcm2jyXSzdrttOvL+jSKI
+         +vdJBmsn6MmIS5qkwC3e/vwqXBLrBywOHba16lNoLvlTwbHBcn+N/l9D1sw3C573Y3Lh
+         00Zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757023624; x=1757628424;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qr2i0EDeenwl7qwpZXz/40ibeng6dEMSFVDO7LDo1Zs=;
+        b=diijEv9JzwaEg/RiMtI/wMYf9PlIZKU1gMBt0Ro/7tfUgySKViq24tSL/Bd1IrpB+I
+         Ijni06UU70H0DKr/kpAvAL6t8/IuOKfACEuTKOT1/QVd/Ua7jJmdF/ip9OATIwchUuqb
+         ca+KJJShlovNvKN/h2AKBa59Kxv1Vb4L3ZtfCGry16Dm17POfRNclbVcJ+FbwRqe0Fjc
+         6FeanBO8oR0+C3bvq1BddBsYDk9sJ97P0ALCj+RLCWMnpN/oTogwJcLINnVfqodim0JN
+         tqg7W66LYM7JnsXabAW6S4SvSihykinK/j95Wv3t4j0sBdctrmzkg/HRHy5T17UPjm9m
+         UJcg==
+X-Forwarded-Encrypted: i=1; AJvYcCVImYW5L+NVy0WlFZvwD1WGHQjWBno44zGNp99VWAx9v0SzHSsdFeSmZg4HFcSRqKaH/J6Isaoe09c=@vger.kernel.org, AJvYcCW9IwfADQDXv1ZzKaTQag92E0gqntljmzSQtl1jn0gIU7GEwCAqoMP0JNI48ZVRzx6zS5mT3ERU09WYyxp+/g==@vger.kernel.org, AJvYcCWUWwNssGgjrz/HcUzqFhgBzX4L3Pr4qqfdWbIbJt533fa4GLhokX0MALZUWlip4fezadvP4WC8OI+S@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0se3ZcznrppAwLHbyJMt1uMYvrAzSaaWL+iidRyeDU+t3Eziy
+	zHBaNzi0PCTNCs8iBw+MFMlYxGXV+6ZZLJxHxvM0xMau4+LJAzhxm62PdnP3Y8Jt7yWfMzKsyyt
+	CfSaoycO9BV8urL9H1Y+36STfRADJvKs=
+X-Gm-Gg: ASbGncsZ5O34QXM9j3Vyr4wSeDP5z6aF+WWItbr2tJx2poqJxha+V4UBQTrJRjpln1l
+	bgeiYklKz2XjhLW/Yy36AI/gBiIXUbBvENyAwLK6uZd2dmRdB4RyNhiR7y6kKx5FfMt6gvb3zVH
+	zRVLzP8m7AvDgYThNcaB7Bgj41wrxvbp1AQ7rvKNkJyzYXXf8Rzs0YtxHmoBt/b90kxlqNQ3O3d
+	fO/H3ns/qXgbsVpuvE=
+X-Google-Smtp-Source: AGHT+IFBlx3X5hlUFXtvs+ZQUGSgM4SWZgYUjgrw3wrd4qs0EaZ6PcfqLcKq5B359vcWigIg10JbbQnlog5F62FqhFg=
+X-Received: by 2002:ac8:7f52:0:b0:4b3:d22:6532 with SMTP id
+ d75a77b69052e-4b31dcecfa9mr228908521cf.69.1757023623981; Thu, 04 Sep 2025
+ 15:07:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Oa1N9bTNjTvfRX39yqCcQGpl9FJVwfDT2fTq-9NXTT8HqTIqG2Y-Gy0f7QHKcp2-TIv7NZ3bu_YexmKiGuo9FBTeCtRnVzABBVnhx5EiShk=@mcbridemail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <20250829235627.4053234-1-joannelkoong@gmail.com>
+ <20250829235627.4053234-3-joannelkoong@gmail.com> <20250903202637.GL1587915@frogsfrogsfrogs>
+ <aLkryaC0K58_wXRy@infradead.org>
+In-Reply-To: <aLkryaC0K58_wXRy@infradead.org>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Thu, 4 Sep 2025 15:06:52 -0700
+X-Gm-Features: Ac12FXyFfSGKkBz5jFs9eCyI7TffwdIJ-lIvcbly65E9pS4ZMBsyucMvYLwC4R8
+Message-ID: <CAJnrk1bkDSwgZ0s9jToEETtu-nvE4FQdG7iPbbH_w+gW1AA2xQ@mail.gmail.com>
+Subject: Re: [PATCH v1 02/16] iomap: rename cur_folio_in_bio to folio_unlockedOM
+To: Christoph Hellwig <hch@infradead.org>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, brauner@kernel.org, miklos@szeredi.hu, 
+	linux-fsdevel@vger.kernel.org, kernel-team@meta.com, 
+	linux-xfs@vger.kernel.org, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 04, 2025 at 09:52:22PM +0000, Blake McBride wrote:
+On Wed, Sep 3, 2025 at 11:03=E2=80=AFPM Christoph Hellwig <hch@infradead.or=
+g> wrote:
+>
+> On Wed, Sep 03, 2025 at 01:26:37PM -0700, Darrick J. Wong wrote:
+> > On Fri, Aug 29, 2025 at 04:56:13PM -0700, Joanne Koong wrote:
+> > > The purpose of struct iomap_readpage_ctx's cur_folio_in_bio is to tra=
+ck
+> > > if the folio needs to be unlocked or not. Rename this to folio_unlock=
+ed
+> > > to make the purpose more clear and so that when iomap read/readahead
+> > > logic is made generic, the name also makes sense for filesystems that
+> > > don't use bios.
+> >
+> > Hrmmm.  The problem is, "cur_folio_in_bio" captures the meaning that th=
+e
+> > (locked) folio is attached to the bio, so the bio_io_end function has t=
+o
+> > unlock the folio.  The readahead context is basically borrowing the
+> > folio and cannot unlock the folio itelf.
+> >
+> > The name folio_unlocked doesn't capture the change in ownership, it jus=
+t
+> > fixates on the lock state which (imo) is a side effect of the folio loc=
+k
+> > ownership.
+>
+> Agreed.  Not sure what a good name is in a world where the folio can be
+> in something else than the bio.  Maybe just replace bio with ctx or
+> similar? cur_folio_in_ctx?  cur_folio_locked_by_ctx?
 
-> Proposed Model
-> --------------
-> The key concept is the introduction of *views*. A view is a named,
-> use-case-specific file hierarchy that contains a subset of the overall
-> files on the system. Each view presents its own hierarchy, which can
-> be completely different from others. Files may appear in multiple
-> views, and may even have different names per view.
+I find the ctx naming to be more confusing, the "ctx" imo is too
+easily confused with the iomap_readfolio_ctx struct.
 
+What about "cur_folio_owned" or "cur_folio_handled"? Or keeping it as
+"cur_folio_unlocked" and adding a comment to explain the change in
+ownership?
 
-What happens on cross-directory rename?  Within the same "view", that is.
-How does it map to changes observable in other views of yours?
+>
+> > > +   bool                    folio_unlocked;
+> >
+> > Maybe this ought to be called cur_folio_borrowed?
+>
+> I don't think 'borrow' makes much sense here.  It's not like we're
+> borrowing it, we transfer the lock context to the bio (or whatever else
+> Joanne is going to use for fuse, I haven't read down to that yet).
 
