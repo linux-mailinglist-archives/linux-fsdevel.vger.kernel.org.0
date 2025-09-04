@@ -1,62 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-60243-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60244-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C183FB431EE
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 08:04:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACF91B431F8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 08:05:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91450547AA5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 06:04:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85881547B0C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 06:05:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45FAD245014;
-	Thu,  4 Sep 2025 06:03:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 082F424635E;
+	Thu,  4 Sep 2025 06:05:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="j8BVD1qB"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NmXqdoCC"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DCAE1758B;
-	Thu,  4 Sep 2025 06:03:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CA1D23B605;
+	Thu,  4 Sep 2025 06:05:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756965836; cv=none; b=l1hLFa7Pki0ygJjBtvB0M3JUI3GikBe6ycTx3nLgmsczUh+IgAcCNxZoCDY5xnb8LP/YiPn6rhSMOqtOptWsb+dBaBdJr0drkyLGscyuWAsXDEHO+mtpVQbauxUjz5HCn2yaiaxPj/lc2BSQQz7ZwXgvWaIG/+zbZKUonNmKE9E=
+	t=1756965946; cv=none; b=RgtGiB6b1Y5kNInHZD4gUj+IisBZP7UxopLXbhNPePdmX21Z4SJ/pNC6ljwORExhySvv2ms4h27a0K3KVH5N0rVcHpcOZ6YQHfzW/nwNl6J1XvaKsOQBBASLiw5PaiBeJ9s1F8np3fpGZYnNmkwR3AvLIWsfFK8+NGGrbm67tKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756965836; c=relaxed/simple;
-	bh=+mpwaLTbZlHXtQq1geajFmLeS+Sy/1KblaULrWLi5Z0=;
+	s=arc-20240116; t=1756965946; c=relaxed/simple;
+	bh=WH73qhRmJByFmUSDWylUHem1HPBKpLwhDJT82iYxpHU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rTNWIGmfaI1F1zFxbDcvNERkF8IYFyqkpcwJqUIWTisIQQ5VXGMRYmaFGJC6ZrTGYmejVkceiPTh2v8zR/jrjIX5+6511Z7rBE1LrdIqm3LZDRIpq3vGBsqlaIabs4oGlH/qap0hvmU0BayvtTSJc1DI7STU4zpZoIGmAXR19sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=j8BVD1qB; arc=none smtp.client-ip=198.137.202.133
+	 Content-Type:Content-Disposition:In-Reply-To; b=II5l5qyOZxQPQe2y6d1LxxKhj1GAGdj7zBPNOa9zTU67Luc1ZCBXfVmEgzZYaxNLhTGiK/cHxWy+yWywx2GeoQ9VlcPH2gw7k1kuGqgKtV/iScf9C4CnI5dqk6a4OieNCewK7WCgXmtx5Y+YOtg4lQgbt5y9hUfqJPhfKreeP9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NmXqdoCC; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
 	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ZRIVlZfvIZBOaVHa139osW0AeVY847lyOS6rePTbMsY=; b=j8BVD1qBU1EC4b80OlRFyH3vf4
-	H2InSCie3eSefeMX778LIRWr0e8aZmwheYZ/dSKCP/pB0Is2j24aI3s1qOJ3yZmsL7v3GUF6BGt/j
-	RVH+v5Um/BKtn6hlb34cT1GKqrA5p0I4VD8R3wtDn1xTZMV+17t9sbtHahPtjReIY3d4hpOQegmY7
-	caxQdZkw5zprtn6ycXWkEtPzeaswq75JfwMb+B6ONJqLVCJHp7myHhe3GLr24hgJ0u72auWU0sEPm
-	bd5Z93A/JKb4XoyatM0T4JoV6X+QqtT21NNThLq+6NuSjSAm2x6gPqUGeQTicuqpnXoDE+hpW9iku
-	FmSSvEWg==;
+	bh=2e+/P/afQV7c+2DktRB4IRbp9gBJb9kSEzBp0kumldA=; b=NmXqdoCCC2yyNQncol58B5riVx
+	t1zvq0AtkZXrsxqknfU7S2H+8Mw0VXd5EeuGo1T27+5yN1R2+4bX4dg8ws8BGlv8y0dyksV+ljtb0
+	iJt6uumkAcUE3rVkbbUrFDL3+PIaqGtjX0pdGpxQx1WbH4jbx49t0Kjziw6n9JnrHAvvBzA/eM7Zc
+	tlZpI0UD9fa5h8JMhWE0+L+lpaczJJaP6gjNIUxKUvD0s7vzzCQ+vnNeklriOxQJiMTcT8CBNR6u5
+	KBAuTs9/tFl3zgO8ROuSdwyUr/0hJMs4atBoDUK29KOkeTs4EQkvE/L1rn2yKseQ1oMMe7eDUDdag
+	rUYAzcpw==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uu34b-00000009OzK-0K5b;
-	Thu, 04 Sep 2025 06:03:53 +0000
-Date: Wed, 3 Sep 2025 23:03:53 -0700
+	id 1uu36O-00000009PTn-3ejE;
+	Thu, 04 Sep 2025 06:05:44 +0000
+Date: Wed, 3 Sep 2025 23:05:44 -0700
 From: Christoph Hellwig <hch@infradead.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Joanne Koong <joannelkoong@gmail.com>, brauner@kernel.org,
-	miklos@szeredi.hu, hch@infradead.org, linux-fsdevel@vger.kernel.org,
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: brauner@kernel.org, miklos@szeredi.hu, hch@infradead.org,
+	djwong@kernel.org, linux-fsdevel@vger.kernel.org,
 	kernel-team@meta.com, linux-xfs@vger.kernel.org,
 	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v1 02/16] iomap: rename cur_folio_in_bio to
- folio_unlockedOM
-Message-ID: <aLkryaC0K58_wXRy@infradead.org>
+Subject: Re: [PATCH v1 03/16] iomap: refactor read/readahead completion
+Message-ID: <aLksOHVXfW7gziFB@infradead.org>
 References: <20250829235627.4053234-1-joannelkoong@gmail.com>
- <20250829235627.4053234-3-joannelkoong@gmail.com>
- <20250903202637.GL1587915@frogsfrogsfrogs>
+ <20250829235627.4053234-4-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,35 +63,21 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250903202637.GL1587915@frogsfrogsfrogs>
+In-Reply-To: <20250829235627.4053234-4-joannelkoong@gmail.com>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Wed, Sep 03, 2025 at 01:26:37PM -0700, Darrick J. Wong wrote:
-> On Fri, Aug 29, 2025 at 04:56:13PM -0700, Joanne Koong wrote:
-> > The purpose of struct iomap_readpage_ctx's cur_folio_in_bio is to track
-> > if the folio needs to be unlocked or not. Rename this to folio_unlocked
-> > to make the purpose more clear and so that when iomap read/readahead
-> > logic is made generic, the name also makes sense for filesystems that
-> > don't use bios.
-> 
-> Hrmmm.  The problem is, "cur_folio_in_bio" captures the meaning that the
-> (locked) folio is attached to the bio, so the bio_io_end function has to
-> unlock the folio.  The readahead context is basically borrowing the
-> folio and cannot unlock the folio itelf.
-> 
-> The name folio_unlocked doesn't capture the change in ownership, it just
-> fixates on the lock state which (imo) is a side effect of the folio lock
-> ownership.
+On Fri, Aug 29, 2025 at 04:56:14PM -0700, Joanne Koong wrote:
+> Refactor the read/readahead completion logic into two new functions,
+> iomap_readfolio_complete() and iomap_readfolio_submit(). This helps make
+> iomap read/readahead generic when the code will be moved out of
+> CONFIG_BLOCK scope.
 
-Agreed.  Not sure what a good name is in a world where the folio can be
-in something else than the bio.  Maybe just replace bio with ctx or
-similar? cur_folio_in_ctx?  cur_folio_locked_by_ctx?
+I'll have to look how this goes further down, but I don't really like
+the idea of treating bios special in common code.  I'd rather go down
+the same route as for writeback and replace the bio with a generic
+void pointer, and then either use callbacks to process them, or maybe
+have multiple versions of iomap_read_folio / iomap_readfolio_complete
+that just share the underlying iterator, but implement their own logic
+around it.
 
-> > +	bool			folio_unlocked;
-> 
-> Maybe this ought to be called cur_folio_borrowed?
-
-I don't think 'borrow' makes much sense here.  It's not like we're
-borrowing it, we transfer the lock context to the bio (or whatever else
-Joanne is going to use for fuse, I haven't read down to that yet).
 
