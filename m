@@ -1,97 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-60320-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60321-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DA5DB44A9B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 01:58:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8118EB44AA0
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 01:58:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 474AF1C855C1
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 23:58:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E970117F825
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 23:58:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D636B2EFDBA;
-	Thu,  4 Sep 2025 23:57:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1A7E2F290E;
+	Thu,  4 Sep 2025 23:58:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IP0RW6nO"
+	dkim=pass (2048-bit key) header.d=mcbridemail.com header.i=@mcbridemail.com header.b="gEpeEReT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+Received: from mail-4323.protonmail.ch (mail-4323.protonmail.ch [185.70.43.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 790762ECD14
-	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Sep 2025 23:57:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 473152EFD82
+	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Sep 2025 23:58:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757030277; cv=none; b=JPE/zB2/YVjfno8nkxjh0RxxnbuzbwSvdjIkhVtghD6jwkD33PzM8ki0SsRUR9H3KTojTMFNzuA2NKVy6HvaBasaZknoi7svpDCntn4TF6k8v3CazXMtGo8ObvGIP+j9cUeoGHAyhw+Fg4jmcmuMo51IjwXdLrjgfIu+epJJekM=
+	t=1757030289; cv=none; b=PqLVIsGVLlvWZ4eVPZRHgKVwikH/tGxGlv0gQUGlBiVyk4hf++uxVp1YECh4pLzxoWBSdzbGlX1b4u9CDhXPNXpAGVlh5YWrG7tb0M4SZKbeH8MFr9kgzqqE/9OAq1Dj/T1kXsUV2+hFB0ZTPheFxZhkvc6ET2oNRCoX3rtmTuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757030277; c=relaxed/simple;
-	bh=LTpvAMDx3l9YQ4vjyMBE5VmJ/wSw9l3B25wX8G92ELE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HdsNrMVALUUl0hnTUsXAvONLvwdq4o+dRQpOmrRILWMMLWlyHobo0CtI9/31HbXq05DrJ6mNmG9LVimENpxGW8hl9wMXQBQp8cNLgadszS9596myAgpNr22/Of4YTeKCpYwL0wHb6oYgierIL08lZTzYYjPuvMWPUGC48wpKa/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=IP0RW6nO; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 4 Sep 2025 16:57:41 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757030273;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+1JF9ABm23/crB5M2qXk95TNoGCZqy9JAAct0jdXudM=;
-	b=IP0RW6nOGMgFPd9nXUCLLw0ahXL7zYDkVP5hnRPsxGQbC8r6JZ+o1Mki8k8IcUbBMSSfVP
-	xY8GEJOkCrT/t5Yv8dVOu0RgPaxIbveuBbRwhK8/wNymTsDGEyJCvlxxw9KVMEtAQMbhqn
-	6n6bXsZWN1E+SIRU+boROe3lY/qrCas=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: akpm@linux-foundation.org, david@redhat.com, axelrasmussen@google.com, 
-	yuanchu@google.com, willy@infradead.org, hughd@google.com, mhocko@suse.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lorenzo.stoakes@oracle.com, 
-	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com, 
-	vishal.moola@gmail.com, linux@armlinux.org.uk, James.Bottomley@hansenpartnership.com, 
-	deller@gmx.de, agordeev@linux.ibm.com, gerald.schaefer@linux.ibm.com, 
-	hca@linux.ibm.com, gor@linux.ibm.com, borntraeger@linux.ibm.com, 
-	svens@linux.ibm.com, davem@davemloft.net, andreas@gaisler.com, 
-	dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com, chris@zankel.net, 
-	jcmvbkbc@gmail.com, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	weixugc@google.com, baolin.wang@linux.alibaba.com, rientjes@google.com, 
-	thuth@redhat.com, broonie@kernel.org, osalvador@suse.de, jfalempe@redhat.com, 
-	mpe@ellerman.id.au, nysal@linux.ibm.com, linux-arm-kernel@lists.infradead.org, 
-	linux-parisc@vger.kernel.org, linux-s390@vger.kernel.org, sparclinux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v6 00/12] mm: establish const-correctness for pointer
- parameters
-Message-ID: <ue3oriedwzzfhvnobtetuyjvcypbvl4dboqmpvdededzaj3amq@5k6vk44ae3fu>
-References: <20250901205021.3573313-1-max.kellermann@ionos.com>
+	s=arc-20240116; t=1757030289; c=relaxed/simple;
+	bh=C4NU9cMtdxrLyGuN3xq4dbUAslLZuV/Eo1Sag8WFxzA=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=s3QjuRER8KS3y5lE1pbHdZEZaXqvpzn0b4yq1J08o09Ign2p+t9cP5OBuR+FRH7e2zHJ3ENy/2WKqjHfPZ6a/cA3w+BSoPyvvL8bwEsfTxGLBZeERCkwLckG7pJZrq68seJSqHIRQuRhVueDJY1oJmU0Zkkc0ehmBjFhpChkNoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mcbridemail.com; spf=pass smtp.mailfrom=mcbridemail.com; dkim=pass (2048-bit key) header.d=mcbridemail.com header.i=@mcbridemail.com header.b=gEpeEReT; arc=none smtp.client-ip=185.70.43.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mcbridemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mcbridemail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mcbridemail.com;
+	s=protonmail; t=1757030285; x=1757289485;
+	bh=C4NU9cMtdxrLyGuN3xq4dbUAslLZuV/Eo1Sag8WFxzA=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=gEpeEReTLhr9KUZI/6wL0U4qXN71QR5W2SDkS/jBl2o+6QgTdBqWkhTZvHGnIXYTp
+	 ANWUXuMIk2+mx9wUqiKZQKyu8Shuy5VhqVJMbBonEw/y5t5IBfBYV/5wSzqklGr02c
+	 k20zE1dqnD0L5FmT7qd8rT0bgb+Jp8mGOIOIAmxwy+hcUEpWUH5DpkN9IWvpS3vsxj
+	 Csy3s1sNA9ZF68hoxboUJ0Hi6xbe4xG0ak3zrGZf3L9GjG/svMSh8z0384G5nelj8N
+	 B1w/48FOt0p9KuC9KwkxoWSiovkVkN/wlLNRBlGL0iw7u3ZjEeUVWNQgU+kvYf88N5
+	 7oVYRqc6Tg99A==
+Date: Thu, 04 Sep 2025 23:57:58 +0000
+To: Blake McBride <blake@mcbridemail.com>
+From: Blake McBride <blake@mcbridemail.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "brauner@kernel.org" <brauner@kernel.org>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, Colby Wes McBride <colbym84@gmail.com>
+Subject: Re: [RFC] View-Based File System Model with Program-Scoped Isolation
+Message-ID: <X0FicR_DkHDIm8QFrAKwaEcu5_rAQY4OUHYnA62zwbNXPxJJ6vk-e3zsNkoTaOFSXVwAaPom7WDhrnSauyUjtqvPYDQKIDwsHzY2TWnSuv8=@mcbridemail.com>
+In-Reply-To: <nPMV5WRZT62Eq5Cu84Q0NMH2CgxAuisCAMQ4XfuG7kb6OdEOgY9UMi5sVx3CV0kSVcEBoDDz1w5btWaT1CfOCC_4jkCDrIoYk866FO9bZVo=@mcbridemail.com>
+References: <Oa1N9bTNjTvfRX39yqCcQGpl9FJVwfDT2fTq-9NXTT8HqTIqG2Y-Gy0f7QHKcp2-TIv7NZ3bu_YexmKiGuo9FBTeCtRnVzABBVnhx5EiShk=@mcbridemail.com> <20250904220650.GQ39973@ZenIV> <DHMURiMioUDX6Ggo4Qy8C43EUoC_ltjjS52i2kgC9tl6GhjGuJXOwyf9Nb-WkI__cM0NXECZw_HdKeIUmwShKkAmP7PwqZcmGz-vBrdWYL8=@mcbridemail.com> <20250904230846.GR39973@ZenIV> <nPMV5WRZT62Eq5Cu84Q0NMH2CgxAuisCAMQ4XfuG7kb6OdEOgY9UMi5sVx3CV0kSVcEBoDDz1w5btWaT1CfOCC_4jkCDrIoYk866FO9bZVo=@mcbridemail.com>
+Feedback-ID: 30086830:user:proton
+X-Pm-Message-ID: b9e2af5321edd8adc1d662b30d3cb6329281b864
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250901205021.3573313-1-max.kellermann@ionos.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 01, 2025 at 10:50:09PM +0200, Max Kellermann wrote:
-> For improved const-correctness in the low-level memory-management
-> subsystem, which provides a basis for further const-ification further
-> up the call stack (e.g. filesystems).
-> 
-> This patch series splitted into smaller patches was initially posted
-> as a single large patch:
-> 
->  https://lore.kernel.org/lkml/20250827192233.447920-1-max.kellermann@ionos.com/
-> 
-> I started this work when I tried to constify the Ceph filesystem code,
-> but found that to be impossible because many "mm" functions accept
-> non-const pointer, even though they modify nothing.
-> 
-> Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+Let me be a little more clear about the application programmer-level API - =
+nothing has to change. A context or view is selected by the user before a p=
+rogram is started (unless a program has a default or specific context). The=
+ API that the program uses is utterly unchanged. However, all of the calls =
+are within the context of the view.
 
-For the series:
+--blake
 
-Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+
+
+
+
+On Thursday, September 4th, 2025 at 6:41 PM, Blake McBride <blake@mcbridema=
+il.com> wrote:
+
+>=20
+>=20
+> On Thursday, September 4th, 2025 at 6:09 PM, Al Viro viro@zeniv.linux.org=
+.uk wrote:
+>=20
+> > On Thu, Sep 04, 2025 at 10:58:12PM +0000, Blake McBride wrote:
+> >=20
+> > > Off the cuff, I'd say it is an mv option. It defaults to changing all=
+ occurrences, with an option to change it only in the current view.
+> >=20
+> > Huh? mv(1) is userland; whatever it does, by definition it boils down
+> > to a sequence of system calls.
+>=20
+>=20
+>=20
+> Yes. This is what is intended. All of userland would just operate on the =
+view the same as if that was your real hierarchy.
+>=20
+> > If those "views" of yours are pasted together subtrees of the global
+> > forest, you already can do all of that with namespaces; if they are not=
+,
+> > you get all kinds of interesting questions about coherency.
+>=20
+>=20
+>=20
+> These views are not pasted together subtrees. Each view can have utterly =
+different layouts of the same set of files.
+>=20
+>=20
+>=20
+>=20
+> > Which one it is? Before anyone can discuss possible implementations
+> > and relative merits thereof, you need to define the semantics of
+> > what you want to implement...
+> >=20
+> > And frankly, if you are thinking in terms of userland programs (file
+> > manglers, etc.) you are going the wrong way - description will have
+> > to be on the syscall level.
+>=20
+>=20
+> I did not specify the implementation, just the user experience. All of us=
+erland would "appear" to function as it does now. The same with the syscall=
+s that are made by the application code. They all effect the current view a=
+s if it was the real hierarchy.
+>=20
+> --blake
 
