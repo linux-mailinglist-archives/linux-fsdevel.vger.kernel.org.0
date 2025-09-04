@@ -1,64 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-60241-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60242-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC3ABB431D5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 07:55:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBC72B431E0
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 08:00:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92784581422
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 05:55:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 789981B24BCC
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 06:01:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D815242D66;
-	Thu,  4 Sep 2025 05:55:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E839A245014;
+	Thu,  4 Sep 2025 06:00:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="I2EYX8Jv"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XzqejuaP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA2321D6DA9
-	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Sep 2025 05:55:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C674732F775;
+	Thu,  4 Sep 2025 06:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756965319; cv=none; b=fxU7RCY4z9wEMn/hROagJ1TGGSM7ZsZiRvwpqZPqrKpQfs09MzsEHNH9UowLAwQaYHr4V77s7rjley8eOq0/9fD0gIkT4rYvFpjc2kmlZJzaS9JO2hU5etPtnB5LfPJz9lRPvhCEHCjQI+kCL3q3h6FmtHEX8znMBwaag7cn8RI=
+	t=1756965643; cv=none; b=C0kJeAxyMKlKsRDtlG8c4qtKFeJdJiWrD6yqX+3yuCDTCnlcTPqa/LNo5AZDepGl3q6bHitXR0caFhSLXHWlzegOqLNrWfkZEX5yxXLG1hls3mv44jkOpKyrJxXU7PkT8WbT6sdHiDK0WdxuE/OY3URCZTQxRZVPv/ZDH+K2QRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756965319; c=relaxed/simple;
-	bh=w+tsHjUndrZG0c5my0GNfOtZO5MlrVZB4J83dg3OmDc=;
+	s=arc-20240116; t=1756965643; c=relaxed/simple;
+	bh=33citsjqgJKqmysaG9AO6VPNkvkmlonfA0zuht2tGg0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B/N9n8rEgvGrFzDTmD8hFJGaTJstZW13KOIdnPqnaj1VggZMrsqIw2blzsoDVPXgWy3tsy0zGgSqyLVMNJaWaWTYl/uSCbJ/wVdZnf/f3Xp97fgfYU1EpDXStFFQ8uVRYkUSqtnZDV5jxtMdIUkMaZH0EVq8TfeH1AVHnmiOKZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=I2EYX8Jv; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+	 Content-Type:Content-Disposition:In-Reply-To; b=EQYAVflw6GGSpncoAHD5twlm/LuH0IX7c/0f93+n7Hssfq2IfUiqgOvqxV2LGzLGZOouxbzzSc2wrijJDCRQyYJkVQ12FrhyWaUw1TNVb/JM6ExlW3Aqc8BPXAHYl1PQjIBS9QizXqjnBma0Y618YMuwfa1bbgikWFAZHoC6t5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XzqejuaP; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=itqNjTNBmqvGxtNvlRCKi+ALTok5ZvtcMkHDoWd2kec=; b=I2EYX8Jv0mvRLb9MpinFw4jHBW
-	GLzqzXP/UwQ2zavlKc632wtDWh9oGaADlNUZufPqFdWuUrtEK/KV1ojn23g6RJoJusZR3aeKlb1hj
-	GJ8MZnfXKhiVC4ffPP0wWedfKaAHbWPxek0+e6+KXQDJzVrv4LCVnIiPLpEaSL1TtqQv59WqB2VTI
-	/nIagOWQtdwJ97Veol2cCSf/FyqVP4ZUEDr5PiAz9Hq3zJs+7wF3alke8TFynUvNsHVbJcCn4oFsK
-	gv4OirnNr9eg8G3bMAHtiTos97WzWZas237y5kUREFeeufHKbx1nuCc4hEZ3r58UISjnAVI9xZCBY
-	4n/eI8xw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uu2wE-0000000DUhg-20Ca;
-	Thu, 04 Sep 2025 05:55:14 +0000
-Date: Thu, 4 Sep 2025 06:55:14 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCHES v3][RFC][CFT] mount-related stuff
-Message-ID: <20250904055514.GA3194878@ZenIV>
-References: <20250825044046.GI39973@ZenIV>
- <20250828230706.GA3340273@ZenIV>
- <20250903045432.GH39973@ZenIV>
- <CAHk-=wgXnEyXQ4ENAbMNyFxTfJ=bo4wawdx8s0dBBHVxhfZDCQ@mail.gmail.com>
- <20250903181429.GL39973@ZenIV>
- <aLjamdL8M7T-ZFOS@dread.disaster.area>
- <20250904032024.GN39973@ZenIV>
+	bh=LlLqJ4E6KRh1PPACkJf/clH5UCgW54K+DvxcXFvIK8c=; b=XzqejuaPM9gaWSIr34HKoP32TN
+	+I9lSxLpGjTrFZg85jHSPlI2Zei7smw3OfhW3FjMe67/0ZynhIapXuAzHOVYxJya2jlUBlYVtsDeM
+	IoDmAaixEnaaPAMryMVP4HpPDu8cqArpPXIaJL/zkJXzK1G+b4yiUIysrMQIuJwHrd2jGvIEjBd4T
+	jeJ3h5VyI1O+MjgfMkQl45J3MaO5xQvetz14jBf9x/eYlcjMg9c2XA8P2clYLJpT+sPqWJStVxYz4
+	0hmnZzI2iUe4RrO8Mb1XacSRz4AWnEfkuUWHtbP1sa2+jSLeRrbVySC1TxoC3GQlOUCdzHoCRxU7P
+	due5p7qA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uu31T-00000009Ntg-2ely;
+	Thu, 04 Sep 2025 06:00:39 +0000
+Date: Wed, 3 Sep 2025 23:00:39 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Joanne Koong <joannelkoong@gmail.com>, brauner@kernel.org,
+	miklos@szeredi.hu, hch@infradead.org, linux-fsdevel@vger.kernel.org,
+	kernel-team@meta.com, linux-xfs@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v1 01/16] iomap: move async bio read logic into helper
+ function
+Message-ID: <aLkrB7CcPsaEkaA-@infradead.org>
+References: <20250829235627.4053234-1-joannelkoong@gmail.com>
+ <20250829235627.4053234-2-joannelkoong@gmail.com>
+ <20250903201659.GK1587915@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -67,44 +65,36 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250904032024.GN39973@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20250903201659.GK1587915@frogsfrogsfrogs>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Thu, Sep 04, 2025 at 04:20:24AM +0100, Al Viro wrote:
-> On Thu, Sep 04, 2025 at 10:17:29AM +1000, Dave Chinner wrote:
-> 
-> > > I'm doing
-> > > a bisection between v6.12 and v6.10 at the moment, will post when I get
-> > > something more useful...
+On Wed, Sep 03, 2025 at 01:16:59PM -0700, Darrick J. Wong wrote:
+> On Fri, Aug 29, 2025 at 04:56:12PM -0700, Joanne Koong wrote:
+> > Move the iomap_readpage_iter() async bio read logic into a separate
+> > helper function. This is needed to make iomap read/readahead more
+> > generically usable, especially for filesystems that do not require
+> > CONFIG_BLOCK.
 > > 
-> > check-parallel is relatively new so, unfortunately, I don't have any
-> > idea when this behaviour might have been introduced.
-> > 
-> > FWIW, 'udevadm wait' is relatively new behaviour for both udev and
-> > fstests. It was introduced into fstests for check-parallel to
-> > replace 'udevadm settle'. i.e. wait for the specific device to
-> > change to a particular state rather than waiting for the entire udev
-> > queue to drain.  Check-parallel uses hundreds of block devices and
-> > filesystems at the same time resulting in multiple mount/unmount
-> > occurring every second. Hence waiting on the udev queue to drain
-> > can take a -long- time, but maybe waiting on the device node state
-> > chang itself is racy (i.e. might be a udevadm or DM bug) and PREEMPT
-> > is opening up that window.
+> > Rename iomap_read_folio_range() to iomap_read_folio_range_sync() to
+> > diferentiate between the synchronous and asynchronous bio folio read
+> > calls.
 > 
-> FWIW, right now it's down to two likely merges, both in 6.12-rc1 window:
-> sched and vfs_blocksize (the latter - with iomap and xfs branches in
-> it).  There's the third merge in that range, but it's ext4, so I'm
-> pretty sure that the next one will be git bisect bad, leaving these
-> two.
+> Hrmm.  Readahead is asynchronous, whereas reading in data as part of an
+> unaligned write to a file must be synchronous.  How about naming it
+> iomap_readahead_folio_range() ?
+> 
+> Oh wait, iomap_read_folio also calls iomap_readpage_iter, which uses the
+> readahead paths to fill out a folio, but then waits for the folio lock
+> to drop, which effectively makes it ... a synchronous user of
+> asynchronous code.
+> 
+> Bleh, naming is hard.  Though the code splitting seems fine...
 
-Bugger...  Either I've got false 'good' at several points, or it's something
-brought in by commit 2004cef11ea0 "Merge tag 'sched-core-2024-09-19' of
-git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip" - bisection has
-converged to something within the first 48 commits of the branch in question.
+Maybe we can look at it from a different angle - the code split out
+isn't really about async vs sync, but about actually using a bio
+to read data from a block device.  Which is also kinda important
+for what Joanne is trying to do.  So I'd encode that in the name,
+e.g. iomap_read_folio_range_bio to mimici the naming used for
+iomap_dio_bio_iter in the direct I/O code.
 
-Which is not impossible, but then the underlying race could've been there
-for years before that, only to be exposed by timing changes ;-/
-
-Anyway, I'll get the bisection to the end, but it looks like the end result
-won't be particularly useful...
 
