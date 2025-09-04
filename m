@@ -1,100 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-60306-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60307-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6807EB448DA
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 23:52:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCD4BB44945
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 00:12:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E5DE3AD0D5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 21:52:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B61A17A85D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 22:11:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D8AA2D0C94;
-	Thu,  4 Sep 2025 21:52:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 462562E1C7A;
+	Thu,  4 Sep 2025 22:06:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="q9/9jIab"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="IA/GY3OG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 104282C3245;
-	Thu,  4 Sep 2025 21:52:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A53722DFF19;
+	Thu,  4 Sep 2025 22:06:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757022757; cv=none; b=pYlvEvlMzwj36SGw5cDNkuiFSNzx+ZMewQAFaGPHQhSUfFftmSS+bBSZVnK7yOOK7eLOEajA8Ja7BvBFdm746uE0ayQ/1IUEB/eYl27Jf2xrYRmrPBlCYMsyRQBSyrvfQkUyj/Hk9ITclFV6CT44iGeCa+tMPcb34jT3+x4FC14=
+	t=1757023615; cv=none; b=YvTZkxd6/Iyc7VMNHmFCYi3Vokd7c4tmH2A0rh7mZ5x/64BrnjiVyyva6JP4F5u593Qb6XZUWETRxn5GRyiRLszFZbvBzZXz5s+O7Fs6HYE59vmyUlz/v7X97K9eLOz5aScByJzImSykyuaYhCLB2pPUjPhZeFDiBicG31/B9WI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757022757; c=relaxed/simple;
-	bh=j8Lvx4LYs6RWWcXUE3HffvZSjpL5xNSLk0qqXdERQZ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HGQj9o3P/ovHR59TX9aJdSPDarVOlJIjJ2+aoVAlxf0HNK4aQ0aBRFuF94YHOU42E0BP/QSJaicg08HwXkWOx6c2fCbBf/u6BhN6s4S9l7Pbui+/I+aQkQnHmGECovaNyI7ox35e/PmjSHzxajjUxaoxOd/4hKLArEDeibbumHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=q9/9jIab; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1757023615; c=relaxed/simple;
+	bh=goG337sZ/iRHs3pRg9IZxmLubB1x5C9U5Sw7O7bN8x4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oXJnbzThExEQ9Iqz3knIMJSp7rG0WtgZ8ELKUTtWZhTJ/lOpPwVIVFwV0bAF95T3LT9Z69Z6MAUYFOkq34MmUXif2YtEnMqC01bBt9UjenosATu/n6C7MHKBCVoZIQ4uzdIP3MfCaECsm1dbelVn2jqfblW81GT3Jh5sxOAAv2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=IA/GY3OG; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=A2XDTefiEP4Ka+Xqy3ySndJof3Li4Xag15XUVtOWBJ4=; b=q9/9jIabKB2C6T44yfpy3iTaNQ
-	9jUT8ddamVcBmPYC3kMrxVKPQ4Db4hevnVkgfDG28tRvXnFvXW3g0I1i+TgHk6Zd67hj8ezYKqLJb
-	A7tE1r8rDGi+iwnJuxqkgLzSGAvmrQaUIJuyFzae4ALVuYZ0e4HpakYjok0v4gsMYAFCYPpeYYGRi
-	B9r6+JpyQhmwHazRCS3BVHG0tZva+ijgHsSbsZBMrSwsaxG/FvLyrxYVL2zlkLEOwaU4UlZGAppl+
-	SJW1Hk0n+maeCXaF9Mp73mkw6Sok0UA1IdFiQrkP2g++Y0eJmVI2QV2HaEULBhYZ8TMcg0rTpg0Iu
-	fP40fl/w==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uuHsh-0000000Eg05-2dil;
-	Thu, 04 Sep 2025 21:52:35 +0000
-Message-ID: <b35f0ff7-8ffb-400f-b537-d15e83319808@infradead.org>
-Date: Thu, 4 Sep 2025 14:52:34 -0700
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=sUoP8dczSKqO6gmkDe5U7V6bW3hFctcl6QkG72jE5VE=; b=IA/GY3OGXbne4WiPiqvcWh0/sI
+	BT5ootVDmUd+BOddTVFnEZMmdKkW2F64/+0ngNoLDXs7r5GLn4kI/pfVDyiUxLQd9fRTJwsIFrHmC
+	9kGxOfpl3JS2FNaV3SGzygGx9F1rSCelnyAItDUJIbaIFbIt1i4v4rd7ll5XlNCzvG08fZ/qbZzu3
+	tciJjkDe9HwU0dJ+Od4MWT1seLZsBN/3txptlomAGl7W8D6T9dxwPgcNbSIyghKlKzgvR0U/qAmB3
+	H8YmcU3Dvtw3G6POd40lTIvq4Ro1x1JokwqfuAnuCrOf1/pSvawfaICir81SnmmVA0kQyXVIf2ZgB
+	1bbHjdrw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uuI6U-00000008x1R-0Yb4;
+	Thu, 04 Sep 2025 22:06:50 +0000
+Date: Thu, 4 Sep 2025 23:06:50 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Blake McBride <blake@mcbridemail.com>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"brauner@kernel.org" <brauner@kernel.org>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	Colby Wes McBride <colbym84@gmail.com>
+Subject: Re: [RFC] View-Based File System Model with Program-Scoped Isolation
+Message-ID: <20250904220650.GQ39973@ZenIV>
+References: <Oa1N9bTNjTvfRX39yqCcQGpl9FJVwfDT2fTq-9NXTT8HqTIqG2Y-Gy0f7QHKcp2-TIv7NZ3bu_YexmKiGuo9FBTeCtRnVzABBVnhx5EiShk=@mcbridemail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] uapi/linux/fcntl: remove AT_RENAME* macros
-To: Florian Weimer <fweimer@redhat.com>, Amir Goldstein <amir73il@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, patches@lists.linux.dev,
- Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
- Alexander Aring <alex.aring@gmail.com>, Josef Bacik <josef@toxicpanda.com>,
- Aleksa Sarai <cyphar@cyphar.com>, Jan Kara <jack@suse.cz>,
- Christian Brauner <brauner@kernel.org>, Matthew Wilcox
- <willy@infradead.org>, David Howells <dhowells@redhat.com>,
- linux-api@vger.kernel.org
-References: <20250904062215.2362311-1-rdunlap@infradead.org>
- <CAOQ4uxiJibbq_MX3HkNaFb3GXGsZ0nNehk+MNODxXxy_khSwEQ@mail.gmail.com>
- <lhua53auk7q.fsf@oldenburg.str.redhat.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <lhua53auk7q.fsf@oldenburg.str.redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Oa1N9bTNjTvfRX39yqCcQGpl9FJVwfDT2fTq-9NXTT8HqTIqG2Y-Gy0f7QHKcp2-TIv7NZ3bu_YexmKiGuo9FBTeCtRnVzABBVnhx5EiShk=@mcbridemail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+
+On Thu, Sep 04, 2025 at 09:52:22PM +0000, Blake McBride wrote:
+
+> Proposed Model
+> --------------
+> The key concept is the introduction of *views*. A view is a named,
+> use-case-specific file hierarchy that contains a subset of the overall
+> files on the system. Each view presents its own hierarchy, which can
+> be completely different from others. Files may appear in multiple
+> views, and may even have different names per view.
 
 
-
-On 9/4/25 11:49 AM, Florian Weimer wrote:
-> * Amir Goldstein:
-> 
->> I find this end result a bit odd, but I don't want to suggest another variant
->> I already proposed one in v2 review [1] that maybe you did not like.
->> It's fine.
->> I'll let Aleksa and Christian chime in to decide on if and how they want this
->> comment to look or if we should just delete these definitions and be done with
->> this episode.
-> 
-> We should fix the definition in glibc to be identical token-wise to the
-> kernel's.
-
-That's probably a good suggestion...
-while I tried the reverse of that and Amir opposed.
-
-Now I find that I don't care enough to sustain this.
-
-Thanks.
-
--- 
-~Randy
-
+What happens on cross-directory rename?  Within the same "view", that is.
+How does it map to changes observable in other views of yours?
 
