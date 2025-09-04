@@ -1,74 +1,74 @@
-Return-Path: <linux-fsdevel+bounces-60316-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60317-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2E5BB44A4A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 01:15:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F2E2B44A4E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 01:17:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18AD7A4340B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 23:15:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 317CF1CC0A72
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 23:17:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BEA72F656E;
-	Thu,  4 Sep 2025 23:15:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99AB52F60A3;
+	Thu,  4 Sep 2025 23:16:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IWbsl2zR"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BdoMpTez"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C04E2F657A;
-	Thu,  4 Sep 2025 23:15:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97EDF32F74D;
+	Thu,  4 Sep 2025 23:16:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757027735; cv=none; b=CxFvSxz7FoXyV/fv5IcdWBQnHaL8yBPQwBghhfNMP0tduJlUC5NG24abGs2PA7kdWT33Dup0Rk/CHO76d0IKscVSfxrQ5NdQCorV81XOPylTvF+lw2FmWuKZapuBwfJSp5KecHQDJ9dUcUJy1T3NY8YaWYMliLepSbLX4AdCx/c=
+	t=1757027814; cv=none; b=WAv4sbDQguUNJVnSM2cR4nBhM0d0KjdRwlfB8NjJgcOE1994C0IEZ9riTX3HGH/dRYT6z6mcV+zPUvJ8olfhV05Kw4fJXtDbOmbf0Xnt1sxLd1etQilHar3Nwtn7VZED7ctVLMn6kpaavIvFuds2NLyna/NrispYvJr1rO5aH28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757027735; c=relaxed/simple;
-	bh=glc6X/lvmgv4+ggBIAX3YdlGe6mGnSSb5/nb9uKZ9vM=;
+	s=arc-20240116; t=1757027814; c=relaxed/simple;
+	bh=5SCN1V3bwWZaUcHIcEOXk3i1RvnbNprN+E8wGiIWb5c=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oGE//LMJ3CmozO8Y8o6e1YingQoukYNsf7b2Z1XlzfguFvfPDp+2B1aosWbvaefbTZ4Bt4AfAbY82WDQIjFw9OUTh+iMaBC/p43Xz7EpdPTcIQoSTfsRDb/7KSuzwZtlE8eQ44mTuJWf794N5EAgMFcdMczuvLH8zAvSlGPli5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IWbsl2zR; arc=none smtp.client-ip=209.85.160.176
+	 To:Cc:Content-Type; b=D6KZjFR/b5u/NuengaAJMbz0dXxsgxke4xdU+74TWFf8jDDLZyK/dtmDlI5TFlFGBt0bqT77hfD3qgHrl9ZB756JXiMqknT4tqyrMprDvwuTrY2UHOj9p3/PEjfOiiTILLaQinasKkLbkanDnNUxNHP4LIqjfEQQKgE9eVZbIhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BdoMpTez; arc=none smtp.client-ip=209.85.160.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4b48eabaef3so18789971cf.1;
-        Thu, 04 Sep 2025 16:15:33 -0700 (PDT)
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4b5e88d9994so3201171cf.1;
+        Thu, 04 Sep 2025 16:16:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757027732; x=1757632532; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757027811; x=1757632611; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=glc6X/lvmgv4+ggBIAX3YdlGe6mGnSSb5/nb9uKZ9vM=;
-        b=IWbsl2zRkuFoFhIP9ndIN3cKsjgDZ+RV8dqnEvvqmktipQMXAS4NwAOUov67gJDojf
-         OymtNemFxDSFbuRI5SBBp1U9jDq8h67V/Mqd78EfKxuxSrkeqNRfE+I+Vr6V9g+ESA0P
-         +50+Z1zZTCUgAQCkPgxbCjYdFGxIWY5lj2/9LSORFc0hgMhq2SyuxC+CzCErzs0RjQIk
-         /vWgftGmJPFbzSmOvXk3fvQShIomXfb8u/KCJO3Bo34wogdc4eDkIFuagMZLmtMoqihX
-         Safep1mQm6S18staRiQGvtdQczwdtZTS8r3odNyT6A00rxCw9ifYpvKvzbZUhS3sSf04
-         yGXA==
+        bh=iodUiBkCdUOR1HJyS4NzY3iHpVK699tt2D+XRmBC3fI=;
+        b=BdoMpTezqAQGTtR8Yt2lWmyCMfvf4u3VF+ZoBIwRpivr2bIFrEtIZZ9BG1JLpefspc
+         b+fUkMePlo7hkPCXtJo43+WztslQ1QM4DHWAcj/Xc3OOHb0ZqO9xken0ef6QwcFULF3f
+         SE/qZaxP4DrAvEUEHP6nYZ/ynT5PWNMU2c5iiplgo9aFhrP7KouCfHkdKZAy7n/U7oS/
+         4fb6MuyFquFcjQKr/6YGp2XEDk1J+P5kONDc6Co4eBaHPNpgGYA7xO/C5khQK2ATQsud
+         lv7IZ8ndGINPlZkKEjgYvok1vUm8AuYWZGsWk7Et/XJ2+gVbi7uDQV9kjpgh+RhvWWvB
+         8Kfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757027732; x=1757632532;
+        d=1e100.net; s=20230601; t=1757027811; x=1757632611;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=glc6X/lvmgv4+ggBIAX3YdlGe6mGnSSb5/nb9uKZ9vM=;
-        b=hMRkAkWMQyn0S5EOvKxATmna5sLFremzNYB0uset2ZemvOY3BQWDUAkJSg5Z6Zusmv
-         MZG6jiog53SsG9dBjnN3t9owZj4vnNITHEiYHWsttVG+LKnCK6mIh1S/Y4c/b5q9JlyU
-         JOlHgRs9Mhe3rxXfWnNHYAn0TV+6eV6Ol/KU6F37Q9F1piWaj+V8s4nn8ke0UKfLkTL6
-         n6ZMXBCRaCzBdNtcqDAB1NzhqA4/Vxw6L9Rnav8xehPm6lYpz1wP8+2ckWQrrP1VSfTH
-         vzUwkV2jVoAG6JhtP7xFSledpD8IxhLyj8nOSxp8yUg7sT6be/WaOcCGOD/LKOzJwE+X
-         gIfg==
-X-Forwarded-Encrypted: i=1; AJvYcCV7yj2nnunVh4Anr5adFV6WgxvEZ21SznvHHkZOqKlUOETYwNM2HqUALKaeSXKFzwUY80WAYD3keUOKvTNxGw==@vger.kernel.org, AJvYcCVPzit1vjbkVPqLRUADhjgzMqSRhx79GlFjx7yq+Hx9HlqKac3CpGamyoidhP4jUYxJ7xE1pMgv4Is=@vger.kernel.org, AJvYcCXm0vD+UKjWRplHnOy2p+MQzvvpZUXgEOMrHayghkm6gLf/YaMPRE/YmH7o5l+eySIqHUQLjetTqsX3@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4GUOAPV3a3nhuYCQ5WRL+3R87oTGxA36OJchTcTapLytrE+D5
-	CzwiXnEAOzbuunUPFYcpMpelUM8cZZq2Zh9sx040OCH0R+bibyHFml/TCMaD1G9xuA3zm7HDqZj
-	IqYjVQFHdYXzFv5iETOJUo/I2uPH9iqQ2q36syzQ=
-X-Gm-Gg: ASbGncsbN//VqxGsq8nyhL9yOjhZ673etZpMiqIIW2+4Jz0+TtSDrIUF15E5Nkk2gui
-	Gp83b57Pt4iQH6HJjVfqP6pXRf1YJNAhQwM/yHJSycy9rdxgMaPbVsASYPVwpf7S3HXKj6U64iw
-	nE/YodO0wYjdLBAdEegmaynEvBYEEeVyXLEG1jlFQ3/x7Kry7TkeXpRTYXNIjiPBQ65k07P00DV
-	R6F+N1F
-X-Google-Smtp-Source: AGHT+IG6XN8UwpfJWu3+RZ17woYr2aRyoi00/E6OZ9xRwJ558hyXT/lCEBx3ar212G9M3w2bMBgaGzO7HdHR/3B6ufE=
-X-Received: by 2002:a05:622a:1e8d:b0:4b4:989a:a272 with SMTP id
- d75a77b69052e-4b4989aa569mr89279601cf.47.1757027732391; Thu, 04 Sep 2025
- 16:15:32 -0700 (PDT)
+        bh=iodUiBkCdUOR1HJyS4NzY3iHpVK699tt2D+XRmBC3fI=;
+        b=bMcridNeGorT9smqxuPMXpqm/8FGkkqJxE8SPx/SbVWfTT4QKqOCAcfF36eiXR79O5
+         If6VV6sozZDgw4Po6rvBJdmLVJnmiH9KV7OgnXpXbhnmhKg76Dqo/JnDP/2BoeZQeQw9
+         9mrZIcBVNdwuQUy6V5UYYwDaezgk4IttQ9xXUTj5evSdr4cYPDk1W6Uwp/CXKkHb/Oec
+         A2dIv6O8ZEfxXuroMf8WKVXbls4XvsPBgA19WCX1TJ2PjMR+PR6xbT9wyMiir0aNjGmh
+         Fa8WWtm52b4DUgpXLNnAtQj9SVlwvzt6snx9uquKc12A5yBhPti0v99E0+cgm+BMPSZa
+         f0wg==
+X-Forwarded-Encrypted: i=1; AJvYcCUYWYItDTEdlJgl45omR7PGcKv1SfOVs2oUbe3hXqC8O9J3q/RmPJasvE2KD0lthCnTtsXjnhQsQWg=@vger.kernel.org, AJvYcCUiGSoCUt83jOz5Qn5Rl3xzUWK5ecuFK9U1zcNFOxdTTMsjtxfHmRy+qDeJ7aA4F/loP42bqmgqyWuO@vger.kernel.org, AJvYcCWDqXN5CS12n867/S3Z/iymXyt2+/bxvwRM46VHE/7pOTjq2f4ClP2sDtjnh8HO5tA7iPS275wBgjNDSuR3MQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMb6lEJWszOkfIxfKf5+vbC8WOyQwAqMMcCvAz/23/Sf6jaozc
+	5+ZSd/VvzOt0LKN5gvqNsnGkPOL2bjXtZRYcJmOaykvQbZQwm9BGfzhSDZ0FiMCRQ8RYcP1ui7G
+	eAGAa9YMTVwRPcg1ZhR3jumNZA/UAgBk=
+X-Gm-Gg: ASbGncvqfrseFcXHLQu2uGN7ThhIeXNmzIDBbCI6TpOp6QxWcoB+B71uUyBHo7/MvhI
+	BKXuiOCK9vcvgDX9iW75Kps4pDk2/R7z6eR/BYX/P/u3y9UyGFmfluvAbgHl2xWit8/8KpwebbB
+	x0oKziM0LW5w8sV3wWXUhaWVatI+OZiqJunHE+HL+QVtqVQjNXhJka7DoIKnFUEN8prN6xUFmCv
+	OzoSSr2
+X-Google-Smtp-Source: AGHT+IHqEAnbqZo+Pm3duMlMf9rB8SqxAVEpYH+eDYzpUUTtF7ZxWxDHg9rxsLCyEm8nvzESUmX2NA6ETmwa4R2Se64=
+X-Received: by 2002:a05:622a:4a8f:b0:4b5:de44:4ec2 with SMTP id
+ d75a77b69052e-4b5de44524bmr44154231cf.78.1757027811489; Thu, 04 Sep 2025
+ 16:16:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -76,74 +76,38 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20250829235627.4053234-1-joannelkoong@gmail.com>
- <20250829235627.4053234-5-joannelkoong@gmail.com> <20250903203031.GM1587915@frogsfrogsfrogs>
- <aLkskcgl3Z91oIVB@infradead.org> <CAJnrk1aaHYQLsEtWkoqL-ehGDvpajc53GoHnLjmf=nB7aXQ=YQ@mail.gmail.com>
-In-Reply-To: <CAJnrk1aaHYQLsEtWkoqL-ehGDvpajc53GoHnLjmf=nB7aXQ=YQ@mail.gmail.com>
+ <20250829235627.4053234-4-joannelkoong@gmail.com> <aLksOHVXfW7gziFB@infradead.org>
+In-Reply-To: <aLksOHVXfW7gziFB@infradead.org>
 From: Joanne Koong <joannelkoong@gmail.com>
-Date: Thu, 4 Sep 2025 16:15:21 -0700
-X-Gm-Features: Ac12FXztSMO9wGhL0GPdMYh32nJ4tsnrFqhqpLPfd1D8NTi9mrmJqQ6mzMIF1RY
-Message-ID: <CAJnrk1Z3XhyqCyweE8L0o29QudmGMd+14o5uv8ZmvxHFN5Ftqw@mail.gmail.com>
-Subject: Re: [PATCH v1 04/16] iomap: use iomap_iter->private for stashing
- read/readahead bio
+Date: Thu, 4 Sep 2025 16:16:40 -0700
+X-Gm-Features: Ac12FXwf3rLLeSklHNz8LN_IJAUV9KYffTMBORN5UGY0MP4oW8_y3azc_7OO4mI
+Message-ID: <CAJnrk1YAiESiSy1rMpU6J+FycXEs1rvkS2jA31jusbNSYVuDVg@mail.gmail.com>
+Subject: Re: [PATCH v1 03/16] iomap: refactor read/readahead completion
 To: Christoph Hellwig <hch@infradead.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, brauner@kernel.org, miklos@szeredi.hu, 
+Cc: brauner@kernel.org, miklos@szeredi.hu, djwong@kernel.org, 
 	linux-fsdevel@vger.kernel.org, kernel-team@meta.com, 
 	linux-xfs@vger.kernel.org, linux-doc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 4, 2025 at 3:20=E2=80=AFPM Joanne Koong <joannelkoong@gmail.com=
-> wrote:
+On Wed, Sep 3, 2025 at 11:05=E2=80=AFPM Christoph Hellwig <hch@infradead.or=
+g> wrote:
 >
-> On Wed, Sep 3, 2025 at 11:07=E2=80=AFPM Christoph Hellwig <hch@infradead.=
-org> wrote:
-> >
-> > On Wed, Sep 03, 2025 at 01:30:31PM -0700, Darrick J. Wong wrote:
-> > > On Fri, Aug 29, 2025 at 04:56:15PM -0700, Joanne Koong wrote:
-> > > > Use the iomap_iter->private field for stashing any read/readahead b=
-ios
-> > > > instead of defining the bio as part of the iomap_readpage_ctx struc=
-t.
-> > > > This makes the read/readahead interface more generic. Some filesyst=
-ems
-> > > > that will be using iomap for read/readahead may not have CONFIG_BLO=
-CK
-> > > > set.
-> > >
-> > > Sorry, but I don't like abusing iomap_iter::private because (a) it's =
-a
-> > > void pointer which means shenanigans; and (b) private exists to store
-> > > some private data for an iomap caller, not iomap itself.
+> On Fri, Aug 29, 2025 at 04:56:14PM -0700, Joanne Koong wrote:
+> > Refactor the read/readahead completion logic into two new functions,
+> > iomap_readfolio_complete() and iomap_readfolio_submit(). This helps mak=
+e
+> > iomap read/readahead generic when the code will be moved out of
+> > CONFIG_BLOCK scope.
 >
-> Fair enough. For callers that provide custom read handling, their
-> equivalent of "bios" is stored in iter->private, so i was thinking it
-> would be nice symmetry to have the two match, but I get your point.
+> I'll have to look how this goes further down, but I don't really like
+> the idea of treating bios special in common code.  I'd rather go down
+> the same route as for writeback and replace the bio with a generic
+> void pointer, and then either use callbacks to process them, or maybe
+> have multiple versions of iomap_read_folio / iomap_readfolio_complete
+> that just share the underlying iterator, but implement their own logic
+> around it.
 >
-> >
-> > I don't think we can do without the void pointer for a generic
-> > lower library, but I fully agree on not using iomap_iter::private.
-> > We'll need that for something caller provided sooner or later.
-> >
-> > The right way ahead is to have a void pointer for the I/O-type specific
-> > context in iomap_readpage_ctx, and then hopefully reasonable type safe
-> > wrappers around it.
-> >
-> Do we need a void pointer for this in iomap_readpage_ctx if the only
-> user of it is bios? For callers who do custom read handling, their
-> pointer is stashed in iter->private where the whole iter then gets
-> passed to ->read_folio_range(iter, ...). It seems like maybe we should
-> just do
->
-> #ifdef CONFIG_BLOCK
-> struct bio *bio;
-> #endif
->
-> in that case.
 
-I think I see what you're saying now. You're suggesting that
-everything just go through iomap_readpage_ctx (and not do anything
-with iter->private altogether), much like how the iomap writeback
-interface has it. That makes sense to me.
-
-I'll make this change in v2.
+That sounds good to me, I'll make that change for v2.
 
