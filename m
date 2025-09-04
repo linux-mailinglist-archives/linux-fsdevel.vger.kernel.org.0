@@ -1,102 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-60256-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60257-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBC94B43650
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 10:53:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E2FBB43717
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 11:28:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 943191719EB
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 08:53:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2574A1C2826C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 09:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A3DB2D0614;
-	Thu,  4 Sep 2025 08:53:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5053923D290;
+	Thu,  4 Sep 2025 09:28:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zLY0z0sK";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ks14tQUF";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zLY0z0sK";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ks14tQUF"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WByJ3PxU";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="XbQHkYCJ";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="I4BHYpWA";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ycIJbiyQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91C8C2264B1
-	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Sep 2025 08:53:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDEEC2F60CB
+	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Sep 2025 09:28:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756976010; cv=none; b=EDrTJ/q4QQ+KFfyTPf6E14pUunFqwN6UAUtgIZ831vDvKX6GWyr9uQ5vA0En3NxBiV3jkQjSGY/VQ78snZRWJGJkKElCPjzaBZNDZVYlbvbDmhuSOs7FD4yDM+NCpTL+F1/sy38w9/H1TJ3/3WDb17GhKU42l8RxzYAwf+/i+Y8=
+	t=1756978132; cv=none; b=RwJQHSnqPS5Z4aRx8JuuFyP+6qAo55bEms1wp9wmt57v9pkB1il4TSYFgkSg1AxcYJQPkkWxra2S2aG0xekj9Qx2ae8dnF8Op3LWBNuM8g4f91szu6p7V4a/HBu6GMlBqe+FKMzl2XTUwNEM9SKNp4qTVsGyAmcSnIwKk3SUwRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756976010; c=relaxed/simple;
-	bh=TbtDw3etI9/ZzofASv193l20wMhRJSnEG+pI6FclPx0=;
+	s=arc-20240116; t=1756978132; c=relaxed/simple;
+	bh=5ej0ropi/8jDsfdWMJ/IAgOdwCRzAHm4Zm1mv/3LhXQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tFx/7vNSGeFJMeBfpy3RiZtZAGCR5NNcVDc17TYpnQKkRKu0Dl/HhlIo3WxvY7iLmLBkfO+71CtT09wXrBMYT+MpacmkOw/4yhkpQNx/Y1w1HW2u8Wxuytu4ejc9I5koAZ8sCF8zjgA07PV+tBRNTR7fU9CWa+MZIDTIeFfsUdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zLY0z0sK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ks14tQUF; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zLY0z0sK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ks14tQUF; arc=none smtp.client-ip=195.135.223.130
+	 Content-Type:Content-Disposition:In-Reply-To; b=JE9mS6gpH6FejjrRreD+psybZ1OUNliZxAXvVoH9xyMSDXvEnpOG73ni22KffDWhN90qxre5cGiLbdM8/Spa5htXY5U6GoaDMZ8hTfJZ6RnWg8LHoanYQyb0YN7a2VgoLepOoyQCcaG309YrholNZlzseHnCo9PMjQzl4iB42io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WByJ3PxU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=XbQHkYCJ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=I4BHYpWA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ycIJbiyQ; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7619B33F61;
-	Thu,  4 Sep 2025 08:53:26 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id DF038341A6;
+	Thu,  4 Sep 2025 09:28:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756976006; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1756978129; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=nPAlW2jGM6z2VbyPzIAk1XwDtLLRv8RXQFnUCLBEOis=;
-	b=zLY0z0sKVWzhzRyIbQlPUo4m/YP4rEXl2vWzHuOLU0U5wdSzWrLpPL14PpyZwl/3qBUvTb
-	rKaEslebF5hPZjCAjVsD1OUXeyCWXPcDPw2CAfakN0tG1eRxPTorzw/JL7x3rHhN7/8Of7
-	D+3/tMdTZX6vSBZ5b6Y0kE9t0JQGgTw=
+	bh=byTc2bjRbM0JqYl+QsOHYcEtmykpuhI65DaMcVhqnTs=;
+	b=WByJ3PxUTsOg/FaiGtZwmOFIkGbqAlHLPmw8I0FseDSImz9JjAs2zXr4tWdFiIC0kRrWED
+	JHEVpKkGi2nHgFpyuDaYyEC+4vH1vMWGQEJWrndudF6QDlujjg6cI0q/9PdLWk33+BxdzS
+	G+54FXCcfTvs/k/5C4weDiBOgPL5Ay4=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756976006;
+	s=susede2_ed25519; t=1756978129;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=nPAlW2jGM6z2VbyPzIAk1XwDtLLRv8RXQFnUCLBEOis=;
-	b=Ks14tQUF4QfXY3dKTad0ND0t1O3z2jPZSLpeLYMg+2yG3fErY4sRXypbYiiIo6S2x88NXf
-	XLr/5Bal3QW4uPBg==
+	bh=byTc2bjRbM0JqYl+QsOHYcEtmykpuhI65DaMcVhqnTs=;
+	b=XbQHkYCJm3h2dmg1yc3tEtmYTwvjE1sGpeopp5+24m3pXNMQTMlMMNBItiFcEsO9Y/QGpx
+	9yBJROZBguw6u8DQ==
 Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=zLY0z0sK;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=Ks14tQUF
+	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756976006; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1756978128; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=nPAlW2jGM6z2VbyPzIAk1XwDtLLRv8RXQFnUCLBEOis=;
-	b=zLY0z0sKVWzhzRyIbQlPUo4m/YP4rEXl2vWzHuOLU0U5wdSzWrLpPL14PpyZwl/3qBUvTb
-	rKaEslebF5hPZjCAjVsD1OUXeyCWXPcDPw2CAfakN0tG1eRxPTorzw/JL7x3rHhN7/8Of7
-	D+3/tMdTZX6vSBZ5b6Y0kE9t0JQGgTw=
+	bh=byTc2bjRbM0JqYl+QsOHYcEtmykpuhI65DaMcVhqnTs=;
+	b=I4BHYpWAEH7I7T2clnKKRDwvqs7xxNUm/4MXo/MUkBOvttBNZrgj+JITW2bS9uFwfsjAD3
+	0iIGweGg5nbZ5JxpEayTHzAOMnto9wfe2hHh5D6Z+cDfU+LHyPd/ghjNicj+ZWMIhurFd8
+	6Wm++jeWCeC14ubp9CJ+1+hQjoI+ZKk=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756976006;
+	s=susede2_ed25519; t=1756978128;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=nPAlW2jGM6z2VbyPzIAk1XwDtLLRv8RXQFnUCLBEOis=;
-	b=Ks14tQUF4QfXY3dKTad0ND0t1O3z2jPZSLpeLYMg+2yG3fErY4sRXypbYiiIo6S2x88NXf
-	XLr/5Bal3QW4uPBg==
+	bh=byTc2bjRbM0JqYl+QsOHYcEtmykpuhI65DaMcVhqnTs=;
+	b=ycIJbiyQK543VWo+LG2i+Vw4NZev/d1oX9FC1Z1bae4i8PJkPsn4zl5nfQLnpBR33A8yuW
+	cRRCvuel2j3nhyBg==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 69A9113675;
-	Thu,  4 Sep 2025 08:53:26 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C944013AA0;
+	Thu,  4 Sep 2025 09:28:48 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id QCDEGYZTuWhOEAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 04 Sep 2025 08:53:26 +0000
+	id B/8cMdBbuWgKHAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 04 Sep 2025 09:28:48 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id E8B40A0A2D; Thu,  4 Sep 2025 10:53:25 +0200 (CEST)
-Date: Thu, 4 Sep 2025 10:53:25 +0200
+	id 83055A0A2D; Thu,  4 Sep 2025 11:28:44 +0200 (CEST)
+Date: Thu, 4 Sep 2025 11:28:44 +0200
 From: Jan Kara <jack@suse.cz>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: linux-mm@kvack.org, brauner@kernel.org, willy@infradead.org, 
-	jack@suse.cz, hch@infradead.org, djwong@kernel.org, jlayton@kernel.org, 
-	linux-fsdevel@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH v2 00/12] mm/iomap: add granular dirty and writeback
- accounting
-Message-ID: <5qgjrq6l627byybxjs6vzouspeqj6hdrx2ohqbxqkkjy65mtz5@zp6pimrpeu4e>
-References: <20250829233942.3607248-1-joannelkoong@gmail.com>
+To: Anderson Nascimento <anderson@allelesecurity.com>
+Cc: jack@suse.cz, amir73il@gmail.com, repnop@google.com, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] - Validating the return value of mnt_ns_from_dentry()
+ before dereferencing mntns->user_ns
+Message-ID: <gocil3mtkyq3hasu5gp2wfbp4kb2p6yxlt72tadub4p2ia655d@xg6cnxenjxar>
+References: <CAPhRvkwpLt03-OohQiBh_RyD+DsgTcRo-KmoqcvZ-3vNcCo=Uw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -105,202 +103,220 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250829233942.3607248-1-joannelkoong@gmail.com>
-X-Spamd-Result: default: False [-4.01 / 50.00];
+In-Reply-To: <CAPhRvkwpLt03-OohQiBh_RyD+DsgTcRo-KmoqcvZ-3vNcCo=Uw@mail.gmail.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.cz:+];
+	ARC_NA(0.00)[];
 	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email]
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[suse.cz,gmail.com,google.com,vger.kernel.org];
+	RCPT_COUNT_FIVE(0.00)[5];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
 X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 7619B33F61
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
+X-Spam-Score: -3.80
 
-Hello!
-
-On Fri 29-08-25 16:39:30, Joanne Koong wrote:
-> This patchset adds granular dirty and writeback stats accounting for large
-> folios.
+On Wed 03-09-25 15:17:10, Anderson Nascimento wrote:
+> Validating the return value of mnt_ns_from_dentry() before
+> dereferencing mntns->user_ns
 > 
-> The dirty page balancing logic uses these stats to determine things like
-> whether the ratelimit has been exceeded, the frequency with which pages need
-> to be written back, if dirtying should be throttled, etc. Currently for large
-> folios, if any byte in the folio is dirtied or written back, all the bytes in
-> the folio are accounted as such.
+> The function do_fanotify_mark() does not validate if
+> mnt_ns_from_dentry() returns NULL before dereferencing mntns->user_ns.
+> This causes a NULL pointer dereference in do_fanotify_mark() if the
+> path is not a mount namespace object.
 > 
-> In particular, there are four places where dirty and writeback stats get
-> incremented and decremented as pages get dirtied and written back:
-> a) folio dirtying (filemap_dirty_folio() -> ... -> folio_account_dirtied())
->    - increments NR_FILE_DIRTY, NR_ZONE_WRITE_PENDING, WB_RECLAIMABLE,
->      current->nr_dirtied
-> 
-> b) writing back a mapping (writeback_iter() -> ... ->
-> folio_clear_dirty_for_io())
->    - decrements NR_FILE_DIRTY, NR_ZONE_WRITE_PENDING, WB_RECLAIMABLE
-> 
-> c) starting writeback on a folio (folio_start_writeback())
->    - increments WB_WRITEBACK, NR_WRITEBACK, NR_ZONE_WRITE_PENDING
-> 
-> d) ending writeback on a folio (folio_end_writeback())
->    - decrements WB_WRITEBACK, NR_WRITEBACK, NR_ZONE_WRITE_PENDING
+> Fix this by checking mnt_ns_from_dentry()'s return value before
+> dereferencing it. Tested on v6.17-rc4.
 
-I was looking through the patch set. One general concern I have is that it
-all looks somewhat fragile. If you say start writeback on a folio with a
-granular function and happen to end writeback with a non-granular one,
-everything will run fine, just a permanent error in the counters will be
-introduced.  Similarly with a dirtying / starting writeback mismatch. The
-practicality of this issue is demostrated by the fact that you didn't
-convert e.g. folio_redirty_for_writepage() so anybody using it together
-with fine-grained accounting will just silently mess up the counters.
-Another issue of a similar kind is that __folio_migrate_mapping() does not
-support fine-grained accounting (and doesn't even have a way to figure out
-proper amount to account) so again any page migration may introduce
-permanent errors into counters. One way to deal with this fragility would
-be to have a flag in the mapping that will determine whether the dirty
-accounting is done by MM or the filesystem (iomap code in your case)
-instead of determining it at the call site.
-
-Another concern I have is the limitation to blocksize >= PAGE_SIZE you
-mention below. That is kind of annoying for filesystems because generally
-they also have to deal with cases of blocksize < PAGE_SIZE and having two
-ways of accounting in one codebase is a big maintenance burden. But this
-was discussed elsewhere in this series and I think you have settled on
-supporting blocksize < PAGE_SIZE as well?
-
-Finally, there is one general issue for which I'd like to hear opinions of
-MM guys: Dirty throttling is a mechanism to avoid a situation where the
-dirty page cache consumes too big amount of memory which makes page reclaim
-hard and the machine thrashes as a result or goes OOM. Now if you dirty a
-2MB folio, it really makes all those 2MB hard to reclaim (neither direct
-reclaim nor kswapd will be able to reclaim such folio) even though only 1KB
-in that folio needs actual writeback. In this sense it is actually correct
-to account whole big folio as dirty in the counters - if you accounted only
-1KB or even 4KB (page), a user could with some effort make all page cache
-memory dirty and hard to reclaim without crossing the dirty limits. On the
-other hand if only 1KB in a folio trully needs writeback, the writeback
-will be generally significantly faster than with 2MB needing writeback. So
-in this sense it is correct to account amount to data that trully needs
-writeback.
-
-I don't know what the right answer to this "conflict of interests" is. We
-could keep accounting full folios in the global / memcg counters (to
-protect memory reclaim) and do per page (or even finer) accounting in the
-bdi_writeback which is there to avoid excessive accumulation of dirty data
-(and thus long writeback times) against one device. This should still help
-your case with FUSE and strictlimit (which is generally constrained by
-bdi_writeback counters). One just needs to have a closer look how hard
-would it be to adapt writeback throttling logic to the different
-granularity of global counters and writeback counters...
+Thanks for the report and the fix! It looks good but I need you provide
+your Signed-off-by so that I can include the fix into the kernel (see
+Documentation/process/submitting-patches.rst, chapter "Sign your work - the
+Developer's Certificate of Origin"). Thank you!
 
 								Honza
 
-> Patches 1 to 9 adds support for the 4 cases above to take in the number of
-> pages to be accounted, instead of accounting for the entire folio.
 > 
-> Patch 12 adds the iomap changes that uses these new APIs. This relies on the
-> iomap folio state bitmap to track which pages are dirty (so that we avoid
-> any double-counting). As such we can only do granular accounting if the
-> block size >= PAGE_SIZE.
+> Before the patch
 > 
-> This patchset was run through xfstests using fuse passthrough hp (with an
-> out-of-tree kernel patch enabling fuse large folios).
+> $ gcc fanotify_nullptr.c -o fanotify_nullptr
+> $ mkdir A
+> $ ./fanotify_nullptr
+> Fanotify fd: 3
+> fanotify_mark: Operation not permitted
+> $ unshare -Urm
+> # ./fanotify_nullptr
+> Fanotify fd: 3
+> Killed
+> # cat fanotify_nullptr.c
+> #include <stdio.h>
+> #include <stdlib.h>
+> #include <fcntl.h>
+> #include <sys/fanotify.h>
 > 
-> This is on top of commit 4f702205 ("Merge branch 'vfs-6.18.rust' into
-> vfs.all") in Christian's vfs tree, and on top of the patchset that removes
-> BDI_CAP_WRITEBACK_ACCT [1].
+> int main(void){
+>     int ffd;
+>     ffd = fanotify_init(FAN_CLASS_NOTIF | FAN_REPORT_MNT, 0);
+>     if(ffd < 0){
+>         perror("fanotify_init");
+>         exit(EXIT_FAILURE);
+>     }
 > 
-> Local benchmarks were run on xfs by doing the following:
+>     printf("Fanotify fd: %d\n",ffd);
 > 
-> seting up xfs (per the xfstests readme):
-> # xfs_io -f -c "falloc 0 10g" test.img
-> # xfs_io -f -c "falloc 0 10g" scratch.img
-> # mkfs.xfs test.img
-> # losetup /dev/loop0 ./test.img
-> # losetup /dev/loop1 ./scratch.img
-> # mkdir -p /mnt/test && mount /dev/loop0 /mnt/test
+>     if(fanotify_mark(ffd, FAN_MARK_ADD | FAN_MARK_MNTNS,
+> FAN_MNT_ATTACH, AT_FDCWD, "A") < 0){
+>         perror("fanotify_mark");
+>         exit(EXIT_FAILURE);
+>     }
 > 
-> # sudo sysctl -w vm.dirty_bytes=$((3276 * 1024 * 1024)) # roughly 20% of 16GB
-> # sudo sysctl -w vm.dirty_background_bytes=$((1638*1024*1024)) # roughly 10% of 16GB
+> return 0;
+> }
+> #
 > 
-> running this test program (ai-generated) [2] which essentially writes out 2 GB
-> of data 256 MB at a time and then spins up 15 threads to do 50-byte 50k
-> writes.
+> After the patch
 > 
-> On my VM, I saw the writes take around 3 seconds (with some variability of
-> taking 0.3 seconds to 5 seconds sometimes) in the base version vs taking
-> a pretty consistent 0.14 seconds with this patchset. It'd be much appreciated
-> if someone could also run it on their local system to verify they see similar
-> numbers.
+> $ gcc fanotify_nullptr.c -o fanotify_nullptr
+> $ mkdir A
+> $ ./fanotify_nullptr
+> Fanotify fd: 3
+> fanotify_mark: Operation not permitted
+> $ unshare -Urm
+> # ./fanotify_nullptr
+> Fanotify fd: 3
+> fanotify_mark: Invalid argument
+> #
 > 
-> Thanks,
-> Joanne
+> [   25.694973] BUG: kernel NULL pointer dereference, address: 0000000000000038
+> [   25.695006] #PF: supervisor read access in kernel mode
+> [   25.695012] #PF: error_code(0x0000) - not-present page
+> [   25.695017] PGD 109a30067 P4D 109a30067 PUD 142b46067 PMD 0
+> [   25.695025] Oops: Oops: 0000 [#1] SMP NOPTI
+> [   25.695032] CPU: 4 UID: 1000 PID: 1478 Comm: fanotify_nullpt Not
+> tainted 6.17.0-rc4 #1 PREEMPT(lazy)
+> [   25.695040] Hardware name: VMware, Inc. VMware Virtual
+> Platform/440BX Desktop Reference Platform, BIOS 6.00 11/12/2020
+> [   25.695049] RIP: 0010:do_fanotify_mark+0x817/0x950
+> [   25.695066] Code: 04 00 00 e9 45 fd ff ff 48 8b 7c 24 48 4c 89 54
+> 24 18 4c 89 5c 24 10 4c 89 0c 24 e8 b3 11 fc ff 4c 8b 54 24 18 4c 8b
+> 5c 24 10 <48> 8b 78 38 4c 8b 0c 24 49 89 c4 e9 13 fd ff ff 8b 4c 24 28
+> 85 c9
+> [   25.695081] RSP: 0018:ffffd31c469e3c08 EFLAGS: 00010203
+> [   25.695104] RAX: 0000000000000000 RBX: 0000000001000000 RCX: ffff8eb48aebd220
+> [   25.695110] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8eb4835e8180
+> [   25.695115] RBP: 0000000000000111 R08: 0000000000000000 R09: 0000000000000000
+> [   25.695142] R10: ffff8eb48a7d56c0 R11: ffff8eb482bede00 R12: 00000000004012a7
+> [   25.695148] R13: 0000000000000110 R14: 0000000000000001 R15: ffff8eb48a7d56c0
+> [   25.695154] FS:  00007f8733bda740(0000) GS:ffff8eb61ce5f000(0000)
+> knlGS:0000000000000000
+> [   25.695162] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   25.695170] CR2: 0000000000000038 CR3: 0000000136994006 CR4: 00000000003706f0
+> [   25.695201] Call Trace:
+> [   25.695209]  <TASK>
+> [   25.695215]  __x64_sys_fanotify_mark+0x1f/0x30
+> [   25.695222]  do_syscall_64+0x82/0x2c0
+> [   25.695229]  ? do_syscall_64+0x82/0x2c0
+> [   25.695234]  ? memcg1_commit_charge+0x7a/0xa0
+> [   25.695240]  ? mod_memcg_lruvec_state+0xe7/0x2e0
+> [   25.695246]  ? charge_memcg+0x48/0x80
+> [   25.695251]  ? blk_cgroup_congested+0x65/0x70
+> [   25.695258]  ? __lruvec_stat_mod_folio+0x85/0xd0
+> [   25.695272]  ? __folio_mod_stat+0x2d/0x90
+> [   25.695284]  ? set_ptes.isra.0+0x36/0x80
+> [   25.695290]  ? do_anonymous_page+0x100/0x520
+> [   25.695295]  ? __handle_mm_fault+0x54f/0x6a0
+> [   25.695317]  ? anon_inode_getfile_fmode+0x18/0x30
+> [   25.695322]  ? count_memcg_events+0xd6/0x220
+> [   25.695327]  ? handle_mm_fault+0x248/0x360
+> [   25.695333]  ? do_user_addr_fault+0x21a/0x690
+> [   25.695339]  ? clear_bhb_loop+0x50/0xa0
+> [   25.695344]  ? clear_bhb_loop+0x50/0xa0
+> [   25.695348]  ? clear_bhb_loop+0x50/0xa0
+> [   25.695353]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> [   25.695358] RIP: 0033:0x7f8733cd26ae
+> [   25.695373] Code: f8 48 8d 75 f8 e8 12 3c ff ff c9 48 83 f8 08 0f
+> 95 c0 0f b6 c0 f7 d8 c3 0f 1f 40 00 f3 0f 1e fa 41 89 ca b8 2d 01 00
+> 00 0f 05 <48> 3d 00 f0 ff ff 77 0a c3 66 0f 1f 84 00 00 00 00 00 48 8b
+> 15 19
+> [   25.695613] RSP: 002b:00007ffcd6842cd8 EFLAGS: 00000206 ORIG_RAX:
+> 000000000000012d
+> [   25.695820] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f8733cd26ae
+> [   25.695992] RDX: 0000000001000000 RSI: 0000000000000111 RDI: 0000000000000003
+> [   25.696141] RBP: 00007ffcd6842cf0 R08: 00000000004012a7 R09: 0000000000000000
+> [   25.696273] R10: 00000000ffffff9c R11: 0000000000000206 R12: 00007ffcd6842e18
+> [   25.696438] R13: 0000000000000001 R14: 00007f8733e15000 R15: 0000000000402e00
+> [   25.696616]  </TASK>
+> [   25.696752] Modules linked in: rfkill nft_fib_inet nft_fib_ipv4
+> nft_fib_ipv6 nft_fib nft_reject_inet nf_reject_ipv4 nf_reject_ipv6
+> nft_reject nft_ct nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6
+> nf_defrag_ipv4 nf_tables qrtr intel_rapl_msr intel_rapl_common
+> intel_uncore_frequency_common intel_pmc_core pmt_telemetry
+> pmt_discovery pmt_class intel_pmc_ssram_telemetry intel_vsec rapl
+> vmw_balloon pcspkr i2c_piix4 i2c_smbus joydev loop vsock_loopback
+> vmw_vsock_virtio_transport_common vmw_vsock_vmci_transport vsock zram
+> vmw_vmci lz4hc_compress lz4_compress xfs polyval_clmulni vmwgfx
+> ghash_clmulni_intel vmxnet3 nvme drm_ttm_helper ata_generic ttm
+> pata_acpi nvme_tcp nvme_fabrics nvme_core nvme_keyring nvme_auth
+> serio_raw sunrpc be2iscsi bnx2i cnic uio cxgb4i cxgb4 tls cxgb3i cxgb3
+> mdio libcxgbi libcxgb qla4xxx iscsi_boot_sysfs iscsi_tcp libiscsi_tcp
+> libiscsi scsi_transport_iscsi scsi_dh_rdac scsi_dh_emc scsi_dh_alua
+> fuse i2c_dev dm_multipath nfnetlink
+> [   25.698055] CR2: 0000000000000038
+> [   25.698202] ---[ end trace 0000000000000000 ]---
+> [   25.698385] RIP: 0010:do_fanotify_mark+0x817/0x950
+> [   25.698595] Code: 04 00 00 e9 45 fd ff ff 48 8b 7c 24 48 4c 89 54
+> 24 18 4c 89 5c 24 10 4c 89 0c 24 e8 b3 11 fc ff 4c 8b 54 24 18 4c 8b
+> 5c 24 10 <48> 8b 78 38 4c 8b 0c 24 49 89 c4 e9 13 fd ff ff 8b 4c 24 28
+> 85 c9
+> [   25.698921] RSP: 0018:ffffd31c469e3c08 EFLAGS: 00010203
+> [   25.699076] RAX: 0000000000000000 RBX: 0000000001000000 RCX: ffff8eb48aebd220
+> [   25.699232] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8eb4835e8180
+> [   25.699409] RBP: 0000000000000111 R08: 0000000000000000 R09: 0000000000000000
+> [   25.699645] R10: ffff8eb48a7d56c0 R11: ffff8eb482bede00 R12: 00000000004012a7
+> [   25.699818] R13: 0000000000000110 R14: 0000000000000001 R15: ffff8eb48a7d56c0
+> [   25.699970] FS:  00007f8733bda740(0000) GS:ffff8eb61ce5f000(0000)
+> knlGS:0000000000000000
+> [   25.700125] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   25.700280] CR2: 0000000000000038 CR3: 0000000136994006 CR4: 00000000003706f0
+> [   25.700495] note: fanotify_nullpt[1478] exited with irqs disabled
 > 
-> [1] https://lore.kernel.org/linux-fsdevel/20250707234606.2300149-1-joannelkoong@gmail.com/
-> [2] https://pastebin.com/CbcwTXjq
+> diff --git a/fs/notify/fanotify/fanotify_user.c
+> b/fs/notify/fanotify/fanotify_user.c
+> index b192ee068a7a..77046be7d3c1 100644
+> --- a/fs/notify/fanotify/fanotify_user.c
+> +++ b/fs/notify/fanotify/fanotify_user.c
+> @@ -1999,7 +1999,10 @@ static int do_fanotify_mark(int fanotify_fd,
+> unsigned int flags, __u64 mask,
+>                 user_ns = path.mnt->mnt_sb->s_user_ns;
+>                 obj = path.mnt->mnt_sb;
+>         } else if (obj_type == FSNOTIFY_OBJ_TYPE_MNTNS) {
+> +               ret = -EINVAL;
+>                 mntns = mnt_ns_from_dentry(path.dentry);
+> +               if(!mntns)
+> +                       goto path_put_and_out;
+>                 user_ns = mntns->user_ns;
+>                 obj = mntns;
+>         }
 > 
-> Changelog
-> v1: https://lore.kernel.org/linux-fsdevel/20250801002131.255068-1-joannelkoong@gmail.com/
-> v1 -> v2:
-> * Add documentation specifying caller expectations for the
->   filemap_dirty_folio_pages() -> __folio_mark_dirty() callpath (Jan)
-> * Add requested iomap bitmap iteration refactoring (Christoph)
-> * Fix long lines (Christoph)
 > 
-> Joanne Koong (12):
->   mm: pass number of pages to __folio_start_writeback()
->   mm: pass number of pages to __folio_end_writeback()
->   mm: add folio_end_writeback_pages() helper
->   mm: pass number of pages dirtied to __folio_mark_dirty()
->   mm: add filemap_dirty_folio_pages() helper
->   mm: add __folio_clear_dirty_for_io() helper
->   mm: add no_stats_accounting bitfield to wbc
->   mm: refactor clearing dirty stats into helper function
->   mm: add clear_dirty_for_io_stats() helper
->   iomap: refactor dirty bitmap iteration
->   iomap: refactor uptodate bitmap iteration
->   iomap: add granular dirty and writeback accounting
-> 
->  fs/btrfs/subpage.c         |   2 +-
->  fs/buffer.c                |   6 +-
->  fs/ext4/page-io.c          |   2 +-
->  fs/iomap/buffered-io.c     | 281 ++++++++++++++++++++++++++++++-------
->  include/linux/page-flags.h |   4 +-
->  include/linux/pagemap.h    |   4 +-
->  include/linux/writeback.h  |  10 ++
->  mm/filemap.c               |  12 +-
->  mm/internal.h              |   2 +-
->  mm/page-writeback.c        | 115 +++++++++++----
->  10 files changed, 346 insertions(+), 92 deletions(-)
-> 
+> Best regards,
 > -- 
-> 2.47.3
-> 
+> Anderson Nascimento
+> Allele Security Intelligence
+> https://www.allelesecurity.com
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
