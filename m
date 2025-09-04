@@ -1,210 +1,173 @@
-Return-Path: <linux-fsdevel+bounces-60230-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60231-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DA15B42E09
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 02:17:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0357B42E23
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 02:25:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 390005612E2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 00:17:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 078C71893C35
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 00:25:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0F55433AD;
-	Thu,  4 Sep 2025 00:17:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4C29190664;
+	Thu,  4 Sep 2025 00:23:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="mFpsO7eR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d5Z0SxG8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 396312628D
-	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Sep 2025 00:17:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11BCE1A23A0
+	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Sep 2025 00:23:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756945056; cv=none; b=SNlt1LOdNChoj6pLhkO7KbK8lDFb7hbDzxTUfxq/+bPKRpan2RVA32KTF6755+PooUADUxHFt+c0tBfm+w5yqh4TPXfB1uiwl9I9ATqkXDH6nVrcOZnotaYZHL3qhWMltdN6Lc6XmJ81bUaS4pDyD1WtkXfsljoGs9iNWuOZvMc=
+	t=1756945389; cv=none; b=oob5mpAqGxmrtB5FfTLI1Vm/hwJPHN+JEIr/U+KoY9ChVG+vvwxczuGBBm0oZ5R2ZJiKhY18k6YcVwwdcyh+b8Zhxea6knJFo+cYy6bnoElDWsQKliRemQGf1MpviCXwFmQJ3O5IZZMuIWL9+1IF5o/MbVzS0+0eWvEKXtLKByM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756945056; c=relaxed/simple;
-	bh=+Fi2uDeyhW+e2OIJgl036DmHeMHMRRLbyOixENxCSAY=;
+	s=arc-20240116; t=1756945389; c=relaxed/simple;
+	bh=18sl02mjEtYlYtgJb9zz5dSLYy+Ccct/w8yNap/8RKA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m7RzWKfWOZobcDLlUETUkgdUZ7Rg/FjejfMyVeLgpxkDut0aq+YjrN/o8r9/2iIzRzPE5+b12vdDFLCBf8gx1aSRLyEYl3ANrSGk665gQ+9S+h5vNsUfAyRJePVejQOab+ke0FjKvPjvkbDUa8raLttYHNYrK/XkyHu5dCXyN0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=mFpsO7eR; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-772301f8a4cso644094b3a.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Sep 2025 17:17:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1756945053; x=1757549853; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cu5bzd3f3USwYvB1CBG4A8cgDzrTBTPuzZz6N9qQq3o=;
-        b=mFpsO7eRGWk02izioHjNb/R1upB7nSR5kQfJ179UhY8SXO0fCZCG2pX0631eHKX8im
-         nPbVRyHI3rFmISfJXNMNGY4/DzSm9umN4FtU38GJhhVMVEphcisQu4HzOhStDFooPd95
-         MBPBOdXM488/mK3pCm65RLlDPjuWDO2Vp82Yu3zpnX/ez4NrEquMwK672HDui7gsipRX
-         7EfgyuhVrHXvcSofW+LsKQetRWryPDokeWvwoEsjgSlUlAALvbs0G9kMi611TzDoqYIr
-         H/yMSwuiluqdF8r37tq0BiKv62RjAOjeeAjG46U9gD7c1Obcura3VmKMgy3sDRJl2eBc
-         HQ6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756945053; x=1757549853;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Cu5bzd3f3USwYvB1CBG4A8cgDzrTBTPuzZz6N9qQq3o=;
-        b=mKAaPjgkEVp9V/L5vIM/OI71cATSaqvTjdt9DMSNd9ktATKfttEMdYzQI7eIk2hyod
-         kH2Ope9enB7nbXyhFU2/F0HWBWfTCaOkOIHGZnEb13A2/D2D12LUB4c4OyFxx58h8xII
-         3TZtu6z3sJ/Goc/RXiVEYpxEYvrNM/iqwjkUyOZ8bOjU7JewHNKLC9/6l8QgET/as9Ua
-         A+ErgWxVTihDXIZw3id9CPipuJFFNRzg/A2PMIgkaEOb8P9caOoYiSVyNo84td23td/T
-         jMJJw4JxU7eCAz/wQHXKyFR9rYpq8OdZnkEfEsogHgji7nh2rMMvYxx33TeAn7x1YliH
-         5leQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXMndXJ5RsgEPPuwYnElEKyPwRrYoGLiL7vsN72DZGiSjDIAV36X9WCAaghZtUqB3qWkiESAulNqAbp8OoX@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIoZUQLR6LCa6P+HyTECizxjw7hte7O4ivNPSpL3NVrR7lPgby
-	bNt/xpilqWNx5M65OL73BPENcgDybh/tlk/Y8+m6Oqr9KNujMp0xJt4sJ0UgkZawAy/ZqWHoywL
-	vKCMf
-X-Gm-Gg: ASbGncv8mLQQQZ/MoNeKdzxJkzXz7LwXnSETG9UAKiujLQlvqorL7tAcL5FVUM+eKnk
-	PLW5lfwRoPgaowepsGxshs1rs+N4ZoRxFgd7Divzdax613fq+ShV41woTRwsoJfFgitXHUlxX+J
-	MJZ0QEmm/DR2xcUW8ceaII3pnYsBOZ4d+YU5ZymamfESQOo8OAPMR2t23ETaq7eNWsMvy6YlCtn
-	xRJau2KSvjyUD3uShZZR7F53N9XHaW9AfmRnKPrZVHiETduNlLIO0FQ/Xdo+i9xv+cOevh/l4SU
-	vDewIQOe1snvoJm4mFK/hgMIQSKUkG2H/zdDAzXKjEuDjEBjR0JtRbPQPMSGH8XCsEBio3a0HDP
-	Y5wD2evwoPAlUY4gKXYg05wuWaOnjKCCigPMXF+i076elxRUbCLmGfqc2YFe3FMSVgeE8qUlvRA
-	==
-X-Google-Smtp-Source: AGHT+IHac/OU38oaL4SeRanD0IBJjpU5pK2pT9HBdMJYzjVzQBpxhyEWsS8S/dnE49bnlbnBzI69bQ==
-X-Received: by 2002:a05:6a00:114b:b0:76b:42e5:fa84 with SMTP id d2e1a72fcca58-7723e21e9aamr18872098b3a.7.1756945053315;
-        Wed, 03 Sep 2025 17:17:33 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-91-142.pa.nsw.optusnet.com.au. [49.180.91.142])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a2a0485sm17251479b3a.25.2025.09.03.17.17.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 17:17:32 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.98.2)
-	(envelope-from <david@fromorbit.com>)
-	id 1utxfN-0000000EwBP-3gnB;
-	Thu, 04 Sep 2025 10:17:29 +1000
-Date: Thu, 4 Sep 2025 10:17:29 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCHES v3][RFC][CFT] mount-related stuff
-Message-ID: <aLjamdL8M7T-ZFOS@dread.disaster.area>
-References: <20250825044046.GI39973@ZenIV>
- <20250828230706.GA3340273@ZenIV>
- <20250903045432.GH39973@ZenIV>
- <CAHk-=wgXnEyXQ4ENAbMNyFxTfJ=bo4wawdx8s0dBBHVxhfZDCQ@mail.gmail.com>
- <20250903181429.GL39973@ZenIV>
+	 Content-Type:Content-Disposition:In-Reply-To; b=drGHPuWG58vbd5hhpy1KYraR55auebqFt54BFezLrZEA0Uyxt4wDysM5XjaZxQf8xpp6M8KcuUBjSZ6kigFck6lxolcRYcGADPMeFKUkyG5y6u+0pUEbB295lmSOILJcw3wXme8V13Vpa0MsnQNpVs3mZ2JO5aHAjqfTOfmc3ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d5Z0SxG8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98905C4CEE7;
+	Thu,  4 Sep 2025 00:23:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756945388;
+	bh=18sl02mjEtYlYtgJb9zz5dSLYy+Ccct/w8yNap/8RKA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d5Z0SxG8jzOJUjtueHNI3EDHMnMKa6blJddV5dKxGKZy5hrjmc3iRaQwsRSf+VYa3
+	 vonmOQKplDuFuoZmCz2u4j6N2LvKiwyYYY6mm1IGuWg2II+NUCngIVoPAxNoxDTWJs
+	 KyPwiXm0zIkfObHBRov2AVucdmptHKHSXG6qA9WueMAnuvGhftHcn3dcfduCjbw3H2
+	 i1Xiz1AaGjt8/aLJkJxwQF2k6UmoChZYbFDnPspfFn4Irm31pPzux7WOjPtWDfY19/
+	 dx34ophQ0HR/9qtJZtQHjAyfy7I9boeNGTi6nViNRgSH0Rcg9ihf0kXeBvf+ViM6CC
+	 5dXnbD1mVzMXQ==
+Date: Wed, 3 Sep 2025 17:23:07 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, bernd@bsbernd.com, neal@gompa.dev,
+	John@groves.net, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 3/7] fuse: capture the unique id of fuse commands being
+ sent
+Message-ID: <20250904002307.GX1587915@frogsfrogsfrogs>
+References: <175573708506.15537.385109193523731230.stgit@frogsfrogsfrogs>
+ <175573708609.15537.12935438672031544498.stgit@frogsfrogsfrogs>
+ <CAJnrk1Z_xLxDSJDcsdes+e=25ZGyKL4_No0b1fF_kUbDfB6u2w@mail.gmail.com>
+ <20250826185201.GA19809@frogsfrogsfrogs>
+ <CAJfpegs-89B2_Y-=+i=E7iSJ38AgGUM2-9mCfeQ9UKA2gYEzxQ@mail.gmail.com>
+ <20250903155405.GE1587915@frogsfrogsfrogs>
+ <20250903184722.GH1587915@frogsfrogsfrogs>
+ <CAJnrk1aUN32CcXyXN_K4r1hOkTHptM5bmwmL2avP+j2sx5bFhA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250903181429.GL39973@ZenIV>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJnrk1aUN32CcXyXN_K4r1hOkTHptM5bmwmL2avP+j2sx5bFhA@mail.gmail.com>
 
-On Wed, Sep 03, 2025 at 07:14:29PM +0100, Al Viro wrote:
-> On Wed, Sep 03, 2025 at 07:47:18AM -0700, Linus Torvalds wrote:
-> > On Tue, 2 Sept 2025 at 21:54, Al Viro <viro@zeniv.linux.org.uk> wrote:
+On Wed, Sep 03, 2025 at 04:05:06PM -0700, Joanne Koong wrote:
+> On Wed, Sep 3, 2025 at 11:47 AM Darrick J. Wong <djwong@kernel.org> wrote:
+> >
+> > On Wed, Sep 03, 2025 at 08:54:05AM -0700, Darrick J. Wong wrote:
+> > > On Wed, Sep 03, 2025 at 05:48:46PM +0200, Miklos Szeredi wrote:
+> > > > On Tue, 26 Aug 2025 at 20:52, Darrick J. Wong <djwong@kernel.org> wrote:
+> > > >
+> 
+> Sorry for the late reply on this.
+> 
+> > > > > Hrmm.  I was thinking that it would be very nice to have
+> > > > > fuse_request_{send,end} bracket the start and end of a fuse request,
+> > > > > even if we kill it immediately.
+> 
+> Oh interesting, I didn't realize there was a trace_fuse_request_end().
+> I get now why you wanted the trace_fuse_request_send() for the
+> !fiq->connected case, for symmetry. I was thinking of it from the
+> client userspace side (one idea I have, which idk if it is actually
+> that useful or not, is building some sort of observability "wireshark
+> for fuse" tool that gives more visibility into the requests being sent
+> to/from the server like their associated kernel vs libfuse timestamps
+> to know where the latency is happening. this issue has come up in prod
+> a few times when debugging slow requests); from this perspective, it
+> seemed confusing to see requests show up that were never in good faith
+> attempted to be sent to the server.
+
+Well at first I was all "Ehhh, why are all the request ids zero??".
+
+Later when I started debugging corruption problems in fuse2fs I realized
+that it would be really helpful to be able to match the start and end of
+a particular fuse request to all the stuff that happened in between.
+
+*So far* I can mostly just watch the raw ftrace feed to see what's going
+on without going crazy, but yes, a wireshark plugin would be nice.  Or
+someone writing fuseslow. ;)
+
+> If you want to preserve the symmetry, maybe one idea is only doing the
+> trace_fuse_request_end() if the req.in.h.unique code is valid? That
+> would skip doing the trace for the !fiq->connected case.
+
+That will actually cause some loss of trace data --
+trace_fuse_request_end also captures the error code of the aborted
+commands, so you can tell from the -103 error code that something really
+bad happened.
+
+--D
+
+> Thanks,
+> Joanne
+> > > >
+> > > > I'm fine with that, and would possibly simplify some code that checks
+> > > > for an error and calls ->end manually.  But that makes it a
+> > > > non-trivial change unfortunately.
 > > >
-> > > If nobody objects, this goes into #for-next.
-> > 
-> > Looks all sane to me.
-> > 
-> > What was the issue with generic/475? I have missed that context..
+> > > Yes, and then you have to poke the idr structure for a request id even
+> > > if that caller already knows that the connection's dead.  That seems
+> > > like a waste of cycles, but OTOH maybe we just don't care?
+> > >
+> > > (Though I suppose seeing more than one request id of zero in the trace
+> > > output implies very strongly that the connection is really dead)
+> >
+> > Well.... given the fuse_iqueue::reqctr usage, the first request gets a
+> > unique id of 2 and increments by two thereafter.  So it's a pretty safe
+> > bet that unique==0 means the request isn't actually being sent, or that
+> > your very lucky in that your fuse server has been running for a /very/
+> > long time.
+> >
+> > I think I just won't call trace_fuse_request_send for requests that are
+> > immediately ended; and I'll refactor the req->in.h.unique assignment
+> > into a helper so that virtiofs and friends can call the helper and get
+> > the tracepoint automatically.
+> >
+> > For example, fuse_dev_queue_req now becomes:
+> >
+> >
+> > static inline void fuse_request_assign_unique_locked(struct fuse_iqueue *fiq,
+> >                                                      struct fuse_req *req)
+> > {
+> >         if (req->in.h.opcode != FUSE_NOTIFY_REPLY)
+> >                 req->in.h.unique = fuse_get_unique_locked(fiq);
+> >
+> >         /* tracepoint captures in.h.unique and in.h.len */
+> >         trace_fuse_request_send(req);
+> > }
+> >
+> > static void fuse_dev_queue_req(struct fuse_iqueue *fiq, struct fuse_req *req)
+> > {
+> >         spin_lock(&fiq->lock);
+> >         if (fiq->connected) {
+> >                 fuse_request_assign_unique_locked(fiq, req);
+> >                 list_add_tail(&req->list, &fiq->pending);
+> >                 fuse_dev_wake_and_unlock(fiq);
+> >         } else {
+> >                 spin_unlock(&fiq->lock);
+> >                 req->out.h.error = -ENOTCONN;
+> >                 clear_bit(FR_PENDING, &req->flags);
+> >                 fuse_request_end(req);
+> >         }
+> > }
+> >
+> > --D
 > 
-> At some point testing that branch has caught a failure in generic/475.
-> Unfortunately, it wouldn't trigger on every run, so there was
-> a possibility that it started earlier.  
-> 
-> When I went digging, I've found it with trixie kernel (6.12.38 in
-> that kvm, at the time) rebuilt with my local config; the one used
-> by debian didn't trigger that.  Bisection by config converged to
-> PREEMPT_VOLUNTARY (no visible failures) changed to PREEMPT (failures
-> happen with odds a bit below 10%).
-> 
-> There are several failure modes; the most common is something like
-> ...
-> echo '1' 2>&1 > /sys/fs/xfs/dm-0/error/fail_at_unmount
-> echo '0' 2>&1 > /sys/fs/xfs/dm-0/error/metadata/EIO/max_retries
-> echo '0' 2>&1 > /sys/fs/xfs/dm-0/error/metadata/EIO/retry_timeout_seconds
-> fsstress: check_cwd stat64() returned -1 with errno: 5 (Input/output error)
-> fsstress: check_cwd failure
-> fsstress: check_cwd stat64() returned -1 with errno: 5 (Input/output error)
-> fsstress: check_cwd failure
-> fsstress: check_cwd stat64() returned -1 with errno: 5 (Input/output error)
-> fsstress: check_cwd failure
-> fsstress: check_cwd stat64() returned -1 with errno: 5 (Input/output error)
-> fsstress: check_cwd failure
-> fsstress killed (pid 10824)
-> fsstress killed (pid 10826)
-> fsstress killed (pid 10827)
-> fsstress killed (pid 10828)
-> fsstress killed (pid 10829)
-> umount: /home/scratch: target is busy.
-> unmount failed
-> umount: /home/scratch: target is busy.
-> umount: /dev/sdb2: not mounted.
-> 
-> in the end of output (that's mainline v6.12); other variants include e.g.
-> quietly hanging udevadm wait (killable). 
-
-Huh. I've been seeing that "udevadm wait hang" on DM devices issue
-for a while now when using my check-parallel variant of fstests.
-
-It sometimes reproduces every run, so it can be under 5 minutes to
-reproduce on a 64-way concurrent test run.  It also affects most of
-the tests that use DM devices (which all call udevadm wait), not
-just generic/475.  Running 'pkill udevadm' is usually enough to get
-everything unstuck and then the tests continue running.
-
-However, I haven't been able to isolate the problem as running the
-tests single threaded (ie. normal fstests behaviour) never
-reproduced it, which is bloody annoying....
-
-> It's bloody annoying to bisect -
-> 100-iterations run takes about 2.5 hours and while usually a failure happens
-> in the first 40 minutes or so or not at all...
-
-That seems to be the case for me, too. If the default XFS config
-completes (~8 minutes for auto group), then the rest of the configs
-also complete (~2 hours for a dozen different mkfs/mount configs
-to run through auto group tests).
-
-> PREEMPT definitely is the main contributor to the failure odds...
-
-My test kernels are built with PREEMPT enabled, so it may very
-likely be a contributing factor:
-
-CONFIG_PREEMPT_BUILD=y
-CONFIG_ARCH_HAS_PREEMPT_LAZY=y
-# CONFIG_PREEMPT_NONE is not set
-# CONFIG_PREEMPT_VOLUNTARY is not set
-CONFIG_PREEMPT=y
-# CONFIG_PREEMPT_LAZY is not set
-# CONFIG_PREEMPT_RT is not set
-CONFIG_PREEMPT_COUNT=y
-CONFIG_PREEMPTION=y
-CONFIG_PREEMPT_DYNAMIC=y
-
-> I'm doing
-> a bisection between v6.12 and v6.10 at the moment, will post when I get
-> something more useful...
-
-check-parallel is relatively new so, unfortunately, I don't have any
-idea when this behaviour might have been introduced.
-
-FWIW, 'udevadm wait' is relatively new behaviour for both udev and
-fstests. It was introduced into fstests for check-parallel to
-replace 'udevadm settle'. i.e. wait for the specific device to
-change to a particular state rather than waiting for the entire udev
-queue to drain.  Check-parallel uses hundreds of block devices and
-filesystems at the same time resulting in multiple mount/unmount
-occurring every second. Hence waiting on the udev queue to drain
-can take a -long- time, but maybe waiting on the device node state
-chang itself is racy (i.e. might be a udevadm or DM bug) and PREEMPT
-is opening up that window.
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
 
