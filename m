@@ -1,70 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-60226-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60227-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5A01B42DD4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 02:05:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72ABEB42DD5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 02:05:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 159E93BE61A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 00:05:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42C102074C3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 00:05:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A8C1BC3F;
-	Thu,  4 Sep 2025 00:05:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BE6724B28;
+	Thu,  4 Sep 2025 00:05:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="2yz4JvwB";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="EACHuVub"
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="QuN9gbNA";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="lh0tQtx0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
+Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03B0715A8;
-	Thu,  4 Sep 2025 00:05:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 568ED1C6B4;
+	Thu,  4 Sep 2025 00:05:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756944328; cv=none; b=t6C2+KHTMBijWbbEcvPe/8qdV7lUIa23g+6gaHwaGo61UQURMWoGtauKe0qarkYFlMPzpofrl691l7M9Gd9+T0QTJgAIn9LEEsCrabc/WnmS+pNmUxdUiv6p0PAEY5LUkEVkpcgVJMxVIXHWMTBvk+ruSZSBSpT33AxGVguVW+8=
+	t=1756944330; cv=none; b=k9Yr4I1O7F4Dwkvirlh5zVniWzqbsKX7VPEIY62kyixSHSKA7Oxz29tLqp4UiWd7mkFyCixL2tBYHd4o3bLdqWcXjArCvrUDhpXT3wlMgBjtkj5PtQCp20RufGSBqLKYOejXiMaFVxtIFM4+n+fHtSeyqFHuNW4MoRNfG3yIWTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756944328; c=relaxed/simple;
-	bh=scZFTBZe7gJCYcNArW/RUUcEk9zABjvDgsI1g9xjiao=;
+	s=arc-20240116; t=1756944330; c=relaxed/simple;
+	bh=oY6yTFcZxKrJcDEfrYyHyrRymAtAlL/Vs+QuHg3NhG0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=W6BsGSU5zf/S3Hd1Q+QONaVfwb+H1lZKkBx9RWrJW9gi/CI9Fxz0SuZEbrp3En06a72hWcUXLhdGGOgo8Yy3UIuvHlNeB9IzviHkJ5re7RM1JIJdv4XmL+C696BBh/tguzE0E4JbpdcJi2NosRFsLQuVhp0dFCK+6C5UOyHE8lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=2yz4JvwB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=EACHuVub; arc=none smtp.client-ip=103.168.172.156
+	 MIME-Version; b=H3CwTq3FHfMfferOm9/csD20PIoNnkieT/nOqVmYkX8r5XEwvzRbYuTb+/9nWK+5Wb/Ybe2w4RQ/wJiiFnyjqU1NqpwBOvRc6J4j9ECoZ21wVFlgiTutP5PkcW2i5O/0tWGaxXyMHq9agRlKskm5plagaFvHkG2wPOi3n86HLD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=QuN9gbNA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=lh0tQtx0; arc=none smtp.client-ip=103.168.172.149
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
-Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 6911B1400182;
-	Wed,  3 Sep 2025 20:05:26 -0400 (EDT)
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailfout.phl.internal (Postfix) with ESMTP id 8ECEDEC009D;
+	Wed,  3 Sep 2025 20:05:28 -0400 (EDT)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-12.internal (MEProxy); Wed, 03 Sep 2025 20:05:26 -0400
+  by phl-compute-06.internal (MEProxy); Wed, 03 Sep 2025 20:05:28 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
 	:cc:content-transfer-encoding:content-type:date:date:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1756944326; x=
-	1757030726; bh=CsbRYtdoTrEOgTKUCcI1TPZdtkoXWLEquNG3Qonu8b4=; b=2
-	yz4JvwBqWakE+ojmyqXssZL9Q/Fd0kzHBfyn/wyoFtcfiSbwRqvGdD9x3jIRi+OJ
-	RNC8YyLn7FDhp0mg019ryoDyxEWs3HsPbv49cbgh1GGo9oMqAWLcQbYMYm+uTxxY
-	g/qEyjvqfS+AZKYjHlfrrOdQFhwU9+xF2BBGoEgAQTzEjRdzoOlDYduN/hY7hrvd
-	2oMpfOSfIFCj9G1uUfX5P6YmJHo9YEKWKDr8rMW3CvQ3wmzVGeBoiK2mjRU4NG9B
-	t3fbprrYxfyTje/Npm4eb0BsoqDBjFfmkghxJIbErkdMlbDBrHyd6rfkkrQ2vbHF
-	XDNAzXPl8iRnqfESPYdEg==
+	:reply-to:subject:subject:to:to; s=fm1; t=1756944328; x=
+	1757030728; bh=Af6MBpxBFei1bd32K4CZVc6vvPIOtcDgTGTORtxh06A=; b=Q
+	uN9gbNAJwUZ6DyDYuPgDM+4jyZZ4oK0x0acILTbiNEJbevN7YSmevsR7ksatLST6
+	yNt9+7xAxQMn/cWOPklgeK9Guq+qoysK69cpMhU+STTwsy09c6mY3OBZ0EHWn/xv
+	cpNyYAUnRlrMAROclVvY7UBWlCXVK4/zunQoGTcyMYpmH4nrR9q0v2X0r3Z09jVT
+	6fhRs1yEZ9FQoxCjvrvLQbajJw/iluSZ8y6Jpo+DP+GWkY1YWj+F9tfBExFRJ46Y
+	apMY85mtGIIWSM4XR6jsAntLE83HexF7wDTqzuZg6Hi0H8hxqq3C2y47LzjWXHC7
+	PjUJB0vep5pswytnDlrOQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm1; t=1756944326; x=1757030726; bh=C
-	sbRYtdoTrEOgTKUCcI1TPZdtkoXWLEquNG3Qonu8b4=; b=EACHuVubK01IPB6Rw
-	VgMTwOv4AUxWMJSkv4UWUngzaYJsBFiHxcA4i7mShZpYdgyVIsjQYbbNOlQvsKM/
-	0a1pcHn0whLzUaUUs8ESectl2H0hikgBHIn+kyqisJcB3RsR9SpTJyy1rsV7w8ls
-	UzrUy4C5ae0cgA2mX4tFR8Hywiz/eMR4am/u7RaSlt+6L0uU0eugKh02nhpHUvxh
-	i9kFOSGE0Jx4oWXwkNpFLvjTahNumutN9JUMJ+4L7CIeIWLinzyWoZVPzOEOr80Z
-	YMv0seNmgKio+qfBe+Hfq0SphqwC4kvcS86lmVtRgzQQ6hmTDmBfIrtiM3WrDK0J
-	omNOQ==
-X-ME-Sender: <xms:xte4aPvP7Z5aLR1lkYHdtdj3zxTdoJdU_UlqKhN4anbP5edVDZoAwA>
-    <xme:xte4aMSvR2Z39wh4clW7iH2Pk0JRf_Sg8FRQsDXlfAoeNdJgoCGIACeyOUJ1jCVl9
-    kwG5fR0rLnBPr6F-Fw>
-X-ME-Received: <xmr:xte4aJMShxDvlhif9WfGLFASZ4U1grplNzBix4nUGUGVB53vacVgigFaJb5HJrsRGqgxCwexKRfArBJmuGG3k8PEFnryqKGVtOAEGOO7GjQwscOy0NrP-ScTKg>
+	:x-me-sender:x-sasl-enc; s=fm1; t=1756944328; x=1757030728; bh=A
+	f6MBpxBFei1bd32K4CZVc6vvPIOtcDgTGTORtxh06A=; b=lh0tQtx0ySmcki6dM
+	JEfQfBqPdUmhDPVH7Gbe6WooCwTKd4O6avo6TXeB4mEKamzHee1MMkXLT76IXaq3
+	Q9nViRBB7BKi7cOPUdgsvR/WKTusSDDwKjCmTEGo68clAFKMsewkNwJILYtOBVQK
+	XbC5isuOlLppd4GtQgMDwOMZOJl2UzVSGqVws69ZZPapI1x6GCq2Ucsf4+pOwwRQ
+	S1KwUMgxkl8SFa0zweVImxddNguKXWsIZx3TM6mzm0VvXtlOSM6W96n0rKN9L/cG
+	RNMYfsTidlzu3QAMsYgIbVzU7qt+SND0VmInSwijVOacP7wGFCUl+LG3+auRCM0o
+	3zuvw==
+X-ME-Sender: <xms:yNe4aArpb--EIpuDD2yk7H0cm63Q5YJApEWSMG9FTOhhyy4JehkyWQ>
+    <xme:yNe4aCfVA6yP7VwkN5j9LStpE3DTbLS9kRwFOwXlbK_JY1jIkcg0mXwpubGQSNdNC
+    13at-vB-KQ-tfc8sIY>
+X-ME-Received: <xmr:yNe4aLrvfRx4VnY0o2fPyvSSZtRu_ttjqVa0iZJuDEHbmKfe7VDdaEr3yHGOst1Ew7MJM5OTCPIIF9tDImhcgCMy_7N_WhXd8s7ckH3lkHFFd0q_PwFnxrPlsQ>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegheegucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
     lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
@@ -80,14 +80,14 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegheegucetufdoteggod
     thhmrdhorhhgpdhrtghpthhtohepvhelfhhssehlihhsthhsrdhlihhnuhigrdguvghvpd
     hrtghpthhtohepghhnohgrtghksehgohhoghhlvgdrtghomhdprhgtphhtthhopehlihhn
     uhigqdhsvggtuhhrihhthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:xte4aK7_4ZGIWHDqbqXrCjbWJnPB_qlDLmmfEsf2a4HuF24LsTJKNw>
-    <xmx:xte4aEWkAvUPhOXbmPuWCdVAUjW2vfMZfy5ILVHuGAdMvUr4lyROFg>
-    <xmx:xte4aJNfNVhRHbzlwazBx0SgFqRGNE6Di4mZ6mnfLJOamV0k-YIWLQ>
-    <xmx:xte4aDiTrW5G04rXCykPB4N2Q3PSW03rBnck2XewTlBZwLlcc3wXPA>
-    <xmx:xte4aP_gNdzdWJNbjvQDNzq3iyhMIoaIin_CafvpZ9mnLRDAScoaBten>
+X-ME-Proxy: <xmx:yNe4aEkzoyYrD4v7V1WhI6Zu7D6HAEiR06QCt1pfZZL3bW3Bamp3CA>
+    <xmx:yNe4aETfhtzIhN7uLJXtBQDyefy89nT8yHXkHcS_P2L6ltOkeMeCfw>
+    <xmx:yNe4aCaYlz19SZLQVB_AgRnCdHey-RZYadM067yhwOnSY3U4sF_Zsg>
+    <xmx:yNe4aM-71_lYHtRL35bMeFDq3-ScN53Y6pUAzyMumfDE64UMbMjxMQ>
+    <xmx:yNe4aBb_KFELzEZNkh5wqA7jXClXl0EOG0_IYwbRZmNDC_UlLBy2GTRr>
 Feedback-ID: i580e4893:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 3 Sep 2025 20:05:24 -0400 (EDT)
+ 3 Sep 2025 20:05:26 -0400 (EDT)
 From: Tingmao Wang <m@maowtm.org>
 To: Dominique Martinet <asmadeus@codewreck.org>,
 	Eric Van Hensbergen <ericvh@kernel.org>,
@@ -103,9 +103,9 @@ Cc: Tingmao Wang <m@maowtm.org>,
 	Matthew Bobrowski <repnop@google.com>,
 	Al Viro <viro@zeniv.linux.org.uk>,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 4/7] fs/9p: .L: Refresh stale inodes on reuse
-Date: Thu,  4 Sep 2025 01:04:14 +0100
-Message-ID: <717c1ede692e9d7fae9033cfbb59c68d7aecc9ba.1756935780.git.m@maowtm.org>
+Subject: [PATCH v2 5/7] fs/9p: non-.L: Refresh stale inodes on reuse
+Date: Thu,  4 Sep 2025 01:04:15 +0100
+Message-ID: <8669a2c7cf096f2466a2a04dc75f7b3e924a2f99.1756935780.git.m@maowtm.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <cover.1756935780.git.m@maowtm.org>
 References: <cover.1756935780.git.m@maowtm.org>
@@ -117,17 +117,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This uses the stat struct we already got as part of lookup process to
-refresh the inode "for free".
-
-Only for uncached mode for now.  We will need to revisit this for cached
-mode once we sort out reusing an old inode with changed qid.version.
-(Currently this is not done in this series, which would be fine unless
-server side change happens, which is not supposed to happen in cached mode
-anyway)
-
-Note that v9fs_test_inode_dotl already makes sure we don't reuse
-inodes of the wrong type or different qid.
+This replicates the previous .L commit for non-.L
 
 Signed-off-by: Tingmao Wang <m@maowtm.org>
 
@@ -136,39 +126,30 @@ Changes since v1:
 - Check cache bits instead of using `new` - uncached mode now also have
   new=0.
 
- fs/9p/vfs_inode_dotl.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+ fs/9p/vfs_inode.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/fs/9p/vfs_inode_dotl.c b/fs/9p/vfs_inode_dotl.c
-index 86adaf5bcc0e..d008e82256ac 100644
---- a/fs/9p/vfs_inode_dotl.c
-+++ b/fs/9p/vfs_inode_dotl.c
-@@ -164,6 +164,7 @@ static struct inode *v9fs_qid_iget_dotl(struct super_block *sb,
+diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
+index 606760f966fd..4b4712eafe4d 100644
+--- a/fs/9p/vfs_inode.c
++++ b/fs/9p/vfs_inode.c
+@@ -473,6 +473,7 @@ static struct inode *v9fs_qid_iget(struct super_block *sb, struct p9_qid *qid,
  		.dentry = dentry,
  		.need_double_check = false,
  	};
 +	bool cached = v9ses->cache & (CACHE_META | CACHE_LOOSE);
  
  	if (new)
- 		test = v9fs_test_new_inode_dotl;
-@@ -203,8 +204,21 @@ static struct inode *v9fs_qid_iget_dotl(struct super_block *sb,
+ 		test = v9fs_test_new_inode;
+@@ -512,8 +513,12 @@ static struct inode *v9fs_qid_iget(struct super_block *sb, struct p9_qid *qid,
  
  	if (!inode)
  		return ERR_PTR(-ENOMEM);
 -	if (!(inode->i_state & I_NEW))
 +	if (!(inode->i_state & I_NEW)) {
-+		/*
-+		 * If we're returning an existing inode, we might as well refresh
-+		 * it with the metadata we just got.  Refreshing the i_size also
-+		 * prevents read errors.
-+		 *
-+		 * We only do this for uncached mode, since in cached move, any
-+		 * change on the inode will bump qid.version, which will result in
-+		 * us getting a new inode in the first place.  If we got an old
-+		 * inode, let's not touch it for now.
-+		 */
++		/* See explanation in v9fs_qid_iget_dotl */
 +		if (!cached)
-+			v9fs_stat2inode_dotl(st, inode, 0);
++			v9fs_stat2inode(st, inode, sb, 0);
  		return inode;
 +	}
  	/*
