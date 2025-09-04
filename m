@@ -1,100 +1,217 @@
-Return-Path: <linux-fsdevel+bounces-60273-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60274-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F11E2B43DDB
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 15:57:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FE26B43DEE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 16:00:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA0803A797E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 13:57:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94AE41BC6122
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 14:01:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3132B2FDC4F;
-	Thu,  4 Sep 2025 13:57:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C695830147F;
+	Thu,  4 Sep 2025 14:00:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="AuGUuNxS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mta21.hihonor.com (mta21.honor.com [81.70.160.142])
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DE7980B;
-	Thu,  4 Sep 2025 13:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.160.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121EC22172D;
+	Thu,  4 Sep 2025 14:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756994242; cv=none; b=bZQff6VpjlQizWt4Gj6Uli94m4FHyw7s/EVOV4yhcosRGvoEWqvknCDzamOrRaTUHISI5qTab1ro9hjb/6Xdsw2ll0D4NZZqq+cd8kbHdszMG53pdIqhd3I6yyAlgCPmVNom8VFZvUNAy+oEC3k9bWieBL7PrP7gHcsTYPRJyJA=
+	t=1756994436; cv=none; b=KXE98Hv3+E+bDe9/XsK8JqxfL+TJmeGibNUEqdFHlG5opmhXFg3T8kODMV4zsKEkPvfuSez/Z+55+cLDZUIWj00SFWRrNZ1+CXfhTc4L3WhOTqJ5GcYMrF/4MwCNCx6PMxxCI3LqgJexQs5zzs8d9tsqEXrsElhlET/M26KLXWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756994242; c=relaxed/simple;
-	bh=32lbB6avdRofV4naQnwYCcbd+Bx6PztM5o10tMnJsAc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ETlxro4Tf3BR4E6PFnLvcAIAxfV9CeD4TiVY098TP4R0Z77B+itpSIgZhFqlqjLpcbFnt3IQff+vmg86xCnXGD1P7ziQUC4ZhmeqOdxM1kGeBn4uBoaC9Xj2m5av1+32Yz6kosTSvGMyE9mu2Jydq8KZgFQtH1p5CTndbGPctBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.160.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-Received: from w001.hihonor.com (unknown [10.68.25.235])
-	by mta21.hihonor.com (SkyGuard) with ESMTPS id 4cHgyG3HJdzYm8RS;
-	Thu,  4 Sep 2025 21:56:54 +0800 (CST)
-Received: from a011.hihonor.com (10.68.31.243) by w001.hihonor.com
- (10.68.25.235) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 4 Sep
- 2025 21:57:17 +0800
-Received: from localhost.localdomain (10.144.23.14) by a011.hihonor.com
- (10.68.31.243) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 4 Sep
- 2025 21:57:17 +0800
-From: wangzijie <wangzijie1@honor.com>
-To: <akpm@linux-foundation.org>, <brauner@kernel.org>,
-	<viro@zeniv.linux.org.uk>, <adobriyan@gmail.com>
-CC: <jirislaby@kernel.org>, <sbrivio@redhat.com>,
-	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>, wangzijie
-	<wangzijie1@honor.com>, Brad Spengler <spender@grsecurity.net>
-Subject: [PATCH] proc: fix type confusion in pde_set_flags()
-Date: Thu, 4 Sep 2025 21:57:15 +0800
-Message-ID: <20250904135715.3972782-1-wangzijie1@honor.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1756994436; c=relaxed/simple;
+	bh=BKBOcbU8gLSyiJEZrgL6nEaRg/ajHC/VSrb++0xnuyk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=INcomYBPdgjh54z85Rr7dcVR9IzFEigy+bJmsiMsWC/cj4WBMru+7s1xXV3GCUD66uIc//VE85bVp7v49ETvjjO9Xy2ST7HQamsNmGTTgXq7OtWM4k6F/QC/TiOjL6ejl3ZPPsZ2svV+RYV2FePX/p8KedtlNHerzzG6LvTBEUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=AuGUuNxS; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=MW0Q1jd9adc0m6VL8nlpW0J6Gu0gI2JKZg94zm/mgTM=; b=AuGUuNxSrEK5m4O0mhW40Qvt+w
+	MKhqITk8Fdj9vLwvIzYxwnEa4QeS65rV/VUbB7Z03fCdc568UD09m0eQd1Qm1fLflmvQs7YUhAZzD
+	D/cWLPGAUuvOr6mGkpCbSyPAQB0O1yLR/lpxFZZIC73SP9k4l2rjjRAFnhxLBnjzB1GLVjxlK+SVJ
+	xHQvJaM45nTFWSd9XaN4j28W10q6kuyOmj3PoDyL5X1xHgncVdgYiN+dph0jJEin9cD/zc17DnpTW
+	9B7GyKK05pIcsgVhGajfj6JOCw7u72na+IGE89F9BJv7ds2+YYZ4dICP2on0aHkxHqWcGIGoiob73
+	LpK1scHA==;
+Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1uuAVd-006oSh-Vp; Thu, 04 Sep 2025 16:00:18 +0200
+From: Luis Henriques <luis@igalia.com>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Bernd Schubert <bernd@bsbernd.com>,  Laura Promberger
+ <laura.promberger@cern.ch>,  Dave Chinner <david@fromorbit.com>,  Matt
+ Harvey <mharvey@jumptrading.com>,  linux-fsdevel@vger.kernel.org,
+  kernel-dev@igalia.com,  linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v5 1/2] fuse: new work queue to periodically
+ invalidate expired dentries
+In-Reply-To: <CAJfpegtfeCJgzSLOYABTaZ7Hec6JDMHpQtxDzg61jAPJcRZQZA@mail.gmail.com>
+	(Miklos Szeredi's message of "Thu, 4 Sep 2025 12:20:46 +0200")
+References: <20250828162951.60437-1-luis@igalia.com>
+	<20250828162951.60437-2-luis@igalia.com>
+	<CAJfpegtfeCJgzSLOYABTaZ7Hec6JDMHpQtxDzg61jAPJcRZQZA@mail.gmail.com>
+Date: Thu, 04 Sep 2025 15:00:12 +0100
+Message-ID: <87y0qul3mb.fsf@wotan.olymp>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: w012.hihonor.com (10.68.27.189) To a011.hihonor.com
- (10.68.31.243)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Commit 2ce3d282bd50 ("proc: fix missing pde_set_flags() for net proc files")
-missed a key part in the definition of proc_dir_entry:
+Hi Miklos,
 
-union {
-	const struct proc_ops *proc_ops;
-	const struct file_operations *proc_dir_ops;
-};
+On Thu, Sep 04 2025, Miklos Szeredi wrote:
 
-So dereference of ->proc_ops assumes it is a proc_ops structure results in
-type confusion and make NULL check for 'proc_ops' not work for proc dir.
+> On Thu, 28 Aug 2025 at 18:30, Luis Henriques <luis@igalia.com> wrote:
+>
+>> +#define HASH_BITS      12
+>
+> Definitely too large.  My gut feeling gives 5, but it obviously
+> depends on a lot of factors.
 
-Add !S_ISDIR(dp->mode) test before calling pde_set_flags() to fix it.
+Right, to be honest I didn't spent a lot of time thinking about the
+correct value for this constant.  But sure, 5 seems to be much more
+reasonable.
 
-Fixes: 2ce3d282bd50 ("proc: fix missing pde_set_flags() for net proc files")
-Reported-by: Brad Spengler <spender@grsecurity.net>
-Signed-off-by: wangzijie <wangzijie1@honor.com>
----
- fs/proc/generic.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+>> +               schedule_delayed_work(&dentry_tree_work,
+>> +                                     secs_to_jiffies(num));
+>
+> secs_to_jiffues() doesn't check overflow.  Perhaps simplest fix would
+> be to constrain parameter to unsigned short.
 
-diff --git a/fs/proc/generic.c b/fs/proc/generic.c
-index bd0c099cf..176281112 100644
---- a/fs/proc/generic.c
-+++ b/fs/proc/generic.c
-@@ -393,7 +393,8 @@ struct proc_dir_entry *proc_register(struct proc_dir_entry *dir,
- 	if (proc_alloc_inum(&dp->low_ino))
- 		goto out_free_entry;
- 
--	pde_set_flags(dp);
-+	if (!S_ISDIR(dp->mode))
-+		pde_set_flags(dp);
- 
- 	write_lock(&proc_subdir_lock);
- 	dp->parent = dir;
--- 
-2.25.1
+Sounds good, thanks.
 
+>> +MODULE_PARM_DESC(inval_wq,
+>> +                "Dentries invalidation work queue period in secs (>=3D =
+5).");
+>
+> __stringify(FUSE_DENTRY_INVAL_FREQ_MIN)
+>
+>> +       if (!inval_wq && RB_EMPTY_NODE(&fd->node))
+>> +               return;
+>
+> inval_wq can change to zero, which shouldn't prevent removing from the rb=
+tree.
+
+Maybe I didn't understood your comment, but isn't that what's happening
+here?  If the 'fd' is in a tree, it will be removed, independently of the
+'inval_wq' value.
+
+>> +static void fuse_dentry_tree_work(struct work_struct *work)
+>> +{
+>> +       struct fuse_dentry *fd;
+>> +       struct rb_node *node;
+>> +       int i;
+>> +
+>> +       for (i =3D 0; i < HASH_SIZE; i++) {
+>> +               spin_lock(&dentry_hash[i].lock);
+>> +               node =3D rb_first(&dentry_hash[i].tree);
+>> +               while (node && !need_resched()) {
+>
+> Wrong place.
+>
+>> +                       fd =3D rb_entry(node, struct fuse_dentry, node);
+>> +                       if (time_after64(get_jiffies_64(), fd->time)) {
+>> +                               rb_erase(&fd->node, &dentry_hash[i].tree=
+);
+>> +                               RB_CLEAR_NODE(&fd->node);
+>> +                               spin_unlock(&dentry_hash[i].lock);
+>
+> cond_resched() here instead.
+
+/me slaps himself.
+
+>> +                               d_invalidate(fd->dentry);
+>
+> Okay, so I understand the reasoning: the validity timeout for the
+> dentry expired, hence it's invalid.  The problem is, this is not quite
+> right.  The validity timeout says "this dentry is assumed valid for
+> this period", it doesn't say the dentry is invalid after the timeout.
+>
+> Doing d_invalidate() means we "know the dentry is invalid", which will
+> get it off the hash tables, giving it a "(deleted)" tag in proc
+> strings, etc.  This would be wrong.
+
+Understood.  Thanks a lot for taking the time to explain it.  This makes
+it clear that using d_invalidate() here is incorrect, of course.
+
+> What we want here is just get rid of *unused* dentries, which don't
+> have any reference.  Referenced ones will get revalidated with
+> ->d_revalidate() and if one turns out to be actually invalid, it will
+> then be invalidated with d_invalidate(), otherwise the timeout will
+> just be reset.
+>
+> There doesn't seem to be a function that does this, so new
+> infrastructure will need to be added to fs/dcache.c.  Exporting
+> shrink_dentry_list() and to_shrink_list() would suffice, but I wonder
+> if the helpers should be a little higher level.
+
+OK, I see how the to_shrink_list() and shrink_dentry_list() pair could
+easily be used here.  This would even remove the need to do the
+unlock/lock in the loop.
+
+(By the way, I considered using mutexes here instead.  Do you have any
+thoughts on this?)
+
+What I don't understand in your comment is where you suggest these helpers
+could be in a higher level.  Could you elaborate on what exactly you have
+in mind?
+
+>> +void fuse_dentry_tree_cleanup(void)
+>> +{
+>> +       struct rb_node *n;
+>> +       int i;
+>> +
+>> +       inval_wq =3D 0;
+>> +       cancel_delayed_work_sync(&dentry_tree_work);
+>> +
+>> +       for (i =3D 0; i < HASH_SIZE; i++) {
+>
+> If we have anything in there at module remove, then something is
+> horribly broken.  A WARN_ON definitely suffices here.
+>
+>> --- a/fs/fuse/fuse_i.h
+>> +++ b/fs/fuse/fuse_i.h
+>> @@ -54,6 +54,12 @@
+>>  /** Frequency (in jiffies) of request timeout checks, if opted into */
+>>  extern const unsigned long fuse_timeout_timer_freq;
+>>
+>> +/*
+>> + * Dentries invalidation workqueue period, in seconds.  It shall be >=
+=3D 5
+>
+> If we have a definition of this constant, please refer to that
+> definition here too.
+>
+>> @@ -2045,6 +2045,10 @@ void fuse_conn_destroy(struct fuse_mount *fm)
+>>
+>>         fuse_abort_conn(fc);
+>>         fuse_wait_aborted(fc);
+>> +       /*
+>> +        * XXX prune dentries:
+>> +        * fuse_dentry_tree_prune(fc);
+>> +        */
+>
+> No need.
+
+Yeah, I wasn't totally sure this would really be required here.
+
+And again, thanks a lot for your review, Miklos!
+
+Cheers,
+--=20
+Lu=C3=ADs
 
