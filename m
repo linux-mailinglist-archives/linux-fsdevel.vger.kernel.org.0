@@ -1,260 +1,166 @@
-Return-Path: <linux-fsdevel+bounces-60266-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60267-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90D8AB43A90
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 13:45:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F653B43AFA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 14:05:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEBA5582807
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 11:45:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E2B01BC1401
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 12:05:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09C932FC005;
-	Thu,  4 Sep 2025 11:43:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1A56279DCE;
+	Thu,  4 Sep 2025 12:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cMqpj/ZP"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="e8qt5Hgq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A181E2D3A6D
-	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Sep 2025 11:43:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E04B0271469;
+	Thu,  4 Sep 2025 12:04:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756986201; cv=none; b=ThY8XqfHfmUksp6XOraWYvZW3l7mETx47hx67/ci5w9ZmrVXwU5Nvp/ZapSWQTgOZXh9IaoJAiWJym9ywB311synkJBo0wdhJ9/EdS87c+yLgZ74mLaKgrzeijx40RiwIrv61YxyAZ94BvVbNttx5ckNq/6qUQp8tHCpQLmGY0A=
+	t=1756987502; cv=none; b=u8Wxlw63U5JZUpeZSTb06L+MgxfkQ5cCRuVd+mXwU4Vb6J9HlJYrPr4cb70gR+N43GYluTuUnsrd37P8wIKVLZHJyH2Vca0SLN4mfBr21gDMDzRnzFaXntR/2HGAZTpcIIb9rAzrm5DiLfaLz75+KfPBSF/AOV+bpTwHw8mQFD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756986201; c=relaxed/simple;
-	bh=60up1lurC6/75SZq9DT30BeyF+PZS06yzH94E2ctCvs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rar4YwNSPFbRgFesKa725P1ARobM0J2gQOps6dNK3WgNzrEt/kT7iAI4dayHmbDGYX/vTZp6MXWzAAUpyLSndA5E/i8C9I+787wpR5q+wQE72hHHDp0eg2pQqMaFHUJ9J3GYKJsmupxX8sEYVEiRswPnYA/Tx039xtf7kVpCB5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cMqpj/ZP; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756986197;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=E1+46tEpahi4RxjqU4Pt4az4ogzA+MJjz/lD3bIkWTw=;
-	b=cMqpj/ZPOqzE4HDTYsK+tYfi3mkvE3f84WYhcLX2FkwrtkPIyxMfldbkeAV6gD15SDTD9F
-	LXMGrxwA0WOJ4xgsXqKjEOgYTz7DRgM/c9/B7amcZ1cI/NIzAK7tRAT8iIfyqUVviUmEoa
-	fuqncgd4bMusHc/anNAoEbvMjoBDlkw=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-32-zk-vE7rFM-GCGfsmuus5OQ-1; Thu,
- 04 Sep 2025 07:43:14 -0400
-X-MC-Unique: zk-vE7rFM-GCGfsmuus5OQ-1
-X-Mimecast-MFC-AGG-ID: zk-vE7rFM-GCGfsmuus5OQ_1756986192
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 826B718002C6;
-	Thu,  4 Sep 2025 11:43:11 +0000 (UTC)
-Received: from bfoster (unknown [10.22.88.143])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2CB7D1800577;
-	Thu,  4 Sep 2025 11:43:09 +0000 (UTC)
-Date: Thu, 4 Sep 2025 07:47:11 -0400
-From: Brian Foster <bfoster@redhat.com>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-mm@kvack.org,
-	brauner@kernel.org, willy@infradead.org, jack@suse.cz,
-	hch@infradead.org, jlayton@kernel.org,
-	linux-fsdevel@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH v2 12/12] iomap: add granular dirty and writeback
- accounting
-Message-ID: <aLl8P8Qzn1IDw_7j@bfoster>
-References: <20250829233942.3607248-1-joannelkoong@gmail.com>
- <20250829233942.3607248-13-joannelkoong@gmail.com>
- <20250902234604.GC1587915@frogsfrogsfrogs>
- <aLiNYdLaMIslxySo@bfoster>
- <CAJnrk1Z6qKqkOwHJwaBfE9FEGABGD4JKoEwNbRJTpOWL-VtPrg@mail.gmail.com>
+	s=arc-20240116; t=1756987502; c=relaxed/simple;
+	bh=ZlPemRzqZBWkCIt9e79unBYjQpbThJ+dY1T3u+NOXoY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Wy0WYNVC9ia1DrJSht7seIyopbdJDBCIYK6RmrQhKc6U+FjI9cS3eovM3enQzzf5hrjzK4BO3DRwMQo4k1mT1Mc7SIB0ZbqFidY4hMbg4VXwuoZIY2C8bPH8MPyWputfJhL7p6a8Iu0w3S2Ck7Wl8aTPjpVTVTGkjSyE7yvYVFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=e8qt5Hgq; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=IJ
+	YiXUgYfec7n2c5/2xp13tDlxmBs6mrIZwN/MTkTps=; b=e8qt5HgqJQXeGesonp
+	OQ/ghJaF4NC8LkBonNk1qKIGXjG73dG9YkVETF2tE5YVy4EIr2zQlj3AEdf7SQVk
+	Cmsia3nrt88eFfZo1Blw4oqC+z5rXi4bnbMn6VMw61s3/COE6H/ckgOXlO7gCNlx
+	JH1TbMzGGv5jL+VoReQxCyKNg=
+Received: from haiyue-pc.localdomain (unknown [])
+	by gzsmtp4 (Coremail) with SMTP id PygvCgAn1CkigLloi3ngBg--.1994S2;
+	Thu, 04 Sep 2025 20:03:48 +0800 (CST)
+From: Haiyue Wang <haiyuewa@163.com>
+To: linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Alistair Popple <apopple@nvidia.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Haiyue Wang <haiyuewa@163.com>,
+	David Hildenbrand <david@redhat.com>,
+	Vivek Goyal <vgoyal@redhat.com>,
+	Stefan Hajnoczi <stefanha@redhat.com>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	virtualization@lists.linux.dev (open list:VIRTIO FILE SYSTEM),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2] fuse: virtio_fs: fix page fault for DAX page address
+Date: Thu,  4 Sep 2025 20:01:19 +0800
+Message-ID: <20250904120339.972-1-haiyuewa@163.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJnrk1Z6qKqkOwHJwaBfE9FEGABGD4JKoEwNbRJTpOWL-VtPrg@mail.gmail.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+X-CM-TRANSID:PygvCgAn1CkigLloi3ngBg--.1994S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxtF18JF4rtryxCrWkGF4rKrg_yoW7WF47pF
+	yUtr1UGr4kXr1UJF10vr18Xr13trsrAF18XrWxAr1kZF1UW3WDJr1ktrWUtr4UXryjqrW7
+	trs8Gw1xtryDKaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zEiiSDUUUUU=
+X-CM-SenderInfo: 5kdl53xhzdqiywtou0bp/1tbiYAS+a2i5fI1csAAAs9
 
-On Wed, Sep 03, 2025 at 05:35:51PM -0700, Joanne Koong wrote:
-> On Wed, Sep 3, 2025 at 11:44 AM Brian Foster <bfoster@redhat.com> wrote:
-> >
-> > On Tue, Sep 02, 2025 at 04:46:04PM -0700, Darrick J. Wong wrote:
-> > > On Fri, Aug 29, 2025 at 04:39:42PM -0700, Joanne Koong wrote:
-> > > > Add granular dirty and writeback accounting for large folios. These
-> > > > stats are used by the mm layer for dirty balancing and throttling.
-> > > > Having granular dirty and writeback accounting helps prevent
-> > > > over-aggressive balancing and throttling.
-> > > >
-> > > > There are 4 places in iomap this commit affects:
-> > > > a) filemap dirtying, which now calls filemap_dirty_folio_pages()
-> > > > b) writeback_iter with setting the wbc->no_stats_accounting bit and
-> > > > calling clear_dirty_for_io_stats()
-> > > > c) starting writeback, which now calls __folio_start_writeback()
-> > > > d) ending writeback, which now calls folio_end_writeback_pages()
-> > > >
-> > > > This relies on using the ifs->state dirty bitmap to track dirty pages in
-> > > > the folio. As such, this can only be utilized on filesystems where the
-> > > > block size >= PAGE_SIZE.
-> > >
-> > > Er... is this statement correct?  I thought that you wanted the granular
-> > > dirty page accounting when it's possible that individual sub-pages of a
-> > > folio could be dirty.
-> > >
-> > > If i_blocksize >= PAGE_SIZE, then we'll have set the min folio order and
-> > > there will be exactly one (large) folio for a single fsblock.  Writeback
-> 
-> Oh interesting, this is the part I'm confused about. With i_blocksize
-> >= PAGE_SIZE, isn't there still the situation where the folio itself
-> could be a lot larger, like 1MB? That's what I've been seeing on fuse
-> where "blocksize" == PAGE_SIZE == 4096. I see that xfs sets the min
-> folio order through mapping_set_folio_min_order() but I'm not seeing
-> how that ensures "there will be exactly one large folio for a single
-> fsblock"? My understanding is that that only ensures the folio is at
-> least the size of the fsblock but that the folio size can be larger
-> than that too. Am I understanding this incorrectly?
-> 
-> > > must happen in units of fsblocks, so there's no point in doing the extra
-> > > accounting calculations if there's only one fsblock.
-> > >
-> > > Waitaminute, I think the logic to decide if you're going to use the
-> > > granular accounting is:
-> > >
-> > >       (folio_size > PAGE_SIZE && folio_size > i_blocksize)
-> > >
-> 
-> Yeah, you're right about this - I had used "ifs && i_blocksize >=
-> PAGE_SIZE" as the check, which translates to "i_blocks_per_folio > 1
-> && i_block_size >= PAGE_SIZE", which in effect does the same thing as
-> what you wrote but has the additional (and now I'm realizing,
-> unnecessary) stipulation that block_size can't be less than PAGE_SIZE.
-> 
-> > > Hrm?
-> > >
-> >
-> > I'm also a little confused why this needs to be restricted to blocksize
-> > gte PAGE_SIZE. The lower level helpers all seem to be managing block
-> > ranges, and then apparently just want to be able to use that directly as
-> > a page count (for accounting purposes).
-> >
-> > Is there any reason the lower level functions couldn't return block
-> > units, then the higher level code can use a blocks_per_page or some such
-> > to translate that to a base page count..? As Darrick points out I assume
-> > you'd want to shortcut the folio_nr_pages() == 1 case to use a min page
-> > count of 1, but otherwise ISTM that would allow this to work with
-> > configs like 64k pagesize and 4k blocks as well. Am I missing something?
-> >
-> 
-> No, I don't think you're missing anything, it should have been done
-> like this in the first place.
-> 
+The commit ced17ee32a99 ("Revert "virtio: reject shm region if length is zero"")
+exposes the following DAX page fault bug (this fix the failure that getting shm
+region alway returns false because of zero length):
 
-Ok. Something that came to mind after thinking about this some more is
-whether there is risk for the accounting to get wonky.. For example,
-consider 4k blocks, 64k pages, and then a large folio on top of that. If
-a couple or so blocks are dirtied at one time, you'd presumably want to
-account that as the minimum of 1 dirty page. Then if a couple more
-blocks are dirtied in the same large folio, how do you determine whether
-those blocks are a newly dirtied page or part of the already accounted
-dirty page? I wonder if perhaps this is the value of the no sub-page
-sized blocks restriction, because you can imply that newly dirtied
-blocks means newly dirtied pages..?
+The commit 21aa65bf82a7 ("mm: remove callers of pfn_t functionality") handles
+the DAX physical page address incorrectly: the removed macro 'phys_to_pfn_t()'
+should be replaced with 'PHYS_PFN()'.
 
-I suppose if that is an issue it might still be manageable. Perhaps we'd
-have to scan the bitmap in blks per page windows and use that to
-determine how many base pages are accounted for at any time. So for
-example, 3 dirty 4k blocks all within the same 64k page size window
-still accounts as 1 dirty page, vs. dirty blocks in multiple page size
-windows might mean multiple dirty pages, etc. That way writeback
-accounting remains consistent with dirty accounting. Hm?
+[    1.390321] BUG: unable to handle page fault for address: ffffd3fb40000008
+[    1.390875] #PF: supervisor read access in kernel mode
+[    1.391257] #PF: error_code(0x0000) - not-present page
+[    1.391509] PGD 0 P4D 0
+[    1.391626] Oops: Oops: 0000 [#1] SMP NOPTI
+[    1.391806] CPU: 6 UID: 1000 PID: 162 Comm: weston Not tainted 6.17.0-rc3-WSL2-STABLE #2 PREEMPT(none)
+[    1.392361] RIP: 0010:dax_to_folio+0x14/0x60
+[    1.392653] Code: 52 c9 c3 00 66 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 0f 1f 44 00 00 48 c1 ef 05 48 c1 e7 06 48 03 3d 34 b5 31 01 <48> 8b 57 08 48 89 f8 f6 c2 01 75 2b 66 90 c3 cc cc cc cc f7 c7 ff
+[    1.393727] RSP: 0000:ffffaf7d04407aa8 EFLAGS: 00010086
+[    1.394003] RAX: 000000a000000000 RBX: ffffaf7d04407bb0 RCX: 0000000000000000
+[    1.394524] RDX: ffffd17b40000008 RSI: 0000000000000083 RDI: ffffd3fb40000000
+[    1.394967] RBP: 0000000000000011 R08: 000000a000000000 R09: 0000000000000000
+[    1.395400] R10: 0000000000001000 R11: ffffaf7d04407c10 R12: 0000000000000000
+[    1.395806] R13: ffffa020557be9c0 R14: 0000014000000001 R15: 0000725970e94000
+[    1.396268] FS:  000072596d6d2ec0(0000) GS:ffffa0222dc59000(0000) knlGS:0000000000000000
+[    1.396715] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    1.397100] CR2: ffffd3fb40000008 CR3: 000000011579c005 CR4: 0000000000372ef0
+[    1.397518] Call Trace:
+[    1.397663]  <TASK>
+[    1.397900]  dax_insert_entry+0x13b/0x390
+[    1.398179]  dax_fault_iter+0x2a5/0x6c0
+[    1.398443]  dax_iomap_pte_fault+0x193/0x3c0
+[    1.398750]  __fuse_dax_fault+0x8b/0x270
+[    1.398997]  ? vm_mmap_pgoff+0x161/0x210
+[    1.399175]  __do_fault+0x30/0x180
+[    1.399360]  do_fault+0xc4/0x550
+[    1.399547]  __handle_mm_fault+0x8e3/0xf50
+[    1.399731]  ? do_syscall_64+0x72/0x1e0
+[    1.399958]  handle_mm_fault+0x192/0x2f0
+[    1.400204]  do_user_addr_fault+0x20e/0x700
+[    1.400418]  exc_page_fault+0x66/0x150
+[    1.400602]  asm_exc_page_fault+0x26/0x30
+[    1.400831] RIP: 0033:0x72596d1bf703
+[    1.401076] Code: 31 f6 45 31 e4 48 8d 15 b3 73 00 00 e8 06 03 00 00 8b 83 68 01 00 00 e9 8e fa ff ff 0f 1f 00 48 8b 44 24 08 4c 89 ee 48 89 df <c7> 00 21 43 34 12 e8 72 09 00 00 e9 6a fa ff ff 0f 1f 44 00 00 e8
+[    1.402172] RSP: 002b:00007ffc350f6dc0 EFLAGS: 00010202
+[    1.402488] RAX: 0000725970e94000 RBX: 00005b7c642c2560 RCX: 0000725970d359a7
+[    1.402898] RDX: 0000000000000003 RSI: 00007ffc350f6dc0 RDI: 00005b7c642c2560
+[    1.403284] RBP: 00007ffc350f6e90 R08: 000000000000000d R09: 0000000000000000
+[    1.403634] R10: 00007ffc350f6dd8 R11: 0000000000000246 R12: 0000000000000001
+[    1.404078] R13: 00007ffc350f6dc0 R14: 0000725970e29ce0 R15: 0000000000000003
+[    1.404450]  </TASK>
+[    1.404570] Modules linked in:
+[    1.404821] CR2: ffffd3fb40000008
+[    1.405029] ---[ end trace 0000000000000000 ]---
+[    1.405323] RIP: 0010:dax_to_folio+0x14/0x60
+[    1.405556] Code: 52 c9 c3 00 66 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 0f 1f 44 00 00 48 c1 ef 05 48 c1 e7 06 48 03 3d 34 b5 31 01 <48> 8b 57 08 48 89 f8 f6 c2 01 75 2b 66 90 c3 cc cc cc cc f7 c7 ff
+[    1.406639] RSP: 0000:ffffaf7d04407aa8 EFLAGS: 00010086
+[    1.406910] RAX: 000000a000000000 RBX: ffffaf7d04407bb0 RCX: 0000000000000000
+[    1.407379] RDX: ffffd17b40000008 RSI: 0000000000000083 RDI: ffffd3fb40000000
+[    1.407800] RBP: 0000000000000011 R08: 000000a000000000 R09: 0000000000000000
+[    1.408246] R10: 0000000000001000 R11: ffffaf7d04407c10 R12: 0000000000000000
+[    1.408666] R13: ffffa020557be9c0 R14: 0000014000000001 R15: 0000725970e94000
+[    1.409170] FS:  000072596d6d2ec0(0000) GS:ffffa0222dc59000(0000) knlGS:0000000000000000
+[    1.409608] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    1.409977] CR2: ffffd3fb40000008 CR3: 000000011579c005 CR4: 0000000000372ef0
+[    1.410437] Kernel panic - not syncing: Fatal exception
+[    1.410857] Kernel Offset: 0xc000000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
 
-Brian
+Fixes: 21aa65bf82a7 ("mm: remove callers of pfn_t functionality")
+Signed-off-by: Haiyue Wang <haiyuewa@163.com>
+Acked-by: David Hildenbrand <david@redhat.com>
+---
+v2:
+  - Add 'fuse' prefix as git commit title.
+  - Add more message about how the bug be exposed.
+v1: https://lore.kernel.org/linux-mm/20250828061023.877-1-haiyuewa@163.com/
+---
+ fs/fuse/virtio_fs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> > Brian
-> >
-> > > > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> > > > ---
-> > > >  fs/iomap/buffered-io.c | 140 ++++++++++++++++++++++++++++++++++++++---
-> > > >  1 file changed, 132 insertions(+), 8 deletions(-)
-> > > >
-> > > > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> > > > index 4f021dcaaffe..bf33a5361a39 100644
-> > > > --- a/fs/iomap/buffered-io.c
-> > > > +++ b/fs/iomap/buffered-io.c
-> > > > @@ -20,6 +20,8 @@ struct iomap_folio_state {
-> > > >     spinlock_t              state_lock;
-> > > >     unsigned int            read_bytes_pending;
-> > > >     atomic_t                write_bytes_pending;
-> > > > +   /* number of pages being currently written back */
-> > > > +   unsigned                nr_pages_writeback;
-> > > >
-> > > >     /*
-> > > >      * Each block has two bits in this bitmap:
-> > > > @@ -139,6 +141,29 @@ static unsigned ifs_next_clean_block(struct folio *folio,
-> > > >             blks + start_blk) - blks;
-> > > >  }
-> > > >
-> > > > +static unsigned ifs_count_dirty_pages(struct folio *folio)
-> > > > +{
-> > > > +   struct inode *inode = folio->mapping->host;
-> > > > +   unsigned block_size = i_blocksize(inode);
-> > > > +   unsigned start_blk, end_blk;
-> > > > +   unsigned blks, nblks = 0;
-> > > > +
-> > > > +   start_blk = 0;
-> > > > +   blks = i_blocks_per_folio(inode, folio);
-> > > > +   end_blk = (i_size_read(inode) - 1) >> inode->i_blkbits;
-> > > > +   end_blk = min(end_blk, i_blocks_per_folio(inode, folio) - 1);
-> > > > +
-> > > > +   while (start_blk <= end_blk) {
-> > > > +           start_blk = ifs_next_dirty_block(folio, start_blk, end_blk);
-> > > > +           if (start_blk > end_blk)
-> > > > +                   break;
-> > >
-> > > Use your new helper?
-> > >
-> > >               nblks = ifs_next_clean_block(folio, start_blk + 1,
-> > >                               end_blk) - start_blk?
-> > > > +           nblks++;
-> > > > +           start_blk++;
-> > > > +   }
-> > > > +
-> > > > +   return nblks * (block_size >> PAGE_SHIFT);
-> > >
-> > > I think this returns the number of dirty basepages in a given large
-> > > folio?  If that's the case then shouldn't this return long, like
-> > > folio_nr_pages does?
-> > >
-> > > > +}
-> > > > +
-> > > >  static unsigned ifs_find_dirty_range(struct folio *folio,
-> > > >             struct iomap_folio_state *ifs, u64 *range_start, u64 range_end)
-> > > >  {
-> > > > @@ -220,6 +245,58 @@ static void iomap_set_range_dirty(struct folio *folio, size_t off, size_t len)
-> > > >             ifs_set_range_dirty(folio, ifs, off, len);
-> > > >  }
-> > > >
-> > > > +static long iomap_get_range_newly_dirtied(struct folio *folio, loff_t pos,
-> > > > +           unsigned len)
-> > >
-> > > iomap_count_clean_pages() ?
-> 
-> Nice, a much clearer name.
-> 
-> I'll make the suggestions you listed above too, thanks for the pointers.
-> 
-> Thanks for taking a look at this, Darrick and Brian!
-> > >
-> > > --D
-> > >
-> 
+diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+index c826e7ca49f5..76c8fd0bfc75 100644
+--- a/fs/fuse/virtio_fs.c
++++ b/fs/fuse/virtio_fs.c
+@@ -1016,7 +1016,7 @@ static long virtio_fs_direct_access(struct dax_device *dax_dev, pgoff_t pgoff,
+ 	if (kaddr)
+ 		*kaddr = fs->window_kaddr + offset;
+ 	if (pfn)
+-		*pfn = fs->window_phys_addr + offset;
++		*pfn = PHYS_PFN(fs->window_phys_addr + offset);
+ 	return nr_pages > max_nr_pages ? max_nr_pages : nr_pages;
+ }
+ 
+-- 
+2.51.0
 
 
