@@ -1,113 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-60319-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60320-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37596B44A7D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 01:41:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DA5DB44A9B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 01:58:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63B38169B6F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 23:41:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 474AF1C855C1
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 23:58:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2CA2F6572;
-	Thu,  4 Sep 2025 23:41:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D636B2EFDBA;
+	Thu,  4 Sep 2025 23:57:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mcbridemail.com header.i=@mcbridemail.com header.b="uDsIAzcP"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IP0RW6nO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-4317.protonmail.ch (mail-4317.protonmail.ch [185.70.43.17])
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A8002882C8
-	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Sep 2025 23:41:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 790762ECD14
+	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Sep 2025 23:57:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757029284; cv=none; b=qsxV3Lt82kW73AhSw0+5tTJTy/Cu7bl2Im9/qUasr8c9IYOEk08D4xaiL8p6dPP4N/BITRoyDZhVur3SEtLI1az4kShww+hj8wIw/ZDsBLgbN+0D7fxQCHkEuyF3E3kwAGJlDOKJXUzOO6v5iCsqCMzkMfPabaBMq8xxaJVHOK8=
+	t=1757030277; cv=none; b=JPE/zB2/YVjfno8nkxjh0RxxnbuzbwSvdjIkhVtghD6jwkD33PzM8ki0SsRUR9H3KTojTMFNzuA2NKVy6HvaBasaZknoi7svpDCntn4TF6k8v3CazXMtGo8ObvGIP+j9cUeoGHAyhw+Fg4jmcmuMo51IjwXdLrjgfIu+epJJekM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757029284; c=relaxed/simple;
-	bh=LFbIKM8j4M9g/fcCcVVVRJnzocvfkIzRKWElyt6Oha8=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oHWJUkUl8wPkfgEUF9BtH3nFq+1gG+jOvjBsy9QfhSyIao+qAUYe4uh+bbYb3KPz6GaJHHjiPoTKBDM1z5LYEIKC2NLiV+81w9fs650omuKa/XCfYOs0BqhzMaWZQj7kiJGN2PWPA6pDE8RdNx3ulymq2hEFR9giJPC9l84hu6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mcbridemail.com; spf=pass smtp.mailfrom=mcbridemail.com; dkim=pass (2048-bit key) header.d=mcbridemail.com header.i=@mcbridemail.com header.b=uDsIAzcP; arc=none smtp.client-ip=185.70.43.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mcbridemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mcbridemail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mcbridemail.com;
-	s=protonmail; t=1757029278; x=1757288478;
-	bh=PvkD4sYAUcc7H3PsgqKK7mZCcx4fpxzEJ/vRxP1AZio=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=uDsIAzcPsIcRKoq5QwwojpV8tBpeU2vrNKCcY+F1qN8bA/qq9ZBpQPotGZ1dQmihv
-	 KkguBe8DxvoB2ZY6oHlc8Ppc/mm76bMe+yS6ipi4DczV6Up0VbkuLitpn4ztZu/960
-	 IxPk26yY2E5vxEAhsPVStYjoyN2DtD3SRhp1HCT434wK9BF6OxjZVOPfYOTcdh7h34
-	 z+R0ndGe5k7RUfYQKrbRYHSrIkywoAmPuGfw8NpsizYUw2uGWrbyxfFcg/vh5TtpjV
-	 gQ7N2ZxlqK/74DjcX4rkgPlcsq28bOkWeRZkS1oiJdMujkXXSAthQqzqVQpAQvow89
-	 2TvtIpNiCkH4g==
-Date: Thu, 04 Sep 2025 23:41:12 +0000
-To: Al Viro <viro@zeniv.linux.org.uk>
-From: Blake McBride <blake@mcbridemail.com>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "brauner@kernel.org" <brauner@kernel.org>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, Colby Wes McBride <colbym84@gmail.com>
-Subject: Re: [RFC] View-Based File System Model with Program-Scoped Isolation
-Message-ID: <nPMV5WRZT62Eq5Cu84Q0NMH2CgxAuisCAMQ4XfuG7kb6OdEOgY9UMi5sVx3CV0kSVcEBoDDz1w5btWaT1CfOCC_4jkCDrIoYk866FO9bZVo=@mcbridemail.com>
-In-Reply-To: <20250904230846.GR39973@ZenIV>
-References: <Oa1N9bTNjTvfRX39yqCcQGpl9FJVwfDT2fTq-9NXTT8HqTIqG2Y-Gy0f7QHKcp2-TIv7NZ3bu_YexmKiGuo9FBTeCtRnVzABBVnhx5EiShk=@mcbridemail.com> <20250904220650.GQ39973@ZenIV> <DHMURiMioUDX6Ggo4Qy8C43EUoC_ltjjS52i2kgC9tl6GhjGuJXOwyf9Nb-WkI__cM0NXECZw_HdKeIUmwShKkAmP7PwqZcmGz-vBrdWYL8=@mcbridemail.com> <20250904230846.GR39973@ZenIV>
-Feedback-ID: 30086830:user:proton
-X-Pm-Message-ID: 584adc3b8567c8ef078a37bca4435820c1ddcfdb
+	s=arc-20240116; t=1757030277; c=relaxed/simple;
+	bh=LTpvAMDx3l9YQ4vjyMBE5VmJ/wSw9l3B25wX8G92ELE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HdsNrMVALUUl0hnTUsXAvONLvwdq4o+dRQpOmrRILWMMLWlyHobo0CtI9/31HbXq05DrJ6mNmG9LVimENpxGW8hl9wMXQBQp8cNLgadszS9596myAgpNr22/Of4YTeKCpYwL0wHb6oYgierIL08lZTzYYjPuvMWPUGC48wpKa/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=IP0RW6nO; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 4 Sep 2025 16:57:41 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757030273;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+1JF9ABm23/crB5M2qXk95TNoGCZqy9JAAct0jdXudM=;
+	b=IP0RW6nOGMgFPd9nXUCLLw0ahXL7zYDkVP5hnRPsxGQbC8r6JZ+o1Mki8k8IcUbBMSSfVP
+	xY8GEJOkCrT/t5Yv8dVOu0RgPaxIbveuBbRwhK8/wNymTsDGEyJCvlxxw9KVMEtAQMbhqn
+	6n6bXsZWN1E+SIRU+boROe3lY/qrCas=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: akpm@linux-foundation.org, david@redhat.com, axelrasmussen@google.com, 
+	yuanchu@google.com, willy@infradead.org, hughd@google.com, mhocko@suse.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lorenzo.stoakes@oracle.com, 
+	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com, 
+	vishal.moola@gmail.com, linux@armlinux.org.uk, James.Bottomley@hansenpartnership.com, 
+	deller@gmx.de, agordeev@linux.ibm.com, gerald.schaefer@linux.ibm.com, 
+	hca@linux.ibm.com, gor@linux.ibm.com, borntraeger@linux.ibm.com, 
+	svens@linux.ibm.com, davem@davemloft.net, andreas@gaisler.com, 
+	dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org, tglx@linutronix.de, 
+	mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com, chris@zankel.net, 
+	jcmvbkbc@gmail.com, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
+	weixugc@google.com, baolin.wang@linux.alibaba.com, rientjes@google.com, 
+	thuth@redhat.com, broonie@kernel.org, osalvador@suse.de, jfalempe@redhat.com, 
+	mpe@ellerman.id.au, nysal@linux.ibm.com, linux-arm-kernel@lists.infradead.org, 
+	linux-parisc@vger.kernel.org, linux-s390@vger.kernel.org, sparclinux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v6 00/12] mm: establish const-correctness for pointer
+ parameters
+Message-ID: <ue3oriedwzzfhvnobtetuyjvcypbvl4dboqmpvdededzaj3amq@5k6vk44ae3fu>
+References: <20250901205021.3573313-1-max.kellermann@ionos.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250901205021.3573313-1-max.kellermann@ionos.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Thursday, September 4th, 2025 at 6:09 PM, Al Viro <viro@zeniv.linux.org.=
-uk> wrote:
+On Mon, Sep 01, 2025 at 10:50:09PM +0200, Max Kellermann wrote:
+> For improved const-correctness in the low-level memory-management
+> subsystem, which provides a basis for further const-ification further
+> up the call stack (e.g. filesystems).
+> 
+> This patch series splitted into smaller patches was initially posted
+> as a single large patch:
+> 
+>  https://lore.kernel.org/lkml/20250827192233.447920-1-max.kellermann@ionos.com/
+> 
+> I started this work when I tried to constify the Ceph filesystem code,
+> but found that to be impossible because many "mm" functions accept
+> non-const pointer, even though they modify nothing.
+> 
+> Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
 
->=20
->=20
-> On Thu, Sep 04, 2025 at 10:58:12PM +0000, Blake McBride wrote:
->=20
-> > Off the cuff, I'd say it is an mv option. It defaults to changing all o=
-ccurrences, with an option to change it only in the current view.
->=20
->=20
-> Huh? mv(1) is userland; whatever it does, by definition it boils down
-> to a sequence of system calls.
+For the series:
 
-
-Yes.  This is what is intended.  All of userland would just operate on the =
-view the same as if that was your real hierarchy.
-
-
->=20
-> If those "views" of yours are pasted together subtrees of the global
-> forest, you already can do all of that with namespaces; if they are not,
-> you get all kinds of interesting questions about coherency.
-
-
-These views are not pasted together subtrees.  Each view can have utterly d=
-ifferent layouts of the same set of files.
-
-
-
-
-
->=20
-> Which one it is? Before anyone can discuss possible implementations
-> and relative merits thereof, you need to define the semantics of
-> what you want to implement...
->=20
-> And frankly, if you are thinking in terms of userland programs (file
-> manglers, etc.) you are going the wrong way - description will have
-> to be on the syscall level.
-
-I did not specify the implementation, just the user experience.  All of use=
-rland would "appear" to function as it does now.  The same with the syscall=
-s that are made by the application code.  They all effect the current view =
-as if it was the real hierarchy.
-
---blake
-
+Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
 
