@@ -1,152 +1,151 @@
-Return-Path: <linux-fsdevel+bounces-60296-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60297-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 444F8B44698
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 21:40:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3853FB446B1
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 21:46:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C4901CC377A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 19:41:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7081A4790C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Sep 2025 19:46:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B4302727F5;
-	Thu,  4 Sep 2025 19:40:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A862750F0;
+	Thu,  4 Sep 2025 19:46:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dtPnrA4U"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hEs3WsgC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CD6425E469;
-	Thu,  4 Sep 2025 19:40:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 654F3242910;
+	Thu,  4 Sep 2025 19:46:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757014841; cv=none; b=iW4TYITtlcqlnOMhxUptFneFzMJYJEdogki0lPZ3p2cEOn7x1aBtWSWBnuyU3+S+TrmHvt7oLMXXADuCjo5TkHjyrvv9SPuymFkL31JgSwyq7B3dNz0px6akZObuXB7NyfG48E1KTuEUIf2wT7OpEVQ6Z/iYvjLAlOQMOS/8/Vg=
+	t=1757015184; cv=none; b=bZFj4sQmqgBbcFHDEXF/mDnRnEdgfBywtNwrbewKRZHAK3yP6dahVtlZ23ZIgSMb10ItPuilrUpR/OReNi63saVUcuGSTDjDkmEN1Vk2jVXhCOlk9vDlMS5P3KyOW4RW2X5UDJ0Z1MJ4B0qPCK2h5JybU9twWqHJHgcpDkzCSFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757014841; c=relaxed/simple;
-	bh=But6yFSXJD2S4pFLQsKbXcuuNX1JkCVO7C+ISR/VD8g=;
+	s=arc-20240116; t=1757015184; c=relaxed/simple;
+	bh=Wh1L5XpgQJ5vOpxlqyelKTn6PiP3ejdECIGs5xjC8ok=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GZJgDkIPAAkeXRISsM+uENGaZjzH6ap7SdhEb8CCqdJHF2jcEP5O9jdOLEvctMB+tL1ibzOkI5SDIjt2PQemywvhQGXpgye5m3s4VlaeyUQLb1DHLOw88s5YoVnHlVzS4Mv6t3K8pdR+nJuu0z5+V9Vu5Alx0RomPBPUh7GW7/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dtPnrA4U; arc=none smtp.client-ip=209.85.160.173
+	 To:Cc:Content-Type; b=olhkTVZ8dMvtvA8MLjftgVCJX+gDEshmpdInLP5p1eQyCz65SD4ydDCjtC6X8VAahLFhBWckxD4GDNxpMRCVuWa0+ePakYPkQ15Rro4skvyA+JydZImuwVImz49ERvkvDoqIJ4y+V0IiFkZgwwgg2XeKjhaQWfdnlBfXKwq5wNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hEs3WsgC; arc=none smtp.client-ip=209.85.160.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4b3319c3a27so11085071cf.0;
-        Thu, 04 Sep 2025 12:40:40 -0700 (PDT)
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4b38d4de61aso18291581cf.0;
+        Thu, 04 Sep 2025 12:46:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757014839; x=1757619639; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757015182; x=1757619982; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jL5EvzitXv89XkgWDtmbXmrQ61qOKXgiKtxFmnaYH2c=;
-        b=dtPnrA4U0HJiNhmBQE8fRzycFWqa35BGv3OLlNUuFYE0Snxd/gb4bRW1qvzHOEPCLm
-         rgMfGoEtqYBhZjyQtyOojD1epIDYFfHyLw4L0gwGZnOFfXupx7t6XoIO5RV7GYMBLeDF
-         3wEHbc4cRy9JIEO04ZC9bOU93APP3di67FQwODtEtjUSP5Sa9PY9ykheoXwGg/HewfMr
-         JToOgiu1tOTCp53gnNgrSGmfGQrNFAW+NPdqEy3agADT+gfFYQSEFRjxui3wYN5OnUZw
-         MatnWzYAfRneHJjh8ncnRTRJBjrfikJg9odquphwS4Zm8CB3kZRavjVMnIolp2pfpLnF
-         vR2A==
+        bh=TYm7syom9MWBpuJ7zcZzkOxlRKn4XoKNaWWjP9biNPY=;
+        b=hEs3WsgCOMD8euI+xTt35TFpW0p6KOHhisuD7CeWPY62eb/e8wEWUtK5/mQRHTEASj
+         5GLLs5OBdjr12/XmS1e7KZjV5RQNHAbmJLCfKlUnLKrm2Dvc9AW3csGJqSWihYo1zQ++
+         nRSkx+kXEeOWMPuD3Dgne2bFbvQAbD93PBSvUrbcGedXQEeXrvB/C1A716Hn7B3XWPtp
+         Gg297QA2iM+/p03SVC17QtqXN1EvMMj1eHPzOpbRu1lJK2bYyW78bNY0E8Icq35rScBf
+         v0vLrPEyGDey+kw52FDJpaLmgND7C0dbEDh6hOjXsRrQCCIMF1SOhOAoHkJQ033vtzDk
+         JNSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757014839; x=1757619639;
+        d=1e100.net; s=20230601; t=1757015182; x=1757619982;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jL5EvzitXv89XkgWDtmbXmrQ61qOKXgiKtxFmnaYH2c=;
-        b=VIrWKm9NpQQuAcH8164H0apxTVu2o88inFwonwShjApPSU0C3uzuypjZIu235iKfMH
-         FEwrbfyZ97pml80vA6p0SILMzjNazpZru6PSud+QJz+VXSioXB6/byzzKDNiPP0aD6r8
-         VvNuTW2NDmQ5FHwgBwJ3Xp9Spus9HXQ8XXp6YZqEKjuI6WosN/x60tZ0IG4vHfO5UN7w
-         lWHi5lXBLycUW2cmOmXNxP0qvFTSND5VxXcOCfDQwOYNDtBzL3GSCruk03Lc39Y/yEuY
-         H5QYaNbB+Slu2/i8OrOJ6231nI1np9dEfQWey72dE21ronLe6TyR7yLRP9VteYZ7gGa/
-         L/8g==
-X-Forwarded-Encrypted: i=1; AJvYcCXEiyvF9hBhxXISZ5tiILGKbVEW7AVOIDC8cGzFBFqLeTM6sk6VegVPXtJ1d32iSModmN3nmL7e651P@vger.kernel.org, AJvYcCXZQcUNYJ1IPuxus9v5HbObVusTtse3FvgEWtGteFZEUI8sm6uyBZwaZlfJQ3xtwyEPvVKeGG4pAf8=@vger.kernel.org, AJvYcCXvdDzeVAl1oJoPglqFkBRzoOJT9u1UNVj1sqrSsah2BjGJHwaLEHLownb3wG4x9cvtJjN3ulGhoUxjmhudcg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoFnGMXGQHQDemRIInOIr8NxP60b0LlpRu1V/NCsHzqPAlAX3Z
-	8w1Rd81ELmxLnAmXpnUnhPlMdGeEq7ABeTZrSluPy5YPkwIJ21LgqW/elVmWA4QVVKUDFD9lWzi
-	4rvI0ZfkKTbktxTwpXU8DVzqOKVZGNZE=
-X-Gm-Gg: ASbGncvE8mTydQlw72o8Ye9LzAr2D0SZcgUP4lP6FyGjw1qeo0fg0+rMqT/e3xfFdNJ
-	d5IwqyNzZtmGMgBXLgtC4P52zBxDeZli5S7gpLUHs0FBzxR7l+As1R3MA+8MFQE6DI7YKQ4PJdV
-	nc8sISCNDJvwIOG8O6LgtAQe9tJJC5wsrd5Oxbr8hrQNCIAk36B6YRqtzxxyRYJKdcW6+00UHfN
-	BdkDa4W
-X-Google-Smtp-Source: AGHT+IHJIffgq0DsxTjOYo/oBjCSEnCKgqUQW8LF/IZVRFcnhtvH7rYenJ6DvpBK2lfixcJeBcsbXFoRm0yFl55bc14=
-X-Received: by 2002:a05:622a:38a:b0:4b3:75b:6f49 with SMTP id
- d75a77b69052e-4b5e7cd23c8mr14445721cf.9.1757014838933; Thu, 04 Sep 2025
- 12:40:38 -0700 (PDT)
+        bh=TYm7syom9MWBpuJ7zcZzkOxlRKn4XoKNaWWjP9biNPY=;
+        b=AcT5q1KifhC5AZAnjMyapMjcove6hFk3eS9w1vWOoy8d2oqisyIaLoXYtNzp5KBsLS
+         RWudq04OQ7PY7mPQPBHXpJAae//5lP5PY83efBgnSIzt5e0Nov6vo++lzDb+D6VxA5oe
+         2VWTF0dNCHcpuGY8rLpd/eEg0bkq3lGyF//ZYlk2hcgbbigE/OTTZDm750E/oELy+0b5
+         2m7sCFc2LaZrGgnvSFWAk9Z3ULLc9n4aink7pcoEtKdHEqeIh6vlGgbz/zb9+/deIBpu
+         qvbNoTqw+vj0lOM1GQLNDH99XygMFMAa32FLem01jDoyr53wIVVXiTEDgc7hkmY4rDdo
+         VUUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVEVORU8LAqW8zP2/Q6igFUvyiqvkauktI27QzwfmwbKbpirRtp3zp9OJm5w8ABRdut8VWKudwZx8vXXngBZg==@vger.kernel.org, AJvYcCXX0N1RU56qIJ8hKoNgSd4YeayPiSDN1X9sflVblJ5fYyKSoq9/Y6OF6h0kEFNoy/j3e1IYJl2c1m32@vger.kernel.org, AJvYcCXlvKk4kjJbr3rUBy3W/2MgYV2wEepoto0I7vTEP0PKeekM7FncEB0rjgGk2oYDOLhX6Aa2wT3QLOI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnY4C6Yj9XM6HE28TP32eibbClQ0+D4T+B88TW4h4CHZqYInwc
+	d8Qw5lZuc+aTb1UkpbG3DooHYHA4A27S35FOdu53/XjuEXLJTYtirm5UbOPovtujuXkwe9V8Cjo
+	yTKDG8mVd2yiGVgS001Y33iePCsXY1Pg=
+X-Gm-Gg: ASbGnctMzo70g8C7Pe1j7fLikl0k/XBVAWhkEIJfPFHhTN6ZkFz5TC7DRwRE0G40W3u
+	b/3ozmhq+MXzt5pPksVHoEp0wYg5UwqtssGlH4FMJ6DItPErZCD3rWQSgl/3To5LL5IV/5COTHq
+	+UEDd/DgJS5aAPWfdoVQDDt+pKBS3Zq++EW4NPH3jJ55VaIFLNi8vShPuiG/ZUAH9eDAsCBEXYl
+	WXiUa4e
+X-Google-Smtp-Source: AGHT+IGFt3R6bT2vPfGlFjKRKndtT851pS99zx9hnN5QeiNFVSBi5KMA74rY17+dIQCUUFKEx8djF0S4sBoW0HDzc6U=
+X-Received: by 2002:a05:622a:4008:b0:4b3:444d:d831 with SMTP id
+ d75a77b69052e-4b3444ddad2mr159303211cf.77.1757015182203; Thu, 04 Sep 2025
+ 12:46:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250829235627.4053234-1-joannelkoong@gmail.com>
- <20250829235627.4053234-16-joannelkoong@gmail.com> <20250903211754.GW1587915@frogsfrogsfrogs>
-In-Reply-To: <20250903211754.GW1587915@frogsfrogsfrogs>
+References: <20250829235627.4053234-1-joannelkoong@gmail.com> <20250829235627.4053234-16-joannelkoong@gmail.com>
+In-Reply-To: <20250829235627.4053234-16-joannelkoong@gmail.com>
 From: Joanne Koong <joannelkoong@gmail.com>
-Date: Thu, 4 Sep 2025 12:40:26 -0700
-X-Gm-Features: Ac12FXwn27nBrE8ZH7N2WgpDrGPfsAU5W2gw-BGJf9BnLiEnEgDTS6hwGhpdJn0
-Message-ID: <CAJnrk1ZGQ7EYL0U0Q6m_V9O2pyMY40a=vu5XQEfcCCOEx3+qEw@mail.gmail.com>
+Date: Thu, 4 Sep 2025 12:46:11 -0700
+X-Gm-Features: Ac12FXy13SRY4M405gjeOtKvNGp10QZZ6VbMtSyH5Rp4FAF1DkWbCGO8hD8JzNg
+Message-ID: <CAJnrk1Z4Oeh_en+pYH9fmq_erNyxm=_a+YgusYY1Uf9uuxP7pA@mail.gmail.com>
 Subject: Re: [PATCH v1 15/16] fuse: use iomap for readahead
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: brauner@kernel.org, miklos@szeredi.hu, hch@infradead.org, 
-	linux-fsdevel@vger.kernel.org, kernel-team@meta.com, 
-	linux-xfs@vger.kernel.org, linux-doc@vger.kernel.org
+To: brauner@kernel.org, miklos@szeredi.hu
+Cc: hch@infradead.org, djwong@kernel.org, linux-fsdevel@vger.kernel.org, 
+	kernel-team@meta.com, linux-xfs@vger.kernel.org, linux-doc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 3, 2025 at 2:17=E2=80=AFPM Darrick J. Wong <djwong@kernel.org> =
-wrote:
+On Fri, Aug 29, 2025 at 4:58=E2=80=AFPM Joanne Koong <joannelkoong@gmail.co=
+m> wrote:
 >
-> On Fri, Aug 29, 2025 at 04:56:26PM -0700, Joanne Koong wrote:
-> > Do readahead in fuse using iomap. This gives us granular uptodate
-> > tracking for large folios, which optimizes how much data needs to be
-> > read in. If some portions of the folio are already uptodate (eg through
-> > a prior write), we only need to read in the non-uptodate portions.
-> >
-> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> > ---
-> >  fs/fuse/file.c | 214 +++++++++++++++++++++++++++----------------------
-> >  1 file changed, 118 insertions(+), 96 deletions(-)
-> >
-> > diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> > index bdfb13cdee4b..1659603f4cb6 100644
-> > --- a/fs/fuse/file.c
-> > +++ b/fs/fuse/file.c
-> > @@ -2176,10 +2187,21 @@ static ssize_t fuse_iomap_writeback_range(struc=
-t iomap_writepage_ctx *wpc,
-> >                       return -EIO;
-> >       }
-> >
-> > -     if (wpa && fuse_writepage_need_send(fc, pos, len, ap, data)) {
-> > -             fuse_writepages_send(inode, data);
-> > -             data->wpa =3D NULL;
-> > -             data->nr_bytes =3D 0;
-> > +     if (wpa) {
-> > +             bool send =3D fuse_folios_need_send(fc, pos, len, ap, dat=
-a->nr_bytes,
-> > +                                               true);
-> > +
-> > +             if (!send) {
-> > +                     /* Need to grow the pages array?  If so, did the =
-expansion fail? */
-> > +                     send =3D (ap->num_folios =3D=3D data->max_folios)=
- &&
-> > +                             !fuse_pages_realloc(data, fc->max_pages);
-> > +             }
->
-> What purpose this code relocation serve?  I gather the idea here is that
-> writes need to reallocate the pages array, whereas readahead can simply
-> constrain to whatever's already allocated?
->
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index bdfb13cdee4b..1659603f4cb6 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> +
+> +static int fuse_handle_readahead(struct folio *folio,
+> +                                struct fuse_fill_read_data *data, loff_t=
+ pos,
+> +                                size_t len)
+> +{
+> +       struct fuse_io_args *ia =3D data->ia;
+> +       size_t off =3D offset_in_folio(folio, pos);
+> +       struct fuse_conn *fc =3D data->fc;
+> +       struct fuse_args_pages *ap;
+> +
+> +       if (ia && fuse_folios_need_send(fc, pos, len, &ia->ap, data->nr_b=
+ytes,
+> +                                       false)) {
+> +               fuse_send_readpages(ia, data->file, data->nr_bytes,
+> +                                   fc->async_read);
+> +               data->nr_bytes =3D 0;
+> +               ia =3D NULL;
+> +       }
+> +       if (!ia) {
+> +               struct readahead_control *rac =3D data->rac;
+> +               unsigned nr_pages =3D min(fc->max_pages, readahead_count(=
+rac));
 
-I think it's more that for readahead there's more guiding info about
-what size array is needed (eg looking at readahead_count(rac)) whereas
-that's more uncertain for writeback, especially since the folios can
-only be part of the same request if they're contiguous. The writeback
-array gets reallocated exponentially up on a per-need basis starting
-at 1. imo it seems better to start the writeback array at 2 or 4
-folios but I also don't really have empirical data to back this theory
-up.
+This should also be constrained by "fc->max_read / PAGE_SIZE". Will
+fix this up for v2.
 
-
-Thanks,
-Joanne
-> --D
->
+> +
+> +               if (fc->num_background >=3D fc->congestion_threshold &&
+> +                   rac->ra->async_size >=3D readahead_count(rac))
+> +                       /*
+> +                        * Congested and only async pages left, so skip t=
+he
+> +                        * rest.
+> +                        */
+> +                       return -EAGAIN;
+> +
+> +               data->ia =3D fuse_io_alloc(NULL, nr_pages);
+> +               if (!data->ia)
+> +                       return -ENOMEM;
+> +               ia =3D data->ia;
+> +       }
+> +       folio_get(folio);
+> +       ap =3D &ia->ap;
+> +       ap->folios[ap->num_folios] =3D folio;
+> +       ap->descs[ap->num_folios].offset =3D off;
+> +       ap->descs[ap->num_folios].length =3D len;
+> +       data->nr_bytes +=3D len;
+> +       ap->num_folios++;
+> +
+> +       return 0;
+> +}
+> +
 
