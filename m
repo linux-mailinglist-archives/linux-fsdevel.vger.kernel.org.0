@@ -1,110 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-60367-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60368-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDE69B45C70
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 17:24:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03B13B46080
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 19:44:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A01263BA399
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 15:23:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 744B21BC033F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 17:44:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 545471C701F;
-	Fri,  5 Sep 2025 15:22:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2404C36CDF4;
+	Fri,  5 Sep 2025 17:44:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L+xvrC8h"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nlX8viSt"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1DBA220696
-	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Sep 2025 15:22:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E6CB3568EA;
+	Fri,  5 Sep 2025 17:44:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757085771; cv=none; b=ovsP2hKSJx7yC7TxqOLkPNec4j1gSU5b7YL00XBFyRw1CWQ1Jp5XQq2DsJWK20J/nJrhv8OXDhNvYSgKCAw2DcvReBr5CUnveCZp6qA4o1lgxWpsyRLPTSrzRCCGHylVwSlg4z03HqP5FHTf8xEAS+HgysQxwl0zYzDTBpLDyNo=
+	t=1757094242; cv=none; b=SlFruBpjPAR6OE2E6eJd2AMQP+YOow9owedJuEB7nJ+R7Yr7DUWgKXIV8hcmzg+S90p/9Me+yBACOeSFwkTRVfay32/Kqc8SkvtFIcsBAKzVgGcFa9c58QEhGEOTVJuwwQbc2gWATFWJXryUz8H9cB0E1Mh8K/HGnBnTDS2dFlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757085771; c=relaxed/simple;
-	bh=OZ/Lx1Zz2uWk3zIlBnv9jk4uKCzlbtEu5wmvtgpUwrk=;
+	s=arc-20240116; t=1757094242; c=relaxed/simple;
+	bh=0R6uBNi0AxfzUpfBexoCE08XIxfXyiwY7sLKg5k0QaA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZvWxJTyLfoWp4xNiG8Fv2B23TjkjqAQFeSBDdNaySiEUHwALuylnvcQuiZxVtuWvG39kk03XDiuWNSmaepWHBtFTcQhtXFpo9da3NRAY452HLctGD7VmChL4JK/Kfp4Uplsg35noN3WtTEetdQDaWripumyAJm1o8X6KN3xYn2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L+xvrC8h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4446BC4CEF1;
-	Fri,  5 Sep 2025 15:22:51 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=r/dutFdNK3E93c2mq6JN5dRyuhdaOvfyDXtigZLhD3+MS4hngxDKhPTewH/+DI2cIHd6DQ1WhccgEsAwE6LchCA2ao/B7w/X8YsISXXVLp/m/dDd0xLB/etIMXs1Bqdd/8rxz3/XVwGNb3ISLPZVwM0bhg3kY5JuXIgRQX1UnN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nlX8viSt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52F5AC4CEF4;
+	Fri,  5 Sep 2025 17:43:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757085771;
-	bh=OZ/Lx1Zz2uWk3zIlBnv9jk4uKCzlbtEu5wmvtgpUwrk=;
+	s=k20201202; t=1757094242;
+	bh=0R6uBNi0AxfzUpfBexoCE08XIxfXyiwY7sLKg5k0QaA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L+xvrC8h/4E42eRYdHpUrFLDAtT7lqukS2N+ggvqcK1v6OIQL/ahytVS/RDSyITK/
-	 B09QcqBCKgnnRwGpAgHppsSqM5rVnzG5GLjeJOsZv+hZhPehPQxIyoFmDrkZcwQb6D
-	 TPBn3vQjJP5n2ChS8gEoRLujXcC4N9HGW6aCRAkhFh78F2MJeIVoZEZQDBMC/xJAy5
-	 e/wmY9xwIweoFbBCl/Lb9mdhZGtfLoEdc1JqI5fWMGwFDLkOqL0mpNA4ya4B8kbuah
-	 hVndpGhOeAQ7q6w+9ZmJMCicoY2qtflNpDbzEHtMGfUkPiH+TiL2KIdgEhukMA8PBr
-	 Vv1W1irU9Ne9Q==
-Date: Fri, 5 Sep 2025 08:22:50 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: bernd@bsbernd.com, neal@gompa.dev, John@groves.net,
-	linux-fsdevel@vger.kernel.org, joannelkoong@gmail.com
-Subject: Re: [PATCH 4/7] fuse: implement file attributes mask for statx
-Message-ID: <20250905152250.GF1587915@frogsfrogsfrogs>
-References: <175573708630.15537.1057407663556817922.stgit@frogsfrogsfrogs>
- <CAJfpegsp=6A7jMxSpQce6Xx72POGddWqtJFTWauM53u7_125vQ@mail.gmail.com>
- <20250829153938.GA8088@frogsfrogsfrogs>
- <CAJfpegs=2==Tx3kcFHoD-0Y98tm6USdX_NTNpmoCpAJSMZvDtw@mail.gmail.com>
- <20250902205736.GB1587915@frogsfrogsfrogs>
- <CAJfpegskHg7ewo6p0Bn=3Otsm7zXcyRu=0drBdqWzMG+hegbSQ@mail.gmail.com>
- <20250903154955.GD1587915@frogsfrogsfrogs>
- <CAJfpegu6Ec=nFPPD8nFXHPF+b1DxvWVEFnKHNHgmeJeo9xX7Nw@mail.gmail.com>
- <20250905012854.GA1587915@frogsfrogsfrogs>
- <CAJfpegubFsCjWJyJhv_9HE_9_htL3Z7-r_AMFszxA-982dC-Jw@mail.gmail.com>
+	b=nlX8viStcFxK79FfJuuymzNpbjrTTtyuePmbEcriYprpXNyHMPVynqL6XQhSJCXiW
+	 4vhqgm49kw8WKmrk6DdElWfQmQfP7+Or1iQEMwjD0WJUicJccWcmFH4mUnXxjAlLqD
+	 gsu66JjFHfS6Du7juXWBtoZ1G5Tq+zQfyT71Kg/oV0EpczIOFG6uL0+r+M/5kur/r9
+	 X1eciZId07CH09tPojFm6OMji6KQ4FV8//PSWz+jVcNLPEjNbwbLGvQxBCwk57VDuQ
+	 bru1m+TRFmp+EbI4MP1c3j3cR13WPotrZMNKrjvhdRmUeLkKk43RrCkFBh1B9Pt1uu
+	 pSwr9Lo+72vIQ==
+Date: Fri, 5 Sep 2025 18:43:53 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Usama Arif <usamaarif642@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, david@redhat.com,
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, corbet@lwn.net,
+	rppt@kernel.org, surenb@google.com, mhocko@suse.com,
+	hannes@cmpxchg.org, baohua@kernel.org, shakeel.butt@linux.dev,
+	riel@surriel.com, ziy@nvidia.com, laoar.shao@gmail.com,
+	dev.jain@arm.com, baolin.wang@linux.alibaba.com, npache@redhat.com,
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+	ryan.roberts@arm.com, vbabka@suse.cz, jannh@google.com,
+	Arnd Bergmann <arnd@arndb.de>, sj@kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	kernel-team@meta.com, Aishwarya.TCV@arm.com
+Subject: Re: [PATCH v5 6/7] selftests: prctl: introduce tests for disabling
+ THPs completely
+Message-ID: <c8249725-e91d-4c51-b9bb-40305e61e20d@sirena.org.uk>
+References: <20250815135549.130506-1-usamaarif642@gmail.com>
+ <20250815135549.130506-7-usamaarif642@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="wfr62XQcW9Sye/W3"
 Content-Disposition: inline
-In-Reply-To: <CAJfpegubFsCjWJyJhv_9HE_9_htL3Z7-r_AMFszxA-982dC-Jw@mail.gmail.com>
+In-Reply-To: <20250815135549.130506-7-usamaarif642@gmail.com>
+X-Cookie: Yow!  I threw up on my window!
 
-On Fri, Sep 05, 2025 at 09:02:05AM +0200, Miklos Szeredi wrote:
-> On Fri, 5 Sept 2025 at 03:28, Darrick J. Wong <djwong@kernel.org> wrote:
-> >
-> > On Thu, Sep 04, 2025 at 01:26:36PM +0200, Miklos Szeredi wrote:
-> > > On Wed, 3 Sept 2025 at 17:49, Darrick J. Wong <djwong@kernel.org> wrote:
-> > > >
-> > > > On Wed, Sep 03, 2025 at 11:55:25AM +0200, Miklos Szeredi wrote:
-> > >
-> > > > > Agree?
-> > > >
-> > > > I think we do, except maybe the difficult first point. :)
-> > >
-> > > Let's then defer the LOOKUPX thing ;)   I'm fine with adding IMMUTABLE
-> > > and APPEND to fuse_attr::flags.
-> >
-> > OK.  Should I hide that behind the fuse mount having iomap turned on?
-> > Or fc->is_local_fs == true?  Or let any server set those bits?
-> >
-> > One thing occurred to me -- for a plain old fuse server that is the
-> > client for some network filesystem, the other end might have its own
-> > immutable/append bits, in which case we actually *do* want to let those
-> > bits through from the FUSE_STATX replies.
-> 
-> Right, as I said this might have worked without VFS help, but having
-> it consistently in the VFS as well would be nicer.
-> 
-> In that spirit, putting those bits in the inode is safe only in the
-> local fs case, so I guess that's what we should do.  And for
-> consistency, in the local fs case inode->flags should be the
-> authoritative source and all the userspace API's should be looking at
-> that, instead of what the server sent in the IOCTL or STATX replies.
 
-Ok, I'll meld that all together today.
+--wfr62XQcW9Sye/W3
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
---D
+On Fri, Aug 15, 2025 at 02:54:58PM +0100, Usama Arif wrote:
+> The test will set the global system THP setting to never, madvise
+> or always depending on the fixture variant and the 2M setting to
+> inherit before it starts (and reset to original at teardown).
+> The fixture setup will also test if PR_SET_THP_DISABLE prctl call can
+> be made to disable all THPs and skip if it fails.
 
-> Thanks,
-> Miklos
-> 
+I don't think this is an issue in this patch but with it we're seeing
+build failures in -next on arm64 with:
+
+  make KBUILD_BUILD_USER=3DKernelCI FORMAT=3D.xz ARCH=3Darm64 HOSTCC=3Dgcc =
+CROSS_COMPILE=3Daarch64-linux-gnu- CROSS_COMPILE_COMPAT=3Darm-linux-gnueabi=
+hf- CC=3D"ccache aarch64-linux-gnu-gcc" O=3D/tmp/kci/linux/build -C/tmp/kci=
+/linux -j98 kselftest-gen_tar
+
+  ...
+
+    CC       prctl_thp_disable
+  prctl_thp_disable.c: In function =E2=80=98test_mmap_thp=E2=80=99:
+  prctl_thp_disable.c:64:39: error: =E2=80=98MADV_COLLAPSE=E2=80=99 undecla=
+red (first use in this function); did you mean =E2=80=98MADV_COLD=E2=80=99?
+     64 |                 madvise(mem, pmdsize, MADV_COLLAPSE);
+        |                                       ^~~~~~~~~~~~~
+        |                                       MADV_COLD
+
+since the headers_install copy of asm-generic/mman-common.h doesn't
+appear to being picked up with the above build invocation (most others
+are fine).  I'm not clear why, it looks like an appropriate -isystem
+ends up getting passed to the compiler:
+
+  aarch64-linux-gnu-gcc -Wall -O2 -I /linux/tools/testing/selftests/../../.=
+=2E  -isystem /tmp/kci/linux/build/usr/include -isystem /linux/tools/testin=
+g/selftests/../../../tools/include/uapi -U_FORTIFY_SOURCE -D_GNU_SOURCE=3D =
+    prctl_thp_disable.c vm_util.c thp_settings.c -lrt -lpthread -lm -o /tmp=
+/kci/linux/build/kselftest/mm/prctl_thp_disable
+
+but the header there is getting ignored AFAICT.  Probably the problem is
+fairly obvious and I'm just being slow - I'm not quite 100% at the
+minute.
+
+Thanks to Aishwarya for confirming which patch triggered the issue.
+
+--wfr62XQcW9Sye/W3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmi7IVgACgkQJNaLcl1U
+h9BkKAf+JqqrHvX7cSXvElB+KK5JJPomvr2GjT43I3RCnUxuhhf+HNozf1vZSVsh
+8ouaFjM+bdFsoFZGH+lHQrwf1jASur/DGPQf77HWkWGyXoT9DU0TC4/aFBydTyHD
+HOhxlD64/GHWMcf4EiYbqAQUVwWItGmpA7A02pWTHKMqP2mRlNfAIBnuGYhX+yng
+T5icV/TPDU+vgWkkGTq5gNCWwwsD6aoxTE5mXDPkiGvQwJ5APXoYiAei4h7bj3Ob
+aWBr719s4YylshIwSt4XX7WP6FYex3GtCSrOGUCFoV9JA18UBWbWKb/Kemgb/drt
+Um6GBJNcKG8OSXdAFAeidRIrg5wqGg==
+=7I+y
+-----END PGP SIGNATURE-----
+
+--wfr62XQcW9Sye/W3--
 
