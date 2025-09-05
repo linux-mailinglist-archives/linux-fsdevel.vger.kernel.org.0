@@ -1,125 +1,205 @@
-Return-Path: <linux-fsdevel+bounces-60328-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60329-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBA27B44B68
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 04:00:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D07FEB44BA8
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 04:37:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E18E7AA120
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 01:58:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D95B7A6D01
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 02:35:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D456020C477;
-	Fri,  5 Sep 2025 01:59:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0EA522172D;
+	Fri,  5 Sep 2025 02:37:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b="hIfrmYVU"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="t3OeD4nS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 577D51AA7A6;
-	Fri,  5 Sep 2025 01:59:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37AE81E3DE5;
+	Fri,  5 Sep 2025 02:37:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757037591; cv=none; b=UEkUi49o6VrwlbbwGxZ52HJnc84OjO+uxfsMFFE+G6Py2bNQbIqT2B3EuLhBxR/dBOdJ2xg6+oVLCwMT7beOA9ukpwwrAYxd6sFRkiUFRDpMYtrMfl1vSIq8E0maOFdjlLVQ+dUEJ08MnIrihf21A/rjtlJaD4YDWDnxv/y+7Hc=
+	t=1757039835; cv=none; b=ljjQVTQcWcF3LHUTpmXNCweRBWcL6ToF6ThUMHxPGvoQuvjgHRzl2oJqIW+PVR1pwFBID8zLflxpbMS5XdUA0QgNVXT1+1EO7gxRlbQIAj5absMGm8AOo2/Yr1NtH6eWEZJJRhlCeKSt1MWMzKH0sNWVabFezO+D6sTXdSUAxYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757037591; c=relaxed/simple;
-	bh=gA4Mh35DL16tO9ykLk/jxV4bapjsLQBQgQUcaxFhOSg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BNaP89cMVeEYm/o0nTJtY+4JAUGQGjcFzPPSv42Q2ZdVYCS5Pqa3afUdYXgSEnQ/A+3x90Yac0PZISWlYh70IMEsJxiNd7BRjLFUqgAAM7bTlhgEQqDoZQVxB6FXbgkmSxt76rq1crV86AbPClIlRqcP/enrUEdAg7vDTjKeIXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b=hIfrmYVU; arc=none smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5851e2AR4127040;
-	Thu, 4 Sep 2025 18:59:28 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
-	 h=cc:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	PPS06212021; bh=dev7IaIeKSTxt4NEKjiqP0mEW51ewSs8JZD7A60ZlJo=; b=
-	hIfrmYVUBNVckIK1GqPkUyX8eEwftqq8R1q1clFIXQKshcyFvbY74EJCNOzqWaRU
-	NJjMBZDZEpPvxZtRcg2ptK9Uy5u/7ufo9XkRyZBv4f2UnOVnSS8tiEXvTnxgDMpb
-	JJe0c6IOA6ueaZshVVTZFU+sq9eioGLfHkGAJPQy1ISFr54sDFKox0m6NIVm/GBK
-	ZrwEA4nodUUqwD5BLoq3boB4YJBp0NoXz3qWdlWJYPDMcWSD6Lytjo0Ub1609zNz
-	CmMGjhj4NulffuzT8GN4idDFTbgQQxFLjLlJjcIr3lPL2AIf0dwHknNESbDwx544
-	bX+ig0WpGATvONhUBWDLcg==
-Received: from ala-exchng01.corp.ad.wrs.com ([128.224.246.36])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 48y7sb161s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Thu, 04 Sep 2025 18:59:28 -0700 (PDT)
-Received: from ALA-EXCHNG02.corp.ad.wrs.com (10.11.224.122) by
- ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Thu, 4 Sep 2025 18:57:47 -0700
-Received: from pek-lpd-ccm6.wrs.com (10.11.232.110) by
- ALA-EXCHNG02.corp.ad.wrs.com (10.11.224.122) with Microsoft SMTP Server id
- 15.1.2507.58 via Frontend Transport; Thu, 4 Sep 2025 18:57:45 -0700
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <syzbot+b73c7d94a151e2ee1e9b@syzkaller.appspotmail.com>
-CC: <dhowells@redhat.com>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <netfs@lists.linux.dev>,
-        <pc@manguebit.org>, <syzkaller-bugs@googlegroups.com>
-Subject: [PATCH] netfs: Prevent duplicate unlocking
-Date: Fri, 5 Sep 2025 09:59:25 +0800
-Message-ID: <20250905015925.2269482-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <68b9d0eb.050a0220.192772.000c.GAE@google.com>
-References: <68b9d0eb.050a0220.192772.000c.GAE@google.com>
+	s=arc-20240116; t=1757039835; c=relaxed/simple;
+	bh=UGTXJugIRy1M4WKMCUR7w0GnUB25at2ZQABEUPH3W/A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n118pvRxLsi+nV7JHakMXJnx2ycbymgLn67P+iu/BoHS++q2FWQPLJfu/0GaK6J/JapaKwx+cnjjrh0LidqYB7pQqtdI4Xbthx1dw+U041Wc9C2QLTBuHowHMhzMrcSxjYHUNLYjGIf0lknptNkl0Zmyo07zgZQjW/5QWqGoX8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=t3OeD4nS; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1757039823; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=NGYgvY6Y3kPW16Obeyy1FYL0bUeHAOATt2HrRULbluQ=;
+	b=t3OeD4nSCawUWywtsrwsrGBqbU1xcf/2vIwEDAlDzhxuOxWGfHs7F6YGyb9Tv5LYoNis3pyeHtOz3JgxfLjSBGHEc1dwzWmFA4qEN8d12Jbu+8Oj2f0BaRNYBHs0pzeVG5xGZoBkFZd67uBt3bSC413nWU3NyGTE93/Qx7VtGsE=
+Received: from 30.221.131.209(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WnIqbYy_1757038879 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 05 Sep 2025 10:21:20 +0800
+Message-ID: <d631c71f-9d0d-405f-862d-b881767b1945@linux.alibaba.com>
+Date: Fri, 5 Sep 2025 10:21:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 13/16] iomap: add a private arg for read and readahead
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: brauner@kernel.org, miklos@szeredi.hu, hch@infradead.org,
+ djwong@kernel.org, linux-fsdevel@vger.kernel.org, kernel-team@meta.com,
+ linux-xfs@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20250829235627.4053234-1-joannelkoong@gmail.com>
+ <20250829235627.4053234-14-joannelkoong@gmail.com> <aLJZv5L6q0FH5F8a@debian>
+ <CAJnrk1af4-FG==X=4LzoBRaxL9N-hnh1i-zx89immQZMLKSzyQ@mail.gmail.com>
+ <a44fd64d-e0b1-4131-9d71-2d36151c90f4@linux.alibaba.com>
+ <CAJnrk1bBmA+VK6UK1n6DRnuLvX8UOMp-VgQGnn2rUrq0=mCyqA@mail.gmail.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <CAJnrk1bBmA+VK6UK1n6DRnuLvX8UOMp-VgQGnn2rUrq0=mCyqA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA1MDAxNiBTYWx0ZWRfX/Mag4kq53t23
- 6gOOtN8W0yahmgAai8TcXCIpi2/RxOhOLtKzbdqzxPVr6A9CKnjedf3N3uI26pWpQYf35pmA1MF
- /SpDGwkDVy7Ns9qEEJleMyuMuBWqBA6FMwTn0P3jZZrVOeleP/kd7ISoeNdB6BgZ3K/A+C2HDfM
- PwvCgU5TybPBk60Kgyndn1Q59bECGdP8ZbJvTspVzlBObGzkzB5H1fshSZK8Bj3efE9F7epJdz4
- c8hxEG63+Z6QyFKimTxeVfxU0X49xYiUSs3w4neQuZlId7gE5Eyu5lbCgwFZ5pugqFpZ8UsaeZS
- UpumyaC+W0bJe3WyofA7dsAoGg3FUmvZlVbPN5ay/DKqXKLRm4cBqXFUm36pwE=
-X-Proofpoint-GUID: 1WKAbH2NX1y1ujUTQaNOyUdaVB08zYtZ
-X-Authority-Analysis: v=2.4 cv=M5BNKzws c=1 sm=1 tr=0 ts=68ba4400 cx=c_pps
- a=AbJuCvi4Y3V6hpbCNWx0WA==:117 a=AbJuCvi4Y3V6hpbCNWx0WA==:17
- a=yJojWOMRYYMA:10 a=edf1wS77AAAA:8 a=hSkVLCK3AAAA:8 a=t7CeM3EgAAAA:8
- a=3yRTcMStzHrrPhRN-PwA:9 a=DcSpbTIhAlouE1Uv7lRv:22 a=cQPPKAXgyycSBL8etih5:22
- a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-ORIG-GUID: 1WKAbH2NX1y1ujUTQaNOyUdaVB08zYtZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-05_01,2025-09-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 suspectscore=0 phishscore=0 clxscore=1011 adultscore=0
- spamscore=0 priorityscore=1501 impostorscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2507300000 definitions=firstrun
 
-The filio lock has been released here, so there is no need to jump to
-error_folio_unlock to release it again.
 
-Reported-by: syzbot+b73c7d94a151e2ee1e9b@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=b73c7d94a151e2ee1e9b
-Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
----
- fs/netfs/buffered_write.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/netfs/buffered_write.c b/fs/netfs/buffered_write.c
-index f27ea5099a68..09394ac2c180 100644
---- a/fs/netfs/buffered_write.c
-+++ b/fs/netfs/buffered_write.c
-@@ -347,7 +347,7 @@ ssize_t netfs_perform_write(struct kiocb *iocb, struct iov_iter *iter,
- 		folio_put(folio);
- 		ret = filemap_write_and_wait_range(mapping, fpos, fpos + flen - 1);
- 		if (ret < 0)
--			goto error_folio_unlock;
-+			goto out;
- 		continue;
- 
- 	copied:
--- 
-2.43.0
+On 2025/9/5 07:29, Joanne Koong wrote:
+> On Tue, Sep 2, 2025 at 6:55 PM Gao Xiang <hsiangkao@linux.alibaba.com> wrote:
+>>
+
+...
+
+
+>>>>
+>>>>>    int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops,
+>>>>> -             const struct iomap_read_ops *read_ops)
+>>>>> +             const struct iomap_read_ops *read_ops, void *private)
+>>>>>    {
+>>>>>         struct iomap_iter iter = {
+>>>>>                 .inode          = folio->mapping->host,
+>>>>>                 .pos            = folio_pos(folio),
+>>>>>                 .len            = folio_size(folio),
+>>>>> +             .private        = private,
+>>>>>         };
+>>>>
+>>>> Will this whole work be landed for v6.18?
+>>>>
+>>>> If not, may I ask if this patch can be shifted advance in this
+>>>> patchset for applying separately (I tried but no luck).
+>>>>
+>>>> Because I also need some similar approach for EROFS iomap page
+>>>> cache sharing feature since EROFS uncompressed I/Os go through
+>>>> iomap and extra information needs a proper way to pass down to
+>>>> iomap_{begin,end} with extra pointer `.private` too.
+>>>
+>>> Hi Gao,
+>>>
+>>> I'm not sure whether this will be landed for v6.18 but I'm happy to
+>>> shift this patch to the beginning of the patchset for applying
+>>> separately.
+>>
+>> Yeah, thanks.  At least this common patch can be potentially applied
+>> easily (e.g. form a common commit id for both features if really
+>> needed) since other iomap/FUSE patches are not dependency of our new
+>> feature and shouldn't be coupled with our development branch later.
+>>
+> 
+> Hi Gao,
+> 
+> I'll be dropping this patch in v2 since all the iomap read stuff is
+> going to go through a struct ctx arg instead of through iter->private.
+> Sorry this won't help your use case, but looking forward to seeing your patches.
+
+Hi Joanne,
+
+Thanks for your reminder.  Okay, I will check your v2 to know how
+you change then.
+
+Also, one thing I really think it's helpful for our use cases is
+converting .iomap_begin() at least to pass struct iomap_iter *
+directly rather than (inode, pos, len, flags, iomap, srcmap)
+since:
+   - .iomap_{begin,end}() are introduced before iomap_iter()
+     and struct iomap_iter but those callbacks are basically
+     now passed down some fields of `struct iomap_iter` now;
+
+   - struct iomap_iter->private then can contain a per-request
+     context so that .iomap_begin() can leverage too;
+
+   - There are already too many arguments for .iomap_begin(),
+     pass down struct iomap_iter directly could avoid adding
+     another `private` argument to .iomap_begin()..
+
+Therefore, I do wonder if this change (.iomap_begin() passes
+struct iomap_iter *) is a good idea for the iomap folks, in
+addition that filesystems can specify `struct iomap_iter->private`
+as in this patch.  Since this change is necessary to make our
+page cache sharing feature efficient, I will continue working on
+this soon.
+
+
+Another thing I want to discuss (but it's less important for our
+recent features) is the whole callback hook model of iomap.
+
+Basically the current model does mean if any filesystem doesn't
+fulfill the iomap standard flow, it has to add some customized
+callback hook somewhere to modify the code flow then (or introduce
+a new special flag and move their specific logic into iomap/
+itself even other fses may not need this), but the hook way will
+cause increased indirect calls for them, currently we have
+`struct iomap_ops`, `struct iomap_writeback_ops` and
+`struct iomap_dio_ops`, if some another filesystem (when converting
+buffer I/Os for example or adding {pre,post}-processing ) have
+specified timing, it needs to add new hooks then.
+
+I do wonder if it's possible to convert iomap to get rid of the
+indirect-call model by just providing helper kAPIs instead,
+take .read_folio / .fiemap for example e.g.
+
+    xxxfs_read_folio:
+       loop iomap_iter
+         xxxfs_iomap_begin();
+	iomap_readpage_bio_advance(); [ or if a fs is non-bio
+              based, spliting more low-level helpers for them. ]
+         xxxfs_iomap_end();
+
+    xxxfs_fiemap():
+       iomap_fiemap_begin
+       loop iomap_iter
+         xxxfs_iomap_begin();
+         iomap_readpage_fiemap_advance()
+         xxxfs_iomap_end();
+       iomap_fiemap_end
+        
+So that each fs can use those helpers flexibly instead of diging
+into adding various new indirect call hooks or moving customized
+logic into iomap/ itself.
+
+I don't have a specific example  because currently we don't have
+direct issue against standard iomap flow on our uncompressed
+path, but after a quick glance of other potential users who try
+to convert their buffer I/Os to iomap, I had such impression in
+my head for a while.
+
+Thanks,
+Gao Xiang
+
+> 
+> 
+> Thanks,
+> Joanne
+> 
+>> Thanks,
+>> Gao Xiang
+>>
+>>>
+>>> Thanks,
+>>> Joanne
+>>>>
+>>>> Thanks,
+>>>> Gao Xiang
+>>
 
 
