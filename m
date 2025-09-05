@@ -1,201 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-60340-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60341-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFD26B452FB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 11:21:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10FBFB45397
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 11:42:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F0D31885E83
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 09:20:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41DB0583760
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 09:41:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AAD33054D6;
-	Fri,  5 Sep 2025 09:17:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 620E627C17F;
+	Fri,  5 Sep 2025 09:41:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k1sead0z"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HAnQsOtS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D34C2DF71F;
-	Fri,  5 Sep 2025 09:17:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BB5A279DD3
+	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Sep 2025 09:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757063865; cv=none; b=e/N8cJ9ITDu8fCKIIRZRPwyFpcUh3sY4HwXXNYK52VWo2cExmdcmOF++9J6EgKLMmO+ospt5w0sRllFlg0J8mMHopsYRqZEkAP4LH1Ai7oud2UimB6yXydd6lh5fgxkXD16+dAKqdSv2moBBkxpPvDiiJom4Ciho3EdZcZsVto4=
+	t=1757065304; cv=none; b=fWjDV6Wr2nCJXvQnBku9Yj93o8JS91YDGUvI5w0krajKNCk709CVCn3Yrb381a3Bfo3/pc1XfjnqjMwWKhLEOPaYqBUD5uYwsqw12zXFkKeQyvzlagutPzoady++DP1GKzVi1m8ia3ACCGE0VmhwN9ezDiAuZmY56JCJKRCoCLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757063865; c=relaxed/simple;
-	bh=psuRtuDnLxsx2zTSnT8LTOpiP2Bg5UgPAZ21S5KZ9ME=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=natop0uT8t+8n+2d6ioN8Fpx5V4FCGYDvKlH7NpjwiC4HoKPYSEHK1GwOZxQQW2QdUJIr3yBgg2nrlyuxCRz79kEDgsfgcvHubWzmGmtbIRR5cAillF2P/VIhAsFodpw9RXWx/JT/+25oLXGNw07dMBGvuOzvmmaKrCee2vVgzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k1sead0z; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-61ded2712f4so3320970a12.1;
-        Fri, 05 Sep 2025 02:17:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757063862; x=1757668662; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MpYKGDOGRX34/ZVwlfuxW6/l5mMjJNcLqlSvourbEHE=;
-        b=k1sead0zT/b0GZ8fjBc8Uu3TnFivZtU1/MakpyqHW1oTlgqRa6Sn3xU9+VosBa10Or
-         srsA+FYlAdf+OERgv08vaKspmRS6HCi5TGXclO5FJ6b+sLnK62but7/FGoeP0AZ981aC
-         pyDreHX6SujwxEF8JQwF56JKTjvDNED1kvJ0a1L/pJhFHz4MiG6fYYWAfntzbTP4Itvt
-         BbXwbTbXmVyfd2YgNR6lJv50PeJ7PBLrK5F3DP9HZNoJ0jQ2Ay9+HpFT+mj95dDxXzg5
-         LCcmNoMUykRGy0wKVxDWefORZcZ2mIF/u80xP+LzlRe/RP80M3oEQ+4qu712YdttmoV7
-         p4Jw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757063862; x=1757668662;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MpYKGDOGRX34/ZVwlfuxW6/l5mMjJNcLqlSvourbEHE=;
-        b=bSGowSPny4eY+9LnmUWHupnye4o5CW271YUz/x3qVgXSGPmloljzBncMH7dd4rjoQw
-         /0x5zkhxa/GIQ0Kp/xDkdFDqGKQxc0VMkyfnjTFP9zaCJ1P4ewC8SAA54HOrO+uUU5JJ
-         D/ulKzsaAJA52W91lvzTaw9LUHt+x9rso3hUKjU72Q8vbz4oe1vOu2F6YvhtURzNxHHI
-         n9aOCMCs1ttHeNh8PWI8A7FtdHqekJlHTTorPS/4ayz/95LnDsevxPpmXvgCtd6JvmDa
-         Olnhf/w+NuOf9UmGkBX6gjmziPmmTj3yWiHOr2M/uW7SZezfNyn5yh2zTXQiZxaPsQ9D
-         AAxg==
-X-Forwarded-Encrypted: i=1; AJvYcCV7Ynam5NFGSqh4div0hlPWVCaG4LKDF6QSNSXjESsjxyOghQ5FYpxQ35kzs5Xr0umNqjkf+HzH4QA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywzl1n3KUYGeVSXDbB8M31yDwjdwf8k6D5W++XmqhE3AYNaPxzm
-	sKGpSEdfhD+sx90eII4PwCsoB8DRYoM7UPXzKn77R/CF0yv0f+FKO2PX+YYF8ygNewcLB2XlxOP
-	9y+9WHQSChdb0wzo+IOTIrRnyoAZrh3k=
-X-Gm-Gg: ASbGncunjdYanGyZXnC405Op1nGlx4AnzfGfopyFgmU90jnaOM3/3eNvqT8oLqcVCK5
-	ZdooonE0KzOG76+SxfnRL+yTggYfB4yds90ptbtvyG0lB1fp3qokAY1Xjifeo6YwI3YSwI9R+Ss
-	TJnQpb44Z9T7ZgOFLdp+t+uN3ckHE2g6jCA5COAD7Z02sfDkZAgoWe7Td7kEFu5ARvNa3FT4f53
-	JgfkgQ=
-X-Google-Smtp-Source: AGHT+IES5bHXVwwaG+UT3PZF9koe60lkGexHaaugyBfBkOCbmGhuG2IpfWaupdbGphiJ7C5ES7/SXREbKVdmWgFyNyY=
-X-Received: by 2002:a05:6402:2693:b0:61c:9cd7:e5b3 with SMTP id
- 4fb4d7f45d1cf-61d26d8059bmr18837198a12.28.1757063862016; Fri, 05 Sep 2025
- 02:17:42 -0700 (PDT)
+	s=arc-20240116; t=1757065304; c=relaxed/simple;
+	bh=xK0X5ybXdU7CZSUGGi0MOJLoE7ekQvmtxtU/O/I8VeE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=uDkYhTxLxRz39jJMQjEJO8xdZlI3svgWKHO0gHdFLdOK6z576+HGTEEHUayuabjtloWDaLdKSsof3LiWDYOG0FRDZRFSEDO4mJYblhnERpygwRnZ2veUWkvpSczl7l4Bfyo3FYX56Cx2jCUMFsVf9XdJjyTcQbxMstO2u3OiKFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HAnQsOtS; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757065301;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AhBFGiEZQECiCXPQgfE0yM1j7Y3xE+crwyDfNzUa1yA=;
+	b=HAnQsOtSehxjfbFLHgfLjZ5c4lJfHhzk9j2jNttg6A3MwyDPoBQ0kGKsU9URPjf9gq0gr+
+	5vNRENy2DaAdx6AfHgstKe4gA4p+m8meP3AZn8uRvd+PJ4wZlXCgT7ioz/LyzovWFVw1dx
+	N4FFleCSYZwDCyl6wuBbfgc4rrvtn+8=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-240-BiEXApicPY29oj70ntVMgQ-1; Fri,
+ 05 Sep 2025 05:41:38 -0400
+X-MC-Unique: BiEXApicPY29oj70ntVMgQ-1
+X-Mimecast-MFC-AGG-ID: BiEXApicPY29oj70ntVMgQ_1757065297
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7EC83180034F;
+	Fri,  5 Sep 2025 09:41:36 +0000 (UTC)
+Received: from fweimer-oldenburg.csb.redhat.com (unknown [10.45.224.104])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9D09419540EB;
+	Fri,  5 Sep 2025 09:41:30 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Aleksa Sarai <cyphar@cyphar.com>,  linux-fsdevel@vger.kernel.org,
+  patches@lists.linux.dev,  Jeff Layton <jlayton@kernel.org>,  Chuck Lever
+ <chuck.lever@oracle.com>,  Alexander Aring <alex.aring@gmail.com>,  Josef
+ Bacik <josef@toxicpanda.com>,  Jan Kara <jack@suse.cz>,  Christian Brauner
+ <brauner@kernel.org>,  Matthew Wilcox <willy@infradead.org>,  David
+ Howells <dhowells@redhat.com>,  linux-api@vger.kernel.org,  Kees Cook
+ <kees@kernel.org>,  Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH v3] uapi/linux/fcntl: remove AT_RENAME* macros
+In-Reply-To: <CAOQ4uxjcLDUcfdp72cpQcDQEtZaaR4G+P8oPXL_HbotFirGrKQ@mail.gmail.com>
+	(Amir Goldstein's message of "Fri, 5 Sep 2025 11:17:30 +0200")
+References: <20250904062215.2362311-1-rdunlap@infradead.org>
+	<CAOQ4uxiJibbq_MX3HkNaFb3GXGsZ0nNehk+MNODxXxy_khSwEQ@mail.gmail.com>
+	<2025-09-05-armless-uneaten-venture-denizen-HnoIhR@cyphar.com>
+	<CAOQ4uxjcLDUcfdp72cpQcDQEtZaaR4G+P8oPXL_HbotFirGrKQ@mail.gmail.com>
+Date: Fri, 05 Sep 2025 11:41:27 +0200
+Message-ID: <lhutt1htewo.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250904062215.2362311-1-rdunlap@infradead.org>
- <CAOQ4uxiJibbq_MX3HkNaFb3GXGsZ0nNehk+MNODxXxy_khSwEQ@mail.gmail.com> <2025-09-05-armless-uneaten-venture-denizen-HnoIhR@cyphar.com>
-In-Reply-To: <2025-09-05-armless-uneaten-venture-denizen-HnoIhR@cyphar.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 5 Sep 2025 11:17:30 +0200
-X-Gm-Features: Ac12FXxQK5szfMOAenSrWFNpnXBYxkFiCvA4oKLkvz9HD9t1tvSGVoQuegPVJgU
-Message-ID: <CAOQ4uxjcLDUcfdp72cpQcDQEtZaaR4G+P8oPXL_HbotFirGrKQ@mail.gmail.com>
-Subject: Re: [PATCH v3] uapi/linux/fcntl: remove AT_RENAME* macros
-To: Aleksa Sarai <cyphar@cyphar.com>, Florian Weimer <fweimer@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, patches@lists.linux.dev, 
-	Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
-	Alexander Aring <alex.aring@gmail.com>, Josef Bacik <josef@toxicpanda.com>, Jan Kara <jack@suse.cz>, 
-	Christian Brauner <brauner@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
-	David Howells <dhowells@redhat.com>, linux-api@vger.kernel.org, 
-	Kees Cook <kees@kernel.org>, Randy Dunlap <rdunlap@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Fri, Sep 5, 2025 at 7:11=E2=80=AFAM Aleksa Sarai <cyphar@cyphar.com> wro=
-te:
+* Amir Goldstein:
+
+>> If it's too much effort to synchronise them between glibc then it's
+>> better to just close the book on this whole chapter (even though my
+>> impression is that glibc made a mistake or two when adding the
+>> definitions).
 >
-> On 2025-09-04, Amir Goldstein <amir73il@gmail.com> wrote:
-> > On Thu, Sep 4, 2025 at 8:22=E2=80=AFAM Randy Dunlap <rdunlap@infradead.=
-org> wrote:
-> > >
-> > > Don't define the AT_RENAME_* macros at all since the kernel does not
-> > > use them nor does the kernel need to provide them for userspace.
-> > > Leave them as comments in <uapi/linux/fcntl.h> only as an example.
-> > >
-> > > The AT_RENAME_* macros have recently been added to glibc's <stdio.h>.
-> > > For a kernel allmodconfig build, this made the macros be defined
-> > > differently in 2 places (same values but different macro text),
-> > > causing build errors/warnings (duplicate definitions) in both
-> > > samples/watch_queue/watch_test.c and samples/vfs/test-statx.c.
-> > > (<linux/fcntl.h> is included indirecty in both programs above.)
-> > >
-> > > Fixes: b4fef22c2fb9 ("uapi: explain how per-syscall AT_* flags should=
- be allocated")
-> > > Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> > > ---
-> > > Cc: Amir Goldstein <amir73il@gmail.com>
-> > > Cc: Jeff Layton <jlayton@kernel.org>
-> > > Cc: Chuck Lever <chuck.lever@oracle.com>
-> > > Cc: Alexander Aring <alex.aring@gmail.com>
-> > > Cc: Josef Bacik <josef@toxicpanda.com>
-> > > Cc: Aleksa Sarai <cyphar@cyphar.com>
-> > > Cc: Jan Kara <jack@suse.cz>
-> > > Cc: Christian Brauner <brauner@kernel.org>
-> > > Cc: Matthew Wilcox <willy@infradead.org>
-> > > Cc: David Howells <dhowells@redhat.com>
-> > > CC: linux-api@vger.kernel.org
-> > > To: linux-fsdevel@vger.kernel.org
-> > > ---
-> > >  include/uapi/linux/fcntl.h |    6 ++++++
-> > >  1 file changed, 6 insertions(+)
-> > >
-> > > --- linux-next-20250819.orig/include/uapi/linux/fcntl.h
-> > > +++ linux-next-20250819/include/uapi/linux/fcntl.h
-> > > @@ -155,10 +155,16 @@
-> > >   * as possible, so we can use them for generic bits in the future if=
- necessary.
-> > >   */
-> > >
-> > > +/*
-> > > + * Note: This is an example of how the AT_RENAME_* flags could be de=
-fined,
-> > > + * but the kernel has no need to define them, so leave them as comme=
-nts.
-> > > + */
-> > >  /* Flags for renameat2(2) (must match legacy RENAME_* flags). */
-> > > +/*
-> > >  #define AT_RENAME_NOREPLACE    0x0001
-> > >  #define AT_RENAME_EXCHANGE     0x0002
-> > >  #define AT_RENAME_WHITEOUT     0x0004
-> > > +*/
-> > >
-> >
-> > I find this end result a bit odd, but I don't want to suggest another v=
-ariant
-> > I already proposed one in v2 review [1] that maybe you did not like.
-> > It's fine.
-> > I'll let Aleksa and Christian chime in to decide on if and how they wan=
-t this
-> > comment to look or if we should just delete these definitions and be do=
-ne with
-> > this episode.
+> Considering that glibc has this fix lined up:
+> https://inbox.sourceware.org/libc-alpha/lhubjnpv03o.fsf@oldenburg.str.redhat.com/
 >
-> For my part, I'm fine with these becoming comments or even removing them
-> outright. I think that defining them as AT_* flags would've been useful
-> examples of how these flags should be used, but it is what it is.
+> Do we need to do anything at all?
 >
-> Then again, AT_EXECVE_CHECK went in and used a higher-level bit despite
-> the comments describing that this was unfavourable and what should be
-> done instead, so maybe attempting to avoid conflicts is an exercise in
-> futility...
-
-That's a bummer :-/
-but to be fair, AT_EXECVE_CHECK was merged after v23, so I guess
-the patch set started way before this comment and got rebased
-after the comment was added, so it was easier to miss it.
-
+> Florian,
 >
-> If it's too much effort to synchronise them between glibc then it's
-> better to just close the book on this whole chapter (even though my
-> impression is that glibc made a mistake or two when adding the
-> definitions).
+> I am not that familiar with packaging and distributions of glibc
+> headers and kernel headers to downstream users.
 
-Considering that glibc has this fix lined up:
-https://inbox.sourceware.org/libc-alpha/lhubjnpv03o.fsf@oldenburg.str.redha=
-t.com/
-
-Do we need to do anything at all?
-
-Florian,
-
-I am not that familiar with packaging and distributions of glibc
-headers and kernel headers to downstream users.
-
-What are the chances that us removing these definitions from the
-current kernel header is going to help any downstream user in the future?
+I don't think kernel changes are necessary or desirable at this point.
+The glibc change went into glibc 2.42 only, and at this point in time,
+all distributions shipping 2.42 (few of them do) are pretty much
+guaranteed to pick up fixes from the 2.42 stable release branch
+regularly.  So if we get this into glibc 2.43 and backport it to 2.42,
+the problem should disappear quite soon from a developer's perspective.
 
 Thanks,
-Amir.
+Florian
+
 
