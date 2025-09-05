@@ -1,189 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-60330-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60331-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB8C0B44D0C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 07:11:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 63328B44E8D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 09:02:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02A9A1BC7E22
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 05:12:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3062518920C1
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 07:02:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76A1A255E40;
-	Fri,  5 Sep 2025 05:11:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96485202961;
+	Fri,  5 Sep 2025 07:02:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="wmtocSjH"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="Fgg9mwvt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B88229B02;
-	Fri,  5 Sep 2025 05:11:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC9532F76C
+	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Sep 2025 07:02:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757049101; cv=none; b=QYm4uGI117YCuBI8buZp+WYitCaJ0ZSyQwWB6IbSG8TLEG2vcd+YkR8S8FTLA29mNv8lW4cuLDNOI2XpCy5gppZ8ROTQ2MD6vl0DDyJSYznXfxyM43tKC568qMmwvXbPkTvEVs2TWmV/GkmvDaRL8F85cVddcEgft8+uEcI6crc=
+	t=1757055740; cv=none; b=mB1dJ2kyekqhkUc4iSaQ1Uonp2fC2lzoFoGXoSx9WbXNhiHumCpCg08p/eOVxBitL66vMtg5rFSSPzgK28PTcfpWvua3j4jaPAWvC2DxcLGOe7vQ/3u0w+lCG5eHpeYfzBRHc8Z0yi8Pp79zRT8VS8XUaU1o/dSxnubjZgGIRYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757049101; c=relaxed/simple;
-	bh=MfMe3Ux66lPxL42rUu5NhgoeUgh/nZCEWUq9lD51RJk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jHpIjPaPjm48RkxsrBys/GJ5C4XfM8sPUq6zQCcXxSoM+Lu/HpG5q8u9ITYX4Zfmv4eTl/KXWqW7rr1BMdBZ09o7F1mllbj0Zjd+jbMCQFJd7pzRnD1oddXpDvEg1LqfwSAhCc4MuwuWGSdu5FvLgJRMDl2vCKMPMT/dYV6WuM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=wmtocSjH; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4cJ4FY4RHFz9sqq;
-	Fri,  5 Sep 2025 07:11:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1757049089;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XGAcrOOH0CnQ5I6y/BvJDOYZrnadTkoW7iPOFIVb7kA=;
-	b=wmtocSjHAx2Xl2pOupR3Agi5dW3D4kNySdIxzyGfCCsxzmKMlSVTLU8R6B4ALA9mvamsel
-	WGj0PB1COf7IyWz1DPcjas0crrrbmxqbhtqwbhxCkjFJLtuEU9p70wefU6ggeWMMLZzNbG
-	J8oHYwB0lpaplEQl5/FMBkjnq9HDGhSgc/7ZM/Yg5l6AQ/ycLkf0Ro1QSFQseLdXFwgaKB
-	obL4CRBE/8y9or76pzRQCswrdjW9ihymrT7SoxWlBaoYhgHqNCH6UIVxnHtzi5e8IlhuxJ
-	nCuAvwx/NBRRiW8F/0ZYDnnftaRHkAQsT3zAcETHDmnjmSqAtcg/j+G2GBLnfA==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
-Date: Fri, 5 Sep 2025 15:11:15 +1000
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>, linux-fsdevel@vger.kernel.org, 
-	patches@lists.linux.dev, Jeff Layton <jlayton@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, Alexander Aring <alex.aring@gmail.com>, 
-	Josef Bacik <josef@toxicpanda.com>, Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>, 
-	Matthew Wilcox <willy@infradead.org>, David Howells <dhowells@redhat.com>, linux-api@vger.kernel.org
-Subject: Re: [PATCH v3] uapi/linux/fcntl: remove AT_RENAME* macros
-Message-ID: <2025-09-05-armless-uneaten-venture-denizen-HnoIhR@cyphar.com>
-References: <20250904062215.2362311-1-rdunlap@infradead.org>
- <CAOQ4uxiJibbq_MX3HkNaFb3GXGsZ0nNehk+MNODxXxy_khSwEQ@mail.gmail.com>
+	s=arc-20240116; t=1757055740; c=relaxed/simple;
+	bh=5bMq2mvJbw4I6jW/yXMG6FU70uaIUcEuG2d718VNuTI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u9l9XGSWvPP8PRwiSKOij0DhPCSEOigQ1I4ZTFbMr4oQZOJpz1DPyVXBW5pV9mT/tx6wt0N+DxZ7vc6fubeulBFvs9NhHHYQrRXQZJVzj7uLRHLarBOcbC6/AgPtLotEzDFrvugmcadSFiRsvq4MAUyYiOtj0anUM2Mj24OETs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=Fgg9mwvt; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4b109c6b9fcso15567451cf.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Sep 2025 00:02:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1757055737; x=1757660537; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=CbUCF83GVvjOC3eVo/KP6tFEeF50f+8z0W1B1r3la+s=;
+        b=Fgg9mwvt0/sb2O60VL4FnAwd//JVWqb2a+dLZaLYQRuW6ttlUptfSMD8T14qPS146j
+         TdoMZuthAiMoN/TkU24bpgiL0LsYvAUbW0OU4e8bY85hM88G2O5Riqokr7TX39cNQQid
+         fWV5ixR8OGAYTmZWtNQzsBFjEXB384hue4Y1s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757055737; x=1757660537;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CbUCF83GVvjOC3eVo/KP6tFEeF50f+8z0W1B1r3la+s=;
+        b=SsCA78KPUVtYx15Zo9dks+Rbk8Q6unIynq8B6pVYCIdPNw3adL6qRzQ8eAWEGusbgO
+         TFgQmLzmYXsebu0yeYFON8tTd/hkWvWXvEUfdDDLoeQYLeQk36eZfFBeXgudp9PtDsFx
+         9DKOr/gdr25gkrect2HPCgB5btnfnQUdRZeoO2d1LHrcHls7Ca7NwXNn512FvkCQSlVe
+         FhQe7fFOF1v7tyDajYFTO93/7+hMYu15DQLTMEg1QpFdjdEZIrvPlDXDMAX4XRBzfryz
+         f+X9Ul4mOO3KtHRIhGcUF7Piy9Q7NLA//r1U2v4shsQnUREinAbdSGsgchqi53/7YB1j
+         McIA==
+X-Forwarded-Encrypted: i=1; AJvYcCV18d+VCGmvH8p1HAUd+GghzCG+2oHST8BKtAK8cHqP0TZi0tvWweVK7OsK5OotoMTEiyIXkDRQjRYlAjew@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJZk0ayPo7Wa/tBnPSuDdJUwjjdG7EDpKxZwr85GBQzsFdKj6/
+	6ORuLzlkQbP6uQVXM8ynVGvvKjKCeLQ5J9GqPJD6vmU4GtnUjcfXZIEVhTxw6JhtH0AfKjH9cpF
+	gxVakIuJrMsYGTGxG/79Y2wTEqFfyQxgSSvpASikmrg==
+X-Gm-Gg: ASbGncvsYD8F6SdLkskk+Hl6UDIA8dNRrGWPCSTPBx/ugBuK42Q59mFcUzVPnF6fpt3
+	ihaPWfnPdzXmv/HWWH8wL6Sh6sDCN1t8E2lwdbhPBWzzEvmtoAH60NPXxQPAyneTmhBF86s9U77
+	TjU9bS7bLzuTtxNBdTDubiK0caxDj4XY7zoB6AV9mKbD+x31YWWBle9GH0F7/ZKam5J7R+uTc/s
+	WSHRgqi3OPYfNuODAbkpUPbb/VrGqYDn3MuKX8arPpcZ9L+gd3w
+X-Google-Smtp-Source: AGHT+IEaD1f+f01g0dYxBn3YUSLh+qnW/vy/BrNr9EXtLuKyGdztl7IJykIIeEyEfuSyRGW41c2+XMgXW1a+4izDKpQ=
+X-Received: by 2002:a05:622a:540f:b0:4b5:f01b:d997 with SMTP id
+ d75a77b69052e-4b5f01bea13mr2805631cf.71.1757055736818; Fri, 05 Sep 2025
+ 00:02:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="yvusjolxsif6sgdv"
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxiJibbq_MX3HkNaFb3GXGsZ0nNehk+MNODxXxy_khSwEQ@mail.gmail.com>
-X-Rspamd-Queue-Id: 4cJ4FY4RHFz9sqq
+References: <175573708506.15537.385109193523731230.stgit@frogsfrogsfrogs>
+ <175573708630.15537.1057407663556817922.stgit@frogsfrogsfrogs>
+ <CAJfpegsp=6A7jMxSpQce6Xx72POGddWqtJFTWauM53u7_125vQ@mail.gmail.com>
+ <20250829153938.GA8088@frogsfrogsfrogs> <CAJfpegs=2==Tx3kcFHoD-0Y98tm6USdX_NTNpmoCpAJSMZvDtw@mail.gmail.com>
+ <20250902205736.GB1587915@frogsfrogsfrogs> <CAJfpegskHg7ewo6p0Bn=3Otsm7zXcyRu=0drBdqWzMG+hegbSQ@mail.gmail.com>
+ <20250903154955.GD1587915@frogsfrogsfrogs> <CAJfpegu6Ec=nFPPD8nFXHPF+b1DxvWVEFnKHNHgmeJeo9xX7Nw@mail.gmail.com>
+ <20250905012854.GA1587915@frogsfrogsfrogs>
+In-Reply-To: <20250905012854.GA1587915@frogsfrogsfrogs>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Fri, 5 Sep 2025 09:02:05 +0200
+X-Gm-Features: Ac12FXyqplgv8V5tnx2HyVXAEjQ-d2wFt5_p0DHwVA0fzrDK9knsr8Nuk2At2uo
+Message-ID: <CAJfpegubFsCjWJyJhv_9HE_9_htL3Z7-r_AMFszxA-982dC-Jw@mail.gmail.com>
+Subject: Re: [PATCH 4/7] fuse: implement file attributes mask for statx
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: bernd@bsbernd.com, neal@gompa.dev, John@groves.net, 
+	linux-fsdevel@vger.kernel.org, joannelkoong@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-
---yvusjolxsif6sgdv
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3] uapi/linux/fcntl: remove AT_RENAME* macros
-MIME-Version: 1.0
-
-On 2025-09-04, Amir Goldstein <amir73il@gmail.com> wrote:
-> On Thu, Sep 4, 2025 at 8:22=E2=80=AFAM Randy Dunlap <rdunlap@infradead.or=
-g> wrote:
+On Fri, 5 Sept 2025 at 03:28, Darrick J. Wong <djwong@kernel.org> wrote:
+>
+> On Thu, Sep 04, 2025 at 01:26:36PM +0200, Miklos Szeredi wrote:
+> > On Wed, 3 Sept 2025 at 17:49, Darrick J. Wong <djwong@kernel.org> wrote:
+> > >
+> > > On Wed, Sep 03, 2025 at 11:55:25AM +0200, Miklos Szeredi wrote:
 > >
-> > Don't define the AT_RENAME_* macros at all since the kernel does not
-> > use them nor does the kernel need to provide them for userspace.
-> > Leave them as comments in <uapi/linux/fcntl.h> only as an example.
+> > > > Agree?
+> > >
+> > > I think we do, except maybe the difficult first point. :)
 > >
-> > The AT_RENAME_* macros have recently been added to glibc's <stdio.h>.
-> > For a kernel allmodconfig build, this made the macros be defined
-> > differently in 2 places (same values but different macro text),
-> > causing build errors/warnings (duplicate definitions) in both
-> > samples/watch_queue/watch_test.c and samples/vfs/test-statx.c.
-> > (<linux/fcntl.h> is included indirecty in both programs above.)
-> >
-> > Fixes: b4fef22c2fb9 ("uapi: explain how per-syscall AT_* flags should b=
-e allocated")
-> > Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> > ---
-> > Cc: Amir Goldstein <amir73il@gmail.com>
-> > Cc: Jeff Layton <jlayton@kernel.org>
-> > Cc: Chuck Lever <chuck.lever@oracle.com>
-> > Cc: Alexander Aring <alex.aring@gmail.com>
-> > Cc: Josef Bacik <josef@toxicpanda.com>
-> > Cc: Aleksa Sarai <cyphar@cyphar.com>
-> > Cc: Jan Kara <jack@suse.cz>
-> > Cc: Christian Brauner <brauner@kernel.org>
-> > Cc: Matthew Wilcox <willy@infradead.org>
-> > Cc: David Howells <dhowells@redhat.com>
-> > CC: linux-api@vger.kernel.org
-> > To: linux-fsdevel@vger.kernel.org
-> > ---
-> >  include/uapi/linux/fcntl.h |    6 ++++++
-> >  1 file changed, 6 insertions(+)
-> >
-> > --- linux-next-20250819.orig/include/uapi/linux/fcntl.h
-> > +++ linux-next-20250819/include/uapi/linux/fcntl.h
-> > @@ -155,10 +155,16 @@
-> >   * as possible, so we can use them for generic bits in the future if n=
-ecessary.
-> >   */
-> >
-> > +/*
-> > + * Note: This is an example of how the AT_RENAME_* flags could be defi=
-ned,
-> > + * but the kernel has no need to define them, so leave them as comment=
-s.
-> > + */
-> >  /* Flags for renameat2(2) (must match legacy RENAME_* flags). */
-> > +/*
-> >  #define AT_RENAME_NOREPLACE    0x0001
-> >  #define AT_RENAME_EXCHANGE     0x0002
-> >  #define AT_RENAME_WHITEOUT     0x0004
-> > +*/
-> >
->=20
-> I find this end result a bit odd, but I don't want to suggest another var=
-iant
-> I already proposed one in v2 review [1] that maybe you did not like.
-> It's fine.
-> I'll let Aleksa and Christian chime in to decide on if and how they want =
-this
-> comment to look or if we should just delete these definitions and be done=
- with
-> this episode.
+> > Let's then defer the LOOKUPX thing ;)   I'm fine with adding IMMUTABLE
+> > and APPEND to fuse_attr::flags.
+>
+> OK.  Should I hide that behind the fuse mount having iomap turned on?
+> Or fc->is_local_fs == true?  Or let any server set those bits?
+>
+> One thing occurred to me -- for a plain old fuse server that is the
+> client for some network filesystem, the other end might have its own
+> immutable/append bits, in which case we actually *do* want to let those
+> bits through from the FUSE_STATX replies.
 
-For my part, I'm fine with these becoming comments or even removing them
-outright. I think that defining them as AT_* flags would've been useful
-examples of how these flags should be used, but it is what it is.
+Right, as I said this might have worked without VFS help, but having
+it consistently in the VFS as well would be nicer.
 
-Then again, AT_EXECVE_CHECK went in and used a higher-level bit despite
-the comments describing that this was unfavourable and what should be
-done instead, so maybe attempting to avoid conflicts is an exercise in
-futility...
+In that spirit, putting those bits in the inode is safe only in the
+local fs case, so I guess that's what we should do.  And for
+consistency, in the local fs case inode->flags should be the
+authoritative source and all the userspace API's should be looking at
+that, instead of what the server sent in the IOCTL or STATX replies.
 
-If it's too much effort to synchronise them between glibc then it's
-better to just close the book on this whole chapter (even though my
-impression is that glibc made a mistake or two when adding the
-definitions).
-
-In either case, feel free to take my
-
-Acked-by: Aleksa Sarai <cyphar@cyphar.com>
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-https://www.cyphar.com/
-
---yvusjolxsif6sgdv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaLpw8xsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG9NbwEA02CLCYrxglSSoPJK2a37
-x4+43VSdH39lraFtf9jLTHEBAOVpoiIDX/SFZMEO7PSYUHZKFl/IG/zm/xWeNSYo
-Zr4L
-=ht91
------END PGP SIGNATURE-----
-
---yvusjolxsif6sgdv--
+Thanks,
+Miklos
 
