@@ -1,76 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-60374-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60375-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CE65B46415
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 22:01:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 06CD3B46418
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 22:02:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD3A93A63FE
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 20:01:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B03FB3BE501
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 20:02:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4C027B50F;
-	Fri,  5 Sep 2025 20:01:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7FCA2882CC;
+	Fri,  5 Sep 2025 20:01:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="3F3aTWeV"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="Qy+OWVIK"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0EB1BA42
-	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Sep 2025 20:01:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21F3C26FD84
+	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Sep 2025 20:01:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757102509; cv=none; b=X2mKVL2eqwwJCS9ffW44GyFK3wHeQQe2yn5atIxUnhr4QKDYdpiME32g+HIUAYovlGy9krrMCkF/mADpAV8mxzQ//yHGhEFO+j8tX+63AAGvptHDB1DcwlAtDtt66+4nkhVwZmeGiNnadwCLG2/WFb/7J53zCi5Ucw9JG9a7l4M=
+	t=1757102511; cv=none; b=h+zMt68lSgHnGPSMiI9P7C+ZbZuCF8/MqVgrhCbrA3cHABus3fheDAzEScL+Xr6MzX+CrDb304Esf/eLNUcoN/Gmndfdrk8+Tys56ICVyugJesz128mVQMtt2iTF3tOqq9lKVuecEygNF3EupeRkI/oLewlE2nPnuGA1np8/aWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757102509; c=relaxed/simple;
-	bh=CIt2rudRtW4UBrSZeLFjRUpcL/34sCPSMHO4G+HzerI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=izf/+snUM+2/v90bYIMw0vcCLXONk6Fuo8MwsK1TvcmEu+H8vQ3FHfyASaJ9SvWAjxeXa85f9BkKdoSslth1gLJVki7Kp5PwnoP/NedGUlM5cyNHIEbz0aWoUHDvciAz5sHVIGSR1Jy2sqcQL1dIY6K6PUb/4JW5M2aE27+H1Zw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=3F3aTWeV; arc=none smtp.client-ip=209.85.128.175
+	s=arc-20240116; t=1757102511; c=relaxed/simple;
+	bh=LE0hjn75pwkoSLK/gXcBFPygWlgP0KS6nDIZFrN26ZM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=cHMd1sF+DoxEFD5OWfUA+PYW7LdGDS/hyYJwkbyBcxmRo1E9DzcGOtC8yUXuU6YUUfR7cZuzIE0Iyd36xmXZz/vRwSlxazXINV4quPXFLGfdXMnA0L+p2IYS8B6uqTVCoahoU3FV7s9OkynLyqlsfRMrkTnYmrwC4lEzUd31nFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=Qy+OWVIK; arc=none smtp.client-ip=209.85.128.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-71d6059f490so25598597b3.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Sep 2025 13:01:46 -0700 (PDT)
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-71d603b60cbso24257177b3.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Sep 2025 13:01:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1757102505; x=1757707305; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jOy/Lx1hali3hqni7ugXsZX+qSqE1qh4LpVXkqYzo1w=;
-        b=3F3aTWeVRG9DQesHQ95dW/ZLjipg1N52Qoxfgnc8uk1S3x8ne6qRrPGapWfCDB2Mpe
-         /ckbbbTu1EJTh32mawJFf/zEVAr4UwxQMJ2mm9L+a+ZE7HQ3nmt0DyaonpDrqcgUIa0C
-         bN6NtVTj4GyDa5g4IqMQedCS/P2NsAJlh2e5DkaQq0OPXeG5NiqKaUP0pocUCasvSqQY
-         umwwgltqis3VwpLY0X+pWaQnr/rxJuYho81CeAV2nsuv+hhL0qlbIdXp8TN33KKYV6wc
-         b5STtHAH0ep6mymockMqm0Ezcf8jp2gN0g00ATux1X/889KvmyQ8DJfQFVGcH5nyDPPn
-         fqRw==
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1757102508; x=1757707308; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PmhDgPf9hf8qVBXfA+JdBAxZi0irYx7iP9xEt0yP5wg=;
+        b=Qy+OWVIKk+ZDCwaTfsit2kpc7pqV7Sio/iqIHAlOdV1ZBOpKDTfM5CPkDOfpIz/XwM
+         WguCMf+atfpVIQ04UDPoY4kLCkMceKlmX1YB/jnj2RGU1ShzJFFcwI5yMDYj2Iapsf/5
+         h7yoaMyjFRjAV/zsGGyMX/bJ7L8MU8kpYKB7Lw0rl1vC4EjRIj9FRsCw3bUixwEK0qKx
+         7zSmQsHP44v8lXNs64GEcLKviLWCb8HlyxLaV1nFH40lATI9TYaclUByWGuTpXIH/BDc
+         Avb4FifcUnUqTQYdpKrQmKbLFvsqdTQEQAlUahl5s0Okqp8bxAl8at0NSmbxkc1VqrKx
+         fflg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757102505; x=1757707305;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jOy/Lx1hali3hqni7ugXsZX+qSqE1qh4LpVXkqYzo1w=;
-        b=q8KQx23X7l2yJ8J+swP5mwtAI7aG9Hc4o0Ip1/b5BMSh3U8ZVvpzssWpdjLrH+kLJK
-         NO4hZTvhUIMk4OfAjKmMlfH6ZLWOTtVw6Q10evl4ri13gT1iGYYJzB998Ct4WpIv6tL4
-         2ZtzeHhKjnQ/vesIdsckmKb9wJNxjnKXQKvVlImiBH0gCf2gVJhAamRduqPGJgqQX/Sf
-         yZfAv556SOOjdkVOJIrouy3ZnrN7pAz+Lj5f4SkRpiBhureHfdkbJy7/eWGroou917in
-         Sv3RtgZFFEgKVZi+t9K+soq5TqeCYTx79OB4gbHRrGcHXnolcXnBFsVWnT66veC+O1Py
-         c+vQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV2/ClqAi1ttwzSX5JWXcOSl/MG05zzPpcTLJdV/7CtcLBinVg6z5VTfwAgsOW19gjwyLYcVx0CS+RiaQxt@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhXXOl4ZSe1gJhgYsTldB2AgzyK8yxQsKeRaZr36mruM/SPNho
-	vCoXcVun0TYjdCigzlmqSB7jO3xdaHwhUKlsiI9gDWuY+cqc1DaH9FQ8cuhaLOPPXcM=
-X-Gm-Gg: ASbGncvXgC7D4b9jaRWTvWza8qbxU0n8WWsiwrhC8f9b2hWHkP2ZPPfwfzZHSKCTzRm
-	6Tsx7oMNwGIDsIrrSNISF5N1xCQLuO6ZTmf1ML9Jh7bQ/7AHH4oZKnu5u73DdR0vg8SBMbPeZ9E
-	N5SgPQMm4Hayb0dbaZLtOgHlewei8aEm0lfT1MS/mRj8Gux8yKuPgzfdSFhqJCUPE0cubPWAGKz
-	0q+pD+opSr3q59+/9jR4sJ2LUIjFi2FPZnfb6f/NTw4J4wQUCB+WurXvSNPxv0niql8NdVijKcV
-	hH5EMJAtowhAILIC5VLhiCsHEHMxmNB5D7qCWoj4mmPg3IX7lq8F/7n+l3NA1C3zHMYkuGopvZJ
-	YQxJN3LMVrfBfM/h16jIMIcnmTDv0tWF0Jra6IPb4gXM6LDmM9N4=
-X-Google-Smtp-Source: AGHT+IEr/a6oBelU2QV3zVFEFZ3TC++egfhB+J+cNPqYIHA9Iy874iEk3OeK+W4CA42HPxHoko/Auw==
-X-Received: by 2002:a05:690c:620d:b0:722:875f:5ba7 with SMTP id 00721157ae682-727f6b21ff2mr1152567b3.39.1757102505276;
-        Fri, 05 Sep 2025 13:01:45 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757102508; x=1757707308;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PmhDgPf9hf8qVBXfA+JdBAxZi0irYx7iP9xEt0yP5wg=;
+        b=hs31J+Bog6FU+HBfYy40Yt39555xmOxAmDl9cYb6sl/x9Tb44hRqI9Mr8qViELEu6y
+         I0rd3PpeHnhlaGK3+eFrmqQzogNBpxykpMBmkCXaT+CtUt8GrfGy/PBkdDuIDcbsnld7
+         2zG5VF68FDG4i/BErLBKPn2Hr0jmJNVTe5lQsIpTaBOl8G+2qKv18BvxFv0yqBzl6FsB
+         jVfPwxG4ES+p8HAhXHJGH+jvQgzuJfX5FfbClu0XvzMbuP1SUdkWJwKjnxklPIjHK8zJ
+         WaALmBj4OO0b5tOFXrvAS5b08djWj75o2yE3VYt+MKsy1YdTTpx4yDZfx/+IyeS8R5uj
+         8fPw==
+X-Forwarded-Encrypted: i=1; AJvYcCUQg8PidaI4wdPR8rMDNrCB1kQRhoMMqsp5w4LOBYMA93j1bgF8jpxymkYpy9KyRRFJV0FDqS4Mw1uA/KL3@vger.kernel.org
+X-Gm-Message-State: AOJu0YxybNZ61wQ913vFeZp9nPNmyMk1Ui4ae2bYrcVjHpI/qHiXVW9z
+	EvjjnqbAo9S3FX8MQnAe4aRKLn5MSnGkJAxaOAI2Z2WvfHTYQhwMONog+y6OLMIwaBo=
+X-Gm-Gg: ASbGncuwdI0wOVjiHXyvXPhuG/JTbfnZLGLaq0YwgpVC/4nwMcJOYKzaw7WkhEv/EfP
+	AvXY6QZ60vIAYZTYvv/TEs24ggdgoXI1LJki+oNhuN5IXCbAdiIidJ0IYYBZwOp0IhYbRSqEwRg
+	+gfMf2z0cMro1ANxIJZ5k9K2o20WC0YGAtgCN/duzdRyWsN1ptzkoSArtVM5HccfvEKU57PvT7H
+	lQiZoLGtaMIi0zyIa/YbMLxUayvLCavbPvNK3lUBuDVmnbrtxB00ZZDGKiLnIyWPVaD/LC39V0r
+	AdpIdGYHStpG3wSBzy7RijHHvHlhJZCsSvC28HBusVDiCo4zOThJIy1SbudAkag7CJlqmrReGwd
+	SZfPna+/xZPdTtTMFYz3vxeUbbnQdna2c/WigziliBj4ts36xOoA=
+X-Google-Smtp-Source: AGHT+IGAwTm0FG/DKA6TRJONfYNC13SH8h5I2cPGvFB4DWOxuKN72Wg0DYF4XZay3nDWcMyLjrNZeA==
+X-Received: by 2002:a05:690c:650c:b0:71b:f500:70c0 with SMTP id 00721157ae682-727f368e6e8mr1187267b3.6.1757102506889;
+        Fri, 05 Sep 2025 13:01:46 -0700 (PDT)
 Received: from system76-pc.attlocal.net ([2600:1700:6476:1430:2479:21e9:a32d:d3ee])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-723a834c9adsm32360857b3.28.2025.09.05.13.01.43
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-723a834c9adsm32360857b3.28.2025.09.05.13.01.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 13:01:44 -0700 (PDT)
+        Fri, 05 Sep 2025 13:01:46 -0700 (PDT)
 From: Viacheslav Dubeyko <slava@dubeyko.com>
 To: ceph-devel@vger.kernel.org
 Cc: idryomov@gmail.com,
@@ -80,10 +82,12 @@ Cc: idryomov@gmail.com,
 	Slava.Dubeyko@ibm.com,
 	slava@dubeyko.com,
 	vdubeyko@redhat.com
-Subject: [RFC PATCH 00/20] add comments in include/linux/ceph/*.h
-Date: Fri,  5 Sep 2025 13:00:48 -0700
-Message-ID: <20250905200108.151563-1-slava@dubeyko.com>
+Subject: [RFC PATCH 01/20] ceph: add comments to metadata structures in auth.h
+Date: Fri,  5 Sep 2025 13:00:49 -0700
+Message-ID: <20250905200108.151563-2-slava@dubeyko.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250905200108.151563-1-slava@dubeyko.com>
+References: <20250905200108.151563-1-slava@dubeyko.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -101,50 +105,112 @@ Claude AI generated comments for CephFS metadata structure
 declarations in include/linux/ceph/*.h. These comments
 have been reviewed, checked, and corrected.
 
-Viacheslav Dubeyko (20):
-  ceph: add comments to metadata structures in auth.h
-  ceph: add comments to metadata structures in buffer.h
-  ceph: add comments in ceph_debug.h
-  ceph: add comments to declarations in ceph_features.h
-  ceph: rework comments in ceph_frag.h
-  ceph: add comments to metadata structures in ceph_fs.h
-  ceph: add comments in ceph_hash.h
-  ceph: add comments to metadata structures in cls_lock_client.h
-  ceph: add comments to metadata structures in libceph.h
-  ceph: add comments to metadata structures in messenger.h
-  ceph: add comments to metadata structures in mon_client.h
-  ceph: add comments to metadata structures in msgpool.h
-  ceph: add comments to metadata structures in msgr.h
-  ceph: add comments to metadata structures in osd_client.h
-  ceph: add comments to metadata structures in osdmap.h
-  ceph: add comments to metadata structures in pagelist.h
-  ceph: add comments to metadata structures in rados.h
-  ceph: add comments to metadata structures in string_table.h
-  ceph: add comments to metadata structures in striper.h
-  ceph: add comments to metadata structures in types.h
+This patch adds comments for struct ceph_authorizer,
+struct ceph_auth_handshake, struct ceph_auth_client_ops,
+struct ceph_auth_client in /include/linux/ceph/auth.h.
 
- include/linux/ceph/auth.h            |  59 +-
- include/linux/ceph/buffer.h          |   9 +-
- include/linux/ceph/ceph_debug.h      |  25 +-
- include/linux/ceph/ceph_features.h   |  47 +-
- include/linux/ceph/ceph_frag.h       |  24 +-
- include/linux/ceph/ceph_fs.h         | 792 ++++++++++++++++++---------
- include/linux/ceph/ceph_hash.h       |  21 +-
- include/linux/ceph/cls_lock_client.h |  34 +-
- include/linux/ceph/libceph.h         |  50 +-
- include/linux/ceph/messenger.h       | 449 +++++++++++----
- include/linux/ceph/mon_client.h      |  93 +++-
- include/linux/ceph/msgpool.h         |  15 +-
- include/linux/ceph/msgr.h            | 162 +++++-
- include/linux/ceph/osd_client.h      | 407 ++++++++++++--
- include/linux/ceph/osdmap.h          | 124 ++++-
- include/linux/ceph/pagelist.h        |  13 +
- include/linux/ceph/rados.h           |  91 ++-
- include/linux/ceph/string_table.h    |  11 +
- include/linux/ceph/striper.h         |  16 +
- include/linux/ceph/types.h           |  14 +-
- 20 files changed, 1907 insertions(+), 549 deletions(-)
+Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+cc: Alex Markuze <amarkuze@redhat.com>
+cc: Ilya Dryomov <idryomov@gmail.com>
+cc: Ceph Development <ceph-devel@vger.kernel.org>
+---
+ include/linux/ceph/auth.h | 59 ++++++++++++++++++++++++++++++---------
+ 1 file changed, 46 insertions(+), 13 deletions(-)
 
+diff --git a/include/linux/ceph/auth.h b/include/linux/ceph/auth.h
+index 6b138fa97db8..339399cbabe9 100644
+--- a/include/linux/ceph/auth.h
++++ b/include/linux/ceph/auth.h
+@@ -15,22 +15,40 @@
+ struct ceph_auth_client;
+ struct ceph_msg;
+ 
++/*
++ * Abstract authorizer handle used for authentication with Ceph services.
++ * Each authentication protocol provides its own implementation.
++ */
+ struct ceph_authorizer {
++	/* Protocol-specific cleanup function */
+ 	void (*destroy)(struct ceph_authorizer *);
+ };
+ 
++/*
++ * Authentication handshake state for communicating with a specific service.
++ * Contains authorizer data and cryptographic functions for message security.
++ */
+ struct ceph_auth_handshake {
++	/* The authorizer token for this service connection */
+ 	struct ceph_authorizer *authorizer;
++	/* Serialized authorizer data sent to the service */
+ 	void *authorizer_buf;
+ 	size_t authorizer_buf_len;
++	/* Buffer for receiving authorizer reply from service */
+ 	void *authorizer_reply_buf;
+ 	size_t authorizer_reply_buf_len;
++	/* Sign outgoing messages using session keys */
+ 	int (*sign_message)(struct ceph_auth_handshake *auth,
+ 			    struct ceph_msg *msg);
++	/* Verify signatures on incoming messages */
+ 	int (*check_message_signature)(struct ceph_auth_handshake *auth,
+ 				       struct ceph_msg *msg);
+ };
+ 
++/*
++ * Protocol-specific operations for authentication with Ceph monitors.
++ * Each authentication method (cephx, etc.) implements these callbacks.
++ */
+ struct ceph_auth_client_ops {
+ 	/*
+ 	 * true if we are authenticated and can connect to
+@@ -87,20 +105,35 @@ struct ceph_auth_client_ops {
+ 				       struct ceph_msg *msg);
+ };
+ 
++/*
++ * Main authentication client state for communicating with Ceph monitors.
++ * Manages protocol negotiation, credentials, and service authorization.
++ */
+ struct ceph_auth_client {
+-	u32 protocol;           /* CEPH_AUTH_* */
+-	void *private;          /* for use by protocol implementation */
+-	const struct ceph_auth_client_ops *ops;  /* null iff protocol==0 */
+-
+-	bool negotiating;       /* true if negotiating protocol */
+-	const char *name;       /* entity name */
+-	u64 global_id;          /* our unique id in system */
+-	const struct ceph_crypto_key *key;     /* our secret key */
+-	unsigned want_keys;     /* which services we want */
+-
+-	int preferred_mode;	/* CEPH_CON_MODE_* */
+-	int fallback_mode;	/* ditto */
+-
++	/* Authentication protocol in use (CEPH_AUTH_*) */
++	u32 protocol;
++	/* Protocol-specific private data */
++	void *private;
++	/* Protocol operations vtable (null if protocol==0) */
++	const struct ceph_auth_client_ops *ops;
++
++	/* true if currently negotiating authentication protocol */
++	bool negotiating;
++	/* Ceph entity name (e.g., "client.admin") */
++	const char *name;
++	/* Unique identifier assigned by monitor */
++	u64 global_id;
++	/* Secret key for authentication */
++	const struct ceph_crypto_key *key;
++	/* Bitmask of services we want tickets for */
++	unsigned want_keys;
++
++	/* Preferred connection security mode */
++	int preferred_mode;
++	/* Fallback connection security mode */
++	int fallback_mode;
++
++	/* Protects concurrent access to auth state */
+ 	struct mutex mutex;
+ };
+ 
 -- 
 2.51.0
 
