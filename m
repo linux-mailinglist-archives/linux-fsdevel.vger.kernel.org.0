@@ -1,320 +1,276 @@
-Return-Path: <linux-fsdevel+bounces-60363-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60364-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42727B45A30
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 16:20:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74F6CB45AE9
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 16:48:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E463DA43CB0
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 14:20:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31022A4532C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 14:48:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A752536CDE3;
-	Fri,  5 Sep 2025 14:20:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E9203728B3;
+	Fri,  5 Sep 2025 14:48:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=allelesecurity.com header.i=@allelesecurity.com header.b="CScAcV1u"
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="0THawW7w"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7A217F4F6
-	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Sep 2025 14:20:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E490536CDE5;
+	Fri,  5 Sep 2025 14:48:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757082046; cv=none; b=Kzkyu3hhBzxfEYOUtDJsJPV52VkDASA1V8frWNo0FSto4ljSHH0hcyAGGvMEY/SVrNo4KeTs9jOtAOhDCDumqFPsEt0ziWj4aer9T53R0TmocatbAz9zS2PQbBYS7DTTqENJ4T3eVtJ6CMAlQ0J9QjBTNeuWmROvk2O+9RSuOgQ=
+	t=1757083713; cv=none; b=mrQ5PWecnpLb03nyZS2gbFWz30vPWFHd8bfzFmmlJUdBjcMl3P1DM4dghI57QU7JLVsAD0yI7yp5ZqQ8YY0RSalK9zS84VXus3vKpRL6o/d2eYYYjX7LPN9HNwo6DIrRj3/TwDeZxZeNBQNgJgJn3jQAIkl0P36EumM8Z0BXvMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757082046; c=relaxed/simple;
-	bh=FsHKADVibPioXlAxGtZyxOR42sJVs11ALl9OoE7WqA8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r91Wnvq4k/hhKoGYDJhIbkPT0h5755HQqKpOG/oCzVPZCdrblcHSgKbqL4I9FcvU/fWMV+vt6v/DSoPAb8mj2yO+tRmKA9NwCKqa+NxCXBEXDWGzchptrG7YwV2Ix6T/gcTbPJwMoYKfiYaSBdGO/oeVQeCoKegWJTHOXZi7AFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=allelesecurity.com; spf=pass smtp.mailfrom=allelesecurity.com; dkim=pass (1024-bit key) header.d=allelesecurity.com header.i=@allelesecurity.com header.b=CScAcV1u; arc=none smtp.client-ip=209.85.222.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=allelesecurity.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=allelesecurity.com
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-89018fa6f6dso645758241.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Sep 2025 07:20:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=allelesecurity.com; s=google; t=1757082043; x=1757686843; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YpK/7YahBNp2r12s2wnLqPrWMslGSBvypNNwVUtlwI8=;
-        b=CScAcV1uT7tl998tuu3pI2NLcB/y14XHI32K7JRlQzoYMERFilzOxMdeflDbm+Y/Mj
-         XEH58jusnW0mxRCzsA07eWAXwZ6pd542/wCnNNOTTcLBB1jr4QD3DqKyhsCc/SlEFEaX
-         OCaNPgUfgon92rTuafGr9W1iRViSRKfFaw7GQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757082043; x=1757686843;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YpK/7YahBNp2r12s2wnLqPrWMslGSBvypNNwVUtlwI8=;
-        b=MejXPc7twCpQ2GK9iYDmmr+H9rAWzknt5Vu5jY+HVOrDCKjSDnXPUinb8b5rT3EZm8
-         MDmW1rlVk1jayihhK6CRIrfAk3ZIih7YZxiU/07K/v/+StIx6yTalS4M4Zkyws92GyFG
-         BwrhJjN6gAyiD/BqdfFDX2lqNEOfvarMhZfbqcJ4j+vZxCosMHYZEbE4UNKdRSAoeY33
-         BH+hfKmD3+s4WAdUZEzbisAvYKZkG+JOWwOwBfmjlyvVXv3OKcfn5MATcoy5OmnLBrRk
-         zRUVkHxOclrqoWajpVfQk/dzuLXqF1FybVP5nx13I3h6hi8TDmHU2mJpotOE9sml2s1x
-         P+Kw==
-X-Gm-Message-State: AOJu0YxwZ0LsW7sJPN34AJqUUYdvyrhxg45qwRjE6ScgdV355SeKxydl
-	79m7HNbhgB/dYgjxpnscCb1/G3fGAnINb8TcCenbaKbZypvFvNUlw6McCn7oF0LhzL2371pu4sQ
-	5ALVhIAa04y3JtjWekVn7Omz/Zx8foKPyd96XKakO3w==
-X-Gm-Gg: ASbGncuem922+XWMyGWRmSkTjW6pDnHO7dMbQemmM71T3tdtIGE5Wd/rvxUCwl+zRIu
-	iwaOhpfyLHPywMNFC8pFWDA5Nu4UQAJf5onBNOVfTs0Jbz86wjyvj07RBADaqeGPKgtATCFQeUb
-	S9S7ZEjz1IEqHqOKAWveIDLfyVleJPCgWskJ36Er4oHzIQrOEsKwU85um88xWX6ff98L8MvGmam
-	ZQItCDk
-X-Google-Smtp-Source: AGHT+IEg+6d2BExxFS0Nj51xtqD+Lc/2XViGpt8x2Y8LVMtw/edk41/39wLNmdcQuOQCaqxKbF+ol5RgneiuczQ3BuE=
-X-Received: by 2002:a05:6122:1350:b0:53f:8fcb:b630 with SMTP id
- 71dfb90a1353d-544a01bba2dmr8128614e0c.4.1757082042416; Fri, 05 Sep 2025
- 07:20:42 -0700 (PDT)
+	s=arc-20240116; t=1757083713; c=relaxed/simple;
+	bh=IeuCwHP7fxBMyZnUg7lRAegA+KMiIxaSfVE4kK3bhJI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PkcykVlyiggWhuhXbWVIl8/2WJP/KESF70iDWybknVmL14MyHbi2jwRmOPD2r1JX7JCcVxqJIf2EfODfYxafOcLBevrS85CqzOIbroltFm2JWz8r1o2BiRJBNyLQ5qWwJYD74m5Dvl5qXkSJaPzKm+fVHM3b2UsbS3L8E8P8Kg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=0THawW7w; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4cJK3G0wV2z9spq;
+	Fri,  5 Sep 2025 16:48:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1757083706;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2yxz7OYC7knSMwqm1/ga1qwzQ1qS/2PhiFrxz5xbnhg=;
+	b=0THawW7wLt4yGtJVklnGykWYvtdY8tmFTAYk6XeFDA+dALD0RH0oFkl36NAnq5puArcylf
+	3jMlvKTeGHbF28yVP4qN7S4zrKl6yWo8wnAARcZPsylin9gDNCSnIdV0ykR+S4SPJoK8Fq
+	02Emfx/ZPuEQalW9jyhYm4OPs4Xrhk1wbjkdl5i8i3hPndBGVjw+0Gj94XJIRQb+yFU2e0
+	FQqf2K/6UeL5hdIw1cdYeLMsXupx9uNPzPYvd9EONNfjL+SpSS/03/nzkM1dMbPbXH3Is1
+	o7WCb/Bow5ALIIPYd+A9RZ2Laizw2G1waOO3dQG+qcdXoyRzwDRxihdk/9JY1w==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
+Date: Sat, 6 Sep 2025 00:48:13 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, 
+	Andy Lutomirski <luto@amacapital.net>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-api@vger.kernel.org, linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v4 0/4] procfs: make reference pidns more user-visible
+Message-ID: <2025-09-05-kinky-napping-auction-creeks-pbN1Vi@cyphar.com>
+References: <20250805-procfs-pidns-api-v4-0-705f984940e7@cyphar.com>
+ <20250902-gehofft-ruheraum-3c286b25b6d3@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAPhRvkw4ONypNsJrCnxbKnJbYmLHTDEKFC4C_num_5sVBVa8jg@mail.gmail.com>
- <7eutfn4jinwwbiq4mbmn7capyfhz7rnsalnj6lerk3z353ckad@5nkhn23rfa6d>
-In-Reply-To: <7eutfn4jinwwbiq4mbmn7capyfhz7rnsalnj6lerk3z353ckad@5nkhn23rfa6d>
-From: Anderson Nascimento <anderson@allelesecurity.com>
-Date: Fri, 5 Sep 2025 11:20:31 -0300
-X-Gm-Features: Ac12FXwNjBOFS55EyfnaClFG9t0-oGYUWhn1WJleEF8xUgMkCp9AtoBd3VMg8T4
-Message-ID: <CAPhRvkw74Y60eneDY1aAzZ5sYds6dJegWPQvZjhh5A_NpynXzg@mail.gmail.com>
-Subject: Re: [PATCH v2] fanotify: Validating the return value of
- mnt_ns_from_dentry() before dereferencing mntns->user_ns in do_fanotify_mark()
-To: Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org, repnop@google.com, amir73il@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="s6blnnuwdbg65wg3"
+Content-Disposition: inline
+In-Reply-To: <20250902-gehofft-ruheraum-3c286b25b6d3@brauner>
+X-Rspamd-Queue-Id: 4cJK3G0wV2z9spq
+
+
+--s6blnnuwdbg65wg3
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 0/4] procfs: make reference pidns more user-visible
+MIME-Version: 1.0
 
-On Fri, Sep 5, 2025 at 10:48=E2=80=AFAM Jan Kara <jack@suse.cz> wrote:
->
-> On Thu 04-09-25 09:58:12, Anderson Nascimento wrote:
-> > Validating the return value of mnt_ns_from_dentry() before
-> > dereferencing mntns->user_ns in do_fanotify_mark()
-> >
-> > The function do_fanotify_mark() does not validate if
-> > mnt_ns_from_dentry() returns NULL before dereferencing mntns->user_ns.
-> > This causes a NULL pointer dereference in do_fanotify_mark() if the
-> > path is not a mount namespace object.
-> >
-> > Fix this by checking mnt_ns_from_dentry()'s return value before
-> > dereferencing it. Tested on v6.17-rc4.
->
-> I've added the patch to my tree and will push it to Linus. Just as a side
-> note for next time: Your mailer seems to have damaged whitespace in the
-> patch so I had to manually fix that up. The best is if you can configure
-> your mail client to leave whitespace as is but the second best option is =
-to
-> just attach the patch as a text/plain attachment. Most of the tooling we
-> use for patch handling can deal with that and it's better than having to
-> manually fixup whitespace. Thanks!
+On 2025-09-02, Christian Brauner <brauner@kernel.org> wrote:
+> On Tue, Aug 05, 2025 at 03:45:07PM +1000, Aleksa Sarai wrote:
+> > Ever since the introduction of pid namespaces, procfs has had very
+> > implicit behaviour surrounding them (the pidns used by a procfs mount is
+> > auto-selected based on the mounting process's active pidns, and the
+> > pidns itself is basically hidden once the mount has been constructed).
+> >=20
+> > /* pidns mount option for procfs */
+> >=20
+> > This implicit behaviour has historically meant that userspace was
+> > required to do some special dances in order to configure the pidns of a
+> > procfs mount as desired. Examples include:
+> >=20
+> >  * In order to bypass the mnt_too_revealing() check, Kubernetes creates
+> >    a procfs mount from an empty pidns so that user namespaced containers
+> >    can be nested (without this, the nested containers would fail to
+> >    mount procfs). But this requires forking off a helper process because
+> >    you cannot just one-shot this using mount(2).
+> >=20
+> >  * Container runtimes in general need to fork into a container before
+> >    configuring its mounts, which can lead to security issues in the case
+> >    of shared-pidns containers (a privileged process in the pidns can
+> >    interact with your container runtime process). While
+> >    SUID_DUMP_DISABLE and user namespaces make this less of an issue, the
+> >    strict need for this due to a minor uAPI wart is kind of unfortunate.
+> >=20
+> > Things would be much easier if there was a way for userspace to just
+> > specify the pidns they want. Patch 1 implements a new "pidns" argument
+> > which can be set using fsconfig(2):
+> >=20
+> >     fsconfig(procfd, FSCONFIG_SET_FD, "pidns", NULL, nsfd);
+> >     fsconfig(procfd, FSCONFIG_SET_STRING, "pidns", "/proc/self/ns/pid",=
+ 0);
+> >=20
+> > or classic mount(2) / mount(8):
+> >=20
+> >     // mount -t proc -o pidns=3D/proc/self/ns/pid proc /tmp/proc
+> >     mount("proc", "/tmp/proc", "proc", MS_..., "pidns=3D/proc/self/ns/p=
+id");
+> >=20
+> > The initial security model I have in this RFC is to be as conservative
+> > as possible and just mirror the security model for setns(2) -- which
+> > means that you can only set pidns=3D... to pid namespaces that your
+> > current pid namespace is a direct ancestor of and you have CAP_SYS_ADMIN
+> > privileges over the pid namespace. This fulfils the requirements of
+> > container runtimes, but I suspect that this may be too strict for some
+> > usecases.
+> >=20
+> > The pidns argument is not displayed in mountinfo -- it's not clear to me
+> > what value it would make sense to show (maybe we could just use ns_dname
+> > to provide an identifier for the namespace, but this number would be
+> > fairly useless to userspace). I'm open to suggestions. Note that
+> > PROCFS_GET_PID_NAMESPACE (see below) does at least let userspace get
+> > information about this outside of mountinfo.
+> >=20
+> > Note that you cannot change the pidns of an already-created procfs
+> > instance. The primary reason is that allowing this to be changed would
+> > require RCU-protecting proc_pid_ns(sb) and thus auditing all of
+> > fs/proc/* and some of the users in fs/* to make sure they wouldn't UAF
+> > the pid namespace. Since creating procfs instances is very cheap, it
+> > seems unnecessary to overcomplicate this upfront. Trying to reconfigure
+> > procfs this way errors out with -EBUSY.
+> >=20
+> > /* ioctl(PROCFS_GET_PID_NAMESPACE) */
+> >=20
+> > In addition, being able to figure out what pid namespace is being used
+> > by a procfs mount is quite useful when you have an administrative
+> > process (such as a container runtime) which wants to figure out the
+> > correct way of mapping PIDs between its own namespace and the namespace
+> > for procfs (using NS_GET_{PID,TGID}_{IN,FROM}_PIDNS). There are
+> > alternative ways to do this, but they all rely on ancillary information
+> > that third-party libraries and tools do not necessarily have access to.
+> >=20
+> > To make this easier, add a new ioctl (PROCFS_GET_PID_NAMESPACE) which
+> > can be used to get a reference to the pidns that a procfs is using.
+> >=20
+> > Rather than copying the (fairly strict) security model for setns(2),
+> > apply a slightly looser model to better match what userspace can already
+> > do:
+> >=20
+> >  * Make the ioctl only valid on the root (meaning that a process without
+> >    access to the procfs root -- such as only having an fd to a procfs
+> >    file or some open_tree(2)-like subset -- cannot use this API). This
+> >    means that the process already has some level of access to the
+> >    /proc/$pid directories.
+> >=20
+> >  * If the calling process is in an ancestor pidns, then they can already
+> >    create pidfd for processes inside the pidns, which is morally
+> >    equivalent to a pidns file descriptor according to setns(2). So it
+> >    seems reasonable to just allow it in this case. (The justification
+> >    for this model was suggested by Christian.)
+> >=20
+> >  * If the process has access to /proc/1/ns/pid already (i.e. has
+> >    ptrace-read access to the pidns pid1), then this ioctl is equivalent
+> >    to just opening a handle to it that way.
+> >=20
+> >    Ideally we would check for ptrace-read access against all processes
+> >    in the pidns (which is very likely to be true for at least one
+> >    process, as SUID_DUMP_DISABLE is cleared on exec(2) and is rarely set
+> >    by most programs), but this would obviously not scale.
+> >=20
+> > I'm open to suggestions for whether we need to make this stricter (or
+> > possibly allow more cases).
+> >=20
+> > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+>=20
+> Thanks for the patchset. Being able to specify what pid namespace the
+> procfs instance is supposed to belong to is super useful and will make
+> things easier for userspace for sure.
 
-Thank you! I'll fix that.
+I was going to send a new version changing the whole thing to be struct
+path based (and adding FSCONFIG_SET_PATH{,_EMPTY} support) so we don't
+need to allocate a file explicitly for the non-FSCONFIG_SET_FD case, but
+we can do that as a follow-up I guess.
 
->
->                                                                 Honza
-> >
-> > Before the patch
-> >
-> > $ gcc fanotify_nullptr.c -o fanotify_nullptr
-> > $ mkdir A
-> > $ ./fanotify_nullptr
-> > Fanotify fd: 3
-> > fanotify_mark: Operation not permitted
-> > $ unshare -Urm
-> > # ./fanotify_nullptr
-> > Fanotify fd: 3
-> > Killed
-> > # cat fanotify_nullptr.c
-> > #include <stdio.h>
-> > #include <stdlib.h>
-> > #include <fcntl.h>
-> > #include <sys/fanotify.h>
-> >
-> > int main(void){
-> >     int ffd;
-> >     ffd =3D fanotify_init(FAN_CLASS_NOTIF | FAN_REPORT_MNT, 0);
-> >     if(ffd < 0){
-> >         perror("fanotify_init");
-> >         exit(EXIT_FAILURE);
-> >     }
-> >
-> >     printf("Fanotify fd: %d\n",ffd);
-> >
-> >     if(fanotify_mark(ffd, FAN_MARK_ADD | FAN_MARK_MNTNS,
-> > FAN_MNT_ATTACH, AT_FDCWD, "A") < 0){
-> >         perror("fanotify_mark");
-> >         exit(EXIT_FAILURE);
-> >     }
-> >
-> > return 0;
-> > }
-> > #
-> >
-> > After the patch
-> >
-> > $ gcc fanotify_nullptr.c -o fanotify_nullptr
-> > $ mkdir A
-> > $ ./fanotify_nullptr
-> > Fanotify fd: 3
-> > fanotify_mark: Operation not permitted
-> > $ unshare -Urm
-> > # ./fanotify_nullptr
-> > Fanotify fd: 3
-> > fanotify_mark: Invalid argument
-> > #
-> >
-> > [   25.694973] BUG: kernel NULL pointer dereference, address: 000000000=
-0000038
-> > [   25.695006] #PF: supervisor read access in kernel mode
-> > [   25.695012] #PF: error_code(0x0000) - not-present page
-> > [   25.695017] PGD 109a30067 P4D 109a30067 PUD 142b46067 PMD 0
-> > [   25.695025] Oops: Oops: 0000 [#1] SMP NOPTI
-> > [   25.695032] CPU: 4 UID: 1000 PID: 1478 Comm: fanotify_nullpt Not
-> > tainted 6.17.0-rc4 #1 PREEMPT(lazy)
-> > [   25.695040] Hardware name: VMware, Inc. VMware Virtual
-> > Platform/440BX Desktop Reference Platform, BIOS 6.00 11/12/2020
-> > [   25.695049] RIP: 0010:do_fanotify_mark+0x817/0x950
-> > [   25.695066] Code: 04 00 00 e9 45 fd ff ff 48 8b 7c 24 48 4c 89 54
-> > 24 18 4c 89 5c 24 10 4c 89 0c 24 e8 b3 11 fc ff 4c 8b 54 24 18 4c 8b
-> > 5c 24 10 <48> 8b 78 38 4c 8b 0c 24 49 89 c4 e9 13 fd ff ff 8b 4c 24 28
-> > 85 c9
-> > [   25.695081] RSP: 0018:ffffd31c469e3c08 EFLAGS: 00010203
-> > [   25.695104] RAX: 0000000000000000 RBX: 0000000001000000 RCX: ffff8eb=
-48aebd220
-> > [   25.695110] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8eb=
-4835e8180
-> > [   25.695115] RBP: 0000000000000111 R08: 0000000000000000 R09: 0000000=
-000000000
-> > [   25.695142] R10: ffff8eb48a7d56c0 R11: ffff8eb482bede00 R12: 0000000=
-0004012a7
-> > [   25.695148] R13: 0000000000000110 R14: 0000000000000001 R15: ffff8eb=
-48a7d56c0
-> > [   25.695154] FS:  00007f8733bda740(0000) GS:ffff8eb61ce5f000(0000)
-> > knlGS:0000000000000000
-> > [   25.695162] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > [   25.695170] CR2: 0000000000000038 CR3: 0000000136994006 CR4: 0000000=
-0003706f0
-> > [   25.695201] Call Trace:
-> > [   25.695209]  <TASK>
-> > [   25.695215]  __x64_sys_fanotify_mark+0x1f/0x30
-> > [   25.695222]  do_syscall_64+0x82/0x2c0
-> > [   25.695229]  ? do_syscall_64+0x82/0x2c0
-> > [   25.695234]  ? memcg1_commit_charge+0x7a/0xa0
-> > [   25.695240]  ? mod_memcg_lruvec_state+0xe7/0x2e0
-> > [   25.695246]  ? charge_memcg+0x48/0x80
-> > [   25.695251]  ? blk_cgroup_congested+0x65/0x70
-> > [   25.695258]  ? __lruvec_stat_mod_folio+0x85/0xd0
-> > [   25.695272]  ? __folio_mod_stat+0x2d/0x90
-> > [   25.695284]  ? set_ptes.isra.0+0x36/0x80
-> > [   25.695290]  ? do_anonymous_page+0x100/0x520
-> > [   25.695295]  ? __handle_mm_fault+0x54f/0x6a0
-> > [   25.695317]  ? anon_inode_getfile_fmode+0x18/0x30
-> > [   25.695322]  ? count_memcg_events+0xd6/0x220
-> > [   25.695327]  ? handle_mm_fault+0x248/0x360
-> > [   25.695333]  ? do_user_addr_fault+0x21a/0x690
-> > [   25.695339]  ? clear_bhb_loop+0x50/0xa0
-> > [   25.695344]  ? clear_bhb_loop+0x50/0xa0
-> > [   25.695348]  ? clear_bhb_loop+0x50/0xa0
-> > [   25.695353]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> > [   25.695358] RIP: 0033:0x7f8733cd26ae
-> > [   25.695373] Code: f8 48 8d 75 f8 e8 12 3c ff ff c9 48 83 f8 08 0f
-> > 95 c0 0f b6 c0 f7 d8 c3 0f 1f 40 00 f3 0f 1e fa 41 89 ca b8 2d 01 00
-> > 00 0f 05 <48> 3d 00 f0 ff ff 77 0a c3 66 0f 1f 84 00 00 00 00 00 48 8b
-> > 15 19
-> > [   25.695613] RSP: 002b:00007ffcd6842cd8 EFLAGS: 00000206 ORIG_RAX:
-> > 000000000000012d
-> > [   25.695820] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f8=
-733cd26ae
-> > [   25.695992] RDX: 0000000001000000 RSI: 0000000000000111 RDI: 0000000=
-000000003
-> > [   25.696141] RBP: 00007ffcd6842cf0 R08: 00000000004012a7 R09: 0000000=
-000000000
-> > [   25.696273] R10: 00000000ffffff9c R11: 0000000000000206 R12: 00007ff=
-cd6842e18
-> > [   25.696438] R13: 0000000000000001 R14: 00007f8733e15000 R15: 0000000=
-000402e00
-> > [   25.696616]  </TASK>
-> > [   25.696752] Modules linked in: rfkill nft_fib_inet nft_fib_ipv4
-> > nft_fib_ipv6 nft_fib nft_reject_inet nf_reject_ipv4 nf_reject_ipv6
-> > nft_reject nft_ct nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6
-> > nf_defrag_ipv4 nf_tables qrtr intel_rapl_msr intel_rapl_common
-> > intel_uncore_frequency_common intel_pmc_core pmt_telemetry
-> > pmt_discovery pmt_class intel_pmc_ssram_telemetry intel_vsec rapl
-> > vmw_balloon pcspkr i2c_piix4 i2c_smbus joydev loop vsock_loopback
-> > vmw_vsock_virtio_transport_common vmw_vsock_vmci_transport vsock zram
-> > vmw_vmci lz4hc_compress lz4_compress xfs polyval_clmulni vmwgfx
-> > ghash_clmulni_intel vmxnet3 nvme drm_ttm_helper ata_generic ttm
-> > pata_acpi nvme_tcp nvme_fabrics nvme_core nvme_keyring nvme_auth
-> > serio_raw sunrpc be2iscsi bnx2i cnic uio cxgb4i cxgb4 tls cxgb3i cxgb3
-> > mdio libcxgbi libcxgb qla4xxx iscsi_boot_sysfs iscsi_tcp libiscsi_tcp
-> > libiscsi scsi_transport_iscsi scsi_dh_rdac scsi_dh_emc scsi_dh_alua
-> > fuse i2c_dev dm_multipath nfnetlink
-> > [   25.698055] CR2: 0000000000000038
-> > [   25.698202] ---[ end trace 0000000000000000 ]---
-> > [   25.698385] RIP: 0010:do_fanotify_mark+0x817/0x950
-> > [   25.698595] Code: 04 00 00 e9 45 fd ff ff 48 8b 7c 24 48 4c 89 54
-> > 24 18 4c 89 5c 24 10 4c 89 0c 24 e8 b3 11 fc ff 4c 8b 54 24 18 4c 8b
-> > 5c 24 10 <48> 8b 78 38 4c 8b 0c 24 49 89 c4 e9 13 fd ff ff 8b 4c 24 28
-> > 85 c9
-> > [   25.698921] RSP: 0018:ffffd31c469e3c08 EFLAGS: 00010203
-> > [   25.699076] RAX: 0000000000000000 RBX: 0000000001000000 RCX: ffff8eb=
-48aebd220
-> > [   25.699232] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8eb=
-4835e8180
-> > [   25.699409] RBP: 0000000000000111 R08: 0000000000000000 R09: 0000000=
-000000000
-> > [   25.699645] R10: ffff8eb48a7d56c0 R11: ffff8eb482bede00 R12: 0000000=
-0004012a7
-> > [   25.699818] R13: 0000000000000110 R14: 0000000000000001 R15: ffff8eb=
-48a7d56c0
-> > [   25.699970] FS:  00007f8733bda740(0000) GS:ffff8eb61ce5f000(0000)
-> > knlGS:0000000000000000
-> > [   25.700125] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > [   25.700280] CR2: 0000000000000038 CR3: 0000000136994006 CR4: 0000000=
-0003706f0
-> > [   25.700495] note: fanotify_nullpt[1478] exited with irqs disabled
-> >
-> > Fixes: 58f5fbeb367f ("fanotify: support watching filesystems and
-> > mounts inside userns")
-> > Signed-off-by: Anderson Nascimento <anderson@allelesecurity.com>
-> > ---
-> > Changes in v2:
-> > - Added Signed-off-by and Fixes tags.
-> > - Changed subject prefix to "fanotify:".
-> > - Link to v1: https://lore.kernel.org/linux-fsdevel/CAPhRvkwpLt03-OohQi=
-Bh_RyD+DsgTcRo-KmoqcvZ-3vNcCo=3DUw@mail.gmail.com/
-> >
-> >  fs/notify/fanotify/fanotify_user.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/fs/notify/fanotify/fanotify_user.c
-> > b/fs/notify/fanotify/fanotify_user.c
-> > index b192ee068a7a..77046be7d3c1 100644
-> > --- a/fs/notify/fanotify/fanotify_user.c
-> > +++ b/fs/notify/fanotify/fanotify_user.c
-> > @@ -1999,7 +1999,10 @@ static int do_fanotify_mark(int fanotify_fd,
-> > unsigned int flags, __u64 mask,
-> >                 user_ns =3D path.mnt->mnt_sb->s_user_ns;
-> >                 obj =3D path.mnt->mnt_sb;
-> >         } else if (obj_type =3D=3D FSNOTIFY_OBJ_TYPE_MNTNS) {
-> > +               ret =3D -EINVAL;
-> >                 mntns =3D mnt_ns_from_dentry(path.dentry);
-> > +               if(!mntns)
-> > +                       goto path_put_and_out;
-> >                 user_ns =3D mntns->user_ns;
-> >                 obj =3D mntns;
-> >         }
-> >
-> > --
-> > Anderson Nascimento
-> > Allele Security Intelligence
-> > https://www.allelesecurity.com
-> --
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+> The code you added contains a minor wrinkle that I disliked which I've
+> changed and you tell me if you can live with this restriction or not.
+>=20
+> The way you've implemented it specifying a pid namespace that the caller
+> holds privilege over would silently also override the user namespace the
+> filesystem is supposed to belong to.
+>=20
+> Specifically, you did something like:
+>=20
+>         put_pid_ns(ctx->pid_ns);
+>         ctx->pid_ns =3D get_pid_ns(target);
+>         put_user_ns(fc->user_ns);
+>         fc->user_ns =3D get_user_ns(ctx->pid_ns->user_ns);
+>=20
+> This silently overrides the user namespace recorded at fsopen() time. I
+> think that's too subtle and we should just not allow that at all for
+> now.
+>=20
+> Instead I've changed this to:
+>=20
+>         if (fc->user_ns !=3D target->user_ns)
+>                 return invalfc(fc, "owning user namespace of pid namespac=
+e doesn't match procfs user namespace");
+>=20
+>         put_pid_ns(ctx->pid_ns);
+>         ctx->pid_ns =3D get_pid_ns(target);
+>=20
+> so we just refuse different owernship.
+
+That sounds fine, I wasn't quite sure what to do with fc->user_ns to be
+honest. Being more conservative is probably the right call here.
+
+> I've also dropped the procfs ioctl because I'm not sure how much value
+> it will actually add given that you can do this via /proc/1/ns/pid.
+>=20
+> If that is something that libpathrs despearately needs I would like to
+> do it as a separate patch anyways.
+
+The main issues are:
+
+1. pid1 can often be non-dumpable, which can block you from doing that.
+   In principle, because the dumpable flag is reset on execve, it is
+   theoretically possible to get access to /proc/$pid/ns/pid if you win
+   the race in a pid namespace with lots of process activity, but this
+   kind of sucks.
+
+2. This approach doesn't work for empty pid namesapces.
+   pidns_for_children doesn't let you get a handle to an empty pid
+   namespace either (I briefly looked at the history and it seems this
+   was silently changed in v2 of the patchset based on some feedback
+   that I'm not sure was entirely correct).
+
+3. Now that you can configure the procfs mount, it seems like a
+   half-baked interface to not provide diagnostic information about the
+   namespace. (I suspect the criu folks would be happy to have this too
+   ;).)
 
 --=20
-Anderson Nascimento
-Allele Security Intelligence
-https://www.allelesecurity.com
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+https://www.cyphar.com/
+
+--s6blnnuwdbg65wg3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaLr4LRsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG+mLwD+OBLrKDjD/AagMCzfrvCF
+gB1Co3GReX99caLh6G7vUqMA/2ZGF2udlINLu5ajN5rT7zw4nvJfvN+ZrkwDzJ9A
+9YwG
+=VwoX
+-----END PGP SIGNATURE-----
+
+--s6blnnuwdbg65wg3--
 
