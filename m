@@ -1,251 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-60366-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60367-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45273B45C68
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 17:23:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BDE69B45C70
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 17:24:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4F923B3962
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 15:21:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A01263BA399
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 15:23:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C64D2F7AD7;
-	Fri,  5 Sep 2025 15:21:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 545471C701F;
+	Fri,  5 Sep 2025 15:22:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hfXisM1t"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L+xvrC8h"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53E323BF96;
-	Fri,  5 Sep 2025 15:21:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1DBA220696
+	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Sep 2025 15:22:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757085679; cv=none; b=XiOhkDFtAt4ReCSlSfJu5ekqH6t2wL4zL8LXvJk1oXT27ml7ZNEThxWSWvMUPzbuzdBd4vLyPgn/Ig6ddrSnVpnUgrpAjExXrP5sHQS9pDcAFVVmuU3VPGWw2sEW4GCFWtaA8Sf17mutyhdtX8eZ3hvUaaREW9Hzmg0yraRLgpA=
+	t=1757085771; cv=none; b=ovsP2hKSJx7yC7TxqOLkPNec4j1gSU5b7YL00XBFyRw1CWQ1Jp5XQq2DsJWK20J/nJrhv8OXDhNvYSgKCAw2DcvReBr5CUnveCZp6qA4o1lgxWpsyRLPTSrzRCCGHylVwSlg4z03HqP5FHTf8xEAS+HgysQxwl0zYzDTBpLDyNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757085679; c=relaxed/simple;
-	bh=Mk9Lv36ZcC/2I3dmxfTwbbljmUfZJLGQEyonJ6cYg30=;
+	s=arc-20240116; t=1757085771; c=relaxed/simple;
+	bh=OZ/Lx1Zz2uWk3zIlBnv9jk4uKCzlbtEu5wmvtgpUwrk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VKY6kZ9iaJ++J7TxdEfpQ4sTTD5PpKN0DcEIW4YILzJSiEEYo4OPB4DJJ0Gmi6DHoRXlh8eoIZ1CvYcdC0qHe4XuiY7nwKQrp74VYkpS8Ltoj8pC7d8yuhEy7PZXWdfbUKog2IwB5Rbwq9u186gssHIebOTeDW77p2A8JTGRbeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hfXisM1t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38116C4CEF1;
-	Fri,  5 Sep 2025 15:21:19 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZvWxJTyLfoWp4xNiG8Fv2B23TjkjqAQFeSBDdNaySiEUHwALuylnvcQuiZxVtuWvG39kk03XDiuWNSmaepWHBtFTcQhtXFpo9da3NRAY452HLctGD7VmChL4JK/Kfp4Uplsg35noN3WtTEetdQDaWripumyAJm1o8X6KN3xYn2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L+xvrC8h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4446BC4CEF1;
+	Fri,  5 Sep 2025 15:22:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757085679;
-	bh=Mk9Lv36ZcC/2I3dmxfTwbbljmUfZJLGQEyonJ6cYg30=;
+	s=k20201202; t=1757085771;
+	bh=OZ/Lx1Zz2uWk3zIlBnv9jk4uKCzlbtEu5wmvtgpUwrk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hfXisM1tX4nLrdzXxpXdR+g4pAROnPe6mAYGtSMkEpJKnlqQiVUNWZJ0PyavUPZ1a
-	 X/gc08cp2BvHaVEbd/utpk9OU1xiqX8oWDw7sJARiIiEBUrvQjZKWCHDEgRRF786HB
-	 PLew8ecnSfUtin+Hi5zFdlmsvH8U51gksH9rIOpYOEFYXYvdwo0bC2oBFK4u9Ev/bt
-	 tQ59xyPblt6dNom7YqwE7+1PmswGNdzdpdhWpQ7JrnLX/O7S2ib6pGu4fO5pjYwp5q
-	 9pMQ870pJOCBUtgxmYjBLMPb+2FCHx2OlFGGk8koCcRpEOPTM/cnMq2ZCDu+qZjvvl
-	 /1x485jJTQWqQ==
-Date: Fri, 5 Sep 2025 08:21:18 -0700
+	b=L+xvrC8h/4E42eRYdHpUrFLDAtT7lqukS2N+ggvqcK1v6OIQL/ahytVS/RDSyITK/
+	 B09QcqBCKgnnRwGpAgHppsSqM5rVnzG5GLjeJOsZv+hZhPehPQxIyoFmDrkZcwQb6D
+	 TPBn3vQjJP5n2ChS8gEoRLujXcC4N9HGW6aCRAkhFh78F2MJeIVoZEZQDBMC/xJAy5
+	 e/wmY9xwIweoFbBCl/Lb9mdhZGtfLoEdc1JqI5fWMGwFDLkOqL0mpNA4ya4B8kbuah
+	 hVndpGhOeAQ7q6w+9ZmJMCicoY2qtflNpDbzEHtMGfUkPiH+TiL2KIdgEhukMA8PBr
+	 Vv1W1irU9Ne9Q==
+Date: Fri, 5 Sep 2025 08:22:50 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: Gao Xiang <hsiangkao@linux.alibaba.com>
-Cc: Joanne Koong <joannelkoong@gmail.com>, brauner@kernel.org,
-	miklos@szeredi.hu, hch@infradead.org, linux-fsdevel@vger.kernel.org,
-	kernel-team@meta.com, linux-xfs@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v1 13/16] iomap: add a private arg for read and readahead
-Message-ID: <20250905152118.GE1587915@frogsfrogsfrogs>
-References: <20250829235627.4053234-1-joannelkoong@gmail.com>
- <20250829235627.4053234-14-joannelkoong@gmail.com>
- <aLJZv5L6q0FH5F8a@debian>
- <CAJnrk1af4-FG==X=4LzoBRaxL9N-hnh1i-zx89immQZMLKSzyQ@mail.gmail.com>
- <a44fd64d-e0b1-4131-9d71-2d36151c90f4@linux.alibaba.com>
- <CAJnrk1bBmA+VK6UK1n6DRnuLvX8UOMp-VgQGnn2rUrq0=mCyqA@mail.gmail.com>
- <d631c71f-9d0d-405f-862d-b881767b1945@linux.alibaba.com>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: bernd@bsbernd.com, neal@gompa.dev, John@groves.net,
+	linux-fsdevel@vger.kernel.org, joannelkoong@gmail.com
+Subject: Re: [PATCH 4/7] fuse: implement file attributes mask for statx
+Message-ID: <20250905152250.GF1587915@frogsfrogsfrogs>
+References: <175573708630.15537.1057407663556817922.stgit@frogsfrogsfrogs>
+ <CAJfpegsp=6A7jMxSpQce6Xx72POGddWqtJFTWauM53u7_125vQ@mail.gmail.com>
+ <20250829153938.GA8088@frogsfrogsfrogs>
+ <CAJfpegs=2==Tx3kcFHoD-0Y98tm6USdX_NTNpmoCpAJSMZvDtw@mail.gmail.com>
+ <20250902205736.GB1587915@frogsfrogsfrogs>
+ <CAJfpegskHg7ewo6p0Bn=3Otsm7zXcyRu=0drBdqWzMG+hegbSQ@mail.gmail.com>
+ <20250903154955.GD1587915@frogsfrogsfrogs>
+ <CAJfpegu6Ec=nFPPD8nFXHPF+b1DxvWVEFnKHNHgmeJeo9xX7Nw@mail.gmail.com>
+ <20250905012854.GA1587915@frogsfrogsfrogs>
+ <CAJfpegubFsCjWJyJhv_9HE_9_htL3Z7-r_AMFszxA-982dC-Jw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d631c71f-9d0d-405f-862d-b881767b1945@linux.alibaba.com>
+In-Reply-To: <CAJfpegubFsCjWJyJhv_9HE_9_htL3Z7-r_AMFszxA-982dC-Jw@mail.gmail.com>
 
-On Fri, Sep 05, 2025 at 10:21:19AM +0800, Gao Xiang wrote:
+On Fri, Sep 05, 2025 at 09:02:05AM +0200, Miklos Szeredi wrote:
+> On Fri, 5 Sept 2025 at 03:28, Darrick J. Wong <djwong@kernel.org> wrote:
+> >
+> > On Thu, Sep 04, 2025 at 01:26:36PM +0200, Miklos Szeredi wrote:
+> > > On Wed, 3 Sept 2025 at 17:49, Darrick J. Wong <djwong@kernel.org> wrote:
+> > > >
+> > > > On Wed, Sep 03, 2025 at 11:55:25AM +0200, Miklos Szeredi wrote:
+> > >
+> > > > > Agree?
+> > > >
+> > > > I think we do, except maybe the difficult first point. :)
+> > >
+> > > Let's then defer the LOOKUPX thing ;)   I'm fine with adding IMMUTABLE
+> > > and APPEND to fuse_attr::flags.
+> >
+> > OK.  Should I hide that behind the fuse mount having iomap turned on?
+> > Or fc->is_local_fs == true?  Or let any server set those bits?
+> >
+> > One thing occurred to me -- for a plain old fuse server that is the
+> > client for some network filesystem, the other end might have its own
+> > immutable/append bits, in which case we actually *do* want to let those
+> > bits through from the FUSE_STATX replies.
 > 
+> Right, as I said this might have worked without VFS help, but having
+> it consistently in the VFS as well would be nicer.
 > 
-> On 2025/9/5 07:29, Joanne Koong wrote:
-> > On Tue, Sep 2, 2025 at 6:55 PM Gao Xiang <hsiangkao@linux.alibaba.com> wrote:
-> > > 
-> 
-> ...
-> 
-> 
-> > > > > 
-> > > > > >    int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops,
-> > > > > > -             const struct iomap_read_ops *read_ops)
-> > > > > > +             const struct iomap_read_ops *read_ops, void *private)
-> > > > > >    {
-> > > > > >         struct iomap_iter iter = {
-> > > > > >                 .inode          = folio->mapping->host,
-> > > > > >                 .pos            = folio_pos(folio),
-> > > > > >                 .len            = folio_size(folio),
-> > > > > > +             .private        = private,
-> > > > > >         };
-> > > > > 
-> > > > > Will this whole work be landed for v6.18?
-> > > > > 
-> > > > > If not, may I ask if this patch can be shifted advance in this
-> > > > > patchset for applying separately (I tried but no luck).
-> > > > > 
-> > > > > Because I also need some similar approach for EROFS iomap page
-> > > > > cache sharing feature since EROFS uncompressed I/Os go through
-> > > > > iomap and extra information needs a proper way to pass down to
-> > > > > iomap_{begin,end} with extra pointer `.private` too.
-> > > > 
-> > > > Hi Gao,
-> > > > 
-> > > > I'm not sure whether this will be landed for v6.18 but I'm happy to
-> > > > shift this patch to the beginning of the patchset for applying
-> > > > separately.
-> > > 
-> > > Yeah, thanks.  At least this common patch can be potentially applied
-> > > easily (e.g. form a common commit id for both features if really
-> > > needed) since other iomap/FUSE patches are not dependency of our new
-> > > feature and shouldn't be coupled with our development branch later.
-> > > 
-> > 
-> > Hi Gao,
-> > 
-> > I'll be dropping this patch in v2 since all the iomap read stuff is
-> > going to go through a struct ctx arg instead of through iter->private.
-> > Sorry this won't help your use case, but looking forward to seeing your patches.
-> 
-> Hi Joanne,
-> 
-> Thanks for your reminder.  Okay, I will check your v2 to know how
-> you change then.
-> 
-> Also, one thing I really think it's helpful for our use cases is
-> converting .iomap_begin() at least to pass struct iomap_iter *
-> directly rather than (inode, pos, len, flags, iomap, srcmap)
-> since:
->   - .iomap_{begin,end}() are introduced before iomap_iter()
->     and struct iomap_iter but those callbacks are basically
->     now passed down some fields of `struct iomap_iter` now;
-> 
->   - struct iomap_iter->private then can contain a per-request
->     context so that .iomap_begin() can leverage too;
-> 
->   - There are already too many arguments for .iomap_begin(),
->     pass down struct iomap_iter directly could avoid adding
->     another `private` argument to .iomap_begin()..
-> 
-> Therefore, I do wonder if this change (.iomap_begin() passes
-> struct iomap_iter *) is a good idea for the iomap folks, in
-> addition that filesystems can specify `struct iomap_iter->private`
-> as in this patch.  Since this change is necessary to make our
-> page cache sharing feature efficient, I will continue working on
-> this soon.
+> In that spirit, putting those bits in the inode is safe only in the
+> local fs case, so I guess that's what we should do.  And for
+> consistency, in the local fs case inode->flags should be the
+> authoritative source and all the userspace API's should be looking at
+> that, instead of what the server sent in the IOCTL or STATX replies.
 
-From a source code perspective, I like the idea of cleaning up the
-function signature to pass fewer things to ->iomap_begin.  I suspect
-that we could simplify it to:
-
-	int (*iomap_begin)(const struct iomap_iter *iter,
-			   struct iomap *iomap,
-			   struct iomap *srcmap);
-
-That way we preserve the notion that the ->iomap_begin functions aren't
-allowed to change the iterator contents except for the two iomaps.
-
-That said, the nice thing about passing so many parameters is that it
-probably leads to less pointer chasing in the implementation functions.
-I wonder if that makes any difference because extent mapping lookups
-likely involve a lot more pointer chasing anyway.  Another benefit is
-that since the parameters aren't const, each implementation can (re)use
-those variables if they need to.
-
-I think you could simplify iomap_end too:
-
-	int (*iomap_end)(const struct iomap_iter *iter,
-			 loff_t pos, u64 length,
-			 size_t written);
-
-and make ->iomap_end implementations extract iter->flags and iter->iomap
-themselves if they want to.  I don't like how xfs_iomap.c abuses
-container_of to extract the iter from the iomap pointer.
-
-(But not enough to have written patches fixing any of this. :P)
-
-> Another thing I want to discuss (but it's less important for our
-> recent features) is the whole callback hook model of iomap.
-> 
-> Basically the current model does mean if any filesystem doesn't
-> fulfill the iomap standard flow, it has to add some customized
-> callback hook somewhere to modify the code flow then (or introduce
-> a new special flag and move their specific logic into iomap/
-> itself even other fses may not need this), but the hook way will
-> cause increased indirect calls for them, currently we have
-> `struct iomap_ops`, `struct iomap_writeback_ops` and
-> `struct iomap_dio_ops`, if some another filesystem (when converting
-> buffer I/Os for example or adding {pre,post}-processing ) have
-> specified timing, it needs to add new hooks then.
-> 
-> I do wonder if it's possible to convert iomap to get rid of the
-> indirect-call model by just providing helper kAPIs instead,
-> take .read_folio / .fiemap for example e.g.
-> 
->    xxxfs_read_folio:
->       loop iomap_iter
->         xxxfs_iomap_begin();
-> 	iomap_readpage_bio_advance(); [ or if a fs is non-bio
->              based, spliting more low-level helpers for them. ]
->         xxxfs_iomap_end();
-> 
->    xxxfs_fiemap():
->       iomap_fiemap_begin
->       loop iomap_iter
->         xxxfs_iomap_begin();
->         iomap_readpage_fiemap_advance()
->         xxxfs_iomap_end();
->       iomap_fiemap_end
-> So that each fs can use those helpers flexibly instead of diging
-> into adding various new indirect call hooks or moving customized
-> logic into iomap/ itself.
-
-Yes, it's quite possible to push the iomap iteration control down into
-the filesystems to avoid the indirect calls.  That might make things
-faster, though I have no idea what sort of performance impact that will
-have.
-
-> I don't have a specific example  because currently we don't have
-> direct issue against standard iomap flow on our uncompressed
-> path, but after a quick glance of other potential users who try
-> to convert their buffer I/Os to iomap, I had such impression in
-> my head for a while.
-
-OTOH making it easier for non-disk filesystems to use iomap but supply
-their own IO mechanism (transformed bios, memcpy, etc) makes a far more
-compelling argument for doing this painful(?) treewide change IMO.
+Ok, I'll meld that all together today.
 
 --D
 
 > Thanks,
-> Gao Xiang
-> 
-> > 
-> > 
-> > Thanks,
-> > Joanne
-> > 
-> > > Thanks,
-> > > Gao Xiang
-> > > 
-> > > > 
-> > > > Thanks,
-> > > > Joanne
-> > > > > 
-> > > > > Thanks,
-> > > > > Gao Xiang
-> > > 
-> 
+> Miklos
 > 
 
