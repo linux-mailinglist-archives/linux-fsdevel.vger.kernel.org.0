@@ -1,94 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-60334-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60335-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E134B450D2
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 10:04:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96B17B4511F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 10:18:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B2111C2064A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 08:04:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BAFC47A27A5
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 08:16:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F079C2FB626;
-	Fri,  5 Sep 2025 08:04:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 892342FB626;
+	Fri,  5 Sep 2025 08:17:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kdN+o1B+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mta21.hihonor.com (mta21.hihonor.com [81.70.160.142])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C10C6270557;
-	Fri,  5 Sep 2025 08:04:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.160.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA49D13E898;
+	Fri,  5 Sep 2025 08:17:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757059445; cv=none; b=u/A3X19Im7nZegLPRucGFdZoNUPSEchJUpNXKWeMHL9Bpz+3AS/9Wew8l5e87Rv54yQd6+eNjGdGBpUnNZZKverJoSTQ4DetweD62LpAFi9ih03+bgyxPOGKgbPJkYR4JY4OUfuZWYEh95DqbFayVZ3bPJx9Csb40pQjYZAgzsc=
+	t=1757060277; cv=none; b=Y9zl3V+uLxNdV+EY+kGDRoCruw5R+vfkX/1YzoGDT0SdzF1n4H6Sp86tJ9ShGdMou1MSs//vLmVvaNyAvur9lBVETZhOUIyTcrwsaG/OAsVJ60l4vE+DvjFk1hHQPpfxx3GElDtW0nO/Z+xW/AI5OwxcxWXxXUJpY+yYwLmeVaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757059445; c=relaxed/simple;
-	bh=cbxXU01GVgzyxmNZKhm6Cjgn0TAgIz4SAbFBFOPg7+o=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cMIcaOr7u8+Q+3GNQ2HCD5bYZ3zNJdlJ2bhcGkCFGmBXGH9qWs1NP7gLoGueoD7afrNLKlOgSKmGUhixVDgJfUVMX4kVg+z4nOueOLzSvjEzhr4BENvFF9zfiwIfYMnhEIx1q6jiWlsVAT0NPGMx+qfi2iN/CYC7nSI59QcsBVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.160.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-Received: from w003.hihonor.com (unknown [10.68.17.88])
-	by mta21.hihonor.com (SkyGuard) with ESMTPS id 4cJ84909gjzYl2R8;
-	Fri,  5 Sep 2025 16:03:37 +0800 (CST)
-Received: from a011.hihonor.com (10.68.31.243) by w003.hihonor.com
- (10.68.17.88) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 5 Sep
- 2025 16:04:00 +0800
-Received: from localhost.localdomain (10.144.23.14) by a011.hihonor.com
- (10.68.31.243) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 5 Sep
- 2025 16:04:00 +0800
-From: wangzijie <wangzijie1@honor.com>
-To: <akpm@linux-foundation.org>
-CC: <adobriyan@gmail.com>, <brauner@kernel.org>, <jirislaby@kernel.org>,
-	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<sbrivio@redhat.com>, <spender@grsecurity.net>, <viro@zeniv.linux.org.uk>,
-	<wangzijie1@honor.com>
-Subject: Re: [PATCH] proc: fix type confusion in pde_set_flags()
-Date: Fri, 5 Sep 2025 16:03:59 +0800
-Message-ID: <20250905080359.4063152-1-wangzijie1@honor.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250904155517.d623a254e8c25027c41e8e41@linux-foundation.org>
-References: <20250904155517.d623a254e8c25027c41e8e41@linux-foundation.org>
+	s=arc-20240116; t=1757060277; c=relaxed/simple;
+	bh=y9VH9c1nH0kxxxroJ0e7TZw+lVlM7zSLrtdSOs2uKac=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XqbOLKvcM3X1RjleFu9FyRR5UPqstU+Z6004prJy10HZfiG9xEze2kNq2lBYC3wFSxh1bt2M/AOAgFGku0TyTV016XhxXojLG4X/Wx/8v8As04JLr2bQJzALJFL2krgNFujLyTH7f0q+j9t2NE0aaWYjIyjscIPTG2m6QNEi/Wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kdN+o1B+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A3CCC4CEF1;
+	Fri,  5 Sep 2025 08:17:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757060276;
+	bh=y9VH9c1nH0kxxxroJ0e7TZw+lVlM7zSLrtdSOs2uKac=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kdN+o1B+lV/nwhlHDkaeB/Yyd3W0xvtHeZdYOYPEDKyYqZugeXHsHO+40xiVSBf70
+	 xujWeNE4LXCe1mwMTCxqgCENABhRjZKmeLFMX1N3ti/K+Zf9QQQzhHzHYv/z8/YONx
+	 HRdLa4a9gW8ZEFqpONxapCtzryqu4zk0s85xFcgYcEtCufnzeebjkY48QnrBTO6r5o
+	 nLIhjA8qB/pKGgCEGq2bjRqNZAStEu7/lWas6JBlMZ/g914BpUgjd1JHZn1UfvsR1Y
+	 RuWjOCqnVzMwvumm/iHv+rVxGnDauY7y33sSki4G0ld+R3X61ZT8NORwDSgTUF47g/
+	 L7cazTTK/QibA==
+Date: Fri, 5 Sep 2025 10:17:51 +0200
+From: Carlos Maiolino <cem@kernel.org>
+To: Hans Holmberg <Hans.Holmberg@wdc.com>
+Cc: "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>, 
+	Dave Chinner <david@fromorbit.com>, "Darrick J . Wong" <djwong@kernel.org>, hch <hch@lst.de>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	brauner@kernel.org
+Subject: Re: [PATCH 1/3] fs: add an enum for number of life time hints
+Message-ID: <gzj54cob33ecyfdabfbvci7nj7gl5sc2cbujpkg6qax7vgoph2@3ubnb4d2dfim>
+References: <20250901105128.14987-1-hans.holmberg@wdc.com>
+ <kcwEWPeEOk9wQLfYFJ-h2ttYjtf0Wq-SjdLpIAqoJzT3jysu_U4uhYJj1RZys6tWgxVKxq833URcLKj-5faenA==@protonmail.internalid>
+ <20250901105128.14987-2-hans.holmberg@wdc.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: w002.hihonor.com (10.68.28.120) To a011.hihonor.com
- (10.68.31.243)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250901105128.14987-2-hans.holmberg@wdc.com>
 
-> On Thu, 4 Sep 2025 21:57:15 +0800 wangzijie <wangzijie1@honor.com> wrote:
+On Mon, Sep 01, 2025 at 10:52:04AM +0000, Hans Holmberg wrote:
+> Add WRITE_LIFE_HINT_NR into the rw_hint enum to define the number of
+> values write life time hints can be set to. This is useful for e.g.
+> file systems which may want to map these values to allocation groups.
 > 
-> > Commit 2ce3d282bd50 ("proc: fix missing pde_set_flags() for net proc files")
-> > missed a key part in the definition of proc_dir_entry:
-> > 
-> > union {
-> > 	const struct proc_ops *proc_ops;
-> > 	const struct file_operations *proc_dir_ops;
-> > };
-> > 
-> > So dereference of ->proc_ops assumes it is a proc_ops structure results in
-> > type confusion and make NULL check for 'proc_ops' not work for proc dir.
-> > 
-> > Add !S_ISDIR(dp->mode) test before calling pde_set_flags() to fix it.
-> > 
-> > Fixes: 2ce3d282bd50 ("proc: fix missing pde_set_flags() for net proc files")
-> 
-> 2ce3d282bd50 had cc:stable, so I added cc:stable to this patch.
-> 
-> > Reported-by: Brad Spengler <spender@grsecurity.net>
-> > Signed-off-by: wangzijie <wangzijie1@honor.com>
-> 
-> A link to Brad's report would be helpful please, if available.  We
-> typically use Closes: for such things.
+> Signed-off-by: Hans Holmberg <hans.holmberg@wdc.com>
 
-Closes: https://lore.kernel.org/all/20250903065758.3678537-1-wangzijie1@honor.com/
+Cc'ing Chris Brauner here, as I think he is who will be picking this up.
 
-Thanks for reminder, I'm not sure if this link is appropriate.
+The other two can go through XFS tree.
+
+> ---
+>  include/linux/rw_hint.h | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/include/linux/rw_hint.h b/include/linux/rw_hint.h
+> index 309ca72f2dfb..adcc43042c90 100644
+> --- a/include/linux/rw_hint.h
+> +++ b/include/linux/rw_hint.h
+> @@ -14,6 +14,7 @@ enum rw_hint {
+>  	WRITE_LIFE_MEDIUM	= RWH_WRITE_LIFE_MEDIUM,
+>  	WRITE_LIFE_LONG		= RWH_WRITE_LIFE_LONG,
+>  	WRITE_LIFE_EXTREME	= RWH_WRITE_LIFE_EXTREME,
+> +	WRITE_LIFE_HINT_NR,
+>  } __packed;
+> 
+>  /* Sparse ignores __packed annotations on enums, hence the #ifndef below. */
+> --
+> 2.34.1
+> 
 
