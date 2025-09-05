@@ -1,163 +1,151 @@
-Return-Path: <linux-fsdevel+bounces-60373-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60374-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAB6DB463DD
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 21:44:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CE65B46415
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 22:01:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D941188E3C5
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 19:45:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD3A93A63FE
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 20:01:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 070E3285071;
-	Fri,  5 Sep 2025 19:44:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4C027B50F;
+	Fri,  5 Sep 2025 20:01:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mTS/deVb"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="3F3aTWeV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B193D28312E;
-	Fri,  5 Sep 2025 19:44:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0EB1BA42
+	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Sep 2025 20:01:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757101466; cv=none; b=eWXxE7eQT7fZTDh3svvEMG5aYd8MAQxzbjqWPT4Qw2jVTc/GE8h4P88EyH76uNZWqF3pAZ4jrd+20wijoQMidyWZSK81foRb19T7styPTRo9o0kv0cV5vAeu18WY1NlBWfgTzIu7GU9YqbOVuSsbgXO1ADyLRScJrEIrBZE6RxQ=
+	t=1757102509; cv=none; b=X2mKVL2eqwwJCS9ffW44GyFK3wHeQQe2yn5atIxUnhr4QKDYdpiME32g+HIUAYovlGy9krrMCkF/mADpAV8mxzQ//yHGhEFO+j8tX+63AAGvptHDB1DcwlAtDtt66+4nkhVwZmeGiNnadwCLG2/WFb/7J53zCi5Ucw9JG9a7l4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757101466; c=relaxed/simple;
-	bh=Ym8w4HXDojSn4bdlotWab64OwdaXhDpeE1PilSeNtZ0=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=NIG3DeHhDEiA5Q7Kd1MtXThzpjZ4wfcZtXMpu8bDLrjS+p4ZzudvbaED80q0l6s2zUWOBloLWlRCVee23B0TOLwmflKFNDKsWqhCnHsoolVLzrW55BCn2TUzBFn3iuOEB/5X2+0Ollh847p+8F4a7L8k+Tp6CvA0+TEuayvRGkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mTS/deVb; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45dd505a1dfso12219935e9.2;
-        Fri, 05 Sep 2025 12:44:24 -0700 (PDT)
+	s=arc-20240116; t=1757102509; c=relaxed/simple;
+	bh=CIt2rudRtW4UBrSZeLFjRUpcL/34sCPSMHO4G+HzerI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=izf/+snUM+2/v90bYIMw0vcCLXONk6Fuo8MwsK1TvcmEu+H8vQ3FHfyASaJ9SvWAjxeXa85f9BkKdoSslth1gLJVki7Kp5PwnoP/NedGUlM5cyNHIEbz0aWoUHDvciAz5sHVIGSR1Jy2sqcQL1dIY6K6PUb/4JW5M2aE27+H1Zw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=3F3aTWeV; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-71d6059f490so25598597b3.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Sep 2025 13:01:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757101463; x=1757706263; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6gihNiL/JMk6H0925BlY7NHCybaKcuYV/h29UWRuqZU=;
-        b=mTS/deVbpDtYn1/nGStTrH8GrN1s7samJnoW0KeaWOwDdYyyc/OrfEWB9XzxkbyK5v
-         bY4O4VG+fKiFruAV0ELEGyYBr62oSnkTNiOpBpjFDWMuijg40Kr46YJOllRkAaa5sWTv
-         n5VXeIWL9ni4+ibkSuTsTAOBsk3L/lwM69ren8rr7ad+wFzoyC0zMzQjSMTwoiqBt6MK
-         gyL3755ZHcegECgWddM496mMYUiXs1FPdA5yGidhjBHibYONO4yTbecjKxHCsilkCQfN
-         m6Pv61lB4zleJBT2kK/ICWmoCXpIZVn6S6T5+olPS0RbYusSFZz3+xgRmf9kDOhakgDl
-         s28A==
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1757102505; x=1757707305; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jOy/Lx1hali3hqni7ugXsZX+qSqE1qh4LpVXkqYzo1w=;
+        b=3F3aTWeVRG9DQesHQ95dW/ZLjipg1N52Qoxfgnc8uk1S3x8ne6qRrPGapWfCDB2Mpe
+         /ckbbbTu1EJTh32mawJFf/zEVAr4UwxQMJ2mm9L+a+ZE7HQ3nmt0DyaonpDrqcgUIa0C
+         bN6NtVTj4GyDa5g4IqMQedCS/P2NsAJlh2e5DkaQq0OPXeG5NiqKaUP0pocUCasvSqQY
+         umwwgltqis3VwpLY0X+pWaQnr/rxJuYho81CeAV2nsuv+hhL0qlbIdXp8TN33KKYV6wc
+         b5STtHAH0ep6mymockMqm0Ezcf8jp2gN0g00ATux1X/889KvmyQ8DJfQFVGcH5nyDPPn
+         fqRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757101463; x=1757706263;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6gihNiL/JMk6H0925BlY7NHCybaKcuYV/h29UWRuqZU=;
-        b=qw9m4LAnVfjZ57ju5TGp3pwaQgsnWg5QcPuK4zvIVwKtypQbOuIf7w6fCo8lEDFQzg
-         YuQ13AkkT91JJrhVXtkBc3MsCIp5U1W2UMc76OJR7uPhEBUbsq4i+PMKskpT/ZAYd8JV
-         taoCtCwRT+oJxBR29oDNxn2UrSCFzvdbLyfVlC57BczHjMa1+ewdq3yPwD8HdHhWh6Um
-         zTp4GkQDvzmrKj2htdmUsEwa2aNPfp9LNGIC2ivgNbsfJ4YBEQp+wZwlI+zX8Ve11nhI
-         X8B6/LnqRvdqhmQuLBtRM9bUaZb8Y7vBXLHklXoGHJZ/ewAHUrnjA+ycD/VO1Qf55rsU
-         rlKg==
-X-Forwarded-Encrypted: i=1; AJvYcCUv8+YPrIgEIw2KW57EVFF3rBCkaxih+PSo9eGVWMTXBJylumKiT83bkPRpcWCr65Ze+OjVAntKioU=@vger.kernel.org, AJvYcCV4d87o+8huGaZl4m89jqqY3+CV/yThNTCmxnlg3QCp7qTYQKyIcQNaF1i5YJ4KiS5PzNwKE+VWM5u7Bosq@vger.kernel.org, AJvYcCW9yPs85dVbT2AESpvVnLnPZxpvQ0V3i55hd33M5yHxxUVnNEoGNh+G5lZUfiz1odyi0lIhsPgnhiQjCqsIxA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWZeCryUgwg7M3wPhQWXPOn8SbYvpvknQ0L/IR2BO+kj3cgadE
-	q7i4zZ0CkTvFsqOkftET5+nwgECKh/Qab7c83qwkVpp8LmKZ0177D+kO
-X-Gm-Gg: ASbGncv0QlWc7tx5udsUJf8X/BKM7j7vq631HN2Tys+IN/M9MNrc+IUe+7nppEmimXn
-	KVZvaKu2Id8ZWQ819WvHG7p9T+Xc9UMSPbXLpQ0UbKWmS1cAub98NRDHPOYvqhcD772uRsy+SWQ
-	9qjM38rEn4q77Kgi6WD8Vagq1WbgoTu+VRuiKCK6ohM+i+r/oOjQpvlC2Kq3gleKDxn0ev6iMBU
-	7nHiMigeFUagE2aqdYFABDX85jVJG64NhzovMsDQMvS+E9rEcsFXHzYnzAMZQwlNE1bl2K/sW2Z
-	wO+Vr9AID4lPKbJnkwQRSg0CKJOZ1k87dlOfXOO7/y1ontlo+kesfn8ucJQ9cUGZr4/536XYje5
-	z5IjH9hCOHGXTjgR62+lxo+VRAvRgYCTih52Ht1nlNTDWPJRWXJ9bsY/7Mp5TAQ9RFnkeMMg3q+
-	C8fy+SVWzDy5+v2SeOVvjng9H3d9M0
-X-Google-Smtp-Source: AGHT+IHOGLoAlL1EKX3BuosEZEEa4UCTSyf5rfL5O6Lh/HionQYcDs1GP2npYPB94Jdvfm24zXfnfQ==
-X-Received: by 2002:a05:6000:25ca:b0:3cd:93c5:eabc with SMTP id ffacd0b85a97d-3d1dcb7627emr16306265f8f.18.1757101462595;
-        Fri, 05 Sep 2025 12:44:22 -0700 (PDT)
-Received: from ?IPV6:2a02:6b6f:e759:7e00:1047:5c2a:74d8:1f23? ([2a02:6b6f:e759:7e00:1047:5c2a:74d8:1f23])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6f306c93sm427283745e9.14.2025.09.05.12.44.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Sep 2025 12:44:22 -0700 (PDT)
-Message-ID: <5a3fd8fd-d215-464c-9e84-b8051c16f07f@gmail.com>
-Date: Fri, 5 Sep 2025 20:44:10 +0100
+        d=1e100.net; s=20230601; t=1757102505; x=1757707305;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jOy/Lx1hali3hqni7ugXsZX+qSqE1qh4LpVXkqYzo1w=;
+        b=q8KQx23X7l2yJ8J+swP5mwtAI7aG9Hc4o0Ip1/b5BMSh3U8ZVvpzssWpdjLrH+kLJK
+         NO4hZTvhUIMk4OfAjKmMlfH6ZLWOTtVw6Q10evl4ri13gT1iGYYJzB998Ct4WpIv6tL4
+         2ZtzeHhKjnQ/vesIdsckmKb9wJNxjnKXQKvVlImiBH0gCf2gVJhAamRduqPGJgqQX/Sf
+         yZfAv556SOOjdkVOJIrouy3ZnrN7pAz+Lj5f4SkRpiBhureHfdkbJy7/eWGroou917in
+         Sv3RtgZFFEgKVZi+t9K+soq5TqeCYTx79OB4gbHRrGcHXnolcXnBFsVWnT66veC+O1Py
+         c+vQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV2/ClqAi1ttwzSX5JWXcOSl/MG05zzPpcTLJdV/7CtcLBinVg6z5VTfwAgsOW19gjwyLYcVx0CS+RiaQxt@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhXXOl4ZSe1gJhgYsTldB2AgzyK8yxQsKeRaZr36mruM/SPNho
+	vCoXcVun0TYjdCigzlmqSB7jO3xdaHwhUKlsiI9gDWuY+cqc1DaH9FQ8cuhaLOPPXcM=
+X-Gm-Gg: ASbGncvXgC7D4b9jaRWTvWza8qbxU0n8WWsiwrhC8f9b2hWHkP2ZPPfwfzZHSKCTzRm
+	6Tsx7oMNwGIDsIrrSNISF5N1xCQLuO6ZTmf1ML9Jh7bQ/7AHH4oZKnu5u73DdR0vg8SBMbPeZ9E
+	N5SgPQMm4Hayb0dbaZLtOgHlewei8aEm0lfT1MS/mRj8Gux8yKuPgzfdSFhqJCUPE0cubPWAGKz
+	0q+pD+opSr3q59+/9jR4sJ2LUIjFi2FPZnfb6f/NTw4J4wQUCB+WurXvSNPxv0niql8NdVijKcV
+	hH5EMJAtowhAILIC5VLhiCsHEHMxmNB5D7qCWoj4mmPg3IX7lq8F/7n+l3NA1C3zHMYkuGopvZJ
+	YQxJN3LMVrfBfM/h16jIMIcnmTDv0tWF0Jra6IPb4gXM6LDmM9N4=
+X-Google-Smtp-Source: AGHT+IEr/a6oBelU2QV3zVFEFZ3TC++egfhB+J+cNPqYIHA9Iy874iEk3OeK+W4CA42HPxHoko/Auw==
+X-Received: by 2002:a05:690c:620d:b0:722:875f:5ba7 with SMTP id 00721157ae682-727f6b21ff2mr1152567b3.39.1757102505276;
+        Fri, 05 Sep 2025 13:01:45 -0700 (PDT)
+Received: from system76-pc.attlocal.net ([2600:1700:6476:1430:2479:21e9:a32d:d3ee])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-723a834c9adsm32360857b3.28.2025.09.05.13.01.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Sep 2025 13:01:44 -0700 (PDT)
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: ceph-devel@vger.kernel.org
+Cc: idryomov@gmail.com,
+	linux-fsdevel@vger.kernel.org,
+	pdonnell@redhat.com,
+	amarkuze@redhat.com,
+	Slava.Dubeyko@ibm.com,
+	slava@dubeyko.com,
+	vdubeyko@redhat.com
+Subject: [RFC PATCH 00/20] add comments in include/linux/ceph/*.h
+Date: Fri,  5 Sep 2025 13:00:48 -0700
+Message-ID: <20250905200108.151563-1-slava@dubeyko.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 6/7] selftests: prctl: introduce tests for disabling
- THPs completely
-Content-Language: en-GB
-From: Usama Arif <usamaarif642@gmail.com>
-To: Mark Brown <broonie@kernel.org>, Zi Yan <ziy@nvidia.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, david@redhat.com,
- linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, corbet@lwn.net,
- rppt@kernel.org, surenb@google.com, mhocko@suse.com, hannes@cmpxchg.org,
- baohua@kernel.org, shakeel.butt@linux.dev, riel@surriel.com,
- laoar.shao@gmail.com, dev.jain@arm.com, baolin.wang@linux.alibaba.com,
- npache@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
- ryan.roberts@arm.com, vbabka@suse.cz, jannh@google.com,
- Arnd Bergmann <arnd@arndb.de>, sj@kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, kernel-team@meta.com, Aishwarya.TCV@arm.com
-References: <20250815135549.130506-1-usamaarif642@gmail.com>
- <20250815135549.130506-7-usamaarif642@gmail.com>
- <c8249725-e91d-4c51-b9bb-40305e61e20d@sirena.org.uk>
- <5F7011AF-8CC2-45E0-A226-273261856FF0@nvidia.com>
- <620a27cc-7a5f-473f-8937-5221d257c066@sirena.org.uk>
- <abe39fc3-37a3-416d-b868-345f4e577427@gmail.com>
-In-Reply-To: <abe39fc3-37a3-416d-b868-345f4e577427@gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 
+We have a lot of declarations and not enough good
+comments on it.
 
-On 05/09/2025 20:40, Usama Arif wrote:
-> 
-> 
-> On 05/09/2025 19:02, Mark Brown wrote:
->> On Fri, Sep 05, 2025 at 01:55:53PM -0400, Zi Yan wrote:
->>> On 5 Sep 2025, at 13:43, Mark Brown wrote:
->>
->>>> but the header there is getting ignored AFAICT.  Probably the problem is
->>>> fairly obvious and I'm just being slow - I'm not quite 100% at the
->>>> minute.
->>
->>> prctl_thp_disable.c uses “#include <sys/mman.h>” but asm-generic/mman-common.h
->>> is included in asm/mman.h. And sys/mman.h gets MADV_COLLAPSE from
->>> bits/mman-linux.h. Maybe that is why?
->>
->> Ah, of course - if glibc is reproducing the kernel definitions rather
->> than including the kernel headers to get them then that'd do it.
->> Probably the test needs to locally define the new MADV_COLLAPSE for
->> glibc compatibility, IME trying to directly include the kernel headers
->> when glibc doesn't normally use them tends to blow up on you sooner or
->> later.
->>
->> I knew it'd be something simple, thanks.
-> 
-> Hi Mark,
-> 
-> Thanks for raising this. I think doing 
-> 
-> diff --git a/tools/testing/selftests/mm/prctl_thp_disable.c b/tools/testing/selftests/mm/prctl_thp_disable.c
-> index 89ed0d7db1c16..0afcdbad94f3d 100644
-> --- a/tools/testing/selftests/mm/prctl_thp_disable.c
-> +++ b/tools/testing/selftests/mm/prctl_thp_disable.c
-> @@ -9,6 +9,7 @@
->  #include <string.h>
->  #include <unistd.h>
->  #include <sys/mman.h>
-> +#include <linux/mman.h>
->  #include <sys/prctl.h>
->  #include <sys/wait.h>
-> 
-> 
-> should fix this issue?
-> 
-> Thanks
-> Usama
+Claude AI generated comments for CephFS metadata structure
+declarations in include/linux/ceph/*.h. These comments
+have been reviewed, checked, and corrected.
 
+Viacheslav Dubeyko (20):
+  ceph: add comments to metadata structures in auth.h
+  ceph: add comments to metadata structures in buffer.h
+  ceph: add comments in ceph_debug.h
+  ceph: add comments to declarations in ceph_features.h
+  ceph: rework comments in ceph_frag.h
+  ceph: add comments to metadata structures in ceph_fs.h
+  ceph: add comments in ceph_hash.h
+  ceph: add comments to metadata structures in cls_lock_client.h
+  ceph: add comments to metadata structures in libceph.h
+  ceph: add comments to metadata structures in messenger.h
+  ceph: add comments to metadata structures in mon_client.h
+  ceph: add comments to metadata structures in msgpool.h
+  ceph: add comments to metadata structures in msgr.h
+  ceph: add comments to metadata structures in osd_client.h
+  ceph: add comments to metadata structures in osdmap.h
+  ceph: add comments to metadata structures in pagelist.h
+  ceph: add comments to metadata structures in rados.h
+  ceph: add comments to metadata structures in string_table.h
+  ceph: add comments to metadata structures in striper.h
+  ceph: add comments to metadata structures in types.h
 
-If that fixes it, please feel free to send a patch or let me know and I will send it.
+ include/linux/ceph/auth.h            |  59 +-
+ include/linux/ceph/buffer.h          |   9 +-
+ include/linux/ceph/ceph_debug.h      |  25 +-
+ include/linux/ceph/ceph_features.h   |  47 +-
+ include/linux/ceph/ceph_frag.h       |  24 +-
+ include/linux/ceph/ceph_fs.h         | 792 ++++++++++++++++++---------
+ include/linux/ceph/ceph_hash.h       |  21 +-
+ include/linux/ceph/cls_lock_client.h |  34 +-
+ include/linux/ceph/libceph.h         |  50 +-
+ include/linux/ceph/messenger.h       | 449 +++++++++++----
+ include/linux/ceph/mon_client.h      |  93 +++-
+ include/linux/ceph/msgpool.h         |  15 +-
+ include/linux/ceph/msgr.h            | 162 +++++-
+ include/linux/ceph/osd_client.h      | 407 ++++++++++++--
+ include/linux/ceph/osdmap.h          | 124 ++++-
+ include/linux/ceph/pagelist.h        |  13 +
+ include/linux/ceph/rados.h           |  91 ++-
+ include/linux/ceph/string_table.h    |  11 +
+ include/linux/ceph/striper.h         |  16 +
+ include/linux/ceph/types.h           |  14 +-
+ 20 files changed, 1907 insertions(+), 549 deletions(-)
 
-Thanks!
-Usama
+-- 
+2.51.0
+
 
