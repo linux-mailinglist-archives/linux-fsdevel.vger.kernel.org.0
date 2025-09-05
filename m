@@ -1,125 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-60331-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60332-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63328B44E8D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 09:02:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F03B0B44F5B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 09:27:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3062518920C1
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 07:02:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96503A4451D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Sep 2025 07:26:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96485202961;
-	Fri,  5 Sep 2025 07:02:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D20122F49E7;
+	Fri,  5 Sep 2025 07:19:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="Fgg9mwvt"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SRq+Zd9E"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC9532F76C
-	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Sep 2025 07:02:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0E522F1FD0
+	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Sep 2025 07:19:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757055740; cv=none; b=mB1dJ2kyekqhkUc4iSaQ1Uonp2fC2lzoFoGXoSx9WbXNhiHumCpCg08p/eOVxBitL66vMtg5rFSSPzgK28PTcfpWvua3j4jaPAWvC2DxcLGOe7vQ/3u0w+lCG5eHpeYfzBRHc8Z0yi8Pp79zRT8VS8XUaU1o/dSxnubjZgGIRYo=
+	t=1757056790; cv=none; b=Ow4jKs5y0DCuG6cNYBOvL3NUl9kgmq1fbXAjzYcKBt83NA6H4hdYXtzeO8YnBqdlOF4uirSpKQLgWuhldbdjcFtfclQZmMyZpH9d8EjqWAl04l5rX/aBeGGaviTJukkLaK7Qsj8hUBQTKIVyCNHgxZqdTlvBx0D+kBNbIZ/KL0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757055740; c=relaxed/simple;
-	bh=5bMq2mvJbw4I6jW/yXMG6FU70uaIUcEuG2d718VNuTI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u9l9XGSWvPP8PRwiSKOij0DhPCSEOigQ1I4ZTFbMr4oQZOJpz1DPyVXBW5pV9mT/tx6wt0N+DxZ7vc6fubeulBFvs9NhHHYQrRXQZJVzj7uLRHLarBOcbC6/AgPtLotEzDFrvugmcadSFiRsvq4MAUyYiOtj0anUM2Mj24OETs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=Fgg9mwvt; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4b109c6b9fcso15567451cf.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Sep 2025 00:02:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1757055737; x=1757660537; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=CbUCF83GVvjOC3eVo/KP6tFEeF50f+8z0W1B1r3la+s=;
-        b=Fgg9mwvt0/sb2O60VL4FnAwd//JVWqb2a+dLZaLYQRuW6ttlUptfSMD8T14qPS146j
-         TdoMZuthAiMoN/TkU24bpgiL0LsYvAUbW0OU4e8bY85hM88G2O5Riqokr7TX39cNQQid
-         fWV5ixR8OGAYTmZWtNQzsBFjEXB384hue4Y1s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757055737; x=1757660537;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CbUCF83GVvjOC3eVo/KP6tFEeF50f+8z0W1B1r3la+s=;
-        b=SsCA78KPUVtYx15Zo9dks+Rbk8Q6unIynq8B6pVYCIdPNw3adL6qRzQ8eAWEGusbgO
-         TFgQmLzmYXsebu0yeYFON8tTd/hkWvWXvEUfdDDLoeQYLeQk36eZfFBeXgudp9PtDsFx
-         9DKOr/gdr25gkrect2HPCgB5btnfnQUdRZeoO2d1LHrcHls7Ca7NwXNn512FvkCQSlVe
-         FhQe7fFOF1v7tyDajYFTO93/7+hMYu15DQLTMEg1QpFdjdEZIrvPlDXDMAX4XRBzfryz
-         f+X9Ul4mOO3KtHRIhGcUF7Piy9Q7NLA//r1U2v4shsQnUREinAbdSGsgchqi53/7YB1j
-         McIA==
-X-Forwarded-Encrypted: i=1; AJvYcCV18d+VCGmvH8p1HAUd+GghzCG+2oHST8BKtAK8cHqP0TZi0tvWweVK7OsK5OotoMTEiyIXkDRQjRYlAjew@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJZk0ayPo7Wa/tBnPSuDdJUwjjdG7EDpKxZwr85GBQzsFdKj6/
-	6ORuLzlkQbP6uQVXM8ynVGvvKjKCeLQ5J9GqPJD6vmU4GtnUjcfXZIEVhTxw6JhtH0AfKjH9cpF
-	gxVakIuJrMsYGTGxG/79Y2wTEqFfyQxgSSvpASikmrg==
-X-Gm-Gg: ASbGncvsYD8F6SdLkskk+Hl6UDIA8dNRrGWPCSTPBx/ugBuK42Q59mFcUzVPnF6fpt3
-	ihaPWfnPdzXmv/HWWH8wL6Sh6sDCN1t8E2lwdbhPBWzzEvmtoAH60NPXxQPAyneTmhBF86s9U77
-	TjU9bS7bLzuTtxNBdTDubiK0caxDj4XY7zoB6AV9mKbD+x31YWWBle9GH0F7/ZKam5J7R+uTc/s
-	WSHRgqi3OPYfNuODAbkpUPbb/VrGqYDn3MuKX8arPpcZ9L+gd3w
-X-Google-Smtp-Source: AGHT+IEaD1f+f01g0dYxBn3YUSLh+qnW/vy/BrNr9EXtLuKyGdztl7IJykIIeEyEfuSyRGW41c2+XMgXW1a+4izDKpQ=
-X-Received: by 2002:a05:622a:540f:b0:4b5:f01b:d997 with SMTP id
- d75a77b69052e-4b5f01bea13mr2805631cf.71.1757055736818; Fri, 05 Sep 2025
- 00:02:16 -0700 (PDT)
+	s=arc-20240116; t=1757056790; c=relaxed/simple;
+	bh=Suw09eB9ppiB6UfNyAOxsVIseQRG6XKcK1nA3C87n6s=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=cP2V57mJyzqUB5NuEHVh1JZCQ08fGPebYZmZA6Vhsh7iAZsA63esDBzb/uXVqCCTyIegRSK40J8fLLhXxm4RCFRH80qYddhL5Z48WgSRk07wN8gx+2jzMvAQmPquu+Fi2vrWjWasaIJQNz9v34PTNoTk0qqmhLldT+VTiAX1BHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SRq+Zd9E; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757056787;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lOWBvlmAC8pfNTMOXHdIcb1vSYRLonZ1V+4KR+bduoU=;
+	b=SRq+Zd9ERRZjPCiwIz097H095DEAD/7IdQOaspbYagFQt9BEvGN/odP60ZE4W+6vr1xpPW
+	hCKQN0NswMBJ9cPSKjVsurLCZ6oRDJo/RA0tsK6C2gsHPTyWijLV0r/CLzbBhtNqjI4cIA
+	IUMup7Y2O9t8BwMQlTq4PIv7w5qwGY0=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-50-Y2iy0qCyNs-1PW5mQz-4kA-1; Fri,
+ 05 Sep 2025 03:19:43 -0400
+X-MC-Unique: Y2iy0qCyNs-1PW5mQz-4kA-1
+X-Mimecast-MFC-AGG-ID: Y2iy0qCyNs-1PW5mQz-4kA_1757056781
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2D9AB195608E;
+	Fri,  5 Sep 2025 07:19:41 +0000 (UTC)
+Received: from fweimer-oldenburg.csb.redhat.com (unknown [10.45.224.104])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AD9F419560B8;
+	Fri,  5 Sep 2025 07:19:36 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Amir Goldstein <amir73il@gmail.com>,  linux-fsdevel@vger.kernel.org,
+  patches@lists.linux.dev,  Jeff Layton <jlayton@kernel.org>,  Chuck Lever
+ <chuck.lever@oracle.com>,  Alexander Aring <alex.aring@gmail.com>,  Josef
+ Bacik <josef@toxicpanda.com>,  Aleksa Sarai <cyphar@cyphar.com>,  Jan Kara
+ <jack@suse.cz>,  Christian Brauner <brauner@kernel.org>,  Matthew Wilcox
+ <willy@infradead.org>,  David Howells <dhowells@redhat.com>,
+  linux-api@vger.kernel.org
+Subject: Re: [PATCH v3] uapi/linux/fcntl: remove AT_RENAME* macros
+In-Reply-To: <b35f0ff7-8ffb-400f-b537-d15e83319808@infradead.org> (Randy
+	Dunlap's message of "Thu, 4 Sep 2025 14:52:34 -0700")
+References: <20250904062215.2362311-1-rdunlap@infradead.org>
+	<CAOQ4uxiJibbq_MX3HkNaFb3GXGsZ0nNehk+MNODxXxy_khSwEQ@mail.gmail.com>
+	<lhua53auk7q.fsf@oldenburg.str.redhat.com>
+	<b35f0ff7-8ffb-400f-b537-d15e83319808@infradead.org>
+Date: Fri, 05 Sep 2025 09:19:33 +0200
+Message-ID: <lhu7bydv01m.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <175573708506.15537.385109193523731230.stgit@frogsfrogsfrogs>
- <175573708630.15537.1057407663556817922.stgit@frogsfrogsfrogs>
- <CAJfpegsp=6A7jMxSpQce6Xx72POGddWqtJFTWauM53u7_125vQ@mail.gmail.com>
- <20250829153938.GA8088@frogsfrogsfrogs> <CAJfpegs=2==Tx3kcFHoD-0Y98tm6USdX_NTNpmoCpAJSMZvDtw@mail.gmail.com>
- <20250902205736.GB1587915@frogsfrogsfrogs> <CAJfpegskHg7ewo6p0Bn=3Otsm7zXcyRu=0drBdqWzMG+hegbSQ@mail.gmail.com>
- <20250903154955.GD1587915@frogsfrogsfrogs> <CAJfpegu6Ec=nFPPD8nFXHPF+b1DxvWVEFnKHNHgmeJeo9xX7Nw@mail.gmail.com>
- <20250905012854.GA1587915@frogsfrogsfrogs>
-In-Reply-To: <20250905012854.GA1587915@frogsfrogsfrogs>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Fri, 5 Sep 2025 09:02:05 +0200
-X-Gm-Features: Ac12FXyqplgv8V5tnx2HyVXAEjQ-d2wFt5_p0DHwVA0fzrDK9knsr8Nuk2At2uo
-Message-ID: <CAJfpegubFsCjWJyJhv_9HE_9_htL3Z7-r_AMFszxA-982dC-Jw@mail.gmail.com>
-Subject: Re: [PATCH 4/7] fuse: implement file attributes mask for statx
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: bernd@bsbernd.com, neal@gompa.dev, John@groves.net, 
-	linux-fsdevel@vger.kernel.org, joannelkoong@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Fri, 5 Sept 2025 at 03:28, Darrick J. Wong <djwong@kernel.org> wrote:
->
-> On Thu, Sep 04, 2025 at 01:26:36PM +0200, Miklos Szeredi wrote:
-> > On Wed, 3 Sept 2025 at 17:49, Darrick J. Wong <djwong@kernel.org> wrote:
-> > >
-> > > On Wed, Sep 03, 2025 at 11:55:25AM +0200, Miklos Szeredi wrote:
-> >
-> > > > Agree?
-> > >
-> > > I think we do, except maybe the difficult first point. :)
-> >
-> > Let's then defer the LOOKUPX thing ;)   I'm fine with adding IMMUTABLE
-> > and APPEND to fuse_attr::flags.
->
-> OK.  Should I hide that behind the fuse mount having iomap turned on?
-> Or fc->is_local_fs == true?  Or let any server set those bits?
->
-> One thing occurred to me -- for a plain old fuse server that is the
-> client for some network filesystem, the other end might have its own
-> immutable/append bits, in which case we actually *do* want to let those
-> bits through from the FUSE_STATX replies.
+* Randy Dunlap:
 
-Right, as I said this might have worked without VFS help, but having
-it consistently in the VFS as well would be nicer.
+> On 9/4/25 11:49 AM, Florian Weimer wrote:
+>> * Amir Goldstein:
+>> 
+>>> I find this end result a bit odd, but I don't want to suggest another variant
+>>> I already proposed one in v2 review [1] that maybe you did not like.
+>>> It's fine.
+>>> I'll let Aleksa and Christian chime in to decide on if and how they want this
+>>> comment to look or if we should just delete these definitions and be done with
+>>> this episode.
+>> 
+>> We should fix the definition in glibc to be identical token-wise to the
+>> kernel's.
+>
+> That's probably a good suggestion...
+> while I tried the reverse of that and Amir opposed.
 
-In that spirit, putting those bits in the inode is safe only in the
-local fs case, so I guess that's what we should do.  And for
-consistency, in the local fs case inode->flags should be the
-authoritative source and all the userspace API's should be looking at
-that, instead of what the server sent in the IOCTL or STATX replies.
+It's certainly odd that the kernel uses different token sequences for
+defining AT_RENAME_* and RENAME_*.  But it's probably too late to fix
+that.
+
+Here's the glibc patch:
+
+  [PATCH] libio: Define AT_RENAME_* with the same tokens as Linux
+  <https://inbox.sourceware.org/libc-alpha/lhubjnpv03o.fsf@oldenburg.str.redhat.com/T/#u>
 
 Thanks,
-Miklos
+Florian
+
 
