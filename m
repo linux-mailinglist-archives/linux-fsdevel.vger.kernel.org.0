@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-60426-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60428-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A997B46A95
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Sep 2025 11:12:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3417B46A8F
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Sep 2025 11:12:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC0A67BCD3C
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Sep 2025 09:10:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3DAA565716
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Sep 2025 09:12:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 089382C236E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D1D2C3277;
 	Sat,  6 Sep 2025 09:11:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="TFam8xKE"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="ZxoKiPWB"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA3EA28C869
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA48E298CD5
 	for <linux-fsdevel@vger.kernel.org>; Sat,  6 Sep 2025 09:11:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757149903; cv=none; b=lqnUBfZQAwTA/zwFOoq/T/x2VoFeH5pbuwuh4jcnH4aaGAJdIXdAy0J6aTNL/FraOQqx3vQuq2dR087nJJ7LXVHbIqS93SwrUjiDF/ka23a0z9iEiqPGyxmr8gM35y0YYL/fYJHkM9UNR530IwFQv++chsxKksvypm6tc5VO/OE=
+	t=1757149903; cv=none; b=a5AwmmekxD9i5YX51Fr7R8+xsGS0kpVy/6dDXFNuNsnP9sPjvRdG6IeRbafBKpsQgHyUaa+qmnMpRKPkv2Lw0E3pqx/3INyvVqhiWJLREn7pyTJRGyI/bu2RhYtn7jhBc3uJpvmXCfRLJX9pxcYsMK41Zi0ILBKuJn9+ewAQcjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1757149903; c=relaxed/simple;
-	bh=zyAOqu3Kw7vUM3AiOY8d6hMtOaR+RADAVgBIrcXwUBI=;
+	bh=Xg8P7dK37WgiYCC62pE5tGrv9QhvgjkiJy29YSKB7nI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=meOhB/ivH8i1NCwmtmu4PY1aFWUOi54wpsq2ph/X1rO50SFU+wCZuoFouVuuHuRO7+tABvRCHSrbdnE/cIC4LWSuCupKpll1UlHkvmu0m23HpWf9+EJMrIeWKdEJJHUi5eFqDxNgUQ6yhcQ+iq8srOapO2E9Ta3BAFG2e62lBYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=TFam8xKE; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=Vgt3BNik1tg9eeaLUJ932U3Kkfoz6PpqfwbgKkgVqnc8lhfia+UiNzRuF4KvgM0/XOzKwHUEfFKxG9PvJE4hjnfRj7UuhGhtapD1nvA84kmACL3hIcGzB85X2StvWIFV4DXVeil+Wto/A47/PPWwiqHkZ0R1ZOApQReWcManNkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=ZxoKiPWB; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=yjcuxDO9wwrVF9vYbfwYT5fq/tMjennT7rrGgm3wdlc=; b=TFam8xKE5kWeoxYRAqsfdHjf3e
-	9iKyjE7HW+vxiezQ/xHeYp1q7A0kuaEkb6AdqCLDjVRdiDh9tGTCis1xOCPDKlEdRoM9YC7LtunEr
-	9HKvzTvp+jyDZa7FbtD6ffJ6R3u2e85Coin5FilqEmO4nvNPeBjAF4eFb5NF3glMdDCVdplBQ7xpD
-	YmZ8uyAkFUHTjHBuCMLdoY+PgSkc6Va5k93X1G22zDn7t9XMjfmQNbe5xa/tyVOGavcF+f3EFPFva
-	wUKiRIpWrERzz1P+60++O12EmV5ntSna5hu89sgb9StBQG705X+bJyEFu9V6b/yz5pA9QYw/GSsjx
-	MfdoaC4Q==;
+	bh=iT7HWSYMQGzjOnCsCBKJ+NIvYOLdxiQSlaWPwYJOnXI=; b=ZxoKiPWBaBsu0oM41k6MWgn8CS
+	iGy7YoxzggtAb1o8ZTIQxsQpt0JAbIQv3GFshEquOpFEAxrJN4msna2Ygjb2vaMF5dDfhwpd42SCU
+	qJ6larJBwV+LKjCG8XLy+fXJN4QHt1m2fZNjPQUXTqbV4kwdfNbAXJ0vdbBRy+LdDP0Fms7XboUHW
+	4Xu8wtIh1/MVwty3p2/dyo9vwS96eQbkP2Cex1bXm5V5X8dAwwEsAPyT0vu/oWfmv+CsFEexaNpPD
+	1zsJyxRCTOJAxMyFQCVsromr9C5ei2t51Q04Q25cLJQ+ZyMWfOn3Oqo8pb6qxWy2BBtg5qf8BWpSM
+	3OP2KY+A==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uuoxP-00000000OtX-3xOC;
-	Sat, 06 Sep 2025 09:11:39 +0000
+	id 1uuoxQ-00000000Otf-03cF;
+	Sat, 06 Sep 2025 09:11:40 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: brauner@kernel.org,
@@ -53,9 +53,9 @@ Cc: brauner@kernel.org,
 	chuck.lever@oracle.com,
 	linkinjeon@kernel.org,
 	john@apparmor.net
-Subject: [PATCH 13/21] ksmbd_vfs_set_init_posix_acl(): constify path argument
-Date: Sat,  6 Sep 2025 10:11:29 +0100
-Message-ID: <20250906091137.95554-13-viro@zeniv.linux.org.uk>
+Subject: [PATCH 14/21] ovl_ensure_verity_loaded(): constify datapath argument
+Date: Sat,  6 Sep 2025 10:11:30 +0100
+Message-ID: <20250906091137.95554-14-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250906091137.95554-1-viro@zeniv.linux.org.uk>
 References: <20250906090738.GA31600@ZenIV>
@@ -71,36 +71,36 @@ Sender: Al Viro <viro@ftp.linux.org.uk>
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/smb/server/vfs.c | 2 +-
- fs/smb/server/vfs.h | 2 +-
+ fs/overlayfs/overlayfs.h | 2 +-
+ fs/overlayfs/util.c      | 2 +-
  2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
-index 299a5d9fcb78..a33b088afa27 100644
---- a/fs/smb/server/vfs.c
-+++ b/fs/smb/server/vfs.c
-@@ -1856,7 +1856,7 @@ void ksmbd_vfs_posix_lock_unblock(struct file_lock *flock)
+diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+index bb0d7ded8e76..53a8ba572a0f 100644
+--- a/fs/overlayfs/overlayfs.h
++++ b/fs/overlayfs/overlayfs.h
+@@ -563,7 +563,7 @@ int ovl_set_metacopy_xattr(struct ovl_fs *ofs, struct dentry *d,
+ 			   struct ovl_metacopy *metacopy);
+ bool ovl_is_metacopy_dentry(struct dentry *dentry);
+ char *ovl_get_redirect_xattr(struct ovl_fs *ofs, const struct path *path, int padding);
+-int ovl_ensure_verity_loaded(struct path *path);
++int ovl_ensure_verity_loaded(const struct path *path);
+ int ovl_validate_verity(struct ovl_fs *ofs,
+ 			struct path *metapath,
+ 			struct path *datapath);
+diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
+index 41033bac96cb..35eb8ee6c9e2 100644
+--- a/fs/overlayfs/util.c
++++ b/fs/overlayfs/util.c
+@@ -1381,7 +1381,7 @@ char *ovl_get_redirect_xattr(struct ovl_fs *ofs, const struct path *path, int pa
  }
  
- int ksmbd_vfs_set_init_posix_acl(struct mnt_idmap *idmap,
--				 struct path *path)
-+				 const struct path *path)
+ /* Call with mounter creds as it may open the file */
+-int ovl_ensure_verity_loaded(struct path *datapath)
++int ovl_ensure_verity_loaded(const struct path *datapath)
  {
- 	struct posix_acl_state acl_state;
- 	struct posix_acl *acls;
-diff --git a/fs/smb/server/vfs.h b/fs/smb/server/vfs.h
-index 458e2e3917b1..df6421b4590b 100644
---- a/fs/smb/server/vfs.h
-+++ b/fs/smb/server/vfs.h
-@@ -164,7 +164,7 @@ int ksmbd_vfs_get_dos_attrib_xattr(struct mnt_idmap *idmap,
- 				   struct dentry *dentry,
- 				   struct xattr_dos_attrib *da);
- int ksmbd_vfs_set_init_posix_acl(struct mnt_idmap *idmap,
--				 struct path *path);
-+				 const struct path *path);
- int ksmbd_vfs_inherit_posix_acl(struct mnt_idmap *idmap,
- 				const struct path *path,
- 				struct inode *parent_inode);
+ 	struct inode *inode = d_inode(datapath->dentry);
+ 	struct file *filp;
 -- 
 2.47.2
 
