@@ -1,87 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-60413-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60414-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28ABBB46958
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Sep 2025 07:52:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C5FBB4695C
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Sep 2025 07:56:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F0917B0588
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Sep 2025 05:51:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46F701BC3242
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Sep 2025 05:56:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F1C27A455;
-	Sat,  6 Sep 2025 05:52:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="jKTCEmwo"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B0BB28136F;
+	Sat,  6 Sep 2025 05:56:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BEE2213E90
-	for <linux-fsdevel@vger.kernel.org>; Sat,  6 Sep 2025 05:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D53217996
+	for <linux-fsdevel@vger.kernel.org>; Sat,  6 Sep 2025 05:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757137964; cv=none; b=Sp/WE16FP+VN7HcbOfjOLk79lBU9ROj02BbxmLg1CBFExIsSI1AMYUtFdS4CfaVd+57wVUNcFWgmwcb1FCC7Z3bEesHTCxKNFMXaCBoGmtnXKCEK5JMqVvU2kTCxbxusoD9UHwc8xKM1vAc4ad3e9vOmri0fV2HQLkx94pgXOoE=
+	t=1757138166; cv=none; b=g7UXlf2/3jyDh53WJm+f4MIv8WC2ioTDESbytZpHvY6/eKe6TwTX4uJXWl0GLTx1Q6D3TCSxBV9vVcTLqraSn5tZa0X8FLcrgIrZStFCFzcQCBwsr2IPjvw3u9f8j8rFJvrrm8aaWffgCtyiQKPkz8cqZErutzjP9EZWAwyTwpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757137964; c=relaxed/simple;
-	bh=t8cZyuLNU/8oCDibkcn+E+PeqlXgYB2BZwuZ3lVDk84=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GNR2AKztw1uk4gqNNszABJ+9j4vjW70F2EnClOSm9CpVHTxIuNJ8Vc6luK9BZAlGBbTk55oczmsMOr5tz3HUSMG17/nI7iBE4S+lj78pUZYxD2C89YbLbujba0YcWuaUG0o/3QPresBMspln8vGNFiYLAqTaOlWKhJNPpw+3Bn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=jKTCEmwo; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=VCzrWvZFyyAOsVvfE8R711pjB6qmnO+kZ5FyggeR6V0=; b=jKTCEmwoo0aLVx0/tqbaD+WfN+
-	CLh5ZJ8ufs9DvFwpH2fUjT8AJyycJkHZGAFvf+uLX+wDyAD70PGj70d0GEM2fnjMtdzn6/e54UkAJ
-	d0qWvKidWhuxlGaNTrDeszVibQ216lt5J+4Xi1JWS7CbX76HiSO7xTDlj03QAliLtXddZtTf6Ri9K
-	JpRIGuApHUvz9omR3tk1bcLJdwgCzO2vV/Na6iNULo+FQMQN9gVCg6f8Vh8ZY+7v3OsuD0ilayHWd
-	itToEMHaSBCHyjygfGDDYMi4vC0d8Ed1BYQ+OslWKtqAW310wKJ/3Km5Uc9NbhIMn1lXXJJJQtQJF
-	rwf0y3OA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uulqq-0000000FdWi-2wXV;
-	Sat, 06 Sep 2025 05:52:40 +0000
-Date: Sat, 6 Sep 2025 06:52:40 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: NeilBrown <neilb@ownmail.net>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/6] fs/proc: Don't look root inode when creating "self"
- and "thread-self"
-Message-ID: <20250906055240.GT39973@ZenIV>
-References: <20250906050015.3158851-1-neilb@ownmail.net>
- <20250906050015.3158851-2-neilb@ownmail.net>
- <20250906055005.GS39973@ZenIV>
+	s=arc-20240116; t=1757138166; c=relaxed/simple;
+	bh=rwS+YQVKwMf2p/fBNKDMiWGnuwF1PhmQunsa3aTRicM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=gh08DQrjMaR644UHYjlAusYZlMcTUkgetlW0TSkcQSjChu+dkj6KAlOTDSOcB6myWQJ+wOwWuGI+yUtKdWPEC5OkGFv4aHoaysmel146zK72tFQ2mHxT7e0Xzp1q60czsjOctnqdIM8HioZJS/18w5S1Th9KO6KN2Trob6qNWlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-8875735aecfso919007439f.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Sep 2025 22:56:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757138164; x=1757742964;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OHTHq7OtikLx0TkjcVWxranl0l9tx/2o6fcLu4mdhBQ=;
+        b=AGkRYDpGGN9fqmSDuFIWid/1fqHO5dhHFdc52EodfvhRX2Wtck3CHujW9i3TXascuc
+         WnyzfzMEZ9w/IrM9zMa/DPensbLVfx7QyYf/xa6tb+om9WvZjBhsgHYMysftLf39kV69
+         Ma6f87DhoEcf7zVFzBOHqX5eboYtTRzapsRL94K3QxRnQfSX6liE+7+OykBNqSyudpSs
+         qVG0fspM9HPkGkOyQ0SY9U8da/ZGHVoT7qsZ2ye1SCl49TdIOjxeX8b1Zjc0SXXM9DqB
+         8fqR2zbnoKGo+X1maZRve6pqhVTcPjLSQtryMNWMGQFqHqpw+8NfchlE/pHGrMY6GJzt
+         Q+lQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWw5ZfNwTxwGFcn24ybQzp/wRpk4JEpAhiF3aa3Kp5EAsENtLdFalNFVP5cX2hYcUbXV0NxwlH1oHBU9wjR@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8N1VQIP4qlE/HuUcofOtSm6bASLqjAAqjLfixH3sT1xCXsM81
+	ozcxj4kx84QWM7QkPOCd/8p1b6Khjm9WwJ0BgG7InFYnPBXNi0UJZbZDtp/3qpLUib+3kodV+CE
+	Mlp79RhE3zLVfIXfYE+pQKQevDU30sM8cfkszGjy991Y1QcPRWjrvYSTtO/8=
+X-Google-Smtp-Source: AGHT+IGJShscWtke5WlVC/9/IgwAZNBtYCTN/XqqZz+AH83Piz1KXfVk7GvvINmromAz5XANIJoIHgKTai0kYSqcShkj9x0zJhA8
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250906055005.GS39973@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Received: by 2002:a05:6e02:2504:b0:3f1:7907:5fb9 with SMTP id
+ e9e14a558f8ab-3fd8cdbddcdmr20275035ab.6.1757138163761; Fri, 05 Sep 2025
+ 22:56:03 -0700 (PDT)
+Date: Fri, 05 Sep 2025 22:56:03 -0700
+In-Reply-To: <94eb2c0b816ebcae030568bb756a@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68bbccf3.a70a0220.7a912.02c1.GAE@google.com>
+Subject: Re: [syzbot] [hfs?] general protection fault in hfs_find_init
+From: syzbot <syzbot+7ca256d0da4af073b2e2@syzkaller.appspotmail.com>
+To: anders.roxell@linaro.org, arnd@arndb.de, brauner@kernel.org, 
+	frank.li@vivo.com, glaubitz@physik.fu-berlin.de, gregkh@linuxfoundation.org, 
+	kstewart@linuxfoundation.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, pombredanne@nexb.com, slava@dubeyko.com, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, yepeilin.cs@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Sep 06, 2025 at 06:50:05AM +0100, Al Viro wrote:
-> On Sat, Sep 06, 2025 at 02:57:05PM +1000, NeilBrown wrote:
-> > From: NeilBrown <neil@brown.name>
-> > 
-> > proc_setup_self() and proc_setup_thread_self() are only called from
-> > proc_fill_super() which is before the filesystem is "live".  So there is
-> > no need to lock the root directory when adding "self" and "thread-self".
-> > 
-> > The locking rules are expected to change, so this locking will become
-> > anachronistic if we don't remove it.
-> 
-> Please, leave that one alone.  FWIW, in tree-in-dcache branch (will push
-> tomorrow or on Sunday, once I sort the fucking #work.f_path out) there's
-> this:
+syzbot suspects this issue was fixed by commit:
 
-PS: you do realize that we have similar things in devpts, binder, functionfs,
-etc., right?  What's special about procfs?
+commit 42b0ef01e6b5e9c77b383d32c25a0ec2a735d08a
+Author: Arnd Bergmann <arnd@arndb.de>
+Date:   Fri Jul 11 08:46:51 2025 +0000
+
+    block: fix FS_IOC_GETLBMD_CAP parsing in blkdev_common_ioctl()
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17c0d312580000
+start commit:   ee88bddf7f2f Merge tag 'bpf-fixes' of git://git.kernel.org..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=28cc6f051378bb16
+dashboard link: https://syzkaller.appspot.com/bug?extid=7ca256d0da4af073b2e2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1026b182580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=159e0f0c580000
+
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: block: fix FS_IOC_GETLBMD_CAP parsing in blkdev_common_ioctl()
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
