@@ -1,286 +1,247 @@
-Return-Path: <linux-fsdevel+bounces-60411-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60412-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96677B46929
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Sep 2025 07:01:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7D91B46957
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Sep 2025 07:50:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05AA6A02766
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Sep 2025 05:01:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D0A756890B
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Sep 2025 05:50:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7909A26CE0A;
-	Sat,  6 Sep 2025 05:01:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B37FD26C391;
+	Sat,  6 Sep 2025 05:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="eXQ06sfL";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="nCfBKlhE"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="jj0LzbHC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AFCA255F39
-	for <linux-fsdevel@vger.kernel.org>; Sat,  6 Sep 2025 05:01:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E60CD161302
+	for <linux-fsdevel@vger.kernel.org>; Sat,  6 Sep 2025 05:50:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757134878; cv=none; b=WyJ5xo4MSms2j+9B3oa6DyJrkY5+vjUElh40y28md9Kq97UKsuETZ0jf7PGmX7pJYQoYZg7EeKa8k6hgDanCFRG8H/Q0SOn0sYtFVkEvhJ690getOPqJ0/7r7l4LP3aRXrmBHd4y7r0Pk4jjUqNyngB/jCl4NOGCYtdfJtPNCLU=
+	t=1757137811; cv=none; b=L9F2+7bnM/6uty+RvbacSvF7OOd79u7F5vs6qu410Pzf6GbKWaZT2AZLu+uuNl5KsmTbWpBOrRgthQyvxCE6qW+muBCmyaHN2pJVqu4cf56PcVq2jtypcbL5Mfb0GgccITTY7SJNB76l68Lh8XzKXLP7q6ib17GKX/DYvtPP2r0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757134878; c=relaxed/simple;
-	bh=wTox/RWhvn2QH8FvhwMj47IxmJJEIOP3kzvQRULXY4s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kWHWt+GT4M6wMlNwa7mw9ZF4OfiOeao1rJr4MSiCAYCm8iaB02SO7dsCYBquDAjgYw2N6qaZ6pXfKxISLrhRPs/sjsEbGvjgs0zS04cB3cXEDO05Z+LazO/C4tQtq5+rNyG+8rhmu9zkfQHmPagseOb2+b/AOBogpp+MFHq9/kM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=eXQ06sfL; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=nCfBKlhE; arc=none smtp.client-ip=202.12.124.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
-	by mailfout.stl.internal (Postfix) with ESMTP id 4120B1D003CB;
-	Sat,  6 Sep 2025 01:01:16 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-10.internal (MEProxy); Sat, 06 Sep 2025 01:01:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1757134876; x=
-	1757221276; bh=SlPHI6TxCRGEokMtR/YkC4vkT6t60QmKFOLa6XXFGUs=; b=e
-	XQ06sfL09Yr0VosQid6r0jSljWByImFLSW7JfJeOp4ryAF0jxNAUF71XBVf3YF9N
-	QEfeyAWxhIMAmI2cEfeFeiDYF569Ch0yz216O0xDsnZap9wNkT/B0u2FUH4sZ26o
-	X4QThmR5JdHO840CUrXfebkfTLdUYt9yBVWWv6hBi1skaP6D7MIQSqyhmgwX1SP5
-	TEtEIfxAnRQFnkz/7A12Ua1+BzR0FDI5c1moZtWpROlBqzGPUaGYj6a4gIphoAit
-	Nh17kE8dEurGKa2mPS6F1VQ4FTesQS7/4kE2fqPZn6B5LWMDr4Ts/gA75QDknKGF
-	ZBgsHH1ewoFoKfn9v+Cww==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm1; t=1757134876; x=1757221276; bh=S
-	lPHI6TxCRGEokMtR/YkC4vkT6t60QmKFOLa6XXFGUs=; b=nCfBKlhEAOemPiwSm
-	ZvWhMCBftr9k/2mX+tdcELC5G4aFQ9cEqpkdtVTy9Ssy0tnFNz3g6ILQFXJGdU62
-	qetL/ONCnLMQYVjSlqm4g7F6dGpMYVCKsuaqesl7w8YY4Ft7FoNuh9F+JQztipfO
-	e6+M0FmKd4LYvglOJBBJxtoCGhiPuVJVWj937NcZGpRCOzXR1VRkHmfQ7k6nEPe3
-	DLYMIOIDunbTqY7zcVOahjxdx57MNXUZ/kbCD2lkF9hekbmUCcq5+hk8MQSNOEPm
-	YJEwinqeKXnne0g/U2SW02ibPyFGhXwoSDd1SfuR5BL4kCITz9mGXOk4dRk5mbRa
-	wparw==
-X-ME-Sender: <xms:G8C7aLrRfGed5PozPuraFqg0eoYt3QkKmqY89k5N7NBn9p4XpWYjCQ>
-    <xme:G8C7aDmwQy58bEx95uNlQXD8ggoAFa9s4NS6TMe0GbLiLoKeGb734s2CpHaDi4-1U
-    epbo9HMnaEwFA>
-X-ME-Received: <xmr:G8C7aKh_Il1bx4T52aG6W14V8d7sTN4okkvswyZ7U9H5M45h5biQ7IMsxTRPqHy6ckMIy8q8IulK_ipEOjAJpQWT5bvFTHEu7e3xKA0ykM0v>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddutdekjecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefpvghilheurhho
-    fihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnhepue
-    ekvdehhfegtddufffhjeehfeeiueffgeeltdeuhefhtdffteejtdejtedvjeetnecuvehl
-    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsgesoh
-    ifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohephedpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtohepvhhirhhoseiivghnihhvrdhlihhnuhigrdhorhhgrdhukhdprhgtph
-    htthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhr
-    tghpthhtohepjhgrtghksehsuhhsvgdrtgiipdhrtghpthhtohepsghrrghunhgvrheskh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtoheprghmihhrjeefihhlsehgmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:G8C7aDelBE4gky8K8kMfkx-qryqvxBNW1zadd6sOgY5-ChxAIvsuRw>
-    <xmx:G8C7aCgyC0lc9SR0IhaQrFHSYsKvR01z1MdvXKIYmbar-dSYwQX5ZQ>
-    <xmx:G8C7aDwaKnwY1R5qQSICYVr7GFifoBDhFGDc3FQVrfShrrECY_htdg>
-    <xmx:G8C7aGMy_3eLYvgbbR9mUI4UKjU6qxkqbB8SIlWLayv8bTSZTiYoaQ>
-    <xmx:HMC7aOs9-5OYnry1nlab0qQnzTMBI-q9yo38cuXaY2dYNyw2MUEhThsE>
-Feedback-ID: iab3e480c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 6 Sep 2025 01:01:14 -0400 (EDT)
-From: NeilBrown <neilb@ownmail.net>
-To: "Alexander Viro" <viro@zeniv.linux.org.uk>,
-	"Christian Brauner" <brauner@kernel.org>,
-	"Amir Goldstein" <amir73il@gmail.com>
-Cc: "Jan Kara" <jack@suse.cz>,
+	s=arc-20240116; t=1757137811; c=relaxed/simple;
+	bh=HCVU1X3QQXC0RNrP0YRQDyDjQBXb5UQQDGjF3EIy3QE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ReOOnufwkrjYrAXXg6IHhdFtuxbWusolnSqeoQQ7Djlt2aw4E+kuP1of32/TKKmPeynS11b6HjEVRgXD4sNv9ZJyocQKaKsdS2hmdzHR9bBYEg4r6zYeofT3bExC3L+dMi7Djae11F0n82UNiJMUUEgmrTb/57SgsAJig6SJeCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=jj0LzbHC; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=q7Q9VGhGlFem0R9lrlvrLXpy2Ba74xc4b5lU6ZRizP4=; b=jj0LzbHCQyv3HNXKmmlMfacCbl
+	KrroJbxm7s1NyMnWM3YqHX5eZGAowma63YV6sOqq1p5aqRbAmFSwENqw/itEXCo8PGPveChHV7VK6
+	ktUeyiUAH0vT6V+4fuxgA1vkkq4DOBcAimlvb2M0kstZfAHwcO7ft3oOKZlvCfsT8FgNB+6OZkjJ2
+	Um5u05k77U3veMlQ8cm+T+Pc8gniM3iDkqSTL9uaxQo/4rZNt0lb/AejG0KevAhhAxwOrsvmvZ+BI
+	v9lozN0FFzJ294tkvftaUFdx6bpAENoJ+wQG6bFPRXSKm0ha7RugVqx9L5PfpHQcRTeJosXlsPLBS
+	7dpRQy4A==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uuloL-0000000FbWZ-2gHf;
+	Sat, 06 Sep 2025 05:50:05 +0000
+Date: Sat, 6 Sep 2025 06:50:05 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: NeilBrown <neilb@ownmail.net>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 6/6] VFS: rename kern_path_locked() to kern_path_removing()
-Date: Sat,  6 Sep 2025 14:57:10 +1000
-Message-ID: <20250906050015.3158851-7-neilb@ownmail.net>
-X-Mailer: git-send-email 2.50.0.107.gf914562f5916.dirty
-In-Reply-To: <20250906050015.3158851-1-neilb@ownmail.net>
+Subject: Re: [PATCH 1/6] fs/proc: Don't look root inode when creating "self"
+ and "thread-self"
+Message-ID: <20250906055005.GS39973@ZenIV>
 References: <20250906050015.3158851-1-neilb@ownmail.net>
+ <20250906050015.3158851-2-neilb@ownmail.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250906050015.3158851-2-neilb@ownmail.net>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-From: NeilBrown <neil@brown.name>
+On Sat, Sep 06, 2025 at 02:57:05PM +1000, NeilBrown wrote:
+> From: NeilBrown <neil@brown.name>
+> 
+> proc_setup_self() and proc_setup_thread_self() are only called from
+> proc_fill_super() which is before the filesystem is "live".  So there is
+> no need to lock the root directory when adding "self" and "thread-self".
+> 
+> The locking rules are expected to change, so this locking will become
+> anachronistic if we don't remove it.
 
-Also rename user_path_locked_at() to user_path_removing_at()
+Please, leave that one alone.  FWIW, in tree-in-dcache branch (will push
+tomorrow or on Sunday, once I sort the fucking #work.f_path out) there's
+this:
 
-Add done_path_removing() to clean up after these calls.
+commit fcac614cd72f0dfc45168817a139653877649507
+Author: Al Viro <viro@zeniv.linux.org.uk>
+Date:   Mon Feb 26 01:55:36 2024 -0500
 
-The only credible need for a locked positive dentry is to remove it, so
-make that explicit in the name.
+    procfs: make /self and /thread_self dentries persistent
+    
+    ... and there's no need to remember those pointers anywhere - ->kill_sb()
+    no longer needs to bother since kill_anon_super() will take care of
+    them anyway and proc_pid_readdir() only wants the inumbers, which
+    we had in a couple of static variables all along.
+    
+    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 
-Signed-off-by: NeilBrown <neil@brown.name>
----
- Documentation/filesystems/porting.rst | 10 ++++++++++
- drivers/base/devtmpfs.c               | 12 ++++--------
- fs/bcachefs/fs-ioctl.c                |  6 ++----
- fs/namei.c                            | 23 +++++++++++++++++------
- include/linux/namei.h                 |  5 +++--
- 5 files changed, 36 insertions(+), 20 deletions(-)
-
-diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesystems/porting.rst
-index 85f590254f07..defbae457310 100644
---- a/Documentation/filesystems/porting.rst
-+++ b/Documentation/filesystems/porting.rst
-@@ -1285,3 +1285,13 @@ rather than a VMA, as the VMA at this stage is not yet valid.
- The vm_area_desc provides the minimum required information for a filesystem
- to initialise state upon memory mapping of a file-backed region, and output
- parameters for the file system to set this state.
-+
-+---
-+
-+**mandatory**
-+
-+kern_path_locked and user_path_locked_at() are renamed to
-+kern_path_removing() and user_path_removing_at() and should only
-+be used when removing a name.  done_path_removing() should be called
-+after removal.
-+
-diff --git a/drivers/base/devtmpfs.c b/drivers/base/devtmpfs.c
-index 31bfb3194b4c..26d0beead1f0 100644
---- a/drivers/base/devtmpfs.c
-+++ b/drivers/base/devtmpfs.c
-@@ -256,7 +256,7 @@ static int dev_rmdir(const char *name)
- 	struct dentry *dentry;
- 	int err;
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index c667702dc69b..2d6a541ede27 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -3585,14 +3585,12 @@ int proc_pid_readdir(struct file *file, struct dir_context *ctx)
+ 		return 0;
  
--	dentry = kern_path_locked(name, &parent);
-+	dentry = kern_path_removing(name, &parent);
- 	if (IS_ERR(dentry))
- 		return PTR_ERR(dentry);
- 	if (d_inode(dentry)->i_private == &thread)
-@@ -265,9 +265,7 @@ static int dev_rmdir(const char *name)
- 	else
- 		err = -EPERM;
+ 	if (pos == TGID_OFFSET - 2) {
+-		struct inode *inode = d_inode(fs_info->proc_self);
+-		if (!dir_emit(ctx, "self", 4, inode->i_ino, DT_LNK))
++		if (!dir_emit(ctx, "self", 4, self_inum, DT_LNK))
+ 			return 0;
+ 		ctx->pos = pos = pos + 1;
+ 	}
+ 	if (pos == TGID_OFFSET - 1) {
+-		struct inode *inode = d_inode(fs_info->proc_thread_self);
+-		if (!dir_emit(ctx, "thread-self", 11, inode->i_ino, DT_LNK))
++		if (!dir_emit(ctx, "thread-self", 11, thread_self_inum, DT_LNK))
+ 			return 0;
+ 		ctx->pos = pos = pos + 1;
+ 	}
+diff --git a/fs/proc/internal.h b/fs/proc/internal.h
+index 96122e91c645..dadc621556d9 100644
+--- a/fs/proc/internal.h
++++ b/fs/proc/internal.h
+@@ -369,6 +369,7 @@ static inline void proc_tty_init(void) {}
+ extern struct proc_dir_entry proc_root;
  
--	dput(dentry);
--	inode_unlock(d_inode(parent.dentry));
--	path_put(&parent);
-+	done_path_removing(dentry, &parent);
- 	return err;
+ extern void proc_self_init(void);
++extern unsigned self_inum, thread_self_inum;
+ 
+ /*
+  * task_[no]mmu.c
+diff --git a/fs/proc/root.c b/fs/proc/root.c
+index 06a297a27ba3..923ae40f19b9 100644
+--- a/fs/proc/root.c
++++ b/fs/proc/root.c
+@@ -261,17 +261,11 @@ static void proc_kill_sb(struct super_block *sb)
+ {
+ 	struct proc_fs_info *fs_info = proc_sb_info(sb);
+ 
+-	if (!fs_info) {
+-		kill_anon_super(sb);
+-		return;
+-	}
+-
+-	dput(fs_info->proc_self);
+-	dput(fs_info->proc_thread_self);
+-
+ 	kill_anon_super(sb);
+-	put_pid_ns(fs_info->pid_ns);
+-	kfree_rcu(fs_info, rcu);
++	if (fs_info) {
++		put_pid_ns(fs_info->pid_ns);
++		kfree(fs_info);
++	}
  }
  
-@@ -325,7 +323,7 @@ static int handle_remove(const char *nodename, struct device *dev)
- 	int deleted = 0;
- 	int err = 0;
+ static struct file_system_type proc_fs_type = {
+diff --git a/fs/proc/self.c b/fs/proc/self.c
+index b46fbfd22681..62d2c0cfe35c 100644
+--- a/fs/proc/self.c
++++ b/fs/proc/self.c
+@@ -31,12 +31,11 @@ static const struct inode_operations proc_self_inode_operations = {
+ 	.get_link	= proc_self_get_link,
+ };
  
--	dentry = kern_path_locked(nodename, &parent);
-+	dentry = kern_path_removing(nodename, &parent);
- 	if (IS_ERR(dentry))
- 		return PTR_ERR(dentry);
+-static unsigned self_inum __ro_after_init;
++unsigned self_inum __ro_after_init;
  
-@@ -349,10 +347,8 @@ static int handle_remove(const char *nodename, struct device *dev)
- 		if (!err || err == -ENOENT)
- 			deleted = 1;
+ int proc_setup_self(struct super_block *s)
+ {
+ 	struct inode *root_inode = d_inode(s->s_root);
+-	struct proc_fs_info *fs_info = proc_sb_info(s);
+ 	struct dentry *self;
+ 	int ret = -ENOMEM;
+ 
+@@ -51,18 +50,15 @@ int proc_setup_self(struct super_block *s)
+ 			inode->i_uid = GLOBAL_ROOT_UID;
+ 			inode->i_gid = GLOBAL_ROOT_GID;
+ 			inode->i_op = &proc_self_inode_operations;
+-			d_add(self, inode);
++			d_make_persistent(self, inode);
+ 			ret = 0;
+-		} else {
+-			dput(self);
+ 		}
++		dput(self);
  	}
--	dput(dentry);
--	inode_unlock(d_inode(parent.dentry));
-+	done_path_removing(dentry, &parent);
+ 	inode_unlock(root_inode);
  
--	path_put(&parent);
- 	if (deleted && strchr(nodename, '/'))
- 		delete_path(nodename);
- 	return err;
-diff --git a/fs/bcachefs/fs-ioctl.c b/fs/bcachefs/fs-ioctl.c
-index 4e72e654da96..9446cefbe249 100644
---- a/fs/bcachefs/fs-ioctl.c
-+++ b/fs/bcachefs/fs-ioctl.c
-@@ -334,7 +334,7 @@ static long bch2_ioctl_subvolume_destroy(struct bch_fs *c, struct file *filp,
- 	if (arg.flags)
- 		return -EINVAL;
+ 	if (ret)
+ 		pr_err("proc_fill_super: can't allocate /proc/self\n");
+-	else
+-		fs_info->proc_self = self;
  
--	victim = user_path_locked_at(arg.dirfd, name, &path);
-+	victim = user_path_removing_at(arg.dirfd, name, &path);
- 	if (IS_ERR(victim))
- 		return PTR_ERR(victim);
+ 	return ret;
+ }
+diff --git a/fs/proc/thread_self.c b/fs/proc/thread_self.c
+index 0e5050d6ab64..d6113dbe58e0 100644
+--- a/fs/proc/thread_self.c
++++ b/fs/proc/thread_self.c
+@@ -31,12 +31,11 @@ static const struct inode_operations proc_thread_self_inode_operations = {
+ 	.get_link	= proc_thread_self_get_link,
+ };
  
-@@ -351,9 +351,7 @@ static long bch2_ioctl_subvolume_destroy(struct bch_fs *c, struct file *filp,
- 		d_invalidate(victim);
+-static unsigned thread_self_inum __ro_after_init;
++unsigned thread_self_inum __ro_after_init;
+ 
+ int proc_setup_thread_self(struct super_block *s)
+ {
+ 	struct inode *root_inode = d_inode(s->s_root);
+-	struct proc_fs_info *fs_info = proc_sb_info(s);
+ 	struct dentry *thread_self;
+ 	int ret = -ENOMEM;
+ 
+@@ -51,19 +50,15 @@ int proc_setup_thread_self(struct super_block *s)
+ 			inode->i_uid = GLOBAL_ROOT_UID;
+ 			inode->i_gid = GLOBAL_ROOT_GID;
+ 			inode->i_op = &proc_thread_self_inode_operations;
+-			d_add(thread_self, inode);
++			d_make_persistent(thread_self, inode);
+ 			ret = 0;
+-		} else {
+-			dput(thread_self);
+ 		}
++		dput(thread_self);
  	}
- err:
--	inode_unlock(dir);
--	dput(victim);
--	path_put(&path);
-+	done_path_removing(victim, &path);
+ 	inode_unlock(root_inode);
+ 
+ 	if (ret)
+ 		pr_err("proc_fill_super: can't allocate /proc/thread-self\n");
+-	else
+-		fs_info->proc_thread_self = thread_self;
+-
  	return ret;
  }
  
-diff --git a/fs/namei.c b/fs/namei.c
-index 104015f302a7..c750820b27b9 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -2757,7 +2757,8 @@ static int filename_parentat(int dfd, struct filename *name,
- }
+diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
+index ea62201c74c4..de0edb431eac 100644
+--- a/include/linux/proc_fs.h
++++ b/include/linux/proc_fs.h
+@@ -63,8 +63,6 @@ enum proc_pidonly {
  
- /* does lookup, returns the object with parent locked */
--static struct dentry *__kern_path_locked(int dfd, struct filename *name, struct path *path)
-+static struct dentry *__kern_path_removing(int dfd, struct filename *name,
-+					   struct path *path)
- {
- 	struct path parent_path __free(path_put) = {};
- 	struct dentry *d;
-@@ -2815,24 +2816,34 @@ struct dentry *kern_path_parent(const char *name, struct path *path)
- 	return d;
- }
- 
--struct dentry *kern_path_locked(const char *name, struct path *path)
-+struct dentry *kern_path_removing(const char *name, struct path *path)
- {
- 	struct filename *filename = getname_kernel(name);
--	struct dentry *res = __kern_path_locked(AT_FDCWD, filename, path);
-+	struct dentry *res = __kern_path_removing(AT_FDCWD, filename, path);
- 
- 	putname(filename);
- 	return res;
- }
- 
--struct dentry *user_path_locked_at(int dfd, const char __user *name, struct path *path)
-+void done_path_removing(struct dentry *dentry, struct path *path)
-+{
-+	if (!IS_ERR(dentry)) {
-+		inode_unlock(path->dentry->d_inode);
-+		dput(dentry);
-+		path_put(path);
-+	}
-+}
-+EXPORT_SYMBOL(done_path_removing);
-+
-+struct dentry *user_path_removing_at(int dfd, const char __user *name, struct path *path)
- {
- 	struct filename *filename = getname(name);
--	struct dentry *res = __kern_path_locked(dfd, filename, path);
-+	struct dentry *res = __kern_path_removing(dfd, filename, path);
- 
- 	putname(filename);
- 	return res;
- }
--EXPORT_SYMBOL(user_path_locked_at);
-+EXPORT_SYMBOL(user_path_removing_at);
- 
- int kern_path(const char *name, unsigned int flags, struct path *path)
- {
-diff --git a/include/linux/namei.h b/include/linux/namei.h
-index 1d5038c21c20..37568f8055f9 100644
---- a/include/linux/namei.h
-+++ b/include/linux/namei.h
-@@ -62,8 +62,9 @@ struct dentry *kern_path_parent(const char *name, struct path *parent);
- extern struct dentry *kern_path_create(int, const char *, struct path *, unsigned int);
- extern struct dentry *user_path_create(int, const char __user *, struct path *, unsigned int);
- extern void done_path_create(struct path *, struct dentry *);
--extern struct dentry *kern_path_locked(const char *, struct path *);
--extern struct dentry *user_path_locked_at(int , const char __user *, struct path *);
-+extern struct dentry *kern_path_removing(const char *, struct path *);
-+extern struct dentry *user_path_removing_at(int , const char __user *, struct path *);
-+void done_path_removing(struct dentry *dentry, struct path *path);
- int vfs_path_parent_lookup(struct filename *filename, unsigned int flags,
- 			   struct path *parent, struct qstr *last, int *type,
- 			   const struct path *root);
--- 
-2.50.0.107.gf914562f5916.dirty
-
+ struct proc_fs_info {
+ 	struct pid_namespace *pid_ns;
+-	struct dentry *proc_self;        /* For /proc/self */
+-	struct dentry *proc_thread_self; /* For /proc/thread-self */
+ 	kgid_t pid_gid;
+ 	enum proc_hidepid hide_pid;
+ 	enum proc_pidonly pidonly;
 
