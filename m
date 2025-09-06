@@ -1,97 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-60405-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60406-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 264E6B46923
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1C84B46924
 	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Sep 2025 07:01:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF9347AC63B
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Sep 2025 04:59:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17DC91D2026E
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Sep 2025 05:01:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD7B25CC58;
-	Sat,  6 Sep 2025 05:00:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 784DB279DA8;
+	Sat,  6 Sep 2025 05:00:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="gLw5uNDl";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="L3JFO0yN"
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="UWDoISlk";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="VCo35G65"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0AEA18C034
-	for <linux-fsdevel@vger.kernel.org>; Sat,  6 Sep 2025 05:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C56EF26CE0A
+	for <linux-fsdevel@vger.kernel.org>; Sat,  6 Sep 2025 05:00:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757134854; cv=none; b=enjIYjoL0k39k43oGNjTtAYxhEUquIKQaTyy6ABfTrMAVv1pkzgO6Ec7m+QK747rn7vgBuiE7bGSB/q06Cs2cl73tKJTDI+mZY5eRFuB6B2J4hw2Md+Qwd+IWgCm2orEhE925LtDM6tgwvX+Av+KrDqt2QOX4WcF8jB/WJ0Ju2Q=
+	t=1757134857; cv=none; b=RgYkHqQv8dsIBVG53saug8fH9+MZiDax8/Rdz1ubXSdyWUI5HV7mC315eXX1vxdOa4GU4MaODB9wDRDEN0vgRESUBLOkeZmHRCb5CZxrDiO8Xwoy0zZsWc6oEIvq02T7H1QT8n72qvHUsSD1o7l1JV/I0YX91U+23S1QZxFEzKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757134854; c=relaxed/simple;
-	bh=GW3U4jnJgJC2VBKcilY6dDv9+W1bogkpTQcWY5vAgKk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ry6ZsemKTbj2qjzQdwq4VCqRLJ30KrkeFCyblbvfYf0j/kIR8kmdeoQKZ9cSx1UqOym7uqG1LAXKjssO1yMZEaE/VEY0a/3qZdPOelCIbuH8RJ9SC2cR0FJD6BYdcdhxlYId2O1eFB4hOnQvugQgK3kz1WkhckPHojhj5mLowWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=gLw5uNDl; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=L3JFO0yN; arc=none smtp.client-ip=202.12.124.159
+	s=arc-20240116; t=1757134857; c=relaxed/simple;
+	bh=sO+35pMqjSFnGpWW1gsCDhePTv+JBH5XYjbnOCF9MT0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=pSEHV/vvYIJ2I6A32xF41VczY0HtqD0uD0om1nngVnuuUfokZR6BN85pConw3UIlgSF3DpmJOcoVmgnB/aOdO1l5N97O5ibnqNSLkADSm6SXgIlh5y0tb5k1tAxHzUMwYOJXdEq88T8ibg1AJSHdZif3onM1r/pOB6eL28NwpSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=UWDoISlk; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=VCo35G65; arc=none smtp.client-ip=202.12.124.159
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 7F0637A0390;
-	Sat,  6 Sep 2025 01:00:50 -0400 (EDT)
+Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id BCBAD7A0387;
+	Sat,  6 Sep 2025 01:00:54 -0400 (EDT)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-11.internal (MEProxy); Sat, 06 Sep 2025 01:00:50 -0400
+  by phl-compute-09.internal (MEProxy); Sat, 06 Sep 2025 01:00:54 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
 	cc:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=fm1; t=1757134850; x=1757221250; bh=jQ9Px8mQZP+rK+uq5VEVI
-	mmBGfyW/rdksCBKCHpeXXc=; b=gLw5uNDlZXgz0nI0JSf5x6lyk19QgBMoauOjN
-	mbJqEwptrHX+J1ucxTtiJ21igTG3MvniKxwDQTUwxm9eAJN9v2I7OdBpDaaMGzzN
-	iiDvNrE5S8cK1n/oRiQjWGgbgtcXDQh9EQCfs3p4/AI2lJAW5oqADTSn5h/6/SEt
-	NX30ylEiqm10yivs0DtXqMihpblLVlIK5ljXe7TQ2S6+i/cy3ExxSN8ERbdG+8wB
-	yQeGXzoH625Q9H7CKcDTYy50PzYFVLUKJcv5ygoQKokeRgLBAwXhXCUC28DfGcqU
-	gxFX6bGZnsDw5UbOYv4Pf6csWGDJHQi0j7NC6ORS7vyokeM7w==
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1757134854; x=
+	1757221254; bh=AhC02sEb2ucQtugfskwv7HWM2K9DkR00fi3BVu64k8E=; b=U
+	WDoISlkfcOjBEe87eUQDl7dInCQD2S4efwiK/2stigp9wmy2ynPatzijO2+8ZO8U
+	KY3xErZk3kRFy3jQ1uZbExajDj6yKb4yckbA2EVVJuiaVRV/7scm7oj9GQFLYYuH
+	9zN7tJoaunfudG+PUQVuzp2mhHPvszKeXJH+FEmfP5DEcqrnhR46ZtuifSaw7aRU
+	1EX1yDpI1zKVquV+/fycC0mqbprwAwOOG4H3zLuOEIy3c2Ow6SKxmlrIUCfknBnb
+	lHtc4cZqXZgkdTmWFri3O5C/Vg5QhdKYhRoIkgOYLAet96D3bh1RrnTSnqMTSaHZ
+	/KMHMUJvzyzuqPWN9twwg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1757134850; x=1757221250; bh=jQ9Px8mQZP+rK+uq5VEVImmBGfyW/rdksCB
-	KCHpeXXc=; b=L3JFO0yNrJS9UBxUIg2Bw9e9EhzqE4H/VSbh3h/J0/2I0rSMMUP
-	mPY6DfLEpvGr2K0xFSXiZEmY0X187rPs9wNvF25dlBjQaZZO9LOa1pl32K1/Y00C
-	xPgstj5Rd9P34sCwIaAmaRjSFbSlbVWJYUxirvExfXuzShUEirH5S86HtuRGPerS
-	59SBp65IFjYsk+z12OEs6rAZijkevZ5omsqq2vPo5cK2AWkzNDHAd/5ROTWmuxKF
-	z5ossWTDqGtTqxKGZy1KC5dRavBxd1iuK0jOPnffH7HGAUAueBdBj3zr50N+xtt/
-	TCGYIMMm3WUsLXi1ZXAaee8Trx6E5ESYkgQ==
-X-ME-Sender: <xms:AcC7aDSOTAyqmjlUZxCzaRRu2PKA3cKxEbe1F7FvLpHZST7zJWoUsw>
-    <xme:AcC7aCuMhIrZMHpfHMeoJRZdeGEmSZINx4JcB7bIXV0yXGjYzyLP-OjK2zdebV9b6
-    xwxafQHHnTK4A>
-X-ME-Received: <xmr:AcC7aLKRc4npJxwzQI_NgkrTGI9T7yOJgHS99gftmquPCgReXrrvT1t8VWBlsh_C2SdbZ_qufa5CbJ4VR6wcDmpJczkXpuTXuxxFE_XydO0v>
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
+	:x-me-sender:x-sasl-enc; s=fm1; t=1757134854; x=1757221254; bh=A
+	hC02sEb2ucQtugfskwv7HWM2K9DkR00fi3BVu64k8E=; b=VCo35G65qjCRPDUhB
+	2UwCm2kCUGS8jFS57zcDIV30tGYT6r80eGaD5UypGQxe0FjcTsXTnyC9OfzaKEhL
+	A+JTJw05e277VFe5Cwpl/tgCieinfIIhkQVMRnlYjcoovxvBKavizWc3n65vUcGV
+	5LL6GoalJJxo3zggI+x/0bczdPvG+np/RQJf76Bg+80MiQU9UcuWXZcYQwIPLlAN
+	fCHG77m754I99ptFMd31ZoWP0p66QvtodKau3ik0L0veLu2XCbdcegYpn1iY9JJq
+	fqI/ScvmWIYoMYHDDt0y7y/3cmJy0utC3rlk/GSiK5s14cC/oSuOh+AuR10DN/QW
+	QeqdA==
+X-ME-Sender: <xms:BsC7aPMrixWcH2dmRFAkYhU__Lu3RYNv9GpjzvfjVEsfEVjL1ypfew>
+    <xme:BsC7aH5Q-8nmGXJxUcOAMJGbB7IHf2zi2ElZ1XRvmZWuUuld51EZGSUEATh12qfHq
+    h_y4mwKcO4TpA>
+X-ME-Received: <xmr:BsC7aAm76zkmhHcq2czxrUi9i5U46Dk-5XYEWq0Lmqm1sXfqiDwKf6pLejMpy2sXGb6qPcvSzCMc20O65d4h3owm3x53Mu_JuLbPw6m_PrmA>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddutdekjecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
     ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpefpvghilheurhhofihn
-    uceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnhepteeiff
-    ehledthffgieeuveetffegteeigeetfeffueekvefhgfdthfeugedtteehnecuvehluhhs
-    thgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsgesohifnh
-    hmrghilhdrnhgvthdpnhgspghrtghpthhtohephedpmhhouggvpehsmhhtphhouhhtpdhr
-    tghpthhtohepvhhirhhoseiivghnihhvrdhlihhnuhigrdhorhhgrdhukhdprhgtphhtth
-    hopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtohepjhgrtghksehsuhhsvgdrtgiipdhrtghpthhtohepsghrrghunhgvrheskhgvrh
-    hnvghlrdhorhhgpdhrtghpthhtoheprghmihhrjeefihhlsehgmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:AcC7aHlP9k_i9FhdX-f-pXJZy8G9yw5BBwqWsvF6aYx816h4rnDTYA>
-    <xmx:AcC7aEL8v2ywNuJVV8lsyNSh5jJzkMI3IjJB2-UHas2dVmDrd24GGg>
-    <xmx:AcC7aE6Dr_lkEM1SQ3_twLkt2jVqS5xE8wDl94tqjMdiv1VeMX8HFQ>
-    <xmx:AcC7aA0byz4C6pzOYTbiPEOOvjmsatn8pj5oql-9M-keci9kc77u0Q>
-    <xmx:AsC7aD2qIhVd52WDqMfdKGMwGAvIxUkn6tMycw3RrX7D3Gq3kHGtHEjk>
+    hrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefpvghilheurhho
+    fihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnhepue
+    ekvdehhfegtddufffhjeehfeeiueffgeeltdeuhefhtdffteejtdejtedvjeetnecuvehl
+    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsgesoh
+    ifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohephedpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtohepvhhirhhoseiivghnihhvrdhlihhnuhigrdhorhhgrdhukhdprhgtph
+    htthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhr
+    tghpthhtohepjhgrtghksehsuhhsvgdrtgiipdhrtghpthhtohepsghrrghunhgvrheskh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtoheprghmihhrjeefihhlsehgmhgrihhlrdgtohhm
+X-ME-Proxy: <xmx:BsC7aIQTePbT_b8sjE1YxdPNpBsg45wc9nWTQScbxTxUZfz_2hLe2A>
+    <xmx:BsC7aPFWRizUX_yiItD8bZ_XFxp8uUCB8vyuc7JoO_oWWrxKhOM6Nw>
+    <xmx:BsC7aNFZsZb6C3O8oYpHPPWlCXE0rEFBhxDCTYRVThff5R2wjxcrrA>
+    <xmx:BsC7aNQiERqRfN2JOBNN1sxAwxvvcpF5Fg2SHwhQFflqZ0AGtLj5KA>
+    <xmx:BsC7aKD2-yutTZ6qcCgGRa_PoT1eu7P8fcHdDL2TajIrgwvbS5Dy9Sp5>
 Feedback-ID: iab3e480c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 6 Sep 2025 01:00:47 -0400 (EDT)
+ 6 Sep 2025 01:00:52 -0400 (EDT)
 From: NeilBrown <neilb@ownmail.net>
 To: "Alexander Viro" <viro@zeniv.linux.org.uk>,
 	"Christian Brauner" <brauner@kernel.org>,
 	"Amir Goldstein" <amir73il@gmail.com>
 Cc: "Jan Kara" <jack@suse.cz>,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 0/6] VFS: more prep for change to directory locking
-Date: Sat,  6 Sep 2025 14:57:04 +1000
-Message-ID: <20250906050015.3158851-1-neilb@ownmail.net>
+Subject: [PATCH 1/6] fs/proc: Don't look root inode when creating "self" and "thread-self"
+Date: Sat,  6 Sep 2025 14:57:05 +1000
+Message-ID: <20250906050015.3158851-2-neilb@ownmail.net>
 X-Mailer: git-send-email 2.50.0.107.gf914562f5916.dirty
+In-Reply-To: <20250906050015.3158851-1-neilb@ownmail.net>
+References: <20250906050015.3158851-1-neilb@ownmail.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -100,19 +105,72 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This is a selection of cleanups, renaming of some APIs, and the
-addition of one simple API (patch 2) which follows an existing
-pattern.  It seemed useful to separate this set from others which
-will be primarily focussed on adding and using some new APIs.
+From: NeilBrown <neil@brown.name>
 
-Thanks,
-NeilBrown
+proc_setup_self() and proc_setup_thread_self() are only called from
+proc_fill_super() which is before the filesystem is "live".  So there is
+no need to lock the root directory when adding "self" and "thread-self".
 
+The locking rules are expected to change, so this locking will become
+anachronistic if we don't remove it.
 
- [PATCH 1/6] fs/proc: Don't look root inode when creating "self" and
- [PATCH 2/6] VFS/ovl: add lookup_one_positive_killable()
- [PATCH 3/6] VFS: discard err2 in filename_create()
- [PATCH 4/6] VFS: unify old_mnt_idmap and new_mnt_idmap in renamedata
- [PATCH 5/6] VFS/audit: introduce kern_path_parent() for audit
- [PATCH 6/6] VFS: rename kern_path_locked() to kern_path_removing()
+Signed-off-by: NeilBrown <neil@brown.name>
+---
+ fs/proc/self.c        | 3 ---
+ fs/proc/thread_self.c | 3 ---
+ 2 files changed, 6 deletions(-)
+
+diff --git a/fs/proc/self.c b/fs/proc/self.c
+index b46fbfd22681..a2867b009269 100644
+--- a/fs/proc/self.c
++++ b/fs/proc/self.c
+@@ -35,12 +35,10 @@ static unsigned self_inum __ro_after_init;
+ 
+ int proc_setup_self(struct super_block *s)
+ {
+-	struct inode *root_inode = d_inode(s->s_root);
+ 	struct proc_fs_info *fs_info = proc_sb_info(s);
+ 	struct dentry *self;
+ 	int ret = -ENOMEM;
+ 
+-	inode_lock(root_inode);
+ 	self = d_alloc_name(s->s_root, "self");
+ 	if (self) {
+ 		struct inode *inode = new_inode(s);
+@@ -57,7 +55,6 @@ int proc_setup_self(struct super_block *s)
+ 			dput(self);
+ 		}
+ 	}
+-	inode_unlock(root_inode);
+ 
+ 	if (ret)
+ 		pr_err("proc_fill_super: can't allocate /proc/self\n");
+diff --git a/fs/proc/thread_self.c b/fs/proc/thread_self.c
+index 0e5050d6ab64..9c4ff2131046 100644
+--- a/fs/proc/thread_self.c
++++ b/fs/proc/thread_self.c
+@@ -35,12 +35,10 @@ static unsigned thread_self_inum __ro_after_init;
+ 
+ int proc_setup_thread_self(struct super_block *s)
+ {
+-	struct inode *root_inode = d_inode(s->s_root);
+ 	struct proc_fs_info *fs_info = proc_sb_info(s);
+ 	struct dentry *thread_self;
+ 	int ret = -ENOMEM;
+ 
+-	inode_lock(root_inode);
+ 	thread_self = d_alloc_name(s->s_root, "thread-self");
+ 	if (thread_self) {
+ 		struct inode *inode = new_inode(s);
+@@ -57,7 +55,6 @@ int proc_setup_thread_self(struct super_block *s)
+ 			dput(thread_self);
+ 		}
+ 	}
+-	inode_unlock(root_inode);
+ 
+ 	if (ret)
+ 		pr_err("proc_fill_super: can't allocate /proc/thread-self\n");
+-- 
+2.50.0.107.gf914562f5916.dirty
+
 
