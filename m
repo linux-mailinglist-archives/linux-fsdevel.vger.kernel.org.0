@@ -1,151 +1,140 @@
-Return-Path: <linux-fsdevel+bounces-60417-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60418-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A821B46967
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Sep 2025 08:21:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7467AB46A54
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Sep 2025 11:07:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6B0C17CFEE
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Sep 2025 06:21:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04BDE7B0B96
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Sep 2025 09:06:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADC892BE7C0;
-	Sat,  6 Sep 2025 06:21:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0596277C90;
+	Sat,  6 Sep 2025 09:07:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="NcI8f4eA";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="gbA4zXaK"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="mn0KM+kh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D551E520F;
-	Sat,  6 Sep 2025 06:21:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45BF7236454
+	for <linux-fsdevel@vger.kernel.org>; Sat,  6 Sep 2025 09:07:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757139690; cv=none; b=Ao7ENFQOOSmftUkKk0K6YT+BWXNUroyOokoJkZilM58G5iwS5p/lBX+O6MEfA+7kxjh7xyE3zLFkwetI3ub3f/R1zPmkN9UrPXGZmYtkYuBr7kAuLiP/1Fj+BguGhHhKhIwcj7L5XuUOFtPYobopw3v1ldUdoppgZVErdhnGwk4=
+	t=1757149665; cv=none; b=T/HdxdxHKdv5FLs9qLRrQ4PZ/v2N8j2PIVlv4SAjzNAYfWH+Ks9TXU8HuXUOx4T7AzxpGRQgan3xb1jHbXzZrm3q2yNxQeghNpZjWcbolE6A/O1pgQYvIoLpBPufSmx7O8spNC3k2YFwXuGeZyXcXOq9xBKomVHxtm0D9YLkC9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757139690; c=relaxed/simple;
-	bh=OhFYpdo+ki2jBw7vWea33uPUPRVGPuYU47AqLGZ5TEo=;
-	h=MIME-Version:Date:From:To:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=YRHzYnfEoI3AF0xMIiMCQ4+Z5wI5c5Wh8b9us5p+tdq3KmC7VVHYfn0C8AerczhI7U82IGtGoiL0fYQynKf7IMiAivJkPxvhOuIdGbDhpDLD0aOyN1V0QAAcoLnj2hTv73sH7jONvIO+/4qtVVH0VLSCgm2cFRpqjZDub4ghbR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=NcI8f4eA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=gbA4zXaK; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id 1A79FEC00E0;
-	Sat,  6 Sep 2025 02:21:26 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Sat, 06 Sep 2025 02:21:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:content-transfer-encoding:content-type:content-type:date:date
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1757139686;
-	 x=1757226086; bh=C/Qx8gn1aEPxWdZanYl378oDEkan1w0vCyVmbQR1Sik=; b=
-	NcI8f4eA6+xfI+2FZ3v0vxGpjNfnklewK7IIeASRWtoQDVgOefMZ6ZUovqGqgbpY
-	rv+cqMSYbYJ19cfSmfvC5mbWFCxobGt5njpVjEWHHODiA3sNCzT5mJvl93o7+xER
-	ZV3yGZmSl49yKYjfDmJewZXCtta8BmtPC2oZobwfiE8WPfEFI0a8lRgfVPFzUUZ0
-	1pgrcnhdc9qdGbORsgnMbVN9xm2omraRoh2jE5UaOMYTwt019Cp49cRuwEYRDzvE
-	YnCe1OLinSxSp5v6kd8yieLO7BO91D0Xi9p3ik6/IvDB5nscZ5GOVFxqGANPcCbd
-	TOlzG5o1e4bsxXtnwh+5aA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:content-transfer-encoding:content-type
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm1; t=1757139686; x=1757226086; bh=C
-	/Qx8gn1aEPxWdZanYl378oDEkan1w0vCyVmbQR1Sik=; b=gbA4zXaK4C7Y9/vsd
-	FpYF1zaJP4tTIhPgsRLgPhk5hzXehE3nNhn7xYf4BdLn29Y8quFwWguQBYJCEFu8
-	EVeH91A24uHbt9THCOL+wdQdB3/O5bxnd6D8GJRZ5835sWG07pgKl0MoIeLxcOmU
-	mu+bUTkQai8xnnxHrsBcSzR7vftDSuRZSRQ8jdO2SjEHw4MzBq3dmdC272eDbKra
-	FCpv2h7KcKk4/MyugqVZfE7zdoxwYLHgGjr7LTlHxyTD+A0MxYgJ6tS0OtExYaBW
-	QbsHjnzNoXZId/vzMMxqHhFxmLyfGXsk/acbzOIafdLv72k2BhlBzdvc1gHLmEri
-	2exgA==
-X-ME-Sender: <xms:5dK7aHc4ThQG4kYV4-fOOrYUFMmhoSETr_6yaHFZzEx5EDP1ALP8WA>
-    <xme:5dK7aNMQs3Pv5tJWEfFPmF0Mnqu0nKkVUwKoQgcTBKAq0V9MVq4q7-N_Zbbe01ldB
-    DoQcepS0_TXn-i4CX8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduuddtfecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhguuceu
-    vghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvghrnh
-    epiedtfedufeejheevlefffedvkeegleelkeehuddvjefgtddtheeigfeitdegffejnecu
-    ffhomhgrihhnpehshiiikhgrlhhlvghrrdgrphhpshhpohhtrdgtohhmpdhkvghrnhgvlh
-    drohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhm
-    pegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedugedpmhhouggvpehsmh
-    htphhouhhtpdhrtghpthhtohepshhlrghvrgesughusggvhihkohdrtghomhdprhgtphht
-    thhopeihvghpvghilhhinhdrtghssehgmhgrihhlrdgtohhmpdhrtghpthhtohepshihii
-    hkrghllhgvrhdqsghughhssehgohhoghhlvghgrhhouhhpshdrtghomhdprhgtphhtthho
-    pegsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrnhguvghrshdrrh
-    hogigvlhhlsehlihhnrghrohdrohhrghdprhgtphhtthhopehtghhlgieslhhinhhuthhr
-    ohhnihigrdguvgdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtih
-    honhdrohhrghdprhgtphhtthhopehkshhtvgifrghrtheslhhinhhugihfohhunhgurght
-    ihhonhdrohhrghdprhgtphhtthhopehpohhmsghrvggurghnnhgvsehnvgigsgdrtghomh
-X-ME-Proxy: <xmx:5dK7aFSQAP437V0tX7uUcxgtGrgb-XsdxBbZsDD-q_Nxd8YwztNhVQ>
-    <xmx:5dK7aKmLHzr7YNbIZt2Fqsl-m2CHHyGcoEAnWTR8eXUavxayDfMeZw>
-    <xmx:5dK7aBRxG4BinL4kEveCMI60YtcLC6xYDqTOzUVPSlAA46G_sSajyg>
-    <xmx:5dK7aJsi4l1wF_goKub4DYVFCxNAtEelK1xbO-e3qc82n9jB6JHt_Q>
-    <xmx:5tK7aICrCqDKYGUvVsynEgeMmLVY_xewpS_mWdAFLm_gT8Nw1EwhFAG6>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 0394C700065; Sat,  6 Sep 2025 02:21:24 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1757149665; c=relaxed/simple;
+	bh=TnOhTFWRa+SyMJn432ftQOBlMYgduwiSf4R4sDv22sg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=fWVLU5I91y3GAjqJB5bfTyJfbq/WQOVKd2qd6ZzSofLJMrEFDMAc/N/Y+O1w9vgCA/f1Aq1/1dugKXQ5nj8epUNhsela2uIHnc+GV8HJ5clCr/LvvIoEq08bhMHRZa/7eFVNmKlxHb5cw2q3bwLoBiNLwt+oUDxYoft8ejCECZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=mn0KM+kh; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
+	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=x4FHbyOL+7DYSoB2Ck9M5hjiIX7UYqhGd4BZW4g54As=; b=mn0KM+khRrVDnDrdtEytUHt+Po
+	BCEztmWn6lMDCYYbWOQgJXvyxFEMPupbEXM1OJ7v6tconkOmeAIQx1QaOeOeMM1+zplbFpybR4ljM
+	iTsuCd6q49R3nm6L6lWff+M2aPvxBZgBs6ZKHw6hN4a5ZQs7Gfh8HhDV1traswI50PqEgItil2glf
+	hPq+BoxoJy8S3qs5HnGdE1XrUjAUx1DS7MqkuTuj0pwfbs2MxW8DT8Q4ksnLEkjoK6HooUD7Is4oU
+	LGedJc33csAq6fbtFYsmlMpOvTv/aF3x1txUD06YEvZPYO3+OcITNarjZEKAU9FYjpyO8QF6fokqb
+	ikgDlisQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uuotW-00000000M7Z-0TSJ;
+	Sat, 06 Sep 2025 09:07:38 +0000
+Date: Sat, 6 Sep 2025 10:07:38 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: linux-fsdevel@vger.kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Namjae Jeon <linkinjeon@kernel.org>,
+	John Johansen <john@apparmor.net>
+Subject: [PATCHES] file->f_path safety and struct path constifications
+Message-ID: <20250906090738.GA31600@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AxX0oEVx0u-k
-Date: Sat, 06 Sep 2025 08:21:04 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: syzbot <syzbot+7ca256d0da4af073b2e2@syzkaller.appspotmail.com>,
- "Anders Roxell" <anders.roxell@linaro.org>,
- "Christian Brauner" <brauner@kernel.org>, "Yangtao Li" <frank.li@vivo.com>,
- "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- kstewart@linuxfoundation.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- "'pombredanne@nexb.com'" <pombredanne@nexb.com>,
- "Viacheslav Dubeyko" <slava@dubeyko.com>, syzkaller-bugs@googlegroups.com,
- "Thomas Gleixner" <tglx@linutronix.de>, yepeilin.cs@gmail.com
-Message-Id: <66114372-5bd8-4f1b-8aea-1f6c4ec91bda@app.fastmail.com>
-In-Reply-To: <68bbccf3.a70a0220.7a912.02c1.GAE@google.com>
-References: <68bbccf3.a70a0220.7a912.02c1.GAE@google.com>
-Subject: Re: [syzbot] [hfs?] general protection fault in hfs_find_init
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Sat, Sep 6, 2025, at 07:56, syzbot wrote:
-> syzbot suspects this issue was fixed by commit:
->
-> commit 42b0ef01e6b5e9c77b383d32c25a0ec2a735d08a
-> Author: Arnd Bergmann <arnd@arndb.de>
-> Date:   Fri Jul 11 08:46:51 2025 +0000
->
->     block: fix FS_IOC_GETLBMD_CAP parsing in blkdev_common_ioctl()
->
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17c0d312580000
-> start commit:   ee88bddf7f2f Merge tag 'bpf-fixes' of git://git.kernel.org..
-> git tree:       upstream
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=28cc6f051378bb16
-> dashboard link: https://syzkaller.appspot.com/bug?extid=7ca256d0da4af073b2e2
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1026b182580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=159e0f0c580000
+	struct path is embedded into several objects, starting with
+struct file.  In a lot of places we rely upon e.g. file->f_path of an
+opened file remaining unchanging; things like "ask for write access to
+file->f_path.mnt when opening for write, release that on final fput()"
+would break badly if ->f_path.mnt could change between those.  It's not
+the only place like that; both VFS and filesystems expect that to hold.
+Anything that would want to play silly buggers with that would have to be
+_very_ careful and would be rather brittle, at that.  It's not impossible
+to get away with, but any such place is a source of headache for proofs
+of correctness, as well as a likely cause of bugs in the future.
 
-I took a look and concluded that my patch is unlikely to have
-fixed the issue, because:
+	Unfortunately, verifying that turns into several hours of manual
+audit that has to be repeated once in a while and I'm sick and tired of
+doing that.  Let the compiler deal with that crap.  The same goes for
+struct unix_sock ->path, etc.
 
- - my patch was wrong and needed another fixup on top
- - the reproducer and kernel log show no reference to ioctl() calls,
-   so they do not directly interact with the code I changed.
+Note that in the mainline we have _very_ few places that store to ->f_path.
+	1) init_file() zeroes it out
+	2) file_init_path() copies the caller-supplied struct path into it
+(common helper of alloc_file() family of primitives; struct file is freshly
+allocated, we are setting it up)
+	3) atomic_open()/finish_open()/finish_no_open() arrange for setting
+->f_path between them.  Again, that's before it gets opened.
+	4) vfs_tmpfile() - ditto.
+	5) do_dentry_open() clears it on early failure exits
+	6) vfs_open() sets it to caller-supplied struct path - that's opening
+the file by path (dentry_open() and its ilk are using that one).  Again,
+prior to file getting opened.
+	7) acct_on() (acct(2) helper) is flipping ->f_path.mnt of its internally
+opened and internally used file to cloned mount.  It does get away with that,
+but it's neither pretty nor robust.
 
-It is possible that my patch is hiding the root cause for the problem,
-if part of the reproducer relies on a prior call to ioctl() on a block
-device and this ioctl was broken by my patch. This still sounds like a
-long shot though, and my first guess would be that the bisection
-went wrong, possibly by running into more than one issue, or an
-unreliable reproducer.
+	All except the last one are in core VFS and not dealing with
+already opened files.  Killing (7) is doable - it's not hard to get rid
+of that weird shit in acct_on().  After that no stores happen to opened
+files and all those stores are local to fs/file_table.c, fs/open.c and
+fs/namei.c (the latter - in the open-related parts).
 
-     Arnd
+	After that the obvious next step would be to turn f_path into
+type-punning union of struct path __f_path and const struct path
+f_path, and switch the places that should do stores (see above) to
+using ->__f_path.  It's valid C99 - no UB there.  struct file no longer
+can be a modifiable lvalue, but we never did wholesale copying for those
+and there's no reason to start; what's more, we never embed struct file
+into any other objects.
+
+	It's not quite that simple, though - things like
+	return vfs_statx_path(&fd_file(f)->f_path, flags, stat, request_mask);
+would have the compiler complain; it needs to be told that vfs_statx_path()
+is not going to modify the struct path it's been given.  IOW, we need to
+switch a bunch of struct path * arguments to const struct path * before we
+can go for the final part.  Turns out that there's not a lot of such
+missing annotations.
+
+So this stuff sits in two branches:
+
+#work.path switches the struct path * arguments that are never used to modify
+the struct path in question to const struct path *.  Not all of those
+functions are used for ->f_path, but there's not a lot of them and new call
+sites might appear, so let's deal with all that bunch.
+
+#work.f_path starts with getting rid of the shit in acct_on(), then merges
+#work.path and #work.mount in (I don't want to pull constification patches
+out of #work.mount), then does the conversion of f_path to anon union.
+
+Branches are in
+git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #work.path and
+git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #work.f_path resp.;
+individual patches in followups.
+
+Please, review.  If nobody objects, I'm putting that into #for-next early
+next week...
 
