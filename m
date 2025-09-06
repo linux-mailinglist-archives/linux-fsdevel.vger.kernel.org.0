@@ -1,167 +1,202 @@
-Return-Path: <linux-fsdevel+bounces-60446-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60447-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41FE6B46AC7
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Sep 2025 12:11:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 90E80B46AD0
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Sep 2025 12:35:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D3981B25A42
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Sep 2025 10:11:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5460518902DD
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Sep 2025 10:36:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5F042D7388;
-	Sat,  6 Sep 2025 10:10:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55D762E92D2;
+	Sat,  6 Sep 2025 10:35:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c7/z+PFE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtpbg154.qq.com (smtpbg154.qq.com [15.184.224.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A412B26CE0A
-	for <linux-fsdevel@vger.kernel.org>; Sat,  6 Sep 2025 10:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=15.184.224.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06A32279354
+	for <linux-fsdevel@vger.kernel.org>; Sat,  6 Sep 2025 10:35:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757153457; cv=none; b=LCU+7O84e1ceMDWNR1wl5aytAZ7cw39PoyTZuOiOx035KJ01YAhqRUnaMSYKMqa3Spc+ddWAbkV+//sAjNUnmeEUJlE4incRl4dsOd2I4rEsKue8CklB4bNveRPumKntAj/3HlRIsBDT+SdNRI28/R7/iwFgzcsPEbnOTTF0wZA=
+	t=1757154938; cv=none; b=OxDMU2sYuk1R+0u+7SebK7nAyCkn1FFRHXjlR6t72+jAvAdl8lPJQHaa+no/v5xiBJV3u63N33iyumxzFMbsQFQjg8WmVPUXDobdDjKSmxxmfvfQqud1Z1EMMgiwywi7+kKaY2GmjZP08bS47i0T7YnNjkrWCxy5B+kMP6tTuGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757153457; c=relaxed/simple;
-	bh=BNHBBJ2wuvbRikCVzJuBLF8gDoZaLVpAsc67kOm5Y8w=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AyKAByK4YRWizW6G0GvnkjkvmonCzXE9artGDfzS54O4H7rfbKHPsdWyn+NlqPJw2eAq4z0FI6vBtkV3w/SrCXltlcCccPS22t0hhzCUxUnh4ZaE+NNjgusDq63YaB3zeF7Scm9kWe7vLqMtalgw45mZwEKc4rURm/jPd1AaLmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=smail.nju.edu.cn; spf=pass smtp.mailfrom=smail.nju.edu.cn; arc=none smtp.client-ip=15.184.224.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=smail.nju.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=smail.nju.edu.cn
-X-QQ-mid: zesmtpip2t1757153367t72c9515a
-X-QQ-Originating-IP: Kb5eA9yLv8fZSDWo33y4fouj4nthWO3ZcdOHFa+xP2c=
-Received: from workstation-Precision-7920-Towe ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Sat, 06 Sep 2025 18:09:25 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 9062404304346425670
-EX-QQ-RecipientCnt: 8
-From: "k.chen" <k.chen@smail.nju.edu.cn>
-To: security@kernel.org
-Cc: slava@dubeyko.com,
-	frank.li@vivo.com,
-	linux-fsdevel@vger.kernel.org,
-	glaubitz@physik.fu-berlin.de,
-	wenzhi.wang@uwaterloo.ca,
-	liushixin2@huawei.com,
-	"k.chen" <k.chen@smail.nju.edu.cn>
-Subject: [PATCH] hfsplus: fix slab-out-of-bounds read in hfsplus_uni2asc()
-Date: Sat,  6 Sep 2025 18:09:23 +0800
-Message-Id: <20250906100923.444243-1-k.chen@smail.nju.edu.cn>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1757154938; c=relaxed/simple;
+	bh=CgiO6DLQAY8bfR//WOKrd9qgXRcNY5/suSvGbikggkY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=luuvqNa60NZvtVQdDYzEKDJnQWSGxJYqkVKTlc5SPI9TNN/eApK7DgZOgDsmLeT82Z9JUmTLmgoRQZH5i6E4i7ckfvab+LFPf0LueoqI5GKZCkypA8FR+rd3nsRn6+J7GegpglW1jrMrOR1gw0yazxhV8qzZO2aOwnexJWzj6U0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c7/z+PFE; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-622b4b14a75so1850000a12.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 06 Sep 2025 03:35:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757154935; x=1757759735; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=h3gmyLWzI4hwQq3BDtqyfFdQP/rWfZ/BOhAK9IOLjIs=;
+        b=c7/z+PFEiOc4oMMlSolpS9cooXybyyXGX4YFeaCrJCPLhTglKBwpg9gtM9dInUM62U
+         5V0jP/xq3LKS1NKnUe8PdJ4CsR36UZrsTLaJ/Y5QgV/Md5rq5qBzs9omO5iwAJCEBDua
+         0xanl6CIZAtw+5Amf+ATpZoPc0v3n32ditoqtfX63h8BzytkEn12/21T+iLg8+eOly2o
+         Eq9NM5wSXHaT5ZNRmH0OdMJEjLblwSiRBMCDbar7WAWgHfrF0yiLUeMx7epKkk/JEgyQ
+         FFO/tSL2AL8DQcN/ZmkDAK8jMattoRZQg7jNh+gcmg4H2JZjrM+QrRjFb5sOoFdWqS82
+         i5Ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757154935; x=1757759735;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=h3gmyLWzI4hwQq3BDtqyfFdQP/rWfZ/BOhAK9IOLjIs=;
+        b=HEWwD4gwTPPNdIJXuYzHuqd43Ly1EMxbyscin2jbNamnV/a1R3SMpll6OBLPkHa5ZO
+         /AQYKbIWQarm1hOFl5KzgVaNAqNDD1JRYl4IMHqIcgIiKW9xrBeP9T61g9A2mrR0dgJf
+         8rmAwO++lQaIFHIPv2194J3rYrqwLYd7Iocn29ibh+9EU3wOimRGK5ztS5XkeTzIDDWL
+         yx87jwGdzwQWODU+dgzFUgamv3M85XlNau6ok/4Yzeo/PiY2Wl4uUXC3o8g8DY0NydTi
+         h+c4adncwe5QAUURlvrJaxIuY0+CwVoGfl3nqA/8g+BALxTFPe/WHHOvLk4D9VXO7A3G
+         mqoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXwPsbvZz3rUDqPlUflWkWUD0ypV2rL3X/ezkUIlO+oomHp1hNFiba/7v+EMYf4sCfczLIix6l72Des+1Yq@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoLtcVGmrQhl5JV3Y3UIWgb9jV53zVcS2kxJQYuvb2VmUGl5jD
+	fMFLACB1VqAt+3TQ0K9RvIs1+QL6BxBYez/kEBPZKEIsOCme0a23hg9SVg2KYOmqucGOGLR5H9J
+	xEWTfJlXipx3IbYLXNgCXOvE2YEIXyxe0XbAHVJM=
+X-Gm-Gg: ASbGnct/jWWWoHHsL4YLm0mPPCTW/7ojKGTXd9ttQ2nwvf3O4xHxCr2lJC3k1AZBS4m
+	siHJzw/LJ7OIUC1QbPzhn5BIoJ5f1Ps1ufkW9Z22TWVfGLJ+ggFTzDcVXsIPvG7aB7XjfiFvQVN
+	6U3kgGLXK46jNcgEXQ6PmjWglAAwXPx/gvdGblwp6XYyqdKsslP/cPw6NgieL/iD9ohfIbdAqTg
+	k0/B5c=
+X-Google-Smtp-Source: AGHT+IHdrcg9IdEgZbAljO4hQjEGI8Xy6xQB2/1DJpsiyeXLfoRgGXgC5IfC8SWAUnem8R/q+ZrccoGu2Zd7+hGCJlk=
+X-Received: by 2002:a05:6402:2746:b0:620:bf3a:f6d7 with SMTP id
+ 4fb4d7f45d1cf-6237b0ac3a4mr1749587a12.2.1757154935055; Sat, 06 Sep 2025
+ 03:35:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:smail.nju.edu.cn:qybglogicsvrgz:qybglogicsvrgz5a-1
-X-QQ-XMAILINFO: N3IC8um5pMyYoMvUTtJ29M3G4yUktgInCFT+pma/wbzqOBdg74AYWMYj
-	dm3VrtQV8Ppg+V9xoGmfKox/Zj3Shvml3/HKsrT0MMYtP86icfAGK8wRZHEzs/NS0EMqz/0
-	GBMfSbiXid/+m9kgLoWpyo42zkU8AdueUqZHG4Z3sxqgsR7JIuPBl6rAlZ5c4pkRzApzR/k
-	9Bu+6FufZFEYSWOivYbUrK2PNszToxFQqJgs9zB2Klau1NSIoWodD/Zp23dnC35/dkVMWGp
-	TLwnQluxehHmawM4cty3KVAWFYyOj4dcqEVCqYhP1M544G4oDSpK7Gc0cvA9TGm4PJUTMqd
-	KxjOLIb1+am5Br4LxvJWZ+h/N6VNTo8CO8KoBrsEi9ZHYz6Wl41DRTOcBr/W3KYQaUflcWa
-	gQug3lmZBjJk1wOfch4uaRrq/5IVRaJDCuX1j/qW6YVeBgby7WgdmRDOukG0FLHA0NlVQJn
-	UKQ9VfiIz6pwog2yo8PgQwrFj+D08Fmf8WHCcZXFKWOvZM4HOC0tZl++lbO8ngpE0H+ubVl
-	S8z4ZLMAGsTZGOtM4VeqRhX5Yjm2ylvSUEZvo9fISTdz7C+FIdDd2iFJRZhaODHpgpGptEv
-	qo262s5CMvHpiH3hTJBXbURNq3GU3Ed27ehjpCBhC2hCLjf3ZEbyVpwSNnnga6dJPjsWMXw
-	88v2vny1/gUOMYijIKDKRfF/PnlKIHAelAq9Veeyk36ossl+bwZi/KLU+a6nnowy5pd136n
-	Q7xcxQ0LaynhLvH+0aTAXuQek3o39PClMEa+0+X7bNCfIqyWyvhZ+A0gtjIextotX4c9i2Z
-	WQSuegTQ1rJgqg7D7ProBslgJZ7YqxIb353GFcml60/mUdSeYa4SLKoUV6s7R9PCfCyrCDX
-	pMiMwdG8IhO4vJSlD/7g5fJVIHI2iMCIt+xS5umEz2kRQK166qaBHwjCo2JRXgNWPPOIUpE
-	Cf4q7G5/QYh6n4NXHm8XKugQtPjzD2J1AwUfhK/ozHkLxO0riuK2igj3M
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-X-QQ-RECHKSPAM: 0
+References: <CAOQ4uxj_JAT6ctwGkw-jVm0_9GDmzcAhL4yVFpxm=1mZ0oWceQ@mail.gmail.com>
+ <175715099454.2850467.15900619784045413971@noble.neil.brown.name>
+In-Reply-To: <175715099454.2850467.15900619784045413971@noble.neil.brown.name>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Sat, 6 Sep 2025 12:35:24 +0200
+X-Gm-Features: Ac12FXyhlGz_boMC6uC2gQoCE1kyjHCdZAqxfyqT1lSdpKWv8WrmWzwWETN8_aw
+Message-ID: <CAOQ4uxh87yzcWkXVCEA0tW7xMhhgfWzno6FCtgvLOEZMqov43A@mail.gmail.com>
+Subject: Re: [PATCH 6/6] VFS: rename kern_path_locked() to kern_path_removing()
+To: NeilBrown <neilb@ownmail.net>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The previous fix (94458781aee6) was insufficient,
-as it did not consider that
-sizeof(struct hfsplus_attr_unistr) != sizeof(struct hfsplus_unistr).
+On Sat, Sep 6, 2025 at 11:30=E2=80=AFAM NeilBrown <neilb@ownmail.net> wrote=
+:
+>
+> On Sat, 06 Sep 2025, Amir Goldstein wrote:
+> > On Sat, Sep 6, 2025 at 7:01=E2=80=AFAM NeilBrown <neilb@ownmail.net> wr=
+ote:
+> > >
+> > > From: NeilBrown <neil@brown.name>
+> > >
+> > > Also rename user_path_locked_at() to user_path_removing_at()
+> > >
+> > > Add done_path_removing() to clean up after these calls.
+> > >
+> > > The only credible need for a locked positive dentry is to remove it, =
+so
+> > > make that explicit in the name.
+> >
+> > That's a pretty bold statement...
+>
+> True - but it appears to be the case.
+>
+> >
+> > I generally like the done_ abstraction that could be also used as a gua=
+rd
+> > cleanup helper.
+> >
+> > The problem I have with this is that {kern,done}_path_removing rhymes w=
+ith
+> > {kern,done}_path_create, while in fact they are very different.
+>
+> As far as I can see the only difference is that one prepares to remove
+> an object and the other prepares to create an object - as reflected in
+> the names.
+>
+> What other difference do you see?
+>
 
-Fixes: 94458781aee6 ("hfsplus: fix slab-out-of-bounds read in hfsplus_uni2asc()")
-Signed-off-by: k.chen <k.chen@smail.nju.edu.cn>
----
- fs/hfsplus/dir.c        | 3 ++-
- fs/hfsplus/hfsplus_fs.h | 2 +-
- fs/hfsplus/unicode.c    | 9 ++++-----
- fs/hfsplus/xattr.c      | 6 ++++--
- 4 files changed, 11 insertions(+), 9 deletions(-)
+void done_path_create(struct path *path, struct dentry *dentry)
+{
+        if (!IS_ERR(dentry))
+                dput(dentry);
+        inode_unlock(path->dentry->d_inode);
+        mnt_drop_write(path->mnt);
+        path_put(path);
+}
 
-diff --git a/fs/hfsplus/dir.c b/fs/hfsplus/dir.c
-index 876bbb80fb4d..765627fc5ebe 100644
---- a/fs/hfsplus/dir.c
-+++ b/fs/hfsplus/dir.c
-@@ -204,7 +204,8 @@ static int hfsplus_readdir(struct file *file, struct dir_context *ctx)
- 			fd.entrylength);
- 		type = be16_to_cpu(entry.type);
- 		len = NLS_MAX_CHARSET_SIZE * HFSPLUS_MAX_STRLEN;
--		err = hfsplus_uni2asc(sb, &fd.key->cat.name, strbuf, &len);
-+		err = hfsplus_uni2asc(sb, &fd.key->cat.name, HFSPLUS_MAX_STRLEN,
-+				      strbuf, &len);
- 		if (err)
- 			goto out;
- 		if (type == HFSPLUS_FOLDER) {
-diff --git a/fs/hfsplus/hfsplus_fs.h b/fs/hfsplus/hfsplus_fs.h
-index 96a5c24813dd..49d97c46fd0a 100644
---- a/fs/hfsplus/hfsplus_fs.h
-+++ b/fs/hfsplus/hfsplus_fs.h
-@@ -522,7 +522,7 @@ int hfsplus_strcasecmp(const struct hfsplus_unistr *s1,
- int hfsplus_strcmp(const struct hfsplus_unistr *s1,
- 		   const struct hfsplus_unistr *s2);
- int hfsplus_uni2asc(struct super_block *sb, const struct hfsplus_unistr *ustr,
--		    char *astr, int *len_p);
-+		    int max_unistr_len, char *astr, int *len_p);
- int hfsplus_asc2uni(struct super_block *sb, struct hfsplus_unistr *ustr,
- 		    int max_unistr_len, const char *astr, int len);
- int hfsplus_hash_dentry(const struct dentry *dentry, struct qstr *str);
-diff --git a/fs/hfsplus/unicode.c b/fs/hfsplus/unicode.c
-index 36b6cf2a3abb..b4303785ba1e 100644
---- a/fs/hfsplus/unicode.c
-+++ b/fs/hfsplus/unicode.c
-@@ -119,9 +119,8 @@ static u16 *hfsplus_compose_lookup(u16 *p, u16 cc)
- 	return NULL;
- }
- 
--int hfsplus_uni2asc(struct super_block *sb,
--		const struct hfsplus_unistr *ustr,
--		char *astr, int *len_p)
-+int hfsplus_uni2asc(struct super_block *sb, const struct hfsplus_unistr *ustr,
-+		    int max_unistr_len, char *astr, int *len_p)
- {
- 	const hfsplus_unichr *ip;
- 	struct nls_table *nls = HFSPLUS_SB(sb)->nls;
-@@ -134,8 +133,8 @@ int hfsplus_uni2asc(struct super_block *sb,
- 	ip = ustr->unicode;
- 
- 	ustrlen = be16_to_cpu(ustr->length);
--	if (ustrlen > HFSPLUS_MAX_STRLEN) {
--		ustrlen = HFSPLUS_MAX_STRLEN;
-+	if (ustrlen > max_unistr_len) {
-+		ustrlen = max_unistr_len;
- 		pr_err("invalid length %u has been corrected to %d\n",
- 			be16_to_cpu(ustr->length), ustrlen);
- 	}
-diff --git a/fs/hfsplus/xattr.c b/fs/hfsplus/xattr.c
-index 18dc3d254d21..9d427cef26f0 100644
---- a/fs/hfsplus/xattr.c
-+++ b/fs/hfsplus/xattr.c
-@@ -736,8 +736,10 @@ ssize_t hfsplus_listxattr(struct dentry *dentry, char *buffer, size_t size)
- 
- 		xattr_name_len = NLS_MAX_CHARSET_SIZE * HFSPLUS_ATTR_MAX_STRLEN;
- 		if (hfsplus_uni2asc(inode->i_sb,
--			(const struct hfsplus_unistr *)&fd.key->attr.key_name,
--					strbuf, &xattr_name_len)) {
-+				    (const struct hfsplus_attr_unistr *)&fd.key
-+					    ->attr.key_name,
-+				    HFSPLUS_ATTR_MAX_STRLEN, strbuf,
-+				    &xattr_name_len)) {
- 			pr_err("unicode conversion failed\n");
- 			res = -EIO;
- 			goto end_listxattr;
--- 
-2.34.1
+void done_path_removing(struct dentry *dentry, struct path *path)
+{
+       if (!IS_ERR(dentry)) {
+               inode_unlock(path->dentry->d_inode);
+               dput(dentry);
+               path_put(path);
+       }
+}
 
+They look pretty different and the difference does not look like
+it is related to differences between creation and removal.
+
+For example, I do not see mnt_want_write() in handle_remove()
+so I wonder why that is.
+
+IOW, maybe xxx_path_removing() is like xxx_path_create()
+but it does not act this way.
+
+If you could use xxx_path_removing() in do_unlink() do_rmdir()
+it would certainly prove your point, but as it is, I don't think you can.
+
+> >
+> > What is the motivation for the function rename (you did not specify it)=
+?
+> > Is it just because done_path_locked() sounds weird or something else?
+>
+> Making the name more specific discourages misuse.  It also highlights
+> the similarity to kern_path_create (which obviously works because you
+> noticed it).
+>
+> This also prepares readers for when they see my next series which adds
+> start_creating and start_removing (with _noperm and _killable options
+> and end_foo()) so that they will think "oh, this fits an established
+> pattern - good".
+>
+> Note that I chose "end_" for symmetry with end_creating() in debugfs and
+> tracefs_end_creating() which already exist.
+> Maybe they should be changed to "done_" but I'm not so keen on done_ as
+> if there was an error then it wasn't "done".  And end_ matches start_
+> better than done_.  They mark the start and end of a code fragment which
+> tries to create or remove (or rename - I have a selection of
+> start_renaming options too).
+> (simple_start_creating() was introduced a few months ago and I'm basing
+>  some of my naming choices on that).
+>
+> Maybe kern_path_create() should be renamed to start_path_creating().
+> We don't really need the "kern" - that is the default.
+>
+>
+
+That makes sense.
+
+> >
+> > I wonder if using guard semantics could be the better choice if
+> > looking to clarify the code.
+>
+> Al suggested in reply to a previous patch that RAII (aka guard etc)
+> should be added separately so it can be reviewed separately.
+>
+
+Makes sense.
+
+Thanks,
+Amir.
 
