@@ -1,140 +1,312 @@
-Return-Path: <linux-fsdevel+bounces-60418-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60419-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7467AB46A54
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Sep 2025 11:07:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DDB9B46A5A
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Sep 2025 11:10:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04BDE7B0B96
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Sep 2025 09:06:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C47A188BC14
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Sep 2025 09:10:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0596277C90;
-	Sat,  6 Sep 2025 09:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 477052877DF;
+	Sat,  6 Sep 2025 09:09:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="mn0KM+kh"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hnRmb1PV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45BF7236454
-	for <linux-fsdevel@vger.kernel.org>; Sat,  6 Sep 2025 09:07:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D422765C3
+	for <linux-fsdevel@vger.kernel.org>; Sat,  6 Sep 2025 09:09:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757149665; cv=none; b=T/HdxdxHKdv5FLs9qLRrQ4PZ/v2N8j2PIVlv4SAjzNAYfWH+Ks9TXU8HuXUOx4T7AzxpGRQgan3xb1jHbXzZrm3q2yNxQeghNpZjWcbolE6A/O1pgQYvIoLpBPufSmx7O8spNC3k2YFwXuGeZyXcXOq9xBKomVHxtm0D9YLkC9Q=
+	t=1757149796; cv=none; b=BbjNzA2EOY3KETtDqZEeI2eJjQIF/TX79Ts4FUPwrJwX5L2qbV2+cuEdP8k4ldlNh956EYWh+oSpolvt3YNzAAWaJsh1CcISxWUQkmR0Dbv+V8HKkGk4Aivur3nAZVyc6U9kCAPyD67F/O5DExoDbUZ2QeVZgrOOch74ThLm63w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757149665; c=relaxed/simple;
-	bh=TnOhTFWRa+SyMJn432ftQOBlMYgduwiSf4R4sDv22sg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=fWVLU5I91y3GAjqJB5bfTyJfbq/WQOVKd2qd6ZzSofLJMrEFDMAc/N/Y+O1w9vgCA/f1Aq1/1dugKXQ5nj8epUNhsela2uIHnc+GV8HJ5clCr/LvvIoEq08bhMHRZa/7eFVNmKlxHb5cw2q3bwLoBiNLwt+oUDxYoft8ejCECZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=mn0KM+kh; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
-	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=x4FHbyOL+7DYSoB2Ck9M5hjiIX7UYqhGd4BZW4g54As=; b=mn0KM+khRrVDnDrdtEytUHt+Po
-	BCEztmWn6lMDCYYbWOQgJXvyxFEMPupbEXM1OJ7v6tconkOmeAIQx1QaOeOeMM1+zplbFpybR4ljM
-	iTsuCd6q49R3nm6L6lWff+M2aPvxBZgBs6ZKHw6hN4a5ZQs7Gfh8HhDV1traswI50PqEgItil2glf
-	hPq+BoxoJy8S3qs5HnGdE1XrUjAUx1DS7MqkuTuj0pwfbs2MxW8DT8Q4ksnLEkjoK6HooUD7Is4oU
-	LGedJc33csAq6fbtFYsmlMpOvTv/aF3x1txUD06YEvZPYO3+OcITNarjZEKAU9FYjpyO8QF6fokqb
-	ikgDlisQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uuotW-00000000M7Z-0TSJ;
-	Sat, 06 Sep 2025 09:07:38 +0000
-Date: Sat, 6 Sep 2025 10:07:38 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: linux-fsdevel@vger.kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Namjae Jeon <linkinjeon@kernel.org>,
-	John Johansen <john@apparmor.net>
-Subject: [PATCHES] file->f_path safety and struct path constifications
-Message-ID: <20250906090738.GA31600@ZenIV>
+	s=arc-20240116; t=1757149796; c=relaxed/simple;
+	bh=OV1+fv3Ng1jypL5QY2WD2lpiS5YBycLjNDYxv5cDjKg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FAbU17oTILAQ/0EgPK63FBomkn/aEhHuLFInHVOMNYCdEQt4GUhtatzmdgP28gN9YfMVCkBEVrQUAtY5ddT+IBEoftrHn2nSb63IxZTVK+XB64bmMpks/Slt2vNDuvBdfbFTLgE1+Kw2hblgIM6dEF5zAD+W9Ej/q+lLFv64M4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hnRmb1PV; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-61d3d622a2bso5310227a12.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 06 Sep 2025 02:09:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757149793; x=1757754593; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PQxDCcALcXDkv+enBTAENkzW4SozSvu3j+yUUOm9ADY=;
+        b=hnRmb1PVqqrhKgrAcXO34Q33Cx+dzggY3lN//1huIXoonSsVTZYS9kOdxupF/D/Ou/
+         WFsFs/SXnt0RovbaLYuRhRu6aHHRMDYB2plp614CCp4VEM3HTCMI7KalJvP0W/hrcJm1
+         zXYQkAIEdSVW4okj2xZXk6kmNIFK5xpqAUmS6n/5QVP4XXkuiQYWMX86xaLiUZI8koii
+         2FysZKSFDRaSPPjvMIF5bkc5QcOnn2/dpn0KhhhiDWK/auRyCD7oCDMWtKcge8yC1AAR
+         0LUegwoI8p0TLvE6GVIw9NbaZHKsKxvgCEO4QNU3BLC4ku3ahSmVd1YN/r6mHzHyzQET
+         r5bQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757149793; x=1757754593;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PQxDCcALcXDkv+enBTAENkzW4SozSvu3j+yUUOm9ADY=;
+        b=oW+bmN76KomqymoOlkZQwuuBfXiWFr3lQYojn6Nb8/fDWhV5AXxyatuDWQqc3pU3Qp
+         4LweWLR9KyberKdyrtFayrPUd4k7bCyNHtug2PL1153lTecKh8mRw1lOksYY5eYVrJ5/
+         r8R7vWzLsy7OhTWiNNXb0WVVj23fk8OTZ9yKpXi0i1s5BUdiPgqP625jR42DwOmLExhV
+         l+nLLnLrmSw2GqXfsocIX5rRRjYiORNi1qKjz2aCTirQd2kCmuD1blou+0ERNBAH/Iom
+         vcQqKr05nMML3JqPH2yfpTbglrYSZjo0ceDKdse3G7yeHeAhCz++lo0L0iGh/rTS4ZGx
+         YeMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWgNwCyCkKWBjdqGaSITbMYlESGS4LHP7BTrcs1UeVofyyXlJEno4mlr2nvvPfye/yI8ZsmUoM2omJbLjIe@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5haqyGp5rfssyhShtLGa6S9lmDM/PexGhphy1qb5bqWCbW6R0
+	3NRNmrHZAPqGpp09hfOv8Ub4Y3mh31o9pM20khgCDDQkyflsI1dkCMEhH98z3R42X6ZuZEIkHKz
+	Kvr/2uYYQ1E6UoLnIvlZDVTcqMIIijjU=
+X-Gm-Gg: ASbGnctpXzTY6y5SbOp6EMYIGVkKPljKbC9ivDcrAK5YXaDp05khIbCtkWcNriNFCHc
+	Hz1yTx6LTqhmofwQUIJFndEd+xqNhu8WpJdIzA/wjUTdmnJjsPkakw/E7eDnREIiEzB633tuMO7
+	OquuoMlPr6Dd7sAwyFYP11LUx6X6kutxx3DvreGURfS0oQAH5v1A9OtmcPc0hKBedcNad0z/75O
+	XgdC2U=
+X-Google-Smtp-Source: AGHT+IEmwObDL46vfet4G7Fopwh0zKA/S4nyqfpYFe0pBOmffsq+xJw8oRzo7fIbf05BB5gSvMSIfVVP0vLSCcC9gtg=
+X-Received: by 2002:a05:6402:13ca:b0:61c:90c:ee97 with SMTP id
+ 4fb4d7f45d1cf-623db0772a4mr1327127a12.4.1757149792778; Sat, 06 Sep 2025
+ 02:09:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <20250906050015.3158851-1-neilb@ownmail.net> <20250906050015.3158851-7-neilb@ownmail.net>
+In-Reply-To: <20250906050015.3158851-7-neilb@ownmail.net>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Sat, 6 Sep 2025 11:09:41 +0200
+X-Gm-Features: Ac12FXzYK2_Cj1KsJMZurChQX6tdd_RB9gA8rSR0cayi-Mv6VavUxZ0BfrIelpk
+Message-ID: <CAOQ4uxj_JAT6ctwGkw-jVm0_9GDmzcAhL4yVFpxm=1mZ0oWceQ@mail.gmail.com>
+Subject: Re: [PATCH 6/6] VFS: rename kern_path_locked() to kern_path_removing()
+To: NeilBrown <neilb@ownmail.net>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-	struct path is embedded into several objects, starting with
-struct file.  In a lot of places we rely upon e.g. file->f_path of an
-opened file remaining unchanging; things like "ask for write access to
-file->f_path.mnt when opening for write, release that on final fput()"
-would break badly if ->f_path.mnt could change between those.  It's not
-the only place like that; both VFS and filesystems expect that to hold.
-Anything that would want to play silly buggers with that would have to be
-_very_ careful and would be rather brittle, at that.  It's not impossible
-to get away with, but any such place is a source of headache for proofs
-of correctness, as well as a likely cause of bugs in the future.
+On Sat, Sep 6, 2025 at 7:01=E2=80=AFAM NeilBrown <neilb@ownmail.net> wrote:
+>
+> From: NeilBrown <neil@brown.name>
+>
+> Also rename user_path_locked_at() to user_path_removing_at()
+>
+> Add done_path_removing() to clean up after these calls.
+>
+> The only credible need for a locked positive dentry is to remove it, so
+> make that explicit in the name.
 
-	Unfortunately, verifying that turns into several hours of manual
-audit that has to be repeated once in a while and I'm sick and tired of
-doing that.  Let the compiler deal with that crap.  The same goes for
-struct unix_sock ->path, etc.
+That's a pretty bold statement...
 
-Note that in the mainline we have _very_ few places that store to ->f_path.
-	1) init_file() zeroes it out
-	2) file_init_path() copies the caller-supplied struct path into it
-(common helper of alloc_file() family of primitives; struct file is freshly
-allocated, we are setting it up)
-	3) atomic_open()/finish_open()/finish_no_open() arrange for setting
-->f_path between them.  Again, that's before it gets opened.
-	4) vfs_tmpfile() - ditto.
-	5) do_dentry_open() clears it on early failure exits
-	6) vfs_open() sets it to caller-supplied struct path - that's opening
-the file by path (dentry_open() and its ilk are using that one).  Again,
-prior to file getting opened.
-	7) acct_on() (acct(2) helper) is flipping ->f_path.mnt of its internally
-opened and internally used file to cloned mount.  It does get away with that,
-but it's neither pretty nor robust.
+I generally like the done_ abstraction that could be also used as a guard
+cleanup helper.
 
-	All except the last one are in core VFS and not dealing with
-already opened files.  Killing (7) is doable - it's not hard to get rid
-of that weird shit in acct_on().  After that no stores happen to opened
-files and all those stores are local to fs/file_table.c, fs/open.c and
-fs/namei.c (the latter - in the open-related parts).
+The problem I have with this is that {kern,done}_path_removing rhymes with
+{kern,done}_path_create, while in fact they are very different.
 
-	After that the obvious next step would be to turn f_path into
-type-punning union of struct path __f_path and const struct path
-f_path, and switch the places that should do stores (see above) to
-using ->__f_path.  It's valid C99 - no UB there.  struct file no longer
-can be a modifiable lvalue, but we never did wholesale copying for those
-and there's no reason to start; what's more, we never embed struct file
-into any other objects.
+What is the motivation for the function rename (you did not specify it)?
+Is it just because done_path_locked() sounds weird or something else?
 
-	It's not quite that simple, though - things like
-	return vfs_statx_path(&fd_file(f)->f_path, flags, stat, request_mask);
-would have the compiler complain; it needs to be told that vfs_statx_path()
-is not going to modify the struct path it's been given.  IOW, we need to
-switch a bunch of struct path * arguments to const struct path * before we
-can go for the final part.  Turns out that there's not a lot of such
-missing annotations.
+I wonder if using guard semantics could be the better choice if
+looking to clarify the code.
 
-So this stuff sits in two branches:
+Thanks,
+Amir.
 
-#work.path switches the struct path * arguments that are never used to modify
-the struct path in question to const struct path *.  Not all of those
-functions are used for ->f_path, but there's not a lot of them and new call
-sites might appear, so let's deal with all that bunch.
-
-#work.f_path starts with getting rid of the shit in acct_on(), then merges
-#work.path and #work.mount in (I don't want to pull constification patches
-out of #work.mount), then does the conversion of f_path to anon union.
-
-Branches are in
-git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #work.path and
-git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #work.f_path resp.;
-individual patches in followups.
-
-Please, review.  If nobody objects, I'm putting that into #for-next early
-next week...
+>
+> Signed-off-by: NeilBrown <neil@brown.name>
+> ---
+>  Documentation/filesystems/porting.rst | 10 ++++++++++
+>  drivers/base/devtmpfs.c               | 12 ++++--------
+>  fs/bcachefs/fs-ioctl.c                |  6 ++----
+>  fs/namei.c                            | 23 +++++++++++++++++------
+>  include/linux/namei.h                 |  5 +++--
+>  5 files changed, 36 insertions(+), 20 deletions(-)
+>
+> diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesy=
+stems/porting.rst
+> index 85f590254f07..defbae457310 100644
+> --- a/Documentation/filesystems/porting.rst
+> +++ b/Documentation/filesystems/porting.rst
+> @@ -1285,3 +1285,13 @@ rather than a VMA, as the VMA at this stage is not=
+ yet valid.
+>  The vm_area_desc provides the minimum required information for a filesys=
+tem
+>  to initialise state upon memory mapping of a file-backed region, and out=
+put
+>  parameters for the file system to set this state.
+> +
+> +---
+> +
+> +**mandatory**
+> +
+> +kern_path_locked and user_path_locked_at() are renamed to
+> +kern_path_removing() and user_path_removing_at() and should only
+> +be used when removing a name.  done_path_removing() should be called
+> +after removal.
+> +
+> diff --git a/drivers/base/devtmpfs.c b/drivers/base/devtmpfs.c
+> index 31bfb3194b4c..26d0beead1f0 100644
+> --- a/drivers/base/devtmpfs.c
+> +++ b/drivers/base/devtmpfs.c
+> @@ -256,7 +256,7 @@ static int dev_rmdir(const char *name)
+>         struct dentry *dentry;
+>         int err;
+>
+> -       dentry =3D kern_path_locked(name, &parent);
+> +       dentry =3D kern_path_removing(name, &parent);
+>         if (IS_ERR(dentry))
+>                 return PTR_ERR(dentry);
+>         if (d_inode(dentry)->i_private =3D=3D &thread)
+> @@ -265,9 +265,7 @@ static int dev_rmdir(const char *name)
+>         else
+>                 err =3D -EPERM;
+>
+> -       dput(dentry);
+> -       inode_unlock(d_inode(parent.dentry));
+> -       path_put(&parent);
+> +       done_path_removing(dentry, &parent);
+>         return err;
+>  }
+>
+> @@ -325,7 +323,7 @@ static int handle_remove(const char *nodename, struct=
+ device *dev)
+>         int deleted =3D 0;
+>         int err =3D 0;
+>
+> -       dentry =3D kern_path_locked(nodename, &parent);
+> +       dentry =3D kern_path_removing(nodename, &parent);
+>         if (IS_ERR(dentry))
+>                 return PTR_ERR(dentry);
+>
+> @@ -349,10 +347,8 @@ static int handle_remove(const char *nodename, struc=
+t device *dev)
+>                 if (!err || err =3D=3D -ENOENT)
+>                         deleted =3D 1;
+>         }
+> -       dput(dentry);
+> -       inode_unlock(d_inode(parent.dentry));
+> +       done_path_removing(dentry, &parent);
+>
+> -       path_put(&parent);
+>         if (deleted && strchr(nodename, '/'))
+>                 delete_path(nodename);
+>         return err;
+> diff --git a/fs/bcachefs/fs-ioctl.c b/fs/bcachefs/fs-ioctl.c
+> index 4e72e654da96..9446cefbe249 100644
+> --- a/fs/bcachefs/fs-ioctl.c
+> +++ b/fs/bcachefs/fs-ioctl.c
+> @@ -334,7 +334,7 @@ static long bch2_ioctl_subvolume_destroy(struct bch_f=
+s *c, struct file *filp,
+>         if (arg.flags)
+>                 return -EINVAL;
+>
+> -       victim =3D user_path_locked_at(arg.dirfd, name, &path);
+> +       victim =3D user_path_removing_at(arg.dirfd, name, &path);
+>         if (IS_ERR(victim))
+>                 return PTR_ERR(victim);
+>
+> @@ -351,9 +351,7 @@ static long bch2_ioctl_subvolume_destroy(struct bch_f=
+s *c, struct file *filp,
+>                 d_invalidate(victim);
+>         }
+>  err:
+> -       inode_unlock(dir);
+> -       dput(victim);
+> -       path_put(&path);
+> +       done_path_removing(victim, &path);
+>         return ret;
+>  }
+>
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 104015f302a7..c750820b27b9 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -2757,7 +2757,8 @@ static int filename_parentat(int dfd, struct filena=
+me *name,
+>  }
+>
+>  /* does lookup, returns the object with parent locked */
+> -static struct dentry *__kern_path_locked(int dfd, struct filename *name,=
+ struct path *path)
+> +static struct dentry *__kern_path_removing(int dfd, struct filename *nam=
+e,
+> +                                          struct path *path)
+>  {
+>         struct path parent_path __free(path_put) =3D {};
+>         struct dentry *d;
+> @@ -2815,24 +2816,34 @@ struct dentry *kern_path_parent(const char *name,=
+ struct path *path)
+>         return d;
+>  }
+>
+> -struct dentry *kern_path_locked(const char *name, struct path *path)
+> +struct dentry *kern_path_removing(const char *name, struct path *path)
+>  {
+>         struct filename *filename =3D getname_kernel(name);
+> -       struct dentry *res =3D __kern_path_locked(AT_FDCWD, filename, pat=
+h);
+> +       struct dentry *res =3D __kern_path_removing(AT_FDCWD, filename, p=
+ath);
+>
+>         putname(filename);
+>         return res;
+>  }
+>
+> -struct dentry *user_path_locked_at(int dfd, const char __user *name, str=
+uct path *path)
+> +void done_path_removing(struct dentry *dentry, struct path *path)
+> +{
+> +       if (!IS_ERR(dentry)) {
+> +               inode_unlock(path->dentry->d_inode);
+> +               dput(dentry);
+> +               path_put(path);
+> +       }
+> +}
+> +EXPORT_SYMBOL(done_path_removing);
+> +
+> +struct dentry *user_path_removing_at(int dfd, const char __user *name, s=
+truct path *path)
+>  {
+>         struct filename *filename =3D getname(name);
+> -       struct dentry *res =3D __kern_path_locked(dfd, filename, path);
+> +       struct dentry *res =3D __kern_path_removing(dfd, filename, path);
+>
+>         putname(filename);
+>         return res;
+>  }
+> -EXPORT_SYMBOL(user_path_locked_at);
+> +EXPORT_SYMBOL(user_path_removing_at);
+>
+>  int kern_path(const char *name, unsigned int flags, struct path *path)
+>  {
+> diff --git a/include/linux/namei.h b/include/linux/namei.h
+> index 1d5038c21c20..37568f8055f9 100644
+> --- a/include/linux/namei.h
+> +++ b/include/linux/namei.h
+> @@ -62,8 +62,9 @@ struct dentry *kern_path_parent(const char *name, struc=
+t path *parent);
+>  extern struct dentry *kern_path_create(int, const char *, struct path *,=
+ unsigned int);
+>  extern struct dentry *user_path_create(int, const char __user *, struct =
+path *, unsigned int);
+>  extern void done_path_create(struct path *, struct dentry *);
+> -extern struct dentry *kern_path_locked(const char *, struct path *);
+> -extern struct dentry *user_path_locked_at(int , const char __user *, str=
+uct path *);
+> +extern struct dentry *kern_path_removing(const char *, struct path *);
+> +extern struct dentry *user_path_removing_at(int , const char __user *, s=
+truct path *);
+> +void done_path_removing(struct dentry *dentry, struct path *path);
+>  int vfs_path_parent_lookup(struct filename *filename, unsigned int flags=
+,
+>                            struct path *parent, struct qstr *last, int *t=
+ype,
+>                            const struct path *root);
+> --
+> 2.50.0.107.gf914562f5916.dirty
+>
 
