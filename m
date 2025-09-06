@@ -1,144 +1,151 @@
-Return-Path: <linux-fsdevel+bounces-60415-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60417-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFD18B46962
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Sep 2025 08:08:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A821B46967
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Sep 2025 08:21:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7867D5A644C
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Sep 2025 06:08:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6B0C17CFEE
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Sep 2025 06:21:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFAED29E0F5;
-	Sat,  6 Sep 2025 06:08:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADC892BE7C0;
+	Sat,  6 Sep 2025 06:21:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="mcLZuEyM";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NNKjyc7v"
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="NcI8f4eA";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="gbA4zXaK"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0148A14B086
-	for <linux-fsdevel@vger.kernel.org>; Sat,  6 Sep 2025 06:08:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D551E520F;
+	Sat,  6 Sep 2025 06:21:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757138905; cv=none; b=bWZRDfGpjcLzKzqo65p3JSfVteXT+JOx0mbcQzuiyd37tpb/XSNdgFXJGeBENtwgwocE/KPGZMXpxXcFMpO4J1Nxuge7jm5LbzBjq3BTiilzx4Ks7a0F0karsYslfKaFwlRbC1nF2FwPC53wswIvuyJ5HR3CYIRP4MZMdf2avBY=
+	t=1757139690; cv=none; b=Ao7ENFQOOSmftUkKk0K6YT+BWXNUroyOokoJkZilM58G5iwS5p/lBX+O6MEfA+7kxjh7xyE3zLFkwetI3ub3f/R1zPmkN9UrPXGZmYtkYuBr7kAuLiP/1Fj+BguGhHhKhIwcj7L5XuUOFtPYobopw3v1ldUdoppgZVErdhnGwk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757138905; c=relaxed/simple;
-	bh=yWD5xFx4Bqg82T0P8vZC2qkHGyIz7w3a9FnA7WpF11o=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=LWOAnw2F3y9Bli4jRESBsUkMxG8ncLy+p5txMh9NQIZDMfRYVwh/neRx0niuIU/Cy1opXvhoggKH5WlGf7zWFKS+3A/SpXzTl0Q7DyCmX3ifp/K62AdqYchqnT4CBTFrgbuDvDtwH5+fnCneFJCdREBG5JMrp33oAOAu1P357SQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=mcLZuEyM; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NNKjyc7v; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
-	by mailfout.phl.internal (Postfix) with ESMTP id 10CC6EC0322;
-	Sat,  6 Sep 2025 02:08:22 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-12.internal (MEProxy); Sat, 06 Sep 2025 02:08:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1757138902;
-	 x=1757225302; bh=6HZJHo8fy/olclxztLAnE+x2Rb2KohEjTwRF5O2jMrM=; b=
-	mcLZuEyM/h7onxPajcrXkr2dD8z8nzuiPvSmCmmk3XVg9pRVySfQy1QGWgPJW/BC
-	eCPXEqHTiCXiPVUnneE0j83gEiilnZUpck++/DkXfdjfD7cQwwzLnuip/SFggLQc
-	N7W7E31tiYnLp46vU2OAxGOO3PH4mcMkFFJqVeOKysl1wQ0DsVXws3fSm4atAf8B
-	9Dyuu04K/AIjnBqLOY3+gfYwc6rFSY616es7aJiHJkpYVpJXs5h8WnsckN2qPyc1
-	53s/cDjiT9EEoqx9Vl6zuHY0u4KB3OKZiX++pEKrGdtgJp1XJbbUeg023d/n1Z7z
-	7Enu0hDaxF9jpYNI33OjzA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
+	s=arc-20240116; t=1757139690; c=relaxed/simple;
+	bh=OhFYpdo+ki2jBw7vWea33uPUPRVGPuYU47AqLGZ5TEo=;
+	h=MIME-Version:Date:From:To:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=YRHzYnfEoI3AF0xMIiMCQ4+Z5wI5c5Wh8b9us5p+tdq3KmC7VVHYfn0C8AerczhI7U82IGtGoiL0fYQynKf7IMiAivJkPxvhOuIdGbDhpDLD0aOyN1V0QAAcoLnj2hTv73sH7jONvIO+/4qtVVH0VLSCgm2cFRpqjZDub4ghbR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=NcI8f4eA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=gbA4zXaK; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id 1A79FEC00E0;
+	Sat,  6 Sep 2025 02:21:26 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Sat, 06 Sep 2025 02:21:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:content-transfer-encoding:content-type:content-type:date:date
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757138902; x=
-	1757225302; bh=6HZJHo8fy/olclxztLAnE+x2Rb2KohEjTwRF5O2jMrM=; b=N
-	NKjyc7vkA7BvqDEdEEWQqwQ/5mEdxL912kW+ejNAPlylyqdU63lq2aPDGiH+vPx3
-	gNvGefuKl1VMoSYOD6B7GeSbxzmbkHjdru8QzRSfR7hvjXP9qkokNILdBeuLpBHU
-	aCEeZOebasFZ58q1vFORXiONc+iU+dB/+RzijsTxzAG98R9BgRjQBTckuVpNlxUe
-	y+ZtIIsk8GpXpT9zOHPgGmW0z4PQX/8GJe5vl7qXNE3qzHuLaME0Z7q8fY0tMqn/
-	oF0mGmg7aFhch1D39QyvyCRBu/0A8xltLVa5VAntk+p1GS2q8bGeN8HpVBiCQjTB
-	x5LdELHFk9Pl2FSmcP7aw==
-X-ME-Sender: <xms:1c-7aJNo16saGPAW573BPNmbBuejZW6nlzag5EvgyrpgeVnYEEeUew>
-    <xme:1c-7aJ7gaOoLj4kFRdeIuoSf-eGin89Gf-u_TfewV8SI3bfGjbjh77Es7fSnMSPkE
-    CKmgflbit4buQ>
-X-ME-Received: <xmr:1c-7aKnYjhV2jiR4JMlsm8Gl3NBbYDmkfOTgVShHAleg_7JkPOGmyVRjTrMc4mXkaJwa_RxScYbYj6r2m-88p1SpHHhb_1LPjlAnsjFNL5uq>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduuddtudcutefuodetggdotefrod
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1757139686;
+	 x=1757226086; bh=C/Qx8gn1aEPxWdZanYl378oDEkan1w0vCyVmbQR1Sik=; b=
+	NcI8f4eA6+xfI+2FZ3v0vxGpjNfnklewK7IIeASRWtoQDVgOefMZ6ZUovqGqgbpY
+	rv+cqMSYbYJ19cfSmfvC5mbWFCxobGt5njpVjEWHHODiA3sNCzT5mJvl93o7+xER
+	ZV3yGZmSl49yKYjfDmJewZXCtta8BmtPC2oZobwfiE8WPfEFI0a8lRgfVPFzUUZ0
+	1pgrcnhdc9qdGbORsgnMbVN9xm2omraRoh2jE5UaOMYTwt019Cp49cRuwEYRDzvE
+	YnCe1OLinSxSp5v6kd8yieLO7BO91D0Xi9p3ik6/IvDB5nscZ5GOVFxqGANPcCbd
+	TOlzG5o1e4bsxXtnwh+5aA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:content-transfer-encoding:content-type
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
+	:x-me-sender:x-sasl-enc; s=fm1; t=1757139686; x=1757226086; bh=C
+	/Qx8gn1aEPxWdZanYl378oDEkan1w0vCyVmbQR1Sik=; b=gbA4zXaK4C7Y9/vsd
+	FpYF1zaJP4tTIhPgsRLgPhk5hzXehE3nNhn7xYf4BdLn29Y8quFwWguQBYJCEFu8
+	EVeH91A24uHbt9THCOL+wdQdB3/O5bxnd6D8GJRZ5835sWG07pgKl0MoIeLxcOmU
+	mu+bUTkQai8xnnxHrsBcSzR7vftDSuRZSRQ8jdO2SjEHw4MzBq3dmdC272eDbKra
+	FCpv2h7KcKk4/MyugqVZfE7zdoxwYLHgGjr7LTlHxyTD+A0MxYgJ6tS0OtExYaBW
+	QbsHjnzNoXZId/vzMMxqHhFxmLyfGXsk/acbzOIafdLv72k2BhlBzdvc1gHLmEri
+	2exgA==
+X-ME-Sender: <xms:5dK7aHc4ThQG4kYV4-fOOrYUFMmhoSETr_6yaHFZzEx5EDP1ALP8WA>
+    <xme:5dK7aNMQs3Pv5tJWEfFPmF0Mnqu0nKkVUwKoQgcTBKAq0V9MVq4q7-N_Zbbe01ldB
+    DoQcepS0_TXn-i4CX8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduuddtfecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
     ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpegtgfgghffvvefujghffffksehtqhertddttdejnecuhfhrohhmpedfpfgvihhluehr
-    ohifnhdfuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
-    epueffkeetfeffieevfefgledukeelgfelveejteeutdduffduuedujeetteehffefnecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
-    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohephedpmhhouggvpehsmhhtphho
-    uhhtpdhrtghpthhtohepvhhirhhoseiivghnihhvrdhlihhnuhigrdhorhhgrdhukhdprh
-    gtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-    pdhrtghpthhtohepjhgrtghksehsuhhsvgdrtgiipdhrtghpthhtohepsghrrghunhgvrh
-    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghmihhrjeefihhlsehgmhgrihhlrdgt
-    ohhm
-X-ME-Proxy: <xmx:1c-7aKRwCRdMlwkTkP5T3AcaC_2cwAXUll56PQYHQe3XpuN8ase2JQ>
-    <xmx:1c-7aJG9VT0ikB93Sn4fpLisul3a8GXEA4aipo9-B3qG1cqcFU-5qQ>
-    <xmx:1c-7aPHL8wun4CleW2R-iELh4AbC8-MoCHx_Ib4EA0i8mynPxk901g>
-    <xmx:1c-7aHR6ZK8TMs4SQFyiirSXDASoB1jIzDQf2bPL-wlYQlGwsMnyPg>
-    <xmx:1s-7aMA8F_Go8bi1RK3Qkmr5G4n2n_NEVepKaIe3XEdIqocpthLpYqSS>
-Feedback-ID: iab3e480c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 6 Sep 2025 02:08:19 -0400 (EDT)
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+    hrpefoggffhffvkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhguuceu
+    vghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvghrnh
+    epiedtfedufeejheevlefffedvkeegleelkeehuddvjefgtddtheeigfeitdegffejnecu
+    ffhomhgrihhnpehshiiikhgrlhhlvghrrdgrphhpshhpohhtrdgtohhmpdhkvghrnhgvlh
+    drohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhm
+    pegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedugedpmhhouggvpehsmh
+    htphhouhhtpdhrtghpthhtohepshhlrghvrgesughusggvhihkohdrtghomhdprhgtphht
+    thhopeihvghpvghilhhinhdrtghssehgmhgrihhlrdgtohhmpdhrtghpthhtohepshihii
+    hkrghllhgvrhdqsghughhssehgohhoghhlvghgrhhouhhpshdrtghomhdprhgtphhtthho
+    pegsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrnhguvghrshdrrh
+    hogigvlhhlsehlihhnrghrohdrohhrghdprhgtphhtthhopehtghhlgieslhhinhhuthhr
+    ohhnihigrdguvgdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtih
+    honhdrohhrghdprhgtphhtthhopehkshhtvgifrghrtheslhhinhhugihfohhunhgurght
+    ihhonhdrohhrghdprhgtphhtthhopehpohhmsghrvggurghnnhgvsehnvgigsgdrtghomh
+X-ME-Proxy: <xmx:5dK7aFSQAP437V0tX7uUcxgtGrgb-XsdxBbZsDD-q_Nxd8YwztNhVQ>
+    <xmx:5dK7aKmLHzr7YNbIZt2Fqsl-m2CHHyGcoEAnWTR8eXUavxayDfMeZw>
+    <xmx:5dK7aBRxG4BinL4kEveCMI60YtcLC6xYDqTOzUVPSlAA46G_sSajyg>
+    <xmx:5dK7aJsi4l1wF_goKub4DYVFCxNAtEelK1xbO-e3qc82n9jB6JHt_Q>
+    <xmx:5tK7aICrCqDKYGUvVsynEgeMmLVY_xewpS_mWdAFLm_gT8Nw1EwhFAG6>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 0394C700065; Sat,  6 Sep 2025 02:21:24 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@ownmail.net>
-To: "Al Viro" <viro@zeniv.linux.org.uk>
-Cc: "Christian Brauner" <brauner@kernel.org>,
- "Amir Goldstein" <amir73il@gmail.com>, "Jan Kara" <jack@suse.cz>,
- linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/6] fs/proc: Don't look root inode when creating "self"
- and "thread-self"
-In-reply-to: <20250906055240.GT39973@ZenIV>
-References: <>, <20250906055240.GT39973@ZenIV>
-Date: Sat, 06 Sep 2025 16:08:13 +1000
-Message-id: <175713889363.2850467.15098685984482981601@noble.neil.brown.name>
+X-ThreadId: AxX0oEVx0u-k
+Date: Sat, 06 Sep 2025 08:21:04 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: syzbot <syzbot+7ca256d0da4af073b2e2@syzkaller.appspotmail.com>,
+ "Anders Roxell" <anders.roxell@linaro.org>,
+ "Christian Brauner" <brauner@kernel.org>, "Yangtao Li" <frank.li@vivo.com>,
+ "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ kstewart@linuxfoundation.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ "'pombredanne@nexb.com'" <pombredanne@nexb.com>,
+ "Viacheslav Dubeyko" <slava@dubeyko.com>, syzkaller-bugs@googlegroups.com,
+ "Thomas Gleixner" <tglx@linutronix.de>, yepeilin.cs@gmail.com
+Message-Id: <66114372-5bd8-4f1b-8aea-1f6c4ec91bda@app.fastmail.com>
+In-Reply-To: <68bbccf3.a70a0220.7a912.02c1.GAE@google.com>
+References: <68bbccf3.a70a0220.7a912.02c1.GAE@google.com>
+Subject: Re: [syzbot] [hfs?] general protection fault in hfs_find_init
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Sat, 06 Sep 2025, Al Viro wrote:
-> On Sat, Sep 06, 2025 at 06:50:05AM +0100, Al Viro wrote:
-> > On Sat, Sep 06, 2025 at 02:57:05PM +1000, NeilBrown wrote:
-> > > From: NeilBrown <neil@brown.name>
-> > >=20
-> > > proc_setup_self() and proc_setup_thread_self() are only called from
-> > > proc_fill_super() which is before the filesystem is "live".  So there is
-> > > no need to lock the root directory when adding "self" and "thread-self".
-> > >=20
-> > > The locking rules are expected to change, so this locking will become
-> > > anachronistic if we don't remove it.
-> >=20
-> > Please, leave that one alone.  FWIW, in tree-in-dcache branch (will push
-> > tomorrow or on Sunday, once I sort the fucking #work.f_path out) there's
-> > this:
+On Sat, Sep 6, 2025, at 07:56, syzbot wrote:
+> syzbot suspects this issue was fixed by commit:
+>
+> commit 42b0ef01e6b5e9c77b383d32c25a0ec2a735d08a
+> Author: Arnd Bergmann <arnd@arndb.de>
+> Date:   Fri Jul 11 08:46:51 2025 +0000
+>
+>     block: fix FS_IOC_GETLBMD_CAP parsing in blkdev_common_ioctl()
+>
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17c0d312580000
+> start commit:   ee88bddf7f2f Merge tag 'bpf-fixes' of git://git.kernel.org..
+> git tree:       upstream
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=28cc6f051378bb16
+> dashboard link: https://syzkaller.appspot.com/bug?extid=7ca256d0da4af073b2e2
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1026b182580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=159e0f0c580000
 
-Sure, I'm happy to drop this patch.
+I took a look and concluded that my patch is unlikely to have
+fixed the issue, because:
 
->=20
-> PS: you do realize that we have similar things in devpts, binder, functionf=
-s,
-> etc., right?  What's special about procfs?
->=20
+ - my patch was wrong and needed another fixup on top
+ - the reproducer and kernel log show no reference to ioctl() calls,
+   so they do not directly interact with the code I changed.
 
-devpts uses simple_start_creating().
-The ->lookup function for for procfs will return -ENOENT for a
-non-existing name rather than returning NULL and leaving the dentry
-uninstantiated, so simple_start_creating() will fail.
+It is possible that my patch is hiding the root cause for the problem,
+if part of the reproducer relies on a prior call to ioctl() on a block
+device and this ioctl was broken by my patch. This still sounds like a
+long shot though, and my first guess would be that the bisection
+went wrong, possibly by running into more than one issue, or an
+unreliable reproducer.
 
-binder uses d_alloc_name() and d_add() without any locking, which is
-exactly what I was proposing for proc.
-
-functionfs seems to do the same.
-
-NeilBrown
+     Arnd
 
