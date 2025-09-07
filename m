@@ -1,169 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-60456-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60457-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C99AB47869
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Sep 2025 03:10:21 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6600B47898
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Sep 2025 03:44:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C64331B212BE
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Sep 2025 01:10:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B18A24E02F8
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Sep 2025 01:44:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54D1C1E86E;
-	Sun,  7 Sep 2025 01:10:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABA4619258E;
+	Sun,  7 Sep 2025 01:44:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P+CzCkM4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF1AD315D4E
-	for <linux-fsdevel@vger.kernel.org>; Sun,  7 Sep 2025 01:10:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13FE71078F
+	for <linux-fsdevel@vger.kernel.org>; Sun,  7 Sep 2025 01:44:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757207415; cv=none; b=UlBb8x8FBF/4JBgI1/TXUAb2wSbavVkKkSCz6hsNSQAGw5znRoGFfl9v9Hkc4OXtZgoXGBti3SpnVSUaGKlYUkHUoC6H9V0I4/fqzkW9pziqH5qKRLtyD+u4uq9XDfUEi6xhQo3bGYTTBDnhXdwV/fyhptuK36LS1EBHLHcdW2k=
+	t=1757209458; cv=none; b=fTpzX+nq/H/rONSujiD64xGbc+i/DK1JgIOXxzDHvSPocb8NTebR3Hp6fTDt9V4NPrgReSKEqIDPUGpifZXcwYiZrZcTYT9nkGv2x/3uza8BhKTsctbXKbEthf8+Fr+9D2cmPlly0aJYRfaPGx3b9ArEbar2KoU7VVTVFocsMnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757207415; c=relaxed/simple;
-	bh=3Sab/iVZVD4cjlstY0giMmGHPJWcSSlbZfVHFX8fmCc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UgdS3P+kG3wtc//v3d6A14rdg8miBOhHQuyUZnruOK6Ldwfx6QsGppYrRMJxJ1o6szREmV6PeAaooUBE8md7Zt8SHT4V44NM47JYrvWe1P03QBzX3CZJoPNQqszKJiJB8Fw+6M2tdjgS+V2Ls+En/G+zpYAys0k8iTkYXJ49Sk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=smail.nju.edu.cn; spf=pass smtp.mailfrom=smail.nju.edu.cn; arc=none smtp.client-ip=54.254.200.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=smail.nju.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=smail.nju.edu.cn
-X-QQ-mid: zesmtpip4t1757207324t9a02a4e6
-X-QQ-Originating-IP: 4U+XYzl+57OdhLM81bdfFZIyNbj5G57Pai+x9mv7gVI=
-Received: from workstation-Precision-7920-Towe ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Sun, 07 Sep 2025 09:08:43 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 1840866798938098571
-EX-QQ-RecipientCnt: 8
-From: "k.chen" <k.chen@smail.nju.edu.cn>
-To: security@kernel.org
-Cc: slava@dubeyko.com,
-	frank.li@vivo.com,
-	linux-fsdevel@vger.kernel.org,
-	glaubitz@physik.fu-berlin.de,
-	wenzhi.wang@uwaterloo.ca,
-	liushixin2@huawei.com,
-	"k.chen" <k.chen@smail.nju.edu.cn>
-Subject: [SECURITY] [PATCH V2] hfsplus: fix slab-out-of-bounds read in hfsplus_uni2asc()
-Date: Sun,  7 Sep 2025 09:08:26 +0800
-Message-Id: <20250907010826.597854-1-k.chen@smail.nju.edu.cn>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1757209458; c=relaxed/simple;
+	bh=slsA3AoFQ8MJDsBCWbRmEEWJ1tU8e7v2VNnoFU+tPMk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ROLLdP0R16XIE7Dc2NBKVd+xK7qAmXtUtinW3LpKvBhELNISMgXXfFkyh+ceL006M6TSANo3/6bTqQRErHqenFzXgJ46YP8n0EyqDS84fHtKH6OMt7DdCJzaLt65R3owMcmYfZRlteD6+QkDLb8orQ91w9zZMVJ/U+DMeiLRiRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P+CzCkM4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C235C4CEF9
+	for <linux-fsdevel@vger.kernel.org>; Sun,  7 Sep 2025 01:44:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757209457;
+	bh=slsA3AoFQ8MJDsBCWbRmEEWJ1tU8e7v2VNnoFU+tPMk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=P+CzCkM4d3gHIw4/xx8rSurh39ZjwA+BXckHVHQvSvL9FUUuMwqnNR3HvmAkLsVtt
+	 uSYQBWI/e2PQxTE2PMoZrY/WKWmejor2mVKA8U0w3VEil69+BtVRmfMB1D+HpVvLGt
+	 3SCdFI9sXxrIIQg1xrzjjYkccn77lG4umBeoVBD+NUQD3mLk/5jSatBNRMe8HZrKGM
+	 DIrJqV+n7/twjwdGpY6n2QHWLrqReYUIeT79iotgVSKNPQRvpfJfomuoRq+jzard3Y
+	 refZUjPhkiO8NLNQ6y+P6MfUlXKiEGwiK3buCn4cQYlxNkO/edwx+uwAFwHy9qzUWt
+	 fWW8aUoPTFysg==
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6188b5ad4f0so5036901a12.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 06 Sep 2025 18:44:17 -0700 (PDT)
+X-Gm-Message-State: AOJu0YwLk2W0IBhtRmjPDKQ1tKpo2Di7qm9SdrlCvxaB/QDPAP50XkWx
+	QPREIYd8F3YuahllXNjoBhDJeDHivDNFZ4Yqqbkh+1GX4TCWxWbgGmzDshy7uY4gYssfLXGWZqL
+	MRe9WjUB6wM4DxiD6WQ08VLukiPrAHUk=
+X-Google-Smtp-Source: AGHT+IH+zmA7tfa8UkQeR4mCFpmFCVvNcZOoDWs89rLjyvXpv0ObpMeP4qJLMOl0L1EKpo8LcFrRZE2gXA0FgIal2S0=
+X-Received: by 2002:a05:6402:1ed3:b0:61c:7a45:583a with SMTP id
+ 4fb4d7f45d1cf-6237b8740cfmr3343229a12.10.1757209456101; Sat, 06 Sep 2025
+ 18:44:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:smail.nju.edu.cn:qybglogicsvrgz:qybglogicsvrgz5a-1
-X-QQ-XMAILINFO: MSyoPQEuxKCu7ICUlQwfLiUaz+gRHhIcTp7q4L1+zmMNCplK9iSruwrj
-	+ziVBLCz5rMjGvDPgicy23q0jdbS65LSYY9q1SVHzE7FQtMCLX9UPpknHWMLTFvBYg4+/wd
-	/bIboqn1jGPcpi2SyRZG/I9MVtczj4847MY24glq2fmqwstDme2nuRTbNI5zTszyD5MnKhp
-	RIfwsr/qWGYm3M2NN3ImWzqnYu/e4leIpf6YQ6lSLQ3qrOkkPU8O3BK/7muHPXcHFva6XvU
-	HCU8aCfrDib8AERzSMuxBg0XDZxQZk6RSOwbAYwAZvnUFP2jhpo7P4GJJttQ06DcrnDNCWJ
-	sSGQ4jThlkO4OgNWYn1iJiY6tJU/FDobiit7V6g6R4HmKnT5290FbH3FjqZv5jauryn1hLl
-	No5ej6dHENg42GfBfxxI6lij+wFkpvuhulnCVHpQLjc5kZTue+1gPda2nlyOtidl7hLFLWX
-	OZJXKHCFbj9gzoUXYsujzGJvnzVTAuX9XWVOwQWG+PTD2pln/PQkY975JaBzDyWDJyZ0qnx
-	gxwEfW1G/afGgGi7i5Ti5xiEFWXv2jWsVK1iKa1w+KwPsgFN/laQSXFfS/JkRx7pu1kvuF0
-	Et+xBaWgFEImXdB1XRZFy/IlDFqknCCmkTRZgCywcxqewktIvTmKC0ifoFLNIAZE+lT30ko
-	x2BfzU8aRWFTaPNII5RKIVQ7tKCBL7y8Pe5fk3ZdXy4bbvIRLWkDzzhIfV4ZuMv8Rm5+5B6
-	xL4z/SgxDDWFJO4JoNLfPsGx3+MhjWSiqur7hACmOpk3PcB/SGb8FQlwmLrfh1TBU4Hm3zL
-	+P+QXGOIwVyYO4QRKh86qrdUJvhTd8zB4GPda4ZoDYvw8hZ8fMzM3b9Rwj62yori9qJMaYm
-	CHGxX0cPpYVR+MQyTF7llPuR6HqQxsgD5nKA7Cy0fZochReYCtEq9sDBEhEmf6BTk8m7OlP
-	3Kbhzmzd6exF2+9YDNtQHyMQs1ANsmtOE8PkMeeO5TmB2XIOREqcnRwcm
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-X-QQ-RECHKSPAM: 0
+References: <20250906090738.GA31600@ZenIV> <20250906091137.95554-1-viro@zeniv.linux.org.uk>
+ <20250906091137.95554-12-viro@zeniv.linux.org.uk>
+In-Reply-To: <20250906091137.95554-12-viro@zeniv.linux.org.uk>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Sun, 7 Sep 2025 10:44:04 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd-dNGH=EAH48HRR4JwA23csKnVHOFxoqaYue7xmKgCaUA@mail.gmail.com>
+X-Gm-Features: AS18NWAZNyN8To_E6aTJKUFKNztqnO82DI7TYS7gM8hwDvOu5uI8iNwiSFwgIwo
+Message-ID: <CAKYAXd-dNGH=EAH48HRR4JwA23csKnVHOFxoqaYue7xmKgCaUA@mail.gmail.com>
+Subject: Re: [PATCH 12/21] ksmbd_vfs_inherit_posix_acl(): constify path argument
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org, jack@suse.cz, 
+	torvalds@linux-foundation.org, amir73il@gmail.com, chuck.lever@oracle.com, 
+	john@apparmor.net
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The previous fix (94458781aee6) was insufficient,
-as it did not consider that
-sizeof(struct hfsplus_attr_unistr) != sizeof(struct hfsplus_unistr).
-
-Fixes: 94458781aee6 ("hfsplus: fix slab-out-of-bounds read in hfsplus_uni2asc()")
-Signed-off-by: k.chen <k.chen@smail.nju.edu.cn>
----
-V2 -> V1: change struct pointer type to pass compiler
-
- fs/hfsplus/dir.c        | 3 ++-
- fs/hfsplus/hfsplus_fs.h | 2 +-
- fs/hfsplus/unicode.c    | 9 ++++-----
- fs/hfsplus/xattr.c      | 6 ++++--
- 4 files changed, 11 insertions(+), 9 deletions(-)
-
-diff --git a/fs/hfsplus/dir.c b/fs/hfsplus/dir.c
-index 876bbb80fb4d..765627fc5ebe 100644
---- a/fs/hfsplus/dir.c
-+++ b/fs/hfsplus/dir.c
-@@ -204,7 +204,8 @@ static int hfsplus_readdir(struct file *file, struct dir_context *ctx)
- 			fd.entrylength);
- 		type = be16_to_cpu(entry.type);
- 		len = NLS_MAX_CHARSET_SIZE * HFSPLUS_MAX_STRLEN;
--		err = hfsplus_uni2asc(sb, &fd.key->cat.name, strbuf, &len);
-+		err = hfsplus_uni2asc(sb, &fd.key->cat.name, HFSPLUS_MAX_STRLEN,
-+				      strbuf, &len);
- 		if (err)
- 			goto out;
- 		if (type == HFSPLUS_FOLDER) {
-diff --git a/fs/hfsplus/hfsplus_fs.h b/fs/hfsplus/hfsplus_fs.h
-index 96a5c24813dd..49d97c46fd0a 100644
---- a/fs/hfsplus/hfsplus_fs.h
-+++ b/fs/hfsplus/hfsplus_fs.h
-@@ -522,7 +522,7 @@ int hfsplus_strcasecmp(const struct hfsplus_unistr *s1,
- int hfsplus_strcmp(const struct hfsplus_unistr *s1,
- 		   const struct hfsplus_unistr *s2);
- int hfsplus_uni2asc(struct super_block *sb, const struct hfsplus_unistr *ustr,
--		    char *astr, int *len_p);
-+		    int max_unistr_len, char *astr, int *len_p);
- int hfsplus_asc2uni(struct super_block *sb, struct hfsplus_unistr *ustr,
- 		    int max_unistr_len, const char *astr, int len);
- int hfsplus_hash_dentry(const struct dentry *dentry, struct qstr *str);
-diff --git a/fs/hfsplus/unicode.c b/fs/hfsplus/unicode.c
-index 36b6cf2a3abb..b4303785ba1e 100644
---- a/fs/hfsplus/unicode.c
-+++ b/fs/hfsplus/unicode.c
-@@ -119,9 +119,8 @@ static u16 *hfsplus_compose_lookup(u16 *p, u16 cc)
- 	return NULL;
- }
- 
--int hfsplus_uni2asc(struct super_block *sb,
--		const struct hfsplus_unistr *ustr,
--		char *astr, int *len_p)
-+int hfsplus_uni2asc(struct super_block *sb, const struct hfsplus_unistr *ustr,
-+		    int max_unistr_len, char *astr, int *len_p)
- {
- 	const hfsplus_unichr *ip;
- 	struct nls_table *nls = HFSPLUS_SB(sb)->nls;
-@@ -134,8 +133,8 @@ int hfsplus_uni2asc(struct super_block *sb,
- 	ip = ustr->unicode;
- 
- 	ustrlen = be16_to_cpu(ustr->length);
--	if (ustrlen > HFSPLUS_MAX_STRLEN) {
--		ustrlen = HFSPLUS_MAX_STRLEN;
-+	if (ustrlen > max_unistr_len) {
-+		ustrlen = max_unistr_len;
- 		pr_err("invalid length %u has been corrected to %d\n",
- 			be16_to_cpu(ustr->length), ustrlen);
- 	}
-diff --git a/fs/hfsplus/xattr.c b/fs/hfsplus/xattr.c
-index 18dc3d254d21..456c7d6b2356 100644
---- a/fs/hfsplus/xattr.c
-+++ b/fs/hfsplus/xattr.c
-@@ -736,8 +736,10 @@ ssize_t hfsplus_listxattr(struct dentry *dentry, char *buffer, size_t size)
- 
- 		xattr_name_len = NLS_MAX_CHARSET_SIZE * HFSPLUS_ATTR_MAX_STRLEN;
- 		if (hfsplus_uni2asc(inode->i_sb,
--			(const struct hfsplus_unistr *)&fd.key->attr.key_name,
--					strbuf, &xattr_name_len)) {
-+				    (const struct hfsplus_unistr *)&fd.key->attr
-+					    .key_name,
-+				    HFSPLUS_ATTR_MAX_STRLEN, strbuf,
-+				    &xattr_name_len)) {
- 			pr_err("unicode conversion failed\n");
- 			res = -EIO;
- 			goto end_listxattr;
--- 
-2.34.1
-
+On Sat, Sep 6, 2025 at 6:11=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> wr=
+ote:
+>
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Acked-by: Namjae Jeon <linkinjeon@kernel.org>
+Thanks!
 
