@@ -1,77 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-60462-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60463-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FB83B478B3
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Sep 2025 04:18:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55536B47F1A
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Sep 2025 22:33:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C41FD2063A1
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Sep 2025 02:18:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 112703C2455
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Sep 2025 20:33:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92B71A01C6;
-	Sun,  7 Sep 2025 02:18:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA80621ADAE;
+	Sun,  7 Sep 2025 20:33:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F0vWrx2H"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="nLAX9yjJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 244BDFC1D
-	for <linux-fsdevel@vger.kernel.org>; Sun,  7 Sep 2025 02:18:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1E42139C9
+	for <linux-fsdevel@vger.kernel.org>; Sun,  7 Sep 2025 20:32:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757211484; cv=none; b=ZeU1W8SX6ADT1ILSVL42Z6SI17hsXJ+OZ+ldLz5nzoqUuVXYTi/m62aSns5wBylw/j1rUoMBqshy+hhR+n4EChTEi2SkyYxltRnkm9F3XINGrDW+x7BT1ODFGBeINv/Kv32wmwMUSMGoRWLy2Q4MJIZgC7y4EZx6QKXF172XNZo=
+	t=1757277181; cv=none; b=CWdouMXMgyulmIAFaMQbwUmk+mUu9BNSb6nWuEzuDQxSwcARvYiK1FgG6ZCRfI1zWdltAMLJgJX1WRZLU/SDPAtF2qDgKohwDsA8qUENz7JTPCqU8hBVM87EKCccpau5CXuwKeosChVPJrfowllesp4Bms0tZJS2T/tNDZY+7fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757211484; c=relaxed/simple;
-	bh=cm4G7KoIwtQuhL6NLnCWALNLTdV6r+4o7J4FRio5OcE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S9btBydXQyFxM52DiISEpDeXjEEdk6Ptq82lNYHLe7MgkoBjsuu6Cy40YNeQVnArKL54dRrtg+UrUsGrG2Eh5d/qEuuIuApHubdJSY1kwoL+MZp0v+6jaPX1WnGAp3XDJ8JRjlJ/oRUmWaHPIl3+Hq5A985jscB7CdHEGjOrQLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F0vWrx2H; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757211482; x=1788747482;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=cm4G7KoIwtQuhL6NLnCWALNLTdV6r+4o7J4FRio5OcE=;
-  b=F0vWrx2HnqMp8wfPShRCURFRnx1f5FHjeqq8G92BOy1jixfJrO2OVg7M
-   ISugpnlo4tNSZhNc9bKkUhcCknVvbhVX0X2yh06EER8EcTcraiFEtk5to
-   oddZziMbVaC+0AKRWTM18Pck2X1GrzlGD9OQZaruufdGYZtMNM8qX7zL7
-   W6I+rucyWgkjQc8fSrk1qA0Q4SnpdZmayHApQeyPr7t+ZQRF+BU9qkDdw
-   zksGmnaHklYHSnU3/11aUVR4WjzMAgZ98QfWGVfkwKRSgtJy5nryU/A/q
-   w0+DKSAl1s0YmiCZoNsT5Eyc24H76t67VTphUQn2nTW0IeEZIQg8Ce8iw
-   A==;
-X-CSE-ConnectionGUID: wEh0Hti/TbKAsiRRx7GEPg==
-X-CSE-MsgGUID: gf/NQOnITeK2ilLm5kw7Ug==
-X-IronPort-AV: E=McAfee;i="6800,10657,11545"; a="70128574"
-X-IronPort-AV: E=Sophos;i="6.18,245,1751266800"; 
-   d="scan'208";a="70128574"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2025 19:18:02 -0700
-X-CSE-ConnectionGUID: AUCl7j+ySPGIuKkJm/WOLA==
-X-CSE-MsgGUID: yHmN+5CRQtCtt7eHPaszlg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,245,1751266800"; 
-   d="scan'208";a="172044037"
-Received: from lkp-server01.sh.intel.com (HELO 114d98da2b6c) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 06 Sep 2025 19:17:59 -0700
-Received: from kbuild by 114d98da2b6c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uv4yb-0001x7-0o;
-	Sun, 07 Sep 2025 02:17:57 +0000
-Date: Sun, 7 Sep 2025 10:17:00 +0800
-From: kernel test robot <lkp@intel.com>
-To: NeilBrown <neilb@ownmail.net>, Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 5/6] VFS/audit: introduce kern_path_parent() for audit
-Message-ID: <202509070916.8uBFTDCH-lkp@intel.com>
-References: <20250906050015.3158851-6-neilb@ownmail.net>
+	s=arc-20240116; t=1757277181; c=relaxed/simple;
+	bh=Q8ghGbCrqeI+FP5slEjAs7rd7yTqjOoXn4QVkTvS+tE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=j7n2AlmTfB1bQXqx+J4/0/GeAaWGnKXwpxAHWIMXGv8+fvnNBbONWWQYvbgh40tGOaK/T2OzipwA9Ux29CQboyyCSuqWTv5C9iPS/oeWMAWXVNTBFgUM0G12S3NeQmS1dABuqjZNBPuWvQUquPJKPO7Wolz9ZkjxcMAulqsa9/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=nLAX9yjJ; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
+	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=x7N2/fU1DHGRxp4RG09CbvDoj0nycVGrVVE+FmaC96o=; b=nLAX9yjJJWDxo4PufGhvNzNBwv
+	BWPO1u9oUSUXQmWf6YxHdov3i7F542nCR0K5c/zPPGmXIQRypQBVtoQHJpZtH4fOU+ZAOA7ZN0nbH
+	CPcaHcP1mlQiuzhuNmgu5E+CBiaZAtm0iZYatR/wuulKErc055LD69KjkgMWKIGoRbEFtjUm6Gd7c
+	oglZje0Dr2jgA2RWBxXJ5oh5omqAt4b8/cb4NThgiN52NAFTqHRqEMg2AhWaELPKH72S4skJTrnKc
+	AtwsDXHOxYsrtvqu5IIBYjBaizYwHqTipk+oliqwJElA87XyHRx7BL0BCek0Y2upIlqQAw7pPvMrd
+	sgo3euvQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uvM4F-00000008D3i-0QbG;
+	Sun, 07 Sep 2025 20:32:55 +0000
+Date: Sun, 7 Sep 2025 21:32:55 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
+	Jan Kara <jack@suse.cz>, NeilBrown <neil@brown.name>
+Subject: [RFC] a possible way of reducing the PITA of ->d_name audits
+Message-ID: <20250907203255.GE31600@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -80,36 +59,159 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250906050015.3158851-6-neilb@ownmail.net>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Hi NeilBrown,
+	I would like to discuss a flagday change to calling conventions
+of ->create()/->unlink()/->rename()/etc. - all directory methods.
+It would have no impact on the code generation, it would involve
+quite a bit of localized churn and it would allow to deal with catching
+->d_name races on compiler level.
 
-kernel test robot noticed the following build warnings:
+	A bit of background:
 
-[auto build test WARNING on brauner-vfs/vfs.all]
-[also build test WARNING on pcmoore-audit/next viro-vfs/for-next linus/master v6.17-rc4 next-20250905]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+	Unlike file->f_path, dentry->d_name *can* change for a live
+dentry.  We had quite a few bugs where it had been used unsafely and
+new ones almost certainly will crop up.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/NeilBrown/fs-proc-Don-t-look-root-inode-when-creating-self-and-thread-self/20250906-130248
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
-patch link:    https://lore.kernel.org/r/20250906050015.3158851-6-neilb%40ownmail.net
-patch subject: [PATCH 5/6] VFS/audit: introduce kern_path_parent() for audit
-config: x86_64-buildonly-randconfig-001-20250907 (https://download.01.org/0day-ci/archive/20250907/202509070916.8uBFTDCH-lkp@intel.com/config)
-compiler: gcc-13 (Debian 13.3.0-16) 13.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250907/202509070916.8uBFTDCH-lkp@intel.com/reproduce)
+	A part of a problem is that locking rules are fairly
+convoluted; they do cover most of the uses in filesystem code these days
+(->d_revalidate() was the last major source of headache), but they are
+not fun to verify.  I've no better solution than a code audit once in a while,
+and every time it's really unpleasant.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509070916.8uBFTDCH-lkp@intel.com/
+	It starts with verifying that ->d_name contents of a live dentry
+can only be changed by __d_move().  The next step is tracing the callers
+of that and verifying several predicates regarding the locks held
+by callers.  Next we need to go over the places that access ->d_name
+and check that locking in those does give sufficient exclusion.
+That's about 800 locations to look through right now, and examining those
+(and the call chains leading to them) is very distinctly Not Fun(tm).
 
-All warnings (new ones prefixed by >>):
+	It used to be worse; reducing the number of places that needed
+to be examined is something I'd been doing for quite a while (debugfs
+bunch was the latest mostly taken out).  The problem is, most of the
+remaining stuff is genuinely needed - foofs_unlink() *does* need to
+know which directory entry to remove, etc.
 
->> Warning: fs/namei.c:2804 function parameter 'path' not described in 'kern_path_parent'
+	The typical part of that audit goes like that:
+* foo_do_something(whatever, dentry, flags) uses dentry->d_name.{name,len}.
+* we need to examine all callchains that might lead to it and prove
+  that locking environment in each of those is sufficient to stabilize
+  these values.  Note that locking environments may vary between the
+  callchains, with their intersection being too weak.
+* one callchain is
+	call of ->i_op->symlink() hits foo_symlink()
+	foo_symlink() calls foo_mknod()
+	foo_mknod() call foo_create_object()
+	foo_create_object() calls foo_do_something()
+  with dentry in the last one coming from the third argument of ->symlink().
+  All callers of ->symlink() guarantee the sufficient locking environment
+  for stability of that argument - both its ->d_name and ->d_parent are
+  not going to change under us (that, BTW, is a separate audit, thankfully
+  a much smaller one).  Therefore we know that this callchain is OK.
+  Lather, rinse, repeat...
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+	None of that is all that complicated (well, unless you are looking
+at something with obscene call chains *cough*ceph*cough*).  The trouble
+is, there are literally hundreds of places to examine, and that needs to
+be multiplied by the number of callchains.  Doing that manually is bloody
+painful; "AI" (s)tools are worse than useless in that area - verifying the
+output is actually _harder_ than doing the whole thing manually.
+
+	We need some annotations ("this dentry is guaranteed to be stable"),
+some way to verify their correctness and helpers that would give access
+to members in question (both ->d_name and ->d_parent), with some way to
+check that they are only used for stable ones.  IMO that's a good fit for
+type system.  And AFAICS, the C type system, weak as it is, can be used
+for that.
+
+	Suppose we introduce something like
+struct stable_dentry {
+	struct dentry *__touch_that_and_suffer;
+};
+
+static inline struct stable_dentry claim_stability(struct dentry *dentry)
+{
+	return (struct stable_dentry){dentry};
+}
+
+static inline struct dentry *unwrap_dentry(struct stable_dentry v)
+{
+	/* this would better be the only place using that identifier */
+	return v.__touch_that_and_suffer;
+}
+
+static const struct qstr *dentry_name(struct stable_dentry v)
+{
+	return &unwrap_dentry(v)->d_name;
+}
+
+static struct dentry *dentry_parent(struct stable_dentry v)
+{
+	return unwrap_dentry(v)->d_parent;
+}
+
+	Those things get passed as argument and returned in the same way
+dentry pointers are, AFAICS on all ABIs we care about.  And they can
+serve as annotations - to pass such object (by value) instead of passing
+a dentry reference == claim that dentry in question is stable and will
+remain such for duration of call.
+
+	So we can do a series of patches along the lines of
+* switch ->symlink() to use of struct stable_dentry
+* replace
+static int ramfs_symlink(struct mnt_idmap *idmap, struct inode *dir,
+			 struct dentry *dentry, const char *symname)
+{
+with
+static int ramfs_symlink(struct mnt_idmap *idmap, struct inode *dir,
+			 struct stable_dentry child, const char *symname)
+{
+	struct dentry *dentry = unwrap_dentry(child);
+and similar for all instances
+* replace the caller(s) (there's only one, in this case - in vfs_symlink())
+so that
+	error = dir->i_op->symlink(idmap, dir, dentry, oldname);
+becomes
+	error = dir->i_op->symlink(idmap, dir, claim_stability(dentry), oldname);
+possibly with a followup that switches vfs_symlink() to stable_dentry as well
+(in which case claim_stability() shifts to the callers).
+* Add to D/f/porting.rst:
+**mandatory**
+
+->symlink() takes struct stable_dentry now; if you are affected, replace
+the third argument with struct stable_dentry and use unwrap_dentry()
+to obtain the dentry reference from it.  If your ->symlink() instance
+happens to be called directly, wrap the argument into claim_stability()
+at the call site (and check that you *do* have sufficient locking
+environment there - if you didn't, it's a bug right there and you'd
+need to fix it first, so that it could be backported without dragging
+the calling conventions change along).
+
+That's the flagday part; it would be fairly mechanical, with very easy
+way to conform for anything outside of mainline tree.
+
+Once that is done, we can eliminate the direct uses of ->d_name
+- dentry_name(child) would do it; might make sense to propagate
+stable_dentry down into helpers - depends upon the filesystem.
+
+What we get out of that is a much smaller set of places to audit, all
+easily catchable by grep.
+	1) claim_stability() calls.  There are _far_ fewer of those,
+and each does need to be verified anyway.
+	2) places where we use ->d_name in filesystems.  Hopefully to
+be much reduced.  Something that e.g. grabs ->d_lock and looks at ->d_name
+is safe, and that ->d_lock would typically be taken within a few lines
+before the use.
+	3) places that simulate claim_stability; catchable by grep -
+that can be defeated by preprocessor-level obfuscation, but anything
+like _that_ would be a confession of malicious intent.  And sparse would
+not be hard to teach catching those anyway.
+Everything else would be caught by compiler.
+
+IMO getting rid of that headache (several days of unpleasant mechanical
+work every time) would be very tempting.  OTOH, it is a flagday change
+and such calling conventions changes risk the bikeshedding fest from hell...
+
+Comments?
 
