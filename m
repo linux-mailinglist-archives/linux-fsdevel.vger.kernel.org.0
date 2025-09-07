@@ -1,126 +1,195 @@
-Return-Path: <linux-fsdevel+bounces-60464-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60465-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DB8FB4807A
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Sep 2025 23:51:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE9E4B48111
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Sep 2025 00:41:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC8543C150B
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Sep 2025 21:51:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B52D7AE32F
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Sep 2025 22:40:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A972192F4;
-	Sun,  7 Sep 2025 21:51:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D7472264B0;
+	Sun,  7 Sep 2025 22:41:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="LVsbWHKJ"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Aju54ZaQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2A7715C158
-	for <linux-fsdevel@vger.kernel.org>; Sun,  7 Sep 2025 21:51:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 962E31C863B
+	for <linux-fsdevel@vger.kernel.org>; Sun,  7 Sep 2025 22:41:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757281899; cv=none; b=Ak66esuFWSQ3tGdwRa2zpH6fmoiAA61E2pJ9dTZzKNk63Lta4Gv/FMdp6xrfrtyM8M2iqlb1knQ/TPhFITpjT0/bHN0m8zfv/8Jn85rUuGkFf5sLJM3k6LmifYGh/qV3nsP+aMnWS0QoBlMGiQ1SkECcNtZBT3Q4swY+dNqRcDA=
+	t=1757284889; cv=none; b=Pl4fzDgac50ZqtkqETAhcgYODRYq5OBuB3U7WF8CEb0f9eEoBMLV+uhuQ64ps1C8jDDj5Fu49ggEksPvhJG71fdVIaYIcnZgeQ6rjZlwfTtcrsNIhzm5rrC+2mEV97nrTlKQEDLmqxFwCGwKISVhTQoK3h2jFiiB3Sps94nQKPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757281899; c=relaxed/simple;
-	bh=i2LQtogur9TYi2w6kPWdqVJRnYjyF81GA7kgRNMabBs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=myvKKAPHMz9TbmmAyA8I4jD6xFou/Y3pwLEeoGAkXHAUW/n1zRitzpanHs0w6VCp7aEk+QGZonfrlwgeVYE9AXzzcHOHi6ezPXaridmtU5nE+atb1EyxU/JgJdEaETz3ERMyfB5tDj/AKodl5Sq2FytLlbSCdX6fKlt2prr/LLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=LVsbWHKJ; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b0411b83aafso644019066b.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 07 Sep 2025 14:51:37 -0700 (PDT)
+	s=arc-20240116; t=1757284889; c=relaxed/simple;
+	bh=n/drI+cMGG5bVmm44g/BahrwI+Nm6w8YZD3H3dpNylQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qAxGp4iS/7rZva1ArYGIFKY24XnBFKm4lFAVmHMg6iYpJ3YaK8rGabJ+d64OcBnJjHy+Vh9MouX5fo979JOXWUA6Up0c9Cp3/9FKRLlt0T1MwoVklQtoOt1R6moP6EQWOUdBdGAsgHlHNEhTdwYt3tXDzbbsaSEOjSp62yh9wTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Aju54ZaQ; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3e537dc30f7so780181f8f.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 07 Sep 2025 15:41:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1757281896; x=1757886696; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ctvD95hXD8mZTU0XdsrSMHd2LX8T01qbThDdBoatB90=;
-        b=LVsbWHKJYwuy2uQMt3JSTOdZf1msvLmepCmkrgaFyTO7bojL4PizdI5XGs+PPKhE+V
-         zJzTRhSJkruX+MseOavR6C/WWKYVuYi38ICb2z0Y8/Dm3t/PuzKVWb3IQnE65EHeGTlM
-         WBowtiE5ipi78BnyzfWuCz0b2UEUd/uScrv7s=
+        d=suse.com; s=google; t=1757284886; x=1757889686; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=hVFLpSueAmA1ouTf41WNMAKcdmyhZBwcWTTBzR0VaHU=;
+        b=Aju54ZaQIBL+sURemAu/1oP+QBv7otcdKyEh3UqDDXh2ugbLLsqt5sOmL/sUCLbyq9
+         zOC+nua85/AF+sChOERMapDXQ1RUjVj1b2nN4gCa3V5VxwFPax3JN5d5iUxAdY0JaCYq
+         JnOLpRhQRSoD/kpoxaXBqVQUUOzxgy+lFZAJdD/djeQKZdP1qOPWxrgOdddEwedJygaM
+         L2lCMB1wc1SNJaBblG3oRj2HUo0jBuFnVAm6BfZbI0ebtXWo+3yT/8l8AhmX2fcSEQoq
+         QSfhMsMGikz/DsY0c3bdQuz1tTo1RoBk35o91OI1mz1kM8KlR/7DB+BiZOx2DWcLpoOi
+         mJqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757281896; x=1757886696;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ctvD95hXD8mZTU0XdsrSMHd2LX8T01qbThDdBoatB90=;
-        b=vtmayQq5EyKlz/fe8TODubWNWdJw6zGvdlo413bEvr9fEAALFiZisc2hPZ3i4VJ7KD
-         85EnDN4BgbsHQqtdJSDTsX/NOqN8ulPMaFSdE0tD+kEjnXkWz33Cv8i8uEzm3AazRnu8
-         a7xoXYcELhthm0z3ob5qgxjK9Ton40pKIchZMO7p91hMQTJdQhVmN2d9voSiN8ebccZ+
-         BWWNVyAfGjEWAF2oQzKwV2gSwpn0j75jpvqOyzfus6PBvc4KlsfVkD806LjL8lVPQcEE
-         Uf4vXQpg2VcocyPt9hVFYtSneDbi/oKV+Ra1+finicW0CirYcoLYi5v3fggwQgeHWGtH
-         ya5A==
-X-Forwarded-Encrypted: i=1; AJvYcCVKEJBMJ3cAomvN44vZsLBAzy3YBgcSdjGDKbQVMHbrvaTIxXeX7v1/SSqbf7cWYuXuObm06sg/SovaQ/O4@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoRU14KQtyoXTTrSweBoSkttpolWbrpYsBlKO+5Q+ZyL3oULPO
-	sU4au/nANP5WOpIeq2xn8s88v6AEyLIQkxylk4LiWLC4Hvs2ulOhMETuvJg5s0znRqDGccNT/Wb
-	CdYzYnJ0=
-X-Gm-Gg: ASbGncsEbZvo4mkBmXaYsjLtn/0QQsXHKdZaHHSazPVUhZq68rIdN//9pfzTkuW/9HW
-	ac95SSUQvCPNETj3OzQO9ydoLgcA7jcVpRIbj+pC+b+8QhxoaxmCgMFdDOtS6iZd20T4sfKJzBy
-	/OiaBkEpER4J75LxbsvBft/kjt4mP4gAD9mVHmywEhw8o4stHNyjzX/Yna6rx2jz+1wbU5d9l6G
-	8cyF6ewQWlmM02Anty6Xr/tzgS4t4+QpPuaF0KnBdXrMZz2REk1wwx1ecQxFMsPJSzKMl7bP+dU
-	qRAYacQmnYJMBLy23J8EqW/g5x+e4dNyt0Cqk/e4THyF7IgXUidAiP/ZY4zySoGchLaPvuLPsuc
-	HwPtzO6xBD7aoIbtoTtt9cjVQXl53azFvJb2IAnxOeKBVE5roxcvr+V3uatsAfz96nc5pNYl0FW
-	6hXGiVsbU=
-X-Google-Smtp-Source: AGHT+IE4buyKoTCqONIpo+sG+LZIByNsMovLUScezCPYjbpHXoXlE32PnJlQTXNCy9fjO3rhJaESdQ==
-X-Received: by 2002:a17:907:1c28:b0:afe:fbee:88a with SMTP id a640c23a62f3a-b04b17663a2mr574322666b.59.1757281895790;
-        Sun, 07 Sep 2025 14:51:35 -0700 (PDT)
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b03fa921a32sm2049393966b.31.2025.09.07.14.51.35
-        for <linux-fsdevel@vger.kernel.org>
+        d=1e100.net; s=20230601; t=1757284886; x=1757889686;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hVFLpSueAmA1ouTf41WNMAKcdmyhZBwcWTTBzR0VaHU=;
+        b=EmDZIiXTuL7DKhr0KmmptiWfVKTwqGY/Su4pWbc0yg4SJuLu+sfxvgMRONIAg2EVp7
+         Mtdo+KqSBUjrTSiAVakqbENwZyB/0H4bsV4ylfaA0LVIJdlaCNAl5AqKUldewTBgxzCt
+         g1ytZBBRtUDlqRYjnxRhh79gz+TAGQtYugo+8BwzFqYooSRzwahB1A+0GNRrG2u/jmzY
+         Pwq3MwUZGfvVFOfHIl0bA6m2ZEuX1crbEkmduYMMbTd2PS79wwdDHZmZKfl021T/r4Qp
+         z7ZOEpVBfPxj8IurMZern62dKoCg1RUcun81BxBTcmfQ7te+qFmxNWkEKS+g4Y4/PNzX
+         L9LA==
+X-Forwarded-Encrypted: i=1; AJvYcCUE9fusnQmjj5lHMDMjlEdfGEtIjUctS0ZRzUg4xofNbUQ9Q+JRxl+i3EuDvoquecTFXISYoF7f5LOI/QIg@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNYtOcLvMStnkYjRwUI62ODXzwTi8Fzlh56QphgaeAVEraixlv
+	LnQtAffe7j6PuAXL1sgDtuW2kkeBQPkdbdhxu7nd74FsQHJ23sN9FtwMUAZ3naju8THozLeWINH
+	LupZQ
+X-Gm-Gg: ASbGncuPJFD9vJttXpxfY1KMjRnrrE1wZUk6cAQMi7ZjROG7IcN7xMThTehyaRda/co
+	ZfbODs3VJ3JAOHKEvtQ8OpJohge4e4ZYCbquXrGtMittuv204zc2AdInYTQwBEmmoltjoYE2WQR
+	tNsy5eUvJiATG22Sq0VdYunHfXLM/U+e9yLZZtUZfcq14A2BSoDeEMp5Quaqw8bNNMxeraTNr70
+	aDYSCBojCfCIXJ1FK4Yi+KBUF/AGLRL7TX7cYgeuaNLgkRhLxj83B7ciuXeW5ZnSYewiPD6kjBw
+	KAojCY5HtdYz7nsxr0b/xP90I9ijMX90VyKk8heVcoO5B7H195sqjp1eKIwQCqoqKPVvEyNotJ7
+	2OQB+6xNJuMieazc6VqXfpDE/lh0ARvkoRi9+PqUAZmF/9NdC2toRcyoCQtgQeA==
+X-Google-Smtp-Source: AGHT+IEOYfTqBSNVTYIQ9V/rlEDtEfAdMgW8uO9tKr+yaEnvOkmsOpyDzVo2RX0gxi1NXzpCePC35Q==
+X-Received: by 2002:a05:6000:2285:b0:3e7:4334:2afe with SMTP id ffacd0b85a97d-3e743342e6cmr2920789f8f.5.1757284885808;
+        Sun, 07 Sep 2025 15:41:25 -0700 (PDT)
+Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24c9304b790sm125165205ad.67.2025.09.07.15.41.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 07 Sep 2025 14:51:35 -0700 (PDT)
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-625e1ef08eeso2241750a12.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 07 Sep 2025 14:51:35 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXGx2yPUh7RXetrCYn83BY0t6mRgrJlOYsREp7Ea1437aekYmTqg8B4Kg/JvONIWGTvL7XQj7xYpdBS6x0A@vger.kernel.org
-X-Received: by 2002:a05:6402:2348:b0:61c:8fe9:9423 with SMTP id
- 4fb4d7f45d1cf-6237edb2f15mr6243812a12.17.1757281894679; Sun, 07 Sep 2025
- 14:51:34 -0700 (PDT)
+        Sun, 07 Sep 2025 15:41:25 -0700 (PDT)
+Message-ID: <7981ee42-fc55-4125-a662-60fb18b454c8@suse.com>
+Date: Mon, 8 Sep 2025 08:11:19 +0930
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250907203255.GE31600@ZenIV>
-In-Reply-To: <20250907203255.GE31600@ZenIV>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 7 Sep 2025 14:51:18 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wif3NXNMmTERKnmDjDBSbY3qdFgd5ScWTwZaZg0NFACUw@mail.gmail.com>
-X-Gm-Features: Ac12FXwlIHsK0S0LoMt3iSb_Stso35WytM2_-ODSedS9EKM_1bb6hs4KsugT48U
-Message-ID: <CAHk-=wif3NXNMmTERKnmDjDBSbY3qdFgd5ScWTwZaZg0NFACUw@mail.gmail.com>
-Subject: Re: [RFC] a possible way of reducing the PITA of ->d_name audits
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	Jan Kara <jack@suse.cz>, NeilBrown <neil@brown.name>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: regression, btrfs mount failure when multiple rescue mount
+ options used
+To: Chris Murphy <lists@colorremedies.com>,
+ Btrfs BTRFS <linux-btrfs@vger.kernel.org>
+Cc: brauner@kernel.org, dsterba@suse.com, terrelln@fb.com,
+ Linux Devel <linux-fsdevel@vger.kernel.org>
+References: <e2179aaa-871f-4478-b72c-45f1410dff87@app.fastmail.com>
+Content-Language: en-US
+From: Qu Wenruo <wqu@suse.com>
+Autocrypt: addr=wqu@suse.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
+ FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
+ Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
+ fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
+ 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
+ V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
+ rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
+ rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
+ Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
+ E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
+ vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
+ g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
+ AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
+ cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
+ qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
+ /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
+ o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
+ JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
+In-Reply-To: <e2179aaa-871f-4478-b72c-45f1410dff87@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sun, 7 Sept 2025 at 13:32, Al Viro <viro@zeniv.linux.org.uk> wrote:
->
->         I would like to discuss a flagday change to calling conventions
-> of ->create()/->unlink()/->rename()/etc. - all directory methods.
-> It would have no impact on the code generation, it would involve
-> quite a bit of localized churn and it would allow to deal with catching
-> ->d_name races on compiler level.
 
-Can you make this more concrete by actually sending an example patch.
 
-Well, two patches: first the patch for the "claim_stability" helper
-type and functions, and then a separate patch for converting _one_ of
-the users (eg 'symlink').
+在 2025/9/7 09:31, Chris Murphy 写道:
+> kernel with mount failures:
+> 6.17.0-0.rc4.36.fc43.x86_64
+> 6.16.4-200.fc42.x86_64
+> 6.15.11-200.fc42.x86_64
+> 
+> 
+> # mount -o ro,rescue=usebackuproot,nologreplay,ibadroots /dev/loop0 /mnt
+> mount: /mnt: fsconfig system call failed: btrfs: Unknown parameter 'nologreplay'.
+>         dmesg(1) may have more information after failed mount system call.
+> # mount -o ro,rescue=usebackuproot /dev/loop0 /mnt
+> # umount /mnt
+> # mount -o ro,rescue=usebackuproot,ibadroots /dev/loop0 /mnt
+> # mount: /mnt: fsconfig system call failed: btrfs: Unknown parameter 'ibadroots'.
+>         dmesg(1) may have more information after failed mount system call.
+> # mount -o ro,rescue=ibadroots /dev/loop0 /mnt
+> #
+> 
+> There are no kernel messages for the failures.
+> 
+> Looks like single rescue options work, but multiple rescue options separated by comma fail.
 
-Because I have a hard time visualizing just how noisy the result would
-be (and whether it would be legible end result).
+It looks like there is no longer combined "rescue=" since 6.8, where we 
+switched to the new fsconfig mount method.
 
-And I do wonder if it might not be simpler to have a model where
-filesystems always get a stable dentry name - either because we hold
-the parent lock on a VFS level (fairly common, I think), or because we
-pass a separate copy to the filesystem
+And even before that, the separator for "rescue=" command group is ':', 
+not ',' as that conflicts with the default separator.
 
-You did that with the d_revalidate() callback, and I think that was a
-clear success. Can we extend on *that* pattern, perhaps?
+There is no support for using ',' inside "rescue=" from the very beginning.
 
-            Linus
+Thanks,
+Qu
+
+> 
+> Any rescue option after the first comma, results in an fsconfig complaint.  Since it looks like fsconfig migration fallout, I'll cc some additional folks, and fs-devel.
+> 
+> ---
+> 
+> I get different results with kernel 6.14.11-300.fc42.x86_64 but I think some of the bugs are fixed in later kernels hence the different behavior. And in any case it's EOL so I won't test any further back than this kernel.
+> 
+> # mount -o ro,rescue=usebackuproot,nologreplay,ibadroots /dev/loop0 /mnt
+> mount: /mnt: fsconfig system call failed: btrfs: Unknown parameter 'ibadroots'.
+>         dmesg(1) may have more information after failed mount system call.
+> 
+> Notice the complaint is about ibadroots, not nologreplay. And there is a kernel message this time.
+> 
+> Sep 06 19:44:38 fnuc.local kernel: BTRFS warning: 'nologreplay' is deprecated, use 'rescue=nologreplay' instead
+> 
+> 
+> But there's more. All of these commands result in mount succeeded, but kernel messages don't indicate they were used.
+> 
+> # mount -o ro,rescue=ibadroots /dev/loop0 /mnt
+> # umount /mnt
+> # mount -o ro,rescue=usebackuproot /dev/loop0 /mnt
+> # umount /mnt
+> # mount -o ro,rescue=nologreplay /dev/loop0 /mnt
+> 
+> This one has yet another different  outcome, I don't know why.
+> 
+> # mount -o ro,rescue=idatacsum /dev/loop0 /mnt
+> mount: /mnt: fsconfig system call failed: btrfs: Bad value for 'rescue'.
+>         dmesg(1) may have more information after failed mount system call.
+> 
+> 
+> 
+> --
+> Chris Murphy
+> 
+
 
