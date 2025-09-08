@@ -1,293 +1,175 @@
-Return-Path: <linux-fsdevel+bounces-60478-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60479-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32738B48491
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Sep 2025 08:56:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CF14B484CD
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Sep 2025 09:09:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCA383B96F5
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Sep 2025 06:56:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 588D8189AF4E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Sep 2025 07:09:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 874162E2DFB;
-	Mon,  8 Sep 2025 06:56:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 805812E3AE6;
+	Mon,  8 Sep 2025 07:09:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="O+4tICuy"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bmZjwRPU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D9715ADB4;
-	Mon,  8 Sep 2025 06:56:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 206C63B7A8
+	for <linux-fsdevel@vger.kernel.org>; Mon,  8 Sep 2025 07:09:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757314597; cv=none; b=TndO+gvFbcc7n0t9dXcqYtqzzjyuxCoP+a19Nsl8GdrraUCIbNAb13CqR9xEKTaHJe3ueBYzmveP9ol5/H6QKKi/89aXRhpGWAhmErl01LMx8SY53EK2X3ir/4IDpeGryksHTezJ9IepeFHt4iaSBsNJoYyGdriWTAR6C8CABLw=
+	t=1757315360; cv=none; b=EJrGfwn2No1Mjzf67ES2ZxvHFs7pvzjp872qVYXdoeeATyiId2jJrHn8F2F9sQw9L5QzsJJ//j4LmPOT0MfCXZt6wCkfMYpqtVO5rtePsbpYLKDinhw52WcHw9xCfPbC9hxGrCcQjcVEygvUilgeiisWHiv2/dsvaeHxvQOZOdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757314597; c=relaxed/simple;
-	bh=IHHgWpB7XcU7hYXbGGKm76CMAvv1L16rOpYVAS1UiRw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nCeoJD7XjBHUumjZNhrmjIZGrj+qmWU6jzpsMFRTcVtBg0VOyGr9mt8hg6Vo6S9TA2JHKEoKTHXjaqgFOzEQEZR+MnWn4qz55SXv2hTyvD9UGxwf9vBKqszK++7A+3SHL0P+7bicoPwML69zwcx4S93OfLNTBTitjM7xuaI4X8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=O+4tICuy; arc=none smtp.client-ip=115.124.30.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1757314584; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=qRfhMOU1jwt6QQs/bLEA+T15CSW+jtTj6s7+A3xD1P0=;
-	b=O+4tICuyc4u09eQyXJ7YSCdiessZnqfiqoqyj9BLk+agre+muiGU0UXBwW+/ezIZLAw108CUSix/fTrudajUJDVpOPSzegyvTtwsmZRgp2RhGWqAb2T7+ZbG7Zf4boDokHl4Y/ywo/3bJdw/9+b2UDzMGcsPLeO/uR6KjUI6lkI=
-Received: from 30.221.130.235(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WnT.E8Y_1757314582 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 08 Sep 2025 14:56:23 +0800
-Message-ID: <2c51b7dd-4eb8-4af3-b554-1044fa493388@linux.alibaba.com>
-Date: Mon, 8 Sep 2025 14:56:22 +0800
+	s=arc-20240116; t=1757315360; c=relaxed/simple;
+	bh=m1M5d14TRNaIu3tPjXJOmy1RXkqYM3pS7VFfyJHpz9U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U15muJM7qANYbdIdOQyv+L4l3t+QPd8Jcd4WGUidXZM34Kibyc07eRZMZaBVYG1NZsYXIbNZdQYuyvLmZY+8aENF5JPw+AXEomdLohzBNIRuiOjyVCeYP15xHggsmSXEFI+pvjw2H4JLBCl+wocg93n+BDgx5YCL4/SXCUoacqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bmZjwRPU; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b04271cfc3eso550143566b.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Sep 2025 00:09:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757315357; x=1757920157; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WjOt7lbujIKT5HiahgbSCYSdWv/nA9zcsRUCoM30KYw=;
+        b=bmZjwRPUggIF4R+RXaPOKg5PxyRepb6NgmpiiXibkeylCCHmTVfRQNmMqTI7xeRXAA
+         RhPs9kX9+8HDBPp0hNMFwNUrsfT6C2zxkPqhvV0k4EjVdYP0r1jnUAdXzYKokPSc1qs6
+         QqJEY4k0g2bnG0sFMMK0nd0jYfNPI2qE//nsa5Ofe2PxvjWg7zUc4eCfzPpTgClOvEHM
+         ZknOSm9BWx7CWoFgZAwD0c6+3DthOLABfBVlFzKunzODpIyLTFN35EbqsO5cFtDIKS71
+         Eg9320zqmOmXJ68wehK9V0IKUjF3mnQJpf9gsGxoOLcEbORAqP3UtBgja1wGAn44mfzY
+         erxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757315357; x=1757920157;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WjOt7lbujIKT5HiahgbSCYSdWv/nA9zcsRUCoM30KYw=;
+        b=MVisxEr7MLTJLMh17j5LsZqKRThojytiK5xWJgUngrWdbaaqcuvwNZfh6X8pRhHJLz
+         od3naWJoxQsEqh2nuqYiRxqNPEBNs2h+2LhxVuh/Gi+w4cLLh+YzHzNBT/MKtGCBmUxE
+         EAI8499cd+HvoSxSota/MC51A7toYdGN2myMoRQoiaVaZ6Xky3OkPBN64jvqfrTqy1gG
+         JqbFniwOSqFpotW8C/sXqqlcrnHgBWEFwoB2vlIIq3cpjPqFYAix7FLKWFgXohuHIsy9
+         wV+5auqfJdy6UoF+0OCu5rUBY7WdMz1lOnTIpipOhDKEZF55DL9flZBYTvaTnG3I0md7
+         SPqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWewb/MBfdBCb3hjrDGbQpHpuPiSil/UzdN+7nVJwLtbUOuapx/2h7QJvXzbu5DE2aBCsun8lQSibSY3gr0@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/0IV04mJxH/abBJGjzYqGpNRz2x+6HDDmObq5ivjLwnApW3Rz
+	5lp+mTsKlzB3Kj2QVlAXCbr8oSQiE0BviVWpg3jcwvdfBsoHyvSxBpemqwN+aEClcwd0Rk+EyVB
+	EezHhkbGy6ivNrKDpiGY9EOT3q2UqZxs=
+X-Gm-Gg: ASbGncuHcjPOjVm9TtHYlhNnmGQn1Vx+bKJuY4vUoXIew8Z/h/F/3oqbJEOtnx5ZNgv
+	OhxVMOGcPLSsOFXy1+mahGt7Pd32Is8c4pTu6zbxZ0xCUiy/V9WQqVM0QY5ydl2rhrQ/I4obC36
+	O79IAzcTsytXVQYRvIzO2SArQ7PnGbCH8GtD7z8b6hJYmAa+jw1dtgo5C/EE/3A9b6YAivY4mwC
+	Je5w7zl8+h3oqNxjA==
+X-Google-Smtp-Source: AGHT+IEV6+//eUjc7g7m7jTYBlgcICPdKCA6Ozms2rhmo+rI9u6PordLmuVfY8ChLsLEXppTsFWNcWN5T4TN6G2NPVs=
+X-Received: by 2002:a17:906:6a16:b0:aff:17a2:629 with SMTP id
+ a640c23a62f3a-b04b13d0af1mr679406366b.3.1757315357125; Mon, 08 Sep 2025
+ 00:09:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 13/16] iomap: add a private arg for read and readahead
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Joanne Koong <joannelkoong@gmail.com>, brauner@kernel.org,
- miklos@szeredi.hu, hch@infradead.org, linux-fsdevel@vger.kernel.org,
- kernel-team@meta.com, linux-xfs@vger.kernel.org, linux-doc@vger.kernel.org
-References: <20250829235627.4053234-1-joannelkoong@gmail.com>
- <20250829235627.4053234-14-joannelkoong@gmail.com> <aLJZv5L6q0FH5F8a@debian>
- <CAJnrk1af4-FG==X=4LzoBRaxL9N-hnh1i-zx89immQZMLKSzyQ@mail.gmail.com>
- <a44fd64d-e0b1-4131-9d71-2d36151c90f4@linux.alibaba.com>
- <CAJnrk1bBmA+VK6UK1n6DRnuLvX8UOMp-VgQGnn2rUrq0=mCyqA@mail.gmail.com>
- <d631c71f-9d0d-405f-862d-b881767b1945@linux.alibaba.com>
- <20250905152118.GE1587915@frogsfrogsfrogs>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20250905152118.GE1587915@frogsfrogsfrogs>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <CAOQ4uxhnvYeJiZ9Bd73kwu3y4VCeeJCvNN1K+GExxF4koA+bxA@mail.gmail.com>
+ <175729725709.2850467.826431423203156062@noble.neil.brown.name>
+In-Reply-To: <175729725709.2850467.826431423203156062@noble.neil.brown.name>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 8 Sep 2025 09:09:05 +0200
+X-Gm-Features: Ac12FXzvaUlaK8eU7ndXvqxcpUgkZeKJEwrrgSl6yqhoAp2gpy9V80mzNbbkZGk
+Message-ID: <CAOQ4uxh8E9G=JH3S-SMFe9RHFTy7J3jHg-Kw5-pApJF1UmOV-Q@mail.gmail.com>
+Subject: Re: [PATCH 2/6] VFS/ovl: add lookup_one_positive_killable()
+To: NeilBrown <neilb@ownmail.net>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Sep 8, 2025 at 4:07=E2=80=AFAM NeilBrown <neilb@ownmail.net> wrote:
+>
+> On Sat, 06 Sep 2025, Amir Goldstein wrote:
+> > On Sat, Sep 6, 2025 at 7:00=E2=80=AFAM NeilBrown <neilb@ownmail.net> wr=
+ote:
+> > >
+> > > From: NeilBrown <neil@brown.name>
+> > >
+> > > ovl wants a lookup which won't block on a fatal signal.
+> > > It currently uses down_write_killable() and then repeated
+> > > calls to lookup_one()
+> > >
+> > > The lock may not be needed if the name is already in the dcache and i=
+t
+> > > aid proposed future changes if the locking is kept internal to namei.=
+c
+> > >
+> > > So this patch adds lookup_one_positive_killable() which is like
+> > > lookup_one_positive() but will abort in the face of a fatal signal.
+> > > overlayfs is changed to use this.
+> > >
+> > > Signed-off-by: NeilBrown <neil@brown.name>
+> >
+> > I think the commit should mention that this changes from
+> > inode_lock_killable() to inode_lock_shared_killable() on the
+> > underlying dir inode which is a good thing for this scope.
+> >
+> > BTW I was reading the git history that led to down_write_killable()
+> > in this code and I had noticed that commit 3e32715496707
+> > ("vfs: get rid of old '->iterate' directory operation") has made
+> > the ovl directory iteration non-killable when promoting the read
+> > lock on the ovl directory to write lock.
+>
+> hmmmm....
+>
+> So the reason that this uses a killable lock is simply because it used
+> to happen under readdir and readdir uses a killable lock.  Is that
+> right?
 
+I think the semantics were copied from readdir of that moment yes.
 
-On 2025/9/5 23:21, Darrick J. Wong wrote:
-> On Fri, Sep 05, 2025 at 10:21:19AM +0800, Gao Xiang wrote:
->>
->>
->> On 2025/9/5 07:29, Joanne Koong wrote:
->>> On Tue, Sep 2, 2025 at 6:55 PM Gao Xiang <hsiangkao@linux.alibaba.com> wrote:
->>>>
->>
->> ...
->>
->>
->>>>>>
->>>>>>>     int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops,
->>>>>>> -             const struct iomap_read_ops *read_ops)
->>>>>>> +             const struct iomap_read_ops *read_ops, void *private)
->>>>>>>     {
->>>>>>>          struct iomap_iter iter = {
->>>>>>>                  .inode          = folio->mapping->host,
->>>>>>>                  .pos            = folio_pos(folio),
->>>>>>>                  .len            = folio_size(folio),
->>>>>>> +             .private        = private,
->>>>>>>          };
->>>>>>
->>>>>> Will this whole work be landed for v6.18?
->>>>>>
->>>>>> If not, may I ask if this patch can be shifted advance in this
->>>>>> patchset for applying separately (I tried but no luck).
->>>>>>
->>>>>> Because I also need some similar approach for EROFS iomap page
->>>>>> cache sharing feature since EROFS uncompressed I/Os go through
->>>>>> iomap and extra information needs a proper way to pass down to
->>>>>> iomap_{begin,end} with extra pointer `.private` too.
->>>>>
->>>>> Hi Gao,
->>>>>
->>>>> I'm not sure whether this will be landed for v6.18 but I'm happy to
->>>>> shift this patch to the beginning of the patchset for applying
->>>>> separately.
->>>>
->>>> Yeah, thanks.  At least this common patch can be potentially applied
->>>> easily (e.g. form a common commit id for both features if really
->>>> needed) since other iomap/FUSE patches are not dependency of our new
->>>> feature and shouldn't be coupled with our development branch later.
->>>>
->>>
->>> Hi Gao,
->>>
->>> I'll be dropping this patch in v2 since all the iomap read stuff is
->>> going to go through a struct ctx arg instead of through iter->private.
->>> Sorry this won't help your use case, but looking forward to seeing your patches.
->>
->> Hi Joanne,
->>
->> Thanks for your reminder.  Okay, I will check your v2 to know how
->> you change then.
->>
->> Also, one thing I really think it's helpful for our use cases is
->> converting .iomap_begin() at least to pass struct iomap_iter *
->> directly rather than (inode, pos, len, flags, iomap, srcmap)
->> since:
->>    - .iomap_{begin,end}() are introduced before iomap_iter()
->>      and struct iomap_iter but those callbacks are basically
->>      now passed down some fields of `struct iomap_iter` now;
->>
->>    - struct iomap_iter->private then can contain a per-request
->>      context so that .iomap_begin() can leverage too;
->>
->>    - There are already too many arguments for .iomap_begin(),
->>      pass down struct iomap_iter directly could avoid adding
->>      another `private` argument to .iomap_begin()..
->>
->> Therefore, I do wonder if this change (.iomap_begin() passes
->> struct iomap_iter *) is a good idea for the iomap folks, in
->> addition that filesystems can specify `struct iomap_iter->private`
->> as in this patch.  Since this change is necessary to make our
->> page cache sharing feature efficient, I will continue working on
->> this soon.
-> 
->  From a source code perspective, I like the idea of cleaning up the
-> function signature to pass fewer things to ->iomap_begin.  I suspect
-> that we could simplify it to:
-> 
-> 	int (*iomap_begin)(const struct iomap_iter *iter,
-> 			   struct iomap *iomap,
-> 			   struct iomap *srcmap);
+>
+> So there is no particularly reason that "killable" is important here?
 
-Hi Darrick,
+I can think of some reasons -
+Maybe overlayfs (ever user mounted overlayfs) has just one process
+accessing it but underlying lower layer is remote fs with many processes
+accessing it so chances of lower layer dir lock being held by another threa=
+d
+are much higher than chances of overlayfs dir lock being held.
 
-Thanks for your reply and sorry for my late reply due to another
-internal stuff.
+> So I could simply change it to use lookup_one_positive() and you
+> wouldn't mind?
+>
 
-It sounds better to me since `const` annonation may have some more
-aggressive compiler optimization.
+I do mind and prefer that you keep this killable as you patch does.
+The more important reason to keep this killable IMO is that we can and
+should make overlayfs readdir shared lock one day.
 
-> 
-> That way we preserve the notion that the ->iomap_begin functions aren't
-> allowed to change the iterator contents except for the two iomaps.
-> 
-> That said, the nice thing about passing so many parameters is that it
-> probably leads to less pointer chasing in the implementation functions.
-> I wonder if that makes any difference because extent mapping lookups
-> likely involve a lot more pointer chasing anyway.  Another benefit is
-> that since the parameters aren't const, each implementation can (re)use
-> those variables if they need to.
+> I'd actually like to make all directory/dentry locking killable - I
+> don't think there is any downside.  But I don't want to try pushing that
+> until my current exercise is finished.
+>
 
-Ok, but I'm not sure, in principle, even without `const` annotation,
-users can make local variables in their callbacks to avoid extra pointer
-chasing.
+The path to making overlayfs readdir shared and killable is
+to move the synchronization of ovl readdir cache and
+OVL_I(inode)->version from the implicit vfs inode_lock() to
+explicit ovl_inode_lock().
 
-But anyway, that is not what's my own original intention: we need
-another `->private` ctx to pass among all-iomap_begin() because it
-holds extra information, I think passing in `const struct iomap_iter *`
-is cleaner than adding a new argument.
+The mechanical change is easy.
+My concern is from hidden assumptions in the code that
+I am not aware of, ones which are not annotated with
+inode_is_locked() like ovl_inode_version_get() and
+ovl_dir_version_inc() are.
 
-I will post this after the whole new feature work is finished.
+And the fact that noone has yet to complain about overlayfs readdir
+scalability makes this conversion non urgent.
 
-> 
-> I think you could simplify iomap_end too:
-> 
-> 	int (*iomap_end)(const struct iomap_iter *iter,
-> 			 loff_t pos, u64 length,
-> 			 size_t written);
-> 
-> and make ->iomap_end implementations extract iter->flags and iter->iomap
-> themselves if they want to.  I don't like how xfs_iomap.c abuses
-> container_of to extract the iter from the iomap pointer.
-
-Yeah, make sense.
-
-> 
-> (But not enough to have written patches fixing any of this. :P)
-> 
->> Another thing I want to discuss (but it's less important for our
->> recent features) is the whole callback hook model of iomap.
->>
->> Basically the current model does mean if any filesystem doesn't
->> fulfill the iomap standard flow, it has to add some customized
->> callback hook somewhere to modify the code flow then (or introduce
->> a new special flag and move their specific logic into iomap/
->> itself even other fses may not need this), but the hook way will
->> cause increased indirect calls for them, currently we have
->> `struct iomap_ops`, `struct iomap_writeback_ops` and
->> `struct iomap_dio_ops`, if some another filesystem (when converting
->> buffer I/Os for example or adding {pre,post}-processing ) have
->> specified timing, it needs to add new hooks then.
->>
->> I do wonder if it's possible to convert iomap to get rid of the
->> indirect-call model by just providing helper kAPIs instead,
->> take .read_folio / .fiemap for example e.g.
->>
->>     xxxfs_read_folio:
->>        loop iomap_iter
->>          xxxfs_iomap_begin();
->> 	iomap_readpage_bio_advance(); [ or if a fs is non-bio
->>               based, spliting more low-level helpers for them. ]
->>          xxxfs_iomap_end();
->>
->>     xxxfs_fiemap():
->>        iomap_fiemap_begin
->>        loop iomap_iter
->>          xxxfs_iomap_begin();
->>          iomap_readpage_fiemap_advance()
->>          xxxfs_iomap_end();
->>        iomap_fiemap_end
->> So that each fs can use those helpers flexibly instead of diging
->> into adding various new indirect call hooks or moving customized
->> logic into iomap/ itself.
-> 
-> Yes, it's quite possible to push the iomap iteration control down into
-> the filesystems to avoid the indirect calls.  That might make things
-> faster, though I have no idea what sort of performance impact that will
-> have.
-
-It's not from the performance impact perspective, but for the
-flexibility.  Adding new hooks everywhere doesn't smell good
-at least on my side (because iomap tends to cover the whole I/O
-lifetime, which is by design different from page cache callbacks
-for example).
-
-> 
->> I don't have a specific example  because currently we don't have
->> direct issue against standard iomap flow on our uncompressed
->> path, but after a quick glance of other potential users who try
->> to convert their buffer I/Os to iomap, I had such impression in
->> my head for a while.
-> 
-> OTOH making it easier for non-disk filesystems to use iomap but supply
-> their own IO mechanism (transformed bios, memcpy, etc) makes a far more
-> compelling argument for doing this painful(?) treewide change IMO.
-
-Yeah, I can see it's rather a painful treewide change, but if more
-hooks are added, it will be more painful than now.
-
-Anyway, it's just my random thought but it doesn't have real impact
-to our work and much less important to me.
+If you have other reasons to want to make ovl readdir killable
+or shared, we can look into that.
 
 Thanks,
-Gao Xiang
-
-> 
-> --D
-> 
->> Thanks,
->> Gao Xiang
->>
->>>
->>>
->>> Thanks,
->>> Joanne
->>>
->>>> Thanks,
->>>> Gao Xiang
->>>>
->>>>>
->>>>> Thanks,
->>>>> Joanne
->>>>>>
->>>>>> Thanks,
->>>>>> Gao Xiang
->>>>
->>
->>
-
+Amir.
 
