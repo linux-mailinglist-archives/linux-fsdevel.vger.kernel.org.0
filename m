@@ -1,167 +1,217 @@
-Return-Path: <linux-fsdevel+bounces-60489-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60491-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 112E6B488DA
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Sep 2025 11:43:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DBA6B488F1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Sep 2025 11:46:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94CB31642F7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Sep 2025 09:43:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3730C16C065
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Sep 2025 09:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 042242F3C30;
-	Mon,  8 Sep 2025 09:43:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8BF41DDC2A;
+	Mon,  8 Sep 2025 09:46:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fCel1wkX";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9LY6+rRq";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fCel1wkX";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9LY6+rRq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PuTNOxnC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 086CB2EB5BF
-	for <linux-fsdevel@vger.kernel.org>; Mon,  8 Sep 2025 09:43:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D9AE2EC54E;
+	Mon,  8 Sep 2025 09:46:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757324594; cv=none; b=OUMkabpCRCJhwuaQB7knDPr93vVcx2L91dPxXN8FnXEw8rLCfElmrhB+LnZ1sl0JsRIGixd15wtXLujeyRyLDsZ7+qNv7QbKunURfqE4I3UxJdIc1F7bwJ8nLOajg4DHJldahY54D4ERZM1JZIBhwo6Qw+cKV/uQSYV9T/JQEJU=
+	t=1757324772; cv=none; b=fKQNftEPdBEhdLdG9Ud02PtgeCoFF7+CxquuAlJbAkfVzDp7FTECBwj6yKMwza/zob5dxeNBYka6TyEgscEPfFV0aoUzrjF5JY59X4eWmMegodQNoSgPSfmcl1pnOtflajirgBFASNxU9Nb98+fu5SXw3uiJpR395HJGk90J0+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757324594; c=relaxed/simple;
-	bh=05AQnvp385taVxlCf0jMjjarnC0lzXQH06c7HURPB/A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JMBcPwmBDpoYvylfXacnVN2UKCkU4ZmM70MDHVAHAsxnGsSSSxFYvHnib3aB3yKvvea3dvoTslVZK0YayuffbgH5MxsmWoSsPqv1GvinnaO3lIscphx30wEl04PWnlMjR3MYjicZKyb0rVh82duu8IJ4hWcDcB4+0mY5YvITyUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fCel1wkX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9LY6+rRq; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fCel1wkX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9LY6+rRq; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 3D4A316D4C;
-	Mon,  8 Sep 2025 09:43:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757324590; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UMJuD2FFA6qLrLUw153O3tqt0ZSz0/RTRaYLJbw0964=;
-	b=fCel1wkXrWFy0H9fZAjz2bOpjmi0P83s5xOsS8jd7F9UDSeLv7w8lgLXWoFLQujEUvE9Is
-	DZAcS8ZzsaScJvFfs3A5fxtvxE4HWdgQNpGA1iCKZ5pKmMAx4fKmGxh4esyfQ5gaz3CRfc
-	9pQb4SN0WCmZPlyFwXILgMbuutc4NlA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757324590;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UMJuD2FFA6qLrLUw153O3tqt0ZSz0/RTRaYLJbw0964=;
-	b=9LY6+rRqErJQKVD60bVDkwgY0+cOawY0mff7G2Jr1UJoiM7+SDngUxpvaKe89mtjrM51kA
-	lBPhEeUx9pZcuTDg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757324590; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UMJuD2FFA6qLrLUw153O3tqt0ZSz0/RTRaYLJbw0964=;
-	b=fCel1wkXrWFy0H9fZAjz2bOpjmi0P83s5xOsS8jd7F9UDSeLv7w8lgLXWoFLQujEUvE9Is
-	DZAcS8ZzsaScJvFfs3A5fxtvxE4HWdgQNpGA1iCKZ5pKmMAx4fKmGxh4esyfQ5gaz3CRfc
-	9pQb4SN0WCmZPlyFwXILgMbuutc4NlA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757324590;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UMJuD2FFA6qLrLUw153O3tqt0ZSz0/RTRaYLJbw0964=;
-	b=9LY6+rRqErJQKVD60bVDkwgY0+cOawY0mff7G2Jr1UJoiM7+SDngUxpvaKe89mtjrM51kA
-	lBPhEeUx9pZcuTDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3172F13869;
-	Mon,  8 Sep 2025 09:43:10 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id QcQMDC6lvmjSbQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 08 Sep 2025 09:43:10 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id E983DA0A2D; Mon,  8 Sep 2025 11:43:05 +0200 (CEST)
-Date: Mon, 8 Sep 2025 11:43:05 +0200
-From: Jan Kara <jack@suse.cz>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org, jack@suse.cz, 
-	torvalds@linux-foundation.org, amir73il@gmail.com, chuck.lever@oracle.com, 
-	linkinjeon@kernel.org, john@apparmor.net
-Subject: Re: [PATCH 09/21] check_export(): constify path argument
-Message-ID: <z56dhwdctwyvhgsxathpz5pypu7mswla5r7vtrobrvhetf6mxd@fkyit364vny2>
-References: <20250906090738.GA31600@ZenIV>
- <20250906091137.95554-1-viro@zeniv.linux.org.uk>
- <20250906091137.95554-9-viro@zeniv.linux.org.uk>
+	s=arc-20240116; t=1757324772; c=relaxed/simple;
+	bh=VLrpnyvJPUnUuHxgJ/fJtXwAK+nZcoeURy5sVJG4cls=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XwgasrPtUzS42Fn6EAasXaWSXnpIQDCPeOHUx8DMCtJYCb812WcGA3Un+tL0Ar9+ck/vQt3HCoIo07elKSZPr9m+rr804rhaDP3dW/Se5G3VxbbM9QR8zrwsmLd0iAGVBsmK+jgphs6ggR6AWp5r9U+hT16RULDVo67wOCAMnm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PuTNOxnC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD6D7C4CEF9;
+	Mon,  8 Sep 2025 09:46:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757324771;
+	bh=VLrpnyvJPUnUuHxgJ/fJtXwAK+nZcoeURy5sVJG4cls=;
+	h=From:To:Cc:Subject:Date:From;
+	b=PuTNOxnCyow54A7XEWGStCET9VmAWuzQG9lw9+nyWBVlWfAHpywgHq93JNwWjDIBJ
+	 LR5YC8MKM4Y+jQjnxXdjr+7p5geXgtauUPpGPeKoZDJMfph1C7RK+Wp2GATQJk/vqJ
+	 /fC+MHK0duutgIllR0UQc9hBnZpABOMwPnpbjcjypn+xuRolidHeLxzedsW3sMq5rv
+	 Iec4QlJlNux1hen/QRl6H3k25tlLQ9oWetOCx9g+wjJg26sGvHRhe1bXuExYQ8bzyX
+	 g931wKB9LWna368Zm0ghXJhjd+xUlRuBzgvpvOSj/Anaw8QSS9Eto+j/X+rE1hfxU/
+	 n1unGsSSXe5NA==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] vfs fixes
+Date: Mon,  8 Sep 2025 11:45:58 +0200
+Message-ID: <20250908-vfs-fixes-0096f8ec89ff@brauner>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250906091137.95554-9-viro@zeniv.linux.org.uk>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,kernel.org,suse.cz,linux-foundation.org,gmail.com,oracle.com,apparmor.net];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[linux.org.uk:email,suse.com:email,imap1.dmz-prg2.suse.org:helo,suse.cz:email]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5589; i=brauner@kernel.org; h=from:subject:message-id; bh=VLrpnyvJPUnUuHxgJ/fJtXwAK+nZcoeURy5sVJG4cls=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTsW3rL8myXrZH3muBlwQJK168+Ea9RbdW6kTXPZcEcx eksDxRvd5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAFyEnZFh0n/bKTfV1UNt+E/G xuoWPSgtlWOc9bjgkrjg/ahFmTKNDP8r4/Zt+BzEIMf3I2z2Iu6FInJ3rvWqfd388avx/GNrpof yAwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Sat 06-09-25 10:11:25, Al Viro wrote:
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Hey Linus,
 
-Looks good. Feel free to add:
+the fixes tree was filled before Link: tags were ousted. Only one of
+the patches in the series carries a Link: tag and that one actually has
+a useful discussion attached to it.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Please also be aware that patches in the various branches for the v6.18
+merge window will have Link: tags applied and I don't want to rebase
+them all just to drop them. I'll mention that during the merge window
+once more as a reminder.
 
-								Honza
+Going forward no tags are applied to individual commits. But I will
+continue adding tags to the cover letter in the merge message for patch
+series as I often modify the merge message so they point back to the
+original cover letter.
 
-> ---
->  fs/nfsd/export.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/nfsd/export.c b/fs/nfsd/export.c
-> index dffb24758f60..caa695c06efb 100644
-> --- a/fs/nfsd/export.c
-> +++ b/fs/nfsd/export.c
-> @@ -402,7 +402,7 @@ static struct svc_export *svc_export_update(struct svc_export *new,
->  					    struct svc_export *old);
->  static struct svc_export *svc_export_lookup(struct svc_export *);
->  
-> -static int check_export(struct path *path, int *flags, unsigned char *uuid)
-> +static int check_export(const struct path *path, int *flags, unsigned char *uuid)
->  {
->  	struct inode *inode = d_inode(path->dentry);
->  
-> -- 
-> 2.47.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+/* Summary */
+
+This contains a few fixes for this cycle:
+
+# fuse
+
+- Prevent opening of non-regular backing files.
+  Fuse doesn't support non-regular files anyway.
+
+- Check whether copy_file_range() returns a larger size than requested.
+
+- Prevent overflow in copy_file_range() as fuse currently only supports
+  32-bit sized copies.
+
+- Cache the blocksize value if the server returned a new value as
+  inode->i_blkbits isn't modified directly anymore.
+
+- Fix i_blkbits handling for iomap partial writes.
+  By default i_blkbits is set to PAGE_SIZE which causes iomap to mark
+  the whole folio as uptodate even on a partial write. But fuseblk
+  filesystems support choosing a blocksize smaller than PAGE_SIZE
+  risking data corruption. Simply enforce PAGE_SIZE as blocksize for
+  fuseblk's internal inode for now.
+
+- Prevent out-of-bounds acces in fuse_dev_write() when the number of
+  bytes to be retrieved is truncated to the fc->max_pages limit.
+
+# virtiofs
+
+- Fix page faults for DAX page addresses.
+
+# Misc
+
+- Tighten file handle decoding from userns.
+  Check that the decoded dentry itself has a valid idmapping in the user
+  namespace.
+
+- Fix mount-notify selftests.
+
+- Fix some indentation errors.
+
+- Add an FMODE_ flag to indicate IOCB_HAS_METADATA availability.
+  This will be moved to an FOP_* flag with a bit more rework needed for
+  that to happen not suitable for a fix.
+
+- Don't silently ignore metadata for sync read/write.
+
+- Don't pointlessly log warning when reading coredump sysctls.
+
+/* Testing */
+
+gcc (Debian 14.2.0-19) 14.2.0
+Debian clang version 19.1.7 (3)
+
+No build failures or warnings were observed.
+
+/* Conflicts */
+
+Merge conflicts with mainline
+=============================
+
+No known conflicts.
+
+Merge conflicts with other trees
+================================
+
+No known conflicts.
+
+The following changes since commit 1b237f190eb3d36f52dffe07a40b5eb210280e00:
+
+  Linux 6.17-rc3 (2025-08-24 12:04:12 -0400)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.17-rc6.fixes
+
+for you to fetch changes up to e1bf212d0604d2cbb5514e47ccec252b656071fb:
+
+  fuse: virtio_fs: fix page fault for DAX page address (2025-09-05 15:56:30 +0200)
+
+Please consider pulling these changes from the signed vfs-6.17-rc6.fixes tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.17-rc6.fixes
+
+----------------------------------------------------------------
+Amir Goldstein (2):
+      fuse: do not allow mapping a non-regular backing file
+      fhandle: use more consistent rules for decoding file handle from userns
+
+Christian Brauner (3):
+      Merge patch series "io_uring / dio metadata fixes"
+      coredump: don't pointlessly check and spew warnings
+      Merge tag 'fuse-fixes-6.17-rc5' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse into vfs.fixes
+
+Christoph Hellwig (2):
+      fs: add a FMODE_ flag to indicate IOCB_HAS_METADATA availability
+      block: don't silently ignore metadata for sync read/write
+
+Edward Adam Davis (1):
+      fuse: Block access to folio overlimit
+
+Guopeng Zhang (1):
+      fs: fix indentation style
+
+Haiyue Wang (1):
+      fuse: virtio_fs: fix page fault for DAX page address
+
+Joanne Koong (2):
+      fuse: reflect cached blocksize if blocksize was changed
+      fuse: fix fuseblk i_blkbits for iomap partial writes
+
+Miklos Szeredi (2):
+      fuse: check if copy_file_range() returns larger than requested size
+      fuse: prevent overflow in copy_file_range return value
+
+Xing Guo (1):
+      selftests/fs/mount-notify: Fix compilation failure.
+
+ block/fops.c                                           | 13 ++++++++-----
+ fs/coredump.c                                          |  4 ++++
+ fs/exec.c                                              |  2 +-
+ fs/fhandle.c                                           |  8 ++++++++
+ fs/fuse/dev.c                                          |  2 +-
+ fs/fuse/dir.c                                          |  3 ++-
+ fs/fuse/file.c                                         |  5 ++++-
+ fs/fuse/fuse_i.h                                       | 14 ++++++++++++++
+ fs/fuse/inode.c                                        | 16 ++++++++++++++++
+ fs/fuse/passthrough.c                                  |  5 +++++
+ fs/fuse/virtio_fs.c                                    |  2 +-
+ fs/namespace.c                                         |  2 +-
+ include/linux/fs.h                                     |  3 ++-
+ io_uring/rw.c                                          |  3 +++
+ .../filesystems/mount-notify/mount-notify_test.c       | 17 ++++++++---------
+ .../filesystems/mount-notify/mount-notify_test_ns.c    | 18 ++++++++----------
+ 16 files changed, 86 insertions(+), 31 deletions(-)
 
