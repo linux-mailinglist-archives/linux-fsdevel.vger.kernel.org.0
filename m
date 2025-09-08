@@ -1,165 +1,161 @@
-Return-Path: <linux-fsdevel+bounces-60480-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60481-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FA6DB4862C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Sep 2025 09:58:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75018B487C5
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Sep 2025 11:06:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15B9916285C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Sep 2025 07:58:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 520267AC965
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Sep 2025 09:04:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF91A2E7BCC;
-	Mon,  8 Sep 2025 07:58:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA4012F0661;
+	Mon,  8 Sep 2025 09:06:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="iM3zfs6z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5F549443;
-	Mon,  8 Sep 2025 07:58:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D87832F0C6F
+	for <linux-fsdevel@vger.kernel.org>; Mon,  8 Sep 2025 09:05:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757318320; cv=none; b=OxbAonuQFdVbbmqNZkT4WM6XJFdR/hV8By01XiCyAhFAHnAMnRxz9GC+mOA/4PbG1Dj6yl354vHARs3yQHGCTJ/9fcgdDudlLiMdIBkQjfW+u/TIXIjUUt2jerFHjIPf4OU9TBLU48hu2hM0HNJs35CO7A7+dIv2OMuYE0+a5II=
+	t=1757322362; cv=none; b=TdoS62uC1pJ+EcplWslczoKBBKH8ONEdU5QIpK0cl9Ud3PQJMuymcTleOPBRcf5UIFvIUaJqWXBecbvjrUdSPLP/LDLmL2XS6odI6y+BTnKqkBIsF6Q0qhe7jmHgxFJfik+tnhcmXndxKGTy5FC1koHWT4Qt6q9XIAkLsIX+b5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757318320; c=relaxed/simple;
-	bh=PKqnTs1+PmTX+I9bAfCbUFEjPeLlkzprqYlYJfuTyPY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uYbGZwwr4g3b89SO6mO0NmeAlMUNzp/fDO3PRaw+rxkGJ7tWp96AVZH3PPb4/ip3YmTAWv89dBGEK56yMz6ZrVACIIVWgR1e4CazXbMWK4vxZEkMevz/qSK010NfR3qgh5VFqd2OOfkTPFfbDwjqZ1oNlqN8KyvS7fJkS86WTW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cKzpy2W68zKHMsp;
-	Mon,  8 Sep 2025 15:58:34 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 7229A1A1125;
-	Mon,  8 Sep 2025 15:58:34 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgB3wY2mjL5oUOoqBw--.63170S3;
-	Mon, 08 Sep 2025 15:58:32 +0800 (CST)
-Message-ID: <ce8aab6c-fcea-4692-ad75-e51fa9448276@huaweicloud.com>
-Date: Mon, 8 Sep 2025 15:58:30 +0800
+	s=arc-20240116; t=1757322362; c=relaxed/simple;
+	bh=oSA263G/clmVuqJxhuSKJYjljHe31B19cdth0t9LBe0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m4L0h6UbsgXrmuHIiCsq9dbF6bFwQ7piohk4/2B7/gNw2bArLpNjD0SvSCR/r+KosdVD9JwaN4ZE7iylEe8f0P5CpEkoWPVOOZN1sMsBVCJniFMClK6xzvYHqgiGQyF1bLhv7tDMrO+fIqWE87F0mLGzY7b0r6X7knrHTwcd+54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=iM3zfs6z; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=D8yr0r29YtuJ1LYj5SuoQpkleN/cSqbgnbvU7s0ET0k=; b=iM3zfs6zjVquK2OnLGBhHHVKUN
+	GxtiV5X3z9tqnWrvbChf32naf09YocQp7i6FYbwrRbKq9EDDR9frAJT3xiIbxqe7HVT37/vL6HWkj
+	MSjFNAJ2+mO5ir3Nj5g41sdZuAbTBx7ZBz+Z5mJSbw5u8tXPRbrujnT0jpTWHixsYW0fDano62+Pe
+	+rne/hscUypk3QIHOXlaZHdlIapgc1xuV4Jjn8V0zDRRCr/gyZuJgKgWs7hZu1KpYG7poJHGIZczm
+	6jxfKMohlbVcesvVH2uYZL0qTpsA58YWdFjrKUu8XinxcQiIOa18zvn99EL7uuMPE42AxDNcpZfAK
+	k3hyl79g==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uvXoz-0000000H8tj-2NIJ;
+	Mon, 08 Sep 2025 09:05:57 +0000
+Date: Mon, 8 Sep 2025 10:05:57 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: NeilBrown <neil@brown.name>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>
+Subject: Re: [RFC] a possible way of reducing the PITA of ->d_name audits
+Message-ID: <20250908090557.GJ31600@ZenIV>
+References: <>
+ <20250908051951.GI31600@ZenIV>
+ <175731272688.2850467.5386978241813293277@noble.neil.brown.name>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] ext4: increase i_disksize to offset + len in
- ext4_update_disksize_before_punch()
-To: sunyongjian1@huawei.com, linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, tytso@mit.edu, jack@suse.cz,
- yangerkun@huawei.com, libaokun1@huawei.com, chengzhihao1@huawei.com
-References: <20250908063355.3149491-1-sunyongjian@huaweicloud.com>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <20250908063355.3149491-1-sunyongjian@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgB3wY2mjL5oUOoqBw--.63170S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxuryrXr1UZFW3XFW5Jw1fJFb_yoW5trWfp3
-	yYkF1Utwn0ga4Dua1SgF4jqrWjva15Jr47GFy7GrWYqrW5Aws2qF18KFySga1kJrs3ur4j
-	qF4YqrsrX348Z3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUylb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUwxhLUUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <175731272688.2850467.5386978241813293277@noble.neil.brown.name>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On 9/8/2025 2:33 PM, Yongjian Sun wrote:
-> From: Yongjian Sun <sunyongjian1@huawei.com>
-> 
-> After running a stress test combined with fault injection,
-> we performed fsck -a followed by fsck -fn on the filesystem
-> image. During the second pass, fsck -fn reported:
-> 
-> Inode 131512, end of extent exceeds allowed value
-> 	(logical block 405, physical block 1180540, len 2)
-> 
-> This inode was not in the orphan list. Analysis revealed the
-> following call chain that leads to the inconsistency:
-> 
->                              ext4_da_write_end()
->                               //does not update i_disksize
->                              ext4_punch_hole()
->                               //truncate folio, keep size
-> ext4_page_mkwrite()
->  ext4_block_page_mkwrite()
->   ext4_block_write_begin()
->     ext4_get_block()
->      //insert written extent without update i_disksize
-> journal commit
-> echo 1 > /sys/block/xxx/device/delete
-> 
-> da-write path updates i_size but does not update i_disksize. Then
-> ext4_punch_hole truncates the da-folio yet still leaves i_disksize
-> unchanged(in the ext4_update_disksize_before_punch function, the
-> condition offset + len < size is met). Then ext4_page_mkwrite sees
-> ext4_nonda_switch return 1 and takes the nodioread_nolock path, the
-> folio about to be written has just been punched out, and it’s offset
-> sits beyond the current i_disksize. This may result in a written
-> extent being inserted, but again does not update i_disksize. If the
-> journal gets committed and then the block device is yanked, we might
-> run into this. It should be noted that replacing ext4_punch_hole with
-> ext4_zero_range in the call sequence may also trigger this issue, as
-> neither will update i_disksize under these circumstances.
-> 
-> To fix this, we can modify ext4_update_disksize_before_punch to always
-> increase i_disksize to offset + len.
-> 
-> Signed-off-by: Yongjian Sun <sunyongjian1@huawei.com>
-> ---
-> Changes in v2:
-> - The modification of i_disksize should be moved into ext4_update_disksize_before_punch,
->   rather than being done in ext4_page_mkwrite.
-> - Link to v1: https://lore.kernel.org/all/20250731140528.1554917-1-sunyongjian@huaweicloud.com/
-> ---
->  fs/ext4/inode.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 5b7a15db4953..2b1ed729a0f0 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -4298,7 +4298,7 @@ int ext4_update_disksize_before_punch(struct inode *inode, loff_t offset,
->  	loff_t size = i_size_read(inode);
->  
->  	WARN_ON(!inode_is_locked(inode));
-> -	if (offset > size || offset + len < size)
-> +	if (offset > size)
->  		return 0;
->  
->  	if (EXT4_I(inode)->i_disksize >= size)
+On Mon, Sep 08, 2025 at 04:25:26PM +1000, NeilBrown wrote:
 
-Hi, Yongjian!
+> Might the locking rules be too complex?  Are they even documented?
 
-I think this check also needs to be updated; otherwise, the limitation
-will be too lenient. If the end position of the punch hole
-is <= i_disksize, we should also avoid updating the i_disksize (this is
-a more general use case). Besides, I'd suggested updating the comment
-of ext4_update_disksize_before_punch() together.
+For ->d_name and ->d_parent?  Very poorly.  That's the absolute worst
+part of struct dentry locking rules.  _That_ is the place where attempts
+to write a coherent documentation stall every time, often diverting
+into yet another side story from hell.  ->d_revalidate() calling convention
+change came from one of those; at least that got dealt with for good
+now - and took a couple of years in the making, what with getting sidetracked
+to other stuff.
 
-Regards,
-Yi.
+Keep in mind that there are weird filesystems that manage to get away with
+playing very odd games.  Or do not manage, really - apparmorfs is the
+most recent weird thing.  Locking of their own, *interspersed* between
+the directory locks.  With ->mkdir() and ->rmdir() both unlocking and
+relocking the parent.  At least apparmor folks have finally admitted that
+there's a problem...
 
-> @@ -4307,7 +4307,7 @@ int ext4_update_disksize_before_punch(struct inode *inode, loff_t offset,
->  	handle = ext4_journal_start(inode, EXT4_HT_MISC, 1);
->  	if (IS_ERR(handle))
->  		return PTR_ERR(handle);
-> -	ext4_update_i_disksize(inode, size);
-> +	ext4_update_i_disksize(inode, min_t(loff_t, size, offset + len));
->  	ret = ext4_mark_inode_dirty(handle, inode);
->  	ext4_journal_stop(handle);
->  
+I don't believe that any of us can get away with imposing changes that
+would break configfs (another weird horror).  Or apparmor.  Or autofs,
+for that matter...
 
+Anyway, the current rules are:
+	* only __d_move() ever changes name/parent of live dentry (there's
+d_mark_tmpfile(), but that's done to a dentry that is invisible to anyone
+other than caller - it flips name from "/" to "#<inumber>" just before
+attaching the inode to it; part of ->tmpfile())
+	* any change happens under rename_lock.
+	* any change happens under ->d_lock on everything involved (parent(s)
+included).
+	* move from one parent to another happens only under ->s_vfs_rename_mutex.
+	* exclusive lock on directory is enough to prevent moves to or from
+that directory.
+	* only positive dentries ever get moved/renamed
+	* d_splice_alias() may move an existing directory dentry, but no
+non-directory is going to be touched by it.
+	* with a couple of exceptions (told you it's messy) d_move() and d_exchange()
+are called in locking conditions equivalent to vfs_rename() - ->s_vfs_rename_mutex
+if cross-directory, parent(s) exclusive, etc.  Exceptions are vfat_lookup()
+and exfat_lookup() - both would be in trouble if ->link() was supported there.
+
+What it boils down to for filesystems is
+	* any dentry passed to directory-modifying operation has stable ->d_name
+and ->d_parent.  That also applies to ->atomic_open() even without O_CREAT in
+flags, except for the mess with directories in some cases (without O_CREAT
+if you are given an in-lookup dentry and it turns out to be a directory,
+from that point on you have no promise that it won't be reparented by d_splice_alias();
+whether it can actually happens depends upon the filesystem, but instances tend to
+just call finish_no_open() in that case and bugger off).
+	* any dentry passed to ->lookup() has stable ->d_name/->d_parent until it
+had been passed to d_splice_alias() (which is normally the last time we look at
+it).
+	* ->d_revalidate() and ->d_compare() get stable name passed as argument;
+they should not look at dentry->d_name at all.
+
+> As you know I want to change directory locking so that a ->d_flags bit
+> locks a dentry in much the same way that locking the parent directory
+> currently does.
+> 
+> I had wondered why vfs_link() locks the inode being linked and thought it was
+> only to protect ->i_nlink.  If it is needed to protect against rename
+> too, that could usefully be documented - or we could use the same
+> ->d_flags bit to ensure that lock.
+
+We could.  FWIW, I *like* the notion of "dentry that is held in place and won't
+go away/get renamed/dropped until we say so".  That's the major reason why I'm
+interested in your patchset, actually.
+
+> I guess I'm a bit concerned that your goal here is to transition from
+> "lots of auditing" to "much less auditing" and I would rather it was "no
+> auditing needed" - one day you won't want to (or be able to) audit any
+> more.
+> 
+> Fudging some type-state with C may well be useful but I suspect it is at
+> most part of a solution.  Simplification, documentation, run-time checks
+> might also be important parts.  As the type-state flag-day is a big
+> thing, maybe it shouldn't be first.
+
+All of that requires being able to answer questions about what's there in
+the existing filesystems.  Which is pretty much the same problem as
+those audits, obviously.  And static annotations are way easier to
+reason about.
+
+Anyway, I'm about to fall asleep (it's nearly 5am here); I've put an
+initial sketch of infrastructure and of symlink calling conventions change
+to #experimenta.stable_dentry, but it's very raw at the moment - and lacks
+the followups that would make use of that stuff.  I'll continue tomorrow
+(right now I've got ->create() half-done as well), but by now one thing
+I'm certain about is that it will be trivial to reorder wrt your stuff -
+in either direction.  So that worry can be discarded - change might or
+might not be a good idea, but as flagdays go it's trivial.
 
