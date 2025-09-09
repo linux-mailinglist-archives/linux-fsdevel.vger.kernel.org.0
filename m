@@ -1,90 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-60684-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60686-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62E2AB500FD
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 17:25:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82E99B50101
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 17:25:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17BC217E28D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 15:25:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 618211899CBE
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 15:25:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EBD0352FC8;
-	Tue,  9 Sep 2025 15:24:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2399352FDB;
+	Tue,  9 Sep 2025 15:24:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SpDH+fdy"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DmuR5lKe"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC1F5352084
-	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Sep 2025 15:24:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B86BE350D69
+	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Sep 2025 15:24:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757431490; cv=none; b=vGlFMJRqZn5crM37x333WKaKHZAsGaGjecc0L8x1qOqwgEHNiCkn4hhlb/IPRntRB4XrwJVKjWAW/ETs69wB5LMIzA8iXe1woVH8LO1HF9qIhlt0TJGn21Qg8mPa/9oAdMYQI8/viX4twxxa34otiJ52CNetbno68efpzvAic9Y=
+	t=1757431492; cv=none; b=jebn9vt+Zm5AUn/SIxfXQyDhacGxv1jvZaSVtLJzx8lBzK8xvz7/EuJiuJ7UxrTpOjM4W2MSswG2Vg8GfjUc96gXK719TrGSw2QZeKNpzXM4tDBt+vvqgvFRX/xTrMpOi8DSJt9rNfFy3fE+SPQNWFRS6KEQJT/rMguDCilAZU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757431490; c=relaxed/simple;
-	bh=0P7SKLlU5ZMqeTvFiPkNMnQMwQAfXKWARkLjPYodK+g=;
+	s=arc-20240116; t=1757431492; c=relaxed/simple;
+	bh=DmqedATQlA3tvap4luNWBTZlVEta2u1+Btm7jB/VL10=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kOIEtShxmIgAVy5ykT4iLcbkB8cXFfksLSscd3hIOY6C4MhCvwUzpM0I2kkG5Tf4zj46mcueMnwkptEVdKflgNNhgiNXiislwZZp/xNx7ARIez1ES9Sl5zVAgmotXZl9LijVqTzsdaJO21ui7rw+RelEATcYrijY6VuzIfLBoSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SpDH+fdy; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:To:Cc; b=GxHTG+hyUhLDcaZjuIpWdtPDXbObpBEEm0TOfijNS/JGu/rn6npv6jJEUEjcT7xH6c+r5oWpeMyP+V9JLXwNaB3lwPrjtMgyNXMWfl2uANXTSQP7QGvvb0fVJEKYDlfctogw9KurORk9wiVl9RlfJe6N1sMxvtdt/hZAyCwgrP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DmuR5lKe; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757431488;
+	s=mimecast20190719; t=1757431489;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=pKG/69ZwliyUOkPsiDTUk2UJHjdQ++vbsHxfCOT2oeE=;
-	b=SpDH+fdyavyV7MCjSADoDpnktKw6lauu1NnmzSb8RBEgWVLV28q9gqUW7zk/W8Wrp30OVR
-	cBzfauARhRf1Q7vk08C+lTdIdMe41M/6Kscry8u8yINfWQjIS1iCZRXox3hTFrtULInpxD
-	1g69ox8I750VGVsidX7K7EeccCqpR0A=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=eBZ9scCH/zyWPoJz68zBrnbhhD6hwcL6Zqo/WIdWR24=;
+	b=DmuR5lKetvC3ZPrAV8uFkpxP0Qkuo9bFP2QlhSRF5mHPiTKvOQumK1u5axl+GTfbePQNiR
+	+WJ0nVsd4aEG/7w2w4mXc+E2oUZbyuJxPFtmtzGM4h8+7cGC8L30PIAFonPRey71r/yBLe
+	fYkBhK1QzSVYmyskqzQVKC7a2KZ9UzM=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-21-xxWQQ22VNK68Ys7g2PmuRA-1; Tue, 09 Sep 2025 11:24:46 -0400
-X-MC-Unique: xxWQQ22VNK68Ys7g2PmuRA-1
-X-Mimecast-MFC-AGG-ID: xxWQQ22VNK68Ys7g2PmuRA_1757431486
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45ddbdb92dfso22445375e9.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Sep 2025 08:24:46 -0700 (PDT)
+ us-mta-279-9qeD7cuGMDWKFVIQruCHIA-1; Tue, 09 Sep 2025 11:24:48 -0400
+X-MC-Unique: 9qeD7cuGMDWKFVIQruCHIA-1
+X-Mimecast-MFC-AGG-ID: 9qeD7cuGMDWKFVIQruCHIA_1757431487
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45df609b181so2166805e9.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Sep 2025 08:24:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757431485; x=1758036285;
+        d=1e100.net; s=20230601; t=1757431487; x=1758036287;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=pKG/69ZwliyUOkPsiDTUk2UJHjdQ++vbsHxfCOT2oeE=;
-        b=FPKJ5DrrVJIbnl8efD7Vtf78VYmpy16ffo05ze3GASEOa1nGgr3bMywB2whIg/YXNa
-         6uDXcwRtCwCFM44M7IFhCJDeAKsqxBHQ/0XclzzR+SQ/PPWOQNSb33W37FpCbbxsmmyy
-         0wv2QTPfQ05WJoaoccsUHlBftHP4IQ08i9qt72eAwCnTqTmPSkrdPfDpbEqVXxUcHcva
-         GugU8+2CdBtyO+/4PnhXGtPrkYbVPh0XvL4FZDS0rprtjEO/aBqgqjfDcjuzpHO9NxJ9
-         1iRijZUiiFPcCFKDDlO9pYl/K4n46PJA6SSbUiO+rak/yYdGhNfkRyQV1Sd8NWLMcZi3
-         Ygng==
-X-Forwarded-Encrypted: i=1; AJvYcCUHTfrWmgzUZ9e9W4tfW57c3DBCT4HnqSPDNe2f/wACWLyz/nh7/SEHr2UfZIixW+8vu+2Lhk9Yl3p5nM5L@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0ryhoFJmPhDnlDRRtZbZmWj0ZWStcPE27sN/XCddTqnNumgvu
-	X7J5vnkLXvfIW7er4s5XSTM5lww6dTAZxVNt2JvC02kz8pGEW6ZLCYopXuaXTg+Jh+GRCou93A9
-	ZIIFMhcOftkHHnp2WihJYUcpKmMmHHIalH1S/gLbjU7H0NRI0Hk5GxYMN1Cg7kBM8AWPV0P3Jpe
-	+J
-X-Gm-Gg: ASbGnctwfOwo64Z/akxQlFBYZgQEQfQjOdZzPBFRo1iuspOO5PRGMt9xDk41yezcCPs
-	LTXzqP4PWioculHomuGgLlSvTlcppQjWmPM9NpfNehPvBbpJJug+nSBRItTkeKMDUsCigYNGNG6
-	2l80VrsfGLUt9U9u0ewyMohFNh3q5Gxtvg8Xdq3UzDatSNdnYJbjqv73IaZAN3xg81nha78vtyz
-	EJ29fqwl2X/MYb8/laGDdmu/WSRTeNnl3aJ6V0B4ZqpVZpyh6T1qefcp3uuvqH6WVEfokda7teH
-	p6OzyrCNcPBvDJAi+VzNWzpkL3vvHkiYE15nVbI=
-X-Received: by 2002:a05:600c:524f:b0:45d:e326:96ca with SMTP id 5b1f17b1804b1-45de4e80095mr83475905e9.36.1757431485130;
-        Tue, 09 Sep 2025 08:24:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE4L1ZypQ28cg3IM40ZlXuEmO0tTigmyLPxis3gb9GTZzw4/t6CZh5CEniMNdDS7YBxYiE1QQ==
-X-Received: by 2002:a05:600c:524f:b0:45d:e326:96ca with SMTP id 5b1f17b1804b1-45de4e80095mr83475715e9.36.1757431484630;
-        Tue, 09 Sep 2025 08:24:44 -0700 (PDT)
+        bh=eBZ9scCH/zyWPoJz68zBrnbhhD6hwcL6Zqo/WIdWR24=;
+        b=kFXu6S9cB86pfmQs6lfogc0BQt6cGsgItluGanZYXVyFycGqWKjXwub6iaqIrX7lnd
+         6k9BYTCFjTFRmhM0iwJDRdWAdZxGLq9VeK0hvnxQZVTaUEwHzQHJm5+nt983lLuCYpID
+         kDY+dIaAkbk8ekPqJX+U30rBlSGvpMP/XhdBWC/eDWqf8D1qaVc5QCu0J81L2FiXUYz9
+         3OlXbzEPcmvetNh2CMd6p98NgKuRnIjENNy0f9Vx13GWgM/mjp7QpJ5ELA0V0I/hlAEO
+         jjxCfZ0IYRniZZKFC8f9R7RUlY1HuuLaeikwGN8wSmIamNQT1xTi1P+mDS4V10kghkQw
+         FJOg==
+X-Forwarded-Encrypted: i=1; AJvYcCUYfHL/xi1WcQRNwckF2w3YRI1LKLTk1pNkuJo91ddAldc5ndfAfsndqkE0bjsMq4g4syeq/YAM+JANmmSN@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGVtz+6oE+2ZhZgX0l6865zJ2Inkm/B3urOfqtQZwxsw9gCui0
+	teQgq8bWP7Mc6rxFwibuYf9TdrgBrEb9cqx0vuBAR2ipAd/OuGZ/Xi4RVcXfuw2vbIcN0KqMS0p
+	lKhSYglpTYuqEb+vvkTUurfvrs92av6+MYIYvDWCs/7uMlTNFtsxC8LeISxa9Y1TZ7Q==
+X-Gm-Gg: ASbGncugGMKuDyNpe5UPb5k6dH0lM7VBAg6dESaKUsZOcSlxG9RosXgcUhjn0KM5MUH
+	KEBcg+WttiBrvpN6SXEkbLN6xu2X+NSnz+mbxAfVZN2/9FxVdCmsCa7jvK8ri8wt+EyR9D6+a41
+	C8wgUGz5xh8sNsUXaX3C6EffxPsw/b9wSSpMgnKTl+z9PWgEuIdLhJtkUncAgTZrwhWxdUxh9Hv
+	8lN28KHvoeyqeVHo6hy7hRH3112eAdHjcPbmoQCSEYoW4eEJlAZVG/ZT4uoVSfGoHwbW8xwZYjC
+	V3a2TCBtn7KH10pl+Rme2EtZu2kTzK0OpCq0IuM=
+X-Received: by 2002:a05:6000:186b:b0:3e7:42c5:ea46 with SMTP id ffacd0b85a97d-3e742c5ecc3mr8754259f8f.55.1757431486832;
+        Tue, 09 Sep 2025 08:24:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGxbjkZ+LXkNckp/mA2ukswzHjE6s8xH7pjrkr+Tm+yixaxasA3i7Ue/iKRyo3do4u4RZPQ/A==
+X-Received: by 2002:a05:6000:186b:b0:3e7:42c5:ea46 with SMTP id ffacd0b85a97d-3e742c5ecc3mr8754241f8f.55.1757431486363;
+        Tue, 09 Sep 2025 08:24:46 -0700 (PDT)
 Received: from [127.0.0.2] ([91.245.205.131])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45df17d9774sm11432015e9.9.2025.09.09.08.24.43
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45df17d9774sm11432015e9.9.2025.09.09.08.24.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 08:24:44 -0700 (PDT)
+        Tue, 09 Sep 2025 08:24:45 -0700 (PDT)
 From: Andrey Albershteyn <aalbersh@redhat.com>
 X-Google-Original-From: Andrey Albershteyn <aalbersh@kernel.org>
-Date: Tue, 09 Sep 2025 17:24:37 +0200
-Subject: [PATCH v3 v3 2/4] xfs_quota: utilize file_setattr to set prjid on
- special files
+Date: Tue, 09 Sep 2025 17:24:38 +0200
+Subject: [PATCH v3 v3 3/4] xfs_io: make ls/chattr work with special files
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -93,281 +91,283 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250909-xattrat-syscall-v3-2-4407a714817e@kernel.org>
+Message-Id: <20250909-xattrat-syscall-v3-3-4407a714817e@kernel.org>
 References: <20250909-xattrat-syscall-v3-0-4407a714817e@kernel.org>
 In-Reply-To: <20250909-xattrat-syscall-v3-0-4407a714817e@kernel.org>
 To: aalbersh@kernel.org, linux-fsdevel@vger.kernel.org, 
  linux-xfs@vger.kernel.org
-Cc: Andrey Albershteyn <aalbersh@redhat.com>
+Cc: Andrey Albershteyn <aalbersh@redhat.com>, 
+ "Darrick J. Wong" <djwong@kernel.org>
 X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7111; i=aalbersh@kernel.org;
- h=from:subject:message-id; bh=tH69RkF2QRVFquTMUMn8VRWpXIuIO9+pJZTSM0auQFw=;
- b=owJ4nJvAy8zAJea2/JXEGuOHHIyn1ZIYMg647apl+SW+k/N5UMiTKqkNp8sn3L1QvdI0635wZ
- Hpb+Bdjh7cdpSwMYlwMsmKKLOuktaYmFUnlHzGokYeZw8oEMoSBi1MAJsK2hJHhKSejyS6Pn+9m
- Bn2NtpbfyvIoZlfLqeYvm3/P8ONc//3laoZ/Bn0GjWaJDczPvM58PHVzf77i46k5L0y6G/4f3Xv
- t6jUeZgAmpk0q
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6848; i=aalbersh@kernel.org;
+ h=from:subject:message-id; bh=UAmqibEOjJrsPJ7LNU85TMCGqr7HuDx292L9Wqa7rtM=;
+ b=owJ4nJvAy8zAJea2/JXEGuOHHIyn1ZIYMg647fq2U/mIXlPu//N+xovf8qlY8J5Y1LLrsf3On
+ F5WqVknS7I6SlkYxLgYZMUUWdZJa01NKpLKP2JQIw8zh5UJZAgDF6cATETJn5HhmP3iDI9LkU/X
+ rojUX7Uo1KTUJnC6+X0Gnu7jLx9c6uU1YGTYI21oo2W2Ze3jOVWF/HXvS9gVjy8rDzvx9s/ezwH
+ MyuuYAUrrRs4=
 X-Developer-Key: i=aalbersh@kernel.org; a=openpgp;
  fpr=AE1B2A9562721A6FC4307C1F46A7EA18AC33E108
 
 From: Andrey Albershteyn <aalbersh@redhat.com>
 
-Utilize new file_getattr/file_setattr syscalls to set project ID on
-special files. Previously, special files were skipped due to lack of the
-way to call FS_IOC_SETFSXATTR ioctl on them. The quota accounting was
-therefore missing these inodes (special files created before project
-setup). The ones created after project initialization did inherit the
-projid flag from the parent.
+With new file_getattr/file_setattr syscalls we can now list/change file
+attributes on special files instead for ignoring them.
 
-Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
+Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- quota/project.c | 142 +++++++++++++++++++++++++++++---------------------------
- 1 file changed, 74 insertions(+), 68 deletions(-)
+ io/attr.c | 138 +++++++++++++++++++++++++++++++++++++-------------------------
+ io/io.h   |   2 +-
+ io/stat.c |   2 +-
+ 3 files changed, 84 insertions(+), 58 deletions(-)
 
-diff --git a/quota/project.c b/quota/project.c
-index adb26945fa57..5832e1474e25 100644
---- a/quota/project.c
-+++ b/quota/project.c
-@@ -4,14 +4,17 @@
-  * All Rights Reserved.
-  */
- 
-+#include <unistd.h>
- #include "command.h"
+diff --git a/io/attr.c b/io/attr.c
+index fd82a2e73801..022ca5f1df1b 100644
+--- a/io/attr.c
++++ b/io/attr.c
+@@ -8,6 +8,7 @@
  #include "input.h"
  #include "init.h"
+ #include "io.h"
 +#include "libfrog/file_attr.h"
- #include "quota.h"
  
- static cmdinfo_t project_cmd;
- static prid_t prid;
- static int recurse_depth = -1;
-+static int dfd;
+ static cmdinfo_t chattr_cmd;
+ static cmdinfo_t lsattr_cmd;
+@@ -113,7 +114,7 @@ chattr_help(void)
+ }
  
- enum {
- 	CHECK_PROJECT	= 0x1,
-@@ -19,13 +22,6 @@ enum {
- 	CLEAR_PROJECT	= 0x4,
- };
- 
--#define EXCLUDED_FILE_TYPES(x) \
--	   (S_ISCHR((x)) \
--	|| S_ISBLK((x)) \
--	|| S_ISFIFO((x)) \
--	|| S_ISLNK((x)) \
--	|| S_ISSOCK((x)))
--
- static void
- project_help(void)
- {
-@@ -85,8 +81,8 @@ check_project(
- 	int			flag,
+ void
+-printxattr(
++print_xflags(
+ 	uint		flags,
+ 	int		verbose,
+ 	int		dofname,
+@@ -156,36 +157,36 @@ lsattr_callback(
+ 	int			status,
  	struct FTW		*data)
  {
 -	struct fsxattr		fsx;
 -	int			fd;
-+	int			error;
 +	struct file_attr	fa;
++	int			error;
  
- 	if (recurse_depth >= 0 && data->level > recurse_depth)
+ 	if (recurse_dir && !S_ISDIR(stat->st_mode))
  		return 0;
-@@ -96,30 +92,30 @@ check_project(
- 		fprintf(stderr, _("%s: cannot stat file %s\n"), progname, path);
- 		return 0;
- 	}
--	if (EXCLUDED_FILE_TYPES(stat->st_mode)) {
--		fprintf(stderr, _("%s: skipping special file %s\n"), progname, path);
--		return 0;
--	}
  
--	if ((fd = open(path, O_RDONLY|O_NOCTTY)) == -1) {
--		exitcode = 1;
+-	if ((fd = open(path, O_RDONLY)) == -1) {
 -		fprintf(stderr, _("%s: cannot open %s: %s\n"),
 -			progname, path, strerror(errno));
--	} else if ((xfsctl(path, fd, FS_IOC_FSGETXATTR, &fsx)) < 0) {
 -		exitcode = 1;
-+	error = xfrog_file_getattr(dfd, path, stat, &fa, AT_SYMLINK_NOFOLLOW);
-+	if (error && errno == EOPNOTSUPP) {
-+		if (SPECIAL_FILE(stat->st_mode)) {
-+			fprintf(stderr, _("%s: skipping special file %s: %s\n"),
-+					progname, path, strerror(errno));
-+			return 0;
-+		}
-+	}
+-	} else if ((xfsctl(path, fd, FS_IOC_FSGETXATTR, &fsx)) < 0) {
++	error = xfrog_file_getattr(AT_FDCWD, path, stat, &fa,
++				   AT_SYMLINK_NOFOLLOW);
 +	if (error) {
  		fprintf(stderr, _("%s: cannot get flags on %s: %s\n"),
--			progname, path, strerror(errno));
--	} else {
--		if (fsx.fsx_projid != prid)
--			printf(_("%s - project identifier is not set"
--				 " (inode=%u, tree=%u)\n"),
--				path, fsx.fsx_projid, (unsigned int)prid);
--		if (!(fsx.fsx_xflags & FS_XFLAG_PROJINHERIT) && S_ISDIR(stat->st_mode))
--			printf(_("%s - project inheritance flag is not set\n"),
--				path);
-+				progname, path, strerror(errno));
-+		exitcode = 1;
+ 			progname, path, strerror(errno));
+ 		exitcode = 1;
+-	} else
+-		printxattr(fsx.fsx_xflags, 0, 1, path, 0, 1);
 +		return 0;
- 	}
++	}
++
++	print_xflags(fa.fa_xflags, 0, 1, path, 0, 1);
+ 
 -	if (fd != -1)
 -		close(fd);
-+
-+	if (fa.fa_projid != prid)
-+		printf(_("%s - project identifier is not set"
-+				" (inode=%u, tree=%u)\n"),
-+			path, fa.fa_projid, (unsigned int)prid);
-+	if (!(fa.fa_xflags & FS_XFLAG_PROJINHERIT) && S_ISDIR(stat->st_mode))
-+		printf(_("%s - project inheritance flag is not set\n"),
-+			path);
-+
  	return 0;
  }
  
-@@ -130,8 +126,8 @@ clear_project(
- 	int			flag,
- 	struct FTW		*data)
+ static int
+ lsattr_f(
+-	int		argc,
+-	char		**argv)
++	int			argc,
++	char			**argv)
  {
--	struct fsxattr		fsx;
--	int			fd;
-+	int			error;
+-	struct fsxattr	fsx;
+-	char		*name = file->name;
+-	int		c, aflag = 0, vflag = 0;
 +	struct file_attr	fa;
- 
- 	if (recurse_depth >= 0 && data->level > recurse_depth)
- 		return 0;
-@@ -141,32 +137,32 @@ clear_project(
- 		fprintf(stderr, _("%s: cannot stat file %s\n"), progname, path);
- 		return 0;
- 	}
--	if (EXCLUDED_FILE_TYPES(stat->st_mode)) {
--		fprintf(stderr, _("%s: skipping special file %s\n"), progname, path);
--		return 0;
-+
-+	error = xfrog_file_getattr(dfd, path, stat, &fa, AT_SYMLINK_NOFOLLOW);
-+	if (error && errno == EOPNOTSUPP) {
-+		if (SPECIAL_FILE(stat->st_mode)) {
-+			fprintf(stderr, _("%s: skipping special file %s: %s\n"),
-+					progname, path, strerror(errno));
-+			return 0;
-+		}
- 	}
- 
--	if ((fd = open(path, O_RDONLY|O_NOCTTY)) == -1) {
--		exitcode = 1;
--		fprintf(stderr, _("%s: cannot open %s: %s\n"),
--			progname, path, strerror(errno));
--		return 0;
--	} else if (xfsctl(path, fd, FS_IOC_FSGETXATTR, &fsx) < 0) {
--		exitcode = 1;
-+	if (error) {
- 		fprintf(stderr, _("%s: cannot get flags on %s: %s\n"),
--			progname, path, strerror(errno));
--		close(fd);
-+				progname, path, strerror(errno));
-+		exitcode = 1;
- 		return 0;
- 	}
- 
--	fsx.fsx_projid = 0;
--	fsx.fsx_xflags &= ~FS_XFLAG_PROJINHERIT;
--	if (xfsctl(path, fd, FS_IOC_FSSETXATTR, &fsx) < 0) {
--		exitcode = 1;
-+	fa.fa_projid = 0;
-+	fa.fa_xflags &= ~FS_XFLAG_PROJINHERIT;
-+
-+	error = xfrog_file_setattr(dfd, path, stat, &fa, AT_SYMLINK_NOFOLLOW);
-+	if (error) {
- 		fprintf(stderr, _("%s: cannot clear project on %s: %s\n"),
- 			progname, path, strerror(errno));
-+		exitcode = 1;
- 	}
--	close(fd);
- 	return 0;
- }
- 
-@@ -177,8 +173,8 @@ setup_project(
- 	int			flag,
- 	struct FTW		*data)
- {
--	struct fsxattr		fsx;
--	int			fd;
-+	struct file_attr	fa;
++	char			*name = file->name;
++	int			c, aflag = 0, vflag = 0;
++	struct stat		st;
 +	int			error;
  
- 	if (recurse_depth >= 0 && data->level > recurse_depth)
- 		return 0;
-@@ -188,32 +184,33 @@ setup_project(
- 		fprintf(stderr, _("%s: cannot stat file %s\n"), progname, path);
- 		return 0;
- 	}
--	if (EXCLUDED_FILE_TYPES(stat->st_mode)) {
--		fprintf(stderr, _("%s: skipping special file %s\n"), progname, path);
--		return 0;
-+
-+	error = xfrog_file_getattr(dfd, path, stat, &fa, AT_SYMLINK_NOFOLLOW);
-+	if (error && errno == EOPNOTSUPP) {
-+		if (SPECIAL_FILE(stat->st_mode)) {
-+			fprintf(stderr, _("%s: skipping special file %s\n"),
-+					progname, path);
-+			return 0;
-+		}
- 	}
- 
--	if ((fd = open(path, O_RDONLY|O_NOCTTY)) == -1) {
--		exitcode = 1;
--		fprintf(stderr, _("%s: cannot open %s: %s\n"),
--			progname, path, strerror(errno));
--		return 0;
--	} else if (xfsctl(path, fd, FS_IOC_FSGETXATTR, &fsx) < 0) {
--		exitcode = 1;
-+	if (error) {
- 		fprintf(stderr, _("%s: cannot get flags on %s: %s\n"),
--			progname, path, strerror(errno));
--		close(fd);
-+				progname, path, strerror(errno));
-+		exitcode = 1;
- 		return 0;
- 	}
- 
--	fsx.fsx_projid = prid;
--	fsx.fsx_xflags |= FS_XFLAG_PROJINHERIT;
--	if (xfsctl(path, fd, FS_IOC_FSSETXATTR, &fsx) < 0) {
--		exitcode = 1;
-+	fa.fa_projid = prid;
-+	if (S_ISDIR(stat->st_mode))
-+		fa.fa_xflags |= FS_XFLAG_PROJINHERIT;
-+
-+	error = xfrog_file_setattr(dfd, path, stat, &fa, AT_SYMLINK_NOFOLLOW);
-+	if (error) {
- 		fprintf(stderr, _("%s: cannot set project on %s: %s\n"),
- 			progname, path, strerror(errno));
-+		exitcode = 1;
- 	}
--	close(fd);
- 	return 0;
- }
- 
-@@ -223,6 +220,13 @@ project_operations(
- 	char		*dir,
- 	int		type)
- {
-+	dfd = open(dir, O_RDONLY | O_NOCTTY);
-+	if (dfd < -1) {
-+		printf(_("Error opening dir %s for project %s...\n"), dir,
-+				project);
-+		return;
+ 	recurse_all = recurse_dir = 0;
+ 	while ((c = getopt(argc, argv, "DRav")) != EOF) {
+@@ -211,17 +212,28 @@ lsattr_f(
+ 	if (recurse_all || recurse_dir) {
+ 		nftw(name, lsattr_callback,
+ 			100, FTW_PHYS | FTW_MOUNT | FTW_DEPTH);
+-	} else if ((xfsctl(name, file->fd, FS_IOC_FSGETXATTR, &fsx)) < 0) {
++		return 0;
 +	}
 +
- 	switch (type) {
- 	case CHECK_PROJECT:
- 		printf(_("Checking project %s (path %s)...\n"), project, dir);
-@@ -237,6 +241,8 @@ project_operations(
- 		nftw(dir, clear_project, 100, FTW_PHYS|FTW_MOUNT);
- 		break;
++	error = stat(name, &st);
++	if (error)
++		return error;
++
++	error = xfrog_file_getattr(AT_FDCWD, name, &st, &fa,
++				   AT_SYMLINK_NOFOLLOW);
++	if (error) {
+ 		fprintf(stderr, _("%s: cannot get flags on %s: %s\n"),
+ 			progname, name, strerror(errno));
+ 		exitcode = 1;
+-	} else {
+-		printxattr(fsx.fsx_xflags, vflag, !aflag, name, vflag, !aflag);
+-		if (aflag) {
+-			fputs("/", stdout);
+-			printxattr(-1, 0, 1, name, 0, 1);
+-		}
++		return 0;
  	}
 +
-+	close(dfd);
++	print_xflags(fa.fa_xflags, vflag, !aflag, name, vflag, !aflag);
++	if (aflag) {
++		fputs("/", stdout);
++		print_xflags(-1, 0, 1, name, 0, 1);
++	}
++
+ 	return 0;
  }
  
- static void
+@@ -232,44 +244,45 @@ chattr_callback(
+ 	int			status,
+ 	struct FTW		*data)
+ {
+-	struct fsxattr		attr;
+-	int			fd;
++	struct file_attr	attr;
++	int			error;
+ 
+ 	if (recurse_dir && !S_ISDIR(stat->st_mode))
+ 		return 0;
+ 
+-	if ((fd = open(path, O_RDONLY)) == -1) {
+-		fprintf(stderr, _("%s: cannot open %s: %s\n"),
+-			progname, path, strerror(errno));
+-		exitcode = 1;
+-	} else if (xfsctl(path, fd, FS_IOC_FSGETXATTR, &attr) < 0) {
++	error = xfrog_file_getattr(AT_FDCWD, path, stat, &attr,
++				   AT_SYMLINK_NOFOLLOW);
++	if (error) {
+ 		fprintf(stderr, _("%s: cannot get flags on %s: %s\n"),
+ 			progname, path, strerror(errno));
+ 		exitcode = 1;
+-	} else {
+-		attr.fsx_xflags |= orflags;
+-		attr.fsx_xflags &= ~andflags;
+-		if (xfsctl(path, fd, FS_IOC_FSSETXATTR, &attr) < 0) {
+-			fprintf(stderr, _("%s: cannot set flags on %s: %s\n"),
+-				progname, path, strerror(errno));
+-			exitcode = 1;
+-		}
++		return 0;
++	}
++
++	attr.fa_xflags |= orflags;
++	attr.fa_xflags &= ~andflags;
++	error = xfrog_file_setattr(AT_FDCWD, path, stat, &attr,
++				   AT_SYMLINK_NOFOLLOW);
++	if (error) {
++		fprintf(stderr, _("%s: cannot set flags on %s: %s\n"),
++			progname, path, strerror(errno));
++		exitcode = 1;
+ 	}
+ 
+-	if (fd != -1)
+-		close(fd);
+ 	return 0;
+ }
+ 
+ static int
+ chattr_f(
+-	int		argc,
+-	char		**argv)
++	int			argc,
++	char			**argv)
+ {
+-	struct fsxattr	attr;
+-	struct xflags	*p;
+-	unsigned int	i = 0;
+-	char		*c, *name = file->name;
++	struct file_attr	attr;
++	struct xflags		*p;
++	unsigned int		i = 0;
++	char			*c, *name = file->name;
++	struct stat		st;
++	int			error;
+ 
+ 	orflags = andflags = 0;
+ 	recurse_all = recurse_dir = 0;
+@@ -326,19 +339,32 @@ chattr_f(
+ 	if (recurse_all || recurse_dir) {
+ 		nftw(name, chattr_callback,
+ 			100, FTW_PHYS | FTW_MOUNT | FTW_DEPTH);
+-	} else if (xfsctl(name, file->fd, FS_IOC_FSGETXATTR, &attr) < 0) {
++		return 0;
++	}
++
++	error = stat(name, &st);
++	if (error)
++		return error;
++
++	error = xfrog_file_getattr(AT_FDCWD, name, &st, &attr,
++				   AT_SYMLINK_NOFOLLOW);
++	if (error) {
+ 		fprintf(stderr, _("%s: cannot get flags on %s: %s\n"),
+ 			progname, name, strerror(errno));
+ 		exitcode = 1;
+-	} else {
+-		attr.fsx_xflags |= orflags;
+-		attr.fsx_xflags &= ~andflags;
+-		if (xfsctl(name, file->fd, FS_IOC_FSSETXATTR, &attr) < 0) {
+-			fprintf(stderr, _("%s: cannot set flags on %s: %s\n"),
+-				progname, name, strerror(errno));
+-			exitcode = 1;
+-		}
++		return 0;
+ 	}
++
++	attr.fa_xflags |= orflags;
++	attr.fa_xflags &= ~andflags;
++	error = xfrog_file_setattr(AT_FDCWD, name, &st, &attr,
++				   AT_SYMLINK_NOFOLLOW);
++	if (error) {
++		fprintf(stderr, _("%s: cannot set flags on %s: %s\n"),
++			progname, name, strerror(errno));
++		exitcode = 1;
++	}
++
+ 	return 0;
+ }
+ 
+diff --git a/io/io.h b/io/io.h
+index 259c034931b8..35fb8339eeb5 100644
+--- a/io/io.h
++++ b/io/io.h
+@@ -78,7 +78,7 @@ extern int		openfile(char *, struct xfs_fsop_geom *, int, mode_t,
+ extern int		addfile(char *, int , struct xfs_fsop_geom *, int,
+ 				struct fs_path *);
+ extern int		closefile(void);
+-extern void		printxattr(uint, int, int, const char *, int, int);
++extern void		print_xflags(uint, int, int, const char *, int, int);
+ 
+ extern unsigned int	recurse_all;
+ extern unsigned int	recurse_dir;
+diff --git a/io/stat.c b/io/stat.c
+index c257037aa8ee..c1085f14eade 100644
+--- a/io/stat.c
++++ b/io/stat.c
+@@ -112,7 +112,7 @@ print_extended_info(int verbose)
+ 	}
+ 
+ 	printf(_("fsxattr.xflags = 0x%x "), fsx.fsx_xflags);
+-	printxattr(fsx.fsx_xflags, verbose, 0, file->name, 1, 1);
++	print_xflags(fsx.fsx_xflags, verbose, 0, file->name, 1, 1);
+ 	printf(_("fsxattr.projid = %u\n"), fsx.fsx_projid);
+ 	printf(_("fsxattr.extsize = %u\n"), fsx.fsx_extsize);
+ 	printf(_("fsxattr.cowextsize = %u\n"), fsx.fsx_cowextsize);
 
 -- 
 2.50.1
