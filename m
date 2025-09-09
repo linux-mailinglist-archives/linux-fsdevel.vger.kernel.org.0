@@ -1,155 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-60601-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60602-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 145E4B49D68
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 01:17:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 42097B49DE6
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 02:15:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29B811BC3E90
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Sep 2025 23:18:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5601E188AC7E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 00:15:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4ACB2F60A2;
-	Mon,  8 Sep 2025 23:17:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4691D4AEE2;
+	Tue,  9 Sep 2025 00:14:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="o/yhZAT6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mOWLOxo4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14E751DFE0B;
-	Mon,  8 Sep 2025 23:17:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B24E14286;
+	Tue,  9 Sep 2025 00:14:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757373463; cv=none; b=o2yCZT/SwWuT16yOBK3hJvD6NrolM482KwUFdnWkkRa9rBvOwulASl593WpuxXMJfZCqYTyccDb4oQ15rsy7r4x7GPlaHVOZUw9wKZKDzY/1HpwGxFOIQYG/X8IuZbqoI4KlxDkBjs2FM9FO5mNW+0PTu8nPGrDsFMbYExH1cvI=
+	t=1757376889; cv=none; b=hTRkxCQmtkmq2MMGDZ10ZbNlbDMnp36Z9gzkhOsi+l2NplCyBMO3vHDjxMCZ/j1dnq5Ud8HiKPD8OjDw5x3aEbiMKXBzuk0uAMEXAgPEaNa7D4WQtafst54FkwLL+xJ3qa1N+ndpVorySYPD1C4YsDg8FMpC5IhgxJj2UmPRgbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757373463; c=relaxed/simple;
-	bh=H/1lSf0qRkqLPIS21dDIq6+Jb5KinRAndOcezAcipC4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sDJr5dXBb4hu2+iXAOXy+igaYSJ2cELzjZcHXJtHDzG7tT+AYXocDmXkrF+WzkCeq401SYrIJz2hVMyAwWfEmT5k2CO5H5MoHle79je7Tbwhxq0c/Q1P3DYG2tagkJOt8mk9Zw0S/tZrV9CyUT2xSPW9HEcu1mOnaIEsvj82Ja4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=o/yhZAT6; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=CMlqYlKj+ILUokIqP1ABAMFD7Ot5oBLbcsJFMFm2zE0=; b=o/yhZAT6Pleqpfj3cap4+Ocr0X
-	SQndNm93uEb+a4QqInydfI6lMJSJFzsSu3/0qeMTKdhPtlmWw3TUQRbR6L2wKk2W3Fv+UH9KsOJEg
-	9qPRFInLAK8DjwwP3kbclODQZmsO+zdGm2eIzKDYqjx3wV8Z9WwBemPbQiE4A+eNMuh7m64z6qIdV
-	KXBfJtcalLtNb7nUQOkOJ5v6vc4bBx6ZTya7R+MDIox9Nxyg/2OCB4wbhLPO78J0Opb4io0rwvic4
-	NDpaGlW9vP1blgirQfaegykINHE1UsAXggKwlIZNRbsS5mNDQybb9YhDkcTYBLtgKyHdfGed+PEsS
-	przXJOJw==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uvl6s-00000002unf-1xHe;
-	Mon, 08 Sep 2025 23:17:18 +0000
-Message-ID: <c0d7df5f-ac43-4e15-8400-155bf87d5e77@infradead.org>
-Date: Mon, 8 Sep 2025 16:17:16 -0700
+	s=arc-20240116; t=1757376889; c=relaxed/simple;
+	bh=HTsCb1oDiC0QvYoU0wK26hVLcTbGDrlmKN2iL0nK59Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LleKrGoXl1VMbO0VeOIM/tqftqTAPleQpYIr8iNA1VdUxO2Iv+WMuQUpayM9o4Dd+4vDvwChQF0POCs6nOwgEpte9QAie45FICCVcshD6ujSZM8vdPF8BmuZXiNDxavkdg1Uf4hYd0I+dnwVIh/cOYKPifNbtYGh2Cw3ZtCEeis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mOWLOxo4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47C20C4CEF1;
+	Tue,  9 Sep 2025 00:14:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757376889;
+	bh=HTsCb1oDiC0QvYoU0wK26hVLcTbGDrlmKN2iL0nK59Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mOWLOxo4BzWDRUTrIyczukYbrDUi6BpGVpqF02LfVogMJjDzTgu3zKAIJw/24vuhl
+	 JuBmK+DeME4iDYrssJTvZytKoo3/HNJ8ZHNOWQNFo4Z9j+2pxdz0a9VuvcbhTg8BzY
+	 JNcxEgjTlcPeF0PHAmAPQlXzYOtkupbyeEHR26QhpokNikwMeN2YFrUPSha4oliOKc
+	 yWVx6heegbO8GTlN1ZOOJZ/+TmR1ELaqBVSlvNGivewbF1rguAYWAexRIVnxckpgK3
+	 CNE8r+6ygI/jfJ613WpJLiiarxIOUw/Ey+eSN1/WxFI0Y0ULHg5mP7Jov/SR0ztYhY
+	 mXdEL5L7ST2ew==
+Date: Tue, 9 Sep 2025 08:14:39 +0800
+From: Gao Xiang <xiang@kernel.org>
+To: Joanne Koong <joannelkoong@gmail.com>, djwong@kernel.org,
+	hch@infradead.org
+Cc: brauner@kernel.org, miklos@szeredi.hu, hsiangkao@linux.alibaba.com,
+	linux-block@vger.kernel.org, gfs2@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, kernel-team@meta.com,
+	linux-xfs@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v2 11/16] iomap: add caller-provided callbacks for read
+ and readahead
+Message-ID: <aL9xb5Jw8tvIRMcQ@debian>
+Mail-Followup-To: Joanne Koong <joannelkoong@gmail.com>, djwong@kernel.org,
+	hch@infradead.org, brauner@kernel.org, miklos@szeredi.hu,
+	hsiangkao@linux.alibaba.com, linux-block@vger.kernel.org,
+	gfs2@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	kernel-team@meta.com, linux-xfs@vger.kernel.org,
+	linux-doc@vger.kernel.org
+References: <20250908185122.3199171-1-joannelkoong@gmail.com>
+ <20250908185122.3199171-12-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/16] doc: update porting, vfs documentation for
- mmap_[complete, abort]
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, Matthew Wilcox <willy@infradead.org>,
- Guo Ren <guoren@kernel.org>, Thomas Bogendoerfer
- <tsbogend@alpha.franken.de>, Heiko Carstens <hca@linux.ibm.com>,
- Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
- <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, "David S . Miller"
- <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>,
- Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Dan Williams <dan.j.williams@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>,
- Nicolas Pitre <nico@fluxnic.net>, Muchun Song <muchun.song@linux.dev>,
- Oscar Salvador <osalvador@suse.de>, David Hildenbrand <david@redhat.com>,
- Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
- Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
- Dave Young <dyoung@redhat.com>, Tony Luck <tony.luck@intel.com>,
- Reinette Chatre <reinette.chatre@intel.com>,
- Dave Martin <Dave.Martin@arm.com>, James Morse <james.morse@arm.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Hugh Dickins <hughd@google.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Uladzislau Rezki <urezki@gmail.com>,
- Dmitry Vyukov <dvyukov@google.com>, Andrey Konovalov <andreyknvl@gmail.com>,
- Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-csky@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-s390@vger.kernel.org,
- sparclinux@vger.kernel.org, nvdimm@lists.linux.dev,
- linux-cxl@vger.kernel.org, linux-mm@kvack.org, ntfs3@lists.linux.dev,
- kexec@lists.infradead.org, kasan-dev@googlegroups.com,
- Jason Gunthorpe <jgg@nvidia.com>
-References: <cover.1757329751.git.lorenzo.stoakes@oracle.com>
- <1ceb56fec97f891df5070b24344bf2009aca6655.1757329751.git.lorenzo.stoakes@oracle.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <1ceb56fec97f891df5070b24344bf2009aca6655.1757329751.git.lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250908185122.3199171-12-joannelkoong@gmail.com>
 
-Hi--
+Hi Joanne,
 
-On 9/8/25 4:10 AM, Lorenzo Stoakes wrote:
-> We have introduced the mmap_complete() and mmap_abort() callbacks, which
-> work in conjunction with mmap_prepare(), so describe what they used for.
+On Mon, Sep 08, 2025 at 11:51:17AM -0700, Joanne Koong wrote:
+> Add caller-provided callbacks for read and readahead so that it can be
+> used generically, especially by filesystems that are not block-based.
 > 
-> We update both the VFS documentation and the porting guide.
+> In particular, this:
+> * Modifies the read and readahead interface to take in a
+>   struct iomap_read_folio_ctx that is publicly defined as:
 > 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> ---
->  Documentation/filesystems/porting.rst |  9 +++++++
->  Documentation/filesystems/vfs.rst     | 35 +++++++++++++++++++++++++++
->  2 files changed, 44 insertions(+)
+>   struct iomap_read_folio_ctx {
+> 	const struct iomap_read_ops *ops;
+> 	struct folio *cur_folio;
+> 	struct readahead_control *rac;
+> 	void *private;
+>   };
+> 
+>   where struct iomap_read_ops is defined as:
+> 
+>   struct iomap_read_ops {
+>       int (*read_folio_range)(const struct iomap_iter *iter,
+>                              struct iomap_read_folio_ctx *ctx,
+>                              loff_t pos, size_t len);
+>       int (*read_submit)(struct iomap_read_folio_ctx *ctx);
+>   };
 > 
 
-> diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
-> index 486a91633474..172d36a13e13 100644
-> --- a/Documentation/filesystems/vfs.rst
-> +++ b/Documentation/filesystems/vfs.rst
+No, I don't think `struct iomap_read_folio_ctx` has another
+`.private` makes any sense, because:
 
-> @@ -1236,6 +1240,37 @@ otherwise noted.
->  	file-backed memory mapping, most notably establishing relevant
->  	private state and VMA callbacks.
->  
-> +``mmap_complete``
-> +	If mmap_prepare is provided, will be invoked after the mapping is fully
+ - `struct iomap_iter *iter` already has `.private` and I think
+   it's mainly used for per-request usage; and your new
+   `.read_folio_range` already passes
+    `const struct iomap_iter *iter` which has `.private`
+   I don't think some read-specific `.private` is useful in any
+   case, also below.
 
-s/mmap_prepare/mmap_complete/ ??
+ - `struct iomap_read_folio_ctx` cannot be accessed by previous
+   .iomap_{begin,end} helpers, which means `struct iomap_read_ops`
+   is only useful for FUSE read iter/submit logic.
 
-> +	established, with the mmap and VMA write locks held.
-> +
-> +	It is useful for prepopulating VMAs before they may be accessed by
-> +	users.
-> +
-> +	The hook MUST NOT release either the VMA or mmap write locks. This is
+Also after my change, the prototype will be:
 
-You could also do **bold** above:
+int iomap_read_folio(const struct iomap_ops *ops,
+		     struct iomap_read_folio_ctx *ctx, void *private2);
+void iomap_readahead(const struct iomap_ops *ops,
+		     struct iomap_read_folio_ctx *ctx, void *private2);
 
-	The hook **MUST NOT** release ...
+Is it pretty weird due to `.iomap_{begin,end}` in principle can
+only use `struct iomap_iter *` but have no way to access
+` struct iomap_read_folio_ctx` to get more enough content for
+read requests.
 
-
-> +	asserted by the mmap logic.
-> +
-> +	If an error is returned by the hook, the VMA is unmapped and the
-> +	mmap() operation fails with that error.
-> +
-> +	It is not valid to specify this hook if mmap_prepare is not also
-> +	specified, doing so will result in an error upon mapping.
-
--- 
-~Randy
-
+Thanks,
+Gao Xiang
 
