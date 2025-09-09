@@ -1,553 +1,356 @@
-Return-Path: <linux-fsdevel+bounces-60639-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60640-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4090B4A761
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 11:19:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EC38B4A763
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 11:20:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95D08543C5B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 09:18:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4C3F170CE6
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 09:19:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39ECD2C21EC;
-	Tue,  9 Sep 2025 09:14:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EF792C327D;
+	Tue,  9 Sep 2025 09:14:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AOtnCJCS"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="q4GQzwtO";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="ZR1MgS5l"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D8EE2C15A0;
-	Tue,  9 Sep 2025 09:14:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757409275; cv=none; b=Zb+AdB74jntDqvcMm33D/rZ+J5P4UbHMg105pdnVP/dQ+0okIqB9dW9eh6mtfYX62JjqNYZqcyuOUS9US8aK7l7r0J1WhPdvqkCxorS+BJkFpdJz8lN5ztq3I6A4iwz6kxP7PphfLh5tuKQsVk1mhRlrw264cby6QqGaICvd/vU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757409275; c=relaxed/simple;
-	bh=IMseACTiSvlyfiyb+LeynI6JiS3FUZBsMYDVNhYzMhU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TUa2W4f2gSHe4RgY56/U1qqTUcq/GpkBD6AzaZMH296PfWm1ZYC6uiGKIz8rQIdxYfyeD9ThYjR6JPx8xz0gVpfn0yZYxO7l3VbTS/s6beg+riW4QieO+qxpkNS4ec5kWXu/Onr3n0pZ66vdMRs0r3FiJ3n8r5fYszitujM8DIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AOtnCJCS; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45de6490e74so17974425e9.2;
-        Tue, 09 Sep 2025 02:14:32 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17879277CA1;
+	Tue,  9 Sep 2025 09:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757409284; cv=fail; b=qwz17NTtrGHS1Iu1oGVISALu8gK9+XGx9FtIlxfNhwM7LohUFhhJLAuZhoP2D/MGlWetQFpSVnz7V1EPO04SFb274++EG9IWx2jd331oFaEzcC+gf63ZAkVu+6ZhlBdnyIF68HdYugwJkIzsADZMfuvLATRnoiyeZcJ1x5pZevM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757409284; c=relaxed/simple;
+	bh=D4JDGQKNxZYq3rabPbLeclcJRoCt7lojbuPigmhsjCI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=hedrK6L7MDcyHT98JGYmYQqKTRa28CmY3Jb7VzwxMvHNnl0lSjCXhw02UVocVBhcTOIBUOFaqiv/nsFp34H+JDtE6g/UezXLpOzzWofUSY7rLr7epwb4/jJeg2fyMXlxwC/Tw4KFHvhfdV+o+pM82KwjqjmgdDfT4vq+Jj0LxhU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=q4GQzwtO; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=ZR1MgS5l; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5897fv9P031644;
+	Tue, 9 Sep 2025 09:14:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=2JvyOpLxZVWdQuH+bT
+	hWmPjOPZRAFQERJi4cx1UNUK8=; b=q4GQzwtOJUJPKn90ANtmgHAuT6FJAQ3+ts
+	ViV4cVp9e2Yxm4Oceo75NLGnZDw5rDa6Rtz44+Rzk8uaxEQ/gqAmb1r3xtsnDbIU
+	bta2Hr79sguHsqs9wl0RPwwKg230p9b28fexBpQojabOMASY6F8xh52M7HIx9j6c
+	CpKvJ+u5TXl/3tahrm+ULerZKy50G4gGh04YbQvjmCQ5ovqeFl8gz3hCSYc4MBom
+	O41n0sJ8QFystYqjhYVOvAXCvwppYVBNudd9AHwIuI/Dq17/yNvZ9xuBuR2ucLsL
+	qgoYhz2TRDvzPPJMwl/cK3RAwZ5LzmZOAF2xeXEqwtbDHFTZDzlA==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4921m2sj7t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 09 Sep 2025 09:14:00 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5898UJF6032837;
+	Tue, 9 Sep 2025 09:13:52 GMT
+Received: from nam04-mw2-obe.outbound.protection.outlook.com (mail-mw2nam04on2060.outbound.protection.outlook.com [40.107.101.60])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 490bdab6ed-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 09 Sep 2025 09:13:52 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=BdwxiRA/8Z+jGpQJs0gerXbWEz8KyOe3VAhoQO/6B6+G/Ce/9sQLnmeRQyRn7WZuzJ4sHO24990irqFj/jXb9ZXgEyGK15y9jYaovT+bOtMdUul7YVsNqeFzPJ2NtGDhLqeSmR0R9vEv8dk62EjNu6X1zWqPPj/r1Vfh3t0NGuyqFxPF7PPEtM3im1u8wGYZqv5WujcHi4FV59MhFcag9Yqw1ehS9AA33RThRxl9Imq/04LuSozVcXBEdqMBJLr99fGXlnD2sf2IbVng49YMRUkAwkwjmyn3dpBkL/LUnkYeaV1owbMHLGELRlMRvz7Fna4PM1Dp6FMMQDFkWRzsQQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2JvyOpLxZVWdQuH+bThWmPjOPZRAFQERJi4cx1UNUK8=;
+ b=Md6/fUrc+sldxcjjC/Hl4RltTiLHxOheLGNeAQxxfhL1wV+RzbrO28dqH/IACggCgCTJ7xORhVfEgbGO15WvGHYgk9KZEseEcbXwSDlB3w2ZAhL6QQq5uLGNOFup2ClLom3a1MZhQvgQp6xyZR/TmUyW1RsLfwOrzkc4tHK2lh9x9VrZX4JIP1oDs5792glnFUH/cW24SCFzmt7aeavsiUsyHO0p09DLFLeVQFilKw49ihWLSfj5ISxVPoH06Eg4VXKOgVUB9ZemJmZ/woeBOMCwIZP/fbv2O6KJ7UIQmEqmfEGCgJa5Ecqkm9OdhSrZBKHxPVd0dqWjacgjvMFwxQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757409271; x=1758014071; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QxYF3RT5zHEtZoH+0QZfPrO40F2dnCdJJPKEE+ejIoU=;
-        b=AOtnCJCSUOfr1HYjFg3Fp3oIFyHF8c+owZVYjf6QLEC4URTHPkTLufjBaUZ2oyBAMO
-         XgOoOjW8/WrDbRmUTL3a2y3E/6mW9ubLoQevsCnFuNMZSKCwCgVZ6f6GH1j9+XwvE9SI
-         nlSrvw+V6NytW2o2WuLlWR5KDbBVjOCPeKbUgGIADZLbWDq69RO3Fdg+rYdwXoFEWdGg
-         +uS9vcT+4IL/Z1zxWj9kuFQGjkjj40ytVQJSMl5T3MyD0KCtsZeLJaBoxKpv25VGjWzC
-         S3v+cEDtINNvOXCF53Nt7d8RU4q0yCOYs8QIRP9LgSzduJJAbTfy3mxjx3mD7gTM5FXP
-         IKCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757409271; x=1758014071;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QxYF3RT5zHEtZoH+0QZfPrO40F2dnCdJJPKEE+ejIoU=;
-        b=Zx+KXJduIswF399QnB5mq+namOnljXQS54bVL3OdQmJ/fp022swn5VeQWF7EP7oEig
-         e7utuCuX4Hwf94jCi/ep74/jBE59X36aUBQyuGr34W63OFmrcspmuimyN41rYXEUjExt
-         MlPiWwhvsn3snlzdmv+qLb31lxUWtm8UD7bLamHAYC2taX7jIzOO8HU3HPyQzZxxeTLW
-         55eBeLNHInTWuhxx4krjA/WItSIzsQ5YVX38JgC+ShKoRXJTnhREezsL91TR/dlaVYV0
-         Ruk1ZXaoGuh1qFixeqEurFHoXOQuXt8TX4ZIZHvO1L6kZFl1bsuwmzZl3A4WlK2UbJ/W
-         RthQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV3gGuFcUxQhzlj+hMYETu8x+fZKNw0FxfNwaTAa64QtZZyy0+bryJbgTddOAmyCJ7ATD3TxyPlnGki@vger.kernel.org, AJvYcCVVaaJbNm7AcFlNcpVl2MPOcLN50TrNMNHGhiKc0NJ6Byw7ycRxQbBPQ6O/q0VgwJeM/6gB2SoLm9jC2Q==@vger.kernel.org, AJvYcCVfrNAjMbGBmGq+XTuFOqOVAa/4mB7+IlzkyImDVj18EKwPl2xy71I9SIDGohMh61+BBw0pHxzqs74roGkb@vger.kernel.org, AJvYcCVqqyxDR0KkS/yc2/78Ju350DLUsXFBAIul+bJmpN1KrSdjBrrJMP/mpeziVsvlBNXVb/V8oblMA0q9og==@vger.kernel.org, AJvYcCWgdwJ76cNx9x1B/U/rc7JxXj2jFamEVuYefWILNan6/2Ml8bj/f9+2vibItur+F7hRBXMtzF30jVvq/zy5Ew==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwnN6W4VlzZFNDo4XuWFXFSeLeQ7Zdl6SGcMHpuFT7QkbBFkZ9
-	VbFFdcOuDEeuJXYqdVKFjQ4PJyIMCBPvxGDcYgVVC5gdsLsQd7hexWf7
-X-Gm-Gg: ASbGncvm0XZbhebKSyCAeYEXSFCeyKAW99cawCk6afEtS++80FuDXuCUD15hpgZz9qE
-	PoeMjpwRTDxxXm9QLr8HZ+GsOJjcsaQhvGfjIQEA9pIV2EvTCoW1xTgspgiGvQrqt6wk9YC+5Dy
-	PYP4NMGHCtLjYX7PYsA4pRCUUGQNEbIhcjRc0S+gNU4vHVzyjuQ9N80Q27gUtLPC59NK1bjqlNz
-	bG0FLqls6Pm/Jb8QEYG+ZquyQ/MnfTik+GECqJ1DJOoOF97MkxGCGDgqE/GPwc7Q3hb9W+J2vtQ
-	Zis9M8ITpXCaeiGvxm6p6EJIQ+JcqicxftdeZci8oGyoaMcAu5yqF7K9Mq35uAm09NduE+EPyEA
-	hRBK9qb7l05F42NWpTJcrSQHgB685IbiaudWciobARcsM4fT5crc=
-X-Google-Smtp-Source: AGHT+IFi9+++EXFDxbZpee7QFWmtTnxdJJIkcvTcwNq69a2UHcOEtGo+RK/G6yNxl517a45cK9euag==
-X-Received: by 2002:a05:600c:1c19:b0:45b:7d24:beac with SMTP id 5b1f17b1804b1-45df2e0495bmr6716185e9.10.1757409270816;
-        Tue, 09 Sep 2025 02:14:30 -0700 (PDT)
-Received: from f.. (cst-prg-84-152.cust.vodafone.cz. [46.135.84.152])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7521bff6esm1810784f8f.13.2025.09.09.02.14.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 02:14:30 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	josef@toxicpanda.com,
-	kernel-team@fb.com,
-	amir73il@gmail.com,
-	linux-btrfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
-	linux-xfs@vger.kernel.org,
-	ocfs2-devel@lists.linux.dev,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH v2 10/10] fs: retire the I_WILL_FREE flag
-Date: Tue,  9 Sep 2025 11:13:44 +0200
-Message-ID: <20250909091344.1299099-11-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250909091344.1299099-1-mjguzik@gmail.com>
-References: <20250909091344.1299099-1-mjguzik@gmail.com>
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2JvyOpLxZVWdQuH+bThWmPjOPZRAFQERJi4cx1UNUK8=;
+ b=ZR1MgS5lUyOiij0FBsT0PkuHuy8as8G7YCkVBpINDNWt7te6RilVUt+7FR8dO7f0w6ku/XPYrnCxLjDtr4r1Q2UJRxSWKKhO4IsC6QumiQRdci7gvt+jviIJMFktRETFio372pmahQRe5y24ZCyIC8sceNFJgnvGetW9E8m3K04=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by CH0PR10MB4969.namprd10.prod.outlook.com (2603:10b6:610:c8::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Tue, 9 Sep
+ 2025 09:13:49 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.9094.021; Tue, 9 Sep 2025
+ 09:13:49 +0000
+Date: Tue, 9 Sep 2025 10:13:45 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, Matthew Wilcox <willy@infradead.org>,
+        Guo Ren <guoren@kernel.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Andreas Larsson <andreas@gaisler.com>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>, Nicolas Pitre <nico@fluxnic.net>,
+        Muchun Song <muchun.song@linux.dev>,
+        Oscar Salvador <osalvador@suse.de>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
+        Dave Young <dyoung@redhat.com>, Tony Luck <tony.luck@intel.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Dave Martin <Dave.Martin@arm.com>, James Morse <james.morse@arm.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+        Hugh Dickins <hughd@google.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Uladzislau Rezki <urezki@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Andrey Konovalov <andreyknvl@gmail.com>, Jann Horn <jannh@google.com>,
+        Pedro Falcato <pfalcato@suse.de>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-csky@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
+        nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org, linux-mm@kvack.org,
+        ntfs3@lists.linux.dev, kexec@lists.infradead.org,
+        kasan-dev@googlegroups.com, Jason Gunthorpe <jgg@nvidia.com>
+Subject: Re: [PATCH 06/16] mm: introduce the f_op->mmap_complete, mmap_abort
+ hooks
+Message-ID: <c04357f9-795e-4a5d-b762-f140e3d413d8@lucifer.local>
+References: <cover.1757329751.git.lorenzo.stoakes@oracle.com>
+ <ea1a5ab9fff7330b69f0b97c123ec95308818c98.1757329751.git.lorenzo.stoakes@oracle.com>
+ <ad69e837-b5c7-4e2d-a268-c63c9b4095cf@redhat.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ad69e837-b5c7-4e2d-a268-c63c9b4095cf@redhat.com>
+X-ClientProxiedBy: AS4P189CA0005.EURP189.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5d7::20) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|CH0PR10MB4969:EE_
+X-MS-Office365-Filtering-Correlation-Id: 519ef78a-9ca8-4d28-62f5-08ddef812ff8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?b8bmLpbA0FEY4B491hCY/gvAHL3VHQE3mzw7bg4sMF43rN4jjAt/2U/KgFKO?=
+ =?us-ascii?Q?BChh7hvHDm94DLW7Yc0Pa17zCK4IuJH4D9+7WLVb6UHsq0hQTbOj09Hg95hC?=
+ =?us-ascii?Q?GUgF5tlRhKYONZE9jiBxX2QVl4qJMqHZZGxZGpfA4+loALUNE3OfXVzXziPJ?=
+ =?us-ascii?Q?jpUaag05vf5/H10G5RXJBhmdmFfNKrqVYObZSEAzNRbqJcrjtxpF0u2NpIFf?=
+ =?us-ascii?Q?P+2u0xj+s0zFS2+OuaqvnpnHw28HPrsBjKsSUq1FFZRCPu4wDlKNhB17Qd7I?=
+ =?us-ascii?Q?/v3OG4C9wr+GmwCxL0qLKWMz9MAaWmKVmEkUse3DSUgP5WI6+S677yMZs+Ic?=
+ =?us-ascii?Q?bRU00Pe5n0D8Q4EYk0ObNZZG8iwY2GsIYiOt+MUHwZWP53iDSg1hK/zm+iO8?=
+ =?us-ascii?Q?EWkxjFLmbLdQygA580EpdkjW1uoMZFa8+VrthPqtpFFVdZpVUiILBf5L0h8G?=
+ =?us-ascii?Q?Pd6P0wrMM5UIw5thEm1hftRp+8VyKapKXrvLXavk5zHqYIJD0PKB+fhiRNC+?=
+ =?us-ascii?Q?uTgx0NhZD2vNJbWnRar7HPd/ihcnBOFkJyvTmCKaSMNVjFQgCf9+aaIkN8Ic?=
+ =?us-ascii?Q?6QsM+zeV7Kd6NAA7l4z8b6Oi/s3ahXLwUTefNU54TqaG2VX6NfpYXdHjOrjk?=
+ =?us-ascii?Q?dLYBMFSj+w/Is2Ps5d6amlziKWet4QDO2TCQuTMKuqIjkTZKSH+deIzIMHtz?=
+ =?us-ascii?Q?fidAgDRGV8ZJl4/s+Kho/2BRIyXjGTlKYA7wH2OVVdtiXlaYIvn5sNnB/ghI?=
+ =?us-ascii?Q?iZYhtgrrsGLgv2k+wLBIjAbmpYYcoWmC2mP2VjG/T1V/DdzHZvObv7SVcYjk?=
+ =?us-ascii?Q?FhqI2mMoM/z3zV+012GUntdwuWYMfnYYSiaBMNJNuoV42LzLJ8l1iEPOj7/k?=
+ =?us-ascii?Q?qlKd5wlDTGs/1NWyz6PJS58q7g6/uCzd8gFhNO5xMwBUC9QKfqyau1OfMK3R?=
+ =?us-ascii?Q?Vxw3ASaSqu2NfmyFtX8uNk32uBo4f7JJpDCqZUp7IxQtzLEYgSTjB24StJso?=
+ =?us-ascii?Q?TDUyD5kApzUHF/GE4T2X/5vVso1XGQAVCIGKCtLjB4wtm51UpjVBQxogAi04?=
+ =?us-ascii?Q?uNLjwX//ZbL9n2sVPG71yj807kUHhx/RWPL3xUjjAr+CvARFRMYj33AeY4SY?=
+ =?us-ascii?Q?wFYYSE/Ma3oBH09lqrnm8MV5YhyKQ4PRHdvLmX9ESvStCfcboFUkQYkt9+zC?=
+ =?us-ascii?Q?9VQGwlZJ+iLm+/SOlyO9jxCFvE76tHCKrRmgleCTC7D8/Dgyk7gcApiAtPzB?=
+ =?us-ascii?Q?j2w4ZOl4JS84KN6LMF/T16t0JK+5Ri1085cHcEl1f3nzlXv3niki1b9ninOl?=
+ =?us-ascii?Q?IMjDd60VRdH8/RPRWuXxsI9vtq3bKr6ZQs3a6TaYo6fmGsHoTpqk4f7rQAn7?=
+ =?us-ascii?Q?vZYFnxvZXal7T7QqLmQo9gWdThnHQ5hT2jcC50sBia4PDDrIDMNbv0mRVcxd?=
+ =?us-ascii?Q?YAiIY2v0Vag=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?LN7xkS5mLvj8oXatoklIhguWQYABmku+LNGjDuh27kqKtPMedYyhYGKjCfVc?=
+ =?us-ascii?Q?tYJnrHRiq1W4OV84hCnvrlVpYSDuphP8dZqRxd3edhBQa07aQCD5hsUaVxiA?=
+ =?us-ascii?Q?yNGwkiD0MpogcX7hBYLnqLmfxxbxcD2IF1hOybdGllvPyadpMxG29ozX/iOv?=
+ =?us-ascii?Q?VHC1HiDj2wGYDAc/f9kzPtIVEiMK7Kjze71n+IA7lbP02WKGEuHXXSAlx7Lt?=
+ =?us-ascii?Q?DVhrjGEipxy/2VqrZWE5IOFkrHWeyw+ocFCzn/9hhPxYYu7U/LUMyQdwS8S6?=
+ =?us-ascii?Q?WyBPkHOZCs4DcmVjBKZ55/lotIYPnK0QJuWZcWrifMmatkJ458JkIOU1k2q8?=
+ =?us-ascii?Q?Qpw7grZlYvc7nul5no/YSB+mksjg6+7GCchXW4ZHPHJ8guS9GHsrFjcRhyHD?=
+ =?us-ascii?Q?lbf+VujuHIbu3X0Sinb2WvWiBUJDmrgA6XeR1d0Du8eJOvavHCDD553T7nCj?=
+ =?us-ascii?Q?MrPaX4tU2HGtNNIml37abM42pKPqH18rjt03NYYlNvDAWO2Smt9/n2wVIPyh?=
+ =?us-ascii?Q?xAw5xXAbU7JuVXE9na7srKl2WIeM6ehNaFRPRQzyQPEfjluD0MHdyvOg8uQu?=
+ =?us-ascii?Q?xg5Sj0mnHgL8XIHh9RqVEoQJlJ7D/65qWfWj0lCA4sbD0Fwoew4gbcipPplX?=
+ =?us-ascii?Q?1A0zygEDgkiJ3WBBbKz5sNKrhhkZZ+jfPmW1ARFfq8zF4R5Ndnc3ShA0f0Og?=
+ =?us-ascii?Q?CtwaDck4ziEFiR0HjSJgnNd4P16yRlHJw0SFm/tnI7OoFhzlXpjgtsCUHDyW?=
+ =?us-ascii?Q?0ohSHvu4RJCx4/qA1/UI+d+vDyp/eGzUVbeXdf/EbNYbYfLwbVkToPxfJ1vD?=
+ =?us-ascii?Q?r66obONfIKncuW0OceAy79cctA9vQ14edWLA6PfXdTnQ0Kifa8SL1m75Gkuz?=
+ =?us-ascii?Q?iSVmqp1QP6L5G6Ucdos3qQb6A3geyHj3MCkA3J6uMwmZXYm6BjfI/HXNeHDa?=
+ =?us-ascii?Q?hVefG9EauMkrlTfFv8WfX3tMERPV+pEqaeemjiY7FOHv/7ByHz948JZSMSaG?=
+ =?us-ascii?Q?oWsVtAzFv60UaJtVzZ675LrPWB05bv3KydzWtxngAWB/la0G/A8zz5Tc2AVE?=
+ =?us-ascii?Q?AtZA3SI0WJ4GaPq6kXZyQRk8/qo0IgmOtz0o57545QnaO2zy5Hv9XUhK9dau?=
+ =?us-ascii?Q?NcXQB8lsbi3lpza2qer883wA+CyX1uCcrqHmHp3B4iUtNBDCgUQWrmmGC2kS?=
+ =?us-ascii?Q?WjdA3XZ+ujzOu7ut/Ii3ytyoAdSB2F9j/iSlzmKAIykSp/FCXIxTxtqtOvVc?=
+ =?us-ascii?Q?Fsd597Hi7KRuKVKx0+ktR79eIF6dh083tRoeLb+1AQodNU1jyv/9BH7vOeC+?=
+ =?us-ascii?Q?T8Lfv3iwCl5EuNJ2d0JjTi31qGWWxltAbyf6+GJXRG0lWd1EdzWYEt5uUA6y?=
+ =?us-ascii?Q?Yoo45AxtbkdWOxKNYokj+3UocrFIxZ17L6iaAiZ57wcTjqM0fx3QPzf11J6u?=
+ =?us-ascii?Q?ELaEEVIAO7hgYKvLlxk9rjDnkBGZ03Oh8sLs0Lipl5uNmUhsuvygYjzcxLus?=
+ =?us-ascii?Q?XcOIcHwNrtW5C8aFrvKcHvGkqjk92otOL0ErMbraXHAXmnaoDUAUS4WKjTKc?=
+ =?us-ascii?Q?ggXIYWm1sFHLJ/2ci1tVBCWXwVFkQeWUXvtUnlNSyZb1+nEsfDF0MkFKNckH?=
+ =?us-ascii?Q?Bg=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	yDFH3eyZ0Os9r295RqTKqe44MMunbk5Vkf+ODkR/BHSJqxY7NvmsHBWdsuk6tEkTFqQNHTtWUqG23S+ruLaxRC6+4WULHlxfsoCQckz65NuCMmVap5bDRf9mwoF45Bg1DdpEQxtCfu/cmrWdXDslDlBE3Mw6/526DCbEW5Cnm8ajL2W12HcX0OO1N+PJLxhpx1oLgEgVEGQYMSvdqz527tXHmELQTYV4an2EFFUzblXf8EYjBcFxO4OUo7nZJmq5Gev2KTEeTIM+si8ABtAgXRftGgpgMatTsC67eWtvkN6FUTUpOl7lKa8cexc7XQIj6DDOMNGbuNtjUY+8lJ/hJ5576kb8aLNiHQr7bTZHNymcnIYKmwzvGzpeAaHtZOuRypsMORhGYlf8Wm9JejbWDBDoAx8MEaZSJxsD1D+LIwAzZ0BamKB7GC3j378y6wcUy6LlrOmILkqFKpU0wgdHy8v8fXqicJhJz/bLZCdE3CVZ5KO7JWn7hmweS7NWFreMj8R+kzKFzt2uAL5WGU63Z5wbPSWSKpTn7aR25DfsTq1o9tHHdDcNliJoOh2mYZKfVT4rHXnUNhgsFdRnXl4UMixkyNwPhzyTpTY473uEWI0=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 519ef78a-9ca8-4d28-62f5-08ddef812ff8
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2025 09:13:49.2814
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dHSjZSs7wS5RUtRd90MjMzBzwbBPBaMStxRJRTn75lq4Jh+YsILCwDPfJRh3qXAOa048gaGD/vFagp0ZkjPWXnEVayk5VZ0jN2L8hVfiQz8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR10MB4969
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-08_06,2025-09-08_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 phishscore=0
+ bulkscore=0 mlxlogscore=999 malwarescore=0 adultscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
+ definitions=main-2509090091
+X-Proofpoint-GUID: pD1WS1ng4CO31s0em3AHiuf8l4ETSbTs
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA4MDE1MSBTYWx0ZWRfXyjWXbM0MVtgD
+ yCk7GecsvespPKsGh0YcDw+63QbulPLJ4G5qx2YZm92LHC75rCQg8M0THEu4gJiBIJ49AyUYevv
+ japM9itaByRjxGOH6o2Jfl6M8bNdHmi2NBemhbrMZaH3nAdM7LcF+aFIw7OyhB4tezIWxafacUQ
+ /YX9Z7fWqHIMi9S4x9ID0lVGhM9eAeI9uA0v/I4xS84Qo6v2kEf5ZkWs0siHKBfN/UpR/bZ5Kt9
+ mzssFbj6LYVXHXD8Ou906snsNNtWZNVcDoUuT/V4VUo0zAwsJ592zSagrQO6hTv41egVizc+FF/
+ GTIt1qRtOMaWXnPm88bpNm/64KVe8aBrDDjJYyXCcxdjfYUvHVznFXsj6oM5cfOI8VZI/OkHTF3
+ tSqAdsKL
+X-Authority-Analysis: v=2.4 cv=Dp5W+H/+ c=1 sm=1 tr=0 ts=68bfefd9 cx=c_pps
+ a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=GoEa3M9JfhUA:10 a=yPCof4ZbAAAA:8 a=hOJakRjXQ98C3HGjIvAA:9
+ a=CjuIK1q_8ugA:10
+X-Proofpoint-ORIG-GUID: pD1WS1ng4CO31s0em3AHiuf8l4ETSbTs
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
- block/bdev.c                     |  2 +-
- fs/bcachefs/fs.c                 |  2 +-
- fs/btrfs/inode.c                 |  2 +-
- fs/crypto/keyring.c              |  2 +-
- fs/drop_caches.c                 |  2 +-
- fs/ext4/inode.c                  |  4 ++--
- fs/fs-writeback.c                | 20 +++++++++----------
- fs/gfs2/ops_fstype.c             |  2 +-
- fs/inode.c                       | 18 ++++++++---------
- fs/notify/fsnotify.c             |  8 ++++----
- fs/quota/dquot.c                 |  2 +-
- fs/xfs/scrub/common.c            |  3 +--
- include/linux/fs.h               | 34 +++++++++++++-------------------
- include/trace/events/writeback.h |  3 +--
- security/landlock/fs.c           |  2 +-
- 15 files changed, 48 insertions(+), 58 deletions(-)
+On Mon, Sep 08, 2025 at 05:27:37PM +0200, David Hildenbrand wrote:
+> On 08.09.25 13:10, Lorenzo Stoakes wrote:
+> > We have introduced the f_op->mmap_prepare hook to allow for setting up a
+> > VMA far earlier in the process of mapping memory, reducing problematic
+> > error handling paths, but this does not provide what all
+> > drivers/filesystems need.
+> >
+> > In order to supply this, and to be able to move forward with removing
+> > f_op->mmap altogether, introduce f_op->mmap_complete.
+> >
+> > This hook is called once the VMA is fully mapped and everything is done,
+> > however with the mmap write lock and VMA write locks held.
+> >
+> > The hook is then provided with a fully initialised VMA which it can do what
+> > it needs with, though the mmap and VMA write locks must remain held
+> > throughout.
+> >
+> > It is not intended that the VMA be modified at this point, attempts to do
+> > so will end in tears.
+> >
+> > This allows for operations such as pre-population typically via a remap, or
+> > really anything that requires access to the VMA once initialised.
+> >
+> > In addition, a caller may need to take a lock in mmap_prepare, when it is
+> > possible to modify the VMA, and release it on mmap_complete. In order to
+> > handle errors which may arise between the two operations, f_op->mmap_abort
+> > is provided.
+> >
+> > This hook should be used to drop any lock and clean up anything before the
+> > VMA mapping operation is aborted. After this point the VMA will not be
+> > added to any mapping and will not exist.
+> >
+> > We also add a new mmap_context field to the vm_area_desc type which can be
+> > used to pass information pertinent to any locks which are held or any state
+> > which is required for mmap_complete, abort to operate correctly.
+> >
+> > We also update the compatibility layer for nested filesystems which
+> > currently still only specify an f_op->mmap() handler so that it correctly
+> > invokes f_op->mmap_complete as necessary (note that no error can occur
+> > between mmap_prepare and mmap_complete so mmap_abort will never be called
+> > in this case).
+> >
+> > Also update the VMA tests to account for the changes.
+> >
+> > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> > ---
+> >   include/linux/fs.h               |  4 ++
+> >   include/linux/mm_types.h         |  5 ++
+> >   mm/util.c                        | 18 +++++--
+> >   mm/vma.c                         | 82 ++++++++++++++++++++++++++++++--
+> >   tools/testing/vma/vma_internal.h | 31 ++++++++++--
+> >   5 files changed, 129 insertions(+), 11 deletions(-)
+> >
+> > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > index 594bd4d0521e..bb432924993a 100644
+> > --- a/include/linux/fs.h
+> > +++ b/include/linux/fs.h
+> > @@ -2195,6 +2195,10 @@ struct file_operations {
+> >   	int (*uring_cmd_iopoll)(struct io_uring_cmd *, struct io_comp_batch *,
+> >   				unsigned int poll_flags);
+> >   	int (*mmap_prepare)(struct vm_area_desc *);
+> > +	int (*mmap_complete)(struct file *, struct vm_area_struct *,
+> > +			     const void *context);
+> > +	void (*mmap_abort)(const struct file *, const void *vm_private_data,
+> > +			   const void *context);
+>
+> Do we have a description somewhere what these things do, when they are
+> called, and what a driver may be allowed to do with a VMA?
 
-diff --git a/block/bdev.c b/block/bdev.c
-index 77f04042ac67..fb280f7b04c0 100644
---- a/block/bdev.c
-+++ b/block/bdev.c
-@@ -1265,7 +1265,7 @@ void sync_bdevs(bool wait)
- 		struct block_device *bdev;
- 
- 		spin_lock(&inode->i_lock);
--		if (inode_state_read(inode) & (I_FREEING|I_WILL_FREE|I_NEW) ||
-+		if (inode_state_read(inode) & (I_NEW | I_FREEING) ||
- 		    mapping->nrpages == 0) {
- 			spin_unlock(&inode->i_lock);
- 			continue;
-diff --git a/fs/bcachefs/fs.c b/fs/bcachefs/fs.c
-index 172685ced878..1aeacc9a945e 100644
---- a/fs/bcachefs/fs.c
-+++ b/fs/bcachefs/fs.c
-@@ -347,7 +347,7 @@ static struct bch_inode_info *bch2_inode_hash_find(struct bch_fs *c, struct btre
- 			spin_unlock(&inode->v.i_lock);
- 			return NULL;
- 		}
--		if ((inode_state_read(&inode->v) & (I_FREEING|I_WILL_FREE))) {
-+		if (inode_state_read(&inode->v) & I_FREEING) {
- 			if (!trans) {
- 				__wait_on_freeing_inode(c, inode, inum);
- 			} else {
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 1cfdba42f072..5a3cb16a9420 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -3856,7 +3856,7 @@ static int btrfs_add_inode_to_root(struct btrfs_inode *inode, bool prealloc)
- 		ASSERT(ret != -ENOMEM);
- 		return ret;
- 	} else if (existing) {
--		WARN_ON(!(inode_state_read_unlocked(&existing->vfs_inode) & (I_WILL_FREE | I_FREEING)));
-+		WARN_ON(!(inode_state_read_unlocked(&existing->vfs_inode) & I_FREEING));
- 	}
- 
- 	return 0;
-diff --git a/fs/crypto/keyring.c b/fs/crypto/keyring.c
-index 34beb60bc24e..b64726176218 100644
---- a/fs/crypto/keyring.c
-+++ b/fs/crypto/keyring.c
-@@ -957,7 +957,7 @@ static void evict_dentries_for_decrypted_inodes(struct fscrypt_master_key *mk)
- 	list_for_each_entry(ci, &mk->mk_decrypted_inodes, ci_master_key_link) {
- 		inode = ci->ci_inode;
- 		spin_lock(&inode->i_lock);
--		if (inode_state_read(inode) & (I_FREEING | I_WILL_FREE | I_NEW)) {
-+		if (inode_state_read(inode) & (I_NEW | I_FREEING)) {
- 			spin_unlock(&inode->i_lock);
- 			continue;
- 		}
-diff --git a/fs/drop_caches.c b/fs/drop_caches.c
-index 73175ac2fe92..687795d7846b 100644
---- a/fs/drop_caches.c
-+++ b/fs/drop_caches.c
-@@ -28,7 +28,7 @@ static void drop_pagecache_sb(struct super_block *sb, void *unused)
- 		 * inodes without pages but we deliberately won't in case
- 		 * we need to reschedule to avoid softlockups.
- 		 */
--		if ((inode_state_read(inode) & (I_FREEING|I_WILL_FREE|I_NEW)) ||
-+		if ((inode_state_read(inode) & (I_NEW | I_FREEING)) ||
- 		    (mapping_empty(inode->i_mapping) && !need_resched())) {
- 			spin_unlock(&inode->i_lock);
- 			continue;
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 55d87fa1c5af..db9a24ca7192 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -425,7 +425,7 @@ void ext4_check_map_extents_env(struct inode *inode)
- 	if (!S_ISREG(inode->i_mode) ||
- 	    IS_NOQUOTA(inode) || IS_VERITY(inode) ||
- 	    is_special_ino(inode->i_sb, inode->i_ino) ||
--	    (inode_state_read_unlocked(inode) & (I_FREEING | I_WILL_FREE | I_NEW)) ||
-+	    (inode_state_read_unlocked(inode) & (I_NEW | I_FREEING)) ||
- 	    ext4_test_inode_flag(inode, EXT4_INODE_EA_INODE) ||
- 	    ext4_verity_in_progress(inode))
- 		return;
-@@ -4581,7 +4581,7 @@ int ext4_truncate(struct inode *inode)
- 	 * or it's a completely new inode. In those cases we might not
- 	 * have i_rwsem locked because it's not necessary.
- 	 */
--	if (!(inode_state_read_unlocked(inode) & (I_NEW|I_FREEING)))
-+	if (!(inode_state_read_unlocked(inode) & (I_NEW | I_FREEING)))
- 		WARN_ON(!inode_is_locked(inode));
- 	trace_ext4_truncate_enter(inode);
- 
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index 67c2157a7d21..a3fb9004b581 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -405,10 +405,10 @@ static bool inode_do_switch_wbs(struct inode *inode,
- 	xa_lock_irq(&mapping->i_pages);
- 
- 	/*
--	 * Once I_FREEING or I_WILL_FREE are visible under i_lock, the eviction
--	 * path owns the inode and we shouldn't modify ->i_io_list.
-+	 * Once I_FREEING is visible under i_lock, the eviction path owns the
-+	 * inode and we shouldn't modify ->i_io_list.
- 	 */
--	if (unlikely(inode_state_read(inode) & (I_FREEING | I_WILL_FREE)))
-+	if (unlikely(inode_state_read(inode) & I_FREEING))
- 		goto skip_switch;
- 
- 	trace_inode_switch_wbs(inode, old_wb, new_wb);
-@@ -561,7 +561,7 @@ static bool inode_prepare_wbs_switch(struct inode *inode,
- 	/* while holding I_WB_SWITCH, no one else can update the association */
- 	spin_lock(&inode->i_lock);
- 	if (!(inode->i_sb->s_flags & SB_ACTIVE) ||
--	    inode_state_read(inode) & (I_WB_SWITCH | I_FREEING | I_WILL_FREE) ||
-+	    inode_state_read(inode) & (I_WB_SWITCH | I_FREEING) ||
- 	    inode_to_wb(inode) == new_wb) {
- 		spin_unlock(&inode->i_lock);
- 		return false;
-@@ -1759,7 +1759,7 @@ __writeback_single_inode(struct inode *inode, struct writeback_control *wbc)
-  * whether it is a data-integrity sync (%WB_SYNC_ALL) or not (%WB_SYNC_NONE).
-  *
-  * To prevent the inode from going away, either the caller must have a reference
-- * to the inode, or the inode must have I_WILL_FREE or I_FREEING set.
-+ * to the inode, or the inode must have I_FREEING set.
-  */
- static int writeback_single_inode(struct inode *inode,
- 				  struct writeback_control *wbc)
-@@ -1769,9 +1769,7 @@ static int writeback_single_inode(struct inode *inode,
- 
- 	spin_lock(&inode->i_lock);
- 	if (!icount_read(inode))
--		WARN_ON(!(inode_state_read(inode) & (I_WILL_FREE|I_FREEING)));
--	else
--		WARN_ON(inode_state_read(inode) & I_WILL_FREE);
-+		WARN_ON(!(inode_state_read(inode) & I_FREEING));
- 
- 	if (inode_state_read(inode) & I_SYNC) {
- 		/*
-@@ -1929,7 +1927,7 @@ static long writeback_sb_inodes(struct super_block *sb,
- 		 * kind writeout is handled by the freer.
- 		 */
- 		spin_lock(&inode->i_lock);
--		if (inode_state_read(inode) & (I_NEW | I_FREEING | I_WILL_FREE)) {
-+		if (inode_state_read(inode) & (I_NEW | I_FREEING)) {
- 			redirty_tail_locked(inode, wb);
- 			spin_unlock(&inode->i_lock);
- 			continue;
-@@ -2697,7 +2695,7 @@ static void wait_sb_inodes(struct super_block *sb)
- 		spin_unlock_irq(&sb->s_inode_wblist_lock);
- 
- 		spin_lock(&inode->i_lock);
--		if (inode_state_read(inode) & (I_FREEING|I_WILL_FREE|I_NEW)) {
-+		if (inode_state_read(inode) & (I_NEW | I_FREEING)) {
- 			spin_unlock(&inode->i_lock);
- 
- 			spin_lock_irq(&sb->s_inode_wblist_lock);
-@@ -2846,7 +2844,7 @@ EXPORT_SYMBOL(sync_inodes_sb);
-  * This function commits an inode to disk immediately if it is dirty. This is
-  * primarily needed by knfsd.
-  *
-- * The caller must either have a ref on the inode or must have set I_WILL_FREE.
-+ * The caller must either have a ref on the inode or must have set I_FREEING.
-  */
- int write_inode_now(struct inode *inode, int sync)
- {
-diff --git a/fs/gfs2/ops_fstype.c b/fs/gfs2/ops_fstype.c
-index 3ccd902ec5ba..240894adb34d 100644
---- a/fs/gfs2/ops_fstype.c
-+++ b/fs/gfs2/ops_fstype.c
-@@ -1749,7 +1749,7 @@ static void gfs2_evict_inodes(struct super_block *sb)
- 	spin_lock(&sb->s_inode_list_lock);
- 	list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
- 		spin_lock(&inode->i_lock);
--		if ((inode_state_read(inode) & (I_FREEING|I_WILL_FREE|I_NEW)) &&
-+		if ((inode_state_read(inode) & (I_NEW | I_FREEING)) &&
- 		    !need_resched()) {
- 			spin_unlock(&inode->i_lock);
- 			continue;
-diff --git a/fs/inode.c b/fs/inode.c
-index 9c695339ec3e..6a69de0bf7bd 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -532,7 +532,7 @@ EXPORT_SYMBOL(ihold);
- 
- static void __inode_add_lru(struct inode *inode, bool rotate)
- {
--	if (inode_state_read(inode) & (I_DIRTY_ALL | I_SYNC | I_FREEING | I_WILL_FREE))
-+	if (inode_state_read(inode) & (I_DIRTY_ALL | I_SYNC | I_FREEING))
- 		return;
- 	if (icount_read(inode))
- 		return;
-@@ -577,7 +577,7 @@ static void inode_lru_list_del(struct inode *inode)
- static void inode_pin_lru_isolating(struct inode *inode)
- {
- 	lockdep_assert_held(&inode->i_lock);
--	WARN_ON(inode_state_read(inode) & (I_LRU_ISOLATING | I_FREEING | I_WILL_FREE));
-+	WARN_ON(inode_state_read(inode) & (I_LRU_ISOLATING | I_FREEING));
- 	inode_state_add(inode, I_LRU_ISOLATING);
- }
- 
-@@ -879,7 +879,7 @@ void evict_inodes(struct super_block *sb)
- 			spin_unlock(&inode->i_lock);
- 			continue;
- 		}
--		if (inode_state_read(inode) & (I_NEW | I_FREEING | I_WILL_FREE)) {
-+		if (inode_state_read(inode) & (I_NEW | I_FREEING)) {
- 			spin_unlock(&inode->i_lock);
- 			continue;
- 		}
-@@ -1025,7 +1025,7 @@ static struct inode *find_inode(struct super_block *sb,
- 		if (!test(inode, data))
- 			continue;
- 		spin_lock(&inode->i_lock);
--		if (inode_state_read(inode) & (I_FREEING|I_WILL_FREE)) {
-+		if (inode_state_read(inode) & I_FREEING) {
- 			__wait_on_freeing_inode(inode, is_inode_hash_locked);
- 			goto repeat;
- 		}
-@@ -1066,7 +1066,7 @@ static struct inode *find_inode_fast(struct super_block *sb,
- 		if (inode->i_sb != sb)
- 			continue;
- 		spin_lock(&inode->i_lock);
--		if (inode_state_read(inode) & (I_FREEING|I_WILL_FREE)) {
-+		if (inode_state_read(inode) & I_FREEING) {
- 			__wait_on_freeing_inode(inode, is_inode_hash_locked);
- 			goto repeat;
- 		}
-@@ -1538,7 +1538,7 @@ EXPORT_SYMBOL(iunique);
- struct inode *igrab(struct inode *inode)
- {
- 	spin_lock(&inode->i_lock);
--	if (!(inode_state_read(inode) & (I_FREEING|I_WILL_FREE))) {
-+	if (!(inode_state_read(inode) & I_FREEING)) {
- 		__iget(inode);
- 		spin_unlock(&inode->i_lock);
- 	} else {
-@@ -1728,7 +1728,7 @@ struct inode *find_inode_rcu(struct super_block *sb, unsigned long hashval,
- 
- 	hlist_for_each_entry_rcu(inode, head, i_hash) {
- 		if (inode->i_sb == sb &&
--		    !(inode_state_read_unlocked(inode) & (I_FREEING | I_WILL_FREE)) &&
-+		    !(inode_state_read_unlocked(inode) & I_FREEING) &&
- 		    test(inode, data))
- 			return inode;
- 	}
-@@ -1767,7 +1767,7 @@ struct inode *find_inode_by_ino_rcu(struct super_block *sb,
- 	hlist_for_each_entry_rcu(inode, head, i_hash) {
- 		if (inode->i_ino == ino &&
- 		    inode->i_sb == sb &&
--		    !(inode_state_read_unlocked(inode) & (I_FREEING | I_WILL_FREE)))
-+		    !(inode_state_read_unlocked(inode) & I_FREEING))
- 		    return inode;
- 	}
- 	return NULL;
-@@ -1789,7 +1789,7 @@ int insert_inode_locked(struct inode *inode)
- 			if (old->i_sb != sb)
- 				continue;
- 			spin_lock(&old->i_lock);
--			if (inode_state_read(old) & (I_FREEING|I_WILL_FREE)) {
-+			if (inode_state_read(old) & I_FREEING) {
- 				spin_unlock(&old->i_lock);
- 				continue;
- 			}
-diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-index 8e504b40fb39..82b0e97454db 100644
---- a/fs/notify/fsnotify.c
-+++ b/fs/notify/fsnotify.c
-@@ -47,12 +47,12 @@ static void fsnotify_unmount_inodes(struct super_block *sb)
- 	spin_lock(&sb->s_inode_list_lock);
- 	list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
- 		/*
--		 * We cannot __iget() an inode in state I_FREEING,
--		 * I_WILL_FREE, or I_NEW which is fine because by that point
--		 * the inode cannot have any associated watches.
-+		 * We cannot __iget() an inode in state I_NEW or I_FREEING
-+		 * which is fine because by that point the inode cannot have
-+		 * any associated watches.
- 		 */
- 		spin_lock(&inode->i_lock);
--		if (inode_state_read(inode) & (I_FREEING|I_WILL_FREE|I_NEW)) {
-+		if (inode_state_read(inode) & (I_NEW | I_FREEING)) {
- 			spin_unlock(&inode->i_lock);
- 			continue;
- 		}
-diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
-index beb3d82a2915..bd5b1d10a52a 100644
---- a/fs/quota/dquot.c
-+++ b/fs/quota/dquot.c
-@@ -1030,7 +1030,7 @@ static int add_dquot_ref(struct super_block *sb, int type)
- 	spin_lock(&sb->s_inode_list_lock);
- 	list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
- 		spin_lock(&inode->i_lock);
--		if ((inode_state_read(inode) & (I_FREEING|I_WILL_FREE|I_NEW)) ||
-+		if ((inode_state_read(inode) & (I_NEW | I_FREEING)) ||
- 		    !atomic_read(&inode->i_writecount) ||
- 		    !dqinit_needed(inode, type)) {
- 			spin_unlock(&inode->i_lock);
-diff --git a/fs/xfs/scrub/common.c b/fs/xfs/scrub/common.c
-index 2ef7742be7d3..e678f944206f 100644
---- a/fs/xfs/scrub/common.c
-+++ b/fs/xfs/scrub/common.c
-@@ -1086,8 +1086,7 @@ xchk_install_handle_inode(
- 
- /*
-  * Install an already-referenced inode for scrubbing.  Get our own reference to
-- * the inode to make disposal simpler.  The inode must not be in I_FREEING or
-- * I_WILL_FREE state!
-+ * the inode to make disposal simpler.  The inode must not have I_FREEING set.
-  */
- int
- xchk_install_live_inode(
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index f933d181a40e..40c4c0e8dd45 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -671,8 +671,8 @@ is_uncached_acl(struct posix_acl *acl)
-  * I_DIRTY_DATASYNC, I_DIRTY_PAGES, and I_DIRTY_TIME.
-  *
-  * Four bits define the lifetime of an inode.  Initially, inodes are I_NEW,
-- * until that flag is cleared.  I_WILL_FREE, I_FREEING and I_CLEAR are set at
-- * various stages of removing an inode.
-+ * until that flag is cleared.  I_FREEING and I_CLEAR are set at various stages
-+ * of removing an inode.
-  *
-  * Two bits are used for locking and completion notification, I_NEW and I_SYNC.
-  *
-@@ -696,24 +696,21 @@ is_uncached_acl(struct posix_acl *acl)
-  *			New inodes set I_NEW.  If two processes both create
-  *			the same inode, one of them will release its inode and
-  *			wait for I_NEW to be released before returning.
-- *			Inodes in I_WILL_FREE, I_FREEING or I_CLEAR state can
-- *			also cause waiting on I_NEW, without I_NEW actually
-- *			being set.  find_inode() uses this to prevent returning
-- *			nearly-dead inodes.
-- * I_WILL_FREE		Must be set when calling write_inode_now() if i_count
-- *			is zero.  I_FREEING must be set when I_WILL_FREE is
-- *			cleared.
-+ *			Inodes in I_FREEING or I_CLEAR state can also cause
-+ *			waiting on I_NEW, without I_NEW actually being set.
-+ *			find_inode() uses this to prevent returning nearly-dead
-+ *			inodes.
-  * I_FREEING		Set when inode is about to be freed but still has dirty
-  *			pages or buffers attached or the inode itself is still
-  *			dirty.
-  * I_CLEAR		Added by clear_inode().  In this state the inode is
-  *			clean and can be destroyed.  Inode keeps I_FREEING.
-  *
-- *			Inodes that are I_WILL_FREE, I_FREEING or I_CLEAR are
-- *			prohibited for many purposes.  iget() must wait for
-- *			the inode to be completely released, then create it
-- *			anew.  Other functions will just ignore such inodes,
-- *			if appropriate.  I_NEW is used for waiting.
-+ *			Inodes that are I_FREEING or I_CLEAR are prohibited for
-+ *			many purposes.  iget() must wait for the inode to be
-+ *			completely released, then create it anew.  Other
-+ *			functions will just ignore such inodes, if appropriate.
-+ *			I_NEW is used for waiting.
-  *
-  * I_SYNC		Writeback of inode is running. The bit is set during
-  *			data writeback, and cleared with a wakeup on the bit
-@@ -743,8 +740,6 @@ is_uncached_acl(struct posix_acl *acl)
-  * I_LRU_ISOLATING	Inode is pinned being isolated from LRU without holding
-  *			i_count.
-  *
-- * Q: What is the difference between I_WILL_FREE and I_FREEING?
-- *
-  * __I_{SYNC,NEW,LRU_ISOLATING} are used to derive unique addresses to wait
-  * upon. There's one free address left.
-  */
-@@ -764,7 +759,7 @@ enum inode_state_flags_enum {
- 	I_DIRTY_SYNC		= (1U << 4),
- 	I_DIRTY_DATASYNC	= (1U << 5),
- 	I_DIRTY_PAGES		= (1U << 6),
--	I_WILL_FREE		= (1U << 7),
-+	I_PINNING_NETFS_WB	= (1U << 7),
- 	I_FREEING		= (1U << 8),
- 	I_CLEAR			= (1U << 9),
- 	I_REFERENCED		= (1U << 10),
-@@ -775,7 +770,6 @@ enum inode_state_flags_enum {
- 	I_CREATING		= (1U << 15),
- 	I_DONTCACHE		= (1U << 16),
- 	I_SYNC_QUEUED		= (1U << 17),
--	I_PINNING_NETFS_WB	= (1U << 18)
- };
- 
- #define I_DIRTY_INODE (I_DIRTY_SYNC | I_DIRTY_DATASYNC)
-@@ -2664,8 +2658,8 @@ static inline int icount_read(const struct inode *inode)
-  */
- static inline bool inode_is_dirtytime_only(struct inode *inode)
- {
--	return (inode_state_read_unlocked(inode) & (I_DIRTY_TIME | I_NEW |
--				  I_FREEING | I_WILL_FREE)) == I_DIRTY_TIME;
-+	return (inode_state_read_unlocked(inode) &
-+		(I_DIRTY_TIME | I_NEW | I_FREEING)) == I_DIRTY_TIME;
- }
- 
- extern void inc_nlink(struct inode *inode);
-diff --git a/include/trace/events/writeback.h b/include/trace/events/writeback.h
-index 82f6b7f26c29..1c6700011f08 100644
---- a/include/trace/events/writeback.h
-+++ b/include/trace/events/writeback.h
-@@ -15,7 +15,7 @@
- 		{I_DIRTY_DATASYNC,	"I_DIRTY_DATASYNC"},	\
- 		{I_DIRTY_PAGES,		"I_DIRTY_PAGES"},	\
- 		{I_NEW,			"I_NEW"},		\
--		{I_WILL_FREE,		"I_WILL_FREE"},		\
-+		{I_PINNING_NETFS_WB,	"I_PINNING_NETFS_WB"},	\
- 		{I_FREEING,		"I_FREEING"},		\
- 		{I_CLEAR,		"I_CLEAR"},		\
- 		{I_SYNC,		"I_SYNC"},		\
-@@ -27,7 +27,6 @@
- 		{I_CREATING,		"I_CREATING"},		\
- 		{I_DONTCACHE,		"I_DONTCACHE"},		\
- 		{I_SYNC_QUEUED,		"I_SYNC_QUEUED"},	\
--		{I_PINNING_NETFS_WB,	"I_PINNING_NETFS_WB"},	\
- 		{I_LRU_ISOLATING,	"I_LRU_ISOLATING"}	\
- 	)
- 
-diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-index 56c30d04971f..4135c11ac939 100644
---- a/security/landlock/fs.c
-+++ b/security/landlock/fs.c
-@@ -1296,7 +1296,7 @@ static void hook_sb_delete(struct super_block *const sb)
- 		 * iput() for the same Landlock object.  Also checks I_NEW
- 		 * because such inode cannot be tied to an object.
- 		 */
--		if (inode_state_read(inode) & (I_FREEING | I_WILL_FREE | I_NEW)) {
-+		if (inode_state_read(inode) & (I_NEW | I_FREEING)) {
- 			spin_unlock(&inode->i_lock);
- 			continue;
- 		}
--- 
-2.43.0
+Yeah there's a doc patch that follows this.
 
+>
+> In particular, the mmap_complete() looks like another candidate for letting
+> a driver just go crazy on the vma? :)
+
+Well there's only so much we can do. In an ideal world we'd treat VMAs as
+entirely internal data structures and pass some sort of opaque thing around, but
+we have to keep things real here :)
+
+So the main purpose of these changes is not so much to be as ambitious as
+_that_, but to only provide the VMA _when it's safe to do so_.
+
+Before we were providing a pointer to an incompletely-initialised VMA that was
+not yet in the maple tree, with which the driver could do _anything_, and then
+afterwards have:
+
+a. a bunch of stuff left to do with a VMA that might be in some broken state due
+   to drivers.
+b. (the really bad case) have error paths to handle because the driver returned
+   an error, but did who-knows-what with the VMA and page tables.
+
+So we address this by:
+
+1. mmap_prepare being done _super early_ and _not_ providing a VMA. We
+   essentially ask the driver 'hey what do you want these fields that you are
+   allowed to change in the VMA to be?'
+
+2. mmap_complete being done _super_ late, essentially just before we release the
+   VMA/mmap locks. If an error arises - we can just unmap it, easy. And then
+   there's a lot less damage the driver can do.
+
+I think it's probably the most sensible means of doing something about the
+legacy we have where we've been rather too 'free and easy' with allowing drivers
+to do whatever.
+
+>
+> --
+> Cheers
+>
+> David / dhildenb
+>
+
+Cheers, Lorenzo
 
