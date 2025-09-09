@@ -1,87 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-60661-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60662-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5AB1B4AC72
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 13:43:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 85D09B4AC90
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 13:45:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4560D4E6C12
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 11:42:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61C484E82DA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 11:44:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA758322C71;
-	Tue,  9 Sep 2025 11:42:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D9FA32BF47;
+	Tue,  9 Sep 2025 11:43:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XURj5asx"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g63hbSzY"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72AA632254F
-	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Sep 2025 11:42:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2085E322A26
+	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Sep 2025 11:43:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757418155; cv=none; b=HJ7BhAyY3OfVfk20faKHjwb2rGoPwQRuZ/UM7OOVAkPa6xL+717+FgSj6hlXYVawzuxhrkrEeed3DcHjZFixZZqATe+y+UJjJOQO+BkJkcrW98bEP65E4/vqV4oohaKEitJR6o6Vaq6YV+qk1bnhphwJWGCRJP0tAXwAxzU0AcY=
+	t=1757418217; cv=none; b=cI80khWt0SkFYbvC1p1cZtMYZZSigVYsIKiaz1QuFB+W5RExb+y1pzvwi9IuNXNZ3x562h44df92E/G7kQtpgz3pr9JgRt5KakJzKcpqYD4tNzCxcOM7YDlSWjsbMoj6o8FnS6m16QQzPwMnbcWwI564i+3PYH9mDlhc5fwUi0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757418155; c=relaxed/simple;
-	bh=H6VAzLsPOmxWnyESHgkWPwLGyz9Zb+oLYRPmgzNBHSk=;
+	s=arc-20240116; t=1757418217; c=relaxed/simple;
+	bh=Inx6cgrkShQnbg5cQvua+6FFGCNnU2WKAhHUl1xxUJQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ftZ5za7d7B4+OWoARmB8t/Y+gj91PWKm8BXv+nLcqxE9lJEYWfVbsxSghgSoxkSYrh1yyZd/uQkvlEVbgV9ZfHelPhVexBXNDecPAzztlxRGcFKamKRpN6QSOGsAOs6td5Hpb9l+j8mPZ/Y378X6WBnLKxQfHa/s9wdcnepvAgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XURj5asx; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=qKxu31zu+4zduvvLOtJBIYku4N6FmgHx/WtXnKnK53jwkId79mwsrvTgCGhS93VB5F8oMPg8Bg7kmwbgqCeiqXKYuAwedGHD1+L9S0AQZojt3+Ae9I/BmaNAkmwIeaIgnZWdaByf/iMmVkM+/iWF9QxtUFrT5j2ZNjnDqMv2sho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g63hbSzY; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757418152;
+	s=mimecast20190719; t=1757418214;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=tUGU+TjHtTHHLTK2zHbFOGsi468ffG0Hp57VOnPF+Rk=;
-	b=XURj5asx7KBEiw0pBstgaPKlyImzj/RMxcAmhiG56aNffbzvc7Sn+GqjVTIyMKG+3Wk2yn
-	6zQ9qdZ5IMxdw4ntXJmoCqPJJ5P8xrRkKqPR19Z7qpTs2MRzkhQlp5tNkzF9xLevLHl1VZ
-	7UKnRbqSWIkzdPVav3rylDR3RLJAS2E=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=ZfsNktiY5EeJ33gIhfo8w6nygoXQJt9oz6VGjfkKEBQ=;
+	b=g63hbSzYtAOzxqTf/aFkxx1KNSi/NJ2J4789Y77DnBdt0epeTBqEIU+wCR4XWiW5gOgNbf
+	yVgeG9vshbaH6cn3mC5xgU21xq3Nlk64VPHb/FI3yJDqRDh3nUoW5qbJ7kUVnF3mDqedFE
+	VrZCw6MkKl+aCGrq41SzbYAuTm0Lh6U=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-537-IhUKVKFhPrCpKHX4UiyL2w-1; Tue, 09 Sep 2025 07:42:31 -0400
-X-MC-Unique: IhUKVKFhPrCpKHX4UiyL2w-1
-X-Mimecast-MFC-AGG-ID: IhUKVKFhPrCpKHX4UiyL2w_1757418150
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3e753e78902so214971f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Sep 2025 04:42:30 -0700 (PDT)
+ us-mta-677-dknaSbnPOjK42kpfSG5fIg-1; Tue, 09 Sep 2025 07:43:32 -0400
+X-MC-Unique: dknaSbnPOjK42kpfSG5fIg-1
+X-Mimecast-MFC-AGG-ID: dknaSbnPOjK42kpfSG5fIg_1757418212
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45de18e7eccso16660455e9.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Sep 2025 04:43:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757418150; x=1758022950;
+        d=1e100.net; s=20230601; t=1757418211; x=1758023011;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=tUGU+TjHtTHHLTK2zHbFOGsi468ffG0Hp57VOnPF+Rk=;
-        b=aeNc/WgqvXNf1zgPOfBOH/F7tDW/cbqzqrpgc9Mw2+pELVzCPOxN0ubfVYnDWNY0LV
-         vBPtYJ+svguE+OJPb1XJEgIM683Bj8Q1j2huLkeAI20BNx1zcG+IDA6HSOenI8r/hlMZ
-         W2MjY371cNmEKIysj89dgN2F2nHOIN2qzB5rdXtJn6mDIRvl7Beu1n8ZAwEe4NBigFQB
-         xflfwz+aqTBTFii8/iyEz1Dhx/S3vKZuPPEpiljc4MVm3ZUgcYp7Sfa253R5O6FaR0mI
-         tFWZrkDvcx/T9K0CxBGp56pVzD30uBDMK4IvDmHpSGIhZOKkwaV9AO4m6x+FS0jYj+EU
-         jPnA==
-X-Forwarded-Encrypted: i=1; AJvYcCWJy/fm+rdtZQq2Z5g1ogXj/uB21DNqG9nTwoaleQJQQp6BXo+tyKCao0w7b4XbnVawt+vbKOzAtrb1Rudl@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwnRu68ADLN9eUKa3EqdD1AAMhaHdmgO70jZgmqKRZaEmAYoIi
-	6Q0emn5b14EjtrWO2DQSWMS5hRU5zsPJbG+Py2rTKaiXBV6gMmrTTWfx7TsHvKzGiTTMBIVqfKn
-	SLjLgobiWY0Fq7LGv5YGHdaH5vsW7Su94XOVOJZC0IR63MzVN6df+Vkuf4NbDdt73zEI=
-X-Gm-Gg: ASbGncuxipWnc75EeN6rwPf/x2UG4PmMRhHkxzJI0QZXXaLczbibvzT3hzYy3k1q5q+
-	ugbVC3KVMIv7gNddsJAPdk+iRvvoqO9eYlmeiK0UkHwpbB9sxuQhNgqDHN63WfOLSaOfgBLdB8u
-	nfQGFj5i77RBqQoYAHQqivS1SJSRaOyUeSJaEqmXo/uGGq0WuZ7zV34Nr6EXk1Ti+AS/v4Lnyay
-	n8zDYZCqa5PjS9aqiz1XnQfiI2eUMjejcUAbg7lEgBQAHGsBrDhvfNeu55wmUQgUY5XgWjidkBT
-	tAG8Z2DzU3EAWwcpWpB/NqG/W4jCPjQ7HRllDv7e9MqQAwGKLd00/ELsU2tbbqGx1748QA==
-X-Received: by 2002:a05:6000:420f:b0:3e5:3346:6e91 with SMTP id ffacd0b85a97d-3e64383717dmr10654854f8f.34.1757418149853;
-        Tue, 09 Sep 2025 04:42:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGKFeXgvK0zu78cnS/MrxQ6hYkXo2ROCVXFAQC8NTjQM7+aKrD3KcmqhXZxE0LXSSAZhwTOPg==
-X-Received: by 2002:a05:6000:420f:b0:3e5:3346:6e91 with SMTP id ffacd0b85a97d-3e64383717dmr10654811f8f.34.1757418149387;
-        Tue, 09 Sep 2025 04:42:29 -0700 (PDT)
+        bh=ZfsNktiY5EeJ33gIhfo8w6nygoXQJt9oz6VGjfkKEBQ=;
+        b=txPyMYqdP+Uhr18J258zPZlGAaTdCY7JrTFXTRfeH/2YEHyuSicb8BTa79gReDUNcF
+         qvTry/2nBPHvLBnmpoAx4kjTobSLFrm9l0/Z3ZWyUHjayggGyGx2SFhgVcGRW8BPNoFX
+         QlCPDlaVnb9KpO0np5P6rUbgy8b3PkUcHI+pzPkD+VTx6SxvWYgaAF6PBrHXi1MbgN1s
+         U3/dZ2QiM0NM1A+6iwaeoCSvWAeTel7z/U7kVStX3cfFndtDBh4JXSjPPUaBigXs+vaI
+         0f65p1Nq1H1CoEoNBnbY1zjfh8Mn+K0TJNR0O8mEHykW1WzRH0A4JLQL0Lui/OHXcgEi
+         ZasA==
+X-Forwarded-Encrypted: i=1; AJvYcCWDz8/9ZAqWekU34f+FJ5nF9DDuO9pZx3cImJdqe9wfvPMJNotosguJmrIvQ6s1/qtJMoQUZEASZrp406Oj@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyd+RdNVaHg2CokHJ48kGVJMFyXEoxD8A+3tET7ghpVtyMFZgUe
+	9PH3QMzVarUAzuvdVFgjj44pziZseZsgLBjlaoifbXrGwDOzC+SqLNh0Gscdq+LYc587RfMp887
+	gvPgN6gITfWbZrddB0ZJitGptd9VNu7DqGbLuNitwxQ9lh5wioMOEsPiS7OqAmtK3ccI=
+X-Gm-Gg: ASbGncvpxgeHxa6hHJ/4ln9+z437s0f1Ung3x2s0nvzywPdZowP89jeRAJMFlBLRtdI
+	Tr4bDtFw8nW9Q45EAdf/OXc0pCX4tgmq22rDgrTDfmkYJ5BUJ/5xtRjyDiouYWaRs38ldlRaci4
+	BlHVO7xHuoPp/ICMCwviGy+VjX2H22TPPBAFU78xCxXyx5IJtT9UALWEQC/PoSA9jet/tXZ6Nca
+	hFdNTArmUkSjmHRP7iFI+PTQgvbVEkm5GJ8BF4juYw8Ajtb+q/GThTahSWcNYx1OIwLXUq6Vevf
+	VaTLSrXtRjqDPyAwcBl1q4n2O4uql4uBul3GGbj+OgH6N4kd33vsZ0LsFwwIVne0uPqOCA==
+X-Received: by 2002:a05:600c:45c9:b0:45b:97d9:4127 with SMTP id 5b1f17b1804b1-45ddde88188mr92336215e9.1.1757418211534;
+        Tue, 09 Sep 2025 04:43:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFJoKdOB5PemUWBhPxYUhvzLBwqsvjrZuiiRzLKO/WI4N7BBAhfeDUq9Rg/ZPYt77RdwSoTMQ==
+X-Received: by 2002:a05:600c:45c9:b0:45b:97d9:4127 with SMTP id 5b1f17b1804b1-45ddde88188mr92335895e9.1.1757418211082;
+        Tue, 09 Sep 2025 04:43:31 -0700 (PDT)
 Received: from [192.168.3.141] (p57a1a41f.dip0.t-ipconnect.de. [87.161.164.31])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e75223ea15sm2306665f8f.47.2025.09.09.04.42.27
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e75223f607sm2331885f8f.51.2025.09.09.04.43.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Sep 2025 04:42:28 -0700 (PDT)
-Message-ID: <6b2f12aa-8ed9-476d-a69d-f05ea526f16a@redhat.com>
-Date: Tue, 9 Sep 2025 13:42:26 +0200
+        Tue, 09 Sep 2025 04:43:30 -0700 (PDT)
+Message-ID: <0847f0b4-a02e-42d7-9bf3-797a753d3304@redhat.com>
+Date: Tue, 9 Sep 2025 13:43:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -89,7 +89,7 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V10 1/5] mm: softdirty: Add pte_soft_dirty_available()
+Subject: Re: [PATCH V10 2/5] mm: uffd_wp: Add pte_uffd_wp_available()
 To: Chunyan Zhang <zhangchunyan@iscas.ac.cn>,
  linux-riscv@lists.infradead.org, linux-fsdevel@vger.kernel.org,
  linux-mm@kvack.org, linux-kernel@vger.kernel.org
@@ -106,7 +106,7 @@ Cc: Paul Walmsley <paul.walmsley@sifive.com>,
  Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>,
  Chunyan Zhang <zhang.lyra@gmail.com>
 References: <20250909095611.803898-1-zhangchunyan@iscas.ac.cn>
- <20250909095611.803898-2-zhangchunyan@iscas.ac.cn>
+ <20250909095611.803898-3-zhangchunyan@iscas.ac.cn>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -153,128 +153,44 @@ Autocrypt: addr=david@redhat.com; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <20250909095611.803898-2-zhangchunyan@iscas.ac.cn>
+In-Reply-To: <20250909095611.803898-3-zhangchunyan@iscas.ac.cn>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 09.09.25 11:56, Chunyan Zhang wrote:
-> Some platforms can customize the PTE soft dirty bit and make it unavailable
+> Some platforms can customize the PTE uffd_wp bit and make it unavailable
 > even if the architecture allows providing the PTE resource.
-> 
-> Add an API which architectures can define their specific implementations
-> to detect if the PTE soft-dirty bit is available, on which the kernel
-> is running.
+> This patch adds a macro API which allows architectures to define
+> their specific ones for checking if the PTE uffd_wp bit is available.
 > 
 > Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
 > ---
->   fs/proc/task_mmu.c      | 17 ++++++++++++++++-
->   include/linux/pgtable.h | 10 ++++++++++
->   mm/debug_vm_pgtable.c   |  9 +++++----
->   mm/huge_memory.c        | 10 ++++++----
->   mm/internal.h           |  2 +-
->   mm/mremap.c             | 10 ++++++----
->   mm/userfaultfd.c        |  6 ++++--
->   7 files changed, 48 insertions(+), 16 deletions(-)
+>   fs/userfaultfd.c                   | 25 +++++++++--------
+>   include/asm-generic/pgtable_uffd.h | 12 ++++++++
+>   include/linux/mm_inline.h          |  7 +++++
+>   include/linux/userfaultfd_k.h      | 44 +++++++++++++++++++-----------
+>   mm/memory.c                        |  6 ++--
+>   5 files changed, 65 insertions(+), 29 deletions(-)
 > 
-> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index 29cca0e6d0ff..20a609ec1ba6 100644
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-> @@ -1058,7 +1058,7 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
->   	 * -Werror=unterminated-string-initialization warning
->   	 *  with GCC 15
->   	 */
-> -	static const char mnemonics[BITS_PER_LONG][3] = {
-> +	static char mnemonics[BITS_PER_LONG][3] = {
->   		/*
->   		 * In case if we meet a flag we don't know about.
->   		 */
-> @@ -1129,6 +1129,16 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
->   		[ilog2(VM_SEALED)] = "sl",
->   #endif
->   	};
-> +/*
-> + * We should remove the VM_SOFTDIRTY flag if the PTE soft-dirty bit is
-> + * unavailable on which the kernel is running, even if the architecture
-> + * allows providing the PTE resource and soft-dirty is compiled in.
-> + */
-> +#ifdef CONFIG_MEM_SOFT_DIRTY
-> +	if (!pte_soft_dirty_available())
-> +		mnemonics[ilog2(VM_SOFTDIRTY)][0] = 0;
-> +#endif
+> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+> index 54c6cc7fe9c6..68e5006e5158 100644
+> --- a/fs/userfaultfd.c
+> +++ b/fs/userfaultfd.c
+> @@ -1270,9 +1270,10 @@ static int userfaultfd_register(struct userfaultfd_ctx *ctx,
+>   	if (uffdio_register.mode & UFFDIO_REGISTER_MODE_MISSING)
+>   		vm_flags |= VM_UFFD_MISSING;
+>   	if (uffdio_register.mode & UFFDIO_REGISTER_MODE_WP) {
+> -#ifndef CONFIG_HAVE_ARCH_USERFAULTFD_WP
+> -		goto out;
+> -#endif
+> +		if (!IS_ENABLED(CONFIG_HAVE_ARCH_USERFAULTFD_WP) ||
+> +		    !pte_uffd_wp_available())
+> +			goto out;
 > +
->   	size_t i;
->   
->   	seq_puts(m, "VmFlags: ");
-> @@ -1531,6 +1541,8 @@ static inline bool pte_is_pinned(struct vm_area_struct *vma, unsigned long addr,
->   static inline void clear_soft_dirty(struct vm_area_struct *vma,
->   		unsigned long addr, pte_t *pte)
->   {
-> +	if (!pte_soft_dirty_available())
-> +		return;
->   	/*
->   	 * The soft-dirty tracker uses #PF-s to catch writes
->   	 * to pages, so write-protect the pte as well. See the
-> @@ -1566,6 +1578,9 @@ static inline void clear_soft_dirty_pmd(struct vm_area_struct *vma,
->   {
->   	pmd_t old, pmd = *pmdp;
->   
-> +	if (!pte_soft_dirty_available())
-> +		return;
-> +
->   	if (pmd_present(pmd)) {
->   		/* See comment in change_huge_pmd() */
->   		old = pmdp_invalidate(vma, addr, pmdp);
-> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-> index 4c035637eeb7..c0e2a6dc69f4 100644
-> --- a/include/linux/pgtable.h
-> +++ b/include/linux/pgtable.h
-> @@ -1538,6 +1538,15 @@ static inline pgprot_t pgprot_modify(pgprot_t oldprot, pgprot_t newprot)
->   #endif
->   
->   #ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
-> +
-> +/*
-> + * Some platforms can customize the PTE soft dirty bit and make it unavailable
-> + * even if the architecture allows providing the PTE resource.
-> + */
-> +#ifndef pte_soft_dirty_available
-> +#define pte_soft_dirty_available()	(true)
-> +#endif
-> +
->   #ifndef CONFIG_ARCH_ENABLE_THP_MIGRATION
->   static inline pmd_t pmd_swp_mksoft_dirty(pmd_t pmd)
->   {
-> @@ -1555,6 +1564,7 @@ static inline pmd_t pmd_swp_clear_soft_dirty(pmd_t pmd)
->   }
->   #endif
->   #else /* !CONFIG_HAVE_ARCH_SOFT_DIRTY */
-> +#define pte_soft_dirty_available()	(false)
->   static inline int pte_soft_dirty(pte_t pte)
->   {
->   	return 0;
-> diff --git a/mm/debug_vm_pgtable.c b/mm/debug_vm_pgtable.c
-> index 830107b6dd08..98ed7e22ccec 100644
-> --- a/mm/debug_vm_pgtable.c
-> +++ b/mm/debug_vm_pgtable.c
-> @@ -690,7 +690,7 @@ static void __init pte_soft_dirty_tests(struct pgtable_debug_args *args)
->   {
->   	pte_t pte = pfn_pte(args->fixed_pte_pfn, args->page_prot);
->   
-> -	if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY))
-> +	if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY) || !pte_soft_dirty_available())
 
-I suggest that you instead make pte_soft_dirty_available() be false without CONFIG_MEM_SOFT_DIRTY.
-
-e.g., for the default implementation
-
-define pte_soft_dirty_available()	IS_ENABLED(CONFIG_MEM_SOFT_DIRTY)
-
-That way you can avoid some ifefs and cleanup these checks.
-
-
-But as we do also have PMD soft-dirty support, I guess we would want to call this
-something more abstract "pgtable_soft_dirty_available" or "pgtable_soft_dirty_supported"
+Same comment as for the other patch: make the 
+CONFIG_HAVE_ARCH_USERFAULTFD_WP part of the pte_uffd_wp_available() 
+check and better call it "pgtable_uffd_wp_" ... available/supported.
 
 -- 
 Cheers
