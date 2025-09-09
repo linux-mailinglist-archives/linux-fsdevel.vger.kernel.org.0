@@ -1,133 +1,138 @@
-Return-Path: <linux-fsdevel+bounces-60701-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60702-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D545B50290
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 18:27:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F6EEB502A7
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 18:31:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DE1E16AAE9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 16:27:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A4323B48C0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 16:31:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 614CB352FEC;
-	Tue,  9 Sep 2025 16:27:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E06632EA481;
+	Tue,  9 Sep 2025 16:31:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="LMOUVrwI"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="MjkRVCeG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EE4733EB14
-	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Sep 2025 16:27:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2A3218871F
+	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Sep 2025 16:31:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757435246; cv=none; b=GWK38FJPkMFnBOW1uTeuESgQFQ8xAEXehbZuCO1IWd/jkHWqh8StvZKqkiZw77rycy5ZLvAWlxJUlflevs6RB1cdEi9rSAQnqR57slBmMlB6nwnR/3pYAXLem6fjZcab9MBzto0A6Oy+Anj67nJCpn5I/VyJSTiqjPNdNQxaqA8=
+	t=1757435477; cv=none; b=BxhE3C9Jqdy1eXA7N3QbQxBnzb05h5lYm6WYzMmpG0hk62ntEmOyd+ejqaRcU79ZRQk4GQwvJAZSXqVN4hEFlw3Mx6wytewnVYs6bNewEuCu5ppJn7ZCMTLQQOd1IElNZUZBqnx30dwdXkQw0qoFS7959//oS3Zcb2B7+FXAugU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757435246; c=relaxed/simple;
-	bh=iGkK0GZV0QqwpOYApQ22IsNCF1IiazNEA6d4iqI+BXk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ZkznYKB661PyItoUlEy8aUc5NkNieAIEq+uyUoYwWVKDmeO0GEl31cCnK6wxGqOsOeMWnd4A2+/2D/izehRgnabBkpoi8mHzSrjHl7neer1PALA8Wip/KhdUrO+9r5LX2w4I7L5H88NJJt3beyQVzHt4slZksyevEoYk9DXJeOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=LMOUVrwI; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-887764c2834so262711139f.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Sep 2025 09:27:23 -0700 (PDT)
+	s=arc-20240116; t=1757435477; c=relaxed/simple;
+	bh=mefygqhgG/25eVyDa/qEx6O2io7m5fyI2dwOWnP2+28=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ykcp2HDFV0JRzdmy5nVXEDgt9BG+c/AiokIKzCCoTF2H1MkFyT7Cc9RrDNXhM9bZDIEaS2Wg/ywiYZkzUxAEvpffdkXbym+mHcGya1GdgshT06DMl2Pe/NynibP3whJ5JtiCPVdTJqmz2kbTx/ELAvCl2FPZ46lbVXlunWxO+/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=MjkRVCeG; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4b5ed9d7e30so49632251cf.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Sep 2025 09:31:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1757435243; x=1758040043; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+        d=soleen.com; s=google; t=1757435473; x=1758040273; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tU5+1dfVb+0Q/QuEy8gW99WTOyajIvbAEwb6qaOWAkg=;
-        b=LMOUVrwIKMmIZiL8VlEZdfg0wkzl8kehGhgg1JrkVkMcBfRwYnOyzgUBLBK+upWnYa
-         30TKuHXeEn8OEeC7r+0cK6BhWWZIRv1fFEsrWCCQ6FepkfGkqnBu7zZdjBNj7VTDfEkd
-         Epm0AlGkPbevVyL7ZChfIIRVpoTRZuR3xZS+g+/jU5whtvGaBReO894upp0jCpaBstV5
-         vsqlI9UjH9FiBRhvBdrm6hJ/DaewVEXsx5CHRbMtU4bXCXIotuZnzweu9Ud0N1y2aGdC
-         g878RgQUp2fddiJ6DpUYq/O29J95y6vXFKQiJszOg0/HneBPVcRVbBSBhgmi5iEKCUpA
-         Fpzw==
+        bh=mefygqhgG/25eVyDa/qEx6O2io7m5fyI2dwOWnP2+28=;
+        b=MjkRVCeGYqtWgZA51G1XdQDmq0aipoVTf9eHwu/VD4iGDytyMy/y/QSncGUyvrb4gJ
+         0GoTL/2AiR8cp4avbjjC8ekpiNWoJVi9sWT7IcLL3/0XQt0uwF0Bj/1BytY+fYCUZ5BA
+         G68Sb26p4jUMftUIPEMW7LldKBFyaeexx5bqGI0f/ea1CKosZrBdOggBFOiJbxbST3Xt
+         7hXb3WdNphFueG3KdAtlcsjBqC+KEDMDTk9JA0F29NNIDSvBRbIvc7HZ40gLfQIxYEPf
+         o/S48YnUGg5RBHVJ8gOIgxhXU1asKIPwb38RuM7Yju9CpUZs5epDsm8loMg6NAdgZ6m2
+         7DFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757435243; x=1758040043;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1757435473; x=1758040273;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tU5+1dfVb+0Q/QuEy8gW99WTOyajIvbAEwb6qaOWAkg=;
-        b=too2w3+dPS/WSmxEK14P4OOLRYSHXxK3i0HXshJI08F+fcJGBXo+uNEmoMpeXolSW1
-         tkj+jtRZLTvIUByO2XRCSX1LVgxLlkr+Jwc2iBF4Nu6L9oy1Ki4iea95nziUBcV1aida
-         FPFKV7CCdNiYAn11YojkHUtoNEvJEoc56VxNKZOn+qUi+0fk/azXU21Z7d3v5+r/iuUU
-         Zad75qtEfT9znexVQJlQySU5tfxDhXReYSq6u3VHlv671Y/5km6o1BCuDvsp9mYV9AJm
-         4+yD61HWh+wtVDjewJD/8ISr/ejixcT8ukG+gEGu9xfbVLha8XOfjzdmscLe54gmBYGl
-         s4tw==
-X-Forwarded-Encrypted: i=1; AJvYcCUzRygCrtNk9QcaV4TiUbyMCC/oerNLRF2VbOP4Bm3nUZ07RdLwJ6huZoorKFlFiN/eraTpRppiqY012U7W@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYd1wINwdNUth6gw4ZS7fm3vgbx+u2c+UuC5F1WgufzRr2iNzj
-	YpjmzYAe44LuMGPBXgS98fXZUF6LnmDfLTbGuL28N2gTaebz9hGclpPb+jgYuJvnRBI=
-X-Gm-Gg: ASbGnctUbeSsj7nmwv5AgHUO4foqKn5z19cYAADucAjN1JDJc8J4zWN4deZk7+vLRWz
-	pGkZgDlEHknGk0nqEiPeToIjfJFmhGOG9bm3J4uzzNjx5VWNJqiwntDSIWZdZsBnx3l7NMuHos/
-	zNl9dCztd3CGd1qhL4/oxycGqNT6t1kXo48ngmM68n25BuhwaH7hwevhpuuL/lbrc9qZIUSNmgK
-	q+kWphrKFeOQ82wT3ee+NeQr+X6vRP70jZ7Q6E5m//ESXdKKF8yD+O3leYPQMNU+IRCf4lImwUF
-	eQBNy49UApAbqeqH20Dx6ggQ37uryzAOJD+ADULGeuL3zYNvhqaYhwA4OtF7SFIv5lV/Qc6OIaJ
-	BG1m8eq7UUm1Hlg==
-X-Google-Smtp-Source: AGHT+IGYb7REoxLIudhiD+LK09+Jxda+ni01YckmiZbSg941A5eJBO8ul/BNPsA8WuRBKs9N3iVw+A==
-X-Received: by 2002:a05:6602:2cc1:b0:887:5799:7ab0 with SMTP id ca18e2360f4ac-887776aff72mr1950935739f.16.1757435243017;
-        Tue, 09 Sep 2025 09:27:23 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50d8f31c66asm9636034173.44.2025.09.09.09.27.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 09:27:22 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- Keith Busch <kbusch@meta.com>
-Cc: linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, hch@lst.de, 
- Keith Busch <kbusch@kernel.org>
-In-Reply-To: <20250827141258.63501-1-kbusch@meta.com>
-References: <20250827141258.63501-1-kbusch@meta.com>
-Subject: Re: [PATCHv4 0/8]
-Message-Id: <175743524234.117585.13836043498265714409.b4-ty@kernel.dk>
-Date: Tue, 09 Sep 2025 10:27:22 -0600
+        bh=mefygqhgG/25eVyDa/qEx6O2io7m5fyI2dwOWnP2+28=;
+        b=p7UxpA1BFjMkIxJ7ppMcgM7WyyD7Oe50PJlghjapQqifuIxVoYa+yj1sET4Lzz3XvY
+         aSn/fVfwN0UdwFX2ekGPz3ceG3gOvTxmp8WkcoRchCdkVDrQNtd9cMhWM7VHRup9euGD
+         fbkwsssYTsZ16YZcurKi/JG8vJ6ueKgji1DKpH4l3n06Hg0lWraXFcdNbTDmwaM5R2IP
+         m4vEkMJLrZNK5u93UwG1n4pT/Tfbchgx06iPvQZTpZGuZUFAn+QNi3lf3qaSpF0OaBW4
+         39ETPwjqYv1ow2tfMjFdNepej00XQgAlH9G7y/4u2EVO4ej6KruVggdbAkcoJIO2OfT8
+         1dgw==
+X-Forwarded-Encrypted: i=1; AJvYcCVOnMCj67GRXbkg560fXaDdvAJRevxT0w1U6LFdfrBIoFP2WVCm+ZHfewAic65fz/gptPyqOAWZt2qLyV1K@vger.kernel.org
+X-Gm-Message-State: AOJu0YytnbKX5nzGcFU8wDbGPU50xqJ5BsGCj/PLsrSKaAyF6K2yYayy
+	bjDTF9eFredTixTgklG8wutvFSoXiAJoOkRDT7eBz0XvtRyo0Qg7XMdX+WGo1rAd7dBwSkMe/sb
+	tUyqVtDmmygt3meJMARxRYn7U2qd6PDgJwU7USoNhww==
+X-Gm-Gg: ASbGncsAcsuuEdgMInUjov8T7IQOMvmXd76FYmZ9tHkyR5eY/VUUJ+n6/vy9RY4jth8
+	Kwn7lmIrlg84TnsbI1WhkQ/BZeWCtfSZYDTTpRiXkuuTB7x7dw6w48v8mRGYvSeGALD035JcDUK
+	Y1hf7LM5OezUpuMebA4jx4WvjRxSr4d0kTINk8A/UuRsNy2VPcJ7JqgikDwELsXo1RboD21hZqx
+	hPv
+X-Google-Smtp-Source: AGHT+IG7jq+sgIVXGN3h/LueN2WhEhyxg+lgF8zD8d4TVGlNbmugwYuofv2hu7ci7G9Y0iK0GJJdSRb+1h+3q0EXcwA=
+X-Received: by 2002:ac8:5acc:0:b0:4b4:94e7:7307 with SMTP id
+ d75a77b69052e-4b5f85898f4mr141860471cf.66.1757435473222; Tue, 09 Sep 2025
+ 09:31:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-2ce6c
+References: <mafs0bjo0yffo.fsf@kernel.org> <20250828124320.GB7333@nvidia.com>
+ <mafs0h5xmw12a.fsf@kernel.org> <20250902134846.GN186519@nvidia.com>
+ <mafs0v7lzvd7m.fsf@kernel.org> <20250903150157.GH470103@nvidia.com>
+ <mafs0a53av0hs.fsf@kernel.org> <20250904144240.GO470103@nvidia.com>
+ <mafs0cy7zllsn.fsf@yadavpratyush.com> <CA+CK2bAKL-gyER2abOV-f4M6HOx9=xDE+=jtcDL6YFbQf1-6og@mail.gmail.com>
+ <20250909155407.GO789684@nvidia.com>
+In-Reply-To: <20250909155407.GO789684@nvidia.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Tue, 9 Sep 2025 12:30:35 -0400
+X-Gm-Features: Ac12FXyuJ9OO-2DZjI3E0TxJNzWUwRCJ02D-wXqnWeEvra68NFxAUUaITiNW7fc
+Message-ID: <CA+CK2bAvxvXKKanKzMZYrknBnVBUGBwYmgXppdiPbotbXRkGeQ@mail.gmail.com>
+Subject: Re: [PATCH v3 29/30] luo: allow preserving memfd
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Pratyush Yadav <me@yadavpratyush.com>, Pratyush Yadav <pratyush@kernel.org>, jasonmiu@google.com, 
+	graf@amazon.com, changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
+	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
+	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
+	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
+	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
+	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
+	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
+	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
+	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
+	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
+	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
+	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, lennart@poettering.net, brauner@kernel.org, 
+	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, saeedm@nvidia.com, 
+	ajayachandra@nvidia.com, parav@nvidia.com, leonro@nvidia.com, witu@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Sep 9, 2025 at 11:54=E2=80=AFAM Jason Gunthorpe <jgg@nvidia.com> wr=
+ote:
+>
+> On Tue, Sep 09, 2025 at 11:40:18AM -0400, Pasha Tatashin wrote:
+> > In reality, this is not something that is high priority for cloud
+> > providers, because these kinds of incompatibilities would be found
+> > during qualification; the kernel will fail to update by detecting a
+> > version mismatch during boot instead of during shutdown.
+>
+> Given I expect CSPs will have to add-in specific version support for
+> their own special version-pair needs, I think it would be helpful in
+> the long run to have a tool that reported what versions a kernel build
+> wrote and parsed. Test-to-learn the same information sounds a bit too
+> difficult.
 
-On Wed, 27 Aug 2025 07:12:50 -0700, Keith Busch wrote:
-> Previous version:
-> 
->   https://lore.kernel.org/linux-block/20250819164922.640964-1-kbusch@meta.com/
-> 
-> This series removes the direct io requirement that io vector lengths
-> align to the logical block size. There are two primary benefits from
-> doing this:
-> 
-> [...]
+Yes, I agree. My point was only about the near term: it's just not a
+priority at the moment. This won't block us in the future, as we can
+always add a tooling later to inject the required ELF segments for
+pre-live update checks.
 
-Applied, thanks!
-
-[1/8] block: check for valid bio while splitting
-      commit: fec2e705729dc93de5399d8b139e4746805c3d81
-[2/8] block: add size alignment to bio_iov_iter_get_pages
-      commit: 743bf2e0c49c835cb7c4e4ac7d5a2610587047be
-[3/8] block: align the bio after building it
-      commit: 20a0e6276edba4318c13486df02c31e5f3c09431
-[4/8] block: simplify direct io validity check
-      commit: 5ff3f74e145adc79b49668adb8de276446acf6be
-[5/8] iomap: simplify direct io validity check
-      commit: 7eac331869575d81eaa2dd68b19e7468f8fa93cb
-[6/8] block: remove bdev_iter_is_aligned
-      commit: 9eab1d4e0d15b633adc170c458c51e8be3b1c553
-[7/8] blk-integrity: use simpler alignment check
-      commit: 69d7ed5b9ef661230264bfa0db4c96fa25b8efa4
-[8/8] iov_iter: remove iov_iter_is_aligned
-      commit: b475272f03ca5d0c437c8f899ff229b21010ec83
-
-Best regards,
--- 
-Jens Axboe
-
-
-
+Pasha
 
