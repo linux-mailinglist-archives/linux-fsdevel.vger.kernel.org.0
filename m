@@ -1,103 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-60673-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60672-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B21FB4FFC9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 16:44:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78C28B4FFCB
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 16:44:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E17794E24AF
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 14:44:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6FFAB7AAC8F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 14:43:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D28F3451B6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0950B34F490;
 	Tue,  9 Sep 2025 14:44:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1xdIbqoD";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="uVyeVjtg";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lsIS8WIv";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="S7wo19sr"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rL0FYiwq";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="DwWBGYx2";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rL0FYiwq";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="DwWBGYx2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4901338F23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE7314A07
 	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Sep 2025 14:44:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757429073; cv=none; b=ALyD4blkTs1Jjf1cqLXK+tUSbBw0voeLYRDxG0Xna5X7Vuvf1ubil7JrAesDAS9voefGIXYmAFefvA8EqOqfxs/Ay63fpAcvSIS27P6O2xw0SXhZaCu9BiVMeUbZv1nFfAVTELuyRiHJlK0KPbpEhszfmEy20F/qlXRx7a94AtU=
+	t=1757429073; cv=none; b=bU561glxAH9gK+/PBVG+Tfh/FoZVGvnyHRYBI6J6OXfBzlP/aKKilf7bxXE0lTyLevH18O+P+k9A6mGodzHnJLscXXfANeZZNfAf6lI55dmQ7PUnAPQjpCHdvXHxFRsZ+d0HNCG55WbeffCOokufavp5ZIJzD5V451OCKr67WLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1757429073; c=relaxed/simple;
-	bh=7KYAKIKmrfod7C7EzJhcbdCi1kJUs9jixIB7VUpU15c=;
+	bh=Oiet7v9PMz1KHe3LlIGWG06AfUItm1n+udem/SIBJmg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pCjZXpRz3XbekjSBP4060rL7npeq3/d6NRVwGjbn4hRbmXtXL32jSIRFMUHP+NhhvOcZyg9L2oPCjmFVVMfPtL/0uN+INx45hILPiw/LSYRXgKUMSLDP9fulON+w9ftUqZjGWuRpyozB8oqn1ZtP+XCEfAbulAzOy92n95XkBfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1xdIbqoD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=uVyeVjtg; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lsIS8WIv; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=S7wo19sr; arc=none smtp.client-ip=195.135.223.131
+	 MIME-Version; b=TR8bQldBV/8W4ZTyKFG8D6xoxd6p4pzyq/EJwR4X0a/IjPmIKxKHLFvGXAHodN+u3B7J5t1TKf3/LCRVlfKmDTzKpsYqKAwjePOy+gRybazSko+j6i4J6cg0E7JSCsMx6Wr2W3RZfoV7qOGCy9U3oLZrBRNymrLDiVURlndzUP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rL0FYiwq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=DwWBGYx2; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rL0FYiwq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=DwWBGYx2; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E10FE5D734;
+	by smtp-out1.suse.de (Postfix) with ESMTPS id F3FB137265;
 	Tue,  9 Sep 2025 14:44:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
 	t=1757429070; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=OUhov8tIxR8NBvo4QkjpeUUK/G3OTnab2I3RTk2yV+Y=;
-	b=1xdIbqoDnhj82m7udLQ+2FIiDEFD+ssa9KsMVarO1ORGBrlch5TeTJcFot9AJs5KAtP56k
-	Nd/ddDvY4B+LrGdPYWb6zebu7A4PYdn/bJrqtGppVml5M6urIGMAdDI8V/YOkK3Do+yjLd
-	opYgjcASwKbmfLo1uH7ygLSVQVmA54k=
+	bh=NtRQAmEEIwA+W/HZTPf0FZf8drp3bjQdQThnZJ+SuKE=;
+	b=rL0FYiwq3yI5wRPc9jAN7ySaOXWHaslZeRWNgv5BcbhYj1EXZC0Vg+PZRTvqQY8ih6g0Kk
+	pJshgGc+/ACMVs76D3o9dJDFu3TDohv3MgeoCInxjNlVkUZt3h2Gke/qWWAWroNB7kZPvv
+	AZIH2Znz1KfoZ85h2Y38RznQtPQviuk=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
 	s=susede2_ed25519; t=1757429070;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=OUhov8tIxR8NBvo4QkjpeUUK/G3OTnab2I3RTk2yV+Y=;
-	b=uVyeVjtgNI/A1cT9u+XQasKESrQrBFWJQ86177kOaSaG0PDU5/MQs0ypES7W+CpGlgPcJS
-	z9AmO4KESwP10rAw==
-Authentication-Results: smtp-out2.suse.de;
-	none
+	bh=NtRQAmEEIwA+W/HZTPf0FZf8drp3bjQdQThnZJ+SuKE=;
+	b=DwWBGYx2GQ2HSdkp6u5con+uU+QMDgGtRDtwpKLIqkfqafqpcVXzae+BBEKobdU3jot7sY
+	ZizKf+LqYX3o2PCw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=rL0FYiwq;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=DwWBGYx2
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757429069; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1757429070; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=OUhov8tIxR8NBvo4QkjpeUUK/G3OTnab2I3RTk2yV+Y=;
-	b=lsIS8WIv3x8tSJyU8L1EXN9rKHmmqVxX8WkuhLKqUqnCSK9vqtoNU/N0ebEgrW26PeRdGj
-	DedIHWJbCV0gCCoATo1wfzRW23lPPex6bnx9f6uyyAkCOeVhshCKiZkBTBvhJSTVNp6kHx
-	ZiTGc4sUN2JhMU1AWFwUvg8aLfOygnA=
+	bh=NtRQAmEEIwA+W/HZTPf0FZf8drp3bjQdQThnZJ+SuKE=;
+	b=rL0FYiwq3yI5wRPc9jAN7ySaOXWHaslZeRWNgv5BcbhYj1EXZC0Vg+PZRTvqQY8ih6g0Kk
+	pJshgGc+/ACMVs76D3o9dJDFu3TDohv3MgeoCInxjNlVkUZt3h2Gke/qWWAWroNB7kZPvv
+	AZIH2Znz1KfoZ85h2Y38RznQtPQviuk=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757429069;
+	s=susede2_ed25519; t=1757429070;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=OUhov8tIxR8NBvo4QkjpeUUK/G3OTnab2I3RTk2yV+Y=;
-	b=S7wo19sr5UjnjLG793WXKvYk527u3mQE3I8K5cJEmEEfJOFeWwmk2dvVvfhKchdGedasl+
-	uGnOr6HBwqUAsBAg==
+	bh=NtRQAmEEIwA+W/HZTPf0FZf8drp3bjQdQThnZJ+SuKE=;
+	b=DwWBGYx2GQ2HSdkp6u5con+uU+QMDgGtRDtwpKLIqkfqafqpcVXzae+BBEKobdU3jot7sY
+	ZizKf+LqYX3o2PCw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D6FC81388C;
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E393813ABB;
 	Tue,  9 Sep 2025 14:44:29 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 4pJ2NE09wGiTdwAAD6G6ig
+	id vvYoN009wGiYdwAAD6G6ig
 	(envelope-from <jack@suse.cz>); Tue, 09 Sep 2025 14:44:29 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 7DD92A0AAF; Tue,  9 Sep 2025 16:44:29 +0200 (CEST)
+	id 85A5DA0AB7; Tue,  9 Sep 2025 16:44:29 +0200 (CEST)
 From: Jan Kara <jack@suse.cz>
 To: Christian Brauner <brauner@kernel.org>
 Cc: <linux-fsdevel@vger.kernel.org>,
 	Tejun Heo <tj@kernel.org>,
 	Jan Kara <jack@suse.cz>
-Subject: [PATCH 3/4] writeback: Avoid excessively long inode switching times
-Date: Tue,  9 Sep 2025 16:44:04 +0200
-Message-ID: <20250909144400.2901-7-jack@suse.cz>
+Subject: [PATCH 4/4] writeback: Add tracepoint to track pending inode switches
+Date: Tue,  9 Sep 2025 16:44:05 +0200
+Message-ID: <20250909144400.2901-8-jack@suse.cz>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20250909143734.30801-1-jack@suse.cz>
 References: <20250909143734.30801-1-jack@suse.cz>
@@ -107,120 +108,110 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3527; i=jack@suse.cz; h=from:subject; bh=7KYAKIKmrfod7C7EzJhcbdCi1kJUs9jixIB7VUpU15c=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBowD0ypmD9J1BwJ3Zm1VNQGni8cy/nrwjf+6b1H 0DLJggmCYmJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCaMA9MgAKCRCcnaoHP2RA 2bhLCADRk747XRUXLL0o3awP7IS04OP1bLncfOBnv+JG7DsdeHDzWoYw5RuqYh6oEJt9WDL0tYF jiFnqlY7KAl4ZOIJjYPuDfCqd6as/3ku6Lyzbh7n5rAPJaE+Gl8F9yoEGhBuAMgXV1lrs64CRCu 1/yUyYv+DS9tHxHggM20v4C9hoJV6J/t4mKZDPAwGe3Ub0zr/FmxOYRMRpqIdeG+KIPjpyewcmH fZsY2VaTfnuYbftIQ5eB8XOMQjnUCZIHig0413Y5u+RWlVuulDr7KQI4Lmx+YC6dw99Q6JAxPEl FODA+o7Si722uZZSdKlpH9cDzlJ1oZWTXqvlL6dclPQ3HE1+
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2230; i=jack@suse.cz; h=from:subject; bh=Oiet7v9PMz1KHe3LlIGWG06AfUItm1n+udem/SIBJmg=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBowD0zs4Rkf1dYyGW1kQOuPmJo4DRmIg+dOSnpl gB2E85v8wWJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCaMA9MwAKCRCcnaoHP2RA 2eiAB/90HA51xNtRYXstICqenQjphCY1E+i8AjWaapl+QvgAOSsv6m7b+x/y1O65llaK/XoeAG9 ATQP6JRRIp3a5NFrD2YnsZONzGPRfoiZD2dxyaX7XCqGwUDaJi1hP3/i8fNlLSs2Ww9x0fcDex8 xmCB1ifWX1nt4tjUXMFr1PLJiI42d1Qphc5/QtLrT3r06iawRSvjiRHQ2+7McaEXJRh2grRm8fQ /dvs7nTkD5EXl4dV/QRFwINpGUsdqGqjFBX4SJyHZpy7sJWXFaFFUppesVVxow3iT2WGRqZMf7B sWvtwHzypdKzDSLJQ96NjoJVTL8yGySgngHg29yqK7iVxqa0
 X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
 Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-2.80 / 50.00];
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: F3FB137265
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.01 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	MID_CONTAINS_FROM(1.00)[];
 	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.997];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
+	MX_GOOD(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
 	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:mid,suse.cz:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	FROM_EQ_ENVFROM(0.00)[];
 	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	RCPT_COUNT_THREE(0.00)[4];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -2.80
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Score: -3.01
 
-With lazytime mount option enabled we can be switching many dirty inodes
-on cgroup exit to the parent cgroup. The numbers observed in practice
-when systemd slice of a large cron job exits can easily reach hundreds
-of thousands or millions. The logic in inode_do_switch_wbs() which sorts
-the inode into appropriate place in b_dirty list of the target wb
-however has linear complexity in the number of dirty inodes thus overall
-time complexity of switching all the inodes is quadratic leading to
-workers being pegged for hours consuming 100% of the CPU and switching
-inodes to the parent wb.
-
-Simple reproducer of the issue:
-  FILES=10000
-  # Filesystem mounted with lazytime mount option
-  MNT=/mnt/
-  echo "Creating files and switching timestamps"
-  for (( j = 0; j < 50; j ++ )); do
-      mkdir $MNT/dir$j
-      for (( i = 0; i < $FILES; i++ )); do
-          echo "foo" >$MNT/dir$j/file$i
-      done
-      touch -a -t 202501010000 $MNT/dir$j/file*
-  done
-  wait
-  echo "Syncing and flushing"
-  sync
-  echo 3 >/proc/sys/vm/drop_caches
-
-  echo "Reading all files from a cgroup"
-  mkdir /sys/fs/cgroup/unified/mycg1 || exit
-  echo $$ >/sys/fs/cgroup/unified/mycg1/cgroup.procs || exit
-  for (( j = 0; j < 50; j ++ )); do
-      cat /mnt/dir$j/file* >/dev/null &
-  done
-  wait
-  echo "Switching wbs"
-  # Now rmdir the cgroup after the script exits
-
-We need to maintain b_dirty list ordering to keep writeback happy so
-instead of sorting inode into appropriate place just append it at the
-end of the list and clobber dirtied_time_when. This may result in inode
-writeback starting later after cgroup switch however cgroup switches are
-rare so it shouldn't matter much. Since the cgroup had write access to
-the inode, there are no practical concerns of the possible DoS issues.
+Add trace_inode_switch_wbs_queue tracepoint to allow insight into how
+many inodes are queued to switch their bdi_writeback structure.
 
 Signed-off-by: Jan Kara <jack@suse.cz>
 ---
- fs/fs-writeback.c | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+ fs/fs-writeback.c                |  4 ++++
+ include/trace/events/writeback.h | 29 +++++++++++++++++++++++++++++
+ 2 files changed, 33 insertions(+)
 
 diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index 125f477c34c1..7765c3deccd6 100644
+index 7765c3deccd6..094b78ce6d72 100644
 --- a/fs/fs-writeback.c
 +++ b/fs/fs-writeback.c
-@@ -447,22 +447,23 @@ static bool inode_do_switch_wbs(struct inode *inode,
- 	 * Transfer to @new_wb's IO list if necessary.  If the @inode is dirty,
- 	 * the specific list @inode was on is ignored and the @inode is put on
- 	 * ->b_dirty which is always correct including from ->b_dirty_time.
--	 * The transfer preserves @inode->dirtied_when ordering.  If the @inode
--	 * was clean, it means it was on the b_attached list, so move it onto
--	 * the b_attached list of @new_wb.
-+	 * If the @inode was clean, it means it was on the b_attached list, so
-+	 * move it onto the b_attached list of @new_wb.
- 	 */
- 	if (!list_empty(&inode->i_io_list)) {
- 		inode->i_wb = new_wb;
+@@ -658,6 +658,8 @@ static void inode_switch_wbs(struct inode *inode, int new_wb_id)
+ 	if (!isw->new_wb)
+ 		goto out_free;
  
- 		if (inode->i_state & I_DIRTY_ALL) {
--			struct inode *pos;
--
--			list_for_each_entry(pos, &new_wb->b_dirty, i_io_list)
--				if (time_after_eq(inode->dirtied_when,
--						  pos->dirtied_when))
--					break;
-+			/*
-+			 * We need to keep b_dirty list sorted by
-+			 * dirtied_time_when. However properly sorting the
-+			 * inode in the list gets too expensive when switching
-+			 * many inodes. So just attach inode at the end of the
-+			 * dirty list and clobber the dirtied_time_when.
-+			 */
-+			inode->dirtied_time_when = jiffies;
- 			inode_io_list_move_locked(inode, new_wb,
--						  pos->i_io_list.prev);
-+						  &new_wb->b_dirty);
- 		} else {
- 			inode_cgwb_move_to_attached(inode, new_wb);
- 		}
++	trace_inode_switch_wbs_queue(inode->i_wb, isw->new_wb, 1);
++
+ 	if (!inode_prepare_wbs_switch(inode, isw->new_wb))
+ 		goto out_free;
+ 
+@@ -752,6 +754,8 @@ bool cleanup_offline_cgwb(struct bdi_writeback *wb)
+ 		return restart;
+ 	}
+ 
++	trace_inode_switch_wbs_queue(wb, isw->new_wb, nr);
++
+ 	/*
+ 	 * In addition to synchronizing among switchers, I_WB_SWITCH tells
+ 	 * the RCU protected stat update paths to grab the i_page
+diff --git a/include/trace/events/writeback.h b/include/trace/events/writeback.h
+index 1e23919c0da9..c08aff044e80 100644
+--- a/include/trace/events/writeback.h
++++ b/include/trace/events/writeback.h
+@@ -213,6 +213,35 @@ TRACE_EVENT(inode_foreign_history,
+ 	)
+ );
+ 
++TRACE_EVENT(inode_switch_wbs_queue,
++
++	TP_PROTO(struct bdi_writeback *old_wb, struct bdi_writeback *new_wb,
++		 unsigned int count),
++
++	TP_ARGS(old_wb, new_wb, count),
++
++	TP_STRUCT__entry(
++		__array(char,		name, 32)
++		__field(ino_t,		old_cgroup_ino)
++		__field(ino_t,		new_cgroup_ino)
++		__field(unsigned int,	count)
++	),
++
++	TP_fast_assign(
++		strscpy_pad(__entry->name, bdi_dev_name(old_wb->bdi), 32);
++		__entry->old_cgroup_ino	= __trace_wb_assign_cgroup(old_wb);
++		__entry->new_cgroup_ino	= __trace_wb_assign_cgroup(new_wb);
++		__entry->count		= count;
++	),
++
++	TP_printk("bdi %s: old_cgroup_ino=%lu new_cgroup_ino=%lu count=%u",
++		__entry->name,
++		(unsigned long)__entry->old_cgroup_ino,
++		(unsigned long)__entry->new_cgroup_ino,
++		__entry->count
++	)
++);
++
+ TRACE_EVENT(inode_switch_wbs,
+ 
+ 	TP_PROTO(struct inode *inode, struct bdi_writeback *old_wb,
 -- 
 2.51.0
 
