@@ -1,241 +1,205 @@
-Return-Path: <linux-fsdevel+bounces-60604-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60605-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3F90B49EA7
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 03:24:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB6EFB49EFF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 04:14:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C44E81BC5320
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 01:24:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DBA616FAA9
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 02:14:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D04FF20102C;
-	Tue,  9 Sep 2025 01:24:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 645592441B8;
+	Tue,  9 Sep 2025 02:14:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Fb+JneoL"
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="NUjTCapi";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JtivojY7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE47915A848;
-	Tue,  9 Sep 2025 01:24:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DCA515A848
+	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Sep 2025 02:14:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757381050; cv=none; b=l+5zAxHh9PHoDixS27Yleiq6E+qAIfRrG/g+fmpBwOBk0/eMVtoZY+vctYmLGuT1S840otg7yLLhIsi7RdkR+N/UNC3Aya7of6ILXdWSTC4o5T50dyySDypefsNu+/Q6VFqmHIaFD6PgEe76n4GdBDBorqtSR03x0yEugmJM770=
+	t=1757384059; cv=none; b=ActjY7A2c89gocjtL/3e+0wwsY0J+4HpaBNc6wHdaOb3s8KoxpJsjRJV8cpilphcGuFuQhoSr63cWOd41Oad/IE2RXsFLwLjY52bZLPtwrhd+5HoI3RF/6tZwQxMr2G3XqMncLAqxsbJo8sb03hm48XuTmOlJwMPXnbRBZYsBFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757381050; c=relaxed/simple;
-	bh=9t2jjirqgihqXvU4UKP2Qi897S5wE8kf1WG1+WY/JJg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UA6jS+7JhAMfpteIREWTuyUyPg0fj2Qc5EUOqAZcFDXSzXzxZWsrSXDKBeY6+E3osXGCo1q2JxiXNsJJlM6l8tXfxSmA/RzG5IORCKu1LG1CYlbo+yetDGfp7AZWljDGnDYtdTGOOP+PZm9Pkd93dO62plN4fwuZYWMlrcKVHKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Fb+JneoL; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1757381039; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=zhR/uQdxVtluM9E+dpo+PTxBDDk8oslc9nOQJ4GqiME=;
-	b=Fb+JneoLGkFqF7HXtsNbAGtn7XNJfh5jVBPDkWYJPdIFZD4+6xNPy/U3kJB0GxOGF79iQtknbnJeZrsXkRvlHvotmjGYWedFOCub/PB8ECFj57eKxV/PMl1AviXhZoCdK/3zS+ELjY/JlQqXmZkEe4lU3cR0j5xstpW9CjmBS+I=
-Received: from 30.221.128.137(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WnbolA6_1757381036 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 09 Sep 2025 09:23:57 +0800
-Message-ID: <b9957de7-737c-454a-83b1-6cb2a4070fcf@linux.alibaba.com>
-Date: Tue, 9 Sep 2025 09:23:56 +0800
+	s=arc-20240116; t=1757384059; c=relaxed/simple;
+	bh=8Yj3MSxN5r+5IKivOrj4wyVTZYHUMH1VgP+a5JfsV/A=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=MMOG6VvmNZrAciJjzB9FR2TduJu32T8YMbxmc/URNoaLtif+Nx2hgRuokjmfGGXTKFrzUbRdR4uWx6wPwsV1DakcEqVan+c8/pqWw+jQiu7K5+rstjZxiZDYPCP8m3vHHjVBA00SsrYEjBAx+WaWVPLdUf13TlYhL6fzzrDb3xQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=NUjTCapi; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JtivojY7; arc=none smtp.client-ip=202.12.124.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
+Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 7A96C7A01B8;
+	Mon,  8 Sep 2025 22:14:16 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-09.internal (MEProxy); Mon, 08 Sep 2025 22:14:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1757384056;
+	 x=1757470456; bh=Jmi1kH3b4X7BwW9kRqKKWRKIpVBBIYW1wWx/dJlmmoM=; b=
+	NUjTCapi9Q8sKK02M9eiYjz6C3ykfD1jT0dQRgdXVaAPImLikeCs33jX6qky/X0m
+	xZ8kC3UIfRcBRebcS0rRWg01zaVldLhnMwiOtSgtDuL9B374rUOaugWYQwWcvofm
+	is2d5HjNTsG7KgFJPbLRsO0vFs4rCgL3kpj0QyANfFvvAB3OS2DHVwxkURd45pOa
+	zeK0Z9Tc8rgEFxrWscj3/l/OBTDYZteCYcAEX+gMpm+sgC5B9Gl4A3VChfFy44EI
+	0UaPtYbry0k0RfrK5u3lrxfJt6NFYXsf6TC0AnKBUOQ+0FvFQFxOoLDw8ZrSD5ts
+	Gbo59mxTwiHlrkLPz7MGzA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757384056; x=
+	1757470456; bh=Jmi1kH3b4X7BwW9kRqKKWRKIpVBBIYW1wWx/dJlmmoM=; b=J
+	tivojY7NAY1cEYxnOQxL7Xes3AdfcxUv+hEqVH0VTIwO/KP5ZQu8oCubSkXeCzWo
+	QgJYcXXODqq/bRr0ul5twxNgAR/nX0ZErH6+b5YQ2uNLnU7v+Yh4fXs7lp9VZRdy
+	NWTp+AXhz41WuSJtJm0urL1XTR2VM//p86x/Os9I5sua6ewn3C7KS5tgXSW9Ym9u
+	jSLmhcG/fMwX6nT+7+j1TBMloJXh/zz1rg7jHSbfufqB47Vvd3EoLGIaGVzUL3Vg
+	7WIodblBD/0PMv1TU1Fu6BP2XkkX2PDdyuN2/P615AT4aDfoDQjTTw4cvsDTVfqt
+	uMGkQxt1r62blerxapOnQ==
+X-ME-Sender: <xms:d42_aLx0-8_2MDs6WB9dZQPHgwSXkKCYra9gIlosrZ1Nynm_AdqBZg>
+    <xme:d42_aKoSSizF_7_o6Dnx-DFv3CWIWBZqtqGZLeInvl7R09YV0sbAa_uRNSMOZ652k
+    wuNMOX5KJQ9GA>
+X-ME-Received: <xmr:d42_aK6y1AenpqpDxncxD3mQGJR4OmhAdlJldmESv2ealtoQcBG27S1FGzmRDbbvLcsV2CNglrWOIqcW4zSKT-TMX-19aT5kb4tgzMtWIZ8c>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduledulecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpegtgfgghffvvefujghffffksehtkeertddttdejnecuhfhrohhmpedfpfgvihhluehr
+    ohifnhdfuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
+    epueeigeduhffffeduhedthfdvjefggfehteeltdejlefgfeeigfehheethfehveehnecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
+    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphho
+    uhhtpdhrtghpthhtohepvhhirhhoseiivghnihhvrdhlihhnuhigrdhorhhgrdhukhdprh
+    gtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+    pdhrtghpthhtohepmhhikhhlohhssehsiigvrhgvughirdhhuhdprhgtphhtthhopehjrg
+    gtkhesshhushgvrdgtiidprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhr
+    ghdprhgtphhtthhopegrmhhirhejfehilhesghhmrghilhdrtghomh
+X-ME-Proxy: <xmx:d42_aBdExPWBqHmQG4rvJC-tdEwQGYteecpvE1wa-eF8og_ThcNRmg>
+    <xmx:d42_aP4VoT-Kh06DyUQSI10Gx37E5_wy4IqgV3CZeOG_bxZf7A0FHw>
+    <xmx:d42_aItlNaMh6i8UZxynexe6Gq5JwVjgUyY9C9rIXoq5TVjG6kI_Uw>
+    <xmx:d42_aPh9aO-KBpbV55CHn0fkWMmwb5ZW85hZA8NYm0zhsJY40N5PuQ>
+    <xmx:eI2_aEvI1CJpbHgMHvqkyCQwomtEFJB2u0hSeTr8D-l2jEz2hTX1VsJa>
+Feedback-ID: iab3e480c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 8 Sep 2025 22:14:13 -0400 (EDT)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [External] : [PATCH] ocfs2: retire ocfs2_drop_inode() and
- I_WILL_FREE usage
-To: Jan Kara <jack@suse.cz>
-Cc: Mateusz Guzik <mjguzik@gmail.com>,
- Mark Tinguely <mark.tinguely@oracle.com>, ocfs2-devel@lists.linux.dev,
- viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, jlbec@evilplan.org,
- mark@fasheh.com, brauner@kernel.org, willy@infradead.org, david@fromorbit.com
-References: <766vdz3ecpm7hv4sp5r3uu4ezggm532ng7fdklb2nrupz6minz@qcws3ufabnjp>
- <20250904154245.644875-1-mjguzik@gmail.com>
- <f3671198-5231-41cf-b0bc-d1280992947a@oracle.com>
- <CAGudoHHT=P_UyZZpx5tBRHPE+irh1b7PxFXZAHjdHNLcEWOxAQ@mail.gmail.com>
- <8ddcaa59-0cf0-4b7c-a121-924105f7f5a6@linux.alibaba.com>
- <rvavp2omizs6e3qf6xpjpycf6norhfhnkrle4fq4632atgar5v@dghmwbctf2mm>
- <f9014fdb-95c8-4faa-8c42-c1ceea49cbd9@linux.alibaba.com>
- <fureginotssirocugn3aznor4vhbpadhwy7fhaxzeullhrzp7y@bg5gzdv6mrif>
-From: Joseph Qi <joseph.qi@linux.alibaba.com>
-In-Reply-To: <fureginotssirocugn3aznor4vhbpadhwy7fhaxzeullhrzp7y@bg5gzdv6mrif>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: "NeilBrown" <neilb@ownmail.net>
+To: "Amir Goldstein" <amir73il@gmail.com>
+Cc: "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org, "Miklos Szeredi" <miklos@szeredi.hu>
+Subject: Re: [PATCH 2/6] VFS/ovl: add lookup_one_positive_killable()
+In-reply-to:
+ <CAOQ4uxh8E9G=JH3S-SMFe9RHFTy7J3jHg-Kw5-pApJF1UmOV-Q@mail.gmail.com>
+References:
+ <>, <CAOQ4uxh8E9G=JH3S-SMFe9RHFTy7J3jHg-Kw5-pApJF1UmOV-Q@mail.gmail.com>
+Date: Tue, 09 Sep 2025 12:14:07 +1000
+Message-id: <175738404705.2850467.10284746345651886394@noble.neil.brown.name>
 
-
-
-On 2025/9/8 21:54, Jan Kara wrote:
-> On Mon 08-09-25 20:41:21, Joseph Qi wrote:
->>
->>
->> On 2025/9/8 18:23, Jan Kara wrote:
->>> On Mon 08-09-25 09:51:36, Joseph Qi wrote:
->>>> On 2025/9/5 00:22, Mateusz Guzik wrote:
->>>>> On Thu, Sep 4, 2025 at 6:15 PM Mark Tinguely <mark.tinguely@oracle.com> wrote:
->>>>>>
->>>>>> On 9/4/25 10:42 AM, Mateusz Guzik wrote:
->>>>>>> This postpones the writeout to ocfs2_evict_inode(), which I'm told is
->>>>>>> fine (tm).
->>>>>>>
->>>>>>> The intent is to retire the I_WILL_FREE flag.
->>>>>>>
->>>>>>> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
->>>>>>> ---
->>>>>>>
->>>>>>> ACHTUNG: only compile-time tested. Need an ocfs2 person to ack it.
->>>>>>>
->>>>>>> btw grep shows comments referencing ocfs2_drop_inode() which are already
->>>>>>> stale on the stock kernel, I opted to not touch them.
->>>>>>>
->>>>>>> This ties into an effort to remove the I_WILL_FREE flag, unblocking
->>>>>>> other work. If accepted would be probably best taken through vfs
->>>>>>> branches with said work, see https://urldefense.com/v3/__https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=vfs-6.18.inode.refcount.preliminaries__;!!ACWV5N9M2RV99hQ!OLwk8DVo7uvC-Pd6XVTiUCgP6MUDMKBMEyuV27h_yPGXOjaq078-kMdC9ILFoYQh-4WX93yb0nMfBDFFY_0$
->>>>>>>
->>>>>>>   fs/ocfs2/inode.c       | 23 ++---------------------
->>>>>>>   fs/ocfs2/inode.h       |  1 -
->>>>>>>   fs/ocfs2/ocfs2_trace.h |  2 --
->>>>>>>   fs/ocfs2/super.c       |  2 +-
->>>>>>>   4 files changed, 3 insertions(+), 25 deletions(-)
->>>>>>>
->>>>>>> diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
->>>>>>> index 6c4f78f473fb..5f4a2cbc505d 100644
->>>>>>> --- a/fs/ocfs2/inode.c
->>>>>>> +++ b/fs/ocfs2/inode.c
->>>>>>> @@ -1290,6 +1290,8 @@ static void ocfs2_clear_inode(struct inode *inode)
->>>>>>>
->>>>>>>   void ocfs2_evict_inode(struct inode *inode)
->>>>>>>   {
->>>>>>> +     write_inode_now(inode, 1);
->>>>>>> +
->>>>>>>       if (!inode->i_nlink ||
->>>>>>>           (OCFS2_I(inode)->ip_flags & OCFS2_INODE_MAYBE_ORPHANED)) {
->>>>>>>               ocfs2_delete_inode(inode);
->>>>>>> @@ -1299,27 +1301,6 @@ void ocfs2_evict_inode(struct inode *inode)
->>>>>>>       ocfs2_clear_inode(inode);
->>>>>>>   }
->>>>>>>
->>>>>>> -/* Called under inode_lock, with no more references on the
->>>>>>> - * struct inode, so it's safe here to check the flags field
->>>>>>> - * and to manipulate i_nlink without any other locks. */
->>>>>>> -int ocfs2_drop_inode(struct inode *inode)
->>>>>>> -{
->>>>>>> -     struct ocfs2_inode_info *oi = OCFS2_I(inode);
->>>>>>> -
->>>>>>> -     trace_ocfs2_drop_inode((unsigned long long)oi->ip_blkno,
->>>>>>> -                             inode->i_nlink, oi->ip_flags);
->>>>>>> -
->>>>>>> -     assert_spin_locked(&inode->i_lock);
->>>>>>> -     inode->i_state |= I_WILL_FREE;
->>>>>>> -     spin_unlock(&inode->i_lock);
->>>>>>> -     write_inode_now(inode, 1);
->>>>>>> -     spin_lock(&inode->i_lock);
->>>>>>> -     WARN_ON(inode->i_state & I_NEW);
->>>>>>> -     inode->i_state &= ~I_WILL_FREE;
->>>>>>> -
->>>>>>> -     return 1;
->>>>>>> -}
->>>>>>> -
->>>>>>>   /*
->>>>>>>    * This is called from our getattr.
->>>>>>>    */
->>>>>>> diff --git a/fs/ocfs2/inode.h b/fs/ocfs2/inode.h
->>>>>>> index accf03d4765e..07bd838e7843 100644
->>>>>>> --- a/fs/ocfs2/inode.h
->>>>>>> +++ b/fs/ocfs2/inode.h
->>>>>>> @@ -116,7 +116,6 @@ static inline struct ocfs2_caching_info *INODE_CACHE(struct inode *inode)
->>>>>>>   }
->>>>>>>
->>>>>>>   void ocfs2_evict_inode(struct inode *inode);
->>>>>>> -int ocfs2_drop_inode(struct inode *inode);
->>>>>>>
->>>>>>>   /* Flags for ocfs2_iget() */
->>>>>>>   #define OCFS2_FI_FLAG_SYSFILE               0x1
->>>>>>> diff --git a/fs/ocfs2/ocfs2_trace.h b/fs/ocfs2/ocfs2_trace.h
->>>>>>> index 54ed1495de9a..4b32fb5658ad 100644
->>>>>>> --- a/fs/ocfs2/ocfs2_trace.h
->>>>>>> +++ b/fs/ocfs2/ocfs2_trace.h
->>>>>>> @@ -1569,8 +1569,6 @@ DEFINE_OCFS2_ULL_ULL_UINT_EVENT(ocfs2_delete_inode);
->>>>>>>
->>>>>>>   DEFINE_OCFS2_ULL_UINT_EVENT(ocfs2_clear_inode);
->>>>>>>
->>>>>>> -DEFINE_OCFS2_ULL_UINT_UINT_EVENT(ocfs2_drop_inode);
->>>>>>> -
->>>>>>>   TRACE_EVENT(ocfs2_inode_revalidate,
->>>>>>>       TP_PROTO(void *inode, unsigned long long ino,
->>>>>>>                unsigned int flags),
->>>>>>> diff --git a/fs/ocfs2/super.c b/fs/ocfs2/super.c
->>>>>>> index 53daa4482406..e4b0d25f4869 100644
->>>>>>> --- a/fs/ocfs2/super.c
->>>>>>> +++ b/fs/ocfs2/super.c
->>>>>>> @@ -129,7 +129,7 @@ static const struct super_operations ocfs2_sops = {
->>>>>>>       .statfs         = ocfs2_statfs,
->>>>>>>       .alloc_inode    = ocfs2_alloc_inode,
->>>>>>>       .free_inode     = ocfs2_free_inode,
->>>>>>> -     .drop_inode     = ocfs2_drop_inode,
->>>>>>> +     .drop_inode     = generic_delete_inode,
->>>>>>>       .evict_inode    = ocfs2_evict_inode,
->>>>>>>       .sync_fs        = ocfs2_sync_fs,
->>>>>>>       .put_super      = ocfs2_put_super,
->>>>>>
->>>>>>
->>>>>> I agree, fileystems should not use I_FREEING/I_WILL_FREE.
->>>>>> Doing the sync write_inode_now() should be fine in ocfs_evict_inode().
->>>>>>
->>>>>> Question is ocfs_drop_inode. In commit 513e2dae9422:
->>>>>>   ocfs2: flush inode data to disk and free inode when i_count becomes zero
->>>>>> the return of 1 drops immediate to fix a memory caching issue.
->>>>>> Shouldn't .drop_inode() still return 1?
->>>>>
->>>>> generic_delete_inode is a stub doing just that.
->>>>>
->>>> In case of "drop = 0", it may return directly without calling evict().
->>>> This seems break the expectation of commit 513e2dae9422.
->>>
->>> generic_delete_inode() always returns 1 so evict() will be called.
->>> ocfs2_drop_inode() always returns 1 as well after 513e2dae9422. So I'm not
->>> sure which case of "drop = 0" do you see...
->>>
->> I don't see a real case, just in theory.
->> As I described before, if we make sure write_inode_now() will be called
->> in iput_final(), it would be fine.
+On Mon, 08 Sep 2025, Amir Goldstein wrote:
+> On Mon, Sep 8, 2025 at 4:07 AM NeilBrown <neilb@ownmail.net> wrote:
+> >
+> > On Sat, 06 Sep 2025, Amir Goldstein wrote:
+> > > On Sat, Sep 6, 2025 at 7:00 AM NeilBrown <neilb@ownmail.net> wrote:
+> > > >
+> > > > From: NeilBrown <neil@brown.name>
+> > > >
+> > > > ovl wants a lookup which won't block on a fatal signal.
+> > > > It currently uses down_write_killable() and then repeated
+> > > > calls to lookup_one()
+> > > >
+> > > > The lock may not be needed if the name is already in the dcache and it
+> > > > aid proposed future changes if the locking is kept internal to namei.c
+> > > >
+> > > > So this patch adds lookup_one_positive_killable() which is like
+> > > > lookup_one_positive() but will abort in the face of a fatal signal.
+> > > > overlayfs is changed to use this.
+> > > >
+> > > > Signed-off-by: NeilBrown <neil@brown.name>
+> > >
+> > > I think the commit should mention that this changes from
+> > > inode_lock_killable() to inode_lock_shared_killable() on the
+> > > underlying dir inode which is a good thing for this scope.
+> > >
+> > > BTW I was reading the git history that led to down_write_killable()
+> > > in this code and I had noticed that commit 3e32715496707
+> > > ("vfs: get rid of old '->iterate' directory operation") has made
+> > > the ovl directory iteration non-killable when promoting the read
+> > > lock on the ovl directory to write lock.
+> >
+> > hmmmm....
+> >
+> > So the reason that this uses a killable lock is simply because it used
+> > to happen under readdir and readdir uses a killable lock.  Is that
+> > right?
 > 
-> I'm sorry but I still don't quite understand what you are proposing. If
-> ->drop() returns 1, the filesystem wants to remove the inode from cache
-> (perhaps because it was deleted). Hence iput_final() doesn't bother with
-> writing out such inodes. This doesn't work well with ocfs2 wanting to
-> always drop inodes hence ocfs2 needs to write the inode itself in
-> ocfs2_evice_inode(). Perhaps you have some modification to iput_final() in
-> mind but I'm not sure how that would work so can you perhaps suggest a
-> patch if you think iput_final() should work differently? Thanks!
+> I think the semantics were copied from readdir of that moment yes.
 > 
-I'm just discussing if generic_delete_inode() will always returns 1. And
-if it is, I'm fine with this change. Sorry for the confusion.
+> >
+> > So there is no particularly reason that "killable" is important here?
+> 
+> I can think of some reasons -
+> Maybe overlayfs (ever user mounted overlayfs) has just one process
+> accessing it but underlying lower layer is remote fs with many processes
+> accessing it so chances of lower layer dir lock being held by another thread
+> are much higher than chances of overlayfs dir lock being held.
+> 
+> > So I could simply change it to use lookup_one_positive() and you
+> > wouldn't mind?
+> >
+> 
+> I do mind and prefer that you keep this killable as you patch does.
+> The more important reason to keep this killable IMO is that we can and
+> should make overlayfs readdir shared lock one day.
 
-Before commit 513e2dae9422, ocfs2_drop_inode() may return 1 and postpone
-the work to orphan scan. So commit 513e2dae9422 make write_inode_now()
-is determinately called by move it to drop_inode().
+Fair enough - I will persist with my current patch.  I just wanted to be
+sure it was wanted.
 
-Now this patch move write_inode_now() down to evict(), and in iput_final()
-it has:
+> 
+> > I'd actually like to make all directory/dentry locking killable - I
+> > don't think there is any downside.  But I don't want to try pushing that
+> > until my current exercise is finished.
+> >
+> 
+> The path to making overlayfs readdir shared and killable is
+> to move the synchronization of ovl readdir cache and
+> OVL_I(inode)->version from the implicit vfs inode_lock() to
+> explicit ovl_inode_lock().
+> 
+> The mechanical change is easy.
+> My concern is from hidden assumptions in the code that
+> I am not aware of, ones which are not annotated with
+> inode_is_locked() like ovl_inode_version_get() and
+> ovl_dir_version_inc() are.
+> 
+> And the fact that noone has yet to complain about overlayfs readdir
+> scalability makes this conversion non urgent.
+> 
+> If you have other reasons to want to make ovl readdir killable
+> or shared, we can look into that.
 
-if (!drop &&
-    !(inode->i_state & I_DONTCACHE) &&
-    (sb->s_flags & SB_ACTIVE)) {
-	......
-	return;
-}
+readdir locking is not on my radar.  We need to keep it to ensure
+exclusion with rmdir (as we need a counter of current readdir threads
+and there is nowhere else suitable to store a counter even if I wanted
+to).
 
-So we have to make sure the above condition is not true, otherwise it
-breaks the case commit 513e2dae9422 describes.
+And readdir is already non-exclusive and would not benefit from
+asynchrony (as far as I can see), so there is no need to change it.
+
+I might find improvements to ovl readdir locking interesting, but not at
+all a priority.
 
 Thanks,
-Joseph
-
+NeilBrown
 
