@@ -1,184 +1,161 @@
-Return-Path: <linux-fsdevel+bounces-60682-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60683-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70CDCB500FA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 17:24:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A725EB500FC
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 17:25:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CE3F1886ED5
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 15:25:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47DDA1B25E1F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 15:25:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 411F2352075;
-	Tue,  9 Sep 2025 15:24:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC5D352095;
+	Tue,  9 Sep 2025 15:24:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CvcehZ0z"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="STDkYNtF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 207DE2BB17;
-	Tue,  9 Sep 2025 15:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DBC935207F
+	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Sep 2025 15:24:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757431481; cv=none; b=MgTWwr5mAdN9L78hung4beu4GmK0P/QvE0v0XGMs9e+/t3bmpOEKcjOOaE3VlYBtOyuBNKNLVtNYL9A9P515fnHAN67AgChtCBuz8oxwBl1gLyPyZEVFq3w3zWf8Cjukb+Hl+VWigyUXDcxKB69APErhWAnYjoSY2usInKKqToo=
+	t=1757431489; cv=none; b=ZFEuS3D0BH2ozLdtL9Ytje1Zp72cog18oL/HI4XgXlOVT0exhb92AQZYYVrXtMWUEnrtJJEQkWwsTE0F7aEzu7vPjB5H+scn7hKk+d2nNbMTRtE2CGYhgPTeeaTbFJr7XQ7i47U6l1m7NezFmXkT4drIFPCTs4kZdE41Kzy8jSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757431481; c=relaxed/simple;
-	bh=3R0m6L3Xc0jpTLVgVCR9emnQCAji/4frJjenqqSAQLU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=ItOpzB1UdDfOjePDlJdaALf9K8SdMDtCNVydvfFCctvrj/LtaExoy2XiMDVLj0UKTMQAIGz7D7cnCU2py/P/gKXRFcHgoy7MGU3p1UZ2JHwJlQ6grnhcJbVMpZbb0RtEh1/LSOhpLBqpjELdcGG3eV0h41F4lD8DGHJ3a9HSw4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CvcehZ0z; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4b61161c32eso24845491cf.3;
-        Tue, 09 Sep 2025 08:24:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757431479; x=1758036279; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yDbmDBECNsOMyPFBVxB/4/c6RAXu7g94A+5MaF46ZQw=;
-        b=CvcehZ0zhYLfn1KqL6gzPBpXgFNx3aOpbCFQ/5d61ERAwyGioTgFmv38hUGXQ0ssEe
-         oZ87K6lmeNJYp6BDj01LHF1EQk9c8aAwcY2TdRvKga66arhvpNWXbxHJhlaKbCvCC+5g
-         DdKgwk9XSTVEf+MjWv2UqH8kh0PtpmR4ZREVrgKk3JQhAUPkGEK0ezyIzebtJsBc34NI
-         4+G8CR77oFi0mcteGq6nW8g5n6nLAN3HNA0r+zQPMxahQihml/8D1kVmKzPiVxHjzpOK
-         ED0GscbwdCJRkSDhethxK+KINrypoTL/QPoV7r0UsUFqlcq2YlnIcCNeLZwtBSnfy3yv
-         VAag==
+	s=arc-20240116; t=1757431489; c=relaxed/simple;
+	bh=qLI7K7SjBg75kFVpuEMsnQPGUHaOHPFdi7ri3LAszIA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 In-Reply-To:To:Cc; b=qobXsDQq6ym2CMEeu5BKka1BVBt4p7CEPqZ0ET1zOtqrIV5UuhBq3/FueY5hqDBVELSEXN/pP1DQEQhD/5EKp5drxv0XgO+kdNwLIC7eqhw02VFo4XuK+u7PcCNIvUZmbJ2FHdMx3aiiIqvnCOFhEw1n9dyEFGsnTy2R77x8r7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=STDkYNtF; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757431486;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:  in-reply-to:in-reply-to;
+	bh=EVQrM7vvGg2wr9cyg1VwAlrBbHtBHMrtY7DnkbL5fuU=;
+	b=STDkYNtFZXl8FSelh6bMe5kBTVS18sIuxUXFDK/ltgNedqOEuUszucVs7WQflbfCwvIBdp
+	Bwi4lqBed4Qn+pWWlVwxOAMJ9t98xoyuwTvRxvvve7xvix4BlprAhf0X20bg7ZmWXObrZb
+	MkDn7feN3yJtDXCNwNX98xT3fe1BDq0=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-467-SzOMyKM-PomC-7nb7kdzAw-1; Tue, 09 Sep 2025 11:24:44 -0400
+X-MC-Unique: SzOMyKM-PomC-7nb7kdzAw-1
+X-Mimecast-MFC-AGG-ID: SzOMyKM-PomC-7nb7kdzAw_1757431484
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45df4726726so2869805e9.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Sep 2025 08:24:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757431479; x=1758036279;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yDbmDBECNsOMyPFBVxB/4/c6RAXu7g94A+5MaF46ZQw=;
-        b=X9pA2y3PpjRFVtWvdxlLTFWzq1akiLkzXNHE/JUgbxylGpnE2ddgzhqMt/bz0qejMc
-         SaGG3HaxnoHhEawjEii/khhsIPifioCV44MNRGA/zZtbULSisrQILHYjSElrKYAYLNRu
-         CxXzBYpdek8lvgJTgwyLcGXh8fvvK6bRmiVQiNVTTo4IzQIjyF7vTphCdUvlBB3GW2UB
-         s/dMuuv/nSnGGN4//t16XlqNwxHs4BNHDO0REYsCadDdbpBl8fFyh1+uZKqnW7/HINVe
-         Df/A/r1TLXrmmBH6OXDWAk7qrSaaBpT6nTfqvs/vBWY4YhYxiBo+CJKrebdpME2IuyEu
-         1+Sg==
-X-Forwarded-Encrypted: i=1; AJvYcCUMgEK8TPQi8ryMQtFlH2r+DUc91iZS+xjtF+JsS0ec+TKPmlxgKHmWAEoZ8LSB+UEHGaGtw0Rwwjh45jvd7Q==@vger.kernel.org, AJvYcCVf30DcDJzvnbHoPHR8ahS88A7Hai3X0LyH0rxfd34yRuv8mlvTYvYcdqEZxkHCLRQPSaBnVOD3wIgd@vger.kernel.org, AJvYcCWnWqVMFXEFX2lIC+EBrO/AcPLbhXJfFPcRIjbFkasAXMvRyn+eVd6Hba/WOLQ24XawbbDdm/4r+iPOxQ==@vger.kernel.org, AJvYcCXnrN2C0sb9fWdWwG7RMA48/HIfx6pEd6dRevH2/JvjPwm+9XZ8FJ7ulFmrhmAMMRYWOgpsSmXYtQcP@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkPOnSY/g0s8YWpD9UtSGDNnLTW+M+dnd9k/YWY+RT85aoo+ct
-	xJc0xCrOY+/G7UJRs9qdQQ/vZizzBhYyQZaQohjddKFsFin3SLgkU+SK/HTEtq1PjCQGgThyDvk
-	m2Nhi9H0Vxw5QtjAEOguglZnkAQnbvdZbddgag2s=
-X-Gm-Gg: ASbGnctLGvRve1EgG6oW0aV6Fthb0ksQWghJO8P6dkmu8WjvV7EGuoavycfNXjNx/Bj
-	+0pO2ECOm07Kc7+fvb5KIJtFLnf2HvYbzQ8dwnhGYo3WftXKpyeBkYU5dWH9NxCfcfQD3RtMrjp
-	yiyqKL8pyB/TSLAt+J32pOl5IKRsV0uJtF4hGS8dSa/qwep7YQxaT4EGaNQfBHVG3tDbnoRb2JR
-	A+G6n22yACcV7v/A2Mv9YQ=
-X-Google-Smtp-Source: AGHT+IE6h/blzNtkiS7tRQSAW4vjy70N2RtjiCed7Thx/n7bpwfptLXKBBHGKN92aIlVAliSIdhlvRW+askAAL9wkJo=
-X-Received: by 2002:ac8:5dd1:0:b0:4b5:f421:14dd with SMTP id
- d75a77b69052e-4b5f836b29cmr131506101cf.7.1757431478686; Tue, 09 Sep 2025
- 08:24:38 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757431484; x=1758036284;
+        h=cc:to:in-reply-to:content-transfer-encoding:mime-version:message-id
+         :date:subject:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EVQrM7vvGg2wr9cyg1VwAlrBbHtBHMrtY7DnkbL5fuU=;
+        b=VlVbaPD6c1xuug8nPshUJlcHP3EV+7f6vHyKx04Ja+GxdTcAyS8Am3gX8Agt7fEMh1
+         B9UMxXYq6GYPiQGgAYkVPKQWbSe0mt1XOCMtVdZdBlzACqZuOBSYT3QXtbFD1gdq1kvT
+         ElUkpzH/xHa8TLKmQ757r8o4UL6cC0xXaDrSkjVp3jVKrTPr8zwS9NH1GWfsiRCREJ08
+         ueVicB6oODRA1gBd8lkzFLPOojlr0+jw35V4HAF3u0Dzn6ENemST6IpcRCyoqk0KkGtp
+         +9bfxfONAshoavBbukr82QC+ksjY/DMPhaNAxpo4Dm/BQmVeU2ICxnR0Z91E5eLuht8l
+         3JZg==
+X-Forwarded-Encrypted: i=1; AJvYcCVihzAJbbhcLNjf1XMof4RkkuKEpPrnH+q+1c5ysSx35okAvQGR8o1KzPMX2GZiiPhZuhFXmkurjN5FkBCG@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcohT5eeoGVuf8w+Bh89r1UibO6hpGXYcCl9iyaFIYiZLFIS99
+	uuCysy7rfx9z/umomOw8wnMyYp4YUICtz7HwegkTlICBMjQqTDC10vMYa/RbG/12l9PiTul/j3b
+	A04n3IjP1dlmppJhm8P0dWprw2+RsPDwRGtVij9lo6wlZGJ7TZ7Ns2plB3Vi+Smm63g==
+X-Gm-Gg: ASbGncs1ZaDP3oW7nRUIvOPorHrC+cD4eKkLVDE6Yb6PAcRAVV/MiidOeYNn0OdxZU4
+	VHaaS1LKC2pdwYn8vpcdOrOvtBD2R+LevNRgMFBjwXuFJWjQehbW3JNiCCp4DF9uOZB2P/nNbpk
+	CLR+4SAJslPOz0E7d5hKJNLTEIRUe0ybwFGtEdTk6ZXBHaeFayP5bvKO81dLBjqRvA6LqS1YmYV
+	eqvfbgFb2UplAYmx9evpmJZ/9mmNbaugQf+C2Hivfa4/P33PfrpBV7Q1oe6R8RrPYcnMBL5hi5W
+	B1GM9rbv2Vb2N5UjL1Az6bc01RCOCUg4zfHg/mQ=
+X-Received: by 2002:a05:6000:3108:b0:3d6:212b:9ae2 with SMTP id ffacd0b85a97d-3e643ff9652mr10220485f8f.63.1757431483644;
+        Tue, 09 Sep 2025 08:24:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IET43k6r7zmrgVjEPOzVzXuIKLSqrOCLzwj6hxs/9rooTTnKM2oQAJL5BkN8TiuGwtdt3/+uw==
+X-Received: by 2002:a05:6000:3108:b0:3d6:212b:9ae2 with SMTP id ffacd0b85a97d-3e643ff9652mr10220461f8f.63.1757431483113;
+        Tue, 09 Sep 2025 08:24:43 -0700 (PDT)
+Received: from [127.0.0.2] ([91.245.205.131])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45df17d9774sm11432015e9.9.2025.09.09.08.24.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 08:24:42 -0700 (PDT)
+From: Andrey Albershteyn <aalbersh@redhat.com>
+X-Google-Original-From: Andrey Albershteyn <aalbersh@kernel.org>
+Subject: [PATCH v3 0/4] xfsprogs: utilize file_getattr() and file_setattr()
+Date: Tue, 09 Sep 2025 17:24:35 +0200
+Message-Id: <20250909-xattrat-syscall-v3-0-4407a714817e@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250908185122.3199171-1-joannelkoong@gmail.com>
- <20250908185122.3199171-12-joannelkoong@gmail.com> <aL9xb5Jw8tvIRMcQ@debian>
-In-Reply-To: <aL9xb5Jw8tvIRMcQ@debian>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Tue, 9 Sep 2025 11:24:25 -0400
-X-Gm-Features: Ac12FXyx8pmrJDFeGMYZs3RCR1CTlhpwdwdT0peJF0IyLF-S26qPwC0nNO2DnTs
-Message-ID: <CAJnrk1YPpNs811dwWo+ts1xwFi-57OgWvSO4_8WLL_3fJgzrFw@mail.gmail.com>
-Subject: Re: [PATCH v2 11/16] iomap: add caller-provided callbacks for read
- and readahead
-To: Joanne Koong <joannelkoong@gmail.com>, djwong@kernel.org, hch@infradead.org, 
-	brauner@kernel.org, miklos@szeredi.hu, hsiangkao@linux.alibaba.com, 
-	linux-block@vger.kernel.org, gfs2@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org, kernel-team@meta.com, 
-	linux-xfs@vger.kernel.org, linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALNGwGgC/2WNzQqDMBCEX0X23JR0gzbtqe9RPORn1VDRsglBE
+ d+9IdcevxnmmwMicaAIz+YAphxiWJcC6tKAm8wykgi+MKDEVqrbXWwmJTZJxD06M89Cq8dg0Vr
+ pOgVl9WUawlaNb8gK+pJNIaaV93qSsTbVp/Hfl1FIodGgR9/qrrWvD/FC83XlEfrzPH+b9gfgs
+ wAAAA==
+X-Change-ID: 20250317-xattrat-syscall-839fb2bb0c63
+In-Reply-To: <mqtzaalalgezpwfwmvrajiecz5y64mhs6h6pcghoq2hwkshcze@mxiscu7g7s32>
+To: aalbersh@kernel.org, linux-fsdevel@vger.kernel.org, 
+ linux-xfs@vger.kernel.org
+Cc: Andrey Albershteyn <aalbersh@redhat.com>, 
+ "Darrick J. Wong" <djwong@kernel.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1698; i=aalbersh@kernel.org;
+ h=from:subject:message-id; bh=qLI7K7SjBg75kFVpuEMsnQPGUHaOHPFdi7ri3LAszIA=;
+ b=owJ4nJvAy8zAJea2/JXEGuOHHIyn1ZIYMg647Wr0f7ht6kevFYlS64ymSOnUrZ8yw+58ufzfz
+ UyZcrFHbVg7SlkYxLgYZMUUWdZJa01NKpLKP2JQIw8zh5UJZAgDF6cATKRXkpFhs8DGq4G2BXle
+ E/63iO6TaFC/nbKh7PrmiW86+Xa4ctyKZmT4cPT52dTVnw6uEmzRsbu2q+ZtzGHlHVP+6U+Zckb
+ u+uN1jAAdgEna
+X-Developer-Key: i=aalbersh@kernel.org; a=openpgp;
+ fpr=AE1B2A9562721A6FC4307C1F46A7EA18AC33E108
 
-On Mon, Sep 8, 2025 at 8:14=E2=80=AFPM Gao Xiang <xiang@kernel.org> wrote:
->
-> Hi Joanne,
->
-> On Mon, Sep 08, 2025 at 11:51:17AM -0700, Joanne Koong wrote:
-> > Add caller-provided callbacks for read and readahead so that it can be
-> > used generically, especially by filesystems that are not block-based.
-> >
-> > In particular, this:
-> > * Modifies the read and readahead interface to take in a
-> >   struct iomap_read_folio_ctx that is publicly defined as:
-> >
-> >   struct iomap_read_folio_ctx {
-> >       const struct iomap_read_ops *ops;
-> >       struct folio *cur_folio;
-> >       struct readahead_control *rac;
-> >       void *private;
-> >   };
-> >
-> >   where struct iomap_read_ops is defined as:
-> >
-> >   struct iomap_read_ops {
-> >       int (*read_folio_range)(const struct iomap_iter *iter,
-> >                              struct iomap_read_folio_ctx *ctx,
-> >                              loff_t pos, size_t len);
-> >       int (*read_submit)(struct iomap_read_folio_ctx *ctx);
-> >   };
-> >
->
-> No, I don't think `struct iomap_read_folio_ctx` has another
-> `.private` makes any sense, because:
->
->  - `struct iomap_iter *iter` already has `.private` and I think
->    it's mainly used for per-request usage; and your new
->    `.read_folio_range` already passes
->     `const struct iomap_iter *iter` which has `.private`
->    I don't think some read-specific `.private` is useful in any
->    case, also below.
->
->  - `struct iomap_read_folio_ctx` cannot be accessed by previous
->    .iomap_{begin,end} helpers, which means `struct iomap_read_ops`
->    is only useful for FUSE read iter/submit logic.
->
-> Also after my change, the prototype will be:
->
-> int iomap_read_folio(const struct iomap_ops *ops,
->                      struct iomap_read_folio_ctx *ctx, void *private2);
-> void iomap_readahead(const struct iomap_ops *ops,
->                      struct iomap_read_folio_ctx *ctx, void *private2);
->
-> Is it pretty weird due to `.iomap_{begin,end}` in principle can
-> only use `struct iomap_iter *` but have no way to access
-> ` struct iomap_read_folio_ctx` to get more enough content for
-> read requests.
+Hi all,
 
-Hi Gao,
+This patchset updates libfrog, xfs_db, xfs_quota to use recently
+introduced syscalls file_getattr()/file_setattr().
 
-imo I don't think it makes sense to, if I'm understanding what you're
-proposing correctly, have one shared data pointer between iomap
-read/readahead and the iomap_{begin,end} helpers because
+I haven't replaced all the calls to ioctls() with a syscalls, just a few
+places where syscalls are necessary. If there's more places it would be
+suitable to update, let me know.
 
-a) I don't think it's guaranteed that the data needed by
-read/readahead and iomap_{begin,end} is the same.  I guess we could
-combine the data each needs altogether into one struct, but it seems
-simpler and cleaner to me to just have the two be separate.
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-xfs@vger.kernel.org
 
-b) I'm not sure about the erofs use case, but at least for what I'm
-seeing for fuse and the block-based filesystems currently using iomap,
-the data needed by iomap read/readahead (eg bios, the fuse
-fuse_fill_read_data) is irrelevant for iomap_{begin/end} and it seems
-unclean to expose that extraneous info. (btw I don't think it's true
-that iomap_iter is mainly used for per-request usage - for readahead
-for example, iomap_{begin,end} is called before and after we service
-the entire readahead, not called per request, whereas
-.read_folio_range() is called per request).
+---
+Changes in v3:
+- Fix tab vs spaces indents
+- Update year in SPDX header
+- Rename AC_HAVE_FILE_ATTR to AC_HAVE_FILE_GETATTR
+- Link to v2: https://lore.kernel.org/r/20250827-xattrat-syscall-v2-0-82a2d2d5865b@kernel.org
 
-c) imo iomap_{begin,end} is meant to be a more generic interface and I
-don't think it makes sense to tie read-specific data to it. For
-example, some filesystems (eg gfs2) use the same iomap_ops across
-different file operations (eg buffered writes, direct io, reads, bmap,
-etc).
+---
+Andrey Albershteyn (4):
+      libfrog: add wrappers for file_getattr/file_setattr syscalls
+      xfs_quota: utilize file_setattr to set prjid on special files
+      xfs_io: make ls/chattr work with special files
+      xfs_db: use file_setattr to copy attributes on special files with rdump
 
+ configure.ac          |   1 +
+ db/rdump.c            |  20 ++++++-
+ include/builddefs.in  |   5 ++
+ include/linux.h       |  20 +++++++
+ io/attr.c             | 138 ++++++++++++++++++++++++++++--------------------
+ io/io.h               |   2 +-
+ io/stat.c             |   2 +-
+ libfrog/Makefile      |   2 +
+ libfrog/file_attr.c   | 121 ++++++++++++++++++++++++++++++++++++++++++
+ libfrog/file_attr.h   |  35 +++++++++++++
+ m4/package_libcdev.m4 |  19 +++++++
+ quota/project.c       | 142 ++++++++++++++++++++++++++------------------------
+ 12 files changed, 380 insertions(+), 127 deletions(-)
+---
+base-commit: 1d287f3d958ebc425275d6a08ad6977e13e52fac
+change-id: 20250317-xattrat-syscall-839fb2bb0c63
 
-Thanks,
-Joanne
+Best regards,
+--  
+Andrey Albershteyn <aalbersh@kernel.org>
 
->
-> Thanks,
-> Gao Xiang
 
