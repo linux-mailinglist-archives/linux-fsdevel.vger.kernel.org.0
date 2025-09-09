@@ -1,365 +1,773 @@
-Return-Path: <linux-fsdevel+bounces-60668-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60669-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C167B4FE3C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 15:54:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CA8BB4FEDF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 16:09:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82940441DA8
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 13:49:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BD711BC0D97
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 14:09:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C516834AB1F;
-	Tue,  9 Sep 2025 13:48:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBED9298CBE;
+	Tue,  9 Sep 2025 14:07:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bZ0RVN5e"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hNULyLcn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA452EB849;
-	Tue,  9 Sep 2025 13:48:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA16343D7B
+	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Sep 2025 14:07:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757425738; cv=none; b=XxDEp0yioYDLxbm3+ShQuPM9tk4GqSH6GJWD2XSbVCnGsLHYhMw+jd3zZ1tDlG3hawr9tryyLvenWRiPNsOtAq5cNOqv2ah1VA4qkSxCe/qxqcm/0qvmgcGK8R0iV19lynNGEzott5ouLeRLB6SX2m706XLYnM70XyXg5CSxxhc=
+	t=1757426848; cv=none; b=fgsnCIqEA8IbhYuzbQ1O4T/RBZLLHaQQib4jvrzPbRysAfpHj4eJPVfwjq8kigyz/+RxWY1iLAGUfE05hiJEcm4OJZL57EpJFW0RQz7qntgW9X1Q3bYxSdVer2Nlgiq66r/3u/Re/aXU4JjGmF3ZXJTAoSSt06jwfkar0YsgCNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757425738; c=relaxed/simple;
-	bh=LrwSQcHJ5zwyEDqOVBfPY5eWTJW8r8/t6z0j7e32T/E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JzYAWPJt9VYITLoR4tvyESfkSfdeu8gxPHLwYnimrLSViZ1eEVDrZkQEURFV76PiUuOdvTaA+JREUd9+Mg186lfdf3U8zRluMJjTOr75JU9f5ce+QYV68hxVnGycw3B2aFtFv5A3eOSoV2aXK1QlEbO9AYUBbEpZRTxv5pOz9WU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bZ0RVN5e; arc=none smtp.client-ip=209.85.128.43
+	s=arc-20240116; t=1757426848; c=relaxed/simple;
+	bh=6SJzcu7ziDwKI0p32XaUxbSne8eVd4XzD5XfgQ/65JI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=njlBWwg+Z3tvsuJVDX0lUc0MKU5mF1w6WkJgrvPnSAZIIFRqKBsCNHHgUOn17xynNpYocD2C0/FHqaL0hmeS0F4EOIZuSj9Vzn4NClNqhwat6J3izKKEQLIfDHuz+5K8W33VyNsIctpI2xbm3ogWzDyu1Bp/P/wx6eyaKgsyKOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hNULyLcn; arc=none smtp.client-ip=209.85.208.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45b9853e630so52354385e9.0;
-        Tue, 09 Sep 2025 06:48:55 -0700 (PDT)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-62733e779bbso2754852a12.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Sep 2025 07:07:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757425734; x=1758030534; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bhofjgq2pg/hk0vNn8yOm0N6bQgvcHXKUZY20lKVr9I=;
-        b=bZ0RVN5eKq0TFgD168+NRbrLYlItIWSh6tu2LkwY6nQBE1h49OhO59lk82AoxzMJY0
-         uJmuj+EIYw5ywjoNDIzQCB/lWIGjpputnjki/S24dNWI7cnVwzIy0Oo+4CWm6CqY+XLy
-         FGBzcg9bDNbROx9PywflO9T2JHC2kAUDgUEY5SRBAP/SWgDz4aCf7755pWdert4uTlgB
-         I8tjviWNwC/npng8qf3UyF4rHSEQz+6dyliMrordjMxxrjm9Q6DLpaUHeTdn48oOX4gO
-         RK9EEaWimhrO2MEQxJe9NJ13lfckTzhGr49iGIRUJR/j3BEqyMA7cmowGadDrIFYtn2j
-         I8pQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757425734; x=1758030534;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1757426844; x=1758031644; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Bhofjgq2pg/hk0vNn8yOm0N6bQgvcHXKUZY20lKVr9I=;
-        b=BzJmX/CbRssa5BayfHOxOk2CfY44enuTn5wTHUPNbrB1TJWwTkbBYFYNYmJfF6DLQs
-         kvgM513q51KVx/FhxrMypXqFBuN59I2rGAlffrtc2ghkTzoCZtrhvLhZsNYJAM6hP7on
-         5HwMHuUl9zZeQYAzhTfYc1rD5N6ilIMMA5dEUp1cg7xt121lwb4otCnShgrG7kv0PjNE
-         CFbBv1YU7QFH0up35fWlVtcfIxQjQ7m0hssD9O+XyCUZqjf03LPdhN8ePyWQRSDFPw7G
-         pvtgdk//gAHP6k6UBo1w3jhg5z3/IIVuJBtNE9ubC1lWwTlwmDOWZ+QyXQMbPbeXLyzJ
-         2PWg==
-X-Forwarded-Encrypted: i=1; AJvYcCUYIp9OZJVajoTCJmzIC2VvU7XM3tc6g6PDWgc1vUWsgXvfXqUA0I0xWEqfwX/bmHX9KBH2xRLt5DCsSA==@vger.kernel.org, AJvYcCW4tvd5oMmTznU60bJTa0gVcn0AYlKRBeRvTkwK2tywjW31ieZNo3iqO0Nn042KeiTeu1kwSTl0v56HEg==@vger.kernel.org, AJvYcCXpWvuG/M6l+Hz5IHXpJbjrGIkbqk1WaD08tES9Ddrj+buaxswWsNKRTkuUn6KsVGGf3KU+zAwX1RHI@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFcPrq/nyBT8shOMcC4sPxgePr1WTEVYau7WVtrRPf6D8q9ffH
-	GxWBorRda3q+L/smIHPL1I+aVAR+DEsBFuhsHmz3Wz5RsxaTbOh9EkB4
-X-Gm-Gg: ASbGncteigYVmghvCNtzUX0ApAY2tLJ1rPTluAxGtlVzhKAcPIHnDLLDt6rRfXYrJbc
-	R2XMAflOvsRIFP6Sb/bZ6UNseOhlHE+pZlb3dfAkUGzlqFfZZpbxXV673ZFfwFctDUHUzI2/UsD
-	9Fa8mkwaMhe+xSgjLB1ufT3kl0+jcwV4dwNrVCRNKnJYGQP/f1o4VdmyU1adQ70nGECFh0NfioO
-	NxUdVY0N22IxXGGkhZUAs+J2jJMSbGbyNoU7amLHCqUQ3AAZRIm7uQ6Td70tOMPKXrMwK9M8Nld
-	RlhE8kx6SW1gy6WiJfjUSc0yxjGqv1XFalgClqempzZiIDNOhWFIrjCiblYVMq1bdNlXSaFH809
-	BfyVYpqy4XBtavQ96o7xbxJt2+sx9j4d0A33acg==
-X-Google-Smtp-Source: AGHT+IF7mRfbickFsYTwMADQx4XAvz8ZPfeUqtzo+M3JPyVTyGXqKLtnhB+rcZg1p+yluEJGGSeq8w==
-X-Received: by 2002:a05:600c:4e93:b0:45d:e0d8:a0aa with SMTP id 5b1f17b1804b1-45de0d8a342mr126859825e9.17.1757425733874;
-        Tue, 09 Sep 2025 06:48:53 -0700 (PDT)
-Received: from f (cst-prg-84-152.cust.vodafone.cz. [46.135.84.152])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e50e30asm492870045e9.24.2025.09.09.06.48.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 06:48:53 -0700 (PDT)
-Date: Tue, 9 Sep 2025 15:48:43 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org, 
-	kernel-team@fb.com, linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	brauner@kernel.org, viro@zeniv.linux.org.uk, amir73il@gmail.com
-Subject: Re: [PATCH v2 00/54] fs: rework inode reference counting
-Message-ID: <dpi5ey667awq63mgxrzu6qdfpeinrmeapgbllqidcdjayanz2p@kp3alvfskssp>
-References: <cover.1756222464.git.josef@toxicpanda.com>
- <eeu47pjcaxkfol2o2bltigfjvrz6eecdjwtilnmnprqh7dhdn7@rqi35ya5ilmv>
- <20250902211629.GA252154@fedora>
+        bh=qI3uCi+I3Vp/FkZTD+FJaco20QjAvvZpJVWAsLDwf0k=;
+        b=hNULyLcn8k4+qk7Ha7035HyM+EmZMIUKEkh3yRdBfqAgu59usqm8Kt771omEBYFgE7
+         aLO3kIaKOPr7fNiLNcm0DZo/wrQlWk9e8wPrRW1tOU9dDRuuJjUmfhDBnC8vQxcxCz5q
+         LeTNLjRESY//KKAGYdSvhTkiDm+ONrmB05Ce65lZUfjIUamT9ToLJAi9UqK2HRvipu+3
+         oFEZprwYwiyBDZTQvAE0wiTLKGx1BmxloEF8xUnhTx5zPOlMTRm+rE2mLSWzmIupFLex
+         CQfE/UO3QdlhIll2oxULuye/64ViLv1yO+m6fkt+Nz6v59xlyQx22ep2biYNQ8mykem7
+         AMVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757426844; x=1758031644;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qI3uCi+I3Vp/FkZTD+FJaco20QjAvvZpJVWAsLDwf0k=;
+        b=H9/dGdtRHEHgrOYXT4EKFt240YNMO8ipvmk+jYauI6qMyLbofbPIBfPqFNwbDJ275r
+         kJ83fBGF54MU+Be/aLS3EZgfif67WaLRNoRUJDJXZluZ9RJ8uKWKwzOxSVml6+f64J5n
+         4R6p+Av6POANgJy9kCOGg2/prICrSgAM+hF4JpWfX718PY2IyRz+XKY04hNuxF1H+Amz
+         dLZwuFE8kpJ2v+Ne9ilIWzncFrT4vn0WPstKI/kTb1ZL6TkDOA2SrFpJjf9M8Gs9sNub
+         EQ94u1a/s8GKEnG673QqWiIN5LAWLquv9t1RgG80trfqTPPUgHi/mPyx9qh8ApypCFEg
+         Yhqw==
+X-Forwarded-Encrypted: i=1; AJvYcCVVbYZb+TCJlqQ78iLE4m+pn71D+mzygIgXZXj4IrUWY/rxqGNNuSWa4lf/fVuHZkahhhr4C6Cj/D4Ev9yV@vger.kernel.org
+X-Gm-Message-State: AOJu0YywAsjDR8KgRhkljPVGRLsJ13cLlBzG3boKnexNT5mr+s1s4Tto
+	yBnAE3CiYfkHlOcWW97+0fAPBlA9QFPhdydCp0CgWwm1xwyshN3Ej/yb+tL5RGh2LSzX0J31J9F
+	SFUft9eS9haEEKAQM4938VbUte81f3xE=
+X-Gm-Gg: ASbGncu0biPcpghf85FZ5AzMB/uC9x8hiX5Kahj6rTwuQQDIZGmSgtqk6SY04BBfNs4
+	ShR5g3fO22eOdNmOG60G9XZYjIpesH8TR7vapYN8ln8ppyKbudR+gOX7omYt++6Rwq+tB/GOqJS
+	ezKFNz4aMRs2TNysOQ5MfUm9FiD7k4a7q8UFYa0B5KY/uwQlwwoBKoh5Cu8GJyPSzGDeK2fgZRb
+	ckkQ7E=
+X-Google-Smtp-Source: AGHT+IEtm9B3E8k9y9MRKD7eZ9jZLIK6z4krT9HCWtigilkcuAW+csk7vvW2dgnU8JkqDF7ceZCLt/GQt92PrGAJK04=
+X-Received: by 2002:a05:6402:4309:b0:627:c107:8443 with SMTP id
+ 4fb4d7f45d1cf-627c1080c85mr8194972a12.14.1757426843032; Tue, 09 Sep 2025
+ 07:07:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250902211629.GA252154@fedora>
+References: <20250909044637.705116-1-neilb@ownmail.net> <20250909044637.705116-6-neilb@ownmail.net>
+In-Reply-To: <20250909044637.705116-6-neilb@ownmail.net>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 9 Sep 2025 16:07:10 +0200
+X-Gm-Features: AS18NWANpmTEICXJJvH9OLRxkRhYawtBCnNP8LIaJqbZ1iwZFrL403KkfyGVE20
+Message-ID: <CAOQ4uxhEEVz2KRK-TtS=xjdMbLiOCkT=y66vx8NfzGQOgCZ=MA@mail.gmail.com>
+Subject: Re: [PATCH v2 5/7] VFS: rename kern_path_locked() and related functions.
+To: neil@brown.name
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 02, 2025 at 05:16:29PM -0400, Josef Bacik wrote:
+On Tue, Sep 9, 2025 at 6:48=E2=80=AFAM NeilBrown <neilb@ownmail.net> wrote:
+>
+> From: NeilBrown <neil@brown.name>
+>
+> kern_path_locked() is now only used to prepare for removing an object
+> from the filesystem (and that is the only credible reason for wanting a
+> positive locked dentry).  Thus it corresponds to kern_path_create() and
+> so should have a corresponding name.
+>
+> Unfortunately the name "kern_path_create" is somewhat misleading as it
+> doesn't actually create anything.  The recently added
+> simple_start_creating() provides a better pattern I believe.  The
+> "start" can be matched with "end" to bracket the creating or removing.
+>
+> So this patch changes names:
+>
+>  kern_path_locked -> start_removing_path
+>  kern_path_create -> start_creating_path
+>  user_path_create -> start_creating_user_path
+>  user_path_locked_at -> start_removing_user_path_at
+>  done_path_create -> end_creating_path
 
-This conversation would be best had over a beer, but unfortunately it's
-not an option. ;)
+This looks nice.
 
-I trimmed the mail prior to the summary. There was some stuff in your
-response where I don't think we have a mutual understanding who is
-arguing for what and it also shows a little in the content below. I'm
-going to try to address it.
+With one comment below fixed feel free to add:
 
-I think there is a significant disconnect in one crucial detail which
-I'm going to note later.
- 
-> Alright I see what you're suggesting. What I want is to have the refcounts be
-> the ultimate arbiter of the state of the inode. We still need I_NEW and
-> I_CREATING. I want to separate the dirty flags off to the side so we can use
-> bitops for I_CREATING and I_NEW. From there we can do simple things about
-> waiting where we need to, and eliminate i_lock for those accesses. That way
-> inode lookup becomes xarray walk under RCU,
-> refcount_inc_not_zero(&inode->i_count), if (unlikely(test_bit(I_NEW))) etc.
-> 
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
-I'm going to address this way below.
+>
+> and also introduces end_removing_path() which is identical to
+> end_creating_path().
+>
+> __start_removing_path (which was __kern_path_locked) is enhanced to
+> call mnt_want_write() for consistency with the start_creating_path().
+>
+> Signed-off-by: NeilBrown <neil@brown.name>
+> ---
+>  Documentation/filesystems/porting.rst        | 12 ++++
+>  arch/powerpc/platforms/cell/spufs/syscalls.c |  4 +-
+>  drivers/base/devtmpfs.c                      | 22 +++-----
+>  fs/bcachefs/fs-ioctl.c                       | 10 ++--
+>  fs/init.c                                    | 17 +++---
+>  fs/namei.c                                   | 58 ++++++++++++--------
+>  fs/ocfs2/refcounttree.c                      |  4 +-
+>  fs/smb/server/vfs.c                          |  8 +--
+>  include/linux/namei.h                        | 14 +++--
+>  kernel/bpf/inode.c                           |  4 +-
+>  net/unix/af_unix.c                           |  6 +-
+>  11 files changed, 92 insertions(+), 67 deletions(-)
+>
+> diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesy=
+stems/porting.rst
+> index 85f590254f07..e0494860be6b 100644
+> --- a/Documentation/filesystems/porting.rst
+> +++ b/Documentation/filesystems/porting.rst
+> @@ -1285,3 +1285,15 @@ rather than a VMA, as the VMA at this stage is not=
+ yet valid.
+>  The vm_area_desc provides the minimum required information for a filesys=
+tem
+>  to initialise state upon memory mapping of a file-backed region, and out=
+put
+>  parameters for the file system to set this state.
+> +
+> +---
+> +
+> +**mandatory**
+> +
+> +Several functions are renamed:
+> +
+> +-  kern_path_locked -> start_removing_path
+> +-  kern_path_create -> start_creating_path
+> +-  user_path_create -> start_creating_user_path
+> +-  user_path_locked_at -> start_removing_user_path_at
+> +-  done_path_create -> end_creating_path
+> diff --git a/arch/powerpc/platforms/cell/spufs/syscalls.c b/arch/powerpc/=
+platforms/cell/spufs/syscalls.c
+> index 157e046e6e93..ea4ba1b6ce6a 100644
+> --- a/arch/powerpc/platforms/cell/spufs/syscalls.c
+> +++ b/arch/powerpc/platforms/cell/spufs/syscalls.c
+> @@ -67,11 +67,11 @@ static long do_spu_create(const char __user *pathname=
+, unsigned int flags,
+>         struct dentry *dentry;
+>         int ret;
+>
+> -       dentry =3D user_path_create(AT_FDCWD, pathname, &path, LOOKUP_DIR=
+ECTORY);
+> +       dentry =3D start_creating_user_path(AT_FDCWD, pathname, &path, LO=
+OKUP_DIRECTORY);
+>         ret =3D PTR_ERR(dentry);
+>         if (!IS_ERR(dentry)) {
+>                 ret =3D spufs_create(&path, dentry, flags, mode, neighbor=
+);
+> -               done_path_create(&path, dentry);
+> +               end_creating_path(&path, dentry);
+>         }
+>
+>         return ret;
+> diff --git a/drivers/base/devtmpfs.c b/drivers/base/devtmpfs.c
+> index 31bfb3194b4c..9d4e46ad8352 100644
+> --- a/drivers/base/devtmpfs.c
+> +++ b/drivers/base/devtmpfs.c
+> @@ -176,7 +176,7 @@ static int dev_mkdir(const char *name, umode_t mode)
+>         struct dentry *dentry;
+>         struct path path;
+>
+> -       dentry =3D kern_path_create(AT_FDCWD, name, &path, LOOKUP_DIRECTO=
+RY);
+> +       dentry =3D start_creating_path(AT_FDCWD, name, &path, LOOKUP_DIRE=
+CTORY);
+>         if (IS_ERR(dentry))
+>                 return PTR_ERR(dentry);
+>
+> @@ -184,7 +184,7 @@ static int dev_mkdir(const char *name, umode_t mode)
+>         if (!IS_ERR(dentry))
+>                 /* mark as kernel-created inode */
+>                 d_inode(dentry)->i_private =3D &thread;
+> -       done_path_create(&path, dentry);
+> +       end_creating_path(&path, dentry);
+>         return PTR_ERR_OR_ZERO(dentry);
+>  }
+>
+> @@ -222,10 +222,10 @@ static int handle_create(const char *nodename, umod=
+e_t mode, kuid_t uid,
+>         struct path path;
+>         int err;
+>
+> -       dentry =3D kern_path_create(AT_FDCWD, nodename, &path, 0);
+> +       dentry =3D start_creating_path(AT_FDCWD, nodename, &path, 0);
+>         if (dentry =3D=3D ERR_PTR(-ENOENT)) {
+>                 create_path(nodename);
+> -               dentry =3D kern_path_create(AT_FDCWD, nodename, &path, 0)=
+;
+> +               dentry =3D start_creating_path(AT_FDCWD, nodename, &path,=
+ 0);
+>         }
+>         if (IS_ERR(dentry))
+>                 return PTR_ERR(dentry);
+> @@ -246,7 +246,7 @@ static int handle_create(const char *nodename, umode_=
+t mode, kuid_t uid,
+>                 /* mark as kernel-created inode */
+>                 d_inode(dentry)->i_private =3D &thread;
+>         }
+> -       done_path_create(&path, dentry);
+> +       end_creating_path(&path, dentry);
+>         return err;
+>  }
+>
+> @@ -256,7 +256,7 @@ static int dev_rmdir(const char *name)
+>         struct dentry *dentry;
+>         int err;
+>
+> -       dentry =3D kern_path_locked(name, &parent);
+> +       dentry =3D start_removing_path(name, &parent);
+>         if (IS_ERR(dentry))
+>                 return PTR_ERR(dentry);
+>         if (d_inode(dentry)->i_private =3D=3D &thread)
+> @@ -265,9 +265,7 @@ static int dev_rmdir(const char *name)
+>         else
+>                 err =3D -EPERM;
+>
+> -       dput(dentry);
+> -       inode_unlock(d_inode(parent.dentry));
+> -       path_put(&parent);
+> +       end_removing_path(&parent, dentry);
+>         return err;
+>  }
+>
+> @@ -325,7 +323,7 @@ static int handle_remove(const char *nodename, struct=
+ device *dev)
+>         int deleted =3D 0;
+>         int err =3D 0;
+>
+> -       dentry =3D kern_path_locked(nodename, &parent);
+> +       dentry =3D start_removing_path(nodename, &parent);
+>         if (IS_ERR(dentry))
+>                 return PTR_ERR(dentry);
+>
+> @@ -349,10 +347,8 @@ static int handle_remove(const char *nodename, struc=
+t device *dev)
+>                 if (!err || err =3D=3D -ENOENT)
+>                         deleted =3D 1;
+>         }
+> -       dput(dentry);
+> -       inode_unlock(d_inode(parent.dentry));
+> +       end_removing_path(&parent, dentry);
+>
+> -       path_put(&parent);
+>         if (deleted && strchr(nodename, '/'))
+>                 delete_path(nodename);
+>         return err;
+> diff --git a/fs/bcachefs/fs-ioctl.c b/fs/bcachefs/fs-ioctl.c
+> index 4e72e654da96..43510da5e734 100644
+> --- a/fs/bcachefs/fs-ioctl.c
+> +++ b/fs/bcachefs/fs-ioctl.c
+> @@ -255,7 +255,7 @@ static long bch2_ioctl_subvolume_create(struct bch_fs=
+ *c, struct file *filp,
+>                 snapshot_src =3D inode_inum(to_bch_ei(src_path.dentry->d_=
+inode));
+>         }
+>
+> -       dst_dentry =3D user_path_create(arg.dirfd,
+> +       dst_dentry =3D start_creating_user_path(arg.dirfd,
+>                         (const char __user *)(unsigned long)arg.dst_ptr,
+>                         &dst_path, lookup_flags);
+>         error =3D PTR_ERR_OR_ZERO(dst_dentry);
+> @@ -314,7 +314,7 @@ static long bch2_ioctl_subvolume_create(struct bch_fs=
+ *c, struct file *filp,
+>         d_instantiate(dst_dentry, &inode->v);
+>         fsnotify_mkdir(dir, dst_dentry);
+>  err3:
+> -       done_path_create(&dst_path, dst_dentry);
+> +       end_creating_path(&dst_path, dst_dentry);
+>  err2:
+>         if (arg.src_ptr)
+>                 path_put(&src_path);
+> @@ -334,7 +334,7 @@ static long bch2_ioctl_subvolume_destroy(struct bch_f=
+s *c, struct file *filp,
+>         if (arg.flags)
+>                 return -EINVAL;
+>
+> -       victim =3D user_path_locked_at(arg.dirfd, name, &path);
+> +       victim =3D start_removing_user_path_at(arg.dirfd, name, &path);
+>         if (IS_ERR(victim))
+>                 return PTR_ERR(victim);
+>
+> @@ -351,9 +351,7 @@ static long bch2_ioctl_subvolume_destroy(struct bch_f=
+s *c, struct file *filp,
+>                 d_invalidate(victim);
+>         }
+>  err:
+> -       inode_unlock(dir);
+> -       dput(victim);
+> -       path_put(&path);
+> +       end_removing_path(&path, victim);
+>         return ret;
+>  }
+>
+> diff --git a/fs/init.c b/fs/init.c
+> index eef5124885e3..07f592ccdba8 100644
+> --- a/fs/init.c
+> +++ b/fs/init.c
+> @@ -149,7 +149,7 @@ int __init init_mknod(const char *filename, umode_t m=
+ode, unsigned int dev)
+>         else if (!(S_ISBLK(mode) || S_ISCHR(mode)))
+>                 return -EINVAL;
+>
+> -       dentry =3D kern_path_create(AT_FDCWD, filename, &path, 0);
+> +       dentry =3D start_creating_path(AT_FDCWD, filename, &path, 0);
+>         if (IS_ERR(dentry))
+>                 return PTR_ERR(dentry);
+>
+> @@ -158,7 +158,7 @@ int __init init_mknod(const char *filename, umode_t m=
+ode, unsigned int dev)
+>         if (!error)
+>                 error =3D vfs_mknod(mnt_idmap(path.mnt), path.dentry->d_i=
+node,
+>                                   dentry, mode, new_decode_dev(dev));
+> -       done_path_create(&path, dentry);
+> +       end_creating_path(&path, dentry);
+>         return error;
+>  }
+>
+> @@ -173,7 +173,7 @@ int __init init_link(const char *oldname, const char =
+*newname)
+>         if (error)
+>                 return error;
+>
+> -       new_dentry =3D kern_path_create(AT_FDCWD, newname, &new_path, 0);
+> +       new_dentry =3D start_creating_path(AT_FDCWD, newname, &new_path, =
+0);
+>         error =3D PTR_ERR(new_dentry);
+>         if (IS_ERR(new_dentry))
+>                 goto out;
+> @@ -191,7 +191,7 @@ int __init init_link(const char *oldname, const char =
+*newname)
+>         error =3D vfs_link(old_path.dentry, idmap, new_path.dentry->d_ino=
+de,
+>                          new_dentry, NULL);
+>  out_dput:
+> -       done_path_create(&new_path, new_dentry);
+> +       end_creating_path(&new_path, new_dentry);
+>  out:
+>         path_put(&old_path);
+>         return error;
+> @@ -203,14 +203,14 @@ int __init init_symlink(const char *oldname, const =
+char *newname)
+>         struct path path;
+>         int error;
+>
+> -       dentry =3D kern_path_create(AT_FDCWD, newname, &path, 0);
+> +       dentry =3D start_creating_path(AT_FDCWD, newname, &path, 0);
+>         if (IS_ERR(dentry))
+>                 return PTR_ERR(dentry);
+>         error =3D security_path_symlink(&path, dentry, oldname);
+>         if (!error)
+>                 error =3D vfs_symlink(mnt_idmap(path.mnt), path.dentry->d=
+_inode,
+>                                     dentry, oldname);
+> -       done_path_create(&path, dentry);
+> +       end_creating_path(&path, dentry);
+>         return error;
+>  }
+>
+> @@ -225,7 +225,8 @@ int __init init_mkdir(const char *pathname, umode_t m=
+ode)
+>         struct path path;
+>         int error;
+>
+> -       dentry =3D kern_path_create(AT_FDCWD, pathname, &path, LOOKUP_DIR=
+ECTORY);
+> +       dentry =3D start_creating_path(AT_FDCWD, pathname, &path,
+> +                                    LOOKUP_DIRECTORY);
+>         if (IS_ERR(dentry))
+>                 return PTR_ERR(dentry);
+>         mode =3D mode_strip_umask(d_inode(path.dentry), mode);
+> @@ -236,7 +237,7 @@ int __init init_mkdir(const char *pathname, umode_t m=
+ode)
+>                 if (IS_ERR(dentry))
+>                         error =3D PTR_ERR(dentry);
+>         }
+> -       done_path_create(&path, dentry);
+> +       end_creating_path(&path, dentry);
+>         return error;
+>  }
+>
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 4017bc8641d3..ee693d16086e 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -2758,7 +2758,8 @@ static int filename_parentat(int dfd, struct filena=
+me *name,
+>  }
+>
+>  /* does lookup, returns the object with parent locked */
+> -static struct dentry *__kern_path_locked(int dfd, struct filename *name,=
+ struct path *path)
+> +static struct dentry *__start_removing_path(int dfd, struct filename *na=
+me,
+> +                                          struct path *path)
+>  {
+>         struct path parent_path __free(path_put) =3D {};
+>         struct dentry *d;
+> @@ -2770,15 +2771,25 @@ static struct dentry *__kern_path_locked(int dfd,=
+ struct filename *name, struct
+>                 return ERR_PTR(error);
+>         if (unlikely(type !=3D LAST_NORM))
+>                 return ERR_PTR(-EINVAL);
 
-> This has all been long and I think I've got the gist of what you're suggesting.
-> I'm going to restate it here so I'm sure we're on the same page.
-> 
-> 1. Don't do the i_obj_count thing.
-> 2. Clean-up all the current weirdness by defining helpers that clearly define
-> the flow of the inode lifetime.
-> 3. Remove the flags that are no longer necessary.
-> 4. Continue on with my other work to remove i_hash and the i_lru.
-> 
-> I don't disagree with this approach. I would however like to argue that changing
-> the refcounting rules to be clear accomplishes a lot of the above goals, and
-> gives us access to refcount_t which allows us to capture all sorts of bad
-> behavior without needing to duplicate the effort.
-> 
+This abnormal error handling pattern deserves a comment:
+  /* don't fail immediately if it's r/o, at least try to report other error=
+s */
 
-The ordering may be a little off here, consider text searching for
-"primary disconnect" and reading that first if you don't like this
-paragraph. :)
-
-This is part of what I'm saying, but it skips the justification, which
-imo puts a question mark on the i_obj_count idea.
-
-One important bit is that the VFS layer should be able to have all its
-funcs assert whether they are legally called for a given inode and if
-the operation they are asked to do is also legal. What is legal depends
-on where the inode is in its lifecycle (literally just handed out from
-the allocator, fully constructed, or maybe in the process of being
-aborted or maybe destroyed or maybe some other state).
-
-The binary state of merely "usable or not usable" provided by typical
-refcount schemes does not cut it and this remains true for your scheme
-with i_obj_count.
-
-So in the name of providing an environment where the programmer can
-check wtf is happening and have the layer yell if at all possible, you
-would need to provide *something* in parallel to the new count anyway.
-
-I outlined one way to do it with enums each denoting a dedicated state.
-
-Another way to do it is with flags, except not in the current
-clusterfuck form.
-
-I also argued with the *something* in place the i_obj_count becomes
-spurious.
-
-However, if your primary objection is that "->i_count == 0" is ambiguous
-as to whether the inode happens to not have users or is being torned
-down, I have a simple solution.
-
-Suppose the current flags are here to say for the time being, even then
-it is an invariant that ->i_count == 0 when I_FREEING is being set.
-Then you can also kill the refcount by setting it to some magic value
-indicating the obj is dead. As a result you still have your indicator in
-->i_count.
-
-> As an alternative approach, I could do the following.
-> 
-> 1. Pull the delayed iput work from btrfs into the core VFS.
-
-I outlined in my previous e-mail how you can do the deferred
-->evict_inode thing very easily with the help of the vfs layer and
-without any refcount shenanigans or putting the burden on filesystems
-which don't need/want it.
-
-Search for "evict_deferred" to find it. It boils down to return an error
-from the routine and having evict() schedule deferred work.
-Alternatively it can be expected the filesystem already did that and
-then there is a magic entry point (e.g., evict_deferred_finish()) to
-call after the fs is finally done.
-
-That proposal can be further twaked to pass an argument denoting who is
-calling. For example if you are already operating from task_work (due to
-deferred fput) OR fput_close_sync then maybe even btrfs can have its
-evict_inode() do the work in place?
-
-I would really like to NOT see iput() defaulting to deferred work for
-everyone if it can be avoided, but maybe I misunderstood the problem you
-are facing there.
-
-> 2. In all the places where we have dubious lifetime stuff (aka where I use
-> i_obj_count), replace it with more i_count usage, and rely on the delayed iput
-> infrastructure to save us here.
-> 3. Change the rules so we never have 0 refcount objects.
-> 4. Convert to refcount_t.
-
-So I think these points showcase the primary disconnect between your
-position and mine.
-
-AFAICS your general stance is that the current state of lifecycle is...
-lacking in quality/clarity (no argument here). At the same time
-refcounts are a well-known mechanism and the specific refcount API in
-the Linux kernel has extra stopgaps. With this in mind you want to lean
-into it, dropping as much hand-rolled code as possible, with the
-assumption this is going to reduce bugs and provide some bug-proofing
-for the future.
-
-My stance includes few points, but the crux is I claim the proposed
-refcount approach is in fact harder to reason about and harder to
-implement in the current kernel (not to be confused with an
-implementation from scratch). All elaborated on below.
-
-First and foremost, even if i_obj_count is to land, the pragmatic
-approach is to bring the current to state to basic sanity in small
-incremental bisectable steps (on top of providing way better assertion
-coverage). That would mean making things sensible with the flags first
-and only then switch to the new refcount scheme. Part of the problem is
-that in the VFS layer you are getting screwed over by bad filesystems
-(which the layer currently provides little self-defence against) and bad
-consumers at the same time, while the layer only provides ad-hoc asserts.
-
-With the patchset as proposed you are making a significant jump in few
-steps leaving a big window for subtle bugs which can take forever to
-figure out. Personally I would not feel safe merging the patchset for
-this reason alone.
-
-Next up, reported woes are not inherent to the currently taken approach
-(including ->i_count == 0 meaning it's still all fine and this not being
-an ambiguous condition or synchronisation vs writeback) and the general
-things the layer is doing at the moment can be expressed in a clean &
-debuggable & assertion-friendly manner without any extra refcounts.
-
-As a small illustration and a step towards that goal I posted a patchset
-sorting out ->i_state handling and the I_WILL_FREE flag:
-https://lore.kernel.org/linux-fsdevel/20250909091344.1299099-1-mjguzik@gmail.com/T/#t
-
-Something of that sort should land even if your patchset makes it way
-into mainline.
-
-I also claim a clear-cut flow which denotes the inode as being
-in-teardown *and* providing a way for certain mechanisms to stop messing
-with it *while* it is still fully operational are important longterm.
-
-The famed writeback is part of it.
-
-I claim a clear-cut API which synchronizes grabbing the inode or
-buggering off vs waiting race-free is not hard to implement, it just was
-not done.
-
-More importantly, I claim the current writeback code may be actively
-depending on various parts of the inode not being torned down while it
-is operating. With your proposal of only guarding the actual freeing of
-the backing struct, an extensive review would be needed to make sure
-this is not happening.
-
-> 5. Remove the various flags.
-> 6. Continue with my existing plans.
-> 
-> Does this sound like a reasonable compromise?  Do my explanations make sense?
-> Did I misunderstand something fundamentally in your response?
-> 
-
-So I looked some more at the patchset and there is something I did not
-mentally register earlier concerning avoidance of ->i_lock for ref
-acquire.
-
-I don't know if it is motivated by a scalability problem on that lock or
-the idea that it will help conversion of the hash to xarray (it might, I
-have not analyzed the API).
-
-There is a problem with the current patchset: with everything applied
-you get __iput() -> maybe_add_lru() -> ->drop_inode().
-
-... except the call happens with the spin lock held (like in the stock
-kenrel) but also ->i_count == 1, allowing lockless ref acquires.
-
-While the layer can have API contract like that, this very much changes
-guarantees compared to the current state.
-
-In the current kernel it is an invariant nobody is going to poke at the
-inode as long you hold ->i_lock -- the count is 0, thus you are the only
-remaining user and any potential new users are stalled waiting on the
-lock.
-
-In the kernel as proposed this is no longer true -- anyone can bump the
-ref since it is not 0, afterwards they might end up modifying the inode
-in a way some of the ->drop_inode routines are not prepared for.
-
-Or to put it differently, this automatically makes ->drop_inode
-callbacks harder to implement as there are races to worry about.
-
-There is a bunch of dodgy filesystems with their custom drop routines,
-all possibly relying on the old semantics. All of which would have to be
-audited for correctness in face of the new scheme if this is to go in.
-
-This is most likely not worth the effort. Also note in my proposals
-these semantics would remain unchanged.
-
-I do know for a fact that the per-sb super block list lock, global hash
-lock and dentry + inode LRUs locks are a scalability problem.
-
-I don't know anything about ->i_lock vs ref get/put also being one. I'm
-not saying this can't happen in some workloads, but from my quick poking
-around vast majoring of inodes reaching iput() have a ref of 1 or way
-higher than 1.
-
-So even if ->i_lock does pose a scalability problem, it can be probably
-get largely alleviated on the stock kernel as follows: 1. provide some
-assertions nobody bumps 0->1 with I_FREEING et al set 2. allow for
-atomic igrab if refcount is at least 1. Note in this case ref of 1
-guarantees drop_inode is not in progress.
-
-If the goal is to help xarray conversion, I have no basis to comment as
-I don't know that API. I did however note that for a fair comparison it
-would make sense to start with bitlocks for the hash. I can do that
-work, I did not because the LRU bottlenecks overtook the hash in my
-tests after my previous work in the area (some lock avoidance + not
-waiting on super block lock while holding the hash lock). fwiw I can do
-the bitlocks with the spin lock, as outlined in my previous e-mail.
-
-Further, if going that way, it would probably make sense to sort out the
-sb thing and LRUs first anyway.
-
-There is an old patchset which sorts out the hash thing + sb thing:
-https://lore.kernel.org/all/20231206060629.2827226-1-david@fromorbit.com/
-
-Would need to some rebasing.
-
-I disagree with how it handles the hash (I would do it with the inverted
-locking I described in my previous e-mail). The distributed linked list
-is also imo of too high granularity compared to what's really needed and
-not backed by core-local memory (I mean NUMA). However, if one is to
-evaluate a hash replacement, doing it on top of the patchset would be a
-good start (+ some LRU unfucking, even as simple as straight commenting
-it out just for testing purposes).
-
-Maybe even get the dlist thing in as is regardless of hash vs whatever.
-I'm not going to argue much with anyone who does the work to bring that
-in, despite the remark above.
-
-I had seen too many cases where one approach is implemented in a gimped
-manner, an inferior approach is implemented in a less gimped manner and
-is faster, leading people to conclude the latter is in fact the better
-choice. Now I have no idea how xarray is going to perform here, I am
-saying rolling with it vs a globally locked hash is unfair.
-
-> I'm not married to my work, I want to find a solution we're all happy with. I'm
-> starting a new job this week so my ability to pay a lot of attention to this is
-> going to be slightly diminished, so I apologize if I missed something.  Thanks,
-> 
-
-Well I'm not even working on Linux, so all my commentary is from the
-sidelines, which puts in me in a worse spot to participate.
-
-The good news is that whatever happens is only my problem if I stick
-around. :-P
+> +       error =3D mnt_want_write(path->mnt);
+>         inode_lock_nested(parent_path.dentry->d_inode, I_MUTEX_PARENT);
+>         d =3D lookup_one_qstr_excl(&last, parent_path.dentry, 0);
+> -       if (IS_ERR(d)) {
+> -               inode_unlock(parent_path.dentry->d_inode);
+> -               return d;
+> -       }
+> +       if (IS_ERR(d))
+> +               goto unlock;
+> +       if (error)
+> +               goto fail;
+>         path->dentry =3D no_free_ptr(parent_path.dentry);
+>         path->mnt =3D no_free_ptr(parent_path.mnt);
+>         return d;
+> +
+> +fail:
+> +       dput(d);
+> +       d =3D ERR_PTR(error);
+> +unlock:
+> +       inode_unlock(parent_path.dentry->d_inode);
+> +       if (!error)
+> +               mnt_drop_write(path->mnt);
+> +       return d;
+>  }
+>
+>  /**
+> @@ -2816,24 +2827,26 @@ struct dentry *kern_path_parent(const char *name,=
+ struct path *path)
+>         return d;
+>  }
+>
+> -struct dentry *kern_path_locked(const char *name, struct path *path)
+> +struct dentry *start_removing_path(const char *name, struct path *path)
+>  {
+>         struct filename *filename =3D getname_kernel(name);
+> -       struct dentry *res =3D __kern_path_locked(AT_FDCWD, filename, pat=
+h);
+> +       struct dentry *res =3D __start_removing_path(AT_FDCWD, filename, =
+path);
+>
+>         putname(filename);
+>         return res;
+>  }
+>
+> -struct dentry *user_path_locked_at(int dfd, const char __user *name, str=
+uct path *path)
+> +struct dentry *start_removing_user_path_at(int dfd,
+> +                                          const char __user *name,
+> +                                          struct path *path)
+>  {
+>         struct filename *filename =3D getname(name);
+> -       struct dentry *res =3D __kern_path_locked(dfd, filename, path);
+> +       struct dentry *res =3D __start_removing_path(dfd, filename, path)=
+;
+>
+>         putname(filename);
+>         return res;
+>  }
+> -EXPORT_SYMBOL(user_path_locked_at);
+> +EXPORT_SYMBOL(start_removing_user_path_at);
+>
+>  int kern_path(const char *name, unsigned int flags, struct path *path)
+>  {
+> @@ -4223,8 +4236,8 @@ static struct dentry *filename_create(int dfd, stru=
+ct filename *name,
+>         return dentry;
+>  }
+>
+> -struct dentry *kern_path_create(int dfd, const char *pathname,
+> -                               struct path *path, unsigned int lookup_fl=
+ags)
+> +struct dentry *start_creating_path(int dfd, const char *pathname,
+> +                                  struct path *path, unsigned int lookup=
+_flags)
+>  {
+>         struct filename *filename =3D getname_kernel(pathname);
+>         struct dentry *res =3D filename_create(dfd, filename, path, looku=
+p_flags);
+> @@ -4232,9 +4245,9 @@ struct dentry *kern_path_create(int dfd, const char=
+ *pathname,
+>         putname(filename);
+>         return res;
+>  }
+> -EXPORT_SYMBOL(kern_path_create);
+> +EXPORT_SYMBOL(start_creating_path);
+>
+> -void done_path_create(struct path *path, struct dentry *dentry)
+> +void end_creating_path(struct path *path, struct dentry *dentry)
+>  {
+>         if (!IS_ERR(dentry))
+>                 dput(dentry);
+> @@ -4242,10 +4255,11 @@ void done_path_create(struct path *path, struct d=
+entry *dentry)
+>         mnt_drop_write(path->mnt);
+>         path_put(path);
+>  }
+> -EXPORT_SYMBOL(done_path_create);
+> +EXPORT_SYMBOL(end_creating_path);
+>
+> -inline struct dentry *user_path_create(int dfd, const char __user *pathn=
+ame,
+> -                               struct path *path, unsigned int lookup_fl=
+ags)
+> +inline struct dentry *start_creating_user_path(
+> +       int dfd, const char __user *pathname,
+> +       struct path *path, unsigned int lookup_flags)
+>  {
+>         struct filename *filename =3D getname(pathname);
+>         struct dentry *res =3D filename_create(dfd, filename, path, looku=
+p_flags);
+> @@ -4253,7 +4267,7 @@ inline struct dentry *user_path_create(int dfd, con=
+st char __user *pathname,
+>         putname(filename);
+>         return res;
+>  }
+> -EXPORT_SYMBOL(user_path_create);
+> +EXPORT_SYMBOL(start_creating_user_path);
+>
+>  /**
+>   * vfs_mknod - create device node or file
+> @@ -4361,7 +4375,7 @@ static int do_mknodat(int dfd, struct filename *nam=
+e, umode_t mode,
+>                         break;
+>         }
+>  out2:
+> -       done_path_create(&path, dentry);
+> +       end_creating_path(&path, dentry);
+>         if (retry_estale(error, lookup_flags)) {
+>                 lookup_flags |=3D LOOKUP_REVAL;
+>                 goto retry;
+> @@ -4465,7 +4479,7 @@ int do_mkdirat(int dfd, struct filename *name, umod=
+e_t mode)
+>                 if (IS_ERR(dentry))
+>                         error =3D PTR_ERR(dentry);
+>         }
+> -       done_path_create(&path, dentry);
+> +       end_creating_path(&path, dentry);
+>         if (retry_estale(error, lookup_flags)) {
+>                 lookup_flags |=3D LOOKUP_REVAL;
+>                 goto retry;
+> @@ -4819,7 +4833,7 @@ int do_symlinkat(struct filename *from, int newdfd,=
+ struct filename *to)
+>         if (!error)
+>                 error =3D vfs_symlink(mnt_idmap(path.mnt), path.dentry->d=
+_inode,
+>                                     dentry, from->name);
+> -       done_path_create(&path, dentry);
+> +       end_creating_path(&path, dentry);
+>         if (retry_estale(error, lookup_flags)) {
+>                 lookup_flags |=3D LOOKUP_REVAL;
+>                 goto retry;
+> @@ -4988,7 +5002,7 @@ int do_linkat(int olddfd, struct filename *old, int=
+ newdfd,
+>         error =3D vfs_link(old_path.dentry, idmap, new_path.dentry->d_ino=
+de,
+>                          new_dentry, &delegated_inode);
+>  out_dput:
+> -       done_path_create(&new_path, new_dentry);
+> +       end_creating_path(&new_path, new_dentry);
+>         if (delegated_inode) {
+>                 error =3D break_deleg_wait(&delegated_inode);
+>                 if (!error) {
+> diff --git a/fs/ocfs2/refcounttree.c b/fs/ocfs2/refcounttree.c
+> index 8f732742b26e..267b50e8e42e 100644
+> --- a/fs/ocfs2/refcounttree.c
+> +++ b/fs/ocfs2/refcounttree.c
+> @@ -4418,7 +4418,7 @@ int ocfs2_reflink_ioctl(struct inode *inode,
+>                 return error;
+>         }
+>
+> -       new_dentry =3D user_path_create(AT_FDCWD, newname, &new_path, 0);
+> +       new_dentry =3D start_creating_user_path(AT_FDCWD, newname, &new_p=
+ath, 0);
+>         error =3D PTR_ERR(new_dentry);
+>         if (IS_ERR(new_dentry)) {
+>                 mlog_errno(error);
+> @@ -4435,7 +4435,7 @@ int ocfs2_reflink_ioctl(struct inode *inode,
+>                                   d_inode(new_path.dentry),
+>                                   new_dentry, preserve);
+>  out_dput:
+> -       done_path_create(&new_path, new_dentry);
+> +       end_creating_path(&new_path, new_dentry);
+>  out:
+>         path_put(&old_path);
+>
+> diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
+> index 07739055ac9f..1cfa688904b2 100644
+> --- a/fs/smb/server/vfs.c
+> +++ b/fs/smb/server/vfs.c
+> @@ -196,7 +196,7 @@ int ksmbd_vfs_create(struct ksmbd_work *work, const c=
+har *name, umode_t mode)
+>                 pr_err("File(%s): creation failed (err:%d)\n", name, err)=
+;
+>         }
+>
+> -       done_path_create(&path, dentry);
+> +       end_creating_path(&path, dentry);
+>         return err;
+>  }
+>
+> @@ -237,7 +237,7 @@ int ksmbd_vfs_mkdir(struct ksmbd_work *work, const ch=
+ar *name, umode_t mode)
+>         if (!err && dentry !=3D d)
+>                 ksmbd_vfs_inherit_owner(work, d_inode(path.dentry), d_ino=
+de(dentry));
+>
+> -       done_path_create(&path, dentry);
+> +       end_creating_path(&path, dentry);
+>         if (err)
+>                 pr_err("mkdir(%s): creation failed (err:%d)\n", name, err=
+);
+>         return err;
+> @@ -669,7 +669,7 @@ int ksmbd_vfs_link(struct ksmbd_work *work, const cha=
+r *oldname,
+>                 ksmbd_debug(VFS, "vfs_link failed err %d\n", err);
+>
+>  out3:
+> -       done_path_create(&newpath, dentry);
+> +       end_creating_path(&newpath, dentry);
+>  out2:
+>         path_put(&oldpath);
+>  out1:
+> @@ -1325,7 +1325,7 @@ struct dentry *ksmbd_vfs_kern_path_create(struct ks=
+mbd_work *work,
+>         if (!abs_name)
+>                 return ERR_PTR(-ENOMEM);
+>
+> -       dent =3D kern_path_create(AT_FDCWD, abs_name, path, flags);
+> +       dent =3D start_creating_path(AT_FDCWD, abs_name, path, flags);
+>         kfree(abs_name);
+>         return dent;
+>  }
+> diff --git a/include/linux/namei.h b/include/linux/namei.h
+> index 1d5038c21c20..a7800ef04e76 100644
+> --- a/include/linux/namei.h
+> +++ b/include/linux/namei.h
+> @@ -59,11 +59,15 @@ struct dentry *lookup_one_qstr_excl(const struct qstr=
+ *name,
+>  extern int kern_path(const char *, unsigned, struct path *);
+>  struct dentry *kern_path_parent(const char *name, struct path *parent);
+>
+> -extern struct dentry *kern_path_create(int, const char *, struct path *,=
+ unsigned int);
+> -extern struct dentry *user_path_create(int, const char __user *, struct =
+path *, unsigned int);
+> -extern void done_path_create(struct path *, struct dentry *);
+> -extern struct dentry *kern_path_locked(const char *, struct path *);
+> -extern struct dentry *user_path_locked_at(int , const char __user *, str=
+uct path *);
+> +extern struct dentry *start_creating_path(int, const char *, struct path=
+ *, unsigned int);
+> +extern struct dentry *start_creating_user_path(int, const char __user *,=
+ struct path *, unsigned int);
+> +extern void end_creating_path(struct path *, struct dentry *);
+> +extern struct dentry *start_removing_path(const char *, struct path *);
+> +extern struct dentry *start_removing_user_path_at(int , const char __use=
+r *, struct path *);
+> +static inline void end_removing_path(struct path *path , struct dentry *=
+dentry)
+> +{
+> +       end_creating_path(path, dentry);
+> +}
+>  int vfs_path_parent_lookup(struct filename *filename, unsigned int flags=
+,
+>                            struct path *parent, struct qstr *last, int *t=
+ype,
+>                            const struct path *root);
+> diff --git a/kernel/bpf/inode.c b/kernel/bpf/inode.c
+> index 5c2e96b19392..fadf3817a9c5 100644
+> --- a/kernel/bpf/inode.c
+> +++ b/kernel/bpf/inode.c
+> @@ -442,7 +442,7 @@ static int bpf_obj_do_pin(int path_fd, const char __u=
+ser *pathname, void *raw,
+>         umode_t mode;
+>         int ret;
+>
+> -       dentry =3D user_path_create(path_fd, pathname, &path, 0);
+> +       dentry =3D start_creating_user_path(path_fd, pathname, &path, 0);
+>         if (IS_ERR(dentry))
+>                 return PTR_ERR(dentry);
+>
+> @@ -471,7 +471,7 @@ static int bpf_obj_do_pin(int path_fd, const char __u=
+ser *pathname, void *raw,
+>                 ret =3D -EPERM;
+>         }
+>  out:
+> -       done_path_create(&path, dentry);
+> +       end_creating_path(&path, dentry);
+>         return ret;
+>  }
+>
+> diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+> index 6d7c110814ff..768098dec231 100644
+> --- a/net/unix/af_unix.c
+> +++ b/net/unix/af_unix.c
+> @@ -1387,7 +1387,7 @@ static int unix_bind_bsd(struct sock *sk, struct so=
+ckaddr_un *sunaddr,
+>          * Get the parent directory, calculate the hash for last
+>          * component.
+>          */
+> -       dentry =3D kern_path_create(AT_FDCWD, addr->name->sun_path, &pare=
+nt, 0);
+> +       dentry =3D start_creating_path(AT_FDCWD, addr->name->sun_path, &p=
+arent, 0);
+>         if (IS_ERR(dentry)) {
+>                 err =3D PTR_ERR(dentry);
+>                 goto out;
+> @@ -1417,7 +1417,7 @@ static int unix_bind_bsd(struct sock *sk, struct so=
+ckaddr_un *sunaddr,
+>         unix_table_double_unlock(net, old_hash, new_hash);
+>         unix_insert_bsd_socket(sk);
+>         mutex_unlock(&u->bindlock);
+> -       done_path_create(&parent, dentry);
+> +       end_creating_path(&parent, dentry);
+>         return 0;
+>
+>  out_unlock:
+> @@ -1427,7 +1427,7 @@ static int unix_bind_bsd(struct sock *sk, struct so=
+ckaddr_un *sunaddr,
+>         /* failed after successful mknod?  unlink what we'd created... */
+>         vfs_unlink(idmap, d_inode(parent.dentry), dentry, NULL);
+>  out_path:
+> -       done_path_create(&parent, dentry);
+> +       end_creating_path(&parent, dentry);
+>  out:
+>         unix_release_addr(addr);
+>         return err =3D=3D -EEXIST ? -EADDRINUSE : err;
+> --
+> 2.50.0.107.gf914562f5916.dirty
+>
 
