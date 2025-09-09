@@ -1,76 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-60630-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60631-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BDE2B4A730
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 11:15:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D043DB4A737
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 11:16:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1059917D6CC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 09:15:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBDAB16BE1B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 09:15:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F6DE286D66;
-	Tue,  9 Sep 2025 09:14:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B7702882A5;
+	Tue,  9 Sep 2025 09:14:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bpk2jstY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HU+Ne10A"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 349FB285061;
-	Tue,  9 Sep 2025 09:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFF93286894;
+	Tue,  9 Sep 2025 09:14:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757409245; cv=none; b=n1K7E1iV8XBkEnWO0I5bNLztp528I5EUD2aMV6D+DWGAIHRrdfDdrQZRHDb2+6S8I3qL1ytZ0bwLcYpX9fQmfpqXTpAQvGffi+inE46RTwqjp6nNb/bCgn9nW6gRwRPf6qZ/DCTnKcycsnEUkerGaOBTmmkRfR2SUhlBaac7KqQ=
+	t=1757409247; cv=none; b=WT2213rYEc9bg/8Oph8TOPKOoQD6+fiYQwJsbvH970xWFO4MIr+NUueyyXLPO25tud22YQPPo7Ezlu2bWvD1a5OMnOaIhS7PLqDlO2kGgDM6I3CWWemWxjMqlrVanZ5SGZc6mFskK1z/KEkSoI7KvxYpHW8r9QSIP55mavF283c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757409245; c=relaxed/simple;
-	bh=m7+EjSEw7wGjGIHmJWC2yW7fI5jbNMbgdH73UJbKpuE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S1aWp/abLHtI57ZmWAmpLkT/IP2j/d0i8zBaWKOl/lKm4qBQSwaHF87X5zqYLxboAlq2h4t0bDcfbfP7Aoz0GQL9Fcl4ILj1uCksXOw63KciU+gXIaLbLxHfvvAfqDxwqIJyCVdXCAoqAeJqabCgPOY//NfqmDUcye9XJ7cfCCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bpk2jstY; arc=none smtp.client-ip=209.85.221.54
+	s=arc-20240116; t=1757409247; c=relaxed/simple;
+	bh=CP3LXTksQglwFNpnXr0hPsTeP7YFtJ0DHIn/IRdimlo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=EM4c3w0J3F6pcDai1Z6xnWUlwTKlkC3k7boi9isBuo+or+WxI/IuYCLObjnNcGUOGJh3RXk+6FqUMVUFyk5SHjFHOVcZsbsNj69y1x0j+kJyDVqluc1pCQBoL88JrODuE5j060XYRUF6oOw0lYOshdntuREqiyDPsNjYMEm6JjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HU+Ne10A; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3e2055ce973so2851446f8f.0;
-        Tue, 09 Sep 2025 02:14:02 -0700 (PDT)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45b9c35bc0aso47315965e9.2;
+        Tue, 09 Sep 2025 02:14:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757409241; x=1758014041; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ka25j5M/VbSSUXNqqPV03aOJpdPrHGb9SiYreXMkqJ8=;
-        b=Bpk2jstY5zuP37nF8l7UqQOCigOraPRHY69F/+phDm1wcB/gq4+CbvdS/0qtiTTH7J
-         epdO5sXKiAND7nMRJbAFju3g8gInAzpp0ialFwamkyYx5bJ+anAIvvw7tCLmEFhMvs+9
-         sqtPASGaZATxpMMY5w/RVwxlek0PXMGRb1HGXoknM0JBx+miEBusVfM6lfcObmOlZ83s
-         RRBNVVrCv8DTOF7imuJYD4x4GEjDHIvyMYqr9bTbnCPR/U2nTNJINrSyQCuf4dZKztgI
-         uwjdd0P4v2v2fiCgs/mu6zAJuXjm+CYpmya6oMkEO0SsAQpaLbq/q0/W41FF7boVs022
-         JQCQ==
+        d=gmail.com; s=20230601; t=1757409244; x=1758014044; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/znQVoqdYnguqmx5WBg8gphSRKbnjv7YqaJ0uXheApk=;
+        b=HU+Ne10AWk3M61acTcknpNPScgbPCsJKjM4X5/bKZDkZwH+v41pMZTRXFJ5mxlBCGa
+         8uRFKXFij1IR02M/3aAmAcp2jpVlxIbEpbFLCQcTGGcrL3VTYFuF0pGFGFmQQQG9aQKK
+         FykBNSYvG7HBUClnr6NlsrJseYR/KyyEQ8TzKTC9h7s0xqLxFUanTegyLIFmFAeMTr+y
+         STsJ0MQh1889z/qrh7Rrz+qhxPeJXixnq8MdPVADpJXlM4UXbsB7hZFWg0bKCZVCijW2
+         S6dUeen/wrEzJC4zqGWTbGlu1X2/7omlvOHB1OwIGR1ny4MgDWbT7vJ8ZidVvuvGBnXV
+         4Qmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757409241; x=1758014041;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ka25j5M/VbSSUXNqqPV03aOJpdPrHGb9SiYreXMkqJ8=;
-        b=b8p5DWDIyj/qVk0kGSs5VUMhtzezJaUFIzr5VCdM/Q2U1rkwIwc6ArWZb+/VoyElrQ
-         NqPO+2arlvDmY8zkjsU+Tq98hqLpFJn6dZRwyVYqQRHt2wuUKQnlACXIK5R20Lip9kDw
-         KxvQQN53SvnXRK07ujfr0ben5kFnuHM/ccCry7mb6+gi4eO8sEcHcwr0/uDYlxvnUMCe
-         WisuOQViMeBk8//j3PSI2VbuJWr3fS9aZVL+OLeMEEeMjFkyENfHRT9Fh8GU3O0bu6We
-         Tkr5VdrsUUTfMf5JhObFqDGCkBcYIHdIB80Bf+em7Zw83jhk3y8/8TcOJJl49sOowarC
-         MEfw==
-X-Forwarded-Encrypted: i=1; AJvYcCU94cAEpFe0SJd3vgxFJ4GvlfyXtBWSRWarhkqbxp7b+OGkc/2Z2C3vEDKHrIzy2s48uzJuQa4LxxvMztH6@vger.kernel.org, AJvYcCUdURounKsD6rLR1B+m38A47VUHXKBsVNbCCL92LBtGSSWU+tUPyjMXLR8734wbilCpLp8PFrWNoYl9@vger.kernel.org, AJvYcCV8QOnHEV0EmyZ8d77vmadrH5OSHiMMvxYeGX5mqFrVJKKorCry5GSDcVSW+2gc1POk20NCIL2hneFuTQ==@vger.kernel.org, AJvYcCWuYNcO4udHCSZpzQHSHQuQiB8JVgTDDXVPZBqqZ+bQTC1R2CV+4T3aP1Cbd4ASP8370cBsWgpBdkZ1lmcv2A==@vger.kernel.org, AJvYcCXfOG4t4xy34riLZDUeUmMxnZLWhARi5px58cvMz10uxzo5Rc9c7IEBJVS1vS4akKnZ3NoQlYwGawJQPA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2vpHp8NiSjlVFhtmsUeAaRzBDNI2IsTtyikNZ39yTlX7169bA
-	rlJVHZ3tw7quVbeKOrzI5YLoCLHcusJahW36ManFExoFRyzuXCwwMGRC
-X-Gm-Gg: ASbGncue0soLG5EXXGYx1+7eLcUXvv9vLmeIRZwz6zybVTIlvbabJuu0vule8oXSAPn
-	xI3WeSIQmvT9h2BF40SP9HdoCNsUHy5zzDFo+8Cd98Ekdo+LbTHLgXA1L8GzW7PkXMQwAoq4lm1
-	J4uyK7EbdwDOuTyGtHOZUKxfp77p9+wbs7089GeWvZB9GGSyIUFhpGJriFFBDVSgFNQD4YbTv8y
-	V+sdyW/q0xBUls6sSsfT+rJvHM34qTkW7oHfE5he7+b1CpoDOezWScPuIzr8fnSRiQTXi2BQ+IV
-	3VNX5K0wxpBVLnm8x46FKnxLoGP8g7wJz/Jhsq7JXMDtH4Ii0L+kWgS1h2uD/gluwPzMxeIVNKQ
-	LRa97wukdrmm6YPy402Smd+c7VW4XBV27giHSxFPftYECMx+jODw=
-X-Google-Smtp-Source: AGHT+IHFEehIPgdcNTbNx4qOhQtSRG+TRsytb4QDyjjp512DHDqKl5O00OUvTsgL0ex7EVMGQT0V4Q==
-X-Received: by 2002:a05:6000:22c3:b0:3de:78c8:11fc with SMTP id ffacd0b85a97d-3e6497c0668mr9444917f8f.63.1757409240911;
-        Tue, 09 Sep 2025 02:14:00 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757409244; x=1758014044;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/znQVoqdYnguqmx5WBg8gphSRKbnjv7YqaJ0uXheApk=;
+        b=DLX4rp7zmnEa8m4KFcPB1UvVkAI+eujMKhSiI/htaSU3atBKaBjSN38doDGBwY/trP
+         v5LlHp8BJoDicCr6la2r+0Gzgq9A89Sk/DdjqcJfECI9FXvCv4UYZNP5fdUW8m8ArN3S
+         xQC+7mPIDgRVzTMuepHPw427SpCWjVrxbVdql9KEz7UDUwKiBfovmWsQO+nWwFbc06Sg
+         4yiGqyn0i/yN7aYsCDuy2UkwhCwc9zqDXsMuC8TTaLI8zKcQSGBVRmFwf9bE+2kWKtOy
+         mLvrPirXuZZTX5ocpRpcJoHkS75cD5oCwH/nmKLgBpyf0HyoeWCft4IUt0mQzaeplV1N
+         SkiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUEwVSsZYtPecxA37b3oJXcKvat5ayz0uZJBlhEg1zHNI46LRO4DqfH+h+JWwLo7Z7h4AxRLD9cmPLuxA==@vger.kernel.org, AJvYcCWZ+Rv6aci8rbhQh42XHRQXGaWqlBfL3kCDFe+COytYhDRpFuP3dE8L4y3tluORyGkY5fNAHZsvfUrNVw==@vger.kernel.org, AJvYcCWeyHlJs+3XKocDFS+TO5gjRtoR0L60r01pFNKRsm/TIbS+3UJoDy51VvvF/OJQOiKr9QG3IjAR+SSq@vger.kernel.org, AJvYcCWqj7MkCA/a/JADTdzigyRXTJULiPpjvAgRK7VPZ57fVvz/FAifL4BmirkioXWDWIAPjvSGz6OEVXElxm0/4A==@vger.kernel.org, AJvYcCXXR6tLpHqUtXyue+vaAKM/AXZZpvfQmWbvDeeW+3gPSRIIH0dXgZJVEfjqKqdv6CM+r3L3JKFNAoe/GwXO@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJXwxWVKq7ytan3fryqvptP1fnw80Zw6Bnd36HSeQlEDHVz3v4
+	cCeD4fyZC71MtdXmLJ52bv8a8ZrkxC6O8lcRKEXGqwH/weLS/m9uFl6E
+X-Gm-Gg: ASbGncvkyPZhIOy5BSsjfg2SA/VXCJ45975YkEj9Zvna9Bqcy98+xOiT6gi9Z3GaUg9
+	UkyOgPyQDpC6v+fScGDhdnWDebIrbHetMW+S/JT9aapbLABvE5bMQ3B9tjy8rz52ci7FKMD+ib+
+	TUiF8xmNcjU2q2rIerhY7dNcQtnDVPwyQOvzS7pdUg4nDVNLeiMxl9Ht1iD4gq+GZh6uEf+Jfbm
+	zJLw+gubPM5SNInbka6CrVXLVsgSRRo4F/EVxSmfs2McoNJachiPOMFKwxWmUQAbFh7PSHtEoHA
+	h8AeDWa1zakYhswVZDMmLWhsOtLqgHVk/YBUTxULpM/VhfgwiEujP1jMmUBvmuC+dJx0BQKRIgh
+	r0SCgf1InWcvtpNqJOy1y8fjd160uTIkNKdCTmJcl
+X-Google-Smtp-Source: AGHT+IGumv6hXX0Ye+Kc7ZPtdtCMonFUD7y5t+JsaAGWTiBx9lCNtXy0TEMvDq2v7tSN4bX9gzdxAg==
+X-Received: by 2002:a05:6000:1445:b0:3d0:820:6822 with SMTP id ffacd0b85a97d-3e637465d1fmr8289240f8f.22.1757409243864;
+        Tue, 09 Sep 2025 02:14:03 -0700 (PDT)
 Received: from f.. (cst-prg-84-152.cust.vodafone.cz. [46.135.84.152])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7521bff6esm1810784f8f.13.2025.09.09.02.13.59
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7521bff6esm1810784f8f.13.2025.09.09.02.14.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 02:14:00 -0700 (PDT)
+        Tue, 09 Sep 2025 02:14:03 -0700 (PDT)
 From: Mateusz Guzik <mjguzik@gmail.com>
 To: brauner@kernel.org
 Cc: viro@zeniv.linux.org.uk,
@@ -85,10 +87,12 @@ Cc: viro@zeniv.linux.org.uk,
 	linux-xfs@vger.kernel.org,
 	ocfs2-devel@lists.linux.dev,
 	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [WIP RFC PATCH v2 00/10] i_state accessors + I_WILL_FREE removal
-Date: Tue,  9 Sep 2025 11:13:34 +0200
-Message-ID: <20250909091344.1299099-1-mjguzik@gmail.com>
+Subject: [PATCH v2 01/10] fs: expand dump_inode()
+Date: Tue,  9 Sep 2025 11:13:35 +0200
+Message-ID: <20250909091344.1299099-2-mjguzik@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250909091344.1299099-1-mjguzik@gmail.com>
+References: <20250909091344.1299099-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -97,256 +101,46 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-NOTE: this is a WIP not meant to be included anywhere yet and perhaps
-should be split into 2 patchsets.
+This adds fs name and few fields from struct inode: i_mode, i_opflags,
+i_flags and i_state.
 
-It is generated against against:
-https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?h=vfs-6.18.inode.refcount.preliminaries
+All values printed raw, no attempt to pretty-print anything.
 
-The first patch in the series is ready to use(tm) and was sent
-separately here:
-https://lore.kernel.org/linux-fsdevel/20250909082613.1296550-1-mjguzik@gmail.com/T/#u
+Compile tested on for i386 and runtime tested on amd64.
 
-It is included in this posting as the newly patched routine has to get
-patched further due to the i_state accessor thing. Having it here should
-make it handier to test for interested.
+Sample output:
+[   31.450263] VFS_WARN_ON_INODE("crap") encountered for inode ffff9b10837a3240
+               fs sockfs mode 140777 opflags c flags 0 state 100
 
-This is a cleaned up continuation of the churn-ey patch which merely removed I_WILL_FREE:
-https://lore.kernel.org/linux-fsdevel/20250902145428.456510-1-mjguzik@gmail.com/
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
+ fs/inode.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-The entire thing is a response to the patchset by Josef Bacik concerning
-refcount changes, see:
-https://lore.kernel.org/linux-fsdevel/cover.1756222464.git.josef@toxicpanda.com/
-
-I'm writing my second reply to that patchset, but in the meantime the
-stuff below should facilitate work forward, regardless if the refcount
-patchset goes in or not.
-
-The patchset splits churn from actual changes.
-
-Plain ->i_state access is still possible to reduce upfront churn, only
-some of the tree got covered so far.
-
-short rundown:
-  fs: hide ->i_state handling behind accessors
-
-This is churn-ey and should largely be a nop, worst case there will be
-failed lock assertions if I messed up some annotations and which should
-be easy to sort out. It covers fs/*.c and friends, but no filesystems.
-
-  bcachefs: use the new ->i_state accessors
-  btrfs: use the new ->i_state accessors
-  ext4: use the new ->i_state accessors
-  gfs2: use the new ->i_state accessors
-  ocfs2: use the new ->i_state accessors
-
-This patches only the filesystems which reference I_WILL_FREE. Again
-should be a nop.
-
-  ocfs2: retire ocfs2_drop_inode() and I_WILL_FREE usage
-
-Actual change, needs ocfs2 folks approval.
-
-  fs: set I_FREEING instead of I_WILL_FREE in iput_final() prior to
-    writeback
-
-Actual change. I_WILL_FREE still exists as a macro but is no longer set
-by anything. As of right now I'm not fully confident this is correct,
-the writeback code is more fuck-ey than not. However, figuring this out
-is imo a hard prerequisite for the refcount patchset by Josef anyway.
-
-  fs: retire the I_WILL_FREE flag
-
-Churn change to whack the flag. It also uses the opportunity to do some
-cosmetics.
-
-Onto the rationale:
-
-I. i_state
-
-The handling in the stock kernel is highly error prone and with 0 assert
-coverage.
-
-Notably there is nothing guaranteeing the caller owns the necessary lock
-when making changes. But apart from that there are spots which look at
-->i_state several times and it is unclear if they think it is stable or
-not. Moreover spots used on inode teardown use WRITE_ONCE, some spots in
-hash lookup use READ_ONCE, but everyone else issues plain loads and
-stores which invites compiler mischief.
-
-All of this is easily preventable.
-
-The ideal state as I see it would also hide the field behind a struct so
-that plain open-coded accesses fail to compile. Not done yet to reduce
-churn.
-
-Another step not taken here but to be sorted out later is strict
-handling of flags, where it is illegal to clear flags which are not
-present and to set flags which are already set -- the kernel should know
-whether a given flag can legally be present or not (trivial example:
-I_FREEING).  Setting a flag which is already set is more likely to be a
-logic error than not. If it turns out there are cases where a flag can
-be legally already present/missing, an additional helper can be added to
-forego the assertion.
-
-Practical examples:
-	spin_lock(&inode->i_lock);
-	if (inode_state_read(inode) & I_WHATEVER) {
-		....
-	}
-	spin_unlock(&inode->i_lock);
-
-This asserts the lock is held.
-
-But if the caller is looking to do a lockless check first, they can do
-it and explicitly denote this is what they want:
-
-	if (inode_state_read_unlocked(inode) & I_WHATEVER) {
-		spin_lock(&inode->i_lock);
-		if (inode_state_read(inode) & I_WHATEVER) {
-			....
-		}
-		spin_unlock(&inode->i_lock);
-	}
-
-Similarly:
-	state = inode_state_read_unlocked(inode);
-	if (state & I_CRAP) {
-	} else (state & I_MEH) {
-	}
-	...
-
-We are guaranteed no mischief and the caller acknowledges the value in
-the inode could have changed from under them and the code is READ_ONCE
-(as opposed to plain ->i_state loads now).
-
-Furthermore, should better lifecycle tracking get introduced, the
-helpers can validate no flags get added when it is invalid to do so.
-
-The *current* routines are as below. I don't care about specific
-names, I do care about semantics.
-
-/*
- * i_state handling
- *
- * We hide all of it behind helpers so that we can validate consumers.
- */
-static inline enum inode_state_flags_enum inode_state_read(struct inode *inode)
-{
-        lockdep_assert_held(&inode->i_lock);
-        return inode->i_state;
-}
-
-static inline enum inode_state_flags_enum inode_state_read_unlocked(struct inode *inode)
-{
-        return READ_ONCE(inode->i_state);
-}
-
-static inline void inode_state_add(struct inode *inode,
-                                         enum inode_state_flags_enum newflags)
-{
-        lockdep_assert_held(&inode->i_lock);
-        WRITE_ONCE(inode->i_state, inode->i_state | newflags);
-}
-
-static inline void inode_state_del(struct inode *inode,
-                                         enum inode_state_flags_enum rmflags)
-{
-        lockdep_assert_held(&inode->i_lock);
-        WRITE_ONCE(inode->i_state, inode->i_state & ~rmflags);
-}
-
-static inline void inode_state_set_unchecked(struct inode *inode,
-                                                   enum inode_state_flags_enum newflags)
-{
-        WRITE_ONCE(inode->i_state, newflags);
-}
-
-The inode_state_set_unchecked() crapper is there to handle early access
-during inode construction (before it lands in the hash).
-
-II. I_WILL_FREE removal
-
-Sounds like nobody likes this flag and even the developer documenting it
-in fs.h was not able to provide a justification for its existence,
-merely stating how it is used.
-
-As far as I can tell the only use was to allow ->drop_inode() handlers
-to drop ->i_lock and still prevent anyone from picking up the inode. I
-*suspect* this was used instead of I_FREEING because the routine could
-have decided to *not* drop afterwards. Differentiating between
-indicating the inode is going down vs just telling the consumer to
-bugger off for the time being seemed like an ok idea.
-
-However, the only filesystem using today is ocfs2, it always returns
-"drop it" and this usage does not even have to be there. Removed in one
-of the patches.
-
-Apart from that the only use was write_inode_now() call in iput_final()
-prior to setting I_FREEING anyway. This probably works as posted here,
-but there might be some fuckery to sort out in writeback to truly
-eliminate the flag. In the worst case it's just some work, but *so far*
-I'm not staking anything on the patchset being fully correct yet.
-
-tl;dr the flag does not have to be there, but there may be dragons in
-writeback (to be seen). No matter what, shaking bugs out of this should
-be considered a pre-requisite for any future work regarding inode
-lifecycle (whether the refcount patchset lands or not, imo it should not
-which I'll elaborate on later in that thread).
-
-Apart from that the I_CREATING flag seems to have inconsistent handling,
-but that's for another e-mail after I get a better hang of it.
-
-So.. comments?
-
-Mateusz Guzik (10):
-  fs: expand dump_inode()
-  fs: hide ->i_state handling behind accessors
-  bcachefs: use the new ->i_state accessors
-  btrfs: use the new ->i_state accessors
-  ext4: use the new ->i_state accessors
-  gfs2: use the new ->i_state accessors
-  ocfs2: use the new ->i_state accessors
-  ocfs2: retire ocfs2_drop_inode() and I_WILL_FREE usage
-  fs: set I_FREEING instead of I_WILL_FREE in iput_final() prior to
-    writeback
-  fs: retire the I_WILL_FREE flag
-
- block/bdev.c                     |   4 +-
- fs/bcachefs/fs.c                 |   8 +-
- fs/btrfs/inode.c                 |  10 +--
- fs/buffer.c                      |   4 +-
- fs/crypto/keyring.c              |   2 +-
- fs/crypto/keysetup.c             |   2 +-
- fs/dcache.c                      |   8 +-
- fs/drop_caches.c                 |   2 +-
- fs/ext4/inode.c                  |  10 +--
- fs/ext4/orphan.c                 |   4 +-
- fs/fs-writeback.c                | 131 +++++++++++++++----------------
- fs/gfs2/file.c                   |   2 +-
- fs/gfs2/glops.c                  |   2 +-
- fs/gfs2/inode.c                  |   4 +-
- fs/gfs2/ops_fstype.c             |   2 +-
- fs/inode.c                       | 115 ++++++++++++++-------------
- fs/libfs.c                       |   6 +-
- fs/namei.c                       |   8 +-
- fs/notify/fsnotify.c             |   8 +-
- fs/ocfs2/dlmglue.c               |   2 +-
- fs/ocfs2/inode.c                 |  27 +------
- fs/ocfs2/inode.h                 |   1 -
- fs/ocfs2/ocfs2_trace.h           |   2 -
- fs/ocfs2/super.c                 |   2 +-
- fs/pipe.c                        |   2 +-
- fs/quota/dquot.c                 |   2 +-
- fs/sync.c                        |   2 +-
- fs/xfs/scrub/common.c            |   3 +-
- include/linux/backing-dev.h      |   5 +-
- include/linux/fs.h               |  75 ++++++++++++------
- include/linux/writeback.h        |   4 +-
- include/trace/events/writeback.h |  11 ++-
- security/landlock/fs.c           |  12 +--
- 33 files changed, 249 insertions(+), 233 deletions(-)
-
+diff --git a/fs/inode.c b/fs/inode.c
+index 833de5457a06..e8c712211822 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -2935,10 +2935,18 @@ EXPORT_SYMBOL(mode_strip_sgid);
+  *
+  * TODO: add a proper inode dumping routine, this is a stub to get debug off the
+  * ground.
++ *
++ * TODO: handle getting to fs type with get_kernel_nofault()?
++ * See dump_mapping() above.
+  */
+ void dump_inode(struct inode *inode, const char *reason)
+ {
+-	pr_warn("%s encountered for inode %px", reason, inode);
++	struct super_block *sb = inode->i_sb;
++
++	pr_warn("%s encountered for inode %px\n"
++		"fs %s mode %ho opflags %hx flags %u state %x\n",
++		reason, inode, sb->s_type->name, inode->i_mode, inode->i_opflags,
++		inode->i_flags, inode->i_state);
+ }
+ 
+ EXPORT_SYMBOL(dump_inode);
 -- 
 2.43.0
 
