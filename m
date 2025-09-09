@@ -1,205 +1,159 @@
-Return-Path: <linux-fsdevel+bounces-60695-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60696-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4851AB501F7
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 17:57:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57796B50221
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 18:07:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3182F1C26EB1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 15:57:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFF167A2E2D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 16:05:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0056231A56D;
-	Tue,  9 Sep 2025 15:57:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3183A3314D5;
+	Tue,  9 Sep 2025 16:06:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yadavpratyush.com header.i=@yadavpratyush.com header.b="U1bZYID0";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="S4orRy0P"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="guFrApYH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from flow-b4-smtp.messagingengine.com (flow-b4-smtp.messagingengine.com [202.12.124.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A661E747F;
-	Tue,  9 Sep 2025 15:57:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B552848BF;
+	Tue,  9 Sep 2025 16:06:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757433424; cv=none; b=Mj9pLuOy1HklUadngZSUe3r3XIoWq+C5SS6/OWNFav1g35U5cwXtyr192iMV2QPCAffQukbtCQdHmf/Mc9QK4AcpuRj8zJ4MoHz3dKkHzM9CC1is6AciOnpzKn3pza5pieaN/6qFKe/vv/c+pZLvE8lekdVcZeA5sDxqMlHTCL8=
+	t=1757434018; cv=none; b=jC162/HDZ1VXHu/WhICQWhbVi+KRcM0C9Y2Z4F20QmTRXI3U4FY8XyuPkDmUw9noryMNf+BAdlLef/eqe/2OEYZ7TnntIZ4koH8HbZ8lFHmJK5pg9v0ekpciYH0M6iNZJ7SbOIvEoEZs63im6NXnvCkCHxMJqBoEIWc8FHslx70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757433424; c=relaxed/simple;
-	bh=Y6bB3spdv0Y4Iq27PYuVsaMwCq7a7eOlCj3k9gfZcIU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=tNHmKNt1rz3VDfhl0AL3VSyjLDD8O48W2Iy+gr/e8NKgqWD/kQwgPFb0KxeIZ93ntMV83tpUNKelr4Hc1MhjKNpIY8kyGd7ICAZXEISY3kXWgB6Pb4oEzQcgt6L7AmHGpjFnRZ4kDES3tdfI3puQGjl/8NWwtzp4fjF/LK2ABnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yadavpratyush.com; spf=pass smtp.mailfrom=yadavpratyush.com; dkim=pass (2048-bit key) header.d=yadavpratyush.com header.i=@yadavpratyush.com header.b=U1bZYID0; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=S4orRy0P; arc=none smtp.client-ip=202.12.124.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yadavpratyush.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yadavpratyush.com
-Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
-	by mailflow.stl.internal (Postfix) with ESMTP id 9BBD81300201;
-	Tue,  9 Sep 2025 11:56:58 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-07.internal (MEProxy); Tue, 09 Sep 2025 11:57:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	yadavpratyush.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1757433418; x=1757440618; bh=Y6bB3spdv0
-	Y4Iq27PYuVsaMwCq7a7eOlCj3k9gfZcIU=; b=U1bZYID0dy9gSV0UyWD12/SGew
-	bbD2cWhycbMq/6YXT30h6iSDIxj+ocmhBR6ENxPLtk9WcRUDkyXLoHS/N4G5kekV
-	0PSHqhZNQ+kpPX0CMeqj4BtaIE7dtT1rVDIR9Dq9GgvbH3K8ck1dQ1hZ7jFHt1Kl
-	WoPLU5JNFFZ2ZOnnV4t7kB0p1pbUSBhvgQi2vKv57F3QN0aYClfqxn7pzBAePvTY
-	qokDUIFBAQnkTlsgptWmlyNGL3sjml4N4yjvwMbiJEY6BFl+5DHlDX4TX3IptT1r
-	kbf/6vlvQDX5HsDN6QH5E8Rj1SXLsNYeH1LUVYBatwY3Qb/p19aoYU0fIGmA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757433418; x=
-	1757440618; bh=Y6bB3spdv0Y4Iq27PYuVsaMwCq7a7eOlCj3k9gfZcIU=; b=S
-	4orRy0PtAYfUg0t7JXdON+wH/z931lLwhRw0jzEw3RUuDOTQlfgWrSGnn+RbA3wU
-	byjzMqiGYqMXkOV7JWWkKbOg68Ycx+hfK8lPQObZFYLTzxk779LN7QH76/xhEf4k
-	svyfFBaXLtwMjCyO2iFfK2sNSg7h/RBaGeBpMlS7IVGLW9Uva8aQgGm78DsOr4y6
-	xJsaVglN0VTAJUCYSlxzIwNWxjywIUFJGHhoh0+s1vdMP4uDePM7xl8kEQvKTVTA
-	Thetj8fBU9/ka6q88UsS9D+V4t3C7gSNzKGUasaKm9PV901mTJYi65SdHtNp2UxL
-	RdzjM6EI7DfSSoweeEo1Q==
-X-ME-Sender: <xms:Rk7AaENFgDgG3Z0ewndwpcU0l4keNXhgvUjtzKy3PsxrId3a6-tfZA>
-    <xme:Rk7AaJechYAPKky5DUGmMlq8Ww5nZhbLKxzlOzpegDkPL7yQv1ZfykSBqAw1Bp3ou
-    D9M9j0yDuKLesBdxjE>
-X-ME-Received: <xmr:Rk7AaDpMvXl_L_dhU7PjygEH5En7BCIxrB_rfN_ap7rG5JI5KrVL6ccaY7hEtOeDE9xTFK_1RjqiqTewgZk73fOF87TiiqVXYdIVo4h-I2d9ZcIV84onyGnG0nji-BIFe37s8FWR>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtdekfecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefhvfevufgjfhffkfgfgggtgfesthhqredttderjeenucfhrhhomheprfhrrghthihu
-    shhhucgjrggurghvuceomhgvseihrggurghvphhrrghthihushhhrdgtohhmqeenucggtf
-    frrghtthgvrhhnpedvhfdvhedtueethefhkeetgedttdeuhefgueehgeduhfejtdfhvdev
-    gedvjedugeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
-    hmpehmvgeshigruggrvhhprhgrthihuhhshhdrtghomhdpnhgspghrtghpthhtohepjedv
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeifihhtuhesnhhvihguihgrrdgtoh
-    hmpdhrtghpthhtoheplhgvohhnrhhosehnvhhiughirgdrtghomhdprhgtphhtthhopehp
-    rghrrghvsehnvhhiughirgdrtghomhdprhgtphhtthhopegrjhgrhigrtghhrghnughrrg
-    esnhhvihguihgrrdgtohhmpdhrtghpthhtohepshgrvggvughmsehnvhhiughirgdrtgho
-    mhdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrd
-    horhhgpdhrtghpthhtoheplhhinhhugidqrghpihesvhhgvghrrdhkvghrnhgvlhdrohhr
-    ghdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhope
-    hlvghnnhgrrhhtsehpohgvthhtvghrihhnghdrnhgvth
-X-ME-Proxy: <xmx:Rk7AaOik0Nhivpz4N1I59xuLqAM9GAZwpQ2ESwBHdZQFSZk92N3TEA>
-    <xmx:Rk7AaEZSZ-16sSEApBkT5RUE-BBpobsQDg-uXUmqfXLQlUPRSz7E9w>
-    <xmx:Rk7AaJtmxu4H6qR5NIpgFu2D4ATeJCF0_IWw64bsgr7jK4wE_9nTuw>
-    <xmx:Rk7AaHJrbTSZ7kj3UB9FV9vpMu-OJj4TthDLmDwssmSHC9inZhbChw>
-    <xmx:Sk7AaIDsIumQfKmeMLRrTl3mf3szS47iGZnmx_wjwi5i_VkrMX-Yzc1a>
-Feedback-ID: i93f149c1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 9 Sep 2025 11:56:46 -0400 (EDT)
-From: Pratyush Yadav <me@yadavpratyush.com>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: Pratyush Yadav <me@yadavpratyush.com>,  Jason Gunthorpe <jgg@nvidia.com>,
-  Pratyush Yadav <pratyush@kernel.org>,  jasonmiu@google.com,
-  graf@amazon.com,  changyuanl@google.com,  rppt@kernel.org,
-  dmatlack@google.com,  rientjes@google.com,  corbet@lwn.net,
-  rdunlap@infradead.org,  ilpo.jarvinen@linux.intel.com,
-  kanie@linux.alibaba.com,  ojeda@kernel.org,  aliceryhl@google.com,
-  masahiroy@kernel.org,  akpm@linux-foundation.org,  tj@kernel.org,
-  yoann.congal@smile.fr,  mmaurer@google.com,  roman.gushchin@linux.dev,
-  chenridong@huawei.com,  axboe@kernel.dk,  mark.rutland@arm.com,
-  jannh@google.com,  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
-  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
-  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
-  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
-  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
-  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
-  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
-  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
-  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
-  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
-  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
-  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
-  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
-  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
-  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
-  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  saeedm@nvidia.com,  ajayachandra@nvidia.com,  parav@nvidia.com,
-  leonro@nvidia.com,  witu@nvidia.com
-Subject: Re: [PATCH v3 29/30] luo: allow preserving memfd
-In-Reply-To: <CA+CK2bAKL-gyER2abOV-f4M6HOx9=xDE+=jtcDL6YFbQf1-6og@mail.gmail.com>
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
-	<20250807014442.3829950-30-pasha.tatashin@soleen.com>
-	<20250826162019.GD2130239@nvidia.com> <mafs0bjo0yffo.fsf@kernel.org>
-	<20250828124320.GB7333@nvidia.com> <mafs0h5xmw12a.fsf@kernel.org>
-	<20250902134846.GN186519@nvidia.com> <mafs0v7lzvd7m.fsf@kernel.org>
-	<20250903150157.GH470103@nvidia.com> <mafs0a53av0hs.fsf@kernel.org>
-	<20250904144240.GO470103@nvidia.com> <mafs0cy7zllsn.fsf@yadavpratyush.com>
-	<CA+CK2bAKL-gyER2abOV-f4M6HOx9=xDE+=jtcDL6YFbQf1-6og@mail.gmail.com>
-Date: Tue, 09 Sep 2025 17:56:46 +0200
-Message-ID: <mafs0h5xbk4ap.fsf@yadavpratyush.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1757434018; c=relaxed/simple;
+	bh=wIkdmEnDfRx16sGCzSDwh8nj6plf38nTLnEDgu5AfTs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XT8pqKmkhPzv+qFrLjEY+KlOvQhNkogzvLiLmH5GUImJXEVCxgPuqbyzq0EpdA6XPyE7hngrjTuEWRT5+2nqXdcNh3lHnaLcn7riYQDM+gFng1yQ//+hMX7gUKIYoe0oquC8jbnQkFwS8/g/ULPkSopY+5YsFaFK2wn+zXbcE0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=guFrApYH; arc=none smtp.client-ip=209.85.160.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-30cce86052cso4313249fac.1;
+        Tue, 09 Sep 2025 09:06:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757434016; x=1758038816; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=UPutT1P8wArm+aybUvFWVUCh+4/82r9lCyk3RktDmIY=;
+        b=guFrApYH0JZEyqCB2zFmm/rBVcuEWfyOhC2x2UOCmM4dCB4s6uH/MizLt+1+Pgc5UL
+         lwxSS0b4VnWwmHgLGTlivGOePHh9ue14FlSFdWJoHRsvUd5xLYyh9avQnSdaj7r2d4iX
+         ph++35+ya8FTd9hpKTSiabF0Eh9SvmY3YzMEkH/U14a/LjnFT5Sp7PHheN8y/xcaTe1G
+         iqzLwub/chcMuwWA1P338ss8BS5BjsRmRXV327JUvQ/+ujAWjPT4M6XIYCMDH4jY8C/I
+         w1i8p/mVqny50IjR/feU9c7AzVm3ZQ38uBk5t+gtHmr7XjMt8RpPVrgIVAfLQJJ/FMyx
+         do9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757434016; x=1758038816;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UPutT1P8wArm+aybUvFWVUCh+4/82r9lCyk3RktDmIY=;
+        b=sfClLBcugxaUs/RT4VgASSISI75hs5Vxy5CJ/3J3ES6IZuNhnDD26mFnO78U57aJjG
+         GdD/UKlNI/Yb/1CiCWUNi3ajPy+aCpK94u4HJ+Lei6wlASMRq62/tZkBwNOgyUijxpnG
+         fIZLFWVSUXl7e/McPdWeIP3pT7pfBMWRmgYbsFKveSExFyFPVorR+chYQr0ti3hBuRp2
+         BnHRAWuI4YXjlJEzwAydLK/WYltIv2KEJOmU7j2J2naRA5ka7w3vRonSj3+nN+zeVOPK
+         OAw4WKS0S2cLZOyBnFDWXtj2WrTg76gVj6AChg1xnWpr/Stf9b2uPBWUMEVTyNDBf1z+
+         64zQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUIYsk6gGohTb7ac+Nwzx6fkmiwzMR7ri75kfbuOjIR/KTrc1ebws/Axjck33itR325W+c2/FA9tbY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJzGBgeogdVohIL36Z0EGWsjueKcwrU+l7G5iEdJcY3HB1YnWc
+	342vREbHxXPgqfCC28X0tvzzkntLjm+cSpsDBtd2yztVfXCOEi8N8q1FUtz9qcBImiCz0/p8kfj
+	EpayAPOxKOUwJ+uJHF1zfV7bkSllCX3lC2w==
+X-Gm-Gg: ASbGncuGC/onhY9gsVIOZXQ190s699xoudp/DeIyO8/Ru5b7dGJQ0z98iwN2e+NVh8T
+	ps9NFpt9AeFkHgP03xOf8AoEPVcfrVaXHytGhJ3CFNY4hrhUrMiqU6KgAOkdNoqk3Lfui1myNRt
+	S/K2xIR+G1TPAHfoOABxbt9caUnWQGnMZz8mfY9zFeIdcSIxq8BWIlkOVru/vZvlDf65sobINu6
+	l/NhRBTyzwIFr381g==
+X-Google-Smtp-Source: AGHT+IFk+xgM75yWZWZ002wMMXrSwQ75GQ3PU/cFWEBaxM78xYxYXdpB7xgruwyALFUMF6anE46FAkSMFV8RwTnLYMI=
+X-Received: by 2002:a05:6870:9713:b0:319:c3d3:21cb with SMTP id
+ 586e51a60fabf-32264c1b7e3mr5100889fac.28.1757434015701; Tue, 09 Sep 2025
+ 09:06:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <CALXu0Ufzm66Ors3aBBrua0-8bvwqo-=RCmiK1yof9mMUxyEmCQ@mail.gmail.com>
+ <CALXu0Ufgv7RK7gDOK53MJsD+7x4f0+BYYwo2xNXidigxLDeuMg@mail.gmail.com>
+ <44250631-2b70-4ce8-b513-a632e70704ed@oracle.com> <aEZ3zza0AsDgjUKq@infradead.org>
+ <e5e385fd-d58a-41c7-93d9-95ff727425dd@oracle.com> <aEfD3Gd0E8ykYNlL@infradead.org>
+In-Reply-To: <aEfD3Gd0E8ykYNlL@infradead.org>
+From: Cedric Blancher <cedric.blancher@gmail.com>
+Date: Tue, 9 Sep 2025 18:06:19 +0200
+X-Gm-Features: Ac12FXyXGqy4XKyMwl8Zkd8NP5hocByGJfYLqu8cG3cu_Oc_NvF1JlXDakmaKgU
+Message-ID: <CALXu0UfgvZdrotUnyeS6F6qYSOspLg_xwVab8BBO6N3c9SFGfA@mail.gmail.com>
+Subject: NFSv4.x export options to mark export as case-insensitive,
+ case-preserving? Re: LInux NFSv4.1 client and server- case insensitive
+ filesystems supported?
+To: linux-fsdevel <linux-fsdevel@vger.kernel.org>, Christoph Hellwig <hch@infradead.org>
+Cc: Chuck Lever <chuck.lever@oracle.com>, 
+	Linux NFS Mailing List <linux-nfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Sep 09 2025, Pasha Tatashin wrote:
-
-> On Tue, Sep 9, 2025 at 10:53=E2=80=AFAM Pratyush Yadav <me@yadavpratyush.=
-com> wrote:
->>
->> On Thu, Sep 04 2025, Jason Gunthorpe wrote:
->>
->> > On Thu, Sep 04, 2025 at 02:57:35PM +0200, Pratyush Yadav wrote:
-[...]
->> >> But perhaps it might be a better idea to come up with a mechanism for
->> >> the kernel to discover which formats the "next" kernel speaks so it c=
-an
->> >> for one decide whether it can do the live update at all, and for anot=
-her
->> >> which formats it should use. Maybe we give a way for luod to choose
->> >> formats, and give it the responsibility for doing these checks?
->> >
->> > I have felt that we should catalog the formats&versions the kernel can
->> > read/write in some way during kbuild.
->> >
->> > Maybe this turns into a sysfs directory of all the data with an
->> > 'enable_write' flag that luod could set to 0 to optimize.
->> >
->> > And maybe this could be a kbuild report that luod could parse to do
->> > this optimization.
->>
->> Or maybe we put that information in a ELF section in the kernel image?
->> Not sure how feasible it would be for tooling to read but I think that
->> would very closely associate the versions info with the kernel. The
->> other option might be to put it somewhere with modules I guess.
+On Tue, 10 Jun 2025 at 07:34, Christoph Hellwig <hch@infradead.org> wrote:
 >
-> To me, all this sounds like hardening, which, while important, can be
-> added later. The pre-kexec check for compatibility can be defined and
-> implemented once we have all live update components ready
-> (KHO/LUO/PCI/IOMMU/VFIO/MEMFD), once we stabilize the versioning
-> story, and once we start discussing update stability.
-
-Right. I don't think this is something the current LUO patches have to
-solve. This is for later down the line.
-
+> On Mon, Jun 09, 2025 at 10:16:24AM -0400, Chuck Lever wrote:
+> > > Date:   Wed May 21 16:50:46 2008 +1000
+> > >
+> > >     dcache: Add case-insensitive support d_ci_add() routine
+> >
+> > My memory must be quite faulty then. I remember there being significant
+> > controversy at the Park City LSF around some patches adding support for
+> > case insensitivity. But so be it -- I must not have paid terribly close
+> > attention due to lack of oxygen.
 >
-> Currently, we've agreed that there are no stability guarantees.
-> Sometime in the future, we may guarantee minor-to-minor stability, and
-> later, stable-to-stable. Once we start working on minor-to-minor
-> stability, it would be a good idea to also add hardening where a
-> pre-live update would check for compatibility.
+> Well, that is when the ext4 CI code landed, which added the unicode
+> normalization, and with that another whole bunch of issues.
+
+Well, no one likes the Han unification, and the mess the Unicode
+consortium made from that,
+But the Chinese are working on a replacement standard for Unicode, so
+that will be a lot of FUN =:-)
+
+> > > That being said no one ever intended any of these to be exported over
+> > > NFS, and I also question the sanity of anyone wanting to use case
+> > > insensitive file systems over NFS.
+> >
+> > My sense is that case insensitivity for NFS exports is for Windows-based
+> > clients
 >
-> In reality, this is not something that is high priority for cloud
-> providers, because these kinds of incompatibilities would be found
-> during qualification; the kernel will fail to update by detecting a
-> version mismatch during boot instead of during shutdown.
+> I still question the sanity of anyone using a Windows NFS client in
+> general, but even more so on a case insensitive file system :)
 
-I think it would help with making a wider range of roll back and forward
-options available. For example, if your current kernel can speak version
-A and B, and you are rolling back to a kernel that only speaks A, this
-information can be used to choose the right serialization formats.
+Well, if you want one and the same homedir on both Linux and Windows,
+then you have the option between the SMB/CIFS and the Windows NFSv4.2
+driver (I'm not counting the Windows NFSv3 driver due lack of ACL
+support).
+Both, as of September 2025, work fine for us for production usage.
 
-[...]
+> > Does it, for example, make sense for NFSD to query the file system
+> > on its case sensitivity when it prepares an NFSv3 PATHCONF response?
+> > Or perhaps only for NFSv4, since NFSv4 pretends to have some recognition
+> > of internationalized file names?
+>
+> Linus hates pathconf any anything like it with passion.  Altough we
+> basically got it now with statx by tacking it onto a fast path
+> interface instead, which he now obviously also hates.  But yes, nfsd
+> not beeing able to query lots of attributes, including actual important
+> ones is largely due to the lack of proper VFS interfaces.
 
---=20
-Regards,
-Pratyush Yadav
+What does Linus recommend as an alternative to pathconf()?
+
+Also, AGAIN the question:
+Due lack of a VFS interface and the urgend use case of needing to
+export a case-insensitive filesystem via NFSv4.x, could we please get
+two /etc/exports options, one setting the case-insensitive boolean
+(true, false, get-default-from-fs) and one for case-preserving (true,
+false, get-default-from-fs)?
+
+So far LInux nfsd does the WRONG thing here, and exports even
+case-insensitive filesystems as case-sensitive. The Windows NFSv4.1
+server does it correctly.
+
+Ced
+-- 
+Cedric Blancher <cedric.blancher@gmail.com>
+[https://plus.google.com/u/0/+CedricBlancher/]
+Institute Pasteur
 
