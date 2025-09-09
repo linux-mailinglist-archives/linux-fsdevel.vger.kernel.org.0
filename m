@@ -1,221 +1,322 @@
-Return-Path: <linux-fsdevel+bounces-60722-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60723-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22584B5092C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 01:22:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71191B50958
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 01:47:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 214891C6299D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 23:22:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A80F57AC216
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Sep 2025 23:45:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27CA0287262;
-	Tue,  9 Sep 2025 23:21:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E353C28C840;
+	Tue,  9 Sep 2025 23:46:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="wXnbFwfA"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="PS6F1g8Y"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E0951F3D58;
-	Tue,  9 Sep 2025 23:21:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 730AC283FE4
+	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Sep 2025 23:46:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757460116; cv=none; b=OssVQcprkr4rc3t26iuo/Cow/k8lPW6AwtohFb1uGbF5sMFpjNLPx6ioEnueZtnOlgdpI643XKy1svvreB5ufMEv/OEfGpfJ2pocUZZPtujXzhJqiJwXC2kh6lmX3JYfDAirYe8tRWmg0MBXs+9ohQrZqzt3TVdvAbn/x+VpN/E=
+	t=1757461612; cv=none; b=RLR+xWXi9XRsBoDzEQXqxxedcHN6pRO96QGYxg+x4xDiPk9TRDE6TEbcKBJrPUe7vayhbLljQgKlcshyF0bkec1sGsjgU1uyIVILjcJcyGPFsLQKKvGnRU1fNrco1yrRpou+/d1twSQHa1UMl+oIP3yP9nLjbi+UNTTIYyYw9Iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757460116; c=relaxed/simple;
-	bh=eibTRJ7HE0lU2R0MPS4mUJGOox1jCETS8teAgOrwFjk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=W1Fc2jecFNyepjZ+5phcW7s2mDphtpNnLfuYSN+U+iRq99HXYKR2ZSx35w+KqFZAiZPMSx1/qsMbRBO9lWPuxalEqihIhpD8M3iR0rf6jRwMY+cYwmxQx//gdSGoS2NWc7NU+HxObpIXkm7Y4jpj9c1MShsw7qSpUbaa5dzN02M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=wXnbFwfA; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1757460110; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=108KB8TcIdTBZlziMq4PiXlySytzFGUVDHJv6u8P/ss=;
-	b=wXnbFwfAzv/LidCVZ8/U8296g++8KU3IJXma8z9avo0lRQs+AxnmIQFJnaxhTEB4QRDnTOgG2hnmVh947cIIGjEpxFZctzfsP0sDMewVnnSRhhmFCaX1MljDqgqy1LBMyvTiiaixx5nDNr0fDSFsSmuOAUzzS+U03GbrKsHvY0M=
-Received: from 30.180.0.242(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WnfVsA3_1757460109 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 10 Sep 2025 07:21:50 +0800
-Message-ID: <488d246b-13c7-4e36-9510-8ae2de450647@linux.alibaba.com>
-Date: Wed, 10 Sep 2025 07:21:48 +0800
+	s=arc-20240116; t=1757461612; c=relaxed/simple;
+	bh=xRQYo9n9HNWQ2t3Rsyvd/UCUHmgleDErgEReBn2PwHM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=J06yvXSocbOnmt2B9XUyr3O1qHyYx0/8aDv7liDq4crlD2/ojfIjhe+S3AmUnrFsJIdzg+bsW7CS9bpiRaQyab27nNfzo/xZmOi45q6+lNJ0L3ydifrJ9jcTzDxw36jKL971+tjaNKpUpGlwgwNTI47lZbZDhqhP8yjRDnF+QCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=PS6F1g8Y; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e931c71a1baso8063340276.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Sep 2025 16:46:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1757461608; x=1758066408; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4O99dLeW5iCbzMHANCstFQV8xVy+8U8+5Mg53NnZz0o=;
+        b=PS6F1g8YZNR/skqsv3nAoyM3ddP75h38hg21FSRDYfNrkzv4347VDHBXbnTeePuxVG
+         JpQJNP3IxF6ydDyvJ3RZSqrXotvXNuCWf7pn7new2CdCPjOt8iuc12ZK1P00ONBlS6KW
+         L5DNXd2JdU5KPrP65QoxF9EzXPslmvlhXwidMjOBY4CwxEXbxjBNlTfsVNtg9wbGmZZZ
+         lNISU6kLVbgNXgmiDeZhS6N/sF9gq0PQk/28k7lVBgqG2riGeNuR2jr+uJTnAB5Sspn2
+         LPn/S4y2mYH5eqls8Nwjyt1KPikBUAKt03+qwCVqVJ50LDzCXZc57Xxce+DXGOzWxq1o
+         FLAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757461608; x=1758066408;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4O99dLeW5iCbzMHANCstFQV8xVy+8U8+5Mg53NnZz0o=;
+        b=wFbk3ZDHyfgcS5inubg4EuuxqQsFp1QIkfxQNL4U1f+4DZOEb1JeG+eqAdp4nUrxww
+         4NTti+QWWhMbQpLGTAGwJxCo8igycwwVMnuUr9QkyB0hL2aI1cLqVf6dyQsIT2yi2RLt
+         /dy8b8tQJC5bNJM3ovVJRed8C4g95mWZ930SBfc88UiSZB/sKne9JDVZEB+HB3gzNQxv
+         gUOwROgSrwaHWeE2XJgz5ge/UihTiQWMxDu8bTv69oayMU/n7hAulQ32P3PTSRdtf2rE
+         iCxdjTLcizb0M3C28Q0w3YFY4aAv4P527h/wHOAOyn6NNOAJodPkXSqgr1ImKh5jmKeG
+         bKgA==
+X-Forwarded-Encrypted: i=1; AJvYcCUDyZq1JKHvPhFDXOGx8gYWwVaSAKSe+Q9xPYGHlnOTGBFeBRCnc25UHWSQmBFzAllS76xf+Dg+ksvCngL/@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/XW5K2Apt9uSbUYeMJ5O4eL4LGJcbcwdwuwvvwtPYdbpt84BO
+	oMD7fDRjO6UE5rAJE+xJhT2ar+5P1AzpAqmEAYRracLueajTjPG7CIsZZMJoOd06ynU=
+X-Gm-Gg: ASbGncukWgM9jL/v+ujgsy0iMtMB8l21XXQ1Rj3GFN9nj2tTt///wf/frFiur2pqVRX
+	Ql2n48xhiIBezMnoxKyT9ov8cQfsKWFgTal3DnUf0mzQ7KVQu3xyJ4A0pWWMVhqqopYFG0pJ6ud
+	P7JQh4RnSWwyLNHHM6VijfW3a+gaP9nABsEdPzIJuRYR9xiTmSv/mIVE24tiXIkWZHHeNN82wwl
+	IKDSNuGCI+Cs+hgV0S3cTDMkee5WtcB30u/XHOfMVMC5xjoSkXlQ6ac8+ivItig55Mp8coZO+/8
+	i0PfsQOvdD0nrvX51neSpgX+u+Ru6h6Rf84AXcMggivD3px0pcMoHRSAotxvuqIzoRnAbpbVDe/
+	E/zt7duiRVewaYfzz0nMlevOvdROBEmvRhLpHMH/TRFZl
+X-Google-Smtp-Source: AGHT+IHa1m5i6NZc5l+X9KaRnJ/mylryw1Fl5QmmvzbIEXh0YhyW017bE5wS/QMknjzHxUBRHZmZeA==
+X-Received: by 2002:a05:6902:33c9:b0:ea3:be0a:ccdb with SMTP id 3f1490d57ef6-ea3be0ae9e0mr220845276.49.1757461608288;
+        Tue, 09 Sep 2025 16:46:48 -0700 (PDT)
+Received: from pop-os.attlocal.net ([2600:1700:6476:1430:1689:6011:96a1:eafd])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e9bbe05d717sm6955938276.22.2025.09.09.16.46.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 16:46:47 -0700 (PDT)
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: glaubitz@physik.fu-berlin.de,
+	linux-fsdevel@vger.kernel.org,
+	frank.li@vivo.com
+Cc: Slava.Dubeyko@ibm.com
+Subject: [PATCH] hfs: introduce KUnit tests for HFS string operations
+Date: Tue,  9 Sep 2025 16:46:15 -0700
+Message-Id: <20250909234614.880671-1-slava@dubeyko.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 11/16] iomap: add caller-provided callbacks for read
- and readahead
-To: Joanne Koong <joannelkoong@gmail.com>, djwong@kernel.org,
- hch@infradead.org, brauner@kernel.org, miklos@szeredi.hu,
- linux-block@vger.kernel.org, gfs2@lists.linux.dev,
- linux-fsdevel@vger.kernel.org, kernel-team@meta.com,
- linux-xfs@vger.kernel.org, linux-doc@vger.kernel.org
-References: <20250908185122.3199171-1-joannelkoong@gmail.com>
- <20250908185122.3199171-12-joannelkoong@gmail.com> <aL9xb5Jw8tvIRMcQ@debian>
- <CAJnrk1YPpNs811dwWo+ts1xwFi-57OgWvSO4_8WLL_3fJgzrFw@mail.gmail.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <CAJnrk1YPpNs811dwWo+ts1xwFi-57OgWvSO4_8WLL_3fJgzrFw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Hi Joanne,
+From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 
-On 2025/9/9 23:24, Joanne Koong wrote:
-> On Mon, Sep 8, 2025 at 8:14 PM Gao Xiang <xiang@kernel.org> wrote:
->>
->> Hi Joanne,
->>
->> On Mon, Sep 08, 2025 at 11:51:17AM -0700, Joanne Koong wrote:
->>> Add caller-provided callbacks for read and readahead so that it can be
->>> used generically, especially by filesystems that are not block-based.
->>>
->>> In particular, this:
->>> * Modifies the read and readahead interface to take in a
->>>    struct iomap_read_folio_ctx that is publicly defined as:
->>>
->>>    struct iomap_read_folio_ctx {
->>>        const struct iomap_read_ops *ops;
->>>        struct folio *cur_folio;
->>>        struct readahead_control *rac;
->>>        void *private;
->>>    };
->>>
->>>    where struct iomap_read_ops is defined as:
->>>
->>>    struct iomap_read_ops {
->>>        int (*read_folio_range)(const struct iomap_iter *iter,
->>>                               struct iomap_read_folio_ctx *ctx,
->>>                               loff_t pos, size_t len);
->>>        int (*read_submit)(struct iomap_read_folio_ctx *ctx);
->>>    };
->>>
->>
->> No, I don't think `struct iomap_read_folio_ctx` has another
->> `.private` makes any sense, because:
->>
->>   - `struct iomap_iter *iter` already has `.private` and I think
->>     it's mainly used for per-request usage; and your new
->>     `.read_folio_range` already passes
->>      `const struct iomap_iter *iter` which has `.private`
->>     I don't think some read-specific `.private` is useful in any
->>     case, also below.
->>
->>   - `struct iomap_read_folio_ctx` cannot be accessed by previous
->>     .iomap_{begin,end} helpers, which means `struct iomap_read_ops`
->>     is only useful for FUSE read iter/submit logic.
->>
->> Also after my change, the prototype will be:
->>
->> int iomap_read_folio(const struct iomap_ops *ops,
->>                       struct iomap_read_folio_ctx *ctx, void *private2);
->> void iomap_readahead(const struct iomap_ops *ops,
->>                       struct iomap_read_folio_ctx *ctx, void *private2);
->>
->> Is it pretty weird due to `.iomap_{begin,end}` in principle can
->> only use `struct iomap_iter *` but have no way to access
->> ` struct iomap_read_folio_ctx` to get more enough content for
->> read requests.
-> 
-> Hi Gao,
-> 
-> imo I don't think it makes sense to, if I'm understanding what you're
-> proposing correctly, have one shared data pointer between iomap
-> read/readahead and the iomap_{begin,end} helpers because
+This patch implements the initial Kunit based set of
+unit tests for HFS string operations. It checks
+functionality of hfs_strcmp(), hfs_hash_dentry(),
+and hfs_compare_dentry() methods.
 
-My main concern is two `private` naming here: I would like to add
-`private` to iomap_read/readahead() much like __iomap_dio_rw() at
-least to make our new feature work efficiently.
+./tools/testing/kunit/kunit.py run --kunitconfig ./fs/hfs/.kunitconfig
 
-> 
-> a) I don't think it's guaranteed that the data needed by
-> read/readahead and iomap_{begin,end} is the same.  I guess we could
-> combine the data each needs altogether into one struct, but it seems
-> simpler and cleaner to me to just have the two be separate.
-> 
-> b) I'm not sure about the erofs use case, but at least for what I'm
-> seeing for fuse and the block-based filesystems currently using iomap,
-> the data needed by iomap read/readahead (eg bios, the fuse
-> fuse_fill_read_data) is irrelevant for iomap_{begin/end} and it seems
-> unclean to expose that extraneous info. (btw I don't think it's true
-> that iomap_iter is mainly used for per-request usage - for readahead
-> for example, iomap_{begin,end} is called before and after we service
-> the entire readahead, not called per request, whereas
-> .read_folio_range() is called per request).
+[16:04:50] Configuring KUnit Kernel ...
+Regenerating .config ...
+Populating config with:
+$ make ARCH=um O=.kunit olddefconfig
+[16:04:51] Building KUnit Kernel ...
+Populating config with:
+$ make ARCH=um O=.kunit olddefconfig
+Building with:
+$ make all compile_commands.json scripts_gdb ARCH=um O=.kunit --jobs=22
+[16:04:59] Starting KUnit Kernel (1/1)...
+[16:04:59] ============================================================
+Running tests with:
+$ .kunit/linux kunit.enable=1 mem=1G console=tty kunit_shutdown=halt
+[16:04:59] ================= hfs_string (3 subtests) ==================
+[16:04:59] [PASSED] hfs_strcmp_test
+[16:04:59] [PASSED] hfs_hash_dentry_test
+[16:04:59] [PASSED] hfs_compare_dentry_test
+[16:04:59] =================== [PASSED] hfs_string ====================
+[16:04:59] ============================================================
+[16:04:59] Testing complete. Ran 3 tests: passed: 3
+[16:04:59] Elapsed time: 9.087s total, 1.310s configuring, 7.611s building, 0.125s running
 
-I said `per-request` meant a single sync read or readahead request,
-which is triggered by vfs or mm for example.
+Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+cc: Yangtao Li <frank.li@vivo.com>
+cc: linux-fsdevel@vger.kernel.org
+---
+ fs/hfs/.kunitconfig  |   7 +++
+ fs/hfs/Kconfig       |  15 +++++
+ fs/hfs/Makefile      |   2 +
+ fs/hfs/string_test.c | 132 +++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 156 insertions(+)
+ create mode 100644 fs/hfs/.kunitconfig
+ create mode 100644 fs/hfs/string_test.c
 
-> 
-> c) imo iomap_{begin,end} is meant to be a more generic interface and I
-> don't think it makes sense to tie read-specific data to it. For
-> example, some filesystems (eg gfs2) use the same iomap_ops across
-> different file operations (eg buffered writes, direct io, reads, bmap,
-> etc).
-
-Previously `.iomap_{begin,end}` participates in buffer read and write
-I/O paths (except for page writeback of course) as you said, in
-principle users only need to care about fields in `struct iomap_iter`.
-
-`struct iomap_readpage_ctx` is currently used as an internal structure
-which is completely invisible to filesystems (IOWs, filesystems don't
-need to care or specify any of that).
-
-After your proposal, new renamed `struct iomap_read_folio_ctx` will be
-exposed to individual filesystems too, but that makes two external
-context structures for the buffer I/O reads (`struct iomap_iter` and
-`struct iomap_read_folio_ctx`) instead of one.
-
-I'm not saying your proposal doesn't work, but:
-
-  - which is unlike `struct iomap_writepage_ctx` because writeback path
-    doesn't have `struct iomap_iter` involved, and it has only that
-    exact one `struct iomap_writepage_ctx` context and all callbacks
-    use that only;
-
-  - take a look at `iomap_dio_rw` and `iomap_dio_ops`, I think it's
-    somewhat similiar to the new `struct iomap_read_ops` in some
-    extent, but dio currently also exposes the exact one context
-    (`struct iomap_iter`) to users.
-
-  - take a look at `iomap_write_ops`, it also exposes
-    `struct iomap_iter` only. you may say `folio`, `pos`, `len` can be
-    wrapped as another `struct iomap_write_ctx` if needed, but that is
-    not designed to be exposed to be specfied by write_iter (e.g.
-    fuse_cache_write_iter)
-
-In short, traditionally the buffered read/write external context is
-the only unique one `struct iomap_iter` (`struct iomap_readpage_ctx`
-is only for iomap internal use), after your proposal there will be
-two external contexts specified by users (.read_folio and .readahead)
-but `.iomap_{begin,end}` is unable to get one of them, which is
-unlike the current writeback and direct i/o paths (they uses one
-external context too.)
-
-Seperate into two contexts works for your use case, but it may
-cause issues since future developers have to decide where to
-place those new context fields for buffer I/O paths (
-`struct iomap_iter` or `struct iomap_read_folio_ctx`), it's still
-possible but may cause further churn on the codebase perspective.
-
-That is my minor concern, but my main concern is still `private`
-naming.
-
-Thanks,
-Gao Xiang
-
-
-> 
-> 
-> Thanks,
-> Joanne
-> 
->>
->> Thanks,
->> Gao Xiang
+diff --git a/fs/hfs/.kunitconfig b/fs/hfs/.kunitconfig
+new file mode 100644
+index 000000000000..5caa9af1e3bb
+--- /dev/null
++++ b/fs/hfs/.kunitconfig
+@@ -0,0 +1,7 @@
++CONFIG_KUNIT=y
++CONFIG_HFS_FS=y
++CONFIG_HFS_KUNIT_TEST=y
++CONFIG_BLOCK=y
++CONFIG_BUFFER_HEAD=y
++CONFIG_NLS=y
++CONFIG_LEGACY_DIRECT_IO=y
+diff --git a/fs/hfs/Kconfig b/fs/hfs/Kconfig
+index 5ea5cd8ecea9..7f3cbe43b4b7 100644
+--- a/fs/hfs/Kconfig
++++ b/fs/hfs/Kconfig
+@@ -13,3 +13,18 @@ config HFS_FS
+ 
+ 	  To compile this file system support as a module, choose M here: the
+ 	  module will be called hfs.
++
++config HFS_KUNIT_TEST
++	tristate "KUnit tests for HFS filesystem" if !KUNIT_ALL_TESTS
++	depends on HFS_FS && KUNIT
++	default KUNIT_ALL_TESTS
++	help
++	  This builds KUnit tests for the HFS filesystem.
++
++	  KUnit tests run during boot and output the results to the debug
++	  log in TAP format (https://testanything.org/). Only useful for
++	  kernel devs running KUnit test harness and are not for inclusion
++	  into a production build.
++
++	  For more information on KUnit and unit tests in general please
++	  refer to the KUnit documentation in Documentation/dev-tools/kunit/.
+diff --git a/fs/hfs/Makefile b/fs/hfs/Makefile
+index b65459bf3dc4..a7c9ce6b4609 100644
+--- a/fs/hfs/Makefile
++++ b/fs/hfs/Makefile
+@@ -9,3 +9,5 @@ hfs-objs := bitmap.o bfind.o bnode.o brec.o btree.o \
+ 	    catalog.o dir.o extent.o inode.o attr.o mdb.o \
+             part_tbl.o string.o super.o sysdep.o trans.o
+ 
++# KUnit tests
++obj-$(CONFIG_HFS_KUNIT_TEST) += string_test.o
+diff --git a/fs/hfs/string_test.c b/fs/hfs/string_test.c
+new file mode 100644
+index 000000000000..de1928dc4ef4
+--- /dev/null
++++ b/fs/hfs/string_test.c
+@@ -0,0 +1,132 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * KUnit tests for HFS string operations
++ *
++ * Copyright (C) 2025 Viacheslav Dubeyko <slava@dubeyko.com>
++ */
++
++#include <kunit/test.h>
++#include <linux/dcache.h>
++#include "hfs_fs.h"
++
++/* Test hfs_strcmp function */
++static void hfs_strcmp_test(struct kunit *test)
++{
++	/* Test equal strings */
++	KUNIT_EXPECT_EQ(test, 0, hfs_strcmp("hello", 5, "hello", 5));
++	KUNIT_EXPECT_EQ(test, 0, hfs_strcmp("test", 4, "test", 4));
++	KUNIT_EXPECT_EQ(test, 0, hfs_strcmp("", 0, "", 0));
++
++	/* Test unequal strings */
++	KUNIT_EXPECT_NE(test, 0, hfs_strcmp("hello", 5, "world", 5));
++	KUNIT_EXPECT_NE(test, 0, hfs_strcmp("test", 4, "testing", 7));
++
++	/* Test different lengths */
++	KUNIT_EXPECT_LT(test, hfs_strcmp("test", 4, "testing", 7), 0);
++	KUNIT_EXPECT_GT(test, hfs_strcmp("testing", 7, "test", 4), 0);
++
++	/* Test case insensitive comparison (HFS should handle case) */
++	KUNIT_EXPECT_EQ(test, 0, hfs_strcmp("Test", 4, "TEST", 4));
++	KUNIT_EXPECT_EQ(test, 0, hfs_strcmp("hello", 5, "HELLO", 5));
++
++	/* Test with special characters */
++	KUNIT_EXPECT_EQ(test, 0, hfs_strcmp("file.txt", 8, "file.txt", 8));
++	KUNIT_EXPECT_NE(test, 0, hfs_strcmp("file.txt", 8, "file.dat", 8));
++
++	/* Test boundary cases */
++	KUNIT_EXPECT_EQ(test, 0, hfs_strcmp("a", 1, "a", 1));
++	KUNIT_EXPECT_NE(test, 0, hfs_strcmp("a", 1, "b", 1));
++}
++
++/* Test hfs_hash_dentry function */
++static void hfs_hash_dentry_test(struct kunit *test)
++{
++	struct qstr test_name1, test_name2, test_name3;
++	struct dentry dentry = {};
++	char name1[] = "testfile";
++	char name2[] = "TestFile";
++	char name3[] = "different";
++
++	/* Initialize test strings */
++	test_name1.name = name1;
++	test_name1.len = strlen(name1);
++	test_name1.hash = 0;
++
++	test_name2.name = name2;
++	test_name2.len = strlen(name2);
++	test_name2.hash = 0;
++
++	test_name3.name = name3;
++	test_name3.len = strlen(name3);
++	test_name3.hash = 0;
++
++	/* Test hashing */
++	KUNIT_EXPECT_EQ(test, 0, hfs_hash_dentry(&dentry, &test_name1));
++	KUNIT_EXPECT_EQ(test, 0, hfs_hash_dentry(&dentry, &test_name2));
++	KUNIT_EXPECT_EQ(test, 0, hfs_hash_dentry(&dentry, &test_name3));
++
++	/* Case insensitive names should hash the same */
++	KUNIT_EXPECT_EQ(test, test_name1.hash, test_name2.hash);
++
++	/* Different names should have different hashes */
++	KUNIT_EXPECT_NE(test, test_name1.hash, test_name3.hash);
++}
++
++/* Test hfs_compare_dentry function */
++static void hfs_compare_dentry_test(struct kunit *test)
++{
++	struct qstr test_name;
++	struct dentry dentry = {};
++	char name[] = "TestFile";
++
++	test_name.name = name;
++	test_name.len = strlen(name);
++
++	/* Test exact match */
++	KUNIT_EXPECT_EQ(test, 0, hfs_compare_dentry(&dentry, 8,
++						    "TestFile", &test_name));
++
++	/* Test case insensitive match */
++	KUNIT_EXPECT_EQ(test, 0, hfs_compare_dentry(&dentry, 8,
++						    "testfile", &test_name));
++	KUNIT_EXPECT_EQ(test, 0, hfs_compare_dentry(&dentry, 8,
++						    "TESTFILE", &test_name));
++
++	/* Test different names */
++	KUNIT_EXPECT_EQ(test, 1, hfs_compare_dentry(&dentry, 8,
++						    "DiffFile", &test_name));
++
++	/* Test different lengths */
++	KUNIT_EXPECT_EQ(test, 1, hfs_compare_dentry(&dentry, 7,
++						    "TestFil", &test_name));
++	KUNIT_EXPECT_EQ(test, 1, hfs_compare_dentry(&dentry, 9,
++						    "TestFiles", &test_name));
++
++	/* Test empty string */
++	test_name.name = "";
++	test_name.len = 0;
++	KUNIT_EXPECT_EQ(test, 0, hfs_compare_dentry(&dentry, 0, "", &test_name));
++
++	/* Test HFS_NAMELEN boundary */
++	test_name.name = "This_is_a_very_long_filename_that_exceeds_normal_limits";
++	test_name.len = strlen(test_name.name);
++	KUNIT_EXPECT_EQ(test, 0, hfs_compare_dentry(&dentry, HFS_NAMELEN,
++			"This_is_a_very_long_filename_th", &test_name));
++}
++
++static struct kunit_case hfs_string_test_cases[] = {
++	KUNIT_CASE(hfs_strcmp_test),
++	KUNIT_CASE(hfs_hash_dentry_test),
++	KUNIT_CASE(hfs_compare_dentry_test),
++	{}
++};
++
++static struct kunit_suite hfs_string_test_suite = {
++	.name = "hfs_string",
++	.test_cases = hfs_string_test_cases,
++};
++
++kunit_test_suite(hfs_string_test_suite);
++
++MODULE_DESCRIPTION("KUnit tests for HFS string operations");
++MODULE_LICENSE("GPL");
+-- 
+2.51.0
 
 
