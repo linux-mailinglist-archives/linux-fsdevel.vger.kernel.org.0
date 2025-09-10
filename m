@@ -1,252 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-60743-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60744-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23FD8B51128
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 10:26:14 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34E15B51153
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 10:32:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C52AF16A394
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 08:26:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D6B024E2AE2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 08:32:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6A8E30DD08;
-	Wed, 10 Sep 2025 08:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iVsFuY7B"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DDFF30FF2A;
+	Wed, 10 Sep 2025 08:31:55 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB8FE24BCE8
-	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Sep 2025 08:26:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A7F2D5947;
+	Wed, 10 Sep 2025 08:31:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757492768; cv=none; b=X6XaX9lh+9QU9zhpLXc4sbLdzdy1jryLORj+7RY3I3eLKZppfyRjsb8/8Rnur7+tz2UOr0lBzPwJ6l8q5EkCPuWt71rm+vmeblwIK9GigoQGCaK0oPcQyO3CPPhTrwBiBFFqCVn091WZmtKCmnNpgQfZPXeIfWg/3+fYJhQclwo=
+	t=1757493115; cv=none; b=vCGhlW1oIehzzqcihZ5IWJ4rfKYiHYgCVytTO+L3mBmKzEmvCxGSWTV4wzqLCdHxe2DN1/GjzyB4rJQ+E8zGczIiESa6zKFn4IG/07L2BpyCbI0ofnhJJ4pv518UsupJfdHrRaXV2LMUsMCSUBwQkHqevRNIBuf7UuxWnWY4Ky4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757492768; c=relaxed/simple;
-	bh=LGDx5UXVQvNOddW1bShX1KCkaUIEpgFgG6LEtTXv7kU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bvoythwFZ1SpslDT8rruiZrYON5fexJXzvj8lN+K1jnV8Nzlm8pyfjckmuW1iKqb17fSVEgldS9WrNTiaqhT+Y8I+qXXmGwCJBRD4UO2RHIlRCsum0EutiMsENMa0AP99wKDIR0eCbzvfYQy175zSi5gzGdzorbKsc9vU/+D/b8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iVsFuY7B; arc=none smtp.client-ip=209.85.210.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-74382048b8cso4618569a34.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Sep 2025 01:26:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757492765; x=1758097565; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=nQH7snnNQnRZRbg0xLLdaSxYnYx9rFgR1u9eFyrWIv8=;
-        b=iVsFuY7BsYTNYGFv2qtJNSI5I3Kj1rvjngN3lOdOqvQYZNj5jWl8TGX0a76wh5Ls+x
-         OXktHxwGlcrHxoqIVCwI8dgYaJ/05lcQqG0CWAkm3+1kFSjFPKZM0DkqWhtWbqe3uh4U
-         f03T5BPutuT4+AyIP8oDvkF73b+5+H34wPYV1sm1VNYYXuZqzZGaGTdTmFBUcGU95Da2
-         uBLfNbv+N1gWiRq2Do941zW9NJKxnWM0QPgzsWVDf/y+RKgFzVc7QdccVO+oRFYW2ALs
-         o/J7s+8jd9liYRoUEl1xub0vfsnECwQTOjtZGa3yg5/DPX3LWnyiklD5x45dJj8Qwpl7
-         BFyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757492765; x=1758097565;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nQH7snnNQnRZRbg0xLLdaSxYnYx9rFgR1u9eFyrWIv8=;
-        b=LbM8+hrMHKoKQPbfePN9bWTM7Q4KoWWpfTtKJIrTpkvQ8CmSq2IFLvK81Oq2AEQ4Mj
-         Hz2iC+tkEpsABKmJWiygIA29tUI9+Wlfii08pjVaix1GEaDdbyvcWHq0XGMWn72AEabh
-         aKzuiYp+kUYVwXmFrez38S7ZqMUUCg2bvM0NwkuJjdFDkVySFlIIos662n/nIFDTMUbj
-         TzL7V6YyS6DlOlRr79jUzk74EOa/0T8B2grXUgRJnNAenlbxvMnLFDyrzZ+V4uTRoEqd
-         9DkvxyXKonA9Ry8s/or2uzpoNBFnfkgfWBUWAUD5qteiu6R+kcdKHY636xKb8nsJdOXM
-         wjDA==
-X-Forwarded-Encrypted: i=1; AJvYcCXvNQRu1/+nfSpZemM/MzIDnH5OG1tW4xmy6o5O31l/cZlI4VZkvs1REfD7LSDfECp7MmwkR2ZcdZKZpnE+@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhondddwRYIpK09D8zQMRh58OpcjoIuUg5qCroSwiSnydICK9m
-	MUPaU26d/+5W667LXjE5n5gT2BdbYE5pX46Eyxm7bpZAd/GCWSCvki/BW3CSaa27qzhd32QH0F+
-	0xILfBtJakNTzjHOt2x2c1tu8cYTaM68=
-X-Gm-Gg: ASbGnctO9khFP4ln61DcXmkJhx5e8QUkHPLTe41t9EFmecWpSYD9avXxf/lJNh+QGMt
-	Jl1fbp9RXJJZ1bGV93UWd3nQO7TjTsOUcyNJjow3vWUc9GHHUK8ILMz2pEibsmj+pCnhAkr5BQx
-	ZneKtMqIGcy/Q3bOOHP3Nnkv0+ZVGUYC+amLTDOXKpS39JMcBzcSuDvDNdCvDhqziL6NnVaKZm8
-	5nD4w==
-X-Google-Smtp-Source: AGHT+IG8+X4z7lWHsoiDJ8ey4B9KiZeLoM8QTORaK4x4ttFg5WhTeM8qOcmzY4k1bJV831pksGGd1X5634WxyYNLQpo=
-X-Received: by 2002:a05:6871:4b10:b0:31d:6b5b:6b57 with SMTP id
- 586e51a60fabf-32264c16755mr7048854fac.30.1757492764639; Wed, 10 Sep 2025
- 01:26:04 -0700 (PDT)
+	s=arc-20240116; t=1757493115; c=relaxed/simple;
+	bh=btYuSerNDcokDO6Y/one3a829eB8ISvBdG67DcBTu9c=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=fhq/dL/3BGLaMAtv4lnvq3QpLFjVUO/cT0wr9wUKsL9tKG9zymYE6NWtlsX3sPd3IzWXJ6NoDts+eykiTerneg0DjlhVRx9nbJ/zSO0b9l2bpi8JOaeghHXlcRnHfeak7A1tvKkFzP8IViYwt6pDvz5Ah92EJZUi43jJsv0GPiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cMDSR0LhGzYQvcg;
+	Wed, 10 Sep 2025 16:31:51 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 881DB1A23A5;
+	Wed, 10 Sep 2025 16:31:49 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgCn8IxzN8Fol3MSCA--.51693S3;
+	Wed, 10 Sep 2025 16:31:49 +0800 (CST)
+Subject: Re: [PATCH 1/2] md: init queue_limits->max_hw_wzeroes_unmap_sectors
+ parameter
+To: John Garry <john.g.garry@oracle.com>, Zhang Yi
+ <yi.zhang@huaweicloud.com>, linux-block@vger.kernel.org,
+ linux-raid@vger.kernel.org, drbd-dev@lists.linbit.com
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, hch@lst.de,
+ martin.petersen@oracle.com, axboe@kernel.dk, yi.zhang@huawei.com,
+ yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20250825083320.797165-1-yi.zhang@huaweicloud.com>
+ <20250825083320.797165-2-yi.zhang@huaweicloud.com>
+ <5b0fd2a0-dffc-4f51-bdff-746e9bd611bd@oracle.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <05249654-3088-d3e1-570d-79f58019377c@huaweicloud.com>
+Date: Wed, 10 Sep 2025 16:31:47 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250909095611.803898-1-zhangchunyan@iscas.ac.cn>
- <20250909095611.803898-2-zhangchunyan@iscas.ac.cn> <6b2f12aa-8ed9-476d-a69d-f05ea526f16a@redhat.com>
-In-Reply-To: <6b2f12aa-8ed9-476d-a69d-f05ea526f16a@redhat.com>
-From: Chunyan Zhang <zhang.lyra@gmail.com>
-Date: Wed, 10 Sep 2025 16:25:28 +0800
-X-Gm-Features: Ac12FXx-v6pjQQB1q-gdPDWGiaVNDNxmW_UZ1a0xUB3t-SaqR__1RTrhpm4oqiU
-Message-ID: <CAAfSe-vbvGQy9JozQY3vsqrrPrTaWYMcNw+NaDf3nReWz8ynZg@mail.gmail.com>
-Subject: Re: [PATCH V10 1/5] mm: softdirty: Add pte_soft_dirty_available()
-To: David Hildenbrand <david@redhat.com>
-Cc: Chunyan Zhang <zhangchunyan@iscas.ac.cn>, linux-riscv@lists.infradead.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Deepak Gupta <debug@rivosinc.com>, Ved Shanbhogue <ved@rivosinc.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <5b0fd2a0-dffc-4f51-bdff-746e9bd611bd@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCn8IxzN8Fol3MSCA--.51693S3
+X-Coremail-Antispam: 1UD129KBjvdXoWruw45WFyUuF4kGr43Jw4Utwb_yoWkCrgEkr
+	sxXa98XFW5AF42qw4UKr13ZrW3ta95Wr1kZF1rWrs8XFyrZrykursxZ3sa9F15JFWIqr90
+	kan7Xw1I9FZFvjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbaxYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
+	07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4
+	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
+	MI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
+	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
+	6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Cr1j6rxdYx
+	BIdaVFxhVjvjDU0xZFpf9x07UAwIDUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Hi David,
+Hi,
 
-On Tue, 9 Sept 2025 at 19:42, David Hildenbrand <david@redhat.com> wrote:
->
-> On 09.09.25 11:56, Chunyan Zhang wrote:
-> > Some platforms can customize the PTE soft dirty bit and make it unavailable
-> > even if the architecture allows providing the PTE resource.
-> >
-> > Add an API which architectures can define their specific implementations
-> > to detect if the PTE soft-dirty bit is available, on which the kernel
-> > is running.
-> >
-> > Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
-> > ---
-> >   fs/proc/task_mmu.c      | 17 ++++++++++++++++-
-> >   include/linux/pgtable.h | 10 ++++++++++
-> >   mm/debug_vm_pgtable.c   |  9 +++++----
-> >   mm/huge_memory.c        | 10 ++++++----
-> >   mm/internal.h           |  2 +-
-> >   mm/mremap.c             | 10 ++++++----
-> >   mm/userfaultfd.c        |  6 ++++--
-> >   7 files changed, 48 insertions(+), 16 deletions(-)
-> >
-> > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> > index 29cca0e6d0ff..20a609ec1ba6 100644
-> > --- a/fs/proc/task_mmu.c
-> > +++ b/fs/proc/task_mmu.c
-> > @@ -1058,7 +1058,7 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
-> >        * -Werror=unterminated-string-initialization warning
-> >        *  with GCC 15
-> >        */
-> > -     static const char mnemonics[BITS_PER_LONG][3] = {
-> > +     static char mnemonics[BITS_PER_LONG][3] = {
-> >               /*
-> >                * In case if we meet a flag we don't know about.
-> >                */
-> > @@ -1129,6 +1129,16 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
-> >               [ilog2(VM_SEALED)] = "sl",
-> >   #endif
-> >       };
-> > +/*
-> > + * We should remove the VM_SOFTDIRTY flag if the PTE soft-dirty bit is
-> > + * unavailable on which the kernel is running, even if the architecture
-> > + * allows providing the PTE resource and soft-dirty is compiled in.
-> > + */
-> > +#ifdef CONFIG_MEM_SOFT_DIRTY
-> > +     if (!pte_soft_dirty_available())
-> > +             mnemonics[ilog2(VM_SOFTDIRTY)][0] = 0;
-> > +#endif
-> > +
-> >       size_t i;
-> >
-> >       seq_puts(m, "VmFlags: ");
-> > @@ -1531,6 +1541,8 @@ static inline bool pte_is_pinned(struct vm_area_struct *vma, unsigned long addr,
-> >   static inline void clear_soft_dirty(struct vm_area_struct *vma,
-> >               unsigned long addr, pte_t *pte)
-> >   {
-> > +     if (!pte_soft_dirty_available())
-> > +             return;
-> >       /*
-> >        * The soft-dirty tracker uses #PF-s to catch writes
-> >        * to pages, so write-protect the pte as well. See the
-> > @@ -1566,6 +1578,9 @@ static inline void clear_soft_dirty_pmd(struct vm_area_struct *vma,
-> >   {
-> >       pmd_t old, pmd = *pmdp;
-> >
-> > +     if (!pte_soft_dirty_available())
-> > +             return;
-> > +
-> >       if (pmd_present(pmd)) {
-> >               /* See comment in change_huge_pmd() */
-> >               old = pmdp_invalidate(vma, addr, pmdp);
-> > diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-> > index 4c035637eeb7..c0e2a6dc69f4 100644
-> > --- a/include/linux/pgtable.h
-> > +++ b/include/linux/pgtable.h
-> > @@ -1538,6 +1538,15 @@ static inline pgprot_t pgprot_modify(pgprot_t oldprot, pgprot_t newprot)
-> >   #endif
-> >
-> >   #ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
-> > +
-> > +/*
-> > + * Some platforms can customize the PTE soft dirty bit and make it unavailable
-> > + * even if the architecture allows providing the PTE resource.
-> > + */
-> > +#ifndef pte_soft_dirty_available
-> > +#define pte_soft_dirty_available()   (true)
-> > +#endif
-> > +
-> >   #ifndef CONFIG_ARCH_ENABLE_THP_MIGRATION
-> >   static inline pmd_t pmd_swp_mksoft_dirty(pmd_t pmd)
-> >   {
-> > @@ -1555,6 +1564,7 @@ static inline pmd_t pmd_swp_clear_soft_dirty(pmd_t pmd)
-> >   }
-> >   #endif
-> >   #else /* !CONFIG_HAVE_ARCH_SOFT_DIRTY */
-> > +#define pte_soft_dirty_available()   (false)
-> >   static inline int pte_soft_dirty(pte_t pte)
-> >   {
-> >       return 0;
-> > diff --git a/mm/debug_vm_pgtable.c b/mm/debug_vm_pgtable.c
-> > index 830107b6dd08..98ed7e22ccec 100644
-> > --- a/mm/debug_vm_pgtable.c
-> > +++ b/mm/debug_vm_pgtable.c
-> > @@ -690,7 +690,7 @@ static void __init pte_soft_dirty_tests(struct pgtable_debug_args *args)
-> >   {
-> >       pte_t pte = pfn_pte(args->fixed_pte_pfn, args->page_prot);
-> >
-> > -     if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY))
-> > +     if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY) || !pte_soft_dirty_available())
->
-> I suggest that you instead make pte_soft_dirty_available() be false without CONFIG_MEM_SOFT_DIRTY.
->
-> e.g., for the default implementation
->
-> define pte_soft_dirty_available()       IS_ENABLED(CONFIG_MEM_SOFT_DIRTY)
->
-> That way you can avoid some ifefs and cleanup these checks.
+在 2025/09/02 20:25, John Garry 写道:
+>> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+>> index 408c26398321..35c6498b4917 100644
+>> --- a/drivers/md/raid1.c
+>> +++ b/drivers/md/raid1.c
+>> @@ -3211,6 +3211,7 @@ static int raid1_set_limits(struct mddev *mddev)
+>>       md_init_stacking_limits(&lim);
+>>       lim.max_write_zeroes_sectors = 0;
+>> +    lim.max_hw_wzeroes_unmap_sectors = 0;
+> 
+> It would be better if we documented why we cannot support this on 
+> raid1/10, yet we can on raid0.
+> 
+> I am looking through the history of why max_write_zeroes_sectors is set 
+> to zero. I have gone as far back as 5026d7a9b, and this tells us that 
+> the retry mechanism for WRITE SAME causes an issue where mirrors are 
+> offlined (and so we disabled the support); and this was simply copied 
+> for write zeroes in 3deff1a70.
 
-Do you mean something like this:
+Yes, we don't support it for now, and I think it is not too hard to
+support write zeros, and finaly to support unmap zeros. BTW, raid5
+discard is in the same suituation.
 
---- a/include/linux/pgtable.h
-+++ b/include/linux/pgtable.h
-@@ -1538,6 +1538,16 @@ static inline pgprot_t pgprot_modify(pgprot_t
-oldprot, pgprot_t newprot)
- #endif
+However, I feel this is not related to this set, perhaps a seperate
+patch to add comments, I can accept that.
 
- #ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
-+#ifndef arch_soft_dirty_available
-+#define arch_soft_dirty_available()     (true)
-+#endif
-+#define pgtable_soft_dirty_supported()
-(IS_ENABLED(CONFIG_MEM_SOFT_DIRTY) && arch_soft_dirty_available())
-+
- #ifndef CONFIG_ARCH_ENABLE_THP_MIGRATION
- static inline pmd_t pmd_swp_mksoft_dirty(pmd_t pmd)
- {
-@@ -1555,6 +1565,7 @@ static inline pmd_t pmd_swp_clear_soft_dirty(pmd_t pmd)
- }
- #endif
- #else /* !CONFIG_HAVE_ARCH_SOFT_DIRTY */
-+#define pgtable_soft_dirty_supported() (false)
+Thanks,
+Kuai
 
->
->
-> But as we do also have PMD soft-dirty support, I guess we would want to call this
-> something more abstract "pgtable_soft_dirty_available" or "pgtable_soft_dirty_supported"
->
-> --
-> Cheers
->
-> David / dhildenb
->
 
