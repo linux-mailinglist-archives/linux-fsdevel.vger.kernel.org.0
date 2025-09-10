@@ -1,57 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-60765-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60766-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 716DBB51622
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 13:54:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BFEDB51700
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 14:34:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD1CA565108
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 11:54:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0AEED7A1D14
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 12:33:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BAF12D6605;
-	Wed, 10 Sep 2025 11:54:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B311831A567;
+	Wed, 10 Sep 2025 12:34:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E6cFEGxI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="knFhOIhG"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FE1027B355;
-	Wed, 10 Sep 2025 11:54:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0345B315785;
+	Wed, 10 Sep 2025 12:34:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757505268; cv=none; b=MTMpkQDTr3LGa4kR84gxQxuwGj6tloJYtGKz9o7K0Z7Ec6Ys/C9l5+oqZr7v9SUL4/IWcS/6/sHTGsKc5/7QGbslu+bpc94s/Ypgp8yPbkEXdKnfqt9Wz7i+twnU0k1P6TMmx7VYd4M4m/h4Dafdp4WfFtzJPHoba4IDNUXSlQY=
+	t=1757507677; cv=none; b=s1ByZTOSwPkLaovNC+9sagUI0Utgjp5F8HFoToYph+RZawiUQ/X34eVjbtJTgNbiLsqGLg/Mk8gX45yIjk2E/jhLRIvWuzs3CjXU+791ftwbRZE2XgX0elVmQKAzKaTeo0/pRnIRcok2B1/qW9rRBxIuMG2/V14Y2x1jQKXc+Lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757505268; c=relaxed/simple;
-	bh=QjxtITEm5x1dB6HWsQIpSXNwQ26lR612PZOFBEDNOL0=;
+	s=arc-20240116; t=1757507677; c=relaxed/simple;
+	bh=3VePX+Jz68LjuQ6rsz5Hhc5qTvlRVcqs8E7OaFtyg68=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=fyEkTS/kMSL1nQerhGuOMPwTbuqaIIvn3+ONDqTb2Sf1jcnJwWXhJwWsowghhWWSMzDfjrovjIFZCfh50tPSIgrgDVX19fb23DsNuGinv47bzuE3+vzBQ47sdz5VJQ9DV82PV7AAl7Jcbp9AQ2jWuObDuBA8VcaBFqrJEije3Mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E6cFEGxI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06504C4CEF0;
-	Wed, 10 Sep 2025 11:54:26 +0000 (UTC)
+	 Content-Type:MIME-Version; b=DpWow7I7abX2kd/zMnAZAXfWXdqqKl7JH1MQHx8/+QxdhJAgWuosbfP58H3Zw2Ls63zulaxxz2uhC+YtWUgQRs8cTcFMNjaRLMaZ9yLuwzVIKBB5jSIOyqN4fBM/IvJbD0p3YqhP7cd5HoXmtkvAdjlSNO/YVGGlO0OZBJARAC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=knFhOIhG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01ED3C4CEF0;
+	Wed, 10 Sep 2025 12:34:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757505267;
-	bh=QjxtITEm5x1dB6HWsQIpSXNwQ26lR612PZOFBEDNOL0=;
+	s=k20201202; t=1757507676;
+	bh=3VePX+Jz68LjuQ6rsz5Hhc5qTvlRVcqs8E7OaFtyg68=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=E6cFEGxIUKLjudT2qnfWjosnXNNfzMTsZw4KWyK31HfH8/ZC58ieuRBDl6Z4Pqilc
-	 vDhsg5lqaT5wtB3vd7LGnEdDT4wSlImvY12XeiMyoraB0GL1NKJUkUn9l4SDgnTK65
-	 NnuhHkBzMWzvvRvRCzmNcUXdDNN4BNBa9yRgX+x/AMrHCGFOefwp/VFUhXFb8jl7C7
-	 h4ZINKBCbdxZ2mbnomoky7yBlQd82qMlKeu0DCi39i+YDQBrNUV371RdhCUmABtkqo
-	 CPxnBOSALdf28+pBc9Qxj7QcpKlrqXK/FL17VVEVt8wqfU0Xi/hJCf6h/6b+JafD+G
-	 5i+2GTamo5EAw==
-Message-ID: <889f488eb1b27c91f445d4fa22dd4ff425b49454.camel@kernel.org>
+	b=knFhOIhGZKtiqe/pwdj6iMbPKepvswpcqruyNHTj8G6SxlZscVxiVe8WUKPpzJdSM
+	 6u7tj2P42gh7maMC1EeTPWaxCWpjqYlXr0NqM6o93NsyG7ydtc2SN47kwdXvo1yJXY
+	 lvrxI7o/2u1nohDa6kDqqewTrMj9LPd/gnrq8wkJgHU0fWlo7D6541EPgx49D3vZ7x
+	 U/o+jaFX8MCnuNhUesNTWWfWjFIQlAChNev7aLVA1V0/GLD99MWGtNUdW3WKYgDa/2
+	 niQ3985ZqBi0STKbYC3X0YqYR1Lf5Yqn4bBKsa91Xvzleq2mdizBsPJkk7DQkdWJnB
+	 hbCdOYN1XfwdQ==
+Message-ID: <8e537762058886d96e9ab6872f910718f672bccf.camel@kernel.org>
 Subject: Re: [PATCH v2 7/7] Use simple_start_creating() in various places.
 From: Jeff Layton <jlayton@kernel.org>
-To: NeilBrown <neil@brown.name>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner
- <brauner@kernel.org>,  Amir Goldstein <amir73il@gmail.com>, Jan Kara
- <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 	linux-nfs@vger.kernel.org
-Date: Wed, 10 Sep 2025 07:54:25 -0400
-In-Reply-To: <175750382935.2850467.264144428541875879@noble.neil.brown.name>
-References: <>, <f402ec5ce57c872f436d1b6a5e9c3633ba237a26.camel@kernel.org>
-	 <175750382935.2850467.264144428541875879@noble.neil.brown.name>
+To: Al Viro <viro@zeniv.linux.org.uk>, NeilBrown <neil@brown.name>
+Cc: Christian Brauner <brauner@kernel.org>, Amir Goldstein
+ <amir73il@gmail.com>,  Jan Kara <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org
+Date: Wed, 10 Sep 2025 08:34:34 -0400
+In-Reply-To: <20250910073711.GS31600@ZenIV>
+References: <> <20250909081949.GM31600@ZenIV>
+	 <175747330917.2850467.10031339002768914482@noble.neil.brown.name>
+	 <20250910041249.GP31600@ZenIV> <20250910041658.GQ31600@ZenIV>
+	 <20250910073711.GS31600@ZenIV>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -136,77 +138,41 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Wed, 2025-09-10 at 21:30 +1000, NeilBrown wrote:
-> On Wed, 10 Sep 2025, Jeff Layton wrote:
-> > On Wed, 2025-09-10 at 08:37 +0100, Al Viro wrote:
-> > > > ... and see viro/vfs.git#work.persistency for the part of the queue=
- that
-> > > > had order already settled down (I'm reshuffling the tail at the mom=
-ent;
-> > > > hypfs commit is still in the leftovers pile - the whole thing used =
-to
-> > > > have a really messy topology, with most of the prep work that used =
-to
-> > > > be the cause of that topology already in mainline - e.g. rpc_pipefs
-> > > > series, securityfs one, etc.)
-> > >=20
-> > > Speaking of which, nfsctl series contains the following and I'd like =
-to
-> > > make sure that behaviour being fixed there *is* just an accident...
-> > > Could nfsd folks comment?
-> > >=20
-> > > [PATCH] nfsctl: don't bump st_nlink of directory when creating a syml=
-ink in it
-> > > =C2=A0=C2=A0=C2=A0=C2=A0
-> > >=20
-> > > apparently blindly copied from mkdir...
-> > > =C2=A0=C2=A0=C2=A0=C2=A0
-> > >=20
-> > > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> > > ---
-> > > diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
-> > > index bc6b776fc657..282b961d8788 100644
-> > > --- a/fs/nfsd/nfsctl.c
-> > > +++ b/fs/nfsd/nfsctl.c
-> > > @@ -1181,7 +1181,6 @@ static int __nfsd_symlink(struct inode *dir, st=
-ruct dentry *dentry,
-> > > =C2=A0	inode->i_size =3D strlen(content);
-> > > =C2=A0
-> > >=20
-> > > =C2=A0	d_add(dentry, inode);
-> > > -	inc_nlink(dir);
-> > > =C2=A0	fsnotify_create(dir, dentry);
-> > > =C2=A0	return 0;
-> > > =C2=A0}
-> >=20
-> > That is increasing the link count on the parent because it's adding a
-> > dentry to "dir". The link count on a dir doesn't have much meaning, but
-> > why do we need to remove it here, but keep the one in __nfsd_mkdir?
+On Wed, 2025-09-10 at 08:37 +0100, Al Viro wrote:
+> > ... and see viro/vfs.git#work.persistency for the part of the queue tha=
+t
+> > had order already settled down (I'm reshuffling the tail at the moment;
+> > hypfs commit is still in the leftovers pile - the whole thing used to
+> > have a really messy topology, with most of the prep work that used to
+> > be the cause of that topology already in mainline - e.g. rpc_pipefs
+> > series, securityfs one, etc.)
 >=20
-> The link count in an inode is the number of links *to* the inode.
-> A symlink (or file etc) in a directory doesn't imply a link to that
-> directory (they are links "from" the directory, but those aren't counted)=
-.
-> A directory in a directory, on the other hand, does imply a link to the
-> (parent) directory due to the ".." entry.
+> Speaking of which, nfsctl series contains the following and I'd like to
+> make sure that behaviour being fixed there *is* just an accident...
+> Could nfsd folks comment?
 >=20
-> In fact the link count on a directory should always be 2 plus the number
-> of subdirectories (one for the name in the parent, one for "." in the
-> directory itself, and one for ".." in each subdirectory).  Some "find"
-> style programs depend on that to a degree, though mostly as an
-> optimisation.
->=20
+> [PATCH] nfsctl: don't bump st_nlink of directory when creating a symlink =
+in it
+> =C2=A0=C2=A0=C2=A0=C2=A0
+> apparently blindly copied from mkdir...
+> =C2=A0=C2=A0=C2=A0=C2=A0
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> ---
+> diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
+> index bc6b776fc657..282b961d8788 100644
+> --- a/fs/nfsd/nfsctl.c
+> +++ b/fs/nfsd/nfsctl.c
+> @@ -1181,7 +1181,6 @@ static int __nfsd_symlink(struct inode *dir, struct=
+ dentry *dentry,
+> =C2=A0	inode->i_size =3D strlen(content);
+> =C2=A0
+> =C2=A0	d_add(dentry, inode);
+> -	inc_nlink(dir);
+> =C2=A0	fsnotify_create(dir, dentry);
+> =C2=A0	return 0;
+> =C2=A0}
 
-I'm having a hard time finding where that is defined in the POSIX
-specs. The link count for normal files is fairly well-defined. The link
-count for directories has always been more nebulous.
+Given Neil's explanation:
 
-I think we would be well-served by a clearly-defined meaning for the
-link count on a directory for Linux, because different filesystems do
-this differently today.
-
-Yours and Al's semantics seem fine (I don't have a real preference,
-tbh), but we should codify this in Documentation/ since it is unclear.
---=20
-Jeff Layton <jlayton@kernel.org>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
