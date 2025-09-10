@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-60804-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60805-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CC1BB51A8C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 16:58:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91696B51A8B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 16:58:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75DA75E3220
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 14:50:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D44D6A047A4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 14:51:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2AF0393DDB;
-	Wed, 10 Sep 2025 14:40:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11E31327A10;
+	Wed, 10 Sep 2025 14:40:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WrHoFTzX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZSHelylM"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5ECE33A00F;
-	Wed, 10 Sep 2025 14:40:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38760338F27;
+	Wed, 10 Sep 2025 14:40:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757515206; cv=none; b=drIF5IbQseZCe7I7ozsgYdUh1QBtH8vbZnfMJrC94Ka76rAQEMRrXOMNixl3uqioLPMgZOCaRimBl4EjAUkjn4stAvPX+R2DJT+VWlSp/wBIuR6SUOVsAHo6ymlsK8/734enu9I+n553QSkXNTVd8u2C4ixbzOT+UHH7tSMsf4Q=
+	t=1757515212; cv=none; b=n8Et28ML9xpCinlzZRdfv8y7fQLZhrR4J+dabFtL1uom4rLKBjcwKXlnbDwJwJ5FAP0tSlnfeH9T/D9UackHxUkJ/t8I/odyv0Vx1H94D1+uvHwvsHBEFRIjz8+7EwlcGanN9DqyXmSxgaIfR29sPZnA8iVb3NdGpVN+u5pOjQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757515206; c=relaxed/simple;
-	bh=gbS2ymyvQLhpBSZHty4/HJL9CBgNRefAr9z2qgMgDus=;
+	s=arc-20240116; t=1757515212; c=relaxed/simple;
+	bh=Co7I2Z+LZzv8R4N0t4c4Y6gt2rHVb3Jja/U+OS0lMy4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qqHRpWv2Hin7PSIsaTbQyHl7hy++UvjfBUd2tt7UYS8O0V4lNtIwLOXLCiRpHXSQFOtLJLY2T0lsvnNHIoldMwsoPXWibTN0hQutPgcBECOxP2x6VryHxa+hhR+GzDChLNxrV8atNdbFX+7eSC2MRh4wYy5neZLT+lDnLKHDo7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WrHoFTzX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 385A6C4CEF8;
-	Wed, 10 Sep 2025 14:40:00 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=hIOn0tKRB2H9lJipeiHLd6o9eyNDGJHbvlZuKY/fdy/oCh0MW80AVYDIP6+kD101qpy9i6nlQ1T6ZOOpimk2V19kJGE+a7NTtAIVLZMOTT59+ouLCFMSS0idPMok5zC2KerYCx5FyAHyE3/5O4Y9KmL5M+zw6H19XT4RACp6Mww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZSHelylM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 350BAC4CEF0;
+	Wed, 10 Sep 2025 14:40:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757515205;
-	bh=gbS2ymyvQLhpBSZHty4/HJL9CBgNRefAr9z2qgMgDus=;
+	s=k20201202; t=1757515211;
+	bh=Co7I2Z+LZzv8R4N0t4c4Y6gt2rHVb3Jja/U+OS0lMy4=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=WrHoFTzXH0e/Em4vInRV5aEDw73hGv+cCIsKqhe0lF+mhsJ0Qm2gVpbz/DxaSczcd
-	 WkYIHhLlWZoUFSg1thfftu9+vqe9+GlOjeQ9S75FJQ6a1gyn3GNEE9BRAWWye/5cM9
-	 SEC+I7Fp5m8CBBK+iKkVZIMljXpOQvn7GyZRrswtEw8zLJdwA2XpQZlOAIP5TYAcC+
-	 +2vxSBPgP/5sP17Zg3JGYtERYdjjm51t/XguHlXBUreFu0gmNyfI/KW10OYhK2c/5E
-	 MAIzLqjFLSI55Lk0FDlvshDncouVGrAoumlcAiQApmEqxJpvtiKC4sHdl8L/eKQKRp
-	 WrcGgBSdb6KdA==
+	b=ZSHelylM+mf8ZWc58zUYPKNPKnCFKqqgSFXxjfoBkShUmc4FDD7c7OpzteDvkZQhZ
+	 xxXwxqPMBXOSHaYjsPWfzYxDfrGUF47MX5s9j2tBi6ZXZV8D9Mb+4QfHivquqt8PbS
+	 ZE9NBPL/UKUQJs8JQOjs3GvW7pAcrVuPeNtHedk78LlxoftPhvIFGp9U4bhVfs+5Ij
+	 NimUJlZn/Sl5vrVBuTnU6/qToOkkzxXgdzcwxuUfYliZ1BO7//a20PPP3tx9YZZxy/
+	 F6hnSd7A8X//SwXqgch/oI+cW2YMuDvDvOw4zfWAUOjtZ9fovhPe6/8qxCUKppcvrR
+	 du9MSoNIe5E3Q==
 From: Christian Brauner <brauner@kernel.org>
-Date: Wed, 10 Sep 2025 16:37:15 +0200
-Subject: [PATCH 30/32] tools: update nsfs.h uapi header
+Date: Wed, 10 Sep 2025 16:37:16 +0200
+Subject: [PATCH 31/32] selftests/namespaces: add identifier selftests
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250910-work-namespace-v1-30-4dd56e7359d8@kernel.org>
+Message-Id: <20250910-work-namespace-v1-31-4dd56e7359d8@kernel.org>
 References: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
 In-Reply-To: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
 To: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
@@ -72,62 +72,1050 @@ Cc: Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>,
  linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
  netdev@vger.kernel.org, Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.14.3-dev-385fa
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1883; i=brauner@kernel.org;
- h=from:subject:message-id; bh=gbS2ymyvQLhpBSZHty4/HJL9CBgNRefAr9z2qgMgDus=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQc7OX0c/qo4Lq6fO6Tr8baU7fk3My6d9zE9vQ5pgWez
- KdFV1WEd5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzEcxLD/xTzq+0O1Xfnb133
- jnXhw1VdL5z6tQ3+c6Xfm/E4/MLhwt2MDH9vXVt6KPh6mrFdlG2I+y75Jk3DzekrGRZ/453GXPj
- MgxUA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=26500; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=Co7I2Z+LZzv8R4N0t4c4Y6gt2rHVb3Jja/U+OS0lMy4=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQc7OU8vV+Q0ffLn6ZbV465Hq5esEeo87Px9+Nq/5+dy
+ +GMtDjR2lHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRTT2MDG+u1RnNzNiWoRQm
+ LHCc4cnKuiurfv3M2Cqpfebm6u8tolkM/xQPBr65trJL4rVfl8PnA1fXRsokx+r2qijI7pj1r4L
+ xPC8A
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Update the nsfs.h tools header to the uapi/nsfs.h header so we can rely
-on it in the selftests.
+Add a bunch of selftests for the identifier retrieval ioctls.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- tools/include/uapi/linux/nsfs.h | 23 +++++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
+ tools/testing/selftests/namespaces/.gitignore  |   1 +
+ tools/testing/selftests/namespaces/Makefile    |   7 +
+ tools/testing/selftests/namespaces/config      |   7 +
+ tools/testing/selftests/namespaces/nsid_test.c | 986 +++++++++++++++++++++++++
+ 4 files changed, 1001 insertions(+)
 
-diff --git a/tools/include/uapi/linux/nsfs.h b/tools/include/uapi/linux/nsfs.h
-index 34127653fd00..f7c21840cc09 100644
---- a/tools/include/uapi/linux/nsfs.h
-+++ b/tools/include/uapi/linux/nsfs.h
-@@ -16,8 +16,6 @@
- #define NS_GET_NSTYPE		_IO(NSIO, 0x3)
- /* Get owner UID (in the caller's user namespace) for a user namespace */
- #define NS_GET_OWNER_UID	_IO(NSIO, 0x4)
--/* Get the id for a mount namespace */
--#define NS_GET_MNTNS_ID		_IOR(NSIO, 0x5, __u64)
- /* Translate pid from target pid namespace into the caller's pid namespace. */
- #define NS_GET_PID_FROM_PIDNS	_IOR(NSIO, 0x6, int)
- /* Return thread-group leader id of pid in the callers pid namespace. */
-@@ -42,4 +40,25 @@ struct mnt_ns_info {
- /* Get previous namespace. */
- #define NS_MNT_GET_PREV		_IOR(NSIO, 12, struct mnt_ns_info)
- 
-+/* Retrieve namespace identifiers. */
-+#define NS_GET_MNTNS_ID		_IOR(NSIO, 5,  __u64)
-+#define NS_GET_NETNS_ID		_IOR(NSIO, 13, __u64)
-+#define NS_GET_CGROUPNS_ID	_IOR(NSIO, 14, __u64)
-+#define NS_GET_IPCNS_ID		_IOR(NSIO, 15, __u64)
-+#define NS_GET_UTSNS_ID		_IOR(NSIO, 16, __u64)
-+#define NS_GET_PIDNS_ID		_IOR(NSIO, 17, __u64)
-+#define NS_GET_TIMENS_ID	_IOR(NSIO, 18, __u64)
-+#define NS_GET_USERNS_ID	_IOR(NSIO, 19, __u64)
+diff --git a/tools/testing/selftests/namespaces/.gitignore b/tools/testing/selftests/namespaces/.gitignore
+new file mode 100644
+index 000000000000..c1e8d634dd21
+--- /dev/null
++++ b/tools/testing/selftests/namespaces/.gitignore
+@@ -0,0 +1 @@
++nsid_test
+diff --git a/tools/testing/selftests/namespaces/Makefile b/tools/testing/selftests/namespaces/Makefile
+new file mode 100644
+index 000000000000..9280c703533e
+--- /dev/null
++++ b/tools/testing/selftests/namespaces/Makefile
+@@ -0,0 +1,7 @@
++# SPDX-License-Identifier: GPL-2.0-only
++CFLAGS += -Wall -O0 -g $(KHDR_INCLUDES) $(TOOLS_INCLUDES)
 +
-+enum init_ns_ino {
-+	IPC_NS_INIT_INO		= 0xEFFFFFFFU,
-+	UTS_NS_INIT_INO		= 0xEFFFFFFEU,
-+	USER_NS_INIT_INO	= 0xEFFFFFFDU,
-+	PID_NS_INIT_INO		= 0xEFFFFFFCU,
-+	CGROUP_NS_INIT_INO	= 0xEFFFFFFBU,
-+	TIME_NS_INIT_INO	= 0xEFFFFFFAU,
-+	NET_NS_INIT_INO		= 0xEFFFFFF9U,
-+	MNT_NS_INIT_INO		= 0xEFFFFFF8U,
-+};
++TEST_GEN_PROGS := nsid_test
 +
- #endif /* __LINUX_NSFS_H */
++include ../lib.mk
++
+diff --git a/tools/testing/selftests/namespaces/config b/tools/testing/selftests/namespaces/config
+new file mode 100644
+index 000000000000..d09836260262
+--- /dev/null
++++ b/tools/testing/selftests/namespaces/config
+@@ -0,0 +1,7 @@
++CONFIG_UTS_NS=y
++CONFIG_TIME_NS=y
++CONFIG_IPC_NS=y
++CONFIG_USER_NS=y
++CONFIG_PID_NS=y
++CONFIG_NET_NS=y
++CONFIG_CGROUPS=y
+diff --git a/tools/testing/selftests/namespaces/nsid_test.c b/tools/testing/selftests/namespaces/nsid_test.c
+new file mode 100644
+index 000000000000..280dde9b71dc
+--- /dev/null
++++ b/tools/testing/selftests/namespaces/nsid_test.c
+@@ -0,0 +1,986 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include <assert.h>
++#include <fcntl.h>
++#include <inttypes.h>
++#include <libgen.h>
++#include <limits.h>
++#include <pthread.h>
++#include <string.h>
++#include <sys/mount.h>
++#include <poll.h>
++#include <sys/epoll.h>
++#include <sys/resource.h>
++#include <sys/stat.h>
++#include <sys/socket.h>
++#include <sys/un.h>
++#include <unistd.h>
++#include <linux/fs.h>
++#include <linux/limits.h>
++#include <linux/nsfs.h>
++#include "../kselftest_harness.h"
++
++TEST(nsid_mntns_basic)
++{
++	__u64 mnt_ns_id = 0;
++	int fd_mntns;
++	int ret;
++
++	/* Open the current mount namespace */
++	fd_mntns = open("/proc/self/ns/mnt", O_RDONLY);
++	ASSERT_GE(fd_mntns, 0);
++
++	/* Get the mount namespace ID */
++	ret = ioctl(fd_mntns, NS_GET_MNTNS_ID, &mnt_ns_id);
++	ASSERT_EQ(ret, 0);
++	ASSERT_NE(mnt_ns_id, 0);
++
++	/* Verify we can get the same ID again */
++	__u64 mnt_ns_id2 = 0;
++	ret = ioctl(fd_mntns, NS_GET_MNTNS_ID, &mnt_ns_id2);
++	ASSERT_EQ(ret, 0);
++	ASSERT_EQ(mnt_ns_id, mnt_ns_id2);
++
++	close(fd_mntns);
++}
++
++TEST(nsid_mntns_separate)
++{
++	__u64 parent_mnt_ns_id = 0;
++	__u64 child_mnt_ns_id = 0;
++	int fd_parent_mntns, fd_child_mntns;
++	int ret;
++	pid_t pid;
++	int pipefd[2];
++
++	/* Get parent's mount namespace ID */
++	fd_parent_mntns = open("/proc/self/ns/mnt", O_RDONLY);
++	ASSERT_GE(fd_parent_mntns, 0);
++	ret = ioctl(fd_parent_mntns, NS_GET_MNTNS_ID, &parent_mnt_ns_id);
++	ASSERT_EQ(ret, 0);
++	ASSERT_NE(parent_mnt_ns_id, 0);
++
++	/* Create a pipe for synchronization */
++	ASSERT_EQ(pipe(pipefd), 0);
++
++	pid = fork();
++	ASSERT_GE(pid, 0);
++
++	if (pid == 0) {
++		/* Child process */
++		close(pipefd[0]);
++
++		/* Create new mount namespace */
++		ret = unshare(CLONE_NEWNS);
++		if (ret != 0) {
++			/* Skip test if we don't have permission */
++			if (errno == EPERM || errno == EACCES) {
++				write(pipefd[1], "S", 1); /* Signal skip */
++				_exit(0);
++			}
++			_exit(1);
++		}
++
++		/* Signal success */
++		write(pipefd[1], "Y", 1);
++		close(pipefd[1]);
++
++		/* Keep namespace alive */
++		pause();
++		_exit(0);
++	}
++
++	/* Parent process */
++	close(pipefd[1]);
++
++	char buf;
++	ASSERT_EQ(read(pipefd[0], &buf, 1), 1);
++	close(pipefd[0]);
++
++	if (buf == 'S') {
++		/* Child couldn't create namespace, skip test */
++		kill(pid, SIGTERM);
++		waitpid(pid, NULL, 0);
++		close(fd_parent_mntns);
++		SKIP(return, "No permission to create mount namespace");
++	}
++
++	ASSERT_EQ(buf, 'Y');
++
++	/* Open child's mount namespace */
++	char path[256];
++	snprintf(path, sizeof(path), "/proc/%d/ns/mnt", pid);
++	fd_child_mntns = open(path, O_RDONLY);
++	ASSERT_GE(fd_child_mntns, 0);
++
++	/* Get child's mount namespace ID */
++	ret = ioctl(fd_child_mntns, NS_GET_MNTNS_ID, &child_mnt_ns_id);
++	ASSERT_EQ(ret, 0);
++	ASSERT_NE(child_mnt_ns_id, 0);
++
++	/* Parent and child should have different mount namespace IDs */
++	ASSERT_NE(parent_mnt_ns_id, child_mnt_ns_id);
++
++	close(fd_parent_mntns);
++	close(fd_child_mntns);
++
++	/* Clean up child process */
++	kill(pid, SIGTERM);
++	waitpid(pid, NULL, 0);
++}
++
++TEST(nsid_cgroupns_basic)
++{
++	__u64 cgroup_ns_id = 0;
++	int fd_cgroupns;
++	int ret;
++
++	/* Open the current cgroup namespace */
++	fd_cgroupns = open("/proc/self/ns/cgroup", O_RDONLY);
++	ASSERT_GE(fd_cgroupns, 0);
++
++	/* Get the cgroup namespace ID */
++	ret = ioctl(fd_cgroupns, NS_GET_CGROUPNS_ID, &cgroup_ns_id);
++	ASSERT_EQ(ret, 0);
++	ASSERT_NE(cgroup_ns_id, 0);
++
++	/* Verify we can get the same ID again */
++	__u64 cgroup_ns_id2 = 0;
++	ret = ioctl(fd_cgroupns, NS_GET_CGROUPNS_ID, &cgroup_ns_id2);
++	ASSERT_EQ(ret, 0);
++	ASSERT_EQ(cgroup_ns_id, cgroup_ns_id2);
++
++	close(fd_cgroupns);
++}
++
++TEST(nsid_cgroupns_separate)
++{
++	__u64 parent_cgroup_ns_id = 0;
++	__u64 child_cgroup_ns_id = 0;
++	int fd_parent_cgroupns, fd_child_cgroupns;
++	int ret;
++	pid_t pid;
++	int pipefd[2];
++
++	/* Get parent's cgroup namespace ID */
++	fd_parent_cgroupns = open("/proc/self/ns/cgroup", O_RDONLY);
++	ASSERT_GE(fd_parent_cgroupns, 0);
++	ret = ioctl(fd_parent_cgroupns, NS_GET_CGROUPNS_ID, &parent_cgroup_ns_id);
++	ASSERT_EQ(ret, 0);
++	ASSERT_NE(parent_cgroup_ns_id, 0);
++
++	/* Create a pipe for synchronization */
++	ASSERT_EQ(pipe(pipefd), 0);
++
++	pid = fork();
++	ASSERT_GE(pid, 0);
++
++	if (pid == 0) {
++		/* Child process */
++		close(pipefd[0]);
++
++		/* Create new cgroup namespace */
++		ret = unshare(CLONE_NEWCGROUP);
++		if (ret != 0) {
++			/* Skip test if we don't have permission */
++			if (errno == EPERM || errno == EACCES) {
++				write(pipefd[1], "S", 1); /* Signal skip */
++				_exit(0);
++			}
++			_exit(1);
++		}
++
++		/* Signal success */
++		write(pipefd[1], "Y", 1);
++		close(pipefd[1]);
++
++		/* Keep namespace alive */
++		pause();
++		_exit(0);
++	}
++
++	/* Parent process */
++	close(pipefd[1]);
++
++	char buf;
++	ASSERT_EQ(read(pipefd[0], &buf, 1), 1);
++	close(pipefd[0]);
++
++	if (buf == 'S') {
++		/* Child couldn't create namespace, skip test */
++		kill(pid, SIGTERM);
++		waitpid(pid, NULL, 0);
++		close(fd_parent_cgroupns);
++		SKIP(return, "No permission to create cgroup namespace");
++	}
++
++	ASSERT_EQ(buf, 'Y');
++
++	/* Open child's cgroup namespace */
++	char path[256];
++	snprintf(path, sizeof(path), "/proc/%d/ns/cgroup", pid);
++	fd_child_cgroupns = open(path, O_RDONLY);
++	ASSERT_GE(fd_child_cgroupns, 0);
++
++	/* Get child's cgroup namespace ID */
++	ret = ioctl(fd_child_cgroupns, NS_GET_CGROUPNS_ID, &child_cgroup_ns_id);
++	ASSERT_EQ(ret, 0);
++	ASSERT_NE(child_cgroup_ns_id, 0);
++
++	/* Parent and child should have different cgroup namespace IDs */
++	ASSERT_NE(parent_cgroup_ns_id, child_cgroup_ns_id);
++
++	close(fd_parent_cgroupns);
++	close(fd_child_cgroupns);
++
++	/* Clean up child process */
++	kill(pid, SIGTERM);
++	waitpid(pid, NULL, 0);
++}
++
++TEST(nsid_ipcns_basic)
++{
++	__u64 ipc_ns_id = 0;
++	int fd_ipcns;
++	int ret;
++
++	/* Open the current IPC namespace */
++	fd_ipcns = open("/proc/self/ns/ipc", O_RDONLY);
++	ASSERT_GE(fd_ipcns, 0);
++
++	/* Get the IPC namespace ID */
++	ret = ioctl(fd_ipcns, NS_GET_IPCNS_ID, &ipc_ns_id);
++	ASSERT_EQ(ret, 0);
++	ASSERT_NE(ipc_ns_id, 0);
++
++	/* Verify we can get the same ID again */
++	__u64 ipc_ns_id2 = 0;
++	ret = ioctl(fd_ipcns, NS_GET_IPCNS_ID, &ipc_ns_id2);
++	ASSERT_EQ(ret, 0);
++	ASSERT_EQ(ipc_ns_id, ipc_ns_id2);
++
++	close(fd_ipcns);
++}
++
++TEST(nsid_ipcns_separate)
++{
++	__u64 parent_ipc_ns_id = 0;
++	__u64 child_ipc_ns_id = 0;
++	int fd_parent_ipcns, fd_child_ipcns;
++	int ret;
++	pid_t pid;
++	int pipefd[2];
++
++	/* Get parent's IPC namespace ID */
++	fd_parent_ipcns = open("/proc/self/ns/ipc", O_RDONLY);
++	ASSERT_GE(fd_parent_ipcns, 0);
++	ret = ioctl(fd_parent_ipcns, NS_GET_IPCNS_ID, &parent_ipc_ns_id);
++	ASSERT_EQ(ret, 0);
++	ASSERT_NE(parent_ipc_ns_id, 0);
++
++	/* Create a pipe for synchronization */
++	ASSERT_EQ(pipe(pipefd), 0);
++
++	pid = fork();
++	ASSERT_GE(pid, 0);
++
++	if (pid == 0) {
++		/* Child process */
++		close(pipefd[0]);
++
++		/* Create new IPC namespace */
++		ret = unshare(CLONE_NEWIPC);
++		if (ret != 0) {
++			/* Skip test if we don't have permission */
++			if (errno == EPERM || errno == EACCES) {
++				write(pipefd[1], "S", 1); /* Signal skip */
++				_exit(0);
++			}
++			_exit(1);
++		}
++
++		/* Signal success */
++		write(pipefd[1], "Y", 1);
++		close(pipefd[1]);
++
++		/* Keep namespace alive */
++		pause();
++		_exit(0);
++	}
++
++	/* Parent process */
++	close(pipefd[1]);
++
++	char buf;
++	ASSERT_EQ(read(pipefd[0], &buf, 1), 1);
++	close(pipefd[0]);
++
++	if (buf == 'S') {
++		/* Child couldn't create namespace, skip test */
++		kill(pid, SIGTERM);
++		waitpid(pid, NULL, 0);
++		close(fd_parent_ipcns);
++		SKIP(return, "No permission to create IPC namespace");
++	}
++
++	ASSERT_EQ(buf, 'Y');
++
++	/* Open child's IPC namespace */
++	char path[256];
++	snprintf(path, sizeof(path), "/proc/%d/ns/ipc", pid);
++	fd_child_ipcns = open(path, O_RDONLY);
++	ASSERT_GE(fd_child_ipcns, 0);
++
++	/* Get child's IPC namespace ID */
++	ret = ioctl(fd_child_ipcns, NS_GET_IPCNS_ID, &child_ipc_ns_id);
++	ASSERT_EQ(ret, 0);
++	ASSERT_NE(child_ipc_ns_id, 0);
++
++	/* Parent and child should have different IPC namespace IDs */
++	ASSERT_NE(parent_ipc_ns_id, child_ipc_ns_id);
++
++	close(fd_parent_ipcns);
++	close(fd_child_ipcns);
++
++	/* Clean up child process */
++	kill(pid, SIGTERM);
++	waitpid(pid, NULL, 0);
++}
++
++TEST(nsid_utsns_basic)
++{
++	__u64 uts_ns_id = 0;
++	int fd_utsns;
++	int ret;
++
++	/* Open the current UTS namespace */
++	fd_utsns = open("/proc/self/ns/uts", O_RDONLY);
++	ASSERT_GE(fd_utsns, 0);
++
++	/* Get the UTS namespace ID */
++	ret = ioctl(fd_utsns, NS_GET_UTSNS_ID, &uts_ns_id);
++	ASSERT_EQ(ret, 0);
++	ASSERT_NE(uts_ns_id, 0);
++
++	/* Verify we can get the same ID again */
++	__u64 uts_ns_id2 = 0;
++	ret = ioctl(fd_utsns, NS_GET_UTSNS_ID, &uts_ns_id2);
++	ASSERT_EQ(ret, 0);
++	ASSERT_EQ(uts_ns_id, uts_ns_id2);
++
++	close(fd_utsns);
++}
++
++TEST(nsid_utsns_separate)
++{
++	__u64 parent_uts_ns_id = 0;
++	__u64 child_uts_ns_id = 0;
++	int fd_parent_utsns, fd_child_utsns;
++	int ret;
++	pid_t pid;
++	int pipefd[2];
++
++	/* Get parent's UTS namespace ID */
++	fd_parent_utsns = open("/proc/self/ns/uts", O_RDONLY);
++	ASSERT_GE(fd_parent_utsns, 0);
++	ret = ioctl(fd_parent_utsns, NS_GET_UTSNS_ID, &parent_uts_ns_id);
++	ASSERT_EQ(ret, 0);
++	ASSERT_NE(parent_uts_ns_id, 0);
++
++	/* Create a pipe for synchronization */
++	ASSERT_EQ(pipe(pipefd), 0);
++
++	pid = fork();
++	ASSERT_GE(pid, 0);
++
++	if (pid == 0) {
++		/* Child process */
++		close(pipefd[0]);
++
++		/* Create new UTS namespace */
++		ret = unshare(CLONE_NEWUTS);
++		if (ret != 0) {
++			/* Skip test if we don't have permission */
++			if (errno == EPERM || errno == EACCES) {
++				write(pipefd[1], "S", 1); /* Signal skip */
++				_exit(0);
++			}
++			_exit(1);
++		}
++
++		/* Signal success */
++		write(pipefd[1], "Y", 1);
++		close(pipefd[1]);
++
++		/* Keep namespace alive */
++		pause();
++		_exit(0);
++	}
++
++	/* Parent process */
++	close(pipefd[1]);
++
++	char buf;
++	ASSERT_EQ(read(pipefd[0], &buf, 1), 1);
++	close(pipefd[0]);
++
++	if (buf == 'S') {
++		/* Child couldn't create namespace, skip test */
++		kill(pid, SIGTERM);
++		waitpid(pid, NULL, 0);
++		close(fd_parent_utsns);
++		SKIP(return, "No permission to create UTS namespace");
++	}
++
++	ASSERT_EQ(buf, 'Y');
++
++	/* Open child's UTS namespace */
++	char path[256];
++	snprintf(path, sizeof(path), "/proc/%d/ns/uts", pid);
++	fd_child_utsns = open(path, O_RDONLY);
++	ASSERT_GE(fd_child_utsns, 0);
++
++	/* Get child's UTS namespace ID */
++	ret = ioctl(fd_child_utsns, NS_GET_UTSNS_ID, &child_uts_ns_id);
++	ASSERT_EQ(ret, 0);
++	ASSERT_NE(child_uts_ns_id, 0);
++
++	/* Parent and child should have different UTS namespace IDs */
++	ASSERT_NE(parent_uts_ns_id, child_uts_ns_id);
++
++	close(fd_parent_utsns);
++	close(fd_child_utsns);
++
++	/* Clean up child process */
++	kill(pid, SIGTERM);
++	waitpid(pid, NULL, 0);
++}
++
++TEST(nsid_userns_basic)
++{
++	__u64 user_ns_id = 0;
++	int fd_userns;
++	int ret;
++
++	/* Open the current user namespace */
++	fd_userns = open("/proc/self/ns/user", O_RDONLY);
++	ASSERT_GE(fd_userns, 0);
++
++	/* Get the user namespace ID */
++	ret = ioctl(fd_userns, NS_GET_USERNS_ID, &user_ns_id);
++	ASSERT_EQ(ret, 0);
++	ASSERT_NE(user_ns_id, 0);
++
++	/* Verify we can get the same ID again */
++	__u64 user_ns_id2 = 0;
++	ret = ioctl(fd_userns, NS_GET_USERNS_ID, &user_ns_id2);
++	ASSERT_EQ(ret, 0);
++	ASSERT_EQ(user_ns_id, user_ns_id2);
++
++	close(fd_userns);
++}
++
++TEST(nsid_userns_separate)
++{
++	__u64 parent_user_ns_id = 0;
++	__u64 child_user_ns_id = 0;
++	int fd_parent_userns, fd_child_userns;
++	int ret;
++	pid_t pid;
++	int pipefd[2];
++
++	/* Get parent's user namespace ID */
++	fd_parent_userns = open("/proc/self/ns/user", O_RDONLY);
++	ASSERT_GE(fd_parent_userns, 0);
++	ret = ioctl(fd_parent_userns, NS_GET_USERNS_ID, &parent_user_ns_id);
++	ASSERT_EQ(ret, 0);
++	ASSERT_NE(parent_user_ns_id, 0);
++
++	/* Create a pipe for synchronization */
++	ASSERT_EQ(pipe(pipefd), 0);
++
++	pid = fork();
++	ASSERT_GE(pid, 0);
++
++	if (pid == 0) {
++		/* Child process */
++		close(pipefd[0]);
++
++		/* Create new user namespace */
++		ret = unshare(CLONE_NEWUSER);
++		if (ret != 0) {
++			/* Skip test if we don't have permission */
++			if (errno == EPERM || errno == EACCES) {
++				write(pipefd[1], "S", 1); /* Signal skip */
++				_exit(0);
++			}
++			_exit(1);
++		}
++
++		/* Signal success */
++		write(pipefd[1], "Y", 1);
++		close(pipefd[1]);
++
++		/* Keep namespace alive */
++		pause();
++		_exit(0);
++	}
++
++	/* Parent process */
++	close(pipefd[1]);
++
++	char buf;
++	ASSERT_EQ(read(pipefd[0], &buf, 1), 1);
++	close(pipefd[0]);
++
++	if (buf == 'S') {
++		/* Child couldn't create namespace, skip test */
++		kill(pid, SIGTERM);
++		waitpid(pid, NULL, 0);
++		close(fd_parent_userns);
++		SKIP(return, "No permission to create user namespace");
++	}
++
++	ASSERT_EQ(buf, 'Y');
++
++	/* Open child's user namespace */
++	char path[256];
++	snprintf(path, sizeof(path), "/proc/%d/ns/user", pid);
++	fd_child_userns = open(path, O_RDONLY);
++	ASSERT_GE(fd_child_userns, 0);
++
++	/* Get child's user namespace ID */
++	ret = ioctl(fd_child_userns, NS_GET_USERNS_ID, &child_user_ns_id);
++	ASSERT_EQ(ret, 0);
++	ASSERT_NE(child_user_ns_id, 0);
++
++	/* Parent and child should have different user namespace IDs */
++	ASSERT_NE(parent_user_ns_id, child_user_ns_id);
++
++	close(fd_parent_userns);
++	close(fd_child_userns);
++
++	/* Clean up child process */
++	kill(pid, SIGTERM);
++	waitpid(pid, NULL, 0);
++}
++
++TEST(nsid_timens_basic)
++{
++	__u64 time_ns_id = 0;
++	int fd_timens;
++	int ret;
++
++	/* Open the current time namespace */
++	fd_timens = open("/proc/self/ns/time", O_RDONLY);
++	if (fd_timens < 0) {
++		SKIP(return, "Time namespaces not supported");
++	}
++
++	/* Get the time namespace ID */
++	ret = ioctl(fd_timens, NS_GET_TIMENS_ID, &time_ns_id);
++	ASSERT_EQ(ret, 0);
++	ASSERT_NE(time_ns_id, 0);
++
++	/* Verify we can get the same ID again */
++	__u64 time_ns_id2 = 0;
++	ret = ioctl(fd_timens, NS_GET_TIMENS_ID, &time_ns_id2);
++	ASSERT_EQ(ret, 0);
++	ASSERT_EQ(time_ns_id, time_ns_id2);
++
++	close(fd_timens);
++}
++
++TEST(nsid_timens_separate)
++{
++	__u64 parent_time_ns_id = 0;
++	__u64 child_time_ns_id = 0;
++	int fd_parent_timens, fd_child_timens;
++	int ret;
++	pid_t pid;
++	int pipefd[2];
++
++	/* Open the current time namespace */
++	fd_parent_timens = open("/proc/self/ns/time", O_RDONLY);
++	if (fd_parent_timens < 0) {
++		SKIP(return, "Time namespaces not supported");
++	}
++
++	/* Get parent's time namespace ID */
++	ret = ioctl(fd_parent_timens, NS_GET_TIMENS_ID, &parent_time_ns_id);
++	ASSERT_EQ(ret, 0);
++	ASSERT_NE(parent_time_ns_id, 0);
++
++	/* Create a pipe for synchronization */
++	ASSERT_EQ(pipe(pipefd), 0);
++
++	pid = fork();
++	ASSERT_GE(pid, 0);
++
++	if (pid == 0) {
++		/* Child process */
++		close(pipefd[0]);
++
++		/* Create new time namespace */
++		ret = unshare(CLONE_NEWTIME);
++		if (ret != 0) {
++			/* Skip test if we don't have permission */
++			if (errno == EPERM || errno == EACCES || errno == EINVAL) {
++				write(pipefd[1], "S", 1); /* Signal skip */
++				_exit(0);
++			}
++			_exit(1);
++		}
++
++		/* Fork a grandchild to actually enter the new namespace */
++		pid_t grandchild = fork();
++		if (grandchild == 0) {
++			/* Grandchild is in the new namespace */
++			write(pipefd[1], "Y", 1);
++			close(pipefd[1]);
++			pause();
++			_exit(0);
++		} else if (grandchild > 0) {
++			/* Child writes grandchild PID and waits */
++			write(pipefd[1], "Y", 1);
++			write(pipefd[1], &grandchild, sizeof(grandchild));
++			close(pipefd[1]);
++			pause(); /* Keep the parent alive to maintain the grandchild */
++			_exit(0);
++		} else {
++			_exit(1);
++		}
++	}
++
++	/* Parent process */
++	close(pipefd[1]);
++
++	char buf;
++	ASSERT_EQ(read(pipefd[0], &buf, 1), 1);
++
++	if (buf == 'S') {
++		/* Child couldn't create namespace, skip test */
++		kill(pid, SIGTERM);
++		waitpid(pid, NULL, 0);
++		close(fd_parent_timens);
++		close(pipefd[0]);
++		SKIP(return, "Cannot create time namespace");
++	}
++
++	ASSERT_EQ(buf, 'Y');
++
++	pid_t grandchild_pid;
++	ASSERT_EQ(read(pipefd[0], &grandchild_pid, sizeof(grandchild_pid)), sizeof(grandchild_pid));
++	close(pipefd[0]);
++
++	/* Open grandchild's time namespace */
++	char path[256];
++	snprintf(path, sizeof(path), "/proc/%d/ns/time", grandchild_pid);
++	fd_child_timens = open(path, O_RDONLY);
++	ASSERT_GE(fd_child_timens, 0);
++
++	/* Get child's time namespace ID */
++	ret = ioctl(fd_child_timens, NS_GET_TIMENS_ID, &child_time_ns_id);
++	ASSERT_EQ(ret, 0);
++	ASSERT_NE(child_time_ns_id, 0);
++
++	/* Parent and child should have different time namespace IDs */
++	ASSERT_NE(parent_time_ns_id, child_time_ns_id);
++
++	close(fd_parent_timens);
++	close(fd_child_timens);
++
++	/* Clean up child process */
++	kill(pid, SIGTERM);
++	waitpid(pid, NULL, 0);
++}
++
++TEST(nsid_pidns_basic)
++{
++	__u64 pid_ns_id = 0;
++	int fd_pidns;
++	int ret;
++
++	/* Open the current PID namespace */
++	fd_pidns = open("/proc/self/ns/pid", O_RDONLY);
++	ASSERT_GE(fd_pidns, 0);
++
++	/* Get the PID namespace ID */
++	ret = ioctl(fd_pidns, NS_GET_PIDNS_ID, &pid_ns_id);
++	ASSERT_EQ(ret, 0);
++	ASSERT_NE(pid_ns_id, 0);
++
++	/* Verify we can get the same ID again */
++	__u64 pid_ns_id2 = 0;
++	ret = ioctl(fd_pidns, NS_GET_PIDNS_ID, &pid_ns_id2);
++	ASSERT_EQ(ret, 0);
++	ASSERT_EQ(pid_ns_id, pid_ns_id2);
++
++	close(fd_pidns);
++}
++
++TEST(nsid_pidns_separate)
++{
++	__u64 parent_pid_ns_id = 0;
++	__u64 child_pid_ns_id = 0;
++	int fd_parent_pidns, fd_child_pidns;
++	int ret;
++	pid_t pid;
++	int pipefd[2];
++
++	/* Get parent's PID namespace ID */
++	fd_parent_pidns = open("/proc/self/ns/pid", O_RDONLY);
++	ASSERT_GE(fd_parent_pidns, 0);
++	ret = ioctl(fd_parent_pidns, NS_GET_PIDNS_ID, &parent_pid_ns_id);
++	ASSERT_EQ(ret, 0);
++	ASSERT_NE(parent_pid_ns_id, 0);
++
++	/* Create a pipe for synchronization */
++	ASSERT_EQ(pipe(pipefd), 0);
++
++	pid = fork();
++	ASSERT_GE(pid, 0);
++
++	if (pid == 0) {
++		/* Child process */
++		close(pipefd[0]);
++
++		/* Create new PID namespace */
++		ret = unshare(CLONE_NEWPID);
++		if (ret != 0) {
++			/* Skip test if we don't have permission */
++			if (errno == EPERM || errno == EACCES) {
++				write(pipefd[1], "S", 1); /* Signal skip */
++				_exit(0);
++			}
++			_exit(1);
++		}
++
++		/* Fork a grandchild to actually enter the new namespace */
++		pid_t grandchild = fork();
++		if (grandchild == 0) {
++			/* Grandchild is in the new namespace */
++			write(pipefd[1], "Y", 1);
++			close(pipefd[1]);
++			pause();
++			_exit(0);
++		} else if (grandchild > 0) {
++			/* Child writes grandchild PID and waits */
++			write(pipefd[1], "Y", 1);
++			write(pipefd[1], &grandchild, sizeof(grandchild));
++			close(pipefd[1]);
++			pause(); /* Keep the parent alive to maintain the grandchild */
++			_exit(0);
++		} else {
++			_exit(1);
++		}
++	}
++
++	/* Parent process */
++	close(pipefd[1]);
++
++	char buf;
++	ASSERT_EQ(read(pipefd[0], &buf, 1), 1);
++
++	if (buf == 'S') {
++		/* Child couldn't create namespace, skip test */
++		kill(pid, SIGTERM);
++		waitpid(pid, NULL, 0);
++		close(fd_parent_pidns);
++		close(pipefd[0]);
++		SKIP(return, "No permission to create PID namespace");
++	}
++
++	ASSERT_EQ(buf, 'Y');
++
++	pid_t grandchild_pid;
++	ASSERT_EQ(read(pipefd[0], &grandchild_pid, sizeof(grandchild_pid)), sizeof(grandchild_pid));
++	close(pipefd[0]);
++
++	/* Open grandchild's PID namespace */
++	char path[256];
++	snprintf(path, sizeof(path), "/proc/%d/ns/pid", grandchild_pid);
++	fd_child_pidns = open(path, O_RDONLY);
++	ASSERT_GE(fd_child_pidns, 0);
++
++	/* Get child's PID namespace ID */
++	ret = ioctl(fd_child_pidns, NS_GET_PIDNS_ID, &child_pid_ns_id);
++	ASSERT_EQ(ret, 0);
++	ASSERT_NE(child_pid_ns_id, 0);
++
++	/* Parent and child should have different PID namespace IDs */
++	ASSERT_NE(parent_pid_ns_id, child_pid_ns_id);
++
++	close(fd_parent_pidns);
++	close(fd_child_pidns);
++
++	/* Clean up child process */
++	kill(pid, SIGTERM);
++	waitpid(pid, NULL, 0);
++}
++
++TEST(nsid_netns_basic)
++{
++	__u64 net_ns_id = 0;
++	__u64 netns_cookie = 0;
++	int fd_netns;
++	int sock;
++	socklen_t optlen;
++	int ret;
++
++	/* Open the current network namespace */
++	fd_netns = open("/proc/self/ns/net", O_RDONLY);
++	ASSERT_GE(fd_netns, 0);
++
++	/* Get the network namespace ID via ioctl */
++	ret = ioctl(fd_netns, NS_GET_NETNS_ID, &net_ns_id);
++	ASSERT_EQ(ret, 0);
++	ASSERT_NE(net_ns_id, 0);
++
++	/* Create a socket to get the SO_NETNS_COOKIE */
++	sock = socket(AF_UNIX, SOCK_STREAM, 0);
++	ASSERT_GE(sock, 0);
++
++	/* Get the network namespace cookie via socket option */
++	optlen = sizeof(netns_cookie);
++	ret = getsockopt(sock, SOL_SOCKET, SO_NETNS_COOKIE, &netns_cookie, &optlen);
++	ASSERT_EQ(ret, 0);
++	ASSERT_EQ(optlen, sizeof(netns_cookie));
++
++	/* The namespace ID and cookie should be identical */
++	ASSERT_EQ(net_ns_id, netns_cookie);
++
++	/* Verify we can get the same ID again */
++	__u64 net_ns_id2 = 0;
++	ret = ioctl(fd_netns, NS_GET_NETNS_ID, &net_ns_id2);
++	ASSERT_EQ(ret, 0);
++	ASSERT_EQ(net_ns_id, net_ns_id2);
++
++	close(sock);
++	close(fd_netns);
++}
++
++TEST(nsid_netns_separate)
++{
++	__u64 parent_net_ns_id = 0;
++	__u64 parent_netns_cookie = 0;
++	__u64 child_net_ns_id = 0;
++	__u64 child_netns_cookie = 0;
++	int fd_parent_netns, fd_child_netns;
++	int parent_sock, child_sock;
++	socklen_t optlen;
++	int ret;
++	pid_t pid;
++	int pipefd[2];
++
++	/* Get parent's network namespace ID */
++	fd_parent_netns = open("/proc/self/ns/net", O_RDONLY);
++	ASSERT_GE(fd_parent_netns, 0);
++	ret = ioctl(fd_parent_netns, NS_GET_NETNS_ID, &parent_net_ns_id);
++	ASSERT_EQ(ret, 0);
++	ASSERT_NE(parent_net_ns_id, 0);
++
++	/* Get parent's network namespace cookie */
++	parent_sock = socket(AF_UNIX, SOCK_STREAM, 0);
++	ASSERT_GE(parent_sock, 0);
++	optlen = sizeof(parent_netns_cookie);
++	ret = getsockopt(parent_sock, SOL_SOCKET, SO_NETNS_COOKIE, &parent_netns_cookie, &optlen);
++	ASSERT_EQ(ret, 0);
++
++	/* Verify parent's ID and cookie match */
++	ASSERT_EQ(parent_net_ns_id, parent_netns_cookie);
++
++	/* Create a pipe for synchronization */
++	ASSERT_EQ(pipe(pipefd), 0);
++
++	pid = fork();
++	ASSERT_GE(pid, 0);
++
++	if (pid == 0) {
++		/* Child process */
++		close(pipefd[0]);
++
++		/* Create new network namespace */
++		ret = unshare(CLONE_NEWNET);
++		if (ret != 0) {
++			/* Skip test if we don't have permission */
++			if (errno == EPERM || errno == EACCES) {
++				write(pipefd[1], "S", 1); /* Signal skip */
++				_exit(0);
++			}
++			_exit(1);
++		}
++
++		/* Signal success */
++		write(pipefd[1], "Y", 1);
++		close(pipefd[1]);
++
++		/* Keep namespace alive */
++		pause();
++		_exit(0);
++	}
++
++	/* Parent process */
++	close(pipefd[1]);
++
++	char buf;
++	ASSERT_EQ(read(pipefd[0], &buf, 1), 1);
++	close(pipefd[0]);
++
++	if (buf == 'S') {
++		/* Child couldn't create namespace, skip test */
++		kill(pid, SIGTERM);
++		waitpid(pid, NULL, 0);
++		close(fd_parent_netns);
++		close(parent_sock);
++		SKIP(return, "No permission to create network namespace");
++	}
++
++	ASSERT_EQ(buf, 'Y');
++
++	/* Open child's network namespace */
++	char path[256];
++	snprintf(path, sizeof(path), "/proc/%d/ns/net", pid);
++	fd_child_netns = open(path, O_RDONLY);
++	ASSERT_GE(fd_child_netns, 0);
++
++	/* Get child's network namespace ID */
++	ret = ioctl(fd_child_netns, NS_GET_NETNS_ID, &child_net_ns_id);
++	ASSERT_EQ(ret, 0);
++	ASSERT_NE(child_net_ns_id, 0);
++
++	/* Create socket in child's namespace to get cookie */
++	ret = setns(fd_child_netns, CLONE_NEWNET);
++	if (ret == 0) {
++		child_sock = socket(AF_UNIX, SOCK_STREAM, 0);
++		ASSERT_GE(child_sock, 0);
++
++		optlen = sizeof(child_netns_cookie);
++		ret = getsockopt(child_sock, SOL_SOCKET, SO_NETNS_COOKIE, &child_netns_cookie, &optlen);
++		ASSERT_EQ(ret, 0);
++
++		/* Verify child's ID and cookie match */
++		ASSERT_EQ(child_net_ns_id, child_netns_cookie);
++
++		close(child_sock);
++
++		/* Return to parent namespace */
++		setns(fd_parent_netns, CLONE_NEWNET);
++	}
++
++	/* Parent and child should have different network namespace IDs */
++	ASSERT_NE(parent_net_ns_id, child_net_ns_id);
++	if (child_netns_cookie != 0) {
++		ASSERT_NE(parent_netns_cookie, child_netns_cookie);
++	}
++
++	close(fd_parent_netns);
++	close(fd_child_netns);
++	close(parent_sock);
++
++	/* Clean up child process */
++	kill(pid, SIGTERM);
++	waitpid(pid, NULL, 0);
++}
++
++TEST_HARNESS_MAIN
 
 -- 
 2.47.3
