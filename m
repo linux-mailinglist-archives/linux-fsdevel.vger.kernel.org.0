@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-60784-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60785-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C34EDB519E9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 16:45:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEA6BB519E3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 16:45:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C80CA00A1F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 14:41:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B86A01C8785E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 14:42:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D928A343D96;
-	Wed, 10 Sep 2025 14:38:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5CB53469E3;
+	Wed, 10 Sep 2025 14:38:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i0iMavcc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AYvkz+cf"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD2632F74D;
-	Wed, 10 Sep 2025 14:38:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D53732F74D;
+	Wed, 10 Sep 2025 14:38:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757515086; cv=none; b=UvXpx9HdKO2Ihwav8a0y+E710dtit01EjqvA/iV1SIxr0UZu8VjRHaBFAI0F377Ut2Nkw5nDV6hE94G5diEmSljizEHaamaOmbZRFsMr+oihi0mwP66DpyWe7eH1CQWhuC32hgz+lGiXok+Tcg2QuvJ6tOKwHM/A1R2RLlntruI=
+	t=1757515092; cv=none; b=Nqkv0FPrYfEuL1wV20w84l+3ZpqrjXLt5nGsYnFUoyg0wudj9n+Kcn95xaHVZ57nOZ8R+dTiV9mDhi21eqkTyoDk1EbqeUnLeRV2pNLxpIozFMqR1maz6HTcisUYoLTaaAKUDAjba49DGdMGYve2ZrZxV/f14JW4SmI1z0pHA3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757515086; c=relaxed/simple;
-	bh=Cv4oIC9snRZNh6Az+KnfKIPi91lVOlLOl59hcQq05as=;
+	s=arc-20240116; t=1757515092; c=relaxed/simple;
+	bh=iiPFC5SPYrdUEWp7Bw5ri9JWaFV5ytA5eNIM6tGTIgE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mGukN6sr9AJYt6UxZ3S0e5g6mighiZg54MWH/XvUWGj4VUYF2gzrgH98ZAhH+wXyUYqTn8lUw1Z9mQfAu/A3DtVwMnyLvTg5Cc433spzjUBcMAM3eAXyDUYh7Z9b6qNBhnKEtk1cIUMoyHSE/KOaeCMYqyQYGfN+3jMosQ2J4WM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i0iMavcc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33CEBC4CEF0;
-	Wed, 10 Sep 2025 14:38:00 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=KxP9pliAUkiUwn94F1ulPW9WIyAvSms9xK7vMmvhLOI7hTgN/pCx73xYEhCIwNkYD/KN5aa3C2TInLvM4sK81DV9+sMN+zZ8834YMX+1cFvqOPp96q0eX/R6ED2tyG3aywbaHa1yZFu+UdCDBZZB3x63siUvsFh2xAR28bSHEWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AYvkz+cf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CADFC4CEEB;
+	Wed, 10 Sep 2025 14:38:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757515085;
-	bh=Cv4oIC9snRZNh6Az+KnfKIPi91lVOlLOl59hcQq05as=;
+	s=k20201202; t=1757515091;
+	bh=iiPFC5SPYrdUEWp7Bw5ri9JWaFV5ytA5eNIM6tGTIgE=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=i0iMavccwG8XQvqcWy1HTa0bjwQkh+CJQtTpY8VFmtWstUwthNsi2dveZCIYbrAR4
-	 LE1VotWlsW2FbiyyRLiIrZgbmEkyJJGP5yqvewekoYO/UjSQoUcYbZlxCxAVpwzQqJ
-	 xEc8JyxWfwlxSnpuDKh2VlP11Cz4mMreS3YjCrY8McUXFpUq0YigdcTYusuZ6K46Wv
-	 hDILOHd5R4IEYMW16mO1wChyyzQWLU33CQXx8w8cAVNpSvVd7w4EHlDN1SqLjgyMPX
-	 JFvjpkLY813U2vusvMsDjPpTGvq4fZrG7n9lCkTcyj0G8BgS363n9qQ4cR4L4ldrY5
-	 ZL/GWKfiyV25A==
+	b=AYvkz+cfX0obtODPvJ6wd/mWGSPoffsYFJm0datfvhBzNtKNQvq4Sx3li9LYX7upi
+	 aQ1L7+Bzrev6MY3XZvJLWusvSruvX42icMSDaMvOr6+5sDlJbMN9It51L4Iro2SuJ5
+	 fbRDsi9nGrTbgo6I6zsj/mpp0ty9GktoQbdakeM/bTf6RiPU0fSd2cfqfCxwCk8XRS
+	 nLsVow8WlyO8tuqabnQLLzfya+BWQ5/qGv/eUpp2Q+Xl2iz96YYoMvvdr5dyYT2IG7
+	 LwOaD+QTGMEJ7J2FChYbqq35pH9xu7J6FTRM63NG9wfZ5TcFAPbACCm6WooYMbkoBt
+	 MEohRrz3bOKrw==
 From: Christian Brauner <brauner@kernel.org>
-Date: Wed, 10 Sep 2025 16:36:55 +0200
-Subject: [PATCH 10/32] pid: use ns_common_init()
+Date: Wed, 10 Sep 2025 16:36:56 +0200
+Subject: [PATCH 11/32] time: use ns_common_init()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250910-work-namespace-v1-10-4dd56e7359d8@kernel.org>
+Message-Id: <20250910-work-namespace-v1-11-4dd56e7359d8@kernel.org>
 References: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
 In-Reply-To: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
 To: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
@@ -72,12 +72,12 @@ Cc: Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>,
  linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
  netdev@vger.kernel.org, Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.14.3-dev-385fa
-X-Developer-Signature: v=1; a=openpgp-sha256; l=946; i=brauner@kernel.org;
- h=from:subject:message-id; bh=Cv4oIC9snRZNh6Az+KnfKIPi91lVOlLOl59hcQq05as=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQc7OXo2fh2k1TApy2HxNMdGbYsvRl3sdiUa2I4U09o1
- E2ugOnXO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbS08jwv+R/a/D/A7nu8zq+
- 5rKceTN9Fk/2/Mlly6Ulv7UE6yWpH2Rk+PXg+ewv0Q2Tln90XWMs9yt29tz9LdKNNyYcYbf95hP
- xhAkA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=957; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=iiPFC5SPYrdUEWp7Bw5ri9JWaFV5ytA5eNIM6tGTIgE=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQc7OXIn3Fi343fhasjU/Ra2OOaN/Ik1L8N1DtoFbjv4
+ eH+wqYfHSUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABNJvc3wTVfgsnecaLDqxZfW
+ 091sFU4vfLCEs5tt0f+Zd7J5N3CtZvjvcfPQV/Oy35NyGHKiLP7qvNqaXc/hOX+O5jxO81PbKx7
+ zAQA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
@@ -85,32 +85,33 @@ Don't cargo-cult the same thing over and over.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- kernel/pid_namespace.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ kernel/time/namespace.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
-index 7098ed44e717..20ce4052d1c5 100644
---- a/kernel/pid_namespace.c
-+++ b/kernel/pid_namespace.c
-@@ -102,17 +102,15 @@ static struct pid_namespace *create_pid_namespace(struct user_namespace *user_ns
- 	if (ns->pid_cachep == NULL)
- 		goto out_free_idr;
- 
--	err = ns_alloc_inum(&ns->ns);
-+	err = ns_common_init(&ns->ns, &pidns_operations, true);
- 	if (err)
- 		goto out_free_idr;
--	ns->ns.ops = &pidns_operations;
- 
- 	ns->pid_max = PID_MAX_LIMIT;
- 	err = register_pidns_sysctls(ns);
- 	if (err)
- 		goto out_free_inum;
+diff --git a/kernel/time/namespace.c b/kernel/time/namespace.c
+index 667452768ed3..80b3d2ce2fb6 100644
+--- a/kernel/time/namespace.c
++++ b/kernel/time/namespace.c
+@@ -92,18 +92,15 @@ static struct time_namespace *clone_time_ns(struct user_namespace *user_ns,
+ 	if (!ns)
+ 		goto fail_dec;
  
 -	refcount_set(&ns->ns.count, 1);
- 	ns->level = level;
- 	ns->parent = get_pid_ns(parent_pid_ns);
+-
+ 	ns->vvar_page = alloc_page(GFP_KERNEL_ACCOUNT | __GFP_ZERO);
+ 	if (!ns->vvar_page)
+ 		goto fail_free;
+ 
+-	err = ns_alloc_inum(&ns->ns);
++	err = ns_common_init(&ns->ns, &timens_operations, true);
+ 	if (err)
+ 		goto fail_free_page;
+ 
+ 	ns->ucounts = ucounts;
+-	ns->ns.ops = &timens_operations;
  	ns->user_ns = get_user_ns(user_ns);
+ 	ns->offsets = old_ns->offsets;
+ 	ns->frozen_offsets = false;
 
 -- 
 2.47.3
