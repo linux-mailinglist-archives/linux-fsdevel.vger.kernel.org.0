@@ -1,211 +1,252 @@
-Return-Path: <linux-fsdevel+bounces-60742-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60743-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3225FB510FD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 10:19:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23FD8B51128
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 10:26:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB3DD3A5F0F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 08:19:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C52AF16A394
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 08:26:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1EDA30C62B;
-	Wed, 10 Sep 2025 08:19:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6A8E30DD08;
+	Wed, 10 Sep 2025 08:26:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="m2AjeCGD";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ef5M89ks";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="m2AjeCGD";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ef5M89ks"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iVsFuY7B"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 935CC2D12ED
-	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Sep 2025 08:19:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB8FE24BCE8
+	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Sep 2025 08:26:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757492385; cv=none; b=hlrUSkbWt0LHXtZJ00RUTTrDnfwyF5xkyE3C+9afNkaLFAy9gsTB8BH2llaCwHJWCJjAiTk5zQFvwHuLs380423RzZ7zWiqaT2PijUfV3rBrRBCF1v6QOwzqZmc6398ivxXRBNUZoYmm8rG9erc5vFSBoCmkOcpqnTHhrqTqh3A=
+	t=1757492768; cv=none; b=X6XaX9lh+9QU9zhpLXc4sbLdzdy1jryLORj+7RY3I3eLKZppfyRjsb8/8Rnur7+tz2UOr0lBzPwJ6l8q5EkCPuWt71rm+vmeblwIK9GigoQGCaK0oPcQyO3CPPhTrwBiBFFqCVn091WZmtKCmnNpgQfZPXeIfWg/3+fYJhQclwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757492385; c=relaxed/simple;
-	bh=LWZ8CAEpycyJFNkA6apWFOna88ZNw6ARdl3dLajeQhE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AS+EQksCT2hpyjqCnLyVfgoE+xsOcmiz4jwdHpdcoeb//waVyLO48JJFjflDjV3hutkvq5aX+0i79eyZUBfnzvw1Ea/zGEj/FLSiQEwRpepaKPrfEL8i0Fp2+40vQg1zyIn575E8ZMdJ+dwtWvUsiwW6ZarTwgyuGD5uDLoYp+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=m2AjeCGD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ef5M89ks; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=m2AjeCGD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ef5M89ks; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 445501F7C5;
-	Wed, 10 Sep 2025 08:19:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757492381; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=P12AVPddthVxDO0dr1bKrqjOMYMUa7VaeFUFW9pWgFU=;
-	b=m2AjeCGDncU5WXYwZ0+wCS4oMrmsln8X3mVHctmsidEYwwEoMzXsApverbnOQ8KqPZDSAf
-	UN32mN2sieWqFbvHWCKG7LTwgMeYNixd2MtCixa4kzByPij2G1OOjcTf6X3fP/qsOQp6W1
-	eYZwoEiV1iyMSF1qyYT+JoF4nwcesac=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757492381;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=P12AVPddthVxDO0dr1bKrqjOMYMUa7VaeFUFW9pWgFU=;
-	b=ef5M89ksZ6gcLSHP7+URxlDX1MEyrgEn/Oq03umCs3DwQegGjkHmGdm9MOa0EOgnBGbCGg
-	gCPn6o0hZHrQRbBA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757492381; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=P12AVPddthVxDO0dr1bKrqjOMYMUa7VaeFUFW9pWgFU=;
-	b=m2AjeCGDncU5WXYwZ0+wCS4oMrmsln8X3mVHctmsidEYwwEoMzXsApverbnOQ8KqPZDSAf
-	UN32mN2sieWqFbvHWCKG7LTwgMeYNixd2MtCixa4kzByPij2G1OOjcTf6X3fP/qsOQp6W1
-	eYZwoEiV1iyMSF1qyYT+JoF4nwcesac=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757492381;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=P12AVPddthVxDO0dr1bKrqjOMYMUa7VaeFUFW9pWgFU=;
-	b=ef5M89ksZ6gcLSHP7+URxlDX1MEyrgEn/Oq03umCs3DwQegGjkHmGdm9MOa0EOgnBGbCGg
-	gCPn6o0hZHrQRbBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3851D13310;
-	Wed, 10 Sep 2025 08:19:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id nLi5DZ00wWjPKQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 10 Sep 2025 08:19:41 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id C444AA0A2D; Wed, 10 Sep 2025 10:19:36 +0200 (CEST)
-Date: Wed, 10 Sep 2025 10:19:36 +0200
-From: Jan Kara <jack@suse.cz>
-To: Tejun Heo <tj@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/4] writeback: Avoid contention on wb->list_lock when
- switching inodes
-Message-ID: <6wl26xqf6kvaz4527m7dy2dng5tu22qxva2uf2fi4xtzuzqxwx@l5re7vgx6zlz>
-References: <20250909143734.30801-1-jack@suse.cz>
- <20250909144400.2901-5-jack@suse.cz>
- <aMBbSxwwnvBvQw8C@slm.duckdns.org>
+	s=arc-20240116; t=1757492768; c=relaxed/simple;
+	bh=LGDx5UXVQvNOddW1bShX1KCkaUIEpgFgG6LEtTXv7kU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bvoythwFZ1SpslDT8rruiZrYON5fexJXzvj8lN+K1jnV8Nzlm8pyfjckmuW1iKqb17fSVEgldS9WrNTiaqhT+Y8I+qXXmGwCJBRD4UO2RHIlRCsum0EutiMsENMa0AP99wKDIR0eCbzvfYQy175zSi5gzGdzorbKsc9vU/+D/b8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iVsFuY7B; arc=none smtp.client-ip=209.85.210.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-74382048b8cso4618569a34.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Sep 2025 01:26:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757492765; x=1758097565; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=nQH7snnNQnRZRbg0xLLdaSxYnYx9rFgR1u9eFyrWIv8=;
+        b=iVsFuY7BsYTNYGFv2qtJNSI5I3Kj1rvjngN3lOdOqvQYZNj5jWl8TGX0a76wh5Ls+x
+         OXktHxwGlcrHxoqIVCwI8dgYaJ/05lcQqG0CWAkm3+1kFSjFPKZM0DkqWhtWbqe3uh4U
+         f03T5BPutuT4+AyIP8oDvkF73b+5+H34wPYV1sm1VNYYXuZqzZGaGTdTmFBUcGU95Da2
+         uBLfNbv+N1gWiRq2Do941zW9NJKxnWM0QPgzsWVDf/y+RKgFzVc7QdccVO+oRFYW2ALs
+         o/J7s+8jd9liYRoUEl1xub0vfsnECwQTOjtZGa3yg5/DPX3LWnyiklD5x45dJj8Qwpl7
+         BFyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757492765; x=1758097565;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nQH7snnNQnRZRbg0xLLdaSxYnYx9rFgR1u9eFyrWIv8=;
+        b=LbM8+hrMHKoKQPbfePN9bWTM7Q4KoWWpfTtKJIrTpkvQ8CmSq2IFLvK81Oq2AEQ4Mj
+         Hz2iC+tkEpsABKmJWiygIA29tUI9+Wlfii08pjVaix1GEaDdbyvcWHq0XGMWn72AEabh
+         aKzuiYp+kUYVwXmFrez38S7ZqMUUCg2bvM0NwkuJjdFDkVySFlIIos662n/nIFDTMUbj
+         TzL7V6YyS6DlOlRr79jUzk74EOa/0T8B2grXUgRJnNAenlbxvMnLFDyrzZ+V4uTRoEqd
+         9DkvxyXKonA9Ry8s/or2uzpoNBFnfkgfWBUWAUD5qteiu6R+kcdKHY636xKb8nsJdOXM
+         wjDA==
+X-Forwarded-Encrypted: i=1; AJvYcCXvNQRu1/+nfSpZemM/MzIDnH5OG1tW4xmy6o5O31l/cZlI4VZkvs1REfD7LSDfECp7MmwkR2ZcdZKZpnE+@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhondddwRYIpK09D8zQMRh58OpcjoIuUg5qCroSwiSnydICK9m
+	MUPaU26d/+5W667LXjE5n5gT2BdbYE5pX46Eyxm7bpZAd/GCWSCvki/BW3CSaa27qzhd32QH0F+
+	0xILfBtJakNTzjHOt2x2c1tu8cYTaM68=
+X-Gm-Gg: ASbGnctO9khFP4ln61DcXmkJhx5e8QUkHPLTe41t9EFmecWpSYD9avXxf/lJNh+QGMt
+	Jl1fbp9RXJJZ1bGV93UWd3nQO7TjTsOUcyNJjow3vWUc9GHHUK8ILMz2pEibsmj+pCnhAkr5BQx
+	ZneKtMqIGcy/Q3bOOHP3Nnkv0+ZVGUYC+amLTDOXKpS39JMcBzcSuDvDNdCvDhqziL6NnVaKZm8
+	5nD4w==
+X-Google-Smtp-Source: AGHT+IG8+X4z7lWHsoiDJ8ey4B9KiZeLoM8QTORaK4x4ttFg5WhTeM8qOcmzY4k1bJV831pksGGd1X5634WxyYNLQpo=
+X-Received: by 2002:a05:6871:4b10:b0:31d:6b5b:6b57 with SMTP id
+ 586e51a60fabf-32264c16755mr7048854fac.30.1757492764639; Wed, 10 Sep 2025
+ 01:26:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aMBbSxwwnvBvQw8C@slm.duckdns.org>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	MISSING_XM_UA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	RCPT_COUNT_THREE(0.00)[4];
-	FROM_EQ_ENVFROM(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+References: <20250909095611.803898-1-zhangchunyan@iscas.ac.cn>
+ <20250909095611.803898-2-zhangchunyan@iscas.ac.cn> <6b2f12aa-8ed9-476d-a69d-f05ea526f16a@redhat.com>
+In-Reply-To: <6b2f12aa-8ed9-476d-a69d-f05ea526f16a@redhat.com>
+From: Chunyan Zhang <zhang.lyra@gmail.com>
+Date: Wed, 10 Sep 2025 16:25:28 +0800
+X-Gm-Features: Ac12FXx-v6pjQQB1q-gdPDWGiaVNDNxmW_UZ1a0xUB3t-SaqR__1RTrhpm4oqiU
+Message-ID: <CAAfSe-vbvGQy9JozQY3vsqrrPrTaWYMcNw+NaDf3nReWz8ynZg@mail.gmail.com>
+Subject: Re: [PATCH V10 1/5] mm: softdirty: Add pte_soft_dirty_available()
+To: David Hildenbrand <david@redhat.com>
+Cc: Chunyan Zhang <zhangchunyan@iscas.ac.cn>, linux-riscv@lists.infradead.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Deepak Gupta <debug@rivosinc.com>, Ved Shanbhogue <ved@rivosinc.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hello Tejun,
+Hi David,
 
-On Tue 09-09-25 06:52:27, Tejun Heo wrote:
-> On Tue, Sep 09, 2025 at 04:44:02PM +0200, Jan Kara wrote:
-> > There can be multiple inode switch works that are trying to switch
-> > inodes to / from the same wb. This can happen in particular if some
-> > cgroup exits which owns many (thousands) inodes and we need to switch
-> > them all. In this case several inode_switch_wbs_work_fn() instances will
-> > be just spinning on the same wb->list_lock while only one of them makes
-> > forward progress. This wastes CPU cycles and quickly leads to softlockup
-> > reports and unusable system.
-> > 
-> > Instead of running several inode_switch_wbs_work_fn() instances in
-> > parallel switching to the same wb and contending on wb->list_lock, run
-> > just one instance and let the other isw items switching to this wb queue
-> > behind the one being processed.
-> > 
-> > Signed-off-by: Jan Kara <jack@suse.cz>
-> ...
-> > +static void inode_switch_wbs_work_fn(struct work_struct *work)
-> > +{
-> > +	struct inode_switch_wbs_context *isw =
-> > +		container_of(to_rcu_work(work), struct inode_switch_wbs_context, work);
-> > +	struct bdi_writeback *new_wb = isw->new_wb;
-> > +	bool switch_running;
+On Tue, 9 Sept 2025 at 19:42, David Hildenbrand <david@redhat.com> wrote:
+>
+> On 09.09.25 11:56, Chunyan Zhang wrote:
+> > Some platforms can customize the PTE soft dirty bit and make it unavailable
+> > even if the architecture allows providing the PTE resource.
+> >
+> > Add an API which architectures can define their specific implementations
+> > to detect if the PTE soft-dirty bit is available, on which the kernel
+> > is running.
+> >
+> > Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
+> > ---
+> >   fs/proc/task_mmu.c      | 17 ++++++++++++++++-
+> >   include/linux/pgtable.h | 10 ++++++++++
+> >   mm/debug_vm_pgtable.c   |  9 +++++----
+> >   mm/huge_memory.c        | 10 ++++++----
+> >   mm/internal.h           |  2 +-
+> >   mm/mremap.c             | 10 ++++++----
+> >   mm/userfaultfd.c        |  6 ++++--
+> >   7 files changed, 48 insertions(+), 16 deletions(-)
+> >
+> > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> > index 29cca0e6d0ff..20a609ec1ba6 100644
+> > --- a/fs/proc/task_mmu.c
+> > +++ b/fs/proc/task_mmu.c
+> > @@ -1058,7 +1058,7 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
+> >        * -Werror=unterminated-string-initialization warning
+> >        *  with GCC 15
+> >        */
+> > -     static const char mnemonics[BITS_PER_LONG][3] = {
+> > +     static char mnemonics[BITS_PER_LONG][3] = {
+> >               /*
+> >                * In case if we meet a flag we don't know about.
+> >                */
+> > @@ -1129,6 +1129,16 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
+> >               [ilog2(VM_SEALED)] = "sl",
+> >   #endif
+> >       };
+> > +/*
+> > + * We should remove the VM_SOFTDIRTY flag if the PTE soft-dirty bit is
+> > + * unavailable on which the kernel is running, even if the architecture
+> > + * allows providing the PTE resource and soft-dirty is compiled in.
+> > + */
+> > +#ifdef CONFIG_MEM_SOFT_DIRTY
+> > +     if (!pte_soft_dirty_available())
+> > +             mnemonics[ilog2(VM_SOFTDIRTY)][0] = 0;
+> > +#endif
 > > +
-> > +	spin_lock_irq(&new_wb->work_lock);
-> > +	switch_running = !list_empty(&new_wb->switch_wbs_ctxs);
-> > +	list_add_tail(&isw->list, &new_wb->switch_wbs_ctxs);
-> > +	spin_unlock_irq(&new_wb->work_lock);
+> >       size_t i;
+> >
+> >       seq_puts(m, "VmFlags: ");
+> > @@ -1531,6 +1541,8 @@ static inline bool pte_is_pinned(struct vm_area_struct *vma, unsigned long addr,
+> >   static inline void clear_soft_dirty(struct vm_area_struct *vma,
+> >               unsigned long addr, pte_t *pte)
+> >   {
+> > +     if (!pte_soft_dirty_available())
+> > +             return;
+> >       /*
+> >        * The soft-dirty tracker uses #PF-s to catch writes
+> >        * to pages, so write-protect the pte as well. See the
+> > @@ -1566,6 +1578,9 @@ static inline void clear_soft_dirty_pmd(struct vm_area_struct *vma,
+> >   {
+> >       pmd_t old, pmd = *pmdp;
+> >
+> > +     if (!pte_soft_dirty_available())
+> > +             return;
 > > +
-> > +	/*
-> > +	 * Let's leave the real work for the running worker since we'd just
-> > +	 * contend with it on wb->list_lock anyway.
-> > +	 */
-> > +	if (switch_running)
-> > +		return;
+> >       if (pmd_present(pmd)) {
+> >               /* See comment in change_huge_pmd() */
+> >               old = pmdp_invalidate(vma, addr, pmdp);
+> > diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+> > index 4c035637eeb7..c0e2a6dc69f4 100644
+> > --- a/include/linux/pgtable.h
+> > +++ b/include/linux/pgtable.h
+> > @@ -1538,6 +1538,15 @@ static inline pgprot_t pgprot_modify(pgprot_t oldprot, pgprot_t newprot)
+> >   #endif
+> >
+> >   #ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
 > > +
-> > +	/* OK, we will be doing the switching work */
-> > +	wb_get(new_wb);
-> > +	spin_lock_irq(&new_wb->work_lock);
-> > +	while (!list_empty(&new_wb->switch_wbs_ctxs)) {
-> > +		isw = list_first_entry(&new_wb->switch_wbs_ctxs,
-> > +				       struct inode_switch_wbs_context, list);
-> > +		spin_unlock_irq(&new_wb->work_lock);
-> > +		process_inode_switch_wbs_work(isw);
-> > +		spin_lock_irq(&new_wb->work_lock);
-> > +		list_del(&isw->list);
-> > +		kfree(isw);
-> > +	}
-> > +	spin_unlock_irq(&new_wb->work_lock);
-> > +	wb_put(new_wb);
-> > +}
-> 
-> Would it be easier to achieve the same effect if we just reduced @max_active
-> when creating inode_switch_wbs? If we update cgroup_writeback_init() to use
-> the following instead:
-> 
->         isw_wq = alloc_workqueue("inode_switch_wbs", WQ_UNBOUND, 1);
-> 
-> Wouldn't that achieve the same thing? Note the addition of WQ_UNBOUND isn't
-> strictly necessary but we're in the process of defaulting to unbound
-> workqueues, so might as well update it together. I can't think of any reason
-> why this would require per-cpu behavior.
+> > +/*
+> > + * Some platforms can customize the PTE soft dirty bit and make it unavailable
+> > + * even if the architecture allows providing the PTE resource.
+> > + */
+> > +#ifndef pte_soft_dirty_available
+> > +#define pte_soft_dirty_available()   (true)
+> > +#endif
+> > +
+> >   #ifndef CONFIG_ARCH_ENABLE_THP_MIGRATION
+> >   static inline pmd_t pmd_swp_mksoft_dirty(pmd_t pmd)
+> >   {
+> > @@ -1555,6 +1564,7 @@ static inline pmd_t pmd_swp_clear_soft_dirty(pmd_t pmd)
+> >   }
+> >   #endif
+> >   #else /* !CONFIG_HAVE_ARCH_SOFT_DIRTY */
+> > +#define pte_soft_dirty_available()   (false)
+> >   static inline int pte_soft_dirty(pte_t pte)
+> >   {
+> >       return 0;
+> > diff --git a/mm/debug_vm_pgtable.c b/mm/debug_vm_pgtable.c
+> > index 830107b6dd08..98ed7e22ccec 100644
+> > --- a/mm/debug_vm_pgtable.c
+> > +++ b/mm/debug_vm_pgtable.c
+> > @@ -690,7 +690,7 @@ static void __init pte_soft_dirty_tests(struct pgtable_debug_args *args)
+> >   {
+> >       pte_t pte = pfn_pte(args->fixed_pte_pfn, args->page_prot);
+> >
+> > -     if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY))
+> > +     if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY) || !pte_soft_dirty_available())
+>
+> I suggest that you instead make pte_soft_dirty_available() be false without CONFIG_MEM_SOFT_DIRTY.
+>
+> e.g., for the default implementation
+>
+> define pte_soft_dirty_available()       IS_ENABLED(CONFIG_MEM_SOFT_DIRTY)
+>
+> That way you can avoid some ifefs and cleanup these checks.
 
-Well, reducing @max_active to 1 will certainly deal with the list_lock
-contention as well. But I didn't want to do that as on a busy container
-system I assume there can be switching happening between different pairs of
-cgroups. With the approach in this patch switches with different target
-cgroups can still run in parallel. I don't have any real world data to back
-that assumption so if you think this parallelism isn't really needed and we
-are fine with at most one switch happening in the system, switching
-max_active to 1 is certainly simple enough.
+Do you mean something like this:
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+--- a/include/linux/pgtable.h
++++ b/include/linux/pgtable.h
+@@ -1538,6 +1538,16 @@ static inline pgprot_t pgprot_modify(pgprot_t
+oldprot, pgprot_t newprot)
+ #endif
+
+ #ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
++#ifndef arch_soft_dirty_available
++#define arch_soft_dirty_available()     (true)
++#endif
++#define pgtable_soft_dirty_supported()
+(IS_ENABLED(CONFIG_MEM_SOFT_DIRTY) && arch_soft_dirty_available())
++
+ #ifndef CONFIG_ARCH_ENABLE_THP_MIGRATION
+ static inline pmd_t pmd_swp_mksoft_dirty(pmd_t pmd)
+ {
+@@ -1555,6 +1565,7 @@ static inline pmd_t pmd_swp_clear_soft_dirty(pmd_t pmd)
+ }
+ #endif
+ #else /* !CONFIG_HAVE_ARCH_SOFT_DIRTY */
++#define pgtable_soft_dirty_supported() (false)
+
+>
+>
+> But as we do also have PMD soft-dirty support, I guess we would want to call this
+> something more abstract "pgtable_soft_dirty_available" or "pgtable_soft_dirty_supported"
+>
+> --
+> Cheers
+>
+> David / dhildenb
+>
 
