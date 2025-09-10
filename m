@@ -1,192 +1,212 @@
-Return-Path: <linux-fsdevel+bounces-60764-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60765-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90A76B515FE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 13:42:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 716DBB51622
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 13:54:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A02D7AF088
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 11:40:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD1CA565108
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 11:54:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35745315D34;
-	Wed, 10 Sep 2025 11:41:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BAF12D6605;
+	Wed, 10 Sep 2025 11:54:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CBfNHrnb";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XGZKqnno";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TTVCxRt2";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="p9FSxy6t"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E6cFEGxI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B5A03074AD
-	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Sep 2025 11:41:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FE1027B355;
+	Wed, 10 Sep 2025 11:54:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757504503; cv=none; b=iG/THhtV6qNihz8ttZ/197Ny593TvunHZYuvp2jR17cNfm8lQTmqLvsHZZZZeKaUxtJyXY5A2dlEQ14R8/YF3M3M3pbm4ccKFWC+l6t3S0bRxjDTNjNMiVbQIepanDZ6nfebeAGrP7qLb9lNCLHBLKl5mjm5tJqbLaYOEv66xVs=
+	t=1757505268; cv=none; b=MTMpkQDTr3LGa4kR84gxQxuwGj6tloJYtGKz9o7K0Z7Ec6Ys/C9l5+oqZr7v9SUL4/IWcS/6/sHTGsKc5/7QGbslu+bpc94s/Ypgp8yPbkEXdKnfqt9Wz7i+twnU0k1P6TMmx7VYd4M4m/h4Dafdp4WfFtzJPHoba4IDNUXSlQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757504503; c=relaxed/simple;
-	bh=mIkjUVgeCFydaSYxYaW5fVhYXZM8bEd2ev81f5KUDAc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u7f07l0FKkfg3gEwpVWmgA/nP9k4atkcm6d2SQVCPHdQlYKthYTL3rfZTQjUxS40GuvkqAvNExIqEr6AEj4m7g5GHBzvWQCmCisZQypgXaj5NpmnWhqUhTO4bHaN2tTkov0WbAEDxkwK1NpF/wnPD543pHE3u6ck1wpUruFXjI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CBfNHrnb; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XGZKqnno; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TTVCxRt2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=p9FSxy6t; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id CB90037561;
-	Wed, 10 Sep 2025 11:41:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1757504497; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zEnisFHsxre0EVVuo5kQHP4jaEtnqdrGoeP3qr+VY6I=;
-	b=CBfNHrnb1AzuTKpJwc7FYNhnrkKQp1A/ZP1Yx2Gk5XjvFx0kGFJfa46wnj8m+Lp6TsjBT7
-	nj/sftMjVjIRkqiquEk/hlSWuddFKqdCafnDhyA5DQfbH9QUTLYckuP09xzLQx5knn6DLG
-	y3optX0Gj2gVYs4YM2U47yt5nnAHFoU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1757504497;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zEnisFHsxre0EVVuo5kQHP4jaEtnqdrGoeP3qr+VY6I=;
-	b=XGZKqnnoWlBqwG7aDFQw5QaBn8twtKugMzflfwMRim/+imgoA7TqNppuxgTrghmm9fRTTv
-	klJ6Hhx++lwFlbCA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=TTVCxRt2;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=p9FSxy6t
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1757504496; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zEnisFHsxre0EVVuo5kQHP4jaEtnqdrGoeP3qr+VY6I=;
-	b=TTVCxRt2c6UkPUQkhNvN1u6t7Lc77PymjFt6+pA1VH4vDUIIRISEI/caoYolxt46ZHpdnN
-	kZdUKofZhnGdE5TRiF0Oni/fNuOKcXAafIIIo1bINCdihU//CmB3yvj0upoxztDdRIq60l
-	U9TVMCZr0bMt7pTO0nI6UrUstD7HjuA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1757504496;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zEnisFHsxre0EVVuo5kQHP4jaEtnqdrGoeP3qr+VY6I=;
-	b=p9FSxy6t96ozqaO/89/SmYgrxvg770I26deqFxl9rG8FMAKZHWNOdcqB3D25ou/+LO3//+
-	8QKtiI+IqnHakZBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A7A8313310;
-	Wed, 10 Sep 2025 11:41:36 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id eF9TKPBjwWgOawAAD6G6ig
-	(envelope-from <hare@suse.de>); Wed, 10 Sep 2025 11:41:36 +0000
-Message-ID: <a0834448-35dd-401f-8d66-a957b8e160b2@suse.de>
-Date: Wed, 10 Sep 2025 13:41:36 +0200
+	s=arc-20240116; t=1757505268; c=relaxed/simple;
+	bh=QjxtITEm5x1dB6HWsQIpSXNwQ26lR612PZOFBEDNOL0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=fyEkTS/kMSL1nQerhGuOMPwTbuqaIIvn3+ONDqTb2Sf1jcnJwWXhJwWsowghhWWSMzDfjrovjIFZCfh50tPSIgrgDVX19fb23DsNuGinv47bzuE3+vzBQ47sdz5VJQ9DV82PV7AAl7Jcbp9AQ2jWuObDuBA8VcaBFqrJEije3Mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E6cFEGxI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06504C4CEF0;
+	Wed, 10 Sep 2025 11:54:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757505267;
+	bh=QjxtITEm5x1dB6HWsQIpSXNwQ26lR612PZOFBEDNOL0=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=E6cFEGxIUKLjudT2qnfWjosnXNNfzMTsZw4KWyK31HfH8/ZC58ieuRBDl6Z4Pqilc
+	 vDhsg5lqaT5wtB3vd7LGnEdDT4wSlImvY12XeiMyoraB0GL1NKJUkUn9l4SDgnTK65
+	 NnuhHkBzMWzvvRvRCzmNcUXdDNN4BNBa9yRgX+x/AMrHCGFOefwp/VFUhXFb8jl7C7
+	 h4ZINKBCbdxZ2mbnomoky7yBlQd82qMlKeu0DCi39i+YDQBrNUV371RdhCUmABtkqo
+	 CPxnBOSALdf28+pBc9Qxj7QcpKlrqXK/FL17VVEVt8wqfU0Xi/hJCf6h/6b+JafD+G
+	 5i+2GTamo5EAw==
+Message-ID: <889f488eb1b27c91f445d4fa22dd4ff425b49454.camel@kernel.org>
+Subject: Re: [PATCH v2 7/7] Use simple_start_creating() in various places.
+From: Jeff Layton <jlayton@kernel.org>
+To: NeilBrown <neil@brown.name>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+ <brauner@kernel.org>,  Amir Goldstein <amir73il@gmail.com>, Jan Kara
+ <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 	linux-nfs@vger.kernel.org
+Date: Wed, 10 Sep 2025 07:54:25 -0400
+In-Reply-To: <175750382935.2850467.264144428541875879@noble.neil.brown.name>
+References: <>, <f402ec5ce57c872f436d1b6a5e9c3633ba237a26.camel@kernel.org>
+	 <175750382935.2850467.264144428541875879@noble.neil.brown.name>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] drbd: init
- queue_limits->max_hw_wzeroes_unmap_sectors parameter
-To: Zhang Yi <yi.zhang@huaweicloud.com>, linux-block@vger.kernel.org,
- linux-raid@vger.kernel.org, drbd-dev@lists.linbit.com
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- john.g.garry@oracle.com, pmenzel@molgen.mpg.de, hch@lst.de,
- martin.petersen@oracle.com, axboe@kernel.dk, yi.zhang@huawei.com,
- yukuai3@huawei.com, yangerkun@huawei.com
-References: <20250910111107.3247530-1-yi.zhang@huaweicloud.com>
- <20250910111107.3247530-3-yi.zhang@huaweicloud.com>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20250910111107.3247530-3-yi.zhang@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: CB90037561
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	MIME_TRACE(0.00)[0:+];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.com:email,suse.de:dkim,suse.de:mid,suse.de:email];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Score: -4.51
 
-On 9/10/25 13:11, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
-> 
-> The parameter max_hw_wzeroes_unmap_sectors in queue_limits should be
-> equal to max_write_zeroes_sectors if it is set to a non-zero value.
-> However, when the backend bdev is specified, this parameter is
-> initialized to UINT_MAX during the call to blk_set_stacking_limits(),
-> while only max_write_zeroes_sectors is adjusted. Therefore, this
-> discrepancy triggers a value check failure in blk_validate_limits().
-> 
-> Since the drvd driver doesn't yet support unmap write zeroes, so fix
-> this failure by explicitly setting max_hw_wzeroes_unmap_sectors to
-> zero.
-> 
-> Fixes: 0c40d7cb5ef3 ("block: introduce max_{hw|user}_wzeroes_unmap_sectors to queue limits")
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
-> Reviewed-by: Yu Kuai <yukuai3@huawei.com>
-> ---
->   drivers/block/drbd/drbd_nl.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/block/drbd/drbd_nl.c b/drivers/block/drbd/drbd_nl.c
-> index e09930c2b226..91f3b8afb63c 100644
-> --- a/drivers/block/drbd/drbd_nl.c
-> +++ b/drivers/block/drbd/drbd_nl.c
-> @@ -1330,6 +1330,7 @@ void drbd_reconsider_queue_parameters(struct drbd_device *device,
->   		lim.max_write_zeroes_sectors = DRBD_MAX_BBIO_SECTORS;
->   	else
->   		lim.max_write_zeroes_sectors = 0;
-> +	lim.max_hw_wzeroes_unmap_sectors = 0;
->   
->   	if ((lim.discard_granularity >> SECTOR_SHIFT) >
->   	    lim.max_hw_discard_sectors) {
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+On Wed, 2025-09-10 at 21:30 +1000, NeilBrown wrote:
+> On Wed, 10 Sep 2025, Jeff Layton wrote:
+> > On Wed, 2025-09-10 at 08:37 +0100, Al Viro wrote:
+> > > > ... and see viro/vfs.git#work.persistency for the part of the queue=
+ that
+> > > > had order already settled down (I'm reshuffling the tail at the mom=
+ent;
+> > > > hypfs commit is still in the leftovers pile - the whole thing used =
+to
+> > > > have a really messy topology, with most of the prep work that used =
+to
+> > > > be the cause of that topology already in mainline - e.g. rpc_pipefs
+> > > > series, securityfs one, etc.)
+> > >=20
+> > > Speaking of which, nfsctl series contains the following and I'd like =
+to
+> > > make sure that behaviour being fixed there *is* just an accident...
+> > > Could nfsd folks comment?
+> > >=20
+> > > [PATCH] nfsctl: don't bump st_nlink of directory when creating a syml=
+ink in it
+> > > =C2=A0=C2=A0=C2=A0=C2=A0
+> > >=20
+> > > apparently blindly copied from mkdir...
+> > > =C2=A0=C2=A0=C2=A0=C2=A0
+> > >=20
+> > > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> > > ---
+> > > diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
+> > > index bc6b776fc657..282b961d8788 100644
+> > > --- a/fs/nfsd/nfsctl.c
+> > > +++ b/fs/nfsd/nfsctl.c
+> > > @@ -1181,7 +1181,6 @@ static int __nfsd_symlink(struct inode *dir, st=
+ruct dentry *dentry,
+> > > =C2=A0	inode->i_size =3D strlen(content);
+> > > =C2=A0
+> > >=20
+> > > =C2=A0	d_add(dentry, inode);
+> > > -	inc_nlink(dir);
+> > > =C2=A0	fsnotify_create(dir, dentry);
+> > > =C2=A0	return 0;
+> > > =C2=A0}
+> >=20
+> > That is increasing the link count on the parent because it's adding a
+> > dentry to "dir". The link count on a dir doesn't have much meaning, but
+> > why do we need to remove it here, but keep the one in __nfsd_mkdir?
+>=20
+> The link count in an inode is the number of links *to* the inode.
+> A symlink (or file etc) in a directory doesn't imply a link to that
+> directory (they are links "from" the directory, but those aren't counted)=
+.
+> A directory in a directory, on the other hand, does imply a link to the
+> (parent) directory due to the ".." entry.
+>=20
+> In fact the link count on a directory should always be 2 plus the number
+> of subdirectories (one for the name in the parent, one for "." in the
+> directory itself, and one for ".." in each subdirectory).  Some "find"
+> style programs depend on that to a degree, though mostly as an
+> optimisation.
+>=20
 
-Cheers,
+I'm having a hard time finding where that is defined in the POSIX
+specs. The link count for normal files is fairly well-defined. The link
+count for directories has always been more nebulous.
 
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+I think we would be well-served by a clearly-defined meaning for the
+link count on a directory for Linux, because different filesystems do
+this differently today.
+
+Yours and Al's semantics seem fine (I don't have a real preference,
+tbh), but we should codify this in Documentation/ since it is unclear.
+--=20
+Jeff Layton <jlayton@kernel.org>
 
