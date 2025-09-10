@@ -1,104 +1,174 @@
-Return-Path: <linux-fsdevel+bounces-60859-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60856-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70111B523BD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 23:47:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ABBBB523AF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 23:46:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A8A5561CDC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 21:47:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9076D1C82F43
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 21:46:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 606DB3093C9;
-	Wed, 10 Sep 2025 21:46:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB3D9309DD2;
+	Wed, 10 Sep 2025 21:46:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="jl66o85u"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bxVRNbUj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B43A25A350;
-	Wed, 10 Sep 2025 21:46:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E438425A350;
+	Wed, 10 Sep 2025 21:46:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757540811; cv=none; b=e0w4oBHunlWJ2paFItohDi3Jve8T7IAOVez+RETZYldaS5JZA/y7hxnCcT/8woECEtX4GqFO6HsSTEVM1HzSKfL6XfrAlm6dV1HvYPuZ3nkCNRFqCbolVxKEBZvy5PCEvifewsVjeHTkLT4Al8O4CtAmAwNB1GudfcUI4uSPpo0=
+	t=1757540781; cv=none; b=AzEcQD0oqceMvxdyZsWH6j4d6uKAabVjLRb2otgdjgV7ThP3vJD8liyjtwc3YxKAXtc1cmCgRUWFMNMVJXBDjw7QPU+Anc7UR5RKxWELOBUsUFp7fnTUR67cRutZqAxiXiDfqo+5KDLbIgXqO8MdZPdDUGE6fMKn4UTAxIY+9MI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757540811; c=relaxed/simple;
-	bh=xI5dr2WLtU48h2vDzwYeGhyj45s9yfxwH9ivM8zY9+w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iKv6fqOWvsl4IZuQ5c3Pqh8LYAYRpB92U5iOx2YSZ4aDaK0mh3rSskQFohg8OpIeArA12xP9sJkYOHxH0KXrSWWCsOIgVQ81EE8QS1UQoSrC5yPNsyKEmJs39KZWtE4eCyNxOgxdxkX7yiL+82cp4mBhn1mdzSi47VClmBSoRXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=jl66o85u; arc=none smtp.client-ip=199.89.3.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 003.mia.mailroute.net (Postfix) with ESMTP id 4cMZ5h6MjrzlgqTy;
-	Wed, 10 Sep 2025 21:46:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1757540804; x=1760132805; bh=SblCa7b4/NTLO3n25U9sMwdZ
-	RzviXHPZ/qYAZnJLH+o=; b=jl66o85uqkGn0HhU8xIV8VJzDOn50wzA/PhwxG7y
-	83Eu311QE0FTDgG8Vfs5pcUIEB3I/PMqK1NA+f+F/CmhRyiYsbAfvgKI9NGeDbfA
-	oJgkcHG+363CIcJIrRIxkmA6QMB7Hbcg6bbk8iwjTGfvIGZ5yMlIhV2oUxk7Y/Lp
-	m+PR8mVloka1g9R9ADPdLGv8qtSaPtKhfQ9Sdojz8M5vz49Y4aftvaV79mvlf4dv
-	8uG1wzNP3j7mcX8/TZz2eBsFI1Fg9L89Ti2/Skn0SQZVLxQjnbZer+thswakrtTQ
-	sNm2OmK3oEqu6RxA0pfn+4DCcecegAif4i28pRwh3TfPNg==
-X-Virus-Scanned: by MailRoute
-Received: from 003.mia.mailroute.net ([127.0.0.1])
- by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id ynXkrDbBFREF; Wed, 10 Sep 2025 21:46:44 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4cMZ5F0NFBzlgn8k;
-	Wed, 10 Sep 2025 21:46:23 +0000 (UTC)
-Message-ID: <f65cf3ae-069d-4ade-9fc9-03f01c7e1649@acm.org>
-Date: Wed, 10 Sep 2025 14:46:21 -0700
+	s=arc-20240116; t=1757540781; c=relaxed/simple;
+	bh=qEPx7HAoIVqxUArLb7byNF6xzaLgP3XmTw+GmgWpgac=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sUfOE/ggOFM/u2zlM0DpUD2xxqlmdI4q6hHwtRvE59MFBdUmDeUB3E/rQM2oQQ0vGMmO03G5wwO7BrForP22ltpW44k0AP03BCXoBXFPmOrvKsJPACu4uxavODEadnHW/evSvjUZ7zzhBCiScVkag0kqd6lC6ypv4GXGfteM27k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bxVRNbUj; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-76e4fc419a9so74526b3a.0;
+        Wed, 10 Sep 2025 14:46:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757540778; x=1758145578; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DEg1ki19kRldKZrSMUtRB9eXrCIGMi4KX9/Z6BU973Q=;
+        b=bxVRNbUj8u3rALQa1hFLsqkduNA1yWWChQBcNlzga08HR1PcHpHvxg9N7Yng26rd+K
+         q8os+rL+FRs8WarGsPYg2lwSq3PWN1jqm/2efFkoZGjzvsR5JdEqwybl/A6xKWVdXtFs
+         yLkzhR3U2BZC/3L4CEJ2C3bq7bHzm5/2rLilb3dtIhNN5efAkW0CMnzSfJ+xYjLy+TH5
+         VGXPmUehoCPrzXu05nWRx/GKA9XNjThFKJD/zwGZlgjQKoQw5zdSyvipnT88NtUJ3rbl
+         FJW1leOg5xV75YupzQAeyaBeSXgeuWpaneh5ndi3po/TXr9nVXXHWr20cVniTv1iHQ8Q
+         Ka/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757540778; x=1758145578;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DEg1ki19kRldKZrSMUtRB9eXrCIGMi4KX9/Z6BU973Q=;
+        b=f0M+U+0YKjWgfQRvMzjKoUWIbjAL3+ByjgG9EwMz1M9GcwWlXSxTzlyNoQu+joAGDe
+         akZ+ZCN7QF7R7dxxqatIDIY/pWANvwhZskbyFsjGL9BNS8t9ASgoyvbcgBAI+6MtegvA
+         E6kFvwJ3HROQu9Jt5ryfZDGcBaYdqzRnKY5TwJEIofpvHvlnwKEbQI4m1oiPqAQjELFl
+         0XuAl/ipVTR8MINFa4BFi7S+Z87c+iDn2qlNTbdordfyHzZrEXUe375qhOVtSeb/KI4/
+         zuYOGeyq600EcvEh/HC+UnxfR2B4utknuqW3Iw67ugeW1m1ZnFj1bAFR37Mc8XhcZnIc
+         3YIw==
+X-Forwarded-Encrypted: i=1; AJvYcCUd+q6g2pe1/N8L0CzK7meyq6PusZy7vD7Ug8ZhNHTBXEO68c0nELWA8MjXTA3J9pdL7GpOpsNVpYWU@vger.kernel.org, AJvYcCVbzMVBhxhZu2fAPPxQe48sC3mTU3fzGfAtvUVNoL61GJ98tGLisPht+Z8voYYwjxZFwMwZsKQ2hAfr@vger.kernel.org, AJvYcCWc+iMd/ZqBA8ZXewaIGQqrSyAydAAtx7heqATLSF8kwrLQS2sdlFdcCGG5kht66jjSybyp0tPmdnIvXv84@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYj7vRrSKUGwAf2DVSLoVTx2a+mjj7uUyCt6o9w59AeefrIKr5
+	ZfsCE7ZN8IJWCJa2U6mLsnd6gK81c/AVipz5kEv7cSvjRmhjQF1TVQE6pXoqtkfH
+X-Gm-Gg: ASbGncsyyDsW53ZCsZKrStTTc2jRfTLxQJrPStXCqtdCLhfQ8Qmcw5UMtVJUaVIa+A7
+	2e8OqiawmOb9ze1QoaeNv1kr3UETaupGIzkSV0cm92UPvC6LaHJvjzM3WF8awZlHMSM60ThdDp7
+	I4HPYLFQwDtuCmD30vEtM+KYwziNXm3oGEDgqSpl/PZZZDdZGStQeP24UAcHJrjzpTnmF2X7bnm
+	ew6uLpOJrOcXNrv1xpb1I/wWwQ/eCr6iwJpp0MjJhzJEGrTF4QLBRqmOytZqaxMMhI03loKttZ1
+	+DgGt/zpz80FKBdy9cFm1ykXhWbZW+5wKFs1z1DT1QYe44FzUSDjIZlC1fcsql582X45QLGvVal
+	iwp4M8DWHD8VzjuCPuURw1Hi77UQKBgGVXChy
+X-Google-Smtp-Source: AGHT+IEWMAt2EvrHuYaNHgZ9JLPgQrDkZIZNfmGfyJ8/NwZtAmfWU7QJSWyZrMZs6yzxQ7mh3Pmsgg==
+X-Received: by 2002:a05:6a20:12c7:b0:251:9f29:4556 with SMTP id adf61e73a8af0-2533e950082mr25079587637.4.1757540778287;
+        Wed, 10 Sep 2025 14:46:18 -0700 (PDT)
+Received: from jicarita ([65.144.169.45])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-775fbbc3251sm2422516b3a.103.2025.09.10.14.46.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Sep 2025 14:46:17 -0700 (PDT)
+From: Thomas Bertschinger <tahbertschinger@gmail.com>
+To: io-uring@vger.kernel.org,
+	axboe@kernel.dk,
+	linux-fsdevel@vger.kernel.org,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	linux-nfs@vger.kernel.org
+Cc: Thomas Bertschinger <tahbertschinger@gmail.com>,
+	linux-xfs@vger.kernel.org,
+	cem@kernel.org,
+	chuck.lever@oracle.com,
+	jlayton@kernel.org
+Subject: [PATCHSET RFC v2 00/10] add support for name_to, open_by_handle_at() to io_uring
+Date: Wed, 10 Sep 2025 15:49:17 -0600
+Message-ID: <20250910214927.480316-1-tahbertschinger@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 32/32] selftests/namespaces: add file handle selftests
-To: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org
-Cc: Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>,
- Mike Yuan <me@yhndnzj.com>, =?UTF-8?Q?Zbigniew_J=C4=99drzejewski-Szmek?=
- <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>,
- Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>,
- Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
- =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, netdev@vger.kernel.org
-References: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
- <20250910-work-namespace-v1-32-4dd56e7359d8@kernel.org>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250910-work-namespace-v1-32-4dd56e7359d8@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 9/10/25 7:37 AM, Christian Brauner wrote:
-> +	snprintf(ns_path, sizeof(ns_path), "/proc/self/ns/net");
-> +	ns_fd = open(ns_path, O_RDONLY);
+This series adds support for name_to_handle_at() and open_by_handle_at()
+to io_uring. The idea is for these opcodes to be useful for userspace
+NFS servers that want to use io_uring.
 
-Here and also in TEST(nsfs_uts_handle), ns_path is not modified. Does
-this mean that "/proc/self/ns/net" can be stored in a static const char
-array and also that the snprintf() call can be left out? In case I would
-have missed the reason why the path is copied, how about using
-asprintf() or strdup() instead of snprintf()?
+The biggest change since [v1] is that this adds support for attempting
+non-blocking open_by_handle_at(). When io_uring calls handle_to_path(),
+it will set a flag to request that the call return -EAGAIN if it cannot
+complete using cached data.
 
-Thanks,
+The same holds for the call to do_filp_path_open().
 
-Bart.
+Supporting this for handle_to_path() requires a way to communicate to
+the filesystem that it should not block in its fh_to_dentry()
+implementation. This is done with a new flag FILEID_CACHED which is set
+in the file handle by the VFS. If a filesystem supports this new flag,
+it will indicate that with a new flag EXPORT_OP_NONBLOCK so that the VFS
+knows not to call into a filesystem with the FILEID_CACHED flag, when
+the FS does not know about that flag.
+
+Support for the new FILEID_CACHED flag is added for xfs.
+
+Thanks to Amir Goldstein for the review comments and suggesting this
+approach on v1.
+
+Testing
+=======
+
+As in v1, a liburing branch with a test is available at
+https://github.com/bertschingert/liburing/tree/open_by_handle_at
+
+and is run with
+
+$ ./test/open_by_handle_at.t
+
+v1 -> v2:
+- rename some new helper functions:
+	- do_name_to_handle_at() -> do_sys_name_to_handle_at()
+	- __do_handle_open() -> do_filp_path_open()
+- create a union member name_to_handle_flags in struct io_uring_sqe
+- add new FILEID_CACHED and EXPORT_OP_NONBLOCK flags
+- attempt non-blocking open_by_handle_at() in io_uring first, rather
+  than always giving up and running in async context
+- add support for FILEID_CACHED in xfs
+
+[v1] https://lore.kernel.org/linux-fsdevel/20250814235431.995876-1-tahbertschinger@gmail.com/
+
+Thomas Bertschinger (10):
+  fhandle: create helper for name_to_handle_at(2)
+  io_uring: add support for IORING_OP_NAME_TO_HANDLE_AT
+  fhandle: helper for allocating, reading struct file_handle
+  fhandle: create do_filp_path_open() helper
+  fhandle: make do_filp_path_open() take struct open_flags
+  exportfs: allow VFS flags in struct file_handle
+  exportfs: new FILEID_CACHED flag for non-blocking fh lookup
+  io_uring: add __io_open_prep() helper
+  io_uring: add support for IORING_OP_OPEN_BY_HANDLE_AT
+  xfs: add support for non-blocking fh_to_dentry()
+
+ fs/exportfs/expfs.c           |  15 ++-
+ fs/fhandle.c                  | 156 ++++++++++++++++-----------
+ fs/internal.h                 |  13 +++
+ fs/xfs/xfs_export.c           |  32 ++++--
+ fs/xfs/xfs_export.h           |   3 +-
+ fs/xfs/xfs_handle.c           |   2 +-
+ include/linux/exportfs.h      |  34 +++++-
+ include/uapi/linux/io_uring.h |   3 +
+ io_uring/opdef.c              |  26 +++++
+ io_uring/openclose.c          | 191 ++++++++++++++++++++++++++++++++--
+ io_uring/openclose.h          |  13 +++
+ 11 files changed, 405 insertions(+), 83 deletions(-)
+
+
+base-commit: 76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c
+-- 
+2.51.0
+
 
