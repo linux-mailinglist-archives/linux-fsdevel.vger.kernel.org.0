@@ -1,187 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-60753-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60754-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F626B5144F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 12:47:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78531B51489
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 12:52:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E12AD465106
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 10:47:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32CD83A5A40
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 10:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26DA53168E2;
-	Wed, 10 Sep 2025 10:45:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6DCF3101C7;
+	Wed, 10 Sep 2025 10:52:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nrubsig.org header.i=@nrubsig.org header.b="Kl2tfLlF"
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="KJncWa/O"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from duck.ash.relay.mailchannels.net (duck.ash.relay.mailchannels.net [23.83.222.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5E733164C8;
-	Wed, 10 Sep 2025 10:45:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.222.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757501133; cv=pass; b=e59LTWK596C3PBVxftI8dncRQkI6McmxepiIY/zNXJtMpp/pE2ifZ+HRxLb+Xobq2IVhKCnm8jrE+4li2JOzDFkWp2uSt3a6MJYn1gXSG5smWtdlHlcqed+jrqjLDnIyl3iyodOP3brEtIUNCxnJgMk/dHn8z7bmVl1PJeeBiCc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757501133; c=relaxed/simple;
-	bh=ZyQZl0BmsGiaSwEFOVHWC8Nv1J46RVBUdcsbZqmNpg4=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B42542367A0
+	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Sep 2025 10:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757501570; cv=none; b=bp7xZB0TDGjpelU9jySxmIaUca9mgeDjNLE7wRS8F9jAiDt/yQ9l3BfaA5oVps/ZOCUE9buQynA6QgfEVP8WZnW7cfQh3lO1D4aSidI0eKuLmD9CyaiFaGq7zFQxOtq+Jl1mpIdzqfwdMwEzcSmRjaDWsqT0LH5L97QnTFMfYHw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757501570; c=relaxed/simple;
+	bh=Pu5n7af86vGvH823/Yp61O2TfCCCjb3TRVHLgzzO1Gc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=m/+SF4ULfIBw1ycDDM7rgpSmfd1GpTqr072Axua6nLI7hGfS5nZtQSt03GzledI6MNT2QBwRj6e3umzyvlVeHDDuqUNT3eS6XNNSlXm5UpwgiHF1vCvsUVMgyzt1gDspEPETWPsjBkZBhbLxSt/WLw/ug4bEnM7O5v3rH9EAOoQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nrubsig.org; spf=pass smtp.mailfrom=nrubsig.org; dkim=pass (2048-bit key) header.d=nrubsig.org header.i=@nrubsig.org header.b=Kl2tfLlF; arc=pass smtp.client-ip=23.83.222.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nrubsig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nrubsig.org
-X-Sender-Id: dreamhost|x-authsender|gisburn@nrubsig.org
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id 88C49164F84;
-	Wed, 10 Sep 2025 10:45:23 +0000 (UTC)
-Received: from pdx1-sub0-mail-a237.dreamhost.com (trex-blue-9.trex.outbound.svc.cluster.local [100.107.107.29])
-	(Authenticated sender: dreamhost)
-	by relay.mailchannels.net (Postfix) with ESMTPA id E5151164D74;
-	Wed, 10 Sep 2025 10:45:22 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1757501122; a=rsa-sha256;
-	cv=none;
-	b=rYbjbXkDURZrCQY+N4nLpsOrfrIXh3t4JsySe5hdG6fZk9QYHgFN44armgDz2Nt2aXCbwm
-	dcKEbaF/UYK+INQG99eHimbqsBrAD5QoAJ/Weyeje4WsKz35k2fvhBZYjOU1nbmlyNQBLT
-	/tXh7gBB6bq5hZgJYylgtkqoCIYaOktenjG0goV8Ja3L76NtcN8q5KQ2UHVSA8AX9zIQB0
-	AKhqLyQ3/qJtsKU4wv02bC9CLxU745At5SIRDymeg6aoj9hmQbLcl8LshilvgTkkH4ShUZ
-	9CIc3MCO7CDtz6kUzr3GkfEmvD+kWqMoO6eI6qHDq0ZBQnXuUky0Q3F/smTvYg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1757501122;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=WWpiqsnARGBJMOxKWu8O8okhFx6J9JlTgDx5K/YgeL8=;
-	b=b272Hvmw48nV7ZXQmAqz2CSBdzAalksD+RxNt2aVkomexGCmUi0EIZsQryTb9ZH2Sn4djm
-	4+TwtdczNPF3Qmi4CBagAdcjvQHOsXq/cE79Ha6RwgVAx4eRZmkoz0X9dBzShO54uXU8Ux
-	+4Uo3zsD8SVN8P7UGEym4rMe9dL+TMzlnLdIqyMDe3ENznWQr7IPJhN1PH8YFAZ7vTlesF
-	CTgpyIz6g6oWcRU0CzEzT3kw8CNbSV7vUS/JcEnIUCv2lHAntqXGh+UXQvNAEXL1+bt2Ks
-	8rPmb9Ob6VMrBJ05S7p8st5iga55kAyhOND22JuX3LC4HQ+BqcVyvBLB6/mopg==
-ARC-Authentication-Results: i=1;
-	rspamd-7b5fd646f8-tthn8;
-	auth=pass smtp.auth=dreamhost smtp.mailfrom=roland.mainz@nrubsig.org
-X-Sender-Id: dreamhost|x-authsender|gisburn@nrubsig.org
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|gisburn@nrubsig.org
-X-MailChannels-Auth-Id: dreamhost
-X-Drop-Squirrel: 0e34a47209efcd39_1757501123150_903476887
-X-MC-Loop-Signature: 1757501123150:304163345
-X-MC-Ingress-Time: 1757501123150
-Received: from pdx1-sub0-mail-a237.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.107.107.29 (trex/7.1.3);
-	Wed, 10 Sep 2025 10:45:23 +0000
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: gisburn@nrubsig.org)
-	by pdx1-sub0-mail-a237.dreamhost.com (Postfix) with ESMTPSA id 4cMHQV4xbMz9s;
-	Wed, 10 Sep 2025 03:45:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nrubsig.org;
-	s=dreamhost; t=1757501122;
-	bh=WWpiqsnARGBJMOxKWu8O8okhFx6J9JlTgDx5K/YgeL8=;
-	h=From:Date:Subject:To:Content-Type:Content-Transfer-Encoding;
-	b=Kl2tfLlFUrHf3wGRw56KdtBpSiFfj2/f6PlHNJvScrH4/y0vMCTXEH7AIqTO5awaX
-	 vksWKOXVueIzmek75nJME9CC2MiX+DhiMrw03lxwX5tGy0Tj4ZB3DleHC3DM8U+nHI
-	 qGIyCFxH1wtRC8N6AsnNgVdhduSMquUCgin+9WLTDa3sG+f1c0Duly/xmh2cIbxbXF
-	 dcI9w79kwflneV9gQpn3pU1pvaED5pq3CBgzZ6s8KySmSvAu3ObOAH1gKUhXULaeT6
-	 dJOs+8sTpgRsIqqiEKu4+V0c6le9u/NpX4if6uSu5sVeHGmZw3nSsFKEF2OBrltzwu
-	 77t0F2LzT6Wuw==
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45df09c7128so4726415e9.1;
-        Wed, 10 Sep 2025 03:45:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV2LMgBwRLxS0rKixxNujYOm0EV8Yh5Om2uCVN/AH9vEPBdPmW/7JzIqyMKCRIlEmGKRG7mM8TfQHY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1w9J+MOKN730ZCt+e2sRmxxjVUfls4xSu+38uVNrsnf8sWTli
-	jqUK6/P5ExO+yHhYFZiJXoDsMya/GSUSwUE+wPYi2RrWlNpDm9hAPb0O1npNsqBzchqemFn+5yV
-	l6yTHbnJ7yGpjwGFNCEx4RodRVEm8BZQ=
-X-Google-Smtp-Source: AGHT+IGtohjlndak90yy4W7vjFwKTM7hCbh0Fdev9jJNwVpjTD69zeC01lMCgHTMwIhSA/Lg9a4Vq45CQaANPDNjba0=
-X-Received: by 2002:a05:600c:840f:b0:45d:dc10:a5ee with SMTP id
- 5b1f17b1804b1-45dde20ee09mr137683985e9.15.1757501121122; Wed, 10 Sep 2025
- 03:45:21 -0700 (PDT)
+	 To:Content-Type; b=hx6m3+zrD2XljN21VwEzzrVzB29uAXFWhEiB2ru24v7toDWEI+X5gI0c1+AHqmSAIXbBtjNno3CtH8mW0jIN4p0oF686s/lny/CdzdZVd0gfhUDfjtQZItLe1ofJGVYws7k5HeYj4O7Tg+ful5SNhuS3luQbY2642fcTVegXIIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=KJncWa/O; arc=none smtp.client-ip=209.85.160.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-314f332e064so2170505fac.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Sep 2025 03:52:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1757501568; x=1758106368; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uT1ofiuSVoWseJh7MYOF/nr4mco48PliIphnXMl83A4=;
+        b=KJncWa/OqYf9t5cElYrZgAfTqO7MLyjDhC+j5/UwdittfzKekaQDyG1svHG+WcL+qe
+         CVLEsgclWew7bw3I3K11AXcDlhco7vAJNjIyP7BB8E05ZR4Fj/TfusWLrdMn82NTATln
+         xEeCvnZij1vLVVzakj/PVcRSazTwAioBiU9X74VzRRg8LjEIHxJNQagk77kkNE+cCZo/
+         VmZckB7jS1mGlVqC54mDB4H7i3dzxD6EpSweyqep2wp7pwM22fxxLTpMzkjg+zLZ1203
+         6h33C9WVtnceyrDXMKHTntd/LZEy59tdFKfe1IqLecAIhSioviUnjmgjdoRfi9rZIIOd
+         WtFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757501568; x=1758106368;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uT1ofiuSVoWseJh7MYOF/nr4mco48PliIphnXMl83A4=;
+        b=mhbzlYhcxVRQQ7VMEn//xEe49ASc7wvqSTbpqEZIbhmw1y0mwKbmdmQIFT5BYgR1sP
+         nMECysrQsTlHHx7lJE/Y9sDiVddJXYePsKotzaVM7gQomm4mr5Dcxd/tb37qgArhlFYC
+         R29t8LWiLMUc0Z7Utfph1yzoRImRqgA+s5n9mKLPMbamNh7PRqJC7DujKzkCSHXs9DYU
+         9cvld1suIHNVoaMzU8mgMxC3BqBMhrJASe4SbNy73cyib3MdfY+3p9TWeesPy/5MZpMw
+         72zcw/5XtOPIV/qzHR4CYASmX/TnjtmzLxFumRoKozP/AzqO9J3MqFVrvGWIGoMkw90M
+         Q9Lw==
+X-Forwarded-Encrypted: i=1; AJvYcCVdfzg9V575+HOfwScBQl2pcNuRmHMcAfprGR9V/2EfvwpZbq2SbxUyoSN/OzCyLDLdqqe1+4MNS+/4AITP@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQH7cGZ8ZY01NgqR7Lre97v3vpxsSx2ebbq3SG5A9byd/YGd7o
+	W+UHE7DETTw5JDuOFxCXmTbKgLgrn9siU4ychL7qr8zMRCbKeq0r6920oJBI2tH/7BjpPOhayQu
+	6Sz+CiWaK9ksjmFJqb7PF4zSDcNms66LaCmhKdvDvXQ==
+X-Gm-Gg: ASbGncvvXPLFFioENVdd8Ep6JpWhH8+pX8VIXgVzHoqsMEqQaPSDhcBpr9HpdYmJ21N
+	2EZDnrGJKbEvEYU1UZDG4OWLhzI0lxBcda8iuZdWOccTEcDW+viphvankMVNUddyi74s0EpGF7C
+	75fLJgzOgtUWBaZShA5bI7nkWBnYcQv1tpGTDqeLjUHBciAagTWnt3d+RxiXYTO+VWnC/sHDFKI
+	vowjwY9VBNfCuz+Vwj1WiWC2pfWoJ2dYKFzGiQCQg==
+X-Google-Smtp-Source: AGHT+IFpMNnWy1Mpff3ONFTLVx27KeGSsvIhY8w+2YZiYG2szzBQUCGr6b1FcWDN3xQZW1C3esWefEhe++/4nWObHfE=
+X-Received: by 2002:a05:6870:f706:b0:31e:1def:1e0e with SMTP id
+ 586e51a60fabf-32264e1f191mr7168001fac.25.1757501567607; Wed, 10 Sep 2025
+ 03:52:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CALXu0Ufzm66Ors3aBBrua0-8bvwqo-=RCmiK1yof9mMUxyEmCQ@mail.gmail.com>
- <CALXu0Ufgv7RK7gDOK53MJsD+7x4f0+BYYwo2xNXidigxLDeuMg@mail.gmail.com>
- <44250631-2b70-4ce8-b513-a632e70704ed@oracle.com> <aEZ3zza0AsDgjUKq@infradead.org>
- <e5e385fd-d58a-41c7-93d9-95ff727425dd@oracle.com> <aEfD3Gd0E8ykYNlL@infradead.org>
- <CALXu0UfgvZdrotUnyeS6F6qYSOspLg_xwVab8BBO6N3c9SFGfA@mail.gmail.com>
- <e1ca19a0-ab61-453f-9aea-ede6537ce9da@oracle.com> <CALXu0Uc9WGU8QfKwuLHMvNrq3oAftV+41K5vbGSkDrbXJftbPw@mail.gmail.com>
- <47ece316-6ca6-4d5d-9826-08bb793a7361@oracle.com>
-In-Reply-To: <47ece316-6ca6-4d5d-9826-08bb793a7361@oracle.com>
-From: Roland Mainz <roland.mainz@nrubsig.org>
-Date: Wed, 10 Sep 2025 12:44:43 +0200
-X-Gmail-Original-Message-ID: <CAKAoaQ=RNxx4RpjdjTVUKOa+mg-=bJqb3d1wtLKMFL-dDaXgCA@mail.gmail.com>
-X-Gm-Features: AS18NWDtlBwRrOUwZmzN0EzHIi6df-up7-JLWJf7V4Ov3ArDNccLpkl055jV-Wk
-Message-ID: <CAKAoaQ=RNxx4RpjdjTVUKOa+mg-=bJqb3d1wtLKMFL-dDaXgCA@mail.gmail.com>
-Subject: Re: NFSv4.x export options to mark export as case-insensitive,
- case-preserving? Re: LInux NFSv4.1 client and server- case insensitive
- filesystems supported?
-To: linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
-	Linux NFS Mailing List <linux-nfs@vger.kernel.org>
+References: <20250822082606.66375-1-changfengnan@bytedance.com>
+ <20250822150550.GP7942@frogsfrogsfrogs> <aKiP966iRv5gEBwm@casper.infradead.org>
+ <877byv9w6z.fsf@gmail.com> <aKif_644529sRXhN@casper.infradead.org>
+ <874ityad1d.fsf@gmail.com> <c4bc7c33-b1e1-47d1-9d22-b189c86c6c7d@gmail.com>
+ <CAPFOzZtaKcaSsvUfjiJL2TOwMy-jUkMdboEmp++-USvoUoqjYA@mail.gmail.com> <879fb17c-e6d6-4b1b-bee5-9087ba24a4f2@gmail.com>
+In-Reply-To: <879fb17c-e6d6-4b1b-bee5-9087ba24a4f2@gmail.com>
+From: Fengnan Chang <changfengnan@bytedance.com>
+Date: Wed, 10 Sep 2025 18:52:36 +0800
+X-Gm-Features: Ac12FXxaXjFDhXYjy8vJN-rkpO3OKcRZyUBgBZDXgkSaBebRrBGN4SGFHpxr1DQ
+Message-ID: <CAPFOzZu5e1AgjHZbKLbCQVn-We6jc-J7h5v1A0SJ9_KM8cPSjA@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH] iomap: allow iomap using the per-cpu bio cache
+To: Pavel Begunkov <asml.silence@gmail.com>, Matthew Wilcox <willy@infradead.org>, 
+	"Darrick J. Wong" <djwong@kernel.org>, brauner@kernel.org, linux-xfs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, 
+	linux-block@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, 
+	Ritesh Harjani <ritesh.list@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 9, 2025 at 9:32=E2=80=AFPM Chuck Lever <chuck.lever@oracle.com>=
- wrote:
+Pavel Begunkov <asml.silence@gmail.com> =E4=BA=8E2025=E5=B9=B49=E6=9C=8810=
+=E6=97=A5=E5=91=A8=E4=B8=89 18:18=E5=86=99=E9=81=93=EF=BC=9A
 >
-> On 9/9/25 12:33 PM, Cedric Blancher wrote:
-> > On Tue, 9 Sept 2025 at 18:12, Chuck Lever <chuck.lever@oracle.com> wrot=
-e:
-> >>
-> >> On 9/9/25 12:06 PM, Cedric Blancher wrote:
-> >>> Due lack of a VFS interface and the urgend use case of needing to
-> >>> export a case-insensitive filesystem via NFSv4.x, could we please get
-> >>> two /etc/exports options, one setting the case-insensitive boolean
-> >>> (true, false, get-default-from-fs) and one for case-preserving (true,
-> >>> false, get-default-from-fs)?
+> On 9/8/25 13:55, Fengnan Chang wrote:
+> > Pavel Begunkov <asml.silence@gmail.com> =E4=BA=8E2025=E5=B9=B49=E6=9C=
+=883=E6=97=A5=E5=91=A8=E4=B8=89 17:52=E5=86=99=E9=81=93=EF=BC=9A
+> ...>>> Now that per-cpu bio cache is being used by io-uring rw requests f=
+or
+> >>> both polled and non-polled I/O. Does that mean, we can kill
+> >>> IOCB_ALLOC_CACHE check from iomap dio path completely and use per-cpu
+> >>> bio cache unconditionally by passing REQ_ALLOC_CACHE flag?  That mean=
+s
+> >>> all DIO requests via iomap can now use this per-cpu bio cache and not
+> >>> just the one initiated via io-uring path.
 > >>>
-> >>> So far LInux nfsd does the WRONG thing here, and exports even
-> >>> case-insensitive filesystems as case-sensitive. The Windows NFSv4.1
-> >>> server does it correctly.
+> >>> Or are there still restrictions in using this per-cpu bio cache, whic=
+h
+> >>> limits it to be only used via io-uring path? If yes, what are they? A=
+nd
+> >>> can this be documented somewhere?
+> >>
+> >> It should be safe to use for task context allocations (struct
+> >> bio_alloc_cache::free_list is [soft]irq unsafe)
 >
-> As always, I encourage you to, first, prototype in NFSD the hard-coding
-> of these settings as returned to NFS clients to see if that does what
-> you really need with Linux-native file systems.
+> Why messaging privately? All that is public information people
+> might be interested in. I'd encourage you to forward this
+> discussion back to the mailing list.
 
-If Cedric wants just case-insensitive mounts for a Windows NFSv4
-(Exceed, OpenText, ms-nfs41-client, ms-nfs42-client, ...), then the
-only thing needed is ext4fs or NTFS in case-insensitive mode, and that
-the Linux NFSv4.1 server sets FATTR4_WORD0_CASE_INSENSITIVE=3D=3Dtrue and
-FATTR4_WORD0_CASE_PRESERVING=3D=3Dtrue (for FAT
-FATTR4_WORD0_CASE_PRESERVING=3D=3Dfalse). Only applications using ADS
-(Alternate Data Streams) will not work, because the Linux NFS server
-does not support "OPENATTR"&co ops.
+Sorry, It's a mistake.
+>
+> > So bio_alloc_bioset is safe for task context, but unsafe for [soft]irq,=
+ but
+> > bio_put is safe for task and  [soft]irq context ?
+>
+> right
+>
+> >> IOCB_ALLOC_CACHE shouldn't be needed, but IIRC I played it
+> >> conservatively to not impact paths I didn't specifically benchmark.
+> >
+> > What's your suggestion? Be conservative or aggressive?
+>
+> At this point in time I'd enable it by default. If you do,
+> just benchmark the worst case to avoid regressions and
+> attach the result to the patch.
 
-If Cedric wants Windows home dirs:
-This is not working with the Linux NFSv4.1 server, because it must support:
-- FATTR4_WORD1_SYSTEM
-- FATTR4_WORD0_ARCHIVE
-- FATTR4_WORD0_HIDDEN
-- Full ACL support, the current draft POSIX-ACLs in Linux NFSv4.1
-server&&{ ext4fs, btrfs, xfs etc. } causes malfunctions in the Windows
-"New User" profile setup (and gets you a temporary profile in
-C:\Users\*.temp+lots of warnings and a note to log out immediately
-because your user profile dir has been "corrupted")
+Thanks for your suggestion, I'll do this, It's already in testing.
 
-Windows home dirs with NFSv4 only work so far with the
-Solaris&&Illumos NFS servers, and maybe the FreeBSD >=3D 14 NFS server
-(not tested yet).
 
-----
-
-Bye,
-Roland
---=20
-  __ .  . __
- (o.\ \/ /.o) roland.mainz@nrubsig.org
-  \__\/\/__/  MPEG specialist, C&&JAVA&&Sun&&Unix programmer
-  /O /=3D=3D\ O\  TEL +49 641 3992797
- (;O/ \/ \O;)
+>
+> --
+> Pavel Begunkov
+>
 
