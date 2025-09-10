@@ -1,277 +1,151 @@
-Return-Path: <linux-fsdevel+bounces-60834-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60835-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BD23B51F2D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 19:42:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98105B52041
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 20:28:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BAF727BCF05
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 17:40:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06E12563BDD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 18:28:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D350933438E;
-	Wed, 10 Sep 2025 17:41:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 244652BCF41;
+	Wed, 10 Sep 2025 18:28:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ESkeav3L"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="o1VY6vrX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 626FA3093C6
-	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Sep 2025 17:41:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1427212FA0;
+	Wed, 10 Sep 2025 18:28:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757526102; cv=none; b=J4mmlkbrGCIz+SbOo7R4WCuoMpyCdfoTGwtmL5AbK9mL6dvyV/8CBgBBHXwFq2dYbuuOoLHKuMCm/RN08vRSHsvwYr7F5DYWVBHT+fOjavWWptKbYpDydyEZHdGRGYhyppD4JvnHnlc3tWMhEobSG2aDwyY+IV1oredLvpSUVZA=
+	t=1757528923; cv=none; b=KrHP5aTOKMRM8dKl8nVPXegTc2DeUU2qA14cSSxb4YCAMvaigBjomY9OdxmewMQZBg2TUaYyVi5sKc4j7S5LAr58sP2sp8LfRe3F1plDIRbPsQGYfUyZ3myAQtRU9H1/S6V1QjsbaYw4e6+KW5dqNIdTQAVdkUqBIdnAF0mtsMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757526102; c=relaxed/simple;
-	bh=ya3nCeHXX4cIOcVB3zT+qGwqtNq6bvInaVnCb1Wx2VE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eWdgUUP9pyBd7Vns7Kozr1r0OFfx2AW0B0pMGFuD0iszgr7L3WOl7Gn7YO91juRCEU/5kl3DGEWdm0KwwbdXdwqxzZkHEqX7D76AOtaZMr/SzDthJKd1OQbnKWMMcyTk7Qn4L3Lxtjz72O7fIqRaSdBop+92arIHbdNf8Uza87Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ESkeav3L; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4b5eee40cc0so55719541cf.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Sep 2025 10:41:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757526099; x=1758130899; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qHT+u2S9m3RVDHyPVmpZb2IEdtnx3gNXVCQQWQ1AuyM=;
-        b=ESkeav3L1JysDAQu8Z3qVss0OcDtwx/8+xGNo7tA6jAl5WtvBeNZ2PFPmetQKo8gdW
-         WKmVgT/Mw3VUSuwX8FKdgCH18t8zs3IR8wSMXzj+wRJnzId51LIca5ArJ+Ge5CCTr3Hr
-         W7hvwTimN3YbCFyo3nnGahUakdOPSQTSOkrBl8XW6VCkru6Zlh9wpesSU4cDcIWJmPkE
-         IZi3Qy3nE5eMKg2KLPssYRXY2RtWMF640hkYA0c3+50ndWVzKdzTCEWavaEIgwNGX1gu
-         Pe6wMZ5nreXtx/eJ7Go71KLSCN8vuTHOhSeaIZtpOX6u5bLf+B1DN3Dpm7rzx0C7gST5
-         E+eA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757526099; x=1758130899;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qHT+u2S9m3RVDHyPVmpZb2IEdtnx3gNXVCQQWQ1AuyM=;
-        b=o9fK3l1hsztIe/IyuwPZTwWdJBogIXRKDRFFYhvSSRlOtTygAKK7psmJxF9UfRb5xS
-         f5vSH3BEBAH16dY0vD4vb4YAlXtZ8lwdOmQM5krw0sk+znbwsGWq+wIVTXvSg4mS14sR
-         7Tm0ARzw0369oGJh3Mj1mYDDMiUEF1FjehzA0LIYoFk9H2KhvWUmMPvLSLC9pAOBBgMB
-         3849nuVrKebkVyN0zGNbGTFEfRzPR4ld5GQufmc89eFiBh8gc+YJ1g9SRbTlOSxSTCpj
-         1yMg+a2ldafrB1La7ufYkOXUBP5wJ6M6zyaqn6WdLZM1yeAItnZrRLtXHJJiy3z9P1lz
-         VRng==
-X-Forwarded-Encrypted: i=1; AJvYcCVZRsNnzdTHROXA210MQsChrHSIjCkmcoDIdQOvF9rZTxZL9WV0aSRPIvpZTl/4gd2scnC4MwnernfO0Au7@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAwqt+8npjFUccNJkuSK2JPoGuLq6SlNkJL7LHhao7WJY4a5w0
-	RlrozztHGxu8Xm4Xypo/+b5PprGuf0zmWKDNulE7l/CFAavKLZfkoVoZipeUEF84Y89ISBqHGs+
-	rLUjrYr+RO5xAv1gNkYoeqCwN8nW5p6E=
-X-Gm-Gg: ASbGncsgety1dMXMSHZp7+f960mQFInlzL4rnB9THtYnQORdGbNhk9KeB7SrHW1Pnle
-	/sgsB/xUAULfXtS8dd/7bNhOw5MLOoTD1hPGILlERdOdh5yoltmUi+Iz8D/NKjFNrw6zqsRHLC5
-	FbqML5XtelSr8ccx2pfotvoSm/5C/h4aPgAsdFRKwWYxLRiHlruj1bPkhDD3p5Z5wu2bYbbPjfI
-	ybJhk9SGB8DeL+tLN3HeWQ2fzwjwPjudA==
-X-Google-Smtp-Source: AGHT+IGM4v8CCbZik1kELSMXAYG/GKBchBBFALBliyv/onlKWZFY2W1P7n4z7sWDqXgSFcqrmLLSXIe+ROn9OwqKnI0=
-X-Received: by 2002:ac8:5f14:0:b0:4b3:50b0:d7f with SMTP id
- d75a77b69052e-4b5f8464d8amr161064711cf.61.1757526099174; Wed, 10 Sep 2025
- 10:41:39 -0700 (PDT)
+	s=arc-20240116; t=1757528923; c=relaxed/simple;
+	bh=VfV9VPzAzrywFyTuOYkFfwxQlGkDk08CnE9fCnPOWso=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UHDO4Zr+FXkcTD2h+DAqyDqjc0fZrn+TVFyzUtwuZlIz40jJTwU8IFJRg8axfyAkC5FO4QMBm86sJUsxsXGIw6KWOUtaf6TYm+z/kr+nW1Slgll7s4f7Ct0jOvMZ1zwRUTuHHQ4HpQF22cCUk9zlEiHrj9xhU7c6GEzu9G+aG04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=o1VY6vrX; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=8ZneQusufplOGVqyxjibUJ37cpo088vXQhTKjItRjqE=; b=o1VY6vrXNqcETLLO9CbUeyjEPC
+	qrVDNH2OmFKihzqvTEO0yqxYFmNVzTot11uymfQRlQWLrd9SVpPZ8QA4OSezHbb6v0Yqyi85pD7yQ
+	Ww9HGUTil4aIkoRzDIRo20WcnyhkPINvw8WxHh47qj4KQng2coh0shtYOaLTDtTRB1JxgLbPjEl22
+	9W2m1m6RdW4se11WjQHfbUAjKntm9H3FgGm3yQ46ooqL3nEuEw8GFPRpRh1EpC2E5MSZT1caj9Kky
+	3pMZvylswxKa3IdC20dGujmqgp5nrS5QIDtOegJGus0TldxUiWTnQ9RacVVE9TtqPVMh+TRh5oY9D
+	XvXifRMg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uwPYb-00000005wsb-2nO7;
+	Wed, 10 Sep 2025 18:28:37 +0000
+Date: Wed, 10 Sep 2025 19:28:37 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: NeilBrown <neil@brown.name>, Christian Brauner <brauner@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH v2 7/7] Use simple_start_creating() in various places.
+Message-ID: <20250910182837.GT31600@ZenIV>
+References: <>
+ <f402ec5ce57c872f436d1b6a5e9c3633ba237a26.camel@kernel.org>
+ <175750382935.2850467.264144428541875879@noble.neil.brown.name>
+ <889f488eb1b27c91f445d4fa22dd4ff425b49454.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250908185122.3199171-1-joannelkoong@gmail.com>
- <20250908185122.3199171-12-joannelkoong@gmail.com> <aL9xb5Jw8tvIRMcQ@debian>
- <CAJnrk1YPpNs811dwWo+ts1xwFi-57OgWvSO4_8WLL_3fJgzrFw@mail.gmail.com> <488d246b-13c7-4e36-9510-8ae2de450647@linux.alibaba.com>
-In-Reply-To: <488d246b-13c7-4e36-9510-8ae2de450647@linux.alibaba.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Wed, 10 Sep 2025 13:41:25 -0400
-X-Gm-Features: Ac12FXx3f2gw2O3qOKT1Xmh_ecXNa2Ke7YGwp9bTrR6B-OHcqgL5c7RB1qg35NQ
-Message-ID: <CAJnrk1a5af-BMPUM3HfGwKZ=zoN4bcmbViLBWMtLao1KfK2gww@mail.gmail.com>
-Subject: Re: [PATCH v2 11/16] iomap: add caller-provided callbacks for read
- and readahead
-To: Gao Xiang <hsiangkao@linux.alibaba.com>
-Cc: djwong@kernel.org, hch@infradead.org, brauner@kernel.org, 
-	miklos@szeredi.hu, linux-block@vger.kernel.org, gfs2@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org, kernel-team@meta.com, 
-	linux-xfs@vger.kernel.org, linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <889f488eb1b27c91f445d4fa22dd4ff425b49454.camel@kernel.org>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Tue, Sep 9, 2025 at 7:21=E2=80=AFPM Gao Xiang <hsiangkao@linux.alibaba.c=
-om> wrote:
->
-> Hi Joanne,
->
-> On 2025/9/9 23:24, Joanne Koong wrote:
-> > On Mon, Sep 8, 2025 at 8:14=E2=80=AFPM Gao Xiang <xiang@kernel.org> wro=
-te:
-> >>
-> >> Hi Joanne,
-> >>
-> >> On Mon, Sep 08, 2025 at 11:51:17AM -0700, Joanne Koong wrote:
-> >>> Add caller-provided callbacks for read and readahead so that it can b=
-e
-> >>> used generically, especially by filesystems that are not block-based.
-> >>>
-> >>> In particular, this:
-> >>> * Modifies the read and readahead interface to take in a
-> >>>    struct iomap_read_folio_ctx that is publicly defined as:
-> >>>
-> >>>    struct iomap_read_folio_ctx {
-> >>>        const struct iomap_read_ops *ops;
-> >>>        struct folio *cur_folio;
-> >>>        struct readahead_control *rac;
-> >>>        void *private;
-> >>>    };
-> >>>
-> >>>    where struct iomap_read_ops is defined as:
-> >>>
-> >>>    struct iomap_read_ops {
-> >>>        int (*read_folio_range)(const struct iomap_iter *iter,
-> >>>                               struct iomap_read_folio_ctx *ctx,
-> >>>                               loff_t pos, size_t len);
-> >>>        int (*read_submit)(struct iomap_read_folio_ctx *ctx);
-> >>>    };
-> >>>
-> >>
-> >> No, I don't think `struct iomap_read_folio_ctx` has another
-> >> `.private` makes any sense, because:
-> >>
-> >>   - `struct iomap_iter *iter` already has `.private` and I think
-> >>     it's mainly used for per-request usage; and your new
-> >>     `.read_folio_range` already passes
-> >>      `const struct iomap_iter *iter` which has `.private`
-> >>     I don't think some read-specific `.private` is useful in any
-> >>     case, also below.
-> >>
-> >>   - `struct iomap_read_folio_ctx` cannot be accessed by previous
-> >>     .iomap_{begin,end} helpers, which means `struct iomap_read_ops`
-> >>     is only useful for FUSE read iter/submit logic.
-> >>
-> >> Also after my change, the prototype will be:
-> >>
-> >> int iomap_read_folio(const struct iomap_ops *ops,
-> >>                       struct iomap_read_folio_ctx *ctx, void *private2=
-);
-> >> void iomap_readahead(const struct iomap_ops *ops,
-> >>                       struct iomap_read_folio_ctx *ctx, void *private2=
-);
-> >>
-> >> Is it pretty weird due to `.iomap_{begin,end}` in principle can
-> >> only use `struct iomap_iter *` but have no way to access
-> >> ` struct iomap_read_folio_ctx` to get more enough content for
-> >> read requests.
-> >
-> > Hi Gao,
-> >
-> > imo I don't think it makes sense to, if I'm understanding what you're
-> > proposing correctly, have one shared data pointer between iomap
-> > read/readahead and the iomap_{begin,end} helpers because
->
-> My main concern is two `private` naming here: I would like to add
-> `private` to iomap_read/readahead() much like __iomap_dio_rw() at
-> least to make our new feature work efficiently.
->
-> >
-> > a) I don't think it's guaranteed that the data needed by
-> > read/readahead and iomap_{begin,end} is the same.  I guess we could
-> > combine the data each needs altogether into one struct, but it seems
-> > simpler and cleaner to me to just have the two be separate.
-> >
-> > b) I'm not sure about the erofs use case, but at least for what I'm
-> > seeing for fuse and the block-based filesystems currently using iomap,
-> > the data needed by iomap read/readahead (eg bios, the fuse
-> > fuse_fill_read_data) is irrelevant for iomap_{begin/end} and it seems
-> > unclean to expose that extraneous info. (btw I don't think it's true
-> > that iomap_iter is mainly used for per-request usage - for readahead
-> > for example, iomap_{begin,end} is called before and after we service
-> > the entire readahead, not called per request, whereas
-> > .read_folio_range() is called per request).
->
-> I said `per-request` meant a single sync read or readahead request,
-> which is triggered by vfs or mm for example.
->
-> >
-> > c) imo iomap_{begin,end} is meant to be a more generic interface and I
-> > don't think it makes sense to tie read-specific data to it. For
-> > example, some filesystems (eg gfs2) use the same iomap_ops across
-> > different file operations (eg buffered writes, direct io, reads, bmap,
-> > etc).
->
-> Previously `.iomap_{begin,end}` participates in buffer read and write
-> I/O paths (except for page writeback of course) as you said, in
-> principle users only need to care about fields in `struct iomap_iter`.
->
-> `struct iomap_readpage_ctx` is currently used as an internal structure
-> which is completely invisible to filesystems (IOWs, filesystems don't
-> need to care or specify any of that).
->
-> After your proposal, new renamed `struct iomap_read_folio_ctx` will be
-> exposed to individual filesystems too, but that makes two external
-> context structures for the buffer I/O reads (`struct iomap_iter` and
-> `struct iomap_read_folio_ctx`) instead of one.
->
-> I'm not saying your proposal doesn't work, but:
->
->   - which is unlike `struct iomap_writepage_ctx` because writeback path
->     doesn't have `struct iomap_iter` involved, and it has only that
->     exact one `struct iomap_writepage_ctx` context and all callbacks
->     use that only;
->
->   - take a look at `iomap_dio_rw` and `iomap_dio_ops`, I think it's
->     somewhat similiar to the new `struct iomap_read_ops` in some
->     extent, but dio currently also exposes the exact one context
->     (`struct iomap_iter`) to users.
->
->   - take a look at `iomap_write_ops`, it also exposes
->     `struct iomap_iter` only. you may say `folio`, `pos`, `len` can be
->     wrapped as another `struct iomap_write_ctx` if needed, but that is
->     not designed to be exposed to be specfied by write_iter (e.g.
->     fuse_cache_write_iter)
->
-> In short, traditionally the buffered read/write external context is
-> the only unique one `struct iomap_iter` (`struct iomap_readpage_ctx`
-> is only for iomap internal use), after your proposal there will be
-> two external contexts specified by users (.read_folio and .readahead)
-> but `.iomap_{begin,end}` is unable to get one of them, which is
-> unlike the current writeback and direct i/o paths (they uses one
-> external context too.)
->
-> Seperate into two contexts works for your use case, but it may
-> cause issues since future developers have to decide where to
-> place those new context fields for buffer I/O paths (
-> `struct iomap_iter` or `struct iomap_read_folio_ctx`), it's still
-> possible but may cause further churn on the codebase perspective.
->
-> That is my minor concern, but my main concern is still `private`
-> naming.
+On Wed, Sep 10, 2025 at 07:54:25AM -0400, Jeff Layton wrote:
 
-Hi Gao,
+> I'm having a hard time finding where that is defined in the POSIX
+> specs. The link count for normal files is fairly well-defined. The link
+> count for directories has always been more nebulous.
 
-In my mind, the big question is whether or not the data the
-filesystems pass in is logically shared by both iomap_begin/end and
-buffered reads/writes/dio callbacks, or whether the data needed by
-both are basically separate entities but have to be frankensteined
-together so that it can be passed in through iter->private. My sense
-of the read/readahead code is that the data needed by iomap begin/end
-vs buffered reads are basically logically separate entities. I see
-your point about how the existing code for buffered writes and dio in
-iomap have them combined into one, but imo, if the iomap_iter data is
-a separate entity from the data needed in the callbacks, then those
-pointers should be separate.
+Try UNIX textbooks...  <pulls some out> in Stevens that would be 4.14
+and I'm pretty sure that it's covered in other standard ones.
 
-But I also am happy to change this back to having it the way it was
-for v1 where everything just went through iter->private. I don't feel
-strongly about this decision, I'm happy with whichever way we go with.
+History of that thing: on traditional filesystem "." and ".." are real
+directory entries, "." refering to the inode of directory itself and
+".." to that of parent (if it's not a root directory) or to directory
+itself (if it is root).  Link count is literally the number of directory
+entries pointing to given inode.  For directories that boils down to 2
+if empty ("." + reference in parent or ".." for non-root and root resp.),
+then each subdirectory adds 1 (".." in it points back to ours).
 
-Thanks,
-Joanne
+That goes for any local UNIX filesystem, and there hadn't been anything
+else until RFS and NFS, both keeping the same rules (both coming from
+the underlying filesystem layout).  Try mkdir and ln -s on NFS, watch
+what's happening to stat of parent.
 
->
-> Thanks,
-> Gao Xiang
->
-> > Thanks,
-> > Joanne
-> >
-> >>
-> >> Thanks,
-> >> Gao Xiang
->
+The things got murkier for FAT, when its support got added - on-disk
+layout has nothing like a link count.  It has only one directory entry
+for any non-directory *and* directory entries have object type of the
+thing they are pointing to, so one can match the behaviour of normal UNIX
+filesystem by going through the directory contents when reading an inode;
+the cost is not particularly high, so that's what everyone did.
+
+For original isofs (i.e. no rockridge extensions, no ownership, etc.)
+that was considerably harder; I don't remember what SunOS hsfs had done
+there (thankfully), our implementation started with "just slap 2 for
+directories if RR is not there", but that switched to "we don't know the
+exact answer, so use 1 to indicate that" pretty early <checks> 1.1.40 -
+Aug '94; original isofs implementation went into the tree in Dec '92.
+
+More complications came when... odd people came complaining about the
+overflows when they got 65534 subdirectories in the same directory.
+That had two sides to it - on-disk inode layout and userland ABI.
+For the latter the long-term solution was to make st_nlink 32bit
+(in newer variant of stat(2) if needed) and fail with EOVERFLOW if the
+value doesn't fit into the ABI you are trying to use.  For the latter...
+some weird kludges followed, with the things eventually settling down
+on "if you can't manage the expected value, at least report something
+that couldn't be confused for it".  Since 1 is normally impossible for
+a directory, that turned into "can't tell you how many links are there".
+That covered both "we don't have enough bits in the on-disk field" and
+"we don't have that field on disk at all and can't be bothered calculating
+it" (as in iso9660 case above).
+
+Of course, for e.g. NFS the value we report is whatever the server
+tells us; nobody is going to have client to readdirplus the entire
+directory and count subdirectories in it just to check if server lies
+and is inconsistent at that.  But that's not really different from the
+situation with local filesystem - we assume that the count in on-disk
+inode matches the number of directory entries pointing to it.
+
+The find(1) (well, tree-walkers in general, really) thing Neil has
+mentioned is that on filesystems where readdir(3) gives you no reliable
+dirent->d_type you need to stat every entry in order to decide whether
+it's a subdirectory you would need to walk into.  Being able to tell
+"this directory has no subdirectories" allows to skip those stat(2) calls
+when going through it.  Same for "I've already seen 5 subdirectories,
+stat on our directory has reported st_nlink being 7, so we'd already
+seen all subdirectories here; no need to stat(2) further entries", for
+that matter...  On a sane filesystem you'd just look for entries with
+->dt_type == DT_DIR and skip all those stat(2).
+
+IOW, the real rules are
+	* st_nlink >= 2: st_nlink - 2 subdirectories
+	* st_nlink = 1: refused to report the number of subdirectories
+	* st_nlink = 0: fstat on something that had been removed
+In case of corrupted filesystem,  bullshitting server, etc. result might
+have no relationship to reality, of course.
+
+I don't know of any case where creation of symlinks in a directory would
+affected the parent's link count.  Frankly, I thought that was just
+an accidental cut'n'paste from __nfsd_mkdir()...  As long as nothing
+in the userland is playing odd games with that st_nlink value, I'd say
+we should remove the temptation to start doing that and return to the
+usual semantics.
 
