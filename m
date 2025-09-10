@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-60786-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60787-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 696C2B519FB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 16:47:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51A4BB51A01
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 16:47:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF438540A4E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 14:42:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FB68A02E1B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 14:42:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA73134AB12;
-	Wed, 10 Sep 2025 14:38:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D414D350D77;
+	Wed, 10 Sep 2025 14:38:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ueyqyW/d"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RoA1MDpk"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD2232BF22;
-	Wed, 10 Sep 2025 14:38:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C723314D4;
+	Wed, 10 Sep 2025 14:38:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757515098; cv=none; b=cE57IEfrDMIGLMSSNu/7oEvMlr2Tj/Epw59LCVCrA+nlcwcHw/RKp2EZyoUM5MV/E0VUTV36ReFIbWMZDX9BnqN5n387i9VcH0HqLo0ajyB4+S4NhnuP5myepmpoDbkiJVdAxftOyYBbbUCMaVpxRG9QfgxJVZH1v5BqvDgZB60=
+	t=1757515104; cv=none; b=kMThdHKI+VJjcG9uOHjnEgWxcJFO25EpWH0GUKd4ovIo2j2E1o0iwhR2NsjVr4J6aQ47Os+0X1kdGXeZWJQxBmUstrLSP9KpdSMHR0eTt1QgDskLio8gLlmnrnHT/+2YyCZlQzfBFkvXyV5E2SaIIweAcHcEu9B7h7Clgsr2vxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757515098; c=relaxed/simple;
-	bh=ccs2mPITvV7+tId/BLNyWx+lXkz4V4lk4FOMDck+H58=;
+	s=arc-20240116; t=1757515104; c=relaxed/simple;
+	bh=2Pb+C09AD3Ch8zyPOBqZ4ir9gSxZa2YXPjiwgVDz5cU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=t42IZsPLFMNcpjQy0JWjafzt6rH7gIvTjmj6uguIHHA6CIvXXyyV+mkWj0u9Ze+2xPt645/XBzEc+sHkCPdnY3mC+aolPJ8IlzHjkpSF9cQRhnRIRtLIEYPQU/wzZggw8yP0TXxMK2fnz3xw76Oz7uh+mWGzycx/DXETKIOvMP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ueyqyW/d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4571CC4CEF0;
-	Wed, 10 Sep 2025 14:38:12 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=gzO98m7l3ioVIa9v3uxyYNiE7Vnt7+ZE3eL2aCWeiAGcWtyaKJQuAYNO+kxGMsqK9OheHtjLx2Tii3X+DeUSmZf/jsoyjPAzj9W14vJ9HTR1mxX0DVI1MK9VQ1Ec5syCWQCgYVigWu8vBTgwXxuNaoDYodxjXSapbpT5U3v2O7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RoA1MDpk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B9CDC4CEEB;
+	Wed, 10 Sep 2025 14:38:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757515097;
-	bh=ccs2mPITvV7+tId/BLNyWx+lXkz4V4lk4FOMDck+H58=;
+	s=k20201202; t=1757515103;
+	bh=2Pb+C09AD3Ch8zyPOBqZ4ir9gSxZa2YXPjiwgVDz5cU=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=ueyqyW/dGhM8OGZDuxLW5JsOsfhwDmPetMD4JrYdT7VyNmiwHWrSdI+Sozmsx20Qm
-	 spB3thrhcrBVyFvwGgbTcFsTpNHxDKmHcUq+nMyKPZv/lBNHlJzD6XX5xnEd4wChiX
-	 AnnTGaZAksoek63PLTNB2LXoaL7ZrCLX2fYhK2pOMGr2D/WtF/Hbc/l/drV5kWiUay
-	 /FgG0+KY5vupnmn1zP7lNr7/Zy81OnCWJjsTmCPP2CfdNSa+Q/MuRX5OedY2kUwMpc
-	 h8NARbPO7EzqxxOpCFSo5Dcv7qR0RteSKtlA6TTbc39Ae5YoYraPLSrwvpF/2p30eq
-	 G675Un6AFTuaQ==
+	b=RoA1MDpk9S+ycSKb/Q+l+kZDQIZH5mDrtrLuYDtbwiGpz30Uhq+sfvSy2CQYDnSR5
+	 wg7hzq7eYSjWPE+Z6MBC3TyBfpUCuPzrOtIeV+TcOhVAc4y32dVRqMg1DcuBYHDdKx
+	 W1lv1OEpocUHLD0TFu2imsiQZRs9EcORK01Y64oS49umndyHGmW2IaNsyN6hj3LYAH
+	 gHe4KpMrGeQ1PL09gAmBQk16BERVL+KtvqORXx7/bHJjG3H1aOZSzZED1lISoh9/0G
+	 tYlK+EEMLX7z01ucOjdvu2eI1slN05SbPIuqUdsJhE1S/G1Ku1Hm8JYGzFk5Cq1RZP
+	 Quhg4OYKyUNbw==
 From: Christian Brauner <brauner@kernel.org>
-Date: Wed, 10 Sep 2025 16:36:57 +0200
-Subject: [PATCH 12/32] uts: use ns_common_init()
+Date: Wed, 10 Sep 2025 16:36:58 +0200
+Subject: [PATCH 13/32] user: use ns_common_init()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250910-work-namespace-v1-12-4dd56e7359d8@kernel.org>
+Message-Id: <20250910-work-namespace-v1-13-4dd56e7359d8@kernel.org>
 References: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
 In-Reply-To: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
 To: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
@@ -72,12 +72,12 @@ Cc: Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>,
  linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
  netdev@vger.kernel.org, Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.14.3-dev-385fa
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1376; i=brauner@kernel.org;
- h=from:subject:message-id; bh=ccs2mPITvV7+tId/BLNyWx+lXkz4V4lk4FOMDck+H58=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQc7OXwljvywTKfUfygeUJ53n61TSvkN366tGK36u9Zi
- 3llb9506ChlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjIF22Gv8Kae2LYV7X3Rj0t
- Y9j6Y+/ltw+y+D4e3rou+/GhidwNHwsZ/kcFrJ4Y7WGi9jd2aoR7qV2aV/LJ+z8FNZmY11sXOvP
- fYwIA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=874; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=2Pb+C09AD3Ch8zyPOBqZ4ir9gSxZa2YXPjiwgVDz5cU=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQc7OWQVtxd+Ip3bqPKpWIPt+Mu1t7KLJ/urTU58Ki5X
+ 7pu/uppHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABNxcWJk2Ou+LOxd0g/NsjNF
+ O2W2vVryxUOktTjt072T+xQeMU7sfcnI8FzUsFY+gvdo/yq1+r6zge/q+g8cfHlNQlJ/BatYdcg
+ pbgA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
@@ -85,50 +85,28 @@ Don't cargo-cult the same thing over and over.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- kernel/utsname.c | 16 ++--------------
- 1 file changed, 2 insertions(+), 14 deletions(-)
+ kernel/user_namespace.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/utsname.c b/kernel/utsname.c
-index b1ac3ca870f2..02037010b378 100644
---- a/kernel/utsname.c
-+++ b/kernel/utsname.c
-@@ -27,16 +27,6 @@ static void dec_uts_namespaces(struct ucounts *ucounts)
- 	dec_ucount(ucounts, UCOUNT_UTS_NAMESPACES);
- }
- 
--static struct uts_namespace *create_uts_ns(void)
--{
--	struct uts_namespace *uts_ns;
--
--	uts_ns = kmem_cache_alloc(uts_ns_cache, GFP_KERNEL);
--	if (uts_ns)
--		refcount_set(&uts_ns->ns.count, 1);
--	return uts_ns;
--}
--
- /*
-  * Clone a new ns copying an original utsname, setting refcount to 1
-  * @old_ns: namespace to clone
-@@ -55,17 +45,15 @@ static struct uts_namespace *clone_uts_ns(struct user_namespace *user_ns,
- 		goto fail;
- 
- 	err = -ENOMEM;
--	ns = create_uts_ns();
-+	ns = kmem_cache_zalloc(uts_ns_cache, GFP_KERNEL);
- 	if (!ns)
+diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
+index 682f40d5632d..98f4fe84d039 100644
+--- a/kernel/user_namespace.c
++++ b/kernel/user_namespace.c
+@@ -124,12 +124,11 @@ int create_user_ns(struct cred *new)
  		goto fail_dec;
  
--	err = ns_alloc_inum(&ns->ns);
-+	err = ns_common_init(&ns->ns, &utsns_operations, true);
- 	if (err)
+ 	ns->parent_could_setfcap = cap_raised(new->cap_effective, CAP_SETFCAP);
+-	ret = ns_alloc_inum(&ns->ns);
++
++	ret = ns_common_init(&ns->ns, &userns_operations, true);
+ 	if (ret)
  		goto fail_free;
+-	ns->ns.ops = &userns_operations;
  
- 	ns->ucounts = ucounts;
--	ns->ns.ops = &utsns_operations;
--
- 	down_read(&uts_sem);
- 	memcpy(&ns->name, &old_ns->name, sizeof(ns->name));
- 	ns->user_ns = get_user_ns(user_ns);
+-	refcount_set(&ns->ns.count, 1);
+ 	/* Leave the new->user_ns reference with the new user namespace. */
+ 	ns->parent = parent_ns;
+ 	ns->level = parent_ns->level + 1;
 
 -- 
 2.47.3
