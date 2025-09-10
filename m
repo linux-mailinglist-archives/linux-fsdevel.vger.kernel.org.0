@@ -1,112 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-60855-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60859-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31D7DB5239D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 23:39:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70111B523BD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 23:47:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37D6C7BA45C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 21:37:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A8A5561CDC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 21:47:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 578AD314B9E;
-	Wed, 10 Sep 2025 21:38:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 606DB3093C9;
+	Wed, 10 Sep 2025 21:46:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ERlNyzA+"
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="jl66o85u"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BEB131282F;
-	Wed, 10 Sep 2025 21:38:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B43A25A350;
+	Wed, 10 Sep 2025 21:46:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757540328; cv=none; b=cw4ML15bEZG8krnxGfAOFhH8Jul7Q8VgDf5QQfLCMcLQo+hq3HN96Dy2bq9XSd6WEXefJqWba1nWdh0ONJGLglKo+9QAlkeBLTeaOf9fuExiocsJZn9bcBDDJpJ+AEL9Ph9RxuPpzpY35Ee0WDzckKZn2hKq2Q4eaf4WdAtOxYA=
+	t=1757540811; cv=none; b=e0w4oBHunlWJ2paFItohDi3Jve8T7IAOVez+RETZYldaS5JZA/y7hxnCcT/8woECEtX4GqFO6HsSTEVM1HzSKfL6XfrAlm6dV1HvYPuZ3nkCNRFqCbolVxKEBZvy5PCEvifewsVjeHTkLT4Al8O4CtAmAwNB1GudfcUI4uSPpo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757540328; c=relaxed/simple;
-	bh=M0egxu8FbVh7lEFbI9KpqlK3Xem+oaa7R3cdZDtUNQQ=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=JEEzDZjnAVMBsBfNIz6QjKnRcKBMNvyxPPe+5ktZwQxJne3fBFc5TyMR+tfoUWPicZsGthqetl/qdfR9Kf00DKelAooh1iBR5k2KasmL+CJuRnVEYaxWz9S0cvOmHBoukDUJk9AAA+L+QyddbF5FKisp2tDyMZY3YnnIYpcjubQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ERlNyzA+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16257C4CEEB;
-	Wed, 10 Sep 2025 21:38:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1757540327;
-	bh=M0egxu8FbVh7lEFbI9KpqlK3Xem+oaa7R3cdZDtUNQQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ERlNyzA+aJCVNQscjQFOcHN3rHi5u0odDg8HJ53DGP17XEJUpaKk2IgWSZVS/hpeF
-	 5p1Ihuc6sdEVaV7cYZYmFtUpA2LlaeGvkTYNkZIfig/XRZmY6YJGSG8lm1Xuk3QIE8
-	 jwrcsmPjtEE9QD5hE3bNL3Ol+tJm9HLfh0DU00FI=
-Date: Wed, 10 Sep 2025 14:38:45 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Matthew Wilcox <willy@infradead.org>,
- Guo Ren <guoren@kernel.org>, Thomas Bogendoerfer
- <tsbogend@alpha.franken.de>, Heiko Carstens <hca@linux.ibm.com>, Vasily
- Gorbik <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle
- <svens@linux.ibm.com>, "David S . Miller" <davem@davemloft.net>, Andreas
- Larsson <andreas@gaisler.com>, Arnd Bergmann <arnd@arndb.de>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Dan Williams
- <dan.j.williams@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, Dave
- Jiang <dave.jiang@intel.com>, Nicolas Pitre <nico@fluxnic.net>, Muchun Song
- <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>, David
- Hildenbrand <david@redhat.com>, Konstantin Komarov
- <almaz.alexandrovich@paragon-software.com>, Baoquan He <bhe@redhat.com>,
- Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>, Tony Luck
- <tony.luck@intel.com>, Reinette Chatre <reinette.chatre@intel.com>, Dave
- Martin <Dave.Martin@arm.com>, James Morse <james.morse@arm.com>, Alexander
- Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan
- Kara <jack@suse.cz>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, Suren
- Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Hugh
- Dickins <hughd@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
- Uladzislau Rezki <urezki@gmail.com>, Dmitry Vyukov <dvyukov@google.com>,
- Andrey Konovalov <andreyknvl@gmail.com>, Jann Horn <jannh@google.com>,
- Pedro Falcato <pfalcato@suse.de>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-csky@vger.kernel.org, linux-mips@vger.kernel.org,
- linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
- nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org, linux-mm@kvack.org,
- ntfs3@lists.linux.dev, kexec@lists.infradead.org,
- kasan-dev@googlegroups.com, Jason Gunthorpe <jgg@nvidia.com>
-Subject: Re: [PATCH v2 00/16] expand mmap_prepare functionality, port more
- users
-Message-Id: <20250910143845.7ecfed713e436ed532c93491@linux-foundation.org>
-In-Reply-To: <cover.1757534913.git.lorenzo.stoakes@oracle.com>
-References: <cover.1757534913.git.lorenzo.stoakes@oracle.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1757540811; c=relaxed/simple;
+	bh=xI5dr2WLtU48h2vDzwYeGhyj45s9yfxwH9ivM8zY9+w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iKv6fqOWvsl4IZuQ5c3Pqh8LYAYRpB92U5iOx2YSZ4aDaK0mh3rSskQFohg8OpIeArA12xP9sJkYOHxH0KXrSWWCsOIgVQ81EE8QS1UQoSrC5yPNsyKEmJs39KZWtE4eCyNxOgxdxkX7yiL+82cp4mBhn1mdzSi47VClmBSoRXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=jl66o85u; arc=none smtp.client-ip=199.89.3.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4cMZ5h6MjrzlgqTy;
+	Wed, 10 Sep 2025 21:46:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1757540804; x=1760132805; bh=SblCa7b4/NTLO3n25U9sMwdZ
+	RzviXHPZ/qYAZnJLH+o=; b=jl66o85uqkGn0HhU8xIV8VJzDOn50wzA/PhwxG7y
+	83Eu311QE0FTDgG8Vfs5pcUIEB3I/PMqK1NA+f+F/CmhRyiYsbAfvgKI9NGeDbfA
+	oJgkcHG+363CIcJIrRIxkmA6QMB7Hbcg6bbk8iwjTGfvIGZ5yMlIhV2oUxk7Y/Lp
+	m+PR8mVloka1g9R9ADPdLGv8qtSaPtKhfQ9Sdojz8M5vz49Y4aftvaV79mvlf4dv
+	8uG1wzNP3j7mcX8/TZz2eBsFI1Fg9L89Ti2/Skn0SQZVLxQjnbZer+thswakrtTQ
+	sNm2OmK3oEqu6RxA0pfn+4DCcecegAif4i28pRwh3TfPNg==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id ynXkrDbBFREF; Wed, 10 Sep 2025 21:46:44 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4cMZ5F0NFBzlgn8k;
+	Wed, 10 Sep 2025 21:46:23 +0000 (UTC)
+Message-ID: <f65cf3ae-069d-4ade-9fc9-03f01c7e1649@acm.org>
+Date: Wed, 10 Sep 2025 14:46:21 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 32/32] selftests/namespaces: add file handle selftests
+To: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org
+Cc: Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>,
+ Mike Yuan <me@yhndnzj.com>, =?UTF-8?Q?Zbigniew_J=C4=99drzejewski-Szmek?=
+ <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>,
+ Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>,
+ Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+ =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, netdev@vger.kernel.org
+References: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
+ <20250910-work-namespace-v1-32-4dd56e7359d8@kernel.org>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250910-work-namespace-v1-32-4dd56e7359d8@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Wed, 10 Sep 2025 21:21:55 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+On 9/10/25 7:37 AM, Christian Brauner wrote:
+> +	snprintf(ns_path, sizeof(ns_path), "/proc/self/ns/net");
+> +	ns_fd = open(ns_path, O_RDONLY);
 
-> Since commit c84bf6dd2b83 ("mm: introduce new .mmap_prepare() file
-> callback"), The f_op->mmap hook has been deprecated in favour of
-> f_op->mmap_prepare.
-> 
-> This was introduced in order to make it possible for us to eventually
-> eliminate the f_op->mmap hook which is highly problematic as it allows
-> drivers and filesystems raw access to a VMA which is not yet correctly
-> initialised.
-> 
-> This hook also introduced complexity for the memory mapping operation, as
-> we must correctly unwind what we do should an error arises.
-> 
-> Overall this interface being so open has caused significant problems for
-> us, including security issues, it is important for us to simply eliminate
-> this as a source of problems.
-> 
-> Therefore this series continues what was established by extending the
-> functionality further to permit more drivers and filesystems to use
-> mmap_prepare.
+Here and also in TEST(nsfs_uts_handle), ns_path is not modified. Does
+this mean that "/proc/self/ns/net" can be stored in a static const char
+array and also that the snprintf() call can be left out? In case I would
+have missed the reason why the path is copied, how about using
+asprintf() or strdup() instead of snprintf()?
 
-Cool, I'll add this to mm-new but I'll suppress the usual emails.
+Thanks,
+
+Bart.
 
