@@ -1,115 +1,165 @@
-Return-Path: <linux-fsdevel+bounces-60868-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60869-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF56AB5240A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 00:02:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B5EEB52449
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 00:53:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98B37583903
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 22:02:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 285E61C81198
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 22:53:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 563832D3EEA;
-	Wed, 10 Sep 2025 22:02:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0CC9306493;
+	Wed, 10 Sep 2025 22:53:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BgfTGvFa"
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="hIQE6v4k";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XPRtcxlX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05DB72877DC
-	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Sep 2025 22:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C62B3FE7
+	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Sep 2025 22:52:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757541733; cv=none; b=tnRzaBqjX9LwKiWRaxEds74QrkGB7ySwZYT/W2yfY2vU4vxeUimlvdg43bG0bWWx9lD2CfsvGIvZogKVLqVLfcuf9Usl2SWPefQkrCPKfxVNg52hzAel647kq4le6e8mqJZ4II+TKWTOmOzFZN0dAIYg9wGvL5XWSIovg7tU14c=
+	t=1757544783; cv=none; b=TaoPrMXkRtZ1Zi1U8V7rQL8s/wBOcgR3tjRKNhxtWMozAtV+HBeJ31z0JHYkmGezlCQamsSn2cBjC5X1UDCrOVVKYC5I+3Qa5Rj8LpHWmXxCJWi5QQIm/Sylmw4jnKqrj9qpCmbJrlSW0TEPZzbYGKPSbTdtU1/sqw6sp11Hpw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757541733; c=relaxed/simple;
-	bh=kaX8rJ5nTqr77iJ9DUkOLuqk1egeY/+7BDFRyxDTl+0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B86+R7Bw86eNTUzBZg5TEyhYI0ES6uI0xrGesydNkgmBbpjI+oSc9ynox7bvrNAMqbG4CQVcoW6HeqiIWUPZrB9q9vilk18jt1NS0P6sshldeGAUBea1ySTMjy3cOeDqEVIZqU1wYd7dfo8/t+IDnlYzByW52w94G7w3u5Rf3l4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BgfTGvFa; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757541732; x=1789077732;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=kaX8rJ5nTqr77iJ9DUkOLuqk1egeY/+7BDFRyxDTl+0=;
-  b=BgfTGvFani94s2u+rLC4AonJhI274WPGYRBvXNrO2pKuf8UvDTf4G43t
-   LPQY02eyeEC1na72SyYqO1IDI006uSZS87Doq3SETH5PncuCs3ScrOPRM
-   BGsrPf8eqpMYKtlIi6NAdItAOSkHE7ZBeATetFOsj26KB5mHIDFQNfYgs
-   Kb+/DMFeCMRCyo5tqfnLdW1rham4gWMHHhq3gpr/rQx46Rejf5dXhE5IM
-   De54dXAOVGODR1L4CueaMGWWbL8BvR+W6eKn2D/snOqEWV/Pg5e+Su8Nz
-   ziLWuAErpFFCFJpduKXKKNNYwQzBKYchezDUNGBQFMVkKjcaKW36ur5Xf
-   w==;
-X-CSE-ConnectionGUID: YnyO6arJTPa+gI/D6LjXIQ==
-X-CSE-MsgGUID: iD0BzUdtQJqrfwrEetb/bg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11549"; a="47437894"
-X-IronPort-AV: E=Sophos;i="6.18,255,1751266800"; 
-   d="scan'208";a="47437894"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 15:02:11 -0700
-X-CSE-ConnectionGUID: 5bMekvClScaGUpSIvEgNGA==
-X-CSE-MsgGUID: nRJjacm7T8Gtqn1UIzvGiw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,255,1751266800"; 
-   d="scan'208";a="174321018"
-Received: from lkp-server01.sh.intel.com (HELO 114d98da2b6c) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 10 Sep 2025 15:02:10 -0700
-Received: from kbuild by 114d98da2b6c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uwStD-0006KB-2O;
-	Wed, 10 Sep 2025 22:02:07 +0000
-Date: Thu, 11 Sep 2025 06:01:49 +0800
-From: kernel test robot <lkp@intel.com>
-To: Viacheslav Dubeyko <slava@dubeyko.com>, glaubitz@physik.fu-berlin.de,
-	linux-fsdevel@vger.kernel.org, frank.li@vivo.com
-Cc: oe-kbuild-all@lists.linux.dev, Slava.Dubeyko@ibm.com
-Subject: Re: [PATCH] hfs: introduce KUnit tests for HFS string operations
-Message-ID: <202509110508.vlALr05g-lkp@intel.com>
-References: <20250909234614.880671-1-slava@dubeyko.com>
+	s=arc-20240116; t=1757544783; c=relaxed/simple;
+	bh=zfJh1194wu5My6wYs9ByZLcFRkMzzTxu8Sk1/+thGJQ=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=djqMYVmgMDBSXBzqfZiRcN1UqyUtGML9a1nsNdS4rG308Sko086JVxUmo92mJ5WMcQo2AlL9oeGYIxOKPfrgA9LlidXoOsxu+G0cm2EWHMOFf08+0zL5owfUejUDop/oi0RLVMPfv9bftXQFnpw5ovGjzrrFP5X/7Y/dLuArzZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=hIQE6v4k; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XPRtcxlX; arc=none smtp.client-ip=202.12.124.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id D73F87A0134;
+	Wed, 10 Sep 2025 18:52:58 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-01.internal (MEProxy); Wed, 10 Sep 2025 18:52:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to; s=fm1; t=
+	1757544778; x=1757631178; bh=kfbWiRHMT7a7kXRlr41kdQFDvD++NeYyH8x
+	BB6eaWDQ=; b=hIQE6v4kW2Fs1h9VG+7BauK1JpjNLY8MIXRvqg3PJ1avgTBkXc/
+	pbMcEY99tVWxtN5AV56HhcRIS726O5F/KnA3WaCltbYkFlEtlE4qYZF1w6LSmUCp
+	U+yVBrHPtBGmg8AV3DRp3OW2VV5YKirq1akH0G4guYepxWVwXS4eI1Y3toWOPr+J
+	90jvav819rba7jSWeI4pmMkiwn/WsYQC3UGe23Ao7UETPxZzvegys6RnK5DwUW4O
+	LybCZu1CZaGVG9wY/T6SPEpF0aGZFAAZigtRLvCFDBsQBVGgrTgw7ezKUE9bgp1c
+	Lq/YK67On2zQdMgJc60w6Pl/+ecs4/qb+KQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757544778; x=
+	1757631178; bh=kfbWiRHMT7a7kXRlr41kdQFDvD++NeYyH8xBB6eaWDQ=; b=X
+	PRtcxlX6GcSfw8aWsUPzbn0MdVgL03G2OvX9+nR7d1LJhNfk+BegYsQvOK/NI38M
+	xmQdQSSyRFVberukwFe7uUVpbGMM+FP24hh9dBCQosH+7EsR1CusWJlrI/8u7eXv
+	wLE/mftD9b2PqiouOOhrG6M3KS8RU82e56cgtAxpcpZYC/TVWxlvZpT9TJa8zPGs
+	2mlHZ7y3R0iTgX5FYFkpZUUUZLOTLXFhsT6pZvo+9aTadqYP4JD9IEX7kd/iaEZH
+	7bMM97agnclB9kU6BEuIoDoNewJcOZKxbyR4rSli7SBE7lRIio3Cqm1nHgibUsuK
+	Qu9OhrKJUvm5G7IJpCu1g==
+X-ME-Sender: <xms:SgHCaKBaJb-wOHKzjH9GFBxu1HA315gPflSvz7fFGYpbMxafeoajxw>
+    <xme:SgHCaCeeDJTNFEZrIdeB1aJcOPqrN4sBKWMta-qoXfd6guJs4JY0TrTjKZFVvR3q6
+    31sD43Cmf4QxA>
+X-ME-Received: <xmr:SgHCaP6h2_Ri1-8epECK3gP1Tp1JYDXZPSArfzvCn8623HCdEVZNWH-ieLV3rL7Pqfww6Dc9QoZEvdlG76S71VVh7k0AdbqQTqFjZiCmiClB>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvgeehgecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpegtgfgghffvrhevufgjfhffkfesthhqredttddtjeenucfhrhhomheppfgvihhluehr
+    ohifnhcuoehnvghilhgssehofihnmhgrihhlrdhnvghtqeenucggtffrrghtthgvrhhnpe
+    efkeffueeuieehfeeihfegheefudejfeeftedufeduhfegudethfehiedugeeikeenucev
+    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnvghilhgsse
+    hofihnmhgrihhlrdhnvghtpdhnsggprhgtphhtthhopeehpdhmohguvgepshhmthhpohhu
+    thdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtg
+    hpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdp
+    rhgtphhtthhopehjrggtkhesshhushgvrdgtiidprhgtphhtthhopehtohhrvhgrlhgush
+    eslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepsghrrghunhgv
+    rheskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:SgHCaNWH-XcB64Su8ZMV6iTCNyaRZOGPzPOmfAL-38B4YVQ_RPcG9A>
+    <xmx:SgHCaG6jkRevvmAiXTMe11CrRS5iJMvD5onm_GyOJweWOcfF0de3RA>
+    <xmx:SgHCaAo5tVWzB7axGElA0S80Maw25ZZa3eQMnFSYrx2PNwkJNhoKEw>
+    <xmx:SgHCaBlk0B8DtayBQOvMpII4DwN1bTvkUi2oeTCTYoY-HXOE_rzTrA>
+    <xmx:SgHCaHnFH2uvjOUuATkZVBtDnaRqnZuK45dLh8_rFyS18ZSIcqKMFDXi>
+Feedback-ID: iab3e480c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 10 Sep 2025 18:52:56 -0400 (EDT)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250909234614.880671-1-slava@dubeyko.com>
+From: NeilBrown <neilb@ownmail.net>
+To: "Al Viro" <viro@zeniv.linux.org.uk>
+Reply-To: neil@brown.name
+Cc: "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Christian Brauner" <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
+ "Jan Kara" <jack@suse.cz>
+Subject: Re: [RFC] a possible way of reducing the PITA of ->d_name audits
+In-reply-to: <20250910072423.GR31600@ZenIV>
+References: <>, <20250910072423.GR31600@ZenIV>
+Date: Thu, 11 Sep 2025 08:52:52 +1000
+Message-id: <175754477209.2850467.14429587967463898116@noble.neil.brown.name>
 
-Hi Viacheslav,
+On Wed, 10 Sep 2025, Al Viro wrote:
+> On Wed, Sep 10, 2025 at 12:45:41PM +1000, NeilBrown wrote:
+>=20
+> >    - dentry is negative and a shared lock is held on parent inode.
+> >      This is guaranteed for dentries passed to ->atomic_open when create
+> >      is NOT set.
+>=20
+> Umm...  The same goes for tmpfile dentry while it's still negative (nobody
+> else could make it positive - it's only reachable via the parent's list
+> of children and those who traverse such will ignore anything negative unhas=
+hed
+> they find there.
+>=20
+> > One thing I don't like is the name "unwrap_dentry()".  It says what is
+> > done rather than what it means or what the purpose is.
+> > Maybe "access_dentry()" (a bit like rcu_access_pointer()).
+> > Maybe "dentry_of()" - then we would want to call stable dentries
+> > "stable_foo" or similar.  So:
+> >=20
+> >  static int afs_symlink(struct mnt_idmap *idmap, struct inode *dir,
+> >                       struct stable_dentry stable_child, const char *cont=
+ent)
+>=20
+> That has too much of over-the-top hungarian notation feel for my taste, TBH=
+...
+>=20
+> Note that these unwrap_dentry() are very likely to move into helpers - if s=
+ome
+> function is always called with unwrapped_dentry(something) as an argument,
+> great, that's probably a candidate for struct stable_dentry.
+>=20
+> I'll hold onto the current variant for now...
+>=20
 
-kernel test robot noticed the following build errors:
+Another idea - maybe we don't need "unwrap_dentry()" at all.
+Just have
+  struct stable_dentry {
+       struct dentry *dentry;
+  };
 
-[auto build test ERROR on brauner-vfs/vfs.all]
-[also build test ERROR on linus/master v6.17-rc5 next-20250910]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+and code can use child.dentry.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Viacheslav-Dubeyko/hfs-introduce-KUnit-tests-for-HFS-string-operations/20250910-074850
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
-patch link:    https://lore.kernel.org/r/20250909234614.880671-1-slava%40dubeyko.com
-patch subject: [PATCH] hfs: introduce KUnit tests for HFS string operations
-config: i386-buildonly-randconfig-001-20250910 (https://download.01.org/0day-ci/archive/20250911/202509110508.vlALr05g-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250911/202509110508.vlALr05g-lkp@intel.com/reproduce)
+There is no concern about people misusing unwrap_dentry() so there is no
+need to be able to grep for it.  So we don't need it.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509110508.vlALr05g-lkp@intel.com/
+It is only uses of claim_stability() and of ->d_name and ->d_parent that we
+might want to monitor.  So I imagine that one day all accesses to
+->d_name and ->d_parent will be centralised either dentry_name() and
+dentry_parent() or in fs/*.c code - and then we can rename them to
+->_private_d_name and ->_private_d_parent or whatever to discourage
+unwrapped access.
 
-All errors (new ones prefixed by >>, old ones prefixed by <<):
+But accessing the dentry in a stable_dentry is safe and uninteresting so
+there is no need to wrap it.
 
->> ERROR: modpost: "hfs_compare_dentry" [fs/hfs/string_test.ko] undefined!
->> ERROR: modpost: "hfs_hash_dentry" [fs/hfs/string_test.ko] undefined!
->> ERROR: modpost: "hfs_strcmp" [fs/hfs/string_test.ko] undefined!
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+NeilBrown
 
