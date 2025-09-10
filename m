@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-60792-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60793-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5506B51A16
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 16:49:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1046AB51A3A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 16:51:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECEB9188393E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 14:45:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5D25580423
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 14:45:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9221335CEBF;
-	Wed, 10 Sep 2025 14:38:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3B1635FC0F;
+	Wed, 10 Sep 2025 14:39:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cNSxojO/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c/kUIU0V"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D293A35AACA;
-	Wed, 10 Sep 2025 14:38:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E7B315D34;
+	Wed, 10 Sep 2025 14:38:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757515134; cv=none; b=TzL1oPAk7pBqwg+BMKrAtqOmC1ejl3oE12gGoxMPRfT2uODqT590AI538tWyS+vSpFLtAmK1+R+acFJI3I4bA4WBR2oz5vUmGBrSVlsqFiRY8TP85H0PnYs4ua1tP3hakATXVwDDNU19PtbTteJZkp7S2MLrJvZSJ2podeRA4No=
+	t=1757515140; cv=none; b=hPCG86Y30m5wj4XBClTf37uZ3+9vdrGWxjFrB2gJVYRwfOvHVC6t65DoZoZPcf/OaHGT3/yA6zzvxkvKIiSOrUx0jPD8F428PiBkrnnwk2uywTu8LvTCrulHYiVN3hHLtXiBQwH0NjHL+zFm1pjk6B0nqYSpgTJR2o65gSP1/08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757515134; c=relaxed/simple;
-	bh=RvFeGI2dajh/uWdk6ZQQzDx/eoO/tdatpOIxDDd51DM=;
+	s=arc-20240116; t=1757515140; c=relaxed/simple;
+	bh=SZfqMg6X4elv6PVRXbYLnsx0Kwlyt6iqs4u/5eCFwbk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PF65InOs1OvhJJatQs8aorbbF83g6dMQ1o+daFJ4jlYHGEiGtjD6vyxroyK60Otwa4AcCFmtQ0IuHeU9q/H55fVQi2AbyYnfVIE7fOMMn3j+H4wyC/vF16uHc+4qnY4Z4o7slJl2/fZosbqLzWeC1NO1sCrSG5aAbQGCWN7VAM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cNSxojO/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18928C4CEEB;
-	Wed, 10 Sep 2025 14:38:47 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=F2nGcXbK50X2vfUlmOXelS/U0Ko/bVf2ejMXO5i1CGCoxNALUJln5TFCEk0R2uD5gEQxFVASVN+09GDfTLIHJ1gnH25RCgs7H9o8OZNZuAZQiVknU/XFvU+wDzujviFMhTyLJKnrf5zFJ/eDeO0rgfwDrGRNpRkJX4s/tNJGKn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c/kUIU0V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3913FC4CEEB;
+	Wed, 10 Sep 2025 14:38:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757515133;
-	bh=RvFeGI2dajh/uWdk6ZQQzDx/eoO/tdatpOIxDDd51DM=;
+	s=k20201202; t=1757515139;
+	bh=SZfqMg6X4elv6PVRXbYLnsx0Kwlyt6iqs4u/5eCFwbk=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=cNSxojO/1LYvZNyxyrmdUEta7H4YZFjaxNW+msfaTODmiPO0f2SzoF852yrPKnceq
-	 79JsILqca50TYBwuzzMG5ZzUDOcal6leKm5OQXJtS/EXl3gP1GI0s0bRQ4JB9D/jD8
-	 Cuq3uflPHIS9ZxPswx6ZZDTevUaEzZKhrq3OP+nqTdYNhPLomIyl1QB8RiliBHSZLF
-	 IWnTbYnQPCxaY9ILVPN/eVUY8dkSoZ6w3nPrRyRzwalseaF+qGcH1xqIuwUE8OPPJA
-	 gm0EhBiQg2c0x01IKF/qfylwNsONYcZw6Q+uaWNmj7ueBFw/gzyFsmbNZDTcj9jkzm
-	 zRT3NLHeHzkbQ==
+	b=c/kUIU0VAfPGzEOXITyI4Ht1mcsq8Zwr+dRtmaKlgIN0Rt2eXG8Y68R41AwxnQi5H
+	 C4j3yNj7nxKR131qjX7KAENZ8u8ZI44qEAyc+xj0uPqYozE/O+610YeCCxndBrvtkk
+	 xsrM39vEmU/Rx8zK4+BPVi2PSGBgj1PySSiTTICzBY4bpwJbUIj7XC7ImucQ1emEPG
+	 7xGpRN0uPwg8n+C11rLUbDH5LoCACMH8XpF2Fh5zb0yxm+MqSzUoxE3jy6hrGPrlTW
+	 y21O38uZcE8NVjAWA4com46q6dNs+eOgE5fsB5p17mLUu6rAYyF75d78q5XIdDUwac
+	 FKv0/Guz8F85Q==
 From: Christian Brauner <brauner@kernel.org>
-Date: Wed, 10 Sep 2025 16:37:03 +0200
-Subject: [PATCH 18/32] cgroup: support iterator
+Date: Wed, 10 Sep 2025 16:37:04 +0200
+Subject: [PATCH 19/32] ipc: support iterator
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250910-work-namespace-v1-18-4dd56e7359d8@kernel.org>
+Message-Id: <20250910-work-namespace-v1-19-4dd56e7359d8@kernel.org>
 References: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
 In-Reply-To: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
 To: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
@@ -72,12 +72,12 @@ Cc: Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>,
  linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
  netdev@vger.kernel.org, Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.14.3-dev-385fa
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1771; i=brauner@kernel.org;
- h=from:subject:message-id; bh=RvFeGI2dajh/uWdk6ZQQzDx/eoO/tdatpOIxDDd51DM=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQc7OXobvnJkqPU4Rf6ualKL+tQhfS1P6+yvk2TPzBRe
- YfSnW8zO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACaSZs7wP9V1whZW5nyvGgkB
- c53u10t7fIL3P1PbN02ch4PlIttNUUaGm6f85nSxSTJvNpaJ/dz1/OUNteS6SOkXe1L0XnEYC+9
- hAgA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1794; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=SZfqMg6X4elv6PVRXbYLnsx0Kwlyt6iqs4u/5eCFwbk=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQc7OWYc+k40zWf1pit+VWXD3k4sdpqzLy1xcVwdtGBa
+ 2bca7x+d5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAExkRQQjw8PNr+0dQ1w33v35
+ 7KBavgXzkXPRYelhZU3yn6dcnsL0Xp2RofPN5+y/4vM3c04QPBzy4kmaRenxBWdn/fl2wK3q4rU
+ LnvwA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
@@ -86,63 +86,70 @@ support file handles for namespaces.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- kernel/cgroup/cgroup.c    | 2 ++
- kernel/cgroup/namespace.c | 7 +++++--
- 2 files changed, 7 insertions(+), 2 deletions(-)
+ ipc/msgutil.c   | 1 +
+ ipc/namespace.c | 3 +++
+ ipc/shm.c       | 2 ++
+ 3 files changed, 6 insertions(+)
 
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index 312c6a8b55bb..092e6bf081ed 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -59,6 +59,7 @@
- #include <linux/sched/cputime.h>
- #include <linux/sched/deadline.h>
- #include <linux/psi.h>
+diff --git a/ipc/msgutil.c b/ipc/msgutil.c
+index c7be0c792647..bbf61275df41 100644
+--- a/ipc/msgutil.c
++++ b/ipc/msgutil.c
+@@ -15,6 +15,7 @@
+ #include <linux/proc_ns.h>
+ #include <linux/uaccess.h>
+ #include <linux/sched.h>
 +#include <linux/nstree.h>
- #include <net/sock.h>
  
- #define CREATE_TRACE_POINTS
-@@ -6312,6 +6313,7 @@ int __init cgroup_init(void)
- 	WARN_ON(register_filesystem(&cpuset_fs_type));
- #endif
+ #include "util.h"
  
-+	ns_tree_add(&init_cgroup_ns);
+diff --git a/ipc/namespace.c b/ipc/namespace.c
+index d4188a88ee57..9f923c1a1eb3 100644
+--- a/ipc/namespace.c
++++ b/ipc/namespace.c
+@@ -15,6 +15,7 @@
+ #include <linux/mount.h>
+ #include <linux/user_namespace.h>
+ #include <linux/proc_ns.h>
++#include <linux/nstree.h>
+ #include <linux/sched/task.h>
+ 
+ #include "util.h"
+@@ -85,6 +86,7 @@ static struct ipc_namespace *create_ipc_ns(struct user_namespace *user_ns,
+ 
+ 	sem_init_ns(ns);
+ 	shm_init_ns(ns);
++	ns_tree_add(ns);
+ 
+ 	return ns;
+ 
+@@ -201,6 +203,7 @@ void put_ipc_ns(struct ipc_namespace *ns)
+ 		mq_clear_sbinfo(ns);
+ 		spin_unlock(&mq_lock);
+ 
++		ns_tree_remove(ns);
+ 		if (llist_add(&ns->mnt_llist, &free_ipc_list))
+ 			schedule_work(&free_ipc_work);
+ 	}
+diff --git a/ipc/shm.c b/ipc/shm.c
+index a9310b6dbbc3..3db36773dd10 100644
+--- a/ipc/shm.c
++++ b/ipc/shm.c
+@@ -45,6 +45,7 @@
+ #include <linux/mount.h>
+ #include <linux/ipc_namespace.h>
+ #include <linux/rhashtable.h>
++#include <linux/nstree.h>
+ 
+ #include <linux/uaccess.h>
+ 
+@@ -148,6 +149,7 @@ void shm_exit_ns(struct ipc_namespace *ns)
+ static int __init ipc_ns_init(void)
+ {
+ 	shm_init_ns(&init_ipc_ns);
++	ns_tree_add(&init_ipc_ns);
  	return 0;
  }
- 
-diff --git a/kernel/cgroup/namespace.c b/kernel/cgroup/namespace.c
-index 0391b6ab0bf1..fc12c416dfeb 100644
---- a/kernel/cgroup/namespace.c
-+++ b/kernel/cgroup/namespace.c
-@@ -5,7 +5,7 @@
- #include <linux/slab.h>
- #include <linux/nsproxy.h>
- #include <linux/proc_ns.h>
--
-+#include <linux/nstree.h>
- 
- /* cgroup namespaces */
- 
-@@ -30,16 +30,19 @@ static struct cgroup_namespace *alloc_cgroup_ns(void)
- 	ret = ns_common_init(&new_ns->ns, &cgroupns_operations, true);
- 	if (ret)
- 		return ERR_PTR(ret);
-+	ns_tree_add(new_ns);
- 	return no_free_ptr(new_ns);
- }
- 
- void free_cgroup_ns(struct cgroup_namespace *ns)
- {
-+	ns_tree_remove(ns);
- 	put_css_set(ns->root_cset);
- 	dec_cgroup_namespaces(ns->ucounts);
- 	put_user_ns(ns->user_ns);
- 	ns_free_inum(&ns->ns);
--	kfree(ns);
-+	/* Concurrent nstree traversal depends on a grace period. */
-+	kfree_rcu(ns, ns.ns_rcu);
- }
- EXPORT_SYMBOL(free_cgroup_ns);
  
 
 -- 
