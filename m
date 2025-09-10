@@ -1,116 +1,239 @@
-Return-Path: <linux-fsdevel+bounces-60740-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60741-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C05FB51064
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 10:02:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D29B3B510EC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 10:17:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F459461F5F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 08:02:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C43ED4657CF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 08:13:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F316330DEDE;
-	Wed, 10 Sep 2025 07:59:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFBEB30E822;
+	Wed, 10 Sep 2025 08:11:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="ug8330kP"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="U25EGZ8t";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="J5G062t3";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="U25EGZ8t";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="J5G062t3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B86C30DD0B;
-	Wed, 10 Sep 2025 07:58:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F2652DE1E6
+	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Sep 2025 08:11:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757491141; cv=none; b=Hqi99WZHTQzfJ6/e1YVy4jtBLqovFKjVyK/jyH83GA4PaDs65v52NRaG3fKGzbrQeFbnM9/qFhrQ52TQ0lbWjRncP8Z7DIPtl6Poyqwk3bLX0srWAaEwPD7/PKGeGesUA/e6onSmNQx3GNi9vnBbFd6+0zT0V+oLe5V45B3JchE=
+	t=1757491898; cv=none; b=MSG5f2JjJpOMT6IMK9vKpuPhlWndfUpIJE2vOe+CGV4+uPG5CdE0sqdFquK3B+DLMoVRB/jrtlJKxr3ReMyEnP+7RU0rdE5/lkphxVBL9FkDf77xiXt4jx1SIw+vO/dEGlkCES+Ve6KtmdygQb/0hKfDRBGroJAy3Q06lfMl41Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757491141; c=relaxed/simple;
-	bh=mFPObuzpF37b4JTpVbmbqGrsleEfc+vMrJEhgyaAVps=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=pVLfhek52FgnjQj/nrL2qE2EhqRT/6Q8F0NDE2vxCLRZA9wk+LJwL5rjDN7rIfBnc1r4qgMg4hTGNmg+7LkWM98oY9bAxDUEtvRltEZla9S8ZoxXPeLSFi7MTy36HMhX9+6Uje6pmSqIZisKNGbQll9MGdVh+ts4jhKdPvPg30s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=ug8330kP; arc=none smtp.client-ip=162.62.58.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1757491132; bh=CRkkhFM8grEXCn/UNb5SFiYKtdwx4jQPUUTOBUsnr1w=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=ug8330kPmNPydiEM9gDJFCIG+fIYeUqjPpBiYS7GQG8RzdEca7ogl3GcM6vn9hXWC
-	 Dp52U0oftRBuqrCHFx7G+EFWBmbMrcFblrCXcsGUufLzLWgeynkt7rt82XwmUPPQXX
-	 xL+e7e/mjPtyXy9zvqD1vO/1DY1gkveCspajISQw=
-Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.230.220])
-	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
-	id EB198E7E; Wed, 10 Sep 2025 15:58:49 +0800
-X-QQ-mid: xmsmtpt1757491129thc94ys5b
-Message-ID: <tencent_B32D6D8C9450EBFEEE5ACC2C7B0E6C402D0A@qq.com>
-X-QQ-XMAILINFO: NG7xP+P+sy64akR4b6dN/NBZT+wuWHSk3x5ICkkVdFquAADQRcZ95scO+BDNin
-	 rmqRjFCvaJRYi2wUAmv2g3t1peLlXlYd/93z8ntRdYLpeVbMV6aghH/my5uSqH8mJO+W8OPacB1w
-	 4XjbfMgX/uBNhSTP49PTBuWm9WAWc10Z6WNSrZ2OyYWRYAoSU4OgRkk6BHQmovyjv03OvcUloZ66
-	 3BYNFmAwhVeM6dnKXAEYneUiwECuuKiojGL2uWwYRwJzjLgT4dLolcZHMoSZLIxjA1CM67Mk7p5M
-	 wVDcL7I1ro+N9tKeImwdXM9csDw8s8UDr7b6Vkxej8nTlA24yjhLDvDap/8WU3RHOAXMknkfzXXy
-	 2xHjJqRocPSBirGTd4GYD6To+c4ZtffDl8VOI2EtpxLkpLiFONV/UaDPi+HS2nJaxj8R/N7dP0iS
-	 a6sANwZliAcqU2llWrYxuplTL/eV3Cmk6S8/i4Y7mh52kmqXuDcl+Rj/0SnCUxvBknooQ7N04O/Q
-	 FueEpYAc205DGXZTzqyXlTB18Czo+U3pcP+nUtpyvCeGNAQu7C670DjmHU64JiETChh+pcLeN7Ta
-	 gfQo2/NEsvsL64FBmkRhwl2GbJG9VMT55GA6wyHAaNF0/bJ9+vaxMSB9dQkz5uNZpTdQjUzN3CcE
-	 c3T1nbe9L00mfLs46v+F/yM+lvfhTBwYyKTgj+zbhzOh6MSTnNXcAXI1ADvJyT8+IbGywpUnCG2Q
-	 0/RdoL0tnlALrqBVqe9yMSoSkrGKLIYiP/gK7yAxGyzgkcCqZbEILjFGACmsL3wnUAwKVNb7Jrnd
-	 baosfSKS+6rh7ge2uN8Ew0XtfOmpTv920IeCTuEE2YcmIxIBC9UwxxzAyjaeSP+rc00W0+XLH7nM
-	 LrV3ECiyDXsTMiIuP0uMM16INfqi9cfBooI6UUcqa6qvpHiozexg/sRxJ3H2tKTYkkw8xIs4IUsr
-	 ruZHBv8u23cfmubf2crLBtrK8N64aTRxSis6pikkWgKLsyaQURXpyxhEWKNhBJ
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+b6445765657b5855e869@syzkaller.appspotmail.com
-Cc: dakr@kernel.org,
-	gregkh@linuxfoundation.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	rafael@kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH] USB: core: remove the move buf action
-Date: Wed, 10 Sep 2025 15:58:47 +0800
-X-OQ-MSGID: <20250910075846.1492634-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <68c118e8.a70a0220.3543fc.000e.GAE@google.com>
-References: <68c118e8.a70a0220.3543fc.000e.GAE@google.com>
+	s=arc-20240116; t=1757491898; c=relaxed/simple;
+	bh=CatvQzLGSUxaEfSA1cVQnsyhQGJ5+89BUXjVmO3C4gU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jl7+SXsgzdRks9pGc4Jn6vXKTVJW9MmEL+t4/TRhGTnrqf9a69tUeD7nvis+NwBAgfjJSqq/KWFHlY3V4p+6GdUZZs/Kyt3jwlz3n4GqshnH733Amn/SReGKfTLlfdXdz8Xnhx6c/hOcWVoL1fXlDijePpPRbOUZxkC4EpXGnhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=U25EGZ8t; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=J5G062t3; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=U25EGZ8t; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=J5G062t3; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id AD0D25C02A;
+	Wed, 10 Sep 2025 08:11:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757491894; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GsvGOC3oj5ojQ7CsuT+7ZrMYYZG+TiB4awsu6EUPxr0=;
+	b=U25EGZ8t+QVsUGsV5Zj07BJk8MKgEClon3RVtYGk8Rll/WprUEakX2FCdnGt36Hj05kBq4
+	vdGonii+WrTRaQkK1ZuS9luaZzfrn7jE1ShTXPICmyKAJC9vlrlMM9gPPmdHDes0T1HvrX
+	OmCH3bVZQ3ifitLK1o1yn7M1M5A6v4I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757491894;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GsvGOC3oj5ojQ7CsuT+7ZrMYYZG+TiB4awsu6EUPxr0=;
+	b=J5G062t384h7CM3piNGbRrc/8YVqLTe4APq1qXIog3KGEPe+Nm6EHm9t8JujFOLilhFnds
+	NEV414poml5LtpAQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757491894; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GsvGOC3oj5ojQ7CsuT+7ZrMYYZG+TiB4awsu6EUPxr0=;
+	b=U25EGZ8t+QVsUGsV5Zj07BJk8MKgEClon3RVtYGk8Rll/WprUEakX2FCdnGt36Hj05kBq4
+	vdGonii+WrTRaQkK1ZuS9luaZzfrn7jE1ShTXPICmyKAJC9vlrlMM9gPPmdHDes0T1HvrX
+	OmCH3bVZQ3ifitLK1o1yn7M1M5A6v4I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757491894;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GsvGOC3oj5ojQ7CsuT+7ZrMYYZG+TiB4awsu6EUPxr0=;
+	b=J5G062t384h7CM3piNGbRrc/8YVqLTe4APq1qXIog3KGEPe+Nm6EHm9t8JujFOLilhFnds
+	NEV414poml5LtpAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9C35A13310;
+	Wed, 10 Sep 2025 08:11:34 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id uGkdJrYywWhLJwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 10 Sep 2025 08:11:34 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id D1437A0A2D; Wed, 10 Sep 2025 10:11:32 +0200 (CEST)
+Date: Wed, 10 Sep 2025 10:11:32 +0200
+From: Jan Kara <jack@suse.cz>
+To: sunyongjian1@huawei.com
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	tytso@mit.edu, jack@suse.cz, yangerkun@huawei.com, yi.zhang@huawei.com, 
+	libaokun1@huawei.com, chengzhihao1@huawei.com
+Subject: Re: [PATCH v3] ext4: increase i_disksize to offset + len in
+ ext4_update_disksize_before_punch()
+Message-ID: <hsnzaxvcwphxncr6mmoepqnbokh7jblkytuqqyzpqsk7w3wsmr@bwutehzrrhys>
+References: <20250910042516.3947590-1-sunyongjian@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250910042516.3947590-1-sunyongjian@huaweicloud.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_NONE(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.com:email,huawei.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-The buffer size of sysfs is fixed at PAGE_SIZE, and the page offset
-of the buf parameter of sysfs_emit_at() must be 0, there is no need
-to manually manage the buf pointer offset.
+On Wed 10-09-25 12:25:16, Yongjian Sun wrote:
+> From: Yongjian Sun <sunyongjian1@huawei.com>
+> 
+> After running a stress test combined with fault injection,
+> we performed fsck -a followed by fsck -fn on the filesystem
+> image. During the second pass, fsck -fn reported:
+> 
+> Inode 131512, end of extent exceeds allowed value
+> 	(logical block 405, physical block 1180540, len 2)
+> 
+> This inode was not in the orphan list. Analysis revealed the
+> following call chain that leads to the inconsistency:
+> 
+>                              ext4_da_write_end()
+>                               //does not update i_disksize
+>                              ext4_punch_hole()
+>                               //truncate folio, keep size
+> ext4_page_mkwrite()
+>  ext4_block_page_mkwrite()
+>   ext4_block_write_begin()
+>     ext4_get_block()
+>      //insert written extent without update i_disksize
+> journal commit
+> echo 1 > /sys/block/xxx/device/delete
+> 
+> da-write path updates i_size but does not update i_disksize. Then
+> ext4_punch_hole truncates the da-folio yet still leaves i_disksize
+> unchanged(in the ext4_update_disksize_before_punch function, the
+> condition offset + len < size is met). Then ext4_page_mkwrite sees
+> ext4_nonda_switch return 1 and takes the nodioread_nolock path, the
+> folio about to be written has just been punched out, and it’s offset
+> sits beyond the current i_disksize. This may result in a written
+> extent being inserted, but again does not update i_disksize. If the
+> journal gets committed and then the block device is yanked, we might
+> run into this. It should be noted that replacing ext4_punch_hole with
+> ext4_zero_range in the call sequence may also trigger this issue, as
+> neither will update i_disksize under these circumstances.
+> 
+> To fix this, we can modify ext4_update_disksize_before_punch to
+> increase i_disksize to min(offset + len) when both i_size and
+> (offset + len) are greater than i_disksize.
+> 
+> Signed-off-by: Yongjian Sun <sunyongjian1@huawei.com>
+> ---
+> Changes in v3:
+> - Add a condition to avoid increasing i_disksize and include some comments.
+> - Link to v2: https://lore.kernel.org/all/20250908063355.3149491-1-sunyongjian@huaweicloud.com/
+> Changes in v2:
+> - The modification of i_disksize should be moved into ext4_update_disksize_before_punch,
+>   rather than being done in ext4_page_mkwrite.
+> - Link to v1: https://lore.kernel.org/all/20250731140528.1554917-1-sunyongjian@huaweicloud.com/
 
-Fixes: 711d41ab4a0e ("usb: core: Use sysfs_emit_at() when showing dynamic IDs")
-Reported-by: syzbot+b6445765657b5855e869@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=b6445765657b5855e869
-Tested-by: syzbot+b6445765657b5855e869@syzkaller.appspotmail.com
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- drivers/usb/core/driver.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Very nice! Just some language improvements below but otherwise feel free to
+add:
 
-diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
-index c3177034b779..f441958b0ef4 100644
---- a/drivers/usb/core/driver.c
-+++ b/drivers/usb/core/driver.c
-@@ -119,11 +119,11 @@ ssize_t usb_show_dynids(struct usb_dynids *dynids, char *buf)
- 	guard(mutex)(&usb_dynids_lock);
- 	list_for_each_entry(dynid, &dynids->list, node)
- 		if (dynid->id.bInterfaceClass != 0)
--			count += sysfs_emit_at(&buf[count], count, "%04x %04x %02x\n",
-+			count += sysfs_emit_at(buf, count, "%04x %04x %02x\n",
- 					   dynid->id.idVendor, dynid->id.idProduct,
- 					   dynid->id.bInterfaceClass);
- 		else
--			count += sysfs_emit_at(&buf[count], count, "%04x %04x\n",
-+			count += sysfs_emit_at(buf, count, "%04x %04x\n",
- 					   dynid->id.idVendor, dynid->id.idProduct);
- 	return count;
- }
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 5b7a15db4953..3df03469d405 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -4287,7 +4287,10 @@ int ext4_can_truncate(struct inode *inode)
+>   * We have to make sure i_disksize gets properly updated before we truncate
+>   * page cache due to hole punching or zero range. Otherwise i_disksize update
+>   * can get lost as it may have been postponed to submission of writeback but
+> - * that will never happen after we truncate page cache.
+> + * 1) that will never happen after we truncate page cache to the end of i_size;
+> + * 2) that will get deferred after we truncate page cache in i_size but beyond
+> + *    i_disksize, another concurrent write page fault can allocate written
+> + *    blocks in the range and lead to filesystem inconsistency.
+
+I'd phrase this:
+ ... that will never happen if we remove the folio containing i_size from
+the page cache. Also if we punch hole within i_size but above i_disksize,
+following ext4_page_mkwrite() may mistakenly allocate written blocks over
+the hole and thus introduce allocated blocks beyond i_disksize which is not
+allowed (e2fsck would complain in case of crash).
+
+								Honza
+
+>   */
+>  int ext4_update_disksize_before_punch(struct inode *inode, loff_t offset,
+>  				      loff_t len)
+> @@ -4298,9 +4301,11 @@ int ext4_update_disksize_before_punch(struct inode *inode, loff_t offset,
+>  	loff_t size = i_size_read(inode);
+>  
+>  	WARN_ON(!inode_is_locked(inode));
+> -	if (offset > size || offset + len < size)
+> +	if (offset > size)
+>  		return 0;
+>  
+> +	if (offset + len < size)
+> +		size = offset + len;
+>  	if (EXT4_I(inode)->i_disksize >= size)
+>  		return 0;
+>  
+> -- 
+> 2.39.2
+> 
 -- 
-2.43.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
