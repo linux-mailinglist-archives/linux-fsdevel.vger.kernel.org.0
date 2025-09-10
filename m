@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-60780-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60781-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C75E3B519C1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 16:42:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86F32B519C5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 16:42:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A32D15655FF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 14:39:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A9F91B20742
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 14:41:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F9EA338F54;
-	Wed, 10 Sep 2025 14:37:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 970FC33EB18;
+	Wed, 10 Sep 2025 14:37:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EYrDm3fo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F8oCGAZj"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70CAA32CF6C;
-	Wed, 10 Sep 2025 14:37:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB96B32CF8F;
+	Wed, 10 Sep 2025 14:37:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757515061; cv=none; b=pfUs2egxBWD0XJzYWkIQyYTF0941vDcIUej3+iTq7yusreHecfGttchy6N1O6vwpIcQPG2fB130EwtzKbqAS1YX/8U33gRNZHWP78dhQBOR2XGh6vJ4lqpV5VmKnihPqbkRTwHcnCmdfOAsc9kOW+Myii5OUJUQRGyuvvWa4FfU=
+	t=1757515068; cv=none; b=IK9TrKm7pxdRTakWpJb3bbKW8ze9GYrfypDutwqJTcg3cnKlVWSbg51JF7LmblTRw1rnadR4BiwwvYD4Gz3JvBNHV0fnkna/skU0j3eNy277lepqQbxfi52RO1V6qxmwpR95rcXWS+/w0h6itPGNJpquC+3EgrM/toHZsQqRM0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757515061; c=relaxed/simple;
-	bh=B7r5xME705JZrGrmvpUjQFvU/5IFdDDiURc8AUJwiiQ=;
+	s=arc-20240116; t=1757515068; c=relaxed/simple;
+	bh=Uyf4OUbQ4N9dntxnaqhQjswkZw9lycGwkUdINuCLOMY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=uR/uzzhyag90UAHhK1dCn7ITTDEh2E75qCQe6B14trHVrfOK77pT0KkSaFnSleNnHEbZRzbdfkc6TslEWur/Dy59nUw+EgzH8dnS9VqyVwSI8fBe6HD7t7BNiSXG8sC6tYsw0MVDY6sYqEbOgcIy50G3YjSacp5IFkiMPw/c7jk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EYrDm3fo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB1F1C4CEF0;
-	Wed, 10 Sep 2025 14:37:35 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=OZbktQmdkYMSGT54TGrLwbKN6A45PL4+OGmrT1cdB/QDvG2eR6/CaMWk5s7ZuI6iKRE6ezwsZLBClBCaBLzvsYcs17Mu8J9FKzR61fdzcV0hSd6zsNbHZqp30GtqcBYzSEGphndbuBf301RoBJq7MLi/u1UGx9CXAXplE2gkrlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F8oCGAZj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5335C4CEF0;
+	Wed, 10 Sep 2025 14:37:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757515061;
-	bh=B7r5xME705JZrGrmvpUjQFvU/5IFdDDiURc8AUJwiiQ=;
+	s=k20201202; t=1757515067;
+	bh=Uyf4OUbQ4N9dntxnaqhQjswkZw9lycGwkUdINuCLOMY=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=EYrDm3foVgRyetarOPPjGBoKL2jTXbEF663pJ31nlzq+EkFi4aicPOLyWGk0pSsVg
-	 7cEYzyu+yorQ401tF4RAPXrix8y4scRYTaAYzme7koY7wTXU9cNFmEernTGng4pyq8
-	 pF08kk1+/JWQhNa8O1tlLB9KMhu28Umklv2TsL1Vd+9QL7bVaef5L3haS2UasPdwFy
-	 82b56iaBwX0cxZq+q6Lb87l/ZJnW/JZizBfcY9ce04Z+bZfXMiK7lMTndKW6AjO6Fc
-	 uR9zu8Q7mR4ASbQFJUeIfWp4MAJmsfbS9pOp01yrjqiR8o3wPOjdVokw7Sv3i8hVF5
-	 t0Sp1JCGUUp2g==
+	b=F8oCGAZjorilhalkKn/ywx/TJ/Tok4E+xiv9lQeGdPrOuw8pN0k6qqOZyyxTg4uxt
+	 R96lBeq9IPrld9W+9TZJyTEY+9GZ+c94IBPhjTKK96vNW+WobsmdPeRUa7i+5jv+70
+	 yDAyEXFPIfY2fHigc0by2sjr73XKF6t8b1l/ERZJWuJSLW3JDRYbSiYfjhvn25kQRz
+	 m1AmgFb+9h7oi4MmcrN5OvG3R+Wn1pcB9k805jqV3NDy0tTbXJBGw1im2dIxCVdv7E
+	 4JktcHvY1uA9x6x2oRHVB34u3wxY3F6Br1HbuOzjYZ69zf1Peg223bb6Iiix3wQswZ
+	 awm3DX268On+w==
 From: Christian Brauner <brauner@kernel.org>
-Date: Wed, 10 Sep 2025 16:36:51 +0200
-Subject: [PATCH 06/32] ns: uniformly initialize ns_common
+Date: Wed, 10 Sep 2025 16:36:52 +0200
+Subject: [PATCH 07/32] mnt: use ns_common_init()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250910-work-namespace-v1-6-4dd56e7359d8@kernel.org>
+Message-Id: <20250910-work-namespace-v1-7-4dd56e7359d8@kernel.org>
 References: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
 In-Reply-To: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
 To: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
@@ -72,50 +72,51 @@ Cc: Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>,
  linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
  netdev@vger.kernel.org, Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.14.3-dev-385fa
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1007; i=brauner@kernel.org;
- h=from:subject:message-id; bh=B7r5xME705JZrGrmvpUjQFvU/5IFdDDiURc8AUJwiiQ=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQc7OWYG3gylSNZ7e36oD8rmc/dLJxQHzZ5Qgz/jTK/C
- bcihT5O7yhlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjIueMMfziTxU4wauybahl0
- I6f+QpvjMqPdW+zW1jnPE6tPb/LdsJmR4cksdlvXEGMRHvadktu3yLnx+tSr++TZn57q2GWn/Uu
- QHQA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1089; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=Uyf4OUbQ4N9dntxnaqhQjswkZw9lycGwkUdINuCLOMY=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQc7OXg+P0gyTyYayKDzIEXK1RT1hfe/v3ijWhhpJonv
+ 69ZjaRlRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwEQm3GL4Kx/VezdaRvvapt7n
+ O1u7FSSPHtB5mbdkt7fdxz+Crz13ODP8M4jb0uBfFNHfM+lRvVLbgekiomf/xDhaf29y/HCu/vZ
+ 3RgA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-No point in cargo-culting the same code across all the different types.
-Use one common initializer.
+Don't cargo-cult the same thing over and over.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- include/linux/proc_ns.h | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ fs/namespace.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
-diff --git a/include/linux/proc_ns.h b/include/linux/proc_ns.h
-index 5e1a4b378b79..dbb119bda097 100644
---- a/include/linux/proc_ns.h
-+++ b/include/linux/proc_ns.h
-@@ -72,6 +72,22 @@ static inline int ns_alloc_inum(struct ns_common *ns)
- 	return proc_alloc_inum(&ns->inum);
- }
- 
-+static inline int ns_common_init(struct ns_common *ns,
-+				 const struct proc_ns_operations *ops,
-+				 bool alloc_inum)
-+{
-+	if (alloc_inum) {
-+		int ret;
-+		ret = proc_alloc_inum(&ns->inum);
-+		if (ret)
-+			return ret;
-+	}
-+	refcount_set(&ns->count, 1);
-+	ns->stashed = NULL;
-+	ns->ops = ops;
-+	return 0;
-+}
+diff --git a/fs/namespace.c b/fs/namespace.c
+index ddfd4457d338..14c5cdbdd6e1 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -4177,18 +4177,15 @@ static struct mnt_namespace *alloc_mnt_ns(struct user_namespace *user_ns, bool a
+ 		dec_mnt_namespaces(ucounts);
+ 		return ERR_PTR(-ENOMEM);
+ 	}
+-	if (!anon) {
+-		ret = ns_alloc_inum(&new_ns->ns);
+-		if (ret) {
+-			kfree(new_ns);
+-			dec_mnt_namespaces(ucounts);
+-			return ERR_PTR(ret);
+-		}
 +
- #define ns_free_inum(ns) proc_free_inum((ns)->inum)
- 
- #define get_proc_ns(inode) ((struct ns_common *)(inode)->i_private)
++	ret = ns_common_init(&new_ns->ns, &mntns_operations, !anon);
++	if (ret) {
++		kfree(new_ns);
++		dec_mnt_namespaces(ucounts);
++		return ERR_PTR(ret);
+ 	}
+-	new_ns->ns.ops = &mntns_operations;
+ 	if (!anon)
+ 		new_ns->seq = atomic64_inc_return(&mnt_ns_seq);
+-	refcount_set(&new_ns->ns.count, 1);
+ 	refcount_set(&new_ns->passive, 1);
+ 	new_ns->mounts = RB_ROOT;
+ 	INIT_LIST_HEAD(&new_ns->mnt_ns_list);
 
 -- 
 2.47.3
