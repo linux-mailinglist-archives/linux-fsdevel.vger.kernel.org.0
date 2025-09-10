@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-60779-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60780-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA8EDB519B5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 16:41:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C75E3B519C1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 16:42:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A7545466AB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 14:39:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A32D15655FF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 14:39:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79B303375C5;
-	Wed, 10 Sep 2025 14:37:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F9EA338F54;
+	Wed, 10 Sep 2025 14:37:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BERmH5tK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EYrDm3fo"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA5CB32A821;
-	Wed, 10 Sep 2025 14:37:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70CAA32CF6C;
+	Wed, 10 Sep 2025 14:37:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757515055; cv=none; b=IwkvNljj8GnE4v9BX4k0x07it1o0etEZlUjZJbIZrLpW7640y/3KgSPt6T3zUr2mAZ/LGmpGjIG5/MvTyEXqtF9oVs+BQjVucLgLJWbpAmghebwLpFV2ioBuDVzXRy5JZkVxsAoIZZUtMylH1M7DxXOAo0cTcJdCdhpm+7tPDtk=
+	t=1757515061; cv=none; b=pfUs2egxBWD0XJzYWkIQyYTF0941vDcIUej3+iTq7yusreHecfGttchy6N1O6vwpIcQPG2fB130EwtzKbqAS1YX/8U33gRNZHWP78dhQBOR2XGh6vJ4lqpV5VmKnihPqbkRTwHcnCmdfOAsc9kOW+Myii5OUJUQRGyuvvWa4FfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757515055; c=relaxed/simple;
-	bh=8FRw/l3sXiggMAyyDWj2ModuYi+3rG5Eie/HR+m5jhg=;
+	s=arc-20240116; t=1757515061; c=relaxed/simple;
+	bh=B7r5xME705JZrGrmvpUjQFvU/5IFdDDiURc8AUJwiiQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RHdtuZFiYRAHHAtyCU9MzyCeel/Pas9pmJeWJU+UWUPwHgV6ovrIiXn+bL28xF5C4Jsem7x1lRN2p7ke2GgTwO2mqXr3fbXh2dZTVWybNtxsTwIun3RmiSieDmuJ9tBynN8RGYmlhs1aRpgvKilIA/gPd7+XpmTynwDue51Js58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BERmH5tK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB113C4CEEB;
-	Wed, 10 Sep 2025 14:37:29 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=uR/uzzhyag90UAHhK1dCn7ITTDEh2E75qCQe6B14trHVrfOK77pT0KkSaFnSleNnHEbZRzbdfkc6TslEWur/Dy59nUw+EgzH8dnS9VqyVwSI8fBe6HD7t7BNiSXG8sC6tYsw0MVDY6sYqEbOgcIy50G3YjSacp5IFkiMPw/c7jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EYrDm3fo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB1F1C4CEF0;
+	Wed, 10 Sep 2025 14:37:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757515055;
-	bh=8FRw/l3sXiggMAyyDWj2ModuYi+3rG5Eie/HR+m5jhg=;
+	s=k20201202; t=1757515061;
+	bh=B7r5xME705JZrGrmvpUjQFvU/5IFdDDiURc8AUJwiiQ=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=BERmH5tKAeTvYAOvix3kN635Rw0RXR5WSDHcImBrNPyr1ZrPnTNiH4IX8bC31r8js
-	 YDpc40DPKToQFGnWNQcb7KD3JBejge20E3E31XY5dUUFgWDgIRUlE29o1yqxcbjrTt
-	 PuWbopF7b6cXNCTWEgVsMEqh0vRHViKhf/aEI7ty4WXa1fe39Kf3txMXopAIyXgOcA
-	 OZFluMkckXlIi4wzdPVU4vl9IoKJTmhERo8Cv0C/th+uTKoR7njWc1JbmQiASbfETb
-	 uUcCVfSnz8EPA2ZMiB4cG3507JBHcKHyW/w6NZvnMTPgN0Q85qStWXsiqQbKp6Lj29
-	 HhoZsM7dF1LLA==
+	b=EYrDm3foVgRyetarOPPjGBoKL2jTXbEF663pJ31nlzq+EkFi4aicPOLyWGk0pSsVg
+	 7cEYzyu+yorQ401tF4RAPXrix8y4scRYTaAYzme7koY7wTXU9cNFmEernTGng4pyq8
+	 pF08kk1+/JWQhNa8O1tlLB9KMhu28Umklv2TsL1Vd+9QL7bVaef5L3haS2UasPdwFy
+	 82b56iaBwX0cxZq+q6Lb87l/ZJnW/JZizBfcY9ce04Z+bZfXMiK7lMTndKW6AjO6Fc
+	 uR9zu8Q7mR4ASbQFJUeIfWp4MAJmsfbS9pOp01yrjqiR8o3wPOjdVokw7Sv3i8hVF5
+	 t0Sp1JCGUUp2g==
 From: Christian Brauner <brauner@kernel.org>
-Date: Wed, 10 Sep 2025 16:36:50 +0200
-Subject: [PATCH 05/32] nsfs: add nsfs.h header
+Date: Wed, 10 Sep 2025 16:36:51 +0200
+Subject: [PATCH 06/32] ns: uniformly initialize ns_common
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250910-work-namespace-v1-5-4dd56e7359d8@kernel.org>
+Message-Id: <20250910-work-namespace-v1-6-4dd56e7359d8@kernel.org>
 References: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
 In-Reply-To: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
 To: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
@@ -72,85 +72,50 @@ Cc: Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>,
  linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
  netdev@vger.kernel.org, Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.14.3-dev-385fa
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2368; i=brauner@kernel.org;
- h=from:subject:message-id; bh=8FRw/l3sXiggMAyyDWj2ModuYi+3rG5Eie/HR+m5jhg=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQc7GWXWXjOL29TmvmqWz/S5CbdMr1WGCFW9N7aNEKUx
- evMzsa0jlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIloXGNkOHYv1+NFppa4/aFP
- cdt4NOV7JXcwcmzZ6Rmd6LsisqHkH8Nvdi/u2e2rf2ndvsQcI1f3xaeJie+x5tyIxQvu8Uo/uPu
- OBQA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1007; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=B7r5xME705JZrGrmvpUjQFvU/5IFdDDiURc8AUJwiiQ=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQc7OWYG3gylSNZ7e36oD8rmc/dLJxQHzZ5Qgz/jTK/C
+ bcihT5O7yhlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjIueMMfziTxU4wauybahl0
+ I6f+QpvjMqPdW+zW1jnPE6tPb/LdsJmR4cksdlvXEGMRHvadktu3yLnx+tSr++TZn57q2GWn/Uu
+ QHQA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-And move the stuff out from proc_ns.h where it really doesn't belong.
+No point in cargo-culting the same code across all the different types.
+Use one common initializer.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- include/linux/nsfs.h    | 26 ++++++++++++++++++++++++++
- include/linux/proc_ns.h | 13 +------------
- 2 files changed, 27 insertions(+), 12 deletions(-)
+ include/linux/proc_ns.h | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/include/linux/nsfs.h b/include/linux/nsfs.h
-new file mode 100644
-index 000000000000..fb84aa538091
---- /dev/null
-+++ b/include/linux/nsfs.h
-@@ -0,0 +1,26 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (c) 2025 Christian Brauner <brauner@kernel.org> */
-+
-+#ifndef _LINUX_NSFS_H
-+#define _LINUX_NSFS_H
-+
-+#include <linux/ns_common.h>
-+
-+struct path;
-+struct task_struct;
-+struct proc_ns_operations;
-+
-+int ns_get_path(struct path *path, struct task_struct *task,
-+		const struct proc_ns_operations *ns_ops);
-+typedef struct ns_common *ns_get_path_helper_t(void *);
-+int ns_get_path_cb(struct path *path, ns_get_path_helper_t ns_get_cb,
-+		   void *private_data);
-+
-+bool ns_match(const struct ns_common *ns, dev_t dev, ino_t ino);
-+
-+int ns_get_name(char *buf, size_t size, struct task_struct *task,
-+			const struct proc_ns_operations *ns_ops);
-+void nsfs_init(void);
-+
-+#endif /* _LINUX_NSFS_H */
-+
 diff --git a/include/linux/proc_ns.h b/include/linux/proc_ns.h
-index 4b20375f3783..5e1a4b378b79 100644
+index 5e1a4b378b79..dbb119bda097 100644
 --- a/include/linux/proc_ns.h
 +++ b/include/linux/proc_ns.h
-@@ -5,7 +5,7 @@
- #ifndef _LINUX_PROC_NS_H
- #define _LINUX_PROC_NS_H
+@@ -72,6 +72,22 @@ static inline int ns_alloc_inum(struct ns_common *ns)
+ 	return proc_alloc_inum(&ns->inum);
+ }
  
--#include <linux/ns_common.h>
-+#include <linux/nsfs.h>
- #include <uapi/linux/nsfs.h>
- 
- struct pid_namespace;
-@@ -75,16 +75,5 @@ static inline int ns_alloc_inum(struct ns_common *ns)
++static inline int ns_common_init(struct ns_common *ns,
++				 const struct proc_ns_operations *ops,
++				 bool alloc_inum)
++{
++	if (alloc_inum) {
++		int ret;
++		ret = proc_alloc_inum(&ns->inum);
++		if (ret)
++			return ret;
++	}
++	refcount_set(&ns->count, 1);
++	ns->stashed = NULL;
++	ns->ops = ops;
++	return 0;
++}
++
  #define ns_free_inum(ns) proc_free_inum((ns)->inum)
  
  #define get_proc_ns(inode) ((struct ns_common *)(inode)->i_private)
--extern int ns_get_path(struct path *path, struct task_struct *task,
--			const struct proc_ns_operations *ns_ops);
--typedef struct ns_common *ns_get_path_helper_t(void *);
--extern int ns_get_path_cb(struct path *path, ns_get_path_helper_t ns_get_cb,
--			    void *private_data);
--
--extern bool ns_match(const struct ns_common *ns, dev_t dev, ino_t ino);
--
--extern int ns_get_name(char *buf, size_t size, struct task_struct *task,
--			const struct proc_ns_operations *ns_ops);
--extern void nsfs_init(void);
- 
- #endif /* _LINUX_PROC_NS_H */
 
 -- 
 2.47.3
