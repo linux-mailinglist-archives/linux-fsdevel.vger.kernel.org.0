@@ -1,242 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-60867-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60868-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60F72B523D7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 23:48:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF56AB5240A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 00:02:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCC587BD4F2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 21:46:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98B37583903
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 22:02:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27C8230F7FB;
-	Wed, 10 Sep 2025 21:48:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 563832D3EEA;
+	Wed, 10 Sep 2025 22:02:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FLxZmxBw"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BgfTGvFa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 063ED2DF3D1;
-	Wed, 10 Sep 2025 21:47:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05DB72877DC
+	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Sep 2025 22:02:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757540879; cv=none; b=n7tQn9g7vsmEaJUWoRPHz0sliMFF4tUgPDRAKcAIM8ALTObnck9IAzh6dzuXdl1rZnVflkfgawOWwkJ0awlEJOLtwZW9+cPm0cdBnQya8Lu/BpVk5KO2qewgzkI8jfb9mWDTYHHAlg6sq7cC0RTLdUx3Ez2hKWd5F06LxpJLCxI=
+	t=1757541733; cv=none; b=tnRzaBqjX9LwKiWRaxEds74QrkGB7ySwZYT/W2yfY2vU4vxeUimlvdg43bG0bWWx9lD2CfsvGIvZogKVLqVLfcuf9Usl2SWPefQkrCPKfxVNg52hzAel647kq4le6e8mqJZ4II+TKWTOmOzFZN0dAIYg9wGvL5XWSIovg7tU14c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757540879; c=relaxed/simple;
-	bh=HM0ofVrxSHq1Bz92Sj1jWe36kTRP0dpeO4I7Bv4bg30=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TRP8yGscJfQ1/XGI1y+XdXg2JHornWNSM3YXecJbv206eJkoruVNCBxFc1qe5CW7EiV4sjeaRl1NcuOBGzzzRTYGG5ZDs3QyG1dOhu5sZ0NGbKVEa0Ik4I4ovf2MB+ilQqZOHEbC4uaJfnY/bSKZG8xOjkSFel3V5NKzN6lEgCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FLxZmxBw; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7725147ec88so72823b3a.0;
-        Wed, 10 Sep 2025 14:47:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757540877; x=1758145677; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=06oifnEAGFR4Ltgc4TOaz5pGi14RXdWh8ksBdzGLZrI=;
-        b=FLxZmxBwhJy6dITtG68tu089kywD9OZgH3JfB0V7ZWncEcT1NugnepueEfXxWzs3vZ
-         0uFmB4Ye/ZjugQF1q89425wOohnl6tPafTD/5izrsbIvvhglw5b7sAID7QjxuN9ZU3Jr
-         JJNxOdDtBAbyBlSWpngf8qx3VrWvf8597ZsdDFfEiXwmtjbzN4h2aLwkThZJoSdPZn+j
-         cH86qooR75UU00HscOYKD6SNaPfj9BffrJVtW1vr9qDG7dJ2G8hELHTSeEDD8uuwwnsY
-         zSMo3AQnxyVnm8O2jNCss2fY7NGJ3f0dC2wvgn5k3QCp18psBPnON3h8qeVqdZR6KLVg
-         Ey4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757540877; x=1758145677;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=06oifnEAGFR4Ltgc4TOaz5pGi14RXdWh8ksBdzGLZrI=;
-        b=Qpl9nTBczse0GwLYKVtL9Qt34xbcQpH1s9F4ug1YNPeldr6OfVIl0XmYx8Yd9L50Gl
-         YlM5sTketSCOSY6ajQY3aC41GRtPGFsLLYGWoA1DGaOXBdFZdWSCNkpIEh7lf9Ad3CuF
-         UnYsWESFr30MNNe6wvwPkpfg1TtGyGMrOr0MzJ/zBdPOcFpb8D+IiCw9vQjS4CgqvOj8
-         HJ7BcFWXHiLHPDDO4x0LFusFnYS4kMcMRqWFUhNqyrn2mDmnrhfqp2QdUS6NxQG/3cfk
-         5iWXquhaDUBi/ThtpK+W2p04Dkhn9N3rgCSz05N60Mk3O/v8TJoRjQuMY7Pr7K2RtRp7
-         e5fw==
-X-Forwarded-Encrypted: i=1; AJvYcCUpTSE89FsEfLoW3L0e8P0hOX8hObZqf0tuEULmf3td2jPuV2VVa74JBgFYzlF0cyTsGjZ3k1rzUpRe@vger.kernel.org, AJvYcCVJUA6bK6alRChfyQcUtq1nGc7wRgtRoH8c69B5EtLT3T6eQ8g4DpdKVerprbkdno3a0p+WU/5UFhVe@vger.kernel.org, AJvYcCWP8hlxeDwYf35+f55ZRFGdRBPHIBkxQY0wMZUC9iNCQxfi8C54mavXAVVaUbdYjUciFYU04TWBbds6q009@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpiuGwJkLSMMmhgNGNfxf9kVDBYKwM57fBXGBmglLPkGVB+bqX
-	hpujIqVkfB7MlDE9Osx507MAnKWX7WWLtii5XEdbSfK1mqYr9T5cIFwn//EdGYM8
-X-Gm-Gg: ASbGncuLlGVE5DZNQ2rA7QSZ2LG58gdxx+x8om3cY5+eKjsxHNCooGVEAgkBgJdkx7u
-	Hpvt05GufLr/W+NMIJ+FngXi2IfO0fA6AiO4mfXYCZ8gZ83SaaXNl8K2ETujAqINJ4Z7aELVPz8
-	7IQqESQ5Syyz+rTEUP4vVngVoEpdRCMlMlNAM4CaXnt9mnBntNwJUycSQcrWwbHTkl+Q4wydLVM
-	wmpgk26fe2bUba1YHeAh06eKALb8pJaqRKllw37CyeDroUyoGFzwhpzNdRjr9rN6Jjmyt0+TKXx
-	LtKtkFjrq8qvl8upZRWiKYdbVxj/T5Ovo0muk8WVewUvgz7sbs+Zu7fRpaHSU3ubcp505TQ5pns
-	4B18Ldi98t23f6h+ZlYa1eHLj/Zypg7nvL3sH
-X-Google-Smtp-Source: AGHT+IGinHS6aq16w9b7HGbBpLflNnAoUm+yBwVktzHXKIvCYcxOtzobQyggEUkzUVtXz8kKC87MiQ==
-X-Received: by 2002:a05:6a00:3e0e:b0:772:7b9b:b1b6 with SMTP id d2e1a72fcca58-77603240aa0mr1106988b3a.9.1757540877117;
-        Wed, 10 Sep 2025 14:47:57 -0700 (PDT)
-Received: from jicarita ([65.144.169.45])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-775fbbc3251sm2422516b3a.103.2025.09.10.14.47.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 14:47:56 -0700 (PDT)
-From: Thomas Bertschinger <tahbertschinger@gmail.com>
-To: io-uring@vger.kernel.org,
-	axboe@kernel.dk,
-	linux-fsdevel@vger.kernel.org,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	linux-nfs@vger.kernel.org
-Cc: Thomas Bertschinger <tahbertschinger@gmail.com>,
-	linux-xfs@vger.kernel.org,
-	cem@kernel.org
-Subject: [PATCH 10/10] xfs: add support for non-blocking fh_to_dentry()
-Date: Wed, 10 Sep 2025 15:49:27 -0600
-Message-ID: <20250910214927.480316-11-tahbertschinger@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250910214927.480316-1-tahbertschinger@gmail.com>
-References: <20250910214927.480316-1-tahbertschinger@gmail.com>
+	s=arc-20240116; t=1757541733; c=relaxed/simple;
+	bh=kaX8rJ5nTqr77iJ9DUkOLuqk1egeY/+7BDFRyxDTl+0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B86+R7Bw86eNTUzBZg5TEyhYI0ES6uI0xrGesydNkgmBbpjI+oSc9ynox7bvrNAMqbG4CQVcoW6HeqiIWUPZrB9q9vilk18jt1NS0P6sshldeGAUBea1ySTMjy3cOeDqEVIZqU1wYd7dfo8/t+IDnlYzByW52w94G7w3u5Rf3l4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BgfTGvFa; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757541732; x=1789077732;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=kaX8rJ5nTqr77iJ9DUkOLuqk1egeY/+7BDFRyxDTl+0=;
+  b=BgfTGvFani94s2u+rLC4AonJhI274WPGYRBvXNrO2pKuf8UvDTf4G43t
+   LPQY02eyeEC1na72SyYqO1IDI006uSZS87Doq3SETH5PncuCs3ScrOPRM
+   BGsrPf8eqpMYKtlIi6NAdItAOSkHE7ZBeATetFOsj26KB5mHIDFQNfYgs
+   Kb+/DMFeCMRCyo5tqfnLdW1rham4gWMHHhq3gpr/rQx46Rejf5dXhE5IM
+   De54dXAOVGODR1L4CueaMGWWbL8BvR+W6eKn2D/snOqEWV/Pg5e+Su8Nz
+   ziLWuAErpFFCFJpduKXKKNNYwQzBKYchezDUNGBQFMVkKjcaKW36ur5Xf
+   w==;
+X-CSE-ConnectionGUID: YnyO6arJTPa+gI/D6LjXIQ==
+X-CSE-MsgGUID: iD0BzUdtQJqrfwrEetb/bg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11549"; a="47437894"
+X-IronPort-AV: E=Sophos;i="6.18,255,1751266800"; 
+   d="scan'208";a="47437894"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 15:02:11 -0700
+X-CSE-ConnectionGUID: 5bMekvClScaGUpSIvEgNGA==
+X-CSE-MsgGUID: nRJjacm7T8Gtqn1UIzvGiw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,255,1751266800"; 
+   d="scan'208";a="174321018"
+Received: from lkp-server01.sh.intel.com (HELO 114d98da2b6c) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 10 Sep 2025 15:02:10 -0700
+Received: from kbuild by 114d98da2b6c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uwStD-0006KB-2O;
+	Wed, 10 Sep 2025 22:02:07 +0000
+Date: Thu, 11 Sep 2025 06:01:49 +0800
+From: kernel test robot <lkp@intel.com>
+To: Viacheslav Dubeyko <slava@dubeyko.com>, glaubitz@physik.fu-berlin.de,
+	linux-fsdevel@vger.kernel.org, frank.li@vivo.com
+Cc: oe-kbuild-all@lists.linux.dev, Slava.Dubeyko@ibm.com
+Subject: Re: [PATCH] hfs: introduce KUnit tests for HFS string operations
+Message-ID: <202509110508.vlALr05g-lkp@intel.com>
+References: <20250909234614.880671-1-slava@dubeyko.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250909234614.880671-1-slava@dubeyko.com>
 
-This is to support using open_by_handle_at(2) via io_uring. It is useful
-for io_uring to request that opening a file via handle be completed
-using only cached data, or fail with -EAGAIN if that is not possible.
+Hi Viacheslav,
 
-The signature of xfs_nfs_get_inode() is extended with a new flags
-argument that allows callers to specify XFS_IGET_INCORE.
+kernel test robot noticed the following build errors:
 
-That flag is set when the VFS passes the FILEID_CACHED flag via the
-fileid_type argument.
+[auto build test ERROR on brauner-vfs/vfs.all]
+[also build test ERROR on linus/master v6.17-rc5 next-20250910]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Signed-off-by: Thomas Bertschinger <tahbertschinger@gmail.com>
----
- fs/xfs/xfs_export.c | 32 ++++++++++++++++++++++++++------
- fs/xfs/xfs_export.h |  3 ++-
- fs/xfs/xfs_handle.c |  2 +-
- 3 files changed, 29 insertions(+), 8 deletions(-)
+url:    https://github.com/intel-lab-lkp/linux/commits/Viacheslav-Dubeyko/hfs-introduce-KUnit-tests-for-HFS-string-operations/20250910-074850
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
+patch link:    https://lore.kernel.org/r/20250909234614.880671-1-slava%40dubeyko.com
+patch subject: [PATCH] hfs: introduce KUnit tests for HFS string operations
+config: i386-buildonly-randconfig-001-20250910 (https://download.01.org/0day-ci/archive/20250911/202509110508.vlALr05g-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250911/202509110508.vlALr05g-lkp@intel.com/reproduce)
 
-diff --git a/fs/xfs/xfs_export.c b/fs/xfs/xfs_export.c
-index 201489d3de08..ca2a9ed0eb16 100644
---- a/fs/xfs/xfs_export.c
-+++ b/fs/xfs/xfs_export.c
-@@ -106,7 +106,8 @@ struct inode *
- xfs_nfs_get_inode(
- 	struct super_block	*sb,
- 	u64			ino,
--	u32			generation)
-+	u32			generation,
-+	uint			flags)
- {
-  	xfs_mount_t		*mp = XFS_M(sb);
- 	xfs_inode_t		*ip;
-@@ -123,7 +124,9 @@ xfs_nfs_get_inode(
- 	 * fine and not an indication of a corrupted filesystem as clients can
- 	 * send invalid file handles and we have to handle it gracefully..
- 	 */
--	error = xfs_iget(mp, NULL, ino, XFS_IGET_UNTRUSTED, 0, &ip);
-+	flags |= XFS_IGET_UNTRUSTED;
-+
-+	error = xfs_iget(mp, NULL, ino, flags, 0, &ip);
- 	if (error) {
- 
- 		/*
-@@ -140,6 +143,10 @@ xfs_nfs_get_inode(
- 		case -EFSCORRUPTED:
- 			error = -ESTALE;
- 			break;
-+		case -ENODATA:
-+			if (flags & XFS_IGET_INCORE)
-+				error = -EAGAIN;
-+			break;
- 		default:
- 			break;
- 		}
-@@ -174,6 +181,12 @@ xfs_fs_fh_to_dentry(struct super_block *sb, struct fid *fid,
- {
- 	struct xfs_fid64	*fid64 = (struct xfs_fid64 *)fid;
- 	struct inode		*inode = NULL;
-+	uint			flags = 0;
-+
-+	if (fileid_type & FILEID_CACHED)
-+		flags = XFS_IGET_INCORE;
-+
-+	fileid_type = FILEID_TYPE(fileid_type);
- 
- 	if (fh_len < xfs_fileid_length(fileid_type))
- 		return NULL;
-@@ -181,11 +194,11 @@ xfs_fs_fh_to_dentry(struct super_block *sb, struct fid *fid,
- 	switch (fileid_type) {
- 	case FILEID_INO32_GEN_PARENT:
- 	case FILEID_INO32_GEN:
--		inode = xfs_nfs_get_inode(sb, fid->i32.ino, fid->i32.gen);
-+		inode = xfs_nfs_get_inode(sb, fid->i32.ino, fid->i32.gen, flags);
- 		break;
- 	case FILEID_INO32_GEN_PARENT | XFS_FILEID_TYPE_64FLAG:
- 	case FILEID_INO32_GEN | XFS_FILEID_TYPE_64FLAG:
--		inode = xfs_nfs_get_inode(sb, fid64->ino, fid64->gen);
-+		inode = xfs_nfs_get_inode(sb, fid64->ino, fid64->gen, flags);
- 		break;
- 	}
- 
-@@ -198,6 +211,12 @@ xfs_fs_fh_to_parent(struct super_block *sb, struct fid *fid,
- {
- 	struct xfs_fid64	*fid64 = (struct xfs_fid64 *)fid;
- 	struct inode		*inode = NULL;
-+	uint			flags = 0;
-+
-+	if (fileid_type & FILEID_CACHED)
-+		flags = XFS_IGET_INCORE;
-+
-+	fileid_type = FILEID_TYPE(fileid_type);
- 
- 	if (fh_len < xfs_fileid_length(fileid_type))
- 		return NULL;
-@@ -205,11 +224,11 @@ xfs_fs_fh_to_parent(struct super_block *sb, struct fid *fid,
- 	switch (fileid_type) {
- 	case FILEID_INO32_GEN_PARENT:
- 		inode = xfs_nfs_get_inode(sb, fid->i32.parent_ino,
--					      fid->i32.parent_gen);
-+					      fid->i32.parent_gen, flags);
- 		break;
- 	case FILEID_INO32_GEN_PARENT | XFS_FILEID_TYPE_64FLAG:
- 		inode = xfs_nfs_get_inode(sb, fid64->parent_ino,
--					      fid64->parent_gen);
-+					      fid64->parent_gen, flags);
- 		break;
- 	}
- 
-@@ -248,4 +267,5 @@ const struct export_operations xfs_export_operations = {
- 	.map_blocks		= xfs_fs_map_blocks,
- 	.commit_blocks		= xfs_fs_commit_blocks,
- #endif
-+	.flags			= EXPORT_OP_NONBLOCK,
- };
-diff --git a/fs/xfs/xfs_export.h b/fs/xfs/xfs_export.h
-index 3cd85e8901a5..9addfcd5b1e1 100644
---- a/fs/xfs/xfs_export.h
-+++ b/fs/xfs/xfs_export.h
-@@ -57,6 +57,7 @@ struct xfs_fid64 {
- /* This flag goes on the wire.  Don't play with it. */
- #define XFS_FILEID_TYPE_64FLAG	0x80	/* NFS fileid has 64bit inodes */
- 
--struct inode *xfs_nfs_get_inode(struct super_block *sb, u64 ino, u32 gen);
-+struct inode *xfs_nfs_get_inode(struct super_block *sb, u64 ino, u32 gen,
-+				uint flags);
- 
- #endif	/* __XFS_EXPORT_H__ */
-diff --git a/fs/xfs/xfs_handle.c b/fs/xfs/xfs_handle.c
-index f19fce557354..7d877ff504d6 100644
---- a/fs/xfs/xfs_handle.c
-+++ b/fs/xfs/xfs_handle.c
-@@ -193,7 +193,7 @@ xfs_khandle_to_inode(
- 		return ERR_PTR(-EINVAL);
- 
- 	inode = xfs_nfs_get_inode(mp->m_super, handle->ha_fid.fid_ino,
--			handle->ha_fid.fid_gen);
-+			handle->ha_fid.fid_gen, 0);
- 	if (IS_ERR(inode))
- 		return ERR_CAST(inode);
- 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509110508.vlALr05g-lkp@intel.com/
+
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+>> ERROR: modpost: "hfs_compare_dentry" [fs/hfs/string_test.ko] undefined!
+>> ERROR: modpost: "hfs_hash_dentry" [fs/hfs/string_test.ko] undefined!
+>> ERROR: modpost: "hfs_strcmp" [fs/hfs/string_test.ko] undefined!
+
 -- 
-2.51.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
