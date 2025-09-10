@@ -1,161 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-60727-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60728-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9147B50A8E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 03:53:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E53BAB50A9A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 03:59:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F1AE56375B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 01:53:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0998169F82
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 01:59:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC173226CFC;
-	Wed, 10 Sep 2025 01:53:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C316E2264D4;
+	Wed, 10 Sep 2025 01:59:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qm38kS5C"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pcKBDT40"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4844A1FAC42
-	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Sep 2025 01:53:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E5E62248B8;
+	Wed, 10 Sep 2025 01:59:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757469229; cv=none; b=WbG2D/EJVtkvKgqQSLO3BifUy1lnxFO7HFWzyfivwCQI3G0MP7EBdPgpu/WPy/nWbJly4gx9R8xih0kqjJHRzO8PKUiUVtKNT6T1ORt07Z4YJfyTeffL9rE8wtRL5ccKW/bmS9vbHm/7dRCO+ht75eb7OLW1dxOZRhui79ZDBpk=
+	t=1757469585; cv=none; b=PM3B6QQraLC2zNy+nIOZU8E2TVrHORY7Q3KuQmuh6D6fCWkArh9VCBbQSvEO5ltGDuC4xt6yBcHQIEfTh/pLS3PDznH8CS0tVdz29i24jySqkQo0HYFu25Rdc5T683z9cG9EqcNmzfOQtB9gL6SA1gBYHx92lx47S6spCxbq3pY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757469229; c=relaxed/simple;
-	bh=pZauyM11CntK8pSkJ8QNRjawZGUOvqDKEEB4FGp7yt8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eZykBBG6fZmcRVsw/Ic+LgkwA2QO1l4xA7EQrX3JpUrAbsamG7VvlFHP8jRgrN+fAJhKaJbk/LiWc13Eya8u6/uONMQfy5qbhYTQ9JhK9a8djQbyY/oMaogMI6IVq4ia54MXEsEozpSrMj00Z7JTwLpqPD7dHekcpJmW6AjJacs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qm38kS5C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72AD5C4CEFA;
-	Wed, 10 Sep 2025 01:53:47 +0000 (UTC)
+	s=arc-20240116; t=1757469585; c=relaxed/simple;
+	bh=tY2g1ewNz2H31wMVaoYNp4hPaQ8OMzfHbr13qu9BshQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=OA1PLPKy0xXD1ltGtxS2lhNnwTucfAPLBvP+astxKJN6Rmb7qR3AFQF3Q9wauyc6IOEqE5fURj7JKig9QuOt7Rj6zmb/0e1KMwj/8MeP0b2mzY9FruWNq3cydYM16RbJAhNjQ1pqqxQaLuyuj5pJ5TgYV4ZNWm3qvzRoZS+UL7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pcKBDT40; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25188C4CEF4;
+	Wed, 10 Sep 2025 01:59:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757469227;
-	bh=pZauyM11CntK8pSkJ8QNRjawZGUOvqDKEEB4FGp7yt8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Qm38kS5CEu7WlWy48Av+PhBhR8rQluIolDr6OIpi1OqR0lyipqVuBuDP+V0EKeVxj
-	 Ln+F53CpxcKikwobc9G8FBsBEQGGZrSZHKFkfLjDmyCXsXH12J8HyWy9o7MhSRR3zP
-	 URLCMDRO1fNrU01b+twgFc0knMBy3gylzdXwFZpVVEew89QJlCe4u7WWf/VxXkbbXA
-	 l+ihRI2TFweAA1fE7LK2ca87t4PWd5YtGBGULLuV4Zjr6W20hgMSWuJwdwU1giYj+R
-	 5BIQkiEpDY5mv6Kz2Sj+i1MHGJqdIOTExtPKNun4DVTJ+whcytpFaa/TB2u50H9uLa
-	 AC3tEz/nNX/7A==
+	s=k20201202; t=1757469584;
+	bh=tY2g1ewNz2H31wMVaoYNp4hPaQ8OMzfHbr13qu9BshQ=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=pcKBDT40l2OFNcvFOhCpqh4mzQO1YOZw3KzEyrS9QzV8G+18vGvcGaEoauo+jdN3E
+	 MfuRJbuZ8vqts5jC5guF85KMn4PHQD+4eC5qIXp5IUfsXMgGJHvwYQdt7RCCAOWUal
+	 wFhVOwrs7qnIXnmwlrYxdIWQdztTWchxwCOfWw2UPdQHOjBaT1Ux5HOeRIImeUBQR9
+	 S8SqUfGWsoWXQjcaDU9lvv+ve6pgHsYLf5t5MOBAFw2hqPzP1DocXUe9E+02lbeOEG
+	 TYaFLnzoRxBJvs/4N8ugvmcnBLpVpJgWW7cKgLVzyRECAy8titAUxclO+VesDQDed+
+	 GO0g8MpI2ajaQ==
+Message-ID: <5839b964d7465a8eb7235cd01575a0af073af60d.camel@kernel.org>
+Subject: Re: [PATCH v5 0/3] Initial NFS client support for RWF_DONTCACHE
 From: Trond Myklebust <trondmy@kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	Anna Schumaker <anna@kernel.org>
-Subject: [PATCH v5 3/3] NFS: Enable use of the RWF_DONTCACHE flag on the NFS client
-Date: Tue,  9 Sep 2025 21:53:44 -0400
-Message-ID: <3c81beb1e2ee8e56a86f0de4598507c8465613fa.1757177140.git.trond.myklebust@hammerspace.com>
-X-Mailer: git-send-email 2.51.0
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, Anna Schumaker
+	 <anna@kernel.org>, linux-nfs@vger.kernel.org
+Date: Tue, 09 Sep 2025 21:59:42 -0400
 In-Reply-To: <cover.1757177140.git.trond.myklebust@hammerspace.com>
-References: <cover.1755612705.git.trond.myklebust@hammerspace.com> <cover.1757177140.git.trond.myklebust@hammerspace.com>
+References: <cover.1755612705.git.trond.myklebust@hammerspace.com>
+	 <cover.1757177140.git.trond.myklebust@hammerspace.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: Trond Myklebust <trond.myklebust@hammerspace.com>
+Hi Andrew,
 
-The NFS client needs to defer dropbehind until after any writes to the
-folio have been persisted on the server. Since this may be a 2 step
-process, use folio_end_writeback_no_dropbehind() to allow release of the
-writeback flag, and then call folio_end_dropbehind() once the COMMIT is
-done.
+On Tue, 2025-09-09 at 21:53 -0400, Trond Myklebust wrote:
+> From: Trond Myklebust <trond.myklebust@hammerspace.com>
+>=20
+> The main issue is allowing support on 2 stage writes (i.e. unstable
+> WRITE followed by a COMMIT) since those don't follow the current
+> assumption that the 'dropbehind' flag can be fulfilled as soon as the
+> writeback lock is dropped.
+>=20
+> v2:
+> =C2=A0- Make use of the new iocb parameter for nfs_write_begin()
+> v3:
+> =C2=A0- Set/clear PG_DROPBEHIND on the head of the nfs_page group
+> =C2=A0- Simplify helper folio_end_dropbehind
+> v4:
+> =C2=A0- Replace filemap_end_dropbehind_write() with folio_end_dropbehind(=
+)
+> =C2=A0- Add a helper to replace folio_end_writeback with an equivalent
+> that
+> =C2=A0=C2=A0 does not attempt to interpret the dropbehind flag
+> =C2=A0- Keep the folio dropbehind flag set until the NFS client is ready
+> to
+> =C2=A0=C2=A0 call folio_end_dropbehind.
+> =C2=A0- Don't try to do a read-modify-write in nfs_write_begin() if the
+> folio
+> =C2=A0=C2=A0 has the dropbehind flag set.
+> v5:
+> =C2=A0- Change helper function export types to EXPORT_SYMBOL_GPL
+>=20
+> Trond Myklebust (3):
+> =C2=A0 filemap: Add a helper for filesystems implementing dropbehind
+> =C2=A0 filemap: Add a version of folio_end_writeback that ignores
+> dropbehind
+> =C2=A0 NFS: Enable use of the RWF_DONTCACHE flag on the NFS client
+>=20
+> =C2=A0fs/nfs/file.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 |=C2=A0 9 +++++----
+> =C2=A0fs/nfs/nfs4file.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 1 +
+> =C2=A0fs/nfs/write.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 |=C2=A0 4 +++-
+> =C2=A0include/linux/pagemap.h |=C2=A0 2 ++
+> =C2=A0mm/filemap.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 | 34 ++++++++++++++++++++++++++--------
+> =C2=A05 files changed, 37 insertions(+), 13 deletions(-)
 
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
----
- fs/nfs/file.c     | 9 +++++----
- fs/nfs/nfs4file.c | 1 +
- fs/nfs/write.c    | 4 +++-
- 3 files changed, 9 insertions(+), 5 deletions(-)
+Since the above series has already done the rounds in the linux-nfs and
+linux-fsdevel mailing lists, could you please ask you to shepherd it in
+to the 6.18 merge window? As you can see above the larger set of
+changes are to mm/filemap.c rather than being NFS specific.
 
-diff --git a/fs/nfs/file.c b/fs/nfs/file.c
-index 8059ece82468..9025c93bcaf1 100644
---- a/fs/nfs/file.c
-+++ b/fs/nfs/file.c
-@@ -361,6 +361,8 @@ static bool nfs_want_read_modify_write(struct file *file, struct folio *folio,
- 
- 	if (pnfs_ld_read_whole_page(file_inode(file)))
- 		return true;
-+	if (folio_test_dropbehind(folio))
-+		return false;
- 	/* Open for reading too? */
- 	if (file->f_mode & FMODE_READ)
- 		return true;
-@@ -380,7 +382,6 @@ static int nfs_write_begin(const struct kiocb *iocb,
- 			   loff_t pos, unsigned len, struct folio **foliop,
- 			   void **fsdata)
- {
--	fgf_t fgp = FGP_WRITEBEGIN;
- 	struct folio *folio;
- 	struct file *file = iocb->ki_filp;
- 	int once_thru = 0;
-@@ -390,10 +391,8 @@ static int nfs_write_begin(const struct kiocb *iocb,
- 		file, mapping->host->i_ino, len, (long long) pos);
- 	nfs_truncate_last_folio(mapping, i_size_read(mapping->host), pos);
- 
--	fgp |= fgf_set_order(len);
- start:
--	folio = __filemap_get_folio(mapping, pos >> PAGE_SHIFT, fgp,
--				    mapping_gfp_mask(mapping));
-+	folio = write_begin_get_folio(iocb, mapping, pos >> PAGE_SHIFT, len);
- 	if (IS_ERR(folio))
- 		return PTR_ERR(folio);
- 	*foliop = folio;
-@@ -405,6 +404,7 @@ static int nfs_write_begin(const struct kiocb *iocb,
- 	} else if (!once_thru &&
- 		   nfs_want_read_modify_write(file, folio, pos, len)) {
- 		once_thru = 1;
-+		folio_clear_dropbehind(folio);
- 		ret = nfs_read_folio(file, folio);
- 		folio_put(folio);
- 		if (!ret)
-@@ -949,5 +949,6 @@ const struct file_operations nfs_file_operations = {
- 	.splice_write	= iter_file_splice_write,
- 	.check_flags	= nfs_check_flags,
- 	.setlease	= simple_nosetlease,
-+	.fop_flags	= FOP_DONTCACHE,
- };
- EXPORT_SYMBOL_GPL(nfs_file_operations);
-diff --git a/fs/nfs/nfs4file.c b/fs/nfs/nfs4file.c
-index c9a0d1e420c6..7f43e890d356 100644
---- a/fs/nfs/nfs4file.c
-+++ b/fs/nfs/nfs4file.c
-@@ -456,4 +456,5 @@ const struct file_operations nfs4_file_operations = {
- #else
- 	.llseek		= nfs_file_llseek,
- #endif
-+	.fop_flags	= FOP_DONTCACHE,
- };
-diff --git a/fs/nfs/write.c b/fs/nfs/write.c
-index 647c53d1418a..a671de3dda07 100644
---- a/fs/nfs/write.c
-+++ b/fs/nfs/write.c
-@@ -296,7 +296,7 @@ static void nfs_folio_end_writeback(struct folio *folio)
- {
- 	struct nfs_server *nfss = NFS_SERVER(folio->mapping->host);
- 
--	folio_end_writeback(folio);
-+	folio_end_writeback_no_dropbehind(folio);
- 	if (atomic_long_dec_return(&nfss->writeback) <
- 	    NFS_CONGESTION_OFF_THRESH) {
- 		nfss->write_congested = 0;
-@@ -745,6 +745,8 @@ static void nfs_inode_remove_request(struct nfs_page *req)
- 			clear_bit(PG_MAPPED, &req->wb_head->wb_flags);
- 		}
- 		spin_unlock(&mapping->i_private_lock);
-+
-+		folio_end_dropbehind(folio);
- 	}
- 	nfs_page_group_unlock(req);
- 
--- 
-2.51.0
+Cheers
+ Trond
 
+--=20
+Trond Myklebust
+Linux NFS client maintainer, Hammerspace
+trondmy@kernel.org, trond.myklebust@hammerspace.com
 
