@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-60795-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60796-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBA97B51A30
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 16:50:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD237B51A0C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 16:48:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBE6E1891B49
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 14:46:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A92E7BEE54
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 14:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2F713629B5;
-	Wed, 10 Sep 2025 14:39:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA552369335;
+	Wed, 10 Sep 2025 14:39:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MnpkegUG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P/NiZzhF"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24CB9246774;
-	Wed, 10 Sep 2025 14:39:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ECDC32C331;
+	Wed, 10 Sep 2025 14:39:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757515152; cv=none; b=pW6e/gSIN6Osgus2GF8eeAI/Pks0eSiSPeSBfA60h9XE3plhMzZLXcKDArA0NNemqGNEY+oUDpwQ4A9XM9IswrDVw99RGmFrBvgaTCYhjgtRYlEhHL94gObnypi8iNajSlBactOAD6k4LbNvFRNc3Ej1GfihhEjODIKJNOKpDfw=
+	t=1757515158; cv=none; b=G4oosctqlkedquLfai/C48i96CMyJFjIM8nH6zAKFFonjMYHtg8quCn1UyAbMw1KGwsYHj9h/TEa8AuEzuFBHQ7mXo92ssL8dqM2hMKkAucnCCx+ytNE/5Mbk6hOCTG5h4gY2bKxfIIB+sdtgAnO/PQ3Y7kC7CIC69bombJrE3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757515152; c=relaxed/simple;
-	bh=0dDnDj24i/MfTfri3RDCElEpJVNXM5ePPuTvy2KpYKw=;
+	s=arc-20240116; t=1757515158; c=relaxed/simple;
+	bh=zqQ6rgi7O/wHq5neMUB7hh99707I6vBoC949QtDxqUc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ngjgRg+91mvNXVLm79Fp7AswUnhWRBX41+MSIIrPhNBcsYLARlOOlIHeAnSCy6q2kgW8zkQwL/WiJEP7dklH5ir2s4QlVOC1nrTKQG5c2USwYJHiL9NIWLtTDy5WR2nnwAZlv1BpRANaEQhVYUVZYqLWP2dFYN36+eCQbV1s5+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MnpkegUG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30C85C4CEEB;
-	Wed, 10 Sep 2025 14:39:06 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=XBoJ00qNqYgyk3Wk9XQP3Ie2zYctpyOxTjFUR0iG1kZF0aOfi15+Ai7IOo1pulDzsJtCXg/2jLZoD5cJbOkzqXSD97PLlSF7lByI0m4maYl78r7KFYk2JXKgZ4uR/DYUMLMi7IT7rvMPB6bxp6DqLXPuWYlT+dNvFg0hSzGK9IQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P/NiZzhF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BF6CC4CEF8;
+	Wed, 10 Sep 2025 14:39:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757515151;
-	bh=0dDnDj24i/MfTfri3RDCElEpJVNXM5ePPuTvy2KpYKw=;
+	s=k20201202; t=1757515157;
+	bh=zqQ6rgi7O/wHq5neMUB7hh99707I6vBoC949QtDxqUc=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=MnpkegUGxO1vBgAdFeYyhSsrw6WMs4xZKi9nh5Zz1O1xhA/kNk6t/Oz8wFZoYaTCC
-	 FsL8MRdyinzyIwB8aH0bD/cWXVWv5VpOWuzRejbTmrkB7bjg57y4jVPYL1T5aMAw/H
-	 lJRRt2KXaWGA1FgLvSDIqFlZlEvbE8dyUN9BE93u9Ub/mVy6ySxBndeZ66wAAb3W3d
-	 /dZzPpKrhVKGrroVV26z7DK3Edayhu+idNZSuv+TDWN1h1N5jXh4CKb2Nwyi2uo3+0
-	 orrp6rVK0A2FCpRr2lc/pfZmMcx2RGlZY+3yxaYfSbPAgemSk/SNUuPWERYUN1Y5mU
-	 +e8pr0aDZ+pcg==
+	b=P/NiZzhFl25Mf35HvvOae3cfDKbIiF66wLTVM+O6VjkuzC4U7wxS3PwmtauvflJob
+	 hGG1IODBTWvFzZT/3hf7OZoOZnz+W3UXRNyx1B31mf4Mbnk6qHhq/9OptIzQTIftH7
+	 nJrrrmIosc3XB1AKMLMl6qQdBXG5BkNwg1XH1gkuHc3CykzLR3gyfbnU9S9r9Y2lqQ
+	 Y59vZ3C2rcLBBv9uOIKTILx91gOjd/uo5oovceO2M5t00EC8ZoPL3Q/mLEe3Gbp4BJ
+	 Ea4+nMWnoz94nT/ikwRSdViLj4xXcV/N+TYAI2evLeqHlsCN1tnE1iMXapYQ0TbRNZ
+	 c5WSoQBRqeabg==
 From: Christian Brauner <brauner@kernel.org>
-Date: Wed, 10 Sep 2025 16:37:06 +0200
-Subject: [PATCH 21/32] pid: support iterator
+Date: Wed, 10 Sep 2025 16:37:07 +0200
+Subject: [PATCH 22/32] time: support iterator
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250910-work-namespace-v1-21-4dd56e7359d8@kernel.org>
+Message-Id: <20250910-work-namespace-v1-22-4dd56e7359d8@kernel.org>
 References: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
 In-Reply-To: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
 To: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
@@ -72,12 +72,12 @@ Cc: Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>,
  linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
  netdev@vger.kernel.org, Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.14.3-dev-385fa
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1243; i=brauner@kernel.org;
- h=from:subject:message-id; bh=0dDnDj24i/MfTfri3RDCElEpJVNXM5ePPuTvy2KpYKw=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQc7OVor/r77utiEc4rArO39PmXXN92fWsco40155W3b
- 3qW7ONY31HKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjAR/l8Mf3gq2bhKV7ksCUte
- a/bqhmlFVklnNfOaxD+pP5nyZT4rsDH897UTYDKfXDJf+FFxca7Czc8hzHm1alM+doRydniuaGp
- jAAA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3233; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=zqQ6rgi7O/wHq5neMUB7hh99707I6vBoC949QtDxqUc=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQc7OUUDd1psjh5jsGCtbNjzjmGfFXWvW+WlyHdtEs/t
+ FY17Cp/RykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwEQ+CDL8d+veZ+Pp/Z57Tbem
+ 8hYZ64+8P/bvDDt79MksPpab3vskYxn+e5/xfDdh0eSDgqt0mOYYsmt9Z14zX5Wt04EjpqR6jeg
+ PBgA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
@@ -86,45 +86,107 @@ support file handles for namespaces.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- kernel/pid_namespace.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ include/linux/time_namespace.h |  5 +++++
+ init/main.c                    |  2 ++
+ kernel/time/namespace.c        | 13 +++++++++++--
+ 3 files changed, 18 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
-index 20ce4052d1c5..228ae20299f9 100644
---- a/kernel/pid_namespace.c
-+++ b/kernel/pid_namespace.c
-@@ -23,6 +23,7 @@
- #include <linux/sched/task.h>
- #include <linux/sched/signal.h>
- #include <linux/idr.h>
+diff --git a/include/linux/time_namespace.h b/include/linux/time_namespace.h
+index bb2c52f4fc94..7f6af7a9771e 100644
+--- a/include/linux/time_namespace.h
++++ b/include/linux/time_namespace.h
+@@ -33,6 +33,7 @@ struct time_namespace {
+ extern struct time_namespace init_time_ns;
+ 
+ #ifdef CONFIG_TIME_NS
++void __init time_ns_init(void);
+ extern int vdso_join_timens(struct task_struct *task,
+ 			    struct time_namespace *ns);
+ extern void timens_commit(struct task_struct *tsk, struct time_namespace *ns);
+@@ -108,6 +109,10 @@ static inline ktime_t timens_ktime_to_host(clockid_t clockid, ktime_t tim)
+ }
+ 
+ #else
++static inline void __init time_ns_init(void)
++{
++}
++
+ static inline int vdso_join_timens(struct task_struct *task,
+ 				   struct time_namespace *ns)
+ {
+diff --git a/init/main.c b/init/main.c
+index 0ee0ee7b7c2c..e7d2c57c65a7 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -103,6 +103,7 @@
+ #include <linux/randomize_kstack.h>
+ #include <linux/pidfs.h>
+ #include <linux/ptdump.h>
++#include <linux/time_namespace.h>
+ #include <net/net_namespace.h>
+ 
+ #include <asm/io.h>
+@@ -1072,6 +1073,7 @@ void start_kernel(void)
+ 	fork_init();
+ 	proc_caches_init();
+ 	uts_ns_init();
++	time_ns_init();
+ 	key_init();
+ 	security_init();
+ 	dbg_late_init();
+diff --git a/kernel/time/namespace.c b/kernel/time/namespace.c
+index 80b3d2ce2fb6..408f60d0a3b6 100644
+--- a/kernel/time/namespace.c
++++ b/kernel/time/namespace.c
+@@ -12,6 +12,7 @@
+ #include <linux/seq_file.h>
+ #include <linux/proc_ns.h>
+ #include <linux/export.h>
 +#include <linux/nstree.h>
- #include <uapi/linux/wait.h>
- #include "pid_sysctl.h"
+ #include <linux/time.h>
+ #include <linux/slab.h>
+ #include <linux/cred.h>
+@@ -88,7 +89,7 @@ static struct time_namespace *clone_time_ns(struct user_namespace *user_ns,
+ 		goto fail;
  
-@@ -122,6 +123,7 @@ static struct pid_namespace *create_pid_namespace(struct user_namespace *user_ns
- 	ns->memfd_noexec_scope = pidns_memfd_noexec_scope(parent_pid_ns);
- #endif
+ 	err = -ENOMEM;
+-	ns = kmalloc(sizeof(*ns), GFP_KERNEL_ACCOUNT);
++	ns = kzalloc(sizeof(*ns), GFP_KERNEL_ACCOUNT);
+ 	if (!ns)
+ 		goto fail_dec;
  
+@@ -104,6 +105,7 @@ static struct time_namespace *clone_time_ns(struct user_namespace *user_ns,
+ 	ns->user_ns = get_user_ns(user_ns);
+ 	ns->offsets = old_ns->offsets;
+ 	ns->frozen_offsets = false;
 +	ns_tree_add(ns);
  	return ns;
  
- out_free_inum:
-@@ -147,6 +149,7 @@ static void delayed_free_pidns(struct rcu_head *p)
+ fail_free_page:
+@@ -250,11 +252,13 @@ static void timens_set_vvar_page(struct task_struct *task,
  
- static void destroy_pid_namespace(struct pid_namespace *ns)
+ void free_time_ns(struct time_namespace *ns)
  {
 +	ns_tree_remove(ns);
- 	unregister_pidns_sysctls(ns);
- 
+ 	dec_time_namespaces(ns->ucounts);
+ 	put_user_ns(ns->user_ns);
  	ns_free_inum(&ns->ns);
-@@ -473,6 +476,7 @@ static __init int pid_namespaces_init(void)
- #endif
- 
- 	register_pid_ns_sysctl_table_vm();
-+	ns_tree_add(&init_pid_ns);
- 	return 0;
+ 	__free_page(ns->vvar_page);
+-	kfree(ns);
++	/* Concurrent nstree traversal depends on a grace period. */
++	kfree_rcu(ns, ns.ns_rcu);
  }
  
+ static struct time_namespace *to_time_ns(struct ns_common *ns)
+@@ -487,3 +491,8 @@ struct time_namespace init_time_ns = {
+ 	.ns.ops		= &timens_operations,
+ 	.frozen_offsets	= true,
+ };
++
++void __init time_ns_init(void)
++{
++	ns_tree_add(&init_time_ns);
++}
 
 -- 
 2.47.3
