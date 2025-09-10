@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-60777-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60778-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0478DB519A9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 16:40:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24113B519AE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 16:40:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA3E0565751
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 14:38:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30C3AA013D6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Sep 2025 14:39:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77C54334709;
-	Wed, 10 Sep 2025 14:37:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 399BC335BB5;
+	Wed, 10 Sep 2025 14:37:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y9QziZBd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uXRhCXHQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB888334379;
-	Wed, 10 Sep 2025 14:37:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78CC131AF06;
+	Wed, 10 Sep 2025 14:37:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757515043; cv=none; b=S98zORo53TaZKC8EQIlT32Im3fIN63OoVbWQykkiVCDWSYv7zJ5SDvAnUkRL4LtxZePSYubEZevGZRYCTTlYhn5rRPxwo+psGy6IdLOogbHkOsyeGsNOcckLRoPgBLv2eFONjyzEt7WMT24FgWyoSI9bGV1jI4CiBcikYnBN5AE=
+	t=1757515049; cv=none; b=UcmFEF/C/p5zp2phcCQIJzWc4784cOXeRAQ6G2lXWTuTErXIS+AfhUXoFM8F/B2QZ+yPtyM6e+FbD9/MmbNShOFH+UrdxXMxAsxZko+aSzJqbPdT1vRkfIds+2QHoerEiKcvDFaQEAjbNVt9/Ddako07YMVXdRpDsBewErJZRYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757515043; c=relaxed/simple;
-	bh=hlPdSkw0/u4fF427i2FMAlYZXzvrtzVNFa+EeyOD1Bk=;
+	s=arc-20240116; t=1757515049; c=relaxed/simple;
+	bh=ygHSdVECEky2ur8dAJ5kFJhfsJSwR30ApmvwmuGj5yo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TeBPlimcRFi0c5x4cHRcVLBvXDNo/BBobtPDdqvt1Whu6eg5lo2i7JknewU/YPe1Aqa8udIIvODl2ldTiWe3Coy1SAbj96OEvw3EdP+jt53w9Lr9Gcdn2YLvbTXmwuFANy+Ew2RjL/c6lZuGTLt9UaPax8f/UUqZNEoBlSYnuGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y9QziZBd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B44E2C4CEEB;
-	Wed, 10 Sep 2025 14:37:17 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=EW8c/RH+JMDajKKFuoPUS4BIxrh0JCxzIR9rrqtru2kYboYM3cjkmcYPR8iL+owpgZw6Iepu45Gc3UsNUGqbab1gKImM+/qcJ6tw44Tjkn9b+dq3jYMqrCgyFCkWOlEM+F/WYL1mCpmeQqQeFjXvLDKartmnl+2yc1DFTVxaMe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uXRhCXHQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B19E0C4CEF9;
+	Wed, 10 Sep 2025 14:37:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757515043;
-	bh=hlPdSkw0/u4fF427i2FMAlYZXzvrtzVNFa+EeyOD1Bk=;
+	s=k20201202; t=1757515049;
+	bh=ygHSdVECEky2ur8dAJ5kFJhfsJSwR30ApmvwmuGj5yo=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Y9QziZBd0Xfzc0k/r5hAFGohisjw14iJaQyLCxbG5+1s/fTXCFtLFrLkkSq/eTlX5
-	 O8p1ntOjYorqNP/nX8D96b7puZvl/zp+aOknGEY8LFIGuw7WKeV/kB2UcfW/neieYF
-	 sY27AFZhq7pTCwQTSQRbqWcEwaDYAXuavdYjed5c0nu/stMgUtOZhS/rR3o1a8T+dp
-	 EtcvePxTOhVaXUE7F/BfWmGfZ5QcQMerTkv0rLWHC6jKoRi3a8Ir6SWM1XqfW3OECo
-	 3WG+YdVlHw1eUVW7XQiXssh53X7Z2MCBjy6YeE6b8v1MnQrRgtEyMzOlLNqn/l7CoL
-	 ocXG37wpvE+/g==
+	b=uXRhCXHQM7+BUFhrfe33B3BKlUxIF6zIEfkqE2XLwfVf1LpLaqTmqV3mRAvy3avlu
+	 USavCz2kLkAYOedsFmywNwuPf2EOBoE+bXWiBR+oTYBDQEBEsccwemEkusIuuMILef
+	 M9Eud7NUYL51LxCBsEJU2gWr5u0sU0DpddjGZUiLWdaldcIAgwPBgAi6CBFgU0e8ac
+	 7Qjvo2lliTqzQyty/+wFP8ETdrvurZ67+w96MQREIXgpOWLIlQt938lnKyN2vkSVS9
+	 l+DAybyDdjw+s/ciqZs6CDXsf8MwdFkSt39Vau0gA9wGt3XU6VGY9mqWTEJKzkr85h
+	 nTJSbkPvcJnKQ==
 From: Christian Brauner <brauner@kernel.org>
-Date: Wed, 10 Sep 2025 16:36:48 +0200
-Subject: [PATCH 03/32] block: use extensible_ioctl_valid()
+Date: Wed, 10 Sep 2025 16:36:49 +0200
+Subject: [PATCH 04/32] ns: move to_ns_common() to ns_common.h
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250910-work-namespace-v1-3-4dd56e7359d8@kernel.org>
+Message-Id: <20250910-work-namespace-v1-4-4dd56e7359d8@kernel.org>
 References: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
 In-Reply-To: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
 To: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
@@ -72,47 +72,81 @@ Cc: Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>,
  linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
  netdev@vger.kernel.org, Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.14.3-dev-385fa
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1199; i=brauner@kernel.org;
- h=from:subject:message-id; bh=hlPdSkw0/u4fF427i2FMAlYZXzvrtzVNFa+EeyOD1Bk=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQc7GVnSFA6qy+kdChh/aztN45MnV18JMfglArXv9Llq
- dvYtxRe6yhlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE9gQLk4BmMjTdQz/q7+z7Gab/uWn4s45
- 2bKdB1M1nC8E8yVOFe/7/2iNeaGWDiND+/W3R+zcPizMLtrO4b56+4Y/DDzLp5YWmvPaHZBmiOF
- jBAA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2191; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=ygHSdVECEky2ur8dAJ5kFJhfsJSwR30ApmvwmuGj5yo=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQc7GVfK1sx13oB05HdnhZHJJXX5zNGnXrYpHykLen5X
+ t2Fi55GdpSwMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAExEYgvDV6EcPy6lps4Xy6Nr
+ q8V3Tk/8c2PilJAP9Z/5W/zbPmZ8ZfhfXzfPfpus+qkFOqcXt/RtTLxwT/KMx+dja/01TRkaC1t
+ 4AA==
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Use the new extensible_ioctl_valid() helper which is equivalent to what
-is done here.
+Move the helper to ns_common.h where it belongs.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- block/blk-integrity.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ include/linux/ns_common.h | 20 ++++++++++++++++++++
+ include/linux/nsproxy.h   | 11 -----------
+ 2 files changed, 20 insertions(+), 11 deletions(-)
 
-diff --git a/block/blk-integrity.c b/block/blk-integrity.c
-index 056b8948369d..609d75d6a39b 100644
---- a/block/blk-integrity.c
-+++ b/block/blk-integrity.c
-@@ -58,16 +58,14 @@ int blk_rq_count_integrity_sg(struct request_queue *q, struct bio *bio)
- int blk_get_meta_cap(struct block_device *bdev, unsigned int cmd,
- 		     struct logical_block_metadata_cap __user *argp)
- {
--	struct blk_integrity *bi = blk_get_integrity(bdev->bd_disk);
-+	struct blk_integrity *bi;
- 	struct logical_block_metadata_cap meta_cap = {};
- 	size_t usize = _IOC_SIZE(cmd);
+diff --git a/include/linux/ns_common.h b/include/linux/ns_common.h
+index 7d22ea50b098..bc2e0758e1c9 100644
+--- a/include/linux/ns_common.h
++++ b/include/linux/ns_common.h
+@@ -6,6 +6,15 @@
  
--	if (_IOC_DIR(cmd)  != _IOC_DIR(FS_IOC_GETLBMD_CAP) ||
--	    _IOC_TYPE(cmd) != _IOC_TYPE(FS_IOC_GETLBMD_CAP) ||
--	    _IOC_NR(cmd)   != _IOC_NR(FS_IOC_GETLBMD_CAP) ||
--	    _IOC_SIZE(cmd) < LBMD_SIZE_VER0)
-+	if (extensible_ioctl_valid(cmd, FS_IOC_GETLBMD_CAP, LBMD_SIZE_VER0))
- 		return -ENOIOCTLCMD;
+ struct proc_ns_operations;
  
-+	bi = blk_get_integrity(bdev->bd_disk);
- 	if (!bi)
- 		goto out;
++struct cgroup_namespace;
++struct ipc_namespace;
++struct mnt_namespace;
++struct net;
++struct pid_namespace;
++struct time_namespace;
++struct user_namespace;
++struct uts_namespace;
++
+ struct ns_common {
+ 	struct dentry *stashed;
+ 	const struct proc_ns_operations *ops;
+@@ -13,4 +22,15 @@ struct ns_common {
+ 	refcount_t count;
+ };
  
++#define to_ns_common(__ns)                              \
++	_Generic((__ns),                                \
++		struct cgroup_namespace *: &(__ns)->ns, \
++		struct ipc_namespace *:    &(__ns)->ns, \
++		struct mnt_namespace *:    &(__ns)->ns, \
++		struct net *:              &(__ns)->ns, \
++		struct pid_namespace *:    &(__ns)->ns, \
++		struct time_namespace *:   &(__ns)->ns, \
++		struct user_namespace *:   &(__ns)->ns, \
++		struct uts_namespace *:    &(__ns)->ns)
++
+ #endif
+diff --git a/include/linux/nsproxy.h b/include/linux/nsproxy.h
+index dab6a1734a22..e6bec522b139 100644
+--- a/include/linux/nsproxy.h
++++ b/include/linux/nsproxy.h
+@@ -42,17 +42,6 @@ struct nsproxy {
+ };
+ extern struct nsproxy init_nsproxy;
+ 
+-#define to_ns_common(__ns)                              \
+-	_Generic((__ns),                                \
+-		struct cgroup_namespace *: &(__ns->ns), \
+-		struct ipc_namespace *:    &(__ns->ns), \
+-		struct net *:              &(__ns->ns), \
+-		struct pid_namespace *:    &(__ns->ns), \
+-		struct mnt_namespace *:    &(__ns->ns), \
+-		struct time_namespace *:   &(__ns->ns), \
+-		struct user_namespace *:   &(__ns->ns), \
+-		struct uts_namespace *:    &(__ns->ns))
+-
+ /*
+  * A structure to encompass all bits needed to install
+  * a partial or complete new set of namespaces.
 
 -- 
 2.47.3
