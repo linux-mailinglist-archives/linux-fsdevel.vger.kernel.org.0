@@ -1,117 +1,297 @@
-Return-Path: <linux-fsdevel+bounces-60950-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60951-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 178D2B5328E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 14:39:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22082B532DF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 14:57:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 910547A7484
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 12:38:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EFAF3BF593
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 12:57:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0237132276C;
-	Thu, 11 Sep 2025 12:39:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9873E322DC1;
+	Thu, 11 Sep 2025 12:57:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q2AqRJHr"
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="xvQtmMEh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE6C931D362;
-	Thu, 11 Sep 2025 12:39:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31FF621C19D;
+	Thu, 11 Sep 2025 12:57:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757594384; cv=none; b=OAdVeOyeQWfOEmqBjEUjtuxnwMw2e1UJVi/ad0teEe7dqePzYEHcl4dAu5LWsw+4WfbGv5WMlz/JYIWAWnNsoUgJ2uSlyfONC8alGeIbRMJIX5ULbSQFvyXTVv/M0IfyTwCIJIP9taYsvQWacn8A4fyF6CR8jX5VaPdIHr9LKhQ=
+	t=1757595432; cv=none; b=cag4pXUb+tdoD/P1y7Z7n3jn2mYJagrhzilJuomSL2PuVq8+f7ArH3FhThq1fnfjZjYl813OM3AP0nplQ37e0cSIxLTTjqWuOptZWhmAikuX6WWGFTnZWQM9szrd4wvcBrWkkc6qzM8mBT88zsVvUzqCW6qZMxYPXUewugHGEdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757594384; c=relaxed/simple;
-	bh=6FtPYMUmXS4HX/u+H612CF2FyM2NkLQzePe7zVxOw2c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UuqcTOvY4HjsHMepsPx4cJCxRtlKZZb7Sq/cHU3FnundODLNCIuVBeFJl1LEnIs6j7I9j/7FV79xGjKxugM9tUozXUgtzVVNVD95CsfDvYkxG55MyqgQRdlT2YCmRKSrB5CBJ+rFcpsz8aSRq6eXeuuCvj9+b6Eb+HGSZ3+gibQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q2AqRJHr; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6188b5ad681so937223a12.0;
-        Thu, 11 Sep 2025 05:39:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757594381; x=1758199181; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bsWzc+/Yzyp5wOv8cyBtS91v14RkQ3sT1U0aSspvdqI=;
-        b=Q2AqRJHrSNS8csDf7Q0gNKkLEWmVXHIZUP2gUr03UmEnYUE0RgLhP6X4DQqUYN4yMv
-         toF6f93x9aBhD4MDM4HkkIdnXCci0Hb9o7G7qyCm9d+qMJKTrNEamgfrMVzznYxWIMZK
-         uqcgPSX8npu9OUbw+QI8pUX/qzqZmpxwPzuxIOrY/6Vkn1BX89ALUriT3AWKT0u/KTDc
-         g7EAUhzLGao93PKPkSGyJaNoDFDjvg4ls61eAqoohwVK5oeeLEPvvshglWtE3excpPic
-         HRz/FfCZ0gtD12/NtGCY0IZ+vFpEKDzQc/VOi3ql+94eBmshjrLyyIyVvR46ePt7LjQ7
-         7xfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757594381; x=1758199181;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bsWzc+/Yzyp5wOv8cyBtS91v14RkQ3sT1U0aSspvdqI=;
-        b=F0zbWIC90NEqfkFm2sFkil1zwdiqScqjN4SaTnn51tqQiWEw0tMYuCzDIu360zHB9Y
-         MT81rp/aCZo0Jq7+81KJsfAWyW108DssHtbP/nVE0XS8NCb5VNY2lJehn68nkneUlihu
-         gxGg4EdVTo5IIp+P70fN2MC8njONFPIBHwp2mee3/0F4rKTEyxCXfVHZRQtpXTl//LEG
-         3Rsq4A2xQP0R+njwEpXPLOGBlPVktgbqNjEZkpmuemr6EDUok149SpQdSWCMlE8arLzW
-         HgF+VNHPn1cCCKI4cmUBtcib1/pCcanL11TnRWcnR4rRH11zyHskZSTyWMa2h//uXz/T
-         dgDg==
-X-Forwarded-Encrypted: i=1; AJvYcCW29O7cbmuKZ1mXpvgOZFfACHXTzloTXkE3618/Zy8uEU/0x3LngRq/AYkL7E/rbEEnGwK+z6owona/zNqKQQ==@vger.kernel.org, AJvYcCWYoQMRw0/iGKlUcXQfgEA4uINVw8q423tUwN+fb7v9KPmxf0C2KOSXUPxV/cvfKGRaqdQWq9bO6w==@vger.kernel.org, AJvYcCXuIDlXJIO9hSRQE+Jw7oUe79Jf+uqdvgkwcI3zSOcJWs+MakTfEX4voTQfQwRjdQNteZ9/rITW02d9@vger.kernel.org, AJvYcCXxl1EzfNB+iCg+dRQJyfHdECxwd2bTr7PqMo82BwnKldNdJmVYY5pZZGoVsj3CQXFPxfaWYGvtUYac@vger.kernel.org
-X-Gm-Message-State: AOJu0YwumPEXCcx/uYYEWDYZ3MWC6gKe0M39WS93//5Tl/IIvLxri3n6
-	7XkHbvFIow+cHzLKsmy9926wMo3uCnFYg1ciSxr2r/DOghi3YijpymFC8Urd8S8t4vCzec+J6LT
-	lI3Wja6Af/MvPytREnf7AX0lnEn/b/WaeanQ9
-X-Gm-Gg: ASbGnctefDygFzUcARQi/D8/Vky6UqYk/qSfys1nkN+O/n1+QWxNAlKIB/msXS96cbQ
-	2wgOPgCeRqfhu128BTP9HX3ymzdlHuNAC4MC1e8aV7tOBormfcJ9xx/VZWqThrmIZ8yjflehANz
-	6Nt0w1tchQXFupcchYJBgTrmf9QV07vnG20NViTS0O37lBCBvZZlIMbTZgfPk4bRvfE542199lt
-	SyV+EA=
-X-Google-Smtp-Source: AGHT+IHj8kn3tYK5fFRS22d2FAno9LzWn2/rSyFfcihgDLJyq6rXSXoYRxKkaU3QCaUdE6DFVxlA54fTAAjDBJ4nUcc=
-X-Received: by 2002:a17:907:6088:b0:afe:78c2:4d4a with SMTP id
- a640c23a62f3a-b04b1542fbbmr1803288366b.34.1757594380949; Thu, 11 Sep 2025
- 05:39:40 -0700 (PDT)
+	s=arc-20240116; t=1757595432; c=relaxed/simple;
+	bh=K+4XD5yFY+tAfXUiIUiyJLrRhDxis6mu+vq20L3/Ahw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oLNvPbMfg9SLKZ5DFLNPL8tuNtodqoXyaigeJftSZ8HZIm5T23EeoZWaTLt9pvVsroTpFK6lOoUkIADL9QCz2GMKTs7xRt6fpOhZlO4L07uaJclDS/S3hjJ4t0wMUd2Bb0qts6sFFG6cQ1y8xqQ2L8grhsX5tlfVMaFDnlQVhpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=xvQtmMEh; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4cMyJ126d7z9v0c;
+	Thu, 11 Sep 2025 14:57:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1757595425;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FPtJkZGBhi1ttcgm/uOh+mtCdcmyZezd0zJhyU8kjvU=;
+	b=xvQtmMEhDN7sp7BbZrnxjOsANXMyN5Jj7p/Bbawllq4g41blJZhsaWR2uBmdlF4k2P7YiK
+	rfi1SXuRJeNcdp+XegJGtIUUi9OHdXNjQfrSVgy7TsbMbyINgcQFtPca+c5cYlGGoneMnt
+	YxDLq1qvg5HNqqhq9K7ji9sJ4SYaUxk7x7dvd2tb2lJlQEBgD3/jTvWXDcj1YP5BOzCHYK
+	YX3aaJQv02terwbVGfM77Uf5PWkeWMOqBkC0RFa8ex1w/SLtlkWWmc/3rCLHC2ST4kWuK0
+	CKdHHLAhzSrOhop14hbxAB/eh0OD6IGX1GX+k2WCCPAeTS4YgnenWIafeyp9Aw==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
+Date: Thu, 11 Sep 2025 22:56:44 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
+	linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
+	Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
+	Daan De Meyer <daan.j.demeyer@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH 29/32] nsfs: add missing id retrieval support
+Message-ID: <2025-09-11-edible-other-howl-rinse-HzYjnw@cyphar.com>
+References: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
+ <20250910-work-namespace-v1-29-4dd56e7359d8@kernel.org>
+ <2025-09-10-yawning-gross-samba-lox-6iVSwq@cyphar.com>
+ <20250911-korallen-aufgibt-faafc9df8f9a@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250910214927.480316-1-tahbertschinger@gmail.com>
- <20250910214927.480316-11-tahbertschinger@gmail.com> <aMLAkwL42TGw0-n6@infradead.org>
-In-Reply-To: <aMLAkwL42TGw0-n6@infradead.org>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 11 Sep 2025 14:39:29 +0200
-X-Gm-Features: AS18NWAy6IN5toh_htKXiw5tLda19ct1lS2Emo_qxQapODBJEDYZPa0A2cfA5ZM
-Message-ID: <CAOQ4uxiKXq-YHfYy_LPt31KBVwWXc62+2CNqepBxhWrHcYxgnQ@mail.gmail.com>
-Subject: Re: [PATCH 10/10] xfs: add support for non-blocking fh_to_dentry()
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Thomas Bertschinger <tahbertschinger@gmail.com>, io-uring@vger.kernel.org, axboe@kernel.dk, 
-	linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org, 
-	linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org, cem@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="k2h4kdmb347cx47i"
+Content-Disposition: inline
+In-Reply-To: <20250911-korallen-aufgibt-faafc9df8f9a@brauner>
+X-Rspamd-Queue-Id: 4cMyJ126d7z9v0c
+
+
+--k2h4kdmb347cx47i
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 29/32] nsfs: add missing id retrieval support
+MIME-Version: 1.0
 
-On Thu, Sep 11, 2025 at 2:29=E2=80=AFPM Christoph Hellwig <hch@infradead.or=
-g> wrote:
->
-> On Wed, Sep 10, 2025 at 03:49:27PM -0600, Thomas Bertschinger wrote:
-> > This is to support using open_by_handle_at(2) via io_uring. It is usefu=
-l
-> > for io_uring to request that opening a file via handle be completed
-> > using only cached data, or fail with -EAGAIN if that is not possible.
-> >
-> > The signature of xfs_nfs_get_inode() is extended with a new flags
-> > argument that allows callers to specify XFS_IGET_INCORE.
-> >
-> > That flag is set when the VFS passes the FILEID_CACHED flag via the
-> > fileid_type argument.
->
-> Please post the entire series to all list.  No one has any idea what your
-> magic new flag does without seeing all the patches.
->
+On 2025-09-11, Christian Brauner <brauner@kernel.org> wrote:
+> On Thu, Sep 11, 2025 at 02:49:49AM +1000, Aleksa Sarai wrote:
+> > On 2025-09-10, Christian Brauner <brauner@kernel.org> wrote:
+> > > The mount namespace has supported id retrieval for a while already.
+> > > Add support for the other types as well.
+> > >=20
+> > > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> > > ---
+> > >  fs/nsfs.c                 | 74 +++++++++++++++++++++++++++++++++++++=
+++--------
+> > >  include/uapi/linux/nsfs.h | 12 ++++++--
+> > >  2 files changed, 72 insertions(+), 14 deletions(-)
+> > >=20
+> > > diff --git a/fs/nsfs.c b/fs/nsfs.c
+> > > index 3c6fcf652633..527480e67fd1 100644
+> > > --- a/fs/nsfs.c
+> > > +++ b/fs/nsfs.c
+> > > @@ -173,6 +173,13 @@ static bool nsfs_ioctl_valid(unsigned int cmd)
+> > >  	case NS_GET_NSTYPE:
+> > >  	case NS_GET_OWNER_UID:
+> > >  	case NS_GET_MNTNS_ID:
+> > > +	case NS_GET_NETNS_ID:
+> > > +	case NS_GET_CGROUPNS_ID:
+> > > +	case NS_GET_IPCNS_ID:
+> > > +	case NS_GET_UTSNS_ID:
+> > > +	case NS_GET_PIDNS_ID:
+> > > +	case NS_GET_TIMENS_ID:
+> > > +	case NS_GET_USERNS_ID:
+> > >  	case NS_GET_PID_FROM_PIDNS:
+> > >  	case NS_GET_TGID_FROM_PIDNS:
+> > >  	case NS_GET_PID_IN_PIDNS:
+> > > @@ -226,18 +233,6 @@ static long ns_ioctl(struct file *filp, unsigned=
+ int ioctl,
+> > >  		argp =3D (uid_t __user *) arg;
+> > >  		uid =3D from_kuid_munged(current_user_ns(), user_ns->owner);
+> > >  		return put_user(uid, argp);
+> > > -	case NS_GET_MNTNS_ID: {
+> > > -		__u64 __user *idp;
+> > > -		__u64 id;
+> > > -
+> > > -		if (ns->ops->type !=3D CLONE_NEWNS)
+> > > -			return -EINVAL;
+> > > -
+> > > -		mnt_ns =3D container_of(ns, struct mnt_namespace, ns);
+> > > -		idp =3D (__u64 __user *)arg;
+> > > -		id =3D mnt_ns->ns.ns_id;
+> > > -		return put_user(id, idp);
+> > > -	}
+> > >  	case NS_GET_PID_FROM_PIDNS:
+> > >  		fallthrough;
+> > >  	case NS_GET_TGID_FROM_PIDNS:
+> > > @@ -283,6 +278,61 @@ static long ns_ioctl(struct file *filp, unsigned=
+ int ioctl,
+> > >  			ret =3D -ESRCH;
+> > >  		return ret;
+> > >  	}
+> > > +	case NS_GET_MNTNS_ID:
+> > > +		fallthrough;
+> > > +	case NS_GET_NETNS_ID:
+> > > +		fallthrough;
+> > > +	case NS_GET_CGROUPNS_ID:
+> > > +		fallthrough;
+> > > +	case NS_GET_IPCNS_ID:
+> > > +		fallthrough;
+> > > +	case NS_GET_UTSNS_ID:
+> > > +		fallthrough;
+> > > +	case NS_GET_PIDNS_ID:
+> > > +		fallthrough;
+> > > +	case NS_GET_TIMENS_ID:
+> > > +		fallthrough;
+> > > +	case NS_GET_USERNS_ID: {
+> > > +		__u64 __user *idp;
+> > > +		__u64 id;
+> > > +		int expected_type;
+> > > +
+> > > +		switch (ioctl) {
+> > > +		case NS_GET_MNTNS_ID:
+> > > +			expected_type =3D CLONE_NEWNS;
+> > > +			break;
+> > > +		case NS_GET_NETNS_ID:
+> > > +			expected_type =3D CLONE_NEWNET;
+> > > +			break;
+> > > +		case NS_GET_CGROUPNS_ID:
+> > > +			expected_type =3D CLONE_NEWCGROUP;
+> > > +			break;
+> > > +		case NS_GET_IPCNS_ID:
+> > > +			expected_type =3D CLONE_NEWIPC;
+> > > +			break;
+> > > +		case NS_GET_UTSNS_ID:
+> > > +			expected_type =3D CLONE_NEWUTS;
+> > > +			break;
+> > > +		case NS_GET_PIDNS_ID:
+> > > +			expected_type =3D CLONE_NEWPID;
+> > > +			break;
+> > > +		case NS_GET_TIMENS_ID:
+> > > +			expected_type =3D CLONE_NEWTIME;
+> > > +			break;
+> > > +		case NS_GET_USERNS_ID:
+> > > +			expected_type =3D CLONE_NEWUSER;
+> > > +			break;
+> > > +		default:
+> > > +			return -EINVAL;
+> > > +		}
+> > > +
+> > > +		if (ns->ops->type !=3D expected_type)
+> > > +			return -EINVAL;
+> >=20
+> > While I get that having this be per-ns-type lets programs avoid being
+> > tricked into thinking that one namespace ID is actually another
+> > namespace, it feels a bit ugly to have to add a new ioctl for every new
+> > namespace.
+> >=20
+> > If we added a way to get the CLONE_* flag for a namespace (NS_GET_TYPE)
+>=20
+> That exists afaict: NS_GET_NSTYPE.
 
-Might as well re-post your entire v2 patches with v2 subjects and
-cc xfs list.
+D'oh, yeah that's all you need.
 
-Thanks,
-Amir.
+> > we could have just NS_GET_ID. Of course, we would have to trust
+> > userspace to do the right thing...
+>=20
+> So NS_GET_ID can just return the id and be done with it. If userspace
+> wants to know what type it is they can issue a separate ioctl. But since
+> the id space is shared all ids of all namespaces can be compared with
+> each other reliably. So really for comparision you wouldn't need to
+> care. IOW, yes.
+
+Ah, I didn't realise they're all in the same id-space -- in that case it
+makes even more sense to just have a single NS_GET_ID IMHO.
+
+> > > +
+> > > +		idp =3D (__u64 __user *)arg;
+> > > +		id =3D ns->ns_id;
+> > > +		return put_user(id, idp);
+> > > +	}
+> > >  	}
+> > > =20
+> > >  	/* extensible ioctls */
+> > > diff --git a/include/uapi/linux/nsfs.h b/include/uapi/linux/nsfs.h
+> > > index 97d8d80d139f..f7c21840cc09 100644
+> > > --- a/include/uapi/linux/nsfs.h
+> > > +++ b/include/uapi/linux/nsfs.h
+> > > @@ -16,8 +16,6 @@
+> > >  #define NS_GET_NSTYPE		_IO(NSIO, 0x3)
+> > >  /* Get owner UID (in the caller's user namespace) for a user namespa=
+ce */
+> > >  #define NS_GET_OWNER_UID	_IO(NSIO, 0x4)
+> > > -/* Get the id for a mount namespace */
+> > > -#define NS_GET_MNTNS_ID		_IOR(NSIO, 0x5, __u64)
+> > >  /* Translate pid from target pid namespace into the caller's pid nam=
+espace. */
+> > >  #define NS_GET_PID_FROM_PIDNS	_IOR(NSIO, 0x6, int)
+> > >  /* Return thread-group leader id of pid in the callers pid namespace=
+=2E */
+> > > @@ -42,6 +40,16 @@ struct mnt_ns_info {
+> > >  /* Get previous namespace. */
+> > >  #define NS_MNT_GET_PREV		_IOR(NSIO, 12, struct mnt_ns_info)
+> > > =20
+> > > +/* Retrieve namespace identifiers. */
+> > > +#define NS_GET_MNTNS_ID		_IOR(NSIO, 5,  __u64)
+> > > +#define NS_GET_NETNS_ID		_IOR(NSIO, 13, __u64)
+> > > +#define NS_GET_CGROUPNS_ID	_IOR(NSIO, 14, __u64)
+> > > +#define NS_GET_IPCNS_ID		_IOR(NSIO, 15, __u64)
+> > > +#define NS_GET_UTSNS_ID		_IOR(NSIO, 16, __u64)
+> > > +#define NS_GET_PIDNS_ID		_IOR(NSIO, 17, __u64)
+> > > +#define NS_GET_TIMENS_ID	_IOR(NSIO, 18, __u64)
+> > > +#define NS_GET_USERNS_ID	_IOR(NSIO, 19, __u64)
+> > > +
+> > >  enum init_ns_ino {
+> > >  	IPC_NS_INIT_INO		=3D 0xEFFFFFFFU,
+> > >  	UTS_NS_INIT_INO		=3D 0xEFFFFFFEU,
+> > >=20
+> > > --=20
+> > > 2.47.3
+> > >=20
+> >=20
+> > --=20
+> > Aleksa Sarai
+> > Senior Software Engineer (Containers)
+> > SUSE Linux GmbH
+> > https://www.cyphar.com/
+>=20
+>=20
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+https://www.cyphar.com/
+
+--k2h4kdmb347cx47i
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaMLHDBsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG/mzwEAx9h4AVzSTJqdqBhkS8zK
+BEnvqdVPIlPDANYwvmDIWUIBAOwZ/4o+AwKGmjWBo/SxQ951kZAsSKCS5CcqlP8p
+8FQB
+=EJ+O
+-----END PGP SIGNATURE-----
+
+--k2h4kdmb347cx47i--
 
