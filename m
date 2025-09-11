@@ -1,92 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-60899-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60900-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3A41B52BD6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 10:36:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 706B5B52BE1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 10:37:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AD28A821EE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 08:36:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4CAF56731B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 08:37:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1122E2DEF;
-	Thu, 11 Sep 2025 08:35:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD8127F006;
+	Thu, 11 Sep 2025 08:37:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="V/2pNPLX";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8wJXEdI7";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="V/2pNPLX";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8wJXEdI7"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gbVdZ5or";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="aLTXTZFS";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BXH35BNu";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="onTJLSTl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3831C2E2F03
-	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Sep 2025 08:35:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A99DD2E3373
+	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Sep 2025 08:37:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757579752; cv=none; b=R22ov9ut7FgmM+CTi4XtX8EYaVrchMtDjaD0S9I8PEVLD6NniWkCD74kFBoxJDPMiwXQBhYgknyJkaPEIPqFvG6+8g+kIDtiZxQ+zVMtAsN6dtXem0Q0eqGHeWzy5ESnR3um3YVR3tgdxIwleilc87zQ8tGumJBiYnOIV2O3SAY=
+	t=1757579823; cv=none; b=I0o4sGGdAb9g7g3L2hg3GmSTpdGktD7eClicJOwbGOQNljedNAfttfmEYJF/Qjnepk5UFxC/a8VMpjG9hHYOQpM9iStjtljcl8feb8n0nr2LDDMuf/ZXgn2N6vyWkwumVd7E/1Is1VxpCQzLOMgOp02tAB+wrXORB5Ec+v2QznM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757579752; c=relaxed/simple;
-	bh=xUniYa5d9kv1YF1wdw5xrXTHy1xcfjyEygeYW6UZbAE=;
+	s=arc-20240116; t=1757579823; c=relaxed/simple;
+	bh=ZX7RRVZevogotEZL80A6v/Ith9MGrv9zZwmRgxBYRGk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WF9DBffIKnIMnh/yykBy8Y8eVOyrsUuE0mWcTl3GtLz6u8AgfJlGTKceq+bEAROgM4E/ZKMiyAXGf4VIMZul4efa7krQka3VP8xfjBFdXPgvAyHX25Tn3r5/5tBkYB3LcE/7HMQX6ayXIfRcxVhW6ehcanHgzKdTh2zLPteEy8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=V/2pNPLX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8wJXEdI7; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=V/2pNPLX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8wJXEdI7; arc=none smtp.client-ip=195.135.223.130
+	 Content-Type:Content-Disposition:In-Reply-To; b=lRfgcOkMQXtezsmpNWZka1Ok9vloIjB10C3uRMZJBObXhzFfGN2xFyLpPVdvivl5rubcbXxaBctdUM30Hfv3Xw26yOhN1FhZAryQgGiSFfW/nHxoOy/Sj5liN8OQVl1D4JGlUIPbBQqNxELogXv/GnT7tPWbEQqcBAyMwwSnJU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gbVdZ5or; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=aLTXTZFS; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BXH35BNu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=onTJLSTl; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B38583F8C9;
-	Thu, 11 Sep 2025 08:35:41 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id EC21968608;
+	Thu, 11 Sep 2025 08:36:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757579741; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1757579819; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=KZHXjktAiNRSWCsp7mRo7oXVASySHuSrY3xtvxgr0Oo=;
-	b=V/2pNPLXjZxOAXOZsGDYJjc2AyKj4F+z+UmxbO0U71QzrlxliA1spl1IIsigxVlhuUNypU
-	V+MwrG1Yfq34WpkYW+gGb73AoQEZkis/St+xrG74pfZnVJhJQupE485J/8vHlzsMWXBU2i
-	e8t2YbSo3Vc4NHMqR5+gg1L1eA9ZgiM=
+	bh=MVKatHAMv6K0HJB+fE+uvvzEY9BdzRg6mGSrDhfixOc=;
+	b=gbVdZ5ordIwsjok0HGyMjLJHMSMCvd7phfCfms+ZTddXEbopzWQoU9SS+FPbGVcufPMb2x
+	JMqA30UnF9uP4ZX8DjZuMTMu0J3iWh4dqAOgxyk/H1JXK2INNCBYcRL6RtLmBo7y9ghHvL
+	it6KQ2/afG8hGOw9P2K0/2NZIIl4e58=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757579741;
+	s=susede2_ed25519; t=1757579819;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=KZHXjktAiNRSWCsp7mRo7oXVASySHuSrY3xtvxgr0Oo=;
-	b=8wJXEdI7KEwDUG4TdenbF0CZ7u9cEaytJTrnh2lXLZFebLh6NR+j81h2lyWMG5ZPD0huZZ
-	exnc3+IjyrgjDqDw==
-Authentication-Results: smtp-out1.suse.de;
+	bh=MVKatHAMv6K0HJB+fE+uvvzEY9BdzRg6mGSrDhfixOc=;
+	b=aLTXTZFSgnI5/Cod9GP6PRHmztHtOqVdF3UN4+Ox//+uZ9pn/LzTYv8Pv/vn52ReXpGA7L
+	LygYn7X671fZo2Cg==
+Authentication-Results: smtp-out2.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757579741; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1757579818; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=KZHXjktAiNRSWCsp7mRo7oXVASySHuSrY3xtvxgr0Oo=;
-	b=V/2pNPLXjZxOAXOZsGDYJjc2AyKj4F+z+UmxbO0U71QzrlxliA1spl1IIsigxVlhuUNypU
-	V+MwrG1Yfq34WpkYW+gGb73AoQEZkis/St+xrG74pfZnVJhJQupE485J/8vHlzsMWXBU2i
-	e8t2YbSo3Vc4NHMqR5+gg1L1eA9ZgiM=
+	bh=MVKatHAMv6K0HJB+fE+uvvzEY9BdzRg6mGSrDhfixOc=;
+	b=BXH35BNu64iIGCB3YP2jGeLYcKsUThmhJ6XH1FZZJOeTGgj8j+AKxuheSOZ825qLuYyoJA
+	Fnp0TF+S3NW+tY9TPbQQJsr0ly3mI21S04Ty4JaNJv85r6FBeE9/XfvhuQjAIdfE3zrgCt
+	iZWZFl6rA6UgTWCABj5n/rG4pREhBLE=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757579741;
+	s=susede2_ed25519; t=1757579818;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=KZHXjktAiNRSWCsp7mRo7oXVASySHuSrY3xtvxgr0Oo=;
-	b=8wJXEdI7KEwDUG4TdenbF0CZ7u9cEaytJTrnh2lXLZFebLh6NR+j81h2lyWMG5ZPD0huZZ
-	exnc3+IjyrgjDqDw==
+	bh=MVKatHAMv6K0HJB+fE+uvvzEY9BdzRg6mGSrDhfixOc=;
+	b=onTJLSTlgfa3oXRqtjZDgBU2LdJbfKNHu4jUM0BmAA78X6XyIiUUKvU898EivdFRT7NBq1
+	eEDGqyXMCeegHVCg==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9FC9913974;
-	Thu, 11 Sep 2025 08:35:41 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E01B213974;
+	Thu, 11 Sep 2025 08:36:58 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id q8z8Jt2JwmhZcgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 11 Sep 2025 08:35:41 +0000
+	id sqPSNSqKwmjPcgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 11 Sep 2025 08:36:58 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 48964A0A2D; Thu, 11 Sep 2025 10:35:41 +0200 (CEST)
-Date: Thu, 11 Sep 2025 10:35:41 +0200
+	id 8E4F6A0A2D; Thu, 11 Sep 2025 10:36:58 +0200 (CEST)
+Date: Thu, 11 Sep 2025 10:36:58 +0200
 From: Jan Kara <jack@suse.cz>
 To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>, 
@@ -116,10 +116,11 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org, linux-mm@kvack.org, 
 	ntfs3@lists.linux.dev, kexec@lists.infradead.org, kasan-dev@googlegroups.com, 
 	Jason Gunthorpe <jgg@nvidia.com>
-Subject: Re: [PATCH v2 02/16] device/dax: update devdax to use mmap_prepare
-Message-ID: <fpdlink5oiu7dbx35qayavv4lq2qjvruyplo2bomvu7lnsz62h@uwoawxkmywo7>
+Subject: Re: [PATCH v2 03/16] mm: add vma_desc_size(), vma_desc_pages()
+ helpers
+Message-ID: <afrz7upbj463hmejktsw2dxvvty7a7jtsibyn4fdlwwyrzogrh@c3svlrvl4job>
 References: <cover.1757534913.git.lorenzo.stoakes@oracle.com>
- <12f96a872e9067fa678a37b8616d12b2c8d1cc10.1757534913.git.lorenzo.stoakes@oracle.com>
+ <5ac75e5ac627c06e62401dfda8c908eadac8dfec.1757534913.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -128,8 +129,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <12f96a872e9067fa678a37b8616d12b2c8d1cc10.1757534913.git.lorenzo.stoakes@oracle.com>
-X-Spam-Level: 
+In-Reply-To: <5ac75e5ac627c06e62401dfda8c908eadac8dfec.1757534913.git.lorenzo.stoakes@oracle.com>
 X-Spamd-Result: default: False [-2.30 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	SUSPICIOUS_RECIPS(1.50)[];
@@ -153,121 +153,76 @@ X-Spamd-Result: default: False [-2.30 / 50.00];
 	RCVD_TLS_LAST(0.00)[];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
 X-Spam-Flag: NO
+X-Spam-Level: 
 X-Spam-Score: -2.30
 
-On Wed 10-09-25 21:21:57, Lorenzo Stoakes wrote:
-> The devdax driver does nothing special in its f_op->mmap hook, so
-> straightforwardly update it to use the mmap_prepare hook instead.
+On Wed 10-09-25 21:21:58, Lorenzo Stoakes wrote:
+> It's useful to be able to determine the size of a VMA descriptor range used
+> on f_op->mmap_prepare, expressed both in bytes and pages, so add helpers
+> for both and update code that could make use of it to do so.
 > 
-> Acked-by: David Hildenbrand <david@redhat.com>
 > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-Looks good. Feel free to add:
+Looks good, I presume more users will come later in the series :). Feel
+free to add:
 
 Reviewed-by: Jan Kara <jack@suse.cz>
 
 								Honza
 
 > ---
->  drivers/dax/device.c | 32 +++++++++++++++++++++-----------
->  1 file changed, 21 insertions(+), 11 deletions(-)
+>  fs/ntfs3/file.c    |  2 +-
+>  include/linux/mm.h | 10 ++++++++++
+>  mm/secretmem.c     |  2 +-
+>  3 files changed, 12 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/dax/device.c b/drivers/dax/device.c
-> index 2bb40a6060af..c2181439f925 100644
-> --- a/drivers/dax/device.c
-> +++ b/drivers/dax/device.c
-> @@ -13,8 +13,9 @@
->  #include "dax-private.h"
->  #include "bus.h"
+> diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
+> index c1ece707b195..86eb88f62714 100644
+> --- a/fs/ntfs3/file.c
+> +++ b/fs/ntfs3/file.c
+> @@ -304,7 +304,7 @@ static int ntfs_file_mmap_prepare(struct vm_area_desc *desc)
 >  
-> -static int check_vma(struct dev_dax *dev_dax, struct vm_area_struct *vma,
-> -		const char *func)
-> +static int __check_vma(struct dev_dax *dev_dax, vm_flags_t vm_flags,
-> +		       unsigned long start, unsigned long end, struct file *file,
-> +		       const char *func)
->  {
->  	struct device *dev = &dev_dax->dev;
->  	unsigned long mask;
-> @@ -23,7 +24,7 @@ static int check_vma(struct dev_dax *dev_dax, struct vm_area_struct *vma,
->  		return -ENXIO;
+>  	if (rw) {
+>  		u64 to = min_t(loff_t, i_size_read(inode),
+> -			       from + desc->end - desc->start);
+> +			       from + vma_desc_size(desc));
 >  
->  	/* prevent private mappings from being established */
-> -	if ((vma->vm_flags & VM_MAYSHARE) != VM_MAYSHARE) {
-> +	if ((vm_flags & VM_MAYSHARE) != VM_MAYSHARE) {
->  		dev_info_ratelimited(dev,
->  				"%s: %s: fail, attempted private mapping\n",
->  				current->comm, func);
-> @@ -31,15 +32,15 @@ static int check_vma(struct dev_dax *dev_dax, struct vm_area_struct *vma,
->  	}
->  
->  	mask = dev_dax->align - 1;
-> -	if (vma->vm_start & mask || vma->vm_end & mask) {
-> +	if (start & mask || end & mask) {
->  		dev_info_ratelimited(dev,
->  				"%s: %s: fail, unaligned vma (%#lx - %#lx, %#lx)\n",
-> -				current->comm, func, vma->vm_start, vma->vm_end,
-> +				current->comm, func, start, end,
->  				mask);
->  		return -EINVAL;
->  	}
->  
-> -	if (!vma_is_dax(vma)) {
-> +	if (!file_is_dax(file)) {
->  		dev_info_ratelimited(dev,
->  				"%s: %s: fail, vma is not DAX capable\n",
->  				current->comm, func);
-> @@ -49,6 +50,13 @@ static int check_vma(struct dev_dax *dev_dax, struct vm_area_struct *vma,
->  	return 0;
+>  		if (is_sparsed(ni)) {
+>  			/* Allocate clusters for rw map. */
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 892fe5dbf9de..0b97589aec6d 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -3572,6 +3572,16 @@ static inline unsigned long vma_pages(const struct vm_area_struct *vma)
+>  	return (vma->vm_end - vma->vm_start) >> PAGE_SHIFT;
 >  }
 >  
-> +static int check_vma(struct dev_dax *dev_dax, struct vm_area_struct *vma,
-> +		     const char *func)
+> +static inline unsigned long vma_desc_size(struct vm_area_desc *desc)
 > +{
-> +	return __check_vma(dev_dax, vma->vm_flags, vma->vm_start, vma->vm_end,
-> +			   vma->vm_file, func);
+> +	return desc->end - desc->start;
 > +}
 > +
->  /* see "strong" declaration in tools/testing/nvdimm/dax-dev.c */
->  __weak phys_addr_t dax_pgoff_to_phys(struct dev_dax *dev_dax, pgoff_t pgoff,
->  		unsigned long size)
-> @@ -285,8 +293,9 @@ static const struct vm_operations_struct dax_vm_ops = {
->  	.pagesize = dev_dax_pagesize,
->  };
+> +static inline unsigned long vma_desc_pages(struct vm_area_desc *desc)
+> +{
+> +	return vma_desc_size(desc) >> PAGE_SHIFT;
+> +}
+> +
+>  /* Look up the first VMA which exactly match the interval vm_start ... vm_end */
+>  static inline struct vm_area_struct *find_exact_vma(struct mm_struct *mm,
+>  				unsigned long vm_start, unsigned long vm_end)
+> diff --git a/mm/secretmem.c b/mm/secretmem.c
+> index 60137305bc20..62066ddb1e9c 100644
+> --- a/mm/secretmem.c
+> +++ b/mm/secretmem.c
+> @@ -120,7 +120,7 @@ static int secretmem_release(struct inode *inode, struct file *file)
 >  
-> -static int dax_mmap(struct file *filp, struct vm_area_struct *vma)
-> +static int dax_mmap_prepare(struct vm_area_desc *desc)
+>  static int secretmem_mmap_prepare(struct vm_area_desc *desc)
 >  {
-> +	struct file *filp = desc->file;
->  	struct dev_dax *dev_dax = filp->private_data;
->  	int rc, id;
+> -	const unsigned long len = desc->end - desc->start;
+> +	const unsigned long len = vma_desc_size(desc);
 >  
-> @@ -297,13 +306,14 @@ static int dax_mmap(struct file *filp, struct vm_area_struct *vma)
->  	 * fault time.
->  	 */
->  	id = dax_read_lock();
-> -	rc = check_vma(dev_dax, vma, __func__);
-> +	rc = __check_vma(dev_dax, desc->vm_flags, desc->start, desc->end, filp,
-> +			 __func__);
->  	dax_read_unlock(id);
->  	if (rc)
->  		return rc;
->  
-> -	vma->vm_ops = &dax_vm_ops;
-> -	vm_flags_set(vma, VM_HUGEPAGE);
-> +	desc->vm_ops = &dax_vm_ops;
-> +	desc->vm_flags |= VM_HUGEPAGE;
->  	return 0;
->  }
->  
-> @@ -377,7 +387,7 @@ static const struct file_operations dax_fops = {
->  	.open = dax_open,
->  	.release = dax_release,
->  	.get_unmapped_area = dax_get_unmapped_area,
-> -	.mmap = dax_mmap,
-> +	.mmap_prepare = dax_mmap_prepare,
->  	.fop_flags = FOP_MMAP_SYNC,
->  };
->  
+>  	if ((desc->vm_flags & (VM_SHARED | VM_MAYSHARE)) == 0)
+>  		return -EINVAL;
 > -- 
 > 2.51.0
 > 
