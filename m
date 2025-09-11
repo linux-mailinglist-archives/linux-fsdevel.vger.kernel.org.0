@@ -1,267 +1,171 @@
-Return-Path: <linux-fsdevel+bounces-60873-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60874-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC21AB526AE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 04:52:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AB1E0B526D1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 05:03:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1F1F1B2659B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 02:53:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E42B51B27239
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 03:04:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD7FF221FAC;
-	Thu, 11 Sep 2025 02:52:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="II+tdFEI"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B71AE201278;
+	Thu, 11 Sep 2025 03:03:49 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8026A18EFD1;
-	Thu, 11 Sep 2025 02:52:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3C964A32;
+	Thu, 11 Sep 2025 03:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757559153; cv=none; b=ZsozGdNB1rPLnhn4tMfFdYiT+ptPrSt795QhZzmstK2VW9i9VvZzlmD1jYGiE2+A5Oy4UsSdzx/Q8rQyq1eLyP2MFu1jDp4a4w/+rNC3fThSkryHCZJG/ZT1lmVASWG9ABHCG6Qw0qTKdh+EXx2g069Fz9xfZ15osBxom8glJgs=
+	t=1757559829; cv=none; b=jUVBrAK/Z+fkUsMgspJxOQ4IyRRxSQG5krv58+imNU6l+3vO/Nn13zDuPVG5orzkGbt5MA7dnj0x3ogKrX+a8EqcKGV62hXc1S/fLKXpsm6FYC9QUOz7nPVE5g8GM7l3Sl6bTp4fdnpwgTDDL9jEUfkUeAYi7q/5KfvT4UQFidk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757559153; c=relaxed/simple;
-	bh=wBdHXnDdAAnQuJHkeV8C1uQMDmdRFSU3OZaPFPd7cM0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GhTV2qnDQjXzMmsdG+RCbTvlvRGP4UgsY8Xp5lzWFlzBrV+EJhT4ouD3VsI/fRC5/3plBoRxHpzcI4mXVacMMldCAvOsOtRXA4P6ojf3Quv9xK/2hwoS27b2TMHoHSRuFWf5of1v5qW/h3Xk417hDzdx59AG+/7RfoaOzm4h/XM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=II+tdFEI; arc=none smtp.client-ip=209.85.160.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-31d6b8be249so249949fac.0;
-        Wed, 10 Sep 2025 19:52:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757559150; x=1758163950; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=bpMjHp2LWdB4AWDkPscdVaO0VRTcuWiIT22FTu9B1MU=;
-        b=II+tdFEI1amfhHAHE4c5mPvKbGBmlxi2I0kOBDyu3BgOf3MMgMYTSebu9F9756tRdy
-         OfdvFESNtPJx/g/JF44zDQP/avEv6kiQmkG5IZxsAEKm9FG06vWPXajr+U0uxpT1PZwX
-         k74t1Ng3nvIH1I7OEfw+Va1kXlWm3O08/yxtrArsc8dF0HgFNij56CP4eqa0koibl/am
-         U9DyeBA6U2LpEIBvYoShhcBNCsWiOeA3x2Ic9A/r61FCWCL4rV3o06UrQ9ZORqt80njB
-         In9BkEWDmD/TAw1j6AGNq/gXI2l6wGIiguAwd+LTBNOnNpsYkGYPXogJXrg8gohyHPX+
-         tmEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757559150; x=1758163950;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bpMjHp2LWdB4AWDkPscdVaO0VRTcuWiIT22FTu9B1MU=;
-        b=B2U8wLVRi/26Px5kXVQZP4WU/db3ph7KTfKlsvq3TZ+iDQpNhNzqQZuQzz/M5h3jjp
-         OfwML9X90eXqCkOXRnPbOuI+9CmAi5UAZJX599CpOhDTmCPyOZpr6OZCv7IIbvrN2cwb
-         oqMTKttIBTCJvXWV3ScSITvL5DxntAlenYlx2ofaw8Int5mRS/x7X6lPWBWfAuTEESGc
-         gcNq58rF1wELxL5TPrL1/V8H2NYrEfq4Q9Z0ilqUnvUv4tieFExAJZbksRyyMNghknrX
-         CCeLQL3rmUUgadvtlQxilwsjCP4kXVZ+aA+LS3Y3MHwXI7uVM/puF4fk7s6J7QaEWqsw
-         zbdA==
-X-Forwarded-Encrypted: i=1; AJvYcCUHlZ0IewAt7RwXaZfr/hlQ9xa15C2c8WpHfQPc9lrQSdmWx4gXw5t9FqtgCSPXG9XIZi3O5RTLt4ndhRy0@vger.kernel.org, AJvYcCXbx+SLS2OfJQHKPy38GhTF3XqgknHK+UjGHAAX6GX3OQWFUgzX6gNo4SF8d/EVV15beJHQQ4XLDNGaCh92@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkVEHI/lEojjdJTf5fxyIsHOs/5pY1AmX54E+LfMo5XdY8X6fM
-	4/LlT+YJRixzJ+o6IQmCWjktYRUeJjbA1IIirYODC8gln8+IcBVG9uAR5iw1OGjIkkntXaVlHHp
-	u3LjU5lEWb5UAYAoKj+OfCuZ9E97PWVg=
-X-Gm-Gg: ASbGncvCq9IVCQgY4m+6agVyQg4m+k/6CCxoKGuy/3Uw79NAinhbSyLebYemwa+UJx4
-	0fZ0Ljk17D8lZ1qWOYF/ZcnIYTnUnJ6LqyNCbhSPpxp8Olp4M5gSDCNqy4EslWxaDtcSFebNf8o
-	yUKfYyrPHEb0wpkB8S3Bs2CgLamLCq6GsBB/U6zpVrqkgrVNs7AB89eKDjgEKxZJdDdqFUWncDh
-	o45ZskqOri2KD9YoJh/vkoC6YtJdz+VJc0d/rk=
-X-Google-Smtp-Source: AGHT+IFv2XibXXypOlqv0RILHKkLaMk/1jc9mR92t82jtZp+Vm0vVDQ6eAhrLbih1UZ+0wzcwt9/oVQRFlYGSifHFZw=
-X-Received: by 2002:a05:6870:524d:b0:321:2680:2f84 with SMTP id
- 586e51a60fabf-3226284cc7bmr8304474fac.3.1757559150312; Wed, 10 Sep 2025
- 19:52:30 -0700 (PDT)
+	s=arc-20240116; t=1757559829; c=relaxed/simple;
+	bh=kG0UySyRFrCja1kzo53SphF8lwr8Xuv0SNwkLVFOTvA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=NNe5vjDQhxqQ6J9sxzQVkHxFLrLygYXXp2ppQ/4DDEIZqVc6hSPBwpbntxs10B+Ryqm5wRfykw7p8sDEMahcQvesBCGE1DP5WUxOdxMOOg5mhCF38n7EXqgx4qc1RvyYpav6kWdsvPXymqL7lztktYD9cvTIFOjWxBQVK/ToWAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cMj7N3wXRzYQvCF;
+	Thu, 11 Sep 2025 11:03:44 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 11D1F1A01A1;
+	Thu, 11 Sep 2025 11:03:43 +0800 (CST)
+Received: from huawei.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgDnMY4LPMJo3pxqCA--.9534S4;
+	Thu, 11 Sep 2025 11:03:41 +0800 (CST)
+From: Yongjian Sun <sunyongjian@huaweicloud.com>
+To: linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	tytso@mit.edu,
+	jack@suse.cz,
+	yangerkun@huawei.com,
+	yi.zhang@huawei.com,
+	libaokun1@huawei.com,
+	chengzhihao1@huawei.com,
+	sunyongjian1@huawei.com
+Subject: [PATCH v4] ext4: increase i_disksize to offset + len in ext4_update_disksize_before_punch()
+Date: Thu, 11 Sep 2025 10:54:12 +0800
+Message-Id: <20250911025412.186872-1-sunyongjian@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
+Reply-To: sunyongjian1@huawei.com
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250909095611.803898-1-zhangchunyan@iscas.ac.cn>
- <20250909095611.803898-2-zhangchunyan@iscas.ac.cn> <6b2f12aa-8ed9-476d-a69d-f05ea526f16a@redhat.com>
- <CAAfSe-vbvGQy9JozQY3vsqrrPrTaWYMcNw+NaDf3nReWz8ynZg@mail.gmail.com> <8f9a4a13-2881-4baf-ab62-3d0d79e0cd3c@redhat.com>
-In-Reply-To: <8f9a4a13-2881-4baf-ab62-3d0d79e0cd3c@redhat.com>
-From: Chunyan Zhang <zhang.lyra@gmail.com>
-Date: Thu, 11 Sep 2025 10:51:54 +0800
-X-Gm-Features: Ac12FXw931KhRWiAwZHuKU_RVXZ29toqGSbWPbkJSujEUI17HyVR0UbdKmmlFK4
-Message-ID: <CAAfSe-snV-XZ3xGmK6gXNXw-D3ECWbyQgG+WG3c5gAsREz4ccQ@mail.gmail.com>
-Subject: Re: [PATCH V10 1/5] mm: softdirty: Add pte_soft_dirty_available()
-To: David Hildenbrand <david@redhat.com>
-Cc: Chunyan Zhang <zhangchunyan@iscas.ac.cn>, linux-riscv@lists.infradead.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Deepak Gupta <debug@rivosinc.com>, Ved Shanbhogue <ved@rivosinc.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDnMY4LPMJo3pxqCA--.9534S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxWFWDXr17KF45AFW8uw15Arb_yoWrGw1Dpr
+	W5GryUKr4qg34fCws7W3Wjqw1jkay5JrWxGFy7Gr4avryUZw4IqF10qrya9a1DJrs3Ar4q
+	qFs0qrsFva48Z3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyKb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI
+	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
+	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
+	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6x
+	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
+	1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUF1v3UUUUU
+X-CM-SenderInfo: 5vxq505qjmxt3q6k3tpzhluzxrxghudrp/
 
-On Wed, 10 Sept 2025 at 16:51, David Hildenbrand <david@redhat.com> wrote:
->
-> On 10.09.25 10:25, Chunyan Zhang wrote:
-> > Hi David,
-> >
-> > On Tue, 9 Sept 2025 at 19:42, David Hildenbrand <david@redhat.com> wrote:
-> >>
-> >> On 09.09.25 11:56, Chunyan Zhang wrote:
-> >>> Some platforms can customize the PTE soft dirty bit and make it unavailable
-> >>> even if the architecture allows providing the PTE resource.
-> >>>
-> >>> Add an API which architectures can define their specific implementations
-> >>> to detect if the PTE soft-dirty bit is available, on which the kernel
-> >>> is running.
-> >>>
-> >>> Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
-> >>> ---
-> >>>    fs/proc/task_mmu.c      | 17 ++++++++++++++++-
-> >>>    include/linux/pgtable.h | 10 ++++++++++
-> >>>    mm/debug_vm_pgtable.c   |  9 +++++----
-> >>>    mm/huge_memory.c        | 10 ++++++----
-> >>>    mm/internal.h           |  2 +-
-> >>>    mm/mremap.c             | 10 ++++++----
-> >>>    mm/userfaultfd.c        |  6 ++++--
-> >>>    7 files changed, 48 insertions(+), 16 deletions(-)
-> >>>
-> >>> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> >>> index 29cca0e6d0ff..20a609ec1ba6 100644
-> >>> --- a/fs/proc/task_mmu.c
-> >>> +++ b/fs/proc/task_mmu.c
-> >>> @@ -1058,7 +1058,7 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
-> >>>         * -Werror=unterminated-string-initialization warning
-> >>>         *  with GCC 15
-> >>>         */
-> >>> -     static const char mnemonics[BITS_PER_LONG][3] = {
-> >>> +     static char mnemonics[BITS_PER_LONG][3] = {
-> >>>                /*
-> >>>                 * In case if we meet a flag we don't know about.
-> >>>                 */
-> >>> @@ -1129,6 +1129,16 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
-> >>>                [ilog2(VM_SEALED)] = "sl",
-> >>>    #endif
-> >>>        };
-> >>> +/*
-> >>> + * We should remove the VM_SOFTDIRTY flag if the PTE soft-dirty bit is
-> >>> + * unavailable on which the kernel is running, even if the architecture
-> >>> + * allows providing the PTE resource and soft-dirty is compiled in.
-> >>> + */
-> >>> +#ifdef CONFIG_MEM_SOFT_DIRTY
-> >>> +     if (!pte_soft_dirty_available())
-> >>> +             mnemonics[ilog2(VM_SOFTDIRTY)][0] = 0;
-> >>> +#endif
-> >>> +
-> >>>        size_t i;
-> >>>
-> >>>        seq_puts(m, "VmFlags: ");
-> >>> @@ -1531,6 +1541,8 @@ static inline bool pte_is_pinned(struct vm_area_struct *vma, unsigned long addr,
-> >>>    static inline void clear_soft_dirty(struct vm_area_struct *vma,
-> >>>                unsigned long addr, pte_t *pte)
-> >>>    {
-> >>> +     if (!pte_soft_dirty_available())
-> >>> +             return;
-> >>>        /*
-> >>>         * The soft-dirty tracker uses #PF-s to catch writes
-> >>>         * to pages, so write-protect the pte as well. See the
-> >>> @@ -1566,6 +1578,9 @@ static inline void clear_soft_dirty_pmd(struct vm_area_struct *vma,
-> >>>    {
-> >>>        pmd_t old, pmd = *pmdp;
-> >>>
-> >>> +     if (!pte_soft_dirty_available())
-> >>> +             return;
-> >>> +
-> >>>        if (pmd_present(pmd)) {
-> >>>                /* See comment in change_huge_pmd() */
-> >>>                old = pmdp_invalidate(vma, addr, pmdp);
-> >>> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-> >>> index 4c035637eeb7..c0e2a6dc69f4 100644
-> >>> --- a/include/linux/pgtable.h
-> >>> +++ b/include/linux/pgtable.h
-> >>> @@ -1538,6 +1538,15 @@ static inline pgprot_t pgprot_modify(pgprot_t oldprot, pgprot_t newprot)
-> >>>    #endif
-> >>>
-> >>>    #ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
-> >>> +
-> >>> +/*
-> >>> + * Some platforms can customize the PTE soft dirty bit and make it unavailable
-> >>> + * even if the architecture allows providing the PTE resource.
-> >>> + */
-> >>> +#ifndef pte_soft_dirty_available
-> >>> +#define pte_soft_dirty_available()   (true)
-> >>> +#endif
-> >>> +
-> >>>    #ifndef CONFIG_ARCH_ENABLE_THP_MIGRATION
-> >>>    static inline pmd_t pmd_swp_mksoft_dirty(pmd_t pmd)
-> >>>    {
-> >>> @@ -1555,6 +1564,7 @@ static inline pmd_t pmd_swp_clear_soft_dirty(pmd_t pmd)
-> >>>    }
-> >>>    #endif
-> >>>    #else /* !CONFIG_HAVE_ARCH_SOFT_DIRTY */
-> >>> +#define pte_soft_dirty_available()   (false)
-> >>>    static inline int pte_soft_dirty(pte_t pte)
-> >>>    {
-> >>>        return 0;
-> >>> diff --git a/mm/debug_vm_pgtable.c b/mm/debug_vm_pgtable.c
-> >>> index 830107b6dd08..98ed7e22ccec 100644
-> >>> --- a/mm/debug_vm_pgtable.c
-> >>> +++ b/mm/debug_vm_pgtable.c
-> >>> @@ -690,7 +690,7 @@ static void __init pte_soft_dirty_tests(struct pgtable_debug_args *args)
-> >>>    {
-> >>>        pte_t pte = pfn_pte(args->fixed_pte_pfn, args->page_prot);
-> >>>
-> >>> -     if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY))
-> >>> +     if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY) || !pte_soft_dirty_available())
-> >>
-> >> I suggest that you instead make pte_soft_dirty_available() be false without CONFIG_MEM_SOFT_DIRTY.
-> >>
-> >> e.g., for the default implementation
-> >>
-> >> define pte_soft_dirty_available()       IS_ENABLED(CONFIG_MEM_SOFT_DIRTY)
-> >>
-> >> That way you can avoid some ifefs and cleanup these checks.
-> >
-> > Do you mean something like this:
-> >
-> > --- a/include/linux/pgtable.h
-> > +++ b/include/linux/pgtable.h
-> > @@ -1538,6 +1538,16 @@ static inline pgprot_t pgprot_modify(pgprot_t
-> > oldprot, pgprot_t newprot)
-> >   #endif
-> >
-> >   #ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
-> > +#ifndef arch_soft_dirty_available
-> > +#define arch_soft_dirty_available()     (true)
-> > +#endif
-> > +#define pgtable_soft_dirty_supported()
-> > (IS_ENABLED(CONFIG_MEM_SOFT_DIRTY) && arch_soft_dirty_available())
-> > +
-> >   #ifndef CONFIG_ARCH_ENABLE_THP_MIGRATION
-> >   static inline pmd_t pmd_swp_mksoft_dirty(pmd_t pmd)
-> >   {
-> > @@ -1555,6 +1565,7 @@ static inline pmd_t pmd_swp_clear_soft_dirty(pmd_t pmd)
-> >   }
-> >   #endif
-> >   #else /* !CONFIG_HAVE_ARCH_SOFT_DIRTY */
-> > +#define pgtable_soft_dirty_supported() (false)
->
-> Maybe we can simplify to
->
-> #ifndef pgtable_soft_dirty_supported
-> #define pgtable_soft_dirty_supported()  IS_ENABLED(CONFIG_MEM_SOFT_DIRTY)
-> #endif
->
-> And then just let the arch that overrides this function just make it
-> respect IS_ENABLED(CONFIG_MEM_SOFT_DIRTY).
+From: Yongjian Sun <sunyongjian1@huawei.com>
 
-Ok, got you, I will address it.
+After running a stress test combined with fault injection,
+we performed fsck -a followed by fsck -fn on the filesystem
+image. During the second pass, fsck -fn reported:
 
-Thanks for your review,
-Chunyan
+Inode 131512, end of extent exceeds allowed value
+	(logical block 405, physical block 1180540, len 2)
 
+This inode was not in the orphan list. Analysis revealed the
+following call chain that leads to the inconsistency:
 
->
-> --
-> Cheers
->
-> David / dhildenb
->
+                             ext4_da_write_end()
+                              //does not update i_disksize
+                             ext4_punch_hole()
+                              //truncate folio, keep size
+ext4_page_mkwrite()
+ ext4_block_page_mkwrite()
+  ext4_block_write_begin()
+    ext4_get_block()
+     //insert written extent without update i_disksize
+journal commit
+echo 1 > /sys/block/xxx/device/delete
+
+da-write path updates i_size but does not update i_disksize. Then
+ext4_punch_hole truncates the da-folio yet still leaves i_disksize
+unchanged(in the ext4_update_disksize_before_punch function, the
+condition offset + len < size is met). Then ext4_page_mkwrite sees
+ext4_nonda_switch return 1 and takes the nodioread_nolock path, the
+folio about to be written has just been punched out, and it’s offset
+sits beyond the current i_disksize. This may result in a written
+extent being inserted, but again does not update i_disksize. If the
+journal gets committed and then the block device is yanked, we might
+run into this. It should be noted that replacing ext4_punch_hole with
+ext4_zero_range in the call sequence may also trigger this issue, as
+neither will update i_disksize under these circumstances.
+
+To fix this, we can modify ext4_update_disksize_before_punch to
+increase i_disksize to min(offset + len) when both i_size and
+(offset + len) are greater than i_disksize.
+
+Signed-off-by: Yongjian Sun <sunyongjian1@huawei.com>
+---
+Changes in v4:
+- Make the comments simpler and clearer.
+- Link to v3: https://lore.kernel.org/all/20250910042516.3947590-1-sunyongjian@huaweicloud.com/
+Changes in v3:
+- Add a condition to avoid increasing i_disksize and include some comments.
+- Link to v2: https://lore.kernel.org/all/20250908063355.3149491-1-sunyongjian@huaweicloud.com/
+Changes in v2:
+- The modification of i_disksize should be moved into ext4_update_disksize_before_punch,
+  rather than being done in ext4_page_mkwrite.
+- Link to v1: https://lore.kernel.org/all/20250731140528.1554917-1-sunyongjian@huaweicloud.com/
+---
+ fs/ext4/inode.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 5b7a15db4953..f82f7fb84e17 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -4287,7 +4287,11 @@ int ext4_can_truncate(struct inode *inode)
+  * We have to make sure i_disksize gets properly updated before we truncate
+  * page cache due to hole punching or zero range. Otherwise i_disksize update
+  * can get lost as it may have been postponed to submission of writeback but
+- * that will never happen after we truncate page cache.
++ * that will never happen if we remove the folio containing i_size from the
++ * page cache. Also if we punch hole within i_size but above i_disksize,
++ * following ext4_page_mkwrite() may mistakenly allocate written blocks over
++ * the hole and thus introduce allocated blocks beyond i_disksize which is
++ * not allowed (e2fsck would complain in case of crash).
+  */
+ int ext4_update_disksize_before_punch(struct inode *inode, loff_t offset,
+ 				      loff_t len)
+@@ -4298,9 +4302,11 @@ int ext4_update_disksize_before_punch(struct inode *inode, loff_t offset,
+ 	loff_t size = i_size_read(inode);
+ 
+ 	WARN_ON(!inode_is_locked(inode));
+-	if (offset > size || offset + len < size)
++	if (offset > size)
+ 		return 0;
+ 
++	if (offset + len < size)
++		size = offset + len;
+ 	if (EXT4_I(inode)->i_disksize >= size)
+ 		return 0;
+ 
+-- 
+2.39.2
+
 
