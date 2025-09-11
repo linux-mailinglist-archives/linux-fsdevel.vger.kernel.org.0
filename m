@@ -1,158 +1,224 @@
-Return-Path: <linux-fsdevel+bounces-60947-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60948-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B10B2B5323C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 14:30:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01229B53255
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 14:34:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83CE05A2805
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 12:30:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2F64A87AA6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 12:32:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAD303277BA;
-	Thu, 11 Sep 2025 12:29:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A08324B06;
+	Thu, 11 Sep 2025 12:31:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="GPMutLoP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FD/I6jVk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4F0E321F5A;
-	Thu, 11 Sep 2025 12:29:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FF4F2B9A4;
+	Thu, 11 Sep 2025 12:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757593773; cv=none; b=YHftBgFNfIgdfH86dZVOohMiap1YTpaprK5V7oS/dbrzdVFOh6YeQgsjfBCE58xb04Ee0YHpSpPiQullJFKU67sjaPVUaZtlA6mZ+D3VAzMDKOfYmh2mak9Q1driKHT5hSkcnn2EV6JhBOSOaaQIrlpF57CPtGbQnzeznfxN+/4=
+	t=1757593890; cv=none; b=iEq2iKeu8z3QJqJ2QgwZg3F8obSB/rFFOg3wIM/i0aJ3gShwJ9QWQg3s3zMMQKhZejsBx1ZbBR/lOsZRmYyELcYUu8ZmDWWmnwJlRVbROsAHmikvIUP3b9z9/zgguAiLo+IzVCZawrdV153/AH+a2kQ63ekByjnM1WdBmQt4zho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757593773; c=relaxed/simple;
-	bh=bN322DPwaOeYhQjptNnHiEdxrT5VPto/SbVF/Os+afs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZNazPkrgKda5E6WfzhnF7UPB/Z4YyPX/hjIam+ErJoHlq212AlMevkdOyYrFodlmChzQmSdW39Yk7jsoR/cScM7A9lSQzbjZRScPdEW64kjjNk2klYywm7gCa8w5/Wk4yH/hfyAVnpnEzb4qXOQqPmfgF0WIw4rzbQu/7okFftA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=GPMutLoP; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1757593761; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=CQwEV9u7fDKUXrr0f6do4Mzfl1lSNw8kMkmnJlwx09s=;
-	b=GPMutLoP0V8tblYsE03jCw4ib6QRGmLOWZISzM6zq9DlCVPvqv7zuO8hFtF/ObPnU2FlXKqyO349GF8eWMwOeu7HpOJe5IE4jcEiOck85fPX0YrcXzJKY+t4f11f8KMxNJOz3JszdF/Hc2s3nECQ4kWSnPKZT93Iqphp0JzB/9I=
-Received: from 30.180.0.242(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WnmHWCN_1757593759 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 11 Sep 2025 20:29:21 +0800
-Message-ID: <9c104881-f09e-4594-9e41-0b6f75a5308c@linux.alibaba.com>
-Date: Thu, 11 Sep 2025 20:29:17 +0800
+	s=arc-20240116; t=1757593890; c=relaxed/simple;
+	bh=hDtQkdh6WZWn0haheZLwVUGKnT10G9NPRD7mdTFVjHc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o1VtJElkTbhtg9q3mmkSGidBSsHNmc9PvvgdMHqX2fntUplvlZyAcJJ1oiWkSuCnr+OcRS4Ud7sAZQljA3ZDTy1TynvK5YRYoytHpFjyBPdkmEano0Nx8Gqq7aGD7fbZHOjQxjFeb/d0X3875pTUPQE2ffCsv08Vihr8+Adpmfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FD/I6jVk; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6228de281baso1106531a12.1;
+        Thu, 11 Sep 2025 05:31:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757593887; x=1758198687; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0Kins1VKefbulcK0+wbfTrzadCXq3OhWXuadJ2XRZFI=;
+        b=FD/I6jVkhsbs+gb3PiRCLPPXVnhZja8Vxd71JCAzcrS99S7TEYBTqqosDYJaqk0aJE
+         6sZ7N+zI1mkYKc9vLB1QQHek+zDPvjXuZkZ5NQDoII+R/pDMHM2xitePVJiMNW4pfwRZ
+         nLvL8tfJ1KC11V3haunrmYdyU2tsgHXG5zCe/MIkr3GwxXkef2IWQw/oW6+TbYJzhzKB
+         vc6ujsFBvFZSlUg7aqhSIx/EnwTq+Ld/a63oeM8QtKUyGgTEBe7ozkMCmuK6/pe+D3L9
+         XpARUJvR4f9VPzllqCILPG4ryPhtn3Du2WY2eOqxrdZpAgTRmoGe4saOKDQPkFSObUnO
+         lrVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757593887; x=1758198687;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0Kins1VKefbulcK0+wbfTrzadCXq3OhWXuadJ2XRZFI=;
+        b=kOV6aAdhOpDyLKxSrB/0FKkIDKXTad5BcdFx2TIvo6GOA3jYbs/zcOrmY3wBXffOp9
+         U5sDn8t3VjgGH+YoPoyZeKVE/HpyPny8kjOIo2zHSK38VIXY1aL2AHhe8evR36E79eoq
+         aZ1mHR4mHYKNukyQge/7Vk6xQmkSLVnUHNGeaR0NuMDo4PrXCLyCQZ1uFqhv+4sbIlAv
+         aRuka0sOD+on56dqJDZQzDIDzpzTeIAxb/dda+Orkqp2Oh8ThAIMXygEV39vGmwpQEuD
+         MmdDeTK0O+8lulaSAKsGV7jrfoq/7N66GD0IjbvsNPZC8Ob81uOU85EIAqUkgmFKTWw6
+         aJzg==
+X-Forwarded-Encrypted: i=1; AJvYcCXWsSDL0p1chl2KU6qJSjyuUavVqHy76HJaM8tWDzI277sXK21IqkzvkpcdRXfaOdrN4tlLBaFlG6uc@vger.kernel.org, AJvYcCXs2XgzN3c2a5Q+fm4wbwKUOwAfbWpX+dvzfVabkvfyiaaDoWcW/HHB6DFvFa4b+7q6mKODlzdMBdYhD8HN@vger.kernel.org
+X-Gm-Message-State: AOJu0YwR1s9w20X8rA63QinVP6oMcFNz7fYQ/TxlY4FC9wcDl1CAVmBM
+	5GwEQ/eWvnzE+wVyr6V3LL3eRZOOfj25+PC/jAkmFk/1r3hWEBg4AW7sd64ykiY/IYGtXeEHmKM
+	1Jid+GAxh8RxBwgWE7Fs2m1hTfLMMkOQ=
+X-Gm-Gg: ASbGncvYI8VVOzCGZjLb89GKUR5+EUjVBr49RR8iJk08QDIA2UmjxAMsdFWooINPlCz
+	V9Guf+To3bg9P9YEEO35s5m3ywqADZVoMe9gjgqmEJn93dD7OD1KlG/3AvY/Qd6KRlcEFO3vn1K
+	biKDUOM6n3qT6LTx5VaaM1fORMYMVxeDJS/sBBf5IpwALLChb/dmd0lphHD3uqZHvKDrWcmWcIC
+	EWmZKo=
+X-Google-Smtp-Source: AGHT+IH3noTAubA5xmLSGRvfiZEBFi5M2dI1pL9G0yLTMhjR7ziZH+7RlBxlihSEl7EqS/oT41OvNI+Q6kAO31PbkAE=
+X-Received: by 2002:a05:6402:2744:b0:628:f0df:2c7f with SMTP id
+ 4fb4d7f45d1cf-628f0df3006mr12655027a12.8.1757593886728; Thu, 11 Sep 2025
+ 05:31:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 13/16] iomap: move read/readahead logic out of
- CONFIG_BLOCK guard
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Joanne Koong <joannelkoong@gmail.com>, brauner@kernel.org,
- miklos@szeredi.hu, djwong@kernel.org, linux-block@vger.kernel.org,
- gfs2@lists.linux.dev, linux-fsdevel@vger.kernel.org, kernel-team@meta.com,
- linux-xfs@vger.kernel.org, linux-doc@vger.kernel.org
-References: <20250908185122.3199171-1-joannelkoong@gmail.com>
- <20250908185122.3199171-14-joannelkoong@gmail.com>
- <a1529c0f-1f1a-477a-aeeb-a4f108aab26b@linux.alibaba.com>
- <CAJnrk1aCCqoOAgcPUpr+Z09DhJ5BAYoSho5dveGQKB9zincYSQ@mail.gmail.com>
- <0b33ab17-2fc0-438f-95aa-56a1d20edb38@linux.alibaba.com>
- <aMK0lC5iwM0GWKHq@infradead.org>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <aMK0lC5iwM0GWKHq@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250910214927.480316-1-tahbertschinger@gmail.com> <20250910214927.480316-8-tahbertschinger@gmail.com>
+In-Reply-To: <20250910214927.480316-8-tahbertschinger@gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 11 Sep 2025 14:31:14 +0200
+X-Gm-Features: AS18NWCrKSfaZUUI0gGgwd_sAK79dWTfHTJXfqiLArxjanXepLHg3OOSgzOkdV4
+Message-ID: <CAOQ4uxiS-U9cf63=RXyHEzFtp41n_Cg_2DnVYR_eNUx1Lb3ung@mail.gmail.com>
+Subject: Re: [PATCH 07/10] exportfs: new FILEID_CACHED flag for non-blocking
+ fh lookup
+To: Thomas Bertschinger <tahbertschinger@gmail.com>
+Cc: io-uring@vger.kernel.org, axboe@kernel.dk, linux-fsdevel@vger.kernel.org, 
+	viro@zeniv.linux.org.uk, brauner@kernel.org, linux-nfs@vger.kernel.org, 
+	chuck.lever@oracle.com, jlayton@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Christoph,
+On Wed, Sep 10, 2025 at 11:47=E2=80=AFPM Thomas Bertschinger
+<tahbertschinger@gmail.com> wrote:
+>
+> This defines a new flag FILEID_CACHED that the VFS can set in the
+> handle_type field of struct file_handle to request that the FS
+> implementations of fh_to_{dentry,parent}() only complete if they can
+> satisfy the request with cached data.
+>
+> Because not every FS implementation will recognize this new flag, those
+> that do recognize the flag can indicate their support using a new
+> export flag, EXPORT_OP_NONBLOCK.
+>
+> If FILEID_CACHED is set in a file handle, but the filesystem does not
+> set EXPORT_OP_NONBLOCK, then the VFS will return -EAGAIN without
+> attempting to call into the filesystem code.
+>
+> exportfs_decode_fh_raw() is updated to respect the new flag by returning
+> -EAGAIN when it would need to do an operation that may not be possible
+> with only cached data.
+>
+> Suggested-by: Amir Goldstein <amir73il@gmail.com>
+> Signed-off-by: Thomas Bertschinger <tahbertschinger@gmail.com>
 
-On 2025/9/11 19:37, Christoph Hellwig wrote:
-> On Wed, Sep 10, 2025 at 12:59:41PM +0800, Gao Xiang wrote:
->> At least it sounds better on my side, but anyway it's just
->> my own overall thought.  If other folks have different idea,
->> I don't have strong opinion, I just need something for my own
->> as previous said.
-> 
-> I already dropped my two suggestions on the earlier patch.  Not totally
-> happy about either my suggestions or data, but in full agreement that
-> it should be something else than private.
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
-To just quote your previous comment and try to discuss here:
+Small comment below
 
-```
-On Wed, Sep 10, 2025 at 01:41:25PM -0400, Joanne Koong wrote:
-> In my mind, the big question is whether or not the data the
-> filesystems pass in is logically shared by both iomap_begin/end and
-> buffered reads/writes/dio callbacks, or whether the data needed by
-> both are basically separate entities
+> ---
+>  fs/exportfs/expfs.c      | 13 +++++++++++++
+>  fs/fhandle.c             |  2 ++
+>  include/linux/exportfs.h |  5 +++++
+>  3 files changed, 20 insertions(+)
+>
+> diff --git a/fs/exportfs/expfs.c b/fs/exportfs/expfs.c
+> index 949ce6ef6c4e..88418b93abbf 100644
+> --- a/fs/exportfs/expfs.c
+> +++ b/fs/exportfs/expfs.c
+> @@ -441,6 +441,7 @@ exportfs_decode_fh_raw(struct vfsmount *mnt, struct f=
+id *fid, int fh_len,
+>                        void *context)
+>  {
+>         const struct export_operations *nop =3D mnt->mnt_sb->s_export_op;
+> +       bool decode_cached =3D fileid_type & FILEID_CACHED;
+>         struct dentry *result, *alias;
+>         char nbuf[NAME_MAX+1];
+>         int err;
+> @@ -453,6 +454,10 @@ exportfs_decode_fh_raw(struct vfsmount *mnt, struct =
+fid *fid, int fh_len,
+>          */
+>         if (!exportfs_can_decode_fh(nop))
+>                 return ERR_PTR(-ESTALE);
+> +
+> +       if (decode_cached && !(nop->flags & EXPORT_OP_NONBLOCK))
+> +               return ERR_PTR(-EAGAIN);
+> +
+>         result =3D nop->fh_to_dentry(mnt->mnt_sb, fid, fh_len, fileid_typ=
+e);
+>         if (IS_ERR_OR_NULL(result))
+>                 return result;
+> @@ -481,6 +486,10 @@ exportfs_decode_fh_raw(struct vfsmount *mnt, struct =
+fid *fid, int fh_len,
+>                  * filesystem root.
+>                  */
+>                 if (result->d_flags & DCACHE_DISCONNECTED) {
+> +                       err =3D -EAGAIN;
+> +                       if (decode_cached)
+> +                               goto err_result;
+> +
+>                         err =3D reconnect_path(mnt, result, nbuf);
+>                         if (err)
+>                                 goto err_result;
+> @@ -526,6 +535,10 @@ exportfs_decode_fh_raw(struct vfsmount *mnt, struct =
+fid *fid, int fh_len,
+>                 err =3D PTR_ERR(target_dir);
+>                 if (IS_ERR(target_dir))
+>                         goto err_result;
+> +               err =3D -EAGAIN;
+> +               if (decode_cached & (target_dir->d_flags & DCACHE_DISCONN=
+ECTED)) {
+> +                       goto err_result;
+> +               }
+>
+>                 /*
+>                  * And as usual we need to make sure the parent directory=
+ is
+> diff --git a/fs/fhandle.c b/fs/fhandle.c
+> index 276c16454eb7..70e265f6a3ab 100644
+> --- a/fs/fhandle.c
+> +++ b/fs/fhandle.c
+> @@ -273,6 +273,8 @@ static int do_handle_to_path(struct file_handle *hand=
+le, struct path *path,
+>         if (IS_ERR_OR_NULL(dentry)) {
+>                 if (dentry =3D=3D ERR_PTR(-ENOMEM))
+>                         return -ENOMEM;
+> +               if (dentry =3D=3D ERR_PTR(-EAGAIN))
+> +                       return -EAGAIN;
+>                 return -ESTALE;
+>         }
+>         path->dentry =3D dentry;
+> diff --git a/include/linux/exportfs.h b/include/linux/exportfs.h
+> index 30a9791d88e0..8238b6f67956 100644
+> --- a/include/linux/exportfs.h
+> +++ b/include/linux/exportfs.h
+> @@ -199,6 +199,8 @@ struct handle_to_path_ctx {
+>  #define FILEID_FS_FLAGS_MASK   0xff00
+>  #define FILEID_FS_FLAGS(flags) ((flags) & FILEID_FS_FLAGS_MASK)
+>
 
-They are separate entities.
-```
-
-I try to push this again because I'm still not quite sure it's
-a good idea, let's take this FUSE iomap-read proposal (but sorry
-honestly I not fully look into the whole series.)
-
-```
-  struct fuse_fill_read_data {
-  	struct file *file;
-+
-+	/*
-+	 * Fields below are used if sending the read request
-+	 * asynchronously.
-+	 */
-+	struct fuse_conn *fc;
-+	struct fuse_io_args *ia;
-+	unsigned int nr_bytes;
-  };
-```
-
-which is just a new FUSE-only-specific context for
-`struct iomap_read_folio_ctx`, it's not used by .iomap_{begin,end}
-is that basically FUSE _currently_ doesn't have logical-to-physical
-mapping requirement (except for another fuse_iomap_begin in dax.c):
-```
-static int fuse_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
-                             unsigned int flags, struct iomap *iomap,
-                             struct iomap *srcmap)
-{
-         iomap->type = IOMAP_MAPPED;
-         iomap->length = length;
-         iomap->offset = offset;
-         return 0;
-}
-```
-
-But if FUSE or some other fs later needs to request L2P information
-in their .iomap_begin() and need to send L2P requests to userspace
-daemon to confirm where to get the physical data (maybe somewhat
-like Darrick's work but I don't have extra time to dig into that
-either) rather than just something totally bypass iomap-L2P logic
-as above, then I'm not sure the current `iomap_iter->private` is
-quite seperate to `struct iomap_read_folio_ctx->private`, it seems
-both needs fs-specific extra contexts for the same I/O flow.
-
-I think the reason why `struct iomap_read_folio_ctx->private` is
-introduced is basically previous iomap filesystems are all
-bio-based, and they shares `bio` concept in common but
-`iter->private` was not designed for this usage.
-
-But fuse `struct iomap_read_folio_ctx` and
-`struct fuse_fill_read_data` are too FUSE-specific, I cannot
-see it could be shared by other filesystems in the near future,
-which is much like a single-filesystem specific concept, and
-unlike to `bio` at all.
-
-I've already racked my brains on this but I have no better
-idea on the current callback-hook model (so I don't want to argue
-more). Anyway, I really think it should be carefully designed
-(because the current FUSE .iomap_{begin,end} are just like no-op
-but that is just fuse-specific).  If folks really think Joanne's
-work is already best or we can live with that, I'm totally fine.
-
-Thanks,
-Gao Xiang
-
+/* vfs flags: */
+> +#define FILEID_CACHED          0x100 /* Use only cached data when decodi=
+ng handle */
+> +
+>  /* User flags: */
+>  #define FILEID_USER_FLAGS_MASK 0xffff0000
+>  #define FILEID_USER_FLAGS(type) ((type) & FILEID_USER_FLAGS_MASK)
+> @@ -303,6 +305,9 @@ struct export_operations {
+>                                                 */
+>  #define EXPORT_OP_FLUSH_ON_CLOSE       (0x20) /* fs flushes file data on=
+ close */
+>  #define EXPORT_OP_NOLOCKS              (0x40) /* no file locking support=
+ */
+> +#define EXPORT_OP_NONBLOCK             (0x80) /* Filesystem supports non=
+-
+> +                                                 blocking fh_to_dentry()
+> +                                               */
+>         unsigned long   flags;
+>  };
+>
+> --
+> 2.51.0
+>
 
