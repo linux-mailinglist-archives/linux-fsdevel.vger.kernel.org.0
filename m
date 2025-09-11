@@ -1,245 +1,177 @@
-Return-Path: <linux-fsdevel+bounces-60896-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60897-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8349B52A89
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 09:52:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9F86B52B32
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 10:08:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0A833A908F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 07:52:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D16611C212ED
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 08:08:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD8272BE02B;
-	Thu, 11 Sep 2025 07:52:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECAAF2D5C86;
+	Thu, 11 Sep 2025 08:08:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l1AjlyyD"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ktb4W/6Q"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20AF521CC4B;
-	Thu, 11 Sep 2025 07:52:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D95F22C3258;
+	Thu, 11 Sep 2025 08:08:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757577129; cv=none; b=t0zCo3C5u2uNgHI/q1YaQCWQSoKfaTVhgowGqHMbhusihLsU4PZ/MTA2ujDtWYMbCOMkIm3vkRzXf4g51DGzzo77ex056IQBjy13i4VbGjJD5iG3CHFwAKbKJa3zSP3JGLrF8sRTqilXHGhGh+2X4EZvNk5gyvezBy9r2uVrj5M=
+	t=1757578094; cv=none; b=JiFBxrhuewNGKdzWKF96i8nhHt+/jPa6dhzuXxqRMKipgyLKTRBTlnKwhCgNInzdylYO/peeIkP3xrhEvRcDH9CPQZxYUSNu1a+x8JmIySn2wSQ/y6RketIaibFWflJg5BgLOJZMJyK4SjbZAaZSpiLbCSv3Lj5KjQJkmU/Ng3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757577129; c=relaxed/simple;
-	bh=zCa/Trshx6t//cjDi+8MplzJbi0R8aSBzBBF4hlrJaE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VqRGPEMMvYtcEST3KCvT1SFpVR4TKpEmBc6NRzIxMbjKdDjXRBny8uuJ0CXdxGB7arVo19AMnueuDTSYWZVEy9CDJNkiVT5BP8D5Au65dXTyozmotc0NAvDSccEuiGlTCeA3EnUzm6M7Vygj+bWJSmmkROUVSA3/NLEyEB3VwZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l1AjlyyD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F95DC4CEF1;
-	Thu, 11 Sep 2025 07:52:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757577128;
-	bh=zCa/Trshx6t//cjDi+8MplzJbi0R8aSBzBBF4hlrJaE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l1AjlyyDYEn9GxWz2+UfShAjuVTVlMdY7BvFsdN/00ftJKHXadGlP1U0K16/N0l/d
-	 z/g18n4+AHhrm9ThUIFJjTovOyc7zU8l1+ehGq8MFzQBSAXjHzFWfpydpU2loJCKC7
-	 OruzJApGWUEdY/eehGGpa/sxpoF9tbT69+v1M9R1VFi4B5nbdPBPS3Nqbr6zOggqOv
-	 eD/nN7cQ+tJe/qnSpKEhJNf8J8keyAc6blrhW/elyTI3MQx/QwexR1TzakugRMZVCf
-	 jNEm99gJksMTsfEbG6bjnGZAggwyRKGRYexdRVXUtJRAi+U7YrSw/F+1rJRjYdPn3I
-	 9Abpbkkxf9MDQ==
-Date: Thu, 11 Sep 2025 09:52:00 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
-	Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH 29/32] nsfs: add missing id retrieval support
-Message-ID: <20250911-korallen-aufgibt-faafc9df8f9a@brauner>
-References: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
- <20250910-work-namespace-v1-29-4dd56e7359d8@kernel.org>
- <2025-09-10-yawning-gross-samba-lox-6iVSwq@cyphar.com>
+	s=arc-20240116; t=1757578094; c=relaxed/simple;
+	bh=6ULBULBFFjI9uaDHpn8mS96tB7ILDHF0ZXJ+Ok6QDdc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=BOYQ/zuhStbtOnaQUZAA4/mouS6H/024YCqCY4sDclt+hM3e5ldeJlfRp6l+4jNSAFvPVUlu/xlBQXCgZ2yAm+7Vj4e0jqptVpV3V6JtIz41AHT/FUjutHn80aR89tSJYydaT29DvMSG5jBmVQfsqIJ5dKKiE/D3y21hvZRuu6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ktb4W/6Q; arc=none smtp.client-ip=209.85.161.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-61bd4a3f39cso96714eaf.0;
+        Thu, 11 Sep 2025 01:08:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757578091; x=1758182891; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6ULBULBFFjI9uaDHpn8mS96tB7ILDHF0ZXJ+Ok6QDdc=;
+        b=ktb4W/6Qbxt8GV+x2FEGa1SM5ZnE6ABFPEant3wH7b4MizKSaERYdSGh2obuMEqxuA
+         wrSYpxb2YGjUm04+Y9yhopAH1AF9xCfTOYONGEmfWAyuUdTN08CjLei6+hCgtuYg+kjt
+         dHlzKmoAaBjS/PCAKWYBbAgezT8fT0aDZ54xsOxlgcSdbD2hAo4hQMFPHErcvco014ST
+         q0i/p8f4fuVTBFy6Lze9uaRvZSSXGqcTTUWWPxQyvoKwoyOesi3d981kbM8EqxeuAUiw
+         b0KcEv/93zFozEUJhHoZGvAnuapdPnlAMKqByGiQOhJ9EcSwtdribCDiZfE/CpmyThRa
+         IMWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757578091; x=1758182891;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6ULBULBFFjI9uaDHpn8mS96tB7ILDHF0ZXJ+Ok6QDdc=;
+        b=Z/woxf2Hc6YF9jU3cFUN/Kaa555Lu4AVB3N4fTnbh0HZYZFeWu5RKFLaEmupk/A2zJ
+         1EZuEcGwig4Mg17HEi+5UrjGmrK6jxvH1gpoi59F3WitADKK+uSZmHm10RvG9I25UWLu
+         51q1LlKS2B3nR++DcyRxNwwBnrGI+dA8gVwwZQ9ME+fiNC5NJpPr7MZpnbnk1IkJrPIf
+         zpvfPqz69Bd8fpHatbIfiJLG38173sgAV1OG2Kr/E7v8zZEfeIB/Gi07YJ4uPBCAgEQv
+         +8s6Q7SZxfuMYTm8DG7H8J2snlAqeQxFTCa77Ys0jDsYzuxBrUnsjJ49fjaQR6TAh+22
+         NdGA==
+X-Forwarded-Encrypted: i=1; AJvYcCXFWgacuPrveBXP6hw1yoo6n6gWcuvP7IApjVkoRvwk8mzUDOWshGOBaXk1SzEIjbu6tQxqHHeYzB4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4IjBRHuAPPTp5fCniqUuC3QW14zpX24ukDySKgaOu8vYmk+Ud
+	flnWtq1E6NAqxX5oBuRLd8IQNMJrQ4of5IYn02PugPgzgf9UKioYLvfWIS2OImEBAQNK9oFYtTg
+	ZRuNmgZMYzZx97HVNqepr5P60Q+OtD2KBkw==
+X-Gm-Gg: ASbGncvxiFYaNB91NBqQ3VHYM9gxO4yCPv8LuE5vsY/GyjxKrWCVCTW9ZQGSSGfXGSs
+	gk3CPy8zNpRRfGhLyR2M2V1XcOOlbmtt4YXKKwnENJTWvGXq77Ycx+HJeQpU9KC+Vk79TyvhneB
+	YDVNnvqyVt8FNsg+r86WoS8HEsg7WnGrhz6S5cvfKSycDjTPcFWUx2W6QtMgpZZ8wGiwF0HmptQ
+	R48xlA=
+X-Google-Smtp-Source: AGHT+IEwR8uLLqKCt//ZYIG47ZIqvHUx4GV3seKH8J5nwfelseoGl6ksRH/8zqGAiVTzsHLiCIJee8/GvpDuXfrrZpE=
+X-Received: by 2002:a05:6871:521e:b0:319:c5fd:44de with SMTP id
+ 586e51a60fabf-3226480d739mr9682400fac.26.1757578090679; Thu, 11 Sep 2025
+ 01:08:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <2025-09-10-yawning-gross-samba-lox-6iVSwq@cyphar.com>
+References: <CALXu0Ufzm66Ors3aBBrua0-8bvwqo-=RCmiK1yof9mMUxyEmCQ@mail.gmail.com>
+ <CALXu0Ufgv7RK7gDOK53MJsD+7x4f0+BYYwo2xNXidigxLDeuMg@mail.gmail.com>
+ <44250631-2b70-4ce8-b513-a632e70704ed@oracle.com> <aEZ3zza0AsDgjUKq@infradead.org>
+ <e5e385fd-d58a-41c7-93d9-95ff727425dd@oracle.com> <aEfD3Gd0E8ykYNlL@infradead.org>
+ <CALXu0UfgvZdrotUnyeS6F6qYSOspLg_xwVab8BBO6N3c9SFGfA@mail.gmail.com>
+ <e1ca19a0-ab61-453f-9aea-ede6537ce9da@oracle.com> <CALXu0Uc9WGU8QfKwuLHMvNrq3oAftV+41K5vbGSkDrbXJftbPw@mail.gmail.com>
+ <47ece316-6ca6-4d5d-9826-08bb793a7361@oracle.com> <CAKAoaQ=RNxx4RpjdjTVUKOa+mg-=bJqb3d1wtLKMFL-dDaXgCA@mail.gmail.com>
+ <CAM5tNy7w71r6WgWOz4tXtLi=yvw55t_5dFe_x-13Thy5NgjEGA@mail.gmail.com>
+In-Reply-To: <CAM5tNy7w71r6WgWOz4tXtLi=yvw55t_5dFe_x-13Thy5NgjEGA@mail.gmail.com>
+From: Cedric Blancher <cedric.blancher@gmail.com>
+Date: Thu, 11 Sep 2025 10:07:00 +0200
+X-Gm-Features: AS18NWCuGUzc4egDyLe6O_WKEjI_fYAV9Afl2vBeDhyvSgKqMl3ZzUpNomTG3UU
+Message-ID: <CALXu0Uep=q9mu1suZ0r04MGJn-xRn2twiRtQbGgtr1eZ7D_6sg@mail.gmail.com>
+Subject: fattr4_archive "deprecated" ? Re: NFSv4.x export options to mark
+ export as case-insensitive, case-preserving? Re: LInux NFSv4.1 client and
+ server- case insensitive filesystems supported?
+To: linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	Linux NFS Mailing List <linux-nfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 11, 2025 at 02:49:49AM +1000, Aleksa Sarai wrote:
-> On 2025-09-10, Christian Brauner <brauner@kernel.org> wrote:
-> > The mount namespace has supported id retrieval for a while already.
-> > Add support for the other types as well.
-> > 
-> > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > ---
-> >  fs/nsfs.c                 | 74 +++++++++++++++++++++++++++++++++++++++--------
-> >  include/uapi/linux/nsfs.h | 12 ++++++--
-> >  2 files changed, 72 insertions(+), 14 deletions(-)
-> > 
-> > diff --git a/fs/nsfs.c b/fs/nsfs.c
-> > index 3c6fcf652633..527480e67fd1 100644
-> > --- a/fs/nsfs.c
-> > +++ b/fs/nsfs.c
-> > @@ -173,6 +173,13 @@ static bool nsfs_ioctl_valid(unsigned int cmd)
-> >  	case NS_GET_NSTYPE:
-> >  	case NS_GET_OWNER_UID:
-> >  	case NS_GET_MNTNS_ID:
-> > +	case NS_GET_NETNS_ID:
-> > +	case NS_GET_CGROUPNS_ID:
-> > +	case NS_GET_IPCNS_ID:
-> > +	case NS_GET_UTSNS_ID:
-> > +	case NS_GET_PIDNS_ID:
-> > +	case NS_GET_TIMENS_ID:
-> > +	case NS_GET_USERNS_ID:
-> >  	case NS_GET_PID_FROM_PIDNS:
-> >  	case NS_GET_TGID_FROM_PIDNS:
-> >  	case NS_GET_PID_IN_PIDNS:
-> > @@ -226,18 +233,6 @@ static long ns_ioctl(struct file *filp, unsigned int ioctl,
-> >  		argp = (uid_t __user *) arg;
-> >  		uid = from_kuid_munged(current_user_ns(), user_ns->owner);
-> >  		return put_user(uid, argp);
-> > -	case NS_GET_MNTNS_ID: {
-> > -		__u64 __user *idp;
-> > -		__u64 id;
-> > -
-> > -		if (ns->ops->type != CLONE_NEWNS)
-> > -			return -EINVAL;
-> > -
-> > -		mnt_ns = container_of(ns, struct mnt_namespace, ns);
-> > -		idp = (__u64 __user *)arg;
-> > -		id = mnt_ns->ns.ns_id;
-> > -		return put_user(id, idp);
-> > -	}
-> >  	case NS_GET_PID_FROM_PIDNS:
-> >  		fallthrough;
-> >  	case NS_GET_TGID_FROM_PIDNS:
-> > @@ -283,6 +278,61 @@ static long ns_ioctl(struct file *filp, unsigned int ioctl,
-> >  			ret = -ESRCH;
-> >  		return ret;
-> >  	}
-> > +	case NS_GET_MNTNS_ID:
-> > +		fallthrough;
-> > +	case NS_GET_NETNS_ID:
-> > +		fallthrough;
-> > +	case NS_GET_CGROUPNS_ID:
-> > +		fallthrough;
-> > +	case NS_GET_IPCNS_ID:
-> > +		fallthrough;
-> > +	case NS_GET_UTSNS_ID:
-> > +		fallthrough;
-> > +	case NS_GET_PIDNS_ID:
-> > +		fallthrough;
-> > +	case NS_GET_TIMENS_ID:
-> > +		fallthrough;
-> > +	case NS_GET_USERNS_ID: {
-> > +		__u64 __user *idp;
-> > +		__u64 id;
-> > +		int expected_type;
-> > +
-> > +		switch (ioctl) {
-> > +		case NS_GET_MNTNS_ID:
-> > +			expected_type = CLONE_NEWNS;
-> > +			break;
-> > +		case NS_GET_NETNS_ID:
-> > +			expected_type = CLONE_NEWNET;
-> > +			break;
-> > +		case NS_GET_CGROUPNS_ID:
-> > +			expected_type = CLONE_NEWCGROUP;
-> > +			break;
-> > +		case NS_GET_IPCNS_ID:
-> > +			expected_type = CLONE_NEWIPC;
-> > +			break;
-> > +		case NS_GET_UTSNS_ID:
-> > +			expected_type = CLONE_NEWUTS;
-> > +			break;
-> > +		case NS_GET_PIDNS_ID:
-> > +			expected_type = CLONE_NEWPID;
-> > +			break;
-> > +		case NS_GET_TIMENS_ID:
-> > +			expected_type = CLONE_NEWTIME;
-> > +			break;
-> > +		case NS_GET_USERNS_ID:
-> > +			expected_type = CLONE_NEWUSER;
-> > +			break;
-> > +		default:
-> > +			return -EINVAL;
-> > +		}
-> > +
-> > +		if (ns->ops->type != expected_type)
-> > +			return -EINVAL;
-> 
-> While I get that having this be per-ns-type lets programs avoid being
-> tricked into thinking that one namespace ID is actually another
-> namespace, it feels a bit ugly to have to add a new ioctl for every new
-> namespace.
-> 
-> If we added a way to get the CLONE_* flag for a namespace (NS_GET_TYPE)
+On Wed, 10 Sept 2025 at 15:38, Rick Macklem <rick.macklem@gmail.com> wrote:
+>
+> On Wed, Sep 10, 2025 at 3:47=E2=80=AFAM Roland Mainz <roland.mainz@nrubsi=
+g.org> wrote:
+> >
+> > On Tue, Sep 9, 2025 at 9:32=E2=80=AFPM Chuck Lever <chuck.lever@oracle.=
+com> wrote:
+> > >
+> > > On 9/9/25 12:33 PM, Cedric Blancher wrote:
+> > > > On Tue, 9 Sept 2025 at 18:12, Chuck Lever <chuck.lever@oracle.com> =
+wrote:
+> > > >>
+> > > >> On 9/9/25 12:06 PM, Cedric Blancher wrote:
+> > > >>> Due lack of a VFS interface and the urgend use case of needing to
+> > > >>> export a case-insensitive filesystem via NFSv4.x, could we please=
+ get
+> > > >>> two /etc/exports options, one setting the case-insensitive boolea=
+n
+> > > >>> (true, false, get-default-from-fs) and one for case-preserving (t=
+rue,
+> > > >>> false, get-default-from-fs)?
+> > > >>>
+> > > >>> So far LInux nfsd does the WRONG thing here, and exports even
+> > > >>> case-insensitive filesystems as case-sensitive. The Windows NFSv4=
+.1
+> > > >>> server does it correctly.
+> > >
+> > > As always, I encourage you to, first, prototype in NFSD the hard-codi=
+ng
+> > > of these settings as returned to NFS clients to see if that does what
+> > > you really need with Linux-native file systems.
+> >
+> > If Cedric wants just case-insensitive mounts for a Windows NFSv4
+> > (Exceed, OpenText, ms-nfs41-client, ms-nfs42-client, ...), then the
+> > only thing needed is ext4fs or NTFS in case-insensitive mode, and that
+> > the Linux NFSv4.1 server sets FATTR4_WORD0_CASE_INSENSITIVE=3D=3Dtrue a=
+nd
+> > FATTR4_WORD0_CASE_PRESERVING=3D=3Dtrue (for FAT
+> > FATTR4_WORD0_CASE_PRESERVING=3D=3Dfalse). Only applications using ADS
+> > (Alternate Data Streams) will not work, because the Linux NFS server
+> > does not support "OPENATTR"&co ops.
+> >
+> > If Cedric wants Windows home dirs:
+> > This is not working with the Linux NFSv4.1 server, because it must supp=
+ort:
+> > - FATTR4_WORD1_SYSTEM
+> > - FATTR4_WORD0_ARCHIVE
+> > - FATTR4_WORD0_HIDDEN
+> > - Full ACL support, the current draft POSIX-ACLs in Linux NFSv4.1
+> > server&&{ ext4fs, btrfs, xfs etc. } causes malfunctions in the Windows
+> > "New User" profile setup (and gets you a temporary profile in
+> > C:\Users\*.temp+lots of warnings and a note to log out immediately
+> > because your user profile dir has been "corrupted")
+> >
+> > Windows home dirs with NFSv4 only work so far with the
+> > Solaris&&Illumos NFS servers, and maybe the FreeBSD >=3D 14 NFS server
+> > (not tested yet).
+> I'll just note that the named attribute support (the windows client
+> folk like the name)
+> along with Hidden and System are in 15 only.
+> And Archive is not supported because it is listed as "deprecated" in the =
+RFC.
+> (If this case really needs it, someone should try to get it "undeprecated=
+" on
+> nfsv4@ietf.org. I could add Archive easily. All of these are for ZFS only=
+.
+> ZFS also knows case insensitive, although I have not tried it.)
 
-That exists afaict: NS_GET_NSTYPE.
+Who (name!) had the idea to declare fattr4_archive as "deprecated"? It
+was explicitly added for Windows and DOS compatibility in NFSv4, and
+unlike Windows EAs (which are depreciated, and were superseded by
+"named streams") the "archive" attribute is still in use.
 
-> we could have just NS_GET_ID. Of course, we would have to trust
-> userspace to do the right thing...
-
-So NS_GET_ID can just return the id and be done with it. If userspace
-wants to know what type it is they can issue a separate ioctl. But since
-the id space is shared all ids of all namespaces can be compared with
-each other reliably. So really for comparision you wouldn't need to
-care. IOW, yes.
-
-> 
-> > +
-> > +		idp = (__u64 __user *)arg;
-> > +		id = ns->ns_id;
-> > +		return put_user(id, idp);
-> > +	}
-> >  	}
-> >  
-> >  	/* extensible ioctls */
-> > diff --git a/include/uapi/linux/nsfs.h b/include/uapi/linux/nsfs.h
-> > index 97d8d80d139f..f7c21840cc09 100644
-> > --- a/include/uapi/linux/nsfs.h
-> > +++ b/include/uapi/linux/nsfs.h
-> > @@ -16,8 +16,6 @@
-> >  #define NS_GET_NSTYPE		_IO(NSIO, 0x3)
-> >  /* Get owner UID (in the caller's user namespace) for a user namespace */
-> >  #define NS_GET_OWNER_UID	_IO(NSIO, 0x4)
-> > -/* Get the id for a mount namespace */
-> > -#define NS_GET_MNTNS_ID		_IOR(NSIO, 0x5, __u64)
-> >  /* Translate pid from target pid namespace into the caller's pid namespace. */
-> >  #define NS_GET_PID_FROM_PIDNS	_IOR(NSIO, 0x6, int)
-> >  /* Return thread-group leader id of pid in the callers pid namespace. */
-> > @@ -42,6 +40,16 @@ struct mnt_ns_info {
-> >  /* Get previous namespace. */
-> >  #define NS_MNT_GET_PREV		_IOR(NSIO, 12, struct mnt_ns_info)
-> >  
-> > +/* Retrieve namespace identifiers. */
-> > +#define NS_GET_MNTNS_ID		_IOR(NSIO, 5,  __u64)
-> > +#define NS_GET_NETNS_ID		_IOR(NSIO, 13, __u64)
-> > +#define NS_GET_CGROUPNS_ID	_IOR(NSIO, 14, __u64)
-> > +#define NS_GET_IPCNS_ID		_IOR(NSIO, 15, __u64)
-> > +#define NS_GET_UTSNS_ID		_IOR(NSIO, 16, __u64)
-> > +#define NS_GET_PIDNS_ID		_IOR(NSIO, 17, __u64)
-> > +#define NS_GET_TIMENS_ID	_IOR(NSIO, 18, __u64)
-> > +#define NS_GET_USERNS_ID	_IOR(NSIO, 19, __u64)
-> > +
-> >  enum init_ns_ino {
-> >  	IPC_NS_INIT_INO		= 0xEFFFFFFFU,
-> >  	UTS_NS_INIT_INO		= 0xEFFFFFFEU,
-> > 
-> > -- 
-> > 2.47.3
-> > 
-> 
-> -- 
-> Aleksa Sarai
-> Senior Software Engineer (Containers)
-> SUSE Linux GmbH
-> https://www.cyphar.com/
-
-
+Ced
+--=20
+Cedric Blancher <cedric.blancher@gmail.com>
+[https://plus.google.com/u/0/+CedricBlancher/]
+Institute Pasteur
 
