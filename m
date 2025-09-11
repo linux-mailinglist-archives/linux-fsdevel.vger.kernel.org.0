@@ -1,177 +1,190 @@
-Return-Path: <linux-fsdevel+bounces-60953-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60954-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32B04B533FB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 15:41:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CB8DB536D3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 17:03:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3652B3BF014
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 13:40:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AEDB48232B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 15:01:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63FC8334734;
-	Thu, 11 Sep 2025 13:40:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E0812A8C1;
+	Thu, 11 Sep 2025 15:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="lCrz45r+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic308-15.consmr.mail.ne1.yahoo.com (sonic308-15.consmr.mail.ne1.yahoo.com [66.163.187.38])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DBE832ED35;
-	Thu, 11 Sep 2025 13:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03EDF31578A
+	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Sep 2025 15:01:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757598004; cv=none; b=DBKbtYtgnk65ffZWk+mmKBi2EWlENN27yYJ68cDJ6AA8KCObiGe+jIHu73WX7AHtO/zbcINFLjMMDlvoZkh+oLvFTrBcRizDuc75rxoKvzGI3FO/e9FsxpZ84qrFW6inxwM5hnwHje6XZelzBfGjAQ+UxjNgBiVFMa/R8/V1sZg=
+	t=1757602875; cv=none; b=pFd8MZx6xQ7Gd6vw1N0yoUpgfwUCvUcCwayfNy9L8X+cDBW4nmulCHjxGgStKWZvKzS4gG1VsoZW52ED9722XSS3GD+8n2TNkQR8pT4hMIAby97RsWYWs1vBlapvOZK3BXOHU/ckg+ynfOuNT5TEHVPKNxEMroTpNBjmYxOrYaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757598004; c=relaxed/simple;
-	bh=LYMXuRBHHgMDLoQ7eirGMahW0IqpBv7I0ZoBUbERBeA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=ZGGnnI3XKiiDVcP+Au/yId/+g2RlFhayheyEd6MT6A4dPp6vXSEgU9kn7biIpoXxhLe4W90vf1JrXKX08JlaaTAF0AwXZlJf3Q1G+IZBcEMte7kuSwSiobBiKkDYdaLzJbOa9MOsqPByYc10cUZMC9T9SMGvk+s2AhOHT6xMZnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cMzFV0f5yzYQvfr;
-	Thu, 11 Sep 2025 21:39:58 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 960A01A06E2;
-	Thu, 11 Sep 2025 21:39:56 +0800 (CST)
-Received: from huawei.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgDXIY4o0cJoGNmcCA--.19374S4;
-	Thu, 11 Sep 2025 21:39:54 +0800 (CST)
-From: Yongjian Sun <sunyongjian@huaweicloud.com>
-To: linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	tytso@mit.edu,
-	jack@suse.cz,
-	yangerkun@huawei.com,
-	yi.zhang@huawei.com,
-	libaokun1@huawei.com,
-	chengzhihao1@huawei.com,
-	sunyongjian1@huawei.com
-Subject: [PATCH v5] ext4: increase i_disksize to offset + len in ext4_update_disksize_before_punch()
-Date: Thu, 11 Sep 2025 21:30:24 +0800
-Message-Id: <20250911133024.1841027-1-sunyongjian@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-Reply-To: sunyongjian1@huawei.com
+	s=arc-20240116; t=1757602875; c=relaxed/simple;
+	bh=QZEsoQGOsjlnmtFhMbREm0kY3s6DmitEWkyCWliE/20=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AqsklDQnBE3E4O4IE74bO0L3BUNFpWZ7B3fmMSAvZ8BH++bsK3wxuX8pSilUsjMK5gOGR3EJII42V4tLkNeiO9EHUlz+QcG3cIrJH+sRKk8nGutcRSHuMq5Jft9qhknNvKpF+mNst5z+GHEb0oBvzhtWoyIfeCsy88M676eV0eU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=lCrz45r+; arc=none smtp.client-ip=66.163.187.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1757602866; bh=fi1iR/ffwue1j7XSq0mm/oJJFZ+PjkggwgXdeE39wKY=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=lCrz45r+2+ud+IiRVNphqWKTzmx+UxO2zC7CdjKWvHNvxul9TJyIhWZ5kyiuNFwxwYsPVpL/6pJBZzIysOXiJTBtU+AyuJs/XnENLjnwne2YcNRD0Y75wfMiv1a41/2IX4/HsEhPH7dVYipqWTWD7T8bPbw/xrWp9wKRKSD5psRqv9SI6ADqkozFlCN5XLIGYZW+17NHhRDYZ1QqsdSR518vYh15Z9UrlJqAqO2rpkr1Rb3+0czwINZs2tegR9VO9t6n07OsJyU0uRbvZWNIm8kjQamE45PTHdkpC3/DUlCqr+dn1NQsWn30S06XwLQR5ODfFM1DP7f6DST4Jbi1FQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1757602866; bh=YjOTWs12OtLwwJ58ctha9Hr3GlX5Uz5XRWz7G5qN+mk=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=om8GoGWRsg520ZRi7vs7XaCz/tyhaM1FCL3xYBi1L/fsTJfj1TrPu30pcSmBRg+wQ/LOUpBOv/ayZuNkCAYxv/i3JmHmuvhZwIjkLhDI76EvWeRWwfn+WXAvRras8+fdkqTr7FKa94z6jNR549K3xiqrnTWNlS04PCHfBAoQi5htAleU1QOuig8nHNOg46bkxw2+Nfdv/2X/g5rw/4njr6YFoCgqM4ID4eG+4NBqSW4/NATrqVEbHRT0Mpx0iC/Yil5wPU9MlKhu7rRE6+lP3Tc3mrK1is1FnoD0wM0GgGQqby7Vw3hc624GGSv4qtwhdZJRT7Ib4D5Cb0Afd/SriA==
+X-YMail-OSG: uvtzMIEVM1mYKua3wHcR8tNlnmqyKJFs0xAlwhlkbxnQ2oYzqkkgRAcHgM850SX
+ zQpyOPPue.XUntpfl.MB2RzusguquWYun06BkvmVk1_8p64fM0CZAb2SVqrlrWVXzQyph_bSggPA
+ 9QBj1HC8JaZI6wCVKo.eqbMp1K_.dLM..q2lMgG_fwfzQi9f1WZEY7uf0M6XZkJAejMbOu27KQH7
+ beRiv2np6XhxM6ibrXTQgohhcQWJE_8nDB3g.eAW3j873ZmcgT92D8alW.Ng65Bh6EPQBhZAMaHR
+ J6jhg5lpMtX0lTxjX41pTfy7bnqgAmRn0HFy48tvCBTiFAIhRmiqtmoG.h5Qo83JD9hsU8Joxo2_
+ d_lbOGCLlUSxwZDmhm7HR7lhdn2eBGua35P7vqnwxpmtxcna0QXS6yyBIQOxxSHnCs6yZ0jL2Bk4
+ XiADytd65UkTdJeovs6mFCZZPE1Xrj5ltZSfwqQ0ZgVZbgemNc9WEyKBSSWYVXuFJDtJ69FTklCQ
+ XQ.xUP_q60hzH8vCx5dcAwV.FkXCCjUOz38Q3SJBuxrnPGHej09.vKMr8xA4aPCg1nAu..LXeVra
+ R0rQp1hzze8D3HYaS122tsGvE.wAsi0KjDE6BcYL.mBYy_uWIGBZ7tEqSceyjT_28Tvgel54pMCy
+ AkIWIdLrszvhatx9HIDekmuLK0HV3XG.P1KP_6VHHtILDvu3ENateTyAG0TGKsEddaO7SKqwxJZ4
+ 5YIhCJuT3XULTZ0XCg5tJR7AcXSxvTWJilZoMhZKpdSv2ibt4trQqUkNjIP4ui2UDn7_RiA4Gjuv
+ GZcjKxVSVedG0Upw7LccWcmDIDJOrwsUaSeiD2Mb.A2W1.6XnnMxq8y6YwtNhK5de1NvSpvdIUcD
+ n_KIGqq7.fWuL47w0Wb6mzqGt4zbRUpytHwfIKbrZ7ImTj4n2J4wgpy3Ep6vuimwrZ2ZAP8OeOXG
+ AQPMntS2R6wR7slA0nV5gaFEibQz9K80wpTTDJ6Z7XSHI67YorL34FgbVT3Kd5KP1JDMkQpntPsF
+ yoCTF03Ffh1Dd6AfTK_f2wwmNCkOE.d4HzFVP_Qe00j8GQATNkYLw.A2bd2z1IPEuH_1v_XyyTB7
+ AGlKj8OFkJMv8B3AvW7096DK8pvEr45bJ5JCyGJ7CS8QJ4Bux7PLmJx64fUJYB.72LqzlOz0fcK6
+ wixI03KqayIsVLov30AGikjkUcKTx3q4Z8dzI85.yPDfIihKOPfMNMEHghLZ7LT6VpUOopY9rDog
+ 1c7zkSs_cOlBomeWrHQYJJKfu8y5UfQCURLYHNYBt.nuWlakevkbNmG.nKYD04T7e_olLXhtcs8A
+ wGgdunC8MOdjDuSjYhxmKZZsKTHZMN4igRlZ4gF9EDt2Og.ZERD7qtSSybovyPBBMfIsd5zJd41_
+ ao7LRM3B8tGpHBYPtPPP7S1jwU17GmDDgzo3FXHCg4BMOEh3G3iAcKCcOpCLylD7KN4nRumGoM.q
+ p84uP5ycmyhR.M66CkR9iUZTewmq2Iw36PfhkNgKqny6I6cRbBXq9ppM9OZTiCvX4.Wb4bFvEx53
+ xkyjmuX0Gdh4sSsP78CdK9aP_5F0FhMV3Iz5wxbFy9qv7xsAvX3oFTDSLanbRal4r54tG06lBHrZ
+ QbemUqJ6rmPKstzTqnPOdQpP5bIQLXMwiixVeO8ahyLDleDSTHcCqszlZvqDb4Wa.H6W.XrpgOJF
+ sUS.EBXohEfXNIBdrALPiXCgKrQFgg_pVs5aHRFG7KYvme.JSRlxcs5.4b64wUkhfXj6Nzo.C8SZ
+ WOtLgaCIzS86wwq4HXBqDgxB1UFU0_7.zzsxmsZuQ4PpHbiCUokvGFcyZ6ucXzAVYxcZQ7Nq4T3Z
+ uAw2X.ODwYPgwRjEbuxc50QFIfR2B6qfox_wR5Q6LLi6ps4UquZjcK4fru0j0BxzlJhYBQK5T2aZ
+ EKTnFR9VC5_shi7F4EOsDoMiswMUa8dJ2GKTiGs_821XAM43KS5wcbQUws7fCbni4ac6BHQDPels
+ GN0XnqS7cfL.OucrEe5E4hw8yz3KWpXYsRSF.GAOpzhw.opMGTEdFXQWCO0IfeZ2ZB8qOz6cZJZO
+ Jx9W6I24_ryZ4JEr8rs0a0nbz5JoL4GZ8JC43Y4xuCWrcTcPepyR1hQxUNQywKzBw1OiERMMJC2H
+ .6CYhrXMkG68jB136X7ET2dKH6HX4.9BoCTetw3v8URKTn1Canq90vGIa4k2K37yfqjxhQ_er6aw
+ SGzIOuIflOj4y8KJEfo4OBUZJKvBJNGvNL1cr322KxfGBFAHkgCjckseX7BNIyy_BMMjhJPnNcVw
+ fBa7iUz1W_NmVPCH5ZMY-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 3563e2cd-f754-4dcf-a41d-578910d893ab
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Thu, 11 Sep 2025 15:01:06 +0000
+Received: by hermes--production-gq1-7bfc77444d-5m7lw (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 5829aeeacd8ee07d1aad2898c78498f3;
+          Thu, 11 Sep 2025 14:30:43 +0000 (UTC)
+Message-ID: <66295710-bb13-45e9-a87f-98b8aa6aa86a@schaufler-ca.com>
+Date: Thu, 11 Sep 2025 07:30:41 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/6] security_dentry_init_security(): constify qstr
+ argument
+To: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, brauner@kernel.org, jack@suse.cz,
+ neil@brown.name, linux-security-module@vger.kernel.org, dhowells@redhat.com,
+ linkinjeon@kernel.org, Casey Schaufler <casey@schaufler-ca.com>
+References: <20250911050149.GW31600@ZenIV>
+ <20250911050534.3116491-1-viro@zeniv.linux.org.uk>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20250911050534.3116491-1-viro@zeniv.linux.org.uk>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDXIY4o0cJoGNmcCA--.19374S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxWFWDXr17KF45AFW8uw15Arb_yoWrArWfpr
-	W5G348Gr1qg3yxCws7W3Wjqw1jka15J3yxGFyxGw4YqryUZw4IgF10q34a9a1DJrs3Ar4q
-	qFs0qrsFva48Z3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI
-	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
-	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6x
-	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
-	1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU17KsUUUUUU==
-X-CM-SenderInfo: 5vxq505qjmxt3q6k3tpzhluzxrxghudrp/
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.24425 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-From: Yongjian Sun <sunyongjian1@huawei.com>
+On 9/10/2025 10:05 PM, Al Viro wrote:
+> Nothing outside of fs/dcache.c has any business modifying
+> dentry names; passing &dentry->d_name as an argument should
+> have that argument declared as a const pointer.
+>
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 
-After running a stress test combined with fault injection,
-we performed fsck -a followed by fsck -fn on the filesystem
-image. During the second pass, fsck -fn reported:
+For the Smack bit:
 
-Inode 131512, end of extent exceeds allowed value
-	(logical block 405, physical block 1180540, len 2)
+Acked-by: Casey Schaufler <casey@schaufler-ca.com>
 
-This inode was not in the orphan list. Analysis revealed the
-following call chain that leads to the inconsistency:
-
-                             ext4_da_write_end()
-                              //does not update i_disksize
-                             ext4_punch_hole()
-                              //truncate folio, keep size
-ext4_page_mkwrite()
- ext4_block_page_mkwrite()
-  ext4_block_write_begin()
-    ext4_get_block()
-     //insert written extent without update i_disksize
-journal commit
-echo 1 > /sys/block/xxx/device/delete
-
-da-write path updates i_size but does not update i_disksize. Then
-ext4_punch_hole truncates the da-folio yet still leaves i_disksize
-unchanged(in the ext4_update_disksize_before_punch function, the
-condition offset + len < size is met). Then ext4_page_mkwrite sees
-ext4_nonda_switch return 1 and takes the nodioread_nolock path, the
-folio about to be written has just been punched out, and it’s offset
-sits beyond the current i_disksize. This may result in a written
-extent being inserted, but again does not update i_disksize. If the
-journal gets committed and then the block device is yanked, we might
-run into this. It should be noted that replacing ext4_punch_hole with
-ext4_zero_range in the call sequence may also trigger this issue, as
-neither will update i_disksize under these circumstances.
-
-To fix this, we can modify ext4_update_disksize_before_punch to
-increase i_disksize to min(i_size, offset + len) when both i_size and
-(offset + len) are greater than i_disksize.
-
-Signed-off-by: Yongjian Sun <sunyongjian1@huawei.com>
-Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Baokun Li <libaokun1@huawei.com>
----
-Changes in v5:
-- Correct the commit message.
-- Link to v4: https://lore.kernel.org/all/20250911025412.186872-1-sunyongjian@huaweicloud.com/
-Changes in v4:
-- Make the comments simpler and clearer.
-- Link to v3: https://lore.kernel.org/all/20250910042516.3947590-1-sunyongjian@huaweicloud.com/
-Changes in v3:
-- Add a condition to avoid increasing i_disksize and include some comments.
-- Link to v2: https://lore.kernel.org/all/20250908063355.3149491-1-sunyongjian@huaweicloud.com/
-Changes in v2:
-- The modification of i_disksize should be moved into ext4_update_disksize_before_punch,
-  rather than being done in ext4_page_mkwrite.
-- Link to v1: https://lore.kernel.org/all/20250731140528.1554917-1-sunyongjian@huaweicloud.com/
----
- fs/ext4/inode.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 5b7a15db4953..f82f7fb84e17 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -4287,7 +4287,11 @@ int ext4_can_truncate(struct inode *inode)
-  * We have to make sure i_disksize gets properly updated before we truncate
-  * page cache due to hole punching or zero range. Otherwise i_disksize update
-  * can get lost as it may have been postponed to submission of writeback but
-- * that will never happen after we truncate page cache.
-+ * that will never happen if we remove the folio containing i_size from the
-+ * page cache. Also if we punch hole within i_size but above i_disksize,
-+ * following ext4_page_mkwrite() may mistakenly allocate written blocks over
-+ * the hole and thus introduce allocated blocks beyond i_disksize which is
-+ * not allowed (e2fsck would complain in case of crash).
-  */
- int ext4_update_disksize_before_punch(struct inode *inode, loff_t offset,
- 				      loff_t len)
-@@ -4298,9 +4302,11 @@ int ext4_update_disksize_before_punch(struct inode *inode, loff_t offset,
- 	loff_t size = i_size_read(inode);
- 
- 	WARN_ON(!inode_is_locked(inode));
--	if (offset > size || offset + len < size)
-+	if (offset > size)
- 		return 0;
- 
-+	if (offset + len < size)
-+		size = offset + len;
- 	if (EXT4_I(inode)->i_disksize >= size)
- 		return 0;
- 
--- 
-2.39.2
-
+> ---
+>  include/linux/lsm_hook_defs.h | 2 +-
+>  include/linux/security.h      | 4 ++--
+>  security/security.c           | 2 +-
+>  security/selinux/hooks.c      | 2 +-
+>  security/smack/smack_lsm.c    | 2 +-
+>  5 files changed, 6 insertions(+), 6 deletions(-)
+>
+> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+> index fd11fffdd3c3..aa4d6ec9c98b 100644
+> --- a/include/linux/lsm_hook_defs.h
+> +++ b/include/linux/lsm_hook_defs.h
+> @@ -85,7 +85,7 @@ LSM_HOOK(int, -EOPNOTSUPP, dentry_init_security, struct dentry *dentry,
+>  	 int mode, const struct qstr *name, const char **xattr_name,
+>  	 struct lsm_context *cp)
+>  LSM_HOOK(int, 0, dentry_create_files_as, struct dentry *dentry, int mode,
+> -	 struct qstr *name, const struct cred *old, struct cred *new)
+> +	 const struct qstr *name, const struct cred *old, struct cred *new)
+>  
+>  #ifdef CONFIG_SECURITY_PATH
+>  LSM_HOOK(int, 0, path_unlink, const struct path *dir, struct dentry *dentry)
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 521bcb5b9717..3f694d3ebd70 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -391,7 +391,7 @@ int security_dentry_init_security(struct dentry *dentry, int mode,
+>  				  const char **xattr_name,
+>  				  struct lsm_context *lsmcxt);
+>  int security_dentry_create_files_as(struct dentry *dentry, int mode,
+> -					struct qstr *name,
+> +					const struct qstr *name,
+>  					const struct cred *old,
+>  					struct cred *new);
+>  int security_path_notify(const struct path *path, u64 mask,
+> @@ -871,7 +871,7 @@ static inline int security_dentry_init_security(struct dentry *dentry,
+>  }
+>  
+>  static inline int security_dentry_create_files_as(struct dentry *dentry,
+> -						  int mode, struct qstr *name,
+> +						  int mode, const struct qstr *name,
+>  						  const struct cred *old,
+>  						  struct cred *new)
+>  {
+> diff --git a/security/security.c b/security/security.c
+> index ad163f06bf7a..db2d75be87cc 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -1775,7 +1775,7 @@ EXPORT_SYMBOL(security_dentry_init_security);
+>   * Return: Returns 0 on success, error on failure.
+>   */
+>  int security_dentry_create_files_as(struct dentry *dentry, int mode,
+> -				    struct qstr *name,
+> +				    const struct qstr *name,
+>  				    const struct cred *old, struct cred *new)
+>  {
+>  	return call_int_hook(dentry_create_files_as, dentry, mode,
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index c95a5874bf7d..58ce49954206 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -2901,7 +2901,7 @@ static int selinux_dentry_init_security(struct dentry *dentry, int mode,
+>  }
+>  
+>  static int selinux_dentry_create_files_as(struct dentry *dentry, int mode,
+> -					  struct qstr *name,
+> +					  const struct qstr *name,
+>  					  const struct cred *old,
+>  					  struct cred *new)
+>  {
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index fc340a6f0dde..5caa372ffbf3 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -4908,7 +4908,7 @@ static int smack_inode_copy_up_xattr(struct dentry *src, const char *name)
+>  }
+>  
+>  static int smack_dentry_create_files_as(struct dentry *dentry, int mode,
+> -					struct qstr *name,
+> +					const struct qstr *name,
+>  					const struct cred *old,
+>  					struct cred *new)
+>  {
 
