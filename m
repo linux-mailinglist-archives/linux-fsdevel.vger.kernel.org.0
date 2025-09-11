@@ -1,199 +1,245 @@
-Return-Path: <linux-fsdevel+bounces-60895-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60896-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB52EB52A33
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 09:37:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E8349B52A89
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 09:52:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FCF13B88EF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 07:37:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0A833A908F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 07:52:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A80F272814;
-	Thu, 11 Sep 2025 07:37:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD8272BE02B;
+	Thu, 11 Sep 2025 07:52:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b="SlxqmsFn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l1AjlyyD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outbound-ip191a.ess.barracuda.com (outbound-ip191a.ess.barracuda.com [209.222.82.58])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 158C1329F17
-	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Sep 2025 07:37:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=209.222.82.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757576236; cv=fail; b=EUMYT1rzV5v+dtEvkzSwoI4ndDzbVGBx7nx5cpSeN8bHK9pCqSMEKmFXOvhs5eaUCl3Unj7TOgjHReatd62Hrs07lK2m8qtlm3Ptj41/HOuT3Lc29T/f0uaBDJCN1h3lfgsiQSLZdnAY3pOAvG9e/TOWSj6OhUAHuxPea/uEAJQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757576236; c=relaxed/simple;
-	bh=4oNglLn901TEdqanxtCVF0Rz6myZ/W3sf+QxZ7cuw9g=;
-	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=VZb8+Xoek5Ev3HQn1va3DqpZzUwezuubOPXTGR3Rh/c2AB+kL1YHphBY+niU1yfggI8wBt9id4xJOyfYMg2Zu9+sj3bz9zTxbW2uTX3WqgtfbEKaq20YSOjlLT4GkL42NraQXh1ZTG3X5hXqrg2OTk6GUy5gpsZV/KPe+zVB7sI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com; spf=pass smtp.mailfrom=ddn.com; dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b=SlxqmsFn; arc=fail smtp.client-ip=209.222.82.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ddn.com
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2136.outbound.protection.outlook.com [40.107.94.136]) by mx-outbound11-233.us-east-2a.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Thu, 11 Sep 2025 07:37:12 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dzx3/NMR1cEgnSJwQ+hNFf3BRVE/AtC5t2Mgww0kcysRlU82S+lRHV1qym6wAm7rSMewMsmIpRkRFPg8thFSpi1+oFRqvQbqGMOcI7jEYIavy8LGtRYD4V/bSx4UZrBeKGxWpUQTekZT4EAnIRFw+xV3b2I8FzGUDV5kQgQalW8Y+JcFtPNlZlIhlyYvKk5nfYS6IXifbOl8LsJocXPldoLfdGx0j8rv/9zXklcBapbx/5KobKMkRYyElFNR+fSACfGY+dist9rxG38kh/4yuNbYPxPiHievbYkddIj966DwtcfytQtXnLWgttC5TUj7QHPN28NRAkhkUVYT0STyPw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XOeAwtTmGj6eb9Cg+fFSxWyZfxY2dd7Ls6UYWeMiizM=;
- b=dXHzhmfMucFhIjrCbkmcxmVzrn2AxPf8Hxd+QRPjbiAWWE2KyBjg6RzbJbiBEpN9BxNKty1XEYsltYEEO0jHdFWCfke792aCLgwR+iSFbHylb4JxVxIkdxkTn+0QSRsp2+jOpUv0Dz/niQJXw89N1YvZZDcxiNWT0RSqMPtWF7daM3wIlIp3UIRhffSKiugHXshYxab7JXxyqUFLhMDMjkYtyvQg0FWu7/XOXszVqv3QEschK5J9zf+E7xUgCfoVMGBJAozug3H6G6L1ksvS2hg7mJUxkBg4DyQVfB586bFu7iLKJ49vjRvREjtYe+YL/ov4MXfSyUCulYfb+nymYQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=ddn.com; dmarc=pass action=none header.from=ddn.com; dkim=pass
- header.d=ddn.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XOeAwtTmGj6eb9Cg+fFSxWyZfxY2dd7Ls6UYWeMiizM=;
- b=SlxqmsFnwo89LXHD9qcS3soyApI2DkBtrNy8g6XzBtj6jPOBEhdljzQqoe6g8v5uXThFNhn3wBP+A7zzDBJrOt4UIjafeuwryicezG7CiyhvacWjHJnzjZRgi2rDdIYGxvclmx/ynSFe/K9bmguE7dHDdpAbEokTVIfc/7ssPBA=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=ddn.com;
-Received: from SN7PR19MB7019.namprd19.prod.outlook.com (2603:10b6:806:2aa::13)
- by DS4PPFA168D4958.namprd19.prod.outlook.com (2603:10b6:f:fc00::a3c) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Thu, 11 Sep
- 2025 07:37:10 +0000
-Received: from SN7PR19MB7019.namprd19.prod.outlook.com
- ([fe80::26a8:a7c5:72e9:43dd]) by SN7PR19MB7019.namprd19.prod.outlook.com
- ([fe80::26a8:a7c5:72e9:43dd%7]) with mapi id 15.20.9094.021; Thu, 11 Sep 2025
- 07:37:09 +0000
-Message-ID: <1029a4e2-bf0d-4394-9b37-ae66126d610b@ddn.com>
-Date: Thu, 11 Sep 2025 15:37:04 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] fs/fuse: fix potential memory leak from
- fuse_uring_cancel
-From: Jian Huang Li <ali@ddn.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: miklos@szeredi.hu, bschubert@ddn.com
-References: <94377ddf-9d04-4181-a632-d8c393dcd240@ddn.com>
-Content-Language: en-US
-In-Reply-To: <94377ddf-9d04-4181-a632-d8c393dcd240@ddn.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: TYWPR01CA0001.jpnprd01.prod.outlook.com
- (2603:1096:400:a9::6) To SN7PR19MB7019.namprd19.prod.outlook.com
- (2603:10b6:806:2aa::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20AF521CC4B;
+	Thu, 11 Sep 2025 07:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757577129; cv=none; b=t0zCo3C5u2uNgHI/q1YaQCWQSoKfaTVhgowGqHMbhusihLsU4PZ/MTA2ujDtWYMbCOMkIm3vkRzXf4g51DGzzo77ex056IQBjy13i4VbGjJD5iG3CHFwAKbKJa3zSP3JGLrF8sRTqilXHGhGh+2X4EZvNk5gyvezBy9r2uVrj5M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757577129; c=relaxed/simple;
+	bh=zCa/Trshx6t//cjDi+8MplzJbi0R8aSBzBBF4hlrJaE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VqRGPEMMvYtcEST3KCvT1SFpVR4TKpEmBc6NRzIxMbjKdDjXRBny8uuJ0CXdxGB7arVo19AMnueuDTSYWZVEy9CDJNkiVT5BP8D5Au65dXTyozmotc0NAvDSccEuiGlTCeA3EnUzm6M7Vygj+bWJSmmkROUVSA3/NLEyEB3VwZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l1AjlyyD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F95DC4CEF1;
+	Thu, 11 Sep 2025 07:52:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757577128;
+	bh=zCa/Trshx6t//cjDi+8MplzJbi0R8aSBzBBF4hlrJaE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l1AjlyyDYEn9GxWz2+UfShAjuVTVlMdY7BvFsdN/00ftJKHXadGlP1U0K16/N0l/d
+	 z/g18n4+AHhrm9ThUIFJjTovOyc7zU8l1+ehGq8MFzQBSAXjHzFWfpydpU2loJCKC7
+	 OruzJApGWUEdY/eehGGpa/sxpoF9tbT69+v1M9R1VFi4B5nbdPBPS3Nqbr6zOggqOv
+	 eD/nN7cQ+tJe/qnSpKEhJNf8J8keyAc6blrhW/elyTI3MQx/QwexR1TzakugRMZVCf
+	 jNEm99gJksMTsfEbG6bjnGZAggwyRKGRYexdRVXUtJRAi+U7YrSw/F+1rJRjYdPn3I
+	 9Abpbkkxf9MDQ==
+Date: Thu, 11 Sep 2025 09:52:00 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
+	linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
+	Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
+	Daan De Meyer <daan.j.demeyer@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH 29/32] nsfs: add missing id retrieval support
+Message-ID: <20250911-korallen-aufgibt-faafc9df8f9a@brauner>
+References: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
+ <20250910-work-namespace-v1-29-4dd56e7359d8@kernel.org>
+ <2025-09-10-yawning-gross-samba-lox-6iVSwq@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR19MB7019:EE_|DS4PPFA168D4958:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3e0c85e2-1661-4816-5113-08ddf10603a1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|19092799006|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZFhzdFI4VXlSNXhKY2lrUHhzUGdEWThXeXJwcHI4bGM2dzdES0Y2N2ZDTy96?=
- =?utf-8?B?NlFITFQ4LzljMVhRMllheUpDSnZaWlRxYXpUTDNZbk1NaHZESllSWUZVVzEy?=
- =?utf-8?B?NGg5eXo2S0VteHk4TGd6aXBxSHQ3T2RzWG9taHl1czk5clQ1Qks4MGRVcWdJ?=
- =?utf-8?B?M3NwS25vWVN1Qm5oT2k5THMxWGcySkJxV29qSlJsQzR0S3hQMHgwY2JSUWhh?=
- =?utf-8?B?d3FweUFJUWRpay9YeWI2NFluRldLUTIyeDhBeDRCY1FDQ2EwYU1YKzZSMHNM?=
- =?utf-8?B?WE9kVUFvRFFEZHZXV1U0eVUvNEl6cEkzdkFFd2ZGd3VFdHh0RXE4cDNJMnpq?=
- =?utf-8?B?YWxNdW51cVdsMEdRQ2o3dytweG53UHlGZmd6R2pyUHdUMWZ5U1loN3hQbkhR?=
- =?utf-8?B?ZnRMWTdFK0U2N1ZUUmhOeXh1aFh0RWs1MVZ0N3J6VTZBK0o5Q2pjUERwYk5k?=
- =?utf-8?B?NUplSFhSc2lBbC9UaXlpNzRjVHdsN2ZKcHdtcjY4dlEyL3owQVJyZEYzZ2Z2?=
- =?utf-8?B?eUtiNG9lekdZZ0QzSCszZHo0Y0RZTG5pc1VoTGNrZVhUdkp5ZzRlbWNwcEFM?=
- =?utf-8?B?cXhNbm84UWd6bU9Wa0R3eGtXMlhvUjlLWFI5a2xQYi9DUHhyUzdlYmgxajA5?=
- =?utf-8?B?T0lidkJwRi9ka0hUcVc3M09YeGxjK1NEODVnb2dPT3U0azZTN2F4YkZJYXoz?=
- =?utf-8?B?eVlRLzd1WDhTVjRpMnBiTW1ZUWJsc2RuU2kzQ0h0RHNUc3BKRVMxbFlHalJ6?=
- =?utf-8?B?UHA5K3ZzMklNMGozd3orcFhWTlNkYWE0bHpiZjhsQkhFSTJOZUlUdi9uUEhW?=
- =?utf-8?B?SWtHZllsQ1FnRjRBVXBWRVdVNUJZY21ReW5xL1FOQ2ZkYVRBbHd0aVJjdHA3?=
- =?utf-8?B?MFBiaDFUTTg4ZDJEWVRxK2tuem4ydXhWQTR1NU9xOFd2aGQ2RTR3OVI5Vk5X?=
- =?utf-8?B?TkVKbGt2OWFlQ1hUN2Zwa1RLQkhNN3plZncxaWpKaXlBTU5Gc0NmODUxazBH?=
- =?utf-8?B?Y0JMZGFEL2hCK2c5dldtemZPODlXTCtmQkZKUXRJR0poOXFmd090SXdCK0Nh?=
- =?utf-8?B?SWljaGZURU5IMmlPdWxOckpTSytQYzRmaWFKVFV2bFF1ZGpkV2JJNnBDS09k?=
- =?utf-8?B?VjdFTVRrQ2oyRzRmaFFrVmorNUEyMU45QWJVZ25pQk5rV1ZmR3VZUkpmSjM0?=
- =?utf-8?B?bDlTMENEQUpFU01QRkVncHovUUJnbjZVdWQxSnlMcXplTG5GOExEeUdtRW5r?=
- =?utf-8?B?MkJwMi81aWVuRzkxNlNyYi9LUW1jbGhxT1ZQcEFLZ3dhbWhLendtSlhnS1ZB?=
- =?utf-8?B?OXRWTHhrZmNEWFhQWnlVSEQ0RzZFY2c5TmxsczNHNWJNQ0doOVZPTTVVamZp?=
- =?utf-8?B?Q3F2THM1UEJPazFBMi93YmhXZERxblJPKzE5UHBwWVpFRzdTWXJRdE1ETXFQ?=
- =?utf-8?B?SWU1RWlNcmd6cS9nQkZFU0RTdXVvMVJkSXorMkdERlk4dGFkaWN0SS9scG5U?=
- =?utf-8?B?SXZ3alptU0R3Z3JSQWQrQlZ0ZTZ2MExmU0VCdWpBN0UzaWxMc2tyaWx6Mlpj?=
- =?utf-8?B?WnpSMUdaOGNNTkZXL1l1WE1TMkJ3bVJHNVZYc2tTNUZ3djVGUXZmNVlOb21m?=
- =?utf-8?B?Vkc3RWN3UmlSd0Myd2NqaU5yWVd2cFQ5V1FLa3dHVTQrdGQ2UEhFUnhiejRI?=
- =?utf-8?B?T2Z6RnMrWldBMFJkZUN1d2xHc0JnYXZlVnpWWUg1bUJOcGRKYzVuTksxamM4?=
- =?utf-8?B?Z0FiMW81WTJkUnpKWDAxMWw1MkYyVWk4aEFGUjBhalNhMmJiOUxuRGZ1Z2I1?=
- =?utf-8?B?MHpLbEc4WGhqbUs2dTZLaDJSY1o1OFJvS0lGL1Eya1lkQndkRmhDc1U1L3RG?=
- =?utf-8?B?NjJGamJWMWZ0YVNhUWQ2bHVRc28vSXZ3eE55eFZIbkw4VzUvMHo1cnlYN2dO?=
- =?utf-8?Q?iZNg4gXitqA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR19MB7019.namprd19.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(19092799006)(1800799024)(376014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?anlUOVhpR05sUGVIOHgyOXhZeW45dkFlT1VYazhWTzdVQzZ4cUF1T1lwcnVz?=
- =?utf-8?B?MXo3ejVoSWxVd3l5VFlSVlhVV0duRHpEV0VHcUthRzBVeVVsRDVZdkFDdThS?=
- =?utf-8?B?WEUrendneUVPdDk1Q1poLytKVUNxWEs2c09nR1RubUw2VzF0YXArSktNeHRT?=
- =?utf-8?B?ZmNFbTUzWkFYTUkxa3hTcndJdjZlQ1FpMzMxNHc3bkNEUSt5L1k2V3VyNHNw?=
- =?utf-8?B?d0tZd1pwakFpb3dXVXFGbjkzV1M4OXR5MFcrOWMxQ2ZtVzhxN0owUW41Tzda?=
- =?utf-8?B?eW1MSTNhZUNsU09pa2ZrbEJ0ZTJJY2hSZ0FjbVMyY05PdnMzY0hrMFBiS2o1?=
- =?utf-8?B?NmNicHpCb3U1OGpQNklWYzdSSjNXck04Rm1BczlFdFV2QjQ3czJoMStZU1Ay?=
- =?utf-8?B?Z0ljMVRublZFNHJwMWkxMFFFM3JtNkI5Ukd0Q2hUdXRvR2lqek9XVkU1eVd0?=
- =?utf-8?B?d2JiT3BwOHJtelFVWVVtQVJiWjZ4MFhBN041eVJ6YzlORTM2VEg3WDdTM25W?=
- =?utf-8?B?MWlLZlMrUEZVaXNBemVneWdCaGNpQVY5NTFMdU1JODVxN2hWblhhc1cxZ1gr?=
- =?utf-8?B?eTIrWWJyMUluZDRLSG5CYnJWNTlNdGk0YkhLWGo4N0RGRU1jOXhCZytWQUJ3?=
- =?utf-8?B?d0RVcFVWbEhXWmlBSXNqM2JSM1JuUWxPNU8xZUdpVHFsRmV4WnVFSmlTYkY1?=
- =?utf-8?B?RFBSQXNjeVB2RVZ1aHRncERSSWc2bXRORHJxNXVwWlRDd0RDcHVTUGo0VTRx?=
- =?utf-8?B?dDFxV1lZZ0t0NTJ3NzBoVWRwMHdSNDU5eiszUEx6b3M1R2RiZzZEa01YV0FE?=
- =?utf-8?B?YllrWWZaV2d2VVVUbHl2MHRHQk1zbVh4YXFoUU5WZkFWbFpOYkFFQzk5STh6?=
- =?utf-8?B?NWdOSklmLzlqT0lYOFEwWTN5SmxlTTJ1bFZVdm92Y3ltR3pZOHdxZWhnSnc0?=
- =?utf-8?B?SEZndndhaUxUMC8wUGV5cmVoZDhBa20xcDRTek9JS0FsMnJCUU5IYkZObXE4?=
- =?utf-8?B?OGVnejVrajdOb2ExU1FWcjZUTmt5NzJVNXBROHBIdmNJMTZKNHNpcGxORUdX?=
- =?utf-8?B?NlhIYVlpL0dZMFlVMzV1YWdTRWNxdENyL2Y3bHVzODVIeHV1a3JVNzM5cERJ?=
- =?utf-8?B?Tnk0UkZldU1BNkluTUNzeWxiUnF2dWlrSnNMZS92YkxkdGV3WFB5MytDeXlC?=
- =?utf-8?B?Zkh0bWRYN1BHSDV3Q0QrK05lbCt2ZDRlRlpDWUZDRy9weVZPTGlsNFpyajNG?=
- =?utf-8?B?ZnFFcE4yNzRuYjN1ZTdLdmFxT2U0T2cvKzJ2Q2wyQ204YTdWek5NVzE4Z2tn?=
- =?utf-8?B?aTJLMm1FaFRYZDNjQ016RmFSNFVFU295ODVZNTNKOHBPNmd4UW1oM0U1eXlG?=
- =?utf-8?B?NGdwZTNSMTlzOU1nYzJiNjF3UnkyQm5Oc3VRSHhCSW5wSGJkTk5Oam9LVmc3?=
- =?utf-8?B?Z0l0Q3dwVUowNjgyRXFmYmFDeGJraEd5eUloQjVkamZLWGtrY2hwZ2VQWTIr?=
- =?utf-8?B?bm1VMXdPTDhpSzB2NkhCL3FHd3RlN3RaWklwQnpRQ1V3ZG5yWDdGdFQzNERv?=
- =?utf-8?B?NlZLYjRuSCtuU1VzTUFyd1JxYyt3UXpzZlM4YVA4VkR3Nkk2WTFqbFBGMXJt?=
- =?utf-8?B?a1h3NmVUTDk4bWZRa2cralBGaVJUNWJnUnA2UmZOazl4TVI5WkFMRG5DM1hX?=
- =?utf-8?B?b0N1YTlXSzJSdWc4Sm1sMmpTYWNlSi9BTEpZYmErUEVoNEJXdytTbTk5MzhO?=
- =?utf-8?B?bGI5SFhvWmMvUElOR3hNUm1uNXFRN3JqYTByeEc3azlnMHh5eTl5VXBiRjlm?=
- =?utf-8?B?YnZQWjZvc2hJKzd2b2JSRnkvNmdNQ0FOaEdMQUF4OEVhMFppRnJzdzNyZkpM?=
- =?utf-8?B?blhNVTFlbFZldCtXRGJPdFhCak9vdEMvMWdjTGI4dGU4TEFCRStWVEZURTVJ?=
- =?utf-8?B?WStRWDlkd3NTT28xWVZDZlBlSHV3TlkyQTM3TlUxZ1p0MTUrUUduM01qakht?=
- =?utf-8?B?VURieUtqdXRpSjNiZDRzVmpPSlJFZVR4eHlrRllUd2tjSVdFdmlXbDhaRXQr?=
- =?utf-8?B?d0lQY1BTQ1h4N0tzSnl2ZnNZTTZzQUwvRldMbWFBQlV3dzk4MU1iSmVPcG1P?=
- =?utf-8?Q?iW9I=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	m9NfDUeMnFlbf8YBGpD4d2XuN4ZaMVVk9usb+9b+OKcRMaqVAmEEacOtm83m4WXr0Nufkgj44K2eAxwGoGAkE86VqGua1xEvEkejbiWxsTbCM1YkLu0pb7Pov88uCeYwx2PMN8T2SiZsNv0LM0LbS8GsvMgyHyvdy7J10ubp+qz5YnZpr2+X0W1okSz2tw1IRGKbsUZOfL2UH3du7WyGCykAfIUWE1OLKpVADPIonbLOLQSTCof9S40F+/3PUdmicozUll46oo4JViV9WFnCu003vZh28nNvKHcnTSY68SDOTI5b08nj/N4WO0TASuHP2dGhA8wzN9maMNhbhJJ87+hPpNWWZbsFATEShJfqatceED1e0OzVDRsGR+8demFq/Ylb8HtSWBE5Z/fwoioWytsDFfFprsAxQNamnlfZaA1DZU8WX4Tv1QnDEaFNuk4p+/pRwCA85FFmo7rPI6za9GGy/4iBIG9T6qxQVBj8jYSmKlTYkLxoK1v7l8njhBleVY1YcPgsKnljRhnij4jcfaEDuYHhUqNj4pqPLlbNovIGOKR+U+qA9k7ILQSgsxKAkmYid4xWXnkyVb4E63jN9FkCJyMiGKgiqF1nKt4V8oDRCOX5s2C3akrKcTEm6sNLTw4sFgt//qwMEGZHjq7+og==
-X-OriginatorOrg: ddn.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3e0c85e2-1661-4816-5113-08ddf10603a1
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR19MB7019.namprd19.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2025 07:37:09.2556
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /9iHkOYhd6UtwYlHldGwQCUPhZfaAzWu6AKuvcyUf5pquicjrxYpsPATJoisUBol
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PPFA168D4958
-X-BESS-ID: 1757576232-103049-24369-14769-1
-X-BESS-VER: 2019.1_20250904.2304
-X-BESS-Apparent-Source-IP: 40.107.94.136
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVsYG5kBGBlDMyMDQIjExMTXJOC
-	U51djQ0CTNLNHUzMLQ0iLVxCQxKVmpNhYA3sbjmkAAAAA=
-X-BESS-Outbound-Spam-Score: 0.00
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.267400 [from 
-	cloudscan20-154.us-east-2b.ess.aws.cudaops.com]
-	Rule breakdown below
-	 pts rule name              description
-	---- ---------------------- --------------------------------
-	0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS124931 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
-X-BESS-BRTS-Status:1
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2025-09-10-yawning-gross-samba-lox-6iVSwq@cyphar.com>
 
-Changelog
----------
-v1: 
-https://lore.kernel.org/all/4a599306-5ef1-4531-b733-4984d09b97a1@ddn.com/
-v1 -> v2:
-* Instead of introducing a new list, keep to use ent_in_userspace to
-   handle not-in-using entities when SQEs get canceled, and
-   iterate/free on the ent_in_userspace list in fuse_uring_destruct.
+On Thu, Sep 11, 2025 at 02:49:49AM +1000, Aleksa Sarai wrote:
+> On 2025-09-10, Christian Brauner <brauner@kernel.org> wrote:
+> > The mount namespace has supported id retrieval for a while already.
+> > Add support for the other types as well.
+> > 
+> > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> > ---
+> >  fs/nsfs.c                 | 74 +++++++++++++++++++++++++++++++++++++++--------
+> >  include/uapi/linux/nsfs.h | 12 ++++++--
+> >  2 files changed, 72 insertions(+), 14 deletions(-)
+> > 
+> > diff --git a/fs/nsfs.c b/fs/nsfs.c
+> > index 3c6fcf652633..527480e67fd1 100644
+> > --- a/fs/nsfs.c
+> > +++ b/fs/nsfs.c
+> > @@ -173,6 +173,13 @@ static bool nsfs_ioctl_valid(unsigned int cmd)
+> >  	case NS_GET_NSTYPE:
+> >  	case NS_GET_OWNER_UID:
+> >  	case NS_GET_MNTNS_ID:
+> > +	case NS_GET_NETNS_ID:
+> > +	case NS_GET_CGROUPNS_ID:
+> > +	case NS_GET_IPCNS_ID:
+> > +	case NS_GET_UTSNS_ID:
+> > +	case NS_GET_PIDNS_ID:
+> > +	case NS_GET_TIMENS_ID:
+> > +	case NS_GET_USERNS_ID:
+> >  	case NS_GET_PID_FROM_PIDNS:
+> >  	case NS_GET_TGID_FROM_PIDNS:
+> >  	case NS_GET_PID_IN_PIDNS:
+> > @@ -226,18 +233,6 @@ static long ns_ioctl(struct file *filp, unsigned int ioctl,
+> >  		argp = (uid_t __user *) arg;
+> >  		uid = from_kuid_munged(current_user_ns(), user_ns->owner);
+> >  		return put_user(uid, argp);
+> > -	case NS_GET_MNTNS_ID: {
+> > -		__u64 __user *idp;
+> > -		__u64 id;
+> > -
+> > -		if (ns->ops->type != CLONE_NEWNS)
+> > -			return -EINVAL;
+> > -
+> > -		mnt_ns = container_of(ns, struct mnt_namespace, ns);
+> > -		idp = (__u64 __user *)arg;
+> > -		id = mnt_ns->ns.ns_id;
+> > -		return put_user(id, idp);
+> > -	}
+> >  	case NS_GET_PID_FROM_PIDNS:
+> >  		fallthrough;
+> >  	case NS_GET_TGID_FROM_PIDNS:
+> > @@ -283,6 +278,61 @@ static long ns_ioctl(struct file *filp, unsigned int ioctl,
+> >  			ret = -ESRCH;
+> >  		return ret;
+> >  	}
+> > +	case NS_GET_MNTNS_ID:
+> > +		fallthrough;
+> > +	case NS_GET_NETNS_ID:
+> > +		fallthrough;
+> > +	case NS_GET_CGROUPNS_ID:
+> > +		fallthrough;
+> > +	case NS_GET_IPCNS_ID:
+> > +		fallthrough;
+> > +	case NS_GET_UTSNS_ID:
+> > +		fallthrough;
+> > +	case NS_GET_PIDNS_ID:
+> > +		fallthrough;
+> > +	case NS_GET_TIMENS_ID:
+> > +		fallthrough;
+> > +	case NS_GET_USERNS_ID: {
+> > +		__u64 __user *idp;
+> > +		__u64 id;
+> > +		int expected_type;
+> > +
+> > +		switch (ioctl) {
+> > +		case NS_GET_MNTNS_ID:
+> > +			expected_type = CLONE_NEWNS;
+> > +			break;
+> > +		case NS_GET_NETNS_ID:
+> > +			expected_type = CLONE_NEWNET;
+> > +			break;
+> > +		case NS_GET_CGROUPNS_ID:
+> > +			expected_type = CLONE_NEWCGROUP;
+> > +			break;
+> > +		case NS_GET_IPCNS_ID:
+> > +			expected_type = CLONE_NEWIPC;
+> > +			break;
+> > +		case NS_GET_UTSNS_ID:
+> > +			expected_type = CLONE_NEWUTS;
+> > +			break;
+> > +		case NS_GET_PIDNS_ID:
+> > +			expected_type = CLONE_NEWPID;
+> > +			break;
+> > +		case NS_GET_TIMENS_ID:
+> > +			expected_type = CLONE_NEWTIME;
+> > +			break;
+> > +		case NS_GET_USERNS_ID:
+> > +			expected_type = CLONE_NEWUSER;
+> > +			break;
+> > +		default:
+> > +			return -EINVAL;
+> > +		}
+> > +
+> > +		if (ns->ops->type != expected_type)
+> > +			return -EINVAL;
+> 
+> While I get that having this be per-ns-type lets programs avoid being
+> tricked into thinking that one namespace ID is actually another
+> namespace, it feels a bit ugly to have to add a new ioctl for every new
+> namespace.
+> 
+> If we added a way to get the CLONE_* flag for a namespace (NS_GET_TYPE)
+
+That exists afaict: NS_GET_NSTYPE.
+
+> we could have just NS_GET_ID. Of course, we would have to trust
+> userspace to do the right thing...
+
+So NS_GET_ID can just return the id and be done with it. If userspace
+wants to know what type it is they can issue a separate ioctl. But since
+the id space is shared all ids of all namespaces can be compared with
+each other reliably. So really for comparision you wouldn't need to
+care. IOW, yes.
+
+> 
+> > +
+> > +		idp = (__u64 __user *)arg;
+> > +		id = ns->ns_id;
+> > +		return put_user(id, idp);
+> > +	}
+> >  	}
+> >  
+> >  	/* extensible ioctls */
+> > diff --git a/include/uapi/linux/nsfs.h b/include/uapi/linux/nsfs.h
+> > index 97d8d80d139f..f7c21840cc09 100644
+> > --- a/include/uapi/linux/nsfs.h
+> > +++ b/include/uapi/linux/nsfs.h
+> > @@ -16,8 +16,6 @@
+> >  #define NS_GET_NSTYPE		_IO(NSIO, 0x3)
+> >  /* Get owner UID (in the caller's user namespace) for a user namespace */
+> >  #define NS_GET_OWNER_UID	_IO(NSIO, 0x4)
+> > -/* Get the id for a mount namespace */
+> > -#define NS_GET_MNTNS_ID		_IOR(NSIO, 0x5, __u64)
+> >  /* Translate pid from target pid namespace into the caller's pid namespace. */
+> >  #define NS_GET_PID_FROM_PIDNS	_IOR(NSIO, 0x6, int)
+> >  /* Return thread-group leader id of pid in the callers pid namespace. */
+> > @@ -42,6 +40,16 @@ struct mnt_ns_info {
+> >  /* Get previous namespace. */
+> >  #define NS_MNT_GET_PREV		_IOR(NSIO, 12, struct mnt_ns_info)
+> >  
+> > +/* Retrieve namespace identifiers. */
+> > +#define NS_GET_MNTNS_ID		_IOR(NSIO, 5,  __u64)
+> > +#define NS_GET_NETNS_ID		_IOR(NSIO, 13, __u64)
+> > +#define NS_GET_CGROUPNS_ID	_IOR(NSIO, 14, __u64)
+> > +#define NS_GET_IPCNS_ID		_IOR(NSIO, 15, __u64)
+> > +#define NS_GET_UTSNS_ID		_IOR(NSIO, 16, __u64)
+> > +#define NS_GET_PIDNS_ID		_IOR(NSIO, 17, __u64)
+> > +#define NS_GET_TIMENS_ID	_IOR(NSIO, 18, __u64)
+> > +#define NS_GET_USERNS_ID	_IOR(NSIO, 19, __u64)
+> > +
+> >  enum init_ns_ino {
+> >  	IPC_NS_INIT_INO		= 0xEFFFFFFFU,
+> >  	UTS_NS_INIT_INO		= 0xEFFFFFFEU,
+> > 
+> > -- 
+> > 2.47.3
+> > 
+> 
+> -- 
+> Aleksa Sarai
+> Senior Software Engineer (Containers)
+> SUSE Linux GmbH
+> https://www.cyphar.com/
+
+
 
