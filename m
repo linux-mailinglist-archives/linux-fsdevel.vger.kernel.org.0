@@ -1,179 +1,254 @@
-Return-Path: <linux-fsdevel+bounces-60941-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60942-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 986C2B531A9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 14:01:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A0515B531BC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 14:07:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D60AC1BC4DD6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 12:02:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4C00188F9CF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 12:07:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C42CB2F0670;
-	Thu, 11 Sep 2025 12:01:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 326F431DD99;
+	Thu, 11 Sep 2025 12:07:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="s9mW5lc6";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kmmshWh0";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="s9mW5lc6";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kmmshWh0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z9G6EcfC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6DC21A2387
-	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Sep 2025 12:01:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21B61A2387;
+	Thu, 11 Sep 2025 12:07:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757592105; cv=none; b=eyhvejxmEtmOEe9TcWcowEA1CRxbq5w10c2+R6uSknmgj3+7k1Wc7D0FCetqO22A/MOu//rBiiMcVWFMj48OGB0l9UnWp+Em1VVNVUN+109rwQdM4kWtDzaHSBzLoUohd+1ROeQL19/2deHxI1jvJDYcAaX7HRz57VEvP+CVER8=
+	t=1757592431; cv=none; b=pPDo+nq01KaFCaQU7CAzugrilJpfalb7dJHqMCQb2+mtOKhB1bGxwMQfn+De/Vzf5qFSNiqhRIf2N+0NmIagYkHn+pODugU1qTvzuNY3PiivNkkO1tnFO7L0IRA8/kUdk69FgpsbVj8VkvagkNjxW64u+x6QoxysikVhBh5shho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757592105; c=relaxed/simple;
-	bh=2YSewRXvJHcUDsCeGu8hxf4jToia7yCgrHOqvfe/vak=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QuUySgRDxR0TB0lcYsR9oHZqlgZPvKOXoh6BssoPFda2F8ccw7VQZ25fZtqMCR8kh/4rHIw2mMZqHgDJKvrQGAwCPbILAPVix+QVIKmwM1Jk8L8bji5hw3ItEyAk3U4Wk4pqNZwd6DOzAdEbgAFuKAJQZLuC9idFvncgycgPqGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=s9mW5lc6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kmmshWh0; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=s9mW5lc6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kmmshWh0; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 13C92227B0;
-	Thu, 11 Sep 2025 12:01:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757592101; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qTcZOMPNJimAbyd8RtPoSsZk0OG2pBh5j6lrygM9lN0=;
-	b=s9mW5lc6BliPQ4VYnrNCkeEdHeqD0A5UX6BO0T5J/qwPmeo3Z/zEwEQM+a80m5hFc/bLB2
-	I4Cz0I3zBSjubue11KZH0GuU9avpYR99kUMoQVmRQrAS8IBiStrrub+38EvZHishVB8iaE
-	2yd4rnpKJ2Mx0O5wZ4O82kcFRADBbZ8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757592101;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qTcZOMPNJimAbyd8RtPoSsZk0OG2pBh5j6lrygM9lN0=;
-	b=kmmshWh0I3qnNavCOUNQ4fCmErW7NQ3M00b4ZSF9ZDqJFkbBTOIxZKhDt5J1j0/J6/MFtY
-	h+LOC/A8sY3jL7Dw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757592101; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qTcZOMPNJimAbyd8RtPoSsZk0OG2pBh5j6lrygM9lN0=;
-	b=s9mW5lc6BliPQ4VYnrNCkeEdHeqD0A5UX6BO0T5J/qwPmeo3Z/zEwEQM+a80m5hFc/bLB2
-	I4Cz0I3zBSjubue11KZH0GuU9avpYR99kUMoQVmRQrAS8IBiStrrub+38EvZHishVB8iaE
-	2yd4rnpKJ2Mx0O5wZ4O82kcFRADBbZ8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757592101;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qTcZOMPNJimAbyd8RtPoSsZk0OG2pBh5j6lrygM9lN0=;
-	b=kmmshWh0I3qnNavCOUNQ4fCmErW7NQ3M00b4ZSF9ZDqJFkbBTOIxZKhDt5J1j0/J6/MFtY
-	h+LOC/A8sY3jL7Dw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 099A01372E;
-	Thu, 11 Sep 2025 12:01:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id nslSAiW6wmifOgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 11 Sep 2025 12:01:41 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id AAFABA0A2D; Thu, 11 Sep 2025 14:01:36 +0200 (CEST)
-Date: Thu, 11 Sep 2025 14:01:36 +0200
-From: Jan Kara <jack@suse.cz>
-To: Tejun Heo <tj@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/4] writeback: Avoid contention on wb->list_lock when
- switching inodes
-Message-ID: <refau7p3ulgz3z35bflhmpds5wdywuvcupaqza2c3fwk45qgtu@qfg255gzs4l3>
-References: <20250909143734.30801-1-jack@suse.cz>
- <20250909144400.2901-5-jack@suse.cz>
- <aMBbSxwwnvBvQw8C@slm.duckdns.org>
- <6wl26xqf6kvaz4527m7dy2dng5tu22qxva2uf2fi4xtzuzqxwx@l5re7vgx6zlz>
- <aMGw9AjS11coqPF_@slm.duckdns.org>
- <7ilbnkfbhv5mtshehvphe4tfiuwg7o52cexd3x4thwizkpjgbt@dycc7ac677t7>
+	s=arc-20240116; t=1757592431; c=relaxed/simple;
+	bh=CWtgdGZKGiV6C2LAqDBOWl4B+CogxkQkccfpg7R1L7I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KdPvN0RHRjj2Y1f1HYznu47vxHZkjAKl+wcpc5LRtoZzr3DYvYEIMSYFsX/NWnr6PxnXUfurb6YwTN1K52TjGTtgLUQcbDuMehDND8xFzedrwmWtDtHd4Of1IVo0NMTQnVKWeM4FB2dSxZCz4YdTYkvkJEbX7E0t8CKxivw7Fes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z9G6EcfC; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b0473327e70so102318066b.3;
+        Thu, 11 Sep 2025 05:07:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757592428; x=1758197228; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MlXq62wKeHqg0gd09zghwHhFaAtZDnEewIqOdMn/A2I=;
+        b=Z9G6EcfCqUI4Yn+03tzsObmBUSmPVQHMQfDCpu3cs0nGAwp5if+NO1EePp7G8vxJsI
+         lfsbMGMD7CLj309oU9Y2kqEc/bxN8+x/wN8Hi8h2W3auSOahC1xhY/Ih2M9nA1gvZ5J6
+         haCNViHzZrqde7pGvkuM1Bkq1dObL9aAl7EJM1kOajpgMZdHzyGM1gIO8ueiS7fvcFBU
+         e6S5slrN9YPGMYKQ/WB3hwvmVcrNqbG1JM9A/paHz+06SvUkqSsSpL7rHdRKkS8ClfOM
+         bHY0n3yneYH9/UchX1hYhGZOuNMcLbkcmcTnK656mZ40YtiEI6I7rCmhCsGrUtKpbiTW
+         cEug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757592428; x=1758197228;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MlXq62wKeHqg0gd09zghwHhFaAtZDnEewIqOdMn/A2I=;
+        b=rSIpOo3HxvAlceqqhDeQceMs9yNb0EwwO7TiJ1EcBFsYq4wYP8ODoXZeUe4cY1wlnx
+         Bz+wwmHjRdhoq6YZoiSH14wyjeieErMNHwatNeKrSpacYU09iYCDLCpR53TZ4SOCDVFm
+         /TgFQ29tSAr2VTim2/U6JnXTQinKfnMscFKYRVuwErocjPF2FL9z7IiTvkzk6WTTbUau
+         YbMQUs5ZyBvlTq9Axu7wDkhsR65TDAlibVqLQ3/gxega2tPj5Tbm7tCeQDNF1vYZzxKq
+         Ac+REQ2JAMkk6N3qLjZ1l6xEsJ1qGCbFCguCGNykzBzs38syvUyLFn0Q3HdvXWZyikeF
+         hicw==
+X-Forwarded-Encrypted: i=1; AJvYcCUdwN9yNX8iLXvcdqNW0OabX2u8NFEPBI6qtb7tKvvgpYRfRKCVBZuDD2iS3u0EYWDcYmS6oBWtfJ034+Bv@vger.kernel.org, AJvYcCVlLYgCfwNyIny5sp43riaM5o2FyzHwgjYP15LL7u+HiQUA6AYaF06eMNJBwc1x4HtiwXnb2IQrja3Q@vger.kernel.org
+X-Gm-Message-State: AOJu0YxY+OB29i8pRLwKhdVX81tWvaISwBZzTD3wbIxA48ubrMDrK2ay
+	XYEnvAf3aoDseQ9OFlJUep8K7yoNCr8GygWBEF7WPozCyFIM+6epLOKvVXE3ZBHmj+NOGQN7/4R
+	JLhItjhMSNqGkuoFXfZtuvOr5GaitEyI=
+X-Gm-Gg: ASbGncuCOqPrZGt2PJ8a1jSMoi/EltC5SBS5L5JmqIMviZSkQmER5hKXY3VK9M9cU6s
+	NqGkarYgkqttw4abwyYTrtHIwQFi9hLpkVyPJyiyl5IdSq9cJRHCVGWR8Qi9JoCFYEXtkhqwBm8
+	k/FXiRtnFylLYMv6/zbDlvATg0hUO9Z8+rNL9Sj6KL2mmlVpH4ZKfLQZf/hU4Xq4VbBl+ocFPSu
+	u66bkA=
+X-Google-Smtp-Source: AGHT+IHuO4Y18/ms8HXtfsVzkykLOgDmAzsniOj5IhMIMaxBgw7OSG4cIU3ZypSMTOIG9T8PMAClxQPupp2Q4vvNwf4=
+X-Received: by 2002:a17:907:1c93:b0:b04:58f8:16e3 with SMTP id
+ a640c23a62f3a-b04b1458ca9mr1835311266b.24.1757592427535; Thu, 11 Sep 2025
+ 05:07:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7ilbnkfbhv5mtshehvphe4tfiuwg7o52cexd3x4thwizkpjgbt@dycc7ac677t7>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	MISSING_XM_UA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	RCPT_COUNT_THREE(0.00)[4];
-	FROM_EQ_ENVFROM(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+References: <20250910214927.480316-1-tahbertschinger@gmail.com> <20250910214927.480316-2-tahbertschinger@gmail.com>
+In-Reply-To: <20250910214927.480316-2-tahbertschinger@gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 11 Sep 2025 14:06:56 +0200
+X-Gm-Features: Ac12FXwE8Bj9dGWGo-5zJ_H-d4HpOgV3sKUQE4ulZ5dVMB7X5gawDwPRuEUsYDQ
+Message-ID: <CAOQ4uxhFXaqxy2tDvFpw1MpX8ierbiXL4kXq0rLL22X3h=_UXA@mail.gmail.com>
+Subject: Re: [PATCH 01/10] fhandle: create helper for name_to_handle_at(2)
+To: Thomas Bertschinger <tahbertschinger@gmail.com>
+Cc: io-uring@vger.kernel.org, axboe@kernel.dk, linux-fsdevel@vger.kernel.org, 
+	viro@zeniv.linux.org.uk, brauner@kernel.org, linux-nfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu 11-09-25 13:30:13, Jan Kara wrote:
-> On Wed 10-09-25 07:10:12, Tejun Heo wrote:
-> > Hello, Jan.
-> > 
-> > On Wed, Sep 10, 2025 at 10:19:36AM +0200, Jan Kara wrote:
-> > > Well, reducing @max_active to 1 will certainly deal with the list_lock
-> > > contention as well. But I didn't want to do that as on a busy container
-> > > system I assume there can be switching happening between different pairs of
-> > > cgroups. With the approach in this patch switches with different target
-> > > cgroups can still run in parallel. I don't have any real world data to back
-> > > that assumption so if you think this parallelism isn't really needed and we
-> > > are fine with at most one switch happening in the system, switching
-> > > max_active to 1 is certainly simple enough.
-> > 
-> > What bothers me is that the concurrency doesn't match between the work items
-> > being scheduled and the actual execution and we're resolving that by early
-> > exiting from some work items. It just feels like an roundabout way to do it
-> > with extra code. I think there are better ways to achieve per-bdi_writeback
-> > concurrency:
-> > 
-> > - Move work_struct from isw to bdi_writeback and schedule the work item on
-> >   the target wb which processes isw's queued on the bdi_writeback.
-> > 
-> > - Or have a per-wb workqueue with max_active limit so that concurrency is
-> >   regulated per-wb.
-> > 
-> > The latter is a bit simpler but does cost more memory as workqueue_struct
-> > isn't tiny. The former is a bit more complicated but most likely less so
-> > than the current code. What do you think?
-> 
-> That's a fair objection and good idea. I'll rework the patch to go with
-> the first variant.
+On Wed, Sep 10, 2025 at 11:47=E2=80=AFPM Thomas Bertschinger
+<tahbertschinger@gmail.com> wrote:
+>
+> Create a helper do_sys_name_to_handle_at() that takes an additional
+> argument, lookup_flags, beyond the syscall arguments.
+>
+> Because name_to_handle_at(2) doesn't take any lookup flags, it always
+> passes 0 for this argument.
+>
+> Future callers like io_uring may pass LOOKUP_CACHED in order to request
+> a non-blocking lookup.
+>
+> This helper's name is confusingly similar to do_sys_name_to_handle()
+> which takes care of returning the file handle, once the filename has
+> been turned into a struct path. To distinguish the names more clearly,
+> rename the latter to do_path_to_handle().
+>
+> Signed-off-by: Thomas Bertschinger <tahbertschinger@gmail.com>
 
-I've realized why I didn't do something like this from the beginning. The
-slight snag is that you can start switching inode's wb only once rcu period
-expires (so that I_WB_SWITCH setting is guaranteed to be visible). This
-makes moving the work struct to bdi_writeback sligthly tricky. It shouldn't
-be too bad so I think I'll try it and see how it looks like.
+Thomas,
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+If you post another patch set please use git-format -v3 to add v3
+to all patch subjects (not only to cover letter subject).
+
+Feel free to add:
+
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+
+Thanks,
+Amir.
+
+> ---
+>  fs/fhandle.c  | 61 ++++++++++++++++++++++++++++-----------------------
+>  fs/internal.h |  9 ++++++++
+>  2 files changed, 43 insertions(+), 27 deletions(-)
+>
+> diff --git a/fs/fhandle.c b/fs/fhandle.c
+> index 68a7d2861c58..605ad8e7d93d 100644
+> --- a/fs/fhandle.c
+> +++ b/fs/fhandle.c
+> @@ -14,10 +14,10 @@
+>  #include "internal.h"
+>  #include "mount.h"
+>
+> -static long do_sys_name_to_handle(const struct path *path,
+> -                                 struct file_handle __user *ufh,
+> -                                 void __user *mnt_id, bool unique_mntid,
+> -                                 int fh_flags)
+> +static long do_path_to_handle(const struct path *path,
+> +                             struct file_handle __user *ufh,
+> +                             void __user *mnt_id, bool unique_mntid,
+> +                             int fh_flags)
+>  {
+>         long retval;
+>         struct file_handle f_handle;
+> @@ -111,27 +111,11 @@ static long do_sys_name_to_handle(const struct path=
+ *path,
+>         return retval;
+>  }
+>
+> -/**
+> - * sys_name_to_handle_at: convert name to handle
+> - * @dfd: directory relative to which name is interpreted if not absolute
+> - * @name: name that should be converted to handle.
+> - * @handle: resulting file handle
+> - * @mnt_id: mount id of the file system containing the file
+> - *          (u64 if AT_HANDLE_MNT_ID_UNIQUE, otherwise int)
+> - * @flag: flag value to indicate whether to follow symlink or not
+> - *        and whether a decodable file handle is required.
+> - *
+> - * @handle->handle_size indicate the space available to store the
+> - * variable part of the file handle in bytes. If there is not
+> - * enough space, the field is updated to return the minimum
+> - * value required.
+> - */
+> -SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const char __user *, name,
+> -               struct file_handle __user *, handle, void __user *, mnt_i=
+d,
+> -               int, flag)
+> +long do_sys_name_to_handle_at(int dfd, const char __user *name,
+> +                             struct file_handle __user *handle,
+> +                             void __user *mnt_id, int flag, int lookup_f=
+lags)
+>  {
+>         struct path path;
+> -       int lookup_flags;
+>         int fh_flags =3D 0;
+>         int err;
+>
+> @@ -155,19 +139,42 @@ SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const =
+char __user *, name,
+>         else if (flag & AT_HANDLE_CONNECTABLE)
+>                 fh_flags |=3D EXPORT_FH_CONNECTABLE;
+>
+> -       lookup_flags =3D (flag & AT_SYMLINK_FOLLOW) ? LOOKUP_FOLLOW : 0;
+> +       if (flag & AT_SYMLINK_FOLLOW)
+> +               lookup_flags |=3D LOOKUP_FOLLOW;
+>         if (flag & AT_EMPTY_PATH)
+>                 lookup_flags |=3D LOOKUP_EMPTY;
+>         err =3D user_path_at(dfd, name, lookup_flags, &path);
+>         if (!err) {
+> -               err =3D do_sys_name_to_handle(&path, handle, mnt_id,
+> -                                           flag & AT_HANDLE_MNT_ID_UNIQU=
+E,
+> -                                           fh_flags);
+> +               err =3D do_path_to_handle(&path, handle, mnt_id,
+> +                                       flag & AT_HANDLE_MNT_ID_UNIQUE,
+> +                                       fh_flags);
+>                 path_put(&path);
+>         }
+>         return err;
+>  }
+>
+> +/**
+> + * sys_name_to_handle_at: convert name to handle
+> + * @dfd: directory relative to which name is interpreted if not absolute
+> + * @name: name that should be converted to handle.
+> + * @handle: resulting file handle
+> + * @mnt_id: mount id of the file system containing the file
+> + *          (u64 if AT_HANDLE_MNT_ID_UNIQUE, otherwise int)
+> + * @flag: flag value to indicate whether to follow symlink or not
+> + *        and whether a decodable file handle is required.
+> + *
+> + * @handle->handle_size indicate the space available to store the
+> + * variable part of the file handle in bytes. If there is not
+> + * enough space, the field is updated to return the minimum
+> + * value required.
+> + */
+> +SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const char __user *, name,
+> +               struct file_handle __user *, handle, void __user *, mnt_i=
+d,
+> +               int, flag)
+> +{
+> +       return do_sys_name_to_handle_at(dfd, name, handle, mnt_id, flag, =
+0);
+> +}
+> +
+>  static int get_path_anchor(int fd, struct path *root)
+>  {
+>         if (fd >=3D 0) {
+> diff --git a/fs/internal.h b/fs/internal.h
+> index 38e8aab27bbd..c972f8ade52d 100644
+> --- a/fs/internal.h
+> +++ b/fs/internal.h
+> @@ -355,3 +355,12 @@ int anon_inode_getattr(struct mnt_idmap *idmap, cons=
+t struct path *path,
+>  int anon_inode_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+>                        struct iattr *attr);
+>  void pidfs_get_root(struct path *path);
+> +
+> +/*
+> + * fs/fhandle.c
+> + */
+> +#ifdef CONFIG_FHANDLE
+> +long do_sys_name_to_handle_at(int dfd, const char __user *name,
+> +                             struct file_handle __user *handle,
+> +                             void __user *mnt_id, int flag, int lookup_f=
+lags);
+> +#endif /* CONFIG_FHANDLE */
+> --
+> 2.51.0
+>
+>
 
