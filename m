@@ -1,241 +1,250 @@
-Return-Path: <linux-fsdevel+bounces-60959-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60960-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4713B537A4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 17:26:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E77FDB537AB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 17:27:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7035F3BBC39
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 15:26:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A46E1885128
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 15:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E30A934A332;
-	Thu, 11 Sep 2025 15:26:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62ADB350D53;
+	Thu, 11 Sep 2025 15:26:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ejzpmWJY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XQkva+HA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452E8337683;
-	Thu, 11 Sep 2025 15:26:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E6334F48A;
+	Thu, 11 Sep 2025 15:26:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757604362; cv=none; b=hnbhJT1udYt1OT4ZvyCjgICyg3YVPssW/pVmy1SRT5YxDDJ+Jdc41bBrcMyJDttFkfHM7al2yZ+IeKAsao5G2+1reBvro6ZZKek12HpyUaLWDRHlE2uZCHMQPB2WgJPf43kSFmux5AcLSAL8APmNcylX5W5x2FSLXPCejvbyUyY=
+	t=1757604399; cv=none; b=aOT/DTr3Se/mYGdkfe1jtFbNL1jNra9OJE47y055SrddpHJh6LyZfaYUS8z0vDSJjJ5LSVR2NixY+MeuiLBoR8d+SEpvxx6Bkq4w5IkN390s1i7oPeTlSfRljWDvP9dXJVcGdgf4CjJL/keIm03SYGvzoCtA3eCDzgcDgE6JrfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757604362; c=relaxed/simple;
-	bh=SfhJYDJXxv3MqG42eHr0HrwJVpTMBIv1QNwURJTGJO0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Icv+hKrAKajf5OHZyciral+X2E6l4oyUf/iu8kvFko2cJVDT0mn5eDhMPD+cLLdBn5dSmIamJW9jzJY/DR6UiCKDtgtNyl31ZezMCyKxUQqnEPXmP+5Qj+Gw042Z/giqTp0cssx3y0ve9EKib4+iKOLaDRqs89vk5JPyg1Xoms8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ejzpmWJY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CE93C4CEF0;
-	Thu, 11 Sep 2025 15:26:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757604361;
-	bh=SfhJYDJXxv3MqG42eHr0HrwJVpTMBIv1QNwURJTGJO0=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=ejzpmWJYYZgSJBcXyZlmWINCU1vNyNIMcCY6EctxcofNnAFmqD0REPsHHkCeRHq9S
-	 cWCV0a7lO7KpY/sSd6ewUAGUaThGtx9kGCareJkUu6Ksz3HbTXOrNc+hckc/hJl5OF
-	 7eCsY3HGmCPENjIP8jrAr/1RuX2nmVyg1KSeB9smndL8HtP5zY0JwLlCv1JWchckLA
-	 utikQ7ehCTdPAWT1TidQF/lNypeBVcSioOaXQU3OlMT3xKr9nxkp03hCvm3hNtftRc
-	 QstSj7oMy82qMG92kUAdiC+c/+GCxcAZ7E43Ieq1fg+yYnnX2uA5xYfQ0KZa7GmJ9+
-	 jAqDDor8w/0gA==
-Message-ID: <e0da383964e9f398854e70c51e15c02faaf009b9.camel@kernel.org>
-Subject: Re: fattr4_archive "deprecated" ? Re: NFSv4.x export options to
- mark export as case-insensitive, case-preserving? Re: LInux NFSv4.1 client
- and server- case insensitive filesystems supported?
-From: Trond Myklebust <trondmy@kernel.org>
-To: Rick Macklem <rick.macklem@gmail.com>, Cedric Blancher
-	 <cedric.blancher@gmail.com>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, Linux NFS Mailing List
-	 <linux-nfs@vger.kernel.org>
-Date: Thu, 11 Sep 2025 11:26:00 -0400
-In-Reply-To: <CAM5tNy5=k9_5GsZkbV225ZmMw7S38o30Zt3RDoBC8UKcoxYGbg@mail.gmail.com>
-References: 
-	<CALXu0Ufzm66Ors3aBBrua0-8bvwqo-=RCmiK1yof9mMUxyEmCQ@mail.gmail.com>
-	 <CALXu0Ufgv7RK7gDOK53MJsD+7x4f0+BYYwo2xNXidigxLDeuMg@mail.gmail.com>
-	 <44250631-2b70-4ce8-b513-a632e70704ed@oracle.com>
-	 <aEZ3zza0AsDgjUKq@infradead.org>
-	 <e5e385fd-d58a-41c7-93d9-95ff727425dd@oracle.com>
-	 <aEfD3Gd0E8ykYNlL@infradead.org>
-	 <CALXu0UfgvZdrotUnyeS6F6qYSOspLg_xwVab8BBO6N3c9SFGfA@mail.gmail.com>
-	 <e1ca19a0-ab61-453f-9aea-ede6537ce9da@oracle.com>
-	 <CALXu0Uc9WGU8QfKwuLHMvNrq3oAftV+41K5vbGSkDrbXJftbPw@mail.gmail.com>
-	 <47ece316-6ca6-4d5d-9826-08bb793a7361@oracle.com>
-	 <CAKAoaQ=RNxx4RpjdjTVUKOa+mg-=bJqb3d1wtLKMFL-dDaXgCA@mail.gmail.com>
-	 <CAM5tNy7w71r6WgWOz4tXtLi=yvw55t_5dFe_x-13Thy5NgjEGA@mail.gmail.com>
-	 <CALXu0Uep=q9mu1suZ0r04MGJn-xRn2twiRtQbGgtr1eZ7D_6sg@mail.gmail.com>
-	 <CAM5tNy5=k9_5GsZkbV225ZmMw7S38o30Zt3RDoBC8UKcoxYGbg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1757604399; c=relaxed/simple;
+	bh=KY6HcsStRQhhbGANFBSUJno+wq9dPNnvokKYnUa+A9k=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=uWrP1lWfNPaRsmteSZG8RhvhvkhLsLnu4f7FShYditFHwGxrawcNkdduzf0L7awGFFvRTg9+UCpqB25hynPL9+J4TDnfstDnfPrxWggA/J6gE/ST5EbVqw9/Ha9dRbRYBZVnBK4J0jJecdeXO1lfxl4gqMm5d0iLrr2HimS2cW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XQkva+HA; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-32b8919e7c7so982849a91.2;
+        Thu, 11 Sep 2025 08:26:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757604397; x=1758209197; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DvyycfYJU53mdK60B6k1xwCgWrdT1y57HpHTcDrbUso=;
+        b=XQkva+HA1LF0xvCBEyJg1bvRIoa1rVNvIkfLOjBEDoK247pAGHPGuX2W7RxUUt6NC0
+         xv0HWPShOvMrmxQLE3wVeUBRs3CP3yFEV2Yi6yHwoZxCkCgk3o+RnDm/tsSEUnkdBpyd
+         j7N7/fhzpGulESDf2zFU4BMrLJuyyP7co2Ly7rjhyDMwf461RjQ7z9rOyQidgVT/64x/
+         wQFIN+93A7nkBI3DOpwBaaBf9viSYyL7Odj0iQVAow1zlLK/RKuR/SIEE3najq+zlD6c
+         SdvcsuUyhUjCwMvWy/jGFA9vyQk7k0XLg2b8q/yvHgF9ChgD5vieWJFi9xVvBV+19AOd
+         /Kqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757604397; x=1758209197;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=DvyycfYJU53mdK60B6k1xwCgWrdT1y57HpHTcDrbUso=;
+        b=JY4eZnwNQWlCLoxzUcPR0ls2E56HNf5x9AajHE38uZdK7RvHVWAJEL8IUw/9WWSvJe
+         FbxzknBEdp0lxJ1FDPAKzOMieADu9HX3wcb/wSXZW5g2mTeS5hcpZKZXamydc0k71fvs
+         ylUQ1IkNFkyilguFESLOWftUeRewimkv/3akmbJBCtE6c7/ijX9hBFdPCWLxTdSWkiC1
+         e8W9+LIoTCyxzXMa8Ggex3cY7K4Pj/7SIFuXaq4McRCdynZ2l1q5ZGDatJBIOM3RouJ4
+         dMWzx4TjBMsb7HYmhTxNPjGRmtf4s6BgGt4ImLezULbxmJPzIFtiMyUnt6YzrtHOgwO5
+         FbHg==
+X-Forwarded-Encrypted: i=1; AJvYcCVNAusVlKOvFhKbTO6H3wlpepxSh2Kabq5zCUMYy77cQSyz2A9K8saZhX7dmdeTN9IATR+sEM7jIas3ph8J@vger.kernel.org, AJvYcCXeeZzw8iKi6yZ7Hjt62+2+sPkdtCgilifWW5hZIN6JU8CkQrucDt64eT1Dd3nodbL7rrd+YVczNFPa@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqlmBZOvkOZ2cABoOwMtF3Fwv7Vj05BoY1kYwOzKlEdKMgvKGI
+	0tOJ/MM+JheVeZ+64BE+0n0AZ9goORkY+CleG6G4pbgq2KJ8FWmOy+54
+X-Gm-Gg: ASbGncsfF+DeU759iyrvBjp1/S3j1JID++m6Na4SnmE7EOu1tllOUPyLIBa+XGptCJR
+	S/7zTuExuJFNCesa3VLpg6DQJHM+GeSfkY1vCDFvpJBPzShJ6uWAONfnh5YfhwllGvl1mduBZ0R
+	Rf1bH242wRY1uOjDAqtNIpNBw3lM8khsfN13XhDSkphXsdGgtdohm1DZ7Qh6pJAMQ87I8aUi87+
+	qRMBK5TMUfynxPcwD7UlgQI2OMUPkl5iJ6VBz5EQmx0ntei1wRphAIj1e3bzKB7NRW3FcLadyDk
+	AWoWp2GKOZm7F5skLlG+4Y468ZQXt8wHOxvALXTlM30PYm5vlLx9Niv0ysodclPrjXq3dT8Ba1G
+	p4rCox55DFjgEcCP8xCOGnB4B9UA0EsiyJTTIHw==
+X-Google-Smtp-Source: AGHT+IFX4qf+vuIsZoroaVQhIX+FRr0pfUbllt2NZXygvX8JS/t9ugc1wy1T3Hcdr/SKKCkIMFBKtQ==
+X-Received: by 2002:a17:90b:3847:b0:329:f22a:cc58 with SMTP id 98e67ed59e1d1-32d43f47341mr27474535a91.12.1757604397197;
+        Thu, 11 Sep 2025 08:26:37 -0700 (PDT)
+Received: from localhost ([65.144.169.45])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32dd98245f2sm2552681a91.9.2025.09.11.08.26.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Sep 2025 08:26:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 11 Sep 2025 09:31:37 -0600
+Message-Id: <DCQ2V7HPAAPL.1OIBUT89HV16S@gmail.com>
+Cc: <io-uring@vger.kernel.org>, <axboe@kernel.dk>,
+ <linux-fsdevel@vger.kernel.org>, <viro@zeniv.linux.org.uk>,
+ <brauner@kernel.org>, <linux-nfs@vger.kernel.org>
+Subject: Re: [PATCH 03/10] fhandle: helper for allocating, reading struct
+ file_handle
+From: "Thomas Bertschinger" <tahbertschinger@gmail.com>
+To: "Amir Goldstein" <amir73il@gmail.com>, "Thomas Bertschinger"
+ <tahbertschinger@gmail.com>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20250910214927.480316-1-tahbertschinger@gmail.com>
+ <20250910214927.480316-4-tahbertschinger@gmail.com>
+ <CAOQ4uxhkU80A75PVB7bsXs2BGhGqKv0vr8RvLb5TnEiMO__pmw@mail.gmail.com>
+In-Reply-To: <CAOQ4uxhkU80A75PVB7bsXs2BGhGqKv0vr8RvLb5TnEiMO__pmw@mail.gmail.com>
 
-On Thu, 2025-09-11 at 08:01 -0700, Rick Macklem wrote:
-> On Thu, Sep 11, 2025 at 1:08=E2=80=AFAM Cedric Blancher
-> <cedric.blancher@gmail.com> wrote:
-> >=20
-> > CAUTION: This email originated from outside of the University of
-> > Guelph. Do not click links or open attachments unless you recognize
-> > the sender and know the content is safe. If in doubt, forward
-> > suspicious emails to IThelp@uoguelph.ca.
-> >=20
-> > On Wed, 10 Sept 2025 at 15:38, Rick Macklem
-> > <rick.macklem@gmail.com> wrote:
-> > >=20
-> > > On Wed, Sep 10, 2025 at 3:47=E2=80=AFAM Roland Mainz
-> > > <roland.mainz@nrubsig.org> wrote:
-> > > >=20
-> > > > On Tue, Sep 9, 2025 at 9:32=E2=80=AFPM Chuck Lever
-> > > > <chuck.lever@oracle.com> wrote:
-> > > > >=20
-> > > > > On 9/9/25 12:33 PM, Cedric Blancher wrote:
-> > > > > > On Tue, 9 Sept 2025 at 18:12, Chuck Lever
-> > > > > > <chuck.lever@oracle.com> wrote:
-> > > > > > >=20
-> > > > > > > On 9/9/25 12:06 PM, Cedric Blancher wrote:
-> > > > > > > > Due lack of a VFS interface and the urgend use case of
-> > > > > > > > needing to
-> > > > > > > > export a case-insensitive filesystem via NFSv4.x, could
-> > > > > > > > we please get
-> > > > > > > > two /etc/exports options, one setting the case-
-> > > > > > > > insensitive boolean
-> > > > > > > > (true, false, get-default-from-fs) and one for case-
-> > > > > > > > preserving (true,
-> > > > > > > > false, get-default-from-fs)?
-> > > > > > > >=20
-> > > > > > > > So far LInux nfsd does the WRONG thing here, and
-> > > > > > > > exports even
-> > > > > > > > case-insensitive filesystems as case-sensitive. The
-> > > > > > > > Windows NFSv4.1
-> > > > > > > > server does it correctly.
-> > > > >=20
-> > > > > As always, I encourage you to, first, prototype in NFSD the
-> > > > > hard-coding
-> > > > > of these settings as returned to NFS clients to see if that
-> > > > > does what
-> > > > > you really need with Linux-native file systems.
-> > > >=20
-> > > > If Cedric wants just case-insensitive mounts for a Windows
-> > > > NFSv4
-> > > > (Exceed, OpenText, ms-nfs41-client, ms-nfs42-client, ...), then
-> > > > the
-> > > > only thing needed is ext4fs or NTFS in case-insensitive mode,
-> > > > and that
-> > > > the Linux NFSv4.1 server sets
-> > > > FATTR4_WORD0_CASE_INSENSITIVE=3D=3Dtrue and
-> > > > FATTR4_WORD0_CASE_PRESERVING=3D=3Dtrue (for FAT
-> > > > FATTR4_WORD0_CASE_PRESERVING=3D=3Dfalse). Only applications using
-> > > > ADS
-> > > > (Alternate Data Streams) will not work, because the Linux NFS
-> > > > server
-> > > > does not support "OPENATTR"&co ops.
-> > > >=20
-> > > > If Cedric wants Windows home dirs:
-> > > > This is not working with the Linux NFSv4.1 server, because it
-> > > > must support:
-> > > > - FATTR4_WORD1_SYSTEM
-> > > > - FATTR4_WORD0_ARCHIVE
-> > > > - FATTR4_WORD0_HIDDEN
-> > > > - Full ACL support, the current draft POSIX-ACLs in Linux
-> > > > NFSv4.1
-> > > > server&&{ ext4fs, btrfs, xfs etc. } causes malfunctions in the
-> > > > Windows
-> > > > "New User" profile setup (and gets you a temporary profile in
-> > > > C:\Users\*.temp+lots of warnings and a note to log out
-> > > > immediately
-> > > > because your user profile dir has been "corrupted")
-> > > >=20
-> > > > Windows home dirs with NFSv4 only work so far with the
-> > > > Solaris&&Illumos NFS servers, and maybe the FreeBSD >=3D 14 NFS
-> > > > server
-> > > > (not tested yet).
-> > > I'll just note that the named attribute support (the windows
-> > > client
-> > > folk like the name)
-> > > along with Hidden and System are in 15 only.
-> > > And Archive is not supported because it is listed as "deprecated"
-> > > in the RFC.
-> > > (If this case really needs it, someone should try to get it
-> > > "undeprecated" on
-> > > nfsv4@ietf.org. I could add Archive easily. All of these are for
-> > > ZFS only.
-> > > ZFS also knows case insensitive, although I have not tried it.)
-> >=20
-> > Who (name!) had the idea to declare fattr4_archive as "deprecated"?
-> > It
-> > was explicitly added for Windows and DOS compatibility in NFSv4,
-> > and
-> > unlike Windows EAs (which are depreciated, and were superseded by
-> > "named streams") the "archive" attribute is still in use.
-> I have no idea who would have done this, but here is the snippet from
-> RFC5661 (which started being edited in 2005 and was published in
-> 2010,
-> so it has been like this for a long time). The same words are in
-> RFC8881
-> and currently in the RFC8881bis draft. Can this be changed?
-> I'd say yes, but it will take time and effort on someone's part.
-> Posting to nfsv4@ietf.org, noting that this attribute is needed
-> by the Windows client (and at least a suggestion that time_backup
-> is not a satisfactory replacement) would be a good start.
->=20
-> 5.8.2.1.=C2=A0 Attribute 14: archive
->=20
-> =C2=A0=C2=A0 TRUE, if this file has been archived since the time of last
-> =C2=A0=C2=A0 modification (deprecated in favor of time_backup).
->=20
-> The problem has been a serious lack of Windows expertise in the NFSv4
-> working group. Long ago (20+ years) the Hummingbird developers were
-> actively involved (Hummingbird became Open Network Solutions, which
-> became a division of OpenText, if I recall it correctly).
->=20
-> But there has been no one with Windows expertise involved more
-> recently.
->=20
-> My suggestion (I'll repeat it) is to have someone participate in the
-> Bakeathon
-> testing events (the next one is in about one month and can be
-> attended
-> remotely using a tailscale VPN). When someone tests at the event and
-> finds an issue, the server developers are there and can discussion
-> what
-> it takes to fix it.
->=20
-> Also, participation on the nfsv4@ietf.org=C2=A0mailing list (some working
-> group
-> members will not be reading this Linux list) and attendance at
-> working
-> group meetings would help. (The working group meetings can
-> also be attended remotely and there is an automatic fee waiver for
-> remote attendance if you, like me, are not funded to do the work.)
->=20
-> With no involvement from people with Windows expertise, the testing
-> has become basically a bunch of servers being tested against by
-> various versions of the Linux client (with me being at outlier,
-> testing
-> the FreeBSD client).
+On Thu Sep 11, 2025 at 6:15 AM MDT, Amir Goldstein wrote:
+> On Wed, Sep 10, 2025 at 11:47=E2=80=AFPM Thomas Bertschinger
+> <tahbertschinger@gmail.com> wrote:
+>>
+>> Pull the code for allocating and copying a struct file_handle from
+>> userspace into a helper function get_user_handle() just for this.
+>>
+>> do_handle_open() is updated to call get_user_handle() prior to calling
+>> handle_to_path(), and the latter now takes a kernel pointer as a
+>> parameter instead of a __user pointer.
+>>
+>> This new helper, as well as handle_to_path(), are also exposed in
+>> fs/internal.h. In a subsequent commit, io_uring will use these helpers
+>> to support open_by_handle_at(2) in io_uring.
+>>
+>> Signed-off-by: Thomas Bertschinger <tahbertschinger@gmail.com>
+>> ---
+>>  fs/fhandle.c  | 64 +++++++++++++++++++++++++++++----------------------
+>>  fs/internal.h |  3 +++
+>>  2 files changed, 40 insertions(+), 27 deletions(-)
+>>
+>> diff --git a/fs/fhandle.c b/fs/fhandle.c
+>> index 605ad8e7d93d..36e194dd4cb6 100644
+>> --- a/fs/fhandle.c
+>> +++ b/fs/fhandle.c
+>> @@ -330,25 +330,45 @@ static inline int may_decode_fh(struct handle_to_p=
+ath_ctx *ctx,
+>>         return 0;
+>>  }
+>>
+>> -static int handle_to_path(int mountdirfd, struct file_handle __user *uf=
+h,
+>> -                  struct path *path, unsigned int o_flags)
+>> +struct file_handle *get_user_handle(struct file_handle __user *ufh)
+>>  {
+>> -       int retval =3D 0;
+>>         struct file_handle f_handle;
+>> -       struct file_handle *handle __free(kfree) =3D NULL;
+>> -       struct handle_to_path_ctx ctx =3D {};
+>> -       const struct export_operations *eops;
+>> +       struct file_handle *handle;
+>>
+>>         if (copy_from_user(&f_handle, ufh, sizeof(struct file_handle)))
+>> -               return -EFAULT;
+>> +               return ERR_PTR(-EFAULT);
+>>
+>>         if ((f_handle.handle_bytes > MAX_HANDLE_SZ) ||
+>>             (f_handle.handle_bytes =3D=3D 0))
+>> -               return -EINVAL;
+>> +               return ERR_PTR(-EINVAL);
+>>
+>>         if (f_handle.handle_type < 0 ||
+>>             FILEID_USER_FLAGS(f_handle.handle_type) & ~FILEID_VALID_USER=
+_FLAGS)
+>> -               return -EINVAL;
+>> +               return ERR_PTR(-EINVAL);
+>> +
+>> +       handle =3D kmalloc(struct_size(handle, f_handle, f_handle.handle=
+_bytes),
+>> +                        GFP_KERNEL);
+>> +       if (!handle) {
+>> +               return ERR_PTR(-ENOMEM);
+>> +       }
+>> +
+>> +       /* copy the full handle */
+>> +       *handle =3D f_handle;
+>> +       if (copy_from_user(&handle->f_handle,
+>> +                          &ufh->f_handle,
+>> +                          f_handle.handle_bytes)) {
+>> +               return ERR_PTR(-EFAULT);
+>> +       }
+>> +
+>> +       return handle;
+>> +}
+>> +
+>> +int handle_to_path(int mountdirfd, struct file_handle *handle,
+>> +                  struct path *path, unsigned int o_flags)
+>> +{
+>> +       int retval =3D 0;
+>> +       struct handle_to_path_ctx ctx =3D {};
+>> +       const struct export_operations *eops;
+>>
+>>         retval =3D get_path_anchor(mountdirfd, &ctx.root);
+>>         if (retval)
+>> @@ -362,31 +382,16 @@ static int handle_to_path(int mountdirfd, struct f=
+ile_handle __user *ufh,
+>>         if (retval)
+>>                 goto out_path;
+>>
+>> -       handle =3D kmalloc(struct_size(handle, f_handle, f_handle.handle=
+_bytes),
+>> -                        GFP_KERNEL);
+>> -       if (!handle) {
+>> -               retval =3D -ENOMEM;
+>> -               goto out_path;
+>> -       }
+>> -       /* copy the full handle */
+>> -       *handle =3D f_handle;
+>> -       if (copy_from_user(&handle->f_handle,
+>> -                          &ufh->f_handle,
+>> -                          f_handle.handle_bytes)) {
+>> -               retval =3D -EFAULT;
+>> -               goto out_path;
+>> -       }
+>> -
+>>         /*
+>>          * If handle was encoded with AT_HANDLE_CONNECTABLE, verify that=
+ we
+>>          * are decoding an fd with connected path, which is accessible f=
+rom
+>>          * the mount fd path.
+>>          */
+>> -       if (f_handle.handle_type & FILEID_IS_CONNECTABLE) {
+>> +       if (handle->handle_type & FILEID_IS_CONNECTABLE) {
+>>                 ctx.fh_flags |=3D EXPORT_FH_CONNECTABLE;
+>>                 ctx.flags |=3D HANDLE_CHECK_SUBTREE;
+>>         }
+>> -       if (f_handle.handle_type & FILEID_IS_DIR)
+>> +       if (handle->handle_type & FILEID_IS_DIR)
+>>                 ctx.fh_flags |=3D EXPORT_FH_DIR_ONLY;
+>>         /* Filesystem code should not be exposed to user flags */
+>>         handle->handle_type &=3D ~FILEID_USER_FLAGS_MASK;
+>> @@ -400,12 +405,17 @@ static int handle_to_path(int mountdirfd, struct f=
+ile_handle __user *ufh,
+>>  static long do_handle_open(int mountdirfd, struct file_handle __user *u=
+fh,
+>>                            int open_flag)
+>>  {
+>> +       struct file_handle *handle __free(kfree) =3D NULL;
+>>         long retval =3D 0;
+>>         struct path path __free(path_put) =3D {};
+>>         struct file *file;
+>>         const struct export_operations *eops;
+>>
+>> -       retval =3D handle_to_path(mountdirfd, ufh, &path, open_flag);
+>> +       handle =3D get_user_handle(ufh);
+>> +       if (IS_ERR(handle))
+>> +               return PTR_ERR(handle);
+>
+> I don't think you can use __free(kfree) for something that can be an ERR_=
+PTR.
+>
+> Thanks,
+> Amir.
 
-As stated in the line you quote, it is listed as being deprecated in
-favour of the backup time because the latter provides a superset of the
-same functionality: by comparing the value of the backup time to the
-value of the mtime, you can determine the value of the archive bit (it
-is set if the backup time is newer than the mtime).
+It looks like the error pointer is correctly handled?
 
-In addition, the backup time also tells you exactly when the file was
-last backed up.
+in include/linux/slab.h:
 
-So no, this is not about people who don't understand Windows. It's
-about repackaging the same functionality in a way that is more useful
-to people who understand backups.
-
---=20
-Trond Myklebust
-Linux NFS client maintainer, Hammerspace
-trondmy@kernel.org, trond.myklebust@hammerspace.com
+DEFINE_FREE(kfree, void *, if (!IS_ERR_OR_NULL(_T)) kfree(_T))
 
