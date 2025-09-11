@@ -1,234 +1,354 @@
-Return-Path: <linux-fsdevel+bounces-60955-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60957-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAD13B536D7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 17:03:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 060C7B53769
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 17:19:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20DD71C86408
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 15:02:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AFD57B8A16
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 15:17:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F145B31578A;
-	Thu, 11 Sep 2025 15:02:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C40443570C3;
+	Thu, 11 Sep 2025 15:16:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gR43asb3"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nJxmD03/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9717A7494;
-	Thu, 11 Sep 2025 15:02:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB63369327;
+	Thu, 11 Sep 2025 15:15:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757602926; cv=none; b=rCRwYcb2NHaH6q1Fws6jTMVOVFjGAPvk/h5g6BsEOKxhVvaxXAmlVmTcMh8JmUdsJweV+sXN20vRoDpANG+gCJF4GYpg0LwKe+BffFt9TlHESGdTyZvTKO3F7yS8chh+NcXTHgsPWEAMzZ9Y2mHlGsrgc9YcJH9STsE/63zqN3s=
+	t=1757603761; cv=none; b=Cg93ju21T9TXDOJGI59gYObI4numKu2H2UEKOwmcr2GRHKcDxdmjBLTNn14KXNUQ+kXO11KbFVVKqNe4Yuj7RjS/8JgVObzQ4lORbk89E3ovef/GcIIQbJtXe6Vjl2zT+8pZa/+Q8W8Xn8Du95zuuwJAthv3brZPsP3bB6g0UwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757602926; c=relaxed/simple;
-	bh=GJ3vineynPoT02RkTG0XTPaAtfP9PT824AwXYZTkSEE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dkaXhf64ifJG7m2GDJPHRcaNffDTGmhEhbOCYQGBwJUngAuA8zgB/hJnvzcaDghnZDRLRs9cJB5eK5omL1pCEBfPt17cc9MDJPR3sCAet3Ud+3YKSoUQKylxhJGMlwYrvYQ+3dzAKESfIGJZSkjv5QtLvSUH8e6QDrcuphzxym4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gR43asb3; arc=none smtp.client-ip=209.85.208.51
+	s=arc-20240116; t=1757603761; c=relaxed/simple;
+	bh=hNLDfMeuBPoPYzsUzYLN/cJRYAooo5sjV68bKl/RUPs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Iyt2wKJW2gdvyJuO/NQQiiIpawfBPhqWcCJI9TuVe6niwfs/PIpZS87OA3BV+JQH3GB3oa4+aPAXetbljkd/jryAUneHo3PH2Lon8qHENI5wUV9csKaJ68KJKBVkZGZu4E0pKEWVcNSletHFN+jAMUKtWQCBF5aKE/+aUXyWICw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nJxmD03/; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6188b7550c0so1034777a12.2;
-        Thu, 11 Sep 2025 08:02:04 -0700 (PDT)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45deccb2c1eso6723535e9.1;
+        Thu, 11 Sep 2025 08:15:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757602923; x=1758207723; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qayikoGYTOQVRYpvyO2ygr4vCmVM8+xJ0viJMtnrUL4=;
-        b=gR43asb3S/EZ/gAlOuKVQPkk3ZC40qesetAEfJKB1qK2ZQbsatx7igXmuep7TJXX6o
-         tIfwb8CsWdxhZn5+pz5G00e/ZZqn1ngvrJXHG13X/nDYtZ34kuZ+UJ8jmQG6KLL9OpnX
-         UoL5c1PJClilBOTzCo/6xk4aihTgFGzeAlSXZ5nKaEIgUnVL+ThK3Y3sxIW/O/vaA3Ux
-         Si+UHE/l83zd9wEpj9Wo511GK4QjE2jYUJMEO/zsLnUQ/ecH4o0KTwbQWtIweJOgIC8U
-         frWCU849lMQ8212m+k7vHHYHS/L7rH5rmfnlNMTROupJxHZpH5OE7bhLjsFtcJnvP3Fy
-         q/GQ==
+        d=gmail.com; s=20230601; t=1757603757; x=1758208557; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+kSQgeyXNErbEiMbYm90Cp8n5GIHwFnPoCAdpOTaHz4=;
+        b=nJxmD03/gPxwDsQvsvajh32B9kNd7DXNvPpFFzDIC6Il0voE4IIzbKuY+i1fmxqLG3
+         uyZI6kKfVAEj2v1QqWYZt/6mbtIKWBKynryuQhWnrqEZfqR/c8oijUdi5xMvgqqiza7P
+         cXpqoOpNPzWOoOlTg5XeMnwJuaqBpGevN0rZXv+bHoPy7+B0nIKMMqXO+DRvGkpZGeES
+         iaxPlRXGvVcVfb0V+YizA0baHsXDz26b/41NOwzKnokFwX7eKlc17v8/augkIsXSalr2
+         xwTeEFgZMDM2Vqayq4V7Z01/38cC/a97jJzw8HBqxuQ0ypDVFwLXfeTRXvPv4ekuqGta
+         FGLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757602923; x=1758207723;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qayikoGYTOQVRYpvyO2ygr4vCmVM8+xJ0viJMtnrUL4=;
-        b=vdsF+Zo7axutOx/8fBMD5SDYW/NcYxCyz4Nd5CC9aj3QCYcB/Ra/hkq1bmnM/q8uVc
-         0aOqWLl4sPTqNBGPIN6qnxkbZyEaIntq0Dj0PR1RWfTO8cVGbBcIvW52KlyENGM7P04F
-         OiGUMd5wR1KLTMtd8v0tltgO+bWBKIS6Hl5AtpbhW82bl5lKdiLqidNbnz5Vr203AdWL
-         vEikJL1jWpL6pvNP7B7b0JdqSI19TTRh/oVxR1pr0M3tju0PmipTh8zLpnqMJbpKH0J5
-         rEj8fIdZ5s43qz+pOwtTqWy7C4WvLq9tptybzMe8NOTdvnkmQJYUyYChEuB7TBJlHryS
-         yR/g==
-X-Forwarded-Encrypted: i=1; AJvYcCUMqXEFYrdJZrw40UrjGXN3MLSplGhFZnj6kdJYiV0ebj1fQf85DAnNSqSwC94JdeYQfgPL1MYgQJc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwblCtOvMiBiceZ/MQ/RZNc7iPrV4B6Q9sD7f/qY1Kv9qnEFfz
-	XluF5RJPWB/V0yHODvIRnbHq38brSxRnZJppm8Z3J//zX32672bHnMXBHjOS2mKrDtO6kPYWtmV
-	pOKj23bcKH9ersGEE2ehKRHMwd+Ltsg==
-X-Gm-Gg: ASbGncuxlpXRgzb/R6LIeupXWEUaybG/Nokp2gJfY/PW9Z956FnjdmtOfr5+/c76UKk
-	kzvRKoLLtXZYuCtuU4ORzqQOrl5yiwMzDNmbM1rL7t2w86cFgwAitSRLzjl8cNF9fGrgKA5uGyh
-	ilPBc369bg4/+dquBYo5AktXcEeAw3ic5yWBY2koGrZYs0B9ptxrZVdbLAscO33Ix4AKgtse+YM
-	nGj7/yxRqy+SK/YTLfQtiuxwTn80zXH4ZcwnKo=
-X-Google-Smtp-Source: AGHT+IG560PopTddfTVjJ8XpJbypvhFCWQs/t8z9KvYLyu/S7/8N4sMN8XH78k69/RvmZ0Oyz3fwJ6qavvAvbXTZ5L0=
-X-Received: by 2002:a17:907:6d0d:b0:b04:315c:8760 with SMTP id
- a640c23a62f3a-b04b1709f61mr1811004866b.50.1757602922455; Thu, 11 Sep 2025
- 08:02:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757603757; x=1758208557;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+kSQgeyXNErbEiMbYm90Cp8n5GIHwFnPoCAdpOTaHz4=;
+        b=ulT7RSZgDLCnOV9rdBOahYiBIilojDvzSNU852z7iejSe2VxUL6Smj/bTpmO5Kx4O8
+         Shu7qRrE9WTjrJR2tu+Q3ITtDHA8YWtgmgY4shys+w8qNwvEHHy1JjkV6GpYf+DAUjoJ
+         tQr6FWuC49xnYjCZsdaDVnavaZcdfzVGPwd0ESHu7hpvSE8w8x/Flj//gcL+R0iojH99
+         22eqlBh830wrmmgsfLcUYtczoUjLRocElj5KjTaDDFrHmmBT1kT7iZBDBZqdQBDvlczs
+         e0zKipjkTcSPzfRoTA/1IJO9y3Kq3l7AL4XZhKjjbtN4krleHXUpM7ZkYQcHF2zdz5sD
+         zFcA==
+X-Forwarded-Encrypted: i=1; AJvYcCW/arrhu1pYDgF5Sq12GO+wLZYJHpkxxPJjx2bwIr+husAD1mrDOXBUSV3N4IQzJATjIJDFFk3FkNf2PYTo@vger.kernel.org, AJvYcCXewc1tilC3p279MTdeomN3kfHsUgZVZr3B2jrU8wpCI10q8kUpn0axxSOgz6CJ0q3yxf+dlOMeL2YSHuo2@vger.kernel.org
+X-Gm-Message-State: AOJu0YzI7HGq19fPZbgVbwc++DZQ5phfsGzabkBC6ce9CBQmfa7g5N7V
+	C1NML8rArmUtuWRYk8tn/irxGOiOrPKlNacK91prn3yYnIfFyA+TO9PR
+X-Gm-Gg: ASbGncsM1lh0//MLnnaC51jb2jO5n2zrqGlSUE7Nm9NgH3SarIT0I4XIfh5Dxu1zQDn
+	8f1F2iPQWgyhZopwBR8/OzCqDkPaVjgu04814DXPdWWOE8SUlApflLg+PPZyrSY1mG8ZtMIVnhx
+	ZDa9O+ROLhdJ9T+2rkpfBdst3R7eCG9a6AsZ1y4D6PP0NeqxnyqmS4BJTfCVUtI0k36rbOWFiZk
+	jN+lXpPU0/gdRDeRokjv1XQzpv35ToaItmuzwQXMeAR/6zammt35LP1D5ESqay7yDqt10EcDTGg
+	6pMzsjWai2Qoc9FBoCmVwmfpwgHTKV6sz3cEwOSDca9lL3LBn5poEhGVwnYNYJ3MBhRIIHBFo18
+	21sbquQUi+4yyXALC2x/+CfQSerhnbGHKuizNq1FdahfErqs1
+X-Google-Smtp-Source: AGHT+IEcROfkg5rCzoOVrVgraVaQTsespGTGiPDzFcdURnbnqY3KxBGgnlK8ozrGTvLYi2J45FN9FQ==
+X-Received: by 2002:a05:6000:26c6:b0:3e7:4701:d1a3 with SMTP id ffacd0b85a97d-3e74701d5bamr15012175f8f.38.1757603757111;
+        Thu, 11 Sep 2025 08:15:57 -0700 (PDT)
+Received: from f (cst-prg-67-222.cust.vodafone.cz. [46.135.67.222])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e037c4490sm26922615e9.19.2025.09.11.08.15.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Sep 2025 08:15:56 -0700 (PDT)
+Date: Thu, 11 Sep 2025 17:15:47 +0200
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: viro@zeniv.linux.org.uk
+Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Subject: buggered I_CREATING implementation?
+Message-ID: <lsqpkeiqraemymog6l5msgx3x4nczbyxg55ffelntnzp43grop@bdk6ezmz5wg5>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CALXu0Ufzm66Ors3aBBrua0-8bvwqo-=RCmiK1yof9mMUxyEmCQ@mail.gmail.com>
- <CALXu0Ufgv7RK7gDOK53MJsD+7x4f0+BYYwo2xNXidigxLDeuMg@mail.gmail.com>
- <44250631-2b70-4ce8-b513-a632e70704ed@oracle.com> <aEZ3zza0AsDgjUKq@infradead.org>
- <e5e385fd-d58a-41c7-93d9-95ff727425dd@oracle.com> <aEfD3Gd0E8ykYNlL@infradead.org>
- <CALXu0UfgvZdrotUnyeS6F6qYSOspLg_xwVab8BBO6N3c9SFGfA@mail.gmail.com>
- <e1ca19a0-ab61-453f-9aea-ede6537ce9da@oracle.com> <CALXu0Uc9WGU8QfKwuLHMvNrq3oAftV+41K5vbGSkDrbXJftbPw@mail.gmail.com>
- <47ece316-6ca6-4d5d-9826-08bb793a7361@oracle.com> <CAKAoaQ=RNxx4RpjdjTVUKOa+mg-=bJqb3d1wtLKMFL-dDaXgCA@mail.gmail.com>
- <CAM5tNy7w71r6WgWOz4tXtLi=yvw55t_5dFe_x-13Thy5NgjEGA@mail.gmail.com> <CALXu0Uep=q9mu1suZ0r04MGJn-xRn2twiRtQbGgtr1eZ7D_6sg@mail.gmail.com>
-In-Reply-To: <CALXu0Uep=q9mu1suZ0r04MGJn-xRn2twiRtQbGgtr1eZ7D_6sg@mail.gmail.com>
-From: Rick Macklem <rick.macklem@gmail.com>
-Date: Thu, 11 Sep 2025 08:01:51 -0700
-X-Gm-Features: AS18NWDU9JZwG9due3rXJq2BquiqzldZ4nQYH6Qxcx17T4rDAh7VrHXiodCfXxQ
-Message-ID: <CAM5tNy5=k9_5GsZkbV225ZmMw7S38o30Zt3RDoBC8UKcoxYGbg@mail.gmail.com>
-Subject: Re: fattr4_archive "deprecated" ? Re: NFSv4.x export options to mark
- export as case-insensitive, case-preserving? Re: LInux NFSv4.1 client and
- server- case insensitive filesystems supported?
-To: Cedric Blancher <cedric.blancher@gmail.com>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
-	Linux NFS Mailing List <linux-nfs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-On Thu, Sep 11, 2025 at 1:08=E2=80=AFAM Cedric Blancher
-<cedric.blancher@gmail.com> wrote:
->
-> CAUTION: This email originated from outside of the University of Guelph. =
-Do not click links or open attachments unless you recognize the sender and =
-know the content is safe. If in doubt, forward suspicious emails to IThelp@=
-uoguelph.ca.
->
-> On Wed, 10 Sept 2025 at 15:38, Rick Macklem <rick.macklem@gmail.com> wrot=
-e:
-> >
-> > On Wed, Sep 10, 2025 at 3:47=E2=80=AFAM Roland Mainz <roland.mainz@nrub=
-sig.org> wrote:
-> > >
-> > > On Tue, Sep 9, 2025 at 9:32=E2=80=AFPM Chuck Lever <chuck.lever@oracl=
-e.com> wrote:
-> > > >
-> > > > On 9/9/25 12:33 PM, Cedric Blancher wrote:
-> > > > > On Tue, 9 Sept 2025 at 18:12, Chuck Lever <chuck.lever@oracle.com=
-> wrote:
-> > > > >>
-> > > > >> On 9/9/25 12:06 PM, Cedric Blancher wrote:
-> > > > >>> Due lack of a VFS interface and the urgend use case of needing =
-to
-> > > > >>> export a case-insensitive filesystem via NFSv4.x, could we plea=
-se get
-> > > > >>> two /etc/exports options, one setting the case-insensitive bool=
-ean
-> > > > >>> (true, false, get-default-from-fs) and one for case-preserving =
-(true,
-> > > > >>> false, get-default-from-fs)?
-> > > > >>>
-> > > > >>> So far LInux nfsd does the WRONG thing here, and exports even
-> > > > >>> case-insensitive filesystems as case-sensitive. The Windows NFS=
-v4.1
-> > > > >>> server does it correctly.
-> > > >
-> > > > As always, I encourage you to, first, prototype in NFSD the hard-co=
-ding
-> > > > of these settings as returned to NFS clients to see if that does wh=
-at
-> > > > you really need with Linux-native file systems.
-> > >
-> > > If Cedric wants just case-insensitive mounts for a Windows NFSv4
-> > > (Exceed, OpenText, ms-nfs41-client, ms-nfs42-client, ...), then the
-> > > only thing needed is ext4fs or NTFS in case-insensitive mode, and tha=
-t
-> > > the Linux NFSv4.1 server sets FATTR4_WORD0_CASE_INSENSITIVE=3D=3Dtrue=
- and
-> > > FATTR4_WORD0_CASE_PRESERVING=3D=3Dtrue (for FAT
-> > > FATTR4_WORD0_CASE_PRESERVING=3D=3Dfalse). Only applications using ADS
-> > > (Alternate Data Streams) will not work, because the Linux NFS server
-> > > does not support "OPENATTR"&co ops.
-> > >
-> > > If Cedric wants Windows home dirs:
-> > > This is not working with the Linux NFSv4.1 server, because it must su=
-pport:
-> > > - FATTR4_WORD1_SYSTEM
-> > > - FATTR4_WORD0_ARCHIVE
-> > > - FATTR4_WORD0_HIDDEN
-> > > - Full ACL support, the current draft POSIX-ACLs in Linux NFSv4.1
-> > > server&&{ ext4fs, btrfs, xfs etc. } causes malfunctions in the Window=
-s
-> > > "New User" profile setup (and gets you a temporary profile in
-> > > C:\Users\*.temp+lots of warnings and a note to log out immediately
-> > > because your user profile dir has been "corrupted")
-> > >
-> > > Windows home dirs with NFSv4 only work so far with the
-> > > Solaris&&Illumos NFS servers, and maybe the FreeBSD >=3D 14 NFS serve=
-r
-> > > (not tested yet).
-> > I'll just note that the named attribute support (the windows client
-> > folk like the name)
-> > along with Hidden and System are in 15 only.
-> > And Archive is not supported because it is listed as "deprecated" in th=
-e RFC.
-> > (If this case really needs it, someone should try to get it "undeprecat=
-ed" on
-> > nfsv4@ietf.org. I could add Archive easily. All of these are for ZFS on=
-ly.
-> > ZFS also knows case insensitive, although I have not tried it.)
->
-> Who (name!) had the idea to declare fattr4_archive as "deprecated"? It
-> was explicitly added for Windows and DOS compatibility in NFSv4, and
-> unlike Windows EAs (which are depreciated, and were superseded by
-> "named streams") the "archive" attribute is still in use.
-I have no idea who would have done this, but here is the snippet from
-RFC5661 (which started being edited in 2005 and was published in 2010,
-so it has been like this for a long time). The same words are in RFC8881
-and currently in the RFC8881bis draft. Can this be changed?
-I'd say yes, but it will take time and effort on someone's part.
-Posting to nfsv4@ietf.org, noting that this attribute is needed
-by the Windows client (and at least a suggestion that time_backup
-is not a satisfactory replacement) would be a good start.
+I'm looking at sanitizing the I_* flags and the current implementation
+of I_CREATING reads like a bug.
 
-5.8.2.1.  Attribute 14: archive
+It showed up in this patchset:
+https://lore.kernel.org/all/20180729220453.13431-2-viro@ZenIV.linux.org.uk/
 
-   TRUE, if this file has been archived since the time of last
-   modification (deprecated in favor of time_backup).
+The relevant commit:
+commit c2b6d621c4ffe9936adf7a55c8b1c769672c306f
+Author: Al Viro <viro@zeniv.linux.org.uk>
+Date:   Thu Jun 28 15:53:17 2018 -0400
 
-The problem has been a serious lack of Windows expertise in the NFSv4
-working group. Long ago (20+ years) the Hummingbird developers were
-actively involved (Hummingbird became Open Network Solutions, which
-became a division of OpenText, if I recall it correctly).
+    new primitive: discard_new_inode()
 
-But there has been no one with Windows expertise involved more recently.
+            We don't want open-by-handle picking half-set-up in-core
+    struct inode from e.g. mkdir() having failed halfway through.
+[snip]
+            Solution: new flag (I_CREATING) set by insert_inode_locked() and
+    removed by unlock_new_inode() and a new primitive (discard_new_inode())
+    to be used by such halfway-through-setup failure exits instead of
+    unlock_new_inode() / iput() combinations.  That primitive unlocks new
+    inode, but leaves I_CREATING in place.
 
-My suggestion (I'll repeat it) is to have someone participate in the Bakeat=
-hon
-testing events (the next one is in about one month and can be attended
-remotely using a tailscale VPN). When someone tests at the event and
-finds an issue, the server developers are there and can discussion what
-it takes to fix it.
+            iget_locked() treats finding an I_CREATING inode as failure
+    (-ESTALE, once we sort out the error propagation).
+            insert_inode_locked() treats the same as instant -EBUSY.
+            ilookup() treats those as icache miss.
 
-Also, participation on the nfsv4@ietf.org mailing list (some working group
-members will not be reading this Linux list) and attendance at working
-group meetings would help. (The working group meetings can
-also be attended remotely and there is an automatic fee waiver for
-remote attendance if you, like me, are not funded to do the work.)
+So as far as I understand the intent was to make it so that discarded
+inodes can be tested for with:
+	(inode->i_state & (I_NEW | I_CREATING) == I_CREATING)
 
-With no involvement from people with Windows expertise, the testing
-has become basically a bunch of servers being tested against by
-various versions of the Linux client (with me being at outlier, testing
-the FreeBSD client).
+But that's not what the patch is doing.
 
-rick
+In insert_inode_locked() every inserted inode gets both flags:
+                if (likely(!old)) {
+                        spin_lock(&inode->i_lock);
+                        inode->i_state |= I_NEW | I_CREATING;
+                        hlist_add_head_rcu(&inode->i_hash, head);
+                        spin_unlock(&inode->i_lock);
+                        spin_unlock(&inode_hash_lock);
+                        return 0;
+                }
 
->
-> Ced
-> --
-> Cedric Blancher <cedric.blancher@gmail.com>
-> [https://plus.google.com/u/0/+CedricBlancher/]
-> Institute Pasteur
->
+This means another call for the same inode will find it and:
+
+                if (unlikely(old->i_state & I_CREATING)) {
+                        spin_unlock(&old->i_lock);
+                        spin_unlock(&inode_hash_lock);
+                        return -EBUSY;
+                }
+
+... return with -EBUSY instead of waiting to check what will happen with it.
+
+The call to wait_on_inode() which can be found later:
+                __iget(old);
+                spin_unlock(&old->i_lock);
+                spin_unlock(&inode_hash_lock);
+                wait_on_inode(old);
+                if (unlikely(!inode_unhashed(old))) {
+                        iput(old);
+                        return -EBUSY;
+                }
+
+... only ever gets to execute if the inode is fully constructed *or* it
+was added to the hash with a routine which does not set I_CREATING,
+which does not add up.
+
+So if I understand correctly what was the intended behavior, my
+counterproposal is to retire I_CREATING and instead add I_DISCARDED
+which would be set by discard_new_inode().
+
+Then insert_inode_locked() and others can do things like:
+                if (unlikely(old->i_state & I_DISCARDED)) {
+                        spin_unlock(&old->i_lock);
+                        spin_unlock(&inode_hash_lock);
+                        return -EBUSY;
+                }
+	[snip]
+                wait_on_inode(old);
+                if (unlikely(old->i_state & I_DISCARDED || !inode_unhashed(old))) {
+                        iput(old);
+                        return -EBUSY;
+                }
+
+The flag thing aside, there is weird bug in this routine in inode traversal:
+               hlist_for_each_entry(old, head, i_hash) {
+                        if (old->i_ino != ino)
+                                continue;
+                        if (old->i_sb != sb)
+                                continue;
+                        spin_lock(&old->i_lock);
+                        if (old->i_state & (I_FREEING|I_WILL_FREE)) {
+                                spin_unlock(&old->i_lock);
+                                continue;
+                        }
+                        break;
+                }
+
+This will intentionally skip I_FREEING|I_WILL_FREE instead of waiting on
+it to leave the hash. I verified this is the only place in the file
+doing this, others call __wait_on_freeing_inode(). It reads like a bug
+to me because it allows the caller looking for this inode to insert
+their own copy and progress outside of the routine.
+
+The current inode_unhashed checks after wait_on_inode could be replaced
+with something like:
+
+bool inode_can_use() {
+	if (inode->i_state & I_DISCARDED)
+		return false;
+	if (inode_unhashed(inode))
+		return false;
+	return true;
+}
+
+or maybe wait_on_inode could grow a return value and do the work inside.
+
+I also noticed wait_on_inode is defined in include/linux/writeback.h,
+but the only users are fs/gfs2 and fs/inode.c, so it will probably want
+a different home.
+
+Comments?
+
+Below is a non-operational WIP diff to replace the flag, it does not add the
+aforementioned checks after wait_on_inode yet or do any cleanups:
+
+diff --git a/fs/dcache.c b/fs/dcache.c
+index 60046ae23d51..c1188ff2fbd1 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -1981,7 +1981,7 @@ void d_instantiate_new(struct dentry *entry, struct inode *inode)
+ 	spin_lock(&inode->i_lock);
+ 	__d_instantiate(entry, inode);
+ 	WARN_ON(!(inode->i_state & I_NEW));
+-	inode->i_state &= ~I_NEW & ~I_CREATING;
++	inode->i_state &= ~I_NEW;
+ 	/*
+ 	 * Pairs with the barrier in prepare_to_wait_event() to make sure
+ 	 * ___wait_var_event() either sees the bit cleared or
+diff --git a/fs/inode.c b/fs/inode.c
+index 95fada5c45ea..9b6d5a644cf5 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -1029,7 +1029,7 @@ static struct inode *find_inode(struct super_block *sb,
+ 			__wait_on_freeing_inode(inode, is_inode_hash_locked);
+ 			goto repeat;
+ 		}
+-		if (unlikely(inode->i_state & I_CREATING)) {
++		if (unlikely(inode->i_state & I_DISCARDED)) {
+ 			spin_unlock(&inode->i_lock);
+ 			rcu_read_unlock();
+ 			return ERR_PTR(-ESTALE);
+@@ -1070,7 +1070,7 @@ static struct inode *find_inode_fast(struct super_block *sb,
+ 			__wait_on_freeing_inode(inode, is_inode_hash_locked);
+ 			goto repeat;
+ 		}
+-		if (unlikely(inode->i_state & I_CREATING)) {
++		if (unlikely(inode->i_state & I_DISCARDED)) {
+ 			spin_unlock(&inode->i_lock);
+ 			rcu_read_unlock();
+ 			return ERR_PTR(-ESTALE);
+@@ -1181,7 +1181,7 @@ void unlock_new_inode(struct inode *inode)
+ 	lockdep_annotate_inode_mutex_key(inode);
+ 	spin_lock(&inode->i_lock);
+ 	WARN_ON(!(inode->i_state & I_NEW));
+-	inode->i_state &= ~I_NEW & ~I_CREATING;
++	inode->i_state &= ~I_NEW;
+ 	/*
+ 	 * Pairs with the barrier in prepare_to_wait_event() to make sure
+ 	 * ___wait_var_event() either sees the bit cleared or
+@@ -1195,10 +1195,14 @@ EXPORT_SYMBOL(unlock_new_inode);
+ 
+ void discard_new_inode(struct inode *inode)
+ {
++	u32 state;
+ 	lockdep_annotate_inode_mutex_key(inode);
+ 	spin_lock(&inode->i_lock);
+-	WARN_ON(!(inode->i_state & I_NEW));
+-	inode->i_state &= ~I_NEW;
++	state = inode->i_state;
++	WARN_ON(!(state & I_NEW));
++	state &= ~I_NEW;
++	state |= I_DISCARDED;
++	WRITE_ONCE(inode->i_state, state);
+ 	/*
+ 	 * Pairs with the barrier in prepare_to_wait_event() to make sure
+ 	 * ___wait_var_event() either sees the bit cleared or
+@@ -1783,6 +1787,7 @@ int insert_inode_locked(struct inode *inode)
+ 	while (1) {
+ 		struct inode *old = NULL;
+ 		spin_lock(&inode_hash_lock);
++repeat:
+ 		hlist_for_each_entry(old, head, i_hash) {
+ 			if (old->i_ino != ino)
+ 				continue;
+@@ -1790,20 +1795,21 @@ int insert_inode_locked(struct inode *inode)
+ 				continue;
+ 			spin_lock(&old->i_lock);
+ 			if (old->i_state & (I_FREEING|I_WILL_FREE)) {
+-				spin_unlock(&old->i_lock);
+-				continue;
++				__wait_on_freeing_inode(inode, true);
++				old = NULL;
++				goto repeat;
+ 			}
+ 			break;
+ 		}
+ 		if (likely(!old)) {
+ 			spin_lock(&inode->i_lock);
+-			inode->i_state |= I_NEW | I_CREATING;
++			inode->i_state |= I_NEW;
+ 			hlist_add_head_rcu(&inode->i_hash, head);
+ 			spin_unlock(&inode->i_lock);
+ 			spin_unlock(&inode_hash_lock);
+ 			return 0;
+ 		}
+-		if (unlikely(old->i_state & I_CREATING)) {
++		if (unlikely(old->i_state & I_DISCARDED)) {
+ 			spin_unlock(&old->i_lock);
+ 			spin_unlock(&inode_hash_lock);
+ 			return -EBUSY;
+@@ -1826,7 +1832,6 @@ int insert_inode_locked4(struct inode *inode, unsigned long hashval,
+ {
+ 	struct inode *old;
+ 
+-	inode->i_state |= I_CREATING;
+ 	old = inode_insert5(inode, hashval, test, NULL, data);
+ 
+ 	if (old != inode) {
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 601d036a6c78..1928ffc55f09 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2559,7 +2559,7 @@ static inline void kiocb_clone(struct kiocb *kiocb, struct kiocb *kiocb_src,
+  * I_OVL_INUSE		Used by overlayfs to get exclusive ownership on upper
+  *			and work dirs among overlayfs mounts.
+  *
+- * I_CREATING		New object's inode in the middle of setting up.
++ * I_DISCARDED		Inode creation failed.
+  *
+  * I_DONTCACHE		Evict inode as soon as it is not used anymore.
+  *
+@@ -2595,7 +2595,7 @@ static inline void kiocb_clone(struct kiocb *kiocb, struct kiocb *kiocb_src,
+ #define I_DIRTY_TIME		(1 << 11)
+ #define I_WB_SWITCH		(1 << 12)
+ #define I_OVL_INUSE		(1 << 13)
+-#define I_CREATING		(1 << 14)
++#define I_DISCARDED		(1 << 14)
+ #define I_DONTCACHE		(1 << 15)
+ #define I_SYNC_QUEUED		(1 << 16)
+ #define I_PINNING_NETFS_WB	(1 << 17)
+diff --git a/include/trace/events/writeback.h b/include/trace/events/writeback.h
+index 1e23919c0da9..cda77ca84bad 100644
+--- a/include/trace/events/writeback.h
++++ b/include/trace/events/writeback.h
+@@ -24,7 +24,7 @@
+ 		{I_LINKABLE,		"I_LINKABLE"},		\
+ 		{I_WB_SWITCH,		"I_WB_SWITCH"},		\
+ 		{I_OVL_INUSE,		"I_OVL_INUSE"},		\
+-		{I_CREATING,		"I_CREATING"},		\
++		{I_DISCARDED,		"I_DISCARDED"},		\
+ 		{I_DONTCACHE,		"I_DONTCACHE"},		\
+ 		{I_SYNC_QUEUED,		"I_SYNC_QUEUED"},	\
+ 		{I_PINNING_NETFS_WB,	"I_PINNING_NETFS_WB"},	\
 
