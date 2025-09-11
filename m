@@ -1,250 +1,226 @@
-Return-Path: <linux-fsdevel+bounces-60968-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60969-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9341B53C70
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 21:39:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA536B53C7B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 21:45:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D88CE1C28895
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 19:39:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D9DA175FFC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 19:45:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F6491FECD4;
-	Thu, 11 Sep 2025 19:39:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F854242D9D;
+	Thu, 11 Sep 2025 19:45:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="tMw+ASjs"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YLBcoqgU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2045.outbound.protection.outlook.com [40.107.94.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38AF9246BD8;
-	Thu, 11 Sep 2025 19:39:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757619558; cv=fail; b=dwFVGgSopSLkLxdVQeKMQokeh2oIrsKN2+XIdKpAStPgX4vEeeFunTfMp4Hf59054CJeCnIeSKEKljFuxS14JOzbl6dZ+3lRn0v8LjRIGc/ay7gvk5lmsagJPVsdLBwORUHxfyo9TzJskqoFulxPxXG8MCg2LNufYYz/2ZcbZXs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757619558; c=relaxed/simple;
-	bh=ew44o9sS4K0l+t2GVsAOWd9xjRrT3YV2vu76kQobcjI=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=cJajHowiQBjbKqSHzfTzrPAu1/Fd2/9CI0q4SNPb5oaL5Oqw1bWjNsbvDOZBuGaz1jk09Dmy5bVaIDSuDE6Vqy9//r/BLjRyzXV3CThmNkgL8w3xWJ4KHxsUvGdy4qUqp9ovdF3RHsTn/NkIW7Z6M9XZf5QHqruX/R+9QSCeurE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=tMw+ASjs; arc=fail smtp.client-ip=40.107.94.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jFRI8VFXblvwQqNWROlGTEBUurRc1S7KDNc6IIEIWL/wFtvaAa2cMhhwYCowx+vINNA/EYqnAccxDmXrKBkIuRB1rtbeBvnBL/xOaspbaKpAYj6TbVFCxDA+TTtgJmiaYiC2g0UfAZBRFAnUKCf0dXWX2yj95nYznCIJduIxHOO9NeLbyI5l0bnP0EL0iTgTJeCgXjFmtQScXCcAsTy2rJa1ptigXyLUbPuJR+9bsidp+qcYJrLwbrWSf1jlo3DMugi1Z5jZmPRyHnLbp5kRwoiRr7D4nDvYibIqfVfCrXwCFLP1SkXtCkx70l8hxP0d/qtrL6akUNvteEhNdGtq2A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0Xm6XA8qElkANEZ/Y6Gl7Cvd2GioaELQ9fx4B6cOS9E=;
- b=wBtxHjpt9WEM9qgeev6aV9VzzGaegDXqP1zD3c5pay1S7QVzUhgWZ6PspoQ5MjOVcsrfxI41lrLquRbdFpIczwmIlJYmFykUv5qjSTuhCAGv3hidxnc9wfLt7LSKtHZD1i9c15vjw03NBEMNeGm+bLvb/Fh/KTsegnvnao0QPnIH55dTLyB/QbfwcC0hF5LTpeuWGPBwbP4MUDSwgtE4rOZLuJt6ctgCQoWmS1KubgZYHsCW8QdQK5wnDWCoLLtPvF3hyHSgbZoUtwrZQYEUgIa/YjrzctnKSvz5vRnRxCsLlSHgk3sngqLMhrBDYjg+wJsfXLOthOeF8yQ4rSkTfA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0Xm6XA8qElkANEZ/Y6Gl7Cvd2GioaELQ9fx4B6cOS9E=;
- b=tMw+ASjsluFaWoVgQkVomAMRpqrqCsebtNfZq2iXDxl58+oTErRf/LiFBhonsOIPG3/EyLFLr2Anw1I3zQQTY2n/XCCja20iD3FdR7uGKz+OUpw2K9mDVKzLg8JBA/AYmGqqQTMP9qMGYMByNumDwmqYPPAppqJAay/nzdXJek0=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from SA1PR12MB7127.namprd12.prod.outlook.com (2603:10b6:806:29e::18)
- by SA1PR12MB5659.namprd12.prod.outlook.com (2603:10b6:806:236::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Thu, 11 Sep
- 2025 19:39:13 +0000
-Received: from SA1PR12MB7127.namprd12.prod.outlook.com
- ([fe80::c7f2:591b:7587:a835]) by SA1PR12MB7127.namprd12.prod.outlook.com
- ([fe80::c7f2:591b:7587:a835%5]) with mapi id 15.20.9094.021; Thu, 11 Sep 2025
- 19:39:13 +0000
-Message-ID: <d3e696c4-1ffa-47f0-baee-cb1bb4296332@amd.com>
-Date: Thu, 11 Sep 2025 12:39:09 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/6] dax/hmem, e820, resource: Defer Soft Reserved
- registration until hmem is ready
-To: dan.j.williams@intel.com,
- Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
- linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
- nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
- linux-pm@vger.kernel.org
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
- "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>,
- Pavel Machek <pavel@kernel.org>, Li Ming <ming.li@zohomail.com>,
- Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
- Ying Huang <huang.ying.caritas@gmail.com>,
- Yao Xingtao <yaoxt.fnst@fujitsu.com>, Peter Zijlstra <peterz@infradead.org>,
- Greg KH <gregkh@linuxfoundation.org>,
- Nathan Fontenot <nathan.fontenot@amd.com>,
- Terry Bowman <terry.bowman@amd.com>, Robert Richter <rrichter@amd.com>,
- Benjamin Cheatham <benjamin.cheatham@amd.com>,
- PradeepVineshReddy Kodamati <PradeepVineshReddy.Kodamati@amd.com>,
- Zhijian Li <lizhijian@fujitsu.com>, ardb@kernel.org, bp@alien8.de
-References: <20250822034202.26896-1-Smita.KoralahalliChannabasappa@amd.com>
- <20250822034202.26896-2-Smita.KoralahalliChannabasappa@amd.com>
- <68bf603dee8ff_75e31001d@dwillia2-mobl4.notmuch>
-Content-Language: en-US
-From: "Koralahalli Channabasappa, Smita" <skoralah@amd.com>
-In-Reply-To: <68bf603dee8ff_75e31001d@dwillia2-mobl4.notmuch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SJ0PR05CA0025.namprd05.prod.outlook.com
- (2603:10b6:a03:33b::30) To SA1PR12MB7127.namprd12.prod.outlook.com
- (2603:10b6:806:29e::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D4823C4E3
+	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Sep 2025 19:45:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757619944; cv=none; b=rdyaeOBXm/l/IzokvcpAe1eLTQ/YDgaSRv673SsmeEMVjXEOpJqNkqIxyF3ydByFIVTh2JQBtl3FORyCsW7Fe9pOXv6cQV0hHO4Xg9kQfM0cpbyLBveMrS6B8sR5ZkhoCr0r58Kx8GLM94e9UqXbyFNCeI10MXp1klHqQaBP7jM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757619944; c=relaxed/simple;
+	bh=UQ+azyfBJLEVgkFhkxQAX5mILv2bK5F4BrYoZ1qtVXw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g5LT2Q5e2x/OQ+B9dqmv5XK1jfUUEhud6VIzPQjq54NjVx4X/RCvNrGBL4bAnxh6MksIO0kwZ75oFzxoHv9qrcar+5KM5zsumuXB4aL4OYKOUt7jXujWYeBqJqD+kpAomaE+hhTpaR9c1taz97L9oVr7XksWrPm7iwgN7Tusv6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YLBcoqgU; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-805a55c09aeso127918485a.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Sep 2025 12:45:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757619942; x=1758224742; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9P8qpgTT4CD1z1EW5R7hzuqr8lbCC0uLuzD1yVLy364=;
+        b=YLBcoqgU97MjY4GRNc4p/EuGAC+N80AaYgJr+GJfZLPc509VrC1VeR8HsvfR35k/cz
+         qutlvx+nqrTq52jml39wKxv/4H/RUi1rxsDFpt3F6ylRJzMNuqRn48mCjui6gcUkgyhR
+         RCNOmF0pICwgFXQf6LZiAv890abcvcWFts0ttbuEa1iPw/6nAFmzSrf9nUXk1MRxjLxv
+         1OOoWdXOncvmYRWUBIEWxhy9wx2BzYwjJ5i44HV/A6Xi3N4/bX+STLHybAc6q+RJHjWD
+         N1CCWApIhgeGyBVezzrrOyBCE/DnR5IJ0pAN/bgxkcVv8a98e65s35+U8t3eTYYts5XX
+         afXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757619942; x=1758224742;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9P8qpgTT4CD1z1EW5R7hzuqr8lbCC0uLuzD1yVLy364=;
+        b=ikg89s1kJYvdcqsrju+J5f9cJXZCNiokGlCXwmuGYCgtYIqUhlCOHRKs9Z11XPwPQz
+         F1zqHys8fj+rlXta85Ejd6kdpdQ0SwdC2voh33uuA+JjgJQM6jOammbIRu7BvGyioeQY
+         +9g5uLmp5Y07MFi1cRQD/b78biiPfZvyVntrx8wgrspr5l17qNeshZRfCLCHVgXdBX4S
+         QvZzh/aD7hZkkMt+yex+euj71XUpQB1vKhd/N1OdQ/uyMXuQTxWkKDZZ4zdgpL+iLVNg
+         bonW0R2qfjJUL6dcm2zSLwnIkbudBNV/1NUmWGwMsuKp1sXY7mtBf/vM02ZKxDNnSABa
+         2x2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWkqS42Z/o5NzNMCMd+DIgVGFU40IfgxhRXHkizXYBvF4lD5+smgBOTe+dKwbshoYuK8X0F50RmvMha7oK4@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2i1cOHzNCGB3Dn/JWQksal5WFp1KxkAZBJpdO0q2jeEvzKuun
+	Rlq+4r+sIb0pfuFOJk4bmVvzG4DKDLu1BEPY1gpA56vbnQg0uEzYkyvSTbye1I8SVdLeCQgjsAA
+	cxoOej6aqHmAnrVMDMYTPQ6Pfo9W7GOQ=
+X-Gm-Gg: ASbGncsBOzbIAHkC5Al5mfrcXuSZTloJOubkJuYTUoecs2p3PZKppfa42ZFfla/YYHm
+	k17Au8OSaXiYXX/8xribz8qW7uyxx37NFP7gsfntO+s7xqoU7bmCKwcI2tTf2m6nrE2dtr7t0JQ
+	4Z9b6cbavuem5x5c6r6h6ctPDo5PmbGjHXeLYdUmWnhSihFSuh4OqwWRewNOVpIgk/rRWMP1kRa
+	14ISISVjdaKlcNAODAp6r2vvp+pz23wwgGmWMOSPWSr
+X-Google-Smtp-Source: AGHT+IHtAw0lVlpGGJ06gAtOTDihqoXPOrWbMz80FfAkP5uWz95A2L7X1pd/xRQ1MQFSLXu83sUO6jrrXMjhd4e0uMw=
+X-Received: by 2002:a05:620a:d88:b0:807:87a9:89a1 with SMTP id
+ af79cd13be357-823fd41926bmr100960385a.37.1757619941606; Thu, 11 Sep 2025
+ 12:45:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA1PR12MB7127:EE_|SA1PR12MB5659:EE_
-X-MS-Office365-Filtering-Correlation-Id: 84e9e423-4777-4842-0164-08ddf16ae2aa
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aUlnTnpLaXZYOE83a1J0YVlTYnRIWGlCcFZXbUpQemVsamRqZVB1Sjc2cDJo?=
- =?utf-8?B?c1lMaG16bDMwWE1KdlJTdStUUUE2VCtMY0RCWlVQVEh2YkZoMjdHekptcm42?=
- =?utf-8?B?ajZvaFBpc3ZBRDNDc2hlRnhhT0Z5RHg0QlVRZ1lIdEJBRHdQNTQ0ZVV6V2JD?=
- =?utf-8?B?K2pGd3hnaFBYWXhzbWpLT2x3aGlIV2JXaDRNejJkWHVrZDlPWUVwU1FpZkU5?=
- =?utf-8?B?TmdHUWlpNnBobjl6K0RaNEVvdnVvdlVQelg2QzkyQWJUOHluMStCTzhEdlJG?=
- =?utf-8?B?OW5jYmhtUFB5UTBMMHc3bStVcnlKaUY3c3RIcU5BYXovR3pPV1E1UjFSRlR0?=
- =?utf-8?B?aE9rOSs5VXhTdXBkQWFZUmFRdThaVlZoNDZxVElmNG5iYmo1WU9xU0JiS0FK?=
- =?utf-8?B?NDZBbytZeE04YUlwb2RxelMxTHo4djRGSUk4TEJ5VmhJL29mWHpvWlJMVGMy?=
- =?utf-8?B?Ky9heXFIYzhKM01GdFJ1RWFvU2RPYk44dUFKYlc1TzZlMVBieU11cnljTzJ1?=
- =?utf-8?B?blF6VHJYQWhGNURYYlFxRjJ6YnhPalhvTGcwY0IvcVpGU2haZzM5NzlvYU1t?=
- =?utf-8?B?dEpYcjZOTVd3WjF0R0FOR1l6YTB3MC91WnNjUml1OXBuMVhtQ3Qwc0xtbW0v?=
- =?utf-8?B?c1U3Y2s5T0N6SlZtT2FLZm1zZGRZVkJKRWY2bjVJTnlEUVlTa3A3TXVqeUxC?=
- =?utf-8?B?MmpBMGVQRi9KWnR1Z2pVeElXVWo5bzQzalFGQ3JOa3MyblExa1NobytrUHYz?=
- =?utf-8?B?cEUwY1pJdzY5amZhcDZaWFVkMEJIclE4d2pFMkFJMFNyZzBVZU5XMjFLTWZO?=
- =?utf-8?B?TDA4SVJLaDZqVlhqZlVWaVB3WVM5VWRpN29Ib0owSWhFeWc5SnNJdmN0MWxX?=
- =?utf-8?B?YXBENUNSU3BuVTYvQXVYT0xGd0VQS29STXNpVjJLYWZxRHBGMmErSm9mSjNJ?=
- =?utf-8?B?cTQreHVPaHJ0SGdHV0w4RjhqbHJDNTZJN2xhSCtkMkhyRVVVZGMwWUFqUmJV?=
- =?utf-8?B?WkF6Vm11Y1hOMEZIQ3FtcEEwbmE5K0lIeHg4RWFVZ25hTXg0eW9tSjU5NFdM?=
- =?utf-8?B?eDVseEdmZkpac3NsT2dwYU1HYXBncC9acTVIQjk5V3hnRm9qRHlQUjhncXJB?=
- =?utf-8?B?WHRXY0dJN2p2ZDJxam51UXNrL3pSQ1FjSGNrL1lvVWFYMHRKVXJlaXZSdE9P?=
- =?utf-8?B?RThFbGxEdlVnZjRMV2hsTWpoSVZpR3IrZHVJZ3NobWI5UzF2TVVxOVFDUndV?=
- =?utf-8?B?K2owOG1pNUFWYlVxamQ1SmlrZmZKR3VpYTgxWFg5eHBpR0F0T3NENjVjZHJD?=
- =?utf-8?B?M1kvZVJyUGZWMzBJdTR4aHJWR21XUFlzOS9LbEI5TXNLL0xGUU9GbWhBcy90?=
- =?utf-8?B?Y3NjbTVHVHREZTd6UFJnVDlLaS91Qk41bVlnVjRXc09nZDBuK1ZMNWxDRGZK?=
- =?utf-8?B?UVI2eTlUc0JNMnFxT2FKOWNEb1Axc3pWRStlTk1ET01acXlzVjFrTFkwMWtD?=
- =?utf-8?B?TVhqc3UyejZYRXUzOVNMMFNITGJLT1A5dm81TTZjM0grblQvM0c3QXp3ZVQ5?=
- =?utf-8?B?ZWkrK2FGNVZBWWlSYi83cngyK3B6ZVJ1ZjF3MkRQYmtuckV2ZWU1TERUYjJw?=
- =?utf-8?B?Ukx0MWNmbFZTOE5Gd3ozTHRJTVVNUk5vMU1IaTVNbUppZVorMlBRRElHMVRs?=
- =?utf-8?B?TllvR2NqWERzZFBsR0QwNUh0bWd5eUs4dW1DQzlFMFcycHNsSWN0V3ZXOVpj?=
- =?utf-8?B?Z3QwUjJSMysvRExrb2lVdHE4UFdUQkg0UUVvUis1ZGtUZ1pxSklGMnROYkJO?=
- =?utf-8?B?VmRLUUEzNzROa2FrcnExM1dOUitjUWVKMFdybm5jaWRNaUVsS3E2U2lwTHVS?=
- =?utf-8?B?emROSElFOXlySExpOXpkVjhJaUR3YkVXeHc0TSt6bmlhQ3RqbnRXYnNVRzRS?=
- =?utf-8?Q?92Poa3NSmMg=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR12MB7127.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MkdyYkVsVWgyVmJsdG10N3kreFFwREVBS1VKQitzMVhIaHNlQzVKN25JbTF5?=
- =?utf-8?B?R2Ixa2J6a3NScURNYnNwVkVqQy9oVVZiK28vK1JpL0ZzYzlEVlZ5VmU0eFhZ?=
- =?utf-8?B?YldWZFZvNmVMcU1sRzVOUjl2Q0FtMUlrd3VmT0dLbEtjaElKQi91a2t0ejhD?=
- =?utf-8?B?WmJhck95SURWdFpOcFoybmJnWDV1a3RBQnNjQ3EyU0luMVJURmRndDVLL2JZ?=
- =?utf-8?B?MGpTMGxYVkpIc2lXdDQyRkkzQTVuaHZWcmpuUjNFWGJKdDZyQnlYQ0JZVEpn?=
- =?utf-8?B?Qi9iZ2M4My8raHJYb2R3VnQ0WVRidUN0aGhlbWIzYUxOVHM2bnlwMjlHWnF4?=
- =?utf-8?B?cVhscXBoOUhVUU5Rb0RmYURrcCtabFdrMU0zaXpsTm5JbTFPRFNiV3hSczhk?=
- =?utf-8?B?WE95Y0daMXhnYlM4R3ljQ1RnN3FtMUh5WHJRSmNUV0NXUE1pdHV3UGEwUzU2?=
- =?utf-8?B?Tkp0OFBHUVhUNFVyV2xtZ2RTNUxQYlp5aDZwbUZBTktSbmRDeEhqMXRlbHFC?=
- =?utf-8?B?ZFRUMDVIdHBNR082N2sza0NsL1huaFhOMnducVQzTmhZM0VuaVhFREE1ZDB5?=
- =?utf-8?B?b09DR1lvKzdGZFpBc3dzR3pyVHhMN0pLbndGeTRCRVFKZlkrZzdLTVlTL0VT?=
- =?utf-8?B?YjZyY0F3Rm0rM250MUsweHp3dHdWcm5oZVBxY1l3WnNkNUNNWnZvaFM0UmVD?=
- =?utf-8?B?c2c2dFN5WVpaQ0w2dk5CTVcrbFFmWnJ0bUZKYmV5MWhFanFMYUVka3FjbW9L?=
- =?utf-8?B?QnY1VStRTTBDakR1bW1Mc3kxd0MwNGl0TGlhWUxTQ2xhajlGWFExOHV5Vjlx?=
- =?utf-8?B?c21yU3AwVDQ3L3dac0FFZTlYM0Z2OW91ZDBZY1lyTzUzWFczOHpybG1QMXZC?=
- =?utf-8?B?Z3F3dUNhd1JWVVVUUXdpOE9wRjE2V1ViWjhERE1zRndGMW1weDFSemVNamtG?=
- =?utf-8?B?OWJTbktoeEFOeU4zWmd6MTIvQlBlM2NGcnJXMlNOL0w0a2dieGd0ODFzNzM5?=
- =?utf-8?B?WWhmVU5rRzNReEtja3RWV2dmRDdwMEZ2UXhwL3hXZElJUEJORVJOanJmRUtu?=
- =?utf-8?B?blZHTFgvd2tiNnk0S05ucEhFZTQ0cXVzRXlqVStaZTlVeEJKcjRudFJJbDBk?=
- =?utf-8?B?ZWgwUW5adEh1Z3U2azFBU2lIQzNNQkd5dkpGMEt6VENVRjdSb2phL3E3cVhq?=
- =?utf-8?B?bnlkSFIxbGxxeVYzOHRqdEgzNzU1U1JCay9PQ09sMmhDYUFjbVhtYS9qWkJy?=
- =?utf-8?B?M0FwSjI2RjdLVStBMzU0OHBxWjY0cTZxTDM3MnFzclNxTnp0MHpVb081ajdi?=
- =?utf-8?B?eDNTSk1CU0Z2dDVNTm1FVzJSMHBIanNXanVKVEhWcmVUci9nbm01dWdDbXNY?=
- =?utf-8?B?RG9tYy96VnhZUG1mVm83cU9BWFJveFB5aDRmVitXUXpMazRON1VYOGEyTEk4?=
- =?utf-8?B?QWV2bGJvc3NmTVY2eUthRDRxWEVwOE82U3RmeldPMkU1UEgzMXV4UFlmdzUz?=
- =?utf-8?B?MlRxLytYLy9kUkcwemdnVU55Z2VXOFpTV0xpUXRCQzYxcnRtU0NGQ3lHdStU?=
- =?utf-8?B?RXJmOG83cFZQaGpQeURxMlVJYkd6Vkc2b2N5Lzh2Y0FPMnB1Um9yQ2I0QWQ0?=
- =?utf-8?B?a2hhNEpXWVAwQWZ0eWpyajNrRzMzYzY2VWlaZ3NUWlF2VEZPK2RXakZzWEQ0?=
- =?utf-8?B?d0R3TThRU3NKWUpJYVl2U0tKeEU4WWpvQm1LUUxkRVZRQ2s4dWYzVjBpK0JH?=
- =?utf-8?B?N3ZUS1NVK1YwNFUyVkhlaXJMUlpBbWJub1c4UVM1aHFxSjA1RkN3b0wrdGZB?=
- =?utf-8?B?Q2JBN1ZlS1ZuWXZKSFpDaC9KUUl6czQyRnNxWWd6bklLWlZqUkdzRWhpVkNB?=
- =?utf-8?B?MVYza0JXS09BYVMzWERJeEI1T1BnUWViczNRWU1INm1ieWRUNVZTOXNzMlN3?=
- =?utf-8?B?R3A3L3htSEJtRWhQa0RkeE5iQkFCQ1hHZHZsVE5FT1UvdGI4VlZuVjlZd3BE?=
- =?utf-8?B?OC8wa0lvWmVjbGM5MlBRTTR6OUtQeXBFdmV1M2xUMDhuTTFJYXhNaG5EbUp3?=
- =?utf-8?B?YjVuOGowWGUvWXBtSnZwUUc4VndETzVNUGY0MHJaTGZCaGRYNk9EcjJzQVZS?=
- =?utf-8?Q?LHRBDfS8LFIUOYowMlWXGaplM?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 84e9e423-4777-4842-0164-08ddf16ae2aa
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR12MB7127.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2025 19:39:12.9690
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: F2SKvmxsU8bD+qYEEjAaEKYuaSxMkvG1M+mX9VWmLzGc75NlgFcjMLmyDE1Y2iBWKlBrVxIOSeC+iPGoCWOpaA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB5659
+References: <20250908185122.3199171-1-joannelkoong@gmail.com>
+ <20250908185122.3199171-14-joannelkoong@gmail.com> <a1529c0f-1f1a-477a-aeeb-a4f108aab26b@linux.alibaba.com>
+ <CAJnrk1aCCqoOAgcPUpr+Z09DhJ5BAYoSho5dveGQKB9zincYSQ@mail.gmail.com>
+ <0b33ab17-2fc0-438f-95aa-56a1d20edb38@linux.alibaba.com> <aMK0lC5iwM0GWKHq@infradead.org>
+ <9c104881-f09e-4594-9e41-0b6f75a5308c@linux.alibaba.com>
+In-Reply-To: <9c104881-f09e-4594-9e41-0b6f75a5308c@linux.alibaba.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Thu, 11 Sep 2025 15:45:28 -0400
+X-Gm-Features: Ac12FXwgTb8F5lYaNAIGfAVGCddROzFscVCRkbUHIIucMvNsiS1K_faJqDoLwX4
+Message-ID: <CAJnrk1b2_XGfMuK-UAej31TtCAAg5Aq8PFS_36yyGg8NerA97g@mail.gmail.com>
+Subject: Re: [PATCH v2 13/16] iomap: move read/readahead logic out of
+ CONFIG_BLOCK guard
+To: Gao Xiang <hsiangkao@linux.alibaba.com>
+Cc: Christoph Hellwig <hch@infradead.org>, brauner@kernel.org, miklos@szeredi.hu, 
+	djwong@kernel.org, linux-block@vger.kernel.org, gfs2@lists.linux.dev, 
+	linux-fsdevel@vger.kernel.org, kernel-team@meta.com, 
+	linux-xfs@vger.kernel.org, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/8/2025 4:01 PM, dan.j.williams@intel.com wrote:
-> [ add Boris and Ard ]
-> 
-> Ard, Boris, can you have a look at the touches to early e820/x86 init
-> (insert_resource_late()) and give an ack (or nak). The general problem
-> here is conflicts between e820 memory resources and CXL subsystem memory
-> resources.
-> 
-> Smita Koralahalli wrote:
->> Insert Soft Reserved memory into a dedicated soft_reserve_resource tree
->> instead of the iomem_resource tree at boot.
->>
->> Publishing Soft Reserved ranges into iomem too early causes conflicts with
->> CXL hotplug and region assembly failure, especially when Soft Reserved
->> overlaps CXL regions.
->>
->> Re-inserting these ranges into iomem will be handled in follow-up patches,
->> after ensuring CXL window publication ordering is stabilized and when the
->> dax_hmem is ready to consume them.
->>
->> This avoids trimming or deleting resources later and provides a cleaner
->> handoff between EFI-defined memory and CXL resource management.
->>
->> Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
-> 
-> 
->> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> 
-> Smita, if you added changes this should have Co-developed-by. Otherwise
-> plain Signed-off-by is interpreted as only chain of custody.  Any other
-> patches that you add my Signed-off-by to should also have
-> Co-developed-by or be From: me.
-> 
-> Alternatively if you completely rewritel a patch with your own approach
-> then note the source (with a Link:) and leave off the original SOB.
-> 
-> Lastly, in this case it looks unmodified from what I wrote? Then it
-> should be:
-> 
-> From: Dan Williams <dan.j.williams@intel.com>
-> 
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
-> 
-> ...to show the chain of custody of you forwarding a diff authored
-> completely by someone else.
+On Thu, Sep 11, 2025 at 8:29=E2=80=AFAM Gao Xiang <hsiangkao@linux.alibaba.=
+com> wrote:
+>
+> Hi Christoph,
+>
+> On 2025/9/11 19:37, Christoph Hellwig wrote:
+> > On Wed, Sep 10, 2025 at 12:59:41PM +0800, Gao Xiang wrote:
+> >> At least it sounds better on my side, but anyway it's just
+> >> my own overall thought.  If other folks have different idea,
+> >> I don't have strong opinion, I just need something for my own
+> >> as previous said.
+> >
+> > I already dropped my two suggestions on the earlier patch.  Not totally
+> > happy about either my suggestions or data, but in full agreement that
+> > it should be something else than private.
+>
+> To just quote your previous comment and try to discuss here:
+>
+> ```
+> On Wed, Sep 10, 2025 at 01:41:25PM -0400, Joanne Koong wrote:
+> > In my mind, the big question is whether or not the data the
+> > filesystems pass in is logically shared by both iomap_begin/end and
+> > buffered reads/writes/dio callbacks, or whether the data needed by
+> > both are basically separate entities
+>
+> They are separate entities.
+> ```
+>
 
-Thanks for clarifying, Dan. I wasn’t aware of the distinction before 
-(especially to handle the chain of custody..). I will update to reflect 
-that properly and will also be careful with how I handle authorship and 
-sign-offs in future submissions.
+Hi Gao,
 
-Thanks
-Smita
+> I try to push this again because I'm still not quite sure it's
+> a good idea, let's take this FUSE iomap-read proposal (but sorry
+> honestly I not fully look into the whole series.)
+>
+> ```
+>   struct fuse_fill_read_data {
+>         struct file *file;
+> +
+> +       /*
+> +        * Fields below are used if sending the read request
+> +        * asynchronously.
+> +        */
+> +       struct fuse_conn *fc;
+> +       struct fuse_io_args *ia;
+> +       unsigned int nr_bytes;
+>   };
+> ```
+>
+> which is just a new FUSE-only-specific context for
+> `struct iomap_read_folio_ctx`, it's not used by .iomap_{begin,end}
+> is that basically FUSE _currently_ doesn't have logical-to-physical
+> mapping requirement (except for another fuse_iomap_begin in dax.c):
+
+I don't think this is true. The other filesystems in the kernel using
+iomap that do need logical to physical mappings also do not have their
+context for `struct iomap_read_folio_ctx` (the struct bio) used by
+.iomap_{begin, end} either. As I see it, the purpose of the `struct
+iomap_read_folio_ctx` context is for processing/issuing the reads and
+the context for .iomap_{begin,end} is for doing all the mapping /
+general metadata tracking stuff - even for the filesystems that have
+the logical to physical mapping requirements, their usage of the
+context is for processing/submitting the bio read requests, which imo
+the more high-level iomap_{begin,end} is a layer above.
+
+> ```
+> static int fuse_iomap_begin(struct inode *inode, loff_t offset, loff_t le=
+ngth,
+>                              unsigned int flags, struct iomap *iomap,
+>                              struct iomap *srcmap)
+> {
+>          iomap->type =3D IOMAP_MAPPED;
+>          iomap->length =3D length;
+>          iomap->offset =3D offset;
+>          return 0;
+> }
+> ```
+>
+> But if FUSE or some other fs later needs to request L2P information
+> in their .iomap_begin() and need to send L2P requests to userspace
+> daemon to confirm where to get the physical data (maybe somewhat
+> like Darrick's work but I don't have extra time to dig into that
+> either) rather than just something totally bypass iomap-L2P logic
+> as above, then I'm not sure the current `iomap_iter->private` is
+> quite seperate to `struct iomap_read_folio_ctx->private`, it seems
+
+If in the future this case arises, the L2P mapping info is accessible
+by the read callback in the current design. `.read_folio_range()`
+passes the iomap iter to the filesystem and they can access
+iter->private to get the L2P mapping data they need.
+
+> both needs fs-specific extra contexts for the same I/O flow.
+>
+> I think the reason why `struct iomap_read_folio_ctx->private` is
+> introduced is basically previous iomap filesystems are all
+> bio-based, and they shares `bio` concept in common but
+> `iter->private` was not designed for this usage.
+>
+> But fuse `struct iomap_read_folio_ctx` and
+> `struct fuse_fill_read_data` are too FUSE-specific, I cannot
+> see it could be shared by other filesystems in the near future,
+> which is much like a single-filesystem specific concept, and
+> unlike to `bio` at all.
+
+Currently fuse is the only non-block-based filesystem using iomap but
+I don't see why there wouldn't be more in the future. For example,
+while looking at some of the netfs code, a lot of the core
+functionality looks the same between that and iomap and I think it
+might be a good idea to have netfs in the future use iomap's interface
+so that it can get the large folio dirty/uptodate tracking stuff and
+any other large folio stuff like more granular writeback stats
+accounting for free.
+
+
+Thanks,
+Joanne
+
+>
+> I've already racked my brains on this but I have no better
+> idea on the current callback-hook model (so I don't want to argue
+> more). Anyway, I really think it should be carefully designed
+> (because the current FUSE .iomap_{begin,end} are just like no-op
+> but that is just fuse-specific).  If folks really think Joanne's
+> work is already best or we can live with that, I'm totally fine.
+>
+> Thanks,
+> Gao Xiang
+>
 
