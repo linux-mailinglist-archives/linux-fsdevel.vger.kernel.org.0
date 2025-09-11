@@ -1,245 +1,282 @@
-Return-Path: <linux-fsdevel+bounces-60915-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60919-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4FD8B52DC7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 11:57:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB6C8B52E11
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 12:12:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37525A05173
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 09:57:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA8297BBB28
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 10:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2AC2EC0B8;
-	Thu, 11 Sep 2025 09:57:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 002E430E0D1;
+	Thu, 11 Sep 2025 10:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WuKs3lkQ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5eCY8HPF";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WuKs3lkQ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5eCY8HPF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6E1223DFF;
-	Thu, 11 Sep 2025 09:57:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5C422578A
+	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Sep 2025 10:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757584629; cv=none; b=IPl3BeTO+rNghRY96Vymi3e5P5QuIUpHZV5UrgtYvJUA9oBLRhpRyIxh/TKG8yqFYPrZOD9QTOcNvx5+HNe075HEFk8zN8YUGLSIJEXWK1CUzhd95GlL9Uq5yfpe23RyGsjOwwP8Cqn3SI1TvTUw/mTS+WxC3U+p66wOGAIO6qU=
+	t=1757585529; cv=none; b=pS0xrr3sLLbFMWFQgNgSeDk8RHtiwx2lEDTG8aR7LqdntVIRZk6U1QvV0r5zZzieBvbITpw4Yc2cCg7vSdOyGSIV989CE6gyJSlmGhJagpAkr24Bha4E8x64WhryUvvfPnoBy8uXSbL5eXf76N5jQpkUq/y0rszRwkfBng0lfVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757584629; c=relaxed/simple;
-	bh=uwGiu70UnwGRa2SDkFYP6QUolkt3bbpqJjRSU0bE2ko=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Cwrl5ckVXZk1jo+bBAQMrpRb7A8+kdV2rQ22nXD5jxys9x2fTMnmMNANCj8xlgArnM17gT/QGW8/5C04GVU4u8fEawSKwoZdZf+MHEn16l6fmeaZ/IIlevqJZPtsGDJjKJOfsp/gfOB1+EaRhz1a7APh01HUQUty6DRj2Re2r48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from ubt.. (unknown [210.73.43.101])
-	by APP-03 (Coremail) with SMTP id rQCowACH2IK5nMJoo6pCAg--.44660S7;
-	Thu, 11 Sep 2025 17:56:16 +0800 (CST)
-From: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
-To: linux-riscv@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Deepak Gupta <debug@rivosinc.com>,
-	Ved Shanbhogue <ved@rivosinc.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Peter Xu <peterx@redhat.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	Yuanchu Xie <yuanchu@google.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH v11 5/5] riscv: mm: Add userfaultfd write-protect support
-Date: Thu, 11 Sep 2025 17:56:02 +0800
-Message-Id: <20250911095602.1130290-6-zhangchunyan@iscas.ac.cn>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250911095602.1130290-1-zhangchunyan@iscas.ac.cn>
-References: <20250911095602.1130290-1-zhangchunyan@iscas.ac.cn>
+	s=arc-20240116; t=1757585529; c=relaxed/simple;
+	bh=Wq9kv36PXgeKaCw85qA4ZTD1AGdVRNL4OnMVsqjObEg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ukIdRu9m8LbWgINjJgr9e+7n7Oj1byZEDsuXtO2BhW+ejO3VJPigUXF1iHyVvoEn+DFYH4X+lqWADB5bRBIDyROzWuXQ/7XaB23t70RNXPEkCG6wdj/JmlDXdxFqmK3as9DIDh/Uypvo2U80kWwhaiOAAzMxQqSU4TgeZ2+zgW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WuKs3lkQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5eCY8HPF; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WuKs3lkQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5eCY8HPF; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 3423F223D6;
+	Thu, 11 Sep 2025 10:12:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757585525; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wzrt736u1vSe3f3WN/AwT/UqJ3hJD7ktYO6uGpX03yQ=;
+	b=WuKs3lkQCyG4Ud2gWnBi1IfnT2OAMl+0HjTZJKpJPEqeyzD2Hj8eCrJTTSpLNylev+8JYn
+	kisHeKsBtXywemSeBSXtH1e/KsP8foVhqrHv6lnIzkLufFa/AN/Aw/4LzqovSl6fyeJl5t
+	CN/HnHm2FfgE+i07/qkKCb9RplCFJjE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757585525;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wzrt736u1vSe3f3WN/AwT/UqJ3hJD7ktYO6uGpX03yQ=;
+	b=5eCY8HPFUfF+8vPQ+Sywmz1q/AOjqjEwRsw8kAe98cd7KTWd3JMuNuXJL5wI/D9IM3H3Eb
+	1MzLunHcp6zGxVDQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757585525; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wzrt736u1vSe3f3WN/AwT/UqJ3hJD7ktYO6uGpX03yQ=;
+	b=WuKs3lkQCyG4Ud2gWnBi1IfnT2OAMl+0HjTZJKpJPEqeyzD2Hj8eCrJTTSpLNylev+8JYn
+	kisHeKsBtXywemSeBSXtH1e/KsP8foVhqrHv6lnIzkLufFa/AN/Aw/4LzqovSl6fyeJl5t
+	CN/HnHm2FfgE+i07/qkKCb9RplCFJjE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757585525;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wzrt736u1vSe3f3WN/AwT/UqJ3hJD7ktYO6uGpX03yQ=;
+	b=5eCY8HPFUfF+8vPQ+Sywmz1q/AOjqjEwRsw8kAe98cd7KTWd3JMuNuXJL5wI/D9IM3H3Eb
+	1MzLunHcp6zGxVDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 293C31372E;
+	Thu, 11 Sep 2025 10:12:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id YY4MCnWgwmhFFAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 11 Sep 2025 10:12:05 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id DD0B3A0A2D; Thu, 11 Sep 2025 12:12:00 +0200 (CEST)
+Date: Thu, 11 Sep 2025 12:12:00 +0200
+From: Jan Kara <jack@suse.cz>
+To: Miklos Szeredi <mszeredi@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>, 
+	Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [PATCH v2] fanotify: add watchdog for permission events
+Message-ID: <fyvzypw7ywz4mmqd7vtw34wa7k6gsicvtsjro5mnu6uggy2aeg@3e4p7l3q6gfm>
+References: <20250909143053.112171-1-mszeredi@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowACH2IK5nMJoo6pCAg--.44660S7
-X-Coremail-Antispam: 1UD129KBjvJXoWxZF48ZF4kKF4xKFW5urWrAFb_yoWruw1rpr
-	s5GayrurWDJF97tayftr4YgrWrZw4fWa4DWr9xCa1kJFy7K3yDXr95Kry3try8JFWvv347
-	WFWrKr1rCw47JrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmEb7Iv0xC_Zr1lb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I2
-	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI
-	8067AKxVWUAVCq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28C
-	jxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI
-	8IcVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E
-	87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64
-	kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVW8JVWxJwAm
-	72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI
-	1lc7CjxVAaw2AFwI0_GFv_Wrylc2xSY4AK67AK6r4fMxAIw28IcxkI7VAKI48JMxC20s02
-	6xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_Jr
-	I_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v2
-	6r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UMIIF0xvE42xK8VAvwI8IcI
-	k0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4U
-	JVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IUnmhF7UUUUU==
-X-CM-SenderInfo: x2kd0wxfkx051dq6x2xfdvhtffof0/1tbiDAcCB2jCjVc9TAAAsP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250909143053.112171-1-mszeredi@redhat.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,suse.cz,gmail.com];
+	RCPT_COUNT_THREE(0.00)[4];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-The Svrsw60t59b extension allows to free the PTE reserved bits 60 and 59
-for software, this patch uses bit 60 for uffd-wp tracking
+On Tue 09-09-25 16:30:47, Miklos Szeredi wrote:
+> This is to make it easier to debug issues with AV software, which time and
+> again deadlocks with no indication of where the issue comes from, and the
+> kernel being blamed for the deadlock.  Then we need to analyze dumps to
+> prove that the kernel is not in fact at fault.
+> 
+> The deadlock comes from recursion: handling the event triggers another
+> permission event, in some roundabout way, obviously, otherwise it would
+> have been found in testing.
+> 
+> With this patch a warning is printed when permission event is received by
+> userspace but not answered for more than the timeout specified in
+> /proc/sys/fs/fanotify/watchdog_timeout.  The watchdog can be turned off by
+> setting the timeout to zero (which is the default).
+> 
+> The timeout is very coarse (T <= t < 2T) but I guess it's good enough for
+> the purpose.
+> 
+> Overhead should be minimal.
+> 
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 
-Additionally for tracking the uffd-wp state as a PTE swap bit, we borrow
-bit 4 which is not involved into swap entry computation.
+Overall looks good. Just some nits below, I'll fix them up on commit if you
+won't object.
 
-Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
----
- arch/riscv/Kconfig                    |  1 +
- arch/riscv/include/asm/pgtable-bits.h | 18 +++++++
- arch/riscv/include/asm/pgtable.h      | 68 +++++++++++++++++++++++++++
- 3 files changed, 87 insertions(+)
+> diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.h
+> index b78308975082..1a007e211bae 100644
+> --- a/fs/notify/fanotify/fanotify.h
+> +++ b/fs/notify/fanotify/fanotify.h
+> @@ -437,11 +437,13 @@ FANOTIFY_ME(struct fanotify_event *event)
+>  struct fanotify_perm_event {
+>  	struct fanotify_event fae;
+>  	struct path path;
+> -	const loff_t *ppos;		/* optional file range info */
+> +	const loff_t *ppos;	/* optional file range info */
 
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index 53b73e4bdf3f..f928768bb14a 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -147,6 +147,7 @@ config RISCV
- 	select HAVE_ARCH_TRANSPARENT_HUGEPAGE if 64BIT && MMU
- 	select HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD if 64BIT && MMU
- 	select HAVE_ARCH_USERFAULTFD_MINOR if 64BIT && USERFAULTFD
-+	select HAVE_ARCH_USERFAULTFD_WP if 64BIT && MMU && USERFAULTFD && RISCV_ISA_SVRSW60T59B
- 	select HAVE_ARCH_VMAP_STACK if MMU && 64BIT
- 	select HAVE_ASM_MODVERSIONS
- 	select HAVE_CONTEXT_TRACKING_USER
-diff --git a/arch/riscv/include/asm/pgtable-bits.h b/arch/riscv/include/asm/pgtable-bits.h
-index f3bac2bbc157..b422d9691e60 100644
---- a/arch/riscv/include/asm/pgtable-bits.h
-+++ b/arch/riscv/include/asm/pgtable-bits.h
-@@ -38,6 +38,24 @@
- #define _PAGE_SWP_SOFT_DIRTY	0
- #endif /* CONFIG_MEM_SOFT_DIRTY */
- 
-+#ifdef CONFIG_HAVE_ARCH_USERFAULTFD_WP
-+
-+/* ext_svrsw60t59b: Bit(60) for uffd-wp tracking */
-+#define _PAGE_UFFD_WP							\
-+	((riscv_has_extension_unlikely(RISCV_ISA_EXT_SVRSW60T59B)) ?	\
-+	 (1UL << 60) : 0)
-+/*
-+ * Bit 4 is not involved into swap entry computation, so we
-+ * can borrow it for swap page uffd-wp tracking.
-+ */
-+#define _PAGE_SWP_UFFD_WP						\
-+	((riscv_has_extension_unlikely(RISCV_ISA_EXT_SVRSW60T59B)) ?	\
-+	 _PAGE_USER : 0)
-+#else
-+#define _PAGE_UFFD_WP		0
-+#define _PAGE_SWP_UFFD_WP	0
-+#endif
-+
- #define _PAGE_TABLE     _PAGE_PRESENT
- 
- /*
-diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-index 77344ff0298b..5d3f17e175e5 100644
---- a/arch/riscv/include/asm/pgtable.h
-+++ b/arch/riscv/include/asm/pgtable.h
-@@ -416,6 +416,41 @@ static inline pte_t pte_wrprotect(pte_t pte)
- 	return __pte(pte_val(pte) & ~(_PAGE_WRITE));
- }
- 
-+#ifdef CONFIG_HAVE_ARCH_USERFAULTFD_WP
-+#define pgtable_uffd_wp_supported()	\
-+	riscv_has_extension_unlikely(RISCV_ISA_EXT_SVRSW60T59B)
-+
-+static inline bool pte_uffd_wp(pte_t pte)
-+{
-+	return !!(pte_val(pte) & _PAGE_UFFD_WP);
-+}
-+
-+static inline pte_t pte_mkuffd_wp(pte_t pte)
-+{
-+	return pte_wrprotect(__pte(pte_val(pte) | _PAGE_UFFD_WP));
-+}
-+
-+static inline pte_t pte_clear_uffd_wp(pte_t pte)
-+{
-+	return __pte(pte_val(pte) & ~(_PAGE_UFFD_WP));
-+}
-+
-+static inline bool pte_swp_uffd_wp(pte_t pte)
-+{
-+	return !!(pte_val(pte) & _PAGE_SWP_UFFD_WP);
-+}
-+
-+static inline pte_t pte_swp_mkuffd_wp(pte_t pte)
-+{
-+	return __pte(pte_val(pte) | _PAGE_SWP_UFFD_WP);
-+}
-+
-+static inline pte_t pte_swp_clear_uffd_wp(pte_t pte)
-+{
-+	return __pte(pte_val(pte) & ~(_PAGE_SWP_UFFD_WP));
-+}
-+#endif /* CONFIG_HAVE_ARCH_USERFAULTFD_WP */
-+
- /* static inline pte_t pte_mkread(pte_t pte) */
- 
- static inline pte_t pte_mkwrite_novma(pte_t pte)
-@@ -838,6 +873,38 @@ static inline pud_t pud_mkspecial(pud_t pud)
- }
- #endif
- 
-+#ifdef CONFIG_HAVE_ARCH_USERFAULTFD_WP
-+static inline bool pmd_uffd_wp(pmd_t pmd)
-+{
-+	return pte_uffd_wp(pmd_pte(pmd));
-+}
-+
-+static inline pmd_t pmd_mkuffd_wp(pmd_t pmd)
-+{
-+	return pte_pmd(pte_mkuffd_wp(pmd_pte(pmd)));
-+}
-+
-+static inline pmd_t pmd_clear_uffd_wp(pmd_t pmd)
-+{
-+	return pte_pmd(pte_clear_uffd_wp(pmd_pte(pmd)));
-+}
-+
-+static inline bool pmd_swp_uffd_wp(pmd_t pmd)
-+{
-+	return pte_swp_uffd_wp(pmd_pte(pmd));
-+}
-+
-+static inline pmd_t pmd_swp_mkuffd_wp(pmd_t pmd)
-+{
-+	return pte_pmd(pte_swp_mkuffd_wp(pmd_pte(pmd)));
-+}
-+
-+static inline pmd_t pmd_swp_clear_uffd_wp(pmd_t pmd)
-+{
-+	return pte_pmd(pte_swp_clear_uffd_wp(pmd_pte(pmd)));
-+}
-+#endif /* CONFIG_HAVE_ARCH_USERFAULTFD_WP */
-+
- #ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
- static inline bool pmd_soft_dirty(pmd_t pmd)
- {
-@@ -1055,6 +1122,7 @@ static inline pud_t pud_modify(pud_t pud, pgprot_t newprot)
-  *	bit            0:	_PAGE_PRESENT (zero)
-  *	bit       1 to 2:	(zero)
-  *	bit            3:	_PAGE_SWP_SOFT_DIRTY
-+ *	bit            4:	_PAGE_SWP_UFFD_WP
-  *	bit            5:	_PAGE_PROT_NONE (zero)
-  *	bit            6:	exclusive marker
-  *	bits      7 to 11:	swap type
+Stray modification.
+
+>  	size_t count;
+>  	u32 response;			/* userspace answer to the event */
+>  	unsigned short state;		/* state of the event */
+> +	unsigned short watchdog_cnt;	/* already scanned by watchdog? */
+>  	int fd;		/* fd we passed to userspace for this event */
+> +	pid_t recv_pid;	/* pid of task receiving the event */
+>  	union {
+>  		struct fanotify_response_info_header hdr;
+>  		struct fanotify_response_info_audit_rule audit_rule;
+...
+> @@ -95,6 +104,84 @@ static void __init fanotify_sysctls_init(void)
+>  #define fanotify_sysctls_init() do { } while (0)
+>  #endif /* CONFIG_SYSCTL */
+>  
+> +static LIST_HEAD(perm_group_list);
+> +static DEFINE_SPINLOCK(perm_group_lock);
+> +static void perm_group_watchdog(struct work_struct *work);
+> +static DECLARE_DELAYED_WORK(perm_group_work, perm_group_watchdog);
+> +
+> +static void perm_group_watchdog_schedule(void)
+> +{
+> +	schedule_delayed_work(&perm_group_work, secs_to_jiffies(perm_group_timeout));
+> +}
+> +
+> +static void perm_group_watchdog(struct work_struct *work)
+> +{
+> +	struct fsnotify_group *group;
+> +	struct fanotify_perm_event *event;
+> +	struct task_struct *task;
+> +	pid_t failed_pid = 0;
+> +
+> +	guard(spinlock)(&perm_group_lock);
+> +	if (list_empty(&perm_group_list))
+> +		return;
+> +
+> +	list_for_each_entry(group, &perm_group_list, fanotify_data.perm_group) {
+> +		/*
+> +		 * Ok to test without lock, racing with an addition is
+> +		 * fine, will deal with it next round
+> +		 */
+> +		if (list_empty(&group->fanotify_data.access_list))
+> +			continue;
+> +
+> +		scoped_guard(spinlock, &group->notification_lock) {
+
+Frankly, I don't see the scoped guard bringing benefit here. It just shifts
+indentation level by 1 which makes some of the lines below longer than I
+like :)
+
+> +			list_for_each_entry(event, &group->fanotify_data.access_list, fae.fse.list) {
+> +				if (likely(event->watchdog_cnt == 0)) {
+> +					event->watchdog_cnt = 1;
+> +				} else if (event->watchdog_cnt == 1) {
+> +					/* Report on event only once */
+> +					event->watchdog_cnt = 2;
+> +
+> +					/* Do not report same pid repeatedly */
+> +					if (event->recv_pid == failed_pid)
+> +						continue;
+> +
+> +					failed_pid = event->recv_pid;
+> +					rcu_read_lock();
+> +					task = find_task_by_pid_ns(event->recv_pid, &init_pid_ns);
+> +					pr_warn_ratelimited("PID %u (%s) failed to respond to fanotify queue for more than %i seconds\n",
+
+Use %d instead of %i here? IMHO we use %d everywhere in the kernel. I had
+to look up whether %i is really signed int.
+
+> +							    event->recv_pid, task ? task->comm : NULL, perm_group_timeout);
+> +					rcu_read_unlock();
+> +				}
+> +			}
+
+I'm wondering if we should cond_resched() somewhere in these loops. There
+could be *many* events pending... OTOH continuing the iteration afterwards
+would be non-trivial so probably let's keep our fingers crossed that
+softlockups won't trigger...
+
+> +		}
+> +	}
+> +	perm_group_watchdog_schedule();
+> +}
+> +
+> +static void fanotify_perm_watchdog_group_remove(struct fsnotify_group *group)
+> +{
+> +	if (!list_empty(&group->fanotify_data.perm_group)) {
+> +		/* Perm event watchdog can no longer scan this group. */
+> +		spin_lock(&perm_group_lock);
+> +		list_del(&group->fanotify_data.perm_group);
+
+list_del_init() here would give me a better peace of mind... It's not like
+the performance matters here.
+
+> diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
+> index d4034ddaf392..7f7fe4f3aa34 100644
+> --- a/include/linux/fsnotify_backend.h
+> +++ b/include/linux/fsnotify_backend.h
+> @@ -273,6 +273,8 @@ struct fsnotify_group {
+>  			int f_flags; /* event_f_flags from fanotify_init() */
+>  			struct ucounts *ucounts;
+>  			mempool_t error_events_pool;
+> +			/* chained on perm_group_list */
+> +			struct list_head perm_group;
+
+Can we call this perm_group_list, perm_list or simply something with 'list'
+in the name, please? We follow this naming convention throughout the
+fsnotify subsystem.
+
+								Honza
 -- 
-2.34.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
