@@ -1,98 +1,51 @@
-Return-Path: <linux-fsdevel+bounces-60910-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60911-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67946B52CFB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 11:19:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D49AEB52D57
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 11:31:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63EA81C20DC1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 09:20:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E2423A516C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 09:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419252E92BB;
-	Thu, 11 Sep 2025 09:19:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F8EF2EA746;
+	Thu, 11 Sep 2025 09:31:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kvuSesQp";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hm03nDpU";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kvuSesQp";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hm03nDpU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DaoX3LOV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A8FA2E92B4
-	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Sep 2025 09:19:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8B3B207A32;
+	Thu, 11 Sep 2025 09:31:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757582374; cv=none; b=WR06ECGZa8aR7M/gMXHjQZUdxPbKp7QcFjFp3RhG5qPHBdAXWn2JKSDohDQaFzLS0wXEXDpJpjCElu6yJJe9vCN5RXmad3V1w5xNK2T7V6TThbVORH1lJADdcJpCy4Nl0ze8BgfFivD0+FS5XRJB4rr9+shTNbA/5z0E/+P7vac=
+	t=1757583099; cv=none; b=lc8IRGGTXzLQniZHiBoMe9zTOgg/t/AgZ/GuzOxGxdnx+UbIpjX0mbSp21g3zGa9ntqe7tq9u4yA7DZJBhT1OIs8R56+N4IsgbSBv0r4IY0cZNmuXTuuWAr03HZXaIskNhTM86BVI8u3pdtcO+UgX3qdE13nKc4DVMjDyH9t/Ac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757582374; c=relaxed/simple;
-	bh=ppA78DJ9yWeyCxvo3LeoCGpBga25U0H/6MUDTly1Xms=;
+	s=arc-20240116; t=1757583099; c=relaxed/simple;
+	bh=z75pw58mpU1J8jn8uDK81j/Jt6tUNtkYOdcRD35A4/A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TP7yp8utwsme4UdjUWKO8Z6GhxuiHtf4tEKXY+VCF8CNn4S0+aCSIZfD5veMw5/cOe/yYfxO9yO3ZyGQY+NTkzoYrhFmhgQXboNVfMQ4kT8SwrjalIUFJVsnnFSSJ2w2e56K4G6LkcD8mGaspY0FiexiaBFEcD8MLW2mM+hwMUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kvuSesQp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hm03nDpU; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kvuSesQp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hm03nDpU; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 5CE8D3FB74;
-	Thu, 11 Sep 2025 09:19:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757582369; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/qXB1dXrzmKVQogqD8IFmDaWfstcGAJOkL6rjZjmYWQ=;
-	b=kvuSesQp4GgX5DlF4lKnduDs4DedK+gY96zjNDjGo/oyNmgZJc0S4KDxhnGMemckXtjS3W
-	GCy80Qn78BfwawpLbWX7iWyeraYXum2G2zXiwq9ch3aJyV4JXUL1w1cQOkPmQSXhgvWbfD
-	L2LBvhSaidA085s2WhCQIUs9V1P/qyQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757582369;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/qXB1dXrzmKVQogqD8IFmDaWfstcGAJOkL6rjZjmYWQ=;
-	b=hm03nDpUHNvd73gywLlKshmOCQni8oLv69yP0EYBkmbuZGgDPbITQmR+bRDtVyPX5p9ult
-	awpSuf3MBi/2boCA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=kvuSesQp;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=hm03nDpU
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757582369; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/qXB1dXrzmKVQogqD8IFmDaWfstcGAJOkL6rjZjmYWQ=;
-	b=kvuSesQp4GgX5DlF4lKnduDs4DedK+gY96zjNDjGo/oyNmgZJc0S4KDxhnGMemckXtjS3W
-	GCy80Qn78BfwawpLbWX7iWyeraYXum2G2zXiwq9ch3aJyV4JXUL1w1cQOkPmQSXhgvWbfD
-	L2LBvhSaidA085s2WhCQIUs9V1P/qyQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757582369;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/qXB1dXrzmKVQogqD8IFmDaWfstcGAJOkL6rjZjmYWQ=;
-	b=hm03nDpUHNvd73gywLlKshmOCQni8oLv69yP0EYBkmbuZGgDPbITQmR+bRDtVyPX5p9ult
-	awpSuf3MBi/2boCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4C34213301;
-	Thu, 11 Sep 2025 09:19:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id CcGQEiGUwmiQAgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 11 Sep 2025 09:19:29 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 0CD53A0A2D; Thu, 11 Sep 2025 11:19:21 +0200 (CEST)
-Date: Thu, 11 Sep 2025 11:19:21 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
-	Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
+	 Content-Type:Content-Disposition:In-Reply-To; b=rSlVXTxblyII5LZHMFb7yLqZR3c6WstVeVKfI+85SXyqyFF/bXUABRRs+zEiAIFD7Fg8iWBebfjMPvMrNVE2oqz8bjlO2+SD2vg+6R5i83mHOv8ct1OC2qWBGXvG9Pfs0CSNZfGJpMf4WaTbQJcDjdY/d2vaxbFTkMdhl52kQzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DaoX3LOV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F021C4CEF0;
+	Thu, 11 Sep 2025 09:31:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757583099;
+	bh=z75pw58mpU1J8jn8uDK81j/Jt6tUNtkYOdcRD35A4/A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DaoX3LOV/jnceBoXDY0xHveKTV+2Iv/EfwWkiwJE6aNm57SGFK25WfhxafNju5RJy
+	 iz/QiR2A19eGrqXnNXpg+AyR+ipcRR0nBnXyEgJdGiMJmouIuaaA559rhYXeD/eF4+
+	 iyvnu5SQdc1qh0li51LCmsdDh4ByxqaIvEI7v0r5Lq96pqSX0IbpKTt+1gE6JAKAIB
+	 1utZ83kizHL1Yk7zSIF8IJuw3DNtG7Y3q+QjrFNF74VkPNT+K5n0V4sq8kRQ8liGfA
+	 x22V1tXu98kmCdVkkKN+gdULo1tIH7pCd//ufri8sZ6fVTfJbTTiA9A7J4UqtEBYVj
+	 4mRQg1Pq+Wq3w==
+Date: Thu, 11 Sep 2025 11:31:30 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
+	Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
 	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
 	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
 	Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, 
@@ -102,102 +55,302 @@ Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
 	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, linux-kselftest@vger.kernel.org, 
 	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
 	netdev@vger.kernel.org
-Subject: Re: [PATCH 14/32] net: use ns_common_init()
-Message-ID: <zylbgyeq6l64hldxg44ydrijs3hk6umckkd75eelruuo47xzwc@uxc53envwz6j>
+Subject: Re: [PATCH 27/32] nsfs: support file handles
+Message-ID: <20250911-werken-raubzug-64735473739c@brauner>
 References: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
- <20250910-work-namespace-v1-14-4dd56e7359d8@kernel.org>
- <vgfnpdvwiji7bbg7yb5fbymp6f6q5f66rywkjyrxtdejdgoi37@ghpon5czjtkm>
- <20250911-unqualifiziert-widmen-03b0c271aa69@brauner>
+ <20250910-work-namespace-v1-27-4dd56e7359d8@kernel.org>
+ <CAOQ4uxgtQQa-jzsnTBxgUTPzgtCiAaH8X6ffMqd+1Y5Jjy0dmQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250911-unqualifiziert-widmen-03b0c271aa69@brauner>
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[27];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	TAGGED_RCPT(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RL9r1cnt7e4118fjryeg1c95sa)];
-	MISSING_XM_UA(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,gmail.com,vger.kernel.org,toxicpanda.com,kernel.org,yhndnzj.com,in.waw.pl,0pointer.de,cyphar.com,zeniv.linux.org.uk,kernel.dk,cmpxchg.org,suse.com,google.com,redhat.com,oracle.com];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 5CE8D3FB74
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -2.51
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxgtQQa-jzsnTBxgUTPzgtCiAaH8X6ffMqd+1Y5Jjy0dmQ@mail.gmail.com>
 
-On Thu 11-09-25 10:46:11, Christian Brauner wrote:
-> On Wed, Sep 10, 2025 at 05:57:52PM +0200, Jan Kara wrote:
-> > On Wed 10-09-25 16:36:59, Christian Brauner wrote:
-> > > Don't cargo-cult the same thing over and over.
-> > > 
-> > > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > 
-> > One comment below.
-> > 
-> > > @@ -812,17 +828,14 @@ static void net_ns_net_debugfs(struct net *net)
-> > >  
-> > >  static __net_init int net_ns_net_init(struct net *net)
-> > >  {
-> > > -#ifdef CONFIG_NET_NS
-> > > -	net->ns.ops = &netns_operations;
-> > > -#endif
-> > > -	net->ns.inum = PROC_NET_INIT_INO;
-> > > -	if (net != &init_net) {
-> > > -		int ret = ns_alloc_inum(&net->ns);
-> > > -		if (ret)
-> > > -			return ret;
-> > > -	}
-> > > +	int ret = 0;
-> > > +
-> > > +	if (net == &init_net)
-> > > +		net->ns.inum = PROC_NET_INIT_INO;
-> > > +	else
-> > > +		ret = proc_alloc_inum(&to_ns_common(net)->inum);
-> > >  	net_ns_net_debugfs(net);
-> > 
-> > Here you're calling net_ns_net_debugfs() even if proc_alloc_inum() failed
-> > which looks like a bug to me...
+On Wed, Sep 10, 2025 at 07:21:22PM +0200, Amir Goldstein wrote:
+> On Wed, Sep 10, 2025 at 4:39 PM Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > A while ago we added support for file handles to pidfs so pidfds can be
+> > encoded and decoded as file handles. Userspace has adopted this quickly
+> > and it's proven very useful.
 > 
-> Yes, good catch!
+> > Pidfd file handles are exhaustive meaning
+> > they don't require a handle on another pidfd to pass to
+> > open_by_handle_at() so it can derive the filesystem to decode in.
+> >
+> > Implement the exhaustive file handles for namespaces as well.
 > 
-> Fyi, I have been out properly sick this week and that's why I haven't
-> been very active on-list. I hope to be back in a more functional state
-> tomorrow and will process the backlog.
+> I think you decide to split the "exhaustive" part to another patch,
+> so better drop this paragraph?
 
-There's no rush. Get well soon!
+Yes, good point. I've dont that.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> I am missing an explanation about the permissions for
+> opening these file handles.
+> 
+> My understanding of the code is that the opener needs to meet one of
+> the conditions:
+> 1. user has CAP_SYS_ADMIN in the userns owning the opened namespace
+> 2. current task is in the opened namespace
+
+Yes.
+
+> 
+> But I do not fully understand the rationale behind the 2nd condition,
+> that is, when is it useful?
+
+A caller is always able to open a file descriptor to it's own set of
+namespaces. File handles will behave the same way.
+
+> And as far as I can tell, your selftest does not cover this condition
+> (only both true or both false)?
+
+I've added this now.
+
+> 
+> I suggest to start with allowing only the useful and important
+> cases, so if cond #1 is useful enough, drop cond #2 and we can add
+> it later if needed and then your selftests already cover cond #1 true and false.
+> 
+> >
+> > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> 
+> After documenting the permissions, with ot without dropping cond #2
+> feel free to add:
+> 
+> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+
+Thanks!
+
+> 
+> > ---
+> >  fs/nsfs.c                | 176 +++++++++++++++++++++++++++++++++++++++++++++++
+> >  include/linux/exportfs.h |   6 ++
+> >  2 files changed, 182 insertions(+)
+> >
+> > diff --git a/fs/nsfs.c b/fs/nsfs.c
+> > index 6f8008177133..a1585a2f4f03 100644
+> > --- a/fs/nsfs.c
+> > +++ b/fs/nsfs.c
+> > @@ -13,6 +13,12 @@
+> >  #include <linux/nsfs.h>
+> >  #include <linux/uaccess.h>
+> >  #include <linux/mnt_namespace.h>
+> > +#include <linux/ipc_namespace.h>
+> > +#include <linux/time_namespace.h>
+> > +#include <linux/utsname.h>
+> > +#include <linux/exportfs.h>
+> > +#include <linux/nstree.h>
+> > +#include <net/net_namespace.h>
+> >
+> >  #include "mount.h"
+> >  #include "internal.h"
+> > @@ -417,12 +423,182 @@ static const struct stashed_operations nsfs_stashed_ops = {
+> >         .put_data = nsfs_put_data,
+> >  };
+> >
+> > +struct nsfs_fid {
+> > +       u64 ns_id;
+> > +       u32 ns_type;
+> > +       u32 ns_inum;
+> > +} __attribute__ ((packed));
+> > +
+> > +#define NSFS_FID_SIZE (sizeof(struct nsfs_fid) / sizeof(u32))
+> > +
+> > +static int nsfs_encode_fh(struct inode *inode, u32 *fh, int *max_len,
+> > +                         struct inode *parent)
+> > +{
+> > +       struct nsfs_fid *fid = (struct nsfs_fid *)fh;
+> > +       struct ns_common *ns = inode->i_private;
+> > +       int len = *max_len;
+> > +
+> > +       /*
+> > +        * TODO:
+> > +        * For hierarchical namespaces we should start to encode the
+> > +        * parent namespace. Then userspace can walk a namespace
+> > +        * hierarchy purely based on file handles.
+> > +        */
+> > +       if (parent)
+> > +               return FILEID_INVALID;
+> > +
+> > +       if (len < NSFS_FID_SIZE) {
+> > +               *max_len = NSFS_FID_SIZE;
+> > +               return FILEID_INVALID;
+> > +       }
+> > +
+> > +       len  = NSFS_FID_SIZE;
+> > +
+> > +       fid->ns_id = ns->ns_id;
+> > +       fid->ns_type = ns->ops->type;
+> > +       fid->ns_inum = inode->i_ino;
+> > +       *max_len = len;
+> > +       return FILEID_NSFS;
+> > +}
+> > +
+> > +static struct dentry *nsfs_fh_to_dentry(struct super_block *sb, struct fid *fh,
+> > +                                       int fh_len, int fh_type)
+> > +{
+> > +       struct path path __free(path_put) = {};
+> > +       struct nsfs_fid *fid = (struct nsfs_fid *)fh;
+> > +       struct user_namespace *owning_ns = NULL;
+> > +       struct ns_common *ns;
+> > +       int ret;
+> > +
+> > +       if (fh_len < NSFS_FID_SIZE)
+> > +               return NULL;
+> > +
+> > +       switch (fh_type) {
+> > +       case FILEID_NSFS:
+> > +               break;
+> > +       default:
+> > +               return NULL;
+> > +       }
+> > +
+> > +       scoped_guard(rcu) {
+> > +               ns = ns_tree_lookup_rcu(fid->ns_id, fid->ns_type);
+> > +               if (!ns)
+> > +                       return NULL;
+> > +
+> > +               VFS_WARN_ON_ONCE(ns->ns_id != fid->ns_id);
+> > +               VFS_WARN_ON_ONCE(ns->ops->type != fid->ns_type);
+> > +               VFS_WARN_ON_ONCE(ns->inum != fid->ns_inum);
+> > +
+> > +               if (!refcount_inc_not_zero(&ns->count))
+> > +                       return NULL;
+> > +       }
+> > +
+> > +       switch (ns->ops->type) {
+> > +#ifdef CONFIG_CGROUPS
+> > +       case CLONE_NEWCGROUP:
+> > +               if (!current_in_namespace(to_cg_ns(ns)))
+> > +                       owning_ns = to_cg_ns(ns)->user_ns;
+> > +               break;
+> > +#endif
+> > +#ifdef CONFIG_IPC_NS
+> > +       case CLONE_NEWIPC:
+> > +               if (!current_in_namespace(to_ipc_ns(ns)))
+> > +                       owning_ns = to_ipc_ns(ns)->user_ns;
+> > +               break;
+> > +#endif
+> > +       case CLONE_NEWNS:
+> > +               if (!current_in_namespace(to_mnt_ns(ns)))
+> > +                       owning_ns = to_mnt_ns(ns)->user_ns;
+> > +               break;
+> > +#ifdef CONFIG_NET_NS
+> > +       case CLONE_NEWNET:
+> > +               if (!current_in_namespace(to_net_ns(ns)))
+> > +                       owning_ns = to_net_ns(ns)->user_ns;
+> > +               break;
+> > +#endif
+> > +#ifdef CONFIG_PID_NS
+> > +       case CLONE_NEWPID:
+> > +               if (!current_in_namespace(to_pid_ns(ns))) {
+> > +                       owning_ns = to_pid_ns(ns)->user_ns;
+> > +               } else if (!READ_ONCE(to_pid_ns(ns)->child_reaper)) {
+> > +                       ns->ops->put(ns);
+> > +                       return ERR_PTR(-EPERM);
+> > +               }
+> > +               break;
+> > +#endif
+> > +#ifdef CONFIG_TIME_NS
+> > +       case CLONE_NEWTIME:
+> > +               if (!current_in_namespace(to_time_ns(ns)))
+> > +                       owning_ns = to_time_ns(ns)->user_ns;
+> > +               break;
+> > +#endif
+> > +#ifdef CONFIG_USER_NS
+> > +       case CLONE_NEWUSER:
+> > +               if (!current_in_namespace(to_user_ns(ns)))
+> > +                       owning_ns = to_user_ns(ns);
+> > +               break;
+> > +#endif
+> > +#ifdef CONFIG_UTS_NS
+> > +       case CLONE_NEWUTS:
+> > +               if (!current_in_namespace(to_uts_ns(ns)))
+> > +                       owning_ns = to_uts_ns(ns)->user_ns;
+> > +               break;
+> > +#endif
+> > +       default:
+> > +               return ERR_PTR(-EOPNOTSUPP);
+> > +       }
+> > +
+> > +       if (owning_ns && !ns_capable(owning_ns, CAP_SYS_ADMIN)) {
+> > +               ns->ops->put(ns);
+> > +               return ERR_PTR(-EPERM);
+> > +       }
+> > +
+> > +       /* path_from_stashed() unconditionally consumes the reference. */
+> > +       ret = path_from_stashed(&ns->stashed, nsfs_mnt, ns, &path);
+> > +       if (ret)
+> > +               return ERR_PTR(ret);
+> > +
+> > +       return no_free_ptr(path.dentry);
+> > +}
+> > +
+> > +/*
+> > + * Make sure that we reject any nonsensical flags that users pass via
+> > + * open_by_handle_at().
+> > + */
+> > +#define VALID_FILE_HANDLE_OPEN_FLAGS \
+> > +       (O_RDONLY | O_WRONLY | O_RDWR | O_NONBLOCK | O_CLOEXEC | O_EXCL)
+> > +
+> > +static int nsfs_export_permission(struct handle_to_path_ctx *ctx,
+> > +                                  unsigned int oflags)
+> > +{
+> > +       if (oflags & ~(VALID_FILE_HANDLE_OPEN_FLAGS | O_LARGEFILE))
+> > +               return -EINVAL;
+> > +
+> > +       /* nsfs_fh_to_dentry() is performs further permission checks. */
+> > +       return 0;
+> > +}
+> > +
+> > +static struct file *nsfs_export_open(struct path *path, unsigned int oflags)
+> > +{
+> > +       /* Clear O_LARGEFILE as open_by_handle_at() forces it. */
+> > +       oflags &= ~O_LARGEFILE;
+> > +       return file_open_root(path, "", oflags, 0);
+> > +}
+> > +
+> > +static const struct export_operations nsfs_export_operations = {
+> > +       .encode_fh      = nsfs_encode_fh,
+> > +       .fh_to_dentry   = nsfs_fh_to_dentry,
+> > +       .open           = nsfs_export_open,
+> > +       .permission     = nsfs_export_permission,
+> > +};
+> > +
+> >  static int nsfs_init_fs_context(struct fs_context *fc)
+> >  {
+> >         struct pseudo_fs_context *ctx = init_pseudo(fc, NSFS_MAGIC);
+> >         if (!ctx)
+> >                 return -ENOMEM;
+> >         ctx->ops = &nsfs_ops;
+> > +       ctx->eops = &nsfs_export_operations;
+> >         ctx->dops = &ns_dentry_operations;
+> >         fc->s_fs_info = (void *)&nsfs_stashed_ops;
+> >         return 0;
+> > diff --git a/include/linux/exportfs.h b/include/linux/exportfs.h
+> > index cfb0dd1ea49c..3aac58a520c7 100644
+> > --- a/include/linux/exportfs.h
+> > +++ b/include/linux/exportfs.h
+> > @@ -122,6 +122,12 @@ enum fid_type {
+> >         FILEID_BCACHEFS_WITHOUT_PARENT = 0xb1,
+> >         FILEID_BCACHEFS_WITH_PARENT = 0xb2,
+> >
+> > +       /*
+> > +        *
+> > +        * 64 bit namespace identifier, 32 bit namespace type, 32 bit inode number.
+> > +        */
+> > +       FILEID_NSFS = 0xf1,
+> > +
+> >         /*
+> >          * 64 bit unique kernfs id
+> >          */
+> >
+> > --
+> > 2.47.3
+> >
 
