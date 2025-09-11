@@ -1,122 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-60971-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60972-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7BBDB53D4C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 22:54:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79164B53E0B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 23:48:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 636A75855F7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 20:54:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA84C3B0690
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 21:46:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B722D7DE6;
-	Thu, 11 Sep 2025 20:54:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02CA52DEA97;
+	Thu, 11 Sep 2025 21:45:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Z0TSCxQT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gv6ATzwV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 158D22C15A0
-	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Sep 2025 20:54:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F812D24A7
+	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Sep 2025 21:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757624064; cv=none; b=AfBn0WLy73ihqNKw9EwkCsuONvblIY4VWDlWerGauUY/Y+lKiqoMGzbSWKfvzX6H1j1f+FDlI7/Oq0TV2lzxu3SKuwRW8d9ybDiu1nZ4vWbVlm8b2aL7mtimtSpSilyvBM65Yk+EX7tgmOxUoFsfg+oK/82MQW+im2a8X2Xu588=
+	t=1757627128; cv=none; b=uJJ4g+t6Cequoknmc1xP6rKjxfUlP3G0upkUfzyAUbEq4M0MGkzy3Go5yreMg2jeZ7Vc9sjtC9SR+rTuwCbWB6vvZTrcr7sekoNqRXNL7jlq+azo8gdqvUVKosIoXUsaq1jT3I9wFNtiQyMMBL1vtdvwMfgWeGcSwpdB/N1A3K0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757624064; c=relaxed/simple;
-	bh=IAkTZVuMJAlakYbDgr6bPsITWtDg+0Us37CUJpJm1uo=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=YTq6dZV0CD7GD0Q5dETOdy4c4dGRA4LJBRohcLrv4O11T8LBePTmK3pVyHkng1+FAgekKXW6aUKuu4nGSyzGG5zfncBuqT8BkyA4UDEJ1Wl3LtzdJ1vyEMBuGGufJGFLD2h06Mt6SWv3aas7MQXLIYybfC+RNd+k2DgZ+iDcdG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Z0TSCxQT; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-816ac9f9507so254838485a.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Sep 2025 13:54:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1757624062; x=1758228862; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Y4qvTZ6b1TyKm2nYvC5gMYys0nnyOLAaCMgbalwU4nk=;
-        b=Z0TSCxQTANWzfkNYU0Jd00tq7X+YAVQ1XIX2+25ofr/jPjYzDa/GunC5aT59ogxvJx
-         eyWRvU5vSHqYUpyhRl4e7QMkfs/5j0OuCEwhJpMjBj326ZzVGQVAmyOxXtrikFLFjygJ
-         OvpN9zVK1VjEm66AtirTFkl5bZYm/JawIL/oBNPbGyB/UOmb+z9rjN3MCBqI60hz2iEz
-         yJw9NOtfN+tNoN+IKLemGP4EHGVvhhnoNdfW8LuJZM6kT49ZXOV1Bdt3ep/NhFjoh7Pb
-         V8d3IIrkD3rFYQsitGNGOJy82KWz44QE9k1yu8sc5ms8QgxWzuRwMuEVc5Ds5yMlDG+M
-         uHUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757624062; x=1758228862;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Y4qvTZ6b1TyKm2nYvC5gMYys0nnyOLAaCMgbalwU4nk=;
-        b=TNPu9euPDEITItVlzQBlaT8IZUX9irkszw21i1yYds4X5KKO1GDdYD5u3n7iwTEszt
-         Xsr01/bs3yaJRIztuBAbyCan6GptX/TmdynYQHdTAtSJm+T8FtAHEgORgjuyAOucLZ4d
-         gRPiU6qiR2xx6XuMEAY0LXilRYeyVm8Z3JMFSvmVH5RIOYAU3u5fLIvWtOECHp8r++uy
-         VZq9uby2nZpKW91lcZoYOMrpmYeuyT/tUyBuwnAM+wF7TVNCIpy2V+gjUmzHLvuiNmCf
-         AFqZcbugF5+NiZO8PQ00GedtsnlO9JrFqiiQKH4jTKxI1N+fsiLFTDvQ/3JENYXS6dNU
-         TLzg==
-X-Forwarded-Encrypted: i=1; AJvYcCUgDYrTzdwZraaySg3s3hkz/EkXA+G9jWBISe4E/cbgaVr2OKND4oDolz8CLoLC4pY9wMBuaDsINYcjZmAh@vger.kernel.org
-X-Gm-Message-State: AOJu0YxV/vF/x5rCIjLYa4uRaEeqCxcODADS0wpMkAl74l63kuLDK+v9
-	/3BNli3axvLkjIrvqAEwtm/axlWoaSTDfXJm/GSNjlrOBZQmYWPs12GXwocUv6vVt9Z5/R9S/1J
-	+biw=
-X-Gm-Gg: ASbGncvOZFa9D626IDcdsZFF5KqRJxRF26H2IRj7NTqYnv2MLdgWV1IwZhEC3QEfQIb
-	Bf3/RdPp9TYaWpQsVGet0cRzExirA4ZTeP/ZJh08WOOIgIVNmbgoJtfqzDxYIxMW7Us+OR7twmS
-	Dcikjn37LqTr2EWb1M4PERSJ14UuBpoEfHcUbw1ch4BaVusV110RVAnfPwg9JKxmcod0af5vGiT
-	GiaiSliQM2kTULhAfu7L7Re3Fuw5Dk7TPDeCjew8Ppk8Jvtpj4FPGuMLIgqX2MUWUqpxUQ5cS3y
-	SSfkxawAgH97hTC0gq3PeUA93FvxPS+XX7Zb0C3QdWl1fhXOmfyy8YxS3GcYSMyg9RD/ZpXTIX8
-	q/AdJTEsNET6IbRRdR+PShnMj3ZcI9Y98m7mOZCqMRfj5YVx81JhYtMGHCGvBYs4wIlGmFkO5Mm
-	po9Z0=
-X-Google-Smtp-Source: AGHT+IEX7rklarTyTs1aa6eZxMFKR2mTMUD+PJmsGRKVSSCqnw5/WIrBlp1fNwjoDz3NBnRjfF2IrA==
-X-Received: by 2002:a05:620a:1a87:b0:801:537e:cddc with SMTP id af79cd13be357-823f9967911mr107148485a.13.1757624061834;
-        Thu, 11 Sep 2025 13:54:21 -0700 (PDT)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-820cd701cabsm159872385a.41.2025.09.11.13.54.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 13:54:21 -0700 (PDT)
-Date: Thu, 11 Sep 2025 16:54:20 -0400
-Message-ID: <b042d4c28324441644cfd8e3d7733477@paul-moore.com>
+	s=arc-20240116; t=1757627128; c=relaxed/simple;
+	bh=F0iC5yU0IO0nkwitEBWUh1GHX0/yLbE3Uh2bGqACZmQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rfrMx9smyKzhrs1n2C1pJggB/S8d8cmET2gc+A5Llk8TVejjV2w8JoQ7Re4JU/yn7yYiTMYj90jKvAor9TyzNoSEssjaduv46e2WnWSqNCyGan+B6lLxID104Opk5Dr8ecySJ0WxjS4oRCVWxmymJL37CBX3C+8gKnXqbuOEWv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gv6ATzwV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6628C4CEF0;
+	Thu, 11 Sep 2025 21:45:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757627127;
+	bh=F0iC5yU0IO0nkwitEBWUh1GHX0/yLbE3Uh2bGqACZmQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Gv6ATzwVX6lgWeCbkioh1GlxHRW+3pDVrinF/8mER9yM39BzJLThe9k3tuV49fI6D
+	 WSo4WK/hjdXyRZdlU4q5Y/+iZSKjNOxVgXRCyF7fGbwOqJL3hKj3Z0Wbf11vBBqkss
+	 +nFL5RIw7fXHxW2EpcTdbG62BTjWswZ9/sWktRItxLeuwXLN2yO3GJyyl05Bgee2Wy
+	 MFRN6mcMdLjtHghDFyl/9gX+hopbmYmKdo40r4QJPPqHpdnBAe3YSGX0SvGu1UnXU3
+	 7KZluvHRTgN1q8yd/8dT4ehA1Yzudcb+j5aLNfYwZtC/Vd2sSv2uS6bsMT3PSqW487
+	 we4nFXBthkQTw==
+Date: Thu, 11 Sep 2025 14:45:27 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: bernd@bsbernd.com, neal@gompa.dev, John@groves.net,
+	linux-fsdevel@vger.kernel.org, joannelkoong@gmail.com
+Subject: Re: [PATCH 02/23] fuse: implement the basic iomap mechanisms
+Message-ID: <20250911214527.GG1587915@frogsfrogsfrogs>
+References: <175573708972.17510.972367243402147687.stgit@frogsfrogsfrogs>
+ <175573709157.17510.2779775194786047472.stgit@frogsfrogsfrogs>
+ <CAJfpegsUhKYLeWXML+V9G+QLVq3T+YbcwL-qrNDESnT4JzOmcg@mail.gmail.com>
+ <20250904144521.GY1587915@frogsfrogsfrogs>
+ <CAJfpeguoMuRH3Q4QEiBLHkWPghFH+XVVUuRWBa3FCkORoFdXGQ@mail.gmail.com>
+ <20250905015029.GC1587915@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20250910_1926/pstg-lib:20250910_1926/pstg-pwork:20250910_1926
-From: Paul Moore <paul@paul-moore.com>
-To: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, brauner@kernel.org, jack@suse.cz, neil@brown.name, linux-security-module@vger.kernel.org, dhowells@redhat.com, linkinjeon@kernel.org
-Subject: Re: [PATCH 1/6] security_dentry_init_security(): constify qstr  argument
-References: <20250911050534.3116491-1-viro@zeniv.linux.org.uk>
-In-Reply-To: <20250911050534.3116491-1-viro@zeniv.linux.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250905015029.GC1587915@frogsfrogsfrogs>
 
-On Sep 11, 2025 Al Viro <viro@zeniv.linux.org.uk> wrote:
+On Thu, Sep 04, 2025 at 06:50:29PM -0700, Darrick J. Wong wrote:
+> On Thu, Sep 04, 2025 at 05:17:13PM +0200, Miklos Szeredi wrote:
+> > On Thu, 4 Sept 2025 at 16:45, Darrick J. Wong <djwong@kernel.org> wrote:
+> > 
+> > > Or do you prefer the first N patches to include only code and no
+> > > debugging stuff at all, with a megapatch at the end to add all that
+> > > instrumentation?
+> > 
+> > It doesn't have to be a megapatch, could be a nicely broken up series.
+> > But separate from the main patchset, if possible.
 > 
-> Nothing outside of fs/dcache.c has any business modifying
-> dentry names; passing &dentry->d_name as an argument should
-> have that argument declared as a const pointer.
-> 
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
-> Reviewed-by: David Howells <dhowells@redhat.com>
-> ---
->  include/linux/lsm_hook_defs.h | 2 +-
->  include/linux/security.h      | 4 ++--
->  security/security.c           | 2 +-
->  security/selinux/hooks.c      | 2 +-
->  security/smack/smack_lsm.c    | 2 +-
->  5 files changed, 6 insertions(+), 6 deletions(-)
+> I'll give it a try.
 
-LSM and SELinux bits look fine to me.  Al, I'm guessing you would
-prefer to take this patch as part of the larger patchset, but if you
-want me to take this single patch for the upcoming merge window let
-me know.
+Hi Miklos!
 
-Acked-by: Paul Moore <paul@paul-moore.com>
+I gave it a try for V5 and the results were ... not fun.
 
---
-paul-moore.com
+I. Moving all the tracepoint definitions to come before the beginning of
+code changes breaks compilation in three critical ways:
+
+ (a) The tracepoints take as arguments pointers to structs that only get
+     defined later in the patchset.
+
+ (b) Tracepoints that extract data from those structs cannot do so
+     because (obviously) they are not actually defined yet.
+
+ (b) The flag constants to strings decoding mechanism requires those
+     constants to be defined.
+
+II. I fixed /that/ by moving the tracepoint definitions to come after
+the all code change, but that brings its own problems:
+
+ (1) Now I have to move all the callsites from the code patches to this
+     new patch at the end.
+
+ (2) I've found that oftentimes, if I need to change one of the code
+     patches to fix a bug, there will be a merge conflict in the
+     tracepoint patch at the end because some whitespace moved, etc.
+     That's annoying to have to fix up every time I make a change, the
+     suggested conflict resolution puts the trace_() call in completely
+     the wrong place because well, textually it looked right.
+
+ (3) If I change a structure in a code patch, I'm not going to find out
+     if it breaks the tracepoint until I get to that megapatch.  In the
+     good case I can just fix the tracepoint, but in the bad case I have
+     to go all the way back to the code patch to fix that, then rebase
+     everything back to the tracepoint patch.  Right now, that kind of
+     breakage is immediately obvious when building each code patch.
+
+III. A middle ground that I devised is to have a patch N that adds code,
+and patch N+1 adds the tracepoints.  That avoids most of the problems of
+the first two approaches, but now there are twice as many patches, e.g.:
+
+ * fuse: implement direct IO with iomap
+ * fuse: add tracepoints for implement direct IO with iomap
+
+Coming from XFS, I encountered a lot of friction from some reviewers for
+putting too many things in a single patch, and from other reviewers for
+sending too many patches once I split things up.  I'd like to avoid that
+here.
+
+So I think the third approach is the way to go, but I'd like your input
+before I commit to a particular approach.  Just to be clear, I'm trying
+to avoid landing any of this in 6.18 (aka presumed 2025 LTS), so there's
+plenty of time.
+
+--D
 
