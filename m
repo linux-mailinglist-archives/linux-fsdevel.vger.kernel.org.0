@@ -1,107 +1,172 @@
-Return-Path: <linux-fsdevel+bounces-60871-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60872-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DE1EB52533
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 02:53:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11854B5258B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 03:10:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 776B74679C5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 00:53:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06DFE1C27200
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 01:11:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCA951E3DC8;
-	Thu, 11 Sep 2025 00:53:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="hrzQDUDs"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 796261C7012;
+	Thu, 11 Sep 2025 01:10:26 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E79617D2;
-	Thu, 11 Sep 2025 00:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7063D189906;
+	Thu, 11 Sep 2025 01:10:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757551998; cv=none; b=iG+mPcqO8ejceyfk+gLUUWYJ/DXMRSLbb+K/CSrf3a/ezSP3pSnsioq7qIcTKpktQmzFB62LeBsBpwpPR2ivwVSAy5uq6ngnTmE0g48F+kizlTfV2IY87ntnAWgBIqEuC2qCX4QywrAuSDgrPOV+lzyr+1ZJTUPaD58zgAiVWcI=
+	t=1757553026; cv=none; b=QVXYi3qHOKg069p34j9YdxiszOlxBRf3h+2YTEM8RmoO8CIm+cKYR9XeCGY4CxGKEWlT3uOwj6M0jciuymbCsf9y1+YKJ/d25qRyFzR/MR7XN3iKF0bzsS4g0hGk80BmOPsCwuhvZ7vjcnWEL2Pt0Lx9ltBhEpHLcSjQkf6KG4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757551998; c=relaxed/simple;
-	bh=mtvQYI07gAg/rmtniXZgDwCf2BFWI6g9dA6zxM8CNtU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PgAXvzUavPhw3gy9TmGbxelhL3BcGdP10N+uLQlpXxRh4r8h4mBk63Wg354Yx6k7xLFIdDsocL8GlgWZ8moO6H9TI3kP0xCG7dVnbh87E1BeO7+hEXDYhbrNoqDfW3OqW21oa+AFP+j1816LQb/LbTek5WOEAH3qsP9LyizGeT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=hrzQDUDs; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=LxE88Yw29XtmMzQcqQYIxxuI/lwirl5m7cem0u7Gy20=; b=hrzQDUDs/KJ/qxdeZX4U0NXSHv
-	qjq2SzKpS1hcoxUm5gcgIT1fCfcNrEWS6FC1FHBPidVEXMJeTMU4Mb08Wh2yOge9yirYHppu8Ef8x
-	qbOpRUM6Tph10gPNJTVfqTsoV6AlL9QOwtcJ/4OLkoq2erdB7fwSC8yPjeUh9eRIl008ZTqUb7emE
-	SAtxmQHEP2s1BgVeTGMkWrVB+M3Xr8bgkU25DlbI0Jy6ftEYC/PWIXSl3aUpmk+LkUxZnRWoNBR+q
-	OO1wh8mW72b0fREUtBqf+mFBbYY8uHblRlxLWYo97cx5uEfFFNNdJ8RlLLVSht6d/mdAIqrsCvnvU
-	drtebSXg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uwVYm-0000000AGMx-0Rmi;
-	Thu, 11 Sep 2025 00:53:12 +0000
-Date: Thu, 11 Sep 2025 01:53:12 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Thomas Bertschinger <tahbertschinger@gmail.com>
-Cc: io-uring@vger.kernel.org, axboe@kernel.dk,
-	linux-fsdevel@vger.kernel.org, brauner@kernel.org,
-	linux-nfs@vger.kernel.org
-Subject: Re: [PATCH 04/10] fhandle: create do_filp_path_open() helper
-Message-ID: <20250911005312.GU31600@ZenIV>
-References: <20250910214927.480316-1-tahbertschinger@gmail.com>
- <20250910214927.480316-5-tahbertschinger@gmail.com>
+	s=arc-20240116; t=1757553026; c=relaxed/simple;
+	bh=bZUjLK5SgTEcv0bBLzldU8xIbeeQxwJdj07Qn7BaKg0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=mEU82/QrYZNUU41HtdN2dmco1waJ+IIFsCkM0mekHWITdMbKUvaCrHB7i3QREOB4kD2/NeMraAa2IoQQbeHEusETAqHFdaSSMX7acSBBJMvyKumbQrbNQaCpXwA1Tb0S+i9s7oRsHFHtb/Gvy9YTCJXtEc8PRIQcr3NDqmTYUQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4cMfXl1TFQz2TTNq;
+	Thu, 11 Sep 2025 09:07:03 +0800 (CST)
+Received: from kwepemo500015.china.huawei.com (unknown [7.202.194.227])
+	by mail.maildlp.com (Postfix) with ESMTPS id E89B51800B2;
+	Thu, 11 Sep 2025 09:10:19 +0800 (CST)
+Received: from [10.174.179.92] (10.174.179.92) by
+ kwepemo500015.china.huawei.com (7.202.194.227) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 11 Sep 2025 09:10:19 +0800
+Message-ID: <d82a3e6f-25a2-4943-9e97-73337b33cfcc@huawei.com>
+Date: Thu, 11 Sep 2025 09:10:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250910214927.480316-5-tahbertschinger@gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] ext4: increase i_disksize to offset + len in
+ ext4_update_disksize_before_punch()
+To: Jan Kara <jack@suse.cz>
+CC: <linux-ext4@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	<tytso@mit.edu>, <yangerkun@huawei.com>, <yi.zhang@huawei.com>,
+	<libaokun1@huawei.com>, <chengzhihao1@huawei.com>
+References: <20250910042516.3947590-1-sunyongjian@huaweicloud.com>
+ <hsnzaxvcwphxncr6mmoepqnbokh7jblkytuqqyzpqsk7w3wsmr@bwutehzrrhys>
+From: Sun Yongjian <sunyongjian1@huawei.com>
+In-Reply-To: <hsnzaxvcwphxncr6mmoepqnbokh7jblkytuqqyzpqsk7w3wsmr@bwutehzrrhys>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ kwepemo500015.china.huawei.com (7.202.194.227)
 
-On Wed, Sep 10, 2025 at 03:49:21PM -0600, Thomas Bertschinger wrote:
-> This pulls the code for opening a file, after its handle has been
-> converted to a struct path, into a new helper function.
+
+
+在 2025/9/10 16:11, Jan Kara 写道:
+> On Wed 10-09-25 12:25:16, Yongjian Sun wrote:
+>> From: Yongjian Sun <sunyongjian1@huawei.com>
+>>
+>> After running a stress test combined with fault injection,
+>> we performed fsck -a followed by fsck -fn on the filesystem
+>> image. During the second pass, fsck -fn reported:
+>>
+>> Inode 131512, end of extent exceeds allowed value
+>> 	(logical block 405, physical block 1180540, len 2)
+>>
+>> This inode was not in the orphan list. Analysis revealed the
+>> following call chain that leads to the inconsistency:
+>>
+>>                               ext4_da_write_end()
+>>                                //does not update i_disksize
+>>                               ext4_punch_hole()
+>>                                //truncate folio, keep size
+>> ext4_page_mkwrite()
+>>   ext4_block_page_mkwrite()
+>>    ext4_block_write_begin()
+>>      ext4_get_block()
+>>       //insert written extent without update i_disksize
+>> journal commit
+>> echo 1 > /sys/block/xxx/device/delete
+>>
+>> da-write path updates i_size but does not update i_disksize. Then
+>> ext4_punch_hole truncates the da-folio yet still leaves i_disksize
+>> unchanged(in the ext4_update_disksize_before_punch function, the
+>> condition offset + len < size is met). Then ext4_page_mkwrite sees
+>> ext4_nonda_switch return 1 and takes the nodioread_nolock path, the
+>> folio about to be written has just been punched out, and it’s offset
+>> sits beyond the current i_disksize. This may result in a written
+>> extent being inserted, but again does not update i_disksize. If the
+>> journal gets committed and then the block device is yanked, we might
+>> run into this. It should be noted that replacing ext4_punch_hole with
+>> ext4_zero_range in the call sequence may also trigger this issue, as
+>> neither will update i_disksize under these circumstances.
+>>
+>> To fix this, we can modify ext4_update_disksize_before_punch to
+>> increase i_disksize to min(offset + len) when both i_size and
+>> (offset + len) are greater than i_disksize.
+>>
+>> Signed-off-by: Yongjian Sun <sunyongjian1@huawei.com>
+>> ---
+>> Changes in v3:
+>> - Add a condition to avoid increasing i_disksize and include some comments.
+>> - Link to v2: https://lore.kernel.org/all/20250908063355.3149491-1-sunyongjian@huaweicloud.com/
+>> Changes in v2:
+>> - The modification of i_disksize should be moved into ext4_update_disksize_before_punch,
+>>    rather than being done in ext4_page_mkwrite.
+>> - Link to v1: https://lore.kernel.org/all/20250731140528.1554917-1-sunyongjian@huaweicloud.com/
 > 
-> This function will be used by io_uring once io_uring supports
-> open_by_handle_at(2).
+> Very nice! Just some language improvements below but otherwise feel free to
+> add:
+> 
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> 
+>> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+>> index 5b7a15db4953..3df03469d405 100644
+>> --- a/fs/ext4/inode.c
+>> +++ b/fs/ext4/inode.c
+>> @@ -4287,7 +4287,10 @@ int ext4_can_truncate(struct inode *inode)
+>>    * We have to make sure i_disksize gets properly updated before we truncate
+>>    * page cache due to hole punching or zero range. Otherwise i_disksize update
+>>    * can get lost as it may have been postponed to submission of writeback but
+>> - * that will never happen after we truncate page cache.
+>> + * 1) that will never happen after we truncate page cache to the end of i_size;
+>> + * 2) that will get deferred after we truncate page cache in i_size but beyond
+>> + *    i_disksize, another concurrent write page fault can allocate written
+>> + *    blocks in the range and lead to filesystem inconsistency.
+> 
+> I'd phrase this:
+>   ... that will never happen if we remove the folio containing i_size from
+> the page cache. Also if we punch hole within i_size but above i_disksize,
+> following ext4_page_mkwrite() may mistakenly allocate written blocks over
+> the hole and thus introduce allocated blocks beyond i_disksize which is not
+> allowed (e2fsck would complain in case of crash).
+> 
+> 								Honza
+> 
+Thank you, Jan! This does make it simpler and easier to understand. I'll 
+improve it.
 
-Not commenting on the rest of patchset, but...
+>>    */
+>>   int ext4_update_disksize_before_punch(struct inode *inode, loff_t offset,
+>>   				      loff_t len)
+>> @@ -4298,9 +4301,11 @@ int ext4_update_disksize_before_punch(struct inode *inode, loff_t offset,
+>>   	loff_t size = i_size_read(inode);
+>>   
+>>   	WARN_ON(!inode_is_locked(inode));
+>> -	if (offset > size || offset + len < size)
+>> +	if (offset > size)
+>>   		return 0;
+>>   
+>> +	if (offset + len < size)
+>> +		size = offset + len;
+>>   	if (EXT4_I(inode)->i_disksize >= size)
+>>   		return 0;
+>>   
+>> -- 
+>> 2.39.2
+>>
 
-Consider the choice of name NAKed with extreme prejudice.  "filp"
-thing should die; please, do not introduce more instances.
-
-It has crawled out of Minix guts, where AST had been tasteless enough
-to call a structure the represents an open file (which is called struct
-file on all Unices, Linux included) "struct filp" instead, the identifier
-standing for "file and position", nevermind that he did include more
-state than that - the damn thing (in OSD&I appendix) is
-struct filp {
-  mask_bits filp_mode;		/* RW bits, telling how file is opened */
-  int filp_count;		/* how many file descriptors share this slot? */
-  struct inode *filp_ino;	/* pointer to the inode */
-  file_pos filp_pos;		/* file position */
-}
-
-
-Linus used "struct file" from the very beginning; unfortunately, if you
-grep for filp in 0.01 you'll see a plenty of those - in form of
-0.01:fs/file_dev.c:int file_write(struct m_inode * inode, struct file * filp, char * buf, int count)
-as well as
-0.01:fs/ioctl.c:        struct file * filp;
-0.01:fs/ioctl.c:        if (fd >= NR_OPEN || !(filp = current->filp[fd]))
-which was both inconsistent *and* resembling hungarian notation just
-enough to confuse (note that in the original that 'p' does *NOT* stand for
-"pointer" - it's "current IO position").  Unfortunately, it was confusing
-enough to stick around; at some point it even leaked into function names
-(filp_open(); that one is my fault - sorry for that brainfart).
-
-Let's not propagate that wart any further, please.  If you are opening a file,
-put "file" in the identifier.
 
