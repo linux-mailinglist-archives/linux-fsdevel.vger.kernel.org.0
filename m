@@ -1,37 +1,37 @@
-Return-Path: <linux-fsdevel+bounces-60913-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60914-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11BC8B52DC3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 11:57:14 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 893EEB52DC5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 11:57:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CB761C27036
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 09:57:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6FB8E4E1AB2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 09:57:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D78E2EB879;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583672EBBAD;
 	Thu, 11 Sep 2025 09:57:08 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
 	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB122EB841;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA832EA72E;
 	Thu, 11 Sep 2025 09:57:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757584627; cv=none; b=kvkTUk7ruPPxyLnHeB72sMIxyfvo8bCuoI/krsBc4sSW4zcO6Z0rx944Lefg18wjBzbky9RBQ6SVt2vHGyKgJftrou+q+YyvGaDgK6Dafj1aThlZMsVmvOXsq4o2XmCZzgTrhb0RBsvXSeejzfDyZjBd3dwF58wVriyP4QdLs8c=
+	t=1757584627; cv=none; b=lQDScJXIYcjajXpUgVhaEpcoiDutENJ+6cYL4tcTK5ccVSFwGCgGLYnnvuTD1eR+xr7GsStbQ4nHyJJc+oDLzHd84mk4OZJp8OxVptfkFBNDc2ShFOfNZUfC4pMSdzuPvvQnVAnddN0jIIJkFTh2bvhUoqS4pnZ+FfQqPO5m7q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1757584627; c=relaxed/simple;
-	bh=TxAVrLeHmF4+wmE1ZVVrAPmEKWhO2vD5EkRvudnwYi8=;
+	bh=r5++EUz06fSh/nQugc99soOEWdCJfz0RH3z9Th1WzUQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Wj9c0eqGVxm/BOEEdFly3P/MAR5A0kEl78Ufny54hvcen+BaAJ6/SIheXezPXyKP7rxzRhbbrFUvw3+OpZRDTdbeaYhHqQenUxpPooqkGXEVF4gXRtk77dIfaZfpWG4Q8BVeekWc+9TwzAKenFbfY2gUxdWaMuvfMuTUsYj/jmw=
+	 MIME-Version; b=PYc8qAMZTV2KiIJw9BO9Cr1nBx8d4izJlR8cluApLDvU1zD+tcvrQyZiKqJZT/tVs8Jh9WCpAbTZIif/LH3Fdf5byY2kS0RqNLstz9WoqkMpqoLHbESsXSrvydGYXD+8gCBzPdwDzb0Qo7IdVqxmjVVGzd+h/vQM5H25KUSgR60=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
 Received: from ubt.. (unknown [210.73.43.101])
-	by APP-03 (Coremail) with SMTP id rQCowACH2IK5nMJoo6pCAg--.44660S5;
-	Thu, 11 Sep 2025 17:56:13 +0800 (CST)
+	by APP-03 (Coremail) with SMTP id rQCowACH2IK5nMJoo6pCAg--.44660S6;
+	Thu, 11 Sep 2025 17:56:14 +0800 (CST)
 From: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
 To: linux-riscv@lists.infradead.org,
 	linux-fsdevel@vger.kernel.org,
@@ -59,9 +59,9 @@ Cc: Paul Walmsley <paul.walmsley@sifive.com>,
 	Axel Rasmussen <axelrasmussen@google.com>,
 	Yuanchu Xie <yuanchu@google.com>,
 	Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH v11 3/5] riscv: Add RISC-V Svrsw60t59b extension support
-Date: Thu, 11 Sep 2025 17:56:00 +0800
-Message-Id: <20250911095602.1130290-4-zhangchunyan@iscas.ac.cn>
+Subject: [PATCH v11 4/5] riscv: mm: Add soft-dirty page tracking support
+Date: Thu, 11 Sep 2025 17:56:01 +0800
+Message-Id: <20250911095602.1130290-5-zhangchunyan@iscas.ac.cn>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250911095602.1130290-1-zhangchunyan@iscas.ac.cn>
 References: <20250911095602.1130290-1-zhangchunyan@iscas.ac.cn>
@@ -72,87 +72,188 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowACH2IK5nMJoo6pCAg--.44660S5
-X-Coremail-Antispam: 1UD129KBjvJXoW7CrykZr47tw4rWF1rtFWfGrg_yoW8KrWrpr
-	4FkryrCrWrWwn3uw4ayr95u3y8Xw4kGwsxGw4Uuw1rJrW7Z34xXw1vy3W7Gw1DXa1vqrnY
-	gF1F9r1xuw4jyFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmGb7Iv0xC_Cr1lb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I2
+X-CM-TRANSID:rQCowACH2IK5nMJoo6pCAg--.44660S6
+X-Coremail-Antispam: 1UD129KBjvJXoW3WFW5WFyUWr4rXw4DJF1UWrg_yoW7Xr1fpF
+	Z5GFyrZ39YyFn3KayftrsIgrWYvws3Way5Wry3Ca1kJay7G3yUXF90grW3Ary5JFWkZayf
+	urZ3tr45CrW7Jr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUmEb7Iv0xC_tr1lb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I2
 	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI
-	8067AKxVWUWwA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF
-	64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcV
-	CY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv
-	6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c
-	02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVW8JVWxJwAm72CE
-	4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7
-	CjxVAaw2AFwI0_GFv_Wrylc2xSY4AK67AK6r4fMxAIw28IcxkI7VAKI48JMxC20s026xCa
-	FVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_Jr
-	Wlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j
-	6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UMIIF0xvE42xK8VAvwI8IcIk0rV
-	WUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWx
-	JrUvcSsGvfC2KfnxnUUI43ZEXa7IUnsID7UUUUU==
-X-CM-SenderInfo: x2kd0wxfkx051dq6x2xfdvhtffof0/1tbiDAgCB2jCjVc9QgABsP
+	8067AKxVWUAVCq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28C
+	jxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI
+	8IcVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E
+	87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64
+	kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVW8JVWxJwAm
+	72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI
+	1lc7CjxVAaw2AFwI0_GFv_Wrylc2xSY4AK67AK6r4fMxAIw28IcxkI7VAKI48JMxC20s02
+	6xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_Jr
+	I_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v2
+	6r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UMIIF0xvE42xK8VAvwI8IcI
+	k0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4U
+	JVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IUnDxhPUUUUU==
+X-CM-SenderInfo: x2kd0wxfkx051dq6x2xfdvhtffof0/1tbiBwsCB2jCjnQ4RgAAsn
 
-The Svrsw60t59b extension allows to free the PTE reserved bits 60
-and 59 for software to use.
+The Svrsw60t59b extension allows to free the PTE reserved bits 60 and 59
+for software, this patch uses bit 59 for soft-dirty.
 
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+To add swap PTE soft-dirty tracking, we borrow bit 3 which is available
+for swap PTEs on RISC-V systems.
+
 Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
 ---
- arch/riscv/Kconfig             | 14 ++++++++++++++
- arch/riscv/include/asm/hwcap.h |  1 +
- arch/riscv/kernel/cpufeature.c |  1 +
- 3 files changed, 16 insertions(+)
+ arch/riscv/Kconfig                    |  1 +
+ arch/riscv/include/asm/pgtable-bits.h | 19 +++++++
+ arch/riscv/include/asm/pgtable.h      | 75 ++++++++++++++++++++++++++-
+ 3 files changed, 93 insertions(+), 2 deletions(-)
 
 diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index a4b233a0659e..d99df67cc7a4 100644
+index d99df67cc7a4..53b73e4bdf3f 100644
 --- a/arch/riscv/Kconfig
 +++ b/arch/riscv/Kconfig
-@@ -862,6 +862,20 @@ config RISCV_ISA_ZICBOP
+@@ -141,6 +141,7 @@ config RISCV
+ 	select HAVE_ARCH_MMAP_RND_COMPAT_BITS if COMPAT
+ 	select HAVE_ARCH_RANDOMIZE_KSTACK_OFFSET
+ 	select HAVE_ARCH_SECCOMP_FILTER
++	select HAVE_ARCH_SOFT_DIRTY if 64BIT && MMU && RISCV_ISA_SVRSW60T59B
+ 	select HAVE_ARCH_THREAD_STRUCT_WHITELIST
+ 	select HAVE_ARCH_TRACEHOOK
+ 	select HAVE_ARCH_TRANSPARENT_HUGEPAGE if 64BIT && MMU
+diff --git a/arch/riscv/include/asm/pgtable-bits.h b/arch/riscv/include/asm/pgtable-bits.h
+index 179bd4afece4..f3bac2bbc157 100644
+--- a/arch/riscv/include/asm/pgtable-bits.h
++++ b/arch/riscv/include/asm/pgtable-bits.h
+@@ -19,6 +19,25 @@
+ #define _PAGE_SOFT      (3 << 8)    /* Reserved for software */
  
- 	  If you don't know what to do here, say Y.
- 
-+config RISCV_ISA_SVRSW60T59B
-+	bool "Svrsw60t59b extension support for using PTE bits 60 and 59"
-+	depends on MMU && 64BIT
-+	depends on RISCV_ALTERNATIVE
-+	default y
-+	help
-+	  Adds support to dynamically detect the presence of the Svrsw60t59b
-+	  extension and enable its usage.
+ #define _PAGE_SPECIAL   (1 << 8)    /* RSW: 0x1 */
 +
-+	  The Svrsw60t59b extension allows to free the PTE reserved bits 60
-+	  and 59 for software to use.
++#ifdef CONFIG_MEM_SOFT_DIRTY
 +
-+	  If you don't know what to do here, say Y.
++/* ext_svrsw60t59b: bit 59 for soft-dirty tracking */
++#define _PAGE_SOFT_DIRTY						\
++	((riscv_has_extension_unlikely(RISCV_ISA_EXT_SVRSW60T59B)) ?	\
++	 (1UL << 59) : 0)
++/*
++ * Bit 3 is always zero for swap entry computation, so we
++ * can borrow it for swap page soft-dirty tracking.
++ */
++#define _PAGE_SWP_SOFT_DIRTY						\
++	((riscv_has_extension_unlikely(RISCV_ISA_EXT_SVRSW60T59B)) ?	\
++	 _PAGE_EXEC : 0)
++#else
++#define _PAGE_SOFT_DIRTY	0
++#define _PAGE_SWP_SOFT_DIRTY	0
++#endif /* CONFIG_MEM_SOFT_DIRTY */
 +
- config TOOLCHAIN_NEEDS_EXPLICIT_ZICSR_ZIFENCEI
- 	def_bool y
- 	# https://sourceware.org/git/?p=binutils-gdb.git;a=commit;h=aed44286efa8ae8717a77d94b51ac3614e2ca6dc
-diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/hwcap.h
-index affd63e11b0a..f98fcb5c17d5 100644
---- a/arch/riscv/include/asm/hwcap.h
-+++ b/arch/riscv/include/asm/hwcap.h
-@@ -106,6 +106,7 @@
- #define RISCV_ISA_EXT_ZAAMO		97
- #define RISCV_ISA_EXT_ZALRSC		98
- #define RISCV_ISA_EXT_ZICBOP		99
-+#define RISCV_ISA_EXT_SVRSW60T59B	100
+ #define _PAGE_TABLE     _PAGE_PRESENT
  
- #define RISCV_ISA_EXT_XLINUXENVCFG	127
+ /*
+diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
+index 91697fbf1f90..77344ff0298b 100644
+--- a/arch/riscv/include/asm/pgtable.h
++++ b/arch/riscv/include/asm/pgtable.h
+@@ -427,7 +427,7 @@ static inline pte_t pte_mkwrite_novma(pte_t pte)
  
-diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
-index 743d53415572..2ba71d2d3fa3 100644
---- a/arch/riscv/kernel/cpufeature.c
-+++ b/arch/riscv/kernel/cpufeature.c
-@@ -539,6 +539,7 @@ const struct riscv_isa_ext_data riscv_isa_ext[] = {
- 	__RISCV_ISA_EXT_DATA(svinval, RISCV_ISA_EXT_SVINVAL),
- 	__RISCV_ISA_EXT_DATA(svnapot, RISCV_ISA_EXT_SVNAPOT),
- 	__RISCV_ISA_EXT_DATA(svpbmt, RISCV_ISA_EXT_SVPBMT),
-+	__RISCV_ISA_EXT_DATA(svrsw60t59b, RISCV_ISA_EXT_SVRSW60T59B),
- 	__RISCV_ISA_EXT_DATA(svvptc, RISCV_ISA_EXT_SVVPTC),
- };
+ static inline pte_t pte_mkdirty(pte_t pte)
+ {
+-	return __pte(pte_val(pte) | _PAGE_DIRTY);
++	return __pte(pte_val(pte) | _PAGE_DIRTY | _PAGE_SOFT_DIRTY);
+ }
  
+ static inline pte_t pte_mkclean(pte_t pte)
+@@ -455,6 +455,42 @@ static inline pte_t pte_mkhuge(pte_t pte)
+ 	return pte;
+ }
+ 
++#ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
++#define pgtable_soft_dirty_supported()				\
++	(IS_ENABLED(CONFIG_MEM_SOFT_DIRTY) &&			\
++	 riscv_has_extension_unlikely(RISCV_ISA_EXT_SVRSW60T59B))
++
++static inline bool pte_soft_dirty(pte_t pte)
++{
++	return !!(pte_val(pte) & _PAGE_SOFT_DIRTY);
++}
++
++static inline pte_t pte_mksoft_dirty(pte_t pte)
++{
++	return __pte(pte_val(pte) | _PAGE_SOFT_DIRTY);
++}
++
++static inline pte_t pte_clear_soft_dirty(pte_t pte)
++{
++	return __pte(pte_val(pte) & ~(_PAGE_SOFT_DIRTY));
++}
++
++static inline bool pte_swp_soft_dirty(pte_t pte)
++{
++	return !!(pte_val(pte) & _PAGE_SWP_SOFT_DIRTY);
++}
++
++static inline pte_t pte_swp_mksoft_dirty(pte_t pte)
++{
++	return __pte(pte_val(pte) | _PAGE_SWP_SOFT_DIRTY);
++}
++
++static inline pte_t pte_swp_clear_soft_dirty(pte_t pte)
++{
++	return __pte(pte_val(pte) & ~(_PAGE_SWP_SOFT_DIRTY));
++}
++#endif /* CONFIG_HAVE_ARCH_SOFT_DIRTY */
++
+ #ifdef CONFIG_RISCV_ISA_SVNAPOT
+ #define pte_leaf_size(pte)	(pte_napot(pte) ?				\
+ 					napot_cont_size(napot_cont_order(pte)) :\
+@@ -802,6 +838,40 @@ static inline pud_t pud_mkspecial(pud_t pud)
+ }
+ #endif
+ 
++#ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
++static inline bool pmd_soft_dirty(pmd_t pmd)
++{
++	return pte_soft_dirty(pmd_pte(pmd));
++}
++
++static inline pmd_t pmd_mksoft_dirty(pmd_t pmd)
++{
++	return pte_pmd(pte_mksoft_dirty(pmd_pte(pmd)));
++}
++
++static inline pmd_t pmd_clear_soft_dirty(pmd_t pmd)
++{
++	return pte_pmd(pte_clear_soft_dirty(pmd_pte(pmd)));
++}
++
++#ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
++static inline bool pmd_swp_soft_dirty(pmd_t pmd)
++{
++	return pte_swp_soft_dirty(pmd_pte(pmd));
++}
++
++static inline pmd_t pmd_swp_mksoft_dirty(pmd_t pmd)
++{
++	return pte_pmd(pte_swp_mksoft_dirty(pmd_pte(pmd)));
++}
++
++static inline pmd_t pmd_swp_clear_soft_dirty(pmd_t pmd)
++{
++	return pte_pmd(pte_swp_clear_soft_dirty(pmd_pte(pmd)));
++}
++#endif /* CONFIG_ARCH_ENABLE_THP_MIGRATION */
++#endif /* CONFIG_HAVE_ARCH_SOFT_DIRTY */
++
+ static inline void set_pmd_at(struct mm_struct *mm, unsigned long addr,
+ 				pmd_t *pmdp, pmd_t pmd)
+ {
+@@ -983,7 +1053,8 @@ static inline pud_t pud_modify(pud_t pud, pgprot_t newprot)
+  *
+  * Format of swap PTE:
+  *	bit            0:	_PAGE_PRESENT (zero)
+- *	bit       1 to 3:       _PAGE_LEAF (zero)
++ *	bit       1 to 2:	(zero)
++ *	bit            3:	_PAGE_SWP_SOFT_DIRTY
+  *	bit            5:	_PAGE_PROT_NONE (zero)
+  *	bit            6:	exclusive marker
+  *	bits      7 to 11:	swap type
 -- 
 2.34.1
 
