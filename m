@@ -1,117 +1,161 @@
-Return-Path: <linux-fsdevel+bounces-60933-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60934-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9FF4B5305B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 13:27:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 712C8B5306D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 13:29:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C943565F6D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 11:27:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B87C3AA00A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 11:29:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5B443191BF;
-	Thu, 11 Sep 2025 11:26:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="03hldyOf"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72960319873;
+	Thu, 11 Sep 2025 11:29:25 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F34FC3126D8;
-	Thu, 11 Sep 2025 11:26:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6202260587;
+	Thu, 11 Sep 2025 11:29:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757589985; cv=none; b=i288IZ8MSnv5+f9pz8MzavnxPj6CkCLVIpjLuEM9eiUY8H9TOnWBd/niF7Qx2VMCJmXPa2VXTJFvacKu0yPv/sRLN/Y2LmXbDOclFqBg/fpHy7PhodIlcAmxg7cgC922nj5iKxmYPV1RZkrHUWcNR0EUankMKVQwgjK+xDiJ+aw=
+	t=1757590165; cv=none; b=S46BqT62cfT9/FJ/QKzIxXGuDKI+Zpvr+QROL5WJyOmsgSLVTA/Vk1QJabiX/wPVKA3hc2M5QuNY2zuvQME1A0dAQsRYaPB42WfxWvypnVpaGZ7dNSWa84KTUGFzUltr2QmHT3jytfdt7RKjkmY+8rDOyMYlyIA9AzV/oN9x+5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757589985; c=relaxed/simple;
-	bh=kyoHfJv60MgSqNk04GS7WfHja/+6HA97+PJVBuaOH2A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fnplrY6bWnxPtkFwn9ZGhu4QYSMztUrst0CenEDTOCFv5Y2d/1apjkKEH2RIXN1Pl1ORMIeOyFSiwno5zMcNFdfOHVQtW50uQyVYvpn2wNedRPN9QCbfly4W1wl8leQSk++lXDzQGlv5QWpOmQ+w2CpXnoQZhNfPRDG8Lkzwlqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=03hldyOf; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=R3I2U2ZPXeYWsTjQsRQwT9QFt6JCj85R8freTEb2xdk=; b=03hldyOfqwTX5tGVw+UNG4O55I
-	eLU1dvx3u+B7LazpSakaQOHnVCbneaxPSovOJiiJ9czUkntDb2xmzJnjsR+tTURxNoiVbP8EtpHCN
-	2RKeAMH/18w0vX7nw72z22pNFltM1GvOuY9t+vKGOwIyZPZ3MJpI8tiMmodyd3GpMkNp6IxZeWXa3
-	Lhd98Hj/8VNp0TSELcPV5OB035zjeLCQDBLYunaQDB/hgKNbxmef2Z4UhQwrxJRg3qgdfZEU0vxDb
-	UScB/2fO1f0I4v1wO9i3lQgnf+/dzPdYB+5Zf8o3yTVKNfvHu+Ryy9SSzK5Pd5Q91t13MVvnbchUq
-	Rg6Aq4UQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uwfRT-00000002fOG-1wmq;
-	Thu, 11 Sep 2025 11:26:19 +0000
-Date: Thu, 11 Sep 2025 04:26:19 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: brauner@kernel.org, miklos@szeredi.hu, hch@infradead.org,
-	djwong@kernel.org, hsiangkao@linux.alibaba.com,
-	linux-block@vger.kernel.org, gfs2@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, kernel-team@meta.com,
-	linux-xfs@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v2 11/16] iomap: add caller-provided callbacks for read
- and readahead
-Message-ID: <aMKx23I3oh5fN-F8@infradead.org>
-References: <20250908185122.3199171-1-joannelkoong@gmail.com>
- <20250908185122.3199171-12-joannelkoong@gmail.com>
+	s=arc-20240116; t=1757590165; c=relaxed/simple;
+	bh=rOXIb2PgGCuqQo7hDob0a64h2gS7AcD63YRhwAMzEOM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=agKyOSO/Ed8m9RlTX11642Lzd847PSrXf9ivYDOgjYagmkNKRTa72kye3v5YJPFS6gBK4TrQ5JYcF7n1sXy6fYEZUaloPwmMCpfugi+faxUDdAGTEYSTtOEVbjqXkTfxoYzzYQWBbjDX2r5OTDr8pVv0phbg2OmyvoJOnb7RPzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4cMwFV6Y1Pz2CgDW;
+	Thu, 11 Sep 2025 19:24:46 +0800 (CST)
+Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9837C1402CC;
+	Thu, 11 Sep 2025 19:29:19 +0800 (CST)
+Received: from [127.0.0.1] (10.174.177.71) by dggpemf500013.china.huawei.com
+ (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 11 Sep
+ 2025 19:29:18 +0800
+Message-ID: <b04060b0-c10c-4fa5-8226-979df4c94d1c@huawei.com>
+Date: Thu, 11 Sep 2025 19:29:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250908185122.3199171-12-joannelkoong@gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] ext4: increase i_disksize to offset + len in
+ ext4_update_disksize_before_punch()
+Content-Language: en-GB
+To: <sunyongjian1@huawei.com>, <linux-ext4@vger.kernel.org>
+CC: <linux-fsdevel@vger.kernel.org>, <tytso@mit.edu>, <jack@suse.cz>,
+	<yangerkun@huawei.com>, <yi.zhang@huawei.com>, <chengzhihao1@huawei.com>
+References: <20250911025412.186872-1-sunyongjian@huaweicloud.com>
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <20250911025412.186872-1-sunyongjian@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ dggpemf500013.china.huawei.com (7.185.36.188)
 
-On Mon, Sep 08, 2025 at 11:51:17AM -0700, Joanne Koong wrote:
-> +  - ``read_folio_range``: Called to read in the range (read can be done
-> +    synchronously or asynchronously). This must be provided by the caller.
-
-As far as I can tell, the interface is always based on an asynchronous
-operation, but doesn't preclude completing it right away.  So the above
-is a little misleading.
-
-> +	struct iomap_read_folio_ctx ctx = {
-> +		.ops = &iomap_read_bios_ops,
-> +		.cur_folio = folio,
-> +	};
+On 2025-09-11 10:54, Yongjian Sun wrote:
+> From: Yongjian Sun <sunyongjian1@huawei.com>
 >
-> +	return iomap_read_folio(&blkdev_iomap_ops, &ctx);
+> After running a stress test combined with fault injection,
+> we performed fsck -a followed by fsck -fn on the filesystem
+> image. During the second pass, fsck -fn reported:
+>
+> Inode 131512, end of extent exceeds allowed value
+> 	(logical block 405, physical block 1180540, len 2)
+>
+> This inode was not in the orphan list. Analysis revealed the
+> following call chain that leads to the inconsistency:
+>
+>                              ext4_da_write_end()
+>                               //does not update i_disksize
+>                              ext4_punch_hole()
+>                               //truncate folio, keep size
+> ext4_page_mkwrite()
+>  ext4_block_page_mkwrite()
+>   ext4_block_write_begin()
+>     ext4_get_block()
+>      //insert written extent without update i_disksize
+> journal commit
+> echo 1 > /sys/block/xxx/device/delete
+>
+> da-write path updates i_size but does not update i_disksize. Then
+> ext4_punch_hole truncates the da-folio yet still leaves i_disksize
+> unchanged(in the ext4_update_disksize_before_punch function, the
+> condition offset + len < size is met). Then ext4_page_mkwrite sees
+> ext4_nonda_switch return 1 and takes the nodioread_nolock path, the
+> folio about to be written has just been punched out, and it’s offset
+> sits beyond the current i_disksize. This may result in a written
+> extent being inserted, but again does not update i_disksize. If the
+> journal gets committed and then the block device is yanked, we might
+> run into this. It should be noted that replacing ext4_punch_hole with
+> ext4_zero_range in the call sequence may also trigger this issue, as
+> neither will update i_disksize under these circumstances.
+>
+> To fix this, we can modify ext4_update_disksize_before_punch to
+> increase i_disksize to min(offset + len) when both i_size and
+                                         ^^^ min(i_size, offset + len)
+> (offset + len) are greater than i_disksize.
+>
+> Signed-off-by: Yongjian Sun <sunyongjian1@huawei.com>
 
-> +	struct iomap_read_folio_ctx ctx = {
-> +		.ops = &iomap_read_bios_ops,
-> +		.rac = rac,
-> +	};
-> +
-> +	iomap_readahead(&blkdev_iomap_ops, &ctx);
+Otherwise looks good. Feel free to add:
 
-Can you add iomap_bio_read_folio and iomap_bio_readahead inline helpers
-to reduce this boilerplate code duplicated in various file systems?
+Reviewed-by: Baokun Li <libaokun1@huawei.com>
 
-> -static void iomap_submit_read_bio(struct iomap_read_folio_ctx *ctx)
-> +static int iomap_submit_read_bio(struct iomap_read_folio_ctx *ctx)
->  {
->  	struct bio *bio = ctx->private;
+> ---
+> Changes in v4:
+> - Make the comments simpler and clearer.
+> - Link to v3: https://lore.kernel.org/all/20250910042516.3947590-1-sunyongjian@huaweicloud.com/
+> Changes in v3:
+> - Add a condition to avoid increasing i_disksize and include some comments.
+> - Link to v2: https://lore.kernel.org/all/20250908063355.3149491-1-sunyongjian@huaweicloud.com/
+> Changes in v2:
+> - The modification of i_disksize should be moved into ext4_update_disksize_before_punch,
+>   rather than being done in ext4_page_mkwrite.
+> - Link to v1: https://lore.kernel.org/all/20250731140528.1554917-1-sunyongjian@huaweicloud.com/
+> ---
+>  fs/ext4/inode.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 5b7a15db4953..f82f7fb84e17 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -4287,7 +4287,11 @@ int ext4_can_truncate(struct inode *inode)
+>   * We have to make sure i_disksize gets properly updated before we truncate
+>   * page cache due to hole punching or zero range. Otherwise i_disksize update
+>   * can get lost as it may have been postponed to submission of writeback but
+> - * that will never happen after we truncate page cache.
+> + * that will never happen if we remove the folio containing i_size from the
+> + * page cache. Also if we punch hole within i_size but above i_disksize,
+> + * following ext4_page_mkwrite() may mistakenly allocate written blocks over
+> + * the hole and thus introduce allocated blocks beyond i_disksize which is
+> + * not allowed (e2fsck would complain in case of crash).
+>   */
+>  int ext4_update_disksize_before_punch(struct inode *inode, loff_t offset,
+>  				      loff_t len)
+> @@ -4298,9 +4302,11 @@ int ext4_update_disksize_before_punch(struct inode *inode, loff_t offset,
+>  	loff_t size = i_size_read(inode);
 >  
->  	if (bio)
->  		submit_bio(bio);
-> +
-> +	return 0;
+>  	WARN_ON(!inode_is_locked(inode));
+> -	if (offset > size || offset + len < size)
+> +	if (offset > size)
+>  		return 0;
+>  
+> +	if (offset + len < size)
+> +		size = offset + len;
+>  	if (EXT4_I(inode)->i_disksize >= size)
+>  		return 0;
+>  
 
-Submission interfaces that can return errors both synchronously and
-asynchronously are extremely error probe. I'd be much happier if this
-interface could not return errors.
-
-> +const struct iomap_read_ops iomap_read_bios_ops = {
-> +	.read_folio_range = iomap_read_folio_range_bio_async,
-> +	.read_submit = iomap_submit_read_bio,
-> +};
-
-Please use tabs to align struct initializers before the '='.
 
 
