@@ -1,233 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-60943-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60944-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24BBBB531E3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 14:16:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8766B531FB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 14:21:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FB09A81DDB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 12:16:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95A4716DA87
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 12:21:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5BD9320CA4;
-	Thu, 11 Sep 2025 12:16:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C8EC319858;
+	Thu, 11 Sep 2025 12:21:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i4ReBOQ0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YkCZkaxQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17931320A3F
-	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Sep 2025 12:16:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D23D531DDAE
+	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Sep 2025 12:21:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757592967; cv=none; b=haz8JRKmLZXN0SCWqD6f0EIMV0OL8Eg1MWKk5WYXk1syOE/E2pkAQKn+GfYMyKXgYIFyHeJAV+xpeSNf4uXc9QxrZPQN3KqywAvObuyhpaIE52xT1A8zu2V5s3CEpieCqpQ+JkYAvp/Hkm4hIBhhyORJSPYHe+JgxORsHFYkglw=
+	t=1757593298; cv=none; b=QDUebgXhceYd/Cu1DqytH0fmd/tME/wrgOnzRT3GmTbgf9Vu0SiE1kStX95trWRxWF6cUVDCjn7OoR0CxQwm6PuHbQGU67mQJPIWwZPVC7nsqQQ8eCPnjO5OZFbK/h5MtH9+mfdiq+RQLCEnvkpEpVmKkV6U68O9C/baDZZpDZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757592967; c=relaxed/simple;
-	bh=JUpYwnClt38SjC34E6edjWshBcshGQPJ5TCZ0Eyt0I0=;
+	s=arc-20240116; t=1757593298; c=relaxed/simple;
+	bh=zsjFv5zr1LpOBJ94icfsXcnZZdQg2TC0dE3twphEhkI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nVZnXcEhBxfQDhHr0rD18Ke7Qmzyh39uY056XWP/2h+xr3q9g+NGizKrBzDvufNaj/SjLr5qgLz+4pGSZqjlOUZ4kC33VNs6nt5q8dwJlMqbs/s36VI5gJs3wFiVDP9N77IVDBzd6RwQvj77wqIVREuyWyv8FeyTVpETF5WpeAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i4ReBOQ0; arc=none smtp.client-ip=209.85.208.43
+	 To:Cc:Content-Type; b=is5cIHzir3YAsNVXrT6KE7ZUA7Mv3REyg5aYyjD9ayFWyvGTKI5JcII/WUaco2Ah3abAxyKRpTZzxTXxVsDzrOeVotn7tPS+FUjmTDcP94k1bLeARkkS4crtvoOU5YnxKBHdIS2KnO+fz1KJ98CzlkzuSZIcRohIUE/C0L5O8Ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YkCZkaxQ; arc=none smtp.client-ip=209.85.208.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-625e1ef08eeso1197707a12.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Sep 2025 05:16:04 -0700 (PDT)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-62ed3e929d1so13572a12.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Sep 2025 05:21:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757592963; x=1758197763; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757593295; x=1758198095; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hmPBcWTObj50LhXYM1I5KZNh6dnED3MFUByLrKPPsww=;
-        b=i4ReBOQ08D7T772beYG9bsDvfxozmdGqIizYFywUNTibOJNMd4FBEbbC6W2Bqd9kt5
-         ooKDxStyMY0PeyXd+XKLiTfTswCsz47Vw3HIISgU8Cg7hN0z3JoOnjE5kaNvkam64IWL
-         GL7KyAaoB/sWGowMf7IB9ED3L5loVmIQs1ob5qZqzvgKLTs8v9i1S5N112+WEti60Ze5
-         oQZlhN4BWKF53rx/YJqQAuc22V5m51b1aE2Qt8yXVgcuO458IIU6YY6tlH+BVlIp4evW
-         i/CqU+xqSwpy9mgeuF3DIQf9ymC2GU06YQg0MwwBgklGDI3u3VV+ybwoK1lJKGDaytoO
-         aapA==
+        bh=QW1bR3dT4ig6jICrP0+Uk0rGADCReVxH2fzr0rO2otM=;
+        b=YkCZkaxQx7mIJqsL5+k9f+3baFLv7NThUZhY8NjImb1IQBmupAWNY7IwfczNJDhjhp
+         awqCNLcIcizHYnyJRTWiDg74bNTqc1C8WcYfMVFQp3bxEXV7OkdfPlVid4EUqXdqSv7+
+         8sMbNfPbvRq0dzi+3XNbFKleeCwkC2LoisXFjg0LMfnzMMK4ETgnTwnfOVdibQAxEwYu
+         Nm8ykRA8yel2j3wUDOZONK5yUwEE47mSAhxWCjeuXOrUwORedHU2CxqOmlL9lLCbmY5s
+         tiBhIsSd/AtUFIeuPvXfP+hnJPVTcJceqm2T8OGT9RYAPgpsk8K7dmVkMs1EYaIX2s61
+         8Ssw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757592963; x=1758197763;
+        d=1e100.net; s=20230601; t=1757593295; x=1758198095;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hmPBcWTObj50LhXYM1I5KZNh6dnED3MFUByLrKPPsww=;
-        b=HnVbY/A37K9opimR7jOO8Fn1THmT9PEZW9CLGRMzMbKLU9LXfXOMXDN+NUKg3jrPvm
-         R6KpLr69sShl3DykBDGy1DTU/e59XQei5c0MmxgbT9Cflo2kWNCNMB+zPvOU642ReAiW
-         HDE42c2pI9u7m6aTY0YO+dfTiFB6UWPlmxcVUPXYiEA3uaQgHTI70J2ZPjygEXHBdJO2
-         6unM8Fd3FJlACgX0QsGVML9iFVRRzyzV+dSaMuIjHZF/l5nfJEAgHDEV8vEQsZUu97yb
-         tnJDzZwDAR7iUgWGWmCSMawCFfrP7o8esG44B1oQVvoQSQm+QR3GQiQZ/jKvfN9/9UaG
-         PaLg==
-X-Forwarded-Encrypted: i=1; AJvYcCXHMb+8GjJRek/2F9yjjMeUoeVVhqDtpAm21OU0M2iaUXLXegfSHt8tWXWqVSK2u/GJJxsg8mdKpvwcHTPo@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9i8COsBaUsJeJGsuscVpmenWjHLJ5fEwybjMyP8OIXtyGfAaF
-	iEiZeNDsVjBUKoG3W14lUutO0ujWfwp9zRu73teBcjpQwiUgElPktfcSWTzdqpNxp5V7rw40hpD
-	WPxQ5mVO85Atz7VH3G6fd1ICZEgPBnuwZzp5S14s=
-X-Gm-Gg: ASbGncuiYmp0j1W61IY/3zfmReZJFrgnY0eahykkEHzKDdaaoIQeJg/dHzjpc8FQvqz
-	5f5o3hLCahRhyl0xXoCOUq5tQEo+zZIPQIgTYicLbPMKMkYclj4pkYw26n2rFVfYPmKkwFBjZQB
-	tTTV5wu7e3q65f5fLkSr4DFNyIqv9g95Mb8ft2TPqr2z+3uxWmE3X7Qe8U8H8+9pm+we5CSKUVA
-	dUOt3FNS5bJ7vYPxA==
-X-Google-Smtp-Source: AGHT+IH7awg+/3rQKI0A5I+og5+M+CvuxyPUITL9rerUxhq2gVDrUHNMQ5fr4up+/Au7lWL3bnr+hbuailmMlx+CkKE=
-X-Received: by 2002:a05:6402:274d:b0:628:f0c1:d711 with SMTP id
- 4fb4d7f45d1cf-628f0c1d78amr12276828a12.30.1757592963327; Thu, 11 Sep 2025
- 05:16:03 -0700 (PDT)
+        bh=QW1bR3dT4ig6jICrP0+Uk0rGADCReVxH2fzr0rO2otM=;
+        b=H6GCI7KQCNlkUg1/dq6rQ1lKS6a+lYKttWtiTp4CdJgSjQ6S0SSWJyKtwwXufvTDzI
+         qwEeZEWzyIiedY/+AnG+dDODGcOIOoYm0FWMeNHnu7uXKEzhCwjoIbhYzFRunyCO+vtg
+         ikMzgrW3UFPX3f7m2//xNYWU+WaJM+h56goP4n3qeETo+NPMOa7m+6bsxTQJ6NvH4/L9
+         3qND2pEEzUjho8T8ppCkwGVB2/Jz2Tghv/rh8b9u45usnnkLTRNidC77H1SgmwDbrl22
+         dnLf49MxeWtiYDSKPQjoCG9Ztd/HVGuXeREv5yWNEDNXf0fgNamkBHzUhJ7N0RtRfEz+
+         heCw==
+X-Forwarded-Encrypted: i=1; AJvYcCW2atXUT22BFuZ271mBtflYd8Hq7TkEhPqtkSrrKbGiQN+mwwDy/RTmOZQYz++XSLlToxMi8eHwYWsim1U9@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw66fRRi0GeH6lRnB6sulVJqgLrDPvnuVXV2dNjNdJ7iCxh5mP6
+	9O1LksC0I/h20iR/vp5aQU+J+LBn0ZhDSH8mITBLuGiK4w/47MukfYgvr+4mMMpsHZEuNcnhPBC
+	YboODYhucda9K0q5i0do5e2hvq7JGj+U=
+X-Gm-Gg: ASbGncuV0fP5Zt7f83FbOTOD+vbWLT5VEKIucVCjJFp6pU7Hi/cBFnjseV2296QK2yp
+	CnwJ3kFygD15njHLmLq3A79rKMkt+smEqTnp7C9IsYhvYvbXWtHxugDmYZyFbpa49KOc5WafRCi
+	KMAVCqIpfxeUPvhOHQ2Y0qgEasPuBgWG/5r61bwo6Bl4/AwJowYeNEuxTThQmMCb/jtdeM0cYf3
+	evQ2J2k+Hkxn7V9uw==
+X-Google-Smtp-Source: AGHT+IEOtkqzFL8PXhrosjpXvuR6sCfAdER8NfA1zUZso1KJwXrMcisMdPmIZ1UPB4FtaW3bfelQnQy+IfM10Lg/90I=
+X-Received: by 2002:a05:6402:90e:b0:61c:35c0:87c6 with SMTP id
+ 4fb4d7f45d1cf-62373df677emr16291803a12.12.1757593294978; Thu, 11 Sep 2025
+ 05:21:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250910214927.480316-1-tahbertschinger@gmail.com> <20250910214927.480316-4-tahbertschinger@gmail.com>
-In-Reply-To: <20250910214927.480316-4-tahbertschinger@gmail.com>
+References: <20250910214927.480316-1-tahbertschinger@gmail.com>
+ <20250910214927.480316-5-tahbertschinger@gmail.com> <20250911005312.GU31600@ZenIV>
+In-Reply-To: <20250911005312.GU31600@ZenIV>
 From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 11 Sep 2025 14:15:52 +0200
-X-Gm-Features: AS18NWD_kI_hQbdQVU0TIOUGXScDePOgT214upJqMBIKSZWcO-wvs36BjpfETcE
-Message-ID: <CAOQ4uxhkU80A75PVB7bsXs2BGhGqKv0vr8RvLb5TnEiMO__pmw@mail.gmail.com>
-Subject: Re: [PATCH 03/10] fhandle: helper for allocating, reading struct file_handle
-To: Thomas Bertschinger <tahbertschinger@gmail.com>
-Cc: io-uring@vger.kernel.org, axboe@kernel.dk, linux-fsdevel@vger.kernel.org, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, linux-nfs@vger.kernel.org
+Date: Thu, 11 Sep 2025 14:21:23 +0200
+X-Gm-Features: AS18NWB0WGVdQiNKClrYvBv-3z0NQbmG39ZPh18gG3MBd4a44MagvnggPo4jNyA
+Message-ID: <CAOQ4uxjNf0sq8eY4kq00sF9tLO9P4kYbYWGGTWrEMX8NWjbE2Q@mail.gmail.com>
+Subject: Re: [PATCH 04/10] fhandle: create do_filp_path_open() helper
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Thomas Bertschinger <tahbertschinger@gmail.com>, io-uring@vger.kernel.org, axboe@kernel.dk, 
+	linux-fsdevel@vger.kernel.org, brauner@kernel.org, linux-nfs@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 10, 2025 at 11:47=E2=80=AFPM Thomas Bertschinger
-<tahbertschinger@gmail.com> wrote:
+On Thu, Sep 11, 2025 at 2:53=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> w=
+rote:
 >
-> Pull the code for allocating and copying a struct file_handle from
-> userspace into a helper function get_user_handle() just for this.
+> On Wed, Sep 10, 2025 at 03:49:21PM -0600, Thomas Bertschinger wrote:
+> > This pulls the code for opening a file, after its handle has been
+> > converted to a struct path, into a new helper function.
+> >
+> > This function will be used by io_uring once io_uring supports
+> > open_by_handle_at(2).
 >
-> do_handle_open() is updated to call get_user_handle() prior to calling
-> handle_to_path(), and the latter now takes a kernel pointer as a
-> parameter instead of a __user pointer.
+> Not commenting on the rest of patchset, but...
 >
-> This new helper, as well as handle_to_path(), are also exposed in
-> fs/internal.h. In a subsequent commit, io_uring will use these helpers
-> to support open_by_handle_at(2) in io_uring.
+> Consider the choice of name NAKed with extreme prejudice.
+> 0.01:fs/ioctl.c:        struct file * filp;
+> 0.01:fs/ioctl.c:        if (fd >=3D NR_OPEN || !(filp =3D current->filp[f=
+d]))
+> which was both inconsistent *and* resembling hungarian notation just
+> enough to confuse (note that in the original that 'p' does *NOT* stand fo=
+r
+> "pointer" - it's "current IO position").  Unfortunately, it was confusing
+> enough to stick around; at some point it even leaked into function names
+> (filp_open(); that one is my fault - sorry for that brainfart).
 >
-> Signed-off-by: Thomas Bertschinger <tahbertschinger@gmail.com>
-> ---
->  fs/fhandle.c  | 64 +++++++++++++++++++++++++++++----------------------
->  fs/internal.h |  3 +++
->  2 files changed, 40 insertions(+), 27 deletions(-)
+> Let's not propagate that wart any further, please.  If you are opening a =
+file,
+> put "file" in the identifier.
 >
-> diff --git a/fs/fhandle.c b/fs/fhandle.c
-> index 605ad8e7d93d..36e194dd4cb6 100644
-> --- a/fs/fhandle.c
-> +++ b/fs/fhandle.c
-> @@ -330,25 +330,45 @@ static inline int may_decode_fh(struct handle_to_pa=
-th_ctx *ctx,
->         return 0;
->  }
->
-> -static int handle_to_path(int mountdirfd, struct file_handle __user *ufh=
-,
-> -                  struct path *path, unsigned int o_flags)
-> +struct file_handle *get_user_handle(struct file_handle __user *ufh)
->  {
-> -       int retval =3D 0;
->         struct file_handle f_handle;
-> -       struct file_handle *handle __free(kfree) =3D NULL;
-> -       struct handle_to_path_ctx ctx =3D {};
-> -       const struct export_operations *eops;
-> +       struct file_handle *handle;
->
->         if (copy_from_user(&f_handle, ufh, sizeof(struct file_handle)))
-> -               return -EFAULT;
-> +               return ERR_PTR(-EFAULT);
->
->         if ((f_handle.handle_bytes > MAX_HANDLE_SZ) ||
->             (f_handle.handle_bytes =3D=3D 0))
-> -               return -EINVAL;
-> +               return ERR_PTR(-EINVAL);
->
->         if (f_handle.handle_type < 0 ||
->             FILEID_USER_FLAGS(f_handle.handle_type) & ~FILEID_VALID_USER_=
-FLAGS)
-> -               return -EINVAL;
-> +               return ERR_PTR(-EINVAL);
-> +
-> +       handle =3D kmalloc(struct_size(handle, f_handle, f_handle.handle_=
-bytes),
-> +                        GFP_KERNEL);
-> +       if (!handle) {
-> +               return ERR_PTR(-ENOMEM);
-> +       }
-> +
-> +       /* copy the full handle */
-> +       *handle =3D f_handle;
-> +       if (copy_from_user(&handle->f_handle,
-> +                          &ufh->f_handle,
-> +                          f_handle.handle_bytes)) {
-> +               return ERR_PTR(-EFAULT);
-> +       }
-> +
-> +       return handle;
-> +}
-> +
-> +int handle_to_path(int mountdirfd, struct file_handle *handle,
-> +                  struct path *path, unsigned int o_flags)
-> +{
-> +       int retval =3D 0;
-> +       struct handle_to_path_ctx ctx =3D {};
-> +       const struct export_operations *eops;
->
->         retval =3D get_path_anchor(mountdirfd, &ctx.root);
->         if (retval)
-> @@ -362,31 +382,16 @@ static int handle_to_path(int mountdirfd, struct fi=
-le_handle __user *ufh,
->         if (retval)
->                 goto out_path;
->
-> -       handle =3D kmalloc(struct_size(handle, f_handle, f_handle.handle_=
-bytes),
-> -                        GFP_KERNEL);
-> -       if (!handle) {
-> -               retval =3D -ENOMEM;
-> -               goto out_path;
-> -       }
-> -       /* copy the full handle */
-> -       *handle =3D f_handle;
-> -       if (copy_from_user(&handle->f_handle,
-> -                          &ufh->f_handle,
-> -                          f_handle.handle_bytes)) {
-> -               retval =3D -EFAULT;
-> -               goto out_path;
-> -       }
-> -
->         /*
->          * If handle was encoded with AT_HANDLE_CONNECTABLE, verify that =
-we
->          * are decoding an fd with connected path, which is accessible fr=
-om
->          * the mount fd path.
->          */
-> -       if (f_handle.handle_type & FILEID_IS_CONNECTABLE) {
-> +       if (handle->handle_type & FILEID_IS_CONNECTABLE) {
->                 ctx.fh_flags |=3D EXPORT_FH_CONNECTABLE;
->                 ctx.flags |=3D HANDLE_CHECK_SUBTREE;
->         }
-> -       if (f_handle.handle_type & FILEID_IS_DIR)
-> +       if (handle->handle_type & FILEID_IS_DIR)
->                 ctx.fh_flags |=3D EXPORT_FH_DIR_ONLY;
->         /* Filesystem code should not be exposed to user flags */
->         handle->handle_type &=3D ~FILEID_USER_FLAGS_MASK;
-> @@ -400,12 +405,17 @@ static int handle_to_path(int mountdirfd, struct fi=
-le_handle __user *ufh,
->  static long do_handle_open(int mountdirfd, struct file_handle __user *uf=
-h,
->                            int open_flag)
->  {
-> +       struct file_handle *handle __free(kfree) =3D NULL;
->         long retval =3D 0;
->         struct path path __free(path_put) =3D {};
->         struct file *file;
->         const struct export_operations *eops;
->
-> -       retval =3D handle_to_path(mountdirfd, ufh, &path, open_flag);
-> +       handle =3D get_user_handle(ufh);
-> +       if (IS_ERR(handle))
-> +               return PTR_ERR(handle);
 
-I don't think you can use __free(kfree) for something that can be an ERR_PT=
-R.
+If I may join the bikeshedding. I find that an exported vfs helper called
+do_file_path_open() does not sound like something that is expected
+to call path.mnt->mnt_sb->s_export_op->open().
+
+I am not sure how to express that in a good helper name.
+IDK. Running out of names. Maybe do_handle_path_open()?
 
 Thanks,
 Amir.
