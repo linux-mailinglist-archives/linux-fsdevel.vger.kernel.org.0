@@ -1,161 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-60934-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60935-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 712C8B5306D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 13:29:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA5F0B53071
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 13:30:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B87C3AA00A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 11:29:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65CDB16ED23
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Sep 2025 11:30:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72960319873;
-	Thu, 11 Sep 2025 11:29:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCE8931AF06;
+	Thu, 11 Sep 2025 11:30:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="nvKdu7lG";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="GIVO+7jA";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="R88s09a6";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="AWRcEncz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6202260587;
-	Thu, 11 Sep 2025 11:29:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14549243367
+	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Sep 2025 11:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757590165; cv=none; b=S46BqT62cfT9/FJ/QKzIxXGuDKI+Zpvr+QROL5WJyOmsgSLVTA/Vk1QJabiX/wPVKA3hc2M5QuNY2zuvQME1A0dAQsRYaPB42WfxWvypnVpaGZ7dNSWa84KTUGFzUltr2QmHT3jytfdt7RKjkmY+8rDOyMYlyIA9AzV/oN9x+5A=
+	t=1757590218; cv=none; b=Y7l9scPuuNpztC72ez7435bWt3Ay806d60qHSBniMq/ye8GpUs04FkzHVYN6na+M/4PKJgWxq3vcPdld9qRDNHNqrfFQVVfvtwjiTYOQHn+j5ot5RM/1ydh9MWBELf5vvJoMxRb5utQjCngHl5yUhsybDUlhvDRHjdIZzEPH90c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757590165; c=relaxed/simple;
-	bh=rOXIb2PgGCuqQo7hDob0a64h2gS7AcD63YRhwAMzEOM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=agKyOSO/Ed8m9RlTX11642Lzd847PSrXf9ivYDOgjYagmkNKRTa72kye3v5YJPFS6gBK4TrQ5JYcF7n1sXy6fYEZUaloPwmMCpfugi+faxUDdAGTEYSTtOEVbjqXkTfxoYzzYQWBbjDX2r5OTDr8pVv0phbg2OmyvoJOnb7RPzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4cMwFV6Y1Pz2CgDW;
-	Thu, 11 Sep 2025 19:24:46 +0800 (CST)
-Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9837C1402CC;
-	Thu, 11 Sep 2025 19:29:19 +0800 (CST)
-Received: from [127.0.0.1] (10.174.177.71) by dggpemf500013.china.huawei.com
- (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 11 Sep
- 2025 19:29:18 +0800
-Message-ID: <b04060b0-c10c-4fa5-8226-979df4c94d1c@huawei.com>
-Date: Thu, 11 Sep 2025 19:29:17 +0800
+	s=arc-20240116; t=1757590218; c=relaxed/simple;
+	bh=B7ZbLWu0M2HrDQ1xdUufdhnXZ4ZbjHXBFfJE46V3iOs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gxcAPi9ki22PPorM8PebwIp7toJ+x2MNGQcC3gBgoizb1Jo+P6TnPiC91siKBRvRy2nh+IDQBJHq1nNDsPQMLZ19+NoqPHPDi8wCGtCVyTokpNeRBvzOiseAcescAEYXRrkm3yHe8w/4oIbDScwdr6BFhb3T6bBcPyDBIvfYY9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=nvKdu7lG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=GIVO+7jA; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=R88s09a6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=AWRcEncz; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id DAD17352D8;
+	Thu, 11 Sep 2025 11:30:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757590214; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z29PhsfFejUvKXzXBhaatsqk5BAbvlYOO69nFWQ2U5A=;
+	b=nvKdu7lGlEbn9Zj4yvlHHn3RVF4wljg0ZhcYle3utgxPO/VZ2eXsiccTN0MUnBowWPkKwm
+	aDLksFn3vhnaMPjMmhPHhd626HqFm6TO7pO+VZv5vZDp7vWa51HE9nP+XNBiVlwjwirx5m
+	xF5+8xjwspDaNTAQLZvdig4xdqeY9LU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757590214;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z29PhsfFejUvKXzXBhaatsqk5BAbvlYOO69nFWQ2U5A=;
+	b=GIVO+7jA9B0kepEoFReFaVSfvR6xyMNPS+r8TBC4t+YQDZMRZ36G65L9VrpNymS0rhFJV4
+	x4d9Gq/fg+q4N0BA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=R88s09a6;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=AWRcEncz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757590213; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z29PhsfFejUvKXzXBhaatsqk5BAbvlYOO69nFWQ2U5A=;
+	b=R88s09a6ALh8dGQFOpOZY32OZBUL7PpBtl2HJNlKXBhtndbbYintz1X+u3sM/Uyeaf2iHg
+	M+GUqMz6sq2GgjLzxQ4PVqeIwZpxk0U/uR5nKRMgHc+1iz16z4bcLuqd+Si+3RCwsDfxX6
+	7zMph4Vv9v7kKMVbbUwD6DRdQkTn2O8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757590213;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z29PhsfFejUvKXzXBhaatsqk5BAbvlYOO69nFWQ2U5A=;
+	b=AWRcEncz+g0xflvTdQ6Txr6erZW65dOEsQeCyAHcKvNAeZOR254ESwmNZxUCzHleZ8Y1Jz
+	q9no6hnM2Ep4f5DQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CE79113301;
+	Thu, 11 Sep 2025 11:30:13 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id iN0XMsWywmgYLwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 11 Sep 2025 11:30:13 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 6A055A0A2D; Thu, 11 Sep 2025 13:30:13 +0200 (CEST)
+Date: Thu, 11 Sep 2025 13:30:13 +0200
+From: Jan Kara <jack@suse.cz>
+To: Tejun Heo <tj@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/4] writeback: Avoid contention on wb->list_lock when
+ switching inodes
+Message-ID: <7ilbnkfbhv5mtshehvphe4tfiuwg7o52cexd3x4thwizkpjgbt@dycc7ac677t7>
+References: <20250909143734.30801-1-jack@suse.cz>
+ <20250909144400.2901-5-jack@suse.cz>
+ <aMBbSxwwnvBvQw8C@slm.duckdns.org>
+ <6wl26xqf6kvaz4527m7dy2dng5tu22qxva2uf2fi4xtzuzqxwx@l5re7vgx6zlz>
+ <aMGw9AjS11coqPF_@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] ext4: increase i_disksize to offset + len in
- ext4_update_disksize_before_punch()
-Content-Language: en-GB
-To: <sunyongjian1@huawei.com>, <linux-ext4@vger.kernel.org>
-CC: <linux-fsdevel@vger.kernel.org>, <tytso@mit.edu>, <jack@suse.cz>,
-	<yangerkun@huawei.com>, <yi.zhang@huawei.com>, <chengzhihao1@huawei.com>
-References: <20250911025412.186872-1-sunyongjian@huaweicloud.com>
-From: Baokun Li <libaokun1@huawei.com>
-In-Reply-To: <20250911025412.186872-1-sunyongjian@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- dggpemf500013.china.huawei.com (7.185.36.188)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMGw9AjS11coqPF_@slm.duckdns.org>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: DAD17352D8
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	MISSING_XM_UA(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -4.01
 
-On 2025-09-11 10:54, Yongjian Sun wrote:
-> From: Yongjian Sun <sunyongjian1@huawei.com>
->
-> After running a stress test combined with fault injection,
-> we performed fsck -a followed by fsck -fn on the filesystem
-> image. During the second pass, fsck -fn reported:
->
-> Inode 131512, end of extent exceeds allowed value
-> 	(logical block 405, physical block 1180540, len 2)
->
-> This inode was not in the orphan list. Analysis revealed the
-> following call chain that leads to the inconsistency:
->
->                              ext4_da_write_end()
->                               //does not update i_disksize
->                              ext4_punch_hole()
->                               //truncate folio, keep size
-> ext4_page_mkwrite()
->  ext4_block_page_mkwrite()
->   ext4_block_write_begin()
->     ext4_get_block()
->      //insert written extent without update i_disksize
-> journal commit
-> echo 1 > /sys/block/xxx/device/delete
->
-> da-write path updates i_size but does not update i_disksize. Then
-> ext4_punch_hole truncates the da-folio yet still leaves i_disksize
-> unchanged(in the ext4_update_disksize_before_punch function, the
-> condition offset + len < size is met). Then ext4_page_mkwrite sees
-> ext4_nonda_switch return 1 and takes the nodioread_nolock path, the
-> folio about to be written has just been punched out, and it’s offset
-> sits beyond the current i_disksize. This may result in a written
-> extent being inserted, but again does not update i_disksize. If the
-> journal gets committed and then the block device is yanked, we might
-> run into this. It should be noted that replacing ext4_punch_hole with
-> ext4_zero_range in the call sequence may also trigger this issue, as
-> neither will update i_disksize under these circumstances.
->
-> To fix this, we can modify ext4_update_disksize_before_punch to
-> increase i_disksize to min(offset + len) when both i_size and
-                                         ^^^ min(i_size, offset + len)
-> (offset + len) are greater than i_disksize.
->
-> Signed-off-by: Yongjian Sun <sunyongjian1@huawei.com>
+On Wed 10-09-25 07:10:12, Tejun Heo wrote:
+> Hello, Jan.
+> 
+> On Wed, Sep 10, 2025 at 10:19:36AM +0200, Jan Kara wrote:
+> > Well, reducing @max_active to 1 will certainly deal with the list_lock
+> > contention as well. But I didn't want to do that as on a busy container
+> > system I assume there can be switching happening between different pairs of
+> > cgroups. With the approach in this patch switches with different target
+> > cgroups can still run in parallel. I don't have any real world data to back
+> > that assumption so if you think this parallelism isn't really needed and we
+> > are fine with at most one switch happening in the system, switching
+> > max_active to 1 is certainly simple enough.
+> 
+> What bothers me is that the concurrency doesn't match between the work items
+> being scheduled and the actual execution and we're resolving that by early
+> exiting from some work items. It just feels like an roundabout way to do it
+> with extra code. I think there are better ways to achieve per-bdi_writeback
+> concurrency:
+> 
+> - Move work_struct from isw to bdi_writeback and schedule the work item on
+>   the target wb which processes isw's queued on the bdi_writeback.
+> 
+> - Or have a per-wb workqueue with max_active limit so that concurrency is
+>   regulated per-wb.
+> 
+> The latter is a bit simpler but does cost more memory as workqueue_struct
+> isn't tiny. The former is a bit more complicated but most likely less so
+> than the current code. What do you think?
 
-Otherwise looks good. Feel free to add:
+That's a fair objection and good idea. I'll rework the patch to go with
+the first variant.
 
-Reviewed-by: Baokun Li <libaokun1@huawei.com>
-
-> ---
-> Changes in v4:
-> - Make the comments simpler and clearer.
-> - Link to v3: https://lore.kernel.org/all/20250910042516.3947590-1-sunyongjian@huaweicloud.com/
-> Changes in v3:
-> - Add a condition to avoid increasing i_disksize and include some comments.
-> - Link to v2: https://lore.kernel.org/all/20250908063355.3149491-1-sunyongjian@huaweicloud.com/
-> Changes in v2:
-> - The modification of i_disksize should be moved into ext4_update_disksize_before_punch,
->   rather than being done in ext4_page_mkwrite.
-> - Link to v1: https://lore.kernel.org/all/20250731140528.1554917-1-sunyongjian@huaweicloud.com/
-> ---
->  fs/ext4/inode.c | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 5b7a15db4953..f82f7fb84e17 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -4287,7 +4287,11 @@ int ext4_can_truncate(struct inode *inode)
->   * We have to make sure i_disksize gets properly updated before we truncate
->   * page cache due to hole punching or zero range. Otherwise i_disksize update
->   * can get lost as it may have been postponed to submission of writeback but
-> - * that will never happen after we truncate page cache.
-> + * that will never happen if we remove the folio containing i_size from the
-> + * page cache. Also if we punch hole within i_size but above i_disksize,
-> + * following ext4_page_mkwrite() may mistakenly allocate written blocks over
-> + * the hole and thus introduce allocated blocks beyond i_disksize which is
-> + * not allowed (e2fsck would complain in case of crash).
->   */
->  int ext4_update_disksize_before_punch(struct inode *inode, loff_t offset,
->  				      loff_t len)
-> @@ -4298,9 +4302,11 @@ int ext4_update_disksize_before_punch(struct inode *inode, loff_t offset,
->  	loff_t size = i_size_read(inode);
->  
->  	WARN_ON(!inode_is_locked(inode));
-> -	if (offset > size || offset + len < size)
-> +	if (offset > size)
->  		return 0;
->  
-> +	if (offset + len < size)
-> +		size = offset + len;
->  	if (EXT4_I(inode)->i_disksize >= size)
->  		return 0;
->  
-
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
