@@ -1,222 +1,339 @@
-Return-Path: <linux-fsdevel+bounces-61081-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61082-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CCBEB54E0D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 14:36:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ED19B54E1D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 14:38:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7433BAC038D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 12:31:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8148A05587
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 12:34:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63FB430C614;
-	Fri, 12 Sep 2025 12:29:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72F96305063;
+	Fri, 12 Sep 2025 12:33:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="Bb61dM/e";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WmApKfXi"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="UQ0Qjqfl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23EC13064AE;
-	Fri, 12 Sep 2025 12:29:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C08D22DF13A;
+	Fri, 12 Sep 2025 12:33:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757680149; cv=none; b=jPKmb9TQT0/vA9ykbbq4zbJAjZUr4kjbKkjKjk+Uk1uEqE3F6hiAUIi+bUciHC4zrO26ouxxp9oR+pWyG4opz7RZhzzkZ9fHMvcbBLYzkVrG/1a0yRx0T5w7YUSA5JI50W3ZcNwpYH47HRnAdP9u+jvPmLdQIoJ0nWEMqTtTQMM=
+	t=1757680405; cv=none; b=Lfle4jMJYmnDMrypj4i7sK+TbGx0uG8anYNqnWyGEtOQK3cJpu9mXjeHWl/yyfishqQLuueIffzI8hL29JeUlXvmuyy3ITRCHYuEguAYXR99KNSzoPo7m5FHggy31+gRfJPoyI92FPoI6FIMF7w4NkoPIopDeHAb8xfila1W7fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757680149; c=relaxed/simple;
-	bh=0KY4CmUCaxpsALU8LxCLml3ocb24U73WUWj+gvADy3M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mafZmJ4emG6BnZNl/NeKVm87CNXqB2sonhgTTMHhFj8TGmlEA3NCMRP8MdvWMe4L55C4umj7NbZdYlHQgvzxvGCEndYny3ziEYSt5r8CtXyijHnnSLcOMy8Pak8uLciDpIObJ9jpOm+MCojH0/w14eBtIUz0oM0gH801IJsULI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=Bb61dM/e; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WmApKfXi; arc=none smtp.client-ip=103.168.172.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 132EF14003CF;
-	Fri, 12 Sep 2025 08:29:06 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Fri, 12 Sep 2025 08:29:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1757680146;
-	 x=1757766546; bh=+EuBTtxheLs6YMQiQHMhbhJYRJOzaO/5/ZkBd7bqUGw=; b=
-	Bb61dM/e7R9qEoerttMFDeG7k1uNgJt8LLJ8DCguRpIDwBTMWEEjg0BCEK1DXOoE
-	Ee5Sbyp+tOf/IvPTNKt0lhwe68rlL9tvV7Hv8wrNvA/3w3p4Rb8Dl5OdDzEElJKY
-	B6oZXBnTB834Ev7JKnMOwJutbi/2yL5gomdN2aicv49T/RxCZKWY6LiuBdwLi6n6
-	oCZ+fFG1u7gvlAVcFc0QZ2BujgFJs13oQJ0hOO3Rn7SX3RiP2zd6YrdnNrKafJ0z
-	opUOc3QrmjRNPjOvnQ+GoygpujQgpjMGvGA/DrMWtQ6Uhv+LZFDnyK8hweCs5oZb
-	6rjcc3U9/9ab2y6v1XcxTw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757680146; x=
-	1757766546; bh=+EuBTtxheLs6YMQiQHMhbhJYRJOzaO/5/ZkBd7bqUGw=; b=W
-	mApKfXiQgeL3XmYmDdMdOylBHWvk/UnHbqlXY9QwE8gercTylVV1/Axgz7ne4iBq
-	ByemZ82QafevwmA79UFjv/WBAfsTo5D5Sn3Z8R5EcIWtERseR98+ZsmPcJHrksq7
-	5XxqeFwRjCxxeDqnuTx6iaqEaylVkHnvSKth2NSHKILaLsgH18rnR7vVfjGG3lOr
-	8vNkYyacHXupYYifsrcpelcOJoh/OKqGT7u2ivxq0n3aMkgd3xuCFklLJy6sS47t
-	6Y+gKs0TTGdapt7Mas2eRy1yNfJboUxYlpcR+focFrk4FivMvQaLtNZI86EEVTy0
-	uLPrWrovlm86p0AuSRIOg==
-X-ME-Sender: <xms:ERLEaCusQqJZezTbNG5Z9cweOnqPzHLvPXeKnDiq8WW3QAmFhgUnAQ>
-    <xme:ERLEaCEgNoCkdoJ1oq2nvbEytNzPnOMBDQgLwzoTWTRuDdWC3P_xjatpsU_xRzSVP
-    s28N5KMAIvd-Xiv>
-X-ME-Received: <xmr:ERLEaDwK94VCz12iBj50xIvmtTZW3Q2462KS-xwxCTjxDqx1JT9nzYDnfQugQ8y8_LQrFLm9SGENZjdwtPi_R52nccEJ67jIzlGtfdOCtYlE3SQLX_0F>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvledthecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepuegvrhhnugcu
-    ufgthhhusggvrhhtuceosggvrhhnugessghssggvrhhnugdrtghomheqnecuggftrfgrth
-    htvghrnheptdeuvdeuudeltddukefhueeludduieejvdevveevteduvdefuedvkeffjeel
-    ueeunecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpe
-    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsvghrnhgusegsshgsvghrnhgurdgtohhm
-    pdhnsggprhgtphhtthhopeelpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrmh
-    hirhejfehilhesghhmrghilhdrtghomhdprhgtphhtthhopehluhhishesihhgrghlihgr
-    rdgtohhmpdhrtghpthhtohepughjfihonhhgsehkvghrnhgvlhdrohhrghdprhgtphhtth
-    hopehthihtshhosehmihhtrdgvughupdhrtghpthhtohepmhhikhhlohhssehsiigvrhgv
-    ughirdhhuhdprhgtphhtthhopegsshgthhhusggvrhhtseguughnrdgtohhmpdhrtghpth
-    htoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgt
-    phhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprh
-    gtphhtthhopehktghhvghnseguughnrdgtohhm
-X-ME-Proxy: <xmx:ERLEaM0_uD09J-uTkc-FuwabqZ2xhoN69wBi67DZ9AM0fmg9a-_rgw>
-    <xmx:ERLEaDo_jd-wvWAJztm8gjNE82oG2W4oCieKTVBXPAx4kPwEcDEz6g>
-    <xmx:ERLEaJVAEB8K7Z2jDTEA2sAgCE-D0GRRizg4IeV1ApSF2zSQcy0nzA>
-    <xmx:ERLEaMpewsONL1PLZo4N2stxKAIX8kEmCRaPp07pvfAwYAwph48vjQ>
-    <xmx:EhLEaDclqWDd0bsKhD65CGS4JgX4PEHJiTwsgHOJtsqF5qJafqmKyTXc>
-Feedback-ID: i5c2e48a5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 12 Sep 2025 08:29:04 -0400 (EDT)
-Message-ID: <2e57be4f-e61b-4a37-832d-14bdea315126@bsbernd.com>
-Date: Fri, 12 Sep 2025 14:29:03 +0200
+	s=arc-20240116; t=1757680405; c=relaxed/simple;
+	bh=FlNK8YoNAl6EbOk9sech/kH7nAtesFk+x3CwoHZdUhs=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=CwgzWrN+WLTbIXgz1ZNdgSDffBlnp0z1Je8tIaJQnjNjv/bUURn3gKN7+lLGNv0zVI5plXXKUYRQ8nU4Ft9pXMAXVZ8KDIRsfLgb+EBQpdSFRK+0h2GrvsyIuX+9iTE9uclFIu42Emw0SQzJLHJw+ETGpHunKIiCohQFBBCuw8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=UQ0Qjqfl; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58C6XZnD009279;
+	Fri, 12 Sep 2025 12:32:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=lzxldH
+	FNVtZ8FuDAJRVh4gQ2YdF665e9h7C4fiEGf2Q=; b=UQ0Qjqfl9EUXzM689e103h
+	p/VY4B1UtOJ9kE1qk4gOIC0zURdvXrgzhsjjOLt2Y7Vwp3Z//b8fOh/Y2hT85LPE
+	GeQIDYgfqUAfCryPCe4qOyyepz/ok1A13jEUMWG+BbqWl6Rp3QoRrFioqlLgNQNx
+	qqKMAuo8Lfm7RwIdTbXJGSsxJbNM3QtazG8s503WEQZYyna2JaAxg3D6RDVyKxvW
+	NqGWHxrxSWxoSfePi06eh9Lan11A55qtaV5IH2x2N1uxMo07rNk+n9MhTIO1tYJ4
+	lIZVGKoEzDVwShtMKWnpjhDvDc4sHRMnoD6TsSldM7wHY2VxRjQbhhuQbt5losLA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cffufsk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 12 Sep 2025 12:32:52 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58CCWpfp030730;
+	Fri, 12 Sep 2025 12:32:51 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cffufse-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 12 Sep 2025 12:32:51 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58CBN1i5001156;
+	Fri, 12 Sep 2025 12:32:50 GMT
+Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 491203tp0y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 12 Sep 2025 12:32:50 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58CCWdJ025559586
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 12 Sep 2025 12:32:39 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A9A9258055;
+	Fri, 12 Sep 2025 12:32:48 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id F080158043;
+	Fri, 12 Sep 2025 12:32:41 +0000 (GMT)
+Received: from smtpclient.apple (unknown [9.61.244.60])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri, 12 Sep 2025 12:32:41 +0000 (GMT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] Another take at restarting FUSE servers
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Luis Henriques <luis@igalia.com>, "Darrick J. Wong" <djwong@kernel.org>,
- Theodore Ts'o <tytso@mit.edu>, Miklos Szeredi <miklos@szeredi.hu>,
- Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, Kevin Chen <kchen@ddn.com>
-References: <8734afp0ct.fsf@igalia.com>
- <20250729233854.GV2672029@frogsfrogsfrogs> <20250731130458.GE273706@mit.edu>
- <20250731173858.GE2672029@frogsfrogsfrogs> <8734abgxfl.fsf@igalia.com>
- <39818613-c10b-4ed2-b596-23b70c749af1@bsbernd.com>
- <CAOQ4uxg1zXPTB1_pFB=hyqjAGjk=AC34qP1k9C043otxcwqJGg@mail.gmail.com>
-From: Bernd Schubert <bernd@bsbernd.com>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <CAOQ4uxg1zXPTB1_pFB=hyqjAGjk=AC34qP1k9C043otxcwqJGg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
+Subject: Re: [linux-next20250911]Kernel OOPs while running generic/256 on Pmem
+ device
+From: Venkat <venkat88@linux.ibm.com>
+In-Reply-To: <8957c526-d05c-4c0d-bfed-0eb6e6d2476c@linux.ibm.com>
+Date: Fri, 12 Sep 2025 18:02:28 +0530
+Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, riteshh@linux.ibm.com,
+        ojaswin@linux.ibm.com, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        cgroups@vger.kernel.org, linux-mm@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <BAEAC2F7-7D7F-49E4-AB21-10FC0E4BF5F3@linux.ibm.com>
+References: <8957c526-d05c-4c0d-bfed-0eb6e6d2476c@linux.ibm.com>
+To: sunjunchao@bytedance.com, tj@kernel.org, akpm@linux-foundation.org,
+        stable@vger.kernel.org, songmuchun@bytedance.com, shakeelb@google.com,
+        hannes@cmpxchg.org, roman.gushchin@linux.dev, mhocko@suse.com
+X-Mailer: Apple Mail (2.3774.600.62)
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: p4Ytzp1KtGI8p2ZOTdhnY1EM3EmHMr32
+X-Proofpoint-GUID: QUm9GvzwEKZeGuYZ_HevR0HRFwF4QMNC
+X-Authority-Analysis: v=2.4 cv=EYDIQOmC c=1 sm=1 tr=0 ts=68c412f4 cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8
+ a=968KyxNXAAAA:8 a=iox4zFpeAAAA:8 a=ufHFDILaAAAA:8 a=1XWaLZrsAAAA:8
+ a=Z4Rwk6OoAAAA:8 a=P6wp6F91U6gQXFS5mtAA:9 a=QEXdDO2ut3YA:10
+ a=WzC6qhA0u3u7Ye7llzcV:22 a=ZmIg1sZ3JBWsdXgziEIF:22 a=HkZW87K1Qel5hWWM3VKY:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyMCBTYWx0ZWRfX3VRxtnPHv9sQ
+ gyScgZkK+8jB3sGP0sPXgC9RlEwPB62+T3BkgjXvYljpa21/IuC41KtNk1cs9yyJdsohoa08LHt
+ N6bTY8V+6it4eWfbLsCGpHkJuM2awlyA6/UhZJplwu6G2SPNF0VKixLSp9XgGwvJQtjiTGO2WKB
+ 5/ID176TH6d7CAmfyRyYRWBJtosbiZuq9tagWKgXqMAUrsBNfJQqSOyJGCNs1HmmGv8H0dDK01K
+ HZAnv2YuIwDht5+pZhi+Mv1QUr1rQhrgtbQsTc5FbWMf03FbfzazKvOjUq8cLB8bjUof0NG96M/
+ 8MhsJ0BL2qXvRtEqwnAY1WoKPMKMr23qqPC3AyyYkFhxXvtgn0fjELYDRuebL66nB0jIkARbU7J
+ FmfsWpJH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-12_04,2025-09-11_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 adultscore=0 suspectscore=0 spamscore=0 impostorscore=0
+ priorityscore=1501 phishscore=0 clxscore=1011 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060020
 
 
 
-On 9/12/25 13:41, Amir Goldstein wrote:
-> On Fri, Sep 12, 2025 at 12:31 PM Bernd Schubert <bernd@bsbernd.com> wrote:
->>
->>
->>
->> On 8/1/25 12:15, Luis Henriques wrote:
->>> On Thu, Jul 31 2025, Darrick J. Wong wrote:
->>>
->>>> On Thu, Jul 31, 2025 at 09:04:58AM -0400, Theodore Ts'o wrote:
->>>>> On Tue, Jul 29, 2025 at 04:38:54PM -0700, Darrick J. Wong wrote:
->>>>>>
->>>>>> Just speaking for fuse2fs here -- that would be kinda nifty if libfuse
->>>>>> could restart itself.  It's unclear if doing so will actually enable us
->>>>>> to clear the condition that caused the failure in the first place, but I
->>>>>> suppose fuse2fs /does/ have e2fsck -fy at hand.  So maybe restarts
->>>>>> aren't totally crazy.
->>>>>
->>>>> I'm trying to understand what the failure scenario is here.  Is this
->>>>> if the userspace fuse server (i.e., fuse2fs) has crashed?  If so, what
->>>>> is supposed to happen with respect to open files, metadata and data
->>>>> modifications which were in transit, etc.?  Sure, fuse2fs could run
->>>>> e2fsck -fy, but if there are dirty inode on the system, that's going
->>>>> potentally to be out of sync, right?
->>>>>
->>>>> What are the recovery semantics that we hope to be able to provide?
->>>>
->>>> <echoing what we said on the ext4 call this morning>
->>>>
->>>> With iomap, most of the dirty state is in the kernel, so I think the new
->>>> fuse2fs instance would poke the kernel with FUSE_NOTIFY_RESTARTED, which
->>>> would initiate GETATTR requests on all the cached inodes to validate
->>>> that they still exist; and then resend all the unacknowledged requests
->>>> that were pending at the time.  It might be the case that you have to
->>>> that in the reverse order; I only know enough about the design of fuse
->>>> to suspect that to be true.
->>>>
->>>> Anyhow once those are complete, I think we can resume operations with
->>>> the surviving inodes.  The ones that fail the GETATTR revalidation are
->>>> fuse_make_bad'd, which effectively revokes them.
->>>
->>> Ah! Interesting, I have been playing a bit with sending LOOKUP requests,
->>> but probably GETATTR is a better option.
->>>
->>> So, are you currently working on any of this?  Are you implementing this
->>> new NOTIFY_RESTARTED request?  I guess it's time for me to have a closer
->>> look at fuse2fs too.
->>
->> Sorry for joining the discussion late, I was totally occupied, day and
->> night. Added Kevin to CC, who is going to work on recovery on our
->> DDN side.
->>
->> Issue with GETATTR and LOOKUP is that they need a path, but on fuse
->> server restart we want kernel to recover inodes and their lookup count.
->> Now inode recovery might be hard, because we currently only have a
->> 64-bit node-id - which is used my most fuse application as memory
->> pointer.
->>
->> As Luis wrote, my issue with FUSE_NOTIFY_RESEND is that it just re-sends
->> outstanding requests. And that ends up in most cases in sending requests
->> with invalid node-IDs, that are casted and might provoke random memory
->> access on restart. Kind of the same issue why fuse nfs export or
->> open_by_handle_at doesn't work well right now.
->>
->> So IMHO, what we really want is something like FUSE_LOOKUP_FH, which
->> would not return a 64-bit node ID, but a max 128 byte file handle.
->> And then FUSE_REVALIDATE_FH on server restart.
->> The file handles could be stored into the fuse inode and also used for
->> NFS export.
->>
->> I *think* Amir had a similar idea, but I don't find the link quickly.
->> Adding Amir to CC.
-> 
-> Or maybe it was Miklos' idea. Hard to keep track of this rolling thread:
-> https://lore.kernel.org/linux-fsdevel/CAJfpegvNZ6Z7uhuTdQ6quBaTOYNkAP8W_4yUY4L2JRAEKxEwOQ@mail.gmail.com/
+> On 12 Sep 2025, at 10:51=E2=80=AFAM, Venkat Rao Bagalkote =
+<venkat88@linux.ibm.com> wrote:
+>=20
+> Greetings!!!
+>=20
+>=20
+> IBM CI has reported a kernel crash, while running generic/256 test =
+case on pmem device from xfstests suite on linux-next20250911 kernel.
+>=20
+>=20
+> xfstests: git://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git
+>=20
+> local.config:
+>=20
+> [xfs_dax]
+> export RECREATE_TEST_DEV=3Dtrue
+> export TEST_DEV=3D/dev/pmem0
+> export TEST_DIR=3D/mnt/test_pmem
+> export SCRATCH_DEV=3D/dev/pmem0.1
+> export SCRATCH_MNT=3D/mnt/scratch_pmem
+> export MKFS_OPTIONS=3D"-m reflink=3D0 -b size=3D65536 -s size=3D512"
+> export FSTYP=3Dxfs
+> export MOUNT_OPTIONS=3D"-o dax"
+>=20
+>=20
+> Test case: generic/256
+>=20
+>=20
+> Traces:
+>=20
+>=20
+> [  163.371929] ------------[ cut here ]------------
+> [  163.371936] kernel BUG at lib/list_debug.c:29!
+> [  163.371946] Oops: Exception in kernel mode, sig: 5 [#1]
+> [  163.371954] LE PAGE_SIZE=3D64K MMU=3DRadix  SMP NR_CPUS=3D8192 NUMA =
+pSeries
+> [  163.371965] Modules linked in: xfs nft_fib_inet nft_fib_ipv4 =
+nft_fib_ipv6 nft_fib nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 =
+nft_reject nft_ct nft_chain_nat nf_nat nf_conntrack bonding tls =
+nf_defrag_ipv6 nf_defrag_ipv4 rfkill ip_set nf_tables nfnetlink sunrpc =
+pseries_rng vmx_crypto dax_pmem fuse ext4 crc16 mbcache jbd2 nd_pmem =
+papr_scm sd_mod libnvdimm sg ibmvscsi ibmveth scsi_transport_srp =
+pseries_wdt
+> [  163.372127] CPU: 22 UID: 0 PID: 130 Comm: kworker/22:0 Kdump: =
+loaded Not tainted 6.17.0-rc5-next-20250911 #1 VOLUNTARY
+> [  163.372142] Hardware name: IBM,9080-HEX Power11 (architected) =
+0x820200 0xf000007 of:IBM,FW1110.01 (NH1110_069) hv:phyp pSeries
+> [  163.372155] Workqueue: cgroup_free css_free_rwork_fn
+> [  163.372169] NIP:  c000000000d051d4 LR: c000000000d051d0 CTR: =
+0000000000000000
+> [  163.372176] REGS: c00000000ba079b0 TRAP: 0700   Not tainted =
+(6.17.0-rc5-next-20250911)
+> [  163.372183] MSR:  800000000282b033 =
+<SF,VEC,VSX,EE,FP,ME,IR,DR,RI,LE>  CR: 28000000  XER: 00000006
+> [  163.372214] CFAR: c0000000002bae9c IRQMASK: 0
+> [  163.372214] GPR00: c000000000d051d0 c00000000ba07c50 =
+c00000000230a600 0000000000000075
+> [  163.372214] GPR04: 0000000000000004 0000000000000001 =
+c000000000507e2c 0000000000000001
+> [  163.372214] GPR08: c000000d0cb87d13 0000000000000000 =
+0000000000000000 a80e000000000000
+> [  163.372214] GPR12: c00e0001a1970fa2 c000000d0ddec700 =
+c000000000208e58 c000000107b5e190
+> [  163.372214] GPR16: c00000000d3e5d08 c00000000b71cf78 =
+c00000000d3e5d05 c00000000b71cf30
+> [  163.372214] GPR20: c00000000b71cf08 c00000000b71cf10 =
+c000000019f58588 c000000004704bc8
+> [  163.372214] GPR24: c000000107b5e100 c000000004704bd0 =
+0000000000000003 c000000004704bd0
+> [  163.372214] GPR28: c000000004704bc8 c000000019f585a8 =
+c000000019f53da8 c000000004704bc8
+> [  163.372315] NIP [c000000000d051d4] =
+__list_add_valid_or_report+0x124/0x188
+> [  163.372326] LR [c000000000d051d0] =
+__list_add_valid_or_report+0x120/0x188
+> [  163.372335] Call Trace:
+> [  163.372339] [c00000000ba07c50] [c000000000d051d0] =
+__list_add_valid_or_report+0x120/0x188 (unreliable)
+> [  163.372352] [c00000000ba07ce0] [c000000000834280] =
+mem_cgroup_css_free+0xa0/0x27c
+> [  163.372363] [c00000000ba07d50] [c0000000003ba198] =
+css_free_rwork_fn+0xd0/0x59c
+> [  163.372374] [c00000000ba07da0] [c0000000001f5d60] =
+process_one_work+0x41c/0x89c
+> [  163.372385] [c00000000ba07eb0] [c0000000001f76c0] =
+worker_thread+0x558/0x848
+> [  163.372394] [c00000000ba07f80] [c000000000209038] =
+kthread+0x1e8/0x230
+> [  163.372406] [c00000000ba07fe0] [c00000000000ded8] =
+start_kernel_thread+0x14/0x18
+> [  163.372416] Code: 4b9b1099 60000000 7f63db78 4bae8245 60000000 =
+e8bf0008 3c62ff88 7fe6fb78 7fc4f378 38637d40 4b5b5c89 60000000 =
+<0fe00000> 60000000 60000000 7f83e378
+> [  163.372453] ---[ end trace 0000000000000000 ]---
+> [  163.380581] pstore: backend (nvram) writing error (-1)
+> [  163.380593]
+>=20
+>=20
+> If you happen to fix this issue, please add below tag.
+>=20
+>=20
+> Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+>=20
+>=20
+>=20
+> Regards,
+>=20
+> Venkat.
+>=20
+>=20
 
-Thanks for the reference Amir! I even had been in that thread.
+After reverting the below commit, issue is not seen.
 
-> 
->>
->> Our short term plan is to add something like FUSE_NOTIFY_RESTART, which
->> will iterate over all superblock inodes and mark them with fuse_make_bad.
->> Any objections against that?
-> 
-> IDK, it seems much more ugly than implementing LOOKUP_HANDLE
-> and I am not sure that LOOKUP_HANDLE is that hard to implement, when
-> comparing to this alternative.
-> 
-> I mean a restartable server is going to be a new implementation anyway, right?
-> So it makes sense to start with a cleaner and more adequate protocol,
-> does it not?
+commit 61bbf51e75df1a94cf6736e311cb96aeb79826a8
+Author: Julian Sun <sunjunchao@bytedance.com>
+Date:   Thu Aug 28 04:45:57 2025 +0800
 
-Definitely, if we agree on the approach on LOOKUP_HANDLE and using it
-for recovery, adding that op seems simple. And reading through the
-thread you had posted above, just the implementation was missing.
-So let's go ahead to do this approach.
+    memcg: don't wait writeback completion when release memcg
+         Recently, we encountered the following hung task:
+         INFO: task kworker/4:1:1334558 blocked for more than 1720 =
+seconds.
+    [Wed Jul 30 17:47:45 2025] Workqueue: cgroup_destroy =
+css_free_rwork_fn
+    [Wed Jul 30 17:47:45 2025] Call Trace:
+    [Wed Jul 30 17:47:45 2025]  __schedule+0x934/0xe10
+    [Wed Jul 30 17:47:45 2025]  ? complete+0x3b/0x50
+    [Wed Jul 30 17:47:45 2025]  ? _cond_resched+0x15/0x30
+    [Wed Jul 30 17:47:45 2025]  schedule+0x40/0xb0
+    [Wed Jul 30 17:47:45 2025]  wb_wait_for_completion+0x52/0x80
+    [Wed Jul 30 17:47:45 2025]  ? finish_wait+0x80/0x80
+    [Wed Jul 30 17:47:45 2025]  mem_cgroup_css_free+0x22/0x1b0
+    [Wed Jul 30 17:47:45 2025]  css_free_rwork_fn+0x42/0x380
+    [Wed Jul 30 17:47:45 2025]  process_one_work+0x1a2/0x360
+    [Wed Jul 30 17:47:45 2025]  worker_thread+0x30/0x390
+    [Wed Jul 30 17:47:45 2025]  ? create_worker+0x1a0/0x1a0
+    [Wed Jul 30 17:47:45 2025]  kthread+0x110/0x130
+    [Wed Jul 30 17:47:45 2025]  ? __kthread_cancel_work+0x40/0x40
+    [Wed Jul 30 17:47:45 2025]  ret_from_fork+0x1f/0x30
+         The direct cause is that memcg spends a long time waiting for =
+dirty page
+    writeback of foreign memcgs during release.
+         The root causes are:
+        a. The wb may have multiple writeback tasks, containing millions
+           of dirty pages, as shown below:
+         >>> for work in list_for_each_entry("struct wb_writeback_work", =
+\
+                                        wb.work_list.address_of_(), =
+"list"):
+    ...     print(work.nr_pages, work.reason, hex(work))
+    ...
+    900628  WB_REASON_FOREIGN_FLUSH 0xffff969e8d956b40
+    1116521 WB_REASON_FOREIGN_FLUSH 0xffff9698332a9540
+    1275228 WB_REASON_FOREIGN_FLUSH 0xffff969d9b444bc0
+    1099673 WB_REASON_FOREIGN_FLUSH 0xffff969f0954d6c0
+    1351522 WB_REASON_FOREIGN_FLUSH 0xffff969e76713340
+    2567437 WB_REASON_FOREIGN_FLUSH 0xffff9694ae208400
+    2954033 WB_REASON_FOREIGN_FLUSH 0xffff96a22d62cbc0
+    3008860 WB_REASON_FOREIGN_FLUSH 0xffff969eee8ce3c0
+    3337932 WB_REASON_FOREIGN_FLUSH 0xffff9695b45156c0
+    3348916 WB_REASON_FOREIGN_FLUSH 0xffff96a22c7a4f40
+    3345363 WB_REASON_FOREIGN_FLUSH 0xffff969e5d872800
+    3333581 WB_REASON_FOREIGN_FLUSH 0xffff969efd0f4600
+    3382225 WB_REASON_FOREIGN_FLUSH 0xffff969e770edcc0
+    3418770 WB_REASON_FOREIGN_FLUSH 0xffff96a252ceea40
+    3387648 WB_REASON_FOREIGN_FLUSH 0xffff96a3bda86340
+    3385420 WB_REASON_FOREIGN_FLUSH 0xffff969efc6eb280
+    3418730 WB_REASON_FOREIGN_FLUSH 0xffff96a348ab1040
+    3426155 WB_REASON_FOREIGN_FLUSH 0xffff969d90beac00
+    3397995 WB_REASON_FOREIGN_FLUSH 0xffff96a2d7288800
+    3293095 WB_REASON_FOREIGN_FLUSH 0xffff969dab423240
+    3293595 WB_REASON_FOREIGN_FLUSH 0xffff969c765ff400
+    3199511 WB_REASON_FOREIGN_FLUSH 0xffff969a72d5e680
+    3085016 WB_REASON_FOREIGN_FLUSH 0xffff969f0455e000
+    3035712 WB_REASON_FOREIGN_FLUSH 0xffff969d9bbf4b00
+             b. The writeback might severely throttled by wbt, with a =
+speed
+           possibly less than 100kb/s, leading to a very long writeback =
+time.
+         >>> wb.write_bandwidth
+    (unsigned long)24
+    >>> wb.write_bandwidth
+    (unsigned long)13
+         The wb_wait_for_completion() here is probably only used to =
+prevent
+    use-after-free.  Therefore, we manage 'done' separately and =
+automatically
+    free it.
+         This allows us to remove wb_wait_for_completion() while =
+preventing the
+    use-after-free issue.
+     com
+    Fixes: 97b27821b485 ("writeback, memcg: Implement foreign dirty =
+flushing")
+    Signed-off-by: Julian Sun <sunjunchao@bytedance.com>
+    Acked-by: Tejun Heo <tj@kernel.org>
+    Cc: Michal Hocko <mhocko@suse.com>
+    Cc: Roman Gushchin <roman.gushchin@linux.dev>
+    Cc: Johannes Weiner <hannes@cmpxchg.org>
+    Cc: Shakeel Butt <shakeelb@google.com>
+    Cc: Muchun Song <songmuchun@bytedance.com>
+    Cc: <stable@vger.kernel.org>
+    Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 
+Regards,
+Venkat.
 
-Thanks,
-Bernd
-
-
+>=20
 
 
