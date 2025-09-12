@@ -1,367 +1,223 @@
-Return-Path: <linux-fsdevel+bounces-61147-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61148-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D46CCB559B7
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Sep 2025 00:50:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27974B559BB
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Sep 2025 00:51:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EF34AA29AF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 22:50:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D21435C1154
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 22:51:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F90E264619;
-	Fri, 12 Sep 2025 22:50:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7B627281C;
+	Fri, 12 Sep 2025 22:51:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="low8U2Oz"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="xdTHJ/FW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50FCD2DC789
-	for <linux-fsdevel@vger.kernel.org>; Fri, 12 Sep 2025 22:50:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A4C2DC789
+	for <linux-fsdevel@vger.kernel.org>; Fri, 12 Sep 2025 22:51:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757717451; cv=none; b=Z+U2yjHgrn/ckZD+mbizSJPyCOuOVJGxFWJMSsoSKiVwP0tK7ciESYYAno7qcrxASmwikYFfE51GoYRDuBfOYyXtdhuSf4eL3uUf0ftxhihN7IeGFDqWNt5N5PwS1hVFKxWYhHwBGieOaIm9/K310mwpfBrKHlktbAGmfaiw0pM=
+	t=1757717469; cv=none; b=fP/MpWDK2N1AZV3lSwz8/5YNviS5lPOs4GBsky7TItSZnojFCSVMaIE9XkJlRQx1ORLwwqlfEz1ohN70I+sKURNFensn1mEphvYSwh+NaRnXsO5nx+YmTDpvARb2uqyyPKS/w+YThk2o+NdfM5j/xARKMRlEVtNRwASUnicPTx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757717451; c=relaxed/simple;
-	bh=c6aDOYNREuzcbzVhzucqMW4kDNmz6f9tlZJN6nNPlfA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mRTRINHisNlPsv/SvweJa7QGTowlGL+jUA/0gpQiJmIy8wKDlNmEFApAX2p6yPOYcUUYOmO1a/ai7SJTR8ux0UKrK76HZ5OeJfsrGqPupKPJHCz5ktkNoYXwc92QxIiDVieOGBo3O4jYtKx8v7tp4A+UqhX06r/m5GPG63TQxHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=low8U2Oz; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e970acf352fso1767832276.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Sep 2025 15:50:49 -0700 (PDT)
+	s=arc-20240116; t=1757717469; c=relaxed/simple;
+	bh=YOXcGHfg2mf4W3/s6seV2E8GnSQ53UsIc+2kJtFCJdg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k3FV1x62R9CeBazyoHf4tAkwYDWEdChLAdVveZAEM5LTbM4rMKB0wkVe5KhtBFNJ8X7K8BwyViNnJ/Ai+dCb1gdsb/W0yHbnAJA4tnsQWcf8s1XYyk/PQtMdkowgRG7KTXFjqDZcPht/OXPNd9NwceFO9slKpzKvAWcAD1SoqQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=xdTHJ/FW; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-76e4f2e4c40so2212861b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Sep 2025 15:51:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1757717448; x=1758322248; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=UEhfWf1On8xREXNNUE0mR4KQhTs+3NHB5rmBVgl39WI=;
-        b=low8U2OzIMbxa4TZw+s4X7MrkZv4eUWODtNRueJfoniZ9Qc3YPaqzu6NvhmPKU0Mj0
-         XBNioQql18rH/irMfRw1CLyVbNsIhOAP91JTUJnXNc5YBFgxJRIT4kIrNDKDvVETs7Ve
-         1Lu29afzoKngRqqIvTcY7+ZAbbQBu/n9gA7ml7EPPmlq0QrtIk16GoC7E+wcTER0JIN0
-         SMK9aGnReGXaBE42GIbURJG9EVXSJ0bCn8H/YsuNEQd3Q8tRZ9pPzrYTtPjssfBtr8xD
-         56hwvSUGvXDgLkZXsxkYMmVrmn8e5FVpJuWseBRb5zDxgf2/0MW69amrOtedrw27sizR
-         4vug==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1757717465; x=1758322265; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wA+M8hQ1q9cqIOe9bR5VV7iDvsTvhsx295cm0pL5JYQ=;
+        b=xdTHJ/FWK5bDHUhULoHRw2ysK+jsIpnSQGK/wNSSPCAv8hrQeqEhlh+meor4HHqlki
+         4ZUchM1WaFDtQA1VQ+NrAUK07Sv5rfBtQOA1aJOo8oxRybCq9Xr/EavGYvfRxZmGLIRJ
+         V4CeAcdkR67z5HXhFqFBMTvDCr4vw4eTTQJF7oS0MFsdK7RPgFV6Jo9C+r8lymDl/56s
+         zCnp+6rQqMZFNWhZ6qh/q0G3hF8hLVnjgVuoY5Sg+/nBk40tLpPyWJBir4Aff0LKOwKx
+         N01kXNNOEM3DYMXwft93TQyL5wAsrYY0Iw9YmdEeHYaYfF31LpX6nXcjOhvPiQDAslaY
+         6Asg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757717448; x=1758322248;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UEhfWf1On8xREXNNUE0mR4KQhTs+3NHB5rmBVgl39WI=;
-        b=uTYWBnhGuCPXBKO2JpFxNglh4VPXy3sIcg8MgPCrOPnolRas6qsFy4gT2r5Fkw1RFG
-         T5uZpGr3y6t1aXbdmxnQ/9Z86otgkGR7ehxN981n0fMNVD3c9FpNHJY36qM9XByfSYuG
-         Roc+q2OF5Uu8kmfodjM/tppLzfSy+Flk5nQP1UcT6PsU7eA4XjTq0qAiMlFIF6lzUgzw
-         7oXMkL+5C+ZIRvtD3Q3kD5Vr9AICgIsCl772rd9R0j3hNBYldCo90Ivxcf2QRLzuqWQU
-         HaZhmr6nLTbLp7PXLZ6jlgl5LhL70fEyNX23sRhl8t5Ieq7JetoOL+XwStawMVHdnHhF
-         bppg==
-X-Forwarded-Encrypted: i=1; AJvYcCVrJmXyN8p3xHN2irGPckM+zWUhaO1opUX3jHyo+gv2/Szazjxunl+u5HcxGIIiSmWLgrmvDtmVaqRgDhRw@vger.kernel.org
-X-Gm-Message-State: AOJu0YykySlVegpJSDPMtMk2Vvx4+3kbxBgZSqQbhgpdoNjL4Udr0lpq
-	0yTDyp2Qb9s5CAIgqLAjWMIVwV7xcgZESYLOCMbuMS+vrIwy/kVZKCSUtKtYX6Moys0=
-X-Gm-Gg: ASbGnctfgi3ev3HR3tIFuSmLq5k0NBVrlBWOB10Z8ieROWjknu/flbcdpe1C6MXJJWa
-	5L3gwPXaefRC1vVBSyQrJGI3TCQBUitwk2L3Cd0q0K3JRIfgOCxNQHibakMC0e4PRkmw79IEC0I
-	kikJkXYQmOO5rBytd/5fP6K04RKhfLEvcTAz+fR1cBQEbgQkhMlHMHVc+lPfsbRU+B1lGQR7CVB
-	ZxiKH+w0FGAFz/hNZtIjkySQWaxqCS3lMAC+10h8CbclL4BtCQv1Nsj+Hid3AtgI15Md3ZUuRnT
-	ARtaoW7r2SKBk+a+kQR4ilr+CN/bnxbuCiYTwJV9nNgkXHGKw7cj3Y6A2l69mDYZbLSoWZdOQAi
-	2/abza1/OVTgSYqy1goRTKRDrxemVw4E/fg==
-X-Google-Smtp-Source: AGHT+IEE3F+Ve1MuLlrnk8ayAeEsQNg/WnORgu7peE77TiWJLlLBJwsxWuaM2QkU2mKZdLqVxO/p1Q==
-X-Received: by 2002:a05:6902:705:b0:ea3:e84c:f99d with SMTP id 3f1490d57ef6-ea3e84cfcacmr2349774276.1.1757717448024;
-        Fri, 12 Sep 2025 15:50:48 -0700 (PDT)
-Received: from pop-os.attlocal.net ([2600:1700:6476:1430:b6c1:d48b:d9e8:3fbf])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-ea3cf212971sm1731554276.21.2025.09.12.15.50.46
+        d=1e100.net; s=20230601; t=1757717465; x=1758322265;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wA+M8hQ1q9cqIOe9bR5VV7iDvsTvhsx295cm0pL5JYQ=;
+        b=jriQDZGIec6BfHzPBqIjL3M0MOOiD9aa8/aPqKG0HoWM3ZZWrXwSc5i4KxGltTo6jz
+         kKoWf+nQt/9vTPK+i3hZT8K0hcbSODnR1XU0ubOeGMcErNvFj3LXXXrNaTqBH2m/+WNW
+         dt2dFKFL8PtDiUjsNrzZckwyJ7E/x6qd8mOvsyOAeopw8ekZ5BuMN7nGSdBou86Hxl7q
+         78DF6tCKwj/5xdmfXDogw0/So3S/x3ae9JjVNdcNWuXsvDC1DoZ6tgsJpMUI/hP1gJLt
+         rZZymAFk8T40mxt8QVGLfj6B2ztPajqNskEia/N52wCjs9yIUriBoo9PIjO4arITxpQ9
+         7zcA==
+X-Forwarded-Encrypted: i=1; AJvYcCWG4ICkY6yCceEZ3uz4m5d2dybpplSKt8PEZzYsbBpQnwgUt1I0cMSmioPFO7KXANsvMBI+B/gbREpZ+74q@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUp83tX3cdhKROTOuvaBrgSpSsIK/19qVKuzfuigoDGleqfOYA
+	cS+ECt52l4+nhSywEf4H7OXHIDd52IUpGIMWyzTcKrPezdyKhXSsBMmF5YcW7tS4nCsWxecIgR6
+	W2ieM
+X-Gm-Gg: ASbGnctwglLLriSWfB4vSYXlLr3SJgyWUJI0/LNl/OX9KYjm37D9dztPnYnEqHlki5C
+	R5sE5/XEY51l5u+UuRopRkSmq17yKZcVR/vx0f+81tbnlIoD2WeVRdaYtOQ+AcD7ukrflkzMM/v
+	3vs8+c7ED02UQbPBoIJLTJqhnEH78klJfnkD4FzJDosUfLtwYQSqmIJRiIMPIcld6EmOvOdsRvM
+	/iTfPVm0ECMEsNqChiVHViN3f8kzYq/Mu5yN4XtjbUcVNJdO1oOyatH9TlbVR3kR6XCdHVvQPza
+	XmTU4cC5ctfbZX8FR4qv5QAKz3qsJYqv6vnvaPakU+l+QhdpO2E1VkDTVVJmSVuljW2dCSjKDGC
+	qau59fT7OAVqstPKUda9xiNdmW5qFeCgb1eOT0titXMWxZx7wGboseZFAUIcf0YG1oTYfX+WfTi
+	8Wbmp7n8YW
+X-Google-Smtp-Source: AGHT+IFo1lDPGPa9ujzGqWPBkLJtotrvuieRUCiBB83GkElVpJ3pJIT5oPAa+9yUOLlt5ADMfKXopA==
+X-Received: by 2002:a05:6a21:32aa:b0:243:a251:cf51 with SMTP id adf61e73a8af0-2602c71d334mr6093077637.54.1757717465166;
+        Fri, 12 Sep 2025 15:51:05 -0700 (PDT)
+Received: from dread.disaster.area (pa49-180-91-142.pa.nsw.optusnet.com.au. [49.180.91.142])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7760793b6b1sm6487510b3a.20.2025.09.12.15.51.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 15:50:47 -0700 (PDT)
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-To: glaubitz@physik.fu-berlin.de,
-	linux-fsdevel@vger.kernel.org,
-	frank.li@vivo.com
-Cc: Slava.Dubeyko@ibm.com,
-	vdubeyko@redhat.com,
-	Chen Linxuan <me@black-desk.cn>
-Subject: [PATCH v3] hfs: introduce KUnit tests for HFS string operations
-Date: Fri, 12 Sep 2025 15:50:23 -0700
-Message-Id: <20250912225022.1083313-1-slava@dubeyko.com>
-X-Mailer: git-send-email 2.34.1
+        Fri, 12 Sep 2025 15:51:04 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.98.2)
+	(envelope-from <david@fromorbit.com>)
+	id 1uxCbe-000000019Z1-08rs;
+	Sat, 13 Sep 2025 08:51:02 +1000
+Date: Sat, 13 Sep 2025 08:51:02 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Thomas Bertschinger <tahbertschinger@gmail.com>
+Cc: io-uring@vger.kernel.org, axboe@kernel.dk,
+	linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, linux-nfs@vger.kernel.org,
+	linux-xfs@vger.kernel.org, cem@kernel.org, chuck.lever@oracle.com,
+	jlayton@kernel.org, amir73il@gmail.com
+Subject: Re: [PATCH v3 10/10] xfs: add support for non-blocking fh_to_dentry()
+Message-ID: <aMSj1kiRMfP8fZD4@dread.disaster.area>
+References: <20250912152855.689917-1-tahbertschinger@gmail.com>
+ <20250912152855.689917-11-tahbertschinger@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250912152855.689917-11-tahbertschinger@gmail.com>
 
-From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+On Fri, Sep 12, 2025 at 09:28:55AM -0600, Thomas Bertschinger wrote:
+> This is to support using open_by_handle_at(2) via io_uring. It is useful
+> for io_uring to request that opening a file via handle be completed
+> using only cached data, or fail with -EAGAIN if that is not possible.
+> 
+> The signature of xfs_nfs_get_inode() is extended with a new flags
+> argument that allows callers to specify XFS_IGET_INCORE.
+> 
+> That flag is set when the VFS passes the FILEID_CACHED flag via the
+> fileid_type argument.
+> 
+> Signed-off-by: Thomas Bertschinger <tahbertschinger@gmail.com>
+> Acked-by: Amir Goldstein <amir73il@gmail.com>
+> ---
+>  fs/xfs/xfs_export.c | 34 ++++++++++++++++++++++++++--------
+>  fs/xfs/xfs_export.h |  3 ++-
+>  fs/xfs/xfs_handle.c |  2 +-
+>  3 files changed, 29 insertions(+), 10 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_export.c b/fs/xfs/xfs_export.c
+> index 201489d3de08..6a57ed8fd9b7 100644
+> --- a/fs/xfs/xfs_export.c
+> +++ b/fs/xfs/xfs_export.c
+> @@ -106,7 +106,8 @@ struct inode *
+>  xfs_nfs_get_inode(
+>  	struct super_block	*sb,
+>  	u64			ino,
+> -	u32			generation)
+> +	u32			generation,
+> +	uint			flags)
+>  {
+>   	xfs_mount_t		*mp = XFS_M(sb);
+>  	xfs_inode_t		*ip;
+> @@ -123,7 +124,9 @@ xfs_nfs_get_inode(
+>  	 * fine and not an indication of a corrupted filesystem as clients can
+>  	 * send invalid file handles and we have to handle it gracefully..
+>  	 */
+> -	error = xfs_iget(mp, NULL, ino, XFS_IGET_UNTRUSTED, 0, &ip);
+> +	flags |= XFS_IGET_UNTRUSTED;
+> +
+> +	error = xfs_iget(mp, NULL, ino, flags, 0, &ip);
+>  	if (error) {
+>  
+>  		/*
+> @@ -140,6 +143,10 @@ xfs_nfs_get_inode(
+>  		case -EFSCORRUPTED:
+>  			error = -ESTALE;
+>  			break;
+> +		case -ENODATA:
+> +			if (flags & XFS_IGET_INCORE)
+> +				error = -EAGAIN;
+> +			break;
+>  		default:
+>  			break;
+>  		}
+> @@ -170,10 +177,15 @@ xfs_nfs_get_inode(
+>  
+>  STATIC struct dentry *
+>  xfs_fs_fh_to_dentry(struct super_block *sb, struct fid *fid,
+> -		 int fh_len, int fileid_type)
+> +		 int fh_len, int fileid_type_flags)
+>  {
+> +	int			fileid_type = FILEID_TYPE(fileid_type_flags);
+>  	struct xfs_fid64	*fid64 = (struct xfs_fid64 *)fid;
+>  	struct inode		*inode = NULL;
+> +	uint			flags = 0;
+> +
+> +	if (fileid_type_flags & FILEID_CACHED)
+> +		flags = XFS_IGET_INCORE;
 
-This patch implements the initial Kunit based set of
-unit tests for HFS string operations. It checks
-functionality of hfs_strcmp(), hfs_hash_dentry(),
-and hfs_compare_dentry() methods.
+XFS_IGET_INCORE doesn't guarantee non-blocking lookup behaviour. It
+never has and it never will. It simply means we return inodes that
+are already full instantiated or it fails with either EAGAIN or
+ENODATA.
 
-./tools/testing/kunit/kunit.py run --kunitconfig ./fs/hfs/.kunitconfig
+IOWs, XFS_IGET_INCORE exploits the internal XFS inode cache
+architecture (cache lookups are done under RCU locks, so cannot
+block). The resultant cleanup that needs to be done once a ilookup
+fails before another attempt can be made is done outside RCU, and
+the lookup is most definitely allowed to block in those paths before
+it returns -EAGAIN to the outer lookup loop. It is mostly pure luck
+that we don't have any sleeping locks in various internal "need to
+retry the lookup" paths right now.
 
-[16:04:50] Configuring KUnit Kernel ...
-Regenerating .config ...
-Populating config with:
-$ make ARCH=um O=.kunit olddefconfig
-[16:04:51] Building KUnit Kernel ...
-Populating config with:
-$ make ARCH=um O=.kunit olddefconfig
-Building with:
-$ make all compile_commands.json scripts_gdb ARCH=um O=.kunit --jobs=22
-[16:04:59] Starting KUnit Kernel (1/1)...
-[16:04:59] ============================================================
-Running tests with:
-$ .kunit/linux kunit.enable=1 mem=1G console=tty kunit_shutdown=halt
-[16:04:59] ================= hfs_string (3 subtests) ==================
-[16:04:59] [PASSED] hfs_strcmp_test
-[16:04:59] [PASSED] hfs_hash_dentry_test
-[16:04:59] [PASSED] hfs_compare_dentry_test
-[16:04:59] =================== [PASSED] hfs_string ====================
-[16:04:59] ============================================================
-[16:04:59] Testing complete. Ran 3 tests: passed: 3
-[16:04:59] Elapsed time: 9.087s total, 1.310s configuring, 7.611s building, 0.125s running
+Exposing XFS_IGET_INCORE functionality to the outside world does not
+fill me with joy, especially to a userspace ABI.  i.e. this takes a
+rarely used, niche internal filesystem behaviour, redefines how it
+is supposed to behave and what it guarantees to callers without
+actually defining those semantics, and then requires the filesystem
+to support it forever more (because io_uring is kernel/userspace
+ABI).
 
-v2
-Fix linker error.
+IOWs, this is a NACK on using XFS_IGET_INCORE for FILEID_CACHED. The
+semantics that are required bu io_uring are non-blocking lookups,
+and that should be defined by a new flag (say XFS_IGET_NONBLOCK)
+with clearly defined and agreed upon semantics.
 
-v3
-Chen Linxuan suggested to use EXPORT_SYMBOL_IF_KUNIT.
+Indeed, this shows the semantic problem with defining the generic
+filehandle behaviour as FILEID_CACHED. io_ uring does not want
+-cached- inode lookups, it wants *non-blocking* inode lookups.
+These are *not* equivalent lookup semantics.
 
-Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-cc: Yangtao Li <frank.li@vivo.com>
-cc: linux-fsdevel@vger.kernel.org
-cc: Chen Linxuan <me@black-desk.cn>
----
- fs/hfs/.kunitconfig  |   7 +++
- fs/hfs/Kconfig       |  15 +++++
- fs/hfs/Makefile      |   2 +
- fs/hfs/string.c      |   5 ++
- fs/hfs/string_test.c | 133 +++++++++++++++++++++++++++++++++++++++++++
- 5 files changed, 162 insertions(+)
- create mode 100644 fs/hfs/.kunitconfig
- create mode 100644 fs/hfs/string_test.c
+e.g. find_inode_fast() has FILEID_CACHED compatible semantics - it
+will return either a referenced, fully instantiated cached inode or
+null.
 
-diff --git a/fs/hfs/.kunitconfig b/fs/hfs/.kunitconfig
-new file mode 100644
-index 000000000000..5caa9af1e3bb
---- /dev/null
-+++ b/fs/hfs/.kunitconfig
-@@ -0,0 +1,7 @@
-+CONFIG_KUNIT=y
-+CONFIG_HFS_FS=y
-+CONFIG_HFS_KUNIT_TEST=y
-+CONFIG_BLOCK=y
-+CONFIG_BUFFER_HEAD=y
-+CONFIG_NLS=y
-+CONFIG_LEGACY_DIRECT_IO=y
-diff --git a/fs/hfs/Kconfig b/fs/hfs/Kconfig
-index 5ea5cd8ecea9..7f3cbe43b4b7 100644
---- a/fs/hfs/Kconfig
-+++ b/fs/hfs/Kconfig
-@@ -13,3 +13,18 @@ config HFS_FS
- 
- 	  To compile this file system support as a module, choose M here: the
- 	  module will be called hfs.
-+
-+config HFS_KUNIT_TEST
-+	tristate "KUnit tests for HFS filesystem" if !KUNIT_ALL_TESTS
-+	depends on HFS_FS && KUNIT
-+	default KUNIT_ALL_TESTS
-+	help
-+	  This builds KUnit tests for the HFS filesystem.
-+
-+	  KUnit tests run during boot and output the results to the debug
-+	  log in TAP format (https://testanything.org/). Only useful for
-+	  kernel devs running KUnit test harness and are not for inclusion
-+	  into a production build.
-+
-+	  For more information on KUnit and unit tests in general please
-+	  refer to the KUnit documentation in Documentation/dev-tools/kunit/.
-diff --git a/fs/hfs/Makefile b/fs/hfs/Makefile
-index b65459bf3dc4..a7c9ce6b4609 100644
---- a/fs/hfs/Makefile
-+++ b/fs/hfs/Makefile
-@@ -9,3 +9,5 @@ hfs-objs := bitmap.o bfind.o bnode.o brec.o btree.o \
- 	    catalog.o dir.o extent.o inode.o attr.o mdb.o \
-             part_tbl.o string.o super.o sysdep.o trans.o
- 
-+# KUnit tests
-+obj-$(CONFIG_HFS_KUNIT_TEST) += string_test.o
-diff --git a/fs/hfs/string.c b/fs/hfs/string.c
-index 3912209153a8..0cfa35e82abc 100644
---- a/fs/hfs/string.c
-+++ b/fs/hfs/string.c
-@@ -16,6 +16,8 @@
- #include "hfs_fs.h"
- #include <linux/dcache.h>
- 
-+#include <kunit/visibility.h>
-+
- /*================ File-local variables ================*/
- 
- /*
-@@ -65,6 +67,7 @@ int hfs_hash_dentry(const struct dentry *dentry, struct qstr *this)
- 	this->hash = end_name_hash(hash);
- 	return 0;
- }
-+EXPORT_SYMBOL_IF_KUNIT(hfs_hash_dentry);
- 
- /*
-  * Compare two strings in the HFS filename character ordering
-@@ -87,6 +90,7 @@ int hfs_strcmp(const unsigned char *s1, unsigned int len1,
- 	}
- 	return len1 - len2;
- }
-+EXPORT_SYMBOL_IF_KUNIT(hfs_strcmp);
- 
- /*
-  * Test for equality of two strings in the HFS filename character ordering.
-@@ -112,3 +116,4 @@ int hfs_compare_dentry(const struct dentry *dentry,
- 	}
- 	return 0;
- }
-+EXPORT_SYMBOL_IF_KUNIT(hfs_compare_dentry);
-diff --git a/fs/hfs/string_test.c b/fs/hfs/string_test.c
-new file mode 100644
-index 000000000000..e1bf6f954312
---- /dev/null
-+++ b/fs/hfs/string_test.c
-@@ -0,0 +1,133 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * KUnit tests for HFS string operations
-+ *
-+ * Copyright (C) 2025 Viacheslav Dubeyko <slava@dubeyko.com>
-+ */
-+
-+#include <kunit/test.h>
-+#include <linux/dcache.h>
-+#include "hfs_fs.h"
-+
-+/* Test hfs_strcmp function */
-+static void hfs_strcmp_test(struct kunit *test)
-+{
-+	/* Test equal strings */
-+	KUNIT_EXPECT_EQ(test, 0, hfs_strcmp("hello", 5, "hello", 5));
-+	KUNIT_EXPECT_EQ(test, 0, hfs_strcmp("test", 4, "test", 4));
-+	KUNIT_EXPECT_EQ(test, 0, hfs_strcmp("", 0, "", 0));
-+
-+	/* Test unequal strings */
-+	KUNIT_EXPECT_NE(test, 0, hfs_strcmp("hello", 5, "world", 5));
-+	KUNIT_EXPECT_NE(test, 0, hfs_strcmp("test", 4, "testing", 7));
-+
-+	/* Test different lengths */
-+	KUNIT_EXPECT_LT(test, hfs_strcmp("test", 4, "testing", 7), 0);
-+	KUNIT_EXPECT_GT(test, hfs_strcmp("testing", 7, "test", 4), 0);
-+
-+	/* Test case insensitive comparison (HFS should handle case) */
-+	KUNIT_EXPECT_EQ(test, 0, hfs_strcmp("Test", 4, "TEST", 4));
-+	KUNIT_EXPECT_EQ(test, 0, hfs_strcmp("hello", 5, "HELLO", 5));
-+
-+	/* Test with special characters */
-+	KUNIT_EXPECT_EQ(test, 0, hfs_strcmp("file.txt", 8, "file.txt", 8));
-+	KUNIT_EXPECT_NE(test, 0, hfs_strcmp("file.txt", 8, "file.dat", 8));
-+
-+	/* Test boundary cases */
-+	KUNIT_EXPECT_EQ(test, 0, hfs_strcmp("a", 1, "a", 1));
-+	KUNIT_EXPECT_NE(test, 0, hfs_strcmp("a", 1, "b", 1));
-+}
-+
-+/* Test hfs_hash_dentry function */
-+static void hfs_hash_dentry_test(struct kunit *test)
-+{
-+	struct qstr test_name1, test_name2, test_name3;
-+	struct dentry dentry = {};
-+	char name1[] = "testfile";
-+	char name2[] = "TestFile";
-+	char name3[] = "different";
-+
-+	/* Initialize test strings */
-+	test_name1.name = name1;
-+	test_name1.len = strlen(name1);
-+	test_name1.hash = 0;
-+
-+	test_name2.name = name2;
-+	test_name2.len = strlen(name2);
-+	test_name2.hash = 0;
-+
-+	test_name3.name = name3;
-+	test_name3.len = strlen(name3);
-+	test_name3.hash = 0;
-+
-+	/* Test hashing */
-+	KUNIT_EXPECT_EQ(test, 0, hfs_hash_dentry(&dentry, &test_name1));
-+	KUNIT_EXPECT_EQ(test, 0, hfs_hash_dentry(&dentry, &test_name2));
-+	KUNIT_EXPECT_EQ(test, 0, hfs_hash_dentry(&dentry, &test_name3));
-+
-+	/* Case insensitive names should hash the same */
-+	KUNIT_EXPECT_EQ(test, test_name1.hash, test_name2.hash);
-+
-+	/* Different names should have different hashes */
-+	KUNIT_EXPECT_NE(test, test_name1.hash, test_name3.hash);
-+}
-+
-+/* Test hfs_compare_dentry function */
-+static void hfs_compare_dentry_test(struct kunit *test)
-+{
-+	struct qstr test_name;
-+	struct dentry dentry = {};
-+	char name[] = "TestFile";
-+
-+	test_name.name = name;
-+	test_name.len = strlen(name);
-+
-+	/* Test exact match */
-+	KUNIT_EXPECT_EQ(test, 0, hfs_compare_dentry(&dentry, 8,
-+						    "TestFile", &test_name));
-+
-+	/* Test case insensitive match */
-+	KUNIT_EXPECT_EQ(test, 0, hfs_compare_dentry(&dentry, 8,
-+						    "testfile", &test_name));
-+	KUNIT_EXPECT_EQ(test, 0, hfs_compare_dentry(&dentry, 8,
-+						    "TESTFILE", &test_name));
-+
-+	/* Test different names */
-+	KUNIT_EXPECT_EQ(test, 1, hfs_compare_dentry(&dentry, 8,
-+						    "DiffFile", &test_name));
-+
-+	/* Test different lengths */
-+	KUNIT_EXPECT_EQ(test, 1, hfs_compare_dentry(&dentry, 7,
-+						    "TestFil", &test_name));
-+	KUNIT_EXPECT_EQ(test, 1, hfs_compare_dentry(&dentry, 9,
-+						    "TestFiles", &test_name));
-+
-+	/* Test empty string */
-+	test_name.name = "";
-+	test_name.len = 0;
-+	KUNIT_EXPECT_EQ(test, 0, hfs_compare_dentry(&dentry, 0, "", &test_name));
-+
-+	/* Test HFS_NAMELEN boundary */
-+	test_name.name = "This_is_a_very_long_filename_that_exceeds_normal_limits";
-+	test_name.len = strlen(test_name.name);
-+	KUNIT_EXPECT_EQ(test, 0, hfs_compare_dentry(&dentry, HFS_NAMELEN,
-+			"This_is_a_very_long_filename_th", &test_name));
-+}
-+
-+static struct kunit_case hfs_string_test_cases[] = {
-+	KUNIT_CASE(hfs_strcmp_test),
-+	KUNIT_CASE(hfs_hash_dentry_test),
-+	KUNIT_CASE(hfs_compare_dentry_test),
-+	{}
-+};
-+
-+static struct kunit_suite hfs_string_test_suite = {
-+	.name = "hfs_string",
-+	.test_cases = hfs_string_test_cases,
-+};
-+
-+kunit_test_suite(hfs_string_test_suite);
-+
-+MODULE_DESCRIPTION("KUnit tests for HFS string operations");
-+MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS("EXPORTED_FOR_KUNIT_TESTING");
+However, find_inode_fast() does *not have non-blocking behaviour*.
+If it finds an inode being freed, it will block until that inode has
+been removed from the cache, then it will retry the lookup and
+return NULL because the inode is no longer found in the cache.
+
+IOWs, "only return in-cache inodes" is fundamentally the wrong
+semantic to implement for non-blocking filehandle decoding. The API
+needs to ask for non-blocking lookup semantics, not "in-cache"
+lookup semantics.
+
+-Dave.
 -- 
-2.51.0
-
+Dave Chinner
+david@fromorbit.com
 
