@@ -1,56 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-61145-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61146-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F69CB5599C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Sep 2025 00:45:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C15FAB559AE
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Sep 2025 00:46:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56F471D620BF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 22:45:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C96253AD0C3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 22:46:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CED52868A6;
-	Fri, 12 Sep 2025 22:45:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 319E5283C89;
+	Fri, 12 Sep 2025 22:46:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="H76IZjXx"
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="acIupnwF"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1514254B09;
-	Fri, 12 Sep 2025 22:44:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37B5E18871F;
+	Fri, 12 Sep 2025 22:46:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757717099; cv=pass; b=I5t/fOFmDYAM6phETAGQzOBMptx2i+EdfPKk9Na8n4Y+/dupNnBPVDpL5kdC8K8d7CRQXKCXB9kT2dPSLbXmfegIMaqKYNetLLYL21BBjws6F+8fs61G04HJ/DbkDF1qei+vIJDwl13v2ERYz/qzn/dNAZ87zojNNGWj6kSaLlI=
+	t=1757717188; cv=pass; b=CdHkWitXfBUSOYM8w8LeScDyL81bxpzV/DbNGR01ecUv6tSN8iZ9ihUvd/vnBlF7WOMYvEJX4Y8N1qDBOf03WHAbW9ni4hfhmbFadCeFeGO0jp/K+/WdCOpXj4puUL5Oy4Wmkrlyx+rLUdClhNZ9Z/Uv1GgHbQdOXR9mBFvAWzU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757717099; c=relaxed/simple;
-	bh=tghuiPzYOsNrv8QCNZMfQoYQ3DpbIYWZtaPF0LKfgGA=;
+	s=arc-20240116; t=1757717188; c=relaxed/simple;
+	bh=guye89JU8c6lU3xOKktnL/Suo1HlmTbQCY9h2iBDVkw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VgOrP9fXqWKnurQTKC+SgpYRqssZkgQZsqsyE0KauPCwiBo7eAWHGobQE3XHpnOP/E3Ce7UcKFgmeh/ffqmt26c3E900wtNhPqDIacvjs2uiX9g/O5hIyTTv1xMjJCTpL3zXm+w3rN9ti7S4945MWGwm4uRNpzE6nfA3HIX+8Ak=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=H76IZjXx; arc=pass smtp.client-ip=136.143.188.95
+	 MIME-Version; b=Lxzx0IabSO5yvxP6/QXwcUmvLEkQFogYWLhenJGKLBzvSqnQIVJ11blDGIy4vNWh+Gn63GqE0Wd11rwN3S7Kbvg8AAX7hXJaFoYlNBXs6ORmqudh42KVQYzssCf0BL/vhFIq8QUpd/I0nX/eWjfwmcOERZ+r7P92kTokPf+2cK0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=acIupnwF; arc=pass smtp.client-ip=136.143.188.95
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1757716867; cv=none; 
+ARC-Seal: i=1; a=rsa-sha256; t=1757716883; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=ndn2Z8a3SDSKS+4kTHXRcb3N4/LdylXuGvzx4c28cN4oloBA7/mmBtA/D1g5YLX3tA/x+NzHXLbsg9SpOAFs/mXEppquRpTx5XmXgzZPOpZTLMhT3+WvvMLqeTGdpxuz3ZNGDhL0hxik7zI2HdYKOJsbCelhbdoVCgOhStWsz5w=
+	b=cYmkTWVTcQlLmLr5V8p1CrwhziHK5jWEHqN1/x0dbbnP4N6eqwJhNpFD+YvvcG1JcA1pILR0lg+/Ny7uiewAqWrYp0xgwBVqCid/qUwxU2pBACMW8E+qi9+gH5uFDpaMNSKBUmBcqwPg32DVp6NEprKLCwOzLldRlExaYRgKRTw=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757716867; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=06D4xOw6vQ3KB42oskAhV5LNczKCiJW3E5jLeODB68E=; 
-	b=mH0OdEP+8glg5yz9sALXY3gmTNUTIdUAY8BV7mXW6yswVZwwt9cYiYDo9ESO6I6qEiyj49CiAITMwDVZbaAlqWwp+TjvliYVe4sfEYykV0peW1ZQ34dY36WYLSz3oDe9agLx4fRBKKQvkEwKqsT31gr35VDcGQTtgoRdmoUwI6U=
+	t=1757716883; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=q9iQK8EdIF6RRP4HkX18/uU6rY0egPm6PmmgTdmDikE=; 
+	b=Ju1dqMVIkIYpU5LdsWBIf/CGwDsN0K99qbvJhITUG43b4iO5ReBci570gSrCvJZpIaavRZGeh519zGwQ3xzl9eLPP7B/6fd5qSQvFqfvp30skE+0PjF0wF1ZPM088gDBmx9lu1/Hmu9iiGaXsgt143EyXlTcYz1mO0b4E8ZkWow=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=zohomail.com;
 	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
 	dmarc=pass header.from=<safinaskar@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757716867;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757716883;
 	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
 	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=06D4xOw6vQ3KB42oskAhV5LNczKCiJW3E5jLeODB68E=;
-	b=H76IZjXxKzHcaO61MC5mUvXa9vcEm4/KEBvaVdt8amCtKLP09DrEHAXVNO5oNsc3
-	7gPoCC7xL41RFYvZ+Ociq2lPhKRUN3F6sHGDPCRxxh3w523SyqqbQQYJLkuVjpIzcbA
-	8GEh5pfvxkuBeSHIjwRFF8UuzEdjsqSXC3nmvVgk=
-Received: by mx.zohomail.com with SMTPS id 1757716865526674.5594283397235;
-	Fri, 12 Sep 2025 15:41:05 -0700 (PDT)
+	bh=q9iQK8EdIF6RRP4HkX18/uU6rY0egPm6PmmgTdmDikE=;
+	b=acIupnwFZvyRH5FokPCft4nvGFUMr39pqEpKs0NtNZVw5kg9Xyn8fLnVwVnsMrYi
+	icAGCn5xQY/D8nPVu8I73mfObC5kAiAiUgDDUOK0dT7tuN6mPBE7LpoJ79v5Pcf1s+2
+	+A3prhgVdkGFxaNK2Z8tJ6RB7TjqHAI2HFOwbXVs=
+Received: by mx.zohomail.com with SMTPS id 1757716881894668.1339002049043;
+	Fri, 12 Sep 2025 15:41:21 -0700 (PDT)
 From: Askar Safin <safinaskar@zohomail.com>
 To: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
@@ -105,10 +105,11 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
 	Kees Cook <kees@kernel.org>,
 	Thorsten Blum <thorsten.blum@linux.dev>,
 	Heiko Carstens <hca@linux.ibm.com>,
-	patches@lists.linux.dev
-Subject: [PATCH 02/62] init: remove deprecated "prompt_ramdisk" command line parameter, which does nothing
-Date: Fri, 12 Sep 2025 22:38:37 +0000
-Message-ID: <20250912223937.3735076-3-safinaskar@zohomail.com>
+	patches@lists.linux.dev,
+	stable+noautosel@kernel.org
+Subject: [PATCH 03/62] init: sh, sparc, x86: remove unused constants RAMDISK_PROMPT_FLAG and RAMDISK_LOAD_FLAG
+Date: Fri, 12 Sep 2025 22:38:38 +0000
+Message-ID: <20250912223937.3735076-4-safinaskar@zohomail.com>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250912223937.3735076-1-safinaskar@zohomail.com>
 References: <20250912223937.3735076-1-safinaskar@zohomail.com>
@@ -119,62 +120,89 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Feedback-ID: rr08011227193e59542dd9f505fa391c9f00000f0706a9cbd22502a3cce0c3d0602ad045b54fc46916c6db2b:zu08011227c1468c513514c5d8768cbcc5000096aaceab903bfdc5a1a7fa3d9acdd3d6733829806c96cd5a3d:rf0801122c37aef85d4cb37fa8db0bf1370000bcf9ac991f815639329c52d47b31d2983fa609b068d95033b55c83eee375:ZohoMail
+Feedback-ID: rr080112274be46f51a3e6d7b65453b8c4000084fba7464352cc4dc9cd50377fd7f09b0684ed62a16f1e6eeb:zu08011227aebba3291345918c920d3b3a00008f86ff3411911b832b8b206255ff0b95bb9fe1592be8b5327b:rf0801122cd997ff081c6a0f543772417b00002b369a2b05bf7efffc2b9c1c1140566e0d80ce0978fa409c151951bada9a:ZohoMail
 X-ZohoMailClient: External
 
-This is preparation for initrd removal
+They were used for initrd before c8376994c86.
 
+c8376994c86c made them unused and forgot to remove them
+
+Fixes: c8376994c86c ("initrd: remove support for multiple floppies")
+Cc: <stable+noautosel@kernel.org> # because changes uapi headers
 Signed-off-by: Askar Safin <safinaskar@zohomail.com>
 ---
- Documentation/admin-guide/kernel-parameters.txt | 2 --
- arch/arm/configs/neponset_defconfig             | 2 +-
- init/do_mounts_rd.c                             | 7 -------
- 3 files changed, 1 insertion(+), 10 deletions(-)
+ arch/sh/kernel/setup.c                | 2 --
+ arch/sparc/kernel/setup_32.c          | 2 --
+ arch/sparc/kernel/setup_64.c          | 2 --
+ arch/x86/include/uapi/asm/bootparam.h | 2 --
+ arch/x86/kernel/setup.c               | 2 --
+ 5 files changed, 10 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index d3b05ce249ff..f940c1184912 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -5229,8 +5229,6 @@
- 			Param: <number> - step/bucket size as a power of 2 for
- 				statistical time based profiling.
+diff --git a/arch/sh/kernel/setup.c b/arch/sh/kernel/setup.c
+index 039a51291002..d66f098e9e9f 100644
+--- a/arch/sh/kernel/setup.c
++++ b/arch/sh/kernel/setup.c
+@@ -71,8 +71,6 @@ EXPORT_SYMBOL(sh_mv);
+ extern int root_mountflags;
  
--	prompt_ramdisk=	[RAM] [Deprecated]
--
- 	prot_virt=	[S390] enable hosting protected virtual machines
- 			isolated from the hypervisor (if hardware supports
- 			that). If enabled, the default kernel base address
-diff --git a/arch/arm/configs/neponset_defconfig b/arch/arm/configs/neponset_defconfig
-index 16f7300239da..4d720001c12e 100644
---- a/arch/arm/configs/neponset_defconfig
-+++ b/arch/arm/configs/neponset_defconfig
-@@ -9,7 +9,7 @@ CONFIG_ASSABET_NEPONSET=y
- CONFIG_ZBOOT_ROM_TEXT=0x80000
- CONFIG_ZBOOT_ROM_BSS=0xc1000000
- CONFIG_ZBOOT_ROM=y
--CONFIG_CMDLINE="console=ttySA0,38400n8 cpufreq=221200 rw root=/dev/mtdblock2 mtdparts=sa1100:512K(boot),1M(kernel),2560K(initrd),4M(root) prompt_ramdisk=0 mem=32M noinitrd initrd=0xc0800000,3M"
-+CONFIG_CMDLINE="console=ttySA0,38400n8 cpufreq=221200 rw root=/dev/mtdblock2 mtdparts=sa1100:512K(boot),1M(kernel),2560K(initrd),4M(root) mem=32M noinitrd initrd=0xc0800000,3M"
- CONFIG_FPE_NWFPE=y
- CONFIG_PM=y
- CONFIG_MODULES=y
-diff --git a/init/do_mounts_rd.c b/init/do_mounts_rd.c
-index ac021ae6e6fa..f7d53bc21e41 100644
---- a/init/do_mounts_rd.c
-+++ b/init/do_mounts_rd.c
-@@ -17,13 +17,6 @@
- static struct file *in_file, *out_file;
- static loff_t in_pos, out_pos;
+ #define RAMDISK_IMAGE_START_MASK	0x07FF
+-#define RAMDISK_PROMPT_FLAG		0x8000
+-#define RAMDISK_LOAD_FLAG		0x4000
  
--static int __init prompt_ramdisk(char *str)
--{
--	pr_warn("ignoring the deprecated prompt_ramdisk= option\n");
--	return 1;
--}
--__setup("prompt_ramdisk=", prompt_ramdisk);
--
- int __initdata rd_image_start;		/* starting block # of image */
+ static char __initdata command_line[COMMAND_LINE_SIZE] = { 0, };
  
- static int __init ramdisk_start_setup(char *str)
+diff --git a/arch/sparc/kernel/setup_32.c b/arch/sparc/kernel/setup_32.c
+index 704375c061e7..eb60be31127f 100644
+--- a/arch/sparc/kernel/setup_32.c
++++ b/arch/sparc/kernel/setup_32.c
+@@ -172,8 +172,6 @@ extern unsigned short root_flags;
+ extern unsigned short root_dev;
+ extern unsigned short ram_flags;
+ #define RAMDISK_IMAGE_START_MASK	0x07FF
+-#define RAMDISK_PROMPT_FLAG		0x8000
+-#define RAMDISK_LOAD_FLAG		0x4000
+ 
+ extern int root_mountflags;
+ 
+diff --git a/arch/sparc/kernel/setup_64.c b/arch/sparc/kernel/setup_64.c
+index 63615f5c99b4..f728f1b00aca 100644
+--- a/arch/sparc/kernel/setup_64.c
++++ b/arch/sparc/kernel/setup_64.c
+@@ -145,8 +145,6 @@ extern unsigned short root_flags;
+ extern unsigned short root_dev;
+ extern unsigned short ram_flags;
+ #define RAMDISK_IMAGE_START_MASK	0x07FF
+-#define RAMDISK_PROMPT_FLAG		0x8000
+-#define RAMDISK_LOAD_FLAG		0x4000
+ 
+ extern int root_mountflags;
+ 
+diff --git a/arch/x86/include/uapi/asm/bootparam.h b/arch/x86/include/uapi/asm/bootparam.h
+index dafbf581c515..f53dd3f319ba 100644
+--- a/arch/x86/include/uapi/asm/bootparam.h
++++ b/arch/x86/include/uapi/asm/bootparam.h
+@@ -6,8 +6,6 @@
+ 
+ /* ram_size flags */
+ #define RAMDISK_IMAGE_START_MASK	0x07FF
+-#define RAMDISK_PROMPT_FLAG		0x8000
+-#define RAMDISK_LOAD_FLAG		0x4000
+ 
+ /* loadflags */
+ #define LOADED_HIGH	(1<<0)
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index 1b2edd07a3e1..6409e766fb17 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -223,8 +223,6 @@ extern int root_mountflags;
+ unsigned long saved_video_mode;
+ 
+ #define RAMDISK_IMAGE_START_MASK	0x07FF
+-#define RAMDISK_PROMPT_FLAG		0x8000
+-#define RAMDISK_LOAD_FLAG		0x4000
+ 
+ static char __initdata command_line[COMMAND_LINE_SIZE];
+ #ifdef CONFIG_CMDLINE_BOOL
 -- 
 2.47.2
 
