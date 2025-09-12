@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-61048-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61049-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 987F7B54BB3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 13:54:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60DD7B54BBD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 13:55:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E52213B3875
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 11:54:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C047188877A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 11:55:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 996833054E9;
-	Fri, 12 Sep 2025 11:53:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF363019BD;
+	Fri, 12 Sep 2025 11:53:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jy/lyLBT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UL65M9My"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B987B301479;
-	Fri, 12 Sep 2025 11:53:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C79A3019A4;
+	Fri, 12 Sep 2025 11:53:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757677997; cv=none; b=soK2F1LGfFej1H1XJYZExJMiNz8eNDNU4pAVbU9dxTQE9E0Sxz5+pbBATN7+6Od0SH1v6Xl8FJ9xU2l/EPf1M4ScWLS8JS3CjxPWg9ibVTLgyFNOvcdSjhEXvoHy709t+T8LKQHLZqhU2UrF+D+9meusZR7YJK2fuuNoJAkquus=
+	t=1757678003; cv=none; b=lpAo4qu42zx+++RggS03y5ax1mXy7MmYaxBCVQQ5vUP5bOqdVWGCQ+u6/yw9KIIcg2whnqnni5axxrv1xECTjHvE5im7b5rsfM1+ggd8GlzPhXsdcka0htV9KZoHvH6iyY5f2QGGCPXq++xMPWbr8Sj+MUyN6p5PC8R6J7/p9XE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757677997; c=relaxed/simple;
-	bh=bpHiyS+5xC4YzDvagV0hyz6n4+V/wicp1a49CbMaOpc=;
+	s=arc-20240116; t=1757678003; c=relaxed/simple;
+	bh=4TrrGhkDl8cVInpL/zoiUoeW6yQ/INmYgdreh+8f+J4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=tty/W4dG6v2x52u3w/J4rkaKab1yYPf8eE+7R+0DTMJAxPIEd39Vi7QzafeDC5NsQAhb0LNumfHAYHlXNiv+cfcQ78s2ez4R97Nous7p1QZK4+eEu6dyL5CeIC1oyoq1N5gH4KZkDJ8rtYRiZS/bwgyh5Awps7qp3YkGZcK6koU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jy/lyLBT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC15AC4CEF4;
-	Fri, 12 Sep 2025 11:53:11 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=Ox1OKvYbXve8TRVR3aZNnpLRdIZyO09B5brib/iYaxkM1Y9ltJfmBvyJCVff4ghERDRaVqK2O3F02rHh2gbsqr9Yf63JtHINjyh4m5PwJ/WZ2iNbfIb9Ucw3okYlg+yLdTv6iORq/eHJe8lc8cscyLZgZoXn2xOBjBUl7rsc02I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UL65M9My; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7EA5C4CEF1;
+	Fri, 12 Sep 2025 11:53:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757677997;
-	bh=bpHiyS+5xC4YzDvagV0hyz6n4+V/wicp1a49CbMaOpc=;
+	s=k20201202; t=1757678003;
+	bh=4TrrGhkDl8cVInpL/zoiUoeW6yQ/INmYgdreh+8f+J4=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=jy/lyLBT4KJ4Qtm8oq3503OT9hfcr0UZvAI1fzTUnNQGH5a6CDXHnre90qYxxME/i
-	 vVzQtvulOvvMp1QdO/N98tTZ0C3dtPTkZcdTGqUxpslzv1mJQRJvk/f43r9epxbJRl
-	 kF09XsGaXXNk/ByiruGnE4jJou6e5pm3U8thqEnT0VuDzjreTgVlZ8Ft1DVVkmz8yx
-	 fvSBmOpH8IQNNexzS5ikFNP72+PVjdbqXo8IEarwhknpOYcS/AV8p8Qw5cRzZGQ4WF
-	 rnrbdV5MDwc7TKgE96y3IbsWuu8F79LLm99yg1AT0Jn5KJAAjr5l3A0Z7VWwgscnFV
-	 Mv0mgMuHiyThw==
+	b=UL65M9MyR31l64FuqysOs0sI4sYvxTIudeRCstGmHjT9X5iqnBEvH6HcQbL0qD7Oi
+	 +vCevhE/HzX5Dpz22KfnVkzsotGsqNRFpEI9l+sK7LSHumZ7+3CwqY2pCn46ka+ZeF
+	 VIuafE+BajOls8KdA67HEpwdBVOGFB31w4tqwIy5flR3qad2Pzroo7EQXn/vYDPTL2
+	 8hEtcqcgs+7WSF1Av7U/RHI89aZv0X2a8+U+07Sz3jAC/g2YUeOAM1qnJ9eyuRTWQU
+	 MEvlGC4PhP+laSINuZdlzFxd+xCFKeDaGRsGo7dLz9FZ5Op8R2mmL/SdPpxw8XbiGD
+	 1x9oROgeNMDDw==
 From: Christian Brauner <brauner@kernel.org>
-Date: Fri, 12 Sep 2025 13:52:26 +0200
-Subject: [PATCH v2 03/33] nsfs: validate extensible ioctls
+Date: Fri, 12 Sep 2025 13:52:27 +0200
+Subject: [PATCH v2 04/33] block: use extensible_ioctl_valid()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250912-work-namespace-v2-3-1a247645cef5@kernel.org>
+Message-Id: <20250912-work-namespace-v2-4-1a247645cef5@kernel.org>
 References: <20250912-work-namespace-v2-0-1a247645cef5@kernel.org>
 In-Reply-To: <20250912-work-namespace-v2-0-1a247645cef5@kernel.org>
 To: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
@@ -72,40 +72,49 @@ Cc: Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>,
  linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
  netdev@vger.kernel.org, Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.14.3-dev-385fa
-X-Developer-Signature: v=1; a=openpgp-sha256; l=917; i=brauner@kernel.org;
- h=from:subject:message-id; bh=bpHiyS+5xC4YzDvagV0hyz6n4+V/wicp1a49CbMaOpc=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQc4ZyyR/3DA56ll5mds7rlig6/Uk76+/3vM4/Vcr8f9
- ++wcIht7yhlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZiIzX9Gho4ZIZZVs2YFJpnf
- mmf/M0jJTe9W8Lrq9zNygn+o3oxJaWf4p5a9jSNtyW/Byoe7T4ZeNwxa/6V9amHoRr6zqy1rG0u
- ncQMA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1280; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=4TrrGhkDl8cVInpL/zoiUoeW6yQ/INmYgdreh+8f+J4=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQc4ZziVPHtk9wXNyvvW59W/7r3cdYT64uTpzS+05krd
+ S7l6JWz8R2lLAxiXAyyYoosDu0m4XLLeSo2G2VqwMxhZQIZwsDFKQAT6dzJyNBsn3vLTn7fmvlG
+ M9bwcMYm2iQWPqhSMp8YYHn+qVNdLzsjw3/GM5PXdf3ZOnt6jlVm5OUHTaeqD/+9WS2m2a9W9Pr
+ xXk4A
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Validate extensible ioctls stricter than we do now.
+Use the new extensible_ioctl_valid() helper which is equivalent to what
+is done here.
 
+Reviewed-by: Jens Axboe <axboe@kernel.dk>
 Reviewed-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/nsfs.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ block/blk-integrity.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/fs/nsfs.c b/fs/nsfs.c
-index ce51041bb624..d016d36272d4 100644
---- a/fs/nsfs.c
-+++ b/fs/nsfs.c
-@@ -169,9 +169,11 @@ static bool nsfs_ioctl_valid(unsigned int cmd)
- 	/* Extensible ioctls require some extra handling. */
- 	switch (_IOC_NR(cmd)) {
- 	case _IOC_NR(NS_MNT_GET_INFO):
-+		return extensible_ioctl_valid(cmd, NS_MNT_GET_INFO, MNT_NS_INFO_SIZE_VER0);
- 	case _IOC_NR(NS_MNT_GET_NEXT):
-+		return extensible_ioctl_valid(cmd, NS_MNT_GET_NEXT, MNT_NS_INFO_SIZE_VER0);
- 	case _IOC_NR(NS_MNT_GET_PREV):
--		return (_IOC_TYPE(cmd) == _IOC_TYPE(cmd));
-+		return extensible_ioctl_valid(cmd, NS_MNT_GET_PREV, MNT_NS_INFO_SIZE_VER0);
- 	}
+diff --git a/block/blk-integrity.c b/block/blk-integrity.c
+index 056b8948369d..609d75d6a39b 100644
+--- a/block/blk-integrity.c
++++ b/block/blk-integrity.c
+@@ -58,16 +58,14 @@ int blk_rq_count_integrity_sg(struct request_queue *q, struct bio *bio)
+ int blk_get_meta_cap(struct block_device *bdev, unsigned int cmd,
+ 		     struct logical_block_metadata_cap __user *argp)
+ {
+-	struct blk_integrity *bi = blk_get_integrity(bdev->bd_disk);
++	struct blk_integrity *bi;
+ 	struct logical_block_metadata_cap meta_cap = {};
+ 	size_t usize = _IOC_SIZE(cmd);
  
- 	return false;
+-	if (_IOC_DIR(cmd)  != _IOC_DIR(FS_IOC_GETLBMD_CAP) ||
+-	    _IOC_TYPE(cmd) != _IOC_TYPE(FS_IOC_GETLBMD_CAP) ||
+-	    _IOC_NR(cmd)   != _IOC_NR(FS_IOC_GETLBMD_CAP) ||
+-	    _IOC_SIZE(cmd) < LBMD_SIZE_VER0)
++	if (extensible_ioctl_valid(cmd, FS_IOC_GETLBMD_CAP, LBMD_SIZE_VER0))
+ 		return -ENOIOCTLCMD;
+ 
++	bi = blk_get_integrity(bdev->bd_disk);
+ 	if (!bi)
+ 		goto out;
+ 
 
 -- 
 2.47.3
