@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-61074-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61075-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6D0CB54C8B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 14:08:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EFD5B54CAE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 14:10:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B87D188B510
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 12:06:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB5C0A07EC3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 12:06:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78D0C3081CD;
-	Fri, 12 Sep 2025 11:55:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9625434DCD6;
+	Fri, 12 Sep 2025 11:55:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WlFYJXiP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uI6Mq85z"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0DE13081C7;
-	Fri, 12 Sep 2025 11:55:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C61C0345722;
+	Fri, 12 Sep 2025 11:55:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757678149; cv=none; b=lKiX0NHo9hQIBSxh8LwGkeP2Vt2Td0qppTGmI3bX1yB7H3VgXWB8Jggk8oTxhHZaAPCYEUvK5ib+UGDSwe0Z2Qnu1SC5oTqpm3wnOm9BSXf0asWCbFG2DINkaeoFK9elIRAz7IlGPzNTrAZCrcZsOHdsplGCFkGyG77K1Y+3NpQ=
+	t=1757678155; cv=none; b=qrEpsV6Eynk0Y2I6X2FLyJk0QGY5LnKbb8TC95TJFtqvnySDvmCXOQYku1hJ1qBBn6g07JVUOEvgK9hC42n7cJVGuUfj/Ll63PNe0LcozcCu59jrpqoZU7zhjhbcirrpYtQSMkly4cOFu5cQdM86LcLcClXLVR4wX177JYCF8rI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757678149; c=relaxed/simple;
-	bh=yObUfUdPCVkTlHS/BGHOoNHxnFYodWOWM1Znc88D5to=;
+	s=arc-20240116; t=1757678155; c=relaxed/simple;
+	bh=QrmIOWpNmJ265k1EdAtkGyosrdV3+sxbSBcDaWsa/Mw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rRKxPlbvoz2E5sGyqAh3Z3HjuEDCDrxdcTIeFakP7r7ElmNMkeM2JuGTmq4LDTPwUQrGXrYQ/5XHK0UlUq6xH9F+Ybl7RO58hnxS7LCmo66gUtrknLIopkVd/W/1F37FE+m0Z72gMmoIszVnGqEouCFwaF4yQZrvp4npmSdODqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WlFYJXiP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F789C4CEF1;
-	Fri, 12 Sep 2025 11:55:43 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=bwgeBTAaclGzgagHkk7Pj0dH9QNTXbpX+OHHAUfuTKuqlaF5JCbzX5b0/bOdpPihC8BkWxYDCyA77o98jEarwB8UEsutF7iFBaLgc89dsL9Opvd+yvOddQfxo4/w3k39pbkoPcDTvyRrkYsdoUuDQjB1E+N/DmmnG4qnQwjOkjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uI6Mq85z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB047C4CEF4;
+	Fri, 12 Sep 2025 11:55:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757678149;
-	bh=yObUfUdPCVkTlHS/BGHOoNHxnFYodWOWM1Znc88D5to=;
+	s=k20201202; t=1757678155;
+	bh=QrmIOWpNmJ265k1EdAtkGyosrdV3+sxbSBcDaWsa/Mw=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=WlFYJXiPEx3J4cg1dDCH7gA6a+qROgJ6CHu5ndCpnNVw1xOKuZ98T+7Q24jMrNU6m
-	 AaRIWvN4Szk6EjmhDzlDY2ZfHqnIy4C31E/GcH4Yam5fV14YJToNhql1lWtWOQOIfJ
-	 M48hgm8lZaeN0v/aTCgHxKJCb/iR1tdR2Mejv93vMD1iJKgnPNQRG+VtTOrc83wt4U
-	 8nnWVslYS05ecshAGveC/pgnvd0uEg8GgIH/nq8YCATrHJc46GddbXgo206UYF/Zpi
-	 0l0y2xgXtLtEeRkTw+VqByxju3YJJ1cs1hf4vktL9S5TFiMARnfADd0ftJhRAY79WI
-	 QqvkYHmBAM34w==
+	b=uI6Mq85zq/mLU9oxrqZFZ7LEr3KHkpAk/NqATr2LkPHf7EPu+CuqDL9m4j4Sb3NPE
+	 gDsqB1F2vZJGoeLH/kVxb7MDFLmaklDlRsx67mBzuh4ZqRCrwQtOWjxKh1UpteeI99
+	 jwiMdtCMl9B74cCy5/4PbpUxFHAcy1tNxPM6jPs5w0G9BdkL2M/hL302xmuAt8inC9
+	 whi3kTeMvoJlhCZLcCOZzSGqOKR/uguy4N6cE7ESPLUS/vLe+L3wshqGfeeHnkzLS5
+	 OAt353mbQ5jGpw6/YRbWBGi37OwAdqjECh8rl9Gna+yn2CyDfwtGOvgwmRdwgWrt4q
+	 pvnHbQg0IQgMQ==
 From: Christian Brauner <brauner@kernel.org>
-Date: Fri, 12 Sep 2025 13:52:52 +0200
-Subject: [PATCH v2 29/33] nsfs: support exhaustive file handles
+Date: Fri, 12 Sep 2025 13:52:53 +0200
+Subject: [PATCH v2 30/33] nsfs: add missing id retrieval support
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250912-work-namespace-v2-29-1a247645cef5@kernel.org>
+Message-Id: <20250912-work-namespace-v2-30-1a247645cef5@kernel.org>
 References: <20250912-work-namespace-v2-0-1a247645cef5@kernel.org>
 In-Reply-To: <20250912-work-namespace-v2-0-1a247645cef5@kernel.org>
 To: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
@@ -72,100 +72,98 @@ Cc: Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>,
  linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
  netdev@vger.kernel.org, Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.14.3-dev-385fa
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2768; i=brauner@kernel.org;
- h=from:subject:message-id; bh=yObUfUdPCVkTlHS/BGHOoNHxnFYodWOWM1Znc88D5to=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQc4Zy6LXCBk8NKqxfXJeoWdzAfTxFcuTtrNf/fPyZPH
- Xp4qnq3dJSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAExkdiLD/7LTuy4ttrNI2vP4
- /HL37TNWnFf6tWe529O1D4JD5h+KnvqPkWF7//MDb2zEZWSFQqtfVVn9j3fnd2WLLJz7S3dCJru
- 5DAcA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2646; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=QrmIOWpNmJ265k1EdAtkGyosrdV3+sxbSBcDaWsa/Mw=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQc4Zyqu3LKL73QvQ/mHt55M3qHa+E0Of+iX6rVKRw3P
+ qzMiuqS6ShlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZhI/FaG/36twqHfxCcueZ+f
+ otOYLN0ffn4DV+DLCcG5ouZe0mVl9owMr3ce9OfbGynJ7X1nw5/9C2936M/YdVArwU+84X6+w/U
+ XnAA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Pidfd file handles are exhaustive meaning they don't require a handle on
-another pidfd to pass to open_by_handle_at() so it can derive the
-filesystem to decode in. Instead it can be derived from the file
-handle itself. The same is possible for namespace file handles.
+The mount namespace has supported id retrieval for a while already.
+Add support for the other types as well.
 
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/fhandle.c               |  6 ++++++
- fs/internal.h              |  1 +
- fs/nsfs.c                  | 10 ++++++++++
- include/uapi/linux/fcntl.h |  1 +
- 4 files changed, 18 insertions(+)
+ fs/nsfs.c                 | 25 +++++++++++++------------
+ include/uapi/linux/nsfs.h |  6 ++++--
+ 2 files changed, 17 insertions(+), 14 deletions(-)
 
-diff --git a/fs/fhandle.c b/fs/fhandle.c
-index 7c236f64cdea..f18c855bb0c2 100644
---- a/fs/fhandle.c
-+++ b/fs/fhandle.c
-@@ -11,6 +11,7 @@
- #include <linux/personality.h>
- #include <linux/uaccess.h>
- #include <linux/compat.h>
-+#include <linux/nsfs.h>
- #include "internal.h"
- #include "mount.h"
- 
-@@ -189,6 +190,11 @@ static int get_path_anchor(int fd, struct path *root)
- 		return 0;
- 	}
- 
-+	if (fd == FD_NSFS_ROOT) {
-+		nsfs_get_root(root);
-+		return 0;
-+	}
-+
- 	return -EBADF;
- }
- 
-diff --git a/fs/internal.h b/fs/internal.h
-index 38e8aab27bbd..a33d18ee5b74 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -355,3 +355,4 @@ int anon_inode_getattr(struct mnt_idmap *idmap, const struct path *path,
- int anon_inode_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 		       struct iattr *attr);
- void pidfs_get_root(struct path *path);
-+void nsfs_get_root(struct path *path);
 diff --git a/fs/nsfs.c b/fs/nsfs.c
-index 926e2680414e..22765fcab18e 100644
+index 22765fcab18e..8484bc4dd3de 100644
 --- a/fs/nsfs.c
 +++ b/fs/nsfs.c
-@@ -25,6 +25,14 @@
+@@ -177,6 +177,7 @@ static bool nsfs_ioctl_valid(unsigned int cmd)
+ 	case NS_GET_TGID_FROM_PIDNS:
+ 	case NS_GET_PID_IN_PIDNS:
+ 	case NS_GET_TGID_IN_PIDNS:
++	case NS_GET_ID:
+ 		return true;
+ 	}
  
- static struct vfsmount *nsfs_mnt;
- 
-+static struct path nsfs_root_path = {};
+@@ -226,18 +227,6 @@ static long ns_ioctl(struct file *filp, unsigned int ioctl,
+ 		argp = (uid_t __user *) arg;
+ 		uid = from_kuid_munged(current_user_ns(), user_ns->owner);
+ 		return put_user(uid, argp);
+-	case NS_GET_MNTNS_ID: {
+-		__u64 __user *idp;
+-		__u64 id;
+-
+-		if (ns->ops->type != CLONE_NEWNS)
+-			return -EINVAL;
+-
+-		mnt_ns = container_of(ns, struct mnt_namespace, ns);
+-		idp = (__u64 __user *)arg;
+-		id = mnt_ns->ns.ns_id;
+-		return put_user(id, idp);
+-	}
+ 	case NS_GET_PID_FROM_PIDNS:
+ 		fallthrough;
+ 	case NS_GET_TGID_FROM_PIDNS:
+@@ -283,6 +272,18 @@ static long ns_ioctl(struct file *filp, unsigned int ioctl,
+ 			ret = -ESRCH;
+ 		return ret;
+ 	}
++	case NS_GET_MNTNS_ID:
++		if (ns->ops->type != CLONE_NEWNS)
++			return -EINVAL;
++		fallthrough;
++	case NS_GET_ID: {
++		__u64 __user *idp;
++		__u64 id;
 +
-+void nsfs_get_root(struct path *path)
-+{
-+	*path = nsfs_root_path;
-+	path_get(path);
-+}
++		idp = (__u64 __user *)arg;
++		id = ns->ns_id;
++		return put_user(id, idp);
++	}
+ 	}
+ 
+ 	/* extensible ioctls */
+diff --git a/include/uapi/linux/nsfs.h b/include/uapi/linux/nsfs.h
+index fa86fe3c8bd3..5d5bf22464c9 100644
+--- a/include/uapi/linux/nsfs.h
++++ b/include/uapi/linux/nsfs.h
+@@ -16,8 +16,6 @@
+ #define NS_GET_NSTYPE		_IO(NSIO, 0x3)
+ /* Get owner UID (in the caller's user namespace) for a user namespace */
+ #define NS_GET_OWNER_UID	_IO(NSIO, 0x4)
+-/* Get the id for a mount namespace */
+-#define NS_GET_MNTNS_ID		_IOR(NSIO, 0x5, __u64)
+ /* Translate pid from target pid namespace into the caller's pid namespace. */
+ #define NS_GET_PID_FROM_PIDNS	_IOR(NSIO, 0x6, int)
+ /* Return thread-group leader id of pid in the callers pid namespace. */
+@@ -42,6 +40,10 @@ struct mnt_ns_info {
+ /* Get previous namespace. */
+ #define NS_MNT_GET_PREV		_IOR(NSIO, 12, struct mnt_ns_info)
+ 
++/* Retrieve namespace identifiers. */
++#define NS_GET_MNTNS_ID		_IOR(NSIO, 5,  __u64)
++#define NS_GET_ID		_IOR(NSIO, 13, __u64)
 +
- static long ns_ioctl(struct file *filp, unsigned int ioctl,
- 			unsigned long arg);
- static const struct file_operations ns_file_operations = {
-@@ -598,4 +606,6 @@ void __init nsfs_init(void)
- 	if (IS_ERR(nsfs_mnt))
- 		panic("can't set nsfs up\n");
- 	nsfs_mnt->mnt_sb->s_flags &= ~SB_NOUSER;
-+	nsfs_root_path.mnt = nsfs_mnt;
-+	nsfs_root_path.dentry = nsfs_mnt->mnt_root;
- }
-diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-index f291ab4f94eb..3741ea1b73d8 100644
---- a/include/uapi/linux/fcntl.h
-+++ b/include/uapi/linux/fcntl.h
-@@ -111,6 +111,7 @@
- #define PIDFD_SELF_THREAD_GROUP		-10001 /* Current thread group leader. */
- 
- #define FD_PIDFS_ROOT			-10002 /* Root of the pidfs filesystem */
-+#define FD_NSFS_ROOT			-10003 /* Root of the nsfs filesystem */
- #define FD_INVALID			-10009 /* Invalid file descriptor: -10000 - EBADF = -10009 */
- 
- /* Generic flags for the *at(2) family of syscalls. */
+ enum init_ns_ino {
+ 	IPC_NS_INIT_INO		= 0xEFFFFFFFU,
+ 	UTS_NS_INIT_INO		= 0xEFFFFFFEU,
 
 -- 
 2.47.3
