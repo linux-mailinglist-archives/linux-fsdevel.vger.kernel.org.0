@@ -1,103 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-61093-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61094-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20C18B5528C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 16:59:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E709B552AB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 17:06:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2F45AA81EF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 14:59:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E632D189DFCE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 15:06:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 610503115B8;
-	Fri, 12 Sep 2025 14:59:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C3DE221D87;
+	Fri, 12 Sep 2025 15:05:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ggZNCJzA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F81256C9B;
-	Fri, 12 Sep 2025 14:59:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00B5928373;
+	Fri, 12 Sep 2025 15:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757689186; cv=none; b=g9SUpQji7bTdhL/amCClkxVl7tuBX6ZgXkUx+wCZzILvfUvs01fuLwDsOMk3qZNcEAHo2pGm4Btee3YROUCzx6/8XYaSyA6CVhFk5oeSa/C/qcDWdreOQPPI9tPyRgAVlS7VygDY/2JaD4mN1JHgOFbNRkVxDfmjn1JSaFtipMw=
+	t=1757689556; cv=none; b=eN6YxvLK3uJ7G6EZYhn6rwqk7nR3DpL5ML9UbmFTmLbQxFej72EtODs5kpZhcHbydwz7XAwuo+WvcPYa0qM/c3gZ6bWo/4WZ66fE/Ru4yjx2ygbppGriD484feDruwbyxUqnKIMNi87yj6WllURpQbKtYaPyRlN4axlnBQNdUoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757689186; c=relaxed/simple;
-	bh=Bpn7eRgulG1Q6k/P9UITv3kB0rJqxawUPo3DndL4fio=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=NuWKm3VnOMjwOgWfuP3GdpdrtkmKK9XahlkM1jqOf8hj8AXYkskvxYUhxr+IlSjRr+aLy0JJ7UQ1U/Z13S1XleDrKFu1RW7qK4fBQ4UVslmLp1BR/R0xPNTUJtVlkzGVoSvelk4QxhFBEOrET5xADAcD/S2DRmS0zoarWQeTSos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 58CExRZV057679;
-	Fri, 12 Sep 2025 23:59:27 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 58CExRc6057676
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Fri, 12 Sep 2025 23:59:27 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <56dd2ace-7e72-424d-a51a-67c48ae58686@I-love.SAKURA.ne.jp>
-Date: Fri, 12 Sep 2025 23:59:27 +0900
+	s=arc-20240116; t=1757689556; c=relaxed/simple;
+	bh=FEMpsaKNILw1LWW9PgrPUEjyVRdy+lNTf4a93hFSDCU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GivpWuhkcRKL7lhFFO2FQUgokPHAPN2Fn6Jjccn9OEG9v85+AEebWBmYqR1kExf0Gx+Z6Yy80OM94LxtnNzmGUSysoxPRnU2uoKBTcnGqG0ncXR+S+wNb2qZPSQVcB+2vMFB8VHoNa3ovTysvuMfpwMBt/OEfJgYSISD+/+i91s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ggZNCJzA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9DEEC4CEF1;
+	Fri, 12 Sep 2025 15:05:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757689555;
+	bh=FEMpsaKNILw1LWW9PgrPUEjyVRdy+lNTf4a93hFSDCU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ggZNCJzAWraLvntXfeMfeiDI2AQwKSi/CMv4LAcRqcyZdoffP96etlBbO+MYrQfqM
+	 uANsl9/UKx2G30zOXwChThSt5p/S5fE5/oq4rHaHh6O6XDgvzZ1s6zgtnX8udGrU6o
+	 QQJ03wlo81mVR9YjY0q+rDdFvYc5SUl92asEqV1guQxQzsdX7SXYuMzcLEi+wx1hwn
+	 0Bi+kRaO6+gJHsJnaQ9lG4Mnpk9jw//Us3nnQ/hHirYmPCPt5vLmgVmcZHitFv80lk
+	 ZbvCFzo64rAGwDMkcYRULl4daHKpDZPLzcSL1BAQhhIsZIXOExU3J6h2U5Fd5iRx/f
+	 fzRQSzX6+MT9g==
+Date: Fri, 12 Sep 2025 08:05:55 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Dave Kleikamp <shaggy@kernel.org>,
+	jfs-discussion@lists.sourceforge.net
+Subject: Re: [PATCH (REPOST)] jfs: Verify inode mode when loading from disk
+Message-ID: <20250912150555.GI1587915@frogsfrogsfrogs>
+References: <1cd51309-096d-497f-8c5e-b0c9cca102fc@I-love.SAKURA.ne.jp>
+ <dce0adb2-a592-44d8-b208-d939415b8d54@I-love.SAKURA.ne.jp>
+ <a471c731-e6ae-408d-b8b8-94f3045b2966@I-love.SAKURA.ne.jp>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
-        Viacheslav Dubeyko <slava@dubeyko.com>,
-        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-        Yangtao Li <frank.li@vivo.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Subject: [PATCH v5] hfs: update sanity check of the root record
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Anti-Virus-Server: fsav305.rs.sakura.ne.jp
-X-Virus-Status: clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a471c731-e6ae-408d-b8b8-94f3045b2966@I-love.SAKURA.ne.jp>
 
-syzbot is reporting that BUG() in hfs_write_inode() fires upon unmount
-operation when the inode number of the record retrieved as a result of
-hfs_cat_find_brec(HFS_ROOT_CNID) is not HFS_ROOT_CNID, for
-commit b905bafdea21 ("hfs: Sanity check the root record") checked
-the record size and the record type but did not check the inode number.
+On Fri, Sep 12, 2025 at 11:18:44PM +0900, Tetsuo Handa wrote:
+> The inode mode loaded from corrupted disk can be invalid. Do like what
+> commit 0a9e74051313 ("isofs: Verify inode mode when loading from disk")
+> does.
+> 
+> Reported-by: syzbot <syzbot+895c23f6917da440ed0d@syzkaller.appspotmail.com>
+> Closes: https://syzkaller.appspot.com/bug?extid=895c23f6917da440ed0d
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> ---
+> This fix is similar to fixes for other filesystems, but got no response.
+> Do we have to wait for Ack from Dave Kleikamp for another month?
 
-Viacheslav Dubeyko considers that the fix should be in hfs_read_inode()
-but Viacheslav has no time for proposing the fix [1]. Also, we can't
-guarantee that the inode number of the record retrieved as a result of
-hfs_cat_find_brec(HFS_ROOT_CNID) is HFS_ROOT_CNID if we validate only in
-hfs_read_inode(). Therefore, while what Viacheslav would propose might
-partially overwrap with my proposal, let's fix an 1000+ days old bug by
-adding a sanity check in hfs_fill_super().
+Let's hope not, this is a validation issue...
 
-Reported-by: syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=97e301b4b82ae803d21b
-Link: https://lkml.kernel.org/r/a3d1464ee40df7f072ea1c19e1ccf533e34554ca.camel@ibm.com [1]
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
----
- fs/hfs/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>  fs/jfs/inode.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/jfs/inode.c b/fs/jfs/inode.c
+> index fcedeb514e14..21f3d029da7d 100644
+> --- a/fs/jfs/inode.c
+> +++ b/fs/jfs/inode.c
+> @@ -59,9 +59,15 @@ struct inode *jfs_iget(struct super_block *sb, unsigned long ino)
+>  			 */
+>  			inode->i_link[inode->i_size] = '\0';
+>  		}
+> -	} else {
+> +	} else if (S_ISCHR(inode->i_mode) || S_ISBLK(inode->i_mode) ||
+> +		   S_ISFIFO(inode->i_mode) || S_ISSOCK(inode->i_mode)) {
+>  		inode->i_op = &jfs_file_inode_operations;
+>  		init_special_inode(inode, inode->i_mode, inode->i_rdev);
+> +	} else {
+> +		printk(KERN_DEBUG "JFS: Invalid file type 0%04o for inode %lu.\n",
+> +		       inode->i_mode, inode->i_ino);
+> +		iget_failed(inode);
+> +		return ERR_PTR(-EIO);
 
-diff --git a/fs/hfs/super.c b/fs/hfs/super.c
-index 388a318297ec..ae6dbc4bb813 100644
---- a/fs/hfs/super.c
-+++ b/fs/hfs/super.c
-@@ -354,7 +354,7 @@ static int hfs_fill_super(struct super_block *sb, struct fs_context *fc)
- 			goto bail_hfs_find;
- 		}
- 		hfs_bnode_read(fd.bnode, &rec, fd.entryoffset, fd.entrylength);
--		if (rec.type != HFS_CDR_DIR)
-+		if (rec.type != HFS_CDR_DIR || rec.dir.DirID != cpu_to_be32(HFS_ROOT_CNID))
- 			res = -EIO;
- 	}
- 	if (res)
--- 
-2.51.0
+...but how about EFSCORRUPTED instead of EIO here?  Several filesystems
+(xfs, ext*, erofs, f2fs, fuse, ocfs2, udf) return that for corrupt
+metadata.
 
+--D
+
+>  	}
+>  	unlock_new_inode(inode);
+>  	return inode;
+> -- 
+> 2.51.0
+> 
+> 
 
