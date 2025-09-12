@@ -1,118 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-61146-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61147-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C15FAB559AE
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Sep 2025 00:46:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D46CCB559B7
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Sep 2025 00:50:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C96253AD0C3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 22:46:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EF34AA29AF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 22:50:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 319E5283C89;
-	Fri, 12 Sep 2025 22:46:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F90E264619;
+	Fri, 12 Sep 2025 22:50:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="acIupnwF"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="low8U2Oz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37B5E18871F;
-	Fri, 12 Sep 2025 22:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757717188; cv=pass; b=CdHkWitXfBUSOYM8w8LeScDyL81bxpzV/DbNGR01ecUv6tSN8iZ9ihUvd/vnBlF7WOMYvEJX4Y8N1qDBOf03WHAbW9ni4hfhmbFadCeFeGO0jp/K+/WdCOpXj4puUL5Oy4Wmkrlyx+rLUdClhNZ9Z/Uv1GgHbQdOXR9mBFvAWzU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757717188; c=relaxed/simple;
-	bh=guye89JU8c6lU3xOKktnL/Suo1HlmTbQCY9h2iBDVkw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Lxzx0IabSO5yvxP6/QXwcUmvLEkQFogYWLhenJGKLBzvSqnQIVJ11blDGIy4vNWh+Gn63GqE0Wd11rwN3S7Kbvg8AAX7hXJaFoYlNBXs6ORmqudh42KVQYzssCf0BL/vhFIq8QUpd/I0nX/eWjfwmcOERZ+r7P92kTokPf+2cK0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=acIupnwF; arc=pass smtp.client-ip=136.143.188.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1757716883; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=cYmkTWVTcQlLmLr5V8p1CrwhziHK5jWEHqN1/x0dbbnP4N6eqwJhNpFD+YvvcG1JcA1pILR0lg+/Ny7uiewAqWrYp0xgwBVqCid/qUwxU2pBACMW8E+qi9+gH5uFDpaMNSKBUmBcqwPg32DVp6NEprKLCwOzLldRlExaYRgKRTw=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757716883; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=q9iQK8EdIF6RRP4HkX18/uU6rY0egPm6PmmgTdmDikE=; 
-	b=Ju1dqMVIkIYpU5LdsWBIf/CGwDsN0K99qbvJhITUG43b4iO5ReBci570gSrCvJZpIaavRZGeh519zGwQ3xzl9eLPP7B/6fd5qSQvFqfvp30skE+0PjF0wF1ZPM088gDBmx9lu1/Hmu9iiGaXsgt143EyXlTcYz1mO0b4E8ZkWow=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
-	dmarc=pass header.from=<safinaskar@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757716883;
-	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=q9iQK8EdIF6RRP4HkX18/uU6rY0egPm6PmmgTdmDikE=;
-	b=acIupnwFZvyRH5FokPCft4nvGFUMr39pqEpKs0NtNZVw5kg9Xyn8fLnVwVnsMrYi
-	icAGCn5xQY/D8nPVu8I73mfObC5kAiAiUgDDUOK0dT7tuN6mPBE7LpoJ79v5Pcf1s+2
-	+A3prhgVdkGFxaNK2Z8tJ6RB7TjqHAI2HFOwbXVs=
-Received: by mx.zohomail.com with SMTPS id 1757716881894668.1339002049043;
-	Fri, 12 Sep 2025 15:41:21 -0700 (PDT)
-From: Askar Safin <safinaskar@zohomail.com>
-To: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	Christoph Hellwig <hch@lst.de>,
-	Jens Axboe <axboe@kernel.dk>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Aleksa Sarai <cyphar@cyphar.com>,
-	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
-	Julian Stecklina <julian.stecklina@cyberus-technology.de>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>,
-	Art Nikpal <email2tema@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Eric Curtin <ecurtin@redhat.com>,
-	Alexander Graf <graf@amazon.com>,
-	Rob Landley <rob@landley.net>,
-	Lennart Poettering <mzxreary@0pointer.de>,
-	linux-arch@vger.kernel.org,
-	linux-alpha@vger.kernel.org,
-	linux-snps-arc@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-csky@vger.kernel.org,
-	linux-hexagon@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-m68k@lists.linux-m68k.org,
-	linux-mips@vger.kernel.org,
-	linux-openrisc@vger.kernel.org,
-	linux-parisc@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	sparclinux@vger.kernel.org,
-	linux-um@lists.infradead.org,
-	x86@kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	linux-block@vger.kernel.org,
-	initramfs@vger.kernel.org,
-	linux-api@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-efi@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
-	"Theodore Y . Ts'o" <tytso@mit.edu>,
-	linux-acpi@vger.kernel.org,
-	Michal Simek <monstr@monstr.eu>,
-	devicetree@vger.kernel.org,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	Thorsten Blum <thorsten.blum@linux.dev>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	patches@lists.linux.dev,
-	stable+noautosel@kernel.org
-Subject: [PATCH 03/62] init: sh, sparc, x86: remove unused constants RAMDISK_PROMPT_FLAG and RAMDISK_LOAD_FLAG
-Date: Fri, 12 Sep 2025 22:38:38 +0000
-Message-ID: <20250912223937.3735076-4-safinaskar@zohomail.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250912223937.3735076-1-safinaskar@zohomail.com>
-References: <20250912223937.3735076-1-safinaskar@zohomail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50FCD2DC789
+	for <linux-fsdevel@vger.kernel.org>; Fri, 12 Sep 2025 22:50:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757717451; cv=none; b=Z+U2yjHgrn/ckZD+mbizSJPyCOuOVJGxFWJMSsoSKiVwP0tK7ciESYYAno7qcrxASmwikYFfE51GoYRDuBfOYyXtdhuSf4eL3uUf0ftxhihN7IeGFDqWNt5N5PwS1hVFKxWYhHwBGieOaIm9/K310mwpfBrKHlktbAGmfaiw0pM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757717451; c=relaxed/simple;
+	bh=c6aDOYNREuzcbzVhzucqMW4kDNmz6f9tlZJN6nNPlfA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mRTRINHisNlPsv/SvweJa7QGTowlGL+jUA/0gpQiJmIy8wKDlNmEFApAX2p6yPOYcUUYOmO1a/ai7SJTR8ux0UKrK76HZ5OeJfsrGqPupKPJHCz5ktkNoYXwc92QxIiDVieOGBo3O4jYtKx8v7tp4A+UqhX06r/m5GPG63TQxHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=low8U2Oz; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e970acf352fso1767832276.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Sep 2025 15:50:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1757717448; x=1758322248; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UEhfWf1On8xREXNNUE0mR4KQhTs+3NHB5rmBVgl39WI=;
+        b=low8U2OzIMbxa4TZw+s4X7MrkZv4eUWODtNRueJfoniZ9Qc3YPaqzu6NvhmPKU0Mj0
+         XBNioQql18rH/irMfRw1CLyVbNsIhOAP91JTUJnXNc5YBFgxJRIT4kIrNDKDvVETs7Ve
+         1Lu29afzoKngRqqIvTcY7+ZAbbQBu/n9gA7ml7EPPmlq0QrtIk16GoC7E+wcTER0JIN0
+         SMK9aGnReGXaBE42GIbURJG9EVXSJ0bCn8H/YsuNEQd3Q8tRZ9pPzrYTtPjssfBtr8xD
+         56hwvSUGvXDgLkZXsxkYMmVrmn8e5FVpJuWseBRb5zDxgf2/0MW69amrOtedrw27sizR
+         4vug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757717448; x=1758322248;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UEhfWf1On8xREXNNUE0mR4KQhTs+3NHB5rmBVgl39WI=;
+        b=uTYWBnhGuCPXBKO2JpFxNglh4VPXy3sIcg8MgPCrOPnolRas6qsFy4gT2r5Fkw1RFG
+         T5uZpGr3y6t1aXbdmxnQ/9Z86otgkGR7ehxN981n0fMNVD3c9FpNHJY36qM9XByfSYuG
+         Roc+q2OF5Uu8kmfodjM/tppLzfSy+Flk5nQP1UcT6PsU7eA4XjTq0qAiMlFIF6lzUgzw
+         7oXMkL+5C+ZIRvtD3Q3kD5Vr9AICgIsCl772rd9R0j3hNBYldCo90Ivxcf2QRLzuqWQU
+         HaZhmr6nLTbLp7PXLZ6jlgl5LhL70fEyNX23sRhl8t5Ieq7JetoOL+XwStawMVHdnHhF
+         bppg==
+X-Forwarded-Encrypted: i=1; AJvYcCVrJmXyN8p3xHN2irGPckM+zWUhaO1opUX3jHyo+gv2/Szazjxunl+u5HcxGIIiSmWLgrmvDtmVaqRgDhRw@vger.kernel.org
+X-Gm-Message-State: AOJu0YykySlVegpJSDPMtMk2Vvx4+3kbxBgZSqQbhgpdoNjL4Udr0lpq
+	0yTDyp2Qb9s5CAIgqLAjWMIVwV7xcgZESYLOCMbuMS+vrIwy/kVZKCSUtKtYX6Moys0=
+X-Gm-Gg: ASbGnctfgi3ev3HR3tIFuSmLq5k0NBVrlBWOB10Z8ieROWjknu/flbcdpe1C6MXJJWa
+	5L3gwPXaefRC1vVBSyQrJGI3TCQBUitwk2L3Cd0q0K3JRIfgOCxNQHibakMC0e4PRkmw79IEC0I
+	kikJkXYQmOO5rBytd/5fP6K04RKhfLEvcTAz+fR1cBQEbgQkhMlHMHVc+lPfsbRU+B1lGQR7CVB
+	ZxiKH+w0FGAFz/hNZtIjkySQWaxqCS3lMAC+10h8CbclL4BtCQv1Nsj+Hid3AtgI15Md3ZUuRnT
+	ARtaoW7r2SKBk+a+kQR4ilr+CN/bnxbuCiYTwJV9nNgkXHGKw7cj3Y6A2l69mDYZbLSoWZdOQAi
+	2/abza1/OVTgSYqy1goRTKRDrxemVw4E/fg==
+X-Google-Smtp-Source: AGHT+IEE3F+Ve1MuLlrnk8ayAeEsQNg/WnORgu7peE77TiWJLlLBJwsxWuaM2QkU2mKZdLqVxO/p1Q==
+X-Received: by 2002:a05:6902:705:b0:ea3:e84c:f99d with SMTP id 3f1490d57ef6-ea3e84cfcacmr2349774276.1.1757717448024;
+        Fri, 12 Sep 2025 15:50:48 -0700 (PDT)
+Received: from pop-os.attlocal.net ([2600:1700:6476:1430:b6c1:d48b:d9e8:3fbf])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-ea3cf212971sm1731554276.21.2025.09.12.15.50.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Sep 2025 15:50:47 -0700 (PDT)
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: glaubitz@physik.fu-berlin.de,
+	linux-fsdevel@vger.kernel.org,
+	frank.li@vivo.com
+Cc: Slava.Dubeyko@ibm.com,
+	vdubeyko@redhat.com,
+	Chen Linxuan <me@black-desk.cn>
+Subject: [PATCH v3] hfs: introduce KUnit tests for HFS string operations
+Date: Fri, 12 Sep 2025 15:50:23 -0700
+Message-Id: <20250912225022.1083313-1-slava@dubeyko.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -120,90 +89,279 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Feedback-ID: rr080112274be46f51a3e6d7b65453b8c4000084fba7464352cc4dc9cd50377fd7f09b0684ed62a16f1e6eeb:zu08011227aebba3291345918c920d3b3a00008f86ff3411911b832b8b206255ff0b95bb9fe1592be8b5327b:rf0801122cd997ff081c6a0f543772417b00002b369a2b05bf7efffc2b9c1c1140566e0d80ce0978fa409c151951bada9a:ZohoMail
-X-ZohoMailClient: External
 
-They were used for initrd before c8376994c86.
+From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 
-c8376994c86c made them unused and forgot to remove them
+This patch implements the initial Kunit based set of
+unit tests for HFS string operations. It checks
+functionality of hfs_strcmp(), hfs_hash_dentry(),
+and hfs_compare_dentry() methods.
 
-Fixes: c8376994c86c ("initrd: remove support for multiple floppies")
-Cc: <stable+noautosel@kernel.org> # because changes uapi headers
-Signed-off-by: Askar Safin <safinaskar@zohomail.com>
+./tools/testing/kunit/kunit.py run --kunitconfig ./fs/hfs/.kunitconfig
+
+[16:04:50] Configuring KUnit Kernel ...
+Regenerating .config ...
+Populating config with:
+$ make ARCH=um O=.kunit olddefconfig
+[16:04:51] Building KUnit Kernel ...
+Populating config with:
+$ make ARCH=um O=.kunit olddefconfig
+Building with:
+$ make all compile_commands.json scripts_gdb ARCH=um O=.kunit --jobs=22
+[16:04:59] Starting KUnit Kernel (1/1)...
+[16:04:59] ============================================================
+Running tests with:
+$ .kunit/linux kunit.enable=1 mem=1G console=tty kunit_shutdown=halt
+[16:04:59] ================= hfs_string (3 subtests) ==================
+[16:04:59] [PASSED] hfs_strcmp_test
+[16:04:59] [PASSED] hfs_hash_dentry_test
+[16:04:59] [PASSED] hfs_compare_dentry_test
+[16:04:59] =================== [PASSED] hfs_string ====================
+[16:04:59] ============================================================
+[16:04:59] Testing complete. Ran 3 tests: passed: 3
+[16:04:59] Elapsed time: 9.087s total, 1.310s configuring, 7.611s building, 0.125s running
+
+v2
+Fix linker error.
+
+v3
+Chen Linxuan suggested to use EXPORT_SYMBOL_IF_KUNIT.
+
+Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+cc: Yangtao Li <frank.li@vivo.com>
+cc: linux-fsdevel@vger.kernel.org
+cc: Chen Linxuan <me@black-desk.cn>
 ---
- arch/sh/kernel/setup.c                | 2 --
- arch/sparc/kernel/setup_32.c          | 2 --
- arch/sparc/kernel/setup_64.c          | 2 --
- arch/x86/include/uapi/asm/bootparam.h | 2 --
- arch/x86/kernel/setup.c               | 2 --
- 5 files changed, 10 deletions(-)
+ fs/hfs/.kunitconfig  |   7 +++
+ fs/hfs/Kconfig       |  15 +++++
+ fs/hfs/Makefile      |   2 +
+ fs/hfs/string.c      |   5 ++
+ fs/hfs/string_test.c | 133 +++++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 162 insertions(+)
+ create mode 100644 fs/hfs/.kunitconfig
+ create mode 100644 fs/hfs/string_test.c
 
-diff --git a/arch/sh/kernel/setup.c b/arch/sh/kernel/setup.c
-index 039a51291002..d66f098e9e9f 100644
---- a/arch/sh/kernel/setup.c
-+++ b/arch/sh/kernel/setup.c
-@@ -71,8 +71,6 @@ EXPORT_SYMBOL(sh_mv);
- extern int root_mountflags;
+diff --git a/fs/hfs/.kunitconfig b/fs/hfs/.kunitconfig
+new file mode 100644
+index 000000000000..5caa9af1e3bb
+--- /dev/null
++++ b/fs/hfs/.kunitconfig
+@@ -0,0 +1,7 @@
++CONFIG_KUNIT=y
++CONFIG_HFS_FS=y
++CONFIG_HFS_KUNIT_TEST=y
++CONFIG_BLOCK=y
++CONFIG_BUFFER_HEAD=y
++CONFIG_NLS=y
++CONFIG_LEGACY_DIRECT_IO=y
+diff --git a/fs/hfs/Kconfig b/fs/hfs/Kconfig
+index 5ea5cd8ecea9..7f3cbe43b4b7 100644
+--- a/fs/hfs/Kconfig
++++ b/fs/hfs/Kconfig
+@@ -13,3 +13,18 @@ config HFS_FS
  
- #define RAMDISK_IMAGE_START_MASK	0x07FF
--#define RAMDISK_PROMPT_FLAG		0x8000
--#define RAMDISK_LOAD_FLAG		0x4000
+ 	  To compile this file system support as a module, choose M here: the
+ 	  module will be called hfs.
++
++config HFS_KUNIT_TEST
++	tristate "KUnit tests for HFS filesystem" if !KUNIT_ALL_TESTS
++	depends on HFS_FS && KUNIT
++	default KUNIT_ALL_TESTS
++	help
++	  This builds KUnit tests for the HFS filesystem.
++
++	  KUnit tests run during boot and output the results to the debug
++	  log in TAP format (https://testanything.org/). Only useful for
++	  kernel devs running KUnit test harness and are not for inclusion
++	  into a production build.
++
++	  For more information on KUnit and unit tests in general please
++	  refer to the KUnit documentation in Documentation/dev-tools/kunit/.
+diff --git a/fs/hfs/Makefile b/fs/hfs/Makefile
+index b65459bf3dc4..a7c9ce6b4609 100644
+--- a/fs/hfs/Makefile
++++ b/fs/hfs/Makefile
+@@ -9,3 +9,5 @@ hfs-objs := bitmap.o bfind.o bnode.o brec.o btree.o \
+ 	    catalog.o dir.o extent.o inode.o attr.o mdb.o \
+             part_tbl.o string.o super.o sysdep.o trans.o
  
- static char __initdata command_line[COMMAND_LINE_SIZE] = { 0, };
++# KUnit tests
++obj-$(CONFIG_HFS_KUNIT_TEST) += string_test.o
+diff --git a/fs/hfs/string.c b/fs/hfs/string.c
+index 3912209153a8..0cfa35e82abc 100644
+--- a/fs/hfs/string.c
++++ b/fs/hfs/string.c
+@@ -16,6 +16,8 @@
+ #include "hfs_fs.h"
+ #include <linux/dcache.h>
  
-diff --git a/arch/sparc/kernel/setup_32.c b/arch/sparc/kernel/setup_32.c
-index 704375c061e7..eb60be31127f 100644
---- a/arch/sparc/kernel/setup_32.c
-+++ b/arch/sparc/kernel/setup_32.c
-@@ -172,8 +172,6 @@ extern unsigned short root_flags;
- extern unsigned short root_dev;
- extern unsigned short ram_flags;
- #define RAMDISK_IMAGE_START_MASK	0x07FF
--#define RAMDISK_PROMPT_FLAG		0x8000
--#define RAMDISK_LOAD_FLAG		0x4000
++#include <kunit/visibility.h>
++
+ /*================ File-local variables ================*/
  
- extern int root_mountflags;
+ /*
+@@ -65,6 +67,7 @@ int hfs_hash_dentry(const struct dentry *dentry, struct qstr *this)
+ 	this->hash = end_name_hash(hash);
+ 	return 0;
+ }
++EXPORT_SYMBOL_IF_KUNIT(hfs_hash_dentry);
  
-diff --git a/arch/sparc/kernel/setup_64.c b/arch/sparc/kernel/setup_64.c
-index 63615f5c99b4..f728f1b00aca 100644
---- a/arch/sparc/kernel/setup_64.c
-+++ b/arch/sparc/kernel/setup_64.c
-@@ -145,8 +145,6 @@ extern unsigned short root_flags;
- extern unsigned short root_dev;
- extern unsigned short ram_flags;
- #define RAMDISK_IMAGE_START_MASK	0x07FF
--#define RAMDISK_PROMPT_FLAG		0x8000
--#define RAMDISK_LOAD_FLAG		0x4000
+ /*
+  * Compare two strings in the HFS filename character ordering
+@@ -87,6 +90,7 @@ int hfs_strcmp(const unsigned char *s1, unsigned int len1,
+ 	}
+ 	return len1 - len2;
+ }
++EXPORT_SYMBOL_IF_KUNIT(hfs_strcmp);
  
- extern int root_mountflags;
- 
-diff --git a/arch/x86/include/uapi/asm/bootparam.h b/arch/x86/include/uapi/asm/bootparam.h
-index dafbf581c515..f53dd3f319ba 100644
---- a/arch/x86/include/uapi/asm/bootparam.h
-+++ b/arch/x86/include/uapi/asm/bootparam.h
-@@ -6,8 +6,6 @@
- 
- /* ram_size flags */
- #define RAMDISK_IMAGE_START_MASK	0x07FF
--#define RAMDISK_PROMPT_FLAG		0x8000
--#define RAMDISK_LOAD_FLAG		0x4000
- 
- /* loadflags */
- #define LOADED_HIGH	(1<<0)
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 1b2edd07a3e1..6409e766fb17 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -223,8 +223,6 @@ extern int root_mountflags;
- unsigned long saved_video_mode;
- 
- #define RAMDISK_IMAGE_START_MASK	0x07FF
--#define RAMDISK_PROMPT_FLAG		0x8000
--#define RAMDISK_LOAD_FLAG		0x4000
- 
- static char __initdata command_line[COMMAND_LINE_SIZE];
- #ifdef CONFIG_CMDLINE_BOOL
+ /*
+  * Test for equality of two strings in the HFS filename character ordering.
+@@ -112,3 +116,4 @@ int hfs_compare_dentry(const struct dentry *dentry,
+ 	}
+ 	return 0;
+ }
++EXPORT_SYMBOL_IF_KUNIT(hfs_compare_dentry);
+diff --git a/fs/hfs/string_test.c b/fs/hfs/string_test.c
+new file mode 100644
+index 000000000000..e1bf6f954312
+--- /dev/null
++++ b/fs/hfs/string_test.c
+@@ -0,0 +1,133 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * KUnit tests for HFS string operations
++ *
++ * Copyright (C) 2025 Viacheslav Dubeyko <slava@dubeyko.com>
++ */
++
++#include <kunit/test.h>
++#include <linux/dcache.h>
++#include "hfs_fs.h"
++
++/* Test hfs_strcmp function */
++static void hfs_strcmp_test(struct kunit *test)
++{
++	/* Test equal strings */
++	KUNIT_EXPECT_EQ(test, 0, hfs_strcmp("hello", 5, "hello", 5));
++	KUNIT_EXPECT_EQ(test, 0, hfs_strcmp("test", 4, "test", 4));
++	KUNIT_EXPECT_EQ(test, 0, hfs_strcmp("", 0, "", 0));
++
++	/* Test unequal strings */
++	KUNIT_EXPECT_NE(test, 0, hfs_strcmp("hello", 5, "world", 5));
++	KUNIT_EXPECT_NE(test, 0, hfs_strcmp("test", 4, "testing", 7));
++
++	/* Test different lengths */
++	KUNIT_EXPECT_LT(test, hfs_strcmp("test", 4, "testing", 7), 0);
++	KUNIT_EXPECT_GT(test, hfs_strcmp("testing", 7, "test", 4), 0);
++
++	/* Test case insensitive comparison (HFS should handle case) */
++	KUNIT_EXPECT_EQ(test, 0, hfs_strcmp("Test", 4, "TEST", 4));
++	KUNIT_EXPECT_EQ(test, 0, hfs_strcmp("hello", 5, "HELLO", 5));
++
++	/* Test with special characters */
++	KUNIT_EXPECT_EQ(test, 0, hfs_strcmp("file.txt", 8, "file.txt", 8));
++	KUNIT_EXPECT_NE(test, 0, hfs_strcmp("file.txt", 8, "file.dat", 8));
++
++	/* Test boundary cases */
++	KUNIT_EXPECT_EQ(test, 0, hfs_strcmp("a", 1, "a", 1));
++	KUNIT_EXPECT_NE(test, 0, hfs_strcmp("a", 1, "b", 1));
++}
++
++/* Test hfs_hash_dentry function */
++static void hfs_hash_dentry_test(struct kunit *test)
++{
++	struct qstr test_name1, test_name2, test_name3;
++	struct dentry dentry = {};
++	char name1[] = "testfile";
++	char name2[] = "TestFile";
++	char name3[] = "different";
++
++	/* Initialize test strings */
++	test_name1.name = name1;
++	test_name1.len = strlen(name1);
++	test_name1.hash = 0;
++
++	test_name2.name = name2;
++	test_name2.len = strlen(name2);
++	test_name2.hash = 0;
++
++	test_name3.name = name3;
++	test_name3.len = strlen(name3);
++	test_name3.hash = 0;
++
++	/* Test hashing */
++	KUNIT_EXPECT_EQ(test, 0, hfs_hash_dentry(&dentry, &test_name1));
++	KUNIT_EXPECT_EQ(test, 0, hfs_hash_dentry(&dentry, &test_name2));
++	KUNIT_EXPECT_EQ(test, 0, hfs_hash_dentry(&dentry, &test_name3));
++
++	/* Case insensitive names should hash the same */
++	KUNIT_EXPECT_EQ(test, test_name1.hash, test_name2.hash);
++
++	/* Different names should have different hashes */
++	KUNIT_EXPECT_NE(test, test_name1.hash, test_name3.hash);
++}
++
++/* Test hfs_compare_dentry function */
++static void hfs_compare_dentry_test(struct kunit *test)
++{
++	struct qstr test_name;
++	struct dentry dentry = {};
++	char name[] = "TestFile";
++
++	test_name.name = name;
++	test_name.len = strlen(name);
++
++	/* Test exact match */
++	KUNIT_EXPECT_EQ(test, 0, hfs_compare_dentry(&dentry, 8,
++						    "TestFile", &test_name));
++
++	/* Test case insensitive match */
++	KUNIT_EXPECT_EQ(test, 0, hfs_compare_dentry(&dentry, 8,
++						    "testfile", &test_name));
++	KUNIT_EXPECT_EQ(test, 0, hfs_compare_dentry(&dentry, 8,
++						    "TESTFILE", &test_name));
++
++	/* Test different names */
++	KUNIT_EXPECT_EQ(test, 1, hfs_compare_dentry(&dentry, 8,
++						    "DiffFile", &test_name));
++
++	/* Test different lengths */
++	KUNIT_EXPECT_EQ(test, 1, hfs_compare_dentry(&dentry, 7,
++						    "TestFil", &test_name));
++	KUNIT_EXPECT_EQ(test, 1, hfs_compare_dentry(&dentry, 9,
++						    "TestFiles", &test_name));
++
++	/* Test empty string */
++	test_name.name = "";
++	test_name.len = 0;
++	KUNIT_EXPECT_EQ(test, 0, hfs_compare_dentry(&dentry, 0, "", &test_name));
++
++	/* Test HFS_NAMELEN boundary */
++	test_name.name = "This_is_a_very_long_filename_that_exceeds_normal_limits";
++	test_name.len = strlen(test_name.name);
++	KUNIT_EXPECT_EQ(test, 0, hfs_compare_dentry(&dentry, HFS_NAMELEN,
++			"This_is_a_very_long_filename_th", &test_name));
++}
++
++static struct kunit_case hfs_string_test_cases[] = {
++	KUNIT_CASE(hfs_strcmp_test),
++	KUNIT_CASE(hfs_hash_dentry_test),
++	KUNIT_CASE(hfs_compare_dentry_test),
++	{}
++};
++
++static struct kunit_suite hfs_string_test_suite = {
++	.name = "hfs_string",
++	.test_cases = hfs_string_test_cases,
++};
++
++kunit_test_suite(hfs_string_test_suite);
++
++MODULE_DESCRIPTION("KUnit tests for HFS string operations");
++MODULE_LICENSE("GPL");
++MODULE_IMPORT_NS("EXPORTED_FOR_KUNIT_TESTING");
 -- 
-2.47.2
+2.51.0
 
 
