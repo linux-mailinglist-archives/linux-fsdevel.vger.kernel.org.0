@@ -1,413 +1,387 @@
-Return-Path: <linux-fsdevel+bounces-60991-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60992-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2DE6B540DB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 05:26:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80D90B540DF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 05:29:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD4711BC05F6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 03:27:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 583597BA51D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 03:27:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 965E523BCF8;
-	Fri, 12 Sep 2025 03:26:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b="aUtgyfIT"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 146E1231839;
+	Fri, 12 Sep 2025 03:28:56 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3117A231839
-	for <linux-fsdevel@vger.kernel.org>; Fri, 12 Sep 2025 03:26:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239692264C8
+	for <linux-fsdevel@vger.kernel.org>; Fri, 12 Sep 2025 03:28:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757647600; cv=none; b=SpSnhdETQVKy0DV4x3o9OSFytKwesSRY7tTFLp/r01+wfgwri+UKmkCtNCWxeCG89QsbiO6ZjeBg05QUVfBi9hpXoknPaaDCoz6Wg8EdO1AYF5edTeoV0erIsK3oObc25admZmz+9yK9L1STWbXpSmjuguuI18bHe5mPVi5myrY=
+	t=1757647735; cv=none; b=mFc8o6NkFfgYNvir9LIqRT3dyaRcunUgdou5JIl3LHK9uuizGGDy+r3Y1owEnDu539J9988NG0IjCEMo2GP7ODOijmTbQLpKahh2BFRC8h608p3gJ6ePSzTLQqUlI2qZmXUOm5BnGDnb+BY2TP4aTuqsciAuT2EAWojMF5RGp/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757647600; c=relaxed/simple;
-	bh=rAIq+qL7shyhs1VR5VdVAx2rWh0zk7WRI811Gra4Eus=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lsDXXwaa0tKFT0Q8D2q2pF4WXLuKSVaxzBd2BCoWnwD2zWvREzTUE3EbJHzrz2SfoIEVyx/Cx1eQxM0f5rFV+Ft6j50NvFCzCbQhUpyeTU5VYKK9Yqp2leeThJuYr3ZkujIquuwCwJC49KrbwW4ole/m/G4Bd6aMS1DI2IZOpds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zetier.com; spf=pass smtp.mailfrom=zetier.com; dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b=aUtgyfIT; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zetier.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zetier.com
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-70ddadde494so12174446d6.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Sep 2025 20:26:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=zetier.com; s=gm; t=1757647597; x=1758252397; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uSNhh7a2tL/8zdA8BOWdTt5FEB0UH1z8YvTHNygF404=;
-        b=aUtgyfIT2Kc6R0xjzap0iTXrWq8Et+pCHIYmk8yrbeL2EfG1AgN6+WIkp8FE+bydxU
-         1Emg3uH4hhCJfeA2SMPJKAvp8pbRgxpD7N20L+Lqnm9Mgt11/jiN8wYOMz1ulUZ2zg6N
-         IqTEYKeVOmOFMMA8IOg6KRAr2F98NEKmH9bNRZPUrpDIAxClVrz2UhKYfOcJ9GNXRnPc
-         1fgg84DvDLh5DFabAoBj6V0KcyJfTDkz/Qeqm6J/KNwkzAo/Ul2L6YQoqlOGIyHR8U73
-         dRvWosFCB6PzVFNhWr4qXoX4c9q1AxpxP4ocMo52DP1kUpblIKNojN9Kmi9vh+barqkI
-         3LGg==
+	s=arc-20240116; t=1757647735; c=relaxed/simple;
+	bh=c//LVwICk4V/tE3QslXuBYeRtb09Uzbz5fQEmQMYgqI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=T36SU1rcxamDpHs4ZPcUAah9GqCsr26uRtpWJ6eow8m2AMmH+pMUv8jA4DMqJ1G8VqeSQB9rf8neBhR7gVkXry+MoAmiJZWCf1w3BjUO3VW7tcWinfRIRu+4/mGDaK010+IMIYn4Ry9nazdBsDPm1Oh1JmQMeHVQ2mSNe5wkR+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=black-desk.cn; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=black-desk.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-ea3ca65bd38so1211713276.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Sep 2025 20:28:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757647597; x=1758252397;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1757647732; x=1758252532;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=uSNhh7a2tL/8zdA8BOWdTt5FEB0UH1z8YvTHNygF404=;
-        b=mTrS9/FvqOAH2XpYIq1Rg8rCQojuVjrYLxPtw558Cd1QooEOLY/dx2e7OQxMMLS3cj
-         tEXX7gW3jVqmyySm8wldhA7UA1j2hGHNc4Hl/yDcB47Tu2XCnOsqkNQqx1zYsVx2Tw94
-         7w1eLAnw7Kfc500WDbAUwfEr+dsxFUOucdqVjxTn6V3ASbpVa2Ljqn78sylZVW3dMlTt
-         IRQ6+i/bPvG3TnNIE5sXr4Doxo+5brvK7m42yYYl7KLTkLL/kRfFEMNJnbjKaybsvz1+
-         E3rAaOjUsEmXfNl9j7wxYQ/G/JFEMKwonIxSQn7JrZ4pLtpcpnfhw9b4nflWzU9js+sc
-         r46w==
-X-Gm-Message-State: AOJu0YwvEkZ3CEtKl2V3bO7wgSm50CFxtkmaXhgP4ZcVRVb3vfYgwi5N
-	NKeKGMa0IxCvYz+wcPaUSO8Psl/wi1D1sUQeAqYPrjxclMfBZ56jj5oSTM/2UE6+8X0=
-X-Gm-Gg: ASbGncsifRM+COEusmEAMoWC0cGzcx7IxsJB65RH9BGIVVmm7lD8iInkqRiCUFYCdW3
-	a8/PCDmTbCs3qmYTRiJOzovM4NdBrJNRQX/tNTMRAVpkGzWdczsey3aFtRrzIAMLTpxfCBODyP+
-	4HqCbyNq3D4cPwZP60lZ27EF1Vpi9pykBaWIB4pfCcJkPO6XtxIlTcXViWqOw/1iESyOzRlf87u
-	+UOs5Ui1P2tBEHuRLem9g90INiuuipO9yOe7eG1iZ0o+fqdm3Xl/nPXLZX995di7slFR0lgMkxQ
-	122OMndwO3MYHmeMxUeys18REEUlUdP7ku2mcxb5X4Ez5urE/lj4p+9vEo8HrlAtyYV4jMzgOLl
-	9yYmDSnn9V2JffzQ4s9EvZmqgVOVb4xW9Zbs/FLxavwVwYO/t
-X-Google-Smtp-Source: AGHT+IEWyzgQ0IDczfge1XGdSvFHh3UAnUiLD0HvExlChnMHU39R0qopbPI43xxuobXRtkeZ5hxQqg==
-X-Received: by 2002:ad4:5fc5:0:b0:764:c753:c57a with SMTP id 6a1803df08f44-767c215c27dmr20966116d6.34.1757647596998;
-        Thu, 11 Sep 2025 20:26:36 -0700 (PDT)
-Received: from ethanf.zetier.com ([65.222.209.234])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-763c19e7faesm20195776d6.72.2025.09.11.20.26.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 20:26:36 -0700 (PDT)
-From: Ethan Ferguson <ethan.ferguson@zetier.com>
-To: linkinjeon@kernel.org,
-	sj1557.seo@samsung.com,
-	yuezhang.mo@sony.com
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	cpgs@samsung.com,
-	Ethan Ferguson <ethan.ferguson@zetier.com>,
-	Yuezhang Mo <Yuezhang.Mo@sony.com>
-Subject: [PATCH v7 1/1] exfat: Add support for FS_IOC_{GET,SET}FSLABEL
-Date: Thu, 11 Sep 2025 23:26:19 -0400
-Message-Id: <20250912032619.9846-2-ethan.ferguson@zetier.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250912032619.9846-1-ethan.ferguson@zetier.com>
-References: <20250912032619.9846-1-ethan.ferguson@zetier.com>
+        bh=itpjzVo5uNHzuebuDZK5ma68QytdvIQ2v0NI1Mc1wDI=;
+        b=EK5npkav4x6Vd3doqkOYzpxYaeN/u+RsW2rGHJQSwAbCPJwE6FE7lln8GBjIQfu3X1
+         o4MWd8RiXmnkitpJZtusJk+xeb+D3kNme1paj6SOABtdPozVUKT0N9bg6ye3TJOrqQhx
+         kULeFey756N30y0P+zKSZ4/wN5mUGbVTbPEOmD6VEjM16JEYQXcEzruABIwaYRuyJ9Bw
+         V3m4IKM0rrmUrCmbpai9B91mMievSiMWBiOdmndbByarZjEZmbZX3UwBlvqM2VGiwoJU
+         8ncGctV+jNoC3SIdo2LXw37ohd38UmB3uAdVzZiqiEJav0q9IpNLpJqBHsZJknex9RrB
+         wL/g==
+X-Forwarded-Encrypted: i=1; AJvYcCUZTJUVY/TwRgJnE9TWqfa1rVn2NE3Nt8U4MQDcOL3rNF/KgeH311xv+mqEIgnQNEy7byTqcyzo5AEPTuMX@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYXeN+eTN4ueQJt1yBTX6eSaqDKYIz8xQCGmjb28EAVKndOpU0
+	AbpPV2Iv4pcYiBSbhMAOA7EEJ05eOem7jhYZdG53H1tA2gtJYRDWVpB+AHKqysOv65A=
+X-Gm-Gg: ASbGnctjxX8NQ6Y+1m9bWUJinPqztp6KyG8pwk34+1Rs/wmqz+u3WteJcRPO3M84TOm
+	6K+wriP4WPeAHYpiKYVeg1tySBDu7nY0gVlZ8x59pphGWbqLtvDSXVB0JnhrVJnLSNchvMvcY7j
+	nsHZfxwfjRYlGLCvWQEmcw+iwy1P4RtUdwi1+4SuEc/KIi3+IBqkJaSaRDCbTehQdnSlXq2Uijj
+	lCdaH2v0/iDxfFYacWNfc09pEyVzn8AX4TREX4DSkGzls0TTHudHX7ixPwZ3ntC95M71qrFWU/Q
+	7n7G9ne/eiCoByig/kL4hx3C9mpu0Q2H4rWW/xG+iwO3AZV+M3cVw2zGaslfe1KbIQSF1HguAt9
+	9YoMfzBWLnFFi1DMt/J84Ua7qLjwwR5bYwLcGBtWMII0IDT35jd/ADasGEBVww/0cBaDkbTnekz
+	7NSfjHyFsxMZB2q+g=
+X-Google-Smtp-Source: AGHT+IGtm18tfEYvhBPtjpmzWjhhqSyUrVIRcFArK0LCIZ8SSRgrtfkhd+AZZIYZFaA3CTX07nzRkA==
+X-Received: by 2002:a05:690e:220d:b0:600:f59f:780f with SMTP id 956f58d0204a3-62725679061mr1350881d50.27.1757647731871;
+        Thu, 11 Sep 2025 20:28:51 -0700 (PDT)
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com. [209.85.128.176])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-72f7623452bsm8356217b3.5.2025.09.11.20.28.51
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Sep 2025 20:28:51 -0700 (PDT)
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-71d6083cc69so13645007b3.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Sep 2025 20:28:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVbQjvyzj4eywN6GxvCT3ySY5J9qeuFzhn50gmYDmrNY6sQ1L0Hw4crTxrzHKs/LrFw/Yhj0H9m7MchuJ5i@vger.kernel.org
+X-Received: by 2002:a05:690c:dc8:b0:71f:a817:1de6 with SMTP id
+ 00721157ae682-730652da62dmr17458847b3.41.1757647731022; Thu, 11 Sep 2025
+ 20:28:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250912010956.1044233-1-slava@dubeyko.com>
+In-Reply-To: <20250912010956.1044233-1-slava@dubeyko.com>
+From: black_desk <me@black-desk.cn>
+Date: Fri, 12 Sep 2025 11:28:39 +0800
+X-Gmail-Original-Message-ID: <CAC1kPDO9jCx73_PqRtFRMLyTp7KmX6PzpN+LFL4gw6Pckju-HA@mail.gmail.com>
+X-Gm-Features: Ac12FXxT9Rru-cF_T-DHRXJGUJk2RMEG-iySZSa3YneCNixkgl1qFL9IqIzYF7E
+Message-ID: <CAC1kPDO9jCx73_PqRtFRMLyTp7KmX6PzpN+LFL4gw6Pckju-HA@mail.gmail.com>
+Subject: Re: [PATCH v2] hfs: introduce KUnit tests for HFS string operations
+To: Viacheslav Dubeyko <slava@dubeyko.com>
+Cc: glaubitz@physik.fu-berlin.de, linux-fsdevel@vger.kernel.org, 
+	frank.li@vivo.com, Slava.Dubeyko@ibm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add support for reading / writing to the exfat volume label from the
-FS_IOC_GETFSLABEL and FS_IOC_SETFSLABEL ioctls
+On Fri, Sep 12, 2025 at 9:10=E2=80=AFAM Viacheslav Dubeyko <slava@dubeyko.c=
+om> wrote:
+>
+> This patch implements the initial Kunit based set of
+> unit tests for HFS string operations. It checks
+> functionality of hfs_strcmp(), hfs_hash_dentry(),
+> and hfs_compare_dentry() methods.
+>
+> ./tools/testing/kunit/kunit.py run --kunitconfig ./fs/hfs/.kunitconfig
+>
+> [16:04:50] Configuring KUnit Kernel ...
+> Regenerating .config ...
+> Populating config with:
+> $ make ARCH=3Dum O=3D.kunit olddefconfig
+> [16:04:51] Building KUnit Kernel ...
+> Populating config with:
+> $ make ARCH=3Dum O=3D.kunit olddefconfig
+> Building with:
+> $ make all compile_commands.json scripts_gdb ARCH=3Dum O=3D.kunit --jobs=
+=3D22
+> [16:04:59] Starting KUnit Kernel (1/1)...
+> [16:04:59] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> Running tests with:
+> $ .kunit/linux kunit.enable=3D1 mem=3D1G console=3Dtty kunit_shutdown=3Dh=
+alt
+> [16:04:59] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D hfs_string=
+ (3 subtests) =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> [16:04:59] [PASSED] hfs_strcmp_test
+> [16:04:59] [PASSED] hfs_hash_dentry_test
+> [16:04:59] [PASSED] hfs_compare_dentry_test
+> [16:04:59] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D [PAS=
+SED] hfs_string =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D
+> [16:04:59] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> [16:04:59] Testing complete. Ran 3 tests: passed: 3
+> [16:04:59] Elapsed time: 9.087s total, 1.310s configuring, 7.611s buildin=
+g, 0.125s running
+>
+> v2
+> Fix linker error.
+>
+> Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
+> cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+> cc: Yangtao Li <frank.li@vivo.com>
+> cc: linux-fsdevel@vger.kernel.org
+> ---
+>  fs/hfs/.kunitconfig  |   7 +++
+>  fs/hfs/Kconfig       |  15 +++++
+>  fs/hfs/Makefile      |   2 +
+>  fs/hfs/string.c      |   3 +
+>  fs/hfs/string_test.c | 132 +++++++++++++++++++++++++++++++++++++++++++
+>  5 files changed, 159 insertions(+)
+>  create mode 100644 fs/hfs/.kunitconfig
+>  create mode 100644 fs/hfs/string_test.c
+>
+> diff --git a/fs/hfs/.kunitconfig b/fs/hfs/.kunitconfig
+> new file mode 100644
+> index 000000000000..5caa9af1e3bb
+> --- /dev/null
+> +++ b/fs/hfs/.kunitconfig
+> @@ -0,0 +1,7 @@
+> +CONFIG_KUNIT=3Dy
+> +CONFIG_HFS_FS=3Dy
+> +CONFIG_HFS_KUNIT_TEST=3Dy
+> +CONFIG_BLOCK=3Dy
+> +CONFIG_BUFFER_HEAD=3Dy
+> +CONFIG_NLS=3Dy
+> +CONFIG_LEGACY_DIRECT_IO=3Dy
+> diff --git a/fs/hfs/Kconfig b/fs/hfs/Kconfig
+> index 5ea5cd8ecea9..7f3cbe43b4b7 100644
+> --- a/fs/hfs/Kconfig
+> +++ b/fs/hfs/Kconfig
+> @@ -13,3 +13,18 @@ config HFS_FS
+>
+>           To compile this file system support as a module, choose M here:=
+ the
+>           module will be called hfs.
+> +
+> +config HFS_KUNIT_TEST
+> +       tristate "KUnit tests for HFS filesystem" if !KUNIT_ALL_TESTS
+> +       depends on HFS_FS && KUNIT
+> +       default KUNIT_ALL_TESTS
+> +       help
+> +         This builds KUnit tests for the HFS filesystem.
+> +
+> +         KUnit tests run during boot and output the results to the debug
+> +         log in TAP format (https://testanything.org/). Only useful for
+> +         kernel devs running KUnit test harness and are not for inclusio=
+n
+> +         into a production build.
+> +
+> +         For more information on KUnit and unit tests in general please
+> +         refer to the KUnit documentation in Documentation/dev-tools/kun=
+it/.
+> diff --git a/fs/hfs/Makefile b/fs/hfs/Makefile
+> index b65459bf3dc4..a7c9ce6b4609 100644
+> --- a/fs/hfs/Makefile
+> +++ b/fs/hfs/Makefile
+> @@ -9,3 +9,5 @@ hfs-objs :=3D bitmap.o bfind.o bnode.o brec.o btree.o \
+>             catalog.o dir.o extent.o inode.o attr.o mdb.o \
+>              part_tbl.o string.o super.o sysdep.o trans.o
+>
+> +# KUnit tests
+> +obj-$(CONFIG_HFS_KUNIT_TEST) +=3D string_test.o
+> diff --git a/fs/hfs/string.c b/fs/hfs/string.c
+> index 3912209153a8..b011c1cbdf94 100644
+> --- a/fs/hfs/string.c
+> +++ b/fs/hfs/string.c
+> @@ -65,6 +65,7 @@ int hfs_hash_dentry(const struct dentry *dentry, struct=
+ qstr *this)
+>         this->hash =3D end_name_hash(hash);
+>         return 0;
+>  }
+> +EXPORT_SYMBOL_GPL(hfs_hash_dentry);
 
-Co-developed-by: Yuezhang Mo <Yuezhang.Mo@sony.com>
-Signed-off-by: Yuezhang Mo <Yuezhang.Mo@sony.com>
-Signed-off-by: Ethan Ferguson <ethan.ferguson@zetier.com>
----
- fs/exfat/dir.c       | 158 +++++++++++++++++++++++++++++++++++++++++++
- fs/exfat/exfat_fs.h  |   7 ++
- fs/exfat/exfat_raw.h |   6 ++
- fs/exfat/file.c      |  52 ++++++++++++++
- fs/exfat/namei.c     |   2 +-
- 5 files changed, 224 insertions(+), 1 deletion(-)
+It seems we should use EXPORT_SYMBOL_IF_KUNIT here?
+See https://docs.kernel.org/dev-tools/kunit/usage.html#testing-static-funct=
+ions
 
-diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c
-index ee060e26f51d..55d826f6475d 100644
---- a/fs/exfat/dir.c
-+++ b/fs/exfat/dir.c
-@@ -1244,3 +1244,161 @@ int exfat_count_dir_entries(struct super_block *sb, struct exfat_chain *p_dir)
- 
- 	return count;
- }
-+
-+static int exfat_get_volume_label_dentry(struct super_block *sb,
-+		struct exfat_entry_set_cache *es)
-+{
-+	int i;
-+	int dentry = 0;
-+	unsigned int type;
-+	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-+	struct exfat_hint_femp hint_femp;
-+	struct exfat_inode_info *ei = EXFAT_I(sb->s_root->d_inode);
-+	struct exfat_chain clu;
-+	struct exfat_dentry *ep;
-+	struct buffer_head *bh;
-+
-+	hint_femp.eidx = EXFAT_HINT_NONE;
-+	exfat_chain_set(&clu, sbi->root_dir, 0, ALLOC_FAT_CHAIN);
-+
-+	while (clu.dir != EXFAT_EOF_CLUSTER) {
-+		for (i = 0; i < sbi->dentries_per_clu; i++, dentry++) {
-+			ep = exfat_get_dentry(sb, &clu, i, &bh);
-+			if (!ep)
-+				return -EIO;
-+
-+			type = exfat_get_entry_type(ep);
-+			if (hint_femp.eidx == EXFAT_HINT_NONE) {
-+				if (type == TYPE_DELETED || type == TYPE_UNUSED) {
-+					hint_femp.cur = clu;
-+					hint_femp.eidx = dentry;
-+					hint_femp.count = 1;
-+				}
-+			}
-+
-+			if (type == TYPE_UNUSED) {
-+				brelse(bh);
-+				goto not_found;
-+			}
-+
-+			if (type != TYPE_VOLUME) {
-+				brelse(bh);
-+				continue;
-+			}
-+
-+			memset(es, 0, sizeof(*es));
-+			es->sb = sb;
-+			es->bh = es->__bh;
-+			es->bh[0] = bh;
-+			es->num_bh = 1;
-+			es->start_off = EXFAT_DEN_TO_B(i) % sb->s_blocksize;
-+
-+			return 0;
-+		}
-+
-+		if (exfat_get_next_cluster(sb, &(clu.dir)))
-+			return -EIO;
-+	}
-+
-+not_found:
-+	if (hint_femp.eidx == EXFAT_HINT_NONE) {
-+		hint_femp.cur.dir = EXFAT_EOF_CLUSTER;
-+		hint_femp.eidx = dentry;
-+		hint_femp.count = 0;
-+	}
-+
-+	ei->hint_femp = hint_femp;
-+
-+	return -ENOENT;
-+}
-+
-+int exfat_read_volume_label(struct super_block *sb, struct exfat_uni_name *label_out)
-+{
-+	int ret, i;
-+	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-+	struct exfat_entry_set_cache es;
-+	struct exfat_dentry *ep;
-+
-+	mutex_lock(&sbi->s_lock);
-+
-+	memset(label_out, 0, sizeof(*label_out));
-+	ret = exfat_get_volume_label_dentry(sb, &es);
-+	if (ret < 0) {
-+		/*
-+		 * ENOENT signifies that a volume label dentry doesn't exist
-+		 * We will treat this as an empty volume label and not fail.
-+		 */
-+		if (ret == -ENOENT)
-+			ret = 0;
-+
-+		goto unlock;
-+	}
-+
-+	ep = exfat_get_dentry_cached(&es, 0);
-+	label_out->name_len = ep->dentry.volume_label.char_count;
-+	if (label_out->name_len > EXFAT_VOLUME_LABEL_LEN) {
-+		ret = -EIO;
-+		goto unlock;
-+	}
-+
-+	for (i = 0; i < label_out->name_len; i++)
-+		label_out->name[i] = le16_to_cpu(ep->dentry.volume_label.volume_label[i]);
-+
-+unlock:
-+	mutex_unlock(&sbi->s_lock);
-+	return ret;
-+}
-+
-+int exfat_write_volume_label(struct super_block *sb,
-+			     struct exfat_uni_name *label)
-+{
-+	int ret, i;
-+	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-+	struct inode *root_inode = sb->s_root->d_inode;
-+	struct exfat_entry_set_cache es;
-+	struct exfat_chain clu;
-+	struct exfat_dentry *ep;
-+
-+	if (label->name_len > EXFAT_VOLUME_LABEL_LEN)
-+		return -EINVAL;
-+
-+	mutex_lock(&sbi->s_lock);
-+
-+	ret = exfat_get_volume_label_dentry(sb, &es);
-+	if (ret == -ENOENT) {
-+		if (label->name_len == 0) {
-+			/* No volume label dentry, no need to clear */
-+			ret = 0;
-+			goto unlock;
-+		}
-+
-+		ret = exfat_find_empty_entry(root_inode, &clu, 1, &es);
-+	}
-+
-+	if (ret < 0)
-+		goto unlock;
-+
-+	ep = exfat_get_dentry_cached(&es, 0);
-+
-+	if (label->name_len == 0 && ep->dentry.volume_label.char_count == 0) {
-+		/* volume label had been cleared */
-+		exfat_put_dentry_set(&es, 0);
-+		goto unlock;
-+	}
-+
-+	memset(ep, 0, sizeof(*ep));
-+	ep->type = EXFAT_VOLUME;
-+
-+	for (i = 0; i < label->name_len; i++)
-+		ep->dentry.volume_label.volume_label[i] =
-+			cpu_to_le16(label->name[i]);
-+
-+	ep->dentry.volume_label.char_count = label->name_len;
-+	es.modified = true;
-+
-+	ret = exfat_put_dentry_set(&es, IS_DIRSYNC(root_inode));
-+
-+unlock:
-+	mutex_unlock(&sbi->s_lock);
-+	return ret;
-+}
-diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
-index f8ead4d47ef0..329697c89d09 100644
---- a/fs/exfat/exfat_fs.h
-+++ b/fs/exfat/exfat_fs.h
-@@ -477,6 +477,9 @@ int exfat_force_shutdown(struct super_block *sb, u32 flags);
- /* namei.c */
- extern const struct dentry_operations exfat_dentry_ops;
- extern const struct dentry_operations exfat_utf8_dentry_ops;
-+int exfat_find_empty_entry(struct inode *inode,
-+		struct exfat_chain *p_dir, int num_entries,
-+			   struct exfat_entry_set_cache *es);
- 
- /* cache.c */
- int exfat_cache_init(void);
-@@ -517,6 +520,10 @@ int exfat_get_empty_dentry_set(struct exfat_entry_set_cache *es,
- 		unsigned int num_entries);
- int exfat_put_dentry_set(struct exfat_entry_set_cache *es, int sync);
- int exfat_count_dir_entries(struct super_block *sb, struct exfat_chain *p_dir);
-+int exfat_read_volume_label(struct super_block *sb,
-+			    struct exfat_uni_name *label_out);
-+int exfat_write_volume_label(struct super_block *sb,
-+			     struct exfat_uni_name *label);
- 
- /* inode.c */
- extern const struct inode_operations exfat_file_inode_operations;
-diff --git a/fs/exfat/exfat_raw.h b/fs/exfat/exfat_raw.h
-index 971a1ccd0e89..4082fa7b8c14 100644
---- a/fs/exfat/exfat_raw.h
-+++ b/fs/exfat/exfat_raw.h
-@@ -80,6 +80,7 @@
- #define BOOTSEC_OLDBPB_LEN		53
- 
- #define EXFAT_FILE_NAME_LEN		15
-+#define EXFAT_VOLUME_LABEL_LEN		11
- 
- #define EXFAT_MIN_SECT_SIZE_BITS		9
- #define EXFAT_MAX_SECT_SIZE_BITS		12
-@@ -159,6 +160,11 @@ struct exfat_dentry {
- 			__le32 start_clu;
- 			__le64 size;
- 		} __packed upcase; /* up-case table directory entry */
-+		struct {
-+			__u8 char_count;
-+			__le16 volume_label[EXFAT_VOLUME_LABEL_LEN];
-+			__u8 reserved[8];
-+		} __packed volume_label; /* volume label directory entry */
- 		struct {
- 			__u8 flags;
- 			__u8 vendor_guid[16];
-diff --git a/fs/exfat/file.c b/fs/exfat/file.c
-index 538d2b6ac2ec..f246cf439588 100644
---- a/fs/exfat/file.c
-+++ b/fs/exfat/file.c
-@@ -486,6 +486,54 @@ static int exfat_ioctl_shutdown(struct super_block *sb, unsigned long arg)
- 	return exfat_force_shutdown(sb, flags);
- }
- 
-+static int exfat_ioctl_get_volume_label(struct super_block *sb, unsigned long arg)
-+{
-+	int ret;
-+	char label[FSLABEL_MAX] = {0};
-+	struct exfat_uni_name uniname;
-+
-+	ret = exfat_read_volume_label(sb, &uniname);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = exfat_utf16_to_nls(sb, &uniname, label, uniname.name_len);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (copy_to_user((char __user *)arg, label, ret + 1))
-+		return -EFAULT;
-+
-+	return 0;
-+}
-+
-+static int exfat_ioctl_set_volume_label(struct super_block *sb,
-+					unsigned long arg)
-+{
-+	int ret = 0, lossy;
-+	char label[FSLABEL_MAX];
-+	struct exfat_uni_name uniname;
-+
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	if (copy_from_user(label, (char __user *)arg, FSLABEL_MAX))
-+		return -EFAULT;
-+
-+	memset(&uniname, 0, sizeof(uniname));
-+	if (label[0]) {
-+		ret = exfat_nls_to_utf16(sb, label, FSLABEL_MAX,
-+					 &uniname, &lossy);
-+		if (ret < 0)
-+			return ret;
-+		else if (lossy & NLS_NAME_LOSSY)
-+			return -EINVAL;
-+	}
-+
-+	uniname.name_len = ret;
-+
-+	return exfat_write_volume_label(sb, &uniname);
-+}
-+
- long exfat_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- {
- 	struct inode *inode = file_inode(filp);
-@@ -500,6 +548,10 @@ long exfat_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 		return exfat_ioctl_shutdown(inode->i_sb, arg);
- 	case FITRIM:
- 		return exfat_ioctl_fitrim(inode, arg);
-+	case FS_IOC_GETFSLABEL:
-+		return exfat_ioctl_get_volume_label(inode->i_sb, arg);
-+	case FS_IOC_SETFSLABEL:
-+		return exfat_ioctl_set_volume_label(inode->i_sb, arg);
- 	default:
- 		return -ENOTTY;
- 	}
-diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
-index f5f1c4e8a29f..eaa781d6263c 100644
---- a/fs/exfat/namei.c
-+++ b/fs/exfat/namei.c
-@@ -300,7 +300,7 @@ static int exfat_check_max_dentries(struct inode *inode)
-  *   the directory entry index in p_dir is returned on succeeds
-  *   -error code is returned on failure
-  */
--static int exfat_find_empty_entry(struct inode *inode,
-+int exfat_find_empty_entry(struct inode *inode,
- 		struct exfat_chain *p_dir, int num_entries,
- 		struct exfat_entry_set_cache *es)
- {
--- 
-2.34.1
+Thanks,
+Chen Linxuan
 
+>
+>  /*
+>   * Compare two strings in the HFS filename character ordering
+> @@ -87,6 +88,7 @@ int hfs_strcmp(const unsigned char *s1, unsigned int le=
+n1,
+>         }
+>         return len1 - len2;
+>  }
+> +EXPORT_SYMBOL_GPL(hfs_strcmp);
+>
+>  /*
+>   * Test for equality of two strings in the HFS filename character orderi=
+ng.
+> @@ -112,3 +114,4 @@ int hfs_compare_dentry(const struct dentry *dentry,
+>         }
+>         return 0;
+>  }
+> +EXPORT_SYMBOL_GPL(hfs_compare_dentry);
+> diff --git a/fs/hfs/string_test.c b/fs/hfs/string_test.c
+> new file mode 100644
+> index 000000000000..de1928dc4ef4
+> --- /dev/null
+> +++ b/fs/hfs/string_test.c
+> @@ -0,0 +1,132 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * KUnit tests for HFS string operations
+> + *
+> + * Copyright (C) 2025 Viacheslav Dubeyko <slava@dubeyko.com>
+> + */
+> +
+> +#include <kunit/test.h>
+> +#include <linux/dcache.h>
+> +#include "hfs_fs.h"
+> +
+> +/* Test hfs_strcmp function */
+> +static void hfs_strcmp_test(struct kunit *test)
+> +{
+> +       /* Test equal strings */
+> +       KUNIT_EXPECT_EQ(test, 0, hfs_strcmp("hello", 5, "hello", 5));
+> +       KUNIT_EXPECT_EQ(test, 0, hfs_strcmp("test", 4, "test", 4));
+> +       KUNIT_EXPECT_EQ(test, 0, hfs_strcmp("", 0, "", 0));
+> +
+> +       /* Test unequal strings */
+> +       KUNIT_EXPECT_NE(test, 0, hfs_strcmp("hello", 5, "world", 5));
+> +       KUNIT_EXPECT_NE(test, 0, hfs_strcmp("test", 4, "testing", 7));
+> +
+> +       /* Test different lengths */
+> +       KUNIT_EXPECT_LT(test, hfs_strcmp("test", 4, "testing", 7), 0);
+> +       KUNIT_EXPECT_GT(test, hfs_strcmp("testing", 7, "test", 4), 0);
+> +
+> +       /* Test case insensitive comparison (HFS should handle case) */
+> +       KUNIT_EXPECT_EQ(test, 0, hfs_strcmp("Test", 4, "TEST", 4));
+> +       KUNIT_EXPECT_EQ(test, 0, hfs_strcmp("hello", 5, "HELLO", 5));
+> +
+> +       /* Test with special characters */
+> +       KUNIT_EXPECT_EQ(test, 0, hfs_strcmp("file.txt", 8, "file.txt", 8)=
+);
+> +       KUNIT_EXPECT_NE(test, 0, hfs_strcmp("file.txt", 8, "file.dat", 8)=
+);
+> +
+> +       /* Test boundary cases */
+> +       KUNIT_EXPECT_EQ(test, 0, hfs_strcmp("a", 1, "a", 1));
+> +       KUNIT_EXPECT_NE(test, 0, hfs_strcmp("a", 1, "b", 1));
+> +}
+> +
+> +/* Test hfs_hash_dentry function */
+> +static void hfs_hash_dentry_test(struct kunit *test)
+> +{
+> +       struct qstr test_name1, test_name2, test_name3;
+> +       struct dentry dentry =3D {};
+> +       char name1[] =3D "testfile";
+> +       char name2[] =3D "TestFile";
+> +       char name3[] =3D "different";
+> +
+> +       /* Initialize test strings */
+> +       test_name1.name =3D name1;
+> +       test_name1.len =3D strlen(name1);
+> +       test_name1.hash =3D 0;
+> +
+> +       test_name2.name =3D name2;
+> +       test_name2.len =3D strlen(name2);
+> +       test_name2.hash =3D 0;
+> +
+> +       test_name3.name =3D name3;
+> +       test_name3.len =3D strlen(name3);
+> +       test_name3.hash =3D 0;
+> +
+> +       /* Test hashing */
+> +       KUNIT_EXPECT_EQ(test, 0, hfs_hash_dentry(&dentry, &test_name1));
+> +       KUNIT_EXPECT_EQ(test, 0, hfs_hash_dentry(&dentry, &test_name2));
+> +       KUNIT_EXPECT_EQ(test, 0, hfs_hash_dentry(&dentry, &test_name3));
+> +
+> +       /* Case insensitive names should hash the same */
+> +       KUNIT_EXPECT_EQ(test, test_name1.hash, test_name2.hash);
+> +
+> +       /* Different names should have different hashes */
+> +       KUNIT_EXPECT_NE(test, test_name1.hash, test_name3.hash);
+> +}
+> +
+> +/* Test hfs_compare_dentry function */
+> +static void hfs_compare_dentry_test(struct kunit *test)
+> +{
+> +       struct qstr test_name;
+> +       struct dentry dentry =3D {};
+> +       char name[] =3D "TestFile";
+> +
+> +       test_name.name =3D name;
+> +       test_name.len =3D strlen(name);
+> +
+> +       /* Test exact match */
+> +       KUNIT_EXPECT_EQ(test, 0, hfs_compare_dentry(&dentry, 8,
+> +                                                   "TestFile", &test_nam=
+e));
+> +
+> +       /* Test case insensitive match */
+> +       KUNIT_EXPECT_EQ(test, 0, hfs_compare_dentry(&dentry, 8,
+> +                                                   "testfile", &test_nam=
+e));
+> +       KUNIT_EXPECT_EQ(test, 0, hfs_compare_dentry(&dentry, 8,
+> +                                                   "TESTFILE", &test_nam=
+e));
+> +
+> +       /* Test different names */
+> +       KUNIT_EXPECT_EQ(test, 1, hfs_compare_dentry(&dentry, 8,
+> +                                                   "DiffFile", &test_nam=
+e));
+> +
+> +       /* Test different lengths */
+> +       KUNIT_EXPECT_EQ(test, 1, hfs_compare_dentry(&dentry, 7,
+> +                                                   "TestFil", &test_name=
+));
+> +       KUNIT_EXPECT_EQ(test, 1, hfs_compare_dentry(&dentry, 9,
+> +                                                   "TestFiles", &test_na=
+me));
+> +
+> +       /* Test empty string */
+> +       test_name.name =3D "";
+> +       test_name.len =3D 0;
+> +       KUNIT_EXPECT_EQ(test, 0, hfs_compare_dentry(&dentry, 0, "", &test=
+_name));
+> +
+> +       /* Test HFS_NAMELEN boundary */
+> +       test_name.name =3D "This_is_a_very_long_filename_that_exceeds_nor=
+mal_limits";
+> +       test_name.len =3D strlen(test_name.name);
+> +       KUNIT_EXPECT_EQ(test, 0, hfs_compare_dentry(&dentry, HFS_NAMELEN,
+> +                       "This_is_a_very_long_filename_th", &test_name));
+> +}
+> +
+> +static struct kunit_case hfs_string_test_cases[] =3D {
+> +       KUNIT_CASE(hfs_strcmp_test),
+> +       KUNIT_CASE(hfs_hash_dentry_test),
+> +       KUNIT_CASE(hfs_compare_dentry_test),
+> +       {}
+> +};
+> +
+> +static struct kunit_suite hfs_string_test_suite =3D {
+> +       .name =3D "hfs_string",
+> +       .test_cases =3D hfs_string_test_cases,
+> +};
+> +
+> +kunit_test_suite(hfs_string_test_suite);
+> +
+> +MODULE_DESCRIPTION("KUnit tests for HFS string operations");
+> +MODULE_LICENSE("GPL");
+> --
+> 2.43.0
+>
+>
+>
 
