@@ -1,78 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-61103-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61104-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7734B55378
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 17:28:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 126FAB55381
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 17:29:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 020BEAE2BD5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 15:28:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 653695C619A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 15:28:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B7EA30DEA5;
-	Fri, 12 Sep 2025 15:28:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E5530E0D3;
+	Fri, 12 Sep 2025 15:28:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A+1XLQwF"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U9g06hcM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ABD8221D96
-	for <linux-fsdevel@vger.kernel.org>; Fri, 12 Sep 2025 15:28:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8074302767
+	for <linux-fsdevel@vger.kernel.org>; Fri, 12 Sep 2025 15:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757690881; cv=none; b=gDi1GcGEhDO91V6QD1pmoxY1emVV/bobgCj8jInIvM2YzZF9vkGdv4tv9rULPFetl+CuwwjitiiVTSenR1PDdJZZBFcs4siUayYSU+v44k8+9kw7PynrzdF6gbvtakkjSQuVhxllLJikO526HQmtnY1hLlILSHvzpOibp1vqhEA=
+	t=1757690887; cv=none; b=RCNJ+4OQUvRfqkWE4BM0BMWFJwapaJl6Lh3lifvq+Fs6AuLczqpGAzvQym7Zxf9Sl2yCRlNGRXmYoH1bzTG4lOS7InQqsrWiWc2yEyNX27ot0CB4cjlv98jXwsuVKDpvpj2nwEF1UxglphZ+ozswQS/C3Sy1hckSIOnQ1p+W/N8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757690881; c=relaxed/simple;
-	bh=o0kkG3gbsibzPiYytCDeVsUKeybnHwvskBHSa2z0UkY=;
+	s=arc-20240116; t=1757690887; c=relaxed/simple;
+	bh=GhbGsRZIFWwACCchhCI1wpT+Z6yk4SfcgM3GpwKm+3k=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jCJcg5BFX8ehsO6JDEm3ZYDMydcGh05cPdUBqLT+7t1m7djlUxaAow/wz7EguWUUQzbI5xFAW6uafR3TeQkFdNlHowRrYpFseqKzbNlZxjU4H2CNEufro8XfY/AqSK0ZOkyd+u+LMt7+ty1z33ZYBZYxrYcMDtRAyrIbObhlyPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A+1XLQwF; arc=none smtp.client-ip=209.85.210.177
+	 MIME-Version; b=a+vxwy/saElPR8+KUmHJjaNVGPsbaZiAkMXEBol3EEo5+abc5tXuPyOr+umzkstlrKBWoc/13Cmg/f2N0SYErRrVnH3yqHyGWlOhb52m4a17lw/pa+Doln/6d+p8aSHOsEsMlCZ+51uxLD/51sdtHSLXw7j1vrzOlRSKsF2Thi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U9g06hcM; arc=none smtp.client-ip=209.85.210.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-77620a1d6bfso38075b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Sep 2025 08:27:59 -0700 (PDT)
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-77287fb79d3so1816955b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Sep 2025 08:28:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757690879; x=1758295679; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757690885; x=1758295685; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tp5k30KObX2DHbYjNETNA0vsxWRW2WFebT5yQL1efcA=;
-        b=A+1XLQwFscCw6MNFlM4Sw62ktqkXpIgfecNzQPJFiKzKufX4Waok8gksjCwvYo9Wn4
-         J5gihhfAaH3VcP526h/p+981g31C7J/mYRC1WziqcNsPRowzs3yyxqR4F1npCGlC/YGQ
-         k4uBEL+rsn+KZ94reGO/0owODjg28HATU/7f9FvMtMsP3wdhCkNVJSpxWew5yoQl3btw
-         Pnxz6pfr06NQTjV26K86aF5tJ5yBwTIT2T1fuVTlVuJKtLy3dOb38qea9az3nlagOtQN
-         KF2r4DWbCf8+gXfpdmO9jdgjAi9FIL+rwAwTNFSSPpCg25debTrH/VeYlkdBaMsaBzic
-         qlcA==
+        bh=epfohba7lLb94CzZQeNzguTuJKCwE90c2JR8b9B+3/Q=;
+        b=U9g06hcMQS1SmAvit1EorYFhcCwBB3xIfBrHCGEfem88UATljbTNLdYoW6DOsBucMO
+         1bClKhf9q2dfK7sQOUI9IKhq8BniuG1QuIh9uOumJw4CbR1C3t5mk7yRHaXmuUlTU+jh
+         Lqr0QZ5TnjRAS6XgxE1JDl9CT+4AA3aYTX4fCC++vbq4VBuHdTJBh9NdCSDuAKCDEdYQ
+         Yt54WcfDVkb9EkphV7gd8VmL4Xl0JN6IhPzlfT3EUEvfqnULG3svwYdAox6nj8xh1XkY
+         ZjOInDctYBZ9JsdwD6daO83prFf3XLsmBG3VtTkvs51x1V1/KI1hkPRFvHo56Jk6qpO3
+         WKIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757690879; x=1758295679;
+        d=1e100.net; s=20230601; t=1757690885; x=1758295685;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tp5k30KObX2DHbYjNETNA0vsxWRW2WFebT5yQL1efcA=;
-        b=XDF+lPGkupPPNU+AXf79TWzK4WHvoyvTRgPxGxWWJ23qcH5qrNPEpiU/Cxf8WK/XQJ
-         Lbk4cFiUwApgmXUd1DoWCdEg8kvrgEDd7h9WL32DHOQ92ym6xgbk56ZdSu0q2/KbXiB7
-         1/ezM95Nk3OwXY1AlA0vYiPaDu+WZvrKk5Cxymvc8QW597L3RY5AudmRzn4pjy96HsHf
-         rRfBE8fumSdfd/42WK78rQJdTgY3IEsnubyqi6AnBsvyBBSYQH2uQHFNa3deslvdQwX1
-         K5QYk8Hd9+8vY8MK9l3GiY/3PNejZa65hxlgf+sGda8Uj7HOuQCgY109MjhErLUEmejX
-         rLVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWjD/RRXN9AfEABySnk+UVJj8Of7C2zkLs/uEhxERXF5llaXgGzZFzqvXbVpHcec7VkrHiI4T+C8DpRvqeM@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyq0RKdcxJstOvfjysXcz5/zUKk/bxsjdCF5TPkgbjmhnz8AcL5
-	v+GWiicAYsyLW+nCkIOnnif1napz7+BCFHNF8nGW8ButwE/S4vbOLmiQ
-X-Gm-Gg: ASbGncuijvUryG8qjfsYhob4pgzNZ7WXQ+4k8g1zqLKehaEYDs4QsKNkAFTyRq4YBaG
-	iEmxgp58Ve2GhIkT6oD97UtLe6cSwOXdbJ9tfKmFQDxuq2PlGM4uPWrKFxs3SsviFrpCOvdPqkM
-	zZSO889hst78Mj0ZrW1C37iNpcrT4PwohuYsPix1tWJ2gtUwoSxI/xeQKTjwjYY36iBTbwTwI8o
-	9rgcgE1z0EM4EOnG//wBgkqdrXzrHbRGdATTCmHdjU8mbbSv6dAmdLR0RYSaSgyE59tD7n4tz4q
-	tGWbCKboGoAVUFNymJJPYFWZwDa9cAiIcOBFl62cGtWDpavvrUtRJhzz3yibvJnl5Z5YW3TSiJq
-	3h1a2zijpxgt9L9Rub2IUF9LTqw==
-X-Google-Smtp-Source: AGHT+IEHoyPuPNjRXMF6D9AbSE9Owm5HszgJnuRdDm6U9PHJUuzC7ORv4NWPgIIfR+wfu5arnCEw/w==
-X-Received: by 2002:a05:6a21:6d9c:b0:243:c5a9:4309 with SMTP id adf61e73a8af0-2602a09ffa6mr3679449637.20.1757690879236;
-        Fri, 12 Sep 2025 08:27:59 -0700 (PDT)
+        bh=epfohba7lLb94CzZQeNzguTuJKCwE90c2JR8b9B+3/Q=;
+        b=h+leyY7jZIOh7SUtDxCsh+7zS5NAD+oCEnsrQHFelDmDr5yuVVZ7yyPNrt2BZtPhVm
+         NkotQKTumJz66zPgQfWtZcJW/qMwjpgRt+Kw/hv4BgOQGbVDMHxu/zyc/O67nCOoRS4D
+         9G6BobSVCM3lZlkiXMtlR2O5Licllp8UcWoRpqiC+iSxOGzAM3qNpF7yBFwZNjpOm1is
+         AF8ftefow3DeQWORmn8kQsn9GdArVOfkOsirowtWNZqDyu+roiPf1fVpEBfvTWuLIq8z
+         BkYUTLTHUUG/sSZfOh6Ap3Vtgs6F+vEtgJZkAp2mkyWqyCigZdx+lAPgeYWN9sG/NHuL
+         9Xow==
+X-Forwarded-Encrypted: i=1; AJvYcCWtKhKU+UuauuR9YiaJDdxpzfhgx3uuSjxDgdsBzC0nSfjHx9+/KD+xdrXlMBA2YGHBEpA/Emz8FR7taw9a@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTPnzBsKiOygmdZtWqcFKngZoe4Ap5U3StqjyuMYnGXbQNkall
+	yPjz0LYG8n2UVAbsC7N8ZKsvZbpTvu46LFdGPC5jEUlSWwfNZcPYgIcI
+X-Gm-Gg: ASbGnct78sGE5nVfXDQNqlLODUcOv3oqh4oHLl57Kp3tMHKjye+nayGy4ZIrhTstdku
+	NrtFZloGnNMJEeMuxe2oKo2btxOR1bHKENC9UV44VjelGGvW7LmTsa3zTn2iksOY50BNGbGIhyd
+	6GZih3nfETXwyHchteaXaB3LIgBzOU7i2MJeNZvdhJuRNwSK9FKgxsdV6GEDihgAA9IEOR+pmwR
+	OgIgcr/Nqsz+/XnG/Jq8V/uAevMaU+v/+Jq429x2lFcFgnkDzotTn30shYKXARQr8QA3C1uWpzm
+	3zNkGyl65LDl4kB8c547djBUuO838803DMe14XCqsAsqUppLf2seXDX4ElQ0yWFCNWUawmCVggX
+	D6uX8RzWyNJTcqFVuVlgZsxCfYTe2cYWKxuLl
+X-Google-Smtp-Source: AGHT+IGNpJNOsvFiulBAn14rvV+gNw6x7YaxgnaL0p3o0QovIgtsHJ2X+893Wi/o+WL5lAWsrHnGBQ==
+X-Received: by 2002:a05:6a21:6d85:b0:245:4181:e1fb with SMTP id adf61e73a8af0-2602aa83d47mr4372165637.27.1757690884773;
+        Fri, 12 Sep 2025 08:28:04 -0700 (PDT)
 Received: from jicarita ([65.144.169.45])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7760944a9a9sm5436846b3a.78.2025.09.12.08.27.57
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7760944a9a9sm5436846b3a.78.2025.09.12.08.28.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 08:27:58 -0700 (PDT)
+        Fri, 12 Sep 2025 08:28:04 -0700 (PDT)
 From: Thomas Bertschinger <tahbertschinger@gmail.com>
 To: io-uring@vger.kernel.org,
 	axboe@kernel.dk,
@@ -86,9 +86,9 @@ To: io-uring@vger.kernel.org,
 	jlayton@kernel.org,
 	amir73il@gmail.com
 Cc: Thomas Bertschinger <tahbertschinger@gmail.com>
-Subject: [PATCH v3 07/10] exportfs: new FILEID_CACHED flag for non-blocking fh lookup
-Date: Fri, 12 Sep 2025 09:28:52 -0600
-Message-ID: <20250912152855.689917-8-tahbertschinger@gmail.com>
+Subject: [PATCH v3 08/10] io_uring: add __io_open_prep() helper
+Date: Fri, 12 Sep 2025 09:28:53 -0600
+Message-ID: <20250912152855.689917-9-tahbertschinger@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20250912152855.689917-1-tahbertschinger@gmail.com>
 References: <20250912152855.689917-1-tahbertschinger@gmail.com>
@@ -100,128 +100,79 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This defines a new flag FILEID_CACHED that the VFS can set in the
-handle_type field of struct file_handle to request that the FS
-implementations of fh_to_{dentry,parent}() only complete if they can
-satisfy the request with cached data.
+This adds a helper, __io_open_prep(), which does the part of preparing
+for an open that is shared between openat*() and open_by_handle_at().
 
-Because not every FS implementation will recognize this new flag, those
-that do recognize the flag can indicate their support using a new
-export flag, EXPORT_OP_NONBLOCK.
+It excludes reading in the user path or file handle--this will be done
+by functions specific to the kind of open().
 
-If FILEID_CACHED is set in a file handle, but the filesystem does not
-set EXPORT_OP_NONBLOCK, then the VFS will return -EAGAIN without
-attempting to call into the filesystem code.
-
-exportfs_decode_fh_raw() is updated to respect the new flag by returning
--EAGAIN when it would need to do an operation that may not be possible
-with only cached data.
-
-Suggested-by: Amir Goldstein <amir73il@gmail.com>
 Signed-off-by: Thomas Bertschinger <tahbertschinger@gmail.com>
 ---
-I didn't apply Amir's Reviewed-by for this patch because I added the
-Documenation section, which was not reviewed in v2.
+ io_uring/openclose.c | 35 +++++++++++++++++++++++++----------
+ 1 file changed, 25 insertions(+), 10 deletions(-)
 
- Documentation/filesystems/nfs/exporting.rst |  6 ++++++
- fs/exportfs/expfs.c                         | 12 ++++++++++++
- fs/fhandle.c                                |  2 ++
- include/linux/exportfs.h                    |  5 +++++
- 4 files changed, 25 insertions(+)
-
-diff --git a/Documentation/filesystems/nfs/exporting.rst b/Documentation/filesystems/nfs/exporting.rst
-index de64d2d002a2..70f46eaeb0d4 100644
---- a/Documentation/filesystems/nfs/exporting.rst
-+++ b/Documentation/filesystems/nfs/exporting.rst
-@@ -238,3 +238,9 @@ following flags are defined:
-     all of an inode's dirty data on last close. Exports that behave this
-     way should set EXPORT_OP_FLUSH_ON_CLOSE so that NFSD knows to skip
-     waiting for writeback when closing such files.
-+
-+  EXPORT_OP_NONBLOCK - FS supports fh_to_{dentry,parent}() using cached data
-+    When performing open_by_handle_at(2) using io_uring, it is useful to
-+    complete the file open using only cached data when possible, otherwise
-+    failing with -EAGAIN.  This flag indicates that the filesystem supports this
-+    mode of operation.
-diff --git a/fs/exportfs/expfs.c b/fs/exportfs/expfs.c
-index 949ce6ef6c4e..e2cfdd9d6392 100644
---- a/fs/exportfs/expfs.c
-+++ b/fs/exportfs/expfs.c
-@@ -441,6 +441,7 @@ exportfs_decode_fh_raw(struct vfsmount *mnt, struct fid *fid, int fh_len,
- 		       void *context)
+diff --git a/io_uring/openclose.c b/io_uring/openclose.c
+index 884a66e56643..4da2afdb9773 100644
+--- a/io_uring/openclose.c
++++ b/io_uring/openclose.c
+@@ -58,11 +58,10 @@ static bool io_openat_force_async(struct io_open *open)
+ 	return open->how.flags & (O_TRUNC | O_CREAT | __O_TMPFILE);
+ }
+ 
+-static int __io_openat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
++/* Prep for open that is common to both openat*() and open_by_handle_at() */
++static int __io_open_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
  {
- 	const struct export_operations *nop = mnt->mnt_sb->s_export_op;
-+	bool decode_cached = fileid_type & FILEID_CACHED;
- 	struct dentry *result, *alias;
- 	char nbuf[NAME_MAX+1];
- 	int err;
-@@ -453,6 +454,10 @@ exportfs_decode_fh_raw(struct vfsmount *mnt, struct fid *fid, int fh_len,
- 	 */
- 	if (!exportfs_can_decode_fh(nop))
- 		return ERR_PTR(-ESTALE);
-+
-+	if (decode_cached && !(nop->flags & EXPORT_OP_NONBLOCK))
-+		return ERR_PTR(-EAGAIN);
-+
- 	result = nop->fh_to_dentry(mnt->mnt_sb, fid, fh_len, fileid_type);
- 	if (IS_ERR_OR_NULL(result))
- 		return result;
-@@ -481,6 +486,10 @@ exportfs_decode_fh_raw(struct vfsmount *mnt, struct fid *fid, int fh_len,
- 		 * filesystem root.
- 		 */
- 		if (result->d_flags & DCACHE_DISCONNECTED) {
-+			err = -EAGAIN;
-+			if (decode_cached)
-+				goto err_result;
-+
- 			err = reconnect_path(mnt, result, nbuf);
- 			if (err)
- 				goto err_result;
-@@ -526,6 +535,9 @@ exportfs_decode_fh_raw(struct vfsmount *mnt, struct fid *fid, int fh_len,
- 		err = PTR_ERR(target_dir);
- 		if (IS_ERR(target_dir))
- 			goto err_result;
-+		err = -EAGAIN;
-+		if (decode_cached && (target_dir->d_flags & DCACHE_DISCONNECTED))
-+			goto err_result;
+ 	struct io_open *open = io_kiocb_to_cmd(req, struct io_open);
+-	const char __user *fname;
+-	int ret;
  
- 		/*
- 		 * And as usual we need to make sure the parent directory is
-diff --git a/fs/fhandle.c b/fs/fhandle.c
-index 2dc669aeb520..509ff8983f94 100644
---- a/fs/fhandle.c
-+++ b/fs/fhandle.c
-@@ -273,6 +273,8 @@ static int do_handle_to_path(struct file_handle *handle, struct path *path,
- 	if (IS_ERR_OR_NULL(dentry)) {
- 		if (dentry == ERR_PTR(-ENOMEM))
- 			return -ENOMEM;
-+		if (dentry == ERR_PTR(-EAGAIN))
-+			return -EAGAIN;
- 		return -ESTALE;
+ 	if (unlikely(sqe->buf_index))
+ 		return -EINVAL;
+@@ -74,6 +73,29 @@ static int __io_openat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe
+ 		open->how.flags |= O_LARGEFILE;
+ 
+ 	open->dfd = READ_ONCE(sqe->fd);
++
++	open->file_slot = READ_ONCE(sqe->file_index);
++	if (open->file_slot && (open->how.flags & O_CLOEXEC))
++		return -EINVAL;
++
++	open->nofile = rlimit(RLIMIT_NOFILE);
++
++	if (io_openat_force_async(open))
++		req->flags |= REQ_F_FORCE_ASYNC;
++
++	return 0;
++}
++
++static int __io_openat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
++{
++	struct io_open *open = io_kiocb_to_cmd(req, struct io_open);
++	const char __user *fname;
++	int ret;
++
++	ret = __io_open_prep(req, sqe);
++	if (ret)
++		return ret;
++
+ 	fname = u64_to_user_ptr(READ_ONCE(sqe->addr));
+ 	open->filename = getname(fname);
+ 	if (IS_ERR(open->filename)) {
+@@ -82,14 +104,7 @@ static int __io_openat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe
+ 		return ret;
  	}
- 	path->dentry = dentry;
-diff --git a/include/linux/exportfs.h b/include/linux/exportfs.h
-index 30a9791d88e0..8238b6f67956 100644
---- a/include/linux/exportfs.h
-+++ b/include/linux/exportfs.h
-@@ -199,6 +199,8 @@ struct handle_to_path_ctx {
- #define FILEID_FS_FLAGS_MASK	0xff00
- #define FILEID_FS_FLAGS(flags)	((flags) & FILEID_FS_FLAGS_MASK)
  
-+#define FILEID_CACHED		0x100 /* Use only cached data when decoding handle */
-+
- /* User flags: */
- #define FILEID_USER_FLAGS_MASK	0xffff0000
- #define FILEID_USER_FLAGS(type) ((type) & FILEID_USER_FLAGS_MASK)
-@@ -303,6 +305,9 @@ struct export_operations {
- 						*/
- #define EXPORT_OP_FLUSH_ON_CLOSE	(0x20) /* fs flushes file data on close */
- #define EXPORT_OP_NOLOCKS		(0x40) /* no file locking support */
-+#define EXPORT_OP_NONBLOCK		(0x80) /* Filesystem supports non-
-+						  blocking fh_to_dentry()
-+						*/
- 	unsigned long	flags;
- };
+-	open->file_slot = READ_ONCE(sqe->file_index);
+-	if (open->file_slot && (open->how.flags & O_CLOEXEC))
+-		return -EINVAL;
+-
+-	open->nofile = rlimit(RLIMIT_NOFILE);
+ 	req->flags |= REQ_F_NEED_CLEANUP;
+-	if (io_openat_force_async(open))
+-		req->flags |= REQ_F_FORCE_ASYNC;
+ 	return 0;
+ }
  
 -- 
 2.51.0
