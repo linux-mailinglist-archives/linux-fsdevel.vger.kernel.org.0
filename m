@@ -1,181 +1,350 @@
-Return-Path: <linux-fsdevel+bounces-60986-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-60987-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01EDCB53FA6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 03:09:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE9A4B53FA8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 03:10:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3B645A189C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 01:09:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEBD17BC3B4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 01:08:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B8F672622;
-	Fri, 12 Sep 2025 01:09:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D3CB54774;
+	Fri, 12 Sep 2025 01:10:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ffeX6sAT"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="2gKca0sP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B206282EE;
-	Fri, 12 Sep 2025 01:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB5C168BD
+	for <linux-fsdevel@vger.kernel.org>; Fri, 12 Sep 2025 01:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757639357; cv=none; b=IAHxt01mi7COuNfaZDJLPi+N5MlwHTdKnYvqRFDWBkPO2QIWiTlg13jzGuPSvGB4rmOkrdBrPICTcF+nAduNb7mGIcntRrkXBiB4DUVEwjXe27zRmkJGNpQm5KAAECPMRss48tHX41Z/7k94xNkCRimfqncmOR1/uyj92bCy9o8=
+	t=1757639430; cv=none; b=SNnXa7QB8Lzx4p7LfxtIMB/CaS5TQPW45TgNo3HaJ1hL5NqjICs32T2hNGEs8UIQizwGUvRhtZZjDrbxJwuKgVcaZ4zJoDC6n7kAUR6UfGbnrLKjE1IGWx7Pt6vFFY78GWUq9Croc9+BtS++ePS9odQWuH9DNLm6LgQmHvVoWlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757639357; c=relaxed/simple;
-	bh=7RNSYWH/V95aG5VeEFq7f6RO4dc8SRjCr3STvE3PKKI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=CwA/HOMvToRE3tzgCsgvc2F7i27x98cZXKXWEOJ61ieMls4yYfovTTHXeINd585XzS+oRHqAzqv06qiRU+PjNmxEG3axg6FcAPA+553dShT13NSSikz5dKykyDYVoeogdIowH1o5HCetemtmdO7fcXnoISSDHMJdNJ/3wQH5lXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ffeX6sAT; arc=none smtp.client-ip=115.124.30.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1757639351; h=Message-ID:Date:MIME-Version:Subject:From:To:Content-Type;
-	bh=PLrM4vez4dkjfX4BYt69DTn/OHrFvZ3II7wiWj12+bw=;
-	b=ffeX6sATjw8qPbYZA33ZlFYkjJpeIYDsFZzUhI8sZUI1j9Nf/5uzo7+GUcZNfFYkQFaRubg7Js6JGkCBjfFeia+R/3FllSea2sAW4v4b+XysAbMF2oamwn2N1Xd8VPvqVIjIbM3mY9CNt6mKd/uDWfi1dF6OrWAoLmsvIUPNnk0=
-Received: from 30.180.0.242(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WnoF9lz_1757639349 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 12 Sep 2025 09:09:10 +0800
-Message-ID: <66971d07-2c1a-4632-bc9e-e0fc0ae2bd04@linux.alibaba.com>
-Date: Fri, 12 Sep 2025 09:09:08 +0800
+	s=arc-20240116; t=1757639430; c=relaxed/simple;
+	bh=qMJw2VbX+JRYR5GoeXWs/02+M7uuNqGiIqURzaFHDgY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GJta53b7lLa3TXmN4mvpyZYRjJeyhDfb7yOkqwoifl3sTHdF004qTornO4ud7XIESQipbKHF4cWiU6QN/7f7NLXE4IRhQy+RYnPLp1m4BNoH8KUgXYeW9OUtCrRclCL2BCoVztdS6zX6u1rUijI5ubyozip3hA/OeDKLEfh5cL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=2gKca0sP; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-71d60504bf8so12416877b3.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Sep 2025 18:10:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1757639427; x=1758244227; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FtxdNSfLKA1ytMbPuF/3fJiuqlGKAP+vZn731TH0b74=;
+        b=2gKca0sPNmgkMsU64LgLb22LZjCOLr2gscTNAYMXDkveh6uly8Mf6l2QZPuMEhKIsO
+         aY3zUStJpPOuxoL88o056Tyx5Kapwzo4TAlNwJL/YWb4NAgBIY/OwcDNWbmHJ7bDpIa8
+         xfHdSwneFRzUYeNkQIPy8EsoRb/UiuH2jIqUUUvfwzzSjfZGidE2ykUzjYTaR3iz2sIX
+         P7x4guO6UvP71W6vHDlNcxJ7U90PIvF7zh1dnS7kE9s6mbqp2g653x/n7ZVxhD4OH6/f
+         34aqc9zkk49UcZ8Xck5LM2/m0IoJdC8PZD76IwE+KR8pETmFuZaA2WEKpJTViF/S758o
+         JHuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757639427; x=1758244227;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FtxdNSfLKA1ytMbPuF/3fJiuqlGKAP+vZn731TH0b74=;
+        b=pb3P6u0ythMju6isVNhGDm4L1VCqdE/sbDlZBJEQE7TYBzACAkbOpzR4RfkTA3KOJ5
+         /ywaViuTqd44YJLLJvvYMDEhCjYUKeA+7+n8oyvWcKeTAXe5d5wpzaD60/tIRnQsUAzP
+         5zY0IzEJZDs0l457yARYME0Uz/2cs9wxV0+8idgPXvsoQSpcaRtxUmgOy1rY62gjRrxJ
+         Y+3gHTdbrPUm+w3X243/WrrZ9NQZLuEp3EGZhnp+89nX1aCc06ooEZpZK0+GcoyJyQSg
+         XyOZE9axQNV/W41t+su4KEirCMtihc9dlsKqtGEGTMcGsSn2oZwAT+zKqPVgN1Peh27S
+         TIlA==
+X-Forwarded-Encrypted: i=1; AJvYcCWKR8/dtPnWQ19BG4Xj4LglpDtSmE1dMTXt7+ppJjrQZAFnJgpSC1WuzeUjgM16A47+C2aPhAVBFk0kIBsA@vger.kernel.org
+X-Gm-Message-State: AOJu0YyliQ3iWrWnbMjBrkoQKa70CbHRpx9Kd2igpyC81w/zCdeCWRqJ
+	Cq7zeRc4Njm3ovLqik/Ga/B64ht2EHi17bYa/OjweXvv1Hc52W4qm5j3hlpU0TF1Awc=
+X-Gm-Gg: ASbGnctN0OHguSevl1AZcbmMauGIsZ8Tz5kT96WQY+xDC//yv/AjKJb1ZZ7uFgJkxyL
+	ZdxerS476049w0T9AjEMM0nYNjhEYqdJ1vLcJqSHwvvnIVGSJtIByI0fJdm9hLuq6a1OU06qzyJ
+	3pw969qYxdz1l2RcmCLGDwQtNzQFmimFZpZ92QIx9jv+P2gzeQWGyt1qHRTbBFF8dRHgmK/T5P6
+	gzVKPYwyu0+lQP/CBhSyuiVRW+Fe76rrSR7kPGYmsNni9whK/VM3Qp9xq5loCjcIcM4yA1OXcSe
+	JRoWO2yuWg64KU05OZM+OKGEZzlLf8cBve/ij13XeHz/dys/z2mh2uZ/HtJXKKHtXTVs7WaJGDK
+	N3ZG76FKTizgPhRSqVcNMz4Wi9kyZcaIB+xSz0pGqIlk=
+X-Google-Smtp-Source: AGHT+IFFu8MmNFme8dvLr/JpDrpGaiCsI5flPdp2HrBEKVAWLHpkmgy+yBQzHbYM3jR1PecNFsQiig==
+X-Received: by 2002:a05:690c:6813:b0:72e:a82a:ab84 with SMTP id 00721157ae682-7306609b092mr13228007b3.51.1757639426903;
+        Thu, 11 Sep 2025 18:10:26 -0700 (PDT)
+Received: from pop-os.attlocal.net ([2600:1700:6476:1430:7b7c:1d1:81fd:fdbe])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-72f769292d4sm7723067b3.27.2025.09.11.18.10.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Sep 2025 18:10:26 -0700 (PDT)
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: glaubitz@physik.fu-berlin.de,
+	linux-fsdevel@vger.kernel.org,
+	frank.li@vivo.com
+Cc: Slava.Dubeyko@ibm.com,
+	Viacheslav Dubeyko <slava@dubeyko.com>
+Subject: [PATCH v2] hfs: introduce KUnit tests for HFS string operations
+Date: Thu, 11 Sep 2025 18:09:57 -0700
+Message-Id: <20250912010956.1044233-1-slava@dubeyko.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 13/16] iomap: move read/readahead logic out of
- CONFIG_BLOCK guard
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Christoph Hellwig <hch@infradead.org>, brauner@kernel.org,
- miklos@szeredi.hu, djwong@kernel.org, linux-block@vger.kernel.org,
- gfs2@lists.linux.dev, linux-fsdevel@vger.kernel.org, kernel-team@meta.com,
- linux-xfs@vger.kernel.org, linux-doc@vger.kernel.org
-References: <20250908185122.3199171-1-joannelkoong@gmail.com>
- <20250908185122.3199171-14-joannelkoong@gmail.com>
- <a1529c0f-1f1a-477a-aeeb-a4f108aab26b@linux.alibaba.com>
- <CAJnrk1aCCqoOAgcPUpr+Z09DhJ5BAYoSho5dveGQKB9zincYSQ@mail.gmail.com>
- <0b33ab17-2fc0-438f-95aa-56a1d20edb38@linux.alibaba.com>
- <aMK0lC5iwM0GWKHq@infradead.org>
- <9c104881-f09e-4594-9e41-0b6f75a5308c@linux.alibaba.com>
- <CAJnrk1b2_XGfMuK-UAej31TtCAAg5Aq8PFS_36yyGg8NerA97g@mail.gmail.com>
- <6609e444-5210-42aa-b655-8ed8309aae75@linux.alibaba.com>
-In-Reply-To: <6609e444-5210-42aa-b655-8ed8309aae75@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+This patch implements the initial Kunit based set of
+unit tests for HFS string operations. It checks
+functionality of hfs_strcmp(), hfs_hash_dentry(),
+and hfs_compare_dentry() methods.
 
+./tools/testing/kunit/kunit.py run --kunitconfig ./fs/hfs/.kunitconfig
 
-On 2025/9/12 08:06, Gao Xiang wrote:
-> 
-> 
-> On 2025/9/12 03:45, Joanne Koong wrote:
->> On Thu, Sep 11, 2025 at 8:29 AM Gao Xiang <hsiangkao@linux.alibaba.com> wrote:
-> 
-> ...
-> 
->>> ```
->>>
->>> But if FUSE or some other fs later needs to request L2P information
->>> in their .iomap_begin() and need to send L2P requests to userspace
->>> daemon to confirm where to get the physical data (maybe somewhat
->>> like Darrick's work but I don't have extra time to dig into that
->>> either) rather than just something totally bypass iomap-L2P logic
->>> as above, then I'm not sure the current `iomap_iter->private` is
->>> quite seperate to `struct iomap_read_folio_ctx->private`, it seems
->>
->> If in the future this case arises, the L2P mapping info is accessible
->> by the read callback in the current design. `.read_folio_range()`
->> passes the iomap iter to the filesystem and they can access
->> iter->private to get the L2P mapping data they need.
-> 
-> The question is what exposes to `iter->private` then, take
-> an example:
-> 
-> ```
-> struct file *file;
-> ```
-> 
-> your .read_folio_range() needs `file->private_data` to get
-> `struct fuse_file` so `file` is kept into
-> `struct iomap_read_folio_ctx`.
-> 
-> If `file->private_data` will be used for `.iomap_begin()`
-> as well, what's your proposal then?
-> 
-> Duplicate the same `file` pointer in both
-> `struct iomap_read_folio_ctx` and `iter->private` context?
+[16:04:50] Configuring KUnit Kernel ...
+Regenerating .config ...
+Populating config with:
+$ make ARCH=um O=.kunit olddefconfig
+[16:04:51] Building KUnit Kernel ...
+Populating config with:
+$ make ARCH=um O=.kunit olddefconfig
+Building with:
+$ make all compile_commands.json scripts_gdb ARCH=um O=.kunit --jobs=22
+[16:04:59] Starting KUnit Kernel (1/1)...
+[16:04:59] ============================================================
+Running tests with:
+$ .kunit/linux kunit.enable=1 mem=1G console=tty kunit_shutdown=halt
+[16:04:59] ================= hfs_string (3 subtests) ==================
+[16:04:59] [PASSED] hfs_strcmp_test
+[16:04:59] [PASSED] hfs_hash_dentry_test
+[16:04:59] [PASSED] hfs_compare_dentry_test
+[16:04:59] =================== [PASSED] hfs_string ====================
+[16:04:59] ============================================================
+[16:04:59] Testing complete. Ran 3 tests: passed: 3
+[16:04:59] Elapsed time: 9.087s total, 1.310s configuring, 7.611s building, 0.125s running
 
-It's just an not-so-appropriate example because
-`struct file *` and `struct fuse_file *` are widely used
-in the (buffer/direct) read/write flow but Darrick's work
-doesn't use `file` in .iomap_{begin/end}.
+v2
+Fix linker error.
 
-But you may find out `file` pointer is already used for
-both FUSE buffer write and your proposal, e.g.
+Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
+cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+cc: Yangtao Li <frank.li@vivo.com>
+cc: linux-fsdevel@vger.kernel.org
+---
+ fs/hfs/.kunitconfig  |   7 +++
+ fs/hfs/Kconfig       |  15 +++++
+ fs/hfs/Makefile      |   2 +
+ fs/hfs/string.c      |   3 +
+ fs/hfs/string_test.c | 132 +++++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 159 insertions(+)
+ create mode 100644 fs/hfs/.kunitconfig
+ create mode 100644 fs/hfs/string_test.c
 
-buffer write:
-  /*
-   * Use iomap so that we can do granular uptodate reads
-   * and granular dirty tracking for large folios.
-   */
-  written = iomap_file_buffered_write(iocb, from,
-                                      &fuse_iomap_ops,
-                                      &fuse_iomap_write_ops,
-                                      file);
-
-
-I just try to say if there is a case/feature which needs
-something previously in `struct iomap_read_folio_ctx` to
-be available in .iomap_{begin,end} too, you have to either:
-  - duplicate this in `iter->private` as well;
-  - move this to `iter->private` entirely.
-
-The problem is that both `iter->private` and
-`struct iomap_read_folio_ctx` are filesystem-specific,
-I can only see there is no clear boundary to leave something
-in which one.  It seems just like an artificial choice.
-
-Thanks,
-Gao Xiang
-
-> 
-> 
->>
->>> both needs fs-specific extra contexts for the same I/O flow.
->>>
->>> I think the reason why `struct iomap_read_folio_ctx->private` is
->>> introduced is basically previous iomap filesystems are all
->>> bio-based, and they shares `bio` concept in common but
->>> `iter->private` was not designed for this usage.
->>>
->>> But fuse `struct iomap_read_folio_ctx` and
->>> `struct fuse_fill_read_data` are too FUSE-specific, I cannot
->>> see it could be shared by other filesystems in the near future,
->>> which is much like a single-filesystem specific concept, and
->>> unlike to `bio` at all.
->>
->> Currently fuse is the only non-block-based filesystem using iomap but
->> I don't see why there wouldn't be more in the future. For example,
->> while looking at some of the netfs code, a lot of the core
->> functionality looks the same between that and iomap and I think it
->> might be a good idea to have netfs in the future use iomap's interface
->> so that it can get the large folio dirty/uptodate tracking stuff and
->> any other large folio stuff like more granular writeback stats
->> accounting for free.
-> 
-> I think you need to ask David on this idea, I've told him to
-> switch fscache to use iomap in 2022 before netfs is fully out [1],
-> but I don't see it will happen.
-> 
-> [1] https://lore.kernel.org/linux-fsdevel/YfivxC9S52FlyKoL@B-P7TQMD6M-0146/
-> 
-> Thanks,
-> Gao Xiang
+diff --git a/fs/hfs/.kunitconfig b/fs/hfs/.kunitconfig
+new file mode 100644
+index 000000000000..5caa9af1e3bb
+--- /dev/null
++++ b/fs/hfs/.kunitconfig
+@@ -0,0 +1,7 @@
++CONFIG_KUNIT=y
++CONFIG_HFS_FS=y
++CONFIG_HFS_KUNIT_TEST=y
++CONFIG_BLOCK=y
++CONFIG_BUFFER_HEAD=y
++CONFIG_NLS=y
++CONFIG_LEGACY_DIRECT_IO=y
+diff --git a/fs/hfs/Kconfig b/fs/hfs/Kconfig
+index 5ea5cd8ecea9..7f3cbe43b4b7 100644
+--- a/fs/hfs/Kconfig
++++ b/fs/hfs/Kconfig
+@@ -13,3 +13,18 @@ config HFS_FS
+ 
+ 	  To compile this file system support as a module, choose M here: the
+ 	  module will be called hfs.
++
++config HFS_KUNIT_TEST
++	tristate "KUnit tests for HFS filesystem" if !KUNIT_ALL_TESTS
++	depends on HFS_FS && KUNIT
++	default KUNIT_ALL_TESTS
++	help
++	  This builds KUnit tests for the HFS filesystem.
++
++	  KUnit tests run during boot and output the results to the debug
++	  log in TAP format (https://testanything.org/). Only useful for
++	  kernel devs running KUnit test harness and are not for inclusion
++	  into a production build.
++
++	  For more information on KUnit and unit tests in general please
++	  refer to the KUnit documentation in Documentation/dev-tools/kunit/.
+diff --git a/fs/hfs/Makefile b/fs/hfs/Makefile
+index b65459bf3dc4..a7c9ce6b4609 100644
+--- a/fs/hfs/Makefile
++++ b/fs/hfs/Makefile
+@@ -9,3 +9,5 @@ hfs-objs := bitmap.o bfind.o bnode.o brec.o btree.o \
+ 	    catalog.o dir.o extent.o inode.o attr.o mdb.o \
+             part_tbl.o string.o super.o sysdep.o trans.o
+ 
++# KUnit tests
++obj-$(CONFIG_HFS_KUNIT_TEST) += string_test.o
+diff --git a/fs/hfs/string.c b/fs/hfs/string.c
+index 3912209153a8..b011c1cbdf94 100644
+--- a/fs/hfs/string.c
++++ b/fs/hfs/string.c
+@@ -65,6 +65,7 @@ int hfs_hash_dentry(const struct dentry *dentry, struct qstr *this)
+ 	this->hash = end_name_hash(hash);
+ 	return 0;
+ }
++EXPORT_SYMBOL_GPL(hfs_hash_dentry);
+ 
+ /*
+  * Compare two strings in the HFS filename character ordering
+@@ -87,6 +88,7 @@ int hfs_strcmp(const unsigned char *s1, unsigned int len1,
+ 	}
+ 	return len1 - len2;
+ }
++EXPORT_SYMBOL_GPL(hfs_strcmp);
+ 
+ /*
+  * Test for equality of two strings in the HFS filename character ordering.
+@@ -112,3 +114,4 @@ int hfs_compare_dentry(const struct dentry *dentry,
+ 	}
+ 	return 0;
+ }
++EXPORT_SYMBOL_GPL(hfs_compare_dentry);
+diff --git a/fs/hfs/string_test.c b/fs/hfs/string_test.c
+new file mode 100644
+index 000000000000..de1928dc4ef4
+--- /dev/null
++++ b/fs/hfs/string_test.c
+@@ -0,0 +1,132 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * KUnit tests for HFS string operations
++ *
++ * Copyright (C) 2025 Viacheslav Dubeyko <slava@dubeyko.com>
++ */
++
++#include <kunit/test.h>
++#include <linux/dcache.h>
++#include "hfs_fs.h"
++
++/* Test hfs_strcmp function */
++static void hfs_strcmp_test(struct kunit *test)
++{
++	/* Test equal strings */
++	KUNIT_EXPECT_EQ(test, 0, hfs_strcmp("hello", 5, "hello", 5));
++	KUNIT_EXPECT_EQ(test, 0, hfs_strcmp("test", 4, "test", 4));
++	KUNIT_EXPECT_EQ(test, 0, hfs_strcmp("", 0, "", 0));
++
++	/* Test unequal strings */
++	KUNIT_EXPECT_NE(test, 0, hfs_strcmp("hello", 5, "world", 5));
++	KUNIT_EXPECT_NE(test, 0, hfs_strcmp("test", 4, "testing", 7));
++
++	/* Test different lengths */
++	KUNIT_EXPECT_LT(test, hfs_strcmp("test", 4, "testing", 7), 0);
++	KUNIT_EXPECT_GT(test, hfs_strcmp("testing", 7, "test", 4), 0);
++
++	/* Test case insensitive comparison (HFS should handle case) */
++	KUNIT_EXPECT_EQ(test, 0, hfs_strcmp("Test", 4, "TEST", 4));
++	KUNIT_EXPECT_EQ(test, 0, hfs_strcmp("hello", 5, "HELLO", 5));
++
++	/* Test with special characters */
++	KUNIT_EXPECT_EQ(test, 0, hfs_strcmp("file.txt", 8, "file.txt", 8));
++	KUNIT_EXPECT_NE(test, 0, hfs_strcmp("file.txt", 8, "file.dat", 8));
++
++	/* Test boundary cases */
++	KUNIT_EXPECT_EQ(test, 0, hfs_strcmp("a", 1, "a", 1));
++	KUNIT_EXPECT_NE(test, 0, hfs_strcmp("a", 1, "b", 1));
++}
++
++/* Test hfs_hash_dentry function */
++static void hfs_hash_dentry_test(struct kunit *test)
++{
++	struct qstr test_name1, test_name2, test_name3;
++	struct dentry dentry = {};
++	char name1[] = "testfile";
++	char name2[] = "TestFile";
++	char name3[] = "different";
++
++	/* Initialize test strings */
++	test_name1.name = name1;
++	test_name1.len = strlen(name1);
++	test_name1.hash = 0;
++
++	test_name2.name = name2;
++	test_name2.len = strlen(name2);
++	test_name2.hash = 0;
++
++	test_name3.name = name3;
++	test_name3.len = strlen(name3);
++	test_name3.hash = 0;
++
++	/* Test hashing */
++	KUNIT_EXPECT_EQ(test, 0, hfs_hash_dentry(&dentry, &test_name1));
++	KUNIT_EXPECT_EQ(test, 0, hfs_hash_dentry(&dentry, &test_name2));
++	KUNIT_EXPECT_EQ(test, 0, hfs_hash_dentry(&dentry, &test_name3));
++
++	/* Case insensitive names should hash the same */
++	KUNIT_EXPECT_EQ(test, test_name1.hash, test_name2.hash);
++
++	/* Different names should have different hashes */
++	KUNIT_EXPECT_NE(test, test_name1.hash, test_name3.hash);
++}
++
++/* Test hfs_compare_dentry function */
++static void hfs_compare_dentry_test(struct kunit *test)
++{
++	struct qstr test_name;
++	struct dentry dentry = {};
++	char name[] = "TestFile";
++
++	test_name.name = name;
++	test_name.len = strlen(name);
++
++	/* Test exact match */
++	KUNIT_EXPECT_EQ(test, 0, hfs_compare_dentry(&dentry, 8,
++						    "TestFile", &test_name));
++
++	/* Test case insensitive match */
++	KUNIT_EXPECT_EQ(test, 0, hfs_compare_dentry(&dentry, 8,
++						    "testfile", &test_name));
++	KUNIT_EXPECT_EQ(test, 0, hfs_compare_dentry(&dentry, 8,
++						    "TESTFILE", &test_name));
++
++	/* Test different names */
++	KUNIT_EXPECT_EQ(test, 1, hfs_compare_dentry(&dentry, 8,
++						    "DiffFile", &test_name));
++
++	/* Test different lengths */
++	KUNIT_EXPECT_EQ(test, 1, hfs_compare_dentry(&dentry, 7,
++						    "TestFil", &test_name));
++	KUNIT_EXPECT_EQ(test, 1, hfs_compare_dentry(&dentry, 9,
++						    "TestFiles", &test_name));
++
++	/* Test empty string */
++	test_name.name = "";
++	test_name.len = 0;
++	KUNIT_EXPECT_EQ(test, 0, hfs_compare_dentry(&dentry, 0, "", &test_name));
++
++	/* Test HFS_NAMELEN boundary */
++	test_name.name = "This_is_a_very_long_filename_that_exceeds_normal_limits";
++	test_name.len = strlen(test_name.name);
++	KUNIT_EXPECT_EQ(test, 0, hfs_compare_dentry(&dentry, HFS_NAMELEN,
++			"This_is_a_very_long_filename_th", &test_name));
++}
++
++static struct kunit_case hfs_string_test_cases[] = {
++	KUNIT_CASE(hfs_strcmp_test),
++	KUNIT_CASE(hfs_hash_dentry_test),
++	KUNIT_CASE(hfs_compare_dentry_test),
++	{}
++};
++
++static struct kunit_suite hfs_string_test_suite = {
++	.name = "hfs_string",
++	.test_cases = hfs_string_test_cases,
++};
++
++kunit_test_suite(hfs_string_test_suite);
++
++MODULE_DESCRIPTION("KUnit tests for HFS string operations");
++MODULE_LICENSE("GPL");
+-- 
+2.43.0
 
 
