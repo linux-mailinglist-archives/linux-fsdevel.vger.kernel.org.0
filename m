@@ -1,368 +1,278 @@
-Return-Path: <linux-fsdevel+bounces-61026-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61027-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29A0CB54790
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 11:31:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE9E2B5496C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 12:20:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F25E9AC3C11
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 09:28:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D1827B1593
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 10:18:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE20C2C21FA;
-	Fri, 12 Sep 2025 09:21:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E43922EBBA6;
+	Fri, 12 Sep 2025 10:15:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mKc9St9q"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="bqpqcsir";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="kLoRIS49"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A842C0297
-	for <linux-fsdevel@vger.kernel.org>; Fri, 12 Sep 2025 09:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757668911; cv=none; b=sNefUOioKZt6IXdQjtimXxjSEHnxniZchz5QwI5eRgiOrokljvvjxcHhmNVirC9t53r7aKFCSYqd2KH5p1yHO1yhvK7YATMCYKYH3RZY4UGb6UAS8N5oGoHqA2qRMQq7X3NIMjhVpGCwxD6wfZ5mULGOTtI9Zm6PdLHWQ2Fg3IA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757668911; c=relaxed/simple;
-	bh=4ja9oQCqcRHmgjRUTjFsiDAGirB++R/PpaGwVbfLLOM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EUCh6wU67j5bGtD24CyTjO4wPJ2qwLOndkNC4cgwgCvMLHLOiHPTyWIkcicaYaruSWjtyrIw7pPxHGuTfsCTF+tsGqq+fXWseSHW0eb0TKXH+ew6GeVkcf/KjgvsROdX9xh+R1v+2OUifTvGZim4/w7A3/PhCxvBlfpb1WKShM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mKc9St9q; arc=none smtp.client-ip=209.85.210.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-74c1251df00so927724a34.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Sep 2025 02:21:49 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A15912EBB93;
+	Fri, 12 Sep 2025 10:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757672119; cv=fail; b=uZ2CjCTH6Fp05NS4ONGkYlFbyhcQNX7iJXhjihMJQ7li12Hb7kbaXLoVkHwZ7dPLuqaA+9bDaEn5+bmYqUzB7M1//jVozjZhHEPI2Hxl0GyaN5H5yGvqjNhYREHOr+OpRAiXMiMPq95cfuleZ5gvaAGnkDDRvMbGlj9+xJZ+QHU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757672119; c=relaxed/simple;
+	bh=leXgaYc2OLtbB88LPNxZsLmQ8IAVz6DvxE08qBUpeJE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=ir8Mdkam/udGQmcWANefnD5+r/ImJMQoPxyyHs5bVpzn1Gw2rO+1eNXe/53BRtfZxm9KcdvNy6bZgPJvToDtilnCa6oJf5lwdysqfRNExHjPCG9sklVmiaqaNq0WrsuxCfk3qz/4IHeQztzsJ4abIsGisJygJAXslOjLJVf+F5E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=bqpqcsir; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=kLoRIS49; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58C1uY1u023133;
+	Fri, 12 Sep 2025 10:14:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=zdr1hPU6JA/zhG50uc
+	+HHu8Adr5bmnNS6oki/jy1LgQ=; b=bqpqcsir5C8inuTClkTyjVBBUvzixm+gYI
+	1XJNIdsOfaAzswshiWt9ybo8MJXDyqXUSFQ9m3nWV/K2LS9KS/aIPsWCuMWgvcLW
+	c/nRzYtfF+DpyLTA0Db7M5lbTs9JR5aSrTW8AxGWYUEdFqf7mtWdbO55zht/qqSX
+	6L5TrnSA6dkQSeLkdqLigE7AryGG8b0InItYgX3RwsACKnBa1gonjbIU/Q01f4r4
+	p5l31c60fUYoR7XKJLVB3eDY6A0R9csdqoDP3I1J4SGHxH5GeQreJKQoc1K8rs72
+	GIxK89zjwX1M8GmL3HybD00BFh8McKXGglkM3g8k6OsH/2lA4J1g==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4921pefyg8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 12 Sep 2025 10:14:23 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 58CA50ML025951;
+	Fri, 12 Sep 2025 10:14:21 GMT
+Received: from dm5pr21cu001.outbound.protection.outlook.com (mail-centralusazon11011033.outbound.protection.outlook.com [52.101.62.33])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 490bddqg0t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 12 Sep 2025 10:14:21 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=H6z8mGQFgHLXQytGuzpN49J4jmRC1XZFnEr7obyKzNNFDhW2OTJsX9+FiPZRmfeBXp8lhsXMp7ZtdMo58GyQPVJ7AOyKiwNyL+89rFVBvz7bIOf4wAdCQIdGNeSfKH30CBwGI8zjhkwxeASvKuQsx8Ngrgob75ToPcGiC/wqqEvuGwdBMfSxUmUBG1+YwJKcWLKwkYe8tC0siClIq6FIGTpoqJNU3skgJQWXMt++iPSXjSrbbgwT+EP9cgZb9n5TvoxxbZAPFlmik+U8J0fsxkAHxbm/Uz1IkSE3SZYr43/JYC/99j+KDhlK/OW55qBtfqzw7VLi5w20WOsQ/Q61Vg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zdr1hPU6JA/zhG50uc+HHu8Adr5bmnNS6oki/jy1LgQ=;
+ b=bMGBSeCpQ/r6tSVaUN7cjW4ri3ak0+y5VpXjA3uQ6BH8ihpLTn2LI3S1ymMBks+h+uDr/uvGVDJ9BqlREHE0SSQGVzY7MgcCYHCDgOa2QfnaAFEL3Rzg500LBdvvRbnqkgelbIo55DbJqUO1zsrxPx9t36syY1p43u61nyso4wsP6oJdzB2NnyrbAo6VWDi86xlZBJif93WfdPC8oCRn2BmQgKGr2HdO91KjdyDS9ZpKpmyMlAJzcjSEAEaICMJmjLXoLihxREjAKmi/mrL/thZhT5EBrCPYR8lYoILrg+XeIdurBReEe5M20xOsfvkdz4NRVmEMSKqvecMVUJhGMA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757668908; x=1758273708; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=WUZ7obya3Sr5RFpCVfRbeOTL3de87o7Xbr0uUEJlIJc=;
-        b=mKc9St9qwoI0LTaHPUCOiDjRQkWvN0F2by1bN8b6mD4YlPzGBeu1OeluJ8fhHrskHR
-         NxvDhs+CDarY41wgTgqSU38vFHQxf8789xXqIDaBaEheZUyXTet+N+aGiVPtLkASfPns
-         FzpLTDoWhMAW5EooV2J33kDn02MXkEvG+LrZ3oUxiRsaW12Cw3E+O6hJ7AHBuiNzChQf
-         MBNa90+kcXW4qRmxpGVUcon7IK4Gsvpf3hM4tGlpZtE4zgwyzD/PBQr+IZGMCBkdkRUJ
-         oGVUyhfLeputYxCrAv17LtItPZ/s1Qt2BB9mL9hi49CIi5WOV7WZVaB5C3vbQYgAVHjo
-         zJ1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757668908; x=1758273708;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WUZ7obya3Sr5RFpCVfRbeOTL3de87o7Xbr0uUEJlIJc=;
-        b=bxWUOBXUQ+mEOdNIjppjcopo0v+itWdgLXsZXKrGWjmUHMkcRZacZGz+Iu0A1acelh
-         jHtIqPuevHV6BZWWgS9reTFiISAvgsz4ZSdS38tet2IyBPpjFmbrOUipI6d/unHhglXX
-         D9kSVWClhEeJs5z30crT5WrziN8zFhdMRxITdIRJAoZxDAgYExtsrR5wGERsiQCJ12Nc
-         bXqkWmurOfnLHVVprL6y69Rox70Ca4gKR+m8ADgU4+bRpcmzBiHQBT4QUvpP0cWpFdY8
-         RNgZ96JaS/tCsOldgPoclPl0ih88LpL+b0NMZDyaDSBxJaUyyU5buSFEaqOzn4N64HBS
-         /sHA==
-X-Forwarded-Encrypted: i=1; AJvYcCW7Qa9zx0yZV47arYEFjf9y5PpFUYRmg/2SkingSinXOTCeAkGAMW45ZxpP5w+C0ke5tMqXWyHaoQCo6pg1@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyx2NxSQ8US2hYAnFBd+tMTBgNJyrl7log/4Uyb8dwuvQz1sRkN
-	XSu89HB5Q2XFLPdZlBJFxzHnzk1Blqe2Cc/zLWBvvXvBYRU6bwlmYhL7HUMwIjWabs1aAwXF5cM
-	L44q+a11bPifIyWk1j/3N13CpqArFM38=
-X-Gm-Gg: ASbGncvBy5zrQ2aErGwhpx/x4jL86EeKQ0v28vCSrV0GygP24K8GW3tJSWg9lvzwnHQ
-	Brx5bJ3daej20BGVN4/lS0PBw2SilHt/0UGxCQSr6oCUTguDrJB2Z4IXz277Gm2Fjlpk4oLLiBX
-	danQY4QKWIh59QV94Hp+Yl56eI6GK2I2PkBQpk+3x2Y+bkgK/Ji9YHPa1M6mOSNFG15brb2mPWi
-	3Mikw==
-X-Google-Smtp-Source: AGHT+IHKdOD0sav1pzLGsvexIHlR11xBcySbkJsNI1i4E1d/USdK7pecHfX7/WogNjy7HJPcnksQEcW2rH2s9qtPrgk=
-X-Received: by 2002:a05:6871:204:b0:31d:8a1e:78ce with SMTP id
- 586e51a60fabf-32e554a2f38mr945748fac.16.1757668908198; Fri, 12 Sep 2025
- 02:21:48 -0700 (PDT)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zdr1hPU6JA/zhG50uc+HHu8Adr5bmnNS6oki/jy1LgQ=;
+ b=kLoRIS49aPOHAHtxp0V8MAD6MrEy2F2qeZ3HW3S38x0F0CCY6rQVIbrByFOKT/qRYDoTFHXqoi4gmQxfhMNBL+za/NxY87RfUrwb34zfEOW2QVppZY49Oz5+AHkzs01F65QnBPaUowlR0DvFqXbSjwZBkB/S8d+sQJpLNnMsr8I=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by PH0PR10MB4630.namprd10.prod.outlook.com (2603:10b6:510:33::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Fri, 12 Sep
+ 2025 10:14:18 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.9094.021; Fri, 12 Sep 2025
+ 10:14:18 +0000
+Date: Fri, 12 Sep 2025 11:14:16 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Matthew Wilcox <willy@infradead.org>,
+        Guo Ren <guoren@kernel.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Andreas Larsson <andreas@gaisler.com>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>, Nicolas Pitre <nico@fluxnic.net>,
+        Muchun Song <muchun.song@linux.dev>,
+        Oscar Salvador <osalvador@suse.de>,
+        David Hildenbrand <david@redhat.com>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
+        Dave Young <dyoung@redhat.com>, Tony Luck <tony.luck@intel.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Dave Martin <Dave.Martin@arm.com>, James Morse <james.morse@arm.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+        Hugh Dickins <hughd@google.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Uladzislau Rezki <urezki@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Andrey Konovalov <andreyknvl@gmail.com>, Jann Horn <jannh@google.com>,
+        Pedro Falcato <pfalcato@suse.de>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-csky@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
+        nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org, linux-mm@kvack.org,
+        ntfs3@lists.linux.dev, kexec@lists.infradead.org,
+        kasan-dev@googlegroups.com, Jason Gunthorpe <jgg@nvidia.com>
+Subject: Re: [PATCH v2 15/16] fs/proc: update vmcore to use .proc_mmap_prepare
+Message-ID: <26d584a9-86da-4286-b980-d45ecf6321d4@lucifer.local>
+References: <cover.1757534913.git.lorenzo.stoakes@oracle.com>
+ <163fba3d7ec775ec3eb9a13bd641d3255e8ec96c.1757534913.git.lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <163fba3d7ec775ec3eb9a13bd641d3255e8ec96c.1757534913.git.lorenzo.stoakes@oracle.com>
+X-ClientProxiedBy: LO4P123CA0070.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:153::21) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250911095602.1130290-1-zhangchunyan@iscas.ac.cn>
- <20250911095602.1130290-2-zhangchunyan@iscas.ac.cn> <9bcaf3ec-c0a1-4ca5-87aa-f84e297d1e42@redhat.com>
- <CAAfSe-sAru+FuhVWRa+i5_sj6m4318pLFrgP0Gsd0DVWzjE-hg@mail.gmail.com> <04d2d781-fd5e-4778-b042-d4dbeb8c5d49@redhat.com>
-In-Reply-To: <04d2d781-fd5e-4778-b042-d4dbeb8c5d49@redhat.com>
-From: Chunyan Zhang <zhang.lyra@gmail.com>
-Date: Fri, 12 Sep 2025 17:21:11 +0800
-X-Gm-Features: Ac12FXyFflHnf_JBI4i9hH9jqdgSKY4ieN6Zsx6mGzkigco15IPWhOrDoEo2gdw
-Message-ID: <CAAfSe-tQgmBm=RS2gCi7VaRW1XZhS_sJ9rHbvqJ0w=KwTf+m3g@mail.gmail.com>
-Subject: Re: [PATCH v11 1/5] mm: softdirty: Add pgtable_soft_dirty_supported()
-To: David Hildenbrand <david@redhat.com>
-Cc: Chunyan Zhang <zhangchunyan@iscas.ac.cn>, linux-riscv@lists.infradead.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Deepak Gupta <debug@rivosinc.com>, Ved Shanbhogue <ved@rivosinc.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|PH0PR10MB4630:EE_
+X-MS-Office365-Filtering-Correlation-Id: 993c8130-a3fb-4d68-9be1-08ddf1e5223a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?OHPSzSr/YWz4v8Cuqk2qBw0k9Rg0hM8vnCgwxch4hQex8YgkZ8mvEaJrfBae?=
+ =?us-ascii?Q?bgDxcWFIp0wOV3fr8lOwp7CXHF4tZuMGO6Tjob4sutsEQ6fxFLtSYBsFu6Fs?=
+ =?us-ascii?Q?ltbTHRkxJ3Xx5e/fvPNOFoK3XOyIWjo8RDZzBjNQlJmYd0YM7AYsZbQYKaTt?=
+ =?us-ascii?Q?V3F5KfYkcgbyU20XDSl4NUnAPHXlhZ057jANg84ggbNsrH/kSO6syod1DAvE?=
+ =?us-ascii?Q?JCB/VfyVUKXISWxnhbq6O3/3QD1fvFY52cPD4r1sFmAfJqMJBIoJZxuknDtb?=
+ =?us-ascii?Q?1D5SNzRZrOGcrLWyZ1xdVLhkA02gxuOIjU0qQ/jzrju45wOHO+y1vReBxGDD?=
+ =?us-ascii?Q?fZRkr2U7vmBgkls/Y2T1EOaKJbL2tKyz2j7X6Kd9hMNsrxnlotYJu9CtF670?=
+ =?us-ascii?Q?i1PFGU6TPkSSNt4LdpgKCDo45NCeZtvI+i2g7oz3YVFKEPq3tVUBcvnvPS71?=
+ =?us-ascii?Q?pgPb6mXLBoTAEeKW4YaJd7gPXxZ8L+2YRvLo0CLMvLD6MwUXPIG1nCkQmHIG?=
+ =?us-ascii?Q?9KYzvOKb2b5mvYzPHhtijeadxPV30cEiAJraG96yOgpYviugsaZY1IV0yJDC?=
+ =?us-ascii?Q?18LmVPQzB6n95ew8wOFykkxVmQMwwhd0L1foE2cS9lEcCsw0gkbNNSaml0Xq?=
+ =?us-ascii?Q?yo//IM0RskXFypBZQHUZT46MEp/r8D6eRIs7BQY/P2VSASaFd6MPmEaLOqSu?=
+ =?us-ascii?Q?Po5v5U9pEeeB2ze2RwVhnlNRxH7dn0KjGKjmr/Zv+jz6vVj6229W7P3zOaQ5?=
+ =?us-ascii?Q?wnl2Ve4wf87juBK2q5S8PgZeJIDhYfN6GWNXtokfwgnmGJR9I6QP2WJEzXoQ?=
+ =?us-ascii?Q?o5t+wG96K9lV1DFacX9T7kjrjwVGQlyc6UVDRAInuJCfx9PXGCz7OPqhZqhd?=
+ =?us-ascii?Q?lDTIcweZmHZv+AKcAESLXNju0gf4Xc5LhdjKBn5ASBAGgCskd1MET/6efFIk?=
+ =?us-ascii?Q?9I/cuiLDdh6VghBM4Ksc/panEdlCvHmglfFQAVqBLPuL4oPVDS0TuZvYnldP?=
+ =?us-ascii?Q?7viEqBTLNDlf7LgdY+NW/+7jrAqoYKzt6sOvTa/A0UgeIwycGmYzwMpsygzW?=
+ =?us-ascii?Q?HvQ5bunr9ewQ83CfJ2ftcuzui8OT2KC0WyTLbTPnfC5ekNkudrIRPQXmRO0o?=
+ =?us-ascii?Q?FHNvWPY26kvjWn5N5tuwwWS8JFnMtZdubIySyMqA8M5NesUctl/VoHxUgm+J?=
+ =?us-ascii?Q?kuwOy5IFNpYuvlwuxD2WT9O9oV2SYulLeBQJeEwJM5CKk58Y3eF5qBcGLEni?=
+ =?us-ascii?Q?akuj+HEMQkYiG+PF/CscZ0tyjkXjMf3PRf0MReiFaw84yRsx02QBxs83K78N?=
+ =?us-ascii?Q?yNQQn1VXwLFtG3MwDBu7grQ8nZQ+rM3MkvcSFlXnvwX7jbOcxCAhcsrH0geW?=
+ =?us-ascii?Q?bzCPpVUJ6MRVxguDCPNTlyWBkE5VgtJa1B27IfrsAnPKgLh7YE0HGD4WJ0+f?=
+ =?us-ascii?Q?+sxRVAGOwAI=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?pctqzPbGODlOr8TocSUmgA5LvHZVLRPHZ/gQwm9v1FdOItIEPWMLN78789+F?=
+ =?us-ascii?Q?ML/yqfLKC5XSmWG2GOFWHXcDAH0hpw4W+RcCA03FZamMZWnOcmVQG7kYjA9D?=
+ =?us-ascii?Q?Yl1z8+wqXR2cAwbJsE2/fWNLZ5kBzkVoX5TTFeyqLDShGq4aZ+M1Avsk5MpR?=
+ =?us-ascii?Q?3JpXUq73tiLqW3rngdx1d+17X/1STp30zOrItg1m5+ac3OKkqUGxn0C1tMfP?=
+ =?us-ascii?Q?TKaBEvk8k/46/FTdmHZnokf8xOHNgHg8JaFM/qaRwJxKgSsrSFC1N69GZyO/?=
+ =?us-ascii?Q?k56MGv4V7fW2/ZEVtnH5fksBgwqz0bUTkjRP2TDVshJznAXdTrilGP71wN6g?=
+ =?us-ascii?Q?cEs58TzOcV41oG/56E3KG43EvfSDU2gpoTT9bOVgQx0v+ORa8E9B60ezMRVU?=
+ =?us-ascii?Q?eKFS3/DWa6drrBE0PPj2Y6uZAAppVqjZR9WWYze72rktq3InGoDsYzko4ycK?=
+ =?us-ascii?Q?QgW0b2vVM4Kp7969E6IET15Y0gI9YApT3UZmvKH53m2KaaVp93brnVNQVIw4?=
+ =?us-ascii?Q?ck2qZtUoRLYVWv8sHmTHqN5BBolss/bxq+l9v/jpZoDUfOvZgSAGtyYMaCXu?=
+ =?us-ascii?Q?m4cjm8qjET6uwRQA1bE1FJ/D57aui+5G7C8fdkPcs3+F06bDNgDBUwdWLcaX?=
+ =?us-ascii?Q?3bJ6ZcVs3LS/lLt6ugD3vO3zc2BFjEvyrxYB8zF/YGuIpeJj+v06rtbbNCwc?=
+ =?us-ascii?Q?PBO+Su0v9O/JTxzMkjSSFfVKd+8pXbH+b/Ltppl3dKvyZTJZDKwYJEd5ZV23?=
+ =?us-ascii?Q?JmQIpGYr560KHKo5UOsdvDoVZObX5xe8IcVaWHTHvPA4OBnMbQ9O8TOeJtuy?=
+ =?us-ascii?Q?3/3pASrCBqCRxE8s7vhQk+koX16QCkvxhhGpMO6zzYFCOP2Zjp5ivrvCgkMR?=
+ =?us-ascii?Q?CGqdJYsU4cFeWCHQ1w6fBVE0iSWtnIIYwy3eaX8H9E0U73PzCujSuIfT6I/K?=
+ =?us-ascii?Q?cW6NJXnJOPFjlnl0n/NmmhevbQHRf9y0kprbmatINiU5Dit5iTag8jnLVZTd?=
+ =?us-ascii?Q?5tVk1AMuZkrWSTmA7Qhcb2vk+F2hb+Fkej0EkMrBKcOsEsjTuVcsj5QAV56v?=
+ =?us-ascii?Q?opnz2DWJsUnI9QXMvPKATPIxILe5lPCoRfy2w2Inw07rSl+BZKzrxSk+i1GC?=
+ =?us-ascii?Q?VsEcJn9PrJ5v57Aru68bmDH9bFmtY67jXpJ6zQuw1PUSdsJOvFGBB+z3oBSo?=
+ =?us-ascii?Q?zlLP7FLMjron+ic5VSy6xAzs8E0Q6uXg9hY0mO1hTzmS1QHT+qEX/PGBvbE3?=
+ =?us-ascii?Q?MtrOwjlMTxR4CtN3ej4cFgD5La1JkXjcfsIabk69CibMgMpc4TL/7ahOkmAI?=
+ =?us-ascii?Q?Zm371z8odxoxRQ5p4FUVsZrfqYGjvmFNil1pCN5K9lN4qPrh72O8BenrkuW8?=
+ =?us-ascii?Q?gVK4XKkT1wZQiDDPsCOgeB5a2g+Ia2+3w+x22fAd5/aGNSgnhPfOGiS8lO8f?=
+ =?us-ascii?Q?vnWOJkY9TSCERfnpSQZgfQmHyZRPnjJ3Cko5zoy6k0Pybl5UZVUvpIk3FK4Y?=
+ =?us-ascii?Q?HC5q35MoHqBsMnxqoVbkE4h69tZXaZIEc5oOhgRloNRBoC3V7DqSQqTqcgnn?=
+ =?us-ascii?Q?J8x3gpedmUMvGzb1Bbbgz97gID3KXLOIk+vMlg7yjV/bvhjbWmNPclk76SqT?=
+ =?us-ascii?Q?cg=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	E2LnCv9XrsHH7leTuGZ68v5Wd9SVw6b9gaS0DtbG8HP0dpKK8qyWx0gRiTFEhvtJ3RA5L2vbkDb52/m6M0QIFb7m3fRsH+ztlTBhl/WyMCvOqwFP5tn3q7PXKVIDUoLLWXEWg1tsUKOlcDCUXYMFhRDHATcbkb+Z7TeMwEyOeS8syrYk2N8NbZpVmizFkGaB/2kfMVuemNH3FmzEFSaXOcphXWzZet8aZs6EmfFs+VDT6eTs8NP7t+8Dct/lyQRDg1soR/GmSJxG5LUE4W65H/sdp0AvrqU3nShA28PIw2gjCzpvXEmVXAIt4nNNaFGYjY0tLdrcsGxUEqXbJi8OoMoL2qKPh8GsXRNtHy+GPjNqqXZt28mDlzqkhI+w1thRXKyLn4lIOKtwYm5QhwJ5SfwxoxAKySXhKmXQEw37G9BRwP9ZdtwKD9Ru9XdGjJo+vjpQAM0+nIdCW901a7zQwIJErYi9NIZFFXu2WGXyfkRN9QfM/N480DekI1Hh1y00bnUjkVale/F+zPueB8lYUsnYN+zi7HlNQOQgU6SVoXXm7pZ9vyb42Nn5aD9TcHll85Bq+FYpPDYlso8g7FefM4dXFcTIgjBI/dFePX7PkxU=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 993c8130-a3fb-4d68-9be1-08ddf1e5223a
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2025 10:14:18.1244
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /N0jZubBhh+zDpboBXIXKqyrwmqN8zcDSOrwhTqXudt8itO/TWsCEjy8JnkLi5nCcF24Blx3U9xYD1nFxsN5MiAHs4cGuqA9zEt+TUmAv2Q=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB4630
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-12_03,2025-09-11_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 suspectscore=0
+ mlxscore=0 adultscore=0 bulkscore=0 malwarescore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
+ definitions=main-2509120096
+X-Proofpoint-GUID: TTO9fSkDZzVHAlryTATiZ0uBolnrm7fq
+X-Proofpoint-ORIG-GUID: TTO9fSkDZzVHAlryTATiZ0uBolnrm7fq
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA4MDE1MiBTYWx0ZWRfX5MIg6YepPqx1
+ vgokq57DZgdxdO43xoVXbVSXaKEIreFCRdsWNf2KS9+uwJ4PwzOB1zKDQnL9Plcl+02Q1rv4W8L
+ Nr7uOzs8GNifVHFQDF8Yqfirmk5WwnrTyVGArszMH7A8eJFfneTb8lIKcQTCK2iYJ93RTQs9oSU
+ TKunHwmbz/YzeKm7AGSvfOdwe8LRwgGATJ8P2E1EMMD9VFw+70PQb5vRApy2KIFyY6SKP4//kFD
+ lOT4HBk89a/Ar2/8CrYGx7nspZHRthuZOQ+mmGGoVsCwX90Obkm5GBdEaLgzIzpSew7GQjlrH1m
+ ltB2GG9iQh1CqQu0I09Ul0a5+lhnr7Kr++PBwWL30/ItlnbbpjzJVMvmY7kUCHXV9FdH460AJdv
+ FEQa2VFy+1sRx/nzyEIVwImhbkzbOw==
+X-Authority-Analysis: v=2.4 cv=b9Oy4sGx c=1 sm=1 tr=0 ts=68c3f27f b=1 cx=c_pps
+ a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=GoEa3M9JfhUA:10 a=yPCof4ZbAAAA:8 a=c34yhIT1r7kIJM1nUv8A:9
+ a=CjuIK1q_8ugA:10 cc=ntf awl=host:13614
 
-On Fri, 12 Sept 2025 at 16:41, David Hildenbrand <david@redhat.com> wrote:
->
-> [...]
->
-> >>> +/*
-> >>> + * We should remove the VM_SOFTDIRTY flag if the soft-dirty bit is
-> >>> + * unavailable on which the kernel is running, even if the architecture
-> >>> + * provides the resource and soft-dirty is compiled in.
-> >>> + */
-> >>> +#ifdef CONFIG_MEM_SOFT_DIRTY
-> >>> +     if (!pgtable_soft_dirty_supported())
-> >>> +             mnemonics[ilog2(VM_SOFTDIRTY)][0] = 0;
-> >>> +#endif
-> >>
-> >> You can now drop the ifdef.
-> >
-> > Ok, you mean define VM_SOFTDIRTY 0x08000000 no matter if
-> > MEM_SOFT_DIRTY is compiled in, right?
-> >
-> > Then I need memcpy() to set mnemonics[ilog2(VM_SOFTDIRTY)] here.
->
-> The whole hunk will not be required when we make sure VM_SOFTDIRTY never
-> gets set, correct?
+Hi Andrew,
 
-Oh no, this hunk code does not set vmflag.
-The mnemonics[ilog2(VM_SOFTDIRTY)] is for show_smap_vma_flags(),
-something like below:
-# cat /proc/1/smaps
-5555605c7000-555560680000 r-xp 00000000 fe:00 19
-  /bin/busybox
-...
-VmFlags: rd ex mr mw me sd
+Can you apply the below fix-patch to address a trivial variable use warning,
+thanks!
 
-'sd' is for soft-dirty
+Cheers, Lorenzo
 
-I think this is still needed, right?
+----8<----
+From b9d0c3b39d97309bf572af443e2190bb20f6b976 Mon Sep 17 00:00:00 2001
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Date: Fri, 12 Sep 2025 11:12:10 +0100
+Subject: [PATCH] vmcore fix
 
->
-> >
-> >>
-> >> But, I wonder if could we instead just stop setting the flag. Then we don't
-> >> have to worry about any VM_SOFTDIRTY checks.
-> >>
-> >> Something like the following
-> >>
-> >> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> >> index 892fe5dbf9de0..8b8bf63a32ef7 100644
-> >> --- a/include/linux/mm.h
-> >> +++ b/include/linux/mm.h
-> >> @@ -783,6 +783,7 @@ static inline void vma_init(struct vm_area_struct *vma, struct mm_struct *mm)
-> >>    static inline void vm_flags_init(struct vm_area_struct *vma,
-> >>                                   vm_flags_t flags)
-> >>    {
-> >> +       VM_WARN_ON_ONCE(!pgtable_soft_dirty_supported() && (flags & VM_SOFTDIRTY));
-> >>          ACCESS_PRIVATE(vma, __vm_flags) = flags;
-> >>    }
-> >>
-> >> @@ -801,6 +802,7 @@ static inline void vm_flags_reset(struct vm_area_struct *vma,
-> >>    static inline void vm_flags_reset_once(struct vm_area_struct *vma,
-> >>                                         vm_flags_t flags)
-> >>    {
-> >> +       VM_WARN_ON_ONCE(!pgtable_soft_dirty_supported() && (flags & VM_SOFTDIRTY));
-> >>          vma_assert_write_locked(vma);
-> >>          WRITE_ONCE(ACCESS_PRIVATE(vma, __vm_flags), flags);
-> >>    }
-> >> @@ -808,6 +810,7 @@ static inline void vm_flags_reset_once(struct vm_area_struct *vma,
-> >>    static inline void vm_flags_set(struct vm_area_struct *vma,
-> >>                                  vm_flags_t flags)
-> >>    {
-> >> +       VM_WARN_ON_ONCE(!pgtable_soft_dirty_supported() && (flags & VM_SOFTDIRTY));
-> >>          vma_start_write(vma);
-> >>          ACCESS_PRIVATE(vma, __vm_flags) |= flags;
-> >>    }
-> >> diff --git a/mm/mmap.c b/mm/mmap.c
-> >> index 5fd3b80fda1d5..40cb3fbf9a247 100644
-> >> --- a/mm/mmap.c
-> >> +++ b/mm/mmap.c
-> >> @@ -1451,8 +1451,10 @@ static struct vm_area_struct *__install_special_mapping(
-> >>                  return ERR_PTR(-ENOMEM);
-> >>
-> >>          vma_set_range(vma, addr, addr + len, 0);
-> >> -       vm_flags_init(vma, (vm_flags | mm->def_flags |
-> >> -                     VM_DONTEXPAND | VM_SOFTDIRTY) & ~VM_LOCKED_MASK);
-> >> +       vm_flags |= mm->def_flags | VM_DONTEXPAND;
-> >
-> > Why use '|=' rather than not directly setting vm_flags which is an
-> > uninitialized variable?
->
-> vm_flags is passed in by the caller?
->
+Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+---
+ fs/proc/vmcore.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Then the original code seems wrong.
+diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
+index faf811ed9b15..028c8c904cbb 100644
+--- a/fs/proc/vmcore.c
++++ b/fs/proc/vmcore.c
+@@ -592,11 +592,10 @@ static int mmap_prepare_action_vmcore(struct vm_area_struct *vma)
+ {
+ 	struct mmap_action action;
+ 	size_t size = vma->vm_end - vma->vm_start;
+-	u64 start, end, len, tsz;
++	u64 start, len, tsz;
+ 	struct vmcore_range *m;
 
-> But just to clarify: this code was just a quick hack, adjust it as you need.
+ 	start = (u64)vma->vm_pgoff << PAGE_SHIFT;
+-	end = start + size;
+ 	len = 0;
 
-Got it.
-
->
-> [...]
->
-> >>>
-> >>> +     if (!pgtable_soft_dirty_supported())
-> >>> +             return;
-> >>> +
-> >>>        if (pmd_present(pmd)) {
-> >>>                /* See comment in change_huge_pmd() */
-> >>>                old = pmdp_invalidate(vma, addr, pmdp);
-> >>
-> >> That would all be handled with the above never-set-VM_SOFTDIRTY.
->
-> I meant that there is no need to add the pgtable_soft_dirty_supported()
-> check.
-
-Ok I will take a look.
-
->
-> >
-> > Sorry I'm not sure I understand here, you mean no longer need #ifdef
-> > CONFIG_MEM_SOFT_DIRTY for these function definitions, right?
->
-> Likely we could drop them. VM_SOFTDIRTY will never be set so the code
-> will not be invoked.
-
-The relationship of VM_SOFTDIRTY and clear_soft_dirty_pmd() is not
-very direct from the first sight, let me take a further look.
-
->
-> And for architectures where VM_SOFTDIRTY is never even possible
-> (!CONFIG_MEM_SOFT_DIRTY) we keep it as 0.
-
-Ok.
-
->
-> That way, the compiler can even optimize out all of that code because
->
-> "vma->vm_flags & VM_SOFTDIRTY" -> "vma->vm_flags & 0"
->
-> will never be true.
->
-> >
-> >>
-> >>> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-> >>> index 4c035637eeb7..2a3578a4ae4c 100644
-> >>> --- a/include/linux/pgtable.h
-> >>> +++ b/include/linux/pgtable.h
-> >>> @@ -1537,6 +1537,18 @@ static inline pgprot_t pgprot_modify(pgprot_t oldprot, pgprot_t newprot)
-> >>>    #define arch_start_context_switch(prev)     do {} while (0)
-> >>>    #endif
-> >>>
-> >>> +/*
-> >>> + * Some platforms can customize the PTE soft-dirty bit making it unavailable
-> >>> + * even if the architecture provides the resource.
-> >>> + * Adding this API allows architectures to add their own checks for the
-> >>> + * devices on which the kernel is running.
-> >>> + * Note: When overiding it, please make sure the CONFIG_MEM_SOFT_DIRTY
-> >>> + * is part of this macro.
-> >>> + */
-> >>> +#ifndef pgtable_soft_dirty_supported
-> >>> +#define pgtable_soft_dirty_supported()       IS_ENABLED(CONFIG_MEM_SOFT_DIRTY)
-> >>> +#endif
-> >>> +
-> >>>    #ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
-> >>>    #ifndef CONFIG_ARCH_ENABLE_THP_MIGRATION
-> >>>    static inline pmd_t pmd_swp_mksoft_dirty(pmd_t pmd)
-> >>> diff --git a/mm/debug_vm_pgtable.c b/mm/debug_vm_pgtable.c
-> >>> index 830107b6dd08..b32ce2b0b998 100644
-> >>> --- a/mm/debug_vm_pgtable.c
-> >>> +++ b/mm/debug_vm_pgtable.c
-> >>> @@ -690,7 +690,7 @@ static void __init pte_soft_dirty_tests(struct pgtable_debug_args *args)
-> >>>    {
-> >>>        pte_t pte = pfn_pte(args->fixed_pte_pfn, args->page_prot);
-> >>>
-> >>> -     if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY))
-> >>> +     if (!pgtable_soft_dirty_supported())
-> >>>                return;
-> >>>
-> >>>        pr_debug("Validating PTE soft dirty\n");
-> >>> @@ -702,7 +702,7 @@ static void __init pte_swap_soft_dirty_tests(struct pgtable_debug_args *args)
-> >>>    {
-> >>>        pte_t pte;
-> >>>
-> >>> -     if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY))
-> >>> +     if (!pgtable_soft_dirty_supported())
-> >>>                return;
-> >>>
-> >>>        pr_debug("Validating PTE swap soft dirty\n");
-> >>> @@ -718,7 +718,7 @@ static void __init pmd_soft_dirty_tests(struct pgtable_debug_args *args)
-> >>>    {
-> >>>        pmd_t pmd;
-> >>>
-> >>> -     if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY))
-> >>> +     if (!pgtable_soft_dirty_supported())
-> >>>                return;
-> >>>
-> >>>        if (!has_transparent_hugepage())
-> >>> @@ -734,8 +734,8 @@ static void __init pmd_swap_soft_dirty_tests(struct pgtable_debug_args *args)
-> >>>    {
-> >>>        pmd_t pmd;
-> >>>
-> >>> -     if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY) ||
-> >>> -             !IS_ENABLED(CONFIG_ARCH_ENABLE_THP_MIGRATION))
-> >>> +     if (!pgtable_soft_dirty_supported() ||
-> >>> +         !IS_ENABLED(CONFIG_ARCH_ENABLE_THP_MIGRATION))
-> >>>                return;
-> >>>
-> >>>        if (!has_transparent_hugepage())
-> >>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> >>> index 9c38a95e9f09..218d430a2ec6 100644
-> >>> --- a/mm/huge_memory.c
-> >>> +++ b/mm/huge_memory.c
-> >>> @@ -2271,12 +2271,13 @@ static inline int pmd_move_must_withdraw(spinlock_t *new_pmd_ptl,
-> >>>
-> >>>    static pmd_t move_soft_dirty_pmd(pmd_t pmd)
-> >>>    {
-> >>> -#ifdef CONFIG_MEM_SOFT_DIRTY
-> >>> -     if (unlikely(is_pmd_migration_entry(pmd)))
-> >>> -             pmd = pmd_swp_mksoft_dirty(pmd);
-> >>> -     else if (pmd_present(pmd))
-> >>> -             pmd = pmd_mksoft_dirty(pmd);
-> >>> -#endif
-> >>> +     if (pgtable_soft_dirty_supported()) {
-> >>> +             if (unlikely(is_pmd_migration_entry(pmd)))
-> >>> +                     pmd = pmd_swp_mksoft_dirty(pmd);
-> >>> +             else if (pmd_present(pmd))
-> >>> +                     pmd = pmd_mksoft_dirty(pmd);
-> >>> +     }
-> >>> +
-> >>
-> >> Wondering, should simply the arch take care of that and we can just clal
-> >> pmd_swp_mksoft_dirty / pmd_mksoft_dirty?
-> >
->
-> I think we have that already in include/linux/pgtable.h:
->
-> We have stubs that just don't do anything.
->
-> For riscv support you would handle runtime-enablement in these helpers.
->
-> >
-> >>
-> >>>        return pmd;
-> >>>    }
-> >>>
-> >>> diff --git a/mm/internal.h b/mm/internal.h
-> >>> index 45b725c3dc03..c6ca62f8ecf3 100644
-> >>> --- a/mm/internal.h
-> >>> +++ b/mm/internal.h
-> >>> @@ -1538,7 +1538,7 @@ static inline bool vma_soft_dirty_enabled(struct vm_area_struct *vma)
-> >>>         * VM_SOFTDIRTY is defined as 0x0, then !(vm_flags & VM_SOFTDIRTY)
-> >>>         * will be constantly true.
-> >>>         */
-> >>> -     if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY))
-> >>> +     if (!pgtable_soft_dirty_supported())
-> >>>                return false;
-> >>>
-> >>
-> >> That should be handled with the above never-set-VM_SOFTDIRTY.
-> >
-> > We don't need to check if (!pgtable_soft_dirty_supported()) if I
-> > understand correctly.
-> Hm, let me think about that. No, I think this has to stay as the comment
-> says, so this case here is special.
-
-I will cook a new version and then we can discuss further based on the
-new patch.
-
-Thanks for your review,
-Chunyan
+ 	if (start < elfcorebuf_sz) {
+--
+2.51.0
 
