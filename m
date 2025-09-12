@@ -1,108 +1,108 @@
-Return-Path: <linux-fsdevel+bounces-61124-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61125-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6E91B55694
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 20:55:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 638ECB556B3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 20:59:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 743C21D622E2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 18:56:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26082178AE4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 18:59:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5E7C334702;
-	Fri, 12 Sep 2025 18:55:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C5BD334731;
+	Fri, 12 Sep 2025 18:59:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="i1X700ar"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="sApHXyVr"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F27703009F0
-	for <linux-fsdevel@vger.kernel.org>; Fri, 12 Sep 2025 18:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24A3631691E
+	for <linux-fsdevel@vger.kernel.org>; Fri, 12 Sep 2025 18:59:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757703335; cv=none; b=SiTYjZJD+n/Mld7zqEkcr9GWBqqfp2NMvtXCMR1h6ZtyshRA4QTmR9AE6kX7f9vqNepCcCY2Air7OetUT4BbLyf3UTzPJpRZwcLK7Bz9R6f7Rky+PsaD4PCa2fZu2g6nCvOLdlWWw20u07HfdDziiW9OB/hwMUIuWDrYHa3RwDA=
+	t=1757703559; cv=none; b=nS4UN+AVMdO6wc9La4goCvhJ5OoHYUhyT3gl6RLtpnH4TJvh4sIncNplnK9Wam9Cx6gP4TmnRO748R6Rb7LGffLnZTx1JwdjRUlmJbWBZ3IO55XhZxH5GAGWxoPRVuZ1Cpch0fo7MnNgfG8rTzbrafWfbSLDr5L0C7IRFzPURTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757703335; c=relaxed/simple;
-	bh=ZXM2VOXVrvpeHqI5zxkdIfLPIeK3d3p2IggeAiRyEzk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ljV5sPVlU4NeMT2kaGSG1hJQQX6xY1kBVpUFHAD7MFjMn8RMcFmgw+I62vDUOSkPtx5DrzpC90I+zdQQs8BfvCzBorJKARTSoTrheKmM/HwGzCf5OPXOMbgWHaPuS3Fz815uKIILRP/njrZINPHjgQlXowza17ZLJxHP32I2dkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=i1X700ar; arc=none smtp.client-ip=62.89.141.173
+	s=arc-20240116; t=1757703559; c=relaxed/simple;
+	bh=lR10101o2F2e90STPUxn9dvKmy899EtrDhLantnzMr0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=AfRbKyTAc0ivW6nQf/F/olEPa/zwsxQl3CRrr1idgN9ymSZYTS6Qym5DzONo1yzNeiYePhf+2+rzWLHhRO52qj+5BAcwuqVHWGyarr1S87Mhp16QwsIs8nVHDy/qH7mrkPXvo+cL0nGCZn0zEqJXH6TxH1MyT7J4Z87vkhMwp4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=sApHXyVr; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=SdaIq14h3itz3IyHneGoAnZ5DhTO5ccTrePhL8RCSlE=; b=i1X700arE3NXwC7Wkk71x1LOUo
-	APzficc2rRxwes8WmEC4VafrsY0iJFh/p5ygcG6sC+1sv06pnawV/GpOc3t/hmb1oXgkbDvRUiGhX
-	C0LFRS/i20ePd+Sq10wEJG4kzOQercvp8TTvPJ14oonQgBvLT3WLVk338lZfM8odakrkls6yYw7P4
-	FnNHx1A3p9zqEi+nzuQoRdFCUFwpRWQaxG39XrOtJDuvF1tko2gkHFhReGu+HJU/f5ixLlDjuceY2
-	LAuPPbkZkX1AABLaSqLgtREdfnW/moahNpxfK2OtM+JNrUIQoUOYGAPvYDdSjw6yP3v5D/A4Y44tg
-	cUoSbgTA==;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+	Reply-To:Content-Type:Content-ID:Content-Description;
+	bh=XvYYvTY7PrU8vWV77PO7qL33KJuBz2lmT7MdI3oMTAk=; b=sApHXyVrSmaH5NwY7vtNlz6PBC
+	YwVAPgHRK1MicsjKVL4dGbHuyG+SSN7exlU03Mw5u+SUC//AgrxFEDQ8Tzqqe8TyNwQ+a+oPcwQMj
+	y1TlR0Fv71dj3Rdqe98432uZnaz4T282F5/zVN8Bt8YsDkIfRPKPFgEPjgFHDCxLoN5OzVpnikuoE
+	4z5XLwyw3kF1bP7Oo/ra1RB1cNPuozq93c3AtAjiL/vh7ntIGqhuz8z17ahpq5ZTIxCzYjHMiFPNB
+	qJ7lv9NLF7EhdJuFUeJppb4Px1gwJE7oXDL4cRkLWgKqes10E49BE9amVk+FXI7W78up8aWlDgfdR
+	GBHgGGWg==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ux8vi-00000001dmz-38B6;
-	Fri, 12 Sep 2025 18:55:30 +0000
-Date: Fri, 12 Sep 2025 19:55:30 +0100
+	id 1ux8zM-00000001g5a-2PUk;
+	Fri, 12 Sep 2025 18:59:16 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
-To: NeilBrown <neil@brown.name>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>,
-	Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: ->atomic_open() fun (was Re: [RFC] a possible way of reducing
- the PITA of ->d_name audits)
-Message-ID: <20250912185530.GZ39973@ZenIV>
-References: <>
- <20250908090557.GJ31600@ZenIV>
- <175747234137.2850467.15661817300242450115@noble.neil.brown.name>
- <20250910072423.GR31600@ZenIV>
- <20250912054907.GA2537338@ZenIV>
+To: neil@brown.name
+Cc: torvalds@linux-foundation.org,
+	linux-fsdevel@vger.kernel.org,
+	brauner@kernel.org,
+	jack@suse.cz,
+	miklos@szeredi.hu
+Subject: [PATCH 1/9] allow finish_no_open(file, ERR_PTR(-E...))
+Date: Fri, 12 Sep 2025 19:59:08 +0100
+Message-ID: <20250912185916.400113-1-viro@zeniv.linux.org.uk>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250912185530.GZ39973@ZenIV>
+References: <20250912185530.GZ39973@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250912054907.GA2537338@ZenIV>
+Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Fri, Sep 12, 2025 at 06:49:07AM +0100, Al Viro wrote:
-> On Wed, Sep 10, 2025 at 08:24:23AM +0100, Al Viro wrote:
-> 
-> > Note that these unwrap_dentry() are very likely to move into helpers - if some
-> > function is always called with unwrapped_dentry(something) as an argument,
-> > great, that's probably a candidate for struct stable_dentry.
-> > 
-> > I'll hold onto the current variant for now...
-> 
-> BTW, fun fallout from that experiment once I've got to ->atomic_open() - things
-> get nicer if we teach finish_no_open() to accept ERR_PTR() for dentry:
+... allowing any ->lookup() return value to be passed to it.
 
-See git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #work.finish_no_open
-Patches in followups.
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+---
+ fs/open.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-Shortlog:
-      allow finish_no_open(file, ERR_PTR(-E...))
-      9p: simplify v9fs_vfs_atomic_open()
-      9p: simplify v9fs_vfs_atomic_open_dotl()
-      simplify cifs_atomic_open()
-      simplify vboxsf_dir_atomic_open()
-      simplify nfs_atomic_open_v23()
-      simplify fuse_atomic_open()
-      simplify gfs2_atomic_open()
-      slightly simplify nfs_atomic_open()
-Diffstat:
- fs/9p/vfs_inode.c      | 34 ++++++++++++----------------------
- fs/9p/vfs_inode_dotl.c | 15 +++++----------
- fs/fuse/dir.c          | 21 +++++++--------------
- fs/gfs2/inode.c        | 26 +++++++++-----------------
- fs/nfs/dir.c           | 18 +++++-------------
- fs/open.c              | 10 ++++++----
- fs/smb/client/dir.c    |  8 +-------
- fs/vboxsf/dir.c        | 25 +++++++++----------------
- 8 files changed, 54 insertions(+), 103 deletions(-)
+diff --git a/fs/open.c b/fs/open.c
+index 9655158c3885..4890b13461c7 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -1059,18 +1059,20 @@ EXPORT_SYMBOL(finish_open);
+  * finish_no_open - finish ->atomic_open() without opening the file
+  *
+  * @file: file pointer
+- * @dentry: dentry or NULL (as returned from ->lookup())
++ * @dentry: dentry, ERR_PTR(-E...) or NULL (as returned from ->lookup())
+  *
+- * This can be used to set the result of a successful lookup in ->atomic_open().
++ * This can be used to set the result of a lookup in ->atomic_open().
+  *
+  * NB: unlike finish_open() this function does consume the dentry reference and
+  * the caller need not dput() it.
+  *
+- * Returns "0" which must be the return value of ->atomic_open() after having
+- * called this function.
++ * Returns 0 or -E..., which must be the return value of ->atomic_open() after
++ * having called this function.
+  */
+ int finish_no_open(struct file *file, struct dentry *dentry)
+ {
++	if (IS_ERR(dentry))
++		return PTR_ERR(dentry);
+ 	file->f_path.dentry = dentry;
+ 	return 0;
+ }
+-- 
+2.47.2
+
 
