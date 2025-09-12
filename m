@@ -1,70 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-61019-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61020-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E3E0B546EC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 11:21:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05A4FB54703
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 11:22:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 404A9189000E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 09:21:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3120B62953
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 09:19:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 962342C3274;
-	Fri, 12 Sep 2025 09:17:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7394285C88;
+	Fri, 12 Sep 2025 09:17:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="Q0cGzsBO"
+	dkim=pass (2048-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="g2xRMfPR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fra-out-005.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-005.esa.eu-central-1.outbound.mail-perimeter.amazon.com [63.176.194.123])
+Received: from fra-out-013.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-013.esa.eu-central-1.outbound.mail-perimeter.amazon.com [63.178.132.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4592296BA5;
-	Fri, 12 Sep 2025 09:17:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.176.194.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCBC429B233;
+	Fri, 12 Sep 2025 09:17:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.178.132.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757668675; cv=none; b=pw/Cqj49OthgUitH55zL9tR4FCCHXdsQiYTw3aLCBSUxlTrHTOn5cIdSlap++jwKagXGlbd7tqtz2uJ8omWkX9MuLMkRN+1XBqlol5juyHum7Pl3IVWQ94D5jJ2Ue7mBLUCd1qbvB5rnVtLvEG4elvwTrSNrqoK+y/iNSbOnZX4=
+	t=1757668676; cv=none; b=UMwUy59FV3n9VV9icPFhmkKvQopB4wgu8r4nQRNWi1BgeVKdcYehq1lwhd+/OxH3xYdQoRtUrvRWRb7rSlovqNbdawVlsdfghPizd/iab81OYSqNiy767xAefkOMw7CQ26fvMJ6WaFqVCZP2SixO9myOXMMA62j9wQGiMemTo0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757668675; c=relaxed/simple;
-	bh=DmIagpWgO2oSc2B+bRyWsRmMy0e5IBuFMLQtHeyV8bs=;
+	s=arc-20240116; t=1757668676; c=relaxed/simple;
+	bh=NYcAcx7X0okYkIT+tSpJ7AuViKn0GgrGcPA9WT5D0kQ=;
 	h=From:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=fmHh+UNMCK/1RpPsgkBkbV5gGHCl1+sCo2xgdB9TKY+ZWiUe0gq2eP1BHvHhmR78HJMCALXDvWhRiez4beOEuJAz3xxox1HtQo98ZljQ6HYksfoac147CE/cMSJ9DpZmcLcMYU6T7eNHm5CSS2TAniF070f+bRw/DBhBxrfbg9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (2048-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=Q0cGzsBO; arc=none smtp.client-ip=63.176.194.123
+	 Content-Type:MIME-Version; b=MzGPFEJv09uNYRIEYXgZoWYK5JB5RnWwifrkHq8/RM5c5llOH779LZTZOgSG/5oqe/FJ0IW0RhaCN/KBr7ZCnNqtNTAPwDgvF3P8JX4RxBp7lJ0yhAocwFBesA9BTpLTdvDmiYGwBq//C3NXXyq0xBzZKl9IwXjICCalPsBYyb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (2048-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=g2xRMfPR; arc=none smtp.client-ip=63.178.132.221
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
-  s=amazoncorp2; t=1757668672; x=1789204672;
+  s=amazoncorp2; t=1757668674; x=1789204674;
   h=from:cc:subject:date:message-id:references:in-reply-to:
    content-transfer-encoding:mime-version;
-  bh=KTZ/VOJbbCjyGaq9AddgILCkPAHpmVIUuRAnTMPHRJE=;
-  b=Q0cGzsBOwcmhUVf9H12Pd/ZfJ1vLsfXhTO0mx4wAkX8pS/36b6Kdk/Kd
-   ZM4zN5r9tkQINxUZYOEhvvZwZZ91k4yujLv511I6l+uQMLFyT35nqyIoM
-   0Uyvmp0BNKkeP9Mip+Dez9iyH84IDTY7IKMOL8XpslV7KLNfbCQaDHJ8i
-   5sgj99vb0HGWtMTBLSPhmAKEh3dqvPiJxnOPrfjslqK72OACgeiXgJuz0
-   y7UhegdcAR+shJX1RaA9n0Lyqa4reEyZXj9Z6oY3KjSKycnbNT7CSSpfc
-   6FfYmUR2ePr/BNkpw3Q1ulFPSloneWpuodTqUHOl/7GE54rfScCKvyXbt
+  bh=dhEedpfYEt1PcCJtARYDpqAPZgRl3DEDExfgwDPiBsk=;
+  b=g2xRMfPRl4TUCk26TITbSmSUDfw8sbKz0lVD8P5tHglJSDVgCKqEpA7H
+   /Ma1xlC/3avgtirfqxj2dIUZffsUo26zX+CYfM4PQreJcpuGRN0f5rZCk
+   RPTcqY2b7ufpNh/5XOkj83DApQqSIWx6FbgRgWt4rSr7rKK9FwAZoVuu6
+   TSlivM1jDz9yHCoUd0W3qwozRnFiR4n3mwR+h5yhf2dEBXK6xvUtqqsf0
+   ApTqbg4TndZk31LrcKFw/eG6KJmTHPxBK9jNdpdwbPuKFx3e9po69OtZC
+   W8ZYtflldBj65RuYxvUajdujJ8rkmFzPYN6lGAMhpc5OU3Ep1nY5pdMz6
    w==;
-X-CSE-ConnectionGUID: QEXct2vdTta8TMzv4Ngyng==
-X-CSE-MsgGUID: jfWOQOMCT/uSRNaEor6nYA==
+X-CSE-ConnectionGUID: W6I7DBGsT7aIZUgxxd8n6A==
+X-CSE-MsgGUID: biCfRrtRTymbPzXlG7U+9Q==
 X-IronPort-AV: E=Sophos;i="6.18,259,1751241600"; 
-   d="scan'208";a="2007537"
+   d="scan'208";a="1905409"
 Received: from ip-10-6-3-216.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.3.216])
-  by internal-fra-out-005.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2025 09:17:41 +0000
-Received: from EX19MTAEUB002.ant.amazon.com [54.240.197.224:27364]
- by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.20.211:2525] with esmtp (Farcaster)
- id 5628c97f-0538-4e01-83c3-9a2b6facd620; Fri, 12 Sep 2025 09:17:41 +0000 (UTC)
-X-Farcaster-Flow-ID: 5628c97f-0538-4e01-83c3-9a2b6facd620
-Received: from EX19D015EUB002.ant.amazon.com (10.252.51.123) by
- EX19MTAEUB002.ant.amazon.com (10.252.51.79) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Fri, 12 Sep 2025 09:17:40 +0000
+  by internal-fra-out-013.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2025 09:17:42 +0000
+Received: from EX19MTAEUB002.ant.amazon.com [54.240.197.224:21541]
+ by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.45.248:2525] with esmtp (Farcaster)
+ id 472e2554-8a6f-4381-b8b5-7eb2482469c1; Fri, 12 Sep 2025 09:17:42 +0000 (UTC)
+X-Farcaster-Flow-ID: 472e2554-8a6f-4381-b8b5-7eb2482469c1
 Received: from EX19D015EUB004.ant.amazon.com (10.252.51.13) by
- EX19D015EUB002.ant.amazon.com (10.252.51.123) with Microsoft SMTP Server
+ EX19MTAEUB002.ant.amazon.com (10.252.51.59) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Fri, 12 Sep 2025 09:17:39 +0000
+ Fri, 12 Sep 2025 09:17:42 +0000
+Received: from EX19D015EUB004.ant.amazon.com (10.252.51.13) by
+ EX19D015EUB004.ant.amazon.com (10.252.51.13) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Fri, 12 Sep 2025 09:17:41 +0000
 Received: from EX19D015EUB004.ant.amazon.com ([fe80::2dc9:7aa9:9cd3:fc8a]) by
  EX19D015EUB004.ant.amazon.com ([fe80::2dc9:7aa9:9cd3:fc8a%3]) with mapi id
- 15.02.2562.020; Fri, 12 Sep 2025 09:17:39 +0000
+ 15.02.2562.020; Fri, 12 Sep 2025 09:17:41 +0000
 From: "Roy, Patrick" <roypat@amazon.co.uk>
 CC: "Thomson, Jack" <jackabt@amazon.co.uk>, "Kalyazin, Nikita"
 	<kalyazin@amazon.co.uk>, "Cali, Marco" <xmarcalx@amazon.co.uk>,
@@ -129,11 +129,13 @@ CC: "Thomson, Jack" <jackabt@amazon.co.uk>, "Kalyazin, Nikita"
 	<devel@lists.orangefs.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
 	"bpf@vger.kernel.org" <bpf@vger.kernel.org>,
 	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
-Subject: [PATCH v6 06/11] KVM: selftests: load elf via bounce buffer
-Thread-Topic: [PATCH v6 06/11] KVM: selftests: load elf via bounce buffer
-Thread-Index: AQHcI8YWbSkdpV9N8kuaL7J+KZ9Yaw==
-Date: Fri, 12 Sep 2025 09:17:39 +0000
-Message-ID: <20250912091708.17502-7-roypat@amazon.co.uk>
+Subject: [PATCH v6 07/11] KVM: selftests: set KVM_MEM_GUEST_MEMFD in
+ vm_mem_add() if guest_memfd != -1
+Thread-Topic: [PATCH v6 07/11] KVM: selftests: set KVM_MEM_GUEST_MEMFD in
+ vm_mem_add() if guest_memfd != -1
+Thread-Index: AQHcI8YXZeuO05bOzUOx1mmYQcKn6g==
+Date: Fri, 12 Sep 2025 09:17:41 +0000
+Message-ID: <20250912091708.17502-8-roypat@amazon.co.uk>
 References: <20250912091708.17502-1-roypat@amazon.co.uk>
 In-Reply-To: <20250912091708.17502-1-roypat@amazon.co.uk>
 Accept-Language: en-US
@@ -149,115 +151,73 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-If guest memory is backed using a VMA that does not allow GUP (e.g. a=0A=
-userspace mapping of guest_memfd when the fd was allocated using=0A=
-KVM_GMEM_NO_DIRECT_MAP), then directly loading the test ELF binary into=0A=
-it via read(2) potentially does not work. To nevertheless support=0A=
-loading binaries in this cases, do the read(2) syscall using a bounce=0A=
-buffer, and then memcpy from the bounce buffer into guest memory.=0A=
+Have vm_mem_add() always set KVM_MEM_GUEST_MEMFD in the memslot flags if=0A=
+a guest_memfd is passed in as an argument. This eliminates the=0A=
+possibility where a guest_memfd instance is passed to vm_mem_add(), but=0A=
+it ends up being ignored because the flags argument does not specify=0A=
+KVM_MEM_GUEST_MEMFD at the same time.=0A=
+=0A=
+This makes it easy to support more scenarios in which no vm_mem_add() is=0A=
+not passed a guest_memfd instance, but is expected to allocate one.=0A=
+Currently, this only happens if guest_memfd =3D=3D -1 but flags &=0A=
+KVM_MEM_GUEST_MEMFD !=3D 0, but later vm_mem_add() will gain support for=0A=
+loading the test code itself into guest_memfd (via=0A=
+GUEST_MEMFD_FLAG_MMAP) if requested via a special=0A=
+vm_mem_backing_src_type, at which point having to make sure the src_type=0A=
+and flags are in-sync becomes cumbersome.=0A=
 =0A=
 Signed-off-by: Patrick Roy <roypat@amazon.co.uk>=0A=
 ---=0A=
- .../testing/selftests/kvm/include/test_util.h |  1 +=0A=
- tools/testing/selftests/kvm/lib/elf.c         |  8 +++----=0A=
- tools/testing/selftests/kvm/lib/io.c          | 23 +++++++++++++++++++=0A=
- 3 files changed, 28 insertions(+), 4 deletions(-)=0A=
+ tools/testing/selftests/kvm/lib/kvm_util.c | 26 +++++++++++++---------=0A=
+ 1 file changed, 15 insertions(+), 11 deletions(-)=0A=
 =0A=
-diff --git a/tools/testing/selftests/kvm/include/test_util.h b/tools/testin=
-g/selftests/kvm/include/test_util.h=0A=
-index c6ef895fbd9a..0409b7b96c94 100644=0A=
---- a/tools/testing/selftests/kvm/include/test_util.h=0A=
-+++ b/tools/testing/selftests/kvm/include/test_util.h=0A=
-@@ -46,6 +46,7 @@ do {								\=0A=
+diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/sel=
+ftests/kvm/lib/kvm_util.c=0A=
+index c3f5142b0a54..cc67dfecbf65 100644=0A=
+--- a/tools/testing/selftests/kvm/lib/kvm_util.c=0A=
++++ b/tools/testing/selftests/kvm/lib/kvm_util.c=0A=
+@@ -1107,22 +1107,26 @@ void vm_mem_add(struct kvm_vm *vm, enum vm_mem_back=
+ing_src_type src_type,=0A=
  =0A=
- ssize_t test_write(int fd, const void *buf, size_t count);=0A=
- ssize_t test_read(int fd, void *buf, size_t count);=0A=
-+ssize_t test_read_bounce(int fd, void *buf, size_t count);=0A=
- int test_seq_read(const char *path, char **bufp, size_t *sizep);=0A=
+ 	region->backing_src_type =3D src_type;=0A=
  =0A=
- void __printf(5, 6) test_assert(bool exp, const char *exp_str,=0A=
-diff --git a/tools/testing/selftests/kvm/lib/elf.c b/tools/testing/selftest=
-s/kvm/lib/elf.c=0A=
-index f34d926d9735..e829fbe0a11e 100644=0A=
---- a/tools/testing/selftests/kvm/lib/elf.c=0A=
-+++ b/tools/testing/selftests/kvm/lib/elf.c=0A=
-@@ -31,7 +31,7 @@ static void elfhdr_get(const char *filename, Elf64_Ehdr *=
-hdrp)=0A=
- 	 * the real size of the ELF header.=0A=
- 	 */=0A=
- 	unsigned char ident[EI_NIDENT];=0A=
--	test_read(fd, ident, sizeof(ident));=0A=
-+	test_read_bounce(fd, ident, sizeof(ident));=0A=
- 	TEST_ASSERT((ident[EI_MAG0] =3D=3D ELFMAG0) && (ident[EI_MAG1] =3D=3D ELF=
-MAG1)=0A=
- 		&& (ident[EI_MAG2] =3D=3D ELFMAG2) && (ident[EI_MAG3] =3D=3D ELFMAG3),=
+-	if (flags & KVM_MEM_GUEST_MEMFD) {=0A=
+-		if (guest_memfd < 0) {=0A=
++	if (guest_memfd < 0) {=0A=
++		if (flags & KVM_MEM_GUEST_MEMFD) {=0A=
+ 			uint32_t guest_memfd_flags =3D 0;=0A=
+ 			TEST_ASSERT(!guest_memfd_offset,=0A=
+ 				    "Offset must be zero when creating new guest_memfd");=0A=
+ 			guest_memfd =3D vm_create_guest_memfd(vm, mem_size, guest_memfd_flags);=
 =0A=
- 		"ELF MAGIC Mismatch,\n"=0A=
-@@ -79,7 +79,7 @@ static void elfhdr_get(const char *filename, Elf64_Ehdr *=
-hdrp)=0A=
- 	offset_rv =3D lseek(fd, 0, SEEK_SET);=0A=
- 	TEST_ASSERT(offset_rv =3D=3D 0, "Seek to ELF header failed,\n"=0A=
- 		"  rv: %zi expected: %i", offset_rv, 0);=0A=
--	test_read(fd, hdrp, sizeof(*hdrp));=0A=
-+	test_read_bounce(fd, hdrp, sizeof(*hdrp));=0A=
- 	TEST_ASSERT(hdrp->e_phentsize =3D=3D sizeof(Elf64_Phdr),=0A=
- 		"Unexpected physical header size,\n"=0A=
- 		"  hdrp->e_phentsize: %x\n"=0A=
-@@ -146,7 +146,7 @@ void kvm_vm_elf_load(struct kvm_vm *vm, const char *fil=
-ename)=0A=
- =0A=
- 		/* Read in the program header. */=0A=
- 		Elf64_Phdr phdr;=0A=
--		test_read(fd, &phdr, sizeof(phdr));=0A=
-+		test_read_bounce(fd, &phdr, sizeof(phdr));=0A=
- =0A=
- 		/* Skip if this header doesn't describe a loadable segment. */=0A=
- 		if (phdr.p_type !=3D PT_LOAD)=0A=
-@@ -187,7 +187,7 @@ void kvm_vm_elf_load(struct kvm_vm *vm, const char *fil=
-ename)=0A=
- 				"  expected: 0x%jx",=0A=
- 				n1, errno, (intmax_t) offset_rv,=0A=
- 				(intmax_t) phdr.p_offset);=0A=
--			test_read(fd, addr_gva2hva(vm, phdr.p_vaddr),=0A=
-+			test_read_bounce(fd, addr_gva2hva(vm, phdr.p_vaddr),=0A=
- 				phdr.p_filesz);=0A=
+-		} else {=0A=
+-			/*=0A=
+-			 * Install a unique fd for each memslot so that the fd=0A=
+-			 * can be closed when the region is deleted without=0A=
+-			 * needing to track if the fd is owned by the framework=0A=
+-			 * or by the caller.=0A=
+-			 */=0A=
+-			guest_memfd =3D dup(guest_memfd);=0A=
+-			TEST_ASSERT(guest_memfd >=3D 0, __KVM_SYSCALL_ERROR("dup()", guest_memf=
+d));=0A=
  		}=0A=
- 	}=0A=
-diff --git a/tools/testing/selftests/kvm/lib/io.c b/tools/testing/selftests=
-/kvm/lib/io.c=0A=
-index fedb2a741f0b..74419becc8bc 100644=0A=
---- a/tools/testing/selftests/kvm/lib/io.c=0A=
-+++ b/tools/testing/selftests/kvm/lib/io.c=0A=
-@@ -155,3 +155,26 @@ ssize_t test_read(int fd, void *buf, size_t count)=0A=
++	} else {=0A=
++		/*=0A=
++		 * Install a unique fd for each memslot so that the fd=0A=
++		 * can be closed when the region is deleted without=0A=
++		 * needing to track if the fd is owned by the framework=0A=
++		 * or by the caller.=0A=
++		 */=0A=
++		guest_memfd =3D dup(guest_memfd);=0A=
++		TEST_ASSERT(guest_memfd >=3D 0, __KVM_SYSCALL_ERROR("dup()", guest_memfd=
+));=0A=
++	}=0A=
++=0A=
++	if (guest_memfd > 0) {=0A=
++		flags |=3D KVM_MEM_GUEST_MEMFD;=0A=
  =0A=
- 	return num_read;=0A=
- }=0A=
-+=0A=
-+/* Test read via intermediary buffer=0A=
-+ *=0A=
-+ * Same as test_read, except read(2)s happen into a bounce buffer that is =
-memcpy'd=0A=
-+ * to buf. For use with buffers that cannot be GUP'd (e.g. guest_memfd VMA=
-s if=0A=
-+ * guest_memfd was created with GUEST_MEMFD_FLAG_NO_DIRECT_MAP).=0A=
-+ */=0A=
-+ssize_t test_read_bounce(int fd, void *buf, size_t count)=0A=
-+{=0A=
-+	void *bounce_buffer;=0A=
-+	ssize_t num_read;=0A=
-+=0A=
-+	TEST_ASSERT(count >=3D 0, "Unexpected count, count: %li", count);=0A=
-+=0A=
-+	bounce_buffer =3D malloc(count);=0A=
-+	TEST_ASSERT(bounce_buffer !=3D NULL, "Failed to allocate bounce buffer");=
-=0A=
-+=0A=
-+	num_read =3D test_read(fd, bounce_buffer, count);=0A=
-+	memcpy(buf, bounce_buffer, num_read);=0A=
-+	free(bounce_buffer);=0A=
-+=0A=
-+	return num_read;=0A=
-+}=0A=
+ 		region->region.guest_memfd =3D guest_memfd;=0A=
+ 		region->region.guest_memfd_offset =3D guest_memfd_offset;=0A=
 -- =0A=
 2.50.1=0A=
 =0A=
