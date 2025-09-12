@@ -1,228 +1,162 @@
-Return-Path: <linux-fsdevel+bounces-61095-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61096-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6854BB5533E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 17:25:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABF26B55353
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 17:27:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1EC9BA2F0D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 15:20:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B82D81D67061
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 15:27:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8129922DF9E;
-	Fri, 12 Sep 2025 15:21:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1473C221F09;
+	Fri, 12 Sep 2025 15:27:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="Uj5B2MNX";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="gidU8oEf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b7L+iUge"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1750B22126D;
-	Fri, 12 Sep 2025 15:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19FAE81ACA
+	for <linux-fsdevel@vger.kernel.org>; Fri, 12 Sep 2025 15:27:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757690465; cv=none; b=H7PmbyIwhKPIu1F8cGdlCqZWCEFEqurOtXvW8X9JML9PXRNiti+PLQSnj7ngrgFFZ7leZIqM48en5hKSvhjE+ZLInV/NdF/UlqMpeifTneFSmat5O1WqcROLjfXpGMPALgVSPcQMwZlWZomgTNIGm2Op1qza3UDbvBgPv53GdOk=
+	t=1757690823; cv=none; b=Vj1yj/RLgX9yXYkmVBZV0+WYUj2gSjskFhb/DndzXeNDaQ4bf6yQudc0lBB36SLzOsE9eL7PA2SG54cYKlTP1YsL/AReW/n86eODxoLZk6x0TiI3d1U8HvprlDvozwvk948/4gtHAiZJmxEWi2/ZzGuSAwvpX02khg5ZoqT4Jro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757690465; c=relaxed/simple;
-	bh=HSFBscSSczcz3S7Wqrp9sgL8dc+A4pMZfkBFeIctCvs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DE5Yk2okum5QLL+HcipkllgcAqQytGukSU9kzAIfwDzmKyvga4jxC3mMVALuyE5uISngZqXwXBBKcA32NXARkwwPgdHfWLgFjSkZKjyMQCrnI7dmz1RDjv7uhmTCknj26SKloMA3dZAsMoPew0fZX7Sg/JlqZgiOZXDnJq4ThpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=Uj5B2MNX; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=gidU8oEf; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 40A9B1400463;
-	Fri, 12 Sep 2025 11:21:02 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Fri, 12 Sep 2025 11:21:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1757690462;
-	 x=1757776862; bh=/umB4IHM99Z/OS6bb2qw7wz6i5KaWIGiJiO6b8ffqWU=; b=
-	Uj5B2MNXLqtVohi+SKRGRs9wpNMaqGfKFDaM+UDquRiI3LNp+SnW8TD0RWmaoU3q
-	ZGiNOuSlmkyf9nfJ+8vgzMH6YT8y1hA/NKP1eWT5IGpZThqeZTjyAj8tU+sa7Bdw
-	WMnnrcezJz4VcPzLtkokhTGJFGX1W4y6QehkDX2IN/KLmmytAsP9aRpRN2tAJwZB
-	AOPS8exn4nSmbQKwEwrXoR1w/KDRN6e8wbdqqB4UOAjd7hqRsKMASxRz3IcNFdS4
-	Uo8hhfot/p0+El104u5nQbhJv+kc+Xai9s6txuiJcaxFAO1bHtOiK0DRuo9LHlpn
-	tpS4fHDOBUDdFzZ70Uzv3Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757690462; x=
-	1757776862; bh=/umB4IHM99Z/OS6bb2qw7wz6i5KaWIGiJiO6b8ffqWU=; b=g
-	idU8oEfSZ1y5uXn2ovpnUVZKdCLgDjCvEP8hjZmPNlaVgoCeKDqYfpRpzmnUqMKx
-	yj8ttYOFYVMnkWaaW/zATlt3apW3FjECoVuy/Cf474TGOwcPlaHIHEZJCe2x4iQI
-	fzrz8ivL+h73pq2ezgV0ue0c7WZLZqrAqWBGZz7Q4dR87MKKadvyYbr3TSIjGXr/
-	vpFcaf0AWA8JSFKA54LmGAMx/wflXZgDbVeS4J+nTuWicWlzTjrFInuMyXiRFGAY
-	vW77wVPauZMQU4dN5tUnrijhyIgdRW+k+lvoThWjgIxUDcR5YAoCWdfCOV495xzV
-	6l65DUDyf30W9vmAiGkqA==
-X-ME-Sender: <xms:XTrEaKFlpY6GQLpLdF191FogEctFRB05b2X_wTQKvne-fki8nGn98A>
-    <xme:XTrEaF8bpyXbgaD-gxTR9T4tKW6AttGzCNDx9T03N79c1NEg7RGbeSOiVPGYqO5w3
-    DHog-hOx8KNrX96>
-X-ME-Received: <xmr:XTrEaKK389mL1gLftomo2wqShOUaEu3nHwuoAvOb4XyIkGe2h82F7RLWQs9GAIYHWepVzl-jClbp0Drz4CfHm8_xA6dI2m7Mo1UZhrshGQKgF3NRWR7Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvleeflecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepuegvrhhnugcu
-    ufgthhhusggvrhhtuceosggvrhhnugessghssggvrhhnugdrtghomheqnecuggftrfgrth
-    htvghrnheptdeuvdeuudeltddukefhueeludduieejvdevveevteduvdefuedvkeffjeel
-    ueeunecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpe
-    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsvghrnhgusegsshgsvghrnhgurdgtohhm
-    pdhnsggprhgtphhtthhopeelpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegujh
-    ifohhngheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghmihhrjeefihhlsehgmhgr
-    ihhlrdgtohhmpdhrtghpthhtoheplhhuihhssehighgrlhhirgdrtghomhdprhgtphhtth
-    hopehthihtshhosehmihhtrdgvughupdhrtghpthhtohepmhhikhhlohhssehsiigvrhgv
-    ughirdhhuhdprhgtphhtthhopegsshgthhhusggvrhhtseguughnrdgtohhmpdhrtghpth
-    htoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgt
-    phhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprh
-    gtphhtthhopehktghhvghnseguughnrdgtohhm
-X-ME-Proxy: <xmx:XTrEaDu4H1KbwXMta5APYdwEZ1CVpIf-7zEp4vyKuJl_zZiFBe6xSg>
-    <xmx:XTrEaBBaNu8ACe7fb2JR1kOw3LwxX6i5BIouhgjyGWnWPsAFWn-vVQ>
-    <xmx:XTrEaLPxdAkNjDE1b_taK154Ywmj_RzlGXVnDTpGEXruM_fCXJ5izA>
-    <xmx:XTrEaJC8alO1PCn9aec6s5Ep8ktBX5h4zJAgwBg81Qz23uaWKZY05A>
-    <xmx:XjrEaM0nm3AW3GuvlgDjLYlHyFgEf3z-o0rVBwjxPTjrWanJSQdNxqfJ>
-Feedback-ID: i5c2e48a5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 12 Sep 2025 11:21:00 -0400 (EDT)
-Message-ID: <5a25a7da-1204-49a5-a897-de457a7c304b@bsbernd.com>
-Date: Fri, 12 Sep 2025 17:20:58 +0200
+	s=arc-20240116; t=1757690823; c=relaxed/simple;
+	bh=UXb6oiZ1a08xukqMWGzQmWMh6jz5S2O37oTIMSab7EM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VYB6Ep/jptW/104wR/CLnP1nShHkFMxoUmNsYiV97nTxIppvVZQbKPvr+LdSwzfhRtD+w3VLs+pN35ll/PCHQQyRLGoUFiIfkjJVKydyYfd5EtUlnBS6tEeg75MBPs6KJ9wg1PLZlQsFSHERVp1bRc/oXLfvMzrYiEKiWvrtpXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b7L+iUge; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-77616dce48cso542634b3a.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Sep 2025 08:27:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757690820; x=1758295620; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xrD09NwNNaCCc36kTZDK/vKByj38vuDQyaEDdfXfDJU=;
+        b=b7L+iUge4aytQjBq4HgJkLPgCqGydals+8HXZasSFisCsDY3Co81nrXf1I5AA7Pn5q
+         6Syc1etDQw+j5O7mAwTR/T+zjpgnRou+nizOfm/u4q0m8Rfgkpcl30eQXnaWO+EXUECZ
+         qOuUsJT6Z66MXugQn139UwNPYmBDn0KhCVVXJufy15aSG++QAiUhovWJB3y6gY7lveoC
+         1X+JNRVI2KakKoHMevrdZcF/T57+QCk39CS1atfzy3tWJAQrAcFXyEbUGPf9l1qjVlGe
+         zRAr0/kUBN/tT/R9lXzJSWq90HzW9drgKZuAlQTEP46T+FZVzOzecbYseyD3QnBRcMEE
+         BYxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757690820; x=1758295620;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xrD09NwNNaCCc36kTZDK/vKByj38vuDQyaEDdfXfDJU=;
+        b=DMMRHOGuZZhHDGmYsRHdKUKtr/5/RoXqtYzl3Tzw1orZZkWTw3m2eneFNHGHh4xqkn
+         cYB6qxPFpKo/y/uF7cLzbNvxeD8GtqYHe4mG0cw8J7a9k8F31p3axP+OD7vK69rEdLp2
+         WhglYv8JUDfKxPYAE8e4VAsjJZzQE/FZu9XTRACTrUCLLtdG9rUdIc3PLDjueMflXQht
+         nR4EilgrFg9WI0MHxFBIZ5THjZUO7EKkGij5k1GsdCDS6dO525IvMtkhzvSaOUh2eX0Q
+         iBujE+GcazWU3uPtFqFbAV0gooI552lc7rIhstMfckMTA3QlqzXLDOyWSwQLh+25Ci/0
+         NAvw==
+X-Forwarded-Encrypted: i=1; AJvYcCV/jwRo6cmIjpXl4quE4p0J0Cz48eMs4jzTsculhTvsc2DQR+KLGTFTnF2wSHU4MpALulaYTT3bvNipbawH@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4eq+IBd8yRZNKpELU/yHBTZD8lTcXxqYwVET63fKQpBjPQfy1
+	mjX6vKMkyUWNYPXS0MduaRP92C9A9tuFjy6PW44SSqJ/IoMlFxmOwl29
+X-Gm-Gg: ASbGncsxuQ018PO9quOYJiUQuR1h+fh3ep7luz47vONCoNZocoCg/5HsD68Xdux428a
+	NqlCJN7sYawD8fbww5A0+OBp80eeH2Fsr+OYkHxiLeLx18fhAFRadObnoozl6a3GklMiL9IWruZ
+	BmeGzbImY/zmobUt/VPGxgQZj+CgLT6aX9GFECG5aVUqLX7HzDE0/TBINYdZEPbvDlUk6gln0vK
+	dWqsL6swRBL2N1Itw492mnQ9WU/mRZ9vwgHwXBigLjBOx4i/Iq0a/SlaknQDDij7PQbj0iuQoAF
+	fGXPdbK5wAbjf0r9s+hkGFbnCHdi3dWNuseM43XFIWC0GOwKKrKiO5rWa3+YNH5wdjTJk0iKMHp
+	4UeIyy+Uj8dmC/SclqRiCyvdcAK/Q0oCIy5ou
+X-Google-Smtp-Source: AGHT+IGUo0K4zIFMUfzF4WpP86EMKMNSUkcTVtq3VjmtoSg0kTDxGd/EyfD7RbMVVOytbEOUNyiPxQ==
+X-Received: by 2002:a05:6a20:2583:b0:24d:56d5:369e with SMTP id adf61e73a8af0-2602a593376mr4421336637.3.1757690820222;
+        Fri, 12 Sep 2025 08:27:00 -0700 (PDT)
+Received: from jicarita ([65.144.169.45])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7760944a9a9sm5436846b3a.78.2025.09.12.08.26.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Sep 2025 08:26:59 -0700 (PDT)
+From: Thomas Bertschinger <tahbertschinger@gmail.com>
+To: io-uring@vger.kernel.org,
+	axboe@kernel.dk,
+	linux-fsdevel@vger.kernel.org,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	linux-nfs@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	cem@kernel.org,
+	chuck.lever@oracle.com,
+	jlayton@kernel.org,
+	amir73il@gmail.com
+Cc: Thomas Bertschinger <tahbertschinger@gmail.com>
+Subject: [PATCH v3 00/10] add support for name_to, open_by_handle_at() to io_uring
+Date: Fri, 12 Sep 2025 09:28:45 -0600
+Message-ID: <20250912152855.689917-1-tahbertschinger@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] Another take at restarting FUSE servers
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Amir Goldstein <amir73il@gmail.com>, Luis Henriques <luis@igalia.com>,
- Theodore Ts'o <tytso@mit.edu>, Miklos Szeredi <miklos@szeredi.hu>,
- Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, Kevin Chen <kchen@ddn.com>
-References: <8734afp0ct.fsf@igalia.com>
- <20250729233854.GV2672029@frogsfrogsfrogs> <20250731130458.GE273706@mit.edu>
- <20250731173858.GE2672029@frogsfrogsfrogs> <8734abgxfl.fsf@igalia.com>
- <39818613-c10b-4ed2-b596-23b70c749af1@bsbernd.com>
- <CAOQ4uxg1zXPTB1_pFB=hyqjAGjk=AC34qP1k9C043otxcwqJGg@mail.gmail.com>
- <2e57be4f-e61b-4a37-832d-14bdea315126@bsbernd.com>
- <20250912145857.GQ8117@frogsfrogsfrogs>
-From: Bernd Schubert <bernd@bsbernd.com>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <20250912145857.GQ8117@frogsfrogsfrogs>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+This series adds support for name_to_handle_at() and open_by_handle_at()
+to io_uring. The idea is for these opcodes to be useful for userspace
+NFS servers that want to use io_uring.
+
+For both syscalls, io_uring will initially attempt to complete the
+operation only using cached data, and will fall back to running in async
+context when that is not possible.
+
+Supporting this for open_by_handle_at() requires a way to communicate to
+the filesystem that it should not block in its fh_to_dentry()
+implementation. This is done with a new flag FILEID_CACHED which is set
+in the file handle by the VFS. If a filesystem supports this new flag,
+it will indicate that with a new flag EXPORT_OP_NONBLOCK so that the VFS
+knows not to call into a filesystem with the FILEID_CACHED flag, when
+the FS does not know about that flag.
+
+Support for the new FILEID_CACHED flag is added for xfs.
+
+v3 is mostly the same as [v2], with minor changes.
+
+v2 -> v3:
+- rename do_filp_path_open -> do_file_handle_open()
+- rename the parameter fileid_type in xfs_fs_fh_to_{dentry,parent}() to
+  fileid_type_flags
+- a few minor style fixups reported by checkpatch.pl
+- fix incorrect use of '&' instead of '&&' in exportfs_decode_fh_raw()
+- add docs for EXPORT_OP_NONBLOCK in Documentation/filesystems/nfs/exporting.rst
+
+[v2] https://lore.kernel.org/linux-fsdevel/20250910214927.480316-1-tahbertschinger@gmail.com/
+[v1] https://lore.kernel.org/linux-fsdevel/20250814235431.995876-1-tahbertschinger@gmail.com/
 
 
-On 9/12/25 16:58, Darrick J. Wong wrote:
-> On Fri, Sep 12, 2025 at 02:29:03PM +0200, Bernd Schubert wrote:
->>
->>
->> On 9/12/25 13:41, Amir Goldstein wrote:
->>> On Fri, Sep 12, 2025 at 12:31 PM Bernd Schubert <bernd@bsbernd.com> wrote:
->>>>
->>>>
->>>>
->>>> On 8/1/25 12:15, Luis Henriques wrote:
->>>>> On Thu, Jul 31 2025, Darrick J. Wong wrote:
->>>>>
->>>>>> On Thu, Jul 31, 2025 at 09:04:58AM -0400, Theodore Ts'o wrote:
->>>>>>> On Tue, Jul 29, 2025 at 04:38:54PM -0700, Darrick J. Wong wrote:
->>>>>>>>
->>>>>>>> Just speaking for fuse2fs here -- that would be kinda nifty if libfuse
->>>>>>>> could restart itself.  It's unclear if doing so will actually enable us
->>>>>>>> to clear the condition that caused the failure in the first place, but I
->>>>>>>> suppose fuse2fs /does/ have e2fsck -fy at hand.  So maybe restarts
->>>>>>>> aren't totally crazy.
->>>>>>>
->>>>>>> I'm trying to understand what the failure scenario is here.  Is this
->>>>>>> if the userspace fuse server (i.e., fuse2fs) has crashed?  If so, what
->>>>>>> is supposed to happen with respect to open files, metadata and data
->>>>>>> modifications which were in transit, etc.?  Sure, fuse2fs could run
->>>>>>> e2fsck -fy, but if there are dirty inode on the system, that's going
->>>>>>> potentally to be out of sync, right?
->>>>>>>
->>>>>>> What are the recovery semantics that we hope to be able to provide?
->>>>>>
->>>>>> <echoing what we said on the ext4 call this morning>
->>>>>>
->>>>>> With iomap, most of the dirty state is in the kernel, so I think the new
->>>>>> fuse2fs instance would poke the kernel with FUSE_NOTIFY_RESTARTED, which
->>>>>> would initiate GETATTR requests on all the cached inodes to validate
->>>>>> that they still exist; and then resend all the unacknowledged requests
->>>>>> that were pending at the time.  It might be the case that you have to
->>>>>> that in the reverse order; I only know enough about the design of fuse
->>>>>> to suspect that to be true.
->>>>>>
->>>>>> Anyhow once those are complete, I think we can resume operations with
->>>>>> the surviving inodes.  The ones that fail the GETATTR revalidation are
->>>>>> fuse_make_bad'd, which effectively revokes them.
->>>>>
->>>>> Ah! Interesting, I have been playing a bit with sending LOOKUP requests,
->>>>> but probably GETATTR is a better option.
->>>>>
->>>>> So, are you currently working on any of this?  Are you implementing this
->>>>> new NOTIFY_RESTARTED request?  I guess it's time for me to have a closer
->>>>> look at fuse2fs too.
->>>>
->>>> Sorry for joining the discussion late, I was totally occupied, day and
->>>> night. Added Kevin to CC, who is going to work on recovery on our
->>>> DDN side.
->>>>
->>>> Issue with GETATTR and LOOKUP is that they need a path, but on fuse
->>>> server restart we want kernel to recover inodes and their lookup count.
->>>> Now inode recovery might be hard, because we currently only have a
->>>> 64-bit node-id - which is used my most fuse application as memory
->>>> pointer.
->>>>
->>>> As Luis wrote, my issue with FUSE_NOTIFY_RESEND is that it just re-sends
->>>> outstanding requests. And that ends up in most cases in sending requests
->>>> with invalid node-IDs, that are casted and might provoke random memory
->>>> access on restart. Kind of the same issue why fuse nfs export or
->>>> open_by_handle_at doesn't work well right now.
->>>>
->>>> So IMHO, what we really want is something like FUSE_LOOKUP_FH, which
->>>> would not return a 64-bit node ID, but a max 128 byte file handle.
->>>> And then FUSE_REVALIDATE_FH on server restart.
->>>> The file handles could be stored into the fuse inode and also used for
->>>> NFS export.
->>>>
->>>> I *think* Amir had a similar idea, but I don't find the link quickly.
->>>> Adding Amir to CC.
->>>
->>> Or maybe it was Miklos' idea. Hard to keep track of this rolling thread:
->>> https://lore.kernel.org/linux-fsdevel/CAJfpegvNZ6Z7uhuTdQ6quBaTOYNkAP8W_4yUY4L2JRAEKxEwOQ@mail.gmail.com/
->>
->> Thanks for the reference Amir! I even had been in that thread.
->>
->>>
->>>>
->>>> Our short term plan is to add something like FUSE_NOTIFY_RESTART, which
->>>> will iterate over all superblock inodes and mark them with fuse_make_bad.
->>>> Any objections against that?
-> 
-> What if you actually /can/ reuse a nodeid after a restart?  Consider
-> fuse4fs, where the nodeid is the on-disk inode number.  After a restart,
-> you can reconnect the fuse_inode to the ondisk inode, assuming recovery
-> didn't delete it, obviously.
-> 
-> I suppose you could just ask for refreshed stat information and either
-> the server gives it to you and the fuse_inode lives; or the server
-> returns ENOENT and then we mark it bad.  But I'd have to see code
-> patches to form a real opinion.
-> 
-> It's very nice of fuse to have implemented revoke() ;)
+Thomas Bertschinger (10):
+  fhandle: create helper for name_to_handle_at(2)
+  io_uring: add support for IORING_OP_NAME_TO_HANDLE_AT
+  fhandle: helper for allocating, reading struct file_handle
+  fhandle: create do_file_handle_open() helper
+  fhandle: make do_file_handle_open() take struct open_flags
+  exportfs: allow VFS flags in struct file_handle
+  exportfs: new FILEID_CACHED flag for non-blocking fh lookup
+  io_uring: add __io_open_prep() helper
+  io_uring: add support for IORING_OP_OPEN_BY_HANDLE_AT
+  xfs: add support for non-blocking fh_to_dentry()
+
+ Documentation/filesystems/nfs/exporting.rst |   6 +
+ fs/exportfs/expfs.c                         |  14 +-
+ fs/fhandle.c                                | 155 +++++++++-------
+ fs/internal.h                               |  13 ++
+ fs/xfs/xfs_export.c                         |  34 +++-
+ fs/xfs/xfs_export.h                         |   3 +-
+ fs/xfs/xfs_handle.c                         |   2 +-
+ include/linux/exportfs.h                    |  34 +++-
+ include/uapi/linux/io_uring.h               |   3 +
+ io_uring/opdef.c                            |  26 +++
+ io_uring/openclose.c                        | 191 +++++++++++++++++++-
+ io_uring/openclose.h                        |  13 ++
+ 12 files changed, 409 insertions(+), 85 deletions(-)
 
 
-Assuming you would run with an attr cache timeout equal 0 the existing
-NOTIFY_RESEND would be enough for fuse4fs? 
+base-commit: 76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c
+-- 
+2.51.0
 
-
-Thanks,
-Bernd
 
