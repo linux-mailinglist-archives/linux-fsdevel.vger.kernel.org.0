@@ -1,223 +1,191 @@
-Return-Path: <linux-fsdevel+bounces-61148-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61149-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27974B559BB
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Sep 2025 00:51:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4CBDB559F7
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Sep 2025 01:21:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D21435C1154
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 22:51:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72C13580738
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 23:21:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7B627281C;
-	Fri, 12 Sep 2025 22:51:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32FF228469E;
+	Fri, 12 Sep 2025 23:21:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="xdTHJ/FW"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="wiatbwaE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A4C2DC789
-	for <linux-fsdevel@vger.kernel.org>; Fri, 12 Sep 2025 22:51:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EDEA280A2F;
+	Fri, 12 Sep 2025 23:20:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757717469; cv=none; b=fP/MpWDK2N1AZV3lSwz8/5YNviS5lPOs4GBsky7TItSZnojFCSVMaIE9XkJlRQx1ORLwwqlfEz1ohN70I+sKURNFensn1mEphvYSwh+NaRnXsO5nx+YmTDpvARb2uqyyPKS/w+YThk2o+NdfM5j/xARKMRlEVtNRwASUnicPTx4=
+	t=1757719261; cv=none; b=BRyyMrNixA4ENgV3+SScvi1JB6hAtzsXdX8hGii6gkKpoA6ruMGcxS8AjngikIMkQHPa4GCW33MRXAD1JZ/e6PCxjkh5VkdurutRdEPdImkM4E46PJCPZ6Y5PLf/4cyi6Lp2+JClXY10/YgjdHxDz7iKjOOo2jYdsrS7f6TuPDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757717469; c=relaxed/simple;
-	bh=YOXcGHfg2mf4W3/s6seV2E8GnSQ53UsIc+2kJtFCJdg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k3FV1x62R9CeBazyoHf4tAkwYDWEdChLAdVveZAEM5LTbM4rMKB0wkVe5KhtBFNJ8X7K8BwyViNnJ/Ai+dCb1gdsb/W0yHbnAJA4tnsQWcf8s1XYyk/PQtMdkowgRG7KTXFjqDZcPht/OXPNd9NwceFO9slKpzKvAWcAD1SoqQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=xdTHJ/FW; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-76e4f2e4c40so2212861b3a.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Sep 2025 15:51:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1757717465; x=1758322265; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wA+M8hQ1q9cqIOe9bR5VV7iDvsTvhsx295cm0pL5JYQ=;
-        b=xdTHJ/FWK5bDHUhULoHRw2ysK+jsIpnSQGK/wNSSPCAv8hrQeqEhlh+meor4HHqlki
-         4ZUchM1WaFDtQA1VQ+NrAUK07Sv5rfBtQOA1aJOo8oxRybCq9Xr/EavGYvfRxZmGLIRJ
-         V4CeAcdkR67z5HXhFqFBMTvDCr4vw4eTTQJF7oS0MFsdK7RPgFV6Jo9C+r8lymDl/56s
-         zCnp+6rQqMZFNWhZ6qh/q0G3hF8hLVnjgVuoY5Sg+/nBk40tLpPyWJBir4Aff0LKOwKx
-         N01kXNNOEM3DYMXwft93TQyL5wAsrYY0Iw9YmdEeHYaYfF31LpX6nXcjOhvPiQDAslaY
-         6Asg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757717465; x=1758322265;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wA+M8hQ1q9cqIOe9bR5VV7iDvsTvhsx295cm0pL5JYQ=;
-        b=jriQDZGIec6BfHzPBqIjL3M0MOOiD9aa8/aPqKG0HoWM3ZZWrXwSc5i4KxGltTo6jz
-         kKoWf+nQt/9vTPK+i3hZT8K0hcbSODnR1XU0ubOeGMcErNvFj3LXXXrNaTqBH2m/+WNW
-         dt2dFKFL8PtDiUjsNrzZckwyJ7E/x6qd8mOvsyOAeopw8ekZ5BuMN7nGSdBou86Hxl7q
-         78DF6tCKwj/5xdmfXDogw0/So3S/x3ae9JjVNdcNWuXsvDC1DoZ6tgsJpMUI/hP1gJLt
-         rZZymAFk8T40mxt8QVGLfj6B2ztPajqNskEia/N52wCjs9yIUriBoo9PIjO4arITxpQ9
-         7zcA==
-X-Forwarded-Encrypted: i=1; AJvYcCWG4ICkY6yCceEZ3uz4m5d2dybpplSKt8PEZzYsbBpQnwgUt1I0cMSmioPFO7KXANsvMBI+B/gbREpZ+74q@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUp83tX3cdhKROTOuvaBrgSpSsIK/19qVKuzfuigoDGleqfOYA
-	cS+ECt52l4+nhSywEf4H7OXHIDd52IUpGIMWyzTcKrPezdyKhXSsBMmF5YcW7tS4nCsWxecIgR6
-	W2ieM
-X-Gm-Gg: ASbGnctwglLLriSWfB4vSYXlLr3SJgyWUJI0/LNl/OX9KYjm37D9dztPnYnEqHlki5C
-	R5sE5/XEY51l5u+UuRopRkSmq17yKZcVR/vx0f+81tbnlIoD2WeVRdaYtOQ+AcD7ukrflkzMM/v
-	3vs8+c7ED02UQbPBoIJLTJqhnEH78klJfnkD4FzJDosUfLtwYQSqmIJRiIMPIcld6EmOvOdsRvM
-	/iTfPVm0ECMEsNqChiVHViN3f8kzYq/Mu5yN4XtjbUcVNJdO1oOyatH9TlbVR3kR6XCdHVvQPza
-	XmTU4cC5ctfbZX8FR4qv5QAKz3qsJYqv6vnvaPakU+l+QhdpO2E1VkDTVVJmSVuljW2dCSjKDGC
-	qau59fT7OAVqstPKUda9xiNdmW5qFeCgb1eOT0titXMWxZx7wGboseZFAUIcf0YG1oTYfX+WfTi
-	8Wbmp7n8YW
-X-Google-Smtp-Source: AGHT+IFo1lDPGPa9ujzGqWPBkLJtotrvuieRUCiBB83GkElVpJ3pJIT5oPAa+9yUOLlt5ADMfKXopA==
-X-Received: by 2002:a05:6a21:32aa:b0:243:a251:cf51 with SMTP id adf61e73a8af0-2602c71d334mr6093077637.54.1757717465166;
-        Fri, 12 Sep 2025 15:51:05 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-91-142.pa.nsw.optusnet.com.au. [49.180.91.142])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7760793b6b1sm6487510b3a.20.2025.09.12.15.51.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 15:51:04 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.98.2)
-	(envelope-from <david@fromorbit.com>)
-	id 1uxCbe-000000019Z1-08rs;
-	Sat, 13 Sep 2025 08:51:02 +1000
-Date: Sat, 13 Sep 2025 08:51:02 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Thomas Bertschinger <tahbertschinger@gmail.com>
-Cc: io-uring@vger.kernel.org, axboe@kernel.dk,
-	linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, linux-nfs@vger.kernel.org,
-	linux-xfs@vger.kernel.org, cem@kernel.org, chuck.lever@oracle.com,
-	jlayton@kernel.org, amir73il@gmail.com
-Subject: Re: [PATCH v3 10/10] xfs: add support for non-blocking fh_to_dentry()
-Message-ID: <aMSj1kiRMfP8fZD4@dread.disaster.area>
-References: <20250912152855.689917-1-tahbertschinger@gmail.com>
- <20250912152855.689917-11-tahbertschinger@gmail.com>
+	s=arc-20240116; t=1757719261; c=relaxed/simple;
+	bh=LMgjFCFXS7lWqAMsP0k6ElrXCn4PbmCAQ9cG/JltHiU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qp3zxXgp8hbiX+WVxtfM1eLO5TkNriVv35GiuVSO9b6Ky7SHkxvsGluPwbFgtzfkxMf0KzuMYqoSLLaxXF96nFK6dS0/MeS2orst0adsayd+hA5eLzntvZVBGSPEmOfnkz3pjc1tfirrPvSN6a3Sv+oOafZrgDJzCTmXwMGqwGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=wiatbwaE; arc=none smtp.client-ip=115.124.30.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1757719249; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=0O+HEt4GxNAVHjkomsoPJNj9dN5Mu9s+azTdTAvcdIQ=;
+	b=wiatbwaECKg8LhzmLa4Yl6IgFgxSWcq0JlJrkZfRu1nQuEmYkoCxL6s6PCKbqP1RJq5RT+p9gdHG4bnva0EHW/HYIHMxrbFjsLWxY5XWPhf31vxOX57HsGSm51HRIcPIcljvJ2UAcI6/zlWE5hDFy9SQS7gyS1QK+502Op/RVks=
+Received: from 30.180.0.242(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0Wns48bz_1757719247 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Sat, 13 Sep 2025 07:20:48 +0800
+Message-ID: <dd0ea3a4-5e2e-4dc3-8cba-94dfdec06d17@linux.alibaba.com>
+Date: Sat, 13 Sep 2025 07:20:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250912152855.689917-11-tahbertschinger@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 13/16] iomap: move read/readahead logic out of
+ CONFIG_BLOCK guard
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Christoph Hellwig <hch@infradead.org>, brauner@kernel.org,
+ miklos@szeredi.hu, djwong@kernel.org, linux-block@vger.kernel.org,
+ gfs2@lists.linux.dev, linux-fsdevel@vger.kernel.org, kernel-team@meta.com,
+ linux-xfs@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20250908185122.3199171-1-joannelkoong@gmail.com>
+ <20250908185122.3199171-14-joannelkoong@gmail.com>
+ <a1529c0f-1f1a-477a-aeeb-a4f108aab26b@linux.alibaba.com>
+ <CAJnrk1aCCqoOAgcPUpr+Z09DhJ5BAYoSho5dveGQKB9zincYSQ@mail.gmail.com>
+ <0b33ab17-2fc0-438f-95aa-56a1d20edb38@linux.alibaba.com>
+ <aMK0lC5iwM0GWKHq@infradead.org>
+ <9c104881-f09e-4594-9e41-0b6f75a5308c@linux.alibaba.com>
+ <CAJnrk1b2_XGfMuK-UAej31TtCAAg5Aq8PFS_36yyGg8NerA97g@mail.gmail.com>
+ <6609e444-5210-42aa-b655-8ed8309aae75@linux.alibaba.com>
+ <66971d07-2c1a-4632-bc9e-e0fc0ae2bd04@linux.alibaba.com>
+ <267abd34-2337-4ae3-ae95-5126e9f9b51c@linux.alibaba.com>
+ <CAJnrk1Y31b-Yr03rN8SXPmUA7D6HW8OhnkfFOebn56z57egDOw@mail.gmail.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <CAJnrk1Y31b-Yr03rN8SXPmUA7D6HW8OhnkfFOebn56z57egDOw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 12, 2025 at 09:28:55AM -0600, Thomas Bertschinger wrote:
-> This is to support using open_by_handle_at(2) via io_uring. It is useful
-> for io_uring to request that opening a file via handle be completed
-> using only cached data, or fail with -EAGAIN if that is not possible.
+
+
+On 2025/9/13 03:56, Joanne Koong wrote:
+> On Thu, Sep 11, 2025 at 9:11 PM Gao Xiang <hsiangkao@linux.alibaba.com> wrote:
+>>
+>> On 2025/9/12 09:09, Gao Xiang wrote:
+>>>
+>>>
+>>> On 2025/9/12 08:06, Gao Xiang wrote:
+>>>>
+>>>>
+>>>> On 2025/9/12 03:45, Joanne Koong wrote:
+>>>>> On Thu, Sep 11, 2025 at 8:29 AM Gao Xiang <hsiangkao@linux.alibaba.com> wrote:
+>>>>
+>>>>>> But if FUSE or some other fs later needs to request L2P information
+>>>>>> in their .iomap_begin() and need to send L2P requests to userspace
+>>>>>> daemon to confirm where to get the physical data (maybe somewhat
+>>>>>> like Darrick's work but I don't have extra time to dig into that
+>>>>>> either) rather than just something totally bypass iomap-L2P logic
+>>>>>> as above, then I'm not sure the current `iomap_iter->private` is
+>>>>>> quite seperate to `struct iomap_read_folio_ctx->private`, it seems
+>>>>>
+>>>>> If in the future this case arises, the L2P mapping info is accessible
+>>>>> by the read callback in the current design. `.read_folio_range()`
+>>>>> passes the iomap iter to the filesystem and they can access
+>>>>> iter->private to get the L2P mapping data they need.
+>>>>
+>>>> The question is what exposes to `iter->private` then, take
+>>>> an example:
+>>>>
+>>>> ```
+>>>> struct file *file;
+>>>> ```
+>>>>
+>>>> your .read_folio_range() needs `file->private_data` to get
+>>>> `struct fuse_file` so `file` is kept into
+>>>> `struct iomap_read_folio_ctx`.
+>>>>
+>>>> If `file->private_data` will be used for `.iomap_begin()`
+>>>> as well, what's your proposal then?
+>>>>
+>>>> Duplicate the same `file` pointer in both
+>>>> `struct iomap_read_folio_ctx` and `iter->private` context?
+>>>
+>>> It's just an not-so-appropriate example because
+>>> `struct file *` and `struct fuse_file *` are widely used
+>>> in the (buffer/direct) read/write flow but Darrick's work
+>>> doesn't use `file` in .iomap_{begin/end}.
+>>>
+>>> But you may find out `file` pointer is already used for
+>>> both FUSE buffer write and your proposal, e.g.
+>>>
+>>> buffer write:
+>>>    /*
+>>>     * Use iomap so that we can do granular uptodate reads
+>>>     * and granular dirty tracking for large folios.
+>>>     */
+>>>    written = iomap_file_buffered_write(iocb, from,
+>>>                                        &fuse_iomap_ops,
+>>>                                        &fuse_iomap_write_ops,
+>>>                                        file);
+>>
+>> And your buffer write per-fs context seems just use
+>> `iter->private` entirely instead to keep `file`.
+>>
 > 
-> The signature of xfs_nfs_get_inode() is extended with a new flags
-> argument that allows callers to specify XFS_IGET_INCORE.
+> I don’t think the iomap buffered writes interface is good to use as a
+> model. I looked a bit at some of the other iomap file operations and I
+> think we should just pass operation-specific data through an
+> operation-specific context for those too, eg for buffered writes and
+> dio modifying the interface from
 > 
-> That flag is set when the VFS passes the FILEID_CACHED flag via the
-> fileid_type argument.
+> ssize_t iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter
+> *from, const struct iomap_ops *ops, const struct iomap_write_ops
+> *write_ops, void *private);
+> ssize_t iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter, const
+> struct iomap_ops *ops, const struct iomap_dio_ops *dops, unsigned int
+> dio_flags, void *private, size_t done_before);
 > 
-> Signed-off-by: Thomas Bertschinger <tahbertschinger@gmail.com>
-> Acked-by: Amir Goldstein <amir73il@gmail.com>
-> ---
->  fs/xfs/xfs_export.c | 34 ++++++++++++++++++++++++++--------
->  fs/xfs/xfs_export.h |  3 ++-
->  fs/xfs/xfs_handle.c |  2 +-
->  3 files changed, 29 insertions(+), 10 deletions(-)
+> to something like
 > 
-> diff --git a/fs/xfs/xfs_export.c b/fs/xfs/xfs_export.c
-> index 201489d3de08..6a57ed8fd9b7 100644
-> --- a/fs/xfs/xfs_export.c
-> +++ b/fs/xfs/xfs_export.c
-> @@ -106,7 +106,8 @@ struct inode *
->  xfs_nfs_get_inode(
->  	struct super_block	*sb,
->  	u64			ino,
-> -	u32			generation)
-> +	u32			generation,
-> +	uint			flags)
->  {
->   	xfs_mount_t		*mp = XFS_M(sb);
->  	xfs_inode_t		*ip;
-> @@ -123,7 +124,9 @@ xfs_nfs_get_inode(
->  	 * fine and not an indication of a corrupted filesystem as clients can
->  	 * send invalid file handles and we have to handle it gracefully..
->  	 */
-> -	error = xfs_iget(mp, NULL, ino, XFS_IGET_UNTRUSTED, 0, &ip);
-> +	flags |= XFS_IGET_UNTRUSTED;
-> +
-> +	error = xfs_iget(mp, NULL, ino, flags, 0, &ip);
->  	if (error) {
->  
->  		/*
-> @@ -140,6 +143,10 @@ xfs_nfs_get_inode(
->  		case -EFSCORRUPTED:
->  			error = -ESTALE;
->  			break;
-> +		case -ENODATA:
-> +			if (flags & XFS_IGET_INCORE)
-> +				error = -EAGAIN;
-> +			break;
->  		default:
->  			break;
->  		}
-> @@ -170,10 +177,15 @@ xfs_nfs_get_inode(
->  
->  STATIC struct dentry *
->  xfs_fs_fh_to_dentry(struct super_block *sb, struct fid *fid,
-> -		 int fh_len, int fileid_type)
-> +		 int fh_len, int fileid_type_flags)
->  {
-> +	int			fileid_type = FILEID_TYPE(fileid_type_flags);
->  	struct xfs_fid64	*fid64 = (struct xfs_fid64 *)fid;
->  	struct inode		*inode = NULL;
-> +	uint			flags = 0;
-> +
-> +	if (fileid_type_flags & FILEID_CACHED)
-> +		flags = XFS_IGET_INCORE;
+> ssize_t iomap_file_buffered_write(const struct iomap_ops *ops, struct
+> iomap_write_folio_ctx *ctx);
+> ssize_t iomap_dio_rw(const struct iomap_ops *ops, struct iomap_dio_ctx *ctx);
+> 
+> There’s one filesystem besides fuse that uses “iter->private” and
+> that’s for xfs zoned inodes (xfs_zoned_buffered_write_iomap_begin()),
+> which passes the  struct xfs_zone_alloc_ctx*  through iter->private,
+> and it's used afaict for tracking block reservations. imo that's what
+> iter->private should be used for, to track the more high level
+> metadata stuff and then the lower-level details that are
+> operation-specific go through the ctx->data fields. That seems the
+> cleanest design to me. I think we should rename the iter->private
+> field to something like "iter->metadata" to make that delineation more
+> clear.  I'm not sure what the iomap maintainers think, but that is my
+> opinion.
 
-XFS_IGET_INCORE doesn't guarantee non-blocking lookup behaviour. It
-never has and it never will. It simply means we return inodes that
-are already full instantiated or it fails with either EAGAIN or
-ENODATA.
+In short, I don't think new "low-level" and "high-level" concepts are
+really useful even for disk fses.
 
-IOWs, XFS_IGET_INCORE exploits the internal XFS inode cache
-architecture (cache lookups are done under RCU locks, so cannot
-block). The resultant cleanup that needs to be done once a ilookup
-fails before another attempt can be made is done outside RCU, and
-the lookup is most definitely allowed to block in those paths before
-it returns -EAGAIN to the outer lookup loop. It is mostly pure luck
-that we don't have any sleeping locks in various internal "need to
-retry the lookup" paths right now.
+> 
+> I think if in the future there is a case/feature which needs something
+> previously in one of the operation-specific ctxes, it seems fine to me
+> to have both iter->private and ctx->data point to the same thing.
+> 
 
-Exposing XFS_IGET_INCORE functionality to the outside world does not
-fill me with joy, especially to a userspace ABI.  i.e. this takes a
-rarely used, niche internal filesystem behaviour, redefines how it
-is supposed to behave and what it guarantees to callers without
-actually defining those semantics, and then requires the filesystem
-to support it forever more (because io_uring is kernel/userspace
-ABI).
+I want to stop this topic here, it's totally up to iomap maintainers to
+decide what's the future iomap looks like but I still keep my strong
+reserve opinion (you can ignore) from my own code design taste.
 
-IOWs, this is a NACK on using XFS_IGET_INCORE for FILEID_CACHED. The
-semantics that are required bu io_uring are non-blocking lookups,
-and that should be defined by a new flag (say XFS_IGET_NONBLOCK)
-with clearly defined and agreed upon semantics.
+Thanks,
+Gao Xiang
 
-Indeed, this shows the semantic problem with defining the generic
-filehandle behaviour as FILEID_CACHED. io_ uring does not want
--cached- inode lookups, it wants *non-blocking* inode lookups.
-These are *not* equivalent lookup semantics.
-
-e.g. find_inode_fast() has FILEID_CACHED compatible semantics - it
-will return either a referenced, fully instantiated cached inode or
-null.
-
-However, find_inode_fast() does *not have non-blocking behaviour*.
-If it finds an inode being freed, it will block until that inode has
-been removed from the cache, then it will retry the lookup and
-return NULL because the inode is no longer found in the cache.
-
-IOWs, "only return in-cache inodes" is fundamentally the wrong
-semantic to implement for non-blocking filehandle decoding. The API
-needs to ask for non-blocking lookup semantics, not "in-cache"
-lookup semantics.
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+> 
+> Thanks,
+> Joanne
 
