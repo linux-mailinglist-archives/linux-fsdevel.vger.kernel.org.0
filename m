@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-61149-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61150-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4CBDB559F7
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Sep 2025 01:21:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5054AB55A63
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Sep 2025 01:37:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72C13580738
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 23:21:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED2821CC532C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 23:37:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32FF228469E;
-	Fri, 12 Sep 2025 23:21:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FF1D296BC5;
+	Fri, 12 Sep 2025 23:36:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="wiatbwaE"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="j1hOEH6s"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EDEA280A2F;
-	Fri, 12 Sep 2025 23:20:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B017283FEB;
+	Fri, 12 Sep 2025 23:35:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757719261; cv=none; b=BRyyMrNixA4ENgV3+SScvi1JB6hAtzsXdX8hGii6gkKpoA6ruMGcxS8AjngikIMkQHPa4GCW33MRXAD1JZ/e6PCxjkh5VkdurutRdEPdImkM4E46PJCPZ6Y5PLf/4cyi6Lp2+JClXY10/YgjdHxDz7iKjOOo2jYdsrS7f6TuPDs=
+	t=1757720159; cv=none; b=VqqAF0QtPAJjzeBN2RDJzgmbcuCOXktVsgnMKzAj2uacAISO9h0apllHE00OO/QOeuNO7BzPSp9KlMjYieFX2hxf0Z/qAD/+7OCBHRv4US/fRpczYPGNHl+ZqVsA7SbI0Wt7A7iQnSErvfnEYN17Poi03KHNBk5q5xGE289dY2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757719261; c=relaxed/simple;
-	bh=LMgjFCFXS7lWqAMsP0k6ElrXCn4PbmCAQ9cG/JltHiU=;
+	s=arc-20240116; t=1757720159; c=relaxed/simple;
+	bh=0bIBfPWuw5ZM1DgXMXybxVA8D6G9EUTJlY7Lrt4adWc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qp3zxXgp8hbiX+WVxtfM1eLO5TkNriVv35GiuVSO9b6Ky7SHkxvsGluPwbFgtzfkxMf0KzuMYqoSLLaxXF96nFK6dS0/MeS2orst0adsayd+hA5eLzntvZVBGSPEmOfnkz3pjc1tfirrPvSN6a3Sv+oOafZrgDJzCTmXwMGqwGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=wiatbwaE; arc=none smtp.client-ip=115.124.30.119
+	 In-Reply-To:Content-Type; b=Rzk/t/nJSSI5kj7yvttflMsh0Yf5Dea8sg0R8PnB8mAL29ShbXETlBMRIqz76SHGDBbA3VLERIFW+s2fWE3lrc8cw56XcjuYGNfIyejiliGTQrAX+yi3a2H3olAIl2bHVX2zp2bZLqgJjGG3rsOx06iX30nKTPq9NYdffyinrZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=j1hOEH6s; arc=none smtp.client-ip=115.124.30.98
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1757719249; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=0O+HEt4GxNAVHjkomsoPJNj9dN5Mu9s+azTdTAvcdIQ=;
-	b=wiatbwaECKg8LhzmLa4Yl6IgFgxSWcq0JlJrkZfRu1nQuEmYkoCxL6s6PCKbqP1RJq5RT+p9gdHG4bnva0EHW/HYIHMxrbFjsLWxY5XWPhf31vxOX57HsGSm51HRIcPIcljvJ2UAcI6/zlWE5hDFy9SQS7gyS1QK+502Op/RVks=
-Received: from 30.180.0.242(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0Wns48bz_1757719247 cluster:ay36)
+	t=1757720148; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=BGcA9S5haR9shxP4e1Rj9BiCfMYulsAHb54maNa9apg=;
+	b=j1hOEH6sLugNry5YQdlhte12Xy3NsOtNlS629Zja3oW8gd+VdW1eE5prU/9lBCvOfjWUvCIwNvavX01qrOLP3y4z8+dGZvCzzlCR3hx/yddAnnBGzUDwolwfW4eS4FqmjtYZAuOWDQnu/n1mwvoNHPqPCyYlHvbKmVVbECKWPfk=
+Received: from 30.180.0.242(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0Wns4Zin_1757720146 cluster:ay36)
           by smtp.aliyun-inc.com;
-          Sat, 13 Sep 2025 07:20:48 +0800
-Message-ID: <dd0ea3a4-5e2e-4dc3-8cba-94dfdec06d17@linux.alibaba.com>
-Date: Sat, 13 Sep 2025 07:20:46 +0800
+          Sat, 13 Sep 2025 07:35:47 +0800
+Message-ID: <9dc446dd-9a7d-4bd0-8f95-a6121a773cfb@linux.alibaba.com>
+Date: Sat, 13 Sep 2025 07:35:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -50,9 +50,9 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v2 13/16] iomap: move read/readahead logic out of
  CONFIG_BLOCK guard
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Christoph Hellwig <hch@infradead.org>, brauner@kernel.org,
- miklos@szeredi.hu, djwong@kernel.org, linux-block@vger.kernel.org,
+To: Joanne Koong <joannelkoong@gmail.com>, "Darrick J. Wong"
+ <djwong@kernel.org>, Christoph Hellwig <hch@infradead.org>
+Cc: brauner@kernel.org, miklos@szeredi.hu, linux-block@vger.kernel.org,
  gfs2@lists.linux.dev, linux-fsdevel@vger.kernel.org, kernel-team@meta.com,
  linux-xfs@vger.kernel.org, linux-doc@vger.kernel.org
 References: <20250908185122.3199171-1-joannelkoong@gmail.com>
@@ -67,125 +67,72 @@ References: <20250908185122.3199171-1-joannelkoong@gmail.com>
  <66971d07-2c1a-4632-bc9e-e0fc0ae2bd04@linux.alibaba.com>
  <267abd34-2337-4ae3-ae95-5126e9f9b51c@linux.alibaba.com>
  <CAJnrk1Y31b-Yr03rN8SXPmUA7D6HW8OhnkfFOebn56z57egDOw@mail.gmail.com>
+ <CAJnrk1ZXM-fRKytRFptKNJrdN9pSbKJqXLW80T4UY=RLRKOBKQ@mail.gmail.com>
 From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <CAJnrk1Y31b-Yr03rN8SXPmUA7D6HW8OhnkfFOebn56z57egDOw@mail.gmail.com>
+In-Reply-To: <CAJnrk1ZXM-fRKytRFptKNJrdN9pSbKJqXLW80T4UY=RLRKOBKQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
 
 
-On 2025/9/13 03:56, Joanne Koong wrote:
-> On Thu, Sep 11, 2025 at 9:11 PM Gao Xiang <hsiangkao@linux.alibaba.com> wrote:
+On 2025/9/13 04:09, Joanne Koong wrote:
+> On Fri, Sep 12, 2025 at 3:56 PM Joanne Koong <joannelkoong@gmail.com> wrote:
 >>
->> On 2025/9/12 09:09, Gao Xiang wrote:
->>>
->>>
->>> On 2025/9/12 08:06, Gao Xiang wrote:
->>>>
->>>>
->>>> On 2025/9/12 03:45, Joanne Koong wrote:
->>>>> On Thu, Sep 11, 2025 at 8:29 AM Gao Xiang <hsiangkao@linux.alibaba.com> wrote:
->>>>
->>>>>> But if FUSE or some other fs later needs to request L2P information
->>>>>> in their .iomap_begin() and need to send L2P requests to userspace
->>>>>> daemon to confirm where to get the physical data (maybe somewhat
->>>>>> like Darrick's work but I don't have extra time to dig into that
->>>>>> either) rather than just something totally bypass iomap-L2P logic
->>>>>> as above, then I'm not sure the current `iomap_iter->private` is
->>>>>> quite seperate to `struct iomap_read_folio_ctx->private`, it seems
+
+...
+
+>>>>> but I don't see it will happen.
 >>>>>
->>>>> If in the future this case arises, the L2P mapping info is accessible
->>>>> by the read callback in the current design. `.read_folio_range()`
->>>>> passes the iomap iter to the filesystem and they can access
->>>>> iter->private to get the L2P mapping data they need.
->>>>
->>>> The question is what exposes to `iter->private` then, take
->>>> an example:
->>>>
->>>> ```
->>>> struct file *file;
->>>> ```
->>>>
->>>> your .read_folio_range() needs `file->private_data` to get
->>>> `struct fuse_file` so `file` is kept into
->>>> `struct iomap_read_folio_ctx`.
->>>>
->>>> If `file->private_data` will be used for `.iomap_begin()`
->>>> as well, what's your proposal then?
->>>>
->>>> Duplicate the same `file` pointer in both
->>>> `struct iomap_read_folio_ctx` and `iter->private` context?
->>>
->>> It's just an not-so-appropriate example because
->>> `struct file *` and `struct fuse_file *` are widely used
->>> in the (buffer/direct) read/write flow but Darrick's work
->>> doesn't use `file` in .iomap_{begin/end}.
->>>
->>> But you may find out `file` pointer is already used for
->>> both FUSE buffer write and your proposal, e.g.
->>>
->>> buffer write:
->>>    /*
->>>     * Use iomap so that we can do granular uptodate reads
->>>     * and granular dirty tracking for large folios.
->>>     */
->>>    written = iomap_file_buffered_write(iocb, from,
->>>                                        &fuse_iomap_ops,
->>>                                        &fuse_iomap_write_ops,
->>>                                        file);
->>
->> And your buffer write per-fs context seems just use
->> `iter->private` entirely instead to keep `file`.
->>
+>>>>> [1] https://lore.kernel.org/linux-fsdevel/YfivxC9S52FlyKoL@B-P7TQMD6M-0146/
 > 
-> I don’t think the iomap buffered writes interface is good to use as a
-> model. I looked a bit at some of the other iomap file operations and I
-> think we should just pass operation-specific data through an
-> operation-specific context for those too, eg for buffered writes and
-> dio modifying the interface from
+> (sorry, just saw this part of the email otherwise I would have
+> included this in the previous message)
 > 
-> ssize_t iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter
-> *from, const struct iomap_ops *ops, const struct iomap_write_ops
-> *write_ops, void *private);
-> ssize_t iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter, const
-> struct iomap_ops *ops, const struct iomap_dio_ops *dops, unsigned int
-> dio_flags, void *private, size_t done_before);
-> 
-> to something like
-> 
-> ssize_t iomap_file_buffered_write(const struct iomap_ops *ops, struct
-> iomap_write_folio_ctx *ctx);
-> ssize_t iomap_dio_rw(const struct iomap_ops *ops, struct iomap_dio_ctx *ctx);
-> 
-> There’s one filesystem besides fuse that uses “iter->private” and
-> that’s for xfs zoned inodes (xfs_zoned_buffered_write_iomap_begin()),
-> which passes the  struct xfs_zone_alloc_ctx*  through iter->private,
-> and it's used afaict for tracking block reservations. imo that's what
-> iter->private should be used for, to track the more high level
-> metadata stuff and then the lower-level details that are
-> operation-specific go through the ctx->data fields. That seems the
-> cleanest design to me. I think we should rename the iter->private
-> field to something like "iter->metadata" to make that delineation more
-> clear.  I'm not sure what the iomap maintainers think, but that is my
-> opinion.
+> Thanks for the link to the thread. My understanding is that the large
+> folio optimizations stuff was added to iomap in July 2023 (afaict from
+> the git history) and iomap is entangled with the block layer but it's
+> becoming more of a generic interface now. Maybe now it makes sense to
+> go through iomap's interface than it did in 2022, but of course David
+> has the most context on this.
 
-In short, I don't think new "low-level" and "high-level" concepts are
-really useful even for disk fses.
+Again, I really think iomap callback model is not good stuff especially
+as it becomes a more generic thing, and it seems inflexible compared
+with other interfaces like the page cache (it also has callbacks
+but many of them are just a few entrances of IO flows) or bio kAPIs.
 
-> 
-> I think if in the future there is a case/feature which needs something
-> previously in one of the operation-specific ctxes, it seems fine to me
-> to have both iter->private and ctx->data point to the same thing.
-> 
+As in the previous example, network filesystems generally don't need
+any L2P logic (in principle, FUSE is more like a network filesystem),
+but they still have to implement those iomap dummy callbacks and
+ignore `iomap->addr`.
 
-I want to stop this topic here, it's totally up to iomap maintainers to
-decide what's the future iomap looks like but I still keep my strong
-reserve opinion (you can ignore) from my own code design taste.
+
+As for per-block dirty/uptodate tracking, that is just an atomic
+feature to manage sub-folio metadata, but iomap is initially a part
+which is out of XFS, and basically standard flows for disk/pmem fses.
+I really think better generic interfaces are like lego bricks instead,
+therefore filesystems can optionally use any of those atomic features
+instead of just calling in iomap {read,write,writeback} maze-like
+helpers and do different work in the callback hooks (even not all
+filesystems need this).
+
+I've mentioned too in
+https://lore.kernel.org/r/d631c71f-9d0d-405f-862d-b881767b1945@linux.alibaba.com
+https://lore.kernel.org/r/20250905152118.GE1587915@frogsfrogsfrogs
 
 Thanks,
 Gao Xiang
 
+
+
+> 
 > 
 > Thanks,
 > Joanne
+> 
+>>>>>
+>>>>> Thanks,
+>>>>> Gao Xiang
+>>>>
+>>>
+
 
