@@ -1,294 +1,444 @@
-Return-Path: <linux-fsdevel+bounces-61008-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61009-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F037B54522
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 10:21:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D21C2B5452C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 10:23:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A857A05512
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 08:21:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D33E63B1B7A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Sep 2025 08:23:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FA4F2D5C8E;
-	Fri, 12 Sep 2025 08:21:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5544F2BD034;
+	Fri, 12 Sep 2025 08:23:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pOy0T8LO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gzo3qeEw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 636EF2D3EF6
-	for <linux-fsdevel@vger.kernel.org>; Fri, 12 Sep 2025 08:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D148878F4B
+	for <linux-fsdevel@vger.kernel.org>; Fri, 12 Sep 2025 08:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757665311; cv=none; b=YQWduQ/1S2Se8S3GqDMftKXUTqrj3g1lhkhrtUvtmUkq/NezGW8I5+WkwBo7yDo5u3+MGgtoGXpMAdYIwJ2nLSnT3JWboHEmTZDMbPIXDfGLmyVDdfSOAqlQZNwwi67IH2rym25cOGiYubDobFjh2F1ZO6b4snu53jQKpIHHJ0I=
+	t=1757665382; cv=none; b=gZ3eOig4U2AmjSHeSubieKHEwDP/GKGxAleBEZzTIK3fZ4OFtze5xl/af2O4u8xblUPB+QpBRgYdTUNTmRyjD27UZgW1o1SJYYmTHIG2x2ElirQWjPQu/F5S7XfGmakqWxB64aJEa4Zi64r2/xxmB/GrZGfc10rZAGMxz7sdDfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757665311; c=relaxed/simple;
-	bh=qZUNdYRrarMZrx/I2jScYFyIRFcUWFIjiLtabn+O6tY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=uQfKPD7t2TpWc980TJFVL0/MkjWfj4XXc18Z9Yv/vnh+xS1LCnr64s0wluYozHrfj/XoIzkwLLudV7fgLIqgObe5hpiS0dXAEHRlwFGqkd4C8wAYoHttLxpkNIXYFF9NEIsQW2AbxtQn11yigJf/S4MZwx8fJuxKgc+AncZKAb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pOy0T8LO; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45dfb8e986aso16783775e9.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Sep 2025 01:21:49 -0700 (PDT)
+	s=arc-20240116; t=1757665382; c=relaxed/simple;
+	bh=C5IqdBkHyvPRcADa39m1fUcH5iX23Tm0UaXWH0jDLs4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J8CRmMxgquLp8MfpNWKysJ84ETZDob6BNWq2ZZC8P0bLuGwVCLKByLMjGg0keH1Gdgy98lRhNnUehki3MnRdBd4df9NUcqITkMbrkL6vIP7j03OT6WWasSPbhDGRR1aumHn1TArtWQSL/EV/2NvBDx0dQ3/yGkGznAzM6Zy+TqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gzo3qeEw; arc=none smtp.client-ip=209.85.210.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-746d5474a53so543124a34.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Sep 2025 01:22:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757665308; x=1758270108; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=W60sZMoMdyLE26ZTuIL3nBsOV3BIJdUY+5uCUKpKW8g=;
-        b=pOy0T8LOPFZS1yge92aUJTTE0o6l3ZtyjzkU65rqMvb9mOKr2XET5fFRBBqM0jWpW7
-         35c6VpFSW5MtGwuGMkKM0aFz0/YFpFdKm0LCzZhu3AauGPjZheuWk/RYdmgaVUONamCN
-         esV1ODGysUs9RQ8AW3xCcrHtOP0WlEUOycVKkWOmhq+W0/AOPTCoEa8G8+EFL1Vyb4ls
-         b1guk54JiA5s1rB53cO0gyso4ylW73ccitKA2eEecYxkknjUDRifQYMtMMXIG84W/Bir
-         Wv7dXOBGT7wOI4tylsrJ8C0L0uL3mFM818yC6IzZsEVC/LrDb9mHZ7i1iJyjgR6Sb9ON
-         D7DQ==
+        d=gmail.com; s=20230601; t=1757665379; x=1758270179; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=E5OA4HGL1bZCBXlCcQNNT1fh5jmZSp0K7o8ch/qdvnc=;
+        b=gzo3qeEwlx/i4mf4xyWHS88VBAjDG2Yw1heIZORYOBf/ja+YccGVgAI0cUtGcGmHy0
+         YhmhYUJ5qzKC9XvbHd+neVZuxsZR1tr4tWLDkvNTupqb4iBLqS9/GOFGHwyaV1pFfzZB
+         DFd621AQG0Gr/SR1OmIw7kgj/mRioc8v/HvRRDe/WoAzXWNps/4TkqdrzA9TWUs0hV9v
+         IohAn6a/NKH4yeoQuqy0+S0R/J5fiL7bUPmCWzy7EB2cXpa1m+sOdHydXlH//ltOAzJ5
+         m15ry/BvWPpf/EZF36vqP5wohDEOWG1czl3QYiCAhiRz5Q7o0+OEH9so0S83+lkhGc3w
+         mlMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757665308; x=1758270108;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1757665379; x=1758270179;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=W60sZMoMdyLE26ZTuIL3nBsOV3BIJdUY+5uCUKpKW8g=;
-        b=GLC6tfN4YCLGvBncOGSB53ZbJE1tUrZ4QnFRc+y0iFjSFjbKW3e0Pefp1lw+xgliLJ
-         pJW88S1N32mPUQZxol3V6HtzJ2JyHETf361b5PQKmBY7Gvqu7dk/emUdWc7wuHVxtrRZ
-         0/AAZaZwb34A5Ibg+qtNQ0AeppWXNGconioAUr1NIAbbKKCdvdDQWoLtxOPRa70tSOMp
-         D6pLagOnRiWOG680fsZYiFe7UQCyJOZcUok2I4MqS1vNLNHZCTLKX0dHfPq/LQNt7SFM
-         Yah6PoF1bJtd/VhlJ4cWu0PWvYqoDGcnWgW+RXjqPPTujTKq95BxdaFcnwjPmg7Ahn4N
-         OFqg==
-X-Forwarded-Encrypted: i=1; AJvYcCUHhcj2ai9bxlt6WA6L+36MP+WOcGBsXLBgTm2GaE8YKT6RsIB5WbviY2ZBOrInrnO7wzOgODLd+e3o7B1u@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIc9QqmPLpVUuwXa4/dnMNZU3lUta1Cda3wWm2yWGaqEr7HPPk
-	g2cR0VXvthl+v8BIuJvFTzNfwJAkKh3SAuyUB6qYLZydtY2ievwGBjLKZtvP4BBhlsk=
-X-Gm-Gg: ASbGncu3Xqpjmj/+tHj3Ph4J1FiZaTPAti8uY1Cee/pWdSNJ4d9qQ65HEjKCeEby3wM
-	sPFW8YIKPeTh49vQHFfMQgxrwvTw041ankuybzKG8sWO4bAywtjNNZeNifpkELfbzIIBLZAPuzL
-	AqfM8ADKmrb7dORu8kA+oynBdHlvIzdd0ud2QqxelOgqnM6MgMg9s4+XO/tnhUO8HGcLoyk4SHn
-	LDaR0LfxqsPnvOcJqSV+gS8sQwfGg/RjlJwxA3WwNbwE6nFGl1GV6qZF1hg6mY5d2T2+bwyGOt7
-	Betpemu923ymPJvcSliKRu6rZtMutFr6re80V343+7wx1J2rv6BdXG6hby3TcTEwx2s78WkI75P
-	+SpJ9IorTKAjO4nPySX6rL7ZbDckX6n5VZOmNgQ==
-X-Google-Smtp-Source: AGHT+IFTVzbYTElrhk+3fv8FZJj0pkcZ0zRcQ2nWpXCv1OCHxc8/2XmvcN8Ey7vGOZneILg1INJRRw==
-X-Received: by 2002:a7b:c006:0:b0:45a:236a:23ba with SMTP id 5b1f17b1804b1-45f211f6b92mr13416655e9.22.1757665307562;
-        Fri, 12 Sep 2025 01:21:47 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45e016b5cbcsm56441345e9.11.2025.09.12.01.21.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 01:21:47 -0700 (PDT)
-Date: Fri, 12 Sep 2025 11:21:44 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev,
-	Thomas Bertschinger <tahbertschinger@gmail.com>,
-	io-uring@vger.kernel.org, axboe@kernel.dk,
-	linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, linux-nfs@vger.kernel.org
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	Thomas Bertschinger <tahbertschinger@gmail.com>,
-	Amir Goldstein <amir73il@gmail.com>, chuck.lever@oracle.com,
-	jlayton@kernel.org
-Subject: Re: [PATCH 07/10] exportfs: new FILEID_CACHED flag for non-blocking
- fh lookup
-Message-ID: <202509120423.cZlR8oLY-lkp@intel.com>
+        bh=E5OA4HGL1bZCBXlCcQNNT1fh5jmZSp0K7o8ch/qdvnc=;
+        b=o3YDJJ7rnL2SKmm4JKiNZAfIPbhjzusw0xiTSjnscKVHY9I4K2qdx6ADJo057ldzaB
+         QRyUpjFvjYZHfoQMvnkF5TLGrpdYxE/qraJvFXdXYWzNOLjYJhqYR3wafXig2mxTSzfB
+         DPdDsYKdrjoBtJZqTeF+UXRklOowFcsavxjArSJEwu62GcQBMXD55Q8V6mySO5DmmJW1
+         o00V2dC8bBypJWoevjPeGMSykLVmF/UeMLABj9lDoW2xw7EaBbfrRJm889It+G5Qrlwm
+         uYnyhed9bIDNLS6qLNn0za/UDqrWTQDHo9zMksbSDbX+IfiQVXNQ6zrIroYMJcv7t/OX
+         SdPA==
+X-Forwarded-Encrypted: i=1; AJvYcCWMWnhqJG3iaEqHc4xQYDCPhw1lQYlzbG4dK2T72kMPOyuSHOMd9XIxvQTafZk10Svws/km78jL3kwotgkF@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8LXGiw0G0Y8kMLGrT3irArp99q6fue1+jyvcvH6Y84nMi1l+8
+	cB4Hs+fxyOv+fvhPyyORCJCQCb4MCusIrZpznqle6bsJCKy+I5Ne1itssPIk+/j0fC+uoWBnpfK
+	ppWXa2KD2w4Xyn1qeyGUdT11bFx8pPm0=
+X-Gm-Gg: ASbGnct8Z35XKxnmYrUU2crUuv1xBwXA6yi0w6nx4EI9EtG32Yc4gljbOtfJUJmMEDP
+	unuS+CrkFGuY3QUEH9+tzO+ht9oJO+GCGTvQs8kLs08FctNG7n8BrxvF7fKUp9QYzq+zjgtYER4
+	+fVP8OlYbFT7HnhukXbDzhLR59dR+eyx0cht5OXUb0fd2ivS3vKjleoHsyABFqJiiyFf5wXf8KL
+	qBNqpxEnfCgictVy6YkJCTFTXs=
+X-Google-Smtp-Source: AGHT+IHhOajMg45qoQKuHFqOphgW1v8C6Y3NGv24TZhjVOQCnYNmKayhLoX2A9i2pe11HP7tejVyO8ZyZRPs6TouXr8=
+X-Received: by 2002:a05:6808:80ad:b0:437:d306:3067 with SMTP id
+ 5614622812f47-43b8d896834mr791446b6e.5.1757665378727; Fri, 12 Sep 2025
+ 01:22:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250910214927.480316-8-tahbertschinger@gmail.com>
+References: <20250911095602.1130290-1-zhangchunyan@iscas.ac.cn>
+ <20250911095602.1130290-2-zhangchunyan@iscas.ac.cn> <9bcaf3ec-c0a1-4ca5-87aa-f84e297d1e42@redhat.com>
+In-Reply-To: <9bcaf3ec-c0a1-4ca5-87aa-f84e297d1e42@redhat.com>
+From: Chunyan Zhang <zhang.lyra@gmail.com>
+Date: Fri, 12 Sep 2025 16:22:22 +0800
+X-Gm-Features: Ac12FXy-cDQ5eFXWwommKSKcCFuy-deRstciVxjZJ-jBtke_I7rVvu7ZtFQQsPg
+Message-ID: <CAAfSe-sAru+FuhVWRa+i5_sj6m4318pLFrgP0Gsd0DVWzjE-hg@mail.gmail.com>
+Subject: Re: [PATCH v11 1/5] mm: softdirty: Add pgtable_soft_dirty_supported()
+To: David Hildenbrand <david@redhat.com>
+Cc: Chunyan Zhang <zhangchunyan@iscas.ac.cn>, linux-riscv@lists.infradead.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Deepak Gupta <debug@rivosinc.com>, Ved Shanbhogue <ved@rivosinc.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Thomas,
+Hi David,
 
-kernel test robot noticed the following build warnings:
+On Thu, 11 Sept 2025 at 21:09, David Hildenbrand <david@redhat.com> wrote:
+>
+> On 11.09.25 11:55, Chunyan Zhang wrote:
+> > Some platforms can customize the PTE PMD entry soft-dirty bit making it
+> > unavailable even if the architecture provides the resource.
+> >
+> > Add an API which architectures can define their specific implementations
+> > to detect if soft-dirty bit is available on which device the kernel is
+> > running.
+>
+> Thinking to myself: maybe pgtable_supports_soft_dirty() would read better
+> Whatever you prefer.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Thomas-Bertschinger/fhandle-create-helper-for-name_to_handle_at-2/20250911-054830
-base:   76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c
-patch link:    https://lore.kernel.org/r/20250910214927.480316-8-tahbertschinger%40gmail.com
-patch subject: [PATCH 07/10] exportfs: new FILEID_CACHED flag for non-blocking fh lookup
-config: arm-randconfig-r071-20250911 (https://download.01.org/0day-ci/archive/20250912/202509120423.cZlR8oLY-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 21857ae337e0892a5522b6e7337899caa61de2a6)
+I will use pgtable_supports_* in the next version.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202509120423.cZlR8oLY-lkp@intel.com/
+> >
+> > Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
+> > ---
+> >   fs/proc/task_mmu.c      | 17 ++++++++++++++++-
+> >   include/linux/pgtable.h | 12 ++++++++++++
+> >   mm/debug_vm_pgtable.c   | 10 +++++-----
+> >   mm/huge_memory.c        | 13 +++++++------
+> >   mm/internal.h           |  2 +-
+> >   mm/mremap.c             | 13 +++++++------
+> >   mm/userfaultfd.c        | 10 ++++------
+> >   7 files changed, 52 insertions(+), 25 deletions(-)
+> >
+> > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> > index 29cca0e6d0ff..9e8083b6d4cd 100644
+> > --- a/fs/proc/task_mmu.c
+> > +++ b/fs/proc/task_mmu.c
+> > @@ -1058,7 +1058,7 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
+> >        * -Werror=unterminated-string-initialization warning
+> >        *  with GCC 15
+> >        */
+> > -     static const char mnemonics[BITS_PER_LONG][3] = {
+> > +     static char mnemonics[BITS_PER_LONG][3] = {
+> >               /*
+> >                * In case if we meet a flag we don't know about.
+> >                */
+> > @@ -1129,6 +1129,16 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
+> >               [ilog2(VM_SEALED)] = "sl",
+> >   #endif
+> >       };
+> > +/*
+> > + * We should remove the VM_SOFTDIRTY flag if the soft-dirty bit is
+> > + * unavailable on which the kernel is running, even if the architecture
+> > + * provides the resource and soft-dirty is compiled in.
+> > + */
+> > +#ifdef CONFIG_MEM_SOFT_DIRTY
+> > +     if (!pgtable_soft_dirty_supported())
+> > +             mnemonics[ilog2(VM_SOFTDIRTY)][0] = 0;
+> > +#endif
+>
+> You can now drop the ifdef.
 
-smatch warnings:
-fs/exportfs/expfs.c:539 exportfs_decode_fh_raw() warn: maybe use && instead of &
+Ok, you mean define VM_SOFTDIRTY 0x08000000 no matter if
+MEM_SOFT_DIRTY is compiled in, right?
 
-vim +539 fs/exportfs/expfs.c
+Then I need memcpy() to set mnemonics[ilog2(VM_SOFTDIRTY)] here.
 
-d045465fc6cbfa4 Trond Myklebust     2020-11-30  437  struct dentry *
-d045465fc6cbfa4 Trond Myklebust     2020-11-30  438  exportfs_decode_fh_raw(struct vfsmount *mnt, struct fid *fid, int fh_len,
-620c266f394932e Christian Brauner   2024-05-24  439  		       int fileid_type, unsigned int flags,
-d045465fc6cbfa4 Trond Myklebust     2020-11-30  440  		       int (*acceptable)(void *, struct dentry *),
-d045465fc6cbfa4 Trond Myklebust     2020-11-30  441  		       void *context)
-d37065cd6d6bbe9 Christoph Hellwig   2007-07-17  442  {
-39655164405940d Christoph Hellwig   2007-10-21  443  	const struct export_operations *nop = mnt->mnt_sb->s_export_op;
-638205375afdc8a Thomas Bertschinger 2025-09-10  444  	bool decode_cached = fileid_type & FILEID_CACHED;
-2596110a3994593 Christoph Hellwig   2007-10-21  445  	struct dentry *result, *alias;
-f3f8e17571934ea Al Viro             2008-08-11  446  	char nbuf[NAME_MAX+1];
-2596110a3994593 Christoph Hellwig   2007-10-21  447  	int err;
-d37065cd6d6bbe9 Christoph Hellwig   2007-07-17  448  
-4a530a7c751d27f Amir Goldstein      2024-10-11  449  	if (fileid_type < 0 || FILEID_USER_FLAGS(fileid_type))
-4a530a7c751d27f Amir Goldstein      2024-10-11  450  		return ERR_PTR(-EINVAL);
-4a530a7c751d27f Amir Goldstein      2024-10-11  451  
-2596110a3994593 Christoph Hellwig   2007-10-21  452  	/*
-2596110a3994593 Christoph Hellwig   2007-10-21  453  	 * Try to get any dentry for the given file handle from the filesystem.
-2596110a3994593 Christoph Hellwig   2007-10-21  454  	 */
-66c62769bcf6aa1 Amir Goldstein      2023-10-23  455  	if (!exportfs_can_decode_fh(nop))
-becfd1f37544798 Aneesh Kumar K.V    2011-01-29  456  		return ERR_PTR(-ESTALE);
-638205375afdc8a Thomas Bertschinger 2025-09-10  457  
-638205375afdc8a Thomas Bertschinger 2025-09-10  458  	if (decode_cached && !(nop->flags & EXPORT_OP_NONBLOCK))
-638205375afdc8a Thomas Bertschinger 2025-09-10  459  		return ERR_PTR(-EAGAIN);
-638205375afdc8a Thomas Bertschinger 2025-09-10  460  
-2596110a3994593 Christoph Hellwig   2007-10-21  461  	result = nop->fh_to_dentry(mnt->mnt_sb, fid, fh_len, fileid_type);
-09bb8bfffd29c3d NeilBrown           2016-08-04  462  	if (IS_ERR_OR_NULL(result))
-d045465fc6cbfa4 Trond Myklebust     2020-11-30  463  		return result;
-2596110a3994593 Christoph Hellwig   2007-10-21  464  
-620c266f394932e Christian Brauner   2024-05-24  465  	if ((flags & EXPORT_FH_DIR_ONLY) && !d_is_dir(result)) {
-620c266f394932e Christian Brauner   2024-05-24  466  		err = -ENOTDIR;
-620c266f394932e Christian Brauner   2024-05-24  467  		goto err_result;
-620c266f394932e Christian Brauner   2024-05-24  468  	}
-620c266f394932e Christian Brauner   2024-05-24  469  
-8a22efa15b46d52 Amir Goldstein      2018-03-09  470  	/*
-8a22efa15b46d52 Amir Goldstein      2018-03-09  471  	 * If no acceptance criteria was specified by caller, a disconnected
-8a22efa15b46d52 Amir Goldstein      2018-03-09  472  	 * dentry is also accepatable. Callers may use this mode to query if
-8a22efa15b46d52 Amir Goldstein      2018-03-09  473  	 * file handle is stale or to get a reference to an inode without
-8a22efa15b46d52 Amir Goldstein      2018-03-09  474  	 * risking the high overhead caused by directory reconnect.
-8a22efa15b46d52 Amir Goldstein      2018-03-09  475  	 */
-8a22efa15b46d52 Amir Goldstein      2018-03-09  476  	if (!acceptable)
-8a22efa15b46d52 Amir Goldstein      2018-03-09  477  		return result;
-8a22efa15b46d52 Amir Goldstein      2018-03-09  478  
-e36cb0b89ce20b4 David Howells       2015-01-29  479  	if (d_is_dir(result)) {
-2596110a3994593 Christoph Hellwig   2007-10-21  480  		/*
-2596110a3994593 Christoph Hellwig   2007-10-21  481  		 * This request is for a directory.
-2596110a3994593 Christoph Hellwig   2007-10-21  482  		 *
-2596110a3994593 Christoph Hellwig   2007-10-21  483  		 * On the positive side there is only one dentry for each
-2596110a3994593 Christoph Hellwig   2007-10-21  484  		 * directory inode.  On the negative side this implies that we
-2596110a3994593 Christoph Hellwig   2007-10-21  485  		 * to ensure our dentry is connected all the way up to the
-2596110a3994593 Christoph Hellwig   2007-10-21  486  		 * filesystem root.
-2596110a3994593 Christoph Hellwig   2007-10-21  487  		 */
-2596110a3994593 Christoph Hellwig   2007-10-21  488  		if (result->d_flags & DCACHE_DISCONNECTED) {
-638205375afdc8a Thomas Bertschinger 2025-09-10  489  			err = -EAGAIN;
-638205375afdc8a Thomas Bertschinger 2025-09-10  490  			if (decode_cached)
-638205375afdc8a Thomas Bertschinger 2025-09-10  491  				goto err_result;
-638205375afdc8a Thomas Bertschinger 2025-09-10  492  
-f3f8e17571934ea Al Viro             2008-08-11  493  			err = reconnect_path(mnt, result, nbuf);
-2596110a3994593 Christoph Hellwig   2007-10-21  494  			if (err)
-2596110a3994593 Christoph Hellwig   2007-10-21  495  				goto err_result;
-2596110a3994593 Christoph Hellwig   2007-10-21  496  		}
-2596110a3994593 Christoph Hellwig   2007-10-21  497  
-2596110a3994593 Christoph Hellwig   2007-10-21  498  		if (!acceptable(context, result)) {
-2596110a3994593 Christoph Hellwig   2007-10-21  499  			err = -EACCES;
-2596110a3994593 Christoph Hellwig   2007-10-21  500  			goto err_result;
-2596110a3994593 Christoph Hellwig   2007-10-21  501  		}
-2596110a3994593 Christoph Hellwig   2007-10-21  502  
-2596110a3994593 Christoph Hellwig   2007-10-21  503  		return result;
-2596110a3994593 Christoph Hellwig   2007-10-21  504  	} else {
-2596110a3994593 Christoph Hellwig   2007-10-21  505  		/*
-2596110a3994593 Christoph Hellwig   2007-10-21  506  		 * It's not a directory.  Life is a little more complicated.
-2596110a3994593 Christoph Hellwig   2007-10-21  507  		 */
-2596110a3994593 Christoph Hellwig   2007-10-21  508  		struct dentry *target_dir, *nresult;
-2596110a3994593 Christoph Hellwig   2007-10-21  509  
-2596110a3994593 Christoph Hellwig   2007-10-21  510  		/*
-2596110a3994593 Christoph Hellwig   2007-10-21  511  		 * See if either the dentry we just got from the filesystem
-2596110a3994593 Christoph Hellwig   2007-10-21  512  		 * or any alias for it is acceptable.  This is always true
-2596110a3994593 Christoph Hellwig   2007-10-21  513  		 * if this filesystem is exported without the subtreecheck
-2596110a3994593 Christoph Hellwig   2007-10-21  514  		 * option.  If the filesystem is exported with the subtree
-2596110a3994593 Christoph Hellwig   2007-10-21  515  		 * check option there's a fair chance we need to look at
-2596110a3994593 Christoph Hellwig   2007-10-21  516  		 * the parent directory in the file handle and make sure
-2596110a3994593 Christoph Hellwig   2007-10-21  517  		 * it's connected to the filesystem root.
-2596110a3994593 Christoph Hellwig   2007-10-21  518  		 */
-2596110a3994593 Christoph Hellwig   2007-10-21  519  		alias = find_acceptable_alias(result, acceptable, context);
-2596110a3994593 Christoph Hellwig   2007-10-21  520  		if (alias)
-2596110a3994593 Christoph Hellwig   2007-10-21  521  			return alias;
-2596110a3994593 Christoph Hellwig   2007-10-21  522  
-2596110a3994593 Christoph Hellwig   2007-10-21  523  		/*
-2596110a3994593 Christoph Hellwig   2007-10-21  524  		 * Try to extract a dentry for the parent directory from the
-2596110a3994593 Christoph Hellwig   2007-10-21  525  		 * file handle.  If this fails we'll have to give up.
-2596110a3994593 Christoph Hellwig   2007-10-21  526  		 */
-2596110a3994593 Christoph Hellwig   2007-10-21  527  		err = -ESTALE;
-2596110a3994593 Christoph Hellwig   2007-10-21  528  		if (!nop->fh_to_parent)
-2596110a3994593 Christoph Hellwig   2007-10-21  529  			goto err_result;
-2596110a3994593 Christoph Hellwig   2007-10-21  530  
-2596110a3994593 Christoph Hellwig   2007-10-21  531  		target_dir = nop->fh_to_parent(mnt->mnt_sb, fid,
-2596110a3994593 Christoph Hellwig   2007-10-21  532  				fh_len, fileid_type);
-a4f4d6df5373682 J. Bruce Fields     2008-12-08  533  		if (!target_dir)
-a4f4d6df5373682 J. Bruce Fields     2008-12-08  534  			goto err_result;
-2596110a3994593 Christoph Hellwig   2007-10-21  535  		err = PTR_ERR(target_dir);
-2596110a3994593 Christoph Hellwig   2007-10-21  536  		if (IS_ERR(target_dir))
-2596110a3994593 Christoph Hellwig   2007-10-21  537  			goto err_result;
-638205375afdc8a Thomas Bertschinger 2025-09-10  538  		err = -EAGAIN;
-638205375afdc8a Thomas Bertschinger 2025-09-10 @539  		if (decode_cached & (target_dir->d_flags & DCACHE_DISCONNECTED)) {
+>
+> But, I wonder if could we instead just stop setting the flag. Then we don't
+> have to worry about any VM_SOFTDIRTY checks.
+>
+> Something like the following
+>
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 892fe5dbf9de0..8b8bf63a32ef7 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -783,6 +783,7 @@ static inline void vma_init(struct vm_area_struct *vma, struct mm_struct *mm)
+>   static inline void vm_flags_init(struct vm_area_struct *vma,
+>                                  vm_flags_t flags)
+>   {
+> +       VM_WARN_ON_ONCE(!pgtable_soft_dirty_supported() && (flags & VM_SOFTDIRTY));
+>         ACCESS_PRIVATE(vma, __vm_flags) = flags;
+>   }
+>
+> @@ -801,6 +802,7 @@ static inline void vm_flags_reset(struct vm_area_struct *vma,
+>   static inline void vm_flags_reset_once(struct vm_area_struct *vma,
+>                                        vm_flags_t flags)
+>   {
+> +       VM_WARN_ON_ONCE(!pgtable_soft_dirty_supported() && (flags & VM_SOFTDIRTY));
+>         vma_assert_write_locked(vma);
+>         WRITE_ONCE(ACCESS_PRIVATE(vma, __vm_flags), flags);
+>   }
+> @@ -808,6 +810,7 @@ static inline void vm_flags_reset_once(struct vm_area_struct *vma,
+>   static inline void vm_flags_set(struct vm_area_struct *vma,
+>                                 vm_flags_t flags)
+>   {
+> +       VM_WARN_ON_ONCE(!pgtable_soft_dirty_supported() && (flags & VM_SOFTDIRTY));
+>         vma_start_write(vma);
+>         ACCESS_PRIVATE(vma, __vm_flags) |= flags;
+>   }
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index 5fd3b80fda1d5..40cb3fbf9a247 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -1451,8 +1451,10 @@ static struct vm_area_struct *__install_special_mapping(
+>                 return ERR_PTR(-ENOMEM);
+>
+>         vma_set_range(vma, addr, addr + len, 0);
+> -       vm_flags_init(vma, (vm_flags | mm->def_flags |
+> -                     VM_DONTEXPAND | VM_SOFTDIRTY) & ~VM_LOCKED_MASK);
+> +       vm_flags |= mm->def_flags | VM_DONTEXPAND;
 
-It needs to be &&.  DCACHE_DISCONNECTED is BIT(5).
+Why use '|=' rather than not directly setting vm_flags which is an
+uninitialized variable?
 
-638205375afdc8a Thomas Bertschinger 2025-09-10  540  			goto err_result;
-638205375afdc8a Thomas Bertschinger 2025-09-10  541  		}
-2596110a3994593 Christoph Hellwig   2007-10-21  542  
-2596110a3994593 Christoph Hellwig   2007-10-21  543  		/*
-2596110a3994593 Christoph Hellwig   2007-10-21  544  		 * And as usual we need to make sure the parent directory is
-2596110a3994593 Christoph Hellwig   2007-10-21  545  		 * connected to the filesystem root.  The VFS really doesn't
-2596110a3994593 Christoph Hellwig   2007-10-21  546  		 * like disconnected directories..
-2596110a3994593 Christoph Hellwig   2007-10-21  547  		 */
-f3f8e17571934ea Al Viro             2008-08-11  548  		err = reconnect_path(mnt, target_dir, nbuf);
-2596110a3994593 Christoph Hellwig   2007-10-21  549  		if (err) {
-2596110a3994593 Christoph Hellwig   2007-10-21  550  			dput(target_dir);
-2596110a3994593 Christoph Hellwig   2007-10-21  551  			goto err_result;
-2596110a3994593 Christoph Hellwig   2007-10-21  552  		}
-2596110a3994593 Christoph Hellwig   2007-10-21  553  
-2596110a3994593 Christoph Hellwig   2007-10-21  554  		/*
-2596110a3994593 Christoph Hellwig   2007-10-21  555  		 * Now that we've got both a well-connected parent and a
-2596110a3994593 Christoph Hellwig   2007-10-21  556  		 * dentry for the inode we're after, make sure that our
-2596110a3994593 Christoph Hellwig   2007-10-21  557  		 * inode is actually connected to the parent.
-2596110a3994593 Christoph Hellwig   2007-10-21  558  		 */
-e38f981758118d8 Christoph Hellwig   2007-10-21  559  		err = exportfs_get_name(mnt, target_dir, nbuf, result);
-a2ece088882666e Al Viro             2019-11-08  560  		if (err) {
-a2ece088882666e Al Viro             2019-11-08  561  			dput(target_dir);
-a2ece088882666e Al Viro             2019-11-08  562  			goto err_result;
-a2ece088882666e Al Viro             2019-11-08  563  		}
-a2ece088882666e Al Viro             2019-11-08  564  
-ce3490038971a20 NeilBrown           2025-06-09  565  		nresult = lookup_one_unlocked(mnt_idmap(mnt), &QSTR(nbuf), target_dir);
-2596110a3994593 Christoph Hellwig   2007-10-21  566  		if (!IS_ERR(nresult)) {
-a2ece088882666e Al Viro             2019-11-08  567  			if (unlikely(nresult->d_inode != result->d_inode)) {
-2596110a3994593 Christoph Hellwig   2007-10-21  568  				dput(nresult);
-a2ece088882666e Al Viro             2019-11-08  569  				nresult = ERR_PTR(-ESTALE);
-2596110a3994593 Christoph Hellwig   2007-10-21  570  			}
-2596110a3994593 Christoph Hellwig   2007-10-21  571  		}
-2596110a3994593 Christoph Hellwig   2007-10-21  572  		/*
-2596110a3994593 Christoph Hellwig   2007-10-21  573  		 * At this point we are done with the parent, but it's pinned
-2596110a3994593 Christoph Hellwig   2007-10-21  574  		 * by the child dentry anyway.
-2596110a3994593 Christoph Hellwig   2007-10-21  575  		 */
-2596110a3994593 Christoph Hellwig   2007-10-21  576  		dput(target_dir);
-2596110a3994593 Christoph Hellwig   2007-10-21  577  
-a2ece088882666e Al Viro             2019-11-08  578  		if (IS_ERR(nresult)) {
-a2ece088882666e Al Viro             2019-11-08  579  			err = PTR_ERR(nresult);
-a2ece088882666e Al Viro             2019-11-08  580  			goto err_result;
-a2ece088882666e Al Viro             2019-11-08  581  		}
-a2ece088882666e Al Viro             2019-11-08  582  		dput(result);
-a2ece088882666e Al Viro             2019-11-08  583  		result = nresult;
-a2ece088882666e Al Viro             2019-11-08  584  
-2596110a3994593 Christoph Hellwig   2007-10-21  585  		/*
-2596110a3994593 Christoph Hellwig   2007-10-21  586  		 * And finally make sure the dentry is actually acceptable
-2596110a3994593 Christoph Hellwig   2007-10-21  587  		 * to NFSD.
-2596110a3994593 Christoph Hellwig   2007-10-21  588  		 */
-2596110a3994593 Christoph Hellwig   2007-10-21  589  		alias = find_acceptable_alias(result, acceptable, context);
-2596110a3994593 Christoph Hellwig   2007-10-21  590  		if (!alias) {
-2596110a3994593 Christoph Hellwig   2007-10-21  591  			err = -EACCES;
-2596110a3994593 Christoph Hellwig   2007-10-21  592  			goto err_result;
-2596110a3994593 Christoph Hellwig   2007-10-21  593  		}
-2596110a3994593 Christoph Hellwig   2007-10-21  594  
-2596110a3994593 Christoph Hellwig   2007-10-21  595  		return alias;
-2596110a3994593 Christoph Hellwig   2007-10-21  596  	}
-2596110a3994593 Christoph Hellwig   2007-10-21  597  
-2596110a3994593 Christoph Hellwig   2007-10-21  598   err_result:
-2596110a3994593 Christoph Hellwig   2007-10-21  599  	dput(result);
-2596110a3994593 Christoph Hellwig   2007-10-21  600  	return ERR_PTR(err);
-10f11c341da8c0e Christoph Hellwig   2007-07-17  601  }
+> +       if (pgtable_soft_dirty_supported())
+> +               vm_flags |= VM_SOFTDIRTY;
+> +       vm_flags_init(vma, vm_flags & ~VM_LOCKED_MASK);
+>         vma->vm_page_prot = vm_get_page_prot(vma->vm_flags);
+>
+>         vma->vm_ops = ops;
+> diff --git a/mm/vma.c b/mm/vma.c
+> index abe0da33c8446..16a1ed2a6199c 100644
+> --- a/mm/vma.c
+> +++ b/mm/vma.c
+> @@ -2551,7 +2551,8 @@ static void __mmap_complete(struct mmap_state *map, struct vm_area_struct *vma)
+>          * then new mapped in-place (which must be aimed as
+>          * a completely new data area).
+>          */
+> -       vm_flags_set(vma, VM_SOFTDIRTY);
+> +       if (pgtable_soft_dirty_supported())
+> +               vm_flags_set(vma, VM_SOFTDIRTY);
+>
+>         vma_set_page_prot(vma);
+>   }
+> @@ -2819,7 +2820,8 @@ int do_brk_flags(struct vma_iterator *vmi, struct vm_area_struct *vma,
+>         mm->data_vm += len >> PAGE_SHIFT;
+>         if (vm_flags & VM_LOCKED)
+>                 mm->locked_vm += (len >> PAGE_SHIFT);
+> -       vm_flags_set(vma, VM_SOFTDIRTY);
+> +       if (pgtable_soft_dirty_supported())
+> +               vm_flags_set(vma, VM_SOFTDIRTY);
+>         return 0;
+>
+>   mas_store_fail:
+> diff --git a/mm/vma_exec.c b/mm/vma_exec.c
+> index 922ee51747a68..c06732a5a620a 100644
+> --- a/mm/vma_exec.c
+> +++ b/mm/vma_exec.c
+> @@ -107,6 +107,7 @@ int relocate_vma_down(struct vm_area_struct *vma, unsigned long shift)
+>   int create_init_stack_vma(struct mm_struct *mm, struct vm_area_struct **vmap,
+>                           unsigned long *top_mem_p)
+>   {
+> +       unsigned long flags  = VM_STACK_FLAGS | VM_STACK_INCOMPLETE_SETUP;
+>         int err;
+>         struct vm_area_struct *vma = vm_area_alloc(mm);
+>
+> @@ -137,7 +138,9 @@ int create_init_stack_vma(struct mm_struct *mm, struct vm_area_struct **vmap,
+>         BUILD_BUG_ON(VM_STACK_FLAGS & VM_STACK_INCOMPLETE_SETUP);
+>         vma->vm_end = STACK_TOP_MAX;
+>         vma->vm_start = vma->vm_end - PAGE_SIZE;
+> -       vm_flags_init(vma, VM_SOFTDIRTY | VM_STACK_FLAGS | VM_STACK_INCOMPLETE_SETUP);
+> +       if (pgtable_soft_dirty_supported())
+> +               flags |= VM_SOFTDIRTY;
+> +       vm_flags_init(vma, flags);
+>         vma->vm_page_prot = vm_get_page_prot(vma->vm_flags);
+>
+>         err = insert_vm_struct(mm, vma);
+>
+>
+> > +
+> >       size_t i;
+> >
+> >       seq_puts(m, "VmFlags: ");
+> > @@ -1531,6 +1541,8 @@ static inline bool pte_is_pinned(struct vm_area_struct *vma, unsigned long addr,
+> >   static inline void clear_soft_dirty(struct vm_area_struct *vma,
+> >               unsigned long addr, pte_t *pte)
+> >   {
+> > +     if (!pgtable_soft_dirty_supported())
+> > +             return;
+> >       /*
+> >        * The soft-dirty tracker uses #PF-s to catch writes
+> >        * to pages, so write-protect the pte as well. See the
+> > @@ -1566,6 +1578,9 @@ static inline void clear_soft_dirty_pmd(struct vm_area_struct *vma,
+> >   {
+> >       pmd_t old, pmd = *pmdp;
+> >
+> > +     if (!pgtable_soft_dirty_supported())
+> > +             return;
+> > +
+> >       if (pmd_present(pmd)) {
+> >               /* See comment in change_huge_pmd() */
+> >               old = pmdp_invalidate(vma, addr, pmdp);
+>
+> That would all be handled with the above never-set-VM_SOFTDIRTY.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Sorry I'm not sure I understand here, you mean no longer need #ifdef
+CONFIG_MEM_SOFT_DIRTY for these function definitions, right?
 
+>
+> > diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+> > index 4c035637eeb7..2a3578a4ae4c 100644
+> > --- a/include/linux/pgtable.h
+> > +++ b/include/linux/pgtable.h
+> > @@ -1537,6 +1537,18 @@ static inline pgprot_t pgprot_modify(pgprot_t oldprot, pgprot_t newprot)
+> >   #define arch_start_context_switch(prev)     do {} while (0)
+> >   #endif
+> >
+> > +/*
+> > + * Some platforms can customize the PTE soft-dirty bit making it unavailable
+> > + * even if the architecture provides the resource.
+> > + * Adding this API allows architectures to add their own checks for the
+> > + * devices on which the kernel is running.
+> > + * Note: When overiding it, please make sure the CONFIG_MEM_SOFT_DIRTY
+> > + * is part of this macro.
+> > + */
+> > +#ifndef pgtable_soft_dirty_supported
+> > +#define pgtable_soft_dirty_supported()       IS_ENABLED(CONFIG_MEM_SOFT_DIRTY)
+> > +#endif
+> > +
+> >   #ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
+> >   #ifndef CONFIG_ARCH_ENABLE_THP_MIGRATION
+> >   static inline pmd_t pmd_swp_mksoft_dirty(pmd_t pmd)
+> > diff --git a/mm/debug_vm_pgtable.c b/mm/debug_vm_pgtable.c
+> > index 830107b6dd08..b32ce2b0b998 100644
+> > --- a/mm/debug_vm_pgtable.c
+> > +++ b/mm/debug_vm_pgtable.c
+> > @@ -690,7 +690,7 @@ static void __init pte_soft_dirty_tests(struct pgtable_debug_args *args)
+> >   {
+> >       pte_t pte = pfn_pte(args->fixed_pte_pfn, args->page_prot);
+> >
+> > -     if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY))
+> > +     if (!pgtable_soft_dirty_supported())
+> >               return;
+> >
+> >       pr_debug("Validating PTE soft dirty\n");
+> > @@ -702,7 +702,7 @@ static void __init pte_swap_soft_dirty_tests(struct pgtable_debug_args *args)
+> >   {
+> >       pte_t pte;
+> >
+> > -     if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY))
+> > +     if (!pgtable_soft_dirty_supported())
+> >               return;
+> >
+> >       pr_debug("Validating PTE swap soft dirty\n");
+> > @@ -718,7 +718,7 @@ static void __init pmd_soft_dirty_tests(struct pgtable_debug_args *args)
+> >   {
+> >       pmd_t pmd;
+> >
+> > -     if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY))
+> > +     if (!pgtable_soft_dirty_supported())
+> >               return;
+> >
+> >       if (!has_transparent_hugepage())
+> > @@ -734,8 +734,8 @@ static void __init pmd_swap_soft_dirty_tests(struct pgtable_debug_args *args)
+> >   {
+> >       pmd_t pmd;
+> >
+> > -     if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY) ||
+> > -             !IS_ENABLED(CONFIG_ARCH_ENABLE_THP_MIGRATION))
+> > +     if (!pgtable_soft_dirty_supported() ||
+> > +         !IS_ENABLED(CONFIG_ARCH_ENABLE_THP_MIGRATION))
+> >               return;
+> >
+> >       if (!has_transparent_hugepage())
+> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> > index 9c38a95e9f09..218d430a2ec6 100644
+> > --- a/mm/huge_memory.c
+> > +++ b/mm/huge_memory.c
+> > @@ -2271,12 +2271,13 @@ static inline int pmd_move_must_withdraw(spinlock_t *new_pmd_ptl,
+> >
+> >   static pmd_t move_soft_dirty_pmd(pmd_t pmd)
+> >   {
+> > -#ifdef CONFIG_MEM_SOFT_DIRTY
+> > -     if (unlikely(is_pmd_migration_entry(pmd)))
+> > -             pmd = pmd_swp_mksoft_dirty(pmd);
+> > -     else if (pmd_present(pmd))
+> > -             pmd = pmd_mksoft_dirty(pmd);
+> > -#endif
+> > +     if (pgtable_soft_dirty_supported()) {
+> > +             if (unlikely(is_pmd_migration_entry(pmd)))
+> > +                     pmd = pmd_swp_mksoft_dirty(pmd);
+> > +             else if (pmd_present(pmd))
+> > +                     pmd = pmd_mksoft_dirty(pmd);
+> > +     }
+> > +
+>
+> Wondering, should simply the arch take care of that and we can just clal
+> pmd_swp_mksoft_dirty / pmd_mksoft_dirty?
+
+Ok, I think I can do that in another patchset.
+
+>
+> >       return pmd;
+> >   }
+> >
+> > diff --git a/mm/internal.h b/mm/internal.h
+> > index 45b725c3dc03..c6ca62f8ecf3 100644
+> > --- a/mm/internal.h
+> > +++ b/mm/internal.h
+> > @@ -1538,7 +1538,7 @@ static inline bool vma_soft_dirty_enabled(struct vm_area_struct *vma)
+> >        * VM_SOFTDIRTY is defined as 0x0, then !(vm_flags & VM_SOFTDIRTY)
+> >        * will be constantly true.
+> >        */
+> > -     if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY))
+> > +     if (!pgtable_soft_dirty_supported())
+> >               return false;
+> >
+>
+> That should be handled with the above never-set-VM_SOFTDIRTY.
+
+We don't need to check if (!pgtable_soft_dirty_supported()) if I
+understand correctly.
+
+Thanks for the review,
+Chunyan
+
+>
+> >       /*
+> > diff --git a/mm/mremap.c b/mm/mremap.c
+> > index e618a706aff5..7beb3114dbf5 100644
+> > --- a/mm/mremap.c
+> > +++ b/mm/mremap.c
+> > @@ -162,12 +162,13 @@ static pte_t move_soft_dirty_pte(pte_t pte)
+> >        * Set soft dirty bit so we can notice
+> >        * in userspace the ptes were moved.
+> >        */
+> > -#ifdef CONFIG_MEM_SOFT_DIRTY
+> > -     if (pte_present(pte))
+> > -             pte = pte_mksoft_dirty(pte);
+> > -     else if (is_swap_pte(pte))
+> > -             pte = pte_swp_mksoft_dirty(pte);
+> > -#endif
+> > +     if (pgtable_soft_dirty_supported()) {
+> > +             if (pte_present(pte))
+> > +                     pte = pte_mksoft_dirty(pte);
+> > +             else if (is_swap_pte(pte))
+> > +                     pte = pte_swp_mksoft_dirty(pte);
+> > +     }
+> > +
+> >       return pte;
+> >   }
+> >
+> --
+> Cheers
+>
+> David / dhildenb
+>
 
