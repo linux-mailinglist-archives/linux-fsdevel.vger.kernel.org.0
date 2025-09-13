@@ -1,77 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-61161-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61162-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC851B55B51
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Sep 2025 02:47:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA0C0B55B62
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Sep 2025 02:48:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 738367B58E4
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Sep 2025 00:45:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 105CE1D62DC2
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Sep 2025 00:48:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F04621662E7;
-	Sat, 13 Sep 2025 00:46:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A408415B0EC;
+	Sat, 13 Sep 2025 00:47:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PGk3bVsR"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bVPk7ubm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1615D84039
-	for <linux-fsdevel@vger.kernel.org>; Sat, 13 Sep 2025 00:46:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A0057DA6D
+	for <linux-fsdevel@vger.kernel.org>; Sat, 13 Sep 2025 00:47:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757724400; cv=none; b=Qlwg2LXaS00D+JM1w2zWsy2CazjfIEucP6JA4K4t3vWDQhyid1T3UcYy+38v0LHbNAIz1vHC0wNxZ76p1wpvkwbuKyG1UGLAg9D9FmJn9NA58/LnlOfEx6XcTBZchOBnF2YscUom85eHpbKIuTA4248h2Eufst/pmRIwWe5exAI=
+	t=1757724466; cv=none; b=inQU/PqYf18m9GZ611TJFj8l+HnRIvLm4x/oDUL4SQNZemiWXFT8OXxAsFGK+QHV7CqQB7ZbSIFoFyuDXjMoOsL9KmaYmLhCdcTIyFt8DRdJPKUP8xG848a3pYnBGnU8dvMkczu8ONTuurMGOaFply06v8zbT7nsf+nO6WBAZe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757724400; c=relaxed/simple;
-	bh=zjnx3/NY9AOu8ee75jqsChu3O0QCH1Ezxe1gYYeY9CY=;
+	s=arc-20240116; t=1757724466; c=relaxed/simple;
+	bh=VrIhE6DR0UxTy1zLmeYzHJtIzcnVxbHuxWIBZzITpiQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SkdhxmTnUQvEzAlE1f73xe8loDRZMfykA9N3LS6pY6ohioU8dbEjYEaamyeOXp7OEKuQ3cxlPFmkG+LrBvde26I0YZiNxXJmvK6ttPw6Q78ALviQw4sFXtwoaoxFVQO4YOjSJm1IoBYbcZRUs1KVrnY5MXemTMooIvmgRQPtO+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PGk3bVsR; arc=none smtp.client-ip=209.85.208.54
+	 MIME-Version; b=j+vKllpqDjFznOpI1JTgj4FNle4xGxPY2X+u1te666mb3MNLvzkgTlDrHSC5fhJNhO4Pv/MJXtDnl7n2y/gH3p35fUtATvmZcbIpeHj6ODHWQ0EZm6aJpe1Bv8LHX/0uXCQHO9f92SJ3pqWEDL+9RNqM5q9UVHyTd3vqn1ZRB6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bVPk7ubm; arc=none smtp.client-ip=209.85.208.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-61d3d622a2bso5239431a12.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Sep 2025 17:46:35 -0700 (PDT)
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-62ecd3c21d3so3049017a12.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Sep 2025 17:47:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757724394; x=1758329194; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757724460; x=1758329260; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Y83Wia04Z/mNTHCUGozzAt26nJVQ29vmo/6z8Jb/IIM=;
-        b=PGk3bVsRmWQpgLwAnVuCRO0kfYqwetnBUpZ9Zl3Pvel66XWmCXB4VKQL5Bdc7K3yzn
-         M/NiRXfXYINjUibah+GvZKkATvgQcgRMrf1NawlM6FGu0AMPYtqvTfiI1b3aVJjsZ1zG
-         5YdT6fe78qL81b9ih8iEIF4U5t2vDQEqoXcLlaw+dOojNkrgJ0XGZoO11wokr1P3l8k1
-         2POWKMHVAj+usqOdMHfl8x1l168nDqH0UlymBKEpDjbdysCodQukbPtnikPIMlUgCONA
-         EeCKIjtBRwOssS5KWaLD6MYW6PEx814n+0axgQBjjZ9AyZVboPwbEM/rFfBdkNQ+CZsf
-         jz+Q==
+        bh=4fVjgLbGK8Q3VzkUirE6fakA1teoXIVC6opbXGA1ZT4=;
+        b=bVPk7ubmvfbJylEezcnWrtaB+2U427THokEb4roL4IyrWiTXYMXexmWpsPKPXfQbMw
+         nKwSxgx6H5iLTv3ymLQTMVtt/xXmLk7r1BVsdTvDdR2qpdG9PPYDI9oVSnDAE4E6KaYe
+         bqRwuAkC7Hg0sOK+ynLWtI3s0Lr+a06FuHPKpNpGqQNMdmyQFj0argPtCCp5VKWfb6iO
+         Dgen5Hd3FA4Jo1gvq8L+LssMQjQeF4c8ClGVyZbGuUw3oGCdE7GDszJEiUgLE7U2jjs3
+         /UN0Gn5S8u9Hcoes/4UyoLEtdl4NMM3Irfz4XqWjPTyBWzP1ihuf7mRn5Q/vCFwYr89o
+         0yig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757724394; x=1758329194;
+        d=1e100.net; s=20230601; t=1757724460; x=1758329260;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Y83Wia04Z/mNTHCUGozzAt26nJVQ29vmo/6z8Jb/IIM=;
-        b=oIpugNoLRfW/GjNyQ7B9VxigkpnXfHpoyW7ZreprSYeERe5fcMiSXHA/y5HAVhspN1
-         ivRu7xqOP4+ScH/S+guOGL2XcuQOmFJAcNJowhbTnAOyZOLOiNn/PxH+IcEHiOm6go2Q
-         QYWKnnhbu4Pt7wpHC3+ODoptqEaTw2FwoPuXOFNSoZgTHK9kGJcI6LH/j+K/LWfMs9GB
-         EQQ/SABusGEWrMha/Skp8r4tVs8rB9xO9gjsCzDhd/vVz9p/TbERDlzj+My4c7iq6jkG
-         v+l//B4d/iO+rtLFX1NoGSodR54cqEvrjI3y4IWrOulAsqx7n+ydvqV5F3MLx2Uu/39F
-         Vn0g==
-X-Gm-Message-State: AOJu0YyAkmwene48t5sZvigFdzWaEVaW/iqaXvybX2wUBJDx8pQaQG9F
-	JzrujBg6tHeQLMoECsSNLsLJGAAYKO2hy0KqNb3TSGiyzn46qteLhohWARo8OYum
-X-Gm-Gg: ASbGnct2KRIHbe74IGziYRlKW/XGt9QeZJSk0eiGzi5CogYIl1IpYbL+o6XSzl9HRdt
-	bBZwUOFYQRVJZ7CqVP9QLDxAXkmAc3w/RfB+1vLwDkoeBEcDQfasC714pGCQVAHMAG3zvHCv/8u
-	7GWlIpPfMLA+VmlxFxB75Un07hHyhubi9LcFouNVWtaxs8tZPSg4rkPJER/9n63aW9T8gk621wJ
-	mO2ToWtgVyTi8RBpi+XsoBHfiEBJAH2baNwvWfyrvIz1Vg607GOjZRTtocmgy2BcrNWLraXdYhW
-	OQhvf4TOJMTUpcZB3ShMpe3357ri6/CnnLVXmnUa35a185aBgZilrZOMvEJR1Mdy97K9YpSU7JY
-	/Hr0uRpTpSXYgse0t3wM=
-X-Google-Smtp-Source: AGHT+IEhRE4IwIn6e21II3sG+AWhFOewnNElGtSUdTtt48+B8a0G24fjikoaCpJ97iRLzEKC56BiAg==
-X-Received: by 2002:a17:907:96a3:b0:b07:e258:4629 with SMTP id a640c23a62f3a-b07e2584a05mr103605766b.16.1757724393999;
-        Fri, 12 Sep 2025 17:46:33 -0700 (PDT)
+        bh=4fVjgLbGK8Q3VzkUirE6fakA1teoXIVC6opbXGA1ZT4=;
+        b=R6hU70poQLcqvz5v5+LY3IYJ9451NtUJB7/+DKolMM2KUhkxRy8vXFc97M7FmYXmJu
+         pZ/75ggvjPyHzKWy4vEZYjP/X/HvYvGmX7w5UYopFiSXaNsYaTOdmucIlEhFpAIY4buD
+         FNYviEkFkujqo/PQEJ7hCHI4nL/cc+BnBp2R/av+y9JGszHGaVF8sJxq5SdJVKLAS+ym
+         rPLDynXkuu8pPj7nUDdzk8n9lksiPy7UT4OTDXqgdoSnMUBwdAfLmokBg9NmPkhXMz25
+         yWnyqetKKQu/dP3gvngr1S8N1M8NqhVz+VevlXyi30p8HPTUZB9/yX/mRfReYRGENE1H
+         TZRQ==
+X-Gm-Message-State: AOJu0YzCK/1xp529m7kxKfXI3yP01rDChUOfLIH93g5rC5jbFsF3Flv5
+	1aFQWjB/XmRkTGM0wIi8Y+GP5AeZsqVZEazZDb1xTFyH8MZol17HzGuGYU22PQ5o
+X-Gm-Gg: ASbGncvFs5RunQwvCoQvja+oMsXqFYCZFg5RefoEurvPUC3Ro5BhRun0059W+3fjxVG
+	ZKvSSoWDRA2HNuQ/oWdTrGPa21+WR7PNJCmQ7Fkdz8Tqzwpa0CeFTifuDs9VJ0s52FAPIEmJMV3
+	XyBhh7RrBwnZvmAjXSiqkS10WU+nOZgW7UxPCtKtej/+i00jUxbfghePS+0D62Ag4ANvpzn2kyg
+	Vz3PFiOs1dtVaJyo5iePzOI55JytQOcp4pCYVlTvtbIBe8YrzUwNOrEyCWB/wxnuYobwVZzy5cf
+	+vb/176Etn2uR20pxBYkBdBf0fx81/v/kqk42lFlX6QMWgn3mo83edqlblD7uvenT7zIKtplwlC
+	D1YKsDnus2NE10PgE+zo=
+X-Google-Smtp-Source: AGHT+IEn7MCXvWnM/H721JcTSYIJ22gozO3aCU54l5QL6th5VdkTEU9iyn+bkfXPUmCFMabMmsyKeA==
+X-Received: by 2002:a05:6402:40c9:b0:62e:ed71:601a with SMTP id 4fb4d7f45d1cf-62eed71640amr2549162a12.36.1757724460211;
+        Fri, 12 Sep 2025 17:47:40 -0700 (PDT)
 Received: from localhost ([212.73.77.104])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b07b32f2334sm475232966b.78.2025.09.12.17.46.29
+        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-62ec33f3c01sm4224385a12.34.2025.09.12.17.47.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Sep 2025 17:46:33 -0700 (PDT)
+        Fri, 12 Sep 2025 17:47:39 -0700 (PDT)
 From: Askar Safin <safinaskar@gmail.com>
 To: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
@@ -127,9 +127,9 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
 	Thorsten Blum <thorsten.blum@linux.dev>,
 	Heiko Carstens <hca@linux.ibm.com>,
 	patches@lists.linux.dev
-Subject: [PATCH RESEND 06/62] arm: init: remove special logic for setting brd.rd_size
-Date: Sat, 13 Sep 2025 00:37:45 +0000
-Message-ID: <20250913003842.41944-7-safinaskar@gmail.com>
+Subject: [PATCH RESEND 07/62] arm: init: remove ATAG_RAMDISK
+Date: Sat, 13 Sep 2025 00:37:46 +0000
+Message-ID: <20250913003842.41944-8-safinaskar@gmail.com>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250913003842.41944-1-safinaskar@gmail.com>
 References: <20250913003842.41944-1-safinaskar@gmail.com>
@@ -141,81 +141,76 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-There is no any reason for having special mechanism
-for setting ramdisk size.
-
-Also this allows us to change rd_size variable to static
+Previous commit removed last reference to ATAG_RAMDISK,
+so let's remove it
 
 Signed-off-by: Askar Safin <safinaskar@gmail.com>
 ---
- arch/arm/kernel/atags_parse.c | 12 ------------
- drivers/block/brd.c           |  8 ++++----
- include/linux/initrd.h        |  3 ---
- 3 files changed, 4 insertions(+), 19 deletions(-)
+ arch/arm/Kconfig                  |  2 +-
+ arch/arm/include/uapi/asm/setup.h | 10 ----------
+ arch/arm/kernel/atags_compat.c    |  8 --------
+ 3 files changed, 1 insertion(+), 19 deletions(-)
 
-diff --git a/arch/arm/kernel/atags_parse.c b/arch/arm/kernel/atags_parse.c
-index a3f0a4f84e04..615d9e83c9b5 100644
---- a/arch/arm/kernel/atags_parse.c
-+++ b/arch/arm/kernel/atags_parse.c
-@@ -87,18 +87,6 @@ static int __init parse_tag_videotext(const struct tag *tag)
- __tagtable(ATAG_VIDEOTEXT, parse_tag_videotext);
- #endif
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index b1f3df39ed40..afc161d76c5f 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -1479,7 +1479,7 @@ config ARM_ATAG_DTB_COMPAT
+ 	depends on ARM_APPENDED_DTB
+ 	help
+ 	  Some old bootloaders can't be updated to a DTB capable one, yet
+-	  they provide ATAGs with memory configuration, the ramdisk address,
++	  they provide ATAGs with memory configuration,
+ 	  the kernel cmdline string, etc.  Such information is dynamically
+ 	  provided by the bootloader and can't always be stored in a static
+ 	  DTB.  To allow a device tree enabled kernel to be used with such
+diff --git a/arch/arm/include/uapi/asm/setup.h b/arch/arm/include/uapi/asm/setup.h
+index 8e50e034fec7..3a70890ce80f 100644
+--- a/arch/arm/include/uapi/asm/setup.h
++++ b/arch/arm/include/uapi/asm/setup.h
+@@ -59,15 +59,6 @@ struct tag_videotext {
+ 	__u16		video_points;
+ };
  
--#ifdef CONFIG_BLK_DEV_RAM
--static int __init parse_tag_ramdisk(const struct tag *tag)
--{
--	if (tag->u.ramdisk.size)
--		rd_size = tag->u.ramdisk.size;
+-/* describes how the ramdisk will be used in kernel */
+-#define ATAG_RAMDISK	0x54410004
 -
--	return 0;
--}
+-struct tag_ramdisk {
+-	__u32 flags;	/* bit 0 = load, bit 1 = prompt */
+-	__u32 size;	/* decompressed ramdisk size in _kilo_ bytes */
+-	__u32 start;	/* starting block of floppy-based RAM disk image */
+-};
 -
--__tagtable(ATAG_RAMDISK, parse_tag_ramdisk);
--#endif
--
- static int __init parse_tag_serialnr(const struct tag *tag)
- {
- 	system_serial_low = tag->u.serialnr.low;
-diff --git a/drivers/block/brd.c b/drivers/block/brd.c
-index 0c2eabe14af3..72f02d2b8a99 100644
---- a/drivers/block/brd.c
-+++ b/drivers/block/brd.c
-@@ -27,6 +27,10 @@
- 
- #include <linux/uaccess.h>
- 
-+static unsigned long rd_size = CONFIG_BLK_DEV_RAM_SIZE;
-+module_param(rd_size, ulong, 0444);
-+MODULE_PARM_DESC(rd_size, "Size of each RAM disk in kbytes.");
-+
+ /* describes where the compressed ramdisk image lives (virtual address) */
  /*
-  * Each block ramdisk device has a xarray brd_pages of pages that stores
-  * the pages containing the block device's contents.
-@@ -209,10 +213,6 @@ static int rd_nr = CONFIG_BLK_DEV_RAM_COUNT;
- module_param(rd_nr, int, 0444);
- MODULE_PARM_DESC(rd_nr, "Maximum number of brd devices");
+  * this one accidentally used virtual addresses - as such,
+@@ -150,7 +141,6 @@ struct tag {
+ 		struct tag_core		core;
+ 		struct tag_mem32	mem;
+ 		struct tag_videotext	videotext;
+-		struct tag_ramdisk	ramdisk;
+ 		struct tag_initrd	initrd;
+ 		struct tag_serialnr	serialnr;
+ 		struct tag_revision	revision;
+diff --git a/arch/arm/kernel/atags_compat.c b/arch/arm/kernel/atags_compat.c
+index 10da11c212cc..b9747061fa97 100644
+--- a/arch/arm/kernel/atags_compat.c
++++ b/arch/arm/kernel/atags_compat.c
+@@ -122,14 +122,6 @@ static void __init build_tag_list(struct param_struct *params, void *taglist)
+ 	tag->u.core.pagesize = params->u1.s.page_size;
+ 	tag->u.core.rootdev = params->u1.s.rootdev;
  
--unsigned long rd_size = CONFIG_BLK_DEV_RAM_SIZE;
--module_param(rd_size, ulong, 0444);
--MODULE_PARM_DESC(rd_size, "Size of each RAM disk in kbytes.");
+-	tag = tag_next(tag);
+-	tag->hdr.tag = ATAG_RAMDISK;
+-	tag->hdr.size = tag_size(tag_ramdisk);
+-	tag->u.ramdisk.flags = (params->u1.s.flags & FLAG_RDLOAD ? 1 : 0) |
+-			       (params->u1.s.flags & FLAG_RDPROMPT ? 2 : 0);
+-	tag->u.ramdisk.size  = params->u1.s.ramdisk_size;
+-	tag->u.ramdisk.start = params->u1.s.rd_start;
 -
- static int max_part = 1;
- module_param(max_part, int, 0444);
- MODULE_PARM_DESC(max_part, "Num Minors to reserve between devices");
-diff --git a/include/linux/initrd.h b/include/linux/initrd.h
-index 6320a9cb6686..b42235c21444 100644
---- a/include/linux/initrd.h
-+++ b/include/linux/initrd.h
-@@ -5,9 +5,6 @@
- 
- #define INITRD_MINOR 250 /* shouldn't collide with /dev/ram* too soon ... */
- 
--/* size of a single RAM disk */
--extern unsigned long rd_size;
--
- /* 1 if it is not an error if initrd_start < memory_start */
- extern int initrd_below_start_ok;
- 
+ 	tag = tag_next(tag);
+ 	tag->hdr.tag = ATAG_INITRD;
+ 	tag->hdr.size = tag_size(tag_initrd);
 -- 
 2.47.2
 
