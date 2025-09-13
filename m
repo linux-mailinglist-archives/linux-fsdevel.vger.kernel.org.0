@@ -1,234 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-61211-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61212-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93A40B56276
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Sep 2025 20:02:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D8C1B5633C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Sep 2025 23:28:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 413D21721EE
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Sep 2025 18:02:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E90B87AC083
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Sep 2025 21:26:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2CBC1F9F51;
-	Sat, 13 Sep 2025 18:02:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0611E281358;
+	Sat, 13 Sep 2025 21:28:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WrDPKO9t";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ifqClj1M"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="KN2GWZlI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F7E1D5146;
-	Sat, 13 Sep 2025 18:02:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A00D25D208
+	for <linux-fsdevel@vger.kernel.org>; Sat, 13 Sep 2025 21:28:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757786524; cv=none; b=pxR/bGojmRLygZ72MqmQ8b8TdzocRTwEwlWF2iDJREJfYO9Nu1k+uVop1ANQrvQ4ZkWRX8GzkEXbsBr6HU+NlOKtzHVJUMXebNfiW8QBQzaGcUqxsNnkWKPTVTmIyiquJHr+vmAmFw30MqIlOnDc4lNxSo4dsmrEiYwu7ZOnxiA=
+	t=1757798901; cv=none; b=kYtKBYiMy51NatzALdoDVOLN9Ehv6jBZ3EweJa5yTD3EassDUAP+r621I4p3ubSp0QO/eC/RldhEPwfumidm+7YbXrTzKiC+TbWC5G7cMlCrnUErmDTYR3COmVG440cBd6UbfLLC0F6zPW88KN9KPHyKhgi4DHC7SkD+3THGq9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757786524; c=relaxed/simple;
-	bh=Ps+Pl01P0IfQwj66HPqHEiOcIWsQihuXbQnfO5Jovdo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=JbhT4CK9r4rZpVQ9V+fr9KmQIKxiA2/9eUPNntKwaNiS1q6MhMexqEytEPi7BvLDU175GukY1iwbMUDaxrSJLLq/MPKqgACopml/71ENrcp/TF4JESwAVPOAaBJVksWB5Jghx93XRkn3ouVw9Cgw+NPze5nR8a7HrUHzEqps4VU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WrDPKO9t; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ifqClj1M; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757786519;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rJrkNR8Djaw117twu3g48vyGNepCTuoaHbeLvsIJPc0=;
-	b=WrDPKO9tFY34kzid5bGf5l3cqv0nOiKxrfNBWunhn/8+gqCydNFVF+qvh7o+b5ejoAKORb
-	3tUcCtmuhpJdGn6fuZoqFFkQDcfAkmbA1wsK6lzTc+JqQ7ejVA9D15rfVZcwAlumCJTrUs
-	BtpaKyKOeHMc7oeQsE+hN4ha1D3sRo/uhFlZXct824XxkjxtVJTN6zCrqMKJDXvSMnLMTX
-	/5nzYGjNrK3ZWKgntU0Kf2Q52BBaNXjlS783MSNm2+jm/puqc7OfiaXlhUMpUAOTZwdK/R
-	Pcpdm4Suj82xE1ThrsiORtxo0FEPkfufBXnuz+k2r6npBhb0vhoLVUyUPyUInQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757786519;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rJrkNR8Djaw117twu3g48vyGNepCTuoaHbeLvsIJPc0=;
-	b=ifqClj1M/rTywWSB3Qli/BeWNUV1cyMMpn4zf0vjoNjjZOhjJPYrKgECwUjF3wB1nYB6r8
-	Uz3s/cQFYOGD0BDA==
-To: Christophe Leroy <christophe.leroy@csgroup.eu>, LKML
- <linux-kernel@vger.kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>,
- Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>,
- =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>, x86@kernel.org,
- Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan
- Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: Re: [patch 1/4] uaccess: Provide common helpers for masked user access
-In-Reply-To: <0424c6bc-aa12-4ee2-a062-68ce16603c26@csgroup.eu>
-References: <20250813150610.521355442@linutronix.de>
- <20250813151939.601040635@linutronix.de>
- <0424c6bc-aa12-4ee2-a062-68ce16603c26@csgroup.eu>
-Date: Sat, 13 Sep 2025 20:01:57 +0200
-Message-ID: <874it65izu.ffs@tglx>
+	s=arc-20240116; t=1757798901; c=relaxed/simple;
+	bh=OOwYFhpmGoG/wxLDyagcYcU5FBxLEPjVda2wIkppMSM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vEQZu0rdaNXADLTtx3gH0WH0E+O2A7xvDVC+gbhYvNdjCayRs0aMtIqYREN2H4vBBa65/yce8krID2TQI5tfMcHsTwqFQh9/SSWSK5pYGo8XPB2fQJ0kUiH1mGjFN0+H33FLPmnWxs5pqUUHurpW9KnGfdLyHwppxK9X2Uk4Nhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=KN2GWZlI; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=rH+iZWE/pfOMgONDQedXM9ek1RMgFNsirxF0NallFiw=; b=KN2GWZlIOlZkgSjF3+zc0yMPTw
+	GU35qJ8KohCmb5XHDDYYUkXsjej+FyuCtAZ0qfGNQCva1L85fvubSWKjLCxC3z3QleG6z4LDL8biY
+	HXuZw5tUqNPJdKDS4AQ76PQagbMQ0Q59TMDGUltRGTOvaWd1De2lJPxROIuEntUj2ojRryaiwdHOT
+	FD5neMkRCj020JAzpuS5IJHx6zGd+NLHq2OCsMtK+/ys+eR9axO1tYEb0TR5uILy6w/bSooQ8kZj5
+	I7pAqgW68fYtfWn0OwI3xNum7/gO9GdAsb8wiiIJu/c6qxYTUnDDOUaVIgz9Izw01A7CNGKDlKs/8
+	5e5xrXtw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uxXn5-00000001DRc-2sKa;
+	Sat, 13 Sep 2025 21:28:15 +0000
+Date: Sat, 13 Sep 2025 22:28:15 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: NeilBrown <neil@brown.name>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>
+Subject: Re: [RFC] a possible way of reducing the PITA of ->d_name audits
+Message-ID: <20250913212815.GE39973@ZenIV>
+References: <>
+ <20250908051951.GI31600@ZenIV>
+ <175731272688.2850467.5386978241813293277@noble.neil.brown.name>
+ <20250908090557.GJ31600@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250908090557.GJ31600@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Tue, Aug 26 2025 at 09:04, Christophe Leroy wrote:
+On Mon, Sep 08, 2025 at 10:05:57AM +0100, Al Viro wrote:
 
-> Le 13/08/2025 =C3=A0 17:57, Thomas Gleixner a =C3=A9crit=C2=A0:
->> commit 2865baf54077 ("x86: support user address masking instead of
->> non-speculative conditional") provided an optimization for
->> unsafe_get/put_user(), which optimizes the Spectre-V1 mitigation in an
->> architecture specific way. Currently only x86_64 supports that.
->>=20
->> The required code pattern is:
->>=20
->> 	if (can_do_masked_user_access())
->> 		dst =3D masked_user_access_begin(dst);
->> 	else if (!user_write_access_begin(dst, sizeof(*dst)))
->> 		return -EFAULT;
->> 	unsafe_put_user(val, dst, Efault);
->> 	user_read_access_end();
->
-> You previously called user_write_access_begin(), so must be a=20
-> user_write_access_end() here not a user_read_access_end().
->
->> 	return 0;
->> Efault:
->> 	user_read_access_end();
->
-> Same.
->
->> 	return -EFAULT;
->>=20
->> The futex code already grew an instance of that and there are other area=
-s,
->> which can be optimized, when the calling code actually verified before,
->> that the user pointer is both aligned and actually in user space.
->>=20
->> Use the futex example and provide generic helper inlines for that to avo=
-id
->> having tons of copies all over the tree.
->>=20
->> This provides get/put_user_masked_uNN() where $NN is the variable size in
->> bits, i.e. 8, 16, 32, 64.
->
-> Couldn't the $NN be automatically determined through the type of the=20
-> provided user pointer (i.e. the 'from' and 'to' in patch 2) ?
->
->>=20
->> The second set of helpers is to encapsulate the prologue for larger acce=
-ss
->> patterns, e.g. multiple consecutive unsafe_put/get_user() scenarioes:
->>=20
->> 	if (can_do_masked_user_access())
->> 		dst =3D masked_user_access_begin(dst);
->> 	else if (!user_write_access_begin(dst, sizeof(*dst)))
->> 		return -EFAULT;
->> 	unsafe_put_user(a, &dst->a, Efault);
->> 	unsafe_put_user(b, &dst->b, Efault);
->> 	user_write_access_end();
->> 	return 0;
->> Efault:
->> 	user_write_access_end();
->> 	return -EFAULT;
->>=20
->> which allows to shorten this to:
->>=20
->> 	if (!user_write_masked_begin(dst))
->> 		return -EFAULT;
->> 	unsafe_put_user(a, &dst->a, Efault);
->> 	...
->
-> That's nice but ... it hides even deeper the fact that=20
-> masked_user_access_begin() opens a read/write access to userspace. On=20
-> x86 it doesn't matter because all userspace accesses are read/write. But=
-=20
-> on architectures like powerpc it becomes a problem if you do a=20
-> read/write open then only call user_read_access_end() as write access=20
-> might remain open.
->
-> I have a patch (See [1]) that splits masked_user_access_begin() into=20
-> three versions, one for read-only, one for write-only and one for=20
-> read-write., so that they match user_read_access_end()=20
-> user_write_access_end() and user_access_end() respectively.
->
-> [1]=20
-> https://patchwork.ozlabs.org/project/linuxppc-dev/patch/7b570e237f7099d56=
-4d7b1a270169428ac1f3099.1755854833.git.christophe.leroy@csgroup.eu/
->
->
->>=20
->> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
->> ---
->>   include/linux/uaccess.h |   78 +++++++++++++++++++++++++++++++++++++++=
-+++++++++
->>   1 file changed, 78 insertions(+)
->>=20
->> --- a/include/linux/uaccess.h
->> +++ b/include/linux/uaccess.h
->> @@ -569,6 +569,84 @@ static inline void user_access_restore(u
->>   #define user_read_access_end user_access_end
->>   #endif
->>=20=20=20
->> +/*
->> + * Conveniance macros to avoid spreading this pattern all over the place
->> + */
->> +#define user_read_masked_begin(src) ({					\
->> +	bool __ret =3D true;						\
->> +									\
->> +	if (can_do_masked_user_access())				\
->> +		src =3D masked_user_access_begin(src);			\
->
-> Should call a masked_user_read_access_begin() to perform a read-only=20
-> masked access begin, matching the read-only access begin below
->
->> +	else if (!user_read_access_begin(src, sizeof(*src)))		\
->> +		__ret =3D false;						\
->> +	__ret;								\
->> +})
->> +
->> +#define user_write_masked_begin(dst) ({					\
->> +	bool __ret =3D true;						\
->> +									\
->> +	if (can_do_masked_user_access())				\
->> +		dst =3D masked_user_access_begin(dst);			\
->
-> Should call masked_user_write_access_begin() to perform a write-only=20
-> masked access begin, matching the write-only access begin below
->
->> +	else if (!user_write_access_begin(dst, sizeof(*dst)))		\
->> +		__ret =3D false;						\
->> +	__ret;								\
->> +})
->
-> You are missing a user_masked_begin() for read-write operations.
+> > Fudging some type-state with C may well be useful but I suspect it is at
+> > most part of a solution.  Simplification, documentation, run-time checks
+> > might also be important parts.  As the type-state flag-day is a big
+> > thing, maybe it shouldn't be first.
+> 
+> All of that requires being able to answer questions about what's there in
+> the existing filesystems.  Which is pretty much the same problem as
+> those audits, obviously.  And static annotations are way easier to
+> reason about.
 
-Duh. Let me go and rewrite this correctly. I clearly wasn't thinking straig=
-ht.
+Speaking of annoyances, d_exact_alias() is gone, and good riddance, but there's
+another fun issue in the same area - environment for d_splice_alias() call *and*
+for one of those d_drop()-just-in-case.
 
->> +GEN_GET_USER_MASKED(u8)
->> +GEN_GET_USER_MASKED(u16)
->> +GEN_GET_USER_MASKED(u32)
->> +GEN_GET_USER_MASKED(u64)
->> +#undef GEN_GET_USER_MASKED
->
-> Do we need four functions ? Can't we just have a get_user_masked() macro=
-=20
-> that relies on the type of src , just like unsafe_get_user() ?
+The call tree is still the same:
+_nfs4_open_and_get_state()
+	<- _nfs4_do_open()
+		<- nfs4_do_open()
+			<- nfs4_atomic_open()
+				== nfs_rpc_ops:open_context
+					<- nfs_atomic_open()
+						== ->atomic_open
+					<- nfs4_file_open()
+						== ->open
+			<- nfs4_proc_create()
+				== nfs_rpc_ops:create
+					<- nfs_do_create()
+						<- nfs_create()
+							== ->create
+						<- nfs_atomic_open_v23(), with O_CREAT
+							== ->atomic_open
+							# won't reach nfs4 stuff?
 
-Tried and the resulting macro maze is completely unreadable
-garbage. Having a readable implementation and the four functions for the
-types supported was definitely more palatable. It's not too much asked
-from a developer to pick the correct one.
+->create() and ->atomic_open() have the parent held at least shared;
+->open() does not, but the chunk in question is hit only if dentry
+is negative, which won't happen in case of ->open().
 
-Thanks,
+Additional complication comes from the possibility for _nfs4_open_and_get_state()
+to fail after that d_splice_alias().  In that case we have _nfs4_do_open()
+return an error; its caller is inside a do-while loop in nfs4_do_open() and
+I think we can't end up going around the loop after such late failure (the
+only error possible after that is -EACCES/-NFS4ERR_ACCESS and that's not one
+of those that can lead to more iterations.
 
-        tglx
+	However, looking at that late failure, that's the only call of
+nfs4_opendata_access(), and that function seems to expect the possibility
+of state->inode being a directory; can that really happen?
+
+	Because if it can, we have a problem:
+                alias = d_splice_alias(igrab(state->inode), dentry);
+                /* d_splice_alias() can't fail here - it's a non-directory */
+                if (alias) {
+                        dput(ctx->dentry);
+                        ctx->dentry = dentry = alias;
+                }
+very much *can* fail if it's reached with state->inode being a directory -
+we can get ERR_PTR() out of that d_splice_alias() and that will oops at
+
+        if (d_inode(dentry) == state->inode)
+                nfs_inode_attach_open_context(ctx);
+shortly afterwards (incidentally, what is that check about?  It can only
+fail in case of nfs4_file_open(); should we have open(2) succeed in such
+situation?)
+
+Sigh...
 
