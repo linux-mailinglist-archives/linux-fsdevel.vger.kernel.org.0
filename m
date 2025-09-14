@@ -1,108 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-61257-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61258-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76458B56B30
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Sep 2025 20:26:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 712A3B56B76
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Sep 2025 21:02:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A9763B1614
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Sep 2025 18:26:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20B00177048
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Sep 2025 19:02:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E1932877E2;
-	Sun, 14 Sep 2025 18:25:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4491627A127;
+	Sun, 14 Sep 2025 19:01:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WlKSpSE5"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="hwOS7uX/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 543FA635
-	for <linux-fsdevel@vger.kernel.org>; Sun, 14 Sep 2025 18:25:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E318F1B532F
+	for <linux-fsdevel@vger.kernel.org>; Sun, 14 Sep 2025 19:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757874357; cv=none; b=bR8Edfa8Sbq0IDQPR+wle950LUmbCNNg1+vqq9iYFf6bmHkUfInmWXL5Op1zUY2EGPm8P5PNYmvmUNUdDChKTIHSeIKIDO4hGtcZzUa0QDrE/M4QGw22XIidtBV4xt833w7aXg3a4hkDwK9KITiFrLJSP9OeThJZhGEDlIV0K4g=
+	t=1757876515; cv=none; b=NpHzj5OZWgOaU0GcoQlRmsWikzCTzhkgnYZDczXUD6ObyouRa5HSvEBpEUHKXEBy7/6NTxkwkeW6iVPPtu7JW8+vuvfYK2305ljpwdEdYd9JnJivj4McIE4+I4tDn0QpMZeMAtQXvdKE/clxDBrhJ9ZiTHIuJST1K/DxhEWBRoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757874357; c=relaxed/simple;
-	bh=Q8OJYhdHaHILYof6wv59VQL1m3rnqOtB0SjQybMVjFQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tFv50eGYMr3N4lgoOyd18L3GEMsildPFoDa6IP2ReFm6WouepHNTFaBDkqgMsD0gsWf6EhaD0HqjhHKvk2fT9aDIT6RTwuSmSeYp6xR75G5Gx9Mxo/3fbWsyfpNKYqMlmI1cljV5qbSQqZJRAr0tyeRwDKOp8C10W9eaoarQVDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WlKSpSE5; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b07d4d24d09so336144066b.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 14 Sep 2025 11:25:56 -0700 (PDT)
+	s=arc-20240116; t=1757876515; c=relaxed/simple;
+	bh=tWRnOkoSNnC3rSkVzZ0thbOPFNYW0R1k/vOjAHOmUeM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hbLB63HVpU9SghwnSFrFunwNviEHkClLaCXYF63ES3vwSemwwSe6E/V2Unzq44qq3pP3uNP4WBV1cAr8g/fuz3LVVcZskNrHS58Umkt+/i9li/xbQ7xlz+enqiLubKmUgAV6Sk+mg56pXSTitE+2jhtDi8N21WVr0PxyInFzYVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=hwOS7uX/; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4b38d4de6d9so20000741cf.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 14 Sep 2025 12:01:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757874354; x=1758479154; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BdeKEdVn8sOmJUOLY1Vb5kmK2eriC/+AQzWZe1N7Gh8=;
-        b=WlKSpSE52sQbDzvrQpkeacS/OabR2/Fma9n2iLwAj/+CS2ZjRCAfVSbUDnk0jmNHsp
-         cokyjbxmD1HHv/pgAl+/e1d0MaRtGhscnTnhj2IkNy0LU+DgrGDvhHPxPdpfBYO4dr/t
-         gFVttvGj2aTgISrhRRqQNW1F9O9fM07xa2xR3C4H4cXqtPIt9LnJpNgO8L0onR7/wmkI
-         7vWNq13XWPi2A/s8X/6I1+GEwfPjeZF20q37waDtl6ISHc/aDihmAMmetdopvkWJYPnO
-         AdfJkSFRN/28x2t1gndoWLogQZr7go3y/Qe26T8beX1viS0mZJ1cEeUugqlAV0hAdQLx
-         58pg==
+        d=szeredi.hu; s=google; t=1757876511; x=1758481311; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=IjuNc4f7tcCIhJ8D8pAnKvzhWN91WU71wJNI6xS/dUc=;
+        b=hwOS7uX/XtB8KO2Ip51D7SGLCBC89AyCDVYkzrNZujRXEaIwNu7mRXwljjlHY0wBdq
+         3F11jLW5iUSdqDENTgI9Ckd9KuF60D8lST9MB2lYYJohKWhF08YAZIQWf84xMsajBhzp
+         n0MnAdbied27CvA+Wuj9EXjFOkme27XfS+2ZQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757874354; x=1758479154;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BdeKEdVn8sOmJUOLY1Vb5kmK2eriC/+AQzWZe1N7Gh8=;
-        b=oue4NM6AC5bLzHoglVRYNtzi/VM7cv9gtAN9UTY30fYwDAE/LnLAeEt32kG3rnR5Em
-         bAfYwroPDEc3mvrXNy6BzBpK9wE2q+bLEsJ2hPwMHRNqdICAJmu8etYBg5SFL/9f1qTa
-         5GpCvmn71zqYwTXHiplMSiRotnkZnU+p3kZFeMq2eh0TRmf4etamNETWa55n1h6AvWxk
-         pCb3YhQFobuTXz8N4A4g+rd3bf6hBA76XdxwebSwMAhAwcmc6lj6R3SQPxHpr3tJ81uR
-         8TWqgrx49BjfOPXpPKBkLvSGBhDUgnypf+gdWIYnRmOilZXGyzVrotg+sqtHo6M3G6hY
-         Zqrg==
-X-Forwarded-Encrypted: i=1; AJvYcCUBLhIbGkMaA4k5qIOGhOeGREkgp3EYU7jy/0ILnL5QCDQ06K78wVNf2SJhK8ySAu5XMlj9LZuYHTXUv4GD@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4jiOxE1+csZ+qHmFUsjt/Xr/YPGliYOCScOIgTzFD/whUNbyp
-	R3OOpJ2afq2QJuQdQvzaq4sjGUep6zfMGyobCqbUnOuEY4rgO5MJzS6fFcnsGA==
-X-Gm-Gg: ASbGncuJKaJAJO8KN8fKBgbhC9O2mJyfg+SNAAAMKOVa07daEGCPximnECxKLuAWapN
-	OhUFfyEekDHP/ZJ1oZNP1VYzVvXTTUYHV4MgLdHXIFVHBNDXe0Bia4ZMqxQa4p0qwsh6JbTe/dq
-	he4zdim5JTd5uDVsp83+ZYoa4H0XonmUdkvFVg2re2tEMKNpgXspiym6CcoBhc1q1+i0CoAzIB8
-	A+EVxPrGif+SGks1gSqTo/9d+GWuzQjVdgJjikr6E2C4VrC15inln641jf7548jzWM1kM/2udBK
-	RNFvAjbs2pRvtVgVhLP0Z187R0ZXw+RSRA2uSK4BMxoGAzPSoTbHoYRuvFuoeONbtsSHIA5xyKq
-	ixyC9AkW3j5xOGc1x/II=
-X-Google-Smtp-Source: AGHT+IHNeQGnC5o6ShEqS3As4wOoOe2jTDBENsE190ifmEewzRPGOVJvdBkP6T+XqYxstA19WEgAiw==
-X-Received: by 2002:a17:907:3f95:b0:afe:ad18:8662 with SMTP id a640c23a62f3a-b07c35c3229mr945229366b.23.1757874354380;
-        Sun, 14 Sep 2025 11:25:54 -0700 (PDT)
-Received: from localhost ([212.73.77.104])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b07b3129199sm780334566b.36.2025.09.14.11.25.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 14 Sep 2025 11:25:54 -0700 (PDT)
-From: Askar Safin <safinaskar@gmail.com>
-To: viro@zeniv.linux.org.uk
-Cc: brauner@kernel.org,
-	jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	torvalds@linux-foundation.org
-Subject: Re: [PATCH 46/52] path_umount(): constify struct path argument
-Date: Sun, 14 Sep 2025 21:25:52 +0300
-Message-ID: <20250914182552.1661507-1-safinaskar@gmail.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250825044355.1541941-46-viro@zeniv.linux.org.uk>
-References: <20250825044355.1541941-46-viro@zeniv.linux.org.uk>
+        d=1e100.net; s=20230601; t=1757876511; x=1758481311;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IjuNc4f7tcCIhJ8D8pAnKvzhWN91WU71wJNI6xS/dUc=;
+        b=VSpDGOqYlAsXl+Rd+Fg1yHadBZIlAu/uEHMjMsab59DAS+YAPDsIlgoPhTbECx5EWH
+         J2oWbLMXHgW9K8lKWZXU43tGDQnOrLvUzWLfB8yStnVdqb/Ah/NId6It7kUj2E3h2dA0
+         cbwVm8HVRqvZThjzqg94SnaCnRQ+ghyzvGEB5s1eWaQvaZI86Dm3kGLq8NVQqq3SFHJX
+         C+4i5lQoDfwWhMa03sZkF6eOyRubPhu3K8Vjla+mEuoZR5d2LU5LxZikvGk1Td5yAxDZ
+         Vl9NIuG3RG/2UXLUPfSSfljBdl6IsNB1tqV3y74B17lVIInrSCmEY0x6dtgGxpB7SL9b
+         mCHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXqMjT8xOkmAl7RW571jzRTCtxM2yPndSQLb3Coe/px2FqZ/LGyEYZ2mUCEFiwWMnzLur3/6OIC8AmOzJMY@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjESuIxk9mDEHzGKl0FwEaS5AHaD6VjG5fR+Nv44zj0vfEyCVe
+	o4H3BdMEXto2CsCbqMvoyPuw69j13ieEkaPiC9c2N+LaYKZfIyb6jUH8V6y26CC0/prtTfCpyNb
+	LTU8ELoSux3b8qQHCVd3eKGlI38nQAVGLQXSmEhKkEw==
+X-Gm-Gg: ASbGncs9CjaZ6GbxJhVd+4kmSrxtWWTjg/cxbVE3bv/OjvjKLpEHH+XISlEDmY9SR1/
+	3yVa2RCgA56d4XC7RDXqy8qKT5xG4GtC96oxprsRKQW04UDLKc3aPGEva7ktgkFjz7zg9fboFML
+	60FO3BmRboQuDVRG0HFdtjp5yBAxnO9FA5+Y19AgjjWNypMrauP94gvUNWdm9C/dzaV5fh+K/B8
+	NYzK9EYSh6OhcuCrv/dlc0ml56xsJolFzq/nWnbluLlbkHMBTjA
+X-Google-Smtp-Source: AGHT+IFnCW6CHy8Ae8CsHeC5xyfNy5w5pX/YjG6Uw0orUfLPs3lFVUe3JZOoYAYFKQfIHfIcPqCc6BduRyyeU2Vpr9g=
+X-Received: by 2002:a05:622a:514a:b0:4b4:c44f:1a7b with SMTP id
+ d75a77b69052e-4b77d0bd2f7mr137866141cf.62.1757876511529; Sun, 14 Sep 2025
+ 12:01:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250908090557.GJ31600@ZenIV> <175747234137.2850467.15661817300242450115@noble.neil.brown.name>
+ <20250910072423.GR31600@ZenIV> <20250912054907.GA2537338@ZenIV>
+ <CAJfpeguqygkT0UsoSLrsSMod61goDoU6b3Bj2AGT6eYBcW8-ZQ@mail.gmail.com>
+ <20250912182936.GY39973@ZenIV> <175773460967.1696783.15803928091939003441@noble.neil.brown.name>
+ <20250913050719.GD39973@ZenIV>
+In-Reply-To: <20250913050719.GD39973@ZenIV>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Sun, 14 Sep 2025 21:01:40 +0200
+X-Gm-Features: Ac12FXxQT4YvBylD79SYKhmnPcBB3tPDdPaGckz4F0YtJI3f6jn4BiuSEIHSPuk
+Message-ID: <CAJfpegvXtXY=Pbxv+dMGFR8mvWN0DUwhSo6NwaVexk6Y6sao+w@mail.gmail.com>
+Subject: Re: ->atomic_open() fun (was Re: [RFC] a possible way of reducing the
+ PITA of ->d_name audits)
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: NeilBrown <neil@brown.name>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>, 
+	Bernd Schubert <bernd@bsbernd.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Please, drop this patch.
+On Sat, 13 Sept 2025 at 07:07, Al Viro <viro@zeniv.linux.org.uk> wrote:
 
-I plan to inline path_umount into the only caller in
-v2 version of my initrd removal patchset
-https://lore.kernel.org/lkml/20250913003842.41944-1-safinaskar@gmail.com/
-.
+> How would that combined revalidate+open work for fuse, anyway?  The former
+> is basically a lookup - you send nodeid of parent + name, get nodeid +
+> attributes of child.  The latter goes strictly by nodeid of child and
+> gets a 64bit number that apparently tells one opened file from another
+> (not to be confused with fhandle).  Combined request of some sort?
 
-(path_umount is called in one place only
-after initrd is removed.)
+There are already two combined ones: FUSE_CREATE and FUSE_TMPFILE both
+get nodeid of parent + name and return attributes of child plus opened
+file.  FUSE_CREATE gets invoked in the uncached or cached negative
+case from ->atomic_open() with inode lock for held exclusive.
 
--- 
-Askar Safin
+That leaves 2 cases:
+
+- uncached plain open: FUSE_OPEN_ATOMIC with same semantics as
+FUSE_CREATE, inode lock held shared
+
+- cached positive (plain or O_CREAT): FUSE_OPEN_REVAL getting nodeid
+of parent + name + nodeid of child and return opened file or -ESTALE,
+no locking required
+
+Thanks,
+Miklos
 
