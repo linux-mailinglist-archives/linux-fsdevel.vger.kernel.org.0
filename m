@@ -1,77 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-61219-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61220-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9095B564D8
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Sep 2025 05:52:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DA8AB564EA
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Sep 2025 05:52:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FF49423E0B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Sep 2025 03:52:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 580931A2077C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Sep 2025 03:53:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF532727E3;
-	Sun, 14 Sep 2025 03:51:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC96A270576;
+	Sun, 14 Sep 2025 03:52:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BvPFXZJ3"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dtj5OhTs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40E626A0DD
-	for <linux-fsdevel@vger.kernel.org>; Sun, 14 Sep 2025 03:51:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AAD6267AF6
+	for <linux-fsdevel@vger.kernel.org>; Sun, 14 Sep 2025 03:52:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757821911; cv=none; b=kGerYKuqVhr+b6+sgEFNWuwhsw7kfVl/AJcdB5LA80oQwXBath0V0dCpYiL5b7lCvmlGluO6FwtVdiexdwvl2mmAIS5GKsPTejgp8VCdjsvAw1EC0v8mH+bPcseV40F7DOyHNOJL8koyhr+T63ksfKMxjwVYLTJQp6jYBRmiQ/c=
+	t=1757821946; cv=none; b=H1twmNlSlSEzWOsRsOAYyyspsrxAJS24FOrfhujv3zOLJ9PZEqavlSku1pd10SP7QS9k5tencXp+xGU8+WuCBURGl6cYRT1jVN1Knd6/o6A5ZC1e2IYZdxnwsYAD/HUoX5vWL4XkgBmSQsIdlyGOVPn/T7Nu9HaK5XMwdX8bMFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757821911; c=relaxed/simple;
-	bh=E44LF/8lHGTYomA5WWH/VDahlaDv99Wi8d81CdQz9ho=;
+	s=arc-20240116; t=1757821946; c=relaxed/simple;
+	bh=UZLn6ULQgc/FnEmwCGdDgCcEQNlktPyYM0GENq2QFck=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=I+v2LQg+BJiOIYQjgIRnvE7k9TdaFYXtyXbrdRAPxrjwKhKhdnnDgsFvKtAcvP5xOIb+geyxCYeOayotOsSSxEIEVShP5U9rhSXhBi1c3r7CCiNHH/dTs3pi/q1zj2HvOemJTd34YNT84ryjIFgyZ6ImffSSPlYsSM7X3EEvV10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BvPFXZJ3; arc=none smtp.client-ip=209.85.218.45
+	 MIME-Version; b=Uyx0z96NvsWSCxMIaSR8mvaFWJHp4B79tesl9e0Zu5PrR2W3D5tlkCGWpxOrLknVH1J6x34+JDp7xJMlUd+R6h/JVLZrtQUt1BEE3AoEHTFBDqI72w2i+UjNlh0rwqQ6anxTY+CATqm+tsWZtIxZ7Kjt4j9MHOJFEgA+kR2nC9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dtj5OhTs; arc=none smtp.client-ip=209.85.218.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b0415e03e25so404342966b.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 13 Sep 2025 20:51:46 -0700 (PDT)
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b00a9989633so588941166b.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 13 Sep 2025 20:52:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757821905; x=1758426705; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757821940; x=1758426740; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=eXT46s/O30O5D6iGHqIIZ8OQqeCOoCO9YfqStJzQ+0w=;
-        b=BvPFXZJ31jpsL4MeINgm/PhbCj3+Kor/W2sgiEY+e/xeD0jyjmm3NGEe5ipXjFcwfh
-         Tly0jR3Ua+cBpmJXCPZ5AskPNQojr/9CDSvRxdNSq8A1rMJzg27q7vMcYsI1s89GCuBM
-         5aDRsLN3C9uYggpc9DJ6TiVdxRok7lXsfXcjo+6f4kkeZ8oAy7QTNvz5rYfLZtGhmFH7
-         17VwQaeOaEdgDebYfTTyBacPnnL3DepEX2BpHD6j+6bw5kLDdtGsDExJ1bVgaiVC4Qqq
-         stg1f48eoFfsLbQrwSYzC8oskYz/ny4gvFb4DcYAtuF8xeDcnKxO0ZWwzcbAqudVtNDU
-         Dsvw==
+        bh=ji/7LeyyXA3A1wf+r0NloCDgCP9kYwAbhvqoNAjAUZw=;
+        b=Dtj5OhTsBzQk3sJ5Qvo5Cj1p0EESJX2lCq88wE1ffN4FbLgUYpOsA57Kqcs2YB96oS
+         +0LkAdWToxZIBKUlf3ATRppWIqmTVhFIdFdQMHWcwvuD/l7bfRSKLiu7aE6ESdnXEpDW
+         HbkaJDABKAPcz+tvW0LuHx5daig5XpPoBA6x6MHtPj9U4ZrB6FN//gU+4xilJjo9FqR4
+         /BJB8SSVvIXGPRLOT2TWSOxx1kVgdA4FJFgEFufUhw8YnGWJuW/VYk5uYBOH38KGQWQN
+         6QCffW0uulyxZAasYxWkIfBCOgzcm94JIzcKRGRtUH5hfwjUf7vaGWaFXQEi8nx3xZwJ
+         v0IQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757821905; x=1758426705;
+        d=1e100.net; s=20230601; t=1757821940; x=1758426740;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=eXT46s/O30O5D6iGHqIIZ8OQqeCOoCO9YfqStJzQ+0w=;
-        b=KNdOaTEHKHpHGzNK4KxHFqATOSylfeNMIW8CvCGxeQ026lmLPp4r9Opljpccs/bwbD
-         Gskx5Hd6UgQ6t8UUSwMhtQiBU5CZPqNMmqJBiKYG9poQrr/81mhK3mkWj0lwGPCN4fiZ
-         2QzrfUJMYoHuoZqcLJRHZoNRBdEPrLK9Bvd4ExSd7ezkvvXyjT2liNUAYTY8ujbQB4ft
-         cP5qj/GBx49mauYMF0j0+pVDoQct3NhAjMUAi4idMTz8ep9iBPWYMjXIeLpUm71nOZr8
-         UfUU/kq9Bk5JffNHqSg+yI/vqXivUmZ21Q0ogRfxh+fIA6bWAvXjSfWc+zyyQdvT7Pvl
-         88Jg==
-X-Gm-Message-State: AOJu0YxeYYi2pOva/Z8thQl9/AshHYMMCRRasDXXaguE+Xqvi1ZJSQSQ
-	VGtKPQSSCFW7bX4+CSpF46EoeXqiA34CNlIsDCVX+U/7L/xjF4OkLNArAY5lc4MP
-X-Gm-Gg: ASbGnct6j0PV9cjj913zuQm7XubBqPh2Uq3/xNKWIOH9CicBU64WYJn1QY57at7JXYA
-	12OrSP22D6rN7aIER87uAeNBxMyeRjLMqjJgd3gIpKmwofcv+XQ4sRvSguM0vSOnz8TiVLyPYhT
-	lXVVq2bKXujnI49xuijiM1WlLAKbVrpNZDPGI06Qaogn0VRxjdfcdmngGtB9iJ7Gbg00SFfzpD9
-	1gMuHz5ITe7UPJKPI367nODc0TLCJdapkFZLoZP47+V/k5aM/nYL1In9dvS/+RXfL2tICkvFMqF
-	Nil3Bq9bpHXXP5D0rnz+74ltb4qeIKCco1FF2VhnV/brWj7EFv42VwP6hDkrcjITrNOBjvghDsL
-	lYaccK6hp1ncvJv65IhQ=
-X-Google-Smtp-Source: AGHT+IEAFUpwy9YyLhSCGMZ/kQuTAA3iwfbEpQd1MDgVvquhbXlSq99pqpi7zF/bJ0OEdeyJIf4Tkg==
-X-Received: by 2002:a17:907:3f07:b0:b04:7ad5:b567 with SMTP id a640c23a62f3a-b07c35be704mr853139866b.16.1757821904788;
-        Sat, 13 Sep 2025 20:51:44 -0700 (PDT)
+        bh=ji/7LeyyXA3A1wf+r0NloCDgCP9kYwAbhvqoNAjAUZw=;
+        b=Su9DA9RkmvadfJcHNKJXFgijLf4eIdwMF7nF3aDRH0BM/bTAoAPOzzAA+ZO/0WYls3
+         OQWUR2fKyB5Qi0TqK2l+8zSCemjsuYjaFlZwFR9BSexT7h5654hI1HkrtMy/436rmd3X
+         H9Li4tbyzt+8qoAgFFthz9kk6FfHbYnTYX4+HOnHwzvF2ItcRGBQZRnPXGQBIkgARxhi
+         9r2R/wKfZ9cFwgFPqo5g2upyMq70/FWjYNZdjmsbcAxDLgAVcyoKOHPqTtLtAeCtbdRB
+         5dcEeCr/f38p29uAVwBpO0sXHuL2+7zFm2pLt+6SF+K9PHglyclEFUDLqEfAFuzdwGua
+         G4+w==
+X-Gm-Message-State: AOJu0YwU8PRInv3NRp3/VLYsX5WGSRxLIuMSh0OJQNjCoRDSqFwqZTWK
+	R9rBnuvQf2HpY97IBVJUxgSofdfnZC+FoRS8dr3naZxUVVGHsskgubS+FtlA8Jj0
+X-Gm-Gg: ASbGnctm8UG0XCYgvVHvTefx7pXHnabxHm5MInEi96xuFCAvEtLzOsGSsTX2xVd+QDs
+	/PmVTa2X379RZp4dO2ZzmPMVaN7d+68zTBmecHPciSej0bXQWR5xSRYzdicvgGGrk8q1bETaxHB
+	xpPpkRUwgBSeSYye94Uf6njyzw/nDBt3W06z2cgzVjQsAlfDuLHaMgKLWLIMhkRBqMqdPZBNF8n
+	qLqghHhr7XMGamz1WEOn7vCoqh0ZV2x1kR2zqgU5EG3tXCuZ6qyftIXONjSdiSiXkcs390kF6C3
+	VeiS+bXno8pe0pwzk3wixhB6XdzR1ibKoVVnwuXutFor5q8lLVPyX7SKUBtM6JdUXKh0Cl/N6xs
+	Ii4h7ror8c+XyIx5iy7M=
+X-Google-Smtp-Source: AGHT+IFrowlqfzYJmQGTHyfqsFCL1BbKqEywr8+/6hRK49j3T1AOHulukHNAqoGa7PMdZRPYrPs7MA==
+X-Received: by 2002:a17:907:3da2:b0:b04:6157:43b with SMTP id a640c23a62f3a-b07c2544bb9mr854247466b.25.1757821940418;
+        Sat, 13 Sep 2025 20:52:20 -0700 (PDT)
 Received: from localhost ([212.73.77.104])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b07b32f35cdsm661712966b.92.2025.09.13.20.51.39
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b07b32dd88fsm669745266b.51.2025.09.13.20.52.16
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 13 Sep 2025 20:51:43 -0700 (PDT)
+        Sat, 13 Sep 2025 20:52:20 -0700 (PDT)
 From: Askar Safin <safinaskar@gmail.com>
 To: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
@@ -127,9 +127,9 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
 	Thorsten Blum <thorsten.blum@linux.dev>,
 	Heiko Carstens <hca@linux.ibm.com>,
 	patches@lists.linux.dev
-Subject: [PATCH RESEND 40/62] init: rename free_initrd_mem to free_initramfs_mem
-Date: Sun, 14 Sep 2025 06:51:38 +0300
-Message-ID: <20250914035138.3631173-1-safinaskar@gmail.com>
+Subject: [PATCH RESEND 41/62] init: rename reserve_initrd_mem to reserve_initramfs_mem
+Date: Sun, 14 Sep 2025 06:52:15 +0300
+Message-ID: <20250914035215.3641628-1-safinaskar@gmail.com>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250913003842.41944-1-safinaskar@gmail.com>
 References: <20250913003842.41944-1-safinaskar@gmail.com>
@@ -145,94 +145,82 @@ This is cleanup after initrd removal
 
 Signed-off-by: Askar Safin <safinaskar@gmail.com>
 ---
- arch/arm/mm/init.c     |  2 +-
- arch/x86/mm/init.c     |  2 +-
- include/linux/initrd.h |  2 +-
- init/initramfs.c       | 10 +++++-----
- 4 files changed, 8 insertions(+), 8 deletions(-)
+ arch/arm/mm/init.c            | 2 +-
+ arch/loongarch/kernel/setup.c | 2 +-
+ arch/riscv/mm/init.c          | 2 +-
+ include/linux/initrd.h        | 4 ++--
+ init/initramfs.c              | 2 +-
+ 5 files changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
-index 4faeec51c522..290e9f9874c9 100644
+index 290e9f9874c9..a564cbc36d18 100644
 --- a/arch/arm/mm/init.c
 +++ b/arch/arm/mm/init.c
-@@ -437,7 +437,7 @@ void free_initmem(void)
- }
+@@ -186,7 +186,7 @@ void __init arm_memblock_init(const struct machine_desc *mdesc)
+ 	/* Register the kernel text, kernel data and initrd with memblock. */
+ 	memblock_reserve(__pa(KERNEL_START), KERNEL_END - KERNEL_START);
  
- #ifdef CONFIG_BLK_DEV_INITRD
--void free_initrd_mem(unsigned long start, unsigned long end)
-+void free_initramfs_mem(unsigned long start, unsigned long end)
- {
- 	if (start == virt_external_initramfs_start)
- 		start = round_down(start, PAGE_SIZE);
-diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
-index bb57e93b4caf..c7ca996fb430 100644
---- a/arch/x86/mm/init.c
-+++ b/arch/x86/mm/init.c
-@@ -981,7 +981,7 @@ void __ref free_initmem(void)
- }
+-	reserve_initrd_mem();
++	reserve_initramfs_mem();
  
- #ifdef CONFIG_BLK_DEV_INITRD
--void __init free_initrd_mem(unsigned long start, unsigned long end)
-+void __init free_initramfs_mem(unsigned long start, unsigned long end)
- {
+ 	arm_mm_memblock_reserve();
+ 
+diff --git a/arch/loongarch/kernel/setup.c b/arch/loongarch/kernel/setup.c
+index 075b79b2c1d3..226262f35dc1 100644
+--- a/arch/loongarch/kernel/setup.c
++++ b/arch/loongarch/kernel/setup.c
+@@ -602,7 +602,7 @@ void __init setup_arch(char **cmdline_p)
+ 	pagetable_init();
+ 	bootcmdline_init(cmdline_p);
+ 	parse_early_param();
+-	reserve_initrd_mem();
++	reserve_initramfs_mem();
+ 
+ 	platform_init();
+ 	arch_mem_init(cmdline_p);
+diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+index 15683ae13fa5..b1c4876dadae 100644
+--- a/arch/riscv/mm/init.c
++++ b/arch/riscv/mm/init.c
+@@ -295,7 +295,7 @@ static void __init setup_bootmem(void)
+ 
+ 	dma32_phys_limit = min(4UL * SZ_1G, (unsigned long)PFN_PHYS(max_low_pfn));
+ 
+-	reserve_initrd_mem();
++	reserve_initramfs_mem();
+ 
  	/*
- 	 * end could be not aligned, and We can not align that,
+ 	 * No allocation should be done before reserving the memory as defined
 diff --git a/include/linux/initrd.h b/include/linux/initrd.h
-index 55239701c4e0..b2a0128c3438 100644
+index b2a0128c3438..51c473b6a973 100644
 --- a/include/linux/initrd.h
 +++ b/include/linux/initrd.h
-@@ -7,7 +7,7 @@
- extern int initramfs_below_start_ok;
- 
- extern unsigned long virt_external_initramfs_start, virt_external_initramfs_end;
--extern void free_initrd_mem(unsigned long, unsigned long);
-+extern void free_initramfs_mem(unsigned long, unsigned long);
+@@ -10,10 +10,10 @@ extern unsigned long virt_external_initramfs_start, virt_external_initramfs_end;
+ extern void free_initramfs_mem(unsigned long, unsigned long);
  
  #ifdef CONFIG_BLK_DEV_INITRD
- extern void __init reserve_initrd_mem(void);
+-extern void __init reserve_initrd_mem(void);
++extern void __init reserve_initramfs_mem(void);
+ extern void wait_for_initramfs(void);
+ #else
+-static inline void __init reserve_initrd_mem(void) {}
++static inline void __init reserve_initramfs_mem(void) {}
+ static inline void wait_for_initramfs(void) {}
+ #endif
+ 
 diff --git a/init/initramfs.c b/init/initramfs.c
-index 8ed352721a79..7a050e54ff1a 100644
+index 7a050e54ff1a..a6c11260e62b 100644
 --- a/init/initramfs.c
 +++ b/init/initramfs.c
-@@ -642,7 +642,7 @@ void __init reserve_initrd_mem(void)
- 	if (!phys_external_initramfs_size)
- 		return;
- 	/*
--	 * Round the memory region to page boundaries as per free_initrd_mem()
-+	 * Round the memory region to page boundaries as per free_initramfs_mem()
- 	 * This allows us to detect whether the pages overlapping the initrd
- 	 * are in use, but more importantly, reserves the entire set of pages
- 	 * as we don't want these pages allocated for other purposes.
-@@ -676,7 +676,7 @@ void __init reserve_initrd_mem(void)
- 	virt_external_initramfs_end = 0;
- }
+@@ -631,7 +631,7 @@ early_param("initrd", early_initrd);
  
--void __weak __init free_initrd_mem(unsigned long start, unsigned long end)
-+void __weak __init free_initramfs_mem(unsigned long start, unsigned long end)
+ static BIN_ATTR(initrd, 0440, sysfs_bin_attr_simple_read, NULL, 0);
+ 
+-void __init reserve_initrd_mem(void)
++void __init reserve_initramfs_mem(void)
  {
- #ifdef CONFIG_ARCH_KEEP_MEMBLOCK
- 	unsigned long aligned_start = ALIGN_DOWN(start, PAGE_SIZE);
-@@ -707,9 +707,9 @@ static bool __init kexec_free_initrd(void)
- 	 */
- 	memset((void *)virt_external_initramfs_start, 0, virt_external_initramfs_end - virt_external_initramfs_start);
- 	if (virt_external_initramfs_start < crashk_start)
--		free_initrd_mem(virt_external_initramfs_start, crashk_start);
-+		free_initramfs_mem(virt_external_initramfs_start, crashk_start);
- 	if (virt_external_initramfs_end > crashk_end)
--		free_initrd_mem(crashk_end, virt_external_initramfs_end);
-+		free_initramfs_mem(crashk_end, virt_external_initramfs_end);
- 	return true;
- }
- #else
-@@ -744,7 +744,7 @@ static void __init do_populate_rootfs(void *unused, async_cookie_t cookie)
- 	 * free only memory that is not part of crashkernel region.
- 	 */
- 	if (!do_retain_initrd && virt_external_initramfs_start && !kexec_free_initrd()) {
--		free_initrd_mem(virt_external_initramfs_start, virt_external_initramfs_end);
-+		free_initramfs_mem(virt_external_initramfs_start, virt_external_initramfs_end);
- 	} else if (do_retain_initrd && virt_external_initramfs_start) {
- 		bin_attr_initrd.size = virt_external_initramfs_end - virt_external_initramfs_start;
- 		bin_attr_initrd.private = (void *)virt_external_initramfs_start;
+ 	phys_addr_t start;
+ 	unsigned long size;
 -- 
 2.47.2
 
