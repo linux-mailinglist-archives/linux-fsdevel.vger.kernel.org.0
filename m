@@ -1,96 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-61255-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61256-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6F61B56954
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Sep 2025 15:30:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F134B56AFB
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Sep 2025 20:05:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CBD017D90D
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Sep 2025 13:30:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2EDB16F189
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Sep 2025 18:05:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 974A518FDBE;
-	Sun, 14 Sep 2025 13:30:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EF812DE6F9;
+	Sun, 14 Sep 2025 18:05:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gKFwQaXj"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D4l61iDq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFFEE27713
-	for <linux-fsdevel@vger.kernel.org>; Sun, 14 Sep 2025 13:30:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 647B32040AB
+	for <linux-fsdevel@vger.kernel.org>; Sun, 14 Sep 2025 18:05:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757856613; cv=none; b=SjgIvfI+dBWYd4QPsdkhLzTPmmexZnaWJJfWC6nhEOVS+08c8KUylzsJtWwh6FrUlxkifG5XCALVsDabfR0a31gZwye8lOCEhXMVN88WEhDbIR477Oj/+ybdyMihvedlPZ2IQfNrwsIe8xu3X3J8I+qS6mhA0E7WHFZ2dZYJZio=
+	t=1757873121; cv=none; b=rT4+TCdo+MacAFTBTialA/E+fjhNdkR9fsnuJNOgi3SpzfHtyUV9yig7Exb+96HQnHiMRtT5Uyj4Kd8o44DjARUIik9R4BpQvC5+/Q57dwcaPbnHlSeyTsZ/7ldzvdpUzlLIkkuwmkuNeHyITsRFdpEUxeVBs4/D9euN2gI0wCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757856613; c=relaxed/simple;
-	bh=sdfxBxt4mURTAIPeCtfkcBrYZDH9reEz+rlyUwKcLO8=;
+	s=arc-20240116; t=1757873121; c=relaxed/simple;
+	bh=U/oSZwJ6hXUZO7BXYjUpX9PpBgB1UmE/oYFBn6YfwD8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ur8gSA0M2Zq17HSa5ZbJI8XBvHgF420bgdGrxFIGTeJF8IoHhQbUTTd5ztVkmko8Xg3qNKyTKGvCZhltRTtYSk9ei3I+TgDEboL86mebvGo4VOd/wsPkRfjx538wfoQJtopkgJUPZE2TJArmYHhNH9Hd8v5jDQ+pHwRUGnRi2AA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gKFwQaXj; arc=none smtp.client-ip=209.85.216.51
+	 MIME-Version; b=HGikIzOE+6eShk30jH9bsiCvBCzVPShX9+6ac+d978Q2bDt7UqBUrrBo9uUIXcaZff3PpjVieQo24iitN0+6Dv9dwm/1pS2HifkXF+o4I/+ivlQYseGS+0TwHaRh2hLacJ+/AW9G4tMrY/oWXfuYtkU6n0O/E3YgL0ajqDm8Raw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D4l61iDq; arc=none smtp.client-ip=209.85.218.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-32de2f8562aso2622004a91.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 14 Sep 2025 06:30:11 -0700 (PDT)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b07c2908f3eso372192466b.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 14 Sep 2025 11:05:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757856611; x=1758461411; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757873117; x=1758477917; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+v/bwFXPYi1A/E+v0RDwAlOzUIE6ZiAt0F/hgL23dj4=;
-        b=gKFwQaXjyaB0t8kuU+1qI3ECYcC7aui8imTZEfEWOe+i4YJVvGhXsfFfJyjUDikCq6
-         l6Mzp+i5U4E8Wwj+wvX8+70LywCCAogjUMfirklvvHA0mOm28TYPewvmayuGSxdOaf/r
-         4IeYX/FzX/CrCA1cmu2toaDzI28szBbOaVjAEHJL7BEyADHG5F2RYW8+xdFpArbAbEoS
-         YFu/7RobKHy8xitduqC3ZIGjtFRVVsUHhjW5Vy8mr3XTBdPkLTwjEvaFJki2POpSrO0i
-         B3470g+P8GIyHYzvdzdmqMLinCSPTtJjGdbqQaN6mRJSTFg5NgMrc78jebFMWeazzvZ3
-         OPTQ==
+        bh=4KN1lZ+2zq79cOp7ZHM2rwumR146D9sFEX36wlxfX34=;
+        b=D4l61iDqujyd+oYaOsEP8qgqe4daQr3cKNlUD4AvDp3nV0lY2M1hs+YDNzjiSh/pKg
+         1p2aV2JkQdT/xWs93jXafOSqY9BOOekgvNHRRZk3QgkCRrvby8YFNXEkpKWRUTizW06D
+         reIiROITB1OPH5awW/z3j1CxlYvPVkIQH4C61k2EkSvUICrw4eWBGTjzcO0VndrV0CDP
+         JE188cAqRL0K2aOpHk0Z3K+nhIT6BZNgjDxlBXPiZGVkimib197Kbs3FUj1WOTLGFwFV
+         gT7WXOMbI1oZXrY/t+zVwDya50mPs6Q+3SjLMYxP6uypTDtkYq9iqq4IKEBDARDxuLTu
+         r/Ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757856611; x=1758461411;
+        d=1e100.net; s=20230601; t=1757873117; x=1758477917;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+v/bwFXPYi1A/E+v0RDwAlOzUIE6ZiAt0F/hgL23dj4=;
-        b=idLL6LEh7IG6gdRqAjhOBUbXAvmZ8R34tkH8rm5aNNSpQRc9xgDty7s7CFE8uRh2+F
-         HD5etwX64vJmWzdQ6GuYS2EIauRfObEIIsj7fPN15ucztD+rV029m0JGK2RhkFWBNwBq
-         F/WUJIxl3ozGiA5IPLIoZ/tmYrlxLyHvqcwnGviwv6Y3AsrP9Tka/PVPewnn0tvLNMPY
-         dHatWAckhnDIA84Xo1EwpZTtB5wpriCMxeZ3x10to5AJyorUu6JWDTJFAYe+cr5Rrc/X
-         /O0w3ZZ+MjKDfUA1WhirI6Fc2/qQSNz1OVt9omQx5HXzkx5p4D7nyyb+kWZcTZ0rsTFO
-         8j+w==
-X-Forwarded-Encrypted: i=1; AJvYcCViVrU5Jtj53QX+MGBiUHUVf8UF9WcdgceEqoaHdVfkBBr5R25QmNjMv3DLULJ5yElFTFOE6TN1tMk+wOdW@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjB+iV4ojd10ntZrby2hZsVldar+Xgi2PmUYR/cVMvCEIL7r5P
-	C16SxSzxSvsHGc/N0gc4sQEvRqANrsv3GkP84qXmuOp6RNh1/LjjUpKrC4q2RzIT
-X-Gm-Gg: ASbGncsm+ohFkKumfpzt01nncQGJaDNerqug5E8VoqXh1A6JJqHUhzWrOHk2s6GqXrC
-	mwrA7TE/j2HlCiQKvu/YBToYSIq4vxiAY6MkYITk8BygII/i9hFtKuUYO2qpQo5OlXAr0nEmQDJ
-	Krlb1hkdd3B4RJ/qrtjSVeq8fZyr3ieO7Q3bGFPPWaj1aP0F/H9Cdlr9k53Lpshg66JxNnVxIMn
-	HX8uq4vYrVOS5fF165jiqmZsKlheWRjGqw2YPRFgHfbkGHBJkRO3Ftw5BKLwqBnv+0wczRUj33r
-	XZyPzKquF7J0DOgw6PVHS0zI4gzhLhUjnj7DBYAa5paF/DtMz5Vpcje20qPMddmOIG/IYuS6sbu
-	AhHNupCEezV0oEevUEiTu9lsVnIPrehrS4ZLlwPsXrFO8
-X-Google-Smtp-Source: AGHT+IF1KcNJt3UWmfwSpwE/UpWBqDtmNxg4KMzYyF8MLuCAmlCdngCBSBEjT/SyGByGhBx68l8iVA==
-X-Received: by 2002:a17:90a:e184:b0:329:ca48:7090 with SMTP id 98e67ed59e1d1-32de4fb254emr11960351a91.37.1757856610930;
-        Sun, 14 Sep 2025 06:30:10 -0700 (PDT)
-Received: from VM-16-24-fedora.. ([43.153.32.141])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b54a36c78b5sm9622382a12.21.2025.09.14.06.30.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Sep 2025 06:30:09 -0700 (PDT)
-From: Jinliang Zheng <alexjlzheng@gmail.com>
-X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
-To: kernel@pankajraghav.com
-Cc: alexjlzheng@gmail.com,
-	alexjlzheng@tencent.com,
-	brauner@kernel.org,
-	djwong@kernel.org,
-	hch@infradead.org,
+        bh=4KN1lZ+2zq79cOp7ZHM2rwumR146D9sFEX36wlxfX34=;
+        b=tEs3sEiMeF2PcBk6rLIrV5g/JVYprKo6ejBApIyhh3nXn9qzuBqEjGys9AkzUfwUc7
+         Px63zUuExiUqoo23Z6N5X84w1H5zr2AAM51MjH9Chg18sQhnjf1JLOyMAEM4WE/OcrHZ
+         YA4AEf9fEKypR9u0L3JsH/wDh1vBi3mmvfOY8fm/zL2tYXNHFCYDXBdPgLwxovzYPg/D
+         syOlQ04JgoadY6TQLs9fOF6F3OuVoLse/UniiCXsu2ys7xztgpwmo2HrsoiTJpc25cI+
+         gVUiFyCPgYGvIJM3ywc0QHstYmSI+KtAlRH8AjqvwAzKotzgFquzWvo4rgfFSDFv7F9j
+         Bo9A==
+X-Forwarded-Encrypted: i=1; AJvYcCW9Ec0v53gN9cCW8kTjlANjzWwPGvWGC1Q+4Vp8NJKUmU+wgODt67qNu8Eg9YYTTh6rVibFY1uwTS7PAnkA@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlnrhUZm1Xhk0Xn1j4YkotKo8Hlm/BkGpaggDigJ6RC1nEpzMm
+	OmF/52ytjknqMePK08qHUzbIY9LJB+BpeuCrzyJlIK/ZpQjRnkgP7o/+
+X-Gm-Gg: ASbGnctC8aJamOHM1ysbVdcdmR0UcE1k3z3yzA+36Ststdicnu0Nrjh73yhW8tnHo9g
+	21pWDvN/FazRjBKcwskr/j9Xr8hDIAwdOgcCTQzsBTQvuDYfOQKzpb6Gyv8Vk3kpzhmfZcTUl8N
+	y6QyMFw0ILKCplca/7Zp60cbjYuttqevzGI75jTKBAde76HJv2whoHrJ6MnxorfM4XBE3qUfeIn
+	z8O2gGnZBVUgj2I89+s3MDjFGuiio/nkkZR8NBdkzfnNI2h52AMa5FwVesYrQOl++GgUVdrnvUu
+	1ap60jVb0d2zd3rlo+T3H0w8nRaTvFsZ0MCC1R2ggbNJj2oJB0V8N15IXCXUz69RSxZTXhE8Bv8
+	jr10uB1DmwDoGqONOYO4=
+X-Google-Smtp-Source: AGHT+IFkMyymMTbmjIVjk2mrOuil/EgfPYT6sn+w0/OHZs5G4QDk4E2t8ponRzmEDowdEHWkiQCRcQ==
+X-Received: by 2002:a17:907:962a:b0:afe:90d2:b952 with SMTP id a640c23a62f3a-b07c3512afamr889531366b.29.1757873116332;
+        Sun, 14 Sep 2025 11:05:16 -0700 (PDT)
+Received: from localhost ([212.73.77.104])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b07b32dd408sm781141966b.59.2025.09.14.11.05.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 14 Sep 2025 11:05:15 -0700 (PDT)
+From: Askar Safin <safinaskar@gmail.com>
+To: thorsten.blum@linux.dev
+Cc: brauner@kernel.org,
+	hch@lst.de,
+	jack@suse.cz,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org,
-	yi.zhang@huawei.com
-Subject: Re: [PATCH v4 0/4] allow partial folio write with iomap_folio_state
-Date: Sun, 14 Sep 2025 21:30:07 +0800
-Message-ID: <20250914133007.3618448-1-alexjlzheng@tencent.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <mbs6h3gfntcyuumccrrup3ifb2dzmpsikvccu7ovrnsebuammy@if4p7zbtvees>
-References: <mbs6h3gfntcyuumccrrup3ifb2dzmpsikvccu7ovrnsebuammy@if4p7zbtvees>
+	viro@zeniv.linux.org.uk
+Subject: Re: [PATCH] initrd: Remove unused parameter 'pos' from identify_ramdisk_image()
+Date: Sun, 14 Sep 2025 21:05:13 +0300
+Message-ID: <20250914180513.1649962-1-safinaskar@gmail.com>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250913143300.1796122-3-thorsten.blum@linux.dev>
+References: <20250913143300.1796122-3-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -99,24 +95,12 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Sun, 14 Sep 2025 13:40:30 +0200, kernel@pankajraghav.com wrote:
-> On Sat, Sep 14, 2025 at 11:37:14AM +0800, alexjlzheng@gmail.com wrote:
-> > This patchset has been tested by xfstests' generic and xfs group, and
-> > there's no new failed cases compared to the lastest upstream version kernel.
-> 
-> Do you know if there is a specific test from generic/ or xfs/ in
-> xfstests that is testing this path?
+Please, drop your initrd-related patches.
 
-It seems not. But there is a chance that the existing buffer write will hit.
+I recently sent patchset, which simply removes initrd support:
 
-thanks,
-Jinliang Zheng. :)
+https://lore.kernel.org/lkml/20250913003842.41944-1-safinaskar@gmail.com/
 
-> 
-> As this is slightly changing the behaviour of a partial write, it would
-> be nice to either add a test or highlight which test is hitting this
-> path in the cover letter.
-> 
-> --
-> Pankaj
+-- 
+Askar Safin
 
