@@ -1,126 +1,141 @@
-Return-Path: <linux-fsdevel+bounces-61253-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61254-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54945B568A1
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Sep 2025 14:34:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96D9EB568B1
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Sep 2025 14:40:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BBF31654FB
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Sep 2025 12:34:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEF7E3A4F01
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Sep 2025 12:40:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4248D262FD8;
-	Sun, 14 Sep 2025 12:34:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 982912561D4;
+	Sun, 14 Sep 2025 12:40:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="ZHnFQ9WV"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cQuRA5o2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31CAFE55A;
-	Sun, 14 Sep 2025 12:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97C3E57C9F
+	for <linux-fsdevel@vger.kernel.org>; Sun, 14 Sep 2025 12:40:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757853280; cv=none; b=JqiSRYEnLWggJaH94kHFw4ZRzUGx5gzP1GjE1Ttnxj79STLsNhigfySAchESYSbbvNIUrt1m5xsOMfRbwc82DVEJM4HnnK7oqYA5BevITRBLCu5WGtzzPkkTYnlv1TLGZdVULjjB01iPFKi9KJCKb3OVR5bdaysqVphRp+2QyPQ=
+	t=1757853610; cv=none; b=iBXqtivMHGJfu0/fWB6SBcHnu8Dc2TlKO05NCkBwQSZ6lc2vkHIoL856kTnIWsjLiV7oTfGStF6m+Pi+XAc287E7fpd5evOMj7VcWQ+bmQXgy/s3k6JC0qu7kPT6rlwtvVzrjAFQht+A0YcOPByuMspyH+WtgmbzQvp6LNZJJs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757853280; c=relaxed/simple;
-	bh=8iABwI2C5d5wA5EN6xiW+XM3Ij/JuAeh7KwDh27HM2s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ldgq0SlqUUjbj9GBmxEY1YaNVjEVo40xWEdiRBY4I6nkVAXgRCssjdTss/NXz7KR652eikdAAZBXqrqaowLc5cMA4vWEGeQh6jwCfBS4fljAD/GsEzzD+2rCxPfR0Q5kaZdWC6TeE/f6M1A/60mqk2ebSr4Rr1Gjuu5ntWi/M9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=ZHnFQ9WV; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id 3336F14C2D3;
-	Sun, 14 Sep 2025 14:34:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1757853270;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jsU2AE2o9h39I/bC+6REsgHkBZzgTz+eEtU5Pz4oB3M=;
-	b=ZHnFQ9WVH7uQ7JXSaJgSdCwGPWEZeOAULgp+YfZaQOyBWL0r//EvgB0uLCrDe5ZqeNAyQq
-	BBuSWtP91z9MYE6EqQmIOVndtjXW581sYCxDbiPTpXp5A00gbrISdjrOXIULuuHW3nPPP5
-	9h9GtQPdeo+c+wZBJ+e6nE8BEAzevKKxo20Hcses+KxzeSB8JI+c/lrfyIzh+fjQwYJ8LW
-	uQq1S8Snlg8jRSdO12JaCVms+ic5oReXoMKjcCaVMc7JSuYkyMg6dWx11YNf2mhGZZim4L
-	Pvo479pRFWyDJLelnVGs2IdgLsbxVGXppkJ+pkQgjDpry7jify9yXyQ+Qcdy2g==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id a8ee2d0a;
-	Sun, 14 Sep 2025 12:34:26 +0000 (UTC)
-Date: Sun, 14 Sep 2025 21:34:11 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Remi Pommarel <repk@triplefau.lt>
-Cc: v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	s=arc-20240116; t=1757853610; c=relaxed/simple;
+	bh=Dh+wk2yoqrWCD8TB+uPwRbLtPIr4/5QsJ+QbZo4yO/g=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=cHGUkVsSBqfrHGDb7tKlTZmRHUUbLitJHOQZlq6djrvi5l26YRVxbNB3qr2M1nvzhx/XRb8XiG+rzRqFeyo1/JbR5mhHd20AAvWgugDhq/QnL/Gj9WfYlVSWfrKQtr91lKMSYDUUVBH4Q/tCCayrD+g6KEyZ0Jwgj2bOcWUByJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cQuRA5o2; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b54a2ab01ffso2273026a12.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 14 Sep 2025 05:40:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757853608; x=1758458408; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FQf2AGsnl6vclYwp9c3+fOFIkP4apfGdDfRnsEWxb3w=;
+        b=cQuRA5o2MTkN4YKbYLM3zCEfwS4QWMKylpaAOPTH1jHZXCQsyFSE7fIE/rGGaRdTX+
+         BYGXZBQNRZo2qOY9g1Sz2RKD4QniFAuXUC0nJoU8OUfGwjhPdFLp0eM17IT5wJ6pnBJt
+         56dY+s98IWWfFybwKywcKLcx5AqYBQzxRp2mRZnz0Y5iXgav8wuMeiMjY1qSz/M5kxyy
+         0eMPi3lxWPPM0Kchfl7XEYUViR0fe34WTIZaqnYxQcgGuQufC2N0MPSCQJCViOW4UeVN
+         u/P3YEHyr48v72K+ihyj9gTSJlEQeRvVnWwq9Tnq+nQIXZVB4nJk8WOqa3gKQx/NIV+D
+         3cuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757853608; x=1758458408;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FQf2AGsnl6vclYwp9c3+fOFIkP4apfGdDfRnsEWxb3w=;
+        b=BzpRwQ77U6k8xOpFNLYpGvTLBdbAOi7b/yWkYX9TWpSM5cD/GZ4saRd9nZCa3F6ug6
+         HUrisw0xYEFwBunG7C8jhWlbWGbkZZnjZ2jSWddiXo2S9nDC8Dug9Xz0ABtUwSNiFPM9
+         DJfFP+94bP/kKJFwLUM3Z/Be77vboMfA+66XgcSES7WoW3v2gLCWv1L+CorMV99Io90B
+         zNn7wxXLl8Q0WM5hOb3uY4q8olF7fTTxCi9TbYMVTXc9CWEDv1TVJ5adDurK32r0MVmf
+         ekYmCT//cma4xUd5QBqmRgRZp7chDyHEwSGVdg0LJqrbb017tEzmRTA+YKxWP6yNsKta
+         D9fw==
+X-Forwarded-Encrypted: i=1; AJvYcCWafChW9aoiuN7JN7NZA33OLEDelr/ktt3yC2hAwdMtSCIJJyZZxp2B1sN/oLTXix4bUtbQjBCe/NQfmFEF@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzr1woPGRptmU68g5+1r4C0qC3X7L/mX75ldk8SbSYYtdBVq1bd
+	d2/q5Jz97YAGbYCVRlP7nX9iC/MVMAO6krv23X1jJWlD3fnDBK9upLS4
+X-Gm-Gg: ASbGnct165m6Jf6f3Ecjs+Lni//0ppQgO3+AZlIz0MLtGgfaXoVvcXXs2/+ILPKz/Ul
+	8KfMyom4Wc1ElyVrOK5meJFjPAmHYwoB/yV/LPfFUpth4HXboeNT58i9HIsQkQJdkTz5LL15HR/
+	WNC9Q6yosgr4rIsIJAfQJGUGUElaR/9eEuFdTo8JFXFFozaHdBe+IObuFypKxnf42SNYcnPH8Yd
+	vEF4Xlgq3HiaYpl/7p7IZDYZXf/iCBe8LeIeMgkjWvMBYbzzxOt72YYhojpnhb3/bSv1Eoq8XLL
+	u2P98NRrRE3obDSou00mPh6wJ0P1vDtLyb3jlXx7orJg4atmWrwl4y6toTYM1378XQq4eUA8QZT
+	DF0QXn8meDt+nNfIQvOdZobxZeticK9wFxQB85XN5D0pDzCvSXbMxX/w=
+X-Google-Smtp-Source: AGHT+IEqALl6Dr8zeTny4Ila1tLRwXJarsJ+CPNRvQ0gp8DtgtwVdOv93ajULAIsNdfEu/GQETTTtg==
+X-Received: by 2002:a17:902:ced2:b0:23f:fa79:15d0 with SMTP id d9443c01a7336-25d27142f24mr114645185ad.46.1757853607940;
+        Sun, 14 Sep 2025 05:40:07 -0700 (PDT)
+Received: from VM-16-24-fedora.. ([43.153.32.141])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25fc8285639sm49876965ad.134.2025.09.14.05.40.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 14 Sep 2025 05:40:07 -0700 (PDT)
+From: Jinliang Zheng <alexjlzheng@gmail.com>
+X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
+To: kernel@pankajraghav.com
+Cc: alexjlzheng@gmail.com,
+	alexjlzheng@tencent.com,
+	brauner@kernel.org,
+	djwong@kernel.org,
+	hch@infradead.org,
+	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>
-Subject: Re: [RFC PATCH 0/5] 9p: Performance improvements for build workloads
-Message-ID: <aMa2Q_BUNonUSOjA@codewreck.org>
-References: <cover.1756635044.git.repk@triplefau.lt>
+	linux-xfs@vger.kernel.org,
+	yi.zhang@huawei.com
+Subject: Re: [PATCH 1/4] iomap: make sure iomap_adjust_read_range() are aligned with block_size
+Date: Sun, 14 Sep 2025 20:40:06 +0800
+Message-ID: <20250914124006.3597588-1-alexjlzheng@tencent.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <vath6pctmyay5ruk43zwj3jd274sx2kqbjkfgvhg3bnmn75oar@373wvrue5pal>
+References: <vath6pctmyay5ruk43zwj3jd274sx2kqbjkfgvhg3bnmn75oar@373wvrue5pal>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <cover.1756635044.git.repk@triplefau.lt>
+Content-Transfer-Encoding: 8bit
 
-Remi Pommarel wrote on Sun, Aug 31, 2025 at 09:03:38PM +0200:
-> This patchset introduces several performance optimizations for the 9p
-> filesystem when used with cache=loose option (exclusive or read only
-> mounts). These improvements particularly target workloads with frequent
-> lookups of non-existent paths and repeated symlink resolutions.
+On Sun, 14 Sep 2025 13:45:16 +0200, kernel@pankajraghav.com wrote:
+> On Sat, Sep 14, 2025 at 11:37:15AM +0800, alexjlzheng@gmail.com wrote:
+> > From: Jinliang Zheng <alexjlzheng@tencent.com>
+> > 
+> > iomap_folio_state marks the uptodate state in units of block_size, so
+> > it is better to check that pos and length are aligned with block_size.
+> > 
+> > Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
+> > ---
+> >  fs/iomap/buffered-io.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> > index fd827398afd2..0c38333933c6 100644
+> > --- a/fs/iomap/buffered-io.c
+> > +++ b/fs/iomap/buffered-io.c
+> > @@ -234,6 +234,9 @@ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
+> >  	unsigned first = poff >> block_bits;
+> >  	unsigned last = (poff + plen - 1) >> block_bits;
+> >  
+> > +	WARN_ON(*pos & (block_size - 1));
+> > +	WARN_ON(length & (block_size - 1));
+> Any reason you chose WARN_ON instead of WARN_ON_ONCE?
 
-Sorry for slow reply, I think a negative cache and symlink cache make
-sense.
-I haven't tested these yet, and there's a conversion to the "new" mount
-API that's brewing and will conflict with 2nd patch, but I'll be happy
-to take these patches as time allows.
-What was the reason this was sent as RFC, does something require more work?
+I just think it's a fatal error that deserves attention every time
+it's triggered.
 
-I can't comment on io_wait_event_killable, it makes sense to me as well
-but it's probably more appropriate to send through the scheduler tree.
+> 
+> I don't see WARN_ON being used in iomap/buffered-io.c.
 
+I'm not sure if there are any community guidelines for using these
+two macros. If there are, please let me know and I'll be happy to
+follow them as a guide.
 
-> The third patch extends page cache usage to symlinks by allowing
-> p9_client_readlink() results to be cached. Resolving symlink is
-> apparently something done quite frequently during the build process and
-> avoiding the cost of a 9P RPC call round trip for already known symlinks
-> helps reduce the build time to 1m26.602s, outperforming the virtiofs
-> setup.
+thanks,
+Jinliang Zheng. :)
 
-That's rather impressive!
-(I assume virtiofs does not have such negative lookup or symlink cache so
-they'll catch up soon enough if someone cares? But that's no reason to
-refuse this with cache=loose)
-
-> Further investigation may be needed to address the remaining gap with
-> native build performance. Using the last two patches it appears there is
-> still a fair amount of time spent waiting for I/O, though. This could be
-> related to the two systematic RPC calls made when opening a file (one to
-> clone the fid and another one to open the file). Maybe reusing fids or
-> openned files could potentially reduce client/server transactions and
-> bring performance even closer to native levels ? But that are just
-> random thoughs I haven't dig enough yet.
-
-Another thing I tried ages ago was making clunk asynchronous,
-but that didn't go well;
-protocol-wise clunk errors are ignored so I figured it was safe enough
-to just fire it in the background, but it caused some regressions I
-never had time to look into...
-
-As for reusing fids, I'm not sure it's obvious because of things like
-locking that basically consider one open file = one fid;
-I think we're already re-using fids when we can, but I guess it's
-technically possible to mark a fid as shared and only clone it if an
-operation that requires an exclusive fid is done...?
-I'm not sure I want to go down that hole though, sounds like an easy way
-to mess up and give someone access to data they shouldn't be able to
-access by sharing a fid opened by another user or something more
-subtle..
-
--- 
-Dominique Martinet | Asmadeus
+> --
+> Pankaj
 
