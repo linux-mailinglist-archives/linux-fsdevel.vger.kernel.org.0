@@ -1,209 +1,201 @@
-Return-Path: <linux-fsdevel+bounces-61389-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61390-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2950AB57C28
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 15:00:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 80FC6B57C32
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 15:01:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F977188A126
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 13:00:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93BE01889300
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 13:02:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E194730DD36;
-	Mon, 15 Sep 2025 12:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B195A2FF148;
+	Mon, 15 Sep 2025 13:01:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OAcrO9AP";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bU22iS28";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OAcrO9AP";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bU22iS28"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JTOIrfAO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A4B530DD2A
-	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Sep 2025 12:59:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4425B2E6122
+	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Sep 2025 13:01:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757941177; cv=none; b=p72JbGLnqzGkxCYNgLfiYLWd7fgMjAR9kejhr5btAh+pqr9xJp6aQbll5TVukPsx0bQBUd4sqDyB7zwvwW6W4/qOOb731J2DSHcBHbE4fhKyivO1HppMF40Av+dD3UseJ/iMCMKThOjnHKzyGY4xoFdMhAFLhNlPQgsaPWfuO2A=
+	t=1757941288; cv=none; b=k8yO18/vJNZJGns5xP5B1f396mQyve7aifPQShIIWQXsyzUM592qLd77BXjWU5OxWpRhlfaJ0L/EZjiK8MgwP6WG0SJuWRrrYLvi/zPmck093taxh06LPl90FX8OeeTE8+dReiYC1s2KBXbfQzjG8N4WadhBYAcN2Z7h1w8tRbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757941177; c=relaxed/simple;
-	bh=mxocf+cy5MC3Cu0DwEUz97XcAG5uLkrwSdD8mAteRYY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gqLGKbuJLw0cKQiSQBPVijdx1CMOJGlkvKN65t2duXAlE0Y0nz++G7Ng1q1oyUjTfZQ0TIraFW0QVmskWGzMrAjN0uDdrNCw6OAL9GsSM2Ksl9X+ErbN3t56Imy3YG36aoTe5i2FOiqw67p9HaQ0z1QKNNrIKE791UllxjhF1Oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OAcrO9AP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bU22iS28; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OAcrO9AP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bU22iS28; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 8BAE11FB6B;
-	Mon, 15 Sep 2025 12:59:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757941173; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M6WMrfXNUP0q2tEtBXN294FElV6YXFXuqFCdyldB7kc=;
-	b=OAcrO9APtk2UaMNWdH/85ofNQGQl/E+RqET2VQKRfBVFxDOQV1wOjD/zDEZNT+BpPQUxPx
-	Z/jppeSRpIngqVMhcip35nGclQZb5nYwFlxddScQMFwWlqzoF2aVedl2K/eVbIG0jOIMUP
-	1/39fN1lZiDskdAS+hM9j7v4aUbcYOk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757941173;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M6WMrfXNUP0q2tEtBXN294FElV6YXFXuqFCdyldB7kc=;
-	b=bU22iS28aEk+zXS1KzuNABm/j2SkZdZeTnMeyVIVuMmahhjNymt76VhqEMNvHnFJc5/Qhw
-	8DmpAn+dUvt/qjDQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757941173; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M6WMrfXNUP0q2tEtBXN294FElV6YXFXuqFCdyldB7kc=;
-	b=OAcrO9APtk2UaMNWdH/85ofNQGQl/E+RqET2VQKRfBVFxDOQV1wOjD/zDEZNT+BpPQUxPx
-	Z/jppeSRpIngqVMhcip35nGclQZb5nYwFlxddScQMFwWlqzoF2aVedl2K/eVbIG0jOIMUP
-	1/39fN1lZiDskdAS+hM9j7v4aUbcYOk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757941173;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M6WMrfXNUP0q2tEtBXN294FElV6YXFXuqFCdyldB7kc=;
-	b=bU22iS28aEk+zXS1KzuNABm/j2SkZdZeTnMeyVIVuMmahhjNymt76VhqEMNvHnFJc5/Qhw
-	8DmpAn+dUvt/qjDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 73E851372E;
-	Mon, 15 Sep 2025 12:59:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id a+NCHLUNyGgBRAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 15 Sep 2025 12:59:33 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 04507A0A06; Mon, 15 Sep 2025 14:59:29 +0200 (CEST)
-Date: Mon, 15 Sep 2025 14:59:28 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
-	Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v2 25/33] uts: support ns lookup
-Message-ID: <altaotwhserbakcnhlenmma5o7o7j6yhy3gcaqwxdaf7sotlz5@qzsiiyu5s4ah>
-References: <20250912-work-namespace-v2-0-1a247645cef5@kernel.org>
- <20250912-work-namespace-v2-25-1a247645cef5@kernel.org>
+	s=arc-20240116; t=1757941288; c=relaxed/simple;
+	bh=Ezck4rxHmKWprPtVv6zuENk42dYeOqTjH8/o6r/ii4c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Mcx8M6HAa3LZsgNnMn0aqztp0nYASDLewksTOsH+749GkdZMIniliwmNeA+y1KgLUzdS4d6MOmt0qWHBBqCq1Fo8AFEXLFxwfGWR2U4q39tx2YhSsSUQHUwD5IQg6inECen5+PwUJTlTIg2HUT0HQGD9bq8sz2ZUunTV6EyT0Nk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JTOIrfAO; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b0473327e70so63853166b.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Sep 2025 06:01:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757941284; x=1758546084; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=45EkO46Qi4HHLwvj2lt+pH5doVvI2GU4+2jW47Bc4qI=;
+        b=JTOIrfAOOE5kGV849J2cav3nPNeYiAtEddxNMQ0BsIUqUFc7DTTeC8r2j3369n0mJr
+         0ZO1yYJOjNi4/bCSRa/BoI12aiT3mzsz/MHqbbvBmXZj/6+gmGs79hLtQIDyU73GPHUS
+         PtSXnO8jgRFnxpfP84HaCU4t780goZhwxCqNlq3m9hNRFSsABg+zfUr7ZiKbOeKu/f0o
+         uYh91dXUY+P7PrijOs9x666JxKGWPD2yralG9rHZLE8uzjRpLnTKZ1JSUj0R3KPhuksn
+         P8kFccLw+O/mj9rJAQZ08wLJg7YzpFAYR2EwtlGbfOcCMI1I4XexQHXIJEmb9VUWhefD
+         y7jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757941284; x=1758546084;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=45EkO46Qi4HHLwvj2lt+pH5doVvI2GU4+2jW47Bc4qI=;
+        b=Poq7oRmYqnzjUMzp1ZKiNzbTYTOwaCMYoVsOzNa1XfZHp9i0f5eiqA8e9o9ZFvOH/b
+         PO2sHghlYRe7Lw7LGnWacwm9/IvDbAg9206wE54q9eaevIBgLsfnyD6uixLQ3iGfuQzE
+         uWXctEdTkhfUEc8AHsCS989Za9HQANYXUDWyIAF+qOuutRxKU+z3ZVJLF8ZNUk18yhra
+         DcZrxLxBq7z/GnAGxeNrFPd53MxWjUx4SGQc2h+5/UE0qtqJzzHVPntAfZ9NWMQnUIaS
+         dYnfLGO39CWgiKsh4oiKDbYe3tC5dM5qAmvZE2ua8cnvP9sdWjtZJWFasYIcj9VZ6wg1
+         9VMw==
+X-Forwarded-Encrypted: i=1; AJvYcCUfEV9OAJo8jhrX9N77okHBJqDjfqxpsMOqz6JXVp/yBV38fhwhkRlUofd+M+L6akyjyulGS1XiQishQu2a@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhrdKuFOw+ptEJsUrTrUFELw8DenByeyQ0dCX8Qo/42q66/Ujs
+	U7moI8JRPa4OCh9blph1qI9IvgEB5VL+25NfKfsnOhhh9URBQ4usSQ/F4Iwp9YMI9U7CIC583py
+	R7ppGoFY3vRlYHgF51YvLI/ii/9zjBtA=
+X-Gm-Gg: ASbGncvWLTVANkig1QkwEdT+TVkQF+1/gwPrU9s5c9ipOEclnaUp+MEgY2omKJmAQ7e
+	4B9Dxj5cDA7l3V7azCF8R8gKvCPehe5g9V+cDXjb+6bmm4UVHY6yR8VGcV66zsnlaPqin9Q6qLn
+	TxACf2w6oWHpue4v/vWtyVRXS9iWOW5uzrhDbUxpIRqLhJXfIZG71vh1rHiNNml2hOwY5BY3q/M
+	a9uAQ9pxZS5CNm1lLLOEO3fgMPkgL/Kqi7E6SFe+w==
+X-Google-Smtp-Source: AGHT+IE0pshEQPchml3qLxCQRHDuqtH5L0cKDhGMqDazan4WSLspsvjhpC/hBVR8LmkWJPiNu+ARl65uKQLFDi+LdeQ=
+X-Received: by 2002:a17:907:3e1e:b0:afe:9777:ed0e with SMTP id
+ a640c23a62f3a-b07c3356e47mr1254804766b.0.1757941284123; Mon, 15 Sep 2025
+ 06:01:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250912-work-namespace-v2-25-1a247645cef5@kernel.org>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[27];
-	TAGGED_RCPT(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	R_RATELIMIT(0.00)[to_ip_from(RLbyy5b47ky7xssyr143sji8pp)];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,gmail.com,vger.kernel.org,toxicpanda.com,kernel.org,yhndnzj.com,in.waw.pl,0pointer.de,cyphar.com,zeniv.linux.org.uk,kernel.dk,cmpxchg.org,suse.com,google.com,redhat.com,oracle.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,suse.cz:email]
-X-Spam-Flag: NO
-X-Spam-Score: -2.30
+References: <20250915101510.7994-1-acsjakub@amazon.de>
+In-Reply-To: <20250915101510.7994-1-acsjakub@amazon.de>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 15 Sep 2025 15:01:13 +0200
+X-Gm-Features: Ac12FXzOnPQ5wHS4xu7aVNWoFlUIY1GgVl-UQpmig0p0kiDTzt7kJQ5EB_XHWw8
+Message-ID: <CAOQ4uxgXvwumYvJm3cLDFfx-TsU3g5-yVsTiG=6i8KS48dn0mQ@mail.gmail.com>
+Subject: Re: [PATCH] ovl: check before dereferencing s_root field
+To: Jakub Acs <acsjakub@amazon.de>, Jan Kara <jack@suse.cz>
+Cc: linux-unionfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	Christian Brauner <brauner@kernel.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri 12-09-25 13:52:48, Christian Brauner wrote:
-> Support the generic ns lookup infrastructure to support file handles for
-> namespaces.
-> 
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-
-Looks good. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
+On Mon, Sep 15, 2025 at 12:15=E2=80=AFPM Jakub Acs <acsjakub@amazon.de> wro=
+te:
+>
+> Calling intotify_show_fdinfo() on fd watching an overlayfs inode, while
+> the overlayfs is being unmounted, can lead to dereferencing NULL ptr.
+>
+> This issue was found by syzkaller.
+>
+> Race Condition Diagram:
+>
+> Thread 1                           Thread 2
+> --------                           --------
+>
+> generic_shutdown_super()
+>  shrink_dcache_for_umount
+>   sb->s_root =3D NULL
+>
+>                     |
+>                     |             vfs_read()
+>                     |              inotify_fdinfo()
+>                     |               * inode get from mark *
+>                     |               show_mark_fhandle(m, inode)
+>                     |                exportfs_encode_fid(inode, ..)
+>                     |                 ovl_encode_fh(inode, ..)
+>                     |                  ovl_check_encode_origin(inode)
+>                     |                   * deref i_sb->s_root *
+>                     |
+>                     |
+>                     v
+>  fsnotify_sb_delete(sb)
+>
+> Which then leads to:
+>
+> [   32.133461] Oops: general protection fault, probably for non-canonical=
+ address 0xdffffc0000000006: 0000 [#1] SMP DEBUG_PAGEALLOC KASAN NOPTI
+> [   32.134438] KASAN: null-ptr-deref in range [0x0000000000000030-0x00000=
+00000000037]
+> [   32.135032] CPU: 1 UID: 0 PID: 4468 Comm: systemd-coredum Not tainted =
+6.17.0-rc6 #22 PREEMPT(none)
+>
+> <snip registers, unreliable trace>
+>
+> [   32.143353] Call Trace:
+> [   32.143732]  ovl_encode_fh+0xd5/0x170
+> [   32.144031]  exportfs_encode_inode_fh+0x12f/0x300
+> [   32.144425]  show_mark_fhandle+0xbe/0x1f0
+> [   32.145805]  inotify_fdinfo+0x226/0x2d0
+> [   32.146442]  inotify_show_fdinfo+0x1c5/0x350
+> [   32.147168]  seq_show+0x530/0x6f0
+> [   32.147449]  seq_read_iter+0x503/0x12a0
+> [   32.148419]  seq_read+0x31f/0x410
+> [   32.150714]  vfs_read+0x1f0/0x9e0
+> [   32.152297]  ksys_read+0x125/0x240
+>
+> IOW ovl_check_encode_origin derefs inode->i_sb->s_root, after it was set
+> to NULL in the unmount path.
+>
+> Minimize the window of opportunity by adding explicit check.
+>
+> Fixes: c45beebfde34 ("ovl: support encoding fid from inode with no alias"=
+)
+> Signed-off-by: Jakub Acs <acsjakub@amazon.de>
+> Cc: Miklos Szeredi <miklos@szeredi.hu>
+> Cc: Amir Goldstein <amir73il@gmail.com>
+> Cc: linux-unionfs@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: stable@vger.kernel.org
 > ---
->  kernel/utsname.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/utsname.c b/kernel/utsname.c
-> index 02037010b378..64155417ae0c 100644
-> --- a/kernel/utsname.c
-> +++ b/kernel/utsname.c
-> @@ -13,6 +13,7 @@
->  #include <linux/cred.h>
->  #include <linux/user_namespace.h>
->  #include <linux/proc_ns.h>
-> +#include <linux/nstree.h>
->  #include <linux/sched/task.h>
->  
->  static struct kmem_cache *uts_ns_cache __ro_after_init;
-> @@ -58,6 +59,7 @@ static struct uts_namespace *clone_uts_ns(struct user_namespace *user_ns,
->  	memcpy(&ns->name, &old_ns->name, sizeof(ns->name));
->  	ns->user_ns = get_user_ns(user_ns);
->  	up_read(&uts_sem);
-> +	ns_tree_add(ns);
->  	return ns;
->  
->  fail_free:
-> @@ -93,10 +95,12 @@ struct uts_namespace *copy_utsname(unsigned long flags,
->  
->  void free_uts_ns(struct uts_namespace *ns)
->  {
-> +	ns_tree_remove(ns);
->  	dec_uts_namespaces(ns->ucounts);
->  	put_user_ns(ns->user_ns);
->  	ns_free_inum(&ns->ns);
-> -	kmem_cache_free(uts_ns_cache, ns);
-> +	/* Concurrent nstree traversal depends on a grace period. */
-> +	kfree_rcu(ns, ns.ns_rcu);
->  }
->  
->  static inline struct uts_namespace *to_uts_ns(struct ns_common *ns)
-> @@ -162,4 +166,5 @@ void __init uts_ns_init(void)
->  			offsetof(struct uts_namespace, name),
->  			sizeof_field(struct uts_namespace, name),
->  			NULL);
-> +	ns_tree_add(&init_uts_ns);
->  }
-> 
-> -- 
-> 2.47.3
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>
+> I'm happy to take suggestions for a better fix - I looked at taking
+> s_umount for reading, but it wasn't clear to me for how long would the
+> fdinfo path need to hold it. Hence the most primitive suggestion in this
+> v1.
+>
+> I'm also not sure if ENOENT or EBUSY is better?.. or even something else?
+>
+>  fs/overlayfs/export.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/fs/overlayfs/export.c b/fs/overlayfs/export.c
+> index 83f80fdb1567..424c73188e06 100644
+> --- a/fs/overlayfs/export.c
+> +++ b/fs/overlayfs/export.c
+> @@ -195,6 +195,8 @@ static int ovl_check_encode_origin(struct inode *inod=
+e)
+>         if (!ovl_inode_lower(inode))
+>                 return 0;
+>
+> +       if (!inode->i_sb->s_root)
+> +               return -ENOENT;
+
+For a filesystem method to have to check that its own root is still alive s=
+ounds
+like the wrong way to me.
+That's one of the things that should be taken for granted by fs code.
+
+I don't think this is an overlayfs specific issue, because other fs would b=
+e
+happy if encode_fh() would be called with NULL sb->s_root.
+
+Jan,
+
+Can we change the order of generic_shutdown_super() so that
+fsnotify_sb_delete(sb) is called before setting s_root to NULL?
+
+Or is there a better solution for this race?
+
+Thanks,
+Amir.
 
