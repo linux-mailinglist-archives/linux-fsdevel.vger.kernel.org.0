@@ -1,309 +1,174 @@
-Return-Path: <linux-fsdevel+bounces-61279-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61280-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16423B56F6E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 06:38:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA830B56F82
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 06:42:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 596E37A6448
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 04:36:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F710189C47A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 04:42:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18D9C27280A;
-	Mon, 15 Sep 2025 04:37:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F22B2765FF;
+	Mon, 15 Sep 2025 04:42:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BKGQ7ztD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7017F1AAE17
-	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Sep 2025 04:37:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128C714F121;
+	Mon, 15 Sep 2025 04:41:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757911078; cv=none; b=IZt5oRUzbOhSbbLdhUI2HlRBcMQV9xt+1J+N32cvzCVORivd/d2B34uKXanJlhrc9QTNTP48Ud9DbwBNDCTnqK/oPzWsDF/32TosBF5EvNkavu16R7EldLq3hlq89kxZw69n0H+hkttIFS1oyyA9Tj4Cg1Rl0xBCzS1DhUGbESw=
+	t=1757911319; cv=none; b=Q/WyXhuCSwKS7zk3hIQXfH8/3mKviloSSl7cnu/kZHZUgp38YWQv5wyqJmv1GYrd0ukFild5w2G1w8sz1K8LuJBFjVY3Bwq9KgtdBu8XeJmfeSnxnpdB/qf+SvxKohYgLd0PuOVN/j322vQCa+87WrP2xQ3AKPZVhu+sHDXRdLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757911078; c=relaxed/simple;
-	bh=1vkQNBotpPiT1YqqHYkSaW3jGAli3UKd/UUiXsS5+aU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=A3i5eB/p8lvDVgux0cgnLvBLfhv2RrHX+fstUXfpVsce0MIjxe51933vT6zNS+NJInQ0TSvIup1gTsEWJyiS/AyU1y7viSew99A01iB/Kzjxj/S8c/q8EJAtH/1JPszxIOt+CQSaJJkizJF0SIT/e/u3gPOLAJhJmnGR1Hrx6wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4cQBwp2sRqzQl2l;
-	Mon, 15 Sep 2025 12:33:14 +0800 (CST)
-Received: from kwepemf100006.china.huawei.com (unknown [7.202.181.220])
-	by mail.maildlp.com (Postfix) with ESMTPS id ADB61180486;
-	Mon, 15 Sep 2025 12:37:51 +0800 (CST)
-Received: from [10.174.177.210] (10.174.177.210) by
- kwepemf100006.china.huawei.com (7.202.181.220) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 15 Sep 2025 12:37:51 +0800
-Message-ID: <7c8557f9-1a8a-71ec-94aa-386e5abd3182@huawei.com>
-Date: Mon, 15 Sep 2025 12:37:50 +0800
+	s=arc-20240116; t=1757911319; c=relaxed/simple;
+	bh=b/qNKcp4cR4Py7I6Jmk+kD30432fdQwu0TjuOKJbeyo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=B/27kH7tlhdwa+zLOA23+1NbUQxPvP1sQ+VzwbbRXIrgo60nb9eOvvPStXzQ3hW+kNgjXpTTj57d5FD7YgxkJ+DAmCBY2MJgXNNrAM0yPicts2zKkflyw6Le+b7fPXJ5LoN/VafhgDWh7v7hgWQbTjkggUFWCn2hbFg5Bq3OZsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BKGQ7ztD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3122BC4CEF1;
+	Mon, 15 Sep 2025 04:41:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757911318;
+	bh=b/qNKcp4cR4Py7I6Jmk+kD30432fdQwu0TjuOKJbeyo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BKGQ7ztDCnDjfZJ0cK4jdzXAQlg5ER9a5S6mlLN1o2ImSD31RSh7Lwze8SuHF0TkX
+	 rfYJllK7y5wqOF93+DWlDBGMbmuup4Xlc3cqmEwbBku+pHZv5LLLt4z0G5b/4h1Jmq
+	 tOvtOzEZGHAKZql6rfhAGE8Hlr5P+fKpGYuacg5DmAiwH+/6KnsntmV30MxFoQF/e6
+	 7KB/uFRVxkdhQVFx+hr+PdjvWpl5gYmxr/jt7jldbt6xV9avUOPDdv8XdP7TlPbQEh
+	 w1yrB6rfYNAO6IjSoEt1bL+fK4LlE/db6uK0ux8c5Sfz62bLPnEdXBc1TD6rAq6wQE
+	 8k9Zh2ZA8ao3g==
+Message-ID: <1b39712b-86c1-4eff-83ea-eb8b180db48c@kernel.org>
+Date: Mon, 15 Sep 2025 06:41:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH 5/5] fuse: {io-uring} Allow reduced number of ring queues
-To: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>
-CC: Joanne Koong <joannelkoong@gmail.com>, <linux-fsdevel@vger.kernel.org>
-References: <20250722-reduced-nr-ring-queues_3-v1-0-aa8e37ae97e6@ddn.com>
- <20250722-reduced-nr-ring-queues_3-v1-5-aa8e37ae97e6@ddn.com>
-From: yangerkun <yangerkun@huawei.com>
-In-Reply-To: <20250722-reduced-nr-ring-queues_3-v1-5-aa8e37ae97e6@ddn.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- kwepemf100006.china.huawei.com (7.202.181.220)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND 21/62] init: remove all mentions of root=/dev/ram*
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Askar Safin <safinaskar@gmail.com>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Linus Torvalds
+ <torvalds@linux-foundation.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+ Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
+ Jens Axboe <axboe@kernel.dk>, Andy Shevchenko <andy.shevchenko@gmail.com>,
+ Aleksa Sarai <cyphar@cyphar.com>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ Julian Stecklina <julian.stecklina@cyberus-technology.de>,
+ Gao Xiang <hsiangkao@linux.alibaba.com>, Art Nikpal <email2tema@gmail.com>,
+ Eric Curtin <ecurtin@redhat.com>, Alexander Graf <graf@amazon.com>,
+ Rob Landley <rob@landley.net>, Lennart Poettering <mzxreary@0pointer.de>,
+ linux-arch@vger.kernel.org, linux-alpha@vger.kernel.org,
+ linux-snps-arc@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+ loongarch@lists.linux.dev, linux-m68k@lists.linux-m68k.org,
+ linux-mips@vger.kernel.org, linux-openrisc@vger.kernel.org,
+ linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+ linux-um@lists.infradead.org, x86@kernel.org, Ingo Molnar
+ <mingo@redhat.com>, linux-block@vger.kernel.org, initramfs@vger.kernel.org,
+ linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-efi@vger.kernel.org, linux-ext4@vger.kernel.org,
+ "Theodore Y . Ts'o" <tytso@mit.edu>, linux-acpi@vger.kernel.org,
+ Michal Simek <monstr@monstr.eu>, devicetree@vger.kernel.org,
+ Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>,
+ Thorsten Blum <thorsten.blum@linux.dev>, Heiko Carstens <hca@linux.ibm.com>,
+ patches@lists.linux.dev
+References: <20250913003842.41944-1-safinaskar@gmail.com>
+ <20250913003842.41944-22-safinaskar@gmail.com>
+ <a079375f-38c2-4f38-b2be-57737084fde8@kernel.org>
+ <20250914131321.df00dfc835be48c10f4cce4b@linux-foundation.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250914131321.df00dfc835be48c10f4cce4b@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-
-在 2025/7/23 5:58, Bernd Schubert 写道:
-> Currently, FUSE io-uring requires all queues to be registered before
-> becoming ready, which can result in too much memory usage.
-
-Thank you very much for this patchset! We have also encountered this 
-issue and have been using per-CPU fiq->ops locally, which combines uring 
-ops and dev ops for a single fuse instance. After discussing it, we 
-prefer your solution as it seems excellent!
-
+On 14/09/2025 22:13, Andrew Morton wrote:
+> On Sun, 14 Sep 2025 12:06:24 +0200 Krzysztof Kozlowski <krzk@kernel.org> wrote:
 > 
-> This patch introduces a static queue mapping system that allows FUSE
-> io-uring to operate with a reduced number of registered queues by:
+>>>  Documentation/admin-guide/kernel-parameters.txt          | 3 +--
+>>>  Documentation/arch/m68k/kernel-options.rst               | 9 ++-------
+>>>  arch/arm/boot/dts/arm/integratorap.dts                   | 2 +-
+>>>  arch/arm/boot/dts/arm/integratorcp.dts                   | 2 +-
+>>>  arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-cmm.dts     | 2 +-
+>>>  .../boot/dts/aspeed/aspeed-bmc-facebook-galaxy100.dts    | 2 +-
+>>>  .../arm/boot/dts/aspeed/aspeed-bmc-facebook-minipack.dts | 2 +-
+>>>  .../arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge100.dts | 2 +-
+>>>  arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge40.dts | 2 +-
+>>>  arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yamp.dts    | 2 +-
+>>>  .../boot/dts/aspeed/ast2600-facebook-netbmc-common.dtsi  | 2 +-
+>>
+>> No, don't do that. DTS is always separate.
 > 
-> 1. Adding a queue_mapping array to track which registered queue each
->     CPU should use
-> 2. Replacing the is_ring_ready() check with immediate queue mapping
->     once any queues are registered
-> 3. Implementing fuse_uring_map_queues() to create CPU-to-queue mappings
->     that prefer NUMA-local queues when available
-> 4. Updating fuse_uring_get_queue() to use the static mapping instead
->     of direct CPU-to-queue correspondence
+> Why can't DTS changes be carried in a different tree?
 
-It appears that fuse_uring_do_register can assist in determining which 
-CPU has been registered. Perhaps you could also modify libfuse to make 
-use of this feature. Could you provide that?
 
-Thanks,
-Erkun.
+It must be carried in a different kernel tree and it must be ALWAYS a
+separate commit. Embedding it in the middle of this patchset and in the
+middle of some other commit breaks these two rules.
 
-> 
-> The mapping prioritizes NUMA locality by first attempting to map CPUs
-> to queues on the same NUMA node, falling back to any available
-> registered queue if no local queue exists.
-> 
-> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
-> ---
->   fs/fuse/dev_uring.c   | 112 ++++++++++++++++++++++++++++++--------------------
->   fs/fuse/dev_uring_i.h |   3 ++
->   2 files changed, 71 insertions(+), 44 deletions(-)
-> 
-> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-> index 624f856388e0867f3c3caed6771e61babd076645..8d16880cb0eb9b252dd6b6cf565011c3787ad1d0 100644
-> --- a/fs/fuse/dev_uring.c
-> +++ b/fs/fuse/dev_uring.c
-> @@ -238,6 +238,7 @@ void fuse_uring_destruct(struct fuse_conn *fc)
->   
->   	fuse_ring_destruct_q_masks(ring);
->   	kfree(ring->queues);
-> +	kfree(ring->queue_mapping);
->   	kfree(ring);
->   	fc->ring = NULL;
->   }
-> @@ -303,6 +304,12 @@ static struct fuse_ring *fuse_uring_create(struct fuse_conn *fc)
->   	if (err)
->   		goto out_err;
->   
-> +	err = -ENOMEM;
-> +	ring->queue_mapping =
-> +		kcalloc(nr_queues, sizeof(int), GFP_KERNEL_ACCOUNT);
-> +	if (!ring->queue_mapping)
-> +		goto out_err;
-> +
->   	spin_lock(&fc->lock);
->   	if (fc->ring) {
->   		/* race, another thread created the ring in the meantime */
-> @@ -324,6 +331,7 @@ static struct fuse_ring *fuse_uring_create(struct fuse_conn *fc)
->   out_err:
->   	fuse_ring_destruct_q_masks(ring);
->   	kfree(ring->queues);
-> +	kfree(ring->queue_mapping);
->   	kfree(ring);
->   	return res;
->   }
-> @@ -1040,31 +1048,6 @@ static int fuse_uring_commit_fetch(struct io_uring_cmd *cmd, int issue_flags,
->   	return 0;
->   }
->   
-> -static bool is_ring_ready(struct fuse_ring *ring, int current_qid)
-> -{
-> -	int qid;
-> -	struct fuse_ring_queue *queue;
-> -	bool ready = true;
-> -
-> -	for (qid = 0; qid < ring->max_nr_queues && ready; qid++) {
-> -		if (current_qid == qid)
-> -			continue;
-> -
-> -		queue = ring->queues[qid];
-> -		if (!queue) {
-> -			ready = false;
-> -			break;
-> -		}
-> -
-> -		spin_lock(&queue->lock);
-> -		if (list_empty(&queue->ent_avail_queue))
-> -			ready = false;
-> -		spin_unlock(&queue->lock);
-> -	}
-> -
-> -	return ready;
-> -}
-> -
->   static int fuse_uring_map_qid(int qid, const struct cpumask *mask)
->   {
->   	int nr_queues = cpumask_weight(mask);
-> @@ -1082,6 +1065,41 @@ static int fuse_uring_map_qid(int qid, const struct cpumask *mask)
->   	return -1;
->   }
->   
-> +static int fuse_uring_map_queues(struct fuse_ring *ring)
-> +{
-> +	int qid, mapped_qid, node;
-> +
-> +	for (qid = 0; qid < ring->max_nr_queues; qid++) {
-> +		node = cpu_to_node(qid);
-> +		if (WARN_ON_ONCE(node >= ring->nr_numa_nodes) || node < 0)
-> +			return -EINVAL;
-> +
-> +		/* First try to find a registered queue on the same NUMA node */
-> +		mapped_qid = fuse_uring_map_qid(
-> +			qid, ring->numa_registered_q_mask[node]);
-> +		if (mapped_qid < 0) {
-> +			/*
-> +			 * No registered queue on this NUMA node,
-> +			 * use any registered queue
-> +			 */
-> +			mapped_qid = fuse_uring_map_qid(
-> +				qid, ring->registered_q_mask);
-> +			if (WARN_ON_ONCE(mapped_qid < 0))
-> +				return -EINVAL;
-> +		}
-> +
-> +		if (WARN_ON_ONCE(!ring->queues[mapped_qid])) {
-> +			pr_err("qid=%d mapped_qid=%d not created\n", qid,
-> +			       mapped_qid);
-> +			return -EINVAL;
-> +		}
-> +
-> +		WRITE_ONCE(ring->queue_mapping[qid], mapped_qid);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->   /*
->    * fuse_uring_req_fetch command handling
->    */
-> @@ -1094,6 +1112,7 @@ static void fuse_uring_do_register(struct fuse_ring_ent *ent,
->   	struct fuse_conn *fc = ring->fc;
->   	struct fuse_iqueue *fiq = &fc->iq;
->   	int node = queue->numa_node;
-> +	int err;
->   
->   	fuse_uring_prepare_cancel(cmd, issue_flags, ent);
->   
-> @@ -1105,14 +1124,14 @@ static void fuse_uring_do_register(struct fuse_ring_ent *ent,
->   	cpumask_set_cpu(queue->qid, ring->registered_q_mask);
->   	cpumask_set_cpu(queue->qid, ring->numa_registered_q_mask[node]);
->   
-> -	if (!ring->ready) {
-> -		bool ready = is_ring_ready(ring, queue->qid);
-> +	err = fuse_uring_map_queues(ring);
-> +	if (err)
-> +		return;
->   
-> -		if (ready) {
-> -			WRITE_ONCE(fiq->ops, &fuse_io_uring_ops);
-> -			WRITE_ONCE(ring->ready, true);
-> -			wake_up_all(&fc->blocked_waitq);
-> -		}
-> +	if (!ring->ready) {
-> +		WRITE_ONCE(fiq->ops, &fuse_io_uring_ops);
-> +		WRITE_ONCE(ring->ready, true);
-> +		wake_up_all(&fc->blocked_waitq);
->   	}
->   }
->   
-> @@ -1365,25 +1384,27 @@ fuse_uring_get_first_queue(struct fuse_ring *ring, const struct cpumask *mask)
->    */
->   static struct fuse_ring_queue *fuse_uring_get_queue(struct fuse_ring *ring)
->   {
-> -	unsigned int qid;
-> -	struct fuse_ring_queue *queue, *local_queue;
-> +	unsigned int mapped_qid;
-> +	struct fuse_ring_queue *queue;
->   	int local_node;
->   	struct cpumask *mask;
-> +	unsigned int core = task_cpu(current);
->   
-> -	qid = task_cpu(current);
-> -	if (WARN_ONCE(qid >= ring->max_nr_queues,
-> -		      "Core number (%u) exceeds nr queues (%zu)\n", qid,
-> -		      ring->max_nr_queues))
-> -		qid = 0;
-> -	local_node = cpu_to_node(qid);
-> +	local_node = cpu_to_node(core);
-> +	if (WARN_ON_ONCE(local_node >= ring->nr_numa_nodes) || local_node < 0)
-> +		local_node = 0;
->   
-> -	local_queue = queue = ring->queues[qid];
-> -	if (WARN_ONCE(!queue, "Missing queue for qid %d\n", qid))
-> -		return NULL;
-> +	if (WARN_ON_ONCE(core >= ring->max_nr_queues))
-> +		core = 0;
->   
-> +	mapped_qid = READ_ONCE(ring->queue_mapping[core]);
-> +	queue = ring->queues[mapped_qid];
-> +
-> +	/* First check if current CPU's queue is available */
->   	if (queue->nr_reqs <= FUSE_URING_QUEUE_THRESHOLD)
->   		return queue;
->   
-> +	/* Second check if there are any available queues on the local node */
->   	mask = ring->per_numa_avail_q_mask[local_node];
->   	queue = fuse_uring_get_first_queue(ring, mask);
->   	if (queue)
-> @@ -1394,7 +1415,10 @@ static struct fuse_ring_queue *fuse_uring_get_queue(struct fuse_ring *ring)
->   	if (queue)
->   		return queue;
->   
-> -	return local_queue;
-> +	/* no better queue available, use the mapped queue */
-> +	queue = ring->queues[mapped_qid];
-> +
-> +	return queue;
->   }
->   
->   static void fuse_uring_dispatch_ent(struct fuse_ring_ent *ent)
-> diff --git a/fs/fuse/dev_uring_i.h b/fs/fuse/dev_uring_i.h
-> index 0457dbc6737c8876dd7a7d4c9c724da05e553e6a..e72b83471cbfc2e911273966f3715305ca10e9ef 100644
-> --- a/fs/fuse/dev_uring_i.h
-> +++ b/fs/fuse/dev_uring_i.h
-> @@ -153,6 +153,9 @@ struct fuse_ring {
->   
->   	atomic_t queue_refs;
->   
-> +	/* static queue mapping */
-> +	int *queue_mapping;
-> +
->   	bool ready;
->   };
->   
-> 
+If you asked why it cannot be carried by VFS (or by any non-SoC tree in
+general), it is because DTS is completely independent hardware
+description, so by keeping it on separate tree we enforce that rule of
+lack of dependency between DTS and any driver or core code.
+
+If there is a dependency here, then it would be a NAK, because there
+cannot be such - it would be a breach of contract for outside users (DTS
+is shared with other, non-Linux projects).
+
+
+Best regards,
+Krzysztof
 
