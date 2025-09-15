@@ -1,92 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-61360-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61363-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7680B57A4D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 14:20:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AC98B57A81
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 14:22:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 648921883D75
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 12:20:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 823493AF3D1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 12:21:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D11305047;
-	Mon, 15 Sep 2025 12:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAB69307AD9;
+	Mon, 15 Sep 2025 12:20:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kO8e8b1g"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="J9Ek2QUW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C13FD24A044;
-	Mon, 15 Sep 2025 12:19:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41A6A307ACE
+	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Sep 2025 12:20:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757938785; cv=none; b=CushE/0C3eTb7O/lW3xS5dhk7O7hMUxdWYIQ619kSX5TKk3uIzq6p52HkCuQ8cjiQYrqKgnPbnMbS0Zk9A8yrptfb8gqbf2lY1vYnC0eIXJWvRXGi9oJsCaQ/jwWjU/KfQA3F8R70XZBRSQCf87YFr6MvKSf8WooChBjdMaHNtY=
+	t=1757938859; cv=none; b=uwLLubZa1lzn0IhDwVBpbjAy0bfmHhdnFIZAOpgSfZWEEoF3KuSV4masNUxSTEYn8+OKRHYqgV43V2J08WcrtYBNyCfyDv4wpdFiQBxJ9I4RCcTws4rdwc0lIw6KKALubrEjFSu6Og9BSAuub1ZCQY/jsOwKhHjPuZqIxOieIiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757938785; c=relaxed/simple;
-	bh=l5Zerqh1/Oc1Qyem5tmwlM1+UIeC27lubKzDCyI2+Rg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QfT3IugIM16aTX0TRpHzkLzVIatDqjwp20Y5anE8lNNrJ9GRMGsnUBV/fTA0mhTbOyJMMN/rlEBVmbUeJ1SXBsn9AWzY9F1okTkX9eIcPJk4i0ueTNvqzE1Jd6VkXnNu6Qq1+eHrObsWgHtkxwYh8qP1HiVE8/gzOQO2ZbxH+Hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kO8e8b1g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FC3BC4CEF5;
-	Mon, 15 Sep 2025 12:19:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757938785;
-	bh=l5Zerqh1/Oc1Qyem5tmwlM1+UIeC27lubKzDCyI2+Rg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=kO8e8b1ggjtxi+5ZRI5880vDl0JhLXW7kfQPxN93EekJQnxkklX7PXjQ3GpE535s4
-	 Ajr3yv4PVn+eJ1N5iIDcGA0NbPALzZAq29xqm/6FLo0F7thYwhGS5PUAFlXD+Idi/C
-	 +aXZeRBYH7gEwZR4WFRbZa8DuNZcKGrDEYvCyEPuYslj4owrYkWjChANNWn14DzbUd
-	 wtIpK4bvQUHg/T1C1FyxXDfMf4uHXuCTpHebs3bPgXlL8nzbuj6e376PTB2djwUiI6
-	 G0JnUChSiCbSSoW50YEoFFnJIAwoQKd3a7yl1zHjfL5Ljv588OzLsqGTbttOp2AfSq
-	 BolXKZ2MCfbPA==
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs: use the switch statement in init_special_inode()
-Date: Mon, 15 Sep 2025 14:19:38 +0200
-Message-ID: <20250915-blutjung-vollbad-baec52a26b44@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250909075459.1291686-1-mjguzik@gmail.com>
-References: <20250909075459.1291686-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1757938859; c=relaxed/simple;
+	bh=SxvSC75+ai5wusFs+sP+EiB6Yy9GbCpqBh03EztSLnM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CYVxH1T4dhA1OJkFEvRrqdPgInEWEq/0XvAunP5RHGAuqKenXuz0tCtLoXaohPyY8+TmNG2mOBZg7XJkaefOv2j5/xEDD9djySrdbhELCrosAXWp8MfSE6cWVOIWuM641+DfO/tPsRRVO8XhXEXa6dCqEtS75sltu62tbGN0sqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=J9Ek2QUW; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-352323388b6so23423891fa.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Sep 2025 05:20:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1757938855; x=1758543655; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SxvSC75+ai5wusFs+sP+EiB6Yy9GbCpqBh03EztSLnM=;
+        b=J9Ek2QUW6tDBZIHRKFNeWWaaRM6hgO8mMAKEEFw6P4yjmgP0rhP9ERsqisZpSZB2vJ
+         4cFYptTHG8jZA4+UkWkyu7uoSiGF0XyQ20qOFH4QX5jhzdtU8lO+Oqc8/bNq3KKDhk9U
+         WNT9++r5sHILcRd74E6oK1G7fC5xw2Ozcumli4zpO1pEEDXx3fKl2+0v7XmcsMvd/98O
+         CmP5axfCTyiCPdmyALQTavqD18NsYmdxN+84s1Vn2OvhC8N9KBNJL09yFCVy9W/jpzO5
+         8bbRgxzkE8nDU8tOqYfpXNzVjpGxAnNqYhGs+dh+GIn6uGY6zi9Cx+IV7ZkRQcYDoS5/
+         YjGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757938855; x=1758543655;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SxvSC75+ai5wusFs+sP+EiB6Yy9GbCpqBh03EztSLnM=;
+        b=EzZts3MeSyP+rBf3bWhmjjXRQhFd9r+lAuCiZsfR9wd/VBH1EbHrYgHZAGGLOuhJrc
+         Io9O001PLdccR1PmTS00FhH/H7qtzDO7/8x/b6fNfGsQzy1z3BXYT0EUoislxdlFamDv
+         hY/Ot1VeSr7L11gxS74K+7soL44AdBf4XF/5naBzyqccuT/LPex9WWrvxdCWmFSZGPGS
+         ZxKLHnovDkKZbLEQJigJC6HHoaV1279pbceMBXoE1Fger+XX3tpv/e0YnSiQ/HzMACZf
+         7vzcJgiWooQRuXAndrn4SazwKCInkuX21TEdHmaic8o8jiZpnEGP4AqGajHXX8PRcjze
+         U2Fw==
+X-Forwarded-Encrypted: i=1; AJvYcCVaN94uZLIL3SmuKXTkvWYtOYaiyNLAQEg3ymm3XyPIwsLwd+EKxJpdRwJSIweg7NH77/k9yqGjMQ0QZVjn@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbpElhUflNkP8EoGoG6Mo1ZkqGPXFrUicSZzbmY7PCPqtL9+ny
+	M3D9dRyRc17iQF0dWmfqa4b5LrBOlVP69zorOYu9fbHkP4sH/6j42sIwiqGyJ7qzOJKX6ouW58O
+	XRnqrQjint00ubHwhmkU70B3XqgA2vfO0E3KK9439GQ==
+X-Gm-Gg: ASbGncvD808EJZZ0kbodQRdcG03Y1cGBnQd1f51DZ6FBMfk0RxA0iN78o7XqZk39sLA
+	upXa4b13AVPzulWU/v411R69jFzSQQHrZ79SqzdZYhwEHvXV10mnumb08bV41vf54xtjQLS0nbq
+	teJJm1icRI6VppMANOtQHy5Q2qjE1RNihuFLoXJ2uaRjPArclGsnfF5SVyx+CDiJygS4lADxlGY
+	A+tF9n7nhkmjO+Huy/DaE+Ia5E8SFYhg40FJqK650zcw6bMdqugvSW02dbD+w==
+X-Google-Smtp-Source: AGHT+IEmnxbeEtgOtDLw2NgOQcwtopUOpi5G2yCRmnyfo2ld0ixRQb3kYGv6XZEeEeUDrjZjp8OP35TG4vLNeTrCZVw=
+X-Received: by 2002:a05:651c:4355:10b0:338:53d:3517 with SMTP id
+ 38308e7fff4ca-35140da7e0bmr36430511fa.33.1757938855373; Mon, 15 Sep 2025
+ 05:20:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=901; i=brauner@kernel.org; h=from:subject:message-id; bh=l5Zerqh1/Oc1Qyem5tmwlM1+UIeC27lubKzDCyI2+Rg=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWScYIkWk2ByONT4dje/593f2zQKNnSeczl9W/tM1pqLE TYdp69d7ChlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjI3QcM/4yiNef9XmgdYSXF d6j5/2rjE9YeWZ85k6Vvfcm59Nkr7RQjw3yH10fdorLeHMlb/9hv4qHfnZtO3JYMei2xyba37I2 8HAMA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+References: <20250905090214.102375-1-marco.crivellari@suse.com> <20250915-abgearbeitet-servolenkung-d0c60406b94e@brauner>
+In-Reply-To: <20250915-abgearbeitet-servolenkung-d0c60406b94e@brauner>
+From: Marco Crivellari <marco.crivellari@suse.com>
+Date: Mon, 15 Sep 2025 14:20:44 +0200
+X-Gm-Features: AS18NWAvbZYrgBGn8tKMf_pIKrTNfuKWU5DLdSvRtq1XfhAg-6v3KzP7FlMTOHo
+Message-ID: <CAAofZF7XWnN1Ozx8LLFtnnsNs=8WV7KZ4vFahK_KoHsVMredbw@mail.gmail.com>
+Subject: Re: [PATCH 0/3] fs: replace wq users and add WQ_PERCPU to
+ alloc_workqueue() users
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Michal Hocko <mhocko@suse.com>, Alexander Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 09 Sep 2025 09:54:58 +0200, Mateusz Guzik wrote:
-> Similar to may_open().
-> 
-> No functional changes.
-> 
-> 
+On Mon, Sep 15, 2025 at 1:50=E2=80=AFPM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+> What is this based on? This doesn't apply to any v6.17-rc* tag so I
+> can't merge it.
 
-Applied to the vfs-6.18.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.18.misc branch should appear in linux-next soon.
+Sorry Christian, it is still based on an older version. I will rebase
+and repost.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Thanks!
+--=20
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+Marco Crivellari
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+L3 Support Engineer, Technology & Product
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.18.misc
-
-[1/1] fs: use the switch statement in init_special_inode()
-      https://git.kernel.org/vfs/vfs/c/4635c2c8bd5c
+marco.crivellari@suse.com
 
